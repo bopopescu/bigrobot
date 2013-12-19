@@ -1,0 +1,8 @@
+# Attributes required for BigSwitch lab environment.
+#
+
+controller_user: admin
+controller_password: adminadmin
+
+mininet_user: mininet
+mininet_password: mininet

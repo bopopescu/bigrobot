@@ -1,0 +1,7 @@
+# Attributes required to access TestRail's REST API. More information can be
+# found at http://docs.gurock.com/testrail-api2/start
+#
+
+url: https://bigswitch.testrail.com/index.php?/api/v2
+user: vui.le@bigswitch.com
+password: HFYIPtJZ90ynNtSOsf07

@@ -1,0 +1,81 @@
+# c<n>: Controllers
+# s<n>: Switches
+# h<n>: Hosts (including bare metal)
+# tg<n>: 3rd-Party traffic generators (e.g., IXIA, Spirent)
+# app<n>: Other appliances (routers, firewalls, load balancers, etc.)
+
+c1:
+  name: bigcontroller1.bigswitch.com
+  alias: [ controller1, master ]
+  ip: 192.168.100.101/24
+  features: [ T5, T6 ]
+c2:
+  name: bigcontroller2.bigswitch.com
+  alias: [ controller2, slave ]
+  ip: 192.168.100.102/24
+  features: [ T5, T6 ]
+s1:
+  ip: 192.168.105.201/24
+  alias: [ switch1, spine1 ]
+  interfaces:
+    leaf1:
+      ip: 192.168.1.1/24
+    leaf2:
+      ip: 192.168.2.1/24
+s2:
+  ip: 192.168.105.202/24
+  alias: [ switch2, spine2 ]
+  interfaces:
+    leaf1:
+      ip: 192.168.1.2/24
+    leaf2:
+      ip: 192.168.2.2/24
+s3:
+  ip: 192.168.105.203/24
+  alias: [ switch3, leaf1 ]
+  interfaces:
+    spine1:
+      ip: 192.168.1.2/24
+    spine2:
+       # same info as for spine1
+    leaf2:
+      ip: 192.168.4.1/24
+    netperf1:
+      ip: 192.168.3.1/24
+    tg1:
+      ip: 192.168.5.2/24  
+s4:
+  ip: 192.168.105.204/24
+  alias: [ switch4, leaf2 ]
+  interfaces:
+    spine1:
+      ip: 192.168.2.2/24
+    spine2:
+       # same info as for spine1
+    leaf1:
+      ip: 192.168.4.2/24
+    netperf2:
+      ip: 192.168.4.2/24
+    tg1:
+      ip: 192.168.6.2/24  
+h1:
+  ip: 192.168.105.110/24
+  role: netperf1
+  interfaces:
+    leaf1:
+      ip: 192.168.3.2/24
+h2:
+  ip: 192.168.105.110/24
+  role: netperf2
+  interfaces:
+    leaf2:
+      ip: 192.168.4.2/24
+tg1:
+  name: ixia-server.bigswitch.com
+  role: traffic-generator
+  ip: 192.168.105.101/24
+  interfaces:
+    leaf1:
+      ip: 192.168.5.1/24  
+    leaf2:
+      ip: 192.168.6.1/24  

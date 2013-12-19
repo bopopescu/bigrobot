@@ -1,0 +1,21 @@
+#!/usr/bin/env python
+"""
+Traverse the directory /var/run/bigtest and gather all the node attributes to
+build a consolidated dictionary.
+"""
+
+import os
+import sys
+
+try:
+    autobot_path = os.environ["BIGROBOT_PATH"]
+except KeyError:
+    print("Error: Please set the environment variable BIGROBOT_PATH.")
+    sys.exit(1)
+sys.path.append(autobot_path)
+
+import autobot.helpers as helpers
+
+
+nodes = helpers.bigtest_node_info()
+print(helpers.to_json(nodes))
