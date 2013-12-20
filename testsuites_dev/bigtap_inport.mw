@@ -1,0 +1,125 @@
+== BigTap Basic Policy ==
+{| class="wikitable sortable"
+! Setting || Value
+|-
+| Documentation || BigTap Sanity Test Suite
+|-
+| Suite Setup || base suite setup
+|-
+| Suite Teardown || base suite teardown
+|-
+| Test Setup || bigtap-inport test setup
+|-
+| Test Teardown || base test teardown
+|-
+| Force Tags || BigTap Sanity
+|-
+| Library || keywords/BsnCommon.py
+|-
+| Library || keywords/BigTapCommonConfig.py
+|-
+| Library || keywords/BigTapCommonShow.py
+|}
+
+{| class="wikitable sortable"
+! Test Case || Action || Argument || Argument || Argument
+|-
+| Verify # of flows with and without Inport Mask || Verify Inport Mask || testPol || 4 || 1
+|-
+| Verify Inport Mask T6088 || T6088 || testPol || 4 || 1
+|-
+| Verify Inport Mask T6088 || T6089 || testPol || 4 || 1
+|-
+|}
+
+{| class="wikitable sortable"
+! Keywords || Action || Argument || Argument || Argument ||
+|-
+| bigtap-inport test setup || || || || ||
+|-
+| || REST disable feature || inport-mask || || ||
+|-
+| || REST add policy || admin-view || testPol || forward ||
+|-
+| || REST add policy match || admin-view || testPol || 1 || {"ether-type": 2048, "dst-tp-port": 80, "ip-proto": 6, "sequence": 1} 
+|-
+| || REST add policy interface || admin-view || testPol || LB7-F1-DL206-D1 || filter 
+|-
+| || REST add policy interface || admin-view || testPol || LB7-F2-DL206-D2 || filter 
+|-
+| || REST add policy interface || admin-view || testPol || LB7-F3-DL206-D3 || filter 
+|-
+| || REST add policy interface || admin-view || testPol || LB7-F4-DL206-D4 || filter 
+|-
+| || REST add policy interface || admin-view || testPol || LB7-D1-DL206-F1 || delivery 
+|-
+| || REST add bigtap service || S5-LY4 || S5-LY4-AR4_E3-PRE || S5-LY4-AR4_E3-PRE || 
+|-
+| Verify Inport Mask || [Arguments] || ${policyName} || ${numFIntf} || ${numDIntf}
+|-
+| || REST show bigtap policy || ${policyName} || ${numFIntf} || ${numDIntf}
+|-
+| || ${switchDpid} = || REST show switch dpid || LB7 || 
+|-
+| || ${switchFlowVal} =  || REST show switch flow || ${switchDpid} || 
+|-
+| || Should Be Equal As Integers || ${switchFlowVal} || 7 ||
+|-
+| || REST enable feature || inport-mask || || ||
+|-
+| || ${switchFlowVal} =  || REST show switch flow || ${switchDpid} || 
+|-
+| || Should Be Equal As Integers || ${switchFlowVal} || 4 ||
+|-
+| T6088 || [Arguments] || ${policyName} || ${numFIntf} || ${numDIntf}
+|-
+| || REST disable feature || inport-mask || || ||
+|-
+| || REST delete policy interface || admin-view || testPol || LB7-D1-DL206-F1 || delivery 
+|-
+| || REST add policy interface || admin-view || testPol || LB8-D1-DL207-F1 || delivery 
+|-
+| || ${switchDpid} = || REST show switch dpid || LB7 || 
+|-
+| || ${switchFlowVal} =  || REST show switch flow || ${switchDpid} || 
+|-
+| || Should Be Equal As Integers || ${switchFlowVal} || 7 ||
+|-
+| || ${switchDpid1} = || REST show switch dpid || LB8 || 
+|-
+| || ${switchFlowVa1l} =  || REST show switch flow || ${switchDpid1} || 
+|-
+| || Should Be Equal As Integers || ${switchFlowVa1l} || 4 ||
+|-
+| || REST enable feature || inport-mask || || ||
+|-
+| || ${switchFlowVal} =  || REST show switch flow || ${switchDpid} || 
+|-
+| || Should Be Equal As Integers || ${switchFlowVal} || 4 ||
+|-
+| || ${switchFlowVa1l} =  || REST show switch flow || ${switchDpid1} || 
+|-
+| || Should Be Equal As Integers || ${switchFlowVa1l} || 4 ||
+|-
+| || ${switchDpid2} = || REST show switch dpid || LY3 || 
+|-
+| || ${switchFlowVa12} =  || REST show switch flow || ${switchDpid2} || 
+|-
+| || ${switchDpid3} = || REST show switch dpid || LY4 || 
+|-
+| || ${switchFlowVa13} =  || REST show switch flow || ${switchDpid3} || 
+|-
+| || REST compare coreswitch flows || ${switchFlowVa12} ||  ${switchFlowVa13} || 4 || 3  
+|-
+| T6089 || [Arguments] || ${policyName} || ${numFIntf} || ${numDIntf}
+|-
+| || REST disable feature || inport-mask || || ||
+|-
+| || REST add service to policy || admin-view || testPol || S5-LY4  || 1
+|-
+| bigtap-inport test teardown || || || || ||
+|-
+| || REST delete policy || admin-view || testPol ||  ||
+|-
+| || REST delete bigtap service || S5-LY4 ||  ||  ||
+|}
