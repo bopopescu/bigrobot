@@ -9,6 +9,7 @@ import pprint
 from pytz import timezone
 from log import *
 from gobot import *
+from autobot.version import *
 from exec_timer import *
 
 
@@ -17,6 +18,7 @@ TZ = timezone("America/Los_Angeles")
 
 def _env_get_and_set(name, new_val=None, default=None):
     """
+    Category: Get/set environment variables for BigRobot.
     Attempt to update 'name' environment variable with a value:
     - if new_val is specified, then set env and return it
     - else if env exist, then just return it
@@ -24,35 +26,48 @@ def _env_get_and_set(name, new_val=None, default=None):
     - last resort, return None
     """
     if new_val:
-        os.environ[name] = new_val
+        os.environ[name] = int_to_str(new_val)
         return os.environ[name]
     elif name in os.environ:
         return os.environ[name]
     elif default:
-        os.environ[name] = default
+        os.environ[name] = int_to_str(default)
         return os.environ[name]
     else:
         return None
 
 
 def bigrobot_path(new_val=None, default=None):
+    """
+    Category: Get/set environment variables for BigRobot.
+    """
     return _env_get_and_set('BIGROBOT_PATH', new_val, default)
 
 
 def bigrobot_config_path():
+    """
+    Category: Get/set environment variables for BigRobot.
+    """
     return ''.join((bigrobot_path(), '/autobot/config'))
 
 
 def bigrobot_log_path(new_val=None, default=None):
+    """
+    Category: Get/set environment variables for BigRobot.
+    """
     return _env_get_and_set('BIGROBOT_LOG_PATH', new_val, default)
 
 
 def bigrobot_suite(new_val=None, default=None):
+    """
+    Category: Get/set environment variables for BigRobot.
+    """
     return _env_get_and_set('BIGROBOT_SUITE', new_val, default)
 
 
 def bigrobot_suite_format(new_val=None, default=None):
     """
+    Category: Get/set environment variables for BigRobot.
     Specify the test suite file format. The possible values include:
     mw  - MediaWiki format
     txt - Robot Framework plain text format 
@@ -61,15 +76,61 @@ def bigrobot_suite_format(new_val=None, default=None):
 
 
 def bigrobot_topology(new_val=None, default=None):
+    """
+    Category: Get/set environment variables for BigRobot.
+    """
     return _env_get_and_set('BIGROBOT_TOPOLOGY', new_val, default)
 
 
 def bigtest_path(new_val=None, default=None):
+    """
+    Category: Get/set environment variables for BigRobot.
+    """
     return _env_get_and_set('BIGTEST_PATH', new_val, default)
 
 
 def python_path(new_val=None, default=None):
+    """
+    Category: Get/set environment variables for BigRobot.
+    """
     return _env_get_and_set('PYTHONPATH', new_val, default)
+
+
+def robot_syslog_file(new_val=None, default=None):
+    """
+    Category: Get/set environment variables for BigRobot.
+    """
+    return _env_get_and_set('ROBOT_SYSLOG_FILE', new_val, default)
+
+
+def robot_syslog_level(new_val=None, default=None):
+    """
+    Category: Get/set environment variables for BigRobot.
+    """
+    return _env_get_and_set('ROBOT_SYSLOG_LEVEL', new_val, default)
+
+
+def bigrobot_debug(new_val=None, default=None):
+    """
+    Category: Get/set environment variables for BigRobot.
+    If env BIGROBOT_DEBUG is 1, then enable Robot Framework syslog debugging.
+    The syslog settings are:
+        Syslog file => <log_path>/syslog.txt
+        Syslog level => DEBUG
+    """
+    debug = _env_get_and_set('BIGROBOT_DEBUG', new_val, default)
+    if debug:
+        robot_syslog_file(default=''.join((bigrobot_log_path(), '/syslog.txt')))
+        robot_syslog_level(default='DEBUG')
+
+    return debug
+
+
+def bigrobot_pandoc_support(new_val=None, default=None):
+    """
+    Category: Get/set environment variables for BigRobot.
+    """
+    return _env_get_and_set('BIGROBOT_PANDOC_SUPPORT', new_val, default)
 
 
 def analyze(s, level=2):
@@ -93,22 +154,6 @@ test_log = log
 
 def prettify_log(s, data, level=3):
     analyze(''.join((s, '\n', prettify(data))), level)
-
-
-def error_msg(msg):
-    print("Error: %s" % msg)
-
-
-def error_exit(msg):
-    error_msg(msg)
-    sys.exit(1)
-
-
-def error_exit_if_file_not_exist(msg, f):
-    if f is None:
-        error_exit(''.join((msg, ': <topology_file_not_specified>')))
-    if not os.path.exists(f):
-        error_exit(''.join((msg, ': ', f)))
 
 
 def sleep(s):
@@ -266,6 +311,40 @@ def bigtest_node_info():
             val = open(full_path_filename, "r").read().rstrip()
             nodes[node][filename] = val
     
+
+def int_to_str(val):
+    """
+    Check value - if type is integer then convert to string and return string.
+    """
+    if isinstance(val, int):
+        val = str(val)
+    return val
+
+
+def str_to_int(val):
+    """
+    Check value - if type is string then convert to integer and return integer.
+    """
+    if isinstance(val, basestring):
+        val = int(val)
+    return val
+    
+    
+def error_msg(msg):
+    print("Error: %s" % msg)
+
+
+def error_exit(msg):
+    error_msg(msg)
+    sys.exit(1)
+
+
+def error_exit_if_file_not_exist(msg, f):
+    if f is None:
+        error_exit(''.join((msg, ': <topology_file_not_specified>')))
+    if not os.path.exists(f):
+        error_exit(''.join((msg, ': ', f)))
+
 
 class TestFailure(AssertionError):
     """

@@ -79,15 +79,14 @@ if helpers.bigrobot_suite():
     helpers.bigrobot_topology(default=''.join((helpers.bigrobot_suite(),
                                                '.topo')))
 helpers.bigrobot_suite_format(default='mw')
-    
+helpers.bigrobot_debug(default=0)
+helpers.bigrobot_pandoc_support(default='1')
+
 ROBOT_FRAMEWORK_OPTS = (
     '--loglevel=debug --debugfile=debug.log --exclude=skipped --outputdir=%s'
         % helpers.bigrobot_log_path()
     )
     # Exclude test cases tagged as 'skipped' from execution
-
-if 'PANDOC_SUPPORT' not in os.environ:
-    os.environ['PANDOC_SUPPORT'] = '1'
 
 
 def get_command_dict():
@@ -101,18 +100,21 @@ def get_command_dict():
 
 
 def usage():
+    version_command()
     print("Usage: gobot [command] [options]\n")
 
-    # Print a list of all the test suites (files with '.mw' extension) in
-    # the current directory
+    # Print a list of all the test suites in the current directory.
+    # Files extension should match the suite extension (e.g., either
+    # 'mw', 'txt', etc).
+    ext = ''.join(('.', helpers.bigrobot_suite_format()))
 
     file_list = []
-    for (dirpath, dirnames, filenames) in os.walk('.'):
+    for (_, _, filenames) in os.walk('.'):
         file_list.extend(filenames)
         break
 
-    # List of test suites (minus the '.mw' extension
-    suite_list = [f[:-3] for f in file_list if f.endswith('.mw')]
+    # List of test suites (remove the extension)
+    suite_list = [f[:-3] for f in file_list if f.endswith(ext)]
 
     # If there is no test suite, make up an example
     sample_suite = 't6_basic_tenant'
@@ -127,15 +129,18 @@ def usage():
     print("  Some possible test suites in the current directory:")
     print("    %s" % "\n    ".join(suite_list))
     print("")
-    print("  BigRobot also expects a topology file. The default file name is")
-    print("  '<suite>.topo'. The user can also specify a topology file by setting")
-    print("  an environment variable:")
-    print("    export BIGROBOT_TOPOLOGY=%s" % ''.join((sample_suite, '.topo')))
-    print("")
+    #print("  BigRobot also expects a topology file. The default file name is")
+    #print("  '<suite>.topo'. The user can also specify a topology file by setting")
+    #print("  an environment variable:")
+    #print("    export BIGROBOT_TOPOLOGY=%s" % ''.join((sample_suite, '.topo')))
+    #print("")
 
     # Print the gobot commands
     cmd_list = []
     for cmd, func in sorted(get_command_dict().items()):
+        if cmd == 'version':
+            # Don't display version command
+            continue
         if func.__doc__:
             cmd_list.append("  %s - %s" % (cmd, func.__doc__))
         else:
@@ -171,16 +176,18 @@ def exit_if_suite_not_defined():
     if not is_suite_defined():
         helpers.error_exit("BIGROBOT_SUITE environment variable required."
                            " See 'gobot help' for more information.")
-    f = helpers.bigrobot_suite() + ".mw"
+    f = ''.join((helpers.bigrobot_suite(),
+                 '.',
+                 helpers.bigrobot_suite_format())) 
     if not os.path.exists(f):
         helpers.error_exit("Test suite file '%s' does not exist." % f)
 
 
-def run(cmd, cwd=None, ignore_stderr=False, quiet=False, background=False, shell=True):
+def run(cmd, cwd=None, ignore_stderr=False, quiet=False, shell=True):
     """
-    Just pass the command string for execution in a subshell. This is ideal
-    when command should run in the background (string can include '&') and/or
-    command contains shell variables/wildcards.
+    shell - Just pass the command string for execution in a subshell. This is
+            ideal when command should run in the background (string can include
+            '&') and/or command contains shell variables/wildcards.
     """ 
     if not quiet:
         print("Executing '%s'" % cmd)
@@ -201,7 +208,14 @@ def run(cmd, cwd=None, ignore_stderr=False, quiet=False, background=False, shell
 
 
 def format_convert(f, quiet=False):
-    if os.environ['PANDOC_SUPPORT'] != '1':
+    """
+    Convert the test suite file (special case for 'mw' only at this point) to:
+      rst format - ReStructuredText format which is human reable
+      html format - HTML file can be fed to Robot Framework for processing
+    """
+    if helpers.bigrobot_pandoc_support() != '1':
+        return
+    if helpers.bigrobot_suite_format() != 'mw':
         return
     
     run('pandoc %s.mw --from=mediawiki --to=rst --output=%s.rst' % (f, f),
@@ -214,15 +228,24 @@ def format_convert_and_copy(f, p, quiet=False):
     format_convert(f, quiet)
     if not os.path.exists(helpers.bigrobot_log_path()):
         os.makedirs(helpers.bigrobot_log_path())
-    shutil.copy(f + '.mw', helpers.bigrobot_log_path())
-    shutil.copy(f + '.rst', helpers.bigrobot_log_path())
-    shutil.copy(f + '.html', helpers.bigrobot_log_path())
-
+        
+    for ext in ('mw', 'txt', 'rst', 'html'):
+        filename = ''.join((f, '.', ext))
+        if os.path.exists(filename):
+            shutil.copy(filename, helpers.bigrobot_log_path())
+        
 
 #
 # Gobot command definitions
 #
 
+def version_command():
+    """
+    Show the version of BigRobot.
+    """
+    print "BigRobot version %s" % helpers.get_version()
+    
+    
 def suite_command():
     """
     Show the text output of the test suite.
@@ -230,7 +253,6 @@ def suite_command():
     exit_if_suite_not_defined()
     format_convert(helpers.bigrobot_suite(), quiet=True)
     run('cat %s.rst' % helpers.bigrobot_suite(), quiet=True)
-
 
 
 def test_command():
@@ -255,7 +277,7 @@ def env_command():
     print('BIGROBOT_LOG_PATH=%s' % helpers.bigrobot_log_path())
     print('BIGROBOT_SUITE=%s' % helpers.bigrobot_suite())
     print('BIGROBOT_TOPOLOGY=%s' % helpers.bigrobot_topology())
-    print('PANDOC_SUPPORT=%s' % os.environ['PANDOC_SUPPORT'])
+    print('PANDOC_SUPPORT=%s' % helpers.bigrobot_pandoc_support())
 
 def gui_command():
     """
