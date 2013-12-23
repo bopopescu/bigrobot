@@ -99,7 +99,6 @@ class BigTapCommonConfig(object):
             intf_type = "delivery-group"
         url = '%s/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]/%s[name="%s"]' % (c.base_url, str(viewName), str(policyName),str(intf_type),str(intfNick))
         c.rest.put(url,{"name": str(intfNick)})
-        helpers.sleep(1)
         if not c.rest.status_code_ok():
             helpers.test_failure(c.rest.error())
             return False
@@ -116,7 +115,6 @@ class BigTapCommonConfig(object):
             intf_type = "delivery-group"
         url = '%s/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]/%s[name="%s"]' % (c.base_url, str(viewName), str(policyName),str(intf_type),str(intfNick))
         c.rest.delete(url,{})
-        helpers.sleep(1)
         if not c.rest.status_code_ok():
             helpers.test_failure(c.rest.error())
             return False
@@ -234,8 +232,8 @@ class BigTapCommonConfig(object):
     def rest_add_service_to_policy(self,viewName,policyName,serviceName,sequenceNumber) :
         t = test.Test()
         c = t.controller()
-        url_to_add = '%s/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]/service[sequence="%s"]' % (c.base_url,str(viewName),str(policyName),str(sequenceNumber))
-        c.rest.put(url_to_add, {"name":str(serviceName), "sequence" : sequenceNumber})
+        url_to_add = '%s/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]/service[sequence=%s]' % (c.base_url,str(viewName),str(policyName),str(sequenceNumber))
+        c.rest.put(url_to_add, {"name":str(serviceName), "sequence" : int(sequenceNumber)})
         if not c.rest.status_code_ok():
             helpers.test_failure(c.rest.error())
             return False
@@ -275,7 +273,6 @@ class BigTapCommonConfig(object):
         c = t.controller()
         url = '%s/api/v1/data/controller/applications/bigtap/feature'  % (c.base_url)
         c.rest.patch(url,{str(featureName): False})
-        helpers.sleep(1)
         if not c.rest.status_code_ok():
             helpers.test_failure(c.rest.error())
             return False
@@ -289,7 +286,6 @@ class BigTapCommonConfig(object):
         c = t.controller()
         url = '%s/api/v1/data/controller/applications/bigtap/feature'  % (c.base_url)
         c.rest.patch(url,{str(featureName): True})
-        helpers.sleep(1)
         if not c.rest.status_code_ok():
             helpers.test_failure(c.rest.error())
             return False
@@ -304,3 +300,6 @@ class BigTapCommonConfig(object):
         else :
             return False
 
+#Generic Sleep Function
+    def sleep_now(self,intTime):
+        helpers.sleep(float(intTime))

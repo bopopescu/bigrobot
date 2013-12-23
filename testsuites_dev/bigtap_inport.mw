@@ -16,9 +16,9 @@
 |-
 | Library || keywords/BsnCommon.py
 |-
-| Library || keywords/BigTapCommonConfig.py
+| Library || keywords_dev/BigTapCommonConfig.py
 |-
-| Library || keywords/BigTapCommonShow.py
+| Library || keywords_dev/BigTapCommonShow.py
 |}
 
 {| class="wikitable sortable"
@@ -26,9 +26,39 @@
 |-
 | Verify # of flows with and without Inport Mask || Verify Inport Mask || testPol || 4 || 1
 |-
-| Verify Inport Mask T6088 || T6088 || testPol || 4 || 1
+| Verify Inport Mask T6090 || T6090 || testPol || 4 || 1
 |-
-| Verify Inport Mask T6088 || T6089 || testPol || 4 || 1
+| Verify Inport Mask T6091 || T6091 || testPol || 4 || 1
+|-
+| Verify Inport Mask T6092 || T6092 || testPol || 4 || 1
+|-
+| Verify Inport Mask T6093 || T6093 || testPol || 1 || 4
+|-
+| Verify Inport Mask T6094 || T6094 || testPol || 1 || 4
+|-
+| Verify Inport Mask T6095 || T6095 || testPol || 4 || 4
+|-
+| Verify Inport Mask T6096 || T6096 || testPol || 4 || 4
+|-
+| Verify Inport Mask T6097 || T6097 || testPol || 2 || 1
+|-
+| Verify Inport Mask T6098 || T6098 || testPol || 2 || 1
+|-
+| Verify Inport Mask T6099 || T6099 || testPol || 2 || 1
+|-
+| Verify Inport Mask T6100 || T6100 || testPol || 2 || 1
+|-
+| Verify Inport Mask T6101 || T6101 || testPol || 2 || 2
+|-
+| Verify Inport Mask T6102 || T6102 || testPol || 2 || 2
+|-
+| Verify Inport Mask T6103 || T6103 || testPol || 4 || 1
+|-
+| Verify Inport Mask T6104 || T6104 || testPol || 4 || 1
+|-
+| Verify Inport Mask T6105 || T6105 || testPol || 4 || 1
+|-
+| Verify Inport Mask T6106 || T6106 || testPol || 4 || 1
 |-
 |}
 
@@ -53,11 +83,19 @@
 |-
 | || REST add policy interface || admin-view || testPol || LB7-D1-DL206-F1 || delivery 
 |-
-| || REST add bigtap service || S5-LY4 || S5-LY4-AR4_E3-PRE || S5-LY4-AR4_E3-PRE || 
+| || REST add bigtap service || S5-LY4 || S5-LY4-AR4_E3-PRE || S5-LY4-AR4_E4-POST || 
+|-
+| || REST add bigtap service || S2-LB8 || S2-LB8_E3-C2950_E23-PRE || S2-LB8_E4-C2950_E24-POST || 
+|-
+| || sleep now || 3 || || ||
 |-
 | Verify Inport Mask || [Arguments] || ${policyName} || ${numFIntf} || ${numDIntf}
 |-
 | || REST show bigtap policy || ${policyName} || ${numFIntf} || ${numDIntf}
+|-
+| || REST disable feature || inport-mask || || ||
+|-
+| || sleep now || 2 || || ||
 |-
 | || ${switchDpid} = || REST show switch dpid || LB7 || 
 |-
@@ -67,17 +105,21 @@
 |-
 | || REST enable feature || inport-mask || || ||
 |-
+| || sleep now || 2 || || ||
+|-
 | || ${switchFlowVal} =  || REST show switch flow || ${switchDpid} || 
 |-
 | || Should Be Equal As Integers || ${switchFlowVal} || 4 ||
 |-
-| T6088 || [Arguments] || ${policyName} || ${numFIntf} || ${numDIntf}
+| T6090 || [Arguments] || ${policyName} || ${numFIntf} || ${numDIntf}
 |-
 | || REST disable feature || inport-mask || || ||
 |-
 | || REST delete policy interface || admin-view || testPol || LB7-D1-DL206-F1 || delivery 
 |-
 | || REST add policy interface || admin-view || testPol || LB8-D1-DL207-F1 || delivery 
+|-
+| || sleep now || 2 || || ||
 |-
 | || ${switchDpid} = || REST show switch dpid || LB7 || 
 |-
@@ -92,6 +134,8 @@
 | || Should Be Equal As Integers || ${switchFlowVa1l} || 4 ||
 |-
 | || REST enable feature || inport-mask || || ||
+|-
+| || sleep now || 2 || || ||
 |-
 | || ${switchFlowVal} =  || REST show switch flow || ${switchDpid} || 
 |-
@@ -111,15 +155,1119 @@
 |-
 | || REST compare coreswitch flows || ${switchFlowVa12} ||  ${switchFlowVa13} || 4 || 3  
 |-
-| T6089 || [Arguments] || ${policyName} || ${numFIntf} || ${numDIntf}
+| T6091 || [Arguments] || ${policyName} || ${numFIntf} || ${numDIntf}
 |-
 | || REST disable feature || inport-mask || || ||
 |-
+| || REST delete policy interface || admin-view || testPol || LB7-D1-DL206-F1 || delivery 
+|-
 | || REST add service to policy || admin-view || testPol || S5-LY4  || 1
+|-
+| || REST add policy interface || admin-view || testPol || LB8-D1-DL207-F1 || delivery 
+|-
+| || sleep now || 2 || || ||
+|-
+| || ${switchDpid} = || REST show switch dpid || LB7 || 
+|-
+| || ${switchFlowVal} =  || REST show switch flow || ${switchDpid} || 
+|-
+| || Should Be Equal As Integers || ${switchFlowVal} || 7 ||
+|-
+| || ${switchDpid1} = || REST show switch dpid || LB8 || 
+|-
+| || ${switchFlowVa1l} =  || REST show switch flow || ${switchDpid1} || 
+|-
+| || Should Be Equal As Integers || ${switchFlowVa1l} || 4 ||
+|-
+| || REST enable feature || inport-mask || || ||
+|-
+| || sleep now || 2 || || ||
+|-
+| || ${switchFlowVal} =  || REST show switch flow || ${switchDpid} || 
+|-
+| || Should Be Equal As Integers || ${switchFlowVal} || 4 ||
+|-
+| || ${switchFlowVa1l} =  || REST show switch flow || ${switchDpid1} || 
+|-
+| || Should Be Equal As Integers || ${switchFlowVa1l} || 4 ||
+|-
+| || ${switchDpid2} = || REST show switch dpid || LY3 || 
+|-
+| || ${switchFlowVa12} =  || REST show switch flow || ${switchDpid2} || 
+|-
+| || ${switchDpid3} = || REST show switch dpid || LY4 || 
+|-
+| || ${switchFlowVa13} =  || REST show switch flow || ${switchDpid3} || 
+|-
+| || REST compare coreswitch flows || ${switchFlowVa12} ||  ${switchFlowVa13} || 4 || 3 
+|-
+| T6092 || [Arguments] || ${policyName} || ${numFIntf} || ${numDIntf}
+|-
+| || REST disable feature || inport-mask || || || 
+|-
+| || REST add service to policy || admin-view || testPol || S2-LB8  || 1
+|-
+| || REST delete policy interface || admin-view || testPol || LB7-D1-DL206-F1 || delivery 
+|-
+| || REST add policy interface || admin-view || testPol || LB8-D1-DL207-F1 || delivery 
+|-
+| || sleep now || 2 || || ||
+|-
+| || ${switchDpid} = || REST show switch dpid || LB7 || 
+|-
+| || ${switchFlowVal} =  || REST show switch flow || ${switchDpid} || 
+|-
+| || Should Be Equal As Integers || ${switchFlowVal} || 7 ||
+|-
+| || ${switchDpid1} = || REST show switch dpid || LB8 || 
+|-
+| || ${switchFlowVa1l} =  || REST show switch flow || ${switchDpid1} || 
+|-
+| || Should Be Equal As Integers || ${switchFlowVa1l} || 5 ||
+|-
+| || REST enable feature || inport-mask || || ||
+|-
+| || sleep now || 2 || || ||
+|-
+| || ${switchFlowVal} =  || REST show switch flow || ${switchDpid} || 
+|-
+| || Should Be Equal As Integers || ${switchFlowVal} || 4 ||
+|-
+| || ${switchFlowVa1l} =  || REST show switch flow || ${switchDpid1} || 
+|-
+| || Should Be Equal As Integers || ${switchFlowVa1l} || 5 ||
+|-
+| || ${switchDpid2} = || REST show switch dpid || LY3 || 
+|-
+| || ${switchFlowVa12} =  || REST show switch flow || ${switchDpid2} || 
+|-
+| || ${switchDpid3} = || REST show switch dpid || LY4 || 
+|-
+| || ${switchFlowVa13} =  || REST show switch flow || ${switchDpid3} || 
+|-
+| || REST compare coreswitch flows || ${switchFlowVa12} ||  ${switchFlowVa13} || 4 || 3  
+|-
+| T6093 || [Arguments] || ${policyName} || ${numFIntf} || ${numDIntf}
+|-
+| || REST disable feature || inport-mask || || || 
+|-
+| || REST delete policy interface || admin-view || testPol || LB7-F2-DL206-D2 || filter
+|-
+| || REST delete policy interface || admin-view || testPol || LB7-F3-DL206-D3 || filter
+|-
+| || REST delete policy interface || admin-view || testPol || LB7-F4-DL206-D4 || filter
+|-
+| || REST delete policy interface || admin-view || testPol || LB7-D1-DL206-F1 || delivery 
+|-
+| || sleep now || 3 || || ||
+|-
+| || REST add policy interface || admin-view || testPol || LB8-D1-DL207-F1 || delivery 
+|-
+| || REST add policy interface || admin-view || testPol || LB8-D2-DL207-F2 || delivery 
+|-
+| || REST add policy interface || admin-view || testPol || LB8-D3-DL207-F3 || delivery 
+|-
+| || REST add policy interface || admin-view || testPol || LB8-D4-DL207-F4 || delivery 
+|-
+| || sleep now || 3 || || ||
+|-
+| || ${switchDpid} = || REST show switch dpid || LB7 || 
+|-
+| || ${switchFlowVal} =  || REST show switch flow || ${switchDpid} || 
+|-
+| || Should Be Equal As Integers || ${switchFlowVal} || 4 ||
+|-
+| || ${switchDpid1} = || REST show switch dpid || LB8 || 
+|-
+| || ${switchFlowVa1l} =  || REST show switch flow || ${switchDpid1} || 
+|-
+| || Should Be Equal As Integers || ${switchFlowVa1l} || 4 ||
+|-
+| || REST enable feature || inport-mask || || ||
+|-
+| || sleep now || 2 || || ||
+|-
+| || ${switchFlowVal} =  || REST show switch flow || ${switchDpid} || 
+|-
+| || Should Be Equal As Integers || ${switchFlowVal} || 4 ||
+|-
+| || ${switchFlowVa1l} =  || REST show switch flow || ${switchDpid1} || 
+|-
+| || Should Be Equal As Integers || ${switchFlowVa1l} || 4 ||
+|-
+| || ${switchDpid2} = || REST show switch dpid || LY3 || 
+|-
+| || ${switchFlowVa12} =  || REST show switch flow || ${switchDpid2} || 
+|-
+| || ${switchDpid3} = || REST show switch dpid || LY4 || 
+|-
+| || ${switchFlowVa13} =  || REST show switch flow || ${switchDpid3} || 
+|-
+| || REST compare coreswitch flows || ${switchFlowVa12} ||  ${switchFlowVa13} || 4 || 3  
+|-
+| T6094 || [Arguments] || ${policyName} || ${numFIntf} || ${numDIntf}
+|-
+| || REST disable feature || inport-mask || || || 
+|-
+| || REST delete service from policy || admin-view || testPol || S2-LB8 || 
+|-
+| || REST delete policy interface || admin-view || testPol || LB7-F2-DL206-D2 || filter
+|-
+| || REST delete policy interface || admin-view || testPol || LB7-F3-DL206-D3 || filter
+|-
+| || REST delete policy interface || admin-view || testPol || LB7-F4-DL206-D4 || filter
+|-
+| || REST delete policy interface || admin-view || testPol || LB7-D1-DL206-F1 || delivery 
+|-
+| || sleep now || 3 || || ||
+|-
+| || REST add service to policy || admin-view || testPol || S2-LB8  || 1
+|-
+| || REST add policy interface || admin-view || testPol || LB8-D1-DL207-F1 || delivery 
+|-
+| || REST add policy interface || admin-view || testPol || LB8-D2-DL207-F2 || delivery 
+|-
+| || REST add policy interface || admin-view || testPol || LB8-D3-DL207-F3 || delivery 
+|-
+| || REST add policy interface || admin-view || testPol || LB8-D4-DL207-F4 || delivery 
+|-
+| || sleep now || 3 || || ||
+|-
+| || ${switchDpid} = || REST show switch dpid || LB7 || 
+|-
+| || ${switchFlowVal} =  || REST show switch flow || ${switchDpid} || 
+|-
+| || Should Be Equal As Integers || ${switchFlowVal} || 4 ||
+|-
+| || ${switchDpid1} = || REST show switch dpid || LB8 || 
+|-
+| || ${switchFlowVa1l} =  || REST show switch flow || ${switchDpid1} || 
+|-
+| || Should Be Equal As Integers || ${switchFlowVa1l} || 5 ||
+|-
+| || REST enable feature || inport-mask || || ||
+|-
+| || sleep now || 2 || || ||
+|-
+| || ${switchFlowVal} =  || REST show switch flow || ${switchDpid} || 
+|-
+| || Should Be Equal As Integers || ${switchFlowVal} || 4 ||
+|-
+| || ${switchFlowVa1l} =  || REST show switch flow || ${switchDpid1} || 
+|-
+| || Should Be Equal As Integers || ${switchFlowVa1l} || 5 ||
+|-
+| || ${switchDpid2} = || REST show switch dpid || LY3 || 
+|-
+| || ${switchFlowVa12} =  || REST show switch flow || ${switchDpid2} || 
+|-
+| || ${switchDpid3} = || REST show switch dpid || LY4 || 
+|-
+| || ${switchFlowVa13} =  || REST show switch flow || ${switchDpid3} || 
+|-
+| || REST compare coreswitch flows || ${switchFlowVa12} ||  ${switchFlowVa13} || 4 || 3  
+|-
+| T6095 || [Arguments] || ${policyName} || ${numFIntf} || ${numDIntf}
+|-
+| || REST disable feature || inport-mask || || || 
+|-
+| || REST delete policy interface || admin-view || testPol || LB7-D1-DL206-F1 || delivery 
+|-
+| || sleep now || 3 || || ||
+|-
+| || REST add policy interface || admin-view || testPol || LB8-D1-DL207-F1 || delivery 
+|-
+| || REST add policy interface || admin-view || testPol || LB8-D2-DL207-F2 || delivery 
+|-
+| || REST add policy interface || admin-view || testPol || LB8-D3-DL207-F3 || delivery 
+|-
+| || REST add policy interface || admin-view || testPol || LB8-D4-DL207-F4 || delivery 
+|-
+| || sleep now || 3 || || ||
+|-
+| || ${switchDpid} = || REST show switch dpid || LB7 || 
+|-
+| || ${switchFlowVal} =  || REST show switch flow || ${switchDpid} || 
+|-
+| || Should Be Equal As Integers || ${switchFlowVal} || 7 ||
+|-
+| || ${switchDpid1} = || REST show switch dpid || LB8 || 
+|-
+| || ${switchFlowVa1l} =  || REST show switch flow || ${switchDpid1} || 
+|-
+| || Should Be Equal As Integers || ${switchFlowVa1l} || 4 ||
+|-
+| || REST enable feature || inport-mask || || ||
+|-
+| || sleep now || 2 || || ||
+|-
+| || ${switchFlowVal} =  || REST show switch flow || ${switchDpid} || 
+|-
+| || Should Be Equal As Integers || ${switchFlowVal} || 4 ||
+|-
+| || ${switchFlowVa1l} =  || REST show switch flow || ${switchDpid1} || 
+|-
+| || Should Be Equal As Integers || ${switchFlowVa1l} || 4 ||
+|-
+| || ${switchDpid2} = || REST show switch dpid || LY3 || 
+|-
+| || ${switchFlowVa12} =  || REST show switch flow || ${switchDpid2} || 
+|-
+| || ${switchDpid3} = || REST show switch dpid || LY4 || 
+|-
+| || ${switchFlowVa13} =  || REST show switch flow || ${switchDpid3} || 
+|-
+| || REST compare coreswitch flows || ${switchFlowVa12} ||  ${switchFlowVa13} || 4 || 3  
+|-
+| T6096 || [Arguments] || ${policyName} || ${numFIntf} || ${numDIntf}
+|-
+| || REST disable feature || inport-mask || || || 
+|-
+| || REST delete policy interface || admin-view || testPol || LB7-D1-DL206-F1 || delivery 
+|-
+| || sleep now || 3 || || ||
+|-
+| || REST add service to policy || admin-view || testPol || S2-LB8  || 1
+|-
+| || REST add policy interface || admin-view || testPol || LB8-D1-DL207-F1 || delivery 
+|-
+| || REST add policy interface || admin-view || testPol || LB8-D2-DL207-F2 || delivery 
+|-
+| || REST add policy interface || admin-view || testPol || LB8-D3-DL207-F3 || delivery 
+|-
+| || REST add policy interface || admin-view || testPol || LB8-D4-DL207-F4 || delivery 
+|-
+| || sleep now || 3 || || ||
+|-
+| || ${switchDpid} = || REST show switch dpid || LB7 || 
+|-
+| || ${switchFlowVal} =  || REST show switch flow || ${switchDpid} || 
+|-
+| || Should Be Equal As Integers || ${switchFlowVal} || 7 ||
+|-
+| || ${switchDpid1} = || REST show switch dpid || LB8 || 
+|-
+| || ${switchFlowVa1l} =  || REST show switch flow || ${switchDpid1} || 
+|-
+| || Should Be Equal As Integers || ${switchFlowVa1l} || 5 ||
+|-
+| || REST enable feature || inport-mask || || ||
+|-
+| || sleep now || 2 || || ||
+|-
+| || ${switchFlowVal} =  || REST show switch flow || ${switchDpid} || 
+|-
+| || Should Be Equal As Integers || ${switchFlowVal} || 4 ||
+|-
+| || ${switchFlowVa1l} =  || REST show switch flow || ${switchDpid1} || 
+|-
+| || Should Be Equal As Integers || ${switchFlowVa1l} || 5 ||
+|-
+| || ${switchDpid2} = || REST show switch dpid || LY3 || 
+|-
+| || ${switchFlowVa12} =  || REST show switch flow || ${switchDpid2} || 
+|-
+| || ${switchDpid3} = || REST show switch dpid || LY4 || 
+|-
+| || ${switchFlowVa13} =  || REST show switch flow || ${switchDpid3} || 
+|-
+| || REST compare coreswitch flows || ${switchFlowVa12} ||  ${switchFlowVa13} || 4 || 3  
+|-
+| T6097 || [Arguments] || ${policyName} || ${numFIntf} || ${numDIntf}
+|-
+| || REST disable feature || inport-mask || || || 
+|-
+| || REST delete policy interface || admin-view || testPol || LB7-D1-DL206-F1 || delivery 
+|-
+| || REST add policy interface || admin-view || testPol || LB8-D1-DL207-F1 || delivery 
+|-
+| || REST add policy interface || admin-view || testPol || LB8-D2-DL207-F2 || delivery 
+|-
+| || REST add policy interface || admin-view || testPol || LB8-D3-DL207-F3 || delivery 
+|-
+| || REST add policy interface || admin-view || testPol || LB8-D4-DL207-F4 || delivery 
+|-
+| || REST add service to policy || admin-view || testPol || S5-LY4  || 1
+|-
+| || sleep now || 1 || || ||
+|-
+| || REST add service to policy || admin-view || testPol || S2-LB8  || 2
+|-
+| || sleep now || 2 || || ||
+|-
+| || ${switchDpid} = || REST show switch dpid || LB7 || 
+|-
+| || ${switchFlowVal} =  || REST show switch flow || ${switchDpid} || 
+|-
+| || Should Be Equal As Integers || ${switchFlowVal} || 7 ||
+|-
+| || ${switchDpid1} = || REST show switch dpid || LB8 || 
+|-
+| || ${switchFlowVal1} =  || REST show switch flow || ${switchDpid1} || 
+|-
+| || Should Be Equal As Integers || ${switchFlowVal1} || 5 ||
+|-
+| || REST enable feature || inport-mask || || ||
+|-
+| || sleep now || 2 || || ||
+|-
+| || ${switchFlowVal} =  || REST show switch flow || ${switchDpid} || 
+|-
+| || Should Be Equal As Integers || ${switchFlowVal} || 4 ||
+|-
+| || ${switchFlowVal1} =  || REST show switch flow || ${switchDpid1} || 
+|-
+| || Should Be Equal As Integers || ${switchFlowVal1} || 5 ||
+|-
+| || ${switchDpid2} = || REST show switch dpid || LY3 || 
+|-
+| || ${switchFlowVa12} =  || REST show switch flow || ${switchDpid2} || 
+|-
+| || ${switchDpid3} = || REST show switch dpid || LY4 || 
+|-
+| || ${switchFlowVa13} =  || REST show switch flow || ${switchDpid3} || 
+|-
+| || REST compare coreswitch flows || ${switchFlowVa12} ||  ${switchFlowVa13} || 5 || 3  
+|-
+| T6098 || [Arguments] || ${policyName} || ${numFIntf} || ${numDIntf}
+|-
+| || REST disable feature || inport-mask || || || 
+|-
+| || REST delete policy interface || admin-view || testPol || LB7-D1-DL206-F1 || delivery 
+|-
+| || REST delete policy interface || admin-view || testPol || LB7-F2-DL206-D2 || filter 
+|-
+| || REST delete policy interface || admin-view || testPol || LB7-F3-DL206-D3 || filter 
+|-
+| || REST delete policy interface || admin-view || testPol || LB7-F4-DL206-D4 || filter 
+|-
+| || REST add policy interface || admin-view || testPol || LB12-F1-HP1-D1 || filter 
+|-
+| || REST add policy interface || admin-view || testPol || LB8-D1-DL207-F1 || delivery 
+|-
+| || sleep now || 2 || || ||
+|-
+| || ${switchDpid} = || REST show switch dpid || LB7 || 
+|-
+| || ${switchFlowVal} =  || REST show switch flow || ${switchDpid} || 
+|-
+| || Should Be Equal As Integers || ${switchFlowVal} || 4 ||
+|-
+| || ${switchDpid2} = || REST show switch dpid || LB12 || 
+|-
+| || ${switchFlowVal2} =  || REST show switch flow || ${switchDpid2} || 
+|-
+| || Should Be Equal As Integers || ${switchFlowVal2} || 4 ||
+|-
+| || ${switchDpid1} = || REST show switch dpid || LB8 || 
+|-
+| || ${switchFlowVal1} =  || REST show switch flow || ${switchDpid1} || 
+|-
+| || Should Be Equal As Integers || ${switchFlowVal1} || 4 ||
+|-
+| || ${switchDpid3} = || REST show switch dpid || LY3 || 
+|-
+| || ${switchFlowVal3} =  || REST show switch flow || ${switchDpid3} || 
+|-
+| || ${switchDpid4} = || REST show switch dpid || LY4 || 
+|-
+| || ${switchFlowVal4} =  || REST show switch flow || ${switchDpid4} || 
+|-
+| || REST compare coreswitch flows || ${switchFlowVal3} ||  ${switchFlowVal4} || 5 || 3  
+|-
+| || REST enable feature || inport-mask || || ||
+|-
+| || sleep now || 2 || || ||
+|-
+| || ${switchFlowVal} =  || REST show switch flow || ${switchDpid} || 
+|-
+| || Should Be Equal As Integers || ${switchFlowVal} || 4 ||
+|-
+| || ${switchFlowVal1} =  || REST show switch flow || ${switchDpid1} || 
+|-
+| || Should Be Equal As Integers || ${switchFlowVal1} || 4 ||
+|-
+| || ${switchFlowVal2} =  || REST show switch flow || ${switchDpid2} || 
+|-
+| || Should Be Equal As Integers || ${switchFlowVal2} || 4 ||
+|-
+| || ${switchDpid3} = || REST show switch dpid || LY3 || 
+|-
+| || ${switchFlowVal3} =  || REST show switch flow || ${switchDpid3} || 
+|-
+| || ${switchDpid4} = || REST show switch dpid || LY4 || 
+|-
+| || ${switchFlowVal4} =  || REST show switch flow || ${switchDpid4} || 
+|-
+| || REST compare coreswitch flows || ${switchFlowVal3} ||  ${switchFlowVal4} || 4 || 3  
+|-
+| T6099 || [Arguments] || ${policyName} || ${numFIntf} || ${numDIntf}
+|-
+| || REST disable feature || inport-mask || || || 
+|-
+| || REST delete policy interface || admin-view || testPol || LB7-D1-DL206-F1 || delivery 
+|-
+| || REST delete policy interface || admin-view || testPol || LB7-F2-DL206-D2 || filter 
+|-
+| || REST delete policy interface || admin-view || testPol || LB7-F3-DL206-D3 || filter 
+|-
+| || REST delete policy interface || admin-view || testPol || LB7-F4-DL206-D4 || filter 
+|-
+| || REST add policy interface || admin-view || testPol || LB12-F1-HP1-D1 || filter 
+|-
+| || REST add policy interface || admin-view || testPol || LB8-D1-DL207-F1 || delivery 
+|-
+| || REST add service to policy || admin-view || testPol || S2-LB8  || 1
+|-
+| || sleep now || 2 || || ||
+|-
+| || ${switchDpid} = || REST show switch dpid || LB7 || 
+|-
+| || ${switchFlowVal} =  || REST show switch flow || ${switchDpid} || 
+|-
+| || Should Be Equal As Integers || ${switchFlowVal} || 4 ||
+|-
+| || ${switchDpid1} = || REST show switch dpid || LB8 || 
+|-
+| || ${switchFlowVal1} =  || REST show switch flow || ${switchDpid1} || 
+|-
+| || Should Be Equal As Integers || ${switchFlowVal1} || 5 ||
+|-
+| || ${switchDpid2} = || REST show switch dpid || LB12 || 
+|-
+| || ${switchFlowVal2} =  || REST show switch flow || ${switchDpid2} || 
+|-
+| || Should Be Equal As Integers || ${switchFlowVal2} || 4 ||
+|-
+| || ${switchDpid3} = || REST show switch dpid || LY3 || 
+|-
+| || ${switchFlowVal3} =  || REST show switch flow || ${switchDpid3} || 
+|-
+| || ${switchDpid4} = || REST show switch dpid || LY4 || 
+|-
+| || ${switchFlowVal4} =  || REST show switch flow || ${switchDpid4} || 
+|-
+| || REST compare coreswitch flows || ${switchFlowVal3} ||  ${switchFlowVal4} || 5 || 3  
+|-
+| || REST enable feature || inport-mask || || ||
+|-
+| || sleep now || 2 || || ||
+|-
+| || ${switchFlowVal} =  || REST show switch flow || ${switchDpid} || 
+|-
+| || Should Be Equal As Integers || ${switchFlowVal} || 4 ||
+|-
+| || ${switchFlowVal1} =  || REST show switch flow || ${switchDpid1} || 
+|-
+| || Should Be Equal As Integers || ${switchFlowVal1} || 5 ||
+|-
+| || ${switchFlowVal2} =  || REST show switch flow || ${switchDpid2} || 
+|-
+| || Should Be Equal As Integers || ${switchFlowVal2} || 4 ||
+|-
+| || ${switchDpid3} = || REST show switch dpid || LY3 || 
+|-
+| || ${switchFlowVal3} =  || REST show switch flow || ${switchDpid3} || 
+|-
+| || ${switchDpid4} = || REST show switch dpid || LY4 || 
+|-
+| || ${switchFlowVal4} =  || REST show switch flow || ${switchDpid4} || 
+|-
+| || REST compare coreswitch flows || ${switchFlowVal3} ||  ${switchFlowVal4} || 4 || 3  
+|-
+| T6100 || [Arguments] || ${policyName} || ${numFIntf} || ${numDIntf}
+|-
+| || REST disable feature || inport-mask || || || 
+|-
+| || REST delete policy interface || admin-view || testPol || LB7-D1-DL206-F1 || delivery 
+|-
+| || REST delete policy interface || admin-view || testPol || LB7-F2-DL206-D2 || filter 
+|-
+| || REST delete policy interface || admin-view || testPol || LB7-F3-DL206-D3 || filter 
+|-
+| || REST delete policy interface || admin-view || testPol || LB7-F4-DL206-D4 || filter 
+|-
+| || REST add policy interface || admin-view || testPol || LB12-F1-HP1-D1 || filter 
+|-
+| || REST add policy interface || admin-view || testPol || LB8-D1-DL207-F1 || delivery 
+|-
+| || REST add service to policy || admin-view || testPol || S5-LY4  || 1
+|-
+| || sleep now || 2 || || ||
+|-
+| || REST add service to policy || admin-view || testPol || S2-LB8  || 2
+|-
+| || sleep now || 2 || || ||
+|-
+| || ${switchDpid} = || REST show switch dpid || LB7 || 
+|-
+| || ${switchFlowVal} =  || REST show switch flow || ${switchDpid} || 
+|-
+| || Should Be Equal As Integers || ${switchFlowVal} || 4 ||
+|-
+| || ${switchDpid1} = || REST show switch dpid || LB8 || 
+|-
+| || ${switchFlowVal1} =  || REST show switch flow || ${switchDpid1} || 
+|-
+| || Should Be Equal As Integers || ${switchFlowVal1} || 5 ||
+|-
+| || ${switchDpid2} = || REST show switch dpid || LB12 || 
+|-
+| || ${switchFlowVal2} =  || REST show switch flow || ${switchDpid2} || 
+|-
+| || Should Be Equal As Integers || ${switchFlowVal2} || 4 ||
+|-
+| || ${switchDpid3} = || REST show switch dpid || LY3 || 
+|-
+| || ${switchFlowVal3} =  || REST show switch flow || ${switchDpid3} || 
+|-
+| || ${switchDpid4} = || REST show switch dpid || LY4 || 
+|-
+| || ${switchFlowVal4} =  || REST show switch flow || ${switchDpid4} || 
+|-
+| || REST compare coreswitch flows || ${switchFlowVal3} ||  ${switchFlowVal4} || 6 || 3  
+|-
+| || REST enable feature || inport-mask || || ||
+|-
+| || sleep now || 2 || || ||
+|-
+| || ${switchFlowVal} =  || REST show switch flow || ${switchDpid} || 
+|-
+| || Should Be Equal As Integers || ${switchFlowVal} || 4 ||
+|-
+| || ${switchFlowVal1} =  || REST show switch flow || ${switchDpid1} || 
+|-
+| || Should Be Equal As Integers || ${switchFlowVal1} || 5 ||
+|-
+| || ${switchFlowVal2} =  || REST show switch flow || ${switchDpid2} || 
+|-
+| || Should Be Equal As Integers || ${switchFlowVal2} || 4 ||
+|-
+| || ${switchDpid3} = || REST show switch dpid || LY3 || 
+|-
+| || ${switchFlowVal3} =  || REST show switch flow || ${switchDpid3} || 
+|-
+| || ${switchDpid4} = || REST show switch dpid || LY4 || 
+|-
+| || ${switchFlowVal4} =  || REST show switch flow || ${switchDpid4} || 
+|-
+| || REST compare coreswitch flows || ${switchFlowVal3} ||  ${switchFlowVal4} || 5 || 3  
+|-
+| T6101 || [Arguments] || ${policyName} || ${numFIntf} || ${numDIntf}
+|-
+| || REST disable feature || inport-mask || || || 
+|-
+| || REST delete policy interface || admin-view || testPol || LB7-D1-DL206-F1 || delivery 
+|-
+| || REST delete policy interface || admin-view || testPol || LB7-F2-DL206-D2 || filter 
+|-
+| || REST delete policy interface || admin-view || testPol || LB7-F3-DL206-D3 || filter 
+|-
+| || REST delete policy interface || admin-view || testPol || LB7-F4-DL206-D4 || filter 
+|-
+| || REST add policy interface || admin-view || testPol || LB12-F1-HP1-D1 || filter 
+|-
+| || REST add policy interface || admin-view || testPol || LB8-D1-DL207-F1 || delivery 
+|-
+| || REST add policy interface || admin-view || testPol || LB11-D1-AR4-F1 || delivery 
+|-
+| || sleep now || 2 || || ||
+|-
+| || ${switchDpid} = || REST show switch dpid || LB7 || 
+|-
+| || ${switchFlowVal} =  || REST show switch flow || ${switchDpid} || 
+|-
+| || Should Be Equal As Integers || ${switchFlowVal} || 4 ||
+|-
+| || ${switchDpid1} = || REST show switch dpid || LB8 || 
+|-
+| || ${switchFlowVal1} =  || REST show switch flow || ${switchDpid1} || 
+|-
+| || Should Be Equal As Integers || ${switchFlowVal1} || 4 ||
+|-
+| || ${switchDpid2} = || REST show switch dpid || LB12 || 
+|-
+| || ${switchFlowVal2} =  || REST show switch flow || ${switchDpid2} || 
+|-
+| || Should Be Equal As Integers || ${switchFlowVal2} || 4 ||
+|-
+| || ${switchDpid5} = || REST show switch dpid || LB11 || 
+|-
+| || ${switchFlowVal5} =  || REST show switch flow || ${switchDpid5} || 
+|-
+| || Should Be Equal As Integers || ${switchFlowVal5} || 4 ||
+|-
+| || ${switchDpid3} = || REST show switch dpid || LY3 || 
+|-
+| || ${switchFlowVal3} =  || REST show switch flow || ${switchDpid3} || 
+|-
+| || ${switchDpid4} = || REST show switch dpid || LY4 || 
+|-
+| || ${switchFlowVal4} =  || REST show switch flow || ${switchDpid4} || 
+|-
+| || REST compare coreswitch flows || ${switchFlowVal3} ||  ${switchFlowVal4} || 5 || 3  
+|-
+| || REST enable feature || inport-mask || || ||
+|-
+| || sleep now || 2 || || ||
+|-
+| || ${switchFlowVal} =  || REST show switch flow || ${switchDpid} || 
+|-
+| || Should Be Equal As Integers || ${switchFlowVal} || 4 ||
+|-
+| || ${switchFlowVal1} =  || REST show switch flow || ${switchDpid1} || 
+|-
+| || Should Be Equal As Integers || ${switchFlowVal1} || 4 ||
+|-
+| || ${switchFlowVal2} =  || REST show switch flow || ${switchDpid2} || 
+|-
+| || Should Be Equal As Integers || ${switchFlowVal2} || 4 ||
+|-
+| || ${switchFlowVal5} =  || REST show switch flow || ${switchDpid5} || 
+|-
+| || Should Be Equal As Integers || ${switchFlowVal5} || 4 ||
+|-
+| || ${switchDpid3} = || REST show switch dpid || LY3 || 
+|-
+| || ${switchFlowVal3} =  || REST show switch flow || ${switchDpid3} || 
+|-
+| || ${switchDpid4} = || REST show switch dpid || LY4 || 
+|-
+| || ${switchFlowVal4} =  || REST show switch flow || ${switchDpid4} || 
+|-
+| || REST compare coreswitch flows || ${switchFlowVal3} ||  ${switchFlowVal4} || 4 || 3  
+|-
+| T6102 || [Arguments] || ${policyName} || ${numFIntf} || ${numDIntf}
+|-
+| || REST disable feature || inport-mask || || || 
+|-
+| || REST delete policy interface || admin-view || testPol || LB7-D1-DL206-F1 || delivery 
+|-
+| || REST delete policy interface || admin-view || testPol || LB7-F2-DL206-D2 || filter 
+|-
+| || REST delete policy interface || admin-view || testPol || LB7-F3-DL206-D3 || filter 
+|-
+| || REST delete policy interface || admin-view || testPol || LB7-F4-DL206-D4 || filter 
+|-
+| || REST add policy interface || admin-view || testPol || LB12-F1-HP1-D1 || filter 
+|-
+| || REST add policy interface || admin-view || testPol || LB8-D1-DL207-F1 || delivery 
+|-
+| || REST add policy interface || admin-view || testPol || LB11-D1-AR4-F1 || delivery 
+|-
+| || REST add service to policy || admin-view || testPol || S5-LY4  || 1
+|-
+| || sleep now || 2 || || ||
+|-
+| || ${switchDpid} = || REST show switch dpid || LB7 || 
+|-
+| || ${switchFlowVal} =  || REST show switch flow || ${switchDpid} || 
+|-
+| || Should Be Equal As Integers || ${switchFlowVal} || 4 ||
+|-
+| || ${switchDpid1} = || REST show switch dpid || LB8 || 
+|-
+| || ${switchFlowVal1} =  || REST show switch flow || ${switchDpid1} || 
+|-
+| || Should Be Equal As Integers || ${switchFlowVal1} || 4 ||
+|-
+| || ${switchDpid2} = || REST show switch dpid || LB12 || 
+|-
+| || ${switchFlowVal2} =  || REST show switch flow || ${switchDpid2} || 
+|-
+| || Should Be Equal As Integers || ${switchFlowVal2} || 4 ||
+|-
+| || ${switchDpid5} = || REST show switch dpid || LB11 || 
+|-
+| || ${switchFlowVal5} =  || REST show switch flow || ${switchDpid5} || 
+|-
+| || Should Be Equal As Integers || ${switchFlowVal5} || 4 ||
+|-
+| || ${switchDpid3} = || REST show switch dpid || LY3 || 
+|-
+| || ${switchFlowVal3} =  || REST show switch flow || ${switchDpid3} || 
+|-
+| || ${switchDpid4} = || REST show switch dpid || LY4 || 
+|-
+| || ${switchFlowVal4} =  || REST show switch flow || ${switchDpid4} || 
+|-
+| || REST compare coreswitch flows || ${switchFlowVal3} ||  ${switchFlowVal4} || 6 || 3  
+|-
+| || REST enable feature || inport-mask || || ||
+|-
+| || sleep now || 2 || || ||
+|-
+| || ${switchFlowVal} =  || REST show switch flow || ${switchDpid} || 
+|-
+| || Should Be Equal As Integers || ${switchFlowVal} || 4 ||
+|-
+| || ${switchFlowVal1} =  || REST show switch flow || ${switchDpid1} || 
+|-
+| || Should Be Equal As Integers || ${switchFlowVal1} || 4 ||
+|-
+| || ${switchFlowVal2} =  || REST show switch flow || ${switchDpid2} || 
+|-
+| || Should Be Equal As Integers || ${switchFlowVal2} || 4 ||
+|-
+| || ${switchFlowVal5} =  || REST show switch flow || ${switchDpid5} || 
+|-
+| || Should Be Equal As Integers || ${switchFlowVal5} || 4 ||
+|-
+| || ${switchDpid3} = || REST show switch dpid || LY3 || 
+|-
+| || ${switchFlowVal3} =  || REST show switch flow || ${switchDpid3} || 
+|-
+| || ${switchDpid4} = || REST show switch dpid || LY4 || 
+|-
+| || ${switchFlowVal4} =  || REST show switch flow || ${switchDpid4} || 
+|-
+| || REST compare coreswitch flows || ${switchFlowVal3} ||  ${switchFlowVal4} || 5 || 3  
+|-
+| T6103 || [Arguments] || ${policyName} || ${numFIntf} || ${numDIntf}
+|-
+| || REST disable feature || inport-mask || || || 
+|-
+| || REST delete policy interface || admin-view || testPol || LB7-D1-DL206-F1 || delivery 
+|-
+| || REST delete policy interface || admin-view || testPol || LB7-F3-DL206-D3 || filter 
+|-
+| || REST delete policy interface || admin-view || testPol || LB7-F4-DL206-D4 || filter 
+|-
+| || REST add policy interface || admin-view || testPol || LB12-F1-HP1-D1 || filter 
+|-
+| || REST add policy interface || admin-view || testPol || LB12-F2-HP1-D2 || filter 
+|-
+| || REST add policy interface || admin-view || testPol || LB8-D1-DL207-F1 || delivery 
+|-
+| || sleep now || 2 || || ||
+|-
+| || ${switchDpid} = || REST show switch dpid || LB7 || 
+|-
+| || ${switchFlowVal} =  || REST show switch flow || ${switchDpid} || 
+|-
+| || Should Be Equal As Integers || ${switchFlowVal} || 5 ||
+|-
+| || ${switchDpid1} = || REST show switch dpid || LB8 || 
+|-
+| || ${switchFlowVal1} =  || REST show switch flow || ${switchDpid1} || 
+|-
+| || Should Be Equal As Integers || ${switchFlowVal1} || 4 ||
+|-
+| || ${switchDpid2} = || REST show switch dpid || LB12 || 
+|-
+| || ${switchFlowVal2} =  || REST show switch flow || ${switchDpid2} || 
+|-
+| || Should Be Equal As Integers || ${switchFlowVal2} || 5 ||
+|-
+| || ${switchDpid5} = || REST show switch dpid || LB11 || 
+|-
+| || ${switchFlowVal5} =  || REST show switch flow || ${switchDpid5} || 
+|-
+| || Should Be Equal As Integers || ${switchFlowVal5} || 3 ||
+|-
+| || ${switchDpid3} = || REST show switch dpid || LY3 || 
+|-
+| || ${switchFlowVal3} =  || REST show switch flow || ${switchDpid3} || 
+|-
+| || ${switchDpid4} = || REST show switch dpid || LY4 || 
+|-
+| || ${switchFlowVal4} =  || REST show switch flow || ${switchDpid4} || 
+|-
+| || REST compare coreswitch flows || ${switchFlowVal3} ||  ${switchFlowVal4} || 5 || 3  
+|-
+| || REST enable feature || inport-mask || || ||
+|-
+| || sleep now || 2 || || ||
+|-
+| || ${switchFlowVal} =  || REST show switch flow || ${switchDpid} || 
+|-
+| || Should Be Equal As Integers || ${switchFlowVal} || 4 ||
+|-
+| || ${switchFlowVal1} =  || REST show switch flow || ${switchDpid1} || 
+|-
+| || Should Be Equal As Integers || ${switchFlowVal1} || 4 ||
+|-
+| || ${switchFlowVal2} =  || REST show switch flow || ${switchDpid2} || 
+|-
+| || Should Be Equal As Integers || ${switchFlowVal2} || 4 ||
+|-
+| || ${switchFlowVal5} =  || REST show switch flow || ${switchDpid5} || 
+|-
+| || Should Be Equal As Integers || ${switchFlowVal5} || 3 ||
+|-
+| || ${switchDpid3} = || REST show switch dpid || LY3 || 
+|-
+| || ${switchFlowVal3} =  || REST show switch flow || ${switchDpid3} || 
+|-
+| || ${switchDpid4} = || REST show switch dpid || LY4 || 
+|-
+| || ${switchFlowVal4} =  || REST show switch flow || ${switchDpid4} || 
+|-
+| || REST compare coreswitch flows || ${switchFlowVal3} ||  ${switchFlowVal4} || 4 || 3  
+|-
+| T6104 || [Arguments] || ${policyName} || ${numFIntf} || ${numDIntf}
+|-
+| || REST disable feature || inport-mask || || || 
+|-
+| || REST delete policy interface || admin-view || testPol || LB7-D1-DL206-F1 || delivery 
+|-
+| || REST delete policy interface || admin-view || testPol || LB7-F3-DL206-D3 || filter 
+|-
+| || REST delete policy interface || admin-view || testPol || LB7-F4-DL206-D4 || filter 
+|-
+| || REST add policy interface || admin-view || testPol || LB12-F1-HP1-D1 || filter 
+|-
+| || REST add policy interface || admin-view || testPol || LB12-F2-HP1-D2 || filter 
+|-
+| || REST add policy interface || admin-view || testPol || LB8-D1-DL207-F1 || delivery 
+|-
+| || REST add service to policy || admin-view || testPol || S2-LB8  || 2
+|-
+| || sleep now || 2 || || ||
+|-
+| || ${switchDpid} = || REST show switch dpid || LB7 || 
+|-
+| || ${switchFlowVal} =  || REST show switch flow || ${switchDpid} || 
+|-
+| || Should Be Equal As Integers || ${switchFlowVal} || 5 ||
+|-
+| || ${switchDpid1} = || REST show switch dpid || LB8 || 
+|-
+| || ${switchFlowVal1} =  || REST show switch flow || ${switchDpid1} || 
+|-
+| || Should Be Equal As Integers || ${switchFlowVal1} || 5 ||
+|-
+| || ${switchDpid2} = || REST show switch dpid || LB12 || 
+|-
+| || ${switchFlowVal2} =  || REST show switch flow || ${switchDpid2} || 
+|-
+| || Should Be Equal As Integers || ${switchFlowVal2} || 5 ||
+|-
+| || ${switchDpid5} = || REST show switch dpid || LB11 || 
+|-
+| || ${switchFlowVal5} =  || REST show switch flow || ${switchDpid5} || 
+|-
+| || Should Be Equal As Integers || ${switchFlowVal5} || 3 ||
+|-
+| || ${switchDpid3} = || REST show switch dpid || LY3 || 
+|-
+| || ${switchFlowVal3} =  || REST show switch flow || ${switchDpid3} || 
+|-
+| || ${switchDpid4} = || REST show switch dpid || LY4 || 
+|-
+| || ${switchFlowVal4} =  || REST show switch flow || ${switchDpid4} || 
+|-
+| || REST compare coreswitch flows || ${switchFlowVal3} ||  ${switchFlowVal4} || 5 || 3  
+|-
+| || REST enable feature || inport-mask || || ||
+|-
+| || sleep now || 2 || || ||
+|-
+| || ${switchFlowVal} =  || REST show switch flow || ${switchDpid} || 
+|-
+| || Should Be Equal As Integers || ${switchFlowVal} || 4 ||
+|-
+| || ${switchFlowVal1} =  || REST show switch flow || ${switchDpid1} || 
+|-
+| || Should Be Equal As Integers || ${switchFlowVal1} || 5 ||
+|-
+| || ${switchFlowVal2} =  || REST show switch flow || ${switchDpid2} || 
+|-
+| || Should Be Equal As Integers || ${switchFlowVal2} || 4 ||
+|-
+| || ${switchFlowVal5} =  || REST show switch flow || ${switchDpid5} || 
+|-
+| || Should Be Equal As Integers || ${switchFlowVal5} || 3 ||
+|-
+| || ${switchDpid3} = || REST show switch dpid || LY3 || 
+|-
+| || ${switchFlowVal3} =  || REST show switch flow || ${switchDpid3} || 
+|-
+| || ${switchDpid4} = || REST show switch dpid || LY4 || 
+|-
+| || ${switchFlowVal4} =  || REST show switch flow || ${switchDpid4} || 
+|-
+| || REST compare coreswitch flows || ${switchFlowVal3} ||  ${switchFlowVal4} || 4 || 3  
+|-
+| T6105 || [Arguments] || ${policyName} || ${numFIntf} || ${numDIntf}
+|-
+| || REST disable feature || inport-mask || || || 
+|-
+| || REST delete policy interface || admin-view || testPol || LB7-D1-DL206-F1 || delivery 
+|-
+| || REST delete policy interface || admin-view || testPol || LB7-F3-DL206-D3 || filter 
+|-
+| || REST delete policy interface || admin-view || testPol || LB7-F4-DL206-D4 || filter 
+|-
+| || REST add policy interface || admin-view || testPol || LB12-F1-HP1-D1 || filter 
+|-
+| || REST add policy interface || admin-view || testPol || LB12-F2-HP1-D2 || filter 
+|-
+| || REST add policy interface || admin-view || testPol || LB8-D1-DL207-F1 || delivery 
+|-
+| || REST add service to policy || admin-view || testPol || S5-LY4  || 1
+|-
+| || REST add service to policy || admin-view || testPol || S2-LB8  || 2
+|-
+| || sleep now || 2 || || ||
+|-
+| || ${switchDpid} = || REST show switch dpid || LB7 || 
+|-
+| || ${switchFlowVal} =  || REST show switch flow || ${switchDpid} || 
+|-
+| || Should Be Equal As Integers || ${switchFlowVal} || 5 ||
+|-
+| || ${switchDpid1} = || REST show switch dpid || LB8 || 
+|-
+| || ${switchFlowVal1} =  || REST show switch flow || ${switchDpid1} || 
+|-
+| || Should Be Equal As Integers || ${switchFlowVal1} || 5 ||
+|-
+| || ${switchDpid2} = || REST show switch dpid || LB12 || 
+|-
+| || ${switchFlowVal2} =  || REST show switch flow || ${switchDpid2} || 
+|-
+| || Should Be Equal As Integers || ${switchFlowVal2} || 5 ||
+|-
+| || ${switchDpid5} = || REST show switch dpid || LB11 || 
+|-
+| || ${switchFlowVal5} =  || REST show switch flow || ${switchDpid5} || 
+|-
+| || Should Be Equal As Integers || ${switchFlowVal5} || 3 ||
+|-
+| || ${switchDpid3} = || REST show switch dpid || LY3 || 
+|-
+| || ${switchFlowVal3} =  || REST show switch flow || ${switchDpid3} || 
+|-
+| || ${switchDpid4} = || REST show switch dpid || LY4 || 
+|-
+| || ${switchFlowVal4} =  || REST show switch flow || ${switchDpid4} || 
+|-
+| || REST compare coreswitch flows || ${switchFlowVal3} ||  ${switchFlowVal4} || 6 || 3  
+|-
+| || REST enable feature || inport-mask || || ||
+|-
+| || sleep now || 2 || || ||
+|-
+| || ${switchFlowVal} =  || REST show switch flow || ${switchDpid} || 
+|-
+| || Should Be Equal As Integers || ${switchFlowVal} || 4 ||
+|-
+| || ${switchFlowVal1} =  || REST show switch flow || ${switchDpid1} || 
+|-
+| || Should Be Equal As Integers || ${switchFlowVal1} || 5 ||
+|-
+| || ${switchFlowVal2} =  || REST show switch flow || ${switchDpid2} || 
+|-
+| || Should Be Equal As Integers || ${switchFlowVal2} || 4 ||
+|-
+| || ${switchFlowVal5} =  || REST show switch flow || ${switchDpid5} || 
+|-
+| || Should Be Equal As Integers || ${switchFlowVal5} || 3 ||
+|-
+| || ${switchDpid3} = || REST show switch dpid || LY3 || 
+|-
+| || ${switchFlowVal3} =  || REST show switch flow || ${switchDpid3} || 
+|-
+| || ${switchDpid4} = || REST show switch dpid || LY4 || 
+|-
+| || ${switchFlowVal4} =  || REST show switch flow || ${switchDpid4} || 
+|-
+| || REST compare coreswitch flows || ${switchFlowVal3} ||  ${switchFlowVal4} || 5 || 3  
+|-
+| T6106 || [Arguments] || ${policyName} || ${numFIntf} || ${numDIntf}
+|-
+| || REST disable feature || inport-mask || || || 
+|-
+| || REST delete policy interface || admin-view || testPol || LB7-D1-DL206-F1 || delivery 
+|-
+| || REST delete policy interface || admin-view || testPol || LB7-F3-DL206-D3 || filter 
+|-
+| || REST delete policy interface || admin-view || testPol || LB7-F4-DL206-D4 || filter 
+|-
+| || REST add policy interface || admin-view || testPol || LB12-F1-HP1-D1 || filter 
+|-
+| || REST add policy interface || admin-view || testPol || LB12-F2-HP1-D2 || filter 
+|-
+| || REST add policy interface || admin-view || testPol || LB8-D1-DL207-F1 || delivery 
+|-
+| || REST add policy interface || admin-view || testPol || LB8-D2-DL207-F2 || delivery 
+|-
+| || REST add policy interface || admin-view || testPol || LB11-D1-AR4-F1  || delivery 
+|-
+| || REST add policy interface || admin-view || testPol || LB11-D2-AR4-F2  || delivery 
+|-
+| || sleep now || 2 || || ||
+|-
+| || ${switchDpid} = || REST show switch dpid || LB7 || 
+|-
+| || ${switchFlowVal} =  || REST show switch flow || ${switchDpid} || 
+|-
+| || Should Be Equal As Integers || ${switchFlowVal} || 5 ||
+|-
+| || ${switchDpid1} = || REST show switch dpid || LB8 || 
+|-
+| || ${switchFlowVal1} =  || REST show switch flow || ${switchDpid1} || 
+|-
+| || Should Be Equal As Integers || ${switchFlowVal1} || 4 ||
+|-
+| || ${switchDpid2} = || REST show switch dpid || LB12 || 
+|-
+| || ${switchFlowVal2} =  || REST show switch flow || ${switchDpid2} || 
+|-
+| || Should Be Equal As Integers || ${switchFlowVal2} || 5 ||
+|-
+| || ${switchDpid5} = || REST show switch dpid || LB11 || 
+|-
+| || ${switchFlowVal5} =  || REST show switch flow || ${switchDpid5} || 
+|-
+| || Should Be Equal As Integers || ${switchFlowVal5} || 4 ||
+|-
+| || ${switchDpid3} = || REST show switch dpid || LY3 || 
+|-
+| || ${switchFlowVal3} =  || REST show switch flow || ${switchDpid3} || 
+|-
+| || ${switchDpid4} = || REST show switch dpid || LY4 || 
+|-
+| || ${switchFlowVal4} =  || REST show switch flow || ${switchDpid4} || 
+|-
+| || REST compare coreswitch flows || ${switchFlowVal3} ||  ${switchFlowVal4} || 5 || 3  
+|-
+| || REST enable feature || inport-mask || || ||
+|-
+| || sleep now || 2 || || ||
+|-
+| || ${switchFlowVal} =  || REST show switch flow || ${switchDpid} || 
+|-
+| || Should Be Equal As Integers || ${switchFlowVal} || 4 ||
+|-
+| || ${switchFlowVal1} =  || REST show switch flow || ${switchDpid1} || 
+|-
+| || Should Be Equal As Integers || ${switchFlowVal1} || 4 ||
+|-
+| || ${switchFlowVal2} =  || REST show switch flow || ${switchDpid2} || 
+|-
+| || Should Be Equal As Integers || ${switchFlowVal2} || 4 ||
+|-
+| || ${switchFlowVal5} =  || REST show switch flow || ${switchDpid5} || 
+|-
+| || Should Be Equal As Integers || ${switchFlowVal5} || 4 ||
+|-
+| || ${switchDpid3} = || REST show switch dpid || LY3 || 
+|-
+| || ${switchFlowVal3} =  || REST show switch flow || ${switchDpid3} || 
+|-
+| || ${switchDpid4} = || REST show switch dpid || LY4 || 
+|-
+| || ${switchFlowVal4} =  || REST show switch flow || ${switchDpid4} || 
+|-
+| || REST compare coreswitch flows || ${switchFlowVal3} ||  ${switchFlowVal4} || 4 || 3  
 |-
 | bigtap-inport test teardown || || || || ||
 |-
 | || REST delete policy || admin-view || testPol ||  ||
 |-
 | || REST delete bigtap service || S5-LY4 ||  ||  ||
+|-
+| || REST delete bigtap service || S2-LB8 ||  ||  ||
 |}
