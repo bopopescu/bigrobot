@@ -24,8 +24,6 @@
 {| class="wikitable sortable"
 ! Test Case || Action || Argument || Argument || Argument
 |-
-| test1 || T1 || || || 
-|-
 | Verify # of flows with and without Inport Mask || Verify Inport Mask || testPol || 4 || 1
 |-
 | Verify Inport Mask T6090 || T6090 || testPol || 4 || 1
@@ -45,6 +43,22 @@
 | Verify Inport Mask T6097 || T6097 || testPol || 2 || 1
 |-
 | Verify Inport Mask T6098 || T6098 || testPol || 2 || 1
+|-
+| Verify Inport Mask T6099 || T6099 || testPol || 2 || 1
+|-
+| Verify Inport Mask T6100 || T6100 || testPol || 2 || 1
+|-
+| Verify Inport Mask T6101 || T6101 || testPol || 2 || 2
+|-
+| Verify Inport Mask T6102 || T6102 || testPol || 2 || 2
+|-
+| Verify Inport Mask T6103 || T6103 || testPol || 4 || 1
+|-
+| Verify Inport Mask T6104 || T6104 || testPol || 4 || 1
+|-
+| Verify Inport Mask T6105 || T6105 || testPol || 4 || 1
+|-
+| Verify Inport Mask T6106 || T6106 || testPol || 4 || 1
 |-
 |}
 
@@ -74,10 +88,6 @@
 | || REST add bigtap service || S2-LB8 || S2-LB8_E3-C2950_E23-PRE || S2-LB8_E4-C2950_E24-POST || 
 |-
 | || sleep now || 3 || || ||
-|-
-| T1 ||  || || || 
-|-
-| || REST show version ||  ||  ||
 |-
 | Verify Inport Mask || [Arguments] || ${policyName} || ${numFIntf} || ${numDIntf}
 |-
