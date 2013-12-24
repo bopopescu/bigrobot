@@ -113,5 +113,14 @@ class BigTapCommonShow(object):
         c.rest.get(url)
         content = c.rest.content()
         helpers.log("Return value for number of flows is %s" % content[0]['stats']['table'][1]['active-count'])
-        return content[0]['stats']['table'][1]['active-count']      
-      
+        return content[0]['stats']['table'][1]['active-count']    
+    
+    def rest_show_version(self):
+        t = test.Test()
+        c = t.controller()
+        c.http_port = 8000
+        url='http://%s:%s/rest/v1/system/version' % (c.ip,c.http_port)
+        c.rest.get(url)
+        content = c.rest.content()
+        helpers.log("Output: %s" % content[0]['controller'])
+        return content[0]['controller']
