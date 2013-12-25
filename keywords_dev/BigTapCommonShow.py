@@ -14,17 +14,6 @@ class BigTapCommonShow(object):
         session_cookie = result['content']['session_cookie']
         c.rest.set_session_cookie(session_cookie)
         
-#Return Controller Role
-    def rest_ha_role(self):
-        t = test.Test()
-        c = t.controller()
-        url = '%s/system/ha/role'  % (c.base_url)
-        c.rest.get(url)
-        helpers.test_log("Ouput: %s" % c.rest.result_json())
-        if not c.rest.status_code_ok():
-            helpers.test_failure(c.rest.error())
-        content = c.rest.content()
-        return content['role']
         
     def rest_show_bigtap_policy(self, policyName,numFIntf,numDIntf):
         t = test.Test()
@@ -114,13 +103,5 @@ class BigTapCommonShow(object):
         content = c.rest.content()
         helpers.log("Return value for number of flows is %s" % content[0]['stats']['table'][1]['active-count'])
         return content[0]['stats']['table'][1]['active-count']    
+
     
-    def rest_show_version(self):
-        t = test.Test()
-        c = t.controller()
-        c.http_port = 8000
-        url='http://%s:%s/rest/v1/system/version' % (c.ip,c.http_port)
-        c.rest.get(url)
-        content = c.rest.content()
-        helpers.log("Output: %s" % content[0]['controller'])
-        return content[0]['controller']

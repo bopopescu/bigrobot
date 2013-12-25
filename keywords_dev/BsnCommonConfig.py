@@ -35,8 +35,8 @@ class BsnCommonConfig(object):
         t = test.Test()
         c = t.controller()
         c.http_port=8000
-        url='http://%s:%s/rest/v1/model/snmp-server-config/?id=snmp' % (c.ip,c.http_port)
-        c.rest.put(url, {"community": str(snmpCommunity)})
+        url='http://%s:%s/rest/v1/model/snmp-server-config/' % (c.ip,c.http_port)
+        c.rest.put(url,  {"id": "snmp", "community": str(snmpCommunity)})
         helpers.test_log("Ouput: %s" % c.rest.result_json())
         if not c.rest.status_code_ok():
             helpers.test_failure(c.rest.error())
@@ -100,3 +100,13 @@ class BsnCommonConfig(object):
         else:
             helpers.test_log(c.rest.content_json())
             return True
+    
+    def rest_delete_snmp(self):
+        t = test.Test()
+        c = t.controller()
+        c.http_port=8000
+        url1='http://%s:%s/rest/v1/model/snmp-server-config/?id=snmp' % (c.ip,c.http_port)
+        helpers.test_log(url1)
+        retVal = c.rest.delete(url1, {})
+        helpers.test_log(retVal)
+        return True

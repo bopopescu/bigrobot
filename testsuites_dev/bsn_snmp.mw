@@ -4,11 +4,11 @@
 |-
 | Documentation || SNMP Sanity Test Suite
 |-
-| Suite Setup || snmp setup
+| Suite Setup || base test setup
 |-
-| Suite Teardown || snmp teardown
+| Suite Teardown || base test teardown
 |-
-| Test Setup || base test setup
+| Test Setup || snmp setup
 |-
 | Test Teardown || base test teardown
 |-
@@ -24,8 +24,23 @@
 {| class="wikitable sortable"
 ! Test Case || Action || Argument || Argument || Argument
 |-
-| Verify SNMP || verify snmp ||  ||  || 
+| Configure and Verify Configuration || verify config ||  ||  || 
 |-
+| Verify SNMP OID sysContact || verify sysContact ||  ||  || 
+|-
+| Verify SNMP OID sysLocation || verify sysLocation ||  ||  || 
+|-
+| Verify SNMP OID sysDescr || verify sysDescr ||  ||  || 
+|-
+| Verify SNMP OID ifDescr || verify ifDescr ||  ||  || 
+|-
+| Verify SNMP OID ifType || verify ifType ||  ||  || 
+|-
+| Verify SNMP OID ifAdminStatus || verify ifAdminStatus ||  ||  || 
+|-
+| Verify SNMP OID ifOperStatus || verify ifOperStatus ||  ||  || 
+|-
+| || [Tags] || sanity
 |}
 
 {| class="wikitable sortable"
@@ -35,21 +50,73 @@
 |-
 | || REST set snmp server community || public || || ||
 |-
-| || REST set snmp server contact || "Animesh Patcha" || || ||
+| || REST set snmp server contact || Big Switch Networks || || ||
 |-
-| || REST set snmp server location || "Mountain View" || || ||
+| || REST set snmp server location || Mountain View || || ||
 |-
 | || REST set snmp server enable || || || ||
 |-
-| verify snmp || || || || ||
+| verify config || || || || ||
 |-
-| || ${snmp_output} =  || REST snmp show ||  || 
+| || ${snmp_output} =  || REST snmp show ||  || ||
 |-
-| bigtap-inport test teardown || || || || ||
+| || ${snmp_key} =  || REST verify dict key || ${snmp_output} || community ||
 |-
-| || REST delete policy || admin-view || testPol ||  ||
+| || Should Be Equal As Strings || ${snmp_key} || public ||
 |-
-| || REST delete bigtap service || S5-LY4 ||  ||  ||
+| || ${snmp_key} =  || REST verify dict key || ${snmp_output} || contact ||
 |-
-| || REST delete bigtap service || S2-LB8 ||  ||  ||
+| || Should Be Equal As Strings || ${snmp_key} || Big Switch Networks ||
+|-
+| || ${snmp_key} =  || REST verify dict key || ${snmp_output} || location ||
+|-
+| || Should Be Equal As Strings || ${snmp_key} || Mountain View ||
+|-
+| || ${snmp_key} =  || REST verify dict key || ${snmp_output} || server-enable ||
+|-
+| verify sysContact || || || || ||
+|-
+| || ${snmp_key} =  || REST snmp get || public || sysContact.0 ||
+|-
+| || Should Contain || ${snmp_key} || Big Switch Networks ||
+|-
+| verify sysLocation || || || || ||
+|-
+| || ${snmp_key} =  || REST snmp get || public || sysLocation.0 ||
+|-
+| || Should Contain || ${snmp_key} || Mountain View ||
+|-
+| verify sysDescr || || || || ||
+|-
+| || ${snmp_key} =  || REST snmp get || public || sysDescr.0 ||
+|-
+| || Should Contain || ${snmp_key} || Big Network Controller ||
+|-
+| verify ifDescr || || || || ||
+|-
+| || ${snmp_key} =  || REST snmp get || public || ifDescr.2 ||
+|-
+| || Should Contain || ${snmp_key} || eth0 ||
+|-
+| verify ifType || || || || ||
+|-
+| || ${snmp_key} =  || REST snmp get || public || ifType.2 ||
+|-
+| || Should Contain || ${snmp_key} || ethernetCsmacd ||
+|-
+| verify ifAdminStatus || || || || ||
+|-
+| || ${snmp_key} =  || REST snmp get || public || ifAdminStatus.2 ||
+|-
+| || Should Contain || ${snmp_key} || up ||
+|-
+| verify ifOperStatus || || || || ||
+|-
+| || ${snmp_key} =  || REST snmp get || public || ifOperStatus.2 ||
+|-
+| || Should Contain || ${snmp_key} || up ||
+|-
+| snmp test teardown || || || || ||
+|-
+| || REST delete snmp || || || ||
 |}

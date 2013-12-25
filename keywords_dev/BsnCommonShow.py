@@ -1,8 +1,10 @@
 import autobot.helpers as helpers
 import autobot.test as test
+import subprocess
 
 
-class BsnCommonConfig(object):
+class BsnCommonShow(object):
+
     def __init__(self):
         t = test.Test()
         c = t.controller()
@@ -55,6 +57,21 @@ class BsnCommonConfig(object):
         url='http://%s:%s/rest/v1/model/snmp-server-config/' % (c.ip,c.http_port)
         c.rest.get(url)
         content = c.rest.content()
+        helpers.log("Output: %s" % content)
         return content
+    
+#SNMP Key Verify
+    def rest_verify_dict_key(self,content,key):
+        return content[0][str(key)]
+    
+#SNMP Get
+    def rest_snmp_get(self,snmpCommunity,snmpOID):
+        t = test.Test()
+        c = t.controller()
+        url="/usr/bin/snmpwalk -v2c -c %s %s %s" % (str(snmpCommunity),c.ip,str(snmpOID))
+        returnVal = subprocess.Popen([url], stdout=subprocess.PIPE, shell=True)
+        (out, err) = returnVal.communicate()
+        helpers.log("URL: %s Output: %s" % (url, out))
+        return out
 
-
+    
