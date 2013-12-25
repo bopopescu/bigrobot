@@ -42,6 +42,8 @@
 |-
 | Verify SNMP OID ifOperStatus || verify ifOperStatus ||  ||  || 
 |-
+| Modify SNMP Community and Verify SNMP OID sysContact || modify community ||  ||  || 
+|-
 | || [Tags] || sanity
 |}
 
@@ -137,6 +139,20 @@
 | || ${snmp_key} =  || REST snmp get || public || ifOperStatus.2 ||
 |-
 | || Should Contain || ${snmp_key} || up ||
+|-
+| modify community || || || || ||
+|-
+| || REST modify snmp key || community || bigswitch || ||
+|-
+| || ${snmp_key} =  || REST snmp get || bigswitch || sysContact.0 ||
+|-
+| || Should Contain || ${snmp_key} || Big Switch Networks ||
+|-
+| || REST modify snmp key || community || public || ||
+|-
+| || ${snmp_key} =  || REST snmp get || public || sysContact.0 ||
+|-
+| || Should Contain || ${snmp_key} || Big Switch Networks ||
 |-
 | snmp test teardown || || || || ||
 |-
