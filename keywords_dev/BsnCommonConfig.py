@@ -87,6 +87,48 @@ class BsnCommonConfig(object):
             helpers.test_log(c.rest.content_json())
             return True
     
+    def rest_set_snmp_trapserver(self,trapIP,trapPort):
+        t = test.Test()
+        c = t.controller()
+        c.http_port=8000
+        url='http://%s:%s/rest/v1/model/snmp-server-config/?id=snmp' % (c.ip,c.http_port)
+        c.rest.put(url, {"trap-enable": True, "trap-server": str(trapIP), "trap-port": str(trapPort)})
+        helpers.test_log("Ouput: %s" % c.rest.result_json())
+        if not c.rest.status_code_ok():
+            helpers.test_failure(c.rest.error())
+            return False
+        else:
+            helpers.test_log(c.rest.content_json())
+            return True
+        
+    def rest_enable_snmp_trapserver(self):
+        t = test.Test()
+        c = t.controller()
+        c.http_port=8000
+        url='http://%s:%s/rest/v1/model/snmp-server-config/?id=snmp' % (c.ip,c.http_port)
+        c.rest.put(url, {"trap-enable": True, "id": "snmp"})
+        helpers.test_log("Ouput: %s" % c.rest.result_json())
+        if not c.rest.status_code_ok():
+            helpers.test_failure(c.rest.error())
+            return False
+        else:
+            helpers.test_log(c.rest.content_json())
+            return True
+    
+    def rest_modify_snmp_key(self,snmpKey,snmpValue):
+        t = test.Test()
+        c = t.controller()
+        c.http_port=8000
+        url='http://%s:%s/rest/v1/model/snmp-server-config/?id=snmp' % (c.ip,c.http_port)
+        c.rest.put(url, { str(snmpKey) : str(snmpValue)})
+        helpers.test_log("Ouput: %s" % c.rest.result_json())
+        if not c.rest.status_code_ok():
+            helpers.test_failure(c.rest.error())
+            return False
+        else:
+            helpers.test_log(c.rest.content_json())
+            return True
+        
     def rest_firewall_allow_snmp(self,controllerID):
         t = test.Test()
         c = t.controller()
