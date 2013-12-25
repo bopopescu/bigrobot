@@ -1,0 +1,55 @@
+== BSN SNMP Sanity ==
+{| class="wikitable sortable"
+! Setting || Value
+|-
+| Documentation || SNMP Sanity Test Suite
+|-
+| Suite Setup || snmp setup
+|-
+| Suite Teardown || snmp teardown
+|-
+| Test Setup || base test setup
+|-
+| Test Teardown || base test teardown
+|-
+| Force Tags || SNMP Sanity
+|-
+| Library || keywords/BsnCommon.py
+|-
+| Library || keywords_dev/BsnCommonConfig.py
+|-
+| Library || keywords_dev/BsnCommonShow.py
+|}
+
+{| class="wikitable sortable"
+! Test Case || Action || Argument || Argument || Argument
+|-
+| Verify SNMP || verify snmp ||  ||  || 
+|-
+|}
+
+{| class="wikitable sortable"
+! Keywords || Action || Argument || Argument || Argument ||
+|-
+| snmp setup || || || || ||
+|-
+| || REST set snmp server community || public || || ||
+|-
+| || REST set snmp server contact || "Animesh Patcha" || || ||
+|-
+| || REST set snmp server location || "Mountain View" || || ||
+|-
+| || REST set snmp server enable || || || ||
+|-
+| verify snmp || || || || ||
+|-
+| || ${snmp_output} =  || REST snmp show ||  || 
+|-
+| bigtap-inport test teardown || || || || ||
+|-
+| || REST delete policy || admin-view || testPol ||  ||
+|-
+| || REST delete bigtap service || S5-LY4 ||  ||  ||
+|-
+| || REST delete bigtap service || S2-LB8 ||  ||  ||
+|}
