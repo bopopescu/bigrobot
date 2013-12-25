@@ -4,11 +4,11 @@
 |-
 | Documentation || SNMP Sanity Test Suite
 |-
-| Suite Setup || base test setup
+| Suite Setup || snmp setup
 |-
 | Suite Teardown || base test teardown
 |-
-| Test Setup || snmp setup
+| Test Setup || base test setup
 |-
 | Test Teardown || base test teardown
 |-
@@ -19,6 +19,8 @@
 | Library || keywords_dev/BsnCommonConfig.py
 |-
 | Library || keywords_dev/BsnCommonShow.py
+|-
+| Library || keywords_dev/BigTapCommonConfig.py
 |}
 
 {| class="wikitable sortable"
@@ -56,6 +58,12 @@
 |-
 | || REST set snmp server enable || || || ||
 |-
+| || REST set snmp trapserver || 10.192.3.22 || 161 || ||
+|-
+| || REST enable snmp trapserver || || || ||
+|-
+| || sleep now || 2 || || ||
+|-
 | verify config || || || || ||
 |-
 | || ${snmp_output} =  || REST snmp show ||  || ||
@@ -73,6 +81,20 @@
 | || Should Be Equal As Strings || ${snmp_key} || Mountain View ||
 |-
 | || ${snmp_key} =  || REST verify dict key || ${snmp_output} || server-enable ||
+|-
+| || Should Be True || ${snmp_key} ||  ||
+|-
+| || ${snmp_key} =  || REST verify dict key || ${snmp_output} || trap-server ||
+|-
+| || Should Be Equal As Strings || ${snmp_key} || 10.192.3.22 ||
+|-
+| || ${snmp_key} =  || REST verify dict key || ${snmp_output} || trap-port ||
+|-
+| || Should Be Equal As Integers || ${snmp_key} || 161 ||
+|-
+| || ${snmp_key} =  || REST verify dict key || ${snmp_output} || trap-enable ||
+|-
+| || Should Be True || ${snmp_key} ||  ||
 |-
 | verify sysContact || || || || ||
 |-
