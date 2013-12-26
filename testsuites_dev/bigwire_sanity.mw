@@ -28,6 +28,8 @@
 |-
 | Verify CLI BigWire Datacenter || bigwire datacenter ||  ||  || 
 |-
+| Verify CLI BigWire Tenant || bigwire tenant ||  ||  || 
+|-
 |}
 
 {| class="wikitable sortable"
@@ -66,6 +68,32 @@
 | || ${dc1} =  || REST verify dict key || ${content} || 0 ||  name ||
 |-
 | || Should Be Equal As Strings || ${dc1} || DC1 || || ||
+|-
+| || ${numSwAct} =  || REST verify dict key || ${content} || 0 ||  num-active-switches ||
+|-
+| || Should Be Equal As Integers || ${numSwAct} || 2 || || ||
+|-
+| || ${numSwInact} =  || REST verify dict key || ${content} || 0 ||  num-inactive-switches ||
+|-
+| || Should Be Equal As Integers || ${numSwInact} || 0 || || ||
+|-
+| bigwire tenant ||  ||  ||  || || ||
+|-
+| || ${content} =  || REST show bigwire command || tenant ||  || ||
+|-
+| || Length Should Be || ${content} || 8 || || ||
+|-
+| || ${name} =  || REST verify dict key || ${content} || 0 ||  name ||
+|-
+| || Should Be Equal As Strings || ${name} || dc1dc2-50 || || ||
+|-
+| || ${num-tenant-interface} =  || REST verify dict key || ${content} || 0 ||  num-tenant-interface ||
+|-
+| || Should Be Equal As Integers || ${num-tenant-interface} || 4 || || ||
+|-
+| || ${num-tenant-vlan} =  || REST verify dict key || ${content} || 0 ||  num-tenant-vlan ||
+|-
+| || Should Be Equal As Integers || ${num-tenant-vlan} || 2 || || ||
 |-
 | bigwire sanity teardown || || || || ||
 |}
