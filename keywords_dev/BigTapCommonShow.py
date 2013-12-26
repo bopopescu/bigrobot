@@ -19,7 +19,8 @@ class BigTapCommonShow(object):
         t = test.Test()
         c = t.controller()
         helpers.test_log("Input arguments: policy = %s" % policyName )
-        url = '%s/api/v1/data/controller/applications/bigtap/view/policy[name="%s"]/info' % (c.base_url, policyName)
+        c.http_port=8082
+        url ='http://%s:%s/api/v1/data/controller/applications/bigtap/view/policy[name="%s"]/info' % (c.ip,c.http_port, policyName)
         c.rest.get(url)
         helpers.test_log("Ouput: %s" % c.rest.result_json())
         if not c.rest.status_code_ok():
@@ -60,7 +61,8 @@ class BigTapCommonShow(object):
     def rest_check_policy_key(self,policyName,method,index,key):
         t = test.Test()
         c = t.controller()
-        url = '%s/api/v1/data/controller/applications/bigtap/view/policy[name="%s"]/%s' % (c.base_url,str(policyName),str(method))
+        c.http_port=8082
+        url ='http://%s:%s/api/v1/data/controller/applications/bigtap/view/policy[name="%s"]/%s' % (c.ip,c.http_port,str(policyName),str(method))
         c.rest.get(url)
         helpers.test_log("Ouput: %s" % c.rest.result_json())
         if not c.rest.status_code_ok():
@@ -79,7 +81,8 @@ class BigTapCommonShow(object):
         t = test.Test()
         c = t.controller()
         aliasExists=0
-        url='%s/api/v1/data/controller/core/switch?select=alias'   % (c.base_url)
+        c.http_port=8082
+        url ='http://%s:%s/api/v1/data/controller/core/switch?select=alias'   % (c.base_url)
         c.rest.get(url)
         content = c.rest.content()
         for i in range(0,len(content)) :
@@ -97,7 +100,8 @@ class BigTapCommonShow(object):
     def rest_show_switch_flow(self,switchDpid):
         t = test.Test()
         c = t.controller()
-        url='%s/api/v1/data/controller/core/switch[dpid="%s"]?select=stats/table' % (c.base_url,str(switchDpid))
+        c.http_port=8082
+        url ='http://%s:%s/api/v1/data/controller/core/switch[dpid="%s"]?select=stats/table' % (c.ip,c.http_port,str(switchDpid))
         c.rest.get(url)
         content = c.rest.content()
         helpers.log("Return value for number of flows is %s" % content[0]['stats']['table'][1]['active-count'])
