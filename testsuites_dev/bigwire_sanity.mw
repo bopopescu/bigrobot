@@ -30,6 +30,8 @@
 |-
 | Verify CLI BigWire Tenant || bigwire tenant ||  ||  || 
 |-
+| Verify CLI BigWire Pseudowire ||  bigwire pseudowire ||  ||  || 
+|-
 |}
 
 {| class="wikitable sortable"
@@ -94,6 +96,38 @@
 | || ${num-tenant-vlan} =  || REST verify dict key || ${content} || 0 ||  num-tenant-vlan ||
 |-
 | || Should Be Equal As Integers || ${num-tenant-vlan} || 2 || || ||
+|-
+| bigwire pseudowire ||  ||  ||  || || ||
+|-
+| || ${content} =  || REST show bigwire command || pseudowire ||  || ||
+|-
+| || ${num-active-wires} =  || REST verify dict key || ${content} || 0 ||  num-active-wires ||
+|-
+| || Should Be Equal As Integers || ${num-active-wires} || 10 || || ||
+|-
+| || ${num-inactive-wires} =  || REST verify dict key || ${content} || 0 ||  num-inactive-wires ||
+|-
+| || Should Be Equal As Integers || ${num-inactive-wires} || 0 || || ||
+|-
+| || ${name} =  || REST verify dict key || ${content[0]['pseudowire-wire']} || 0 ||  name ||
+|-
+| || Should Be Equal As Strings || ${name} || bw1bw3 || || ||
+|-
+| || ${interface1} =  || REST verify dict key || ${content[0]['pseudowire-wire']} || 0 ||  interface1 ||
+|-
+| || Should Be Equal As Strings || ${interface1} || ethernet14 || || ||
+|-
+| || ${interface2} =  || REST verify dict key || ${content[0]['pseudowire-wire']} || 0 ||  interface2 ||
+|-
+| || Should Be Equal As Strings || ${interface2} || ethernet8 || || ||
+|-
+| || ${state} =  || REST verify dict key || ${content[0]['pseudowire-wire']} || 0 ||  state ||
+|-
+| || Should Be Equal As Strings || ${state} || up || || ||
+|-
+| || ${vlan} =  || REST verify dict key || ${content[0]['pseudowire-wire']} || 0 ||  vlan ||
+|-
+| || Should Be Equal As Integers || ${vlan} || -1 || || ||
 |-
 | bigwire sanity teardown || || || || ||
 |}
