@@ -48,113 +48,113 @@
 |}
 
 {| class="wikitable sortable"
-! Keywords || Action || Argument || Argument || Argument ||
+! Keywords || Action || Argument || Argument || Argument || Argument ||
 |-
-| snmp setup || || || || ||
+| snmp setup || || || || || ||
 |-
-| || REST set snmp server community || public || || ||
+| || REST set snmp server community || public || || || ||
 |-
-| || REST set snmp server contact || Big Switch Networks || || ||
+| || REST set snmp server contact || Big Switch Networks || || || ||
 |-
-| || REST set snmp server location || Mountain View || || ||
+| || REST set snmp server location || Mountain View || || || ||
 |-
-| || REST set snmp server enable || || || ||
+| || REST set snmp server enable || || || || ||
 |-
-| || REST set snmp trapserver || 10.192.3.22 || 161 || ||
+| || REST set snmp trapserver || 10.192.3.22 || 161 || || ||
 |-
-| || REST enable snmp trapserver || || || ||
+| || REST enable snmp trapserver || || || || ||
 |-
-| || sleep now || 2 || || ||
+| || sleep now || 2 || || || ||
 |-
-| verify config || || || || ||
+| verify config || || || || || ||
 |-
-| || ${snmp_output} =  || REST snmp show ||  || ||
+| || ${snmp_output} =  || REST snmp show ||  || || ||
 |-
-| || ${snmp_key} =  || REST verify dict key || ${snmp_output} || community ||
+| || ${snmp_key} =  || REST verify dict key || ${snmp_output} || 0 || community ||
 |-
-| || Should Be Equal As Strings || ${snmp_key} || public ||
+| || Should Be Equal As Strings || ${snmp_key} || public || ||
 |-
-| || ${snmp_key} =  || REST verify dict key || ${snmp_output} || contact ||
+| || ${snmp_key} =  || REST verify dict key || ${snmp_output} || 0 || contact ||
 |-
-| || Should Be Equal As Strings || ${snmp_key} || Big Switch Networks ||
+| || Should Be Equal As Strings || ${snmp_key} || Big Switch Networks || ||
 |-
-| || ${snmp_key} =  || REST verify dict key || ${snmp_output} || location ||
+| || ${snmp_key} =  || REST verify dict key || ${snmp_output} || 0 || location ||
 |-
-| || Should Be Equal As Strings || ${snmp_key} || Mountain View ||
+| || Should Be Equal As Strings || ${snmp_key} || Mountain View || ||
 |-
-| || ${snmp_key} =  || REST verify dict key || ${snmp_output} || server-enable ||
+| || ${snmp_key} =  || REST verify dict key || ${snmp_output} || 0 || server-enable ||
 |-
-| || Should Be True || ${snmp_key} ||  ||
+| || Should Be True || ${snmp_key} ||  || ||
 |-
-| || ${snmp_key} =  || REST verify dict key || ${snmp_output} || trap-server ||
+| || ${snmp_key} =  || REST verify dict key || ${snmp_output} || 0 || trap-server ||
 |-
-| || Should Be Equal As Strings || ${snmp_key} || 10.192.3.22 ||
+| || Should Be Equal As Strings || ${snmp_key} || 10.192.3.22 || ||
 |-
-| || ${snmp_key} =  || REST verify dict key || ${snmp_output} || trap-port ||
+| || ${snmp_key} =  || REST verify dict key || ${snmp_output} || 0 || trap-port ||
 |-
-| || Should Be Equal As Integers || ${snmp_key} || 161 ||
+| || Should Be Equal As Integers || ${snmp_key} || 161 || ||
 |-
-| || ${snmp_key} =  || REST verify dict key || ${snmp_output} || trap-enable ||
+| || ${snmp_key} =  || REST verify dict key || ${snmp_output} || 0 || trap-enable ||
 |-
-| || Should Be True || ${snmp_key} ||  ||
+| || Should Be True || ${snmp_key} ||  || ||
 |-
-| verify sysContact || || || || ||
+| verify sysContact || || || || ||||
 |-
-| || ${snmp_key} =  || REST snmp get || public || sysContact.0 ||
+| || ${snmp_key} =  || REST snmp get || public || sysContact.0 || ||
 |-
-| || Should Contain || ${snmp_key} || Big Switch Networks ||
+| || Should Contain || ${snmp_key} || Big Switch Networks || ||
 |-
-| verify sysLocation || || || || ||
+| verify sysLocation || || || || || ||
 |-
-| || ${snmp_key} =  || REST snmp get || public || sysLocation.0 ||
+| || ${snmp_key} =  || REST snmp get || public || sysLocation.0 || ||
 |-
-| || Should Contain || ${snmp_key} || Mountain View ||
+| || Should Contain || ${snmp_key} || Mountain View || ||
 |-
-| verify sysDescr || || || || ||
+| verify sysDescr || || || || || ||
 |-
-| || ${snmp_key} =  || REST snmp get || public || sysDescr.0 ||
+| || ${snmp_key} =  || REST snmp get || public || sysDescr.0 || ||
 |-
-| || Should Contain || ${snmp_key} || Big Network Controller ||
+| || Should Contain || ${snmp_key} || Big Network Controller || ||
 |-
-| verify ifDescr || || || || ||
+| verify ifDescr || || || || || ||
 |-
-| || ${snmp_key} =  || REST snmp get || public || ifDescr.2 ||
+| || ${snmp_key} =  || REST snmp get || public || ifDescr.2 || ||
 |-
-| || Should Contain || ${snmp_key} || eth0 ||
+| || Should Contain || ${snmp_key} || eth0 || ||
 |-
-| verify ifType || || || || ||
+| verify ifType || || || || || ||
 |-
-| || ${snmp_key} =  || REST snmp get || public || ifType.2 ||
+| || ${snmp_key} =  || REST snmp get || public || ifType.2 || ||
 |-
-| || Should Contain || ${snmp_key} || ethernetCsmacd ||
+| || Should Contain || ${snmp_key} || ethernetCsmacd || ||
 |-
-| verify ifAdminStatus || || || || ||
+| verify ifAdminStatus || || || || || ||
 |-
-| || ${snmp_key} =  || REST snmp get || public || ifAdminStatus.2 ||
+| || ${snmp_key} =  || REST snmp get || public || ifAdminStatus.2 || ||
 |-
-| || Should Contain || ${snmp_key} || up ||
+| || Should Contain || ${snmp_key} || up || ||
 |-
-| verify ifOperStatus || || || || ||
+| verify ifOperStatus || || || || || ||
 |-
-| || ${snmp_key} =  || REST snmp get || public || ifOperStatus.2 ||
+| || ${snmp_key} =  || REST snmp get || public || ifOperStatus.2 || ||
 |-
-| || Should Contain || ${snmp_key} || up ||
+| || Should Contain || ${snmp_key} || up || ||
 |-
-| modify community || || || || ||
+| modify community || || || || || ||
 |-
-| || REST modify snmp key || community || bigswitch || ||
+| || REST modify snmp key || community || bigswitch || || ||
 |-
-| || ${snmp_key} =  || REST snmp get || bigswitch || sysContact.0 ||
+| || ${snmp_key} =  || REST snmp get || bigswitch || sysContact.0 || ||
 |-
-| || Should Contain || ${snmp_key} || Big Switch Networks ||
+| || Should Contain || ${snmp_key} || Big Switch Networks || ||
 |-
-| || REST modify snmp key || community || public || ||
+| || REST modify snmp key || community || public || || ||
 |-
-| || ${snmp_key} =  || REST snmp get || public || sysContact.0 ||
+| || ${snmp_key} =  || REST snmp get || public || sysContact.0 || ||
 |-
-| || Should Contain || ${snmp_key} || Big Switch Networks ||
+| || Should Contain || ${snmp_key} || Big Switch Networks || || ||
 |-
-| snmp test teardown || || || || ||
+| snmp test teardown || || || || || ||
 |-
-| || REST delete snmp || || || ||
+| || REST delete snmp || || || || ||
 |}

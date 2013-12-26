@@ -61,8 +61,8 @@ class BsnCommonShow(object):
         return content
     
 #SNMP Key Verify
-    def rest_verify_dict_key(self,content,key):
-        return content[0][str(key)]
+    def rest_verify_dict_key(self,content,index,key):
+        return content[int(index)][str(key)]
     
 #SNMP Get
     def rest_snmp_get(self,snmpCommunity,snmpOID):

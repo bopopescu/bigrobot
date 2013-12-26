@@ -18,7 +18,6 @@ class BigTapCommonShow(object):
     def rest_show_bigtap_policy(self, policyName,numFIntf,numDIntf):
         t = test.Test()
         c = t.controller()
-        helpers.sleep(1)
         helpers.test_log("Input arguments: policy = %s" % policyName )
         url = '%s/api/v1/data/controller/applications/bigtap/view/policy[name="%s"]/info' % (c.base_url, policyName)
         c.rest.get(url)

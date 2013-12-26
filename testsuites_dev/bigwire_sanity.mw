@@ -1,0 +1,71 @@
+== BigWire Sanity ==
+{| class="wikitable sortable"
+! Setting || Value
+|-
+| Documentation || BigTap Sanity Test Suite
+|-
+| Suite Setup || base suite setup
+|-
+| Suite Teardown || base suite teardown
+|-
+| Test Setup || base test setup
+|-
+| Test Teardown || base test teardown
+|-
+| Force Tags || BigWire Sanity
+|-
+| Library || keywords/BsnCommon.py
+|-
+| Library || keywords_dev/BsnCommonShow.py
+|-
+| Library || keywords_dev/BigWireCommonShow.py
+|}
+
+{| class="wikitable sortable"
+! Test Case || Action || Argument || Argument || Argument
+|-
+| Verify CLI BigWire Summary || bigwire summary ||  ||  || 
+|-
+| Verify CLI BigWire Datacenter || bigwire datacenter ||  ||  || 
+|-
+|}
+
+{| class="wikitable sortable"
+! Keywords || Action || Argument || Argument || Argument || ||
+|-
+| bigwire summary ||  ||  ||  || || ||
+|-
+| || ${content} =  || REST show bigwire command || summary ||  || ||
+|-
+| || ${num-datacenters} =  || REST verify dict key || ${content} || 0||  num-datacenters ||
+|-
+| || Should Be Equal As Integers || ${num-datacenters} || 5 || || ||
+|-
+| || ${num-pseudowires} =  || REST verify dict key || ${content} || 0 || num-pseudowires ||
+|-
+| || Should Be Equal As Integers || ${num-pseudowires} || 10 || || ||
+|-
+| || ${num-tenants} =  || REST verify dict key || ${content} || 0 || num-tenants ||
+|-
+| || Should Be Equal As Integers || ${num-tenants} || 8 || || ||
+|-
+| || ${num-zones} =  || REST verify dict key || ${content} ||  0 || num-zones ||
+|-
+| || Should Be Equal As Integers || ${num-zones} || 2 || || ||
+|-
+| || ${state} =  || REST verify dict key || ${content} ||  0 || state ||
+|-
+| || Should Be Equal As Strings || ${state} || OK || || ||
+|-
+| bigwire datacenter ||  ||  ||  || || ||
+|-
+| || ${content} =  || REST show bigwire command || datacenter ||  || ||
+|-
+| || Length Should Be || ${content} || 5 || || ||
+|-
+| || ${dc1} =  || REST verify dict key || ${content} || 0 ||  name ||
+|-
+| || Should Be Equal As Strings || ${dc1} || DC1 || || ||
+|-
+| bigwire sanity teardown || || || || ||
+|}
