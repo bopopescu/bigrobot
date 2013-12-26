@@ -24,7 +24,8 @@ class BsnCommonConfig(object):
     def rest_set_switch_alias(self,switchDpid,switchAlias):
         t = test.Test()
         c = t.controller()
-        url='%s/api/v1/data/controller/core/switch[dpid="%s"]' % (c.base_url, str(switchDpid))
+        c.http_port=8082
+        url='http://%s:%s/api/v1/data/controller/core/switch[dpid="%s"]' % (c.ip,c.http_port,str(switchDpid))
         c.rest.patch(url, {"alias": str(switchAlias)})
         helpers.test_log("Ouput: %s" % c.rest.result_json())
         if not c.rest.status_code_ok():
@@ -182,3 +183,4 @@ class BsnCommonConfig(object):
         retVal = c.rest.delete(url1, {})
         helpers.test_log(retVal)
         return True
+        

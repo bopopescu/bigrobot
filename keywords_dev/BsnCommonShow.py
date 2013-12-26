@@ -87,4 +87,24 @@ class BsnCommonShow(object):
         helpers.log("URL: %s Output: %s" % (url, out))
         return out
 
-    
+# Objective: Return dictionary containing DPID,IP Addresses for every switch connected to current controller
+# Input : N/A
+# Output: Dictionary of Switch DPID and IP Addresses
+    def rest_show_switch(self):
+        t = test.Test()
+        c = t.controller()
+        c.http_port = 8082
+        url='http://%s:%s/api/v1/data/controller/core/switch' % (c.ip,c.http_port)
+        c.rest.get(url)
+        content = c.rest.content()
+        switchDict ={}
+        for x in range (0,len(content)):
+            helpers.log("For x = %s dpid is %s" % (str(x),content[x]['dpid']))
+            switchDict[str(content[x]['inet-address']['ip'])] = str(content[x]['dpid'])
+        return switchDict
+
+# Objective: Return DPID of switch, when IP Address is provided
+# Input : dictionary of switch 
+# Output: Dictionary of Switch DPID and IP Addresses
+    def return_switch_dpid(self,switchDict,ipAddr):
+            return switchDict[str(ipAddr)]

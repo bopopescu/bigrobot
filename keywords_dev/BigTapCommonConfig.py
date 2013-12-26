@@ -20,11 +20,12 @@ class BigTapCommonConfig(object):
         
 #Assign filter/delivery/service node characteristics to particular switch interfaces.
 #Same as bigtap role filter interface-name F1    
-    def rest_setup_bigtap_interfaces(self,swName,intfName,intfType,intfNick):
+    def rest_setup_bigtap_interfaces(self,switchDpid,intfName,intfType,intfNick):
         t = test.Test()
         c = t.controller()
-        url = '%s/api/v1/data/controller/applications/bigtap/interface-config[interface="%s"][switch="%s"]' % (c.base_url, str(intfName), str(swName))
-        c.rest.put(url, {"interface": str(intfName), "switch": str(swName), 'role':str(intfType),'name':str(intfNick)})
+        c.http_port=8082
+        url='http://%s:%s/api/v1/data/controller/applications/bigtap/interface-config[interface="%s"][switch="%s"]' % (c.ip,c.http_port,str(intfName), str(switchDpid))
+        c.rest.put(url, {"interface": str(intfName), "switch": str(switchDpid), 'role':str(intfType),'name':str(intfNick)})
         helpers.test_log("Ouput: %s" % c.rest.result_json())
         if not c.rest.status_code_ok():
             helpers.test_failure(c.rest.error())

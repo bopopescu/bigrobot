@@ -4,7 +4,7 @@
 |-
 | Documentation || BigTap Sanity Test Suite
 |-
-| Suite Setup || base suite setup
+| Suite Setup || basic-inport suite setup
 |-
 | Suite Teardown || base suite teardown
 |-
@@ -15,6 +15,10 @@
 | Force Tags || BigTap Sanity
 |-
 | Library || keywords/BsnCommon.py
+|-
+| Library || keywords_dev/BsnCommonShow.py
+|-
+| Library || keywords_dev/BsnCommonConfig.py
 |-
 | Library || keywords_dev/BigTapCommonConfig.py
 |-
@@ -64,6 +68,70 @@
 
 {| class="wikitable sortable"
 ! Keywords || Action || Argument || Argument || Argument ||
+|-
+| basic-inport suite setup || || || || ||
+|-
+| || ${switchDict} = || REST show switch || || ||
+|-
+| || ${dpid1} = || return switch dpid || ${switchDict}  || 10.192.75.7 ||
+|-
+| || REST set switch alias || ${dpid1} || LB7  ||  ||
+|-
+| || ${dpid2} = || return switch dpid || ${switchDict}  || 10.192.75.8 ||
+|-
+| || REST set switch alias || ${dpid2} || LB8  ||  ||
+|-
+| || ${dpid3} = || return switch dpid || ${switchDict}  || 10.192.75.213 ||
+|-
+| || REST set switch alias || ${dpid3} || LY3  ||  ||
+|-
+| || ${dpid4} = || return switch dpid || ${switchDict}  || 10.192.75.214 ||
+|-
+| || REST set switch alias || ${dpid4} || LY4  ||  ||
+|-
+| || ${dpid5} = || return switch dpid || ${switchDict}  || 10.192.75.215 ||
+|-
+| || REST set switch alias || ${dpid5} || LB11  ||  ||
+|-
+| || ${dpid6} = || return switch dpid || ${switchDict}  || 10.192.75.216 ||
+|-
+| || REST set switch alias || ${dpid6} || LB12  ||  ||
+|-
+| || REST setup bigtap interfaces || ${dpid1} || ethernet5  || filter || LB7-F1-DL206-D1
+|-
+| || REST setup bigtap interfaces || ${dpid1} || ethernet6  || filter || LB7-F2-DL206-D2
+|-
+| || REST setup bigtap interfaces || ${dpid1} || ethernet7  || filter || LB7-F3-DL206-D3
+|-
+| || REST setup bigtap interfaces || ${dpid1} || ethernet8  || filter || LB7-F4-DL206-D4
+|-
+| || REST setup bigtap interfaces || ${dpid1} || ethernet27  || delivery || LB7-D1-DL206-F1
+|-
+| || REST setup bigtap interfaces || ${dpid4} || ethernet37  || service || S5-LY4-AR4_E3-PRE
+|-
+| || REST setup bigtap interfaces || ${dpid4} || ethernet38  || service || S5-LY4-AR4_E4-POST
+|-
+| || REST setup bigtap interfaces || ${dpid4} || ethernet37  || service || S5-LY4-AR4_E3-PRE
+|-
+| || REST setup bigtap interfaces || ${dpid2} || ethernet3  || delivery || S2-LB8_E3-C2950_E23-PRE
+|-
+| || REST setup bigtap interfaces || ${dpid2} || ethernet4  || delivery || S2-LB8_E4-C2950_E24-POST
+|-
+| || REST setup bigtap interfaces || ${dpid2} || ethernet27  || delivery || LB8-D1-DL207-F1
+|-
+| || REST setup bigtap interfaces || ${dpid2} || ethernet28  || delivery || LB8-D2-DL207-F2
+|-
+| || REST setup bigtap interfaces || ${dpid2} || ethernet29  || delivery || LB8-D3-DL207-F3
+|-
+| || REST setup bigtap interfaces || ${dpid2} || ethernet30  || delivery || LB8-D4-DL207-F4
+|-
+| || REST setup bigtap interfaces || ${dpid5} || ethernet27  || delivery || LB11-D1-AR4-F1
+|-
+| || REST setup bigtap interfaces || ${dpid5} || ethernet28  || delivery || LB11-D2-AR4-F2
+|-
+| || REST setup bigtap interfaces || ${dpid6} || ethernet7  || delivery || LB12-F1-HP1-D1
+|-
+| || REST setup bigtap interfaces || ${dpid6} || ethernet8  || delivery || LB12-F2-HP1-D2
 |-
 | bigtap-inport test setup || || || || ||
 |-
