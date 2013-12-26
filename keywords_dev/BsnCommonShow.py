@@ -15,7 +15,9 @@ class BsnCommonShow(object):
         session_cookie = result['content']['session_cookie']
         c.rest.set_session_cookie(session_cookie)
 
-#Return controller version
+#   Objective: Execute CLI command "show version"
+#   Input: N/A
+#   Return Value:  Version String
     def rest_show_version(self):
         t = test.Test()
         c = t.controller()
@@ -26,7 +28,10 @@ class BsnCommonShow(object):
         helpers.log("Output: %s" % content[0]['controller'])
         return content[0]['controller']
 
-#Return Controller Role
+
+#   Objective: Return Current Controller Role viz. Master/Slave
+#   Input: N/A
+#   Return Value:  Current Controller Role viz. Master/Slave
     def rest_ha_role(self):
         t = test.Test()
         c = t.controller()
@@ -38,7 +43,9 @@ class BsnCommonShow(object):
         content = c.rest.content()
         return content['role']
 
-#Return Controller ID
+#   Objective: Return Current Controller ID
+#   Input: N/A
+#   Return Value:  Return Current Controller ID
     def rest_controller_id(self):
         t = test.Test()
         c = t.controller()
@@ -49,7 +56,9 @@ class BsnCommonShow(object):
         helpers.log("Output: %s" % content['id'])
         return content['id']
 
-#Show snmp
+#   Objective: Execute CLI Command "show snmp"
+#   Input: N/A
+#   Return Value:  Return a dictionary of SNMP related values
     def rest_snmp_show(self):
         t = test.Test()
         c = t.controller()
@@ -60,11 +69,15 @@ class BsnCommonShow(object):
         helpers.log("Output: %s" % content)
         return content
     
-#SNMP Key Verify
+#   Objective: Given a dictionary, return the value for a particular key
+#   Input: Dictionary, index and required key.
+#   Return Value:  return the value for a particular key
     def rest_verify_dict_key(self,content,index,key):
         return content[int(index)][str(key)]
     
-#SNMP Get
+#   Objective: Execute SNMP Walk from local machine for a particular SNMP OID
+#   Input: SNMP Community and OID 
+#   Return Value:  return the SNMP Walk O/P
     def rest_snmp_get(self,snmpCommunity,snmpOID):
         t = test.Test()
         c = t.controller()

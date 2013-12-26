@@ -14,13 +14,15 @@ class BigWireCommonShow(object):
         session_cookie = result['content']['session_cookie']
         c.rest.set_session_cookie(session_cookie)
 
-# Execute command "show bigwire summary", "show bigwire datacenter", "show bigwire pseudowire" or "show bigwire tenant"
+#   Objective: Execute CLI Commands "show bigwire summary", "show bigwire tenant", "show bigwire pseudowire" and "show bigwire  datacenter"
+#   Input: BigWire Key: datacenter for "show bigwire  datacenter",  pseudowire for "show bigwire pseudowire", tenant for "show bigwire tenant" and "summary" for "show bigwire summary"
+#   Return Value:  Dictionary of Command O/P  
     def rest_show_bigwire_command(self,bwKey):
         t = test.Test()
         c = t.controller()
         c.http_port=8082
         if bwKey == "datacenter":
-            bwKeyword = "datacenter-info" # "show bigwire summary"
+            bwKeyword = "datacenter-info" # "show bigwire datacenter"
         elif bwKey == "pseudowire":
             bwKeyword = "pseudowire-info" #"show bigwire pseudowire"
         elif bwKey == "tenant":
