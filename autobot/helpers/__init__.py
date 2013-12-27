@@ -13,28 +13,41 @@ from autobot.version import *
 from exec_timer import *
 
 
-TZ = timezone("America/Los_Angeles")
-
+_TZ = timezone("America/Los_Angeles")
+_BIGROBOT_ENV_LIST = []
 
 def _env_get_and_set(name, new_val=None, default=None):
     """
     Category: Get/set environment variables for BigRobot.
-    Attempt to update 'name' environment variable with a value:
-    - if new_val is specified, then set env and return it
-    - else if env exist, then just return it
-    - else if a default value is specified, then set env and return it
-    - last resort, return None
+    
+    :param name:    (str) The name of the environment variable
+    :param new_val: (str) If specified, force set env with new_value
+    :param default: (str) Default fallback value
+    :return: str or None -- Value of the environment variable
+    
+    Attempt to update `name` environment variable with a value.
+    - If `new_val` is specified, then assign it to env (force option)
+    - Else if env exists, then use it
+    - Else, if default is specified, then assign it to env (fallback option)
+    - Else return None as last resort
     """
     if new_val:
         os.environ[name] = int_to_str(new_val)
-        return os.environ[name]
     elif name in os.environ:
-        return os.environ[name]
+        pass
     elif default:
         os.environ[name] = int_to_str(default)
-        return os.environ[name]
     else:
         return None
+
+    if name not in _BIGROBOT_ENV_LIST:
+        _BIGROBOT_ENV_LIST.append(name)
+        
+    return os.environ[name]
+
+
+def bigrobot_env_list():
+    return _BIGROBOT_ENV_LIST
 
 
 def bigrobot_path(new_val=None, default=None):
@@ -42,13 +55,6 @@ def bigrobot_path(new_val=None, default=None):
     Category: Get/set environment variables for BigRobot.
     """
     return _env_get_and_set('BIGROBOT_PATH', new_val, default)
-
-
-def bigrobot_config_path():
-    """
-    Category: Get/set environment variables for BigRobot.
-    """
-    return ''.join((bigrobot_path(), '/autobot/config'))
 
 
 def bigrobot_log_path(new_val=None, default=None):
@@ -68,6 +74,7 @@ def bigrobot_suite(new_val=None, default=None):
 def bigrobot_suite_format(new_val=None, default=None):
     """
     Category: Get/set environment variables for BigRobot.
+
     Specify the test suite file format. The possible values include:
     mw  - MediaWiki format
     txt - Robot Framework plain text format 
@@ -113,6 +120,7 @@ def robot_syslog_level(new_val=None, default=None):
 def bigrobot_debug(new_val=None, default=None):
     """
     Category: Get/set environment variables for BigRobot.
+
     If env BIGROBOT_DEBUG is 1, then enable Robot Framework syslog debugging.
     The syslog settings are:
         Syslog file => <log_path>/syslog.txt
@@ -200,6 +208,10 @@ def get_path_autobot():
     return get_path(autobot.__file__)
 
 
+def get_path_autobot_config():
+    return ''.join((get_path_autobot(), '/config'))
+
+
 def create_uuid():
     """
     Create a UUID based on the host ID and current time.
@@ -211,7 +223,7 @@ def ds():
     """
     Return the current datestamp, e.g., 20130926.
     """
-    t = datetime.datetime.now(TZ)
+    t = datetime.datetime.now(_TZ)
 
     # UTC time would return '2013-10-30T07:40:53z' whereas the following
     # returns '2013-10-30T00:40:53z' (PST)
@@ -232,7 +244,7 @@ def ts_local():
     Return the current timestamp in local time (string format),
     e.g., 20130926_155749
     """
-    local_datetime = datetime.datetime.now(TZ)
+    local_datetime = datetime.datetime.now(_TZ)
     return local_datetime.strftime("%Y%m%d_%H%M%S")
 
 
@@ -250,7 +262,7 @@ def ts_long_local():
     Return the current timestamp in local time (string format),
     e.g., 2013-09-26T15:57:49z
     """
-    local_datetime = datetime.datetime.now(TZ)
+    local_datetime = datetime.datetime.now(_TZ)
     return local_datetime.strftime("%Y-%m-%dT%H:%M:%Sz")
 
 
@@ -298,7 +310,7 @@ def bigtest_node_info():
         error_exit('Directory %s does not exist.' % my_root)
     
     nodes = {}
-    for root, dirs, files in os.walk(my_root):
+    for root, _, files in os.walk(my_root):
         if root == my_root:
             # Ignore top-level root
             continue
@@ -352,6 +364,12 @@ class TestFailure(AssertionError):
     """
 
 
+class TestError(AssertionError):
+    """
+    This can triggered when there is a test failure.
+    """
+
+
 class EnvironmentFailure(AssertionError):
     """
     This is triggered when there is a test environment failure.
@@ -370,6 +388,13 @@ def test_failure(msg):
     Call this on test failure.
     """
     raise TestFailure(msg)
+
+
+def test_error(msg):
+    """
+    Call this on test error.
+    """
+    raise TestError(msg)
 
 
 def environment_failure(msg):
