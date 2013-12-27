@@ -8,7 +8,9 @@ class RestClient(object):
     REST Client for talking to RESTful web services
     '''
 
-    default_timeout = 45  # seconds
+    # Number of seconds to wait before timing out the REST call.
+    default_timeout = 45
+
     http_codes = {
         '200': 'OK',
         '401': 'Unauthorized',
@@ -119,6 +121,7 @@ class RestClient(object):
             python_content = {}
 
         result = {'content': python_content}
+        result['http_verb'] = verb
         result['status_code'] = code
         result['request_url'] = url
         if code in RestClient.http_codes:
