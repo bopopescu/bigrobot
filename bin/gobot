@@ -45,7 +45,8 @@ def autobot_import():
     Test importing the Autobot package. This must work else we fail hard.
     """
     try:
-        import autobot
+        import autobot.version
+        autobot.version.get_version()  # just to silence the "unused" warning
     except ImportError:
         sys.stderr.write(
             "Error: Cannot find Autobot package. Please check PYTHONPATH,"
@@ -81,6 +82,9 @@ if helpers.bigrobot_suite():
 helpers.bigrobot_suite_format(default='mw')
 helpers.bigrobot_debug(default=0)
 helpers.bigrobot_pandoc_support(default='1')
+helpers.bigrobot_path()
+helpers.bigtest_path()
+helpers.python_path()
 
 ROBOT_FRAMEWORK_OPTS = (
     '--loglevel=debug --debugfile=debug.log --exclude=skipped --outputdir=%s'
@@ -106,6 +110,7 @@ def usage():
     # Print a list of all the test suites in the current directory.
     # Files extension should match the suite extension (e.g., either
     # 'mw', 'txt', etc).
+    
     ext = ''.join(('.', helpers.bigrobot_suite_format()))
 
     file_list = []
@@ -113,27 +118,19 @@ def usage():
         file_list.extend(filenames)
         break
 
-    # List of test suites (remove the extension)
-    suite_list = [f[:-3] for f in file_list if f.endswith(ext)]
+    # List of test suites, with file extension removed
+    #suite_list = [f[:-3] for f in file_list if f.endswith(ext)]
+    suite_list = [os.path.splitext(f)[0] for f in file_list if f.endswith(ext)]
 
-    # If there is no test suite, make up an example
-    sample_suite = 't6_basic_tenant'
-    if suite_list:
-        sample_suite = suite_list[0]
-    else:
-        suite_list = ['<None>']
-
-    print("  Point environment variable BIGROBOT_SUITE to a test suite:")
-    print("    export BIGROBOT_SUITE=%s" % sample_suite)
+    print("  Point environment variable BIGROBOT_SUITE to a test suite."
+          " Select one below:")
+    for _ in suite_list:
+        print("    export BIGROBOT_SUITE=%s" % _)
+    
+    if not suite_list:
+        print("    export BIGROBOT_SUITE=<testsuite_name>")
+        
     print("")
-    print("  Some possible test suites in the current directory:")
-    print("    %s" % "\n    ".join(suite_list))
-    print("")
-    #print("  BigRobot also expects a topology file. The default file name is")
-    #print("  '<suite>.topo'. The user can also specify a topology file by setting")
-    #print("  an environment variable:")
-    #print("    export BIGROBOT_TOPOLOGY=%s" % ''.join((sample_suite, '.topo')))
-    #print("")
 
     # Print the gobot commands
     cmd_list = []
@@ -263,21 +260,22 @@ def test_command():
     exit_if_topology_not_defined()
     format_convert_and_copy(helpers.bigrobot_suite(),
                             helpers.bigrobot_log_path())
-    run('pybot %s %s.html'
-        % (ROBOT_FRAMEWORK_OPTS, helpers.bigrobot_suite()))
+    
+    ext = 'txt'
+    if helpers.bigrobot_suite_format() == 'mw':
+        ext = 'html'
+        
+    run('pybot %s %s.%s'
+        % (ROBOT_FRAMEWORK_OPTS, helpers.bigrobot_suite(), ext))
 
 
 def env_command():
     """
     Show the environment used by the test suite (useful for debugging purpose).
     """
-    print('PYTHONPATH=%s' % helpers.python_path())
-    print('BIGTEST_PATH=%s' % helpers.bigtest_path())
-    print('BIGROBOT_PATH=%s' % helpers.bigrobot_path())
-    print('BIGROBOT_LOG_PATH=%s' % helpers.bigrobot_log_path())
-    print('BIGROBOT_SUITE=%s' % helpers.bigrobot_suite())
-    print('BIGROBOT_TOPOLOGY=%s' % helpers.bigrobot_topology())
-    print('PANDOC_SUPPORT=%s' % helpers.bigrobot_pandoc_support())
+    for env in sorted(helpers.bigrobot_env_list()):
+        print("%s=%s" % (env, os.environ[env]))
+    
 
 def gui_command():
     """
@@ -316,14 +314,14 @@ def startremotevm_command():
     """
     Setup remote VMs using BigTest (executes 'bt startremotevm').
     """
-    run('bt startremotevm', cwd=os.environ['BIGTEST_PATH'])
+    run('bt startremotevm', cwd=helpers.bigtest_path())
     
 
 def stopremotevm_command():
     """
     Tear down remote VMs using BigTest (executes 'bt stopremotevm').
     """
-    run('bt stopremotevm', cwd=os.environ['BIGTEST_PATH'])
+    run('bt stopremotevm', cwd=helpers.bigtest_path())
 
 
 def main(args):
