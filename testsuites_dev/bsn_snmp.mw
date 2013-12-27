@@ -44,9 +44,15 @@
 |-
 | Modify SNMP Community and Verify SNMP OID sysContact || modify community ||  ||  || 
 |-
+| Verify snmpgetnext works as expected || verify snmpgetnext ||  ||  || 
+|-
+| Verify snmpbulkget works as expected || verify snmpbulkget ||  ||  || 
+|-
+| Verify snmpbulkwalk works as expected || verify snmpbulkwalk ||  ||  || 
+|-
 | || [Tags] || sanity
 |}
-
+ 
 {| class="wikitable sortable"
 ! Keywords || Action || Argument || Argument || Argument || Argument ||
 |-
@@ -153,6 +159,42 @@
 | || ${snmp_key} =  || REST snmp get || public || sysContact.0 || ||
 |-
 | || Should Contain || ${snmp_key} || Big Switch Networks || || ||
+|-
+| || ${snmp_key} =  || REST snmp get || public || ifOperStatus.2 || ||
+|-
+| || Should Contain || ${snmp_key} || up || ||
+|-
+| delete contact || || || || || ||
+|-
+| || REST modify snmp key || contact || null || || ||
+|-
+| || ${snmp_key} =  || REST snmp get || public || sysContact.0 || ||
+|-
+| || Should Contain || ${snmp_key} || Unknown || ||
+|-
+| || REST modify snmp key || contact || Big Switch Networks || || ||
+|-
+| || ${snmp_key} =  || REST snmp get || public || sysContact.0 || ||
+|-
+| || Should Contain || ${snmp_key} || Big Switch Networks || ||
+|-
+| verify snmpgetnext || || || || || ||
+|-
+| || ${snmp_key} =  || REST snmp getnext || public || ifDescr.1 || ||
+|-
+| || Should Contain || ${snmp_key} || eth0 || ||
+|-
+| verify snmpbulkget || || || || || ||
+|-
+| || ${snmp_key} =  || REST snmp cmd || snmpbulkget  || -Cr2 || public || ifDescr 
+|-
+| || Should Contain || ${snmp_key} || eth0 || ||
+|-
+| verify snmpbulkwalk || || || || || ||
+|-
+| || ${snmp_key} =  || REST snmp cmd || snmpbulkwalk  ||  || public || ifDescr 
+|-
+| || Should Contain || ${snmp_key} || eth0 || ||
 |-
 | snmp test teardown || || || || || ||
 |-

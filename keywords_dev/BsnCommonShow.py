@@ -2,7 +2,6 @@ import autobot.helpers as helpers
 import autobot.test as test
 import subprocess
 
-
 class BsnCommonShow(object):
 
     def __init__(self):
@@ -82,6 +81,31 @@ class BsnCommonShow(object):
         t = test.Test()
         c = t.controller()
         url="/usr/bin/snmpwalk -v2c -c %s %s %s" % (str(snmpCommunity),c.ip,str(snmpOID))
+        returnVal = subprocess.Popen([url], stdout=subprocess.PIPE, shell=True)
+        (out, err) = returnVal.communicate()
+        helpers.log("URL: %s Output: %s" % (url, out))
+        return out
+    
+#   Objective: Execute snmpgetnext from local machine for a particular SNMP OID
+#   Input: SNMP Community and OID 
+#   Return Value:  return the SNMP Walk O/P
+    def rest_snmp_getnext(self,snmpCommunity,snmpOID):
+        t = test.Test()
+        c = t.controller()
+        url="/usr/bin/snmpgetnext -v2c -c %s %s %s" % (str(snmpCommunity),c.ip,str(snmpOID))
+        returnVal = subprocess.Popen([url], stdout=subprocess.PIPE, shell=True)
+        (out, err) = returnVal.communicate()
+        helpers.log("URL: %s Output: %s" % (url, out))
+        return out
+    
+    
+#   Objective: Execute snmpgetnext from local machine for a particular SNMP OID
+#   Input: SNMP Community and OID 
+#   Return Value:  return the SNMP Walk O/P
+    def rest_snmp_cmd(self,snmp_cmd,snmpOptions,snmpCommunity,snmpOID):
+        t = test.Test()
+        c = t.controller()
+        url="/usr/bin/%s -v2c %s -c %s %s %s" % (str(snmp_cmd),str(snmpOptions),str(snmpCommunity),c.ip,str(snmpOID))
         returnVal = subprocess.Popen([url], stdout=subprocess.PIPE, shell=True)
         (out, err) = returnVal.communicate()
         helpers.log("URL: %s Output: %s" % (url, out))
