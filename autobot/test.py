@@ -23,7 +23,7 @@ class Test(object):
             # This flag ensures that we only do setup once
             self._init_completed = False
             
-            config = ''.join((helpers.bigrobot_config_path(), '/bsn.yaml'))
+            config = ''.join((helpers.get_path_autobot_config(), '/bsn.yaml'))
             self._bsn_config = helpers.load_config(config)
 
             topo = helpers.bigrobot_topology()

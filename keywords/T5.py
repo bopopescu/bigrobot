@@ -19,7 +19,8 @@ class T5(object):
 
         helpers.log("Input arguments: tenant = %s" % tenant )
                 
-        url = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]' % (c.base_url, tenant)
+        url = ('%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]'
+               % (c.base_url, tenant))
         c.rest.put(url, {"name": tenant})
         helpers.log("Output: %s" % c.rest.result_json())
 
@@ -34,10 +35,12 @@ class T5(object):
 
         if tenant:
             # Show a specific tenant
-            url = '%s/api/v1/data/controller/applicaptions/bvs/tenant[name="%s"]' % (c.base_url, tenant)
+            url = ('%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]'
+                   % (c.base_url, tenant))
         else:
             # Show all tenants
-            url = '%s/api/v1/data/controller/applications/bvs/tenant' % (c.base_url)
+            url = ('%s/api/v1/data/controller/applications/bvs/tenant'
+                   % (c.base_url))
             
         c.rest.get(url)
         helpers.log("Output: %s" % c.rest.result_json())
@@ -55,14 +58,17 @@ class T5(object):
         for t in data:
             actual_tenant = t['name']
             if actual_tenant == tenant:
-                helpers.log("Match: Actual tenant '%s' == expected tenant '%s'" % (actual_tenant, tenant))
+                helpers.log("Match: Actual tenant '%s' == expected tenant '%s'"
+                            % (actual_tenant, tenant))
                 
                 if negative:
-                    helpers.test_failure("Unexpected match: Actual tenant '%s' == expected tenant '%s'" % (actual_tenant, tenant))
+                    helpers.test_failure("Unexpected match: Actual tenant '%s' == expected tenant '%s'"
+                                         % (actual_tenant, tenant))
                 else:
                     return data
             else:
-                helpers.log("No match: Actual tenant '%s' != expected tenant '%s'" % (actual_tenant, tenant))
+                helpers.log("No match: Actual tenant '%s' != expected tenant '%s'"
+                            % (actual_tenant, tenant))
         
         # If we reach here, then we didn't find a matching tenant.
         if negative:
@@ -85,7 +91,8 @@ class T5(object):
 
         helpers.log("Input arguments: tenant = %s" % tenant )
         
-        url = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]' % (c.base_url, tenant)
+        url = ('%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]'
+               % (c.base_url, tenant))
 
         c.rest.delete(url, {"name": tenant})
         helpers.log("Ouput: %s" % c.rest.result_json())
