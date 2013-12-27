@@ -1,0 +1,210 @@
+== BSN Switch SNMP Sanity ==
+{| class="wikitable sortable"
+! Setting || Value
+|-
+| Documentation || SNMP Sanity Test Suite
+|-
+| Suite Setup || snmp setup
+|-
+| Suite Teardown || base test teardown
+|-
+| Test Setup || base test setup
+|-
+| Test Teardown || base test teardown
+|-
+| Force Tags || SNMP Sanity
+|-
+| Library || keywords/BsnCommon.py
+|-
+| Library || keywords_dev/BsnCommonConfig.py
+|-
+| Library || keywords_dev/BsnCommonShow.py
+|-
+| Library || keywords_dev/BsnSwitchCommon.py
+|}
+
+
+{| class="wikitable sortable"
+! Test Case || Action || Argument || Argument || Argument
+|-
+| Configure and Verify Configuration via CLI || verify config ||  ||  || 
+|-
+| Verify SNMP OID sysContact || verify sysContact ||  ||  || 
+|-
+| Verify SNMP OID sysLocation || verify sysLocation ||  ||  || 
+|-
+| Verify SNMP OID sysDescr || verify sysDescr ||  ||  || 
+|-
+| Verify SNMP OID ifDescr of ma1 || verify ifDescr ||  ||  || 
+|-
+| Verify SNMP OID ifType of ma1 || verify ifType ||  ||  || 
+|-
+| Verify SNMP OID ifAdminStatus of ma1 || verify ifAdminStatus ||  ||  || 
+|-
+| Verify SNMP OID ifOperStatus of ma1 || verify ifOperStatus ||  ||  || 
+|-
+| Verify SNMP OID ifSpeed of ma1 || verify ifSpeed ||  ||  || 
+|-
+| Verify SNMP OID ifMtu of ma1 || verify ifSpeed ||  ||  || 
+|-
+| Verify snmpgetnext works as expected || verify snmpgetnext ||  ||  || 
+|-
+| Verify snmpbulkget works as expected || verify snmpbulkget ||  ||  || 
+|-
+| Verify snmpbulkwalk works as expected || verify snmpbulkwalk ||  ||  || 
+|-
+| Verify no snmp-server disables snmp || disable snmp ||  ||  || 
+|-
+| Restart process SNMPD and verify SNMP Stats || restart snmpd ||  ||  || 
+|-
+| || [Tags] || sanity
+|}
+
+{| class="wikitable sortable"
+! Keywords || Action || Argument || Argument || Argument || Argument || Argument ||
+|-
+| snmp setup || || || || || ||
+|-
+| || configure snmp keyword || 10.192.75.7 || community || ro public || ||  ||
+|-
+| || configure snmp keyword || 10.192.75.7 || location || CS_RACK11_6020 || ||  ||
+|-
+| || configure snmp keyword || 10.192.75.7 || contact || nw_admin@super_awesome_company.com || ||  ||
+|-
+| || configure snmp host || 10.192.75.7 || 10.192.66.230 || traps || public || 161  ||
+|-
+| || configure snmp host || 10.192.75.7 || 10.192.66.230 || informs || public || 161  ||
+|-
+| || enable snmp || 10.192.75.7 ||  ||  || ||  ||
+|-
+| verify config || || || || || ||  ||
+|-
+| || ${snmp_output} =  || snmp show || 10.192.75.7 || || || ||
+|-
+| || Should Contain || ${snmp_output} || CS_RACK11_6020 || || || ||
+|-
+| || Should Contain || ${snmp_output} || nw_admin@super_awesome_company.com || || || ||
+|-
+| || Should Contain || ${snmp_output} || public || || || ||
+|-
+| || Should Contain || ${snmp_output} || enabled || || || ||
+|-
+| verify sysContact || || || || || ||  ||
+|-
+| || ${snmp_key} =  ||  snmp cmd || 10.192.75.7 || snmpget  || public || sysContact.0 ||
+|-
+| || Should Contain || ${snmp_key} || nw_admin@super_awesome_company.com || || ||
+|-
+| verify sysLocation || || || || || || ||
+|-
+| || ${snmp_key} =  ||  snmp cmd || 10.192.75.7 || snmpget  || public || sysLocation.0 ||
+|-
+| || Should Contain || ${snmp_key} || CS_RACK11_6020 || || || ||
+|-
+| verify sysDescr || || || || || || ||
+|-
+| || ${snmp_key} =  ||  snmp cmd ||10.192.75.7 || snmpget   || public || sysDescr.0 ||
+|-
+| || Should Contain || ${snmp_key} || SwitchLight 2.0.0-beta1 || || ||
+|-
+| verify ifDescr || || || || || || ||
+|-
+| || ${snmp_key} =  ||  snmp cmd || 10.192.75.7 || snmpget  || public || ifDescr.3 ||
+|-
+| || Should Contain || ${snmp_key} || ma1 || || || ||
+|-
+| verify ifType || || || || || || ||
+|-
+| || ${snmp_key} =  ||  snmp cmd || 10.192.75.7 || snmpget  || public || ifType.3 ||
+|-
+| || Should Contain || ${snmp_key} || ethernetCsmacd || || || ||
+|-
+| verify ifAdminStatus || || || || || || ||
+|-
+| || ${snmp_key} =  ||  snmp cmd ||10.192.75.7 || snmpget     || public || ifAdminStatus.3 ||
+|-
+| || Should Contain || ${snmp_key} || up || || || ||
+|-
+| verify ifOperStatus || || || || || || ||
+|-
+| || ${snmp_key} =  ||  snmp cmd || 10.192.75.7 || snmpget   || public || ifOperStatus.3  ||
+|-
+| || Should Contain || ${snmp_key} || up || || || ||
+|-
+| verify ifSpeed || || || || || ||
+|-
+| || ${snmp_key} =  ||  snmp cmd || 10.192.75.7 || snmpget   || public || ifSpeed.3  ||
+|-
+| || Should Contain || ${snmp_key} || 1000000000 || || ||
+|-
+| verify IfMtu || || || || || || ||
+|-
+| || ${snmp_key} =  ||  snmp cmd || 10.192.75.7 || snmpget   || public || ifMtu.3  ||
+|-
+| || Should Contain || ${snmp_key} || 1500 || || || ||
+|-
+| verify snmpgetnext || || || || || || ||
+|-
+| || ${snmp_key} =  || snmp cmd || 10.192.75.7 || snmpgetnext || public || ifDescr.2 ||
+|-
+| || Should Contain || ${snmp_key} || ma1 || || || ||
+|-
+| verify snmpbulkget || || || || || || ||
+|-
+| || ${snmp_key} =  ||  snmp cmd opt ||  10.192.75.7 || snmpbulkget || -Cr1 || public || ifDescr.2 
+|-
+| || Should Contain || ${snmp_key} || ma1 || || ||
+|-
+| verify snmpbulkwalk || || || || || || ||
+|-
+| || ${snmp_key} =  ||  snmp cmd opt ||  10.192.75.7 || snmpbulkwalk || -Cr2 || public || ifDescr.3 
+|-
+| || Should Contain || ${snmp_key} || ma1 || || ||
+|-
+| disable snmp || || || || || || ||
+|-
+| || disable switch snmp || 10.192.75.7 ||  ||  || ||  ||
+|-
+| || sleepnow || 10 ||  ||  || ||  ||
+|-
+| || ${snmp_output} =  || snmp show || 10.192.75.7 || || || ||
+|-
+| || Should Contain || ${snmp_output} || disabled || || || ||
+|-
+| || ${snmp_key} =  ||  snmp cmd || 10.192.75.7 || snmpget  || public || sysContact.0 ||
+|-
+| || Should Be Empty || ${snmp_key} ||  || || || ||
+|-
+| || enable snmp || 10.192.75.7 ||  ||  || ||  ||
+|-
+| || sleepnow || 10 ||  ||  || ||  ||
+|-
+| || ${snmp_output} =  || snmp show || 10.192.75.7 || || || ||
+|-
+| || Should Contain || ${snmp_output} || enabled || || || ||
+|-
+| || ${snmp_key} =  ||  snmp cmd || 10.192.75.7 || snmpget  || public || sysContact.0 ||
+|-
+| || Should Contain || ${snmp_key} || nw_admin@super_awesome_company.com || || ||
+|-
+| restart snmpd || || || || || || ||
+|-
+| || restart process || 10.192.75.7  || snmpd ||    ||  ||   ||
+|-
+| || ${snmp_output} =  || snmp show || 10.192.75.7 || || || ||
+|-
+| || Should Contain || ${snmp_output} || CS_RACK11_6020 || || || ||
+|-
+| || Should Contain || ${snmp_output} || nw_admin@super_awesome_company.com || || || ||
+|-
+| || Should Contain || ${snmp_output} || public || || || ||
+|-
+| || ${snmp_key} =  ||  snmp cmd || 10.192.75.7 || snmpget  || public || sysContact.0 ||
+|-
+| || Should Contain || ${snmp_key} || nw_admin@super_awesome_company.com || || || ||
+|-
+| snmp test teardown || || || || || || ||
+|-
+| || REST delete snmp || || || || || ||
+|}
+

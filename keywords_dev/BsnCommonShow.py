@@ -132,3 +132,7 @@ class BsnCommonShow(object):
 # Output: Dictionary of Switch DPID and IP Addresses
     def return_switch_dpid(self,switchDict,ipAddr):
             return switchDict[str(ipAddr)]
+
+#Generic Sleep Function
+    def sleepnow(self,intTime):
+        helpers.sleep(float(intTime))

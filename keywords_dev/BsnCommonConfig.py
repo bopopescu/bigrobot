@@ -1,6 +1,7 @@
 import autobot.helpers as helpers
 import autobot.test as test
-
+from Exscript.protocols import SSH2
+from Exscript import Account, Host
 
 class BsnCommonConfig(object):
 
@@ -145,7 +146,13 @@ class BsnCommonConfig(object):
         c = t.controller()
         c.http_port=8000
         url='http://%s:%s/rest/v1/model/snmp-server-config/?id=snmp' % (c.ip,c.http_port)
-        c.rest.put(url, { str(snmpKey) : snmpValue})
+        if snmpValue == "null":
+                snmpValue1=None
+        else:
+                snmpValue1=str(snmpValue)
+    
+        helpers.test_log("snmpValue1: %s" % snmpValue1)
+        c.rest.put(url, { str(snmpKey) : snmpValue1})
         helpers.test_log("Ouput: %s" % c.rest.result_json())
         if not c.rest.status_code_ok():
             helpers.test_failure(c.rest.error())
