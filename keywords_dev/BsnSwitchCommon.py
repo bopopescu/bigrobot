@@ -62,7 +62,22 @@ class BsnSwitchCommon(object):
         conn.send('exit\r')
         conn.close()
         return True
-
+    
+    def delete_snmp_keyword(self,ip_address,snmpKey,snmpValue):
+        t = test.Test()
+        conn = SSH2()
+        conn.connect(ip_address)
+        conn.login(Account("admin","adminadmin"))
+        conn.execute('enable')
+        conn.execute('conf t')
+        input="no snmp-server %s %s" % (str(snmpKey),str(snmpValue))
+        conn.execute(input)
+        conn.send('exit\r')
+        conn.send('exit\r')
+        conn.send('exit\r')
+        conn.close()
+        return True
+    
     def configure_snmp_host(self,ip_address,remHostIP,snmpKey,snmpCommunity,snmpPort):
         t = test.Test()
         conn = SSH2()
@@ -75,6 +90,25 @@ class BsnSwitchCommon(object):
         else:
             snmpKey == "informs"
         input="snmp-server host %s %s %s udp-port %s" % (str(remHostIP),str(snmpKey),str(snmpCommunity),str(snmpPort))
+        conn.execute(input)
+        conn.send('exit\r')
+        conn.send('exit\r')
+        conn.send('exit\r')
+        conn.close()
+        return True
+
+    def delete_snmp_host(self,ip_address,remHostIP,snmpKey,snmpCommunity,snmpPort):
+        t = test.Test()
+        conn = SSH2()
+        conn.connect(ip_address)
+        conn.login(Account("admin","adminadmin"))
+        conn.execute('enable')
+        conn.execute('conf t')
+        if snmpKey == "traps" or snmpKey == "trap":
+            snmpKey == "traps"
+        else:
+            snmpKey == "informs"
+        input="no snmp-server host %s %s %s udp-port %s" % (str(remHostIP),str(snmpKey),str(snmpCommunity),str(snmpPort))
         conn.execute(input)
         conn.send('exit\r')
         conn.send('exit\r')
@@ -148,3 +182,32 @@ class BsnSwitchCommon(object):
         conn.send('logout\r')
         conn.close()
         return True
+    
+    def configure_portchannel(self,ip_address,pcNumber,portList,hashMode):
+        t = test.Test()
+        conn = SSH2()
+        conn.connect(ip_address)
+        conn.login(Account("admin","adminadmin"))
+        conn.execute('enable')
+        conn.execute('conf t')
+        input = "port-channel " + str(pcNumber) + " interface-list " + str(portList) + "  hash " + str(hashMode)
+        conn.execute(input)
+        conn.send('logout\r')
+        conn.close()
+        return True
+
+    def verify_portchannel(self,ip_address,pcNumber):
+        t = test.Test()
+        conn = SSH2()
+        conn.connect(ip_address)
+        conn.login(Account("admin","adminadmin"))
+        conn.execute('enable')
+        intf_name = "port-channel"+pcNumber
+        input = "show interface " + intf_name
+        conn.execute(input)
+        lagNumber = 60 + int(pcNumber)
+        input1=str(lagNumber) + "* " + intf_name
+        if str(input1) in conn.response:
+                return True
+        else:
+                return False
