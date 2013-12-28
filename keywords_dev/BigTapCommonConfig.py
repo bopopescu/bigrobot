@@ -317,7 +317,3 @@ class BigTapCommonConfig(object):
             return True
         else :
             return False
-
-#Generic Sleep Function
-    def sleep_now(self,intTime):
-        helpers.sleep(float(intTime))

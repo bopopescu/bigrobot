@@ -105,6 +105,8 @@ class BsnCommonShow(object):
     def rest_snmp_cmd(self,snmp_cmd,snmpOptions,snmpCommunity,snmpOID):
         t = test.Test()
         c = t.controller()
+        if snmpOptions == "None" or snmpOptions == "none":
+                snmpOptions =" "
         url="/usr/bin/%s -v2c %s -c %s %s %s" % (str(snmp_cmd),str(snmpOptions),str(snmpCommunity),c.ip,str(snmpOID))
         returnVal = subprocess.Popen([url], stdout=subprocess.PIPE, shell=True)
         (out, err) = returnVal.communicate()
