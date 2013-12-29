@@ -3,6 +3,7 @@ import autobot.test as test
 from Exscript.protocols import SSH2
 from Exscript import Account, Host
 import subprocess
+import string
 
 class BsnSwitchCommon(object):
 
@@ -205,6 +206,7 @@ class BsnSwitchCommon(object):
         intf_name = "port-channel"+pcNumber
         input = "show interface " + intf_name
         conn.execute(input)
+        helpers.log("Multiline is %s" % (string.split(conn.response, '\n')))
         lagNumber = 60 + int(pcNumber)
         input1=str(lagNumber) + "* " + intf_name
         if str(input1) in conn.response:
