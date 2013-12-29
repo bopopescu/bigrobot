@@ -213,3 +213,71 @@ class BsnSwitchCommon(object):
                 return True
         else:
                 return False
+        
+    def return_intf_macaddress(self,ip_address,intf_name):
+        t = test.Test()
+        conn = SSH2()
+        conn.connect(ip_address)
+        conn.login(Account("admin","adminadmin"))
+        input = "show interface " + str(intf_name) + " detail"
+        conn.execute(input)
+        content = string.split(conn.response, '\n')
+        (firstvalue,colon,lastvalue) = content[2].strip().partition(':')
+        lastvalue=str(lastvalue).rstrip('\n').replace(" ", "")
+        mac_address = lastvalue.rstrip('\n')
+        helpers.log("Value in content[1] is %s \n and mac address is %s" %(content[1],mac_address))
+        return mac_address
+
+    def return_intf_state(self,ip_address,intf_name):
+        t = test.Test()
+        conn = SSH2()
+        conn.connect(ip_address)
+        conn.login(Account("admin","adminadmin"))
+        input = "show interface " + str(intf_name) + " detail"
+        conn.execute(input)
+        content = string.split(conn.response, '\n')
+        helpers.log("Value in content[1] is '%s' " %(content[1]))
+        (firstvalue,colon,lastvalue) = content[1].rstrip('\n').strip().split(' ')
+        intf_state = lastvalue.rstrip('\n')
+        helpers.log("Value in content[1] is %s \n and intf_state is %s" %(content[1],intf_state))
+        return intf_state
+    
+    def verify_portchannel_members(self,ip_address,pc_number,intf_name):
+        t = test.Test()
+        conn = SSH2()
+        conn.connect(ip_address)
+        conn.login(Account("admin","adminadmin"))
+        input = "show port-channel " + str(pc_number)
+        conn.execute(input)
+        content = string.split(conn.response, '\n')
+        helpers.log("Length of content %d" % (len(content)))
+        if len(content) < 8 :
+            return False
+        else :
+            for i in range(8,len(content)):
+                intfName = ' '.join(content[i].split()).split(" ",2)
+                if len(intfName) >1 and intfName[1] == intf_name :
+                        helpers.log("IntfName is %s \n" % (intfName[1]))
+                        return True
+        return False
+
+    def verify_portchannel_member_state(self,ip_address,pc_number,intf_name):
+        t = test.Test()
+        conn = SSH2()
+        conn.connect(ip_address)
+        conn.login(Account("admin","adminadmin"))
+        input = "show port-channel " + str(pc_number)
+        conn.execute(input)
+        content = string.split(conn.response, '\n')
+        helpers.log("Length of content %d" % (len(content)))
+        if len(content) < 8 :
+            return False
+        else :
+            for i in range(8,len(content)):
+                intfName = ' '.join(content[i].split()).split(" ",2)
+                if len(intfName) >1 and intfName[0] == "*" :
+                        helpers.log("Intf Name is %s and state is %s \n" % (intfName[1], intfName[0]))
+                        return True
+        return False
+        
+        
