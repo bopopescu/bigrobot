@@ -13,42 +13,71 @@ Library  keywords_dev/BsnSwitchCommon.py
 * Variable
 ${ip_address_1}  10.192.75.7
 ${ip_address_2}  10.192.75.213
+${ip_address_3}  10.192.75.214
 ${switchlight_version}  SwitchLight 2.0.0-beta1
 
 
 *Test Case
-Verify port-channel interface (10G links) is up on switch (LB9)  
+Verify port-channel (hash-mode:L3) interface (10G links) is up on switch (LB9)  
 	verify lag-10glb9-up
 	
-Verify port-channel interface shows correct 10G member links on switch (LB9)  
+Verify port-channel (hash-mode:L3) interface shows correct 10G member links on switch (LB9)  
 	verify lagmem-10glb9   
 
-Verify port-channel interface 10G member links are up on switch (LB9)  
+Verify port-channel (hash-mode:L3) interface 10G member links are up on switch (LB9)  
 	verify lagmem-10glb9-up
 
-Verify port-channel interface (10G links) is up on switch (LY2)  
+Verify port-channel (hash-mode:L3) interface (10G links) is up on switch (LY2)  
 	verify lag-10gly2-up
 	
-Verify port-channel interface shows correct 10G member links on switch (LY2)  
+Verify port-channel (hash-mode:L3) interface shows correct 10G member links on switch (LY2)  
 	verify lagmem-10gly2    
 
-Verify port-channel interface 10G member links are up on switch (LY2)  
+Verify port-channel (hash-mode:L3) interface 10G member links are up on switch (LY2)  
 	verify lagmem-10gly2-up
 
-Verify port-channel interface (40G links) is up on switch (LY2)  
+Verify port-channel (hash-mode:L3) interface (40G links) is up on switch (LY2)  
 	verify lag-40gly2-up
 	
-Verify port-channel interface shows correct 40G member links on switch (LY2)  
+Verify port-channel (hash-mode:L3) interface shows correct 40G member links on switch (LY2)  
 	verify lagmem-40gly2    
 
-Verify port-channel interface 40G member links are up on switch (LY2)  
+Verify port-channel (hash-mode:L3) interface 40G member links are up on switch (LY2)  
 	verify lagmem-40gly2-up
+
+Verify port-channel (hash-mode:L2) interface (10G links) is up on switch (LB9)  
+	verify l2-lag-10glb9-up
+	
+Verify port-channel (hash-mode:L2) interface shows correct 10G member links on switch (LB9)  
+	verify l2-lagmem-10glb9   
+
+Verify port-channel (hash-mode:L2) interface 10G member links are up on switch (LB9)  
+	verify l2-lagmem-10glb9-up
+
+Verify port-channel (hash-mode:L2) interface (10G links) is up on switch (LY2)  
+	verify l2-lag-10gly2-up
+	
+Verify port-channel (hash-mode:L2) interface shows correct 10G member links on switch (LY2)  
+	verify l2-lagmem-10gly2    
+
+Verify port-channel (hash-mode:L2) interface 10G member links are up on switch (LY2)  
+	verify l2-lagmem-10gly2-up
+
+Verify port-channel (hash-mode:L2) interface (40G links) is up on switch (LY2)  
+	verify l2-lag-40gly2-up
+	
+Verify port-channel (hash-mode:L2) interface shows correct 40G member links on switch (LY2)  
+	verify l2-lagmem-40gly2    
+
+Verify port-channel (hash-mode:L2) interface 40G member links are up on switch (LY2)  
+	verify l2-lagmem-40gly2-up
 
 * Keywords  
 lag suite setup
 	configure portchannel  ${ip_address_1}  1  49-50  L3         
 	configure portchannel  ${ip_address_2}  7  43,44  L3   
-	configure portchannel  ${ip_address_2}  30  49,52  L3 
+	configure portchannel  ${ip_address_2}  30  49,52  L3
+	configure portchannel  ${ip_address_3}  30  49,52  L3  
 	sleepnow   30
 
 verify lag-10glb9-up 
@@ -107,6 +136,90 @@ verify lagmem-40gly2-up
 	Should Be True  ${member_isup5}
 	${member_isup6}=  verify portchannel member state  ${ip_address_2}  30  ethernet52
 	Should Be True  ${member_isup6}
+
+
+
+verify l2-lag-10glb9-up 
+# Verify portchannel interface is up
+	configure portchannel  ${ip_address_1}  1  49-50  L2         
+	configure portchannel  ${ip_address_2}  7  43,44  L2
+	sleepnow   5
+	${inft_state}=  return intf state  ${ip_address_1}  port-channel1
+	Should Contain  ${inft_state}  up
+
+verify l2-lagmem-10glb9
+# Verify portchannel interface correctly reports member interface name
+	configure portchannel  ${ip_address_1}  1  49-50  L2         
+	configure portchannel  ${ip_address_2}  7  43,44  L2
+	sleepnow   5
+	${member_exists1}=  verify portchannel members  ${ip_address_1}  1  ethernet49
+	Should Be True  ${member_exists1}
+	${member_exists2}=  verify portchannel members  ${ip_address_1}  1  ethernet50
+	Should Be True  ${member_exists2}
+
+verify l2-lagmem-10glb9-up
+# Verify portchannel interface correctly reports member interfaces as up
+	configure portchannel  ${ip_address_1}  1  49-50  L2         
+	configure portchannel  ${ip_address_2}  7  43,44  L2
+	sleepnow   5
+	${member_isup1}=  verify portchannel member state  ${ip_address_1}  1  ethernet49
+	Should Be True  ${member_isup1}
+	${member_isup2}=  verify portchannel member state  ${ip_address_1}  1  ethernet50
+	Should Be True  ${member_isup2}
+
+verify l2-lag-10gly2-up
+# Verify portchannel interface is up
+	configure portchannel  ${ip_address_1}  1  49-50  L2         
+	configure portchannel  ${ip_address_2}  7  43,44  L2
+	sleepnow   5
+	${inft_state}=  return intf state  ${ip_address_2}  port-channel7
+	Should Contain  ${inft_state}  up
+
+verify l2-lagmem-10gly2
+# Verify portchannel interface correctly reports member interface name
+	configure portchannel  ${ip_address_1}  1  49-50  L2         
+	configure portchannel  ${ip_address_2}  7  43,44  L2
+	sleepnow   5
+	${member_exists3}=  verify portchannel members  ${ip_address_2}  7  ethernet43
+	Should Be True  ${member_exists3}
+	${member_exists4}=  verify portchannel members  ${ip_address_2}  7  ethernet44
+	Should Be True  ${member_exists4}
+
+verify l2-lagmem-10gly2-up
+# Verify portchannel interface correctly reports member interfaces as up
+	configure portchannel  ${ip_address_1}  1  49-50  L2         
+	configure portchannel  ${ip_address_2}  7  43,44  L2
+	sleepnow   5
+	${member_isup3}=  verify portchannel member state  ${ip_address_2}  7  ethernet43
+	Should Be True  ${member_isup3}
+	${member_isup4}=  verify portchannel member state  ${ip_address_2}  7  ethernet44
+	Should Be True  ${member_isup4}
+
+verify l2-lag-40gly2-up
+# Verify portchannel interface is up
+	configure portchannel  ${ip_address_2}  30  49,52  L2
+	configure portchannel  ${ip_address_3}  30  49,52  L2 
+	${inft_state}=  return intf state  ${ip_address_2}  port-channel30
+	Should Contain  ${inft_state}  up
+
+verify l2-lagmem-40gly2
+# Verify portchannel interface correctly reports member interface name
+	configure portchannel  ${ip_address_2}  30  49,52  L2
+	configure portchannel  ${ip_address_3}  30  49,52  L2 
+	${member_exists5}=  verify portchannel members  ${ip_address_2}  30  ethernet49
+	Should Be True  ${member_exists5}
+	${member_exists6}=  verify portchannel members  ${ip_address_2}  30  ethernet52
+	Should Be True  ${member_exists6}
+
+verify l2-lagmem-40gly2-up
+# Verify portchannel interface correctly reports member interfaces as up
+	configure portchannel  ${ip_address_2}  30  49,52  L2
+	configure portchannel  ${ip_address_3}  30  49,52  L2 
+	${member_isup5}=  verify portchannel member state  ${ip_address_2}  30  ethernet49
+	Should Be True  ${member_isup5}
+	${member_isup6}=  verify portchannel member state  ${ip_address_2}  30  ethernet52
+	Should Be True  ${member_isup6}
+
 	
 snmp test teardown
 	REST delete snmp
