@@ -275,9 +275,13 @@ class BsnSwitchCommon(object):
         else :
             for i in range(8,len(content)):
                 intfName = ' '.join(content[i].split()).split(" ",2)
-                if len(intfName) >1 and intfName[0] == "*" :
-                        helpers.log("Intf Name is %s and state is %s \n" % (intfName[1], intfName[0]))
-                        return True
+                if len(intfName) >1 and intfName[1] == intf_name :
+                        if intfName[0] == "*" :
+                            helpers.log("Intf Name is %s and state is %s \n" % (intfName[1], intfName[0]))
+                            return True
+                        else:
+                            helpers.log("Intf Name is %s and state is %s \n" % (intfName[1], intfName[0]))
+                            return False
         return False
         
         
