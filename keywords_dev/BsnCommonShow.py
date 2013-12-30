@@ -14,6 +14,10 @@ class BsnCommonShow(object):
         session_cookie = result['content']['session_cookie']
         c.rest.set_session_cookie(session_cookie)
 
+#Generic Sleep Function
+    def sleepnow(self,intTime):
+        helpers.sleep(float(intTime))
+
 #   Objective: Execute CLI command "show version"
 #   Input: N/A
 #   Return Value:  Version String
@@ -135,6 +139,18 @@ class BsnCommonShow(object):
     def return_switch_dpid(self,switchDict,ipAddr):
             return switchDict[str(ipAddr)]
 
-#Generic Sleep Function
-    def sleepnow(self,intTime):
-        helpers.sleep(float(intTime))
+
+# Objective: Return the MAC/Hardware Address of a given interface
+# Input: Switch DPID and Interface Name
+# Output: Hardware/MAC Address of Interface
+    def return_switch_interface_mac(self,switchDpid,interfaceName):
+        t=test.Test()
+        c = t.controller()
+        http_port=8082
+        url='http://%s:%s/api/v1/data/controller/core/switch[interface/name="%s"][dpid="%s"]?select=interface[name="%s"]' %(c.ip,c.http_port,interfaceName,switchDpid,interfaceName)
+        c.rest.get(url)
+        helpers.test_log("Ouput: %s" % c.rest.result_json())
+        if not c.rest.status_code_ok():
+            helpers.test_failure(c.rest.error())
+        content = c.rest.content()
+        return content[0]['interface'][0]['hardware-address']
