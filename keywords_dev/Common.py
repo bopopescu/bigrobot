@@ -13,6 +13,52 @@ class Common(object):
         session_cookie = result['content']['session_cookie']
         c.rest.set_session_cookie(session_cookie)
         
+        
+        
+    def sleep_now(self, Flag):
+        if (Flag == 'short'):
+            helpers.sleep(float(5))
+        if (Flag == 'very short'):
+            helpers.sleep(float(2))    
+        if (Flag == 'long'):
+            helpers.sleep(float(10))    
+     
+    def bigtap_clean_up(self, Feature):
+        t = test.Test()
+        c = t.controller()       
+        if ( Feature == 'policy'):
+            url = '%s/api/v1/data/controller/applications/bigtap/view/policy?select=info' % (c.base_url)
+            c.rest.get(url)
+            content = c.rest.content()
+      
+            helpers.log("Output: %s" % c.rest.result_json()) 
+            length =len(content)
+            
+  #          content = c.rest.content()[0]  
+            helpers.log("Content Output: \n %s " % content )
+            helpers.log("Number of Policies is: %s" % str(length))        
+            for index in range(length):
+                name = content[index]['name']
+                helpers.log("this is the %s Policy to be cleaned: %s" % (str(index), str(name)))
+                url = '%s/api/v1/data/controller/applications/bigtap/view[name="admin-view"]/policy[name="%s"]' % (c.base_url,str(name))   
+                c.rest.delete(url) 
+                
+        if ( Feature == 'address-group'):
+            url = '%s/api/v1/data/controller/applications/bigtap/ip-address-set' % (c.base_url)      
+            c.rest.get(url) 
+            content = c.rest.content()
+            helpers.log("Output: %s" % c.rest.result_json()) 
+            length =len(content)  
+            helpers.log("Content Output: \n %s " % content )
+            helpers.log("Number of address group is: %s" % str(length))        
+            for index in range(length):
+                name = content[index]['name']
+                helpers.log("this is the %s Address-group to be cleaned: %s" % (str(index), str(name)))
+                url = '%s/api/v1/data/controller/applications/bigtap/ip-address-set[name="%s"]' % (c.base_url,str(name))   
+                c.rest.delete(url) 
+                        
+        return True   
+        
     def rest_show_version(self):
         # perform show version and reture the version number
         t = test.Test()
@@ -162,9 +208,9 @@ class Common(object):
     def rest_bigtap_setup_role(self,swDpid,intf,role,intfName):
         t = test.Test()
         c = t.controller()
-        
-       # swDpid = rest_get_switch_dpid(str(swName))       
-       #helpers.log("name: %s , DPID %s" % str(swName), str(swDpid))
+        #mingtao  -  TBD
+        #swDpid = self.rest_get_switch_dpid(str(swName))       
+        #helpers.log("name: %s , DPID %s" % str(swName), str(swDpid))
         
         url = '%s/api/v1/data/controller/applications/bigtap/interface-config[interface="%s"][switch="%s"]' % (c.base_url, str(intfName), str(swDpid))
         c.rest.put(url, {"interface": str(intf), "switch": str(swDpid), 'role':str(role),'name':str(intfName)})
@@ -220,4 +266,32 @@ class Common(object):
             helpers.test_log("ERROR bigtap role does not exist. Error seen: %s" % (c.rest.result_json()))
             return False        
         
+
+    def rest_get_switch_flow(self,swName,numFlow):
+        t = test.Test()
+        c = t.controller()
+        c.http_port=8082
+        
+        swDpid = self.rest_get_switch_dpid(str(swName))       
+        helpers.log("name: %s ===> DPID: %s" % (str(swName), str(swDpid)))
+        
+        url ='%s/api/v1/data/controller/core/switch[dpid="%s"]?select=stats/table' % (c.base_url,str(swDpid))
+        
+        c.rest.get(url)
+        helpers.test_log("Json Ouput: %s" % c.rest.result_json())             
+        helpers.test_log("Ouput: %s" % c.rest.content()) 
+        
+        content = c.rest.content()
+        helpers.log("Return value for number of flows is %s" % content[0]['stats']['table'][1]['active-count'])
+        flows = content[0]['stats']['table'][1]['active-count']    
+    
+        if flows == int(numFlow) :
+                helpers.test_log("Switch %s is correctly programmed with %s of flows" % (str(swName), str(flows)) ) 
+        else:
+                helpers.test_failure("Switch %s is NOT correctly programmed with flows,  expect: %s  Actual: %s" % (str(swName), str(numFlow), str(flows)) ) 
+                debug_url= '%s/api/v1/data/controller/core/switch[dpid=" %s"]?select=stats/flow' % (c.base_url,str(swDpid))  
+                c.rest.get(url) 
+                helpers.test_log("Json Ouput: %s" % c.rest.result_json())             
+                return False        
+ 
         

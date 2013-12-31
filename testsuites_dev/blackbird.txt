@@ -1,0 +1,89 @@
+* Setting
+Documentation   BigTap Test Suite
+Suite Setup     base suite setup
+Suite Teardown  base suite teardown
+Test Setup      base test setup
+Test Teardown   base test teardown
+Force Tags      BigTap Sanity
+Library         keywords_dev/Common.py
+Library         keywords/BsnCommon.py 
+Library         keywords_dev/BigTapCommonConfig.py 
+Library         keywords_dev/BigTapCommonShow.py 
+
+* Test Case
+#Verify all the common show cmd
+#	show command
+#	[Tags]  skip
+
+#Bigtap Prepare topology
+#	Bigtap Setup role
+#	[Tags]  skip
+
+Test IPv4 Address Group
+ 	bigtap_clean_up             policy
+ 	bigtap_clean_up             address-group
+	Config IPv4 Address Group	
+	Config bigtap policy        IPv4_ADD 
+	sleep_now                   short
+	REST add policy match       admin-view  IPv4_ADD   10   {"sequence": 10, "src-ip-list": "IPV4", "ether-type": 2048} 
+	REST add policy match       admin-view  IPv4_ADD   20   {"sequence": 20, "dst-ip-list": "IPV4", "ether-type": 2048} 	
+	sleep_now                   short	
+	Bigtap Verify policy        IPv4_ADD 
+    REST delete policy          admin-view  IPv4_ADD 
+	
+	[Tags] 	sanity
+	
+#Test IPv6 Address Group         
+##	Config bigtap policy        IPv6_ADD 
+#	sleep_now                   short
+#	REST add policy match       admin-view  IPv6_ADD   10   {"sequence": 10, "src-ip-list": "IPV6", "ether-type": 34525} 
+#	REST add policy match       admin-view  IPv6_ADD   20   {"sequence": 20, "dst-ip-list": "IPV6", "ether-type": 34525} 	
+#	sleep_now                   short
+#	Bigtap Verify policy        IPv6_ADD 
+#   REST delete policy          admin-view  IPv6_ADD  
+#	[Tags]    skip
+
+
+* Keywords
+Config bigtap policy
+	[Arguments]               ${pName}
+	REST add policy            admin-view  ${pName}  forward 
+	REST add policy interface  admin-view  ${pName}  S203-50  filter 
+	REST add policy interface  admin-view  ${pName}  S203-52  delivery 
+
+#bigtap policy match src         
+#	[Arguments]  ${pName}
+#	REST add policy match       admin-view  ${pName}  10   {"sequence": 10, "src-ip-list": "IPV4", "ether-type": 2048} 
+	
+#bigtap policy match dst    [Arguments]  ${pName}
+#	REST add policy match      admin-view   ${pName}  20   {"sequence": 20, "dst-ip-list": "IPV4", "ether-type": 2048} 
+
+show command  
+	REST show version  
+	REST show user 
+	REST show controller  
+	REST show bigtap  
+
+Config IPv4 Address Group  
+	REST bigtap create addgroup      IPV4   ipv4  
+	REST bigtap add address          IPV4   100.100.100.100   255.255.255.255  
+	REST bigtap show address group   IPV4   ipv4   
+	REST bigtap add address          IPV4   2001:100::0   FFFF:FFFF::0   negative
+
+Config IPv6 Address Group  
+	REST bigtap create addgroup      IPV6    ipv6  
+	REST bigtap add address          IPV6    2001:100::0   FFFF:FFFF::0   
+	REST bigtap show address group   IPV6    ipv6  
+	REST bigtap add address          IPV6   100.100.100.100   255.255.255.255   negative
+
+Bigtap Setup role 
+	${sidS204} =             REST get switch dpid       S204  
+	REST bigtap setup role   ${sidS204}   ethernet49    filter     S204-49 
+	REST bigtap setup role   ${sidS204}   ethernet42    delivery   S204-42 
+	REST bigtap setup role   ${sidS204}   ethernet43    service    S204-43 
+	REST bigtap setup role   ${sidS204}   ethernet44    service    S204-44 
+	
+Bigtap Verify policy
+	[Arguments]               ${pName}      
+   	REST show bigtap policy   ${pName}  1  1
+	REST get switch flow      S203 	5
