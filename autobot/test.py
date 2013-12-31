@@ -170,12 +170,28 @@ class Test(object):
                 else:
                     helpers.environment_failure("Mininet topology is missing.")
 
+                if 'type' not in params[key]:
+                    helpers.environment_failure("Must specify a Mininet type in topology file ('t6' or 'basic').")
+
+                mn_type = params[key]['type'].lower()
+                if mn_type not in ('t6', 'basic'):
+                    helpers.environment_failure("Mininet type must be 't6' or 'basic'.") 
+                    
+                helpers.log("Mininet type: %s" % mn_type)
                 helpers.log("Setting up mininet ('%s')" % key)
-                n.dev = devconf.T6MininetDevConf(host=n.ip,
-                                                 user=self.mininet_user(),
-                                                 password=self.mininet_password(),
-                                                 controller=self.controller().ip,
-                                                 topology=n.topology)
+
+                if mn_type == 't6':
+                    n.dev = devconf.T6MininetDevConf(host=n.ip,
+                                                     user=self.mininet_user(),
+                                                     password=self.mininet_password(),
+                                                     controller=self.controller().ip,
+                                                     topology=n.topology)
+                elif mn_type == 'basic':
+                    n.dev = devconf.MininetDevConf(host=n.ip,
+                                                   user=self.mininet_user(),
+                                                   password=self.mininet_password(),
+                                                   controller=self.controller().ip,
+                                                   topology=n.topology)
 
                 # Shortcuts
                 n.cli = n.dev.cli

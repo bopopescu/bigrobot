@@ -75,21 +75,31 @@ class MininetDevConf(DevConf):
     :param topology: str, in the form 'tree,4,2'
     """
     def __init__(self, host=None, user=None, password=None, controller=None,
-                 port=6653,
                  topology=None):
         if controller is None:
             helpers.environment_failure("Must specify a controller for Mininet.")
         if topology is None:
             helpers.environment_failure("Must specify a topology for Mininet.")
 
-        super(T6MininetDevConf, self).__init__(host, user, password, 't6mininet')
+        super(MininetDevConf, self).__init__(host, user, password, 't6mininet')
         
         # Enter CLI mode
         cmd = ("sudo mn --controller=remote --ip=%s --topo=%s --mac"
                % (controller, topology))
         helpers.log("Execute Mininet cmd: %s" % cmd)
+
+        # Possible Mininet prompts:
+        #   mininet>                 - if successfully acquired Mininet CLI
+        #   mininet@t6-mininet: ~$   - on failure
+        self.conn.set_prompt(r'(mininet>|mininet@.*mininet:.*\$)')
         
-        # Mininet prompt
-        self.conn.set_prompt('mininet>')
         self.cli(cmd)
-        helpers.log("Response: %s" % self.response())
+        out = self.response()
+        helpers.log("Response: %s" % out)
+
+        err = helpers.any_match(out, r'(Cleanup complete|error: no such option)')
+        if err:
+            helpers.test_failure("Mininet CLI unexpected error - %s." % err)
+
+        # Success. Set Mininet prompt.
+        self.conn.set_prompt('mininet>')
