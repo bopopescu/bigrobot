@@ -191,28 +191,26 @@ class BsnSwitchCommon(object):
         conn.login(Account("admin","adminadmin"))
         conn.execute('enable')
         conn.execute('conf t')
-        input = "port-channel " + str(pcNumber) + " interface-list " + str(portList) + "  hash " + str(hashMode)
-        conn.execute(input)
-        conn.send('logout\r')
-        conn.close()
+        input_value = "port-channel " + str(pcNumber) + " interface-list " + str(portList) + "  hash " + str(hashMode)
+        helpers.log("Input is %s" % input_value )
+        try:
+            conn.execute(input_value)
+        except:
+            return False            
         return True
 
-    def verify_portchannel(self,ip_address,pcNumber):
+    def unconfigure_portchannel(self,ip_address,pcNumber):
         t = test.Test()
         conn = SSH2()
         conn.connect(ip_address)
         conn.login(Account("admin","adminadmin"))
         conn.execute('enable')
-        intf_name = "port-channel"+pcNumber
-        input = "show interface " + intf_name
+        conn.execute('conf t')
+        input = "no port-channel " + str(pcNumber) + " "
         conn.execute(input)
-        helpers.log("Multiline is %s" % (string.split(conn.response, '\n')))
-        lagNumber = 60 + int(pcNumber)
-        input1=str(lagNumber) + "* " + intf_name
-        if str(input1) in conn.response:
-                return True
-        else:
-                return False
+        conn.send('logout\r')
+        conn.close()
+        return True
         
     def return_intf_macaddress(self,ip_address,intf_name):
         t = test.Test()
@@ -241,6 +239,23 @@ class BsnSwitchCommon(object):
         intf_state = lastvalue.rstrip('\n')
         helpers.log("Value in content[1] is %s \n and intf_state is %s" %(content[1],intf_state))
         return intf_state
+
+    def verify_portchannel(self,ip_address,pcNumber):
+        t = test.Test()
+        conn = SSH2()
+        conn.connect(ip_address)
+        conn.login(Account("admin","adminadmin"))
+        conn.execute('enable')
+        intf_name = "port-channel"+pcNumber
+        input = "show interface " + intf_name
+        conn.execute(input)
+        helpers.log("Multiline is %s" % (string.split(conn.response, '\n')))
+        lagNumber = 60 + int(pcNumber)
+        input1=str(lagNumber) + "* " + intf_name
+        if str(input1) in conn.response:
+                return True
+        else:
+                return False
     
     def verify_portchannel_members(self,ip_address,pc_number,intf_name):
         t = test.Test()
@@ -256,6 +271,7 @@ class BsnSwitchCommon(object):
         else :
             for i in range(8,len(content)):
                 intfName = ' '.join(content[i].split()).split(" ",2)
+                helpers.log('intfName is %s' % intfName)
                 if len(intfName) >1 and intfName[1] == intf_name :
                         helpers.log("IntfName is %s \n" % (intfName[1]))
                         return True
@@ -283,5 +299,73 @@ class BsnSwitchCommon(object):
                             helpers.log("Intf Name is %s and state is %s \n" % (intfName[1], intfName[0]))
                             return False
         return False
-        
-        
+
+#Objective: Shut/Unshut interface
+#Inputs: Switch IP Address (ip_address), Interface Name and State (Yes="shutdown", No="no shutdown")
+#Output: Shut/No-Shut interface
+
+    def change_interface_state(self,ip_address,interface_name,state):
+        t = test.Test()
+        conn = SSH2()
+        conn.connect(ip_address)
+        conn.login(Account("admin","adminadmin"))
+        conn.execute('enable')
+        conn.execute('conf t')
+        if state =="yes" or state =="Yes":
+                input = "interface " + str(interface_name) + " shutdown"
+        else:
+                input = "no interface " + str(interface_name) + " shutdown"
+        conn.execute(input)
+        conn.send('logout\r')
+        conn.close()
+        return True
+
+#Objective:  Shut/Unshut interface via broadcom shell command.
+#Inputs: Switch IP Address (ip_address), Interface Number and State (Yes="shutdown", No="no shutdown")
+#Output: Shut/No-Shut interface
+    def change_interface_state_bshell(self,ip_address,interface_num,state):
+        t = test.Test()
+        conn = SSH2()
+        conn.connect(ip_address)
+        conn.login(Account("admin","adminadmin"))
+        conn.execute('enable')
+        conn.execute('conf t')
+        if state =="yes" or state =="Yes":
+                input = 'debug ofad "help; ofad-ctl bshell port ' + str(interface_num) + ' enable=0"'
+        else:
+                input = 'debug ofad "help; ofad-ctl bshell port ' + str(interface_num) + ' enable=1"'
+        conn.execute(input)
+        conn.send('logout\r')
+        conn.close()
+        return True
+
+#Objective: Grep syslog on switch for string
+#Input:     IP Address of Switch, string to grep for.
+#Output:    Output string.
+    def grep_switch_syslog(self,ip_address,string_to_grep):
+        t = test.Test()
+        conn = SSH2()
+        conn.connect(ip_address)
+        conn.login(Account("admin","adminadmin"))
+        conn.execute('enable')
+        input="debug ofad 'help; cat /var/log/syslog | grep \"" + str(string_to_grep) + "\"'"
+        conn.execute(input)
+        output = conn.response
+        conn.send('logout\r')
+        conn.close()
+        return output
+
+#Objective: Execute CLI commands on switch, where we do not care for ouput from switch.
+#Input:  IP Address of Switch, CLI command
+#Output: Always True
+    def execute_switch_command(self,ip_address,cli_cmd):
+        t = test.Test()
+        conn = SSH2()
+        conn.connect(ip_address)
+        conn.login(Account("admin","adminadmin"))
+        conn.execute('enable')
+        conn.execute(cli_cmd)
+        conn.send('logout\r')
+        conn.close()
+        return True 
+
