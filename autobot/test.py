@@ -25,10 +25,12 @@ class Test(object):
             self._init_completed = False
             
             config = ''.join((helpers.get_path_autobot_config(), '/bsn.yaml'))
+            helpers.log("Loading config file %s" % config)
             self._bsn_config = helpers.load_config(config)
 
             topo = helpers.bigrobot_topology()
             helpers.error_exit_if_file_not_exist("Topology file not found", topo)
+            helpers.log("Loading topology file %s" % topo)
             self._topology_params = helpers.load_config(topo)
             self._topology = {}
     

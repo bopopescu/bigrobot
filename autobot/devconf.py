@@ -65,6 +65,7 @@ class T6MininetDevConf(DevConf):
         # T6Mininet prompt
         self.conn.set_prompt('t6-mininet>')
         self.cli(cmd)
+        helpers.log("Response: %s" % self.response())
 
 
 class MininetDevConf(DevConf):
@@ -88,3 +89,4 @@ class MininetDevConf(DevConf):
         # Mininet prompt
         self.conn.set_prompt('mininet>')
         self.cli(cmd)
+        helpers.log("Response: %s" % self.response())
