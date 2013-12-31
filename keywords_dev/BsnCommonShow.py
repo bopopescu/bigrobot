@@ -154,3 +154,18 @@ class BsnCommonShow(object):
             helpers.test_failure(c.rest.error())
         content = c.rest.content()
         return content[0]['interface'][0]['hardware-address']
+    
+    def verify_interface_is_up(self,switchDpid,interfaceName):
+        t=test.Test()
+        c = t.controller()
+        http_port=8082
+        url='http://%s:%s/api/v1/data/controller/core/switch[interface/name="%s"][dpid="%s"]?select=interface[name="%s"]' %(c.ip,c.http_port,interfaceName,switchDpid,interfaceName)
+        c.rest.get(url)
+        helpers.test_log("Ouput: %s" % c.rest.result_json())
+        if not c.rest.status_code_ok():
+            helpers.test_failure(c.rest.error())
+        content = c.rest.content()
+        if (content[0]['interface'][0]['state-flags'] == 0):
+                return True
+        else:
+                return False
