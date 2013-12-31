@@ -1,0 +1,18 @@
+# Topology description is in YAML format - see http://en.wikipedia.org/wiki/YAML
+#
+# c<n>: Controllers
+# s<n>: Switches
+# h<n>: Hosts (including bare metal)
+# mn  : Mininet server
+
+c1:
+  ip: 10.192.5.51
+  #ip: 10.192.5.56
+
+mn:
+  ip: 10.192.7.39
+  #ip: 10.192.7.213
+
+  # Mininet topology
+  topology: -s 0 -r 1 -m 2 -x 0 -n 0
+
