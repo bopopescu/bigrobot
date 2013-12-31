@@ -1,5 +1,5 @@
 import autobot.helpers as helpers
-from Exscript import Host, Account
+from Exscript import Account
 from Exscript.protocols import SSH2
 
 class DevConf(object):
@@ -46,7 +46,8 @@ class ControllerDevConf(DevConf):
 
 class T6MininetDevConf(DevConf):
     """
-    :param topology: str, in the form '-s 0 -r 1 -m 2 -x 0 -n 0'
+    :param topology: str, in the form
+        '--num-spine 0 --num-rack 1 --num-bare-metal 2 --num-hypervisor 0'
     """
     def __init__(self, host=None, user=None, password=None, controller=None,
                  port=6653,
@@ -59,7 +60,8 @@ class T6MininetDevConf(DevConf):
         super(T6MininetDevConf, self).__init__(host, user, password, 't6mininet')
         
         # Enter CLI mode
-        cmd = "sudo /opt/t6-mininet/run.sh -c %s:%s %s" % (controller, port, topology)
+        cmd = ("sudo /opt/t6-mininet/run.sh -c %s:%s %s"
+               % (controller, port, topology))
         helpers.log("Execute T6Mininet cmd: %s" % cmd)
         
         # T6Mininet prompt
@@ -83,7 +85,8 @@ class MininetDevConf(DevConf):
         super(T6MininetDevConf, self).__init__(host, user, password, 't6mininet')
         
         # Enter CLI mode
-        cmd = "sudo mn --controller=remote --ip=%s --topo=%s --mac" % (controller, topology)
+        cmd = ("sudo mn --controller=remote --ip=%s --topo=%s --mac"
+               % (controller, topology))
         helpers.log("Execute Mininet cmd: %s" % cmd)
         
         # Mininet prompt

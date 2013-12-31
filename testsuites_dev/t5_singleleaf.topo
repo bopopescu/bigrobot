@@ -14,5 +14,5 @@ mn:
   #ip: 10.192.7.213
 
   # Mininet topology
-  topology: -s 0 -r 1 -m 2 -x 0 -n 0
+  topology: --num-spine 0 --num-rack 1 --num-bare-metal 2 --num-hypervisor 0
 
