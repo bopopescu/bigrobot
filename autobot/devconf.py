@@ -52,6 +52,29 @@ class T6MininetDevConf(DevConf):
                  port=6653,
                  topology=None):
         if controller is None:
+            helpers.environment_failure("Must specify a controller for T6Mininet.")
+        if topology is None:
+            helpers.environment_failure("Must specify a topology for T6Mininet.")
+
+        super(T6MininetDevConf, self).__init__(host, user, password, 't6mininet')
+        
+        # Enter CLI mode
+        cmd = "sudo /opt/t6-mininet/run.sh -c %s:%s %s" % (controller, port, topology)
+        helpers.log("Execute T6Mininet cmd: %s" % cmd)
+        
+        # T6Mininet prompt
+        self.conn.set_prompt('t6-mininet>')
+        self.cli(cmd)
+
+
+class MininetDevConf(DevConf):
+    """
+    :param topology: str, in the form 'tree,4,2'
+    """
+    def __init__(self, host=None, user=None, password=None, controller=None,
+                 port=6653,
+                 topology=None):
+        if controller is None:
             helpers.environment_failure("Must specify a controller for Mininet.")
         if topology is None:
             helpers.environment_failure("Must specify a topology for Mininet.")
@@ -59,9 +82,9 @@ class T6MininetDevConf(DevConf):
         super(T6MininetDevConf, self).__init__(host, user, password, 't6mininet')
         
         # Enter CLI mode
-        cmd = "sudo /opt/t6-mininet/run.sh -c %s:%s %s" % (controller, port, topology)
+        cmd = "sudo mn --controller=remote --ip=%s --topo=%s --mac" % (controller, topology)
         helpers.log("Execute Mininet cmd: %s" % cmd)
         
-        # T6Mininet prompt
-        self.conn.set_prompt('t6-mininet>')
+        # Mininet prompt
+        self.conn.set_prompt('mininet>')
         self.cli(cmd)
