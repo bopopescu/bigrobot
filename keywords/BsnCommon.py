@@ -9,13 +9,13 @@ class BsnCommon(object):
         pass
         
     def base_suite_setup(self):
-        t = test.Test()
+        test.Test()
 
     def base_suite_teardown(self):
         pass
 
     def base_test_setup(self):
-        t = test.Test()
+        test.Test()
 
     def base_test_teardown(self):
         pass
@@ -53,8 +53,7 @@ class BsnCommon(object):
             return subnet_list[first_index:]
         
         return subnet_list[first_index:last_index]
-    
-    
+   
     def ip_range_byte_mod(self, subnet, first=None, last=None, byte=None):
         """
         :param byte: (str) [Optional] The byte field in the IP address to
@@ -87,3 +86,4 @@ class BsnCommon(object):
             new_subnet_list.append('.'.join(byte_list))
             
         return new_subnet_list
+
