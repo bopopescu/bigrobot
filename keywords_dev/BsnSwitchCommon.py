@@ -3,6 +3,7 @@ import autobot.test as test
 from Exscript.protocols import SSH2
 from Exscript import Account, Host
 import subprocess
+import string
 
 class BsnSwitchCommon(object):
 
@@ -62,7 +63,22 @@ class BsnSwitchCommon(object):
         conn.send('exit\r')
         conn.close()
         return True
-
+    
+    def delete_snmp_keyword(self,ip_address,snmpKey,snmpValue):
+        t = test.Test()
+        conn = SSH2()
+        conn.connect(ip_address)
+        conn.login(Account("admin","adminadmin"))
+        conn.execute('enable')
+        conn.execute('conf t')
+        input="no snmp-server %s %s" % (str(snmpKey),str(snmpValue))
+        conn.execute(input)
+        conn.send('exit\r')
+        conn.send('exit\r')
+        conn.send('exit\r')
+        conn.close()
+        return True
+    
     def configure_snmp_host(self,ip_address,remHostIP,snmpKey,snmpCommunity,snmpPort):
         t = test.Test()
         conn = SSH2()
@@ -75,6 +91,25 @@ class BsnSwitchCommon(object):
         else:
             snmpKey == "informs"
         input="snmp-server host %s %s %s udp-port %s" % (str(remHostIP),str(snmpKey),str(snmpCommunity),str(snmpPort))
+        conn.execute(input)
+        conn.send('exit\r')
+        conn.send('exit\r')
+        conn.send('exit\r')
+        conn.close()
+        return True
+
+    def delete_snmp_host(self,ip_address,remHostIP,snmpKey,snmpCommunity,snmpPort):
+        t = test.Test()
+        conn = SSH2()
+        conn.connect(ip_address)
+        conn.login(Account("admin","adminadmin"))
+        conn.execute('enable')
+        conn.execute('conf t')
+        if snmpKey == "traps" or snmpKey == "trap":
+            snmpKey == "traps"
+        else:
+            snmpKey == "informs"
+        input="no snmp-server host %s %s %s udp-port %s" % (str(remHostIP),str(snmpKey),str(snmpCommunity),str(snmpPort))
         conn.execute(input)
         conn.send('exit\r')
         conn.send('exit\r')
@@ -148,3 +183,105 @@ class BsnSwitchCommon(object):
         conn.send('logout\r')
         conn.close()
         return True
+    
+    def configure_portchannel(self,ip_address,pcNumber,portList,hashMode):
+        t = test.Test()
+        conn = SSH2()
+        conn.connect(ip_address)
+        conn.login(Account("admin","adminadmin"))
+        conn.execute('enable')
+        conn.execute('conf t')
+        input = "port-channel " + str(pcNumber) + " interface-list " + str(portList) + "  hash " + str(hashMode)
+        conn.execute(input)
+        conn.send('logout\r')
+        conn.close()
+        return True
+
+    def verify_portchannel(self,ip_address,pcNumber):
+        t = test.Test()
+        conn = SSH2()
+        conn.connect(ip_address)
+        conn.login(Account("admin","adminadmin"))
+        conn.execute('enable')
+        intf_name = "port-channel"+pcNumber
+        input = "show interface " + intf_name
+        conn.execute(input)
+        helpers.log("Multiline is %s" % (string.split(conn.response, '\n')))
+        lagNumber = 60 + int(pcNumber)
+        input1=str(lagNumber) + "* " + intf_name
+        if str(input1) in conn.response:
+                return True
+        else:
+                return False
+        
+    def return_intf_macaddress(self,ip_address,intf_name):
+        t = test.Test()
+        conn = SSH2()
+        conn.connect(ip_address)
+        conn.login(Account("admin","adminadmin"))
+        input = "show interface " + str(intf_name) + " detail"
+        conn.execute(input)
+        content = string.split(conn.response, '\n')
+        (firstvalue,colon,lastvalue) = content[2].strip().partition(':')
+        lastvalue=str(lastvalue).rstrip('\n').replace(" ", "")
+        mac_address = lastvalue.rstrip('\n')
+        helpers.log("Value in content[1] is %s \n and mac address is %s" %(content[1],mac_address))
+        return mac_address
+
+    def return_intf_state(self,ip_address,intf_name):
+        t = test.Test()
+        conn = SSH2()
+        conn.connect(ip_address)
+        conn.login(Account("admin","adminadmin"))
+        input = "show interface " + str(intf_name) + " detail"
+        conn.execute(input)
+        content = string.split(conn.response, '\n')
+        helpers.log("Value in content[1] is '%s' " %(content[1]))
+        (firstvalue,colon,lastvalue) = content[1].rstrip('\n').strip().split(' ')
+        intf_state = lastvalue.rstrip('\n')
+        helpers.log("Value in content[1] is %s \n and intf_state is %s" %(content[1],intf_state))
+        return intf_state
+    
+    def verify_portchannel_members(self,ip_address,pc_number,intf_name):
+        t = test.Test()
+        conn = SSH2()
+        conn.connect(ip_address)
+        conn.login(Account("admin","adminadmin"))
+        input = "show port-channel " + str(pc_number)
+        conn.execute(input)
+        content = string.split(conn.response, '\n')
+        helpers.log("Length of content %d" % (len(content)))
+        if len(content) < 8 :
+            return False
+        else :
+            for i in range(8,len(content)):
+                intfName = ' '.join(content[i].split()).split(" ",2)
+                if len(intfName) >1 and intfName[1] == intf_name :
+                        helpers.log("IntfName is %s \n" % (intfName[1]))
+                        return True
+        return False
+
+    def verify_portchannel_member_state(self,ip_address,pc_number,intf_name):
+        t = test.Test()
+        conn = SSH2()
+        conn.connect(ip_address)
+        conn.login(Account("admin","adminadmin"))
+        input = "show port-channel " + str(pc_number)
+        conn.execute(input)
+        content = string.split(conn.response, '\n')
+        helpers.log("Length of content %d" % (len(content)))
+        if len(content) < 8 :
+            return False
+        else :
+            for i in range(8,len(content)):
+                intfName = ' '.join(content[i].split()).split(" ",2)
+                if len(intfName) >1 and intfName[1] == intf_name :
+                        if intfName[0] == "*" :
+                            helpers.log("Intf Name is %s and state is %s \n" % (intfName[1], intfName[0]))
+                            return True
+                        else:
+                            helpers.log("Intf Name is %s and state is %s \n" % (intfName[1], intfName[0]))
+                            return False
+        return False
+        
+        
