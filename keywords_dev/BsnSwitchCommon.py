@@ -4,6 +4,8 @@ from Exscript.protocols import SSH2
 from Exscript import Account, Host
 import subprocess
 import string
+import telnetlib
+import time
 
 class BsnSwitchCommon(object):
 
@@ -18,6 +20,7 @@ class BsnSwitchCommon(object):
         c.rest.set_session_cookie(session_cookie)
 
     def activate_deactivate_controller(self,ip_address,iteration):
+        """Activate and deactivate controller configuration on switch"""
         t = test.Test()
         c = t.controller()
         conn = SSH2()
@@ -342,13 +345,13 @@ class BsnSwitchCommon(object):
 #Objective: Grep syslog on switch for string
 #Input:     IP Address of Switch, string to grep for.
 #Output:    Output string.
-    def grep_switch_syslog(self,ip_address,string_to_grep):
+    def execute_switch_command_return_output(self,ip_address,input):
         t = test.Test()
         conn = SSH2()
         conn.connect(ip_address)
         conn.login(Account("admin","adminadmin"))
         conn.execute('enable')
-        input="debug ofad 'help; cat /var/log/syslog | grep \"" + str(string_to_grep) + "\"'"
+#        input="debug ofad 'help; cat /var/log/syslog | grep \"" + str(string_to_grep) + "\"'"
         conn.execute(input)
         output = conn.response
         conn.send('logout\r')
@@ -369,3 +372,22 @@ class BsnSwitchCommon(object):
         conn.close()
         return True 
 
+    def flap_interface_ma1(self,conIP,conPort):
+        user = "admin"
+        password = "adminadmin"
+        tn = telnetlib.Telnet(str(conIP),int(conPort))
+        tn.read_until("login: ", 3)
+        tn.write(user + "\r\n")
+        tn.read_until("Password: ", 3)
+        tn.write(password + "\r\n")
+        tn.read_until('')
+        tn.write("\r\n" + "show running-config" + "\r\n")
+        tn.write("\r\n" + "debug bash" + "\r\n")
+        tn.write("ifconfig ma1 " + "\r\n")
+        tn.write("ifconfig ma1 down" + "\r\n")
+        time.sleep(2)
+        tn.write("ifconfig ma1 up" + "\r\n")
+        tn.write("exit" + "\r\n")
+        tn.write("exit" + "\r\n")
+        tn.close()
+        return True 

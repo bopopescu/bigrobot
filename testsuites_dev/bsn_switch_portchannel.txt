@@ -19,6 +19,7 @@ ${switchlight_version}  SwitchLight 2.0.0-beta1
 
 
 *Test Case
+
 T5847-1: Verify port-channel (hash-mode:L3) interface (1G links) is up on switch (LB9)  
 	verify lag-1glb9-up
 	
@@ -404,10 +405,10 @@ verify T5839
 verify T5844
 #Verify log messages are generated for link up/link down events for LAG interfaces
 	change interface state  ${ip_address_1}  port-channel1  Yes
-	${syslog_op}=  grep switch syslog  ${ip_address_1}  Disabling port port-channel1
+	${syslog_op}=  execute switch command return output  ${ip_address_1}  debug ofad 'help; cat /var/log/syslog | grep \"Disabling port port-channel1\"'
 	Should Contain  ${syslog_op}  brcmdriver: INFO: Disabling port port-channel1 (61)
 	change interface state  ${ip_address_1}  port-channel1  No
-	${syslog_op}=  grep switch syslog  ${ip_address_1}  Enabling port port-channel1
+	${syslog_op}=  execute switch command return output  ${ip_address_1}  debug ofad 'help; cat /var/log/syslog | grep \"Enabling port port-channel1\"'
 	Should Contain  ${syslog_op}  brcmdriver: INFO: Enabling port port-channel1 (61)
 
 verify T5845
