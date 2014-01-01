@@ -36,7 +36,7 @@ T6017: Restart process NTP and verify NTP Status
 T6018: Restart process RSYSLOG
 	process rsyslog
 
-T6011: Reboot Switch and verify policy flows get re-installed
+T6011: Reboot Switch and verify policy flow gets re-installed
 	reboot switch
 
 T6013: Flap interface ma1 and verify bigtap flow is not affected.
