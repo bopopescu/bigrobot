@@ -1,5 +1,5 @@
 import autobot.helpers as helpers
-from Exscript import Host, Account
+from Exscript import Account
 from Exscript.protocols import SSH2
 
 class DevConf(object):
@@ -46,7 +46,8 @@ class ControllerDevConf(DevConf):
 
 class T6MininetDevConf(DevConf):
     """
-    :param topology: str, in the form '-s 0 -r 1 -m 2 -x 0 -n 0'
+    :param topology: str, in the form
+        '--num-spine 0 --num-rack 1 --num-bare-metal 2 --num-hypervisor 0'
     """
     def __init__(self, host=None, user=None, password=None, controller=None,
                  port=6653,
@@ -59,7 +60,8 @@ class T6MininetDevConf(DevConf):
         super(T6MininetDevConf, self).__init__(host, user, password, 't6mininet')
         
         # Enter CLI mode
-        cmd = "sudo /opt/t6-mininet/run.sh -c %s:%s %s" % (controller, port, topology)
+        cmd = ("sudo /opt/t6-mininet/run.sh -c %s:%s %s"
+               % (controller, port, topology))
         helpers.log("Execute T6Mininet cmd: %s" % cmd)
         
         # T6Mininet prompt
@@ -73,20 +75,31 @@ class MininetDevConf(DevConf):
     :param topology: str, in the form 'tree,4,2'
     """
     def __init__(self, host=None, user=None, password=None, controller=None,
-                 port=6653,
                  topology=None):
         if controller is None:
             helpers.environment_failure("Must specify a controller for Mininet.")
         if topology is None:
             helpers.environment_failure("Must specify a topology for Mininet.")
 
-        super(T6MininetDevConf, self).__init__(host, user, password, 't6mininet')
+        super(MininetDevConf, self).__init__(host, user, password, 't6mininet')
         
         # Enter CLI mode
-        cmd = "sudo mn --controller=remote --ip=%s --topo=%s --mac" % (controller, topology)
+        cmd = ("sudo mn --controller=remote --ip=%s --topo=%s --mac"
+               % (controller, topology))
         helpers.log("Execute Mininet cmd: %s" % cmd)
+
+        # Possible Mininet prompts:
+        #   mininet>                 - if successfully acquired Mininet CLI
+        #   mininet@t6-mininet: ~$   - on failure
+        self.conn.set_prompt(r'(mininet>|mininet@.*mininet:.*\$)')
         
-        # Mininet prompt
-        self.conn.set_prompt('mininet>')
         self.cli(cmd)
-        helpers.log("Response: %s" % self.response())
+        out = self.response()
+        helpers.log("Response: %s" % out)
+
+        err = helpers.any_match(out, r'(Cleanup complete|error: no such option)')
+        if err:
+            helpers.test_failure("Mininet CLI unexpected error - %s." % err)
+
+        # Success. Set Mininet prompt.
+        self.conn.set_prompt('mininet>')
