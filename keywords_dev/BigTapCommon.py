@@ -595,12 +595,15 @@ class BigTapCommon(object):
         
            Input:
                 `viewName`           :    RBAC View Name for eg. admin-view
+                
                 `policyName`         :    Policy Name
+                
                 `policyAction`       :    Desired action. Values are `forward`, `rate-measure` and `inactive`
         
            Returns: True if action change for policy is successful, false otherwise
             Examples:
                 | rest change policy action  |  admin-view  |  testPolicy  |  rate-measure |  
+                
                 Result is 
                 bigtap policy testPolicy rbac-permission admin-view
                     action rate-measure
