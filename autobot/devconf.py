@@ -28,21 +28,43 @@ class DevConf(object):
             self.conn.set_driver('ios')
         elif os == 't6mininet':
             self.conn.set_driver('shell')
+        
+        self.host = host
+        self.user = user
+        self.password = password
+        self.os = os
+        self.last_result = None
 
-    def cmd(self, cmd):
+    def cmd(self, cmd, verbose=False):
+        if verbose:
+            helpers.log("Execute command: %s" % cmd, level=4)
+            
         self.conn.execute(cmd)
+        self.last_result = { 'content': self.conn.response }
+        
+        if verbose:
+            helpers.log("Command output: %s" % self.content(), level=4) 
 
     # Alias
     cli = cmd
     
-    def response(self):
-        return self.conn.response
-    
+    def result(self):
+        return self.last_result
+
+    def content(self):
+        return self.result()['content']
+
+    def close(self):
+        helpers.log("Closing device %s (OS=%s)." % (self.host, self.os))
 
 class ControllerDevConf(DevConf):
     def __init__(self, host=None, user=None, password=None):
         super(ControllerDevConf, self).__init__(host, user, password, 'bvs')
-    
+
+    def close(self):
+        super(ControllerDevConf, self).close()
+        # !!! FIXME: Need to close the controller connection
+        
 
 class T6MininetDevConf(DevConf):
     """
@@ -62,12 +84,26 @@ class T6MininetDevConf(DevConf):
         # Enter CLI mode
         cmd = ("sudo /opt/t6-mininet/run.sh -c %s:%s %s"
                % (controller, port, topology))
-        helpers.log("Execute T6Mininet cmd: %s" % cmd)
         
-        # T6Mininet prompt
+        # Possible Mininet prompts:
+        #   mininet>                 - if successfully acquired Mininet CLI
+        #   mininet@t6-mininet: ~$   - on failure
+        self.conn.set_prompt(r'(t6-mininet>|mininet@.*mininet:.*\$)')
+
+        self.cli(cmd, verbose=True)
+
+        # Error handling - placeholder (see MinietDevConf for example)
+
+        # Success. Set Mininet prompt.
         self.conn.set_prompt('t6-mininet>')
-        self.cli(cmd)
-        helpers.log("Response: %s" % self.response())
+    
+    def close(self):
+        super(T6MininetDevConf, self).close()
+
+        self.conn.set_prompt(r'(t6-mininet>|mininet@.*mininet:.*\$)')
+        self.cmd('exit', verbose=True)  # Exit mininet CLI
+        self.conn.close(force=True)
+        helpers.log("T6MininetDevConf - force closed the device connection.")
 
 
 class MininetDevConf(DevConf):
@@ -93,13 +129,21 @@ class MininetDevConf(DevConf):
         #   mininet@t6-mininet: ~$   - on failure
         self.conn.set_prompt(r'(mininet>|mininet@.*mininet:.*\$)')
         
-        self.cli(cmd)
-        out = self.response()
-        helpers.log("Response: %s" % out)
+        self.cli(cmd, verbose=True)
 
+        # Error handling        
+        out = self.content()
         err = helpers.any_match(out, r'(Cleanup complete|error: no such option)')
         if err:
             helpers.test_failure("Mininet CLI unexpected error - %s." % err)
 
         # Success. Set Mininet prompt.
         self.conn.set_prompt('mininet>')
+
+    def close(self):
+        super(MininetDevConf, self).close()
+
+        self.conn.set_prompt(r'(mininet>|mininet@.*mininet:.*\$)')
+        self.cmd('exit', verbose=True)  # Exit mininet CLI
+        self.conn.close(force=True)
+        helpers.log("MininetDevConf - force closed the device connection.")
