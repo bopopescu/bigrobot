@@ -12,7 +12,12 @@ class BsnCommon(object):
         test.Test()
 
     def base_suite_teardown(self):
-        pass
+        t = test.Test()
+        for n in t.topology():
+            node = t.node(n)
+            if t.is_controller(n) or t.is_mininet(n):
+                helpers.log("Closing device connection for node name: %s" % n)
+                node.dev.close()
 
     def base_test_setup(self):
         test.Test()
@@ -32,6 +37,10 @@ class BsnCommon(object):
 
     def manual_failed(self):
         raise AssertionError("MANUAL FAILED")
+
+    def show_test_topology_params(self):
+        t = test.Test()
+        helpers.log("Test topology params: %s" % helpers.prettify(t.topology_params()))
 
     def ip_range(self, subnet, first=None, last=None):
         """

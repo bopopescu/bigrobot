@@ -71,17 +71,13 @@ class RestClient(object):
     def result(self, result=None):
         if not result:
             result = self.last_result
-        #return helpers.to_json(result)
         return result
 
     def result_json(self, result=None):
         return helpers.to_json(self.result(result))
 
     def content(self, result=None):
-        if not result:
-            result = self.last_result
-        #return helpers.to_json(result['content'])
-        return result['content']
+        return self.result(result)['content']
 
     def content_json(self, result=None):
         return helpers.to_json(self.content(result))

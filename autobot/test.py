@@ -72,17 +72,20 @@ class Test(object):
         """
         return self._topology_params
 
-    def topology(self, node=None):
-        if node:
-            return self._topology[node]
+    def topology(self, name=None):
+        if name:
+            return self._topology[name]
         else:
             return self._topology
     
-    def controller(self):
-        return self.topology('c1')
+    def controller(self, name='c1'):
+        return self.topology(name)
     
     def mininet(self):
         return self.topology('mn')
+    
+    def node(self, name):
+        return self.topology(name)
     
     def is_controller(self, name):
         match = re.match(r'^(c\d|controller\d?|master|slave)$', name)
@@ -152,6 +155,10 @@ class Test(object):
                 n.put = n.rest.put
                 n.patch = n.rest.patch
                 n.delete = n.rest.delete
+                n.rest_content = n.rest.content
+                n.rest_content_json = n.rest.content_json
+                n.rest_result = n.rest.result
+                n.rest_result_json = n.rest.result_json
                 
                 n.dev = devconf.ControllerDevConf(host=n.ip,
                                                   user=self.controller_user(),
@@ -159,7 +166,8 @@ class Test(object):
                 
                 # Shortcuts
                 n.cli = n.dev.cli
-                n.cli_response = n.dev.response
+                n.cli_content = n.dev.content
+                n.cli_result = n.dev.result
                 
                 self._topology[key] = n
 
@@ -195,7 +203,8 @@ class Test(object):
 
                 # Shortcuts
                 n.cli = n.dev.cli
-                n.cli_response = n.dev.response
+                n.cli_content = n.dev.content
+                n.cli_result = n.dev.result
                 
                 self._topology[key] = n
             
