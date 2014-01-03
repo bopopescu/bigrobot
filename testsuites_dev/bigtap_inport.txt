@@ -7,10 +7,8 @@ Test Setup  bigtap-inport test setup
 Test Teardown  base test teardown
 Force Tags  Inport Sanity
 Library  keywords/BsnCommon.py
-Library  keywords_dev/BsnCommonShow.py
-Library  keywords_dev/BsnCommonConfig.py
-Library  keywords_dev/BigTapCommonConfig.py
-Library  keywords_dev/BigTapCommonShow.py
+Library  keywords_dev/BsnCommon.py
+Library  keywords_dev/BigTapCommon.py
 
 * Variable
 ${ip_address_1}  10.192.75.7

@@ -6,8 +6,7 @@ Test Setup  base test setup
 Test Teardown  base test teardown
 Force Tags  SNMP Sanity
 Library  keywords/BsnCommon.py
-Library  keywords_dev/BsnCommonConfig.py
-Library  keywords_dev/BsnCommonShow.py
+Library  keywords_dev/BsnCommon.py
 Library  keywords_dev/BsnSwitchCommon.py
 
 
