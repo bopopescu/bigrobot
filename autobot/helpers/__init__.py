@@ -165,6 +165,13 @@ def log(s, level=3):
 test_log = log
 
 
+def prettify(data):
+    """
+    Return the Python object as a pretty-print formatted string.
+    """
+    return pprint.pformat(data)
+
+
 def prettify_log(s, data, level=3):
     analyze(''.join((s, '\n', prettify(data))), level)
 
@@ -173,7 +180,7 @@ def sleep(s):
     """
     Sleep for <s> seconds.
     """
-    time.sleep(s)
+    time.sleep(int(s))
 
 
 def from_json(json_str):
@@ -294,13 +301,6 @@ def file_write_append_once(filename, s):
     f = open(filename, 'a')
     f.write(s)
     f.close()
-
-
-def prettify(data):
-    """
-    Return the Python object as a pretty-print formatted string.
-    """
-    return pprint.pformat(data)
 
 
 def bigtest_node_info():

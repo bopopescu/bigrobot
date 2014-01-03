@@ -82,7 +82,7 @@ class BigTapCommonShow(object):
         c = t.controller()
         aliasExists=0
         c.http_port=8082
-        url ='http://%s:%s/api/v1/data/controller/core/switch?select=alias'   % (c.base_url)
+        url ='http://%s:%s/api/v1/data/controller/core/switch?select=alias'   % (c.ip,c.http_port)
         c.rest.get(url)
         content = c.rest.content()
         for i in range(0,len(content)) :

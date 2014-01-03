@@ -2,7 +2,7 @@ import autobot.helpers as helpers
 import autobot.test as test
 
 
-class BigWireCommonShow(object):
+class BigWireCommon(object):
 
     def __init__(self):
         t = test.Test()
@@ -14,10 +14,20 @@ class BigWireCommonShow(object):
         session_cookie = result['content']['session_cookie']
         c.rest.set_session_cookie(session_cookie)
 
-#   Objective: Execute CLI Commands "show bigwire summary", "show bigwire tenant", "show bigwire pseudowire" and "show bigwire  datacenter"
-#   Input: BigWire Key: datacenter for "show bigwire  datacenter",  pseudowire for "show bigwire pseudowire", tenant for "show bigwire tenant" and "summary" for "show bigwire summary"
-#   Return Value:  Dictionary of Command O/P  
+###################################################
+# All Bigtap Show Commands Go Here:
+###################################################
+
     def rest_show_bigwire_command(self,bwKey):
+        '''Execute CLI Commands "show bigwire summary", "show bigwire tenant", "show bigwire pseudowire" and "show bigwire  datacenter"
+        
+            Input:
+            
+                'bwKey'    :    BigWire Keyword  datacenter for "show bigwire  datacenter",  pseudowire for "show bigwire pseudowire", tenant for "show bigwire tenant" and "summary" for "show bigwire summary"
+
+            Return: Content as a dictionary after execution of command.
+                
+        '''
         t = test.Test()
         c = t.controller()
         c.http_port=8082
@@ -36,3 +46,12 @@ class BigWireCommonShow(object):
             helpers.test_failure(c.rest.error())
         content = c.rest.content()
         return content
+
+###################################################
+# All Bigtap Verify Commands Go Here:
+###################################################
+
+
+###################################################
+# All Bigtap Configuration Commands Go Here:
+###################################################

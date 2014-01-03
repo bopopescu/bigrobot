@@ -13,7 +13,7 @@ Library  keywords_dev/BsnSwitchCommon.py
 * Variable
 ${ip_address_1}  10.192.75.7
 ${ip_address_2}  10.192.75.213
-${ip_address_2}  10.192.75.214
+${ip_address_3}  10.192.75.214
 ${switchlight_version}  SwitchLight 2.0.0-beta1
 
 

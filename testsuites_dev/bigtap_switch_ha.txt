@@ -1,0 +1,163 @@
+*Settings
+Documentation  SNMP Sanity Test	Suite
+Suite Setup  ha suite setup
+Suite Teardown   ha suite teardown
+Test Setup   base test setup
+Test Teardown   base test teardown
+Force Tags   HA Scale
+Library   keywords/BsnCommon.py
+Library   keywords_dev/BsnCommonConfig.py
+Library  keywords_dev/BsnCommonShow.py
+Library  keywords_dev/BsnSwitchCommon.py
+Library   keywords_dev/BigTapCommonShow.py
+Library   keywords_dev/BigTapCommonConfig.py
+
+* Variable
+${ip_address_1}  10.192.75.7
+${ip_address_2}  10.192.75.213
+${switchlight_version}  SwitchLight 2.0.0-beta1
+${console_ip}	10.192.2.89
+${console_port}	6020
+
+
+*Test Case
+verify configuration is successful
+	verify config
+
+T6015: Restart process OFAD and verify flow on switch
+	process ofad
+
+T6016: Restart process SNMPD and verify flow and SNMP on switch
+	process snmpd
+
+T6017: Restart process NTP and verify NTP Status
+	process ntp
+
+T6018: Restart process RSYSLOG
+	process rsyslog
+
+T6011: Reboot Switch and verify policy flow gets re-installed
+	reboot switch
+
+T6013: Flap interface ma1 and verify bigtap flow is not affected.
+	flap ma1
+
+* Keywords  
+ha suite setup
+	${switchDict}=  REST show switch
+	${dpid1}=  return switch dpid  ${switchDict}  ${ip_address_1}
+	REST set switch alias  ${dpid1}  LB7
+	REST setup bigtap interfaces  ${dpid1}  ethernet5  filter  LB7-F1-DL206-D1
+	REST setup bigtap interfaces  ${dpid1}  ethernet6  filter  LB7-F2-DL206-D2
+	REST setup bigtap interfaces  ${dpid1}  ethernet27  delivery  LB7-D1-DL206-F1
+	REST setup bigtap interfaces  ${dpid1}  ethernet28  delivery  LB7-D2-DL206-F2
+	REST add policy  admin-view  testPol  forward
+	REST add policy match  admin-view  testPol  1  {"ether-type": 2048, "dst-tp-port": 80, "ip-proto": 6, "sequence": 1} 
+	REST add policy interface  admin-view  testPol  LB7-F1-DL206-D1  filter
+	REST add policy interface  admin-view  testPol  LB7-D1-DL206-F1  delivery
+	sleepnow  5
+
+verify config
+	${switchDict}=  REST show switch
+	${dpid1}=  return switch dpid  ${switchDict}  ${ip_address_1}
+	REST show bigtap policy  testPol  1  1
+	${flow_switch}=  REST show switch flow  ${dpid1}
+	Should Be Equal As Integers  ${flow_switch}  4
+
+process ofad
+	${switchDict}=  REST show switch
+	${dpid1}=  return switch dpid  ${switchDict}  ${ip_address_1}
+	${flow_before}=  REST show switch flow  ${dpid1}
+	REST show bigtap policy  testPol  1  1
+	restart process  ${ip_address_1}  ofad
+	sleepnow  30
+	REST show bigtap policy  testPol  1  1
+	${flow_after}=  REST show switch flow  ${dpid1}
+	Should Be Equal As Integers  ${flow_after}  ${flow_before}
+
+process snmpd
+	configure snmp keyword   ${ip_address_1}   community   ro public       
+	configure snmp keyword   ${ip_address_1}   location   CS_RACK11_6020       
+	configure snmp keyword   ${ip_address_1}   contact   nw_admin@super_awesome_company.com       
+	configure snmp host   ${ip_address_1}   10.192.66.230   traps   public   161   
+	configure snmp host   ${ip_address_1}   10.192.66.230   informs   public   161
+	enable snmp   ${ip_address_1}
+	sleepnow  30
+	${switchDict}=  REST show switch
+	${dpid1}=  return switch dpid  ${switchDict}  ${ip_address_1}
+	${flow_before}=  REST show switch flow  ${dpid1}
+	REST show bigtap policy  testPol  1  1
+	${snmp_output}=  snmp show  ${ip_address_1}
+	Should Contain  ${snmp_output}  CS_RACK11_6020
+	Should Contain  ${snmp_output}  nw_admin@super_awesome_company.com
+	Should Contain  ${snmp_output}  public
+	${snmp_key}=  snmp cmd  ${ip_address_1}  snmpget  public  sysContact.0
+	Should Contain  ${snmp_key}  nw_admin@super_awesome_company.com
+	restart process  ${ip_address_1}   snmpd
+	sleepnow  30
+	${snmp_output}=  snmp show  ${ip_address_1}
+	Should Contain  ${snmp_output}  CS_RACK11_6020
+	Should Contain  ${snmp_output}  nw_admin@super_awesome_company.com
+	Should Contain  ${snmp_output}  public
+	${snmp_key}=  snmp cmd  ${ip_address_1}  snmpget  public  sysContact.0
+	Should Contain  ${snmp_key}  nw_admin@super_awesome_company.com
+	REST show bigtap policy  testPol  1  1
+	${flow_after}=  REST show switch flow  ${dpid1}
+	Should Be Equal As Integers  ${flow_after}  ${flow_before}
+
+process ntp
+	execute switch command  ${ip_address_1}  conf t;ntp server 0.debian.pool.ntp.org;ntp enable
+	sleepnow  30
+	${switchDict}=  REST show switch
+	${dpid1}=  return switch dpid  ${switchDict}  ${ip_address_1}
+	${flow_before}=  REST show switch flow  ${dpid1}
+	REST show bigtap policy  testPol  1  1
+	${ntp_op}=  execute switch command return output  ${ip_address_1}  debug ofad 'help; ntpdc -p'
+	Should Contain  ${ntp_op}  ${ip_address_1}
+	restart process  ${ip_address_1}   ntp
+	sleepnow  30
+	${ntp_op}=  execute switch command return output  ${ip_address_1}  debug ofad 'help; ntpdc -p'
+	Should Contain  ${ntp_op}  ${ip_address_1}
+	REST show bigtap policy  testPol  1  1
+	${flow_after}=  REST show switch flow  ${dpid1}
+	Should Be Equal As Integers  ${flow_after}  ${flow_before}
+
+process rsyslog
+	${switchDict}=  REST show switch
+	${dpid1}=  return switch dpid  ${switchDict}  ${ip_address_1}
+	${flow_before}=  REST show switch flow  ${dpid1}
+	REST show bigtap policy  testPol  1  1
+	restart process  ${ip_address_1}   rsyslog
+	sleepnow  30
+	${syslog_op}=  execute switch command return output  ${ip_address_1}  debug ofad 'help; cat /var/log/syslog | grep \"kernel: imklog\"'
+	Should Contain  ${syslog_op}  kmsg started
+	REST show bigtap policy  testPol  1  1
+	${flow_after}=  REST show switch flow  ${dpid1}
+	Should Be Equal As Integers  ${flow_after}  ${flow_before}
+
+flap ma1
+	${switchDict}=  REST show switch
+	${dpid1}=  return switch dpid  ${switchDict}  ${ip_address_1}
+	${flow_before}=  REST show switch flow  ${dpid1}
+	REST show bigtap policy  testPol  1  1
+	flap interface ma1  ${console_ip}  ${console_port}
+	sleepnow  10
+	REST show bigtap policy  testPol  1  1
+	${flow_after}=  REST show switch flow  ${dpid1}
+	Should Be Equal As Integers  ${flow_after}  ${flow_before}
+
+reboot switch
+	${switchDict}=  REST show switch
+	${dpid1}=  return switch dpid  ${switchDict}  ${ip_address_1}
+	${flow_before}=  REST show switch flow  ${dpid1}
+	REST show bigtap policy  testPol  1  1
+	execute switch command  ${ip_address_1}  copy running-config startup-config
+	sleepnow  5
+	Run Keyword And Continue On Failure  execute switch command  ${ip_address_1}  debug ofad 'help; reboot\r'
+	Wait Until Keyword Succeeds  5 min  30 sec  execute switch command  ${ip_address_1}  show version
+	${dpid1}=  return switch dpid  ${switchDict}  ${ip_address_1}
+	${flow_before}=  REST show switch flow  ${dpid1}
+	REST show bigtap policy  testPol  1  1
+
+ha suite teardown
+	REST delete policy  admin-view  testPol
