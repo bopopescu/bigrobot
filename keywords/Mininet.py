@@ -38,3 +38,18 @@ class Mininet(object):
             helpers.test_failure(loss[0] + "% packet loss")
         
         return out
+    
+    def mininet_link_tag(self, intf, intf_name, vlan, ip):        
+        t = test.Test()
+        mn = t.mininet()
+        mn.cli('%s ip link add link %s vlan1 type vlan id %s' % (intf, intf_name, vlan),
+               )
+        mn.cli('%s ifconfig %s 0.0.0.0' % (intf, intf_name), verbose=True)
+        mn.cli('%s ifconfig vlan1 %s' % (intf, ip), verbose=True)
+        
+    def mininet_link_untag(self, intf, intf_name, vlan, ip):        
+        t = test.Test()
+        mn = t.mininet()
+        mn.cli('%s ip link delete link %s vlan1' % (intf, intf_name),
+               verbose=True)
+        mn.cli('%s ifconfig %s %s' % (intf, intf_name, ip), verbose=True)
