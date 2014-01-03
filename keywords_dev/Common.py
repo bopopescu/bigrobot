@@ -30,33 +30,45 @@ class Common(object):
             url = '%s/api/v1/data/controller/applications/bigtap/view/policy?select=info' % (c.base_url)
             c.rest.get(url)
             content = c.rest.content()
-      
+            if not c.rest.status_code_ok():
+                helpers.test_failure(c.rest.error())
+                return False
             helpers.log("Output: %s" % c.rest.result_json()) 
             length =len(content)
-            
-  #          content = c.rest.content()[0]  
-            helpers.log("Content Output: \n %s " % content )
+             
+#            helpers.log("Content Output: \n %s " % content )
             helpers.log("Number of Policies is: %s" % str(length))        
             for index in range(length):
                 name = content[index]['name']
                 helpers.log("this is the %s Policy to be cleaned: %s" % (str(index), str(name)))
                 url = '%s/api/v1/data/controller/applications/bigtap/view[name="admin-view"]/policy[name="%s"]' % (c.base_url,str(name))   
                 c.rest.delete(url) 
-                
+                if not c.rest.status_code_ok():
+                    helpers.test_failure(c.rest.error())                    
+                                
         if ( Feature == 'address-group'):
             url = '%s/api/v1/data/controller/applications/bigtap/ip-address-set' % (c.base_url)      
             c.rest.get(url) 
             content = c.rest.content()
+            if not c.rest.status_code_ok():
+                helpers.test_failure(c.rest.error())
+                return False
             helpers.log("Output: %s" % c.rest.result_json()) 
             length =len(content)  
-            helpers.log("Content Output: \n %s " % content )
+ #           helpers.log("Content Output: \n %s " % content )
             helpers.log("Number of address group is: %s" % str(length))        
             for index in range(length):
                 name = content[index]['name']
                 helpers.log("this is the %s Address-group to be cleaned: %s" % (str(index), str(name)))
                 url = '%s/api/v1/data/controller/applications/bigtap/ip-address-set[name="%s"]' % (c.base_url,str(name))   
                 c.rest.delete(url) 
-                        
+                if not c.rest.status_code_ok():
+                    helpers.test_failure(c.rest.error())                                   
+        if ( Feature == 'l3-l4-mode'):
+            url = '%s/api/v1/data/controller/applications/bigtap/feature/l3-l4-mode' % (c.base_url)      
+            c.rest.delete(url) 
+            if not c.rest.status_code_ok():
+                helpers.test_failure(c.rest.error())
         return True   
         
     def rest_show_version(self):
@@ -121,20 +133,61 @@ class Common(object):
 
         return c.rest.content()
     
-    def rest_show_bigtap(self):
+    def rest_bigtap_verify_l34(self, l3_l4="False"):
         t = test.Test()
         c = t.controller()
-        c.http_port = 8000
-        #  TBD need to find the rest api 
-      
+        
         url = '%s/api/v1/data/controller/applications/bigtap/info' % (c.base_url)
+        c.rest.get(url)
+        helpers.log("Output: %s" % c.rest.result_json())
+                
+        if not c.rest.status_code_ok():
+            helpers.test_failure(c.rest.error())
+        data = c.rest.content()
+        helpers.log("Content is Output: %s" % data)
+         
+        if str(data[0]['l3-l4-mode']) == str(l3_l4):            
+            helpers.test_log("Bigtap correctly reports L3-L4-mode as: %s " % data[0]['l3-l4-mode'])
+            return True
+        else:
+            helpers.test_failure("Bigtap NOT correctly reports L3-L4-mode as : %s --- Expect: %s " % (data[0]['l3-l4-mode'], str(l3_l4)))               
+            return False     
+   
+    def rest_show_run_bigtap_policy(self, pName=None):
+        t = test.Test()
+        c = t.controller()
+        
+        if pName is None:
+            url = '%s/api/v1/data/controller/applications/bigtap/view?config=true' % (c.base_url)
+        else:
+            url = '%s/api/v1/data/controller/applications/bigtap/view[policy/name="%s"]?config=true&select=policy[name="%s"]' % (c.base_url, str(pName), str(pName)) 
+            
         c.rest.get(url)
         helpers.log("Output: %s" % c.rest.result_json())
     
         if not c.rest.status_code_ok():
             helpers.test_failure(c.rest.error())
 
-        return c.rest.content()
+        return c.rest.content() 
+ 
+ # same as rest _add_policy  in bigtapcommonconfig
+    def rest_bigtap_add_policy(self,viewName,policyName,policyAction):
+        t = test.Test()
+        c = t.controller()
+        c.http_port=8082
+        url='http://%s:%s/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]' % (c.ip,c.http_port, str(viewName), str(policyName))
+        c.rest.put(url,{'name':str(policyName)})
+        helpers.test_log("Ouput: %s" % c.rest.result_json())
+        if not c.rest.status_code_ok():
+            helpers.test_failure(c.rest.error())
+        c.rest.patch(url,{"action": str(policyAction) })
+        helpers.test_log("Ouput: %s" % c.rest.result_json())
+        if not c.rest.status_code_ok():
+            helpers.test_failure(c.rest.error())
+            return False
+        else:
+            helpers.test_log(c.rest.content_json())
+            return True 
     
     def rest_bigtap_create_addgroup(self,groupName,ipType):
         # create the address group and associate the type
@@ -165,9 +218,9 @@ class Common(object):
         
         c.rest.put(url,{"ip": str(ipAddr), "ip-mask": str(ipMask)})
         helpers.sleep(1)
+        helpers.test_log(c.rest.content_json())
         if (Flag == 'negative'):
             if not c.rest.status_code_ok():
-                helpers.test_log(c.rest.content_json())
                 return True
             else:
                 helpers.test_failure(c.rest.error())
@@ -177,7 +230,6 @@ class Common(object):
                 helpers.test_failure(c.rest.error())
                 return False
             else:
-                helpers.test_log(c.rest.content_json())
                 return True  
     
     
@@ -286,12 +338,55 @@ class Common(object):
         flows = content[0]['stats']['table'][1]['active-count']    
     
         if flows == int(numFlow) :
-                helpers.test_log("Switch %s is correctly programmed with %s of flows" % (str(swName), str(flows)) ) 
+            helpers.test_log("Switch %s is correctly programmed with %s of flows" % (str(swName), str(flows)) ) 
         else:
-                helpers.test_failure("Switch %s is NOT correctly programmed with flows,  expect: %s  Actual: %s" % (str(swName), str(numFlow), str(flows)) ) 
-                debug_url= '%s/api/v1/data/controller/core/switch[dpid=" %s"]?select=stats/flow' % (c.base_url,str(swDpid))  
-                c.rest.get(url) 
-                helpers.test_log("Json Ouput: %s" % c.rest.result_json())             
-                return False        
- 
+            debug_url= '%s/api/v1/data/controller/core/switch[dpid="%s"]?select=stats/flow' % (c.base_url,str(swDpid)) 
+            c.rest.get(url) 
+            helpers.test_log("******debug  Ouput******* \n %s" % c.rest.result_json())                
+            helpers.test_failure("Switch %s is NOT correctly programmed with flows,  expect: %s  Actual: %s" % (str(swName), str(numFlow), str(flows)) )                      
+            return False  
+                  
+ #  the same as Animesh,  add Flag
+    def rest_bigtap_add_policy_match(self,viewName,policyName,match_number,data,Flag="true"):
+        t = test.Test()
+        c = t.controller()
+        c.http_port=8082
+        url='http://%s:%s/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]/rule[sequence=%s]'  % (c.ip,c.http_port,str(viewName),str(policyName),str(match_number))
+        data_dict = helpers.from_json(data)
+        c.rest.put(url,data_dict)
+        helpers.test_log(c.rest.result_json())
+        helpers.test_log(c.rest.content_json()) 
+        if (Flag == 'negative'):
+            if not c.rest.status_code_ok():
+                return True
+            else:
+                helpers.test_failure(c.rest.error())
+                return False 
+        else:    
+            if not c.rest.status_code_ok():
+                helpers.test_failure(c.rest.error())
+                return False
+            else:
+                return True  
         
+    def rest_bigtap_config_l34(self,l3_l4,Flag="true"):
+        t = test.Test()
+        c = t.controller()
+        
+        url ='%s/api/v1/data/controller/applications/bigtap/feature' % (c.base_url)
+        c.rest.patch(url, {"l3-l4-mode": str(l3_l4)})
+              
+        helpers.test_log(c.rest.result_json())
+        helpers.test_log(c.rest.content_json()) 
+        if (Flag == 'negative'):
+            if not c.rest.status_code_ok():
+                return True
+            else:
+                helpers.test_failure(c.rest.error())
+                return False 
+        else:    
+            if not c.rest.status_code_ok():
+                helpers.test_failure(c.rest.error())
+                return False
+            else:
+                return True    

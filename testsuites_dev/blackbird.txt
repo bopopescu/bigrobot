@@ -15,66 +15,163 @@ Library         keywords_dev/BigTapCommonShow.py
 #	show command
 #	[Tags]  skip
 
-#Bigtap Prepare topology
-#	Bigtap Setup role
-#	[Tags]  skip
+Bigtap Prepare topology
+	Bigtap Setup role
+	[Tags]  skipped
 
 Test IPv4 Address Group
  	bigtap_clean_up             policy
  	bigtap_clean_up             address-group
-	Config IPv4 Address Group	
-	Config bigtap policy        IPv4_ADD 
+	Config IPv4 Address Group	IPV4
+	Config bigtap policy        IPv4_ADD   S203-50   S203-52
 	sleep_now                   short
-	REST add policy match       admin-view  IPv4_ADD   10   {"sequence": 10, "src-ip-list": "IPV4", "ether-type": 2048} 
-	REST add policy match       admin-view  IPv4_ADD   20   {"sequence": 20, "dst-ip-list": "IPV4", "ether-type": 2048} 	
+	REST bigtap add policy match       admin-view  IPv4_ADD   10   {"sequence": 10, "src-ip-list": "IPV4", "ether-type": 2048} 
+	REST bigtap add policy match       admin-view  IPv4_ADD   20   {"sequence": 20, "dst-ip-list": "IPV4", "ether-type": 2048} 	
+	REST bigtap add policy match       admin-view  IPv4_ADD   30   {"sequence": 30, "dst-ip-list": "IPV4", "src-ip-list": "IPV4","ether-type": 2048}  negative
+	REST bigtap add policy match       admin-view  IPv4_ADD   40   {"sequence": 40, "ether-type": 2048, "dst-ip-mask": "255.255.255.0", "src-ip-list": "IPV4", "dst-ip": "10.10.10.0"}  
+	REST bigtap add policy match       admin-view  IPv4_ADD   50   {"sequence": 50, "ether-type": 2048, "src-ip-mask": "255.255.255.0", "dst-ip-list": "IPV4", "src-ip": "10.10.10.0"}  	
 	sleep_now                   short	
-	Bigtap Verify policy        IPv4_ADD 
+	Bigtap Verify policy        IPv4_ADD   1   1  S203      7
     REST delete policy          admin-view  IPv4_ADD 
 	
-	[Tags] 	sanity
+	[Tags] 	sanity  skipped
 	
-#Test IPv6 Address Group         
-##	Config bigtap policy        IPv6_ADD 
-#	sleep_now                   short
-#	REST add policy match       admin-view  IPv6_ADD   10   {"sequence": 10, "src-ip-list": "IPV6", "ether-type": 34525} 
-#	REST add policy match       admin-view  IPv6_ADD   20   {"sequence": 20, "dst-ip-list": "IPV6", "ether-type": 34525} 	
-#	sleep_now                   short
-#	Bigtap Verify policy        IPv6_ADD 
-#   REST delete policy          admin-view  IPv6_ADD  
-#	[Tags]    skip
+Test IPv6 Address Group    
+  	bigtap_clean_up             policy
+ 	bigtap_clean_up             address-group    
+ 	Config IPv6 Address Group   IPV6
+	Config bigtap policy        IPv6_ADD   S203-50   S203-52
+	sleep_now                   short
+	REST bigtap add policy match       admin-view  IPv6_ADD   10   {"sequence": 10, "src-ip-list": "IPV6", "ether-type": 34525} 
+	REST bigtap add policy match       admin-view  IPv6_ADD   20   {"sequence": 20, "dst-ip-list": "IPV6", "ether-type": 34525} 	
+	REST bigtap add policy match       admin-view  IPv6_ADD   30   {"sequence": 30, "dst-ip-list": "IPV6", "src-ip-list": "IPV6","ether-type": 34525}  negative
+	REST bigtap add policy match       admin-view  IPv6_ADD   40   {"sequence": 40, "ether-type": 34525, "dst-ip-mask": "FFFF:FFFF::0", "src-ip-list": "IPV6", "dst-ip": "2001:200::0"}  
+	REST bigtap add policy match       admin-view  IPv6_ADD   50   {"sequence": 50, "ether-type": 34525, "src-ip-mask": "FFFF:FFFF::0", "dst-ip-list": "IPV6", "src-ip": "2001:200::0"} 	
+ 	sleep_now                   short
+	Bigtap Verify policy        IPv6_ADD   1   1    S203      7
+	REST delete policy          admin-view  IPv6_ADD  
+	[Tags]   sanity   skipped
+
+
+Test IPv4/IPv6 Address Group    
+  	bigtap_clean_up             policy
+ 	bigtap_clean_up             address-group   
+ 	Config IPv4 Address Group	IPV4 
+ 	Config IPv6 Address Group   IPV6
+	Config bigtap policy        IPv46     S203-50   S203-52
+	sleep_now                   short
+	REST bigtap add policy match       admin-view  IPv46   10   {"sequence": 10, "src-ip-list": "IPV4", "ether-type": 2048} 
+	REST bigtap add policy match       admin-view  IPv46   20   {"sequence": 20, "dst-ip-list": "IPV4", "ether-type": 2048} 	
+	REST bigtap add policy match       admin-view  IPv46   40   {"sequence": 40, "ether-type": 2048, "dst-ip-mask": "255.255.255.0", "src-ip-list": "IPV4", "dst-ip": "10.10.10.0"}  
+	REST bigtap add policy match       admin-view  IPv46   50   {"sequence": 50, "ether-type": 2048, "src-ip-mask": "255.255.255.0", "dst-ip-list": "IPV4", "src-ip": "10.10.10.0"}  	
+	REST bigtap add policy match       admin-view  IPv46   110   {"sequence": 110, "src-ip-list": "IPV6", "ether-type": 34525} 
+	REST bigtap add policy match       admin-view  IPv46   120   {"sequence": 120, "dst-ip-list": "IPV6", "ether-type": 34525} 	
+	REST bigtap add policy match       admin-view  IPv46   140   {"sequence": 140, "ether-type": 34525, "dst-ip-mask": "FFFF:FFFF::0", "src-ip-list": "IPV6", "dst-ip": "2001:200::0"}  
+	REST bigtap add policy match       admin-view  IPv46   150   {"sequence": 150, "ether-type": 34525, "src-ip-mask": "FFFF:FFFF::0", "dst-ip-list": "IPV6", "src-ip": "2001:200::0"} 
+		
+	REST bigtap add policy match       admin-view  IPv46   200   {"sequence": 200, "src-ip-list": "IPV4","ether-type": 34525}  negative	
+	REST bigtap add policy match       admin-view  IPv46   210   {"sequence": 210, "dst-ip-list": "IPV4","ether-type": 34525}  negative
+	REST bigtap add policy match       admin-view  IPv46   220   {"sequence": 220, "src-ip-list": "IPV6","ether-type": 2048}  negative	
+	REST bigtap add policy match       admin-view  IPv46   230   {"sequence": 230, "dst-ip-list": "IPV6","ether-type": 2048}  negative
+	
+	REST bigtap add policy match       admin-view  IPv46   300   {"sequence": 300, "dst-ip-list": "IPV6", "src-ip-list": "IPV4","ether-type": 2048}  negative		
+	REST bigtap add policy match       admin-view  IPv46   310   {"sequence": 310, "dst-ip-list": "IPV6", "src-ip-list": "IPV4","ether-type": 34525}  negative	
+	REST bigtap add policy match       admin-view  IPv46   320   {"sequence": 320, "dst-ip-list": "IPV4", "src-ip-list": "IPV6","ether-type": 2048}  negative		
+	REST bigtap add policy match       admin-view  IPv46   330   {"sequence": 330, "dst-ip-list": "IPV4", "src-ip-list": "IPV6","ether-type": 34525}  negative	
+
+	REST bigtap add policy match       admin-view  IPv46   400   {"sequence": 400, "ether-type": 34525, "dst-ip-mask": "255.255.255.0", "src-ip-list": "IPV6", "dst-ip": "200.200.200.0"}  negative
+	REST bigtap add policy match       admin-view  IPv46   410   {"sequence": 410, "ether-type": 2048, "dst-ip-mask": "255.255.255.0", "src-ip-list": "IPV6", "dst-ip": "200.200.200.0"}  negative
+	REST bigtap add policy match       admin-view  IPv46   420   {"sequence": 420, "ether-type": 34525, "src-ip-mask": "255.255.255.0", "dst-ip-list": "IPV6", "src-ip": "200.200.200.0"}  negative
+	REST bigtap add policy match       admin-view  IPv46   430   {"sequence": 430, "ether-type": 2048, "src-ip-mask": "255.255.255.0", "dst-ip-list": "IPV6", "src-ip": "200.200.200.0"}  negative
+
+	REST bigtap add policy match       admin-view  IPv46   500   {"sequence": 500, "ether-type": 34525, "dst-ip-mask": "FFFF:FFFF::0", "src-ip-list": "IPV4", "dst-ip": "2001:200::0"}  negative
+	REST bigtap add policy match       admin-view  IPv46   510   {"sequence": 510, "ether-type": 2048, "dst-ip-mask": "FFFF:FFFF::0", "src-ip-list": "IPV4", "dst-ip": "2001:200::0"}  negative
+	REST bigtap add policy match       admin-view  IPv46   520   {"sequence": 520, "ether-type": 34525, "src-ip-mask": "FFFF:FFFF::0", "dst-ip-list": "IPV4", "src-ip": "2001:200::0"}  negative
+	REST bigtap add policy match       admin-view  IPv46   530   {"sequence": 530, "ether-type": 2048, "src-ip-mask": "FFFF:FFFF::0", "dst-ip-list": "IPV4", "src-ip": "2001:200::0"}  negative
+		
+ 	sleep_now                   short
+	Bigtap Verify policy        IPv46   1   1    S203      11
+	REST delete policy          admin-view  IPv46  
+	[Tags]   sanity   skipped
+
+
+Test IP_overlap Address Group    
+  	bigtap_clean_up             policy
+ 	bigtap_clean_up             address-group   
+ 	Config IPv4 Address Group	IPV4 
+ 	Config IPv6 Address Group   IPV6
+	Config bigtap policy        IP1   S203-50   S204-52
+	Config bigtap policy        IP2   S203-50   S203-52
+	sleep_now                   short
+	REST bigtap add policy match       admin-view  IP1   10   {"sequence": 10, "src-ip-list": "IPV4", "ether-type": 2048} 
+	REST bigtap add policy match       admin-view  IP1   20   {"sequence": 20, "src-ip-list": "IPV6", "ether-type": 34525} 	
+	REST bigtap add policy match       admin-view  IP2   10   {"sequence": 10, "dst-ip-list": "IPV4", "ether-type": 2048} 
+	REST bigtap add policy match       admin-view  IP2   20   {"sequence": 20, "dst-ip-list": "IPV6", "ether-type": 34525} 		
+		
+ 	sleep_now                   short
+   	REST show bigtap policy       IP1     1   1
+    REST show bigtap policy       IP2     1   1   	 	
+	Bigtap Verify policy        _IP2_o_IP1   1   2    S203      9
+#	REST delete policy          admin-view  IPv6_ADD  
+	[Tags]   sanity   skipped
+
+Test L3_L4_Mode    
+	bigtap_clean_up             policy
+ 	sleep_now                   short  		
+  	bigtap_clean_up             l3-l4-mode
+ 	sleep_now                   short  	
+# verify default is l3-l4-mode disable
+  	REST bigtap verify l34	False
+# config l3-l4-mode and verify
+  	REST bigtap config l34    true
+ 	sleep_now                   short  	
+  	REST bigtap verify l34	True
+  	
+ # verify l3-l4-mode can not be disabled with policy	
+  	Config bigtap policy        IP1   S203-50   S204-52
+  	REST bigtap config l34    False   negative   	
+  	
+ # verify l3-l4-mode can not be enable with policy
+  	bigtap_clean_up             policy
+  	REST bigtap config l34      false
+ 	sleep_now                   short  	  	
+  	REST bigtap verify l34	    False	
+  	Config bigtap policy        IP2   S203-50   S204-52
+ 	sleep_now                   short  	  	  	
+  	REST bigtap config l34      true    negative   		 
+  	 
+#	REST delete policy          admin-view  IPv6_ADD  
+	[Tags]   sanity  
+
+
+
 
 
 * Keywords
 Config bigtap policy
-	[Arguments]               ${pName}
+	[Arguments]               ${pName}  ${intFname}  ${intDname}
 	REST add policy            admin-view  ${pName}  forward 
-	REST add policy interface  admin-view  ${pName}  S203-50  filter 
-	REST add policy interface  admin-view  ${pName}  S203-52  delivery 
-
-#bigtap policy match src         
-#	[Arguments]  ${pName}
-#	REST add policy match       admin-view  ${pName}  10   {"sequence": 10, "src-ip-list": "IPV4", "ether-type": 2048} 
+	REST add policy interface  admin-view  ${pName}  ${intFname}  filter 
+	REST add policy interface  admin-view  ${pName}  ${intDname}  delivery 
+ 	
 	
-#bigtap policy match dst    [Arguments]  ${pName}
-#	REST add policy match      admin-view   ${pName}  20   {"sequence": 20, "dst-ip-list": "IPV4", "ether-type": 2048} 
-
 show command  
 	REST show version  
 	REST show user 
 	REST show controller  
 	REST show bigtap  
 
-Config IPv4 Address Group  
-	REST bigtap create addgroup      IPV4   ipv4  
-	REST bigtap add address          IPV4   100.100.100.100   255.255.255.255  
-	REST bigtap show address group   IPV4   ipv4   
-	REST bigtap add address          IPV4   2001:100::0   FFFF:FFFF::0   negative
+Config IPv4 Address Group           [Arguments]  ${GName}
+	REST bigtap create addgroup      ${GName}   ipv4  
+	REST bigtap add address          ${GName}   100.100.100.100   255.255.255.255  
+	REST bigtap show address group   ${GName}   ipv4   
+	REST bigtap add address          ${GName}   2001:100::0   FFFF:FFFF::0   negative
 
-Config IPv6 Address Group  
-	REST bigtap create addgroup      IPV6    ipv6  
-	REST bigtap add address          IPV6    2001:100::0   FFFF:FFFF::0   
-	REST bigtap show address group   IPV6    ipv6  
-	REST bigtap add address          IPV6   100.100.100.100   255.255.255.255   negative
+Config IPv6 Address Group           [Arguments]  ${GName}
+	REST bigtap create addgroup      ${GName}    ipv6  
+	REST bigtap add address          ${GName}    2001:100::0   FFFF:FFFF::0   
+	REST bigtap show address group   ${GName}6    ipv6  
+	REST bigtap add address          ${GName}   100.100.100.100   255.255.255.255   negative
 
 Bigtap Setup role 
 	${sidS204} =             REST get switch dpid       S204  
@@ -84,6 +181,7 @@ Bigtap Setup role
 	REST bigtap setup role   ${sidS204}   ethernet44    service    S204-44 
 	
 Bigtap Verify policy
-	[Arguments]               ${pName}      
-   	REST show bigtap policy   ${pName}  1  1
-	REST get switch flow      S203 	5
+	[Arguments]                   ${pName}     ${numFIntf}   ${numDIntf}   ${swName}    ${numFlow} 
+	REST show run bigtap policy   ${pName}
+   	REST show bigtap policy       ${pName}     ${numFIntf}   ${numDIntf}
+	REST get switch flow          ${swName}    ${numFlow} 
