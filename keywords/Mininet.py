@@ -43,7 +43,7 @@ class Mininet(object):
         t = test.Test()
         mn = t.mininet()
         mn.cli('%s ip link add link %s vlan1 type vlan id %s' % (intf, intf_name, vlan),
-               )
+               verbose=True)
         mn.cli('%s ifconfig %s 0.0.0.0' % (intf, intf_name), verbose=True)
         mn.cli('%s ifconfig vlan1 %s' % (intf, ip), verbose=True)
         
