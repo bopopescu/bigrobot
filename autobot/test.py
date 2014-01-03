@@ -1,5 +1,6 @@
 import autobot.helpers as helpers
 import autobot.restclient as restclient
+import autobot.devconf as devconf
 import autobot.node as node
 import re
 #import bigtest
@@ -24,10 +25,12 @@ class Test(object):
             self._init_completed = False
             
             config = ''.join((helpers.get_path_autobot_config(), '/bsn.yaml'))
+            helpers.log("Loading config file %s" % config)
             self._bsn_config = helpers.load_config(config)
 
             topo = helpers.bigrobot_topology()
             helpers.error_exit_if_file_not_exist("Topology file not found", topo)
+            helpers.log("Loading topology file %s" % topo)
             self._topology_params = helpers.load_config(topo)
             self._topology = {}
     
@@ -43,6 +46,18 @@ class Test(object):
     def __setattr__(self, attr, val):
         return setattr(self._instance, attr, val)
     
+    def controller_user(self):
+        return self._bsn_config['controller_user']
+    
+    def controller_password(self):
+        return self._bsn_config['controller_password']
+
+    def mininet_user(self):
+        return self._bsn_config['mininet_user']
+    
+    def mininet_password(self):
+        return self._bsn_config['mininet_password']
+
     def topology_params(self):
         """
         Returns the topology dictionary.
@@ -57,14 +72,20 @@ class Test(object):
         """
         return self._topology_params
 
-    def topology(self, node=None):
-        if node:
-            return self._topology[node]
+    def topology(self, name=None):
+        if name:
+            return self._topology[name]
         else:
             return self._topology
     
-    def controller(self):
-        return self.topology('c1')
+    def controller(self, name='c1'):
+        return self.topology(name)
+    
+    def mininet(self):
+        return self.topology('mn')
+    
+    def node(self, name):
+        return self.topology(name)
     
     def is_controller(self, name):
         match = re.match(r'^(c\d|controller\d?|master|slave)$', name)
@@ -115,6 +136,7 @@ class Test(object):
             n = node.Node(params[key]['ip'])
             
             if self.is_controller(key):
+                helpers.log("Setting up the controller ('%s')" % key)
                 if 'http_port' in params[key]:
                     n.http_port = params[key]['http_port']
                 else:
@@ -126,17 +148,65 @@ class Test(object):
                     n.base_url =  'http://%s:%s' % (n.ip, n.http_port) 
                 
                 n.rest = restclient.RestClient(base_url=n.base_url)
+                
+                # Shortcuts
+                n.post = n.rest.post
+                n.get = n.rest.get
+                n.put = n.rest.put
+                n.patch = n.rest.patch
+                n.delete = n.rest.delete
+                n.rest_content = n.rest.content
+                n.rest_content_json = n.rest.content_json
+                n.rest_result = n.rest.result
+                n.rest_result_json = n.rest.result_json
+                
+                n.dev = devconf.ControllerDevConf(host=n.ip,
+                                                  user=self.controller_user(),
+                                                  password=self.controller_password())
+                
+                # Shortcuts
+                n.cli = n.dev.cli
+                n.cli_content = n.dev.content
+                n.cli_result = n.dev.result
+                
                 self._topology[key] = n
-                helpers.log("Configure the controller ('%s')" % key)
 
             # !!! FIXME: This is a hack to get things going for now...
             if self.is_mininet(key):
-                #env = bigtest.controller.TwoNodeTest()
-                #mininetNode = env.node2()
-                #mininetCli = mininetNode.cli()
-                #self._topology[key] = mininetCli
-                helpers.log("Configure the mininet ('%s')" % key)
+                if 'topology' in params[key]:
+                    n.topology = params[key]['topology']
+                else:
+                    helpers.environment_failure("Mininet topology is missing.")
 
+                if 'type' not in params[key]:
+                    helpers.environment_failure("Must specify a Mininet type in topology file ('t6' or 'basic').")
+
+                mn_type = params[key]['type'].lower()
+                if mn_type not in ('t6', 'basic'):
+                    helpers.environment_failure("Mininet type must be 't6' or 'basic'.") 
+                    
+                helpers.log("Mininet type: %s" % mn_type)
+                helpers.log("Setting up mininet ('%s')" % key)
+
+                if mn_type == 't6':
+                    n.dev = devconf.T6MininetDevConf(host=n.ip,
+                                                     user=self.mininet_user(),
+                                                     password=self.mininet_password(),
+                                                     controller=self.controller().ip,
+                                                     topology=n.topology)
+                elif mn_type == 'basic':
+                    n.dev = devconf.MininetDevConf(host=n.ip,
+                                                   user=self.mininet_user(),
+                                                   password=self.mininet_password(),
+                                                   controller=self.controller().ip,
+                                                   topology=n.topology)
+
+                # Shortcuts
+                n.cli = n.dev.cli
+                n.cli_content = n.dev.content
+                n.cli_result = n.dev.result
+                
+                self._topology[key] = n
             
         helpers.prettify_log("self._topology", self._topology)
         helpers.log("Test object initialization completed.") 

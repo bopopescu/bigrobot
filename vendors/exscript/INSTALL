@@ -1,0 +1,13 @@
+Exscript Installation
+----------------------
+
+1. Install python-crypto
+2. Install Exscript. For example, do this as root:
+
+    sudo make install PREFIX=/usr/local
+
+
+Configuring the Exscript daemon
+--------------------------------
+Please refer to the PDF handbook for instructions on setting up
+the Exscript as a server.

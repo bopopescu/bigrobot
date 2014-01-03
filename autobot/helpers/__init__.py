@@ -12,18 +12,23 @@ from gobot import *
 from autobot.version import *
 from exec_timer import *
 
+# Convenience helper function any_match() and first_match() imported from
+# Exscript. More info at
+# http://knipknap.github.io/exscript/api/Exscript.util.match-module.html
+from Exscript.util.match import any_match, first_match
 
 _TZ = timezone("America/Los_Angeles")
 _BIGROBOT_ENV_LIST = []
+
 
 def _env_get_and_set(name, new_val=None, default=None):
     """
     Category: Get/set environment variables for BigRobot.
     
-    :param name:    (str) The name of the environment variable
-    :param new_val: (str) If specified, force set env with new_value
-    :param default: (str) Default fallback value
-    :return: str or None -- Value of the environment variable
+    :param name:    str, The name of the environment variable
+    :param new_val: str, If specified, force set env with new_value
+    :param default: str, Default fallback value
+    :return: str or None, Value of the environment variable
     
     Attempt to update `name` environment variable with a value.
     - If `new_val` is specified, then assign it to env (force option)
@@ -160,6 +165,13 @@ def log(s, level=3):
 test_log = log
 
 
+def prettify(data):
+    """
+    Return the Python object as a pretty-print formatted string.
+    """
+    return pprint.pformat(data)
+
+
 def prettify_log(s, data, level=3):
     analyze(''.join((s, '\n', prettify(data))), level)
 
@@ -168,7 +180,7 @@ def sleep(s):
     """
     Sleep for <s> seconds.
     """
-    time.sleep(s)
+    time.sleep(int(s))
 
 
 def from_json(json_str):
@@ -289,13 +301,6 @@ def file_write_append_once(filename, s):
     f = open(filename, 'a')
     f.write(s)
     f.close()
-
-
-def prettify(data):
-    """
-    Return the Python object as a pretty-print formatted string.
-    """
-    return pprint.pformat(data)
 
 
 def bigtest_node_info():

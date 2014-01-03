@@ -13,6 +13,7 @@ Library  keywords_dev/BsnSwitchCommon.py
 * Variable
 ${ip_address_1}  10.192.75.7
 ${ip_address_2}  10.192.75.213
+${ip_address_3}  10.192.75.214
 ${switchlight_version}  SwitchLight 2.0.0-beta1
 
 
@@ -209,7 +210,8 @@ snmp setup
 	configure snmp host   ${ip_address_2}   10.192.66.230   traps   public   161   
 	configure snmp host   ${ip_address_2}   10.192.66.230   informs   public   161  
 	configure portchannel  ${ip_address_2}  7  43,44  L3   
-	configure portchannel  ${ip_address_2}  30  49,52  L3 
+	configure portchannel  ${ip_address_2}  30  49,52  L3
+	configure portchannel  ${ip_address_3}  30  49,52  L3 
 	enable snmp   ${ip_address_2}             
 	sleepnow   30             
 
@@ -309,9 +311,7 @@ verify ifHighSpeed lb9
 	Should Contain  ${snmp_key}  1000
 
 verify ifPhysAddress lb9
-	${switchDict}=  REST show switch
-	${dpid1}=  return switch dpid  ${switchDict}  ${ip_address_1}
-	${mac_address1}=  return switch interface mac  ${dpid1}  ethernet48
+	${mac_address1}=  return intf macaddress  ${ip_address_1}  ethernet48
 	${snmp_key} =  snmp cmd  ${ip_address_1}  snmpwalk  public  ifPhysAddress.1048
 	Should Contain  ${snmp_key}  ${mac_address1}
 

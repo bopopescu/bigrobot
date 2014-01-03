@@ -9,13 +9,18 @@ class BsnCommon(object):
         pass
         
     def base_suite_setup(self):
-        t = test.Test()
+        test.Test()
 
     def base_suite_teardown(self):
-        pass
+        t = test.Test()
+        for n in t.topology():
+            node = t.node(n)
+            if t.is_controller(n) or t.is_mininet(n):
+                helpers.log("Closing device connection for node name: %s" % n)
+                node.dev.close()
 
     def base_test_setup(self):
-        t = test.Test()
+        test.Test()
 
     def base_test_teardown(self):
         pass
@@ -32,6 +37,10 @@ class BsnCommon(object):
 
     def manual_failed(self):
         raise AssertionError("MANUAL FAILED")
+
+    def show_test_topology_params(self):
+        t = test.Test()
+        helpers.log("Test topology params: %s" % helpers.prettify(t.topology_params()))
 
     def ip_range(self, subnet, first=None, last=None):
         """
@@ -53,8 +62,7 @@ class BsnCommon(object):
             return subnet_list[first_index:]
         
         return subnet_list[first_index:last_index]
-    
-    
+   
     def ip_range_byte_mod(self, subnet, first=None, last=None, byte=None):
         """
         :param byte: (str) [Optional] The byte field in the IP address to
@@ -87,3 +95,4 @@ class BsnCommon(object):
             new_subnet_list.append('.'.join(byte_list))
             
         return new_subnet_list
+

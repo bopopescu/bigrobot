@@ -1,0 +1,12 @@
+Welcome to dummy!
+User: sab
+Password: 
+dummy> test number one: $a test$
+dummy> test number two: \another test
+dummy> test number three: \another test\
+dummy> execline1 $another $test \
+dummy> "execline2 another test"
+dummy> execline3 $another $test 
+dummy> regex result should be "st": "st"
+dummy> regex result should be "t": "t"
+dummy> 
