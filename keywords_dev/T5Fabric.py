@@ -17,7 +17,7 @@ class T5Fabric(object):
     def rest_show_fabric_switch(self):
         t = test.Test()
         c = t.controller()
-        url = '%s/api/v1/data/controller/core/switch?select=alias' % (c.base_url)
+        url = '%s/api/v1/data/controller/core/switch' % (c.base_url)
         c.rest.get(url)
         helpers.test_log("Output: %s" % c.rest.content_json())
         return True
@@ -170,12 +170,11 @@ class T5Fabric(object):
         for i in range(0,len(data1)):
             if data1[i]["fabric-switch-info"]["fabric-role"] == "spine":
                 spine_switch = spine_switch + 1
-                
-            
+                  
         if spine_switch == 2 and rack_lag == 2 and spine_lag == 2 and spine_bcast_lag == 2:
-            helpers.test_log("Fabric Lag formation for Dual rack is correct") 
+            helpers.test_log("Fabric Lag formation for Dual rack Dual spine is correct") 
         if spine_switch == 1 and rack_lag == 1 and spine_lag == 1 and spine_bcast_lag == 1:
-            helpers.test_log("Fabric Lag formation for single rack is correct")       
+            helpers.test_log("Fabric Lag formation for Dual rack Single spine is correct")       
         
         if not c.rest.status_code_ok():
            helpers.test_failure(c.rest.error())
