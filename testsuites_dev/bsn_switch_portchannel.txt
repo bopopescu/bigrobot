@@ -6,8 +6,7 @@ Test Setup  base test setup
 Test Teardown  base test teardown
 Force Tags  SNMP Sanity
 Library  keywords/BsnCommon.py
-Library  keywords_dev/BsnCommonConfig.py
-Library  keywords_dev/BsnCommonShow.py
+Library  keywords_dev/BsnCommon.py
 Library  keywords_dev/BsnSwitchCommon.py
 
 
@@ -116,11 +115,13 @@ T5848: Verify LAG interface can be formed with maximum number of member links (8
 T5850: Verify LAG interface with just 1 member link
 	verify T5850
 
+T5852: Save running-config to startup-config. Reboot switch and verify that LAG interface comes up correctly.
+	verify T5852
+	
 T5853: Restart process OFAD and verify LAG interface shows up correctly
 	verify T5853
 	
-T5852: Save running-config to startup-config. Reboot switch and verify that LAG interface comes up correctly.
-	verify T5852
+
 
 * Keywords  
 lag suite setup
@@ -128,7 +129,7 @@ lag suite setup
 	configure portchannel  ${ip_address_1}  20  1-2  L3         
 	configure portchannel  ${ip_address_2}  7  43,44  L3   
 	configure portchannel  ${ip_address_2}  30  49,52  L3
-#	configure portchannel  ${ip_address_3}  30  49,52  L3  
+	configure portchannel  ${ip_address_3}  30  49,52  L3  
 	sleepnow   30
 
 verify lag-1glb9-up
@@ -320,14 +321,14 @@ verify l2-lagmem-10gly2-up
 verify l2-lag-40gly2-up
 # Verify portchannel interface is up
 	configure portchannel  ${ip_address_2}  30  49,52  L2
-#	configure portchannel  ${ip_address_3}  30  49,52  L2 
+	configure portchannel  ${ip_address_3}  30  49,52  L2 
 	${inft_state}=  return intf state  ${ip_address_2}  port-channel30
 	Should Contain  ${inft_state}  up
 
 verify l2-lagmem-40gly2
 # Verify portchannel interface correctly reports member interface name
 	configure portchannel  ${ip_address_2}  30  49,52  L2
-#	configure portchannel  ${ip_address_3}  30  49,52  L2 
+	configure portchannel  ${ip_address_3}  30  49,52  L2 
 	${member_exists5}=  verify portchannel members  ${ip_address_2}  30  ethernet49
 	Should Be True  ${member_exists5}
 	${member_exists6}=  verify portchannel members  ${ip_address_2}  30  ethernet52
@@ -336,7 +337,7 @@ verify l2-lagmem-40gly2
 verify l2-lagmem-40gly2-up
 # Verify portchannel interface correctly reports member interfaces as up
 	configure portchannel  ${ip_address_2}  30  49,52  L2
-#	configure portchannel  ${ip_address_3}  30  49,52  L2 
+	configure portchannel  ${ip_address_3}  30  49,52  L2 
 	${member_isup5}=  verify portchannel member state  ${ip_address_2}  30  ethernet49
 	Should Be True  ${member_isup5}
 	${member_isup6}=  verify portchannel member state  ${ip_address_2}  30  ethernet52
@@ -463,17 +464,17 @@ verify T5852
 	${dpid1}=  return switch dpid  ${switchDict}  ${ip_address_1}
 	${cpc_state}=  verify interface is up   ${dpid1}  port-channel1
 	Should Be True  ${cpc_state}
-	execute switch command  ${ip_address_1}  copy running-config startup-config
+	execute switch command return output  ${ip_address_1}  copy running-config startup-config
 	sleepnow  5
-	Run Keyword And Continue On Failure  execute switch command  ${ip_address_1}  debug ofad 'help; reboot\r'
-	Wait Until Keyword Succeeds  5 min  30 sec  execute switch command  ${ip_address_1}  show version
+	Run Keyword And Continue On Failure  execute switch command return output  ${ip_address_1}  debug ofad 'help; reboot\r'
+	Wait Until Keyword Succeeds  5 min  30 sec  execute switch command return output  ${ip_address_1}  show version
 	${pc_state}=  verify_portchannel  ${ip_address_1}  1
 	Should Be True  ${pc_state}
 	${switchDict}=  REST show switch
 	${dpid1}=  return switch dpid  ${switchDict}  ${ip_address_1}
 	${cpc_state}=  verify interface is up   ${dpid1}  port-channel1
 	Should Be True  ${cpc_state}
-	execute switch command  ${ip_address_1}  copy running-config startup-config
+	execute switch command return output  ${ip_address_1}  copy running-config startup-config
 
 verify T5853
 #Restart process OFAD and verify LAG interface shows up correctly
@@ -497,5 +498,8 @@ verify T5853
 	sleepnow  20
 
 lag suite teardown
-	unconfigure portchannel  ${ip_address_1}  20
+	unconfigure portchannel  ${ip_address_1}  1 
+	unconfigure portchannel  ${ip_address_1}  20        
+	unconfigure portchannel  ${ip_address_2}  7   
+	unconfigure portchannel  ${ip_address_2}  30
 	sleepnow   20

@@ -13,13 +13,43 @@ class BigTapCommonShow(object):
         helpers.log("result: %s" % helpers.to_json(result))
         session_cookie = result['content']['session_cookie']
         c.rest.set_session_cookie(session_cookie)
-        
-        
+    
+    def rest_is_c1_master_controller(self):
+        t = test.Test()
+        try:
+            t.controller('c2')
+        except:
+            helpers.log('C1 is MASTER')
+            return True
+        else:
+            c1 = t.controller('c1')
+            c2 = t.controller('c2')
+            url0 = 'http://%s:8000/rest/v1/system/ha/role'  % (c1.ip)
+            c1.rest.get(url0)
+            content1 = c1.rest.content()
+            c1role = content1['role']
+            url0 = 'http://%s:8000/rest/v1/system/ha/role'  % (c2.ip)
+            c2.rest.get(url0)
+            content2 = c2.rest.content()
+            c2role = content2['role']
+            if c1role =="MASTER":
+                helpers.log('C1 is MASTER')
+                return True
+            else:
+                helpers.log('C2 is MASTER')
+                return False
+
+
+                  
     def rest_show_bigtap_policy(self, policyName,numFIntf,numDIntf):
         t = test.Test()
-        c = t.controller()
+        if(self.rest_is_c1_master_controller()):
+            c = t.controller('c1')
+            c.http_port=8082
+        else:
+            c = t.controller('c2')
+            c.http_port=8082
         helpers.test_log("Input arguments: policy = %s" % policyName )
-        c.http_port=8082
         url ='http://%s:%s/api/v1/data/controller/applications/bigtap/view/policy[name="%s"]/info' % (c.ip,c.http_port, policyName)
         c.rest.get(url)
         helpers.test_log("Ouput: %s" % c.rest.result_json())
@@ -60,8 +90,12 @@ class BigTapCommonShow(object):
 # Values for method are info/rule/filter-interface/delivery-interface/service-interface/core-interface/failed-paths    
     def rest_check_policy_key(self,policyName,method,index,key):
         t = test.Test()
-        c = t.controller()
-        c.http_port=8082
+        if(self.rest_is_c1_master_controller()):
+            c = t.controller('c1')
+            c.http_port=8082
+        else:
+            c = t.controller('c2')
+            c.http_port=8082
         url ='http://%s:%s/api/v1/data/controller/applications/bigtap/view/policy[name="%s"]/%s' % (c.ip,c.http_port,str(policyName),str(method))
         c.rest.get(url)
         helpers.test_log("Ouput: %s" % c.rest.result_json())
@@ -79,9 +113,14 @@ class BigTapCommonShow(object):
 # Output: switch dpid 
     def rest_show_switch_dpid(self,switchAlias):
         t = test.Test()
-        c = t.controller()
+        if(self.rest_is_c1_master_controller()):
+            c = t.controller('c1')
+            c.http_port=8082
+        else:
+            c = t.controller('c2')
+            c.http_port=8082
+        helpers.log("IP address is %s" % (c.ip))
         aliasExists=0
-        c.http_port=8082
         url ='http://%s:%s/api/v1/data/controller/core/switch?select=alias'   % (c.ip,c.http_port)
         c.rest.get(url)
         content = c.rest.content()
@@ -99,8 +138,12 @@ class BigTapCommonShow(object):
 # Output: Number of flows      
     def rest_show_switch_flow(self,switchDpid):
         t = test.Test()
-        c = t.controller()
-        c.http_port=8082
+        if(self.rest_is_c1_master_controller()):
+            c = t.controller('c1')
+            c.http_port=8082
+        else:
+            c = t.controller('c2')
+            c.http_port=8082
         url ='http://%s:%s/api/v1/data/controller/core/switch[dpid="%s"]?select=stats/table' % (c.ip,c.http_port,str(switchDpid))
         c.rest.get(url)
         content = c.rest.content()
