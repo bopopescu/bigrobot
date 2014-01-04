@@ -612,6 +612,3 @@ class BsnSwitchCommon(object):
         conn.send('logout\r')
         conn.close()
         return True
-        
-
-
