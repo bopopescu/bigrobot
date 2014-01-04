@@ -10,12 +10,15 @@ Force Tags       T5 Sanity
 Library          keywords/BsnCommon.py
 Library          keywords_dev/T5.py
 Library	         keywords_dev/T5Fabric.py
-Library          keywords_dev/Mininet.py
+Library          keywords/Mininet.py
 
 * Variables
 ${bm0_ip}  10.0.0.1
 ${bm1_ip}  10.0.0.2
 ${bm2_ip}  10.0.0.3
+${bm0_mac}  00:00:00:00:00:01
+${bm1_mac}  00:00:00:00:00:02
+${bm2_mac}  00:00:00:00:00:03
 
 * Test Case 
 
@@ -37,11 +40,19 @@ ping bm0 to bm1 single leaf static endpoints
    create a endpoint  A  A  e2 
    add portgroup to endpoint  A   A  e2  p2  -1
    add portgroup to endpoint  A   A  e1  p1  -1
+   REST configure ip endpoint  A  A  e1  ${bm0_ip}
+   REST configure mac endpoint  A  A  e1  ${bm0_mac}
+   REST configure ip endpoint  A  A  e2  ${bm1_ip}
+   REST configure mac endpoint  A  A  e2  ${bm1_mac}
+   add portgroup to vns  A  A  p2  -1 
+   add portgroup to vns  A  A  p1  -1 
    mininet ping  bm0  ${bm1_ip} 
 
 ping bm0 to bm2 dual rack single leaf dynamic endpoints
    delete a endpoint  A  A  e1 
    delete a endpoint  A  A  e2
+   delete portgroup from vns  A  A  p1  -1 
+   delete portgroup from vns  A  A  p2  -1
    create a portgroup  p3 
    add interface to portgroup  leaf1  leaf1-eth5  p3 
    add portgroup to vns  A  A  p3  -1 
@@ -51,15 +62,23 @@ ping bm0 to bm2 dual rack single leaf dynamic endpoints
 ping bm0 to bm2 dual rack single leaf static endpoints     
    delete portgroup from vns  A  A  p1  -1 
    delete portgroup from vns  A  A  p3  -1
-   create a endpoint  A  A  e1  
-   add portgroup to endpoint  A  A  e1  p1  -1 
-   create a endpoint  A  A  e2  
-   add portgroup to endpoint  A  A  e2  p3  -1
-   mininet ping  bm0  ${bm2_ip} 
+   create a endpoint  A  A  e1 
+   create a endpoint  A  A  e2 
+   add portgroup to endpoint  A   A  e2  p3  -1
+   add portgroup to endpoint  A   A  e1  p1  -1
+   REST configure ip endpoint  A  A  e1  ${bm0_ip}
+   REST configure mac endpoint  A  A  e1  ${bm0_mac}
+   REST configure ip endpoint  A  A  e2  ${bm2_ip}
+   REST configure mac endpoint  A  A  e2  ${bm2_mac}
+   add portgroup to vns  A  A  p3  -1 
+   add portgroup to vns  A  A  p1  -1 
+   mininet ping  bm0  ${bm2_ip}  
    
 ping bm0 to bm1 single leaf dynamic endpoints tag
    delete a endpoint  A  A  e1 
    delete a endpoint  A  A  e2
+   delete portgroup from vns  A  A  p1  -1 
+   delete portgroup from vns  A  A  p3  -1
    add portgroup to vns  A  A  p1  10 
    add portgroup to vns  A  A  p2  10 
    mininet link tag  bm0  bm0-bond0  10  10.0.0.1
@@ -73,14 +92,22 @@ ping bm0 to bm1 single leaf static endpoints tag
    add portgroup to endpoint  A  A  e1  p1  10
    create a endpoint  A  A  e2 
    add portgroup to endpoint  A  A  e2  p2  10
+   REST configure ip endpoint  A  A  e1  ${bm0_ip}
+   REST configure mac endpoint  A  A  e1  ${bm0_mac}
+   REST configure ip endpoint  A  A  e2  ${bm1_ip}
+   REST configure mac endpoint  A  A  e2  ${bm1_mac}
+   add portgroup to vns  A  A  p2  10 
+   add portgroup to vns  A  A  p1  10 
    mininet ping  bm0  ${bm1_ip}
 
 ping bm0 to bm2 dual rack single leaf dynamic endpoints tag     
    delete a endpoint  A  A  e1  
    delete a endpoint  A  A  e2
+   delete portgroup from vns  A  A  p1  10 
+   delete portgroup from vns  A  A  p2  10
    add portgroup to vns  A  A  p1  10 
    add portgroup to vns  A  A  p3  10 
-   mininet link tag  bm2  bm2-bond0  10  10.0.0.3
+   mininet link tag  bm2  bm2-bond0  10  ${bm2_ip}
    mininet ping  bm0  ${bm2_ip}   
    
 ping bm0 to bm2 dual rack single leaf static endpoints tag 
@@ -88,8 +115,14 @@ ping bm0 to bm2 dual rack single leaf static endpoints tag
    delete portgroup from vns  A  A  p3  10 
    create a endpoint  A  A  e1  
    add portgroup to endpoint  A  A  e1  p1  10
-   create a endpoint  A  A  e2  
-   add portgroup to endpoint  A  A  e2  p3  10
+   create a endpoint  A  A  e2 
+   add portgroup to endpoint  A  A  e2  p3  10 
+   REST configure ip endpoint  A  A  e1  ${bm0_ip}
+   REST configure mac endpoint  A  A  e1  ${bm0_mac}
+   REST configure ip endpoint  A  A  e2  ${bm2_ip}
+   REST configure mac endpoint  A  A  e2  ${bm2_mac}
+   add portgroup to vns  A  A  p3  10 
+   add portgroup to vns  A  A  p1  10 
    mininet ping   bm0  ${bm2_ip}  
    
 Tear down the config 
@@ -136,11 +169,11 @@ add portgroup to vns  [Arguments]  ${tenant}  ${vns}  ${pg}  ${vlan}
   	REST add portgroup to vns  ${tenant}  ${vns}  ${pg}  ${vlan} 
 
 add portgroup to endpoint  [Arguments]  ${tenant}  ${vns}  ${endpoint}  ${pg}  ${vlan} 
-
   REST add portgroup to endpoint  ${tenant}  ${vns}  ${endpoint}  ${pg}  ${vlan} 
 
 delete portgroup from vns  [Arguments]  ${tenant}  ${vns}  ${pg}  ${vlan} 
+  REST delete portgroup from vns  ${tenant}  ${vns}  ${pg}  ${vlan}
+  
 
-  REST delete portgroup from vns  ${tenant}  ${vns}  ${pg}  ${vlan} 
 
  
