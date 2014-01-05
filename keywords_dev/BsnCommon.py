@@ -632,6 +632,28 @@ class BsnCommon(object):
 #   Objective: Delete SNMP. Similar to "no snmp-server enable"
 #   Input: N/A
 #   Return Value:  True/False    
+    def rest_delete_snmp_trapserver(self,trapPort):
+        '''Delete SNMP trapserver. Similar to "no snmp-server trap server 10.192.3.22 161"
+            
+           Input: N/A
+           
+           Return Value:  True if the configuration is successful, false otherwise 
+        '''
+        t = test.Test()
+        if(self.rest_is_c1_master_controller()):
+            c = t.controller('c1')
+            c.http_port=8000
+        else:
+            c = t.controller('c2')
+            c.http_port=8000
+        url1='http://%s:%s/rest/v1/model/snmp-server-config/?id=snmp' % (c.ip,c.http_port)
+        helpers.test_log(url1)
+        c.rest.put(url1, {"trap-enable": False, "trap-server": "", "trap-port": int(trapPort)})
+        return True
+
+#   Objective: Delete SNMP. Similar to "no snmp-server enable"
+#   Input: N/A
+#   Return Value:  True/False    
     def rest_delete_snmp(self):
         '''Delete SNMP. Similar to "no snmp-server enable"
             
@@ -648,6 +670,5 @@ class BsnCommon(object):
             c.http_port=8000
         url1='http://%s:%s/rest/v1/model/snmp-server-config/?id=snmp' % (c.ip,c.http_port)
         helpers.test_log(url1)
-        retVal = c.rest.delete(url1, {})
-        helpers.test_log(retVal)
+        c.rest.delete(url1, {})
         return True
