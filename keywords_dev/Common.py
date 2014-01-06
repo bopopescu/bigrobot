@@ -1,6 +1,8 @@
 import autobot.helpers as helpers
 import autobot.test as test
 import re
+import subprocess
+import os
 
 class Common(object):
 # This is for all the common function   - Mingtao
@@ -22,6 +24,10 @@ class Common(object):
             helpers.sleep(float(2))    
         if (Flag == 'long'):
             helpers.sleep(float(10))    
+            
+            
+            
+            
      
     def bigtap_clean_up(self, Feature):
         t = test.Test()
@@ -390,3 +396,102 @@ class Common(object):
                 return False
             else:
                 return True    
+            
+            
+    def remote_copy(self,file):
+        t = test.Test()
+        c = t.controller()
+        
+        destination = "admin@10.192.105.1:/opt/bigswitch/run/saved-configs/%s" % file
+        helpers.log("remote copy file:  %s  --->  %s" % (file, str(destination)))
+        os.system("scp "+file+" "+destination)
+         
+        return True                
+
+    def bigtap_gen_address_group(self,fName,gName,Type,base,incr,Mask,Num):
+        t = test.Test()
+        c = t.controller()
+        
+        helpers.log("the base address is: %s,  the step is: %s,  the mask is: %s,  the Num is: %s"  % (str(base), str(incr), str(Mask),  str(Num)))   
+         
+        fo = open(fName,'w')
+        temp = "bigtap address-group %s \n ip type %s \n ip %s %s \n"  % (str(fName), str(gName),str(base),str(Mask)) 
+        fo.write(str(temp)) 
+                
+        if Type == 'ipv4': 
+            ip = list(map(int, base.split(".")))
+            step = list(map(int, incr.split(".")))
+            
+            ipAdd = []
+            Num = int(Num) - 1
+            
+            for num in range(0,int(Num)):
+                ip[3] += step[3]
+                if ip[3] >= 256:
+                    ip[3] = 0
+                    ip[2] +=1
+                ip[2] += step[2]   
+                if ip[2] >= 256:
+                    ip[2] = 0
+                    ip[1] +=1
+                ip[1] += step[1]     
+                if ip[1] >= 256:
+                    ip[1] = 0
+                    ip[0] +=1
+                    
+                ip[0] += step[0]        
+                if ip[0] >= 256:
+                    ip[0] = 0
+                
+                ipAdd  = '.'.join(map(str,ip)) 
+                temp = " ip %s %s \n"  % (str(ipAdd),str(Mask)) 
+                fo.write(str(temp)) 
+                                
+#                helpers.log("the address is: %s"  % (str(ipAdd)))    
+                               
+        if Type == 'ipv6' :
+            ip = base.split(":")
+            step =  incr.split(":")
+            
+            helpers.log("IP list is %s" % ip)
+            
+            ipAdd = []
+            hexip = []
+            Num = int(Num) - 1
+            
+            for index,item in enumerate(ip):
+                helpers.log("The list is:  %s -- %s "  % (str(index), str(item)))   
+                
+            for num in range(0,int(Num)):   
+                hexip = []             
+                for i in range(0,7):
+                    index = 7 - int(i)
+                    helpers.log("The %s value is (%s): %d"  % (int(index), ip[index], int(ip[index], 16)))                     
+ 
+                    ip[index] = int(ip[index], 16) + int(step[index], 16)
+                    ip[index] = hex(ip[index])
+                    if ip[index] >= 'ffff':
+                        ip[index] = 0
+                        ip[index-1] = int(ip[index-1],16) + 1
+                        ip[index-1] = hex(ip[index-1])
+                  
+                    
+                ip[0] = int(ip[0],16) + int(step[0],16)        
+                if ip[0] >= 65535:
+                    ip[0] = 0
+                    
+                ip[0]=hex(ip[0])    
+                
+                for i in range(0,8):
+                    hexip.append('{0:x}'.format(int(ip[i],16)))
+                    
+                    
+                ipAdd  = ':'.join(map(str,hexip)) 
+                temp = " ip %s %s \n"  % (str(ipAdd),str(Mask)) 
+                fo.write(str(temp)) 
+                                
+ 
+ 
+        fo.close()  
+        return True                         
+            

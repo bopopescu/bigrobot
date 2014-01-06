@@ -10,6 +10,15 @@ Library         keywords/BsnCommon.py
 Library         keywords_dev/BigTapCommonConfig.py 
 Library         keywords_dev/BigTapCommonShow.py 
 
+
+
+* Variable
+${c1}  10.192.105.1
+${c2}  10.192.105.2
+ 
+
+
+
 * Test Case
 #Verify all the common show cmd
 #	show command
@@ -141,10 +150,14 @@ Test L3_L4_Mode
   	REST bigtap config l34      true    negative   		 
   	 
 #	REST delete policy          admin-view  IPv6_ADD  
-	[Tags]   sanity  
+	[Tags]   sanity  skipped
 
 
-
+Load and apply config file
+#	remote_copy    blackbird.txt
+	bigtap_gen_address_group	 IPV4 	 ipv4_10	ipv4 	10.0.0.0 	0.1.0.1		255.255.255.255 	10
+	bigtap_gen_address_group	 IPV6 	 ipv6_10	ipv6 	f001:100:0:0:0:0:0:0 	0:0:0:0:0:0:0:1		ffff:ffff:ffff:ffff:ffff:fff:ffff:ffff 	20
+	[Tags]  sanity
 
 
 * Keywords
