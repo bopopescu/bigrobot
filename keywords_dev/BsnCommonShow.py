@@ -275,9 +275,14 @@ class BsnCommonShow(object):
     def return_master_slave_ip_address(self):
         t=test.Test()
         ip_address_list={}
-        if(self.btc.rest_is_c1_master_controller()):
-            ip_address_list={'Master':str(t.controller('c1').ip), 'Slave':str(t.controller('c2').ip)}
-            return (ip_address_list)
+        try:
+            t.controller('c2')
+        except:
+            return {'Master':str(t.controller('c1').ip)}
         else:
-            ip_address_list={'Master':str(t.controller('c2').ip), 'Slave':str(t.controller('c1').ip)}
-            return (ip_address_list)
+            if(self.btc.rest_is_c1_master_controller()):
+                ip_address_list={'Master':str(t.controller('c1').ip), 'Slave':str(t.controller('c2').ip)}
+                return (ip_address_list)
+            else:
+                ip_address_list={'Master':str(t.controller('c2').ip), 'Slave':str(t.controller('c1').ip)}
+                return (ip_address_list)

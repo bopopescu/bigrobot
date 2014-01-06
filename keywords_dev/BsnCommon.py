@@ -31,8 +31,12 @@ class BsnCommon(object):
         '''Returns True if c1 (defined in .topo file) is Master, False otherwise
         '''
         t = test.Test()
-        #c = t.controller()
-        if (t.controller('c2')) :
+        try:
+            t.controller('c2')
+        except:
+            helpers.log('C1 is MASTER')
+            return True
+        else:
             c1 = t.controller('c1')
             c2 = t.controller('c2')
             url0 = 'http://%s:8000/rest/v1/system/ha/role'  % (c1.ip)
@@ -49,9 +53,6 @@ class BsnCommon(object):
             else:
                 helpers.log('C2 is MASTER')
                 return False
-        else:
-            c1role='MASTER'
-            return True
         
     def rest_show_version(self):
         '''Return version of controller s/w
@@ -244,12 +245,17 @@ class BsnCommon(object):
         '''
         t=test.Test()
         ip_address_list={}
-        if(self.btc.rest_is_c1_master_controller()):
-            ip_address_list={'Master':str(t.controller('c1').ip), 'Slave':str(t.controller('c2').ip)}
-            return (ip_address_list)
+        try:
+            t.controller('c2')
+        except:
+            return {'Master':str(t.controller('c1').ip)}
         else:
-            ip_address_list={'Master':str(t.controller('c2').ip), 'Slave':str(t.controller('c1').ip)}
-            return (ip_address_list)
+            if(self.btc.rest_is_c1_master_controller()):
+                ip_address_list={'Master':str(t.controller('c1').ip), 'Slave':str(t.controller('c2').ip)}
+                return (ip_address_list)
+            else:
+                ip_address_list={'Master':str(t.controller('c2').ip), 'Slave':str(t.controller('c1').ip)}
+                return (ip_address_list)
 
 ########################################################
 # All Common Controller Verification Commands Go Here:
@@ -337,6 +343,62 @@ class BsnCommon(object):
 #########################################################
 # All Common Controller Platform related Commands Go Here
 #########################################################
+
+##NTP
+
+############### NTP SHOW COMMANDS ########################
+
+############### NTP CONFIG COMMANDS ########################
+
+    def rest_configure_ntp(self,ntp_server):
+        '''Configure NTP server
+        
+            Inputs:
+                ntp_server: Name of NTP server 
+            
+            Returns: True if configuration is successful, false otherwise
+        '''
+        t = test.Test()
+        if(self.rest_is_c1_master_controller()):
+            c = t.controller('c1')
+            c.http_port=8000
+        else:
+            c = t.controller('c2')
+            c.http_port=8000
+        url='http://%s:%s/rest/v1/model/ntp-server/' % (c.ip,c.http_port)
+        c.rest.put(url,  {"enabled": True, "server": str(ntp_server)})
+        helpers.test_log("Ouput: %s" % c.rest.result_json())
+        if not c.rest.status_code_ok():
+            helpers.test_failure(c.rest.error())
+            return False
+        else:
+            helpers.test_log(c.rest.content_json())
+            return True
+
+    def rest_delete_ntp(self,ntp_server):
+        '''Delete NTP server
+        
+            Inputs:
+                ntp_server: Name of NTP server 
+            
+            Returns: True if configuration is successful, false otherwise
+        '''
+        t = test.Test()
+        if(self.rest_is_c1_master_controller()):
+            c = t.controller('c1')
+            c.http_port=8000
+        else:
+            c = t.controller('c2')
+            c.http_port=8000
+        url='http://%s:%s/rest/v1/model/ntp-server/?enabled=True&server=%s' % (c.ip,c.http_port,str(ntp_server))
+        c.rest.delete(url,  {})
+        helpers.test_log("Ouput: %s" % c.rest.result_json())
+        if not c.rest.status_code_ok():
+            helpers.test_failure(c.rest.error())
+            return False
+        else:
+            helpers.test_log(c.rest.content_json())
+            return True      
 
 ##SNMP##
 
