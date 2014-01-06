@@ -1,14 +1,22 @@
 import autobot.helpers as helpers
 import autobot.test as test
+from BigTapCommonShow import BigTapCommonShow
+from Exscript.protocols import SSH2
+from Exscript import Account, Host
 
 
 class BigWireCommon(object):
 
     def __init__(self):
         t = test.Test()
-        c = t.controller()
-        url = '%s/auth/login' % c.base_url
-        helpers.log("url: %s" % url)
+        self.btc=BigTapCommonShow()
+        if(self.btc.rest_is_c1_master_controller()):
+            c = t.controller('c1')
+            c.http_port=8082
+        else:
+            c = t.controller('c2')
+            c.http_port=8082
+        url='http://%s:%s/auth/login' % (c.ip,c.http_port)
         result = c.rest.post(url, {"user":"admin", "password":"adminadmin"})
         helpers.log("result: %s" % helpers.to_json(result))
         session_cookie = result['content']['session_cookie']
@@ -29,8 +37,23 @@ class BigWireCommon(object):
                 
         '''
         t = test.Test()
-        c = t.controller()
-        c.http_port=8082
+        try:
+            t.controller('c2')
+        except:
+            c = t.controller('c1')
+            c.http_port=8082
+        else:
+            if(self.btc.rest_is_c1_master_controller()):
+                c = t.controller('c1')
+                c.http_port=8082
+            else:
+                c = t.controller('c2')
+                c.http_port=8082  
+        url='http://%s:%s/auth/login' % (c.ip,c.http_port)
+        result = c.rest.post(url, {"user":"admin", "password":"adminadmin"})
+        helpers.log("result: %s" % helpers.to_json(result))
+        session_cookie = result['content']['session_cookie']
+        c.rest.set_session_cookie(session_cookie) 
         if bwKey == "datacenter":
             bwKeyword = "datacenter-info" # "show bigwire datacenter"
         elif bwKey == "pseudowire":
@@ -65,8 +88,24 @@ class BigWireCommon(object):
             Returns: True if configuration is successful, false otherwise
         '''
         t = test.Test()
-        c = t.controller()
-        c.http_port=8082
+        try:
+            t.controller('c2')
+        except:
+            c = t.controller('c1')
+            c.http_port=8082
+        else:
+            if(self.btc.rest_is_c1_master_controller()):
+                c = t.controller('c1')
+                c.http_port=8082
+            else:
+                c = t.controller('c2')
+                c.http_port=8082  
+                
+        url='http://%s:%s/auth/login' % (c.ip,c.http_port)
+        result = c.rest.post(url, {"user":"admin", "password":"adminadmin"})
+        helpers.log("result: %s" % helpers.to_json(result))
+        session_cookie = result['content']['session_cookie']
+        c.rest.set_session_cookie(session_cookie) 
         url='http://%s:%s/api/v1/data/controller/applications/bigwire/datacenter[name="%s"]' % (c.ip,c.http_port,str(dcName))
         c.rest.put(url, {"name": str(dcName)})
         helpers.test_log("Ouput: %s" % c.rest.result_json())
@@ -90,8 +129,24 @@ class BigWireCommon(object):
           Returns: True if configuration is successful, false otherwise
         '''
         t = test.Test()
-        c = t.controller()
-        c.http_port=8082
+        try:
+            t.controller('c2')
+        except:
+            c = t.controller('c1')
+            c.http_port=8082
+        else:
+            if(self.btc.rest_is_c1_master_controller()):
+                c = t.controller('c1')
+                c.http_port=8082
+            else:
+                c = t.controller('c2')
+                c.http_port=8082  
+                
+        url='http://%s:%s/auth/login' % (c.ip,c.http_port)
+        result = c.rest.post(url, {"user":"admin", "password":"adminadmin"})
+        helpers.log("result: %s" % helpers.to_json(result))
+        session_cookie = result['content']['session_cookie']
+        c.rest.set_session_cookie(session_cookie) 
         url='http://%s:%s/api/v1/data/controller/applications/bigwire/datacenter[name="%s"]/member-switch[dpid="%s"]' % (c.ip,c.http_port,str(dcName),str(swDpid))
         c.rest.put(url, {"zone": str(zoneName), "dpid": str(swDpid)})
         helpers.test_log("Ouput: %s" % c.rest.result_json())
@@ -116,8 +171,24 @@ class BigWireCommon(object):
           Returns: True if configuration is successful, false otherwise
         '''
         t = test.Test()
-        c = t.controller()
-        c.http_port=8082
+        try:
+            t.controller('c2')
+        except:
+            c = t.controller('c1')
+            c.http_port=8082
+        else:
+            if(self.btc.rest_is_c1_master_controller()):
+                c = t.controller('c1')
+                c.http_port=8082
+            else:
+                c = t.controller('c2')
+                c.http_port=8082  
+                
+        url='http://%s:%s/auth/login' % (c.ip,c.http_port)
+        result = c.rest.post(url, {"user":"admin", "password":"adminadmin"})
+        helpers.log("result: %s" % helpers.to_json(result))
+        session_cookie = result['content']['session_cookie']
+        c.rest.set_session_cookie(session_cookie) 
         url='http://%s:%s/api/v1/data/controller/applications/bigwire/pseudo-wire[name="%s"]' % (c.ip,c.http_port,str(pseudoName))
         if vlan == 0:
             c.rest.put(url, {"interface1": str(intfName1), "switch2": str(switchDpid2), "switch1": str(switchDpid1), "interface2": str(inftName2), "name": str(pseudoName)})
@@ -140,8 +211,24 @@ class BigWireCommon(object):
             Returns: True if configuration is successful, false otherwise
         '''
         t = test.Test()
-        c = t.controller()
-        c.http_port=8082
+        try:
+            t.controller('c2')
+        except:
+            c = t.controller('c1')
+            c.http_port=8082
+        else:
+            if(self.btc.rest_is_c1_master_controller()):
+                c = t.controller('c1')
+                c.http_port=8082
+            else:
+                c = t.controller('c2')
+                c.http_port=8082
+                
+        url='http://%s:%s/auth/login' % (c.ip,c.http_port)
+        result = c.rest.post(url, {"user":"admin", "password":"adminadmin"})
+        helpers.log("result: %s" % helpers.to_json(result))
+        session_cookie = result['content']['session_cookie']
+        c.rest.set_session_cookie(session_cookie) 
         url='http://%s:%s/api/v1/data/controller/applications/bigwire/tenant[name="%s"]' % (c.ip,c.http_port,str(tenantName))
         c.rest.put(url, {"name": str(tenantName)})
         helpers.test_log("Ouput: %s" % c.rest.result_json())
@@ -167,8 +254,24 @@ class BigWireCommon(object):
           Returns: True if configuration is successful, false otherwise
         '''
         t = test.Test()
-        c = t.controller()
-        c.http_port=8082
+        try:
+            t.controller('c2')
+        except:
+            c = t.controller('c1')
+            c.http_port=8082
+        else:
+            if(self.btc.rest_is_c1_master_controller()):
+                c = t.controller('c1')
+                c.http_port=8082
+            else:
+                c = t.controller('c2')
+                c.http_port=8082
+                
+        url='http://%s:%s/auth/login' % (c.ip,c.http_port)
+        result = c.rest.post(url, {"user":"admin", "password":"adminadmin"})
+        helpers.log("result: %s" % helpers.to_json(result))
+        session_cookie = result['content']['session_cookie']
+        c.rest.set_session_cookie(session_cookie) 
         url='http://%s:%s/api/v1/data/controller/applications/bigwire/tenant[name="%s"]/tenant-interface[interface="%s"][switch="%s"]' %(c.ip,c.http_port,str(tenantName),str(interfaceName),str(switchDpid))
         if vlan == 0:
             c.rest.put(url,{"interface": str(interfaceName), "switch": str(switchDpid)})
@@ -191,8 +294,23 @@ class BigWireCommon(object):
           Returns: True if configuration is successful, false otherwise
         '''
         t = test.Test()
-        c = t.controller()
-        c.http_port=8082
+        try:
+            t.controller('c2')
+        except:
+            c = t.controller('c1')
+            c.http_port=8082
+        else:
+            if(self.btc.rest_is_c1_master_controller()):
+                c = t.controller('c1')
+                c.http_port=8082
+            else:
+                c = t.controller('c2')
+                c.http_port=8082
+        url='http://%s:%s/auth/login' % (c.ip,c.http_port)
+        result = c.rest.post(url, {"user":"admin", "password":"adminadmin"})
+        helpers.log("result: %s" % helpers.to_json(result))
+        session_cookie = result['content']['session_cookie']
+        c.rest.set_session_cookie(session_cookie)
         url='http://%s:%s/api/v1/data/controller/applications/bigwire/tenant[name="%s"]'  % (c.ip,c.http_port,str(tenantName))    
         c.rest.delete(url, {})
         if not c.rest.status_code_ok():
@@ -211,8 +329,23 @@ class BigWireCommon(object):
           Returns: True if configuration is successful, false otherwise
         '''
         t = test.Test()
-        c = t.controller()
-        c.http_port=8082
+        try:
+            t.controller('c2')
+        except:
+            c = t.controller('c1')
+            c.http_port=8082
+        else:
+            if(self.btc.rest_is_c1_master_controller()):
+                c = t.controller('c1')
+                c.http_port=8082
+            else:
+                c = t.controller('c2')
+                c.http_port=8082
+        url='http://%s:%s/auth/login' % (c.ip,c.http_port)
+        result = c.rest.post(url, {"user":"admin", "password":"adminadmin"})
+        helpers.log("result: %s" % helpers.to_json(result))
+        session_cookie = result['content']['session_cookie']
+        c.rest.set_session_cookie(session_cookie)
         url='http://%s:%s/api/v1/data/controller/applications/bigwire/pseudo-wire[name="%s"]'  % (c.ip,c.http_port,str(pseudoName))    
         c.rest.delete(url, {})
         if not c.rest.status_code_ok():
@@ -231,8 +364,23 @@ class BigWireCommon(object):
           Returns: True if configuration is successful, false otherwise
         '''
         t = test.Test()
-        c = t.controller()
-        c.http_port=8082
+        try:
+            t.controller('c2')
+        except:
+            c = t.controller('c1')
+            c.http_port=8082
+        else:
+            if(self.btc.rest_is_c1_master_controller()):
+                c = t.controller('c1')
+                c.http_port=8082
+            else:
+                c = t.controller('c2')
+                c.http_port=8082
+        url='http://%s:%s/auth/login' % (c.ip,c.http_port)
+        result = c.rest.post(url, {"user":"admin", "password":"adminadmin"})
+        helpers.log("result: %s" % helpers.to_json(result))
+        session_cookie = result['content']['session_cookie']
+        c.rest.set_session_cookie(session_cookie)
         url='http://%s:%s/api/v1/data/controller/applications/bigwire/datacenter[name="%s"]'  % (c.ip,c.http_port,str(dcName))    
         c.rest.delete(url, {})
         if not c.rest.status_code_ok():
