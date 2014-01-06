@@ -28,6 +28,15 @@ ${switchlight_version}  SwitchLight 2.0.0-beta1
 verify configuration is successful
 	verify config
 
+Verify CLI 'show ntp' 
+	verify ntpconfig
+
+Verify CLI 'show syslog' 
+	verify syslogconfig
+
+Flap eth0 on Master Controller
+	flap eth0  Master
+
 Restart Process Floodlight on Master Controller: 
 	restart floodlight  Master
 
@@ -45,6 +54,9 @@ Restart Process ntpd on Master Controller:
 
 Restart Process Cassandra on Master Controller: 
 	restart cassandra  Master
+
+Flap eth0 on Slave Controller
+	flap eth0  Slave
 
 Restart Process Floodlight on Slave Controller: 
 	restart floodlight  Slave
@@ -94,7 +106,7 @@ ha suite setup
 	REST setup bigtap interfaces  ${dpid3}  ethernet38  service  S5-LY4-AR4_E4-POST
 	# Configure BigTap Service
 	REST add bigtap service  S5-LY4  S5-LY4-AR4_E3-PRE  S5-LY4-AR4_E4-POST
-	sleepnow  10
+	Sleep  10
 	#Configure BigTap Policy
 	REST add policy  admin-view  P1  forward
 	REST add policy match  admin-view  P1  1  {"ether-type": 2048, "dst-tp-port": 80, "ip-proto": 6, "sequence": 1}
@@ -116,9 +128,47 @@ ha suite setup
 	REST add policy interface  admin-view  ZP4  LB7-F2-DL206-D2  filter
 	REST add policy interface  admin-view  ZP4  LB11-F2-AR4-D2  filter	
 	REST add policy interface  admin-view  ZP4  LY4-LB82-ET9  delivery
-	sleepnow  10
+	
+	#Configure NTP and SYSLOG
+	Run Keyword And Ignore Error  rest delete ntp  0.bigswitch.pool.ntp.org
+	Run Keyword And Ignore Error  rest delete syslog  10.192.66.230  0
+	rest configure ntp  0.debian.pool.ntp.org
+	rest configure syslog  10.192.66.230  0
+	Sleep  30
 
 verify config
+    REST show bigtap policy  P1  2  1
+    REST show bigtap policy  ZP2  2  1
+    REST show bigtap policy  P3  2  1
+    REST show bigtap policy  ZP4  2  1
+    REST show bigtap policy  _ZP2_o_P1  2  2
+    REST show bigtap policy  _ZP4_o_P3  2  2
+
+verify ntpconfig
+	${ntpContent}=  rest show ntp
+	${ntpState}=  return switch dpid  ${ntpContent}  enabled
+	${ntpServer}=  return switch dpid  ${ntpContent}  server
+	Should Be Equal As Strings  ${ntpServer}  0.debian.pool.ntp.org
+	Should Be True  ${ntpState}
+
+verify syslogconfig
+	${syslogContent}=  rest show syslog
+	${syslogState}=  return switch dpid  ${syslogContent}  logging-enabled
+	${syslogServer}=  return switch dpid  ${syslogContent}  logging-server
+	${syslogLevel}=  return switch dpid  ${syslogContent}  logging-level
+	Should Be True  ${syslogState}
+	Should Be Equal As Strings  ${syslogServer}  10.192.66.230
+	Should Be Equal As Integers  ${syslogLevel}  0
+
+flap eth0
+    [Arguments]  ${controllerRole}
+    REST show bigtap policy  P1  2  1
+    REST show bigtap policy  ZP2  2  1
+    REST show bigtap policy  P3  2  1
+    REST show bigtap policy  ZP4  2  1
+    REST show bigtap policy  _ZP2_o_P1  2  2
+    REST show bigtap policy  _ZP4_o_P3  2  2
+	flap eth0 controller  ${controllerRole}
     REST show bigtap policy  P1  2  1
     REST show bigtap policy  ZP2  2  1
     REST show bigtap policy  P3  2  1
@@ -135,7 +185,7 @@ restart floodlight
     REST show bigtap policy  _ZP2_o_P1  2  2
     REST show bigtap policy  _ZP4_o_P3  2  2
 	restart process controller  floodlight  ${controllerRole}
-	sleepnow  30
+	Sleep  30
     REST show bigtap policy  P1  2  1
     REST show bigtap policy  ZP2  2  1
     REST show bigtap policy  P3  2  1
@@ -152,7 +202,7 @@ restart keepalived
     REST show bigtap policy  _ZP2_o_P1  2  2
     REST show bigtap policy  _ZP4_o_P3  2  2
 	restart process controller  keepalived  ${controllerRole}
-	sleepnow  30
+	Sleep  30
     REST show bigtap policy  P1  2  1
     REST show bigtap policy  ZP2  2  1
     REST show bigtap policy  P3  2  1
@@ -169,7 +219,7 @@ restart snmpd
     REST show bigtap policy  _ZP2_o_P1  2  2
     REST show bigtap policy  _ZP4_o_P3  2  2
 	restart process controller  snmpd  ${controllerRole}
-	sleepnow  30
+	Sleep  30
     REST show bigtap policy  P1  2  1
     REST show bigtap policy  ZP2  2  1
     REST show bigtap policy  P3  2  1
@@ -186,7 +236,7 @@ restart rsyslogd
     REST show bigtap policy  _ZP2_o_P1  2  2
     REST show bigtap policy  _ZP4_o_P3  2  2
 	restart process controller  rsyslogd  ${controllerRole}
-	sleepnow  30
+	Sleep  30
     REST show bigtap policy  P1  2  1
     REST show bigtap policy  ZP2  2  1
     REST show bigtap policy  P3  2  1
@@ -203,7 +253,7 @@ restart ntpd
     REST show bigtap policy  _ZP2_o_P1  2  2
     REST show bigtap policy  _ZP4_o_P3  2  2
 	restart process controller  ntpd  ${controllerRole}
-	sleepnow  30
+	Sleep  30
 	${ip_address_list}=  return master slave ip address
 	${ntp_op}=  execute controller command return output  ntpdc -p  ${controllerRole}
 	${ip_address}=  return switch dpid  ${ip_address_list}  ${controllerRole}
@@ -224,7 +274,7 @@ restart cassandra
     REST show bigtap policy  _ZP2_o_P1  2  2
     REST show bigtap policy  _ZP4_o_P3  2  2
 	restart process controller  cassandra  ${controllerRole}
-	sleepnow  30
+	Sleep  30
     REST show bigtap policy  P1  2  1
     REST show bigtap policy  ZP2  2  1
     REST show bigtap policy  P3  2  1
@@ -240,7 +290,7 @@ ha failover
     REST show bigtap policy  _ZP2_o_P1  2  2
     REST show bigtap policy  _ZP4_o_P3  2  2
 	rest execute ha failover
-	sleepnow  120
+	Sleep  120
     REST show bigtap policy  P1  2  1
     REST show bigtap policy  ZP2  2  1
     REST show bigtap policy  P3  2  1

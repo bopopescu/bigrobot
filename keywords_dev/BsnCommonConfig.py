@@ -389,3 +389,42 @@ class BsnCommonConfig(object):
         else:
             helpers.test_log(c.rest.content_json())
             return True
+
+    def flap_eth0_controller(self,controllerRole):
+        ''' Flap eth0 on Controller
+        
+            Input:
+               controllerRole        Where to execute the command. Accepted values are `Master` and `Slave`
+           
+           Return Value:  True if the configuration is successful, false otherwise 
+        '''
+        t=test.Test()
+        try:
+            t.controller('c2')
+        except:
+            c = t.controller('c1')
+            c.http_port=8000
+        else:
+            if(self.btc.rest_is_c1_master_controller() and controllerRole=='Master' ) :
+                c = t.controller('c1')
+            elif (self.btc.rest_is_c1_master_controller() and controllerRole=='Slave' ):
+                c = t.controller('c2')
+            elif (not self.btc.rest_is_c1_master_controller() and controllerRole=='Master'):
+                c = t.controller('c2')
+            else:
+                c = t.controller('c1')
+        conn = SSH2()
+        conn.connect(c.ip)
+        conn.login(Account("admin","adminadmin"))
+        conn.execute('debug bash')
+        conn.execute("echo '#!/bin/bash' > test.sh")
+        conn.execute("echo 'sleep 15' >> test.sh")
+        conn.execute("echo 'sudo ifconfig eth0 down' >> test.sh")
+        conn.execute("echo 'sleep 10' >> test.sh")
+        conn.execute("echo 'sudo ifconfig eth0 up' >> test.sh")
+        conn.execute("echo 'sleep 10' >> test.sh")
+        conn.execute("sh test.sh &")
+        helpers.sleep(float(30))
+        conn.send('exit\r')
+        conn.close()
+        return True
