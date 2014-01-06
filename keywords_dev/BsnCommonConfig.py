@@ -16,7 +16,7 @@ class BsnCommonConfig(object):
             c = t.controller('c2')
             c.http_port=8082
 
-        url = '%s/auth/login' % c.base_url
+        url='http://%s:%s/auth/login' % (c.ip,c.http_port)
         
         helpers.log("url: %s" % url)
         result = c.rest.post(url, {"user":"admin", "password":"adminadmin"})
@@ -323,4 +323,69 @@ class BsnCommonConfig(object):
             return False
         else:
             helpers.test_log(c.rest.content_json())
-            return True    
+            return True
+
+
+    def rest_configure_syslog(self,syslog_server,log_level):
+        '''Configure Syslog server
+        
+            Inputs:
+                syslog_server: Name of Syslog server 
+                log_level    :  Logging Level, 0-9
+            
+            Returns: True if configuration is successful, false otherwise
+        '''
+        t = test.Test()
+        try:
+            t.controller('c2')
+        except:
+            c = t.controller('c1')
+            c.http_port=8000
+        else:
+            if(self.btc.rest_is_c1_master_controller()):
+                c = t.controller('c1')
+                c.http_port=8000
+            else:
+                c = t.controller('c2')
+                c.http_port=8000
+        url='http://%s:%s/rest/v1/model/syslog-server/' % (c.ip,c.http_port)
+        c.rest.put(url,  {"logging-enabled": True, "logging-server": str(syslog_server),"logging-level":int(log_level)})
+        helpers.test_log("Ouput: %s" % c.rest.result_json())
+        if not c.rest.status_code_ok():
+            helpers.test_failure(c.rest.error())
+            return False
+        else:
+            helpers.test_log(c.rest.content_json())
+            return True
+
+    def rest_delete_syslog(self,syslog_server,log_level):
+        '''Delete Syslog server
+        
+            Inputs:
+                syslog_server: Name of Syslog server 
+                log_level    :  Logging Level, 0-9
+            
+            Returns: True if configuration is successful, false otherwise
+        '''
+        t = test.Test()
+        try:
+            t.controller('c2')
+        except:
+            c = t.controller('c1')
+            c.http_port=8000
+        else:
+            if(self.btc.rest_is_c1_master_controller()):
+                c = t.controller('c1')
+                c.http_port=8000
+            else:
+                c = t.controller('c2')
+                c.http_port=8000
+        url='http://%s:%s/rest/v1/model/syslog-server/?logging-enabled=True&logging-server=%s&logging-level=%d' % (c.ip,c.http_port,str(syslog_server),int(log_level))
+        c.rest.delete(url,  {})
+        helpers.test_log("Ouput: %s" % c.rest.result_json())
+        if not c.rest.status_code_ok():
+            helpers.test_failure(c.rest.error())
+            return False
+        else:
+            helpers.test_log(c.rest.content_json())
+            return True

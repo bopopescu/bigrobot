@@ -16,7 +16,7 @@ class BsnCommonShow(object):
         else:
             c = t.controller('c2')
             c.http_port=8082
-        url = '%s/auth/login' % c.base_url   
+        url='http://%s:%s/auth/login' % (c.ip,c.http_port)   
         helpers.log("url: %s" % url)
         result = c.rest.post(url, {"user":"admin", "password":"adminadmin"})
         helpers.log("result: %s" % helpers.to_json(result))
@@ -168,6 +168,7 @@ class BsnCommonShow(object):
 # Input : dictionary of switch 
 # Output: Dictionary of Switch DPID and IP Addresses
     def return_switch_dpid(self,switchDict,ipAddr):
+            helpers.log('Dictionary is %s' % switchDict)
             return switchDict[str(ipAddr)]
 
 
@@ -286,3 +287,44 @@ class BsnCommonShow(object):
             else:
                 ip_address_list={'Master':str(t.controller('c2').ip), 'Slave':str(t.controller('c1').ip)}
                 return (ip_address_list)
+
+    def rest_show_ntp(self):
+        t=test.Test()
+        try:
+            t.controller('c2')
+        except:
+            c = t.controller('c1')
+            c.http_port=8000
+        else:
+            if(self.btc.rest_is_c1_master_controller()):
+                c = t.controller('c1')
+                c.http_port=8000
+            else:
+                c = t.controller('c2')
+                c.http_port=8000            
+        url='http://%s:%s/rest/v1/model/ntp-server/' % (c.ip,c.http_port)
+        helpers.log("URL is %s  " %url)
+        c.rest.get(url)
+        content = c.rest.content()
+        return content[0]
+
+
+    def rest_show_syslog(self):
+        t=test.Test()
+        try:
+            t.controller('c2')
+        except:
+            c = t.controller('c1')
+            c.http_port=8000
+        else:
+            if(self.btc.rest_is_c1_master_controller()):
+                c = t.controller('c1')
+                c.http_port=8000
+            else:
+                c = t.controller('c2')
+                c.http_port=8000            
+        url='http://%s:%s/rest/v1/model/syslog-server/' % (c.ip,c.http_port)
+        helpers.log("URL is %s  " %url)
+        c.rest.get(url)
+        content = c.rest.content()
+        return content[0]

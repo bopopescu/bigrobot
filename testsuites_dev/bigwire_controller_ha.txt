@@ -5,13 +5,12 @@ Suite Teardown   ha suite teardown
 Test Setup   base test setup
 Test Teardown   base test teardown
 Force Tags   HA Scale
-Library   keywords/BsnCommon.py
-Library   keywords_dev/BsnCommonConfig.py
+Library  keywords/BsnCommon.py
+Library  keywords_dev/BsnCommonConfig.py
 Library  keywords_dev/BsnCommonShow.py
+Library  keywords_dev/BigTapCommonShow.py
+Library  keywords_dev/BigTapCommonConfig.py
 Library  keywords_dev/BigWireCommon.py
-Library  keywords_dev/BsnSwitchCommon.py
-Library   keywords_dev/BigTapCommonShow.py
-Library   keywords_dev/BigTapCommonConfig.py
 
 * Variable
 ${switch1_ip}  10.192.75.225
@@ -37,6 +36,12 @@ ${switchlight_version}  SwitchLight 1.7-branch
 verify configuration is successful
 	verify config
 
+Verify CLI 'show ntp' 
+	verify ntpconfig
+
+Verify CLI 'show syslog' 
+	verify syslogconfig
+	
 Restart Process Floodlight on Master Controller: 
 	restart floodlight  Master
 
@@ -55,6 +60,26 @@ Restart Process ntpd on Master Controller:
 Restart Process Cassandra on Master Controller: 
 	restart cassandra  Master
 
+Restart Process Floodlight on Slave Controller: 
+	restart floodlight  Slave
+
+Restart Process keepalived on Slave Controller: 
+	restart keepalived  Slave
+
+Restart Process snmpd on Slave Controller: 
+	restart snmpd  Slave
+
+Restart Process rsyslogd on Slave Controller: 
+	restart rsyslogd  Slave
+	
+Restart Process ntpd on Slave Controller: 
+	restart ntpd  Slave
+
+Restart Process Cassandra on Slave Controller: 
+	restart cassandra  Slave
+
+Execute HA Failover and verify BigWire Configuration
+	ha failover
 
 * Keywords  
 ha suite setup
@@ -90,7 +115,10 @@ ha suite setup
 	rest add switch to tenant  ${tenant2}  ${dpid3}  ethernet28  100
 	
 	#Configure NTP
+	Run Keyword And Ignore Error  rest delete ntp  0.bigswitch.pool.ntp.org
+	Run Keyword And Ignore Error  rest delete syslog  10.192.66.230  0
 	rest configure ntp  0.debian.pool.ntp.org
+	rest configure syslog  10.192.66.230  0
 	sleepnow  30
 
 verify config
@@ -106,6 +134,22 @@ verify config
 	${state} =  REST verify dict key  ${content}  0  state
 	Should Be Equal As Strings  ${state}  OK
 
+verify ntpconfig
+	${ntpContent}=  rest show ntp
+	${ntpState}=  return switch dpid  ${ntpContent}  enabled
+	${ntpServer}=  return switch dpid  ${ntpContent}  server
+	Should Be Equal As Strings  ${ntpServer}  0.debian.pool.ntp.org
+	Should Be True  ${ntpState}
+
+verify syslogconfig
+	${syslogContent}=  rest show syslog
+	${syslogState}=  return switch dpid  ${syslogContent}  logging-enabled
+	${syslogServer}=  return switch dpid  ${syslogContent}  logging-server
+	${syslogLevel}=  return switch dpid  ${syslogContent}  logging-level
+	Should Be True  ${syslogState}
+	Should Be Equal As Strings  ${syslogServer}  10.192.66.230
+	Should Be Equal As Integers  ${syslogLevel}  0
+	
 restart floodlight 
     [Arguments]  ${controllerRole}
 	${content}=  REST show bigwire command  summary
@@ -272,6 +316,31 @@ restart cassandra
 	${state} =  REST verify dict key  ${content}  0  state
 	Should Be Equal As Strings  ${state}  OK
 
+ha failover
+	${content}=  REST show bigwire command  summary
+	${num-datacenters}=  REST verify dict key  ${content}  0  num-datacenters
+	Should Be Equal As Integers  ${num-datacenters}  2
+	${num-pseudowires}=  REST verify dict key  ${content}  0  num-pseudowires
+	Should Be Equal As Integers  ${num-pseudowires}  2
+	${num-tenants}=  REST verify dict key  ${content}  0  num-tenants
+	Should Be Equal As Integers  ${num-tenants}  2
+	${num-zones}=  REST verify dict key  ${content}   0  num-zones
+	Should Be Equal As Integers  ${num-zones}  2
+	${state} =  REST verify dict key  ${content}  0  state
+	Should Be Equal As Strings  ${state}  OK
+	rest execute ha failover
+	sleepnow  150
+	${content}=  REST show bigwire command  summary
+	${num-datacenters}=  REST verify dict key  ${content}  0  num-datacenters
+	Should Be Equal As Integers  ${num-datacenters}  2
+	${num-pseudowires}=  REST verify dict key  ${content}  0  num-pseudowires
+	Should Be Equal As Integers  ${num-pseudowires}  2
+	${num-tenants}=  REST verify dict key  ${content}  0  num-tenants
+	Should Be Equal As Integers  ${num-tenants}  2
+	${num-zones}=  REST verify dict key  ${content}   0  num-zones
+	Should Be Equal As Integers  ${num-zones}  2
+	${state} =  REST verify dict key  ${content}  0  state
+	Should Be Equal As Strings  ${state}  OK
   
 ha suite teardown
 	rest_delete_tenant  ${tenant1}
@@ -281,4 +350,5 @@ ha suite teardown
 	rest_delete_datacenter  ${datacenter1}
 	rest_delete_datacenter  ${datacenter2}
 	Run Keyword And Ignore Error  rest delete ntp  0.debian.pool.ntp.org
+	Run Keyword And Ignore Error  rest delete syslog  10.192.66.230  0
 	sleepnow  30
