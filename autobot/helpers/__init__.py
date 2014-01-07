@@ -6,6 +6,8 @@ import datetime
 import time
 import uuid
 import pprint
+import paramiko
+from scp import SCPClient
 from pytz import timezone
 from log import *
 from gobot import *
@@ -407,3 +409,34 @@ def environment_failure(msg):
     Call this on environmental failure.
     """
     raise EnvironmentFailure(msg)
+
+
+def _createSSHClient(server, user, password, port=22):
+    client = paramiko.SSHClient()
+    client.load_system_host_keys()
+    #client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    client.connect(server, port, user, password)
+    return client
+
+
+def scp_put(server, local_file, remote_path):
+    user = 'admin'
+    password = 'adminadmin'
+    ssh = _createSSHClient(server, user, password)
+    s = SCPClient(ssh.get_transport())
+
+    # !!! FIXME: Catch conditions where file/path are not found
+    #log("scp put local_file=%s remote_path=%s" % (local_file, remote_path))
+    s.put(local_file, remote_path) 
+
+
+def scp_get(server, remote_file, local_path):
+    user = 'admin'
+    password = 'adminadmin'
+    ssh = _createSSHClient(server, user, password)
+    s = SCPClient(ssh.get_transport())
+
+    # !!! FIXME: Catch conditions where file/path are not found
+    #log("scp put remote_file=%s local_path=%s" % (remote_file, local_path))
+    s.get(remote_file, local_path)
+

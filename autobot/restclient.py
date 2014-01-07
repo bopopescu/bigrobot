@@ -18,7 +18,8 @@ class RestClient(object):
         'unknown': 'Unknown error (unexpected HTTP status code)'
     }
 
-    def __init__(self, base_url=None, u=None, p=None, content_type='application/json'):
+    def __init__(self, base_url=None, u=None, p=None,
+                 content_type='application/json'):
         self.http = httplib2.Http(timeout=RestClient.default_timeout)
 
         self.base_url = base_url
