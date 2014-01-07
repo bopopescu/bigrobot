@@ -11,7 +11,7 @@ Library          keywords/BsnCommon.py
 Library          keywords_dev/T5.py
 Library	         keywords_dev/T5Fabric.py
 Library          keywords/Mininet.py
-Resource		 ./t5_dualleaf_resource.txt
+Resource		 keywords_dev/t5_dualleaf_resource.txt
 
 * Variables
 ${bm0_ip}  10.0.0.1
