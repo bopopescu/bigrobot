@@ -1,0 +1,62 @@
+== T5 Fabric Add Link ==
+
+
+* Setting 
+
+ Documentation  T5 Fabric add Link
+
+ Suite Setup  base suite setup
+
+ Suite Teardown  base suite teardown
+
+ Test Setup  base test setup
+
+ Test Teardown  base test teardown
+
+ Force Tags  T5 Sanity
+
+ Library  keywords/BsnCommon.py
+ Library  keywords_dev/T5.py
+ Library  keywords_dev/T5Fabric.py
+ Library  keywords/Mininet.py
+
+
+
+* Test Case  
+
+ Check the fabric topology  show fabric switch 
+
+  check switch connectivity 
+
+  show fabric link 
+
+  check fabric link 
+
+  add link between peer leaf  
+
+  show fabric link 
+
+  check fabric link  
+
+  add link between leaf0 and spine0 
+
+  show fabric link 
+
+  check fabric link 
+
+
+
+* Keywords       
+
+show fabric switch  [Arguments]  ${tenant}  ${vns}  ${switch}  ${intf}  ${vlan}  
+
+  REST show fabric switch  ${tenant}  ${vns}  ${switch}  ${intf}  ${vlan} 
+
+check switch connectivity  [Arguments]  ${tenant}  ${vns}  ${endpoint}  ${switch}  ${intf}  ${vlan} 
+
+  REST check switch connectivity 
+
+check fabric link  [Arguments]  ${dpid}
+
+  REST check fabric link  ${dpid}
+

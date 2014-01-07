@@ -1,0 +1,44 @@
+== T5 Fabric Link Test ==
+
+*Settings
+Documentation    Fabric Link Formation Dual Rack Dual Spine Test
+Suite Setup      base suite setup
+Suite Teardown   base suite teardown
+Test Setup       base test setup
+Test Teardown    base test teardown
+Force Tags       T5 Fabric
+Library          keywords/BsnCommon.py
+Library          keywords_dev/T5.py
+Library          keywords_dev/T5Fabric.py
+Library			 keywords/Mininet.py
+
+
+
+*Test Case
+Setup Dual Rack Dual Leaf Topology
+   
+Verify Fabric link formation  
+	REST verify fabric link 	
+
+Remove one of the spine Fabric Role  
+	REST remove fabric role   spine0       
+
+Verify Fabric Link formation after deleting one spine 
+	REST verify fabric link   
+
+Add the Fabric Role back for spine 
+	REST configure fabric role   spine0   spine      
+
+Verify Fabric Link formation after adding one spine 
+	REST verify fabric link  
+	
+Tear down config and Topology
+ 
+
+* Keywords  
+
+
+
+    
+
+
