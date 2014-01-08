@@ -510,16 +510,15 @@ def get_args(func):
     Test1 keyword will invoke the following library function:
 
       def test1(xyz, arg2=True, arg3=0, arg4=None):
-          get_args(self.test1)
+          args = helpers.get_args(self.test1)
           ...
 
     It returns an argument dictionary.
 
-          args = get_args()
-            --  args['xyz'] => 1
-            --  args['arg2'] => False
-            --  args['arg3'] => None
-            --  args['arg4'] => None
+          args['xyz'] => 1
+          args['arg2'] => False
+          args['arg3'] => None
+          args['arg4'] => None
     """
 
     # Get the default list of arguments
