@@ -26,37 +26,18 @@ class TestGetArgs(object):
                   arg10=None,
                   arg11=None,
                   arg12=None):
-        
-        locals()['XXX'] = 123
-        locals().pop("arg1", None)
-        locals()['arg1'] = 8888
-        locals()['arg111'] = 8888
-        import pprint
-        pp = pprint.PrettyPrinter(indent=4)
-        pp.pprint(locals())
-        
-        args = helpers.get_args(self.test_args)
-        helpers.prettify_log("args:", args)
-        
-        
-        helpers.prettify_log("locals():", locals())
-        
-        vars()['arg1'] = 9999
-        helpers.prettify_log("vars():", vars())
-        
-        helpers.log("arg1: %s" % arg1)
-        for key in args:
-            helpers.log('key:%s, local()[%s]=%s <= args[%s]=%s'
-                        % (key, key, locals()[key], key, args[key]))
-            if key in locals():
-                helpers.log("Found key('%s') in locals()" % key)
-            else:
-                helpers.log("Key('%s' not found in locals()" % key)
-            #locals()[key] = args[key]
-            locals()[key] = 1
+
+        eval('print 123456')
+        print("arg1: %s" % locals()['arg1'])        
+        #locals()['XXX'] = 123
+        #locals().pop("arg1", None)
+        #locals()['arg1'] = 'XXXX'
+        #print("arg1: %s" % locals()['arg1'])        
+
+        #import pprint
+        #pp = pprint.PrettyPrinter(indent=4)
+        #pp.pprint(locals())
             
-        return args
-    
     def test_args2(self):
         args = self.test_args(arg1=1000)
         helpers.prettify_log("args:", args)
