@@ -571,6 +571,12 @@ def get_args(func):
     #
     _, _, _, robot_kw_args_dict = inspect.getargvalues(robot_caller_stack[0])
     #log("robot_kw_args_dict: %s" % prettify(robot_kw_args_dict))
+
+    # If dictionary key 'positional' is not found then assume that the caller
+    # is not Robot Framework.
+    if 'positional' not in robot_kw_args_dict:
+        return args_dict
+    
     robot_kw_arg_len = len(robot_kw_args_dict['positional'])
     robot_kw_arg = robot_kw_args_dict['positional'][0]
     
