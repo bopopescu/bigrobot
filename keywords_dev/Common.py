@@ -397,16 +397,6 @@ class Common(object):
             else:
                 return True    
             
-            
-    def remote_copy(self,file):
-        t = test.Test()
-        c = t.controller()
-        
-        destination = "admin@10.192.105.1:/opt/bigswitch/run/saved-configs/%s" % file
-        helpers.log("remote copy file:  %s  --->  %s" % (file, str(destination)))
-        os.system("scp "+file+" "+destination)
-         
-        return True                
 
     def bigtap_gen_address_group(self,fName,gName,Type,base,incr,Mask,Num):
         t = test.Test()
@@ -494,4 +484,348 @@ class Common(object):
  
         fo.close()  
         return True                         
+
+    def bigtap_gen_match(self,fName,pName,mType,cType,base,incr,Mask,Num,common=''):
+        t = test.Test()
+        c = t.controller()
+        
+        helpers.log("the base address is: %s,  the step is: %s,  the mask is: %s,  the Num is: %s, the common field: %s"  % (str(base), str(incr), str(Mask),  str(Num), str(common)))   
+         
+        fo = open(fName,'w')
+        temp = "bigtap policy %s \n"  % (str(pName)) 
+        fo.write(str(temp)) 
+                
+        if mType == 'ip': 
+            if cType == 'src-ip' or cType == 'dst-ip':   
+                temp = "10 match ip %s %s %s %s\n"  % (str(cType), str(base),str(Mask), str(common))  
+                fo.write(str(temp))       
+                ip = list(map(int, base.split(".")))
+                step = list(map(int, incr.split(".")))            
+                ipAdd = []
+                Num = int(Num) - 1
             
+                for num in range(0,int(Num)):
+                    ipAdd = [] 
+                    for i in range(3,0,-1):
+                        ip[i] += step[i]
+                        if ip[i] >= 256:
+                            ip[i] = 0
+                            ip[i-1] +=1
+                    ip[0] += step[0]        
+                    if ip[0] >= 256:
+                        ip[0] = 0
+                
+                    ipAdd  = '.'.join(map(str,ip)) 
+                    mNum = int(num) + 100 
+                    temp = "%d match ip %s %s %s %s\n"  % (mNum, str(cType), str(ipAdd),str(Mask), str(common)) 
+                    fo.write(str(temp))  
+                               
+        if mType == 'ip6' :  
+            if cType == 'src-ip' or cType == 'dst-ip':               
+                temp = "10 match ip6 %s %s %s %s\n"  % (str(cType), str(base),str(Mask), str(common))  
+                fo.write(str(temp))       
+                ip = base.split(":")
+                step =  incr.split(":")
+                helpers.log("IP list is %s" % ip)
+            
+                ipAdd = []
+                hexip = []
+                Num = int(Num) - 1
+ 
+                for num in range(0,int(Num)):   
+                    hexip = []             
+                    for index in range(7,0,-1):
+                        helpers.log("The %s value is (%s): %d"  % (int(index), ip[index], int(ip[index], 16)))                     
+ 
+                        ip[index] = int(ip[index], 16) + int(step[index], 16)
+                        ip[index] = hex(ip[index])
+                        if ip[index] >= 'ffff':
+                            ip[index] = 0
+                            ip[index-1] = int(ip[index-1],16) + 1
+                            ip[index-1] = hex(ip[index-1])
+                  
+                    
+                    ip[0] = int(ip[0],16) + int(step[0],16)        
+                    if ip[0] >= 65535:
+                        ip[0] = 0
+                    
+                    ip[0]=hex(ip[0])    
+                
+                    for i in range(0,8):
+                        hexip.append('{0:x}'.format(int(ip[i],16)))
+                                        
+                    ipAdd  = ':'.join(map(str,hexip)) 
+                    mNum = int(num) + 100 
+                    temp = "%d match ip6 %s %s %s %s\n"  % (mNum, str(cType), str(ipAdd),str(Mask), str(common)) 
+                    fo.write(str(temp)) 
+                                
+ 
+ 
+        fo.close()  
+        return True                         
+ 
+    def rest_bigtap_show_policy_optimize(self, policyName,numMatch):
+        t = test.Test()
+        c = t.controller()
+         
+        helpers.test_log("Input arguments: policy = %s, numMatch = %s" % (policyName,numMatch))  
+        url ='%s/api/v1/data/controller/applications/bigtap/view/policy[name="IP1"]/debug' % (c.base_url)
+        c.rest.get(url)
+        helpers.test_log("Ouput: %s" % c.rest.result_json())
+        
+        if not c.rest.status_code_ok():
+            helpers.test_failure(c.rest.error())
+            
+        content = c.rest.content() 
+        helpers.log("content Output : %s" % content) 
+                 
+        if content[0]['name'] == str(policyName):
+                helpers.test_log("Policy correctly reports policy name as : %s" % content[0]['name'])
+        else:
+                helpers.test_failure("Policy does not correctly report policy name  : %s" % content[0]['name'])                
+                return False        
+        if len(content[0]['optimized-match']) == "numMatch":
+                helpers.test_log("Policy correctly  optimize the match entries: %s" % numMatch  )
+        else:
+                helpers.test_failure("ERROR: Policy does not correctly optimized match expect : %s  -----  actual:  %s " % (numMatch, len(content[0]['optimized-match'])))
+                return False                
+        
+        return True
+
+    def copy_to_controller(self,fName,dst_name):
+        t = test.Test()
+        c = t.controller()
+        helpers.test_log("Input arguments: File Name = %s, Dest Name = %s" % (fName,dst_name)) 
+        
+        helpers.scp_put(c.ip, fName, dst_name)   
+        
+        return True
+        
+    def rest_copy_file_to_running(self,fName):
+        """  there is no REST API for it,  need to reconsider
+        
+        """
+        t = test.Test()
+        c = t.controller()
+        
+        helpers.test_log("Input arguments: File Name = %s, Dest Name = %s" % (fName,dst_name)) 
+        
+        url ='%s/api/v1/data/controller/applications/bigtap/view/policy[name="IP1"]/debug' % (c.base_url)
+        
+        return True
+ 
+ 
+ 
+ 
+    def bigtap_apply_address_group(self,gName,Type,base,incr,Mask,Num):
+        """ Generate and apply #Num of ipv4/ipv6 for address-group  
+            Mingtao
+            Usage:
+                bigtap_apply_address_group     IPV4    ipv4     10.0.0.0     0.1.0.1        255.255.255.0     20
+                bigtap_apply_address_group     IPV6    ipv6     f001:100:0:0:0:0:0:0     0:0:0:0:0:0:0:1     ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff     20
+        """
+        t = test.Test()
+        c = t.controller()
+        
+        helpers.log("the base address is: %s,  the step is: %s,  the mask is: %s,  the Num is: %s"  % (str(base), str(incr), str(Mask),  str(Num)))   
+         
+        self.rest_bigtap_create_addgroup(gName,Type)
+        self.rest_bigtap_add_address(gName,base,Mask)
+
+        Num = int(Num) - 1            
+        for num in range(0,int(Num)):    
+           
+            ipAddr = self.get_next_address(Type,base,incr)
+            self.rest_bigtap_add_address(gName,ipAddr,Mask)
+            base = ipAddr
+            helpers.log("the applied address is: %s %s %s "  % (Type, str(ipAddr), str(Mask)))     
+        
+        return True         
+ 
+ 
+    def get_next_address(self,Type,base,incr): 
+        """ Generate the next address bases on the base and step.
+            Mingtao
+            Usage:    ipAddr = self.get_next_address(ipv4,'10.0.0.0','0.0.0.1')
+        """
+        t = test.Test()
+        c = t.controller()
+           
+        helpers.log("the base address is: %s,  the step is: %s,  "  % (str(base), str(incr)))   
+        if Type == 'ipv4': 
+            ip = list(map(int, base.split(".")))
+            step = list(map(int, incr.split(".")))
+            
+            ipAddr = []
+            for i in range(3,0,-1):
+                ip[i] += step[i]
+                if ip[i] >= 256:
+                    ip[i] = 0
+                    ip[i-1] +=1
+            ip[0] += step[0]        
+            if ip[0] >= 256:
+                ip[0] = 0
+             
+            ipAddr  = '.'.join(map(str,ip)) 
+             
+            
+        if Type == 'ipv6' :
+            ip = base.split(":")
+            step =  incr.split(":")
+            helpers.log("IP list is %s" % ip)
+            
+            ipAddr = []
+            hexip = []  
+            
+#            for index,item in enumerate(ip):
+#               helpers.log("The list is:  %s -- %s "  % (str(index), str(item)))   
+                     
+            for i in range(0,7):
+                index = 7 - int(i)
+                ip[index] = int(ip[index], 16) + int(step[index], 16)
+                ip[index] = hex(ip[index])
+                if ip[index] >= 'ffff':
+                    ip[index] = 0
+                    ip[index-1] = int(ip[index-1],16) + 1
+                    ip[index-1] = hex(ip[index-1])
+                  
+                    
+            ip[0] = int(ip[0],16) + int(step[0],16)        
+            if ip[0] >= 65535:
+                ip[0] = 0
+                    
+            ip[0]=hex(ip[0])    
+                
+            for i in range(0,8):
+                hexip.append('{0:x}'.format(int(ip[i],16)))  
+                                      
+            ipAddr  = ':'.join(map(str,hexip))  
+                 
+        return ipAddr
+ 
+    def bigtap_apply_match(self,pName,mType,cType,base,incr,Mask,Num,common=''):
+        """ not done  Mingtao
+        """
+        t = test.Test()
+        c = t.controller()
+        
+        helpers.log("the base address is: %s,  the step is: %s,  the mask is: %s,  the Num is: %s, the common field: %s"  % (str(base), str(incr), str(Mask),  str(Num), str(common)))   
+         
+ 
+        temp = "bigtap policy %s \n"  % (str(pName)) 
+                 
+        if mType == 'ip': 
+            if cType == 'src-ip' or cType == 'dst-ip':   
+                temp = "10 match ip %s %s %s %s\n"  % (str(cType), str(base),str(Mask), str(common))  
+  
+                Num = int(Num) - 1
+            
+                for num in range(0,int(Num)):
+                    mNum = int(num) + 100 
+                    temp = "%d match ip %s %s %s %s\n"  % (mNum, str(cType), str(ipAdd),str(Mask), str(common)) 
+                    data = self.bigtap_construct_match()
+                    self.rest_bigtap_add_policy_match(admin-view, pName,mNum,data,Flag="true") 
+        return True   
+
+
+#    REST bigtap add policy match       admin-view  IP1   10   {"dst-tp-port-min": 16, "ether-type": 2048, "dst-tp-port-max": 31, "ip-proto": 6, "sequence": 10}   
+  
+    def bigtap_construct_match(self,
+                               ip=None, ip6=None, ether_type=None,
+                               src_mac = None,
+                               dst_mac = None,
+                               udp=None, tcp=None,
+                               vlan_id = None, vlan_min=None, vlan_max=None,  
+                               src_ip_list =None, src_ip =None, src_ip_mask =None, 
+                               dst_ip_list =None, dst_ip =None, dst_ip_mask =None, 
+                               tos_bit =None,
+                               dst_port_min=None,
+                               dst_port_max=None,
+                               sequence=10):
+        """ bigtap: construct the match string for policy
+            Mingtao
+        """
+        
+        
+        t = test.Test()
+        c = t.controller()  
+        temp = '{'
+
+  
+        if src_mac:
+            temp += '"src-mac": "%s",' %src_mac
+        if dst_mac:
+            temp += '"dst-mac": "%s",' %dst_mac
+        
+        if icmp:
+            temp += '"ip-proto": 1,'        
+            if icmp_code:
+                temp += '"dst-tp-port": %s,' % icmp_code      
+            if icmp_type:
+                temp += '"src-tp-port": %s,' % icmp_type
+                  
+        if ether_type:
+            if ether_type == ipv6:
+                temp += '"ether-type": 34525,'
+            elif ether_type == ip:
+                temp += '"ether-type": 2048,'
+            else:
+                temp += '"ether-type": %s,' % ether_type
+        elif ip6:
+            temp += '"ether-type": 34525,' 
+        else:
+            temp += '"ether-type": 2048,'
+                
+        if tcp:
+            temp +='"ip-proto": 6,'  
+        elif udp:
+            temp +='"ip-proto": 17,'   
+
+        if vlan_id:
+            temp +='"vlan-id":  %s ,' % vlan_id  
+        else:
+            if vlan_min:
+                temp +='"src-tp-port-min": %s,' % vlan_min  
+            if vlan_max:
+                temp +='"src-tp-port-min": %s,' % vlan_max  
+                    
+        if src_ip_list:
+            temp += '"src-ip-list": "%s",' % src_ip_list
+        else:
+            if src_ip:
+                temp += '"src-ip": "%s",' % src_ip  
+            if src_ip_mask:
+                temp += '"src-ip-mask": "%s",' % src_ip_mask  
+
+        if dst_ip_list:
+            temp += '"dst-ip-list": "%s",' % dst_ip_list
+        else:
+            if dst_ip:
+                temp += '"dst-ip": "%s",' % dst_ip  
+            if dst_ip_mask:
+                temp += '"dst-ip-mask": "%s",' % dst_ip_mask  
+
+        if tos_bit:
+            temp +='"ip-tos": %s,' % tos_bit
+ 
+        if src-port:
+            temp +='"src-tp-port":  %s ,' % src-port  
+        else:
+            if src_port_min:
+                temp +='"src-tp-port-min": %s,' % src_port_min  
+            if src_port_max:
+                temp +='"src-tp-port-min": %s,' % src_port_max   
+                            
+        if dst-port:
+            temp +='"dst-tp-port":  %s ,' % dst-port  
+        else:
+            if dst_port_min:
+                temp +='"dst-tp-port-min": %s,' % dst_port_min  
+            if dst_port_max:
+                temp +='"dst-tp-port-min": %s,' % dst_port_max   
+                 
+        temp +='"sequence": %s}' % sequence                              
+        helpers.log("the temp is: %s"  % (str(temp)) )  
+                    
+        return temp 
+                              
