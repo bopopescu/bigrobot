@@ -39,6 +39,7 @@ class T5Fabric(object):
         c.rest.put(url, {"name": switch})
         
         if not c.rest.status_code_ok():
+            helpers.log("Error: Invalid argument: syntax: expected [a-zA-Z][-.0-9a-zA-Z_]*$ for: %s" % (switch))
             helpers.test_failure(c.rest.error())
 
         return c.rest.content()
