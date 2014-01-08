@@ -29,21 +29,4 @@ class TestGetArgs(object):
         args = helpers.get_args(self.test_args)
         helpers.prettify_log("args:", args)
         
-        helpers.log("arg1: %s" % arg1)
-        helpers.log("args['arg1']: %s" % args['arg1'])
-
-        helpers.log("arg2: %s" % arg2)
-        helpers.log("args['arg2']: %s" % args['arg2'])
-
-        helpers.log("arg3: %s" % arg3)
-        helpers.log("args['arg3']: %s" % args['arg3'])
-
-        helpers.log("arg8: %s" % arg8)
-        helpers.log("args['arg8']: %s" % args['arg8'])
-        
-        helpers.log("arg10: %s" % arg10)
-        helpers.log("args['arg10']: %s" % args['arg10'])
-
-        helpers.log("arg12: %s" % arg12)
-        helpers.log("args['arg12']: %s" % args['arg12'])
-
+        helpers.prettify_log("locals():", locals())

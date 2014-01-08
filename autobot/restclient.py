@@ -77,13 +77,21 @@ class RestClient(object):
     def result_json(self, result=None):
         return helpers.to_json(self.result(result))
 
+    def log_result(self, result=None, level=4):
+        helpers.log("REST result: %s" % self.result_json(result), level=level)
+        
     def content(self, result=None):
         return self.result(result)['content']
 
     def content_json(self, result=None):
         return helpers.to_json(self.content(result))
 
-    def http_request(self, url, verb='GET', data=None, session=None):
+    def log_content(self, result=None, level=4):
+        helpers.log("REST content: %s" % self.content_json(result),
+                    level=level)
+        
+    def http_request(self, url, verb='GET', data=None, session=None,
+                     quiet=False):
         """
         Generic HTTP request for POST, GET, PUT, DELETE, etc.
         data is a Python dictionary.
@@ -100,10 +108,10 @@ class RestClient(object):
         elif self.session_cookie:
             headers['Cookie'] = 'session_cookie=%s' % self.session_cookie
 
-        helpers.analyze("RestClient: %s %s" % (verb, url))
-        helpers.analyze("Headers = %s" % helpers.to_json(headers))
+        helpers.log("RestClient: %s %s" % (verb, url), level=5)
+        helpers.log("Headers = %s" % helpers.to_json(headers), level=5)
         if data:
-            helpers.analyze("Data = %s" % helpers.to_json(data))
+            helpers.log("Data = %s" % helpers.to_json(data), level=5)
 
         resp, content = self.http.request(url,
                                           verb,
@@ -132,19 +140,22 @@ class RestClient(object):
 
         self.last_result = result
 
+        if not quiet:
+            self.log_result(level=6)
+
         return result
 
-    def post(self, url, data=None, session=None):
-        return self.http_request(url, 'POST', data, session)
+    def post(self, url, data=None, session=None, quiet=False):
+        return self.http_request(url, 'POST', data, session=session, quiet=quiet)
 
-    def get(self, url, session=None):
-        return self.http_request(url, 'GET', session=session)
+    def get(self, url, session=None, quiet=False):
+        return self.http_request(url, 'GET', session=session, quiet=quiet)
 
-    def put(self, url, data=None, session=None):
-        return self.http_request(url, 'PUT', data, session)
+    def put(self, url, data=None, session=None, quiet=False):
+        return self.http_request(url, 'PUT', data, session, quiet=quiet)
 
-    def patch(self, url, data=None, session=None):
-        return self.http_request(url, 'PATCH', data, session)
+    def patch(self, url, data=None, session=None, quiet=False):
+        return self.http_request(url, 'PATCH', data, session, quiet=quiet)
 
-    def delete(self, url, data=None, session=None):
-        return self.http_request(url, 'DELETE', data, session)
+    def delete(self, url, data=None, session=None, quiet=False):
+        return self.http_request(url, 'DELETE', data, session, quiet=quiet)

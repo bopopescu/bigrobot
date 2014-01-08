@@ -22,7 +22,6 @@ class T5(object):
         url = ('%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]'
                % (c.base_url, tenant))
         c.rest.put(url, {"name": tenant})
-        helpers.log("Output: %s" % c.rest.result_json())
 
         if not c.rest.status_code_ok():
             helpers.test_failure(c.rest.error())
@@ -43,7 +42,6 @@ class T5(object):
                    % (c.base_url))
             
         c.rest.get(url)
-        helpers.log("Output: %s" % c.rest.result_json())
         
         if not c.rest.status_code_ok():
             helpers.test_failure(c.rest.error())
@@ -95,7 +93,6 @@ class T5(object):
                % (c.base_url, tenant))
 
         c.rest.delete(url, {"name": tenant})
-        helpers.log("Ouput: %s" % c.rest.result_json())
 
         if not c.rest.status_code_ok():
             helpers.test_failure(c.rest.error())
