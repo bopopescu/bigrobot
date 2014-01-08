@@ -23,7 +23,7 @@ ${controller_ip_2}  10.192.96.2
 *Test Case
 T5981: Verify all interfaces show up (in show o/p from CLI)
     verify interfaces
-    [Tags]  sanity  skipped
+    [Tags]  sanity  
 
 Verify one openflow controller can be configured
     verify onecontroller
@@ -39,19 +39,19 @@ Verify multiple openflow controllers can be configured
 
 T5987: Verify Controller IP address is pingable
  	T5987
-    [Tags]  sanity  skipped
+    [Tags]  sanity  
 
 T5988: Configure DNS server and DNS Domain. Verify you can ping www.bigswitch.com
 	T5988
-    [Tags]  sanity  skipped
+    [Tags]  sanity  
     
 T5983: Verify ma1 ip address configuration via static config
     verify staticipdns
-    [Tags]  sanity  skipped
+    [Tags]  sanity  
 
 T5984: Verify ma1 ip address configuration via dhcp
     verify dhcpipdns
-    [Tags]  sanity  skipped
+    [Tags]  sanity  
 
 
 * Keywords  
