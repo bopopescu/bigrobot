@@ -65,6 +65,7 @@ class T5Fabric(object):
         c.rest.patch(url, {"fabric-role": role})
         
         if not c.rest.status_code_ok():
+            helpers.log("Error: no matching commands")
             helpers.test_failure(c.rest.error())
 
         return c.rest.content() 
@@ -77,6 +78,7 @@ class T5Fabric(object):
         c.rest.patch(url, {"leaf-group": group})
         
         if not c.rest.status_code_ok():
+            helpers.log("Error: Invalid argument: syntax: expected [a-zA-Z][-.0-9a-zA-Z_]*$ for: %s" % (group))
             helpers.test_failure(c.rest.error())
             
         return c.rest.content() 
