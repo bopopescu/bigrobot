@@ -1,0 +1,17 @@
+* Setting
+Documentation   This suite loads all available keyword libraries which comes with Robot Framework and also BSN production. It is intended for loading into RIDE (GUI) for keyword lookup.
+Library         Collections.py
+Library         Dialogs.py
+Library         OperatingSystem.py
+Library         Process.py
+#Library         Remote.py
+Library         Reserved.py
+Library         Screenshot.py
+Library         String.py
+Library         Telnet.py
+Library         XML.py
+Library         keywords/BsnCommon.py
+
+* Test Case
+Load Big Robot keyword libraries
+    mock passed
