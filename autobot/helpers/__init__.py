@@ -7,6 +7,8 @@ import time
 import uuid
 import pprint
 import paramiko
+import inspect
+import re
 from scp import SCPClient
 from pytz import timezone
 from log import *
@@ -185,6 +187,43 @@ def sleep(s):
     time.sleep(int(s))
 
 
+def is_bool(data):
+    """Verify if the input is a valid Python boolean."""
+    return isinstance(data, bool)
+    
+    
+def is_int(data):
+    """Verify if the input is a valid Python integer."""
+    return isinstance(data, int)
+    
+    
+def is_list(data):
+    """Verify if the input is a valid Python list (array)."""
+    return isinstance(data, list)
+    
+    
+def is_dict(data):
+    """Verify if the input is a valid Python dictionary (hash)."""
+    return isinstance(data, dict)
+
+
+def is_str(data):
+    """Verify if the input is a valid Python string."""
+    return isinstance(data, str)
+
+
+def is_json(data):
+    """
+    Verify if the input is a valid JSON string. 
+    """
+    try:
+        _ = json.loads(data)
+    except ValueError:
+        return False
+    else:
+        return True
+    
+    
 def from_json(json_str):
     """
     Return Python datatype (dict or array) from JSON string.
@@ -285,6 +324,21 @@ def time_now():
     Return the current time.
     """
     return time.time()
+
+
+def file_exists(filename):
+    """
+    Does the file exist?
+    """
+    return os.path.exists(filename)    
+
+
+def file_remove(filename):
+    """
+    Remove/delete a file.
+    """
+    if file_exists(filename):
+        os.remove(filename)
 
 
 def file_write_once(filename, s):
@@ -420,6 +474,7 @@ def _createSSHClient(server, user, password, port=22):
 
 
 def scp_put(server, local_file, remote_path):
+    # !!! FIXME: Remove hardcoded user/pw
     user = 'admin'
     password = 'adminadmin'
     ssh = _createSSHClient(server, user, password)
@@ -431,6 +486,7 @@ def scp_put(server, local_file, remote_path):
 
 
 def scp_get(server, remote_file, local_path):
+    # !!! FIXME: Remove hardcoded user/pw
     user = 'admin'
     password = 'adminadmin'
     ssh = _createSSHClient(server, user, password)
@@ -439,4 +495,117 @@ def scp_get(server, remote_file, local_path):
     # !!! FIXME: Catch conditions where file/path are not found
     #log("scp put remote_file=%s local_path=%s" % (remote_file, local_path))
     s.get(remote_file, local_path)
+
+
+def get_args(func):
+    """
+    Provide a mechanism to translate a JSON string into function arguments.
+    This allows us to specify "named arguments" (instead of positional
+    arguments) as a Robot keyword.
+    
+    Example keyword:
+    
+      Test1    kwarg { 'xyz':1, 'arg2':false, 'arg3':null }
+
+    Test1 keyword will invoke the following library function:
+
+      def test1(xyz, arg2=True, arg3=0, arg4=None):
+          args = helpers.get_args(self.test1)
+          ...
+
+    It returns an argument dictionary.
+
+          args['xyz'] => 1
+          args['arg2'] => False
+          args['arg3'] => None
+          args['arg4'] => None
+    """
+
+    # Get the default list of arguments
+    default_args, _, _, default_vals = inspect.getargspec(func)
+    default_args = default_args[1:]    # remove 'self' from list
+    default_vals = list(default_vals)  # convert tuple to list
+    
+    first_arg = default_args[0]
+    
+    if len(default_args) == len(default_vals):
+        # all args have default values, so extract default value for 1st arg
+        first_arg_val = default_vals[0]
+    else:
+        # 1st arg doesn't have a default value, so assign None to it
+        first_arg_val = None    
+    
+    stack = inspect.stack()
+    
+    # get_arg's caller
+    #   (<frame object at 0x7f93b3c08450>,
+    #   '/Users/vui/Documents/workspace/bigrobot/keywords_dev/vui/MyTest.py',
+    #   30,
+    #   'test_args2',
+    #   ['        args = helpers.get_args()\n'],
+    #   0)
+    caller_stack = stack[1]
+    
+    # Robot caller (keyword invocation)
+    #   (<frame object at 0x7f93b2514900>,
+    #   '/usr/local/lib/python2.7/site-packages/robot/running/handlers.py',
+    #   127,
+    #   '<lambda>',
+    #   ['        return lambda: handler(*positional, **named)\n'],
+    #   0),
+    robot_caller_stack = stack[2]
+  
+    #log("stack: %s" % prettify(stack))
+    
+    args, _, varkw, args_dict = inspect.getargvalues(caller_stack[0])
+
+    args_dict.update(args_dict.pop(varkw, []))
+    args_dict.pop('self', None)    # remove 'self' argument
+
+    # Robot Framework's keyword invocation
+    # Stackframe output:
+    #   robot_kw_args_dict: {
+    #       'handler': <bound method MyTest.test_args2 of <MyTest.MyTest object at 0x1038b89d0>>,
+    #       'named': {},
+    #       'positional': [u'{"arg8":1111, "arg12":2222 }']}
+    #
+    _, _, _, robot_kw_args_dict = inspect.getargvalues(robot_caller_stack[0])
+    #log("robot_kw_args_dict: %s" % prettify(robot_kw_args_dict))
+    robot_kw_arg_len = len(robot_kw_args_dict['positional'])
+    robot_kw_arg = robot_kw_args_dict['positional'][0]
+    
+    # Multiple arguments or none were passed, no special handling
+    if robot_kw_arg_len != 1:
+        return args_dict
+    
+    # If match 'kwarg {' then we should assume with high confidence that the
+    # keyword argument is being passed as a JSON string.
+    match = re.match(r'^kwarg ({.*)$', robot_kw_arg, re.I)
+    if match:
+        kw_arg = match.group(1) 
+        #log("Found keyword argument: %s" % kw_arg)
+    else:
+        return args_dict
+    
+    if not is_json(kw_arg):
+        test_error("Robot keyword argument is not a valid JSON string: %s"
+                   % kw_arg)
+    
+    kw_args_dict = from_json(kw_arg)
+    log("Converted keyword argument to dictionary: %s" % kw_args_dict)
+    
+    # preserve the first argument's default value
+    args_dict[first_arg] = first_arg_val
+    
+    for key in kw_args_dict:
+        if key in args_dict:
+            if args_dict[key] != kw_args_dict[key]:
+                #log("Updating value for '%s' from '%s' to '%s'"
+                #    % (key, args_dict[key], kw_args_dict[key]))
+                args_dict[key] = kw_args_dict[key]
+        else:
+            test_error("Invalid Robot keyword argument: '%s'. Allowable arguments are %s."
+                       % (key, args[1:]))            
+    
+    return args_dict
 

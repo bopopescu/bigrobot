@@ -1,0 +1,37 @@
+*Settings
+Documentation    Fabric Lag Single spine and Dual spine Test
+Suite Setup      base suite setup
+Suite Teardown   base suite teardown
+Test Setup       base test setup
+Test Teardown    base test teardown
+Force Tags       T5 Fabric
+Library          keywords/BsnCommon.py
+Library          keywords_dev/T5.py
+Library          keywords_dev/T5Fabric.py
+
+
+
+*Test Case
+configure Dual Rack Dual Leaf Topology
+   
+Verify Fabric Lag formation  
+	verify fabric lag   00:00:00:00:00:02:00:01
+	
+Remove the Fabric Role  
+	REST remove fabric role   spine0       
+
+Verify Fabric Lag formation after deleting one spine 
+	verify fabric lag   00:00:00:00:00:02:00:01
+
+Add the Fabric Role back  
+	REST configure fabric role   spine0   spine      
+
+Verify Fabric Lag formation after adding one spine 
+	verify fabric lag   00:00:00:00:00:02:00:01
+ 
+
+* Keywords  
+
+verify fabric lag  [Arguments]  ${dpid}
+    REST verify fabric lag  ${dpid}
+

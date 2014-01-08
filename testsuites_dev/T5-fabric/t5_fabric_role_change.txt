@@ -1,0 +1,63 @@
+== T5 Fabric Role Verification Test ==
+
+
+* Setting 
+
+Documentation  T5 Fabric Role Changes Test suite
+Suite Setup  base suite setup
+Suite Teardown  base suite teardown
+Test Setup  base test setup
+Test Teardown  base test teardown
+Force Tags  T5 Sanity
+Library  keywords/BsnCommon.py
+Library  keywords_dev/T5.py
+Library  keywords_dev/T5Fabric.py
+Resource  keywords_dev/t5_dualleaf_resource.txt
+
+
+
+* Test Case   
+
+Configure Dual Rack Dual Leaf Topology
+   configure fabric switch
+   sleep 5
+   rest check fabric switch connectivity
+
+Verify the Fabric Role Spine0 
+   check fabric switch role  00:00:00:00:00:01:00:01  spine  
+
+Remove the Fabric role spine 
+  REST remove fabric role  spine0
+  
+Verify the Fabric role 
+   check fabric switch role  00:00:00:00:00:01:00:01  virtual 
+
+Re-configure Fabric role spine  
+   REST configure fabric role  spine0  spine
+
+Verify the Fabric role 
+   check fabric switch role  00:00:00:00:00:01:00:02  virtual 
+
+Remove the Fabric role leaf 
+   REST remove fabric role  leaf0-a  
+  
+Verify the Default Fabric role for leaf 
+   check fabric switch role  00:00:00:00:00:02:00:01  virtual  
+
+Re-configure Fabric role leaf  
+   REST configure fabric role  leaf0-a  leaf
+   
+Verify Fabric role after re-configuration
+   check fabric switch role  00:00:00:00:00:02:00:01  leaf 
+ 
+Tear down the topology
+   remove fabric switch
+
+* Keywords   
+
+check fabric switch role  [Arguments]  ${dpid}  ${role}
+  REST check fabric switch role  ${dpid}  ${role}
+
+
+ 
+

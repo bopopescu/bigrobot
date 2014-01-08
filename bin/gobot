@@ -83,9 +83,13 @@ if helpers.bigrobot_suite():
 if helpers.bigrobot_suite():
     helpers.bigrobot_topology(default=''.join((helpers.bigrobot_suite(),
                                                '.topo')))
-helpers.bigrobot_suite_format(default='mw')
+helpers.bigrobot_suite_format(default='txt')
 helpers.bigrobot_debug(default=0)
-helpers.bigrobot_pandoc_support(default='1')
+
+# !!! FIXME: We're doing away with Pandoc support (required by .mw format)
+#     since .txt format is much more flexible. Can get rid of all things
+#     relating to pandoc at some point.
+helpers.bigrobot_pandoc_support(default='0')
 helpers.bigrobot_path()
 helpers.bigtest_path()
 helpers.python_path()
@@ -236,6 +240,13 @@ def format_convert_and_copy(f, p, quiet=False):
             shutil.copy(filename, helpers.bigrobot_log_path())
         
 
+def create_symlinks_to_logs():
+    log_path = helpers.bigrobot_log_path()
+    log_files = ['debug.log', 'log.html', 'report.html']
+    [helpers.file_remove(f) for f in log_files]
+    [os.symlink('/'.join((log_path, f)), f) for f in log_files]
+
+
 #
 # Gobot command definitions
 #
@@ -268,10 +279,17 @@ def test_command():
     ext = 'txt'
     if helpers.bigrobot_suite_format() == 'mw':
         ext = 'html'
-        
+    
+    # Command options:
+    #   pybot --loglevel=debug \
+    #         --debugfile=debug.log \
+    #         --exclude=skipped \
+    #         --outputdir=./mytest_20140108_052828 \
+    #         mytest.txt
     run('pybot %s %s.%s'
         % (ROBOT_FRAMEWORK_OPTS, helpers.bigrobot_suite(), ext))
-
+    create_symlinks_to_logs()
+    
 
 def env_command():
     """

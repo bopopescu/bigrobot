@@ -1,0 +1,134 @@
+*Settings
+Documentation  Pandora Platform Test	Suite
+Suite Setup  base suite setup
+Suite Teardown   platform suite teardown
+Test Setup   base test setup
+Test Teardown   base test teardown
+Force Tags   platform Sanity
+Library  keywords/BsnCommon.py
+Library  keywords_dev/BsnCommonConfig.py
+Library  keywords_dev/BsnCommonShow.py
+Library  keywords_dev/BsnSwitchCommon.py
+
+
+* Variable
+${ip_address_1}  10.192.75.7
+${ip_address_2}  10.192.75.213
+${switchlight_version}  SwitchLight 2.0.0-beta1
+${console_ip}	10.192.2.89
+${console_port}	6020
+${controller_ip_1}  10.192.96.1
+${controller_ip_2}  10.192.96.2
+
+*Test Case
+T5981: Verify all interfaces show up (in show o/p from CLI)
+    verify interfaces
+    [Tags]  sanity  
+
+Verify one openflow controller can be configured
+    verify onecontroller
+    [Tags]  sanity  
+
+Verify controller can be modified 
+    verify changecontroller
+    [Tags]  sanity  
+
+Verify multiple openflow controllers can be configured
+    verify multiplecontroller
+    [Tags]  sanity
+
+T5987: Verify Controller IP address is pingable
+ 	T5987
+    [Tags]  sanity  
+
+T5988: Configure DNS server and DNS Domain. Verify you can ping www.bigswitch.com
+	T5988
+    [Tags]  sanity  
+    
+T5983: Verify ma1 ip address configuration via static config
+    verify staticipdns
+    [Tags]  sanity  
+
+T5984: Verify ma1 ip address configuration via dhcp
+    verify dhcpipdns
+    [Tags]  sanity  
+
+
+* Keywords  
+
+verify interfaces
+	show interfaces  ${ip_address_1}
+
+verify onecontroller
+	delete controller  ${ip_address_1}  ${controller_ip_1}
+	delete controller  ${ip_address_1}  ${controller_ip_2}
+	Sleep  3	 
+	configure controller  ${ip_address_1}  ${controller_ip_1}
+	Sleep  3
+	verify controller  ${ip_address_1}  ${controller_ip_1}  MASTER
+
+verify changecontroller
+	delete controller  ${ip_address_1}  ${controller_ip_1}
+	delete controller  ${ip_address_1}  ${controller_ip_2}
+	Sleep  3	 
+	configure controller  ${ip_address_1}  ${controller_ip_1}
+	Sleep  3
+	verify controller  ${ip_address_1}  ${controller_ip_1}  MASTER
+	delete controller  ${ip_address_1}  ${controller_ip_1}
+	Sleep  3
+	configure controller  ${ip_address_1}  ${controller_ip_2}
+	Sleep  3
+	verify controller  ${ip_address_1}  ${controller_ip_2}  SLAVE	
+
+verify multiplecontroller
+	delete controller  ${ip_address_1}  ${controller_ip_1}
+	delete controller  ${ip_address_1}  ${controller_ip_2}
+	Sleep  3	 
+	configure controller  ${ip_address_1}  ${controller_ip_1}
+	configure controller  ${ip_address_1}  ${controller_ip_2}
+	Sleep  3
+	verify controller  ${ip_address_1}  ${controller_ip_1}  MASTER
+	verify controller  ${ip_address_1}  ${controller_ip_2}  SLAVE	
+
+T5988
+	configure dns server domain  ${console_ip}  ${console_port}  10.192.3.1  bigswitch.com
+	${output}=  execute switch command return output  ${ip_address_1}  ping www.bigswitch.com
+	Should Contain  ${output}  4 received
+
+verify staticipdns
+	delete static ip  ${console_ip}  ${console_port}  ${ip_address_1}  18  10.192.64.1
+	delete dns server domain  ${console_ip}  ${console_port}  10.192.3.1  bigswitch.com
+	Sleep  30
+	configure static ip  ${console_ip}  ${console_port}  ${ip_address_1}  18  10.192.64.1
+	configure dns server domain  ${console_ip}  ${console_port}  10.192.3.1  bigswitch.com
+	Sleep  30
+	verify switch ip dns  ${ip_address_1}  18  10.192.64.1  10.192.3.1  bigswitch.com 
+
+verify dhcpipdns
+	delete static ip  ${console_ip}  ${console_port}  ${ip_address_1}  18  10.192.64.1
+	delete dns server domain  ${console_ip}  ${console_port}  10.192.3.1  bigswitch.com
+	Sleep  30
+	configure dhcp ip  ${console_ip}  ${console_port}
+	configure dns server domain  ${console_ip}  ${console_port}  10.192.3.1  bigswitch.com
+	${ip_address_subnet}=  show switch ip address  ${console_ip}  ${console_port}
+	${ip_address}=  return switch dpid  ${ip_address_subnet}  ip-address
+	${subnet}=  return switch dpid  ${ip_address_subnet}  subnet
+	verify switch dhcp ip dns  ${ip_address}  ${subnet}  10.192.3.1  bigswitch.com
+	delete dhcp ip  ${console_ip}  ${console_port}  ${ip_address}  ${subnet}  10.192.64.1
+	delete dns server domain  ${console_ip}  ${console_port}  10.192.3.1  bigswitch.com
+	Sleep  30
+	configure static ip  ${console_ip}  ${console_port}  ${ip_address_1}  18  10.192.64.1
+	configure dns server domain  ${console_ip}  ${console_port}  10.192.3.1  bigswitch.com
+	Sleep  30
+
+T5987
+	execute ping from local  ${ip_address_1}
+
+platform suite teardown
+	delete controller  ${ip_address_1}  ${controller_ip_1}
+	delete controller  ${ip_address_1}  ${controller_ip_2}	 
+	configure controller  ${ip_address_1}  ${controller_ip_1}
+	configure controller  ${ip_address_1}  ${controller_ip_2}
+	Sleep  10
+	verify controller  ${ip_address_1}  ${controller_ip_1}  MASTER
+	verify controller  ${ip_address_1}  ${controller_ip_2}  SLAVE

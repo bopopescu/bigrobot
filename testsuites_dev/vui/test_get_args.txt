@@ -1,0 +1,9 @@
+* Setting
+Documentation   Test helpers.get_args() function as a mechanism to pass named arguments in a language-agnostic fashion.
+Force Tags      Vui
+Library         keywords/BsnCommon.py
+Library         keywords_dev/vui/TestGetArgs.py
+
+* Test Case
+test get_args
+    test args  KwarG {"arg8":1111, "arg12":2222, "arg10":true, "arg3":null}
