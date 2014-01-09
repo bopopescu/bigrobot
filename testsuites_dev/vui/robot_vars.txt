@@ -1,0 +1,33 @@
+* Setting
+Documentation   How to use Robot's Set Suite Variable keyword
+Force Tags      Vui
+Library         keywords/BsnCommon.py
+Library         keywords_dev/vui/MyTest.py
+
+* Variables
+${data1}        1
+${data2}        8888
+${data3}        9999
+
+* Test Case
+test robot var scope
+    ${data1}=  generate data
+    set suite variable  ${DATA}  ${data1}
+
+    # Note: This will only save it to the local scope. So next test case won't see it.
+    ${DATA}=   save data  ${data2}
+    
+    # Note: To update the suite variable, you need to call 'set suite variable' again.
+    set suite variable  ${DATA}  ${DATA}
+    print data  ${DATA}
+
+test robot var scope reuse
+    print data  ${DATA}
+    ${DATA}=   save data  ${data3}
+
+    # If I comment out the below line, the next test case won't see the update value for ${DATA}
+    #set suite variable  ${DATA}  ${DATA}
+    print data  ${DATA}
+
+test robot var scope reuse again
+    print data  ${DATA}
