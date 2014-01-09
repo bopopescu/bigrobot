@@ -44,68 +44,71 @@ class BigTapCommon(object):
         
         Return value is True/False
         '''
-        t = test.Test()
-        if(self.btc.rest_is_c1_master_controller()):
-            c = t.controller('c1')
-            c.http_port=8082
-        else:
-            c = t.controller('c2')
-            c.http_port=8082
-        url ='http://%s:%s/api/v1/data/controller/applications/bigtap/view/policy[name="%s"]/info' % (c.ip,c.http_port, policyName)
-        c.rest.get(url)
-        helpers.test_log("Ouput: %s" % c.rest.result_json())
-        if not c.rest.status_code_ok():
-            helpers.test_failure(c.rest.error())
-        content = c.rest.content()
+        try:
+            t = test.Test()
+            if(self.btc.rest_is_c1_master_controller()):
+                c = t.controller('c1')
+                c.http_port=8082
+            else:
+                c = t.controller('c2')
+                c.http_port=8082
+            url ='http://%s:%s/api/v1/data/controller/applications/bigtap/view/policy[name="%s"]/info' % (c.ip,c.http_port, policyName)
+            c.rest.get(url)
+            if not c.rest.status_code_ok():
+                helpers.test_failure(c.rest.error())
+            content = c.rest.content()
+        except:
+            helpers.test_failure("Could not execute command")
+            return False
+        else:      
+            if content[0]['name'] == str(policyName):
+                    helpers.test_log("Policy correctly reports policy name as : %s" % content[0]['name'])
+            else:
+                    helpers.test_failure("Policy does not correctly report policy name  : %s" % content[0]['name'])                
+                    return False
+                  
+            if content[0]['config-status'] == "active and forwarding":
+                    helpers.test_log("Policy correctly reports config status as : %s" % content[0]['config-status'])
+            elif content[0]['config-status'] == "active and rate measure":
+                    helpers.test_log("Policy correctly reports config status as : %s" % content[0]['config-status'])          
+            else:
+                    helpers.test_failure("Policy does not correctly report config status as : %s" % content[0]['config-status'])
+                    return False
+                  
+            if content[0]['type'] == "Configured":
+                    helpers.test_log("Policy correctly reports type as : %s" % content[0]['type'])         
+            else:
+                    helpers.test_failure("Policy does not correctly report type as : %s" % content[0]['type'])
+                    return False
+                  
+            if content[0]['runtime-status'] == "installed":
+                    helpers.test_log("Policy correctly reports runtime status as : %s" % content[0]['runtime-status'])         
+            else:
+                    helpers.test_failure("Policy does not correctly report runtime status as : %s" % content[0]['runtime-status'])
+                    return False
                 
-        if content[0]['name'] == str(policyName):
-                helpers.test_log("Policy correctly reports policy name as : %s" % content[0]['name'])
-        else:
-                helpers.test_failure("Policy does not correctly report policy name  : %s" % content[0]['name'])                
-                return False
-              
-        if content[0]['config-status'] == "active and forwarding":
-                helpers.test_log("Policy correctly reports config status as : %s" % content[0]['config-status'])
-        elif content[0]['config-status'] == "active and rate measure":
-                helpers.test_log("Policy correctly reports config status as : %s" % content[0]['config-status'])          
-        else:
-                helpers.test_failure("Policy does not correctly report config status as : %s" % content[0]['config-status'])
-                return False
-              
-        if content[0]['type'] == "Configured":
-                helpers.test_log("Policy correctly reports type as : %s" % content[0]['type'])         
-        else:
-                helpers.test_failure("Policy does not correctly report type as : %s" % content[0]['type'])
-                return False
-              
-        if content[0]['runtime-status'] == "installed":
-                helpers.test_log("Policy correctly reports runtime status as : %s" % content[0]['runtime-status'])         
-        else:
-                helpers.test_failure("Policy does not correctly report runtime status as : %s" % content[0]['runtime-status'])
-                return False
-            
-        if content[0]['delivery-interface-count'] == int(numDIntf) :
-                helpers.test_log("Policy correctly reports number of delivery interfaces as : %s" % content[0]['delivery-interface-count'])
-        else:
-                helpers.test_failure("Policy does not correctly report number of delivery interfaces  : %s" % content[0]['delivery-interface-count'])                
-                return False
-                      
-        if content[0]['filter-interface-count'] == int(numFIntf):
-                helpers.test_log("Policy correctly reports number of filter interfaces as : %s" % content[0]['filter-interface-count'])
-        else:
-                helpers.test_failure("Policy does not correctly report number of filter interfaces  : %s" % content[0]['filter-interface-count'])                
-                return False
-            
-        if content[0]['detailed-status'] == "installed to forward":
-                helpers.test_log("Policy correctly reports detailed status as : %s" % content[0]['detailed-status'])
-        elif content[0]['detailed-status'] == "installed to measure rate":
-                helpers.test_log("Policy correctly reports detailed status as : %s" % content[0]['detailed-status'])
-        else:
-                helpers.test_failure("Policy does not correctly report detailed status as : %s" % content[0]['detailed-status'])
-                return False
-        return True
+            if content[0]['delivery-interface-count'] == int(numDIntf) :
+                    helpers.test_log("Policy correctly reports number of delivery interfaces as : %s" % content[0]['delivery-interface-count'])
+            else:
+                    helpers.test_failure("Policy does not correctly report number of delivery interfaces  : %s" % content[0]['delivery-interface-count'])                
+                    return False
+                          
+            if content[0]['filter-interface-count'] == int(numFIntf):
+                    helpers.test_log("Policy correctly reports number of filter interfaces as : %s" % content[0]['filter-interface-count'])
+            else:
+                    helpers.test_failure("Policy does not correctly report number of filter interfaces  : %s" % content[0]['filter-interface-count'])                
+                    return False
+                
+            if content[0]['detailed-status'] == "installed to forward":
+                    helpers.test_log("Policy correctly reports detailed status as : %s" % content[0]['detailed-status'])
+            elif content[0]['detailed-status'] == "installed to measure rate":
+                    helpers.test_log("Policy correctly reports detailed status as : %s" % content[0]['detailed-status'])
+            else:
+                    helpers.test_failure("Policy does not correctly report detailed status as : %s" % content[0]['detailed-status'])
+                    return False
+            return True
 
-    def rest_show_switch_dpid(self,switchAlias):
+    def rest_show_switch_dpid(self,switch_alias):
         '''Returns switch DPID, given a switch alias
         
         Input `switchAlias` refers to switch alias
@@ -116,25 +119,30 @@ class BigTapCommon(object):
         
         Return value is switch DPID
         '''
-        t = test.Test()
-        if(self.btc.rest_is_c1_master_controller()):
-            c = t.controller('c1')
-            c.http_port=8082
-        else:
-            c = t.controller('c2')
-            c.http_port=8082
-        aliasExists=0
-        url ='http://%s:%s/api/v1/data/controller/core/switch?select=alias'   % (c.ip,c.http_port)
-        c.rest.get(url)
-        content = c.rest.content()
-        for i in range(0,len(content)) :
-                if content[i]['alias'] == str(switchAlias) :
-                        switchDpid = content[i]['dpid']
-                        aliasExists=1
-        if(aliasExists):
-            return switchDpid
-        else:
+        try:
+            t = test.Test()
+            if(self.btc.rest_is_c1_master_controller()):
+                c = t.controller('c1')
+                c.http_port=8082
+            else:
+                c = t.controller('c2')
+                c.http_port=8082
+            alias_exists=0
+            url ='http://%s:%s/api/v1/data/controller/core/switch?select=alias'   % (c.ip,c.http_port)
+            c.rest.get(url)
+            content = c.rest.content()
+        except:
+            helpers.test_failure("Could not execute command")
             return False
+        else:            
+            for i in range(0,len(content)) :
+                    if content[i]['alias'] == str(switch_alias) :
+                            switch_dpid = content[i]['dpid']
+                            alias_exists=1
+            if(alias_exists):
+                return switch_dpid
+            else:
+                return False
     
     def rest_show_switch_flow(self,switchDpid):
         '''Returns number of flows on a switch
@@ -147,18 +155,23 @@ class BigTapCommon(object):
         
         Return valuse is the number of active flows on the switch
         '''
-        t = test.Test()
-        if(self.btc.rest_is_c1_master_controller()):
-            c = t.controller('c1')
-            c.http_port=8082
+        try:
+            t = test.Test()
+            if(self.btc.rest_is_c1_master_controller()):
+                c = t.controller('c1')
+                c.http_port=8082
+            else:
+                c = t.controller('c2')
+                c.http_port=8082
+            url ='http://%s:%s/api/v1/data/controller/core/switch[dpid="%s"]?select=stats/table' % (c.ip,c.http_port,str(switchDpid))
+            c.rest.get(url)
+            content = c.rest.content()
+        except:
+            helpers.test_failure("Could not execute command")
+            return False
         else:
-            c = t.controller('c2')
-            c.http_port=8082
-        url ='http://%s:%s/api/v1/data/controller/core/switch[dpid="%s"]?select=stats/table' % (c.ip,c.http_port,str(switchDpid))
-        c.rest.get(url)
-        content = c.rest.content()
-        helpers.log("Return value for number of flows is %s" % content[0]['stats']['table'][1]['active-count'])
-        return content[0]['stats']['table'][1]['active-count']
+            helpers.log("Return value for number of flows is %s" % content[0]['stats']['table'][1]['active-count'])
+            return content[0]['stats']['table'][1]['active-count']
 
 ###################################################
 # All Bigtap Verify Commands Go Here:
@@ -182,24 +195,28 @@ class BigTapCommon(object):
             
             Return Value: is value of key if the key exists, False if it does not.
         '''
-        t = test.Test()
-        if(self.btc.rest_is_c1_master_controller()):
-            c = t.controller('c1')
-            c.http_port=8082
-        else:
-            c = t.controller('c2')
-            c.http_port=8082
-        url ='http://%s:%s/api/v1/data/controller/applications/bigtap/view/policy[name="%s"]/%s' % (c.ip,c.http_port,str(policyName),str(method))
-        c.rest.get(url)
-        helpers.test_log("Ouput: %s" % c.rest.result_json())
-        if not c.rest.status_code_ok():
-            helpers.test_failure(c.rest.error())
-        if(c.rest.content()):
-            content = c.rest.content()
-            return content[index][key]
-        else :
-            helpers.test_log("ERROR Policy %s does not exist. Error seen: %s" % (str(policyName),c.rest.result_json()))
+        try:
+            t = test.Test()
+            if(self.btc.rest_is_c1_master_controller()):
+                c = t.controller('c1')
+                c.http_port=8082
+            else:
+                c = t.controller('c2')
+                c.http_port=8082
+            url ='http://%s:%s/api/v1/data/controller/applications/bigtap/view/policy[name="%s"]/%s' % (c.ip,c.http_port,str(policyName),str(method))
+            c.rest.get(url)
+        except:
             return False
+        else:
+            if not c.rest.status_code_ok():
+                helpers.test_failure(c.rest.error())
+                return False
+            if(c.rest.content()):
+                content = c.rest.content()
+                return content[index][key]
+            else :
+                helpers.test_log("ERROR Policy %s does not exist. Error seen: %s" % (str(policyName),c.rest.result_json()))
+                return False
 
 ###################################################
 # All Bigtap Configuration Commands Go Here:
@@ -215,22 +232,26 @@ class BigTapCommon(object):
             
             Returns: True if configuration is successful, false otherwise
         '''
-        t = test.Test()
-        if(self.btc.rest_is_c1_master_controller()):
-            c = t.controller('c1')
-            c.http_port=8082
-        else:
-            c = t.controller('c2')
-            c.http_port=8082
-        url='http://%s:%s/api/v1/data/controller/applications/bigtap/interface-config[interface="%s"][switch="%s"]' % (c.ip,c.http_port,str(intfName), str(switchDpid))
-        c.rest.put(url, {"interface": str(intfName), "switch": str(switchDpid), 'role':str(intfType),'name':str(intfNick)})
-        helpers.test_log("Ouput: %s" % c.rest.result_json())
-        if not c.rest.status_code_ok():
+        try:
+            t = test.Test()
+            if(self.btc.rest_is_c1_master_controller()):
+                c = t.controller('c1')
+                c.http_port=8082
+            else:
+                c = t.controller('c2')
+                c.http_port=8082
+            url='http://%s:%s/api/v1/data/controller/applications/bigtap/interface-config[interface="%s"][switch="%s"]' % (c.ip,c.http_port,str(intfName), str(switchDpid))
+            c.rest.put(url, {"interface": str(intfName), "switch": str(switchDpid), 'role':str(intfType),'name':str(intfNick)})
+        except:
             helpers.test_failure(c.rest.error())
             return False
-        else:
-            helpers.test_log(c.rest.content_json())
-            return True
+        else:  
+            if not c.rest.status_code_ok():
+                helpers.test_failure(c.rest.error())
+                return False
+            else:
+                helpers.test_log(c.rest.content_json())
+                return True
 
     def rest_delete_interface_role(self,swName,intfName,intfType,intfNick):
         '''Delete filter/service/delivery interface from switch configuration. Similar to executing the CLI command 'no bigtap role filter interface-name F1'
@@ -243,22 +264,25 @@ class BigTapCommon(object):
             
             Returns: True if delete is successful, false otherwise       
         '''
-        t = test.Test()
-        if(self.btc.rest_is_c1_master_controller()):
-            c = t.controller('c1')
-            c.http_port=8082
-        else:
-            c = t.controller('c2')
-            c.http_port=8082
-        url='http://%s:%s/api/v1/data/controller/applications/bigtap/interface-config[interface="%s"][switch="%s"]' % (c.ip,c.http_port, str(intfName), str(swName)) 
-        c.rest.delete(url, {'role':str(intfType), "name": str(intfNick)})
-        helpers.test_log("Ouput: %s" % c.rest.result_json())
-        if not c.rest.status_code_ok():
+        try:
+            t = test.Test()
+            if(self.btc.rest_is_c1_master_controller()):
+                c = t.controller('c1')
+                c.http_port=8082
+            else:
+                c = t.controller('c2')
+                c.http_port=8082
+            url='http://%s:%s/api/v1/data/controller/applications/bigtap/interface-config[interface="%s"][switch="%s"]' % (c.ip,c.http_port, str(intfName), str(swName)) 
+            c.rest.delete(url, {'role':str(intfType), "name": str(intfNick)})
+        except:
             helpers.test_failure(c.rest.error())
             return False
-        else:
-            helpers.test_log(c.rest.content_json())
-            return True
+        else:            
+            if not c.rest.status_code_ok():
+                helpers.test_failure(c.rest.error())
+                return False
+            else:
+                return True
 
     def rest_delete_interface(self,swName,intfName):
         '''Delete interface from switch
@@ -269,53 +293,58 @@ class BigTapCommon(object):
             
             Returns: True if delete is successful, false otherwise       
         '''
-        t = test.Test()
-        if(self.btc.rest_is_c1_master_controller()):
-            c = t.controller('c1')
-            c.http_port=8082
-        else:
-            c = t.controller('c2')
-            c.http_port=8082
-        url='http://%s:%s/api/v1/data/controller/core/switch[dpid="%s"]/interface[name=""]'  % (c.ip,c.http_port, str(swName), str(intfName))
-        c.rest.delete(url1, {})
-        helpers.test_log("Ouput: %s" % c.rest.result_json())
-        if not c.rest.status_code_ok():
+        try:
+            t = test.Test()
+            if(self.btc.rest_is_c1_master_controller()):
+                c = t.controller('c1')
+                c.http_port=8082
+            else:
+                c = t.controller('c2')
+                c.http_port=8082
+            url='http://%s:%s/api/v1/data/controller/core/switch[dpid="%s"]/interface[name=""]'  % (c.ip,c.http_port, str(swName), str(intfName))
+            c.rest.delete(url1, {})
+        except:
             helpers.test_failure(c.rest.error())
             return False
-        else:
-            helpers.test_log(c.rest.content_json())
-            return True
+        else:  
+            if not c.rest.status_code_ok():
+                helpers.test_failure(c.rest.error())
+                return False
+            else:
+                helpers.test_log(c.rest.content_json())
+                return True
 
-    def rest_add_policy(self,viewName,policyName,policyAction):
+    def rest_add_policy(self,viewName,policyName,policyAction="inactive"):
         '''Add a bigtap policy.
         
             Input:
                 `viewName`    :    RBAC View Name for eg. admin-view
                 `policyName`  :    Policy Name
-                `policyAction`:    Policy action. The permitted values are "forward" or "rate-measure"
+                `policyAction`:    Policy action. The permitted values are "forward" or "rate-measure", default is inactive
             
             Returns: True if policy configuration is successful, false otherwise       
         '''
-        t = test.Test()
-        if(self.btc.rest_is_c1_master_controller()):
-            c = t.controller('c1')
-            c.http_port=8082
-        else:
-            c = t.controller('c2')
-            c.http_port=8082
-        url='http://%s:%s/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]' % (c.ip,c.http_port, str(viewName), str(policyName))
-        c.rest.put(url,{'name':str(policyName)})
-        helpers.test_log("Ouput: %s" % c.rest.result_json())
-        if not c.rest.status_code_ok():
-            helpers.test_failure(c.rest.error())
-        c.rest.patch(url,{"action": str(policyAction) })
-        helpers.test_log("Ouput: %s" % c.rest.result_json())
-        if not c.rest.status_code_ok():
+        try:
+            t = test.Test()
+            if(self.btc.rest_is_c1_master_controller()):
+                c = t.controller('c1')
+                c.http_port=8082
+            else:
+                c = t.controller('c2')
+                c.http_port=8082
+            url='http://%s:%s/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]' % (c.ip,c.http_port, str(viewName), str(policyName))
+            c.rest.put(url,{'name':str(policyName)})
+        except:
             helpers.test_failure(c.rest.error())
             return False
-        else:
-            helpers.test_log(c.rest.content_json())
-            return True
+        else:  
+            try:
+                c.rest.patch(url,{"action": str(policyAction) })
+            except:
+                helpers.test_failure(c.rest.error())
+                return False
+            else:          
+                return True
 
     def rest_delete_policy(self,viewName,policyName):
         '''Delete a bigtap policy.
@@ -326,22 +355,26 @@ class BigTapCommon(object):
             
             Returns: True if policy delete is successful, False otherwise       
         '''
-        t = test.Test()
-        if(self.btc.rest_is_c1_master_controller()):
-            c = t.controller('c1')
-            c.http_port=8082
-        else:
-            c = t.controller('c2')
-            c.http_port=8082
-        url='http://%s:%s/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]' % (c.ip,c.http_port, str(viewName), str(policyName))
-        c.rest.delete(url,{})
-        helpers.test_log("Ouput: %s" % c.rest.result_json())
-        if not c.rest.status_code_ok():
+        try:
+            t = test.Test()
+            if(self.btc.rest_is_c1_master_controller()):
+                c = t.controller('c1')
+                c.http_port=8082
+            else:
+                c = t.controller('c2')
+                c.http_port=8082
+            url='http://%s:%s/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]' % (c.ip,c.http_port, str(viewName), str(policyName))
+            c.rest.delete(url,{})
+        except:
             helpers.test_failure(c.rest.error())
             return False
-        else:
-            helpers.test_log(c.rest.content_json())
-            return True
+        else:  
+            if not c.rest.status_code_ok():
+                helpers.test_failure(c.rest.error())
+                return False
+            else:
+                helpers.test_log(c.rest.content_json())
+                return True
 
     def rest_add_policy_interface(self,viewName,policyName,intfNick,intfType):
         '''Add a bigtap policy interface viz. Add a filter-interface and/or delivery-interface under a bigtap policy.
@@ -354,25 +387,30 @@ class BigTapCommon(object):
             
             Returns: True if policy configuration is successful, false otherwise       
         '''
-        t = test.Test()
-        if(self.btc.rest_is_c1_master_controller()):
-            c = t.controller('c1')
-            c.http_port=8082
-        else:
-            c = t.controller('c2')
-            c.http_port=8082
-        if "filter" in str(intfType) :
-            intf_type = "filter-group"
-        else :
-            intf_type = "delivery-group"
-        url='http://%s:%s/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]/%s[name="%s"]' % (c.ip,c.http_port, str(viewName), str(policyName),str(intf_type),str(intfNick))
-        c.rest.put(url,{"name": str(intfNick)})
-        if not c.rest.status_code_ok():
+        try:
+            t = test.Test()
+            if(self.btc.rest_is_c1_master_controller()):
+                c = t.controller('c1')
+                c.http_port=8082
+            else:
+                c = t.controller('c2')
+                c.http_port=8082
+            if "filter" in str(intfType) :
+                intf_type = "filter-group"
+            else :
+                intf_type = "delivery-group"
+            url='http://%s:%s/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]/%s[name="%s"]' % (c.ip,c.http_port, str(viewName), str(policyName),str(intf_type),str(intfNick))
+            c.rest.put(url,{"name": str(intfNick)})
+        except:
             helpers.test_failure(c.rest.error())
             return False
-        else:
-            helpers.test_log(c.rest.content_json())
-            return True
+        else:  
+            if not c.rest.status_code_ok():
+                helpers.test_failure(c.rest.error())
+                return False
+            else:
+                helpers.test_log(c.rest.content_json())
+                return True
     
     def rest_delete_policy_interface(self,viewName,policyName,intfNick,intfType):
         '''Delete a bigtap policy interface viz. Delete a filter-interface and/or delivery-interface from a bigtap policy.
@@ -385,25 +423,30 @@ class BigTapCommon(object):
             
             Returns: True if policy delete is successful, false otherwise   
         '''
-        t = test.Test()
-        if(self.btc.rest_is_c1_master_controller()):
-            c = t.controller('c1')
-            c.http_port=8082
-        else:
-            c = t.controller('c2')
-            c.http_port=8082
-        if "filter" in str(intfType) :
-            intf_type = "filter-group"
-        else :
-            intf_type = "delivery-group"
-        url='http://%s:%s/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]/%s[name="%s"]' % (c.ip,c.http_port, str(viewName), str(policyName),str(intf_type),str(intfNick))
-        c.rest.delete(url,{})
-        if not c.rest.status_code_ok():
+        try:
+            t = test.Test()
+            if(self.btc.rest_is_c1_master_controller()):
+                c = t.controller('c1')
+                c.http_port=8082
+            else:
+                c = t.controller('c2')
+                c.http_port=8082
+            if "filter" in str(intfType) :
+                intf_type = "filter-group"
+            else :
+                intf_type = "delivery-group"
+            url='http://%s:%s/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]/%s[name="%s"]' % (c.ip,c.http_port, str(viewName), str(policyName),str(intf_type),str(intfNick))
+            c.rest.delete(url,{})
+        except:
             helpers.test_failure(c.rest.error())
             return False
-        else:
-            helpers.test_log(c.rest.content_json())
-            return True
+        else:  
+            if not c.rest.status_code_ok():
+                helpers.test_failure(c.rest.error())
+                return False
+            else:
+                helpers.test_log(c.rest.content_json())
+                return True
   
     def rest_add_policy_match(self,viewName,policyName,match_number,data):
         '''Add a bigtap policy match condition.
@@ -416,24 +459,28 @@ class BigTapCommon(object):
             
             Returns: True if policy configuration is successful, false otherwise       
         '''
-        t = test.Test()
-        if(self.btc.rest_is_c1_master_controller()):
-            c = t.controller('c1')
-            c.http_port=8082
-        else:
-            c = t.controller('c2')
-            c.http_port=8082
-        url='http://%s:%s/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]/rule[sequence=%s]'  % (c.ip,c.http_port,str(viewName),str(policyName),str(match_number))
-        data_dict = helpers.from_json(data)
-        c.rest.put(url,data_dict)
-        helpers.test_log(c.rest.result_json())
-        if not c.rest.status_code_ok():
-            helpers.test_log(c.rest.content_json())
+        try:
+            t = test.Test()
+            if(self.btc.rest_is_c1_master_controller()):
+                c = t.controller('c1')
+                c.http_port=8082
+            else:
+                c = t.controller('c2')
+                c.http_port=8082
+            url='http://%s:%s/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]/rule[sequence=%s]'  % (c.ip,c.http_port,str(viewName),str(policyName),str(match_number))
+            data_dict = helpers.from_json(data)
+            c.rest.put(url,data_dict)
+        except:
             helpers.test_failure(c.rest.error())
             return False
-        else:
-            helpers.test_log(c.rest.content_json())
-            return True
+        else:  
+            if not c.rest.status_code_ok():
+                helpers.test_log(c.rest.content_json())
+                helpers.test_failure(c.rest.error())
+                return False
+            else:
+                helpers.test_log(c.rest.content_json())
+                return True
     
     def rest_delete_policy_match(self,viewName,policyName,match_number):
         '''Delete a bigtap policy match condition.
@@ -445,19 +492,20 @@ class BigTapCommon(object):
             
             Returns: True if policy delete is successful, false otherwise       
         '''
-        t = test.Test()
-        if(self.btc.rest_is_c1_master_controller()):
-            c = t.controller('c1')
-            c.http_port=8082
-        else:
-            c = t.controller('c2')
-            c.http_port=8082
-        url='http://%s:%s/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]/rule[sequence="%s"]'  % (c.ip,c.http_port,str(viewName),str(policyName),str(match_number))
-        c.rest.delete(url,{})
-        if not c.rest.status_code_ok():
+        try:
+            t = test.Test()
+            if(self.btc.rest_is_c1_master_controller()):
+                c = t.controller('c1')
+                c.http_port=8082
+            else:
+                c = t.controller('c2')
+                c.http_port=8082
+            url='http://%s:%s/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]/rule[sequence="%s"]'  % (c.ip,c.http_port,str(viewName),str(policyName),str(match_number))
+            c.rest.delete(url,{})
+        except:
             helpers.test_failure(c.rest.error())
             return False
-        else:
+        else:  
             helpers.test_log(c.rest.content_json())
             return True
         
@@ -479,37 +527,38 @@ class BigTapCommon(object):
                   post-service S1-LB7_E4-HP1_E4-POST
                   pre-service S1-LB7_E3-HP1_E3-PRE
         '''
-        t = test.Test()
-        if(self.btc.rest_is_c1_master_controller()):
-            c = t.controller('c1')
-            c.http_port=8082
-        else:
-            c = t.controller('c2')
-            c.http_port=8082
-        url='http://%s:%s/api/v1/data/controller/applications/bigtap/service[name="%s"]' % (c.ip,c.http_port,str(serviceName))
-        c.rest.put(url,{"name":str(serviceName)})
-        if not c.rest.status_code_ok():
+        try: 
+            t = test.Test()
+            if(self.btc.rest_is_c1_master_controller()):
+                c = t.controller('c1')
+                c.http_port=8082
+            else:
+                c = t.controller('c2')
+                c.http_port=8082
+            url='http://%s:%s/api/v1/data/controller/applications/bigtap/service[name="%s"]' % (c.ip,c.http_port,str(serviceName))
+            c.rest.put(url,{"name":str(serviceName)})
+        except:
             helpers.test_failure(c.rest.error())
             return False
-        else :
-            helpers.test_log(c.rest.content_json())
-        #Add Pre-Service Interface
-        url_add_intf ='http://%s:%s/api/v1/data/controller/applications/bigtap/service[name="%s"]/pre-group[name="%s"]'  % (c.ip,c.http_port,str(serviceName),str(intfPreNick))
-        c.rest.put(url_add_intf, {"name":str(intfPreNick)})
-        if not c.rest.status_code_ok():
-            helpers.test_failure(c.rest.error())
-            return False
-        else :
-            helpers.test_log(c.rest.content_json())
-        #Add Post-Service Interface
-        url_add_intf ='http://%s:%s/api/v1/data/controller/applications/bigtap/service[name="%s"]/post-group[name="%s"]'  % (c.ip,c.http_port,str(serviceName),str(intfPostNick))
-        c.rest.put(url_add_intf, {"name":str(intfPostNick)})
-        if not c.rest.status_code_ok():
-            helpers.test_failure(c.rest.error())
-            return False
-        else:
-            helpers.test_log(c.rest.content_json())
-            return True
+        else:  
+            try:
+                #Add Pre-Service Interface
+                url_add_intf ='http://%s:%s/api/v1/data/controller/applications/bigtap/service[name="%s"]/pre-group[name="%s"]'  % (c.ip,c.http_port,str(serviceName),str(intfPreNick))
+                c.rest.put(url_add_intf, {"name":str(intfPreNick)})
+            except:
+                helpers.test_failure(c.rest.error())
+                return False
+            else:     
+                try:
+                    #Add Post-Service Interface
+                    url_add_intf ='http://%s:%s/api/v1/data/controller/applications/bigtap/service[name="%s"]/post-group[name="%s"]'  % (c.ip,c.http_port,str(serviceName),str(intfPostNick))
+                    c.rest.put(url_add_intf, {"name":str(intfPostNick)})
+                except:
+                    helpers.test_failure(c.rest.error())
+                    return False
+                else:  
+                    helpers.test_log(c.rest.content_json())
+                    return True
  
 # Delete a service
     def rest_delete_bigtap_service(self,serviceName) :
@@ -521,21 +570,26 @@ class BigTapCommon(object):
             Returns: True if service deletion is successful, false otherwise
         
         '''
-        t = test.Test()
-        if(self.btc.rest_is_c1_master_controller()):
-            c = t.controller('c1')
-            c.http_port=8082
-        else:
-            c = t.controller('c2')
-            c.http_port=8082
-        url='http://%s:%s/api/v1/data/controller/applications/bigtap/service[name="%s"]'  % (c.ip,c.http_port,str(serviceName))
-        c.rest.delete(url,{})   
-        if not c.rest.status_code_ok():
+        try:
+            t = test.Test()
+            if(self.btc.rest_is_c1_master_controller()):
+                c = t.controller('c1')
+                c.http_port=8082
+            else:
+                c = t.controller('c2')
+                c.http_port=8082
+            url='http://%s:%s/api/v1/data/controller/applications/bigtap/service[name="%s"]'  % (c.ip,c.http_port,str(serviceName))
+            c.rest.delete(url,{})
+        except:
             helpers.test_failure(c.rest.error())
             return False
-        else:
-            helpers.test_log(c.rest.content_json())
-        return True
+        else:  
+            if not c.rest.status_code_ok():
+                helpers.test_failure(c.rest.error())
+                return False
+            else:
+                helpers.test_log(c.rest.content_json())
+                return True
     
     def rest_add_interface_service(self,serviceName,intfType,intfNick):
         '''Add a service interface to a service. This is similar to executing CLI command "post-service S1-LB7_E4-HP1_E4-POST"
@@ -553,24 +607,29 @@ class BigTapCommon(object):
                 bigtap service S1-LB7
                   post-service S1-LB7_E4-HP1_E4-POST
         '''
-        t = test.Test()
-        if(self.btc.rest_is_c1_master_controller()):
-            c = t.controller('c1')
-            c.http_port=8082
-        else:
-            c = t.controller('c2')
-            c.http_port=8082
-        if "pre" in str(intfType) :
-            url_add_intf ='http://%s:%s/api/v1/data/controller/applications/bigtap/service[name="%s"]/pre-group[name="%s"]'  % (c.ip,c.http_port,str(serviceName),str(intfNick))
-        else :
-            url_add_intf ='http://%s:%s/api/v1/data/controller/applications/bigtap/service[name="%s"]/post-group[name="%s"]'  % (c.ip,c.http_port,str(serviceName),str(intfNick))
-        c.rest.post(url_add_intf, {"name":str(intfNick)})
-        if not c.rest.status_code_ok():
+        try:
+            t = test.Test()
+            if(self.btc.rest_is_c1_master_controller()):
+                c = t.controller('c1')
+                c.http_port=8082
+            else:
+                c = t.controller('c2')
+                c.http_port=8082
+            if "pre" in str(intfType) :
+                url_add_intf ='http://%s:%s/api/v1/data/controller/applications/bigtap/service[name="%s"]/pre-group[name="%s"]'  % (c.ip,c.http_port,str(serviceName),str(intfNick))
+            else :
+                url_add_intf ='http://%s:%s/api/v1/data/controller/applications/bigtap/service[name="%s"]/post-group[name="%s"]'  % (c.ip,c.http_port,str(serviceName),str(intfNick))
+            c.rest.post(url_add_intf, {"name":str(intfNick)})
+        except:
             helpers.test_failure(c.rest.error())
             return False
-        else:
-            helpers.test_log(c.rest.content_json())
-            return True
+        else:  
+            if not c.rest.status_code_ok():
+                helpers.test_failure(c.rest.error())
+                return False
+            else:
+                helpers.test_log(c.rest.content_json())
+                return True
 
     def rest_delete_interface_service(self,serviceName,intfNick,intfType) :
         '''Delete an interface from a service. This is similar to executing CLI command "no post-service S1-LB7_E4-HP1_E4-POST"
@@ -587,24 +646,29 @@ class BigTapCommon(object):
                 Result is 
                 bigtap service S1-LB7
         '''
-        t = test.Test()
-        if(self.btc.rest_is_c1_master_controller()):
-            c = t.controller('c1')
-            c.http_port=8082
-        else:
-            c = t.controller('c2')
-            c.http_port=8082
-        if "pre" in str(intfType) :
-            url_add_intf ='http://%s:%s/api/v1/data/controller/applications/bigtap/service[name="%s"]/pre-group[name="%s"]'  % (c.ip,c.http_port,str(serviceName),str(intfNick))
-        else :
-            url_add_intf ='http://%s:%s/api/v1/data/controller/applications/bigtap/service[name="%s"]/post-group[name="%s"]'  % (c.ip,c.http_port,str(serviceName),str(intfNick))
-        c.rest.delete(url_add_intf, {})
-        if not c.rest.status_code_ok():
+        try:
+            t = test.Test()
+            if(self.btc.rest_is_c1_master_controller()):
+                c = t.controller('c1')
+                c.http_port=8082
+            else:
+                c = t.controller('c2')
+                c.http_port=8082
+            if "pre" in str(intfType) :
+                url_add_intf ='http://%s:%s/api/v1/data/controller/applications/bigtap/service[name="%s"]/pre-group[name="%s"]'  % (c.ip,c.http_port,str(serviceName),str(intfNick))
+            else :
+                url_add_intf ='http://%s:%s/api/v1/data/controller/applications/bigtap/service[name="%s"]/post-group[name="%s"]'  % (c.ip,c.http_port,str(serviceName),str(intfNick))
+            c.rest.delete(url_add_intf, {})
+        except:
             helpers.test_failure(c.rest.error())
             return False
-        else:
-            helpers.test_log(c.rest.content_json())
-            return True
+        else:  
+            if not c.rest.status_code_ok():
+                helpers.test_failure(c.rest.error())
+                return False
+            else:
+                helpers.test_log(c.rest.content_json())
+                return True
 
     def rest_add_service_to_policy(self,viewName,policyName,serviceName,sequenceNumber) :
         '''Add a service to a policy. This is similar to executing CLI command "use-service S1-LB7 sequence 1"
@@ -626,21 +690,26 @@ class BigTapCommon(object):
                     ...
                     use-service S1-LB7 sequence 1
         '''
-        t = test.Test()
-        if(self.btc.rest_is_c1_master_controller()):
-            c = t.controller('c1')
-            c.http_port=8082
-        else:
-            c = t.controller('c2')
-            c.http_port=8082
-        url_to_add ='http://%s:%s/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]/service[sequence=%s]' % (c.ip,c.http_port,str(viewName),str(policyName),str(sequenceNumber))
-        c.rest.put(url_to_add, {"name":str(serviceName), "sequence" : int(sequenceNumber)})
-        if not c.rest.status_code_ok():
+        try:
+            t = test.Test()
+            if(self.btc.rest_is_c1_master_controller()):
+                c = t.controller('c1')
+                c.http_port=8082
+            else:
+                c = t.controller('c2')
+                c.http_port=8082
+            url_to_add ='http://%s:%s/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]/service[sequence=%s]' % (c.ip,c.http_port,str(viewName),str(policyName),str(sequenceNumber))
+            c.rest.put(url_to_add, {"name":str(serviceName), "sequence" : int(sequenceNumber)})
+        except:
             helpers.test_failure(c.rest.error())
             return False
-        else:
-            helpers.test_log(c.rest.content_json())
-            return True
+        else:  
+            if not c.rest.status_code_ok():
+                helpers.test_failure(c.rest.error())
+                return False
+            else:
+                helpers.test_log(c.rest.content_json())
+                return True
 
     def rest_delete_service_from_policy(self,viewName,policyName,serviceName) :
         '''Delete a service from a policy. This is similar to executing CLI command "no use-service S1-LB7 sequence 1"
@@ -653,21 +722,26 @@ class BigTapCommon(object):
             Returns: True if deletion of service from policy is successful, false otherwise
         
         '''
-        t = test.Test()
-        if(self.btc.rest_is_c1_master_controller()):
-            c = t.controller('c1')
-            c.http_port=8082
-        else:
-            c = t.controller('c2')
-            c.http_port=8082
-        url ='http://%s:%s/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]/service[name="%s"]' % (c.ip,c.http_port,str(viewName),str(policyName),str(serviceName))
-        c.rest.delete(url, {})
-        if not c.rest.status_code_ok():
+        try:
+            t = test.Test()
+            if(self.btc.rest_is_c1_master_controller()):
+                c = t.controller('c1')
+                c.http_port=8082
+            else:
+                c = t.controller('c2')
+                c.http_port=8082
+            url ='http://%s:%s/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]/service[name="%s"]' % (c.ip,c.http_port,str(viewName),str(policyName),str(serviceName))
+            c.rest.delete(url, {})
+        except:
             helpers.test_failure(c.rest.error())
             return False
-        else:
-            helpers.test_log(c.rest.content_json())
-            return True
+        else:  
+            if not c.rest.status_code_ok():
+                helpers.test_failure(c.rest.error())
+                return False
+            else:
+                helpers.test_log(c.rest.content_json())
+                return True
 
 #Change policy action
     def rest_change_policy_action(self,viewName,policyName,policyAction):
@@ -692,21 +766,26 @@ class BigTapCommon(object):
                     ...
         
         '''
-        t = test.Test()
-        if(self.btc.rest_is_c1_master_controller()):
-            c = t.controller('c1')
-            c.http_port=8082
-        else:
-            c = t.controller('c2')
-            c.http_port=8082
-        url ='http://%s:%s/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]' % (c.ip,c.http_port,str(viewName),str(policyName))
-        c.rest.patch(url,{"action":str(policyAction)})
-        if not c.rest.status_code_ok():
+        try:
+            t = test.Test()
+            if(self.btc.rest_is_c1_master_controller()):
+                c = t.controller('c1')
+                c.http_port=8082
+            else:
+                c = t.controller('c2')
+                c.http_port=8082
+            url ='http://%s:%s/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]' % (c.ip,c.http_port,str(viewName),str(policyName))
+            c.rest.patch(url,{"action":str(policyAction)})
+        except:
             helpers.test_failure(c.rest.error())
             return False
-        else:
-            helpers.test_log(c.rest.content_json())
-            return True
+        else:  
+            if not c.rest.status_code_ok():
+                helpers.test_failure(c.rest.error())
+                return False
+            else:
+                helpers.test_log(c.rest.content_json())
+                return True
 
 #Disable bigtap feature overlap/inport-mask/tracked-host/l3-l4-mode
     def rest_disable_feature(self,featureName):
@@ -719,21 +798,26 @@ class BigTapCommon(object):
             Examples:
                 | rest disable feature  |  overlap |  
         '''
-        t = test.Test()
-        if(self.btc.rest_is_c1_master_controller()):
-            c = t.controller('c1')
-            c.http_port=8082
-        else:
-            c = t.controller('c2')
-            c.http_port=8082
-        url ='http://%s:%s/api/v1/data/controller/applications/bigtap/feature'  % (c.ip,c.http_port,)
-        c.rest.patch(url,{str(featureName): False})
-        if not c.rest.status_code_ok():
+        try:
+            t = test.Test()
+            if(self.btc.rest_is_c1_master_controller()):
+                c = t.controller('c1')
+                c.http_port=8082
+            else:
+                c = t.controller('c2')
+                c.http_port=8082
+            url ='http://%s:%s/api/v1/data/controller/applications/bigtap/feature'  % (c.ip,c.http_port,)
+            c.rest.patch(url,{str(featureName): False})
+        except:
             helpers.test_failure(c.rest.error())
             return False
-        else:
-            helpers.test_log(c.rest.content_json())
-            return True
+        else:  
+            if not c.rest.status_code_ok():
+                helpers.test_failure(c.rest.error())
+                return False
+            else:
+                helpers.test_log(c.rest.content_json())
+                return True
     
 #Enable bigtap feature overlap/inport-mask/tracked-host/l3-l4-mode
     def rest_enable_feature(self,featureName):
@@ -746,21 +830,26 @@ class BigTapCommon(object):
             Examples:
                 | rest enable feature  |  overlap |  
         '''
-        t = test.Test()
-        if(self.btc.rest_is_c1_master_controller()):
-            c = t.controller('c1')
-            c.http_port=8082
-        else:
-            c = t.controller('c2')
-            c.http_port=8082
-        url ='http://%s:%s/api/v1/data/controller/applications/bigtap/feature'  % (c.ip,c.http_port,)
-        c.rest.patch(url,{str(featureName): True})
-        if not c.rest.status_code_ok():
+        try:
+            t = test.Test()
+            if(self.btc.rest_is_c1_master_controller()):
+                c = t.controller('c1')
+                c.http_port=8082
+            else:
+                c = t.controller('c2')
+                c.http_port=8082
+            url ='http://%s:%s/api/v1/data/controller/applications/bigtap/feature'  % (c.ip,c.http_port,)
+            c.rest.patch(url,{str(featureName): True})
+        except:
             helpers.test_failure(c.rest.error())
             return False
-        else:
-            helpers.test_log(c.rest.content_json())
-            return True
+        else:  
+            if not c.rest.status_code_ok():
+                helpers.test_failure(c.rest.error())
+                return False
+            else:
+                helpers.test_log(c.rest.content_json())
+                return True
         
 #Compare coreswitch flows
     def rest_compare_coreswitch_flows(self,flow1,flow2,flowVal1,flowVal2):

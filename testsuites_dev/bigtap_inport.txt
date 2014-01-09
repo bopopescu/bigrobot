@@ -107,17 +107,17 @@ bigtap-inport test setup
     REST add policy interface  admin-view  testPol  LB7-D1-DL206-F1  delivery 
     REST add bigtap service  S5-LY4  S5-LY4-AR4_E3-PRE  S5-LY4-AR4_E4-POST  
     REST add bigtap service  S2-LB8  S2-LB8_E3-C2950_E23-PRE  S2-LB8_E4-C2950_E24-POST  
-    sleepnow  3
+    Sleep  3
 
 Verify Inport Mask
     REST show bigtap policy  testPol  4  1
     REST disable feature  inport-mask
-    sleepnow  2
+    Sleep  2
     ${switchDpid}=  REST show switch dpid  LB7  
     ${switchFlowVal}=  REST show switch flow  ${switchDpid}  
     Should Be Equal As Integers  ${switchFlowVal}  7
     REST enable feature  inport-mask
-    sleepnow  2
+    Sleep  2
     ${switchFlowVal}=   REST show switch flow  ${switchDpid}  
     Should Be Equal As Integers  ${switchFlowVal}  4
   
@@ -125,7 +125,7 @@ T6090
     REST disable feature  inport-mask
     REST delete policy interface  admin-view  testPol  LB7-D1-DL206-F1  delivery
     REST add policy interface  admin-view  testPol  LB8-D1-DL207-F1  delivery
-    sleepnow  2
+    Sleep  2
     ${switchDpid}=  REST show switch dpid  LB7
     ${switchFlowVal}=  REST show switch flow  ${switchDpid}
     Should Be Equal As Integers  ${switchFlowVal}  7
@@ -133,7 +133,7 @@ T6090
     ${switchFlowVa1l}=   REST show switch flow  ${switchDpid1}
     Should Be Equal As Integers  ${switchFlowVa1l}  4
     REST enable feature  inport-mask
-    sleepnow  2
+    Sleep  2
     ${switchFlowVal}=  REST show switch flow  ${switchDpid}
     Should Be Equal As Integers  ${switchFlowVal}  4
     ${switchFlowVa1l}=  REST show switch flow  ${switchDpid1}
@@ -149,7 +149,7 @@ T6091
     REST delete policy interface  admin-view  testPol  LB7-D1-DL206-F1  delivery
     REST add service to policy  admin-view  testPol  S5-LY4  1
     REST add policy interface  admin-view  testPol  LB8-D1-DL207-F1  delivery
-    sleepnow  2
+    Sleep  2
     ${switchDpid}=  REST show switch dpid  LB7
     ${switchFlowVal}=  REST show switch flow  ${switchDpid}
     Should Be Equal As Integers  ${switchFlowVal}  7
@@ -157,7 +157,7 @@ T6091
     ${switchFlowVa1l}=  REST show switch flow  ${switchDpid1}
     Should Be Equal As Integers  ${switchFlowVa1l}  4
     REST enable feature  inport-mask
-    sleepnow  2
+    Sleep  2
     ${switchFlowVal}=  REST show switch flow  ${switchDpid}
     Should Be Equal As Integers  ${switchFlowVal}  4
     ${switchFlowVa1l}=  REST show switch flow  ${switchDpid1}  
@@ -173,7 +173,7 @@ T6092
     REST add service to policy  admin-view  testPol  S2-LB8  1
     REST delete policy interface  admin-view  testPol  LB7-D1-DL206-F1  delivery 
     REST add policy interface  admin-view  testPol  LB8-D1-DL207-F1  delivery 
-    sleepnow  2
+    Sleep  2
     ${switchDpid}=  REST show switch dpid  LB7
     ${switchFlowVal}=  REST show switch flow  ${switchDpid}  
     Should Be Equal As Integers  ${switchFlowVal}  7
@@ -181,7 +181,7 @@ T6092
     ${switchFlowVa1l}=  REST show switch flow  ${switchDpid1}  
     Should Be Equal As Integers  ${switchFlowVa1l}  5
     REST enable feature  inport-mask
-    sleepnow  2
+    Sleep  2
     ${switchFlowVal}=   REST show switch flow  ${switchDpid}  
     Should Be Equal As Integers  ${switchFlowVal}  4
     ${switchFlowVa1l}=   REST show switch flow  ${switchDpid1}  
@@ -198,12 +198,12 @@ T6093
     REST delete policy interface  admin-view  testPol  LB7-F3-DL206-D3  filter
     REST delete policy interface  admin-view  testPol  LB7-F4-DL206-D4  filter
     REST delete policy interface  admin-view  testPol  LB7-D1-DL206-F1  delivery 
-    sleepnow  3
+    Sleep  3
     REST add policy interface  admin-view  testPol  LB8-D1-DL207-F1  delivery 
     REST add policy interface  admin-view  testPol  LB8-D2-DL207-F2  delivery 
     REST add policy interface  admin-view  testPol  LB8-D3-DL207-F3  delivery 
     REST add policy interface  admin-view  testPol  LB8-D4-DL207-F4  delivery 
-    sleepnow  3
+    Sleep  3
     ${switchDpid} =  REST show switch dpid  LB7  
     ${switchFlowVal} =   REST show switch flow  ${switchDpid}  
     Should Be Equal As Integers  ${switchFlowVal}  4
@@ -211,7 +211,7 @@ T6093
     ${switchFlowVa1l} =   REST show switch flow  ${switchDpid1}  
     Should Be Equal As Integers  ${switchFlowVa1l}  4
     REST enable feature  inport-mask
-    sleepnow  2
+    Sleep  2
     ${switchFlowVal} =   REST show switch flow  ${switchDpid}  
     Should Be Equal As Integers  ${switchFlowVal}  4
     ${switchFlowVa1l} =   REST show switch flow  ${switchDpid1}  
@@ -228,13 +228,13 @@ T6094
     REST delete policy interface  admin-view  testPol  LB7-F3-DL206-D3  filter
     REST delete policy interface  admin-view  testPol  LB7-F4-DL206-D4  filter
     REST delete policy interface  admin-view  testPol  LB7-D1-DL206-F1  delivery 
-    sleepnow  3
+    Sleep  3
     REST add service to policy  admin-view  testPol  S2-LB8   1
     REST add policy interface  admin-view  testPol  LB8-D1-DL207-F1  delivery 
     REST add policy interface  admin-view  testPol  LB8-D2-DL207-F2  delivery 
     REST add policy interface  admin-view  testPol  LB8-D3-DL207-F3  delivery 
     REST add policy interface  admin-view  testPol  LB8-D4-DL207-F4  delivery 
-    sleepnow  3
+    Sleep  3
     ${switchDpid} =  REST show switch dpid  LB7  
     ${switchFlowVal} =   REST show switch flow  ${switchDpid}  
     Should Be Equal As Integers  ${switchFlowVal}  4
@@ -242,7 +242,7 @@ T6094
     ${switchFlowVa1l} =   REST show switch flow  ${switchDpid1}  
     Should Be Equal As Integers  ${switchFlowVa1l}  5
     REST enable feature  inport-mask
-    sleepnow  2
+    Sleep  2
     ${switchFlowVal} =   REST show switch flow  ${switchDpid}  
     Should Be Equal As Integers  ${switchFlowVal}  4
     ${switchFlowVa1l} =   REST show switch flow  ${switchDpid1}  
@@ -255,12 +255,12 @@ T6094
 T6095
     REST disable feature  inport-mask 
     REST delete policy interface  admin-view  testPol  LB7-D1-DL206-F1  delivery 
-    sleepnow  3
+    Sleep  3
     REST add policy interface  admin-view  testPol  LB8-D1-DL207-F1  delivery 
     REST add policy interface  admin-view  testPol  LB8-D2-DL207-F2  delivery 
     REST add policy interface  admin-view  testPol  LB8-D3-DL207-F3  delivery 
     REST add policy interface  admin-view  testPol  LB8-D4-DL207-F4  delivery 
-    sleepnow  3
+    Sleep  3
     ${switchDpid} =  REST show switch dpid  LB7  
     ${switchFlowVal} =   REST show switch flow  ${switchDpid}  
     Should Be Equal As Integers  ${switchFlowVal}  7
@@ -268,7 +268,7 @@ T6095
     ${switchFlowVa1l} =   REST show switch flow  ${switchDpid1}  
     Should Be Equal As Integers  ${switchFlowVa1l}  4
     REST enable feature  inport-mask
-    sleepnow  2
+    Sleep  2
     ${switchFlowVal} =   REST show switch flow  ${switchDpid}  
     Should Be Equal As Integers  ${switchFlowVal}  4
     ${switchFlowVa1l} =   REST show switch flow  ${switchDpid1}  
@@ -281,13 +281,13 @@ T6095
 T6096
     REST disable feature  inport-mask 
     REST delete policy interface  admin-view  testPol  LB7-D1-DL206-F1  delivery 
-    sleepnow  3
+    Sleep  3
     REST add service to policy  admin-view  testPol  S2-LB8   1
     REST add policy interface  admin-view  testPol  LB8-D1-DL207-F1  delivery 
     REST add policy interface  admin-view  testPol  LB8-D2-DL207-F2  delivery 
     REST add policy interface  admin-view  testPol  LB8-D3-DL207-F3  delivery 
     REST add policy interface  admin-view  testPol  LB8-D4-DL207-F4  delivery 
-    sleepnow  3
+    Sleep  3
     ${switchDpid} =  REST show switch dpid  LB7  
     ${switchFlowVal} =   REST show switch flow  ${switchDpid}  
     Should Be Equal As Integers  ${switchFlowVal}  7
@@ -295,7 +295,7 @@ T6096
     ${switchFlowVa1l} =   REST show switch flow  ${switchDpid1}  
     Should Be Equal As Integers  ${switchFlowVa1l}  5
     REST enable feature  inport-mask
-    sleepnow  2
+    Sleep  2
     ${switchFlowVal} =   REST show switch flow  ${switchDpid}  
     Should Be Equal As Integers  ${switchFlowVal}  4
     ${switchFlowVa1l} =   REST show switch flow  ${switchDpid1}  
@@ -314,9 +314,9 @@ T6097
     REST add policy interface  admin-view  testPol  LB8-D3-DL207-F3  delivery 
     REST add policy interface  admin-view  testPol  LB8-D4-DL207-F4  delivery 
     REST add service to policy  admin-view  testPol  S5-LY4   1
-    sleepnow  1
+    Sleep  1
     REST add service to policy  admin-view  testPol  S2-LB8   2
-    sleepnow  2
+    Sleep  2
     ${switchDpid} =  REST show switch dpid  LB7  
     ${switchFlowVal} =   REST show switch flow  ${switchDpid}  
     Should Be Equal As Integers  ${switchFlowVal}  7
@@ -324,7 +324,7 @@ T6097
     ${switchFlowVal1} =   REST show switch flow  ${switchDpid1}  
     Should Be Equal As Integers  ${switchFlowVal1}  5
     REST enable feature  inport-mask
-    sleepnow  2
+    Sleep  2
     ${switchFlowVal} =   REST show switch flow  ${switchDpid}  
     Should Be Equal As Integers  ${switchFlowVal}  4
     ${switchFlowVal1} =   REST show switch flow  ${switchDpid1}  
@@ -342,7 +342,7 @@ T6098
     REST delete policy interface  admin-view  testPol  LB7-F4-DL206-D4  filter 
     REST add policy interface  admin-view  testPol  LB12-F1-HP1-D1  filter 
     REST add policy interface  admin-view  testPol  LB8-D1-DL207-F1  delivery 
-    sleepnow  2     
+    Sleep  2     
     ${switchDpid} =  REST show switch dpid  LB7  
     ${switchFlowVal} =   REST show switch flow  ${switchDpid}  
     Should Be Equal As Integers  ${switchFlowVal}  4  
@@ -358,7 +358,7 @@ T6098
     ${switchFlowVal4} =   REST show switch flow  ${switchDpid4}  
     REST compare coreswitch flows  ${switchFlowVal3}   ${switchFlowVal4}  5  3  
     REST enable feature  inport-mask     
-    sleepnow  2     
+    Sleep  2     
     ${switchFlowVal} =   REST show switch flow  ${switchDpid}  
     Should Be Equal As Integers  ${switchFlowVal}  4  
     ${switchFlowVal1} =   REST show switch flow  ${switchDpid1}  
@@ -379,7 +379,7 @@ T6099
     REST add policy interface  admin-view  testPol  LB12-F1-HP1-D1  filter 
     REST add policy interface  admin-view  testPol  LB8-D1-DL207-F1  delivery 
     REST add service to policy  admin-view  testPol  S2-LB8   1
-    sleepnow  2     
+    Sleep  2     
     ${switchDpid} =  REST show switch dpid  LB7  
     ${switchFlowVal} =   REST show switch flow  ${switchDpid}  
     Should Be Equal As Integers  ${switchFlowVal}  4  
@@ -395,7 +395,7 @@ T6099
     ${switchFlowVal4} =   REST show switch flow  ${switchDpid4}  
     REST compare coreswitch flows  ${switchFlowVal3}   ${switchFlowVal4}  5  3  
     REST enable feature  inport-mask     
-    sleepnow  2     
+    Sleep  2     
     ${switchFlowVal} =   REST show switch flow  ${switchDpid}  
     Should Be Equal As Integers  ${switchFlowVal}  4  
     ${switchFlowVal1} =   REST show switch flow  ${switchDpid1}  
@@ -416,9 +416,9 @@ T6100
     REST add policy interface  admin-view  testPol  LB12-F1-HP1-D1  filter 
     REST add policy interface  admin-view  testPol  LB8-D1-DL207-F1  delivery 
     REST add service to policy  admin-view  testPol  S5-LY4   1
-    sleepnow  2     
+    Sleep  2     
     REST add service to policy  admin-view  testPol  S2-LB8   2
-    sleepnow  2     
+    Sleep  2     
     ${switchDpid} =  REST show switch dpid  LB7  
     ${switchFlowVal} =   REST show switch flow  ${switchDpid}  
     Should Be Equal As Integers  ${switchFlowVal}  4  
@@ -434,7 +434,7 @@ T6100
     ${switchFlowVal4} =   REST show switch flow  ${switchDpid4}  
     REST compare coreswitch flows  ${switchFlowVal3}   ${switchFlowVal4}  6  3  
     REST enable feature  inport-mask     
-    sleepnow  2     
+    Sleep  2     
     ${switchFlowVal} =   REST show switch flow  ${switchDpid}  
     Should Be Equal As Integers  ${switchFlowVal}  4  
     ${switchFlowVal1} =   REST show switch flow  ${switchDpid1}  
@@ -455,7 +455,7 @@ T6101
     REST add policy interface  admin-view  testPol  LB12-F1-HP1-D1  filter 
     REST add policy interface  admin-view  testPol  LB8-D1-DL207-F1  delivery 
     REST add policy interface  admin-view  testPol  LB11-D1-AR4-F1  delivery 
-    sleepnow  2     
+    Sleep  2     
     ${switchDpid} =  REST show switch dpid  LB7  
     ${switchFlowVal} =   REST show switch flow  ${switchDpid}  
     Should Be Equal As Integers  ${switchFlowVal}  4  
@@ -474,7 +474,7 @@ T6101
     ${switchFlowVal4} =   REST show switch flow  ${switchDpid4}  
     REST compare coreswitch flows  ${switchFlowVal3}   ${switchFlowVal4}  5  3  
     REST enable feature  inport-mask     
-    sleepnow  2     
+    Sleep  2     
     ${switchFlowVal} =   REST show switch flow  ${switchDpid}  
     Should Be Equal As Integers  ${switchFlowVal}  4  
     ${switchFlowVal1} =   REST show switch flow  ${switchDpid1}  
@@ -498,7 +498,7 @@ T6102
     REST add policy interface  admin-view  testPol  LB8-D1-DL207-F1  delivery 
     REST add policy interface  admin-view  testPol  LB11-D1-AR4-F1  delivery 
     REST add service to policy  admin-view  testPol  S5-LY4   1
-    sleepnow  2     
+    Sleep  2     
     ${switchDpid} =  REST show switch dpid  LB7  
     ${switchFlowVal} =   REST show switch flow  ${switchDpid}  
     Should Be Equal As Integers  ${switchFlowVal}  4  
@@ -517,7 +517,7 @@ T6102
     ${switchFlowVal4} =   REST show switch flow  ${switchDpid4}  
     REST compare coreswitch flows  ${switchFlowVal3}   ${switchFlowVal4}  6  3  
     REST enable feature  inport-mask     
-    sleepnow  2     
+    Sleep  2     
     ${switchFlowVal} =   REST show switch flow  ${switchDpid}  
     Should Be Equal As Integers  ${switchFlowVal}  4  
     ${switchFlowVal1} =   REST show switch flow  ${switchDpid1}  
@@ -539,7 +539,7 @@ T6103
     REST add policy interface  admin-view  testPol  LB12-F1-HP1-D1  filter 
     REST add policy interface  admin-view  testPol  LB12-F2-HP1-D2  filter 
     REST add policy interface  admin-view  testPol  LB8-D1-DL207-F1  delivery 
-    sleepnow  2     
+    Sleep  2     
     ${switchDpid} =  REST show switch dpid  LB7  
     ${switchFlowVal} =   REST show switch flow  ${switchDpid}  
     Should Be Equal As Integers  ${switchFlowVal}  5  
@@ -558,7 +558,7 @@ T6103
     ${switchFlowVal4} =   REST show switch flow  ${switchDpid4}  
     REST compare coreswitch flows  ${switchFlowVal3}   ${switchFlowVal4}  5  3  
     REST enable feature  inport-mask     
-    sleepnow  2     
+    Sleep  2     
     ${switchFlowVal} =   REST show switch flow  ${switchDpid}  
     Should Be Equal As Integers  ${switchFlowVal}  4  
     ${switchFlowVal1} =   REST show switch flow  ${switchDpid1}  
@@ -581,7 +581,7 @@ T6104
     REST add policy interface  admin-view  testPol  LB12-F2-HP1-D2  filter 
     REST add policy interface  admin-view  testPol  LB8-D1-DL207-F1  delivery 
     REST add service to policy  admin-view  testPol  S2-LB8   2
-    sleepnow  2     
+    Sleep  2     
     ${switchDpid} =  REST show switch dpid  LB7  
     ${switchFlowVal} =   REST show switch flow  ${switchDpid}  
     Should Be Equal As Integers  ${switchFlowVal}  5  
@@ -600,7 +600,7 @@ T6104
     ${switchFlowVal4} =   REST show switch flow  ${switchDpid4}  
     REST compare coreswitch flows  ${switchFlowVal3}   ${switchFlowVal4}  5  3  
     REST enable feature  inport-mask     
-    sleepnow  2     
+    Sleep  2     
     ${switchFlowVal} =   REST show switch flow  ${switchDpid}  
     Should Be Equal As Integers  ${switchFlowVal}  4  
     ${switchFlowVal1} =   REST show switch flow  ${switchDpid1}  
@@ -624,7 +624,7 @@ T6105
     REST add policy interface  admin-view  testPol  LB8-D1-DL207-F1  delivery 
     REST add service to policy  admin-view  testPol  S5-LY4   1
     REST add service to policy  admin-view  testPol  S2-LB8   2
-    sleepnow  2     
+    Sleep  2     
     ${switchDpid} =  REST show switch dpid  LB7  
     ${switchFlowVal} =   REST show switch flow  ${switchDpid}  
     Should Be Equal As Integers  ${switchFlowVal}  5  
@@ -643,7 +643,7 @@ T6105
     ${switchFlowVal4} =   REST show switch flow  ${switchDpid4}  
     REST compare coreswitch flows  ${switchFlowVal3}   ${switchFlowVal4}  6  3  
     REST enable feature  inport-mask     
-    sleepnow  2     
+    Sleep  2     
     ${switchFlowVal} =   REST show switch flow  ${switchDpid}  
     Should Be Equal As Integers  ${switchFlowVal}  4  
     ${switchFlowVal1} =   REST show switch flow  ${switchDpid1}  
@@ -668,7 +668,7 @@ T6106
     REST add policy interface  admin-view  testPol  LB8-D2-DL207-F2  delivery 
     REST add policy interface  admin-view  testPol  LB11-D1-AR4-F1   delivery 
     REST add policy interface  admin-view  testPol  LB11-D2-AR4-F2   delivery 
-    sleepnow  2     
+    Sleep  2     
     ${switchDpid} =  REST show switch dpid  LB7  
     ${switchFlowVal} =   REST show switch flow  ${switchDpid}  
     Should Be Equal As Integers  ${switchFlowVal}  5  
@@ -687,7 +687,7 @@ T6106
     ${switchFlowVal4} =   REST show switch flow  ${switchDpid4}  
     REST compare coreswitch flows  ${switchFlowVal3}   ${switchFlowVal4}  5  3  
     REST enable feature  inport-mask     
-    sleepnow  2     
+    Sleep  2     
     ${switchFlowVal} =   REST show switch flow  ${switchDpid}  
     Should Be Equal As Integers  ${switchFlowVal}  4  
     ${switchFlowVal1} =   REST show switch flow  ${switchDpid1}  

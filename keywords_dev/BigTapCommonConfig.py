@@ -379,7 +379,7 @@ class BigTapCommonConfig(object):
         else:
             c = t.controller('c2')
             c.http_port=8082
-        url ='http://%s:%s/api/v1/data/controller/applications/bigtap/feature'  % (c.ip,c.http_port,)
+        url ='http://%s:%s/api/v1/data/controller/applications/bigtap/feature'  % (c.ip,c.http_port)
         c.rest.patch(url,{str(featureName): True})
         if not c.rest.status_code_ok():
             helpers.test_failure(c.rest.error())

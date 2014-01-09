@@ -213,7 +213,7 @@ snmp setup
 	configure portchannel  ${ip_address_2}  30  49,52  L3
 	configure portchannel  ${ip_address_3}  30  49,52  L3 
 	enable snmp   ${ip_address_2}             
-	sleepnow   30             
+	Sleep   30             
 
 verify config               
 	${snmp_output}=  snmp show   ${ip_address_1}        
@@ -283,7 +283,7 @@ verify IfMtu
 	Should Contain  ${snmp_key}  1500
 	${snmp_key2}=  snmp cmd  ${ip_address_2}  snmpget    public  ifMtu.3
 	Should Contain  ${snmp_key2}  1500
-	sleepnow  5
+	Sleep  5
 
 verify ifDescr lb9
 	${snmp_key}=  snmp cmd  ${ip_address_1}  snmpwalk  public  ifDescr.1048
@@ -304,7 +304,7 @@ verify ifOperStatus lb9
 verify ifSpeed lb9
 	${snmp_key} =  snmp cmd  ${ip_address_1}  snmpwalk  public  ifSpeed.1048
 	Should Contain  ${snmp_key}  1000000000
-	sleepnow  5
+	Sleep  5
 	
 verify ifHighSpeed lb9
 	${snmp_key} =  snmp cmd  ${ip_address_1}  snmpwalk  public  ifHighSpeed.1048
@@ -334,12 +334,12 @@ verify ifOperStatus tenGlb9
 verify ifSpeed tenGlb9
 	${snmp_key} =  snmp cmd  ${ip_address_1}  snmpwalk  public  ifSpeed.1051
 	Should Contain  ${snmp_key}  4294967295
-	sleepnow  5
+	Sleep  5
 	
 verify ifHighSpeed tenGlb9
 	${snmp_key} =  snmp cmd  ${ip_address_1}  snmpwalk  public  ifHighSpeed.1051
 	Should Contain  ${snmp_key}  10000
-	sleepnow  5
+	Sleep  5
 
 verify ifPhysAddress tenGlb9
 	${switchDict1}=  REST show switch
@@ -363,7 +363,7 @@ verify ifAdminStatus ly2
 verify ifOperStatus ly2
 	${snmp_key}=  snmp cmd  ${ip_address_2}  snmpwalk    public  ifOperStatus.1048
 	Should Contain  ${snmp_key}  up
-	sleepnow  5
+	Sleep  5
 
 verify ifSpeed ly2
 	${snmp_key}=  snmp cmd  ${ip_address_2}  snmpwalk    public  ifSpeed.1048
@@ -403,7 +403,7 @@ verify ifSpeed fortyGly2
 verify ifHighSpeed fortyGly2
 	${snmp_key}=  snmp cmd  ${ip_address_2}  snmpwalk    public  ifHighSpeed.1052
 	Should Contain  ${snmp_key}  40000
-	sleepnow  5
+	Sleep  5
 
 verify ifPhysAddress fortyGly2
 	${switchDict2}=  REST show switch
@@ -496,13 +496,13 @@ modify community
 
 disable snmp
 	disable switch snmp  ${ip_address_1}
-	sleepnow  5
+	Sleep  5
 	${snmp_output} =   snmp show  ${ip_address_1}
 	Should Contain  ${snmp_output}  disabled
 	${snmp_key}=  snmp cmd  ${ip_address_1}  snmpget   public  sysContact.0
 	Should Be Empty  ${snmp_key}  
 	enable snmp  ${ip_address_1}
-	sleepnow  5
+	Sleep  5
 	${snmp_output} =   snmp show  ${ip_address_1}
 	Should Contain  ${snmp_output}  enabled
 	${snmp_key}=  snmp cmd  ${ip_address_1}  snmpget   public  sysContact.0
