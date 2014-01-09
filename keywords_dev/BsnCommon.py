@@ -175,29 +175,29 @@ class BsnCommon(object):
             return False
         else:  
             content = c.rest.content()
-            switchDict ={}
+            switch_dict ={}
             for x in range (0,len(content)):
-                switchDict[str(content[x]['inet-address']['ip'])] = str(content[x]['dpid'])
-            return switchDict
+                switch_dict[str(content[x]['inet-address']['ip'])] = str(content[x]['dpid'])
+            return switch_dict
 
-    def return_switch_dpid(self,switchDict,ipAddr):
+    def return_switch_dpid(self,switch_dict,ip_address):
             '''Return DPID of switch, when dictionary from o/p of `rest show switch` and IP Address is provided
             
                Input: 
-                   switchDict    dictionary of switch
-                   ipAddr        IP Address of Switch
+                   switch_dict    dictionary of switch
+                   ip_address        IP Address of Switch
                 
                Return: Switch IP Address
             '''
-            return switchDict[str(ipAddr)]
+            return switch_dict[str(ip_address)]
 
 
-    def return_switch_interface_mac(self,switchDpid,interfaceName):
+    def return_switch_interface_mac(self,switch_dpid,interface_name):
         '''Return the MAC/Hardware Address of a given interface
         
             Input: 
-                `switchDpid`       DPID of the Switch
-                `interfaceName`    Interface Name e.g. ethernet13
+                `switch_dpid`       DPID of the Switch
+                `interface_name`    Interface Name e.g. ethernet13
             
             Returns: Hardware/MAC Address of Interface
         '''
@@ -215,7 +215,7 @@ class BsnCommon(object):
                 c = t.controller('c2')
                 c.http_port=8082
         try:
-            url='http://%s:%s/api/v1/data/controller/core/switch[interface/name="%s"][dpid="%s"]?select=interface[name="%s"]' %(c.ip,c.http_port,interfaceName,switchDpid,interfaceName)
+            url='http://%s:%s/api/v1/data/controller/core/switch[interface/name="%s"][dpid="%s"]?select=interface[name="%s"]' %(c.ip,c.http_port,interface_name,switch_dpid,interface_name)
             c.rest.get(url)
         except:
             helpers.test_failure(c.rest.error())
@@ -226,22 +226,22 @@ class BsnCommon(object):
             content = c.rest.content()
             return content[0]['interface'][0]['hardware-address']
     
-    def restart_process_controller(self,process_name,controllerRole):
+    def restart_process_controller(self,process_name,controller_role):
         '''Restart a process on controller
         
             Input:
                processName        Name of process to be restarted
-               controllerRole        Where to execute the command. Accepted values are `Master` and `Slave`
+               controller_role        Where to execute the command. Accepted values are `Master` and `Slave`
            
            Return Value:  True if the configuration is successful, false otherwise 
         '''
         try:
             t=test.Test()
-            if(self.btc.rest_is_c1_master_controller() and controllerRole=='Master' ) :
+            if(self.btc.rest_is_c1_master_controller() and controller_role=='Master' ) :
                 c = t.controller('c1')
-            elif (self.btc.rest_is_c1_master_controller() and controllerRole=='Slave' ):
+            elif (self.btc.rest_is_c1_master_controller() and controller_role=='Slave' ):
                 c = t.controller('c2')
-            elif (not self.btc.rest_is_c1_master_controller() and controllerRole=='Master'):
+            elif (not self.btc.rest_is_c1_master_controller() and controller_role=='Master'):
                 c = t.controller('c2')
             else:
                 c = t.controller('c1')
@@ -261,22 +261,22 @@ class BsnCommon(object):
         else:  
             return True         
 
-    def execute_controller_command_return_output(self,input,controllerRole):
+    def execute_controller_command_return_output(self,input,controller_role):
         '''Execute a generic command on the controller and return output.
         
             Input:
-                controllerRole        Where to execute the command. Accepted values are `Master` and `Slave`
+                controller_role        Where to execute the command. Accepted values are `Master` and `Slave`
                 input            Command to be executed on switch
                 
             Return Value: Output from command execution
         '''
         try:
             t=test.Test()
-            if(self.btc.rest_is_c1_master_controller() and controllerRole=='Master' ) :
+            if(self.btc.rest_is_c1_master_controller() and controller_role=='Master' ) :
                 c = t.controller('c1')
-            elif (self.btc.rest_is_c1_master_controller() and controllerRole=='Slave' ):
+            elif (self.btc.rest_is_c1_master_controller() and controller_role=='Slave' ):
                 c = t.controller('c2')            
-            elif (not self.btc.rest_is_c1_master_controller() and controllerRole=='Master'):
+            elif (not self.btc.rest_is_c1_master_controller() and controller_role=='Master'):
                 c = t.controller('c2')
             else:
                 c = t.controller('c1')
@@ -317,12 +317,12 @@ class BsnCommon(object):
 # All Common Controller Verification Commands Go Here:
 ########################################################
 
-    def verify_interface_is_up(self,switchDpid,interfaceName):
+    def verify_interface_is_up(self,switch_dpid,interface_name):
         '''Verify if a given interface on a given switch is up
         
             Input: 
-                `switchDpid`       DPID of the Switch
-                `interfaceName`    Interface Name e.g. ethernet13
+                `switch_dpid`       DPID of the Switch
+                `interface_name`    Interface Name e.g. ethernet13
             
             Returns: True if the interface is up, false otherwise
         '''
@@ -340,7 +340,7 @@ class BsnCommon(object):
                 c = t.controller('c2')
                 c.http_port=8082
         try:
-            url='http://%s:%s/api/v1/data/controller/core/switch[interface/name="%s"][dpid="%s"]?select=interface[name="%s"]' %(c.ip,c.http_port,interfaceName,switchDpid,interfaceName)
+            url='http://%s:%s/api/v1/data/controller/core/switch[interface/name="%s"][dpid="%s"]?select=interface[name="%s"]' %(c.ip,c.http_port,interface_name,switch_dpid,interface_name)
             c.rest.get(url)
         except:
             helpers.test_failure(c.rest.error())
@@ -360,12 +360,12 @@ class BsnCommon(object):
 #   Objective: Set Switch alias via command "switch-alias <switch_alias>"
 #   Input: Switch DPID and Switch Alias
 #   Return Value:  True/False
-    def rest_set_switch_alias(self,switchDpid,switchAlias):
+    def rest_set_switch_alias(self,switch_dpid,switch_alias):
         '''Set Switch alias via command "switch-alias <switch_alias>"
         
             Input:
-                `switchDpid`        DPID of switch
-                `switchAlias`        Desired alias for switch
+                `switch_dpid`        DPID of switch
+                `switch_alias`        Desired alias for switch
             
             Return: true if configuration is successful, false otherwise
         '''
@@ -383,8 +383,8 @@ class BsnCommon(object):
                 c = t.controller('c2')
                 c.http_port=8082
         try:
-            url='http://%s:%s/api/v1/data/controller/core/switch[dpid="%s"]' % (c.ip,c.http_port,str(switchDpid))
-            c.rest.patch(url, {"alias": str(switchAlias)})
+            url='http://%s:%s/api/v1/data/controller/core/switch[dpid="%s"]' % (c.ip,c.http_port,str(switch_dpid))
+            c.rest.patch(url, {"alias": str(switch_alias)})
         except:
             helpers.test_failure(c.rest.error())
             return False
@@ -426,11 +426,11 @@ class BsnCommon(object):
                 helpers.test_log(c.rest.content_json())
                 return True
 
-    def flap_eth0_controller(self,controllerRole):
+    def flap_eth0_controller(self,controller_role):
         ''' Flap eth0 on Controller
         
             Input:
-               controllerRole        Where to execute the command. Accepted values are `Master` and `Slave`
+               controller_role        Where to execute the command. Accepted values are `Master` and `Slave`
            
            Return Value:  True if the configuration is successful, false otherwise 
         '''
@@ -441,11 +441,11 @@ class BsnCommon(object):
             c = t.controller('c1')
             c.http_port=8000
         else:
-            if(self.rest_is_c1_master_controller() and controllerRole=='Master' ) :
+            if(self.rest_is_c1_master_controller() and controller_role=='Master' ) :
                 c = t.controller('c1')
-            elif (self.rest_is_c1_master_controller() and controllerRole=='Slave' ):
+            elif (self.rest_is_c1_master_controller() and controller_role=='Slave' ):
                 c = t.controller('c2')
-            elif (not self.rest_is_c1_master_controller() and controllerRole=='Master'):
+            elif (not self.rest_is_c1_master_controller() and controller_role=='Master'):
                 c = t.controller('c2')
             else:
                 c = t.controller('c1')
@@ -714,7 +714,7 @@ class BsnCommon(object):
             content = c.rest.content()
             return content
 
-    def rest_snmp_get(self,snmpCommunity,snmpOID):
+    def rest_snmp_get(self,snmp_community,snmp_oid):
         '''Execute SNMP Walk from local machine for a particular SNMP OID
         
             Input: SNMP Community and OID
@@ -735,7 +735,7 @@ class BsnCommon(object):
                 c = t.controller('c2')
                 c.http_port=8000
         try:
-            url="/usr/bin/snmpwalk -v2c -c %s %s %s" % (str(snmpCommunity),c.ip,str(snmpOID))
+            url="/usr/bin/snmpwalk -v2c -c %s %s %s" % (str(snmp_community),c.ip,str(snmp_oid))
             returnVal = subprocess.Popen([url], stdout=subprocess.PIPE, shell=True)
             (out, err) = returnVal.communicate()
         except:
@@ -746,7 +746,7 @@ class BsnCommon(object):
             return out
     
 
-    def rest_snmp_getnext(self,snmpCommunity,snmpOID):
+    def rest_snmp_getnext(self,snmp_community,snmp_oid):
         '''Execute snmpgetnext from local machine for a particular SNMP OID
         
             Input: SNMP Community and OID
@@ -755,29 +755,29 @@ class BsnCommon(object):
         '''
         t = test.Test()
         c = t.controller()
-        url="/usr/bin/snmpgetnext -v2c -c %s %s %s" % (str(snmpCommunity),c.ip,str(snmpOID))
+        url="/usr/bin/snmpgetnext -v2c -c %s %s %s" % (str(snmp_community),c.ip,str(snmp_oid))
         returnVal = subprocess.Popen([url], stdout=subprocess.PIPE, shell=True)
         (out, err) = returnVal.communicate()
         helpers.log("URL: %s Output: %s" % (url, out))
         return out
     
 
-    def rest_snmp_cmd(self,snmp_cmd,snmpOptions,snmpCommunity,snmpOID):
+    def rest_snmp_cmd(self,snmp_cmd,snmp_options,snmp_community,snmp_oid):
         '''Execute a generic snmp command from local machine for a particular SNMP OID
         
             Input: 
                 `snmp_cmd`        SNMP Command (snmpbulkget/snmpbulkwalk)
-                `snmpOptions`     SNMP Command options
-                `snmpCommunity`   SNMP Community
-                `snmpOID`         SNMP OID to perform walk on
+                `snmp_options`     SNMP Command options
+                `snmp_community`   SNMP Community
+                `snmp_oid`         SNMP OID to perform walk on
             
             Return Value:  return the SNMP Walk O/P
         '''
         t = test.Test()
         c = t.controller()
-        if snmpOptions == "None" or snmpOptions == "none":
-                snmpOptions =" "
-        url="/usr/bin/%s -v2c %s -c %s %s %s" % (str(snmp_cmd),str(snmpOptions),str(snmpCommunity),c.ip,str(snmpOID))
+        if snmp_options == "None" or snmp_options == "none":
+                snmp_options =" "
+        url="/usr/bin/%s -v2c %s -c %s %s %s" % (str(snmp_cmd),str(snmp_options),str(snmp_community),c.ip,str(snmp_oid))
         returnVal = subprocess.Popen([url], stdout=subprocess.PIPE, shell=True)
         (out, err) = returnVal.communicate()
         helpers.log("URL: %s Output: %s" % (url, out))
@@ -785,10 +785,10 @@ class BsnCommon(object):
     
 ############### SNMP CONFIGURATION COMMANDS ########################
      
-    def rest_set_snmp_server_community(self,snmpCommunity):
+    def rest_set_snmp_server_community(self,snmp_community):
         '''Set SNMP Community String. Similar to CLI command "snmp-server community ro public"
         
-           Input: `snmpCommunity`    SNMP Community name
+           Input: `snmp_community`    SNMP Community name
            
            Return Value:  True if the configuration is successful, false otherwise 
         '''
@@ -807,7 +807,7 @@ class BsnCommon(object):
                 c.http_port=8000
         try:
             url='http://%s:%s/rest/v1/model/snmp-server-config/' % (c.ip,c.http_port)
-            c.rest.put(url,  {"id": "snmp", "community": str(snmpCommunity)})
+            c.rest.put(url,  {"id": "snmp", "community": str(snmp_community)})
         except:
             helpers.test_failure(c.rest.error())
             return False
@@ -819,10 +819,10 @@ class BsnCommon(object):
                 helpers.test_log(c.rest.content_json())
                 return True
                  
-    def rest_set_snmp_server_contact(self,snmpContact):
+    def rest_set_snmp_server_contact(self,snmp_contact):
         '''Set SNMP Contact. Similar to CLI command "snmp-server contact 'Animesh Patcha'"
         
-           Input: `snmpContact`    SNMP Contact Name
+           Input: `snmp_contact`    SNMP Contact Name
            
            Return Value:  True if the configuration is successful, false otherwise 
         '''
@@ -841,7 +841,7 @@ class BsnCommon(object):
                 c.http_port=8000
         try:
             url='http://%s:%s/rest/v1/model/snmp-server-config/?id=snmp' % (c.ip,c.http_port)
-            c.rest.put(url, {"contact": str(snmpContact)})
+            c.rest.put(url, {"contact": str(snmp_contact)})
         except:
             helpers.test_failure(c.rest.error())
             return False
@@ -853,10 +853,10 @@ class BsnCommon(object):
                 helpers.test_log(c.rest.content_json())
                 return True
 
-    def rest_set_snmp_server_location(self,snmpLocation):
+    def rest_set_snmp_server_location(self,snmp_location):
         '''Set SNMP Location. Similar to CLI command "snmp-server location 'Mountain View'"
         
-           Input: `snmpContact`    SNMP Location Name
+           Input: `snmp_contact`    SNMP Location Name
            
            Return Value:  True if the configuration is successful, false otherwise 
         '''
@@ -875,7 +875,7 @@ class BsnCommon(object):
                 c.http_port=8000
         try:
             url='http://%s:%s/rest/v1/model/snmp-server-config/?id=snmp' % (c.ip,c.http_port)
-            c.rest.put(url, {"location": str(snmpLocation)})
+            c.rest.put(url, {"location": str(snmp_location)})
         except:
             helpers.test_failure(c.rest.error())
             return False
@@ -921,13 +921,13 @@ class BsnCommon(object):
                 helpers.test_log(c.rest.content_json())
                 return True
   
-    def rest_set_snmp_trapserver(self,trapIP,trapPort):
+    def rest_set_snmp_trapserver(self,trap_ip,trap_port):
         '''Configure SNMP Trap Server. Similar to cli command ""snmp-server trap server 10.192.3.22 161"
             
            Input: 
-               `trapIP`    SNMP Trap Server IP Address
+               `trap_ip`    SNMP Trap Server IP Address
                
-               `trapPort`  SNMP Trap Server Port Number
+               `trap_port`  SNMP Trap Server Port Number
            
            Return Value:  True if the configuration is successful, false otherwise 
         '''
@@ -946,7 +946,7 @@ class BsnCommon(object):
                 c.http_port=8000
         try:
             url='http://%s:%s/rest/v1/model/snmp-server-config/?id=snmp' % (c.ip,c.http_port)
-            c.rest.put(url, {"trap-enable": True, "trap-server": str(trapIP), "trap-port": str(trapPort)})
+            c.rest.put(url, {"trap-enable": True, "trap-server": str(trap_ip), "trap-port": str(trap_port)})
         except:
             helpers.test_failure(c.rest.error())
             return False
@@ -1043,7 +1043,7 @@ class BsnCommon(object):
 #   Objective: Modify Firewall to allow port 161 for SNMP Requests from external hosts
 #   Input: Controller ID
 #   Return Value:  True/False         
-    def rest_firewall_allow_snmp(self,controllerID):
+    def rest_firewall_allow_snmp(self,controller_id):
         '''Modify Firewall to allow port 161 for SNMP Requests from external hosts
             
            Input: N/A
@@ -1065,8 +1065,8 @@ class BsnCommon(object):
                 c.http_port=8000
         try:
             url='http://%s:%s/rest/v1/model/firewall-rule/' % (c.ip,c.http_port)
-            cInterface = "%s|Ethernet|0" %(str(controllerID))
-            c.rest.put(url,{"interface": str(cInterface), "vrrp-ip": "", "port": 161, "src-ip": "", "proto": "udp"})
+            controller_interface = "%s|Ethernet|0" %(str(controller_id))
+            c.rest.put(url,{"interface": str(controller_interface), "vrrp-ip": "", "port": 161, "src-ip": "", "proto": "udp"})
         except:
             helpers.test_failure(c.rest.error())
             return False
@@ -1081,7 +1081,7 @@ class BsnCommon(object):
 #   Objective: Delete SNMP. Similar to "no snmp-server enable"
 #   Input: N/A
 #   Return Value:  True/False    
-    def rest_delete_snmp_trapserver(self,trapPort):
+    def rest_delete_snmp_trapserver(self,trap_port):
         '''Delete SNMP trapserver. Similar to "no snmp-server trap server 10.192.3.22 161"
             
            Input: N/A
@@ -1104,7 +1104,7 @@ class BsnCommon(object):
         try:
             url1='http://%s:%s/rest/v1/model/snmp-server-config/?id=snmp' % (c.ip,c.http_port)
             helpers.test_log(url1)
-            c.rest.put(url1, {"trap-enable": False, "trap-server": "", "trap-port": int(trapPort)})
+            c.rest.put(url1, {"trap-enable": False, "trap-server": "", "trap-port": int(trap_port)})
         except:
             helpers.test_failure(c.rest.error())
             return False
