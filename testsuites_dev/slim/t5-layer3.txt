@@ -14,3 +14,4 @@ L3 ping bm0 to bm1 single leaf single rack dynamic endpoints
    REST create tenant  A
    REST create vns  A	A1
    REST create vns	A	A2
+   
