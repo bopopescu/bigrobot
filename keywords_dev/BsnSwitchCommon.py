@@ -106,17 +106,17 @@ class BsnSwitchCommon(object):
             helpers.test_failure("Could not execute command. Please check log for errors")
             return False
     
-    def show_switch_ip_address(self,conIP,conPort):
+    def show_switch_ip_address(self,console_ip,console_port):
         '''Detect the IP address of a switch when IP address is not known
         
             Inputs:
-                conIP:    Console IP Address
-                conPort:  Console Port Number
+                console_ip:    Console IP Address
+                console_port:  Console Port Number
         '''
         try:
             user = "admin"
             password = "adminadmin"
-            tn = telnetlib.Telnet(str(conIP),int(conPort))
+            tn = telnetlib.Telnet(str(console_ip),int(console_port))
             tn.read_until("login: ", 3)
             tn.write(user + "\r\n")
             tn.read_until("Password: ", 3)
@@ -397,18 +397,18 @@ class BsnSwitchCommon(object):
             helpers.test_failure("Could not execute command. Please check log for errors")
             return False
 
-    def flap_interface_ma1(self,conIP,conPort):
+    def flap_interface_ma1(self,console_ip,console_port):
         '''Flap interface ma1 on switch
         
             Inputs:
-                conIP        IP Address of Console Server
+                console_ip        IP Address of Console Server
                 
-                conPort      Console Port Number
+                console_port      Console Port Number
         '''
         try:
             user = "admin"
             password = "adminadmin"
-            tn = telnetlib.Telnet(str(conIP),int(conPort))
+            tn = telnetlib.Telnet(str(console_ip),int(console_port))
             tn.read_until("login: ", 3)
             tn.write(user + "\r\n")
             tn.read_until("Password: ", 3)
@@ -508,13 +508,13 @@ class BsnSwitchCommon(object):
             helpers.test_failure("Configuration delete failed")
             return False 
 
-    def configure_static_ip(self,conIP,conPort,ip_address,subnet,gateway):
+    def configure_static_ip(self,console_ip,console_port,ip_address,subnet,gateway):
         '''Configure static IP address configuration on switch.
         '''
         try:
             user = "admin"
             password = "adminadmin"
-            tn = telnetlib.Telnet(str(conIP),int(conPort))
+            tn = telnetlib.Telnet(str(console_ip),int(console_port))
             tn.read_until("login: ", 3)
             tn.write(user + "\r\n")
             tn.read_until("Password: ", 3)
@@ -532,13 +532,13 @@ class BsnSwitchCommon(object):
             helpers.test_failure("Could not execute command. Please check log for errors")
             return False
         
-    def delete_static_ip(self,conIP,conPort,ip_address,subnet,gateway):
+    def delete_static_ip(self,console_ip,console_port,ip_address,subnet,gateway):
         '''Delete static IP address configuration on switch.
         '''
         try:
             user = "admin"
             password = "adminadmin"
-            tn = telnetlib.Telnet(str(conIP),int(conPort))
+            tn = telnetlib.Telnet(str(console_ip),int(console_port))
             tn.read_until("login: ", 3)
             tn.write(user + "\r\n")
             tn.read_until("Password: ", 3)
@@ -556,13 +556,13 @@ class BsnSwitchCommon(object):
             helpers.test_failure("Could not execute command. Please check log for errors")
             return False
 
-    def configure_dhcp_ip(self,conIP,conPort):
+    def configure_dhcp_ip(self,console_ip,console_port):
         '''Configure static IP address configuration on switch.
         '''
         try:
             user = "admin"
             password = "adminadmin"
-            tn = telnetlib.Telnet(str(conIP),int(conPort))
+            tn = telnetlib.Telnet(str(console_ip),int(console_port))
             tn.read_until("login: ", 3)
             tn.write(user + "\r\n")
             tn.read_until("Password: ", 3)
@@ -581,13 +581,13 @@ class BsnSwitchCommon(object):
             helpers.test_failure("Could not execute command. Please check log for errors")
             return False
 
-    def delete_dhcp_ip(self,conIP,conPort,ip_address, subnet, gateway):
+    def delete_dhcp_ip(self,console_ip,console_port,ip_address, subnet, gateway):
         '''Configure static IP address configuration on switch.
         '''
         try:
             user = "admin"
             password = "adminadmin"
-            tn = telnetlib.Telnet(str(conIP),int(conPort))
+            tn = telnetlib.Telnet(str(console_ip),int(console_port))
             tn.read_until("login: ", 3)
             tn.write(user + "\r\n")
             tn.read_until("Password: ", 3)
@@ -604,13 +604,13 @@ class BsnSwitchCommon(object):
             helpers.test_failure("Could not configure static IP address configuration on switch. Please check log for errors")
             return False
 
-    def configure_dns_server_domain(self,conIP,conPort,dns_server,dns_domain):
+    def configure_dns_server_domain(self,console_ip,console_port,dns_server,dns_domain):
         '''Configure static IP address configuration on switch.
         '''
         try:
             user = "admin"
             password = "adminadmin"
-            tn = telnetlib.Telnet(str(conIP),int(conPort))
+            tn = telnetlib.Telnet(str(console_ip),int(console_port))
             tn.read_until("login: ", 3)
             tn.write(user + "\r\n")
             tn.read_until("Password: ", 3)
@@ -626,13 +626,13 @@ class BsnSwitchCommon(object):
             helpers.test_failure("Could not configure static IP address configuration on switch. Please check log for errors")
             return False
         
-    def delete_dns_server_domain(self,conIP,conPort,dns_server,dns_domain):
+    def delete_dns_server_domain(self,console_ip,console_port,dns_server,dns_domain):
         '''Delete static IP address configuration on switch.
         '''
         try:
             user = "admin"
             password = "adminadmin"
-            tn = telnetlib.Telnet(str(conIP),int(conPort))
+            tn = telnetlib.Telnet(str(console_ip),int(console_port))
             tn.read_until("login: ", 3)
             tn.write(user + "\r\n")
             tn.read_until("Password: ", 3)
