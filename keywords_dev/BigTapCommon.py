@@ -16,7 +16,6 @@ class BigTapCommon(object):
         url = '%s/auth/login' % c.base_url
         helpers.log("url: %s" % url)
         result = c.rest.post(url, {"user":"admin", "password":"adminadmin"})
-        helpers.log("result: %s" % helpers.to_json(result))
         session_cookie = result['content']['session_cookie']
         c.rest.set_session_cookie(session_cookie)
 
@@ -311,7 +310,6 @@ class BigTapCommon(object):
                 helpers.test_failure(c.rest.error())
                 return False
             else:
-                helpers.test_log(c.rest.content_json())
                 return True
 
     def rest_add_policy(self,rbac_view_name,policy_name,policy_action="inactive"):
@@ -373,7 +371,6 @@ class BigTapCommon(object):
                 helpers.test_failure(c.rest.error())
                 return False
             else:
-                helpers.test_log(c.rest.content_json())
                 return True
 
     def rest_add_policy_interface(self,rbac_view_name,policy_name,intf_nickname,intf_type):
@@ -409,7 +406,6 @@ class BigTapCommon(object):
                 helpers.test_failure(c.rest.error())
                 return False
             else:
-                helpers.test_log(c.rest.content_json())
                 return True
     
     def rest_delete_policy_interface(self,rbac_view_name,policy_name,intf_nickname,intf_type):
@@ -445,7 +441,6 @@ class BigTapCommon(object):
                 helpers.test_failure(c.rest.error())
                 return False
             else:
-                helpers.test_log(c.rest.content_json())
                 return True
   
     def rest_add_policy_match(self,rbac_view_name,policy_name,match_number,data):
@@ -475,11 +470,9 @@ class BigTapCommon(object):
             return False
         else:  
             if not c.rest.status_code_ok():
-                helpers.test_log(c.rest.content_json())
                 helpers.test_failure(c.rest.error())
                 return False
             else:
-                helpers.test_log(c.rest.content_json())
                 return True
     
     def rest_delete_policy_match(self,rbac_view_name,policy_name,match_number):
@@ -506,7 +499,6 @@ class BigTapCommon(object):
             helpers.test_failure(c.rest.error())
             return False
         else:  
-            helpers.test_log(c.rest.content_json())
             return True
         
 # Add a service with Pre-Service and Post Service interface.
