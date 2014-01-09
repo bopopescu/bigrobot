@@ -242,9 +242,15 @@ def format_convert_and_copy(f, p, quiet=False):
 
 def create_symlinks_to_logs():
     log_path = helpers.bigrobot_log_path()
-    log_files = ['debug.log', 'log.html', 'report.html']
+    log_files = ['debug.log', 'syslog.txt', 'log.html', 'report.html']
     [helpers.file_remove(f) for f in log_files]
-    [os.symlink('/'.join((log_path, f)), f) for f in log_files]
+    
+    for f in log_files:
+        source_file =  '/'.join((log_path, f))
+        
+        # Create symlink only if source file exists
+        if helpers.file_exists(source_file):
+            os.symlink(source_file, f)
 
 
 #
@@ -313,7 +319,8 @@ def clean_command():
     """
     Remove output files created from Robot runs.
     """
-    run('rm -f log.html report.html output.xml debug.log', shell=True)
+    run('rm -f log.html report.html output.xml debug.log syslog.txt',
+        shell=True)
 
     #if is_suite_defined():
     #    run('rm -f %s.rst %s.html' % (helpers.bigrobot_suite(),

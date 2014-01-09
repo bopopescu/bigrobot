@@ -18,12 +18,12 @@ Create a tenant and verify it exists
 
 Delete a tenant and verify it removed
     Delete a tenant  A1
-    [Tags]  sanity
+    [Tags]  sanity  smoke
 
 
 Ping 2 end points in 2 racks
     Create a tenant
-    [Tags]  sanity  skipped
+    [Tags]  feature  skipped
 
 
 * Keywords 

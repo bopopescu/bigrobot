@@ -11,9 +11,12 @@ import inspect
 import re
 from scp import SCPClient
 from pytz import timezone
+from autobot.version import get_version
+
+# All below are modules in the helpers package. So we can control and manage
+# name conflicts. Therefore it's assumed safe to do 'import *'.
 from log import *
 from gobot import *
-from autobot.version import *
 from exec_timer import *
 
 # Convenience helper function any_match() and first_match() imported from
@@ -40,11 +43,11 @@ def _env_get_and_set(name, new_val=None, default=None):
     - Else, if default is specified, then assign it to env (fallback option)
     - Else return None as last resort
     """
-    if new_val:
+    if new_val is not None:
         os.environ[name] = int_to_str(new_val)
     elif name in os.environ:
         pass
-    elif default:
+    elif default is not None:
         os.environ[name] = int_to_str(default)
     else:
         return None
@@ -136,7 +139,7 @@ def bigrobot_debug(new_val=None, default=None):
         Syslog level => DEBUG
     """
     debug = _env_get_and_set('BIGROBOT_DEBUG', new_val, default)
-    if debug:
+    if int(debug) == 1:
         robot_syslog_file(default=''.join((bigrobot_log_path(), '/syslog.txt')))
         robot_syslog_level(default='DEBUG')
 
@@ -187,6 +190,11 @@ def sleep(s):
     time.sleep(int(s))
 
 
+def is_scalar(data):
+    """Verify if the input is a valid Python scalar."""
+    return isinstance(data, (type(None), str, int, float, bool))
+    
+    
 def is_bool(data):
     """Verify if the input is a valid Python boolean."""
     return isinstance(data, bool)
@@ -330,7 +338,10 @@ def file_exists(filename):
     """
     Does the file exist?
     """
-    return os.path.exists(filename)    
+
+    # os.path.exists doesn't detect stale symlinks (link to non-existent
+    # file), so also need to check if file is a symlink 
+    return os.path.exists(filename) or os.path.islink(filename)
 
 
 def file_remove(filename):
@@ -495,123 +506,4 @@ def scp_get(server, remote_file, local_path):
     # !!! FIXME: Catch conditions where file/path are not found
     #log("scp put remote_file=%s local_path=%s" % (remote_file, local_path))
     s.get(remote_file, local_path)
-
-
-def get_args(func):
-    """
-    Provide a mechanism to translate a JSON string into function arguments.
-    This allows us to specify "named arguments" (instead of positional
-    arguments) as a Robot keyword.
-    
-    Example keyword:
-    
-      Test1    kwarg { 'xyz':1, 'arg2':false, 'arg3':null }
-
-    Test1 keyword will invoke the following library function:
-
-      def test1(xyz, arg2=True, arg3=0, arg4=None):
-          args = helpers.get_args(self.test1)
-          ...
-
-    It returns an argument dictionary.
-
-          args['xyz'] => 1
-          args['arg2'] => False
-          args['arg3'] => None
-          args['arg4'] => None
-    """
-
-    # Get the default list of arguments
-    default_args, _, _, default_vals = inspect.getargspec(func)
-    default_args = default_args[1:]    # remove 'self' from list
-    default_vals = list(default_vals)  # convert tuple to list
-    
-    first_arg = default_args[0]
-    
-    if len(default_args) == len(default_vals):
-        # all args have default values, so extract default value for 1st arg
-        first_arg_val = default_vals[0]
-    else:
-        # 1st arg doesn't have a default value, so assign None to it
-        first_arg_val = None    
-    
-    stack = inspect.stack()
-    
-    # get_arg's caller
-    #   (<frame object at 0x7f93b3c08450>,
-    #   '/Users/vui/Documents/workspace/bigrobot/keywords_dev/vui/MyTest.py',
-    #   30,
-    #   'test_args2',
-    #   ['        args = helpers.get_args()\n'],
-    #   0)
-    caller_stack = stack[1]
-    
-    # Robot caller (keyword invocation)
-    #   (<frame object at 0x7f93b2514900>,
-    #   '/usr/local/lib/python2.7/site-packages/robot/running/handlers.py',
-    #   127,
-    #   '<lambda>',
-    #   ['        return lambda: handler(*positional, **named)\n'],
-    #   0),
-    robot_caller_stack = stack[2]
-  
-    #log("stack: %s" % prettify(stack))
-    
-    args, _, varkw, args_dict = inspect.getargvalues(caller_stack[0])
-
-    args_dict.update(args_dict.pop(varkw, []))
-    args_dict.pop('self', None)    # remove 'self' argument
-
-    # Robot Framework's keyword invocation
-    # Stackframe output:
-    #   robot_kw_args_dict: {
-    #       'handler': <bound method MyTest.test_args2 of <MyTest.MyTest object at 0x1038b89d0>>,
-    #       'named': {},
-    #       'positional': [u'{"arg8":1111, "arg12":2222 }']}
-    #
-    _, _, _, robot_kw_args_dict = inspect.getargvalues(robot_caller_stack[0])
-    #log("robot_kw_args_dict: %s" % prettify(robot_kw_args_dict))
-
-    # If dictionary key 'positional' is not found then assume that the caller
-    # is not Robot Framework.
-    if 'positional' not in robot_kw_args_dict:
-        return args_dict
-    
-    robot_kw_arg_len = len(robot_kw_args_dict['positional'])
-    robot_kw_arg = robot_kw_args_dict['positional'][0]
-    
-    # Multiple arguments or none were passed, no special handling
-    if robot_kw_arg_len != 1:
-        return args_dict
-    
-    # If match 'kwarg {' then we should assume with high confidence that the
-    # keyword argument is being passed as a JSON string.
-    match = re.match(r'^kwarg ({.*)$', robot_kw_arg, re.I)
-    if match:
-        kw_arg = match.group(1) 
-        #log("Found keyword argument: %s" % kw_arg)
-    else:
-        return args_dict
-    
-    if not is_json(kw_arg):
-        test_error("Robot keyword argument is not a valid JSON string: %s"
-                   % kw_arg)
-    
-    kw_args_dict = from_json(kw_arg)
-    log("Converted keyword argument to dictionary: %s" % kw_args_dict)
-    
-    # preserve the first argument's default value
-    args_dict[first_arg] = first_arg_val
-    
-    for key in kw_args_dict:
-        if key in args_dict:
-            if args_dict[key] != kw_args_dict[key]:
-                #log("Updating value for '%s' from '%s' to '%s'"
-                #    % (key, args_dict[key], kw_args_dict[key]))
-                args_dict[key] = kw_args_dict[key]
-        else:
-            test_error("Invalid Robot keyword argument: '%s'. Allowable arguments are %s."
-                       % (key, args[1:]))            
-    
-    return args_dict
 
