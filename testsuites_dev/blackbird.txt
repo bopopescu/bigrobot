@@ -179,11 +179,16 @@ Load and apply config file
 #	bigtap_gen_match	 		 IPV6 	 pIpv6	    ip6  	src-ip	 f001:100:0:0:0:0:0:0 	0:1:0:0:0:0:0:1	  ffff:ffff:ffff:ffff:ffff:fff:ffff:ffff 	20
 #	copy_to_controller           IPV4     /opt/bigswitch/run/saved-configs/IPV4
 #	REST copy_file_to_running    IPV4 
-#	bigtap_apply_address_group  	 IPV4    ipv4 	10.0.0.0 	0.1.0.1		255.255.255.0 	20
-#	bigtap_apply_address_group 	 IPV6    ipv6 	f001:100:0:0:0:0:0:0 	0:0:0:0:0:0:0:1		ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff 	20
-	bigtap_construct_match       ip      tcp      16     33
-	bigtap_construct_match		 { match_type=ip, udp=tcp, dst_port_min=16 }
-		 
+#	bigtap_gen_config_addrgroup  	 IPV4    ipv4 	10.0.0.0 	0.1.0.1		255.255.255.0 	20
+#	bigtap_gen_config_addrgroup 	 IPV6    ipv6 	f001:100:0:0:0:0:0:0 	0:0:0:0:0:0:0:1		ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff 	20
+
+   	REST bigtap_create_policy  admin-view    IPV46
+	bigtap_apply_match           IPV46    ip     src_ip    10.0.0.0     0.0.1.0   255.255.255.0  3   100
+
+	bigtap_apply_match           IPV46    ipv6     src_ip    f001:100:0:0:0:0:0:0   0:0:0:0:0:0:0:1		ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff   3   1000
+
+#	bigtap_construct_match       ip      tcp      16     33 
+#	bigtap_construct_match       kwarg {"ip":"ip","src_ip":"10.0.0.0","src_ip_mask":"255.255.255.0"}	 
 	[Tags]  sanity  
 
 
@@ -202,26 +207,26 @@ show command
 	REST show bigtap  
 
 Config IPv4 Address Group           [Arguments]  ${GName}
-	REST bigtap create addgroup      ${GName}   ipv4  
-	REST bigtap add address          ${GName}   100.100.100.100   255.255.255.255  
-	REST bigtap show address group   ${GName}   ipv4   
-	REST bigtap add address          ${GName}   2001:100::0   FFFF:FFFF::0   negative
+	REST bigtap create addrgroup      ${GName}   ipv4  
+	REST bigtap add addrgroup          ${GName}   100.100.100.100   255.255.255.255  
+	REST bigtap verify addrgroup   ${GName}   ipv4   
+	REST bigtap add addrgroup          ${GName}   2001:100::0   FFFF:FFFF::0   negative
 
 Config IPv6 Address Group           [Arguments]  ${GName}
-	REST bigtap create addgroup      ${GName}    ipv6  
-	REST bigtap add address          ${GName}    2001:100::0   FFFF:FFFF::0   
-	REST bigtap show address group   ${GName}6    ipv6  
-	REST bigtap add address          ${GName}   100.100.100.100   255.255.255.255   negative
+	REST bigtap create addrgroup      ${GName}    ipv6  
+	REST bigtap add addrgroup         ${GName}    2001:100::0   FFFF:FFFF::0   
+	REST bigtap verify addrgroup   ${GName}6    ipv6  
+	REST bigtap add addrgroup         ${GName}   100.100.100.100   255.255.255.255   negative
 
 Bigtap Setup role 
-	${sidS204} =             REST get switch dpid       S204  
-	REST bigtap setup role   ${sidS204}   ethernet49    filter     S204-49 
-	REST bigtap setup role   ${sidS204}   ethernet42    delivery   S204-42 
-	REST bigtap setup role   ${sidS204}   ethernet43    service    S204-43 
-	REST bigtap setup role   ${sidS204}   ethernet44    service    S204-44 
+ 
+	REST bigtap setup role    S204    ethernet49    filter     S204-49 
+	REST bigtap setup role    S204    ethernet42    delivery   S204-42 
+	REST bigtap setup role    S204    ethernet43    service    S204-43 
+	REST bigtap setup role    S204    ethernet44    service    S204-44 
 	
 Bigtap Verify policy
 	[Arguments]                   ${pName}     ${numFIntf}   ${numDIntf}   ${swName}    ${numFlow} 
-	REST show run bigtap policy   ${pName}
+	REST bigtap show run policy   ${pName}
    	REST show bigtap policy       ${pName}     ${numFIntf}   ${numDIntf}
-	REST get switch flow          ${swName}    ${numFlow} 
+	REST verify switch flow          ${swName}    ${numFlow} 
