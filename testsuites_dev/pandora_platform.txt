@@ -35,7 +35,7 @@ Verify controller can be modified
 
 Verify multiple openflow controllers can be configured
     verify multiplecontroller
-    [Tags]  sanity
+    [Tags]  sanity  
 
 T5987: Verify Controller IP address is pingable
  	T5987
