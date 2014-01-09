@@ -8,6 +8,7 @@ import uuid
 import pprint
 import paramiko
 import inspect
+import subprocess
 import re
 from scp import SCPClient
 from pytz import timezone
@@ -507,3 +508,30 @@ def scp_get(server, remote_file, local_path):
     #log("scp put remote_file=%s local_path=%s" % (remote_file, local_path))
     s.get(remote_file, local_path)
 
+
+def run_cmd(cmd, cwd=None, ignore_stderr=False, shell=True, quiet=False):
+    """
+    shell - Just pass the command string for execution in a subshell. This is
+            ideal when command should run in the background (string can include
+            '&') and/or command contains shell variables/wildcards.
+    
+    Returns tuple (Boolean, String)
+        success: (True,  "...success message...")
+        failure: (False, "...error message...")
+    """ 
+    if not quiet:
+        print("Executing '%s'" % cmd)
+
+    if shell:
+        p = subprocess.call(cmd, shell=True)
+        return (True, None)
+    else:
+        cmd_list = cmd.split(' ')
+        p = subprocess.Popen(cmd_list,
+                             stdout=subprocess.PIPE,
+                             stderr=subprocess.PIPE, cwd=cwd)        
+        out, err = p.communicate() 
+        if err and not ignore_stderr:
+            return (False, err)
+        
+        return (True, out)
