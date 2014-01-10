@@ -54,7 +54,7 @@ class Mininet(object):
                verbose=True)
         mn.cli('%s ifconfig %s %s' % (intf, intf_name, ip), verbose=True)
 
-    def mininet_host_route(self, host, gw, intf):        
+    def mininet_host_gw(self, host, gw, intf):        
         t = test.Test()
         mn = t.mininet()
         mn.cli('%s route add default gw %s %s' % (host, gw, intf),
