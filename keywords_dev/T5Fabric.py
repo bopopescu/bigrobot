@@ -273,11 +273,9 @@ class T5Fabric(object):
         c = t.controller()
         url = '%s/api/v1/data/controller/core/switch/interface' % (c.base_url)      
         c.rest.get(url)
-        #data = c.rest.content()  
-        data = c.rest.result_json()
+        data = c.rest.content()  
         fabric_interface = 0
-        helpers.log("length = %d" % len(data[0])) 
-        for i in range(0,len(data[0])):
+        for i in range(0,len(data)):
             if data[i]["type"] == "leaf" or data[i]["type"] == "spine":
                 fabric_interface = fabric_interface + 1
         url1 = '%s/api/v1/data/controller/applications/bvs/info/fabric?select=link' % (c.base_url)
