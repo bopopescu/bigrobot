@@ -362,3 +362,25 @@ class T5(object):
             
         return c.rest.content()
     
+    
+    
+    def rest_create_vns_ip(self, tenant, vns, ipaddr, netmask):
+        t = test.Test()
+        c = t.controller()
+        
+        helpers.test_log("Input arguments: tenant = %s vns = %s ipaddr = %s netmask = %s " % (tenant, vns, ipaddr, netmask ))
+        
+        url = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]/virtual-router/vns-interfaces' % (c.base_url, tenant)
+        c.rest.put(url, {"vns-name": vns, "ip-cidr": ipaddr/netmask, "active": True})
+        helpers.test_log("Output: %s" % c.rest.result_json())
+
+        if not c.rest.status_code_ok():
+            helpers.test_failure(c.rest.error())
+            
+        return c.rest.content()
+           
+        
+        
+        
+        
+        
