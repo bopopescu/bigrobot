@@ -23,7 +23,7 @@ class T5Fabric(object):
         c = t.controller()
         url = '%s/api/v1/data/controller/core/switch' % (c.base_url)
         c.rest.get(url)
-        helpers.test_log("Output: %s" % c.rest.content_json())
+        
         return True
     
     def rest_show_fabric_link(self):
@@ -36,7 +36,7 @@ class T5Fabric(object):
         
         url = '%s/api/v1/data/controller/applications/bvs/info/fabric?select=link' % (c.base_url)       
         c.rest.get(url)
-        helpers.test_log("Output: %s" % c.rest.content_json())
+        
         return True
     
     def rest_configure_switch(self, switch):
@@ -52,42 +52,50 @@ class T5Fabric(object):
                         
         url = '%s/api/v1/data/controller/core/switch-config[name="%s"]' % (c.base_url, switch)       
         c.rest.put(url, {"name": switch})
-        helpers.test_log("Output: %s" % c.rest.content_json())
+        
         if not c.rest.status_code_ok():
+            helpers.log("Error: Invalid argument: syntax: expected [a-zA-Z][-.0-9a-zA-Z_]*$ for: %s" % (switch))
             helpers.test_failure(c.rest.error())
 
         return c.rest.content()
+    
     def rest_configure_dpid(self, switch, dpid):
         t = test.Test()
         c = t.controller()
         
         url = '%s/api/v1/data/controller/core/switch-config[name="%s"]' % (c.base_url, switch)       
         c.rest.patch(url, {"dpid": dpid})
-        helpers.test_log("Output: %s" % c.rest.content_json())
+        
         if not c.rest.status_code_ok():
+            helpers.log("Error: Invalid argument: Invalid switch id (8-hex bytes): %s; switch %s doesn't exist" % (dpid,switch)) 
             helpers.test_failure(c.rest.error())
 
         return c.rest.content() 
+    
     def rest_configure_fabric_role(self, switch, role):
         t = test.Test()
         c = t.controller()
         
         url = '%s/api/v1/data/controller/core/switch-config[name="%s"]' % (c.base_url, switch)       
         c.rest.patch(url, {"fabric-role": role})
-        helpers.test_log("Output: %s" % c.rest.content_json())
+        
         if not c.rest.status_code_ok():
+            helpers.log("Error: no matching commands")
             helpers.test_failure(c.rest.error())
 
         return c.rest.content() 
+    
     def rest_configure_leaf_group(self, switch, group):
         t = test.Test()
         c = t.controller()
         
         url = '%s/api/v1/data/controller/core/switch-config[name="%s"]' % (c.base_url, switch)       
         c.rest.patch(url, {"leaf-group": group})
-        helpers.test_log("Output: %s" % c.rest.content_json())
+        
         if not c.rest.status_code_ok():
+            helpers.log("Error: Invalid argument: syntax: expected [a-zA-Z][-.0-9a-zA-Z_]*$ for: %s" % (group))
             helpers.test_failure(c.rest.error())
+            
         return c.rest.content() 
     
     def rest_remove_fabric_switch(self, switch=None):
@@ -96,9 +104,10 @@ class T5Fabric(object):
         
         url = '%s/api/v1/data/controller/core/switch-config[name="%s"]' % (c.base_url, switch)       
         c.rest.delete(url, {"name": switch})
-        helpers.test_log("Output: %s" % c.rest.content_json())
+        
         if not c.rest.status_code_ok():
             helpers.test_failure(c.rest.error())
+            
         return c.rest.content() 
     
     def rest_check_fabric_switch_connectivity(self):
@@ -169,6 +178,7 @@ class T5Fabric(object):
         helpers.test_log("Output: %s" % c.rest.content_json())
         if not c.rest.status_code_ok():
             helpers.test_failure(c.rest.error())
+            
         return c.rest.content()  
            
     def rest_verify_fabric_lag(self, dpid):

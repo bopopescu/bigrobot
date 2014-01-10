@@ -55,7 +55,7 @@ ha suite setup
 	REST add policy match  admin-view  testPol  1  {"ether-type": 2048, "dst-tp-port": 80, "ip-proto": 6, "sequence": 1} 
 	REST add policy interface  admin-view  testPol  LB7-F1-DL206-D1  filter
 	REST add policy interface  admin-view  testPol  LB7-D1-DL206-F1  delivery
-	sleepnow  5
+	Sleep  5
 
 verify config
 	${switchDict}=  REST show switch
@@ -70,7 +70,7 @@ process ofad
 	${flow_before}=  REST show switch flow  ${dpid1}
 	REST show bigtap policy  testPol  1  1
 	restart process  ${ip_address_1}  ofad
-	sleepnow  30
+	Sleep  30
 	REST show bigtap policy  testPol  1  1
 	${flow_after}=  REST show switch flow  ${dpid1}
 	Should Be Equal As Integers  ${flow_after}  ${flow_before}
@@ -82,7 +82,7 @@ process snmpd
 	configure snmp host   ${ip_address_1}   10.192.66.230   traps   public   161   
 	configure snmp host   ${ip_address_1}   10.192.66.230   informs   public   161
 	enable snmp   ${ip_address_1}
-	sleepnow  30
+	Sleep  30
 	${switchDict}=  REST show switch
 	${dpid1}=  return switch dpid  ${switchDict}  ${ip_address_1}
 	${flow_before}=  REST show switch flow  ${dpid1}
@@ -94,7 +94,7 @@ process snmpd
 	${snmp_key}=  snmp cmd  ${ip_address_1}  snmpget  public  sysContact.0
 	Should Contain  ${snmp_key}  nw_admin@super_awesome_company.com
 	restart process  ${ip_address_1}   snmpd
-	sleepnow  30
+	Sleep  30
 	${snmp_output}=  snmp show  ${ip_address_1}
 	Should Contain  ${snmp_output}  CS_RACK11_6020
 	Should Contain  ${snmp_output}  nw_admin@super_awesome_company.com
@@ -107,7 +107,7 @@ process snmpd
 
 process ntp
 	execute switch command  ${ip_address_1}  conf t;ntp server 0.debian.pool.ntp.org;ntp enable
-	sleepnow  30
+	Sleep  30
 	${switchDict}=  REST show switch
 	${dpid1}=  return switch dpid  ${switchDict}  ${ip_address_1}
 	${flow_before}=  REST show switch flow  ${dpid1}
@@ -115,7 +115,7 @@ process ntp
 	${ntp_op}=  execute switch command return output  ${ip_address_1}  debug ofad 'help; ntpdc -p'
 	Should Contain  ${ntp_op}  ${ip_address_1}
 	restart process  ${ip_address_1}   ntp
-	sleepnow  30
+	Sleep  30
 	${ntp_op}=  execute switch command return output  ${ip_address_1}  debug ofad 'help; ntpdc -p'
 	Should Contain  ${ntp_op}  ${ip_address_1}
 	REST show bigtap policy  testPol  1  1
@@ -128,7 +128,7 @@ process rsyslog
 	${flow_before}=  REST show switch flow  ${dpid1}
 	REST show bigtap policy  testPol  1  1
 	restart process  ${ip_address_1}   rsyslog
-	sleepnow  30
+	Sleep  30
 	${syslog_op}=  execute switch command return output  ${ip_address_1}  debug ofad 'help; cat /var/log/syslog | grep \"kernel: imklog\"'
 	Should Contain  ${syslog_op}  kmsg started
 	REST show bigtap policy  testPol  1  1
@@ -141,7 +141,7 @@ flap ma1
 	${flow_before}=  REST show switch flow  ${dpid1}
 	REST show bigtap policy  testPol  1  1
 	flap interface ma1  ${console_ip}  ${console_port}
-	sleepnow  10
+	Sleep  10
 	REST show bigtap policy  testPol  1  1
 	${flow_after}=  REST show switch flow  ${dpid1}
 	Should Be Equal As Integers  ${flow_after}  ${flow_before}
@@ -152,7 +152,7 @@ reboot switch
 	${flow_before}=  REST show switch flow  ${dpid1}
 	REST show bigtap policy  testPol  1  1
 	execute switch command  ${ip_address_1}  copy running-config startup-config
-	sleepnow  5
+	Sleep  5
 	Run Keyword And Continue On Failure  execute switch command  ${ip_address_1}  debug ofad 'help; reboot\r'
 	Wait Until Keyword Succeeds  5 min  30 sec  execute switch command  ${ip_address_1}  show version
 	${dpid1}=  return switch dpid  ${switchDict}  ${ip_address_1}

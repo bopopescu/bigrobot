@@ -1,0 +1,17 @@
+* Setting
+Documentation   T5 Basic L3 single leaf dual rack Test Suite
+Suite Setup     base suite setup
+Suite Teardown  base suite teardown
+Test Setup      base test setup
+Test Teardown   base test teardown
+Force Tags      T5 Sanity
+Library         keywords/BsnCommon.py
+Library         keywords/Mininet.py
+Library         keywords_dev/T5.py
+
+* Test Case
+L3 ping bm0 to bm1 single leaf single rack dynamic endpoints
+   REST create tenant  A
+   REST create vns  A	A1
+   REST create vns	A	A2
+   

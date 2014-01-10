@@ -26,17 +26,28 @@ class TestGetArgs(object):
                   arg10=None,
                   arg11=None,
                   arg12=None):
-        args = helpers.get_args(self.test_args)
-        helpers.prettify_log("args:", args)
+
+        helpers.log("locals(): %s" % helpers.prettify(locals()))
+
+        local_var = 100
+        print("local_var (1): %s" % local_var)
         
-        #for key in args:
-        #    helpers.log('key:%s, local()[%s]=%s <= args[%s]=%s'
-        #                % (key, key, locals()[key], key, args[key]))
-        #    locals()[key] = args[key]
+        locals()['local_var'] = 123
+        print("local_var (2): %s" % local_var)
+
+        #arg1 = 8000
+        #print("arg1 (1): %s" % arg1)
+
+        #locals()['arg1'] = 123
+        #print("arg1 (2): %s" % arg1)
         
-        helpers.prettify_log("locals():", locals())
-        return args
-    
+        helpers.log("locals(): %s" % helpers.prettify(locals()))
+        
+        #locals().pop("arg1", None)
+        #locals()['arg1'] = 'XXXX'
+        #print("arg1: %s" % locals()['arg1'])        
+
+            
     def test_args2(self):
         args = self.test_args(arg1=1000)
         helpers.prettify_log("args:", args)

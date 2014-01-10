@@ -68,7 +68,7 @@ snmp suite setup
 	REST set snmp server enable
 	REST set snmp trapserver  10.192.3.22  161
 	REST enable snmp trapserver
-	sleepnow  2
+	Sleep  2
 
 verify config
 	${snmp_output}=  REST snmp show
