@@ -28,14 +28,16 @@ ${bm2_intf0}  leaf1-eth5
 
 Configure Single Leaf Dual Rack setup
    [Tags]  smoke  sanity
+   sleep  5
    configure fabric switch
    sleep  5
    rest check fabric switch connectivity
+   rest verify fabric link
 
 ping bm0 to bm1 single leaf single rack dynamic endpoints
    [Tags]  smoke  sanity
-   add portgroup to vns  A  A  p1  -1 
-   add portgroup to vns  A  A  p2  -1 
+   rest add interface to vns  A  A  leaf0  ${bm0_intf0}  -1 
+   rest add interface to vns  A  A  leaf0  ${bm1_intf0}  -1 
    sleep  10
    mininet ping  bm0  ${bm1_ip} 
  
@@ -43,41 +45,43 @@ ping bm0 to bm1 single leaf single rack static endpoints
    [Tags]  sanity
    create a endpoint  A  A  e1 
    create a endpoint  A  A  e2 
-   add portgroup to endpoint  A   A  e2  p2  -1
-   add portgroup to endpoint  A   A  e1  p1  -1
+   rest add interface to endpoint  A   A  e2  leaf0  ${bm1_intf0}  -1
+   rest add interface to endpoint  A   A  e1  leaf0  ${bm0_intf0}  -1
    REST configure ip endpoint  A  A  e1  ${bm0_ip}
    REST configure mac endpoint  A  A  e1  ${bm0_mac}
    REST configure ip endpoint  A  A  e2  ${bm1_ip}
    REST configure mac endpoint  A  A  e2  ${bm1_mac}
-   add portgroup to vns  A  A  p2  -1 
-   add portgroup to vns  A  A  p1  -1
+   rest add interface to vns  A  A  leaf0  ${bm1_intf0}  -1 
+   rest add interface to vns  A  A  leaf0  ${bm0_intf0}  -1
    sleep  10 
    mininet ping  bm0  ${bm1_ip}
    
 ping bm0 to bm2 dual rack single leaf dynamic endpoints
    [Tags]  smoke  sanity
-   add portgroup to vns  A  A  p3  -1 
-   add portgroup to vns  A  A  p1  -1
+   rest add interface to vns  A  A  leaf0  ${bm0_intf0}  -1 
+   rest add interface to vns  A  A  leaf1  ${bm2_intf0}  -1 
    sleep  10 
    mininet ping  bm0  ${bm2_ip} 					 
 		
 ping bm0 to bm2 dual rack single leaf static endpoints 
    [Tags]  sanity    
-   add portgroup to endpoint  A   A  e2  p3  -1
-   add portgroup to endpoint  A   A  e1  p1  -1
+   create a endpoint  A  A  e1 
+   create a endpoint  A  A  e2 
+   rest add interface to endpoint  A   A  e2  leaf1  ${bm2_intf0}  -1
+   rest add interface to endpoint  A   A  e1  leaf0  ${bm0_intf0}  -1
    REST configure ip endpoint  A  A  e1  ${bm0_ip}
    REST configure mac endpoint  A  A  e1  ${bm0_mac}
    REST configure ip endpoint  A  A  e2  ${bm2_ip}
    REST configure mac endpoint  A  A  e2  ${bm2_mac}
-   add portgroup to vns  A  A  p3  -1 
-   add portgroup to vns  A  A  p1  -1
+   rest add interface to vns  A  A  leaf1  ${bm2_intf0}  -1 
+   rest add interface to vns  A  A  leaf0  ${bm0_intf0}  -1
    sleep  10 
    mininet ping  bm0  ${bm2_ip}   
    
 ping bm0 to bm1 single leaf single rack dynamic endpoints tag
    [Tags]  smoke  sanity
-   add portgroup to vns  A  A  p1  10 
-   add portgroup to vns  A  A  p2  10 
+   rest add interface to vns  A  A  leaf0  ${bm0_intf0}  10 
+   rest add interface to vns  A  A  leaf0  ${bm1_intf0}  10 
    mininet link tag  bm0  bm0-bond0  10  ${bm0_ip}
    mininet link tag  bm1  bm1-bond0  10  ${bm1_ip}
    sleep  10
@@ -86,49 +90,43 @@ ping bm0 to bm1 single leaf single rack dynamic endpoints tag
 ping bm0 to bm1 single leaf single rack static endpoints tag
    [Tags]  sanity
    create a endpoint  A  A  e1 
-   add portgroup to endpoint  A  A  e1  p1  10
    create a endpoint  A  A  e2 
-   add portgroup to endpoint  A  A  e2  p2  10
+   rest add interface to endpoint  A   A  e2  leaf0  ${bm1_intf0}  10
+   rest add interface to endpoint  A   A  e1  leaf0  ${bm0_intf0}  10
    REST configure ip endpoint  A  A  e1  ${bm0_ip}
    REST configure mac endpoint  A  A  e1  ${bm0_mac}
    REST configure ip endpoint  A  A  e2  ${bm1_ip}
    REST configure mac endpoint  A  A  e2  ${bm1_mac}
-   add portgroup to vns  A  A  p2  10 
-   add portgroup to vns  A  A  p1  10
+   rest add interface to vns  A  A  leaf0  ${bm1_intf0}  10 
+   rest add interface to vns  A  A  leaf0  ${bm0_intf0}  10
    sleep  10 
    mininet ping  bm0  ${bm1_ip}
 
 ping bm0 to bm2 dual rack single leaf dynamic endpoints tag     
    [Tags]  smoke  sanity
-   add portgroup to vns  A  A  p1  10 
-   add portgroup to vns  A  A  p3  10 
+   rest add interface to vns  A  A  leaf0  ${bm0_intf0}  10 
+   rest add interface to vns  A  A  leaf1  ${bm2_intf0}  10
    mininet link tag  bm2  bm2-bond0  10  ${bm2_ip}
    sleep  10
    mininet ping  bm0  ${bm2_ip}    
    
 ping bm0 to bm2 dual rack single leaf static endpoints tag 
    [Tags]  sanity
-   create a endpoint  A  A  e1  
-   add portgroup to endpoint  A  A  e1  p1  10
+   create a endpoint  A  A  e1 
    create a endpoint  A  A  e2 
-   add portgroup to endpoint  A  A  e2  p3  10 
+   rest add interface to endpoint  A   A  e2  leaf1  ${bm2_intf0}  10
+   rest add interface to endpoint  A   A  e1  leaf0  ${bm0_intf0}  10
    REST configure ip endpoint  A  A  e1  ${bm0_ip}
    REST configure mac endpoint  A  A  e1  ${bm0_mac}
    REST configure ip endpoint  A  A  e2  ${bm2_ip}
    REST configure mac endpoint  A  A  e2  ${bm2_mac}
-   add portgroup to vns  A  A  p3  10 
-   add portgroup to vns  A  A  p1  10
+   rest add interface to vns  A  A  leaf1  ${bm2_intf0}  10 
+   rest add interface to vns  A  A  leaf0  ${bm0_intf0}  10
    sleep  10 
    mininet ping   bm0  ${bm2_ip}  
    
 Tear down the config
    [Tags]  smoke  sanity 
-   delete interface from portgroup  leaf0  ${bm0_intf0}  p1
-   delete interface from portgroup  leaf0  ${bm1_intf0}  p2
-   delete interface from portgroup  leaf1  ${bm2_intf0}  p3   
-   delete a portgroup  p1
-   delete a portgroup  p2
-   delete a portgroup  p3
    remove fabric switch
 
 * Keywords      
@@ -136,19 +134,9 @@ T5 base test setup
    base test setup
    create a tenant  A 
    create a vns  A  A
-   create a portgroup  p1
-   add interface to portgroup  leaf0  ${bm0_intf0}  p1
-   create a portgroup  p2
-   add interface to portgroup  leaf0  ${bm1_intf0}  p2
-   create a portgroup  p3
-   add interface to portgroup  leaf1  ${bm2_intf0}  p3
-     
-
+   
 T5 base test teardown
    delete a tenant  A
-   delete a portgroup  p1
-   delete a portgroup  p2
-   delete a portgroup  p3
    base test teardown
    
 create a tenant  [Arguments]  ${tenant} 
@@ -185,10 +173,12 @@ add portgroup to vns  [Arguments]  ${tenant}  ${vns}  ${pg}  ${vlan}
   	REST add portgroup to vns  ${tenant}  ${vns}  ${pg}  ${vlan} 
 
 add portgroup to endpoint  [Arguments]  ${tenant}  ${vns}  ${endpoint}  ${pg}  ${vlan} 
-  REST add portgroup to endpoint  ${tenant}  ${vns}  ${endpoint}  ${pg}  ${vlan} 
+    REST add portgroup to endpoint  ${tenant}  ${vns}  ${endpoint}  ${pg}  ${vlan} 
 
 delete portgroup from vns  [Arguments]  ${tenant}  ${vns}  ${pg}  ${vlan} 
-  REST delete portgroup from vns  ${tenant}  ${vns}  ${pg}  ${vlan}
+    REST delete portgroup from vns  ${tenant}  ${vns}  ${pg}  ${vlan}
+    
+
   
 
 
