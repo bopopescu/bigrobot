@@ -31,9 +31,11 @@ ${bm2_intf1}  leaf1b-eth8
 
 Configure Fabric setup Dual Rack Dual Leaf 
    [Tags]  smoke  sanity
+   sleep  5
    configure fabric switch
    sleep  5
-   rest check fabric switch connectivity 
+   rest check fabric switch connectivity
+   rest verify fabric link 
 
 ping bm0 to bm1 dual leaf single rack dynamic endpoints
    [Tags]  smoke  sanity
@@ -158,6 +160,12 @@ T5 base test setup
    
 T5 base test teardown
    delete a tenant  A
+   delete interface from portgroup  leaf0-a  ${bm0_intf0}  p1
+   delete interface from portgroup  leaf0-b  ${bm0_intf1}  p1
+   delete interface from portgroup  leaf0-a  ${bm1_intf0}  p2
+   delete interface from portgroup  leaf0-b  ${bm1_intf1}  p2
+   delete interface from portgroup  leaf1-a  ${bm2_intf0}  p3 
+   delete interface from portgroup  leaf1-b  ${bm2_intf1}  p3  
    delete a portgroup  p1
    delete a portgroup  p2
    delete a portgroup  p3
