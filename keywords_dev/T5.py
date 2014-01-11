@@ -362,3 +362,22 @@ class T5(object):
             
         return c.rest.content()
     
+    def rest_configure_ip_endpoint(self, tenant, vns, endpoint, ip):
+        t = test.Test()
+        c = t.controller()
+        url = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/endpoints[name="%s"]' % (c.base_url, tenant, vns, endpoint)
+        c.rest.patch(url, {"ip-address": ip})
+        helpers.test_log("Output: %s" % c.rest.result_json())
+        if not c.rest.status_code_ok():
+            helpers.test_failure(c.rest.error())
+        return c.rest.content()
+    
+    def rest_configure_mac_endpoint(self, tenant, vns, endpoint, mac):
+        t = test.Test()
+        c = t.controller()
+        url = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/endpoints[name="%s"]' % (c.base_url, tenant, vns, endpoint)
+        c.rest.patch(url, {"mac": mac})
+        helpers.test_log("Output: %s" % c.rest.result_json())
+        if not c.rest.status_code_ok():
+            helpers.test_failure(c.rest.error())
+        return c.rest.content()
