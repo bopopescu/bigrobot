@@ -388,7 +388,7 @@ class T5(object):
         url = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]/virtual-router/vns-interfaces' % (c.base_url, tenant)
         ip_addr = ipaddr + "/" + netmask
         try:
-            c.rest.put(url, {"vns-name": vns, "ip-cidr": str(ip_addr), "active": True})
+            c.rest.post(url, {"vns-name": vns, "ip-cidr": str(ip_addr), "active": True})
         except:
                helpers.test_failure(c.rest.error())
         else: 
