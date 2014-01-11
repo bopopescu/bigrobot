@@ -11,11 +11,15 @@ Library          keywords/BsnCommon.py
 Library          keywords_dev/T5.py
 Library          keywords_dev/T5Fabric.py
 Library			 keywords/Mininet.py
+REsource         keywords_dev/t5_dualleaf_resource.txt
 
 
 
 *Test Case
 Setup Dual Rack Dual Leaf Topology
+    configure fabric switch
+    sleep  5
+    rest check fabric switch connectivity
    
 Verify Fabric link formation  
 	REST verify fabric link 	
@@ -33,6 +37,7 @@ Verify Fabric Link formation after adding one spine
 	REST verify fabric link  
 	
 Tear down config and Topology
+    remove fabric switch
  
 
 * Keywords  

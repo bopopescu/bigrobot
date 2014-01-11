@@ -65,3 +65,11 @@ class Mininet(object):
         mn = t.mininet()
         mn.cli('%s ifconfig %s %s %s' % (host, intf, ipaddr, mask),
                verbose=True)
+        
+    def mininet_host_arp(self, host, ipaddr, mac):
+        t = test.Test()
+        mn = t.mininet()
+        mn.cli('%s arp -s %s %s' % (host, ipaddr, mac),
+               verbose=True)
+        
+        

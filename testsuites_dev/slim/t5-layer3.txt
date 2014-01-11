@@ -8,10 +8,22 @@ Force Tags      T5 Sanity
 Library         keywords/BsnCommon.py
 Library         keywords/Mininet.py
 Library         keywords_dev/T5.py
+Library         keywords_dev/T5Fabric.py
+Resource		keywords_dev/t5_singleleaf_resource.txt
+
+
 
 * Test Case
+Configure topology
+	configure fabric switch 
+	sleep  5
+
 L3 ping bm0 to bm1 single leaf single rack dynamic endpoints
    REST create tenant  A
    REST create vns  A	A1
    REST create vns	A	A2
+#   REST create vns ip  A  A1  10.10.10.1  24
+#   REST create vns ip  A  A2  10.10.11.1  24
+#   REST add interface to vns  A  A1  leaf0  leaf0-eth3  -1 
+#   REST add interface to vns  A  A2  leaf0  leaf0-eth4  -1
    

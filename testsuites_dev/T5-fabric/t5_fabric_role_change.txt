@@ -3,7 +3,7 @@
 
 * Setting 
 
-Documentation  T5 Fabric Role Changes Test suite
+Documentation  T5 Fabric Role Change Test suite
 Suite Setup  base suite setup
 Suite Teardown  base suite teardown
 Test Setup  base test setup
@@ -20,7 +20,7 @@ Resource  keywords_dev/t5_dualleaf_resource.txt
 
 Configure Dual Rack Dual Leaf Topology
    configure fabric switch
-   sleep 5
+   sleep  5
    rest check fabric switch connectivity
 
 Verify the Fabric Role Spine0 

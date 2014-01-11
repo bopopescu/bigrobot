@@ -97,10 +97,14 @@ class T5(object):
         return c.rest.content()
 
     def test_args(self, arg1, arg2, arg3):
-        helpers.log("Input arguments: arg1 = %s" % arg1 )
-        helpers.log("Input arguments: arg2 = %s" % arg2 )
-        helpers.log("Input arguments: arg3 = %s" % arg3 )
-
+        try:
+            helpers.log("Input arguments: arg1 = %s" % arg1 )
+            helpers.log("Input arguments: arg2 = %s" % arg2 )
+            helpers.log("Input arguments: arg3 = %s" % arg3 )
+        except:
+            return False
+        else:
+            return True
 
     def rest_create_vns(self, tenant, vns):
         t = test.Test()
@@ -109,13 +113,15 @@ class T5(object):
         helpers.test_log("Input arguments: tenant = %s vns = %s" % (tenant, vns ))
         
         url = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]' % (c.base_url, tenant, vns)
-        c.rest.put(url, {"name": vns})
-        helpers.test_log("Output: %s" % c.rest.result_json())
-
-        if not c.rest.status_code_ok():
+        try:
+            c.rest.put(url, {"name": vns})
+        except:
             helpers.test_failure(c.rest.error())
-
-        return c.rest.content()
+        else:
+            if not c.rest.status_code_ok():
+                helpers.test_failure(c.rest.error())
+    
+            return c.rest.content()
     
     def rest_delete_vns(self, tenant, vns=None):
         t = test.Test()
@@ -361,6 +367,7 @@ class T5(object):
             helpers.test_failure(c.rest.error())
             
         return c.rest.content()
+<<<<<<< HEAD
     
     def rest_configure_ip_endpoint(self, tenant, vns, endpoint, ip):
         t = test.Test()
@@ -381,3 +388,38 @@ class T5(object):
         if not c.rest.status_code_ok():
             helpers.test_failure(c.rest.error())
         return c.rest.content()
+=======
+   
+    def rest_create_vns_ip(self, tenant, vns, ipaddr, netmask):
+        '''Create vns router interface via command "virtual-router vns interface"
+        
+            Input:
+                `tenant`        tenant name
+                `vns`           vns interface name which must be similar to VNS
+                `ipaddr`        interface ip address
+                `netmask`       vns subnet mask
+            
+            Return: true if configuration is successful, false otherwise
+        '''
+        
+        t = test.Test()
+        c = t.controller()
+        
+        helpers.test_log("Input arguments: tenant = %s vns = %s ipaddr = %s netmask = %s " % (tenant, vns, ipaddr, netmask ))
+        
+        url = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]/virtual-router/vns-interfaces' % (c.base_url, tenant)
+        ip_addr = ipaddr + "/" + netmask
+        try:
+            c.rest.post(url, {"vns-name": vns, "ip-cidr": str(ip_addr), "active": True})
+        except:
+               helpers.test_failure(c.rest.error())
+        else: 
+            helpers.test_log("Output: %s" % c.rest.result_json())
+            return c.rest.content()
+           
+        
+        
+        
+        
+        
+>>>>>>> 877798d13269b725b9c9573fbf8f934fafeec393
