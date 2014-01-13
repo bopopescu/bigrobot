@@ -11,6 +11,27 @@ Library         keywords_dev/slim/T5.py
 Library         keywords_dev/T5Fabric.py
 Resource		keywords_dev/t5_singleleaf_resource.txt
 
+* Variable
+${tenant_name}		A
+${vns_1}			A1
+${vns_2}			A2
+${vns1_ip}			10.10.10.1
+${vns1_subnet}		24
+${vns2_ip}			10.10.11.1
+${vns2_subnet}		24
+${leaf_name}		leaf0
+${leaf0_intf1}		leaf0-eth3
+${leaf0_intf2}		leaf0-eth4
+${host0_ip}			10.10.10.11
+${host0_subnet}		255.255.255.0
+${host1_ip}			10.10.11.11
+${host1_subnet}		255.255.255.0
+${gw_mac}			5c:16:c7:01:00:00
+${host0_name}		bm0
+${host1_name}		bm1
+${host0_intf}		bm0-bond0
+${host1_intf}		bm1-bond0
+
 
 
 * Test Case
@@ -19,20 +40,20 @@ Configure topology
 	sleep  5
 
 L3 ping bm0 to bm1 single leaf single rack dynamic endpoints
-   REST create tenant  			A
-   REST create vns  			A		A1
-   REST create vns				A		A2
-   REST create vns ip  			A  		A1  		10.10.10.1  	24
-   REST create vns ip  			A  		A2  		10.10.11.1  	24
-   REST add interface to vns  	A  		A1  		leaf0  			leaf0-eth3  	-1 
-   REST add interface to vns  	A  		A2  		leaf0  			leaf0-eth4  	-1
-   mininet host ipcfg   		bm0		bm0-bond0	10.10.10.11		255.255.255.0 
-   mininet host ipcfg			bm1		bm1-bond0	10.10.11.11		255.255.255.0
-   mininet host gw				bm0		10.10.10.1	bm0-bond0
-   mininet host gw				bm1		10.10.11.1	bm1-bond0
-   mininet host arp				bm0		10.10.10.1	5c:16:c7:01:00:00
-   mininet host arp				bm1 	10.10.11.1	5c:16:c7:01:00:00
-   ${count}=  					mininet L3 ping		bm0		bm1
+   REST create tenant  			${tenant_name}
+   REST create vns  			${tenant_name}		${vns_1}
+   REST create vns				${tenant_name}		${vns_2}
+   REST create vns ip  			${tenant_name}  	${vns_1}  		${vns1_ip}	  	${vns1_subnet}
+   REST create vns ip  			${tenant_name}  	${vns_2}  		${vns2_ip}	  	${vns2_subnet}
+   REST add interface to vns  	${tenant_name}  	${vns_1}  		${leaf_name} 	${leaf0_intf1}  -1 
+   REST add interface to vns  	${tenant_name}  	${vns_2}  		${leaf_name} 	${leaf0_intf2} 	-1
+   mininet host ipcfg   		${host0_name}		${host0_intf}	${host0_ip}		${host0_subnet} 
+   mininet host ipcfg			${host1_name}		${host1_intf}	${host1_ip}		${host1_subnet}
+   mininet host gw				${host0_name}		${vns1_ip}		${host0_intf}
+   mininet host gw				${host1_name}		${vns2_ip}		${host1_intf}
+   mininet host arp				${host0_name}		${vns1_ip}		${gw_mac}
+   mininet host arp				${host1_name} 		${vns2_ip}		${gw_mac}
+   ${count}=  					mininet L3 ping		${host0_name}		${host1_name}
    loss = helpers.any_match(${count}, r', (\d+)% packet loss')
    helpers.log("packet loss: %s" % loss)
    if int(loss[0]) > 0:
