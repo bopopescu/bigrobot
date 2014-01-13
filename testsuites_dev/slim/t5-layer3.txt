@@ -23,9 +23,9 @@ ${leaf_name}		leaf0
 ${leaf0_intf1}		leaf0-eth3
 ${leaf0_intf2}		leaf0-eth4
 ${host0_ip}			10.10.10.11
-${host0_subnet}		255.255.255.0
+${host0_subnet}		24
 ${host1_ip}			10.10.11.11
-${host1_subnet}		255.255.255.0
+${host1_subnet}		24
 ${gw_mac}			5c:16:c7:01:00:00
 ${host0_name}		bm0
 ${host1_name}		bm1
@@ -53,7 +53,7 @@ L3 ping bm0 to bm1 single leaf single rack dynamic endpoints
    mininet host gw				${host1_name}		${vns2_ip}		${host1_intf}
    mininet host arp				${host0_name}		${vns1_ip}		${gw_mac}
    mininet host arp				${host1_name} 		${vns2_ip}		${gw_mac}
-   ${count}=  					mininet L3 ping		${host0_name}		${host1_name}
+   ${count}=  					mininet L3 ping		${host0_name}	${host1_name}
    loss = helpers.any_match(${count}, r', (\d+)% packet loss')
    helpers.log("packet loss: %s" % loss)
    if int(loss[0]) > 0:
