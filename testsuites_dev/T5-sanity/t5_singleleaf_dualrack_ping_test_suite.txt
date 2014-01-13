@@ -127,17 +127,21 @@ ping bm0 to bm2 dual rack single leaf static endpoints tag
    
 Tear down the config
    [Tags]  smoke  sanity 
+   delete a tenant  A
    remove fabric switch
+   
 
 * Keywords      
 T5 base test setup
    base test setup
    create a tenant  A 
    create a vns  A  A
+   sleep  5
    
 T5 base test teardown
    delete a tenant  A
    base test teardown
+   sleep  5
    
 create a tenant  [Arguments]  ${tenant} 
   REST create tenant  ${tenant}    
