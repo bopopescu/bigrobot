@@ -412,11 +412,60 @@ class T5(object):
         try:
             c.rest.post(url, {"vns-name": vns, "ip-cidr": str(ip_addr), "active": True})
         except:
-               helpers.test_failure(c.rest.error())
+            helpers.test_failure(c.rest.error())
         else: 
             helpers.test_log("Output: %s" % c.rest.result_json())
             return c.rest.content()
-           
+        
+   
+    def rest_attach_tenant_routers_to_system(self, tenant):        
+        '''Attach tenant router to system router"
+        
+            Input:
+                `tenant`        tenant name
+            
+            Return: true if configuration is successful, false otherwise
+        '''
+        
+        t = test.Test()
+        c = t.controller()
+        
+        helpers.test_log("Input arguments: tenant = %s " % (tenant))
+        
+        url = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]/virtual-router/tenant-interfaces[tenant-name="system"]' % (c.base_url, tenant)
+        try:
+            c.rest.post(url, {"tenant-name": system, "active": True})
+        except:
+            helpers.test_failure(c.rest.error())
+        else: 
+            helpers.test_log("Output: %s" % c.rest.result_json())
+            return c.rest.content()        
+        
+    def rest_add_static_routes(self, tenant, dstroute, nexthop):
+        '''Add static routes to tenant router"
+        
+            Input:
+                `tenant`          tenant name
+                `dstroute`        destination subnet
+                `nexthop`         nexthop IP address
+            Return: true if configuration is successful, false otherwise
+        '''
+        
+        t = test.Test()
+        c = t.controller()
+        
+        helpers.test_log("Input arguments: tenant = %s dstroute = %s nexthop = %s " % (tenant, dstroute, nexthop))
+        
+        url = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]/virtual-router/routes' % (c.base_url, tenant)
+        try:
+            c.rest.post(url, {"dest-ip-subnet": dstroute, "next-hop": nexthop})
+        except:
+            helpers.test_failure(c.rest.error())
+        else: 
+            helpers.test_log("Output: %s" % c.rest.result_json())
+            return c.rest.content()               
+        
+        
         
         
         
