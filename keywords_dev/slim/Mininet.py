@@ -71,5 +71,12 @@ class Mininet(object):
         mn = t.mininet()
         mn.cli('%s arp -s %s %s' % (host, ipaddr, mac),
                verbose=True)
+ 
+    def mininet_L3_ping(self, src, dst, count=5):        
+        t = test.Test()
+        mn = t.mininet()
+        mn.cli('%s ping %s -c %s' % (src, dst, count), verbose=True)
         
+        out = mn.cli_content()
+        return out             
         
