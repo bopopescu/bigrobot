@@ -15,6 +15,7 @@ class T5(object):
         c.rest.set_session_cookie(session_cookie)
         
     def rest_create_tenant(self, tenant):
+        
         t = test.Test()
         c = t.controller()
 
@@ -130,14 +131,31 @@ class T5(object):
         helpers.test_log("Input arguments: tenant = %s vns = %s" % (tenant, vns ))
         
         url = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]' % (c.base_url, tenant, vns)
-        c.rest.delete(url, {"name": vns})
-        helpers.test_log("Output: %s" % c.rest.result_json())
+        try:
+            c.rest.delete(url, {"name": vns})
+        except:
+            helpers.test_log("Output: %s" % c.rest.result_json())
+        else:
+            if not c.rest.status_code_ok():
+               helpers.test_failure(c.rest.error())
 
-        if not c.rest.status_code_ok():
-            helpers.test_failure(c.rest.error())
+            return c.rest.content()
+    def rest_show_vns(self):
+        t = test.Test()
+        c = t.controller()
+  
+        url = '%s/api/v1/data/controller/applications/bvs/info/endpoint-manager/vnses' % (c.base_url)
+       
+        try:
+            c.rest.get(url)
+        except:
+            helpers.test_log("Output: %s" % c.rest.result_json())
+        else:
+            if not c.rest.status_code_ok():
+               helpers.test_failure(c.rest.error())
 
-        return c.rest.content()
-    
+            return c.rest.content()
+     
     def rest_create_portgroup(self, pg):
         t = test.Test()
         c = t.controller()
@@ -367,7 +385,6 @@ class T5(object):
             helpers.test_failure(c.rest.error())
             
         return c.rest.content()
-<<<<<<< HEAD
     
     def rest_configure_ip_endpoint(self, tenant, vns, endpoint, ip):
         t = test.Test()
@@ -388,7 +405,6 @@ class T5(object):
         if not c.rest.status_code_ok():
             helpers.test_failure(c.rest.error())
         return c.rest.content()
-=======
    
     def rest_create_vns_ip(self, tenant, vns, ipaddr, netmask):
         '''Create vns router interface via command "virtual-router vns interface"
@@ -421,5 +437,4 @@ class T5(object):
         
         
         
-        
->>>>>>> 877798d13269b725b9c9573fbf8f934fafeec393
+
