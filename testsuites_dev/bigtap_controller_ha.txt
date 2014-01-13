@@ -20,8 +20,33 @@ ${switch2_alias}  LB11
 ${switch3_ip}  10.192.75.214
 ${switch3_alias}  LY4
 ${switchlight_version}  SwitchLight 2.0.0-beta1
-
-
+${sw1_f1}  ethernet5
+${sw1_f1nick}  LB7-F1-DL206-D1
+${sw1_f2}  ethernet6
+${sw1_f2nick}  LB7-F2-DL206-D2
+${sw1_f3}  ethernet7
+${sw1_f3nick}  LB7-F3-DL206-D3
+${sw1_f4}  ethernet8
+${sw1_f4nick}  LB7-F4-DL206-D4
+${sw2_f1}  ethernet5
+${sw2_f1nick}  LB11-F1-AR4-D1
+${sw2_f2}  ethernet6
+${sw2_f2nick}  LB11-F2-AR4-D2
+${sw2_f3}  ethernet7
+${sw2_f3nick}  LB11-F3-AR4-D3
+${sw2_f4}  ethernet8
+${sw2_f4nick}  LB11-F4-AR4-D4
+${sw3_d1}  ethernet1
+${sw3_d1nick}  LY4-LB81-ET9
+${sw3_d2}  ethernet3
+${sw3_d2nick}  LY4-LB82-ET9
+${sw3_s1}  ethernet37
+${sw3_s1nick}  S5-LY4-AR4_E3-PRE
+${sw3_s2}  ethernet38
+${sw3_s2nick}  S5-LY4-AR4_E4-POST
+${filter}  filter
+${delivery}  delivery
+${service}  service
 
 
 *Test Case
@@ -90,44 +115,44 @@ ha suite setup
 	${dpid3}=  return switch dpid  ${switchDict}  ${switch3_ip}
 	REST set switch alias  ${dpid3}  ${switch3_alias}
 	# Configure Filter Interfaces
-	REST setup bigtap interfaces  ${dpid1}  ethernet5  filter  LB7-F1-DL206-D1
-	REST setup bigtap interfaces  ${dpid1}  ethernet6  filter  LB7-F2-DL206-D2
-	REST setup bigtap interfaces  ${dpid1}  ethernet7  filter  LB7-F3-DL206-D3
-	REST setup bigtap interfaces  ${dpid1}  ethernet8  filter  LB7-F4-DL206-D4
-	REST setup bigtap interfaces  ${dpid2}  ethernet5  filter  LB11-F1-AR4-D1
-	REST setup bigtap interfaces  ${dpid2}  ethernet6  filter  LB11-F2-AR4-D2
-	REST setup bigtap interfaces  ${dpid2}  ethernet7  filter  LB11-F3-AR4-D3
-	REST setup bigtap interfaces  ${dpid2}  ethernet8  filter  LB11-F4-AR4-D4
+	REST bigtap setup interface  intf_name=${sw1_f1}  intf_type=${filter}  intf_nickname=${sw1_f1nick}  sw_dpid=${dpid1}
+	REST bigtap setup interface  intf_name=${sw1_f2}  intf_type=${filter}  intf_nickname=${sw1_f1nick}  sw_dpid=${dpid1}
+	REST bigtap setup interface  intf_name=${sw1_f3}  intf_type=${filter}  intf_nickname=${sw1_f1nick}  sw_dpid=${dpid1}
+	REST bigtap setup interface  intf_name=${sw1_f4}  intf_type=${filter}  intf_nickname=${sw1_f1nick}  sw_dpid=${dpid1}
+	REST bigtap setup interface  intf_name=${sw2_f1}  intf_type=${filter}  intf_nickname=${sw2_f1nick}  sw_dpid=${dpid2}
+	REST bigtap setup interface  intf_name=${sw2_f2}  intf_type=${filter}  intf_nickname=${sw2_f2nick}  sw_dpid=${dpid2}
+	REST bigtap setup interface  intf_name=${sw2_f3}  intf_type=${filter}  intf_nickname=${sw2_f3nick}  sw_dpid=${dpid2}
+	REST bigtap setup interface  intf_name=${sw2_f4}  intf_type=${filter}  intf_nickname=${sw2_f4nick}  sw_dpid=${dpid2}
 	# Configure Delivery Interfaces
-	REST setup bigtap interfaces  ${dpid3}  ethernet1  delivery  LY4-LB81-ET9
-	REST setup bigtap interfaces  ${dpid3}  ethernet3  delivery  LY4-LB82-ET9
+	REST bigtap setup interface  intf_name=${sw3_d1}  intf_type=${delivery}  intf_nickname=${sw3_d1nick}  sw_dpid=${dpid3}
+	REST bigtap setup interface  intf_name=${sw3_d2}  intf_type=${delivery}  intf_nickname=${sw3_d2nick}  sw_dpid=${dpid3}
 	# Configure Service Interfaces
-	REST setup bigtap interfaces  ${dpid3}  ethernet37  service  S5-LY4-AR4_E3-PRE
-	REST setup bigtap interfaces  ${dpid3}  ethernet38  service  S5-LY4-AR4_E4-POST
+	REST bigtap setup interface  intf_name=${sw3_s1}  intf_type=${service}  intf_nickname=${sw3_s1nick}  sw_dpid=${dpid3}
+	REST bigtap setup interface  intf_name=${sw3_s2}  intf_type=${service}  intf_nickname=${sw3_s2nick}  sw_dpid=${dpid3}
 	# Configure BigTap Service
-	REST add bigtap service  S5-LY4  S5-LY4-AR4_E3-PRE  S5-LY4-AR4_E4-POST
+	REST bigtap add service  S5-LY4  ${sw3_s1nick}  ${sw3_s2nick}
 	Sleep  10
 	#Configure BigTap Policy
-	REST add policy  admin-view  P1  forward
-	REST add policy match  admin-view  P1  1  {"ether-type": 2048, "dst-tp-port": 80, "ip-proto": 6, "sequence": 1}
-	REST add policy interface  admin-view  P1  LB7-F1-DL206-D1  filter
-	REST add policy interface  admin-view  P1  LB11-F1-AR4-D1  filter	
-	REST add policy interface  admin-view  P1  LY4-LB81-ET9  delivery
-	REST add policy  admin-view  ZP2  forward
-	REST add policy match  admin-view  ZP2  1  {"ether-type": 2048, "src-tp-port": 1234, "ip-proto": 6, "sequence": 1}
-	REST add policy interface  admin-view  ZP2  LB7-F1-DL206-D1  filter
-	REST add policy interface  admin-view  ZP2  LB11-F1-AR4-D1  filter	
-	REST add policy interface  admin-view  ZP2  LY4-LB82-ET9  delivery
-	REST add policy  admin-view  P3  forward
-	REST add policy match  admin-view  P3  1  {"src-ip-mask": "255.255.255.252", "sequence": 1, "src-ip": "100.1.1.1", "ip-proto": 132, "ether-type": 2048}
-	REST add policy interface  admin-view  P3  LB7-F2-DL206-D2  filter
-	REST add policy interface  admin-view  P3  LB11-F2-AR4-D2  filter	
-	REST add policy interface  admin-view  P3  LY4-LB81-ET9  delivery
-	REST add policy  admin-view  ZP4  forward
-	REST add policy match  admin-view  ZP4  1  {"ether-type": 2048, "sequence": 1, "dst-ip-mask": "255.255.255.252", "ip-proto": 132, "dst-ip": "101.1.1.1"}
-	REST add policy interface  admin-view  ZP4  LB7-F2-DL206-D2  filter
-	REST add policy interface  admin-view  ZP4  LB11-F2-AR4-D2  filter	
-	REST add policy interface  admin-view  ZP4  LY4-LB82-ET9  delivery
+	REST bigtap add policy  admin-view  P1  forward
+	REST bigtap add policy match  admin-view  P1  1  {"ether-type": 2048, "dst-tp-port": 80, "ip-proto": 6, "sequence": 1}
+	REST bigtap add policy interface  admin-view  P1  ${sw1_f1nick}  ${filter}
+	REST bigtap add policy interface  admin-view  P1  ${sw2_f1nick}  ${filter}	
+	REST bigtap add policy interface  admin-view  P1  ${sw3_d1nick}  ${delivery}
+	REST bigtap add policy  admin-view  ZP2  forward
+	REST bigtap add policy match  admin-view  ZP2  1  {"ether-type": 2048, "src-tp-port": 1234, "ip-proto": 6, "sequence": 1}
+	REST bigtap add policy interface  admin-view  ZP2  ${sw1_f1nick}  ${filter}
+	REST bigtap add policy interface  admin-view  ZP2  ${sw2_f1nick}  ${filter}	
+	REST bigtap add policy interface  admin-view  ZP2  ${sw3_d2nick}  ${delivery}
+	REST bigtap add policy  admin-view  P3  forward
+	REST bigtap add policy match  admin-view  P3  1  {"src-ip-mask": "255.255.255.252", "sequence": 1, "src-ip": "100.1.1.1", "ip-proto": 132, "ether-type": 2048}
+	REST bigtap add policy interface  admin-view  P3  ${sw1_f2nick}  ${filter}
+	REST bigtap add policy interface  admin-view  P3  ${sw2_f2nick}  ${filter}	
+	REST bigtap add policy interface  admin-view  P3  ${sw3_d1nick}  ${delivery}
+	REST bigtap add policy  admin-view  ZP4  forward
+	REST bigtap add policy match  admin-view  ZP4  1  {"ether-type": 2048, "sequence": 1, "dst-ip-mask": "255.255.255.252", "ip-proto": 132, "dst-ip": "101.1.1.1"}
+	REST bigtap add policy interface  admin-view  ZP4  ${sw1_f2nick}  ${filter}
+	REST bigtap add policy interface  admin-view  ZP4  ${sw2_f2nick}  ${filter}	
+	REST bigtap add policy interface  admin-view  ZP4  ${sw3_d2nick}  ${delivery}
 	
 	#Configure NTP and SYSLOG
 	Run Keyword And Ignore Error  rest delete ntp  0.bigswitch.pool.ntp.org
@@ -299,8 +324,8 @@ ha failover
     REST show bigtap policy  _ZP4_o_P3  2  2
 
 ha suite teardown
-    REST delete policy  admin-view  P1
-    REST delete policy  admin-view  ZP2
-    REST delete policy  admin-view  P3
-    REST delete policy  admin-view  ZP4
-    REST delete bigtap service  S5-LY4
+    REST bigtap delete policy  admin-view  P1
+    REST bigtap delete policy  admin-view  ZP2
+    REST bigtap delete policy  admin-view  P3
+    REST bigtap delete policy  admin-view  ZP4
+    REST bigtap delete service  S5-LY4

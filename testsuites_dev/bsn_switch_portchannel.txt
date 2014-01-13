@@ -15,7 +15,11 @@ ${ip_address_1}  10.192.75.7
 ${ip_address_2}  10.192.75.213
 ${ip_address_3}  10.192.75.214
 ${switchlight_version}  SwitchLight 2.0.0-beta1
-
+${1glb9_name}  port-channel20
+${10glb9_name}  port-channel1
+${10gly2_name}  port-channel7
+${40gly2_name}  port-channel30
+${uknLag_name}  port-channel22
 
 *Test Case
 
@@ -134,11 +138,11 @@ lag suite setup
 
 verify lag-1glb9-up
 # Verify portchannel interface is up
-	${inft_state}=  return intf state  ${ip_address_1}  port-channel20
+	${inft_state}=  return intf state  ${ip_address_1}  ${1glb9_name}
 	Should Contain  ${inft_state}  up
 	${switchDict1}=  REST show switch
 	${dpid1}=  return switch dpid  ${switchDict1}  ${ip_address_1}
-	${cintf_state}=  verify interface is up  ${dpid1}  port-channel20
+	${cintf_state}=  verify interface is up  interface_name=${1glb9_name}  sw_dpid=${dpid1}
 	Should Be True  ${cintf_state}
 
 verify lagmem-1glb9
@@ -157,11 +161,11 @@ verify lagmem-1glb9up
 
 verify lag-10glb9-up 
 # Verify portchannel interface is up
-	${inft_state}=  return intf state  ${ip_address_1}  port-channel1
+	${inft_state}=  return intf state  ${ip_address_1}  ${10glb9_name}
 	Should Contain  ${inft_state}  up
 	${switchDict1}=  REST show switch
 	${dpid1}=  return switch dpid  ${switchDict1}  ${ip_address_1}
-	${cintf_state}=  verify interface is up  ${dpid1}  port-channel1
+	${cintf_state}=  verify interface is up  interface_name=${10glb9_name}  sw_dpid=${dpid1}
 	Should Be True  ${cintf_state}
 
 verify lagmem-10glb9
@@ -180,11 +184,11 @@ verify lagmem-10glb9-up
 
 verify lag-10gly2-up
 # Verify portchannel interface is up
-	${inft_state}=  return intf state  ${ip_address_2}  port-channel7
+	${inft_state}=  return intf state  ${ip_address_2}  ${10gly2_name}
 	Should Contain  ${inft_state}  up
 	${switchDict1}=  REST show switch
 	${dpid1}=  return switch dpid  ${switchDict1}  ${ip_address_2}
-	${cintf_state}=  verify interface is up  ${dpid1}  port-channel7
+	${cintf_state}=  verify interface is up  interface_name=${10gly2_name}  sw_dpid=${dpid1}
 	Should Be True  ${cintf_state}
 	
 verify lagmem-10gly2
@@ -203,11 +207,11 @@ verify lagmem-10gly2-up
 
 verify lag-40gly2-up
 # Verify portchannel interface is up
-	${inft_state}=  return intf state  ${ip_address_2}  port-channel30
+	${inft_state}=  return intf state  ${ip_address_2}  ${40gly2_name}
 	Should Contain  ${inft_state}  up
 	${switchDict1}=  REST show switch
 	${dpid1}=  return switch dpid  ${switchDict1}  ${ip_address_2}
-	${cintf_state}=  verify interface is up  ${dpid1}  port-channel30
+	${cintf_state}=  verify interface is up  interface_name=${40gly2_name}  sw_dpid=${dpid1}
 	Should Be True  ${cintf_state}
 
 verify lagmem-40gly2
@@ -227,11 +231,11 @@ verify lagmem-40gly2-up
 verify l2-lag-1glb9-up
 # Verify portchannel interface is up
 	configure portchannel  ${ip_address_1}  20  1-2  L2
-	${inft_state}=  return intf state  ${ip_address_1}  port-channel20
+	${inft_state}=  return intf state  ${ip_address_1}  ${1glb9_name}
 	Should Contain  ${inft_state}  up
 	${switchDict1}=  REST show switch
 	${dpid1}=  return switch dpid  ${switchDict1}  ${ip_address_1}
-	${cintf_state}=  verify interface is up  ${dpid1}  port-channel20
+	${cintf_state}=  verify interface is up  interface_name=${1glb9_name}  sw_dpid=${dpid1}
 	Should Be True  ${cintf_state}
 
 verify l2-lagmem-1glb9
@@ -255,11 +259,11 @@ verify l2-lag-10glb9-up
 	configure portchannel  ${ip_address_1}  1  49-50  L2         
 	configure portchannel  ${ip_address_2}  7  43,44  L2
 	Sleep   5
-	${inft_state}=  return intf state  ${ip_address_1}  port-channel1
+	${inft_state}=  return intf state  ${ip_address_1}  ${10glb9_name}
 	Should Contain  ${inft_state}  up
 	${switchDict1}=  REST show switch
 	${dpid1}=  return switch dpid  ${switchDict1}  ${ip_address_1}
-	${cintf_state}=  verify interface is up  ${dpid1}  port-channel1
+	${cintf_state}=  verify interface is up  interface_name=${10glb9_name}  sw_dpid=${dpid1}
 	Should Be True  ${cintf_state}
 
 verify l2-lagmem-10glb9
@@ -283,7 +287,7 @@ verify l2-lagmem-10glb9-up
 	Should Be True  ${member_isup2}
 	${switchDict1}=  REST show switch
 	${dpid1}=  return switch dpid  ${switchDict1}  ${ip_address_1}
-	${cintf_state}=  verify interface is up  ${dpid1}  port-channel1
+	${cintf_state}=  verify interface is up  interface_name=${10glb9_name}  sw_dpid=${dpid1}
 	Should Be True  ${cintf_state}
 
 verify l2-lag-10gly2-up
@@ -291,7 +295,7 @@ verify l2-lag-10gly2-up
 	configure portchannel  ${ip_address_1}  1  49-50  L2         
 	configure portchannel  ${ip_address_2}  7  43,44  L2
 	Sleep   5
-	${inft_state}=  return intf state  ${ip_address_2}  port-channel7
+	${inft_state}=  return intf state  ${ip_address_2}  ${10gly2_name}
 	Should Contain  ${inft_state}  up
 
 verify l2-lagmem-10gly2
@@ -315,14 +319,14 @@ verify l2-lagmem-10gly2-up
 	Should Be True  ${member_isup4}
 	${switchDict1}=  REST show switch
 	${dpid1}=  return switch dpid  ${switchDict1}  ${ip_address_2}
-	${cintf_state}=  verify interface is up  ${dpid1}  port-channel7
+	${cintf_state}=  verify interface is up  interface_name=${10gly2_name}  sw_dpid=${dpid1}
 	Should Be True  ${cintf_state}
 
 verify l2-lag-40gly2-up
 # Verify portchannel interface is up
 	configure portchannel  ${ip_address_2}  30  49,52  L2
 	configure portchannel  ${ip_address_3}  30  49,52  L2 
-	${inft_state}=  return intf state  ${ip_address_2}  port-channel30
+	${inft_state}=  return intf state  ${ip_address_2}  ${40gly2_name}
 	Should Contain  ${inft_state}  up
 
 verify l2-lagmem-40gly2
@@ -344,14 +348,14 @@ verify l2-lagmem-40gly2-up
 	Should Be True  ${member_isup6}
 	${switchDict1}=  REST show switch
 	${dpid1}=  return switch dpid  ${switchDict1}  ${ip_address_2}
-	${cintf_state}=  verify interface is up  ${dpid1}  port-channel30
+	${cintf_state}=  verify interface is up  interface_name=${40gly2_name}  sw_dpid=${dpid1}
 	Should Be True  ${cintf_state}
 
 verify T5829-1g10g
 #  	Verify that when portchannel interface cannot be formed if member links have mismatched speeds
 	configure portchannel  ${ip_address_1}  1  48,49,50  L3
 	Sleep   10
-	${inft_state}=  return intf state  ${ip_address_1}  port-channel1
+	${inft_state}=  return intf state  ${ip_address_1}  ${10glb9_name}
 	Should Contain  ${inft_state}  up
 	${member_exists0}=  verify portchannel members  ${ip_address_1}  1  ethernet48
 	Should Be True  ${member_exists0}
@@ -372,7 +376,7 @@ verify T5829-10g40g
 #  	Verify that when portchannel interface cannot be formed if member links have mismatched speeds (10g and 40g)
 	configure portchannel  ${ip_address_2}  30  4,49,52  L3
 	Sleep   30
-	${inft_state}=  return intf state  ${ip_address_2}  port-channel30
+	${inft_state}=  return intf state  ${ip_address_2}  ${40gly2_name}
 	Should Contain  ${inft_state}  up
 	${member_exists0}=  verify portchannel members  ${ip_address_2}  30  ethernet4
 	Should Be True  ${member_exists0}
@@ -398,17 +402,17 @@ verify T5839
 	Should Not Be True  ${pc_state}
 	${switchDict}=  REST show switch
 	${dpid1}=  return switch dpid  ${switchDict}  ${ip_address_2}
-	${cpc_state}=  verify interface is up   ${dpid1}  port-channel22
+	${cpc_state}=  verify interface is up  interface_name=${uknLag_name}  sw_dpid=${dpid1}
 	Should Not Be True  ${cpc_state}
 	unconfigure portchannel  ${ip_address_2}  22
 	Sleep  10
 
 verify T5844
 #Verify log messages are generated for link up/link down events for LAG interfaces
-	change interface state  ${ip_address_1}  port-channel1  Yes
+	change interface state  ${ip_address_1}  ${10glb9_name}  Yes
 	${syslog_op}=  execute switch command return output  ${ip_address_1}  debug ofad 'help; cat /var/log/syslog | grep \"Disabling port port-channel1\"'
 	Should Contain  ${syslog_op}  brcmdriver: INFO: Disabling port port-channel1 (61)
-	change interface state  ${ip_address_1}  port-channel1  No
+	change interface state  ${ip_address_1}  ${10glb9_name}  No
 	${syslog_op}=  execute switch command return output  ${ip_address_1}  debug ofad 'help; cat /var/log/syslog | grep \"Enabling port port-channel1\"'
 	Should Contain  ${syslog_op}  brcmdriver: INFO: Enabling port port-channel1 (61)
 
@@ -425,7 +429,7 @@ verify T5846
 	Should Be True  ${pc_state}
 	${switchDict}=  REST show switch
 	${dpid1}=  return switch dpid  ${switchDict}  ${ip_address_1}
-	${cpc_state}=  verify interface is up   ${dpid1}  port-channel22
+	${cpc_state}=  verify interface is up  interface_name=${uknLag_name}  sw_dpid=${dpid1}
 	Should Be True  ${cpc_state}
 	unconfigure portchannel  ${ip_address_1}  22
 	Sleep  20
@@ -438,7 +442,7 @@ verify T5848
 	Should Be True  ${pc_state}
 	${switchDict}=  REST show switch
 	${dpid1}=  return switch dpid  ${switchDict}  ${ip_address_1}
-	${cpc_state}=  verify interface is up   ${dpid1}  port-channel22
+	${cpc_state}=  verify interface is up  $interface_name={uknLag_name}   sw_dpid=$${dpid1}
 	Should Be True  ${cpc_state}
 	unconfigure portchannel  ${ip_address_1}  22
 	Sleep  20
@@ -451,7 +455,7 @@ verify T5850
 	Should Be True  ${pc_state}
 	${switchDict}=  REST show switch
 	${dpid1}=  return switch dpid  ${switchDict}  ${ip_address_1}
-	${cpc_state}=  verify interface is up   ${dpid1}  port-channel22
+	${cpc_state}=  verify interface is up  interface_name=${uknLag_name}   sw_dpid=${dpid1}
 	Should Be True  ${cpc_state}
 	unconfigure portchannel  ${ip_address_1}  22
 	Sleep  20
@@ -462,7 +466,7 @@ verify T5852
 	Should Be True  ${pc_state}
 	${switchDict}=  REST show switch
 	${dpid1}=  return switch dpid  ${switchDict}  ${ip_address_1}
-	${cpc_state}=  verify interface is up   ${dpid1}  port-channel1
+	${cpc_state}=  verify interface is up  interface_name=${10glb9_name}  sw_dpid=${dpid1}
 	Should Be True  ${cpc_state}
 	execute switch command return output  ${ip_address_1}  copy running-config startup-config
 	Sleep  5
@@ -472,7 +476,7 @@ verify T5852
 	Should Be True  ${pc_state}
 	${switchDict}=  REST show switch
 	${dpid1}=  return switch dpid  ${switchDict}  ${ip_address_1}
-	${cpc_state}=  verify interface is up   ${dpid1}  port-channel1
+	${cpc_state}=  verify interface is up  interface_name=${10glb9_name}   sw_dpid=${dpid1}
 	Should Be True  ${cpc_state}
 	execute switch command return output  ${ip_address_1}  copy running-config startup-config
 
@@ -484,7 +488,7 @@ verify T5853
 	Should Be True  ${pc_state}
 	${switchDict}=  REST show switch
 	${dpid1}=  return switch dpid  ${switchDict}  ${ip_address_1}
-	${cpc_state}=  verify interface is up   ${dpid1}  port-channel22
+	${cpc_state}=  verify interface is up  interface_name=${uknLag_name}   sw_dpid=${dpid1}
 	Should Be True  ${cpc_state}
 	restart process  ${ip_address_1}  ofad
 	Sleep  20
@@ -492,7 +496,7 @@ verify T5853
 	Should Be True  ${pc_state}
 	${switchDict}=  REST show switch
 	${dpid1}=  return switch dpid  ${switchDict}  ${ip_address_1}
-	${cpc_state}=  verify interface is up   ${dpid1}  port-channel22
+	${cpc_state}=  verify interface is up  interface_name=${uknLag_name}   sw_dpid=${dpid1}
 	Should Be True  ${cpc_state}
 	unconfigure portchannel  ${ip_address_1}  22
 	Sleep  20
