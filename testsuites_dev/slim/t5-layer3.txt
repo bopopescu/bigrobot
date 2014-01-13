@@ -12,25 +12,34 @@ Library         keywords_dev/T5Fabric.py
 Resource		keywords_dev/t5_singleleaf_resource.txt
 
 * Variable
-${tenant_name}		A
+${tenant1_name}		A
+${tenant2_name}		B
 ${vns_1}			A1
 ${vns_2}			A2
+${vns_3}			B1
 ${vns1_ip}			10.10.10.1
 ${vns1_subnet}		24
 ${vns2_ip}			10.10.11.1
 ${vns2_subnet}		24
+${vns3_ip}			10.10.20.1
+${vns3_subnet}		24
 ${leaf_name}		leaf0
 ${leaf0_intf1}		leaf0-eth3
 ${leaf0_intf2}		leaf0-eth4
+${leaf0-intf3}		leaf0-eth5
 ${host0_ip}			10.10.10.11
 ${host0_subnet}		24
 ${host1_ip}			10.10.11.11
 ${host1_subnet}		24
+${host2_ip}			10.10.20.11
+${host2_subnet}		24
 ${gw_mac}			5c:16:c7:01:00:00
 ${host0_name}		bm0
 ${host1_name}		bm1
+${host2_name}		bm2
 ${host0_intf}		bm0-bond0
 ${host1_intf}		bm1-bond0
+${host2_intf}		bm2-bond0
 
 
 
@@ -39,22 +48,51 @@ Configure topology
 	configure fabric switch 
 	sleep  5
 
-L3 ping bm0 to bm1 single leaf single rack dynamic endpoints
-   REST create tenant  			${tenant_name}
-   REST create vns  			${tenant_name}		${vns_1}
-   REST create vns				${tenant_name}		${vns_2}
-   REST create vns ip  			${tenant_name}  	${vns_1}  		${vns1_ip}	  	${vns1_subnet}
-   REST create vns ip  			${tenant_name}  	${vns_2}  		${vns2_ip}	  	${vns2_subnet}
-   REST add interface to vns  	${tenant_name}  	${vns_1}  		${leaf_name} 	${leaf0_intf1}  -1 
-   REST add interface to vns  	${tenant_name}  	${vns_2}  		${leaf_name} 	${leaf0_intf2} 	-1
+L3 ping bm0 to bm1 single leaf single rack within tenant different VNS
+   REST create tenant  			${tenant1_name}
+   REST create vns  			${tenant1_name}		${vns_1}
+   REST create vns				${tenant1_name}		${vns_2}
+   REST create vns ip  			${tenant1_name}  	${vns_1}  		${vns1_ip}	  	${vns1_subnet}
+   REST create vns ip  			${tenant1_name}  	${vns_2}  		${vns2_ip}	  	${vns2_subnet}
+   REST add interface to vns  	${tenant1_name}  	${vns_1}  		${leaf_name} 	${leaf0_intf1}  -1 
+   REST add interface to vns  	${tenant1_name}  	${vns_2}  		${leaf_name} 	${leaf0_intf2} 	-1
    mininet host ipcfg   		${host0_name}		${host0_intf}	${host0_ip}		${host0_subnet} 
    mininet host ipcfg			${host1_name}		${host1_intf}	${host1_ip}		${host1_subnet}
    mininet host gw				${host0_name}		${vns1_ip}		${host0_intf}
    mininet host gw				${host1_name}		${vns2_ip}		${host1_intf}
    mininet host arp				${host0_name}		${vns1_ip}		${gw_mac}
    mininet host arp				${host1_name} 		${vns2_ip}		${gw_mac}
+   sleep 5
    ${count}=  					mininet L3 ping		${host0_name}	${host1_name}
    loss = helpers.any_match(${count}, r', (\d+)% packet loss')
    helpers.log("packet loss: %s" % loss)
    if int(loss[0]) > 0:
         helpers.test_failure(loss[0] + "% packet loss")
+   REST delete tenant 			${tenant1_name}        
+    
+L3 ping bm0 to bm1 single leaf single rack across tenants    
+	REST create tenant  		${tenant1_name}        
+	REST create tenant  		${tenant2_name} 
+   	REST create vns				${tenant1_name}		${vns_1}	      
+	REST create vns  			${tenant2_name}		${vns_3}
+	REST create vns ip  		${tenant1_name}  	${vns_1}  		${vns1_ip}	  	${vns1_subnet}
+   	REST create vns ip  		${tenant2_name}  	${vns_3}  		${vns3_ip}	  	${vns3_subnet}
+ 	REST add interface to vns  	${tenant1_name}  	${vns_1}  		${leaf_name} 	${leaf0_intf1}  -1 
+   	REST add interface to vns  	${tenant2_name}  	${vns_3}  		${leaf_name} 	${leaf0_intf3} 	-1
+   	REST attach tenant routers to system 	${tenant1_name} 
+   	REST attach tenant routers to system 	${tenant2_name} 
+   	mininet host ipcfg   		${host0_name}		${host0_intf}	${host0_ip}		${host0_subnet} 
+   	mininet host ipcfg			${host2_name}		${host2_intf}	${host2_ip}		${host2_subnet}
+   	mininet host gw				${host0_name}		${vns1_ip}		${host0_intf}
+   	mininet host gw				${host2_name}		${vns3_ip}		${host2_intf}
+   	mininet host arp			${host0_name}		${vns1_ip}		${gw_mac}
+   	mininet host arp			${host2_name} 		${vns3_ip}		${gw_mac}
+   	sleep 5
+   	${count}=  					mininet L3 ping		${host0_name}	${host2_name}
+   	loss = helpers.any_match(${count}, r', (\d+)% packet loss')
+   	helpers.log("packet loss: %s" % loss)
+   	if int(loss[0]) > 0:
+        helpers.test_failure(loss[0] + "% packet loss")
+	REST delete tenant			${tenant1_name}   
+	REST delete tenant			${tenant2_name}     
+   	

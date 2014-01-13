@@ -434,7 +434,7 @@ class T5(object):
         
         url = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]/virtual-router/tenant-interfaces[tenant-name="system"]' % (c.base_url, tenant)
         try:
-            c.rest.post(url, {"tenant-name": system, "active": True})
+            c.rest.post(url, {"tenant-name": "system", "active": True})
         except:
             helpers.test_failure(c.rest.error())
         else: 
