@@ -76,9 +76,9 @@ class Mininet(object):
         out = mn.cli_content()
         loss = helpers.any_match(out, r', (\d+)% packet loss')
         helpers.log("packet loss: %s" % loss)
-        value = return_list_element(loss, 0)
+        value = list element   loss   0
         return value             
        
-    def return_list_element(self, content, index):
+    def list_element(self, content, index):
         return content[index]
     
