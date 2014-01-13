@@ -14,8 +14,8 @@ class DevConf(object):
             helpers.environment_failure("Must specify a user name.")
         if password is None:
             helpers.environment_failure("Must specify a password.")
-        if os not in ('bvs', 't6mininet'):
-            helpers.environment_failure("OS type must be 'bvs' or 't6mininet'.")
+        if os not in ('bsn_controller', 't6mininet'):
+            helpers.environment_failure("OS type must be 'bsn_controller' or 't6mininet'.")
         
         helpers.log("Connecting to host %s" % host)
         #helpers.log("User:%s, password:%s" % (user, password))
@@ -23,27 +23,32 @@ class DevConf(object):
         self.conn = SSH2()
         self.conn.connect(host)
         self.conn.login(account)
-        if os == 'bvs':
+        if os == 'bsn_controller':
             # !!! FIXME: Use ios driver in the interim.
-            self.conn.set_driver('ios')
+            #self.conn.set_driver('bsn_controller')
+            pass
         elif os == 't6mininet':
-            self.conn.set_driver('shell')
+            #self.conn.set_driver('shell')
+            pass
         
         self.host = host
         self.user = user
         self.password = password
         self.os = os
         self.last_result = None
+        self.mode = 'cli'
 
-    def cmd(self, cmd, verbose=False):
-        if verbose:
+    def cmd(self, cmd, quiet=False):
+        if not quiet:
             helpers.log("Execute command: %s" % cmd, level=4)
             
         self.conn.execute(cmd)
         self.last_result = { 'content': self.conn.response }
         
-        if verbose:
-            helpers.log("Command output: %s" % self.content(), level=4) 
+        if not quiet:
+            helpers.log("Command output: %s" % self.content(), level=4)
+        
+        return self.result
 
     # Alias
     cli = cmd
@@ -59,7 +64,94 @@ class DevConf(object):
 
 class ControllerDevConf(DevConf):
     def __init__(self, host=None, user=None, password=None):
-        super(ControllerDevConf, self).__init__(host, user, password, 'bvs')
+        super(ControllerDevConf, self).__init__(host, user, password, 
+                                                #'bvs')
+                                                'bsn_controller')
+        self.mode_before_bash = None
+
+    def is_cli(self):
+        return self.mode == 'cli'
+
+    def is_enable(self):
+        return self.mode == 'enable'
+
+    def is_config(self):
+        return self.mode == 'config'
+
+    def is_bash(self):
+        return self.mode == 'bash'
+
+    def exit_bash_mode(self, new_mode):
+        self.mode = self.mode_before_bash
+        helpers.log("Switching from bash to %s mode" % new_mode, level=5)
+        super(ControllerDevConf, self).cmd('exit', quiet=True)
+        helpers.log("Current mode is %s" % self.mode)
+
+    def cmd(self, cmd, quiet=False, mode='cli'):
+        if mode == 'cli':
+            if self.is_bash():
+                self.exit_bash_mode(mode)
+
+            if self.is_enable():
+                helpers.log("Switching from enable to %s mode" % mode, level=5)
+                super(ControllerDevConf, self).cmd('exit', quiet=True)
+            elif self.is_config():
+                helpers.log("Switching from config to %s mode" % mode, level=5)
+                super(ControllerDevConf, self).cmd('exit', quiet=True)
+                super(ControllerDevConf, self).cmd('exit', quiet=True)
+        elif mode == 'enable':
+            if self.is_bash():
+                self.exit_bash_mode(mode)
+
+            if self.is_cli():
+                helpers.log("Switching from cli to %s mode" % mode, level=5)
+                super(ControllerDevConf, self).cmd('enable', quiet=True)
+            elif self.is_config():
+                helpers.log("Switching from config to %s mode" % mode, level=5)
+                super(ControllerDevConf, self).cmd('exit', quiet=True)
+        elif mode == 'config':
+            if self.is_bash():
+                self.exit_bash_mode(mode)
+
+            if self.is_cli():
+                helpers.log("Switching from cli to %s mode" % mode, level=5)
+                super(ControllerDevConf, self).cmd('enable', quiet=True)
+                super(ControllerDevConf, self).cmd('configure', quiet=True)
+            elif self.is_enable():
+                helpers.log("Switching from enable to %s mode" % mode, level=5)
+                super(ControllerDevConf, self).cmd('configure', quiet=True)
+        elif mode == 'bash':
+            if self.is_cli():
+                self.mode_before_bash = 'cli'
+                helpers.log("Switching from cli to %s mode" % mode, level=5)
+            elif self.is_enable():
+                self.mode_before_bash = 'enable'
+                helpers.log("Switching from enable to %s mode" % mode, level=5)
+            elif self.is_config():
+                self.mode_before_bash = 'config'
+                helpers.log("Switching from config to %s mode" % mode, level=5)
+            helpers.log("Mode previous to bash is %s" % self.mode_before_bash)
+            super(ControllerDevConf, self).cmd('debug bash', quiet=True)
+                
+        self.mode = mode
+        helpers.log("Current mode is %s" % self.mode)
+
+        super(ControllerDevConf, self).cmd(cmd, quiet=True)
+        helpers.log("%s result:\n%s\n\n---" % (mode, self.content()), level=5)
+        return self.result
+
+    
+    def cli(self, cmd, quiet=False):
+        return self.cmd(cmd, quiet=quiet, mode='cli')
+
+    def enable(self, cmd, quiet=False):
+        return self.cmd(cmd, quiet=quiet, mode='enable')
+
+    def config(self, cmd, quiet=False):
+        return self.cmd(cmd, quiet=quiet, mode='config')
+
+    def bash(self, cmd, quiet=False):
+        return self.cmd(cmd, quiet=quiet, mode='bash')
 
     def close(self):
         super(ControllerDevConf, self).close()
@@ -90,7 +182,7 @@ class T6MininetDevConf(DevConf):
         #   mininet@t6-mininet: ~$   - on failure
         self.conn.set_prompt(r'(t6-mininet>|mininet@.*mininet:.*\$)')
 
-        self.cli(cmd, verbose=True)
+        self.cli(cmd, quiet=False)
 
         # Error handling - placeholder (see MinietDevConf for example)
 
@@ -101,7 +193,7 @@ class T6MininetDevConf(DevConf):
         super(T6MininetDevConf, self).close()
 
         self.conn.set_prompt(r'(t6-mininet>|mininet@.*mininet:.*\$)')
-        self.cmd('exit', verbose=True)  # Exit mininet CLI
+        self.cmd('exit', quiet=False)  # Exit mininet CLI
         self.conn.close(force=True)
         helpers.log("T6MininetDevConf - force closed the device connection.")
 
@@ -129,7 +221,7 @@ class MininetDevConf(DevConf):
         #   mininet@t6-mininet: ~$   - on failure
         self.conn.set_prompt(r'(mininet>|mininet@.*mininet:.*\$)')
         
-        self.cli(cmd, verbose=True)
+        self.cli(cmd, quiet=False)
 
         # Error handling        
         out = self.content()
@@ -144,6 +236,6 @@ class MininetDevConf(DevConf):
         super(MininetDevConf, self).close()
 
         self.conn.set_prompt(r'(mininet>|mininet@.*mininet:.*\$)')
-        self.cmd('exit', verbose=True)  # Exit mininet CLI
+        self.cmd('exit', quiet=False)  # Exit mininet CLI
         self.conn.close(force=True)
         helpers.log("MininetDevConf - force closed the device connection.")

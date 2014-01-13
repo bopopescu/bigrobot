@@ -15,6 +15,8 @@ from Exscript.protocols.drivers.shell import ShellDriver
 from Exscript.protocols.drivers.smart_edge_os import SmartEdgeOSDriver
 from Exscript.protocols.drivers.vrp import VRPDriver
 from Exscript.protocols.drivers.sros import SROSDriver
+from Exscript.protocols.drivers.bsn_controller import BsnControllerDriver
+from Exscript.protocols.drivers.mininet import MininetDriver
 
 driver_classes = []
 drivers        = []
