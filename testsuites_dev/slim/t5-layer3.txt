@@ -26,7 +26,7 @@ ${vns3_subnet}		24
 ${leaf_name}		leaf0
 ${leaf0_intf1}		leaf0-eth3
 ${leaf0_intf2}		leaf0-eth4
-${leaf0-intf3}		leaf0-eth5
+${leaf0_intf3}		leaf0-eth5
 ${host0_ip}			10.10.10.11
 ${host0_subnet}		24
 ${host1_ip}			10.10.11.11
