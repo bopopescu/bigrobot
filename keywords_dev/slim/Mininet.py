@@ -63,7 +63,8 @@ class Mininet(object):
     def mininet_host_ipcfg(self, host, intf, ipaddr, mask):
         t = test.Test()
         mn = t.mininet()
-        mn.cli('%s ifconfig %s %s %s' % (host, intf, ipaddr, mask),
+        ip_addr = ipaddr + "/" + mask
+        mn.cli('%s ifconfig %s %s up' % (host, intf, ip_addr),
                verbose=True)
         
     def mininet_host_arp(self, host, ipaddr, mac):
