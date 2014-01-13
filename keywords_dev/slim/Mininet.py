@@ -79,5 +79,7 @@ class Mininet(object):
         mn.cli('%s ping %s -c %s' % (src, dst, count), verbose=True)
         
         out = mn.cli_content()
-        return out             
+        loss = helpers.any_match(out, r', (\d+)% packet loss')
+        helpers.log("packet loss: %s" % loss)
+        return loss             
         

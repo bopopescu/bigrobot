@@ -63,12 +63,11 @@ L3 ping bm0 to bm1 single leaf single rack within tenant different VNS
    mininet host arp				${host0_name}		${vns1_ip}		${gw_mac}
    mininet host arp				${host1_name} 		${vns2_ip}		${gw_mac}
    sleep  5
-   ${count}=  					mininet L3 ping		${host0_name}	${host1_name}
-   loss = helpers.any_match(${count}, r', (\d+)% packet loss')
-   helpers.log("packet loss: %s" % loss)
-   if int(loss[0]) > 0:
+   ${loss}=  					mininet L3 ping		${host0_name}	${host1_name}
+   if int(${loss}) > 0:
         helpers.test_failure(loss[0] + "% packet loss")
    REST delete tenant 			${tenant1_name}        
+   sleep  20
     
 L3 ping bm0 to bm1 single leaf single rack across tenants    
 	REST create tenant  		${tenant1_name}        
@@ -88,11 +87,11 @@ L3 ping bm0 to bm1 single leaf single rack across tenants
    	mininet host arp			${host0_name}		${vns1_ip}		${gw_mac}
    	mininet host arp			${host2_name} 		${vns3_ip}		${gw_mac}
    	sleep  5
-   	${count}=  					mininet L3 ping		${host0_name}	${host2_name}
-   	loss = helpers.any_match(${count}, r', (\d+)% packet loss')
-   	helpers.log("packet loss: %s" % loss)
-   	if int(loss[0]) > 0:
+   	${loss}=  					mininet L3 ping		${host0_name}	${host2_name}
+   	if int(${loss}) > 0:
         helpers.test_failure(loss[0] + "% packet loss")
 	REST delete tenant			${tenant1_name}   
 	REST delete tenant			${tenant2_name}     
+	sleep  20
+	
    	
