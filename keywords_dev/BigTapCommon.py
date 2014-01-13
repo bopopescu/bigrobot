@@ -107,7 +107,7 @@ class BigTapCommon(object):
                     return False
             return True
 
-    def rest_show_switch_dpid(self,switch_alias):
+    def rest_get_switch_dpid(self,switch_alias):
         '''Returns switch DPID, given a switch alias
         
         Input `switchAlias` refers to switch alias
@@ -118,32 +118,32 @@ class BigTapCommon(object):
         
         Return value is switch DPID
         '''
+        t=test.Test()
         try:
-            t = test.Test()
-            if(self.btc.rest_is_c1_master_controller()):
+            t.controller('c2')
+        except:
+            c = t.controller('c1')
+            c.http_port=8082
+        else:
+            if(self.rest_is_c1_master_controller()):
                 c = t.controller('c1')
                 c.http_port=8082
             else:
                 c = t.controller('c2')
                 c.http_port=8082
-            alias_exists=0
-            url ='http://%s:%s/api/v1/data/controller/core/switch?select=alias'   % (c.ip,c.http_port)
+        try:
+            url ='http://%s:%s/api/v1/data/controller/core/switch?select=alias' %(c.ip,c.http_port)
             c.rest.get(url)
             content = c.rest.content()
-        except:
-            helpers.test_failure("Could not execute command")
+            flag = False
+            for x in range (0,len(content)):
+                if str(content[x]['alias']) == str(switch_alias):
+                    return content[x]['dpid']
             return False
-        else:            
-            for i in range(0,len(content)) :
-                    if content[i]['alias'] == str(switch_alias) :
-                            switch_dpid = content[i]['dpid']
-                            alias_exists=1
-            if(alias_exists):
-                return switch_dpid
-            else:
-                return False
+        except:
+            return False
     
-    def rest_show_switch_flow(self,switch_dpid):
+    def rest_get_switch_flow(self,switch_alias=None, sw_dpid=None):
         '''Returns number of flows on a switch
         
         Input 'switch_dpid' is the switch DPID
@@ -154,14 +154,29 @@ class BigTapCommon(object):
         
         Return valuse is the number of active flows on the switch
         '''
+        t=test.Test()
         try:
-            t = test.Test()
-            if(self.btc.rest_is_c1_master_controller()):
+            t.controller('c2')
+        except:
+            c = t.controller('c1')
+            c.http_port=8082
+        else:
+            if(self.rest_is_c1_master_controller()):
                 c = t.controller('c1')
                 c.http_port=8082
             else:
                 c = t.controller('c2')
                 c.http_port=8082
+        try:
+            if (switch_alias is None and sw_dpid is not None):
+                switch_dpid = sw_dpid
+            elif (switch_alias is None and sw_dpid is None):
+                helpers.log('Either Switch DPID or Switch Alias has to be provided')
+                return False
+            elif (switch_alias is not None and sw_dpid is None):
+                switch_dpid = self.rest_get_switch_dpid(switch_alias)
+            else:
+                switch_dpid = sw_dpid
             url ='http://%s:%s/api/v1/data/controller/core/switch[dpid="%s"]?select=stats/table' % (c.ip,c.http_port,str(switch_dpid))
             c.rest.get(url)
             content = c.rest.content()
@@ -220,7 +235,7 @@ class BigTapCommon(object):
 ###################################################
 # All Bigtap Configuration Commands Go Here:
 ###################################################    
-    def rest_setup_bigtap_interfaces(self,switch_dpid,intf_name,intf_type,intf_nickname):
+    def rest_bigtap_setup_interface(self,intf_name,intf_type,intf_nickname,switch_alias=None, sw_dpid=None):
         '''Execute the CLI command 'bigtap role filter interface-name F1'
         
             Input: 
@@ -231,14 +246,29 @@ class BigTapCommon(object):
             
             Returns: True if configuration is successful, false otherwise
         '''
+        t=test.Test()
         try:
-            t = test.Test()
-            if(self.btc.rest_is_c1_master_controller()):
+            t.controller('c2')
+        except:
+            c = t.controller('c1')
+            c.http_port=8082
+        else:
+            if(self.rest_is_c1_master_controller()):
                 c = t.controller('c1')
                 c.http_port=8082
             else:
                 c = t.controller('c2')
                 c.http_port=8082
+        try:
+            if (switch_alias is None and sw_dpid is not None):
+                switch_dpid = sw_dpid
+            elif (switch_alias is None and sw_dpid is None):
+                helpers.log('Either Switch DPID or Switch Alias has to be provided')
+                return False
+            elif (switch_alias is not None and sw_dpid is None):
+                switch_dpid = self.rest_get_switch_dpid(switch_alias)
+            else:
+                switch_dpid = sw_dpid
             url='http://%s:%s/api/v1/data/controller/applications/bigtap/interface-config[interface="%s"][switch="%s"]' % (c.ip,c.http_port,str(intf_name), str(switch_dpid))
             c.rest.put(url, {"interface": str(intf_name), "switch": str(switch_dpid), 'role':str(intf_type),'name':str(intf_nickname)})
         except:
@@ -252,7 +282,7 @@ class BigTapCommon(object):
                 helpers.test_log(c.rest.content_json())
                 return True
 
-    def rest_delete_interface_role(self,switch_dpid,intf_name,intf_type,intf_nickname):
+    def rest_bigtap_delete_interface_role(self,intf_name,intf_type,intf_nickname,switch_alias=None, sw_dpid=None):
         '''Delete filter/service/delivery interface from switch configuration. Similar to executing the CLI command 'no bigtap role filter interface-name F1'
          
             Input: 
@@ -263,14 +293,30 @@ class BigTapCommon(object):
             
             Returns: True if delete is successful, false otherwise       
         '''
+        t=test.Test()
         try:
-            t = test.Test()
-            if(self.btc.rest_is_c1_master_controller()):
+            t.controller('c2')
+        except:
+            c = t.controller('c1')
+            c.http_port=8082
+        else:
+            if(self.rest_is_c1_master_controller()):
                 c = t.controller('c1')
                 c.http_port=8082
             else:
                 c = t.controller('c2')
                 c.http_port=8082
+        try:
+            if (switch_alias is None and sw_dpid is not None):
+                switch_dpid = sw_dpid
+            elif (switch_alias is None and sw_dpid is None):
+                helpers.log('Either Switch DPID or Switch Alias has to be provided')
+                return False
+            elif (switch_alias is not None and sw_dpid is None):
+                switch_dpid = self.rest_get_switch_dpid(switch_alias)
+            else:
+                switch_dpid = sw_dpid
+
             url='http://%s:%s/api/v1/data/controller/applications/bigtap/interface-config[interface="%s"][switch="%s"]' % (c.ip,c.http_port, str(intf_name), str(switch_dpid)) 
             c.rest.delete(url, {'role':str(intf_type), "name": str(intf_nickname)})
         except:
@@ -283,7 +329,7 @@ class BigTapCommon(object):
             else:
                 return True
 
-    def rest_delete_interface(self,switch_dpid,intf_name):
+    def rest_bigtap_delete_interface(self,intf_name,switch_alias=None, sw_dpid=None):
         '''Delete interface from switch
          
             Input: 
@@ -292,14 +338,29 @@ class BigTapCommon(object):
             
             Returns: True if delete is successful, false otherwise       
         '''
+        t=test.Test()
         try:
-            t = test.Test()
-            if(self.btc.rest_is_c1_master_controller()):
+            t.controller('c2')
+        except:
+            c = t.controller('c1')
+            c.http_port=8082
+        else:
+            if(self.rest_is_c1_master_controller()):
                 c = t.controller('c1')
                 c.http_port=8082
             else:
                 c = t.controller('c2')
                 c.http_port=8082
+        try:
+            if (switch_alias is None and sw_dpid is not None):
+                switch_dpid = sw_dpid
+            elif (switch_alias is None and sw_dpid is None):
+                helpers.log('Either Switch DPID or Switch Alias has to be provided')
+                return False
+            elif (switch_alias is not None and sw_dpid is None):
+                switch_dpid = self.rest_get_switch_dpid(switch_alias)
+            else:
+                switch_dpid = sw_dpid
             url='http://%s:%s/api/v1/data/controller/core/switch[dpid="%s"]/interface[name=""]'  % (c.ip,c.http_port, str(switch_dpid), str(intf_name))
             c.rest.delete(url1, {})
         except:
@@ -312,7 +373,7 @@ class BigTapCommon(object):
             else:
                 return True
 
-    def rest_add_policy(self,rbac_view_name,policy_name,policy_action="inactive"):
+    def rest_bigtap_add_policy(self,rbac_view_name,policy_name,policy_action="inactive"):
         '''Add a bigtap policy.
         
             Input:
@@ -344,7 +405,7 @@ class BigTapCommon(object):
             else:          
                 return True
 
-    def rest_delete_policy(self,rbac_view_name,policy_name):
+    def rest_bigtap_delete_policy(self,rbac_view_name,policy_name):
         '''Delete a bigtap policy.
         
             Input:
@@ -373,7 +434,7 @@ class BigTapCommon(object):
             else:
                 return True
 
-    def rest_add_policy_interface(self,rbac_view_name,policy_name,intf_nickname,intf_type):
+    def rest_bigtap_add_policy_interface(self,rbac_view_name,policy_name,intf_nickname,intf_type):
         '''Add a bigtap policy interface viz. Add a filter-interface and/or delivery-interface under a bigtap policy.
         
             Input:
@@ -408,7 +469,7 @@ class BigTapCommon(object):
             else:
                 return True
     
-    def rest_delete_policy_interface(self,rbac_view_name,policy_name,intf_nickname,intf_type):
+    def rest_bigtap_delete_policy_interface(self,rbac_view_name,policy_name,intf_nickname,intf_type):
         '''Delete a bigtap policy interface viz. Delete a filter-interface and/or delivery-interface from a bigtap policy.
         
             Input:
@@ -443,7 +504,7 @@ class BigTapCommon(object):
             else:
                 return True
   
-    def rest_add_policy_match(self,rbac_view_name,policy_name,match_number,data):
+    def rest_bigtap_add_policy_match(self,rbac_view_name,policy_name,match_number,data):
         '''Add a bigtap policy match condition.
         
             Input:
@@ -475,7 +536,7 @@ class BigTapCommon(object):
             else:
                 return True
     
-    def rest_delete_policy_match(self,rbac_view_name,policy_name,match_number):
+    def rest_bigtap_delete_policy_match(self,rbac_view_name,policy_name,match_number):
         '''Delete a bigtap policy match condition.
         
             Input:
@@ -502,7 +563,7 @@ class BigTapCommon(object):
             return True
         
 # Add a service with Pre-Service and Post Service interface.
-    def rest_add_bigtap_service(self,service_name,pre_service_intf_nickname,post_service_intf_nickname):
+    def rest_bigtap_add_service(self,service_name,pre_service_intf_nickname,post_service_intf_nickname):
         '''Add a bigtap service.
         
             Input:
@@ -553,7 +614,7 @@ class BigTapCommon(object):
                     return True
  
 # Delete a service
-    def rest_delete_bigtap_service(self,service_name) :
+    def rest_bigtap_delete_service(self,service_name) :
         '''Delete a bigtap service.
         
             Input:
@@ -583,7 +644,7 @@ class BigTapCommon(object):
                 helpers.test_log(c.rest.content_json())
                 return True
     
-    def rest_add_interface_service(self,service_name,intf_type,intf_nickname):
+    def rest_bigtap_add_interface_service(self,service_name,intf_type,intf_nickname):
         '''Add a service interface to a service. This is similar to executing CLI command "post-service S1-LB7_E4-HP1_E4-POST"
         
             Input:
@@ -623,7 +684,7 @@ class BigTapCommon(object):
                 helpers.test_log(c.rest.content_json())
                 return True
 
-    def rest_delete_interface_service(self,service_name,intf_nickname,intf_type) :
+    def rest_bigtap_delete_interface_service(self,service_name,intf_nickname,intf_type) :
         '''Delete an interface from a service. This is similar to executing CLI command "no post-service S1-LB7_E4-HP1_E4-POST"
         
             Input:
@@ -662,7 +723,7 @@ class BigTapCommon(object):
                 helpers.test_log(c.rest.content_json())
                 return True
 
-    def rest_add_service_to_policy(self,rbac_view_name,policy_name,service_name,sequence_number) :
+    def rest_bigtap_add_service_to_policy(self,rbac_view_name,policy_name,service_name,sequence_number) :
         '''Add a service to a policy. This is similar to executing CLI command "use-service S1-LB7 sequence 1"
         
             Input:
@@ -703,7 +764,7 @@ class BigTapCommon(object):
                 helpers.test_log(c.rest.content_json())
                 return True
 
-    def rest_delete_service_from_policy(self,rbac_view_name,policy_name,service_name) :
+    def rest_bigtap_delete_service_from_policy(self,rbac_view_name,policy_name,service_name) :
         '''Delete a service from a policy. This is similar to executing CLI command "no use-service S1-LB7 sequence 1"
         
             Input:
@@ -736,7 +797,7 @@ class BigTapCommon(object):
                 return True
 
 #Change policy action
-    def rest_change_policy_action(self,rbac_view_name,policy_name,policy_action):
+    def rest_bigtap_change_policy_action(self,rbac_view_name,policy_name,policy_action):
         '''Change a bigtap policy action from forward --> Rate-Measure, Forward --> Inactive, Rate-Measure--> Forward, Rate-Measure--> Inactive etc.
         
            Input:
@@ -780,7 +841,7 @@ class BigTapCommon(object):
                 return True
 
 #Disable bigtap feature overlap/inport-mask/tracked-host/l3-l4-mode
-    def rest_disable_feature(self,feature_name):
+    def rest_bigtap_disable_feature(self,feature_name):
         '''Disable a bigtap feature
         
            Input:
@@ -812,7 +873,7 @@ class BigTapCommon(object):
                 return True
     
 #Enable bigtap feature overlap/inport-mask/tracked-host/l3-l4-mode
-    def rest_enable_feature(self,feature_name):
+    def rest_bigtap_enable_feature(self,feature_name):
         '''Enable a bigtap feature
         
            Input:

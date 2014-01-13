@@ -111,7 +111,7 @@ class BigTapCommonShow(object):
 # Return switch dpid given a switch alias
 # Input: switch alias
 # Output: switch dpid 
-    def rest_show_switch_dpid(self,switchAlias):
+    def rest_get_switch_dpid(self,switchAlias):
         t = test.Test()
         if(self.rest_is_c1_master_controller()):
             c = t.controller('c1')
@@ -136,7 +136,7 @@ class BigTapCommonShow(object):
 # Return number of flows installed in full match table
 # Input: switch dpid
 # Output: Number of flows      
-    def rest_show_switch_flow(self,switchDpid):
+    def rest_get_switch_flow(self,switchDpid):
         t = test.Test()
         if(self.rest_is_c1_master_controller()):
             c = t.controller('c1')

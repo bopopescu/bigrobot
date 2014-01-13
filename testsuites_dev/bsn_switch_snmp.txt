@@ -14,6 +14,10 @@ Library  keywords_dev/BsnSwitchCommon.py
 ${ip_address_1}  10.192.75.7
 ${ip_address_2}  10.192.75.213
 ${ip_address_3}  10.192.75.214
+${oneGlb9_name}  ethernet48
+${tenGlb9_name}  ethernet51
+${tenGly2_name}  ethernet48
+${fortyGly2_name}  ethernet50
 ${switchlight_version}  SwitchLight 2.0.0-beta1
 
 
@@ -287,7 +291,7 @@ verify IfMtu
 
 verify ifDescr lb9
 	${snmp_key}=  snmp cmd  ${ip_address_1}  snmpwalk  public  ifDescr.1048
-	Should Contain  ${snmp_key}  ethernet48
+	Should Contain  ${snmp_key}  ${oneGlb9_name}
 
 verify ifType lb9
 	${snmp_key} =  snmp cmd  ${ip_address_1}  snmpwalk  public  ifType.1048
@@ -311,13 +315,13 @@ verify ifHighSpeed lb9
 	Should Contain  ${snmp_key}  1000
 
 verify ifPhysAddress lb9
-	${mac_address1}=  return intf macaddress  ${ip_address_1}  ethernet48
+	${mac_address1}=  return intf macaddress  ${ip_address_1}  ${oneGlb9_name}
 	${snmp_key} =  snmp cmd  ${ip_address_1}  snmpwalk  public  ifPhysAddress.1048
 	Should Contain  ${snmp_key}  ${mac_address1}
 
 verify ifDescr tenGlb9
 	${snmp_key} =  snmp cmd  ${ip_address_1}  snmpwalk  public  ifDescr.1051
-	Should Contain  ${snmp_key}  ethernet51
+	Should Contain  ${snmp_key}  ${tenGlb9_name}
 
 verify ifType tenGlb9
 	${snmp_key} =  snmp cmd  ${ip_address_1}  snmpwalk  public  ifType.1051
@@ -344,13 +348,13 @@ verify ifHighSpeed tenGlb9
 verify ifPhysAddress tenGlb9
 	${switchDict1}=  REST show switch
 	${dpid1}=  return switch dpid  ${switchDict1}  ${ip_address_1}
-	${mac_address2}=  return switch interface mac  ${dpid1}  ethernet51
+	${mac_address2}=  return switch interface mac  interface_name=${tenGlb9_name}  sw_dpid=${dpid1}
 	${snmp_key} =  snmp cmd  ${ip_address_1}  snmpwalk  public  ifPhysAddress.1051
 	Should Contain  ${snmp_key}  ${mac_address2}
 
 verify ifDescr ly2
 	${snmp_key}=  snmp cmd  ${ip_address_2}  snmpwalk   public  ifDescr.1048
-	Should Contain  ${snmp_key}  ethernet48
+	Should Contain  ${snmp_key}  ${tenGly2_name}
 
 verify ifType ly2
 	${snmp_key}=  snmp cmd  ${ip_address_2}  snmpwalk   public  ifType.1048
@@ -376,7 +380,7 @@ verify ifHighSpeed ly2
 verify ifPhysAddress ly2
 	${switchDict2}=  REST show switch
 	${dpid2}=  return switch dpid  ${switchDict2}  ${ip_address_2}
-	${mac_address3}=  return switch interface mac  ${dpid2}  ethernet48
+	${mac_address3}=  return switch interface mac  ${tenGly2_name}  sw_dpid=${dpid2}
 	${snmp_key} =  snmp cmd  ${ip_address_2}  snmpwalk  public  ifPhysAddress.1048
 	Should Contain  ${snmp_key}  ${mac_address3}
 
@@ -408,7 +412,7 @@ verify ifHighSpeed fortyGly2
 verify ifPhysAddress fortyGly2
 	${switchDict2}=  REST show switch
 	${dpid2}=  return switch dpid  ${switchDict2}  ${ip_address_2}
-	${mac_address4}=  return switch interface mac  ${dpid2}  ethernet50
+	${mac_address4}=  return switch interface mac  sw_dpid=${dpid2}  interface_name=${fortyGly2_name}
 	${snmp_key} =  snmp cmd  ${ip_address_2}  snmpwalk  public  ifPhysAddress.1050
 	Should Contain  ${snmp_key}  ${mac_address4}
 
@@ -439,7 +443,7 @@ verify lag-ifHighSpeed tenGlb9
 verify lag-ifPhysAddress tenGlb9
 	${switchDict1}=  REST show switch
 	${dpid1}=  return switch dpid  ${switchDict1}  ${ip_address_1}
-	${mac_address5}=  return switch interface mac  ${dpid1}  port-channel1
+	${mac_address5}=  return switch interface mac  sw_dpid=${dpid1}  interface_name="port-channel1"
 	${snmp_key} =  snmp cmd  ${ip_address_1}  snmpwalk  public  ifPhysAddress.1061
 	Should Contain  ${snmp_key}  ${mac_address5}
 	
@@ -470,7 +474,7 @@ verify lag-ifHighSpeed fortyGly2
 verify lag-ifPhysAddress fortyGly2
 	${switchDict2}=  REST show switch
 	${dpid2}=  return switch dpid  ${switchDict2}  ${ip_address_2}
-	${mac_address6}=  return switch interface mac  ${dpid2}  port-channel30
+	${mac_address6}=  return switch interface mac  sw_dpid=${dpid2}  interface_name="port-channel30"
 	${snmp_key} =  snmp cmd  ${ip_address_2}  snmpwalk  public  ifPhysAddress.1090
 	Should Contain  ${snmp_key}  ${mac_address6}
 	
