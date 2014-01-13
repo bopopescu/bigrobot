@@ -39,3 +39,17 @@ class MyTest(object):
         helpers.log("arg1: %s" % arg1)
         helpers.log("arg2: %s" % arg2)
         self.passing_kwargs_additions(**kwargs)
+        
+    def enable_help(self):
+        t = test.Test()
+        c = t.controller()
+        c.enable('help')
+        c.cli('show user')
+        c.config('show running-config')
+        c.cli('history')
+        c.bash('uptime')
+        c.config('whoami')
+        c.bash('sudo cat /etc/hosts')
+        c.cli('whoami')
+        c.bash('ls /tmp')
+        c.config('whoami')

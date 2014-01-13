@@ -8,7 +8,7 @@ import os
 import sys
 import platform
 import shutil
-import argparse
+#import argparse
 
 
 def set_environment():
@@ -83,7 +83,7 @@ if helpers.bigrobot_suite():
     helpers.bigrobot_topology(default=''.join((helpers.bigrobot_suite(),
                                                '.topo')))
 helpers.bigrobot_suite_format(default='txt')
-helpers.bigrobot_debug(default=0)
+helpers.bigrobot_debug(default=1)
 
 # !!! FIXME: We're doing away with Pandoc support (required by .mw format)
 #     since .txt format is much more flexible. Can get rid of all things
@@ -188,7 +188,6 @@ def exit_if_suite_not_defined():
 
 
 def run(cmd, cwd=None, shell=True, quiet=False):
-    helpers.log("cmd: %s" % cmd)
     status, msg = helpers.run_cmd(cmd, cwd=cwd, shell=shell, quiet=quiet)
     if msg:
         print msg
