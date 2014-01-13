@@ -168,47 +168,125 @@ class BsnCommonShow(object):
 # Input : dictionary of switch 
 # Output: Dictionary of Switch DPID and IP Addresses
     def return_switch_dpid(self,switchDict,ipAddr):
-            helpers.log('Dictionary is %s' % switchDict)
-            return switchDict[str(ipAddr)]
+        helpers.log('Dictionary is %s' % switchDict)
+        return switchDict[str(ipAddr)]
 
 
-# Objective: Return the MAC/Hardware Address of a given interface
-# Input: Switch DPID and Interface Name
-# Output: Hardware/MAC Address of Interface
-    def return_switch_interface_mac(self,switchDpid,interfaceName):
+    def return_switch_dpid_from_alias(self,switch_alias):
         t=test.Test()
-        if(self.btc.rest_is_c1_master_controller()):
+        try:
+            t.controller('c2')
+        except:
             c = t.controller('c1')
             c.http_port=8082
         else:
-            c = t.controller('c2')
-            c.http_port=8082
-        url='http://%s:%s/api/v1/data/controller/core/switch[interface/name="%s"][dpid="%s"]?select=interface[name="%s"]' %(c.ip,c.http_port,interfaceName,switchDpid,interfaceName)
-        c.rest.get(url)
-        helpers.test_log("Ouput: %s" % c.rest.result_json())
-        if not c.rest.status_code_ok():
-            helpers.test_failure(c.rest.error())
-        content = c.rest.content()
-        return content[0]['interface'][0]['hardware-address']
-    
-    def verify_interface_is_up(self,switchDpid,interfaceName):
+            if(self.btc.rest_is_c1_master_controller()):
+                c = t.controller('c1')
+                c.http_port=8082
+            else:
+                c = t.controller('c2')
+                c.http_port=8082
+        try:
+            url ='http://%s:%s/api/v1/data/controller/core/switch?select=alias' %(c.ip,c.http_port)
+            c.rest.get(url)
+            content = c.rest.content()
+            flag = False
+            for x in range (0,len(content)):
+                if str(content[x]['alias']) == str(switch_alias):
+                    return content[x]['dpid']
+            return False
+        except:
+            return False
+        return False
+
+    def return_switch_interface_mac(self, interface_name, switch_alias=None, sw_dpid=None):
+        '''Return the MAC/Hardware Address of a given interface
+        
+            Input: 
+                `switch_dpid`       DPID of the Switch
+                `interface_name`    Interface Name e.g. ethernet13
+            
+            Returns: Hardware/MAC Address of Interface
+        '''
         t=test.Test()
-        if(self.btc.rest_is_c1_master_controller()):
+        try:
+            t.controller('c2')
+        except:
             c = t.controller('c1')
             c.http_port=8082
         else:
-            c = t.controller('c2')
-            c.http_port=8082
-        url='http://%s:%s/api/v1/data/controller/core/switch[interface/name="%s"][dpid="%s"]?select=interface[name="%s"]' %(c.ip,c.http_port,interfaceName,switchDpid,interfaceName)
-        c.rest.get(url)
-        helpers.test_log("Ouput: %s" % c.rest.result_json())
-        if not c.rest.status_code_ok():
-            helpers.test_failure(c.rest.error())
-        content = c.rest.content()
-        if (content[0]['interface'][0]['state-flags'] == 0):
-                return True
-        else:
+            if(self.btc.rest_is_c1_master_controller()):
+                c = t.controller('c1')
+                c.http_port=8082
+            else:
+                c = t.controller('c2')
+                c.http_port=8082
+        try:
+            if (switch_alias is None and sw_dpid is not None):
+                switch_dpid = sw_dpid
+            elif (switch_alias is None and sw_dpid is None):
+                helpers.log('Either Switch DPID or Switch Alias has to be provided')
                 return False
+            elif (switch_alias is not None and sw_dpid is None):
+                switch_dpid = self.return_switch_dpid_from_alias(switch_alias)
+            else:
+                switch_dpid = sw_dpid    
+            url='http://%s:%s/api/v1/data/controller/core/switch[interface/name="%s"][dpid="%s"]?select=interface[name="%s"]' %(c.ip,c.http_port,interface_name,switch_dpid,interface_name)
+            c.rest.get(url)
+        except:
+            helpers.test_failure(c.rest.error())
+            return False
+        else:  
+            if not c.rest.status_code_ok():
+                helpers.test_failure(c.rest.error())
+            content = c.rest.content()
+            return content[0]['interface'][0]['hardware-address']
+    
+    def verify_interface_is_up(self,interface_name, switch_alias=None, sw_dpid=None):
+        '''Verify if a given interface on a given switch is up
+        
+            Input: 
+                `switch_dpid`       DPID of the Switch
+                `interface_name`    Interface Name e.g. ethernet13
+            
+            Returns: True if the interface is up, false otherwise
+        '''
+        t=test.Test()
+        try:
+            t.controller('c2')
+        except:
+            c = t.controller('c1')
+            c.http_port=8082
+        else:
+            if(self.btc.rest_is_c1_master_controller()):
+                c = t.controller('c1')
+                c.http_port=8082
+            else:
+                c = t.controller('c2')
+                c.http_port=8082
+        try:
+            if (switch_alias is None and sw_dpid is not None):
+                switch_dpid = sw_dpid
+            elif (switch_alias is None and sw_dpid is None):
+                helpers.log('Either Switch DPID or Switch Alias has to be provided')
+                return False
+            elif (switch_alias is not None and sw_dpid is None):
+                switch_dpid = self.return_switch_dpid_from_alias(switch_alias)
+            else:
+                switch_dpid = sw_dpid
+            url='http://%s:%s/api/v1/data/controller/core/switch[interface/name="%s"][dpid="%s"]?select=interface[name="%s"]' %(c.ip,c.http_port,interface_name,switch_dpid,interface_name)
+            c.rest.get(url)
+        except:
+            helpers.test_failure(c.rest.error())
+            return False
+        else:              
+            if not c.rest.status_code_ok():
+                helpers.test_failure(c.rest.error())
+            content = c.rest.content()
+            if (content[0]['interface'][0]['state-flags'] == 0):
+                    return True
+            else:
+                    return False
 
     def restart_process_controller(self,process_name,controllerRole):
         '''Restart a process on controller

@@ -21,43 +21,49 @@ ${controller_ip_1}  10.192.96.1
 ${controller_ip_2}  10.192.96.2
 
 *Test Case
-T5981: Verify all interfaces show up (in show o/p from CLI)
-    verify interfaces
-    [Tags]  sanity  
-
+ 
 Verify one openflow controller can be configured
     verify onecontroller
-    [Tags]  sanity  
+    [Tags]  sanity  skipped
 
 Verify controller can be modified 
     verify changecontroller
-    [Tags]  sanity  
+    [Tags]  sanity  skipped
 
 Verify multiple openflow controllers can be configured
     verify multiplecontroller
-    [Tags]  sanity  
+    [Tags]  sanity  skipped
 
 T5987: Verify Controller IP address is pingable
  	T5987
-    [Tags]  sanity  
+    [Tags]  sanity  skipped
 
 T5988: Configure DNS server and DNS Domain. Verify you can ping www.bigswitch.com
 	T5988
-    [Tags]  sanity  
+    [Tags]  sanity  skipped
     
 T5983: Verify ma1 ip address configuration via static config
     verify staticipdns
-    [Tags]  sanity  
+    [Tags]  sanity  skipped
 
 T5984: Verify ma1 ip address configuration via dhcp
     verify dhcpipdns
-    [Tags]  sanity  
+    [Tags]  sanity  skipped
 
+T5981: Verify all interfaces show up (in show o/p from CLI)
+    verify interfaces
+    [Tags]  sanity  skipped
+
+Shutdown an interface and verify interface state is down
+    shut interface
+    [Tags]  sanity  skipped 
+ 
+test1
+    test1
 
 * Keywords  
 
-verify interfaces
-	show interfaces  ${ip_address_1}
+
 
 verify onecontroller
 	delete controller  ${ip_address_1}  ${controller_ip_1}
@@ -123,6 +129,15 @@ verify dhcpipdns
 
 T5987
 	execute ping from local  ${ip_address_1}
+
+verify interfaces
+	show interfaces  ${ip_address_1}
+
+shut interface
+	return intf state  {ip_address_1}  ethernet48
+
+test1
+	return switch interface mac  ethernet1  LB8  
 
 platform suite teardown
 	delete controller  ${ip_address_1}  ${controller_ip_1}

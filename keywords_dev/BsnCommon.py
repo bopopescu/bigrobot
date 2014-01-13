@@ -191,8 +191,40 @@ class BsnCommon(object):
             '''
             return switch_dict[str(ip_address)]
 
+    def return_switch_dpid_from_alias(self,switch_alias):
+        '''Given a switch alias, find the corresponding switch DPID
+        
+            Input:
+                  switch_alias:    Alias of the switch
+            
+            Return:    Switch DPID
+        '''
+        t=test.Test()
+        try:
+            t.controller('c2')
+        except:
+            c = t.controller('c1')
+            c.http_port=8082
+        else:
+            if(self.rest_is_c1_master_controller()):
+                c = t.controller('c1')
+                c.http_port=8082
+            else:
+                c = t.controller('c2')
+                c.http_port=8082
+        try:
+            url ='http://%s:%s/api/v1/data/controller/core/switch?select=alias' %(c.ip,c.http_port)
+            c.rest.get(url)
+            content = c.rest.content()
+            flag = False
+            for x in range (0,len(content)):
+                if str(content[x]['alias']) == str(switch_alias):
+                    return content[x]['dpid']
+            return False
+        except:
+            return False
 
-    def return_switch_interface_mac(self,switch_dpid,interface_name):
+    def return_switch_interface_mac(self, interface_name, switch_alias=None, sw_dpid=None):
         '''Return the MAC/Hardware Address of a given interface
         
             Input: 
@@ -215,6 +247,15 @@ class BsnCommon(object):
                 c = t.controller('c2')
                 c.http_port=8082
         try:
+            if (switch_alias is None and sw_dpid is not None):
+                switch_dpid = sw_dpid
+            elif (switch_alias is None and sw_dpid is None):
+                helpers.log('Either Switch DPID or Switch Alias has to be provided')
+                return False
+            elif (switch_alias is not None and sw_dpid is None):
+                switch_dpid = self.return_switch_dpid_from_alias(switch_alias)
+            else:
+                switch_dpid = sw_dpid 
             url='http://%s:%s/api/v1/data/controller/core/switch[interface/name="%s"][dpid="%s"]?select=interface[name="%s"]' %(c.ip,c.http_port,interface_name,switch_dpid,interface_name)
             c.rest.get(url)
         except:
@@ -237,11 +278,11 @@ class BsnCommon(object):
         '''
         try:
             t=test.Test()
-            if(self.btc.rest_is_c1_master_controller() and controller_role=='Master' ) :
+            if(self.rest_is_c1_master_controller() and controller_role=='Master' ) :
                 c = t.controller('c1')
-            elif (self.btc.rest_is_c1_master_controller() and controller_role=='Slave' ):
+            elif (self.rest_is_c1_master_controller() and controller_role=='Slave' ):
                 c = t.controller('c2')
-            elif (not self.btc.rest_is_c1_master_controller() and controller_role=='Master'):
+            elif (not self.rest_is_c1_master_controller() and controller_role=='Master'):
                 c = t.controller('c2')
             else:
                 c = t.controller('c1')
@@ -272,11 +313,11 @@ class BsnCommon(object):
         '''
         try:
             t=test.Test()
-            if(self.btc.rest_is_c1_master_controller() and controller_role=='Master' ) :
+            if(self.rest_is_c1_master_controller() and controller_role=='Master' ) :
                 c = t.controller('c1')
-            elif (self.btc.rest_is_c1_master_controller() and controller_role=='Slave' ):
+            elif (self.rest_is_c1_master_controller() and controller_role=='Slave' ):
                 c = t.controller('c2')            
-            elif (not self.btc.rest_is_c1_master_controller() and controller_role=='Master'):
+            elif (not self.rest_is_c1_master_controller() and controller_role=='Master'):
                 c = t.controller('c2')
             else:
                 c = t.controller('c1')
@@ -306,7 +347,7 @@ class BsnCommon(object):
         except:
             return {'Master':str(t.controller('c1').ip)}
         else:
-            if(self.btc.rest_is_c1_master_controller()):
+            if(self.rest_is_c1_master_controller()):
                 ip_address_list={'Master':str(t.controller('c1').ip), 'Slave':str(t.controller('c2').ip)}
                 return (ip_address_list)
             else:
@@ -317,7 +358,7 @@ class BsnCommon(object):
 # All Common Controller Verification Commands Go Here:
 ########################################################
 
-    def verify_interface_is_up(self,switch_dpid,interface_name):
+    def verify_interface_is_up(self,interface_name, switch_alias=None, sw_dpid=None):
         '''Verify if a given interface on a given switch is up
         
             Input: 
@@ -340,6 +381,15 @@ class BsnCommon(object):
                 c = t.controller('c2')
                 c.http_port=8082
         try:
+            if (switch_alias is None and sw_dpid is not None):
+                switch_dpid = sw_dpid
+            elif (switch_alias is None and sw_dpid is None):
+                helpers.log('Either Switch DPID or Switch Alias has to be provided')
+                return False
+            elif (switch_alias is not None and sw_dpid is None):
+                switch_dpid = self.return_switch_dpid_from_alias(switch_alias)
+            else:
+                switch_dpid = sw_dpid
             url='http://%s:%s/api/v1/data/controller/core/switch[interface/name="%s"][dpid="%s"]?select=interface[name="%s"]' %(c.ip,c.http_port,interface_name,switch_dpid,interface_name)
             c.rest.get(url)
         except:
@@ -488,7 +538,7 @@ class BsnCommon(object):
             c = t.controller('c1')
             c.http_port=8000
         else:
-            if(self.btc.rest_is_c1_master_controller()):
+            if(self.rest_is_c1_master_controller()):
                 c = t.controller('c1')
                 c.http_port=8000
             else:
@@ -522,7 +572,7 @@ class BsnCommon(object):
             c = t.controller('c1')
             c.http_port=8000
         else:
-            if(self.btc.rest_is_c1_master_controller()):
+            if(self.rest_is_c1_master_controller()):
                 c = t.controller('c1')
                 c.http_port=8000
             else:
@@ -558,7 +608,7 @@ class BsnCommon(object):
             c = t.controller('c1')
             c.http_port=8000
         else:
-            if(self.btc.rest_is_c1_master_controller()):
+            if(self.rest_is_c1_master_controller()):
                 c = t.controller('c1')
                 c.http_port=8000
             else:
