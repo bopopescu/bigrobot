@@ -96,7 +96,20 @@ class T5Fabric(object):
             helpers.log("Error: Invalid argument: syntax: expected [a-zA-Z][-.0-9a-zA-Z_]*$ for: %s" % (group))
             helpers.test_failure(c.rest.error())
             
-        return c.rest.content() 
+        return c.rest.content()
+    
+    def rest_remove_leaf_group(self, switch, group=None):
+        ''' 
+           Function to remove the specific leaf group
+           Input:  Switch name
+        '''
+        t = test.Test()
+        c = t.controller()
+        url = '%s/api/v1/data/controller/core/switch-config[name="%s"]/leaf-group' % (c.base_url, switch)
+        c.rest.delete(url, {"leaf-group": None}) 
+        if not c.rest.status_code_ok():
+            helpers.test_failure(c.rest.error())
+        return c.rest.content()   
     
     def rest_remove_fabric_switch(self, switch=None):
         t = test.Test()
@@ -182,7 +195,11 @@ class T5Fabric(object):
         return c.rest.content()  
            
     def rest_verify_fabric_lag(self, dpid):
-        # Function verifying the Lag type formation from the spine nodes.
+        ''' 
+          Function to verify Lag formation from the fabric switches
+          Input : specific DPID
+          output : Will provide the No of lag it is suppose to form between Spine and Leaf in Dual Rack or single rack setup
+        '''   
         t = test.Test()
         c = t.controller()
         url = '%s/api/v1/data/controller/core/switch[dpid="%s"]/interface' % (c.base_url, dpid)       
@@ -200,42 +217,45 @@ class T5Fabric(object):
                for i in range(0,len(data)):
                   if data[i]["type"] == "leaf":
                      fabric_interface = fabric_interface + 1
+                     continue
+                  elif data[i]["type"] == "local":
+                      continue  
                   for i in range(0,len(data3[0]["fabric-lag"])):  
                      if data3[0]["fabric-lag"][i]["lag-type"] == "rack-lag":
                          if len(data3[0]["fabric-lag"][i]["member"]) == fabric_interface: 
-                            helpers.log("Rack Lag formation from spine switch %s is correct,No of fabric-interface = %d, No of Rack lag = %d " % (dpid, fabric_interface, len(data3[0]["fabric-lag"][i]["member"])))
+                            helpers.log("No of Rack lag from  %s is correct,Expected = %d, Actual = %d " % (dpid, fabric_interface, len(data3[0]["fabric-lag"][i]["member"])))
                             return True
                          else:
-                            helpers.test_failure("Rack Lag formation from spine %s switch is incorrect,No of fabric-interface = %d, No of Rack lag = %d " % (dpid, fabric_interface, len(data3[0]["fabric-lag"][i]["member"])))
+                            helpers.test_failure("No of Rack lag from %s is incorrect,Expected = %d, Actual = %d " % (dpid, fabric_interface, len(data3[0]["fabric-lag"][i]["member"])))
                             return False 
-                     
             elif data1[0]["fabric-switch-info"]["fabric-role"] == "leaf":
                 fabric_spine_interface = 0
                 fabric_peer_interface = 0
                 for i in range(0,len(data)):
                   if data[i]["type"] == "spine":
                      fabric_spine_interface = fabric_spine_interface + 1
+                     continue
                   elif data[i]["type"] == "leaf":
-                      fabric_peer_interface = fabric_peer_interface + 1   
-                for i in range(0,len(data3[0]["fabric-lag"])):
-                     if data3[0]["fabric-lag"][i]["lag-type"] == "spine-lag":
-                        if len(data3[0]["fabric-lag"][i]["member"]) == fabric_spine_interface:  
-                          helpers.log("Spine lag formation from leaf switch %s is correct,Expected = %d, Actual = %d, " % (dpid, fabric_spine_interface, len(data3[0]["fabric-lag"][i]["member"])))
-                          return True
-                        else:
-                          helpers.test_failure(" Spine lag formation from leaf %s switch is not correct,Expected = %d, Actual = %d" % (dpid, fabric_spine_interface, len(data3[0]["fabric-lag"][i]["member"])))
-                          return False 
-                     elif data3[0]["fabric-lag"][i]["lag-type"] == "spine-broadcast-lag":
+                      fabric_peer_interface = fabric_peer_interface + 1
+                      continue   
+                  for i in range(0,len(data3[0]["fabric-lag"])):
+                      if data3[0]["fabric-lag"][i]["lag-type"] == "spine-lag":
+                         if len(data3[0]["fabric-lag"][i]["member"]) == fabric_spine_interface:  
+                           helpers.log("Spine lag formation from leaf switch %s is correct,Expected = %d, Actual = %d, " % (dpid, fabric_spine_interface, len(data3[0]["fabric-lag"][i]["member"])))
+                           return True
+                         else:
+                           helpers.test_failure(" Spine lag formation from leaf %s switch is not correct,Expected = %d, Actual = %d" % (dpid, fabric_spine_interface, len(data3[0]["fabric-lag"][i]["member"])))
+                           return False 
+                      elif data3[0]["fabric-lag"][i]["lag-type"] == "spine-broadcast-lag":
                           if len(data3[0]["fabric-lag"][i]["member"]) == (int(self.rest_get_no_of_rack()) * fabric_spine_interface):
-                             helpers.log("Spine Broadcast lag from leaf switch %s is correct , no of rack = %d , no of fabric_interface = %d" % (dpid, int(self.rest_get_no_of_rack()), fabric_spine_interface))
+                             helpers.log("Spine Broadcast lag from leaf switch %s is correct , Actual = %d , Expected = %d" % (dpid, int(self.rest_get_no_of_rack()), fabric_spine_interface))
                           else:
                              helpers.test_failure("Spine Broadcast lag from leaf switch %s is not correct,expected = %d,actual = %d" % (dpid, (int(self.rest_get_no_of_rack()) * fabric_spine_interface), len(data3[0]["fabric-lag"][i]["member"])))
-                     elif data3[0]["fabric-lag"][i]["lag-type"] == "leaf-lag":       
+                      elif data3[0]["fabric-lag"][i]["lag-type"] == "leaf-lag":       
                           if len(data3[0]["fabric-lag"][i]["member"]) == fabric_peer_interface:  
-                             helpers.log("Peer lag formation from leaf switch %s is correct,no of fabric-interface = %d" % (dpid, fabric_peer_interface))
+                             helpers.log("Peer lag formation from leaf switch %s is correct,Expected = %d, Actual = %d" % (dpid, fabric_peer_interface, len(data3[0]["fabric-lag"][i]["member"])))
                           else:
                              helpers.test_failure(" Spine lag formation from leaf %s switch is not correct,expected= %d,Actual= %d" % (dpid, fabric_peer_interface, len(data3[0]["fabric-lag"][i]["member"])))
-                                       
         else :
             return False
     

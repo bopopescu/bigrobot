@@ -23,11 +23,13 @@ Add Fabric Switch Spine and Verify the Status
 
   REST show fabric switch     
   # Check the fabric switch connection status once the physical switch is connected
+  sleep  5
   verify fabric switch  00:00:00:00:00:01:00:01  
   # status should show as virtual   
   configure switch  spine0 
   configure dpid  spine0  00:00:00:00:00:01:00:01 
   configure fabric role  spine0  spine
+  sleep  5
   verify fabric switch  00:00:00:00:00:01:00:01 
   
 Add Fabric Switch Leaf Group and Verify the status
@@ -37,16 +39,19 @@ Add Fabric Switch Leaf Group and Verify the status
   configure dpid  leaf0-a  00:00:00:00:00:02:00:01 
   configure fabric role  leaf0-a  leaf
   configure leaf group  leaf0-a  rack0
+  sleep  5
   verify fabric switch  00:00:00:00:00:02:00:01
   configure switch  leaf0-b
   configure dpid  leaf0-b  00:00:00:00:00:02:00:02 
   configure fabric role  leaf0-b  leaf
   configure leaf group  leaf0-b  rack0
+  sleep  5
   verify fabric switch  00:00:00:00:00:02:00:02 
  
 Delete Fabric switch and verify the status
 
   REST remove fabric switch  spine0
+  sleep  5
   verify fabric switch  00:00:00:00:00:01:00:01
   verify fabric switch  00:00:00:00:00:02:00:01
   verify fabric switch  00:00:00:00:00:02:00:02
