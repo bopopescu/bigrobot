@@ -13,5 +13,5 @@ class Controller(object):
         cmd = 'show user'
         if user:
             cmd = ''.join((cmd, ' ', user)) 
-        c.cli.cmd(cmd)
-        helpers.log(c.cli.response())
+        c.cli(cmd)
+        helpers.log("CLI mode result: %s" % c.cli_content())

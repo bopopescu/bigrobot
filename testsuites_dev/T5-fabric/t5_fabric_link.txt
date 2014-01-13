@@ -25,16 +25,30 @@ Verify Fabric link formation
 	REST verify fabric link 	
 
 Remove one of the spine Fabric Role  
-	REST remove fabric role   spine0       
+	REST remove fabric role  spine     
 
-Verify Fabric Link formation after deleting one spine 
+Verify Fabric Link formation after deleting one spine
+    sleep  5 
 	REST verify fabric link   
 
 Add the Fabric Role back for spine 
 	REST configure fabric role   spine0   spine      
 
-Verify Fabric Link formation after adding one spine 
-	REST verify fabric link  
+Verify Fabric Link formation after adding one spine
+    sleep  5 
+	REST verify fabric link
+	
+Remove one of the leaf in Dual Leaf setup and verify the link
+    rest remove fabric role  leaf
+    rest remove leaf group  leaf0-a
+    sleep  5
+    rest verify fabric link
+    
+Add leaf back into the setup in Dual Rack Dual leaf topology
+    rest configure fabric role  leaf0-a  leaf
+    rest configure leaf group  leaf0-a  rack0
+    sleep  5
+    rest verify fabric link
 	
 Tear down config and Topology
     remove fabric switch

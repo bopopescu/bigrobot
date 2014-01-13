@@ -25,21 +25,23 @@ verify fabric lag formation from spine node
     verify fabric lag   00:00:00:00:00:01:00:01
 	
 Remove the Fabric Role spine  
-	REST remove fabric role   spine0       
+	REST remove fabric role   spine       
 
-Verify Fabric Lag from leaf after deleting one spine 
+Verify Fabric Lag from leaf after deleting one spine
+    sleep  5 
 	verify fabric lag   00:00:00:00:00:02:00:01
 
 Verify Fabric Lag from spine after deleting one spine 
 	verify fabric lag   00:00:00:00:00:01:00:01
 
-Add the Fabric Role back  
+Add the Fabric Role spine back  
 	REST configure fabric role   spine0   spine      
 
-Verify Fabric Lag formation after adding one spine 
+Verify Fabric Lag from leaf node after adding back spine node 
+    sleep  5 
 	verify fabric lag   00:00:00:00:00:02:00:01
 	
-Verify Fabric Lag from spine after deleting one spine 
+Verify Fabric Lag from spine after adding back spine node 
 	verify fabric lag   00:00:00:00:00:01:00:01
 
 Tear down config and topology

@@ -141,6 +141,7 @@ Tear down the config
    delete a portgroup  p2
    delete a portgroup  p3
    remove fabric switch
+   
 
 * Keywords
 
@@ -157,6 +158,7 @@ T5 base test setup
    create a portgroup  p3 
    add interface to portgroup  leaf1-a  ${bm2_intf0}  p3
    add interface to portgroup  leaf1-b  ${bm2_intf1}  p3
+   sleep  5
    
 T5 base test teardown
    delete a tenant  A
@@ -170,6 +172,7 @@ T5 base test teardown
    delete a portgroup  p2
    delete a portgroup  p3
    base test teardown
+   sleep  5
          
 create a tenant  [Arguments]  ${tenant} 
   REST create tenant  ${tenant}    
