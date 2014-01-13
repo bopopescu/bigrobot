@@ -65,8 +65,8 @@ class Common(object):
         """ Clean up bigtap configuration in order: policy, address-group
             Mingtao
          """         
-        self.bigtap_clean_policy 
-        self.bigtap_clean_addrgroup
+        self.bigtap_clean_policy() 
+        self.bigtap_clean_addrgroup()
  
         return True   
 
@@ -179,7 +179,7 @@ class Common(object):
         """
        
         helpers.log("the base address is: %s,  the step is: %s,  "  % (str(base), str(incr)))   
-        if addr_type == 'ipv4': 
+        if addr_type == 'ipv4' or addr_type == 'ip': 
             ip = list(map(int, base.split(".")))
             step = list(map(int, incr.split(".")))            
             ipAddr = []
@@ -194,7 +194,7 @@ class Common(object):
              
             ipAddr  = '.'.join(map(str,ip)) 
                         
-        if addr_type == 'ipv6' :
+        if addr_type == 'ipv6'  or addr_type == 'ip6':
             ip = base.split(":")
             step =  incr.split(":")
             helpers.log("IP list is %s" % ip)
@@ -206,17 +206,19 @@ class Common(object):
                 index = 7 - int(i)
                 ip[index] = int(ip[index], 16) + int(step[index], 16)
                 ip[index] = hex(ip[index])
-                if ip[index] >= 'ffff':
-                    ip[index] = 0
+                temp = ip[index]                                         
+                if int(temp,16) >= 65536:
+                    ip[index] = hex(0)
                     ip[index-1] = int(ip[index-1],16) + 1
                     ip[index-1] = hex(ip[index-1])
                   
                     
-            ip[0] = int(ip[0],16) + int(step[0],16)        
-            if ip[0] >= 65535:
-                ip[0] = 0
-                    
-            ip[0]=hex(ip[0])    
+            ip[0] = int(ip[0],16) + int(step[0],16)   
+            ip[0]=hex(ip[0])      
+            temp = ip[0]                               
+            if int(temp,16) >= 65536:
+                ip[0] = hex(0)
+                ip[0]=hex(ip[0])    
                 
             for i in range(0,8):
                 hexip.append('{0:x}'.format(int(ip[i],16)))  
@@ -551,7 +553,7 @@ class Common(object):
         helpers.log("the data in match is %s" % data)
         c.rest.put(url,data_dict)
         helpers.test_log(c.rest.result_json())
-        helpers.test_log(c.rest.content_json()) 
+ 
         if (flag == 'negative'):
             if not c.rest.status_code_ok():
                 return True
@@ -600,7 +602,8 @@ class Common(object):
             TBD - file can be new or append
         """
           
-        helpers.log("the base address is: %s,  the step is: %s,  the mask is: %s,  the Num is: %s, the common field: %s"  % (str(base), str(incr), str(mask),  str(number), str(common)))   
+        helpers.log("the base address is: %s,  the step is: %s,  the mask is: %s,  the Num is: %s, the common field: %s"  
+                    % (str(base), str(incr), str(mask),  str(number), str(common)))   
          
         fo = open(file_name,'w')
         temp = "bigtap policy %s \n"  % (str(policy)) 
@@ -650,14 +653,15 @@ class Common(object):
         """ add multiple match entries to a policy 
             Mingtao
             Done: ipv4/ipv6  src_ip,  dst_ip
+            Usage: 
             To BE Done:  other fields: port    mac   vlan ....
+                 common: dst-ip=100 100.100.100.1, dst-ip-mask=255.255.255.0   
+            
         """
-        helpers.log("the policy Name is: %s, mtype is: %s, cType is : %s, base is: %s,  the step is: %s,  the mask is: %s,  the Num is: %s, the common field: %s"  % (str(pName), str(mType), str(cType), str(base), str(incr), str(Mask),  str(Num), kwargs ))   
+        helpers.log("policy Name is: %s, mtype is: %s, cType is : %s, base is: %s,   step is: %s,  mask is: %s,  Num is: %s,  common: %s" 
+                     % (str(pName), str(mType), str(cType), str(base), str(incr), str(Mask),  str(Num), kwargs ))   
                                
-        """
-        common: dst-ip=100 100.100.100.1, dst-ip-mask=255.255.255.0
-          
-        """
+       
         if mType == 'ip': 
             if cType == 'src_ip' or cType == 'dst_ip':
                 match_string = self.bigtap_construct_match(ip=mType, src_ip=base, src_ip_mask=Mask, sequence=match_num, **kwargs) 
@@ -697,12 +701,12 @@ class Common(object):
 
    
     def bigtap_construct_match(self,
-                               ip=None, ip6=None, ether_type=None,
+                               ip_type=None, ether_type=None,
                                src_mac = None,
                                dst_mac = None,
-                               udp=None, tcp=None,
+                               ip_proto=None, 
                                icmp=None, icmp_code=None, icmp_type=None,
-                               vlan_id = None, vlan_min=None, vlan_max=None,  
+                               vlan = None, vlan_min=None, vlan_max=None,  
                                src_ip_list =None, src_ip =None, src_ip_mask =None, 
                                dst_ip_list =None, dst_ip =None, dst_ip_mask =None, 
                                tos_bit =None,
@@ -727,24 +731,36 @@ class Common(object):
                 temp += '"src-tp-port": %s,' % icmp_type
                   
         if ether_type:
-            if ether_type == 'ipv6':
+            if ether_type == 'ipv6' or ether_type == 'ip6':
                 temp += '"ether-type": 34525,'
-            elif ether_type == 'ip':
+            elif ether_type == 'ip' or ether_type == 'ipv4':
                 temp += '"ether-type": 2048,'
             else:
                 temp += '"ether-type": %s,' % ether_type
-        elif ip6:
-            temp += '"ether-type": 34525,' 
-        else:
-            temp += '"ether-type": 2048,'
-                
-        if tcp:
-            temp +='"ip-proto": 6,'  
-        elif udp:
-            temp +='"ip-proto": 17,'   
+        elif ip_type:
+            if ip_type =='ip' or  ip_type =='ipv4':
+                temp += '"ether-type": 2048,'
+            else:
+                temp += '"ether-type": 34525,' 
+ 
+        if ip_proto:
+            if ip_proto == 'tcp':
+                temp += '"ether-type": 2048,'
+                temp +='"ip-proto": 6,'   
+            elif ip_proto == 'tcp6':
+                temp += '"ether-type": 34525,'
+                temp +='"ip-proto": 6,'  
+            elif ip_proto == 'udp':
+                temp += '"ether-type": 2048,'                
+                temp +='"ip-proto": 17,'   
+            elif ip_proto == 'udp6':
+                temp += '"ether-type": 34525,'                
+                temp +='"ip-proto": 17,'   
+            else:
+                temp +='"ip-proto": %s,' %ip_proto  
 
-        if vlan_id:
-            temp +='"vlan-id":  %s ,' % vlan_id  
+        if vlan:
+            temp +='"vlan":  %s ,' % vlan 
         else:
             if vlan_min:
                 temp +='"src-tp-port-min": %s,' % vlan_min  
@@ -793,15 +809,8 @@ class Common(object):
     
     
     
-
-
-
-
+##################end files to be staged to production ################### 
  
-##################################### 
-# files to be staged to product
-########################################
-
 
 
 
@@ -871,10 +880,125 @@ class Common(object):
     
 
 
+    def bigtap_gen_config_match_new(self,pname,match_type,field,base,incr,mask=None,number='10',sequence='100', **kwargs):
+        """ add multiple match entries to a policy 
+            Mingtao
+            Done: ipv4/ipv6  src_ip,  dst_ip
+            Usage: 
+                bigtap_gen_config_match_new   IP1   ip  src_ip  10.0.0.0  0.0.0.1  255.255.255.255  10  100 
+                bigtap_gen_config_match_new   IP1   tcp  dst_port  100  1   number=10  sequence=200 
+            To BE Done:  other fields: port    mac   vlan ....
+                 common: dst-ip=100 100.100.100.1, dst-ip-mask=255.255.255.0   
+            
+        """
+        helpers.log("policy Name is: %s, mtype is: %s, cType is : %s, base is: %s,   step is: %s,  mask is: %s,  Num is: %s,  common: %s" 
+                     % (str(pname), str(match_type), str(field), str(base), str(incr), str(mask),  str(number), kwargs ))   
+     
+        if field in ('src_ip', 'dst_ip'): 
+            #match type is:  ip  ip6  ipv4  ipv6 
+            Num = int(number)         
+            for num in range(0,int(Num)): 
+                kwargs[field] = base
+                kwargs[field + '_mask'] = mask                            
+                helpers.log("the num is:  %s ;  kwargs is : %s" % (str(num), kwargs))   
+                mNum = int(num) + int(sequence)                 
+                match_string = self.bigtap_construct_match(ip_type=match_type, sequence=mNum, **kwargs) 
+                self.rest_bigtap_add_policy_match("admin-view", pname,mNum,match_string)         
+                                                        
+                ipAddr = self.get_next_address(match_type,base,incr)
+                base = ipAddr 
+                    
+        if field in ('dst_port', 'src_port'): 
+            # match_type is:  tcp  udp, tcp6  udp6
+            Num = int(number)         
+            for num in range(0,int(Num)): 
+                kwargs[field] = base                                        
+                helpers.log("the num is:  %s ;  kwargs is : %s" % (str(num), kwargs))   
+                mNum = int(num) + int(sequence)                 
+                match_string = self.bigtap_construct_match(ip_proto=match_type, sequence=mNum, **kwargs) 
+                self.rest_bigtap_add_policy_match("admin-view", pname,mNum,match_string)                                                                                
+                base = int(base) + int(incr) 
+                                       
+        if field in ('vlan'): 
+            # match_type is: ip ipv6  tcp tcp6 udp udp6  
+            Num = int(number)         
+            for num in range(0,int(Num)): 
+                kwargs[field] = base                                        
+                helpers.log("the num is:  %s ;  kwargs is : %s" % (str(num), kwargs))   
+                mNum = int(num) + int(sequence)    
+                if match_type == 'ip' or  match_type == 'ipv4' or  match_type == 'ip6' or match_type == 'ipv6':          
+                    match_string = self.bigtap_construct_match(ip_type=match_type, sequence=mNum, **kwargs) 
+                if match_type == 'tcp' or  match_type == 'tcp6' or  match_type == 'udp' or match_type == 'udp6':  
+                    match_string = self.bigtap_construct_match(ip_proto=match_type, sequence=mNum, **kwargs)                                   
+                self.rest_bigtap_add_policy_match("admin-view", pname,mNum,match_string)                                                                                
+                base = int(base) + int(incr) 
 
+                        
+        if field in ('src_mac','dst_mac'): 
+            # match_type is: ip ipv6  tcp tcp6 udp udp6  
+            Num = int(number)         
+            for num in range(0,int(Num)): 
+                kwargs[field] = base                                        
+                helpers.log("the num is:  %s ;  kwargs is : %s" % (str(num), kwargs))   
+                mNum = int(num) + int(sequence)    
+                if match_type == 'ip' or  match_type == 'ipv4' or  match_type == 'ip6' or match_type == 'ipv6':          
+                    match_string = self.bigtap_construct_match(ip_type=match_type, sequence=mNum, **kwargs) 
+                if match_type == 'tcp' or  match_type == 'tcp6' or  match_type == 'udp' or match_type == 'udp6':  
+                    match_string = self.bigtap_construct_match(ip_proto=match_type, sequence=mNum, **kwargs)   
+                                                    
+                self.rest_bigtap_add_policy_match("admin-view", pname,mNum,match_string)  
+                macAddr = self.get_next_mac(base,incr)                                                                              
+                base = macAddr
+        
+        return True   
+
+
+    def get_next_mac(self,base,incr): 
+        """ Generate the next mac address bases on the base and step.
+            Mingtao
+            Usage:     
+                      
+            Vui - move to common
+        """
+       
+        helpers.log("the base address is: %s,  the step is: %s,  "  % (str(base), str(incr)))   
+  
+        ip = base.split(":")
+        step =  incr.split(":")
+        helpers.log("MAC list is %s" % ip)
+         
+        hexip = []  
+                             
+        for index in range(5,0,-1):
+            ip[index] = int(ip[index], 16) + int(step[index], 16)
+            ip[index] = hex(ip[index]) 
+            temp = ip[index]                                         
+            if int(temp,16) >= 256:
+                ip[index] = hex(0)
+                ip[index-1] = int(ip[index-1],16) + 1
+                ip[index-1] = hex(ip[index-1])
+                 
+        ip[0] = int(ip[0],16) + int(step[0],16)   
+        ip[0]=hex(ip[0])  
+        
+        temp = ip[0]    
+                                  
+        if int(temp,16) >= 256:
+            ip[0] = hex(0)
+            ip[0]=hex(ip[0])    
+            
+        for i in range(0,6):
+ 
+            hexip.append('{0:02x}'.format(int(ip[i],16)))                                    
+        ipAddr  = ':'.join(map(str,hexip))  
+             
+        return ipAddr
+ 
 
 
     def rest_bigtap_show_policy_optimize(self, policyName,numMatch):
+        """ not working now
+        """
         t = test.Test()
         c = t.controller()
          
@@ -897,7 +1021,8 @@ class Common(object):
         if len(content[0]['optimized-match']) == "numMatch":
                 helpers.test_log("Policy correctly  optimize the match entries: %s" % numMatch  )
         else:
-                helpers.test_failure("ERROR: Policy does not correctly optimized match expect : %s  -----  actual:  %s " % (numMatch, len(content[0]['optimized-match'])))
+                helpers.test_failure("ERROR: Policy not correctly optimized  expect : %s  -----  actual:  %s " 
+                                     % (numMatch, len(content[0]['optimized-match'])))
                 return False                
         
         return True

@@ -130,11 +130,11 @@ Test L3_L4_Mode
   	bigtap_clean_up             l3-l4-mode
  	sleep_now                   short  	
 # verify default is l3-l4-mode disable
-  	REST bigtap verify l34	False
+  	REST bigtap verify feature	    l3_l4=False  inport_mask=True
 # config l3-l4-mode and verify
   	REST bigtap config l34    true
  	sleep_now                   short  	
-  	REST bigtap verify l34	True
+  	REST bigtap verify feature	    l3_l4=True
   	
  # verify l3-l4-mode can not be disabled with policy	
   	Config bigtap policy        IP1   S203-50   S204-52
@@ -144,7 +144,7 @@ Test L3_L4_Mode
   	bigtap_clean_up             policy
   	REST bigtap config l34      false
  	sleep_now                   short  	  	
-  	REST bigtap verify l34	    False	
+  	REST bigtap verify feature	    l3_l4=False
   	Config bigtap policy        IP2   S203-50   S204-52
  	sleep_now                   short  	  	  	
   	REST bigtap config l34      true    negative   		 
@@ -156,19 +156,31 @@ Test L3_L4_Mode
 
 Test optimization 
 # prepare
-	bigtap_clean_up             policy
- 	sleep_now                   short  		
+	bigtap_clean_all      
+#	bigtap_clean_policy
+#	bigtap_clean_addrgroup	     	    
+ 	sleep_now                   short   			
 	Config bigtap policy        IP1   S203-50   S204-52
-	sleep_now                   short
+	sleep_now                   3
+#   Test prefix optimization
+#	bigtap_gen_config_match_new   IP1   ip  src_ip  10.0.0.0  0.0.0.1  255.255.255.255  10  100  
+	bigtap_gen_config_match_new   IP1   ipv6  src_ip  f001:100:0:0:0:0:0:fffe 	0:1:0:0:0:0:0:1	  ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff  20  150 
+#	bigtap_gen_config_match_new   IP1   tcp  dst_port  100  1   number=10  sequence=200 
+#	bigtap_gen_config_match_new   IP1   tcp6  dst_port  200  1   number=10  sequence=300 	
+#	bigtap_gen_config_match_new   IP1   tcp6  vlan  200  1   number=10  sequence=300 		
+#	bigtap_gen_config_match_new   IP1   ip  vlan  500  1   number=10  sequence=500 	
+	bigtap_gen_config_match_new   IP1   ip  src_mac  5c:16:c7:13:fc:fe   0:0:0:0:0:1   number=3  sequence=500 	
+
+
 # verify tcp port optimize	for ipv4 and ipv6
-	REST bigtap add policy match       admin-view  IP1   10   {"dst-tp-port-min": 16, "ether-type": 2048, "dst-tp-port-max": 31, "ip-proto": 6, "sequence": 10} 	
-	REST bigtap show policy optimize	IP1	   1 
-	REST bigtap add policy match       admin-view  IP1   10   {"dst-tp-port-min": 16, "ether-type": 34525, "dst-tp-port-max": 31, "ip-proto": 6, "sequence": 10} 		 
-	REST bigtap show policy optimize	IP1	   1 
+#	REST bigtap add policy match       admin-view  IP1   10   {"dst-tp-port-min": 16, "ether-type": 2048, "dst-tp-port-max": 31, "ip-proto": 6, "sequence": 10} 	
+#	REST bigtap show policy optimize	IP1	   1 
+#	REST bigtap add policy match       admin-view  IP1   10   {"dst-tp-port-min": 16, "ether-type": 34525, "dst-tp-port-max": 31, "ip-proto": 6, "sequence": 10} 		 
+#	REST bigtap show policy optimize	IP1	   1 
 
 
 		 	
-	[Tags]   sanity  skipped
+	[Tags]   sanity   
 
 
 Load and apply config file
@@ -183,21 +195,21 @@ Load and apply config file
 #	bigtap_gen_config_addrgroup 	 IPV6    ipv6 	f001:100:0:0:0:0:0:0 	0:0:0:0:0:0:0:1		ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff 	20
 
    	REST bigtap_create_policy  admin-view    IPV46
-	bigtap_apply_match           IPV46    ip     src_ip    10.0.0.0     0.0.1.0   255.255.255.0  3   100
+	bigtap_gen_config_match           IPV46    ip     src_ip    10.0.0.0     0.0.1.0   255.255.255.0  3   100   dst_ip=100.100.100.1  dst_ip_mask=255.255.255.0
 
-	bigtap_apply_match           IPV46    ipv6     src_ip    f001:100:0:0:0:0:0:0   0:0:0:0:0:0:0:1		ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff   3   1000
+	bigtap_gen_config_match           IPV46    ipv6     src_ip    f001:100:0:0:0:0:0:0   0:0:0:0:0:0:0:1		ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff   3   1000
 
 #	bigtap_construct_match       ip      tcp      16     33 
 #	bigtap_construct_match       kwarg {"ip":"ip","src_ip":"10.0.0.0","src_ip_mask":"255.255.255.0"}	 
-	[Tags]  sanity  
+	[Tags]  sanity  skipped
 
 
 * Keywords
 Config bigtap policy
-	[Arguments]               ${pName}  ${intFname}  ${intDname}
-	REST add policy            admin-view  ${pName}  forward 
-	REST add policy interface  admin-view  ${pName}  ${intFname}  filter 
-	REST add policy interface  admin-view  ${pName}  ${intDname}  delivery 
+	[Arguments]          			    	  ${pName}  ${intFname}  ${intDname}
+	REST bigtap create policy 	  admin-view  ${pName}  forward 
+	REST bigtap add policy interface   admin-view  ${pName}  ${intFname}  filter 
+	REST bigtap add policy interface  admin-view  ${pName}  ${intDname}  delivery 
  	
 	
 show command  
