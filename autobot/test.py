@@ -23,6 +23,7 @@ class Test(object):
         def __init__(self):
             # This flag ensures that we only do setup once
             self._init_completed = False
+            self._fatal_error = False
             
             config = ''.join((helpers.get_path_autobot_config(), '/bsn.yaml'))
             helpers.log("Loading config file %s" % config)
@@ -73,6 +74,7 @@ class Test(object):
         return self._topology_params
 
     def topology(self, name=None):
+        #self.initialize()
         if name:
             return self._topology[name]
         else:
@@ -108,11 +110,21 @@ class Test(object):
         else:
             return False
 
+    def pingable_or_die(self, node):
+        if not helpers.ping(node, count=3, waittime=1000):
+            # Consider init to be completed, so as not to be invoked again.
+            self._init_completed = True
+            helpers.environment_failure("Node with IP address %s is unreachable."
+                                        % node)
+
     def initialize(self, force_init=False):
         """
         Initializes the test object. This should be called prior to test case
         execution (e.g., called by Test Suite or Test Case setup).
         """
+
+        if self._fatal_error:
+            helpers.exit_robot_immediately()
 
         # This check ensures we  don't try to initialize multiple times.
         if self._init_completed and not force_init:
@@ -135,8 +147,10 @@ class Test(object):
             #
             n = node.Node(params[key]['ip'])
             
+            self.pingable_or_die(n.ip)
+            
             if self.is_controller(key):
-                helpers.log("Setting up the controller ('%s')" % key)
+                helpers.log("Setting up controller ('%s')" % key)
                 if 'http_port' in params[key]:
                     n.http_port = params[key]['http_port']
                 else:
@@ -165,7 +179,10 @@ class Test(object):
                                                   password=self.controller_password())
                 
                 # Shortcuts
-                n.cli = n.dev.cli
+                n.cli = n.dev.cli           # CLI mode
+                n.enable = n.dev.enable     # Enable mode
+                n.config = n.dev.config     # Configuration mode
+                n.bash   = n.dev.bash       # Bash mode
                 n.cli_content = n.dev.content
                 n.cli_result = n.dev.result
                 
@@ -173,6 +190,7 @@ class Test(object):
 
             # !!! FIXME: This is a hack to get things going for now...
             if self.is_mininet(key):
+                helpers.log("Setting up Mininet ('%s')" % key)
                 if 'topology' in params[key]:
                     n.topology = params[key]['topology']
                 else:
@@ -207,7 +225,10 @@ class Test(object):
                 n.cli_result = n.dev.result
                 
                 self._topology[key] = n
-            
+
+        helpers.log("Exscript driver for '%s': %s"
+                    % (key, n.dev.conn.get_driver()))
+
         helpers.prettify_log("self._topology", self._topology)
         helpers.log("Test object initialization completed.") 
         self._init_completed = True

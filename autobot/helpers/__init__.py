@@ -9,6 +9,7 @@ import pprint
 import paramiko
 import inspect
 import subprocess
+import signal
 import re
 from scp import SCPClient
 from pytz import timezone
@@ -431,22 +432,40 @@ def error_exit_if_file_not_exist(msg, f):
         error_exit(''.join((msg, ': ', f)))
 
 
+def exit_robot_immediately(msg=None):
+    """
+    See https://groups.google.com/forum/#!topic/robotframework-users/Mbt_8Pe3t7c
+    Send same signal that Ctrl-C sends to stop execution gracefully.
+    Currently, this is the sure way to exit out of Robot Framework.
+    """
+    if msg:
+        log(msg, level=4)
+    log("Exiting BigRobot now...", level=4)
+    os.kill(os.getpid(), signal.SIGINT)  # "Second signal will force exit"
+    os.kill(os.getpid(), signal.SIGINT)  # "Execution forcefully stopped"
+    
+
 class TestFailure(AssertionError):
     """
-    This can triggered when there is a test failure.
+    This can be triggered when there is a test case failure.
     """
 
 
 class TestError(AssertionError):
     """
-    This can triggered when there is a test failure.
+    This can be triggered when there is a test error. It is designed for
+    flagging uncaught error conditions in the test libraries, such as the
+    'Unknown ping error' in helpers.ping().
     """
+    ROBOT_EXIT_ON_FAILURE = True
 
 
-class EnvironmentFailure(AssertionError):
+class EnvironmentFailure(RuntimeError):
     """
-    This is triggered when there is a test environment failure.
+    This can be triggered when there is a test environment failure. It is a
+    critical condition which should prevent further test executions.
     """
+    ROBOT_EXIT_ON_FAILURE = True
     
 
 def test_success(msg):
@@ -535,3 +554,51 @@ def run_cmd(cmd, cwd=None, ignore_stderr=False, shell=True, quiet=False):
             return (False, err)
         
         return (True, out)
+
+
+def _ping(host, count=3, waittime=100, quiet=False):
+    _, out = run_cmd("ping -c %d -W %d %s" % (count, waittime, host),
+                     shell=False, quiet=True)
+
+    if not quiet:
+        log("Ping output:\n%s" % out, level=5)
+        
+    # Linux output:
+    #   3 packets transmitted, 3 received, 0% packet loss, time 2003ms
+    # Mac OS X output:
+    #   3 packets transmitted, 3 packets received, 0.0% packet loss
+
+    match = re.search(r'.*transmitted, (\d+)( packets)? received.*',
+                      out,
+                      re.M|re.I)
+    if match:
+        packets_received = int(match.group(1))
+        s = ("Ping host '%s' - %d transmitted, %d received"
+             % (host, count, packets_received))
+        if packets_received > 0:
+            if not quiet:
+                log("Success! %s" % s, level=5)
+            return True
+        else:
+            if not quiet:
+                log("Failure! %s" % s, level=5)
+            return False
+    test_error("Unknown ping error.")
+
+
+def ping(host, count=3, waittime=100, quiet=False):
+    """
+    Unix ping.
+    :param host: (Str) ping hist host
+    :param count: (Int) number of packets to send
+    :param waittime: (Int) time in milliseconds to wait for a reply
+    """
+    if count < 3:
+        count = 3   # minimum count
+    status = _ping(host, count=1, waittime=100, quiet=quiet)
+    if not status:
+        status = _ping(host, count=1, waittime=100, quiet=quiet)
+    if not status:
+        count -= 2
+        status = _ping(host, count=count, waittime=waittime, quiet=quiet)
+    return status
