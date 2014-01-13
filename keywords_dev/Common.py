@@ -218,7 +218,7 @@ class Common(object):
             temp = ip[0]                               
             if int(temp,16) >= 65536:
                 ip[0] = hex(0)
-                ip[0]=hex(ip[0])    
+#                ip[0]=hex(ip[0])    
                 
             for i in range(0,8):
                 hexip.append('{0:x}'.format(int(ip[i],16)))  
@@ -956,43 +956,42 @@ class Common(object):
     def get_next_mac(self,base,incr): 
         """ Generate the next mac address bases on the base and step.
             Mingtao
-            Usage:     
-                      
+            Usage:  macAddr = self.get_next_mac(base,incr)      
             Vui - move to common
         """
        
         helpers.log("the base address is: %s,  the step is: %s,  "  % (str(base), str(incr)))   
   
-        ip = base.split(":")
+        mac = base.split(":")
         step =  incr.split(":")
-        helpers.log("MAC list is %s" % ip)
+        helpers.log("MAC list is %s" % mac)
          
-        hexip = []  
+        hexmac = []  
                              
         for index in range(5,0,-1):
-            ip[index] = int(ip[index], 16) + int(step[index], 16)
-            ip[index] = hex(ip[index]) 
-            temp = ip[index]                                         
+            mac[index] = int(mac[index], 16) + int(step[index], 16)
+            mac[index] = hex(mac[index]) 
+            temp = mac[index]                                         
             if int(temp,16) >= 256:
-                ip[index] = hex(0)
-                ip[index-1] = int(ip[index-1],16) + 1
-                ip[index-1] = hex(ip[index-1])
+                mac[index] = hex(0)
+                mac[index-1] = int(mac[index-1],16) + 1
+                mac[index-1] = hex(mac[index-1])
                  
-        ip[0] = int(ip[0],16) + int(step[0],16)   
-        ip[0]=hex(ip[0])  
+        mac[0] = int(mac[0],16) + int(step[0],16)   
+        mac[0]=hex(mac[0])  
         
-        temp = ip[0]    
+        temp = mac[0]    
                                   
         if int(temp,16) >= 256:
-            ip[0] = hex(0)
-            ip[0]=hex(ip[0])    
+            mac[0] = hex(0)
+#           mac[0]=hex(mac[0])    
             
         for i in range(0,6):
  
-            hexip.append('{0:02x}'.format(int(ip[i],16)))                                    
-        ipAddr  = ':'.join(map(str,hexip))  
+            hexmac.append('{0:02x}'.format(int(mac[i],16)))                                    
+        macAddr  = ':'.join(map(str,hexmac))  
              
-        return ipAddr
+        return macAddr
  
 
 
