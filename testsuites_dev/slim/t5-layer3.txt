@@ -86,9 +86,8 @@ L3 ping bm0 to bm1 single leaf single rack across tenants
    	mininet host arp			${host0_name}		${vns1_ip}		${gw_mac}
    	mininet host arp			${host2_name} 		${vns3_ip}		${gw_mac}
    	sleep  5
-   	loss  						mininet L3 ping		${host0_name}	${host1_name}
-   	${a}=   loss[0]
-   	Should Be True  ${a} == 100
+   	${loss}=						mininet L3 ping		${host0_name}	${host1_name}
+   	Should Be True  ${loss} == 100
 	REST delete tenant			${tenant1_name}   
 	REST delete tenant			${tenant2_name}     
 	sleep  10
