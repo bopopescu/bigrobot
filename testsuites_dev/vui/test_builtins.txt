@@ -1,0 +1,15 @@
+* Setting
+Documentation   This suite is my sandbox for trying out Builtin keywords
+Force Tags      Vui
+
+* Test Case
+Test Should Be True
+    [Documentation]  This is a generic keyword for doing all sorts of basic comparison operations.
+    Should Be True  10 > 1
+    Should Be True  10 >= 10
+
+Test Should Be False
+    [Tags]  skipped
+    Should Be True  10 < 1
+    Should Be True  10 > 10
+

@@ -367,7 +367,7 @@ class T5(object):
             helpers.test_failure(c.rest.error())
             
         return c.rest.content()
-<<<<<<< HEAD
+
     
     def rest_configure_ip_endpoint(self, tenant, vns, endpoint, ip):
         t = test.Test()
@@ -388,8 +388,8 @@ class T5(object):
         if not c.rest.status_code_ok():
             helpers.test_failure(c.rest.error())
         return c.rest.content()
-=======
-   
+
+
     def rest_create_vns_ip(self, tenant, vns, ipaddr, netmask):
         '''Create vns router interface via command "virtual-router vns interface"
         
@@ -466,9 +466,3 @@ class T5(object):
             return c.rest.content()               
         
         
-        
-        
-        
-        
-        
->>>>>>> 877798d13269b725b9c9573fbf8f934fafeec393

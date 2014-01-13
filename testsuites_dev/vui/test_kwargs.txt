@@ -1,0 +1,9 @@
+* Setting
+Documentation   This suite is my sandbox for experimentation.
+Force Tags      Vui
+Library         keywords_dev/vui/MyTest.py
+
+* Test Case
+Test kwargs
+    passing kwargs  arg1=${1}  arg2=${2}  arg_kw1="ABC"  arg_kw2="XYZ"
+

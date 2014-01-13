@@ -6,5 +6,6 @@ Library         keywords_dev/vui/TestGetArgs.py
 
 * Test Case
 test get_args
-    test args  KwarG {"arg8":1111, "arg12":2222, "arg10":true, "arg3":null}
+    test args  arg8=1111  arg12=${2222}  arg10=${true}  arg3=${none}  arg1=333
+    #test args  KwarG {"arg8":1111, "arg12":2222, "arg10":true, "arg3":null}
     #test args2

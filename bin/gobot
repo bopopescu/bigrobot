@@ -8,7 +8,6 @@ import os
 import sys
 import platform
 import shutil
-import subprocess
 import argparse
 
 
@@ -188,28 +187,12 @@ def exit_if_suite_not_defined():
         helpers.error_exit("Test suite file '%s' does not exist." % f)
 
 
-def run(cmd, cwd=None, ignore_stderr=False, quiet=False, shell=True):
-    """
-    shell - Just pass the command string for execution in a subshell. This is
-            ideal when command should run in the background (string can include
-            '&') and/or command contains shell variables/wildcards.
-    """ 
-    if not quiet:
-        print("Executing '%s'" % cmd)
-
-    if shell:
-        p = subprocess.call(cmd, shell=True)
-    else:
-        cmd_list = cmd.split(' ')
-        p = subprocess.Popen(cmd_list,
-                             stdout=subprocess.PIPE,
-                             stderr=subprocess.PIPE, cwd=cwd)
-        
-        out, err = p.communicate() 
-        if out:
-            print(out)
-        if err and not ignore_stderr:
-            print(err)
+def run(cmd, cwd=None, shell=True, quiet=False):
+    helpers.log("cmd: %s" % cmd)
+    status, msg = helpers.run_cmd(cmd, cwd=cwd, shell=shell, quiet=quiet)
+    if msg:
+        print msg
+    return status
 
 
 def format_convert(f, quiet=False):
@@ -242,9 +225,15 @@ def format_convert_and_copy(f, p, quiet=False):
 
 def create_symlinks_to_logs():
     log_path = helpers.bigrobot_log_path()
-    log_files = ['debug.log', 'log.html', 'report.html']
+    log_files = ['debug.log', 'syslog.txt', 'log.html', 'report.html']
     [helpers.file_remove(f) for f in log_files]
-    [os.symlink('/'.join((log_path, f)), f) for f in log_files]
+    
+    for f in log_files:
+        source_file =  '/'.join((log_path, f))
+        
+        # Create symlink only if source file exists
+        if helpers.file_exists(source_file):
+            os.symlink(source_file, f)
 
 
 #
@@ -313,11 +302,8 @@ def clean_command():
     """
     Remove output files created from Robot runs.
     """
-    run('rm -f log.html report.html output.xml debug.log', shell=True)
-
-    #if is_suite_defined():
-    #    run('rm -f %s.rst %s.html' % (helpers.bigrobot_suite(),
-    #                                  helpers.bigrobot_suite()))
+    run('rm -f log.html report.html output.xml debug.log syslog.txt',
+        shell=True)
 
 
 def clean_deep_command():

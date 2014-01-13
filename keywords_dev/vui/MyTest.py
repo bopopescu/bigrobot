@@ -30,3 +30,12 @@ class MyTest(object):
         t = test.Test()
         c = t.controller()
         helpers.scp_put(c.ip, '/etc/hosts', '/tmp')
+
+    def passing_kwargs_additions(self, arg_kw1=None, arg_kw2=None):
+        helpers.log("arg_kw1: %s" % arg_kw1)
+        helpers.log("arg_kw2: %s" % arg_kw2)
+        
+    def passing_kwargs(self, arg1, arg2, **kwargs):
+        helpers.log("arg1: %s" % arg1)
+        helpers.log("arg2: %s" % arg2)
+        self.passing_kwargs_additions(**kwargs)

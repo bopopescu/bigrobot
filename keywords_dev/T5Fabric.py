@@ -15,6 +15,10 @@ class T5Fabric(object):
         
        
     def rest_show_fabric_switch(self):
+        '''Return the list of connected switches
+                                       
+            Returns: gives list of connected switches
+        '''
         t = test.Test()
         c = t.controller()
         url = '%s/api/v1/data/controller/core/switch' % (c.base_url)
@@ -23,6 +27,10 @@ class T5Fabric(object):
         return True
     
     def rest_show_fabric_link(self):
+        '''Return the list of fabric links       
+                    
+            Returns: Print the Total fabric links
+        '''
         t = test.Test()
         c = t.controller()
         
@@ -32,6 +40,13 @@ class T5Fabric(object):
         return True
     
     def rest_configure_switch(self, switch):
+        '''Configure the fabric switch 
+        
+            Input:
+                    switch        Name of the switch
+                                       
+            Returns: Configure the fabric switch
+        '''
         t = test.Test()
         c = t.controller()
                         
@@ -101,12 +116,11 @@ class T5Fabric(object):
         url = '%s/api/v1/data/controller/core/switch' % (c.base_url)       
         c.rest.get(url)
         data = c.rest.content()
-        url1 = '%s/api/v1/data/controller/core/switch-config?config=true' % (c.base_url)
-        c.rest.get(url1)
-        data1 = c.rest.content()
         for i in range (0,len(data)):
-            if data[i]["fabric-switch-info"]["suspended"] is True and (data1[i]["fabric-role"] == "leaf" or data1[i]["fabric-role"] == "spine"):
+            if data[i]["fabric-switch-info"]["suspended"] is True and (data[i]["fabric-switch-info"]["fabric-role"] == "leaf" or data[i]["fabric-switch-info"]["fabric-role"] == "spine"):
                helpers.test_failure("Fabric manager status is incorrect")
+            elif data[i]["fabric-switch-info"]["suspended"] is False and (data[i]["fabric-switch-info"]["fabric-role"] == "virtual"):
+                helpers.test_failure("Fabric manager status is incorrect") 
         helpers.log("Fabric manager status is correct")     
                                                                                  
         return True
@@ -166,91 +180,68 @@ class T5Fabric(object):
             helpers.test_failure(c.rest.error())
             
         return c.rest.content()  
-    
-    def rest_verify_fabric_lag_from_leaf(self, dpid):
-        # Function verifying the Lag type formation from the leaf nodes.
-        t = test.Test()
-        c = t.controller()
-        url = '%s/api/v1/data/controller/core/switch[dpid="%s"]?select=fabric-lag' % (c.base_url, dpid)       
-        c.rest.get(url)
-        data = c.rest.content()
-        helpers.log("lag-type content %d" % len(data[0]["fabric-lag"]))
-        if data[0]["dpid"] == dpid:
-            for i in range(0,len(data[0]["fabric-lag"])):
-               if data[0]["fabric-lag"][i]["lag-type"] == "leaf-lag":
-                   leaf_lag = len(data[0]["fabric-lag"][i]["member"])
-               elif data[0]["fabric-lag"][i]["lag-type"] == "rack-lag":    
-                   rack_lag = len(data[0]["fabric-lag"][i]["member"])
-               elif data[0]["fabric-lag"][i]["lag-type"] == "spine-lag":
-                   spine_lag = len(data[0]["fabric-lag"][i]["member"])
-               elif data[0]["fabric-lag"][i]["lag-type"] == "spine-broadcast-lag":    
-                   spine_bcast_lag = len(data[0]["fabric-lag"][i]["member"])
-        helpers.log("data content %d %d %d %d" % (leaf_lag, rack_lag, spine_lag, spine_bcast_lag))
-        url1 = '%s/api/v1/data/controller/core/switch' % (c.base_url)
-        c.rest.get(url1)
-        data1 = c.rest.content()
-        spine_switch = 0
-        for i in range(0,len(data1)):
-             if data1[i]["fabric-switch-info"]["fabric-role"] == "spine":
-                      spine_switch = spine_switch + 1
-        if spine_switch == 2:
-               if rack_lag == 4 and spine_lag == 4 and spine_bcast_lag == 4:
-                  helpers.test_log("Fabric Lag formation for Dual rack Dual spine is correct") 
-                  return True
-               else:
-                   helpers.test_failure("All Fabric lag for %s in dual rack is not formed" % dpid)
-        elif spine_switch == 1:
-               if rack_lag == 2 and spine_lag == 2 and spine_bcast_lag == 2:
-                  helpers.test_log("Fabric Lag formation for Dual rack Single spine is correct") 
-                  return True
-               else:
-                   helpers.test_failure("All fabric lag for %s dual rack single spine is not formed" % dpid)      
-        else :
-            return False
-        
-    def rest_verify_fabric_lag_from_spine(self, dpid):
+           
+    def rest_verify_fabric_lag(self, dpid):
         # Function verifying the Lag type formation from the spine nodes.
         t = test.Test()
         c = t.controller()
-        url = '%s/api/v1/data/controller/core/switch[dpid="%s"]?select=fabric-lag' % (c.base_url, dpid)       
+        url = '%s/api/v1/data/controller/core/switch[dpid="%s"]/interface' % (c.base_url, dpid)       
         c.rest.get(url)
         data = c.rest.content()
-        helpers.log("lag-type content %d" % len(data[0]["fabric-lag"]))
-        if data[0]["dpid"] == dpid:
-            for i in range(0,len(data[0]["fabric-lag"])):
-               if data[0]["fabric-lag"][i]["lag-type"] == "leaf-lag":
-                   leaf_lag = len(data[0]["fabric-lag"][i]["member"])
-               elif data[0]["fabric-lag"][i]["lag-type"] == "rack-lag":    
-                   rack_lag = len(data[0]["fabric-lag"][i]["member"])
-               elif data[0]["fabric-lag"][i]["lag-type"] == "spine-lag":
-                   spine_lag = len(data[0]["fabric-lag"][i]["member"])
-               elif data[0]["fabric-lag"][i]["lag-type"] == "spine-broadcast-lag":    
-                   spine_bcast_lag = len(data[0]["fabric-lag"][i]["member"])
-        helpers.log("data content %d %d %d %d" % (leaf_lag, rack_lag, spine_lag, spine_bcast_lag))
-        url1 = '%s/api/v1/data/controller/core/switch' % (c.base_url)
+        url1 = '%s/api/v1/data/controller/core/switch[dpid="%s"]' % (c.base_url, dpid)
         c.rest.get(url1)
         data1 = c.rest.content()
-        spine_switch = 0
-        for i in range(0,len(data1)):
-             if data1[i]["fabric-switch-info"]["fabric-role"] == "spine":
-                      spine_switch = spine_switch + 1
-        if spine_switch == 2:
-               if rack_lag == 4 and spine_lag == 4 and spine_bcast_lag == 4:
-                  helpers.test_log("Fabric Lag formation for Dual rack Dual spine is correct") 
-                  return True
-               else:
-                   helpers.test_failure("All Fabric lag for %s in dual rack is not formed" % dpid)
-        elif spine_switch == 1:
-               if rack_lag == 2 and spine_lag == 2 and spine_bcast_lag == 2:
-                  helpers.test_log("Fabric Lag formation for Dual rack Single spine is correct") 
-                  return True
-               else:
-                   helpers.test_failure("All fabric lag for %s dual rack single spine is not formed" % dpid)      
+        url2 = '%s/api/v1/data/controller/core/switch[dpid="%s"]?select=fabric-lag' % (c.base_url, dpid)
+        c.rest.get(url2)
+        data3 = c.rest.content()
+        if data[0]["switch-dpid"] == dpid:
+            if data1[0]["fabric-switch-info"]["fabric-role"] == "spine":
+               fabric_interface = 0
+               for i in range(0,len(data)):
+                  if data[i]["type"] == "leaf":
+                     fabric_interface = fabric_interface + 1
+                  for i in range(0,len(data3[0]["fabric-lag"])):  
+                     if data3[0]["fabric-lag"][i]["lag-type"] == "rack-lag":
+                         if len(data3[0]["fabric-lag"][i]["member"]) == fabric_interface: 
+                            helpers.log("Rack Lag formation from spine switch %s is correct,No of fabric-interface = %d, No of Rack lag = %d " % (dpid, fabric_interface, len(data3[0]["fabric-lag"][i]["member"])))
+                            return True
+                         else:
+                            helpers.test_failure("Rack Lag formation from spine %s switch is incorrect,No of fabric-interface = %d, No of Rack lag = %d " % (dpid, fabric_interface, len(data3[0]["fabric-lag"][i]["member"])))
+                            return False 
+                     
+            elif data1[0]["fabric-switch-info"]["fabric-role"] == "leaf":
+                fabric_spine_interface = 0
+                fabric_peer_interface = 0
+                for i in range(0,len(data)):
+                  if data[i]["type"] == "spine":
+                     fabric_spine_interface = fabric_spine_interface + 1
+                  elif data[i]["type"] == "leaf":
+                      fabric_peer_interface = fabric_peer_interface + 1   
+                for i in range(0,len(data3[0]["fabric-lag"])):
+                     if data3[0]["fabric-lag"][i]["lag-type"] == "spine-lag":
+                        if len(data3[0]["fabric-lag"][i]["member"]) == fabric_spine_interface:  
+                          helpers.log("Spine lag formation from leaf switch %s is correct,Expected = %d, Actual = %d, " % (dpid, fabric_spine_interface, len(data3[0]["fabric-lag"][i]["member"])))
+                          return True
+                        else:
+                          helpers.test_failure(" Spine lag formation from leaf %s switch is not correct,Expected = %d, Actual = %d" % (dpid, fabric_spine_interface, len(data3[0]["fabric-lag"][i]["member"])))
+                          return False 
+                     elif data3[0]["fabric-lag"][i]["lag-type"] == "spine-broadcast-lag":
+                          if len(data3[0]["fabric-lag"][i]["member"]) == (int(self.rest_get_no_of_rack()) * fabric_spine_interface):
+                             helpers.log("Spine Broadcast lag from leaf switch %s is correct , no of rack = %d , no of fabric_interface = %d" % (dpid, int(self.rest_get_no_of_rack()), fabric_spine_interface))
+                          else:
+                             helpers.test_failure("Spine Broadcast lag from leaf switch %s is not correct,expected = %d,actual = %d" % (dpid, (int(self.rest_get_no_of_rack()) * fabric_spine_interface), len(data3[0]["fabric-lag"][i]["member"])))
+                     elif data3[0]["fabric-lag"][i]["lag-type"] == "leaf-lag":       
+                          if len(data3[0]["fabric-lag"][i]["member"]) == fabric_peer_interface:  
+                             helpers.log("Peer lag formation from leaf switch %s is correct,no of fabric-interface = %d" % (dpid, fabric_peer_interface))
+                          else:
+                             helpers.test_failure(" Spine lag formation from leaf %s switch is not correct,expected= %d,Actual= %d" % (dpid, fabric_peer_interface, len(data3[0]["fabric-lag"][i]["member"])))
+                                       
         else :
             return False
     
     
     def rest_verify_fabric_switch(self, dpid):
+        # Function verify fabric switch status for default as well after fabric role configuration
         t = test.Test()
         c = t.controller()
         url = '%s/api/v1/data/controller/core/switch[dpid="%s"]' % (c.base_url, dpid)       
@@ -283,8 +274,8 @@ class T5Fabric(object):
         url = '%s/api/v1/data/controller/core/switch/interface' % (c.base_url)      
         c.rest.get(url)
         data = c.rest.content()  
-        fabric_interface = 0 
-        for i in range(0,len(data[0])):
+        fabric_interface = 0
+        for i in range(0,len(data)):
             if data[i]["type"] == "leaf" or data[i]["type"] == "spine":
                 fabric_interface = fabric_interface + 1
         url1 = '%s/api/v1/data/controller/applications/bvs/info/fabric?select=link' % (c.base_url)
@@ -300,6 +291,33 @@ class T5Fabric(object):
             helpers.test_failure("Fail: Inconsistent state of fabric links. Fabric_Interface = %d , bidir_link = %d" % (fabric_interface, bidir_link))
         
                         
-               
+    def rest_get_no_of_rack(self):
+        t = test.Test()
+        c = t.controller()
+        url = '%s/api/v1/data/controller/core/switch' % (c.base_url)
+        c.rest.get(url)
+        data = c.rest.content()
+        rack = []
+        rack_count = 0
+        for i in range(0,len(data)):
+            if data[i]["fabric-switch-info"]["fabric-role"] == "leaf":
+                if data[i]["fabric-switch-info"]["leaf-group"] == None:
+                    rack_count = rack_count + 1
+                elif not data[i]["fabric-switch-info"]["leaf-group"] in rack:
+                     rack.append(data[i]["fabric-switch-info"]["leaf-group"]) 
+                   
+        total_rack = rack_count + len(rack)
+        helpers.log("Total Rack in the Topology: %d" % total_rack)
+        return total_rack
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                          
                   
         
