@@ -6,7 +6,7 @@ Test Setup      base test setup
 Test Teardown   base test teardown
 Force Tags      T5 Sanity
 Library         keywords/BsnCommon.py
-Library         keywords_dev/slim/Mininet.py
+Library         keywords/Mininet.py
 Library         keywords_dev/slim/T5.py
 Library         keywords_dev/T5Fabric.py
 Resource		keywords_dev/t5_singleleaf_resource.txt
@@ -67,8 +67,10 @@ L3 ping bm0 to bm1 single leaf single rack within tenant different VNS
    mininet host arp				${host0_name}		${vns1_ip}		${gw_mac}
    mininet host arp				${host1_name} 		${vns2_ip}		${gw_mac}
    sleep  5
-   ${loss}=  					mininet l3 ping		${host0_name}	${host1_name} 	${ping_count}
-   Should Be True  				${loss} == 0
+   ${loss}=  					mininet l3 ping		${host0_name}	${host1_name} 	
+   Should Be True  				${loss} == 100
+   endpoints= 					rest show endpoints
+   numMac=  					len(endpoints)
    REST delete tenant 			${tenant1_name}        
    sleep  20
 
@@ -155,6 +157,15 @@ L3 ping tagged bm0 to tagged bm1 single leaf single rack within tenant different
    mininet l3 link untag		${host0_name}		${host0_intf}	${vns1_vlan}	${host0_ip}		${host0_subnet}
    mininet l3 link untag		${host1_name}		${host1_intf}	${vns2_vlan}	${host1_ip}		${host1_subnet}       
    sleep  						20   
+
+
+
+
+cleanup setup
+	REST delete tenant			${tenant1_name}   
+	REST delete tenant			${tenant2_name}     	
+
+
        
 
 Teardown topology
