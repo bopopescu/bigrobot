@@ -39,9 +39,13 @@ class Mininet(object):
         
         return out
     
-    def mininet_link_tag(self, intf, intf_name, vlan, ip):        
+    def mininet_link_tag(self, intf, intf_name, vlan, ipaddr, mask=0):        
         t = test.Test()
         mn = t.mininet()
+        if mask > 0:
+            ip = ipaddr + "/" + mask
+        else:
+            ip = ipaddr
         mn.cli('%s ip link add link %s vlan1 type vlan id %s' % (intf, intf_name, vlan))
         mn.cli('%s ifconfig %s 0.0.0.0' % (intf, intf_name))
         mn.cli('%s ifconfig vlan1 %s' % (intf, ip))
