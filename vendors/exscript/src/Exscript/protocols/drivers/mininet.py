@@ -30,13 +30,13 @@ class MininetDriver(Driver):
         self.password_re = _password_re
 
     def check_head_for_os(self, string):
+        self._platform = 'mininet'
         if _mininet_re.search(string):
             return 90
         if _linux_re.search(string):
             return 70
         if _user_re[0].search(string):
             return 20
-        self._platform = 'mininet'
         return 0
 
     # BSN tweaks - all methods below
