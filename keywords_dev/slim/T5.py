@@ -465,4 +465,12 @@ class T5(object):
             helpers.test_log("Output: %s" % c.rest.result_json())
             return c.rest.content()               
         
-        
+    def rest_show_endpoints(self):
+        t = test.Test()
+        c = t.controller()
+        url = '%s/api/v1/data/controller/applications/bvs/info/endpoint-manager/endpoints' % (c.base_url)
+        c.rest.get(url)
+        helpers.log("Output: %s" % c.rest.result_json())
+        data = c.rest.content()
+        return data
+     
