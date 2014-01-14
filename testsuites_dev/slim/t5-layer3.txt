@@ -6,7 +6,7 @@ Test Setup      base test setup
 Test Teardown   base test teardown
 Force Tags      T5 Sanity
 Library         keywords/BsnCommon.py
-Library         keywords_dev/slim/Mininet.py
+Library         keywords/Mininet.py
 Library         keywords_dev/slim/T5.py
 Library         keywords_dev/T5Fabric.py
 Resource		keywords_dev/t5_singleleaf_resource.txt
