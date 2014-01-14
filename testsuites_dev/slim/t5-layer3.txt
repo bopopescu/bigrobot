@@ -42,7 +42,7 @@ ${host0_intf}		bm0-bond0
 ${host1_intf}		bm1-bond0
 ${host2_intf}		bm2-bond0
 ${vns1_vlan}		100
-${vns2_vlan}		4095
+${vns2_vlan}		4094
 ${vns3_vlan}		4091
 ${ping_count}		10
 
