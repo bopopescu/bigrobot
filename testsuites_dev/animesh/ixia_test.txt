@@ -1,0 +1,54 @@
+*Settings
+Documentation  Controller SNMP Sanity Test Suite
+Suite Setup  base suite setup
+Suite Teardown   base test teardown
+Test Setup   base test setup
+Test Teardown   base test teardown
+Force Tags   SNMP Sanity
+Library  keywords/BsnCommon.py
+Library  keywords_dev/BsnCommonConfig.py
+Library  keywords_dev/BsnCommonShow.py
+Library  keywords_dev/BigTapCommonConfig.py
+Library  keywords_dev/IxLib.py
+
+* Variable
+${ixClientIP}	10.194.64.172
+${ixClientIxNetTclServPortNo}  ${8009}
+${ixClientIxNetVer}   7.11
+${ixChassis}   10.192.85.151
+${ixPorts}   [('10.192.85.151', 1, 3), ('10.192.85.151', 1, 16)]
+${Mac1Mult}   1
+${Mac2Mult}   1
+${Mac1}   "00:11:23:00:00:01"
+${Mac2}   "00:11:23:00:00:02"
+${Mac1Step}   "00:00:00:00:01:00"
+${Mac2Step}   "00:00:00:00:01:00"
+${mRate}  "100000"
+${mSize}  "64"
+${frameType}   'fixed'
+${frameSize}   '64'
+${frameRate}   '10000'
+${frameMode}   'framesPerSecond'
+${#frameMode}   'percentLineRate'
+${addr1}   '132.0.0.1'
+${addr2}   '132.0.0.100'
+${addr1Step}   '0.0.0.1'
+${addr2Step}   '0.0.0.1'
+${prefix1}   '24'
+${prefix2}   '24'
+
+*Test Case
+Configure and Verify Configuration  
+	verify config
+
+* Keywords  
+verify config
+	${ixNet}=  IxConnect  ${ixClientIP}  ${ixClientIxNetTclServPortNo} 
+	${vport1,vport2}=  IxLib.IxCreateVport  ${ixNet}
+	${topology}=  IxLib.IxCreateTopo  ${ixNet}  ${vport1}  ${vport2}
+	${mac1,mac2}=  IxLib.IxCreateDeviceEthernet  ${ixNet}  ${topology}  ${Mac1Mult}  ${Mac2Mult}  ${Mac1}  ${Mac2}  ${Mac1Step}  ${Mac2Step}
+	${trafficStream1}=  IxLib.IxSetupTrafficStreamsEthernet  ${ixNet}  ${mac1}  ${mac2}  ${frameType}  ${frameSize}  ${frameRate}  ${frameMode}
+	IxLib.IxConnectChassis  ${ixNet}  ${vport1}  ${vport2}  ${ixChassis}  ${ixPorts}
+	${portStatistics}=  IxLib.IxStartTrafficEthernet  ${ixNet}  ${trafficStream1}
+	Sleep  45
+	IxLib.IxStopTraffic  ${ixNet}  ${trafficStream1}  ${portStatistics}

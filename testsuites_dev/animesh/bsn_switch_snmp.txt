@@ -18,7 +18,7 @@ ${oneGlb9_name}  ethernet48
 ${tenGlb9_name}  ethernet51
 ${tenGly2_name}  ethernet48
 ${fortyGly2_name}  ethernet50
-${switchlight_version}  SwitchLight 2.0.0-beta1
+${switchlight_version}  SwitchLight
 
 
 *Test Case
@@ -443,7 +443,7 @@ verify lag-ifHighSpeed tenGlb9
 verify lag-ifPhysAddress tenGlb9
 	${switchDict1}=  REST show switch
 	${dpid1}=  return switch dpid  ${switchDict1}  ${ip_address_1}
-	${mac_address5}=  return switch interface mac  sw_dpid=${dpid1}  interface_name="port-channel1"
+	${mac_address5}=  return switch interface mac  sw_dpid=${dpid1}  interface_name=port-channel1
 	${snmp_key} =  snmp cmd  ${ip_address_1}  snmpwalk  public  ifPhysAddress.1061
 	Should Contain  ${snmp_key}  ${mac_address5}
 	
@@ -474,7 +474,7 @@ verify lag-ifHighSpeed fortyGly2
 verify lag-ifPhysAddress fortyGly2
 	${switchDict2}=  REST show switch
 	${dpid2}=  return switch dpid  ${switchDict2}  ${ip_address_2}
-	${mac_address6}=  return switch interface mac  sw_dpid=${dpid2}  interface_name="port-channel30"
+	${mac_address6}=  return switch interface mac  sw_dpid=${dpid2}  interface_name=port-channel30
 	${snmp_key} =  snmp cmd  ${ip_address_2}  snmpwalk  public  ifPhysAddress.1090
 	Should Contain  ${snmp_key}  ${mac_address6}
 	

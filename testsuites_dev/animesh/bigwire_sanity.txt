@@ -40,7 +40,6 @@ Verify CLI BigWire Tenant
 Verify CLI BigWire Pseudowire
 	bigwire pseudowire
 
-
 * Keywords
 bigwire suite setup
 	${switchDict}=  REST show switch

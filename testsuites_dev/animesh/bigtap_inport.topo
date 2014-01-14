@@ -1,0 +1,41 @@
+# Topology description is in YAML format - see http://en.wikipedia.org/wiki/YAML
+#
+# c<n>: Controllers
+# s<n>: Switches
+# h<n>: Hosts (including bare metal)
+# mn  : Mininet server
+
+c1:
+  ip: 10.192.96.1
+  http_port: 8082
+
+c2:
+  ip: 10.192.96.2
+  http_port: 8082
+
+s1:
+  ip: 10.192.75.7
+
+s2:
+  ip: 10.192.75.8
+
+s3:
+  ip: 10.192.75.9
+
+s4:
+  ip: 10.192.75.215
+
+s5:
+  ip: 10.192.75.216
+
+s6:
+  ip: 10.192.75.211
+
+s7:
+  ip: 10.192.75.212
+
+s8:
+  ip: 10.192.75.213
+
+s9:
+  ip: 10.192.75.214
