@@ -69,8 +69,8 @@ L3 ping bm0 to bm1 single leaf single rack within tenant different VNS
    sleep  5
    ${loss}=  					mininet l3 ping		${host0_name}	${host1_name} 	
    Should Be True  				${loss} == 100
-   endpoints= 					rest show endpoints
-   numMac=  					len(endpoints)
+   ${endpoints_cnt}=			rest count endpoints mac
+   Should Be True  				${endpoints_cnt} == 2
    REST delete tenant 			${tenant1_name}        
    sleep  20
 

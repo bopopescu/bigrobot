@@ -320,9 +320,8 @@ class T5(object):
             helpers.test_failure(c.rest.error())
 
         return c.rest.content()
-            
-    def rest_show_endpoints(self):
-        pass
+          
+
     def rest_add_interface_to_vns(self, tenant, vns, switch, intf, vlan):
         t = test.Test()
         c = t.controller()
@@ -473,4 +472,8 @@ class T5(object):
         helpers.log("Output: %s" % c.rest.result_json())
         data = c.rest.content()
         return data
+    
+    def rest_count_endpoints_mac(self):
+        data = self.rest_show_endpoints()
+        return len(data)
      
