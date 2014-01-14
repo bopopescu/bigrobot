@@ -47,7 +47,7 @@ class Mininet(object):
         except:
             ip = ipaddr
         else:
-            ip = ipaddr + "/" + mask
+            ip = ipaddr + "/" + mask[0]
         mn.cli('%s ip link add link %s vlan1 type vlan id %s' % (intf, intf_name, vlan))
         mn.cli('%s ifconfig %s 0.0.0.0' % (intf, intf_name))
         mn.cli('%s ifconfig vlan1 %s' % (intf, ip))
@@ -82,7 +82,7 @@ class Mininet(object):
         except:
             count = 5
         else:
-            count = cnt
+            count = cnt[0]
         mn.cli('%s ping %s -c %s' % (src, dst, count))
         out = mn.cli_content()
         loss = helpers.any_match(out, r', (\d+)% packet loss')
