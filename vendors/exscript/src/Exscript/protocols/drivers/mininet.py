@@ -13,7 +13,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 """
-A generic shell driver that handles unknown unix shells.
+A driver for Big Switch controller. This was borrowed from shell.py.
 """
 import re
 from Exscript.protocols.drivers.driver import Driver
@@ -36,4 +36,9 @@ class MininetDriver(Driver):
             return 70
         if _user_re[0].search(string):
             return 20
+        self._platform = 'mininet'
         return 0
+
+    # BSN tweaks - all methods below
+    def platform(self):
+        return self._platform

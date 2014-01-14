@@ -53,6 +53,15 @@ class DevConf(object):
     # Alias
     cli = cmd
     
+    def platform(self):
+        driver = self.conn.get_driver()
+        if hasattr(driver, 'platform'):
+            # Does the driver class have the method platform() defined?
+            # See src/protocols/drivers/bsn_controller.py as an example.
+            return driver.platform()
+        else:
+            return "__undefined__"
+        
     def result(self):
         return self.last_result
 
@@ -61,6 +70,7 @@ class DevConf(object):
 
     def close(self):
         helpers.log("Closing device %s (OS=%s)." % (self.host, self.os))
+
 
 class ControllerDevConf(DevConf):
     def __init__(self, host=None, user=None, password=None):

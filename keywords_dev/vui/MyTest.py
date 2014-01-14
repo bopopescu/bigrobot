@@ -7,7 +7,7 @@ def testing123():
 
 class MyTest(object):
 
-    def __init__(self):
+    def __init2__(self):
         t = test.Test()
         c = t.controller()
         
@@ -43,13 +43,18 @@ class MyTest(object):
     def enable_help(self):
         t = test.Test()
         c = t.controller()
-        c.enable('help')
-        c.cli('show user')
-        c.config('show running-config')
-        c.cli('history')
-        c.bash('uptime')
-        c.config('whoami')
-        c.bash('sudo cat /etc/hosts')
-        c.cli('whoami')
-        c.bash('ls /tmp')
-        c.config('whoami')
+        
+        #c.enable('help')
+        #c.cli('show user')
+        #c.config('show running-config')
+        #c.cli('history')
+        #c.bash('uptime')
+        #c.config('whoami')
+        #c.bash('sudo cat /etc/hosts')
+        #.cli('whoami')
+        #c.bash('ls /tmp')
+        #c.config('whoami')
+        #helpers.log("result: %s" % c.cli_result())
+        #return c.cli_result()
+
+        helpers.log("*** platform: %s" % c.platform())

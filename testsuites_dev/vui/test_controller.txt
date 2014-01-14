@@ -1,0 +1,15 @@
+* Setting
+Documentation   This suite is my sandbox for experimentation.
+Force Tags      Vui
+Library         keywords/Controller.py
+Library         keywords_dev/vui/MyTest.py
+
+
+* Test Case
+Test controller
+    cli show user
+    [Tags]  skipped
+
+Test enable mode
+    ${a}=  enable help
+

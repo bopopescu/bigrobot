@@ -10,14 +10,15 @@ import re
 
 class Test(object):
     """
-    Test class is a singleton which contains important test states for the current
-    robot execution. E.g., topology information including device IP addresses,
-    roles (controller, switch, spine, leaf), interfaces, and so on...
+    Test class is a singleton which contains important test states for the
+    current robot execution. E.g., topology information including device
+    IP addresses, roles (controller, switch, spine, leaf), interfaces, and
+    so on...
     """
 
     _instance = None
 
-    # Singleton pattern. Code borrowed from
+    # Singleton pattern borrowed from
     # http://developer.nokia.com/Community/Wiki/How_to_make_a_singleton_in_Python    
     class Singleton:
         def __init__(self):
@@ -145,12 +146,13 @@ class Test(object):
             #
             # !!! FIXME: Need to convert section to a factory design pattern.
             #
-            n = node.Node(params[key]['ip'])
-            
-            self.pingable_or_die(n.ip)
+            host = params[key]['ip']            
+            self.pingable_or_die(host)
             
             if self.is_controller(key):
                 helpers.log("Setting up controller ('%s')" % key)
+                n = node.ControllerNode(host)
+
                 if 'http_port' in params[key]:
                     n.http_port = params[key]['http_port']
                 else:
@@ -191,6 +193,8 @@ class Test(object):
             # !!! FIXME: This is a hack to get things going for now...
             if self.is_mininet(key):
                 helpers.log("Setting up Mininet ('%s')" % key)
+                n = node.MininetNode(host)
+                
                 if 'topology' in params[key]:
                     n.topology = params[key]['topology']
                 else:
@@ -228,6 +232,7 @@ class Test(object):
 
         helpers.log("Exscript driver for '%s': %s"
                     % (key, n.dev.conn.get_driver()))
+        helpers.log("Platform is %s" % n.platform())
 
         helpers.prettify_log("self._topology", self._topology)
         helpers.log("Test object initialization completed.") 

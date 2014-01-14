@@ -48,13 +48,21 @@ class BsnControllerDriver(Driver):
         self.password_re = _password_re
         self.prompt_re   = _prompt_re
         self.error_re    = _error_re
+        
+        # BSN tweak to specify what platform this device is.
+        self._platform = None
 
     def check_head_for_os(self, string):
         #print("string: %s" % string)
-        if 'Big Virtual Switch' in string:
+        if 'Big Tap Controller' in string:
+            self._platform = 'bigtap'
             return 90
-        if 'User Access Verification' in string:
+        if 'Big Wire Controller' in string:
+            self._platform = 'bigwire'
             return 60
+        if 'Big Virtual Switch' in string:
+            self._platform = 'bvs'
+            return 90
         if _tacacs_re.search(string):
             return 50
         if _user_re[0].search(string):
@@ -67,3 +75,7 @@ class BsnControllerDriver(Driver):
     def auto_authorize(self, conn, account, flush, bailout):
         conn.send('enable\r')
         conn.app_authorize(account, flush, bailout)
+
+    # BSN tweaks - all methods below
+    def platform(self):
+        return self._platform
