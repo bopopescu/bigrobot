@@ -71,7 +71,7 @@ class Mininet(object):
     def mininet_l3_ping(self, src, dst, count):        
         t = test.Test()
         mn = t.mininet()
-        mn.cli('%s ping %s -c %s' % (src, dst, count))
+        mn.cli('%s ping %s -c %s -W 2' % (src, dst, count))
         out = mn.cli_content()
         loss = helpers.any_match(out, r', (\d+)% packet loss')
         helpers.log("packet loss: %s" % loss)
