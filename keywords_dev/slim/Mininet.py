@@ -39,7 +39,7 @@ class Mininet(object):
         
         return out
     
-    def mininet_link_tag(self, intf, intf_name, vlan, ipaddr, mask):        
+    def mininet_link_tag(self, intf, intf_name, vlan, ipaddr, *mask):        
         t = test.Test()
         mn = t.mininet()
         try:
@@ -74,7 +74,7 @@ class Mininet(object):
         mn = t.mininet()
         mn.cli('%s arp -s %s %s' % (host, ipaddr, mac))
  
-    def mininet_L3_ping(self, src, dst, cnt):        
+    def mininet_L3_ping(self, src, dst, *cnt):        
         t = test.Test()
         mn = t.mininet()
         try:

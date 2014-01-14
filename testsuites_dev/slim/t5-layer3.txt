@@ -67,7 +67,7 @@ L3 ping bm0 to bm1 single leaf single rack within tenant different VNS
    mininet host arp				${host0_name}		${vns1_ip}		${gw_mac}
    mininet host arp				${host1_name} 		${vns2_ip}		${gw_mac}
    sleep  5
-   ${loss}=  					mininet L3 ping		${host0_name}	${host1_name}
+   ${loss}=  					mininet L3 ping		${host0_name}	${host1_name} 	11
    Should Be True  				${loss} == 0
    REST delete tenant 			${tenant1_name}        
    sleep  10
@@ -107,8 +107,7 @@ L3 ping untagged bm0 to tagged bm1 single leaf single rack within tenant differe
    REST delete tenant 			${tenant1_name}        
    sleep  10
 
-  
-
+ 
 L3 ping tagged bm0 to tagged bm1 single leaf single rack within tenant different VNS
    REST create tenant  			${tenant1_name}
    REST create vns  			${tenant1_name}		${vns_1}
