@@ -67,7 +67,7 @@ L3 ping bm0 to bm1 single leaf single rack within tenant different VNS
    mininet host arp				${host0_name}		${vns1_ip}		${gw_mac}
    mininet host arp				${host1_name} 		${vns2_ip}		${gw_mac}
    sleep  5
-   ${loss}=  					mininet L3 ping		${host0_name}	${host1_name} 	${ping_count}
+   ${loss}=  					mininet l3 ping		${host0_name}	${host1_name} 	${ping_count}
    Should Be True  				${loss} == 0
    REST delete tenant 			${tenant1_name}        
    sleep  20
@@ -81,7 +81,7 @@ L3 ping bm0 to unreachable host single leaf single rack single tenant across VNS
    mininet host gw				${host0_name}		${vns1_ip}		${host0_intf}
    mininet host arp				${host0_name}		${vns1_ip}		${gw_mac}
    sleep  5
-   ${loss}=  					mininet L3 ping		${host0_name}	${unknown_host}	${ping_count}
+   ${loss}=  					mininet l3 ping		${host0_name}	${unknown_host}	${ping_count}
    Should Be True  				${loss} == 100
    REST delete tenant 			${tenant1_name}        
    sleep  20    
@@ -96,13 +96,13 @@ L3 ping untagged bm0 to tagged bm1 single leaf single rack within tenant differe
    REST add interface to vns  	${tenant1_name}  	${vns_1}  		${leaf_name} 	${leaf0_intf1}  -1 
    REST add interface to vns  	${tenant1_name}  	${vns_2}  		${leaf_name} 	${leaf0_intf2}	${vns2_vlan}
    mininet host ipcfg   		${host0_name}		${host0_intf}	${host0_ip}		${host0_subnet} 
-   mininet link tag				${host1_name}		${host1_intf}	${vns2_vlan}	${host1_ip}		${host1_subnet}
+   mininet l3 link tag				${host1_name}		${host1_intf}	${vns2_vlan}	${host1_ip}		${host1_subnet}
    mininet host gw				${host0_name}		${vns1_ip}		${host0_intf}
    mininet host gw				${host1_name}		${vns2_ip}		${host1_intf}
    mininet host arp				${host0_name}		${vns1_ip}		${gw_mac}
    mininet host arp				${host1_name} 		${vns2_ip}		${gw_mac}
    sleep 						5
-   ${loss}=  					mininet L3 ping		${host0_name}	${host1_name}	${ping_count}
+   ${loss}=  					mininet l3 ping		${host0_name}	${host1_name}	${ping_count}
    Should Be True  				${loss} == 0
    REST delete tenant 			${tenant1_name}        
    sleep  						20
@@ -116,14 +116,14 @@ L3 ping tagged bm0 to tagged bm1 single leaf single rack within tenant different
    REST create vns ip  			${tenant1_name}  	${vns_2}  		${vns2_ip}	  	${vns2_subnet}
    REST add interface to vns  	${tenant1_name}  	${vns_1}  		${leaf_name} 	${leaf0_intf1}  ${vns1_vlan}
    REST add interface to vns  	${tenant1_name}  	${vns_2}  		${leaf_name} 	${leaf0_intf2}	${vns2_vlan}
-   mininet link tag				${host0_name}		${host0_intf}	${vns1_vlan}	${host0_ip}		${host0_subnet}
-   mininet link tag				${host1_name}		${host1_intf}	${vns2_vlan}	${host1_ip}		${host1_subnet}
+   mininet l3 link tag				${host0_name}		${host0_intf}	${vns1_vlan}	${host0_ip}		${host0_subnet}
+   mininet l3 link tag				${host1_name}		${host1_intf}	${vns2_vlan}	${host1_ip}		${host1_subnet}
    mininet host gw				${host0_name}		${vns1_ip}		${host0_intf}
    mininet host gw				${host1_name}		${vns2_ip}		${host1_intf}
    mininet host arp				${host0_name}		${vns1_ip}		${gw_mac}
    mininet host arp				${host1_name} 		${vns2_ip}		${gw_mac}
    sleep  						5
-   ${loss}=  					mininet L3 ping		${host0_name}	${host1_name}	${ping_count}
+   ${loss}=  					mininet l3 ping		${host0_name}	${host1_name}	${ping_count}
    Should Be True  				${loss} == 0
    REST delete tenant 			${tenant1_name}        
    sleep  						20   
@@ -147,7 +147,7 @@ L3 ping bm0 to bm1 single leaf single rack across tenants
    	mininet host arp			${host0_name}		${vns1_ip}		${gw_mac}
    	mininet host arp			${host2_name} 		${vns3_ip}		${gw_mac}
    	sleep 	 					5
-   	${loss}=					mininet L3 ping		${host0_name}	${host1_name}	${ping_count}
+   	${loss}=					mininet l3 ping		${host0_name}	${host1_name}	${ping_count}
    	Should Be True  			${loss} == 0
 	REST delete tenant			${tenant1_name}   
 	REST delete tenant			${tenant2_name}     
