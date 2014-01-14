@@ -39,15 +39,9 @@ class Mininet(object):
         
         return out
     
-    def mininet_link_tag(self, intf, intf_name, vlan, ipaddr, *mask):        
+    def mininet_link_tag(self, intf, intf_name, vlan, ip):        
         t = test.Test()
         mn = t.mininet()
-        try:
-            mask
-        except:
-            ip = ipaddr
-        else:
-            ip = ipaddr + "/" + mask[0]
         mn.cli('%s ip link add link %s vlan1 type vlan id %s' % (intf, intf_name, vlan))
         mn.cli('%s ifconfig %s 0.0.0.0' % (intf, intf_name))
         mn.cli('%s ifconfig vlan1 %s' % (intf, ip))
@@ -74,15 +68,9 @@ class Mininet(object):
         mn = t.mininet()
         mn.cli('%s arp -s %s %s' % (host, ipaddr, mac))
  
-    def mininet_L3_ping(self, src, dst, *cnt):        
+    def mininet_L3_ping(self, src, dst, count):        
         t = test.Test()
         mn = t.mininet()
-        try:
-            cnt
-        except:
-            count = 5
-        else:
-            count = cnt[0]
         mn.cli('%s ping %s -c %s' % (src, dst, count))
         out = mn.cli_content()
         loss = helpers.any_match(out, r', (\d+)% packet loss')
