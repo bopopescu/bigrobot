@@ -5,22 +5,15 @@ import autobot.test as test
 class T5(object):
 
     def __init__(self):
-        t = test.Test()
-        c = t.controller()
+        pass
 
-        url = '%s/api/v1/auth/login' % c.base_url
-        result = c.rest.post(url, {"user":"admin", "password":"adminadmin"})
-        session_cookie = result['content']['session_cookie']
-        c.rest.set_session_cookie(session_cookie)
-        
     def rest_create_tenant(self, tenant):
         t = test.Test()
         c = t.controller()
 
         helpers.log("Input arguments: tenant = %s" % tenant )
                 
-        url = ('%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]'
-               % (c.base_url, tenant))
+        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]' % tenant
         c.rest.put(url, {"name": tenant})
 
         if not c.rest.status_code_ok():
@@ -34,12 +27,10 @@ class T5(object):
 
         if tenant:
             # Show a specific tenant
-            url = ('%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]'
-                   % (c.base_url, tenant))
+            url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]' % tenant
         else:
             # Show all tenants
-            url = ('%s/api/v1/data/controller/applications/bvs/tenant'
-                   % (c.base_url))
+            url = '/api/v1/data/controller/applications/bvs/tenant'
             
         c.rest.get(url)
         
@@ -89,8 +80,7 @@ class T5(object):
 
         helpers.log("Input arguments: tenant = %s" % tenant )
         
-        url = ('%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]'
-               % (c.base_url, tenant))
+        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]' % tenant
 
         c.rest.delete(url, {"name": tenant})
 

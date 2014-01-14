@@ -4,9 +4,9 @@ import autobot.helpers as helpers
 
 
 class RestClient(object):
-    '''
-    REST Client for talking to RESTful web services
-    '''
+    """
+    REST Client for talking to RESTful web services.
+    """
 
     # Number of seconds to wait before timing out the REST call.
     default_timeout = 45
@@ -53,9 +53,6 @@ class RestClient(object):
             return True
         else:
             return False
-
-    # Alias
-    status_code_200 = status_code_ok
 
     def status_descr(self, result=None):
         if not result:

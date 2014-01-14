@@ -192,6 +192,42 @@ def sleep(s):
     time.sleep(int(s))
 
 
+def is_controller(name):
+    match = re.match(r'^(c\d|controller\d?|master|slave)$', name)
+    if match:
+        return True
+    else:
+        return False
+
+
+def is_switch(name):
+    match = re.match(r'^(s\d+|spine\d+|leaf\d+)$', name)
+    if match:
+        return True
+    else:
+        return False
+
+
+def is_mininet(name):
+    match = re.match(r'^(mn\d?|mininet\d?)$', name)
+    if match:
+        return True
+    else:
+        return False
+
+
+def is_bvs(name):
+    return name == 'bvs'
+
+
+def is_bigtap(name):
+    return name == 'bigtap'
+
+
+def is_bigwire(name):
+    return name == 'bigwire'
+
+
 def is_scalar(data):
     """Verify if the input is a valid Python scalar."""
     return isinstance(data, (type(None), str, int, float, bool))
@@ -557,8 +593,11 @@ def run_cmd(cmd, cwd=None, ignore_stderr=False, shell=True, quiet=False):
 
 
 def _ping(host, count=3, waittime=100, quiet=False):
-    _, out = run_cmd("ping -c %d -W %d %s" % (count, waittime, host),
-                     shell=False, quiet=True)
+    cmd = "ping -c %d -W %d %s" % (count, waittime, host)
+    if not quiet:
+        log("Ping command: %s" % cmd, level=5)
+
+    _, out = run_cmd(cmd, shell=False, quiet=True)
 
     if not quiet:
         log("Ping output:\n%s" % out, level=5)

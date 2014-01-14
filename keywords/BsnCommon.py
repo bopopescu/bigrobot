@@ -15,7 +15,7 @@ class BsnCommon(object):
         t = test.Test()
         for n in t.topology():
             node = t.node(n)
-            if t.is_controller(n) or t.is_mininet(n):
+            if helpers.is_controller(n) or helpers.is_mininet(n):
                 helpers.log("Closing device connection for node name: %s" % n)
                 node.dev.close()
 

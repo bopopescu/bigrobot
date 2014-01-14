@@ -42,19 +42,21 @@ class MyTest(object):
         
     def enable_help(self):
         t = test.Test()
-        c = t.controller()
-        
+        master = t.controller('master')
+        c1 = t.controller('c1')
+        c2 = t.controller('c2')
         #c.enable('help')
         #c.cli('show user')
         #c.config('show running-config')
         #c.cli('history')
-        #c.bash('uptime')
+        master.config('whoami')
+        c2.bash('uptime')
+        c1.cli('show user')
         #c.config('whoami')
         #c.bash('sudo cat /etc/hosts')
         #.cli('whoami')
         #c.bash('ls /tmp')
-        #c.config('whoami')
         #helpers.log("result: %s" % c.cli_result())
         #return c.cli_result()
 
-        helpers.log("*** platform: %s" % c.platform())
+        #helpers.log("*** platform: %s" % c.platform())

@@ -27,11 +27,13 @@ _tacacs_re   = re.compile(r'[\r\n]s\/key[\S ]+\r?%s' % _password_re[0].pattern)
 
 # Expected prompts:
 #   CLI:        controller>
+#               BIGWIRE-2>
+#               SLAVE BIGWIRE-1>
 #   Enable:     controller#
 #   Configure:  controller(config)#
 #   Debug Bash: admin@controller:~$
 #
-_prompt_re   = [re.compile(r'[\r\n](\w+@)?[\-\w+\.:/]+(?:\([^\)]+\))?(:~)?[>#$] ?$')]
+_prompt_re   = [re.compile(r'[\r\n](\w+\s?@?)?[\-\w+\.:/]+(?:\([^\)]+\))?(:~)?[>#$] ?$')]
 
 
 _error_re    = [re.compile(r'%Error'),

@@ -1,6 +1,4 @@
 import autobot.helpers as helpers
-import autobot.restclient as restclient
-import autobot.devconf as devconf
 import autobot.node as node
 import re
 #import bigtest
@@ -23,8 +21,10 @@ class Test(object):
     class Singleton:
         def __init__(self):
             # This flag ensures that we only do setup once
+            self._init_in_progress = False
             self._init_completed = False
-            self._fatal_error = False
+            self._setup_in_progress = False
+            self._setup_completed = False
             
             config = ''.join((helpers.get_path_autobot_config(), '/bsn.yaml'))
             helpers.log("Loading config file %s" % config)
@@ -40,7 +40,6 @@ class Test(object):
         if Test._instance is None:
             Test._instance = Test.Singleton()
         self._EventHandler_instance = Test._instance
-        self.initialize()
         
     def __getattr__(self, attr):
         return getattr(self._instance, attr)
@@ -74,15 +73,48 @@ class Test(object):
         """
         return self._topology_params
 
-    def topology(self, name=None):
-        #self.initialize()
-        if name:
+    def topology(self, name=None, node=None):
+        if not self._init_in_progress:
+            self._init_in_progress = True
+            self.initialize()
+
+            # Proceed with setup, but only after init completes        
+            if not self._setup_in_progress:
+                self._setup_in_progress = True
+                self.setup()
+
+        #helpers.prettify_log("_topology:", self._topology)
+        if name and node:
+            self._topology[name] = node
+            return node
+        elif name:
+            if name not in self._topology:
+                helpers.environment_failure("Device '%s' is not found in topology" % name)
             return self._topology[name]
         else:
             return self._topology
-    
+
     def controller(self, name='c1'):
-        return self.topology(name)
+        if name == 'master':
+            if self.controller_rest_is_master('c1'):
+                node = 'c1'
+            elif self.controller_rest_is_master('c2'):
+                node = 'c2'
+            else:
+                helpers.environment_failure("Neither 'c1' nor 'c2' is the master. This is an impossible state!")
+            helpers.log("Device '%s' is the master" % node)
+        elif name == 'slave':
+            if not self.controller_rest_is_master('c1'):
+                return self.topology('c1')
+            elif not self.controller_rest_is_master('c2'):
+                return self.topology('c2')
+            else:
+                helpers.environment_failure("Neither 'c1' nor 'c2' is the slave. This is an impossible state!")
+            helpers.log("Device '%s' is the slave" % node)
+        else:
+            node = name
+
+        return self.topology(node)
     
     def mininet(self):
         return self.topology('mn')
@@ -90,49 +122,24 @@ class Test(object):
     def node(self, name):
         return self.topology(name)
     
-    def is_controller(self, name):
-        match = re.match(r'^(c\d|controller\d?|master|slave)$', name)
-        if match:
-            return True
-        else:
-            return False
-
-    def is_switch(self, name):
-        match = re.match(r'^(s\d+|spine\d+|leaf\d+)$', name)
-        if match:
-            return True
-        else:
-            return False
-
-    def is_mininet(self, name):
-        match = re.match(r'^(mn\d?|mininet\d?)$', name)
-        if match:
-            return True
-        else:
-            return False
-
-    def pingable_or_die(self, node):
-        if not helpers.ping(node, count=3, waittime=1000):
-            # Consider init to be completed, so as not to be invoked again.
-            self._init_completed = True
-            helpers.environment_failure("Node with IP address %s is unreachable."
-                                        % node)
-
-    def initialize(self, force_init=False):
+    def initialize(self):
         """
-        Initializes the test object. This should be called prior to test case
+        Initializes the test topologt. This should be called prior to test case
         execution (e.g., called by Test Suite or Test Case setup).
         """
 
-        if self._fatal_error:
-            helpers.exit_robot_immediately()
-
         # This check ensures we  don't try to initialize multiple times.
-        if self._init_completed and not force_init:
+        if self._init_completed:
             #helpers.log("Test object initialization skipped.")
             return
         
         params = self._topology_params
+        
+        if 'c1' not in params:
+            helpers.environment_failure("Must have a controller (c1) defined")
+        controller_ip = params['c1']['ip']   # Mininet needs this bit of info
+        helpers.log("Controller IP address is %s" % controller_ip)
+        
         for key in params:
             # Matches the following device types:
             #  Controllers: c1, c2, controller, controller1, controller2, master, slave
@@ -143,101 +150,152 @@ class Test(object):
             if not match:
                 helpers.environment_failure("Unknown/unsupported device type in topology file: %s" % key)
         
-            #
-            # !!! FIXME: Need to convert section to a factory design pattern.
-            #
             host = params[key]['ip']            
-            self.pingable_or_die(host)
             
-            if self.is_controller(key):
-                helpers.log("Setting up controller ('%s')" % key)
-                n = node.ControllerNode(host)
+            t = self   # Test handle
+            
+            if helpers.is_controller(key):
+                helpers.log("Initializing controller '%s'" % key)
+                n = node.ControllerNode(key, host,
+                                        self.controller_user(),
+                                        self.controller_password(),
+                                        t)
+            if helpers.is_mininet(key):
+                helpers.log("Initializing Mininet '%s'" % key)
+                n = node.MininetNode(key, host, controller_ip,
+                                     self.mininet_user(),
+                                     self.mininet_password(),
+                                     t)
+            self.topology(key, n)
 
-                if 'http_port' in params[key]:
-                    n.http_port = params[key]['http_port']
-                else:
-                    n.http_port = 8080
-                    
-                if 'base_url' in params[key]:
-                    n.base_url = params[key]['base_url'] % (n.ip, n.http_port)
-                else:
-                    n.base_url =  'http://%s:%s' % (n.ip, n.http_port) 
-                
-                n.rest = restclient.RestClient(base_url=n.base_url)
-                
-                # Shortcuts
-                n.post = n.rest.post
-                n.get = n.rest.get
-                n.put = n.rest.put
-                n.patch = n.rest.patch
-                n.delete = n.rest.delete
-                n.rest_content = n.rest.content
-                n.rest_content_json = n.rest.content_json
-                n.rest_result = n.rest.result
-                n.rest_result_json = n.rest.result_json
-                
-                n.dev = devconf.ControllerDevConf(host=n.ip,
-                                                  user=self.controller_user(),
-                                                  password=self.controller_password())
-                
-                # Shortcuts
-                n.cli = n.dev.cli           # CLI mode
-                n.enable = n.dev.enable     # Enable mode
-                n.config = n.dev.config     # Configuration mode
-                n.bash   = n.dev.bash       # Bash mode
-                n.cli_content = n.dev.content
-                n.cli_result = n.dev.result
-                
-                self._topology[key] = n
+            helpers.log("Exscript driver for '%s': %s"
+                        % (key, n.dev.conn.get_driver()))
+            helpers.log("Node '%s' is platform '%s'" % (key, n.platform()))
 
-            # !!! FIXME: This is a hack to get things going for now...
-            if self.is_mininet(key):
-                helpers.log("Setting up Mininet ('%s')" % key)
-                n = node.MininetNode(host)
-                
-                if 'topology' in params[key]:
-                    n.topology = params[key]['topology']
-                else:
-                    helpers.environment_failure("Mininet topology is missing.")
-
-                if 'type' not in params[key]:
-                    helpers.environment_failure("Must specify a Mininet type in topology file ('t6' or 'basic').")
-
-                mn_type = params[key]['type'].lower()
-                if mn_type not in ('t6', 'basic'):
-                    helpers.environment_failure("Mininet type must be 't6' or 'basic'.") 
-                    
-                helpers.log("Mininet type: %s" % mn_type)
-                helpers.log("Setting up mininet ('%s')" % key)
-
-                if mn_type == 't6':
-                    n.dev = devconf.T6MininetDevConf(host=n.ip,
-                                                     user=self.mininet_user(),
-                                                     password=self.mininet_password(),
-                                                     controller=self.controller().ip,
-                                                     topology=n.topology)
-                elif mn_type == 'basic':
-                    n.dev = devconf.MininetDevConf(host=n.ip,
-                                                   user=self.mininet_user(),
-                                                   password=self.mininet_password(),
-                                                   controller=self.controller().ip,
-                                                   topology=n.topology)
-
-                # Shortcuts
-                n.cli = n.dev.cli
-                n.cli_content = n.dev.content
-                n.cli_result = n.dev.result
-                
-                self._topology[key] = n
-
-        helpers.log("Exscript driver for '%s': %s"
-                    % (key, n.dev.conn.get_driver()))
-        helpers.log("Platform is %s" % n.platform())
-
-        helpers.prettify_log("self._topology", self._topology)
+        helpers.prettify_log("self._topology: ", self._topology)
         helpers.log("Test object initialization completed.") 
         self._init_completed = True
 
+    def leading_spaces(self, s):
+        return len(s) - len(s.lstrip(' '))
+                     
+    def parse_running_config(self, config):
+        data = {}
+        lines = config.split('\n')
+
+        # Ignore 1st line: contains command string
+        # Ignore last line: contains device prompt
+        i = 1
+        while i < len(lines) - 1:
+            line = lines[i]
+            if re.match(r'^!', line):        # remove comments
+                i += 1
+                continue
+            if line.strip() == '':           # remove empty lines
+                i += 1
+                continue
+            helpers.log("Line %s: %s" % (i, line))
+            if re.match(r'^\w+', line):
+                key, val = line.split(' ', 1)
+                data[key] = val
+            i += 1
+        return data
+             
+    def controller_cli_show_version(self, name):
+        n = self.topology(name)
+        n.cli('show version')
+
+    def controller_cli_show_running_config(self, name):
+        n = self.topology(name)
+        n.enable('show running-config', quiet=True)
+        return n.cli_content()
+    
+    def controller_get_node_ids(self, config):
+        lines = config.split('\n')
+        node_ids = []
+        for line in lines:
+            match = re.match(r'^controller-node (.+)$', line)
+            if match:
+                node = match.group(1)
+                node = node.strip()
+                node_ids.append(node)
+        return node_ids
+    
+    def controller_cli_firewall_allow_rest_access(self, name, node_id):
+        n = self.topology(name)
+        n.config('controller-node %s' % node_id)
+        n.config('interface Ethernet 0')
+        n.config('firewall allow tcp 8000')
+        n.config('firewall allow tcp 8082')
+        n.config('exit')
+        n.config('exit')
+        
+    def setup_controller_firewall_allow_rest_access(self, name):
+        helpers.log("Enabling REST access via firewall filters")
+        n = self.topology(name)
+        platform = n.platform()
+        
+        if helpers.is_bvs(platform):
+            # Currently REST is enabled by default
+            pass
+        elif helpers.is_bigtap(platform) or helpers.is_bigwire(platform):
+            self.controller_cli_show_version(name)
+            config = self.controller_cli_show_running_config(name)
+            node_ids = self.controller_get_node_ids(config)
+            helpers.log("node_ids: %s" % node_ids)
+            for node_id in node_ids:
+                self.controller_cli_firewall_allow_rest_access(name, node_id)
+        else:
+            helpers.environment_failure("Inconceivable!!!")
+    
+    def setup_controller_http_session_cookie(self, name):
+        n = self.topology(name)
+        platform = n.platform()
+
+        helpers.log("Setting up HTTP session cookies for REST access")
+
+        if helpers.is_bvs(platform):
+            url = "/api/v1/auth/login"
+        elif helpers.is_bigtap(platform) or helpers.is_bigwire(platform):
+            url = "/auth/login"
+
+        result = n.rest.post(url, {"user":"admin", "password":"adminadmin"})
+        session_cookie = result['content']['session_cookie']
+        n.rest.set_session_cookie(session_cookie)
+
+    def controller_rest_is_master(self, name):
+        n = self.topology(name)
+        platform = n.platform()
+
+        if helpers.is_bigtap(platform) or helpers.is_bigwire(platform):
+            http_port = 8000
+            url = "http://%s:%s/rest/v1/system/ha/role" % (n.ip, http_port)
+            n.rest.get(url)
+            content = n.rest.content()
+            helpers.log("content: %s" % content)
+            if content['role'] == "MASTER":
+                return True
+            else:
+                return False
+        elif helpers.is_bvs(platform):
+            helpers.log("Device '%s' is platform 'bvs'. HA is not supported."
+                        % name)
+            return True
+
+    def setup(self):
+        # This check ensures we  don't try to setup multiple times.
+        if self._setup_completed:
+            #helpers.log("Test object setup skipped.")
+            return
+
+        params = self._topology_params
+        for key in params:
+            if helpers.is_controller(key):
+                self.setup_controller_firewall_allow_rest_access(key)
+                self.setup_controller_http_session_cookie(key)
+                
+        self._setup_completed = True
+    
 
 def test_singleton():
     t = Test()
