@@ -39,7 +39,8 @@ ping bm0 to bm1 single leaf single rack dynamic endpoints
    rest add interface to vns  A  A  leaf0  ${bm0_intf0}  -1 
    rest add interface to vns  A  A  leaf0  ${bm1_intf0}  -1 
    sleep  10
-   mininet ping  bm0  ${bm1_ip} 
+   ${loss}=  mininet ping  bm0  ${bm1_ip}
+   Should Be True  ${loss} == 0  
  
 ping bm0 to bm1 single leaf single rack static endpoints
    [Tags]  sanity
@@ -54,14 +55,16 @@ ping bm0 to bm1 single leaf single rack static endpoints
    rest add interface to vns  A  A  leaf0  ${bm1_intf0}  -1 
    rest add interface to vns  A  A  leaf0  ${bm0_intf0}  -1
    sleep  10 
-   mininet ping  bm0  ${bm1_ip}
+   ${loss}=  mininet ping  bm0  ${bm1_ip}
+   Should Be True  ${loss} == 0
    
 ping bm0 to bm2 dual rack single leaf dynamic endpoints
    [Tags]  smoke  sanity
    rest add interface to vns  A  A  leaf0  ${bm0_intf0}  -1 
    rest add interface to vns  A  A  leaf1  ${bm2_intf0}  -1 
    sleep  10 
-   mininet ping  bm0  ${bm2_ip} 					 
+   ${loss}=  mininet ping  bm0  ${bm2_ip}
+   Should Be True  ${loss} == 0 					 
 		
 ping bm0 to bm2 dual rack single leaf static endpoints 
    [Tags]  sanity    
@@ -76,7 +79,8 @@ ping bm0 to bm2 dual rack single leaf static endpoints
    rest add interface to vns  A  A  leaf1  ${bm2_intf0}  -1 
    rest add interface to vns  A  A  leaf0  ${bm0_intf0}  -1
    sleep  10 
-   mininet ping  bm0  ${bm2_ip}   
+   ${loss}=  mininet ping  bm0  ${bm2_ip}
+   Should Be True  ${loss} == 0   
    
 ping bm0 to bm1 single leaf single rack dynamic endpoints tag
    [Tags]  smoke  sanity
@@ -85,7 +89,8 @@ ping bm0 to bm1 single leaf single rack dynamic endpoints tag
    mininet link tag  bm0  bm0-bond0  10  ${bm0_ip}
    mininet link tag  bm1  bm1-bond0  10  ${bm1_ip}
    sleep  10
-   mininet ping  bm0  ${bm1_ip}  					
+   ${loss}=  mininet ping  bm0  ${bm1_ip}
+   Should Be True  ${loss} == 0  					
 		
 ping bm0 to bm1 single leaf single rack static endpoints tag
    [Tags]  sanity
@@ -100,7 +105,8 @@ ping bm0 to bm1 single leaf single rack static endpoints tag
    rest add interface to vns  A  A  leaf0  ${bm1_intf0}  10 
    rest add interface to vns  A  A  leaf0  ${bm0_intf0}  10
    sleep  10 
-   mininet ping  bm0  ${bm1_ip}
+   ${loss}=  mininet ping  bm0  ${bm1_ip}
+   Should Be True  ${loss} == 0
 
 ping bm0 to bm2 dual rack single leaf dynamic endpoints tag     
    [Tags]  smoke  sanity
@@ -108,7 +114,8 @@ ping bm0 to bm2 dual rack single leaf dynamic endpoints tag
    rest add interface to vns  A  A  leaf1  ${bm2_intf0}  10
    mininet link tag  bm2  bm2-bond0  10  ${bm2_ip}
    sleep  10
-   mininet ping  bm0  ${bm2_ip}    
+   ${loss}=  mininet ping  bm0  ${bm2_ip}
+   Should Be True  ${loss} == 0    
    
 ping bm0 to bm2 dual rack single leaf static endpoints tag 
    [Tags]  sanity
@@ -123,7 +130,8 @@ ping bm0 to bm2 dual rack single leaf static endpoints tag
    rest add interface to vns  A  A  leaf1  ${bm2_intf0}  10 
    rest add interface to vns  A  A  leaf0  ${bm0_intf0}  10
    sleep  10 
-   mininet ping   bm0  ${bm2_ip}  
+   ${loss}=  mininet ping  bm0  ${bm2_ip}
+   Should Be True  ${loss} == 0  
    
 Tear down the config
    [Tags]  smoke  sanity 

@@ -42,7 +42,8 @@ ping bm0 to bm1 dual leaf single rack dynamic endpoints
    add portgroup to vns  A  A  p1  -1 
    add portgroup to vns  A  A  p2  -1
    sleep  10 
-   mininet ping  bm0  ${bm1_ip}						 
+   ${loss}=  mininet ping  bm0  ${bm1_ip}
+   Should Be True  ${loss} == 0						 
 	 
 ping bm0 to bm1 dual leaf single rack static endpoints
    [Tags]  sanity
@@ -57,14 +58,16 @@ ping bm0 to bm1 dual leaf single rack static endpoints
    add portgroup to vns  A  A  p2  -1 
    add portgroup to vns  A  A  p1  -1
    sleep  10 
-   mininet ping  bm0  ${bm1_ip} 
+   ${loss}=  mininet ping  bm0  ${bm1_ip}
+   Should Be True  ${loss} == 0 
 
 ping bm0 to bm2 dual rack dual leaf dynamic endpoints
    [Tags]  sanity
    add portgroup to vns  A  A  p3  -1 
    add portgroup to vns  A  A  p1  -1
    sleep  10 
-   mininet ping  bm0  ${bm2_ip}					 
+   ${loss}=  mininet ping  bm0  ${bm2_ip}
+   Should Be True  ${loss} == 0					 
 		
 ping bm0 to bm2 dual rack dual leaf static endpoints
    [Tags]  sanity     
@@ -79,7 +82,8 @@ ping bm0 to bm2 dual rack dual leaf static endpoints
    add portgroup to vns  A  A  p3  -1 
    add portgroup to vns  A  A  p1  -1 
    sleep  10
-   mininet ping  bm0  ${bm2_ip}  
+   ${loss}=  mininet ping  bm0  ${bm2_ip}
+   Should Be True  ${loss} == 0  
    
 ping bm0 to bm1 dual leaf single rack dynamic endpoints tag
    [Tags]  sanity
@@ -88,7 +92,8 @@ ping bm0 to bm1 dual leaf single rack dynamic endpoints tag
    mininet link tag  bm0  bm0-bond0  10  ${bm0_ip}
    mininet link tag  bm1  bm1-bond0  10  ${bm1_ip}
    sleep  10
-   mininet ping  bm0  ${bm1_ip} 					
+   ${loss}=  mininet ping  bm0  ${bm1_ip}
+   Should Be True  ${loss} == 0 					
 		
 ping bm0 to bm1 dual leaf single rack static endpoints tag
    [Tags]  sanity
@@ -103,7 +108,8 @@ ping bm0 to bm1 dual leaf single rack static endpoints tag
    add portgroup to vns  A  A  p2  10 
    add portgroup to vns  A  A  p1  10
    sleep  10 
-   mininet ping  bm0  ${bm1_ip}
+   ${loss}=  mininet ping  bm0  ${bm1_ip}
+   Should Be True  ${loss} == 0
 
 ping bm0 to bm2 dual rack dual leaf dynamic endpoints tag     
    [Tags]  sanity
@@ -111,7 +117,8 @@ ping bm0 to bm2 dual rack dual leaf dynamic endpoints tag
    add portgroup to vns  A  A  p3  10 
    mininet link tag  bm2  bm2-bond0  10  ${bm2_ip}
    sleep  10
-   mininet ping  bm0  ${bm2_ip}   
+   ${loss}=  mininet ping  bm0  ${bm2_ip}
+   Should Be True  ${loss} == 0   
    
 ping bm0 to bm2 dual rack dual leaf static endpoints tag 
    [Tags]  sanity
@@ -126,7 +133,8 @@ ping bm0 to bm2 dual rack dual leaf static endpoints tag
    add portgroup to vns  A  A  p3  10 
    add portgroup to vns  A  A  p1  10
    sleep  10 
-   mininet ping   bm0  ${bm2_ip}  
+   ${loss}=  mininet ping  bm0  ${bm2_ip}
+   Should Be True  ${loss} == 0  
    
 Tear down the config
    [Tags]  smoke  sanity 
