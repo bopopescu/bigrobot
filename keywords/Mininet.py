@@ -34,9 +34,6 @@ class Mininet(object):
         out = mn.cli_content()
         loss = helpers.any_match(out, r', (\d+)% packet loss')
         helpers.log("packet loss: %s" % loss)
-        if int(loss[0]) > 0:
-            helpers.test_failure(loss[0] + "% packet loss")
-        
         return loss[0]
     
     def mininet_link_tag(self, intf, intf_name, vlan, ip):        
