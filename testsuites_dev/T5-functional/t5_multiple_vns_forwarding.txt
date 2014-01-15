@@ -100,11 +100,20 @@ Check forwarding between rack1-bm2 and rack2-bm4 after adding VNS
    create a vns  t1  v3
    rest add interface to vns  t1  v3  leaf1  ${bm2_intf0}  -1 
    rest add interface to vns  t1  v3  leaf2  ${bm4_intf0}  -1
+   sleep  10
+   ${loss}=  mininet ping  bm2  ${bm4_ip}
+   Should Be True  ${loss} <= 20
+   
+Check forwarding between rack1-bm2 and rack2-bm4 untag--tag
+   [Tags]  functional
+   rest delete interface from vns  t1  v3  leaf2  ${bm4_intf0}  -1
+   rest add interface to vns  t1  v3  leaf2  ${bm4_intf0}  100
+   mininet link tag  bm4  bm4-bond0  100  ${bm4_ip}
    sleep  5
    ${loss}=  mininet ping  bm2  ${bm4_ip}
    Should Be True  ${loss} <= 20
    
- Check forwarding between rack0-bm0 and rack2-bm5 after deleting tenant
+Check forwarding between rack0-bm0 and rack2-bm5 after deleting tenant
    [Tags]  functional
    delete a tenant  t1
    sleep  5
