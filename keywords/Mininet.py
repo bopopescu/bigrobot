@@ -90,5 +90,10 @@ class Mininet(object):
         ipaddr = ip + "/" + mask
         mn.cli('%s ip link delete link %s vlan%s' % (host, intf_name, vlan))
         mn.cli('%s ifconfig %s %s' % (host, intf_name, ipaddr))   
-        
+    
+    def mininet_host_tagged_gw(self, host, gw, intf):        
+        t = test.Test()
+        mn = t.mininet()
+        mn.cli('%s route add default gw %s vlan%s' % (host, gw, intf))
+    
         
