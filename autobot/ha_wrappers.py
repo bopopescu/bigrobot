@@ -15,6 +15,18 @@ class HaBsnRestClient(object):
         self.t = t
         self.name = name
 
+    def status_code(self, *args, **kwargs):
+        n = self.t.controller(self.name, resolve_mastership=True)
+        return n.rest.status_code(*args, **kwargs)
+
+    def status_code_ok(self, *args, **kwargs):
+        n = self.t.controller(self.name, resolve_mastership=True)
+        return n.rest.status_code_ok(*args, **kwargs)
+
+    def error(self, *args, **kwargs):
+        n = self.t.controller(self.name, resolve_mastership=True)
+        return n.rest.error(*args, **kwargs)
+
     def result(self, *args, **kwargs):
         n = self.t.controller(self.name, resolve_mastership=True)
         return n.rest.result(*args, **kwargs)

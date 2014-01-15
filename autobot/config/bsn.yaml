@@ -6,3 +6,10 @@ controller_password: adminadmin
 
 mininet_user: mininet
 mininet_password: mininet
+
+switch_user: admin
+switch_user: adminadmin
+
+host_user: bsn
+host_user: bsn
+

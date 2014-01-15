@@ -1,0 +1,7 @@
+c1:
+  ip: 10.192.5.51
+h1:
+  ip: 10.193.0.120
+  user: root
+  password: bsn
+
