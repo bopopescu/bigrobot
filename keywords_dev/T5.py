@@ -276,9 +276,6 @@ class T5(object):
 
         return c.rest.content()
             
-    def rest_ping(self, bm0, bm1):
-        pass
-            
     def rest_change_to_tenant(self, tenant):
         t = test.Test()
         c = t.controller()
@@ -339,8 +336,6 @@ class T5(object):
 
         return c.rest.content()
             
-    def rest_show_endpoints(self):
-        pass
     def rest_add_interface_to_vns(self, tenant, vns, switch, intf, vlan):
         t = test.Test()
         c = t.controller()
@@ -405,7 +400,61 @@ class T5(object):
         if not c.rest.status_code_ok():
             helpers.test_failure(c.rest.error())
         return c.rest.content()
-   
+    
+    def rest_verify_vns(self):
+        '''Verify VNS information
+        
+            Input:           
+            
+            Return: true if it matches the created VNS (string starts with "v")
+        '''
+        t = test.Test()
+        c = t.controller()
+        try:
+            url = '%s/api/v1/data/controller/applications/bvs/info/endpoint-manager/vnses' % (c.base_url)
+            c.rest.get(url)
+            data = c.rest.content()
+            for i in len(data):
+                if len(data) == 0:
+                    helpers.log("No VNS are configured")
+                elif data[i]["name"] == str.startswith("v"):
+                    helpers.log("All VNS are configured")
+                    continue
+                else:
+                    helpers.test_failure("All VNS are not configured")       
+        except:
+            helpers.test_failure(c.rest.error())
+        else: 
+            helpers.test_log("Output: %s" % c.rest.result_json())
+            return c.rest.content()
+        
+    def rest_verify_tenant(self):
+        '''Verify CLI tenant information
+        
+            Input:           
+            
+            Return: true if it matches the created tenant (string starts with "t")
+        '''
+        t = test.Test()
+        c = t.controller()
+        try:
+            url = '%s/api/v1/data/controller/applications/bvs/info/endpoint-manager/tenants' % (c.base_url)
+            c.rest.get(url)
+            data = c.rest.content()
+            for i in len(data):
+                if len(data) == 0:
+                    helpers.log("No tenants are configured")
+                elif data[i]["tenant-name"] == str.startswith("t"):
+                    helpers.log("All tenants are configured")
+                    continue
+                else:
+                    helpers.test_failure("All tenants are not configured")       
+        except:
+            helpers.test_failure(c.rest.error())
+        else: 
+            helpers.test_log("Output: %s" % c.rest.result_json())
+            return c.rest.content()
+            
     def rest_create_vns_ip(self, tenant, vns, ipaddr, netmask):
         '''Create vns router interface via command "virtual-router vns interface"
         

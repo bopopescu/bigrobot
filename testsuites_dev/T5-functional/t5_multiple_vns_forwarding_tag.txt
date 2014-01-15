@@ -58,7 +58,7 @@ Configure Multiple VNS and membership rules
    rest show tenant
    rest show vns 
  
-Check forwarding between rack0-bm0 and rack2-bm5 
+Check forwarding between rack0-bm0 and rack2-bm5 different tags 
    [Tags]  functional
    mininet link tag  bm0  bm0-bond0  100  ${bm0_ip}
    mininet link tag  bm5  bm5-bond0  150  ${bm5_ip}
@@ -95,6 +95,32 @@ Check forwarding between rack0-bm0 and rack2-bm5 after adding back member interf
    ${loss}=  mininet ping  bm0  ${bm5_ip}
    Should Be True  ${loss} <= 20
    
+Check forwarding with multiple tags on same interface different vns
+   [Tags]  functional
+   create a vns  t1  v4
+   rest add interface to vns  t1  v4  leaf0  ${bm0_intf0}  200
+   rest add interface to vns  t1  v4  leaf2  ${bm5_intf0}  250
+   mininet link untag  bm0  bm0-bond0  100  ${bm0_ip}
+   mininet link untag  bm5  bm5-bond0  150  ${bm5_ip}
+   mininet link tag  bm0  bm0-bond0  200  ${bm0_ip}
+   mininet link tag  bm5  bm5-bond0  250  ${bm5_ip}
+   sleep  5
+   ${loss}=  mininet ping  bm0  ${bm5_ip}
+   Should Be True  ${loss} == 0 
+
+Check forwarding with untagged and tag on same interface multiple VNS 
+   [Tags]  functional
+   create a vns  t1  v4
+   rest add interface to vns  t1  v4  leaf0  ${bm0_intf0}  -1
+   rest add interface to vns  t1  v4  leaf2  ${bm5_intf0}  300
+   mininet link untag  bm0  bm0-bond0  200  ${bm0_ip}
+   mininet link untag  bm5  bm5-bond0  250  ${bm5_ip}
+   mininet link tag  bm5  bm5-bond0  300  ${bm5_ip}
+   mininet host ipcfg  bm0  bm0-bond0  ${bm0_ip}  8
+   sleep  5
+   ${loss}=  mininet ping  bm0  ${bm5_ip}
+   Should Be True  ${loss} == 0  
+
 Check forwarding between rack1-bm2 and rack2-bm4 after deleting VNS
    [Tags]  functional
    delete a vns  t1  v3
