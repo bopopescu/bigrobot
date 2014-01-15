@@ -130,7 +130,7 @@ L3 ping untagged bm0 to tagged bm1 single leaf single rack within tenant differe
 	mininet host ipcfg   		${host0_name}		${host0_intf}	${host0_ip}		${host0_subnet} 
 	mininet l3 link tag			${host1_name}		${host1_intf}	${vns2_vlan}	${host1_ip}		${host1_subnet}
 	mininet host gw				${host0_name}		${vns1_ip}		${host0_intf}
-	mininet host gw				${host1_name}		${vns2_ip}		${host1_intf}
+	mininet host gw				${host1_name}		${vns2_ip}		${vns2_vlan}
 	mininet host arp			${host0_name}		${vns1_ip}		${gw_mac}
 	mininet host arp			${host1_name} 		${vns2_ip}		${gw_mac}
 	sleep 						5
