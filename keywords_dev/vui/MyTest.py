@@ -62,3 +62,8 @@ class MyTest(object):
         slave.cli("whoami")
         result_json = slave.rest.result_json()
         helpers.log("result_json: %s" % result_json)
+        
+    def host_commands(self):
+        t = test.Test()
+        h1 = t.host()
+        helpers.log("h1: %s" % h1)
