@@ -193,27 +193,35 @@ def sleep(s):
 
 
 def is_controller(name):
+    """
+    Controller is defined as c1, c2, master, slave, ...
+    """
     match = re.match(r'^(c\d|controller\d?|master|slave)$', name)
-    if match:
-        return True
-    else:
-        return False
+    return True if match else False
 
 
 def is_switch(name):
+    """
+    Switch is defined as s1, s2, s3, spine1, spine2, leaf1, leaf2, ...
+    """
     match = re.match(r'^(s\d+|spine\d+|leaf\d+)$', name)
-    if match:
-        return True
-    else:
-        return False
+    return True if match else False
+
+
+def is_host(name):
+    """
+    Host is defined as h1, h2, h3, ...
+    """
+    match = re.match(r'^(h\d+)$', name)
+    return True if match else False
 
 
 def is_mininet(name):
+    """
+    Mininet is defined as mn, mn1, or mininet
+    """
     match = re.match(r'^(mn\d?|mininet\d?)$', name)
-    if match:
-        return True
-    else:
-        return False
+    return True if match else False
 
 
 def is_bvs(name):
