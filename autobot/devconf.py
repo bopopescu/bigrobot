@@ -25,7 +25,9 @@ class DevConf(object):
         self.mode = 'cli'
 
     def cmd(self, cmd, quiet=False, level=5):
-        helpers.log("Execute command: %s" % cmd, level=level)
+        if not quiet:
+            helpers.log("Execute command: %s" % cmd, level=level)
+
         self.conn.execute(cmd)
         self.last_result = { 'content': self.conn.response }
         
@@ -57,9 +59,10 @@ class DevConf(object):
 
 
 class ControllerDevConf(DevConf):
-    def __init__(self, host=None, user=None, password=None):
+    def __init__(self, name=None, host=None, user=None, password=None):
         super(ControllerDevConf, self).__init__(host, user, password)
         self.mode_before_bash = None
+        self.name = name
 
     def is_cli(self):
         return self.mode == 'cli'
@@ -80,6 +83,8 @@ class ControllerDevConf(DevConf):
         helpers.log("Current mode is %s" % self.mode)
 
     def cmd(self, cmd, quiet=False, mode='cli', level=5):
+
+        # Check to make sure we're in the right mode prior to executing command
         if mode == 'cli':
             if self.is_bash():
                 self.exit_bash_mode(mode)
@@ -126,12 +131,16 @@ class ControllerDevConf(DevConf):
             super(ControllerDevConf, self).cmd('debug bash', quiet=True, level=level)
                 
         self.mode = mode
-        helpers.log("Current mode is %s" % self.mode, level=level)
+        #helpers.log("Current mode is %s" % self.mode, level=level)
+
+        if not quiet:
+            helpers.log("Execute command on '%s': %s" % (self.name, cmd), level=level)
 
         super(ControllerDevConf, self).cmd(cmd, quiet=True)
         if not quiet:
-            helpers.log("%s content:\n%s\n\n---"
-                        % (mode, self.content()), level=level)
+            helpers.log("%s content on '%s':\n%s%s"
+                        % (mode, self.name, self.content(), helpers.end_of_output_marker),
+                        level=level)
         return self.result()
 
     
@@ -157,7 +166,8 @@ class T6MininetDevConf(DevConf):
     :param topology: str, in the form
         '--num-spine 0 --num-rack 1 --num-bare-metal 2 --num-hypervisor 0'
     """
-    def __init__(self, host=None, user=None, password=None, controller=None,
+    def __init__(self, name=None, host=None, user=None, password=None,
+                 controller=None,
                  port=6653,
                  topology=None):
         if controller is None:
@@ -166,6 +176,8 @@ class T6MininetDevConf(DevConf):
             helpers.environment_failure("Must specify a topology for T6Mininet.")
 
         super(T6MininetDevConf, self).__init__(host, user, password)
+        
+        self.name = name
         
         # Enter CLI mode
         cmd = ("sudo /opt/t6-mininet/run.sh -c %s:%s %s"

@@ -23,6 +23,7 @@ _password_re = [re.compile(r'Password: ?$')]
 _linux_re    = re.compile(r'\blinux\b', re.I)
 _mininet_re  = re.compile(r'mininet@.+mininet', re.I)
 
+
 class MininetDriver(Driver):
     def __init__(self):
         Driver.__init__(self, 'shell')

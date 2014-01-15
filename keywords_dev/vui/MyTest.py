@@ -43,20 +43,22 @@ class MyTest(object):
     def enable_help(self):
         t = test.Test()
         master = t.controller('master')
-        c1 = t.controller('c1')
-        c2 = t.controller('c2')
-        #c.enable('help')
-        #c.cli('show user')
-        #c.config('show running-config')
-        #c.cli('history')
-        master.config('whoami')
-        c2.bash('uptime')
-        c1.cli('show user')
-        #c.config('whoami')
-        #c.bash('sudo cat /etc/hosts')
-        #.cli('whoami')
-        #c.bash('ls /tmp')
-        #helpers.log("result: %s" % c.cli_result())
-        #return c.cli_result()
+        helpers.log("master: %s" % master)
 
-        #helpers.log("*** platform: %s" % c.platform())
+        slave = t.controller('slave')
+        helpers.log("slave: %s" % slave)
+        
+        result = master.cli('show user')
+        helpers.log("CLI output: %s" % result['content'])
+        
+        #master.rest().get('/api/v1/data/controller/applications/bvs/tenant')
+        master.rest.get('/api/v1/data/controller/core/aaa/local-user')
+        content = master.rest.content()
+        helpers.log("content: %s" % content)
+        
+        content_json = master.rest.content_json()
+        helpers.log("content_json: %s" % content_json)
+        
+        slave.cli("whoami")
+        result_json = slave.rest.result_json()
+        helpers.log("result_json: %s" % result_json)
