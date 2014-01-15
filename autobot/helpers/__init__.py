@@ -616,11 +616,11 @@ def _ping(host, count=3, waittime=100, quiet=False):
              % (host, count, packets_received))
         if packets_received > 0:
             if not quiet:
-                log("Success! %s" % s, level=5)
+                log("Success! %s%s" % (s, end_of_output_marker()), level=5)
             return True
         else:
             if not quiet:
-                log("Failure! %s" % s, level=5)
+                log("Failure! %s%s" % (s, end_of_output_marker()), level=5)
             return False
     test_error("Unknown ping error.")
 
@@ -641,3 +641,7 @@ def ping(host, count=3, waittime=100, quiet=False):
         count -= 2
         status = _ping(host, count=count, waittime=waittime, quiet=quiet)
     return status
+
+
+def end_of_output_marker():
+    return '\n\n----'

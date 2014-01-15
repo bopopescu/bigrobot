@@ -1,5 +1,6 @@
 import autobot.helpers as helpers
-import autobot.node as node
+import autobot.node as a_node
+import autobot.ha_wrappers as ha_wrappers
 import re
 #import bigtest
 #import bigtest.controller
@@ -75,12 +76,10 @@ class Test(object):
 
     def topology(self, name=None, node=None):
         if not self._init_in_progress:
-            self._init_in_progress = True
             self.initialize()
 
             # Proceed with setup, but only after init completes        
             if not self._setup_in_progress:
-                self._setup_in_progress = True
                 self.setup()
 
         #helpers.prettify_log("_topology:", self._topology)
@@ -94,20 +93,52 @@ class Test(object):
         else:
             return self._topology
 
-    def controller(self, name='c1'):
+    def is_master_controller(self, name):
+        n = self.topology(name)
+        platform = n.platform()
+
+        if helpers.is_bigtap(platform) or helpers.is_bigwire(platform):
+            url = "/rest/v1/system/ha/role"
+            
+            # We don't want REST object to save the result from the REST
+            # command to detect mastership.
+            result = n.rest.get(url, save_last_result=False)
+            
+            content = result['content']
+            if content['role'] == "MASTER":
+                return True
+            else:
+                return False
+        elif helpers.is_bvs(platform):
+            helpers.log("Device '%s' is platform 'bvs'. HA is not supported."
+                        % name)
+            return True
+
+    def controller(self, name='c1', resolve_mastership=False):
+        """
+        :param resolve_mastership: (Bool) 
+                - If False, it returns the fax controller node (HaControllerNode)
+                - If True, it resolves 'master' (or 'slave') to a controller
+                  name (e.g., 'c1', 'c2', etc). 
+        """
+        t = self
+
+        if not resolve_mastership and name in ('master', 'slave'):
+            return ha_wrappers.HaControllerNode(name, t)
+
         if name == 'master':
-            if self.controller_rest_is_master('c1'):
+            if self.is_master_controller('c1'):
                 node = 'c1'
-            elif self.controller_rest_is_master('c2'):
+            elif self.is_master_controller('c2'):
                 node = 'c2'
             else:
                 helpers.environment_failure("Neither 'c1' nor 'c2' is the master. This is an impossible state!")
             helpers.log("Device '%s' is the master" % node)
         elif name == 'slave':
-            if not self.controller_rest_is_master('c1'):
-                return self.topology('c1')
-            elif not self.controller_rest_is_master('c2'):
-                return self.topology('c2')
+            if not self.is_master_controller('c1'):
+                node = 'c1'
+            elif not self.is_master_controller('c2'):
+                node = 'c2'
             else:
                 helpers.environment_failure("Neither 'c1' nor 'c2' is the slave. This is an impossible state!")
             helpers.log("Device '%s' is the slave" % node)
@@ -115,16 +146,22 @@ class Test(object):
             node = name
 
         return self.topology(node)
+        
+    def mininet(self, name='mn'):
+        return self.topology(name)
     
-    def mininet(self):
-        return self.topology('mn')
-    
+    def switch(self, name='s1'):
+        return self.topology(name)
+
+    def host(self, name='h1'):
+        return self.topology(name)
+
     def node(self, name):
         return self.topology(name)
     
     def initialize(self):
         """
-        Initializes the test topologt. This should be called prior to test case
+        Initializes the test topology. This should be called prior to test case
         execution (e.g., called by Test Suite or Test Case setup).
         """
 
@@ -132,13 +169,17 @@ class Test(object):
         if self._init_completed:
             #helpers.log("Test object initialization skipped.")
             return
+        if self._init_in_progress:
+            return
         
+        self._init_in_progress = True
+
         params = self._topology_params
         
         if 'c1' not in params:
             helpers.environment_failure("Must have a controller (c1) defined")
         controller_ip = params['c1']['ip']   # Mininet needs this bit of info
-        helpers.log("Controller IP address is %s" % controller_ip)
+        #helpers.log("Controller IP address is %s" % controller_ip)
         
         for key in params:
             # Matches the following device types:
@@ -156,16 +197,16 @@ class Test(object):
             
             if helpers.is_controller(key):
                 helpers.log("Initializing controller '%s'" % key)
-                n = node.ControllerNode(key, host,
-                                        self.controller_user(),
-                                        self.controller_password(),
-                                        t)
+                n = a_node.ControllerNode(key, host,
+                                          self.controller_user(),
+                                          self.controller_password(),
+                                          t)
             if helpers.is_mininet(key):
                 helpers.log("Initializing Mininet '%s'" % key)
-                n = node.MininetNode(key, host, controller_ip,
-                                     self.mininet_user(),
-                                     self.mininet_password(),
-                                     t)
+                n = a_node.MininetNode(key, host, controller_ip,
+                                       self.mininet_user(),
+                                       self.mininet_password(),
+                                       t)
             self.topology(key, n)
 
             helpers.log("Exscript driver for '%s': %s"
@@ -263,30 +304,15 @@ class Test(object):
         session_cookie = result['content']['session_cookie']
         n.rest.set_session_cookie(session_cookie)
 
-    def controller_rest_is_master(self, name):
-        n = self.topology(name)
-        platform = n.platform()
-
-        if helpers.is_bigtap(platform) or helpers.is_bigwire(platform):
-            http_port = 8000
-            url = "http://%s:%s/rest/v1/system/ha/role" % (n.ip, http_port)
-            n.rest.get(url)
-            content = n.rest.content()
-            helpers.log("content: %s" % content)
-            if content['role'] == "MASTER":
-                return True
-            else:
-                return False
-        elif helpers.is_bvs(platform):
-            helpers.log("Device '%s' is platform 'bvs'. HA is not supported."
-                        % name)
-            return True
-
     def setup(self):
         # This check ensures we  don't try to setup multiple times.
         if self._setup_completed:
             #helpers.log("Test object setup skipped.")
             return
+        if self._setup_in_progress:
+            return
+                
+        self._setup_in_progress = True
 
         params = self._topology_params
         for key in params:

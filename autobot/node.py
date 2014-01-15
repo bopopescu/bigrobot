@@ -29,13 +29,15 @@ class Node(object):
         self.is_pingable = True
         return True
 
+
 class ControllerNode(Node):
     def __init__(self, name, ip, user, password, t):
         super(ControllerNode, self).__init__(name, ip, user, password) 
         self.pingable_or_die()
         params = t.topology_params()
 
-        self.dev = devconf.ControllerDevConf(host=ip,
+        self.dev = devconf.ControllerDevConf(name=name,
+                                             host=ip,
                                              user=user,
                                              password=password)
         
@@ -53,16 +55,17 @@ class ControllerNode(Node):
                                   platform=self.platform(),
                                   host=self.ip)
         
+        # !!! FIXME: Can remove this if no one complains
         # Shortcuts
-        self.post = self.rest.post
-        self.get = self.rest.get
-        self.put = self.rest.put
-        self.patch = self.rest.patch
-        self.delete = self.rest.delete
-        self.rest_content = self.rest.content
-        self.rest_content_json = self.rest.content_json
-        self.rest_result = self.rest.result
-        self.rest_result_json = self.rest.result_json
+        #self.post = self.rest.post
+        #self.get = self.rest.get
+        #self.put = self.rest.put
+        #self.patch = self.rest.patch
+        #self.delete = self.rest.delete
+        #self.rest_content = self.rest.content
+        #self.rest_content_json = self.rest.content_json
+        #self.rest_result = self.rest.result
+        #self.rest_result_json = self.rest.result_json
         
         # Shortcuts
         self.cli = self.dev.cli           # CLI mode
@@ -71,6 +74,86 @@ class ControllerNode(Node):
         self.bash   = self.dev.bash       # Bash mode
         self.cli_content = self.dev.content
         self.cli_result = self.dev.result
+
+
+class HaBsnRestClient(object):
+    def __init__(self, name, t):
+        if name not in ('master', 'slave'):
+            helpers.log("HA controller must either be 'master' or 'slave'")
+        self.t = t
+        self.name = name
+
+    def result(self, *args, **kwargs):
+        n = self.t.controller(self.name, resolve_mastership=True)
+        return n.rest.result(*args, **kwargs)
+
+    def result_json(self, *args, **kwargs):
+        n = self.t.controller(self.name, resolve_mastership=True)
+        return n.rest.result_json(*args, **kwargs)
+
+    def content(self, *args, **kwargs):
+        n = self.t.controller(self.name, resolve_mastership=True)
+        return n.rest.content(*args, **kwargs)
+
+    def content_json(self, *args, **kwargs):
+        n = self.t.controller(self.name, resolve_mastership=True)
+        return n.rest.content_json(*args, **kwargs)
+
+    def post(self, *args, **kwargs):
+        n = self.t.controller(self.name, resolve_mastership=True)
+        return n.rest.post(*args, **kwargs)
+
+    def get(self, *args, **kwargs):
+        n = self.t.controller(self.name, resolve_mastership=True)
+        return n.rest.get(*args, **kwargs)
+
+    def put(self, *args, **kwargs):
+        n = self.t.controller(self.name, resolve_mastership=True)
+        return n.rest.put(*args, **kwargs)
+
+    def patch(self, *args, **kwargs):
+        n = self.t.controller(self.name, resolve_mastership=True)
+        return n.rest.patch(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        n = self.t.controller(self.name, resolve_mastership=True)
+        return n.rest.delete(*args, **kwargs)
+
+    
+class HaControllerNode(object):
+    """
+    This class returns a faux controller node. It is intended as a wrapper for
+    handling HA/mastership logic. So we have to intercept all the common
+    interfaces of ControllerNode (e.g., cli, enable, config, bash,
+    cli_content, cli_result, REST verbs/results, etc.) to ensure we are on the
+    correct controller prior to executing the command. 
+    """
+    def __init__(self, name, t):
+        if name not in ('master', 'slave'):
+            helpers.log("HA controller must either be 'master' or 'slave'")
+        self.t = t
+        self.name = name
+        self.rest = HaBsnRestClient(name, t)
+
+    def cli(self, *args, **kwargs):
+        n = self.t.controller(self.name, resolve_mastership=True)
+        return n.cli(*args, **kwargs)
+
+    def enable(self, *args, **kwargs):
+        n = self.t.controller(self.name, resolve_mastership=True)
+        return n.enable(*args, **kwargs)
+
+    def config(self, *args, **kwargs):
+        n = self.t.controller(self.name, resolve_mastership=True)
+        return n.config(*args, **kwargs)
+
+    def cli_content(self, *args, **kwargs):
+        n = self.t.controller(self.name, resolve_mastership=True)
+        return n.cli_content(*args, **kwargs)
+
+    def cli_result(self, *args, **kwargs):
+        n = self.t.controller(self.name, resolve_mastership=True)
+        return n.cli_result(*args, **kwargs)
 
 
 class MininetNode(Node):
@@ -94,13 +177,15 @@ class MininetNode(Node):
         helpers.log("Setting up mininet ('%s')" % name)
 
         if mn_type == 't6':
-            self.dev = devconf.T6MininetDevConf(host=ip,
+            self.dev = devconf.T6MininetDevConf(name=name,
+                                                host=ip,
                                                 user=user,
                                                 password=password,
                                                 controller=controller_ip,
                                                 topology=self.topology)
         elif mn_type == 'basic':
-            self.dev = devconf.MininetDevConf(host=ip,
+            self.dev = devconf.MininetDevConf(name=name,
+                                              host=ip,
                                               user=user,
                                               password=password,
                                               controller=controller_ip,

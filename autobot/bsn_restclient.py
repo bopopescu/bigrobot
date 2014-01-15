@@ -27,6 +27,7 @@ class BsnRestClient(RestClient):
           - http://host:8082/api/v1/data/controller/core/switch[dpid="%s"]
           - http://host:8000/rest/v1/model/snmp-server-config/
 
+        Returns a formatted URL.
         """
         if re.match(r'^http://', url):
             # Full URL specified. Leave it as is
@@ -53,22 +54,22 @@ class BsnRestClient(RestClient):
             helpers.environment_failure("Inconceivable!!! Platform=%s" %
                                         self.platform)
         
-    def post(self, url, data=None, session=None, quiet=False):
+    def post(self, url, *args, **kwargs):
         url = self.format_url(url)
-        return super(BsnRestClient, self).post(url, data, session, quiet)
+        return super(BsnRestClient, self).post(url, *args, **kwargs)
 
-    def get(self, url, session=None, quiet=False):
+    def get(self, url, *args, **kwargs):
         url = self.format_url(url)
-        return super(BsnRestClient, self).get(url, session, quiet)
+        return super(BsnRestClient, self).get(url, *args, **kwargs)
 
-    def put(self, url, data=None, session=None, quiet=False):
+    def put(self, url, *args, **kwargs):
         url = self.format_url(url)
-        return super(BsnRestClient, self).put(url, data, session, quiet)
+        return super(BsnRestClient, self).put(url, *args, **kwargs)
 
-    def patch(self, url, data=None, session=None, quiet=False):
+    def patch(self, url, *args, **kwargs):
         url = self.format_url(url)
-        return super(BsnRestClient, self).patch(url, data, session, quiet)
+        return super(BsnRestClient, self).patch(url, *args, **kwargs)
 
-    def delete(self, url, data=None, session=None, quiet=False):
+    def delete(self, url, *args, **kwargs):
         url = self.format_url(url)
-        return super(BsnRestClient, self).delete(url, data, session, quiet)
+        return super(BsnRestClient, self).delete(url, *args, **kwargs)

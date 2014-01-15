@@ -112,7 +112,7 @@ Check forwarding between rack1-bm2 and rack2-bm4 untag--tag
    sleep  5
    ${loss}=  mininet ping  bm2  ${bm4_ip}
    Should Be True  ${loss} <= 20
-   
+
 Check forwarding between rack0-bm0 and rack2-bm5 after deleting tenant
    [Tags]  functional
    delete a tenant  t1
