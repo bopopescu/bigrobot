@@ -80,15 +80,15 @@ class Mininet(object):
         mn = t.mininet()
         ipaddr = ip + "/" + mask
         mn.cli('%s ifconfig %s 0.0.0.0' % (host, intf_name))
-        mn.cli('%s ip link add link %s vlan1 type vlan id %s' % (host, intf_name, vlan))
-        mn.cli('%s ifconfig vlan1 %s' % (host, ipaddr))
+        mn.cli('%s ip link add link %s vlan%s type vlan id %s' % (host, intf_name, vlan, vlan))
+        mn.cli('%s ifconfig vlan%s %s' % (host, vlan, ipaddr))
         
         
     def mininet_l3_link_untag(self, host, intf_name, vlan, ip, mask):        
         t = test.Test()
         mn = t.mininet()
         ipaddr = ip + "/" + mask
-        mn.cli('%s ip link delete link %s vlan1' % (host, intf_name))
+        mn.cli('%s ip link delete link %s vlan%s' % (host, intf_name, vlan))
         mn.cli('%s ifconfig %s %s' % (host, intf_name, ipaddr))   
         
         
