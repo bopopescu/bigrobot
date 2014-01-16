@@ -63,7 +63,18 @@ class MyTest(object):
         result_json = slave.rest.result_json()
         helpers.log("result_json: %s" % result_json)
         
+        master.sudo('cat /etc/shadow')
+        
     def host_commands(self):
         t = test.Test()
-        h1 = t.host()
+        h1 = t.host('h1')
         helpers.log("h1: %s" % h1)
+        h1.bash("cat /etc/passwd")
+        #h1.sudo("cat /etc/shadow")
+        
+    def switch_show_version(self):
+        t = test.Test()
+        s1 = t.switch('s1')
+        helpers.log("s1: %s" % s1)
+        s1.cli("show version")
+        
