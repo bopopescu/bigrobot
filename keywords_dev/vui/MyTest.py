@@ -77,4 +77,25 @@ class MyTest(object):
         s1 = t.switch('s1')
         helpers.log("s1: %s" % s1)
         s1.cli("show version")
+    
+    def convert_openstack_table_output_to_dictionary(self):
+        openstack_output = """
++--------------------------------------+---------------------+------+
+| ID                                   | Label               | CIDR |
++--------------------------------------+---------------------+------+
+| 02f4a4d1-0930-43bf-94db-2d39b11c343d | External-Network    | None |
+| 25b9465a-852c-434c-a06c-dce646145eb6 | Tenant1-Network-2   | None |
+| 78f7740d-3774-41df-83e8-77e07a7d4206 | Tenant1-Network-129 | None |
+| c2d1d2f4-3706-43cc-ad4a-19e4a97f91b0 | Coke-External       | None |
+| d1919755-5872-4f4c-9320-29e91273c54a | 1-OutSide-Net       | None |
+| fb68e3c6-dbc1-4334-b2aa-6539361c0bff | Tenant1-Network-1   | None |
++--------------------------------------+---------------------+------+
+"""
+        out_dict = helpers.openstack_convert_table_to_dict(openstack_output)
+        helpers.prettify_log("out_dict:", out_dict)
+        
+        # Now you can walk through the dictionary...
+        key = '02f4a4d1-0930-43bf-94db-2d39b11c343d'
+        helpers.log("key(%s) contains: %s" % (key, out_dict[key]))
+        helpers.log("key(%s) label: %s" % (key, out_dict[key]['label']))
         
