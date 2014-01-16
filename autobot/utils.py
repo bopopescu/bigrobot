@@ -6,7 +6,7 @@ def strip_empty_lines(input_list):
 
 
 def strip_table_row_dividers(input_list):
-    return filter(lambda x: not re.match(r'^[\+-]+$', x), input_list)
+    return filter(lambda x: not re.match(r'^\+---', x), input_list)
 
 
 def strip_table_ws_between_columns(input_list):
