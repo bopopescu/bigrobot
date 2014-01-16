@@ -51,8 +51,10 @@ ${ping_count}		10
 ${host0_mac}		00:00:00:00:00:01
 ${host1_mac}		00:00:00:00:00:02
 ${host2_mac}		00:00:00:00:00:03
-
-
+${dstroute}			10.111.0.0/16
+${nexthopgroup}		{"ecmp-group-name": "e2"}
+${ecmpgroup}		e2
+${nexthop}			10.10.10.2
 
 * Test Case
 Configure topology
@@ -174,7 +176,7 @@ L3 ping tagged bm0 to tagged bm1 single leaf single rack within tenant different
 	sleep  						20  
    
 L3 ping with destination host interface move in the same tenant
-	[Tags]						
+	[Tags]						skipped
 	REST create tenant  		${tenant1_name}
 	REST create vns  			${tenant1_name}		${vns_1}
 	REST create vns				${tenant1_name}		${vns_2}
@@ -212,6 +214,12 @@ L3 ping with destination host interface move in the same tenant
 	sleep  						20  
 
 L3 ping with destination host interface move in different tenant
+	[Tags]
+	REST create tenant  		${tenant1_name}
+	REST create vns  			${tenant1_name}		${vns_1}	
+	REST add ecmp group			${tenant1_name}		${ecmpgroup}	${nexthop}
+	REST add gw pool nexthop	${tenant1_name}		${ecmpgroup}		
+	REST add static routes		${tenant1_name}		${dstroute}		${nexthopgroup}   
 
    
 * Keywords
@@ -221,4 +229,5 @@ teardown topology
 	REST delete tenant			${tenant2_name}     
 		
 	
-   	
+	
+	
