@@ -11,9 +11,14 @@ class Openstack(object):
         t = test.Test()
         h1 = t.host('h1')
     
-        result = h1.bash("nova --os-username %s --os-tenant-name %s  --os-password %s --os-auth-url %s image-show %s | grep -i id" % (osUserName, osTenantName, osPassWord, osAuthUrl, imageName))
-        a = result.split("|")
-        return a[1]
+#        result = h1.bash("nova --os-username %s --os-tenant-name %s  --os-password %s --os-auth-url %s image-show %s | grep -i id" % (osUserName, osTenantName, osPassWord, osAuthUrl, imageName))
+#        a = result.split("|")
+#        return a[1]
+        result = h1.bash("nova --os-username %s --os-tenant-name %s  --os-password %s --os-auth-url %s image-show %s" % (osUserName, osTenantName, osPassWord, osAuthUrl, imageName))
+        id = result("id")
+        return id
+        
+    
     
 #    def openstack_create_tenant(self, osUserName, osTenantName, osAuthUrl, osPassWord, tenantName):        
 #        t = test.Test()
