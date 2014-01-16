@@ -32,6 +32,14 @@ class Node(object):
 
 class ControllerNode(Node):
     def __init__(self, name, ip, user, password, t):
+
+        # If user/password info is specified in the topology params then use it
+        authen = t.topology_params_authen(name)
+        if authen[0]:
+            user = authen[0]
+        if authen[1]:
+            password = authen[1]
+        
         super(ControllerNode, self).__init__(name, ip, user, password) 
         self.pingable_or_die()
         params = t.topology_params()
@@ -72,6 +80,7 @@ class ControllerNode(Node):
         self.enable = self.dev.enable     # Enable mode
         self.config = self.dev.config     # Configuration mode
         self.bash   = self.dev.bash       # Bash mode
+        self.sudo   = self.dev.sudo       # Sudo (part of Bash mode)
         self.cli_content = self.dev.content
         self.cli_result = self.dev.result
 
@@ -113,5 +122,57 @@ class MininetNode(Node):
 
         # Shortcuts
         self.cli = self.dev.cli
+        self.cli_content = self.dev.content
+        self.cli_result = self.dev.result
+
+
+class HostNode(Node):
+    def __init__(self, name, ip, user, password, t):
+
+        # If user/password info is specified in the topology params then use it
+        authen = t.topology_params_authen(name)
+        if authen[0]:
+            user = authen[0]
+        if authen[1]:
+            password = authen[1]
+        
+        super(HostNode, self).__init__(name, ip, user, password)
+        self.pingable_or_die()
+        #params = t.topology_params()
+
+        self.dev = devconf.HostDevConf(name=name,
+                                       host=ip,
+                                       user=user,
+                                       password=password)
+
+        # Shortcuts
+        self.bash = self.dev.bash
+        self.sudo = self.dev.sudo
+        self.bash_content = self.dev.content
+        self.bash_result = self.dev.result
+
+
+class SwitchNode(Node):
+    def __init__(self, name, ip, user, password, t):
+
+        # If user/password info is specified in the topology params then use it
+        authen = t.topology_params_authen(name)
+        if authen[0]:
+            user = authen[0]
+        if authen[1]:
+            password = authen[1]
+        
+        super(SwitchNode, self).__init__(name, ip, user, password)
+        self.pingable_or_die()
+        #params = t.topology_params()
+
+        self.dev = devconf.SwitchDevConf(name=name,
+                                         host=ip,
+                                         user=user,
+                                         password=password)
+
+        # Shortcuts
+        self.cli = self.dev.cli
+        #self.bash = self.dev.bash
         self.cli_content = self.dev.content
         self.cli_result = self.dev.result

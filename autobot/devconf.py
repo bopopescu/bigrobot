@@ -139,7 +139,7 @@ class ControllerDevConf(DevConf):
         super(ControllerDevConf, self).cmd(cmd, quiet=True)
         if not quiet:
             helpers.log("%s content on '%s':\n%s%s"
-                        % (mode, self.name, self.content(), helpers.end_of_output_marker),
+                        % (mode, self.name, self.content(), helpers.end_of_output_marker()),
                         level=level)
         return self.result()
 
@@ -155,6 +155,9 @@ class ControllerDevConf(DevConf):
 
     def bash(self, cmd, quiet=False, level=5):
         return self.cmd(cmd, quiet=quiet, mode='bash', level=level)
+
+    def sudo(self, cmd, quiet=False, level=5):
+        return self.cmd(' '.join(('sudo', cmd)), quiet=quiet, mode='bash', level=level)
 
     def close(self):
         super(ControllerDevConf, self).close()
@@ -245,3 +248,59 @@ class MininetDevConf(DevConf):
         self.cmd('exit', quiet=False)  # Exit mininet CLI
         self.conn.close(force=True)
         helpers.log("MininetDevConf - force closed the device connection.")
+
+
+class HostDevConf(DevConf):
+    def __init__(self, name=None, host=None, user=None, password=None):
+        super(HostDevConf, self).__init__(host, user, password)
+        self.name = name
+        self.bash('uname -a')
+
+    def cmd(self, cmd, quiet=False, level=4):
+        if not quiet:
+            helpers.log("Execute command on '%s': %s" % (self.name, cmd), level=level)
+
+        super(HostDevConf, self).cmd(cmd, quiet=True)
+        if not quiet:
+            helpers.log("Content on '%s':\n%s%s"
+                        % (self.name, self.content(), helpers.end_of_output_marker()),
+                        level=level)
+        return self.result()
+
+    # Alias
+    bash = cmd
+    
+    def sudo(self, cmd, quiet=False, level=5):
+        return self.bash(' '.join(('sudo', cmd)), quiet=quiet, level=level)
+
+    def close(self):
+        super(HostDevConf, self).close()
+        # !!! FIXME: Need to close the controller connection
+
+
+class SwitchDevConf(DevConf):
+    def __init__(self, name=None, host=None, user=None, password=None):
+        super(SwitchDevConf, self).__init__(host, user, password)
+        self.name = name
+        self.cli('show version')
+
+    def cmd(self, cmd, quiet=False, level=4):
+        if not quiet:
+            helpers.log("Execute command on '%s': %s" % (self.name, cmd), level=level)
+
+        super(SwitchDevConf, self).cmd(cmd, quiet=True)
+        if not quiet:
+            helpers.log("Content on '%s':\n%s%s"
+                        % (self.name, self.content(), helpers.end_of_output_marker()),
+                        level=level)
+        return self.result()
+
+    # Alias
+    cli = cmd
+    
+    #def sudo(self, cmd, quiet=False, level=5):
+    #    return self.bash(' '.join(('sudo', cmd)), quiet=quiet, level=level)
+
+    def close(self):
+        super(HostDevConf, self).close()
+        # !!! FIXME: Need to close the controller connection

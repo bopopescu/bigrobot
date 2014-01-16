@@ -60,6 +60,18 @@ class Test(object):
     def mininet_password(self):
         return self._bsn_config['mininet_password']
 
+    def host_user(self):
+        return self._bsn_config['host_user']
+    
+    def host_password(self):
+        return self._bsn_config['host_password']
+
+    def switch_user(self):
+        return self._bsn_config['switch_user']
+    
+    def switch_password(self):
+        return self._bsn_config['switch_password']
+
     def topology_params(self):
         """
         Returns the topology dictionary.
@@ -68,12 +80,39 @@ class Test(object):
             },
             'mn': {
                 'ip': '10.192.7.205'
+            },
+            's1': {
+                'ip': '10.195.0.31',
+                'user': 'admin',
+                'password': 'bsn'
+            },
+            'h1': {
+                'ip': '10.193.0.120'
             }
             ...
         }
         """
         return self._topology_params
 
+    def topology_params_authen(self, name):
+        """
+        Given a node name, check the params info to see whether the
+        user/password is specified for the node.
+        """
+        authen = []
+        params = self.topology_params()
+        if name in params:
+            node = params[name]
+            if 'user' in node:
+                authen.append(node['user'])
+            else:
+                authen.append(None)
+            if 'password' in node:
+                authen.append(node['password'])
+            else:
+                authen.append(None)
+        return authen
+            
     def topology(self, name=None, node=None):
         if not self._init_in_progress:
             self.initialize()
@@ -174,7 +213,7 @@ class Test(object):
         
         self._init_in_progress = True
 
-        params = self._topology_params
+        params = self.topology_params()
         
         if 'c1' not in params:
             helpers.environment_failure("Must have a controller (c1) defined")
@@ -187,9 +226,9 @@ class Test(object):
             #  Mininet: mn, mn1, mn2, mininet
             #  Switches: s1, s2, spine1, leaf1
             #
-            match = re.match(r'^(c\d|controller\d?|master|slave|mn\d?|mininet\d?|s\d+|spine\d+|leaf\d+)$', key)
+            match = re.match(r'^(c\d|controller\d?|master|slave|mn\d?|mininet\d?|s\d+|spine\d+|leaf\d+|s\d+|h\d+)$', key)
             if not match:
-                helpers.environment_failure("Unknown/unsupported device type in topology file: %s" % key)
+                helpers.environment_failure("Unknown/unsupported device '%s'" % key)
         
             host = params[key]['ip']            
             
@@ -197,16 +236,35 @@ class Test(object):
             
             if helpers.is_controller(key):
                 helpers.log("Initializing controller '%s'" % key)
-                n = a_node.ControllerNode(key, host,
+                n = a_node.ControllerNode(key,
+                                          host,
                                           self.controller_user(),
                                           self.controller_password(),
                                           t)
-            if helpers.is_mininet(key):
+            elif helpers.is_mininet(key):
                 helpers.log("Initializing Mininet '%s'" % key)
-                n = a_node.MininetNode(key, host, controller_ip,
+                n = a_node.MininetNode(key,
+                                       host,
+                                       controller_ip,
                                        self.mininet_user(),
                                        self.mininet_password(),
                                        t)
+            elif helpers.is_host(key):
+                helpers.log("Initializing host '%s'" % key)
+                n = a_node.HostNode(key,
+                                    host,
+                                    self.host_user(),
+                                    self.host_password(),
+                                    t)
+            elif helpers.is_switch(key):
+                helpers.log("Initializing switch '%s'" % key)
+                n = a_node.SwitchNode(key,
+                                      host,
+                                      self.switch_user(),
+                                      self.switch_password(),
+                                      t)
+            else:
+                helpers.environment_failure("Not able to initialize device '%s'" % key)
             self.topology(key, n)
 
             helpers.log("Exscript driver for '%s': %s"
@@ -287,7 +345,7 @@ class Test(object):
             for node_id in node_ids:
                 self.controller_cli_firewall_allow_rest_access(name, node_id)
         else:
-            helpers.environment_failure("Inconceivable!!!")
+            helpers.environment_failure("'%s' is not a known controller (platform=%s)" % (name, platform))
     
     def setup_controller_http_session_cookie(self, name):
         n = self.topology(name)
@@ -314,7 +372,7 @@ class Test(object):
                 
         self._setup_in_progress = True
 
-        params = self._topology_params
+        params = self.topology_params()
         for key in params:
             if helpers.is_controller(key):
                 self.setup_controller_firewall_allow_rest_access(key)

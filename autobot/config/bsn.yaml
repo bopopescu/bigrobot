@@ -8,8 +8,8 @@ mininet_user: mininet
 mininet_password: mininet
 
 switch_user: admin
-switch_user: adminadmin
+switch_password: adminadmin
 
 host_user: bsn
-host_user: bsn
+host_password: bsn
 
