@@ -96,4 +96,18 @@ class Mininet(object):
         mn = t.mininet()
         mn.cli('%s route add default gw %s vlan%s' % (host, gw, intf))
     
+    def mininet_link_up (self, host, intf):        
+        t = test.Test()
+        mn = t.mininet()
+        mn.cli('%s ifconfig %s up' % (host, intf))         
+    
+    def mininet_link_down (self, host, intf):        
+        t = test.Test()
+        mn = t.mininet()
+        mn.cli('%s ifconfig %s down' % (host, intf))      
+    
+    def mininet_host_mac_config (self, host, intf, mac):        
+        t = test.Test()
+        mn = t.mininet()
+        mn.cli('%s ifconfig %s hw ether %s' % (host, intf, mac))     
         

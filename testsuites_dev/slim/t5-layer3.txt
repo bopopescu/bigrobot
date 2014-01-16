@@ -38,13 +38,20 @@ ${gw_mac}			5c:16:c7:01:00:00
 ${host0_name}		bm0
 ${host1_name}		bm1
 ${host2_name}		bm2
-${host0_intf}		bm0-bond0
-${host1_intf}		bm1-bond0
-${host2_intf}		bm2-bond0
+${host0_intf}		bm0-eth0
+${host1_intf}		bm1-eth0
+${host2_intf}		bm2-eth0
+${host0_bondif}		bm0-bond0
+${host1_bondif}		bm1-bond0
+${host2_bondif}		bm2-bond0
 ${vns1_vlan}		100
 ${vns2_vlan}		4094
 ${vns3_vlan}		4091
 ${ping_count}		10
+${host0_mac}		00:00:00:00:00:01
+${host1_mac}		00:00:00:00:00:02
+${host2_mac}		00:00:00:00:00:03
+
 
 
 * Test Case
@@ -53,7 +60,7 @@ Configure topology
 	sleep  5
 
 L3 ping bm0 to bm1 single leaf single rack within tenant different VNS
-	[Tags]						skipped
+	[Tags]						smoke				skipped
 	REST create tenant  		${tenant1_name}
 	REST create vns  			${tenant1_name}		${vns_1}
 	REST create vns				${tenant1_name}		${vns_2}
@@ -61,10 +68,10 @@ L3 ping bm0 to bm1 single leaf single rack within tenant different VNS
 	REST create vns ip  		${tenant1_name}  	${vns_2}  		${vns2_ip}	  	${vns2_subnet}
 	REST add interface to vns  	${tenant1_name}  	${vns_1}  		${leaf_name} 	${leaf0_intf1}  -1 
 	REST add interface to vns  	${tenant1_name}  	${vns_2}  		${leaf_name} 	${leaf0_intf2} 	-1
-	mininet host ipcfg   		${host0_name}		${host0_intf}	${host0_ip}		${host0_subnet} 
-	mininet host ipcfg			${host1_name}		${host1_intf}	${host1_ip}		${host1_subnet}
-	mininet host gw				${host0_name}		${vns1_ip}		${host0_intf}
-	mininet host gw				${host1_name}		${vns2_ip}		${host1_intf}
+	mininet host ipcfg   		${host0_name}		${host0_bondif}	${host0_ip}		${host0_subnet} 
+	mininet host ipcfg			${host1_name}		${host1_bondif}	${host1_ip}		${host1_subnet}
+	mininet host gw				${host0_name}		${vns1_ip}		${host0_bondif}
+	mininet host gw				${host1_name}		${vns2_ip}		${host1_bondif}
 	mininet host arp			${host0_name}		${vns1_ip}		${gw_mac}
 	mininet host arp			${host1_name} 		${vns2_ip}		${gw_mac}
 	sleep  5
@@ -82,8 +89,8 @@ L3 ping bm0 to unreachable host single leaf single rack single tenant across VNS
 	REST create vns  			${tenant1_name}		${vns_1}
 	REST create vns ip  		${tenant1_name}  	${vns_1}  		${vns1_ip}	  	${vns1_subnet}
 	REST add interface to vns  	${tenant1_name}  	${vns_1}  		${leaf_name} 	${leaf0_intf1}  -1 
-	mininet host ipcfg   		${host0_name}		${host0_intf}	${host0_ip}		${host0_subnet} 
-	mininet host gw				${host0_name}		${vns1_ip}		${host0_intf}
+	mininet host ipcfg   		${host0_name}		${host0_bondif}	${host0_ip}		${host0_subnet} 
+	mininet host gw				${host0_name}		${vns1_ip}		${host0_bondif}
 	mininet host arp			${host0_name}		${vns1_ip}		${gw_mac}
 	sleep  5
 	${loss}=  					mininet l3 ping		${host0_name}	${unknown_host}	${ping_count}
@@ -93,7 +100,7 @@ L3 ping bm0 to unreachable host single leaf single rack single tenant across VNS
 	sleep  						20  
     
 L3 ping bm0 to bm1 single leaf single rack across tenants  
-   	[Tags]						skipped
+   	[Tags]						smoke				skipped
 	REST create tenant  		${tenant1_name}        
 	REST create tenant  		${tenant2_name} 
    	REST create vns				${tenant1_name}		${vns_1}	      
@@ -104,10 +111,10 @@ L3 ping bm0 to bm1 single leaf single rack across tenants
    	REST add interface to vns  	${tenant2_name}  	${vns_3}  		${leaf_name} 	${leaf0_intf3} 	-1
    	REST attach tenant routers to system 	${tenant1_name} 
    	REST attach tenant routers to system 	${tenant2_name} 
-   	mininet host ipcfg   		${host0_name}		${host0_intf}	${host0_ip}		${host0_subnet} 
-   	mininet host ipcfg			${host2_name}		${host2_intf}	${host2_ip}		${host2_subnet}
-   	mininet host gw				${host0_name}		${vns1_ip}		${host0_intf}
-   	mininet host gw				${host2_name}		${vns3_ip}		${host2_intf}
+   	mininet host ipcfg   		${host0_name}		${host0_bondif}	${host0_ip}		${host0_subnet} 
+   	mininet host ipcfg			${host2_name}		${host2_bondif}	${host2_ip}		${host2_subnet}
+   	mininet host gw				${host0_name}		${vns1_ip}		${host0_bondif}
+   	mininet host gw				${host2_name}		${vns3_ip}		${host2_bondif}
    	mininet host arp			${host0_name}		${vns1_ip}		${gw_mac}
    	mininet host arp			${host2_name} 		${vns3_ip}		${gw_mac}
    	sleep 	 					5
@@ -127,9 +134,9 @@ L3 ping untagged bm0 to tagged bm1 single leaf single rack within tenant differe
 	REST create vns ip  		${tenant1_name}  	${vns_2}  		${vns2_ip}	  	${vns2_subnet}
 	REST add interface to vns  	${tenant1_name}  	${vns_1}  		${leaf_name} 	${leaf0_intf1}  -1 
 	REST add interface to vns  	${tenant1_name}  	${vns_2}  		${leaf_name} 	${leaf0_intf2}	${vns2_vlan}
-	mininet host ipcfg   		${host0_name}		${host0_intf}	${host0_ip}		${host0_subnet} 
-	mininet l3 link tag			${host1_name}		${host1_intf}	${vns2_vlan}	${host1_ip}		${host1_subnet}
-	mininet host gw				${host0_name}		${vns1_ip}		${host0_intf}
+	mininet host ipcfg   		${host0_name}		${host0_bondif}	${host0_ip}		${host0_subnet} 
+	mininet l3 link tag			${host1_name}		${host1_bondif}	${vns2_vlan}	${host1_ip}		${host1_subnet}
+	mininet host gw				${host0_name}		${vns1_ip}		${host0_bondif}
 	mininet host tagged gw		${host1_name}		${vns2_ip}		${vns2_vlan}
 	mininet host arp			${host0_name}		${vns1_ip}		${gw_mac}
 	mininet host arp			${host1_name} 		${vns2_ip}		${gw_mac}
@@ -138,12 +145,12 @@ L3 ping untagged bm0 to tagged bm1 single leaf single rack within tenant differe
 	sleep  						20
 	Should Be True  			${loss} == 0
 	REST delete tenant 			${tenant1_name}        
-	mininet l3 link untag		${host1_name}		${host1_intf}	${vns2_vlan}	${host1_ip}		${host1_subnet}
+	mininet l3 link untag		${host1_name}		${host1_bondif}	${vns2_vlan}	${host1_ip}		${host1_subnet}
 	sleep  						20  
 
  
 L3 ping tagged bm0 to tagged bm1 single leaf single rack within tenant different VNS
-	[Tags]		
+	[Tags]						skipped
 	REST create tenant  		${tenant1_name}
 	REST create vns  			${tenant1_name}		${vns_1}
 	REST create vns				${tenant1_name}		${vns_2}
@@ -151,8 +158,8 @@ L3 ping tagged bm0 to tagged bm1 single leaf single rack within tenant different
 	REST create vns ip  		${tenant1_name}  	${vns_2}  		${vns2_ip}	  	${vns2_subnet}
 	REST add interface to vns  	${tenant1_name}  	${vns_1}  		${leaf_name} 	${leaf0_intf1}  ${vns1_vlan}
 	REST add interface to vns  	${tenant1_name}  	${vns_2}  		${leaf_name} 	${leaf0_intf2}	${vns2_vlan}
-	mininet l3 link tag			${host0_name}		${host0_intf}	${vns1_vlan}	${host0_ip}		${host0_subnet}
-	mininet l3 link tag			${host1_name}		${host1_intf}	${vns2_vlan}	${host1_ip}		${host1_subnet}
+	mininet l3 link tag			${host0_name}		${host0_bondif}	${vns1_vlan}	${host0_ip}		${host0_subnet}
+	mininet l3 link tag			${host1_name}		${host1_bondif}	${vns2_vlan}	${host1_ip}		${host1_subnet}
 	mininet host tagged gw		${host0_name}		${vns1_ip}		${vns1_vlan}
 	mininet host tagged gw		${host1_name}		${vns2_ip}		${vns2_vlan}
 	mininet host arp			${host0_name}		${vns1_ip}		${gw_mac}
@@ -162,12 +169,49 @@ L3 ping tagged bm0 to tagged bm1 single leaf single rack within tenant different
 	Should Be True  			${loss} == 0
 	sleep  						20   
 	REST delete tenant 			${tenant1_name} 
-	mininet l3 link untag		${host0_name}		${host0_intf}	${vns1_vlan}	${host0_ip}		${host0_subnet}
-	mininet l3 link untag		${host1_name}		${host1_intf}	${vns2_vlan}	${host1_ip}		${host1_subnet}       
+	mininet l3 link untag		${host0_name}		${host0_bondif}	${vns1_vlan}	${host0_ip}		${host0_subnet}
+	mininet l3 link untag		${host1_name}		${host1_bondif}	${vns2_vlan}	${host1_ip}		${host1_subnet}       
 	sleep  						20  
    
-L3 traffic across vns with no router interface configured
+L3 ping with destination host interface move in the same tenant
+	[Tags]						
+	REST create tenant  		${tenant1_name}
+	REST create vns  			${tenant1_name}		${vns_1}
+	REST create vns				${tenant1_name}		${vns_2}
+	REST create vns ip  		${tenant1_name}  	${vns_1}  		${vns1_ip}	  	${vns1_subnet}
+	REST create vns ip  		${tenant1_name}  	${vns_2}  		${vns2_ip}	  	${vns2_subnet}
+	REST add interface to vns  	${tenant1_name}  	${vns_1}  		${leaf_name} 	${leaf0_intf1}  -1 
+	REST add interface to vns  	${tenant1_name}  	${vns_2}  		${leaf_name} 	${leaf0_intf2} 	-1
+	REST add interface to vns  	${tenant1_name}  	${vns_2}  		${leaf_name} 	${leaf0_intf3} 	-1
+	mininet host ipcfg   		${host0_name}		${host0_bondif}	${host0_ip}		${host0_subnet} 
+	mininet host ipcfg			${host1_name}		${host1_bondif}	${host1_ip}		${host1_subnet}
+	mininet host gw				${host0_name}		${vns1_ip}		${host0_bondif}
+	mininet host gw				${host1_name}		${vns2_ip}		${host1_bondif}
+	mininet host arp			${host0_name}		${vns1_ip}		${gw_mac}
+	mininet host arp			${host1_name} 		${vns2_ip}		${gw_mac}
+	sleep  						5
+	${loss}=  					mininet l3 ping		${host0_name}	${host1_name} 	
+	Should Be True  			${loss} == 100
+	sleep 						5
+	mininet link down			${host0_name}		${host0_bondif}
+	mininet link down			${host0_name}		${host0_intf}
+	mininet link down			${host2_name}		${host2_bondif}
+	mininet link down			${host2_name}		${host2_intf}	
+	mininet host mac config		${host2_name}		${host2_bondif}	${host1_mac}
+	mininet host ipcfg			${host2_name}		${host2_bondif}	${host1_ip}		${host1_subnet}
+	mininet host gw				${host2_name}		${vns1_ip}		${host2_bondif}
+	mininet host arp			${host2_name}		${vns1_ip}		${gw_mac}
+	mininet link up				${host2_name}		${host2_intf}	
+	mininet link up				${host2_name}		${host2_bondif}	
+	sleep						1
+	${loss}=  					mininet l3 ping		${host2_name}	${host1_name} 	
+	Should Be True  			${loss} == 100
+	${endpoints_cnt}=			rest count endpoints mac
+	Should Be True  			${endpoints_cnt} == 2
+	REST delete tenant 			${tenant1_name}        
+	sleep  						20  
 
+L3 ping with destination host interface move in different tenant
 
    
 * Keywords
