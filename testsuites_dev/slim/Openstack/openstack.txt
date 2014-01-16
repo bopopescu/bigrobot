@@ -1,0 +1,23 @@
+* Setting
+Documentation   Openstack setup
+Suite Setup     base suite setup
+Suite Teardown  base suite teardown
+Test Setup      base test setup
+Test Teardown   teardown topology
+Force Tags      T5 Sanity
+Library         keywords/BsnCommon.py
+Library         keywords/Mininet.py
+Library         keywords_dev/slim/Openstack.py
+
+
+* Variable
+${adminUserName}	admin
+${adminTenant}		admin
+${adminPassWord}	bsn
+${authUrl}			http://10.193.0.120:5000/v2.0/
+${imageName}		Ubuntu.13.10
+
+
+* Test Case
+Get Ubuntu saucy Image ID 
+	${ubuntuImageId}=	openstack get image id		${adminUserName}	${adminTenant}	${adminPassWord}	${authUrl}	${imageName}
