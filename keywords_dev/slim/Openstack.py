@@ -84,7 +84,8 @@ class Openstack(object):
 #        a = result.split("|")
 #        return a[1]
         result = h1.bash("nova --os-username %s --os-tenant-name %s --os-password %s --os-auth-url %s image-show %s" % (osUserName, osTenantName, osPassWord, osAuthUrl, imageName))
-        out_dict = helpers.openstack_convert_table_to_dict(result)
+        output = result["content"]
+        out_dict = helpers.openstack_convert_table_to_dict(output)
         id = out_dict["id"]
         return id
         
