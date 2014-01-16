@@ -91,6 +91,14 @@ class HaControllerNode(object):
         n = self.t.controller(self.name, resolve_mastership=True)
         return n.config(*args, **kwargs)
 
+    def bash(self, *args, **kwargs):
+        n = self.t.controller(self.name, resolve_mastership=True)
+        return n.bash(*args, **kwargs)
+
+    def sudo(self, *args, **kwargs):
+        n = self.t.controller(self.name, resolve_mastership=True)
+        return n.sudo(*args, **kwargs)
+
     def cli_content(self, *args, **kwargs):
         n = self.t.controller(self.name, resolve_mastership=True)
         return n.cli_content(*args, **kwargs)
