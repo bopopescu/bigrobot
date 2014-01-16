@@ -3,6 +3,4 @@ c1:
 h1:
   #ip: 10.192.4.11    # dev1
   ip: 10.193.0.120  # Song's UNIX system
-  user: root
-  password: bsn
 
