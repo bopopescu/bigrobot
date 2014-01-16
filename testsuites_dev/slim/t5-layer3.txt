@@ -217,8 +217,8 @@ L3 ping with destination host interface move in different tenant
 	[Tags]
 	REST create tenant  		${tenant1_name}
 	REST create vns  			${tenant1_name}		${vns_1}	
-	REST add ecmp group			${tenant1_name}		${ecmpgroup}	${nexthop}
-	REST add gw pool nexthop	${tenant1_name}		${ecmpgroup}		
+	REST add ecmp group			${tenant1_name}		${ecmpgroup}
+	REST add gw pool nexthop	${tenant1_name}		${ecmpgroup}	${nexthop}		
 	REST add static routes		${tenant1_name}		${dstroute}		${nexthopgroup}   
 
    
