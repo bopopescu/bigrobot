@@ -13,7 +13,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 """
-A driver for Big Switch controller. This was borrowed from shell.py.
+A driver for Mininet. This was borrowed from shell.py.
 """
 import re
 from Exscript.protocols.drivers.driver import Driver
@@ -26,7 +26,7 @@ _mininet_re  = re.compile(r'mininet@.+mininet', re.I)
 
 class MininetDriver(Driver):
     def __init__(self):
-        Driver.__init__(self, 'shell')
+        Driver.__init__(self, 'mininet')
         self.user_re     = _user_re
         self.password_re = _password_re
 
@@ -35,6 +35,8 @@ class MininetDriver(Driver):
         if _mininet_re.search(string):
             return 90
         if _linux_re.search(string):
+            # Value is smaller than one defined in shell.py because we want it
+            # to pick up shell first.
             return 70
         if _user_re[0].search(string):
             return 20

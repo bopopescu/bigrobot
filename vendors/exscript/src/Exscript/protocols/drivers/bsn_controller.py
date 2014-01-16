@@ -74,9 +74,9 @@ class BsnControllerDriver(Driver):
     def init_terminal(self, conn):
         pass
     
-    def auto_authorize(self, conn, account, flush, bailout):
-        conn.send('enable\r')
-        conn.app_authorize(account, flush, bailout)
+    #def auto_authorize(self, conn, account, flush, bailout):
+    #    conn.send('enable\r')
+    #    conn.app_authorize(account, flush, bailout)
 
     # BSN tweaks - all methods below
     def platform(self):
