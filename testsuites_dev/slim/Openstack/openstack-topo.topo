@@ -7,14 +7,14 @@
 
 
 h1:
-	ip: 10.193.0.120
-	user: root
-	password: bsn
+  ip: 10.193.0.120
+  user: root
+  password: bsn
 	
 h2:
-	ip: 10.193.0.121
-	user: root
-	password: bsn
+  ip: 10.193.0.121
+  user: root
+  password: bsn
 	
 
 	
