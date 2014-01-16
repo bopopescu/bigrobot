@@ -5,8 +5,6 @@ Suite Teardown  base suite teardown
 Test Setup      base test setup
 Test Teardown   teardown topology
 Force Tags      T5 Sanity
-Library         keywords/BsnCommon.py
-Library         keywords/Mininet.py
 Library         keywords_dev/slim/Openstack.py
 
 
