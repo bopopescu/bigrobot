@@ -693,6 +693,17 @@ def openstack_convert_table_to_dict(input_str):
         test_error("Input must be a string or a list")
         
     out = br_utils.strip_empty_lines(out)
+    
+    if not re.match(r'^[\+-]+$', out[0]):
+        # For CLI output, the first line may be a command (not part of the
+        # table), so strip it.
+        out = out[1:]
+
+    if not re.match(r'^[\+-]+$', out[-1]):
+        # For CLI output, the last line may be a CLI/shell prompt (not part
+        # of the table), so strip it.
+        out = out[:-1]
+
     out = br_utils.strip_table_row_dividers(out)
     out = br_utils.strip_table_ws_between_columns(out)
     out = br_utils.convert_table_to_dict(out)
