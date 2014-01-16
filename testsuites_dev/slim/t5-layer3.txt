@@ -199,10 +199,12 @@ L3 ping with destination host interface move in the same tenant
 	mininet link down			${host2_name}		${host2_intf}	
 	mininet host mac config		${host2_name}		${host2_bondif}	${host1_mac}
 	mininet host ipcfg			${host2_name}		${host2_bondif}	${host1_ip}		${host1_subnet}
+	mininet host gw				${host2_name}		${vns1_ip}		${host2_bondif}
+	mininet host arp			${host2_name}		${vns1_ip}		${gw_mac}
 	mininet link up				${host2_name}		${host2_intf}	
 	mininet link up				${host2_name}		${host2_bondif}	
 	sleep						1
-	${loss}=  					mininet l3 ping		${host0_name}	${host1_name} 	
+	${loss}=  					mininet l3 ping		${host2_name}	${host1_name} 	
 	Should Be True  			${loss} == 100
 	${endpoints_cnt}=			rest count endpoints mac
 	Should Be True  			${endpoints_cnt} == 2
