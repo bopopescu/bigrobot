@@ -515,7 +515,7 @@ class T5(object):
         
         url = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]/virtual-router/ecmp-groups[name="%s"]/ip-addresses' % (c.base_url, tenant, ecmpgroup)
         try:
-            c.rest.post(url, {"ip-address": nexthop})
+            c.rest.put(url, {"ip-address": nexthop})
         except:
             helpers.test_failure(c.rest.error())
         else: 

@@ -54,7 +54,8 @@ ${host2_mac}		00:00:00:00:00:03
 ${dstroute}			10.111.0.0/16
 ${nexthopgroup}		{"ecmp-group-name": "e2"}
 ${ecmpgroup}		e2
-${nexthop}			10.10.10.2
+${nexthop1}			10.10.10.2
+${nexthop2}			10.10.10.3
 
 * Test Case
 Configure topology
@@ -218,7 +219,8 @@ L3 ping with destination host interface move in different tenant
 	REST create tenant  		${tenant1_name}
 	REST create vns  			${tenant1_name}		${vns_1}	
 	REST add ecmp group			${tenant1_name}		${ecmpgroup}
-	REST add gw pool nexthop	${tenant1_name}		${ecmpgroup}	${nexthop}		
+	REST add gw pool nexthop	${tenant1_name}		${ecmpgroup}	${nexthop1}		
+	REST add gw pool nexthop	${tenant1_name}		${ecmpgroup}	${nexthop2}			
 	REST add static routes		${tenant1_name}		${dstroute}		${nexthopgroup}   
 
    
