@@ -44,7 +44,7 @@ class T5Platform(object):
         '''Using the 'show cluster' command verify the cluster formation across both nodes
 	   Also check for the formation integrity
 	'''
-	try:
+        try:
             t = test.Test()
             master = t.controller("master")
             slave = t.controller("slave")
@@ -59,7 +59,7 @@ class T5Platform(object):
             if(reported_active_byMaster != reported_active_bySlave):
                 helpers.log("Both controllers %s & %s are declaring themselves as active" \
                         % (reported_active_byMaster, reported_active_bySlave))
-		helpers.test_failure("Error: Inconsistent active/stand-By cluster formation detected")
+                helpers.test_failure("Error: Inconsistent active/stand-By cluster formation detected")
                 return False
             else:
                 helpers.log("Active controller id is: %s " % reported_active_byMaster)
@@ -70,6 +70,4 @@ class T5Platform(object):
             helpers.test_failure("Exception in: rest_verify_ha_cluster %s : %s " % (Exception, err))
             return False
 
-
-	        
 
