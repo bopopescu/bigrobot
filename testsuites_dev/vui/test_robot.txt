@@ -6,7 +6,12 @@ Force Tags      Vui
 
 * Test Cases
 Test var assignment
+    [Tags]           skipped
     variable assignment  ${123}
+
+Robot loop test
+    : for  ${index}  in range  1  3
+    \  log  ${index}
     
 
 * Keywords
@@ -15,3 +20,4 @@ variable assignment
     Should be true  ${input} == 123
     ${temp}=        Set Variable  123${input}
     Should be true  ${temp} == 123123
+
