@@ -4,14 +4,8 @@ import autobot.test as test
 class T5Platform(object):
 
     def __init__(self):
-        t = test.Test()
-        c = t.controller()
-        
-        url = '%s/api/v1/auth/login' % c.base_url
-        result = c.rest.post(url, {"user":"admin", "password":"adminadmin"})
-        session_cookie = result['content']['session_cookie']
-        c.rest.set_session_cookie(session_cookie)
-    
+	pass
+   
     def rest_configure_ntp(self, ntp_server):
         '''Configure the ntp server
         
@@ -23,7 +17,7 @@ class T5Platform(object):
         t = test.Test()
         c = t.controller()
                         
-        url = '%s/api/v1/data/controller//action/time/ntp'      
+        url = '/api/v1/data/controller/action/time/ntp'      
         c.rest.put(url, {"ntp-server": ntp_server})
         
         if not c.rest.status_code_ok():
@@ -40,7 +34,40 @@ class T5Platform(object):
         t = test.Test()
         c = t.controller()
         
-        url = '%s/api/v1/data/controller//action/time/ntp/status ' % (c.base_url)       
+        url = '/api/v1/data/controller/action/time/ntp/status '
         c.rest.get(url)
         
         return True
+    
+    
+    def rest_verify_ha_cluster(self):
+        '''Using the 'show cluster' command verify the cluster formation across both nodes
+	   Also check for the formation integrity
+	'''
+        try:
+            t = test.Test()
+            master = t.controller("master")
+            slave = t.controller("slave")
+            url = '/api/v1/data/controller/cluster'
+            
+            result = master.rest.get(url)['content']
+            reported_active_byMaster = result[0]['status']['domain-leader']['leader-id']
+            
+            result = slave.rest.get(url)['content']
+            reported_active_bySlave = result[0]['status']['domain-leader']['leader-id']
+            
+            if(reported_active_byMaster != reported_active_bySlave):
+                helpers.log("Both controllers %s & %s are declaring themselves as active" \
+                        % (reported_active_byMaster, reported_active_bySlave))
+                helpers.test_failure("Error: Inconsistent active/stand-By cluster formation detected")
+                return False
+            else:
+                helpers.log("Active controller id is: %s " % reported_active_byMaster)
+                helpers.log("Pass: Consistent active/stand-By cluster formation verified")
+                return True
+            
+        except Exception, err:
+            helpers.test_failure("Exception in: rest_verify_ha_cluster %s : %s " % (Exception, err))
+            return False
+
+
