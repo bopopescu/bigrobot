@@ -5,19 +5,8 @@ from BsnCommon import BsnCommon
 class BigTapCommon(object):
     
     def __init__(self):
-        t = test.Test()
-        self.btc=BsnCommon()
-        if(self.btc.rest_is_c1_master_controller()):
-            c = t.controller('c1')
-            c.http_port=8082
-        else:
-            c = t.controller('c2')
-            c.http_port=8082
-        url = '%s/auth/login' % c.base_url
-        helpers.log("url: %s" % url)
-        result = c.rest.post(url, {"user":"admin", "password":"adminadmin"})
-        session_cookie = result['content']['session_cookie']
-        c.rest.set_session_cookie(session_cookie)
+        pass
+
 
 ###################################################
 # All Bigtap Show Commands Go Here:
@@ -45,13 +34,8 @@ class BigTapCommon(object):
         '''
         try:
             t = test.Test()
-            if(self.btc.rest_is_c1_master_controller()):
-                c = t.controller('c1')
-                c.http_port=8082
-            else:
-                c = t.controller('c2')
-                c.http_port=8082
-            url ='http://%s:%s/api/v1/data/controller/applications/bigtap/view/policy[name="%s"]/info' % (c.ip,c.http_port, policy_name)
+            c= t.controller('master')
+            url ='/api/v1/data/controller/applications/bigtap/view/policy[name="%s"]/info' % (policy_name)
             c.rest.get(url)
             if not c.rest.status_code_ok():
                 helpers.test_failure(c.rest.error())
@@ -119,18 +103,7 @@ class BigTapCommon(object):
         Return value is switch DPID
         '''
         t=test.Test()
-        try:
-            t.controller('c2')
-        except:
-            c = t.controller('c1')
-            c.http_port=8082
-        else:
-            if(self.rest_is_c1_master_controller()):
-                c = t.controller('c1')
-                c.http_port=8082
-            else:
-                c = t.controller('c2')
-                c.http_port=8082
+        c= t.controller('master')
         try:
             url ='http://%s:%s/api/v1/data/controller/core/switch?select=alias' %(c.ip,c.http_port)
             c.rest.get(url)
@@ -156,36 +129,30 @@ class BigTapCommon(object):
         '''
         t=test.Test()
         try:
-            t.controller('c2')
+            c= t.controller('master')
         except:
-            c = t.controller('c1')
-            c.http_port=8082
-        else:
-            if(self.rest_is_c1_master_controller()):
-                c = t.controller('c1')
-                c.http_port=8082
-            else:
-                c = t.controller('c2')
-                c.http_port=8082
-        try:
-            if (switch_alias is None and sw_dpid is not None):
-                switch_dpid = sw_dpid
-            elif (switch_alias is None and sw_dpid is None):
-                helpers.log('Either Switch DPID or Switch Alias has to be provided')
-                return False
-            elif (switch_alias is not None and sw_dpid is None):
-                switch_dpid = self.rest_get_switch_dpid(switch_alias)
-            else:
-                switch_dpid = sw_dpid
-            url ='http://%s:%s/api/v1/data/controller/core/switch[dpid="%s"]?select=stats/table' % (c.ip,c.http_port,str(switch_dpid))
-            c.rest.get(url)
-            content = c.rest.content()
-        except:
-            helpers.test_failure("Could not execute command")
             return False
+
         else:
-            helpers.log("Return value for number of flows is %s" % content[0]['stats']['table'][1]['active-count'])
-            return content[0]['stats']['table'][1]['active-count']
+            try:
+                if (switch_alias is None and sw_dpid is not None):
+                    switch_dpid = sw_dpid
+                elif (switch_alias is None and sw_dpid is None):
+                    helpers.log('Either Switch DPID or Switch Alias has to be provided')
+                    return False
+                elif (switch_alias is not None and sw_dpid is None):
+                    switch_dpid = self.rest_get_switch_dpid(switch_alias)
+                else:
+                    switch_dpid = sw_dpid
+                url ='http://%s:%s/api/v1/data/controller/core/switch[dpid="%s"]?select=stats/table' % (c.ip,c.http_port,str(switch_dpid))
+                c.rest.get(url)
+                content = c.rest.content()
+            except:
+                helpers.test_failure("Could not execute command")
+                return False
+            else:
+                helpers.log("Return value for number of flows is %s" % content[0]['stats']['table'][1]['active-count'])
+                return content[0]['stats']['table'][1]['active-count']
 
 ###################################################
 # All Bigtap Verify Commands Go Here:
