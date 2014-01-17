@@ -14,6 +14,7 @@ import re
 from scp import SCPClient
 from pytz import timezone
 from autobot.version import get_version
+import autobot.utils as br_utils
 
 # All below are modules in the helpers package. So we can control and manage
 # name conflicts. Therefore it's assumed safe to do 'import *'.
@@ -653,3 +654,59 @@ def ping(host, count=3, waittime=100, quiet=False):
 
 def end_of_output_marker():
     return '\n\n----'
+
+
+def openstack_convert_table_to_dict(input_str):
+    """
+    Many commands on OpenStack Nova controller will return a table for its
+    output, e.g.,
+    
+    root@nova-controller:~# nova --os-username admin \
+                                 --os-tenant-name admin \
+                                 --os-auth-url http://10.193.0.120:5000/v2.0/ \
+                                 --os-password bsn
+                                 image-show  Ubuntu.13.10
+ 
+        +----------------------+--------------------------------------+
+        | Property             | Value                                |
+        +----------------------+--------------------------------------+
+        | status               | ACTIVE                               |
+        | updated              | 2014-01-03T06:51:26Z                 |
+        | name                 | Ubuntu.13.10                         |
+        | created              | 2014-01-03T06:50:55Z                 |
+        | minDisk              | 0                                    |
+        | progress             | 100                                  |
+        | minRam               | 0                                    |
+        | OS-EXT-IMG-SIZE:size | 243662848                            |
+        | id                   | 8caae5ae-66dd-4ee1-87f8-08674da401ff |
+        +----------------------+--------------------------------------+
+    
+    Parse this table and convert it into a Python dictionary.
+    
+    Return dictionary.
+    """
+    if is_list(input_str):
+        pass
+    elif is_str(input_str):
+        out = input_str.split('\n')
+    else:
+        test_error("Input must be a string or a list")
+        
+    out = br_utils.strip_empty_lines(out)
+    
+    if not re.match(r'^[\+-]+$', out[0]):
+        # For CLI output, the first line may be a command (not part of the
+        # table), so strip it.
+        out = out[1:]
+
+    if not re.match(r'^[\+-]+$', out[-1]):
+        # For CLI output, the last line may be a CLI/shell prompt (not part
+        # of the table), so strip it.
+        out = out[:-1]
+
+    log("***** out: %s" % out)
+    out = br_utils.strip_table_row_dividers(out)
+    out = br_utils.strip_table_ws_between_columns(out)
+    out = br_utils.convert_table_to_dict(out)
+
+    return out

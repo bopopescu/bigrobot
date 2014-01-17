@@ -433,25 +433,28 @@ class T5(object):
         else: 
             helpers.test_log("Output: %s" % c.rest.result_json())
             return c.rest.content()        
-        
+    
     def rest_add_static_routes(self, tenant, dstroute, nexthop):
         '''Add static routes to tenant router"
         
             Input:
                 `tenant`          tenant name
                 `dstroute`        destination subnet
-                `nexthop`         nexthop IP address
+                `nexthop`         nexthop IP address or nexthop tenant name or nexthop ecmp group name. e.g. of nexthop input is {"ip-address": "10.10.10.1"} or {"tenant-name": "B"} or {"ecmp-group-name": "e3"}
+                more specific example REST add static routes(A, 10.10.11.0/24, {"ecmp-group-name": "e2"})
             Return: true if configuration is successful, false otherwise
         '''
         
         t = test.Test()
         c = t.controller()
         
+        nexthop_dict = helpers.from_json(nexthop)
+        
         helpers.test_log("Input arguments: tenant = %s dstroute = %s nexthop = %s " % (tenant, dstroute, nexthop))
         
         url = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]/virtual-router/routes' % (c.base_url, tenant)
         try:
-            c.rest.post(url, {"dest-ip-subnet": dstroute, "next-hop": nexthop})
+            c.rest.post(url, {"dest-ip-subnet": dstroute, "next-hop": nexthop_dict})
         except:
             helpers.test_failure(c.rest.error())
         else: 
@@ -470,4 +473,54 @@ class T5(object):
     def rest_count_endpoints_mac(self):
         data = self.rest_show_endpoints()
         return len(data)
+     
+    def rest_add_ecmp_group(self, tenant, ecmpgroup):
+        '''Add ecmp groups aks gateway pool to tenant"
+        
+            Input:
+                `tenant`          tenant name
+                `ecmpgroup`        pool or ecmp groups name
+            Return: true if configuration is successful, false otherwise
+        '''
+        
+        t = test.Test()
+        c = t.controller()
+        
+        helpers.test_log("Input arguments: tenant = %s ecmpgroup = %s" % (tenant, ecmpgroup))
+        
+        url = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]/virtual-router/ecmp-groups' % (c.base_url, tenant)
+        try:
+            c.rest.post(url, {"name": ecmpgroup})
+        except:
+            helpers.test_failure(c.rest.error())
+        else: 
+            helpers.test_log("Output: %s" % c.rest.result_json())
+            return c.rest.content()                
+     
+     
+    def rest_add_gw_pool_nexthop(self, tenant, ecmpgroup, nexthop):
+        '''Add nexthop to ecmp groups aks gateway pool in tenant"
+        
+            Input:
+                `tenant`         tenant name
+                `ecmpgroup`      pool or ecmp groups name
+                `nexthop`        nexthop IP address
+            Return: true if configuration is successful, false otherwise
+        '''
+        
+        t = test.Test()
+        c = t.controller()
+        
+        helpers.test_log("Input arguments: tenant = %s ecmpgroup = %s nexthop = %s" % (tenant, ecmpgroup, nexthop))
+        
+        url = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]/virtual-router/ecmp-groups[name="%s"]/ip-addresses' % (c.base_url, tenant, ecmpgroup)
+        try:
+            c.rest.put(url, {"ip-address": nexthop})
+        except:
+            helpers.test_failure(c.rest.error())
+        else: 
+            helpers.test_log("Output: %s" % c.rest.result_json())
+            return c.rest.content()                         
+
+     
      

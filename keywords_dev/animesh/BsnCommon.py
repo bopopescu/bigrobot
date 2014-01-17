@@ -7,15 +7,7 @@ from Exscript import Account, Host
 class BsnCommon(object):
     
     def __init__(self):
-        t = test.Test()
-        c = t.controller()
-        c.http_port=8082
-        url='http://%s:%s/auth/login' % (c.ip,c.http_port)
-        helpers.log("url: %s" % url)
-        result = c.rest.post(url, {"user":"admin", "password":"adminadmin"})
-        helpers.log("result: %s" % helpers.to_json(result))
-        session_cookie = result['content']['session_cookie']
-        c.rest.set_session_cookie(session_cookie)
+        pass
 
 #######################################################
 # All Common Controller Show Commands Go Here:
@@ -33,11 +25,11 @@ class BsnCommon(object):
         else:
             c1 = t.controller('c1')
             c2 = t.controller('c2')
-            url0 = 'http://%s:8000/rest/v1/system/ha/role'  % (c1.ip)
+            url0 = '/rest/v1/system/ha/role'
             c1.rest.get(url0)
             content1 = c1.rest.content()
             c1role = content1['role']
-            url0 = 'http://%s:8000/rest/v1/system/ha/role'  % (c2.ip)
+            url0 = '/rest/v1/system/ha/role'
             c2.rest.get(url0)
             content2 = c2.rest.content()
             c2role = content2['role']
@@ -51,29 +43,23 @@ class BsnCommon(object):
     def rest_show_version(self):
         '''Return version of controller s/w
         '''
-        t = test.Test()
         try:
-            t.controller('c2')
-        except:
-            c = t.controller('c1')
-            c.http_port=8000
-        else:
-            if(self.rest_is_c1_master_controller()):
-                c = t.controller('c1')
-                c.http_port=8000
-            else:
-                c = t.controller('c2')
-                c.http_port=8000
-        try:
-            url='http://%s:%s/rest/v1/system/version' % (c.ip,c.http_port)
-            c.rest.get(url)
-            content = c.rest.content()
+            t = test.Test()
         except:
             helpers.test_failure(c.rest.error())
             return False
-        else:  
-            helpers.log("Output: %s" % content[0]['controller'])
-            return content[0]['controller']
+        else:
+            c= t.controller('master')
+            try:
+                url='/rest/v1/system/version'
+                c.rest.get(url)
+                content = c.rest.content()
+            except:
+                helpers.test_failure(c.rest.error())
+                return False
+            else:  
+                helpers.log("Output: %s" % content[0]['controller'])
+                return content[0]['controller']
 
     def rest_ha_role(self):
         '''Return Current Controller Role viz. Master/Slave
@@ -82,30 +68,24 @@ class BsnCommon(object):
             
             Returns: Current Controller Role viz. Master/Slave
         '''
-        t = test.Test()
         try:
-            t.controller('c2')
-        except:
-            c = t.controller('c1')
-            c.http_port=8000
-        else:
-            if(self.rest_is_c1_master_controller()):
-                c = t.controller('c1')
-                c.http_port=8000
-            else:
-                c = t.controller('c2')
-                c.http_port=8000
-        try:
-            url = 'http://%s:%s/system/ha/role'  % (c.ip,c.http_port)
-            c.rest.get(url)
+            t = test.Test()
         except:
             helpers.test_failure(c.rest.error())
             return False
-        else:  
-            if not c.rest.status_code_ok():
+        else:
+            c= t.controller('master')
+            try:
+                url = '/system/ha/role'
+                c.rest.get(url)
+            except:
                 helpers.test_failure(c.rest.error())
-            content = c.rest.content()
-            return content['role']
+                return False
+            else:  
+                if not c.rest.status_code_ok():
+                    helpers.test_failure(c.rest.error())
+                content = c.rest.content()
+                return content['role']
 
     def rest_controller_id(self):
         '''Return Current Controller ID
@@ -114,29 +94,22 @@ class BsnCommon(object):
             
             Returns: Return Current Controller ID
         '''
-        t = test.Test()
         try:
-            t.controller('c2')
-        except:
-            c = t.controller('c1')
-            c.http_port=8000
-        else:
-            if(self.rest_is_c1_master_controller()):
-                c = t.controller('c1')
-                c.http_port=8000
-            else:
-                c = t.controller('c2')
-                c.http_port=8000
-        try:
-            url='http://%s:%s/rest/v1/system/controller' % (c.ip,c.http_port)
-            c.rest.get(url)
+            t = test.Test()
         except:
             helpers.test_failure(c.rest.error())
             return False
-        else:  
-            content = c.rest.content()
-            helpers.log("Output: %s" % content['id'])
-            return content['id']
+        else:
+            c= t.controller('master')
+            try:
+                url='/rest/v1/system/controller'
+                c.rest.get(url)
+            except:
+                helpers.test_failure(c.rest.error())
+                return False
+            else:  
+                content = c.rest.content()
+                return content['id']
 
     def rest_verify_dict_key(self,content,index,key):
         ''' Given a dictionary, return the value for a particular key
@@ -154,31 +127,25 @@ class BsnCommon(object):
             
             Returns: Dictionary of Switch DPID and IP Addresses
         '''
-        t = test.Test()
         try:
-            t.controller('c2')
-        except:
-            c = t.controller('c1')
-            c.http_port=8082
-        else:
-            if(self.rest_is_c1_master_controller()):
-                c = t.controller('c1')
-                c.http_port=8082
-            else:
-                c = t.controller('c2')
-                c.http_port=8082
-        try:
-            url='http://%s:%s/api/v1/data/controller/core/switch' % (c.ip,c.http_port)
-            c.rest.get(url)
+            t = test.Test()
         except:
             helpers.test_failure(c.rest.error())
             return False
-        else:  
-            content = c.rest.content()
-            switch_dict ={}
-            for x in range (0,len(content)):
-                switch_dict[str(content[x]['inet-address']['ip'])] = str(content[x]['dpid'])
-            return switch_dict
+        else:
+            c= t.controller('master')
+            try:
+                url='/api/v1/data/controller/core/switch'
+                c.rest.get(url)
+            except:
+                helpers.test_failure(c.rest.error())
+                return False
+            else:  
+                content = c.rest.content()
+                switch_dict ={}
+                for x in range (0,len(content)):
+                    switch_dict[str(content[x]['inet-address']['ip'])] = str(content[x]['dpid'])
+                return switch_dict
 
     def return_switch_dpid(self,switch_dict,ip_address):
             '''Return DPID of switch, when dictionary from o/p of `rest show switch` and IP Address is provided
@@ -199,30 +166,26 @@ class BsnCommon(object):
             
             Return:    Switch DPID
         '''
-        t=test.Test()
         try:
-            t.controller('c2')
+            t = test.Test()
         except:
-            c = t.controller('c1')
-            c.http_port=8082
+            helpers.test_failure(c.rest.error())
+            return False
         else:
-            if(self.rest_is_c1_master_controller()):
-                c = t.controller('c1')
-                c.http_port=8082
-            else:
-                c = t.controller('c2')
-                c.http_port=8082
-        try:
-            url ='http://%s:%s/api/v1/data/controller/core/switch?select=alias' %(c.ip,c.http_port)
-            c.rest.get(url)
-            content = c.rest.content()
-            flag = False
-            for x in range (0,len(content)):
-                if str(content[x]['alias']) == str(switch_alias):
-                    return content[x]['dpid']
-            return False
-        except:
-            return False
+            c= t.controller('master')
+            try:
+                url ='/api/v1/data/controller/core/switch?select=alias'
+                c.rest.get(url)
+            except:
+                helpers.test_failure(c.rest.error())
+                return False
+            else:            
+                content = c.rest.content()
+                flag = False
+                for x in range (0,len(content)):
+                    if str(content[x]['alias']) == str(switch_alias):
+                        return content[x]['dpid']
+                return False
 
     def return_switch_interface_mac(self, interface_name, switch_alias=None, sw_dpid=None):
         '''Return the MAC/Hardware Address of a given interface
@@ -233,39 +196,33 @@ class BsnCommon(object):
             
             Returns: Hardware/MAC Address of Interface
         '''
-        t=test.Test()
         try:
-            t.controller('c2')
-        except:
-            c = t.controller('c1')
-            c.http_port=8082
-        else:
-            if(self.rest_is_c1_master_controller()):
-                c = t.controller('c1')
-                c.http_port=8082
-            else:
-                c = t.controller('c2')
-                c.http_port=8082
-        try:
-            if (switch_alias is None and sw_dpid is not None):
-                switch_dpid = sw_dpid
-            elif (switch_alias is None and sw_dpid is None):
-                helpers.log('Either Switch DPID or Switch Alias has to be provided')
-                return False
-            elif (switch_alias is not None and sw_dpid is None):
-                switch_dpid = self.return_switch_dpid_from_alias(switch_alias)
-            else:
-                switch_dpid = sw_dpid 
-            url='http://%s:%s/api/v1/data/controller/core/switch[interface/name="%s"][dpid="%s"]?select=interface[name="%s"]' %(c.ip,c.http_port,interface_name,switch_dpid,interface_name)
-            c.rest.get(url)
+            t = test.Test()
         except:
             helpers.test_failure(c.rest.error())
             return False
-        else:  
-            if not c.rest.status_code_ok():
+        else:
+            c= t.controller('master')
+            try:
+                if (switch_alias is None and sw_dpid is not None):
+                    switch_dpid = sw_dpid
+                elif (switch_alias is None and sw_dpid is None):
+                    helpers.log('Either Switch DPID or Switch Alias has to be provided')
+                    return False
+                elif (switch_alias is not None and sw_dpid is None):
+                    switch_dpid = self.return_switch_dpid_from_alias(switch_alias)
+                else:
+                    switch_dpid = sw_dpid 
+                url='/api/v1/data/controller/core/switch[interface/name="%s"][dpid="%s"]?select=interface[name="%s"]' %(interface_name,switch_dpid,interface_name)
+                c.rest.get(url)
+            except:
                 helpers.test_failure(c.rest.error())
-            content = c.rest.content()
-            return content[0]['interface'][0]['hardware-address']
+                return False
+            else:  
+                if not c.rest.status_code_ok():
+                    helpers.test_failure(c.rest.error())
+                content = c.rest.content()
+                return content[0]['interface'][0]['hardware-address']
     
     def restart_process_controller(self,process_name,controller_role):
         '''Restart a process on controller
@@ -278,14 +235,10 @@ class BsnCommon(object):
         '''
         try:
             t=test.Test()
-            if(self.rest_is_c1_master_controller() and controller_role=='Master' ) :
-                c = t.controller('c1')
-            elif (self.rest_is_c1_master_controller() and controller_role=='Slave' ):
-                c = t.controller('c2')
-            elif (not self.rest_is_c1_master_controller() and controller_role=='Master'):
-                c = t.controller('c2')
+            if (controller_role=='Master'):
+                c= t.controller('master')
             else:
-                c = t.controller('c1')
+                c= t.controller('slave')
             conn = SSH2()
             conn.connect(c.ip)
             conn.login(Account("admin","adminadmin"))
@@ -313,14 +266,10 @@ class BsnCommon(object):
         '''
         try:
             t=test.Test()
-            if(self.rest_is_c1_master_controller() and controller_role=='Master' ) :
-                c = t.controller('c1')
-            elif (self.rest_is_c1_master_controller() and controller_role=='Slave' ):
-                c = t.controller('c2')            
-            elif (not self.rest_is_c1_master_controller() and controller_role=='Master'):
-                c = t.controller('c2')
+            if (controller_role=='Master'):
+                c= t.controller('master')
             else:
-                c = t.controller('c1')
+                c= t.controller('slave')
             conn = SSH2()
             conn.connect(c.ip)
             conn.login(Account("admin","adminadmin"))
@@ -343,16 +292,12 @@ class BsnCommon(object):
         t=test.Test()
         ip_address_list={}
         try:
-            t.controller('c2')
+            t.controller('slave')
         except:
-            return {'Master':str(t.controller('c1').ip)}
+            return {'Master':str(t.controller('master').ip)}
         else:
-            if(self.rest_is_c1_master_controller()):
-                ip_address_list={'Master':str(t.controller('c1').ip), 'Slave':str(t.controller('c2').ip)}
-                return (ip_address_list)
-            else:
-                ip_address_list={'Master':str(t.controller('c2').ip), 'Slave':str(t.controller('c1').ip)}
-                return (ip_address_list)
+            ip_address_list={'Master':str(t.controller('master').ip), 'Slave':str(t.controller('slave').ip)}
+            return (ip_address_list)
 
 ########################################################
 # All Common Controller Verification Commands Go Here:
@@ -367,42 +312,36 @@ class BsnCommon(object):
             
             Returns: True if the interface is up, false otherwise
         '''
-        t=test.Test()
         try:
-            t.controller('c2')
-        except:
-            c = t.controller('c1')
-            c.http_port=8082
-        else:
-            if(self.rest_is_c1_master_controller()):
-                c = t.controller('c1')
-                c.http_port=8082
-            else:
-                c = t.controller('c2')
-                c.http_port=8082
-        try:
-            if (switch_alias is None and sw_dpid is not None):
-                switch_dpid = sw_dpid
-            elif (switch_alias is None and sw_dpid is None):
-                helpers.log('Either Switch DPID or Switch Alias has to be provided')
-                return False
-            elif (switch_alias is not None and sw_dpid is None):
-                switch_dpid = self.return_switch_dpid_from_alias(switch_alias)
-            else:
-                switch_dpid = sw_dpid
-            url='http://%s:%s/api/v1/data/controller/core/switch[interface/name="%s"][dpid="%s"]?select=interface[name="%s"]' %(c.ip,c.http_port,interface_name,switch_dpid,interface_name)
-            c.rest.get(url)
+            t = test.Test()
         except:
             helpers.test_failure(c.rest.error())
             return False
-        else:              
-            if not c.rest.status_code_ok():
-                helpers.test_failure(c.rest.error())
-            content = c.rest.content()
-            if (content[0]['interface'][0]['state-flags'] == 0):
-                    return True
-            else:
+        else:
+            c= t.controller('master')
+            try:
+                if (switch_alias is None and sw_dpid is not None):
+                    switch_dpid = sw_dpid
+                elif (switch_alias is None and sw_dpid is None):
+                    helpers.log('Either Switch DPID or Switch Alias has to be provided')
                     return False
+                elif (switch_alias is not None and sw_dpid is None):
+                    switch_dpid = self.return_switch_dpid_from_alias(switch_alias)
+                else:
+                    switch_dpid = sw_dpid
+                url='/api/v1/data/controller/core/switch[interface/name="%s"][dpid="%s"]?select=interface[name="%s"]' %(interface_name,switch_dpid,interface_name)
+                c.rest.get(url)
+            except:
+                helpers.test_failure(c.rest.error())
+                return False
+            else:              
+                if not c.rest.status_code_ok():
+                    helpers.test_failure(c.rest.error())
+                content = c.rest.content()
+                if (content[0]['interface'][0]['state-flags'] == 0):
+                        return True
+                else:
+                        return False
 
 ########################################################
 # All Common Controller Configuration Commands Go Here:
@@ -419,60 +358,40 @@ class BsnCommon(object):
             
             Return: true if configuration is successful, false otherwise
         '''
-        t = test.Test()
         try:
-            t.controller('c2')
-        except:
-            c = t.controller('c1')
-            c.http_port=8082
-        else:
-            if(self.rest_is_c1_master_controller()):
-                c = t.controller('c1')
-                c.http_port=8082
-            else:
-                c = t.controller('c2')
-                c.http_port=8082
-        try:
-            url='http://%s:%s/api/v1/data/controller/core/switch[dpid="%s"]' % (c.ip,c.http_port,str(switch_dpid))
-            c.rest.patch(url, {"alias": str(switch_alias)})
+            t = test.Test()
         except:
             helpers.test_failure(c.rest.error())
             return False
-        else:  
-            if not c.rest.status_code_ok():
+        else:
+            c= t.controller('master')
+            try:
+                url='/api/v1/data/controller/core/switch[dpid="%s"]' % (str(switch_dpid))
+                c.rest.patch(url, {"alias": str(switch_alias)})
+            except:
                 helpers.test_failure(c.rest.error())
                 return False
-            else:
+            else: 
                 helpers.test_log(c.rest.content_json())
                 return True
 
     def rest_execute_ha_failover(self):
         '''Execute HA failover from master controller
         '''
-        t = test.Test()
         try:
-            t.controller('c2')
-        except:
-            c = t.controller('c1')
-            c.http_port=8000
-        else:
-            if(self.rest_is_c1_master_controller()):
-                c = t.controller('c1')
-                c.http_port=8000
-            else:
-                c = t.controller('c2')
-                c.http_port=8000
-        try:
-            url1='http://%s:%s/rest/v1/system/ha/failback' % (c.ip,c.http_port)
-            c.rest.put(url1, {})
+            t = test.Test()
         except:
             helpers.test_failure(c.rest.error())
             return False
-        else:  
-            if not c.rest.status_code_ok():
+        else:
+            c= t.controller('master')
+            try:
+                url1='/rest/v1/system/ha/failback'
+                c.rest.put(url1, {})
+            except:
                 helpers.test_failure(c.rest.error())
                 return False
-            else:
+            else: 
                 helpers.test_log(c.rest.content_json())
                 return True
 
@@ -484,41 +403,41 @@ class BsnCommon(object):
            
            Return Value:  True if the configuration is successful, false otherwise 
         '''
-        t=test.Test()
         try:
-            t.controller('c2')
-        except:
-            c = t.controller('c1')
-            c.http_port=8000
-        else:
-            if(self.rest_is_c1_master_controller() and controller_role=='Master' ) :
-                c = t.controller('c1')
-            elif (self.rest_is_c1_master_controller() and controller_role=='Slave' ):
-                c = t.controller('c2')
-            elif (not self.rest_is_c1_master_controller() and controller_role=='Master'):
-                c = t.controller('c2')
-            else:
-                c = t.controller('c1')
-        try:
-            conn = SSH2()
-            conn.connect(c.ip)
-            conn.login(Account("admin","adminadmin"))
-            conn.execute('debug bash')
-            conn.execute("echo '#!/bin/bash' > test.sh")
-            conn.execute("echo 'sleep 15' >> test.sh")
-            conn.execute("echo 'sudo ifconfig eth0 down' >> test.sh")
-            conn.execute("echo 'sleep 10' >> test.sh")
-            conn.execute("echo 'sudo ifconfig eth0 up' >> test.sh")
-            conn.execute("echo 'sleep 10' >> test.sh")
-            conn.execute("sh test.sh &")
-            helpers.sleep(float(30))
-            conn.send('exit\r')
-            conn.close()
+            t = test.Test()
         except:
             helpers.test_failure(c.rest.error())
             return False
-        else:  
-            return True
+        else:
+            try:
+                if (controller_role=='Master'):
+                    c= t.controller('master')
+                else:
+                    c= t.controller('slave')
+            except:
+                helpers.test_failure(c.rest.error())
+                return False
+            else:            
+                try:
+                    conn = SSH2()
+                    conn.connect(c.ip)
+                    conn.login(Account("admin","adminadmin"))
+                    conn.execute('debug bash')
+                    conn.execute("echo '#!/bin/bash' > test.sh")
+                    conn.execute("echo 'sleep 15' >> test.sh")
+                    conn.execute("echo 'sudo ifconfig eth0 down' >> test.sh")
+                    conn.execute("echo 'sleep 10' >> test.sh")
+                    conn.execute("echo 'sudo ifconfig eth0 up' >> test.sh")
+                    conn.execute("echo 'sleep 10' >> test.sh")
+                    conn.execute("sh test.sh &")
+                    helpers.sleep(float(30))
+                    conn.send('exit\r')
+                    conn.close()
+                except:
+                    helpers.test_failure(c.rest.error())
+                    return False
+                else:  
+                    return True
     
 #########################################################
 # All Common Controller Platform related Commands Go Here
@@ -531,29 +450,23 @@ class BsnCommon(object):
         
             Returns dictionary of o/p
         '''
-        t=test.Test()
         try:
-            t.controller('c2')
-        except:
-            c = t.controller('c1')
-            c.http_port=8000
-        else:
-            if(self.rest_is_c1_master_controller()):
-                c = t.controller('c1')
-                c.http_port=8000
-            else:
-                c = t.controller('c2')
-                c.http_port=8000
-        try:            
-            url='http://%s:%s/rest/v1/model/syslog-server/' % (c.ip,c.http_port)
-            helpers.log("URL is %s  " %url)
-            c.rest.get(url)
+            t = test.Test()
         except:
             helpers.test_failure(c.rest.error())
             return False
-        else:  
-            content = c.rest.content()
-            return content[0]
+        else:
+            c= t.controller('master')
+            try:         
+                url='/rest/v1/model/syslog-server/'
+                helpers.log("URL is %s  " %url)
+                c.rest.get(url)
+            except:
+                helpers.test_failure(c.rest.error())
+                return False
+            else:  
+                content = c.rest.content()
+                return content[0]
 
 ############### SYSLOG CONFIG COMMANDS ########################
     def rest_configure_syslog(self,syslog_server,log_level):
@@ -565,30 +478,20 @@ class BsnCommon(object):
             
             Returns: True if configuration is successful, false otherwise
         '''
-        t = test.Test()
         try:
-            t.controller('c2')
-        except:
-            c = t.controller('c1')
-            c.http_port=8000
-        else:
-            if(self.rest_is_c1_master_controller()):
-                c = t.controller('c1')
-                c.http_port=8000
-            else:
-                c = t.controller('c2')
-                c.http_port=8000
-        try:
-            url='http://%s:%s/rest/v1/model/syslog-server/' % (c.ip,c.http_port)
-            c.rest.put(url,  {"logging-enabled": True, "logging-server": str(syslog_server),"logging-level":int(log_level)})
+            t = test.Test()
         except:
             helpers.test_failure(c.rest.error())
             return False
-        else:      
-            if not c.rest.status_code_ok():
+        else:
+            c= t.controller('master')
+            try:
+                url='/rest/v1/model/syslog-server/'
+                c.rest.put(url,  {"logging-enabled": True, "logging-server": str(syslog_server),"logging-level":int(log_level)})
+            except:
                 helpers.test_failure(c.rest.error())
                 return False
-            else:
+            else: 
                 helpers.test_log(c.rest.content_json())
                 return True
 
@@ -601,30 +504,20 @@ class BsnCommon(object):
             
             Returns: True if configuration is successful, false otherwise
         '''
-        t = test.Test()
         try:
-            t.controller('c2')
-        except:
-            c = t.controller('c1')
-            c.http_port=8000
-        else:
-            if(self.rest_is_c1_master_controller()):
-                c = t.controller('c1')
-                c.http_port=8000
-            else:
-                c = t.controller('c2')
-                c.http_port=8000
-        try:
-            url='http://%s:%s/rest/v1/model/syslog-server/?logging-enabled=True&logging-server=%s&logging-level=%d' % (c.ip,c.http_port,str(syslog_server),int(log_level))
-            c.rest.delete(url,  {})
+            t = test.Test()
         except:
             helpers.test_failure(c.rest.error())
             return False
-        else:  
-            if not c.rest.status_code_ok():
+        else:
+            c= t.controller('master')
+            try:
+                url='/rest/v1/model/syslog-server/?logging-enabled=True&logging-server=%s&logging-level=%d' % (str(syslog_server),int(log_level))
+                c.rest.delete(url,  {})
+            except:
                 helpers.test_failure(c.rest.error())
                 return False
-            else:
+            else: 
                 helpers.test_log(c.rest.content_json())
                 return True
         
@@ -636,28 +529,22 @@ class BsnCommon(object):
         
             Returns dictionary of o/p
         '''
-        t=test.Test()
         try:
-            t.controller('c2')
-        except:
-            c = t.controller('c1')
-            c.http_port=8000
-        else:
-            if(self.rest_is_c1_master_controller()):
-                c = t.controller('c1')
-                c.http_port=8000
-            else:
-                c = t.controller('c2')
-                c.http_port=8000
-        try:    
-            url='http://%s:%s/rest/v1/model/ntp-server/' % (c.ip,c.http_port)
-            c.rest.get(url)
+            t = test.Test()
         except:
             helpers.test_failure(c.rest.error())
             return False
-        else:  
-            content = c.rest.content()
-            return content[0]
+        else:
+            c= t.controller('master')
+            try:    
+                url='/rest/v1/model/ntp-server/'
+                c.rest.get(url)
+            except:
+                helpers.test_failure(c.rest.error())
+                return False
+            else:  
+                content = c.rest.content()
+                return content[0]
 ############### NTP CONFIG COMMANDS ########################
 
     def rest_configure_ntp(self,ntp_server):
@@ -668,30 +555,20 @@ class BsnCommon(object):
             
             Returns: True if configuration is successful, false otherwise
         '''
-        t = test.Test()
         try:
-            t.controller('c2')
-        except:
-            c = t.controller('c1')
-            c.http_port=8000
-        else:
-            if(self.rest_is_c1_master_controller()):
-                c = t.controller('c1')
-                c.http_port=8000
-            else:
-                c = t.controller('c2')
-                c.http_port=8000
-        try:
-            url='http://%s:%s/rest/v1/model/ntp-server/' % (c.ip,c.http_port)
-            c.rest.put(url,  {"enabled": True, "server": str(ntp_server)})
+            t = test.Test()
         except:
             helpers.test_failure(c.rest.error())
             return False
-        else:  
-            if not c.rest.status_code_ok():
+        else:
+            c= t.controller('master')
+            try:
+                url='/rest/v1/model/ntp-server/' 
+                c.rest.put(url,  {"enabled": True, "server": str(ntp_server)})
+            except:
                 helpers.test_failure(c.rest.error())
                 return False
-            else:
+            else: 
                 helpers.test_log(c.rest.content_json())
                 return True
 
@@ -703,32 +580,22 @@ class BsnCommon(object):
             
             Returns: True if configuration is successful, false otherwise
         '''
-        t = test.Test()
         try:
-            t.controller('c2')
-        except:
-            c = t.controller('c1')
-            c.http_port=8000
-        else:
-            if(self.rest_is_c1_master_controller()):
-                c = t.controller('c1')
-                c.http_port=8000
-            else:
-                c = t.controller('c2')
-                c.http_port=8000
-        try:
-            url='http://%s:%s/rest/v1/model/ntp-server/?enabled=True&server=%s' % (c.ip,c.http_port,str(ntp_server))
-            c.rest.delete(url,  {})
+            t = test.Test()
         except:
             helpers.test_failure(c.rest.error())
             return False
-        else:  
-            if not c.rest.status_code_ok():
+        else:
+            c= t.controller('master')
+            try:
+                url='/rest/v1/model/ntp-server/?enabled=True&server=%s' % (str(ntp_server))
+                c.rest.delete(url,  {})
+            except:
                 helpers.test_failure(c.rest.error())
                 return False
-            else:
+            else: 
                 helpers.test_log(c.rest.content_json())
-                return True      
+                return True    
 
 ##SNMP##
 
@@ -741,28 +608,22 @@ class BsnCommon(object):
             
             Returns: dictionary of SNMP related values
         '''
-        t = test.Test()
         try:
-            t.controller('c2')
-        except:
-            c = t.controller('c1')
-            c.http_port=8000
-        else:
-            if(self.rest_is_c1_master_controller()):
-                c = t.controller('c1')
-                c.http_port=8000
-            else:
-                c = t.controller('c2')
-                c.http_port=8000
-        try:
-            url='http://%s:%s/rest/v1/model/snmp-server-config/' % (c.ip,c.http_port)
-            c.rest.get(url)
+            t = test.Test()
         except:
             helpers.test_failure(c.rest.error())
             return False
-        else:  
-            content = c.rest.content()
-            return content
+        else:
+            c= t.controller('master')
+            try:
+                url='/rest/v1/model/snmp-server-config/' 
+                c.rest.get(url)
+            except:
+                helpers.test_failure(c.rest.error())
+                return False
+            else:  
+                content = c.rest.content()
+                return content
 
     def rest_snmp_get(self,snmp_community,snmp_oid):
         '''Execute SNMP Walk from local machine for a particular SNMP OID
@@ -771,29 +632,23 @@ class BsnCommon(object):
             
             Return Value:  return the SNMP Walk O/P
         '''
-        t = test.Test()
         try:
-            t.controller('c2')
+            t = test.Test()
         except:
-            c = t.controller('c1')
-            c.http_port=8000
-        else:
-            if(self.rest_is_c1_master_controller()):
-                c = t.controller('c1')
-                c.http_port=8000
-            else:
-                c = t.controller('c2')
-                c.http_port=8000
-        try:
-            url="/usr/bin/snmpwalk -v2c -c %s %s %s" % (str(snmp_community),c.ip,str(snmp_oid))
-            returnVal = subprocess.Popen([url], stdout=subprocess.PIPE, shell=True)
-            (out, err) = returnVal.communicate()
-        except:
-            helpers.test_failure(err)
+            helpers.test_failure(c.rest.error())
             return False
-        else:  
-            helpers.log("URL: %s Output: %s" % (url, out))
-            return out
+        else:
+            c= t.controller('master')
+            try:
+                url="/usr/bin/snmpwalk -v2c -c %s %s %s" % (str(snmp_community),c.ip,str(snmp_oid))
+                returnVal = subprocess.Popen([url], stdout=subprocess.PIPE, shell=True)
+                (out, err) = returnVal.communicate()
+            except:
+                helpers.test_failure(err)
+                return False
+            else:  
+                helpers.log("URL: %s Output: %s" % (url, out))
+                return out
     
 
     def rest_snmp_getnext(self,snmp_community,snmp_oid):
@@ -842,30 +697,20 @@ class BsnCommon(object):
            
            Return Value:  True if the configuration is successful, false otherwise 
         '''
-        t = test.Test()
         try:
-            t.controller('c2')
-        except:
-            c = t.controller('c1')
-            c.http_port=8000
-        else:
-            if(self.rest_is_c1_master_controller()):
-                c = t.controller('c1')
-                c.http_port=8000
-            else:
-                c = t.controller('c2')
-                c.http_port=8000
-        try:
-            url='http://%s:%s/rest/v1/model/snmp-server-config/' % (c.ip,c.http_port)
-            c.rest.put(url,  {"id": "snmp", "community": str(snmp_community)})
+            t = test.Test()
         except:
             helpers.test_failure(c.rest.error())
             return False
-        else: 
-            if not c.rest.status_code_ok():
+        else:
+            c= t.controller('master')
+            try:
+                url='/rest/v1/model/snmp-server-config/' 
+                c.rest.put(url,  {"id": "snmp", "community": str(snmp_community)})
+            except:
                 helpers.test_failure(c.rest.error())
                 return False
-            else:
+            else: 
                 helpers.test_log(c.rest.content_json())
                 return True
                  
@@ -876,30 +721,20 @@ class BsnCommon(object):
            
            Return Value:  True if the configuration is successful, false otherwise 
         '''
-        t = test.Test()
         try:
-            t.controller('c2')
-        except:
-            c = t.controller('c1')
-            c.http_port=8000
-        else:
-            if(self.rest_is_c1_master_controller()):
-                c = t.controller('c1')
-                c.http_port=8000
-            else:
-                c = t.controller('c2')
-                c.http_port=8000
-        try:
-            url='http://%s:%s/rest/v1/model/snmp-server-config/?id=snmp' % (c.ip,c.http_port)
-            c.rest.put(url, {"contact": str(snmp_contact)})
+            t = test.Test()
         except:
             helpers.test_failure(c.rest.error())
             return False
-        else: 
-            if not c.rest.status_code_ok():
+        else:
+            c= t.controller('master')
+            try:
+                url='/rest/v1/model/snmp-server-config/?id=snmp' 
+                c.rest.put(url, {"contact": str(snmp_contact)})
+            except:
                 helpers.test_failure(c.rest.error())
                 return False
-            else:
+            else: 
                 helpers.test_log(c.rest.content_json())
                 return True
 
@@ -910,30 +745,20 @@ class BsnCommon(object):
            
            Return Value:  True if the configuration is successful, false otherwise 
         '''
-        t = test.Test()
         try:
-            t.controller('c2')
-        except:
-            c = t.controller('c1')
-            c.http_port=8000
-        else:
-            if(self.rest_is_c1_master_controller()):
-                c = t.controller('c1')
-                c.http_port=8000
-            else:
-                c = t.controller('c2')
-                c.http_port=8000
-        try:
-            url='http://%s:%s/rest/v1/model/snmp-server-config/?id=snmp' % (c.ip,c.http_port)
-            c.rest.put(url, {"location": str(snmp_location)})
+            t = test.Test()
         except:
             helpers.test_failure(c.rest.error())
             return False
-        else: 
-            if not c.rest.status_code_ok():
+        else:
+            c= t.controller('master')
+            try:
+                url='/rest/v1/model/snmp-server-config/?id=snmp' 
+                c.rest.put(url, {"location": str(snmp_location)})
+            except:
                 helpers.test_failure(c.rest.error())
                 return False
-            else:
+            else: 
                 helpers.test_log(c.rest.content_json())
                 return True
 
@@ -944,30 +769,20 @@ class BsnCommon(object):
            
            Return Value:  True if the configuration is successful, false otherwise 
         '''
-        t = test.Test()
         try:
-            t.controller('c2')
-        except:
-            c = t.controller('c1')
-            c.http_port=8000
-        else:
-            if(self.rest_is_c1_master_controller()):
-                c = t.controller('c1')
-                c.http_port=8000
-            else:
-                c = t.controller('c2')
-                c.http_port=8000
-        try:
-            url='http://%s:%s/rest/v1/model/snmp-server-config/?id=snmp' % (c.ip,c.http_port)
-            c.rest.put(url, {"server-enable": True})
+            t = test.Test()
         except:
             helpers.test_failure(c.rest.error())
             return False
-        else: 
-            if not c.rest.status_code_ok():
+        else:
+            c= t.controller('master')
+            try:
+                url='/rest/v1/model/snmp-server-config/?id=snmp' 
+                c.rest.put(url, {"server-enable": True})
+            except:
                 helpers.test_failure(c.rest.error())
                 return False
-            else:
+            else: 
                 helpers.test_log(c.rest.content_json())
                 return True
   
@@ -981,30 +796,20 @@ class BsnCommon(object):
            
            Return Value:  True if the configuration is successful, false otherwise 
         '''
-        t = test.Test()
         try:
-            t.controller('c2')
-        except:
-            c = t.controller('c1')
-            c.http_port=8000
-        else:
-            if(self.rest_is_c1_master_controller()):
-                c = t.controller('c1')
-                c.http_port=8000
-            else:
-                c = t.controller('c2')
-                c.http_port=8000
-        try:
-            url='http://%s:%s/rest/v1/model/snmp-server-config/?id=snmp' % (c.ip,c.http_port)
-            c.rest.put(url, {"trap-enable": True, "trap-server": str(trap_ip), "trap-port": str(trap_port)})
+            t = test.Test()
         except:
             helpers.test_failure(c.rest.error())
             return False
-        else: 
-            if not c.rest.status_code_ok():
+        else:
+            c= t.controller('master')
+            try:
+                url='/rest/v1/model/snmp-server-config/?id=snmp' 
+                c.rest.put(url, {"trap-enable": True, "trap-server": str(trap_ip), "trap-port": str(trap_port)})
+            except:
                 helpers.test_failure(c.rest.error())
                 return False
-            else:
+            else: 
                 helpers.test_log(c.rest.content_json())
                 return True
 
@@ -1018,30 +823,20 @@ class BsnCommon(object):
            
            Return Value:  True if the configuration is successful, false otherwise 
         '''
-        t = test.Test()
         try:
-            t.controller('c2')
-        except:
-            c = t.controller('c1')
-            c.http_port=8000
-        else:
-            if(self.rest_is_c1_master_controller()):
-                c = t.controller('c1')
-                c.http_port=8000
-            else:
-                c = t.controller('c2')
-                c.http_port=8000
-        try:
-            url='http://%s:%s/rest/v1/model/snmp-server-config/?id=snmp' % (c.ip,c.http_port)
-            c.rest.put(url, {"trap-enable": True, "id": "snmp"})
+            t = test.Test()
         except:
             helpers.test_failure(c.rest.error())
             return False
-        else: 
-            if not c.rest.status_code_ok():
+        else:
+            c= t.controller('master')
+            try:
+                url='/rest/v1/model/snmp-server-config/?id=snmp' 
+                c.rest.put(url, {"trap-enable": True, "id": "snmp"})
+            except:
                 helpers.test_failure(c.rest.error())
                 return False
-            else:
+            else: 
                 helpers.test_log(c.rest.content_json())
                 return True
 
@@ -1057,36 +852,26 @@ class BsnCommon(object):
            
            Return Value:  True if the configuration is successful, false otherwise 
         '''
-        t = test.Test()
         try:
-            t.controller('c2')
-        except:
-            c = t.controller('c1')
-            c.http_port=8000
-        else:
-            if(self.rest_is_c1_master_controller()):
-                c = t.controller('c1')
-                c.http_port=8000
-            else:
-                c = t.controller('c2')
-                c.http_port=8000
-        try:
-            url='http://%s:%s/rest/v1/model/snmp-server-config/?id=snmp' % (c.ip,c.http_port)
-            if snmpValue == "null":
-                    snmpValue1=None
-            else:
-                    snmpValue1=str(snmpValue)
-        
-            helpers.test_log("snmpValue1: %s" % snmpValue1)
-            c.rest.put(url, { str(snmpKey) : snmpValue1})
+            t = test.Test()
         except:
             helpers.test_failure(c.rest.error())
             return False
-        else: 
-            if not c.rest.status_code_ok():
+        else:
+            c= t.controller('master')
+            try:
+                url='/rest/v1/model/snmp-server-config/?id=snmp' 
+                if snmpValue == "null":
+                        snmpValue1=None
+                else:
+                        snmpValue1=str(snmpValue)
+            
+                helpers.test_log("snmpValue1: %s" % snmpValue1)
+                c.rest.put(url, { str(snmpKey) : snmpValue1})
+            except:
                 helpers.test_failure(c.rest.error())
                 return False
-            else:
+            else: 
                 helpers.test_log(c.rest.content_json())
                 return True
 
@@ -1100,31 +885,21 @@ class BsnCommon(object):
            
            Return Value:  True if the configuration is successful, false otherwise 
         '''
-        t = test.Test()
         try:
-            t.controller('c2')
-        except:
-            c = t.controller('c1')
-            c.http_port=8000
-        else:
-            if(self.rest_is_c1_master_controller()):
-                c = t.controller('c1')
-                c.http_port=8000
-            else:
-                c = t.controller('c2')
-                c.http_port=8000
-        try:
-            url='http://%s:%s/rest/v1/model/firewall-rule/' % (c.ip,c.http_port)
-            controller_interface = "%s|Ethernet|0" %(str(controller_id))
-            c.rest.put(url,{"interface": str(controller_interface), "vrrp-ip": "", "port": 161, "src-ip": "", "proto": "udp"})
+            t = test.Test()
         except:
             helpers.test_failure(c.rest.error())
             return False
-        else: 
-            if not c.rest.status_code_ok():
+        else:
+            c= t.controller('master')
+            try:
+                url='/rest/v1/model/firewall-rule/' 
+                controller_interface = "%s|Ethernet|0" %(str(controller_id))
+                c.rest.put(url,{"interface": str(controller_interface), "vrrp-ip": "", "port": 161, "src-ip": "", "proto": "udp"})
+            except:
                 helpers.test_failure(c.rest.error())
                 return False
-            else:
+            else: 
                 helpers.test_log(c.rest.content_json())
                 return True
 
@@ -1138,28 +913,22 @@ class BsnCommon(object):
            
            Return Value:  True if the configuration is successful, false otherwise 
         '''
-        t = test.Test()
         try:
-            t.controller('c2')
-        except:
-            c = t.controller('c1')
-            c.http_port=8000
-        else:
-            if(self.rest_is_c1_master_controller()):
-                c = t.controller('c1')
-                c.http_port=8000
-            else:
-                c = t.controller('c2')
-                c.http_port=8000
-        try:
-            url1='http://%s:%s/rest/v1/model/snmp-server-config/?id=snmp' % (c.ip,c.http_port)
-            helpers.test_log(url1)
-            c.rest.put(url1, {"trap-enable": False, "trap-server": "", "trap-port": int(trap_port)})
+            t = test.Test()
         except:
             helpers.test_failure(c.rest.error())
             return False
-        else: 
-            return True
+        else:
+            c= t.controller('master')
+            try:
+                url1='/rest/v1/model/snmp-server-config/?id=snmp'
+                helpers.test_log(url1)
+                c.rest.put(url1, {"trap-enable": False, "trap-server": "", "trap-port": int(trap_port)})
+            except:
+                helpers.test_failure(c.rest.error())
+                return False
+            else: 
+                return True
 
 #   Objective: Delete SNMP. Similar to "no snmp-server enable"
 #   Input: N/A
@@ -1171,25 +940,19 @@ class BsnCommon(object):
            
            Return Value:  True if the configuration is successful, false otherwise 
         '''
-        t = test.Test()
         try:
-            t.controller('c2')
-        except:
-            c = t.controller('c1')
-            c.http_port=8000
-        else:
-            if(self.rest_is_c1_master_controller()):
-                c = t.controller('c1')
-                c.http_port=8000
-            else:
-                c = t.controller('c2')
-                c.http_port=8000
-        try:
-            url1='http://%s:%s/rest/v1/model/snmp-server-config/?id=snmp' % (c.ip,c.http_port)
-            helpers.test_log(url1)
-            c.rest.delete(url1, {})
+            t = test.Test()
         except:
             helpers.test_failure(c.rest.error())
             return False
-        else: 
-            return True
+        else:
+            c= t.controller('master')
+            try:
+                url1='/rest/v1/model/snmp-server-config/?id=snmp'
+                helpers.test_log(url1)
+                c.rest.delete(url1, {})
+            except:
+                helpers.test_failure(c.rest.error())
+                return False
+            else: 
+                return True
