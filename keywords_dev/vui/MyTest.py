@@ -104,7 +104,7 @@ root@nova-controller:~#
     def restart_mininet(self):
         t = test.Test()
         mn = t.mininet('mn')
-        mn.dev.stop_mininet()
-        mn.dev.stop_mininet()
-        mn.dev.start_mininet()
-        mn.dev.restart_mininet()
+        mn.stop_mininet()
+        mn.stop_mininet()
+        mn.start_mininet()
+        mn.restart_mininet()
