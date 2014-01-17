@@ -100,4 +100,11 @@ root@nova-controller:~#
         key = '02f4a4d1-0930-43bf-94db-2d39b11c343d'
         helpers.log("key(%s) contains: %s" % (key, out_dict[key]))
         helpers.log("key(%s) label: %s" % (key, out_dict[key]['label']))
-        
+    
+    def restart_mininet(self):
+        t = test.Test()
+        mn = t.mininet('mn')
+        mn.dev.stop_mininet()
+        mn.dev.stop_mininet()
+        mn.dev.start_mininet()
+        mn.dev.restart_mininet()
