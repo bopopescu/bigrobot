@@ -79,6 +79,13 @@ def bigrobot_log_path(new_val=None, default=None):
     return _env_get_and_set('BIGROBOT_LOG_PATH', new_val, default)
 
 
+def bigrobot_log_path_exec_instance(new_val=None, default=None):
+    """
+    Category: Get/set environment variables for BigRobot.
+    """
+    return _env_get_and_set('BIGROBOT_LOG_PATH_EXEC_INSTANCE', new_val, default)
+
+
 def bigrobot_suite(new_val=None, default=None):
     """
     Category: Get/set environment variables for BigRobot.
@@ -143,7 +150,8 @@ def bigrobot_debug(new_val=None, default=None):
     """
     debug = _env_get_and_set('BIGROBOT_DEBUG', new_val, default)
     if int(debug) == 1:
-        robot_syslog_file(default=''.join((bigrobot_log_path(), '/syslog.txt')))
+        robot_syslog_file(default=''.join((bigrobot_log_path_exec_instance(),
+                                           '/syslog.txt')))
         robot_syslog_level(default='DEBUG')
 
     return debug
@@ -417,6 +425,19 @@ def file_write_append_once(filename, s):
     f.close()
 
 
+def is_same_file(file1, file2):
+    """
+    Check if file1 is the same file as file2 by comparing their inodes. This
+    gets us around the issue of 'debug.txt' != './debug.txt"
+    """
+    if not file_exists(file1) or not file_exists(file2):
+        return False
+    inode1 = os.stat(file1)[1]
+    inode2 = os.stat(file2)[1]
+    
+    return True if inode1 == inode2 else False
+
+    
 def bigtest_node_info():
     """
     Traverse the directory /var/run/bigtest and gather all the node attributes
@@ -549,10 +570,8 @@ def _createSSHClient(server, user, password, port=22):
     return client
 
 
-def scp_put(server, local_file, remote_path):
-    # !!! FIXME: Remove hardcoded user/pw
-    user = 'admin'
-    password = 'adminadmin'
+def scp_put(server, local_file, remote_path,
+            user='admin', password='adminadmin'):
     ssh = _createSSHClient(server, user, password)
     s = SCPClient(ssh.get_transport())
 
@@ -561,10 +580,8 @@ def scp_put(server, local_file, remote_path):
     s.put(local_file, remote_path) 
 
 
-def scp_get(server, remote_file, local_path):
-    # !!! FIXME: Remove hardcoded user/pw
-    user = 'admin'
-    password = 'adminadmin'
+def scp_get(server, remote_file, local_path,
+            user='admin', password='adminadmin'):
     ssh = _createSSHClient(server, user, password)
     s = SCPClient(ssh.get_transport())
 
@@ -625,11 +642,13 @@ def _ping(host, count=3, waittime=100, quiet=False):
              % (host, count, packets_received))
         if packets_received > 0:
             if not quiet:
-                log("Success! %s%s" % (s, end_of_output_marker()), level=5)
+                log("Success! %s%s"
+                    % (s, br_utils.end_of_output_marker()), level=5)
             return True
         else:
             if not quiet:
-                log("Failure! %s%s" % (s, end_of_output_marker()), level=5)
+                log("Failure! %s%s"
+                    % (s, br_utils.end_of_output_marker()), level=5)
             return False
     test_error("Unknown ping error.")
 
@@ -652,14 +671,10 @@ def ping(host, count=3, waittime=100, quiet=False):
     return status
 
 
-def end_of_output_marker():
-    return '\n\n----'
-
-
 def openstack_convert_table_to_dict(input_str):
     """
-    Many commands on OpenStack Nova controller will return a table for its
-    output, e.g.,
+    Many commands on OpenStack Nova controller will return a table output,
+    e.g.,
     
     root@nova-controller:~# nova --os-username admin \
                                  --os-tenant-name admin \
@@ -681,7 +696,7 @@ def openstack_convert_table_to_dict(input_str):
         | id                   | 8caae5ae-66dd-4ee1-87f8-08674da401ff |
         +----------------------+--------------------------------------+
     
-    Parse this table and convert it into a Python dictionary.
+    This function converts the table to a Python dictionary.
     
     Return dictionary.
     """

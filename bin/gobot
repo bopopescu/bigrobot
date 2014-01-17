@@ -75,10 +75,13 @@ os.environ['IS_GOBOT'] = 'True'
 
 helpers.bigrobot_log_path(default='.')
 if helpers.bigrobot_suite():
-    helpers.bigrobot_log_path("%s/%s_%s" %
-                     (helpers.bigrobot_log_path(),
-                      helpers.bigrobot_suite(),
-                      helpers.ts_local()))
+    helpers.bigrobot_log_path_exec_instance("%s/%s_%s"
+                                            % (helpers.bigrobot_log_path(),
+                                               helpers.bigrobot_suite(),
+                                               helpers.ts_local()))
+else:
+    helpers.bigrobot_log_path_exec_instance(helpers.bigrobot_log_path())
+
 if helpers.bigrobot_suite():
     helpers.bigrobot_topology(default=''.join((helpers.bigrobot_suite(),
                                                '.topo')))
@@ -95,7 +98,7 @@ helpers.python_path()
 
 ROBOT_FRAMEWORK_OPTS = (
     '--loglevel=debug --debugfile=debug.log --exclude=skipped --outputdir=%s'
-        % helpers.bigrobot_log_path()
+        % helpers.bigrobot_log_path_exec_instance()
     )
     # Exclude test cases tagged as 'skipped' from execution
 
@@ -111,7 +114,7 @@ def get_command_dict():
 
 
 def usage():
-    version_command()
+    version_hidden_command()
     print("Usage: gobot [command] [options]\n")
 
     # Print a list of all the test suites in the current directory.
@@ -142,8 +145,8 @@ def usage():
     # Print the gobot commands
     cmd_list = []
     for cmd, func in sorted(get_command_dict().items()):
-        if cmd == 'version':
-            # Don't display version command
+        if cmd.endswith("_hidden"):
+            # Don't display hidden commands
             continue
         if func.__doc__:
             cmd_list.append("  %s - %s" % (cmd, func.__doc__))
@@ -213,33 +216,41 @@ def format_convert(f, quiet=False):
 
 def format_convert_and_copy(f, p, quiet=False):
     format_convert(f, quiet)
-    if not os.path.exists(helpers.bigrobot_log_path()):
-        os.makedirs(helpers.bigrobot_log_path())
+    if not os.path.exists(helpers.bigrobot_log_path_exec_instance()):
+        os.makedirs(helpers.bigrobot_log_path_exec_instance())
         
     for ext in ('mw', 'txt', 'rst', 'html'):
         filename = ''.join((f, '.', ext))
         if os.path.exists(filename):
-            shutil.copy(filename, helpers.bigrobot_log_path())
+            shutil.copy(filename, helpers.bigrobot_log_path_exec_instance())
         
 
 def create_symlinks_to_logs():
     log_path = helpers.bigrobot_log_path()
+    log_path_run = helpers.bigrobot_log_path_exec_instance()
     log_files = ['debug.log', 'syslog.txt', 'log.html', 'report.html']
-    [helpers.file_remove(f) for f in log_files]
     
     for f in log_files:
-        source_file =  '/'.join((log_path, f))
+        f2 = '/'.join((log_path, f))
+        
+        is_different = not helpers.is_same_file(f, f2)
+        if is_different:
+            helpers.file_remove(f2)
+        helpers.file_remove(f)
+        
+        source_file =  '/'.join((log_path_run, f))
         
         # Create symlink only if source file exists
         if helpers.file_exists(source_file):
-            os.symlink(source_file, f)
-
+            if is_different:
+                os.symlink(source_file, f2)
+            os.symlink(source_file, f)            
 
 #
 # Gobot command definitions
 #
 
-def version_command():
+def version_hidden_command():
     """
     Show the version of BigRobot.
     """
@@ -262,7 +273,7 @@ def test_command():
     exit_if_suite_not_defined()
     exit_if_topology_not_defined()
     format_convert_and_copy(helpers.bigrobot_suite(),
-                            helpers.bigrobot_log_path())
+                            helpers.bigrobot_log_path_exec_instance())
     
     ext = 'txt'
     if helpers.bigrobot_suite_format() == 'mw':
@@ -291,9 +302,6 @@ def gui_command():
     """
     Run the Robot Framework GUI (RIDE).
     """
-    exit_if_suite_not_defined()
-    format_convert_and_copy(helpers.bigrobot_suite(),
-                            helpers.bigrobot_log_path())
     run('ride.py 2> /dev/null &', shell=True)
 
 
@@ -316,7 +324,14 @@ def clean_deep_command():
         run('rm -rfv %s_20[0-9][0-9][0-9][0-9][0-9][0-9]_[0-9][0-9][0-9][0-9][0-9][0-9]'
             % helpers.bigrobot_suite(), shell=True)
 
-
+def codesize_hidden_command():
+    """
+    Check the size of BigRobot source code.
+    """
+    cmd = ''.join((helpers.bigrobot_path(), "/bin/chk-code-bloat-bigrobot",
+                   " ", helpers.bigrobot_path()))
+    run(cmd, shell=True)
+    
 def startremotevm_command():
     """
     Setup remote VMs using BigTest (executes 'bt startremotevm').
@@ -339,8 +354,12 @@ def main(args):
     cmd = args[0]
     cmd_dict = get_command_dict()
     if cmd not in cmd_dict:
-        sys.stderr.write("Unknown command: %s\n" % cmd)
-        sys.exit(1)
+        hidden_cmd = cmd + "_hidden"
+        if hidden_cmd not in cmd_dict:
+            sys.stderr.write("Unknown command: %s\n" % cmd)
+            sys.exit(1)
+        else:
+            cmd = hidden_cmd
 
     cmd_dict[cmd]()
 
