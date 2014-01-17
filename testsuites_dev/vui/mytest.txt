@@ -9,5 +9,6 @@ Library         keywords/BsnCommon.py
 Library         keywords_dev/vui/MyTest.py
 
 * Test Case
-scp put test
-    test scp
+Test Mininet execution
+    #test scp
+    restart_mininet

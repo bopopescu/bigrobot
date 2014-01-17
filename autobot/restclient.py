@@ -1,6 +1,7 @@
 import httplib2
 import base64
 import autobot.helpers as helpers
+import autobot.utils as br_utils
 
 
 class RestClient(object):
@@ -76,9 +77,10 @@ class RestClient(object):
         return helpers.to_json(self.result(result))
 
     def log_result(self, result=None, level=4):
-        helpers.log("REST result: %s%s"
-                    % (self.result_json(result), helpers.end_of_output_marker()),
-                    level=level)
+        helpers.log("REST result:\n%s%s"
+                    % (self.result_json(result),
+                       br_utils.end_of_output_marker()),
+                       level=level)
         
     def content(self, result=None):
         return self.result(result)['content']
@@ -87,9 +89,10 @@ class RestClient(object):
         return helpers.to_json(self.content(result))
 
     def log_content(self, result=None, level=4):
-        helpers.log("REST content: %s%s"
-                    % (self.content_json(result), helpers.end_of_output_marker()),
-                    level=level)
+        helpers.log("REST content:\n%s%s"
+                    % (self.content_json(result),
+                       br_utils.end_of_output_marker()),
+                       level=level)
         
     def http_request(self, url, verb='GET', data=None, session=None,
                      quiet=False, save_last_result=True):

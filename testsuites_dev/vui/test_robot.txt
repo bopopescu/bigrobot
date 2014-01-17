@@ -12,6 +12,6 @@ Test var assignment
 * Keywords
 variable assignment
     [Arguments]     ${input}
+    Should be true  ${input} == 123
     ${temp}=        Set Variable  123${input}
-    Should be true  ${input} == ${temp}
-    Log             We got ${input} == ${temp}
+    Should be true  ${temp} == 123123
