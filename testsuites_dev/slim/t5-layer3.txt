@@ -70,12 +70,14 @@ ${nexthop6}			10.10.11.4
 
 
 * Test Case
-Configure topology
-	configure fabric switch 
-	sleep  5
+#Configure topology
+#	configure fabric switch 
+#	sleep  5
 
 L3 ping bm0 to bm1 single leaf single rack within tenant different VNS
-	[Tags]						smoke				
+	[Tags]						smoke		
+	configure fabric switch 
+	sleep  5		
 	REST create tenant  		${tenant1_name}
 	REST create vns  			${tenant1_name}		${vns_1}
 	REST create vns				${tenant1_name}		${vns_2}
@@ -100,6 +102,8 @@ L3 ping bm0 to bm1 single leaf single rack within tenant different VNS
 	      
 L3 ping bm0 to unreachable host single leaf single rack single tenant across VNS
 	[Tags]						skipped
+	configure fabric switch 
+	sleep  5	
 	REST create tenant  		${tenant1_name}
 	REST create vns  			${tenant1_name}		${vns_1}
 	REST create vns ip  		${tenant1_name}  	${vns_1}  		${vns1_ip}	  	${vns1_subnet}
@@ -116,6 +120,8 @@ L3 ping bm0 to unreachable host single leaf single rack single tenant across VNS
     
 L3 ping bm0 to bm1 single leaf single rack across tenants  
    	[Tags]						smoke				skipped
+	configure fabric switch 
+	sleep  5   	
 	REST create tenant  		${tenant1_name}        
 	REST create tenant  		${tenant2_name} 
    	REST create vns				${tenant1_name}		${vns_1}	      
@@ -142,6 +148,8 @@ L3 ping bm0 to bm1 single leaf single rack across tenants
    
 L3 ping untagged bm0 to tagged bm1 single leaf single rack within tenant different VNS
 	[Tags]						skipped
+	configure fabric switch 
+	sleep  5	
 	REST create tenant  		${tenant1_name}
 	REST create vns  			${tenant1_name}		${vns_1}
 	REST create vns				${tenant1_name}		${vns_2}
@@ -166,6 +174,8 @@ L3 ping untagged bm0 to tagged bm1 single leaf single rack within tenant differe
  
 L3 ping tagged bm0 to tagged bm1 single leaf single rack within tenant different VNS
 	[Tags]						skipped
+	configure fabric switch 
+	sleep  5	
 	REST create tenant  		${tenant1_name}
 	REST create vns  			${tenant1_name}		${vns_1}
 	REST create vns				${tenant1_name}		${vns_2}
@@ -190,6 +200,8 @@ L3 ping tagged bm0 to tagged bm1 single leaf single rack within tenant different
    
 L3 ping with destination host interface move in the same tenant
 	[Tags]						skipped
+	configure fabric switch 
+	sleep  5	
 	REST create tenant  		${tenant1_name}
 	REST create vns  			${tenant1_name}		${vns_1}
 	REST create vns				${tenant1_name}		${vns_2}
@@ -228,6 +240,8 @@ L3 ping with destination host interface move in the same tenant
 
 L3 ping with destination host interface move in different tenant
 	[Tags]							skipped
+	configure fabric switch 
+	sleep  5	
     REST create tenant              ${tenant1_name}
 	REST create vns					${tenant1_name}         ${vns_1}
     REST add ecmp group				${tenant1_name}         ${ecmpgroup1}
