@@ -719,7 +719,6 @@ def openstack_convert_table_to_dict(input_str):
         # of the table), so strip it.
         out = out[:-1]
 
-    log("***** out: %s" % out)
     out = br_utils.strip_table_row_dividers(out)
     out = br_utils.strip_table_ws_between_columns(out)
     out = br_utils.convert_table_to_dict(out)
