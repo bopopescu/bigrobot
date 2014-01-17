@@ -238,7 +238,7 @@ L3 ping with destination host interface move in the same tenant
 	REST delete tenant 			${tenant1_name}        
 	sleep  						20  
 
-L3 ping with destination host interface move in different tenant
+L3 ping with nexthop in a ecmp group
 	[Tags]							skipped
 	configure fabric switch 
 	sleep  5	
@@ -255,6 +255,9 @@ L3 ping with destination host interface move in different tenant
     REST add static routes          ${tenant1_name}         ${dstroute2} 	${nexthopgroup2}
     REST add static routes          ${tenant1_name}         ${dstroute3}	${nexthopgroup3}
     REST add static routes          ${tenant1_name}         ${dstroute4}	${nexthopgroup4}
+    
+    
+    
    
 * Keywords
 teardown topology

@@ -14,8 +14,13 @@ ${adminTenant}		admin
 ${adminPassWord}	bsn
 ${authUrl}			http://10.193.0.120:5000/v2.0/
 ${imageName}		Ubuntu.13.10
+${tenant1Name}		tenant1
+${tenant1User}		user1
+${tenantPassword}	bsn
+${tenant1Router}	Tenant1-Router
 
 
 * Test Case
 Get Ubuntu saucy Image ID 
 	${ubuntuImageId}=	openstack get image id		${adminUserName}	${adminTenant}	${adminPassWord}	${authUrl}	${imageName}
+	${t1RouterId}=		openstack get router id		${tenant1User}		${tenant1Name}	${tenantPassword}	${authUrl}	${tenant1Router}
