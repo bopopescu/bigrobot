@@ -1,4 +1,4 @@
-== T5 Functional CLI Test Suite ==
+== T5 Platform Test Suite ==
 
 * Setting
 Documentation    T5 BVS APP Functional CLI Test Suite
