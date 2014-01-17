@@ -39,9 +39,6 @@ class T5Platform(object):
         
         return True
     
-    def rest_verify_ha_cluster(self):
-        try:
-
     
     def rest_verify_ha_cluster(self):
         '''Using the 'show cluster' command verify the cluster formation across both nodes
@@ -68,8 +65,8 @@ class T5Platform(object):
                 helpers.log("Active controller id is: %s " % reported_active_byMaster)
                 helpers.log("Pass: Consistent active/stand-By cluster formation verified")
                 return True
-
-	except Exception, err:
+            
+        except Exception, err:
             helpers.test_failure("Exception in: rest_verify_ha_cluster %s : %s " % (Exception, err))
             return False
 
