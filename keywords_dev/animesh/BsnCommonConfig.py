@@ -2,7 +2,6 @@ import autobot.helpers as helpers
 import autobot.test as test
 from Exscript.protocols import SSH2
 from Exscript import Account, Host
-from BigTapCommonShow import BigTapCommonShow
 
 class BsnCommonConfig(object):
 
