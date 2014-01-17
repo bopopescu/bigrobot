@@ -1,0 +1,17 @@
+* Settings
+Documentation   This suite is my sandbox for experimentation.
+Force Tags      Vui
+#Library         Reserve
+
+
+* Test Cases
+Test var assignment
+    variable assignment  ${123}
+    
+
+* Keywords
+variable assignment
+    [Arguments]     ${input}
+    ${temp}=        Set Variable  123${input}
+    Should be true  ${input} == ${temp}
+    Log             We got ${input} == ${temp}
