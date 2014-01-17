@@ -204,6 +204,12 @@ class Openstack(object):
 
 
 	def openstack_get_image_id(self, osUserName, osTenantName, osPassWord, osAuthUrl, imageName):
+		'''Get image id
+			Input:
+				`osXXX`        		tenant name, password, username etc credentials
+				`imageName`       	image's name
+			Return: id of image
+		'''
 		t = test.Test()
 		h1 = t.host('h1')
 
@@ -215,29 +221,56 @@ class Openstack(object):
 		imageId = result1["value"]
 		helpers.log("image %s id is: %s" % (imageName, str(imageId)))   
 		return imageId
-    		
-    # def openstack_set_user_role(self, osUserName, osTenantName, osPassWord, osAuthUrl, userName, roleName, tenantName):
-        # t = test.Test()
-        # h1 = t.host('h1')
-      
-        # result = h1.bash("keystone --os-username %s --os-tenant-name %s --os-password %s --os-auth-url %s user-role-add --user %s --role --tenant %s" % (osUserName, osTenantName, osPassWord, osAuthUrl, userName, roleName, tenantName))              
-        # return
-        
 
-    
- 
-    # def openstack_create_tenant(self, osUserName, osTenantName, osPassWord, osAuthUrl):
-        # t = test.Test()
-        # h1 = t.host('h1')
-        
-        # return
-    
-    # def openstack_create_user(self, osUserName, osTenantName, osPassWord, osAuthUrl):
-        # t = test.Test()
-        # h1 = t.host('h1')
-        
-        # return        
-    
+
+	def openstack_set_user_role(self, osUserName, osTenantName, osPassWord, osAuthUrl, userName, roleName, tenantName):
+		t = test.Test()
+		h1 = t.host('h1')
+		
+		h1.bash("keystone --os-username %s --os-tenant-name %s --os-password %s --os-auth-url %s user-role-add --user %s --role --tenant %s" % (osUserName, osTenantName, osPassWord, osAuthUrl, userName, roleName, tenantName))   
+		
+	def openstack_create_tenant(self, osUserName, osTenantName, osPassWord, osAuthUrl, tenantName):
+		'''create tenant
+			Input:
+				`osXXX`        		tenant name, password, username etc credentials
+				`tenantName`       	tenant's name
+			Return: id of tenant
+		'''		
+		t = test.Test()
+		h1 = t.host('h1')
+
+		result = h1.bash("keystone --os-username %s --os-tenant-name %s --os-password %s --os-auth-url %s --name %s" % (osUserName, osTenantName, osPassWord, osAuthUrl, tenantName))
+		output = result["content"]
+		helpers.log("output: %s" % output)
+		out_dict = helpers.openstack_convert_table_to_dict(output)
+		result1 = out_dict["id"]
+		tenantId = result1["value"]
+		helpers.log("image %s id is: %s" % (tenantName, str(tenantId)))   
+		return tenantId
+
+
+	def openstack_create_user(self, osUserName, osTenantName, osPassWord, osAuthUrl, userName, userPassword, tenantName, userEmail):
+		'''create user
+			Input:
+				`osXXX`        		tenant name, password, username etc credentials
+				`userName`       	user's name
+				`userPassword`		user's password
+				`tenantName`		name of tenant that the user is a member of
+				`userEmail`			user's email address
+			Return: id of user
+		'''		
+		t = test.Test()
+		h1 = t.host('h1')
+
+		result = h1.bash("keystone --os-username %s --os-tenant-name %s --os-password %s --os-auth-url %s user-create --name=%s --pass=%s --tenant-id %s --email %s" % (osUserName, osTenantName, osPassWord, osAuthUrl, userName, userPassword, tenantName, userEmail))
+		output = result["content"]
+		helpers.log("output: %s" % output)
+		out_dict = helpers.openstack_convert_table_to_dict(output)
+		result1 = out_dict["id"]
+		userId = result1["value"]
+		helpers.log("user %s id is: %s" % (userName, str(userId)))   
+		return userId
+		
     # def openstack_create_role(self, osUserName, osTenantName, osPassWord, osAuthUrl, roleName):
         # t = test.Test()
         # h1 = t.host('h1')

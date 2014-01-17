@@ -8,6 +8,7 @@ Force Tags      T5 Sanity
 Library         keywords/BsnCommon.py
 Library         keywords/Mininet.py
 Library         keywords_dev/slim/T5.py
+Library         keywords_dev/T5.py
 Library         keywords_dev/T5Fabric.py
 Resource		keywords_dev/t5_singleleaf_resource.txt
 
@@ -94,7 +95,7 @@ L3 ping bm0 to bm1 single leaf single rack within tenant different VNS
 	sleep  5
 	${loss}=  					mininet l3 ping		${host0_name}	${host1_name} 	
 	sleep  						20       
-	Should Be True  			${loss} == 100
+	Should Be True  			${loss} == 0
 	${endpoints_cnt}=			rest count endpoints mac
 	Should Be True  			${endpoints_cnt} == 2
 	REST delete tenant 			${tenant1_name}        
