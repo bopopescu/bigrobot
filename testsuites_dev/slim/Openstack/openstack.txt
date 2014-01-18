@@ -25,9 +25,8 @@ ${userEmail}		users@tenant.com
 Get Ubuntu saucy Image ID 
 	${ubuntuImageId}=	openstack get image id		${adminUserName}	${adminTenant}	${adminPassWord}	${authUrl}	${imageName}
 	${t1RouterId}=		openstack get router id		${tenant1User}		${tenant1Name}	${tenantPassword}	${authUrl}	${tenant1Router}
-	for x in range(1, 5):
-		${user}= "user%d" % (x)
-		${tenant}= "tenant%d" % (x)
-		${tenantRouter}= "Tenant%d-Router" % (x)
-		${routerId}= 	openstack get router id		${tenant}		${user}		${tenantPassword}	${authUrl}	${tenantRouter}
-		print ${routerId}
+	: for  ${x}  in range  1  5
+	\	${user}=	Set Variable  	user${x}
+	\	${tenant}=	Set Variable 	tenant${x}
+	\	${tenantRouter}=	Set Variable 	Tenant${x}-Router
+	\	${routerId}= 	openstack get router id		${tenant}		${user}		${tenantPassword}	${authUrl}	${tenantRouter}
