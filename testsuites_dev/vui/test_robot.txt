@@ -10,8 +10,14 @@ Test var assignment
     variable assignment  ${123}
 
 Robot loop test
+    [Tags]           skipped
     : for  ${index}  in range  1  3
     \  log  ${index}
+    
+Openstack user id
+    : for  ${index}  in range  1  5
+    \  ${user}=  Set Variable  user${index}
+    \  log  ${index}:${user}
     
 
 * Keywords
