@@ -65,8 +65,8 @@ Create Project, users and VM
 	${ImageId}=			openstack create image		${adminUserName}	${adminTenant}	${adminPassWord}	${authUrl}	 	${imageName} 		${diskFormat}		${imageLocation}
 	sleep				5
 	${adminTenandId}=	openstack get tenant id		${adminUserName}	${adminTenant}	${adminPassWord}	${authUrl}		${adminTenant}
-	${extNetId}=		openstack create net		${adminUserName}	${adminTenant}	${adminPassWord}	${authUrl} 		${adminTenandId}	${adminTenant} 		0	True
-	${extSubnetId}=		openstack create subnet		${adminUserName}	${adminTenant}	${adminPassWord}	${authUrl}  	${adminTenandId}	${adminTenant}		0	${extNetIP}		${extNetMask}	 ${dnsList}
+	${extNetId}=		openstack create net		${adminUserName}	${adminTenant}	${adminPassWord}	${authUrl} 		${adminTenandId}	${adminTenant} 		Ext		True
+	${extSubnetId}=		openstack create subnet		${adminUserName}	${adminTenant}	${adminPassWord}	${authUrl}  	${adminTenandId}	${adminTenant}		Ext		${extNetIP}		${extNetMask}	 ${dnsList}
 	sleep				1
 	${tenantId}=		openstack create tenant		${adminUserName}	${adminTenant}	${adminPassWord}	${authUrl} 		${tenant1Name}
 	sleep				1
