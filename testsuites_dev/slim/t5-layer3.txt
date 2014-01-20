@@ -9,7 +9,7 @@ Library         keywords/BsnCommon.py
 Library         keywords/Mininet.py
 Library         keywords_dev/T5.py
 Library         keywords_dev/T5Fabric.py
-Library         keywords_dev/slim/T5.py
+Library         keywords_dev/slim/T5_L3.py
 Resource		keywords_dev/t5_singleleaf_resource.txt
 
 * Variable
