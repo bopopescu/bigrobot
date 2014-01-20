@@ -193,7 +193,7 @@ class Openstack(object):
 		t = test.Test()
 		h1 = t.host('h1')
 
-		result = h1.bash("neutron --os-username %s --os-tenant-name %s --os-password %s --os-auth-url %s router-show %s" % (osUserName, osTenantName, osPassWord, osAuthUrl, subnetName))              
+		result = h1.bash("neutron --os-username %s --os-tenant-name %s --os-password %s --os-auth-url %s subnet-show %s" % (osUserName, osTenantName, osPassWord, osAuthUrl, subnetName))              
 		output = result["content"]
 		helpers.log("output: %s" % output)
 		out_dict = helpers.openstack_convert_table_to_dict(output)
