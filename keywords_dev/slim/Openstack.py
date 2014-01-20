@@ -364,19 +364,24 @@ class Openstack(object):
 		return routerId
 
 
-	def openstack_create_net(self, osUserName, osTenantName, osPassWord, osAuthUrl, tenantId, tenantName, networkNum):
+	def openstack_create_net(self, osUserName, osTenantName, osPassWord, osAuthUrl, tenantId, tenantName, networkNum, external=False):
 		'''create network
 			Input:
 				`osXXX`        		tenant name, password, username etc credentials
 				`tenantId`			ID of the tenant for the router creation. 
 				`tenantName`		Name of Tenant
 				`networkNum`		Metwork Num or identifier for this tenant network
+				neutron net-create --tenant-id $adminid External-Network --router:external=True
 			Return: id of created Router
 		'''				
 		t = test.Test()
 		h1 = t.host('h1')
-
-		result = h1.bash("neutron --os-username %s --os-tenant-name %s --os-password %s --os-auth-url %s net-create --tenant-id %s %s-Network-%s " % (osUserName, osTenantName, osPassWord, osAuthUrl, tenantId, tenantName, networkNum))              
+		
+		if external is False:
+			result = h1.bash("neutron --os-username %s --os-tenant-name %s --os-password %s --os-auth-url %s net-create --tenant-id %s %s-Network-%s " % (osUserName, osTenantName, osPassWord, osAuthUrl, tenantId, tenantName, networkNum))              
+		else:
+			result = h1.bash("neutron --os-username %s --os-tenant-name %s --os-password %s --os-auth-url %s net-create --tenant-id %s %s-Network-%s --router:external=True" % (osUserName, osTenantName, osPassWord, osAuthUrl, tenantId, tenantName, networkNum))  
+		
 		output = result["content"]
 		helpers.log("output: %s" % output)
 		out_dict = helpers.openstack_convert_table_to_dict(output)
@@ -510,7 +515,7 @@ S
 		h1.bash("nova --os-username %s --os-tenant-name %s --os-password %s --os-auth-url %s secgroup %s tcp 1 65535 0.0.0.0/0" % (osUserName, osTenantName, osPassWord, osAuthUrl, secgroupName))   
 		h1.bash("nova --os-username %s --os-tenant-name %s --os-password %s --os-auth-url %s secgroup %s udp 1 65535 0.0.0.0/0" % (osUserName, osTenantName, osPassWord, osAuthUrl, secgroupName))   
 		h1.bash("nova --os-username %s --os-tenant-name %s --os-password %s --os-auth-url %s secgroup %s icmp -1 -1 0.0.0.0/0" % (osUserName, osTenantName, osPassWord, osAuthUrl, secgroupName))   
-		
+		return pass
 
 	def openstack_create_instance(self, osUserName, osTenantName, osPassWord, osAuthUrl, imageId, flavorId, hostName, subnetId, keypairName):
 		'''create network
@@ -559,4 +564,19 @@ nova --no-cache boot --image $ubuntuid --flavor $flavor2id T$startTenantid-NW-$s
 		helpers.log("instance %s status is: %s" % (vmId, str(vmStatus)))   
 		return vmStatus
 		
+	
+	def openstack_delete_instance(self, osUserName, osTenantName, osPassWord, osAuthUrl, vmId):
+		'''delete instance
+			Input:
+				`osXXX`        		tenant name, password, username etc credentials
+				`vmId`				Instance ID or instance name to be deleted. 
+			Return: empty string
+		'''
+
+		t = test.Test()
+		h1 = t.host('h1')
+
+		h1.bash("nova --os-username %s --os-tenant-name %s --os-password %s --os-auth-url %s delete %s" % (osUserName, osTenantName, osPassWord, osAuthUrl, vmId))              
+		return pass
+	
 	
