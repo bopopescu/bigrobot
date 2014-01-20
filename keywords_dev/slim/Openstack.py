@@ -529,7 +529,7 @@ nova --no-cache boot --image $ubuntuid --flavor $flavor2id T$startTenantid-NW-$s
 		t = test.Test()
 		h1 = t.host('h1')
 
-		result = h1.bash("neutron --os-username %s --os-tenant-name %s --os-password %s --os-auth-url %s --no-cache boot --image %s --flavor %s %s --nic net-id=%s --key_name %s" % (osUserName, osTenantName, osPassWord, osAuthUrl, imageId, flavorId, hostName, subnetId, keypairName))              
+		result = h1.bash("nova --os-username %s --os-tenant-name %s --os-password %s --os-auth-url %s --no-cache boot --image %s --flavor %s %s --nic net-id=%s --key_name %s" % (osUserName, osTenantName, osPassWord, osAuthUrl, imageId, flavorId, hostName, subnetId, keypairName))              
 		output = result["content"]
 		helpers.log("output: %s" % output)
 		out_dict = helpers.openstack_convert_table_to_dict(output)
@@ -550,7 +550,7 @@ nova --no-cache boot --image $ubuntuid --flavor $flavor2id T$startTenantid-NW-$s
 		t = test.Test()
 		h1 = t.host('h1')
 
-		result = h1.bash("neutron --os-username %s --os-tenant-name %s --os-password %s --os-auth-url %s show %s" % (osUserName, osTenantName, osPassWord, osAuthUrl, vmId))              
+		result = h1.bash("nova --os-username %s --os-tenant-name %s --os-password %s --os-auth-url %s show %s" % (osUserName, osTenantName, osPassWord, osAuthUrl, vmId))              
 		output = result["content"]
 		helpers.log("output: %s" % output)
 		out_dict = helpers.openstack_convert_table_to_dict(output)
