@@ -3,7 +3,7 @@ import autobot.restclient as restclient
 import autobot.test as test
 
 
-class T5(object):
+class T5_L3(object):
 
     def __init__(self):
         pass
