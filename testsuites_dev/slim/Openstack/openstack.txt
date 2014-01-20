@@ -19,7 +19,7 @@ ${tenant1User}		user1
 ${tenantPassword}	bsn
 ${tenant1Router}	Tenant1-Router
 ${userEmail}		users@tenant.com
-
+${instanceName}		T1-NW-1-Host-1
 
 * Test Case
 Get Ubuntu saucy Image ID 
@@ -30,3 +30,6 @@ Get Ubuntu saucy Image ID
 	\	${tenant}=		Set Variable 				tenant${x}
 	\	${tenantRouter}=		Set Variable 		Tenant${x}-Router
 	\	${routerId}= 	openstack get router id		${user}				${tenant}		${tenantPassword}	${authUrl}	${tenantRouter}
+
+Get VM status
+	${status}= 		openstack get instance status	${tenant1User}		${tenant1Name}	${tenantPassword}	${authUrl}	${instanceName}

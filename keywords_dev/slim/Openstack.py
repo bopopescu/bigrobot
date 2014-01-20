@@ -385,7 +385,7 @@ class Openstack(object):
 		helpers.log("network %s id is: %s" % (tenantName, str(netId)))   
 		return netId
 
-	def openstack_create_subnet(self, osUserName, osTenantName, osPassWord, osAuthUrl, gateway=None, networkName, poolStart=None, poolEnd=None, netIP, netMask):
+	def openstack_create_subnet(self, osUserName, osTenantName, osPassWord, osAuthUrl, tenantId, tenantName, networkNum, netIP, netMask, dnsNameServers=None):
 		'''create image
 			Input:
 				`osXXX`        		tenant name, password, username etc credentials
@@ -396,45 +396,167 @@ class Openstack(object):
 		'''				
 		t = test.Test()
 		h1 = t.host('h1')
-
-		result = h1.bash("neutron --os-username %s --os-tenant-name %s --os-password %s --os-auth-url %s net-create --tenant-id %s %s-Network-%s " % (osUserName, osTenantName, osPassWord, osAuthUrl, tenantId, tenantName, networkNum))              
+		
+		ipSubnet = netIP + "/" + netMask
+		if dnsNameServers is None:
+			result = h1.bash("neutron --os-username %s --os-tenant-name %s --os-password %s --os-auth-url %s subnet-create --tenant-id %s %s-Network-%s %s" % (osUserName, osTenantName, osPassWord, osAuthUrl, tenantId, tenantName, networkNum, ipSubnet))   
+		else:	
+			result = h1.bash("neutron --os-username %s --os-tenant-name %s --os-password %s --os-auth-url %s subnet-create --tenant-id %s %s-Network-%s %s --dns_nameservers list=true %s" % (osUserName, osTenantName, osPassWord, osAuthUrl, tenantId, tenantName, networkNum, ipSubnet, dnsNameServers))   
+		
 		output = result["content"]
 		helpers.log("output: %s" % output)
 		out_dict = helpers.openstack_convert_table_to_dict(output)
 		result1 = out_dict["id"]
-		netId = result1["value"]
-		helpers.log("network %s id is: %s" % (tenantName, str(netId)))   
-		return netId
+		subNetId = result1["value"]
+		helpers.log("subnet id is: %s" % (str(subNetId)))   
+		return subNetId
+
+	def openstack_gen_keypair(self, osUserName, osTenantName, osPassWord, osAuthUrl, keypairName, pathToSave):
+		'''Generate openstack tenant keypair
+			Input:
+				`osXXX`        		tenant name, password, username etc credentials
+				`keypairName`			Keypair name 
+				`pathToSave`		Path to save public key on nova controller
+			Return: no data is returned
+		'''				
+		t = test.Test()
+		h1 = t.host('h1')
+		
+		h1.bash("nova --os-username %s --os-tenant-name %s --os-password %s --os-auth-url %s keypair-add %s > %s" % (osUserName, osTenantName, osPassWord, osAuthUrl, keypairName, pathToSave))   
+		
+
+	def openstack_set_router_gw(self, osUserName, osTenantName, osPassWord, osAuthUrl, routerId, extNetId):
+		'''set tenant router gateway
+			Input:
+				`osXXX`        		tenant name, password, username etc credentials
+				`routerId`			tenant router id
+				`extNetId`		external network id
+				root@nova-controller:~# neutron --os-username user1 --os-tenant-name Tenant1 --os-auth-url http://10.193.0.120:5000/v2.0/ --os-password bsn router-gateway-set ff25378d-8b0d-4192-8c33-78ea0eba8d0e 02f4a4d1-0930-43bf-94db-2d39b11c343d
+S	
+				Set gateway for router ff25378d-8b0d-4192-8c33-78ea0eba8d0e
+			Return: output of command results
+		'''				
+		t = test.Test()
+		h1 = t.host('h1')
+		
+		h1.bash("neutron --os-username %s --os-tenant-name %s --os-password %s --os-auth-url %s router-gateway-set %s %s" % (osUserName, osTenantName, osPassWord, osAuthUrl, routerId, extNetId))   
+		data = h1.bash_content()
+		return data
+
+	def openstack_clear_router_gw(self, osUserName, osTenantName, osPassWord, osAuthUrl, routerId):
+		'''set tenant router gateway
+			Input:
+				`osXXX`        		tenant name, password, username etc credentials
+				`routerId`			tenant router id
+				`extNetId`		external network id
+				neutron --os-username user1 --os-tenant-name Tenant1 --os-auth-url http://10.193.0.120:5000/v2.0/ --os-password bsn router-gateway-clear ff25378d-8b0d-4192-8c33-78ea0eba8d0e
+				Removed gateway from router ff25378d-8b0d-4192-8c33-78ea0eba8d0e
+			Return: output of command results
+		'''				
+		t = test.Test()
+		h1 = t.host('h1')
+		
+		h1.bash("neutron --os-username %s --os-tenant-name %s --os-password %s --os-auth-url %s router-gateway-set %s" % (osUserName, osTenantName, osPassWord, osAuthUrl, routerId))   
+		data = h1.bash_content()
+		return data
+		
+		
+	def openstack_attach_subnet_to_router(self, osUserName, osTenantName, osPassWord, osAuthUrl, routerId, subNetId):
+		'''set tenant router gateway
+			Input:
+				`osXXX`        		tenant name, password, username etc credentials
+				`routerId`			tenant router id
+				`subNetId`			sub network id
+		neutron --os-username user1 --os-tenant-name Tenant1 --os-auth-url http://10.193.0.120:5000/v2.0/ --os-password bsn router-interface-add ff25378d-8b0d-4192-8c33-78ea0eba8d0e 470fbbce-26e0-464b-9e21-f888a852db04   
+		Added interface b0a05a66-db7f-4282-95b5-648ab6dbd8fe to router ff25378d-8b0d-4192-8c33-78ea0eba8d0e.
+		
+		Return: output of command results
+		'''
+		t = test.Test()
+		h1 = t.host('h1')
+		
+		h1.bash("neutron --os-username %s --os-tenant-name %s --os-password %s --os-auth-url %s router-interface-add %s %s" % (osUserName, osTenantName, osPassWord, osAuthUrl, routerId, subNetId))   
+		data = h1.bash_content()
+		return data
+		
+	def openstack_detach_subnet_to_router(self, osUserName, osTenantName, osPassWord, osAuthUrl, routerId, subNetId):
+		'''set tenant router gateway
+			Input:
+				`osXXX`        		tenant name, password, username etc credentials
+				`routerId`			tenant router id
+				`subNetId`			sub network id
+
+		neutron --os-username user1 --os-tenant-name Tenant1 --os-auth-url http://10.193.0.120:5000/v2.0/ --os-password bsn router-interface-delete ff25378d-8b0d-4192-8c33-78ea0eba8d0e 470fbbce-26e0-464b-9e21-f888a852db04
+		Removed interface from router ff25378d-8b0d-4192-8c33-78ea0eba8d0e.
+		Return: output of command results
+		'''
+		t = test.Test()
+		h1 = t.host('h1')
+		
+		h1.bash("neutron --os-username %s --os-tenant-name %s --os-password %s --os-auth-url %s router-interface-delete %s %s" % (osUserName, osTenantName, osPassWord, osAuthUrl, routerId, subNetId))   
+		data = h1.bash_content()
+		return data
+
+	def openstack_secgroup_permit_all(self, osUserName, osTenantName, osPassWord, osAuthUrl, secgroupName):
+		'''set tenant secgroup policy to allow all traffic
+			Input:
+				`osXXX`        		tenant name, password, username etc credentials
+				`secgroupName`		secgroup name, default is default
+		Return: no results to return
+		'''
+		t = test.Test()
+		h1 = t.host('h1')
+
+		h1.bash("nova --os-username %s --os-tenant-name %s --os-password %s --os-auth-url %s secgroup %s tcp 1 65535 0.0.0.0/0" % (osUserName, osTenantName, osPassWord, osAuthUrl, secgroupName))   
+		h1.bash("nova --os-username %s --os-tenant-name %s --os-password %s --os-auth-url %s secgroup %s udp 1 65535 0.0.0.0/0" % (osUserName, osTenantName, osPassWord, osAuthUrl, secgroupName))   
+		h1.bash("nova --os-username %s --os-tenant-name %s --os-password %s --os-auth-url %s secgroup %s icmp -1 -1 0.0.0.0/0" % (osUserName, osTenantName, osPassWord, osAuthUrl, secgroupName))   
+		
+
+	def openstack_create_instance(self, osUserName, osTenantName, osPassWord, osAuthUrl, imageId, flavorId, hostName, subnetId, keypairName):
+		'''create network
+			Input:
+				`osXXX`        		tenant name, password, username etc credentials
+				`imageId`			Image ID. 
+				`flavorId`			image flavor
+				`hostName`			instance host name
+				`subnetId`			instance network subnet Id
+				`keypairName`		tenant keypair name
+				
+nova --no-cache boot --image $ubuntuid --flavor $flavor2id T$startTenantid-NW-$startIntNetwork-Host-$startHost --nic net-id=$netid --key_name t$startTenantid 				
+			Return: id of created instance
+		'''
+
+		t = test.Test()
+		h1 = t.host('h1')
+
+		result = h1.bash("neutron --os-username %s --os-tenant-name %s --os-password %s --os-auth-url %s --no-cache boot --image %s --flavor %s %s --nic net-id=%s --key_name %s" % (osUserName, osTenantName, osPassWord, osAuthUrl, imageId, flavorId, hostName, subnetId, keypairName))              
+		output = result["content"]
+		helpers.log("output: %s" % output)
+		out_dict = helpers.openstack_convert_table_to_dict(output)
+		result1 = out_dict["id"]
+		vmId = result1["value"]
+		helpers.log("instance %s id is: %s" % (hostName, str(vmId)))   
+		return vmId
+
+
+	def openstack_get_instance_status(self, osUserName, osTenantName, osPassWord, osAuthUrl, vmId):
+		'''create network
+			Input:
+				`osXXX`        		tenant name, password, username etc credentials
+				`vmId`				Instance ID or instance name. 
+			Return: status of instance
+		'''
+
+		t = test.Test()
+		h1 = t.host('h1')
+
+		result = h1.bash("neutron --os-username %s --os-tenant-name %s --os-password %s --os-auth-url %s show %s" % (osUserName, osTenantName, osPassWord, osAuthUrl, vmId))              
+		output = result["content"]
+		helpers.log("output: %s" % output)
+		out_dict = helpers.openstack_convert_table_to_dict(output)
+		result1 = out_dict["status"]
+		vmStatus = result1["value"]
+		helpers.log("instance %s status is: %s" % (vmId, str(vmStatus)))   
+		return vmStatus
+		
 	
-neutron subnet-create --tenant-id $tenantid Tenant$startTenantid-Network-$startExtNetwork $ipExtsubnet --dns_nameservers list=true $dns1 $dns2 
-    
-    # def openstack_gen_keypair(self, osUserName, osTenantName, osPassWord, osAuthUrl):
-        # t = test.Test()
-        # h1 = t.host('h1')
-        
-        # return
-    
-    # def openstack_set_router_gw(self, osUserName, osTenantName, osPassWord, osAuthUrl):
-        # t = test.Test()
-        # h1 = t.host('h1')
-        
-        # return
-    
-    # def openstack_attach_subnet_to_router(self, osUserName, osTenantName, osPassWord, osAuthUrl, routerip=None):
-        # t = test.Test()
-        # h1 = t.host('h1')
-        
-        # return
-    
-    # def openstack_edit_secgroup(self, osUserName, osTenantName, osPassWord, osAuthUrl):
-        # t = test.Test()
-        # h1 = t.host('h1')
-        
-        # return
-    
-    # def openstack_create_instance(self, osUserName, osTenantName, osPassWord, osAuthUrl):
-        # t = test.Test()
-        # h1 = t.host('h1')
-        
-        # return
-    
