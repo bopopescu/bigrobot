@@ -505,62 +505,8 @@ class T5(object):
               helpers.test_failure("Expected vns are not created %s" % vns)
               return False
             
-           
-    def rest_create_vns_ip(self, tenant, vns, ipaddr, netmask):
-        '''Create vns router interface via command "virtual-router vns interface"
-        
-            Input:
-                `tenant`        tenant name
-                `vns`           vns interface name which must be similar to VNS
-                `ipaddr`        interface ip address
-                `netmask`       vns subnet mask
-            
-            Return: true if configuration is successful, false otherwise
-        '''
-        
-        t = test.Test()
-        c = t.controller()
-        
-        helpers.test_log("Input arguments: tenant = %s vns = %s ipaddr = %s netmask = %s " % (tenant, vns, ipaddr, netmask ))
-        
-        url = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]/virtual-router/vns-interfaces' % (c.base_url, tenant)
-        ip_addr = ipaddr + "/" + netmask
-        try:
-            c.rest.post(url, {"vns-name": vns, "ip-cidr": str(ip_addr), "active": True})
-        except:
-            helpers.test_failure(c.rest.error())
-        else: 
-            helpers.test_log("Output: %s" % c.rest.result_json())
-            return c.rest.content()
-        
-   
-    def rest_attach_tenant_routers_to_system(self, tenant):        
-        '''Attach tenant router to system router"
-        
-            Input:
-                `tenant`        tenant name
-            
-            Return: true if configuration is successful, false otherwise
-        '''
-        
-        t = test.Test()
-        c = t.controller()
-        
-        helpers.test_log("Input arguments: tenant = %s " % (tenant))
-        
-        url = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]/virtual-router/tenant-interfaces[tenant-name="system"]' % (c.base_url, tenant)
-        try:
-            c.rest.post(url, {"tenant-name": "system", "active": True})
-        except:
-            helpers.test_failure(c.rest.error())
-        else: 
-            helpers.test_log("Output: %s" % c.rest.result_json())
-            return c.rest.content()        
           
-        
-        
-        
-        
+ 
         
         
 
