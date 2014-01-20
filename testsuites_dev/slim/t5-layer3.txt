@@ -7,9 +7,9 @@ Test Teardown   teardown topology
 Force Tags      T5 Sanity
 Library         keywords/BsnCommon.py
 Library         keywords/Mininet.py
-Library         keywords_dev/slim/T5.py
 Library         keywords_dev/T5.py
 Library         keywords_dev/T5Fabric.py
+Library         keywords_dev/slim/T5.py
 Resource		keywords_dev/t5_singleleaf_resource.txt
 
 * Variable
@@ -262,9 +262,9 @@ L3 ping with nexthop in a ecmp group
    
 * Keywords
 teardown topology
-	remove fabric switch
-	REST delete tenant			${tenant1_name}   
-	REST delete tenant			${tenant2_name}     
+#	remove fabric switch
+#	REST delete tenant			${tenant1_name}   
+#	REST delete tenant			${tenant2_name}     
 		
 	
 	
