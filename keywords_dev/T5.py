@@ -556,30 +556,7 @@ class T5(object):
         else: 
             helpers.test_log("Output: %s" % c.rest.result_json())
             return c.rest.content()        
-        
-    def rest_add_static_routes(self, tenant, dstroute, nexthop):
-        '''Add static routes to tenant router"
-        
-            Input:
-                `tenant`          tenant name
-                `dstroute`        destination subnet
-                `nexthop`         nexthop IP address
-            Return: true if configuration is successful, false otherwise
-        '''
-        
-        t = test.Test()
-        c = t.controller()
-        
-        helpers.test_log("Input arguments: tenant = %s dstroute = %s nexthop = %s " % (tenant, dstroute, nexthop))
-        
-        url = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]/virtual-router/routes' % (c.base_url, tenant)
-        try:
-            c.rest.post(url, {"dest-ip-subnet": dstroute, "next-hop": nexthop})
-        except:
-            helpers.test_failure(c.rest.error())
-        else: 
-            helpers.test_log("Output: %s" % c.rest.result_json())
-            return c.rest.content()               
+          
         
         
         
