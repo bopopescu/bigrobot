@@ -23,6 +23,7 @@ ${instanceName}		T1-NW-1-Host-1
 ${hostName}			TJ-XZ
 ${subnetName}		470fbbce-26e0-464b-9e21-f888a852db04
 ${networkName}		Tenant1-Network-1
+${flavorId}			micro
 
 * Test Case
 Get Ubuntu saucy Image ID 
@@ -38,6 +39,6 @@ Get VM status
 	${ubuntuImageId}=	openstack get image id		${adminUserName}	${adminTenant}	${adminPassWord}	${authUrl}	${imageName}
 	${subnetId}=		openstack get subnet id		${tenant1User}		${tenant1Name}	${tenantPassword}	${authUrl}	${subnetName}
 	${netId}= 			openstack get nw id			${tenant1User}		${tenant1Name}	${tenantPassword}	${authUrl}	${networkName}
-	${instanceId}=	openstack create instance	${tenant1User}		${tenant1Name}		${tenantPassword}	${authUrl}	 	${ubuntuImageId} 	1	${hostName} 	${netId} 	t1
+	${instanceId}=	openstack create instance	${tenant1User}		${tenant1Name}		${tenantPassword}	${authUrl}	 	${ubuntuImageId} 	${flavorId}		${hostName} 	${netId} 	t1
 	sleep 		5
 	${status}= 		openstack get instance status	${tenant1User}		${tenant1Name}	${tenantPassword}	${authUrl}		${instanceId}
