@@ -11,6 +11,16 @@ Library         String.py
 Library         Telnet.py
 Library         XML.py
 Library         keywords/BsnCommon.py
+Library         keywords_dev/animesh/BigTapCommon.py
+Library         keywords_dev/animesh/BigTapCommonConfig.py
+Library         keywords_dev/animesh/BigTapCommonShow.py
+Library         keywords_dev/animesh/BigWireCommon.py
+Library         keywords_dev/animesh/BigWireCommonConfig.py
+Library         keywords_dev/animesh/BigWireCommonShow.py
+Library         keywords_dev/animesh/BsnSwitchCommon.py
+Library         keywords_dev/T5.py
+Library         keywords_dev/T5Fabric.py
+Library         keywords_dev/T5Platform.py
 
 * Test Case
 Load Big Robot keyword libraries
