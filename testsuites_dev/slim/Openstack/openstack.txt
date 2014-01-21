@@ -63,7 +63,7 @@ Create Project, users and VM
 	[Tags]		
 	${flavorId}=	openstack get flavor id 	${adminUserName}	${adminTenant}	${adminPassWord}	${authUrl}	 	${flavorName}
 	${flavorId}=		Run Keyword If 	${flavorId} == False		openstack create flavor		${adminUserName}	${adminTenant}	${adminPassWord}	${authUrl}	 	${flavorName}	${flavorId}	${flavorMemSize}	 ${flavorDisk}	 ${flavorVCpu}	
-	${imageId}=	openstack get image id 		${adminUserName}	${adminTenant}	${adminPassWord}	${authUrl}		${imageName}
+	${imageId}=		openstack get image id 		${adminUserName}	${adminTenant}	${adminPassWord}	${authUrl}		${imageName}
 	${imageId}= 		Run Keyword If 	${imageId} == False		openstack create image		${adminUserName}	${adminTenant}	${adminPassWord}	${authUrl}	 	${imageName} 		${diskFormat}		${imageLocation}
 	sleep				5
 	${adminTenandId}=	openstack get tenant id		${adminUserName}	${adminTenant}	${adminPassWord}	${authUrl}		${adminTenant}

@@ -32,7 +32,7 @@ else:
 		output = result["content"]
 		helpers.log("output: %s" % output)
 		
-		match = re.match(r'Unable to find network with (.*)', output, re.I)
+		match = re.search(r'Unable to find network with', output, re.S | re.I)
 		if match:
 			return False
 		else:
@@ -55,7 +55,7 @@ else:
 		result = h1.bash("nova --os-username %s --os-tenant-name %s --os-password %s --os-auth-url %s flavor-show %s" % (osUserName, osTenantName, osPassWord, osAuthUrl, flavorName))         
 		output = result["content"]
 		helpers.log("output: %s" % output)
-		match = re.match(r'ERROR: No flavor with (.*)', output, re.I)
+		match = re.search(r'ERROR: No flavor with', output, re.S | re.I)
 		if match:
 			return False
 		else:
@@ -78,7 +78,7 @@ else:
 		result = h1.bash("keystone --os-username %s --os-tenant-name %s --os-password %s --os-auth-url %s user-get %s" % (osUserName, osTenantName, osPassWord, osAuthUrl, userName))              
 		output = result["content"]
 		helpers.log("output: %s" % output)
-		match = re.match(r'No user with a name or ID (.*)', output, re.I)
+		match = re.search(r'No user with a name or ID', output, re.S | re.I)
 		if match:
 			return False
 		else:
@@ -241,7 +241,7 @@ else:
 		helpers.log("output: %s" % output)
 		
 		
-		match = re.match(r'ERROR: No image with a name or ID (.*)', output, re.I)
+		match = re.search(r'ERROR: No image with a name or ID', output, re.S | re.I)
 		if match:
 			return False
 		else:
