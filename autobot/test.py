@@ -93,6 +93,9 @@ class Test(object):
         }
         """
         return self._topology_params
+    
+    # Alias
+    params = topology_params
 
     def topology_params_authen(self, name):
         """
@@ -137,21 +140,26 @@ class Test(object):
         platform = n.platform()
 
         if helpers.is_bigtap(platform) or helpers.is_bigwire(platform):
-            url = "/rest/v1/system/ha/role"
-            
             # We don't want REST object to save the result from the REST
             # command to detect mastership.
-            result = n.rest.get(url, save_last_result=False)
-            
+            result = n.rest.get("/rest/v1/system/ha/role",
+                                save_last_result=False)
             content = result['content']
             if content['role'] == "MASTER":
                 return True
             else:
                 return False
         elif helpers.is_bvs(platform):
-            helpers.log("Device '%s' is platform 'bvs'. HA is not supported."
-                        % name)
-            return True
+            result = n.rest.get("/api/v1/data/controller/cluster",
+                                save_last_result=False)
+            content = result['content']
+            leader_id = content[0]['status']['domain-leader']['leader-id']
+            local_node_id = content[0]['status']['local-node-id']
+
+            if leader_id == local_node_id:
+                return True
+            else:
+                return False
 
     def controller(self, name='c1', resolve_mastership=False):
         """

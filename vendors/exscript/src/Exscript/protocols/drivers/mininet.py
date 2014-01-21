@@ -21,7 +21,13 @@ from Exscript.protocols.drivers.driver import Driver
 _user_re     = [re.compile(r'(user|login): $', re.I)]
 _password_re = [re.compile(r'Password: ?$')]
 _linux_re    = re.compile(r'\blinux\b', re.I)
-_mininet_re  = re.compile(r'mininet@.+mininet', re.I)
+
+# This should cover Mininet system's shell and cli. E.g.,
+#    mininet@t6-mininet:~$
+#    mininet>
+#    t6-mininet>
+
+_mininet_re  = re.compile(r'(mininet>|mininet@.*mininet.*\$)', re.I)
 
 
 class MininetDriver(Driver):

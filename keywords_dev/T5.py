@@ -410,23 +410,20 @@ class T5(object):
         '''
         t = test.Test()
         c = t.controller()
-        try:
-            url = '%s/api/v1/data/controller/applications/bvs/info/endpoint-manager/vnses' % (c.base_url)
-            c.rest.get(url)
-            data = c.rest.content()
-            for i in len(data):
+        url = '%s/api/v1/data/controller/applications/bvs/info/endpoint-manager/vnses' % (c.base_url)
+        c.rest.get(url)
+        data = c.rest.content()
+        for i in len(data):
                 if len(data) == 0:
                     helpers.log("No VNS are configured")
                 elif data[i]["name"] == str.startswith("v"):
-                    helpers.log("All VNS are configured")
+                    helpers.log("Expected VNS's are present in the config")
+                    return True
                     continue
                 else:
-                    helpers.test_failure("All VNS are not configured")       
-        except:
-            helpers.test_failure(c.rest.error())
-        else: 
-            helpers.test_log("Output: %s" % c.rest.result_json())
-            return c.rest.content()
+                    helpers.test_failure("Expected VNS's are not present in the config")  
+                    return False     
+        
         
     def rest_verify_tenant(self):
         '''Verify CLI tenant information
@@ -437,102 +434,79 @@ class T5(object):
         '''
         t = test.Test()
         c = t.controller()
-        try:
-            url = '%s/api/v1/data/controller/applications/bvs/info/endpoint-manager/tenants' % (c.base_url)
-            c.rest.get(url)
-            data = c.rest.content()
-            for i in len(data):
+        url = '%s/api/v1/data/controller/applications/bvs/info/endpoint-manager/tenants' % (c.base_url)
+        c.rest.get(url)
+        data = c.rest.content()
+        for i in len(data):
                 if len(data) == 0:
                     helpers.log("No tenants are configured")
                 elif data[i]["tenant-name"] == str.startswith("t"):
-                    helpers.log("All tenants are configured")
-                    continue
+                    helpers.log("Expected Tenants are present in the config")
+                    return True
                 else:
-                    helpers.test_failure("All tenants are not configured")       
-        except:
-            helpers.test_failure(c.rest.error())
-        else: 
-            helpers.test_log("Output: %s" % c.rest.result_json())
-            return c.rest.content()
+                    helpers.test_failure("Expected Tenants are not present in the config")
+                    return False       
+       
             
-    def rest_create_vns_ip(self, tenant, vns, ipaddr, netmask):
-        '''Create vns router interface via command "virtual-router vns interface"
+    def rest_verify_endpoint(self, vns, vlan, ipaddr, switch, intf):
+         '''Verify Dynamic Endpoint entry
         
-            Input:
-                `tenant`        tenant name
-                `vns`           vns interface name which must be similar to VNS
-                `ipaddr`        interface ip address
-                `netmask`       vns subnet mask
+            Input: vns name , vlan ID , ipaddress , switch name, expected switch interface          
             
-            Return: true if configuration is successful, false otherwise
-        '''
-        
-        t = test.Test()
-        c = t.controller()
-        
-        helpers.test_log("Input arguments: tenant = %s vns = %s ipaddr = %s netmask = %s " % (tenant, vns, ipaddr, netmask ))
-        
-        url = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]/virtual-router/vns-interfaces' % (c.base_url, tenant)
-        ip_addr = ipaddr + "/" + netmask
-        try:
-            c.rest.post(url, {"vns-name": vns, "ip-cidr": str(ip_addr), "active": True})
-        except:
-            helpers.test_failure(c.rest.error())
-        else: 
-            helpers.test_log("Output: %s" % c.rest.result_json())
-            return c.rest.content()
-        
-   
-    def rest_attach_tenant_routers_to_system(self, tenant):        
-        '''Attach tenant router to system router"
-        
-            Input:
-                `tenant`        tenant name
+            Return: true if it matches Value specified
+         '''
+         t = test.Test()
+         c = t.controller()
+         url = '%s/api/v1/data/controller/applications/bvs/info/endpoint-manager/endpoints' % (c.base_url)
+         c.rest.get(url)
+         data = c.rest.content()
+         if len(data) != 0:
+             for i in range(0,len(data)):
+                 if str(data[i]["vns-name"]) == vns:
+                     if str(data[i]["attachment-point"]["vlan"]) == str(vlan):
+                         if (data[i]["ip-address"] == str(ipaddr)) :
+                             if (data[i]["attachment-point"]["switch-name"] == switch) :
+                                 if (data[i]["attachment-point"]["interface-name"] == str(intf)) :
+                                     helpers.log("Expected Endpoints are created data matches is %s" % data[i]["ip-address"] )
+                                     return True
+                                 else:
+                                    helpers.test_failure("Expected endpoints %s are not created" % (str(ipaddr)))
+                                    return False
+         else:
+              helpers.test_failure("Expected vns are not created %s" % vns)
+              return False
             
-            Return: true if configuration is successful, false otherwise
-        '''
+    def rest_verify_endpoint_static(self, vns, vlan, ipaddr, switch, intf):
+         '''Verify Static Endpoint entry
         
-        t = test.Test()
-        c = t.controller()
-        
-        helpers.test_log("Input arguments: tenant = %s " % (tenant))
-        
-        url = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]/virtual-router/tenant-interfaces[tenant-name="system"]' % (c.base_url, tenant)
-        try:
-            c.rest.post(url, {"tenant-name": "system", "active": True})
-        except:
-            helpers.test_failure(c.rest.error())
-        else: 
-            helpers.test_log("Output: %s" % c.rest.result_json())
-            return c.rest.content()        
-        
-    def rest_add_static_routes(self, tenant, dstroute, nexthop):
-        '''Add static routes to tenant router"
-        
-            Input:
-                `tenant`          tenant name
-                `dstroute`        destination subnet
-                `nexthop`         nexthop IP address
-            Return: true if configuration is successful, false otherwise
-        '''
-        
-        t = test.Test()
-        c = t.controller()
-        
-        helpers.test_log("Input arguments: tenant = %s dstroute = %s nexthop = %s " % (tenant, dstroute, nexthop))
-        
-        url = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]/virtual-router/routes' % (c.base_url, tenant)
-        try:
-            c.rest.post(url, {"dest-ip-subnet": dstroute, "next-hop": nexthop})
-        except:
-            helpers.test_failure(c.rest.error())
-        else: 
-            helpers.test_log("Output: %s" % c.rest.result_json())
-            return c.rest.content()               
-        
-        
-        
-        
+            Input: vns name , vlan ID , ipaddress , switch name, expected switch interface          
+            
+            Return: true if it matches Value specified and configured attachment point is true
+         '''
+         t = test.Test()
+         c = t.controller()
+         url = '%s/api/v1/data/controller/applications/bvs/info/endpoint-manager/endpoints' % (c.base_url)
+         c.rest.get(url)
+         data = c.rest.content()
+         if len(data) != 0:
+             for i in range(0,len(data)):
+                 if str(data[i]["vns-name"]) == vns:
+                     if str(data[i]["attachment-point"]["vlan"]) == str(vlan):
+                         if (data[i]["ip-address"] == str(ipaddr)) :
+                             if (data[i]["attachment-point"]["switch-name"] == switch) :
+                                 if (data[i]["attachment-point"]["interface-name"] == str(intf)) :
+                                     if (data[i]["configured-endpoint"] == True) :
+                                          helpers.log("Expected Endpoints are created data matches is %s" % data[i]["ip-address"] )
+                                          return True
+                                     else:
+                                          helpers.test_failure("Expected endpoints %s are not created" % (str(ipaddr)))
+                                          return False
+         else:
+              helpers.test_failure("Expected vns are not created %s" % vns)
+              return False
+            
+          
+ 
         
         
 

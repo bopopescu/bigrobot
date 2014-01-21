@@ -6,9 +6,9 @@ Test Setup   base test setup
 Test Teardown   base test teardown
 Force Tags   HA Scale
 Library  keywords/BsnCommon.py
-Library  keywords_dev/animesh/BsnCommonShow.py
+Library  keywords_dev/animesh/BigWireCommon.py
 Library  keywords_dev/animesh/BsnCommonConfig.py
-Library  keywords_dev/BigWireCommon.py
+Library  keywords_dev/animesh/BsnCommonShow.py
 
 * Variable
 ${switch1_ip}  10.192.75.225

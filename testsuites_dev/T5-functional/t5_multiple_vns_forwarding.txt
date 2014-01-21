@@ -63,6 +63,8 @@ Check forwarding between rack0-bm0 and rack2-bm5
    sleep  5
    ${loss}=  mininet ping  bm0  ${bm5_ip}
    Should Be True  ${loss} == 0
+   rest verify endpoint  v1  -1  ${bm0_ip}  leaf0  ${bm0_intf0}
+   rest verify endpoint  v1  -1  ${bm5_ip}  leaf2  ${bm5_intf0}
    
 Check forwarding between rack0-bm1 and rack1-bm3
    [Tags]  functional
@@ -112,6 +114,8 @@ Check forwarding between rack1-bm2 and rack2-bm4 untag--tag
    sleep  5
    ${loss}=  mininet ping  bm2  ${bm4_ip}
    Should Be True  ${loss} <= 20
+   rest verify endpoint  v3  -1  ${bm2_ip}  leaf1  ${bm2_intf0}
+   rest verify endpoint  v3  100  ${bm4_ip}  leaf2  ${bm4_intf0}
 
 Check forwarding between rack0-bm0 and rack2-bm5 after deleting tenant
    [Tags]  functional

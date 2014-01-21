@@ -1,6 +1,8 @@
-import autobot.helpers as helpers
 from Exscript import Account
 from Exscript.protocols import SSH2
+import autobot.helpers as helpers
+import autobot.utils as br_utils
+
 
 class DevConf(object):
     def __init__(self, host=None, user=None, password=None):
@@ -32,7 +34,7 @@ class DevConf(object):
         self.last_result = { 'content': self.conn.response }
         
         if not quiet:
-            helpers.log("Command content: %s" % self.content(), level=level)
+            helpers.log("Command content:\n%s" % self.content(), level=level)
         
         return self.result()
 
@@ -139,8 +141,9 @@ class ControllerDevConf(DevConf):
         super(ControllerDevConf, self).cmd(cmd, quiet=True)
         if not quiet:
             helpers.log("%s content on '%s':\n%s%s"
-                        % (mode, self.name, self.content(), helpers.end_of_output_marker()),
-                        level=level)
+                        % (mode, self.name, self.content(),
+                           br_utils.end_of_output_marker()),
+                           level=level)
         return self.result()
 
     
@@ -164,90 +167,98 @@ class ControllerDevConf(DevConf):
         # !!! FIXME: Need to close the controller connection
         
 
-class T6MininetDevConf(DevConf):
-    """
-    :param topology: str, in the form
-        '--num-spine 0 --num-rack 1 --num-bare-metal 2 --num-hypervisor 0'
-    """
-    def __init__(self, name=None, host=None, user=None, password=None,
-                 controller=None,
-                 port=6653,
-                 topology=None):
-        if controller is None:
-            helpers.environment_failure("Must specify a controller for T6Mininet.")
-        if topology is None:
-            helpers.environment_failure("Must specify a topology for T6Mininet.")
-
-        super(T6MininetDevConf, self).__init__(host, user, password)
-        
-        self.name = name
-        
-        # Enter CLI mode
-        cmd = ("sudo /opt/t6-mininet/run.sh -c %s:%s %s"
-               % (controller, port, topology))
-        
-        # Possible Mininet prompts:
-        #   mininet>                 - if successfully acquired Mininet CLI
-        #   mininet@t6-mininet: ~$   - on failure
-        self.conn.set_prompt(r'(t6-mininet>|mininet@.*mininet:.*\$)')
-
-        self.cli(cmd, quiet=False)
-
-        # Error handling - placeholder (see MininetDevConf for example)
-
-        # Success. Set Mininet prompt.
-        self.conn.set_prompt('t6-mininet>')
-    
-    def close(self):
-        super(T6MininetDevConf, self).close()
-
-        self.conn.set_prompt(r'(t6-mininet>|mininet@.*mininet:.*\$)')
-        self.cmd('exit', quiet=False)  # Exit mininet CLI
-        self.conn.close(force=True)
-        helpers.log("T6MininetDevConf - force closed the device connection.")
-
-
 class MininetDevConf(DevConf):
     """
     :param topology: str, in the form 'tree,4,2'
     """
-    def __init__(self, host=None, user=None, password=None, controller=None,
+    def __init__(self, name=None, host=None, user=None, password=None,
+                 controller=None,
+                 port=None,
                  topology=None):
+
         if controller is None:
             helpers.environment_failure("Must specify a controller for Mininet.")
         if topology is None:
             helpers.environment_failure("Must specify a topology for Mininet.")
 
+        self.topology = topology
+        self.controller = controller
+        self.port = port
+        self.name = name
+        self.state = 'stopped'  # or 'started'
+
         super(MininetDevConf, self).__init__(host, user, password)
+        self.start_mininet()
         
-        # Enter CLI mode
-        cmd = ("sudo mn --controller=remote --ip=%s --topo=%s --mac"
-               % (controller, topology))
-        helpers.log("Execute Mininet cmd: %s" % cmd)
+    def cmd(self, cmd, quiet=False, level=4):
+        if not quiet:
+            helpers.log("Execute command on '%s': %s"
+                        % (self.name, cmd), level=level)
 
-        # Possible Mininet prompts:
-        #   mininet>                 - if successfully acquired Mininet CLI
-        #   mininet@t6-mininet: ~$   - on failure
-        self.conn.set_prompt(r'(mininet>|mininet@.*mininet:.*\$)')
-        
+        super(MininetDevConf, self).cmd(cmd, quiet=True)
+        if not quiet:
+            helpers.log("Content on '%s':\n%s%s"
+                        % (self.name, self.content(),
+                           br_utils.end_of_output_marker()),
+                           level=level)
+        return self.result()
+
+    # Alias
+    cli = cmd
+
+    def mininet_cmd(self):
+        return ("sudo /usr/local/bin/mn --controller=remote --ip=%s --topo=%s --mac"
+                % (self.controller, self.topology))
+
+    def start_mininet(self, new_topology=None):
+        if self.state == 'started':
+            helpers.log("Mininet is already running. No need to start it.")
+            return True
+
+        helpers.log("Starting Mininet on '%s'" % self.name)
+        if new_topology:
+            self.topology = new_topology
+            helpers.log("Start new Mininet topology for '%s': %s"
+                        % (self.name, new_topology))
+
+        cmd = self.mininet_cmd()
         self.cli(cmd, quiet=False)
+        self.state = 'started'
 
-        # Error handling        
-        out = self.content()
-        err = helpers.any_match(out, r'(Cleanup complete|error: no such option)')
-        if err:
-            helpers.test_failure("Mininet CLI unexpected error - %s." % err)
+    def stop_mininet(self):
+        if self.state == 'stopped':
+            helpers.log("Mininet is not running. No need to stop it.")
+            return True
 
-        # Success. Set Mininet prompt.
-        self.conn.set_prompt('mininet>')
+        helpers.log("Stopping Mininet on '%s'" % self.name)
+        self.cli("exit", quiet=False)
+        self.state = 'stopped'
 
+    def restart_mininet(self, new_topology=None):
+        helpers.log("Restarting Mininet topology on '%s'" % self.name)
+        self.stop_mininet()
+        self.start_mininet(new_topology)
+        
     def close(self):
         super(MininetDevConf, self).close()
 
-        self.conn.set_prompt(r'(mininet>|mininet@.*mininet:.*\$)')
-        self.cmd('exit', quiet=False)  # Exit mininet CLI
+        self.stop_mininet()
         self.conn.close(force=True)
-        helpers.log("MininetDevConf - force closed the device connection.")
+        helpers.log("Mininet - force closed the device connection '%s'."
+                    % self.name)
+
+
+class T6MininetDevConf(MininetDevConf):
+    """
+    :param topology: str, in the form
+        '--num-spine 0 --num-rack 1 --num-bare-metal 2 --num-hypervisor 0'
+    """
+    def __init__(self, *args, **kwargs):
+        super(T6MininetDevConf, self).__init__(port=6653, *args, **kwargs)
+
+    def mininet_cmd(self):
+        return ("sudo /opt/t6-mininet/run.sh -c %s:%s %s"
+                % (self.controller, self.port, self.topology))
 
 
 class HostDevConf(DevConf):
@@ -258,13 +269,15 @@ class HostDevConf(DevConf):
 
     def cmd(self, cmd, quiet=False, level=4):
         if not quiet:
-            helpers.log("Execute command on '%s': %s" % (self.name, cmd), level=level)
+            helpers.log("Execute command on '%s': %s"
+                        % (self.name, cmd), level=level)
 
         super(HostDevConf, self).cmd(cmd, quiet=True)
         if not quiet:
             helpers.log("Content on '%s':\n%s%s"
-                        % (self.name, self.content(), helpers.end_of_output_marker()),
-                        level=level)
+                        % (self.name, self.content(),
+                           br_utils.end_of_output_marker()),
+                           level=level)
         return self.result()
 
     # Alias
@@ -286,13 +299,15 @@ class SwitchDevConf(DevConf):
 
     def cmd(self, cmd, quiet=False, level=4):
         if not quiet:
-            helpers.log("Execute command on '%s': %s" % (self.name, cmd), level=level)
+            helpers.log("Execute command on '%s': %s"
+                        % (self.name, cmd), level=level)
 
         super(SwitchDevConf, self).cmd(cmd, quiet=True)
         if not quiet:
             helpers.log("Content on '%s':\n%s%s"
-                        % (self.name, self.content(), helpers.end_of_output_marker()),
-                        level=level)
+                        % (self.name, self.content(),
+                           br_utils.end_of_output_marker()),
+                           level=level)
         return self.result()
 
     # Alias
