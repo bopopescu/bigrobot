@@ -239,11 +239,17 @@ else:
 		result = h1.bash("nova --os-username %s --os-tenant-name %s --os-password %s --os-auth-url %s image-show %s" % (osUserName, osTenantName, osPassWord, osAuthUrl, imageName))
 		output = result["content"]
 		helpers.log("output: %s" % output)
-		out_dict = helpers.openstack_convert_table_to_dict(output)
-		result1 = out_dict["id"]
-		imageId = result1["value"]
-		helpers.log("image %s id is: %s" % (imageName, str(imageId)))   
-		return imageId
+		
+		
+		match = re.match(r'ERROR: No image with a name or ID (.*)', output, re.I)
+		if match:
+			return False
+		else:
+			out_dict = helpers.openstack_convert_table_to_dict(output)
+			result1 = out_dict["id"]
+			imageId = result1["value"]
+			helpers.log("image %s id is: %s" % (imageName, str(imageId)))   
+			return imageId
 
 
 	def openstack_set_user_role(self, osUserName, osTenantName, osPassWord, osAuthUrl, userName, roleName, tenantName):
@@ -265,6 +271,8 @@ else:
 		result = h1.bash("keystone --os-username %s --os-tenant-name %s --os-password %s --os-auth-url %s --name %s" % (osUserName, osTenantName, osPassWord, osAuthUrl, tenantName))
 		output = result["content"]
 		helpers.log("output: %s" % output)
+		
+		
 		out_dict = helpers.openstack_convert_table_to_dict(output)
 		result1 = out_dict["id"]
 		tenantId = result1["value"]

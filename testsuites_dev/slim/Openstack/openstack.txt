@@ -62,11 +62,11 @@ Get VM status
 Create Project, users and VM
 	[Tags]		
 	${result}=	openstack get flavor id 	${adminUserName}	${adminTenant}	${adminPassWord}	${authUrl}	 	${flavorName}
-	${ImageId}=		Run Keyword If 	${result} == False		openstack create image		${adminUserName}	${adminTenant}	${adminPassWord}	${authUrl}	 	${imageName} 		${diskFormat}		${imageLocation}
-		
-	
-	openstack create flavor		${adminUserName}	${adminTenant}	${adminPassWord}	${authUrl}	 	${flavorName}	${flavorId}	${flavorMemSize}	 ${flavorDisk}	 ${flavorVCpu}
-	
+	${flavorId}=		Run Keyword If 	${result} == False		openstack create flavor		${adminUserName}	${adminTenant}	${adminPassWord}	${authUrl}	 	${flavorName}	${flavorId}	${flavorMemSize}	 ${flavorDisk}	 ${flavorVCpu}	
+	ELSE	${flavorId} = ${result}
+	${result}=	openstack get image id 		${adminUserName}	${adminTenant}	${adminPassWord}	${authUrl}		${imageName}
+	${imageId}= 		Run Keyword If 	${result} == False		openstack create image		${adminUserName}	${adminTenant}	${adminPassWord}	${authUrl}	 	${imageName} 		${diskFormat}		${imageLocation}
+	ELSE	${imageId} = ${result}
 	sleep				5
 	${adminTenandId}=	openstack get tenant id		${adminUserName}	${adminTenant}	${adminPassWord}	${authUrl}		${adminTenant}
 	${extNetId}=		openstack create net		${adminUserName}	${adminTenant}	${adminPassWord}	${authUrl} 		${adminTenandId}	${adminTenant} 		Ext		True
