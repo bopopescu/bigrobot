@@ -386,6 +386,8 @@ class Openstack(object):
 		helpers.log("output: %s" % output)
 		out_dict = helpers.openstack_convert_table_to_dict(output)
 		result1 = out_dict["id"]
+		helpers.log("result1: %s" % result1)
+		
 		netId = result1["value"]
 		helpers.log("network %s id is: %s" % (tenantName, str(netId)))   
 		return netId
