@@ -1,0 +1,81 @@
+== T5 Platform Test Suite ==
+
+* Setting
+Documentation    T5 BVS APP Functional CLI Test Suite
+Suite Setup      base suite setup
+#Suite Teardown   base suite teardown
+Test Setup       base test setup
+#Test Teardown    base test teardown
+Force Tags       T5 
+Library          keywords/BsnCommon.py
+Library          keywords_dev/T5.py
+#Library	         keywords_dev/T5Fabric.py
+Library	         keywords_dev/T5Platform.py
+Library          keywords/Mininet.py
+Resource	 keywords_dev/t5_singleleaf_resource.txt
+
+* Variables
+${bm0_ip}  10.0.0.1
+${bm1_ip}  10.0.0.2
+${bm2_ip}  10.0.0.3
+${bm0_mac}  00:00:00:00:00:01
+${bm1_mac}  00:00:00:00:00:02
+${bm2_mac}  00:00:00:00:00:03
+${bm0_intf0}  leaf0-eth5
+${bm1_intf0}  leaf0-eth6
+${bm2_intf0}  leaf1-eth5
+
+* Test Case 
+Verify HA Cluster Formation
+   [Tags]  HA
+   rest verify show cluster
+   
+#Verify Cluster Take Leader
+#	[Tags] HA
+#	rest cluster take leader
+#	sleep 60
+
+
+#Configure Single Leaf Dual Rack setup
+#   [Tags]  functional
+#   sleep  5
+#   configure fabric switch
+#   sleep  5
+#   rest check fabric switch connectivity
+#   rest verify fabric link
+#
+#create a tenant
+#   [Tags]   functional
+#   create a tenant  t1
+#   sleep  3
+#   rest show tenant  
+# 
+
+#Tear down the config
+#   [Tags]  smoke  sanity 
+#   delete interface from portgroup  leaf0  ${bm0_intf0}  p1
+#   delete interface from portgroup  leaf0  ${bm1_intf0}  p2
+#   delete interface from portgroup  leaf1  ${bm2_intf0}  p3   
+#   delete a portgroup  p1
+#   delete a portgroup  p2
+#   delete a portgroup  p3
+#   remove fabric switch
+#
+* Keywords      
+T5 base test setup
+   base test setup
+      
+T5 base test teardown
+#   delete a tenant  A
+#   delete a portgroup  p1
+#   delete a portgroup  p2
+#   delete a portgroup  p3
+   base test teardown
+   
+create a tenant  [Arguments]  ${tenant} 
+  REST create tenant  ${tenant}    
+
+delete a tenant  [Arguments]  ${tenant} 
+  	REST delete tenant  ${tenant}    
+
+
