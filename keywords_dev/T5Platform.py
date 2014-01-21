@@ -35,7 +35,7 @@ class T5Platform(object):
     def rest_show_ntp_servers(self):
         '''Return the list of NTP servers      
                     
-            Returns: Output of ntpq -pn which lists configured NTP servers and their status
+            Returns: Output of 'ntpq -pn' which lists configured NTP servers and their status
         '''
         t = test.Test()
         c = t.controller()
