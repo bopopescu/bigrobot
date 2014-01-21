@@ -60,9 +60,13 @@ Get VM status
 	${status}= 		openstack get instance status	${tenant1User}		${tenant1Name}	${tenantPassword}	${authUrl}		${instanceId}
 	
 Create Project, users and VM
-	[Tags]					
+	[Tags]		
+	${result}=	openstack get flavor id 	${adminUserName}	${adminTenant}	${adminPassWord}	${authUrl}	 	${flavorName}
+	${ImageId}=		Run Keyword If 	${result} == False		openstack create image		${adminUserName}	${adminTenant}	${adminPassWord}	${authUrl}	 	${imageName} 		${diskFormat}		${imageLocation}
+		
+	
 	openstack create flavor		${adminUserName}	${adminTenant}	${adminPassWord}	${authUrl}	 	${flavorName}	${flavorId}	${flavorMemSize}	 ${flavorDisk}	 ${flavorVCpu}
-	${ImageId}=			openstack create image		${adminUserName}	${adminTenant}	${adminPassWord}	${authUrl}	 	${imageName} 		${diskFormat}		${imageLocation}
+	
 	sleep				5
 	${adminTenandId}=	openstack get tenant id		${adminUserName}	${adminTenant}	${adminPassWord}	${authUrl}		${adminTenant}
 	${extNetId}=		openstack create net		${adminUserName}	${adminTenant}	${adminPassWord}	${authUrl} 		${adminTenandId}	${adminTenant} 		Ext		True

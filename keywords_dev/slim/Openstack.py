@@ -1,6 +1,6 @@
 import autobot.helpers as helpers
 import autobot.test as test
-
+import re
 
 class Openstack(object):
 
@@ -14,6 +14,16 @@ class Openstack(object):
 				`osXXX`        		tenant name, password, username etc credentials
 				`networkName`       network name for that particular tenant
 			Return: id of network
+			
+			matchObj = re.match( r'(.*) are (.*?) .*', line, re.M|re.I)
+
+if matchObj:
+   print "matchObj.group() : ", matchObj.group()
+   print "matchObj.group(1) : ", matchObj.group(1)
+   print "matchObj.group(2) : ", matchObj.group(2)
+else:
+   print "No match!!"
+			
 		'''
 		t = test.Test()
 		h1 = t.host('h1')
@@ -21,11 +31,16 @@ class Openstack(object):
 		result = h1.bash("neutron --os-username %s --os-tenant-name %s --os-password %s --os-auth-url %s net-show %s" % (osUserName, osTenantName, osPassWord, osAuthUrl, networkName))
 		output = result["content"]
 		helpers.log("output: %s" % output)
-		out_dict = helpers.openstack_convert_table_to_dict(output)
-		result1 = out_dict["id"]
-		netId = result1["value"]
-		helpers.log("network %s id is: %s" % (networkName, str(netId)))   
-		return netId		
+		
+		match = re.match(r'Unable to find network with (.*)', output, re.I)
+		if match:
+			return False
+		else:
+			out_dict = helpers.openstack_convert_table_to_dict(output)
+			result1 = out_dict["id"]
+			netId = result1["value"]
+			helpers.log("network %s id is: %s" % (networkName, str(netId)))   
+			return netId		
 
 	def openstack_get_flavor_id(self, osUserName, osTenantName, osPassWord, osAuthUrl, flavorName):
 		'''Get flavor id
@@ -40,11 +55,15 @@ class Openstack(object):
 		result = h1.bash("nova --os-username %s --os-tenant-name %s --os-password %s --os-auth-url %s flavor-show %s" % (osUserName, osTenantName, osPassWord, osAuthUrl, flavorName))         
 		output = result["content"]
 		helpers.log("output: %s" % output)
-		out_dict = helpers.openstack_convert_table_to_dict(output)
-		result1 = out_dict["id"]
-		flavorId = result1["value"]
-		helpers.log("flavor %s id is: %s" % (flavorName, str(flavorId)))   
-		return flavorId		
+		match = re.match(r'ERROR: No flavor with (.*)', output, re.I)
+		if match:
+			return False
+		else:
+			out_dict = helpers.openstack_convert_table_to_dict(output)
+			result1 = out_dict["id"]
+			flavorId = result1["value"]
+			helpers.log("flavor %s id is: %s" % (flavorName, str(flavorId)))   
+			return flavorId		
 
 	def openstack_get_user_id(self, osUserName, osTenantName, osPassWord, osAuthUrl, userName):
 		'''Get user id
@@ -59,11 +78,15 @@ class Openstack(object):
 		result = h1.bash("keystone --os-username %s --os-tenant-name %s --os-password %s --os-auth-url %s user-get %s" % (osUserName, osTenantName, osPassWord, osAuthUrl, userName))              
 		output = result["content"]
 		helpers.log("output: %s" % output)
-		out_dict = helpers.openstack_convert_table_to_dict(output)
-		result1 = out_dict["id"]
-		userId = result1["value"]
-		helpers.log("user %s id is: %s" % (userName, str(userId)))   
-		return userId		
+		match = re.match(r'No user with a name or ID (.*)', output, re.I)
+		if match:
+			return False
+		else:
+			out_dict = helpers.openstack_convert_table_to_dict(output)
+			result1 = out_dict["id"]
+			userId = result1["value"]
+			helpers.log("user %s id is: %s" % (userName, str(userId)))   
+			return userId		
 
 	def openstack_get_role_id(self, osUserName, osTenantName, osPassWord, osAuthUrl, roleName):
 		'''Get role id
