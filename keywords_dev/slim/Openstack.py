@@ -52,10 +52,7 @@ else:
 		t = test.Test()
 		h1 = t.host('h1')
 		
-		try:
-			result = h1.bash("nova --os-username %s --os-tenant-name %s --os-password %s --os-auth-url %s flavor-show %s" % (osUserName, osTenantName, osPassWord, osAuthUrl, flavorName))         
-		except:
-			pass
+		result = h1.bash("nova --os-username %s --os-tenant-name %s --os-password %s --os-auth-url %s flavor-show %s" % (osUserName, osTenantName, osPassWord, osAuthUrl, flavorName))         
 		output = result["content"]
 		
 		helpers.log("output: %s" % output)
