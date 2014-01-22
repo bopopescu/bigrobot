@@ -52,8 +52,12 @@ else:
 		t = test.Test()
 		h1 = t.host('h1')
 		
-		result = h1.bash("nova --os-username %s --os-tenant-name %s --os-password %s --os-auth-url %s flavor-show %s" % (osUserName, osTenantName, osPassWord, osAuthUrl, flavorName))         
+		try:
+			result = h1.bash("nova --os-username %s --os-tenant-name %s --os-password %s --os-auth-url %s flavor-show %s" % (osUserName, osTenantName, osPassWord, osAuthUrl, flavorName))         
+		except:
+			pass
 		output = result["content"]
+		
 		helpers.log("output: %s" % output)
 		match = re.search(r'ERROR: No flavor with', output, re.S | re.I)
 		if match:
