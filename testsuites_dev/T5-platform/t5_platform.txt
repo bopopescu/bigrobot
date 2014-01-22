@@ -28,7 +28,13 @@ ${bm2_intf0}  leaf1-eth5
 * Test Case 
 Verify HA Cluster Formation
    [Tags]  HA
-   rest verify ha cluster
+   rest verify show cluster
+   
+#Verify Cluster Take Leader
+#	[Tags] HA
+#	rest cluster take leader
+#	sleep 60
+
 
 #Configure Single Leaf Dual Rack setup
 #   [Tags]  functional

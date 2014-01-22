@@ -8,6 +8,33 @@ def strip_empty_lines(input_list):
     return filter(lambda x: not re.match(r'^\s*$', x), input_list)
 
 
+def strip_cruds_before_table_begins(input_list):
+    """
+    For CLI output, the first line(s) may be a command (not part of the
+    table), so strip lines before the table starts.
+    """
+    i = 0
+    for s in input_list:
+        if re.match(r'^[\+-]+$', s):
+            break
+        i += 1
+    return input_list[i:]
+
+
+def strip_cruds_after_table_ends(input_list):
+    """
+    For CLI output, the last line(s) may be a prompt or some extraneous
+    output which is not part of the table, so strip lines after the table
+    ends.
+    """
+    i = 0
+    for s in reversed(input_list):
+        if re.match(r'^[\+-]+$', s):
+            break
+        i += 1
+    return input_list[:-i]
+
+
 def strip_table_row_dividers(input_list):
     """
     Remove entries in the format:

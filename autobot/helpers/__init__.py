@@ -462,6 +462,7 @@ def bigtest_node_info():
             full_path_filename = "%s/%s/%s" % (my_root, node, filename)
             val = open(full_path_filename, "r").read().rstrip()
             nodes[node][filename] = val
+    return nodes
     
 
 def int_to_str(val):
@@ -618,15 +619,26 @@ def run_cmd(cmd, cwd=None, ignore_stderr=False, shell=True, quiet=False):
         return (True, out)
 
 
-def _ping(host, count=3, waittime=100, quiet=False):
-    cmd = "ping -c %d -W %d %s" % (count, waittime, host)
-    if not quiet:
-        log("Ping command: %s" % cmd, level=5)
+def _ping(host, count=3, waittime=100, quiet=False, node=None):
 
-    _, out = run_cmd(cmd, shell=False, quiet=True)
+    # !!! FIXME: Mac OS X ping can use -W (waittime) to timeout ping.
+    #            On Ubuntu, use -w (deadline) to timeout after n seconds.
+    if not node:
+        cmd = "ping -c %d -W %d %s" % (count, waittime, host)
+        if not quiet:
+            log("Ping command: %s" % cmd, level=4)
+
+        _, out = run_cmd(cmd, shell=False, quiet=True)
+    else:
+        cmd = "ping -w %d %s" % (count, host)
+        if not quiet:
+            log("Ping command: %s" % cmd, level=4)
+
+        result = node.bash(cmd)
+        out = result["content"]
 
     if not quiet:
-        log("Ping output:\n%s" % out, level=5)
+        log("Ping output:\n%s" % out, level=4)
         
     # Linux output:
     #   3 packets transmitted, 3 received, 0% packet loss, time 2003ms
@@ -643,12 +655,12 @@ def _ping(host, count=3, waittime=100, quiet=False):
         if packets_received > 0:
             if not quiet:
                 log("Success! %s%s"
-                    % (s, br_utils.end_of_output_marker()), level=5)
+                    % (s, br_utils.end_of_output_marker()), level=4)
             return True
         else:
             if not quiet:
                 log("Failure! %s%s"
-                    % (s, br_utils.end_of_output_marker()), level=5)
+                    % (s, br_utils.end_of_output_marker()), level=4)
             return False
     test_error("Unknown ping error.")
 
@@ -701,7 +713,7 @@ def openstack_convert_table_to_dict(input_str):
     Return dictionary.
     """
     if is_list(input_str):
-        pass
+        out = input_str
     elif is_str(input_str):
         out = input_str.split('\n')
     else:
@@ -709,16 +721,8 @@ def openstack_convert_table_to_dict(input_str):
         
     out = br_utils.strip_empty_lines(out)
     
-    if not re.match(r'^[\+-]+$', out[0]):
-        # For CLI output, the first line may be a command (not part of the
-        # table), so strip it.
-        out = out[1:]
-
-    if not re.match(r'^[\+-]+$', out[-1]):
-        # For CLI output, the last line may be a CLI/shell prompt (not part
-        # of the table), so strip it.
-        out = out[:-1]
-
+    out = br_utils.strip_cruds_before_table_begins(out)
+    out = br_utils.strip_cruds_after_table_ends(out)
     out = br_utils.strip_table_row_dividers(out)
     out = br_utils.strip_table_ws_between_columns(out)
     out = br_utils.convert_table_to_dict(out)
