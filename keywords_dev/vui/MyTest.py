@@ -81,6 +81,7 @@ class MyTest(object):
     def convert_openstack_table_output_to_dictionary(self):
         openstack_output = """
 nova --os-username user1 --os-tenant-name Tenant1  --os-auth-url http://10.193.0.120:5000/v2.0/ --os-password bsn net-list
+blah blah
 +--------------------------------------+---------------------+------+
 | ID                                   | Label               | CIDR |
 +--------------------------------------+---------------------+------+
@@ -91,6 +92,10 @@ nova --os-username user1 --os-tenant-name Tenant1  --os-auth-url http://10.193.0
 | d1919755-5872-4f4c-9320-29e91273c54a | 1-OutSide-Net       | None |
 | fb68e3c6-dbc1-4334-b2aa-6539361c0bff | Tenant1-Network-1   | None |
 +--------------------------------------+---------------------+------+
+root@nova-controller:~#
+root@nova-controller:~#
+root@nova-controller:~#
+root@nova-controller:~#
 root@nova-controller:~#
 """
         out_dict = helpers.openstack_convert_table_to_dict(openstack_output)
