@@ -76,7 +76,7 @@ ${nexthop6}			10.10.11.4
 #	sleep  5
 
 L3 ping bm0 to bm1 single leaf single rack within tenant different VNS
-	[Tags]						smoke		skipped	
+	[Tags]						smoke			
 	configure fabric switch 
 	sleep  5		
 	REST create tenant  		${tenant1_name}
@@ -240,7 +240,7 @@ L3 ping with destination host interface move in the same tenant
 	sleep  						20  
 
 L3 ping with nexthop in a ecmp group
-	[Tags]							
+	[Tags]							skipped
 	configure fabric switch 
 	sleep  5	
     REST create tenant              ${tenant1_name}
