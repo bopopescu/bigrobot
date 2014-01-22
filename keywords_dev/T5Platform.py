@@ -1,3 +1,4 @@
+import time
 import autobot.helpers as helpers
 import autobot.test as test
 
@@ -76,13 +77,45 @@ class T5Platform(object):
         ''' Invoke "cluster election take-leader" command and verify the active controller change.
             Verify by executing on both the current-active and current-stdby controller
         '''
+        t = test.Test()
+        slave = t.controller("slave")
+        master = t.controller("master")
+
+        showUrl = '/api/v1/data/controller/cluster'
+        result = master.rest.get(showUrl)['content']
+        masterID = result[0]['status']['local-node-id']
+        result = slave.rest.get(showUrl)['content']
+        slaveID = result[0]['status']['local-node-id']
+
+        helpers.log("Current slave ID is : %s / Current master ID is: %s" % (slaveID, masterID))
+
+        url = '/api/v1/data/controller/cluster/config/new-election'
+        slave.rest.post(url, {"rigged": True})
+        time.sleep(10)
+
+        newMaster = t.controller("master")
+        result = newMaster.rest.get(showUrl)['content'] 
+        newMasterID = result[0]['status']['domain-leader']['leader-id']
+        if(masterID == newMasterID):
+            helpers.test_failure("Fail: Master didn't change after executing take-leader")
+            return False
+        else:
+            helpers.log("Pass: Take-Leader successful - Leader changed from %s to %s" % (masterID, newMasterID))
+            return True
+
+
+    def rest_cluster_election_rerun(self):
+        ''' Invoke "cluster election re-run" command and verify the controller state
+        '''
+
         try:
             t = test.Test()
             master = t.controller("master")
+            
 
         except Exception, err:
-            helpers.test_failure("Exception in: rest_cluster_take_leader %s : %s " % (Exception, err))
-            return false
+            helpers.test_failure("Exception in: rest_cluster_election_rerun %s : %s " % (Exception, err))
+            return False
 
 
 
