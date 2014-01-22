@@ -2,6 +2,7 @@
 Documentation   This suite is my sandbox for experimentation.
 Force Tags      Vui
 #Library         Reserve
+Library         keywords/BsnCommon.py
 
 
 * Test Cases
@@ -9,12 +10,20 @@ Test var assignment
     [Tags]           skipped
     variable assignment  ${123}
 
+Test run keyword if
+    #[Tags]           skipped
+    ${temp}=         set variable  ${123}
+    ${result}=       run keyword if   ${temp} == 1234  mock_passed  ELSE  manual_passed
+    log              temp=${temp}, result=${result}
+
+
 Robot loop test
     [Tags]           skipped
     : for  ${index}  in range  1  3
     \  log  ${index}
     
 Openstack user id
+    [Tags]           skipped
     : for  ${index}  in range  1  5
     \  ${user}=  Set Variable  user${index}
     \  log  ${index}:${user}
@@ -26,4 +35,5 @@ variable assignment
     Should be true  ${input} == 123
     ${temp}=        Set Variable  123${input}
     Should be true  ${temp} == 123123
+
 

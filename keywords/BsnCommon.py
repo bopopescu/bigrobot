@@ -28,12 +28,14 @@ class BsnCommon(object):
     def mock_passed(self):
         #helpers.sleep(2)
         print("MOCK PASSED")
+        return True
 
     def mock_failed(self):
         raise AssertionError("MOCK FAILED")
 
     def manual_passed(self):
         print("MANUAL PASSED")
+        return 8888
 
     def manual_failed(self):
         raise AssertionError("MANUAL FAILED")
@@ -42,6 +44,21 @@ class BsnCommon(object):
         t = test.Test()
         helpers.log("Test topology params: %s" % helpers.prettify(t.topology_params()))
 
+    def host_ping(self, node, dest_ip=None, dest_node=None, *args, **kwargs):
+        t = test.Test()
+        n = t.node(node)
+        
+        if not dest_ip and not dest_node:
+            helpers.test_error("Must specify 'dest_ip' or 'dest_node'")
+        if dest_ip and dest_node:
+            helpers.test_error("Specify 'dest_ip' or 'dest_node' but not both")
+        if dest_ip:
+            dest = dest_ip
+        if dest_node:
+            dest = t.node(dest_node).ip
+        status = helpers._ping(dest, node=n, *args, **kwargs)
+        return status
+        
     def ip_range(self, subnet, first=None, last=None):
         """
         :param subnet: (str) The IP subnet, e.g., '192.168.1.1/24'
