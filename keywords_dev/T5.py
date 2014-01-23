@@ -185,21 +185,49 @@ class T5(object):
             helpers.test_failure(c.rest.error())
 
         return c.rest.content()
-    
+
+
     def rest_create_endpoint(self, tenant, vns, endpoint):
+        '''Add nexthop to ecmp groups aks gateway pool in tenant"
+        
+            Input:
+                `tenant`          tenant name
+                `vns`         vns name
+                `endpoint`    endpoint name
+            Return: true if configuration is successful, false otherwise
+            http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[name="A"]/vns[name="A1"]/endpoints[name="H1"] {"name": "H1"}
+
+        '''
+        
         t = test.Test()
         c = t.controller()
         
         helpers.test_log("Input arguments: tenant = %s, vns = %s, endpoint = %s" % (tenant, vns, endpoint ))
         
-        url = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/endpoints[name="%s"]' % (c.base_url, tenant, vns, endpoint)
-        c.rest.put(url, {"name": endpoint})
-        helpers.test_log("Output: %s" % c.rest.result_json())
-
-        if not c.rest.status_code_ok():
+        url = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/endpoints' % (c.base_url, tenant, vns)
+        try:
+            c.rest.post(url, {"name": endpoint})
+        except:
             helpers.test_failure(c.rest.error())
+        else: 
+            helpers.test_log("Output: %s" % c.rest.result_json())
+            return c.rest.content()                         
 
-        return c.rest.content()
+    
+#    def rest_create_endpoint(self, tenant, vns, endpoint):
+#        t = test.Test()
+#        c = t.controller()
+        
+#        helpers.test_log("Input arguments: tenant = %s, vns = %s, endpoint = %s" % (tenant, vns, endpoint ))
+        
+#        url = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/endpoints[name="%s"]' % (c.base_url, tenant, vns, endpoint)
+#        c.rest.put(url, {"name": endpoint})
+#        helpers.test_log("Output: %s" % c.rest.result_json())
+
+ #       if not c.rest.status_code_ok():
+ #           helpers.test_failure(c.rest.error())
+
+#        return c.rest.content()
     
     def rest_delete_endpoint(self, tenant, vns, endpoint=None):
         t = test.Test()

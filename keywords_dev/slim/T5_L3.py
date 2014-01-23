@@ -147,32 +147,7 @@ class T5_L3(object):
             helpers.test_log("Output: %s" % c.rest.result_json())
             return c.rest.content()                         
 
-        
-    def rest_create_endpoint(self, tenant, vnsname, endpointname):
-        '''Add nexthop to ecmp groups aks gateway pool in tenant"
-        
-            Input:
-                `tenant`          tenant name
-                `vnsname`         vns name
-                `endpointname`    endpoint name
-            Return: true if configuration is successful, false otherwise
-            http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[name="A"]/vns[name="A1"]/endpoints[name="H1"] {"name": "H1"}
-
-        '''
-        
-        t = test.Test()
-        c = t.controller()
-        
-        helpers.test_log("Input arguments: tenant = %s vnsname = %s endpointname = %s" % (tenant, vnsname, endpointname))
-        
-        url = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/endpoints' % (c.base_url, tenant, vnsname)
-        try:
-            c.rest.post(url, {"name": endpointname})
-        except:
-            helpers.test_failure(c.rest.error())
-        else: 
-            helpers.test_log("Output: %s" % c.rest.result_json())
-            return c.rest.content()                         
+     
 
     def rest_create_endpoint_ip(self, tenant, vnsname, endpointname, ipaddr):
         '''Add nexthop to ecmp groups aks gateway pool in tenant"
