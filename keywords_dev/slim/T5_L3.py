@@ -148,5 +148,141 @@ class T5_L3(object):
             return c.rest.content()                         
 
         
+    def rest_create_endpoint(self, tenant, vnsname, endpointname):
+        '''Add nexthop to ecmp groups aks gateway pool in tenant"
         
-     
+            Input:
+                `tenant`          tenant name
+                `vnsname`         vns name
+                `endpointname`    endpoint name
+            Return: true if configuration is successful, false otherwise
+            http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[name="A"]/vns[name="A1"]/endpoints[name="H1"] {"name": "H1"}
+
+        '''
+        
+        t = test.Test()
+        c = t.controller()
+        
+        helpers.test_log("Input arguments: tenant = %s vnsname = %s endpointname = %s" % (tenant, vnsname, endpointname))
+        
+        url = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/endpoints' % (c.base_url, tenant, vnsname)
+        try:
+            c.rest.post(url, {"name": endpointname})
+        except:
+            helpers.test_failure(c.rest.error())
+        else: 
+            helpers.test_log("Output: %s" % c.rest.result_json())
+            return c.rest.content()                         
+
+    def rest_create_endpoint_ip(self, tenant, vnsname, endpointname, ipaddr):
+        '''Add nexthop to ecmp groups aks gateway pool in tenant"
+        
+            Input:
+                `tenant`          tenant name
+                `vnsname`         vns name
+                `endpointname`    endpoint name
+                `ipaddr`          host IP address
+            Return: true if configuration is successful, false otherwise
+            http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[name="A"]/vns[name="A1"]/endpoints[name="H1"] {"name": "H1"}
+
+        '''
+        
+        t = test.Test()
+        c = t.controller()
+        
+        helpers.test_log("Input arguments: tenant = %s vnsname = %s endpointname = %s ipaddress = %s" % (tenant, vnsname, endpointname, ipaddr))
+        
+        url = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/endpoints[name=%]' % (c.base_url, tenant, vnsname, endpointname)
+        try:
+            c.rest.patch(url, {"ip-address": ipaddr})
+        except:
+            helpers.test_failure(c.rest.error())
+        else: 
+            helpers.test_log("Output: %s" % c.rest.result_json())
+            return c.rest.content()                         
+
+    def rest_create_endpoint_mac(self, tenant, vnsname, endpointname, mac):
+        '''Add nexthop to ecmp groups aks gateway pool in tenant"
+        
+            Input:
+                `tenant`          tenant name
+                `vnsname`         vns name
+                `endpointname`    endpoint name
+                `mac`          host mac address
+            Return: true if configuration is successful, false otherwise
+            http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[name="A"]/vns[name="A1"]/endpoints[name="H1"] {"name": "H1"}
+
+        '''
+        
+        t = test.Test()
+        c = t.controller()
+        
+        helpers.test_log("Input arguments: tenant = %s vnsname = %s endpointname = %s mac address = %s" % (tenant, vnsname, endpointname, mac))
+        
+        url = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/endpoints[name=%]' % (c.base_url, tenant, vnsname, endpointname)
+        try:
+            c.rest.patch(url, {"mac": mac})
+        except:
+            helpers.test_failure(c.rest.error())
+        else: 
+            helpers.test_log("Output: %s" % c.rest.result_json())
+            return c.rest.content()                         
+
+    def rest_create_endpoint_portgroup_attachment(self, tenant, vnsname, endpointname, portgroupname, vlan):
+        '''Add nexthop to ecmp groups aks gateway pool in tenant"
+        
+            Input:
+                `tenant`          tenant name
+                `vnsname`         vns name
+                `endpointname`    endpoint name
+                `portgroupname`   port-group name
+                `vlan`            vlan id or -1 for untagged
+            Return: true if configuration is successful, false otherwise
+            curl -gX PATCH -H 'Cookie: session_cookie=RKIUFOl07Dqiz10nXJcbquvUcWVJ3xYM' -d '{"port-group-name": "leaf4", "vlan": -1}' 'localhost:8080/api/v1/data/controller/applications/bvs/tenant[name="B"]/vns[name="B1"]/endpoints[name="B1-H1"]/attachment-point'
+        '''
+        
+        t = test.Test()
+        c = t.controller()
+        
+        helpers.test_log("Input arguments: tenant = %s vnsname = %s endpointname = %s portgroup = %s vlan = %s" % (tenant, vnsname, endpointname, portgroupname, vlan))
+        
+        url = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/endpoints[name=%]/attachment-point' % (c.base_url, tenant, vnsname, endpointname)
+        try:
+            c.rest.post(url, {"port-group-name": portgroupname, "vlan": vlan})
+        except:
+            helpers.test_failure(c.rest.error())
+        else: 
+            helpers.test_log("Output: %s" % c.rest.result_json())
+            return c.rest.content()            
+
+    def rest_create_endpoint_switch_attachment(self, tenant, vnsname, endpointname, switchname, switchinterface, vlan):
+        '''Add nexthop to ecmp groups aks gateway pool in tenant"
+        
+            Input:
+                `tenant`          tenant name
+                `vnsname`         vns name
+                `endpointname`    endpoint name
+                `switchname`       name of switch
+                `switchinterface`    switch port
+                `vlan`            vlan id or -1 for untagged
+            Return: true if configuration is successful, false otherwise
+            
+            curl -gX PATCH -H 'Cookie: session_cookie=RKIUFOl07Dqiz10nXJcbquvUcWVJ3xYM' -d '{"switch-name": "leaf1", "interface-name": "leaf1-eth2", "vlan": -1}' 'localhost:8080/api/v1/data/controller/applications/bvs/tenant[name="B"]/vns[name="B1"]/endpoints[name="B1-H1"]/attachment-point'
+        '''        
+        t = test.Test()
+        c = t.controller()
+        
+        helpers.test_log("Input arguments: tenant = %s vnsname = %s endpointname = %s switchname = %s switch interface = %s vlan = %s" % (tenant, vnsname, endpointname, switchname, switchinterface, vlan))
+        
+        url = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/endpoints[name=%]/attachment-point' % (c.base_url, tenant, vnsname, endpointname)
+        try:
+            c.rest.post(url, {"switch-name": switchname, "interface-name": switchinterface, "vlan": vlan})
+        except:
+            helpers.test_failure(c.rest.error())
+        else: 
+            helpers.test_log("Output: %s" % c.rest.result_json())
+            return c.rest.content()            
+
+
+
+

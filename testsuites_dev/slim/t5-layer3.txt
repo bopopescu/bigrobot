@@ -25,7 +25,8 @@ ${vns2_subnet}		24
 ${vns3_ip}			10.10.20.1
 ${vns3_subnet}		24
 ${unknown_host}		10.99.99.99
-${leaf_name}		leaf0
+${leaf0_name}		leaf0
+${leaf1_name}		leaf1
 ${leaf0_intf1}		leaf0-eth3
 ${leaf0_intf2}		leaf0-eth4
 ${leaf0_intf3}		leaf0-eth5
@@ -68,6 +69,12 @@ ${nexthop3}			10.10.10.4
 ${nexthop4}			10.10.11.5
 ${nexthop5}			10.10.11.3
 ${nexthop6}			10.10.11.4
+${untaggedvlan}		-1
+${endpoint1name}	H1
+${endpoint2name}	H2
+${endpoint3name}	H3
+
+
 
 
 * Test Case
@@ -84,8 +91,16 @@ L3 ping bm0 to bm1 single leaf single rack within tenant different VNS
 	REST create vns				${tenant1_name}		${vns_2}
 	REST create vns ip  		${tenant1_name}  	${vns_1}  		${vns1_ip}	  	${vns1_subnet}
 	REST create vns ip  		${tenant1_name}  	${vns_2}  		${vns2_ip}	  	${vns2_subnet}
-	REST add interface to vns  	${tenant1_name}  	${vns_1}  		${leaf_name} 	${leaf0_intf1}  -1 
-	REST add interface to vns  	${tenant1_name}  	${vns_2}  		${leaf_name} 	${leaf0_intf2} 	-1
+	REST add interface to vns  	${tenant1_name}  	${vns_1}  		${leaf_name} 	${leaf0_intf1}  ${untaggedvlan}	
+	REST add interface to vns  	${tenant1_name}  	${vns_2}  		${leaf_name} 	${leaf0_intf2} 	${untaggedvlan}	
+	REST_create_endpoint		${tenant1_name}		${vns_1}		${endpoint1name}
+	REST_create_endpoint		${tenant1_name}		${vns_2}		${endpoint2name}	
+	REST_create_endpoint_ip		${tenant1_name}		${vns_1}		${endpoint1name}	${host0_ip}
+	REST_create_endpoint_ip		${tenant1_name}		${vns_2}		${endpoint2name}	${host1_ip}
+	REST_create_endpoint_mac	${tenant1_name}		${vns_1}		${endpoint1name}	${host0_mac}
+	REST_create_endpoint_mac	${tenant1_name}		${vns_2}		${endpoint2name}	${host1_mac}
+	REST_create_endpoint_switch_attachment	${tenant1_name}		${vns_1}		${endpoint1name}	${leaf0_name}	${leaf0_intf1}	${untaggedvlan}	
+	REST_create_endpoint_switch_attachment	${tenant1_name}		${vns_2}		${endpoint2name}	${leaf0_name}	${leaf0_intf2}	${untaggedvlan}	
 	mininet host ipcfg   		${host0_name}		${host0_bondif}	${host0_ip}		${host0_subnet} 
 	mininet host ipcfg			${host1_name}		${host1_bondif}	${host1_ip}		${host1_subnet}
 	mininet host gw				${host0_name}		${vns1_ip}		${host0_bondif}
@@ -108,7 +123,7 @@ L3 ping bm0 to unreachable host single leaf single rack single tenant across VNS
 	REST create tenant  		${tenant1_name}
 	REST create vns  			${tenant1_name}		${vns_1}
 	REST create vns ip  		${tenant1_name}  	${vns_1}  		${vns1_ip}	  	${vns1_subnet}
-	REST add interface to vns  	${tenant1_name}  	${vns_1}  		${leaf_name} 	${leaf0_intf1}  -1 
+	REST add interface to vns  	${tenant1_name}  	${vns_1}  		${leaf_name} 	${leaf0_intf1}  ${untaggedvlan}	
 	mininet host ipcfg   		${host0_name}		${host0_bondif}	${host0_ip}		${host0_subnet} 
 	mininet host gw				${host0_name}		${vns1_ip}		${host0_bondif}
 	mininet host arp			${host0_name}		${vns1_ip}		${gw_mac}
@@ -129,8 +144,8 @@ L3 ping bm0 to bm1 single leaf single rack across tenants
 	REST create vns  			${tenant2_name}		${vns_3}
 	REST create vns ip  		${tenant1_name}  	${vns_1}  		${vns1_ip}	  	${vns1_subnet}
    	REST create vns ip  		${tenant2_name}  	${vns_3}  		${vns3_ip}	  	${vns3_subnet}
- 	REST add interface to vns  	${tenant1_name}  	${vns_1}  		${leaf_name} 	${leaf0_intf1}  -1 
-   	REST add interface to vns  	${tenant2_name}  	${vns_3}  		${leaf_name} 	${leaf0_intf3} 	-1
+ 	REST add interface to vns  	${tenant1_name}  	${vns_1}  		${leaf_name} 	${leaf0_intf1}  ${untaggedvlan}	
+   	REST add interface to vns  	${tenant2_name}  	${vns_3}  		${leaf_name} 	${leaf0_intf3} 	${untaggedvlan}	
    	REST attach tenant routers to system 	${tenant1_name} 
    	REST attach tenant routers to system 	${tenant2_name} 
    	mininet host ipcfg   		${host0_name}		${host0_bondif}	${host0_ip}		${host0_subnet} 
@@ -156,7 +171,7 @@ L3 ping untagged bm0 to tagged bm1 single leaf single rack within tenant differe
 	REST create vns				${tenant1_name}		${vns_2}
 	REST create vns ip  		${tenant1_name}  	${vns_1}  		${vns1_ip}	  	${vns1_subnet}
 	REST create vns ip  		${tenant1_name}  	${vns_2}  		${vns2_ip}	  	${vns2_subnet}
-	REST add interface to vns  	${tenant1_name}  	${vns_1}  		${leaf_name} 	${leaf0_intf1}  -1 
+	REST add interface to vns  	${tenant1_name}  	${vns_1}  		${leaf_name} 	${leaf0_intf1}  ${untaggedvlan}	
 	REST add interface to vns  	${tenant1_name}  	${vns_2}  		${leaf_name} 	${leaf0_intf2}	${vns2_vlan}
 	mininet host ipcfg   		${host0_name}		${host0_bondif}	${host0_ip}		${host0_subnet} 
 	mininet l3 link tag			${host1_name}		${host1_bondif}	${vns2_vlan}	${host1_ip}		${host1_subnet}
@@ -208,9 +223,9 @@ L3 ping with destination host interface move in the same tenant
 	REST create vns				${tenant1_name}		${vns_2}
 	REST create vns ip  		${tenant1_name}  	${vns_1}  		${vns1_ip}	  	${vns1_subnet}
 	REST create vns ip  		${tenant1_name}  	${vns_2}  		${vns2_ip}	  	${vns2_subnet}
-	REST add interface to vns  	${tenant1_name}  	${vns_1}  		${leaf_name} 	${leaf0_intf1}  -1 
-	REST add interface to vns  	${tenant1_name}  	${vns_2}  		${leaf_name} 	${leaf0_intf2} 	-1
-	REST add interface to vns  	${tenant1_name}  	${vns_2}  		${leaf_name} 	${leaf0_intf3} 	-1
+	REST add interface to vns  	${tenant1_name}  	${vns_1}  		${leaf_name} 	${leaf0_intf1}  ${untaggedvlan}	
+	REST add interface to vns  	${tenant1_name}  	${vns_2}  		${leaf_name} 	${leaf0_intf2} 	${untaggedvlan}	
+	REST add interface to vns  	${tenant1_name}  	${vns_2}  		${leaf_name} 	${leaf0_intf3} 	${untaggedvlan}	
 	mininet host ipcfg   		${host0_name}		${host0_bondif}	${host0_ip}		${host0_subnet} 
 	mininet host ipcfg			${host1_name}		${host1_bondif}	${host1_ip}		${host1_subnet}
 	mininet host gw				${host0_name}		${vns1_ip}		${host0_bondif}
