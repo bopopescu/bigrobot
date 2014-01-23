@@ -167,7 +167,7 @@ class T5_L3(object):
         
         helpers.test_log("Input arguments: tenant = %s vnsname = %s endpointname = %s ipaddress = %s" % (tenant, vnsname, endpointname, ipaddr))
         
-        url = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/endpoints[name=%]' % (c.base_url, tenant, vnsname, endpointname)
+        url = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/endpoints[name="%s"]' % (c.base_url, tenant, vnsname, endpointname)
         try:
             c.rest.patch(url, {"ip-address": ipaddr})
         except:
@@ -194,7 +194,7 @@ class T5_L3(object):
         
         helpers.test_log("Input arguments: tenant = %s vnsname = %s endpointname = %s mac address = %s" % (tenant, vnsname, endpointname, mac))
         
-        url = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/endpoints[name=%]' % (c.base_url, tenant, vnsname, endpointname)
+        url = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/endpoints[name="%s"]' % (c.base_url, tenant, vnsname, endpointname)
         try:
             c.rest.patch(url, {"mac": mac})
         except:
@@ -202,6 +202,7 @@ class T5_L3(object):
         else: 
             helpers.test_log("Output: %s" % c.rest.result_json())
             return c.rest.content()                         
+
 
     def rest_create_endpoint_portgroup_attachment(self, tenant, vnsname, endpointname, portgroupname, vlan):
         '''Add nexthop to ecmp groups aks gateway pool in tenant"
@@ -221,7 +222,7 @@ class T5_L3(object):
         
         helpers.test_log("Input arguments: tenant = %s vnsname = %s endpointname = %s portgroup = %s vlan = %s" % (tenant, vnsname, endpointname, portgroupname, vlan))
         
-        url = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/endpoints[name=%]/attachment-point' % (c.base_url, tenant, vnsname, endpointname)
+        url = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/endpoints[name="%s"]/attachment-point' % (c.base_url, tenant, vnsname, endpointname)
         try:
             c.rest.post(url, {"port-group-name": portgroupname, "vlan": vlan})
         except:
@@ -229,6 +230,7 @@ class T5_L3(object):
         else: 
             helpers.test_log("Output: %s" % c.rest.result_json())
             return c.rest.content()            
+
 
     def rest_create_endpoint_switch_attachment(self, tenant, vnsname, endpointname, switchname, switchinterface, vlan):
         '''Add nexthop to ecmp groups aks gateway pool in tenant"
@@ -249,7 +251,7 @@ class T5_L3(object):
         
         helpers.test_log("Input arguments: tenant = %s vnsname = %s endpointname = %s switchname = %s switch interface = %s vlan = %s" % (tenant, vnsname, endpointname, switchname, switchinterface, vlan))
         
-        url = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/endpoints[name=%]/attachment-point' % (c.base_url, tenant, vnsname, endpointname)
+        url = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/endpoints[name="%s"]/attachment-point' % (c.base_url, tenant, vnsname, endpointname)
         try:
             c.rest.post(url, {"switch-name": switchname, "interface-name": switchinterface, "vlan": vlan})
         except:

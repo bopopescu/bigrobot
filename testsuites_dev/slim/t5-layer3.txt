@@ -109,7 +109,6 @@ L3 ping bm0 to bm1 single leaf single rack within tenant different VNS
 	mininet host arp			${host1_name} 		${vns2_ip}		${gw_mac}
 	sleep  5
 	${loss}=  					mininet l3 ping		${host0_name}	${host1_name} 	
-	sleep  						20       
 	Should Be True  			${loss} == 0
 	${endpoints_cnt}=			rest count endpoints mac
 	Should Be True  			${endpoints_cnt} == 2
@@ -117,13 +116,14 @@ L3 ping bm0 to bm1 single leaf single rack within tenant different VNS
 	sleep  						20  
 	      
 L3 ping bm0 to unreachable host single leaf single rack single tenant across VNS
-	[Tags]						skipped
+	[Tags]						
 	configure fabric switch 
 	sleep  5	
 	REST create tenant  		${tenant1_name}
 	REST create vns  			${tenant1_name}		${vns_1}
 	REST create vns ip  		${tenant1_name}  	${vns_1}  		${vns1_ip}	  	${vns1_subnet}
 	REST add interface to vns  	${tenant1_name}  	${vns_1}  		${leaf0_name} 	${leaf0_intf1}  ${untaggedvlan}	
+	
 	mininet host ipcfg   		${host0_name}		${host0_bondif}	${host0_ip}		${host0_subnet} 
 	mininet host gw				${host0_name}		${vns1_ip}		${host0_bondif}
 	mininet host arp			${host0_name}		${vns1_ip}		${gw_mac}
@@ -156,14 +156,13 @@ L3 ping bm0 to bm1 single leaf single rack across tenants
    	mininet host arp			${host2_name} 		${vns3_ip}		${gw_mac}
    	sleep 	 					5
    	${loss}=					mininet l3 ping		${host0_name}	${host1_name}	${ping_count}
-	sleep  						20
    	Should Be True  			${loss} == 0
 	REST delete tenant			${tenant1_name}   
 	REST delete tenant			${tenant2_name}     
    	sleep  						20  
    
 L3 ping untagged bm0 to tagged bm1 single leaf single rack within tenant different VNS
-	[Tags]						skipped
+	[Tags]						
 	configure fabric switch 
 	sleep  5	
 	REST create tenant  		${tenant1_name}
@@ -173,6 +172,14 @@ L3 ping untagged bm0 to tagged bm1 single leaf single rack within tenant differe
 	REST create vns ip  		${tenant1_name}  	${vns_2}  		${vns2_ip}	  	${vns2_subnet}
 	REST add interface to vns  	${tenant1_name}  	${vns_1}  		${leaf0_name} 	${leaf0_intf1}  ${untaggedvlan}	
 	REST add interface to vns  	${tenant1_name}  	${vns_2}  		${leaf0_name} 	${leaf0_intf2}	${vns2_vlan}
+	REST_create_endpoint		${tenant1_name}		${vns_1}		${endpoint1name}
+	REST_create_endpoint		${tenant1_name}		${vns_2}		${endpoint2name}	
+	REST_create_endpoint_ip		${tenant1_name}		${vns_1}		${endpoint1name}	${host0_ip}
+	REST_create_endpoint_ip		${tenant1_name}		${vns_2}		${endpoint2name}	${host1_ip}
+	REST_create_endpoint_mac	${tenant1_name}		${vns_1}		${endpoint1name}	${host0_mac}
+	REST_create_endpoint_mac	${tenant1_name}		${vns_2}		${endpoint2name}	${host1_mac}
+	REST_create_endpoint_switch_attachment	${tenant1_name}		${vns_1}		${endpoint1name}	${leaf0_name}	${leaf0_intf1}	${untaggedvlan}	
+	REST_create_endpoint_switch_attachment	${tenant1_name}		${vns_2}		${endpoint2name}	${leaf0_name}	${leaf0_intf2}	${vns2_vlan}
 	mininet host ipcfg   		${host0_name}		${host0_bondif}	${host0_ip}		${host0_subnet} 
 	mininet l3 link tag			${host1_name}		${host1_bondif}	${vns2_vlan}	${host1_ip}		${host1_subnet}
 	mininet host gw				${host0_name}		${vns1_ip}		${host0_bondif}
@@ -277,9 +284,9 @@ L3 ping with nexthop in a ecmp group
    
 * Keywords
 teardown topology
-#	remove fabric switch
-#	REST delete tenant			${tenant1_name}   
-#	REST delete tenant			${tenant2_name}     
+	remove fabric switch
+	REST delete tenant			${tenant1_name}   
+	REST delete tenant			${tenant2_name}     
 		
 	
 	
