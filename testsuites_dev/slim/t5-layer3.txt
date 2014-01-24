@@ -82,7 +82,7 @@ ${endpoint3name}	H3
 #	configure fabric switch 
 #	sleep  5
 
-L3 ping bm0 to bm1 single leaf single rack within tenant different VNS
+L3 ping bm0 to bm1 single leaf single rack within tenant different VNS all statically defined
 	[Tags]						smoke			
 	configure fabric switch 
 	sleep  5		
@@ -112,9 +112,53 @@ L3 ping bm0 to bm1 single leaf single rack within tenant different VNS
 	Should Be True  			${loss} == 0
 	${endpoints_cnt}=			rest count endpoints mac
 	Should Be True  			${endpoints_cnt} == 2
-	REST delete tenant 			${tenant1_name}        
-	sleep  						20  
-	      
+
+
+L3 ping bm0 to bm1 single leaf single rack within tenant different VNS dynamic endpoints
+	[Tags]						smoke			
+	configure fabric switch 
+	sleep  5		
+	REST create tenant  		${tenant1_name}
+	REST create vns  			${tenant1_name}		${vns_1}
+	REST create vns				${tenant1_name}		${vns_2}
+	REST create vns ip  		${tenant1_name}  	${vns_1}  		${vns1_ip}	  	${vns1_subnet}
+	REST create vns ip  		${tenant1_name}  	${vns_2}  		${vns2_ip}	  	${vns2_subnet}
+	REST add interface to vns  	${tenant1_name}  	${vns_1}  		${leaf0_name} 	${leaf0_intf1}  ${untaggedvlan}	
+	REST add interface to vns  	${tenant1_name}  	${vns_2}  		${leaf0_name} 	${leaf0_intf2} 	${untaggedvlan}	
+	mininet host ipcfg   		${host0_name}		${host0_bondif}	${host0_ip}		${host0_subnet} 
+	mininet host ipcfg			${host1_name}		${host1_bondif}	${host1_ip}		${host1_subnet}
+	mininet host gw				${host0_name}		${vns1_ip}		${host0_bondif}
+	mininet host gw				${host1_name}		${vns2_ip}		${host1_bondif}
+	mininet host arp			${host0_name}		${vns1_ip}		${gw_mac}
+	mininet host arp			${host1_name} 		${vns2_ip}		${gw_mac}
+	sleep  5
+	${loss}=  					mininet l3 ping		${host0_name}	${host1_name} 	
+	Should Be True  			${loss} == 0
+	${endpoints_cnt}=			rest count endpoints mac
+	Should Be True  			${endpoints_cnt} == 2
+	     
+
+L3 ping bm0 to bm1 single leaf single rack within tenant different VNS all dynamic
+	[Tags]						smoke			
+	configure fabric switch 
+	sleep  5		
+	REST create tenant  		${tenant1_name}
+	REST create vns  			${tenant1_name}		${vns_1}
+	REST create vns				${tenant1_name}		${vns_2}
+	REST create vns ip  		${tenant1_name}  	${vns_1}  		${vns1_ip}	  	${vns1_subnet}
+	REST create vns ip  		${tenant1_name}  	${vns_2}  		${vns2_ip}	  	${vns2_subnet}
+	REST add interface to vns  	${tenant1_name}  	${vns_1}  		${leaf0_name} 	${leaf0_intf1}  ${untaggedvlan}	
+	REST add interface to vns  	${tenant1_name}  	${vns_2}  		${leaf0_name} 	${leaf0_intf2} 	${untaggedvlan}	
+	mininet host ipcfg   		${host0_name}		${host0_bondif}	${host0_ip}		${host0_subnet} 
+	mininet host ipcfg			${host1_name}		${host1_bondif}	${host1_ip}		${host1_subnet}
+	mininet host gw				${host0_name}		${vns1_ip}		${host0_bondif}
+	mininet host gw				${host1_name}		${vns2_ip}		${host1_bondif}
+	sleep  5
+	${loss}=  					mininet l3 ping		${host0_name}	${host1_name} 	
+	Should Be True  			${loss} == 0
+	${endpoints_cnt}=			rest count endpoints mac
+	Should Be True  			${endpoints_cnt} == 2
+
 L3 ping bm0 to unreachable host single leaf single rack single tenant across VNS
 	[Tags]						
 	configure fabric switch 
@@ -131,8 +175,7 @@ L3 ping bm0 to unreachable host single leaf single rack single tenant across VNS
 	${loss}=  					mininet l3 ping		${host0_name}	${unknown_host}	${ping_count}
 	sleep  						20    
 	Should Be True  			${loss} == 100
-	REST delete tenant 			${tenant1_name}        
-	sleep  						20  
+
     
 L3 ping bm0 to bm1 single leaf single rack across tenants  
    	[Tags]						smoke				skipped
@@ -213,7 +256,7 @@ L3 ping tagged bm0 to tagged bm1 single leaf single rack within tenant different
 	mininet host arp			${host0_name}		${vns1_ip}		${gw_mac}
 	mininet host arp			${host1_name} 		${vns2_ip}		${gw_mac}
 	sleep  						5
-	${loss}=  					mininet l3 ping		${host0_name}	${host1_name}	${ping_count}
+	${loss}=  					mininet l3 ping		${host0_name}	${host1_ip}		${ping_count}
 	Should Be True  			${loss} == 0
 	sleep  						20   
 	REST delete tenant 			${tenant1_name} 
@@ -254,7 +297,7 @@ L3 ping with destination host interface move in the same tenant
 	mininet link up				${host2_name}		${host2_intf}	
 	mininet link up				${host2_name}		${host2_bondif}	
 	sleep						1
-	${loss}=  					mininet l3 ping		${host0_name}	${host2_name} 	
+	${loss}=  					mininet l3 ping		${host0_name}	${host1_ip}	
 	Should Be True  			${loss} == 100
 	${endpoints_cnt}=			rest count endpoints mac
 	Should Be True  			${endpoints_cnt} == 2
