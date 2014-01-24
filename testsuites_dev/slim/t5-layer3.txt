@@ -186,25 +186,25 @@ L3 ping bm0 to unreachable host single leaf single rack single tenant across VNS
 
     
 L3 ping bm0 to bm1 single leaf single rack across tenants  
-   	[Tags]						smoke				skipped
+   	[Tags]						smoke				
 	configure fabric switch 
 	sleep  5   	
 	REST create tenant  		${tenant1_name}        
 	REST create tenant  		${tenant2_name} 
    	REST create vns				${tenant1_name}		${vns_1}	      
-	REST create vns  			${tenant2_name}		${vns_3}
+	REST create vns  			${tenant2_name}		${vns_2}
 	REST create vns ip  		${tenant1_name}  	${vns_1}  		${vns1_ip}	  	${vns1_subnet}
-   	REST create vns ip  		${tenant2_name}  	${vns_3}  		${vns3_ip}	  	${vns3_subnet}
+   	REST create vns ip  		${tenant2_name}  	${vns_2}  		${vns2_ip}	  	${vns2_subnet}
  	REST add interface to vns  	${tenant1_name}  	${vns_1}  		${leaf0_name} 	${leaf0_intf1}  ${untaggedvlan}	
-   	REST add interface to vns  	${tenant2_name}  	${vns_3}  		${leaf0_name} 	${leaf0_intf3} 	${untaggedvlan}	
+   	REST add interface to vns  	${tenant2_name}  	${vns_2}  		${leaf0_name} 	${leaf0_intf2} 	${untaggedvlan}	
    	REST attach tenant routers to system 	${tenant1_name} 
    	REST attach tenant routers to system 	${tenant2_name} 
    	mininet host ipcfg   		${host0_name}		${host0_bondif}	${host0_ip}		${host0_subnet} 
-   	mininet host ipcfg			${host2_name}		${host2_bondif}	${host2_ip}		${host2_subnet}
+   	mininet host ipcfg			${host1_name}		${host1_bondif}	${host1_ip}		${host1_subnet}
    	mininet host gw				${host0_name}		${vns1_ip}		${host0_bondif}
-   	mininet host gw				${host2_name}		${vns3_ip}		${host2_bondif}
+   	mininet host gw				${host1_name}		${vns2_ip}		${host1_bondif}
    	mininet host arp			${host0_name}		${vns1_ip}		${gw_mac}
-   	mininet host arp			${host2_name} 		${vns3_ip}		${gw_mac}
+   	mininet host arp			${host1_name} 		${vns2_ip}		${gw_mac}
 	sleep  						5
 	mininet l3 ping		${host0_name}	${host1_name} 		3
 	sleep 						2
