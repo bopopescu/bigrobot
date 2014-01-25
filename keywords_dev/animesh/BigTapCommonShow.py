@@ -119,7 +119,6 @@ class BigTapCommonShow(object):
         try:
             t = test.Test()
         except:
-            helpers.test_failure(c.rest.error())
             return False
         else:
             c= t.controller('master')
@@ -145,7 +144,6 @@ class BigTapCommonShow(object):
         try:
             t = test.Test()
         except:
-            helpers.test_failure(c.rest.error())
             return False
         else:
             c= t.controller('master')
@@ -175,7 +173,6 @@ class BigTapCommonShow(object):
         try:
             t = test.Test()
         except:
-            helpers.test_failure(c.rest.error())
             return False
         else:
             c= t.controller('master')

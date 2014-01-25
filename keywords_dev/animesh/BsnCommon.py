@@ -46,7 +46,6 @@ class BsnCommon(object):
         try:
             t = test.Test()
         except:
-            helpers.test_failure(c.rest.error())
             return False
         else:
             c= t.controller('master')
@@ -71,7 +70,6 @@ class BsnCommon(object):
         try:
             t = test.Test()
         except:
-            helpers.test_failure(c.rest.error())
             return False
         else:
             c= t.controller('master')
@@ -97,7 +95,6 @@ class BsnCommon(object):
         try:
             t = test.Test()
         except:
-            helpers.test_failure(c.rest.error())
             return False
         else:
             c= t.controller('master')
@@ -130,7 +127,6 @@ class BsnCommon(object):
         try:
             t = test.Test()
         except:
-            helpers.test_failure(c.rest.error())
             return False
         else:
             c= t.controller('master')
@@ -169,7 +165,6 @@ class BsnCommon(object):
         try:
             t = test.Test()
         except:
-            helpers.test_failure(c.rest.error())
             return False
         else:
             c= t.controller('master')
@@ -199,7 +194,6 @@ class BsnCommon(object):
         try:
             t = test.Test()
         except:
-            helpers.test_failure(c.rest.error())
             return False
         else:
             c= t.controller('master')
@@ -281,7 +275,6 @@ class BsnCommon(object):
             conn.send('logout\r')
             conn.close()
         except:
-            helpers.test_failure(c.rest.error())
             return False
         else:  
             return output
@@ -315,7 +308,6 @@ class BsnCommon(object):
         try:
             t = test.Test()
         except:
-            helpers.test_failure(c.rest.error())
             return False
         else:
             c= t.controller('master')
@@ -361,7 +353,6 @@ class BsnCommon(object):
         try:
             t = test.Test()
         except:
-            helpers.test_failure(c.rest.error())
             return False
         else:
             c= t.controller('master')
@@ -381,7 +372,6 @@ class BsnCommon(object):
         try:
             t = test.Test()
         except:
-            helpers.test_failure(c.rest.error())
             return False
         else:
             c= t.controller('master')
@@ -406,7 +396,6 @@ class BsnCommon(object):
         try:
             t = test.Test()
         except:
-            helpers.test_failure(c.rest.error())
             return False
         else:
             try:
@@ -453,7 +442,6 @@ class BsnCommon(object):
         try:
             t = test.Test()
         except:
-            helpers.test_failure(c.rest.error())
             return False
         else:
             c= t.controller('master')
@@ -481,7 +469,6 @@ class BsnCommon(object):
         try:
             t = test.Test()
         except:
-            helpers.test_failure(c.rest.error())
             return False
         else:
             c= t.controller('master')
@@ -507,7 +494,6 @@ class BsnCommon(object):
         try:
             t = test.Test()
         except:
-            helpers.test_failure(c.rest.error())
             return False
         else:
             c= t.controller('master')
@@ -532,7 +518,6 @@ class BsnCommon(object):
         try:
             t = test.Test()
         except:
-            helpers.test_failure(c.rest.error())
             return False
         else:
             c= t.controller('master')
@@ -558,7 +543,6 @@ class BsnCommon(object):
         try:
             t = test.Test()
         except:
-            helpers.test_failure(c.rest.error())
             return False
         else:
             c= t.controller('master')
@@ -583,7 +567,6 @@ class BsnCommon(object):
         try:
             t = test.Test()
         except:
-            helpers.test_failure(c.rest.error())
             return False
         else:
             c= t.controller('master')
@@ -611,7 +594,6 @@ class BsnCommon(object):
         try:
             t = test.Test()
         except:
-            helpers.test_failure(c.rest.error())
             return False
         else:
             c= t.controller('master')
@@ -635,7 +617,6 @@ class BsnCommon(object):
         try:
             t = test.Test()
         except:
-            helpers.test_failure(c.rest.error())
             return False
         else:
             c= t.controller('master')
@@ -700,7 +681,6 @@ class BsnCommon(object):
         try:
             t = test.Test()
         except:
-            helpers.test_failure(c.rest.error())
             return False
         else:
             c= t.controller('master')
@@ -724,7 +704,6 @@ class BsnCommon(object):
         try:
             t = test.Test()
         except:
-            helpers.test_failure(c.rest.error())
             return False
         else:
             c= t.controller('master')
@@ -748,7 +727,6 @@ class BsnCommon(object):
         try:
             t = test.Test()
         except:
-            helpers.test_failure(c.rest.error())
             return False
         else:
             c= t.controller('master')
@@ -772,7 +750,6 @@ class BsnCommon(object):
         try:
             t = test.Test()
         except:
-            helpers.test_failure(c.rest.error())
             return False
         else:
             c= t.controller('master')
@@ -799,7 +776,6 @@ class BsnCommon(object):
         try:
             t = test.Test()
         except:
-            helpers.test_failure(c.rest.error())
             return False
         else:
             c= t.controller('master')
@@ -826,7 +802,6 @@ class BsnCommon(object):
         try:
             t = test.Test()
         except:
-            helpers.test_failure(c.rest.error())
             return False
         else:
             c= t.controller('master')
@@ -855,7 +830,6 @@ class BsnCommon(object):
         try:
             t = test.Test()
         except:
-            helpers.test_failure(c.rest.error())
             return False
         else:
             c= t.controller('master')
@@ -888,7 +862,6 @@ class BsnCommon(object):
         try:
             t = test.Test()
         except:
-            helpers.test_failure(c.rest.error())
             return False
         else:
             c= t.controller('master')
@@ -916,7 +889,6 @@ class BsnCommon(object):
         try:
             t = test.Test()
         except:
-            helpers.test_failure(c.rest.error())
             return False
         else:
             c= t.controller('master')
@@ -943,7 +915,6 @@ class BsnCommon(object):
         try:
             t = test.Test()
         except:
-            helpers.test_failure(c.rest.error())
             return False
         else:
             c= t.controller('master')
