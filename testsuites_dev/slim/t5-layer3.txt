@@ -251,7 +251,7 @@ L3 ping untagged bm0 to tagged bm1 single leaf single rack within tenant differe
 
  
 L3 ping tagged bm0 to tagged bm1 single leaf single rack within tenant different VNS
-	[Tags]										skipped
+	[Tags]										sanity
 	configure fabric switch 
 	sleep  										5	
 	REST create tenant  						${tenant1_name}
@@ -279,7 +279,7 @@ L3 ping tagged bm0 to tagged bm1 single leaf single rack within tenant different
 	sleep  										20  
    
 L3 ping with destination host interface move in the same tenant
-	[Tags]										skipped
+	[Tags]										sanity
 	configure fabric switch 
 	sleep  5	
 	REST create tenant  						${tenant1_name}
