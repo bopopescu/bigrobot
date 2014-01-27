@@ -84,7 +84,7 @@ ${endpoint3name}	H3
 #	sleep  5
 
 L3 untagged bm0 ping to untagged bm1 same tenant across VNS with static configuration
-	[Tags]										skipped				smoke			
+	[Tags]										smoke			
 	configure fabric switch 
 	sleep  										5						
 	REST create tenant  						${tenant1_name}
@@ -118,7 +118,7 @@ L3 untagged bm0 ping to untagged bm1 same tenant across VNS with static configur
 
 
 L3 untagged bm0 ping to untagged bm1 same tenant across VNS with dynamic endpoints
-	[Tags]										skipped				smoke			
+	[Tags]										smoke			
 	configure fabric switch 
 	sleep  5		
 	REST create tenant  						${tenant1_name}
@@ -144,7 +144,7 @@ L3 untagged bm0 ping to untagged bm1 same tenant across VNS with dynamic endpoin
 	     
 
 L3 untagged bm0 ping to untagged bm1 same tenant across VNS dynamic host ARPing gateway
-	[Tags]										skipped				smoke			
+	[Tags]										smoke			
 	configure fabric switch 
 	sleep  5		
 	REST create tenant  						${tenant1_name}
@@ -167,7 +167,7 @@ L3 untagged bm0 ping to untagged bm1 same tenant across VNS dynamic host ARPing 
 	Should Be True  							${endpoints_cnt} == 2
 
 L3 untagged bm0 ping to untagged bm1 unreachable host on same tenant different VNS 
-	[Tags]										skipped				sanity				smoke
+	[Tags]										sanity				smoke
 	configure fabric switch 
 	sleep  										5	
 	REST create tenant  						${tenant1_name}
@@ -227,7 +227,7 @@ L3 untagged bm0 ping to untagged bm1 across tenants and VNS all statically defin
 #  	sleep  										20  
   
 L3 untagged bm0 ping to untagged bm1 with destination host interface move in the same tenant across VNS
-	[Tags]										skipped
+	[Tags]										
 	configure fabric switch 
 	sleep  5	
 	REST create tenant  						${tenant1_name}
@@ -269,7 +269,7 @@ L3 untagged bm0 ping to untagged bm1 with destination host interface move in the
 	sleep  										20  
  
 L3 ping untagged bm0 to tagged bm1 same tenant across VNS
-	[Tags]										skipped				sanity
+	[Tags]										sanity
 	configure fabric switch 
 	sleep  5	
 	REST create tenant  						${tenant1_name}
@@ -304,7 +304,7 @@ L3 ping untagged bm0 to tagged bm1 same tenant across VNS
 	sleep  										20  
  
 L3 ping tagged bm0 to tagged bm1 single leaf single rack within tenant different VNS
-	[Tags]										skipped
+	[Tags]										sanity
 	configure fabric switch 
 	sleep  										5	
 	REST create tenant  						${tenant1_name}
@@ -349,11 +349,13 @@ L3 ping with nexthop in a ecmp group
     REST add static routes          			${tenant1_name}         ${dstroute3}	${nexthopgroup3}
     REST add static routes          			${tenant1_name}         ${dstroute4}	${nexthopgroup4}
     
+    
+    
 * Keywords
 teardown topology
-#	remove fabric switch
-#	REST delete tenant							${tenant1_name}   
-#	REST delete tenant							${tenant2_name}     
+	remove fabric switch
+	REST delete tenant							${tenant1_name}   
+	REST delete tenant							${tenant2_name}     
 	sleep 										10
 		
 	
