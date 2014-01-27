@@ -206,7 +206,7 @@ L3 untagged bm0 ping to untagged bm1 across tenants and VNS all statically defin
    	REST_create_endpoint						${tenant1_name}		${vns1_1}		${endpoint1name}
 	REST_create_endpoint						${tenant2_name}		${vns2_1}		${endpoint2name}	
 	REST_create_endpoint_ip						${tenant1_name}		${vns1_1}		${endpoint1name}	${host0_ip}
-	REST_create_endpoint_ip						${tenant2_name}		${vns2_1}		${endpoint2name}	${host1_ip}
+	REST_create_endpoint_ip						${tenant2_name}		${vns2_1}		${endpoint2name}	${host2_ip}
 	REST_create_endpoint_mac					${tenant1_name}		${vns1_1}		${endpoint1name}	${host0_mac}
 	REST_create_endpoint_mac					${tenant2_name}		${vns2_1}		${endpoint2name}	${host1_mac}
 	REST_create_endpoint_switch_attachment		${tenant1_name}		${vns1_1}		${endpoint1name}	${leaf0_name}		${leaf0_intf1}	${untaggedvlan}	
