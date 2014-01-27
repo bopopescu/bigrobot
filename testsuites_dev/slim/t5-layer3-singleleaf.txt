@@ -194,7 +194,7 @@ L3 untagged bm0 ping to untagged bm1 across tenants and VNS all statically defin
 	REST create tenant  						${tenant2_name} 
 	REST create tenant							${tenant_system}
    	REST create vns								${tenant1_name}		${vns1_1}	      
-	REST create vns  							${tenant2_name}		${vns1_2}
+	REST create vns  							${tenant2_name}		${vns2_1}
 	REST create vns ip  						${tenant1_name}  	${vns1_1}  		${vns1_ip1}	  		${vns1_subnet1}
    	REST create vns ip  						${tenant2_name}  	${vns2_1}  		${vns2_ip1}	  		${vns2_subnet1}
  	REST add interface to vns  					${tenant1_name}  	${vns1_1}  		${leaf0_name} 		${leaf0_intf1}  ${untaggedvlan}	
@@ -203,8 +203,16 @@ L3 untagged bm0 ping to untagged bm1 across tenants and VNS all statically defin
    	REST attach system to tenant routers 		${tenant2_name} 
    	REST attach tenant routers to system		${tenant1_name} 
    	REST attach tenant routers to system		${tenant2_name} 
+   	REST_create_endpoint						${tenant1_name}		${vns1_1}		${endpoint1name}
+	REST_create_endpoint						${tenant2_name}		${vns2_1}		${endpoint2name}	
+	REST_create_endpoint_ip						${tenant1_name}		${vns1_1}		${endpoint1name}	${host0_ip}
+	REST_create_endpoint_ip						${tenant2_name}		${vns2_1}		${endpoint2name}	${host1_ip}
+	REST_create_endpoint_mac					${tenant1_name}		${vns1_1}		${endpoint1name}	${host0_mac}
+	REST_create_endpoint_mac					${tenant2_name}		${vns2_1}		${endpoint2name}	${host1_mac}
+	REST_create_endpoint_switch_attachment		${tenant1_name}		${vns1_1}		${endpoint1name}	${leaf0_name}		${leaf0_intf1}	${untaggedvlan}	
+	REST_create_endpoint_switch_attachment		${tenant2_name}		${vns2_1}		${endpoint2name}	${leaf0_name}		${leaf0_intf2}	${untaggedvlan}	
    	mininet host ipcfg   						${host0_name}		${host0_bondif}	${host0_ip}			${host0_subnet} 
-   	mininet host ipcfg							${host1_name}		${host1_bondif}	${host1_ip}			${host1_subnet}
+   	mininet host ipcfg							${host1_name}		${host1_bondif}	${host2_ip}			${host1_subnet}
    	mininet host gw								${host0_name}		${vns1_ip1}		${host0_bondif}
    	mininet host gw								${host1_name}		${vns2_ip1}		${host1_bondif}
    	mininet host arp							${host0_name}		${vns1_ip1}		${gw_mac}
@@ -343,9 +351,9 @@ L3 ping with nexthop in a ecmp group
     
 * Keywords
 teardown topology
-	remove fabric switch
-	REST delete tenant							${tenant1_name}   
-	REST delete tenant							${tenant2_name}     
+#	remove fabric switch
+#	REST delete tenant							${tenant1_name}   
+#	REST delete tenant							${tenant2_name}     
 	sleep 										10
 		
 	
