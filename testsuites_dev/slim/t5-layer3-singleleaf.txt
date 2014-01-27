@@ -197,8 +197,10 @@ L3 untagged bm0 ping to untagged bm1 across tenants and VNS all statically defin
    	REST create vns ip  						${tenant2_name}  	${vns1_2}  		${vns1_ip2}	  		${vns1_subnet2}
  	REST add interface to vns  					${tenant1_name}  	${vns1_1}  		${leaf0_name} 		${leaf0_intf1}  ${untaggedvlan}	
    	REST add interface to vns  					${tenant2_name}  	${vns1_2}  		${leaf0_name} 		${leaf0_intf2} 	${untaggedvlan}	
-   	REST attach tenant routers to system 		${tenant1_name} 
-   	REST attach tenant routers to system 		${tenant2_name} 
+   	REST attach system to tenant routers 		${tenant1_name} 
+   	REST attach system to tenant routers 		${tenant2_name} 
+   	REST attach tenant to system routers
+   	REST attach tenant to system routers
    	mininet host ipcfg   						${host0_name}		${host0_bondif}	${host0_ip}			${host0_subnet} 
    	mininet host ipcfg							${host1_name}		${host1_bondif}	${host1_ip}			${host1_subnet}
    	mininet host gw								${host0_name}		${vns1_ip1}		${host0_bondif}

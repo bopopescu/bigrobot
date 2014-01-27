@@ -83,7 +83,7 @@ ${endpoint3name}	H3
 #	sleep  5
 
 L3 ping bm0 to bm1 single leaf single rack within tenant different VNS all statically defined
-	[Tags]										smoke			
+	[Tags]										skipped				sanity			smoke			
 	configure fabric switch 
 	sleep  										5						
 	REST create tenant  						${tenant1_name}
@@ -117,7 +117,7 @@ L3 ping bm0 to bm1 single leaf single rack within tenant different VNS all stati
 
 
 L3 ping bm0 to bm1 single leaf single rack within tenant different VNS dynamic endpoints
-	[Tags]										smoke			
+	[Tags]										skipped				sanity			smoke			
 	configure fabric switch 
 	sleep  5		
 	REST create tenant  						${tenant1_name}
@@ -143,7 +143,7 @@ L3 ping bm0 to bm1 single leaf single rack within tenant different VNS dynamic e
 	     
 
 L3 ping bm0 to bm1 single leaf single rack within tenant different VNS all dynamic
-	[Tags]										smoke			
+	[Tags]										skipped				sanity			smoke			
 	configure fabric switch 
 	sleep  5		
 	REST create tenant  						${tenant1_name}
@@ -166,7 +166,7 @@ L3 ping bm0 to bm1 single leaf single rack within tenant different VNS all dynam
 	Should Be True  							${endpoints_cnt} == 2
 
 L3 ping bm0 to unreachable host single leaf single rack single tenant across VNS
-	[Tags]										sanity				smoke
+	[Tags]										skipped				sanity				smoke
 	configure fabric switch 
 	sleep  										5	
 	REST create tenant  						${tenant1_name}
@@ -199,6 +199,8 @@ L3 ping bm0 to bm1 single leaf single rack across tenants
    	REST add interface to vns  					${tenant2_name}  	${vns1_2}  		${leaf0_name} 		${leaf0_intf2} 	${untaggedvlan}	
    	REST attach tenant routers to system 		${tenant1_name} 
    	REST attach tenant routers to system 		${tenant2_name} 
+	REST create tenant  						${system_name}  
+	REST atta     	
    	mininet host ipcfg   						${host0_name}		${host0_bondif}	${host0_ip}			${host0_subnet} 
    	mininet host ipcfg							${host1_name}		${host1_bondif}	${host1_ip}			${host1_subnet}
    	mininet host gw								${host0_name}		${vns1_ip1}		${host0_bondif}
@@ -215,7 +217,7 @@ L3 ping bm0 to bm1 single leaf single rack across tenants
    	sleep  										20  
    
 L3 ping untagged bm0 to tagged bm1 single leaf single rack within tenant different VNS
-	[Tags]										sanity
+	[Tags]										skipped				sanity
 	configure fabric switch 
 	sleep  5	
 	REST create tenant  						${tenant1_name}
@@ -251,7 +253,7 @@ L3 ping untagged bm0 to tagged bm1 single leaf single rack within tenant differe
 
  
 L3 ping tagged bm0 to tagged bm1 single leaf single rack within tenant different VNS
-	[Tags]										sanity
+	[Tags]										skipped				sanity
 	configure fabric switch 
 	sleep  										5	
 	REST create tenant  						${tenant1_name}
@@ -272,14 +274,14 @@ L3 ping tagged bm0 to tagged bm1 single leaf single rack within tenant different
 	sleep 										2
 	${loss}=  									mininet l3 ping		${host0_name}	${host1_ip}			${ping_count}
 	Should Be True  							${loss} == 0
-	sleep  										20   
-	REST delete tenant 							${tenant1_name} 
+#	sleep  										20   
+#	REST delete tenant 							${tenant1_name} 
 	mininet l3 link untag						${host0_name}		${host0_bondif}	${vns1_vlan1}		${host0_ip}		${host0_subnet}
 	mininet l3 link untag						${host1_name}		${host1_bondif}	${vns1_vlan2}		${host1_ip}		${host1_subnet}       
-	sleep  										20  
+#	sleep  										20  
    
 L3 ping with destination host interface move in the same tenant
-	[Tags]										sanity
+	[Tags]										skipped				sanity
 	configure fabric switch 
 	sleep  5	
 	REST create tenant  						${tenant1_name}
@@ -340,9 +342,9 @@ L3 ping with nexthop in a ecmp group
     
 * Keywords
 teardown topology
-	remove fabric switch
-	REST delete tenant							${tenant1_name}   
-	REST delete tenant							${tenant2_name}     
+#	remove fabric switch
+#	REST delete tenant							${tenant1_name}   
+#	REST delete tenant							${tenant2_name}     
 	sleep 										10
 		
 	

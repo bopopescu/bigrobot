@@ -43,6 +43,35 @@ class T5_L3(object):
                 `tenant`        tenant name
             
             Return: true if configuration is successful, false otherwise
+            
+REST-POST: PUT http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[name="system"]/virtual-router/tenant-interfaces[tenant-name="A"] {"tenant-name": "A"}
+REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[name="system"]/virtual-router/tenant-interfaces[tenant-name="A"] reply: ""
+
+        '''
+        
+        t = test.Test()
+        c = t.controller()
+        
+        helpers.test_log("Input arguments: tenant = %s " % (tenant))
+        
+        url = '%s/api/v1/data/controller/applications/bvs/tenant[name="system"]/virtual-router/tenant-interfaces[tenant-name="%s"]' % (c.base_url, tenant)
+        try:
+            c.rest.post(url, {"tenant-name": tenant, "active": True})
+        except:
+            helpers.test_failure(c.rest.error())
+        else: 
+            helpers.test_log("Output: %s" % c.rest.result_json())
+            return c.rest.content() 
+        
+        
+    def rest_attach_system_to_tenant_routers(self, tenant):        
+        '''Attach tenant router to system router"
+        
+            Input:
+                `tenant`        tenant name
+            
+            Return: true if configuration is successful, false otherwise
+            
         '''
         
         t = test.Test()
@@ -57,7 +86,9 @@ class T5_L3(object):
             helpers.test_failure(c.rest.error())
         else: 
             helpers.test_log("Output: %s" % c.rest.result_json())
-            return c.rest.content()        
+            return c.rest.content()         
+        
+               
     
     def rest_add_static_routes(self, tenant, dstroute, nexthop):
         '''Add static routes to tenant router"
@@ -84,7 +115,8 @@ class T5_L3(object):
             helpers.test_failure(c.rest.error())
         else: 
             helpers.test_log("Output: %s" % c.rest.result_json())
-            return c.rest.content()               
+            return c.rest.content()    
+                   
         
     def rest_show_endpoints(self):
         t = test.Test()
