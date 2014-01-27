@@ -15,6 +15,7 @@ Resource		keywords_dev/t5_singleleaf_resource.txt
 * Variable
 ${tenant1_name}		A
 ${tenant2_name}		B
+${tenant_system}	system
 ${vns1_1}			A1
 ${vns1_2}			A2
 ${vns2_1}			B1
@@ -191,12 +192,13 @@ L3 untagged bm0 ping to untagged bm1 across tenants and VNS all statically defin
 	sleep										5   	
 	REST create tenant  						${tenant1_name}        
 	REST create tenant  						${tenant2_name} 
+	REST create tenant							${tenant_system}
    	REST create vns								${tenant1_name}		${vns1_1}	      
 	REST create vns  							${tenant2_name}		${vns1_2}
 	REST create vns ip  						${tenant1_name}  	${vns1_1}  		${vns1_ip1}	  		${vns1_subnet1}
-   	REST create vns ip  						${tenant2_name}  	${vns1_2}  		${vns1_ip2}	  		${vns1_subnet2}
+   	REST create vns ip  						${tenant2_name}  	${vns2_1}  		${vns2_ip1}	  		${vns2_subnet1}
  	REST add interface to vns  					${tenant1_name}  	${vns1_1}  		${leaf0_name} 		${leaf0_intf1}  ${untaggedvlan}	
-   	REST add interface to vns  					${tenant2_name}  	${vns1_2}  		${leaf0_name} 		${leaf0_intf2} 	${untaggedvlan}	
+   	REST add interface to vns  					${tenant2_name}  	${vns2_1}  		${leaf0_name} 		${leaf0_intf2} 	${untaggedvlan}	
    	REST attach system to tenant routers 		${tenant1_name} 
    	REST attach system to tenant routers 		${tenant2_name} 
    	REST attach tenant routers to system		${tenant1_name} 
@@ -204,9 +206,9 @@ L3 untagged bm0 ping to untagged bm1 across tenants and VNS all statically defin
    	mininet host ipcfg   						${host0_name}		${host0_bondif}	${host0_ip}			${host0_subnet} 
    	mininet host ipcfg							${host1_name}		${host1_bondif}	${host1_ip}			${host1_subnet}
    	mininet host gw								${host0_name}		${vns1_ip1}		${host0_bondif}
-   	mininet host gw								${host1_name}		${vns1_ip2}		${host1_bondif}
+   	mininet host gw								${host1_name}		${vns2_ip1}		${host1_bondif}
    	mininet host arp							${host0_name}		${vns1_ip1}		${gw_mac}
-   	mininet host arp							${host1_name} 		${vns1_ip2}		${gw_mac}
+   	mininet host arp							${host1_name} 		${vns2_ip1}		${gw_mac}
 	sleep  										5
 	mininet l3 ping								${host0_name}		${host1_name} 		3
 	sleep 										2
