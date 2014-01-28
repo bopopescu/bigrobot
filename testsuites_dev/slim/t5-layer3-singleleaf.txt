@@ -9,7 +9,7 @@ Library         keywords/BsnCommon.py
 Library         keywords/Mininet.py
 Library         keywords_dev/T5.py
 Library         keywords_dev/T5Fabric.py
-Library         keywords_dev/slim/T5_L3.py
+Library         keywords_dev/T5_L3.py
 Resource		keywords_dev/t5_singleleaf_resource.txt
 
 * Variable
@@ -74,6 +74,7 @@ ${untaggedvlan}		-1
 ${endpoint1name}	H1
 ${endpoint2name}	H2
 ${endpoint3name}	H3
+${dhcpserver1}		10.255.255.10
 
 
 
@@ -366,9 +367,9 @@ L3 configure dhcp relay on vns
     
 * Keywords
 teardown topology
-	remove fabric switch
-	REST delete tenant							${tenant1_name}   
-	REST delete tenant							${tenant2_name}     
+#	remove fabric switch
+#	REST delete tenant							${tenant1_name}   
+#	REST delete tenant							${tenant2_name}     
 	sleep 										10
 		
 	
