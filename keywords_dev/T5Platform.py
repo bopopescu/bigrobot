@@ -137,8 +137,15 @@ class T5Platform(object):
         result = slave.rest.get(showUrl)['content']
         slaveID = result[0]['status']['local-node-id']
         
-        url = "/api/v1/data/controller/os/action/power"
-        master.rest.post(url, {"action": "reboot"})
+        #url = "/api/v1/data/controller/os/action/power"
+        #master.rest.post(url, {"action": "reboot"})
+
+        n = t.node('c1')
+        if not helpers.is_controller('c1'):
+            helpers.test_error("Node must be a controller ('c1', 'c2').")
+
+        n.enable("reboot", prompt="Confirm Reboot (yes to continue) ")
+        n.enable("yes", prompt='Broadcast message from root@controller ')
  
         time.sleep(15)
  
