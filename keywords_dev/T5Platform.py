@@ -73,9 +73,10 @@ class T5Platform(object):
 
 
 
-    def rest_cluster_take_leader(self):
-        ''' Invoke "cluster election take-leader" command and verify the active controller change.
-            Verify by executing on both the current-active and current-stdby controller
+    def rest_cluster_election(self, rigged):
+        ''' Invoke "cluster election" commands: re-run or take-leader
+            If: "rigged" is true then verify the active controller change.
+            Else: execute the election rerun
         '''
         t = test.Test()
         slave = t.controller("slave")
@@ -90,32 +91,83 @@ class T5Platform(object):
         helpers.log("Current slave ID is : %s / Current master ID is: %s" % (slaveID, masterID))
 
         url = '/api/v1/data/controller/cluster/config/new-election'
-        slave.rest.post(url, {"rigged": True})
-        time.sleep(10)
 
+        if(rigged):
+            slave.rest.post(url, {"rigged": True})
+        else:
+            slave.rest.post(url, {"rigged": False})
+        
+        time.sleep(10)
         newMaster = t.controller("master")
         result = newMaster.rest.get(showUrl)['content'] 
         newMasterID = result[0]['status']['domain-leader']['leader-id']
+
         if(masterID == newMasterID):
-            helpers.test_failure("Fail: Master didn't change after executing take-leader")
-            return False
+            if(rigged):
+                helpers.test_failure("Fail: Master didn't change after executing take-leader")
+                return False
+            else:
+                helpers.log("Pass: Leader election re-run successful - Leader %s  is intact " % (masterID))
+                return True
         else:
             helpers.log("Pass: Take-Leader successful - Leader changed from %s to %s" % (masterID, newMasterID))
             return True
 
+    def rest_cluster_election_take_leader(self):
+        ''' Invoke "cluster election take-leader" command and verify the controller state
+        '''
+        self.rest_cluster_election(True)
 
     def rest_cluster_election_rerun(self):
         ''' Invoke "cluster election re-run" command and verify the controller state
         '''
+        self.rest_cluster_election(False)
 
-        try:
-            t = test.Test()
-            master = t.controller("master")
-            
 
-        except Exception, err:
-            helpers.test_failure("Exception in: rest_cluster_election_rerun %s : %s " % (Exception, err))
+    def rest_cluster_master_reboot(self):
+        ''' Reboot the cluster master
+        '''
+        t = test.Test()
+        master = t.controller("master")
+        slave = t.controller("slave")
+       
+        showUrl = '/api/v1/data/controller/cluster'
+        result = master.rest.get(showUrl)['content']
+        masterID = result[0]['status']['local-node-id']
+        result = slave.rest.get(showUrl)['content']
+        slaveID = result[0]['status']['local-node-id']
+        
+        url = "/api/v1/data/controller/os/action/power"
+        master.rest.post(url, {"action": "reboot"})
+ 
+        time.sleep(15)
+ 
+        master = t.controller("master")
+        showUrl = '/api/v1/data/controller/cluster'
+        result = master.rest.get(showUrl)['content']
+        newMasterID = result[0]['status']['local-node-id']
+ 
+        slave = t.controller("slave")
+        showUrl = '/api/v1/data/controller/cluster'
+        result = slave.rest.get(showUrl)['content']
+        newSlaveID = result[0]['status']['local-node-id']
+ 
+        if(masterID == newSlaveID and slaveID == newMasterID):
+            helpers.log("Pass: After the reboot cluster is stable - Master is : %s / Slave is: %s" % (newMasterID, newSlaveID))
+            return True
+        else:
+            helper.log("Fail: Reboot Failed. Cluster is not stable. Before the reboot Master is: %s / Slave is : %s \n \
+                    After the reboot Master is: %s / Slave is : %s " %(masterID, slaveID, newMasterID, newSlaveID))
             return False
+ 
+ 
+
+
+
+
+
+ 
+
 
 
 
