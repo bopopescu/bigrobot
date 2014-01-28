@@ -116,7 +116,11 @@ class Test(object):
                 authen.append(None)
         return authen
             
-    def topology(self, name=None, node=None):
+    def topology(self, name=None, node=None, ignore_error=False):
+        """
+        :param ignore_error: (Bool) If true, don't trigger exception when
+                             name is not found.
+        """
         if not self._init_in_progress:
             self.initialize()
 
@@ -130,7 +134,10 @@ class Test(object):
             return node
         elif name:
             if name not in self._topology:
-                helpers.environment_failure("Device '%s' is not found in topology" % name)
+                if ignore_error:
+                    return None
+                else:
+                    helpers.environment_failure("Device '%s' is not found in topology" % name)
             return self._topology[name]
         else:
             return self._topology
@@ -194,17 +201,17 @@ class Test(object):
 
         return self.topology(node)
         
-    def mininet(self, name='mn'):
-        return self.topology(name)
+    def mininet(self, name='mn', *args, **kwargs):
+        return self.topology(name, *args, **kwargs)
     
-    def switch(self, name='s1'):
-        return self.topology(name)
+    def switch(self, name='s1', *args, **kwargs):
+        return self.topology(name, *args, **kwargs)
 
-    def host(self, name='h1'):
-        return self.topology(name)
+    def host(self, name='h1', *args, **kwargs):
+        return self.topology(name, *args, **kwargs)
 
-    def node(self, name):
-        return self.topology(name)
+    def node(self, *args, **kwargs):
+        return self.topology(*args, **kwargs)
     
     def initialize(self):
         """
@@ -384,6 +391,26 @@ class Test(object):
 
         return n.rest.request_session_cookie(url)
 
+    def setup_switch(self, name):
+        """
+        Perform setup on SwitchLight
+        - configure the controller IP address and (optional) port
+        """
+        n = self.topology(name)
+
+        if not n.dev:
+            helpers.log("DevConf session is not available for node '%s'" % name)
+            return
+        
+        for controller in ('c1', 'c2'):
+            c = self.topology(controller, ignore_error=True)
+            if c:
+                if 'openflow_port' in self.topology_params()[controller]:
+                    openflow_port = self.topology_params()[controller]['openflow_port']
+                    n.config("controller %s port %s" % (c.ip, openflow_port))
+                else:
+                    n.config("controller %s" % c.ip)
+        
     def setup(self):
         # This check ensures we  don't try to setup multiple times.
         if self._setup_completed:
@@ -399,6 +426,8 @@ class Test(object):
             if helpers.is_controller(key):
                 self.setup_controller_firewall_allow_rest_access(key)
                 self.setup_controller_http_session_cookie(key)
+            elif helpers.is_switch(key):
+                self.setup_switch(key)
                 
         self._setup_completed = True
     

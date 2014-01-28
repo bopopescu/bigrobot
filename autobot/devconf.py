@@ -97,10 +97,10 @@ class DevConf(object):
         helpers.log("Closing device %s" % self.host)
 
 
-class ControllerDevConf(DevConf):
+class BsnDevConf(DevConf):
     def __init__(self, name=None, host=None, user=None, password=None,
                  port=None, is_console=False, debug=0):
-        super(ControllerDevConf, self).__init__(host, user, password,
+        super(BsnDevConf, self).__init__(host, user, password,
                                                 port=port,
                                                 is_console=is_console,
                                                 debug=debug)
@@ -122,7 +122,7 @@ class ControllerDevConf(DevConf):
     def exit_bash_mode(self, new_mode):
         self.mode = self.mode_before_bash
         helpers.log("Switching from bash to %s mode" % new_mode, level=5)
-        super(ControllerDevConf, self).cmd('exit', quiet=True)
+        super(BsnDevConf, self).cmd('exit', quiet=True)
         helpers.log("Current mode is %s" % self.mode)
 
     def cmd(self, cmd, quiet=False, mode='cmd', prompt=None, level=5):
@@ -134,32 +134,32 @@ class ControllerDevConf(DevConf):
 
             if self.is_enable():
                 helpers.log("Switching from enable to %s mode" % mode, level=level)
-                super(ControllerDevConf, self).cmd('exit', quiet=True, level=level)
+                super(BsnDevConf, self).cmd('exit', quiet=True, level=level)
             elif self.is_config():
                 helpers.log("Switching from config to %s mode" % mode, level=level)
-                super(ControllerDevConf, self).cmd('exit', quiet=True)
-                super(ControllerDevConf, self).cmd('exit', quiet=True)
+                super(BsnDevConf, self).cmd('exit', quiet=True)
+                super(BsnDevConf, self).cmd('exit', quiet=True)
         elif mode == 'enable':
             if self.is_bash():
                 self.exit_bash_mode(mode)
 
             if self.is_cli():
                 helpers.log("Switching from cli to %s mode" % mode, level=level)
-                super(ControllerDevConf, self).cmd('enable', quiet=True, level=level)
+                super(BsnDevConf, self).cmd('enable', quiet=True, level=level)
             elif self.is_config():
                 helpers.log("Switching from config to %s mode" % mode, level=level)
-                super(ControllerDevConf, self).cmd('exit', quiet=True, level=level)
+                super(BsnDevConf, self).cmd('exit', quiet=True, level=level)
         elif mode == 'config':
             if self.is_bash():
                 self.exit_bash_mode(mode)
 
             if self.is_cli():
                 helpers.log("Switching from cli to %s mode" % mode, level=level)
-                super(ControllerDevConf, self).cmd('enable', quiet=True, level=level)
-                super(ControllerDevConf, self).cmd('configure', quiet=True, level=level)
+                super(BsnDevConf, self).cmd('enable', quiet=True, level=level)
+                super(BsnDevConf, self).cmd('configure', quiet=True, level=level)
             elif self.is_enable():
                 helpers.log("Switching from enable to %s mode" % mode, level=level)
-                super(ControllerDevConf, self).cmd('configure', quiet=True, level=level)
+                super(BsnDevConf, self).cmd('configure', quiet=True, level=level)
         elif mode == 'bash':
             if self.is_cli():
                 self.mode_before_bash = 'cli'
@@ -171,7 +171,7 @@ class ControllerDevConf(DevConf):
                 self.mode_before_bash = 'config'
                 helpers.log("Switching from config to %s mode" % mode, level=level)
             helpers.log("Mode previous to bash is %s" % self.mode_before_bash, level=level)
-            super(ControllerDevConf, self).cmd('debug bash', quiet=True, level=level)
+            super(BsnDevConf, self).cmd('debug bash', quiet=True, level=level)
                 
         self.mode = mode
         #helpers.log("Current mode is %s" % self.mode, level=level)
@@ -179,7 +179,7 @@ class ControllerDevConf(DevConf):
         if not quiet:
             helpers.log("Execute command on '%s': %s" % (self.name, cmd), level=level)
 
-        super(ControllerDevConf, self).cmd(cmd, prompt=prompt, quiet=True)
+        super(BsnDevConf, self).cmd(cmd, prompt=prompt, quiet=True)
         if not quiet:
             helpers.log("%s content on '%s':\n%s%s"
                         % (mode, self.name, self.content(),
@@ -204,9 +204,19 @@ class ControllerDevConf(DevConf):
         return self.cmd(' '.join(('sudo', cmd)), quiet=quiet, mode='bash', prompt=prompt, level=level)
 
     def close(self):
-        super(ControllerDevConf, self).close()
+        super(BsnDevConf, self).close()
         # !!! FIXME: Need to close the controller connection
         
+
+class ControllerDevConf(BsnDevConf):
+    def __init__(self, *args, **kwargs):
+        super(ControllerDevConf, self).__init__(*args, **kwargs)
+
+
+class SwitchDevConf(BsnDevConf):
+    def __init__(self, *args, **kwargs):
+        super(SwitchDevConf, self).__init__(*args, **kwargs)
+
 
 class MininetDevConf(DevConf):
     """
@@ -331,40 +341,6 @@ class HostDevConf(DevConf):
     
     def sudo(self, cmd, quiet=False, prompt=False, level=5):
         return self.bash(' '.join(('sudo', cmd)), quiet=quiet, prompt=prompt, level=level)
-
-    def close(self):
-        super(HostDevConf, self).close()
-        # !!! FIXME: Need to close the controller connection
-
-
-class SwitchDevConf(DevConf):
-    def __init__(self, name=None, host=None, user=None, password=None,
-                 port=None, is_console=False, debug=0):
-        super(SwitchDevConf, self).__init__(host, user, password,
-                                            port=port,
-                                            is_console=is_console,
-                                            debug=debug)
-        self.name = name
-        self.cli('show version')
-
-    def cmd(self, cmd, quiet=False, prompt=False, level=4):
-        if not quiet:
-            helpers.log("Execute command on '%s': %s"
-                        % (self.name, cmd), level=level)
-
-        super(SwitchDevConf, self).cmd(cmd, prompt=prompt, quiet=True)
-        if not quiet:
-            helpers.log("Content on '%s':\n%s%s"
-                        % (self.name, self.content(),
-                           br_utils.end_of_output_marker()),
-                           level=level)
-        return self.result()
-
-    # Alias
-    cli = cmd
-    
-    #def sudo(self, cmd, quiet=False, level=5):
-    #    return self.bash(' '.join(('sudo', cmd)), quiet=quiet, level=level)
 
     def close(self):
         super(HostDevConf, self).close()
