@@ -9,7 +9,7 @@ Library         keywords/BsnCommon.py
 Library         keywords/Mininet.py
 Library         keywords_dev/T5.py
 Library         keywords_dev/T5Fabric.py
-Library         keywords_dev/slim/T5_L3.py
+Library         keywords_dev/T5_L3.py
 Resource		keywords_dev/t5_singleleaf_resource.txt
 
 * Variable
@@ -73,6 +73,8 @@ ${untaggedvlan}		-1
 ${endpoint1name}	H1
 ${endpoint2name}	H2
 ${endpoint3name}	H3
+${dhcpserver1}		10.255.255.3
+
 
 
 
@@ -186,7 +188,7 @@ L3 ping bm0 to unreachable host single leaf single rack single tenant across VNS
 
     
 L3 ping bm0 to bm1 single leaf single rack across tenants  
-   	[Tags]										sanity 				smoke				
+   	[Tags]										sanity 				smoke			skipped		
 	configure fabric switch 
 	sleep										5   	
 	REST create tenant  						${tenant1_name}        
@@ -339,6 +341,20 @@ L3 ping with nexthop in a ecmp group
     REST add static routes          			${tenant1_name}         ${dstroute2} 	${nexthopgroup2}
     REST add static routes          			${tenant1_name}         ${dstroute3}	${nexthopgroup3}
     REST add static routes          			${tenant1_name}         ${dstroute4}	${nexthopgroup4}
+
+
+L3 configure dhcp relay on vns
+	[Tags]										sanity
+	configure fabric switch 
+	sleep 										5	
+    REST create tenant          				${tenant1_name}
+	REST create vns								${tenant1_name}         ${vns1_1}
+	REST create vns ip  						${tenant1_name}  		${vns1_1}  		${vns1_ip1}	  	${vns1_subnet1}
+	REST add interface to vns  					${tenant1_name}  		${vns1_1}  		${leaf0_name} 	${leaf0_intf1}  ${untaggedvlan}		
+	REST create dhcp relay						${tenant1_name}  		${vns1_1}  		${dhcpserver1}
+	REST toggle dhcp relay						${tenant1_name}  		${vns1_1}  		True
+	sleep 										5
+
     
 * Keywords
 teardown topology
