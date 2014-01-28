@@ -305,51 +305,6 @@ class T5(object):
 
         return c.rest.content()
             
-    def rest_change_to_tenant(self, tenant):
-        t = test.Test()
-        c = t.controller()
-        
-        helpers.test_log("Input arguments: tenant = %s" % tenant )
-        
-        url = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]?config=true&select=name&single=true' % (c.base_url, tenant)
-        c.rest.get(url, {"name": tenant})
-        helpers.test_log("Output: %s" % c.rest.result_json())
-
-        if not c.rest.status_code_ok():
-            helpers.test_failure(c.rest.error())
-
-        return c.rest.content()
-    
-    def rest_change_to_vns(self, tenant, vns): 
-        t = test.Test()
-        c = t.controller()
-        
-        helpers.test_log("Input arguments: vns = %s" % vns )
-        
-        url = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]?config=true&select=name&single=true' % (c.base_url, tenant, vns)
-        c.rest.get(url, {"name": vns})
-        helpers.test_log("Output: %s" % c.rest.result_json())
-
-        if not c.rest.status_code_ok():
-            helpers.test_failure(c.rest.error())
-
-        return c.rest.content()
-    
-    def rest_change_to_portgroup(self, pg): 
-        t = test.Test()
-        c = t.controller()
-        
-        helpers.test_log("Input arguments: port-group = %s" % pg )
-        
-        url = '%s/api/v1/data/controller/fabric/port-group[name="%s"]?config=true&select=name&single=true' % (c.base_url, pg)
-        c.rest.get(url, {"name": pg})
-        helpers.test_log("Output: %s" % c.rest.result_json())
-
-        if not c.rest.status_code_ok():
-            helpers.test_failure(c.rest.error())
-
-        return c.rest.content()
-
     def rest_delete_portgroup_from_vns(self, tenant, vns, pg, vlan):
         t = test.Test()
         c = t.controller()
@@ -444,8 +399,7 @@ class T5(object):
         data = c.rest.content()
         for i in range(0,len(data)):
                 if len(data) != 0:
-                     name = re.search('^v', 'data[i]["name"]')
-                     if data[i]["name"] == str(name):
+                     if (int(data[i]["internal-vlan"]) != 0):
                          helpers.log("Expected VNS's are present in the config")
                          return True
                      else:
