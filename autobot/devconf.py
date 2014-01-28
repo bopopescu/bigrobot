@@ -1,5 +1,5 @@
 from Exscript import Account
-from Exscript.protocols import SSH2
+from Exscript.protocols import SSH2, Telnet
 from Exscript.protocols.Exception import LoginFailure
 import autobot.helpers as helpers
 import autobot.utils as br_utils
@@ -7,7 +7,9 @@ import sys
 
 
 class DevConf(object):
-    def __init__(self, host=None, user=None, password=None):
+    def __init__(self, host=None, user=None, password=None, port=None,
+                 is_console=False,
+                 debug=0):
         if host is None:
             helpers.environment_failure("Must specify a host.")
         if user is None:
@@ -15,14 +17,25 @@ class DevConf(object):
         if password is None:
             helpers.environment_failure("Must specify a password.")
         
-        helpers.log("Connecting to host %s" % host)
         #helpers.log("User:%s, password:%s" % (user, password))
         account = Account(user, password)
         
         try:
-            self.conn = SSH2()
-            self.conn.connect(host)
-            self.conn.login(account)
+            if is_console:
+                helpers.log("Connecting to console %s, port %s" % (host, port))
+                self.conn = Telnet(debug=debug)
+                self.conn.connect(host, port)
+                # Note: User needs to figure out what state the console is in
+                #       and manage it themself.
+            else:
+                if port:
+                    helpers.log("Connecting to host %s, port %s" % (host, port))
+                else:
+                    helpers.log("Connecting to host %s" % host)
+
+                self.conn = SSH2(debug=debug)
+                self.conn.connect(host, port)
+                self.conn.login(account)
         except LoginFailure:
             helpers.log("Login failure: Check the user name and password for device %s. Also try to log in manually to see what the error is." % host)
             helpers.log("Exception in %s" % sys.exc_info()[0])
@@ -34,9 +47,11 @@ class DevConf(object):
         self.host = host
         self.user = user
         self.password = password
+        self.port = port
         self.last_result = None
         self.mode = 'cli'
         self.is_prompt_changed = False
+        self.set_prompt = self.conn.set_prompt 
 
     def cmd(self, cmd, quiet=False, prompt=None, level=5):
         if prompt:
@@ -52,6 +67,7 @@ class DevConf(object):
             helpers.log("Execute command: %s" % cmd, level=level)
 
         self.conn.execute(cmd)
+        helpers.sleep(1)
         self.last_result = { 'content': self.conn.response }
         
         if not quiet:
@@ -82,8 +98,12 @@ class DevConf(object):
 
 
 class ControllerDevConf(DevConf):
-    def __init__(self, name=None, host=None, user=None, password=None):
-        super(ControllerDevConf, self).__init__(host, user, password)
+    def __init__(self, name=None, host=None, user=None, password=None,
+                 port=None, is_console=False, debug=0):
+        super(ControllerDevConf, self).__init__(host, user, password,
+                                                port=port,
+                                                is_console=is_console,
+                                                debug=debug)
         self.mode_before_bash = None
         self.name = name
 
@@ -105,7 +125,7 @@ class ControllerDevConf(DevConf):
         super(ControllerDevConf, self).cmd('exit', quiet=True)
         helpers.log("Current mode is %s" % self.mode)
 
-    def cmd(self, cmd, quiet=False, mode='cli', prompt=None, level=5):
+    def cmd(self, cmd, quiet=False, mode='cmd', prompt=None, level=5):
 
         # Check to make sure we're in the right mode prior to executing command
         if mode == 'cli':
@@ -195,7 +215,8 @@ class MininetDevConf(DevConf):
     def __init__(self, name=None, host=None, user=None, password=None,
                  controller=None,
                  port=None,
-                 topology=None):
+                 topology=None,
+                 debug=0):
 
         if controller is None:
             helpers.environment_failure("Must specify a controller for Mininet.")
@@ -208,7 +229,7 @@ class MininetDevConf(DevConf):
         self.name = name
         self.state = 'stopped'  # or 'started'
 
-        super(MininetDevConf, self).__init__(host, user, password)
+        super(MininetDevConf, self).__init__(host, user, password, debug=debug)
         self.start_mininet()
         
     def cmd(self, cmd, quiet=False, prompt=False, level=4):
@@ -283,8 +304,12 @@ class T6MininetDevConf(MininetDevConf):
 
 
 class HostDevConf(DevConf):
-    def __init__(self, name=None, host=None, user=None, password=None):
-        super(HostDevConf, self).__init__(host, user, password)
+    def __init__(self, name=None, host=None, user=None, password=None,
+                 port=None, is_console=False, debug=0):
+        super(HostDevConf, self).__init__(host, user, password,
+                                          port=port,
+                                          is_console=is_console,
+                                          debug=debug)
         self.name = name
         self.bash('uname -a')
 
@@ -313,8 +338,12 @@ class HostDevConf(DevConf):
 
 
 class SwitchDevConf(DevConf):
-    def __init__(self, name=None, host=None, user=None, password=None):
-        super(SwitchDevConf, self).__init__(host, user, password)
+    def __init__(self, name=None, host=None, user=None, password=None,
+                 port=None, is_console=False, debug=0):
+        super(SwitchDevConf, self).__init__(host, user, password,
+                                            port=port,
+                                            is_console=is_console,
+                                            debug=debug)
         self.name = name
         self.cli('show version')
 

@@ -275,9 +275,10 @@ class Test(object):
                 helpers.environment_failure("Not able to initialize device '%s'" % key)
             self.topology(key, n)
 
-            helpers.log("Exscript driver for '%s': %s"
-                        % (key, n.dev.conn.get_driver()))
-            helpers.log("Node '%s' is platform '%s'" % (key, n.platform()))
+            if n.dev:
+                helpers.log("Exscript driver for '%s': %s"
+                            % (key, n.dev.conn.get_driver()))
+                helpers.log("Node '%s' is platform '%s'" % (key, n.platform()))
 
         helpers.prettify_log("self._topology: ", self._topology)
         helpers.log("Test object initialization completed.") 
@@ -330,6 +331,11 @@ class Test(object):
     
     def controller_cli_firewall_allow_rest_access(self, name, node_id):
         n = self.topology(name)
+
+        if not n.dev:
+            helpers.log("DevConf session is not available for node '%s'" % name)
+            return
+
         n.config('controller-node %s' % node_id)
         n.config('interface Ethernet 0')
         n.config('firewall allow tcp 8000')
@@ -338,8 +344,13 @@ class Test(object):
         n.config('exit')
         
     def setup_controller_firewall_allow_rest_access(self, name):
-        helpers.log("Enabling REST access via firewall filters")
         n = self.topology(name)
+
+        if not n.dev:
+            helpers.log("DevConf session is not available for node '%s'" % name)
+            return
+        
+        helpers.log("Enabling REST access via firewall filters")
         platform = n.platform()
         
         if helpers.is_bvs(platform):
@@ -357,6 +368,11 @@ class Test(object):
     
     def setup_controller_http_session_cookie(self, name):
         n = self.topology(name)
+
+        if not n.dev:
+            helpers.log("DevConf session is not available for node '%s'" % name)
+            return
+        
         platform = n.platform()
 
         helpers.log("Setting up HTTP session cookies for REST access")
@@ -366,9 +382,7 @@ class Test(object):
         elif helpers.is_bigtap(platform) or helpers.is_bigwire(platform):
             url = "/auth/login"
 
-        result = n.rest.post(url, {"user":"admin", "password":"adminadmin"})
-        session_cookie = result['content']['session_cookie']
-        n.rest.set_session_cookie(session_cookie)
+        return n.rest.request_session_cookie(url)
 
     def setup(self):
         # This check ensures we  don't try to setup multiple times.

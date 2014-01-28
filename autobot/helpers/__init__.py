@@ -727,3 +727,33 @@ def openstack_convert_table_to_dict(input_str):
     out = br_utils.convert_table_to_dict(out)
 
     return out
+
+
+def params_val(k, params_dict):
+    """
+    If key is found in Params dictionary then return its value, else return
+    None.
+    """
+    if k in params_dict:
+        return params_dict[k]
+    else:
+        return None
+
+
+def params_is_true(k, params_dict):
+    val = params_val(k, params_dict)
+    if val is True:
+        return True
+    else:
+        return False
+
+
+def params_is_false(k, params_dict):
+    val = params_val(k, params_dict)
+    if val is False:
+        return True
+    else:
+        return False
+
+def marker():
+    print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
