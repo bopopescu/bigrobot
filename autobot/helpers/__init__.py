@@ -720,15 +720,10 @@ def openstack_convert_table_to_dict(input_str):
         test_error("Input must be a string or a list")
         
     out = br_utils.strip_empty_lines(out)
-    log("out1: %s" % out)
     out = br_utils.strip_cruds_before_table_begins(out)
-    log("out2: %s" % out)
     out = br_utils.strip_cruds_after_table_ends(out)
-    log("out3: %s" % out)
     out = br_utils.strip_table_row_dividers(out)
-    log("out4: %s" % out)
     out = br_utils.strip_table_ws_between_columns(out)
-    log("out5: %s" % out)
     out = br_utils.convert_table_to_dict(out)
 
     return out

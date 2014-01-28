@@ -13,6 +13,7 @@ class Node(object):
         self.base_url = None
         self.rest = None  # REST handle
         self.is_pingable = False
+
         
     def platform(self):
         return self.dev.platform()
@@ -44,6 +45,11 @@ class ControllerNode(Node):
         self.pingable_or_die()
         params = t.topology_params()
 
+        # Note: Must be initialized before BsnRestClient since we need the
+        # CLI for platform info and also to configure the firewall for REST
+        # access
+        
+        helpers.log("name=%s host=%s user=%s password=%s" % (name, ip, user, password))
         self.dev = devconf.ControllerDevConf(name=name,
                                              host=ip,
                                              user=user,
@@ -63,18 +69,6 @@ class ControllerNode(Node):
                                   platform=self.platform(),
                                   host=self.ip)
         
-        # !!! FIXME: Can remove this if no one complains
-        # Shortcuts
-        #self.post = self.rest.post
-        #self.get = self.rest.get
-        #self.put = self.rest.put
-        #self.patch = self.rest.patch
-        #self.delete = self.rest.delete
-        #self.rest_content = self.rest.content
-        #self.rest_content_json = self.rest.content_json
-        #self.rest_result = self.rest.result
-        #self.rest_result_json = self.rest.result_json
-        
         # Shortcuts
         self.cli = self.dev.cli           # CLI mode
         self.enable = self.dev.enable     # Enable mode
@@ -83,6 +77,7 @@ class ControllerNode(Node):
         self.sudo   = self.dev.sudo       # Sudo (part of Bash mode)
         self.cli_content = self.dev.content
         self.cli_result = self.dev.result
+        self.set_prompt = self.dev.conn.set_prompt
 
 
 class MininetNode(Node):
@@ -127,6 +122,7 @@ class MininetNode(Node):
         self.start_mininet = self.dev.start_mininet
         self.restart_mininet = self.dev.restart_mininet
         self.stop_mininet = self.dev.stop_mininet
+        self.set_prompt = self.dev.conn.set_prompt
 
 
 class HostNode(Node):
@@ -153,6 +149,7 @@ class HostNode(Node):
         self.sudo = self.dev.sudo
         self.bash_content = self.dev.content
         self.bash_result = self.dev.result
+        self.set_prompt = self.dev.conn.set_prompt
 
 
 class SwitchNode(Node):
@@ -179,3 +176,4 @@ class SwitchNode(Node):
         #self.bash = self.dev.bash
         self.cli_content = self.dev.content
         self.cli_result = self.dev.result
+        self.set_prompt = self.dev.conn.set_prompt

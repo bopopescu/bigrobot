@@ -1,7 +1,9 @@
 from Exscript import Account
 from Exscript.protocols import SSH2
+from Exscript.protocols.Exception import LoginFailure
 import autobot.helpers as helpers
 import autobot.utils as br_utils
+import sys
 
 
 class DevConf(object):
@@ -16,17 +18,36 @@ class DevConf(object):
         helpers.log("Connecting to host %s" % host)
         #helpers.log("User:%s, password:%s" % (user, password))
         account = Account(user, password)
-        self.conn = SSH2()
-        self.conn.connect(host)
-        self.conn.login(account)
+        
+        try:
+            self.conn = SSH2()
+            self.conn.connect(host)
+            self.conn.login(account)
+        except LoginFailure:
+            helpers.log("Login failure: Check the user name and password for device %s. Also try to log in manually to see what the error is." % host)
+            helpers.log("Exception in %s" % sys.exc_info()[0])
+            raise
+        except:
+            helpers.log("Exception in %s" % sys.exc_info()[0])
+            raise        
         
         self.host = host
         self.user = user
         self.password = password
         self.last_result = None
         self.mode = 'cli'
+        self.is_prompt_changed = False
 
-    def cmd(self, cmd, quiet=False, level=5):
+    def cmd(self, cmd, quiet=False, prompt=None, level=5):
+        if prompt:
+            helpers.log("Expected prompt is '%s'" % prompt)
+            self.conn.set_prompt(prompt)
+            self.is_prompt_changed = True
+        else:
+            if self.is_prompt_changed:
+                helpers.log("Resetting default prompt")
+                self.conn.set_prompt()
+            
         if not quiet:
             helpers.log("Execute command: %s" % cmd, level=level)
 
@@ -84,7 +105,7 @@ class ControllerDevConf(DevConf):
         super(ControllerDevConf, self).cmd('exit', quiet=True)
         helpers.log("Current mode is %s" % self.mode)
 
-    def cmd(self, cmd, quiet=False, mode='cli', level=5):
+    def cmd(self, cmd, quiet=False, mode='cli', prompt=None, level=5):
 
         # Check to make sure we're in the right mode prior to executing command
         if mode == 'cli':
@@ -138,7 +159,7 @@ class ControllerDevConf(DevConf):
         if not quiet:
             helpers.log("Execute command on '%s': %s" % (self.name, cmd), level=level)
 
-        super(ControllerDevConf, self).cmd(cmd, quiet=True)
+        super(ControllerDevConf, self).cmd(cmd, prompt=prompt, quiet=True)
         if not quiet:
             helpers.log("%s content on '%s':\n%s%s"
                         % (mode, self.name, self.content(),
@@ -147,20 +168,20 @@ class ControllerDevConf(DevConf):
         return self.result()
 
     
-    def cli(self, cmd, quiet=False, level=5):
-        return self.cmd(cmd, quiet=quiet, mode='cli', level=level)
+    def cli(self, cmd, quiet=False, prompt=False, level=5):
+        return self.cmd(cmd, quiet=quiet, mode='cli', prompt=prompt, level=level)
 
-    def enable(self, cmd, quiet=False, level=5):
-        return self.cmd(cmd, quiet=quiet, mode='enable', level=level)
+    def enable(self, cmd, quiet=False, prompt=False, level=5):
+        return self.cmd(cmd, quiet=quiet, mode='enable', prompt=prompt, level=level)
 
-    def config(self, cmd, quiet=False, level=5):
-        return self.cmd(cmd, quiet=quiet, mode='config', level=level)
+    def config(self, cmd, quiet=False, prompt=False, level=5):
+        return self.cmd(cmd, quiet=quiet, mode='config', prompt=prompt, level=level)
 
-    def bash(self, cmd, quiet=False, level=5):
-        return self.cmd(cmd, quiet=quiet, mode='bash', level=level)
+    def bash(self, cmd, quiet=False, prompt=False, level=5):
+        return self.cmd(cmd, quiet=quiet, mode='bash', prompt=prompt, level=level)
 
-    def sudo(self, cmd, quiet=False, level=5):
-        return self.cmd(' '.join(('sudo', cmd)), quiet=quiet, mode='bash', level=level)
+    def sudo(self, cmd, quiet=False, prompt=False, level=5):
+        return self.cmd(' '.join(('sudo', cmd)), quiet=quiet, mode='bash', prompt=prompt, level=level)
 
     def close(self):
         super(ControllerDevConf, self).close()
@@ -190,12 +211,12 @@ class MininetDevConf(DevConf):
         super(MininetDevConf, self).__init__(host, user, password)
         self.start_mininet()
         
-    def cmd(self, cmd, quiet=False, level=4):
+    def cmd(self, cmd, quiet=False, prompt=False, level=4):
         if not quiet:
             helpers.log("Execute command on '%s': %s"
                         % (self.name, cmd), level=level)
 
-        super(MininetDevConf, self).cmd(cmd, quiet=True)
+        super(MininetDevConf, self).cmd(cmd, prompt=prompt, quiet=True)
         if not quiet:
             helpers.log("Content on '%s':\n%s%s"
                         % (self.name, self.content(),
@@ -267,12 +288,12 @@ class HostDevConf(DevConf):
         self.name = name
         self.bash('uname -a')
 
-    def cmd(self, cmd, quiet=False, level=4):
+    def cmd(self, cmd, quiet=False, prompt=False, level=4):
         if not quiet:
             helpers.log("Execute command on '%s': %s"
                         % (self.name, cmd), level=level)
 
-        super(HostDevConf, self).cmd(cmd, quiet=True)
+        super(HostDevConf, self).cmd(cmd, prompt=prompt, quiet=True)
         if not quiet:
             helpers.log("Content on '%s':\n%s%s"
                         % (self.name, self.content(),
@@ -283,8 +304,8 @@ class HostDevConf(DevConf):
     # Alias
     bash = cmd
     
-    def sudo(self, cmd, quiet=False, level=5):
-        return self.bash(' '.join(('sudo', cmd)), quiet=quiet, level=level)
+    def sudo(self, cmd, quiet=False, prompt=False, level=5):
+        return self.bash(' '.join(('sudo', cmd)), quiet=quiet, prompt=prompt, level=level)
 
     def close(self):
         super(HostDevConf, self).close()
@@ -297,12 +318,12 @@ class SwitchDevConf(DevConf):
         self.name = name
         self.cli('show version')
 
-    def cmd(self, cmd, quiet=False, level=4):
+    def cmd(self, cmd, quiet=False, prompt=False, level=4):
         if not quiet:
             helpers.log("Execute command on '%s': %s"
                         % (self.name, cmd), level=level)
 
-        super(SwitchDevConf, self).cmd(cmd, quiet=True)
+        super(SwitchDevConf, self).cmd(cmd, prompt=prompt, quiet=True)
         if not quiet:
             helpers.log("Content on '%s':\n%s%s"
                         % (self.name, self.content(),
