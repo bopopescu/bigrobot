@@ -19,26 +19,26 @@ configure Dual Rack Dual Leaf Topology
     rest check fabric switch connectivity
    
 Verify Fabric Lag formation from leaf node  
-	verify fabric lag   00:00:00:00:00:02:00:01
+	verify fabric lag   00:00:00:00:02:00:00:01
 	
 verify fabric lag formation from spine node
-    verify fabric lag   00:00:00:00:00:01:00:01
+    verify fabric lag   00:00:00:00:01:00:00:01
 	
 Remove the Fabric Role spine and verify the lag from leaf switch  
 	REST remove fabric role   spine       
     sleep  5 
-	verify fabric lag   00:00:00:00:00:02:00:01
+	verify fabric lag   00:00:00:00:02:00:00:01
 
 Verify Fabric Lag from spine after deleting one spine 
-	verify fabric lag   00:00:00:00:00:01:00:01
+	verify fabric lag   00:00:00:00:01:00:00:01
 
 Add the Fabric Role spine back and verify the lag from leaf switch  
 	REST configure fabric role   spine0   spine      
     sleep  5 
-	verify fabric lag   00:00:00:00:00:02:00:01
+	verify fabric lag   00:00:00:00:02:00:00:01
 	
 Verify Fabric Lag from spine after adding back spine node 
-	verify fabric lag   00:00:00:00:00:01:00:01
+	verify fabric lag   00:00:00:00:01:00:00:01
 
 Tear down config and topology
     remove fabric switch 

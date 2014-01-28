@@ -27,13 +27,13 @@ Setup Dual Rack Dual Leaf Topology
    
 Add a new rack rack2 with Dual leaf switch   
 	rest configure switch  leaf2-a 
-  	rest configure dpid  leaf1-a  00:00:00:00:00:02:00:05
+  	rest configure dpid  leaf1-a  00:00:00:00:02:00:00:05
   	rest configure fabric role  leaf2-a  leaf
   	rest configure leaf group  leaf2-a  rack2
   	sleep 3
   	rest verify fabric link
   	rest configure switch  leaf2-b 
-  	rest configure dpid  leaf2-b  00:00:00:00:00:02:00:06
+  	rest configure dpid  leaf2-b  00:00:00:00:02:00:00:06
   	rest configure fabric role  leaf2-b  leaf
   	rest configure leaf group  leaf2-b  rack2
 	sleep 3   
@@ -49,13 +49,13 @@ Delete a rack2 and verify the fabric link
 	
 Re-add a new rack rack2 with Dual leaf switch  
 	rest configure switch  leaf2-a 
-  	rest configure dpid  leaf1-a  00:00:00:00:00:02:00:05
+  	rest configure dpid  leaf1-a  00:00:00:00:02:00:00:05
   	rest configure fabric role  leaf2-a  leaf
   	rest configure leaf group  leaf2-a  rack2
   	sleep 3
   	rest verify fabric link
   	rest configure switch  leaf2-b 
-  	rest configure dpid  leaf2-b  00:00:00:00:00:02:00:06
+  	rest configure dpid  leaf2-b  00:00:00:00:02:00:00:06
   	rest configure fabric role  leaf2-b  leaf
   	rest configure leaf group  leaf2-b  rack2
 	sleep 3   
@@ -66,7 +66,7 @@ Remove/add rack0 leaf0-b switch to verify the fabric status
 	sleep 10
 	rest verify fabric link
 	rest configure switch  leaf0-b 
-  	rest configure dpid  leaf0-b  00:00:00:00:00:02:00:02
+  	rest configure dpid  leaf0-b  00:00:00:00:02:00:00:02
   	rest configure fabric role  leaf0-b  leaf
   	rest configure leaf group  leaf0-b  rack0
   	sleep 5
