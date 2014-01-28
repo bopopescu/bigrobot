@@ -113,3 +113,8 @@ root@nova-controller:~#
         mn.stop_mininet()
         mn.start_mininet()
         mn.restart_mininet()
+
+    def bounce_session_cookie(self):
+        t = test.Test()
+        c = t.controller('master')
+        c.rest.get("/api/v1/data/controller/core/aaa/local-user")

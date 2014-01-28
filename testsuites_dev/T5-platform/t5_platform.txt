@@ -1,7 +1,7 @@
 == T5 Platform Test Suite ==
 
 * Setting
-Documentation    T5 BVS APP Functional CLI Test Suite
+Documentation    T5 Controller Platform Test Suite
 Suite Setup      base suite setup
 #Suite Teardown   base suite teardown
 Test Setup       base test setup
@@ -26,15 +26,21 @@ ${bm1_intf0}  leaf0-eth6
 ${bm2_intf0}  leaf1-eth5
 
 * Test Case 
-Verify HA Cluster Formation
-   [Tags]  HA
-   rest verify show cluster
+#Verify HA Cluster Formation
+#   [Tags]  HA
+#   rest verify show cluster
    
-#Verify Cluster Take Leader
-#	[Tags] HA
-#	rest cluster take leader
-#	sleep 60
+#Verify Cluster Election Take-Leader
+#	[Tags]  HA
+#	rest cluster election take leader
 
+#Verify Cluster Election Re-run
+#	[Tags]  HA
+#	rest cluster election rerun
+
+Verify Cluster Master Reboot
+	[Tags]  HA
+	rest cluster master reboot
 
 #Configure Single Leaf Dual Rack setup
 #   [Tags]  functional

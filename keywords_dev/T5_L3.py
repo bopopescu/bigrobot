@@ -292,6 +292,105 @@ REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[
             helpers.test_log("Output: %s" % c.rest.result_json())
             return c.rest.content()            
 
+    def rest_create_dhcp_relay(self, tenant, vnsname, dhcpserverip):
+        '''Add nexthop to ecmp groups aks gateway pool in tenant"
+        
+            Input:
+                `tenant`          tenant name
+                `vnsname`         name of vns interface
+                `dhcpserverip`    IP address of dhcp server
+            Return: true if configuration is successful, false otherwise
+REST-POST: PATCH http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[name="C"]/virtual-router/vns-interfaces[vns-name="C1"] {"dhcp-server-ip": "10.2.1.1"}
+REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[name="C"]/virtual-router/vns-interfaces[vns-name="C1"] reply:             
+        '''        
+        t = test.Test()
+        c = t.controller()
+        
+        helpers.test_log("Input arguments: tenant = %s vns name = %s relay-ip = %s" % (tenant, vnsname, dhcpserverip))
+        
+        url = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]/virtual-router/vns-interfaces[vns-name="%s"]' % (c.base_url, tenant, vnsname)
+        try:
+            c.rest.post(url, {"dhcp-server-ip": dhcpserverip})
+        except:
+            helpers.test_failure(c.rest.error())
+        else: 
+            helpers.test_log("Output: %s" % c.rest.result_json())
+            return c.rest.content()            
+
+    def rest_toggle_dhcp_relay(self, tenant, vnsname, togglevalue):
+        '''Add nexthop to ecmp groups aks gateway pool in tenant"
+        
+            Input:
+                `tenant`          tenant name
+                `vnsname`         name of vns interface
+                `togglevalue`     True or False to enable or disable dhcp relay
+            Return: true if configuration is successful, false otherwise
+REST-POST: PATCH http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[name="C"]/virtual-router/vns-interfaces[vns-name="C1"] {"dhcp-relay-enable": true}
+REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[name="C"]/virtual-router/vns-interfaces[vns-name="C1"] reply: ""           
+        '''        
+        t = test.Test()
+        c = t.controller()
+        
+        helpers.test_log("Input arguments: tenant = %s vns name = %s toggle values = %s" % (tenant, vnsname, togglevalue))
+        
+        url = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]/virtual-router/vns-interfaces[vns-name="%s"]' % (c.base_url, tenant, vnsname, togglevalue)
+        try:
+            c.rest.post(url, {"dhcp-relay-enable": togglevalue})
+        except:
+            helpers.test_failure(c.rest.error())
+        else: 
+            helpers.test_log("Output: %s" % c.rest.result_json())
+            return c.rest.content()            
+
+    def rest_set_dhcprelay_circuitid(self, tenant, vnsname, circuitid):
+        '''Add nexthop to ecmp groups aks gateway pool in tenant"
+        
+            Input:
+                `tenant`          tenant name
+                `vnsname`         name of vns interface
+                `circuitid`      Circuit id, can be a string
+            Return: true if configuration is successful, false otherwise
+REST-POST: PATCH http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[name="C"]/virtual-router/vns-interfaces[vns-name="C1"] {"dhcp-circuit-id": "this is a test"}
+REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[name="C"]/virtual-router/vns-interfaces[vns-name="C1"] reply: ""          
+        '''        
+        t = test.Test()
+        c = t.controller()
+        
+        helpers.test_log("Input arguments: tenant = %s vns name = %s circuit id = %s" % (tenant, vnsname, circuitid))
+        
+        url = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]/virtual-router/vns-interfaces[vns-name="%s"]' % (c.base_url, tenant, vnsname, circuitid)
+        try:
+            c.rest.post(url, {"dhcp-circuit-id": circuitid})
+        except:
+            helpers.test_failure(c.rest.error())
+        else: 
+            helpers.test_log("Output: %s" % c.rest.result_json())
+            return c.rest.content()            
 
 
+    def rest_delete_dhcprelay(self, tenant, vnsname, dhcpserverip):
+        '''Add nexthop to ecmp groups aks gateway pool in tenant"
+        
+            Input:
+                `tenant`          tenant name
+                `vnsname`         name of vns interface
+                `dhcpserverip`       DHCP server IP, can be anything since it will delete everything under the vns
+            Return: true if configuration is successful, false otherwise
+
+REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[name="B"]/virtual-router/vns-interfaces[vns-name="B1"]/dhcp-server-ip {}
+     
+        '''        
+        t = test.Test()
+        c = t.controller()
+        
+        helpers.test_log("Input arguments: tenant = %s vns name = %s dhcp server ip = %s" % (tenant, vnsname, dhcpserverip))
+        
+        url = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]/virtual-router/vns-interfaces[vns-name="%s"]/dhcp-server-ip' % (c.base_url, tenant, vnsname)
+        try:
+            c.rest.delete(url, {})
+        except:
+            helpers.test_failure(c.rest.error())
+        else: 
+            helpers.test_log("Output: %s" % c.rest.result_json())
+            return c.rest.content()            
 

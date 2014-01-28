@@ -29,7 +29,9 @@ class RestClient(object):
         self.default_header = {}
         self.default_header['content-type'] = content_type
         
+        self.session_cookie_url = None
         self.session_cookie = None
+        self.session_cookie_loop = 0
         self.last_result = None
         
         if u and p:
@@ -39,6 +41,16 @@ class RestClient(object):
     def authen_encoding(self, u, p):
         base64str = base64.encodestring('%s:%s' % (u, p))
         return base64str.replace('\n', '')
+
+    def request_session_cookie(self, url=None):
+        if url:
+            self.session_cookie_url = url
+        helpers.log("session_cookie_url: %s" % self.session_cookie_url)
+        result = self.post(self.session_cookie_url,
+                           {"user":"admin", "password":"adminadmin"})
+        session_cookie = result['content']['session_cookie']
+        self.set_session_cookie(session_cookie)
+        return session_cookie
 
     def set_session_cookie(self, session):
         helpers.log("Saving session cookie %s" % session)
@@ -94,7 +106,7 @@ class RestClient(object):
                        br_utils.end_of_output_marker()),
                        level=level)
         
-    def http_request(self, url, verb='GET', data=None, session=None,
+    def _http_request(self, url, verb='GET', data=None, session=None,
                      quiet=False, save_last_result=True):
         """
         Generic HTTP request for POST, GET, PUT, DELETE, etc.
@@ -150,6 +162,23 @@ class RestClient(object):
 
         return result
 
+    def http_request(self, *args, **kwargs):
+        result = self._http_request(*args, **kwargs)
+        if int(result['status_code']) == 401 and result['status_descr'] == 'Unauthorized':
+            if self.session_cookie_loop > 5:
+                helpers.test_error("Detected session cookie loop.")
+            else:
+                self.session_cookie_loop += 1
+
+            helpers.log("It appears the session cookie has expired. Requesting new session cookie.")
+            self.request_session_cookie()
+            
+            # Re-run command
+            result = self._http_request(*args, **kwargs)
+        else:
+            self.session_cookie_loop = 0
+        return result
+        
     def post(self, url, *args, **kwargs):
         return self.http_request(url, 'POST', *args, **kwargs)
 

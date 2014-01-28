@@ -1,0 +1,14 @@
+* Settings
+Documentation   This suite is my sandbox for experimentation.
+Force Tags      Vui
+#Library         Reserve
+Library         keywords/BsnCommon.py
+Library         keywords/Controller.py
+
+
+* Test Cases
+Test first boot
+    #[Tags]           skipped
+    cli boot factory default  c1
+
+
