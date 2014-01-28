@@ -198,6 +198,3 @@ add portgroup to endpoint  [Arguments]  ${tenant}  ${vns}  ${endpoint}  ${pg}  $
 delete portgroup from vns  [Arguments]  ${tenant}  ${vns}  ${pg}  ${vlan} 
     REST delete portgroup from vns  ${tenant}  ${vns}  ${pg}  ${vlan}
   
-
-
- 
