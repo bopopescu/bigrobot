@@ -164,7 +164,7 @@ class Test(object):
     def controller(self, name='c1', resolve_mastership=False):
         """
         :param resolve_mastership: (Bool) 
-                - If False, it returns the fax controller node (HaControllerNode)
+                - If False, it returns the faux controller node (HaControllerNode)
                 - If True, it resolves 'master' (or 'slave') to a controller
                   name (e.g., 'c1', 'c2', etc). 
         """
