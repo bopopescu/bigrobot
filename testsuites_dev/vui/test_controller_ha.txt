@@ -11,7 +11,10 @@ Library         keywords_dev/vui/MyTest.py
 
 
 * Test Case
-Test controller rest session cookie
-    bounce session cookie
-    #[Tags]  skipped
+Test controller
+    cli show user
+    [Tags]  skipped
+
+Test enable mode
+    ${a}=  enable help
 
