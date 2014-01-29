@@ -135,7 +135,8 @@ class ControllerNode(Node):
 
 
 class MininetNode(Node):
-    def __init__(self, name, ip, controller_ip, user, password, t):
+    def __init__(self, name, ip, controller_ip, user, password, t,
+                 openflow_port=None):
         super(MininetNode, self).__init__(name, ip, user, password,
                                           t.topology_params())
         if 'topology' in self.node_params:
@@ -164,6 +165,7 @@ class MininetNode(Node):
                                                 password=password,
                                                 controller=controller_ip,
                                                 topology=self.topology,
+                                                openflow_port=openflow_port,
                                                 debug=self.dev_debug_level)
         elif mn_type == 'basic':
             self.dev = devconf.MininetDevConf(name=name,
@@ -172,6 +174,7 @@ class MininetNode(Node):
                                               password=password,
                                               controller=controller_ip,
                                               topology=self.topology,
+                                              openflow_port=openflow_port,
                                               debug=self.dev_debug_level)
 
         # Shortcuts
