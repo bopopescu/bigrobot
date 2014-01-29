@@ -1,5 +1,6 @@
 import autobot.helpers as helpers
 import autobot.test as test
+import re
 
 
 class T5Fabric(object):
@@ -329,8 +330,44 @@ class T5Fabric(object):
         helpers.log("Total Rack in the Topology: %d" % total_rack)
         return total_rack
                 
-                
-                
+    def rest_verify_forwarding_lag(self, dpid, switch):
+        '''Verify Edge port  Information in Controller Forwarding Table
+        
+            Input:  Specific DPID of the switch and also the switch name of the specific device     
+            
+            Return: Match forwarding table lag/Port for peer switch edge ports
+        '''
+        t = test.Test()
+        c = t.controller()
+        url = '%s/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch-id="%s"]/lag-table' % (c.base_url, dpid)
+        c.rest.get(url)
+        data = c.rest.content()
+        url1 = '%s/api/v1/data/controller/core/switch[dpid="%s"]' % (c.base_url, dpid)
+        c.rest.get(url1)
+        data1 = c.rest.content()
+        url2 = '%s/api/v1/data/controller/core/switch[name="%s"]?select=fabric-lag' % (c.base_url, switch)
+        c.rest.get(url2)
+        data2 = c.rest.content()
+        peer_intf = []
+        for i in range(0,len(data2[0]["fabric-lag"])):
+            if data2[0]["fabric-lag"][i]["lag-type"] == "leaf-lag":
+                interface = re.sub("\D", "", data2[0]["fabric-lag"][i]["member"][0]["src-interface"])
+                peer_intf.append(int(interface))                            
+        if data1[0]["fabric-switch-info"]["leaf-group"] == "" :
+            for i in range(0,len(data)):
+                if (data[i]["port"]["port-num"] == peer_intf[0]):
+                    helpers.test_failure("Peer switch edge ports are not removed from lag table")
+                    return False
+                else:
+                    helpers.log("Peer switch edge ports are removed from forwarding lag table")  
+                    return True
+        else:           
+            for i in range(0,len(data)):
+                if (data[i]["port"]["port-num"] == peer_intf[0]):
+                    helpers.log("Peer switch edge ports are properly created in forwarding table")
+                else:
+                    helpers.test_failure("Peer switch edge ports are not created in forwarding table")
+                    
                 
                 
                 
