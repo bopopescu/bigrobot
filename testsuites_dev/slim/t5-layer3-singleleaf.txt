@@ -228,8 +228,10 @@ L3 untagged bm0 ping to untagged bm1 across tenants and VNS all statically defin
 	sleep					10
 	REST detach system to tenant routers		${tenant1_name}
 	sleep					30
-	REST detach tenant to system routers		${tenant1_name}
+	REST detach tenant routers to system		${tenant1_name}
 	sleep					30
+	REST detach system to tenant routers		${tenant2_name}
+	REST detach tenant routers to system		${tenant2_name}	
 	REST delete vns ip							${tenant1_name}  	${vns1_1}  		${vns1_ip1}	  		${vns1_subnet1}
 	sleep 					30
 	
