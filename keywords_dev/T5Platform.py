@@ -1,6 +1,7 @@
 import time
 import autobot.helpers as helpers
 import autobot.test as test
+from T5PlatformCommon import T5PlatformCommon as common
 
 class T5Platform(object):
 
@@ -39,7 +40,8 @@ class T5Platform(object):
         c.rest.get(url)
         
         return True
-    
+
+
     
     def rest_verify_show_cluster(self):
         '''Using the 'show cluster' command verify the cluster formation across both nodes
@@ -113,15 +115,29 @@ class T5Platform(object):
             helpers.log("Pass: Take-Leader successful - Leader changed from %s to %s" % (masterID, newMasterID))
             return True
 
+
     def rest_cluster_election_take_leader(self):
         ''' Invoke "cluster election take-leader" command and verify the controller state
         '''
+        obj = common()
+        common.integrity_checker(obj,"beforeHA")
         self.rest_cluster_election(True)
+        time.sleep(10)
+        common.integrity_checker(obj, "afterHA")
 
     def rest_cluster_election_rerun(self):
         ''' Invoke "cluster election re-run" command and verify the controller state
         '''
+        switchDict_b4 = self.verify_switch_connectivity()
         self.rest_cluster_election(False)
+        time.sleep(30)
+        switchDict_after = self.verify_switch_connectivity()
+        warningCount = self.compare_switch_status(switchDict_b4, switchDict_after)
+        if(warningCount == 0): 
+            helpers.log("Switch status are intact after the take-leader")
+            return True
+        else: 
+            return False
 
 
     def rest_cluster_master_reboot(self):
@@ -144,7 +160,8 @@ class T5Platform(object):
         if not helpers.is_controller('c1'):
             helpers.test_error("Node must be a controller ('c1', 'c2').")
 
-        n.enable("reboot", prompt="Confirm Reboot (yes to continue) ")
+        n.enable("reboot", prompt="")
+        #n.enable("reboot", prompt="Confirm Reboot (yes to continue) ")
         n.enable("yes", prompt='Broadcast message from root@controller ')
  
         time.sleep(15)
@@ -163,7 +180,7 @@ class T5Platform(object):
             helpers.log("Pass: After the reboot cluster is stable - Master is : %s / Slave is: %s" % (newMasterID, newSlaveID))
             return True
         else:
-            helper.log("Fail: Reboot Failed. Cluster is not stable. Before the reboot Master is: %s / Slave is : %s \n \
+            helpers.log("Fail: Reboot Failed. Cluster is not stable. Before the reboot Master is: %s / Slave is : %s \n \
                     After the reboot Master is: %s / Slave is : %s " %(masterID, slaveID, newMasterID, newSlaveID))
             return False
  
@@ -174,11 +191,6 @@ class T5Platform(object):
 
 
  
-
-
-
-
-
 
 
 
