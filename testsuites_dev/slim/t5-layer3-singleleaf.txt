@@ -224,6 +224,8 @@ L3 untagged bm0 ping to untagged bm1 across tenants and VNS all statically defin
 	sleep  										5
 	mininet l3 ping								${host0_name}		${host1_name} 		3
 	sleep 										2
+	mininet dump switch							${leaf0_name}
+	sleep 										1
    	${loss}=									mininet l3 ping		${host0_name}	${host1_name}		${ping_count}
    	Should Be True  							${loss} == 0
 
