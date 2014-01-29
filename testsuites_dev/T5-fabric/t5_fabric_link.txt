@@ -11,11 +11,12 @@ Library          keywords/BsnCommon.py
 Library          keywords_dev/T5.py
 Library          keywords_dev/T5Fabric.py
 Library			 keywords/Mininet.py
-REsource         keywords_dev/t5_dualleaf_resource.txt
+REsource         keywords_dev/t5_dualleaf_three_rack_resource.txt
 
 
 
 *Test Case
+
 Setup Dual Rack Dual Leaf Topology
     configure fabric switch
     sleep  5
@@ -24,17 +25,13 @@ Setup Dual Rack Dual Leaf Topology
 Verify Fabric link formation  
 	REST verify fabric link 	
 
-Remove one of the spine Fabric Role  
+Remove one of the spine Fabric Role and verify the link  
 	REST remove fabric role  spine     
-
-Verify Fabric Link formation after deleting one spine
     sleep  5 
 	REST verify fabric link   
 
 Add the Fabric Role back for spine 
 	REST configure fabric role   spine0   spine      
-
-Verify Fabric Link formation after adding one spine
     sleep  5 
 	REST verify fabric link
 	

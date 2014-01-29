@@ -106,6 +106,7 @@ Execute HA Failover and verify BigTap Policies
 
 * Keywords  
 ha suite setup
+	base suite setup
 	# Assign Alias to switch
 	${switchDict}=  REST show switch
 	${dpid1}=  return switch dpid  ${switchDict}  ${switch1_ip}
@@ -324,8 +325,10 @@ ha failover
     REST show bigtap policy  _ZP4_o_P3  2  2
 
 ha suite teardown
+	
     REST bigtap delete policy  admin-view  P1
     REST bigtap delete policy  admin-view  ZP2
     REST bigtap delete policy  admin-view  P3
     REST bigtap delete policy  admin-view  ZP4
     REST bigtap delete service  S5-LY4
+	base suite teardown

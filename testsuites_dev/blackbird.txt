@@ -7,8 +7,8 @@ Test Teardown   base test teardown
 Force Tags      BigTap Sanity
 Library         keywords_dev/Common.py
 Library         keywords/BsnCommon.py 
-Library         keywords_dev/BigTapCommonConfig.py 
-Library         keywords_dev/BigTapCommonShow.py 
+Library         keywords_dev/animesh/BigTapCommonConfig.py 
+Library         keywords_dev/animesh/BigTapCommonShow.py 
 
 
 
@@ -20,9 +20,22 @@ ${c2}  10.192.105.2
 
 
 * Test Case
+
+
+
+
 #Verify all the common show cmd
 #	show command
 #	[Tags]  skip
+
+
+Verify all switch show commands 
+    switch show command       s207
+    
+    
+    
+	[Tags]  sanity  skipped
+
 
 Bigtap Prepare topology
 	Bigtap Setup role
@@ -154,33 +167,84 @@ Test L3_L4_Mode
 
 
 
-Test optimization 
+Test optimization for prefix
 # prepare
 	bigtap_clean_all      
 #	bigtap_clean_policy
 #	bigtap_clean_addrgroup	     	    
- 	sleep_now                   short   			
-	Config bigtap policy        IP1   S203-50   S204-52
-	sleep_now                   3
+  	sleep_now                   short   			
+ 	Config bigtap policy        IP1   S203-50   S204-52
+ 	sleep_now                   2
 #   Test prefix optimization
-#	bigtap_gen_config_match_new   IP1   ip  src_ip  10.0.0.0  0.0.0.1  255.255.255.255  10  100  
-	bigtap_gen_config_match_new   IP1   ipv6  src_ip  f001:100:0:0:0:0:0:fffe 	0:1:0:0:0:0:0:1	  ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff  20  150 
-#	bigtap_gen_config_match_new   IP1   tcp  dst_port  100  1   number=10  sequence=200 
-#	bigtap_gen_config_match_new   IP1   tcp6  dst_port  200  1   number=10  sequence=300 	
+ 	bigtap_gen_config_match     IP1   ip  src_ip  10.0.0.0  0.0.0.1  255.255.255.255  16  100  
+ 	bigtap_gen_config_match     IP1   ip  dst_ip  21.0.0.0  0.0.0.1  255.255.255.255  16  150  
+ 	Sleep                         20
+    ${switchFlowVal}=  BigTapCommonShow.rest_get_switch_flow   switch_alias=S203 
+    Should Be Equal As Integers  ${switchFlowVal}  5
+	${numMatches}=  rest_bigtap_get_policy_optimize   IP1  
+    Should Be Equal As Integers  ${numMatches}  2
+	bigtap_gen_config_match    IP1   ipv6  src_ip  f001:100:0:0:0:0:0:0 	0:0:0:1:0:0:0:0	  ffff:ffff:ffff:ffff:0:0:0:0  256  200 
+ 	Sleep                         20
+    ${switchFlowVal}=  BigTapCommonShow.rest_get_switch_flow   switch_alias=S203 
+    Should Be Equal As Integers  ${switchFlowVal}  6
+	${numMatches}=  rest_bigtap_get_policy_optimize   IP1  
+    Should Be Equal As Integers  ${numMatches}  3
+
+	[Tags]   sanity  skipped
+
+
+Test optimization port
+
+	bigtap_clean_all      	    
+  	sleep_now                   short   			
+ 	Config bigtap policy        IP1   S203-50   S204-52
+ 	sleep_now                   2
+	Common.REST bigtap add policy match       admin-view  IP1   10   {"dst-tp-port-min": 128, "ether-type": 2048, "dst-tp-port-max": 255, "ip-proto": 6, "sequence": 10 }  	
+	Common.REST bigtap add policy match       admin-view  IP1   50   {"dst-tp-port-min": 256, "ether-type": 34525, "dst-tp-port-max": 511, "ip-proto": 6, "sequence": 50 }  	 	
+	Common.REST bigtap add policy match       admin-view  IP1   100   {"src-tp-port-min": 128, "ether-type": 2048, "src-tp-port-max": 255, "ip-proto": 6, "sequence": 100 }  	
+	Common.REST bigtap add policy match       admin-view  IP1   150   {"src-tp-port-min": 256, "ether-type": 34525, "src-tp-port-max": 511, "ip-proto": 6, "sequence": 150 }  	 	
+
+	Common.REST bigtap add policy match       admin-view  IP1   210   {"dst-tp-port-min": 128, "ether-type": 2048, "dst-tp-port-max": 255, "ip-proto": 17, "sequence": 210 }  	
+	Common.REST bigtap add policy match       admin-view  IP1   250   {"dst-tp-port-min": 256, "ether-type": 34525, "dst-tp-port-max": 511, "ip-proto": 17, "sequence": 250 }  	 	
+	Common.REST bigtap add policy match       admin-view  IP1   300   {"src-tp-port-min": 128, "ether-type": 2048, "src-tp-port-max": 255, "ip-proto": 17, "sequence": 300 }  	
+	Common.REST bigtap add policy match       admin-view  IP1   350   {"src-tp-port-min": 256, "ether-type": 34525, "src-tp-port-max": 511, "ip-proto": 17, "sequence": 350 }  	 	
+
+ 	Sleep                         10
+    ${switchFlowVal}=  BigTapCommonShow.rest_get_switch_flow   switch_alias=S203 
+    Should Be Equal As Integers  ${switchFlowVal}  11
+	${numMatches}=  rest_bigtap_get_policy_optimize   IP1  
+    Should Be Equal As Integers  ${numMatches}  8
+    
+#  for individual entries, it is not working
+#	bigtap_gen_config_match      IP1   tcp  dst_port  128  1   number=128  sequence=1000 
+#	bigtap_gen_config_match      IP1   tcp6  src_port  256  1   number=256  sequence=1500 	
+# 	Sleep                         20
+#    ${switchFlowVal}=  BigTapCommonShow.rest_get_switch_flow   switch_alias=S203 
+#    Should Be Equal As Integers  ${switchFlowVal}  8
+#	${numMatches}=  rest_bigtap_get_policy_optimize   IP1  
+#    Should Be Equal As Integers  ${numMatches}  5
+
+
+	[Tags]   sanity  skipped
+
+Test optimization vlan
+	bigtap_clean_policy
+#	bigtap_clean_all      	    
+  	sleep_now                   short   			
+ #	Config bigtap policy        IP1   S203-50   S204-52
+# 	sleep_now                   2
+  
 #	bigtap_gen_config_match_new   IP1   tcp6  vlan  200  1   number=10  sequence=300 		
 #	bigtap_gen_config_match_new   IP1   ip  vlan  500  1   number=10  sequence=500 	
-	bigtap_gen_config_match_new   IP1   ip  src_mac  5c:16:c7:13:fc:fe   0:0:0:0:0:1   number=3  sequence=500 	
+#	bigtap_gen_config_match_new   IP1   ip  src_mac  5c:16:c7:13:fc:fe   0:0:0:0:0:1   number=3  sequence=500 	
+##    ${switchFlowVal}=  BigTapCommonShow.rest_get_switch_flow   switch_alias=S203 
+# #   Should Be Equal As Integers  ${switchFlowVal}  8
+#	${numMatches}=  rest_bigtap_get_policy_optimize   IP1  
+#    Should Be Equal As Integers  ${numMatches}  5
 
-
-# verify tcp port optimize	for ipv4 and ipv6
-#	REST bigtap add policy match       admin-view  IP1   10   {"dst-tp-port-min": 16, "ether-type": 2048, "dst-tp-port-max": 31, "ip-proto": 6, "sequence": 10} 	
-#	REST bigtap show policy optimize	IP1	   1 
-#	REST bigtap add policy match       admin-view  IP1   10   {"dst-tp-port-min": 16, "ether-type": 34525, "dst-tp-port-max": 31, "ip-proto": 6, "sequence": 10} 		 
-#	REST bigtap show policy optimize	IP1	   1 
-
-
+ 
 		 	
-	[Tags]   sanity   
+	[Tags]   sanity   skipped
 
 
 Load and apply config file
@@ -204,6 +268,32 @@ Load and apply config file
 	[Tags]  sanity  skipped
 
 
+Scale IPv4 IPV6
+#	bigtap_clean_all      
+#  IPv4 only 
+#	bigtap_gen_addrgroup	 IP1_500  	 G1_500	  ipv4 	100.0.0.0 	0.1.0.1		255.255.255.255 	500	   
+#	copy_to_controller       IP1_500     /opt/bigswitch/run/saved-configs/IP1_500 
+#    cli_copy_to_running      IP1_500    
+#	bigtap_gen_addrgroup	 IP2_500 	 G2_500	  ipv4 	110.0.0.0 	0.1.0.1		255.255.255.255 	500	   
+#	copy_to_controller       IP2_500     /opt/bigswitch/run/saved-configs/IP2_500
+    cli_copy_to_running      IP2_500   
+# 	rest_bigtap_create_policy   admin-view  V4SCALE   forward
+#	rest_bigtap_add_policy_int      admin-view   V4SCALE    S203-52    delivery
+#	Common.REST bigtap add policy match       admin-view   V4SCALE   10   {"sequence": 10, "src-ip-list": "G1_500", "ether-type": 2048} 
+#	Common.REST bigtap add policy match       admin-view   V4SCALE   20   {"sequence": 20, "dst-ip-list": "G1_500", "ether-type": 2048}
+#	Common.REST bigtap add policy match       admin-view   V4SCALE   40   {"sequence": 40, "src-ip-list": "G2_500", "ether-type": 2048} 
+#	Common.REST bigtap add policy match       admin-view   V4SCALE   50   {"sequence": 50, "dst-ip-list": "G2_500", "ether-type": 2048}
+
+	[Tags]  sanity   skipped
+	
+Longevity
+   # total test last for 600s, and action is changes every 150s
+  	bigtap_longevity     during=43200    flap=150
+  	
+ 	[Tags]  sanity 	    
+	
+
+
 * Keywords
 Config bigtap policy
 	[Arguments]          			    	  ${pName}  ${intFname}  ${intDname}
@@ -211,6 +301,20 @@ Config bigtap policy
 	REST bigtap add policy interface   admin-view  ${pName}  ${intFname}  filter 
 	REST bigtap add policy interface  admin-view  ${pName}  ${intDname}  delivery 
  	
+
+
+switch show command        [Arguments]  ${SName}  
+   cli_bigtap_sw_show     ${SName}     show ver
+   cli_bigtap_sw_show     ${SName}     show controller
+   cli_bigtap_sw_show     ${SName}     show flowtable summary   
+   cli_bigtap_sw_show     ${SName}     show flowtable  
+   cli_bigtap_sw_show     ${SName}     show interface  
+   cli_bigtap_sw_show     ${SName}     show inventory  
+   cli_bigtap_sw_show     ${SName}     show boot     
+#    cli_bigtap_sw_show     ${SName}     show environment  
+#   cli_bigtap_sw_show_walk     ${SName}   
+
+
 	
 show command  
 	REST show version  
