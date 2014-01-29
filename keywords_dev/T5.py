@@ -7,13 +7,13 @@ import re
 class T5(object):
 
     def __init__(self):
-        t = test.Test()
-        c = t.controller()
-        
-        url = '%s/api/v1/auth/login' % c.base_url
-        result = c.rest.post(url, {"user":"admin", "password":"adminadmin"})
-        session_cookie = result['content']['session_cookie']
-        c.rest.set_session_cookie(session_cookie)
+#        t = test.Test()
+#        c = t.controller()
+        pass        
+#        url = '%s/api/v1/auth/login' % c.base_url
+#        result = c.rest.post(url, {"user":"admin", "password":"adminadmin"})
+#        session_cookie = result['content']['session_cookie']
+#        c.rest.set_session_cookie(session_cookie)
         
     def rest_create_tenant(self, tenant):
         
