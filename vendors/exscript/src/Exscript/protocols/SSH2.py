@@ -318,11 +318,15 @@ class SSH2(Protocol):
             # Check whether what's buffered matches the prompt.
             driver        = self.get_driver()
             search_window = self.buffer.tail(search_window_size)
+            #print("***** VUI search_window: %s <<<<<" % search_window)
             search_window, incomplete_tail = driver.clean_response_for_re_match(search_window)
             match         = None
             for n, regex in enumerate(prompt):
+                #print("***** VUI n:%s regex:%s <<<<<" % (n, regex))
+
                 match = regex.search(search_window)
                 if match is not None:
+                    #`print("**** VUI Found a match! (matched: ^^^^^^%s^^^^^^)" % search_window)
                     break
 
             if not match:
