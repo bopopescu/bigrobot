@@ -27,7 +27,7 @@ class Controller(object):
 
     def cli_reload(self, node):
         t = test.Test()
-        n = t.node(node)
+        n = t.controller(node)
         if not helpers.is_controller(node):
             helpers.test_error("Node must be a controller ('c1', 'c2').")
 
