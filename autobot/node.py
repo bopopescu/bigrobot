@@ -53,7 +53,7 @@ class Node(object):
         """
         Inheriting class needs to define this method.
         """
-        pass
+        raise NotImplementedError()
 
 
 class ControllerNode(Node):

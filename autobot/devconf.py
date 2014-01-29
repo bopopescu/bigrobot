@@ -223,10 +223,7 @@ class MininetDevConf(DevConf):
     :param topology: str, in the form 'tree,4,2'
     """
     def __init__(self, name=None, host=None, user=None, password=None,
-                 controller=None,
-                 port=None,
-                 topology=None,
-                 debug=0):
+                 controller=None, port=None, topology=None, debug=0):
 
         if controller is None:
             helpers.environment_failure("Must specify a controller for Mininet.")
@@ -238,8 +235,8 @@ class MininetDevConf(DevConf):
         self.port = port
         self.name = name
         self.state = 'stopped'  # or 'started'
-
-        super(MininetDevConf, self).__init__(host, user, password, debug=debug)
+        
+        super(MininetDevConf, self).__init__(host, user, password, port=port, debug=debug)
         self.start_mininet()
         
     def cmd(self, cmd, quiet=False, prompt=False, level=4):
@@ -268,13 +265,15 @@ class MininetDevConf(DevConf):
             return True
 
         helpers.log("Starting Mininet on '%s'" % self.name)
+
         if new_topology:
             self.topology = new_topology
             helpers.log("Start new Mininet topology for '%s': %s"
                         % (self.name, new_topology))
 
-        cmd = self.mininet_cmd()
-        self.cli(cmd, quiet=False)
+        _cmd = self.mininet_cmd()
+        
+        self.cli(_cmd, quiet=False)
         self.state = 'started'
 
     def stop_mininet(self):
@@ -305,8 +304,8 @@ class T6MininetDevConf(MininetDevConf):
     :param topology: str, in the form
         '--num-spine 0 --num-rack 1 --num-bare-metal 2 --num-hypervisor 0'
     """
-    def __init__(self, *args, **kwargs):
-        super(T6MininetDevConf, self).__init__(port=6653, *args, **kwargs)
+    def __init__(self, **kwargs):
+        super(T6MininetDevConf, self).__init__(port=6653, **kwargs)
 
     def mininet_cmd(self):
         return ("sudo /opt/t6-mininet/run.sh -c %s:%s %s"
