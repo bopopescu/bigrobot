@@ -258,12 +258,21 @@ class Test(object):
                                           t)
             elif helpers.is_mininet(key):
                 helpers.log("Initializing Mininet '%s'" % key)
+                
+                # Use the OpenFlow port defined in the controller ('c1')
+                # if it's defined.
+                if 'openflow_port' in self.topology_params()['c1']:
+                    openflow_port = self.topology_params()['c1']['openflow_port']
+                else:
+                    openflow_port = None
+                
                 n = a_node.MininetNode(key,
                                        host,
                                        controller_ip,
                                        self.mininet_user(),
                                        self.mininet_password(),
-                                       t)
+                                       t,
+                                       openflow_port=openflow_port)
             elif helpers.is_host(key):
                 helpers.log("Initializing host '%s'" % key)
                 n = a_node.HostNode(key,
