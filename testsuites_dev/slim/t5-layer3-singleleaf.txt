@@ -9,7 +9,7 @@ Library         keywords/BsnCommon.py
 Library         keywords/Mininet.py
 Library         keywords_dev/T5.py
 Library         keywords_dev/T5Fabric.py
-Library         keywords_dev/slim/T5_L3.py
+Library         keywords_dev/T5_L3.py
 Resource		keywords_dev/t5_singleleaf_resource.txt
 
 * Variable
@@ -74,6 +74,7 @@ ${untaggedvlan}		-1
 ${endpoint1name}	H1
 ${endpoint2name}	H2
 ${endpoint3name}	H3
+${dhcpserver1}		10.255.255.10
 
 
 
@@ -84,7 +85,7 @@ ${endpoint3name}	H3
 #	sleep  5
 
 L3 untagged bm0 ping to untagged bm1 same tenant across VNS with static configuration
-	[Tags]										smoke			
+	[Tags]										smoke				sanity			skipped
 	configure fabric switch 
 	sleep  										5						
 	REST create tenant  						${tenant1_name}
@@ -117,8 +118,9 @@ L3 untagged bm0 ping to untagged bm1 same tenant across VNS with static configur
 	Should Be True  							${endpoints_cnt} == 2
 
 
+
 L3 untagged bm0 ping to untagged bm1 same tenant across VNS with dynamic endpoints
-	[Tags]										smoke			
+	[Tags]										smoke				skipped
 	configure fabric switch 
 	sleep  5		
 	REST create tenant  						${tenant1_name}
@@ -144,7 +146,7 @@ L3 untagged bm0 ping to untagged bm1 same tenant across VNS with dynamic endpoin
 	     
 
 L3 untagged bm0 ping to untagged bm1 same tenant across VNS dynamic host ARPing gateway
-	[Tags]										smoke			
+	[Tags]										smoke				skipped
 	configure fabric switch 
 	sleep  5		
 	REST create tenant  						${tenant1_name}
@@ -167,7 +169,7 @@ L3 untagged bm0 ping to untagged bm1 same tenant across VNS dynamic host ARPing 
 	Should Be True  							${endpoints_cnt} == 2
 
 L3 untagged bm0 ping to untagged bm1 unreachable host on same tenant different VNS 
-	[Tags]										sanity				smoke
+	[Tags]										sanity				smoke			skipped
 	configure fabric switch 
 	sleep  										5	
 	REST create tenant  						${tenant1_name}
@@ -222,12 +224,20 @@ L3 untagged bm0 ping to untagged bm1 across tenants and VNS all statically defin
 	sleep 										2
    	${loss}=									mininet l3 ping		${host0_name}	${host1_name}		${ping_count}
    	Should Be True  							${loss} == 0
-#	REST delete tenant							${tenant1_name}   
-#	REST delete tenant							${tenant2_name}     
-#  	sleep  										20  
+
+	sleep					10
+	REST detach system to tenant routers		${tenant1_name}
+	sleep					30
+	REST detach tenant to system routers		${tenant1_name}
+	sleep					30
+	REST delete vns ip							${tenant1_name}  	${vns1_1}  		${vns1_ip1}	  		${vns1_subnet1}
+	sleep 					30
+	
+	
+	
   
 L3 untagged bm0 ping to untagged bm1 with destination host interface move in the same tenant across VNS
-	[Tags]										
+	[Tags]										skipped
 	configure fabric switch 
 	sleep  5	
 	REST create tenant  						${tenant1_name}
@@ -269,7 +279,7 @@ L3 untagged bm0 ping to untagged bm1 with destination host interface move in the
 	sleep  										20  
  
 L3 ping untagged bm0 to tagged bm1 same tenant across VNS
-	[Tags]										sanity
+	[Tags]										sanity				skipped
 	configure fabric switch 
 	sleep  5	
 	REST create tenant  						${tenant1_name}
@@ -304,7 +314,7 @@ L3 ping untagged bm0 to tagged bm1 same tenant across VNS
 	sleep  										20  
  
 L3 ping tagged bm0 to tagged bm1 single leaf single rack within tenant different VNS
-	[Tags]										sanity
+	[Tags]										sanity				skipped
 	configure fabric switch 
 	sleep  										5	
 	REST create tenant  						${tenant1_name}
@@ -349,13 +359,26 @@ L3 ping with nexthop in a ecmp group
     REST add static routes          			${tenant1_name}         ${dstroute3}	${nexthopgroup3}
     REST add static routes          			${tenant1_name}         ${dstroute4}	${nexthopgroup4}
     
-    
+
+L3 configure dhcp relay on vns
+	[Tags]										sanity					skipped
+	configure fabric switch 
+	sleep 										5	
+    REST create tenant          				${tenant1_name}
+	REST create vns								${tenant1_name}         ${vns1_1}
+	REST create vns ip  						${tenant1_name}  		${vns1_1}  		${vns1_ip1}	  	${vns1_subnet1}
+	REST add interface to vns  					${tenant1_name}  		${vns1_1}  		${leaf0_name} 	${leaf0_intf1}  ${untaggedvlan}		
+	REST create dhcp relay						${tenant1_name}  		${vns1_1}  		${dhcpserver1}
+	REST toggle dhcp relay						${tenant1_name}  		${vns1_1}  		${true}
+	sleep 										5
+
+        
     
 * Keywords
 teardown topology
-	remove fabric switch
-	REST delete tenant							${tenant1_name}   
-	REST delete tenant							${tenant2_name}     
+#	remove fabric switch
+#	REST delete tenant							${tenant1_name}   
+#	REST delete tenant							${tenant2_name}     
 	sleep 										10
 		
 	

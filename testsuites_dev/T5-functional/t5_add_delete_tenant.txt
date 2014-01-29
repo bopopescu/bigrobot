@@ -11,7 +11,7 @@ Library          keywords/BsnCommon.py
 Library          keywords_dev/T5.py
 Library	         keywords_dev/T5Fabric.py
 Library          keywords/Mininet.py
-Resource	     keywords_dev/t5_singleleaf_resource.txt
+Resource         keywords_dev/t5_dualleaf_three_rack_resource.txt
 
 * Variables
 ${bm0_ip}  10.0.0.1
@@ -26,7 +26,7 @@ ${bm2_intf0}  leaf1-eth5
 
 * Test Case 
 
-Configure Single Leaf Dual Rack setup
+Configure Dual Leaf Three Rack setup
    [Tags]  functional
    sleep  5
    configure fabric switch
@@ -34,39 +34,33 @@ Configure Single Leaf Dual Rack setup
    rest check fabric switch connectivity
    rest verify fabric link
 
-create a tenant
+create/delete a tenant
    [Tags]   functional
    create a tenant  t1
-   sleep  3
-   rest show tenant  
- 
-delete tenant 
-   [Tags]  functional
-   create a tenant  t1
+   sleep  1
+   rest verify tenant  
    delete a tenant  t1
-   rest show tenant
+   sleep  1
+   rest verify tenant   
 
-create a vns
+create/delete a vns
    [Tags]  functional
    create a tenant  t1
    create a vns  t1  v1 
-   rest show vns 					 
-   
-delete a vns
-   [Tags]  functional
-   create a tenant  t1
-   create a vns  v1
+   rest verify vns
    delete a vns  t1  v1
-   sleep  3
-   rest show vns
-   
+   sleep  1
+   rest verify vns
+   rest verify forwarding vlan  00:00:00:00:00:02:00:01  	
+   rest verify forwarding vlan  00:00:00:00:00:02:00:02     			 
+
 create a multiple tenant 
    [Tags]  functional
    create a tenant  t1
    create a tenant  t2
    create a tenant  t3
    sleep  3
-   rest show tenant
+   rest verify tenant 
    
 create a multiple vns same tenant
    [Tags]  functional
@@ -75,32 +69,30 @@ create a multiple vns same tenant
    create a vns  t1  v2
    create a vns  t1  v3
    sleep  5
-   rest show vns 
+   rest verify vns  
    
 create a portgroup
-   [Tags]  functional
+   [Tags]  functional  skipped
    create a portgroup  p1
-   create a portgroup  p2
-   rest show portgroup
-   
-Add member interface to port-group
-   [Tags]  functional
-   create a portgroup  p1
+   rest verify portgroup
    add interface to portgroup  leaf0  ${bm0_intf0}  p1
-   rest show portgroup  p1
+   rest verify portgroup interface  p1
    delete interface from portgroup  leaf0  ${bm0_intf0}  p1
-   rest show portgroup  p1 
-   
-Add interface to vns
+   rest verify portgroup interface  p1  
+
+Add/delete interface to vns
    [Tags]  functional
    create a tenant  t1
    create a vns  t1  v1
-   add interface to vns  t1  v1   leaf0  ${bm0_intf0}  vlan  -1
-   add interface to vns  t1  v1  leaf0  ${bm1_intf0}  vlan  10
-   rest show vns  
+   rest add interface to vns  t1  v1  leaf0  ${bm0_intf0}  -1
+   rest add interface to vns  t1  v1  leaf0  ${bm1_intf0}  10
+   rest verify vns interface  v1  2
+   rest delete interface from vns  t1  v1  leaf0  ${bm1_intf0}  10
+   rest verify vns interface  v1  1  
 
 Tear down the config
    [Tags]  smoke  sanity 
+   delete a tenant  t1
    delete interface from portgroup  leaf0  ${bm0_intf0}  p1
    delete interface from portgroup  leaf0  ${bm1_intf0}  p2
    delete interface from portgroup  leaf1  ${bm2_intf0}  p3   
@@ -114,7 +106,7 @@ T5 base test setup
    base test setup
       
 T5 base test teardown
-   delete a tenant  A
+   delete a tenant  t1
    delete a portgroup  p1
    delete a portgroup  p2
    delete a portgroup  p3
@@ -154,11 +146,8 @@ add portgroup to vns  [Arguments]  ${tenant}  ${vns}  ${pg}  ${vlan}
   	REST add portgroup to vns  ${tenant}  ${vns}  ${pg}  ${vlan} 
 
 add portgroup to endpoint  [Arguments]  ${tenant}  ${vns}  ${endpoint}  ${pg}  ${vlan} 
-  REST add portgroup to endpoint  ${tenant}  ${vns}  ${endpoint}  ${pg}  ${vlan} 
+    REST add portgroup to endpoint  ${tenant}  ${vns}  ${endpoint}  ${pg}  ${vlan} 
 
 delete portgroup from vns  [Arguments]  ${tenant}  ${vns}  ${pg}  ${vlan} 
-  REST delete portgroup from vns  ${tenant}  ${vns}  ${pg}  ${vlan}
+    REST delete portgroup from vns  ${tenant}  ${vns}  ${pg}  ${vlan}
   
-
-
- 

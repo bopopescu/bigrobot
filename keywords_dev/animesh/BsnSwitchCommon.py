@@ -10,14 +10,7 @@ import time
 class BsnSwitchCommon(object):
 
     def __init__(self):
-        t = test.Test()
-        c = t.controller()
-        url = '%s/auth/login' % c.base_url
-        helpers.log("url: %s" % url)
-        result = c.rest.post(url, {"user":"admin", "password":"adminadmin"})
-        helpers.log("result: %s" % helpers.to_json(result))
-        session_cookie = result['content']['session_cookie']
-        c.rest.set_session_cookie(session_cookie)
+        pass
 
 #######################################################################
 # All Common Switch Show Commands Go Here:
