@@ -25,7 +25,7 @@ class Common(object):
         """ Get the switch id: input - switch alias;  output - switch dpid
         """        
         t = test.Test()
-        c = t.controller()
+        c= t.controller('master')
         aliasExists=0
         url='%s/api/v1/data/controller/core/switch?select=alias'   % (c.base_url)
         c.rest.get(url)
@@ -44,7 +44,7 @@ class Common(object):
            can take both name or dpid, dpid has high priority
         """
         t = test.Test()
-        c = t.controller()
+        c= t.controller('master')
            
         if sw_dpid:
             helpers.log("Switch dpid is: %s" % (str(sw_dpid)))   
@@ -74,11 +74,11 @@ class Common(object):
     def bigtap_clean_policy(self,policy=None):
         """ Clean up the policy: input - policy 
             Mingtao
-            Usage:  bigtap_clean_policy   policy   -  clean up one policy
+            Usage:  bigtap_clean_policy   P1   -  clean up  policy  P1
                     bigtap_clean_policy            -  clean up all polices
         """        
         t = test.Test()
-        c = t.controller()      
+        c= t.controller('master')
          
         if policy:
             helpers.log("this is the Policy to be cleaned: %s" % (policy))
@@ -113,7 +113,7 @@ class Common(object):
                     bigtap_clean_policy            -  clean up all polices
         """        
         t = test.Test()
-        c = t.controller()      
+        c= t.controller('master') 
          
         if addrgroup:
             helpers.log("this is the Address-group to be cleaned: %s" % (addrgroup))
@@ -147,7 +147,7 @@ class Common(object):
                     bigtap_clean_policy            -  clean up all polices
         """        
         t = test.Test()
-        c = t.controller()      
+        c= t.controller('master')   
 
         if service:
             helpers.log("this is the Service to be cleaned: %s" % (service))
@@ -179,7 +179,7 @@ class Common(object):
         """ verify bigtap  interface role           
         """
         t = test.Test()
-        c = t.controller()
+        c= t.controller('master')
         url = '%s/api/v1/data/controller/applications/bigtap/interface-config' % (c.base_url)
   
         c.rest.get(url)
@@ -268,7 +268,7 @@ class Common(object):
             type - ipv4 :  ipv6
         """
         t = test.Test()
-        c = t.controller()
+        c= t.controller('master')
         url = '%s/api/v1/data/controller/applications/bigtap/ip-address-set[name="%s"]'% (c.base_url, str(name)) 
         c.rest.put(url,{"name": str(name)})
         helpers.sleep(1)        
@@ -294,7 +294,7 @@ class Common(object):
         """
         # create the address group and associate the type
         t = test.Test()
-        c = t.controller()
+        c= t.controller('master')
              
         url = ('%s/api/v1/data/controller/applications/bigtap/ip-address-set[name="%s"]/address-mask-set[ip="%s"][ip-mask="%s"]' 
                % (c.base_url, str(name),str(addr),str(mask))) 
@@ -320,7 +320,7 @@ class Common(object):
             Mingtao
         """
         t = test.Test()
-        c = t.controller()
+        c= t.controller('master')
         
         url = '%s/api/v1/data/controller/applications/bigtap/info' % (c.base_url)
         c.rest.get(url)
@@ -405,7 +405,7 @@ class Common(object):
                     
         """ 
         t = test.Test()
-        c = t.controller()
+        c= t.controller('master')
         url = '%s/api/v1/data/controller/applications/bigtap/ip-address-set[name="%s"]' % (c.base_url,str(group))
   
         c.rest.get(url)                  
@@ -424,9 +424,157 @@ class Common(object):
             return False
    
 
-
+    def bigtap_construct_match(self,
+                               ip_type=None, ether_type=None,
+                               src_mac = None,
+                               dst_mac = None,
+                               ip_proto=None, 
+                               icmp=None, icmp_code=None, icmp_type=None,
+                               vlan = None, vlan_min=None, vlan_max=None,  
+                               src_ip_list =None, src_ip =None, src_ip_mask =None, 
+                               dst_ip_list =None, dst_ip =None, dst_ip_mask =None, 
+                               tos_bit =None,
+                               src_port=None,src_port_min=None,src_port_max=None,
+                               dst_port=None,dst_port_min=None,dst_port_max=None,
+                               sequence=10):
+        """ bigtap: construct the match string for policy
+            Mingtao
+        """
+        temp = '{'
+   
+        if src_mac:
+            temp += '"src-mac": "%s",' %src_mac
+        if dst_mac:
+            temp += '"dst-mac": "%s",' %dst_mac
         
-############  end APIs to be committed to production        
+        if icmp:
+            temp += '"ip-proto": 1,'        
+            if icmp_code:
+                temp += '"dst-tp-port": %s,' % icmp_code      
+            if icmp_type:
+                temp += '"src-tp-port": %s,' % icmp_type
+                  
+        if ether_type:
+            if ether_type == 'ipv6' or ether_type == 'ip6':
+                temp += '"ether-type": 34525,'
+            elif ether_type == 'ip' or ether_type == 'ipv4':
+                temp += '"ether-type": 2048,'
+            else:
+                temp += '"ether-type": %s,' % ether_type
+        elif ip_type:
+            if ip_type =='ip' or  ip_type =='ipv4':
+                temp += '"ether-type": 2048,'
+            else:
+                temp += '"ether-type": 34525,' 
+ 
+        if ip_proto:
+            if ip_proto == 'tcp':
+                temp += '"ether-type": 2048,'
+                temp +='"ip-proto": 6,'   
+            elif ip_proto == 'tcp6':
+                temp += '"ether-type": 34525,'
+                temp +='"ip-proto": 6,'  
+            elif ip_proto == 'udp':
+                temp += '"ether-type": 2048,'                
+                temp +='"ip-proto": 17,'   
+            elif ip_proto == 'udp6':
+                temp += '"ether-type": 34525,'                
+                temp +='"ip-proto": 17,'   
+            else:
+                temp +='"ip-proto": %s,' %ip_proto  
+
+        if vlan:
+            temp +='"vlan":  %s ,' % vlan 
+        else:
+            if vlan_min:
+                temp +='"src-tp-port-min": %s,' % vlan_min  
+            if vlan_max:
+                temp +='"src-tp-port-min": %s,' % vlan_max  
+                    
+        if src_ip_list:
+            temp += '"src-ip-list": "%s",' % src_ip_list
+        else:
+            if src_ip:
+                temp += '"src-ip": "%s",' % src_ip  
+            if src_ip_mask:
+                temp += '"src-ip-mask": "%s",' % src_ip_mask  
+
+        if dst_ip_list:
+            temp += '"dst-ip-list": "%s",' % dst_ip_list
+        else:
+            if dst_ip:
+                temp += '"dst-ip": "%s",' % dst_ip  
+            if dst_ip_mask:
+                temp += '"dst-ip-mask": "%s",' % dst_ip_mask  
+
+        if tos_bit:
+            temp +='"ip-tos": %s,' % tos_bit
+ 
+        if src_port:
+            temp +='"src-tp-port":  %s ,' % src_port  
+        else:
+            if src_port_min:
+                temp +='"src-tp-port-min": %s,' % src_port_min  
+            if src_port_max:
+                temp +='"src-tp-port-min": %s,' % src_port_max   
+                            
+        if dst_port:
+            temp +='"dst-tp-port":  %s ,' % dst_port  
+        else:
+            if dst_port_min:
+                temp +='"dst-tp-port-min": %s,' % dst_port_min  
+            if dst_port_max:
+                temp +='"dst-tp-port-min": %s,' % dst_port_max   
+                 
+        temp +='"sequence": %s}' % sequence                              
+        helpers.log("the temp is: %s"  % (str(temp)) )  
+                    
+        return temp 
+
+
+    def get_next_mac(self,base,incr): 
+        """ Generate the next mac address bases on the base and step.
+            Mingtao
+            Usage:  macAddr = self.get_next_mac(base,incr)      
+            Vui - move to common
+        """
+       
+        helpers.log("the base address is: %s,  the step is: %s,  "  % (str(base), str(incr)))   
+  
+        mac = base.split(":")
+        step =  incr.split(":")
+        helpers.log("MAC list is %s" % mac)
+         
+        hexmac = []  
+                             
+        for index in range(5,0,-1):
+            mac[index] = int(mac[index], 16) + int(step[index], 16)
+            mac[index] = hex(mac[index]) 
+            temp = mac[index]                                         
+            if int(temp,16) >= 256:
+                mac[index] = hex(0)
+                mac[index-1] = int(mac[index-1],16) + 1
+                mac[index-1] = hex(mac[index-1])
+                 
+        mac[0] = int(mac[0],16) + int(step[0],16)   
+        mac[0]=hex(mac[0])  
+        
+        temp = mac[0]                                      
+        if int(temp,16) >= 256:
+            mac[0] = hex(0)
+             
+        for i in range(0,6):
+            hexmac.append('{0:02x}'.format(int(mac[i],16)))                                    
+        macAddr  = ':'.join(map(str,hexmac))  
+             
+        return macAddr
+ 
+
+
+
+    
+        
+##############################  end APIs to be committed to production   #######################     
 
 ##################################### 
 # files to be staged to product
@@ -593,7 +741,7 @@ class Common(object):
                     policy name is not provided, return all policies
         """ 
         t = test.Test()
-        c = t.controller()
+        c= t.controller('master')
         
         if policy is None:
             url = '%s/api/v1/data/controller/applications/bigtap/view?config=true' % (c.base_url)
@@ -610,113 +758,7 @@ class Common(object):
         return c.rest.content() 
      
    
-    def bigtap_construct_match(self,
-                               ip_type=None, ether_type=None,
-                               src_mac = None,
-                               dst_mac = None,
-                               ip_proto=None, 
-                               icmp=None, icmp_code=None, icmp_type=None,
-                               vlan = None, vlan_min=None, vlan_max=None,  
-                               src_ip_list =None, src_ip =None, src_ip_mask =None, 
-                               dst_ip_list =None, dst_ip =None, dst_ip_mask =None, 
-                               tos_bit =None,
-                               src_port=None,src_port_min=None,src_port_max=None,
-                               dst_port=None,dst_port_min=None,dst_port_max=None,
-                               sequence=10):
-        """ bigtap: construct the match string for policy
-            Mingtao
-        """
-        temp = '{'
-   
-        if src_mac:
-            temp += '"src-mac": "%s",' %src_mac
-        if dst_mac:
-            temp += '"dst-mac": "%s",' %dst_mac
-        
-        if icmp:
-            temp += '"ip-proto": 1,'        
-            if icmp_code:
-                temp += '"dst-tp-port": %s,' % icmp_code      
-            if icmp_type:
-                temp += '"src-tp-port": %s,' % icmp_type
-                  
-        if ether_type:
-            if ether_type == 'ipv6' or ether_type == 'ip6':
-                temp += '"ether-type": 34525,'
-            elif ether_type == 'ip' or ether_type == 'ipv4':
-                temp += '"ether-type": 2048,'
-            else:
-                temp += '"ether-type": %s,' % ether_type
-        elif ip_type:
-            if ip_type =='ip' or  ip_type =='ipv4':
-                temp += '"ether-type": 2048,'
-            else:
-                temp += '"ether-type": 34525,' 
- 
-        if ip_proto:
-            if ip_proto == 'tcp':
-                temp += '"ether-type": 2048,'
-                temp +='"ip-proto": 6,'   
-            elif ip_proto == 'tcp6':
-                temp += '"ether-type": 34525,'
-                temp +='"ip-proto": 6,'  
-            elif ip_proto == 'udp':
-                temp += '"ether-type": 2048,'                
-                temp +='"ip-proto": 17,'   
-            elif ip_proto == 'udp6':
-                temp += '"ether-type": 34525,'                
-                temp +='"ip-proto": 17,'   
-            else:
-                temp +='"ip-proto": %s,' %ip_proto  
 
-        if vlan:
-            temp +='"vlan":  %s ,' % vlan 
-        else:
-            if vlan_min:
-                temp +='"src-tp-port-min": %s,' % vlan_min  
-            if vlan_max:
-                temp +='"src-tp-port-min": %s,' % vlan_max  
-                    
-        if src_ip_list:
-            temp += '"src-ip-list": "%s",' % src_ip_list
-        else:
-            if src_ip:
-                temp += '"src-ip": "%s",' % src_ip  
-            if src_ip_mask:
-                temp += '"src-ip-mask": "%s",' % src_ip_mask  
-
-        if dst_ip_list:
-            temp += '"dst-ip-list": "%s",' % dst_ip_list
-        else:
-            if dst_ip:
-                temp += '"dst-ip": "%s",' % dst_ip  
-            if dst_ip_mask:
-                temp += '"dst-ip-mask": "%s",' % dst_ip_mask  
-
-        if tos_bit:
-            temp +='"ip-tos": %s,' % tos_bit
- 
-        if src_port:
-            temp +='"src-tp-port":  %s ,' % src_port  
-        else:
-            if src_port_min:
-                temp +='"src-tp-port-min": %s,' % src_port_min  
-            if src_port_max:
-                temp +='"src-tp-port-min": %s,' % src_port_max   
-                            
-        if dst_port:
-            temp +='"dst-tp-port":  %s ,' % dst_port  
-        else:
-            if dst_port_min:
-                temp +='"dst-tp-port-min": %s,' % dst_port_min  
-            if dst_port_max:
-                temp +='"dst-tp-port-min": %s,' % dst_port_max   
-                 
-        temp +='"sequence": %s}' % sequence                              
-        helpers.log("the temp is: %s"  % (str(temp)) )  
-                    
-        return temp 
-    
 
     def rest_bigtap_get_policy_optimize(self,policy):
         """ Get policy # of optimized matches
@@ -826,44 +868,6 @@ class Common(object):
         
         return True   
 
-
-    def get_next_mac(self,base,incr): 
-        """ Generate the next mac address bases on the base and step.
-            Mingtao
-            Usage:  macAddr = self.get_next_mac(base,incr)      
-            Vui - move to common
-        """
-       
-        helpers.log("the base address is: %s,  the step is: %s,  "  % (str(base), str(incr)))   
-  
-        mac = base.split(":")
-        step =  incr.split(":")
-        helpers.log("MAC list is %s" % mac)
-         
-        hexmac = []  
-                             
-        for index in range(5,0,-1):
-            mac[index] = int(mac[index], 16) + int(step[index], 16)
-            mac[index] = hex(mac[index]) 
-            temp = mac[index]                                         
-            if int(temp,16) >= 256:
-                mac[index] = hex(0)
-                mac[index-1] = int(mac[index-1],16) + 1
-                mac[index-1] = hex(mac[index-1])
-                 
-        mac[0] = int(mac[0],16) + int(step[0],16)   
-        mac[0]=hex(mac[0])  
-        
-        temp = mac[0]                                      
-        if int(temp,16) >= 256:
-            mac[0] = hex(0)
-             
-        for i in range(0,6):
-            hexmac.append('{0:02x}'.format(int(mac[i],16)))                                    
-        macAddr  = ':'.join(map(str,hexmac))  
-             
-        return macAddr
- 
 
 
 
