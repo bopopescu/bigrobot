@@ -16,6 +16,27 @@ class Controller(object):
         c.cli(cmd)
         helpers.log("CLI mode result: %s" % c.cli_content())
 
+    def cli_reboot(self, node):
+        t = test.Test()
+        n = t.node(node)
+        if not helpers.is_controller(node):
+            helpers.test_error("Node must be a controller ('c1', 'c2').")
+
+        n.enable("reboot", prompt="Confirm Reboot (yes to continue) ")
+        n.enable("yes", prompt='Broadcast message from root@controller ')
+
+    def cli_reload(self, node):
+        t = test.Test()
+        n = t.controller(node)
+        if not helpers.is_controller(node):
+            helpers.test_error("Node must be a controller ('c1', 'c2').")
+
+        n.send("reload")
+        n.expect('Confirm Reload \(yes to continue\)')
+        n.send("yes")
+        n.expect('The system is going down for reboot')
+        helpers.log("Device '%s' has rebooted" % n.name)
+
     def cli_boot_factory_default(self, node):
         """
         Run 'boot factory default' command. This will cause the SSH connection

@@ -51,7 +51,42 @@ class DevConf(object):
         self.last_result = None
         self.mode = 'cli'
         self.is_prompt_changed = False
-        self.set_prompt = self.conn.set_prompt 
+        
+        # Aliases
+        self.set_prompt = self.conn.set_prompt
+
+    def send(self, cmd, quiet=False, level=4):
+        """
+        Invoking low-level send/expect commands to the device. This is a
+        wrapper for Exscript's send(). Use with caution!!!
+        
+        This will simply send the command to the device and immediately
+        returns. It is intended to be used with expect(). Note that a
+        carriage returned is appended to the command.
+        
+        See http://knipknap.github.io/exscript/api/Exscript.protocols.Protocol-class.html#send
+        """
+        if not quiet:
+            helpers.log("Send command: %s" % cmd, level=level)
+        cmd = ''.join((cmd, '\r'))
+        self.conn.send(cmd)
+    
+    def expect(self, prompt, quiet=False, level=4):
+        """
+        Invoking low-level send/expect commands to the device. This is a
+        wrapper for Exscript's expect(). Use with caution!!!
+        
+        This function will wait until there a prompt match or times out in
+        the process. It is intended to be used with expect().
+        
+        See http://knipknap.github.io/exscript/api/Exscript.protocols.Protocol-class.html#expect
+        """
+        self.conn.expect(prompt)
+        self.last_result = { 'content': self.conn.response }
+        if not quiet:
+            helpers.log("Expect content:\n%s%s"
+                        % (self.content(), br_utils.end_of_output_marker()),
+                        level=level)
 
     def cmd(self, cmd, quiet=False, prompt=None, level=5):
         if prompt:
@@ -67,7 +102,6 @@ class DevConf(object):
             helpers.log("Execute command: %s" % cmd, level=level)
 
         self.conn.execute(cmd)
-        helpers.sleep(1)
         self.last_result = { 'content': self.conn.response }
         
         if not quiet:
