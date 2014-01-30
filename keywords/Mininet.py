@@ -111,3 +111,8 @@ class Mininet(object):
         mn = t.mininet()
         mn.cli('%s ifconfig %s hw ether %s' % (host, intf, mac))     
         
+    def mininet_dump_switch(self, switch):
+        t = test.Test()
+        mn = t.mininet()
+        mn.cli('dumpt6 %s' % (switch))
+        helpers.log(mn.cli_content())

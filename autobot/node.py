@@ -5,7 +5,7 @@ from autobot.bsn_restclient import BsnRestClient
 
 class Node(object):
     def __init__(self, name, ip, user=None, password=None, params=None):
-        self.node_name = name
+        self.name = name
         self.ip = ip
         self.user = user
         self.password = password
@@ -40,7 +40,7 @@ class Node(object):
     def pingable_or_die(self):
         if self.is_pingable:
             return True
-        helpers.log("Ping %s ('%s')" % (self.ip, self.node_name))
+        helpers.log("Ping %s ('%s')" % (self.ip, self.name))
         if not helpers.ping(self.ip, count=3, waittime=1000):
             # Consider init to be completed, so as not to be invoked again.
             self._init_completed = True
@@ -53,7 +53,7 @@ class Node(object):
         """
         Inheriting class needs to define this method.
         """
-        pass
+        raise NotImplementedError()
 
 
 class ControllerNode(Node):
@@ -108,6 +108,8 @@ class ControllerNode(Node):
         self.cli_content = self.dev.content
         self.cli_result = self.dev.result
         self.set_prompt = self.dev.set_prompt
+        self.send = self.dev.send
+        self.expect = self.dev.expect
 
     def console(self):
         if self.dev_console:
@@ -117,14 +119,14 @@ class ControllerNode(Node):
             self.console_ip = self.node_params['console_ip']
         else:
             helpers.test_error("Console IP address is not defined for node '%s'"
-                               % self.node_name)
+                               % self.name)
         if 'console_port' in self.node_params:
             self.console_port = self.node_params['console_port']
         else:
             helpers.test_error("Console port is not defined for node '%s'"
-                               % self.node_name)
+                               % self.name)
             
-        self.dev_console = devconf.ControllerDevConf(name=self.node_name,
+        self.dev_console = devconf.ControllerDevConf(name=self.name,
                                                      host=self.console_ip,
                                                      port=self.console_port,
                                                      user=self.user,
@@ -135,7 +137,8 @@ class ControllerNode(Node):
 
 
 class MininetNode(Node):
-    def __init__(self, name, ip, controller_ip, user, password, t):
+    def __init__(self, name, ip, controller_ip, user, password, t,
+                 openflow_port=None):
         super(MininetNode, self).__init__(name, ip, user, password,
                                           t.topology_params())
         if 'topology' in self.node_params:
@@ -164,6 +167,7 @@ class MininetNode(Node):
                                                 password=password,
                                                 controller=controller_ip,
                                                 topology=self.topology,
+                                                openflow_port=openflow_port,
                                                 debug=self.dev_debug_level)
         elif mn_type == 'basic':
             self.dev = devconf.MininetDevConf(name=name,
@@ -172,6 +176,7 @@ class MininetNode(Node):
                                               password=password,
                                               controller=controller_ip,
                                               topology=self.topology,
+                                              openflow_port=openflow_port,
                                               debug=self.dev_debug_level)
 
         # Shortcuts
@@ -182,6 +187,8 @@ class MininetNode(Node):
         self.restart_mininet = self.dev.restart_mininet
         self.stop_mininet = self.dev.stop_mininet
         self.set_prompt = self.dev.set_prompt
+        self.send = self.dev.send
+        self.expect = self.dev.expect
 
 
 class HostNode(Node):
@@ -213,6 +220,8 @@ class HostNode(Node):
         self.bash_content = self.dev.content
         self.bash_result = self.dev.result
         self.set_prompt = self.dev.set_prompt
+        self.send = self.dev.send
+        self.expect = self.dev.expect
 
 
 class SwitchNode(Node):
@@ -247,3 +256,5 @@ class SwitchNode(Node):
         self.cli_content = self.dev.content
         self.cli_result = self.dev.result
         self.set_prompt = self.dev.set_prompt
+        self.send = self.dev.send
+        self.expect = self.dev.expect

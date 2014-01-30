@@ -209,6 +209,16 @@ def is_controller(name):
     return True if match else False
 
 
+def is_controller_or_error(name):
+    """
+    Controller is defined as c1, c2, master, slave, ...
+    """
+    if not is_controller(name):
+        test_error("Node must be a controller ('c1', 'c2').")
+    else:
+        return True
+
+
 def is_switch(name):
     """
     Switch is defined as s1, s2, s3, spine1, spine2, leaf1, leaf2, ...
@@ -566,7 +576,7 @@ def environment_failure(msg):
 def _createSSHClient(server, user, password, port=22):
     client = paramiko.SSHClient()
     client.load_system_host_keys()
-    #client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     client.connect(server, port, user, password)
     return client
 
@@ -578,16 +588,18 @@ def scp_put(server, local_file, remote_path,
 
     # !!! FIXME: Catch conditions where file/path are not found
     #log("scp put local_file=%s remote_path=%s" % (local_file, remote_path))
-    s.put(local_file, remote_path) 
+    log("SSH copy source (%s) to destination (%s) " % (local_file, remote_path))
+    s.put(local_file, remote_path, recursive=True) 
 
 
 def scp_get(server, remote_file, local_path,
-            user='admin', password='adminadmin'):
+            user='admin', password='adminadmin', recursive=True):
     ssh = _createSSHClient(server, user, password)
     s = SCPClient(ssh.get_transport())
 
     # !!! FIXME: Catch conditions where file/path are not found
     #log("scp put remote_file=%s local_path=%s" % (remote_file, local_path))
+    log("SSH copy source (%s) to destination (%s) " % (remote_file, local_path))
     s.get(remote_file, local_path)
 
 

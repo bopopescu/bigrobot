@@ -13,5 +13,13 @@ Library         keywords_dev/vui/MyTest.py
 * Test Case
 Test controller rest session cookie
     bounce session cookie
+    [Tags]  skipped
+
+Test controller reload (BigTap)
+    cli reload  master
     #[Tags]  skipped
 
+Get controller handles
+    #cli save running config
+    cli show user
+    [Tags]  skipped

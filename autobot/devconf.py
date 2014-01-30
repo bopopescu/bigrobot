@@ -51,7 +51,42 @@ class DevConf(object):
         self.last_result = None
         self.mode = 'cli'
         self.is_prompt_changed = False
-        self.set_prompt = self.conn.set_prompt 
+        
+        # Aliases
+        self.set_prompt = self.conn.set_prompt
+
+    def send(self, cmd, quiet=False, level=4):
+        """
+        Invoking low-level send/expect commands to the device. This is a
+        wrapper for Exscript's send(). Use with caution!!!
+        
+        This will simply send the command to the device and immediately
+        returns. It is intended to be used with expect(). Note that a
+        carriage returned is appended to the command.
+        
+        See http://knipknap.github.io/exscript/api/Exscript.protocols.Protocol-class.html#send
+        """
+        if not quiet:
+            helpers.log("Send command: %s" % cmd, level=level)
+        cmd = ''.join((cmd, '\r'))
+        self.conn.send(cmd)
+    
+    def expect(self, prompt, quiet=False, level=4):
+        """
+        Invoking low-level send/expect commands to the device. This is a
+        wrapper for Exscript's expect(). Use with caution!!!
+        
+        This function will wait until there a prompt match or times out in
+        the process. It is intended to be used with expect().
+        
+        See http://knipknap.github.io/exscript/api/Exscript.protocols.Protocol-class.html#expect
+        """
+        self.conn.expect(prompt)
+        self.last_result = { 'content': self.conn.response }
+        if not quiet:
+            helpers.log("Expect content:\n%s%s"
+                        % (self.content(), br_utils.end_of_output_marker()),
+                        level=level)
 
     def cmd(self, cmd, quiet=False, prompt=None, level=5):
         if prompt:
@@ -67,7 +102,6 @@ class DevConf(object):
             helpers.log("Execute command: %s" % cmd, level=level)
 
         self.conn.execute(cmd)
-        helpers.sleep(1)
         self.last_result = { 'content': self.conn.response }
         
         if not quiet:
@@ -223,9 +257,7 @@ class MininetDevConf(DevConf):
     :param topology: str, in the form 'tree,4,2'
     """
     def __init__(self, name=None, host=None, user=None, password=None,
-                 controller=None,
-                 port=None,
-                 topology=None,
+                 controller=None, topology=None, openflow_port=None,
                  debug=0):
 
         if controller is None:
@@ -235,10 +267,10 @@ class MininetDevConf(DevConf):
 
         self.topology = topology
         self.controller = controller
-        self.port = port
+        self.openflow_port = openflow_port
         self.name = name
         self.state = 'stopped'  # or 'started'
-
+        
         super(MininetDevConf, self).__init__(host, user, password, debug=debug)
         self.start_mininet()
         
@@ -268,13 +300,15 @@ class MininetDevConf(DevConf):
             return True
 
         helpers.log("Starting Mininet on '%s'" % self.name)
+
         if new_topology:
             self.topology = new_topology
             helpers.log("Start new Mininet topology for '%s': %s"
                         % (self.name, new_topology))
 
-        cmd = self.mininet_cmd()
-        self.cli(cmd, quiet=False)
+        _cmd = self.mininet_cmd()
+        
+        self.cli(_cmd, quiet=False)
         self.state = 'started'
 
     def stop_mininet(self):
@@ -305,12 +339,15 @@ class T6MininetDevConf(MininetDevConf):
     :param topology: str, in the form
         '--num-spine 0 --num-rack 1 --num-bare-metal 2 --num-hypervisor 0'
     """
-    def __init__(self, *args, **kwargs):
-        super(T6MininetDevConf, self).__init__(port=6653, *args, **kwargs)
+    def __init__(self, **kwargs):
+        super(T6MininetDevConf, self).__init__(**kwargs)
 
     def mininet_cmd(self):
+        if self.openflow_port is None:
+            self.openflow_port = 6653
+            helpers.log("Setting OpenFlow port to %d" % self.openflow_port)
         return ("sudo /opt/t6-mininet/run.sh -c %s:%s %s"
-                % (self.controller, self.port, self.topology))
+                % (self.controller, self.openflow_port, self.topology))
 
 
 class HostDevConf(DevConf):

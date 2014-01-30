@@ -1,17 +1,18 @@
 import autobot.helpers as helpers
 import autobot.test as test
+import re
 
 
 class T5Fabric(object):
 
     def __init__(self):
-        t = test.Test()
-        c = t.controller()
-        
-        url = '%s/api/v1/auth/login' % c.base_url
-        result = c.rest.post(url, {"user":"admin", "password":"adminadmin"})
-        session_cookie = result['content']['session_cookie']
-        c.rest.set_session_cookie(session_cookie)
+#        t = test.Test()
+#        c = t.controller()
+        pass        
+#        url = '%s/api/v1/auth/login' % c.base_url
+#        result = c.rest.post(url, {"user":"admin", "password":"adminadmin"})
+#        session_cookie = result['content']['session_cookie']
+#        c.rest.set_session_cookie(session_cookie)
         
        
     def rest_show_fabric_switch(self):
@@ -197,7 +198,7 @@ class T5Fabric(object):
     def rest_verify_fabric_lag(self, switch):
         ''' 
           Function to verify Lag formation from the fabric switches
-          Input : specific DPID
+          Input : specific switch name
           output : Will provide the No of lag it is suppose to form between Spine and Leaf in Dual Rack or single rack setup
         '''   
         t = test.Test()
@@ -211,22 +212,21 @@ class T5Fabric(object):
         url2 = '%s/api/v1/data/controller/core/switch[name="%s"]?select=fabric-lag' % (c.base_url, switch)
         c.rest.get(url2)
         data3 = c.rest.content()
-        if data[0]["switch-name"] == switch:
+        if str(data1[0]["fabric-switch-info"]["switch-name"]) == str(switch):
             if data1[0]["fabric-switch-info"]["fabric-role"] == "spine":
                 fabric_interface = 0
+                rack_lag = 0
                 for i in range(0,len(data)):
                     if data[i]["type"] == "leaf":
                         fabric_interface = fabric_interface + 1
-                        continue
-                    elif data[i]["type"] == "local":
-                        continue  
-                    for i in range(0,len(data3[0]["fabric-lag"])):  
-                        if data3[0]["fabric-lag"][i]["lag-type"] == "rack-lag":
-                            if len(data3[0]["fabric-lag"][i]["member"]) == fabric_interface: 
-                                helpers.log("No of Rack lag from  %s is correct,Expected = %d, Actual = %d " % (switch, fabric_interface, len(data3[0]["fabric-lag"][i]["member"])))
+                for i in range(0,len(data3[0]["fabric-lag"])):  
+                        if (data3[0]["fabric-lag"][i]["lag-type"]) == "rack-lag":
+                            rack_lag = rack_lag + int(len(data3[0]["fabric-lag"][i]["member"]))
+                if (int(rack_lag) == int(fabric_interface)): 
+                                helpers.log("No of Rack lag from  %s is correct,Expected = %d, Actual = %d " % (switch, fabric_interface, rack_lag))
                                 return True
-                            else:
-                                helpers.test_failure("No of Rack lag from %s is incorrect,Expected = %d, Actual = %d " % (switch, fabric_interface, len(data3[0]["fabric-lag"][i]["member"])))
+                else:
+                                helpers.test_failure("No of Rack lag from %s is incorrect,Expected = %d, Actual = %d " % (switch, fabric_interface, rack_lag))
                                 return False 
             elif data1[0]["fabric-switch-info"]["fabric-role"] == "leaf":
                     fabric_spine_interface = 0
@@ -234,13 +234,13 @@ class T5Fabric(object):
                     for i in range(0,len(data)):
                                 if data[i]["type"] == "spine":
                                     fabric_spine_interface = fabric_spine_interface + 1
-                                    continue
+                                    
                                 elif data[i]["type"] == "leaf":
                                     fabric_peer_interface = fabric_peer_interface + 1
-                                    continue   
-                                for i in range(0,len(data3[0]["fabric-lag"])):
+                                     
+                    for i in range(0,len(data3[0]["fabric-lag"])):
                                         if data3[0]["fabric-lag"][i]["lag-type"] == "spine-lag":
-                                            if len(data3[0]["fabric-lag"][i]["member"]) == fabric_spine_interface:  
+                                            if (int(len(data3[0]["fabric-lag"][i]["member"])) == int(fabric_spine_interface)):  
                                                 helpers.log("Spine lag formation from leaf switch %s is correct,Expected = %d, Actual = %d, " % (switch, fabric_spine_interface, len(data3[0]["fabric-lag"][i]["member"])))
                                                 return True
                                             else:
@@ -330,8 +330,44 @@ class T5Fabric(object):
         helpers.log("Total Rack in the Topology: %d" % total_rack)
         return total_rack
                 
-                
-                
+    def rest_verify_forwarding_lag(self, dpid, switch):
+        '''Verify Edge port  Information in Controller Forwarding Table
+        
+            Input:  Specific DPID of the switch and also the switch name of the specific device     
+            
+            Return: Match forwarding table lag/Port for peer switch edge ports
+        '''
+        t = test.Test()
+        c = t.controller()
+        url = '%s/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch-id="%s"]/lag-table' % (c.base_url, dpid)
+        c.rest.get(url)
+        data = c.rest.content()
+        url1 = '%s/api/v1/data/controller/core/switch[dpid="%s"]' % (c.base_url, dpid)
+        c.rest.get(url1)
+        data1 = c.rest.content()
+        url2 = '%s/api/v1/data/controller/core/switch[name="%s"]?select=fabric-lag' % (c.base_url, switch)
+        c.rest.get(url2)
+        data2 = c.rest.content()
+        peer_intf = []
+        for i in range(0,len(data2[0]["fabric-lag"])):
+            if data2[0]["fabric-lag"][i]["lag-type"] == "leaf-lag":
+                interface = re.sub("\D", "", data2[0]["fabric-lag"][i]["member"][0]["src-interface"])
+                peer_intf.append(int(interface))                            
+        if data1[0]["fabric-switch-info"]["leaf-group"] == "" :
+            for i in range(0,len(data)):
+                if (data[i]["port"]["port-num"] == peer_intf[0]):
+                    helpers.test_failure("Peer switch edge ports are not removed from lag table")
+                    return False
+                else:
+                    helpers.log("Peer switch edge ports are removed from forwarding lag table")  
+                    return True
+        else:           
+            for i in range(0,len(data)):
+                if (data[i]["port"]["port-num"] == peer_intf[0]):
+                    helpers.log("Peer switch edge ports are properly created in forwarding table")
+                else:
+                    helpers.test_failure("Peer switch edge ports are not created in forwarding table")
+                    
                 
                 
                 

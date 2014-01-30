@@ -168,6 +168,12 @@ class Test(object):
             else:
                 return False
 
+    def controllers(self):
+        """
+        Get the handles of all the controllers.
+        """
+        return [n for n in self.topology_params() if re.match(r'^c\d+', n)]
+        
     def controller(self, name='c1', resolve_mastership=False):
         """
         :param resolve_mastership: (Bool) 
@@ -204,14 +210,39 @@ class Test(object):
     def mininet(self, name='mn', *args, **kwargs):
         return self.topology(name, *args, **kwargs)
     
+    def switches(self):
+        """
+        Get the handles of all the switches.
+        """
+        return [n for n in self.topology_params() if re.match(r'^s\d+', n)]
+        
     def switch(self, name='s1', *args, **kwargs):
         return self.topology(name, *args, **kwargs)
 
+    def hosts(self):
+        """
+        Get the handles of all the hosts.
+        """
+        return [n for n in self.topology_params() if re.match(r'^h\d+', n)]
+        
     def host(self, name='h1', *args, **kwargs):
         return self.topology(name, *args, **kwargs)
 
     def node(self, *args, **kwargs):
-        return self.topology(*args, **kwargs)
+        """
+        Returns the handle for a node. 
+        """
+        if len(args) >= 1:
+            node = args[0]
+        elif 'name' in kwargs:
+            node = kwargs['name']
+        else:
+            helpers.test_error("Impossible state.")
+                        
+        if re.match(r'^(master|slave)$', node):
+            return self.controller(*args, **kwargs)
+        else:
+            return self.topology(*args, **kwargs)
     
     def initialize(self):
         """
@@ -258,12 +289,21 @@ class Test(object):
                                           t)
             elif helpers.is_mininet(key):
                 helpers.log("Initializing Mininet '%s'" % key)
+                
+                # Use the OpenFlow port defined in the controller ('c1')
+                # if it's defined.
+                if 'openflow_port' in self.topology_params()['c1']:
+                    openflow_port = self.topology_params()['c1']['openflow_port']
+                else:
+                    openflow_port = None
+                
                 n = a_node.MininetNode(key,
                                        host,
                                        controller_ip,
                                        self.mininet_user(),
                                        self.mininet_password(),
-                                       t)
+                                       t,
+                                       openflow_port=openflow_port)
             elif helpers.is_host(key):
                 helpers.log("Initializing host '%s'" % key)
                 n = a_node.HostNode(key,
