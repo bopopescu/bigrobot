@@ -319,32 +319,33 @@ class BsnCommonShow(object):
     
     def rest_show_running_config(self):
         t=test.Test()
-        c= t.controller('master')           
+        c= t.controller()           
 
         url = '%s/api/v1/data/controller/os/config' % (c.base_url)
         c.rest.get(url)
-        content = c.rest.content()
-        helpers.log(content())
         url = '%s/api/v1/data/controller/core/aaa/local-user' % (c.base_url)
         c.rest.get(url)
-        content = c.rest.content()
-        helpers.log(content())
         url = '%s/api/v1/data/controller/os/config/global/snmp-config' % (c.base_url)
         c.rest.get(url)
-        content = c.rest.content()
-        helpers.log(content())
         url = '%s/api/v1/data/controller/core/switch-config' % (c.base_url)
         c.rest.get(url)
-        content = c.rest.content()
-        helpers.log(content())
         url = '%s/api/v1/data/controller/fabric/port-group' % (c.base_url)
         c.rest.get(url)
-        content = c.rest.content()
-        helpers.log(content())
         url = '%s/api/v1/data/controller/applications/bvs/tenant' % (c.base_url)
         c.rest.get(url)
-        content = c.rest.content()
-        helpers.log(content())
+        
+        url = '%s/api/v1/data/controller/os/config?config=true reply "[ ]"' % (c.base_url)
+        c.rest.get(url)
+        url = '%s/api/v1/data/controller/core/aaa/local-user?config=true reply "[ ]"' % (c.base_url)
+        c.rest.get(url)
+        url = '%s/api/v1/data/controller/os/config/global/snmp-config?config=true reply "[ ]"' % (c.base_url)
+        c.rest.get(url)
+        url = '%s/api/v1/data/controller/core/switch-config?config=true reply "[ ]"' % (c.base_url)
+        c.rest.get(url)
+        url = '%s/api/v1/data/controller/fabric/port-group?config=true reply "[ ]"' % (c.base_url)
+        c.rest.get(url)
+        url = '%s/api/v1/data/controller/applications/bvs/tenant?config=true reply "[ ]"' % (c.base_url)
+        c.rest.get(url)
         
 '''        
     def mininet_dump_switch(self, switch):
@@ -358,5 +359,7 @@ curl -g -H 'Cookie: session_cookie=V_00W0VngoQL004KdrZJknmxsZtFrz5c'  'http://12
 curl -g -H 'Cookie: session_cookie=V_00W0VngoQL004KdrZJknmxsZtFrz5c'  'http://127.0.0.1:8080/api/v1/data/controller/core/switch-config'
 curl -g -H 'Cookie: session_cookie=V_00W0VngoQL004KdrZJknmxsZtFrz5c'  'http://127.0.0.1:8080/api/v1/data/controller/fabric/port-group'
 curl -g -H 'Cookie: session_cookie=V_00W0VngoQL004KdrZJknmxsZtFrz5c'  'http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant'
+curl -g -H 'Cookie: session_cookie=V_00W0VngoQL004KdrZJknmxsZtFrz5c'  'http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant?config=true reply "[ ]"'
+
 
 '''
