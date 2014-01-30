@@ -29,7 +29,7 @@ class MyTest(object):
     def test_scp(self):
         t = test.Test()
         c = t.controller()
-        helpers.scp_put(c.ip, '/etc/hosts', '/tmp')
+        helpers.scp_put(c.ip, '/etc/hosts', '/tmp/12345/1234')
 
     def passing_kwargs_additions(self, arg_kw1=None, arg_kw2=None):
         helpers.log("arg_kw1: %s" % arg_kw1)
@@ -118,3 +118,11 @@ root@nova-controller:~#
         t = test.Test()
         c = t.controller('master')
         c.rest.get("/api/v1/data/controller/core/aaa/local-user")
+        
+    def get_a_dictionary(self):
+        return { "abc": 123, "xyz": True}
+    
+    def process_a_dictionary(self, input_dict):
+        helpers.log("input_dict: %s" % input_dict)
+        helpers.log("abc: %s" % input_dict['abc'])
+        helpers.log("xyz: %s" % input_dict['xyz'])
