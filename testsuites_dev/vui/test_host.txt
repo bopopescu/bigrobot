@@ -16,7 +16,11 @@ Test host
     host commands
 
 Test host ping
+    [Tags]  skipped
     #${status}       host ping  node=h1  dest_ip=10.192.7.210
     ${status}       host ping  node=h1  dest_ip=10.192.5.254
     #${status}       host ping  node=h1  dest_node=c1
     Should be true  ${status} 
+
+Test scp command
+    test scp
