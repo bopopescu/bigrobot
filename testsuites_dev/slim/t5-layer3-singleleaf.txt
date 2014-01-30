@@ -201,10 +201,12 @@ L3 untagged bm0 ping to untagged bm1 across tenants and VNS all statically defin
    	REST create vns ip  						${tenant2_name}  	${vns2_1}  		${vns2_ip1}	  		${vns2_subnet1}
  	REST add interface to vns  					${tenant1_name}  	${vns1_1}  		${leaf0_name} 		${leaf0_intf1}  ${untaggedvlan}	
    	REST add interface to vns  					${tenant2_name}  	${vns2_1}  		${leaf0_name} 		${leaf0_intf2} 	${untaggedvlan}	
+   	sleep 										30
    	REST attach system to tenant routers 		${tenant1_name} 
    	REST attach system to tenant routers 		${tenant2_name} 
    	REST attach tenant routers to system		${tenant1_name} 
    	REST attach tenant routers to system		${tenant2_name} 
+   	sleep			30
    	REST_create_endpoint						${tenant1_name}		${vns1_1}		${endpoint1name}
 	REST_create_endpoint						${tenant2_name}		${vns2_1}		${endpoint2name}	
 	REST_create_endpoint_ip						${tenant1_name}		${vns1_1}		${endpoint1name}	${host0_ip}
@@ -220,8 +222,11 @@ L3 untagged bm0 ping to untagged bm1 across tenants and VNS all statically defin
    	mininet host arp							${host0_name}		${vns1_ip1}		${gw_mac}
    	mininet host arp							${host1_name} 		${vns2_ip1}		${gw_mac}
 	sleep  										5
+	REST show running config
 	mininet l3 ping								${host0_name}		${host1_name} 		3
 	sleep 										2
+	mininet dump switch							${leaf0_name}
+	sleep 										1
    	${loss}=									mininet l3 ping		${host0_name}	${host1_name}		${ping_count}
    	Should Be True  							${loss} == 0
 
@@ -232,8 +237,23 @@ L3 untagged bm0 ping to untagged bm1 across tenants and VNS all statically defin
 	sleep					30
 	REST detach system to tenant routers		${tenant2_name}
 	REST detach tenant routers to system		${tenant2_name}	
+	REST show running config	
+	mininet dump switch							${leaf0_name}
+	${loss}=									mininet l3 ping		${host0_name}	${host1_name}		${ping_count}
+# 	Should Be True  							${loss} == 100
+	sleep 		1
+   	REST attach system to tenant routers 		${tenant1_name} 
+   	REST attach system to tenant routers 		${tenant2_name} 
+   	REST attach tenant routers to system		${tenant1_name} 
+   	REST attach tenant routers to system		${tenant2_name} 
+   	sleep			10
+	REST show running config   	
+ 	mininet dump switch							${leaf0_name}
+	${loss}=									mininet l3 ping		${host0_name}	${host1_name}		${ping_count}
+# 	Should Be True  							${loss} == 0  		
 	REST delete vns ip							${tenant1_name}  	${vns1_1}  		${vns1_ip1}	  		${vns1_subnet1}
-	sleep 					30
+	REST delete tenant							${tenant_system}
+#	sleep 					30
 	
 	
 	
@@ -378,9 +398,10 @@ L3 configure dhcp relay on vns
     
 * Keywords
 teardown topology
-#	remove fabric switch
-#	REST delete tenant							${tenant1_name}   
-#	REST delete tenant							${tenant2_name}     
+	remove fabric switch
+	REST delete tenant							${tenant1_name}   
+	REST delete tenant							${tenant2_name}    
+	REST delete tenant							${tenant_system}
 	sleep 										10
 		
 	
