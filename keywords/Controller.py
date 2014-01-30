@@ -15,24 +15,49 @@ class Controller(object):
             cmd = ''.join((cmd, ' ', user)) 
         c.cli(cmd)
 
-    def cli_reboot(self, node):
-        helpers.is_controller_or_error(node)
+    def _boot_switchlight(self, node):
+        t = test.Test()
+        n = t.node(node)
+        n.send("reload now")
+        n.expect('The system is going down for reboot')
+
+    def _boot_bvs(self, node):
         t = test.Test()
         n = t.node(node)
         n.enable("reboot", prompt="Confirm Reboot (yes to continue) ")
         n.enable("yes", prompt='Broadcast message from root@controller ')
 
-    def cli_reload(self, node):
-        helpers.is_controller_or_error(node)
+    def _boot_bigtap_bigwire(self, node):
         t = test.Test()
         n = t.controller(node)
-
-        helpers.log("Reloading '%s' (platform=%s)" % (n.name, n.platform))
         n.send("reload")
         n.expect('Confirm Reload \(yes to continue\)')
         n.send("yes")
         n.expect('The system is going down for reboot')
+        
+    def cli_reload(self, node):
+        """
+        
+        """
+        t = test.Test()
+        n = t.controller(node)
+
+        platform = n.platform()
+        helpers.log("Reloading '%s' (platform=%s)" % (n.name, n.platform()))
+
+        if helpers.is_bigwire(platform) or helpers.is_bigtap(platform):
+            self._boot_bigtap_bigwire(node)
+        elif helpers.is_bvs(platform):
+            self._boot_bvs(node)
+        elif helpers.is_switchlight(platform):
+            self._boot_switchlight(node)
+        else:
+            helpers.test_error("Reload does not recognize platform '%s'" % platform)
+        
         helpers.log("Device '%s' has rebooted" % n.name)
+    
+    # alias
+    cli_reboot = cli_reload
 
     def cli_save_running_config(self, node=None):
         """

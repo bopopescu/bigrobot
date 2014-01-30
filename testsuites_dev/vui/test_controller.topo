@@ -6,6 +6,11 @@ c1:
   #ip: 10.192.5.121     # T5 (Prashanth's)
   set_devconf_debug_level: 0
 
+#s1:
+#  ip: 10.195.0.34
+#  user: admin
+#  password: bsn
+
 #mn:
 #  ip: 10.192.7.39
 #  type: 't6'  # required: 't6' or 'basic'
