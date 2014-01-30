@@ -26,6 +26,7 @@ ${bm1_intf0}  leaf0-eth6
 ${bm2_intf0}  leaf1-eth5
 
 * Test Case 
+
 #Verify HA Cluster Formation
 #   [Tags]  HA
 #   rest verify show cluster
@@ -38,9 +39,18 @@ ${bm2_intf0}  leaf1-eth5
 #	[Tags]  HA
 #	rest cluster election rerun
 
-Verify Cluster Master Reboot
+#Verify Cluster Master Reboot
+#	[Tags]  HA
+#	rest cluster master reboot
+
+#Verify Cluster Slave Reboot
+#	[Tags]  HA
+#	rest cluster slave reboot
+
+Verify Cluster Slave Shutdown
 	[Tags]  HA
-	rest cluster master reboot
+	rest cluster slave shutdown
+
 
 #Configure Single Leaf Dual Rack setup
 #   [Tags]  functional

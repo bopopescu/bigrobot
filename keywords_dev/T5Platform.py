@@ -138,11 +138,10 @@ class T5Platform(object):
 
     def cluster_node_reboot(self, masterNode=True):
 
-        ''' Reboot the cluster master
+        ''' Reboot the node
         '''
         t = test.Test()
         master = t.controller("master")
-        slave = t.controller("slave")
         obj = common()
 
         masterID,slaveID = common.getNodeID(obj)
@@ -155,6 +154,7 @@ class T5Platform(object):
             helpers.log("Master is rebooting")
             sleep(30)
         else:
+            slave = t.controller("slave")
             slave.enable("reboot", prompt="Confirm Reboot \(yes to continue\)")
             slave.enable("yes")
             helpers.log("Slave is rebooting")
@@ -182,6 +182,51 @@ class T5Platform(object):
                 return False
 
 
+    def cluster_node_shutdown(self, masterNode=True):
+        ''' Shutdown the node
+        '''
+        t = test.Test()
+        master = t.controller("master")
+        obj = common()
+
+        masterID,slaveID = common.getNodeID(obj)
+        if(masterID == -1 and slaveID == -1):
+            return False
+
+        if(masterNode):
+            master.enable("shutdown", prompt="Confirm Shutdown \(yes to continue\)")
+            master.enable("yes")
+            helpers.log("Master is shutting down")
+            sleep(30)
+        else:
+            slave = t.controller("slave")
+            slave.enable("shutdown", prompt="Confirm Shutdown \(yes to continue\)")
+            slave.enable("yes")
+            helpers.log("Slave is shutting down")
+            sleep(30)
+
+        newMasterID = common.getNodeID(obj, False)
+        if(newMasterID == -1):
+            return False
+
+        if(masterNode):
+            if(slaveID == newMasterID):
+                helpers.log("Pass: After the shutdown cluster is stable - New master is : %s " % (newMasterID))
+                return True
+            else:
+                helpers.log("Fail: Shutdown Failed. Cluster is not stable. Before the master shutdown Master is: %s / Slave is : %s \n \
+                        After the reboot Master is: %s " %(masterID, slaveID, newMasterID))
+                return False
+        else:
+            if(masterID == newMasterID):
+                helpers.log("Pass: After the reboot cluster is stable - Master is still: %s " % (newMasterID))
+                return True
+            else:
+                helpers.log("Fail: Reboot failed. Cluster is not stable. Before the slave reboot Master is: %s / Slave is : %s \n \
+                        After the reboot Master is: %s " %(masterID, slaveID, newMasterID))
+                return False
+
+
     def rest_cluster_master_reboot(self):
         obj = common()
         common.fabric_integrity_checker(obj,"before")
@@ -193,6 +238,12 @@ class T5Platform(object):
         obj = common()
         common.fabric_integrity_checker(obj,"before")
         self.cluster_node_reboot(False)
+        common.fabric_integrity_checker(obj,"after")
+
+    def rest_cluster_slave_shutdown(self):
+        obj = common()
+        common.fabric_integrity_checker(obj,"before")
+        self.cluster_node_shutdown(False)
         common.fabric_integrity_checker(obj,"after")
 
 
