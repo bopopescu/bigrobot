@@ -659,7 +659,7 @@ def run_cmd(cmd, cwd=None, ignore_stderr=False, shell=True, quiet=False):
         return (True, out)
 
 
-def _ping(host, count=3, waittime=100, quiet=False, node=None):
+def _ping(host, count=3, waittime=100, quiet=False, source_if=None, node=None):
 
     # !!! FIXME: Mac OS X ping can use -W (waittime) to timeout ping.
     #            On Ubuntu, use -w (deadline) to timeout after n seconds.
@@ -670,7 +670,10 @@ def _ping(host, count=3, waittime=100, quiet=False, node=None):
 
         _, out = run_cmd(cmd, shell=False, quiet=True)
     else:
-        cmd = "ping -w %d %s" % (count, host)
+        options = ''
+        if source_if:
+            options = "-I %s " % source_if
+        cmd = "ping -w %d %s%s" % (count, options, host)
         if not quiet:
             log("Ping command: %s" % cmd, level=4)
 

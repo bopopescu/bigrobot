@@ -7,14 +7,21 @@ class Controller(object):
     def __init__(self):
         pass
         
-    def cli_show_user(self, user=None):
+    def cli_show_user(self, node, user=None):
         t = test.Test()
-        c = t.controller()
+        c = t.controller(node)
         cmd = 'show user'
         if user:
             cmd = ''.join((cmd, ' ', user)) 
         c.cli(cmd)
 
+    def cli_show_question_mark(self, node):
+        t = test.Test()
+        n = t.controller(node)
+        n.send("show ?")
+        n.set_prompt()
+        helpers.log("***** I am here")
+                
     def _boot_switchlight(self, node):
         t = test.Test()
         n = t.node(node)
@@ -34,10 +41,11 @@ class Controller(object):
         n.expect('Confirm Reload \(yes to continue\)')
         n.send("yes")
         n.expect('The system is going down for reboot')
-        
+
     def cli_reload(self, node):
         """
-        
+        Reloads (aka reboots) a controller - BigTap, BigWire, BVS, or
+        SwitchLight.
         """
         t = test.Test()
         n = t.controller(node)

@@ -8,6 +8,13 @@ class Host(object):
         pass
         
     def host_ping(self, node, dest_ip=None, dest_node=None, *args, **kwargs):
+        """
+        :param node: The device name as defined in the topology file, e.g., 'c1', 's1', etc.
+        :param dest_ip: Ping this destination IP address
+        :param dest_node Ping this destination node ('c1', 's1', etc)
+        :param source_if: Source interface
+        :param count: Number of ping packets to send  
+        """
         t = test.Test()
         n = t.node(node)
         
