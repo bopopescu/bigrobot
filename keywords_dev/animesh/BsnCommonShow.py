@@ -315,3 +315,22 @@ class BsnCommonShow(object):
         c.rest.get(url)
         content = c.rest.content()
         return content[0]
+    
+    
+    def rest_show_running_config(self):
+        t=test.Test()
+        c= t.controller('master')           
+
+
+        url = '%s/api/v1/data/controller/core/aaa/audit-event' % (c.base_url)
+        c.rest.put(url, {"attributes": [{"attribute-value": "show running-config", "attribute-key": "cmd_args"}], "event-type": "bigcli.command"})
+        helpers.log(c.content())
+'''        
+    def mininet_dump_switch(self, switch):
+        t = test.Test()
+        mn = t.mininet()
+        mn.cli('dumpt6 %s' % (switch))
+        helpers.log(mn.cli_content())
+
+REST-POST: POST http://127.0.0.1:8080/api/v1/data/controller/core/aaa/audit-event {"attributes": [{"attribute-value": "show running-config", "attribute-key": "cmd_args"}], "event-type": "bigcli.command"}
+'''

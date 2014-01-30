@@ -3,6 +3,7 @@ Documentation   This suite is my sandbox for experimentation.
 Force Tags      Vui
 #Library         Reserve
 Library         keywords/BsnCommon.py
+Library         keywords_dev/vui/MyTest.py
 
 
 * Test Cases
@@ -11,11 +12,17 @@ Test var assignment
     variable assignment  ${123}
 
 Test run keyword if
-    #[Tags]           skipped
+    [Tags]           skipped
     ${temp}=         set variable  ${123}
     ${result}=       run keyword if   ${temp} == 1234  mock_passed  ELSE  manual_passed
     log              temp=${temp}, result=${result}
 
+
+Test process python dictionary
+    #[Tags]           skipped
+    ${result}=       get a dictionary
+    log              result=${result}
+    process a dictionary  ${result}
 
 Robot loop test
     [Tags]           skipped
