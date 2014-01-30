@@ -46,6 +46,7 @@ class SwitchLight(object):
             helpers.test_failure("Could not execute command. Please check log for errors")
             return False
 
+
     def cli_show_interface_state(self,node,intf_name):
         '''Return the Interface State of a given interface on a switch
         
