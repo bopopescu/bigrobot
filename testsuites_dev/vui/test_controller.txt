@@ -18,3 +18,8 @@ Test controller rest session cookie
 Test controller reload (BigTap)
     cli reload  c1
     #[Tags]  skipped
+
+Get controller handles
+    #cli save running config
+    cli show user
+    [Tags]  skipped

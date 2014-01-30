@@ -1,5 +1,6 @@
 import autobot.helpers as helpers
 import autobot.test as test
+from time import sleep
 
 switchDict_b4 = {}
 switchDict_after = {}
@@ -37,8 +38,13 @@ class T5PlatformCommon(object):
             Returns: If the status is differnt increase WarningCount and return
         '''
         global warningCount
-        helpers.log("B4 is : %s " % switchDict_b4)
+        helpers.log("Before is : %s " % switchDict_b4)
         helpers.log("After is: %s " % switchDict_after)
+        
+        if(len(switchDict_b4) != len(switchDict_after)):
+            helpers.log("Warning: Number of switches are different between Before & After")
+            warningCount += 1
+
         for switch in switchDict_b4:
             if switchDict_after[switch] != switchDict_b4[switch]:
                 helpers.log("Warning: Switch status for switch %s has changed from: %s to %s " \
@@ -47,7 +53,55 @@ class T5PlatformCommon(object):
 
         return warningCount
 
-    def integrity_checker(self, state):
+    
+    def getNodeID(self, slaveNode=True):
+        ''' This function will handout the NodeID's for master & slave nodes '''
+        numTries = 0
+        t = test.Test()
+        master = t.controller("master")
+        slave = t.controller("slave")
+         
+        while(True):
+            try:
+                showUrl = '/api/v1/data/controller/cluster'
+                result = master.rest.get(showUrl)['content']
+                masterID = result[0]['status']['local-node-id']
+                break 
+            except(KeyError):
+                if(numTries < 5):
+                    helpers.log("Warning: KeyError detected during master ID retrieval. Sleeping for 10 seconds")
+                    sleep(10)
+                    numTries += 1
+                else:
+                    helpers.log("Error: KeyError detected during master ID retrieval")
+                    return (-1, -1)
+
+        helpers.log("Slave is: %s " % slaveNode)
+
+        if(slaveNode):
+            while(True):
+                try:
+                    showUrl = '/api/v1/data/controller/cluster'
+                    result = slave.rest.get(showUrl)['content']
+                    slaveID = result[0]['status']['local-node-id']
+                    break 
+                except(KeyError):
+                    if(numTries < 5):
+                        helpers.log("Warning: KeyError detected during slave ID retrieval. Sleeping for 10 seconds")
+                        sleep(10)
+                        numTries += 1
+                    else:
+                        helpers.log("Error: KeyError detected during slave ID retrieval")
+                        return (-1,-1)
+
+
+        if(slaveNode):
+            return (masterID, slaveID)
+        else:
+            return masterID
+
+
+    def fabric_integrity_checker(self, state):
         ''' Wrapper function to go through different integrity checks of the fabric. 
         '''
         global switchDict_b4
@@ -55,7 +109,7 @@ class T5PlatformCommon(object):
         global warningCount
 
         # Switch connectivity verification
-        if (state == "beforeHA"):
+        if (state == "before"):
             switchDict_b4 = self.verify_switch_connectivity()
 
         else:

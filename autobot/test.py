@@ -168,6 +168,12 @@ class Test(object):
             else:
                 return False
 
+    def controllers(self):
+        """
+        Get the handles of all the controllers.
+        """
+        return [n for n in self.topology_params() if re.match(r'^c\d+', n)]
+        
     def controller(self, name='c1', resolve_mastership=False):
         """
         :param resolve_mastership: (Bool) 
@@ -204,14 +210,39 @@ class Test(object):
     def mininet(self, name='mn', *args, **kwargs):
         return self.topology(name, *args, **kwargs)
     
+    def switches(self):
+        """
+        Get the handles of all the switches.
+        """
+        return [n for n in self.topology_params() if re.match(r'^s\d+', n)]
+        
     def switch(self, name='s1', *args, **kwargs):
         return self.topology(name, *args, **kwargs)
 
+    def hosts(self):
+        """
+        Get the handles of all the hosts.
+        """
+        return [n for n in self.topology_params() if re.match(r'^h\d+', n)]
+        
     def host(self, name='h1', *args, **kwargs):
         return self.topology(name, *args, **kwargs)
 
     def node(self, *args, **kwargs):
-        return self.topology(*args, **kwargs)
+        """
+        Returns the handle for a node. 
+        """
+        if len(args) >= 1:
+            node = args[0]
+        elif 'name' in kwargs:
+            node = kwargs['name']
+        else:
+            helpers.test_error("Impossible state.")
+                        
+        if re.match(r'^(master|slave)$', node):
+            return self.controller(*args, **kwargs)
+        else:
+            return self.topology(*args, **kwargs)
     
     def initialize(self):
         """

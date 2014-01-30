@@ -14,3 +14,6 @@ Test Mininet execution
     #test scp
     #restart_mininet
     mininet_dump
+    #[Tags]  skipped
+
+

@@ -79,6 +79,10 @@ class HaControllerNode(object):
         self.name = name
         self.rest = HaBsnRestClient(name, t)
 
+    def platform(self, *args, **kwargs):
+        n = self.t.controller(self.name, resolve_mastership=True)
+        return n.platform(*args, **kwargs)
+
     def cli(self, *args, **kwargs):
         n = self.t.controller(self.name, resolve_mastership=True)
         return n.cli(*args, **kwargs)
