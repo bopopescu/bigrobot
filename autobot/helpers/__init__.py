@@ -244,15 +244,43 @@ def is_mininet(name):
 
 
 def is_bvs(name):
+    """
+    Inspect the platform type for the node. Usage:
+    
+    if helpers.is_bvs(n.platform():
+        ...this is a BVS controller...
+    """
     return name == 'bvs'
 
 
 def is_bigtap(name):
+    """
+    Inspect the platform type for the node. Usage:
+    
+    if helpers.is_bigtap(n.platform():
+        ...this is a BigTap controller...
+    """
     return name == 'bigtap'
 
 
 def is_bigwire(name):
+    """
+    Inspect the platform type for the node. Usage:
+    
+    if helpers.is_bigwire(n.platform():
+        ...this is a BigWire controller...
+    """
     return name == 'bigwire'
+
+
+def is_switchlight(name):
+    """
+    Inspect the platform type for the node. Usage:
+    
+    if helpers.is_switchlight(n.platform():
+        ...this is a SwitchLight switch...
+    """
+    return name == 'switchlight'
 
 
 def is_scalar(data):

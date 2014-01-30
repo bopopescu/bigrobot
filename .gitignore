@@ -1,3 +1,8 @@
 *.pyc
 .project
 .pydevproject
+debug.log
+log.html
+report.html
+syslog.txt
+report.html
