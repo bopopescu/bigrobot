@@ -46,6 +46,7 @@ class SwitchLight(object):
             helpers.test_failure("Could not execute command. Please check log for errors")
             return False
 
+
     def cli_show_interface_state(self,node,intf_name):
         '''Return the Interface State of a given interface on a switch
         
@@ -322,7 +323,7 @@ class SwitchLight(object):
             return False
 
 
-    def cli_add_interface_state(self,node,interface_name,state):
+    def cli_disable_interface(self,node,interface_name):
         ''' Shut/Unshut interface via CLI
         
             Input:
@@ -332,21 +333,33 @@ class SwitchLight(object):
         '''
         try:
             t = test.Test()
-            s1  = t.switch(node)  
-            if state =="yes" or state =="Yes":
-                    cli_input_1 = "interface " + str(interface_name) + " shutdown"
-            else:
-                    cli_input_1 = "no interface " + str(interface_name) + " shutdown"
+            s1  = t.switch(node)
+            cli_input_1 = "interface " + str(interface_name) + " shutdown"
+            s1.config(cli_input_1)
+            return True
+        except:
+            helpers.test_failure("Could not execute command. Please check log for errors")
+            return False
+        
+    def cli_enable_interface(self,node,interface_name):
+        ''' Shut/Unshut interface via CLI
+        
+            Input:
+                ip_address        IP Address of Switch
+                interface_name    Interface Name
+                state             Yes="shutdown", No="no shutdown"
+        '''
+        try:
+            t = test.Test()
+            s1  = t.switch(node)
+            cli_input_1 = "no interface " + str(interface_name) + " shutdown"
             s1.config(cli_input_1)
             return True
         except:
             helpers.test_failure("Could not execute command. Please check log for errors")
             return False
 
-    # Alias
-    cli_update_interface_state = cli_add_interface_state
-
-    def bash_add_interface_state_bshell(self,node,interface_num,state):
+    def bash_disable_interface_bshell(self,node,interface_num):
         ''' Shut/Unshut interface via broadcom shell command. This can be used only if it is an internal image.
         
             Input:
@@ -357,19 +370,30 @@ class SwitchLight(object):
         try:
             t = test.Test()
             s1  = t.switch(node)  
-            if state =="yes" or state =="Yes":
-                    bash_input = 'ofad-ctl bshell port ' + str(interface_num) + ' enable=0'
-            else:
-                    bash_input = 'ofad-ctl bshell port ' + str(interface_num) + ' enable=1'
+            bash_input = 'ofad-ctl bshell port ' + str(interface_num) + ' enable=0'
             s1.bash(bash_input)
             return True
         except:
             helpers.test_failure("Could not execute command. Please check log for errors")
             return False
 
-    # Alias
-    bash_update_interface_state_bshell = bash_add_interface_state_bshell
-
+    def bash_enable_interface_bshell(self,node,interface_num):
+        ''' Shut/Unshut interface via broadcom shell command. This can be used only if it is an internal image.
+        
+            Input:
+                ip_address        IP Address of Switch
+                interface_name    Interface Name
+                state             Yes="shutdown", No="no shutdown"
+        '''
+        try:
+            t = test.Test()
+            s1  = t.switch(node)  
+            bash_input = 'ofad-ctl bshell port ' + str(interface_num) + ' enable=1'
+            s1.bash(bash_input)
+            return True
+        except:
+            helpers.test_failure("Could not execute command. Please check log for errors")
+            return False
 
     def cli_add_interface_ma1(self,console_ip,console_port):
         '''Flap interface ma1 on switch
