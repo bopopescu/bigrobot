@@ -23,23 +23,23 @@ class BigTap(object):
     def rest_show_bigtap_policy(self, policy_name,num_filter_intf,num_delivery_intf):
         '''Parse the output of cli command 'show bigtap policy <policy_name>'
         
-        The first input item `policy_name` which is the name of the policy being parsed
-        The second input item `num_filter_intf` is the number of configured Filter Interfaces in the policy
-        The third input item `num_delivery_intf` is the number of configured Delivery Interfaces in the policy
+        - The first input item `policy_name` which is the name of the policy being parsed
+        - The second input item `num_filter_intf` is the number of configured Filter Interfaces in the policy
+        - The third input item `num_delivery_intf` is the number of configured Delivery Interfaces in the policy
         
-        The policy returns True if and only if all the following conditions are True 
-            a) Policy name is seen correctly in the output
-            b) Config-Status is either "active and forwarding" or "active and rate measure"
-            c) Type is "Configured"
-            d) Runtime Status is "installed"
-            e) Delivery interface count is num_delivery_intf
-            f) Filter Interface count is num_filter_intf
-            g) deltailed status is either "installed to forward" or "installed to measure rate"
+        - The policy returns True if and only if all the following conditions are True 
+            - Policy name is seen correctly in the output
+            - Config-Status is either "active and forwarding" or "active and rate measure"
+            - Type is "Configured"
+            - Runtime Status is "installed"
+            - Delivery interface count is num_delivery_intf
+            - Filter Interface count is num_filter_intf
+            - deltailed status is either "installed to forward" or "installed to measure rate"
         
-        The function executes a REST GET for 
-            http://<CONTROLLER_IP>:8082/api/v1/data/controller/applications/bigtap/view/policy[name="<POLICY_NAME>"]/info
+        - The function executes a REST GET for 
+            - http://<CONTROLLER_IP>:8082/api/v1/data/controller/applications/bigtap/view/policy[name="<POLICY_NAME>"]/info
         
-        Return value is True/False
+        - Return value is True/False
         '''
         try:
             t = test.Test()
