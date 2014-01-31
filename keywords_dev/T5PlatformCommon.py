@@ -59,11 +59,11 @@ class T5PlatformCommon(object):
         numTries = 0
         t = test.Test()
         master = t.controller("master")
-        slave = t.controller("slave")
          
         while(True):
             try:
                 showUrl = '/api/v1/data/controller/cluster'
+                helpers.log("Master is : %s " % master.name)
                 result = master.rest.get(showUrl)['content']
                 masterID = result[0]['status']['local-node-id']
                 break 
@@ -76,9 +76,8 @@ class T5PlatformCommon(object):
                     helpers.log("Error: KeyError detected during master ID retrieval")
                     return (-1, -1)
 
-        helpers.log("Slave is: %s " % slaveNode)
-
         if(slaveNode):
+            slave = t.controller("slave")
             while(True):
                 try:
                     showUrl = '/api/v1/data/controller/cluster'
@@ -117,7 +116,8 @@ class T5PlatformCommon(object):
             warningCount = self.compare_switch_status(switchDict_b4, switchDict_after)
 
         if(warningCount == 0): 
-            helpers.log("Switch status are intact after the take-leader")
+            if(state == "after"):
+                helpers.log("Switch status are intact after the operation")
             return True
         else: 
             return False

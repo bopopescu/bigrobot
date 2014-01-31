@@ -11,10 +11,10 @@ configure fabric switch
   rest configure dpid  leaf0  00:00:00:00:02:00:00:01
   rest configure fabric role  leaf0  leaf
   rest configure switch  leaf1
-  rest configure dpid  leaf1  00:00:00:00:02:00:00:02
+  rest configure dpid  leaf1  00:00:00:00:02:00:00:03
   rest configure fabric role  leaf1  leaf
   rest configure switch  leaf2
-  rest configure dpid  leaf2  00:00:00:00:02:00:00:03
+  rest configure dpid  leaf2  00:00:00:00:02:00:00:05
   rest configure fabric role  leaf2  leaf
   
 remove fabric switch  

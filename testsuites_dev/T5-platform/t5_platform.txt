@@ -27,29 +27,33 @@ ${bm2_intf0}  leaf1-eth5
 
 * Test Case 
 
-#Verify HA Cluster Formation
-#   [Tags]  HA
-#   rest verify show cluster
+Verify HA Cluster Formation
+   [Tags]  HA
+   rest verify show cluster
    
-#Verify Cluster Election Take-Leader
-#	[Tags]  HA
-#	rest cluster election take leader
-
-#Verify Cluster Election Re-run
-#	[Tags]  HA
-#	rest cluster election rerun
-
-#Verify Cluster Master Reboot
-#	[Tags]  HA
-#	rest cluster master reboot
-
-#Verify Cluster Slave Reboot
-#	[Tags]  HA
-#	rest cluster slave reboot
-
-Verify Cluster Slave Shutdown
+Verify Cluster Election Take-Leader
 	[Tags]  HA
-	rest cluster slave shutdown
+	rest cluster election take leader
+
+Verify Cluster Election Re-run
+	[Tags]  HA
+	rest cluster election rerun
+
+Verify Cluster Master Reboot
+	[Tags]  HA
+	cli cluster master reboot
+
+Verify Cluster Slave Reboot
+	[Tags]  HA
+	cli cluster slave reboot
+
+#Verify Cluster Master Shutdown
+#	[Tags]  HA
+#	cli cluster master shutdown
+
+#Verify Cluster Slave Shutdown
+#	[Tags]  HA
+#	cli cluster slave shutdown
 
 
 #Configure Single Leaf Dual Rack setup
