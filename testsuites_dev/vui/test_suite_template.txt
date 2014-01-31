@@ -1,24 +1,16 @@
 * Settings
+Resource        testplan.txt
 Force Tags      IronHorse
 Library         keywords/BsnCommon.py
-Documentation   Paragraph 1 - Switch Platform - Iron Horse
-...
-...             Paragraph 2 - The documentation can span multiple lines.
-...
-...             Paragraph 3 - blah blah blah
-...
-...             Paragraph 4 - blah blah blah
-...
-...             Paragraph 5 - blah blah blah
-
 
 * Test Cases
 Install OS at loader using the internal Compact Flash
-    Mock untested
+    Manual untested
 
 Verify console connectivity
-    Mock untested
+    Manual untested
 
 Verify UBoot version DRAM etc
-    Mock untested
+    # Comments
+    Manual untested
 
