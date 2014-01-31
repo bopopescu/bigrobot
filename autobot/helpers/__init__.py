@@ -691,7 +691,7 @@ def _ping(host, count=3, waittime=100, quiet=False, source_if=None, node=None):
     # Mac OS X output:
     #   3 packets transmitted, 3 packets received, 0.0% packet loss
 
-    match = re.search(r'.*?(\d+) packets transmitted, (\d+)( packets)? received, .*?(\d+\.?\d+?)% packet loss.*',
+    match = re.search(r'.*?(\d+) packets transmitted, (\d+)( packets)? received, .*?(\d+\.?(\d+)?)% packet loss.*',
                       out,
                       re.M|re.I)
     if match:
