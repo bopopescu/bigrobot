@@ -1,3 +1,17 @@
+''' 
+###  WARNING !!!!!!!
+###  
+###  This is where common code for BigWire will go in.
+###  
+###  To commit new code, please contact the Library Owner: 
+###  Animesh Patcha (animesh.patcha@bigswitch.com)
+###
+###  DO NOT COMMIT CODE WITHOUT APPROVAL FROM LIBRARY OWNER
+###
+###  Last Updated: 01/30/2014
+###
+###  WARNING !!!!!!!
+'''
 import autobot.helpers as helpers
 import autobot.test as test
 
