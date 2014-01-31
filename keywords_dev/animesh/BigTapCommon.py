@@ -313,7 +313,7 @@ class BigTapCommon(object):
                 else:
                     switch_dpid = sw_dpid
                 url='/api/v1/data/controller/core/switch[dpid="%s"]/interface[name=""]'  % (str(switch_dpid), str(intf_name))
-                c.rest.delete(url1, {})
+                c.rest.delete(url, {})
             except:
                 helpers.test_failure(c.rest.error())
                 return False

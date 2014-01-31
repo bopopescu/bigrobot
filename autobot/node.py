@@ -5,7 +5,7 @@ from autobot.bsn_restclient import BsnRestClient
 
 class Node(object):
     def __init__(self, name, ip, user=None, password=None, params=None):
-        self.node_name = name
+        self.name = name
         self.ip = ip
         self.user = user
         self.password = password
@@ -29,13 +29,18 @@ class Node(object):
         else:
             self.node_params = None
         
+        if helpers.params_is_false('set_session_ssh', self.node_params):
+            helpers.log("'set_init_ping' is disabled for '%s', bypassing node ping" % name)
+        else:
+            self.pingable_or_die()
+
     def platform(self):
         return self.dev.platform()
 
     def pingable_or_die(self):
         if self.is_pingable:
             return True
-        helpers.log("Ping %s ('%s')" % (self.ip, self.node_name))
+        helpers.log("Ping %s ('%s')" % (self.ip, self.name))
         if not helpers.ping(self.ip, count=3, waittime=1000):
             # Consider init to be completed, so as not to be invoked again.
             self._init_completed = True
@@ -48,7 +53,7 @@ class Node(object):
         """
         Inheriting class needs to define this method.
         """
-        pass
+        raise NotImplementedError()
 
 
 class ControllerNode(Node):
@@ -64,11 +69,6 @@ class ControllerNode(Node):
         super(ControllerNode, self).__init__(name, ip, user, password,
                                              t.topology_params())
         
-        if helpers.params_is_false('set_session_ssh', self.node_params):
-            helpers.log("'set_init_ping' is disabled for '%s', bypassing node ping" % name)
-        else:
-            self.pingable_or_die()
-
         # Note: Must be initialized before BsnRestClient since we need the
         # CLI for platform info and also to configure the firewall for REST
         # access
@@ -108,6 +108,8 @@ class ControllerNode(Node):
         self.cli_content = self.dev.content
         self.cli_result = self.dev.result
         self.set_prompt = self.dev.set_prompt
+        self.send = self.dev.send
+        self.expect = self.dev.expect
 
     def console(self):
         if self.dev_console:
@@ -117,14 +119,14 @@ class ControllerNode(Node):
             self.console_ip = self.node_params['console_ip']
         else:
             helpers.test_error("Console IP address is not defined for node '%s'"
-                               % self.node_name)
+                               % self.name)
         if 'console_port' in self.node_params:
             self.console_port = self.node_params['console_port']
         else:
             helpers.test_error("Console port is not defined for node '%s'"
-                               % self.node_name)
+                               % self.name)
             
-        self.dev_console = devconf.ControllerDevConf(name=self.node_name,
+        self.dev_console = devconf.ControllerDevConf(name=self.name,
                                                      host=self.console_ip,
                                                      port=self.console_port,
                                                      user=self.user,
@@ -135,10 +137,10 @@ class ControllerNode(Node):
 
 
 class MininetNode(Node):
-    def __init__(self, name, ip, controller_ip, user, password, t):
+    def __init__(self, name, ip, controller_ip, user, password, t,
+                 openflow_port=None):
         super(MininetNode, self).__init__(name, ip, user, password,
                                           t.topology_params())
-        self.pingable_or_die()
         if 'topology' in self.node_params:
             self.topology = self.node_params['topology']
         else:
@@ -150,7 +152,11 @@ class MininetNode(Node):
         mn_type = self.node_params['type'].lower()
         if mn_type not in ('t6', 'basic'):
             helpers.environment_failure("Mininet type must be 't6' or 'basic'.") 
-            
+
+        if helpers.params_is_false('set_session_ssh', self.node_params):
+            helpers.log("'set_session_ssh' is disabled for '%s', bypassing node SSH and RestClient session setup" % name)
+            return
+
         helpers.log("Mininet type: %s" % mn_type)
         helpers.log("Setting up mininet ('%s')" % name)
 
@@ -161,6 +167,7 @@ class MininetNode(Node):
                                                 password=password,
                                                 controller=controller_ip,
                                                 topology=self.topology,
+                                                openflow_port=openflow_port,
                                                 debug=self.dev_debug_level)
         elif mn_type == 'basic':
             self.dev = devconf.MininetDevConf(name=name,
@@ -169,6 +176,7 @@ class MininetNode(Node):
                                               password=password,
                                               controller=controller_ip,
                                               topology=self.topology,
+                                              openflow_port=openflow_port,
                                               debug=self.dev_debug_level)
 
         # Shortcuts
@@ -179,6 +187,8 @@ class MininetNode(Node):
         self.restart_mininet = self.dev.restart_mininet
         self.stop_mininet = self.dev.stop_mininet
         self.set_prompt = self.dev.set_prompt
+        self.send = self.dev.send
+        self.expect = self.dev.expect
 
 
 class HostNode(Node):
@@ -193,9 +203,11 @@ class HostNode(Node):
         
         super(HostNode, self).__init__(name, ip, user, password,
                                        t.topology_params())
-        self.pingable_or_die()
-        #params = t.topology_params()
 
+        if helpers.params_is_false('set_session_ssh', self.node_params):
+            helpers.log("'set_session_ssh' is disabled for '%s', bypassing node SSH and RestClient session setup" % name)
+            return
+            
         self.dev = devconf.HostDevConf(name=name,
                                        host=ip,
                                        user=user,
@@ -208,6 +220,8 @@ class HostNode(Node):
         self.bash_content = self.dev.content
         self.bash_result = self.dev.result
         self.set_prompt = self.dev.set_prompt
+        self.send = self.dev.send
+        self.expect = self.dev.expect
 
 
 class SwitchNode(Node):
@@ -222,9 +236,11 @@ class SwitchNode(Node):
         
         super(SwitchNode, self).__init__(name, ip, user, password,
                                          t.topology_params())
-        self.pingable_or_die()
-        #params = t.topology_params()
 
+        if helpers.params_is_false('set_session_ssh', self.node_params):
+            helpers.log("'set_session_ssh' is disabled for '%s', bypassing node SSH and RestClient session setup" % name)
+            return
+            
         self.dev = devconf.SwitchDevConf(name=name,
                                          host=ip,
                                          user=user,
@@ -232,8 +248,13 @@ class SwitchNode(Node):
                                          debug=self.dev_debug_level)
 
         # Shortcuts
-        self.cli = self.dev.cli
-        #self.bash = self.dev.bash
+        self.cli = self.dev.cli           # CLI mode
+        self.enable = self.dev.enable     # Enable mode
+        self.config = self.dev.config     # Configuration mode
+        self.bash   = self.dev.bash       # Bash mode
+        self.sudo   = self.dev.sudo       # Sudo (part of Bash mode)
         self.cli_content = self.dev.content
         self.cli_result = self.dev.result
         self.set_prompt = self.dev.set_prompt
+        self.send = self.dev.send
+        self.expect = self.dev.expect

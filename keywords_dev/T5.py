@@ -1,18 +1,19 @@
 import autobot.helpers as helpers
 import autobot.restclient as restclient
 import autobot.test as test
+import re
 
 
 class T5(object):
 
     def __init__(self):
-        t = test.Test()
-        c = t.controller()
-        
-        url = '%s/api/v1/auth/login' % c.base_url
-        result = c.rest.post(url, {"user":"admin", "password":"adminadmin"})
-        session_cookie = result['content']['session_cookie']
-        c.rest.set_session_cookie(session_cookie)
+#        t = test.Test()
+#        c = t.controller()
+        pass        
+#        url = '%s/api/v1/auth/login' % c.base_url
+#        result = c.rest.post(url, {"user":"admin", "password":"adminadmin"})
+#        session_cookie = result['content']['session_cookie']
+#        c.rest.set_session_cookie(session_cookie)
         
     def rest_create_tenant(self, tenant):
         
@@ -137,7 +138,7 @@ class T5(object):
             helpers.test_log("Output: %s" % c.rest.result_json())
         else:
             if not c.rest.status_code_ok():
-               helpers.test_failure(c.rest.error())
+                helpers.test_failure(c.rest.error())
 
             return c.rest.content()
     def rest_show_vns(self):
@@ -152,7 +153,7 @@ class T5(object):
             helpers.test_log("Output: %s" % c.rest.result_json())
         else:
             if not c.rest.status_code_ok():
-               helpers.test_failure(c.rest.error())
+                helpers.test_failure(c.rest.error())
 
             return c.rest.content()
      
@@ -212,23 +213,7 @@ class T5(object):
         else: 
             helpers.test_log("Output: %s" % c.rest.result_json())
             return c.rest.content()                         
-
-    
-#    def rest_create_endpoint(self, tenant, vns, endpoint):
-#        t = test.Test()
-#        c = t.controller()
         
-#        helpers.test_log("Input arguments: tenant = %s, vns = %s, endpoint = %s" % (tenant, vns, endpoint ))
-        
-#        url = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/endpoints[name="%s"]' % (c.base_url, tenant, vns, endpoint)
-#        c.rest.put(url, {"name": endpoint})
-#        helpers.test_log("Output: %s" % c.rest.result_json())
-
- #       if not c.rest.status_code_ok():
- #           helpers.test_failure(c.rest.error())
-
-#        return c.rest.content()
-    
     def rest_delete_endpoint(self, tenant, vns, endpoint=None):
         t = test.Test()
         c = t.controller()
@@ -304,51 +289,6 @@ class T5(object):
 
         return c.rest.content()
             
-    def rest_change_to_tenant(self, tenant):
-        t = test.Test()
-        c = t.controller()
-        
-        helpers.test_log("Input arguments: tenant = %s" % tenant )
-        
-        url = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]?config=true&select=name&single=true' % (c.base_url, tenant)
-        c.rest.get(url, {"name": tenant})
-        helpers.test_log("Output: %s" % c.rest.result_json())
-
-        if not c.rest.status_code_ok():
-            helpers.test_failure(c.rest.error())
-
-        return c.rest.content()
-    
-    def rest_change_to_vns(self, tenant, vns): 
-        t = test.Test()
-        c = t.controller()
-        
-        helpers.test_log("Input arguments: vns = %s" % vns )
-        
-        url = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]?config=true&select=name&single=true' % (c.base_url, tenant, vns)
-        c.rest.get(url, {"name": vns})
-        helpers.test_log("Output: %s" % c.rest.result_json())
-
-        if not c.rest.status_code_ok():
-            helpers.test_failure(c.rest.error())
-
-        return c.rest.content()
-    
-    def rest_change_to_portgroup(self, pg): 
-        t = test.Test()
-        c = t.controller()
-        
-        helpers.test_log("Input arguments: port-group = %s" % pg )
-        
-        url = '%s/api/v1/data/controller/fabric/port-group[name="%s"]?config=true&select=name&single=true' % (c.base_url, pg)
-        c.rest.get(url, {"name": pg})
-        helpers.test_log("Output: %s" % c.rest.result_json())
-
-        if not c.rest.status_code_ok():
-            helpers.test_failure(c.rest.error())
-
-        return c.rest.content()
-
     def rest_delete_portgroup_from_vns(self, tenant, vns, pg, vlan):
         t = test.Test()
         c = t.controller()
@@ -441,22 +381,22 @@ class T5(object):
         url = '%s/api/v1/data/controller/applications/bvs/info/endpoint-manager/vnses' % (c.base_url)
         c.rest.get(url)
         data = c.rest.content()
-        for i in len(data):
-                if len(data) == 0:
-                    helpers.log("No VNS are configured")
-                elif data[i]["name"] == str.startswith("v"):
-                    helpers.log("Expected VNS's are present in the config")
-                    return True
-                    continue
+        for i in range(0,len(data)):
+                if len(data) != 0:
+                        if (int(data[i]["internal-vlan"]) != 0):
+                            helpers.log("Expected VNS's are present in the config")
+                            return True
+                        else:
+                            helpers.test_failure("Expected VNS's are not present in the config")  
+                            return False     
                 else:
-                    helpers.test_failure("Expected VNS's are not present in the config")  
-                    return False     
-        
+                        helpers.log("No VNS are configured")
+                        return False
         
     def rest_verify_tenant(self):
         '''Verify CLI tenant information
         
-            Input:           
+            Input:   None        
             
             Return: true if it matches the created tenant (string starts with "t")
         '''
@@ -465,76 +405,202 @@ class T5(object):
         url = '%s/api/v1/data/controller/applications/bvs/info/endpoint-manager/tenants' % (c.base_url)
         c.rest.get(url)
         data = c.rest.content()
-        for i in len(data):
-                if len(data) == 0:
-                    helpers.log("No tenants are configured")
-                elif data[i]["tenant-name"] == str.startswith("t"):
-                    helpers.log("Expected Tenants are present in the config")
-                    return True
+        for i in range(0,len(data)):
+                if len(data) != 0:
+                    if data[i]["tenant-name"] == re.search('t\B', 'data[i]["tenant-name"]'):
+                        helpers.log("Expected Tenants are present in the config")
+                        return True
+                    else:
+                        helpers.test_failure("Expected Tenants are not present in the config")
+                        return False 
                 else:
-                    helpers.test_failure("Expected Tenants are not present in the config")
-                    return False       
+                        helpers.log("No tenants are configured")
+                        return False       
        
             
     def rest_verify_endpoint(self, vns, vlan, ipaddr, switch, intf):
-         '''Verify Dynamic Endpoint entry
+        '''Verify Dynamic Endpoint entry
         
             Input: vns name , vlan ID , ipaddress , switch name, expected switch interface          
             
             Return: true if it matches Value specified
-         '''
-         t = test.Test()
-         c = t.controller()
-         url = '%s/api/v1/data/controller/applications/bvs/info/endpoint-manager/endpoints' % (c.base_url)
-         c.rest.get(url)
-         data = c.rest.content()
-         if len(data) != 0:
-             for i in range(0,len(data)):
-                 if str(data[i]["vns-name"]) == vns:
-                     if str(data[i]["attachment-point"]["vlan"]) == str(vlan):
-                         if (data[i]["ip-address"] == str(ipaddr)) :
-                             if (data[i]["attachment-point"]["switch-name"] == switch) :
-                                 if (data[i]["attachment-point"]["interface-name"] == str(intf)) :
-                                     helpers.log("Expected Endpoints are created data matches is %s" % data[i]["ip-address"] )
-                                     return True
-                                 else:
-                                    helpers.test_failure("Expected endpoints %s are not created" % (str(ipaddr)))
-                                    return False
-         else:
-              helpers.test_failure("Expected vns are not created %s" % vns)
-              return False
+        '''
+        t = test.Test()
+        c = t.controller()
+        url = '%s/api/v1/data/controller/applications/bvs/info/endpoint-manager/endpoints' % (c.base_url)
+        c.rest.get(url)
+        data = c.rest.content()
+        if len(data) != 0:
+                for i in range(0,len(data)):
+                    if str(data[i]["vns-name"]) == vns:
+                        if str(data[i]["attachment-point"]["vlan"]) == str(vlan):
+                            if (data[i]["ip-address"] == str(ipaddr)) :
+                                if (data[i]["attachment-point"]["switch-name"] == switch) :
+                                    if (data[i]["attachment-point"]["interface-name"] == str(intf)) :
+                                        helpers.log("Expected Endpoints are created data matches is %s" % data[i]["ip-address"] )
+                                        return True
+                                    else:
+                                        helpers.test_failure("Expected endpoints %s are not created" % (str(ipaddr)))
+                                        return False
+        else:
+            helpers.test_failure("Expected vns are not created %s" % vns)
+            return False
             
     def rest_verify_endpoint_static(self, vns, vlan, ipaddr, switch, intf):
-         '''Verify Static Endpoint entry
+        '''Verify Static Endpoint entry
         
             Input: vns name , vlan ID , ipaddress , switch name, expected switch interface          
             
             Return: true if it matches Value specified and configured attachment point is true
          '''
-         t = test.Test()
-         c = t.controller()
-         url = '%s/api/v1/data/controller/applications/bvs/info/endpoint-manager/endpoints' % (c.base_url)
-         c.rest.get(url)
-         data = c.rest.content()
-         if len(data) != 0:
-             for i in range(0,len(data)):
-                 if str(data[i]["vns-name"]) == vns:
-                     if str(data[i]["attachment-point"]["vlan"]) == str(vlan):
-                         if (data[i]["ip-address"] == str(ipaddr)) :
-                             if (data[i]["attachment-point"]["switch-name"] == switch) :
-                                 if (data[i]["attachment-point"]["interface-name"] == str(intf)) :
-                                     if (data[i]["configured-endpoint"] == True) :
-                                          helpers.log("Expected Endpoints are created data matches is %s" % data[i]["ip-address"] )
-                                          return True
-                                     else:
-                                          helpers.test_failure("Expected endpoints %s are not created" % (str(ipaddr)))
-                                          return False
-         else:
-              helpers.test_failure("Expected vns are not created %s" % vns)
-              return False
+        t = test.Test()
+        c = t.controller()
+        url = '%s/api/v1/data/controller/applications/bvs/info/endpoint-manager/endpoints' % (c.base_url)
+        c.rest.get(url)
+        data = c.rest.content()
+        if len(data) != 0:
+            for i in range(0,len(data)):
+                if str(data[i]["vns-name"]) == vns:
+                    if str(data[i]["attachment-point"]["vlan"]) == str(vlan):
+                        if (data[i]["ip-address"] == str(ipaddr)) :
+                            if (data[i]["attachment-point"]["switch-name"] == switch) :
+                                if (data[i]["attachment-point"]["interface-name"] == str(intf)) :
+                                    if (data[i]["configured-endpoint"] == True) :
+                                        helpers.log("Expected Endpoints are created data matches is %s" % data[i]["ip-address"] )
+                                        return True
+                                    else:
+                                        helpers.test_failure("Expected endpoints %s are not created" % (str(ipaddr)))
+                                        return False
+        else:
+                helpers.test_failure("Expected vns are not created %s" % vns)
+                return False
             
+
+    def rest_verify_endpoint_portgroup(self, vns, vlan, ipaddr, pg):
+        '''Verify Dynamic Endpoint entry
+        
+            Input: vns name , vlan ID , ipaddress , portgroup name          
+            
+            Return: true if it matches Value specified
+        '''
+        t = test.Test()
+        c = t.controller()
+        url = '%s/api/v1/data/controller/applications/bvs/info/endpoint-manager/endpoints' % (c.base_url)
+        c.rest.get(url)
+        data = c.rest.content()
+        if len(data) != 0:
+            for i in range(0,len(data)):
+                if str(data[i]["vns-name"]) == vns:
+                    if str(data[i]["attachment-point"]["vlan"]) == str(vlan):
+                        if (data[i]["ip-address"] == str(ipaddr)) :
+                            if (data[i]["attachment-point"]["port-group-name"] == pg) :
+                                helpers.log("Expected Endpoints are created data matches is %s" % data[i]["ip-address"] )
+                                return True
+                            else:
+                                helpers.test_failure("Expected endpoints %s are not created" % (str(ipaddr)))
+                                return False
+        else:
+            helpers.test_failure("Expected vns are not created %s" % vns)
+            return False       
+   
+    def rest_verify_endpoint_static_portgroup(self, vns, vlan, ipaddr, pg):
+        '''Verify Static Endpoint entry
+        
+            Input: vns name , vlan ID , ipaddress , portgroup name          
+            
+            Return: true if it matches Value specified and configured attachment point is true
+        '''
+        t = test.Test()
+        c = t.controller()
+        url = '%s/api/v1/data/controller/applications/bvs/info/endpoint-manager/endpoints' % (c.base_url)
+        c.rest.get(url)
+        data = c.rest.content()
+        if len(data) != 0:
+                for i in range(0,len(data)):
+                    if str(data[i]["vns-name"]) == vns:
+                        if str(data[i]["attachment-point"]["vlan"]) == str(vlan):
+                            if (data[i]["ip-address"] == str(ipaddr)) :
+                                if (data[i]["attachment-point"]["port-group-name"] == pg) :
+                                    if (data[i]["configured-endpoint"] == True) :
+                                        helpers.log("Expected Endpoints are created data matches is %s" % data[i]["ip-address"] )
+                                        return True
+                                    else:
+                                        helpers.test_failure("Expected endpoints %s are not created" % (str(ipaddr)))
+                                        return False
+        else:
+                helpers.test_failure("Expected vns are not created %s" % vns)
+                return False
+    
+    def rest_verify_vns_interface(self, vns, intf_num):
+        '''Verify VNS Membership Interface information
+        
+            Input:  specific VNS Name  and number of interfaces to be present in the VNS       
+            
+            Return: Num of ports part of the specific VNS
+        '''
+        t = test.Test()
+        c = t.controller()
+        url = '%s/api/v1/data/controller/applications/bvs/info/endpoint-manager/vnses[name="%s"]' % (c.base_url, vns)
+        c.rest.get(url)
+        data = c.rest.content()
+        if data[0]["name"] == vns:
+                if (int(data[0]["num-ports"]) == int(intf_num)) :
+                    helpers.log("Expected Member port counts in VNS are correct %d = %d" % (int(intf_num), int(data[0]["num-ports"])))
+                    return True
+                else:
+                    helpers.test_failure("Membership count in VNS are not correct %d = %d" % (int(intf_num), int(data[0]["num-ports"])))  
+                    return False     
+        else:
+                helpers.log("Expected VNS are configured")
+                return False
+
+        
+    def rest_verify_forwarding_vlan(self, dpid):
+        '''Verify VNS(VLAN) Information in Controller Forwarding Table
+        
+            Input:  Specific DPID of the switch      
+            
+            Return: vlan table from the forwarding table with membership ports.
+        '''
+        t = test.Test()
+        c = t.controller()
+        url = '%s/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch-id="%s"]/vlan-table' % (c.base_url, dpid)
+        c.rest.get(url)
+        data = c.rest.content()
+        no_of_vlans = len(data)
+        url1 = '%s/api/v1/data/controller/applications/bvs/info/endpoint-manager/vnses' % (c.base_url)
+        c.rest.get(url1)
+        data1 = c.rest.content()
+        no_of_vns = len(data1)
+        if (int(no_of_vns) == int(no_of_vlans)):
+                helpers.log("Vlan Entries are present in forwarding table Actual:%d = Expected:%d" % (int(no_of_vns), int(no_of_vlans)))
+                return True
+        else:
+                helpers.test_failure("Vlan Entries are inconsistent in forwarding table %d = %d" % (int(no_of_vns), int(no_of_vlans)))  
+                return False     
+         
+    def rest_verify_forwarding_port(self, dpid):
+        '''Verify Edge port  Information in Controller Forwarding Table
+        
+            Input:  Specific DPID of the switch      
+            
+            Return: port table with associated Lag id will be provided
+        '''
+        t = test.Test()
+        c = t.controller()
+        url = '%s/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch-id="%s"]/port-table' % (c.base_url, dpid)
+        c.rest.get(url)
+        data = c.rest.content()
+        for i in range(0,len(data)):
+            if ((data[i]["lag-id"]) == 0):
+                helpers.test_failure("Lag-Id for the edge interface (switch=%s,interface=%s) is showing 0" % (dpid, data[i]["port-num"]))
+                return False
+            helpers.log("Proper Lag-Id created for All edge Interfaces")         
+        
+
           
  
+
         
         
 

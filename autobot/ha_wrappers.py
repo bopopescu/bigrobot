@@ -79,6 +79,10 @@ class HaControllerNode(object):
         self.name = name
         self.rest = HaBsnRestClient(name, t)
 
+    def platform(self, *args, **kwargs):
+        n = self.t.controller(self.name, resolve_mastership=True)
+        return n.platform(*args, **kwargs)
+
     def cli(self, *args, **kwargs):
         n = self.t.controller(self.name, resolve_mastership=True)
         return n.cli(*args, **kwargs)
@@ -107,3 +111,14 @@ class HaControllerNode(object):
         n = self.t.controller(self.name, resolve_mastership=True)
         return n.cli_result(*args, **kwargs)
 
+    def set_prompt(self, *args, **kwargs):
+        n = self.t.controller(self.name, resolve_mastership=True)
+        return n.set_prompt(*args, **kwargs)
+
+    def send(self, *args, **kwargs):
+        n = self.t.controller(self.name, resolve_mastership=True)
+        return n.send(*args, **kwargs)
+
+    def expect(self, *args, **kwargs):
+        n = self.t.controller(self.name, resolve_mastership=True)
+        return n.expect(*args, **kwargs)

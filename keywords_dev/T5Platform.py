@@ -1,13 +1,14 @@
-import time
 import autobot.helpers as helpers
 import autobot.test as test
+from T5PlatformCommon import T5PlatformCommon as common
+from time import sleep
 
 class T5Platform(object):
 
     def __init__(self):
-	pass
+        pass
    
-    def rest_configure_ntp(self, ntp_server):
+    def rest_add_ntp_server(self, ntp_server):
         '''Configure the ntp server
         
             Input:
@@ -18,8 +19,68 @@ class T5Platform(object):
         t = test.Test()
         c = t.controller()
                         
-        url = '/api/v1/data/controller/action/time/ntp'      
-        c.rest.put(url, {"ntp-server": ntp_server})
+        url = '/api/v1/data/controller/os/config/global/time-config'  
+        c.rest.put(url, {"ntp-servers": [ntp_server]})
+        
+        if not c.rest.status_code_ok():
+            helpers.test_failure(c.rest.error())
+            return False
+
+        return True
+    
+    def rest_add_ntp_timezone(self, ntp_timezone):
+        '''Configure the ntp timezone
+        
+            Input:
+                    ntp_server        NTP server IP address
+                                       
+            Returns: True if policy configuration is successful, false otherwise  
+        '''
+        t = test.Test()
+        c = t.controller()
+                        
+        url = '/api/v1/data/controller/os/config/global/time-config'  
+        c.rest.put(url, {"time-zone": ntp_timezone})
+        
+        if not c.rest.status_code_ok():
+            helpers.test_failure(c.rest.error())
+            return False
+
+        return True
+    
+    def rest_delete_ntp_server(self, ntp_server):
+        '''Delete the ntp server
+        
+            Input:
+                    ntp_server        NTP server IP address
+                                       
+            Returns: True if policy configuration is successful, false otherwise  
+        '''
+        t = test.Test()
+        c = t.controller()
+                        
+        url = '/api/v1/data/controller/os/config/global/time-config'  
+        c.rest.delete(url, {"ntp-servers": [ntp_server]})
+        
+        if not c.rest.status_code_ok():
+            helpers.test_failure(c.rest.error())
+            return False
+
+        return True
+    
+    def rest_delete_ntp_timezone(self, ntp_timezone):
+        '''Delete the ntp timezone
+        
+            Input:
+                    ntp_server        NTP server IP address
+                                       
+            Returns: True if policy configuration is successful, false otherwise  
+        '''
+        t = test.Test()
+        c = t.controller()
+                        
+        url = '/api/v1/data/controller/os/config/global/time-config'  
+        c.rest.delete(url, {"time-zone": ntp_timezone})
         
         if not c.rest.status_code_ok():
             helpers.test_failure(c.rest.error())
@@ -35,11 +96,14 @@ class T5Platform(object):
         t = test.Test()
         c = t.controller()
         
-        url = '/api/v1/data/controller/action/time/ntp/status '
+        url = '%s/api/v1/data/controller/os/action/time/ntp ' % (c.base_url)     
         c.rest.get(url)
         
+        if not c.rest.status_code_ok():
+            helpers.test_failure(c.rest.error())
+            return False
+        
         return True
-    
     
     def rest_verify_show_cluster(self):
         '''Using the 'show cluster' command verify the cluster formation across both nodes
@@ -73,7 +137,7 @@ class T5Platform(object):
 
 
 
-    def rest_cluster_election(self, rigged):
+    def cluster_election(self, rigged):
         ''' Invoke "cluster election" commands: re-run or take-leader
             If: "rigged" is true then verify the active controller change.
             Else: execute the election rerun
@@ -82,11 +146,10 @@ class T5Platform(object):
         slave = t.controller("slave")
         master = t.controller("master")
 
-        showUrl = '/api/v1/data/controller/cluster'
-        result = master.rest.get(showUrl)['content']
-        masterID = result[0]['status']['local-node-id']
-        result = slave.rest.get(showUrl)['content']
-        slaveID = result[0]['status']['local-node-id']
+        obj = common()
+        masterID,slaveID = common.getNodeID(obj)
+        if(masterID == -1 and slaveID == -1):
+            return False
 
         helpers.log("Current slave ID is : %s / Current master ID is: %s" % (slaveID, masterID))
 
@@ -97,10 +160,12 @@ class T5Platform(object):
         else:
             slave.rest.post(url, {"rigged": False})
         
-        time.sleep(10)
-        newMaster = t.controller("master")
-        result = newMaster.rest.get(showUrl)['content'] 
-        newMasterID = result[0]['status']['domain-leader']['leader-id']
+        sleep(30)
+
+        obj = common()
+        newMasterID = common.getNodeID(obj, False)
+        if(newMasterID == -1):
+            return False
 
         if(masterID == newMasterID):
             if(rigged):
@@ -113,65 +178,145 @@ class T5Platform(object):
             helpers.log("Pass: Take-Leader successful - Leader changed from %s to %s" % (masterID, newMasterID))
             return True
 
+
     def rest_cluster_election_take_leader(self):
         ''' Invoke "cluster election take-leader" command and verify the controller state
         '''
-        self.rest_cluster_election(True)
+        obj = common()
+        common.fabric_integrity_checker(obj,"before")
+        self.cluster_election(True)
+        sleep(30)
+        common.fabric_integrity_checker(obj, "after")
 
     def rest_cluster_election_rerun(self):
         ''' Invoke "cluster election re-run" command and verify the controller state
         '''
-        self.rest_cluster_election(False)
+        obj = common()
+        common.fabric_integrity_checker(obj, "after")
+        self.cluster_election(False)
+        sleep(30)
+        common.fabric_integrity_checker(obj, "before")
 
 
-    def rest_cluster_master_reboot(self):
-        ''' Reboot the cluster master
+    def cluster_node_reboot(self, masterNode=True):
+
+        ''' Reboot the node
         '''
         t = test.Test()
         master = t.controller("master")
-        slave = t.controller("slave")
-       
-        showUrl = '/api/v1/data/controller/cluster'
-        result = master.rest.get(showUrl)['content']
-        masterID = result[0]['status']['local-node-id']
-        result = slave.rest.get(showUrl)['content']
-        slaveID = result[0]['status']['local-node-id']
-        
-        url = "/api/v1/data/controller/os/action/power"
-        master.rest.post(url, {"action": "reboot"})
- 
-        time.sleep(15)
- 
-        master = t.controller("master")
-        showUrl = '/api/v1/data/controller/cluster'
-        result = master.rest.get(showUrl)['content']
-        newMasterID = result[0]['status']['local-node-id']
- 
-        slave = t.controller("slave")
-        showUrl = '/api/v1/data/controller/cluster'
-        result = slave.rest.get(showUrl)['content']
-        newSlaveID = result[0]['status']['local-node-id']
- 
-        if(masterID == newSlaveID and slaveID == newMasterID):
-            helpers.log("Pass: After the reboot cluster is stable - Master is : %s / Slave is: %s" % (newMasterID, newSlaveID))
-            return True
-        else:
-            helper.log("Fail: Reboot Failed. Cluster is not stable. Before the reboot Master is: %s / Slave is : %s \n \
-                    After the reboot Master is: %s / Slave is : %s " %(masterID, slaveID, newMasterID, newSlaveID))
+        obj = common()
+
+        masterID,slaveID = common.getNodeID(obj)
+        if(masterID == -1 and slaveID == -1):
             return False
+
+        if(masterNode):
+            master.enable("reboot", prompt="Confirm Reboot \(yes to continue\)")
+            master.enable("yes")
+            helpers.log("Master is rebooting")
+            sleep(30)
+        else:
+            slave = t.controller("slave")
+            slave.enable("reboot", prompt="Confirm Reboot \(yes to continue\)")
+            slave.enable("yes")
+            helpers.log("Slave is rebooting")
+            sleep(30)
+       
+        newMasterID, newSlaveID = common.getNodeID(obj)
+        if(newMasterID == -1 and newSlaveID == -1):
+            return False
+
+        if(masterNode):
+            if(masterID == newSlaveID and slaveID == newMasterID):
+                helpers.log("Pass: After the reboot cluster is stable - Master is : %s / Slave is: %s" % (newMasterID, newSlaveID))
+                return True
+            else:
+                helpers.log("Fail: Reboot Failed. Cluster is not stable. Before the master reboot Master is: %s / Slave is : %s \n \
+                        After the reboot Master is: %s / Slave is : %s " %(masterID, slaveID, newMasterID, newSlaveID))
+                return False
+        else:
+            if(masterID == newMasterID and slaveID == newSlaveID):
+                helpers.log("Pass: After the reboot cluster is stable - Master is : %s / Slave is: %s" % (newMasterID, newSlaveID))
+                return True
+            else:
+                helpers.log("Fail: Reboot Failed. Cluster is not stable. Before the slave reboot Master is: %s / Slave is : %s \n \
+                        After the reboot Master is: %s / Slave is : %s " %(masterID, slaveID, newMasterID, newSlaveID))
+                return False
+
+
+    def cluster_node_shutdown(self, masterNode=True):
+        ''' Shutdown the node
+        '''
+        t = test.Test()
+        master = t.controller("master")
+        obj = common()
+
+        masterID,slaveID = common.getNodeID(obj)
+        if(masterID == -1 and slaveID == -1):
+            return False
+
+        if(masterNode):
+            master.enable("shutdown", prompt="Confirm Shutdown \(yes to continue\)")
+            master.enable("yes")
+            helpers.log("Master is shutting down")
+            sleep(30)
+        else:
+            slave = t.controller("slave")
+            slave.enable("shutdown", prompt="Confirm Shutdown \(yes to continue\)")
+            slave.enable("yes")
+            helpers.log("Slave is shutting down")
+            sleep(30)
+
+        newMasterID = common.getNodeID(obj, False)
+        if(newMasterID == -1):
+            return False
+
+        if(masterNode):
+            if(slaveID == newMasterID):
+                helpers.log("Pass: After the shutdown cluster is stable - New master is : %s " % (newMasterID))
+                return True
+            else:
+                helpers.log("Fail: Shutdown Failed. Cluster is not stable. Before the master shutdown Master is: %s / Slave is : %s \n \
+                        After the reboot Master is: %s " %(masterID, slaveID, newMasterID))
+                return False
+        else:
+            if(masterID == newMasterID):
+                helpers.log("Pass: After the reboot cluster is stable - Master is still: %s " % (newMasterID))
+                return True
+            else:
+                helpers.log("Fail: Reboot failed. Cluster is not stable. Before the slave reboot Master is: %s / Slave is : %s \n \
+                        After the reboot Master is: %s " %(masterID, slaveID, newMasterID))
+                return False
+
+
+    def rest_cluster_master_reboot(self):
+        obj = common()
+        common.fabric_integrity_checker(obj,"before")
+        self.cluster_node_reboot()
+        common.fabric_integrity_checker(obj,"after")
+
+
+    def rest_cluster_slave_reboot(self):
+        obj = common()
+        common.fabric_integrity_checker(obj,"before")
+        self.cluster_node_reboot(False)
+        common.fabric_integrity_checker(obj,"after")
+
+    def rest_cluster_slave_shutdown(self):
+        obj = common()
+        common.fabric_integrity_checker(obj,"before")
+        self.cluster_node_shutdown(False)
+        common.fabric_integrity_checker(obj,"after")
+
+
+     
  
- 
 
 
 
 
 
  
-
-
-
-
-
 
 
 

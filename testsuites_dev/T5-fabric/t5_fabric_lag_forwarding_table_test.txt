@@ -1,5 +1,5 @@
 *Settings
-Documentation    Fabric Lag Dual Spine Three Rack Test Suite
+Documentation    Fabric Lag Dual Spine Dual Rack Test Suite
 Suite Setup      base suite setup
 Suite Teardown   base suite teardown
 Test Setup       base test setup
@@ -8,7 +8,7 @@ Force Tags       T5 Fabric
 Library          keywords/BsnCommon.py
 Library          keywords_dev/T5.py
 Library          keywords_dev/T5Fabric.py
-Resource         keywords_dev/t5_dualleaf_three_rack_resource.txt
+Resource         keywords_dev/t5_dualleaf_resource.txt
 
 
 
@@ -18,32 +18,27 @@ configure Dual Rack Dual Leaf Topology
     sleep  5
     rest check fabric switch connectivity
    
-Verify Fabric Lag formation from leaf node 
-	[Tags]	functional
-	verify fabric lag   leaf0-a
+Verify Fabric Lag formation from leaf node  
+	verify fabric lag   00:00:00:00:02:00:00:01
 	
 verify fabric lag formation from spine node
-    verify fabric lag   spine0
+    verify fabric lag   00:00:00:00:01:00:00:01
 	
-Remove the Fabric Role spine and verify the lag from leaf switch 
-	[Tags]	 functional
+Remove the Fabric Role spine and verify the lag from leaf switch  
 	REST remove fabric role   spine       
     sleep  5 
-	verify fabric lag   leaf0-a
+	verify fabric lag   00:00:00:00:02:00:00:01
 
-Verify Fabric Lag from spine after deleting one spine
-	[Tags]	 functional 
-	verify fabric lag   spine0
+Verify Fabric Lag from spine after deleting one spine 
+	verify fabric lag   00:00:00:00:01:00:00:01
 
-Add the Fabric Role spine back and verify the lag from leaf switch
-	[Tags]	 functional
+Add the Fabric Role spine back and verify the lag from leaf switch  
 	REST configure fabric role   spine0   spine      
     sleep  5 
-	verify fabric lag   leaf0-a
+	verify fabric lag   00:00:00:00:02:00:00:01
 	
 Verify Fabric Lag from spine after adding back spine node 
-	[Tags]	 functional
-	verify fabric lag   spine0
+	verify fabric lag   00:00:00:00:01:00:00:01
 
 Tear down config and topology
     remove fabric switch 
@@ -51,6 +46,6 @@ Tear down config and topology
 
 * Keywords  
 
-verify fabric lag   [Arguments]  ${switch}
-    REST verify fabric lag   ${switch}
+verify fabric lag   [Arguments]  ${dpid}
+    REST verify fabric lag   ${dpid}
 

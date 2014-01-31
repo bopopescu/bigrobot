@@ -233,18 +233,17 @@ def create_symlinks_to_logs():
     for f in log_files:
         f2 = '/'.join((log_path, f))
         
-        is_different = not helpers.is_same_file(f, f2)
-        if is_different:
-            helpers.file_remove(f2)
         helpers.file_remove(f)
+        helpers.file_remove(f2)
         
         source_file =  '/'.join((log_path_run, f))
-        
+
         # Create symlink only if source file exists
         if helpers.file_exists(source_file):
-            if is_different:
-                os.symlink(source_file, f2)
-            os.symlink(source_file, f)            
+            os.symlink(source_file, f)
+            if not helpers.file_exists(f2):
+                # Create additional symlink, unless f == f2
+                os.symlink(source_file, f2)            
 
 #
 # Gobot command definitions

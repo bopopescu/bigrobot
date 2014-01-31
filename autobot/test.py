@@ -116,7 +116,11 @@ class Test(object):
                 authen.append(None)
         return authen
             
-    def topology(self, name=None, node=None):
+    def topology(self, name=None, node=None, ignore_error=False):
+        """
+        :param ignore_error: (Bool) If true, don't trigger exception when
+                             name is not found.
+        """
         if not self._init_in_progress:
             self.initialize()
 
@@ -130,7 +134,10 @@ class Test(object):
             return node
         elif name:
             if name not in self._topology:
-                helpers.environment_failure("Device '%s' is not found in topology" % name)
+                if ignore_error:
+                    return None
+                else:
+                    helpers.environment_failure("Device '%s' is not found in topology" % name)
             return self._topology[name]
         else:
             return self._topology
@@ -161,6 +168,12 @@ class Test(object):
             else:
                 return False
 
+    def controllers(self):
+        """
+        Get the handles of all the controllers.
+        """
+        return [n for n in self.topology_params() if re.match(r'^c\d+', n)]
+        
     def controller(self, name='c1', resolve_mastership=False):
         """
         :param resolve_mastership: (Bool) 
@@ -194,17 +207,42 @@ class Test(object):
 
         return self.topology(node)
         
-    def mininet(self, name='mn'):
-        return self.topology(name)
+    def mininet(self, name='mn', *args, **kwargs):
+        return self.topology(name, *args, **kwargs)
     
-    def switch(self, name='s1'):
-        return self.topology(name)
+    def switches(self):
+        """
+        Get the handles of all the switches.
+        """
+        return [n for n in self.topology_params() if re.match(r'^s\d+', n)]
+        
+    def switch(self, name='s1', *args, **kwargs):
+        return self.topology(name, *args, **kwargs)
 
-    def host(self, name='h1'):
-        return self.topology(name)
+    def hosts(self):
+        """
+        Get the handles of all the hosts.
+        """
+        return [n for n in self.topology_params() if re.match(r'^h\d+', n)]
+        
+    def host(self, name='h1', *args, **kwargs):
+        return self.topology(name, *args, **kwargs)
 
-    def node(self, name):
-        return self.topology(name)
+    def node(self, *args, **kwargs):
+        """
+        Returns the handle for a node. 
+        """
+        if len(args) >= 1:
+            node = args[0]
+        elif 'name' in kwargs:
+            node = kwargs['name']
+        else:
+            helpers.test_error("Impossible state.")
+                        
+        if re.match(r'^(master|slave)$', node):
+            return self.controller(*args, **kwargs)
+        else:
+            return self.topology(*args, **kwargs)
     
     def initialize(self):
         """
@@ -251,12 +289,21 @@ class Test(object):
                                           t)
             elif helpers.is_mininet(key):
                 helpers.log("Initializing Mininet '%s'" % key)
+                
+                # Use the OpenFlow port defined in the controller ('c1')
+                # if it's defined.
+                if 'openflow_port' in self.topology_params()['c1']:
+                    openflow_port = self.topology_params()['c1']['openflow_port']
+                else:
+                    openflow_port = None
+                
                 n = a_node.MininetNode(key,
                                        host,
                                        controller_ip,
                                        self.mininet_user(),
                                        self.mininet_password(),
-                                       t)
+                                       t,
+                                       openflow_port=openflow_port)
             elif helpers.is_host(key):
                 helpers.log("Initializing host '%s'" % key)
                 n = a_node.HostNode(key,
@@ -384,6 +431,26 @@ class Test(object):
 
         return n.rest.request_session_cookie(url)
 
+    def setup_switch(self, name):
+        """
+        Perform setup on SwitchLight
+        - configure the controller IP address and (optional) port
+        """
+        n = self.topology(name)
+
+        if not n.dev:
+            helpers.log("DevConf session is not available for node '%s'" % name)
+            return
+        
+        for controller in ('c1', 'c2'):
+            c = self.topology(controller, ignore_error=True)
+            if c:
+                if 'openflow_port' in self.topology_params()[controller]:
+                    openflow_port = self.topology_params()[controller]['openflow_port']
+                    n.config("controller %s port %s" % (c.ip, openflow_port))
+                else:
+                    n.config("controller %s" % c.ip)
+        
     def setup(self):
         # This check ensures we  don't try to setup multiple times.
         if self._setup_completed:
@@ -399,6 +466,8 @@ class Test(object):
             if helpers.is_controller(key):
                 self.setup_controller_firewall_allow_rest_access(key)
                 self.setup_controller_http_session_cookie(key)
+            elif helpers.is_switch(key):
+                self.setup_switch(key)
                 
         self._setup_completed = True
     

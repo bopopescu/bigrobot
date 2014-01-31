@@ -209,6 +209,16 @@ def is_controller(name):
     return True if match else False
 
 
+def is_controller_or_error(name):
+    """
+    Controller is defined as c1, c2, master, slave, ...
+    """
+    if not is_controller(name):
+        test_error("Node must be a controller ('c1', 'c2').")
+    else:
+        return True
+
+
 def is_switch(name):
     """
     Switch is defined as s1, s2, s3, spine1, spine2, leaf1, leaf2, ...
@@ -234,15 +244,43 @@ def is_mininet(name):
 
 
 def is_bvs(name):
+    """
+    Inspect the platform type for the node. Usage:
+    
+    if helpers.is_bvs(n.platform():
+        ...this is a BVS controller...
+    """
     return name == 'bvs'
 
 
 def is_bigtap(name):
+    """
+    Inspect the platform type for the node. Usage:
+    
+    if helpers.is_bigtap(n.platform():
+        ...this is a BigTap controller...
+    """
     return name == 'bigtap'
 
 
 def is_bigwire(name):
+    """
+    Inspect the platform type for the node. Usage:
+    
+    if helpers.is_bigwire(n.platform():
+        ...this is a BigWire controller...
+    """
     return name == 'bigwire'
+
+
+def is_switchlight(name):
+    """
+    Inspect the platform type for the node. Usage:
+    
+    if helpers.is_switchlight(n.platform():
+        ...this is a SwitchLight switch...
+    """
+    return name == 'switchlight'
 
 
 def is_scalar(data):
@@ -566,7 +604,7 @@ def environment_failure(msg):
 def _createSSHClient(server, user, password, port=22):
     client = paramiko.SSHClient()
     client.load_system_host_keys()
-    #client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     client.connect(server, port, user, password)
     return client
 
@@ -578,16 +616,18 @@ def scp_put(server, local_file, remote_path,
 
     # !!! FIXME: Catch conditions where file/path are not found
     #log("scp put local_file=%s remote_path=%s" % (local_file, remote_path))
-    s.put(local_file, remote_path) 
+    log("SSH copy source (%s) to destination (%s) " % (local_file, remote_path))
+    s.put(local_file, remote_path, recursive=True) 
 
 
 def scp_get(server, remote_file, local_path,
-            user='admin', password='adminadmin'):
+            user='admin', password='adminadmin', recursive=True):
     ssh = _createSSHClient(server, user, password)
     s = SCPClient(ssh.get_transport())
 
     # !!! FIXME: Catch conditions where file/path are not found
     #log("scp put remote_file=%s local_path=%s" % (remote_file, local_path))
+    log("SSH copy source (%s) to destination (%s) " % (remote_file, local_path))
     s.get(remote_file, local_path)
 
 
@@ -619,7 +659,7 @@ def run_cmd(cmd, cwd=None, ignore_stderr=False, shell=True, quiet=False):
         return (True, out)
 
 
-def _ping(host, count=3, waittime=100, quiet=False, node=None):
+def _ping(host, count=3, waittime=100, quiet=False, source_if=None, node=None):
 
     # !!! FIXME: Mac OS X ping can use -W (waittime) to timeout ping.
     #            On Ubuntu, use -w (deadline) to timeout after n seconds.
@@ -630,7 +670,10 @@ def _ping(host, count=3, waittime=100, quiet=False, node=None):
 
         _, out = run_cmd(cmd, shell=False, quiet=True)
     else:
-        cmd = "ping -w %d %s" % (count, host)
+        options = ''
+        if source_if:
+            options = "-I %s " % source_if
+        cmd = "ping -w %d %s%s" % (count, options, host)
         if not quiet:
             log("Ping command: %s" % cmd, level=4)
 
