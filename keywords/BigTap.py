@@ -21,25 +21,29 @@ class BigTap(object):
 # All Bigtap Show Commands Go Here:
 ###################################################
     def rest_show_bigtap_policy(self, policy_name,num_filter_intf,num_delivery_intf):
-        '''Parse the output of cli command 'show bigtap policy <policy_name>'
+        '''
+        Objective:
+        Parse the output of cli command 'show bigtap policy <policy_name>'
+              
+        Inputs:
+        | `policy_name` | Name of the policy being parsed | 
+        | `num_filter_intf` | Number of configured Filter Interfaces in the policy | 
+        | `num_delivery_intf` | Number of configured Delivery Interfaces in the policy | 
         
-        - The first input item `policy_name` which is the name of the policy being parsed
-        - The second input item `num_filter_intf` is the number of configured Filter Interfaces in the policy
-        - The third input item `num_delivery_intf` is the number of configured Delivery Interfaces in the policy
+        Description:
+        The function executes a REST GET for http://<CONTROLLER_IP>:8082/api/v1/data/controller/applications/bigtap/view/policy[name="<POLICY_NAME>"]/info
+        The policy returns True if and only if all the following conditions are True 
+        - Policy name is seen correctly in the output
+        - Config-Status is either "active and forwarding" or "active and rate measure"
+        - Type is "Configured"
+        - Runtime Status is "installed"
+        - Delivery interface count is num_delivery_intf
+        - Filter Interface count is num_filter_intf
+        - Detailed status is either "installed to forward" or "installed to measure rate"        
         
-        - The policy returns True if and only if all the following conditions are True 
-            - Policy name is seen correctly in the output
-            - Config-Status is either "active and forwarding" or "active and rate measure"
-            - Type is "Configured"
-            - Runtime Status is "installed"
-            - Delivery interface count is num_delivery_intf
-            - Filter Interface count is num_filter_intf
-            - deltailed status is either "installed to forward" or "installed to measure rate"
-        
-        - The function executes a REST GET for 
-            - http://<CONTROLLER_IP>:8082/api/v1/data/controller/applications/bigtap/view/policy[name="<POLICY_NAME>"]/info
-        
-        - Return value is True/False
+        Return value: 
+        - True on success
+        - False otherwise
         '''
         try:
             t = test.Test()
@@ -101,15 +105,19 @@ class BigTap(object):
             return True
 
     def rest_show_switch_dpid(self,switch_alias):
-        '''Returns switch DPID, given a switch alias
+        '''
+        Objective: Returns switch DPID, given a switch alias
         
-        Input `switchAlias` refers to switch alias
+        Input:  
+        | `switch_alias` |  User defined switch alias | 
         
-        The function executes a REST GET for 
-            http://<CONTROLLER_IP>:8082/api/v1/data/controller/core/switch?select=alias
-        and greps for switch-alias, and returns switch-dpid
+        Description:
+        The function 
+        - executes a REST GET for http://<CONTROLLER_IP>:8082/api/v1/data/controller/core/switch?select=alias
+        - and greps for switch-alias, and returns switch-dpid
         
-        Return value is switch DPID
+        Return value
+        - Switch DPID
         '''
         try:
             t = test.Test()
@@ -129,15 +137,19 @@ class BigTap(object):
                 return False
     
     def rest_show_switch_flow(self,switch_alias=None, sw_dpid=None):
-        '''Returns number of flows on a switch
+        '''
+        Objective: 
+        - Returns number of flows on a switch
         
-        Input 'switch_dpid' is the switch DPID
+        Input: 
+        | 'switch_dpid' |  Datapath ID of the switch | 
         
-        The function executes a REST GET for 
-            http://<CONTROLLER_IP>:8082/api/v1/data/controller/core/switch[dpid="<SWITCH_DPID>"]?select=stats/table
-        and returns number of active flows
+        Description:
+        - The function executes a REST GET for http://<CONTROLLER_IP>:8082/api/v1/data/controller/core/switch[dpid="<SWITCH_DPID>"]?select=stats/table
+        - Returns number of active flows
         
-        Return valuse is the number of active flows on the switch
+        Return value: 
+        - Number of active flows on the switch
         '''
         t=test.Test()
         try:
@@ -171,19 +183,23 @@ class BigTap(object):
 ###################################################
 
     def rest_verify_policy_key(self,policy_name,method,index,key):
-        '''Execute a rest get and verify if a particular key exists in a policy
+        '''
+            Objective:
+            - Execute a rest get and verify if a particular key exists in a policy
         
-            Inputs:
-                `policy_name` : Policy Name being tested for
-                `method`    : Methods can be info/rule/filter-interface/delivery-interface/service-interface/core-interface/failed-paths
-                `index`    : Index in the array
-                `key`      : Particular key we are looking for.
+            Inputs
+            | `policy_name` |  Policy Name being tested for| 
+            | `method`    |  Methods can be info/rule/filter-interface/delivery-interface/service-interface/core-interface/failed-paths| 
+            | `index`    |  Index in the array| 
+            | `key`      |  Particular key we are looking for.| 
             
-            Example:
+            Description:
                 rest_check_policy_key('testPolicy','ip-proto',0,'rule') would check execute a REST get on "http://<CONTROLLER_IP>:8082/api/v1/data/controller/applications/bigtap/view/policy[name="testPolicy"]/rule
                 and return the value "ip-proto"
             
-            Return Value: is value of key if the key exists, False if it does not.
+            Return Value: 
+            - Value of key if the key exists, 
+            - False if it does not.
         '''
         try:
             t = test.Test()
@@ -210,15 +226,19 @@ class BigTap(object):
 # All Bigtap Configuration Commands Go Here:
 ###################################################    
     def rest_add_interface_role(self,intf_name,intf_type,intf_nickname,switch_alias=None, sw_dpid=None):
-        '''Execute the CLI command 'bigtap role filter interface-name F1'
+        '''
+            Objective:
+            - Execute the CLI command 'bigtap role filter interface-name F1'
         
             Input: 
-                `switch_dpid` : DPID of the switch
-                `intf_name`    : Interface Name viz. etherenet1, ethernet2 etc.
-                `intf_type`    : Interface Type viz. filter, delivery, service
-                `intf_nickname`    : Nickname for the interface for eg. F1, D1, S1 etc.
+            | `switch_dpid` |  DPID of the switch | 
+            | `intf_name`    |  Interface Name viz. etherenet1, ethernet2 etc. | 
+            | `intf_type`    |  Interface Type viz. filter, delivery, service | 
+            | `intf_nickname` |  Nickname for the interface for eg. F1, D1, S1 etc. | 
             
-            Returns: True if configuration is successful, false otherwise
+            Return Value: 
+            - True if configuration is successful
+            - False otherwise
         '''
         try:
             t = test.Test()
@@ -250,15 +270,22 @@ class BigTap(object):
                     return True
 
     def rest_delete_interface_role(self,intf_name,intf_type,intf_nickname,switch_alias=None, sw_dpid=None):
-        '''Delete filter/service/delivery interface from switch configuration. Similar to executing the CLI command 'no bigtap role filter interface-name F1'
+        '''
+            Objective:
+            - Delete filter/service/delivery interface from switch configuration. 
          
             Input: 
-                `switch_dpid` : DPID of the switch
-                `intf_name`    : Interface Name viz. etherenet1, ethernet2 etc.
-                `intf_type`    : Interface Type viz. filter, delivery, service
-                `intf_nickname`    : Nickname for the interface for eg. F1, D1, S1 etc.
+             | `switch_dpid` | Datapath ID of the switch | 
+             | `intf_name` |  Interface Name viz. etherenet1, ethernet2 etc. | 
+             | `intf_type` | Interface Type viz. filter, delivery, service | 
+             | `intf_nickname` | Nickname for the interface for eg. F1, D1, S1 etc. | 
+                
+            Description:
+            - Similar to executing the CLI command 'no bigtap role filter interface-name F1'
             
-            Returns: True if delete is successful, false otherwise       
+            Return Value: 
+            - True if configuration is successful
+            - False otherwise    
         '''
         try:
             t = test.Test()
@@ -290,13 +317,17 @@ class BigTap(object):
                     return True
 
     def rest_delete_interface(self,intf_name,switch_alias=None, sw_dpid=None):
-        '''Delete interface from switch
+        '''
+            Objective
+            - Delete interface from switch
          
             Input: 
-                `switch_dpid` : DPID of the switch
-                `intf_name`    : Interface Name viz. etherenet1, ethernet2 etc.
+             | `switch_dpid` | DPID of the switch | 
+             | `intf_name` | Interface Name viz. etherenet1, ethernet2 etc. | 
             
-            Returns: True if delete is successful, false otherwise       
+            Return Value: 
+            - True if configuration delete is successful
+            - False otherwise       
         '''
         try:
             t = test.Test()
@@ -327,14 +358,18 @@ class BigTap(object):
                     return True
 
     def rest_add_policy(self,rbac_view_name,policy_name,policy_action="inactive"):
-        '''Add a bigtap policy.
+        '''
+            Objective:
+            - Add a bigtap policy.
         
             Input:
-                `rbac_view_name`    :    RBAC View Name for eg. admin-view
-                `policy_name`  :    Policy Name
-                `policy_action`:    Policy action. The permitted values are "forward" or "rate-measure", default is inactive
+             | rbac_view_name` | RBAC View Name for eg. admin-view | 
+             | `policy_name` | Policy Name | 
+             | `policy_action` | Policy action. The permitted values are "forward" or "rate-measure", default is inactive | 
             
-            Returns: True if policy configuration is successful, false otherwise       
+            Return Value: 
+            - True if configuration is successful
+            - False otherwise       
         '''
         try:
             t = test.Test()
@@ -358,13 +393,17 @@ class BigTap(object):
                     return True
 
     def rest_delete_policy(self,rbac_view_name,policy_name):
-        '''Delete a bigtap policy.
+        '''
+            Objective:
+            - Delete a bigtap policy.
         
             Input:
-                `rbac_view_name`    :    RBAC View Name for eg. admin-view
-                `policy_name`  :    Policy Name
+             | `rbac_view_name` | RBAC View Name for eg. admin-view | 
+             | `policy_name` | Policy Name | 
             
-            Returns: True if policy delete is successful, False otherwise       
+            Return Value: 
+            - True if configuration delete is successful
+            - False if configuration delete is unsuccessful          
         '''
         try:
             t = test.Test()
@@ -386,15 +425,19 @@ class BigTap(object):
                     return True
 
     def rest_add_policy_interface(self,rbac_view_name,policy_name,intf_nickname,intf_type):
-        '''Add a bigtap policy interface viz. Add a filter-interface and/or delivery-interface under a bigtap policy.
+        '''
+            Objective:
+            - Add a bigtap policy interface viz. Add a filter-interface and/or delivery-interface under a bigtap policy.
         
             Input:
-                `rbac_view_name`    :    RBAC View Name for eg. admin-view
-                `policy_name`  :    Policy Name
-                `intf_nickname`    :    Interface Nick-Name for eg. F1 or D1
-                `intf_type`    :    Interface Type. Allowed values are `filter` or `delivery`
+             | `rbac_view_name` |   RBAC View Name for eg. admin-view| 
+             | `policy_name` |  Policy Name| 
+             | `intf_nickname` |  Interface Nick-Name for eg. F1 or D1 | 
+             | `intf_type` |  Interface Type. Allowed values are `filter` or `delivery` | 
             
-            Returns: True if policy configuration is successful, false otherwise       
+            Return Value: 
+            - True if configuration delete is successful
+            - False if configuration delete is unsuccessful     
         '''
         try:
             t = test.Test()
@@ -420,15 +463,20 @@ class BigTap(object):
                     return True
     
     def rest_delete_policy_interface(self,rbac_view_name,policy_name,intf_nickname,intf_type):
-        '''Delete a bigtap policy interface viz. Delete a filter-interface and/or delivery-interface from a bigtap policy.
+        '''
+            Objective:
+            - Delete a bigtap policy interface viz. 
+            - Delete a filter-interface and/or delivery-interface from a bigtap policy.
         
             Input:
-                `rbac_view_name`    :    RBAC View Name for eg. admin-view
-                `policy_name`  :    Policy Name
-                `intf_nickname`    :    Interface Nick-Name for eg. F1 or D1
-                `intf_type`    :    Interface Type. Allowed values are `filter` or `delivery`
+            | `rbac_view_name` | RBAC View Name for eg. admin-view | 
+            | `policy_name` | Policy Name | 
+            | `intf_nickname` | Interface Nick-Name for eg. F1 or D1 | 
+            | `intf_type` | Interface Type. Allowed values are `filter` or `delivery` | 
             
-            Returns: True if policy delete is successful, false otherwise   
+            Return Value: 
+            - True if configuration delete is successful
+            - False if configuration delete is unsuccessful    
         '''
         try:
             t = test.Test()
@@ -454,15 +502,19 @@ class BigTap(object):
                     return True
   
     def rest_add_policy_match(self,rbac_view_name,policy_name,match_number,data):
-        '''Add a bigtap policy match condition.
+        '''
+            Objective:
+            - Add a bigtap policy match condition.
         
             Input:
-                `rbac_view_name`    :    RBAC View Name for eg. admin-view
-                `policy_name`  :    Policy Name
-                `match_number`    :    Match number like the '1' in  '1 match tcp
-                `data`    :    Formatted data field like  {"ether-type": 2048, "dst-tp-port": 80, "ip-proto": 6, "sequence": 1} 
+            | `rbac_view_name`| RBAC View Name for eg. admin-view | 
+            | `policy_name` | Policy Name | 
+            | `match_number` |  Match number like the '1' in  '1 match tcp | 
+            | `data` | Formatted data field like  {"ether-type": 2048, "dst-tp-port": 80, "ip-proto": 6, "sequence": 1} | 
             
-            Returns: True if policy configuration is successful, false otherwise       
+            Return Value: 
+            - True if configuration add is successful
+            - False if configuration add is unsuccessful         
         '''
         try:
             t = test.Test()
@@ -485,14 +537,18 @@ class BigTap(object):
                     return True
     
     def rest_delete_policy_match(self,rbac_view_name,policy_name,match_number):
-        '''Delete a bigtap policy match condition.
+        '''
+            Objective:
+            - Delete a bigtap policy match condition.
         
             Input:
-                `rbac_view_name`    :    RBAC View Name for eg. admin-view
-                `policy_name`  :    Policy Name
-                `match_number`    :    Match number like the '1' in  '1 match tcp
+            | `rbac_view_name` |  RBAC View Name for eg. admin-view | 
+            | `policy_name` | Policy Name | 
+            | `match_number` |  Match number like the '1' in  '1 match tcp | 
             
-            Returns: True if policy delete is successful, false otherwise       
+            Return Value: 
+            - True if configuration delete is successful
+            - False if configuration delete is unsuccessful         
         '''
         try:
             t = test.Test()
@@ -511,14 +567,18 @@ class BigTap(object):
         
 # Add a service with Pre-Service and Post Service interface.
     def rest_add_service(self,service_name,pre_service_intf_nickname,post_service_intf_nickname):
-        '''Add a bigtap service.
+        '''
+            Objective:
+            - Add a bigtap service.
         
             Input:
-                `service_name`        : Name of Service
-                `pre_service_intf_nickname`        : Name of pre-service interface
-                `post_service_intf_nickname`       : Name of post-service interface
+            | `service_name`| Name of Service | 
+            | `pre_service_intf_nickname`| Name of pre-service interface | 
+            | `post_service_intf_nickname`| Name of post-service interface | 
             
-            Returns: True if service addition is successful, false otherwise
+            Return Value: 
+            - True if configuration add is successful
+            - False if configuration add is unsuccessful  
         
             Examples:
                 | rest add bigtap service  |  S1-LB7  |  S1-LB7_E3-HP1_E3-PRE  |  S1-LB7_E4-HP1_E4-POST  |  
@@ -561,12 +621,16 @@ class BigTap(object):
  
 # Delete a service
     def rest_delete_service(self,service_name) :
-        '''Delete a bigtap service.
+        '''
+            Objective:
+            - Delete a bigtap service.
         
             Input:
-                `service_name`        : Name of Service
+            | `service_name` | Name of Service |
             
-            Returns: True if service deletion is successful, false otherwise
+            Return Value: 
+            - True if configuration delete is successful
+            - False if configuration delete is unsuccessful  
         
         '''
         try:
@@ -590,14 +654,19 @@ class BigTap(object):
                     return True
     
     def rest_add_interface_service(self,service_name,intf_type,intf_nickname):
-        '''Add a service interface to a service. This is similar to executing CLI command "post-service S1-LB7_E4-HP1_E4-POST"
+        '''
+            Objective:
+            - Add a service interface to a service. 
+            - This is similar to executing CLI command "post-service S1-LB7_E4-HP1_E4-POST"
         
             Input:
-                `service_name`        : Name of Service
-                `intf_type`           : Interface Type. Acceptable values are `pre` or `post`
-                `post_service_intf_nickname`       : Name of pre/post-service interface for e.g. S1-LB7_E4-HP1_E4-POST
+            | `service_name` | Name of Service |
+            | `intf_type`  | Interface Type. Acceptable values are `pre` or `post` |
+            | `post_service_intf_nickname` | Name of pre/post-service interface for e.g. S1-LB7_E4-HP1_E4-POST |
             
-            Returns: True if addition of interface to service is successful, false otherwise
+            Return Value: 
+            - True if configuration add is successful
+            - False if configuration add is unsuccessful  
         
             Examples:
                 | rest add interface service  |  S1-LB7  |  post  |  S1-LB7_E4-HP1_E4-POST  |  
@@ -629,14 +698,18 @@ class BigTap(object):
                     return True
 
     def rest_delete_interface_service(self,service_name,intf_nickname,intf_type) :
-        '''Delete an interface from a service. This is similar to executing CLI command "no post-service S1-LB7_E4-HP1_E4-POST"
+        '''
+            Objective:
+            - Delete an interface from a service. This is similar to executing CLI command "no post-service S1-LB7_E4-HP1_E4-POST"
         
             Input:
-                `service_name`        : Name of Service
-                `intf_type`           : Interface Type. Acceptable values are `pre` or `post`
-                `post_service_intf_nickname`       : Name of pre/post-service interface for e.g. S1-LB7_E4-HP1_E4-POST
+            | `service_name` | Name of Service |
+            | `intf_type` | Interface Type. Acceptable values are `pre` or `post` |
+            | `post_service_intf_nickname` | Name of pre/post-service interface for e.g. S1-LB7_E4-HP1_E4-POST |
             
-            Returns: True if addition of interface to service is successful, false otherwise
+            Return Value: 
+            - True if configuration add is successful
+            - False if configuration add is unsuccessful  
         
             Examples:
                 | rest delete interface service  |  S1-LB7  |  post  |  S1-LB7_E4-HP1_E4-POST  |  
@@ -667,17 +740,21 @@ class BigTap(object):
                     return True
 
     def rest_add_service_to_policy(self,rbac_view_name,policy_name,service_name,sequence_number) :
-        '''Add a service to a policy. This is similar to executing CLI command "use-service S1-LB7 sequence 1"
+        '''
+          Objective:
+          - Add a service to a policy. This is similar to executing CLI command "use-service S1-LB7 sequence 1"
         
-            Input:
-                `rbac_view_name`           :    RBAC View Name for eg. admin-view
-                `policy_name`         :    Policy Name
-                `service_name`        : Name of Service
-                `sequence_number`     : Sequence number of the policy, to determine order in which policies are processed
+          Input:
+            |`rbac_view_name` | RBAC View Name for eg. admin-view |
+            |`policy_name` | Policy Name |
+            |`service_name` | Name of Service |
+            |`sequence_number`| Sequence number of the policy, to determine order in which policies are processed |
             
-            Returns: True if addition of service to policy is successful, false otherwise
+          Return Value:
+            - True if action add for policy is successful
+            - False if action add for policy is unsuccessful
         
-            Examples:
+          Examples:
                 | rest add service to policy  |  admin-view  |  testPolicy  |  S1-LB7  |  1  |  
                 Result is 
                 bigtap policy testPolicy rbac-permission admin-view
@@ -707,14 +784,18 @@ class BigTap(object):
                     return True
 
     def rest_delete_service_from_policy(self,rbac_view_name,policy_name,service_name) :
-        '''Delete a service from a policy. This is similar to executing CLI command "no use-service S1-LB7 sequence 1"
+        '''
+            Objective:
+            - Delete a service from a policy. This is similar to executing CLI command "no use-service S1-LB7 sequence 1"
         
             Input:
-                `rbac_view_name`           :    RBAC View Name for eg. admin-view
-                `policy_name`         :    Policy Name
-                `service_name`        : Name of Service
+            |`rbac_view_name`| RBAC View Name for eg. admin-view |
+            |`policy_name` | Policy Name |
+            |`service_name` | Name of Service |
             
-            Returns: True if deletion of service from policy is successful, false otherwise
+            Return Value:
+            - True if action delete for policy is successful
+            - False if action delete for policy is unsuccessful
         
         '''
         try:
@@ -739,19 +820,29 @@ class BigTap(object):
 
 #Change policy action
     def rest_add_policy_action(self,rbac_view_name,policy_name,policy_action):
-        '''Change a bigtap policy action from forward --> Rate-Measure, Forward --> Inactive, Rate-Measure--> Forward, Rate-Measure--> Inactive etc.
+        '''
+          Objective:
+          - Change the action field in a bigtap policy
         
-           Input:
-                `rbac_view_name`           :    RBAC View Name for eg. admin-view
-                
-                `policy_name`         :    Policy Name
-                
-                `policy_action`       :    Desired action. Values are `forward`, `rate-measure` and `inactive`
-        
-           Returns: True if action change for policy is successful, false otherwise
-            Examples:
+          Input:
+           |`rbac_view_name`|RBAC View Name for eg. admin-view |    
+           |`policy_name`|Policy Name |
+           |`policy_action`|Desired action. Values are `forward`, `rate-measure` and `inactive` |
+
+          
+          Description: 
+          Change a bigtap policy action from 
+          - Forward --> Rate-Measure, 
+          - Forward --> Inactive, 
+          - Rate-Measure--> Forward, 
+          - Rate-Measure--> Inactive
+          
+          Return Value:
+            - True if action change for policy is successful
+            - False if action change for policy is unsuccessful
+
+          Examples:
                 | rest change policy action  |  admin-view  |  testPolicy  |  rate-measure |  
-                
                 Result is 
                 bigtap policy testPolicy rbac-permission admin-view
                     action rate-measure
@@ -781,17 +872,23 @@ class BigTap(object):
                     return True
 
 #Alias
-    rest_update_policy_action  = rest_add_policy_action
+    def rest_update_policy_action(self,rbac_view_name,policy_name,policy_action):
+        return self.rest_add_policy_action(rbac_view_name, policy_name, policy_action)
 
 
 #Disable bigtap feature overlap/inport-mask/tracked-host/l3-l4-mode
     def rest_disable_feature(self,feature_name):
-        '''Disable a bigtap feature
+        '''
+            Objective:
+            - Disable a bigtap feature
         
            Input:
-                `feature_name`           :    Bigtap Feature Name. Currently allowed feature names are `overlap`,`inport-mask`,`tracked-host`,`l3-l4-mode`
-        
-           Returns: True if feature is disabled successfully, false otherwise
+            | `feature_name` | Bigtap Feature Name. \n Currently allowed feature names are `overlap`,`inport-mask`,`tracked-host`,`l3-l4-mode` | 
+            
+            Return Value 
+            - True if feature is enabled
+            - False if feature could not be enabled
+            
             Examples:
                 | rest disable feature  |  overlap |  
         '''
@@ -817,12 +914,17 @@ class BigTap(object):
     
 #Enable bigtap feature overlap/inport-mask/tracked-host/l3-l4-mode
     def rest_enable_feature(self,feature_name):
-        '''Enable a bigtap feature
+        '''
+            Objective:
+            - Enable a bigtap feature
         
            Input:
-                `feature_name`           :    Bigtap Feature Name. Currently allowed feature names are `overlap`,`inport-mask`,`tracked-host`,`l3-l4-mode`
-        
-           Returns: True if feature is enabled successfully, false otherwise
+            | `feature_name` | Bigtap Feature Name. \n Currently allowed feature names are `overlap`,`inport-mask`,`tracked-host`,`l3-l4-mode` | 
+            
+            Return Value 
+            - True if feature is enabled
+            - False if feature could not be enabled
+            
             Examples:
                 | rest enable feature  |  overlap |  
         '''
@@ -848,15 +950,19 @@ class BigTap(object):
         
 #Compare coreswitch flows
     def rest_verify_coreswitch_flows(self,flow_1,flow_2,flow_value_1,flow_value_2):
-        '''Compare coreswitch flow counts. Useful when we have multiple core-switches.
+        '''
+            Objective
+            - Compare coreswitch flow counts. Useful when we have multiple core-switches.
         
             Inputs:
-                flow_1: Number of flows on core switch 1
-                flow_2: Number of flows on core switch 2
-                flow_value_1: Desired number of flows on switch 1 or switch 2
-                flow_value_2: Desired number of flows on switch 1 or switch 2
+            | flow_1 | Number of flows on core switch 1 | 
+            | flow_2 | Number of flows on core switch 2 | 
+            | flow_value_1 | Desired number of flows on switch 1 or switch 2 | 
+            | flow_value_2 | Desired number of flows on switch 1 or switch 2 | 
         
-            Returns True if flow is found on switch
+            Return Value 
+            - True if flow is found on switch
+            - False if flow is not found on switch
         '''
         if ((flow_1 == flow_value_1) and (flow_2 == flow_value_2 )) or ((flow_2 == flow_value_1) and (flow_1 == flow_value_2 )) :
             return True
