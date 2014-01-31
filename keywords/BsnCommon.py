@@ -28,17 +28,20 @@ class BsnCommon(object):
     def base_test_teardown(self):
         pass
 
+    def mock_untested(self):
+        print("MOCK UNTESTED")
+
     def mock_passed(self):
-        #helpers.sleep(2)
         print("MOCK PASSED")
-        return True
 
     def mock_failed(self):
         raise AssertionError("MOCK FAILED")
 
+    def manual_untested(self):
+        print("MANUAL UNTESTED")
+
     def manual_passed(self):
         print("MANUAL PASSED")
-        return 8888
 
     def manual_failed(self):
         raise AssertionError("MANUAL FAILED")
