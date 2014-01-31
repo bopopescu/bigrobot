@@ -13,12 +13,17 @@ Documentation   Paragraph 1 - Switch Platform - Iron Horse
 
 * Test Cases
 Install OS at loader using the internal Compact Flash
+    Log    Step 1 - blah blah blah
+    Log    Step 2 - blah blah blah
     Manual untested
 
 Verify console connectivity
+    Log    Step 1 - bluh bluh bluh
+    Log    Step 2 - bluh bluh bluh
     Manual untested
 
 Verify UBoot version DRAM etc
-    # Comments
+    Log    Step 1 - bleh bleh bleh
+    Log    Step 2 - bleh bleh bleh
     Manual untested
 
