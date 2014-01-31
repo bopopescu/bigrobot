@@ -41,7 +41,9 @@ class Node(object):
         if self.is_pingable:
             return True
         helpers.log("Ping %s ('%s')" % (self.ip, self.name))
-        if not helpers.ping(self.ip, count=3, waittime=1000):
+        loss = helpers.ping(self.ip, count=3, waittime=1000)
+        if  loss > 20:
+            # We can tolerate 20% loss.
             # Consider init to be completed, so as not to be invoked again.
             self._init_completed = True
             helpers.environment_failure("Node with IP address %s is unreachable."
