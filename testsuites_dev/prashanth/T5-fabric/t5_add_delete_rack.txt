@@ -1,0 +1,79 @@
+*Settings
+Documentation    Fabric Lag/Link Test with add/delete a rack
+Suite Setup      base suite setup
+Suite Teardown   base suite teardown
+Test Setup       base test setup
+Test Teardown    base test teardown
+Force Tags       T5 Fabric
+Library          keywords/BsnCommon.py
+Library          keywords_dev/T5.py
+Library          keywords_dev/T5Fabric.py
+Resource         keywords_dev/t5_dualleaf_resource.txt
+
+*Variables
+${switch1_rack0_ip}  10.195.0.35
+${switch2_rack0_ip}  10.195.0.36
+${switch1_rack1_ip}  10.195.0.33
+${switch2_rack1_ip}  10.195.0.34
+${switch1_rack2_ip}  10.195.0.31
+${switch2_rack2_ip}  10.195.0.32
+
+*Test Case
+Setup Dual Rack Dual Leaf Topology
+    configure fabric switch
+    sleep  5
+    rest check fabric switch connectivity
+    rest verify fabric link
+   
+Add a new rack rack2 with Dual leaf switch   
+	rest configure switch  leaf2-a 
+  	rest configure dpid  leaf1-a  00:00:00:00:02:00:00:05
+  	rest configure fabric role  leaf2-a  leaf
+  	rest configure leaf group  leaf2-a  rack2
+  	sleep 3
+  	rest verify fabric link
+  	rest configure switch  leaf2-b 
+  	rest configure dpid  leaf2-b  00:00:00:00:02:00:00:06
+  	rest configure fabric role  leaf2-b  leaf
+  	rest configure leaf group  leaf2-b  rack2
+	sleep 3   
+	rest verify fabric link
+
+Delete a rack2 and verify the fabric link
+	rest remove fabric switch  leaf2-b
+	sleep  2 
+	rest verify fabric link
+	rest remove fabric switch  leaf2-b
+	sleep  2
+	rest verify fabric link
+	
+Re-add a new rack rack2 with Dual leaf switch  
+	rest configure switch  leaf2-a 
+  	rest configure dpid  leaf1-a  00:00:00:00:02:00:00:05
+  	rest configure fabric role  leaf2-a  leaf
+  	rest configure leaf group  leaf2-a  rack2
+  	sleep 3
+  	rest verify fabric link
+  	rest configure switch  leaf2-b 
+  	rest configure dpid  leaf2-b  00:00:00:00:02:00:00:06
+  	rest configure fabric role  leaf2-b  leaf
+  	rest configure leaf group  leaf2-b  rack2
+	sleep 3   
+	rest verify fabric link
+	
+Remove/add rack0 leaf0-b switch to verify the fabric status
+	rest remove fabric switch  leaf0-b
+	sleep 10
+	rest verify fabric link
+	rest configure switch  leaf0-b 
+  	rest configure dpid  leaf0-b  00:00:00:00:02:00:00:02
+  	rest configure fabric role  leaf0-b  leaf
+  	rest configure leaf group  leaf0-b  rack0
+  	sleep 5
+  	rest verify fabric link
+      
+Tear down config and Topology
+    remove fabric switch
+ 
+
+* Keywords  

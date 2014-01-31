@@ -1,0 +1,52 @@
+*Settings
+Documentation    Fabric Lag Single spine and Dual spine Test
+Suite Setup      base suite setup
+Suite Teardown   base suite teardown
+Test Setup       base test setup
+Test Teardown    base test teardown
+Force Tags       T5 Fabric
+Library          keywords/BsnCommon.py
+Library          keywords_dev/T5.py
+Library          keywords_dev/T5Fabric.py
+
+
+
+*Test Case
+configure Dual Rack Dual Leaf Topology
+    configure fabric switch
+   
+Verify Fabric Spine Lag formation  
+	verify fabric lag   00:00:00:00:00:02:00:01
+	
+Configure lag change from static to lcap 
+	change lag lacp      
+
+Verify Fabric Spine Lag formation after change to lacp 
+	verify fabric lag   00:00:00:00:00:02:00:01
+	
+Verify Fabric leaf Lag formation after change to lacp 
+	verify fabric lag   00:00:00:00:00:01:00:01	
+
+Verify the Fabric Link  
+	REST verify fabric link    
+
+configure lag change from lacp to static 
+    change lag static
+    
+Verify Fabric Spine Lag formation after change to lacp 
+	verify fabric lag   00:00:00:00:00:02:00:01
+	
+Verify Fabric leaf Lag formation after change to lacp 
+	verify fabric lag   00:00:00:00:00:01:00:01	
+
+Verify the Fabric Link  
+	REST verify fabric link
+	
+Tear down the config
+    remove fabric switch
+
+* Keywords  
+
+verify fabric lag  [Arguments]  ${dpid}
+    REST verify fabric lag  ${dpid}
+
