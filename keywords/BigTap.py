@@ -1,10 +1,9 @@
 ''' 
 ###  WARNING !!!!!!!
 ###  This is where common code for BigTap will go in.
-###  WARNING !!!!!!!
 ###  To commit new code, please contact the Library Owner: 
 ###  Animesh Patcha (animesh.patcha@bigswitch.com)
-###  WARNING !!!!!!!
+###
 ###  DO NOT COMMIT CODE WITHOUT APPROVAL FROM LIBRARY OWNER
 ###  WARNING !!!!!!!
 '''
