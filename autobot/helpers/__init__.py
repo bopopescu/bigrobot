@@ -660,11 +660,8 @@ def run_cmd(cmd, cwd=None, ignore_stderr=False, shell=True, quiet=False):
 
 
 def _ping(host, count=3, waittime=100, quiet=False, source_if=None, node=None):
-
-    # !!! FIXME: Mac OS X ping can use -W (waittime) to timeout ping.
-    #            On Ubuntu, use -w (deadline) to timeout after n seconds.
     if not node:
-        cmd = "ping -c %d -W %d %s" % (count, waittime, host)
+        cmd = "ping -c %s -W %s %s" % (count, waittime, host)
         if not quiet:
             log("Ping command: %s" % cmd, level=4)
 
@@ -673,7 +670,11 @@ def _ping(host, count=3, waittime=100, quiet=False, source_if=None, node=None):
         options = ''
         if source_if:
             options = "-I %s " % source_if
-        cmd = "ping -w %d %s%s" % (count, options, host)
+
+        # On Ubuntu, use -w (deadline) to timeout after n seconds. Set it to
+        # be the same as count. On Unbuntu, if the destination is not pingable,
+        # it will keep attempting to ping until deadline is reache.
+        cmd = "ping -c %s -w %s %s%s" % (count, count, options, host)
         if not quiet:
             log("Ping command: %s" % cmd, level=4)
 
@@ -685,26 +686,25 @@ def _ping(host, count=3, waittime=100, quiet=False, source_if=None, node=None):
         
     # Linux output:
     #   3 packets transmitted, 3 received, 0% packet loss, time 2003ms
+    #   3 packets transmitted, 0 received, +3 errors, 100% packet loss, time 2014ms
+    #       This is when ping failed with 'ping -c 3 -w 4 -I eth0 101.195.0.131'
     # Mac OS X output:
     #   3 packets transmitted, 3 packets received, 0.0% packet loss
 
-    match = re.search(r'.*transmitted, (\d+)( packets)? received.*',
+    match = re.search(r'.*?(\d+) packets transmitted, (\d+)( packets)? received, .*?(\d+\.?\d+?)% packet loss.*',
                       out,
                       re.M|re.I)
     if match:
-        packets_received = int(match.group(1))
-        s = ("Ping host '%s' - %d transmitted, %d received"
-             % (host, count, packets_received))
-        if packets_received > 0:
-            if not quiet:
-                log("Success! %s%s"
-                    % (s, br_utils.end_of_output_marker()), level=4)
-            return True
-        else:
-            if not quiet:
-                log("Failure! %s%s"
-                    % (s, br_utils.end_of_output_marker()), level=4)
-            return False
+        packets_transmitted = int(match.group(1))
+        packets_received = int(match.group(2))
+        loss_percentage = int(float(match.group(4)))
+        s = ("Ping host '%s' - %d transmitted, %d received, %d%% loss"
+             % (host, packets_transmitted, packets_received, loss_percentage))
+
+        log("Ping result: %s%s"
+            % (s, br_utils.end_of_output_marker()), level=4)
+        return loss_percentage
+
     test_error("Unknown ping error.")
 
 
@@ -714,16 +714,18 @@ def ping(host, count=3, waittime=100, quiet=False):
     :param host: (Str) ping hist host
     :param count: (Int) number of packets to send
     :param waittime: (Int) time in milliseconds to wait for a reply
+    
+    Return: (Int) loss percentage
     """
     if count < 3:
         count = 3   # minimum count
-    status = _ping(host, count=1, waittime=100, quiet=quiet)
-    if not status:
-        status = _ping(host, count=1, waittime=100, quiet=quiet)
-    if not status:
+    loss = _ping(host, count=1, waittime=100, quiet=quiet)
+    if loss > 0:
+        loss = _ping(host, count=1, waittime=100, quiet=quiet)
+    if loss > 0:
         count -= 2
-        status = _ping(host, count=count, waittime=waittime, quiet=quiet)
-    return status
+        loss = _ping(host, count=count, waittime=waittime, quiet=quiet)
+    return loss
 
 
 def openstack_convert_table_to_dict(input_str):
