@@ -515,8 +515,9 @@ class SwitchLight(object):
             helpers.test_failure("Could not execute command. Please check log for errors")
             return False
 
-    # Alias
-    cli_update_interface_ma1 = cli_add_interface_ma1
+    #Alias
+    def cli_update_interface_ma1(self,console_ip,console_port):
+        return self.cli_add_interface_ma1(self,console_ip,console_port)
 
     def cli_execute_command(self,node,cli_input):
         '''
