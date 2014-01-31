@@ -21,14 +21,16 @@ class SwitchLight(object):
 #######################################################################
 
     def cli_show_interface_macaddress(self,node,intf_name):
-        '''Return the MAC/Hardware address of a given interface on a switch
+        '''
+            Objective:
+            - Return the MAC/Hardware address of a given interface on a switch
         
             Input:
-                    ip_address        IP Address of switch
+            | node | Reference to switch (as defined in .topo file) |                     
+            | intf_name | Interface Name eg. ethernet1 or portchannel1 | 
                     
-                    intf_name        Interface Name eg. ethernet1 or portchannel1
-                    
-            Returns: MAC/Hardware address of interface on success.
+            Return Value: 
+            - MAC/Hardware address of interface on success.
         '''
         try:
             t = test.Test()
@@ -48,14 +50,16 @@ class SwitchLight(object):
 
 
     def cli_show_interface_state(self,node,intf_name):
-        '''Return the Interface State of a given interface on a switch
+        '''
+            Objective:
+            - Return the Interface State of a given interface on a switch
         
             Input:
-                    ip_address        IP Address of switch
+            | node | Reference to switch (as defined in .topo file) |                     
+            | intf_name | Interface Name eg. ethernet1 or portchannel1 | 
                     
-                    intf_name        Interface Name eg. ethernet1 or portchannel1
-                    
-            Returns: Interface State of interface.
+            Return Value: 
+            - Interface State of interface.
         '''
         try:
             t = test.Test()
@@ -74,8 +78,17 @@ class SwitchLight(object):
             return False
 
     
-    def cli_show_interfaces(self,node,ip_address):
-        '''Verify all 52 interfaces are seen in switch
+    def cli_show_interfaces(self,node):
+        '''
+            Objective:
+            - Verify all 52 interfaces are seen in switch
+
+            Input:
+            | node | Reference to switch (as defined in .topo file) |
+            
+            Return Value:
+            - True if all 52 interfaces are seen
+            - False of all 52 interfaces are not seen
         '''
         try:
             t = test.Test()
@@ -100,11 +113,18 @@ class SwitchLight(object):
             return False
 
     def cli_show_ip_address(self,console_ip,console_port):
-        '''Detect the IP address of a switch when IP address is not known
+        '''
+        
+            Objective:
+            - Detect the IP address of a switch when IP address is not known
         
             Inputs:
-                console_ip:    Console IP Address
-                console_port:  Console Port Number
+            | console_ip | Console IP Address | 
+            | console_port | Console Port Number |
+            
+            Return Value:
+            - IP address and Subnet on success
+            - False in case of failure 
         '''
         try:
             user = "admin"
@@ -132,12 +152,15 @@ class SwitchLight(object):
             return False
 
     def ping_from_local(self,ip_address):
-        '''Execute ping command  from local machine for a particular switch IP
+        '''
+            Objective:
+            - Execute ping command from local machine for a particular switch IP
         
             Input:
-                ip_address        IP Address of switch
+            | ip_address | IP Address of switch |
             
-            Returns:  Output of Ping
+            Return Value:  
+            - Output of Ping
         '''
         try:
             url="/sbin/ping -c 3 %s" % (ip_address)
@@ -158,10 +181,18 @@ class SwitchLight(object):
 #######################################################################
 
     def cli_verify_controller(self,node,controller_ip,controller_role):
-        '''Configure controller IP address on switch
+        '''
+            Objective:
+            - Configure controller IP address on switch
         
             Input:
-                ip_address:        IP Address of switch
+            | node | Reference to switch (as defined in .topo file) |
+            | controller_ip | IP Address of Controller |
+            | controller_role | Role of controller (Active/Backup) |
+            
+            Return Value:
+            - True on verification success
+            - False on verification failure
         '''
         try:
             t = test.Test()
@@ -198,14 +229,20 @@ class SwitchLight(object):
             return False 
 
     def cli_verify_ip_dns(self,node,subnet,gateway,dns_server,dns_domain):
-        '''Verify Switch Correctly reports configured IP Address and DNS
+        '''
+            Objective:
+            - Verify Switch Correctly reports configured IP Address and DNS
         
             Input: 
-                ip_address:    Switch IP address in 1.2.3.4 format
-                subnet:        Switch subnet in /18 /24 format
-                gateway        IP address of default gateway
-                dns_server     dns-server IP address in 1.2.3.4 format
-                dns-domain    dns-server IP address in bigswitch.com format
+            | node | Reference to switch (as defined in .topo file) |
+            | subnet | Switch subnet in /18 /24 format | 
+            | gateway | IP address of default gateway | 
+            | dns_server | dns-server IP address in 1.2.3.4 format | 
+            | dns-domain | dns-server IP address in bigswitch.com format |
+
+            Return Value:
+            - True on verification success
+            - False on verification failure
         '''
         try:
             t = test.Test()
@@ -246,7 +283,20 @@ class SwitchLight(object):
             return False
 
     def cli_verify_dhcp_ip_dns(self,node,subnet,dns_server,dns_domain):
-        '''Verify Switch Correctly reports configured IP Address and DNS
+        '''
+            Objective:
+            - Verify Switch Correctly reports configured IP Address and DNS when IP address is obtained via DHCP
+        
+            Input: 
+            | node | Reference to switch (as defined in .topo file) |
+            | subnet | Switch subnet in /18 /24 format | 
+            | gateway | IP address of default gateway | 
+            | dns_server | dns-server IP address in 1.2.3.4 format | 
+            | dns-domain | dns-server IP address in bigswitch.com format |
+
+            Return Value:
+            - True on verification success
+            - False on verification failure
         '''
         try:
             t = test.Test()
@@ -291,11 +341,17 @@ class SwitchLight(object):
 # All Common Controller Configuration Commands Go Here:
 #######################################################################
     def cli_enable_disable_controller(self,node,iteration):
-        '''Activate and deactivate controller configuration on switch
+        '''
+            Objective:
+            - Activate and deactivate controller configuration on switch
         
             Inputs:
-                ip_address    IP Address of Switch
-                iteration     Number of times the operation has to be performed
+            | node | Reference to switch (as defined in .topo file) |
+            | iteration | Number of times the operation has to be performed | 
+            
+            Return Value:
+            - True on verification success
+            - False on verification failure
         '''
         try:
             t = test.Test()
@@ -324,12 +380,17 @@ class SwitchLight(object):
 
 
     def cli_disable_interface(self,node,interface_name):
-        ''' Shut/Unshut interface via CLI
+        ''' 
+            Objective:
+            - Disable interface via CLI
         
             Input:
-                ip_address        IP Address of Switch
-                interface_name    Interface Name
-                state             Yes="shutdown", No="no shutdown"
+            | node | Reference to switch (as defined in .topo file) |
+            | interface_name | Interface Name |
+                
+            Return Value:
+            - True on  success
+            - False on  failure
         '''
         try:
             t = test.Test()
@@ -342,12 +403,17 @@ class SwitchLight(object):
             return False
         
     def cli_enable_interface(self,node,interface_name):
-        ''' Shut/Unshut interface via CLI
+        ''' 
+            Objective:
+            - Enable interface via CLI
         
             Input:
-                ip_address        IP Address of Switch
-                interface_name    Interface Name
-                state             Yes="shutdown", No="no shutdown"
+            | node | Reference to switch (as defined in .topo file) |
+            | interface_name | Interface Name |
+                
+            Return Value:
+            - True on  success
+            - False on  failure
         '''
         try:
             t = test.Test()
@@ -360,12 +426,17 @@ class SwitchLight(object):
             return False
 
     def bash_disable_interface_bshell(self,node,interface_num):
-        ''' Shut/Unshut interface via broadcom shell command. This can be used only if it is an internal image.
+        '''  
+            Objective:
+            - Disable interface via bshell. This can be used only if it is an internal image.
         
             Input:
-                ip_address        IP Address of Switch
-                interface_name    Interface Name
-                state             Yes="shutdown", No="no shutdown"
+            | node | Reference to switch (as defined in .topo file) |
+            | interface_name | Interface Name |
+                
+            Return Value:
+            - True on  success
+            - False on  failure
         '''
         try:
             t = test.Test()
@@ -378,12 +449,17 @@ class SwitchLight(object):
             return False
 
     def bash_enable_interface_bshell(self,node,interface_num):
-        ''' Shut/Unshut interface via broadcom shell command. This can be used only if it is an internal image.
+        '''  
+            Objective:
+            - Enable interface via bshell. This can be used only if it is an internal image.
         
             Input:
-                ip_address        IP Address of Switch
-                interface_name    Interface Name
-                state             Yes="shutdown", No="no shutdown"
+            | node | Reference to switch (as defined in .topo file) |
+            | interface_name | Interface Name |
+                
+            Return Value:
+            - True on  success
+            - False on  failure
         '''
         try:
             t = test.Test()
@@ -396,12 +472,17 @@ class SwitchLight(object):
             return False
 
     def cli_add_interface_ma1(self,console_ip,console_port):
-        '''Flap interface ma1 on switch
+        '''
+            Objective: 
+            - Flap interface ma1 on switch
         
             Inputs:
-                console_ip        IP Address of Console Server
+            | console_ip | IP Address of Console Server |    
+            | console_port | Console Port Number | 
                 
-                console_port      Console Port Number
+            Return Value:
+            - True on  success
+            - False on  failure
         '''
         try:
             user = "admin"
@@ -430,13 +511,16 @@ class SwitchLight(object):
     cli_update_interface_ma1 = cli_add_interface_ma1
 
     def cli_execute_command(self,node,cli_input):
-        '''Execute a generic command on the switch and return ouput.
+        '''
+            Objective:
+            - Execute a generic command on the switch and return ouput.
         
             Input:
-                ip_address        IP Address of Switch
-                input            Command to be executed on switch
+            | node | Reference to switch (as defined in .topo file) |
+            | input  | Command to be executed on switch |
                 
-            Return Value: Output from command execution
+            Return Value: 
+            - Output from command execution
             
             Example:
             
@@ -457,10 +541,17 @@ class SwitchLight(object):
             return False
 
     def cli_add_controller(self,node,controller_ip):
-        '''Configure controller IP address on switch
+        '''
+            Objective:
+            - Configure controller IP address on switch
         
             Input:
-                ip_address:        IP Address of switch
+            | node | Reference to switch (as defined in .topo file) |
+
+            Return Value:
+            - True on  success
+            - False on  failure
+
         '''
 
         try:
@@ -476,11 +567,17 @@ class SwitchLight(object):
 
 
     def cli_delete_controller(self,node,controller_ip):
-        '''Delete controller IP address on switch
+        '''
+            Objective:
+            - Delete controller IP address on switch
         
             Input:
-                ip_address:        IP Address of switch
-                controller_ip:        IP Address of Controller
+            | node | Reference to switch (as defined in .topo file) |
+            | controller_ip | IP Address of Controller |
+
+            Return Value:
+            - True on  success
+            - False on  failure
         '''
 
         try:
@@ -494,7 +591,22 @@ class SwitchLight(object):
             helpers.test_failure("Configuration delete failed")
             return False
     def cli_add_static_ip(self,console_ip,console_port,ip_address,subnet,gateway):
-        '''Configure static IP address configuration on switch.
+        '''
+        Objective:
+         - Configure static IP address configuration on switch.
+        
+        Inputs:
+        | console_ip | IP Address of Console Server |    
+        | console_port | Console Port Number | 
+        | ip_address | IP Address of Switch |
+        | subnet | Switch subnet in /18 /24 format | 
+        | gateway | IP address of default gateway | 
+
+
+        Return Value:
+        - True on configuration success
+        - False on configuration failure
+
         '''
         try:
             user = "admin"
@@ -518,7 +630,21 @@ class SwitchLight(object):
             return False
         
     def cli_delete_static_ip(self,console_ip,console_port,ip_address,subnet,gateway):
-        '''Delete static IP address configuration on switch.
+        '''
+        Objective:
+        - Delete static IP address configuration on switch.
+        
+        Inputs:
+        | console_ip | IP Address of Console Server |    
+        | console_port | Console Port Number | 
+        | ip_address | IP Address of Switch |
+        | subnet | Switch subnet in /18 /24 format | 
+        | gateway | IP address of default gateway | 
+
+
+        Return Value:
+        - True on configuration success
+        - False on configuration failure
         '''
         try:
             user = "admin"
@@ -542,7 +668,20 @@ class SwitchLight(object):
             return False
 
     def cli_add_dhcp_ip(self,console_ip,console_port):
-        '''Configure static IP address configuration on switch.
+        '''
+        Objective:
+        - Configure static IP address configuration on switch.
+        
+        Inputs:
+        | console_ip | IP Address of Console Server |    
+        | console_port | Console Port Number | 
+        | ip_address | IP Address of Switch |
+        | subnet | Switch subnet in /18 /24 format | 
+        | gateway | IP address of default gateway | 
+
+        Return Value:
+        - True on configuration success
+        - False on configuration failure
         '''
         try:
             user = "admin"
@@ -567,7 +706,20 @@ class SwitchLight(object):
             return False
 
     def cli_delete_dhcp_ip(self,console_ip,console_port,ip_address, subnet, gateway):
-        '''Configure static IP address configuration on switch.
+        '''
+        Objective:
+         - Delete DHCP IP address configuration on switch.
+        
+        Inputs:
+        | console_ip | IP Address of Console Server |    
+        | console_port | Console Port Number | 
+        | ip_address | IP Address of Switch |
+        | subnet | Switch subnet in /18 /24 format | 
+        | gateway | IP address of default gateway | 
+
+        Return Value:
+        - True on configuration success
+        - False on configuration failure
         '''
         try:
             user = "admin"
@@ -590,7 +742,20 @@ class SwitchLight(object):
             return False
 
     def cli_add_dns_server_domain(self,console_ip,console_port,dns_server,dns_domain):
-        '''Configure static IP address configuration on switch.
+        '''
+        Objective:
+        - Add DNS Server and Domain configuration on switch.
+
+        Inputs:
+        | console_ip | IP Address of Console Server |    
+        | console_port | Console Port Number | 
+        | dns_server | dns server Address of Switch |
+        | dns_domain | dns domain | 
+
+        Return Value:
+        - True on configuration success
+        - False on configuration failure
+        
         '''
         try:
             user = "admin"
@@ -612,7 +777,20 @@ class SwitchLight(object):
             return False
         
     def cli_delete_dns_server_domain(self,console_ip,console_port,dns_server,dns_domain):
-        '''Delete static IP address configuration on switch.
+        '''
+        Objective:
+        - Delete DNS configuration on switch.
+
+        Inputs:
+        | console_ip | IP Address of Console Server |    
+        | console_port | Console Port Number | 
+        | dns_server | dns server Address of Switch |
+        | dns_domain | dns domain | 
+
+        Return Value:
+        - True on configuration success
+        - False on configuration failure
+        
         '''
         try:
             user = "admin"
@@ -638,12 +816,18 @@ class SwitchLight(object):
 #######################################################################
 
     def bash_restart_process(self,node,processName):
-        '''Restart a process on switch
+        '''
+        Objective:
+        -Restart a process on switch
         
-            Input:
-                node        Switch
-                
-                processName        Name of process to be restarted
+        Input:
+        | node | Reference to switch (as defined in .topo file) |
+        | processName | Name of process to be restarted |
+        
+        Return Value:
+        - True on configuration success
+        - False on configuration failure
+        
         '''
         try:
             t = test.Test()
@@ -661,10 +845,16 @@ class SwitchLight(object):
 ############# SNMP SHOW ##############################
 
     def cli_show_snmp(self,node):
-        '''Execute CLI command "show snmp-server".
+        '''
+        Objective:
+        - Execute CLI command "show snmp-server".
         
-            Input: 
-                ip_address        IP Address of switch
+        Input:
+        | node | Reference to switch (as defined in .topo file) |
+
+        Return Value:
+        - True on configuration success
+        - False on configuration failure
         '''
         try:
             t = test.Test()
@@ -680,18 +870,18 @@ class SwitchLight(object):
 #   Input: SNMP Community and OID 
 #   Return Value:  return the SNMP Walk O/P
     def snmp_cmd(self,node,snmp_cmd,snmpCommunity,snmpOID):
-        '''Execute snmp command which do not require options from local machine for a particular SNMP OID
+        '''
+            Objective:
+            - Execute snmp command which do not require options from local machine for a particular SNMP OID
         
             Input:
-                ip_address        IP Address of switch
-                
-                snmp_cmd          SNMP Command like snmpwalk, snmpget, snmpgetnext etc.
-                
-                snmpCommunity    SNMP Community
-                
-                snmpOID           OID for which walk is being performed
+            | node | Reference to switch (as defined in .topo file) |
+            | snmp_cmd | SNMP Command like snmpwalk, snmpget, snmpgetnext etc. |
+            | snmpCommunity | SNMP Community |   
+            | snmpOID | OID for which walk is being performed | 
             
-            Returns:  Output from SNMP Walk.
+            Return Value:  
+            - Output from SNMP Walk.
         '''
         try:
             t = test.Test()
@@ -706,18 +896,18 @@ class SwitchLight(object):
             return False
         
     def snmp_cmd_opt(self,ip_address,snmp_cmd,snmpOpt, snmpCommunity,snmpOID):
-        '''Execute snmp command which  require options from local machine for a particular SNMP OID
+        '''
+            Objective:
+            - Execute snmp command which  require options from local machine for a particular SNMP OID
         
             Input:
-                ip_address        IP Address of switch
-                
-                snmp_cmd          SNMP Command like snmpbulkwalk, snmpbulkget, etc.
-                
-                snmpCommunity    SNMP Community
-                
-                snmpOID           OID for which walk is being performed
+            | node | Reference to switch (as defined in .topo file) |
+            | snmp_cmd | SNMP Command like snmpwalk, snmpget, snmpgetnext etc. |
+            | snmpCommunity | SNMP Community |   
+            | snmpOID | OID for which walk is being performed | 
             
-            Returns:  Output from SNMP Walk.
+            Return Value:  
+            - Output from SNMP Walk.
         '''
         try:
             url="/usr/bin/%s  -v2c %s -c %s %s %s" % (str(snmp_cmd),str(snmpOpt),str(snmpCommunity),ip_address,str(snmpOID))
@@ -732,14 +922,18 @@ class SwitchLight(object):
 ############# SNMP CONFIGURATION ##############################
 
     def cli_add_snmp_keyword(self,node,snmpKey,snmpValue):
-        ''' Configure SNMP Key/Value
-        
-            Input: 
-                ip_address        IP Address of switch
-                
-                snmpKey           SNMP Key like location, community etc
-                
-                snmpValue         Value corresponding to SNMP Key    
+        ''' 
+            Objective:
+            - Configure SNMP Key/Value
+            
+            Input:
+            | node | Reference to switch (as defined in .topo file) |
+            | snmpKey | SNMP Key like location, community etc |
+            | snmpValue | Value corresponding to SNMP Key |   
+            
+            Return Value:
+            - True on configuration success
+            - False on configuration failure
         '''
         try:
             t = test.Test()
@@ -753,14 +947,18 @@ class SwitchLight(object):
 
 
     def cli_delete_snmp_keyword(self,node,snmpKey,snmpValue):
-        ''' Delete SNMP Key/Value
-        
-            Input: 
-                ip_address        IP Address of switch
-                
-                snmpKey           SNMP Key like location, community etc
-                
-                snmpValue         Value corresponding to SNMP Key    
+        ''' 
+            Objective:
+            - Delete a SNMP Key/Value
+            
+            Input:
+            | node | Reference to switch (as defined in .topo file) |
+            | snmpKey | SNMP Key like location, community etc |
+            | snmpValue | Value corresponding to SNMP Key |   
+            
+            Return Value:
+            - True on configuration success
+            - False on configuration failure   
         '''
         try:
             t = test.Test()
@@ -773,18 +971,21 @@ class SwitchLight(object):
             return False
     
     def cli_add_snmp_host(self,node,remHostIP,snmpKey,snmpCommunity,snmpPort):
-        ''' Configure Remote SNMP Host
+        ''' 
+            Objective:
+            - Configure Remote SNMP Host
         
             Input: 
-                ip_address        IP Address of switch
-                
-                remHostIP         IP Address of remote host
-                       
-                snmpKey           Acceptable values are traps/informs
-                
-                snmpCommunity     SNMP community
-                
-                snmpPort          Port on which traps are sent out.
+            | node | Reference to switch (as defined in .topo file) | 
+            | remHostIP | IP Address of remote host|      
+            | snmpKey | Acceptable values are traps/informs| 
+            | snmpCommunity | SNMP community | 
+            | snmpPort | Port on which traps are sent out.| 
+            
+            Return Value:
+            - True on configuration success
+            - False on configuration failure
+
         '''
         try:
             t = test.Test()
@@ -801,18 +1002,20 @@ class SwitchLight(object):
             return False
 
     def cli_delete_snmp_host(self,node,remHostIP,snmpKey,snmpCommunity,snmpPort):
-        ''' Delete Remote SNMP Host
+        ''' 
+            Objective:
+            - Delete Remote SNMP Host
         
             Input: 
-                ip_address        IP Address of switch
-                
-                remHostIP         IP Address of remote host
-                       
-                snmpKey           Acceptable values are traps/informs
-                
-                snmpCommunity     SNMP community
-                
-                snmpPort          Port on which traps are sent out.
+            | node | Reference to switch (as defined in .topo file) | 
+            | remHostIP | IP Address of remote host|      
+            | snmpKey | Acceptable values are traps/informs| 
+            | snmpCommunity | SNMP community | 
+            | snmpPort | Port on which traps are sent out.| 
+            
+            Return Value:
+            - True on configuration success
+            - False on configuration failure
         '''
         try:
             t = test.Test()
@@ -829,10 +1032,16 @@ class SwitchLight(object):
             return False
 
     def cli_enable_snmp(self,node):
-        ''' Enable SNMP Server.
-        
+        ''' 
+            Objective:
+            - Enable SNMP Server.
+            
             Input: 
-                ip_address        IP Address of switch
+            | node | Reference to switch (as defined in .topo file) | 
+            
+            Return Value:
+            - True on configuration success
+            - False on configuration failure
         '''
         try:
             t = test.Test()
@@ -844,10 +1053,16 @@ class SwitchLight(object):
             return False
 
     def cli_disable_switch_snmp(self,node):
-        ''' Disable SNMP Server.
-        
+        ''' 
+            Objective:
+            - Disable SNMP Server.
+            
             Input: 
-                ip_address        IP Address of switch
+            | node | Reference to switch (as defined in .topo file) | 
+            
+            Return Value:
+            - True on configuration success
+            - False on configuration failure
         '''
         try:
             t = test.Test()
@@ -865,14 +1080,17 @@ class SwitchLight(object):
 ############# PORT-CHANNEL SHOW COMMANDS##############################
 
     def cli_verify_portchannel(self,node,pcNumber):
-        '''Verify portchannel shows as up
-        
+        '''
+            Objective:
+            - Verify portchannel shows as up
+                    
             Input:
-                node        reference to switch
-                
-                pcNumber           PortChannel number. Range is between 1 and 30
-                
-            Returns: true if interface is up, false otherwise
+            | node | Reference to switch (as defined in .topo file) | 
+            | pcNumber | PortChannel number. Range is between 1 and 30 |                 
+                           
+            Return Value:
+            - True on verification success
+            - False on verification failure
         '''
         try:
             t = test.Test()
@@ -893,16 +1111,18 @@ class SwitchLight(object):
             return False
     
     def cli_verify_portchannel_members(self,node,pc_number,intf_name):
-        '''Verify if portchannel contains the member interface that was configured 
-        
+        '''
+            
+            Objective:
+            - Verify if portchannel contains the member interface that was configured 
+                    
             Input:
-                ip_address        IP Address of switch
-                
-                pcNumber           PortChannel number. Range is between 1 and 30
-                
-                intf_name        Interface name of member interface
-                
-            Returns: true if member interface is present, false otherwise
+            | node | Reference to switch (as defined in .topo file) | 
+            | pcNumber | PortChannel number. Range is between 1 and 30 |                 
+                           
+            Return Value:
+            - True if member interface is present
+            - False if member interface is not present
         '''
         try:
             t = test.Test()
@@ -927,16 +1147,19 @@ class SwitchLight(object):
             return False
 
     def cli_verify_portchannel_member_state(self,node,pc_number,intf_name):
-        '''Verify if portchannel member interface is up
-        
+        '''
+            Objective:
+            - Verify if portchannel member interface is up
+                    
             Input:
-                node        reference to switch (as defined in topo file)
-                
-                pcNumber           PortChannel number. Range is between 1 and 30
-                
-                intf_name        Interface name of member interface
-                
-            Returns: true if member interface is up, false otherwise
+            | node | Reference to switch (as defined in .topo file) | 
+            | pcNumber | PortChannel number. Range is between 1 and 30 |     
+            | intf_name | Interface name of member interface |              
+                           
+            Return Value:
+            - True if member interface is up
+            - False if member interface is not up        
+
         '''
         try:
             t = test.Test()
@@ -966,18 +1189,19 @@ class SwitchLight(object):
 ############# PORT-CHANNEL CONFIGURATION COMMANDS##############################
 
     def cli_add_portchannel(self,node,pcNumber,portList,hashMode):
-        '''Configure port-channel
-        
-            Inputs:
-                ip_address        IP Address of switch
-                
-                pcNumber           PortChannel number. Range is between 1 and 30
-                
-                portList          Comma or - separated list of ports (integer values) that are part of PortChannel group.
-                
-                hashMode            Hash Mode. Supported values are L2 or L3
-                
-            Returns: True if configuration is a success or False otherwise
+        '''
+            Objective:
+            - Configure port-channel
+            
+            Input:
+            | node | Reference to switch (as defined in .topo file) | 
+            | pcNumber | PortChannel number. Range is between 1 and 30 |     
+            | portList | Comma or - separated list of ports (integer values) that are part of PortChannel group. |
+            | hashMode |   Hash Mode. Supported values are L2 or L3 |
+                            
+            Return Value:
+            - True on configuration success
+            - False on configuration failure
             
             Examples:
             
@@ -999,14 +1223,17 @@ class SwitchLight(object):
             return False
 
     def cli_delete_portchannel(self,node,pcNumber):
-        '''Unconfigure port-channel
-        
-            Inputs:
-                ip_address        IP Address of switch
-                
-                pcNumber           PortChannel number. Range is between 1 and 30
-                
-            Returns: True if configuration is a success or False otherwise
+        '''
+            Objective:
+            - Unconfigure port-channel
+            
+            Input:
+            | node | Reference to switch (as defined in .topo file) | 
+            | pcNumber | PortChannel number. Range is between 1 and 30 |     
+                            
+            Return Value:
+            - True on configuration success
+            - False on configuration failure
             
             Examples:
             
