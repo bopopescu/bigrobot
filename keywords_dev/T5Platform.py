@@ -259,13 +259,13 @@ class T5Platform(object):
             master.enable("shutdown", prompt="Confirm Shutdown \(yes to continue\)")
             master.enable("yes")
             helpers.log("Master is shutting down")
-            sleep(30)
+            sleep(10)
         else:
             slave = t.controller("slave")
             slave.enable("shutdown", prompt="Confirm Shutdown \(yes to continue\)")
             slave.enable("yes")
             helpers.log("Slave is shutting down")
-            sleep(30)
+            sleep(10)
 
         newMasterID = common.getNodeID(obj, False)
         if(newMasterID == -1):
@@ -276,37 +276,43 @@ class T5Platform(object):
                 helpers.log("Pass: After the shutdown cluster is stable - New master is : %s " % (newMasterID))
                 return True
             else:
-                helpers.log("Fail: Shutdown Failed. Cluster is not stable. Before the master shutdown Master is: %s / Slave is : %s \n \
-                        After the reboot Master is: %s " %(masterID, slaveID, newMasterID))
+                helpers.log("Fail: Shutdown Failed. Cluster is not stable. Before the master node shutdown Master is: %s / Slave is : %s \n \
+                        After the shutdown Master is: %s " %(masterID, slaveID, newMasterID))
                 return False
         else:
             if(masterID == newMasterID):
-                helpers.log("Pass: After the reboot cluster is stable - Master is still: %s " % (newMasterID))
+                helpers.log("Pass: After the slave shutdown cluster is stable - Master is still: %s " % (newMasterID))
                 return True
             else:
-                helpers.log("Fail: Reboot failed. Cluster is not stable. Before the slave reboot Master is: %s / Slave is : %s \n \
-                        After the reboot Master is: %s " %(masterID, slaveID, newMasterID))
+                helpers.log("Fail: Shutdown failed. Cluster is not stable. Before the slave shutdown Master is: %s / Slave is : %s \n \
+                        After the shutdown Master is: %s " %(masterID, slaveID, newMasterID))
                 return False
 
 
-    def rest_cluster_master_reboot(self):
+    def cli_cluster_master_reboot(self):
         obj = common()
         common.fabric_integrity_checker(obj,"before")
         self.cluster_node_reboot()
         common.fabric_integrity_checker(obj,"after")
 
-
-    def rest_cluster_slave_reboot(self):
+    def cli_cluster_slave_reboot(self):
         obj = common()
         common.fabric_integrity_checker(obj,"before")
         self.cluster_node_reboot(False)
         common.fabric_integrity_checker(obj,"after")
 
-    def rest_cluster_slave_shutdown(self):
+    def cli_cluster_master_shutdown(self):
+        obj = common()
+        common.fabric_integrity_checker(obj,"before")
+        self.cluster_node_shutdown()
+        common.fabric_integrity_checker(obj,"after")
+
+    def cli_cluster_slave_shutdown(self):
         obj = common()
         common.fabric_integrity_checker(obj,"before")
         self.cluster_node_shutdown(False)
         common.fabric_integrity_checker(obj,"after")
+
 
 
      

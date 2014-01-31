@@ -691,7 +691,13 @@ def _ping(host, count=3, waittime=100, quiet=False, source_if=None, node=None):
     # Mac OS X output:
     #   3 packets transmitted, 3 packets received, 0.0% packet loss
 
-    match = re.search(r'.*?(\d+) packets transmitted, (\d+)( packets)? received, .*?(\d+\.?\d+?)% packet loss.*',
+    if source_if:
+        match = re.search(r'ping: unknown iface (\w+)', out, re.M|re.I)
+        if match:
+            test_error("Ping error - unknown source interface '%s'"
+                       % match.group(1))
+        
+    match = re.search(r'.*?(\d+) packets transmitted, (\d+)( packets)? received, .*?(\d+\.?(\d+)?)% packet loss.*',
                       out,
                       re.M|re.I)
     if match:
@@ -705,7 +711,7 @@ def _ping(host, count=3, waittime=100, quiet=False, source_if=None, node=None):
             % (s, br_utils.end_of_output_marker()), level=4)
         return loss_percentage
 
-    test_error("Unknown ping error.")
+    test_error("Unknown ping error. Please check the output log.")
 
 
 def ping(host, count=3, waittime=100, quiet=False):

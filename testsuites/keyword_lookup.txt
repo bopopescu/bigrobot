@@ -11,6 +11,8 @@ Library         String.py
 Library         Telnet.py
 Library         XML.py
 Library         keywords/BsnCommon.py
+Library         keywords/Host.py
+Library         keywords/Controller.py
 Library         keywords_dev/animesh/BigTapCommon.py
 Library         keywords_dev/animesh/BigTapCommonConfig.py
 Library         keywords_dev/animesh/BigTapCommonShow.py

@@ -72,12 +72,24 @@ class MyTest(object):
         h1.bash("cat /etc/passwd")
         #h1.sudo("cat /etc/shadow")
         
-    def switch_show_version(self):
+    def switch_show_version(self, node):
         t = test.Test()
-        s1 = t.switch('s1')
-        helpers.log("s1: %s" % s1)
-        s1.cli("show version")
+        s = t.switch(node)
+        helpers.log("node: %s" % s)
+        s.cli("show version")
     
+    def switch_show_environment(self, node):
+        t = test.Test()
+        s = t.switch(node)
+        helpers.log("node: %s" % s)
+        s.cli("show environment")
+
+    def switch_show_walk(self, node):
+        t = test.Test()
+        s = t.switch(node)
+        helpers.log("Node: %s" % s)
+        s.cli("show ?")
+        
     def convert_openstack_table_output_to_dictionary(self):
         openstack_output = """
 nova --os-username user1 --os-tenant-name Tenant1  --os-auth-url http://10.193.0.120:5000/v2.0/ --os-password bsn net-list
