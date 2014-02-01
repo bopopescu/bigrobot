@@ -85,10 +85,12 @@ def IxCreateDeviceEthernet(handle, topology, mac_mults, macs, mac_steps) :
     topo_devices = []
     eth_devices = []
     for topo in topology:
-        topo_device = handle.remapIds((handle.getList(topo,'deviceGroup'))[0])
+        dev_grp = handle.getList(topo,'deviceGroup')
+        topo_device = handle.remapIds(dev_grp)[0]
         topo_devices.append(topo_device)
         
-    for (topo_device, multi) in zip(topo_devices, mac_mult):
+    for (topo_device, multi) in zip(topo_devices, mac_mults):
+        print '### topo device : ', topo_device
         handle.setAttribute(topo_device, '-multiplier', multi)
         eth_devices.append(handle.add(topo_device,'ethernet'))
     handle.commit()
@@ -103,13 +105,18 @@ def IxCreateDeviceEthernet(handle, topology, mac_mults, macs, mac_steps) :
         else :        
             m1 = handle.setMultiAttribute(handle.getAttribute(mac_device,'-mac')+'/counter','-direction','increment','-start', mac,'-step', mac_step)
     
+    handle.commit()
+    
+    print " ## adding Name ", topology[0], topology[1]
+    print " ## adding Name ", mac_devices[0], mac_devices[1]
+    
     handle.setAttribute(topology[0],'-name','Send Topology')
     handle.setAttribute(topology[1],'-name','Receive Topology')
-    handle.setAttribute(mac_device[0],'-name','Send Device')
-    handle.setAttribute(mac_device[1],'-name','Receive Device')
+    handle.setAttribute(mac_devices[0],'-name','Send Device')
+    handle.setAttribute(mac_devices[1],'-name','Receive Device')
     handle.commit()
     helpers.log("### Done adding two device groups")
-    return (mac1,mac2)
+    return (mac_devices)
 
 def IxSetupTrafficStreamsEthernet(handle,mac1,mac2,frameType,frameSize,frameRate,frameMode):
     trafficStream1 = handle.add(handle.getRoot()+'traffic','trafficItem','-name','Ethernet L2','-allowSelfDestined',False,'-trafficItemType','l2L3','-enabled',True,'-transmitMode','interleaved','-biDirectional',False,'-trafficType','ethernetVlan','-hostsPerNetwork','1')

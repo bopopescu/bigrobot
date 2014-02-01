@@ -19,7 +19,7 @@ if __name__ == '__main__':
     ixClientIxNetVer = '7.10'
     ixChassis = '10.192.85.151'
     ixPorts = [('10.192.85.151',2, 7), ('10.192.85.151', 2, 8)]
-    mac_multi = [1,1]
+    mac_mults = [1,1]
     macs = ["00:11:23:00:00:01", "00:11:23:00:00:02"]
     mac_steps = ["00:00:00:00:01:00", "00:00:00:00:01:00"]
     
@@ -58,15 +58,13 @@ if __name__ == '__main__':
     print '### Topology Created: ', topology
     
     #Create Ether Device:
-    (mac1,mac2) = IxLib.IxCreateDeviceEthernet(ixNet,topology,Mac1Mult,Mac2Mult,Mac1,Mac2,Mac1Step,Mac2Step)
-    
-    #(Mac1, Mac2) = IxLib.IxCreateDeviceEthernet(ixNet, topology, 
+    mac_devices = IxLib.IxCreateDeviceEthernet(ixNet,topology, mac_mults =  mac_mults, macs = macs, mac_steps = mac_steps)
+    print '### Created Mac Devices with corrsponding Topos ...'
     
     #Create Traffic Stream:
-    
-    trafficStream = IxLib.IxSetupTrafficStreamsEthernet(ixNet, mac1, mac2, frameType, frameSize, frameRate, frameMode)
-    
+    trafficStream = IxLib.IxSetupTrafficStreamsEthernet(ixNet, mac_devices[0], mac_devices[1], frameType, frameSize, frameRate, frameMode)
     print 'Created Traffic Stream : ' , trafficStream
+    raw_input()
     
     print 'Starting Traffic...'
     
@@ -76,6 +74,7 @@ if __name__ == '__main__':
         
     time.sleep(45)
     
+    print "Press Enter to stop Traffic "
     raw_input()
     
     (port1_stats, port2_stats) = IxLib.IxStopTraffic(ixNet,trafficStream,portStatistics)
