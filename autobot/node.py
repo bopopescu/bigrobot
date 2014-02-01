@@ -127,13 +127,21 @@ class ControllerNode(Node):
         else:
             helpers.test_error("Console port is not defined for node '%s'"
                                % self.name)
+        
+        if self.dev:
+            driver = self.dev.driver().name
+        else:
+            driver = None
             
+        helpers.log("Using devconf driver '%s' for console to '%s'"
+                    % (driver, self.name))
         self.dev_console = devconf.ControllerDevConf(name=self.name,
                                                      host=self.console_ip,
                                                      port=self.console_port,
                                                      user=self.user,
                                                      password=self.password,
                                                      is_console=True,
+                                                     console_driver=driver,
                                                      debug=self.dev_debug_level)
         return self.dev_console
 

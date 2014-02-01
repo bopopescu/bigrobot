@@ -1,0 +1,16 @@
+* Settings
+Documentation   This suite is my sandbox for experimentation.
+Force Tags      Vui
+#Library         Reserve
+Library         keywords/BsnCommon.py
+Library         keywords/Controller.py
+
+
+* Test Cases
+Test first boot
+    [Documentation]   Performing the first boot configuration steps from the console
+    #[Tags]           skipped
+    cli add first boot  c1  ip_address=10.192.5.191  netmask=255.255.252.0  gateway=10.192.4.1  dns_server=192.168.15.2  dns_search=bigswitch.com  ntp_server=0.bigswitch.pool.ntp.org
+
+
+

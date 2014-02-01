@@ -9,6 +9,7 @@ import sys
 class DevConf(object):
     def __init__(self, host=None, user=None, password=None, port=None,
                  is_console=False,
+                 console_driver=None,
                  debug=0):
         if host is None:
             helpers.environment_failure("Must specify a host.")
@@ -25,8 +26,16 @@ class DevConf(object):
                 helpers.log("Connecting to console %s, port %s" % (host, port))
                 self.conn = Telnet(debug=debug)
                 self.conn.connect(host, port)
+
+                if not console_driver:
+                    helpers.log("A devconf driver is not specified for console connection")
+                else:
+                    helpers.log("Setting devconf driver for console to '%s'" % console_driver)
+                    self.conn.set_driver(console_driver)
+
                 # Note: User needs to figure out what state the console is in
                 #       and manage it themself.
+
             else:
                 if port:
                     helpers.log("Connecting to host %s, port %s" % (host, port))
@@ -42,8 +51,11 @@ class DevConf(object):
             raise
         except:
             helpers.log("Exception in %s" % sys.exc_info()[0])
-            raise        
+            raise
         
+        driver = self.conn.get_driver()
+        helpers.log("Using devconf driver '%s' (name: '%s')" % (driver, driver.name))
+
         self.host = host
         self.user = user
         self.password = password
@@ -67,7 +79,7 @@ class DevConf(object):
         See http://knipknap.github.io/exscript/api/Exscript.protocols.Protocol-class.html#send
         """
         if not quiet:
-            helpers.log("Send command: %s" % cmd, level=level)
+            helpers.log("Send command: '%s'" % cmd, level=level)
         cmd = ''.join((cmd, '\r'))
         self.conn.send(cmd)
     
@@ -81,10 +93,31 @@ class DevConf(object):
         
         See http://knipknap.github.io/exscript/api/Exscript.protocols.Protocol-class.html#expect
         """
+        if not quiet:
+            helpers.log("Expecting prompt '%s'" % prompt)
         self.conn.expect(prompt)
         self.last_result = { 'content': self.conn.response }
         if not quiet:
             helpers.log("Expect content:\n%s%s"
+                        % (self.content(), br_utils.end_of_output_marker()),
+                        level=level)
+
+    def waitfor(self, prompt, quiet=False, level=4):
+        """
+        Invoking low-level send/expect commands to the device. This is a
+        wrapper for Exscript's expect(). Use with caution!!!
+        
+        This function will wait until there a prompt match or times out in
+        the process. It is intended to be used with expect().
+        
+        See http://knipknap.github.io/exscript/api/Exscript.protocols.Protocol-class.html#expect
+        """
+        if not quiet:
+            helpers.log("Expecting waitfor prompt '%s'" % prompt)
+        self.conn.waitfor(prompt)
+        self.last_result = { 'content': self.conn.response }
+        if not quiet:
+            helpers.log("Waitfor (expect) content:\n%s%s"
                         % (self.content(), br_utils.end_of_output_marker()),
                         level=level)
 
@@ -99,7 +132,7 @@ class DevConf(object):
                 self.conn.set_prompt()
             
         if not quiet:
-            helpers.log("Execute command: %s" % cmd, level=level)
+            helpers.log("Execute command: '%s'" % cmd, level=level)
 
         self.conn.execute(cmd)
         self.last_result = { 'content': self.conn.response }
@@ -112,8 +145,11 @@ class DevConf(object):
     # Alias
     cli = cmd
     
+    def driver(self):
+        return self.conn.get_driver()
+    
     def platform(self):
-        driver = self.conn.get_driver()
+        driver = self.driver()
         if hasattr(driver, 'platform'):
             # Does the driver class have the method platform() defined?
             # See src/protocols/drivers/bsn_controller.py as an example.
@@ -133,10 +169,11 @@ class DevConf(object):
 
 class BsnDevConf(DevConf):
     def __init__(self, name=None, host=None, user=None, password=None,
-                 port=None, is_console=False, debug=0):
+                 port=None, is_console=False, console_driver=None, debug=0):
         super(BsnDevConf, self).__init__(host, user, password,
                                                 port=port,
                                                 is_console=is_console,
+                                                console_driver=console_driver,
                                                 debug=debug)
         self.mode_before_bash = None
         self.name = name
@@ -211,7 +248,7 @@ class BsnDevConf(DevConf):
         #helpers.log("Current mode is %s" % self.mode, level=level)
 
         if not quiet:
-            helpers.log("Execute command on '%s': %s" % (self.name, cmd), level=level)
+            helpers.log("Execute command on '%s': '%s'" % (self.name, cmd), level=level)
 
         super(BsnDevConf, self).cmd(cmd, prompt=prompt, quiet=True)
         if not quiet:
@@ -362,7 +399,7 @@ class HostDevConf(DevConf):
 
     def cmd(self, cmd, quiet=False, prompt=False, level=4):
         if not quiet:
-            helpers.log("Execute command on '%s': %s"
+            helpers.log("Execute command on '%s': '%s'"
                         % (self.name, cmd), level=level)
 
         super(HostDevConf, self).cmd(cmd, prompt=prompt, quiet=True)
