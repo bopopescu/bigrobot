@@ -19,7 +19,7 @@ if __name__ == '__main__':
     ixClientIxNetVer = '7.10'
     ixChassis = '10.192.85.151'
     ixPorts = [('10.192.85.151',2, 7), ('10.192.85.151', 2, 8)]
-    mac_mults = [1,1]
+    mac_mults = [20,20]
     macs = ["00:11:23:00:00:01", "00:11:23:00:00:02"]
     mac_steps = ["00:00:00:00:01:00", "00:00:00:00:01:00"]
     
@@ -64,16 +64,12 @@ if __name__ == '__main__':
     #Create Traffic Stream:
     trafficStream = IxLib.IxSetupTrafficStreamsEthernet(ixNet, mac_devices[0], mac_devices[1], frameType, frameSize, frameRate, frameMode)
     print 'Created Traffic Stream : ' , trafficStream
-    raw_input()
-    
     print 'Starting Traffic...'
     
     portStatistics = IxLib.IxStartTrafficEthernet(ixNet,trafficStream)
     
-    print 'Sleeping 45 secs..'
-        
+    print 'Sleeping 45 secs..'    
     time.sleep(45)
-    
     print "Press Enter to stop Traffic "
     raw_input()
     

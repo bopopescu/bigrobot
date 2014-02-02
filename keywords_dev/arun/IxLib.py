@@ -77,6 +77,11 @@ def IxCreateTopo(handle, vports):
     return topology
 
 def IxCreateDeviceEthernet(handle, topology, mac_mults, macs, mac_steps) :
+    '''
+        RETURN IXIA MAC DEVICES mapped with Topologies created with vports and added increment values accordingly
+        Ex Usage:
+        IxLib.IxCreateDeviceEthernet(ixNet,topology, mac_mults =  mac_mults, macs = macs, mac_steps = mac_steps)
+    '''
     helpers.log("### Adding %s device groups" % len(topology))
     
     for topo in topology:
@@ -102,7 +107,8 @@ def IxCreateDeviceEthernet(handle, topology, mac_mults, macs, mac_steps) :
     for (mac_device, mult, mac_step, mac) in zip(mac_devices, mac_mults, mac_steps, macs):
         if mult <= 1 :
             m1 = handle.setAttribute(handle.getAttribute(mac_device, '-mac')+'/singleValue', '-value', mac)
-        else :        
+        else :     
+            helpers.log('###Adding Multipier ...')   
             m1 = handle.setMultiAttribute(handle.getAttribute(mac_device,'-mac')+'/counter','-direction','increment','-start', mac,'-step', mac_step)
     
     handle.commit()
@@ -110,15 +116,20 @@ def IxCreateDeviceEthernet(handle, topology, mac_mults, macs, mac_steps) :
     print " ## adding Name ", topology[0], topology[1]
     print " ## adding Name ", mac_devices[0], mac_devices[1]
     
-    handle.setAttribute(topology[0],'-name','Send Topology')
-    handle.setAttribute(topology[1],'-name','Receive Topology')
-    handle.setAttribute(mac_devices[0],'-name','Send Device')
-    handle.setAttribute(mac_devices[1],'-name','Receive Device')
+    for topo in topology:
+        handle.setAttribute(topo,'-name','SND_RCV Topology')
+    for mac_device in mac_devices:
+        handle.setAttribute(mac_device,'-name','SND_RCV Device')
     handle.commit()
     helpers.log("### Done adding two device groups")
     return (mac_devices)
 
 def IxSetupTrafficStreamsEthernet(handle,mac1,mac2,frameType,frameSize,frameRate,frameMode):
+    '''
+        Returns traffic stream with 2 flows with provided mac sources 
+        Ex Usage:
+            IxLib.IxSetupTrafficStreamsEthernet(ixNet, mac_devices[0], mac_devices[1], frameType, frameSize, frameRate, frameMode)
+    '''
     trafficStream1 = handle.add(handle.getRoot()+'traffic','trafficItem','-name','Ethernet L2','-allowSelfDestined',False,'-trafficItemType','l2L3','-enabled',True,'-transmitMode','interleaved','-biDirectional',False,'-trafficType','ethernetVlan','-hostsPerNetwork','1')
     handle.commit()
     endpointSet1 = handle.add(trafficStream1, 'endpointSet','-name','l2u','-sources', mac1,'-destinations', mac2)
@@ -137,6 +148,36 @@ def IxSetupTrafficStreamsEthernet(handle,mac1,mac2,frameType,frameSize,frameRate
     handle.commit()
     return trafficStream1
 
+def IxStartTrafficEthernet(handle,trafficHandle) :
+    '''
+        Returns portStatistics after starting the traffic that is configured in Traffic Stream using Mac devices and Topologies
+        Ex Usage:
+            IxLib.IxStartTrafficEthernet(ixNet,trafficStream)
+    '''
+    helpers.log("### Starting Traffic")
+    handle.execute('startAllProtocols')
+    time.sleep(2)
+    handle.execute('apply', handle.getRoot()+'traffic')
+    time.sleep(2)
+    portStatistics = handle.getFilteredList(handle.getRoot()+'statistics', 'view', '-caption', 'Port Statistics')[0]
+    time.sleep(2)
+    handle.execute('startStatelessTraffic',trafficHandle)
+    helpers.log("### Traffic Started")
+    return portStatistics
+
+def IxStopTraffic(handle,trafficHandle,portStatistics) :
+    '''
+        Stops the traffis and returns port stats
+    '''
+    helpers.log("### Stopping Traffic")
+    handle.execute('stopStatelessTraffic',trafficHandle)
+    helpers.log("### Printing Statistics")
+    #print handle.getAttribute(portStatistics+'/page', '-columnCaptions')
+    #print handle.getAttribute(portStatistics+'/page', '-rowValues')
+#['Stat Name', 'Port Name', 'Line Speed', 'Link State', 'Frames Tx.', 'Valid Frames Rx.', 'Frames Tx. Rate', 'Valid Frames Rx. Rate', 'Data Integrity Frames Rx.', 'Data Integrity Errors', 'Bytes Tx.', 'Bytes Rx.', 'Bits Sent', 'Bits Received', 'Bytes Tx. Rate', 'Tx. Rate (bps)', 'Tx. Rate (Kbps)', 'Tx. Rate (Mbps)', 'Bytes Rx. Rate', 'Rx. Rate (bps)', 'Rx. Rate (Kbps)', 'Rx. Rate (Mbps)', 'Scheduled Frames Tx.', 'Scheduled Frames Tx. Rate', 'Control Frames Tx', 'Control Frames Rx', 'Ethernet OAM Information PDUs Sent', 'Ethernet OAM Information PDUs Received', 'Ethernet OAM Event Notification PDUs Received', 'Ethernet OAM Loopback Control PDUs Received', 'Ethernet OAM Organisation PDUs Received', 'Ethernet OAM Variable Request PDUs Received', 'Ethernet OAM Variable Response Received', 'Ethernet OAM Unsupported PDUs Received', 'Rx Pause Priority Group 0 Frames', 'Rx Pause Priority Group 1 Frames', 'Rx Pause Priority Group 2 Frames', 'Rx Pause Priority Group 3 Frames', 'Rx Pause Priority Group 4 Frames', 'Rx Pause Priority Group 5 Frames', 'Rx Pause Priority Group 6 Frames', 'Rx Pause Priority Group 7 Frames', 'Misdirected Packet Count', 'CRC Errors']
+    port1stats = handle.getAttribute(portStatistics+'/page', '-rowValues')[0]
+    port2stats = handle.getAttribute(portStatistics+'/page', '-rowValues')[1]
+    return (port1stats, port2stats)
 
 def IxCreateDeviceIP(handle,mac1,mac2,Mac1Mult,Mac2Mult,addr1,addr1Step,addr2Step,addr2,prefix1,prefix2) :
     helpers.log("### Add ipv4")
@@ -192,17 +233,7 @@ def IxSetupTrafficStreamsIP(handle,ip1,ip2,frameType,frameSize,frameRate,frameMo
 
 
 
-def IxStartTrafficEthernet(handle,trafficHandle) :
-    helpers.log("### Starting Traffic")
-    handle.execute('startAllProtocols')
-    time.sleep(2)
-    handle.execute('apply', handle.getRoot()+'traffic')
-    time.sleep(2)
-    portStatistics = handle.getFilteredList(handle.getRoot()+'statistics', 'view', '-caption', 'Port Statistics')[0]
-    time.sleep(2)
-    handle.execute('startStatelessTraffic',trafficHandle)
-    helpers.log("### Traffic Started")
-    return portStatistics
+
 
 def IxStartTrafficIP(handle,trafficHandle) :
     helpers.log("### Starting Traffic")
@@ -217,15 +248,6 @@ def IxStartTrafficIP(handle,trafficHandle) :
     helpers.log("### Traffic Started")
     return portStatistics
 
-def IxStopTraffic(handle,trafficHandle,portStatistics) :
-    helpers.log("### Stopping Traffic")
-    handle.execute('stopStatelessTraffic',trafficHandle)
-    helpers.log("### Printing Statistics")
-    #print handle.getAttribute(portStatistics+'/page', '-columnCaptions')
-    #print handle.getAttribute(portStatistics+'/page', '-rowValues')
-#['Stat Name', 'Port Name', 'Line Speed', 'Link State', 'Frames Tx.', 'Valid Frames Rx.', 'Frames Tx. Rate', 'Valid Frames Rx. Rate', 'Data Integrity Frames Rx.', 'Data Integrity Errors', 'Bytes Tx.', 'Bytes Rx.', 'Bits Sent', 'Bits Received', 'Bytes Tx. Rate', 'Tx. Rate (bps)', 'Tx. Rate (Kbps)', 'Tx. Rate (Mbps)', 'Bytes Rx. Rate', 'Rx. Rate (bps)', 'Rx. Rate (Kbps)', 'Rx. Rate (Mbps)', 'Scheduled Frames Tx.', 'Scheduled Frames Tx. Rate', 'Control Frames Tx', 'Control Frames Rx', 'Ethernet OAM Information PDUs Sent', 'Ethernet OAM Information PDUs Received', 'Ethernet OAM Event Notification PDUs Received', 'Ethernet OAM Loopback Control PDUs Received', 'Ethernet OAM Organisation PDUs Received', 'Ethernet OAM Variable Request PDUs Received', 'Ethernet OAM Variable Response Received', 'Ethernet OAM Unsupported PDUs Received', 'Rx Pause Priority Group 0 Frames', 'Rx Pause Priority Group 1 Frames', 'Rx Pause Priority Group 2 Frames', 'Rx Pause Priority Group 3 Frames', 'Rx Pause Priority Group 4 Frames', 'Rx Pause Priority Group 5 Frames', 'Rx Pause Priority Group 6 Frames', 'Rx Pause Priority Group 7 Frames', 'Misdirected Packet Count', 'CRC Errors']
-    port1stats = handle.getAttribute(portStatistics+'/page', '-rowValues')[0]
-    port2stats = handle.getAttribute(portStatistics+'/page', '-rowValues')[1]
-    return (port1stats, port2stats)
+
 
 
