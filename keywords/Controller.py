@@ -1,5 +1,6 @@
 import autobot.helpers as helpers
 import autobot.test as test
+import re
 
 
 class Controller(object):
@@ -93,8 +94,7 @@ class Controller(object):
 
     def cli_boot_factory_default(self, node):
         """
-        Runs boot factory-default. This will cause the SSH connection
-        to disappear and the session would need to be restarted.
+        Runs boot factory-default. This will cause the SSH connection to disappear and the session would need to be restarted.
         """
         t = test.Test()
         n = t.node(node)
@@ -125,11 +125,10 @@ class Controller(object):
         helpers.log("Getting the console telnet session for '%s'" % node)
         n = t.node(node).console()
 
-        helpers.log("******* Device driver: %s" % n.conn.get_driver())
         n.send('')  # press <Enter> and expect to see the login prompt
         helpers.sleep(3)
-        n.waitfor('Big Tap Controller')
-        n.waitfor('og in as .+ to configure')        
+        n.expect('Big Tap Controller')
+        n.expect('Log in as .+? to configure')        
         n.expect('localhost login: ')
         
         # For some unknown reason, Exscript will receive '%admin' as the input
@@ -142,7 +141,7 @@ class Controller(object):
         n.send('')
         n.expect('Password: ')
         n.send('')
-        n.waitfor('Login incorrect')
+        n.expect('Login incorrect')
         n.expect('localhost login: ')
         
         n.send('admin')  # second attempt - expect success
@@ -163,24 +162,25 @@ class Controller(object):
 
         n.expect('Configuration IPv4 Address: ')
         n.send(ip_address)
-        n.expect('IPv4 subnet mask .*: ')
+        n.expect('IPv4 subnet mask .+?: ')
         n.send(netmask)
-        n.expect('Default gateway IPv4 address .*: ')
+        n.expect('Default gateway IPv4 address .+?: ')
         n.send(gateway)
         n.expect('Hostname \(optional\): ')
         n.send('')  # don't configure a hostname (press <Enter> for default)
-        n.expect('DNS server 1 IPv4 address .*: ')
+        n.expect('DNS server 1 IPv4 address .+?: ')
         n.send(dns_server)
-        n.expect('DNS server 2 IPv4 address .*: ')
+        n.expect('DNS server 2 IPv4 address .+?: ')
         n.send('')  # don't configure a 2nd DNS server
-        n.expect('DNS search domain .*: ')
+        n.expect('DNS search domain .+?: ')
         n.send(dns_search)
-        n.expect('NTP server hostname or address .*: ')
+        n.expect('NTP server hostname or address .+?: ')
         n.send(ntp_server)
-        n.expect('Apply these settings .*\? ')
+        n.expect('Apply these settings .+?\? ')
         n.send('yes')
-        helpers.log("Waiting for system to process info")
-        helpers.sleep(10)
+        
+        #helpers.log("Waiting for system to process info")
+        #helpers.sleep(10)
         
         # Additional output and questions
         #   Enter the IP address of master controller OR
@@ -206,9 +206,7 @@ class Controller(object):
         n.send('')  # press <Enter>
         n.expect('Enter NEW admin password: ')
         n.send('adminadmin')
-        n.expect('Repeat NEW admin password: ')
-        n.send('adminadmin')
-
+        
         # Hmmm... It doesn't always ask for recovery password...
                  
         n.expect('Enter NEW recovery password:')
@@ -217,8 +215,171 @@ class Controller(object):
         n.send('bsn')
         
         helpers.log("Waiting for system to process info")
-        helpers.sleep(20)
-        n.expect('Time zone .*: ')
+        helpers.sleep(10)
+        n.expect('Time zone .+?: ')
+        n.send(timezone)
+        n.expect('First-time setup complete!')
+
+        loss = helpers.ping(ip_address)
+        if loss < 50:
+            helpers.log("Node '%s' has survived first-boot!" % node)
+            return True
+        else:
+            return False
+
+    def cli_add_first_boot2(self,
+                            node,
+                            ip_address,
+                            hostname='',
+                            netmask='',
+                            gateway='',
+                            dns_server='',
+                            dns_server2='',
+                            dns_search='',
+                            controller_ip='',
+                            ntp_server='',
+                            timezone='America/Los_Angeles'):
+        """
+        First boot setup - connect to the console to complete the first-boot configuration steps.
+        It calls keyword 'cli add first boot'.
+        """
+        t = test.Test()
+        
+        n = t.host('h1')
+        helpers.log("Getting the console telnet session for '%s'" % node)
+
+        #n = t.node(node).console()
+        #n = t.node(node)
+        n.bash('uptime')
+        n.send('telnet %s %s' % ("blade-1-a.bigswitch.com", 15902))
+        n.send('')  # press <Enter> and expect to see the login prompt
+        helpers.sleep(3)
+        n.expect('Big Tap Controller')
+        n.expect('Log in as .+? to configure')        
+        n.expect('localhost login: ')
+        
+        # For some unknown reason, Exscript will receive '%admin' as the input
+        # (extra '%' character somehow got added) which will cause authen to
+        # fail. The steps below is to get past the authen failure and retry
+        # the login/password. It should pass the 2nd time around.
+        
+        n.send('admin')  # first attempt - expect failure 
+        n.expect('Password: ')
+        n.send('')
+        n.expect('Password: ')
+        n.send('')
+        n.expect('Login incorrect')
+        n.expect('localhost login: ')
+        
+        n.send('admin')  # second attempt - expect success
+        n.expect('Password: ')
+        n.send('adminadmin')
+        
+        # First boot questionaire
+        #   Configuration IPv4 Address: 10.192.5.191
+        #   IPv4 subnet mask [255.255.255.0]: 255.255.252.0
+        #   Default gateway IPv4 address [10.192.4.1]: 10.192.4.1
+        #   Hostname (optional): 
+        #   DNS server 1 IPv4 address (optional): 192.168.15.2
+        #   DNS server 2 IPv4 address (optional): 
+        #   DNS search domain (optional): bigswitch.com
+        #   NTP server hostname or address [0.bigswitch.pool.ntp.org]: 0.bigswitch.pool.ntp.org
+        #   ...
+        #   Apply these settings [yes]? yes
+
+        n.expect('Configuration IPv4 Address: ')
+        n.send(ip_address)
+        n.expect('IPv4 subnet mask .+?: ')
+        n.send(netmask)
+        n.expect('Default gateway IPv4 address .+?: ')
+        n.send(gateway)
+        n.expect('Hostname \(optional\): ')
+        n.send('')  # don't configure a hostname (press <Enter> for default)
+        n.expect('DNS server 1 IPv4 address .+?: ')
+        n.send(dns_server)
+        n.expect('DNS server 2 IPv4 address .+?: ')
+        n.send(dns_server2)  # don't configure a 2nd DNS server
+        n.expect('DNS search domain .+?: ')
+        n.send(dns_search)
+        n.expect('NTP server hostname or address .+?: ')
+        n.send(ntp_server)
+        n.expect('Apply these settings .+?\? ')
+        n.send('yes')
+        helpers.log("Waiting for system to process info")
+        helpers.sleep(10)
+        
+        # Additional output and questions
+        #   Enter the IP address of master controller OR
+        #   To start a new cluster, just enter <cr>.
+        #   Existing controller IP: 
+        #   clustername = 6771f3f3-b18e-4bcd-b01b-5969706bd195.0
+        #   Enter NEW recovery password:  
+        #   Repeat NEW recovery password: 
+        #   Initializing the database. Please do not hit CTRL-C from here onwards. This may take a while...
+        #   updating cassandra config with seed =  10.192.5.191
+        #   Setting static IP address
+        #   Setting gateway
+        #   Setting DNS1
+        #   Setting domain
+        #   Setting NTP
+        #   Time zone [UTC]: America/Los_Angeles
+        #
+        #   First-time setup complete!
+        #
+        #   localhost login: [11910.956374] Restarting system.
+
+        n.expect('Existing controller IP: ')
+        n.send(controller_ip)
+        #n.send('')  # press <Enter>
+
+        # Hmmm... sometimes it won't ask for admin password...
+
+        prompt_pw = ['Enter NEW admin password: ',
+                     'Enter NEW recovery password:']
+        n.expect(prompt_pw)
+        
+        n.send('')
+        
+        idx, _ = n.expect(prompt_pw)
+
+        if idx == 0:
+            helpers.log("Matched '%s" % prompt_pw[idx])
+            n.send('adminadmin')
+
+            # Hmmm... sometimes it seems the password is not getting sent. When
+            # that happens, you see:
+            #   prompt_for_password: *** empty password
+            #   Enter NEW admin password: 
+            
+            n.expect('Repeat NEW admin password: ')
+            n.send('adminadmin')
+
+            """
+            # Hmmm ... It doesn't always see the entered password
+            n.expect(['Repeat NEW admin password: ',
+                      'prompt_for_password: .+? empty password'])
+    
+            if re.search(r'empty password', n.cli_content()):
+                n.expect('Enter NEW admin password: ')
+                n.send('adminadmin')
+            
+            n.send('adminadmin')
+            """
+
+            n.expect('Enter NEW recovery password:')
+
+        elif idx == 1:
+            helpers.log("Matched '%s" % prompt_pw[idx])
+
+        # Hmmm... It doesn't always ask for recovery password...
+                 
+        n.send('bsn')
+        n.expect('Repeat NEW recovery password:')
+        n.send('bsn')
+        
+        helpers.log("Waiting for system to process info")
+        helpers.sleep(10)
+        n.expect('Time zone .+?: ')
         n.send(timezone)
         n.expect('First-time setup complete!')
 
@@ -231,8 +392,7 @@ class Controller(object):
 
     def cli_boot_factory_default_and_first_boot(self, node, *args, **kwargs):
         """
-        Call 'cli boot factory default' to put device in first-boot mode.
-        Then call 'cli_add_first_boot' to configure the device.
+        Call 'cli boot factory default' to put device in first-boot mode. Then call 'cli_add_first_boot' to configure the device.
         """
         do_factory_boot = True
         do_first_boot = True

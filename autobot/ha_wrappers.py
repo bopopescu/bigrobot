@@ -122,3 +122,7 @@ class HaControllerNode(object):
     def expect(self, *args, **kwargs):
         n = self.t.controller(self.name, resolve_mastership=True)
         return n.expect(*args, **kwargs)
+
+    def waitfor(self, *args, **kwargs):
+        n = self.t.controller(self.name, resolve_mastership=True)
+        return n.expect(*args, **kwargs)
