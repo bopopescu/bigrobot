@@ -1,0 +1,341 @@
+* Setting
+Documentation   BigTap Test Suite
+Suite Setup     base suite setup
+Suite Teardown  base suite teardown
+Test Setup      base test setup
+Test Teardown   base test teardown
+Force Tags      BigTap Sanity
+Library         keywords_dev/Common.py
+Library         keywords/BsnCommon.py 
+Library         keywords_dev/animesh/BigTapCommonConfig.py 
+Library         keywords_dev/animesh/BigTapCommonShow.py 
+
+
+
+* Variable
+ 
+${short}   1
+${medium}  5
+${long}    30 
+
+
+* Test Case
+
+T1.1 Address group IPv4  
+ 	bigtap_clean_all    
+    log  step 1: config 1 ipv4 entries
+               	 
+	REST bigtap create addrgroup   		   IPV4   ipv4  
+	REST bigtap add addrgroup      		   IPV4   100.100.100.100   255.255.255.255  	
+ 	${input_dict}=  rest_bigtap_show_addrgroup  IPV4
+	${result}=  bigtap_verify_addrgroup 	${input_dict}    IPV4   group_type=ipv4   entry=1 
+    Should be True    ${result}  
+     
+# step 2. config  bignumber of entries
+
+	REST bigtap create addrgroup      IPV4_10    ipv4  
+    bigtap_gen_config_addrgroup       IPV4_10    ipv4     10.0.0.0     0.1.0.2     255.255.255.254    10 	
+ 	${input_dict}=  rest_bigtap_show_addrgroup  IPV4_10
+    ${result}=  bigtap_verify_addrgroup  ${input_dict}    IPV4_10   group_type=ipv4   entry=10   
+    Should be True    ${result}  
+ 
+
+# step 3. Apply ipv4 address group to Policy
+
+	REST bigtap create policy 	       admin-view  IPv4_ADD  forward 
+	REST bigtap add policy int         admin-view  IPv4_ADD  S207-39   filter
+	REST bigtap add policy int         admin-view  IPv4_ADD  S207-37   delivery   
+	Sleep     ${short}
+	
+	Common.REST bigtap add policy match       admin-view  IPv4_ADD   10   {"sequence": 10, "src-ip-list": "IPV4", "ether-type": 2048} 
+	Common.REST bigtap add policy match       admin-view  IPv4_ADD   20   {"sequence": 20, "dst-ip-list": "IPV4", "ether-type": 2048} 	 
+	Common.REST bigtap add policy match       admin-view  IPv4_ADD   40   {"sequence": 40, "ether-type": 2048, "dst-ip-mask": "255.255.255.0", "src-ip-list": "IPV4", "dst-ip": "10.10.10.0"}  
+	Common.REST bigtap add policy match       admin-view  IPv4_ADD   50   {"sequence": 50, "ether-type": 2048, "src-ip-mask": "255.255.255.0", "dst-ip-list": "IPV4", "src-ip": "10.10.10.0"}  	
+	Sleep     ${short}
+
+    ${input_dict}=   rest_bigtap_show_policy    IPv4_ADD 
+    ${result}=  bigtap_verify_policy  ${input_dict}    IPv4_ADD   action=forward
+    Should be True    ${result}   
+ 
+    ${switchFlowVal}=   Common.rest_get_switch_flow   sw_name=S207
+    Should Be Equal As Integers  ${switchFlowVal}  4 
+
+
+# step 4. Negative 
+    Common.REST bigtap add policy match   admin-view  IPv4_ADD   30   {"sequence": 30, "dst-ip-list": "IPV4", "src-ip-list": "IPV4","ether-type": 2048}  negative  
+
+	[Tags] 	sanity   skipped
+
+
+T1.2 Address group IPv6  
+ 	bigtap_clean_all    
+#  step 1: config 1 ipv6 entries
+               	 
+	REST bigtap create addrgroup   		   IPV6   ipv6  
+	REST bigtap add addrgroup      		   IPV6   1001:100:200:300:0:0:0:0     FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF   	
+ 	${input_dict}=  rest_bigtap_show_addrgroup  IPV6
+	${result}=  bigtap_verify_addrgroup 	${input_dict}    IPV6   group_type=ipv6   entry=1 
+    Should be True    ${result}  
+     
+# step 2. config  big number of entries
+
+	REST bigtap create addrgroup      IPV6_10    ipv6   
+    bigtap_gen_config_addrgroup       IPV6_10    ipv6     2001:100:200:300:0:0:0:0     0:0:0:0:0:1:0:1     FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF     10 	
+ 	${input_dict}=  rest_bigtap_show_addrgroup  IPV6_10
+    ${result}=  bigtap_verify_addrgroup  ${input_dict}    IPV6_10   group_type=ipv6   entry=10   
+    Should be True    ${result}  
+ 
+
+# step 3. Apply ipv6 address group to Policy
+
+	REST bigtap create policy 	       admin-view  IPv6_ADD  forward 
+	REST bigtap add policy int         admin-view  IPv6_ADD  S207-39   filter
+	REST bigtap add policy int         admin-view  IPv6_ADD  S207-37   delivery   
+	Sleep     ${short}
+	
+	Common.REST bigtap add policy match       admin-view  IPv6_ADD   10   {"sequence": 10, "src-ip-list": "IPV6", "ether-type": 34525} 
+	Common.REST bigtap add policy match       admin-view  IPv6_ADD   20   {"sequence": 20, "dst-ip-list": "IPV6", "ether-type": 34525} 	 
+	Common.REST bigtap add policy match       admin-view  IPv6_ADD   40   {"sequence": 40, "ether-type": 34525, "dst-ip-mask": "FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF", "src-ip-list": "IPV6", "dst-ip": "1111:100:200:300:0:0:0:0"}  
+	Common.REST bigtap add policy match       admin-view  IPv6_ADD   50   {"sequence": 50, "ether-type": 34525, "src-ip-mask": "FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF", "dst-ip-list": "IPV6", "src-ip": "1111:100:200:300:0:0:0:0"}  	
+	Sleep     ${short}
+
+    ${input_dict}=   rest_bigtap_show_policy    IPv6_ADD 
+    ${result}=  bigtap_verify_policy  ${input_dict}    IPv6_ADD   action=forward
+    Should be True    ${result}   
+ 
+    ${switchFlowVal}=   Common.rest_get_switch_flow   sw_name=S207
+    Should Be Equal As Integers  ${switchFlowVal}  4 
+
+
+# step 4. Negative 
+    Common.REST bigtap add policy match   admin-view  IPv6_ADD   30   {"sequence": 30, "dst-ip-list": "IPV6", "src-ip-list": "IPV6","ether-type": 34525}  negative  
+
+	[Tags] 	sanity    skipped
+
+
+
+T1.3 Address group IPv4/IPv6  
+ 	bigtap_clean_all    
+#  step 1: config  ipv4  address group
+	REST bigtap create addrgroup      IPV4     ipv4  
+    bigtap_gen_config_addrgroup       IPV4     ipv4     10.0.0.0     0.1.0.2     255.255.255.254    10 	
+ 	${input_dict}=  rest_bigtap_show_addrgroup  IPV4 
+    ${result}=  bigtap_verify_addrgroup  ${input_dict}    IPV4    group_type=ipv4   entry=10   
+    Should be True    ${result}  
+
+    
+# step 2. config  ipv6 address group
+
+	REST bigtap create addrgroup      IPV6     ipv6   
+    bigtap_gen_config_addrgroup       IPV6     ipv6     2001:100:200:300:0:0:0:0     0:0:0:0:0:1:0:1     FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF     10 	
+ 	${input_dict}=  rest_bigtap_show_addrgroup  IPV6 
+    ${result}=  bigtap_verify_addrgroup  ${input_dict}    IPV6    group_type=ipv6   entry=10   
+    Should be True    ${result}  
+ 
+
+# step 3. Apply ipv4/ipv6 address group to Policy
+   
+	REST bigtap create policy 	       admin-view  IPv46   forward 
+	REST bigtap add policy int         admin-view  IPv46    S207-39   filter
+	REST bigtap add policy int         admin-view  IPv46   S207-37   delivery   
+	Sleep     ${short}
+
+
+	Common.REST bigtap add policy match       admin-view  IPv46    10   {"sequence": 10, "src-ip-list": "IPV4", "ether-type": 2048} 
+	Common.REST bigtap add policy match       admin-view  IPv46    20   {"sequence": 20, "dst-ip-list": "IPV4", "ether-type": 2048} 	 
+	Common.REST bigtap add policy match       admin-view  IPv46    40   {"sequence": 40, "ether-type": 2048, "dst-ip-mask": "255.255.255.0", "src-ip-list": "IPV4", "dst-ip": "10.10.10.0"}  
+	Common.REST bigtap add policy match       admin-view  IPv46    50   {"sequence": 50, "ether-type": 2048, "src-ip-mask": "255.255.255.0", "dst-ip-list": "IPV4", "src-ip": "10.10.10.0"}  	
+ 
+	Common.REST bigtap add policy match       admin-view  IPv46    110   {"sequence": 110, "src-ip-list": "IPV6", "ether-type": 34525} 
+	Common.REST bigtap add policy match       admin-view  IPv46    120   {"sequence": 120, "dst-ip-list": "IPV6", "ether-type": 34525} 	 
+	Common.REST bigtap add policy match       admin-view  IPv46    140   {"sequence": 140, "ether-type": 34525, "dst-ip-mask": "FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF", "src-ip-list": "IPV6", "dst-ip": "1111:100:200:300:0:0:0:0"}  
+	Common.REST bigtap add policy match       admin-view  IPv46    150   {"sequence": 150, "ether-type": 34525, "src-ip-mask": "FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF", "dst-ip-list": "IPV6", "src-ip": "1111:100:200:300:0:0:0:0"}  	
+	Sleep     ${short}
+
+    ${input_dict}=   rest_bigtap_show_policy    IPv46   
+    ${result}=  bigtap_verify_policy  ${input_dict}    IPv46    action=forward
+    Should be True    ${result}  
+ 
+    ${switchFlowVal}=   Common.rest_get_switch_flow   sw_name=S207
+    Should Be Equal As Integers  ${switchFlowVal}  80 
+
+
+ 	log	 step 4.Negative 
+
+  	Common.REST bigtap add policy match       admin-view  IPv46   200   {"sequence": 200, "src-ip-list": "IPV4","ether-type": 34525}  negative	
+	Common.REST bigtap add policy match       admin-view  IPv46   210   {"sequence": 210, "dst-ip-list": "IPV4","ether-type": 34525}  negative
+	Common.REST bigtap add policy match       admin-view  IPv46   220   {"sequence": 220, "src-ip-list": "IPV6","ether-type": 2048}  negative	
+	Common.REST bigtap add policy match       admin-view  IPv46   230   {"sequence": 230, "dst-ip-list": "IPV6","ether-type": 2048}  negative
+	
+	Common.REST bigtap add policy match       admin-view  IPv46   300   {"sequence": 300, "dst-ip-list": "IPV6", "src-ip-list": "IPV4","ether-type": 2048}  negative		
+	Common.REST bigtap add policy match       admin-view  IPv46   310   {"sequence": 310, "dst-ip-list": "IPV6", "src-ip-list": "IPV4","ether-type": 34525}  negative	
+	Common.REST bigtap add policy match       admin-view  IPv46   320   {"sequence": 320, "dst-ip-list": "IPV4", "src-ip-list": "IPV6","ether-type": 2048}  negative		
+	Common.REST bigtap add policy match       admin-view  IPv46   330   {"sequence": 330, "dst-ip-list": "IPV4", "src-ip-list": "IPV6","ether-type": 34525}  negative	
+
+	Common.REST bigtap add policy match       admin-view  IPv46   400   {"sequence": 400, "ether-type": 34525, "dst-ip-mask": "255.255.255.0", "src-ip-list": "IPV6", "dst-ip": "200.200.200.0"}  negative
+	Common.REST bigtap add policy match       admin-view  IPv46   410   {"sequence": 410, "ether-type": 2048, "dst-ip-mask": "255.255.255.0", "src-ip-list": "IPV6", "dst-ip": "200.200.200.0"}  negative
+	Common.REST bigtap add policy match       admin-view  IPv46   420   {"sequence": 420, "ether-type": 34525, "src-ip-mask": "255.255.255.0", "dst-ip-list": "IPV6", "src-ip": "200.200.200.0"}  negative
+	Common.REST bigtap add policy match       admin-view  IPv46   430   {"sequence": 430, "ether-type": 2048, "src-ip-mask": "255.255.255.0", "dst-ip-list": "IPV6", "src-ip": "200.200.200.0"}  negative
+
+	Common.REST bigtap add policy match       admin-view  IPv46   500   {"sequence": 500, "ether-type": 34525, "dst-ip-mask": "FFFF:FFFF::0", "src-ip-list": "IPV4", "dst-ip": "2001:200::0"}  negative
+	Common.REST bigtap add policy match       admin-view  IPv46   510   {"sequence": 510, "ether-type": 2048, "dst-ip-mask": "FFFF:FFFF::0", "src-ip-list": "IPV4", "dst-ip": "2001:200::0"}  negative
+	Common.REST bigtap add policy match       admin-view  IPv46   520   {"sequence": 520, "ether-type": 34525, "src-ip-mask": "FFFF:FFFF::0", "dst-ip-list": "IPV4", "src-ip": "2001:200::0"}  negative
+	Common.REST bigtap add policy match       admin-view  IPv46   530   {"sequence": 530, "ether-type": 2048, "src-ip-mask": "FFFF:FFFF::0", "dst-ip-list": "IPV4", "src-ip": "2001:200::0"}  negative
+	
+	[Tags] 	feature    skipped  
+
+ 
+ 
+ T1.4 Address group match options  
+ 	bigtap_clean_all    
+    log  step 1: config ipv4 address group
+	REST bigtap create addrgroup      IPV4     ipv4  
+    bigtap_gen_config_addrgroup       IPV4     ipv4     10.0.0.0     0.1.0.2     255.255.255.254    10 	
+ 	${input_dict}=  rest_bigtap_show_addrgroup  IPV4 
+    ${result}=  bigtap_verify_addrgroup  ${input_dict}    IPV4    group_type=ipv4   entry=10   
+    Should be True    ${result}  
+
+    log  step 2. config ipv6 address group
+
+	REST bigtap create addrgroup      IPV6     ipv6   
+    bigtap_gen_config_addrgroup       IPV6     ipv6     2001:100:200:300:0:0:0:0     0:0:0:0:0:1:0:1     FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF     10 	
+ 	${input_dict}=  rest_bigtap_show_addrgroup  IPV6 
+    ${result}=  bigtap_verify_addrgroup  ${input_dict}    IPV6    group_type=ipv6   entry=10   
+    Should be True    ${result}  
+ 
+
+    log  step 3. ipv4 all match
+	REST bigtap create policy 	       admin-view  IPv46   forward 
+	REST bigtap add policy int         admin-view  IPv46    S207-39   filter
+	REST bigtap add policy int         admin-view  IPv46   S207-37   delivery   
+	Sleep     ${short}
+    log    source list   
+	Common.REST bigtap add policy match       admin-view  IPv46    10   {"sequence": 10, "src-ip-list": "IPV4", "ether-type": 2048} 
+    log    dest list
+	Common.REST bigtap add policy match       admin-view  IPv46    20   {"sequence": 20, "dst-ip-list": "IPV4", "ether-type": 2048} 	 
+  
+    log    source list + dest ip 
+	Common.REST bigtap add policy match       admin-view  IPv46    10   {"sequence": 10, "src-ip-list": "IPV4", "ether-type": 2048,"dst-ip": "10.10.10.0","dst-ip-mask": "255.255.255.0"} 
+    log    dest list + src ip
+	Common.REST bigtap add policy match       admin-view  IPv46    20   {"sequence": 20, "dst-ip-list": "IPV4", "ether-type": 2048,"src-ip": "10.10.10.0","src-ip-mask": "255.255.255.0"} 	 
+
+
+	log    tcp dst port + source list + dst ip
+	Common.REST bigtap add policy match       admin-view  IPv46    110   {"sequence": 110, "src-ip-list": "IPV4", "dst-tp-port": 100, "ip-proto": 6, "ether-type": 2048,"dst-ip": "10.10.10.0","dst-ip-mask": "255.255.255.0"} 
+	log    tcp dst port range + source list + dst ip
+	Common.REST bigtap add policy match       admin-view  IPv46    120   {"sequence": 120, "src-ip-list": "IPV4", "dst-tp-port-max": 20, "ip-proto": 6,"dst-tp-port-min": 10, "ether-type": 2048,"dst-ip": "10.10.10.0","dst-ip-mask": "255.255.255.0"} 
+	log   tcp src port + source list + dst ip 
+	Common.REST bigtap add policy match       admin-view  IPv46    130   {"sequence": 130, "src-ip-list": "IPV4", "src-tp-port": 100, "ip-proto": 6, "ether-type": 2048,"dst-ip": "10.10.10.0","dst-ip-mask": "255.255.255.0"} 
+	log   tcp src port range + source list + dst ip
+	Common.REST bigtap add policy match       admin-view  IPv46    140   {"sequence": 140, "src-ip-list": "IPV4", "src-tp-port-max": 20, "ip-proto": 6,"src-tp-port-min": 10, "ether-type": 2048,"dst-ip": "10.10.10.0","dst-ip-mask": "255.255.255.0"} 
+	
+	log   tcp dst port + dest list + src ip  
+	Common.REST bigtap add policy match       admin-view  IPv46    210   {"sequence": 210, "dst-ip-list": "IPV4", "dst-tp-port": 100, "ip-proto": 6, "ether-type": 2048,"src-ip": "10.10.10.0","src-ip-mask": "255.255.255.0"} 
+	log	  tcp dst port range + dest list + src ip
+	Common.REST bigtap add policy match       admin-view  IPv46    220   {"sequence": 220, "dst-ip-list": "IPV4", "dst-tp-port-max": 20, "ip-proto": 6,"dst-tp-port-min": 10, "ether-type": 2048,"src-ip": "10.10.10.0","src-ip-mask": "255.255.255.0"} 
+	log   tcp src port + dest lsit + src ip
+	Common.REST bigtap add policy match       admin-view  IPv46    230   {"sequence": 230, "dst-ip-list": "IPV4", "src-tp-port": 100, "ip-proto": 6, "ether-type": 2048,"src-ip": "10.10.10.0","src-ip-mask": "255.255.255.0"} 
+	log   tcp src port range + dest list + src ip
+	Common.REST bigtap add policy match       admin-view  IPv46    240   {"sequence": 240, "dst-ip-list": "IPV4", "src-tp-port-max": 20, "ip-proto": 6,"src-tp-port-min": 10, "ether-type": 2048,"src-ip": "10.10.10.0","src-ip-mask": "255.255.255.0"} 
+		
+	
+  
+  
+	[Tags] 	sanity  
+
+
+
+
+
+
+
+
+
+ 
+Scale IPv4 IPV6
+#	bigtap_clean_all      
+#  IPv4 only 
+	bigtap_gen_addrgroup_file	 IP1_500  	 G1_500	  ipv4 	100.0.0.0 	0.1.0.1		255.255.255.255 	500	   flag=new
+	bigtap_gen_addrgroup_file	 IP1_500  	 G1_500	  ipv4 	200.0.0.0 	0.1.0.1		255.255.255.255 	500	   flag=append
+	bigtap_gen_addrgroup_file	 IP2_500  	 G2_500	  ipv4 	110.0.0.0 	0.1.0.1		255.255.255.255 	500	   
+	bigtap_gen_addrgroup_file	 IP2_500  	 G2_500	  ipv4 	210.0.0.0 	0.1.0.1		255.255.255.255 	500	   flag=append
+
+#	copy_to_controller       IP1_500     /opt/bigswitch/run/saved-configs/IP1_500 
+#    cli_copy_to_running      IP1_500   
+    
+     
+#	bigtap_gen_addrgroup	 IP2_500 	 G2_500	  ipv4 	110.0.0.0 	0.1.0.1		255.255.255.255 	500	   
+#	copy_to_controller       IP2_500     /opt/bigswitch/run/saved-configs/IP2_500
+#    cli_copy_to_running      IP2_500   
+# 	rest_bigtap_create_policy   admin-view  V4SCALE   forward
+#	rest_bigtap_add_policy_int      admin-view   V4SCALE    S203-52    delivery
+#	Common.REST bigtap add policy match       admin-view   V4SCALE   10   {"sequence": 10, "src-ip-list": "G1_500", "ether-type": 2048} 
+#	Common.REST bigtap add policy match       admin-view   V4SCALE   20   {"sequence": 20, "dst-ip-list": "G1_500", "ether-type": 2048}
+#	Common.REST bigtap add policy match       admin-view   V4SCALE   40   {"sequence": 40, "src-ip-list": "G2_500", "ether-type": 2048} 
+#	Common.REST bigtap add policy match       admin-view   V4SCALE   50   {"sequence": 50, "dst-ip-list": "G2_500", "ether-type": 2048}
+
+	[Tags]  sanity   Skipped
+	
+	
+	
+	
+Longevity
+   # total test last for 600s, and action is changes every 150s
+  	bigtap_longevity     during=172800    flap=150
+  	
+ 	[Tags]  sanity 	    skipped
+	
+
+
+* Keywords
+Config bigtap policy
+	[Arguments]          			    	  ${pName}  ${intFname}  ${intDname}
+	REST bigtap create policy 	  admin-view  ${pName}  forward 
+	REST bigtap add policy interface   admin-view  ${pName}  ${intFname}  filter 
+	REST bigtap add policy interface  admin-view  ${pName}  ${intDname}  delivery 
+ 	
+
+
+switch show command        [Arguments]  ${SName}  
+   cli_bigtap_sw_show     ${SName}     show ver
+   cli_bigtap_sw_show     ${SName}     show controller
+   cli_bigtap_sw_show     ${SName}     show flowtable summary   
+   cli_bigtap_sw_show     ${SName}     show flowtable  
+   cli_bigtap_sw_show     ${SName}     show interface  
+   cli_bigtap_sw_show     ${SName}     show inventory  
+   cli_bigtap_sw_show     ${SName}     show boot     
+#    cli_bigtap_sw_show     ${SName}     show environment  
+#   cli_bigtap_sw_show_walk     ${SName}   
+
+
+	
+show command  
+	REST show version  
+	REST show user 
+	REST show controller  
+	REST show bigtap  
+
+Config IPv4 Address Group           [Arguments]  ${GName}
+	REST bigtap create addrgroup      ${GName}   ipv4  
+	REST bigtap add addrgroup          ${GName}   100.100.100.100   255.255.255.255  
+	REST bigtap verify addrgroup   ${GName}   ipv4   
+	REST bigtap add addrgroup          ${GName}   2001:100::0   FFFF:FFFF::0   negative
+
+Config IPv6 Address Group           [Arguments]  ${GName}
+	REST bigtap create addrgroup      ${GName}    ipv6  
+	REST bigtap add addrgroup         ${GName}    2001:100::0   FFFF:FFFF::0   
+	REST bigtap verify addrgroup   ${GName}6    ipv6  
+	REST bigtap add addrgroup         ${GName}   100.100.100.100   255.255.255.255   negative
+
+Bigtap Setup role 
+ 
+	REST bigtap setup role    S204    ethernet49    filter     S204-49 
+	REST bigtap setup role    S204    ethernet42    delivery   S204-42 
+	REST bigtap setup role    S204    ethernet43    service    S204-43 
+	REST bigtap setup role    S204    ethernet44    service    S204-44 
+	
+#Bigtap Verify policy
+#	[Arguments]                   ${pName}     ${numFIntf}   ${numDIntf}   ${swName}    ${numFlow} 
+#	REST bigtap show run policy   ${pName}
+#   	REST show bigtap policy       ${pName}     ${numFIntf}   ${numDIntf}
+#	REST verify switch flow          ${swName}    ${numFlow} 
