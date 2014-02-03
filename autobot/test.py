@@ -447,9 +447,9 @@ class Test(object):
             if c:
                 if 'openflow_port' in self.topology_params()[controller]:
                     openflow_port = self.topology_params()[controller]['openflow_port']
-                    n.config("controller %s port %s" % (c.ip, openflow_port))
+                    n.config("controller %s port %s" % (c.ip(), openflow_port))
                 else:
-                    n.config("controller %s" % c.ip)
+                    n.config("controller %s" % c.ip())
         
     def setup(self):
         # This check ensures we  don't try to setup multiple times.

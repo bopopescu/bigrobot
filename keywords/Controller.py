@@ -1,6 +1,5 @@
 import autobot.helpers as helpers
 import autobot.test as test
-import re
 
 
 class Controller(object):
@@ -52,7 +51,7 @@ class Controller(object):
         n = t.controller(node)
 
         platform = n.platform()
-        helpers.log("Reloading '%s' (platform=%s)" % (n.name, n.platform()))
+        helpers.log("Reloading '%s' (platform=%s)" % (n.name(), n.platform()))
 
         if helpers.is_bigwire(platform) or helpers.is_bigtap(platform):
             self._boot_bigtap_bigwire(node)
@@ -63,7 +62,7 @@ class Controller(object):
         else:
             helpers.test_error("Reload does not recognize platform '%s'" % platform)
         
-        helpers.log("Device '%s' has rebooted" % n.name)
+        helpers.log("Device '%s' has rebooted" % n.name())
     
     def cli_reboot(self, *args, **kwargs):
         """

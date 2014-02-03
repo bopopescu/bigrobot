@@ -10,6 +10,7 @@ class DevConf(object):
     def __init__(self, host=None, user=None, password=None, port=None,
                  is_console=False,
                  console_driver=None,
+                 name=None,
                  debug=0):
         if host is None:
             helpers.environment_failure("Must specify a host.")
@@ -73,6 +74,7 @@ class DevConf(object):
         helpers.log("Using devconf driver '%s' (name: '%s')"
                     % (driver, driver.name))
 
+        self._name = name
         self.host = host
         self.user = user
         self.password = password
@@ -83,6 +85,9 @@ class DevConf(object):
         
         # Aliases
         self.set_prompt = self.conn.set_prompt
+
+    def name(self):
+        return self._name
 
     def send(self, cmd, quiet=False, level=4):
         """
@@ -224,9 +229,9 @@ class BsnDevConf(DevConf):
                                                 port=port,
                                                 is_console=is_console,
                                                 console_driver=console_driver,
+                                                name=name,
                                                 debug=debug)
         self.mode_before_bash = None
-        self.name = name
 
     def is_cli(self):
         return self.mode == 'cli'
@@ -298,12 +303,12 @@ class BsnDevConf(DevConf):
         #helpers.log("Current mode is %s" % self.mode, level=level)
 
         if not quiet:
-            helpers.log("Execute command on '%s': '%s'" % (self.name, cmd), level=level)
+            helpers.log("Execute command on '%s': '%s'" % (self.name(), cmd), level=level)
 
         super(BsnDevConf, self).cmd(cmd, prompt=prompt, quiet=True)
         if not quiet:
             helpers.log("%s content on '%s':\n%s%s"
-                        % (mode, self.name, self.content(),
+                        % (mode, self.name(), self.content(),
                            br_utils.end_of_output_marker()),
                            level=level)
         return self.result()
@@ -356,21 +361,21 @@ class MininetDevConf(DevConf):
         self.topology = topology
         self.controller = controller
         self.openflow_port = openflow_port
-        self.name = name
         self.state = 'stopped'  # or 'started'
         
-        super(MininetDevConf, self).__init__(host, user, password, debug=debug)
+        super(MininetDevConf, self).__init__(host, user, password, name=name,
+                                             debug=debug)
         self.start_mininet()
         
     def cmd(self, cmd, quiet=False, prompt=False, level=4):
         if not quiet:
             helpers.log("Execute command on '%s': %s"
-                        % (self.name, cmd), level=level)
+                        % (self.name(), cmd), level=level)
 
         super(MininetDevConf, self).cmd(cmd, prompt=prompt, quiet=True)
         if not quiet:
             helpers.log("Content on '%s':\n%s%s"
-                        % (self.name, self.content(),
+                        % (self.name(), self.content(),
                            br_utils.end_of_output_marker()),
                            level=level)
         return self.result()
@@ -387,12 +392,12 @@ class MininetDevConf(DevConf):
             helpers.log("Mininet is already running. No need to start it.")
             return True
 
-        helpers.log("Starting Mininet on '%s'" % self.name)
+        helpers.log("Starting Mininet on '%s'" % self.name())
 
         if new_topology:
             self.topology = new_topology
             helpers.log("Start new Mininet topology for '%s': %s"
-                        % (self.name, new_topology))
+                        % (self.name(), new_topology))
 
         _cmd = self.mininet_cmd()
         
@@ -404,12 +409,12 @@ class MininetDevConf(DevConf):
             helpers.log("Mininet is not running. No need to stop it.")
             return True
 
-        helpers.log("Stopping Mininet on '%s'" % self.name)
+        helpers.log("Stopping Mininet on '%s'" % self.name())
         self.cli("exit", quiet=False)
         self.state = 'stopped'
 
     def restart_mininet(self, new_topology=None):
-        helpers.log("Restarting Mininet topology on '%s'" % self.name)
+        helpers.log("Restarting Mininet topology on '%s'" % self.name())
         self.stop_mininet()
         self.start_mininet(new_topology)
         
@@ -419,7 +424,7 @@ class MininetDevConf(DevConf):
         self.stop_mininet()
         self.conn.close(force=True)
         helpers.log("Mininet - force closed the device connection '%s'."
-                    % self.name)
+                    % self.name())
 
 
 class T6MininetDevConf(MininetDevConf):
@@ -444,19 +449,19 @@ class HostDevConf(DevConf):
         super(HostDevConf, self).__init__(host, user, password,
                                           port=port,
                                           is_console=is_console,
+                                          name=name,
                                           debug=debug)
-        self.name = name
         self.bash('uname -a')
 
     def cmd(self, cmd, quiet=False, prompt=False, level=4):
         if not quiet:
             helpers.log("Execute command on '%s': '%s'"
-                        % (self.name, cmd), level=level)
+                        % (self.name(), cmd), level=level)
 
         super(HostDevConf, self).cmd(cmd, prompt=prompt, quiet=True)
         if not quiet:
             helpers.log("Content on '%s':\n%s%s"
-                        % (self.name, self.content(),
+                        % (self.name(), self.content(),
                            br_utils.end_of_output_marker()),
                            level=level)
         return self.result()

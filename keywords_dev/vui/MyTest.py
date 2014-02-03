@@ -29,7 +29,7 @@ class MyTest(object):
     def test_scp(self):
         t = test.Test()
         c = t.controller()
-        helpers.scp_put(c.ip, '/etc/hosts', '/tmp/12345/1234')
+        helpers.scp_put(c.ip(), '/etc/hosts', '/tmp/12345/1234')
 
     def passing_kwargs_additions(self, arg_kw1=None, arg_kw2=None):
         helpers.log("arg_kw1: %s" % arg_kw1)

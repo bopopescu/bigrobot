@@ -5,12 +5,13 @@ from autobot.bsn_restclient import BsnRestClient
 
 class Node(object):
     def __init__(self, name, ip, user=None, password=None, params=None):
-        self.name = name
-        self.ip = ip
+        self._name = name
+        self._ip = ip
         self.user = user
         self.password = password
         self.http_port = None
         self.base_url = None
+        self.params = params
         self.is_pingable = False
         self.rest = None  # REST handle
         self.dev = None   # DevConf handle (SSH)
@@ -18,7 +19,6 @@ class Node(object):
         self.dev_debug_level = 0
         self.console_ip = None
         self.console_port = None
-        self.params = params
         if params:
             self.node_params = self.params[name]
             val = helpers.params_val('set_devconf_debug_level', self.node_params)
@@ -34,20 +34,26 @@ class Node(object):
         else:
             self.pingable_or_die()
 
+    def name(self):
+        return self._name
+    
+    def ip(self):
+        return self._ip
+    
     def platform(self):
         return self.dev.platform()
 
     def pingable_or_die(self):
         if self.is_pingable:
             return True
-        helpers.log("Ping %s ('%s')" % (self.ip, self.name))
-        loss = helpers.ping(self.ip, count=3, waittime=1000)
+        helpers.log("Ping %s ('%s')" % (self.ip(), self.name()))
+        loss = helpers.ping(self.ip(), count=3, waittime=1000)
         if  loss > 20:
             # We can tolerate 20% loss.
             # Consider init to be completed, so as not to be invoked again.
             self._init_completed = True
             helpers.environment_failure("Node with IP address %s is unreachable."
-                                        % self.ip)
+                                        % self.ip())
         self.is_pingable = True
         return True
 
@@ -100,7 +106,7 @@ class ControllerNode(Node):
         
         self.rest = BsnRestClient(base_url=self.base_url,
                                   platform=self.platform(),
-                                  host=self.ip)
+                                  host=self.ip())
         # Shortcuts
         self.cli = self.dev.cli           # CLI mode
         self.enable = self.dev.enable     # Enable mode
@@ -121,21 +127,21 @@ class ControllerNode(Node):
             self.console_ip = self.node_params['console_ip']
         else:
             helpers.test_error("Console IP address is not defined for node '%s'"
-                               % self.name)
+                               % self.name())
         if 'console_port' in self.node_params:
             self.console_port = self.node_params['console_port']
         else:
             helpers.test_error("Console port is not defined for node '%s'"
-                               % self.name)
+                               % self.name())
         
         if self.dev:
-            driver = self.dev.driver().name
+            driver = self.dev.driver().name()
         else:
             driver = None
             
         helpers.log("Using devconf driver '%s' for console to '%s'"
-                    % (driver, self.name))
-        self.dev_console = devconf.ControllerDevConf(name=self.name,
+                    % (driver, self.name()))
+        self.dev_console = devconf.ControllerDevConf(name=self.name(),
                                                      host=self.console_ip,
                                                      port=self.console_port,
                                                      user=self.user,

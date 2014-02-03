@@ -840,6 +840,3 @@ def params_is_false(k, params_dict):
         return True
     else:
         return False
-
-def marker():
-    print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
