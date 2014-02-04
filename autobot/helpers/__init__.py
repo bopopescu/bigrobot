@@ -560,6 +560,16 @@ def file_remove(filename):
         os.remove(filename)
 
 
+def file_read_once(filename):
+    """
+    Read file in a single shot. Immediately close file.
+    """
+    f = open(filename, 'r')
+    s = f.readlines()
+    f.close()
+    return s
+
+
 def file_write_once(filename, s):
     """
     Write string to file in a single shot. Immediately close file.
