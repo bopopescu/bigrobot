@@ -7,11 +7,11 @@ Test Teardown   teardown topology
 Force Tags      T5 Sanity
 Library         keywords/BsnCommon.py
 Library         keywords/Mininet.py
-Library         keywords_dev/T5.py
-Library         keywords_dev/T5Fabric.py
-Library         keywords_dev/T5_L3.py
+Library         keywords_dev/prashanth/T5.py
+Library         keywords_dev/prashanth/T5Fabric.py
+Library         keywords_dev/prashanth/T5_L3.py
 Library         keywords_dev/animesh/BsnCommonShow.py
-Resource		keywords_dev/t5_singleleaf_resource.txt
+Resource		keywords_dev/prashanth/t5_singleleaf_resource.txt
 
 * Variable
 ${tenant1_name}		A
@@ -86,7 +86,7 @@ ${dhcpserver1}		10.255.255.10
 #	sleep  5
 
 L3 untagged bm0 ping to untagged bm1 same tenant across VNS with static configuration
-	[Tags]										smoke				sanity			
+	[Tags]										smoke				sanity			skipped
 	configure fabric switch 
 	sleep  										5						
 	REST create tenant  						${tenant1_name}
@@ -119,9 +119,8 @@ L3 untagged bm0 ping to untagged bm1 same tenant across VNS with static configur
 	Should Be True  							${endpoints_cnt} == 2
 
 
-
 L3 untagged bm0 ping to untagged bm1 same tenant across VNS with dynamic endpoints
-	[Tags]										smoke				
+	[Tags]										smoke				skipped
 	configure fabric switch 
 	sleep  5		
 	REST create tenant  						${tenant1_name}
@@ -147,7 +146,7 @@ L3 untagged bm0 ping to untagged bm1 same tenant across VNS with dynamic endpoin
 	     
 
 L3 untagged bm0 ping to untagged bm1 same tenant across VNS dynamic host ARPing gateway
-	[Tags]										smoke				
+	[Tags]										smoke				skipped
 	configure fabric switch 
 	sleep  5		
 	REST create tenant  						${tenant1_name}
@@ -169,8 +168,9 @@ L3 untagged bm0 ping to untagged bm1 same tenant across VNS dynamic host ARPing 
 	${endpoints_cnt}=							rest count endpoints mac
 	Should Be True  							${endpoints_cnt} == 2
 
+
 L3 untagged bm0 ping to untagged bm1 unreachable host on same tenant different VNS 
-	[Tags]										sanity				smoke			
+	[Tags]										sanity				smoke			skipped		
 	configure fabric switch 
 	sleep  										5	
 	REST create tenant  						${tenant1_name}
@@ -190,7 +190,7 @@ L3 untagged bm0 ping to untagged bm1 unreachable host on same tenant different V
 
     
 L3 untagged bm0 ping to untagged bm1 across tenants and VNS all statically defined
-   	[Tags]										sanity 				smoke				
+   	[Tags]										sanity 				smoke			skipped		
 	configure fabric switch 
 	sleep										5   	
 	REST create tenant  						${tenant1_name}        
@@ -256,11 +256,9 @@ L3 untagged bm0 ping to untagged bm1 across tenants and VNS all statically defin
 	REST delete tenant							${tenant_system}
 #	sleep 					30
 	
-	
-	
   
 L3 untagged bm0 ping to untagged bm1 with destination host interface move in the same tenant across VNS
-	[Tags]										sanity
+	[Tags]										sanity				skipped
 	configure fabric switch 
 	sleep  5	
 	REST create tenant  						${tenant1_name}
@@ -300,6 +298,7 @@ L3 untagged bm0 ping to untagged bm1 with destination host interface move in the
 	Should Be True  							${endpoints_cnt} == 2
 	REST delete tenant 							${tenant1_name}        
 	sleep  										20  
+
  
 L3 ping untagged bm0 to tagged bm1 same tenant across VNS
 	[Tags]										sanity				
@@ -320,6 +319,10 @@ L3 ping untagged bm0 to tagged bm1 same tenant across VNS
 	REST_create_endpoint_mac					${tenant1_name}		${vns1_2}		${endpoint2name}	${host1_mac}
 	REST_create_endpoint_switch_attachment		${tenant1_name}		${vns1_1}		${endpoint1name}	${leaf0_name}	${leaf0_intf1}	${untaggedvlan}	
 	REST_create_endpoint_switch_attachment		${tenant1_name}		${vns1_2}		${endpoint2name}	${leaf0_name}	${leaf0_intf2}	${vns1_vlan2}
+	REST show endpoints name					${endpoint1name}
+	REST show endpoints name					${endpoint2name}
+	REST show endpoints mac						${host0_mac}
+	REST show endpoints mac						${host1_mac}
 	mininet host ipcfg   						${host0_name}		${host0_bondif}	${host0_ip}			${host0_subnet} 
 	mininet l3 link tag							${host1_name}		${host1_bondif}	${vns1_vlan2}		${host1_ip}		${host1_subnet}
 	mininet host gw								${host0_name}		${vns1_ip1}		${host0_bondif}
@@ -327,9 +330,9 @@ L3 ping untagged bm0 to tagged bm1 same tenant across VNS
 	mininet host arp							${host0_name}		${vns1_ip1}		${gw_mac}
 	mininet host arp							${host1_name} 		${vns1_ip2}		${gw_mac}
 	sleep  										5
-	mininet l3 ping								${host0_name}		${host1_name} 		3
+	mininet l3 ping								${host0_name}		${host1_ip} 		3
 	sleep 										2
-	${loss}=  									mininet l3 ping		${host0_name}	${host1_name}	${ping_count}
+	${loss}=  									mininet l3 ping		${host0_name}	${host1_ip}		${ping_count}
 	sleep  										20
 	Should Be True  							${loss} == 0
 	REST delete tenant 							${tenant1_name}        
@@ -337,7 +340,7 @@ L3 ping untagged bm0 to tagged bm1 same tenant across VNS
 	sleep  										20  
  
 L3 ping tagged bm0 to tagged bm1 single leaf single rack within tenant different VNS
-	[Tags]										sanity				
+	[Tags]										sanity				skipped
 	configure fabric switch 
 	sleep  										5	
 	REST create tenant  						${tenant1_name}
@@ -403,7 +406,7 @@ teardown topology
 	REST delete tenant							${tenant1_name}   
 	REST delete tenant							${tenant2_name}    
 	REST delete tenant							${tenant_system}
-	sleep 										10
+	sleep 										30
 		
 	
 	

@@ -179,7 +179,7 @@ class T5Platform(object):
             return True
 
 
-    def rest_cluster_election_take_leader(self):
+    def rest_verify_cluster_election_take_leader(self):
         ''' Invoke "cluster election take-leader" command and verify the controller state
         '''
         obj = common()
@@ -188,7 +188,7 @@ class T5Platform(object):
         sleep(30)
         common.fabric_integrity_checker(obj, "after")
 
-    def rest_cluster_election_rerun(self):
+    def rest_verify_cluster_election_rerun(self):
         ''' Invoke "cluster election re-run" command and verify the controller state
         '''
         obj = common()
@@ -289,29 +289,53 @@ class T5Platform(object):
                 return False
 
 
-    def cli_cluster_master_reboot(self):
+    def cli_verify_cluster_master_reboot(self):
         obj = common()
         common.fabric_integrity_checker(obj,"before")
         self.cluster_node_reboot()
         common.fabric_integrity_checker(obj,"after")
 
-    def cli_cluster_slave_reboot(self):
+    def cli_verify_cluster_slave_reboot(self):
         obj = common()
         common.fabric_integrity_checker(obj,"before")
         self.cluster_node_reboot(False)
         common.fabric_integrity_checker(obj,"after")
 
-    def cli_cluster_master_shutdown(self):
+    def cli_verify_cluster_master_shutdown(self):
         obj = common()
         common.fabric_integrity_checker(obj,"before")
         self.cluster_node_shutdown()
         common.fabric_integrity_checker(obj,"after")
 
-    def cli_cluster_slave_shutdown(self):
+    def cli_verify_cluster_slave_shutdown(self):
         obj = common()
         common.fabric_integrity_checker(obj,"before")
         self.cluster_node_shutdown(False)
         common.fabric_integrity_checker(obj,"after")
+
+    def rest_add_user(self, numUsers):
+        t = test.Test()
+        master = t.controller("master")
+        
+        url = "/api/v1/data/controller/core/aaa/local-user"
+        numErrors = 0
+        for i in range (0, int(numUsers)):
+            user = "user" + str(i+1)
+            master.rest.post(url, {"user-name": user})
+            sleep(3)
+            
+            if not master.rest.status_code_ok():
+                helpers.test_failure(c.rest.error())
+                numErrors += 1
+            else:
+                helpers.log("Successfully added user: %s " % user)
+
+        if(numErrors > 0):
+            return False
+        else:
+            return True
+
+
 
 
 

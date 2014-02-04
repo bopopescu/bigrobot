@@ -169,7 +169,7 @@ class BigTap(object):
                     helpers.log('Either Switch DPID or Switch Alias has to be provided')
                     return False
                 elif (switch_alias is not None and sw_dpid is None):
-                    switch_dpid = self.rest_get_switch_dpid(switch_alias)
+                    switch_dpid = self.rest_show_switch_dpid(switch_alias)
                 else:
                     switch_dpid = sw_dpid
                 url = '/api/v1/data/controller/core/switch[dpid="%s"]?select=stats/table' % (str(switch_dpid))
@@ -257,7 +257,7 @@ class BigTap(object):
                     helpers.log('Either Switch DPID or Switch Alias has to be provided')
                     return False
                 elif (switch_alias is not None and sw_dpid is None):
-                    switch_dpid = self.rest_get_switch_dpid(switch_alias)
+                    switch_dpid = self.rest_show_switch_dpid(switch_alias)
                 else:
                     switch_dpid = sw_dpid
                 url = '/api/v1/data/controller/applications/bigtap/interface-config[interface="%s"][switch="%s"]' % (str(intf_name), str(switch_dpid))
@@ -304,7 +304,7 @@ class BigTap(object):
                     helpers.log('Either Switch DPID or Switch Alias has to be provided')
                     return False
                 elif (switch_alias is not None and sw_dpid is None):
-                    switch_dpid = self.rest_get_switch_dpid(switch_alias)
+                    switch_dpid = self.rest_show_switch_dpid(switch_alias)
                 else:
                     switch_dpid = sw_dpid
     
@@ -346,10 +346,10 @@ class BigTap(object):
                     helpers.log('Either Switch DPID or Switch Alias has to be provided')
                     return False
                 elif (switch_alias is not None and sw_dpid is None):
-                    switch_dpid = self.rest_get_switch_dpid(switch_alias)
+                    switch_dpid = self.rest_show_switch_dpid(switch_alias)
                 else:
                     switch_dpid = sw_dpid
-                url='/api/v1/data/controller/core/switch[dpid="%s"]/interface[name=""]'  % (str(switch_dpid), str(intf_name))
+                url='/api/v1/data/controller/core/switch[dpid="%s"]/interface[name="%s"]'  % (str(switch_dpid), str(intf_name))
                 c.rest.delete(url, {})
             except:
                 helpers.test_failure(c.rest.error())
