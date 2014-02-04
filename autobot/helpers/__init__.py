@@ -31,6 +31,86 @@ _TZ = timezone("America/Los_Angeles")
 _BIGROBOT_ENV_LIST = []
 
 
+def error_msg(msg):
+    print("Error: %s" % msg)
+
+
+def error_exit(msg):
+    error_msg(msg)
+    sys.exit(1)
+
+
+def error_exit_if_file_not_exist(msg, f):
+    if f is None:
+        error_exit(''.join((msg, ': <topology_file_not_specified>')))
+    if not os.path.exists(f):
+        error_exit(''.join((msg, ': ', f)))
+
+
+def exit_robot_immediately(msg=None):
+    """
+    See https://groups.google.com/forum/#!topic/robotframework-users/Mbt_8Pe3t7c
+    Send same signal that Ctrl-C sends to stop execution gracefully.
+    Currently, this is the sure way to exit out of Robot Framework.
+    """
+    if msg:
+        log(msg, level=4)
+    log("Exiting BigRobot now...", level=4)
+    os.kill(os.getpid(), signal.SIGINT)  # "Second signal will force exit"
+    os.kill(os.getpid(), signal.SIGINT)  # "Execution forcefully stopped"
+    
+
+class TestFailure(AssertionError):
+    """
+    This can be triggered when there is a test case failure.
+    """
+
+
+class TestError(AssertionError):
+    """
+    This can be triggered when there is a test error. It is designed for
+    flagging uncaught error conditions in the test libraries, such as the
+    'Unknown ping error' in helpers.ping().
+    """
+    ROBOT_EXIT_ON_FAILURE = True
+
+
+class EnvironmentFailure(RuntimeError):
+    """
+    This can be triggered when there is a test environment failure. It is a
+    critical condition which should prevent further test executions.
+    """
+    ROBOT_EXIT_ON_FAILURE = True
+    
+
+def test_success(msg):
+    """
+    Call this on test success.
+    """
+    log(msg)
+
+    
+def test_failure(msg):
+    """
+    Call this on test failure.
+    """
+    raise TestFailure(msg)
+
+
+def test_error(msg):
+    """
+    Call this on test error.
+    """
+    raise TestError(msg)
+
+
+def environment_failure(msg):
+    """
+    Call this on environmental failure.
+    """
+    raise EnvironmentFailure(msg)
+
+
 def _env_get_and_set(name, new_val=None, default=None):
     """
     Category: Get/set environment variables for BigRobot.
@@ -98,10 +178,27 @@ def bigrobot_suite_format(new_val=None, default=None):
     Category: Get/set environment variables for BigRobot.
 
     Specify the test suite file format. The possible values include:
-    mw  - MediaWiki format
+    mw  - MediaWiki format (obsolete)
     txt - Robot Framework plain text format 
     """
     return _env_get_and_set('BIGROBOT_SUITE_FORMAT', new_val, default)
+
+
+def bigrobot_exec_hint_format(new_val=None, default='export'):
+    """
+    Category: Get/set environment variables for BigRobot.
+    Options:
+        - 'export'
+        - 'run_gobot'
+    """
+    opt = _env_get_and_set('BIGROBOT_EXEC_HINT_FORMAT', new_val, default)
+    if opt == 'export':
+        return 'export BIGROBOT_SUITE=%s'
+    elif opt == 'run_gobot':
+        return 'BIGROBOT_SUITE=%s gobot test'
+    else:
+        test_error("Invalid option '%s'. Supported options are 'export', 'run_gobot'."
+                   % opt)
 
 
 def bigrobot_topology(new_val=None, default=None):
@@ -164,23 +261,41 @@ def bigrobot_pandoc_support(new_val=None, default=None):
     return _env_get_and_set('BIGROBOT_PANDOC_SUPPORT', new_val, default)
 
 
-def analyze(s, level=2):
+def warn(s, level=2):
     """
-    Write to the log file. The advantage with this function is convenience
-    since the user doesn't need to instantiate from the Log class. They can
-    simply call helpers.analyze("blah") to start logging.
-
-    The intended use is for quick code analysis.
+    Warn log.
     """
-    Log().log(s, level)
+    Log().warn(s, level)
 
 
-def log(s, level=3):
-    analyze(s, level)
+def debug(s, level=2):
+    """
+    Debug log.
+    """
+    Log().debug(s, level)
+
+
+def trace(s, level=2):
+    """
+    Trace log.
+    """
+    Log().trace(s, level)
+
+
+def info(s, level=2):
+    """
+    Info log.
+    """
+    Log().info(s, level)
 
 
 # Alias
-test_log = log
+test_log = info
+log = info
+
+
+def analyze(s, level=3):
+    info(s, level)
 
 
 def prettify(data):
@@ -521,86 +636,6 @@ def str_to_int(val):
     return val
     
     
-def error_msg(msg):
-    print("Error: %s" % msg)
-
-
-def error_exit(msg):
-    error_msg(msg)
-    sys.exit(1)
-
-
-def error_exit_if_file_not_exist(msg, f):
-    if f is None:
-        error_exit(''.join((msg, ': <topology_file_not_specified>')))
-    if not os.path.exists(f):
-        error_exit(''.join((msg, ': ', f)))
-
-
-def exit_robot_immediately(msg=None):
-    """
-    See https://groups.google.com/forum/#!topic/robotframework-users/Mbt_8Pe3t7c
-    Send same signal that Ctrl-C sends to stop execution gracefully.
-    Currently, this is the sure way to exit out of Robot Framework.
-    """
-    if msg:
-        log(msg, level=4)
-    log("Exiting BigRobot now...", level=4)
-    os.kill(os.getpid(), signal.SIGINT)  # "Second signal will force exit"
-    os.kill(os.getpid(), signal.SIGINT)  # "Execution forcefully stopped"
-    
-
-class TestFailure(AssertionError):
-    """
-    This can be triggered when there is a test case failure.
-    """
-
-
-class TestError(AssertionError):
-    """
-    This can be triggered when there is a test error. It is designed for
-    flagging uncaught error conditions in the test libraries, such as the
-    'Unknown ping error' in helpers.ping().
-    """
-    ROBOT_EXIT_ON_FAILURE = True
-
-
-class EnvironmentFailure(RuntimeError):
-    """
-    This can be triggered when there is a test environment failure. It is a
-    critical condition which should prevent further test executions.
-    """
-    ROBOT_EXIT_ON_FAILURE = True
-    
-
-def test_success(msg):
-    """
-    Call this on test success.
-    """
-    log(msg)
-
-    
-def test_failure(msg):
-    """
-    Call this on test failure.
-    """
-    raise TestFailure(msg)
-
-
-def test_error(msg):
-    """
-    Call this on test error.
-    """
-    raise TestError(msg)
-
-
-def environment_failure(msg):
-    """
-    Call this on environmental failure.
-    """
-    raise EnvironmentFailure(msg)
-
-
 def _createSSHClient(server, user, password, port=22):
     client = paramiko.SSHClient()
     client.load_system_host_keys()

@@ -1,0 +1,44 @@
+* Settings
+Force Tags      IronHorse
+Library         keywords/BsnCommon.py
+Documentation   Paragraph 1 - Switch Platform - Iron Horse
+...
+...             Paragraph 2 - The documentation can span multiple lines.
+...
+...             Paragraph 3 - blah blah blah
+
+
+* Test Cases
+Address group IPv4/IPv6
+    # Note that this test case has 4 high level test steps which are just
+    # user keywords.
+    config IPv4 address group
+    config IPv6 address group
+    IPv4 all match
+    IPv6 all match
+
+
+* Keywords
+
+# User keywords - high level test steps (test steps). They can call low level
+# keywords, or call library keywords.
+
+config IPv4 address group
+  ${status}  do abc
+  should be true  ${status}
+
+config IPv6 address group
+  ${status}  do abc
+  should be true  ${status} == ${true}
+
+IPv4 all match
+  do abc
+
+IPv6 all match
+  do abc
+
+# User keywords - low level, detailed actions (or call library keywords).
+
+do abc
+  [Return]  ${true}
+

@@ -76,7 +76,11 @@ class Telnet(Protocol):
 
         if match:
             self._dbg(2, "Got a prompt, match was %s" % repr(match.group()))
+            #self._dbg(3, "**** VUI: len(self.response)=%s" % len(self.response))
+            #self._dbg(3, "**** VUI: self.response=%s" % repr(self.response))
+            #self._dbg(3, "**** VUI: self.buffer=%s" % repr(self.buffer.__str__()))
             self.buffer.pop(len(self.response))
+            #self._dbg(3, "**** VUI: self.buffer(2)=%s" % repr(self.buffer.__str__()))
 
         self._dbg(5, "Response was %s" % repr(self.response))
 

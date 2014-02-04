@@ -1,0 +1,372 @@
+<h2 id="bigtap-basic">BigTap basic</h2>
+<table>
+<thead>
+<tr class="header">
+<th align="left"><p>Setting</p></th>
+<th align="left"></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"><p>Documentation</p></td>
+<td align="left"><p>BigTap Test Suite</p></td>
+</tr>
+<tr class="even">
+<td align="left"><p>Suite Setup</p></td>
+<td align="left"><p>base suite setup</p></td>
+</tr>
+<tr class="odd">
+<td align="left"><p>Suite Teardown</p></td>
+<td align="left"><p>base suite teardown</p></td>
+</tr>
+<tr class="even">
+<td align="left"><p>Test Setup</p></td>
+<td align="left"><p>base test setup</p></td>
+</tr>
+<tr class="odd">
+<td align="left"><p>Test Teardown</p></td>
+<td align="left"><p>base test teardown</p></td>
+</tr>
+<tr class="even">
+<td align="left"><p>Force Tags</p></td>
+<td align="left"><p>BigTap Sanity</p></td>
+</tr>
+<tr class="odd">
+<td align="left"><p>Library</p></td>
+<td align="left"><p>keywords_dev/Common.py</p></td>
+</tr>
+<tr class="even">
+<td align="left"><p>Library</p></td>
+<td align="left"><p>keywords/BsnCommon.py</p></td>
+</tr>
+<tr class="odd">
+<td align="left"><p>Library</p></td>
+<td align="left"><p>keywords_dev/BigTapCommonConfig.py</p></td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr class="header">
+<th align="left"><p>Test Case</p></th>
+<th align="left"><p>Action</p></th>
+<th align="left"><p>Argument</p></th>
+<th align="left"><p>Argument</p></th>
+<th align="left"><p>Argument</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"><p>Verify all the common show cmd</p></td>
+<td align="left"><p>show command</p></td>
+<td align="left"></td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left"><p>[Tags]</p></td>
+<td align="left"><p>sanity</p></td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left"><p>Bigtap Prepare topology</p></td>
+<td align="left"><p>Bigtap Setup role</p></td>
+<td align="left"></td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left"><p>[Tags]</p></td>
+<td align="left"><p>sanity</p></td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left"><p>Test IPv4 Address Group</p></td>
+<td align="left"><p>Config IPv4 Address Group</p></td>
+<td align="left"></td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left"><p>Config bigtap policy</p></td>
+<td align="left"><p>IPv4_ADD</p></td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left"><p>bigtap policy match src</p></td>
+<td align="left"><p>IPv4_ADD</p></td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left"><p>bigtap policy match dst</p></td>
+<td align="left"><p>IPv4_ADD</p></td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left"><p>[Tags]</p></td>
+<td align="left"><p>sanity</p></td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left"><p>Test IPv6 Address Group</p></td>
+<td align="left"><p>Config IPv6 Address Group</p></td>
+<td align="left"></td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left"><p>[Tags]</p></td>
+<td align="left"><p>sanity</p></td>
+<td align="left"></td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr class="header">
+<th align="left"><p>Keywords</p></th>
+<th align="left"><p>Action</p></th>
+<th align="left"><p>Argument</p></th>
+<th align="left"><p>Argument</p></th>
+<th align="left"><p>Argument</p></th>
+<th align="left"><p>Argument</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"><p>Config bigtap policy</p></td>
+<td align="left"><p>[Arguments]</p></td>
+<td align="left"><p>${pName}</p></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left"><p>REST add policy</p></td>
+<td align="left"><p>admin-view</p></td>
+<td align="left"><p>${pName}</p></td>
+<td align="left"><p>forward</p></td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left"><p>REST add policy interface</p></td>
+<td align="left"><p>admin-view</p></td>
+<td align="left"><p>${pName}</p></td>
+<td align="left"><p>S203-50</p></td>
+<td align="left"><p>filter</p></td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left"><p>REST add policy interface</p></td>
+<td align="left"><p>admin-view</p></td>
+<td align="left"><p>${pName}</p></td>
+<td align="left"><p>S203-52</p></td>
+<td align="left"><p>delivery</p></td>
+</tr>
+<tr class="odd">
+<td align="left"><p>bigtap policy match src</p></td>
+<td align="left"><p>[Arguments]</p></td>
+<td align="left"><p>${pName}</p></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left"><p>REST add policy match</p></td>
+<td align="left"><p>admin-view</p></td>
+<td align="left"><p>${pName}</p></td>
+<td align="left"><p>10</p></td>
+<td align="left"><p>{&quot;sequence&quot;: 10, &quot;src-ip-list&quot;: &quot;IPV4&quot;, &quot;ether-type&quot;: 2048}</p></td>
+</tr>
+<tr class="odd">
+<td align="left"><p>bigtap policy match dst</p></td>
+<td align="left"><p>[Arguments]</p></td>
+<td align="left"><p>${pName}</p></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left"><p>REST add policy match</p></td>
+<td align="left"><p>admin-view</p></td>
+<td align="left"><p>${pName}</p></td>
+<td align="left"><p>20</p></td>
+<td align="left"><p>{&quot;sequence&quot;: 20, &quot;dst-ip-list&quot;: &quot;IPV4&quot;, &quot;ether-type&quot;: 2048}</p></td>
+</tr>
+<tr class="odd">
+<td align="left"><p>show command</p></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left"><p>REST show version</p></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left"><p>REST show user</p></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left"><p>REST show controller</p></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left"><p>REST show bigtap</p></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left"><p>Config IPv4 Address Group</p></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left"><p>REST bigtap create addgroup</p></td>
+<td align="left"><p>IPV4</p></td>
+<td align="left"><p>ipv4</p></td>
+<td align="left"></td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left"><p>REST bigtap add address</p></td>
+<td align="left"><p>IPV4</p></td>
+<td align="left"><p>100.100.100.100</p></td>
+<td align="left"><p>255.255.255.255</p></td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left"><p>REST bigtap show address group</p></td>
+<td align="left"><p>IPV4</p></td>
+<td align="left"><p>ipv4</p></td>
+<td align="left"></td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left"><p>REST bigtap add address</p></td>
+<td align="left"><p>IPV4</p></td>
+<td align="left"><p>2001:100::0</p></td>
+<td align="left"><p>FFFF:FFFF::0</p></td>
+<td align="left"><p>negative</p></td>
+</tr>
+<tr class="odd">
+<td align="left"><p>Config IPv6 Address Group</p></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left"><p>REST bigtap create addgroup</p></td>
+<td align="left"><p>IPV6</p></td>
+<td align="left"><p>ipv6</p></td>
+<td align="left"></td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left"><p>REST bigtap add address</p></td>
+<td align="left"><p>IPV6</p></td>
+<td align="left"><p>2001:100::0</p></td>
+<td align="left"><p>FFFF:FFFF::0</p></td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left"><p>REST bigtap show address group</p></td>
+<td align="left"><p>IPV6</p></td>
+<td align="left"><p>ipv6</p></td>
+<td align="left"></td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left"><p>REST bigtap add address</p></td>
+<td align="left"><p>IPV6</p></td>
+<td align="left"><p>100.100.100.100</p></td>
+<td align="left"><p>255.255.255.255</p></td>
+<td align="left"><p>negative</p></td>
+</tr>
+<tr class="even">
+<td align="left"><p>Bigtap Setup role</p></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left"><p>${sidS204} =</p></td>
+<td align="left"><p>REST get switch dpid</p></td>
+<td align="left"><p>S204</p></td>
+<td align="left"></td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left"><p>REST bigtap setup role</p></td>
+<td align="left"><p>${sidS204}</p></td>
+<td align="left"><p>ethernet49</p></td>
+<td align="left"><p>filter</p></td>
+<td align="left"><p>S204-49</p></td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left"><p>REST bigtap setup role</p></td>
+<td align="left"><p>${sidS204}</p></td>
+<td align="left"><p>ethernet42</p></td>
+<td align="left"><p>delivery</p></td>
+<td align="left"><p>S204-42</p></td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left"><p>REST bigtap setup role</p></td>
+<td align="left"><p>${sidS204}</p></td>
+<td align="left"><p>ethernet43</p></td>
+<td align="left"><p>service</p></td>
+<td align="left"><p>S204-43</p></td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left"><p>REST bigtap setup role</p></td>
+<td align="left"><p>${sidS204}</p></td>
+<td align="left"><p>ethernet44</p></td>
+<td align="left"><p>service</p></td>
+<td align="left"><p>S204-44</p></td>
+</tr>
+</tbody>
+</table>

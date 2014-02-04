@@ -1,6 +1,6 @@
 from Exscript import Account
 from Exscript.protocols import SSH2, Telnet
-from Exscript.protocols.Exception import LoginFailure
+from Exscript.protocols.Exception import LoginFailure, TimeoutException
 import autobot.helpers as helpers
 import autobot.utils as br_utils
 import sys
@@ -30,31 +30,48 @@ class DevConf(object):
                 if not console_driver:
                     helpers.log("A devconf driver is not specified for console connection")
                 else:
-                    helpers.log("Setting devconf driver for console to '%s'" % console_driver)
+                    helpers.log("Setting devconf driver for console to '%s'"
+                                % console_driver)
                     self.conn.set_driver(console_driver)
 
                 # Note: User needs to figure out what state the console is in
                 #       and manage it themself.
 
             else:
+                auth_info = "(login:%s, password:%s)" % (user, password)
                 if port:
-                    helpers.log("Connecting to host %s, port %s" % (host, port))
+                    helpers.log("SSH connect to host %s, port %s %s"
+                                % (host, port, auth_info))
                 else:
-                    helpers.log("Connecting to host %s" % host)
+                    helpers.log("Connecting to host %s %s"
+                                % (host, auth_info))
 
                 self.conn = SSH2(debug=debug)
                 self.conn.connect(host, port)
                 self.conn.login(account)
         except LoginFailure:
-            helpers.log("Login failure: Check the user name and password for device %s. Also try to log in manually to see what the error is." % host)
-            helpers.log("Exception in %s" % sys.exc_info()[0])
-            raise
+            helpers.test_error("Login failure: Check the user name and password"
+                               " for device %s. Also try to log in manually to"
+                               " see what the error is." % host)
+            #helpers.log("Exception in %s" % sys.exc_info()[0])
+            #raise
+        except TimeoutException:
+            helpers.test_error("Login failure: Timed out during SSH connnect"
+                               " to device %s. Try to log in manually to see"
+                               " what the error is." % host)
+            #helpers.log("Exception in %s" % sys.exc_info()[0])
+            #raise
         except:
-            helpers.log("Exception in %s" % sys.exc_info()[0])
+            helpers.log("Unexpected SSH login exception in %s\n"
+                        "Expect buffer:\n%s%s"
+                        % (sys.exc_info()[0],
+                           self.conn.buffer.__str__(),
+                           br_utils.end_of_output_marker()))
             raise
         
         driver = self.conn.get_driver()
-        helpers.log("Using devconf driver '%s' (name: '%s')" % (driver, driver.name))
+        helpers.log("Using devconf driver '%s' (name: '%s')"
+                    % (driver, driver.name))
 
         self.host = host
         self.user = user
@@ -89,37 +106,70 @@ class DevConf(object):
         wrapper for Exscript's expect(). Use with caution!!!
         
         This function will wait until there a prompt match or times out in
-        the process. It is intended to be used with expect().
+        the process. It is intended to be used with send().
         
         See http://knipknap.github.io/exscript/api/Exscript.protocols.Protocol-class.html#expect
         """
         if not quiet:
-            helpers.log("Expecting prompt '%s'" % prompt)
-        self.conn.expect(prompt)
-        self.last_result = { 'content': self.conn.response }
-        if not quiet:
-            helpers.log("Expect content:\n%s%s"
-                        % (self.content(), br_utils.end_of_output_marker()),
-                        level=level)
+            helpers.log("Expecting prompt '%s'" % prompt, level=level)
+
+        try:            
+            ret_val = self.conn.expect(prompt)
+            self.last_result = { 'content': self.conn.response }
+            if not quiet:
+                helpers.log("Expect content:\n%s%s"
+                            % (self.content(), br_utils.end_of_output_marker()),
+                            level=level)
+        except TimeoutException:
+            helpers.test_error("Expect failure: Timed out during expect prompt '%s'\n"
+                               "Expect buffer:\n%s%s"
+                               % (prompt,
+                                  self.conn.buffer.__str__(),
+                                  br_utils.end_of_output_marker()))
+            #raise
+            #helpers.log("Exception in %s" % sys.exc_info()[0])
+            #raise
+        except:
+            helpers.log("Unexpected expect exception in %s\n"
+                        "Expect buffer:\n%s%s"
+                        % (sys.exc_info()[0],
+                           self.conn.buffer.__str__(),
+                           br_utils.end_of_output_marker()))
+            raise
+
+        return ret_val
 
     def waitfor(self, prompt, quiet=False, level=4):
         """
         Invoking low-level send/expect commands to the device. This is a
-        wrapper for Exscript's expect(). Use with caution!!!
+        wrapper for Exscript's waitfor(). Use with caution!!!
         
         This function will wait until there a prompt match or times out in
-        the process. It is intended to be used with expect().
+        the process. It is intended to be used with send().
         
-        See http://knipknap.github.io/exscript/api/Exscript.protocols.Protocol-class.html#expect
+        See http://knipknap.github.io/exscript/api/Exscript.protocols.Protocol-class.html#waitfor
         """
         if not quiet:
-            helpers.log("Expecting waitfor prompt '%s'" % prompt)
-        self.conn.waitfor(prompt)
-        self.last_result = { 'content': self.conn.response }
-        if not quiet:
-            helpers.log("Waitfor (expect) content:\n%s%s"
-                        % (self.content(), br_utils.end_of_output_marker()),
-                        level=level)
+            helpers.log("Expecting waitfor prompt '%s'" % prompt, level=level)
+        
+        try:
+            self.conn.waitfor(prompt)
+            self.last_result = { 'content': self.conn.response }
+            if not quiet:
+                helpers.log("Waitfor (expect) content:\n%s%s"
+                            % (self.content(), br_utils.end_of_output_marker()),
+                            level=level)
+        except TimeoutException:
+            helpers.log("Waitfor failure: Timed out during waitfor prompt '%s'"
+                        % prompt)
+            helpers.log("Waitfor buffer <%s>" % self.conn.buffer.__str__())
+            raise
+            #helpers.log("Exception in %s" % sys.exc_info()[0])
+            #raise
+        except:
+            helpers.log("Unexpected waitfor exception in %s"
+                        % sys.exc_info()[0])
+            raise
 
     def cmd(self, cmd, quiet=False, prompt=None, level=5):
         if prompt:
@@ -272,7 +322,8 @@ class BsnDevConf(DevConf):
         return self.cmd(cmd, quiet=quiet, mode='bash', prompt=prompt, level=level)
 
     def sudo(self, cmd, quiet=False, prompt=False, level=5):
-        return self.cmd(' '.join(('sudo', cmd)), quiet=quiet, mode='bash', prompt=prompt, level=level)
+        return self.cmd(' '.join(('sudo', cmd)), quiet=quiet, mode='bash',
+                        prompt=prompt, level=level)
 
     def close(self):
         super(BsnDevConf, self).close()
@@ -414,7 +465,8 @@ class HostDevConf(DevConf):
     bash = cmd
     
     def sudo(self, cmd, quiet=False, prompt=False, level=5):
-        return self.bash(' '.join(('sudo', cmd)), quiet=quiet, prompt=prompt, level=level)
+        return self.bash(' '.join(('sudo', cmd)), quiet=quiet, prompt=prompt,
+                         level=level)
 
     def close(self):
         super(HostDevConf, self).close()

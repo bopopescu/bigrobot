@@ -6,7 +6,13 @@ c1:
   console_port: 15902
   set_init_ping: false            # default: true
   set_session_ssh: false          # default: true
-  set_devconf_debug_level: 5      # default: 0
+  #set_devconf_debug_level: 5      # default: 0
+
+h1:
+  ip: dev1
+  user: bsn
+  password: bsn
+  #set_devconf_debug_level: 5      # default: 0
 
 #s1:
 #  ip: 10.195.0.31

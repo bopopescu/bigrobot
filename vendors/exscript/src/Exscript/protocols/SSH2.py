@@ -318,18 +318,19 @@ class SSH2(Protocol):
             # Check whether what's buffered matches the prompt.
             driver        = self.get_driver()
             search_window = self.buffer.tail(search_window_size)
-            #print("***** VUI search_window: %s <<<<<" % search_window)
+            #print("**** VUI search_window: %s <<<<<" % search_window)
             search_window, incomplete_tail = driver.clean_response_for_re_match(search_window)
             match         = None
             for n, regex in enumerate(prompt):
-                #print("***** VUI n:%s regex:%s <<<<<" % (n, regex))
+                #self._dbg(3, "**** VUI n:%s regex:%s <<<<<" % (n, regex))
 
                 match = regex.search(search_window)
                 if match is not None:
-                    #`print("**** VUI Found a match! (matched: ^^^^^^%s^^^^^^)" % search_window)
+                    #self._dbg(3, "\n**** VUI Found a match! (matched: ^^^^^^%s^^^^^^)" % search_window)
                     break
 
             if not match:
+                #self._dbg(3, "\n**** VUI No match! (buffer: ^^^^^^%s^^^^^^)" % self.buffer.__str__())
                 if not self._fill_buffer():
                     error = 'EOF while waiting for response from device'
                     raise ProtocolException(error)
@@ -338,8 +339,10 @@ class SSH2(Protocol):
             end = self.buffer.size() - len(search_window) + match.end()
             if flush:
                 self.response = self.buffer.pop(end)
+                #self._dbg(3, "\n**** VUI self.response (flush): %s" % self.response)
             else:
                 self.response = self.buffer.head(end)
+                self._dbg(3, "\n**** VUI self.response: %s" % self.response)
             return n, match
 
         # Ending up here, self.cancel_expect() was called.

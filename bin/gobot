@@ -86,6 +86,7 @@ if helpers.bigrobot_suite():
     helpers.bigrobot_topology(default=''.join((helpers.bigrobot_suite(),
                                                '.topo')))
 helpers.bigrobot_suite_format(default='txt')
+helpers.bigrobot_exec_hint_format()
 helpers.bigrobot_debug(default=1)
 
 # !!! FIXME: We're doing away with Pandoc support (required by .mw format)
@@ -97,7 +98,7 @@ helpers.bigtest_path()
 helpers.python_path()
 
 ROBOT_FRAMEWORK_OPTS = (
-    '--loglevel=debug --debugfile=debug.log --exclude=skipped --outputdir=%s'
+    '--loglevel=trace --debugfile=debug.log --exclude=skipped --outputdir=%s'
         % helpers.bigrobot_log_path_exec_instance()
     )
     # Exclude test cases tagged as 'skipped' from execution
@@ -129,13 +130,14 @@ def usage():
         break
 
     # List of test suites, with file extension removed
-    #suite_list = [f[:-3] for f in file_list if f.endswith(ext)]
     suite_list = [os.path.splitext(f)[0] for f in file_list if f.endswith(ext)]
 
     print("  Point environment variable BIGROBOT_SUITE to a test suite."
           " Select one below:")
     for _ in suite_list:
-        print("    export BIGROBOT_SUITE=%s" % _)
+        #print("    export BIGROBOT_SUITE=%s" % _)
+        #print(repr(helpers.bigrobot_exec_hint_format()) % _)
+        print("    " + helpers.bigrobot_exec_hint_format() % _)
     
     if not suite_list:
         print("    export BIGROBOT_SUITE=<testsuite_name>")
@@ -253,7 +255,13 @@ def version_hidden_command():
     """
     Show the version of BigRobot.
     """
-    print "BigRobot version %s" % helpers.get_version()
+    import robot
+    robot_framework_version = robot.version.VERSION
+    import Exscript
+    exscript_version = Exscript.version.__version__
+    print "BigRobot version        %s" % helpers.get_version()
+    print "Robot Framework version %s" % robot_framework_version
+    print "Exscript version        %s" % exscript_version
     
     
 def suite_command():

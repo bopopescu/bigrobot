@@ -1,4 +1,4 @@
-''' 
+'''
 ###  WARNING !!!!!!!
 ###  This is where common code for SwitchLight will go in.
 ###  
@@ -28,7 +28,7 @@ class SwitchLight(object):
 # All Common Switch Show Commands Go Here:
 #######################################################################
 
-    def cli_show_interface_macaddress(self,node,intf_name):
+    def cli_show_interface_macaddress(self, node, intf_name):
         '''
             Objective:
             - Return the MAC/Hardware address of a given interface on a switch
@@ -42,22 +42,21 @@ class SwitchLight(object):
         '''
         try:
             t = test.Test()
-            s1  = t.switch(node)
+            s1 = t.switch(node)
             input1 = "show interface " + str(intf_name) + " detail"
             s1.enable(input1)
             content = string.split(s1.cli_content(), '\n')
-            (firstvalue,colon,lastvalue) = content[2].strip().partition(':')
-            helpers.log("Values after split are %s \n %s \n %s \n" %(firstvalue,colon,lastvalue))
-            lastvalue=str(lastvalue).rstrip('\n').replace(" ", "")
+            (firstvalue, colon, lastvalue) = content[2].strip().partition(':')
+            helpers.log("Values are %s \n %s \n %s \n" %(firstvalue, colon, lastvalue))
+            lastvalue = str(lastvalue).rstrip('\n').replace(" ", "")
             mac_address = lastvalue.rstrip('\n')
-            helpers.log("Value in content[1] is %s \n and mac address is %s" %(content[1],mac_address))
+            helpers.log("Value in content[1] is %s \n and mac address is %s" %(content[1], mac_address))
             return mac_address
         except:
             helpers.test_failure("Could not execute command. Please check log for errors")
             return False
 
-
-    def cli_show_interface_state(self,node,intf_name):
+    def cli_show_interface_state(self, node, intf_name):
         '''
             Objective:
             - Return the Interface State of a given interface on a switch
@@ -71,22 +70,21 @@ class SwitchLight(object):
         '''
         try:
             t = test.Test()
-            s1  = t.switch(node)
+            s1 = t.switch(node)
             cli_input = "show interface " + str(intf_name) + " detail"
             s1.enable(cli_input)
             content = string.split(s1.cli_content(), '\n')
             helpers.log("Value in content[1] is '%s' " %(content[1]))
-            (firstvalue,colon,lastvalue) = content[1].rstrip('\n').strip().split(' ')
-            helpers.log("Values after split are %s \n %s \n %s \n" %(firstvalue,colon,lastvalue))
+            (firstvalue, colon, lastvalue) = content[1].rstrip('\n').strip().split(' ')
+            helpers.log("Values after split are %s \n %s \n %s \n" %(firstvalue, colon, lastvalue))
             intf_state = lastvalue.rstrip('\n')
-            helpers.log("Value in content[1] is %s \n and intf_state is %s" %(content[1],intf_state))
+            helpers.log("Value in content[1] is %s \n and intf_state is %s" %(content[1], intf_state))
             return intf_state
         except:
             helpers.test_failure("Could not execute command. Please check log for errors")
             return False
-
     
-    def cli_show_interfaces(self,node):
+    def cli_show_interfaces(self, node):
         '''
             Objective:
             - Verify all 52 interfaces are seen in switch
@@ -100,27 +98,27 @@ class SwitchLight(object):
         '''
         try:
             t = test.Test()
-            s1  = t.switch(node)
-            count=1
+            s1 = t.switch(node)
+            count = 1
             intf_pass_count = 0
-            while count < 53 :
-                intf_name="ethernet"+str(count)
-                cli_input="show interface ethernet"+ str(count) + " detail"
+            while count < 53:
+                intf_name = "ethernet" + str(count)
+                cli_input = "show interface ethernet" + str(count) + " detail"
                 s1.enable(cli_input)
                 cli_output = s1.cli_content()
-                if intf_name in cli_output :
-                    intf_pass_count=intf_pass_count+1
-                helpers.log("Interface %s \n Output is %s \n ======\n" %(intf_name,cli_output))
-                count=count+1
+                if intf_name in cli_output:
+                    intf_pass_count = intf_pass_count + 1
+                helpers.log("Interface %s \n Output is %s \n ======\n" %(intf_name, cli_output))
+                count = count + 1
             if intf_pass_count == 52:
-                    return True
+                return True
             else:
-                    return False
+                return False
         except:
             helpers.test_failure("Could not execute command. Please check log for errors")
             return False
 
-    def cli_show_ip_address(self,console_ip,console_port):
+    def cli_show_ip_address(self, console_ip, console_port):
         '''
         
             Objective:
@@ -137,7 +135,7 @@ class SwitchLight(object):
         try:
             user = "admin"
             password = "adminadmin"
-            tn = telnetlib.Telnet(str(console_ip),int(console_port))
+            tn = telnetlib.Telnet(str(console_ip), int(console_port))
             tn.read_until("login: ", 3)
             tn.write(user + "\r\n")
             tn.read_until("Password: ", 3)
@@ -150,35 +148,35 @@ class SwitchLight(object):
                 if "IPv4 Address" in item:
                     output_1 = string.split(item, ': ')
                     output_2 = string.split(output_1[1], '/')
-                    ip_address_subnet={'ip-address':str(output_2[0]), 'subnet':str(output_2[1].rstrip('\r'))}           
+                    ip_address_subnet = {'ip-address':str(output_2[0]), 'subnet':str(output_2[1].rstrip('\r'))}           
             tn.write("exit \r\n")
             tn.write("exit \r\n")
             tn.close()
-            return (ip_address_subnet)
+            return ip_address_subnet
         except:
             helpers.test_failure("Could not execute command. Please check log for errors")
             return False
 
-    def ping_from_local(self,ip_address):
+    def ping_from_local(self, ip_address):
         '''
             Objective:
             - Execute ping command from local machine for a particular switch IP
-        
+
             Input:
             | ip_address | IP Address of switch |
-            
-            Return Value:  
+
+            Return Value:
             - Output of Ping
         '''
         try:
-            url="/sbin/ping -c 3 %s" % (ip_address)
+            url = "/sbin/ping -c 3 %s" % (ip_address)
             returnVal = subprocess.Popen([url], stdout=subprocess.PIPE, shell=True)
             (out, err) = returnVal.communicate()
             helpers.log("URL: %s Output: %s" % (url, out))
             if "Request timeout" in out:
                 return False
             else:
-                helpers.test_failure("Error was:%s" % (err) )
+                helpers.test_failure("Error was:%s" % (err))
                 return True
         except:
             helpers.test_failure("Could not execute ping. Please check log for errors")
@@ -188,24 +186,24 @@ class SwitchLight(object):
 # All Common Controller Verification Commands Go Here:
 #######################################################################
 
-    def cli_verify_controller(self,node,controller_ip,controller_role):
+    def cli_verify_controller(self, node, controller_ip, controller_role):
         '''
             Objective:
             - Configure controller IP address on switch
-        
+
             Input:
             | node | Reference to switch (as defined in .topo file) |
             | controller_ip | IP Address of Controller |
             | controller_role | Role of controller (Active/Backup) |
-            
+
             Return Value:
             - True on verification success
             - False on verification failure
-        '''
+    '''
         try:
             t = test.Test()
-            s1  = t.switch(node)     
-            
+            s1 = t.switch(node)     
+
             cli_input = "show running-config openflow"
             s1.enable(cli_input)
             cli_output = s1.cli_content()
@@ -217,17 +215,17 @@ class SwitchLight(object):
             cli_output_2 = s1.cli_content()
             show_output = cli_output_2
             helpers.log("Show Controllers O/P: \n %s" % (cli_input_2)) 
-                 
-            pass_count=0
+
+            pass_count = 0
             if str(controller_ip) in run_config:
-                pass_count=pass_count+1
-            input3=str(controller_ip) +":6653"
+                pass_count = pass_count + 1
+            input3 = str(controller_ip) + ":6653"
             if input3 in show_output:
-                pass_count=pass_count+1
+                pass_count = pass_count + 1
             if "CONNECTED" in show_output:
-                pass_count=pass_count+1
+                pass_count = pass_count + 1
             if controller_role in show_output:
-                pass_count=pass_count+1
+                pass_count = pass_count + 1
             if pass_count == 4:
                 return True
             else:
@@ -236,11 +234,11 @@ class SwitchLight(object):
             helpers.test_failure("Could not execute command. Please check log for errors")
             return False 
 
-    def cli_verify_ip_dns(self,node,subnet,gateway,dns_server,dns_domain):
+    def cli_verify_ip_dns(self, node, subnet, gateway, dns_server, dns_domain):
         '''
             Objective:
             - Verify Switch Correctly reports configured IP Address and DNS
-        
+
             Input: 
             | node | Reference to switch (as defined in .topo file) |
             | subnet | Switch subnet in /18 /24 format | 
@@ -251,37 +249,37 @@ class SwitchLight(object):
             Return Value:
             - True on verification success
             - False on verification failure
-        '''
+    '''
         try:
             t = test.Test()
-            s1  = t.switch(node)     
-            
+            s1 = t.switch(node)     
+
             s1.enable('show running-config interface')
             run_config = s1.cli_content()
             helpers.log("Running Config O/P: \n %s" % (run_config))
-            pass_count=0
+            pass_count = 0
             input1 = "interface ma1 ip-address " + str(s1.ip) + "/" + str(subnet)
             if input1 in run_config:
-                pass_count=pass_count+1
-            input2 = "ip default-gateway "+str(gateway)
+                pass_count = pass_count + 1
+            input2 = "ip default-gateway " + str(gateway)
             if input2 in run_config:
-                pass_count=pass_count+1        
-            input3 = "dns-domain "+str(dns_domain)
+                pass_count = pass_count + 1
+            input3 = "dns-domain " + str(dns_domain)
             if input3 in run_config:
-                pass_count=pass_count+1             
-            input4 = "dns-server "+str(dns_server)
+                pass_count = pass_count + 1
+            input4 = "dns-server " + str(dns_server)
             if input4 in run_config:
-                pass_count=pass_count+1
+                pass_count = pass_count + 1
             s1.enable('show interface ma1 detail')
             show_command = s1.cli_content()
             helpers.log("Show Command O/P: \n %s" % (show_command))
             if "ma1 is up" in show_command:
-                pass_count=pass_count+1
+                pass_count = pass_count + 1
             input5 = str(s1.ip) + "/"  + str(subnet)
             if input5 in show_command:
-                pass_count=pass_count+1
+                pass_count = pass_count + 1
             if "MTU 1500 bytes, Speed 1000 Mbps" in show_command:
-                pass_count=pass_count+1
+                pass_count = pass_count + 1
             if pass_count == 7:
                 return True
             else:
@@ -290,11 +288,11 @@ class SwitchLight(object):
             helpers.test_failure("Could not execute command. Please check log for errors")
             return False
 
-    def cli_verify_dhcp_ip_dns(self,node,subnet,dns_server,dns_domain):
+    def cli_verify_dhcp_ip_dns(self, node, subnet, dns_server, dns_domain):
         '''
             Objective:
             - Verify Switch Correctly reports configured IP Address and DNS when IP address is obtained via DHCP
-        
+
             Input: 
             | node | Reference to switch (as defined in .topo file) |
             | subnet | Switch subnet in /18 /24 format | 
@@ -305,24 +303,24 @@ class SwitchLight(object):
             Return Value:
             - True on verification success
             - False on verification failure
-        '''
+    '''
         try:
             t = test.Test()
-            s1  = t.switch(node)     
-            
+            s1 = t.switch(node)
+
             s1.enable('show running-config interface')
             run_config = s1.cli_content()
             helpers.log("Running Config O/P: \n %s" % (run_config))
-            pass_count=0
+            pass_count = 0
             input1 = "interface ma1 ip-address dhcp"
             if input1 in run_config:
-                pass_count=pass_count+1
-            input2 = "dns-domain "+str(dns_domain)
+                pass_count = pass_count + 1
+            input2 = "dns-domain " + str(dns_domain)
             if input2 in run_config:
-                pass_count=pass_count+1             
-            input3 = "dns-server "+str(dns_server)
+                pass_count = pass_count + 1
+            input3 = "dns-server " + str(dns_server)
             if input3 in run_config:
-                pass_count=pass_count+1   
+                pass_count = pass_count+1
             s1.enable('show interface ma1 detail')
             show_command = s1.cli_content()
             #output_1 = string.split(show_command, '\n')
@@ -332,12 +330,12 @@ class SwitchLight(object):
             #switch_mask = output_3[1]
             helpers.log("Show Command O/P: \n %s" % (show_command))
             if "ma1 is up" in show_command:
-                pass_count=pass_count+1
-            input4 = str(s1.ip) + "/"  + str(subnet)
+                pass_count = pass_count + 1
+            input4 = str(s1.ip) + "/" + str(subnet)
             if input4 in show_command:
-                pass_count=pass_count+1
+                pass_count = pass_count + 1
             if "MTU 1500 bytes, Speed 1000 Mbps" in show_command:
-                pass_count=pass_count+1
+                pass_count = pass_count + 1
             if pass_count == 6:
                 return True
             else:
@@ -348,7 +346,7 @@ class SwitchLight(object):
 #######################################################################
 # All Common Controller Configuration Commands Go Here:
 #######################################################################
-    def cli_enable_disable_controller(self,node,iteration):
+    def cli_enable_disable_controller(self, node, iteration):
         '''
             Objective:
             - Activate and deactivate controller configuration on switch
@@ -364,9 +362,9 @@ class SwitchLight(object):
         try:
             t = test.Test()
             c = t.controller('master')
-            s1  = t.switch(node)  
+            s1 = t.switch(node)
             mycount = 1
-            while (mycount<=iteration):
+            while mycount <= iteration:
                 cli_input = "no controller " + str(c.ip)
                 s1.config(cli_input)
                 s1.enable('show running-config openflow')
@@ -376,8 +374,8 @@ class SwitchLight(object):
                 s1.config(cli_input_1)
                 s1.enable('show running-config openflow')
                 helpers.log("Output of show running-config openflow after re-enabling controller %s" %(s1.cli_content()))
-                if iteration > mycount :
-                    mycount=mycount+1
+                if iteration > mycount:
+                    mycount = mycount + 1
                     helpers.sleep(10)
                 elif mycount == iteration :
                     helpers.log('Exiting from loop')
@@ -386,12 +384,11 @@ class SwitchLight(object):
             helpers.test_failure("Could not execute command. Please check log for errors")
             return False
 
-
-    def cli_disable_interface(self,node,interface_name):
+    def cli_disable_interface(self, node, interface_name):
         ''' 
             Objective:
             - Disable interface via CLI
-        
+
             Input:
             | node | Reference to switch (as defined in .topo file) |
             | interface_name | Interface Name |
@@ -402,7 +399,7 @@ class SwitchLight(object):
         '''
         try:
             t = test.Test()
-            s1  = t.switch(node)
+            s1 = t.switch(node)
             cli_input_1 = "interface " + str(interface_name) + " shutdown"
             s1.config(cli_input_1)
             return True
@@ -410,7 +407,7 @@ class SwitchLight(object):
             helpers.test_failure("Could not execute command. Please check log for errors")
             return False
         
-    def cli_enable_interface(self,node,interface_name):
+    def cli_enable_interface(self, node, interface_name):
         ''' 
             Objective:
             - Enable interface via CLI
@@ -433,7 +430,7 @@ class SwitchLight(object):
             helpers.test_failure("Could not execute command. Please check log for errors")
             return False
 
-    def bash_disable_interface_bshell(self,node,interface_num):
+    def bash_disable_interface_bshell(self, node, interface_num):
         '''  
             Objective:
             - Disable interface via bshell. This can be used only if it is an internal image.
@@ -448,7 +445,7 @@ class SwitchLight(object):
         '''
         try:
             t = test.Test()
-            s1  = t.switch(node)  
+            s1 = t.switch(node)  
             bash_input = 'ofad-ctl bshell port ' + str(interface_num) + ' enable=0'
             s1.bash(bash_input)
             return True
@@ -456,11 +453,11 @@ class SwitchLight(object):
             helpers.test_failure("Could not execute command. Please check log for errors")
             return False
 
-    def bash_enable_interface_bshell(self,node,interface_num):
+    def bash_enable_interface_bshell(self, node, interface_num):
         '''  
             Objective:
             - Enable interface via bshell. This can be used only if it is an internal image.
-        
+
             Input:
             | node | Reference to switch (as defined in .topo file) |
             | interface_name | Interface Name |
@@ -471,7 +468,7 @@ class SwitchLight(object):
         '''
         try:
             t = test.Test()
-            s1  = t.switch(node)  
+            s1 = t.switch(node)
             bash_input = 'ofad-ctl bshell port ' + str(interface_num) + ' enable=1'
             s1.bash(bash_input)
             return True
@@ -479,7 +476,7 @@ class SwitchLight(object):
             helpers.test_failure("Could not execute command. Please check log for errors")
             return False
 
-    def cli_add_interface_ma1(self,console_ip,console_port):
+    def cli_add_interface_ma1(self, console_ip, console_port):
         '''
             Objective: 
             - Flap interface ma1 on switch
@@ -495,7 +492,7 @@ class SwitchLight(object):
         try:
             user = "admin"
             password = "adminadmin"
-            tn = telnetlib.Telnet(str(console_ip),int(console_port))
+            tn = telnetlib.Telnet(str(console_ip), int(console_port))
             tn.read_until("login: ", 3)
             tn.write(user + "\r\n")
             tn.read_until("Password: ", 3)
@@ -516,44 +513,44 @@ class SwitchLight(object):
             return False
 
     #Alias
-    def cli_update_interface_ma1(self,console_ip,console_port):
-        return self.cli_add_interface_ma1(self,console_ip,console_port)
+    def cli_update_interface_ma1(self, console_ip, console_port):
+        return self.cli_add_interface_ma1(console_ip, console_port)
 
-    def cli_execute_command(self,node,cli_input):
+    def cli_execute_command(self, node, cli_input):
         '''
             Objective:
             - Execute a generic command on the switch and return ouput.
-        
+
             Input:
             | node | Reference to switch (as defined in .topo file) |
             | input  | Command to be executed on switch |
                 
             Return Value: 
             - Output from command execution
-            
+
             Example:
             
             |${syslog_op}=  |  execute switch command return output | 10.192.75.7  |  debug ofad 'help; cat /var/log/syslog | grep \"Disabling port port-channel1\"' |
-                    
+
         '''
         try:
             t = test.Test()
-            s1  = t.switch(node)
+            s1 = t.switch(node)
             helpers.sleep(float(1))
             s1.enable(cli_input)
             helpers.sleep(float(1))
             cli_output = s1.cli_content()
-            helpers.log("Input is '%s' \n Output is %s" %(cli_input,cli_output))
+            helpers.log("Input is '%s' \n Output is %s" %(cli_input, cli_output))
             return cli_output
         except:
             helpers.test_failure("Could not execute command. Please check log for errors")
             return False
 
-    def cli_add_controller(self,node,controller_ip):
+    def cli_add_controller(self, node, controller_ip):
         '''
             Objective:
             - Configure controller IP address on switch
-        
+
             Input:
             | node | Reference to switch (as defined in .topo file) |
 
@@ -565,17 +562,16 @@ class SwitchLight(object):
 
         try:
             t = test.Test()
-            s1  = t.switch(node)
-            cli_input="controller "+ s1.ip()
-            s1.config(cli_input)            
+            s1 = t.switch(node)
+            cli_input = "controller " + s1.ip()
+            s1.config(cli_input)
             helpers.sleep(float(30))
             return True
         except:
             helpers.test_failure("Configuration of controller failed")
-            return False  
+            return False
 
-
-    def cli_delete_controller(self,node,controller_ip):
+    def cli_delete_controller(self, node, controller_ip):
         '''
             Objective:
             - Delete controller IP address on switch
@@ -591,26 +587,25 @@ class SwitchLight(object):
 
         try:
             t = test.Test()
-            s1  = t.switch(node)
-            cli_input="no controller "+ s1.ip()
-            s1.config(cli_input)            
+            s1 = t.switch(node)
+            cli_input="no controller " + s1.ip()
+            s1.config(cli_input)
             helpers.sleep(float(30))
             return True
         except:
             helpers.test_failure("Configuration delete failed")
             return False
-    def cli_add_static_ip(self,console_ip,console_port,ip_address,subnet,gateway):
+    def cli_add_static_ip(self, console_ip, console_port, ip_address, subnet,gateway):
         '''
         Objective:
          - Configure static IP address configuration on switch.
-        
+
         Inputs:
         | console_ip | IP Address of Console Server |    
         | console_port | Console Port Number | 
         | ip_address | IP Address of Switch |
         | subnet | Switch subnet in /18 /24 format | 
         | gateway | IP address of default gateway | 
-
 
         Return Value:
         - True on configuration success
@@ -620,7 +615,7 @@ class SwitchLight(object):
         try:
             user = "admin"
             password = "adminadmin"
-            tn = telnetlib.Telnet(str(console_ip),int(console_port))
+            tn = telnetlib.Telnet(str(console_ip), int(console_port))
             tn.read_until("login: ", 3)
             tn.write(user + "\r\n")
             tn.read_until("Password: ", 3)
@@ -628,8 +623,8 @@ class SwitchLight(object):
             tn.read_until('')
             tn.write("\r\n" + "enable \r\n")
             tn.write("conf t \r\n")
-            tn.write("\r\n" + "interface ma1 ip-address " + str(ip_address)+ "/" + str(subnet)+ " \r\n")
-            tn.write("\r\n" + "ip default-gateway " + str(gateway)+  " \r\n")
+            tn.write("\r\n" + "interface ma1 ip-address " + str(ip_address) + "/" + str(subnet) + " \r\n")
+            tn.write("\r\n" + "ip default-gateway " + str(gateway) +  " \r\n")
             tn.write("exit" + "\r\n")
             tn.write("exit" + "\r\n")
             tn.close()
@@ -638,7 +633,7 @@ class SwitchLight(object):
             helpers.test_failure("Could not execute command. Please check log for errors")
             return False
         
-    def cli_delete_static_ip(self,console_ip,console_port,ip_address,subnet,gateway):
+    def cli_delete_static_ip(self, console_ip, console_port, ip_address, subnet,gateway):
         '''
         Objective:
         - Delete static IP address configuration on switch.
@@ -658,7 +653,7 @@ class SwitchLight(object):
         try:
             user = "admin"
             password = "adminadmin"
-            tn = telnetlib.Telnet(str(console_ip),int(console_port))
+            tn = telnetlib.Telnet(str(console_ip), int(console_port))
             tn.read_until("login: ", 3)
             tn.write(user + "\r\n")
             tn.read_until("Password: ", 3)
@@ -666,8 +661,8 @@ class SwitchLight(object):
             tn.read_until('')
             tn.write("\r\n" + "enable \r\n")
             tn.write("\r\n" + "conf t \r\n")
-            tn.write("\r\n" + "no interface ma1 ip-address " + str(ip_address)+ "/" + str(subnet)+ " \r\n")
-            tn.write("\r\n" + "no ip default-gateway " + str(gateway)+  " \r\n")
+            tn.write("\r\n" + "no interface ma1 ip-address " + str(ip_address) + "/" + str(subnet) + " \r\n")
+            tn.write("\r\n" + "no ip default-gateway " + str(gateway) +  " \r\n")
             tn.write("exit" + "\r\n")
             tn.write("exit" + "\r\n")
             tn.close()
@@ -676,7 +671,7 @@ class SwitchLight(object):
             helpers.test_failure("Could not execute command. Please check log for errors")
             return False
 
-    def cli_add_dhcp_ip(self,console_ip,console_port):
+    def cli_add_dhcp_ip(self, console_ip, console_port):
         '''
         Objective:
         - Configure static IP address configuration on switch.
@@ -695,7 +690,7 @@ class SwitchLight(object):
         try:
             user = "admin"
             password = "adminadmin"
-            tn = telnetlib.Telnet(str(console_ip),int(console_port))
+            tn = telnetlib.Telnet(str(console_ip), int(console_port))
             tn.read_until("login: ", 3)
             tn.write(user + "\r\n")
             tn.read_until("Password: ", 3)
@@ -714,7 +709,7 @@ class SwitchLight(object):
             helpers.test_failure("Could not execute command. Please check log for errors")
             return False
 
-    def cli_delete_dhcp_ip(self,console_ip,console_port,ip_address, subnet, gateway):
+    def cli_delete_dhcp_ip(self, console_ip, console_port, ip_address, subnet, gateway):
         '''
         Objective:
          - Delete DHCP IP address configuration on switch.
@@ -750,7 +745,7 @@ class SwitchLight(object):
             helpers.test_failure("Could not configure static IP address configuration on switch. Please check log for errors")
             return False
 
-    def cli_add_dns_server_domain(self,console_ip,console_port,dns_server,dns_domain):
+    def cli_add_dns_server_domain(self, console_ip, console_port, dns_server, dns_domain):
         '''
         Objective:
         - Add DNS Server and Domain configuration on switch.
@@ -769,14 +764,14 @@ class SwitchLight(object):
         try:
             user = "admin"
             password = "adminadmin"
-            tn = telnetlib.Telnet(str(console_ip),int(console_port))
+            tn = telnetlib.Telnet(str(console_ip), int(console_port))
             tn.read_until("login: ", 3)
             tn.write(user + "\r\n")
             tn.read_until("Password: ", 3)
             tn.write(password + "\r\n")
             tn.read_until('')
-            tn.write("\r\n" + "dns-domain " + str(dns_domain)+ " \r\n")
-            tn.write("\r\n" + "dns-server " + str(dns_server)+  " \r\n")
+            tn.write("\r\n" + "dns-domain " + str(dns_domain) + " \r\n")
+            tn.write("\r\n" + "dns-server " + str(dns_server) + " \r\n")
             tn.write("exit" + "\r\n")
             tn.write("exit" + "\r\n")
             tn.close()
@@ -785,7 +780,7 @@ class SwitchLight(object):
             helpers.test_failure("Could not configure static IP address configuration on switch. Please check log for errors")
             return False
         
-    def cli_delete_dns_server_domain(self,console_ip,console_port,dns_server,dns_domain):
+    def cli_delete_dns_server_domain(self, console_ip, console_port, dns_server, dns_domain):
         '''
         Objective:
         - Delete DNS configuration on switch.
@@ -824,7 +819,7 @@ class SwitchLight(object):
 # All Common Switch Platform/Feature Related Commands Go Here:
 #######################################################################
 
-    def bash_restart_process(self,node,processName):
+    def bash_restart_process(self, node, processName):
         '''
         Objective:
         -Restart a process on switch
@@ -853,7 +848,7 @@ class SwitchLight(object):
 ############################################################################
 ############# SNMP SHOW ##############################
 
-    def cli_show_snmp(self,node):
+    def cli_show_snmp(self, node):
         '''
         Objective:
         - Execute CLI command "show snmp-server".
@@ -878,7 +873,7 @@ class SwitchLight(object):
 #   Objective: Execute snmpgetnext from local machine for a particular SNMP OID
 #   Input: SNMP Community and OID 
 #   Return Value:  return the SNMP Walk O/P
-    def snmp_cmd(self,node,snmp_cmd,snmpCommunity,snmpOID):
+    def snmp_cmd(self, node, snmp_cmd, snmpCommunity, snmpOID):
         '''
             Objective:
             - Execute snmp command which do not require options from local machine for a particular SNMP OID
@@ -904,7 +899,7 @@ class SwitchLight(object):
             helpers.test_failure("Could not execute command. Please check log for errors")
             return False
         
-    def snmp_cmd_opt(self,ip_address,snmp_cmd,snmpOpt, snmpCommunity,snmpOID):
+    def snmp_cmd_opt(self, ip_address, snmp_cmd, snmpOpt, snmpCommunity, snmpOID):
         '''
             Objective:
             - Execute snmp command which  require options from local machine for a particular SNMP OID
@@ -930,7 +925,7 @@ class SwitchLight(object):
         
 ############# SNMP CONFIGURATION ##############################
 
-    def cli_add_snmp_keyword(self,node,snmpKey,snmpValue):
+    def cli_add_snmp_keyword(self, node, snmpKey, snmpValue):
         ''' 
             Objective:
             - Configure SNMP Key/Value
@@ -955,7 +950,7 @@ class SwitchLight(object):
             return False
 
 
-    def cli_delete_snmp_keyword(self,node,snmpKey,snmpValue):
+    def cli_delete_snmp_keyword(self, node, snmpKey, snmpValue):
         ''' 
             Objective:
             - Delete a SNMP Key/Value
@@ -979,7 +974,7 @@ class SwitchLight(object):
             helpers.test_failure("Could not execute command. Please check log for errors")
             return False
     
-    def cli_add_snmp_host(self,node,remHostIP,snmpKey,snmpCommunity,snmpPort):
+    def cli_add_snmp_host(self, node, remHostIP, snmpKey, snmpCommunity, snmpPort):
         ''' 
             Objective:
             - Configure Remote SNMP Host
@@ -1010,7 +1005,7 @@ class SwitchLight(object):
             helpers.test_failure("Could not execute command. Please check log for errors")
             return False
 
-    def cli_delete_snmp_host(self,node,remHostIP,snmpKey,snmpCommunity,snmpPort):
+    def cli_delete_snmp_host(self, node, remHostIP, snmpKey, snmpCommunity, snmpPort):
         ''' 
             Objective:
             - Delete Remote SNMP Host
@@ -1040,7 +1035,7 @@ class SwitchLight(object):
             helpers.test_failure("Could not execute command. Please check log for errors")
             return False
 
-    def cli_enable_snmp(self,node):
+    def cli_enable_snmp(self, node):
         ''' 
             Objective:
             - Enable SNMP Server.
@@ -1061,7 +1056,7 @@ class SwitchLight(object):
             helpers.test_failure("Could not execute command. Please check log for errors")
             return False
 
-    def cli_disable_switch_snmp(self,node):
+    def cli_disable_switch_snmp(self, node):
         ''' 
             Objective:
             - Disable SNMP Server.
@@ -1088,7 +1083,7 @@ class SwitchLight(object):
 
 ############# PORT-CHANNEL SHOW COMMANDS##############################
 
-    def cli_verify_portchannel(self,node,pcNumber):
+    def cli_verify_portchannel(self, node, pcNumber):
         '''
             Objective:
             - Verify portchannel shows as up
@@ -1119,7 +1114,7 @@ class SwitchLight(object):
             helpers.test_failure("Could not execute command. Please check log for errors")
             return False
     
-    def cli_verify_portchannel_members(self,node,pc_number,intf_name):
+    def cli_verify_portchannel_members(self, node, pc_number, intf_name):
         '''
             
             Objective:
@@ -1155,7 +1150,7 @@ class SwitchLight(object):
             helpers.test_failure("Could not execute command. Please check log for errors")
             return False
 
-    def cli_verify_portchannel_member_state(self,node,pc_number,intf_name):
+    def cli_verify_portchannel_member_state(self, node, pc_number, intf_name):
         '''
             Objective:
             - Verify if portchannel member interface is up
@@ -1197,7 +1192,7 @@ class SwitchLight(object):
 
 ############# PORT-CHANNEL CONFIGURATION COMMANDS##############################
 
-    def cli_add_portchannel(self,node,pcNumber,portList,hashMode):
+    def cli_add_portchannel(self, node, pcNumber, portList, hashMode):
         '''
             Objective:
             - Configure port-channel
@@ -1231,7 +1226,7 @@ class SwitchLight(object):
             helpers.test_failure("Could not execute command. Please check log for errors")
             return False
 
-    def cli_delete_portchannel(self,node,pcNumber):
+    def cli_delete_portchannel(self, node, pcNumber):
         '''
             Objective:
             - Unconfigure port-channel

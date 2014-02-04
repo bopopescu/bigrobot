@@ -179,7 +179,7 @@ class T5Platform(object):
             return True
 
 
-    def rest_cluster_election_take_leader(self):
+    def rest_verify_cluster_election_take_leader(self):
         ''' Invoke "cluster election take-leader" command and verify the controller state
         '''
         obj = common()
@@ -188,7 +188,7 @@ class T5Platform(object):
         sleep(30)
         common.fabric_integrity_checker(obj, "after")
 
-    def rest_cluster_election_rerun(self):
+    def rest_verify_cluster_election_rerun(self):
         ''' Invoke "cluster election re-run" command and verify the controller state
         '''
         obj = common()
@@ -289,25 +289,25 @@ class T5Platform(object):
                 return False
 
 
-    def cli_cluster_master_reboot(self):
+    def cli_verify_cluster_master_reboot(self):
         obj = common()
         common.fabric_integrity_checker(obj,"before")
         self.cluster_node_reboot()
         common.fabric_integrity_checker(obj,"after")
 
-    def cli_cluster_slave_reboot(self):
+    def cli_verify_cluster_slave_reboot(self):
         obj = common()
         common.fabric_integrity_checker(obj,"before")
         self.cluster_node_reboot(False)
         common.fabric_integrity_checker(obj,"after")
 
-    def cli_cluster_master_shutdown(self):
+    def cli_verify_cluster_master_shutdown(self):
         obj = common()
         common.fabric_integrity_checker(obj,"before")
         self.cluster_node_shutdown()
         common.fabric_integrity_checker(obj,"after")
 
-    def cli_cluster_slave_shutdown(self):
+    def cli_verify_cluster_slave_shutdown(self):
         obj = common()
         common.fabric_integrity_checker(obj,"before")
         self.cluster_node_shutdown(False)

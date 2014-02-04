@@ -135,6 +135,7 @@ root@nova-controller:~#
         return { "abc": 123, "xyz": True}
     
     def process_a_dictionary(self, input_dict):
-        helpers.log("input_dict: %s" % input_dict)
+        helpers.warn("input_dict: %s" % input_dict)
         helpers.log("abc: %s" % input_dict['abc'])
-        helpers.log("xyz: %s" % input_dict['xyz'])
+        helpers.debug("xyz: %s" % input_dict['xyz'])
+        helpers.trace("This is a trace log")
