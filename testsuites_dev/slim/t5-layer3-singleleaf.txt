@@ -119,7 +119,6 @@ L3 untagged bm0 ping to untagged bm1 same tenant across VNS with static configur
 	Should Be True  							${endpoints_cnt} == 2
 
 
-
 L3 untagged bm0 ping to untagged bm1 same tenant across VNS with dynamic endpoints
 	[Tags]										smoke				
 	configure fabric switch 
@@ -169,6 +168,7 @@ L3 untagged bm0 ping to untagged bm1 same tenant across VNS dynamic host ARPing 
 	${endpoints_cnt}=							rest count endpoints mac
 	Should Be True  							${endpoints_cnt} == 2
 
+
 L3 untagged bm0 ping to untagged bm1 unreachable host on same tenant different VNS 
 	[Tags]										sanity				smoke			
 	configure fabric switch 
@@ -190,7 +190,7 @@ L3 untagged bm0 ping to untagged bm1 unreachable host on same tenant different V
 
     
 L3 untagged bm0 ping to untagged bm1 across tenants and VNS all statically defined
-   	[Tags]										sanity 				smoke				
+   	[Tags]										sanity 				smoke			
 	configure fabric switch 
 	sleep										5   	
 	REST create tenant  						${tenant1_name}        
@@ -256,11 +256,9 @@ L3 untagged bm0 ping to untagged bm1 across tenants and VNS all statically defin
 	REST delete tenant							${tenant_system}
 #	sleep 					30
 	
-	
-	
   
 L3 untagged bm0 ping to untagged bm1 with destination host interface move in the same tenant across VNS
-	[Tags]										sanity
+	[Tags]										sanity				
 	configure fabric switch 
 	sleep  5	
 	REST create tenant  						${tenant1_name}
@@ -300,6 +298,7 @@ L3 untagged bm0 ping to untagged bm1 with destination host interface move in the
 	Should Be True  							${endpoints_cnt} == 2
 	REST delete tenant 							${tenant1_name}        
 	sleep  										20  
+
  
 L3 ping untagged bm0 to tagged bm1 same tenant across VNS
 	[Tags]										sanity				
@@ -403,7 +402,7 @@ teardown topology
 	REST delete tenant							${tenant1_name}   
 	REST delete tenant							${tenant2_name}    
 	REST delete tenant							${tenant_system}
-	sleep 										10
+	sleep 										30
 		
 	
 	
