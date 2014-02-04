@@ -37,6 +37,7 @@ if __name__ == '__main__':
     prefix1 = '24'
     prefix2 = '24'
     vport_names = ['vport1_eclipse', 'vport2_eclipse']
+    frameCount = 70000
     
     # Connec to IXIA TCL Server Running on Windows
     ixNet = IxLib.IxConnect(ixClientIP,ixClientIxNetTclServPortNo,ixClientIxNetVer)
@@ -56,23 +57,27 @@ if __name__ == '__main__':
     # Create Topo:
     topology = IxLib.IxCreateTopo(ixNet, vports)
     print '### Topology Created: ', topology
+    # Create IP Devices:
+#     ips = IxLib.IxCreateDeviceIP(ixNet, macs, mac_mults, addrs, addrsteps, prefixs)
+     
     
     #Create Ether Device:
     mac_devices = IxLib.IxCreateDeviceEthernet(ixNet,topology, mac_mults =  mac_mults, macs = macs, mac_steps = mac_steps)
-    print '### Created Mac Devices with corrsponding Topos ...'
-    
+    print '### Created Mac Devices with corrsponding Topos ...'    
+     
     #Create Traffic Stream:
-    trafficStream = IxLib.IxSetupTrafficStreamsEthernet(ixNet, mac_devices[0], mac_devices[1], frameType, frameSize, frameRate, frameMode)
+    trafficStream = IxLib.IxSetupTrafficStreamsEthernet(ixNet, mac_devices[0], mac_devices[1], frameType, frameSize, frameRate, frameMode, frameCount)
     print 'Created Traffic Stream : ' , trafficStream
     print 'Starting Traffic...'
-    
+     
     portStatistics = IxLib.IxStartTrafficEthernet(ixNet,trafficStream)
-    
+     
     print 'Sleeping 45 secs..'    
     time.sleep(45)
     print "Press Enter to stop Traffic "
-    raw_input()
+     
+    traffic_results = IxLib.IxStopTraffic(ixNet,trafficStream,portStatistics)
+     
+    print "Port Stats : ", traffic_results
     
-    (port1_stats, port2_stats) = IxLib.IxStopTraffic(ixNet,trafficStream,portStatistics)
     
-    print "Port Stats : ", (port1_stats, port2_stats)
