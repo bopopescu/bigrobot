@@ -313,6 +313,30 @@ class T5Platform(object):
         self.cluster_node_shutdown(False)
         common.fabric_integrity_checker(obj,"after")
 
+    def rest_add_user(self, numUsers):
+        t = test.Test()
+        master = t.controller("master")
+        
+        url = "/api/v1/data/controller/core/aaa/local-user"
+        numErrors = 0
+        for i in range (0, int(numUsers)):
+            user = "user" + str(i+1)
+            master.rest.post(url, {"user-name": user})
+            sleep(3)
+            
+            if not master.rest.status_code_ok():
+                helpers.test_failure(c.rest.error())
+                numErrors += 1
+            else:
+                helpers.log("Successfully added user: %s " % user)
+
+        if(numErrors > 0):
+            return False
+        else:
+            return True
+
+
+
 
 
      
