@@ -76,7 +76,7 @@ def IxCreateTopo(handle, vports):
     helpers.log("### Done adding %s topologies" % len(vports))
     return topology
 
-def IxCreateDeviceEthernet(handle, topology, mac_mults, macs, mac_steps) :
+def IxCreateDeviceEthernet(handle, topology, s_cnt, d_cnt, s_mac, d_mac, s_step, d_step) :
     '''
         RETURN IXIA MAC DEVICES mapped with Topologies created with vports and added increment values accordingly
         Ex Usage:
@@ -84,7 +84,9 @@ def IxCreateDeviceEthernet(handle, topology, mac_mults, macs, mac_steps) :
     '''
     
     helpers.log("### Adding %s device groups" % len(topology))
-    
+    mac_mults = [s_cnt, d_cnt]
+    mac_steps = [s_step, d_step]
+    macs = [s_mac, d_mac]
     for topo in topology:
         handle.add(topo,'deviceGroup')
     handle.commit()
@@ -125,7 +127,7 @@ def IxCreateDeviceEthernet(handle, topology, mac_mults, macs, mac_steps) :
     helpers.log("### Done adding two device groups")
     return (mac_devices)
 
-def IxSetupTrafficStreamsEthernet(handle,mac1,mac2,frameType,frameSize,frameRate,frameMode, frameCount):
+def IxSetupTrafficStreamsEthernet(handle,mac1,mac2,frameType,frameSize,frameRate,frameMode, frameCount, flow):
     '''
         Returns traffic stream with 2 flows with provided mac sources 
         Ex Usage:
@@ -133,22 +135,29 @@ def IxSetupTrafficStreamsEthernet(handle,mac1,mac2,frameType,frameSize,frameRate
     '''
     trafficStream1 = handle.add(handle.getRoot()+'traffic','trafficItem','-name','Ethernet L2','-allowSelfDestined',False,'-trafficItemType','l2L3','-enabled',True,'-transmitMode','interleaved','-biDirectional',False,'-trafficType','ethernetVlan','-hostsPerNetwork','1')
     handle.commit()
-    endpointSet1 = handle.add(trafficStream1, 'endpointSet','-name','l2u','-sources', mac1,'-destinations', mac2)
-    endpointSet2 = handle.add(trafficStream1, 'endpointSet','-name','l2u','-sources', mac2,'-destinations', mac1)
-    handle.commit()
-    handle.setAttribute(trafficStream1,'-enabled',True)
-    handle.setAttribute(trafficStream1+'/highLevelStream:1/'+'frameSize','-type',frameType)
-    handle.setAttribute(trafficStream1+'/highLevelStream:1/'+'frameSize','-fixedSize',frameSize)
-    handle.setAttribute(trafficStream1+'/highLevelStream:1/'+'frameRate','-type',frameMode)
-    handle.setAttribute(trafficStream1+'/highLevelStream:1/'+'frameRate','-rate',frameRate)
-    handle.setAttribute(trafficStream1+'/highLevelStream:1/'+'transmissionControl', '-type', 'fixedFrameCount')
-    handle.setAttribute(trafficStream1+'/highLevelStream:1/'+'transmissionControl', '-frameCount', frameCount + 10000)
-    handle.setAttribute(trafficStream1+'/highLevelStream:2/'+'frameSize','-type',frameType)
-    handle.setAttribute(trafficStream1+'/highLevelStream:2/'+'frameSize','-fixedSize',frameSize)
-    handle.setAttribute(trafficStream1+'/highLevelStream:2/'+'frameRate','-type',frameMode)
-    handle.setAttribute(trafficStream1+'/highLevelStream:2/'+'frameRate','-rate',frameRate)
-    handle.setAttribute(trafficStream1+'/highLevelStream:2/'+'transmissionControl', '-type', 'fixedFrameCount')
-    handle.setAttribute(trafficStream1+'/highLevelStream:2/'+'transmissionControl', '-frameCount', frameCount)
+    
+    if flow == 'uni-directional':
+        endpointSet1 = handle.add(trafficStream1, 'endpointSet','-name','l2u','-sources', mac1,'-destinations', mac2)
+        handle.setAttribute(trafficStream1,'-enabled',True)
+        handle.setAttribute(trafficStream1+'/highLevelStream:1/'+'frameSize','-type',frameType)
+        handle.setAttribute(trafficStream1+'/highLevelStream:1/'+'frameSize','-fixedSize',frameSize)
+        handle.setAttribute(trafficStream1+'/highLevelStream:1/'+'frameRate','-type',frameMode)
+        handle.setAttribute(trafficStream1+'/highLevelStream:1/'+'frameRate','-rate',frameRate)
+        if frameCount is not None:
+            handle.setAttribute(trafficStream1+'/highLevelStream:1/'+'transmissionControl', '-type', 'fixedFrameCount')
+            handle.setAttribute(trafficStream1+'/highLevelStream:1/'+'transmissionControl', '-frameCount', frameCount + 10000)
+    
+    if flow == 'bi-directional':
+        helpers.log('Adding Another  ixia end point set for Bi Directional Traffic..')
+        endpointSet2 = handle.add(trafficStream1, 'endpointSet','-name','l2u','-sources', mac2,'-destinations', mac1)
+        handle.setAttribute(trafficStream1+'/highLevelStream:2/'+'frameSize','-type',frameType)
+        handle.setAttribute(trafficStream1+'/highLevelStream:2/'+'frameSize','-fixedSize',frameSize)
+        handle.setAttribute(trafficStream1+'/highLevelStream:2/'+'frameRate','-type',frameMode)
+        handle.setAttribute(trafficStream1+'/highLevelStream:2/'+'frameRate','-rate',frameRate)
+        if frameCount is not None:
+            handle.setAttribute(trafficStream1+'/highLevelStream:2/'+'transmissionControl', '-type', 'fixedFrameCount')
+            handle.setAttribute(trafficStream1+'/highLevelStream:2/'+'transmissionControl', '-frameCount', frameCount)
+    
     handle.setAttribute(handle.getList(trafficStream1,'tracking')[0],'-trackBy','trackingenabled0')
     handle.commit()
     return trafficStream1
@@ -170,17 +179,74 @@ def IxStartTrafficEthernet(handle,trafficHandle) :
     helpers.log("### Traffic Started")
     return portStatistics
 
-def IxStopTraffic(handle,trafficHandle,portStatistics) :
+def IXIA_L2_ADD(**kwargs):
     '''
-        Stops the traffis and returns port stats
+        This Helper Method created L2 related Config on IXIA to start Traffic with given arguments
+        Ex Usage:
+            ix_ports = [('10.192.85.151',2, 7), ('10.192.85.151', 2, 8)] 
+            
+            L2_stream_args = {ports : ix_ports, src_mac :  '00:11:23:00:00:01', dst_mac : '00:11:23:00:00:02', d_cnt : 10, s_cnt : 50, \
+            frame_rate : 10000, frame_cnt : 90000, frame_size : 64, ix_tcl_server : '10.194.64.183'. 'flow' : 'bi-directional'}
+            
+            IXIA_L2_ADD(**L2_stream_args)
+    '''
+    helpers.log("###Starting L2 IXIA ADD Config ...")
+    ix_handle = kwargs.get('ix_handle', None)
+    ix_ports = kwargs.get('ports', None)
+    s_mac = kwargs.get('src_mac', None)
+    d_mac = kwargs.get('dst_mac', None)
+    d_cnt = kwargs.get('d_cnt', 1)
+    s_cnt = kwargs.get('s_cnt', 1)
+    d_step = kwargs.get('d_step', '00:00:00:01:00:00')
+    s_step = kwargs.get('s_step', '00:00:00:01:00:00')
+    frame_rate = kwargs.get('frame_rate', 100)
+    frame_cnt = kwargs.get('frame_cnt', None)
+    frame_size = kwargs.get('frame_size', 70)
+    frame_type = kwargs.get('frame_type', 'fixed')
+    frame_mode = kwargs.get('frame_mode', 'framesPerSecond')
+    ix_tcl_server = kwargs.get('ix_tcl_server', None)
+    flow = kwargs.get('flow', 'bi-directional')
+
+    vport_names = ['vport1_sdk', 'vport2_sdk']
+    ix_chassis = ix_ports[0][0]
+    if ix_tcl_server is None or ix_ports is None or s_mac is None or d_mac is None:
+        helpers.warn('Please Provide Required Args for IXIA_L2_ADD helper method !!')
+        raise IxNetwork.IxNetError('Please provide Required Args for IXIA_L2_ADD helper method !!')
+    
+    get_version = ix_handle.getVersion()
+    helpers.log("###Current Version of Ixia Chassis : %s " % get_version)
+    ix_handle.setDebug(False)    # Set Debug True to print Ixia Server Interactions
+    # Create vports:
+    vports = IxCreateVports(ix_handle, vport_names)
+    helpers.log('### vports Created : %s' % vports)
+    # Map to Chassis Physhical Ports:
+    if IxConnectChassis(ix_handle, vports, ix_chassis, ix_ports):
+        helpers.log('### Successfully mapped vport to physical ixia ports..')
+    else:
+        helpers.warn('Unable to connect to Ixia Chassis')
+        return False
+    # Create Topo:
+    topology = IxCreateTopo(ix_handle, vports)
+    helpers.log('### Topology Created: %s' % topology)
+    
+    #Create Ether Device:
+    mac_devices = IxCreateDeviceEthernet(ix_handle, topology, s_cnt, d_cnt, s_mac, d_mac, s_step, d_step)
+    helpers.log('### Created Mac Devices with corrsponding Topos ...')    
+     
+    #Create Traffic Stream:
+    traffic_stream = IxSetupTrafficStreamsEthernet(ix_handle, mac_devices[0], mac_devices[1],\
+                                                   frame_type, frame_size, frame_rate, frame_mode, frame_cnt, flow)
+    helpers.log('Created Traffic Stream : %s' % traffic_stream)
+    return traffic_stream 
+    
+    
+def ix_fetch_port_stats(handle):
+    '''
+        Returns Dictionary with Port Tx and Rx real time results
     '''
     port_stats = []
-    helpers.log("### Stopping Traffic")
-    handle.execute('stopStatelessTraffic',trafficHandle)
-    helpers.log("### Printing Statistics")
+    portStatistics = handle.getFilteredList(handle.getRoot()+'statistics', 'view', '-caption', 'Port Statistics')[0]
     col_names = handle.getAttribute(portStatistics+'/page', '-columnCaptions')
-    #print handle.getAttribute(portStatistics+'/page', '-rowValues')
-#['Stat Name', 'Port Name', 'Line Speed', 'Link State', 'Frames Tx.', 'Valid Frames Rx.', 'Frames Tx. Rate', 'Valid Frames Rx. Rate', 'Data Integrity Frames Rx.', 'Data Integrity Errors', 'Bytes Tx.', 'Bytes Rx.', 'Bits Sent', 'Bits Received', 'Bytes Tx. Rate', 'Tx. Rate (bps)', 'Tx. Rate (Kbps)', 'Tx. Rate (Mbps)', 'Bytes Rx. Rate', 'Rx. Rate (bps)', 'Rx. Rate (Kbps)', 'Rx. Rate (Mbps)', 'Scheduled Frames Tx.', 'Scheduled Frames Tx. Rate', 'Control Frames Tx', 'Control Frames Rx', 'Ethernet OAM Information PDUs Sent', 'Ethernet OAM Information PDUs Received', 'Ethernet OAM Event Notification PDUs Received', 'Ethernet OAM Loopback Control PDUs Received', 'Ethernet OAM Organisation PDUs Received', 'Ethernet OAM Variable Request PDUs Received', 'Ethernet OAM Variable Response Received', 'Ethernet OAM Unsupported PDUs Received', 'Rx Pause Priority Group 0 Frames', 'Rx Pause Priority Group 1 Frames', 'Rx Pause Priority Group 2 Frames', 'Rx Pause Priority Group 3 Frames', 'Rx Pause Priority Group 4 Frames', 'Rx Pause Priority Group 5 Frames', 'Rx Pause Priority Group 6 Frames', 'Rx Pause Priority Group 7 Frames', 'Misdirected Packet Count', 'CRC Errors']
     stats = handle.getAttribute(portStatistics+'/page', '-rowValues')
     for stat in stats:
         port_stat = {}
@@ -191,7 +257,23 @@ def IxStopTraffic(handle,trafficHandle,portStatistics) :
                 port_stat['Tx'] = value 
             if column == 'Valid Frames Rx.':
                 port_stat['Rx'] = value
+            if column == 'Frames Tx. Rate':
+                port_stat['TxRate'] = value
+            if column == 'Valid Frames Rx. Rate':
+                port_stat['RxRate'] = value
         port_stats.append(port_stat)
+    return port_stats
+
+def IxStopTraffic(handle,traffic_stream) :
+    '''
+        Stops the traffis and returns port stats
+        Ex Usage : IxStopTraffic(ix_handle, traffic_stream)
+    '''
+    helpers.log("### Stopping Traffic")
+    handle.execute('stopStatelessTraffic',traffic_stream)
+    helpers.log("### Printing Statistics")
+    port_stats = ix_fetch_port_stats(handle)
+    helpers.log("### Port Stats : \n %s" % port_stats)
     return port_stats
 
 def IxCreateDeviceIP(handle,macs, mac_mults, addrs,addrsteps, prefixs) :
