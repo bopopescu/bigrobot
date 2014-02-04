@@ -7,6 +7,7 @@ Library         keywords_dev/vui/MyTest.py
 
 * Variables
 ${NAME}         "Vui Le"
+${COUNTER}      100
 
 * Test Cases
 Test var assignment
@@ -38,10 +39,16 @@ Openstack user id
     \  log  ${index}:${user}
 
 Test dynamic string
-    #[Tags]           skipped
+    [Tags]           skipped
     json_to_pydict    {a:true, b:${123}, name:${NAME}}
     
-    
+Test expression
+    #[Tags]           skipped
+    ${result1}=       expr  1 + 1 + ${COUNTER}
+    ${result2}=       expr  10 / 2
+    ${result3}=       expr  ${result1} + ${result2}
+    log               Expression evaluated to result1=${result1}, result2=${result2}, result3=${result3}
+
 
 * Keywords
 variable assignment
