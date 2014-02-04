@@ -321,6 +321,8 @@ L3 ping untagged bm0 to tagged bm1 same tenant across VNS
 	REST_create_endpoint_switch_attachment		${tenant1_name}		${vns1_2}		${endpoint2name}	${leaf0_name}	${leaf0_intf2}	${vns1_vlan2}
 	REST show endpoints name					${endpoint1name}
 	REST show endpoints name					${endpoint2name}
+	REST show endpoints mac						${host0_mac}
+	REST show endpoints mac						${host1_mac}
 	mininet host ipcfg   						${host0_name}		${host0_bondif}	${host0_ip}			${host0_subnet} 
 	mininet l3 link tag							${host1_name}		${host1_bondif}	${vns1_vlan2}		${host1_ip}		${host1_subnet}
 	mininet host gw								${host0_name}		${vns1_ip1}		${host0_bondif}
