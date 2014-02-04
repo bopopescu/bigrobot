@@ -8,11 +8,11 @@ Test Setup       base test setup
 #Test Teardown    base test teardown
 Force Tags       T5 
 Library          keywords/BsnCommon.py
-Library          keywords_dev/T5.py
-#Library	         keywords_dev/T5Fabric.py
-Library	         keywords_dev/T5Platform.py
+Library          keywords_dev/prashanth/T5.py
+#Library	     keywords_dev/prashanth/T5Fabric.py
+Library	         keywords_dev/don/T5Platform.py
 Library          keywords/Mininet.py
-Resource	 keywords_dev/t5_singleleaf_resource.txt
+Resource	 	 keywords_dev/prashanth/t5_singleleaf_resource.txt
 
 * Variables
 ${bm0_ip}  10.0.0.1
@@ -33,27 +33,27 @@ Verify HA Cluster Formation
    
 Verify Cluster Election Take-Leader
 	[Tags]  HA
-	rest cluster election take leader
+	rest verify cluster election take leader
 
 Verify Cluster Election Re-run
 	[Tags]  HA
-	rest cluster election rerun
+	rest verify cluster election rerun
 
 Verify Cluster Master Reboot
 	[Tags]  HA
-	cli cluster master reboot
+	cli verify cluster master reboot
 
 Verify Cluster Slave Reboot
 	[Tags]  HA
-	cli cluster slave reboot
+	cli verify cluster slave reboot
 
 #Verify Cluster Master Shutdown
 #	[Tags]  HA
-#	cli cluster master shutdown
+#	cli verify cluster master shutdown
 
 #Verify Cluster Slave Shutdown
 #	[Tags]  HA
-#	cli cluster slave shutdown
+#	cli verify cluster slave shutdown
 
 
 #Configure Single Leaf Dual Rack setup
