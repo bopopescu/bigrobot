@@ -58,7 +58,7 @@ def exit_robot_immediately(msg=None):
     log("Exiting BigRobot now...", level=4)
     os.kill(os.getpid(), signal.SIGINT)  # "Second signal will force exit"
     os.kill(os.getpid(), signal.SIGINT)  # "Execution forcefully stopped"
-    
+
 
 class TestFailure(AssertionError):
     """
@@ -81,7 +81,7 @@ class EnvironmentFailure(RuntimeError):
     critical condition which should prevent further test executions.
     """
     ROBOT_EXIT_ON_FAILURE = True
-    
+
 
 def test_success(msg):
     """
@@ -89,7 +89,7 @@ def test_success(msg):
     """
     log(msg)
 
-    
+
 def test_failure(msg):
     """
     Call this on test failure.
@@ -137,7 +137,7 @@ def _env_get_and_set(name, new_val=None, default=None):
 
     if name not in _BIGROBOT_ENV_LIST:
         _BIGROBOT_ENV_LIST.append(name)
-        
+
     return os.environ[name]
 
 
@@ -401,23 +401,23 @@ def is_switchlight(name):
 def is_scalar(data):
     """Verify if the input is a valid Python scalar."""
     return isinstance(data, (type(None), str, int, float, bool))
-    
-    
+
+
 def is_bool(data):
     """Verify if the input is a valid Python boolean."""
     return isinstance(data, bool)
-    
-    
+
+
 def is_int(data):
     """Verify if the input is a valid Python integer."""
     return isinstance(data, int)
-    
-    
+
+
 def is_list(data):
     """Verify if the input is a valid Python list (array)."""
     return isinstance(data, list)
-    
-    
+
+
 def is_dict(data):
     """Verify if the input is a valid Python dictionary (hash)."""
     return isinstance(data, dict)
@@ -438,8 +438,8 @@ def is_json(data):
         return False
     else:
         return True
-    
-    
+
+
 def from_json(json_str):
     """
     Return Python datatype (dict or array) from JSON string.
@@ -548,7 +548,7 @@ def file_exists(filename):
     """
 
     # os.path.exists doesn't detect stale symlinks (link to non-existent
-    # file), so also need to check if file is a symlink 
+    # file), so also need to check if file is a symlink
     return os.path.exists(filename) or os.path.islink(filename)
 
 
@@ -587,10 +587,10 @@ def is_same_file(file1, file2):
         return False
     inode1 = os.stat(file1)[1]
     inode2 = os.stat(file2)[1]
-    
+
     return True if inode1 == inode2 else False
 
-    
+
 def bigtest_node_info():
     """
     Traverse the directory /var/run/bigtest and gather all the node attributes
@@ -601,22 +601,22 @@ def bigtest_node_info():
 
     if not os.path.exists(my_root):
         error_exit('Directory %s does not exist.' % my_root)
-    
+
     nodes = {}
     for root, _, files in os.walk(my_root):
         if root == my_root:
             # Ignore top-level root
             continue
-    
+
         node = os.path.basename(root)
         nodes[node] = {}
-    
+
         for filename in files:
             full_path_filename = "%s/%s/%s" % (my_root, node, filename)
             val = open(full_path_filename, "r").read().rstrip()
             nodes[node][filename] = val
     return nodes
-    
+
 
 def int_to_str(val):
     """
@@ -634,8 +634,8 @@ def str_to_int(val):
     if isinstance(val, basestring):
         val = int(val)
     return val
-    
-    
+
+
 def _createSSHClient(server, user, password, port=22):
     client = paramiko.SSHClient()
     client.load_system_host_keys()
@@ -650,9 +650,9 @@ def scp_put(server, local_file, remote_path,
     s = SCPClient(ssh.get_transport())
 
     # !!! FIXME: Catch conditions where file/path are not found
-    #log("scp put local_file=%s remote_path=%s" % (local_file, remote_path))
+    # log("scp put local_file=%s remote_path=%s" % (local_file, remote_path))
     log("SSH copy source (%s) to destination (%s) " % (local_file, remote_path))
-    s.put(local_file, remote_path, recursive=True) 
+    s.put(local_file, remote_path, recursive=True)
 
 
 def scp_get(server, remote_file, local_path,
@@ -661,7 +661,7 @@ def scp_get(server, remote_file, local_path,
     s = SCPClient(ssh.get_transport())
 
     # !!! FIXME: Catch conditions where file/path are not found
-    #log("scp put remote_file=%s local_path=%s" % (remote_file, local_path))
+    # log("scp put remote_file=%s local_path=%s" % (remote_file, local_path))
     log("SSH copy source (%s) to destination (%s) " % (remote_file, local_path))
     s.get(remote_file, local_path)
 
@@ -675,7 +675,7 @@ def run_cmd(cmd, cwd=None, ignore_stderr=False, shell=True, quiet=False):
     Returns tuple (Boolean, String)
         success: (True,  "...success message...")
         failure: (False, "...error message...")
-    """ 
+    """
     if not quiet:
         print("Executing '%s'" % cmd)
 
@@ -686,15 +686,15 @@ def run_cmd(cmd, cwd=None, ignore_stderr=False, shell=True, quiet=False):
         cmd_list = cmd.split(' ')
         p = subprocess.Popen(cmd_list,
                              stdout=subprocess.PIPE,
-                             stderr=subprocess.PIPE, cwd=cwd)        
-        out, err = p.communicate() 
+                             stderr=subprocess.PIPE, cwd=cwd)
+        out, err = p.communicate()
         if err and not ignore_stderr:
             return (False, err)
-        
+
         return (True, out)
 
 
-def _ping(host, count=3, waittime=100, quiet=False, source_if=None, node=None):
+def _ping(host, count=5, waittime=100, quiet=False, source_if=None, node=None):
     if not node:
         cmd = "ping -c %s -W %s %s" % (count, waittime, host)
         if not quiet:
@@ -718,7 +718,7 @@ def _ping(host, count=3, waittime=100, quiet=False, source_if=None, node=None):
 
     if not quiet:
         log("Ping output:\n%s" % out, level=4)
-        
+
     # Linux output:
     #   3 packets transmitted, 3 received, 0% packet loss, time 2003ms
     #   3 packets transmitted, 0 received, +3 errors, 100% packet loss, time 2014ms
@@ -727,14 +727,14 @@ def _ping(host, count=3, waittime=100, quiet=False, source_if=None, node=None):
     #   3 packets transmitted, 3 packets received, 0.0% packet loss
 
     if source_if:
-        match = re.search(r'ping: unknown iface (\w+)', out, re.M|re.I)
+        match = re.search(r'ping: unknown iface (\w+)', out, re.M | re.I)
         if match:
             test_error("Ping error - unknown source interface '%s'"
                        % match.group(1))
-        
+
     match = re.search(r'.*?(\d+) packets transmitted, (\d+)( packets)? received, .*?(\d+\.?(\d+)?)% packet loss.*',
                       out,
-                      re.M|re.I)
+                      re.M | re.I)
     if match:
         packets_transmitted = int(match.group(1))
         packets_received = int(match.group(2))
@@ -749,7 +749,7 @@ def _ping(host, count=3, waittime=100, quiet=False, source_if=None, node=None):
     test_error("Unknown ping error. Please check the output log.")
 
 
-def ping(host, count=3, waittime=100, quiet=False):
+def ping(host, count=5, waittime=100, quiet=False):
     """
     Unix ping.
     :param host: (Str) ping hist host
@@ -759,7 +759,7 @@ def ping(host, count=3, waittime=100, quiet=False):
     Return: (Int) loss percentage
     """
     if count < 3:
-        count = 3   # minimum count
+        count = 3  # minimum count
     loss = _ping(host, count=1, waittime=100, quiet=quiet)
     if loss > 0:
         loss = _ping(host, count=1, waittime=100, quiet=quiet)
@@ -804,7 +804,7 @@ def openstack_convert_table_to_dict(input_str):
         out = input_str.split('\n')
     else:
         test_error("Input must be a string or a list")
-        
+
     out = br_utils.strip_empty_lines(out)
     out = br_utils.strip_cruds_before_table_begins(out)
     out = br_utils.strip_cruds_after_table_ends(out)
