@@ -5,6 +5,7 @@ Force Tags      Vui
 * Test Case
 Test Should Be True
     [Documentation]  This is a generic keyword for doing all sorts of basic comparison operations.
+    [Tags]  skipped
     Should Be True  10 > 1
     Should Be True  10 >= 10
 
@@ -13,3 +14,15 @@ Test Should Be False
     Should Be True  10 < 1
     Should Be True  10 > 10
 
+Test keyword should be true
+    #[Tags]  skipped
+    ${status}       Keyword returns true
+    Log             status=${status}
+    Should be True  ${status} < 123
+
+#Test keyword should be true (direct call)
+#    Should be True       Keyword returns true
+
+* Keywords
+Keyword returns true
+    [Return]  123
