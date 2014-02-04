@@ -362,14 +362,8 @@ class MininetDevConf(DevConf):
         self.controller = controller
         self.openflow_port = openflow_port
         self.state = 'stopped'  # or 'started'
-<<<<<<< HEAD
-        
         super(MininetDevConf, self).__init__(host, user, password, name=name,
                                              debug=debug)
-=======
-
-        super(MininetDevConf, self).__init__(host, user, password, debug=debug)
->>>>>>> dev
         self.start_mininet()
 
     def cmd(self, cmd, quiet=False, prompt=False, level=4):

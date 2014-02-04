@@ -139,11 +139,8 @@ root@nova-controller:~#
         helpers.log("abc: %s" % input_dict['abc'])
         helpers.debug("xyz: %s" % input_dict['xyz'])
         helpers.trace("This is a trace log")
-<<<<<<< HEAD
-=======
 
     def json_to_pydict(self, arg):
         helpers.log("arg: %s" % arg)
         arg_dict = helpers.from_json(arg)
         helpers.log("arg_dict: %s" % arg_dict)
->>>>>>> dev

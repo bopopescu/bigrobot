@@ -63,18 +63,11 @@ class Controller(object):
         elif helpers.is_switchlight(platform):
             self._boot_switchlight(node)
         else:
-<<<<<<< HEAD
-            helpers.test_error("Reload does not recognize platform '%s'" % platform)
-        
-        helpers.log("Device '%s' has rebooted" % n.name())
-    
-=======
             helpers.test_error("Reload does not recognize platform '%s'"
                                % platform)
 
         helpers.log("Device '%s' has rebooted" % n.name)
 
->>>>>>> dev
     def cli_reboot(self, *args, **kwargs):
         """
         Alias for 'cli reload'.
@@ -263,7 +256,8 @@ class Controller(object):
         n.bash('uptime')
         n.send('telnet %s %s' % ("blade-1-a.bigswitch.com", 15902))
         n.send('')  # press <Enter> and expect to see the login prompt
-        helpers.sleep(3)
+        n.send('')
+        # helpers.sleep(3)
         n.expect('Big Tap Controller')
         n.expect('Log in as .+? to configure')
         n.expect('localhost login: ')

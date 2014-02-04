@@ -245,13 +245,13 @@ def bigrobot_debug(new_val=None, default=None):
         Syslog file => <log_path>/syslog.txt
         Syslog level => DEBUG
     """
-    debug = _env_get_and_set('BIGROBOT_DEBUG', new_val, default)
-    if int(debug) == 1:
+    _debug = _env_get_and_set('BIGROBOT_DEBUG', new_val, default)
+    if int(_debug) == 1:
         robot_syslog_file(default=''.join((bigrobot_log_path_exec_instance(),
                                            '/syslog.txt')))
         robot_syslog_level(default='DEBUG')
 
-    return debug
+    return _debug
 
 
 def bigrobot_pandoc_support(new_val=None, default=None):
