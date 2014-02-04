@@ -232,7 +232,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
         t = test.Test()
         c = t.controller()
         
-        endptname = "\%5Bname\%3D\%22" + endpointname + "\%22\%5D" 
+        endptname = "%5Bname%3D%22" + endpointname + "%22%5D" 
         url = '%s/api/v1/data/controller/applications/bvs/info/endpoint-manager/endpoints%s' % (c.base_url, endptname)
         c.rest.get(url)
         helpers.log("Output: %s" % c.rest.result_json())

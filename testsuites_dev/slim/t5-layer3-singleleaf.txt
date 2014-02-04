@@ -328,7 +328,7 @@ L3 ping untagged bm0 to tagged bm1 same tenant across VNS
 	mininet host arp							${host0_name}		${vns1_ip1}		${gw_mac}
 	mininet host arp							${host1_name} 		${vns1_ip2}		${gw_mac}
 	sleep  										5
-	mininet l3 ping								${host0_name}		${host1_name} 		3
+	mininet l3 ping								${host0_name}		${host1_ip} 		3
 	sleep 										2
 	${loss}=  									mininet l3 ping		${host0_name}	${host1_ip}		${ping_count}
 	sleep  										20
