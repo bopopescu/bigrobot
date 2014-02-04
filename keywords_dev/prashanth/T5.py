@@ -15,7 +15,7 @@ class T5(object):
 #        session_cookie = result['content']['session_cookie']
 #        c.rest.set_session_cookie(session_cookie)
         
-    def rest_create_tenant(self, tenant):
+    def rest_add_tenant(self, tenant):
         
         t = test.Test()
         c = t.controller()
@@ -108,7 +108,7 @@ class T5(object):
         else:
             return True
 
-    def rest_create_vns(self, tenant, vns):
+    def rest_add_vns(self, tenant, vns):
         t = test.Test()
         c = t.controller()
         
@@ -157,7 +157,7 @@ class T5(object):
 
             return c.rest.content()
      
-    def rest_create_portgroup(self, pg):
+    def rest_add_portgroup(self, pg):
         t = test.Test()
         c = t.controller()
         
@@ -188,7 +188,7 @@ class T5(object):
         return c.rest.content()
 
 
-    def rest_create_endpoint(self, tenant, vns, endpoint):
+    def rest_add_endpoint(self, tenant, vns, endpoint):
         '''Add nexthop to ecmp groups aks gateway pool in tenant"
         
             Input:
@@ -349,7 +349,7 @@ class T5(object):
             
         return c.rest.content()
     
-    def rest_configure_ip_endpoint(self, tenant, vns, endpoint, ip):
+    def rest_add_ip_endpoint(self, tenant, vns, endpoint, ip):
         t = test.Test()
         c = t.controller()
         url = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/endpoints[name="%s"]' % (c.base_url, tenant, vns, endpoint)
@@ -359,7 +359,7 @@ class T5(object):
             helpers.test_failure(c.rest.error())
         return c.rest.content()
     
-    def rest_configure_mac_endpoint(self, tenant, vns, endpoint, mac):
+    def rest_add_mac_endpoint(self, tenant, vns, endpoint, mac):
         t = test.Test()
         c = t.controller()
         url = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/endpoints[name="%s"]' % (c.base_url, tenant, vns, endpoint)
@@ -374,7 +374,7 @@ class T5(object):
         
             Input:           
             
-            Return: true if it matches the created VNS (string starts with "v")
+            Return: true if it matches the added VNS (string starts with "v")
         '''
         t = test.Test()
         c = t.controller()
@@ -390,7 +390,7 @@ class T5(object):
                             helpers.test_failure("Expected VNS's are not present in the config")  
                             return False     
                 else:
-                        helpers.log("No VNS are configured")
+                        helpers.log("No VNS are added")
                         return False
         
     def rest_verify_tenant(self):
@@ -398,7 +398,7 @@ class T5(object):
         
             Input:   None        
             
-            Return: true if it matches the created tenant (string starts with "t")
+            Return: true if it matches the added tenant (string starts with "t")
         '''
         t = test.Test()
         c = t.controller()
@@ -414,7 +414,7 @@ class T5(object):
                         helpers.test_failure("Expected Tenants are not present in the config")
                         return False 
                 else:
-                        helpers.log("No tenants are configured")
+                        helpers.log("No tenants are added")
                         return False       
        
             
@@ -437,13 +437,13 @@ class T5(object):
                             if (data[i]["ip-address"] == str(ipaddr)) :
                                 if (data[i]["attachment-point"]["switch-name"] == switch) :
                                     if (data[i]["attachment-point"]["interface-name"] == str(intf)) :
-                                        helpers.log("Expected Endpoints are created data matches is %s" % data[i]["ip-address"] )
+                                        helpers.log("Expected Endpoints are added data matches is %s" % data[i]["ip-address"] )
                                         return True
                                     else:
-                                        helpers.test_failure("Expected endpoints %s are not created" % (str(ipaddr)))
+                                        helpers.test_failure("Expected endpoints %s are not added" % (str(ipaddr)))
                                         return False
         else:
-            helpers.test_failure("Expected vns are not created %s" % vns)
+            helpers.test_failure("Expected vns are not added %s" % vns)
             return False
             
     def rest_verify_endpoint_static(self, vns, vlan, ipaddr, switch, intf):
@@ -451,7 +451,7 @@ class T5(object):
         
             Input: vns name , vlan ID , ipaddress , switch name, expected switch interface          
             
-            Return: true if it matches Value specified and configured attachment point is true
+            Return: true if it matches Value specified and added attachment point is true
          '''
         t = test.Test()
         c = t.controller()
@@ -466,13 +466,13 @@ class T5(object):
                             if (data[i]["attachment-point"]["switch-name"] == switch) :
                                 if (data[i]["attachment-point"]["interface-name"] == str(intf)) :
                                     if (data[i]["configured-endpoint"] == True) :
-                                        helpers.log("Expected Endpoints are created data matches is %s" % data[i]["ip-address"] )
+                                        helpers.log("Expected Endpoints are added data matches is %s" % data[i]["ip-address"] )
                                         return True
                                     else:
-                                        helpers.test_failure("Expected endpoints %s are not created" % (str(ipaddr)))
+                                        helpers.test_failure("Expected endpoints %s are not added" % (str(ipaddr)))
                                         return False
         else:
-                helpers.test_failure("Expected vns are not created %s" % vns)
+                helpers.test_failure("Expected vns are not added %s" % vns)
                 return False
             
 
@@ -494,13 +494,13 @@ class T5(object):
                     if str(data[i]["attachment-point"]["vlan"]) == str(vlan):
                         if (data[i]["ip-address"] == str(ipaddr)) :
                             if (data[i]["attachment-point"]["port-group-name"] == pg) :
-                                helpers.log("Expected Endpoints are created data matches is %s" % data[i]["ip-address"] )
+                                helpers.log("Expected Endpoints are added data matches is %s" % data[i]["ip-address"] )
                                 return True
                             else:
-                                helpers.test_failure("Expected endpoints %s are not created" % (str(ipaddr)))
+                                helpers.test_failure("Expected endpoints %s are not added" % (str(ipaddr)))
                                 return False
         else:
-            helpers.test_failure("Expected vns are not created %s" % vns)
+            helpers.test_failure("Expected vns are not added %s" % vns)
             return False       
    
     def rest_verify_endpoint_static_portgroup(self, vns, vlan, ipaddr, pg):
@@ -508,7 +508,7 @@ class T5(object):
         
             Input: vns name , vlan ID , ipaddress , portgroup name          
             
-            Return: true if it matches Value specified and configured attachment point is true
+            Return: true if it matches Value specified and added attachment point is true
         '''
         t = test.Test()
         c = t.controller()
@@ -522,13 +522,13 @@ class T5(object):
                             if (data[i]["ip-address"] == str(ipaddr)) :
                                 if (data[i]["attachment-point"]["port-group-name"] == pg) :
                                     if (data[i]["configured-endpoint"] == True) :
-                                        helpers.log("Expected Endpoints are created data matches is %s" % data[i]["ip-address"] )
+                                        helpers.log("Expected Endpoints are added data matches is %s" % data[i]["ip-address"] )
                                         return True
                                     else:
-                                        helpers.test_failure("Expected endpoints %s are not created" % (str(ipaddr)))
+                                        helpers.test_failure("Expected endpoints %s are not added" % (str(ipaddr)))
                                         return False
         else:
-                helpers.test_failure("Expected vns are not created %s" % vns)
+                helpers.test_failure("Expected vns are not added %s" % vns)
                 return False
     
     def rest_verify_vns_interface(self, vns, intf_num):
@@ -551,11 +551,11 @@ class T5(object):
                     helpers.test_failure("Membership count in VNS are not correct %d = %d" % (int(intf_num), int(data[0]["num-ports"])))  
                     return False     
         else:
-                helpers.log("Expected VNS are configured")
+                helpers.log("Expected VNS are added")
                 return False
 
         
-    def rest_verify_forwarding_vlan(self, dpid):
+    def rest_verify_forwarding_vlan(self, switch):
         '''Verify VNS(VLAN) Information in Controller Forwarding Table
         
             Input:  Specific DPID of the switch      
@@ -564,7 +564,7 @@ class T5(object):
         '''
         t = test.Test()
         c = t.controller()
-        url = '%s/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch-id="%s"]/vlan-table' % (c.base_url, dpid)
+        url = '%s/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch-id="%s"]/vlan-table' % (c.base_url, switch)
         c.rest.get(url)
         data = c.rest.content()
         no_of_vlans = len(data)
@@ -579,7 +579,7 @@ class T5(object):
                 helpers.test_failure("Vlan Entries are inconsistent in forwarding table %d = %d" % (int(no_of_vns), int(no_of_vlans)))  
                 return False     
          
-    def rest_verify_forwarding_port(self, dpid):
+    def rest_verify_forwarding_port(self, switch):
         '''Verify Edge port  Information in Controller Forwarding Table
         
             Input:  Specific DPID of the switch      
@@ -588,14 +588,14 @@ class T5(object):
         '''
         t = test.Test()
         c = t.controller()
-        url = '%s/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch-id="%s"]/port-table' % (c.base_url, dpid)
+        url = '%s/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch-id="%s"]/port-table' % (c.base_url, switch)
         c.rest.get(url)
         data = c.rest.content()
         for i in range(0,len(data)):
             if ((data[i]["lag-id"]) == 0):
-                helpers.test_failure("Lag-Id for the edge interface (switch=%s,interface=%s) is showing 0" % (dpid, data[i]["port-num"]))
+                helpers.test_failure("Lag-Id for the edge interface (switch=%s,interface=%s) is showing 0" % (switch, data[i]["port-num"]))
                 return False
-            helpers.log("Proper Lag-Id created for All edge Interfaces")         
+            helpers.log("Proper Lag-Id added for All edge Interfaces")         
         
 
           
