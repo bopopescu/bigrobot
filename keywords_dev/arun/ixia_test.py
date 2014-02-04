@@ -6,6 +6,7 @@ Created on Jan 28, 2014
 import vendors.Ixia.IxNetwork
 
 if __name__ == '__main__':
+    import vendors.Ixia.IxNetwork
     import sys, time
     sys.path.append('/Users/mallinaarun/Documents/workspace/bigrobot/keywords_dev/arun')
     sys.path.append('/Users/mallinaarun/Documents/workspace/bigrobot/vendors/exscript/src')
@@ -14,70 +15,40 @@ if __name__ == '__main__':
     
     
     startTime  =  datetime.now()
-    ixClientIP = '10.194.64.183'
-    ixClientIxNetTclServPortNo = 8009
-    ixClientIxNetVer = '7.10'
-    ixChassis = '10.192.85.151'
-    ixPorts = [('10.192.85.151',2, 7), ('10.192.85.151', 2, 8)]
-    mac_mults = [20,20]
-    macs = ["00:11:23:00:00:01", "00:11:23:00:00:02"]
-    mac_steps = ["00:00:00:00:01:00", "00:00:00:00:01:00"]
+    ix_tcl_server = '10.194.64.183'
+    ix_server_port = 8009
+    ix_version = '7.10'
+    ix_ports = [('10.192.85.151',2, 7), ('10.192.85.151', 2, 8)]
     
-    mRate="100000"
-    mSize="64"
-    frameType = 'fixed'
-    frameSize = '64'
-    frameRate = '10000'
-    frameMode = 'framesPerSecond'
-    #frameMode = 'percentLineRate'
-    addr1 = '132.0.0.1'
-    addr2 = '132.0.0.100'
-    addr1Step = '0.0.0.1'
-    addr2Step = '0.0.0.1'
-    prefix1 = '24'
-    prefix2 = '24'
-    vport_names = ['vport1_eclipse', 'vport2_eclipse']
-    frameCount = 70000
+    ix_handle = IxLib.IxConnect(ix_tcl_server,  ix_server_port, ix_version)
+    L2_stream_args = {'ix_handle' : ix_handle, 'ports' : ix_ports, 'src_mac' :  '00:11:23:00:00:01', 'dst_mac' : '00:11:23:00:00:02', 'd_cnt' : 10, 's_cnt' : 50, \
+                'frame_rate' : 10000, 'frame_size' : 64, \
+                'ix_tcl_server' : '10.194.64.183', 'flow' : 'uni-directional'}
     
-    # Connec to IXIA TCL Server Running on Windows
-    ixNet = IxLib.IxConnect(ixClientIP,ixClientIxNetTclServPortNo,ixClientIxNetVer)
-    ixNet.setDebug(False)    # Set Debug True to print Ixia Server Interactions
+    traffic_stream = IxLib.IXIA_L2_ADD(**L2_stream_args)
+    print 'Successfully created L2 Traffic Flows'
+    IxLib.IxStartTrafficEthernet(ix_handle, traffic_stream)
+    print "Successfully Started Traffic"
+    # below code snippet is sample to fetch results and stop the traffic 
+    i = 0
+    while i != 5:
+        portstats =  IxLib.ix_fetch_port_stats(ix_handle)
+        for stat in portstats:
+            print 'Port:', stat['port']
+            print 'Tx:', stat['Tx']
+            print 'TxRate:', stat['TxRate']
+            print 'Rx:', stat['Rx']
+            print 'RxRate:', stat['RxRate']
+            print '#'*50
+            
+        print 'Sleeping for 5 sec for next poll'
+        time.sleep(5)
+        i = i + 1
     
-    ##ixNet.getVersion()
-    getVersion = ixNet.getVersion()
-    print 'Verifying ixNet.getVersion():',getVersion
+    print 'Stopping the traffic...'
     
-    # Create vports:
-    vports = IxLib.IxCreateVports(ixNet, vport_names)
-    print '### vports Created : ', vports
+    port_stats = IxLib.IxStopTraffic(ix_handle, traffic_stream)
     
-    # Map to Chassis Physhical Ports:
-    if IxLib.IxConnectChassis(ixNet, vports, ixChassis, ixPorts):
-        print '### Successfully mapped vport to physical ixia ports..'
-    # Create Topo:
-    topology = IxLib.IxCreateTopo(ixNet, vports)
-    print '### Topology Created: ', topology
-    # Create IP Devices:
-#     ips = IxLib.IxCreateDeviceIP(ixNet, macs, mac_mults, addrs, addrsteps, prefixs)
-     
-    
-    #Create Ether Device:
-    mac_devices = IxLib.IxCreateDeviceEthernet(ixNet,topology, mac_mults =  mac_mults, macs = macs, mac_steps = mac_steps)
-    print '### Created Mac Devices with corrsponding Topos ...'    
-     
-    #Create Traffic Stream:
-    trafficStream = IxLib.IxSetupTrafficStreamsEthernet(ixNet, mac_devices[0], mac_devices[1], frameType, frameSize, frameRate, frameMode, frameCount)
-    print 'Created Traffic Stream : ' , trafficStream
-    print 'Starting Traffic...'
-     
-    portStatistics = IxLib.IxStartTrafficEthernet(ixNet,trafficStream)
-     
-    print 'Sleeping 45 secs..'    
-    time.sleep(45)
-    print "Press Enter to stop Traffic "
-     
-    traffic_results = IxLib.IxStopTraffic(ixNet,trafficStream,portStatistics)
-     
-    print "Port Stats : ", traffic_results
-    
-    
+    print 'Successfully stopped traffic'
+    print 'Final Stats Result..'
+    print port_stats
