@@ -82,6 +82,7 @@ def IxCreateDeviceEthernet(handle, topology, mac_mults, macs, mac_steps) :
         Ex Usage:
         IxLib.IxCreateDeviceEthernet(ixNet,topology, mac_mults =  mac_mults, macs = macs, mac_steps = mac_steps)
     '''
+    
     helpers.log("### Adding %s device groups" % len(topology))
     
     for topo in topology:
@@ -124,7 +125,7 @@ def IxCreateDeviceEthernet(handle, topology, mac_mults, macs, mac_steps) :
     helpers.log("### Done adding two device groups")
     return (mac_devices)
 
-def IxSetupTrafficStreamsEthernet(handle,mac1,mac2,frameType,frameSize,frameRate,frameMode):
+def IxSetupTrafficStreamsEthernet(handle,mac1,mac2,frameType,frameSize,frameRate,frameMode, frameCount):
     '''
         Returns traffic stream with 2 flows with provided mac sources 
         Ex Usage:
@@ -140,10 +141,14 @@ def IxSetupTrafficStreamsEthernet(handle,mac1,mac2,frameType,frameSize,frameRate
     handle.setAttribute(trafficStream1+'/highLevelStream:1/'+'frameSize','-fixedSize',frameSize)
     handle.setAttribute(trafficStream1+'/highLevelStream:1/'+'frameRate','-type',frameMode)
     handle.setAttribute(trafficStream1+'/highLevelStream:1/'+'frameRate','-rate',frameRate)
+    handle.setAttribute(trafficStream1+'/highLevelStream:1/'+'transmissionControl', '-type', 'fixedFrameCount')
+    handle.setAttribute(trafficStream1+'/highLevelStream:1/'+'transmissionControl', '-frameCount', frameCount + 10000)
     handle.setAttribute(trafficStream1+'/highLevelStream:2/'+'frameSize','-type',frameType)
     handle.setAttribute(trafficStream1+'/highLevelStream:2/'+'frameSize','-fixedSize',frameSize)
     handle.setAttribute(trafficStream1+'/highLevelStream:2/'+'frameRate','-type',frameMode)
     handle.setAttribute(trafficStream1+'/highLevelStream:2/'+'frameRate','-rate',frameRate)
+    handle.setAttribute(trafficStream1+'/highLevelStream:2/'+'transmissionControl', '-type', 'fixedFrameCount')
+    handle.setAttribute(trafficStream1+'/highLevelStream:2/'+'transmissionControl', '-frameCount', frameCount)
     handle.setAttribute(handle.getList(trafficStream1,'tracking')[0],'-trackBy','trackingenabled0')
     handle.commit()
     return trafficStream1
@@ -169,48 +174,49 @@ def IxStopTraffic(handle,trafficHandle,portStatistics) :
     '''
         Stops the traffis and returns port stats
     '''
+    port_stats = []
     helpers.log("### Stopping Traffic")
     handle.execute('stopStatelessTraffic',trafficHandle)
     helpers.log("### Printing Statistics")
-    #print handle.getAttribute(portStatistics+'/page', '-columnCaptions')
+    col_names = handle.getAttribute(portStatistics+'/page', '-columnCaptions')
     #print handle.getAttribute(portStatistics+'/page', '-rowValues')
 #['Stat Name', 'Port Name', 'Line Speed', 'Link State', 'Frames Tx.', 'Valid Frames Rx.', 'Frames Tx. Rate', 'Valid Frames Rx. Rate', 'Data Integrity Frames Rx.', 'Data Integrity Errors', 'Bytes Tx.', 'Bytes Rx.', 'Bits Sent', 'Bits Received', 'Bytes Tx. Rate', 'Tx. Rate (bps)', 'Tx. Rate (Kbps)', 'Tx. Rate (Mbps)', 'Bytes Rx. Rate', 'Rx. Rate (bps)', 'Rx. Rate (Kbps)', 'Rx. Rate (Mbps)', 'Scheduled Frames Tx.', 'Scheduled Frames Tx. Rate', 'Control Frames Tx', 'Control Frames Rx', 'Ethernet OAM Information PDUs Sent', 'Ethernet OAM Information PDUs Received', 'Ethernet OAM Event Notification PDUs Received', 'Ethernet OAM Loopback Control PDUs Received', 'Ethernet OAM Organisation PDUs Received', 'Ethernet OAM Variable Request PDUs Received', 'Ethernet OAM Variable Response Received', 'Ethernet OAM Unsupported PDUs Received', 'Rx Pause Priority Group 0 Frames', 'Rx Pause Priority Group 1 Frames', 'Rx Pause Priority Group 2 Frames', 'Rx Pause Priority Group 3 Frames', 'Rx Pause Priority Group 4 Frames', 'Rx Pause Priority Group 5 Frames', 'Rx Pause Priority Group 6 Frames', 'Rx Pause Priority Group 7 Frames', 'Misdirected Packet Count', 'CRC Errors']
-    port1stats = handle.getAttribute(portStatistics+'/page', '-rowValues')[0]
-    port2stats = handle.getAttribute(portStatistics+'/page', '-rowValues')[1]
-    return (port1stats, port2stats)
+    stats = handle.getAttribute(portStatistics+'/page', '-rowValues')
+    for stat in stats:
+        port_stat = {}
+        for column, value in zip(col_names, stat[0]):
+            if column == 'Stat Name':
+                port_stat['port'] = value
+            if column == 'Frames Tx.':
+                port_stat['Tx'] = value 
+            if column == 'Valid Frames Rx.':
+                port_stat['Rx'] = value
+        port_stats.append(port_stat)
+    return port_stats
 
-def IxCreateDeviceIP(handle,mac1,mac2,Mac1Mult,Mac2Mult,addr1,addr1Step,addr2Step,addr2,prefix1,prefix2) :
+def IxCreateDeviceIP(handle,macs, mac_mults, addrs,addrsteps, prefixs) :
     helpers.log("### Add ipv4")
-    handle.add(mac1,'ipv4')
-    handle.commit()
-    ipA1 = handle.getList(mac1,'ipv4')
-    ip1 = handle.remapIds(ipA1)[0]
-    mvAdd1 = handle.getAttribute(ip1,'-address')
-    mvGw1 = handle.getAttribute(ip1,'-gatewayIp')
-    if Mac1Mult <= 1 :
-        i1 = handle.setAttribute(mvAdd1+'/singleValue','-value',addr1)
-    else :        
-        i1 = handle.setMultiAttribute(mvAdd1+'/counter','-start',addr1,'-step',addr1Step)
-    handle.setAttribute(mvGw1+'/singleValue','-value',addr2)
-    handle.setAttribute(handle.getAttribute(ip1,'-prefix')+'/singleValue','-value',prefix1)
-    handle.commit()
-    handle.add(mac2,'ipv4')
-    handle.commit()
-    ipA2 = handle.getList(mac2,'ipv4')
-    ip2 = handle.remapIds(ipA2)[0]
-    mvAdd2 = handle.getAttribute(ip2,'-address')
-    mvGw2 = handle.getAttribute(ip2,'-gatewayIp')
-    if Mac2Mult <= 1 :
-        i2 = handle.setAttribute(mvAdd2+'/singleValue','-value',addr2)
-    else :        
-        i2 = handle.setMultiAttribute(mvAdd2+'/counter','-start',addr2,'-step',addr2Step)
-    handle.setAttribute(mvGw2+'/singleValue','-value',addr1)
-    handle.setAttribute(handle.getAttribute(ip2,'-prefix')+'/singleValue','-value',prefix2)
-    handle.commit()
-    handle.setMultiAttribute(handle.getAttribute(ip1,'-resolveGateway')+'/singleValue','-value',True)
-    handle.setMultiAttribute(handle.getAttribute(ip2,'-resolveGateway')+'/singleValue','-value',True)
+    return_ips = []
+    for (mac, mac_mult, addr, addrstep, prefix) in zip(macs, mac_mults, addrs, addrsteps, prefixs):
+        handle.add(mac,'ipv4')
+        handle.commit()
+        ipA1 = handle.getList(mac,'ipv4')
+        ip1 = handle.remapIds(ipA1)[0]
+        return_ips.append(ip1)
+        mvAdd1 = handle.getAttribute(ip1,'-address')
+        mvGw1 = handle.getAttribute(ip1,'-gatewayIp')
+        if mac_mult <= 1 :
+            i1 = handle.setAttribute(mvAdd1+'/singleValue','-value',addr)
+        else :        
+            i1 = handle.setMultiAttribute(mvAdd1+'/counter','-start',addr,'-step',addrstep)
+        handle.setAttribute(mvGw1+'/singleValue','-value',addr)
+        handle.setAttribute(handle.getAttribute(ip1,'-prefix')+'/singleValue','-value',prefix)
+        handle.commit()
+        
+    handle.setMultiAttribute(handle.getAttribute(return_ips[0],'-resolveGateway')+'/singleValue','-value',True)
+    handle.setMultiAttribute(handle.getAttribute(return_ips[1],'-resolveGateway')+'/singleValue','-value',True)
     helpers.log("### Done adding ipv4 Addresses")
-    return (ip1,ip2)
+    return return_ips
 
 def IxSetupTrafficStreamsIP(handle,ip1,ip2,frameType,frameSize,frameRate,frameMode):
     trafficItem = handle.add(handle.getRoot()+'traffic', 'trafficItem', '-trafficItemType', 'raw')
@@ -230,8 +236,6 @@ def IxSetupTrafficStreamsIP(handle,ip1,ip2,frameType,frameSize,frameRate,frameMo
     #handle.setAttribute(handle.getList(end1,'tracking')[0],'-trackBy','trackingenabled0')
     handle.commit()
     return trafficItem1
-
-
 
 
 
