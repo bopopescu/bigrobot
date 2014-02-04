@@ -8,7 +8,7 @@ import os
 import sys
 import platform
 import shutil
-#import argparse
+# import argparse
 
 
 def set_environment():
@@ -16,7 +16,7 @@ def set_environment():
     Look for user-defined environments BIGROBOT_PATH and BIGTEST_PATH. If they
     don't exist then assume some defaults. Add them to Python path.
     """
-    
+
     system = platform.system()
     if system == 'Darwin':
         p = '%s/Documents/workspace' % os.path.expanduser('~')
@@ -28,17 +28,17 @@ def set_environment():
 
     if 'BIGROBOT_PATH' not in os.environ:
         os.environ['BIGROBOT_PATH'] = ''.join((p, '/bigrobot'))
-    
+
     if 'BIGTEST_PATH' not in os.environ:
         os.environ['BIGTEST_PATH'] = ''.join((p, '/bigtest'))
-    
+
     # Add paths to PYTHONPATH
     sys.path.append(os.environ['BIGROBOT_PATH'])
     sys.path.append(os.environ['BIGTEST_PATH'])
     exscript_path = ''.join((os.environ['BIGROBOT_PATH'],
                              '/vendors/exscript/src'))
     sys.path.append(exscript_path)
-    
+
     # (Re-)export PYTHONPATH environment
     os.environ['PYTHONPATH'] = os.pathsep.join(sys.path)
 
@@ -121,7 +121,7 @@ def usage():
     # Print a list of all the test suites in the current directory.
     # Files extension should match the suite extension (e.g., either
     # 'mw', 'txt', etc).
-    
+
     ext = ''.join(('.', helpers.bigrobot_suite_format()))
 
     file_list = []
@@ -135,13 +135,13 @@ def usage():
     print("  Point environment variable BIGROBOT_SUITE to a test suite."
           " Select one below:")
     for _ in suite_list:
-        #print("    export BIGROBOT_SUITE=%s" % _)
-        #print(repr(helpers.bigrobot_exec_hint_format()) % _)
+        # print("    export BIGROBOT_SUITE=%s" % _)
+        # print(repr(helpers.bigrobot_exec_hint_format()) % _)
         print("    " + helpers.bigrobot_exec_hint_format() % _)
-    
+
     if not suite_list:
         print("    export BIGROBOT_SUITE=<testsuite_name>")
-        
+
     print("")
 
     # Print the gobot commands
@@ -165,7 +165,7 @@ def is_topology_defined():
         return False
     else:
         return True
-    
+
 
 def exit_if_topology_not_defined():
     if not is_topology_defined():
@@ -187,7 +187,7 @@ def exit_if_suite_not_defined():
                            " See 'gobot help' for more information.")
     f = ''.join((helpers.bigrobot_suite(),
                  '.',
-                 helpers.bigrobot_suite_format())) 
+                 helpers.bigrobot_suite_format()))
     if not os.path.exists(f):
         helpers.error_exit("Test suite file '%s' does not exist." % f)
 
@@ -209,7 +209,7 @@ def format_convert(f, quiet=False):
         return
     if helpers.bigrobot_suite_format() != 'mw':
         return
-    
+
     run('pandoc %s.mw --from=mediawiki --to=rst --output=%s.rst' % (f, f),
         quiet=quiet)
     run('pandoc %s.mw --from=mediawiki --to=html --output=%s.html' % (f, f),
@@ -220,32 +220,32 @@ def format_convert_and_copy(f, p, quiet=False):
     format_convert(f, quiet)
     if not os.path.exists(helpers.bigrobot_log_path_exec_instance()):
         os.makedirs(helpers.bigrobot_log_path_exec_instance())
-        
+
     for ext in ('mw', 'txt', 'rst', 'html'):
         filename = ''.join((f, '.', ext))
         if os.path.exists(filename):
             shutil.copy(filename, helpers.bigrobot_log_path_exec_instance())
-        
+
 
 def create_symlinks_to_logs():
     log_path = helpers.bigrobot_log_path()
     log_path_run = helpers.bigrobot_log_path_exec_instance()
     log_files = ['debug.log', 'syslog.txt', 'log.html', 'report.html']
-    
+
     for f in log_files:
         f2 = '/'.join((log_path, f))
-        
+
         helpers.file_remove(f)
         helpers.file_remove(f2)
-        
-        source_file =  '/'.join((log_path_run, f))
+
+        source_file = '/'.join((log_path_run, f))
 
         # Create symlink only if source file exists
         if helpers.file_exists(source_file):
             os.symlink(source_file, f)
             if not helpers.file_exists(f2):
                 # Create additional symlink, unless f == f2
-                os.symlink(source_file, f2)            
+                os.symlink(source_file, f2)
 
 #
 # Gobot command definitions
@@ -262,8 +262,8 @@ def version_hidden_command():
     print "BigRobot version        %s" % helpers.get_version()
     print "Robot Framework version %s" % robot_framework_version
     print "Exscript version        %s" % exscript_version
-    
-    
+
+
 def suite_command():
     """
     Show the text output of the test suite.
@@ -281,11 +281,11 @@ def test_command():
     exit_if_topology_not_defined()
     format_convert_and_copy(helpers.bigrobot_suite(),
                             helpers.bigrobot_log_path_exec_instance())
-    
+
     ext = 'txt'
     if helpers.bigrobot_suite_format() == 'mw':
         ext = 'html'
-    
+
     # Command options:
     #   pybot --loglevel=debug \
     #         --debugfile=debug.log \
@@ -295,7 +295,7 @@ def test_command():
     run('pybot %s %s.%s'
         % (ROBOT_FRAMEWORK_OPTS, helpers.bigrobot_suite(), ext))
     create_symlinks_to_logs()
-    
+
 
 def env_command():
     """
@@ -303,7 +303,7 @@ def env_command():
     """
     for env in sorted(helpers.bigrobot_env_list()):
         print("%s=%s" % (env, os.environ[env]))
-    
+
 
 def gui_command():
     """
@@ -331,6 +331,7 @@ def clean_deep_command():
         run('rm -rfv %s_20[0-9][0-9][0-9][0-9][0-9][0-9]_[0-9][0-9][0-9][0-9][0-9][0-9]'
             % helpers.bigrobot_suite(), shell=True)
 
+
 def codesize_hidden_command():
     """
     Check the size of BigRobot source code.
@@ -338,13 +339,14 @@ def codesize_hidden_command():
     cmd = ''.join((helpers.bigrobot_path(), "/bin/chk-code-bloat-bigrobot",
                    " ", helpers.bigrobot_path()))
     run(cmd, shell=True)
-    
+
+
 def startremotevm_command():
     """
     Setup remote VMs using BigTest (executes 'bt startremotevm').
     """
     run('bt startremotevm', cwd=helpers.bigtest_path())
-    
+
 
 def stopremotevm_command():
     """

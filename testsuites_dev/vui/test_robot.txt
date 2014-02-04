@@ -5,6 +5,9 @@ Force Tags      Vui
 Library         keywords/BsnCommon.py
 Library         keywords_dev/vui/MyTest.py
 
+* Variables
+${NAME}         "Vui Le"
+${COUNTER}      100
 
 * Test Cases
 Test var assignment
@@ -19,7 +22,7 @@ Test run keyword if
 
 
 Test process python dictionary
-    #[Tags]           skipped
+    [Tags]           skipped
     ${result}=       get a dictionary
     log              result=${result}
     process a dictionary  ${result}
@@ -34,7 +37,18 @@ Openstack user id
     : for  ${index}  in range  1  5
     \  ${user}=  Set Variable  user${index}
     \  log  ${index}:${user}
+
+Test dynamic string
+    [Tags]           skipped
+    json_to_pydict    {a:true, b:${123}, name:${NAME}}
     
+Test expression
+    #[Tags]           skipped
+    ${result1}=       expr  1 + 1 + ${COUNTER}
+    ${result2}=       expr  10 / 2
+    ${result3}=       expr  ${result1} + ${result2}
+    log               Expression evaluated to result1=${result1}, result2=${result2}, result3=${result3}
+
 
 * Keywords
 variable assignment
