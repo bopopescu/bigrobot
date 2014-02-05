@@ -18,27 +18,26 @@ class Common(object):
 
     def bigtap_test_setup(self):
         test.Test()
-        self.bigtap_clean_all()
+        self.bigtap_delete_all()
 
     def bigtap_test_teardown(self):
-#       self.bigtap_clean_all()
+#       self.bigtap_delete_all()
         pass
 
-    def bigtap_clean_all(self):
+    def bigtap_delete_all(self):
         """ Clean up bigtap configuration in order: policy, address-group
            -- Mingtao
          """         
-        self.bigtap_clean_policy() 
-        self.bigtap_clean_address_group()
+        self.bigtap_delete_policy() 
+        self.bigtap_delete_address_group()
  
         return True   
 
  
-    def bigtap_clean_policy(self,policy=None):
+    def bigtap_delete_policy(self,policy=None):
         """ Clean up the policy: input - policy 
             -- Mingtao
-            Usage:  bigtap_clean_policy   P1   -  clean up  policy  P1
-                    bigtap_clean_policy            -  clean up all polices
+            Usage:  ces
         """        
         t = test.Test()
         c= t.controller('master')
@@ -69,11 +68,10 @@ class Common(object):
                     return False                
         return True   
 
-    def bigtap_clean_address_group(self,addrgroup=None):
+    def bigtap_delete_address_group(self,addrgroup=None):
         """ Clean up the address-group: input - address-group
             -- Mingtao
-            Usage:  bigtap_clean_policy   addrgroup   -  clean up one policy
-                    bigtap_clean_policy            -  clean up all polices
+            Usage:   
         """        
         t = test.Test()
         c= t.controller('master') 
@@ -103,11 +101,10 @@ class Common(object):
                     return False
         return True   
 
-    def bigtap_clean_service(self,service=None):
+    def bigtap_delete_service(self,service=None):
         """ Clean up the address-group: input - address-group   ##TBD
             -- Mingtao
-            Usage:  bigtap_clean_policy   addrgroup   -  clean up one policy
-                    bigtap_clean_policy            -  clean up all polices
+            Usage:  
         """        
         t = test.Test()
         c= t.controller('master')   
