@@ -40,13 +40,13 @@ class T5Fabric(object):
         
         return True
     
-    def rest_configure_switch(self, switch):
-        '''Configure the fabric switch 
+    def rest_add_switch(self, switch):
+        '''add the fabric switch 
         
             Input:
                     switch        Name of the switch
                                        
-            Returns: Configure the fabric switch
+            Returns: add the fabric switch
         '''
         t = test.Test()
         c = t.controller()
@@ -60,7 +60,7 @@ class T5Fabric(object):
 
         return c.rest.content()
     
-    def rest_configure_dpid(self, switch, dpid):
+    def rest_add_dpid(self, switch, dpid):
         t = test.Test()
         c = t.controller()
         
@@ -73,7 +73,7 @@ class T5Fabric(object):
 
         return c.rest.content() 
     
-    def rest_configure_fabric_role(self, switch, role):
+    def rest_add_fabric_role(self, switch, role):
         t = test.Test()
         c = t.controller()
         
@@ -86,7 +86,7 @@ class T5Fabric(object):
 
         return c.rest.content() 
     
-    def rest_configure_leaf_group(self, switch, group):
+    def rest_add_leaf_group(self, switch, group):
         t = test.Test()
         c = t.controller()
         
@@ -99,9 +99,9 @@ class T5Fabric(object):
             
         return c.rest.content()
     
-    def rest_remove_leaf_group(self, switch, group=None):
+    def rest_delete_leaf_group(self, switch, group=None):
         ''' 
-           Function to remove the specific leaf group
+           Function to delete the specific leaf group
            Input:  Switch name
         '''
         t = test.Test()
@@ -112,7 +112,7 @@ class T5Fabric(object):
             helpers.test_failure(c.rest.error())
         return c.rest.content()   
     
-    def rest_remove_fabric_switch(self, switch=None):
+    def rest_delete_fabric_switch(self, switch=None):
         t = test.Test()
         c = t.controller()
         
@@ -124,7 +124,7 @@ class T5Fabric(object):
             
         return c.rest.content() 
     
-    def rest_check_fabric_switch_connectivity(self):
+    def rest_verify_fabric_switch_all(self):
         t = test.Test()
         c = t.controller()
         url = '%s/api/v1/data/controller/core/switch' % (c.base_url)       
@@ -147,7 +147,7 @@ class T5Fabric(object):
         data = c.rest.content()       
         for i in range (0,len(data)):
             if data[i]["link"]["dst"]["switch-info"]["switch-name"] == switch and data[i]["link"]["link-direction"] == "bidirectional":
-                helpers.test_failure("%s Fabric Links not Removed" % str(data[i]["link"]["dst"]["switch-info"]["switch-name"])) 
+                helpers.test_failure("%s Fabric Links not deleted" % str(data[i]["link"]["dst"]["switch-info"]["switch-name"])) 
                 break 
                                               
         return True 
@@ -160,11 +160,11 @@ class T5Fabric(object):
         data = c.rest.content()
         for i in range (0,len(data)):
             if data[i]["link"]["dst"]["switch-info"]["switch-name"] == switch and data[i]["link"]["link-direction"] == "bidirectional":
-                helpers.test_log("%s Fabric Links not Removed" % str(data[i]["link"]["dst"]["switch-info"]["switch-name"])) 
+                helpers.test_log("%s Fabric Links not deleted" % str(data[i]["link"]["dst"]["switch-info"]["switch-name"])) 
                                                              
         return True 
                          
-    def rest_check_fabric_switch_role(self, dpid, role):
+    def rest_verify_fabric_switch_role(self, dpid, role):
         t = test.Test()
         c = t.controller()
         url = '%s/api/v1/data/controller/core/switch' % (c.base_url)       
@@ -183,7 +183,7 @@ class T5Fabric(object):
                                                                               
         return False
 
-    def rest_remove_fabric_role(self, switch, role=None):
+    def rest_delete_fabric_role(self, switch, role=None):
         t = test.Test()
         c = t.controller()
         
@@ -247,7 +247,7 @@ class T5Fabric(object):
                                                 helpers.test_failure(" Spine lag formation from leaf %s switch is not correct,Expected = %d, Actual = %d" % (switch, fabric_spine_interface, len(data3[0]["fabric-lag"][i]["member"])))
                                                 return False 
                                         elif data3[0]["fabric-lag"][i]["lag-type"] == "spine-broadcast-lag":
-                                                if len(data3[0]["fabric-lag"][i]["member"]) == (int(self.rest_get_no_of_rack()) * fabric_spine_interface):
+                                                if len(data3[0]["fabric-lag"][i]["member"]) == (int(self.rest_verify_no_of_rack()) * fabric_spine_interface):
                                                     helpers.log("Spine Broadcast lag from leaf switch %s is correct , Actual = %d , Expected = %d" % (switch, int(self.rest_get_no_of_rack()), fabric_spine_interface))
                                                 else:
                                                         helpers.test_failure("Spine Broadcast lag from leaf switch %s is not correct,expected = %d,actual = %d" % (switch, (int(self.rest_get_no_of_rack()) * fabric_spine_interface), len(data3[0]["fabric-lag"][i]["member"])))
@@ -281,7 +281,7 @@ class T5Fabric(object):
                             helpers.log("Pass: Fabric switch connection status for %s dual leaf is correct" % str(data[0]["fabric-switch-info"]["switch-name"]))
                             return True
                 else:
-                    helpers.log("Default fabric role is virtual for not configured fabric switches")                        
+                    helpers.log("Default fabric role is virtual for not added fabric switches")                        
             elif data[0]["fabric-switch-info"]["suspended"] == False or data[0]["fabric-switch-info"]["suspended"] == True:
                 helpers.test_failure("Fail: Switch is not connected , Fabric switch status still exists")
                 return True    
@@ -311,7 +311,7 @@ class T5Fabric(object):
             helpers.test_failure("Fail: Inconsistent state of fabric links. Fabric_Interface = %d , bidir_link = %d" % (fabric_interface, bidir_link))
         
                         
-    def rest_get_no_of_rack(self):
+    def rest_verify_no_of_rack(self):
         t = test.Test()
         c = t.controller()
         url = '%s/api/v1/data/controller/core/switch' % (c.base_url)
@@ -356,17 +356,17 @@ class T5Fabric(object):
         if data1[0]["fabric-switch-info"]["leaf-group"] == "" :
             for i in range(0,len(data)):
                 if (data[i]["port"]["port-num"] == peer_intf[0]):
-                    helpers.test_failure("Peer switch edge ports are not removed from lag table")
+                    helpers.test_failure("Peer switch edge ports are not deleted from lag table")
                     return False
                 else:
-                    helpers.log("Peer switch edge ports are removed from forwarding lag table")  
+                    helpers.log("Peer switch edge ports are deleted from forwarding lag table")  
                     return True
         else:           
             for i in range(0,len(data)):
                 if (data[i]["port"]["port-num"] == peer_intf[0]):
-                    helpers.log("Peer switch edge ports are properly created in forwarding table")
+                    helpers.log("Peer switch edge ports are properly added in forwarding table")
                 else:
-                    helpers.test_failure("Peer switch edge ports are not created in forwarding table")
+                    helpers.test_failure("Peer switch edge ports are not added in forwarding table")
                     
                 
                 

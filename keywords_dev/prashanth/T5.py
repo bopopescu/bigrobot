@@ -244,6 +244,21 @@ class T5(object):
 
         return c.rest.content()
     
+    def rest_add_portgroup_lacp(self, pg):
+        t = test.Test()
+        c = t.controller()
+                       
+        helpers.test_log("Input arguments: port-group = %s" % (pg))
+        
+        url = '%s/api/v1/data/controller/fabric/port-group[name="%s"]' % (c.base_url, pg)
+        c.rest.patch(url, {"mode": "lacp"})
+        helpers.test_log("Output: %s" % c.rest.result_json())
+
+        if not c.rest.status_code_ok():
+            helpers.test_failure(c.rest.error())
+
+        return c.rest.content()
+    
     def rest_delete_interface_from_portgroup(self, switch, intf, pg):
         t = test.Test()
         c = t.controller()
