@@ -1,0 +1,20 @@
+[MESSAGES CONTROL]
+# F0401 - Unable to import 'module'
+disable=C0103,F0401
+
+[REPORTS]
+# set the output format. Available formats are text, parseable, colorized and
+# html
+output-format=colorized
+
+# Include message's id in output
+msg-template={msg_id}:{line:3d},{column}: {obj}: {msg}
+
+[MISCELLANEOUS]
+
+# List of note tags to take in consideration, separated by a comma.
+# FIXME -- something which needs fixing
+# TODO  -- future plan
+# XXX   -- some concern
+# YYY   -- comment/answer to above mentioned concern
+notes=FIXME,TODO,XXX,YYY
