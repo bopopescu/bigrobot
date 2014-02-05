@@ -12,156 +12,156 @@ Library          keywords_dev/prashanth/T5.py
 Library	         keywords_dev/prashanth/T5Fabric.py
 Library          keywords/Mininet.py
 Library			 keywords/Host.py
-Resource	     keywords_dev/prashanth/t5_singleleaf_dual_rack_physical_resource.txt
+Resource	     keywords_dev/prashanth/t5_singleleaf_three_rack_physical_resource.txt
 
 * Variables
-${bm0_ip}  192.168.1.20
-${bm1_ip}  192.168.1.21
-${bm2_ip}  192.168.1.10
-${bm0_mac}  d4:ae:52:c9:c7:45
-${bm1_mac}  d4:ae:52:c9:c5:35
-${bm2_mac}  d4:ae:52:c6:bc:cb
-${bm0_intf0}  ethernet25
-${bm1_intf0}  ethernet26
-${bm2_intf0}  ethernet25
-${bm0_eth1_ip}	192.168.2.20/24
-${bm1_eth1_ip}	192.168.2.21/24
-${bm2_eth1_ip}	192.168.2.10/24
-${bm0_tag_ip}	192.168.2.20
-${bm1_tag_ip}	192.168.2.21
-${bm2_tag_ip}	192.168.2.10
+${h1_ip}  192.168.1.20
+${h2_ip}  192.168.1.21
+${h3_ip}  192.168.1.10
+${h1_mac}  d4:ae:52:c9:c7:45
+${h2_mac}  d4:ae:52:c9:c5:35
+${h3_mac}  d4:ae:52:c6:bc:cb
+${h1_intf0}  ethernet25
+${h2_intf0}  ethernet26
+${h3_intf0}  ethernet25
+${h1_eth1_ip}	192.168.2.20/24
+${h2_eth1_ip}	192.168.2.21/24
+${h3_eth1_ip}	192.168.2.10/24
+${h1_tag_ip}	192.168.2.20
+${h2_tag_ip}	192.168.2.21
+${h3_tag_ip}	192.168.2.10
 
 * Test Case 
 
-Configure Single Leaf Dual Rack setup
-   [Tags]  smoke  sanity
-   sleep  5
-   configure fabric switch
-   sleep  5
-   rest check fabric switch connectivity
+add Single Leaf Dual Rack setup
+   [Tags]  smoke  sanity   
+#   sleep  5
+#   add fabric switch
+#   sleep  5
+   rest verify fabric switch all
    rest verify fabric link
 
-ping bm0 to bm1 single leaf single rack dynamic endpoints
-   [Tags]  smoke  sanity  skipped   
-   rest add interface to vns  A  A  leaf0  ${bm0_intf0}  -1 
-   rest add interface to vns  A  A  leaf0  ${bm1_intf0}  -1 
+ping h1 to h2 single leaf single rack dynamic endpoints
+   [Tags]  smoke  sanity     
+   rest add interface to vns  A  A  leaf0-a  ${h1_intf0}  -1 
+   rest add interface to vns  A  A  leaf0-a  ${h2_intf0}  -1 
    sleep  5
-   ${loss}=  bash ping  h1  ${bm1_ip}  source_if=eth1
+   ${loss}=  bash ping  h1  ${h2_ip}  source_if=eth1
    Should Be True  ${loss} == 0  
  
-ping bm0 to bm1 single leaf single rack static endpoints
-   [Tags]  sanity  skipped   
-   create a endpoint  A  A  e1 
-   create a endpoint  A  A  e2 
-   rest add interface to endpoint  A   A  e2  leaf0  ${bm1_intf0}  -1
-   rest add interface to endpoint  A   A  e1  leaf0  ${bm0_intf0}  -1
-   REST configure ip endpoint  A  A  e1  ${bm0_ip}
-   REST configure mac endpoint  A  A  e1  ${bm0_mac}
-   REST configure ip endpoint  A  A  e2  ${bm1_ip}
-   REST configure mac endpoint  A  A  e2  ${bm1_mac}
-   rest add interface to vns  A  A  leaf0  ${bm1_intf0}  -1 
-   rest add interface to vns  A  A  leaf0  ${bm0_intf0}  -1
+ping h1 to h2 single leaf single rack static endpoints
+   [Tags]  sanity     
+   add a endpoint  A  A  e1 
+   add a endpoint  A  A  e2 
+   rest add interface to endpoint  A   A  e2  leaf0-a  ${h2_intf0}  -1
+   rest add interface to endpoint  A   A  e1  leaf0-a  ${h1_intf0}  -1
+   REST add ip endpoint  A  A  e1  ${h1_ip}
+   REST add mac endpoint  A  A  e1  ${h1_mac}
+   REST add ip endpoint  A  A  e2  ${h2_ip}
+   REST add mac endpoint  A  A  e2  ${h2_mac}
+   rest add interface to vns  A  A  leaf0-a  ${h2_intf0}  -1 
+   rest add interface to vns  A  A  leaf0-a  ${h1_intf0}  -1
    sleep  5 
-   ${loss}=  bash ping  h1   ${bm1_ip}  source_if=eth1
+   ${loss}=  bash ping  h1   ${h2_ip}  source_if=eth1
    Should Be True  ${loss} == 0
    
-ping bm0 to bm2 dual rack single leaf dynamic endpoints
+ping h1 to h3 dual rack single leaf dynamic endpoints
    [Tags]  smoke  sanity   
-   rest add interface to vns  A  A  leaf0  ${bm0_intf0}  -1 
-   rest add interface to vns  A  A  leaf1  ${bm2_intf0}  -1 
-   sleep  5000 
-   ${loss}=  bash ping  h1   ${bm2_ip}  source_if=eth1
+   rest add interface to vns  A  A  leaf0-a  ${h1_intf0}  -1 
+   rest add interface to vns  A  A  leaf1-a  ${h3_intf0}  -1 
+   sleep  5 
+   ${loss}=  bash ping  h1   ${h3_ip}  source_if=eth1
    Should Be True  ${loss} == 0 					 
 		
-ping bm0 to bm2 dual rack single leaf static endpoints 
+ping h1 to h3 dual rack single leaf static endpoints 
    [Tags]  sanity      
-   create a endpoint  A  A  e1 
-   create a endpoint  A  A  e2 
-   rest add interface to endpoint  A   A  e2  leaf1  ${bm2_intf0}  -1
-   rest add interface to endpoint  A   A  e1  leaf0  ${bm0_intf0}  -1
-   REST configure ip endpoint  A  A  e1  ${bm0_ip}
-   REST configure mac endpoint  A  A  e1  ${bm0_mac}
-   REST configure ip endpoint  A  A  e2  ${bm2_ip}
-   REST configure mac endpoint  A  A  e2  ${bm2_mac}
-   rest add interface to vns  A  A  leaf1  ${bm2_intf0}  -1 
-   rest add interface to vns  A  A  leaf0  ${bm0_intf0}  -1
+   add a endpoint  A  A  e1 
+   add a endpoint  A  A  e2 
+   rest add interface to endpoint  A   A  e2  leaf1-a  ${h3_intf0}  -1
+   rest add interface to endpoint  A   A  e1  leaf0-a  ${h1_intf0}  -1
+   REST add ip endpoint  A  A  e1  ${h1_ip}
+   REST add mac endpoint  A  A  e1  ${h1_mac}
+   REST add ip endpoint  A  A  e2  ${h3_ip}
+   REST add mac endpoint  A  A  e2  ${h3_mac}
+   rest add interface to vns  A  A  leaf1-a  ${h3_intf0}  -1 
+   rest add interface to vns  A  A  leaf0-a  ${h1_intf0}  -1
    sleep  5 
-   ${loss}=  bash ping  h1  ${bm2_ip}  source_if=eth1
+   ${loss}=  bash ping  h1  ${h3_ip}  source_if=eth1
    Should Be True  ${loss} == 0   
    
-ping bm0 to bm1 single leaf single rack dynamic endpoints tag
+ping h1 to h2 single leaf single rack dynamic endpoints tag
    [Tags]  smoke  sanity   
-   rest add interface to vns  A  A  leaf0  ${bm0_intf0}  10 
-   rest add interface to vns  A  A  leaf0  ${bm1_intf0}  10 
-   bash add tag  h1  eth1  10 
-   bash add ip address  h1  ${bm0_eth1_ip}  eth1.10
+   rest add interface to vns  A  A  leaf0-a  ${h1_intf0}  20 
+   rest add interface to vns  A  A  leaf0-a  ${h2_intf0}  20 
+   bash add tag  h1  eth1  20 
+   bash add ip address  h1  ${h1_eth1_ip}  eth1.20
    bash network restart  h1
    sleep  3
-   bash add tag  h2  eth1  10
-   bash add ip address  h2  ${bm1_eth1_ip}  eth1.10
+   bash add tag  h2  eth1  20
+   bash add ip address  h2  ${h2_eth1_ip}  eth1.20
    bash network restart  h2
    sleep  3
-   bash add tag  h3  eth1  10
-   bash add ip address  h3  ${bm2_eth1_ip}  eth1.10
+   bash add tag  h3  eth1  20
+   bash add ip address  h3  ${h3_eth1_ip}  eth1.20
    bash network restart  h3
    sleep  5
-   ${loss}=  bash ping  h1  ${bm1_tag_ip}  source_if=eth1.10
+   ${loss}=  bash ping  h1  ${h2_tag_ip}  source_if=eth1.20
    Should Be True  ${loss} == 0  					
 		
-ping bm0 to bm1 single leaf single rack static endpoints tag
+ping h1 to h2 single leaf single rack static endpoints tag
    [Tags]  sanity  
-   create a endpoint  A  A  e1 
-   create a endpoint  A  A  e2 
-   rest add interface to endpoint  A   A  e2  leaf0  ${bm1_intf0}  10
-   rest add interface to endpoint  A   A  e1  leaf0  ${bm0_intf0}  10
-   REST configure ip endpoint  A  A  e1  ${bm0_tag_ip}
-   REST configure mac endpoint  A  A  e1  ${bm0_mac}
-   REST configure ip endpoint  A  A  e2  ${bm1_tag_ip}
-   REST configure mac endpoint  A  A  e2  ${bm1_mac}
-   rest add interface to vns  A  A  leaf0  ${bm1_intf0}  10 
-   rest add interface to vns  A  A  leaf0  ${bm0_intf0}  10
+   add a endpoint  A  A  e1 
+   add a endpoint  A  A  e2 
+   rest add interface to endpoint  A   A  e2  leaf0-a  ${h2_intf0}  20
+   rest add interface to endpoint  A   A  e1  leaf0-a  ${h1_intf0}  20
+   REST add ip endpoint  A  A  e1  ${h1_tag_ip}
+   REST add mac endpoint  A  A  e1  ${h1_mac}
+   REST add ip endpoint  A  A  e2  ${h2_tag_ip}
+   REST add mac endpoint  A  A  e2  ${h2_mac}
+   rest add interface to vns  A  A  leaf0-a  ${h2_intf0}  20 
+   rest add interface to vns  A  A  leaf0-a  ${h1_intf0}  20
    sleep  5 
-   ${loss}=  bash ping  h1  ${bm1_tag_ip}  source_if=eth1.10
+   ${loss}=  bash ping  h1  ${h2_tag_ip}  source_if=eth1.20
    Should Be True  ${loss} == 0
 
-ping bm0 to bm2 dual rack single leaf dynamic endpoints tag     
+ping h1 to h3 dual rack single leaf dynamic endpoints tag     
    [Tags]  smoke  sanity    
-   rest add interface to vns  A  A  leaf0  ${bm0_intf0}  10 
-   rest add interface to vns  A  A  leaf1  ${bm2_intf0}  10
+   rest add interface to vns  A  A  leaf0-a  ${h1_intf0}  20 
+   rest add interface to vns  A  A  leaf1-a  ${h3_intf0}  20
    sleep  5
-   ${loss}=  bash ping  h1  ${bm2_tag_ip}  source_if=eth1.10
+   ${loss}=  bash ping  h1  ${h3_tag_ip}  source_if=eth1.20
    Should Be True  ${loss} == 0    
    
-ping bm0 to bm2 dual rack single leaf static endpoints tag 
+ping h1 to h3 dual rack single leaf static endpoints tag 
    [Tags]  sanity 
-   create a endpoint  A  A  e1 
-   create a endpoint  A  A  e2 
-   rest add interface to endpoint  A   A  e2  leaf1  ${bm2_intf0}  10
-   rest add interface to endpoint  A   A  e1  leaf0  ${bm0_intf0}  10
-   REST configure ip endpoint  A  A  e1  ${bm0_tag_ip}
-   REST configure mac endpoint  A  A  e1  ${bm0_mac}
-   REST configure ip endpoint  A  A  e2  ${bm2_tag_ip}
-   REST configure mac endpoint  A  A  e2  ${bm2_mac}
-   rest add interface to vns  A  A  leaf1  ${bm2_intf0}  10 
-   rest add interface to vns  A  A  leaf0  ${bm0_intf0}  10
+   add a endpoint  A  A  e1 
+   add a endpoint  A  A  e2 
+   rest add interface to endpoint  A   A  e2  leaf1-a  ${h3_intf0}  20
+   rest add interface to endpoint  A   A  e1  leaf0-a  ${h1_intf0}  20
+   REST add ip endpoint  A  A  e1  ${h1_tag_ip}
+   REST add mac endpoint  A  A  e1  ${h1_mac}
+   REST add ip endpoint  A  A  e2  ${h3_tag_ip}
+   REST add mac endpoint  A  A  e2  ${h3_mac}
+   rest add interface to vns  A  A  leaf1-a  ${h3_intf0}  20 
+   rest add interface to vns  A  A  leaf0-a  ${h1_intf0}  20
    sleep  5 
-   ${loss}=  bash ping  h1   ${bm2_tag_ip}  source_if=eth1.10
+   ${loss}=  bash ping  h1   ${h3_tag_ip}  source_if=eth1.20
    Should Be True  ${loss} == 0  
    
 Tear down the config
-   [Tags]  smoke  sanity 
+   [Tags]  smoke  sanity  
    delete a tenant  A
-   remove fabric switch
-   bash delete tag  h1  eth1.10
-   bash delete tag  h2  eth1.10
-   bash delete tag	h3	eth1.10
+#   delete fabric switch
+   bash delete tag  h1  eth1.20
+   bash delete tag  h2  eth1.20
+   bash delete tag	h3	eth1.20
    
 
 * Keywords      
 T5 base test setup
    base test setup
-   create a tenant  A 
-   create a vns  A  A
+   add a tenant  A 
+   add a vns  A  A
    sleep  5
    
 T5 base test teardown
@@ -169,26 +169,26 @@ T5 base test teardown
    base test teardown
    sleep  5
    
-create a tenant  [Arguments]  ${tenant} 
-  REST create tenant  ${tenant}    
+add a tenant  [Arguments]  ${tenant} 
+  REST add tenant  ${tenant}    
 
 delete a tenant  [Arguments]  ${tenant} 
   	REST delete tenant  ${tenant}    
 
-create a vns  [Arguments]  ${tenant}  ${vns}  
-	REST create vns  ${tenant}  ${vns}   
+add a vns  [Arguments]  ${tenant}  ${vns}  
+	REST add vns  ${tenant}  ${vns}   
 
 delete a vns  [Arguments]  ${tenant}  ${vns} 
   	REST delete vns  ${tenant}  ${vns}   
 
-create a portgroup  [Arguments]  ${pg}
-  	REST create portgroup  ${pg}    
+add a portgroup  [Arguments]  ${pg}
+  	REST add portgroup  ${pg}    
 
 delete a portgroup  [Arguments]  ${pg}
   	REST delete portgroup  ${pg}    
 
-create a endpoint  [Arguments]  ${tenant}  ${vns}  ${endpoint} 
-  	REST create endpoint  ${tenant}  ${vns}  ${endpoint}  
+add a endpoint  [Arguments]  ${tenant}  ${vns}  ${endpoint} 
+  	REST add endpoint  ${tenant}  ${vns}  ${endpoint}  
 
 delete a endpoint  [Arguments]  ${tenant}  ${vns}  ${endpoint}
   	REST delete endpoint  ${tenant}  ${vns}  ${endpoint}  
