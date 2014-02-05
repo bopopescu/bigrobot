@@ -43,12 +43,11 @@ Test dynamic string
     json_to_pydict    {a:true, b:${123}, name:${NAME}}
     
 Test expression
-    #[Tags]           skipped
+    [Tags]           skipped
     ${result1}=       expr  1 + 1 + ${COUNTER}
     ${result2}=       expr  10 / 2
     ${result3}=       expr  ${result1} + ${result2}
     log               Expression evaluated to result1=${result1}, result2=${result2}, result3=${result3}
-
 
 * Keywords
 variable assignment

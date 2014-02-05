@@ -560,13 +560,24 @@ def file_remove(filename):
         os.remove(filename)
 
 
+def file_cat(filename):
+    """
+    Behaves like the Unix 'cat' - concatenate and print file.
+    Reads a file and prints it to stdout.
+    """
+    s = file_read_once(filename)
+    print(s)
+
+
 def file_read_once(filename):
     """
     Read file in a single shot. Immediately close file.
+    Returns a string.
     """
     f = open(filename, 'r')
-    s = f.readlines()
+    lines = f.readlines()
     f.close()
+    s = ''.join(lines)
     return s
 
 
@@ -823,6 +834,54 @@ def openstack_convert_table_to_dict(input_str):
     out = br_utils.convert_table_to_dict(out)
 
     return out
+
+
+def openstack_replace_text_marker(input_file, output_file, line_marker,
+                                  line_marker_end, append_string):
+    """
+    Takes an input file and search for a marker, such as '[filter:authtoken]',
+    then remove the marker and all subsequent lines in the file until
+    the line_marker_end is hit. A sample line_marker_end is '[filter:gzip]'.
+    
+    Usage:
+   
+    append_str = '''
+    [filter:authtoken]
+    paste.filter_factory = keystoneclient.middleware.auth_token:filter_factory
+    delay_auth_decision = true
+    auth_host = 10.193.0.120
+    auth_port = 35357
+    auth_protocol = http
+    admin_tenant_name = service
+    admin_user = glance
+    '''
+    helpers.openstack_replace_text_marker(input_file='/tmp/glance-api-paste.ini',
+                                          output_file='/tmp/new-glance-api-paste.ini',
+                                          line_marker=r'^\[filter:authtoken\]',
+                                          line_marker_end=r'^\[.+',
+                                          append_string=append_str)
+    """
+    line_marker = line_marker.strip()
+    line_marker_end = line_marker_end.strip()
+    s = file_read_once(input_file)
+    lines = s.split("\n")
+    ignore_line = False
+    new_lines = []
+    for line in lines:
+        line = line.strip()
+        if re.search(line_marker, line):
+            log("matched line_marker: %s" % line_marker)
+            ignore_line = True
+        elif ignore_line and re.search(line_marker_end, line):
+            log("matched line_marker_end: %s" % line_marker_end)
+            ignore_line = False
+        if not ignore_line:
+            new_lines.append(line)
+        else:
+            log("Ignoring: %s" % line)
+    new_str = '\n'.join(new_lines) + '\n' + append_string
+    file_write_once(output_file, new_str)
+    return new_str
 
 
 def params_val(k, params_dict):
