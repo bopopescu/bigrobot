@@ -21,11 +21,13 @@ if __name__ == '__main__':
     ix_ports = [('10.192.85.151',2, 7), ('10.192.85.151', 2, 8)]
     
     ix_handle = IxLib.IxConnect(ix_tcl_server,  ix_server_port, ix_version)
-    L2_stream_args = {'ix_handle' : ix_handle, 'ports' : ix_ports, 'src_mac' :  '00:11:23:00:00:01', 'dst_mac' : '00:11:23:00:00:02', 'd_cnt' : 10, 's_cnt' : 50, \
-                'frame_rate' : 10000, 'frame_size' : 64, \
-                'ix_tcl_server' : '10.194.64.183', 'flow' : 'uni-directional'}
+    L2_stream_args = {'ix_handle' : ix_handle, 'ports' : ix_ports, 'src_mac' :  '00:11:23:00:00:01',\
+                       'dst_mac' : '00:11:23:00:00:02', 'd_cnt' : 10, 's_cnt' : 10, \
+                       'frame_rate' : 10000, 'frame_size' : 64, \
+                       'ix_tcl_server' : '10.194.64.183', 'flow' : 'bi-directional'}
     
     traffic_stream = IxLib.IXIA_L2_ADD(**L2_stream_args)
+    
     print 'Successfully created L2 Traffic Flows'
     IxLib.IxStartTrafficEthernet(ix_handle, traffic_stream)
     print "Successfully Started Traffic"
@@ -46,7 +48,8 @@ if __name__ == '__main__':
         i = i + 1
     
     print 'Stopping the traffic...'
-    
+    print 'Enter to stop the traffic'
+    raw_input()
     port_stats = IxLib.IxStopTraffic(ix_handle, traffic_stream)
     
     print 'Successfully stopped traffic'
