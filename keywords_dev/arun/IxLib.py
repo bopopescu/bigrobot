@@ -1,4 +1,7 @@
 #!/usr/bin/env python
+'''
+    This module is used to maintain Ixia Related Libraries for traffic generation
+'''
 import autobot.helpers as helpers
 import time
 from vendors.Ixia import IxNetwork
@@ -197,7 +200,6 @@ def IXIA_L2_ADD(**kwargs):
     frame_mode = kwargs.get('frame_mode', 'framesPerSecond')
     ix_tcl_server = kwargs.get('ix_tcl_server', None)
     flow = kwargs.get('flow', 'bi-directional')
-
     vport_names = ['vport1_sdk', 'vport2_sdk']
     ix_chassis = ix_ports[0][0]
     if ix_tcl_server is None or ix_ports is None or s_mac is None or d_mac is None:
@@ -251,13 +253,13 @@ def ix_fetch_port_stats(handle):
         port_stats.append(port_stat)
     return port_stats
 
-def IxStopTraffic(handle,traffic_stream) :
+def IxStopTraffic(handle, traffic_stream):
     '''
         Stops the traffis and returns port stats
         Ex Usage : IxStopTraffic(ix_handle, traffic_stream)
     '''
     helpers.log("### Stopping Traffic")
-    handle.execute('stopStatelessTraffic',traffic_stream)
+    handle.execute('stopStatelessTraffic', traffic_stream)
     helpers.log("### Printing Statistics")
     port_stats = ix_fetch_port_stats(handle)
     helpers.log("### Port Stats : \n %s" % port_stats)
