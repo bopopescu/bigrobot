@@ -144,3 +144,46 @@ root@nova-controller:~#
         helpers.log("arg: %s" % arg)
         arg_dict = helpers.from_json(arg)
         helpers.log("arg_dict: %s" % arg_dict)
+
+    def kw_read_file(self, f):
+        lines = helpers.file_read_once(f)
+        helpers.log("lines:\n%s" % lines)
+        return lines
+
+    def kw_write_file(self, f, s):
+        helpers.file_write_once(f, s)
+        helpers.log("Wrote to file: %s" % f)
+
+    def kw_cat_file(self, f):
+        helpers.file_cat(f)
+
+    def kw_strip_text(self):
+        inf = '/tmp/glance-api-paste.ini'
+        outf = '/tmp/new-glance-api-paste.ini'
+        line_marker = r'^\[filter:authtoken\]'
+        line_marker_end = r'^\[.+'
+        append_string = '''
+[filter:authtoken]
+paste.filter_factory = keystoneclient.middleware.auth_token:filter_factory
+delay_auth_decision = true
+auth_host = 10.193.0.120
+auth_port = 35357
+auth_protocol = http
+admin_tenant_name = service
+admin_user = glance
+'''
+        helpers.openstack_replace_text_marker(input_file=inf,
+                                              output_file=outf,
+                                              line_marker=line_marker,
+                                              line_marker_end=line_marker_end,
+                                              append_string=append_string)
+
+    def kw_mod_config(self):
+        openstack_host = '10.193.0.120'
+        helpers.scp_get(openstack_host, user='root', password='bsn',
+                        remote_file='/etc/glance/glance-api-paste.ini',
+                        local_path='/tmp')
+        self.kw_strip_text()
+        helpers.scp_put(openstack_host, user='root', password='bsn',
+                        local_file='/tmp/new-glance-api-paste.ini',
+                        remote_path='/tmp/glance-api-paste.ini')
