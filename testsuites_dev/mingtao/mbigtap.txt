@@ -101,9 +101,11 @@ T1.7 Address group IPv6 overlap
 	[Tags] 	sanity   skipped
  
 
+
+
 	
 T2.1 Ipv4 prefix optimization
-     Config number of ipv4 entries        G_1     10.0.0.0    0.0.0.1    255.255.255.255      32  
+     Config number of ipv4 entries        G_1     10.0.0.0    0.0.0.1    255.255.255.255      256  
      Config bigtap policy                 P1    S207-39     S207-37	 
      Config ipv4 list src                 P1    "G_1"   10
      Config ipv4 list dst                 P1    "G_1"   20
@@ -111,19 +113,19 @@ T2.1 Ipv4 prefix optimization
 	 Verify optimized match    P1   2
      Verify switch entry       S207   2
 
-	[Tags]   sanity    skipped
+	[Tags]   sanity     skipped
 
 
 T2.2 Ipv4 prefix and src address optimization
-     Config number of ipv4 entries        G_1     10.0.0.128    0.0.0.1    255.255.255.255      32  
+     Config number of ipv4 entries        G_1     10.0.0.128    0.0.0.1    255.255.255.255      256  
      Config bigtap policy                 P1    S207-39     S207-37	 
      Config ipv4 list src ip dst                P1    "G_1"   10     "110.111.111.0"   "255.255.255.0"  
      Config ipv4 list dst ip src                P1    "G_1"   20     "210.111.111.0"   "255.255.255.0"  
      Sleep     ${medium}       
-	 Verify optimized match    P1   2
-     Verify switch entry       S207   2
+	 Verify optimized match    P1   4
+     Verify switch entry       S207   4
 
-	[Tags]   sanity    skipped
+	[Tags]   sanity     
 
 
 T2.3 Ipv6 prefix optimization
@@ -135,7 +137,7 @@ T2.3 Ipv6 prefix optimization
 	 Verify optimized match    P1   2
      Verify switch entry       S207   2
 
-	[Tags]   sanity      skipped
+	[Tags]   sanity      
 
 
 T2.4 Ipv6 prefix and src address optimization
@@ -147,8 +149,50 @@ T2.4 Ipv6 prefix and src address optimization
 	 Verify optimized match    P1   2
      Verify switch entry       S207   2
 
-	[Tags]   sanity    skipped
+	[Tags]   sanity    
 
+
+T2.5 Ipv4 tcp optimization
+     Config bigtap policy                 P1    S207-39     S207-37	 
+     Config ipv4 tcp src port range       P1    10     16    47
+     Config ipv4 tcp dst port range       P1    20     128   255
+     Sleep     ${medium}       
+	 Verify optimized match    P1   3
+     Verify switch entry       S207   3
+
+	[Tags]   sanity   
+
+
+T2.6 Ipv6 tcp optimization
+     Config bigtap policy                 P1    S207-39     S207-37	 
+     Config ipv6 tcp src port range       P1    10     16    47
+     Config ipv6 tcp dst port range       P1    20     128   255
+     Sleep     ${medium}       
+	 Verify optimized match    P1   3
+     Verify switch entry       S207   3
+
+	[Tags]   sanity   
+
+T2.7 Ipv4 udp optimization
+     Config bigtap policy                 P1    S207-39     S207-37	 
+     Config ipv4 udp src port range       P1    10     16    47
+     Config ipv4 udp dst port range       P1    20     128   255
+     Sleep     ${medium}       
+	 Verify optimized match    P1   3
+     Verify switch entry       S207   3
+
+	[Tags]   sanity   
+
+
+T2.8 Ipv6 udp optimization
+     Config bigtap policy                 P1    S207-39     S207-37	 
+     Config ipv6 udp src port range       P1    10     16    47
+     Config ipv6 udp dst port range       P1    20     128   255
+     Sleep     ${medium}       
+	 Verify optimized match    P1   3
+     Verify switch entry       S207   3
+
+	[Tags]   sanity   
 
 
 
@@ -158,11 +202,7 @@ T2.4 Ipv6 prefix and src address optimization
 
 
 * Keywords
-Config bigtap policy       [Arguments]    ${PName}  ${Fint}  ${Dint}	 
-	rest_add_policy 	              admin-view  ${PName}  forward 
-	rest_add_policy_interface         admin-view  ${PName}  ${Fint}   filter
-	rest_add_policy_interface         admin-view  ${PName}  ${Dint}   delivery   
-    Sleep     ${short} 
+
  
 Verify policy running config matches   [Arguments]    ${PName}   ${matches}	 
   	${input_dict}=  rest_show_run_policy   ${PName}       
@@ -178,8 +218,12 @@ Verify optimized match    [Arguments]    ${PName}   ${matches}
      Should Be Equal As Integers   ${numMatches}  ${matches}	 
 
 
-
-
+Config bigtap policy       [Arguments]    ${PName}  ${Fint}  ${Dint}	 
+	rest_add_policy 	              admin-view  ${PName}  forward 
+	rest_add_policy_interface         admin-view  ${PName}  ${Fint}   filter
+	rest_add_policy_interface         admin-view  ${PName}  ${Dint}   delivery   
+    Sleep     ${short} 
+    
 Config ipv4 list src     [Arguments]    ${PName}   ${GName}	  ${seq}
      ${result}=  rest_add_policy_match  admin-view   ${PName}   ${seq}   {"sequence": ${seq}, "src-ip-list":${GName}, "ether-type":2048}
      Should be True    ${result}  
@@ -213,7 +257,37 @@ Config ipv6 list dst ip src          [Arguments]       ${PName}   ${GName}	  ${s
      ${result}=  rest_add_policy_match  admin-view   ${PName}   ${seq}   {"sequence": ${seq}, "dst-ip-list":${GName}, "src-ip":${src}, "src-ip-mask":${smask}, "ether-type":34525}
      Should be True    ${result}  	
 
+ Config ipv4 tcp src port range     [Arguments]    ${PName}   ${seq}   ${min}   ${max}
+     ${result}=  rest_add_policy_match  admin-view   ${PName}   ${seq}   {"sequence": ${seq}, "src-tp-port-min":${min}, "src-tp-port-max":${max},"ip-proto": 6, "ether-type":2048}
+     Should be True    ${result}  
 
+ Config ipv4 tcp dst port range     [Arguments]    ${PName}   ${seq}   ${min}   ${max}
+     ${result}=  rest_add_policy_match  admin-view   ${PName}   ${seq}   {"sequence": ${seq}, "dst-tp-port-min":${min}, "dst-tp-port-max":${max},"ip-proto": 6, "ether-type":2048}
+     Should be True    ${result}  
+
+ Config ipv6 tcp src port range     [Arguments]    ${PName}   ${seq}   ${min}   ${max}
+     ${result}=  rest_add_policy_match  admin-view   ${PName}   ${seq}   {"sequence": ${seq}, "src-tp-port-min":${min}, "src-tp-port-max":${max},"ip-proto": 6, "ether-type":34525}
+     Should be True    ${result}  
+
+ Config ipv6 tcp dst port range     [Arguments]    ${PName}   ${seq}   ${min}   ${max}
+     ${result}=  rest_add_policy_match  admin-view   ${PName}   ${seq}   {"sequence": ${seq}, "dst-tp-port-min":${min}, "dst-tp-port-max":${max},"ip-proto": 6, "ether-type":34525}
+     Should be True    ${result}  
+
+ Config ipv4 udp src port range     [Arguments]    ${PName}   ${seq}   ${min}   ${max}
+     ${result}=  rest_add_policy_match  admin-view   ${PName}   ${seq}   {"sequence": ${seq}, "src-tp-port-min":${min}, "src-tp-port-max":${max},"ip-proto": 17, "ether-type":2048}
+     Should be True    ${result}  
+
+ Config ipv4 udp dst port range     [Arguments]    ${PName}   ${seq}   ${min}   ${max}
+     ${result}=  rest_add_policy_match  admin-view   ${PName}   ${seq}   {"sequence": ${seq}, "dst-tp-port-min":${min}, "dst-tp-port-max":${max},"ip-proto": 17, "ether-type":2048}
+     Should be True    ${result}  
+
+ Config ipv6 udp src port range     [Arguments]    ${PName}   ${seq}   ${min}   ${max}
+     ${result}=  rest_add_policy_match  admin-view   ${PName}   ${seq}   {"sequence": ${seq}, "src-tp-port-min":${min}, "src-tp-port-max":${max},"ip-proto": 17, "ether-type":34525}
+     Should be True    ${result}  
+
+ Config ipv6 udp dst port range     [Arguments]    ${PName}   ${seq}   ${min}   ${max}
+     ${result}=  rest_add_policy_match  admin-view   ${PName}   ${seq}   {"sequence": ${seq}, "dst-tp-port-min":${min}, "dst-tp-port-max":${max},"ip-proto": 17, "ether-type":34525}
+     Should be True    ${result}  
 
 
 
