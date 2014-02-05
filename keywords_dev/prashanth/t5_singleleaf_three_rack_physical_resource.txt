@@ -7,15 +7,15 @@ add fabric switch
   rest add switch  spine1
   rest add dpid  spine1  00:00:00:00:01:00:00:02
   rest add fabric role  spine1  spine
-  rest add switch  leaf0
-  rest add dpid  leaf0  00:00:00:00:02:00:00:01
-  rest add fabric role  leaf0  leaf
-  rest add switch  leaf1
-  rest add dpid  leaf1  00:00:00:00:02:00:00:03
-  rest add fabric role  leaf1  leaf
-  rest add switch  leaf2
-  rest add dpid  leaf2  00:00:00:00:02:00:00:05
-  rest add fabric role  leaf2  leaf
+  rest add switch  leaf0-a
+  rest add dpid  leaf0-a  00:00:00:00:02:00:00:01
+  rest add fabric role  leaf0-a  leaf
+  rest add switch  leaf1-a
+  rest add dpid  leaf1-a  00:00:00:00:02:00:00:03
+  rest add fabric role  leaf1-a  leaf
+  rest add switch  leaf2-a
+  rest add dpid  leaf2-a  00:00:00:00:02:00:00:05
+  rest add fabric role  leaf2-a  leaf
   
 delete fabric switch  
   rest delete fabric switch  spine0 
@@ -27,4 +27,6 @@ delete fabric switch
   rest delete fabric switch  leaf0-b 
   rest delete fabric switch  leaf1-a 
   rest delete fabric switch  leaf1-b 
+  rest delete fabric switch  leaf2-a
+  rest delete fabric switch  leaf2-b
 

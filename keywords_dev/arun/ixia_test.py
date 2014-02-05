@@ -4,7 +4,6 @@ Created on Jan 28, 2014
 @author: mallinaarun
 '''
 import vendors.Ixia.IxNetwork
-
 if __name__ == '__main__':
     import vendors.Ixia.IxNetwork
     import sys, time
@@ -48,10 +47,11 @@ if __name__ == '__main__':
         i = i + 1
     
     print 'Stopping the traffic...'
-    print 'Enter to stop the traffic'
+#     print 'Enter to stop the traffic'
     raw_input()
     port_stats = IxLib.IxStopTraffic(ix_handle, traffic_stream)
     
     print 'Successfully stopped traffic'
     print 'Final Stats Result..'
     print port_stats
+    
