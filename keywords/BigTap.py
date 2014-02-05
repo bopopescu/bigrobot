@@ -24,89 +24,6 @@ class BigTap(object):
 ###################################################
 # All Bigtap Show Commands Go Here:
 ###################################################
-    def rest_show_bigtap_policy(self, policy_name, num_filter_intf, num_delivery_intf):
-        '''
-        Objective:
-        Parse the output of cli command 'show bigtap policy <policy_name>'
-              
-        Inputs:
-        | `policy_name` | Name of the policy being parsed | 
-        | `num_filter_intf` | Number of configured Filter Interfaces in the policy | 
-        | `num_delivery_intf` | Number of configured Delivery Interfaces in the policy | 
-        
-        Description:
-        The function executes a REST GET for http://<CONTROLLER_IP>:8082/api/v1/data/controller/applications/bigtap/view/policy[name="<POLICY_NAME>"]/info
-        The policy returns True if and only if all the following conditions are True 
-        - Policy name is seen correctly in the output
-        - Config-Status is either "active and forwarding" or "active and rate measure"
-        - Type is "Configured"
-        - Runtime Status is "installed"
-        - Delivery interface count is num_delivery_intf
-        - Filter Interface count is num_filter_intf
-        - Detailed status is either "installed to forward" or "installed to measure rate"        
-        
-        Return value: 
-        - True on success
-        - False otherwise
-        '''
-        try:
-            t = test.Test()
-            c = t.controller('master')
-            url = '/api/v1/data/controller/applications/bigtap/view/policy[name="%s"]/info' % (policy_name)
-            c.rest.get(url)
-            if not c.rest.status_code_ok():
-                helpers.test_failure(c.rest.error())
-            content = c.rest.content()
-        except:
-            helpers.test_failure("Could not execute command")
-            return False
-        else:
-            if content[0]['name'] == str(policy_name):
-                    helpers.test_log("Policy correctly reports policy name as : %s" % content[0]['name'])
-            else:
-                    helpers.test_failure("Policy does not correctly report policy name  : %s" % content[0]['name'])
-                    return False
-
-            if content[0]['config-status'] == "active and forwarding":
-                    helpers.test_log("Policy correctly reports config status as : %s" % content[0]['config-status'])
-            elif content[0]['config-status'] == "active and rate measure":
-                    helpers.test_log("Policy correctly reports config status as : %s" % content[0]['config-status'])
-            else:
-                    helpers.test_failure("Policy does not correctly report config status as : %s" % content[0]['config-status'])
-                    return False
-
-            if content[0]['type'] == "Configured":
-                    helpers.test_log("Policy correctly reports type as : %s" % content[0]['type'])
-            else:
-                    helpers.test_failure("Policy does not correctly report type as : %s" % content[0]['type'])
-                    return False
-
-            if content[0]['runtime-status'] == "installed":
-                    helpers.test_log("Policy correctly reports runtime status as : %s" % content[0]['runtime-status'])
-            else:
-                    helpers.test_failure("Policy does not correctly report runtime status as : %s" % content[0]['runtime-status'])
-                    return False
-
-            if content[0]['delivery-interface-count'] == int(num_delivery_intf):
-                    helpers.test_log("Policy correctly reports number of delivery interfaces as : %s" % content[0]['delivery-interface-count'])
-            else:
-                    helpers.test_failure("Policy does not correctly report number of delivery interfaces  : %s" % content[0]['delivery-interface-count'])
-                    return False
-
-            if content[0]['filter-interface-count'] == int(num_filter_intf):
-                    helpers.test_log("Policy correctly reports number of filter interfaces as : %s" % content[0]['filter-interface-count'])
-            else:
-                    helpers.test_failure("Policy does not correctly report number of filter interfaces  : %s" % content[0]['filter-interface-count'])
-                    return False
-
-            if content[0]['detailed-status'] == "installed to forward":
-                    helpers.test_log("Policy correctly reports detailed status as : %s" % content[0]['detailed-status'])
-            elif content[0]['detailed-status'] == "installed to measure rate":
-                    helpers.test_log("Policy correctly reports detailed status as : %s" % content[0]['detailed-status'])
-            else:
-                    helpers.test_failure("Policy does not correctly report detailed status as : %s" % content[0]['detailed-status'])
-                    return False
-            return True
 
     def rest_show_switch_dpid(self, switch_alias):
         '''
@@ -184,9 +101,196 @@ class BigTap(object):
                 else:
                     return content[0]['stats']['table'][1]['active-count']
 
+# Mingtao
+    def rest_show_address_group(self, group):
+        """ 
+            Objective:
+            Return output of show address-group group_name.
+            
+            Input:
+            | group | Name of IP Address Group|
+
+            Return Value:
+            - Returns dictionary of elements on success
+            - Returns False on failure.
+        """
+        t = test.Test()
+        c = t.controller('master')
+        url = '/api/v1/data/controller/applications/bigtap/ip-address-set[name="%s"]' % (str(group))
+        c.rest.get(url)
+        if not c.rest.status_code_ok():
+            helpers.test_failure(c.rest.error())
+
+        if(c.rest.content()):
+            helpers.log("INFO: name: %s" % c.rest.content()[0]['name'])
+            helpers.log("INFO: type: %s" % c.rest.content()[0]['ip-address-type'])
+            return c.rest.content()[0]
+
+        return False
+
+# Mingtao
+    def rest_show_policy_optimize(self, policy):
+        ''' 
+            Objective:
+            Return number of optimized matches per given policy.
+            
+            Input:
+            | policy | Name of policy|
+
+            Return Value:
+            - Returns number of optimized matches
+            - Returns False on failure.
+        '''
+        t = test.Test()
+        c = t.controller('master')
+
+        helpers.test_log("Input arguments: policy = %s " % (policy))
+        url = '/api/v1/data/controller/applications/bigtap/view/policy[name="%s"]/debug' % policy
+        c.rest.get(url)
+
+        if not c.rest.status_code_ok():
+            helpers.test_failure(c.rest.error())
+
+        content = c.rest.content()
+        if content[0]['name'] == str(policy):
+            helpers.test_log("Policy correctly reports policy name as : %s" % content[0]['name'])
+            temp = content[0]['optimized-match'].strip()
+            temp = temp.split('\n')
+        else:
+            helpers.test_failure("Policy does not correctly report policy name  : %s" % content[0]['name'])
+            return False
+        return len(temp)
+# Mingtao
+    def rest_show_run_policy(self, policy):
+        """ Get the rest output of "show run bigtap policy XX"
+            -- Mingtao
+            Usage:                     
+        """
+        t = test.Test()
+        c = t.controller('master')
+        url = '/api/v1/data/controller/applications/bigtap/view[policy/name="%s"]?config=true&select=policy[name="%s"]' % (policy, policy)
+        c.rest.get(url)
+
+        if not c.rest.status_code_ok():
+            helpers.test_failure(c.rest.error())
+        if(c.rest.content()):
+            helpers.log("INFO: name: %s" % c.rest.content()[0]['policy'][0])
+            if c.rest.content()[0]['policy'][0]['name'] == str(policy):
+                return c.rest.content()[0]['policy'][0]
+            else:
+                helpers.test_failure("ERROR: Policy does not correctly report policy name  : %s" % c.rest.content()[0]['policy'][0]['name'])
+                return False
+        helpers.test_failure("ERROR: Policy does not correctly report ")
+        return False
+
+# Mingtao
+    def rest_get_run_policy_feild(self, input_dict, policy, match=None):
+        """ Get the rest output of "show bigtap policy XX"
+            -- Mingtao
+            Usage:                     
+        """
+        helpers.log("Output: input_dict: %s" % input_dict)
+
+        if input_dict['name'] == str(policy):
+            helpers.test_log("INFO: Policy correctly reports policy name as : %s" % input_dict['name'])
+        else:
+            helpers.test_failure("ERROR: Policy does not correctly report policy name  : %s" % input_dict['name'])
+            return False
+
+        if match:
+            temp = input_dict['rule']
+            helpers.test_log("INFO: Policy  %s has %d of matches" % (policy, len(temp)))
+            return len(temp)
+
+        return True
 ###################################################
 # All Bigtap Verify Commands Go Here:
 ###################################################
+    def rest_verify_bigtap_policy(self, policy_name, num_filter_intf=None, num_delivery_intf=None, action='active and forwarding'):
+        '''
+        Objective:
+        Parse the output of cli command 'show bigtap policy <policy_name>'
+              
+        Inputs:
+        | `policy_name` | Name of the policy being parsed | 
+        | `num_filter_intf` | Number of configured Filter Interfaces in the policy | 
+        | `num_delivery_intf` | Number of configured Delivery Interfaces in the policy | 
+        
+        Description:
+        The function executes a REST GET for http://<CONTROLLER_IP>:8082/api/v1/data/controller/applications/bigtap/view/policy[name="<POLICY_NAME>"]/info
+        The policy returns True if and only if all the following conditions are True 
+        - Policy name is seen correctly in the output
+        - Config-Status is either "active and forwarding" or "active and rate measure"
+        - Type is "Configured"
+        - Runtime Status is "installed"
+        - Delivery interface count is num_delivery_intf
+        - Filter Interface count is num_filter_intf
+        - Detailed status is either "installed to forward" or "installed to measure rate"        
+        
+        Return value: 
+        - True on success
+        - False otherwise
+        '''
+        try:
+            t = test.Test()
+            c = t.controller('master')
+            url = '/api/v1/data/controller/applications/bigtap/view/policy[name="%s"]/info' % (policy_name)
+            c.rest.get(url)
+            if not c.rest.status_code_ok():
+                helpers.test_failure(c.rest.error())
+            content = c.rest.content()
+        except:
+            helpers.test_failure("Could not execute command")
+            return False
+        else:
+            if content[0]['name'] == str(policy_name):
+                    helpers.test_log("Policy correctly reports policy name as : %s" % content[0]['name'])
+            else:
+                    helpers.test_failure("Policy does not correctly report policy name  : %s" % content[0]['name'])
+                    return False
+
+            if (content[0]['config-status'] == "active and forwarding") and (str(action) == "active and forwarding"):
+                    helpers.test_log("Policy correctly reports config status as : %s" % content[0]['config-status'])
+            elif (content[0]['config-status'] == "active and rate measure") and (str(action) == "active and rate measure"):
+                    helpers.test_log("Policy correctly reports config status as : %s" % content[0]['config-status'])
+            elif (content[0]['config-status'] == "inactive") and (str(action) == "inactive"):
+                    helpers.test_log("Policy correctly reports config status as : %s" % content[0]['config-status'])
+            else:
+                    helpers.test_failure("Policy does not correctly report config status as : %s and passed action value is %s" % (content[0]['config-status'], str(action)))
+                    return False
+
+            if content[0]['type'] == "Configured":
+                    helpers.test_log("Policy correctly reports type as : %s" % content[0]['type'])
+            else:
+                    helpers.test_failure("Policy does not correctly report type as : %s" % content[0]['type'])
+                    return False
+
+            if content[0]['runtime-status'] == "installed":
+                    helpers.test_log("Policy correctly reports runtime status as : %s" % content[0]['runtime-status'])
+            else:
+                    helpers.test_failure("Policy does not correctly report runtime status as : %s" % content[0]['runtime-status'])
+                    return False
+
+            if content[0]['delivery-interface-count'] == int(num_delivery_intf):
+                    helpers.test_log("Policy correctly reports number of delivery interfaces as : %s" % content[0]['delivery-interface-count'])
+            else:
+                    helpers.test_failure("Policy does not correctly report number of delivery interfaces  : %s" % content[0]['delivery-interface-count'])
+                    return False
+
+            if content[0]['filter-interface-count'] == int(num_filter_intf):
+                    helpers.test_log("Policy correctly reports number of filter interfaces as : %s" % content[0]['filter-interface-count'])
+            else:
+                    helpers.test_failure("Policy does not correctly report number of filter interfaces  : %s" % content[0]['filter-interface-count'])
+                    return False
+
+            if content[0]['detailed-status'] == "installed to forward":
+                    helpers.test_log("Policy correctly reports detailed status as : %s" % content[0]['detailed-status'])
+            elif content[0]['detailed-status'] == "installed to measure rate":
+                    helpers.test_log("Policy correctly reports detailed status as : %s" % content[0]['detailed-status'])
+            else:
+                    helpers.test_failure("Policy does not correctly report detailed status as : %s" % content[0]['detailed-status'])
+                    return False
+            return True
 
     def rest_verify_policy_key(self, policy_name, method, index, key):
         '''
@@ -228,6 +332,36 @@ class BigTap(object):
                 else:
                     helpers.test_log("ERROR Policy %s does not exist. Error seen: %s" % (str(policy_name), c.rest.result_json()))
                     return False
+
+# Mingtao
+    def verify_address_group(self, input_dict, group_name, group_type=None, entry=None):
+        """ Verify the  type or/and entry number bigtap address group
+            -- Mingtao
+            Usage: 
+             verify_address_group        ${input_dict}    IPV4   group_type=ipv4   entry=1                    
+        """
+        helpers.log("input_dict: %s" % input_dict)
+        if str(group_name) == input_dict['name']:
+            if group_type:
+                if group_type == input_dict['ip-address-type']:
+                    helpers.log("INFO: type is correctly reported as %s" % group_type)
+                else:
+                    helpers.log("ERROR: type NOT correctly reported: EXPECT: %s  - ACTUAL:  %s" % (group_type, input_dict['ip-address-type']))
+                    return False
+
+            if entry:
+                if int(entry) == len(input_dict['address-mask-set']):
+                    helpers.log("INFO: number of entries: %s" % len(input_dict['address-mask-set']))
+                else :
+                    helpers.log("ERROR: entry NOT correctly reported: EXPECT: %s  - ACTUAL: %s " % (entry, len(input_dict['address-mask-set'])))
+                    return False
+        else:
+            helpers.log("ERROR: Not correctly report the Name: EXPECT: %s  - ACTUAL: %s " % (group_name, input_dict['name']))
+            return False
+
+        return True
+
+
 ###################################################
 # All Bigtap Configuration Commands Go Here:
 ###################################################
@@ -1170,68 +1304,7 @@ class BigTap(object):
         else:
             return True
 
-# Mingtao
-    def get_next_address(self, addr_type, base, incr):
-        """ 
-            Objective:
-            Generate the next address bases on the base and step.
-            
-            Input:
-            | addr_type | IPv4/IpV6|
-            | base | Starting IP address |
-            | incr | Value by which we will incrememnt the IP address|
 
-            Usage:    ipAddr = self.get_next_address(ipv4,'10.0.0.0','0.0.0.1')
-                      ipAddr = self.get_next_address(ipv6,'f001:100:0:0:0:0:0:0','0:0:0:0:0:0:0:1:0')
-        """
-
-        helpers.log("the base address is: %s,  the step is: %s,  " % (str(base), str(incr)))
-        if addr_type == 'ipv4' or addr_type == 'ip':
-            ip = list(map(int, base.split(".")))
-            step = list(map(int, incr.split(".")))
-            ipAddr = []
-            for i in range(3, 0, -1):
-                ip[i] += step[i]
-                if ip[i] >= 256:
-                    ip[i] = 0
-                    ip[i - 1] += 1
-            ip[0] += step[0]
-            if ip[0] >= 256:
-                ip[0] = 0
-
-            ipAddr = '.'.join(map(str, ip))
-
-        if addr_type == 'ipv6'  or addr_type == 'ip6':
-            ip = base.split(":")
-            step = incr.split(":")
-            helpers.log("IP list is %s" % ip)
-
-            ipAddr = []
-            hexip = []
-
-            for i in range(0, 7):
-                index = 7 - int(i)
-                ip[index] = int(ip[index], 16) + int(step[index], 16)
-                ip[index] = hex(ip[index])
-                temp = ip[index]
-                if int(temp, 16) >= 65536:
-                    ip[index] = hex(0)
-                    ip[index - 1] = int(ip[index - 1], 16) + 1
-                    ip[index - 1] = hex(ip[index - 1])
-
-
-            ip[0] = int(ip[0], 16) + int(step[0], 16)
-            ip[0] = hex(ip[0])
-            temp = ip[0]
-            if int(temp, 16) >= 65536:
-                ip[0] = hex(0)
-
-            for i in range(0, 8):
-                hexip.append('{0:x}'.format(int(ip[i], 16)))
-
-            ipAddr = ':'.join(map(str, hexip))
-
-        return ipAddr
 
 # Mingtao
     def gen_add_address_group_entries(self, group, addr_type, base, incr, mask, number):
@@ -1266,29 +1339,125 @@ class BigTap(object):
             helpers.log("the applied address is: %s %s %s " % (addr_type, str(ipAddr), str(mask)))
 
         return True
+
 # Mingtao
-    def rest_show_address_group(self, group):
-        """ 
-            Objective:
-            Return output of show address-group group_name.
-            
-            Input:
-            | group | Name of IP Address Group|
-
-            Return Value:
-            - Returns dictionary of elements on success
-            - Returns False on failure.
+    def construct_policy_match(self,
+                               ip_type=None,
+                               ether_type=None,
+                               src_mac=None,
+                               dst_mac=None,
+                               ip_proto=None,
+                               icmp=None,
+                               icmp_code=None,
+                               icmp_type=None,
+                               vlan=None,
+                               vlan_min=None,
+                               vlan_max=None,
+                               src_ip_list=None,
+                               src_ip=None,
+                               src_ip_mask=None,
+                               dst_ip_list=None,
+                               dst_ip=None,
+                               dst_ip_mask=None,
+                               tos_bit=None,
+                               src_port=None,
+                               src_port_min=None,
+                               src_port_max=None,
+                               dst_port=None,
+                               dst_port_min=None,
+                               dst_port_max=None,
+                               sequence=10):
+        """ bigtap: construct the match string for policy
+            Mingtao
         """
-        t = test.Test()
-        c = t.controller('master')
-        url = '/api/v1/data/controller/applications/bigtap/ip-address-set[name="%s"]' % (str(group))
-        c.rest.get(url)
-        if not c.rest.status_code_ok():
-            helpers.test_failure(c.rest.error())
+        temp = '{'
 
-        if(c.rest.content()):
-            helpers.log("INFO: name: %s" % c.rest.content()[0]['name'])
-            helpers.log("INFO: type: %s" % c.rest.content()[0]['ip-address-type'])
-            return c.rest.content()[0]
+        if src_mac:
+            temp += '"src-mac": "%s",' % src_mac
+        if dst_mac:
+            temp += '"dst-mac": "%s",' % dst_mac
 
-        return False
+        if icmp:
+            temp += '"ip-proto": 1,'
+            if icmp_code:
+                temp += '"dst-tp-port": %s,' % icmp_code
+            if icmp_type:
+                temp += '"src-tp-port": %s,' % icmp_type
+
+        if ether_type:
+            if ether_type == 'ipv6' or ether_type == 'ip6':
+                temp += '"ether-type": 34525,'
+            elif ether_type == 'ip' or ether_type == 'ipv4':
+                temp += '"ether-type": 2048,'
+            else:
+                temp += '"ether-type": %s,' % ether_type
+        elif ip_type:
+            if ip_type == 'ip' or  ip_type == 'ipv4':
+                temp += '"ether-type": 2048,'
+            else:
+                temp += '"ether-type": 34525,'
+
+        if ip_proto:
+            if ip_proto == 'tcp':
+                temp += '"ether-type": 2048,'
+                temp += '"ip-proto": 6,'
+            elif ip_proto == 'tcp6':
+                temp += '"ether-type": 34525,'
+                temp += '"ip-proto": 6,'
+            elif ip_proto == 'udp':
+                temp += '"ether-type": 2048,'
+                temp += '"ip-proto": 17,'
+            elif ip_proto == 'udp6':
+                temp += '"ether-type": 34525,'
+                temp += '"ip-proto": 17,'
+            else:
+                temp += '"ip-proto": %s,' % ip_proto
+
+
+        if vlan:
+            temp += '"vlan":  %s ,' % vlan
+        else:
+            if vlan_min:
+                temp += '"src-tp-port-min": %s,' % vlan_min
+            if vlan_max:
+                temp += '"src-tp-port-min": %s,' % vlan_max
+
+        if src_ip_list:
+            temp += '"src-ip-list": "%s",' % src_ip_list
+        else:
+            if src_ip:
+                temp += '"src-ip": "%s",' % src_ip
+            if src_ip_mask:
+                temp += '"src-ip-mask": "%s",' % src_ip_mask
+
+        if dst_ip_list:
+            temp += '"dst-ip-list": "%s",' % dst_ip_list
+        else:
+            if dst_ip:
+                temp += '"dst-ip": "%s",' % dst_ip
+            if dst_ip_mask:
+                temp += '"dst-ip-mask": "%s",' % dst_ip_mask
+
+        if tos_bit:
+            temp += '"ip-tos": %s,' % tos_bit
+
+        if src_port:
+            temp += '"src-tp-port":  %s ,' % src_port
+        else:
+            if src_port_min:
+                temp += '"src-tp-port-min": %s,' % src_port_min
+            if src_port_max:
+                temp += '"src-tp-port-min": %s,' % src_port_max
+
+        if dst_port:
+            temp += '"dst-tp-port":  %s ,' % dst_port
+        else:
+            if dst_port_min:
+                temp += '"dst-tp-port-min": %s,' % dst_port_min
+            if dst_port_max:
+                temp += '"dst-tp-port-min": %s,' % dst_port_max
+
+        temp += '"sequence": %s}' % sequence
+        helpers.log("the temp is: %s" % (str(temp)))
+
+        return temp
