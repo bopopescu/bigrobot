@@ -343,12 +343,32 @@ class ControllerDevConf(BsnDevConf):
 class SwitchDevConf(BsnDevConf):
     def __init__(self, *args, **kwargs):
         super(SwitchDevConf, self).__init__(*args, **kwargs)
+        self._info = None
+
+    def info(self, key=None, refresh=False):
+        if refresh or not self._info:
+            out = self.cli('show version')['content']
+            # Remove first line, which contains 'show version'
+            out = helpers.text_processing_str_remove_header(out, 1)
+            # Remove line starting with 'Uptime is xxxxxx' to the end of string
+            out = helpers.text_processing_str_remove_to_end(out,
+                                                            line_marker=r'^Uptime is')
+            out_dict = helpers.from_yaml(out)
+            self._info = helpers.snake_case_key(out_dict)
+            helpers.log("Switch info:\n%s" % helpers.prettify(self._info))
+        if key:
+            if key not in self._info:
+                helpers.test_error("Attribute '%s' is not found in switch info" % key)
+            return self._info[key]
+        return self._info
 
     def bash(self, *args, **kwargs):
         # For SwitchLight, you need to enter Enable mode to execute
         # 'debug bash'.
         self.enable('')
-        return super(SwitchDevConf, self).bash(*args, **kwargs)
+        super(SwitchDevConf, self).bash(*args, **kwargs)
+        return self.result()
+
 
 class MininetDevConf(DevConf):
     """

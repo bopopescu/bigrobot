@@ -24,5 +24,13 @@ Test switch show environment
     switch show environment  s1
 
 Test switch uptime
-    #[Tags]  skipped
+    [Tags]  skipped
     switch uptime  s1
+
+Test switch info
+    [Tags]  skipped
+    switch info  s1
+
+Test sanitize CLI output
+    #[Tags]  skipped
+    sanitize cli output  s1

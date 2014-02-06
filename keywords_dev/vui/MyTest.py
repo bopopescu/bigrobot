@@ -90,10 +90,20 @@ class MyTest(object):
         s = t.switch(node)
         helpers.log("node: %s" % s)
         s.bash("uptime")
-        s.cli('show user')
-        # s.enable("")
+
+    def switch_ping(self, node):
+        t = test.Test()
+        s = t.switch(node)
+        helpers.log("node: %s" % s)
         host = Host.Host()
         host.bash_ping('s1', 'dev1')
+
+    def switch_info(self, node):
+        t = test.Test()
+        s = t.switch(node)
+        helpers.log("node: %s" % s)
+        helpers.log("Switch model is '%s'" % s.info('model'))
+        helpers.log("Switch manufacturer is '%s'" % s.info('manufacturer'))
 
     def switch_show_walk(self, node):
         t = test.Test()
@@ -206,3 +216,9 @@ admin_user = glance
         helpers.log("'%s' platform is '%s'" % (node, platform))
         params = t.topology_params()
         helpers.log("params: %s" % helpers.prettify(params))
+
+    def sanitize_cli_output(self, node):
+        t = test.Test()
+        n = t.node(node)
+        content = n.cli('show version')['content']
+        helpers.log("new_content: %s" % helpers.sanitize_expect_output(content))

@@ -277,6 +277,7 @@ class SwitchNode(Node):
         self.set_prompt = self.dev.set_prompt
         self.send = self.dev.send
         self.expect = self.dev.expect
+        self.info = self.dev.info
 
 
 class IxiaNode(Node):

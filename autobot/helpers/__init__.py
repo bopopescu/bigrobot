@@ -489,6 +489,12 @@ def load_config(yaml_file):
     return yaml.load(stream)
 
 
+def from_yaml(yaml_str):
+    """
+    Convert a YAML-formatted string to Python dict.
+    """
+    return yaml.load(yaml_str)
+
 def get_path(filename):
     """
     Extract the path from the filename.
@@ -817,6 +823,52 @@ def ping(host, count=5, waittime=100, quiet=False):
     return loss
 
 
+def params_val(k, params_dict):
+    """
+    If key is found in Params dictionary then return its value, else return
+    None.
+    """
+    if k in params_dict:
+        return params_dict[k]
+    else:
+        return None
+
+
+def params_is_true(k, params_dict):
+    val = params_val(k, params_dict)
+    if val is True:
+        return True
+    else:
+        return False
+
+
+def params_is_false(k, params_dict):
+    val = params_val(k, params_dict)
+    if val is False:
+        return True
+    else:
+        return False
+
+
+def snake_case_key(in_dict):
+    """
+    Convert the keys in a dictionary to snake case. It also supports nested
+    dictionaries.
+    """
+    out_dict = {}
+    for k, v in in_dict.iteritems():
+        new_key = k.lower()
+        new_key = new_key.replace (" ", "_")
+        if is_dict(v):
+            v = snake_case_key(v)
+        out_dict[new_key] = v
+    return out_dict
+
+
+#
+# String processing helpers
+#
+
 def openstack_convert_table_to_dict(input_str):
     """
     Many commands on OpenStack Nova controller will return a table output,
@@ -911,31 +963,59 @@ def openstack_replace_text_marker(input_file, output_file, line_marker,
     return new_str
 
 
-def params_val(k, params_dict):
+def text_processing_str_remove_header(input_str, n):
     """
-    If key is found in Params dictionary then return its value, else return
-    None.
+    Given a multi-line string, remove the first <n> lines.
     """
-    if k in params_dict:
-        return params_dict[k]
-    else:
-        return None
+    lines = input_str.split("\n")
+    return '\n'.join(lines[n:])
 
 
-def params_is_true(k, params_dict):
-    val = params_val(k, params_dict)
-    if val is True:
-        return True
-    else:
-        return False
+def text_processing_str_remove_trailer(input_str, n):
+    """
+    Given a multi-line string, remove the trailing <n> lines.
+    """
+    lines = input_str.split("\n")
+    return '\n'.join(lines[:-n])
 
 
-def params_is_false(k, params_dict):
-    val = params_val(k, params_dict)
-    if val is False:
-        return True
-    else:
-        return False
+def sanitize_expect_output(input_str):
+    """
+    The convention from the expect library (Exscript) is that the first line
+    contains the issued command and the last line contains the device prompt.
+    This function removes the first and last line, leaving the actual output. 
+    """
+    out = text_processing_str_remove_header(input_str, 1)
+    out = text_processing_str_remove_trailer(out, 1)
+    return out
+
+def text_processing_str_remove_to_end(input_str, line_marker):
+    """
+    Given a multi-line string, find the input marker and remove the content
+    to end of string.
+    
+    Usage:
+    
+    input_str = '''
+    Manufacturer: Quanta
+    Model: LY2
+    Uptime is 2:53:22
+    Load average:  0.24 0.17 0.15
+    '''
+    out = helpers.text_processing_str_remove_to_end(input_str,
+                                                    line_marker=r'^Uptime is')
+    
+    Returns:
+
+    Manufacturer: Quanta
+    Model: LY2
+    
+    """
+    lines = input_str.split("\n")
+    for i, line in enumerate(lines):
+        if re.search(line_marker, line):
+            break
+    return '\n'.join(lines[:i])
 
 
 #
@@ -962,6 +1042,7 @@ def ip_range(subnet, first=None, last=None):
         return subnet_list[first_index:]
 
     return subnet_list[first_index:last_index]
+
 
 def ip_range_byte_mod(self, subnet, first=None, last=None, byte=None):
     """
