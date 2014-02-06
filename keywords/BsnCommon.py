@@ -123,18 +123,19 @@ class BsnCommon(object):
             new_subnet_list.append('.'.join(byte_list))
 
         return new_subnet_list
-# Mingtao
+
     def get_next_mac(self, base, incr):
-        """ 
-            Objective: 
-            - Generate the next mac/physical address based on the base and step.
+        """
+        Contributor: Mingtao Yang 
+        Objective: 
+        - Generate the next mac/physical address based on the base and step.
             
-            Inputs:
-            | base | starting mac address |
-            | incr | Value by which we will increment the mac/physical address |
+        Inputs:
+          | base | starting mac address |
+          | incr | Value by which we will increment the mac/physical address |
             
-            Usage:  
-            | macAddr = self.get_next_mac(base,incr) |     
+        Usage:  
+          | macAddr = self.get_next_mac(base,incr) |     
         """
 
         helpers.log("the base address is: %s,  the step is: %s,  " % (str(base), str(incr)))
@@ -167,19 +168,19 @@ class BsnCommon(object):
 
         return macAddr
 
-# Mingtao
     def get_next_address(self, addr_type, base, incr):
         """ 
-            Objective:
-            Generate the next address bases on the base and step.
-            
-            Input:
-            | addr_type | IPv4/IpV6|
-            | base | Starting IP address |
-            | incr | Value by which we will increment the IP address|
+        Contributor: Mingtao Yang
+        Objective:
+        Generate the next address bases on the base and step.
+        
+        Input:
+        | addr_type | IPv4/IpV6|
+        | base | Starting IP address |
+        | incr | Value by which we will increment the IP address|
 
-            Usage:    ipAddr = self.get_next_address(ipv4,'10.0.0.0','0.0.0.1')
-                      ipAddr = self.get_next_address(ipv6,'f001:100:0:0:0:0:0:0','0:0:0:0:0:0:0:1:0')
+        Usage:    ipAddr = self.get_next_address(ipv4,'10.0.0.0','0.0.0.1')
+                  ipAddr = self.get_next_address(ipv6,'f001:100:0:0:0:0:0:0','0:0:0:0:0:0:0:1:0')
         """
 
         helpers.log("the base address is: %s,  the step is: %s,  " % (str(base), str(incr)))
