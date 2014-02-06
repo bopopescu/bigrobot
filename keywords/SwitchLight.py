@@ -366,12 +366,12 @@ class SwitchLight(object):
             s1 = t.switch(node)
             mycount = 1
             while mycount <= iteration:
-                cli_input = "no controller " + str(c.ip)
+                cli_input = "no controller " + str(c.ip())
                 s1.config(cli_input)
                 s1.enable('show running-config openflow')
                 helpers.log("Output of show running-config openflow after removing controller configuration %s" % (s1.cli_content()))
                 helpers.sleep(10)
-                cli_input_1 = "controller " + str(c.ip)
+                cli_input_1 = "controller " + str(c.ip())
                 s1.config(cli_input_1)
                 s1.enable('show running-config openflow')
                 helpers.log("Output of show running-config openflow after re-enabling controller %s" % (s1.cli_content()))
@@ -888,12 +888,15 @@ class SwitchLight(object):
             bash_input_1 = 'rm /mnt/flash2/' + str(image_name)
             switch.bash(bash_input_1)
             full_path = "http://switch-nfs.bigswitch.com/export/switchlight/" + str(image_path)
-            bash_input_2 = "wget " + str(full_path) + " /mnt/flash2/"
+            bash_input_2 = "cd /mnt/flash2/; wget " + str(full_path) + " ./"
             switch.bash(bash_input_2)
             bash_input_3 = "echo SWI=flash2:" + str(image_name) + " > /mnt/flash/boot-config"
             switch.bash(bash_input_3)
-            bash_input_4 = "reboot"
+            bash_input_4 = "ls -lrt /mnt/flash2/; cat /mnt/flash/boot-config"
             switch.bash(bash_input_4)
+            helpers.sleep(1)
+            bash_input_5 = "reboot"
+            switch.bash(bash_input_5)
             return True
         except:
             helpers.test_failure("Could not execute command. Please check log for errors")
