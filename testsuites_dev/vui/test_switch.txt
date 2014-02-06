@@ -28,9 +28,9 @@ Test switch uptime
     switch uptime  s1
 
 Test switch info
-    [Tags]  skipped
+    #[Tags]  skipped
     switch info  s1
 
 Test sanitize CLI output
-    #[Tags]  skipped
+    [Tags]  skipped
     sanitize cli output  s1

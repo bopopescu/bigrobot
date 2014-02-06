@@ -800,6 +800,9 @@ def _ping(host, count=5, waittime=100, quiet=False, source_if=None, node=None):
             % (s, br_utils.end_of_output_marker()), level=4)
         return loss_percentage
 
+    if re.search(r'no route to host', out, re.M | re.I):
+        test_error("Ping error - no route to host")
+
     test_error("Unknown ping error. Please check the output log.")
 
 

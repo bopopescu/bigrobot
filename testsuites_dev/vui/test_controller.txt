@@ -18,9 +18,12 @@ Test controller rest session cookie
 Test controller reload (BigTap)
     cli reboot  c1
     #cli reload  s1
-    #[Tags]  skipped
+    [Tags]  skipped
 
 Get controller handles
     #cli save running config
     cli show user
     [Tags]  skipped
+
+Test is master
+    check mastership  c1

@@ -112,6 +112,8 @@ class ControllerNode(Node):
         self.rest = BsnRestClient(base_url=self.base_url,
                                   platform=self.platform(),
                                   host=self.ip())
+        self.t = t
+
         # Shortcuts
         self.cli = self.dev.cli  # CLI mode
         self.enable = self.dev.enable  # Enable mode
@@ -123,6 +125,14 @@ class ControllerNode(Node):
         self.set_prompt = self.dev.set_prompt
         self.send = self.dev.send
         self.expect = self.dev.expect
+
+    def is_master(self):
+        """
+        Am I the master controller? This functionality is already implemented
+        in Test class so simply refer to it.
+        """
+        node = self.name()
+        return self.t.is_master_controller(node)
 
     def console(self):
         if self.dev_console:

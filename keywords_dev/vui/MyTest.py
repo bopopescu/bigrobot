@@ -222,3 +222,14 @@ admin_user = glance
         n = t.node(node)
         content = n.cli('show version')['content']
         helpers.log("new_content: %s" % helpers.sanitize_expect_output(content))
+
+    def check_mastership(self, node):
+        t = test.Test()
+        n = t.node(node)
+
+        if (n.is_master()):
+            controller_role = "MASTER"
+        else:
+            controller_role = "SLAVE"
+
+        helpers.log("*** I am the %s of the Universe!" % controller_role)
