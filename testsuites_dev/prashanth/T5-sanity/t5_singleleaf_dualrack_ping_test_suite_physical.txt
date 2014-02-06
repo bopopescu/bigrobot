@@ -35,9 +35,9 @@ ${h3_tag_ip}	192.168.2.10
 
 add Single Leaf Dual Rack setup
    [Tags]  smoke  sanity   
-#   sleep  5
-#   add fabric switch
-#   sleep  5
+   sleep  5
+   add fabric switch
+   sleep  5
    rest verify fabric switch all
    rest verify fabric link
 
@@ -151,7 +151,7 @@ ping h1 to h3 dual rack single leaf static endpoints tag
 Tear down the config
    [Tags]  smoke  sanity  
    delete a tenant  A
-#   delete fabric switch
+   delete fabric switch
    bash delete tag  h1  eth1.20
    bash delete tag  h2  eth1.20
    bash delete tag	h3	eth1.20
