@@ -26,7 +26,7 @@ class Host(object):
         """
         t = test.Test()
         n = t.node(node)
-        
+
         if not dest_ip and not dest_node:
             helpers.test_error("Must specify 'dest_ip' or 'dest_node'")
         if dest_ip and dest_node:
@@ -54,7 +54,7 @@ class Host(object):
         """
         t = test.Test()
         n = t.node(node)
-        n.sudo("ip addr add %s dev %s" %(ipaddr, intf))
+        n.sudo("ip addr add %s dev %s" % (ipaddr, intf))
         return True
 
     def bash_delete_ip_address(self, node, ipaddr, intf):
@@ -63,7 +63,7 @@ class Host(object):
         """
         t = test.Test()
         n = t.node(node)
-        n.sudo("ip addr del %s dev %s" %(ipaddr, intf))
+        n.sudo("ip addr del %s dev %s" % (ipaddr, intf))
         return True
 
     def bash_delete_tag(self, node, intf):

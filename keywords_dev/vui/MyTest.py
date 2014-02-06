@@ -1,6 +1,7 @@
 import autobot.helpers as helpers
 import autobot.restclient as restclient
 import autobot.test as test
+import keywords.Host as Host
 
 def testing123():
     pass
@@ -91,6 +92,8 @@ class MyTest(object):
         s.bash("uptime")
         s.cli('show user')
         # s.enable("")
+        host = Host.Host()
+        host.bash_ping('s1', 'dev1')
 
     def switch_show_walk(self, node):
         t = test.Test()
