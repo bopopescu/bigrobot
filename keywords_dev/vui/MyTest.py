@@ -187,3 +187,7 @@ admin_user = glance
         helpers.scp_put(openstack_host, user='root', password='bsn',
                         local_file='/tmp/new-glance-api-paste.ini',
                         remote_path='/tmp/glance-api-paste.ini')
+
+    def ixia_info(self, node):
+        t = test.Test()
+        tg1 = t.traffic_generator('tg1')
