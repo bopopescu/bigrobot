@@ -32,32 +32,35 @@ class Log(object):
                 Log.log_file = name
 
     def _format_log(self, s, level):
-        level += 1
-        frm = inspect.stack()[level]
-        mod = inspect.getmodule(frm[0])
-        filename = os.path.basename(frm[1])
-        lineno = frm[2]
-        funcname = frm[3]
+        if level:
+            level += 1
+            frm = inspect.stack()[level]
+            mod = inspect.getmodule(frm[0])
+            filename = os.path.basename(frm[1])
+            lineno = frm[2]
+            funcname = frm[3]
 
-        if re.match(r'^(<module>)$', funcname):
-            funcname = ''
+            if re.match(r'^(<module>)$', funcname):
+                funcname = ''
+            else:
+                funcname = '.' + funcname
+
+            s = s.rstrip()
+            return "[%s:%s%s:%d] %s\n" % (filename, mod.__name__, funcname, lineno, s)
         else:
-            funcname = '.' + funcname
-
-        s = s.rstrip()
-        return "[%s:%s%s:%d] %s\n" % (filename, mod.__name__, funcname, lineno, s)
+            return "%s\n" % s
 
     def log(self, s, level=1):
         """
         Write to INFO log.
-        """        
+        """
         msg = self._format_log(s, level)
-        
+
         if not gobot.is_gobot():
             if Log.log_file is None:
                 # Probably impossible to reach here...
                 raise RuntimeError("You must specify an Autobot log file")
-            
+
             f = open(Log.log_file, "a")
             f.write(msg)
             f.close()

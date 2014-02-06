@@ -40,9 +40,17 @@ def error_exit(msg):
     sys.exit(1)
 
 
+def file_not_exist(f):
+    if f is None:
+        return True
+    if not os.path.exists(f):
+        return True
+    return False
+
+
 def error_exit_if_file_not_exist(msg, f):
     if f is None:
-        error_exit(''.join((msg, ': <topology_file_not_specified>')))
+        error_exit(''.join((msg, ': <file_not_specified>')))
     if not os.path.exists(f):
         error_exit(''.join((msg, ': ', f)))
 
@@ -358,6 +366,14 @@ def is_mininet(name):
     return True if match else False
 
 
+def is_traffic_generator(name):
+    """
+    Traffic generator is defined as tg1, tg2, tg3, ...
+    """
+    match = re.match(r'^(tg\d+)$', name)
+    return True if match else False
+
+
 def is_bvs(name):
     """
     Inspect the platform type for the node. Usage:
@@ -396,6 +412,16 @@ def is_switchlight(name):
         ...this is a SwitchLight switch...
     """
     return name == 'switchlight'
+
+
+def is_ixia(name):
+    """
+    Inspect the platform type for the node. Usage:
+    
+    if helpers.is_traffic_generator(n.platform():
+        ...this is an IXIA box...
+    """
+    return name == 'ixia'
 
 
 def is_scalar(data):
