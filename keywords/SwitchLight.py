@@ -18,6 +18,7 @@ import subprocess
 import string
 import telnetlib
 import time
+import re
 
 class SwitchLight(object):
 
@@ -865,6 +866,82 @@ class SwitchLight(object):
             helpers.test_failure("Could not execute command. Please check log for errors")
             return False
 
+    def bash_upgrade_switch(self, node, image_path):
+        '''
+        Objective:
+        Upgrade switch via bash
+        
+        Inputs:
+        | node | Reference to switch (as defined in .topo file) |
+        | image_path | Image path after http://switch-nfs.bigswitch.com/export/switchlight/ |
+        
+        Return Value:
+        - True on upgrade success
+        - False on upgrade failure        
+        '''
+
+        try:
+            t = test.Test()
+            switch = t.switch(node)
+            image_array = image_path.split('/')
+            image_name = image_array[len(image_array) - 1]
+            bash_input_1 = 'rm /mnt/flash2/' + str(image_name)
+            switch.bash(bash_input_1)
+            full_path = "http://switch-nfs.bigswitch.com/export/switchlight/" + str(image_path)
+            bash_input_2 = "wget " + str(full_path) + " /mnt/flash2/"
+            switch.bash(bash_input_2)
+            bash_input_3 = "echo SWI=flash2:" + str(image_name) + " > /mnt/flash/boot-config"
+            switch.bash(bash_input_3)
+            bash_input_4 = "reboot"
+            switch.bash(bash_input_4)
+            return True
+        except:
+            helpers.test_failure("Could not execute command. Please check log for errors")
+            return False
+
+    def cli_upgrade_switch(self, node, image_path, netdns='10.192.3.1', netdomain='bigswitch.com', netmask='255.255.192.0', netgw='10.192.64.1'):
+        '''
+        Objective:
+        Upgrade switch via CLI
+        
+        Inputs:
+        | node | Reference to switch (as defined in .topo file) |
+        | image_path | Image path after http://switch-nfs.bigswitch.com/export/switchlight/ |
+        | netdns | IP Address of DNS Server. Default Value is 10.192.3.1|
+        | netdomain | DNS Domain. Default Value is bigswitch.com|
+        | netmask | NetMask. Default Value is 255.255.192.0|
+        | netgw | Default Gateway. Default Value is 10.192.64.1 |
+        
+        Return Value:
+        - True on upgrade success
+        - False on upgrade failure    
+        '''
+        try:
+            t = test.Test()
+            switch = t.switch(node)
+            cli_input_1 = "boot image http://switch-nfs.bigswitch.com/export/switchlight/" + str(image_path)
+            switch.config(cli_input_1)
+            cli_input_2 = "boot netdev ma1"
+            switch.config(cli_input_2)
+            cli_input_3 = "boot netdns " + str(netdns)
+            switch.config(cli_input_3)
+            cli_input_4 = "boot netdomain " + str(netdomain)
+            switch.config(cli_input_4)
+            cli_input_5 = "boot netip " + str(switch.ip())
+            switch.config(cli_input_5)
+            cli_input_6 = "boot netmask " + str(netmask)
+            switch.config(cli_input_6)
+            cli_input_7 = "boot netgw " + str(netgw)
+            switch.config(cli_input_7)
+            cli_input_8 = "copy running-config startup-config"
+            switch.config(cli_input_8)
+            cli_input_9 = "reload now"
+            switch.config(cli_input_9)
+            return True
+        except:
+            helpers.test_failure("Could not execute command. Please check log for errors")
+            return False
+
 ############################################################################
 #  Platform Testcases
 ############################################################################
@@ -1095,7 +1172,6 @@ class SwitchLight(object):
             s1 = t.switch(node)
             s1.config("no snmp-server enable")
             return True
-            return True
         except:
             helpers.test_failure("Could not execute command. Please check log for errors")
             return False
@@ -1129,9 +1205,9 @@ class SwitchLight(object):
             lagNumber = 60 + int(pcNumber)
             input1 = str(lagNumber) + "* " + intf_name
             if str(input1) in cli_output:
-                    return True
+                return True
             else:
-                    return False
+                return False
         except:
             helpers.test_failure("Could not execute command. Please check log for errors")
             return False
@@ -1165,8 +1241,8 @@ class SwitchLight(object):
                     intfName = ' '.join(content[i].split()).split(" ", 2)
                     helpers.log('intfName is %s' % intfName)
                     if len(intfName) > 1 and intfName[1] == intf_name :
-                            helpers.log("IntfName is %s \n" % (intfName[1]))
-                            return True
+                        helpers.log("IntfName is %s \n" % (intfName[1]))
+                        return True
             return False
         except:
             helpers.test_failure("Could not execute command. Please check log for errors")
@@ -1200,13 +1276,13 @@ class SwitchLight(object):
             else :
                 for i in range(8, len(content)):
                     intfName = ' '.join(content[i].split()).split(" ", 2)
-                    if len(intfName) > 1 and intfName[1] == intf_name :
-                            if intfName[0] == "*" :
-                                helpers.log("Intf Name is %s and state is %s \n" % (intfName[1], intfName[0]))
-                                return True
-                            else:
-                                helpers.log("Intf Name is %s and state is %s \n" % (intfName[1], intfName[0]))
-                                return False
+                    if len(intfName) > 1 and intfName[1] == intf_name:
+                        if intfName[0] == "*":
+                            helpers.log("Intf Name is %s and state is %s \n" % (intfName[1], intfName[0]))
+                            return True
+                        else:
+                            helpers.log("Intf Name is %s and state is %s \n" % (intfName[1], intfName[0]))
+                            return False
             return False
         except:
             helpers.test_failure("Could not execute command. Please check log for errors")
