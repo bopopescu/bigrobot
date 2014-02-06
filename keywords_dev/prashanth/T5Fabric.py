@@ -365,10 +365,28 @@ class T5Fabric(object):
             for i in range(0,len(data)):
                 if (data[i]["port"]["port-num"] == peer_intf[0]):
                     helpers.log("Peer switch edge ports are properly added in forwarding table")
+                    return True
                 else:
                     helpers.test_failure("Peer switch edge ports are not added in forwarding table")
+                    return False
                     
-                
+    def rest_verify_fabric_lacp(self, switch, intf):
+        t = test.Test()
+        c = t.controller()
+        url = '%s//api/v1/data/controller/core/switch[name="%s"]/interface[name="%s"]' % (c.base_url, switch, intf)      
+        c.rest.get(url)
+        data = c.rest.content()  
+        if data[0]["lacp-active"] == True:
+            if data[0]["lacp-partner-info"]["system-mac"] != None:
+                helpers.log("LACP Neibhour Is Up and active")
+                return True
+            else:
+                helpers.test_failure("LACP is enabled , LACP Partner is not seen , check the floodlight logs")
+                return False
+        else:
+            helpers.log("LACP is not enabled on the %s = %s" % (switch, intf))
+            
+                   
                 
                 
                 

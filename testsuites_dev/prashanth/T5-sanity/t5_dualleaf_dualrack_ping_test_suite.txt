@@ -29,12 +29,12 @@ ${bm2_intf1}  leaf1b-eth8
 
 * Test Case 
 
-Configure Fabric setup Dual Rack Dual Leaf 
+add Fabric setup Dual Rack Dual Leaf 
    [Tags]  smoke  sanity
    sleep  5
-   configure fabric switch
+   add fabric switch
    sleep  5
-   rest check fabric switch connectivity
+   rest check fabric switch all
    rest verify fabric link 
 
 ping bm0 to bm1 dual leaf single rack dynamic endpoints
@@ -47,14 +47,14 @@ ping bm0 to bm1 dual leaf single rack dynamic endpoints
 	 
 ping bm0 to bm1 dual leaf single rack static endpoints
    [Tags]  sanity
-   create a endpoint  A  A  e1 
-   create a endpoint  A  A  e2 
+   add a endpoint  A  A  e1 
+   add a endpoint  A  A  e2 
    add portgroup to endpoint  A   A  e2  p2  -1
    add portgroup to endpoint  A   A  e1  p1  -1
-   REST configure ip endpoint  A  A  e1  ${bm0_ip}
-   REST configure mac endpoint  A  A  e1  ${bm0_mac}
-   REST configure ip endpoint  A  A  e2  ${bm1_ip}
-   REST configure mac endpoint  A  A  e2  ${bm1_mac}
+   REST add ip endpoint  A  A  e1  ${bm0_ip}
+   REST add mac endpoint  A  A  e1  ${bm0_mac}
+   REST add ip endpoint  A  A  e2  ${bm1_ip}
+   REST add mac endpoint  A  A  e2  ${bm1_mac}
    add portgroup to vns  A  A  p2  -1 
    add portgroup to vns  A  A  p1  -1
    sleep  10 
@@ -71,14 +71,14 @@ ping bm0 to bm2 dual rack dual leaf dynamic endpoints
 		
 ping bm0 to bm2 dual rack dual leaf static endpoints
    [Tags]  sanity     
-   create a endpoint  A  A  e1 
-   create a endpoint  A  A  e2 
+   add a endpoint  A  A  e1 
+   add a endpoint  A  A  e2 
    add portgroup to endpoint  A   A  e2  p3  -1
    add portgroup to endpoint  A   A  e1  p1  -1
-   REST configure ip endpoint  A  A  e1  ${bm0_ip}
-   REST configure mac endpoint  A  A  e1  ${bm0_mac}
-   REST configure ip endpoint  A  A  e2  ${bm2_ip}
-   REST configure mac endpoint  A  A  e2  ${bm2_mac}
+   REST add ip endpoint  A  A  e1  ${bm0_ip}
+   REST add mac endpoint  A  A  e1  ${bm0_mac}
+   REST add ip endpoint  A  A  e2  ${bm2_ip}
+   REST add mac endpoint  A  A  e2  ${bm2_mac}
    add portgroup to vns  A  A  p3  -1 
    add portgroup to vns  A  A  p1  -1 
    sleep  10
@@ -97,14 +97,14 @@ ping bm0 to bm1 dual leaf single rack dynamic endpoints tag
 		
 ping bm0 to bm1 dual leaf single rack static endpoints tag
    [Tags]  sanity
-   create a endpoint  A  A  e1 
+   add a endpoint  A  A  e1 
    add portgroup to endpoint  A  A  e1  p1  10
-   create a endpoint  A  A  e2 
+   add a endpoint  A  A  e2 
    add portgroup to endpoint  A  A  e2  p2  10
-   REST configure ip endpoint  A  A  e1  ${bm0_ip}
-   REST configure mac endpoint  A  A  e1  ${bm0_mac}
-   REST configure ip endpoint  A  A  e2  ${bm1_ip}
-   REST configure mac endpoint  A  A  e2  ${bm1_mac}
+   REST add ip endpoint  A  A  e1  ${bm0_ip}
+   REST add mac endpoint  A  A  e1  ${bm0_mac}
+   REST add ip endpoint  A  A  e2  ${bm1_ip}
+   REST add mac endpoint  A  A  e2  ${bm1_mac}
    add portgroup to vns  A  A  p2  10 
    add portgroup to vns  A  A  p1  10
    sleep  10 
@@ -122,14 +122,14 @@ ping bm0 to bm2 dual rack dual leaf dynamic endpoints tag
    
 ping bm0 to bm2 dual rack dual leaf static endpoints tag 
    [Tags]  sanity
-   create a endpoint  A  A  e1  
+   add a endpoint  A  A  e1  
    add portgroup to endpoint  A  A  e1  p1  10
-   create a endpoint  A  A  e2 
+   add a endpoint  A  A  e2 
    add portgroup to endpoint  A  A  e2  p3  10 
-   REST configure ip endpoint  A  A  e1  ${bm0_ip}
-   REST configure mac endpoint  A  A  e1  ${bm0_mac}
-   REST configure ip endpoint  A  A  e2  ${bm2_ip}
-   REST configure mac endpoint  A  A  e2  ${bm2_mac}
+   REST add ip endpoint  A  A  e1  ${bm0_ip}
+   REST add mac endpoint  A  A  e1  ${bm0_mac}
+   REST add ip endpoint  A  A  e2  ${bm2_ip}
+   REST add mac endpoint  A  A  e2  ${bm2_mac}
    add portgroup to vns  A  A  p3  10 
    add portgroup to vns  A  A  p1  10
    sleep  10 
@@ -148,22 +148,22 @@ Tear down the config
    delete a portgroup  p1
    delete a portgroup  p2
    delete a portgroup  p3
-   remove fabric switch
+   delete fabric switch
    
 
 * Keywords
 
 T5 base test setup
    base test setup
-   create a tenant  A 
-   create a vns  A  A
-   create a portgroup  p1 
+   add a tenant  A 
+   add a vns  A  A
+   add a portgroup  p1 
    add interface to portgroup  leaf0-a  ${bm0_intf0}  p1
    add interface to portgroup  leaf0-b  ${bm0_intf1}  p1
-   create a portgroup  p2 
+   add a portgroup  p2 
    add interface to portgroup  leaf0-a  ${bm1_intf0}  p2
    add interface to portgroup  leaf0-b  ${bm1_intf1}  p2
-   create a portgroup  p3 
+   add a portgroup  p3 
    add interface to portgroup  leaf1-a  ${bm2_intf0}  p3
    add interface to portgroup  leaf1-b  ${bm2_intf1}  p3
    sleep  5
@@ -182,26 +182,26 @@ T5 base test teardown
    base test teardown
    sleep  5
          
-create a tenant  [Arguments]  ${tenant} 
-  REST create tenant  ${tenant}    
+add a tenant  [Arguments]  ${tenant} 
+  REST add tenant  ${tenant}    
 
 delete a tenant  [Arguments]  ${tenant} 
   	REST delete tenant  ${tenant}    
 
-create a vns  [Arguments]  ${tenant}  ${vns}  
-	REST create vns  ${tenant}  ${vns}   
+add a vns  [Arguments]  ${tenant}  ${vns}  
+	REST add vns  ${tenant}  ${vns}   
 
 delete a vns  [Arguments]  ${tenant}  ${vns} 
   	REST delete vns  ${tenant}  ${vns}   
 
-create a portgroup  [Arguments]  ${pg}
-  	REST create portgroup  ${pg}    
+add a portgroup  [Arguments]  ${pg}
+  	REST add portgroup  ${pg}    
 
 delete a portgroup  [Arguments]  ${pg}
   	REST delete portgroup  ${pg}    
 
-create a endpoint  [Arguments]  ${tenant}  ${vns}  ${endpoint} 
-  	REST create endpoint  ${tenant}  ${vns}  ${endpoint}  
+add a endpoint  [Arguments]  ${tenant}  ${vns}  ${endpoint} 
+  	REST add endpoint  ${tenant}  ${vns}  ${endpoint}  
 
 delete a endpoint  [Arguments]  ${tenant}  ${vns}  ${endpoint}
   	REST delete endpoint  ${tenant}  ${vns}  ${endpoint}  

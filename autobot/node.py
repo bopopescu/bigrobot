@@ -5,6 +5,12 @@ from autobot.bsn_restclient import BsnRestClient
 
 class Node(object):
     def __init__(self, name, ip, user=None, password=None, params=None):
+        if not name:
+            helpers.test_error("Controller node name is not defined")
+        if not ip:
+            helpers.test_error("Controller IP address is not defined for '%s'"
+                               % name)
+
         self._name = name
         self._ip = ip
         self.user = user
@@ -14,7 +20,7 @@ class Node(object):
         self.params = params
         self.is_pingable = False
         self.rest = None  # REST handle
-        self.dev = None   # DevConf handle (SSH)
+        self.dev = None  # DevConf handle (SSH)
         self.dev_console = None
         self.dev_debug_level = 0
         self.console_ip = None
@@ -28,18 +34,18 @@ class Node(object):
                             % (name, self.dev_debug_level))
         else:
             self.node_params = None
-        
-        if helpers.params_is_false('set_session_ssh', self.node_params):
-            helpers.log("'set_init_ping' is disabled for '%s', bypassing node ping" % name)
+
+        if helpers.params_is_false('set_init_ping', self.node_params):
+            helpers.log("'set_init_ping' is disabled for '%s', bypassing initial ping" % name)
         else:
             self.pingable_or_die()
 
     def name(self):
         return self._name
-    
+
     def ip(self):
         return self._ip
-    
+
     def platform(self):
         return self.dev.platform()
 
@@ -66,7 +72,6 @@ class Node(object):
 
 class ControllerNode(Node):
     def __init__(self, name, ip, user, password, t):
-
         # If user/password info is specified in the topology params then use it
         authen = t.topology_params_authen(name)
         if authen[0]:
@@ -76,7 +81,7 @@ class ControllerNode(Node):
 
         super(ControllerNode, self).__init__(name, ip, user, password,
                                              t.topology_params())
-        
+
         # Note: Must be initialized before BsnRestClient since we need the
         # CLI for platform info and also to configure the firewall for REST
         # access
@@ -86,33 +91,33 @@ class ControllerNode(Node):
         if helpers.params_is_false('set_session_ssh', self.node_params):
             helpers.log("'set_session_ssh' is disabled for '%s', bypassing node SSH and RestClient session setup" % name)
             return
-            
+
         helpers.log("name=%s host=%s user=%s password=%s" % (name, ip, user, password))
         self.dev = devconf.ControllerDevConf(name=name,
                                              host=ip,
                                              user=user,
                                              password=password,
                                              debug=self.dev_debug_level)
-    
+
         if 'http_port' in self.node_params:
             self.http_port = self.node_params['http_port']
         else:
             self.http_port = 8080
-            
+
         if 'base_url' in self.node_params:
             self.base_url = self.node_params['base_url'] % (ip, self.http_port)
         else:
-            self.base_url =  'http://%s:%s' % (ip, self.http_port) 
-        
+            self.base_url = 'http://%s:%s' % (ip, self.http_port)
+
         self.rest = BsnRestClient(base_url=self.base_url,
                                   platform=self.platform(),
                                   host=self.ip())
         # Shortcuts
-        self.cli = self.dev.cli           # CLI mode
-        self.enable = self.dev.enable     # Enable mode
-        self.config = self.dev.config     # Configuration mode
-        self.bash   = self.dev.bash       # Bash mode
-        self.sudo   = self.dev.sudo       # Sudo (part of Bash mode)
+        self.cli = self.dev.cli  # CLI mode
+        self.enable = self.dev.enable  # Enable mode
+        self.config = self.dev.config  # Configuration mode
+        self.bash = self.dev.bash  # Bash mode
+        self.sudo = self.dev.sudo  # Sudo (part of Bash mode)
         self.cli_content = self.dev.content
         self.cli_result = self.dev.result
         self.set_prompt = self.dev.set_prompt
@@ -133,12 +138,12 @@ class ControllerNode(Node):
         else:
             helpers.test_error("Console port is not defined for node '%s'"
                                % self.name())
-        
+
         if self.dev:
             driver = self.dev.driver().name()
         else:
             driver = None
-            
+
         helpers.log("Using devconf driver '%s' for console to '%s'"
                     % (driver, self.name()))
         self.dev_console = devconf.ControllerDevConf(name=self.name(),
@@ -167,7 +172,7 @@ class MininetNode(Node):
 
         mn_type = self.node_params['type'].lower()
         if mn_type not in ('t6', 'basic'):
-            helpers.environment_failure("Mininet type must be 't6' or 'basic'.") 
+            helpers.environment_failure("Mininet type must be 't6' or 'basic'.")
 
         if helpers.params_is_false('set_session_ssh', self.node_params):
             helpers.log("'set_session_ssh' is disabled for '%s', bypassing node SSH and RestClient session setup" % name)
@@ -209,21 +214,20 @@ class MininetNode(Node):
 
 class HostNode(Node):
     def __init__(self, name, ip, user, password, t):
-
         # If user/password info is specified in the topology params then use it
         authen = t.topology_params_authen(name)
         if authen[0]:
             user = authen[0]
         if authen[1]:
             password = authen[1]
-        
+
         super(HostNode, self).__init__(name, ip, user, password,
                                        t.topology_params())
 
         if helpers.params_is_false('set_session_ssh', self.node_params):
             helpers.log("'set_session_ssh' is disabled for '%s', bypassing node SSH and RestClient session setup" % name)
             return
-            
+
         self.dev = devconf.HostDevConf(name=name,
                                        host=ip,
                                        user=user,
@@ -242,21 +246,20 @@ class HostNode(Node):
 
 class SwitchNode(Node):
     def __init__(self, name, ip, user, password, t):
-
         # If user/password info is specified in the topology params then use it
         authen = t.topology_params_authen(name)
         if authen[0]:
             user = authen[0]
         if authen[1]:
             password = authen[1]
-        
+
         super(SwitchNode, self).__init__(name, ip, user, password,
                                          t.topology_params())
 
         if helpers.params_is_false('set_session_ssh', self.node_params):
             helpers.log("'set_session_ssh' is disabled for '%s', bypassing node SSH and RestClient session setup" % name)
             return
-            
+
         self.dev = devconf.SwitchDevConf(name=name,
                                          host=ip,
                                          user=user,
@@ -264,13 +267,40 @@ class SwitchNode(Node):
                                          debug=self.dev_debug_level)
 
         # Shortcuts
-        self.cli = self.dev.cli           # CLI mode
-        self.enable = self.dev.enable     # Enable mode
-        self.config = self.dev.config     # Configuration mode
-        self.bash   = self.dev.bash       # Bash mode
-        self.sudo   = self.dev.sudo       # Sudo (part of Bash mode)
+        self.cli = self.dev.cli  # CLI mode
+        self.enable = self.dev.enable  # Enable mode
+        self.config = self.dev.config  # Configuration mode
+        self.bash = self.dev.bash  # Bash mode
+        self.sudo = self.dev.sudo  # Sudo (part of Bash mode)
         self.cli_content = self.dev.content
         self.cli_result = self.dev.result
         self.set_prompt = self.dev.set_prompt
         self.send = self.dev.send
         self.expect = self.dev.expect
+
+
+class IxiaNode(Node):
+    def __init__(self, name, t):
+        params = t.topology_params()[name]
+        if 'chassis_ip' not in params:
+            helpers.environment_failure("Undefined chassis_ip on '%s'" % name)
+        if 'tcl_server_ip' not in params:
+            helpers.environment_failure("Undefined tcl_server_ip on '%s'" % name)
+
+        self._chassis_ip = params['chassis_ip']
+        self._tcl_server_ip = params['tcl_server_ip']
+        self._tcl_server_port = 8009
+        self._ix_version = '7.10'
+
+        if 'tcl_server_port' in params:
+            self._tcl_server_port = params['tcl_server_port']
+        if 'ix_version' in params:
+            self._ix_version = params['ix_version']
+
+        super(IxiaNode, self).__init__(name, self._chassis_ip,
+                                       params=t.topology_params())
+        ports = params['ports']
+        helpers.log("***** IXIA ports for '%s': %s" % (name, ports))
+
+    def platform(self):
+        return 'ixia'

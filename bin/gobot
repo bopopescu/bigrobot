@@ -169,9 +169,8 @@ def is_topology_defined():
 
 def exit_if_topology_not_defined():
     if not is_topology_defined():
-        helpers.error_exit("Topology file (%s) is not defined.\n"
-                           " See 'gobot help' for more information."
-                           % helpers.bigrobot_topology())
+        helpers.warn("Topology file (%s) is not defined.\n"
+                     % helpers.bigrobot_topology(), level=None)
 
 
 def is_suite_defined():

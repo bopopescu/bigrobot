@@ -1,3 +1,18 @@
+''' 
+###  WARNING !!!!!!!
+###  
+###  This is where common code for all Controller Platforms will go in.
+###  
+###  To commit new code, please contact the Library Owner: 
+###  Vui Le (vui.le@bigswitch.com)
+###
+###  DO NOT COMMIT CODE WITHOUT APPROVAL FROM LIBRARY OWNER
+###
+###  Last Updated: 02/05/2014
+###
+###  WARNING !!!!!!!
+'''
+
 import autobot.helpers as helpers
 import autobot.test as test
 import ipcalc
@@ -108,4 +123,109 @@ class BsnCommon(object):
             new_subnet_list.append('.'.join(byte_list))
 
         return new_subnet_list
+# Mingtao
+    def get_next_mac(self, base, incr):
+        """ 
+            Objective: 
+            - Generate the next mac/physical address based on the base and step.
+            
+            Inputs:
+            | base | starting mac address |
+            | incr | Value by which we will increment the mac/physical address |
+            
+            Usage:  
+            | macAddr = self.get_next_mac(base,incr) |     
+        """
 
+        helpers.log("the base address is: %s,  the step is: %s,  " % (str(base), str(incr)))
+
+        mac = base.split(":")
+        step = incr.split(":")
+        helpers.log("MAC list is %s" % mac)
+
+        hexmac = []
+
+        for index in range(5, 0, -1):
+            mac[index] = int(mac[index], 16) + int(step[index], 16)
+            mac[index] = hex(mac[index])
+            temp = mac[index]
+            if int(temp, 16) >= 256:
+                mac[index] = hex(0)
+                mac[index - 1] = int(mac[index - 1], 16) + 1
+                mac[index - 1] = hex(mac[index - 1])
+
+        mac[0] = int(mac[0], 16) + int(step[0], 16)
+        mac[0] = hex(mac[0])
+
+        temp = mac[0]
+        if int(temp, 16) >= 256:
+            mac[0] = hex(0)
+
+        for i in range(0, 6):
+            hexmac.append('{0:02x}'.format(int(mac[i], 16)))
+        macAddr = ':'.join(map(str, hexmac))
+
+        return macAddr
+
+# Mingtao
+    def get_next_address(self, addr_type, base, incr):
+        """ 
+            Objective:
+            Generate the next address bases on the base and step.
+            
+            Input:
+            | addr_type | IPv4/IpV6|
+            | base | Starting IP address |
+            | incr | Value by which we will increment the IP address|
+
+            Usage:    ipAddr = self.get_next_address(ipv4,'10.0.0.0','0.0.0.1')
+                      ipAddr = self.get_next_address(ipv6,'f001:100:0:0:0:0:0:0','0:0:0:0:0:0:0:1:0')
+        """
+
+        helpers.log("the base address is: %s,  the step is: %s,  " % (str(base), str(incr)))
+        if addr_type == 'ipv4' or addr_type == 'ip':
+            ip = list(map(int, base.split(".")))
+            step = list(map(int, incr.split(".")))
+            ip_address = []
+            for i in range(3, 0, -1):
+                ip[i] += step[i]
+                if ip[i] >= 256:
+                    ip[i] = 0
+                    ip[i - 1] += 1
+            ip[0] += step[0]
+            if ip[0] >= 256:
+                ip[0] = 0
+
+            ip_address = '.'.join(map(str, ip))
+
+        if addr_type == 'ipv6'  or addr_type == 'ip6':
+            ip = base.split(":")
+            step = incr.split(":")
+            helpers.log("IP list is %s" % ip)
+
+            ip_address = []
+            hexip = []
+
+            for i in range(0, 7):
+                index = 7 - int(i)
+                ip[index] = int(ip[index], 16) + int(step[index], 16)
+                ip[index] = hex(ip[index])
+                temp = ip[index]
+                if int(temp, 16) >= 65536:
+                    ip[index] = hex(0)
+                    ip[index - 1] = int(ip[index - 1], 16) + 1
+                    ip[index - 1] = hex(ip[index - 1])
+
+
+            ip[0] = int(ip[0], 16) + int(step[0], 16)
+            ip[0] = hex(ip[0])
+            temp = ip[0]
+            if int(temp, 16) >= 65536:
+                ip[0] = hex(0)
+
+            for i in range(0, 8):
+                hexip.append('{0:x}'.format(int(ip[i], 16)))
+
+            ip_address = ':'.join(map(str, hexip))
+
+        return ip_address

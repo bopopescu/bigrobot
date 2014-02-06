@@ -1,0 +1,13 @@
+tg1:
+  platform: 'ixia'
+  chassis_ip: 10.192.85.151
+  tcl_server_ip: 10.194.64.183
+  #tcl_server_port: 8009
+  #ix_version: '7.10'
+  set_init_ping: false
+  ports:
+    a:
+      ixia_port: 2/7
+    b:
+      ixia_port: 2/8
+
