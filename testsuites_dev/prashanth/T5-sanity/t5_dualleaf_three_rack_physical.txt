@@ -44,8 +44,8 @@ ${h3_tag_mac}  00:10:18:f0:eb:e0
 
 add Fabric setup Three Rack Dual Leaf 
    [Tags]  smoke  sanity  
-#   sleep  5
-#   add fabric switch
+   sleep  5
+   add fabric switch
    sleep  5
    rest verify fabric switch all
    rest verify fabric link 
@@ -167,7 +167,7 @@ Tear down the config
    delete a portgroup  p4
    delete a portgroup  p5
    delete a portgroup  p6
-#   delete fabric switch
+   delete fabric switch
    
 
 * Keywords
