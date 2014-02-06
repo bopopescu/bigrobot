@@ -84,6 +84,14 @@ class MyTest(object):
         helpers.log("node: %s" % s)
         s.cli("show environment")
 
+    def switch_uptime(self, node):
+        t = test.Test()
+        s = t.switch(node)
+        helpers.log("node: %s" % s)
+        s.bash("uptime")
+        s.cli('show user')
+        # s.enable("")
+
     def switch_show_walk(self, node):
         t = test.Test()
         s = t.switch(node)
@@ -190,4 +198,8 @@ admin_user = glance
 
     def ixia_info(self, node):
         t = test.Test()
-        tg1 = t.traffic_generator('tg1')
+        tg1 = t.traffic_generator(node)
+        platform = tg1.platform()
+        helpers.log("'%s' platform is '%s'" % (node, platform))
+        params = t.topology_params()
+        helpers.log("params: %s" % helpers.prettify(params))

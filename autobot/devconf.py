@@ -344,6 +344,11 @@ class SwitchDevConf(BsnDevConf):
     def __init__(self, *args, **kwargs):
         super(SwitchDevConf, self).__init__(*args, **kwargs)
 
+    def bash(self, *args, **kwargs):
+        # For SwitchLight, you need to enter Enable mode to execute
+        # 'debug bash'.
+        self.enable('')
+        return super(SwitchDevConf, self).bash(*args, **kwargs)
 
 class MininetDevConf(DevConf):
     """

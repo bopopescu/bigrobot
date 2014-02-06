@@ -16,10 +16,13 @@ Test switch
     switch show version  s1
 
 Test switch show walk
-    #[Tags]  skipped
+    [Tags]  skipped
     cli show question mark  s1
 
 Test switch show environment
-    #[Tags]  skipped
+    [Tags]  skipped
     switch show environment  s1
 
+Test switch uptime
+    #[Tags]  skipped
+    switch uptime  s1
