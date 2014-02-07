@@ -1,0 +1,40 @@
+* Setting
+Documentation   This suite is my sandbox for experimentation.
+Suite Setup     base suite setup
+Suite Teardown  base suite teardown
+Test Setup      base test setup
+Test Teardown   base test teardown
+Force Tags      Vui
+Library         keywords/BsnCommon.py
+#Library         keywords/Controller.py
+Library         keywords_dev/vui/MyTest.py
+Library         keywords/Ixia.py
+
+
+* Test Case
+Test IXIA
+    [Tags]  skipped
+    ixia info  tg1
+
+Test IXIA2
+# Basic test case with all default values and just start the flow
+	[Tags]  skipped
+    IXIA initialize        tg1
+    ${stream}=             IXIA L2 add  flow=a->b
+    IXIA start L2 traffic  ${stream}
+    sleep                  10
+    IXIA stop L2 traffic   ${stream}
+    sleep                  10
+    ${report}=             IXIA fetch port stats
+    Log                    Report is ${report}
+
+Test IXIA3
+# Currently Supported L2 Stream args will be adding more
+    IXIA initialize        tg1
+    ${stream}=             IXIA L2 add  flow=a->b  src_mac=00:11:23:00:00:09  dst_mac=00:11:23:00:00:99  frame_rate=10000  frame_size=68  frame_cnt=99000  name=a_b_flow
+    IXIA start L2 traffic  ${stream}
+    sleep                  10
+    IXIA stop L2 traffic   ${stream}
+    sleep                  10
+    ${report}=             IXIA fetch port stats
+    Log                    Report is ${report}
