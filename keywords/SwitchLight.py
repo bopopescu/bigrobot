@@ -7,7 +7,7 @@
 ###
 ###  DO NOT COMMIT CODE WITHOUT APPROVAL FROM LIBRARY OWNER
 ###  
-###  Last Updated: 01/30/2014
+###  Last Updated: 02/06/2014
 ###  
 ###  WARNING !!!!!!!
 '''
@@ -158,7 +158,7 @@ class SwitchLight(object):
             helpers.test_failure("Could not execute command. Please check log for errors")
             return False
 
-    def ping_from_local(self, ip_address):
+    def ping_from_local(self, node):
         '''
             Objective:
             - Execute ping command from local machine for a particular switch IP
@@ -170,14 +170,15 @@ class SwitchLight(object):
             - Output of Ping
         '''
         try:
-            url = "/sbin/ping -c 3 %s" % (ip_address)
+            t = test.Test()
+            switch = t.switch(node)
+            url = "/sbin/ping -c 3 %s" % (switch.ip())
             returnVal = subprocess.Popen([url], stdout=subprocess.PIPE, shell=True)
-            (out, err) = returnVal.communicate()
+            (out, _) = returnVal.communicate()
             helpers.log("URL: %s Output: %s" % (url, out))
             if "Request timeout" in out:
                 return False
             else:
-                helpers.test_failure("Error was:%s" % (err))
                 return True
         except:
             helpers.test_failure("Could not execute ping. Please check log for errors")
@@ -187,7 +188,7 @@ class SwitchLight(object):
 # All Common Controller Verification Commands Go Here:
 #######################################################################
 
-    def cli_verify_controller(self, node, controller_ip, controller_role):
+    def cli_verify_controller(self, node, controller):
         '''
             Objective:
             - Configure controller IP address on switch
@@ -203,8 +204,8 @@ class SwitchLight(object):
     '''
         try:
             t = test.Test()
+            c = t.controller(controller)
             s1 = t.switch(node)
-
             cli_input = "show running-config openflow"
             s1.enable(cli_input)
             cli_output = s1.cli_content()
@@ -218,9 +219,14 @@ class SwitchLight(object):
             helpers.log("Show Controllers O/P: \n %s" % (cli_input_2))
 
             pass_count = 0
-            if str(controller_ip) in run_config:
+            if (c.is_master()):
+                controller_role = "MASTER"
+            else:
+                controller_role = "SLAVE"
+
+            if str(c.ip()) in run_config:
                 pass_count = pass_count + 1
-            input3 = str(controller_ip) + ":6653"
+            input3 = str(c.ip()) + ":6653"
             if input3 in show_output:
                 pass_count = pass_count + 1
             if "CONNECTED" in show_output:
@@ -547,7 +553,7 @@ class SwitchLight(object):
             helpers.test_failure("Could not execute command. Please check log for errors")
             return False
 
-    def cli_add_controller(self, node, controller_ip):
+    def cli_add_controller(self, node, controller):
         '''
             Objective:
             - Configure controller IP address on switch
@@ -563,8 +569,9 @@ class SwitchLight(object):
 
         try:
             t = test.Test()
+            c1 = t.controller(controller)
             s1 = t.switch(node)
-            cli_input = "controller " + s1.ip()
+            cli_input = "controller " + c1.ip()
             s1.config(cli_input)
             helpers.sleep(float(30))
             return True
@@ -572,7 +579,7 @@ class SwitchLight(object):
             helpers.test_failure("Configuration of controller failed")
             return False
 
-    def cli_delete_controller(self, node, controller_ip):
+    def cli_delete_controller(self, node, controller):
         '''
             Objective:
             - Delete controller IP address on switch
@@ -588,14 +595,16 @@ class SwitchLight(object):
 
         try:
             t = test.Test()
+            c1 = t.controller(controller)
             s1 = t.switch(node)
-            cli_input = "no controller " + s1.ip()
+            cli_input = "no controller " + c1.ip()
             s1.config(cli_input)
             helpers.sleep(float(30))
             return True
         except:
             helpers.test_failure("Configuration delete failed")
             return False
+
     def cli_add_static_ip(self, console_ip, console_port, ip_address, subnet, gateway):
         '''
         Objective:
@@ -652,6 +661,7 @@ class SwitchLight(object):
         - False on configuration failure
         '''
         try:
+
             user = "admin"
             password = "adminadmin"
             tn = telnetlib.Telnet(str(console_ip), int(console_port))
@@ -746,7 +756,7 @@ class SwitchLight(object):
             helpers.test_failure("Could not configure static IP address configuration on switch. Please check log for errors")
             return False
 
-    def cli_add_dns_server_domain(self, console_ip, console_port, dns_server, dns_domain):
+    def cli_add_dns_server_domain(self, node, dns_server, dns_domain):
         '''
         Objective:
         - Add DNS Server and Domain configuration on switch.
@@ -763,20 +773,28 @@ class SwitchLight(object):
         
         '''
         try:
+            t = test.Test()
+            switch = t.switch(node)
             user = "admin"
             password = "adminadmin"
-            tn = telnetlib.Telnet(str(console_ip), int(console_port))
-            tn.read_until("login: ", 3)
-            tn.write(user + "\r\n")
-            tn.read_until("Password: ", 3)
-            tn.write(password + "\r\n")
-            tn.read_until('')
-            tn.write("\r\n" + "dns-domain " + str(dns_domain) + " \r\n")
-            tn.write("\r\n" + "dns-server " + str(dns_server) + " \r\n")
-            tn.write("exit" + "\r\n")
-            tn.write("exit" + "\r\n")
-            tn.close()
-            return True
+            try:
+                helpers.log("Switch Console IP is %s \n Switch Console Port is %s :" % (str(switch.console_ip()), int(switch.console_port())))
+                tn = telnetlib.Telnet(str(switch.console_ip()), int(switch.console_port()))
+                tn.read_until("login: ", 3)
+                tn.write(user + "\r\n")
+                tn.read_until("Password: ", 3)
+                tn.write(password + "\r\n")
+                tn.read_until('')
+            except:
+                helpers.test_failure("Could not configure static IP address configuration on switch. Please check log for errors")
+                return False
+            else:
+                tn.write("\r\n" + "dns-domain " + str(dns_domain) + " \r\n")
+                tn.write("\r\n" + "dns-server " + str(dns_server) + " \r\n")
+                tn.write("exit" + "\r\n")
+                tn.write("exit" + "\r\n")
+                tn.close()
+                return True
         except:
             helpers.test_failure("Could not configure static IP address configuration on switch. Please check log for errors")
             return False
