@@ -3,7 +3,7 @@ import autobot.test as test
 import autobot.helpers as helpers
 
 
-class TrafficGenerator(object):
+class Ixia(object):
     def __init__(self):
         pass
 
