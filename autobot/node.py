@@ -292,26 +292,30 @@ class SwitchNode(Node):
 
 class IxiaNode(Node):
     def __init__(self, name, t):
-        params = t.topology_params()[name]
-        if 'chassis_ip' not in params:
-            helpers.environment_failure("Undefined chassis_ip on '%s'" % name)
-        if 'tcl_server_ip' not in params:
-            helpers.environment_failure("Undefined tcl_server_ip on '%s'" % name)
-
-        self._chassis_ip = params['chassis_ip']
-        self._tcl_server_ip = params['tcl_server_ip']
-        self._tcl_server_port = 8009
-        self._ix_version = '7.10'
-
-        if 'tcl_server_port' in params:
-            self._tcl_server_port = params['tcl_server_port']
-        if 'ix_version' in params:
-            self._ix_version = params['ix_version']
+        self._chassis_ip = t.params(name, 'chassis_ip')
+        self._tcl_server_ip = t.params(name, 'tcl_server_ip')
+        self._tcl_server_port = t.params(name, 'tcl_server_port', 8009)
+        self._ix_version = t.params(name, 'ix_version', '7.10')
+        self._ports = t.params(name, 'ports')
+        helpers.log("***** IXIA ports for '%s': %s" % (name, self._ports))
 
         super(IxiaNode, self).__init__(name, self._chassis_ip,
                                        params=t.topology_params())
-        ports = params['ports']
-        helpers.log("***** IXIA ports for '%s': %s" % (name, ports))
+
+    def chassis_ip(self):
+        return self._chassis_ip
+
+    def tcl_server_ip(self):
+        return self._tcl_server_ip
+
+    def tcl_server_port(self):
+        return self._tcl_server_port
+
+    def ix_version(self):
+        return self._ix_version
+
+    def ports(self):
+        return self._ports
 
     def platform(self):
         return 'ixia'

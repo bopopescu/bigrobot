@@ -1,0 +1,7 @@
+#!/bin/sh
+#
+# Clean the BigRobot project directory of temp files (e.g., *.pyc, etc).
+#
+BIGROBOT_BIN_PATH=`/usr/bin/dirname $0`
+
+(cd $BIGROBOT_BIN_PATH/..;  make clean)

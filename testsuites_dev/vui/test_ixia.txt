@@ -8,9 +8,21 @@ Force Tags      Vui
 Library         keywords/BsnCommon.py
 #Library         keywords/Controller.py
 Library         keywords_dev/vui/MyTest.py
+Library         keywords/TrafficGenerator.py
 
 
 * Test Case
 Test IXIA
-    #[Tags]  skipped
+    [Tags]  skipped
     ixia info  tg1
+
+Test IXIA2
+    IXIA initialize        tg1
+    ${stream}=             IXIA L2 add  flow=a->b
+    IXIA start L2 traffic  ${stream}
+    sleep                  10
+    IXIA stop L2 traffic   ${stream}
+    sleep                  10
+    ${report}=             IXIA fetch port stats
+    Log                    Report is ${report}
+
