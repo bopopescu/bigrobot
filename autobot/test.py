@@ -316,7 +316,7 @@ class Test(object):
                                           t)
             elif helpers.is_mininet(key):
                 helpers.log("Initializing Mininet '%s'" % key)
-                if self._has_no_controller:
+                if not self._has_a_controller:
                     helpers.environment_failure("Cannot bring up Mininet without a controller")
 
                 # Use the OpenFlow port defined in the controller ('c1')
