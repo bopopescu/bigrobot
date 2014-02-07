@@ -104,6 +104,10 @@ class MyTest(object):
         helpers.log("node: %s" % s)
         helpers.log("Switch model is '%s'" % s.info('model'))
         helpers.log("Switch manufacturer is '%s'" % s.info('manufacturer'))
+        helpers.log("Switch '%s' console IP:%s, port:%s" %
+                    (s.name(),
+                     t.params(node, 'console_ip'),
+                     t.params(node, 'console_port')))
 
     def switch_show_walk(self, node):
         t = test.Test()
