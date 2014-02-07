@@ -1,9 +1,11 @@
-#!/bin/sh
+#!/bin/bash
 # Description:
 #  - Check for code bloat. I borrowed this from Ward Cunningham, see https://github.com/WardCunningham/Smallest-Federated-Wiki#readme
 #  - Send find stderr to /dev/null (e.g., "Permission denied").
 #  - Added /dev/null to prevent wc stalling on stdout when no files are found.
 #
-p=$1
-wc -l `(find $p | perl -ne 'next if /(jquery|vendors|keywords_dev)/; print if /\.(java|scala|rb|scm|scheme|ss|rkt|lisp|haml|sass|coffee|js|pl|pm|sh|py|pp)$/') 2> /dev/null ; echo /dev/null` | sort -rgb
+BIGROBOT_BIN_PATH=$(/usr/bin/dirname $0)
+BIGROBOT_PATH=$(cd $BIGROBOT_BIN_PATH/..; /bin/pwd)
+
+wc -l `(find $BIGROBOT_PATH | perl -ne 'next if /(jquery|vendors|keywords_dev)/; print if /\.(java|scala|rb|scm|scheme|ss|rkt|lisp|haml|sass|coffee|js|pl|pm|sh|py|pp)$/') 2> /dev/null ; echo /dev/null` | sort -rgb
 
