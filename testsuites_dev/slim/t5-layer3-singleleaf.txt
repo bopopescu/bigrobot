@@ -85,8 +85,12 @@ ${dhcpserver1}		10.255.255.10
 #	configure fabric switch 
 #	sleep  5
 
+
+
+
+
 L3 untagged bm0 ping to untagged bm1 same tenant across VNS with static configuration
-	[Tags]										smoke				sanity			skipped
+	[Tags]										smoke				sanity			
 	configure fabric switch 
 	sleep  										5						
 	REST create tenant  						${tenant1_name}
@@ -120,7 +124,7 @@ L3 untagged bm0 ping to untagged bm1 same tenant across VNS with static configur
 
 
 L3 untagged bm0 ping to untagged bm1 same tenant across VNS with dynamic endpoints
-	[Tags]										smoke				skipped
+	[Tags]										smoke				
 	configure fabric switch 
 	sleep  5		
 	REST create tenant  						${tenant1_name}
@@ -146,7 +150,7 @@ L3 untagged bm0 ping to untagged bm1 same tenant across VNS with dynamic endpoin
 	     
 
 L3 untagged bm0 ping to untagged bm1 same tenant across VNS dynamic host ARPing gateway
-	[Tags]										smoke				skipped
+	[Tags]										smoke				
 	configure fabric switch 
 	sleep  5		
 	REST create tenant  						${tenant1_name}
@@ -170,7 +174,7 @@ L3 untagged bm0 ping to untagged bm1 same tenant across VNS dynamic host ARPing 
 
 
 L3 untagged bm0 ping to untagged bm1 unreachable host on same tenant different VNS 
-	[Tags]										sanity				smoke			skipped		
+	[Tags]										sanity				smoke					
 	configure fabric switch 
 	sleep  										5	
 	REST create tenant  						${tenant1_name}
@@ -190,7 +194,7 @@ L3 untagged bm0 ping to untagged bm1 unreachable host on same tenant different V
 
     
 L3 untagged bm0 ping to untagged bm1 across tenants and VNS all statically defined
-   	[Tags]										sanity 				smoke			skipped		
+   	[Tags]										sanity 				smoke					
 	configure fabric switch 
 	sleep										5   	
 	REST create tenant  						${tenant1_name}        
@@ -258,7 +262,7 @@ L3 untagged bm0 ping to untagged bm1 across tenants and VNS all statically defin
 	
   
 L3 untagged bm0 ping to untagged bm1 with destination host interface move in the same tenant across VNS
-	[Tags]										sanity				skipped
+	[Tags]										sanity				
 	configure fabric switch 
 	sleep  5	
 	REST create tenant  						${tenant1_name}
@@ -340,7 +344,7 @@ L3 ping untagged bm0 to tagged bm1 same tenant across VNS
 	sleep  										20  
  
 L3 ping tagged bm0 to tagged bm1 single leaf single rack within tenant different VNS
-	[Tags]										sanity				skipped
+	[Tags]										sanity				
 	configure fabric switch 
 	sleep  										5	
 	REST create tenant  						${tenant1_name}
@@ -397,6 +401,10 @@ L3 configure dhcp relay on vns
 	REST create dhcp relay						${tenant1_name}  		${vns1_1}  		${dhcpserver1}
 	REST toggle dhcp relay						${tenant1_name}  		${vns1_1}  		${true}
 	sleep 										5
+
+#verify port membership
+
+#configure vns membership before port membership
 
         
     

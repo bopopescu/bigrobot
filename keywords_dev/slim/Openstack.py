@@ -7,7 +7,6 @@ class Openstack(object):
 	def __init__(self):
 		pass
 
-
 	def openstack_get_nw_id(self, osUserName, osTenantName, osPassWord, osAuthUrl, networkName):
 		'''Get network id
 			Input:
@@ -254,6 +253,12 @@ else:
 
 
 	def openstack_set_user_role(self, osUserName, osTenantName, osPassWord, osAuthUrl, userName, roleName, tenantName):
+		''' set user role
+			Input:
+				`username`:		username of the tenant's user
+				`rolename`:		rolename
+				`tenantname`:	name of tenant
+		'''
 		t = test.Test()
 		h1 = t.host('h1')
 		
@@ -425,7 +430,7 @@ else:
 		return netId
 
 	def openstack_create_subnet(self, osUserName, osTenantName, osPassWord, osAuthUrl, tenantId, tenantName, networkNum, netIP, netMask, dnsNameServers=None):
-		'''create image
+		'''create subnet
 			Input:
 				`osXXX`        		tenant name, password, username etc credentials
 				`tenantId`			ID of the tenant for the router creation. 
@@ -501,7 +506,7 @@ S
 		
 		
 	def openstack_attach_subnet_to_router(self, osUserName, osTenantName, osPassWord, osAuthUrl, routerId, subNetId):
-		'''set tenant router gateway
+		'''attach subnet to tenant router
 			Input:
 				`osXXX`        		tenant name, password, username etc credentials
 				`routerId`			tenant router id
@@ -519,7 +524,7 @@ S
 		return data
 		
 	def openstack_detach_subnet_to_router(self, osUserName, osTenantName, osPassWord, osAuthUrl, routerId, subNetId):
-		'''set tenant router gateway
+		'''detach subnet from tenant router
 			Input:
 				`osXXX`        		tenant name, password, username etc credentials
 				`routerId`			tenant router id
@@ -552,7 +557,7 @@ S
 #		return pass
 
 	def openstack_create_instance(self, osUserName, osTenantName, osPassWord, osAuthUrl, imageId, flavorId, hostName, subnetId, keypairName):
-		'''create network
+		'''create an instance
 			Input:
 				`osXXX`        		tenant name, password, username etc credentials
 				`imageId`			Image ID. 
@@ -579,7 +584,7 @@ nova --no-cache boot --image $ubuntuid --flavor $flavor2id T$startTenantid-NW-$s
 
 
 	def openstack_get_instance_status(self, osUserName, osTenantName, osPassWord, osAuthUrl, vmId):
-		'''create network
+		'''get instance status
 			Input:
 				`osXXX`        		tenant name, password, username etc credentials
 				`vmId`				Instance ID or instance name. 
