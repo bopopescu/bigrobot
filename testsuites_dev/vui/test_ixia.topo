@@ -7,7 +7,7 @@ tg1:
   set_init_ping: false
   ports:
     a:
-      ixia_port: 2/7
+      name: 2/7
     b:
-      ixia_port: 2/8
+      name: 2/8
 

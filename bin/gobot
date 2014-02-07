@@ -33,11 +33,11 @@ def set_environment():
         os.environ['BIGTEST_PATH'] = ''.join((p, '/bigtest'))
 
     # Add paths to PYTHONPATH
-    sys.path.append(os.environ['BIGROBOT_PATH'])
-    sys.path.append(os.environ['BIGTEST_PATH'])
+    sys.path.insert(0, os.environ['BIGROBOT_PATH'])
+    sys.path.insert(1, os.environ['BIGTEST_PATH'])
     exscript_path = ''.join((os.environ['BIGROBOT_PATH'],
                              '/vendors/exscript/src'))
-    sys.path.append(exscript_path)
+    sys.path.insert(2, exscript_path)
 
     # (Re-)export PYTHONPATH environment
     os.environ['PYTHONPATH'] = os.pathsep.join(sys.path)

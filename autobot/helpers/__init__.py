@@ -982,15 +982,17 @@ def text_processing_str_remove_trailer(input_str, n):
     return '\n'.join(lines[:-n])
 
 
-def sanitize_expect_output(input_str):
+def strip_cli_output(input_str):
     """
-    The convention from the expect library (Exscript) is that the first line
-    contains the issued command and the last line contains the device prompt.
-    This function removes the first and last line, leaving the actual output. 
+    The convention from the expect library (Exscript) is as followed:
+      - first line contains the issued command
+      - last line contains the device prompt
+    This function strips the first and last line, leaving the actual output. 
     """
     out = text_processing_str_remove_header(input_str, 1)
     out = text_processing_str_remove_trailer(out, 1)
     return out
+
 
 def text_processing_str_remove_to_end(input_str, line_marker):
     """

@@ -1,0 +1,20 @@
+* Settings
+Documentation   This suite is my sandbox for experimentation.
+Force Tags      Vui
+#Library         Reserve
+Library         keywords/BsnCommon.py
+Library         keywords_dev/vui/MyTest.py
+
+* Variables
+${NAME}         "Vui Le"
+${COUNTER}      100
+
+* Test Cases
+Test kw read file
+    #[Tags]           skipped
+    #${lines}=         kw read file  /tmp/out.txt
+    #kw write file     /tmp/out_new.txt  ${lines}
+
+    #kw strip text
+    kw_mod_config
+

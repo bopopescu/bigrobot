@@ -29,9 +29,10 @@ class Test(object):
             self._has_a_controller = False
             self._has_a_topo_file = False
 
-            config = ''.join((helpers.get_path_autobot_config(), '/bsn.yaml'))
-            helpers.log("Loading config file %s" % config)
-            self._bsn_config = helpers.load_config(config)
+            self._bsn_config_file = ''.join((helpers.get_path_autobot_config(),
+                                             '/bsn.yaml'))
+            helpers.log("Loading config file %s" % self._bsn_config_file)
+            self._bsn_config = helpers.load_config(self._bsn_config_file)
 
             topo = helpers.bigrobot_topology()
             if helpers.file_not_exist(topo):
@@ -54,29 +55,36 @@ class Test(object):
     def __setattr__(self, attr, val):
         return setattr(self._instance, attr, val)
 
+    def bsn_config(self, key):
+        if key in self._bsn_config:
+            return self._bsn_config[key]
+        else:
+            helpers.test_error("Attribute '%s' is not defined in %s" %
+                               (key, self._bsn_config_file))
+
     def controller_user(self):
-        return self._bsn_config['controller_user']
+        return self.bsn_config('controller_user')
 
     def controller_password(self):
-        return self._bsn_config['controller_password']
+        return self.bsn_config('controller_password')
 
     def mininet_user(self):
-        return self._bsn_config['mininet_user']
+        return self.bsn_config('mininet_user')
 
     def mininet_password(self):
-        return self._bsn_config['mininet_password']
+        return self.bsn_config('mininet_password')
 
     def host_user(self):
-        return self._bsn_config['host_user']
+        return self.bsn_config('host_user')
 
     def host_password(self):
-        return self._bsn_config['host_password']
+        return self.bsn_config('host_password')
 
     def switch_user(self):
-        return self._bsn_config['switch_user']
+        return self.bsn_config('switch_user')
 
     def switch_password(self):
-        return self._bsn_config['switch_password']
+        return self.bsn_config('switch_password')
 
     def topology_params(self):
         """
