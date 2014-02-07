@@ -1333,10 +1333,10 @@ class BigTap(object):
         Num = int(number) - 1
         for _ in range(0, int(Num)):
 
-            ipAddr = self.get_next_address(addr_type, base, incr)
-            self.rest_add_address_group_entry(group, ipAddr, mask)
-            base = ipAddr
-            helpers.log("the applied address is: %s %s %s " % (addr_type, str(ipAddr), str(mask)))
+            ip_address = helpers.get_next_address(addr_type, base, incr)
+            self.rest_add_address_group_entry(group, ip_address, mask)
+            base = ip_address
+            helpers.log("the applied address is: %s %s %s " % (addr_type, str(ip_address), str(mask)))
 
         return True
 
