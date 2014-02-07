@@ -155,7 +155,7 @@ class Ixia(object):
             self._handle.setAttribute(trafficStream1 + '/highLevelStream:1/' + 'transmissionControl', '-type',
                                 'fixedFrameCount')
             self._handle.setAttribute(trafficStream1 + '/highLevelStream:1/' + 'transmissionControl',
-                                '-frameCount', frameCount + 10000)
+                                '-frameCount', frameCount)
         if flow == 'bi-directional':
             helpers.log('Adding Another  ixia end point set for Bi Directional Traffic..')
             endpointSet2 = self._handle.add(trafficStream1, 'endpointSet', '-name', 'l2u', '-sources', mac2,
