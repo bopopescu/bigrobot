@@ -8,20 +8,25 @@ Force Tags      BigTap Sanity
 Library         keywords_dev/mingtao/Common.py
 Library         keywords/BigTap.py 
 Library         keywords/BsnCommon.py  
-
+Resource	    testsuites_dev/mingtao/blackbird_list_op_resource.txt 
 
 
 * Variable
  
 ${short}   1
 ${medium}  5
-${long}    30 
-
+${long}   10 
+${verylong}    30 
 ${bip}    "111.111.111.0"
 ${bmask}   "255.255.255.0"
 
 ${bip6}     "1111:100:200:300:0:0:0:0"
 ${bmask6}   "FFFF:FFFF:FFFF:FFFF:0:0:0:0"
+
+${sw1}   S207
+${sw1_f1}  S207-44
+${sw1_d1}  S207-46
+${sw1_d2}  S207-48
 
 * Test Case
 
@@ -29,554 +34,439 @@ T1.1 Address group IPv4
  
     Config 1 ipv4 entries                IPV4        100.100.100.100   255.255.255.255  	
     Config number of ipv4 entries        IPV4_10     10.0.0.0          0.1.0.2         255.255.255.254      10 
-    Config bigtap policy                 IPv4_ADD    S207-39     S207-37        
-    Apply ipv4 address group to policy   IPv4_ADD    "IPV4"  20   S207   4    
-    Ipv4 address group negative      IPv4_ADD    "IPV4"    100
+    Config bigtap policy                 IPv4_ADD    ${sw1_f1}     ${sw1_d1}        
+    Apply ipv4 address group to policy   IPv4_ADD    "IPV4"  20   ${sw1}   4    
+    Ipv4 address group policy negative          IPv4_ADD    "IPV4"    100
     
- 	[Tags] 	sanity    skipped
+ 	[Tags] 	sanity  address_group   BigTap   blackbird    skipped
 
     
 T1.2 Address group IPv6  
  	Config 1 ipv6 entries                 IPV6        1001:100:200:300:0:0:0:0     FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF   
 	Config number of ipv6 entries         IPV6_10     2001:100:200:300:0:0:0:0     0:0:0:0:0:1:0:1     FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF     10 
-    Config bigtap policy                  IPv6_ADD    S207-39     S207-37   
-	Apply ipv6 address group to policy    IPv6_ADD    "IPV6"  20  S207   4     
-	Ipv6 address group negative       IPv6_ADD    "IPV6"     100
+    Config bigtap policy                  IPv6_ADD    ${sw1_f1}     ${sw1_d1}   
+	Apply ipv6 address group to policy    IPv6_ADD    "IPV6"  20  ${sw1}   4     
+	Ipv6 address group policy negative       IPv6_ADD    "IPV6"     100
 	
- 	[Tags] 	sanity      skipped
+ 	[Tags] 	sanity    address_group     BigTap   blackbird    skipped
 
 T1.3 Address group IPv4/IPv6  
     Config number of ipv4 entries        IPV4_10     10.0.0.0          0.1.0.2         255.255.255.254      10 
-    Config number of ipv6 entries        IPV6_10     2001:100:200:300:0:0:0:0     0:0:0:0:0:1:0:1     FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF     10  
-    Config bigtap policy                 IPv46_ADD     S207-39     S207-37 
-    Apply ipv4 address group to policy   IPv46_ADD     "IPV4_10"  100  S207    40   
-  	Apply ipv6 address group to policy   IPv46_ADD     "IPV6_10"  200  S207    80
-    Ipv46 address group negative         IPv46_ADD     "IPV4_10"    "IPV6_10"   500
+    Config number of ipv6 entries        IPV6_10     2001:100:200:300:0:0:0:0     0:0:0:0:0:1:0:1     FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF     10    
+    Config bigtap policy                 IPv46_ADD     ${sw1_f1}     ${sw1_d1} 
+    Apply ipv4 address group to policy   IPv46_ADD     "IPV4_10"  100  ${sw1}    40   
+  	Apply ipv6 address group to policy   IPv46_ADD     "IPV6_10"  200  ${sw1}    80
+    Ipv46 address group policy negative         IPv46_ADD     "IPV4_10"    "IPV6_10"   500
  
-	[Tags] 	feature    skipped
+	[Tags] 	feature    address_group   BigTap   blackbird     skipped
 
- 
  
 T1.4 Address group IPV4 match options  
     Config number of ipv4 entries        IPV4_10     10.0.0.0          0.1.0.2         255.255.255.254      10 
-    Config bigtap policy                 IPv4_ADD    S207-39     S207-37	 
+    Config bigtap policy                 IPv4_ADD    ${sw1_f1}     ${sw1_d1}	 
     Ipv4 all match option                IPv4_ADD    "IPV4_10"     500
-    Verify policy running config matches    IPv4_ADD   16
+    Verify policy running config matches    IPv4_ADD   17
 
-
-	[Tags] 	sanity    skipped
+	[Tags] 	sanity     address_group   BigTap   blackbird     skipped
 
 T1.5 Address group IPV6 match options
     Config number of ipv6 entries        IPV6_10     2001:100:200:300:0:0:0:0   0:0:0:0:0:1:0:1   FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF  10  
-    Config bigtap policy                 IPv6_ADD    S207-39    S207-37  
+    Config bigtap policy                 IPv6_ADD    ${sw1_f1}    ${sw1_d1}  
     Ipv6 all match option                IPv6_ADD    "IPV6_10"    500
     Verify policy running config matches    IPv6_ADD   16
 
-	[Tags] 	sanity    skipped
+	[Tags] 	sanity   address_group    BigTap   blackbird    skipped
 
 
 T1.6 Address group IPv4 overlap
      Config number of ipv4 entries        G_1  10.0.0.0  0.1.0.2   255.255.255.254   10   
      Config number of ipv4 entries        G_2  50.0.0.0  0.1.0.2   255.255.255.254   10 
-     Config bigtap policy                 P1    S207-39     S207-37	
-     Config bigtap policy                 P2    S207-39     S207-38	
+     Config bigtap policy                 P1    ${sw1_f1}     ${sw1_d1}	
+     Config bigtap policy                 P2    ${sw1_f1}     ${sw1_d2}	
      Config ipv4 list src                 P1    "G_1"   10
      Config ipv4 list dst                 P2    "G_2"   10
      Sleep     ${medium}      
-     Verify switch entry   S207   120
+     Verify switch entry   ${sw1}   120
  
-	[Tags] 	sanity    skipped
+	[Tags] 	sanity   address_group   BigTap   blackbird    skipped
  
  
 T1.7 Address group IPv6 overlap
      Config number of ipv6 entries        G_1  f001:100:0:0:0:0:0:0 	0:1:0:1:0:0:0:0	  ffff:ffff:ffff:ffff:0:0:0:0   10   
      Config number of ipv6 entries        G_2  1001:100:0:0:0:0:0:0 	0:1:0:1:0:0:0:0	  ffff:ffff:ffff:ffff:0:0:0:0   10 
-     Config bigtap policy                 P1    S207-39     S207-37	
-     Config bigtap policy                 P2    S207-39     S207-38	
+     Config bigtap policy                 P1    ${sw1_f1}     ${sw1_d1}	
+     Config bigtap policy                 P2    ${sw1_f1}     ${sw1_d2}	
      Config ipv6 list src                 P1    "G_1"   10
      Config ipv6 list dst                 P2    "G_2"   10
      Sleep     ${medium}      
-     Verify switch entry   S207   120
+     Verify switch entry   ${sw1}   120
  
-	[Tags] 	sanity   skipped
+	[Tags] 	sanity    address_group   BigTap   blackbird    skipped
  
+T1.8 ipv4/6 list config options
+    REST add address group  		    G4    ipv4  
+    REST add address group  		    G6    ipv6  
+    Config ipv4/ipv6 list               G4     G6    
+    Config ipv4/ipv6 list negative      G4     G6
 
+	[Tags] 	sanity    address_group   BigTap   blackbird  skipped
+
+
+T1.101 Address group IPv4 scale 
+    Config number of ipv4 entries        G1    10.0.0.0          0.1.0.1         255.255.255.255      256 
+    Config bigtap policy                 P1    ${sw1_f1}     ${sw1_d1}        
+    Config ipv4 list src                 P1    "G1"   20   
+    Config ipv4 list dst                 P1    "G1"   30   
+    Sleep     ${long}       
+    Verify switch entry                 ${sw1}   512	
+    
+ 	[Tags] 	scaling  address_group   BigTap   blackbird    skipped
+
+T1.102 Address group IPv6 scale 
+ 	Config number of ipv6 entries         G1     2001:100:200:300:0:0:0:0     0:0:0:0:1:0:1:0     FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:0     256 
+    Config bigtap policy                  P1    ${sw1_f1}     ${sw1_d1}   
+    Config ipv6 list src                  P1    "G1"   20   
+    Config ipv6 list dst                  P1    "G1"   30   
+    Sleep     ${long}       
+    Verify switch entry                   ${sw1}   512	
+ 	
+ 	[Tags] 	scaling   address_group   BigTap   blackbird    skipped
 
 
 	
-T2.1 Ipv4 prefix optimization
-     Config number of ipv4 entries        G_1     10.0.0.0    0.0.0.1    255.255.255.255      256  
-     Config bigtap policy                 P1    S207-39     S207-37	 
+T2.1 Ipv4 prefix list optimization
+     Config number of ipv4 entries        G_1     10.0.0.0    0.0.0.1    255.255.255.255     8  
+     Config bigtap policy                 P1    ${sw1_f1}     ${sw1_d1}	 
      Config ipv4 list src                 P1    "G_1"   10
      Config ipv4 list dst                 P1    "G_1"   20
      Sleep     ${medium}       
 	 Verify optimized match    P1   2
-     Verify switch entry       S207   2
+     Verify switch entry       ${sw1}   2
 
-	[Tags]   sanity     skipped
+	[Tags]   sanity    optimization    BigTap   blackbird    skipped
 
 
-T2.2 Ipv4 prefix and src address optimization
-     Config number of ipv4 entries        G_1     10.0.0.128    0.0.0.1    255.255.255.255      256  
-     Config bigtap policy                 P1    S207-39     S207-37	 
+T2.2 Ipv4 prefix list optimization and ip  
+     Config number of ipv4 entries        G_1     10.0.0.128    0.0.0.1    255.255.255.255      8  
+     Config bigtap policy                 P1    ${sw1_f1}     ${sw1_d1}	 
      Config ipv4 list src ip dst                P1    "G_1"   10     "110.111.111.0"   "255.255.255.0"  
      Config ipv4 list dst ip src                P1    "G_1"   20     "210.111.111.0"   "255.255.255.0"  
      Sleep     ${medium}       
-	 Verify optimized match    P1   4
-     Verify switch entry       S207   4
+	 Verify optimized match    P1   2
+     Verify switch entry       ${sw1}   2
 
-	[Tags]   sanity     
+	[Tags]   sanity   optimization     BigTap   blackbird     skipped
+
+T2.3 Ipv4 prefix list and ip double optimizaton 
+     log   Failed:BSC-4610
+     Config number of ipv4 entries        G_1     10.0.0.0    0.0.0.1    255.255.255.255      8  
+     Config bigtap policy                 P1    ${sw1_f1}     ${sw1_d1}	 
+     Config ipv4 list src ip dst                P1    "G_1"   10     "110.111.111.0"   "255.255.255.255"  
+     Config ipv4 list src ip dst                P1    "G_1"   20     "110.111.111.1"   "255.255.255.255"       
+     Config ipv4 list dst ip src                P1    "G_1"   30     "210.111.111.0"   "255.255.255.255"  
+     Config ipv4 list dst ip src                P1    "G_1"   40     "210.111.111.1"   "255.255.255.255"       
+     Sleep     ${medium}       
+	 Verify optimized match    P1     2
+     Verify switch entry       ${sw1}   2
+
+	[Tags]   sanity  optimization     BigTap   blackbird    skipped
 
 
-T2.3 Ipv6 prefix optimization
+
+T2.4 Ipv6 prefix list optimization
      Config number of ipv6 entries        G_1      f001:100:0:0:0:0:0:0 	0:0:0:1:0:0:0:0	  ffff:ffff:ffff:ffff:0:0:0:0     32  
-     Config bigtap policy                 P1    S207-39     S207-37	 
+     Config bigtap policy                 P1    ${sw1_f1}     ${sw1_d1}	 
      Config ipv6 list src                 P1    "G_1"   10
      Config ipv6 list dst                 P1    "G_1"   20
      Sleep     ${medium}       
 	 Verify optimized match    P1   2
-     Verify switch entry       S207   2
+     Verify switch entry       ${sw1}   2
 
-	[Tags]   sanity      
+	[Tags]   sanity     optimization   BigTap   blackbird    skipped
 
 
-T2.4 Ipv6 prefix and src address optimization
+T2.5 Ipv6 prefix list optimization and src address 
      Config number of ipv6 entries        G_1      f001:100:0:0:0:0:0:0 	0:0:0:1:0:0:0:0	  ffff:ffff:ffff:ffff:0:0:0:0       32  
-     Config bigtap policy                 P1    S207-39     S207-37	 
+     Config bigtap policy                 P1    ${sw1_f1}     ${sw1_d1}	 
      Config ipv6 list src ip dst                P1    "G_1"   10     "2222:123:1111:1234:0:0:0:0"   "ffff:ffff:ffff:ffff:0:0:0:0"  
      Config ipv6 list dst ip src                P1    "G_1"   20     "1111:123:2222:1234:0:0:0:0"   "ffff:ffff:ffff:ffff:0:0:0:0"  
      Sleep     ${medium}       
 	 Verify optimized match    P1   2
-     Verify switch entry       S207   2
+     Verify switch entry       ${sw1}   2
 
-	[Tags]   sanity    
+	[Tags]   sanity     optimization   BigTap   blackbird    skipped
+
+T2.6 Ipv6 prefix list and ip double optimizaton 
+     log   Failed:BSC-4610
+     Config number of ipv6 entries        G_1      f001:100:0:0:0:0:0:0 	0:0:0:1:0:0:0:0	  ffff:ffff:ffff:ffff:0:0:0:0     8  
+     Config bigtap policy                 P1    ${sw1_f1}     ${sw1_d1}	 
+     Config ipv6 list src ip dst                P1    "G_1"   10     "2222:123:1111:0:0:0:0:0"   "ffff:ffff:ffff:ffff:0:0:0:0"  
+     Config ipv6 list src ip dst                P1    "G_1"   20     "2222:123:1111:1:0:0:0:0"   "ffff:ffff:ffff:ffff:0:0:0:0"  
+     Config ipv6 list dst ip src                P1    "G_1"   30     "1111:123:2222:0:0:0:0:0"   "ffff:ffff:ffff:ffff:0:0:0:0"  
+     Config ipv6 list dst ip src                P1    "G_1"   40     "1111:123:2222:1:0:0:0:0"   "ffff:ffff:ffff:ffff:0:0:0:0"  
+     Sleep     ${medium}       
+	 Verify optimized match    P1     2
+     Verify switch entry       ${sw1}   2
+
+	[Tags]   sanity  optimization    BigTap   blackbird    skipped
 
 
-T2.5 Ipv4 tcp optimization
-     Config bigtap policy                 P1    S207-39     S207-37	 
+T2.7 Ipv4 single tcp udp vlan optimization
+     Config bigtap policy                 P1    ${sw1_f1}     ${sw1_d1}	 
      Config ipv4 tcp src port range       P1    10     16    47
      Config ipv4 tcp dst port range       P1    20     128   255
+     Config ipv4 udp src port range       P1    30     16    47
+     Config ipv4 udp dst port range       P1    40     128   255
+     Config ipv4 vlan range               P1    50     16    47
      Sleep     ${medium}       
-	 Verify optimized match    P1   3
-     Verify switch entry       S207   3
+	 Verify optimized match    P1        8
+     Verify switch entry       ${sw1}      8
 
-	[Tags]   sanity   
+	[Tags]   sanity     optimization   BigTap   blackbird    skipped
 
 
-T2.6 Ipv6 tcp optimization
-     Config bigtap policy                 P1    S207-39     S207-37	 
+T2.8 Ipv6 tcp udp vlan single optimization
+     Config bigtap policy                 P1    ${sw1_f1}     ${sw1_d1}	 
      Config ipv6 tcp src port range       P1    10     16    47
      Config ipv6 tcp dst port range       P1    20     128   255
+     Config ipv6 udp src port range       P1    30     16    47
+     Config ipv6 udp dst port range       P1    40     128   255
+     Config ipv6 vlan range               P1    50     128   255
      Sleep     ${medium}       
-	 Verify optimized match    P1   3
-     Verify switch entry       S207   3
+	 Verify optimized match    P1     7
+     Verify switch entry       ${sw1}   7
 
-	[Tags]   sanity   
-
-T2.7 Ipv4 udp optimization
-     Config bigtap policy                 P1    S207-39     S207-37	 
-     Config ipv4 udp src port range       P1    10     16    47
-     Config ipv4 udp dst port range       P1    20     128   255
-     Sleep     ${medium}       
-	 Verify optimized match    P1   3
-     Verify switch entry       S207   3
-
-	[Tags]   sanity   
-
-
-T2.8 Ipv6 udp optimization
-     Config bigtap policy                 P1    S207-39     S207-37	 
-     Config ipv6 udp src port range       P1    10     16    47
-     Config ipv6 udp dst port range       P1    20     128   255
-     Sleep     ${medium}       
-	 Verify optimized match    P1   3
-     Verify switch entry       S207   3
-
-	[Tags]   sanity   
-
-
-
-
-
-
-
-
-* Keywords
+	[Tags]   sanity    optimization    BigTap   blackbird    skipped
 
  
-Verify policy running config matches   [Arguments]    ${PName}   ${matches}	 
-  	${input_dict}=  rest_show_run_policy   ${PName}       
-    ${num}=   rest_get_run_policy_feild    ${input_dict}   ${PName}   match=yes
-    Should Be Equal As Integers    ${num}     ${matches}	
-
-Verify switch entry    [Arguments]    ${swName}   ${flow}	 
-     ${switchFlowVal}=   rest_show_switch_flow   switch_alias=${swName}
-     Should Be Equal As Integers  ${switchFlowVal}   ${flow}
-
-Verify optimized match    [Arguments]    ${PName}   ${matches}	 
-  	 ${numMatches}=  rest_show_policy_optimize    ${PName}  
-     Should Be Equal As Integers   ${numMatches}  ${matches}	 
-
-
-Config bigtap policy       [Arguments]    ${PName}  ${Fint}  ${Dint}	 
-	rest_add_policy 	              admin-view  ${PName}  forward 
-	rest_add_policy_interface         admin-view  ${PName}  ${Fint}   filter
-	rest_add_policy_interface         admin-view  ${PName}  ${Dint}   delivery   
-    Sleep     ${short} 
-    
-Config ipv4 list src     [Arguments]    ${PName}   ${GName}	  ${seq}
-     ${result}=  rest_add_policy_match  admin-view   ${PName}   ${seq}   {"sequence": ${seq}, "src-ip-list":${GName}, "ether-type":2048}
-     Should be True    ${result}  
-  	
-
-Config ipv4 list dst     [Arguments]    ${PName}   ${GName}	  ${seq}
-     ${result}=  rest_add_policy_match  admin-view   ${PName}   ${seq}   {"sequence": ${seq}, "dst-ip-list":${GName}, "ether-type":2048}
-     Should be True    ${result}  	
-
-Config ipv4 list src ip dst       [Arguments]          ${PName}   ${GName}	  ${seq}    ${dst}    ${dmask}
-     ${result}=  rest_add_policy_match  admin-view   ${PName}   ${seq}   {"sequence": ${seq}, "src-ip-list":${GName}, "dst-ip":${dst}, "dst-ip-mask":${dmask}, "ether-type":2048}
-     Should be True    ${result}  	
-Config ipv4 list dst ip src          [Arguments]       ${PName}   ${GName}	  ${seq}    ${src}    ${smask}
-     ${result}=  rest_add_policy_match  admin-view   ${PName}   ${seq}   {"sequence": ${seq}, "dst-ip-list":${GName}, "src-ip":${src}, "src-ip-mask":${smask}, "ether-type":2048}
-     Should be True    ${result}  	
-
-    
-Config ipv6 list src     [Arguments]    ${PName}   ${GName}	  ${seq}
-     ${result}=  rest_add_policy_match  admin-view   ${PName}   ${seq}   {"sequence": ${seq}, "src-ip-list":${GName}, "ether-type":34525}
-     Should be True    ${result}  
-  	
-
-Config ipv6 list dst     [Arguments]    ${PName}   ${GName}	  ${seq}
-     ${result}=  rest_add_policy_match  admin-view   ${PName}   ${seq}   {"sequence": ${seq}, "dst-ip-list":${GName}, "ether-type":34525}
-     Should be True    ${result}  	
-  
-Config ipv6 list src ip dst       [Arguments]          ${PName}   ${GName}	  ${seq}    ${dst}    ${dmask}
-     ${result}=  rest_add_policy_match  admin-view   ${PName}   ${seq}   {"sequence": ${seq}, "src-ip-list":${GName}, "dst-ip":${dst}, "dst-ip-mask":${dmask}, "ether-type":34525}
-     Should be True    ${result}  	
-Config ipv6 list dst ip src          [Arguments]       ${PName}   ${GName}	  ${seq}    ${src}    ${smask}
-     ${result}=  rest_add_policy_match  admin-view   ${PName}   ${seq}   {"sequence": ${seq}, "dst-ip-list":${GName}, "src-ip":${src}, "src-ip-mask":${smask}, "ether-type":34525}
-     Should be True    ${result}  	
-
- Config ipv4 tcp src port range     [Arguments]    ${PName}   ${seq}   ${min}   ${max}
-     ${result}=  rest_add_policy_match  admin-view   ${PName}   ${seq}   {"sequence": ${seq}, "src-tp-port-min":${min}, "src-tp-port-max":${max},"ip-proto": 6, "ether-type":2048}
-     Should be True    ${result}  
-
- Config ipv4 tcp dst port range     [Arguments]    ${PName}   ${seq}   ${min}   ${max}
-     ${result}=  rest_add_policy_match  admin-view   ${PName}   ${seq}   {"sequence": ${seq}, "dst-tp-port-min":${min}, "dst-tp-port-max":${max},"ip-proto": 6, "ether-type":2048}
-     Should be True    ${result}  
-
- Config ipv6 tcp src port range     [Arguments]    ${PName}   ${seq}   ${min}   ${max}
-     ${result}=  rest_add_policy_match  admin-view   ${PName}   ${seq}   {"sequence": ${seq}, "src-tp-port-min":${min}, "src-tp-port-max":${max},"ip-proto": 6, "ether-type":34525}
-     Should be True    ${result}  
-
- Config ipv6 tcp dst port range     [Arguments]    ${PName}   ${seq}   ${min}   ${max}
-     ${result}=  rest_add_policy_match  admin-view   ${PName}   ${seq}   {"sequence": ${seq}, "dst-tp-port-min":${min}, "dst-tp-port-max":${max},"ip-proto": 6, "ether-type":34525}
-     Should be True    ${result}  
-
- Config ipv4 udp src port range     [Arguments]    ${PName}   ${seq}   ${min}   ${max}
-     ${result}=  rest_add_policy_match  admin-view   ${PName}   ${seq}   {"sequence": ${seq}, "src-tp-port-min":${min}, "src-tp-port-max":${max},"ip-proto": 17, "ether-type":2048}
-     Should be True    ${result}  
-
- Config ipv4 udp dst port range     [Arguments]    ${PName}   ${seq}   ${min}   ${max}
-     ${result}=  rest_add_policy_match  admin-view   ${PName}   ${seq}   {"sequence": ${seq}, "dst-tp-port-min":${min}, "dst-tp-port-max":${max},"ip-proto": 17, "ether-type":2048}
-     Should be True    ${result}  
-
- Config ipv6 udp src port range     [Arguments]    ${PName}   ${seq}   ${min}   ${max}
-     ${result}=  rest_add_policy_match  admin-view   ${PName}   ${seq}   {"sequence": ${seq}, "src-tp-port-min":${min}, "src-tp-port-max":${max},"ip-proto": 17, "ether-type":34525}
-     Should be True    ${result}  
-
- Config ipv6 udp dst port range     [Arguments]    ${PName}   ${seq}   ${min}   ${max}
-     ${result}=  rest_add_policy_match  admin-view   ${PName}   ${seq}   {"sequence": ${seq}, "dst-tp-port-min":${min}, "dst-tp-port-max":${max},"ip-proto": 17, "ether-type":34525}
-     Should be True    ${result}  
-
-
-
-
-Config 1 ipv4 entries     [Arguments]  ${GName}  ${ipAddr}      ${mask}    
-	REST add address group   		              ${GName}      ipv4  
-	${result}=   REST add address group entry      ${GName}     ${ipAddr}   ${mask} 
-    Should be True    ${result}  	
- 	${input_dict}=  rest_show_address_group        ${GName}
-	${result}=      verify_address_group 	      ${input_dict}     ${GName}   group_type=ipv4   entry=1 
-    Should be True    ${result}  
-
-Config number of ipv4 entries      [Arguments]  ${GName}  ${ipAddr}   ${step}    ${mask}    ${num} 
-
-	REST add address group                        ${GName}    ipv4  
-    ${result}=  gen_add_address_group_entries     ${GName}    ipv4     ${ipAddr}      ${step}    ${mask}    ${num} 	
-    Should be True    ${result}  	
- 	${input_dict}=  rest_show_address_group      ${GName}
-    ${result}=  verify_address_group            ${input_dict}     ${GName}   group_type=ipv4   entry=${num}   
-    Should be True    ${result}  
- 
-
-Apply ipv4 address group to policy     [Arguments]  ${PName}    ${GName}  ${seq}  ${sName}   ${num}     
-	
- 	${result}=  rest_add_policy_match      admin-view  ${PName}   ${seq}   {"sequence": ${seq}, "src-ip-list": ${GName}, "ether-type": 2048}
-    Should be True    ${result}  		
-    ${seq}=  expr   ${seq} + 1
-	${result}=  rest_add_policy_match      admin-view  ${PName}   ${seq}   {"sequence": ${seq} , "dst-ip-list": ${GName}, "ether-type": 2048} 	
-	Should be True    ${result}  	 
-    ${seq}=  expr   ${seq} + 1
-	${result}=  rest_add_policy_match      admin-view  ${PName}   ${seq}    {"sequence": ${seq}, "dst-ip-list": ${GName}, "ether-type": 2048,"src-ip":${bip}, "src-ip-mask":${bmask}}  
-    Should be True    ${result}  	
-    ${seq}=  expr   ${seq} + 1
- 	${result}=  rest_add_policy_match      admin-view  ${PName}   ${seq}    {"sequence": ${seq}, "src-ip-list": ${GName}, "ether-type": 2048,"dst-ip":${bip}, "dst-ip-mask":${bmask}}  		
-    Should be True    ${result}  	
-	Sleep     ${short}
-
-    ${input_dict}=   rest_show_policy    ${PName} 
-    ${result}=       verify_policy       ${input_dict}   ${PName}   action=forward
-    Should be True   ${result}   
- 
-    ${switchFlowVal}=   rest_show_switch_flow   switch_alias=${sName}
-    Should Be Equal As Integers  ${switchFlowVal}  ${num} 
-
-
-Ipv4 address group negative        [Arguments]   ${PName}   ${GName}   ${seq} 
-    ${result}=  rest_add_policy_match   admin-view    ${PName}   ${seq}    {"sequence":${seq}, "src-ip-list": ${GName}, "ether-type": 2048,"dst-ip-list":${GName}}	  
- 	Should Not Be True    ${result}  	
-
-
-Config 1 ipv6 entries        [Arguments]  ${GName}  ${ipAddr}   ${mask}                  	 
-	REST add address group  		              ${GName}   ipv6  
-	${result}=   REST add address group entry     ${GName}   ${ipAddr}   ${mask}  
-    Should be True    ${result}  		 	
- 	${input_dict}=  rest_show_address_group       ${GName}
-	${result}=      verify_address_group 	     ${input_dict}     ${GName}   group_type=ipv6   entry=1 
-    Should be True    ${result}  
+ T2.9 Ipv4/6 vlan tcp/udp single optimization
+     Config bigtap policy              P1    ${sw1_f1}     ${sw1_d1}	 
+     Config ipv4 vlan range + tcp      P1    10     16    47
+     Config ipv6 vlan range + tcp      P1    20     128   255
+     Config ipv4 vlan range + udp      P1    30     32    47
+     Config ipv6 vlan range + udp      P1    40     256   511
      
-Config number of ipv6 entries       [Arguments]  ${GName}  ${ipAddr}   ${step}    ${mask}    ${num} 
-	REST add address group                        ${GName}    ipv6   
-    ${result}=  gen_add_address_group_entries     ${GName}    ipv6     ${ipAddr}   ${step}    ${mask}    ${num} 	
-    Should be True    ${result} 
- 	${input_dict}=   rest_show_address_group      ${GName}
-    ${result}=  verify_address_group            ${input_dict}     ${GName}   group_type=ipv6   entry=${num}    
-    Should be True    ${result}  
+     Sleep     ${medium}       
+	 Verify optimized match    P1     5
+     Verify switch entry       ${sw1}   5
+
+	[Tags]   sanity    optimization    BigTap   blackbird    skipped
+
+
+ T2.10 Ipv4/6 vlan tcp/udp port range double optimization
+     Config bigtap policy                      P1    ${sw1_f1}     ${sw1_d1}	 
+     Config ipv4 vlan range + tcp s range      P1    10     1024    2047    4096   8191       
+     Config ipv6 vlan range + tcp d range      P1    20     2048    4095    8192   16383    
+     Config ipv4 vlan range + udp d range      P1    30     1024    2047    4096   8191    
+     Config ipv6 vlan range + udp s range      P1    40     2048    4095    16384   32767
+     
+     Sleep     ${medium}       
+	 Verify optimized match    P1     4
+     Verify switch entry       ${sw1}   4
+
+	[Tags]   feature      optimization    BigTap   blackbird    skipped
+
+
+ T2.11 Ipv4/6 ip list vlan tcp/udp port range triple optimization
+     Config number of ipv4 entries        G1     10.0.0.0    0.0.0.1    255.255.255.255      16  
+     Config number of ipv6 entries        G2      f001:100:0:0:0:0:0:0 	0:0:0:1:0:0:0:0	  ffff:ffff:ffff:ffff:0:0:0:0     8      
+     Config bigtap policy                         P1    ${sw1_f1}     ${sw1_d1}	     
+     Config ipv4 ip list src vlan range + tcp s range      P1   "G1"  10     1024    2047    4096   8191       
+     Config ipv6 ip list src vlan range + tcp d range      P1   "G2"  20     2048    4095    8192   16383    
+     Config ipv4 ip list src vlan range + udp d range      P1   "G1"  30     1024    2047    4096   8191    
+     Config ipv6 ip list src vlan range + udp s range      P1   "G2"  40     2048    4095    16384   32767
  
+     Config ipv4 ip list dst vlan range + tcp s range      P1   "G1"  110     1024    2047    4096   8191       
+     Config ipv6 ip list dst vlan range + tcp d range      P1   "G2"  120     2048    4095    8192   16383    
+     Config ipv4 ip list dst vlan range + udp d range      P1   "G1"  130     1024    2047    4096   8191    
+     Config ipv6 ip list dst vlan range + udp s range      P1   "G2"  140     2048    4095    16384   32767
+      
+     Sleep     ${medium}       
+	 Verify optimized match    P1     8
+     Verify switch entry       ${sw1}   8
 
-Apply ipv6 address group to policy     [Arguments]  ${PName}     ${GName}  ${seq}  ${sName}  ${num}     	
-	${result}=  rest_add_policy_match       admin-view   ${PName}   ${seq}   {"sequence": ${seq}, "src-ip-list": ${GName}, "ether-type": 34525} 
-    Should be True    ${result}  		 		
-    ${seq}=  expr   ${seq} + 1
-	${result}=  rest_add_policy_match       admin-view   ${PName}   ${seq}   {"sequence": ${seq}, "dst-ip-list": ${GName}, "ether-type": 34525} 	
-	Should be True    ${result}   
-    ${seq}=  expr   ${seq} + 1
-	${result}=  rest_add_policy_match       admin-view   ${PName}   ${seq}   {"sequence": ${seq}, "ether-type": 34525, "dst-ip-mask": "FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF", "src-ip-list": ${GName}, "dst-ip": "1111:100:200:300:0:0:0:0"}  
-    Should be True    ${result}  
-    ${seq}=  expr   ${seq} + 1
-	${result}=  rest_add_policy_match       admin-view   ${PName}   ${seq}   {"sequence": ${seq}, "ether-type": 34525, "src-ip-mask": "FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF", "dst-ip-list": ${GName}, "src-ip": "1111:100:200:300:0:0:0:0"}  	
-    Should be True    ${result}  
-	Sleep     ${short}
+	[Tags]   feature      optimization   BigTap   blackbird    skipped
+  
 
-    ${input_dict}=   rest_show_policy     ${PName} 
-    ${result}=       verify_policy       ${input_dict}     ${PName}   action=forward
-    Should be True    ${result}   
+ T2.12 Ipv4/6 ip list ip vlan tcp/udp port range triple optimization
+     Config number of ipv4 entries        G1     10.0.0.0    0.0.0.1    255.255.255.255      16  
+     Config number of ipv6 entries        G2      f001:100:0:0:0:0:0:0 	0:0:0:1:0:0:0:0	  ffff:ffff:ffff:ffff:0:0:0:0     8      
+     Config bigtap policy                         P1    ${sw1_f1}     ${sw1_d1}	     
+     Config ipv4 ip list src ip vlan range + tcp s range      P1   "G1"  10   ${bip}     ${bmask}   1024    2047    4096   8191       
+     Config ipv6 ip list src ip vlan range + tcp d range      P1   "G2"  20   ${bip6}     ${bmask6}   2048    4095    8192   16383    
+     Config ipv4 ip list src ip vlan range + udp d range      P1   "G1"  30   ${bip}     ${bmask}    1024    2047    4096   8191    
+     Config ipv6 ip list src ip vlan range + udp s range      P1   "G2"  40   ${bip6}     ${bmask6}   2048    4095    16384   32767
  
-    ${switchFlowVal}=   rest_show_switch_flow   switch_alias=${sName}
-    Should Be Equal As Integers  ${switchFlowVal}   ${num} 
+     Config ipv4 ip list dst ip vlan range + tcp s range      P1   "G1"  110   ${bip}     ${bmask}   1024    2047    4096   8191       
+     Config ipv6 ip list dst ip vlan range + tcp d range      P1   "G2"  120   ${bip6}     ${bmask6}   2048    4095    8192   16383    
+     Config ipv4 ip list dst ip vlan range + udp d range      P1   "G1"  130   ${bip}     ${bmask}    1024    2047    4096   8191    
+     Config ipv6 ip list dst ip vlan range + udp s range      P1   "G2"  140   ${bip6}     ${bmask6}   2048    4095    16384   32767
+      
+     Sleep     ${medium}       
+	 Verify optimized match    P1     8
+     Verify switch entry       ${sw1}   8
+
+	[Tags]   feature    optimization    BigTap   blackbird    skipped
 
 
-Ipv6 address group negative     [Arguments]   ${PName}   ${GName}    ${seq}
-    ${result}=  rest_add_policy_match   admin-view  ${PName}    ${seq}   {"sequence": ${seq}, "dst-ip-list": ${GName}, "src-ip-list": ${GName},"ether-type": 34525} 
- 	Should Not Be True    ${result}  
+ T2.11 Ipv4/6 prefix overlap entries optimization
+     log    BT-786
+     Config bigtap policy       P1    ${sw1_f1}     ${sw1_d1}	    
+	 Config ipv4 src       P1	  10   "110.111.111.10"   "255.255.255.255"  
+  	 Config ipv4 src       P1	  15   "110.111.111.20"   "255.255.255.0"        
+
+	 Config ipv4 dst       P1	  20   "110.111.111.10"   "255.255.255.255"  
+  	 Config ipv4 dst       P1	  25   "110.111.111.20"   "255.255.254.0"        
+
+	 Config ipv6 dst       P1	  30    "2222:123:1111:0:0:0:0:0"   "ffff:ffff:ffff:ffff:0:0:0:0"  
+  	 Config ipv6 dst       P1	  35    "2222:123:1111:50:0:0:0:0"  "ffff:ffff:ffff:0:0:0:0:0"         
+
+	 Config ipv6 src       P1	  40    "2222:123:1111:20:0:0:0:0"   "ffff:ffff:ffff:ffff:0:0:0:0"  
+  	 Config ipv6 src       P1	  45    "2222:123:1111:50:0:0:0:0"  "ffff:ffff:ffff:0:0:0:0:0"         
+     Sleep     ${medium}       
+	 Verify optimized match    P1     4
+     Verify switch entry       ${sw1}   4
+
+#  TBD:  any overwrite match ip match ipv6,  
+     Config ipv4 tcp any    P1	  100    
+     Config ipv4 udp any    P1	  110
+     Config ipv4 any     P1	  120    
+     Config ipv6 any     P1	  200    
+     Config ipv6 tcp any    P1	  210
+     Config ipv6 udp any     P1	  220    
+         
+     Sleep     ${medium}       
+	 Verify optimized match    P1     2
+     Verify switch entry       ${sw1}   2
+
+	[Tags]   feature    optimization    BigTap   blackbird   
+
+
+
+
+T2.101 Ipv4 prefix list optimization scale
+     Config number of ipv4 entries        G1     10.0.0.0    0.0.0.1    255.255.255.255    512
+     Config bigtap policy                 P1    ${sw1_f1}     ${sw1_d1}	 
+     Config ipv4 list src                 P1    "G1"   10
+     Config ipv4 list dst                 P1    "G1"   20
+     Sleep     ${medium}       
+	 Verify optimized match    P1   2
+     Verify switch entry       ${sw1}   2
+
+	[Tags]   scaling    optimization    BigTap   blackbird    skipped
+	
+T2.102 Ipv6 prefix list optimization scale
+     Config number of ipv6 entries        G1      f001:100:0:0:0:0:0:0 	0:0:0:1:0:0:0:0	  ffff:ffff:ffff:ffff:0:0:0:0     512  
+     Config bigtap policy                 P1    ${sw1_f1}     ${sw1_d1}	 
+     Config ipv6 list src                 P1    "G1"   10
+     Config ipv6 list dst                 P1    "G1"   20
+     Sleep     ${medium}       
+	 Verify optimized match    P1   2
+     Verify switch entry       ${sw1}   2
+
+	[Tags]   scaling  optimization   BigTap   blackbird    skipped
+
+
+
+
+
+
+T3.1 Default l3-l4: Test ipv4/6 group and optimization 
+    Verify L3-l4 config         False
+    Verify l3-l4 mode controler and tcam    False   ${sw1}
+ 	Testcase T1.3 Address group IPv4/IPv6     ${sw1}     ${sw1_f1}     ${sw1_d1}
+	bigtap delete all 
+ 	Testcase T2.1 Ipv4 prefix list optimization   ${sw1}     ${sw1_f1}     ${sw1_d1}		
+	bigtap delete all 
+	Testcase T2.4 Ipv6 prefix list optimization      ${sw1}     ${sw1_f1}     ${sw1_d1}		
+
+	[Tags]  sanity l3_l4   BigTap   blackbird_1    skipped 
+
+
+T3.2 Enable l3-l4: Test ipv4/6 group and optimization 
+    rest enable feature       l3-l4-mode
+    Sleep	                   ${short}
+    Verify l3-l4 mode controler and tcam    True   ${sw1}  
+	Testcase T1.3 Address group IPv4/IPv6     ${sw1}     ${sw1_f1}     ${sw1_d1}
+	bigtap delete all 
+	Testcase T2.1 Ipv4 prefix list optimization     ${sw1}     ${sw1_f1}     ${sw1_d1}
+	bigtap delete all 
+	Testcase T2.4 Ipv6 prefix list optimization      ${sw1}     ${sw1_f1}     ${sw1_d1}		
+	 
+	[Tags]  sanity  l3_l4   BigTap   blackbird_1    skipped
+
+
+T3.3 Change l3-l4 with policy with no mac configured
+    Verify L3-l4 config       				False
+    Verify l3-l4 mode controler and tcam    False   ${sw1}  
+	Testcase T1.3 Address group IPv4/IPv6     ${sw1}     ${sw1_f1}     ${sw1_d1} 
+    ${Flow1}=   rest_show_switch_flow       ${sw1}	
+
+	rest enable feature                    l3-l4-mode
+    Sleep	                                ${short}
+    Verify l3-l4 mode controler and tcam    True   ${sw1}  
+    ${Flow2}=   rest_show_switch_flow       ${sw1}	
+    Should Be Equal As Integers            ${Flow1}    ${Flow2}
  
-Ipv46 address group negative      [Arguments]   ${PName}     ${GName}    ${G6Name}    ${seq}
-    log  Negative - type ipv6, src group - ipv4
-    ${result}=  rest_add_policy_match   admin-view  ${PName}    ${seq}   {"sequence": ${seq}, "src-ip-list": ${GName},"ether-type": 34525} 
- 	Should Not Be True    ${result}  
-    ${seq}=  expr   ${seq} + 1
-    log  Negative - type ipv6, dst group - ipv4
-    ${result}=  rest_add_policy_match   admin-view  ${PName}    ${seq}   {"sequence": ${seq}, "dst-ip-list": ${GName},"ether-type": 34525} 
- 	Should Not Be True    ${result}  
-    ${seq}=  expr   ${seq} + 1
-    log  Negative - type ipv4, src group - ipv6
-    ${result}=  rest_add_policy_match   admin-view  ${PName}    ${seq}   {"sequence": ${seq}, "src-ip-list": ${G6Name},"ether-type": 2048} 
- 	Should Not Be True    ${result}  
-    ${seq}=  expr   ${seq} + 1
-    log  Negative - type ipv4, dst group - ipv6
-    ${result}=  rest_add_policy_match   admin-view  ${PName}    ${seq}   {"sequence": ${seq}, "dst-ip-list": ${G6Name},"ether-type": 2048} 
- 	Should Not Be True    ${result}  
-    ${seq}=  expr   ${seq} + 1
-    log  Negative - type ipv6, src group - ipv4, dst-group - ipv6
-    ${result}=  rest_add_policy_match   admin-view  ${PName}    ${seq}   {"sequence": ${seq}, "src-ip-list": ${GName},"dst-ip-list": ${G6Name},"ether-type": 34525} 
- 	Should Not Be True    ${result}  
-    ${seq}=  expr   ${seq} + 1
-    log  Negative - type ipv6, src group - ipv6, dst-group - ipv4
-    ${result}=  rest_add_policy_match   admin-view  ${PName}   ${seq}   {"sequence": ${seq}, "src-ip-list": ${G6Name},"dst-ip-list": ${GName},"ether-type": 34525} 
- 	Should Not Be True    ${result}  
-    ${seq}=  expr   ${seq} + 1
-    log  Negative - type ipv4, src group - ipv4, dst-group - ipv6
-    ${result}=  rest_add_policy_match   admin-view  ${PName}    ${seq}   {"sequence": ${seq}, "src-ip-list": ${GName},"dst-ip-list": ${G6Name},"ether-type": 2048} 
- 	Should Not Be True    ${result}  
-    ${seq}=  expr   ${seq} + 1
-    log  Negative - type ipv4, src group - ipv6, dst-group - ipv4
-    ${result}=  rest_add_policy_match   admin-view  ${PName}    ${seq}   {"sequence": ${seq}, "src-ip-list": ${G6Name},"dst-ip-list": ${GName},"ether-type": 2048} 
- 	Should Not Be True    ${result}  
-    ${seq}=  expr   ${seq} + 1
-    log  Negative - type ipv6, src group - ipv4, dst - ipv6
-    ${result}=  rest_add_policy_match   admin-view  ${PName}    ${seq}   {"sequence": ${seq}, "src-ip-list": ${GName}, "dst-ip": "2001:200::0","dst-ip-mask": "FFFF:FFFF::0", "ether-type": 34525} 
- 	Should Not Be True    ${result}  
-    ${seq}=  expr   ${seq} + 1
-    log  Negative - type ipv6, src group - ipv6, dst - ipv4
-    ${result}=  rest_add_policy_match   admin-view  ${PName}    ${seq}  {"sequence": ${seq}, "src-ip-list": ${G6Name}, "dst-ip": "200.200.200.0", "dst-ip-mask": "255.255.255.0","ether-type": 34525} 
- 	Should Not Be True    ${result}  
-    ${seq}=  expr   ${seq} + 1
-    log  Negative - type ipv4, src group - ipv4, dst - ipv6
-    ${result}=  rest_add_policy_match   admin-view  ${PName}    ${seq}   {"sequence": ${seq}, "src-ip-list": ${GName},"dst-ip": "2001:200::0","dst-ip-mask": "FFFF:FFFF::0","ether-type": 2048} 
-   	Should Not Be True    ${result}  
-    ${seq}=  expr   ${seq} + 1
-    log  Negative - type ipv4, src group - ipv6, dst - ipv4
-    ${result}=  rest_add_policy_match   admin-view  ${PName}    ${seq}   {"sequence": ${seq}, "src-ip-list": ${G6Name}, "dst-ip": "200.200.200.0", "dst-ip-mask": "255.255.255.0","ether-type": 2048} 
- 	Should Not Be True    ${result}  
-    ${seq}=  expr   ${seq} + 1
-    log  Negative - type ipv6, src - ipv4, dst group - ipv6
-    ${result}=  rest_add_policy_match   admin-view  ${PName}    ${seq}   {"sequence": ${seq}, "dst-ip-list": ${GName}, "src-ip": "2001:200::0","src-ip-mask": "FFFF:FFFF::0", "ether-type": 34525} 
- 	Should Not Be True    ${result}  
-    ${seq}=  expr   ${seq} + 1
-    log  Negative - type ipv6, src - ipv6, dst group - ipv4
-    ${result}=  rest_add_policy_match   admin-view  ${PName}    ${seq}   {"sequence": ${seq}, "dst-ip-list": ${G6Name}, "src-ip": "200.200.200.0", "src-ip-mask": "255.255.255.0","ether-type": 34525} 
- 	Should Not Be True    ${result}  
-    ${seq}=  expr   ${seq} + 1
-    log  Negative - type ipv4, src - ipv4, dst group - ipv6
-    ${result}=  rest_add_policy_match   admin-view  ${PName}    ${seq}   {"sequence": ${seq}, "dst-ip-list": ${GName},"src-ip": "2001:200::0","src-ip-mask": "FFFF:FFFF::0","ether-type": 2048} 
- 	Should Not Be True    ${result}  
-    ${seq}=  expr   ${seq} + 1
-    log  Negative - type ipv4, src - ipv6, dst group - ipv4
-    ${result}=  rest_add_policy_match   admin-view  ${PName}    ${seq}   {"sequence": ${seq}, "dst-ip-list": ${G6Name}, "src-ip": "200.200.200.0", "src-ip-mask": "255.255.255.0","ether-type": 2048} 
- 	Should Not Be True    ${result}  
+    rest_disable_feature                   l3-l4-mode 
+    Sleep	                                ${short}   
+    Verify l3-l4 mode controler and tcam    False   ${sw1}      
+    ${Flow3}=   rest_show_switch_flow       ${sw1}	    
+    Should Be Equal As Integers            ${Flow1}    ${Flow3}
+  
+   [Tags]  sanity  l3_l4   BigTap   blackbird_1     skipped
 
 
-Ipv4 all match option   [Arguments]    ${PName}  ${GName}    ${seq}
-    log    source list   
- 	${result}=  rest_add_policy_match      admin-view  ${PName}   ${seq}   {"sequence": ${seq}, "src-ip-list": ${GName}, "ether-type": 2048}
-    Should be True    ${result}  	
-    ${seq}=  expr   ${seq} + 1
-    log    dest list   
- 	${result}=  rest_add_policy_match      admin-view  ${PName}   ${seq}   {"sequence": ${seq}, "dst-ip-list": ${GName}, "ether-type": 2048}
-    Should be True    ${result}  	
-    ${seq}=  expr   ${seq} + 1
-    log    source list + dest ip 
- 	${result}=  rest_add_policy_match      admin-view  ${PName}   ${seq}   {"sequence": ${seq}, "dst-ip-list": ${GName}, "ether-type": 2048, "dst-ip": "50.10.10.0","dst-ip-mask": "255.255.255.0"}
-    Should be True    ${result}  	
-    ${seq}=  expr   ${seq} + 1
-    log    dest list + src ip
-	${result}=  rest_add_policy_match      admin-view  ${PName}   ${seq}   {"sequence": ${seq}, "dst-ip-list": ${GName}, "ether-type": 2048,"src-ip": "50.10.10.0","src-ip-mask": "255.255.255.0"}
-    Should be True    ${result}  	
-    ${seq}=  expr   ${seq} + 1
-	log   source list + dst ip + tcp dst port 
-    ${result}=  rest_add_policy_match      admin-view  ${PName}   ${seq}   {"sequence": ${seq}, "src-ip-list": ${GName}, "dst-tp-port": 100, "ip-proto": 6, "ether-type": 2048,"dst-ip": "10.10.10.0","dst-ip-mask": "255.255.255.0"} 
-    Should be True    ${result}  	
-    ${seq}=  expr   ${seq} + 1
-	log   source list + dst ip + tcp dst port range 
-    ${result}=  rest_add_policy_match      admin-view  ${PName}   ${seq}   {"sequence": ${seq}, "src-ip-list": ${GName}, "dst-tp-port-max": 20, "dst-tp-port-min": 10, "ip-proto": 6, "ether-type": 2048,"dst-ip": "10.10.10.0","dst-ip-mask": "255.255.255.0"} 
-    Should be True    ${result}  	
-    ${seq}=  expr   ${seq} + 1
-	log   source list + dst ip + udp dst port 
-    ${result}=  rest_add_policy_match      admin-view  ${PName}   ${seq}   {"sequence": ${seq}, "src-ip-list": ${GName}, "dst-tp-port": 100, "ip-proto": 17, "ether-type": 2048,"dst-ip": "10.10.10.0","dst-ip-mask": "255.255.255.0"} 
-    Should be True    ${result}  	
-    ${seq}=  expr   ${seq} + 1
-	log   source list + dst ip + udp dst port range 
-    ${result}=  rest_add_policy_match      admin-view  ${PName}   ${seq}   {"sequence": ${seq}, "src-ip-list": ${GName}, "dst-tp-port-max": 20, "dst-tp-port-min": 10, "ip-proto": 17, "ether-type": 2048,"dst-ip": "10.10.10.0","dst-ip-mask": "255.255.255.0"} 
-    Should be True    ${result}  	
-    ${seq}=  expr   ${seq} + 1
-	log   source list + dst ip + tcp src port 
-    ${result}=  rest_add_policy_match      admin-view  ${PName}   ${seq}   {"sequence": ${seq}, "src-ip-list": ${GName}, "src-tp-port": 100, "ip-proto": 6, "ether-type": 2048,"dst-ip": "10.10.10.0","dst-ip-mask": "255.255.255.0"} 
-    Should be True    ${result}  	
-    ${seq}=  expr   ${seq} + 1
-	log   source list + dst ip + tcp srct port range 
-    ${result}=  rest_add_policy_match      admin-view  ${PName}   ${seq}   {"sequence": ${seq}, "src-ip-list": ${GName}, "src-tp-port-max": 20, "src-tp-port-min": 10, "ip-proto": 6, "ether-type": 2048,"dst-ip": "10.10.10.0","dst-ip-mask": "255.255.255.0"} 
-    Should be True    ${result}  	
-    ${seq}=  expr   ${seq} + 1
-	log   source list + dst ip + udp src port 
-    ${result}=  rest_add_policy_match      admin-view  ${PName}   ${seq}   {"sequence": ${seq}, "src-ip-list": ${GName}, "src-tp-port": 100, "ip-proto": 17, "ether-type": 2048,"dst-ip": "10.10.10.0","dst-ip-mask": "255.255.255.0"} 
-    Should be True    ${result}  	
-    ${seq}=  expr   ${seq} + 1
-	log   source list + dst ip + udp src port range 
-    ${result}=  rest_add_policy_match      admin-view  ${PName}   ${seq}   {"sequence": ${seq}, "src-ip-list": ${GName}, "src-tp-port-max": 20, "src-tp-port-min": 10, "ip-proto": 17, "ether-type": 2048,"dst-ip": "10.10.10.0","dst-ip-mask": "255.255.255.0"} 
-    Should be True    ${result}  	
-    ${seq}=  expr   ${seq} + 1
-	log   source list + dst ip + tcp src port + dst port range
-    ${result}=  rest_add_policy_match      admin-view  ${PName}   ${seq}   {"sequence": ${seq}, "src-ip-list": ${GName}, "src-tp-port": 100, "ip-proto": 6, "ether-type": 2048,"dst-ip": "10.10.10.0","dst-ip-mask": "255.255.255.0"} 
-    Should be True    ${result}  	
-    ${seq}=  expr   ${seq} + 1
-	log   source list + dst ip + tcp src port range + dst port
-    ${result}=  rest_add_policy_match      admin-view  ${PName}   ${seq}   {"sequence": ${seq}, "src-ip-list": ${GName}, "src-tp-port-max": 20, "src-tp-port-min": 10, "ip-proto": 6, "ether-type": 2048,"dst-ip": "10.10.10.0","dst-ip-mask": "255.255.255.0"} 
-    Should be True    ${result}  	
-    ${seq}=  expr   ${seq} + 1
-	log   source list + dst ip + udp src port + dst port range
-    ${result}=  rest_add_policy_match      admin-view  ${PName}   ${seq}   {"sequence": ${seq}, "src-ip-list": ${GName}, "src-tp-port": 100, "ip-proto": 17, "ether-type": 2048,"dst-ip": "10.10.10.0","dst-ip-mask": "255.255.255.0"} 
-    Should be True    ${result}  	
-    ${seq}=  expr   ${seq} + 1
-	log   source list + dst ip + udp src port range + dst port
-    ${result}=  rest_add_policy_match      admin-view  ${PName}   ${seq}   {"sequence": ${seq}, "src-ip-list": ${GName}, "src-tp-port-max": 20, "src-tp-port-min": 10, "ip-proto": 17, "ether-type": 2048,"dst-ip": "10.10.10.0","dst-ip-mask": "255.255.255.0"} 
-    Should be True    ${result}  	
+T3.4 ipv4 mac can be configured/not configured correctly  
+    Verify L3-l4 config       				False
+    Verify l3-l4 mode controler and tcam    False   ${sw1}  
+    Config bigtap policy                 P1    ${sw1_f1}     ${sw1_d1}	    
+    Config ipv4 mac+ ip src + dst + vlan range + tcp dsts port range    P1   10  "11:11:11:11:11:11"  "22:22:22:22:22:22"  "111.111.111.0"  "255.255.255.0"   11  12   51  52
+    Config ipv4 mac+ ip src + dst + vlan range + tcp dsts + src         P1   20  "11:11:11:11:11:11"  "22:22:22:22:22:22"  "111.111.111.0"  "255.255.255.0"   21  22   100  200
+    Config ipv4 any                     P1    30
+    Sleep	                                ${short} 
+    Verify switch entry                    ${sw1}	 7    
+     
+    ${result}=   rest_enable_feature      l3-l4-mode 
+    Should not be True                    ${result}     
+# not working now     
+#     rest_delete_policy_match       admin-view   P1   10  
+#     rest_delete_policy_match       admin-view   P1   20  
 
-Ipv6 all match option   [Arguments]    ${PName}  ${GName}    ${seq}
-    log    source list   
- 	${result}=  rest_add_policy_match      admin-view  ${PName}   ${seq}   {"sequence": ${seq}, "src-ip-list": ${GName}, "ether-type": 34525}
-    Should be True    ${result}  	
-    ${seq}=  expr   ${seq} + 1
-    log    dest list   
- 	${result}=  rest_add_policy_match      admin-view  ${PName}   ${seq}   {"sequence": ${seq}, "dst-ip-list": ${GName}, "ether-type": 34525}
-    Should be True    ${result}  	
-    ${seq}=  expr   ${seq} + 1
-    log    source list + dest ip 
- 	${result}=  rest_add_policy_match      admin-view  ${PName}   ${seq}   {"sequence": ${seq}, "dst-ip-list": ${GName}, "ether-type": 34525, "dst-ip": "2001:111:222:333:0:0:0:0","dst-ip-mask": "FFFF:FFFF:FFFF:FFFF:0:0:0:0"}
-    Should be True    ${result}  	
-    ${seq}=  expr   ${seq} + 1
-    log    dest list + src ip
-	${result}=  rest_add_policy_match      admin-view  ${PName}   ${seq}   {"sequence": ${seq}, "dst-ip-list": ${GName}, "ether-type": 34525,"src-ip": "2001:111:222:333:0:0:0:0","src-ip-mask": "FFFF:FFFF:FFFF:FFFF:0:0:0:0"}
-    Should be True    ${result}  	
-    ${seq}=  expr   ${seq} + 1
-	log   source list + dst ip + tcp dst port 
-    ${result}=  rest_add_policy_match      admin-view  ${PName}   ${seq}   {"sequence": ${seq}, "src-ip-list": ${GName}, "dst-tp-port": 100, "ip-proto": 6, "ether-type": 34525,"dst-ip": "2001:111:222:333:0:0:0:0","dst-ip-mask": "FFFF:FFFF:FFFF:FFFF:0:0:0:0"} 
-    Should be True    ${result}  	
-    ${seq}=  expr   ${seq} + 1
-	log   source list + dst ip + tcp dst port range 
-    ${result}=  rest_add_policy_match      admin-view  ${PName}   ${seq}   {"sequence": ${seq}, "src-ip-list": ${GName}, "dst-tp-port-max": 20, "dst-tp-port-min": 10, "ip-proto": 6, "ether-type": 34525,"dst-ip": "2001:111:222:333:0:0:0:0","dst-ip-mask": "FFFF:FFFF:FFFF:FFFF:0:0:0:0"} 
-    Should be True    ${result}  	
-    ${seq}=  expr   ${seq} + 1
-	log   source list + dst ip + udp dst port 
-    ${result}=  rest_add_policy_match      admin-view  ${PName}   ${seq}   {"sequence": ${seq}, "src-ip-list": ${GName}, "dst-tp-port": 100, "ip-proto": 17, "ether-type": 34525,"dst-ip": "2001:111:222:333:0:0:0:0","dst-ip-mask": "FFFF:FFFF:FFFF:FFFF:0:0:0:0"} 
-    Should be True    ${result}  	
-    ${seq}=  expr   ${seq} + 1
-	log   source list + dst ip + udp dst port range 
-    ${result}=  rest_add_policy_match      admin-view  ${PName}   ${seq}   {"sequence": ${seq}, "src-ip-list": ${GName}, "dst-tp-port-max": 20, "dst-tp-port-min": 10, "ip-proto": 17, "ether-type": 34525,"dst-ip": "2001:111:222:333:0:0:0:0","dst-ip-mask": "FFFF:FFFF:FFFF:FFFF:0:0:0:0"} 
-    Should be True    ${result}  	
-    ${seq}=  expr   ${seq} + 1
-	log   source list + dst ip + tcp src port 
-    ${result}=  rest_add_policy_match      admin-view  ${PName}   ${seq}   {"sequence": ${seq}, "src-ip-list": ${GName}, "src-tp-port": 100, "ip-proto": 6, "ether-type": 34525,"dst-ip": "2001:111:222:333:0:0:0:0","dst-ip-mask": "FFFF:FFFF:FFFF:FFFF:0:0:0:0"} 
-    Should be True    ${result}  	
-    ${seq}=  expr   ${seq} + 1
-	log   source list + dst ip + tcp srct port range 
-    ${result}=  rest_add_policy_match      admin-view  ${PName}   ${seq}   {"sequence": ${seq}, "src-ip-list": ${GName}, "src-tp-port-max": 20, "src-tp-port-min": 10, "ip-proto": 6, "ether-type": 34525,"dst-ip": "2001:111:222:333:0:0:0:0","dst-ip-mask": "FFFF:FFFF:FFFF:FFFF:0:0:0:0"} 
-    Should be True    ${result}  	
-    ${seq}=  expr   ${seq} + 1
-	log   source list + dst ip + udp src port 
-    ${result}=  rest_add_policy_match      admin-view  ${PName}   ${seq}   {"sequence": ${seq}, "src-ip-list": ${GName}, "src-tp-port": 100, "ip-proto": 17, "ether-type": 34525,"dst-ip": "2001:111:222:333:0:0:0:0","dst-ip-mask": "FFFF:FFFF:FFFF:FFFF:0:0:0:0"} 
-    Should be True    ${result}  	
-    ${seq}=  expr   ${seq} + 1
-	log   source list + dst ip + udp src port range 
-    ${result}=  rest_add_policy_match      admin-view  ${PName}   ${seq}   {"sequence": ${seq}, "src-ip-list": ${GName}, "src-tp-port-max": 20, "src-tp-port-min": 10, "ip-proto": 17, "ether-type": 34525,"dst-ip": "2001:111:222:333:0:0:0:0","dst-ip-mask": "FFFF:FFFF:FFFF:FFFF:0:0:0:0"} 
-    Should be True    ${result}  	
-    ${seq}=  expr   ${seq} + 1
-	log   source list + dst ip + tcp src port + dst port range
-    ${result}=  rest_add_policy_match      admin-view  ${PName}   ${seq}   {"sequence": ${seq}, "src-ip-list": ${GName}, "src-tp-port": 100, "ip-proto": 6, "ether-type": 34525,"dst-ip": "2001:111:222:333:0:0:0:0","dst-ip-mask": "FFFF:FFFF:FFFF:FFFF:0:0:0:0"} 
-    Should be True    ${result}  	
-    ${seq}=  expr   ${seq} + 1
-	log   source list + dst ip + tcp src port range + dst port
-    ${result}=  rest_add_policy_match      admin-view  ${PName}   ${seq}   {"sequence": ${seq}, "src-ip-list": ${GName}, "src-tp-port-max": 20, "src-tp-port-min": 10, "ip-proto": 6, "ether-type": 34525,"dst-ip": "2001:111:222:333:0:0:0:0","dst-ip-mask": "FFFF:FFFF:FFFF:FFFF:0:0:0:0"} 
-    Should be True    ${result}  	
-    ${seq}=  expr   ${seq} + 1
-	log   source list + dst ip + udp src port + dst port range
-    ${result}=  rest_add_policy_match      admin-view  ${PName}   ${seq}   {"sequence": ${seq}, "src-ip-list": ${GName}, "src-tp-port": 100, "ip-proto": 17, "ether-type": 34525,"dst-ip": "2001:111:222:333:0:0:0:0","dst-ip-mask": "FFFF:FFFF:FFFF:FFFF:0:0:0:0"} 
-    Should be True    ${result}  	
-    ${seq}=  expr   ${seq} + 1
-	log   source list + dst ip + udp src port range + dst port
-    ${result}=  rest_add_policy_match      admin-view  ${PName}   ${seq}   {"sequence": ${seq}, "src-ip-list": ${GName}, "src-tp-port-max": 20, "src-tp-port-min": 10, "ip-proto": 17, "ether-type": 34525,"dst-ip": "2001:111:222:333:0:0:0:0","dst-ip-mask": "FFFF:FFFF:FFFF:FFFF:0:0:0:0"} 
-    Should be True    ${result}  	
+    ${result}=   rest_enable_feature    l3-l4-mode 
+    Should be True                      ${result}     
+    
+   [Tags]  sanity  l3_l4   BigTap   blackbird_1     skipped  
 
+
+
+T3.5 ipv6 mac can be configured/not configured correctly  
+    Verify L3-l4 config       				False
+    Verify l3-l4 mode controler and tcam    False   ${sw1}  
+    Config bigtap policy                  P1    ${sw1_f1}     ${sw1_d1}	    
+    Config ipv6 mac all negative          P1   30     "11:11:11:11:11:11"  "22:22:22:22:22:22" 
+    Config ipv6 any                       P1   10
+    Config ipv6 tcp any                   P1   20
+    Config ipv6 udp any                   P1   25   
+    
+    Sleep	                                ${short} 
+    Verify switch entry                    ${sw1}	 3    
+     
+    ${result}=   rest_enable_feature      l3-l4-mode 
+    Should be True                    ${result}     
+ 
+    Config ipv6 mac all negative          P1   30     "11:11:11:11:11:11"  "22:22:22:22:22:22"      
+    Sleep	                              ${short} 
+    Verify switch entry                   ${sw1}	 3    
+  
+    ${result}=   rest_enable_feature    l3-l4-mode 
+    Should be True                      ${result}     
+    Config ipv6 mac all negative         P1   30     "11:11:11:11:11:11"  "22:22:22:22:22:22" 
+    Sleep	                            ${short} 
+    Verify switch entry                 ${sw1}	   3    
+ 
+    
+   [Tags]  sanity  l3_l4   BigTap   blackbird_1     skipped
 
 
 
