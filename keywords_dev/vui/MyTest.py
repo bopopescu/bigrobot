@@ -40,6 +40,10 @@ class MyTest(object):
         helpers.log("arg1: %s" % arg1)
         helpers.log("arg2: %s" % arg2)
         self.passing_kwargs_additions(**kwargs)
+        helpers.log("kwargs: %s" % kwargs)
+
+    def passing_kwargs2(self, **kwargs):
+        helpers.log("kwargs: %s" % kwargs)
 
     def enable_help(self):
         t = test.Test()
@@ -104,6 +108,10 @@ class MyTest(object):
         helpers.log("node: %s" % s)
         helpers.log("Switch model is '%s'" % s.info('model'))
         helpers.log("Switch manufacturer is '%s'" % s.info('manufacturer'))
+        helpers.log("Switch '%s' console IP:%s, port:%s" %
+                    (s.name(),
+                     t.params(node, 'console_ip'),
+                     t.params(node, 'console_port')))
 
     def switch_show_walk(self, node):
         t = test.Test()

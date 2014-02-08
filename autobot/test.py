@@ -86,7 +86,7 @@ class Test(object):
     def switch_password(self):
         return self.bsn_config('switch_password')
 
-    def topology_params(self):
+    def topology_params(self, node=None, key=None, default=None):
         """
         Returns the topology dictionary.
         {   'c1': {
@@ -106,6 +106,25 @@ class Test(object):
             ...
         }
         """
+        if node:
+            if node not in self._topology_params:
+                helpers.test_error("Node '%s' is not defined in topology file"
+                                   % node)
+            else:
+                if key:
+                    if key not in self._topology_params[node]:
+                        if default:
+                            self._topology_params[node][key] = default
+                            return default
+                        helpers.test_error("Node '%s' does not have attribute '%s' defined"
+                                           % (node, key))
+                    else:
+                        return self._topology_params[node][key]
+                else:
+                    return self._topology_params[node]
+        elif key:
+            helpers.test_error("Key '%s' is defined but not associated with a node"
+                               % key)
         return self._topology_params
 
     # Alias

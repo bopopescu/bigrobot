@@ -380,9 +380,13 @@ def is_bvs(name):
     Inspect the platform type for the node. Usage:
     
     if helpers.is_bvs(n.platform():
-        ...this is a BVS controller...
+        ...this is a BVS (aka T5) controller...
     """
     return name == 'bvs'
+
+
+# Alias
+is_t5 = is_bvs
 
 
 def is_bigtap(name):

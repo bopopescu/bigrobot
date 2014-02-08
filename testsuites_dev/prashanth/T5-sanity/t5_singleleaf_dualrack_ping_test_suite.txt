@@ -8,7 +8,7 @@ Test Setup       T5 base test setup
 Test Teardown    T5 base test teardown
 Force Tags       T5 
 Library          keywords/BsnCommon.py
-Library          keywords_dev/prashanthT5.py
+Library          keywords_dev/prashanth/T5.py
 Library	         keywords_dev/prashanth/T5Fabric.py
 Library          keywords/Mininet.py
 Resource	     keywords_dev/prashanth/t5_singleleaf_resource.txt

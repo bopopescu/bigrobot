@@ -53,9 +53,13 @@ ${bm2_intf0}  leaf1-eth5
 #	[Tags]  HA
 #	cli verify cluster slave shutdown
 
-Add a user
+#Add User
+#	[Tags]  User_Administration
+#	rest add user  3
+	
+Delete User
 	[Tags]  User_Administration
-	rest add user  2
+	rest delete user  3
 
 * Keywords      
 T5 base test setup

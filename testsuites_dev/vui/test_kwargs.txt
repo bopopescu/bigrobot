@@ -5,5 +5,6 @@ Library         keywords_dev/vui/MyTest.py
 
 * Test Case
 Test kwargs
-    passing kwargs  arg1=${1}  arg2=${2}  arg_kw1="ABC"  arg_kw2="XYZ"
+    passing kwargs2  arg1=${1}    arg2=${2}    arg_kw1=ABC  arg_kw2=XYZ
+    ...              arg_kw3=aaa  arg_kw4=bbb  arg_kw5=ccc
 
