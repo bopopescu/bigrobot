@@ -18,12 +18,12 @@ A driver for Big Switch controller. This was borrowed from ios.py.
 import re
 from Exscript.protocols.drivers.driver import Driver
 
-_user_re     = [re.compile(r'user ?name: ?$', re.I)]
+_user_re = [re.compile(r'user ?name: ?$', re.I)]
 _password_re = [re.compile(r'(?:[\r\n]Password: ?|last resort password:)$')]
-_tacacs_re   = re.compile(r'[\r\n]s\/key[\S ]+\r?%s' % _password_re[0].pattern)
+_tacacs_re = re.compile(r'[\r\n]s\/key[\S ]+\r?%s' % _password_re[0].pattern)
 
 # Original for Cisco
-#_prompt_re   = [re.compile(r'[\r\n][\-\w+\.:/]+(?:\([^\)]+\))?[>#] ?$')]
+# _prompt_re   = [re.compile(r'[\r\n][\-\w+\.:/]+(?:\([^\)]+\))?[>#] ?$')]
 
 # Expected prompts:
 #   CLI:        controller>
@@ -33,10 +33,10 @@ _tacacs_re   = re.compile(r'[\r\n]s\/key[\S ]+\r?%s' % _password_re[0].pattern)
 #   Configure:  controller(config)#
 #   Debug Bash: admin@controller:~$
 #
-_prompt_re   = [re.compile(r'[\r\n](\w+\s?@?)?[\-\w+\.:/]+(?:\([^\)]+\))?(:~)?[>#$] ?$')]
+_prompt_re = [re.compile(r'[\r\n](\w+\s?@?)?[\-\w+\.:/]+(?:\([^\)]+\))?(:~)?[>#$] ?$')]
 
 
-_error_re    = [re.compile(r'%Error'),
+_error_re = [re.compile(r'%Error'),
                 re.compile(r'invalid input', re.I),
                 re.compile(r'(?:incomplete|ambiguous) command', re.I),
                 re.compile(r'connection timed out', re.I),
@@ -46,17 +46,17 @@ _error_re    = [re.compile(r'%Error'),
 class BsnControllerDriver(Driver):
     def __init__(self):
         Driver.__init__(self, 'bsn_controller')
-        self.user_re     = _user_re
+        self.user_re = _user_re
         self.password_re = _password_re
-        self.prompt_re   = _prompt_re
-        self.error_re    = _error_re
-        
+        self.prompt_re = _prompt_re
+        self.error_re = _error_re
+
         # BSN tweak to specify what platform this device is.
         self._platform = None
 
     def check_head_for_os(self, string):
-        #print("string: %s" % string)
-        if 'Big Tap Controller' in string:
+        # print("string: %s" % string)
+        if 'Big Tap Controller' in string or 'Big Network Controller' in string:
             self._platform = 'bigtap'
             return 90
         if 'Big Wire Controller' in string:
@@ -73,8 +73,8 @@ class BsnControllerDriver(Driver):
 
     def init_terminal(self, conn):
         pass
-    
-    #def auto_authorize(self, conn, account, flush, bailout):
+
+    # def auto_authorize(self, conn, account, flush, bailout):
     #    conn.send('enable\r')
     #    conn.app_authorize(account, flush, bailout)
 
