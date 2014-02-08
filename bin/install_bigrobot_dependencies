@@ -1,0 +1,28 @@
+#!/bin/sh
+# Description:
+# Install various dependencies for BigRobot.
+#
+
+no_error=1
+
+packages='pep8 pylint httplib2 pyyaml pytz ipcalc pycrypto paramiko scp robotframework'
+modules='pep8 pylint httplib2 yaml pytz ipcalc Crypto paramiko scp robot robot.api blah'
+
+sudo pip install $modules
+
+for x in `echo $modules`; do
+    python -c "import $x"
+    if [ $? -ne 0 ]; then
+        echo "Error with module '$x' - not exist?"
+        no_error=0
+    else
+        : echo "Module $x is loadable"
+    fi
+done
+
+if [ $no_error -ne 1 ]; then
+    echo "Error with dependency installation. Please check the output log."
+    exit 1
+fi
+
+exit 0
