@@ -155,7 +155,7 @@ class Ixia(object):
             self._handle.setAttribute(trafficStream1 + '/highLevelStream:1/' + 'transmissionControl', '-type',
                                 'fixedFrameCount')
             self._handle.setAttribute(trafficStream1 + '/highLevelStream:1/' + 'transmissionControl',
-                                '-frameCount', frameCount + 10000)
+                                '-frameCount', frameCount)
         if flow == 'bi-directional':
             helpers.log('Adding Another  ixia end point set for Bi Directional Traffic..')
             endpointSet2 = self._handle.add(trafficStream1, 'endpointSet', '-name', 'l2u', '-sources', mac2,
@@ -272,7 +272,7 @@ class Ixia(object):
             Returns Dictionary with Port Tx and Rx real time results
         '''
         handle = self._handle
-        port_stats = []
+        port_stats = {}
         portStatistics = handle.getFilteredList(handle.getRoot() + 'statistics', 'view', '-caption', 'Port Statistics')[0]
         col_names = handle.getAttribute(portStatistics + '/page', '-columnCaptions')
         stats = handle.getAttribute(portStatistics + '/page', '-rowValues')
@@ -280,16 +280,18 @@ class Ixia(object):
             port_stat = {}
             for column, value in zip(col_names, stat[0]):
                 if column == 'Stat Name':
+                    port_stat['physical_port'] = value
+                if column == 'Port Name':
                     port_stat['port'] = value
                 if column == 'Frames Tx.':
-                    port_stat['Tx'] = value
+                    port_stat['transmitted_frames'] = value
                 if column == 'Valid Frames Rx.':
-                    port_stat['Rx'] = value
+                    port_stat['received_frames'] = value
                 if column == 'Frames Tx. Rate':
-                    port_stat['TxRate'] = value
+                    port_stat['transmitted_frame_rate'] = value
                 if column == 'Valid Frames Rx. Rate':
-                    port_stat['RxRate'] = value
-            port_stats.append(port_stat)
+                    port_stat['received_frame_rate'] = value
+            port_stats[port_stat['port']] = port_stat
         return port_stats
 
     def ix_stop_traffic(self, traffic_stream):

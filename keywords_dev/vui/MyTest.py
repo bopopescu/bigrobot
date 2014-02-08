@@ -40,6 +40,10 @@ class MyTest(object):
         helpers.log("arg1: %s" % arg1)
         helpers.log("arg2: %s" % arg2)
         self.passing_kwargs_additions(**kwargs)
+        helpers.log("kwargs: %s" % kwargs)
+
+    def passing_kwargs2(self, **kwargs):
+        helpers.log("kwargs: %s" % kwargs)
 
     def enable_help(self):
         t = test.Test()
