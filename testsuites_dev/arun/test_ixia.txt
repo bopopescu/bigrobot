@@ -9,6 +9,7 @@ Library         keywords/BsnCommon.py
 #Library         keywords/Controller.py
 Library         keywords_dev/vui/MyTest.py
 Library         keywords/Ixia.py
+Library		keywords_dev/arun/example.py
 
 
 * Test Case
@@ -43,12 +44,49 @@ Test IXIA3
 Test IXIA4
 # Stream with Different Src and Dst Mac addresses
 # s_cnt is used to pass no of src macs, d_step is the increment value for the next mac
-# d_cnt is used to pass no of dst macs, s_step is the increment value for the next mac 
+# d_cnt is used to pass no of dst macs, s_step is the increment value for the next mac
+	[Tags]  skipped
     IXIA initialize        tg1
-    ${stream}=             IXIA L2 add  flow=a->b  src_mac=00:11:23:00:00:09  dst_mac=00:11:23:00:00:99  frame_rate=10000  frame_size=68  frame_cnt=99000  d_cnt=50  s_cnt=50  d_step=00:00:00:01:00:00  s_step=00:00:00:01:00:00  name=a_b_flow
+    ${stream}=             IXIA L2 add  flow=a<->b  src_mac=00:11:23:00:00:09  dst_mac=00:11:23:00:00:99  frame_rate=10000
+	...						frame_size=68  frame_cnt=99000  d_cnt=50  s_cnt=50  
+	...						d_step=00:00:00:01:00:00  s_step=00:00:00:01:00:00  name=a_b_flow
     IXIA start L2 traffic  ${stream}
     sleep                  10
     IXIA stop L2 traffic   ${stream}
     sleep                  10
     ${report}=             IXIA fetch port stats
     Log                    Report is ${report}
+ 
+ Test IXIA_5
+# Basic test case with all default values and just start the flow
+	[Tags]  skipped
+    IXIA initialize        tg1
+    ${stream}=             IXIA L2 add  flow=a<-b
+    IXIA start L2 traffic  ${stream}
+    sleep                  10
+    IXIA stop L2 traffic   ${stream}
+    sleep                  10
+    ${report}=             IXIA fetch port stats
+    ${status}=             test tx  ${report}
+    Should be true         ${status}
+    
+ Test IXIA_6
+# Basic test case with all default values and etherytype 88cc LLDP
+    IXIA initialize        tg1
+    ${stream}=             IXIA L2 add  flow=a<-b  ethertype=88cc
+    IXIA start L2 traffic  ${stream}
+    sleep                  260
+    IXIA stop L2 traffic   ${stream}
+    sleep                  10
+    ${report}=             IXIA fetch port stats
+    
+ Test IXIA_7
+# Basic test case with all default values and etherytype 8100, with vlan id
+    IXIA initialize        tg1
+    ${stream}=             IXIA L2 add  flow=a<-b  ethertype=8100  vlan_id=199  frame_size=68
+    IXIA start L2 traffic  ${stream}
+    sleep                  260
+    IXIA stop L2 traffic   ${stream}
+    sleep                  10
+    ${report}=             IXIA fetch port stats
+

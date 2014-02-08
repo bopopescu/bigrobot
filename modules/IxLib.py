@@ -133,7 +133,7 @@ class Ixia(object):
         return mac_devices
 
     def ix_setup_traffic_streams_ethernet(self, mac1, mac2, frameType, frameSize, frameRate,
-                                      frameMode, frameCount, flow, name):
+                                      frameMode, frameCount, flow, name, ethertype=None, vlan_id=None):
         '''
             Returns traffic stream with 2 flows with provided mac sources
             Ex Usage:
@@ -151,6 +151,32 @@ class Ixia(object):
         self._handle.setAttribute(trafficStream1 + '/highLevelStream:1/' + 'frameSize', '-fixedSize', frameSize)
         self._handle.setAttribute(trafficStream1 + '/highLevelStream:1/' + 'frameRate', '-type', frameMode)
         self._handle.setAttribute(trafficStream1 + '/highLevelStream:1/' + 'frameRate', '-rate', frameRate)
+        if ethertype is not None:
+            helpers.log('Adding Ethertype %s !!!' % ethertype)
+            self._handle.setAttribute(trafficStream1 + '/highLevelStream:1/stack:"ethernet-1"/field:"ethernet.header.etherType-3"',
+                                      '-auto', False)
+            self._handle.setAttribute(trafficStream1 + '/highLevelStream:1/stack:"ethernet-1"/field:"ethernet.header.etherType-3"',
+                                      '-fieldValue', ethertype)
+            self._handle.setAttribute(trafficStream1 + '/highLevelStream:1/stack:"ethernet-1"/field:"ethernet.header.etherType-3"',
+                                      '-singleValue', ethertype)
+            self._handle.setAttribute(trafficStream1 + '/highLevelStream:1/stack:"ethernet-1"/field:"ethernet.header.etherType-3"',
+                                      '-countValue', 1)
+            self._handle.setAttribute(trafficStream1 + '/highLevelStream:1/stack:"ethernet-1"/field:"ethernet.header.etherType-3"',
+                                      '-fixedBits', ethertype)
+            self._handle.setAttribute(trafficStream1 + '/highLevelStream:1/stack:"ethernet-1"/field:"ethernet.header.etherType-3"',
+                                      '-optionalEnabled ', True)
+            
+        if vlan_id is not None:
+            print('Adding Vlan ID: %s !!!' % vlan_id)
+            self._handle.setAttribute(trafficStream1 + '/highLevelStream:1/stack:"vlan-2"/field:"vlan.header.vlanTag.vlanID-3"',
+                                      '-countValue', 1)
+            self._handle.setAttribute(trafficStream1 + '/highLevelStream:1/stack:"vlan-2"/field:"vlan.header.vlanTag.vlanID-3"',
+                                      '-fieldValue', vlan_id)
+            self._handle.setAttribute(trafficStream1 + '/highLevelStream:1/stack:"vlan-2"/field:"vlan.header.vlanTag.vlanID-3"',
+                                      '-optionalEnabled', True)
+            
+            
+            
         if frameCount is not None:
             self._handle.setAttribute(trafficStream1 + '/highLevelStream:1/' + 'transmissionControl', '-type',
                                 'fixedFrameCount')
@@ -169,7 +195,29 @@ class Ixia(object):
                                     'fixedFrameCount')
                 self._handle.setAttribute(trafficStream1 + '/highLevelStream:2/' + 'transmissionControl', '-frameCount',
                                     frameCount)
+            if ethertype is not None:
+                self._handle.setAttribute(trafficStream1 + '/highLevelStream:2/stack:"ethernet-1"/field:"ethernet.header.etherType-3"',
+                                          '-auto', False)
+                self._handle.setAttribute(trafficStream1 + '/highLevelStream:2/stack:"ethernet-1"/field:"ethernet.header.etherType-3"',
+                                          '-fieldValue', ethertype)
+                self._handle.setAttribute(trafficStream1 + '/highLevelStream:2/stack:"ethernet-1"/field:"ethernet.header.etherType-3"',
+                                          '-singleValue', ethertype)
+                self._handle.setAttribute(trafficStream1 + '/highLevelStream:2/stack:"ethernet-1"/field:"ethernet.header.etherType-3"',
+                                          '-countValue', 1)
+                self._handle.setAttribute(trafficStream1 + '/highLevelStream:2/stack:"ethernet-1"/field:"ethernet.header.etherType-3"',
+                                          '-fixedBits', ethertype)
+                self._handle.setAttribute(trafficStream1 + '/highLevelStream:2/stack:"ethernet-1"/field:"ethernet.header.etherType-3"',
+                                          '-optionalEnabled ', True)
+            if vlan_id is not None:
+                print('Adding Vlan ID: %s !!!' % vlan_id)
+                self._handle.setAttribute(trafficStream1 + '/highLevelStream:2/stack:"vlan-2"/field:"vlan.header.vlanTag.vlanID-3"',
+                                          '-countValue', 1)
+                self._handle.setAttribute(trafficStream1 + '/highLevelStream:2/stack:"vlan-2"/field:"vlan.header.vlanTag.vlanID-3"',
+                                          '-fieldValue', vlan_id)
+                self._handle.setAttribute(trafficStream1 + '/highLevelStream:2/stack:"vlan-2"/field:"vlan.header.vlanTag.vlanID-3"',
+                                          '-optionalEnabled', True)
         self._handle.setAttribute(self._handle.getList(trafficStream1, 'tracking')[0], '-trackBy', 'trackingenabled0')
+        
         self._handle.commit()
         return trafficStream1
 
@@ -192,6 +240,9 @@ class Ixia(object):
         frame_type = kwargs.get('frame_type', 'fixed')
         frame_mode = kwargs.get('frame_mode', 'framesPerSecond')
         name = kwargs.get('name', 'gobot_default')
+        ethertype = kwargs.get('ethertype', None)
+        vlan_id = kwargs.get('vlan_id', None)
+        
         ix_tcl_server = self._tcl_server_ip
         flow = kwargs.get('flow', 'None')
         if ix_tcl_server is None or ix_ports is None or s_mac is None or d_mac is None:
@@ -241,8 +292,8 @@ class Ixia(object):
         helpers.log('### Created Mac Devices with corrsponding Topos ...')
         # Create Traffic Stream:
         traffic_stream = self.ix_setup_traffic_streams_ethernet(mac_devices[0], mac_devices[1],
-                                                       frame_type, frame_size, frame_rate,
-                                                       frame_mode, frame_cnt, stream_flow, name)
+                                                       frame_type, frame_size, frame_rate, frame_mode,
+                                                       frame_cnt, stream_flow, name, ethertype, vlan_id)
         helpers.log('Created Traffic Stream : %s' % traffic_stream)
         self._traffic_stream[name] = traffic_stream
         return traffic_stream
