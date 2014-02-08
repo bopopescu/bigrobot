@@ -673,6 +673,10 @@ def bigtest_node_info():
             full_path_filename = "%s/%s/%s" % (my_root, node, filename)
             val = open(full_path_filename, "r").read().rstrip()
             nodes[node][filename] = val
+
+    if not nodes:
+        error_exit('Directory %s appears to be empty.' % my_root)
+
     return nodes
 
 
