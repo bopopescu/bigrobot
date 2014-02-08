@@ -402,12 +402,77 @@ class SwitchLight(object):
             helpers.log("Show Command O/P: \n %s" % (show_command))
             if "ma1 is up" in show_command:
                 pass_count = pass_count + 1
-            input4 = str(s1.ip) + "/" + str(subnet)
+            input4 = str(s1.ip()) + "/" + str(subnet)
             if input4 in show_command:
                 pass_count = pass_count + 1
             if "MTU 1500 bytes, Speed 1000 Mbps" in show_command:
                 pass_count = pass_count + 1
             if pass_count == 6:
+                return True
+            else:
+                return False
+        except:
+            helpers.test_failure("Could not execute command. Please check log for errors")
+            return False
+
+    def cli_verify_crc_forwarding_is_disabled(self, node):
+        '''
+            Objective: Verify CRC Forwarding is disabled.
+            
+            Inputs:
+            | node | Reference to switch (as defined in .topo file) |
+            
+            Return Value:
+            - True on verification success
+            - False on verification failure
+        '''
+        try:
+            t = test.Test()
+            switch = t.switch(node)
+            pass_count = 0
+
+            cli_input = "show running-config forwarding"
+            switch.enable(cli_input)
+            show_output = switch.cli_content()
+            if "forwarding crc disable" in show_output:
+                pass_count = pass_count + 1
+            else:
+                helpers.test_log("FAIL: Did not see 'forwarding crc disable' in running-config")
+
+            cli_input_1 = "show forwarding crc status"
+            switch.enable(cli_input_1)
+            show_output_1 = switch.cli_content()
+            if "Packets with CRC error will be dropped on all ports" in show_output_1:
+                pass_count = pass_count + 1
+            else:
+                helpers.test_log("FAIL: Did not see 'forwarding crc disable' in running-config")
+
+            if pass_count == 2:
+                return True
+            else:
+                return False
+        except:
+            helpers.test_failure("Could not execute command. Please check log for errors")
+            return False
+
+    def cli_verify_crc_forwarding_is_enabled(self, node):
+        '''
+            Objective: Verify CRC Forwarding is disabled.
+            
+            Inputs:
+            | node | Reference to switch (as defined in .topo file) |
+            
+            Return Value:
+            - True on verification success
+            - False on verification failure
+        '''
+        try:
+            t = test.Test()
+            switch = t.switch(node)
+            cli_input_1 = "show forwarding crc status"
+            switch.enable(cli_input_1)
+            show_output = switch.cli_content()
+            if "Packets with CRC error will be forwarded on all ports" in show_output:
                 return True
             else:
                 return False
@@ -910,6 +975,51 @@ class SwitchLight(object):
         except:
             helpers.test_log("Could not execute command. Please check log for errors")
             return False
+
+    def cli_enable_crc_forwarding(self, node):
+        ''' 
+            Objective:
+            - Enable crc forwarding via CLI
+        
+            Input:
+            | node | Reference to switch (as defined in .topo file) |
+                
+            Return Value:
+            - True on  success
+            - False on  failure
+        '''
+        try:
+            t = test.Test()
+            s1 = t.switch(node)
+            cli_input_1 = "no forwarding crc disable"
+            s1.config(cli_input_1)
+            return True
+        except:
+            helpers.test_failure("Could not execute command. Please check log for errors")
+            return False
+
+    def cli_disable_crc_forwarding(self, node):
+        ''' 
+            Objective:
+            - Disable crc forwarding via CLI
+        
+            Input:
+            | node | Reference to switch (as defined in .topo file) |
+                
+            Return Value:
+            - True on  success
+            - False on  failure
+        '''
+        try:
+            t = test.Test()
+            s1 = t.switch(node)
+            cli_input_1 = "forwarding crc disable"
+            s1.config(cli_input_1)
+            return True
+        except:
+            helpers.test_failure("Could not execute command. Please check log for errors")
+            return False
+
 
 #######################################################################
 # All Common Switch Platform/Feature Related Commands Go Here:
