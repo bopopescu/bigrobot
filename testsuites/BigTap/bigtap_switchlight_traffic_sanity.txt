@@ -27,7 +27,7 @@ ${delivery_nick}  D1
 
 *Test Case
 
-    Verify L2 traffic: frame size 64 bytes
+Verify L2 traffic: frame size 64 bytes
     IXIA initialize  tg1
     ${stream}=  IXIA L2 add  flow=a->b  frame_rate=10000  frame_size=64  frame_cnt=50000  name=a_b_flow
     IXIA start L2 traffic  ${stream}
