@@ -353,7 +353,7 @@ class Ixia(object):
                 if column == 'CRC Errors':
                     port_stat['received_crc_errored_frames'] = value
                 if column == 'Bytes Rx.':
-                    frames = int(value) / self._frame_size
+                    frames = int(value) / int(self._frame_size)
                     port_stat['received_frames'] = frames                    
             port_stats[port_stat['port']] = port_stat
         return port_stats
