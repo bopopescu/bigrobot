@@ -34,7 +34,7 @@ Verify L2 traffic: frame size 64 bytes
     sleep  10
     IXIA stop L2 traffic  ${stream}
     verify results
-    [Tags]  traffic  sanity  skipped
+    [Tags]  traffic  sanity
 
 Verify L2 traffic: frame size 128 bytes
     IXIA initialize  tg1
@@ -43,7 +43,7 @@ Verify L2 traffic: frame size 128 bytes
     sleep  10
     IXIA stop L2 traffic  ${stream}
     verify results
-    [Tags]  traffic  sanity  skipped
+    [Tags]  traffic  sanity
 
 Verify L2 traffic: frame size 256 bytes
     IXIA initialize  tg1
@@ -52,7 +52,7 @@ Verify L2 traffic: frame size 256 bytes
     sleep  10
     IXIA stop L2 traffic  ${stream}
     verify results
-    [Tags]  traffic  sanity  skipped
+    [Tags]  traffic  sanity
     
 Verify L2 traffic: frame size 512 bytes
     IXIA initialize  tg1
@@ -61,7 +61,7 @@ Verify L2 traffic: frame size 512 bytes
     sleep  10
     IXIA stop L2 traffic  ${stream}
     verify results
-    [Tags]  traffic  sanity  skipped
+    [Tags]  traffic  sanity
     
 Verify L2 traffic: frame size 1024 bytes
     IXIA initialize  tg1
@@ -70,7 +70,7 @@ Verify L2 traffic: frame size 1024 bytes
     sleep  10
     IXIA stop L2 traffic  ${stream}
     verify results
-    [Tags]  traffic  sanity  skipped
+    [Tags]  traffic  sanity
     
 Verify L2 traffic: frame size 1518 bytes
     IXIA initialize  tg1
@@ -79,7 +79,7 @@ Verify L2 traffic: frame size 1518 bytes
     sleep  10
     IXIA stop L2 traffic  ${stream}
     verify results
-    [Tags]  traffic  sanity  skipped
+    [Tags]  traffic  sanity
     
 Verify L2 traffic: frame size 9216 bytes
     IXIA initialize  tg1
@@ -89,7 +89,63 @@ Verify L2 traffic: frame size 9216 bytes
     IXIA stop L2 traffic  ${stream}
     verify results
     [Tags]  traffic  sanity
+
+Verify L2 Traffic: VLAN Tagged Traffic
+    IXIA initialize  tg1
+    ${stream}=  IXIA L2 add  flow=a->b  frame_rate=10000  frame_size=64  frame_cnt=50000  ethertype=8100  vlan_id=2048  name=a_b_flow
+    IXIA start L2 traffic  ${stream}
+    sleep  10
+    IXIA stop L2 traffic  ${stream}
+    verify results
+    [Tags]  traffic  sanity
+
+Verify L2 Traffic: Spanning Tree Protocol (for bridges) IEEE 802.1D
+    IXIA initialize  tg1
+    ${stream}=  IXIA L2 add  flow=a->b  frame_rate=10000  frame_size=64  frame_cnt=50000  ethertype=0802  src_mac=00:11:12:13:14:01  dst_mac=01:80:c2:00:00:00  name=a_b_flow
+    IXIA start L2 traffic  ${stream}
+    sleep  10
+    IXIA stop L2 traffic  ${stream}
+    verify results
+    [Tags]  traffic  sanity
+
+Verify L2 Traffic: Spanning Tree Protocol (for provider bridges) IEEE 802.1AD
+    IXIA initialize  tg1
+    ${stream}=  IXIA L2 add  flow=a->b  frame_rate=10000  frame_size=64  frame_cnt=50000  ethertype=0802  src_mac=00:11:12:13:14:01  dst_mac=01:80:c2:00:00:08  name=a_b_flow
+    IXIA start L2 traffic  ${stream}
+    sleep  10
+    IXIA stop L2 traffic  ${stream}
+    verify results
+    [Tags]  traffic  sanity
+
+Verify L2 Traffic: Ethernet flow control (Pause frame) IEEE 802.3x
+    IXIA initialize  tg1
+    ${stream}=  IXIA L2 add  flow=a->b  frame_rate=10000  frame_size=64  frame_cnt=50000  ethertype=0800  src_mac=00:11:12:13:14:01  dst_mac=01:80:c2:00:00:01  name=a_b_flow
+    IXIA start L2 traffic  ${stream}
+    sleep  10
+    IXIA stop L2 traffic  ${stream}
+    verify results
+    [Tags]  traffic  sanity
+
+Verify L2 Traffic: LLDP with ethernet ethertype
+    IXIA initialize  tg1
+    ${stream}=  IXIA L2 add  flow=a->b  frame_rate=10000  frame_size=64  frame_cnt=50000  ethertype=0800  src_mac=00:11:12:13:14:01  dst_mac=01:80:c2:00:00:0E  name=a_b_flow
+    IXIA start L2 traffic  ${stream}
+    sleep  10
+    IXIA stop L2 traffic  ${stream}
+    verify results
+    [Tags]  traffic  sanity
+
+Verify L2 Traffic: Ethernet OAM Protocol IEEE 802.3ah/Slow Protocols
+    IXIA initialize  tg1
+    ${stream}=  IXIA L2 add  flow=a->b  frame_rate=10000  frame_size=64  frame_cnt=50000  ethertype=8809  src_mac=00:11:12:13:14:01  dst_mac=01:80:c2:00:00:02  name=a_b_flow
+    IXIA start L2 traffic  ${stream}
+    sleep  10
+    IXIA stop L2 traffic  ${stream}
+    verify results
+    [Tags]  traffic  sanity   
     
+        
+        
 * Keywords
 
 bigtap suite setup
