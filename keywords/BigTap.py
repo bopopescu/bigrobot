@@ -15,6 +15,7 @@
 
 import autobot.helpers as helpers
 import autobot.test as test
+import keywords.AppController as AppController
 
 class BigTap(object):
 
@@ -25,37 +26,6 @@ class BigTap(object):
 # All Bigtap Show Commands Go Here:
 ###################################################
 
-    def rest_show_switch_dpid(self, switch_alias):
-        '''
-        Objective: Returns switch DPID, given a switch alias
-        
-        Input:  
-        | `switch_alias` |  User defined switch alias | 
-        
-        Description:
-        The function 
-        - executes a REST GET for http://<CONTROLLER_IP>:8082/api/v1/data/controller/core/switch?select=alias
-        - and greps for switch-alias, and returns switch-dpid
-        
-        Return value
-        - Switch DPID
-        '''
-        try:
-            t = test.Test()
-        except:
-            return False
-        else:
-            c = t.controller('master')
-            try:
-                url = '/api/v1/data/controller/core/switch?select=alias'
-                c.rest.get(url)
-                content = c.rest.content()
-                for x in range(0, len(content)):
-                    if str(content[x]['alias']) == str(switch_alias):
-                        return content[x]['dpid']
-                return False
-            except:
-                return False
 
     def rest_show_switch_flow(self, switch_alias=None, sw_dpid=None, return_value=None):
         '''
@@ -365,6 +335,32 @@ class BigTap(object):
 ###################################################
 # All Bigtap Configuration Commands Go Here:
 ###################################################
+#    def rest_add_switch_alias(self, switch_dpid, switch_alias):
+#        '''Set Switch alias via command "switch-alias <switch_alias>"
+#
+#            Input:
+#                `switch_dpid`        DPID of switch
+#                `switch_alias`        Desired alias for switch
+#
+#            Return: true if configuration is successful, false otherwise
+#        '''
+#        try:
+#            t = test.Test()
+#        except:
+#            return False
+#        else:
+#            c = t.controller('master')
+#            try:
+#                url = '/api/v1/data/controller/core/switch[dpid="%s"]' % (str(switch_dpid))
+#                c.rest.patch(url, {"alias": str(switch_alias)})
+#            except:
+#                helpers.test_failure(c.rest.error())
+#                return False
+#            else:
+#                helpers.test_log(c.rest.content_json())
+#                return True
+
+
     def rest_add_interface_role(self, intf_name, intf_type, intf_nickname, switch_alias=None, sw_dpid=None):
         '''
             Objective:
@@ -386,6 +382,7 @@ class BigTap(object):
             return False
         else:
             c = t.controller('master')
+            AppCommon = AppController.AppController()
             try:
                 if (switch_alias is None and sw_dpid is not None):
                     switch_dpid = sw_dpid
@@ -393,7 +390,7 @@ class BigTap(object):
                     helpers.log('Either Switch DPID or Switch Alias has to be provided')
                     return False
                 elif (switch_alias is not None and sw_dpid is None):
-                    switch_dpid = self.rest_show_switch_dpid(switch_alias)
+                    switch_dpid = AppCommon.rest_return_switch_dpid_from_alias(switch_alias)
                 else:
                     switch_dpid = sw_dpid
                 url = '/api/v1/data/controller/applications/bigtap/interface-config[interface="%s"][switch="%s"]' % (str(intf_name), str(switch_dpid))
@@ -403,7 +400,7 @@ class BigTap(object):
                 return False
             else:
                 if not c.rest.status_code_ok():
-                    helpers.test_failure(c.rest.error())
+                    helpers.test_log(c.rest.error())
                     return False
                 else:
                     helpers.test_log(c.rest.content_json())
@@ -433,14 +430,15 @@ class BigTap(object):
             return False
         else:
             c = t.controller('master')
+            AppCommon = AppController.AppController()
             try:
                 if (switch_alias is None and sw_dpid is not None):
                     switch_dpid = sw_dpid
                 elif (switch_alias is None and sw_dpid is None):
-                    helpers.log('Either Switch DPID or Switch Alias has to be provided')
+                    helpers.test_log('Either Switch DPID or Switch Alias has to be provided')
                     return False
                 elif (switch_alias is not None and sw_dpid is None):
-                    switch_dpid = self.rest_show_switch_dpid(switch_alias)
+                    switch_dpid = AppCommon.rest_return_switch_dpid_from_alias(switch_alias)
                 else:
                     switch_dpid = sw_dpid
 
@@ -475,6 +473,7 @@ class BigTap(object):
             return False
         else:
             c = t.controller('master')
+            AppCommon = AppController.AppController()
             try:
                 if (switch_alias is None and sw_dpid is not None):
                     switch_dpid = sw_dpid
@@ -482,7 +481,7 @@ class BigTap(object):
                     helpers.log('Either Switch DPID or Switch Alias has to be provided')
                     return False
                 elif (switch_alias is not None and sw_dpid is None):
-                    switch_dpid = self.rest_show_switch_dpid(switch_alias)
+                    switch_dpid = AppCommon.rest_return_switch_dpid_from_alias(switch_alias)
                 else:
                     switch_dpid = sw_dpid
                 url = '/api/v1/data/controller/core/switch[dpid="%s"]/interface[name="%s"]' % (str(switch_dpid), str(intf_name))
