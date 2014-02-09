@@ -30,4 +30,5 @@ class Ixia(object):
         return self._ixia.ix_stop_traffic(stream)
 
     def ixia_fetch_port_stats(self):
-        return self._ixia.ix_fetch_port_stats()
+        result = self._ixia.ix_fetch_port_stats()
+        helpers.log('result:\n%s' % helpers.prettify(result))
