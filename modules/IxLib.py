@@ -20,6 +20,7 @@ class Ixia(object):
         self._traffic_stream = {}
         self._topology = {}
         self._traffi_apply = False
+        self._frame_size = 68
 
     def port_map_list(self, ports):
         # something happens here
@@ -133,7 +134,7 @@ class Ixia(object):
         return mac_devices
 
     def ix_setup_traffic_streams_ethernet(self, mac1, mac2, frameType, frameSize, frameRate,
-                                      frameMode, frameCount, flow, name, ethertype=None, vlan_id=None):
+                                      frameMode, frameCount, flow, name, ethertype=None, vlan_id=None, crc=None):
         '''
             Returns traffic stream with 2 flows with provided mac sources
             Ex Usage:
@@ -151,6 +152,8 @@ class Ixia(object):
         self._handle.setAttribute(trafficStream1 + '/highLevelStream:1/' + 'frameSize', '-fixedSize', frameSize)
         self._handle.setAttribute(trafficStream1 + '/highLevelStream:1/' + 'frameRate', '-type', frameMode)
         self._handle.setAttribute(trafficStream1 + '/highLevelStream:1/' + 'frameRate', '-rate', frameRate)
+        if crc is not None:
+            self._handle.setAttribute(trafficStream1 + '/highLevelStream:1', '-crc', 'badCrc')
         if ethertype is not None:
             helpers.log('Adding Ethertype %s !!!' % ethertype)
             self._handle.setAttribute(trafficStream1 + '/highLevelStream:1/stack:"ethernet-1"/field:"ethernet.header.etherType-3"',
@@ -186,6 +189,8 @@ class Ixia(object):
             helpers.log('Adding Another  ixia end point set for Bi Directional Traffic..')
             endpointSet2 = self._handle.add(trafficStream1, 'endpointSet', '-name', 'l2u', '-sources', mac2,
                                       '-destinations', mac1)
+            if crc is not None:
+                self._handle.setAttribute(trafficStream1 + '/highLevelStream:2', '-crc', 'badCrc')
             self._handle.setAttribute(trafficStream1 + '/highLevelStream:2/' + 'frameSize', '-type', frameType)
             self._handle.setAttribute(trafficStream1 + '/highLevelStream:2/' + 'frameSize', '-fixedSize', frameSize)
             self._handle.setAttribute(trafficStream1 + '/highLevelStream:2/' + 'frameRate', '-type', frameMode)
@@ -236,12 +241,13 @@ class Ixia(object):
         s_step = kwargs.get('s_step', '00:00:00:01:00:00')
         frame_rate = kwargs.get('frame_rate', 100)
         frame_cnt = kwargs.get('frame_cnt', None)
-        frame_size = kwargs.get('frame_size', 70)
+        self._frame_size = kwargs.get('frame_size', 70)
         frame_type = kwargs.get('frame_type', 'fixed')
         frame_mode = kwargs.get('frame_mode', 'framesPerSecond')
         name = kwargs.get('name', 'gobot_default')
         ethertype = kwargs.get('ethertype', None)
         vlan_id = kwargs.get('vlan_id', None)
+        crc = kwargs.get('crc', None)
         
         ix_tcl_server = self._tcl_server_ip
         flow = kwargs.get('flow', 'None')
@@ -292,8 +298,8 @@ class Ixia(object):
         helpers.log('### Created Mac Devices with corrsponding Topos ...')
         # Create Traffic Stream:
         traffic_stream = self.ix_setup_traffic_streams_ethernet(mac_devices[0], mac_devices[1],
-                                                       frame_type, frame_size, frame_rate, frame_mode,
-                                                       frame_cnt, stream_flow, name, ethertype, vlan_id)
+                                                       frame_type, self._frame_size, frame_rate, frame_mode,
+                                                       frame_cnt, stream_flow, name, ethertype, vlan_id, crc)
         helpers.log('Created Traffic Stream : %s' % traffic_stream)
         self._traffic_stream[name] = traffic_stream
         return traffic_stream
@@ -337,13 +343,18 @@ class Ixia(object):
                 if column == 'Frames Tx.':
                     port_stat['transmitted_frames'] = value
                 if column == 'Valid Frames Rx.':
-                    port_stat['received_frames'] = value
+                    port_stat['received_valid_frames'] = value
                 if column == 'Frames Tx. Rate':
                     port_stat['transmitted_frame_rate'] = value
                 if column == 'Valid Frames Rx. Rate':
                     port_stat['received_frame_rate'] = value
-                if column == 'Data Integrity Frames Rx.':
-                    port_stat['received_invalid_frames'] = value                    
+#                 if column == 'Data Integrity Frames Rx.':
+#                     port_stat['received_invalid_frames'] = value
+                if column == 'CRC Errors':
+                    port_stat['received_crc_errored_frames'] = value
+                if column == 'Bytes Rx.':
+                    frames = int(value) / self._frame_size
+                    port_stat['received_frames'] = frames                    
             port_stats[port_stat['port']] = port_stat
         return port_stats
 
