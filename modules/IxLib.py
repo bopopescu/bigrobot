@@ -342,6 +342,8 @@ class Ixia(object):
                     port_stat['transmitted_frame_rate'] = value
                 if column == 'Valid Frames Rx. Rate':
                     port_stat['received_frame_rate'] = value
+                if column == 'Data Integrity Frames Rx.':
+                    port_stat['received_invalid_frames'] = value                    
             port_stats[port_stat['port']] = port_stat
         return port_stats
 
