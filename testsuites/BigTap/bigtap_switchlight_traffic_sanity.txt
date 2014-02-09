@@ -145,12 +145,14 @@ Verify L2 Traffic: Ethernet OAM Protocol IEEE 802.3ah/Slow Protocols
     [Tags]  traffic  sanity   
     
 Verify L2 Traffic: Traffic with CRC Errors
+    cli enable crc forwarding  s1
     IXIA initialize  tg1
     ${stream}=  IXIA L2 add  flow=a->b  frame_rate=10000  frame_size=64  frame_cnt=50000  ethertype=0800  crc=True  name=a_b_flow
     IXIA start L2 traffic  ${stream}
     sleep  10
     IXIA stop L2 traffic  ${stream}
-    verify results  transmitted_frames  received_crc_errored_frames  
+    verify results  transmitted_frames  received_crc_errored_frames
+    cli disable crc forwarding  s1  
     [Tags]  traffic  sanity        
         
 * Keywords
