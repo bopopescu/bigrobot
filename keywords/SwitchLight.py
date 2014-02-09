@@ -18,7 +18,8 @@ import subprocess
 import string
 import telnetlib
 import time
-import re
+# import re
+# from netaddr import *
 
 class SwitchLight(object):
 
@@ -976,6 +977,36 @@ class SwitchLight(object):
             helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
+    def cli_set_boot(self, node, image):
+        '''
+            Objective:
+            - Configure boot parameters on switch
+            
+            Inputs:
+            | node | Reference to switch (as defined in .topo file) |
+            | image | location and name of image |
+            | netmask | Network mask |
+            | gateway| Default Gateway for network |
+            | dns_server | IP Address of DNS Server |
+            | dns_domain | DNS Domain Address |
+            
+            Return Value:
+            - True, if configuration is successful
+            - False, if configuration is unsuccessful
+        '''
+        try:
+
+            t = test.Test()
+            s1 = t.switch(node)
+            cli_input_1 = 'boot image ' + str(image)
+            s1.config(cli_input_1)
+            helpers.test_log(s1.cli_content)
+            return True
+        except:
+            helpers.test_failure("Could not execute command. Please check log for errors")
+            return False
+
+
     def cli_enable_crc_forwarding(self, node):
         ''' 
             Objective:
@@ -1019,6 +1050,7 @@ class SwitchLight(object):
         except:
             helpers.test_failure("Could not execute command. Please check log for errors")
             return False
+
 
 
 #######################################################################
