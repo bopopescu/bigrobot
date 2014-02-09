@@ -32,3 +32,4 @@ class Ixia(object):
     def ixia_fetch_port_stats(self):
         result = self._ixia.ix_fetch_port_stats()
         helpers.log('result:\n%s' % helpers.prettify(result))
+        return result
