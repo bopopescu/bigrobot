@@ -17,7 +17,7 @@ class HaBsnRestClient(object):
 
     def name(self):
         return self._name
-    
+
     def status_code(self, *args, **kwargs):
         n = self.t.controller(self.name(), resolve_mastership=True)
         return n.rest.status_code(*args, **kwargs)
@@ -66,7 +66,7 @@ class HaBsnRestClient(object):
         n = self.t.controller(self.name(), resolve_mastership=True)
         return n.rest.delete(*args, **kwargs)
 
-    
+
 class HaControllerNode(object):
     """
     This class returns a faux controller node. It is intended as a wrapper for
@@ -84,6 +84,9 @@ class HaControllerNode(object):
 
     def name(self):
         return self._name
+
+    def ip(self):
+        return self._ip
 
     def platform(self, *args, **kwargs):
         n = self.t.controller(self.name(), resolve_mastership=True)

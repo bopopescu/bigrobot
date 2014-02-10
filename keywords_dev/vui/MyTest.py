@@ -246,6 +246,7 @@ admin_user = glance
         t = test.Test()
         n = t.node('c1')
 
+        n.rest.get('/api/v1/data/controller/core/aaa/local-users')
         try:
             n.rest.get('/api/v1/data/controller/core/aaa/local-users')
         except:
