@@ -1,0 +1,3464 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generated="20140207 17:41:52.561" generator="Robot 2.8.3 (Python 2.7.6 on darwin)">
+<suite source="/Users/donj/Documents/workspace/bigrobot/testsuites_dev/don/T5-sanity/temp.txt" id="s1" name="Temp">
+<kw type="setup" name="BsnCommon.Base Suite Setup">
+<doc></doc>
+<arguments>
+</arguments>
+<msg timestamp="20140207 17:41:52.785" level="TRACE">Arguments: [  ]</msg>
+<msg timestamp="20140207 17:41:52.840" level="INFO">[test.py:autobot.test.__init__:34] Loading config file /Users/donj/Documents/workspace/bigrobot/autobot/config/bsn.yaml
+</msg>
+<msg timestamp="20140207 17:41:52.843" level="INFO">[test.py:autobot.test.__init__:42] Loading topology file temp.topo
+</msg>
+<msg timestamp="20140207 17:41:52.847" level="INFO">[test.py:autobot.test.initialize:330] Initializing controller 'c2'
+</msg>
+<msg timestamp="20140207 17:41:52.849" level="INFO">[node.py:autobot.node.pingable_or_die:55] Ping 10.192.106.11 ('c2')
+</msg>
+<msg timestamp="20140207 17:41:52.850" level="INFO">[node.py:autobot.node.pingable_or_die:56] Ping command: ping -c 1 -W 100 10.192.106.11
+</msg>
+<msg timestamp="20140207 17:41:52.857" level="INFO">[node.py:autobot.node.pingable_or_die:56] Ping output:
+PING 10.192.106.11 (10.192.106.11): 56 data bytes
+64 bytes from 10.192.106.11: icmp_seq=0 ttl=64 time=0.905 ms
+
+--- 10.192.106.11 ping statistics ---
+1 packets transmitted, 1 packets received, 0.0% packet loss
+round-trip min/avg/max/stddev = 0.905/0.905/0.905/0.000 ms
+</msg>
+<msg timestamp="20140207 17:41:52.860" level="INFO">[node.py:autobot.node.pingable_or_die:56] Ping result: Ping host '10.192.106.11' - 1 transmitted, 1 received, 0% loss
+
+----
+</msg>
+<msg timestamp="20140207 17:41:52.861" level="INFO">[node.py:autobot.node.__init__:95] name=c2 host=10.192.106.11 user=admin password=adminadmin
+</msg>
+<msg timestamp="20140207 17:41:52.863" level="INFO">[devconf.py:autobot.devconf.__init__:48] Connecting to host 10.192.106.11 (login:admin, password:adminadmin)
+</msg>
+<msg timestamp="20140207 17:41:53.214" level="DEBUG">[chan 1] Max packet in: 34816 bytes</msg>
+<msg timestamp="20140207 17:41:54.622" level="INFO">[devconf.py:autobot.devconf.__init__:75] Using devconf driver '&lt;Exscript.protocols.drivers.bsn_controller.BsnControllerDriver object at 0x10faa7150&gt;' (name: 'bsn_controller')
+</msg>
+<msg timestamp="20140207 17:41:54.624" level="INFO">[test.py:autobot.test.initialize:385] Exscript driver for 'c2': &lt;Exscript.protocols.drivers.bsn_controller.BsnControllerDriver object at 0x10faa7150&gt;
+</msg>
+<msg timestamp="20140207 17:41:54.627" level="INFO">[test.py:autobot.test.initialize:386] Node 'c2' is platform 'bvs'
+</msg>
+<msg timestamp="20140207 17:41:54.629" level="INFO">[test.py:autobot.test.initialize:330] Initializing controller 'c1'
+</msg>
+<msg timestamp="20140207 17:41:54.632" level="INFO">[node.py:autobot.node.pingable_or_die:55] Ping 10.192.106.10 ('c1')
+</msg>
+<msg timestamp="20140207 17:41:54.635" level="INFO">[node.py:autobot.node.pingable_or_die:56] Ping command: ping -c 1 -W 100 10.192.106.10
+</msg>
+<msg timestamp="20140207 17:41:54.644" level="INFO">[node.py:autobot.node.pingable_or_die:56] Ping output:
+PING 10.192.106.10 (10.192.106.10): 56 data bytes
+64 bytes from 10.192.106.10: icmp_seq=0 ttl=64 time=0.872 ms
+
+--- 10.192.106.10 ping statistics ---
+1 packets transmitted, 1 packets received, 0.0% packet loss
+round-trip min/avg/max/stddev = 0.872/0.872/0.872/0.000 ms
+</msg>
+<msg timestamp="20140207 17:41:54.648" level="INFO">[node.py:autobot.node.pingable_or_die:56] Ping result: Ping host '10.192.106.10' - 1 transmitted, 1 received, 0% loss
+
+----
+</msg>
+<msg timestamp="20140207 17:41:54.651" level="INFO">[node.py:autobot.node.__init__:95] name=c1 host=10.192.106.10 user=admin password=adminadmin
+</msg>
+<msg timestamp="20140207 17:41:54.652" level="INFO">[devconf.py:autobot.devconf.__init__:48] Connecting to host 10.192.106.10 (login:admin, password:adminadmin)
+</msg>
+<msg timestamp="20140207 17:41:55.040" level="DEBUG">[chan 1] Max packet in: 34816 bytes</msg>
+<msg timestamp="20140207 17:41:59.578" level="INFO">[devconf.py:autobot.devconf.__init__:75] Using devconf driver '&lt;Exscript.protocols.drivers.bsn_controller.BsnControllerDriver object at 0x10faa7150&gt;' (name: 'bsn_controller')
+</msg>
+<msg timestamp="20140207 17:41:59.580" level="INFO">[test.py:autobot.test.initialize:385] Exscript driver for 'c1': &lt;Exscript.protocols.drivers.bsn_controller.BsnControllerDriver object at 0x10faa7150&gt;
+</msg>
+<msg timestamp="20140207 17:41:59.582" level="INFO">[test.py:autobot.test.initialize:386] Node 'c1' is platform 'bvs'
+</msg>
+<msg timestamp="20140207 17:41:59.584" level="INFO">[__init__.py:autobot.helpers.prettify_log:318] self._topology: 
+{'c1': &lt;autobot.node.ControllerNode object at 0x110132c90&gt;,
+ 'c2': &lt;autobot.node.ControllerNode object at 0x10f6432d0&gt;}
+</msg>
+<msg timestamp="20140207 17:41:59.585" level="INFO">[test.py:autobot.test.initialize:389] Test object initialization completed.
+</msg>
+<msg timestamp="20140207 17:41:59.586" level="INFO">[test.py:autobot.test.setup_controller_firewall_allow_rest_access:458] Enabling REST access via firewall filters
+</msg>
+<msg timestamp="20140207 17:41:59.588" level="INFO">[test.py:autobot.test.setup_controller_http_session_cookie:483] Setting up HTTP session cookies for REST access
+</msg>
+<msg timestamp="20140207 17:41:59.589" level="INFO">[restclient.py:autobot.restclient.request_session_cookie:48] session_cookie_url: /api/v1/auth/login
+</msg>
+<msg timestamp="20140207 17:41:59.591" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.post:59] RestClient: POST http://10.192.106.11:8080/api/v1/auth/login
+</msg>
+<msg timestamp="20140207 17:41:59.592" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.post:59] Headers = {
+    "content-type": "application/json"
+}
+</msg>
+<msg timestamp="20140207 17:41:59.594" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.post:59] Data = {
+    "password": "adminadmin", 
+    "user": "admin"
+}
+</msg>
+<msg timestamp="20140207 17:41:59.692" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.post:59] REST result:
+{
+    "content": {
+        "error_message": "", 
+        "session_cookie": "0QWIdq76Fsno14ZSbXyVelPwxNANR2W5", 
+        "success": true
+    }, 
+    "http_verb": "POST", 
+    "request_url": "http://10.192.106.11:8080/api/v1/auth/login", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+
+----
+</msg>
+<msg timestamp="20140207 17:41:59.694" level="INFO">[restclient.py:autobot.restclient.set_session_cookie:56] Saving session cookie 0QWIdq76Fsno14ZSbXyVelPwxNANR2W5
+</msg>
+<msg timestamp="20140207 17:41:59.695" level="INFO">[test.py:autobot.test.setup_controller_firewall_allow_rest_access:458] Enabling REST access via firewall filters
+</msg>
+<msg timestamp="20140207 17:41:59.696" level="INFO">[test.py:autobot.test.setup_controller_http_session_cookie:483] Setting up HTTP session cookies for REST access
+</msg>
+<msg timestamp="20140207 17:41:59.698" level="INFO">[restclient.py:autobot.restclient.request_session_cookie:48] session_cookie_url: /api/v1/auth/login
+</msg>
+<msg timestamp="20140207 17:41:59.699" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.post:59] RestClient: POST http://10.192.106.10:8080/api/v1/auth/login
+</msg>
+<msg timestamp="20140207 17:41:59.701" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.post:59] Headers = {
+    "content-type": "application/json"
+}
+</msg>
+<msg timestamp="20140207 17:41:59.702" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.post:59] Data = {
+    "password": "adminadmin", 
+    "user": "admin"
+}
+</msg>
+<msg timestamp="20140207 17:41:59.805" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.post:59] REST result:
+{
+    "content": {
+        "error_message": "", 
+        "session_cookie": "4N9SjnkLC2FCLJ_8Nr60SGOGV_npl-7B", 
+        "success": true
+    }, 
+    "http_verb": "POST", 
+    "request_url": "http://10.192.106.10:8080/api/v1/auth/login", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+
+----
+</msg>
+<msg timestamp="20140207 17:41:59.807" level="INFO">[restclient.py:autobot.restclient.set_session_cookie:56] Saving session cookie 4N9SjnkLC2FCLJ_8Nr60SGOGV_npl-7B
+</msg>
+<msg timestamp="20140207 17:41:59.808" level="INFO">[Controller.py:Controller.cli_save_running_config:94] Copying running-config to file on node 'c2'
+</msg>
+<msg timestamp="20140207 17:41:59.809" level="INFO">[BsnCommon.py:BsnCommon.base_suite_setup:29] Switching from cli to enable mode
+</msg>
+<msg timestamp="20140207 17:41:59.831" level="INFO">[BsnCommon.py:BsnCommon.base_suite_setup:29] Execute command on 'c2': 'copy running-config file://running-config-bigrobot'
+</msg>
+<msg timestamp="20140207 17:41:59.860" level="INFO">[BsnCommon.py:BsnCommon.base_suite_setup:29] enable content on 'c2':
+copy running-config file://running-config-bigrobot
+Error: Invalid Use: unsupported dest: file://running-config-bigrobot
+Controller-2# 
+
+----
+</msg>
+<msg timestamp="20140207 17:41:59.862" level="INFO">[Controller.py:Controller.cli_save_running_config:94] Copying running-config to file on node 'c1'
+</msg>
+<msg timestamp="20140207 17:41:59.863" level="INFO">[BsnCommon.py:BsnCommon.base_suite_setup:29] Switching from cli to enable mode
+</msg>
+<msg timestamp="20140207 17:41:59.886" level="INFO">[BsnCommon.py:BsnCommon.base_suite_setup:29] Execute command on 'c1': 'copy running-config file://running-config-bigrobot'
+</msg>
+<msg timestamp="20140207 17:41:59.917" level="INFO">[BsnCommon.py:BsnCommon.base_suite_setup:29] enable content on 'c1':
+copy running-config file://running-config-bigrobot
+Error: Invalid Use: unsupported dest: file://running-config-bigrobot
+Controller-10# 
+
+----
+</msg>
+<msg timestamp="20140207 17:41:59.918" level="TRACE">Return: None</msg>
+<status status="PASS" endtime="20140207 17:41:59.918" starttime="20140207 17:41:52.785"></status>
+</kw>
+<test id="s1-t1" name="ping h1 to h2 dual leaf single rack dynamic endpoints tag">
+<kw type="setup" name="T5 base test setup">
+<doc></doc>
+<arguments>
+</arguments>
+<msg timestamp="20140207 17:41:59.920" level="TRACE">Arguments: [  ]</msg>
+<kw type="kw" name="BsnCommon.Base Test Setup">
+<doc></doc>
+<arguments>
+</arguments>
+<msg timestamp="20140207 17:41:59.920" level="TRACE">Arguments: [  ]</msg>
+<msg timestamp="20140207 17:41:59.921" level="TRACE">Return: None</msg>
+<status status="PASS" endtime="20140207 17:41:59.921" starttime="20140207 17:41:59.920"></status>
+</kw>
+<kw type="kw" name="add a tenant">
+<doc></doc>
+<arguments>
+<arg>h1h2h3</arg>
+</arguments>
+<msg timestamp="20140207 17:41:59.921" level="TRACE">Arguments: [ ${tenant}=u'h1h2h3' ]</msg>
+<kw type="kw" name="T5.Rest Add Tenant">
+<doc></doc>
+<arguments>
+<arg>${tenant}</arg>
+</arguments>
+<msg timestamp="20140207 17:41:59.922" level="TRACE">Arguments: [ u'h1h2h3' ]</msg>
+<msg timestamp="20140207 17:41:59.924" level="INFO">[T5.py:T5.rest_add_tenant:23] Input arguments: tenant = h1h2h3
+</msg>
+<msg timestamp="20140207 17:41:59.926" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] RestClient: PUT http://10.192.106.10:8080/api/v1/data/controller/applications/bvs/tenant[name="h1h2h3"]
+</msg>
+<msg timestamp="20140207 17:41:59.929" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] Headers = {
+    "Cookie": "session_cookie=4N9SjnkLC2FCLJ_8Nr60SGOGV_npl-7B", 
+    "content-type": "application/json"
+}
+</msg>
+<msg timestamp="20140207 17:41:59.931" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] Data = {
+    "name": "h1h2h3"
+}
+</msg>
+<msg timestamp="20140207 17:41:59.957" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] REST result:
+{
+    "content": {}, 
+    "http_verb": "PUT", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/applications/bvs/tenant[name=\"h1h2h3\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+
+----
+</msg>
+<msg timestamp="20140207 17:41:59.960" level="INFO">[T5.py:T5.rest_add_tenant:27] Output: {
+    "content": {}, 
+    "http_verb": "PUT", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/applications/bvs/tenant[name=\"h1h2h3\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+</msg>
+<msg timestamp="20140207 17:41:59.960" level="TRACE">Return: {}</msg>
+<status status="PASS" endtime="20140207 17:41:59.960" starttime="20140207 17:41:59.922"></status>
+</kw>
+<msg timestamp="20140207 17:41:59.960" level="TRACE">Return: None</msg>
+<status status="PASS" endtime="20140207 17:41:59.960" starttime="20140207 17:41:59.921"></status>
+</kw>
+<kw type="kw" name="add a vns">
+<doc></doc>
+<arguments>
+<arg>h1h2h3</arg>
+<arg>h1h2h3</arg>
+</arguments>
+<msg timestamp="20140207 17:41:59.961" level="TRACE">Arguments: [ ${tenant}=u'h1h2h3' | ${vns}=u'h1h2h3' ]</msg>
+<kw type="kw" name="T5.Rest Add Vns">
+<doc></doc>
+<arguments>
+<arg>${tenant}</arg>
+<arg>${vns}</arg>
+</arguments>
+<msg timestamp="20140207 17:41:59.961" level="TRACE">Arguments: [ u'h1h2h3' | u'h1h2h3' ]</msg>
+<msg timestamp="20140207 17:41:59.963" level="INFO">[T5.py:T5.rest_add_vns:115] Input arguments: tenant = h1h2h3 vns = h1h2h3
+</msg>
+<msg timestamp="20140207 17:41:59.966" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] RestClient: PUT http://10.192.106.10:8080/api/v1/data/controller/applications/bvs/tenant[name="h1h2h3"]/vns[name="h1h2h3"]
+</msg>
+<msg timestamp="20140207 17:41:59.968" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] Headers = {
+    "Cookie": "session_cookie=4N9SjnkLC2FCLJ_8Nr60SGOGV_npl-7B", 
+    "content-type": "application/json"
+}
+</msg>
+<msg timestamp="20140207 17:41:59.970" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] Data = {
+    "name": "h1h2h3"
+}
+</msg>
+<msg timestamp="20140207 17:41:59.997" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] REST result:
+{
+    "content": {}, 
+    "http_verb": "PUT", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/applications/bvs/tenant[name=\"h1h2h3\"]/vns[name=\"h1h2h3\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+
+----
+</msg>
+<msg timestamp="20140207 17:41:59.997" level="TRACE">Return: {}</msg>
+<status status="PASS" endtime="20140207 17:41:59.997" starttime="20140207 17:41:59.961"></status>
+</kw>
+<msg timestamp="20140207 17:41:59.997" level="TRACE">Return: None</msg>
+<status status="PASS" endtime="20140207 17:41:59.997" starttime="20140207 17:41:59.960"></status>
+</kw>
+<kw type="kw" name="add a tenant">
+<doc></doc>
+<arguments>
+<arg>h4h5h6</arg>
+</arguments>
+<msg timestamp="20140207 17:41:59.998" level="TRACE">Arguments: [ ${tenant}=u'h4h5h6' ]</msg>
+<kw type="kw" name="T5.Rest Add Tenant">
+<doc></doc>
+<arguments>
+<arg>${tenant}</arg>
+</arguments>
+<msg timestamp="20140207 17:41:59.999" level="TRACE">Arguments: [ u'h4h5h6' ]</msg>
+<msg timestamp="20140207 17:42:00.000" level="INFO">[T5.py:T5.rest_add_tenant:23] Input arguments: tenant = h4h5h6
+</msg>
+<msg timestamp="20140207 17:42:00.003" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] RestClient: PUT http://10.192.106.10:8080/api/v1/data/controller/applications/bvs/tenant[name="h4h5h6"]
+</msg>
+<msg timestamp="20140207 17:42:00.005" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] Headers = {
+    "Cookie": "session_cookie=4N9SjnkLC2FCLJ_8Nr60SGOGV_npl-7B", 
+    "content-type": "application/json"
+}
+</msg>
+<msg timestamp="20140207 17:42:00.007" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] Data = {
+    "name": "h4h5h6"
+}
+</msg>
+<msg timestamp="20140207 17:42:00.044" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] REST result:
+{
+    "content": {}, 
+    "http_verb": "PUT", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/applications/bvs/tenant[name=\"h4h5h6\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+
+----
+</msg>
+<msg timestamp="20140207 17:42:00.046" level="INFO">[T5.py:T5.rest_add_tenant:27] Output: {
+    "content": {}, 
+    "http_verb": "PUT", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/applications/bvs/tenant[name=\"h4h5h6\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+</msg>
+<msg timestamp="20140207 17:42:00.047" level="TRACE">Return: {}</msg>
+<status status="PASS" endtime="20140207 17:42:00.046" starttime="20140207 17:41:59.998"></status>
+</kw>
+<msg timestamp="20140207 17:42:00.047" level="TRACE">Return: None</msg>
+<status status="PASS" endtime="20140207 17:42:00.047" starttime="20140207 17:41:59.997"></status>
+</kw>
+<kw type="kw" name="add a vns">
+<doc></doc>
+<arguments>
+<arg>h4h5h6</arg>
+<arg>h4h5h6</arg>
+</arguments>
+<msg timestamp="20140207 17:42:00.048" level="TRACE">Arguments: [ ${tenant}=u'h4h5h6' | ${vns}=u'h4h5h6' ]</msg>
+<kw type="kw" name="T5.Rest Add Vns">
+<doc></doc>
+<arguments>
+<arg>${tenant}</arg>
+<arg>${vns}</arg>
+</arguments>
+<msg timestamp="20140207 17:42:00.048" level="TRACE">Arguments: [ u'h4h5h6' | u'h4h5h6' ]</msg>
+<msg timestamp="20140207 17:42:00.050" level="INFO">[T5.py:T5.rest_add_vns:115] Input arguments: tenant = h4h5h6 vns = h4h5h6
+</msg>
+<msg timestamp="20140207 17:42:00.052" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] RestClient: PUT http://10.192.106.10:8080/api/v1/data/controller/applications/bvs/tenant[name="h4h5h6"]/vns[name="h4h5h6"]
+</msg>
+<msg timestamp="20140207 17:42:00.055" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] Headers = {
+    "Cookie": "session_cookie=4N9SjnkLC2FCLJ_8Nr60SGOGV_npl-7B", 
+    "content-type": "application/json"
+}
+</msg>
+<msg timestamp="20140207 17:42:00.057" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] Data = {
+    "name": "h4h5h6"
+}
+</msg>
+<msg timestamp="20140207 17:42:00.092" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] REST result:
+{
+    "content": {}, 
+    "http_verb": "PUT", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/applications/bvs/tenant[name=\"h4h5h6\"]/vns[name=\"h4h5h6\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+
+----
+</msg>
+<msg timestamp="20140207 17:42:00.092" level="TRACE">Return: {}</msg>
+<status status="PASS" endtime="20140207 17:42:00.092" starttime="20140207 17:42:00.048"></status>
+</kw>
+<msg timestamp="20140207 17:42:00.092" level="TRACE">Return: None</msg>
+<status status="PASS" endtime="20140207 17:42:00.092" starttime="20140207 17:42:00.047"></status>
+</kw>
+<kw type="kw" name="add a portgroup">
+<doc></doc>
+<arguments>
+<arg>p1</arg>
+</arguments>
+<msg timestamp="20140207 17:42:00.093" level="TRACE">Arguments: [ ${pg}=u'p1' ]</msg>
+<kw type="kw" name="T5.Rest Add Portgroup">
+<doc></doc>
+<arguments>
+<arg>${pg}</arg>
+</arguments>
+<msg timestamp="20140207 17:42:00.093" level="TRACE">Arguments: [ u'p1' ]</msg>
+<msg timestamp="20140207 17:42:00.095" level="INFO">[T5.py:T5.rest_add_portgroup:164] Input arguments: port-group = p1
+</msg>
+<msg timestamp="20140207 17:42:00.097" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] RestClient: PUT http://10.192.106.10:8080/api/v1/data/controller/fabric/port-group[name="p1"]
+</msg>
+<msg timestamp="20140207 17:42:00.099" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] Headers = {
+    "Cookie": "session_cookie=4N9SjnkLC2FCLJ_8Nr60SGOGV_npl-7B", 
+    "content-type": "application/json"
+}
+</msg>
+<msg timestamp="20140207 17:42:00.102" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] Data = {
+    "name": "p1"
+}
+</msg>
+<msg timestamp="20140207 17:42:00.140" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] REST result:
+{
+    "content": {}, 
+    "http_verb": "PUT", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/fabric/port-group[name=\"p1\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+
+----
+</msg>
+<msg timestamp="20140207 17:42:00.142" level="INFO">[T5.py:T5.rest_add_portgroup:168] Output: {
+    "content": {}, 
+    "http_verb": "PUT", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/fabric/port-group[name=\"p1\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+</msg>
+<msg timestamp="20140207 17:42:00.142" level="TRACE">Return: {}</msg>
+<status status="PASS" endtime="20140207 17:42:00.142" starttime="20140207 17:42:00.093"></status>
+</kw>
+<msg timestamp="20140207 17:42:00.143" level="TRACE">Return: None</msg>
+<status status="PASS" endtime="20140207 17:42:00.143" starttime="20140207 17:42:00.092"></status>
+</kw>
+<kw type="kw" name="add interface to portgroup">
+<doc></doc>
+<arguments>
+<arg>leaf0-a</arg>
+<arg>${h1_intf0}</arg>
+<arg>p1</arg>
+</arguments>
+<msg timestamp="20140207 17:42:00.144" level="TRACE">Arguments: [ ${switch}=u'leaf0-a' | ${intf}=u'ethernet8' | ${pg}=u'p1' ]</msg>
+<kw type="kw" name="T5.Rest Add Interface To Portgroup">
+<doc></doc>
+<arguments>
+<arg>${switch}</arg>
+<arg>${intf}</arg>
+<arg>${pg}</arg>
+</arguments>
+<msg timestamp="20140207 17:42:00.144" level="TRACE">Arguments: [ u'leaf0-a' | u'ethernet8' | u'p1' ]</msg>
+<msg timestamp="20140207 17:42:00.146" level="INFO">[T5.py:T5.rest_add_interface_to_portgroup:236] Input arguments: switch-name = leaf0-a Interface-name = ethernet8 port-group = p1
+</msg>
+<msg timestamp="20140207 17:42:00.149" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] RestClient: PUT http://10.192.106.10:8080/api/v1/data/controller/core/switch-config[name="leaf0-a"]/interface[name="ethernet8"]
+</msg>
+<msg timestamp="20140207 17:42:00.152" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] Headers = {
+    "Cookie": "session_cookie=4N9SjnkLC2FCLJ_8Nr60SGOGV_npl-7B", 
+    "content-type": "application/json"
+}
+</msg>
+<msg timestamp="20140207 17:42:00.155" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] Data = {
+    "name": "ethernet8", 
+    "port-group-name": "p1"
+}
+</msg>
+<msg timestamp="20140207 17:42:00.182" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] REST result:
+{
+    "content": {}, 
+    "http_verb": "PUT", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/core/switch-config[name=\"leaf0-a\"]/interface[name=\"ethernet8\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+
+----
+</msg>
+<msg timestamp="20140207 17:42:00.184" level="INFO">[T5.py:T5.rest_add_interface_to_portgroup:240] Output: {
+    "content": {}, 
+    "http_verb": "PUT", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/core/switch-config[name=\"leaf0-a\"]/interface[name=\"ethernet8\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+</msg>
+<msg timestamp="20140207 17:42:00.184" level="TRACE">Return: {}</msg>
+<status status="PASS" endtime="20140207 17:42:00.184" starttime="20140207 17:42:00.144"></status>
+</kw>
+<msg timestamp="20140207 17:42:00.184" level="TRACE">Return: None</msg>
+<status status="PASS" endtime="20140207 17:42:00.184" starttime="20140207 17:42:00.143"></status>
+</kw>
+<kw type="kw" name="add interface to portgroup">
+<doc></doc>
+<arguments>
+<arg>leaf0-b</arg>
+<arg>${h1_intf1}</arg>
+<arg>p1</arg>
+</arguments>
+<msg timestamp="20140207 17:42:00.185" level="TRACE">Arguments: [ ${switch}=u'leaf0-b' | ${intf}=u'ethernet8' | ${pg}=u'p1' ]</msg>
+<kw type="kw" name="T5.Rest Add Interface To Portgroup">
+<doc></doc>
+<arguments>
+<arg>${switch}</arg>
+<arg>${intf}</arg>
+<arg>${pg}</arg>
+</arguments>
+<msg timestamp="20140207 17:42:00.186" level="TRACE">Arguments: [ u'leaf0-b' | u'ethernet8' | u'p1' ]</msg>
+<msg timestamp="20140207 17:42:00.188" level="INFO">[T5.py:T5.rest_add_interface_to_portgroup:236] Input arguments: switch-name = leaf0-b Interface-name = ethernet8 port-group = p1
+</msg>
+<msg timestamp="20140207 17:42:00.190" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] RestClient: PUT http://10.192.106.10:8080/api/v1/data/controller/core/switch-config[name="leaf0-b"]/interface[name="ethernet8"]
+</msg>
+<msg timestamp="20140207 17:42:00.192" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] Headers = {
+    "Cookie": "session_cookie=4N9SjnkLC2FCLJ_8Nr60SGOGV_npl-7B", 
+    "content-type": "application/json"
+}
+</msg>
+<msg timestamp="20140207 17:42:00.194" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] Data = {
+    "name": "ethernet8", 
+    "port-group-name": "p1"
+}
+</msg>
+<msg timestamp="20140207 17:42:00.221" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] REST result:
+{
+    "content": {}, 
+    "http_verb": "PUT", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/core/switch-config[name=\"leaf0-b\"]/interface[name=\"ethernet8\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+
+----
+</msg>
+<msg timestamp="20140207 17:42:00.222" level="INFO">[T5.py:T5.rest_add_interface_to_portgroup:240] Output: {
+    "content": {}, 
+    "http_verb": "PUT", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/core/switch-config[name=\"leaf0-b\"]/interface[name=\"ethernet8\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+</msg>
+<msg timestamp="20140207 17:42:00.223" level="TRACE">Return: {}</msg>
+<status status="PASS" endtime="20140207 17:42:00.223" starttime="20140207 17:42:00.185"></status>
+</kw>
+<msg timestamp="20140207 17:42:00.223" level="TRACE">Return: None</msg>
+<status status="PASS" endtime="20140207 17:42:00.223" starttime="20140207 17:42:00.184"></status>
+</kw>
+<kw type="kw" name="T5.Rest Add Portgroup Lacp">
+<doc></doc>
+<arguments>
+<arg>p1</arg>
+</arguments>
+<msg timestamp="20140207 17:42:00.223" level="TRACE">Arguments: [ u'p1' ]</msg>
+<msg timestamp="20140207 17:42:00.225" level="INFO">[T5.py:T5.rest_add_portgroup_lacp:251] Input arguments: port-group = p1
+</msg>
+<msg timestamp="20140207 17:42:00.227" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.patch:71] RestClient: PATCH http://10.192.106.10:8080/api/v1/data/controller/fabric/port-group[name="p1"]
+</msg>
+<msg timestamp="20140207 17:42:00.229" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.patch:71] Headers = {
+    "Cookie": "session_cookie=4N9SjnkLC2FCLJ_8Nr60SGOGV_npl-7B", 
+    "content-type": "application/json"
+}
+</msg>
+<msg timestamp="20140207 17:42:00.230" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.patch:71] Data = {
+    "mode": "lacp"
+}
+</msg>
+<msg timestamp="20140207 17:42:00.252" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.patch:71] REST result:
+{
+    "content": {}, 
+    "http_verb": "PATCH", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/fabric/port-group[name=\"p1\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+
+----
+</msg>
+<msg timestamp="20140207 17:42:00.253" level="INFO">[T5.py:T5.rest_add_portgroup_lacp:255] Output: {
+    "content": {}, 
+    "http_verb": "PATCH", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/fabric/port-group[name=\"p1\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+</msg>
+<msg timestamp="20140207 17:42:00.253" level="TRACE">Return: {}</msg>
+<status status="PASS" endtime="20140207 17:42:00.253" starttime="20140207 17:42:00.223"></status>
+</kw>
+<kw type="kw" name="add a portgroup">
+<doc></doc>
+<arguments>
+<arg>p2</arg>
+</arguments>
+<msg timestamp="20140207 17:42:00.254" level="TRACE">Arguments: [ ${pg}=u'p2' ]</msg>
+<kw type="kw" name="T5.Rest Add Portgroup">
+<doc></doc>
+<arguments>
+<arg>${pg}</arg>
+</arguments>
+<msg timestamp="20140207 17:42:00.255" level="TRACE">Arguments: [ u'p2' ]</msg>
+<msg timestamp="20140207 17:42:00.257" level="INFO">[T5.py:T5.rest_add_portgroup:164] Input arguments: port-group = p2
+</msg>
+<msg timestamp="20140207 17:42:00.259" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] RestClient: PUT http://10.192.106.10:8080/api/v1/data/controller/fabric/port-group[name="p2"]
+</msg>
+<msg timestamp="20140207 17:42:00.261" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] Headers = {
+    "Cookie": "session_cookie=4N9SjnkLC2FCLJ_8Nr60SGOGV_npl-7B", 
+    "content-type": "application/json"
+}
+</msg>
+<msg timestamp="20140207 17:42:00.263" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] Data = {
+    "name": "p2"
+}
+</msg>
+<msg timestamp="20140207 17:42:00.283" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] REST result:
+{
+    "content": {}, 
+    "http_verb": "PUT", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/fabric/port-group[name=\"p2\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+
+----
+</msg>
+<msg timestamp="20140207 17:42:00.285" level="INFO">[T5.py:T5.rest_add_portgroup:168] Output: {
+    "content": {}, 
+    "http_verb": "PUT", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/fabric/port-group[name=\"p2\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+</msg>
+<msg timestamp="20140207 17:42:00.285" level="TRACE">Return: {}</msg>
+<status status="PASS" endtime="20140207 17:42:00.285" starttime="20140207 17:42:00.254"></status>
+</kw>
+<msg timestamp="20140207 17:42:00.285" level="TRACE">Return: None</msg>
+<status status="PASS" endtime="20140207 17:42:00.285" starttime="20140207 17:42:00.254"></status>
+</kw>
+<kw type="kw" name="add interface to portgroup">
+<doc></doc>
+<arguments>
+<arg>leaf0-a</arg>
+<arg>${h2_intf0}</arg>
+<arg>p2</arg>
+</arguments>
+<msg timestamp="20140207 17:42:00.286" level="TRACE">Arguments: [ ${switch}=u'leaf0-a' | ${intf}=u'ethernet9' | ${pg}=u'p2' ]</msg>
+<kw type="kw" name="T5.Rest Add Interface To Portgroup">
+<doc></doc>
+<arguments>
+<arg>${switch}</arg>
+<arg>${intf}</arg>
+<arg>${pg}</arg>
+</arguments>
+<msg timestamp="20140207 17:42:00.287" level="TRACE">Arguments: [ u'leaf0-a' | u'ethernet9' | u'p2' ]</msg>
+<msg timestamp="20140207 17:42:00.289" level="INFO">[T5.py:T5.rest_add_interface_to_portgroup:236] Input arguments: switch-name = leaf0-a Interface-name = ethernet9 port-group = p2
+</msg>
+<msg timestamp="20140207 17:42:00.291" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] RestClient: PUT http://10.192.106.10:8080/api/v1/data/controller/core/switch-config[name="leaf0-a"]/interface[name="ethernet9"]
+</msg>
+<msg timestamp="20140207 17:42:00.293" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] Headers = {
+    "Cookie": "session_cookie=4N9SjnkLC2FCLJ_8Nr60SGOGV_npl-7B", 
+    "content-type": "application/json"
+}
+</msg>
+<msg timestamp="20140207 17:42:00.295" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] Data = {
+    "name": "ethernet9", 
+    "port-group-name": "p2"
+}
+</msg>
+<msg timestamp="20140207 17:42:00.313" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] REST result:
+{
+    "content": {}, 
+    "http_verb": "PUT", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/core/switch-config[name=\"leaf0-a\"]/interface[name=\"ethernet9\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+
+----
+</msg>
+<msg timestamp="20140207 17:42:00.315" level="INFO">[T5.py:T5.rest_add_interface_to_portgroup:240] Output: {
+    "content": {}, 
+    "http_verb": "PUT", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/core/switch-config[name=\"leaf0-a\"]/interface[name=\"ethernet9\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+</msg>
+<msg timestamp="20140207 17:42:00.315" level="TRACE">Return: {}</msg>
+<status status="PASS" endtime="20140207 17:42:00.315" starttime="20140207 17:42:00.286"></status>
+</kw>
+<msg timestamp="20140207 17:42:00.316" level="TRACE">Return: None</msg>
+<status status="PASS" endtime="20140207 17:42:00.316" starttime="20140207 17:42:00.285"></status>
+</kw>
+<kw type="kw" name="add interface to portgroup">
+<doc></doc>
+<arguments>
+<arg>leaf0-b</arg>
+<arg>${h2_intf1}</arg>
+<arg>p2</arg>
+</arguments>
+<msg timestamp="20140207 17:42:00.317" level="TRACE">Arguments: [ ${switch}=u'leaf0-b' | ${intf}=u'ethernet9' | ${pg}=u'p2' ]</msg>
+<kw type="kw" name="T5.Rest Add Interface To Portgroup">
+<doc></doc>
+<arguments>
+<arg>${switch}</arg>
+<arg>${intf}</arg>
+<arg>${pg}</arg>
+</arguments>
+<msg timestamp="20140207 17:42:00.317" level="TRACE">Arguments: [ u'leaf0-b' | u'ethernet9' | u'p2' ]</msg>
+<msg timestamp="20140207 17:42:00.319" level="INFO">[T5.py:T5.rest_add_interface_to_portgroup:236] Input arguments: switch-name = leaf0-b Interface-name = ethernet9 port-group = p2
+</msg>
+<msg timestamp="20140207 17:42:00.321" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] RestClient: PUT http://10.192.106.10:8080/api/v1/data/controller/core/switch-config[name="leaf0-b"]/interface[name="ethernet9"]
+</msg>
+<msg timestamp="20140207 17:42:00.323" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] Headers = {
+    "Cookie": "session_cookie=4N9SjnkLC2FCLJ_8Nr60SGOGV_npl-7B", 
+    "content-type": "application/json"
+}
+</msg>
+<msg timestamp="20140207 17:42:00.325" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] Data = {
+    "name": "ethernet9", 
+    "port-group-name": "p2"
+}
+</msg>
+<msg timestamp="20140207 17:42:00.353" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] REST result:
+{
+    "content": {}, 
+    "http_verb": "PUT", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/core/switch-config[name=\"leaf0-b\"]/interface[name=\"ethernet9\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+
+----
+</msg>
+<msg timestamp="20140207 17:42:00.355" level="INFO">[T5.py:T5.rest_add_interface_to_portgroup:240] Output: {
+    "content": {}, 
+    "http_verb": "PUT", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/core/switch-config[name=\"leaf0-b\"]/interface[name=\"ethernet9\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+</msg>
+<msg timestamp="20140207 17:42:00.356" level="TRACE">Return: {}</msg>
+<status status="PASS" endtime="20140207 17:42:00.356" starttime="20140207 17:42:00.317"></status>
+</kw>
+<msg timestamp="20140207 17:42:00.356" level="TRACE">Return: None</msg>
+<status status="PASS" endtime="20140207 17:42:00.356" starttime="20140207 17:42:00.316"></status>
+</kw>
+<kw type="kw" name="T5.Rest Add Portgroup Lacp">
+<doc></doc>
+<arguments>
+<arg>p2</arg>
+</arguments>
+<msg timestamp="20140207 17:42:00.356" level="TRACE">Arguments: [ u'p2' ]</msg>
+<msg timestamp="20140207 17:42:00.358" level="INFO">[T5.py:T5.rest_add_portgroup_lacp:251] Input arguments: port-group = p2
+</msg>
+<msg timestamp="20140207 17:42:00.360" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.patch:71] RestClient: PATCH http://10.192.106.10:8080/api/v1/data/controller/fabric/port-group[name="p2"]
+</msg>
+<msg timestamp="20140207 17:42:00.361" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.patch:71] Headers = {
+    "Cookie": "session_cookie=4N9SjnkLC2FCLJ_8Nr60SGOGV_npl-7B", 
+    "content-type": "application/json"
+}
+</msg>
+<msg timestamp="20140207 17:42:00.363" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.patch:71] Data = {
+    "mode": "lacp"
+}
+</msg>
+<msg timestamp="20140207 17:42:00.382" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.patch:71] REST result:
+{
+    "content": {}, 
+    "http_verb": "PATCH", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/fabric/port-group[name=\"p2\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+
+----
+</msg>
+<msg timestamp="20140207 17:42:00.384" level="INFO">[T5.py:T5.rest_add_portgroup_lacp:255] Output: {
+    "content": {}, 
+    "http_verb": "PATCH", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/fabric/port-group[name=\"p2\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+</msg>
+<msg timestamp="20140207 17:42:00.384" level="TRACE">Return: {}</msg>
+<status status="PASS" endtime="20140207 17:42:00.384" starttime="20140207 17:42:00.356"></status>
+</kw>
+<kw type="kw" name="add a portgroup">
+<doc></doc>
+<arguments>
+<arg>p3</arg>
+</arguments>
+<msg timestamp="20140207 17:42:00.385" level="TRACE">Arguments: [ ${pg}=u'p3' ]</msg>
+<kw type="kw" name="T5.Rest Add Portgroup">
+<doc></doc>
+<arguments>
+<arg>${pg}</arg>
+</arguments>
+<msg timestamp="20140207 17:42:00.385" level="TRACE">Arguments: [ u'p3' ]</msg>
+<msg timestamp="20140207 17:42:00.387" level="INFO">[T5.py:T5.rest_add_portgroup:164] Input arguments: port-group = p3
+</msg>
+<msg timestamp="20140207 17:42:00.389" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] RestClient: PUT http://10.192.106.10:8080/api/v1/data/controller/fabric/port-group[name="p3"]
+</msg>
+<msg timestamp="20140207 17:42:00.391" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] Headers = {
+    "Cookie": "session_cookie=4N9SjnkLC2FCLJ_8Nr60SGOGV_npl-7B", 
+    "content-type": "application/json"
+}
+</msg>
+<msg timestamp="20140207 17:42:00.393" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] Data = {
+    "name": "p3"
+}
+</msg>
+<msg timestamp="20140207 17:42:00.413" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] REST result:
+{
+    "content": {}, 
+    "http_verb": "PUT", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/fabric/port-group[name=\"p3\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+
+----
+</msg>
+<msg timestamp="20140207 17:42:00.414" level="INFO">[T5.py:T5.rest_add_portgroup:168] Output: {
+    "content": {}, 
+    "http_verb": "PUT", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/fabric/port-group[name=\"p3\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+</msg>
+<msg timestamp="20140207 17:42:00.415" level="TRACE">Return: {}</msg>
+<status status="PASS" endtime="20140207 17:42:00.415" starttime="20140207 17:42:00.385"></status>
+</kw>
+<msg timestamp="20140207 17:42:00.415" level="TRACE">Return: None</msg>
+<status status="PASS" endtime="20140207 17:42:00.415" starttime="20140207 17:42:00.384"></status>
+</kw>
+<kw type="kw" name="add interface to portgroup">
+<doc></doc>
+<arguments>
+<arg>leaf1-a</arg>
+<arg>${h3_intf0}</arg>
+<arg>p3</arg>
+</arguments>
+<msg timestamp="20140207 17:42:00.416" level="TRACE">Arguments: [ ${switch}=u'leaf1-a' | ${intf}=u'ethernet8' | ${pg}=u'p3' ]</msg>
+<kw type="kw" name="T5.Rest Add Interface To Portgroup">
+<doc></doc>
+<arguments>
+<arg>${switch}</arg>
+<arg>${intf}</arg>
+<arg>${pg}</arg>
+</arguments>
+<msg timestamp="20140207 17:42:00.416" level="TRACE">Arguments: [ u'leaf1-a' | u'ethernet8' | u'p3' ]</msg>
+<msg timestamp="20140207 17:42:00.418" level="INFO">[T5.py:T5.rest_add_interface_to_portgroup:236] Input arguments: switch-name = leaf1-a Interface-name = ethernet8 port-group = p3
+</msg>
+<msg timestamp="20140207 17:42:00.420" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] RestClient: PUT http://10.192.106.10:8080/api/v1/data/controller/core/switch-config[name="leaf1-a"]/interface[name="ethernet8"]
+</msg>
+<msg timestamp="20140207 17:42:00.423" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] Headers = {
+    "Cookie": "session_cookie=4N9SjnkLC2FCLJ_8Nr60SGOGV_npl-7B", 
+    "content-type": "application/json"
+}
+</msg>
+<msg timestamp="20140207 17:42:00.425" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] Data = {
+    "name": "ethernet8", 
+    "port-group-name": "p3"
+}
+</msg>
+<msg timestamp="20140207 17:42:00.448" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] REST result:
+{
+    "content": {}, 
+    "http_verb": "PUT", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/core/switch-config[name=\"leaf1-a\"]/interface[name=\"ethernet8\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+
+----
+</msg>
+<msg timestamp="20140207 17:42:00.450" level="INFO">[T5.py:T5.rest_add_interface_to_portgroup:240] Output: {
+    "content": {}, 
+    "http_verb": "PUT", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/core/switch-config[name=\"leaf1-a\"]/interface[name=\"ethernet8\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+</msg>
+<msg timestamp="20140207 17:42:00.450" level="TRACE">Return: {}</msg>
+<status status="PASS" endtime="20140207 17:42:00.450" starttime="20140207 17:42:00.416"></status>
+</kw>
+<msg timestamp="20140207 17:42:00.451" level="TRACE">Return: None</msg>
+<status status="PASS" endtime="20140207 17:42:00.451" starttime="20140207 17:42:00.415"></status>
+</kw>
+<kw type="kw" name="add interface to portgroup">
+<doc></doc>
+<arguments>
+<arg>leaf1-b</arg>
+<arg>${h3_intf1}</arg>
+<arg>p3</arg>
+</arguments>
+<msg timestamp="20140207 17:42:00.452" level="TRACE">Arguments: [ ${switch}=u'leaf1-b' | ${intf}=u'ethernet8' | ${pg}=u'p3' ]</msg>
+<kw type="kw" name="T5.Rest Add Interface To Portgroup">
+<doc></doc>
+<arguments>
+<arg>${switch}</arg>
+<arg>${intf}</arg>
+<arg>${pg}</arg>
+</arguments>
+<msg timestamp="20140207 17:42:00.452" level="TRACE">Arguments: [ u'leaf1-b' | u'ethernet8' | u'p3' ]</msg>
+<msg timestamp="20140207 17:42:00.454" level="INFO">[T5.py:T5.rest_add_interface_to_portgroup:236] Input arguments: switch-name = leaf1-b Interface-name = ethernet8 port-group = p3
+</msg>
+<msg timestamp="20140207 17:42:00.456" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] RestClient: PUT http://10.192.106.10:8080/api/v1/data/controller/core/switch-config[name="leaf1-b"]/interface[name="ethernet8"]
+</msg>
+<msg timestamp="20140207 17:42:00.458" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] Headers = {
+    "Cookie": "session_cookie=4N9SjnkLC2FCLJ_8Nr60SGOGV_npl-7B", 
+    "content-type": "application/json"
+}
+</msg>
+<msg timestamp="20140207 17:42:00.460" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] Data = {
+    "name": "ethernet8", 
+    "port-group-name": "p3"
+}
+</msg>
+<msg timestamp="20140207 17:42:00.479" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] REST result:
+{
+    "content": {}, 
+    "http_verb": "PUT", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/core/switch-config[name=\"leaf1-b\"]/interface[name=\"ethernet8\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+
+----
+</msg>
+<msg timestamp="20140207 17:42:00.481" level="INFO">[T5.py:T5.rest_add_interface_to_portgroup:240] Output: {
+    "content": {}, 
+    "http_verb": "PUT", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/core/switch-config[name=\"leaf1-b\"]/interface[name=\"ethernet8\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+</msg>
+<msg timestamp="20140207 17:42:00.481" level="TRACE">Return: {}</msg>
+<status status="PASS" endtime="20140207 17:42:00.481" starttime="20140207 17:42:00.452"></status>
+</kw>
+<msg timestamp="20140207 17:42:00.481" level="TRACE">Return: None</msg>
+<status status="PASS" endtime="20140207 17:42:00.481" starttime="20140207 17:42:00.451"></status>
+</kw>
+<kw type="kw" name="T5.Rest Add Portgroup Lacp">
+<doc></doc>
+<arguments>
+<arg>p3</arg>
+</arguments>
+<msg timestamp="20140207 17:42:00.482" level="TRACE">Arguments: [ u'p3' ]</msg>
+<msg timestamp="20140207 17:42:00.483" level="INFO">[T5.py:T5.rest_add_portgroup_lacp:251] Input arguments: port-group = p3
+</msg>
+<msg timestamp="20140207 17:42:00.485" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.patch:71] RestClient: PATCH http://10.192.106.10:8080/api/v1/data/controller/fabric/port-group[name="p3"]
+</msg>
+<msg timestamp="20140207 17:42:00.487" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.patch:71] Headers = {
+    "Cookie": "session_cookie=4N9SjnkLC2FCLJ_8Nr60SGOGV_npl-7B", 
+    "content-type": "application/json"
+}
+</msg>
+<msg timestamp="20140207 17:42:00.489" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.patch:71] Data = {
+    "mode": "lacp"
+}
+</msg>
+<msg timestamp="20140207 17:42:00.507" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.patch:71] REST result:
+{
+    "content": {}, 
+    "http_verb": "PATCH", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/fabric/port-group[name=\"p3\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+
+----
+</msg>
+<msg timestamp="20140207 17:42:00.509" level="INFO">[T5.py:T5.rest_add_portgroup_lacp:255] Output: {
+    "content": {}, 
+    "http_verb": "PATCH", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/fabric/port-group[name=\"p3\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+</msg>
+<msg timestamp="20140207 17:42:00.510" level="TRACE">Return: {}</msg>
+<status status="PASS" endtime="20140207 17:42:00.510" starttime="20140207 17:42:00.482"></status>
+</kw>
+<kw type="kw" name="add a portgroup">
+<doc></doc>
+<arguments>
+<arg>p4</arg>
+</arguments>
+<msg timestamp="20140207 17:42:00.511" level="TRACE">Arguments: [ ${pg}=u'p4' ]</msg>
+<kw type="kw" name="T5.Rest Add Portgroup">
+<doc></doc>
+<arguments>
+<arg>${pg}</arg>
+</arguments>
+<msg timestamp="20140207 17:42:00.511" level="TRACE">Arguments: [ u'p4' ]</msg>
+<msg timestamp="20140207 17:42:00.513" level="INFO">[T5.py:T5.rest_add_portgroup:164] Input arguments: port-group = p4
+</msg>
+<msg timestamp="20140207 17:42:00.516" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] RestClient: PUT http://10.192.106.10:8080/api/v1/data/controller/fabric/port-group[name="p4"]
+</msg>
+<msg timestamp="20140207 17:42:00.518" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] Headers = {
+    "Cookie": "session_cookie=4N9SjnkLC2FCLJ_8Nr60SGOGV_npl-7B", 
+    "content-type": "application/json"
+}
+</msg>
+<msg timestamp="20140207 17:42:00.520" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] Data = {
+    "name": "p4"
+}
+</msg>
+<msg timestamp="20140207 17:42:00.572" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] REST result:
+{
+    "content": {}, 
+    "http_verb": "PUT", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/fabric/port-group[name=\"p4\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+
+----
+</msg>
+<msg timestamp="20140207 17:42:00.574" level="INFO">[T5.py:T5.rest_add_portgroup:168] Output: {
+    "content": {}, 
+    "http_verb": "PUT", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/fabric/port-group[name=\"p4\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+</msg>
+<msg timestamp="20140207 17:42:00.574" level="TRACE">Return: {}</msg>
+<status status="PASS" endtime="20140207 17:42:00.574" starttime="20140207 17:42:00.511"></status>
+</kw>
+<msg timestamp="20140207 17:42:00.574" level="TRACE">Return: None</msg>
+<status status="PASS" endtime="20140207 17:42:00.574" starttime="20140207 17:42:00.510"></status>
+</kw>
+<kw type="kw" name="add interface to portgroup">
+<doc></doc>
+<arguments>
+<arg>leaf1-a</arg>
+<arg>${h4_intf0}</arg>
+<arg>p4</arg>
+</arguments>
+<msg timestamp="20140207 17:42:00.575" level="TRACE">Arguments: [ ${switch}=u'leaf1-a' | ${intf}=u'ethernet9' | ${pg}=u'p4' ]</msg>
+<kw type="kw" name="T5.Rest Add Interface To Portgroup">
+<doc></doc>
+<arguments>
+<arg>${switch}</arg>
+<arg>${intf}</arg>
+<arg>${pg}</arg>
+</arguments>
+<msg timestamp="20140207 17:42:00.576" level="TRACE">Arguments: [ u'leaf1-a' | u'ethernet9' | u'p4' ]</msg>
+<msg timestamp="20140207 17:42:00.578" level="INFO">[T5.py:T5.rest_add_interface_to_portgroup:236] Input arguments: switch-name = leaf1-a Interface-name = ethernet9 port-group = p4
+</msg>
+<msg timestamp="20140207 17:42:00.580" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] RestClient: PUT http://10.192.106.10:8080/api/v1/data/controller/core/switch-config[name="leaf1-a"]/interface[name="ethernet9"]
+</msg>
+<msg timestamp="20140207 17:42:00.582" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] Headers = {
+    "Cookie": "session_cookie=4N9SjnkLC2FCLJ_8Nr60SGOGV_npl-7B", 
+    "content-type": "application/json"
+}
+</msg>
+<msg timestamp="20140207 17:42:00.584" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] Data = {
+    "name": "ethernet9", 
+    "port-group-name": "p4"
+}
+</msg>
+<msg timestamp="20140207 17:42:00.604" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] REST result:
+{
+    "content": {}, 
+    "http_verb": "PUT", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/core/switch-config[name=\"leaf1-a\"]/interface[name=\"ethernet9\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+
+----
+</msg>
+<msg timestamp="20140207 17:42:00.605" level="INFO">[T5.py:T5.rest_add_interface_to_portgroup:240] Output: {
+    "content": {}, 
+    "http_verb": "PUT", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/core/switch-config[name=\"leaf1-a\"]/interface[name=\"ethernet9\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+</msg>
+<msg timestamp="20140207 17:42:00.606" level="TRACE">Return: {}</msg>
+<status status="PASS" endtime="20140207 17:42:00.606" starttime="20140207 17:42:00.575"></status>
+</kw>
+<msg timestamp="20140207 17:42:00.606" level="TRACE">Return: None</msg>
+<status status="PASS" endtime="20140207 17:42:00.606" starttime="20140207 17:42:00.574"></status>
+</kw>
+<kw type="kw" name="add interface to portgroup">
+<doc></doc>
+<arguments>
+<arg>leaf1-b</arg>
+<arg>${h4_intf1}</arg>
+<arg>p4</arg>
+</arguments>
+<msg timestamp="20140207 17:42:00.607" level="TRACE">Arguments: [ ${switch}=u'leaf1-b' | ${intf}=u'ethernet9' | ${pg}=u'p4' ]</msg>
+<kw type="kw" name="T5.Rest Add Interface To Portgroup">
+<doc></doc>
+<arguments>
+<arg>${switch}</arg>
+<arg>${intf}</arg>
+<arg>${pg}</arg>
+</arguments>
+<msg timestamp="20140207 17:42:00.607" level="TRACE">Arguments: [ u'leaf1-b' | u'ethernet9' | u'p4' ]</msg>
+<msg timestamp="20140207 17:42:00.609" level="INFO">[T5.py:T5.rest_add_interface_to_portgroup:236] Input arguments: switch-name = leaf1-b Interface-name = ethernet9 port-group = p4
+</msg>
+<msg timestamp="20140207 17:42:00.611" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] RestClient: PUT http://10.192.106.10:8080/api/v1/data/controller/core/switch-config[name="leaf1-b"]/interface[name="ethernet9"]
+</msg>
+<msg timestamp="20140207 17:42:00.613" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] Headers = {
+    "Cookie": "session_cookie=4N9SjnkLC2FCLJ_8Nr60SGOGV_npl-7B", 
+    "content-type": "application/json"
+}
+</msg>
+<msg timestamp="20140207 17:42:00.615" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] Data = {
+    "name": "ethernet9", 
+    "port-group-name": "p4"
+}
+</msg>
+<msg timestamp="20140207 17:42:00.635" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] REST result:
+{
+    "content": {}, 
+    "http_verb": "PUT", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/core/switch-config[name=\"leaf1-b\"]/interface[name=\"ethernet9\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+
+----
+</msg>
+<msg timestamp="20140207 17:42:00.637" level="INFO">[T5.py:T5.rest_add_interface_to_portgroup:240] Output: {
+    "content": {}, 
+    "http_verb": "PUT", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/core/switch-config[name=\"leaf1-b\"]/interface[name=\"ethernet9\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+</msg>
+<msg timestamp="20140207 17:42:00.637" level="TRACE">Return: {}</msg>
+<status status="PASS" endtime="20140207 17:42:00.637" starttime="20140207 17:42:00.607"></status>
+</kw>
+<msg timestamp="20140207 17:42:00.637" level="TRACE">Return: None</msg>
+<status status="PASS" endtime="20140207 17:42:00.637" starttime="20140207 17:42:00.606"></status>
+</kw>
+<kw type="kw" name="T5.Rest Add Portgroup Lacp">
+<doc></doc>
+<arguments>
+<arg>p4</arg>
+</arguments>
+<msg timestamp="20140207 17:42:00.637" level="TRACE">Arguments: [ u'p4' ]</msg>
+<msg timestamp="20140207 17:42:00.639" level="INFO">[T5.py:T5.rest_add_portgroup_lacp:251] Input arguments: port-group = p4
+</msg>
+<msg timestamp="20140207 17:42:00.641" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.patch:71] RestClient: PATCH http://10.192.106.10:8080/api/v1/data/controller/fabric/port-group[name="p4"]
+</msg>
+<msg timestamp="20140207 17:42:00.643" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.patch:71] Headers = {
+    "Cookie": "session_cookie=4N9SjnkLC2FCLJ_8Nr60SGOGV_npl-7B", 
+    "content-type": "application/json"
+}
+</msg>
+<msg timestamp="20140207 17:42:00.644" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.patch:71] Data = {
+    "mode": "lacp"
+}
+</msg>
+<msg timestamp="20140207 17:42:00.693" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.patch:71] REST result:
+{
+    "content": {}, 
+    "http_verb": "PATCH", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/fabric/port-group[name=\"p4\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+
+----
+</msg>
+<msg timestamp="20140207 17:42:00.695" level="INFO">[T5.py:T5.rest_add_portgroup_lacp:255] Output: {
+    "content": {}, 
+    "http_verb": "PATCH", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/fabric/port-group[name=\"p4\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+</msg>
+<msg timestamp="20140207 17:42:00.696" level="TRACE">Return: {}</msg>
+<status status="PASS" endtime="20140207 17:42:00.696" starttime="20140207 17:42:00.637"></status>
+</kw>
+<kw type="kw" name="add a portgroup">
+<doc></doc>
+<arguments>
+<arg>p5</arg>
+</arguments>
+<msg timestamp="20140207 17:42:00.697" level="TRACE">Arguments: [ ${pg}=u'p5' ]</msg>
+<kw type="kw" name="T5.Rest Add Portgroup">
+<doc></doc>
+<arguments>
+<arg>${pg}</arg>
+</arguments>
+<msg timestamp="20140207 17:42:00.697" level="TRACE">Arguments: [ u'p5' ]</msg>
+<msg timestamp="20140207 17:42:00.699" level="INFO">[T5.py:T5.rest_add_portgroup:164] Input arguments: port-group = p5
+</msg>
+<msg timestamp="20140207 17:42:00.701" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] RestClient: PUT http://10.192.106.10:8080/api/v1/data/controller/fabric/port-group[name="p5"]
+</msg>
+<msg timestamp="20140207 17:42:00.703" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] Headers = {
+    "Cookie": "session_cookie=4N9SjnkLC2FCLJ_8Nr60SGOGV_npl-7B", 
+    "content-type": "application/json"
+}
+</msg>
+<msg timestamp="20140207 17:42:00.707" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] Data = {
+    "name": "p5"
+}
+</msg>
+<msg timestamp="20140207 17:42:00.729" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] REST result:
+{
+    "content": {}, 
+    "http_verb": "PUT", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/fabric/port-group[name=\"p5\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+
+----
+</msg>
+<msg timestamp="20140207 17:42:00.731" level="INFO">[T5.py:T5.rest_add_portgroup:168] Output: {
+    "content": {}, 
+    "http_verb": "PUT", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/fabric/port-group[name=\"p5\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+</msg>
+<msg timestamp="20140207 17:42:00.731" level="TRACE">Return: {}</msg>
+<status status="PASS" endtime="20140207 17:42:00.731" starttime="20140207 17:42:00.697"></status>
+</kw>
+<msg timestamp="20140207 17:42:00.731" level="TRACE">Return: None</msg>
+<status status="PASS" endtime="20140207 17:42:00.731" starttime="20140207 17:42:00.696"></status>
+</kw>
+<kw type="kw" name="add interface to portgroup">
+<doc></doc>
+<arguments>
+<arg>leaf2-a</arg>
+<arg>${h5_intf0}</arg>
+<arg>p5</arg>
+</arguments>
+<msg timestamp="20140207 17:42:00.732" level="TRACE">Arguments: [ ${switch}=u'leaf2-a' | ${intf}=u'ethernet8' | ${pg}=u'p5' ]</msg>
+<kw type="kw" name="T5.Rest Add Interface To Portgroup">
+<doc></doc>
+<arguments>
+<arg>${switch}</arg>
+<arg>${intf}</arg>
+<arg>${pg}</arg>
+</arguments>
+<msg timestamp="20140207 17:42:00.733" level="TRACE">Arguments: [ u'leaf2-a' | u'ethernet8' | u'p5' ]</msg>
+<msg timestamp="20140207 17:42:00.735" level="INFO">[T5.py:T5.rest_add_interface_to_portgroup:236] Input arguments: switch-name = leaf2-a Interface-name = ethernet8 port-group = p5
+</msg>
+<msg timestamp="20140207 17:42:00.737" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] RestClient: PUT http://10.192.106.10:8080/api/v1/data/controller/core/switch-config[name="leaf2-a"]/interface[name="ethernet8"]
+</msg>
+<msg timestamp="20140207 17:42:00.739" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] Headers = {
+    "Cookie": "session_cookie=4N9SjnkLC2FCLJ_8Nr60SGOGV_npl-7B", 
+    "content-type": "application/json"
+}
+</msg>
+<msg timestamp="20140207 17:42:00.741" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] Data = {
+    "name": "ethernet8", 
+    "port-group-name": "p5"
+}
+</msg>
+<msg timestamp="20140207 17:42:00.763" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] REST result:
+{
+    "content": {}, 
+    "http_verb": "PUT", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/core/switch-config[name=\"leaf2-a\"]/interface[name=\"ethernet8\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+
+----
+</msg>
+<msg timestamp="20140207 17:42:00.765" level="INFO">[T5.py:T5.rest_add_interface_to_portgroup:240] Output: {
+    "content": {}, 
+    "http_verb": "PUT", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/core/switch-config[name=\"leaf2-a\"]/interface[name=\"ethernet8\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+</msg>
+<msg timestamp="20140207 17:42:00.765" level="TRACE">Return: {}</msg>
+<status status="PASS" endtime="20140207 17:42:00.765" starttime="20140207 17:42:00.732"></status>
+</kw>
+<msg timestamp="20140207 17:42:00.765" level="TRACE">Return: None</msg>
+<status status="PASS" endtime="20140207 17:42:00.765" starttime="20140207 17:42:00.731"></status>
+</kw>
+<kw type="kw" name="add interface to portgroup">
+<doc></doc>
+<arguments>
+<arg>leaf2-b</arg>
+<arg>${h5_intf1}</arg>
+<arg>p5</arg>
+</arguments>
+<msg timestamp="20140207 17:42:00.766" level="TRACE">Arguments: [ ${switch}=u'leaf2-b' | ${intf}=u'ethernet8' | ${pg}=u'p5' ]</msg>
+<kw type="kw" name="T5.Rest Add Interface To Portgroup">
+<doc></doc>
+<arguments>
+<arg>${switch}</arg>
+<arg>${intf}</arg>
+<arg>${pg}</arg>
+</arguments>
+<msg timestamp="20140207 17:42:00.767" level="TRACE">Arguments: [ u'leaf2-b' | u'ethernet8' | u'p5' ]</msg>
+<msg timestamp="20140207 17:42:00.768" level="INFO">[T5.py:T5.rest_add_interface_to_portgroup:236] Input arguments: switch-name = leaf2-b Interface-name = ethernet8 port-group = p5
+</msg>
+<msg timestamp="20140207 17:42:00.771" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] RestClient: PUT http://10.192.106.10:8080/api/v1/data/controller/core/switch-config[name="leaf2-b"]/interface[name="ethernet8"]
+</msg>
+<msg timestamp="20140207 17:42:00.773" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] Headers = {
+    "Cookie": "session_cookie=4N9SjnkLC2FCLJ_8Nr60SGOGV_npl-7B", 
+    "content-type": "application/json"
+}
+</msg>
+<msg timestamp="20140207 17:42:00.775" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] Data = {
+    "name": "ethernet8", 
+    "port-group-name": "p5"
+}
+</msg>
+<msg timestamp="20140207 17:42:00.797" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] REST result:
+{
+    "content": {}, 
+    "http_verb": "PUT", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/core/switch-config[name=\"leaf2-b\"]/interface[name=\"ethernet8\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+
+----
+</msg>
+<msg timestamp="20140207 17:42:00.799" level="INFO">[T5.py:T5.rest_add_interface_to_portgroup:240] Output: {
+    "content": {}, 
+    "http_verb": "PUT", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/core/switch-config[name=\"leaf2-b\"]/interface[name=\"ethernet8\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+</msg>
+<msg timestamp="20140207 17:42:00.799" level="TRACE">Return: {}</msg>
+<status status="PASS" endtime="20140207 17:42:00.799" starttime="20140207 17:42:00.766"></status>
+</kw>
+<msg timestamp="20140207 17:42:00.799" level="TRACE">Return: None</msg>
+<status status="PASS" endtime="20140207 17:42:00.799" starttime="20140207 17:42:00.765"></status>
+</kw>
+<kw type="kw" name="T5.Rest Add Portgroup Lacp">
+<doc></doc>
+<arguments>
+<arg>p5</arg>
+</arguments>
+<msg timestamp="20140207 17:42:00.800" level="TRACE">Arguments: [ u'p5' ]</msg>
+<msg timestamp="20140207 17:42:00.801" level="INFO">[T5.py:T5.rest_add_portgroup_lacp:251] Input arguments: port-group = p5
+</msg>
+<msg timestamp="20140207 17:42:00.803" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.patch:71] RestClient: PATCH http://10.192.106.10:8080/api/v1/data/controller/fabric/port-group[name="p5"]
+</msg>
+<msg timestamp="20140207 17:42:00.805" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.patch:71] Headers = {
+    "Cookie": "session_cookie=4N9SjnkLC2FCLJ_8Nr60SGOGV_npl-7B", 
+    "content-type": "application/json"
+}
+</msg>
+<msg timestamp="20140207 17:42:00.807" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.patch:71] Data = {
+    "mode": "lacp"
+}
+</msg>
+<msg timestamp="20140207 17:42:00.834" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.patch:71] REST result:
+{
+    "content": {}, 
+    "http_verb": "PATCH", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/fabric/port-group[name=\"p5\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+
+----
+</msg>
+<msg timestamp="20140207 17:42:00.837" level="INFO">[T5.py:T5.rest_add_portgroup_lacp:255] Output: {
+    "content": {}, 
+    "http_verb": "PATCH", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/fabric/port-group[name=\"p5\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+</msg>
+<msg timestamp="20140207 17:42:00.837" level="TRACE">Return: {}</msg>
+<status status="PASS" endtime="20140207 17:42:00.837" starttime="20140207 17:42:00.800"></status>
+</kw>
+<kw type="kw" name="add a portgroup">
+<doc></doc>
+<arguments>
+<arg>p6</arg>
+</arguments>
+<msg timestamp="20140207 17:42:00.838" level="TRACE">Arguments: [ ${pg}=u'p6' ]</msg>
+<kw type="kw" name="T5.Rest Add Portgroup">
+<doc></doc>
+<arguments>
+<arg>${pg}</arg>
+</arguments>
+<msg timestamp="20140207 17:42:00.839" level="TRACE">Arguments: [ u'p6' ]</msg>
+<msg timestamp="20140207 17:42:00.841" level="INFO">[T5.py:T5.rest_add_portgroup:164] Input arguments: port-group = p6
+</msg>
+<msg timestamp="20140207 17:42:00.844" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] RestClient: PUT http://10.192.106.10:8080/api/v1/data/controller/fabric/port-group[name="p6"]
+</msg>
+<msg timestamp="20140207 17:42:00.846" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] Headers = {
+    "Cookie": "session_cookie=4N9SjnkLC2FCLJ_8Nr60SGOGV_npl-7B", 
+    "content-type": "application/json"
+}
+</msg>
+<msg timestamp="20140207 17:42:00.848" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] Data = {
+    "name": "p6"
+}
+</msg>
+<msg timestamp="20140207 17:42:00.867" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] REST result:
+{
+    "content": {}, 
+    "http_verb": "PUT", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/fabric/port-group[name=\"p6\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+
+----
+</msg>
+<msg timestamp="20140207 17:42:00.869" level="INFO">[T5.py:T5.rest_add_portgroup:168] Output: {
+    "content": {}, 
+    "http_verb": "PUT", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/fabric/port-group[name=\"p6\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+</msg>
+<msg timestamp="20140207 17:42:00.869" level="TRACE">Return: {}</msg>
+<status status="PASS" endtime="20140207 17:42:00.869" starttime="20140207 17:42:00.838"></status>
+</kw>
+<msg timestamp="20140207 17:42:00.869" level="TRACE">Return: None</msg>
+<status status="PASS" endtime="20140207 17:42:00.869" starttime="20140207 17:42:00.837"></status>
+</kw>
+<kw type="kw" name="add interface to portgroup">
+<doc></doc>
+<arguments>
+<arg>leaf2-a</arg>
+<arg>${h6_intf0}</arg>
+<arg>p6</arg>
+</arguments>
+<msg timestamp="20140207 17:42:00.870" level="TRACE">Arguments: [ ${switch}=u'leaf2-a' | ${intf}=u'ethernet9' | ${pg}=u'p6' ]</msg>
+<kw type="kw" name="T5.Rest Add Interface To Portgroup">
+<doc></doc>
+<arguments>
+<arg>${switch}</arg>
+<arg>${intf}</arg>
+<arg>${pg}</arg>
+</arguments>
+<msg timestamp="20140207 17:42:00.871" level="TRACE">Arguments: [ u'leaf2-a' | u'ethernet9' | u'p6' ]</msg>
+<msg timestamp="20140207 17:42:00.873" level="INFO">[T5.py:T5.rest_add_interface_to_portgroup:236] Input arguments: switch-name = leaf2-a Interface-name = ethernet9 port-group = p6
+</msg>
+<msg timestamp="20140207 17:42:00.875" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] RestClient: PUT http://10.192.106.10:8080/api/v1/data/controller/core/switch-config[name="leaf2-a"]/interface[name="ethernet9"]
+</msg>
+<msg timestamp="20140207 17:42:00.877" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] Headers = {
+    "Cookie": "session_cookie=4N9SjnkLC2FCLJ_8Nr60SGOGV_npl-7B", 
+    "content-type": "application/json"
+}
+</msg>
+<msg timestamp="20140207 17:42:00.879" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] Data = {
+    "name": "ethernet9", 
+    "port-group-name": "p6"
+}
+</msg>
+<msg timestamp="20140207 17:42:00.898" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] REST result:
+{
+    "content": {}, 
+    "http_verb": "PUT", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/core/switch-config[name=\"leaf2-a\"]/interface[name=\"ethernet9\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+
+----
+</msg>
+<msg timestamp="20140207 17:42:00.900" level="INFO">[T5.py:T5.rest_add_interface_to_portgroup:240] Output: {
+    "content": {}, 
+    "http_verb": "PUT", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/core/switch-config[name=\"leaf2-a\"]/interface[name=\"ethernet9\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+</msg>
+<msg timestamp="20140207 17:42:00.900" level="TRACE">Return: {}</msg>
+<status status="PASS" endtime="20140207 17:42:00.900" starttime="20140207 17:42:00.871"></status>
+</kw>
+<msg timestamp="20140207 17:42:00.900" level="TRACE">Return: None</msg>
+<status status="PASS" endtime="20140207 17:42:00.900" starttime="20140207 17:42:00.870"></status>
+</kw>
+<kw type="kw" name="add interface to portgroup">
+<doc></doc>
+<arguments>
+<arg>leaf2-b</arg>
+<arg>${h6_intf1}</arg>
+<arg>p6</arg>
+</arguments>
+<msg timestamp="20140207 17:42:00.901" level="TRACE">Arguments: [ ${switch}=u'leaf2-b' | ${intf}=u'ethernet9' | ${pg}=u'p6' ]</msg>
+<kw type="kw" name="T5.Rest Add Interface To Portgroup">
+<doc></doc>
+<arguments>
+<arg>${switch}</arg>
+<arg>${intf}</arg>
+<arg>${pg}</arg>
+</arguments>
+<msg timestamp="20140207 17:42:00.902" level="TRACE">Arguments: [ u'leaf2-b' | u'ethernet9' | u'p6' ]</msg>
+<msg timestamp="20140207 17:42:00.904" level="INFO">[T5.py:T5.rest_add_interface_to_portgroup:236] Input arguments: switch-name = leaf2-b Interface-name = ethernet9 port-group = p6
+</msg>
+<msg timestamp="20140207 17:42:00.906" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] RestClient: PUT http://10.192.106.10:8080/api/v1/data/controller/core/switch-config[name="leaf2-b"]/interface[name="ethernet9"]
+</msg>
+<msg timestamp="20140207 17:42:00.908" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] Headers = {
+    "Cookie": "session_cookie=4N9SjnkLC2FCLJ_8Nr60SGOGV_npl-7B", 
+    "content-type": "application/json"
+}
+</msg>
+<msg timestamp="20140207 17:42:00.910" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] Data = {
+    "name": "ethernet9", 
+    "port-group-name": "p6"
+}
+</msg>
+<msg timestamp="20140207 17:42:00.928" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] REST result:
+{
+    "content": {}, 
+    "http_verb": "PUT", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/core/switch-config[name=\"leaf2-b\"]/interface[name=\"ethernet9\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+
+----
+</msg>
+<msg timestamp="20140207 17:42:00.930" level="INFO">[T5.py:T5.rest_add_interface_to_portgroup:240] Output: {
+    "content": {}, 
+    "http_verb": "PUT", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/core/switch-config[name=\"leaf2-b\"]/interface[name=\"ethernet9\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+</msg>
+<msg timestamp="20140207 17:42:00.931" level="TRACE">Return: {}</msg>
+<status status="PASS" endtime="20140207 17:42:00.931" starttime="20140207 17:42:00.901"></status>
+</kw>
+<msg timestamp="20140207 17:42:00.931" level="TRACE">Return: None</msg>
+<status status="PASS" endtime="20140207 17:42:00.931" starttime="20140207 17:42:00.900"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Sleep">
+<doc>Pauses the test executed for the given time.</doc>
+<arguments>
+<arg>5</arg>
+</arguments>
+<msg timestamp="20140207 17:42:00.931" level="TRACE">Arguments: [ u'5' ]</msg>
+<msg timestamp="20140207 17:42:05.933" level="INFO">Slept 5 seconds</msg>
+<msg timestamp="20140207 17:42:05.933" level="TRACE">Return: None</msg>
+<status status="PASS" endtime="20140207 17:42:05.933" starttime="20140207 17:42:00.931"></status>
+</kw>
+<msg timestamp="20140207 17:42:05.933" level="TRACE">Return: None</msg>
+<status status="PASS" endtime="20140207 17:42:05.933" starttime="20140207 17:41:59.919"></status>
+</kw>
+<kw type="kw" name="add portgroup to vns">
+<doc></doc>
+<arguments>
+<arg>h1h2h3</arg>
+<arg>h1h2h3</arg>
+<arg>p1</arg>
+<arg>10</arg>
+</arguments>
+<msg timestamp="20140207 17:42:05.934" level="TRACE">Arguments: [ ${tenant}=u'h1h2h3' | ${vns}=u'h1h2h3' | ${pg}=u'p1' | ${vlan}=u'10' ]</msg>
+<kw type="kw" name="T5.Rest Add Portgroup To Vns">
+<doc></doc>
+<arguments>
+<arg>${tenant}</arg>
+<arg>${vns}</arg>
+<arg>${pg}</arg>
+<arg>${vlan}</arg>
+</arguments>
+<msg timestamp="20140207 17:42:05.935" level="TRACE">Arguments: [ u'h1h2h3' | u'h1h2h3' | u'p1' | u'10' ]</msg>
+<msg timestamp="20140207 17:42:05.936" level="INFO">[T5.py:T5.rest_add_portgroup_to_vns:281] Input arguments: tenant = h1h2h3 vns = h1h2h3 port-group = p1 vlan = 10
+</msg>
+<msg timestamp="20140207 17:42:05.938" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] RestClient: PUT http://10.192.106.10:8080/api/v1/data/controller/applications/bvs/tenant[name="h1h2h3"]/vns[name="h1h2h3"]/port-group-membership-rules[port-group-name="p1"]
+</msg>
+<msg timestamp="20140207 17:42:05.940" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] Headers = {
+    "Cookie": "session_cookie=4N9SjnkLC2FCLJ_8Nr60SGOGV_npl-7B", 
+    "content-type": "application/json"
+}
+</msg>
+<msg timestamp="20140207 17:42:05.942" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] Data = {
+    "port-group-name": "p1", 
+    "vlan": "10"
+}
+</msg>
+<msg timestamp="20140207 17:42:06.003" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] REST result:
+{
+    "content": {}, 
+    "http_verb": "PUT", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/applications/bvs/tenant[name=\"h1h2h3\"]/vns[name=\"h1h2h3\"]/port-group-membership-rules[port-group-name=\"p1\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+
+----
+</msg>
+<msg timestamp="20140207 17:42:06.005" level="INFO">[T5.py:T5.rest_add_portgroup_to_vns:285] Output: {
+    "content": {}, 
+    "http_verb": "PUT", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/applications/bvs/tenant[name=\"h1h2h3\"]/vns[name=\"h1h2h3\"]/port-group-membership-rules[port-group-name=\"p1\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+</msg>
+<msg timestamp="20140207 17:42:06.005" level="TRACE">Return: {}</msg>
+<status status="PASS" endtime="20140207 17:42:06.005" starttime="20140207 17:42:05.934"></status>
+</kw>
+<msg timestamp="20140207 17:42:06.005" level="TRACE">Return: None</msg>
+<status status="PASS" endtime="20140207 17:42:06.005" starttime="20140207 17:42:05.933"></status>
+</kw>
+<kw type="kw" name="add portgroup to vns">
+<doc></doc>
+<arguments>
+<arg>h1h2h3</arg>
+<arg>h1h2h3</arg>
+<arg>p2</arg>
+<arg>10</arg>
+</arguments>
+<msg timestamp="20140207 17:42:06.006" level="TRACE">Arguments: [ ${tenant}=u'h1h2h3' | ${vns}=u'h1h2h3' | ${pg}=u'p2' | ${vlan}=u'10' ]</msg>
+<kw type="kw" name="T5.Rest Add Portgroup To Vns">
+<doc></doc>
+<arguments>
+<arg>${tenant}</arg>
+<arg>${vns}</arg>
+<arg>${pg}</arg>
+<arg>${vlan}</arg>
+</arguments>
+<msg timestamp="20140207 17:42:06.007" level="TRACE">Arguments: [ u'h1h2h3' | u'h1h2h3' | u'p2' | u'10' ]</msg>
+<msg timestamp="20140207 17:42:06.008" level="INFO">[T5.py:T5.rest_add_portgroup_to_vns:281] Input arguments: tenant = h1h2h3 vns = h1h2h3 port-group = p2 vlan = 10
+</msg>
+<msg timestamp="20140207 17:42:06.010" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] RestClient: PUT http://10.192.106.10:8080/api/v1/data/controller/applications/bvs/tenant[name="h1h2h3"]/vns[name="h1h2h3"]/port-group-membership-rules[port-group-name="p2"]
+</msg>
+<msg timestamp="20140207 17:42:06.012" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] Headers = {
+    "Cookie": "session_cookie=4N9SjnkLC2FCLJ_8Nr60SGOGV_npl-7B", 
+    "content-type": "application/json"
+}
+</msg>
+<msg timestamp="20140207 17:42:06.014" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] Data = {
+    "port-group-name": "p2", 
+    "vlan": "10"
+}
+</msg>
+<msg timestamp="20140207 17:42:06.059" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] REST result:
+{
+    "content": {}, 
+    "http_verb": "PUT", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/applications/bvs/tenant[name=\"h1h2h3\"]/vns[name=\"h1h2h3\"]/port-group-membership-rules[port-group-name=\"p2\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+
+----
+</msg>
+<msg timestamp="20140207 17:42:06.061" level="INFO">[T5.py:T5.rest_add_portgroup_to_vns:285] Output: {
+    "content": {}, 
+    "http_verb": "PUT", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/applications/bvs/tenant[name=\"h1h2h3\"]/vns[name=\"h1h2h3\"]/port-group-membership-rules[port-group-name=\"p2\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+</msg>
+<msg timestamp="20140207 17:42:06.061" level="TRACE">Return: {}</msg>
+<status status="PASS" endtime="20140207 17:42:06.061" starttime="20140207 17:42:06.006"></status>
+</kw>
+<msg timestamp="20140207 17:42:06.062" level="TRACE">Return: None</msg>
+<status status="PASS" endtime="20140207 17:42:06.062" starttime="20140207 17:42:06.005"></status>
+</kw>
+<kw type="kw" name="add portgroup to vns">
+<doc></doc>
+<arguments>
+<arg>h1h2h3</arg>
+<arg>h1h2h3</arg>
+<arg>p3</arg>
+<arg>10</arg>
+</arguments>
+<msg timestamp="20140207 17:42:06.063" level="TRACE">Arguments: [ ${tenant}=u'h1h2h3' | ${vns}=u'h1h2h3' | ${pg}=u'p3' | ${vlan}=u'10' ]</msg>
+<kw type="kw" name="T5.Rest Add Portgroup To Vns">
+<doc></doc>
+<arguments>
+<arg>${tenant}</arg>
+<arg>${vns}</arg>
+<arg>${pg}</arg>
+<arg>${vlan}</arg>
+</arguments>
+<msg timestamp="20140207 17:42:06.063" level="TRACE">Arguments: [ u'h1h2h3' | u'h1h2h3' | u'p3' | u'10' ]</msg>
+<msg timestamp="20140207 17:42:06.065" level="INFO">[T5.py:T5.rest_add_portgroup_to_vns:281] Input arguments: tenant = h1h2h3 vns = h1h2h3 port-group = p3 vlan = 10
+</msg>
+<msg timestamp="20140207 17:42:06.067" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] RestClient: PUT http://10.192.106.10:8080/api/v1/data/controller/applications/bvs/tenant[name="h1h2h3"]/vns[name="h1h2h3"]/port-group-membership-rules[port-group-name="p3"]
+</msg>
+<msg timestamp="20140207 17:42:06.068" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] Headers = {
+    "Cookie": "session_cookie=4N9SjnkLC2FCLJ_8Nr60SGOGV_npl-7B", 
+    "content-type": "application/json"
+}
+</msg>
+<msg timestamp="20140207 17:42:06.070" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] Data = {
+    "port-group-name": "p3", 
+    "vlan": "10"
+}
+</msg>
+<msg timestamp="20140207 17:42:06.104" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] REST result:
+{
+    "content": {}, 
+    "http_verb": "PUT", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/applications/bvs/tenant[name=\"h1h2h3\"]/vns[name=\"h1h2h3\"]/port-group-membership-rules[port-group-name=\"p3\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+
+----
+</msg>
+<msg timestamp="20140207 17:42:06.106" level="INFO">[T5.py:T5.rest_add_portgroup_to_vns:285] Output: {
+    "content": {}, 
+    "http_verb": "PUT", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/applications/bvs/tenant[name=\"h1h2h3\"]/vns[name=\"h1h2h3\"]/port-group-membership-rules[port-group-name=\"p3\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+</msg>
+<msg timestamp="20140207 17:42:06.106" level="TRACE">Return: {}</msg>
+<status status="PASS" endtime="20140207 17:42:06.106" starttime="20140207 17:42:06.063"></status>
+</kw>
+<msg timestamp="20140207 17:42:06.106" level="TRACE">Return: None</msg>
+<status status="PASS" endtime="20140207 17:42:06.106" starttime="20140207 17:42:06.062"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Sleep">
+<doc>Pauses the test executed for the given time.</doc>
+<arguments>
+<arg>5</arg>
+</arguments>
+<msg timestamp="20140207 17:42:06.107" level="TRACE">Arguments: [ u'5' ]</msg>
+<msg timestamp="20140207 17:42:11.108" level="INFO">Slept 5 seconds</msg>
+<msg timestamp="20140207 17:42:11.108" level="TRACE">Return: None</msg>
+<status status="PASS" endtime="20140207 17:42:11.108" starttime="20140207 17:42:06.107"></status>
+</kw>
+<doc></doc>
+<tags>
+<tag>sanity</tag>
+<tag>T5</tag>
+</tags>
+<status status="PASS" endtime="20140207 17:42:11.108" critical="yes" starttime="20140207 17:41:59.918"></status>
+</test>
+<test id="s1-t2" name="ping h4 to h5 dual rack dual leaf dynamic endpoints">
+<kw type="setup" name="T5 base test setup">
+<doc></doc>
+<arguments>
+</arguments>
+<msg timestamp="20140207 17:42:11.110" level="TRACE">Arguments: [  ]</msg>
+<kw type="kw" name="BsnCommon.Base Test Setup">
+<doc></doc>
+<arguments>
+</arguments>
+<msg timestamp="20140207 17:42:11.111" level="TRACE">Arguments: [  ]</msg>
+<msg timestamp="20140207 17:42:11.111" level="TRACE">Return: None</msg>
+<status status="PASS" endtime="20140207 17:42:11.111" starttime="20140207 17:42:11.111"></status>
+</kw>
+<kw type="kw" name="add a tenant">
+<doc></doc>
+<arguments>
+<arg>h1h2h3</arg>
+</arguments>
+<msg timestamp="20140207 17:42:11.112" level="TRACE">Arguments: [ ${tenant}=u'h1h2h3' ]</msg>
+<kw type="kw" name="T5.Rest Add Tenant">
+<doc></doc>
+<arguments>
+<arg>${tenant}</arg>
+</arguments>
+<msg timestamp="20140207 17:42:11.112" level="TRACE">Arguments: [ u'h1h2h3' ]</msg>
+<msg timestamp="20140207 17:42:11.114" level="INFO">[T5.py:T5.rest_add_tenant:23] Input arguments: tenant = h1h2h3
+</msg>
+<msg timestamp="20140207 17:42:11.116" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] RestClient: PUT http://10.192.106.10:8080/api/v1/data/controller/applications/bvs/tenant[name="h1h2h3"]
+</msg>
+<msg timestamp="20140207 17:42:11.118" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] Headers = {
+    "Cookie": "session_cookie=4N9SjnkLC2FCLJ_8Nr60SGOGV_npl-7B", 
+    "content-type": "application/json"
+}
+</msg>
+<msg timestamp="20140207 17:42:11.120" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] Data = {
+    "name": "h1h2h3"
+}
+</msg>
+<msg timestamp="20140207 17:42:11.149" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] REST result:
+{
+    "content": {}, 
+    "http_verb": "PUT", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/applications/bvs/tenant[name=\"h1h2h3\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+
+----
+</msg>
+<msg timestamp="20140207 17:42:11.151" level="INFO">[T5.py:T5.rest_add_tenant:27] Output: {
+    "content": {}, 
+    "http_verb": "PUT", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/applications/bvs/tenant[name=\"h1h2h3\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+</msg>
+<msg timestamp="20140207 17:42:11.151" level="TRACE">Return: {}</msg>
+<status status="PASS" endtime="20140207 17:42:11.151" starttime="20140207 17:42:11.112"></status>
+</kw>
+<msg timestamp="20140207 17:42:11.152" level="TRACE">Return: None</msg>
+<status status="PASS" endtime="20140207 17:42:11.152" starttime="20140207 17:42:11.111"></status>
+</kw>
+<kw type="kw" name="add a vns">
+<doc></doc>
+<arguments>
+<arg>h1h2h3</arg>
+<arg>h1h2h3</arg>
+</arguments>
+<msg timestamp="20140207 17:42:11.153" level="TRACE">Arguments: [ ${tenant}=u'h1h2h3' | ${vns}=u'h1h2h3' ]</msg>
+<kw type="kw" name="T5.Rest Add Vns">
+<doc></doc>
+<arguments>
+<arg>${tenant}</arg>
+<arg>${vns}</arg>
+</arguments>
+<msg timestamp="20140207 17:42:11.153" level="TRACE">Arguments: [ u'h1h2h3' | u'h1h2h3' ]</msg>
+<msg timestamp="20140207 17:42:11.155" level="INFO">[T5.py:T5.rest_add_vns:115] Input arguments: tenant = h1h2h3 vns = h1h2h3
+</msg>
+<msg timestamp="20140207 17:42:11.158" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] RestClient: PUT http://10.192.106.10:8080/api/v1/data/controller/applications/bvs/tenant[name="h1h2h3"]/vns[name="h1h2h3"]
+</msg>
+<msg timestamp="20140207 17:42:11.160" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] Headers = {
+    "Cookie": "session_cookie=4N9SjnkLC2FCLJ_8Nr60SGOGV_npl-7B", 
+    "content-type": "application/json"
+}
+</msg>
+<msg timestamp="20140207 17:42:11.162" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] Data = {
+    "name": "h1h2h3"
+}
+</msg>
+<msg timestamp="20140207 17:42:11.215" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] REST result:
+{
+    "content": {}, 
+    "http_verb": "PUT", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/applications/bvs/tenant[name=\"h1h2h3\"]/vns[name=\"h1h2h3\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+
+----
+</msg>
+<msg timestamp="20140207 17:42:11.216" level="TRACE">Return: {}</msg>
+<status status="PASS" endtime="20140207 17:42:11.216" starttime="20140207 17:42:11.153"></status>
+</kw>
+<msg timestamp="20140207 17:42:11.216" level="TRACE">Return: None</msg>
+<status status="PASS" endtime="20140207 17:42:11.216" starttime="20140207 17:42:11.152"></status>
+</kw>
+<kw type="kw" name="add a tenant">
+<doc></doc>
+<arguments>
+<arg>h4h5h6</arg>
+</arguments>
+<msg timestamp="20140207 17:42:11.217" level="TRACE">Arguments: [ ${tenant}=u'h4h5h6' ]</msg>
+<kw type="kw" name="T5.Rest Add Tenant">
+<doc></doc>
+<arguments>
+<arg>${tenant}</arg>
+</arguments>
+<msg timestamp="20140207 17:42:11.217" level="TRACE">Arguments: [ u'h4h5h6' ]</msg>
+<msg timestamp="20140207 17:42:11.219" level="INFO">[T5.py:T5.rest_add_tenant:23] Input arguments: tenant = h4h5h6
+</msg>
+<msg timestamp="20140207 17:42:11.221" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] RestClient: PUT http://10.192.106.10:8080/api/v1/data/controller/applications/bvs/tenant[name="h4h5h6"]
+</msg>
+<msg timestamp="20140207 17:42:11.224" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] Headers = {
+    "Cookie": "session_cookie=4N9SjnkLC2FCLJ_8Nr60SGOGV_npl-7B", 
+    "content-type": "application/json"
+}
+</msg>
+<msg timestamp="20140207 17:42:11.226" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] Data = {
+    "name": "h4h5h6"
+}
+</msg>
+<msg timestamp="20140207 17:42:11.277" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] REST result:
+{
+    "content": {}, 
+    "http_verb": "PUT", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/applications/bvs/tenant[name=\"h4h5h6\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+
+----
+</msg>
+<msg timestamp="20140207 17:42:11.279" level="INFO">[T5.py:T5.rest_add_tenant:27] Output: {
+    "content": {}, 
+    "http_verb": "PUT", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/applications/bvs/tenant[name=\"h4h5h6\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+</msg>
+<msg timestamp="20140207 17:42:11.279" level="TRACE">Return: {}</msg>
+<status status="PASS" endtime="20140207 17:42:11.279" starttime="20140207 17:42:11.217"></status>
+</kw>
+<msg timestamp="20140207 17:42:11.279" level="TRACE">Return: None</msg>
+<status status="PASS" endtime="20140207 17:42:11.279" starttime="20140207 17:42:11.216"></status>
+</kw>
+<kw type="kw" name="add a vns">
+<doc></doc>
+<arguments>
+<arg>h4h5h6</arg>
+<arg>h4h5h6</arg>
+</arguments>
+<msg timestamp="20140207 17:42:11.280" level="TRACE">Arguments: [ ${tenant}=u'h4h5h6' | ${vns}=u'h4h5h6' ]</msg>
+<kw type="kw" name="T5.Rest Add Vns">
+<doc></doc>
+<arguments>
+<arg>${tenant}</arg>
+<arg>${vns}</arg>
+</arguments>
+<msg timestamp="20140207 17:42:11.281" level="TRACE">Arguments: [ u'h4h5h6' | u'h4h5h6' ]</msg>
+<msg timestamp="20140207 17:42:11.283" level="INFO">[T5.py:T5.rest_add_vns:115] Input arguments: tenant = h4h5h6 vns = h4h5h6
+</msg>
+<msg timestamp="20140207 17:42:11.285" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] RestClient: PUT http://10.192.106.10:8080/api/v1/data/controller/applications/bvs/tenant[name="h4h5h6"]/vns[name="h4h5h6"]
+</msg>
+<msg timestamp="20140207 17:42:11.288" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] Headers = {
+    "Cookie": "session_cookie=4N9SjnkLC2FCLJ_8Nr60SGOGV_npl-7B", 
+    "content-type": "application/json"
+}
+</msg>
+<msg timestamp="20140207 17:42:11.292" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] Data = {
+    "name": "h4h5h6"
+}
+</msg>
+<msg timestamp="20140207 17:42:11.342" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] REST result:
+{
+    "content": {}, 
+    "http_verb": "PUT", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/applications/bvs/tenant[name=\"h4h5h6\"]/vns[name=\"h4h5h6\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+
+----
+</msg>
+<msg timestamp="20140207 17:42:11.342" level="TRACE">Return: {}</msg>
+<status status="PASS" endtime="20140207 17:42:11.342" starttime="20140207 17:42:11.280"></status>
+</kw>
+<msg timestamp="20140207 17:42:11.342" level="TRACE">Return: None</msg>
+<status status="PASS" endtime="20140207 17:42:11.342" starttime="20140207 17:42:11.279"></status>
+</kw>
+<kw type="kw" name="add a portgroup">
+<doc></doc>
+<arguments>
+<arg>p1</arg>
+</arguments>
+<msg timestamp="20140207 17:42:11.343" level="TRACE">Arguments: [ ${pg}=u'p1' ]</msg>
+<kw type="kw" name="T5.Rest Add Portgroup">
+<doc></doc>
+<arguments>
+<arg>${pg}</arg>
+</arguments>
+<msg timestamp="20140207 17:42:11.344" level="TRACE">Arguments: [ u'p1' ]</msg>
+<msg timestamp="20140207 17:42:11.346" level="INFO">[T5.py:T5.rest_add_portgroup:164] Input arguments: port-group = p1
+</msg>
+<msg timestamp="20140207 17:42:11.348" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] RestClient: PUT http://10.192.106.10:8080/api/v1/data/controller/fabric/port-group[name="p1"]
+</msg>
+<msg timestamp="20140207 17:42:11.350" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] Headers = {
+    "Cookie": "session_cookie=4N9SjnkLC2FCLJ_8Nr60SGOGV_npl-7B", 
+    "content-type": "application/json"
+}
+</msg>
+<msg timestamp="20140207 17:42:11.352" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] Data = {
+    "name": "p1"
+}
+</msg>
+<msg timestamp="20140207 17:42:11.436" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] REST result:
+{
+    "content": {}, 
+    "http_verb": "PUT", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/fabric/port-group[name=\"p1\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+
+----
+</msg>
+<msg timestamp="20140207 17:42:11.438" level="INFO">[T5.py:T5.rest_add_portgroup:168] Output: {
+    "content": {}, 
+    "http_verb": "PUT", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/fabric/port-group[name=\"p1\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+</msg>
+<msg timestamp="20140207 17:42:11.438" level="TRACE">Return: {}</msg>
+<status status="PASS" endtime="20140207 17:42:11.438" starttime="20140207 17:42:11.343"></status>
+</kw>
+<msg timestamp="20140207 17:42:11.439" level="TRACE">Return: None</msg>
+<status status="PASS" endtime="20140207 17:42:11.439" starttime="20140207 17:42:11.343"></status>
+</kw>
+<kw type="kw" name="add interface to portgroup">
+<doc></doc>
+<arguments>
+<arg>leaf0-a</arg>
+<arg>${h1_intf0}</arg>
+<arg>p1</arg>
+</arguments>
+<msg timestamp="20140207 17:42:11.440" level="TRACE">Arguments: [ ${switch}=u'leaf0-a' | ${intf}=u'ethernet8' | ${pg}=u'p1' ]</msg>
+<kw type="kw" name="T5.Rest Add Interface To Portgroup">
+<doc></doc>
+<arguments>
+<arg>${switch}</arg>
+<arg>${intf}</arg>
+<arg>${pg}</arg>
+</arguments>
+<msg timestamp="20140207 17:42:11.440" level="TRACE">Arguments: [ u'leaf0-a' | u'ethernet8' | u'p1' ]</msg>
+<msg timestamp="20140207 17:42:11.442" level="INFO">[T5.py:T5.rest_add_interface_to_portgroup:236] Input arguments: switch-name = leaf0-a Interface-name = ethernet8 port-group = p1
+</msg>
+<msg timestamp="20140207 17:42:11.445" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] RestClient: PUT http://10.192.106.10:8080/api/v1/data/controller/core/switch-config[name="leaf0-a"]/interface[name="ethernet8"]
+</msg>
+<msg timestamp="20140207 17:42:11.447" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] Headers = {
+    "Cookie": "session_cookie=4N9SjnkLC2FCLJ_8Nr60SGOGV_npl-7B", 
+    "content-type": "application/json"
+}
+</msg>
+<msg timestamp="20140207 17:42:11.449" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] Data = {
+    "name": "ethernet8", 
+    "port-group-name": "p1"
+}
+</msg>
+<msg timestamp="20140207 17:42:11.502" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] REST result:
+{
+    "content": {}, 
+    "http_verb": "PUT", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/core/switch-config[name=\"leaf0-a\"]/interface[name=\"ethernet8\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+
+----
+</msg>
+<msg timestamp="20140207 17:42:11.504" level="INFO">[T5.py:T5.rest_add_interface_to_portgroup:240] Output: {
+    "content": {}, 
+    "http_verb": "PUT", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/core/switch-config[name=\"leaf0-a\"]/interface[name=\"ethernet8\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+</msg>
+<msg timestamp="20140207 17:42:11.504" level="TRACE">Return: {}</msg>
+<status status="PASS" endtime="20140207 17:42:11.504" starttime="20140207 17:42:11.440"></status>
+</kw>
+<msg timestamp="20140207 17:42:11.505" level="TRACE">Return: None</msg>
+<status status="PASS" endtime="20140207 17:42:11.505" starttime="20140207 17:42:11.439"></status>
+</kw>
+<kw type="kw" name="add interface to portgroup">
+<doc></doc>
+<arguments>
+<arg>leaf0-b</arg>
+<arg>${h1_intf1}</arg>
+<arg>p1</arg>
+</arguments>
+<msg timestamp="20140207 17:42:11.506" level="TRACE">Arguments: [ ${switch}=u'leaf0-b' | ${intf}=u'ethernet8' | ${pg}=u'p1' ]</msg>
+<kw type="kw" name="T5.Rest Add Interface To Portgroup">
+<doc></doc>
+<arguments>
+<arg>${switch}</arg>
+<arg>${intf}</arg>
+<arg>${pg}</arg>
+</arguments>
+<msg timestamp="20140207 17:42:11.506" level="TRACE">Arguments: [ u'leaf0-b' | u'ethernet8' | u'p1' ]</msg>
+<msg timestamp="20140207 17:42:11.508" level="INFO">[T5.py:T5.rest_add_interface_to_portgroup:236] Input arguments: switch-name = leaf0-b Interface-name = ethernet8 port-group = p1
+</msg>
+<msg timestamp="20140207 17:42:11.510" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] RestClient: PUT http://10.192.106.10:8080/api/v1/data/controller/core/switch-config[name="leaf0-b"]/interface[name="ethernet8"]
+</msg>
+<msg timestamp="20140207 17:42:11.512" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] Headers = {
+    "Cookie": "session_cookie=4N9SjnkLC2FCLJ_8Nr60SGOGV_npl-7B", 
+    "content-type": "application/json"
+}
+</msg>
+<msg timestamp="20140207 17:42:11.515" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] Data = {
+    "name": "ethernet8", 
+    "port-group-name": "p1"
+}
+</msg>
+<msg timestamp="20140207 17:42:11.544" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] REST result:
+{
+    "content": {}, 
+    "http_verb": "PUT", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/core/switch-config[name=\"leaf0-b\"]/interface[name=\"ethernet8\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+
+----
+</msg>
+<msg timestamp="20140207 17:42:11.546" level="INFO">[T5.py:T5.rest_add_interface_to_portgroup:240] Output: {
+    "content": {}, 
+    "http_verb": "PUT", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/core/switch-config[name=\"leaf0-b\"]/interface[name=\"ethernet8\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+</msg>
+<msg timestamp="20140207 17:42:11.547" level="TRACE">Return: {}</msg>
+<status status="PASS" endtime="20140207 17:42:11.547" starttime="20140207 17:42:11.506"></status>
+</kw>
+<msg timestamp="20140207 17:42:11.547" level="TRACE">Return: None</msg>
+<status status="PASS" endtime="20140207 17:42:11.547" starttime="20140207 17:42:11.505"></status>
+</kw>
+<kw type="kw" name="T5.Rest Add Portgroup Lacp">
+<doc></doc>
+<arguments>
+<arg>p1</arg>
+</arguments>
+<msg timestamp="20140207 17:42:11.547" level="TRACE">Arguments: [ u'p1' ]</msg>
+<msg timestamp="20140207 17:42:11.549" level="INFO">[T5.py:T5.rest_add_portgroup_lacp:251] Input arguments: port-group = p1
+</msg>
+<msg timestamp="20140207 17:42:11.551" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.patch:71] RestClient: PATCH http://10.192.106.10:8080/api/v1/data/controller/fabric/port-group[name="p1"]
+</msg>
+<msg timestamp="20140207 17:42:11.552" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.patch:71] Headers = {
+    "Cookie": "session_cookie=4N9SjnkLC2FCLJ_8Nr60SGOGV_npl-7B", 
+    "content-type": "application/json"
+}
+</msg>
+<msg timestamp="20140207 17:42:11.554" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.patch:71] Data = {
+    "mode": "lacp"
+}
+</msg>
+<msg timestamp="20140207 17:42:11.589" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.patch:71] REST result:
+{
+    "content": {}, 
+    "http_verb": "PATCH", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/fabric/port-group[name=\"p1\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+
+----
+</msg>
+<msg timestamp="20140207 17:42:11.590" level="INFO">[T5.py:T5.rest_add_portgroup_lacp:255] Output: {
+    "content": {}, 
+    "http_verb": "PATCH", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/fabric/port-group[name=\"p1\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+</msg>
+<msg timestamp="20140207 17:42:11.590" level="TRACE">Return: {}</msg>
+<status status="PASS" endtime="20140207 17:42:11.590" starttime="20140207 17:42:11.547"></status>
+</kw>
+<kw type="kw" name="add a portgroup">
+<doc></doc>
+<arguments>
+<arg>p2</arg>
+</arguments>
+<msg timestamp="20140207 17:42:11.591" level="TRACE">Arguments: [ ${pg}=u'p2' ]</msg>
+<kw type="kw" name="T5.Rest Add Portgroup">
+<doc></doc>
+<arguments>
+<arg>${pg}</arg>
+</arguments>
+<msg timestamp="20140207 17:42:11.592" level="TRACE">Arguments: [ u'p2' ]</msg>
+<msg timestamp="20140207 17:42:11.593" level="INFO">[T5.py:T5.rest_add_portgroup:164] Input arguments: port-group = p2
+</msg>
+<msg timestamp="20140207 17:42:11.596" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] RestClient: PUT http://10.192.106.10:8080/api/v1/data/controller/fabric/port-group[name="p2"]
+</msg>
+<msg timestamp="20140207 17:42:11.598" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] Headers = {
+    "Cookie": "session_cookie=4N9SjnkLC2FCLJ_8Nr60SGOGV_npl-7B", 
+    "content-type": "application/json"
+}
+</msg>
+<msg timestamp="20140207 17:42:11.600" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] Data = {
+    "name": "p2"
+}
+</msg>
+<msg timestamp="20140207 17:42:11.634" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] REST result:
+{
+    "content": {}, 
+    "http_verb": "PUT", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/fabric/port-group[name=\"p2\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+
+----
+</msg>
+<msg timestamp="20140207 17:42:11.636" level="INFO">[T5.py:T5.rest_add_portgroup:168] Output: {
+    "content": {}, 
+    "http_verb": "PUT", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/fabric/port-group[name=\"p2\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+</msg>
+<msg timestamp="20140207 17:42:11.636" level="TRACE">Return: {}</msg>
+<status status="PASS" endtime="20140207 17:42:11.636" starttime="20140207 17:42:11.591"></status>
+</kw>
+<msg timestamp="20140207 17:42:11.636" level="TRACE">Return: None</msg>
+<status status="PASS" endtime="20140207 17:42:11.636" starttime="20140207 17:42:11.590"></status>
+</kw>
+<kw type="kw" name="add interface to portgroup">
+<doc></doc>
+<arguments>
+<arg>leaf0-a</arg>
+<arg>${h2_intf0}</arg>
+<arg>p2</arg>
+</arguments>
+<msg timestamp="20140207 17:42:11.637" level="TRACE">Arguments: [ ${switch}=u'leaf0-a' | ${intf}=u'ethernet9' | ${pg}=u'p2' ]</msg>
+<kw type="kw" name="T5.Rest Add Interface To Portgroup">
+<doc></doc>
+<arguments>
+<arg>${switch}</arg>
+<arg>${intf}</arg>
+<arg>${pg}</arg>
+</arguments>
+<msg timestamp="20140207 17:42:11.638" level="TRACE">Arguments: [ u'leaf0-a' | u'ethernet9' | u'p2' ]</msg>
+<msg timestamp="20140207 17:42:11.640" level="INFO">[T5.py:T5.rest_add_interface_to_portgroup:236] Input arguments: switch-name = leaf0-a Interface-name = ethernet9 port-group = p2
+</msg>
+<msg timestamp="20140207 17:42:11.642" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] RestClient: PUT http://10.192.106.10:8080/api/v1/data/controller/core/switch-config[name="leaf0-a"]/interface[name="ethernet9"]
+</msg>
+<msg timestamp="20140207 17:42:11.644" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] Headers = {
+    "Cookie": "session_cookie=4N9SjnkLC2FCLJ_8Nr60SGOGV_npl-7B", 
+    "content-type": "application/json"
+}
+</msg>
+<msg timestamp="20140207 17:42:11.646" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] Data = {
+    "name": "ethernet9", 
+    "port-group-name": "p2"
+}
+</msg>
+<msg timestamp="20140207 17:42:11.674" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] REST result:
+{
+    "content": {}, 
+    "http_verb": "PUT", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/core/switch-config[name=\"leaf0-a\"]/interface[name=\"ethernet9\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+
+----
+</msg>
+<msg timestamp="20140207 17:42:11.677" level="INFO">[T5.py:T5.rest_add_interface_to_portgroup:240] Output: {
+    "content": {}, 
+    "http_verb": "PUT", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/core/switch-config[name=\"leaf0-a\"]/interface[name=\"ethernet9\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+</msg>
+<msg timestamp="20140207 17:42:11.677" level="TRACE">Return: {}</msg>
+<status status="PASS" endtime="20140207 17:42:11.677" starttime="20140207 17:42:11.638"></status>
+</kw>
+<msg timestamp="20140207 17:42:11.677" level="TRACE">Return: None</msg>
+<status status="PASS" endtime="20140207 17:42:11.677" starttime="20140207 17:42:11.637"></status>
+</kw>
+<kw type="kw" name="add interface to portgroup">
+<doc></doc>
+<arguments>
+<arg>leaf0-b</arg>
+<arg>${h2_intf1}</arg>
+<arg>p2</arg>
+</arguments>
+<msg timestamp="20140207 17:42:11.678" level="TRACE">Arguments: [ ${switch}=u'leaf0-b' | ${intf}=u'ethernet9' | ${pg}=u'p2' ]</msg>
+<kw type="kw" name="T5.Rest Add Interface To Portgroup">
+<doc></doc>
+<arguments>
+<arg>${switch}</arg>
+<arg>${intf}</arg>
+<arg>${pg}</arg>
+</arguments>
+<msg timestamp="20140207 17:42:11.679" level="TRACE">Arguments: [ u'leaf0-b' | u'ethernet9' | u'p2' ]</msg>
+<msg timestamp="20140207 17:42:11.680" level="INFO">[T5.py:T5.rest_add_interface_to_portgroup:236] Input arguments: switch-name = leaf0-b Interface-name = ethernet9 port-group = p2
+</msg>
+<msg timestamp="20140207 17:42:11.683" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] RestClient: PUT http://10.192.106.10:8080/api/v1/data/controller/core/switch-config[name="leaf0-b"]/interface[name="ethernet9"]
+</msg>
+<msg timestamp="20140207 17:42:11.685" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] Headers = {
+    "Cookie": "session_cookie=4N9SjnkLC2FCLJ_8Nr60SGOGV_npl-7B", 
+    "content-type": "application/json"
+}
+</msg>
+<msg timestamp="20140207 17:42:11.687" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] Data = {
+    "name": "ethernet9", 
+    "port-group-name": "p2"
+}
+</msg>
+<msg timestamp="20140207 17:42:11.714" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] REST result:
+{
+    "content": {}, 
+    "http_verb": "PUT", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/core/switch-config[name=\"leaf0-b\"]/interface[name=\"ethernet9\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+
+----
+</msg>
+<msg timestamp="20140207 17:42:11.716" level="INFO">[T5.py:T5.rest_add_interface_to_portgroup:240] Output: {
+    "content": {}, 
+    "http_verb": "PUT", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/core/switch-config[name=\"leaf0-b\"]/interface[name=\"ethernet9\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+</msg>
+<msg timestamp="20140207 17:42:11.716" level="TRACE">Return: {}</msg>
+<status status="PASS" endtime="20140207 17:42:11.716" starttime="20140207 17:42:11.678"></status>
+</kw>
+<msg timestamp="20140207 17:42:11.716" level="TRACE">Return: None</msg>
+<status status="PASS" endtime="20140207 17:42:11.716" starttime="20140207 17:42:11.677"></status>
+</kw>
+<kw type="kw" name="T5.Rest Add Portgroup Lacp">
+<doc></doc>
+<arguments>
+<arg>p2</arg>
+</arguments>
+<msg timestamp="20140207 17:42:11.717" level="TRACE">Arguments: [ u'p2' ]</msg>
+<msg timestamp="20140207 17:42:11.718" level="INFO">[T5.py:T5.rest_add_portgroup_lacp:251] Input arguments: port-group = p2
+</msg>
+<msg timestamp="20140207 17:42:11.720" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.patch:71] RestClient: PATCH http://10.192.106.10:8080/api/v1/data/controller/fabric/port-group[name="p2"]
+</msg>
+<msg timestamp="20140207 17:42:11.722" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.patch:71] Headers = {
+    "Cookie": "session_cookie=4N9SjnkLC2FCLJ_8Nr60SGOGV_npl-7B", 
+    "content-type": "application/json"
+}
+</msg>
+<msg timestamp="20140207 17:42:11.723" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.patch:71] Data = {
+    "mode": "lacp"
+}
+</msg>
+<msg timestamp="20140207 17:42:11.836" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.patch:71] REST result:
+{
+    "content": {}, 
+    "http_verb": "PATCH", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/fabric/port-group[name=\"p2\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+
+----
+</msg>
+<msg timestamp="20140207 17:42:11.838" level="INFO">[T5.py:T5.rest_add_portgroup_lacp:255] Output: {
+    "content": {}, 
+    "http_verb": "PATCH", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/fabric/port-group[name=\"p2\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+</msg>
+<msg timestamp="20140207 17:42:11.838" level="TRACE">Return: {}</msg>
+<status status="PASS" endtime="20140207 17:42:11.838" starttime="20140207 17:42:11.716"></status>
+</kw>
+<kw type="kw" name="add a portgroup">
+<doc></doc>
+<arguments>
+<arg>p3</arg>
+</arguments>
+<msg timestamp="20140207 17:42:11.839" level="TRACE">Arguments: [ ${pg}=u'p3' ]</msg>
+<kw type="kw" name="T5.Rest Add Portgroup">
+<doc></doc>
+<arguments>
+<arg>${pg}</arg>
+</arguments>
+<msg timestamp="20140207 17:42:11.839" level="TRACE">Arguments: [ u'p3' ]</msg>
+<msg timestamp="20140207 17:42:11.841" level="INFO">[T5.py:T5.rest_add_portgroup:164] Input arguments: port-group = p3
+</msg>
+<msg timestamp="20140207 17:42:11.843" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] RestClient: PUT http://10.192.106.10:8080/api/v1/data/controller/fabric/port-group[name="p3"]
+</msg>
+<msg timestamp="20140207 17:42:11.845" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] Headers = {
+    "Cookie": "session_cookie=4N9SjnkLC2FCLJ_8Nr60SGOGV_npl-7B", 
+    "content-type": "application/json"
+}
+</msg>
+<msg timestamp="20140207 17:42:11.847" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] Data = {
+    "name": "p3"
+}
+</msg>
+<msg timestamp="20140207 17:42:11.875" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] REST result:
+{
+    "content": {}, 
+    "http_verb": "PUT", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/fabric/port-group[name=\"p3\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+
+----
+</msg>
+<msg timestamp="20140207 17:42:11.877" level="INFO">[T5.py:T5.rest_add_portgroup:168] Output: {
+    "content": {}, 
+    "http_verb": "PUT", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/fabric/port-group[name=\"p3\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+</msg>
+<msg timestamp="20140207 17:42:11.877" level="TRACE">Return: {}</msg>
+<status status="PASS" endtime="20140207 17:42:11.877" starttime="20140207 17:42:11.839"></status>
+</kw>
+<msg timestamp="20140207 17:42:11.877" level="TRACE">Return: None</msg>
+<status status="PASS" endtime="20140207 17:42:11.877" starttime="20140207 17:42:11.838"></status>
+</kw>
+<kw type="kw" name="add interface to portgroup">
+<doc></doc>
+<arguments>
+<arg>leaf1-a</arg>
+<arg>${h3_intf0}</arg>
+<arg>p3</arg>
+</arguments>
+<msg timestamp="20140207 17:42:11.878" level="TRACE">Arguments: [ ${switch}=u'leaf1-a' | ${intf}=u'ethernet8' | ${pg}=u'p3' ]</msg>
+<kw type="kw" name="T5.Rest Add Interface To Portgroup">
+<doc></doc>
+<arguments>
+<arg>${switch}</arg>
+<arg>${intf}</arg>
+<arg>${pg}</arg>
+</arguments>
+<msg timestamp="20140207 17:42:11.879" level="TRACE">Arguments: [ u'leaf1-a' | u'ethernet8' | u'p3' ]</msg>
+<msg timestamp="20140207 17:42:11.880" level="INFO">[T5.py:T5.rest_add_interface_to_portgroup:236] Input arguments: switch-name = leaf1-a Interface-name = ethernet8 port-group = p3
+</msg>
+<msg timestamp="20140207 17:42:11.883" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] RestClient: PUT http://10.192.106.10:8080/api/v1/data/controller/core/switch-config[name="leaf1-a"]/interface[name="ethernet8"]
+</msg>
+<msg timestamp="20140207 17:42:11.885" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] Headers = {
+    "Cookie": "session_cookie=4N9SjnkLC2FCLJ_8Nr60SGOGV_npl-7B", 
+    "content-type": "application/json"
+}
+</msg>
+<msg timestamp="20140207 17:42:11.887" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] Data = {
+    "name": "ethernet8", 
+    "port-group-name": "p3"
+}
+</msg>
+<msg timestamp="20140207 17:42:11.916" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] REST result:
+{
+    "content": {}, 
+    "http_verb": "PUT", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/core/switch-config[name=\"leaf1-a\"]/interface[name=\"ethernet8\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+
+----
+</msg>
+<msg timestamp="20140207 17:42:11.918" level="INFO">[T5.py:T5.rest_add_interface_to_portgroup:240] Output: {
+    "content": {}, 
+    "http_verb": "PUT", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/core/switch-config[name=\"leaf1-a\"]/interface[name=\"ethernet8\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+</msg>
+<msg timestamp="20140207 17:42:11.918" level="TRACE">Return: {}</msg>
+<status status="PASS" endtime="20140207 17:42:11.918" starttime="20140207 17:42:11.878"></status>
+</kw>
+<msg timestamp="20140207 17:42:11.919" level="TRACE">Return: None</msg>
+<status status="PASS" endtime="20140207 17:42:11.919" starttime="20140207 17:42:11.877"></status>
+</kw>
+<kw type="kw" name="add interface to portgroup">
+<doc></doc>
+<arguments>
+<arg>leaf1-b</arg>
+<arg>${h3_intf1}</arg>
+<arg>p3</arg>
+</arguments>
+<msg timestamp="20140207 17:42:11.920" level="TRACE">Arguments: [ ${switch}=u'leaf1-b' | ${intf}=u'ethernet8' | ${pg}=u'p3' ]</msg>
+<kw type="kw" name="T5.Rest Add Interface To Portgroup">
+<doc></doc>
+<arguments>
+<arg>${switch}</arg>
+<arg>${intf}</arg>
+<arg>${pg}</arg>
+</arguments>
+<msg timestamp="20140207 17:42:11.921" level="TRACE">Arguments: [ u'leaf1-b' | u'ethernet8' | u'p3' ]</msg>
+<msg timestamp="20140207 17:42:11.923" level="INFO">[T5.py:T5.rest_add_interface_to_portgroup:236] Input arguments: switch-name = leaf1-b Interface-name = ethernet8 port-group = p3
+</msg>
+<msg timestamp="20140207 17:42:11.925" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] RestClient: PUT http://10.192.106.10:8080/api/v1/data/controller/core/switch-config[name="leaf1-b"]/interface[name="ethernet8"]
+</msg>
+<msg timestamp="20140207 17:42:11.927" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] Headers = {
+    "Cookie": "session_cookie=4N9SjnkLC2FCLJ_8Nr60SGOGV_npl-7B", 
+    "content-type": "application/json"
+}
+</msg>
+<msg timestamp="20140207 17:42:11.929" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] Data = {
+    "name": "ethernet8", 
+    "port-group-name": "p3"
+}
+</msg>
+<msg timestamp="20140207 17:42:11.949" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] REST result:
+{
+    "content": {}, 
+    "http_verb": "PUT", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/core/switch-config[name=\"leaf1-b\"]/interface[name=\"ethernet8\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+
+----
+</msg>
+<msg timestamp="20140207 17:42:11.951" level="INFO">[T5.py:T5.rest_add_interface_to_portgroup:240] Output: {
+    "content": {}, 
+    "http_verb": "PUT", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/core/switch-config[name=\"leaf1-b\"]/interface[name=\"ethernet8\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+</msg>
+<msg timestamp="20140207 17:42:11.951" level="TRACE">Return: {}</msg>
+<status status="PASS" endtime="20140207 17:42:11.951" starttime="20140207 17:42:11.920"></status>
+</kw>
+<msg timestamp="20140207 17:42:11.951" level="TRACE">Return: None</msg>
+<status status="PASS" endtime="20140207 17:42:11.951" starttime="20140207 17:42:11.919"></status>
+</kw>
+<kw type="kw" name="T5.Rest Add Portgroup Lacp">
+<doc></doc>
+<arguments>
+<arg>p3</arg>
+</arguments>
+<msg timestamp="20140207 17:42:11.952" level="TRACE">Arguments: [ u'p3' ]</msg>
+<msg timestamp="20140207 17:42:11.953" level="INFO">[T5.py:T5.rest_add_portgroup_lacp:251] Input arguments: port-group = p3
+</msg>
+<msg timestamp="20140207 17:42:11.955" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.patch:71] RestClient: PATCH http://10.192.106.10:8080/api/v1/data/controller/fabric/port-group[name="p3"]
+</msg>
+<msg timestamp="20140207 17:42:11.957" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.patch:71] Headers = {
+    "Cookie": "session_cookie=4N9SjnkLC2FCLJ_8Nr60SGOGV_npl-7B", 
+    "content-type": "application/json"
+}
+</msg>
+<msg timestamp="20140207 17:42:11.959" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.patch:71] Data = {
+    "mode": "lacp"
+}
+</msg>
+<msg timestamp="20140207 17:42:11.986" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.patch:71] REST result:
+{
+    "content": {}, 
+    "http_verb": "PATCH", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/fabric/port-group[name=\"p3\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+
+----
+</msg>
+<msg timestamp="20140207 17:42:11.988" level="INFO">[T5.py:T5.rest_add_portgroup_lacp:255] Output: {
+    "content": {}, 
+    "http_verb": "PATCH", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/fabric/port-group[name=\"p3\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+</msg>
+<msg timestamp="20140207 17:42:11.988" level="TRACE">Return: {}</msg>
+<status status="PASS" endtime="20140207 17:42:11.988" starttime="20140207 17:42:11.951"></status>
+</kw>
+<kw type="kw" name="add a portgroup">
+<doc></doc>
+<arguments>
+<arg>p4</arg>
+</arguments>
+<msg timestamp="20140207 17:42:11.989" level="TRACE">Arguments: [ ${pg}=u'p4' ]</msg>
+<kw type="kw" name="T5.Rest Add Portgroup">
+<doc></doc>
+<arguments>
+<arg>${pg}</arg>
+</arguments>
+<msg timestamp="20140207 17:42:11.989" level="TRACE">Arguments: [ u'p4' ]</msg>
+<msg timestamp="20140207 17:42:11.991" level="INFO">[T5.py:T5.rest_add_portgroup:164] Input arguments: port-group = p4
+</msg>
+<msg timestamp="20140207 17:42:11.993" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] RestClient: PUT http://10.192.106.10:8080/api/v1/data/controller/fabric/port-group[name="p4"]
+</msg>
+<msg timestamp="20140207 17:42:11.995" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] Headers = {
+    "Cookie": "session_cookie=4N9SjnkLC2FCLJ_8Nr60SGOGV_npl-7B", 
+    "content-type": "application/json"
+}
+</msg>
+<msg timestamp="20140207 17:42:11.998" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] Data = {
+    "name": "p4"
+}
+</msg>
+<msg timestamp="20140207 17:42:12.030" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] REST result:
+{
+    "content": {}, 
+    "http_verb": "PUT", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/fabric/port-group[name=\"p4\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+
+----
+</msg>
+<msg timestamp="20140207 17:42:12.032" level="INFO">[T5.py:T5.rest_add_portgroup:168] Output: {
+    "content": {}, 
+    "http_verb": "PUT", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/fabric/port-group[name=\"p4\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+</msg>
+<msg timestamp="20140207 17:42:12.032" level="TRACE">Return: {}</msg>
+<status status="PASS" endtime="20140207 17:42:12.032" starttime="20140207 17:42:11.989"></status>
+</kw>
+<msg timestamp="20140207 17:42:12.033" level="TRACE">Return: None</msg>
+<status status="PASS" endtime="20140207 17:42:12.033" starttime="20140207 17:42:11.988"></status>
+</kw>
+<kw type="kw" name="add interface to portgroup">
+<doc></doc>
+<arguments>
+<arg>leaf1-a</arg>
+<arg>${h4_intf0}</arg>
+<arg>p4</arg>
+</arguments>
+<msg timestamp="20140207 17:42:12.034" level="TRACE">Arguments: [ ${switch}=u'leaf1-a' | ${intf}=u'ethernet9' | ${pg}=u'p4' ]</msg>
+<kw type="kw" name="T5.Rest Add Interface To Portgroup">
+<doc></doc>
+<arguments>
+<arg>${switch}</arg>
+<arg>${intf}</arg>
+<arg>${pg}</arg>
+</arguments>
+<msg timestamp="20140207 17:42:12.034" level="TRACE">Arguments: [ u'leaf1-a' | u'ethernet9' | u'p4' ]</msg>
+<msg timestamp="20140207 17:42:12.036" level="INFO">[T5.py:T5.rest_add_interface_to_portgroup:236] Input arguments: switch-name = leaf1-a Interface-name = ethernet9 port-group = p4
+</msg>
+<msg timestamp="20140207 17:42:12.038" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] RestClient: PUT http://10.192.106.10:8080/api/v1/data/controller/core/switch-config[name="leaf1-a"]/interface[name="ethernet9"]
+</msg>
+<msg timestamp="20140207 17:42:12.040" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] Headers = {
+    "Cookie": "session_cookie=4N9SjnkLC2FCLJ_8Nr60SGOGV_npl-7B", 
+    "content-type": "application/json"
+}
+</msg>
+<msg timestamp="20140207 17:42:12.042" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] Data = {
+    "name": "ethernet9", 
+    "port-group-name": "p4"
+}
+</msg>
+<msg timestamp="20140207 17:42:12.065" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] REST result:
+{
+    "content": {}, 
+    "http_verb": "PUT", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/core/switch-config[name=\"leaf1-a\"]/interface[name=\"ethernet9\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+
+----
+</msg>
+<msg timestamp="20140207 17:42:12.067" level="INFO">[T5.py:T5.rest_add_interface_to_portgroup:240] Output: {
+    "content": {}, 
+    "http_verb": "PUT", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/core/switch-config[name=\"leaf1-a\"]/interface[name=\"ethernet9\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+</msg>
+<msg timestamp="20140207 17:42:12.067" level="TRACE">Return: {}</msg>
+<status status="PASS" endtime="20140207 17:42:12.067" starttime="20140207 17:42:12.034"></status>
+</kw>
+<msg timestamp="20140207 17:42:12.067" level="TRACE">Return: None</msg>
+<status status="PASS" endtime="20140207 17:42:12.067" starttime="20140207 17:42:12.033"></status>
+</kw>
+<kw type="kw" name="add interface to portgroup">
+<doc></doc>
+<arguments>
+<arg>leaf1-b</arg>
+<arg>${h4_intf1}</arg>
+<arg>p4</arg>
+</arguments>
+<msg timestamp="20140207 17:42:12.068" level="TRACE">Arguments: [ ${switch}=u'leaf1-b' | ${intf}=u'ethernet9' | ${pg}=u'p4' ]</msg>
+<kw type="kw" name="T5.Rest Add Interface To Portgroup">
+<doc></doc>
+<arguments>
+<arg>${switch}</arg>
+<arg>${intf}</arg>
+<arg>${pg}</arg>
+</arguments>
+<msg timestamp="20140207 17:42:12.069" level="TRACE">Arguments: [ u'leaf1-b' | u'ethernet9' | u'p4' ]</msg>
+<msg timestamp="20140207 17:42:12.071" level="INFO">[T5.py:T5.rest_add_interface_to_portgroup:236] Input arguments: switch-name = leaf1-b Interface-name = ethernet9 port-group = p4
+</msg>
+<msg timestamp="20140207 17:42:12.073" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] RestClient: PUT http://10.192.106.10:8080/api/v1/data/controller/core/switch-config[name="leaf1-b"]/interface[name="ethernet9"]
+</msg>
+<msg timestamp="20140207 17:42:12.075" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] Headers = {
+    "Cookie": "session_cookie=4N9SjnkLC2FCLJ_8Nr60SGOGV_npl-7B", 
+    "content-type": "application/json"
+}
+</msg>
+<msg timestamp="20140207 17:42:12.077" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] Data = {
+    "name": "ethernet9", 
+    "port-group-name": "p4"
+}
+</msg>
+<msg timestamp="20140207 17:42:12.098" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] REST result:
+{
+    "content": {}, 
+    "http_verb": "PUT", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/core/switch-config[name=\"leaf1-b\"]/interface[name=\"ethernet9\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+
+----
+</msg>
+<msg timestamp="20140207 17:42:12.100" level="INFO">[T5.py:T5.rest_add_interface_to_portgroup:240] Output: {
+    "content": {}, 
+    "http_verb": "PUT", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/core/switch-config[name=\"leaf1-b\"]/interface[name=\"ethernet9\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+</msg>
+<msg timestamp="20140207 17:42:12.100" level="TRACE">Return: {}</msg>
+<status status="PASS" endtime="20140207 17:42:12.100" starttime="20140207 17:42:12.069"></status>
+</kw>
+<msg timestamp="20140207 17:42:12.101" level="TRACE">Return: None</msg>
+<status status="PASS" endtime="20140207 17:42:12.101" starttime="20140207 17:42:12.068"></status>
+</kw>
+<kw type="kw" name="T5.Rest Add Portgroup Lacp">
+<doc></doc>
+<arguments>
+<arg>p4</arg>
+</arguments>
+<msg timestamp="20140207 17:42:12.101" level="TRACE">Arguments: [ u'p4' ]</msg>
+<msg timestamp="20140207 17:42:12.103" level="INFO">[T5.py:T5.rest_add_portgroup_lacp:251] Input arguments: port-group = p4
+</msg>
+<msg timestamp="20140207 17:42:12.104" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.patch:71] RestClient: PATCH http://10.192.106.10:8080/api/v1/data/controller/fabric/port-group[name="p4"]
+</msg>
+<msg timestamp="20140207 17:42:12.106" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.patch:71] Headers = {
+    "Cookie": "session_cookie=4N9SjnkLC2FCLJ_8Nr60SGOGV_npl-7B", 
+    "content-type": "application/json"
+}
+</msg>
+<msg timestamp="20140207 17:42:12.108" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.patch:71] Data = {
+    "mode": "lacp"
+}
+</msg>
+<msg timestamp="20140207 17:42:12.132" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.patch:71] REST result:
+{
+    "content": {}, 
+    "http_verb": "PATCH", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/fabric/port-group[name=\"p4\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+
+----
+</msg>
+<msg timestamp="20140207 17:42:12.133" level="INFO">[T5.py:T5.rest_add_portgroup_lacp:255] Output: {
+    "content": {}, 
+    "http_verb": "PATCH", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/fabric/port-group[name=\"p4\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+</msg>
+<msg timestamp="20140207 17:42:12.134" level="TRACE">Return: {}</msg>
+<status status="PASS" endtime="20140207 17:42:12.134" starttime="20140207 17:42:12.101"></status>
+</kw>
+<kw type="kw" name="add a portgroup">
+<doc></doc>
+<arguments>
+<arg>p5</arg>
+</arguments>
+<msg timestamp="20140207 17:42:12.134" level="TRACE">Arguments: [ ${pg}=u'p5' ]</msg>
+<kw type="kw" name="T5.Rest Add Portgroup">
+<doc></doc>
+<arguments>
+<arg>${pg}</arg>
+</arguments>
+<msg timestamp="20140207 17:42:12.135" level="TRACE">Arguments: [ u'p5' ]</msg>
+<msg timestamp="20140207 17:42:12.137" level="INFO">[T5.py:T5.rest_add_portgroup:164] Input arguments: port-group = p5
+</msg>
+<msg timestamp="20140207 17:42:12.139" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] RestClient: PUT http://10.192.106.10:8080/api/v1/data/controller/fabric/port-group[name="p5"]
+</msg>
+<msg timestamp="20140207 17:42:12.141" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] Headers = {
+    "Cookie": "session_cookie=4N9SjnkLC2FCLJ_8Nr60SGOGV_npl-7B", 
+    "content-type": "application/json"
+}
+</msg>
+<msg timestamp="20140207 17:42:12.143" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] Data = {
+    "name": "p5"
+}
+</msg>
+<msg timestamp="20140207 17:42:12.171" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] REST result:
+{
+    "content": {}, 
+    "http_verb": "PUT", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/fabric/port-group[name=\"p5\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+
+----
+</msg>
+<msg timestamp="20140207 17:42:12.173" level="INFO">[T5.py:T5.rest_add_portgroup:168] Output: {
+    "content": {}, 
+    "http_verb": "PUT", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/fabric/port-group[name=\"p5\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+</msg>
+<msg timestamp="20140207 17:42:12.173" level="TRACE">Return: {}</msg>
+<status status="PASS" endtime="20140207 17:42:12.173" starttime="20140207 17:42:12.135"></status>
+</kw>
+<msg timestamp="20140207 17:42:12.173" level="TRACE">Return: None</msg>
+<status status="PASS" endtime="20140207 17:42:12.173" starttime="20140207 17:42:12.134"></status>
+</kw>
+<kw type="kw" name="add interface to portgroup">
+<doc></doc>
+<arguments>
+<arg>leaf2-a</arg>
+<arg>${h5_intf0}</arg>
+<arg>p5</arg>
+</arguments>
+<msg timestamp="20140207 17:42:12.174" level="TRACE">Arguments: [ ${switch}=u'leaf2-a' | ${intf}=u'ethernet8' | ${pg}=u'p5' ]</msg>
+<kw type="kw" name="T5.Rest Add Interface To Portgroup">
+<doc></doc>
+<arguments>
+<arg>${switch}</arg>
+<arg>${intf}</arg>
+<arg>${pg}</arg>
+</arguments>
+<msg timestamp="20140207 17:42:12.175" level="TRACE">Arguments: [ u'leaf2-a' | u'ethernet8' | u'p5' ]</msg>
+<msg timestamp="20140207 17:42:12.176" level="INFO">[T5.py:T5.rest_add_interface_to_portgroup:236] Input arguments: switch-name = leaf2-a Interface-name = ethernet8 port-group = p5
+</msg>
+<msg timestamp="20140207 17:42:12.179" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] RestClient: PUT http://10.192.106.10:8080/api/v1/data/controller/core/switch-config[name="leaf2-a"]/interface[name="ethernet8"]
+</msg>
+<msg timestamp="20140207 17:42:12.181" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] Headers = {
+    "Cookie": "session_cookie=4N9SjnkLC2FCLJ_8Nr60SGOGV_npl-7B", 
+    "content-type": "application/json"
+}
+</msg>
+<msg timestamp="20140207 17:42:12.183" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] Data = {
+    "name": "ethernet8", 
+    "port-group-name": "p5"
+}
+</msg>
+<msg timestamp="20140207 17:42:12.202" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] REST result:
+{
+    "content": {}, 
+    "http_verb": "PUT", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/core/switch-config[name=\"leaf2-a\"]/interface[name=\"ethernet8\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+
+----
+</msg>
+<msg timestamp="20140207 17:42:12.204" level="INFO">[T5.py:T5.rest_add_interface_to_portgroup:240] Output: {
+    "content": {}, 
+    "http_verb": "PUT", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/core/switch-config[name=\"leaf2-a\"]/interface[name=\"ethernet8\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+</msg>
+<msg timestamp="20140207 17:42:12.204" level="TRACE">Return: {}</msg>
+<status status="PASS" endtime="20140207 17:42:12.204" starttime="20140207 17:42:12.174"></status>
+</kw>
+<msg timestamp="20140207 17:42:12.204" level="TRACE">Return: None</msg>
+<status status="PASS" endtime="20140207 17:42:12.204" starttime="20140207 17:42:12.173"></status>
+</kw>
+<kw type="kw" name="add interface to portgroup">
+<doc></doc>
+<arguments>
+<arg>leaf2-b</arg>
+<arg>${h5_intf1}</arg>
+<arg>p5</arg>
+</arguments>
+<msg timestamp="20140207 17:42:12.205" level="TRACE">Arguments: [ ${switch}=u'leaf2-b' | ${intf}=u'ethernet8' | ${pg}=u'p5' ]</msg>
+<kw type="kw" name="T5.Rest Add Interface To Portgroup">
+<doc></doc>
+<arguments>
+<arg>${switch}</arg>
+<arg>${intf}</arg>
+<arg>${pg}</arg>
+</arguments>
+<msg timestamp="20140207 17:42:12.206" level="TRACE">Arguments: [ u'leaf2-b' | u'ethernet8' | u'p5' ]</msg>
+<msg timestamp="20140207 17:42:12.208" level="INFO">[T5.py:T5.rest_add_interface_to_portgroup:236] Input arguments: switch-name = leaf2-b Interface-name = ethernet8 port-group = p5
+</msg>
+<msg timestamp="20140207 17:42:12.210" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] RestClient: PUT http://10.192.106.10:8080/api/v1/data/controller/core/switch-config[name="leaf2-b"]/interface[name="ethernet8"]
+</msg>
+<msg timestamp="20140207 17:42:12.212" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] Headers = {
+    "Cookie": "session_cookie=4N9SjnkLC2FCLJ_8Nr60SGOGV_npl-7B", 
+    "content-type": "application/json"
+}
+</msg>
+<msg timestamp="20140207 17:42:12.214" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] Data = {
+    "name": "ethernet8", 
+    "port-group-name": "p5"
+}
+</msg>
+<msg timestamp="20140207 17:42:12.234" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] REST result:
+{
+    "content": {}, 
+    "http_verb": "PUT", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/core/switch-config[name=\"leaf2-b\"]/interface[name=\"ethernet8\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+
+----
+</msg>
+<msg timestamp="20140207 17:42:12.236" level="INFO">[T5.py:T5.rest_add_interface_to_portgroup:240] Output: {
+    "content": {}, 
+    "http_verb": "PUT", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/core/switch-config[name=\"leaf2-b\"]/interface[name=\"ethernet8\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+</msg>
+<msg timestamp="20140207 17:42:12.236" level="TRACE">Return: {}</msg>
+<status status="PASS" endtime="20140207 17:42:12.236" starttime="20140207 17:42:12.206"></status>
+</kw>
+<msg timestamp="20140207 17:42:12.237" level="TRACE">Return: None</msg>
+<status status="PASS" endtime="20140207 17:42:12.237" starttime="20140207 17:42:12.205"></status>
+</kw>
+<kw type="kw" name="T5.Rest Add Portgroup Lacp">
+<doc></doc>
+<arguments>
+<arg>p5</arg>
+</arguments>
+<msg timestamp="20140207 17:42:12.237" level="TRACE">Arguments: [ u'p5' ]</msg>
+<msg timestamp="20140207 17:42:12.239" level="INFO">[T5.py:T5.rest_add_portgroup_lacp:251] Input arguments: port-group = p5
+</msg>
+<msg timestamp="20140207 17:42:12.240" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.patch:71] RestClient: PATCH http://10.192.106.10:8080/api/v1/data/controller/fabric/port-group[name="p5"]
+</msg>
+<msg timestamp="20140207 17:42:12.242" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.patch:71] Headers = {
+    "Cookie": "session_cookie=4N9SjnkLC2FCLJ_8Nr60SGOGV_npl-7B", 
+    "content-type": "application/json"
+}
+</msg>
+<msg timestamp="20140207 17:42:12.244" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.patch:71] Data = {
+    "mode": "lacp"
+}
+</msg>
+<msg timestamp="20140207 17:42:12.265" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.patch:71] REST result:
+{
+    "content": {}, 
+    "http_verb": "PATCH", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/fabric/port-group[name=\"p5\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+
+----
+</msg>
+<msg timestamp="20140207 17:42:12.266" level="INFO">[T5.py:T5.rest_add_portgroup_lacp:255] Output: {
+    "content": {}, 
+    "http_verb": "PATCH", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/fabric/port-group[name=\"p5\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+</msg>
+<msg timestamp="20140207 17:42:12.266" level="TRACE">Return: {}</msg>
+<status status="PASS" endtime="20140207 17:42:12.266" starttime="20140207 17:42:12.237"></status>
+</kw>
+<kw type="kw" name="add a portgroup">
+<doc></doc>
+<arguments>
+<arg>p6</arg>
+</arguments>
+<msg timestamp="20140207 17:42:12.267" level="TRACE">Arguments: [ ${pg}=u'p6' ]</msg>
+<kw type="kw" name="T5.Rest Add Portgroup">
+<doc></doc>
+<arguments>
+<arg>${pg}</arg>
+</arguments>
+<msg timestamp="20140207 17:42:12.268" level="TRACE">Arguments: [ u'p6' ]</msg>
+<msg timestamp="20140207 17:42:12.270" level="INFO">[T5.py:T5.rest_add_portgroup:164] Input arguments: port-group = p6
+</msg>
+<msg timestamp="20140207 17:42:12.272" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] RestClient: PUT http://10.192.106.10:8080/api/v1/data/controller/fabric/port-group[name="p6"]
+</msg>
+<msg timestamp="20140207 17:42:12.274" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] Headers = {
+    "Cookie": "session_cookie=4N9SjnkLC2FCLJ_8Nr60SGOGV_npl-7B", 
+    "content-type": "application/json"
+}
+</msg>
+<msg timestamp="20140207 17:42:12.276" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] Data = {
+    "name": "p6"
+}
+</msg>
+<msg timestamp="20140207 17:42:12.300" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] REST result:
+{
+    "content": {}, 
+    "http_verb": "PUT", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/fabric/port-group[name=\"p6\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+
+----
+</msg>
+<msg timestamp="20140207 17:42:12.303" level="INFO">[T5.py:T5.rest_add_portgroup:168] Output: {
+    "content": {}, 
+    "http_verb": "PUT", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/fabric/port-group[name=\"p6\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+</msg>
+<msg timestamp="20140207 17:42:12.303" level="TRACE">Return: {}</msg>
+<status status="PASS" endtime="20140207 17:42:12.303" starttime="20140207 17:42:12.268"></status>
+</kw>
+<msg timestamp="20140207 17:42:12.303" level="TRACE">Return: None</msg>
+<status status="PASS" endtime="20140207 17:42:12.303" starttime="20140207 17:42:12.267"></status>
+</kw>
+<kw type="kw" name="add interface to portgroup">
+<doc></doc>
+<arguments>
+<arg>leaf2-a</arg>
+<arg>${h6_intf0}</arg>
+<arg>p6</arg>
+</arguments>
+<msg timestamp="20140207 17:42:12.305" level="TRACE">Arguments: [ ${switch}=u'leaf2-a' | ${intf}=u'ethernet9' | ${pg}=u'p6' ]</msg>
+<kw type="kw" name="T5.Rest Add Interface To Portgroup">
+<doc></doc>
+<arguments>
+<arg>${switch}</arg>
+<arg>${intf}</arg>
+<arg>${pg}</arg>
+</arguments>
+<msg timestamp="20140207 17:42:12.305" level="TRACE">Arguments: [ u'leaf2-a' | u'ethernet9' | u'p6' ]</msg>
+<msg timestamp="20140207 17:42:12.308" level="INFO">[T5.py:T5.rest_add_interface_to_portgroup:236] Input arguments: switch-name = leaf2-a Interface-name = ethernet9 port-group = p6
+</msg>
+<msg timestamp="20140207 17:42:12.310" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] RestClient: PUT http://10.192.106.10:8080/api/v1/data/controller/core/switch-config[name="leaf2-a"]/interface[name="ethernet9"]
+</msg>
+<msg timestamp="20140207 17:42:12.313" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] Headers = {
+    "Cookie": "session_cookie=4N9SjnkLC2FCLJ_8Nr60SGOGV_npl-7B", 
+    "content-type": "application/json"
+}
+</msg>
+<msg timestamp="20140207 17:42:12.315" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] Data = {
+    "name": "ethernet9", 
+    "port-group-name": "p6"
+}
+</msg>
+<msg timestamp="20140207 17:42:12.342" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] REST result:
+{
+    "content": {}, 
+    "http_verb": "PUT", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/core/switch-config[name=\"leaf2-a\"]/interface[name=\"ethernet9\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+
+----
+</msg>
+<msg timestamp="20140207 17:42:12.345" level="INFO">[T5.py:T5.rest_add_interface_to_portgroup:240] Output: {
+    "content": {}, 
+    "http_verb": "PUT", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/core/switch-config[name=\"leaf2-a\"]/interface[name=\"ethernet9\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+</msg>
+<msg timestamp="20140207 17:42:12.345" level="TRACE">Return: {}</msg>
+<status status="PASS" endtime="20140207 17:42:12.345" starttime="20140207 17:42:12.305"></status>
+</kw>
+<msg timestamp="20140207 17:42:12.345" level="TRACE">Return: None</msg>
+<status status="PASS" endtime="20140207 17:42:12.345" starttime="20140207 17:42:12.304"></status>
+</kw>
+<kw type="kw" name="add interface to portgroup">
+<doc></doc>
+<arguments>
+<arg>leaf2-b</arg>
+<arg>${h6_intf1}</arg>
+<arg>p6</arg>
+</arguments>
+<msg timestamp="20140207 17:42:12.347" level="TRACE">Arguments: [ ${switch}=u'leaf2-b' | ${intf}=u'ethernet9' | ${pg}=u'p6' ]</msg>
+<kw type="kw" name="T5.Rest Add Interface To Portgroup">
+<doc></doc>
+<arguments>
+<arg>${switch}</arg>
+<arg>${intf}</arg>
+<arg>${pg}</arg>
+</arguments>
+<msg timestamp="20140207 17:42:12.347" level="TRACE">Arguments: [ u'leaf2-b' | u'ethernet9' | u'p6' ]</msg>
+<msg timestamp="20140207 17:42:12.350" level="INFO">[T5.py:T5.rest_add_interface_to_portgroup:236] Input arguments: switch-name = leaf2-b Interface-name = ethernet9 port-group = p6
+</msg>
+<msg timestamp="20140207 17:42:12.352" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] RestClient: PUT http://10.192.106.10:8080/api/v1/data/controller/core/switch-config[name="leaf2-b"]/interface[name="ethernet9"]
+</msg>
+<msg timestamp="20140207 17:42:12.354" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] Headers = {
+    "Cookie": "session_cookie=4N9SjnkLC2FCLJ_8Nr60SGOGV_npl-7B", 
+    "content-type": "application/json"
+}
+</msg>
+<msg timestamp="20140207 17:42:12.356" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] Data = {
+    "name": "ethernet9", 
+    "port-group-name": "p6"
+}
+</msg>
+<msg timestamp="20140207 17:42:12.388" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] REST result:
+{
+    "content": {}, 
+    "http_verb": "PUT", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/core/switch-config[name=\"leaf2-b\"]/interface[name=\"ethernet9\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+
+----
+</msg>
+<msg timestamp="20140207 17:42:12.390" level="INFO">[T5.py:T5.rest_add_interface_to_portgroup:240] Output: {
+    "content": {}, 
+    "http_verb": "PUT", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/core/switch-config[name=\"leaf2-b\"]/interface[name=\"ethernet9\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+</msg>
+<msg timestamp="20140207 17:42:12.390" level="TRACE">Return: {}</msg>
+<status status="PASS" endtime="20140207 17:42:12.390" starttime="20140207 17:42:12.347"></status>
+</kw>
+<msg timestamp="20140207 17:42:12.390" level="TRACE">Return: None</msg>
+<status status="PASS" endtime="20140207 17:42:12.390" starttime="20140207 17:42:12.346"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Sleep">
+<doc>Pauses the test executed for the given time.</doc>
+<arguments>
+<arg>5</arg>
+</arguments>
+<msg timestamp="20140207 17:42:12.391" level="TRACE">Arguments: [ u'5' ]</msg>
+<msg timestamp="20140207 17:42:17.392" level="INFO">Slept 5 seconds</msg>
+<msg timestamp="20140207 17:42:17.392" level="TRACE">Return: None</msg>
+<status status="PASS" endtime="20140207 17:42:17.392" starttime="20140207 17:42:12.390"></status>
+</kw>
+<msg timestamp="20140207 17:42:17.392" level="TRACE">Return: None</msg>
+<status status="PASS" endtime="20140207 17:42:17.392" starttime="20140207 17:42:11.110"></status>
+</kw>
+<kw type="kw" name="add portgroup to vns">
+<doc></doc>
+<arguments>
+<arg>h4h5h6</arg>
+<arg>h4h5h6</arg>
+<arg>p4</arg>
+<arg>-1</arg>
+</arguments>
+<msg timestamp="20140207 17:42:17.393" level="TRACE">Arguments: [ ${tenant}=u'h4h5h6' | ${vns}=u'h4h5h6' | ${pg}=u'p4' | ${vlan}=u'-1' ]</msg>
+<kw type="kw" name="T5.Rest Add Portgroup To Vns">
+<doc></doc>
+<arguments>
+<arg>${tenant}</arg>
+<arg>${vns}</arg>
+<arg>${pg}</arg>
+<arg>${vlan}</arg>
+</arguments>
+<msg timestamp="20140207 17:42:17.394" level="TRACE">Arguments: [ u'h4h5h6' | u'h4h5h6' | u'p4' | u'-1' ]</msg>
+<msg timestamp="20140207 17:42:17.396" level="INFO">[T5.py:T5.rest_add_portgroup_to_vns:281] Input arguments: tenant = h4h5h6 vns = h4h5h6 port-group = p4 vlan = -1
+</msg>
+<msg timestamp="20140207 17:42:17.398" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] RestClient: PUT http://10.192.106.10:8080/api/v1/data/controller/applications/bvs/tenant[name="h4h5h6"]/vns[name="h4h5h6"]/port-group-membership-rules[port-group-name="p4"]
+</msg>
+<msg timestamp="20140207 17:42:17.399" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] Headers = {
+    "Cookie": "session_cookie=4N9SjnkLC2FCLJ_8Nr60SGOGV_npl-7B", 
+    "content-type": "application/json"
+}
+</msg>
+<msg timestamp="20140207 17:42:17.401" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] Data = {
+    "port-group-name": "p4", 
+    "vlan": "-1"
+}
+</msg>
+<msg timestamp="20140207 17:42:17.427" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] REST result:
+{
+    "content": {}, 
+    "http_verb": "PUT", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/applications/bvs/tenant[name=\"h4h5h6\"]/vns[name=\"h4h5h6\"]/port-group-membership-rules[port-group-name=\"p4\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+
+----
+</msg>
+<msg timestamp="20140207 17:42:17.429" level="INFO">[T5.py:T5.rest_add_portgroup_to_vns:285] Output: {
+    "content": {}, 
+    "http_verb": "PUT", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/applications/bvs/tenant[name=\"h4h5h6\"]/vns[name=\"h4h5h6\"]/port-group-membership-rules[port-group-name=\"p4\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+</msg>
+<msg timestamp="20140207 17:42:17.429" level="TRACE">Return: {}</msg>
+<status status="PASS" endtime="20140207 17:42:17.429" starttime="20140207 17:42:17.394"></status>
+</kw>
+<msg timestamp="20140207 17:42:17.429" level="TRACE">Return: None</msg>
+<status status="PASS" endtime="20140207 17:42:17.429" starttime="20140207 17:42:17.393"></status>
+</kw>
+<kw type="kw" name="add portgroup to vns">
+<doc></doc>
+<arguments>
+<arg>h4h5h6</arg>
+<arg>h4h5h6</arg>
+<arg>p5</arg>
+<arg>-1</arg>
+</arguments>
+<msg timestamp="20140207 17:42:17.430" level="TRACE">Arguments: [ ${tenant}=u'h4h5h6' | ${vns}=u'h4h5h6' | ${pg}=u'p5' | ${vlan}=u'-1' ]</msg>
+<kw type="kw" name="T5.Rest Add Portgroup To Vns">
+<doc></doc>
+<arguments>
+<arg>${tenant}</arg>
+<arg>${vns}</arg>
+<arg>${pg}</arg>
+<arg>${vlan}</arg>
+</arguments>
+<msg timestamp="20140207 17:42:17.431" level="TRACE">Arguments: [ u'h4h5h6' | u'h4h5h6' | u'p5' | u'-1' ]</msg>
+<msg timestamp="20140207 17:42:17.432" level="INFO">[T5.py:T5.rest_add_portgroup_to_vns:281] Input arguments: tenant = h4h5h6 vns = h4h5h6 port-group = p5 vlan = -1
+</msg>
+<msg timestamp="20140207 17:42:17.434" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] RestClient: PUT http://10.192.106.10:8080/api/v1/data/controller/applications/bvs/tenant[name="h4h5h6"]/vns[name="h4h5h6"]/port-group-membership-rules[port-group-name="p5"]
+</msg>
+<msg timestamp="20140207 17:42:17.436" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] Headers = {
+    "Cookie": "session_cookie=4N9SjnkLC2FCLJ_8Nr60SGOGV_npl-7B", 
+    "content-type": "application/json"
+}
+</msg>
+<msg timestamp="20140207 17:42:17.438" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] Data = {
+    "port-group-name": "p5", 
+    "vlan": "-1"
+}
+</msg>
+<msg timestamp="20140207 17:42:17.466" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] REST result:
+{
+    "content": {}, 
+    "http_verb": "PUT", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/applications/bvs/tenant[name=\"h4h5h6\"]/vns[name=\"h4h5h6\"]/port-group-membership-rules[port-group-name=\"p5\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+
+----
+</msg>
+<msg timestamp="20140207 17:42:17.468" level="INFO">[T5.py:T5.rest_add_portgroup_to_vns:285] Output: {
+    "content": {}, 
+    "http_verb": "PUT", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/applications/bvs/tenant[name=\"h4h5h6\"]/vns[name=\"h4h5h6\"]/port-group-membership-rules[port-group-name=\"p5\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+</msg>
+<msg timestamp="20140207 17:42:17.468" level="TRACE">Return: {}</msg>
+<status status="PASS" endtime="20140207 17:42:17.468" starttime="20140207 17:42:17.431"></status>
+</kw>
+<msg timestamp="20140207 17:42:17.468" level="TRACE">Return: None</msg>
+<status status="PASS" endtime="20140207 17:42:17.468" starttime="20140207 17:42:17.429"></status>
+</kw>
+<kw type="kw" name="add portgroup to vns">
+<doc></doc>
+<arguments>
+<arg>h4h5h6</arg>
+<arg>h4h5h6</arg>
+<arg>p6</arg>
+<arg>-1</arg>
+</arguments>
+<msg timestamp="20140207 17:42:17.469" level="TRACE">Arguments: [ ${tenant}=u'h4h5h6' | ${vns}=u'h4h5h6' | ${pg}=u'p6' | ${vlan}=u'-1' ]</msg>
+<kw type="kw" name="T5.Rest Add Portgroup To Vns">
+<doc></doc>
+<arguments>
+<arg>${tenant}</arg>
+<arg>${vns}</arg>
+<arg>${pg}</arg>
+<arg>${vlan}</arg>
+</arguments>
+<msg timestamp="20140207 17:42:17.470" level="TRACE">Arguments: [ u'h4h5h6' | u'h4h5h6' | u'p6' | u'-1' ]</msg>
+<msg timestamp="20140207 17:42:17.472" level="INFO">[T5.py:T5.rest_add_portgroup_to_vns:281] Input arguments: tenant = h4h5h6 vns = h4h5h6 port-group = p6 vlan = -1
+</msg>
+<msg timestamp="20140207 17:42:17.474" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] RestClient: PUT http://10.192.106.10:8080/api/v1/data/controller/applications/bvs/tenant[name="h4h5h6"]/vns[name="h4h5h6"]/port-group-membership-rules[port-group-name="p6"]
+</msg>
+<msg timestamp="20140207 17:42:17.475" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] Headers = {
+    "Cookie": "session_cookie=4N9SjnkLC2FCLJ_8Nr60SGOGV_npl-7B", 
+    "content-type": "application/json"
+}
+</msg>
+<msg timestamp="20140207 17:42:17.477" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] Data = {
+    "port-group-name": "p6", 
+    "vlan": "-1"
+}
+</msg>
+<msg timestamp="20140207 17:42:17.508" level="INFO">[bsn_restclient.py:autobot.bsn_restclient.put:67] REST result:
+{
+    "content": {}, 
+    "http_verb": "PUT", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/applications/bvs/tenant[name=\"h4h5h6\"]/vns[name=\"h4h5h6\"]/port-group-membership-rules[port-group-name=\"p6\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+
+----
+</msg>
+<msg timestamp="20140207 17:42:17.509" level="INFO">[T5.py:T5.rest_add_portgroup_to_vns:285] Output: {
+    "content": {}, 
+    "http_verb": "PUT", 
+    "request_url": "http://10.192.106.10:8080/api/v1/data/controller/applications/bvs/tenant[name=\"h4h5h6\"]/vns[name=\"h4h5h6\"]/port-group-membership-rules[port-group-name=\"p6\"]", 
+    "status_code": "200", 
+    "status_descr": "OK", 
+    "success": true
+}
+</msg>
+<msg timestamp="20140207 17:42:17.509" level="TRACE">Return: {}</msg>
+<status status="PASS" endtime="20140207 17:42:17.509" starttime="20140207 17:42:17.470"></status>
+</kw>
+<msg timestamp="20140207 17:42:17.510" level="TRACE">Return: None</msg>
+<status status="PASS" endtime="20140207 17:42:17.509" starttime="20140207 17:42:17.469"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Sleep">
+<doc>Pauses the test executed for the given time.</doc>
+<arguments>
+<arg>5</arg>
+</arguments>
+<msg timestamp="20140207 17:42:17.510" level="TRACE">Arguments: [ u'5' ]</msg>
+<msg timestamp="20140207 17:42:22.511" level="INFO">Slept 5 seconds</msg>
+<msg timestamp="20140207 17:42:22.512" level="TRACE">Return: None</msg>
+<status status="PASS" endtime="20140207 17:42:22.511" starttime="20140207 17:42:17.510"></status>
+</kw>
+<doc></doc>
+<tags>
+<tag>sanity</tag>
+<tag>T5</tag>
+</tags>
+<status status="PASS" endtime="20140207 17:42:22.512" critical="yes" starttime="20140207 17:42:11.109"></status>
+</test>
+<kw type="teardown" name="BsnCommon.Base Suite Teardown">
+<doc></doc>
+<arguments>
+</arguments>
+<msg timestamp="20140207 17:42:22.513" level="TRACE">Arguments: [  ]</msg>
+<msg timestamp="20140207 17:42:22.515" level="INFO">[BsnCommon.py:BsnCommon.base_suite_teardown:36] Closing device connection for node 'c2'
+</msg>
+<msg timestamp="20140207 17:42:22.516" level="INFO">[devconf.py:autobot.devconf.close:222] Closing device 10.192.106.11
+</msg>
+<msg timestamp="20140207 17:42:22.517" level="INFO">[BsnCommon.py:BsnCommon.base_suite_teardown:36] Closing device connection for node 'c1'
+</msg>
+<msg timestamp="20140207 17:42:22.518" level="INFO">[devconf.py:autobot.devconf.close:222] Closing device 10.192.106.10
+</msg>
+<msg timestamp="20140207 17:42:22.518" level="TRACE">Return: None</msg>
+<status status="PASS" endtime="20140207 17:42:22.518" starttime="20140207 17:42:22.513"></status>
+</kw>
+<doc>T5 Platform Smoke/Sanity Test Suite</doc>
+<metadata>
+</metadata>
+<status status="PASS" endtime="20140207 17:42:22.519" starttime="20140207 17:41:52.562"></status>
+</suite>
+<statistics>
+<total>
+<stat fail="0" pass="2">Critical Tests</stat>
+<stat fail="0" pass="2">All Tests</stat>
+</total>
+<tag>
+<stat info="" links="" doc="" combined="" pass="2" fail="0">sanity</stat>
+<stat info="" links="" doc="" combined="" pass="2" fail="0">T5</stat>
+</tag>
+<suite>
+<stat fail="0" pass="2" id="s1" name="Temp">Temp</stat>
+</suite>
+</statistics>
+<errors>
+</errors>
+</robot>
