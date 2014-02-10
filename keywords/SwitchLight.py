@@ -480,6 +480,8 @@ class SwitchLight(object):
         except:
             helpers.test_failure("Could not execute command. Please check log for errors")
             return False
+
+
 #######################################################################
 # All Common Controller Configuration Commands Go Here:
 #######################################################################
@@ -1052,7 +1054,6 @@ class SwitchLight(object):
             return False
 
 
-
 #######################################################################
 # All Common Switch Platform/Feature Related Commands Go Here:
 #######################################################################
@@ -1238,7 +1239,7 @@ class SwitchLight(object):
             helpers.test_failure("Could not execute command. Please check log for errors")
             return False
 
-    def snmp_cmd_opt(self, ip_address, snmp_cmd, snmpOpt, snmpCommunity, snmpOID):
+    def snmp_cmd_opt(self, node, snmp_cmd, snmpOpt, snmpCommunity, snmpOID):
         '''
             Objective:
             - Execute snmp command which  require options from local machine for a particular SNMP OID
@@ -1253,7 +1254,9 @@ class SwitchLight(object):
             - Output from SNMP Walk.
         '''
         try:
-            url = "/usr/bin/%s  -v2c %s -c %s %s %s" % (str(snmp_cmd), str(snmpOpt), str(snmpCommunity), ip_address, str(snmpOID))
+            t = test.Test()
+            switch = t.switch(node)
+            url = "/usr/bin/%s  -v2c %s -c %s %s %s" % (str(snmp_cmd), str(snmpOpt), str(snmpCommunity), switch.ip(), str(snmpOID))
             returnVal = subprocess.Popen([url], stdout=subprocess.PIPE, shell=True)
             (out, _) = returnVal.communicate()
             helpers.log("URL: %s Output: %s" % (url, out))
