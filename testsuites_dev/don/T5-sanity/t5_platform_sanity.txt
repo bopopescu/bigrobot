@@ -5,7 +5,7 @@ Documentation    T5 Platform Smoke/Sanity Test Suite
 Suite Setup      base suite setup
 Suite Teardown   base suite teardown
 Test Setup       T5 base test setup
-Test Teardown    T5 base test teardown
+#Test Teardown    T5 base test teardown
 Force Tags       T5 
 Library          keywords/BsnCommon.py
 Library          keywords_dev/prashanth/T5.py
@@ -23,18 +23,18 @@ ${h6_ip}  192.168.0.31
 ${h4_mac}	00:10:18:f0:e9:70
 ${h5_mac}	90:e2:ba:4f:80:dc
 ${h6_mac}	90:e2:ba:4e:bb:90
-${h1_intf0}  ethernet8
-${h1_intf1}  ethernet8
-${h2_intf0}  ethernet9
-${h2_intf1}  ethernet9
-${h3_intf0}  ethernet8
-${h3_intf1}  ethernet8
-${h4_intf0}  ethernet9
-${h4_intf1}  ethernet9
-${h5_intf0}  ethernet8
-${h5_intf1}  ethernet8
-${h6_intf0}  ethernet9
-${h6_intf1}  ethernet9
+${h1_intf0}  ethernet48
+${h1_intf1}  ethernet48
+${h2_intf0}  ethernet47
+${h2_intf1}  ethernet47
+${h3_intf0}  ethernet1
+${h3_intf1}  ethernet1
+${h4_intf0}  ethernet2
+${h4_intf1}  ethernet2
+${h5_intf0}  ethernet48
+${h5_intf1}  ethernet48
+${h6_intf0}  ethernet47
+${h6_intf1}  ethernet47
 ${h1_tag_ip}	192.168.4.20
 ${h2_tag_ip}	192.168.4.21
 ${h3_tag_ip}	192.168.4.10
@@ -42,11 +42,12 @@ ${h1_tag_mac}  90:e2:ba:4e:bc:98
 ${h2_tag_mac}  90:e2:ba:4f:80:b1
 ${h3_tag_mac}  00:10:18:f0:eb:e0
 
+
 * Test Case 
 
 
 Add physical switches to the controller 
-   [Tags]  smoke  sanity  skipped
+   [Tags]  smoke  sanity 
    sleep  5
    add fabric switch
    sleep  5
@@ -54,13 +55,13 @@ Add physical switches to the controller
    rest verify fabric link 
    
 Add h1,h2,h3 in to a VNS and verify the connectivity
-   [Tags]  sanity  skipped
+   [Tags]  sanity  
    add a tenant  h1h2h3
    add a vns  h1h2h3  h1h2h3
    add portgroup to vns  h1h2h3  h1h2h3  p1  10
    add portgroup to vns  h1h2h3  h1h2h3  p2  10
    add portgroup to vns  h1h2h3  h1h2h3  p3  10
-   sleep  5
+   sleep  10
    ${loss}=  bash ping  h1  ${h2_tag_ip}  source_if=bond0.10
    Should Be True  ${loss} == 0 	
    ${loss}=  bash ping  h1  ${h3_tag_ip}  source_if=bond0.10
@@ -68,13 +69,13 @@ Add h1,h2,h3 in to a VNS and verify the connectivity
 
 
 Add h4,h5,h6 in to a VNS and verify the connectivity
-   [Tags]  sanity  skipped
+   [Tags]  sanity  
    add a tenant  h4h5h6
    add a vns  h4h5h6  h4h5h6
    add portgroup to vns  h4h5h6  h4h5h6  p4  -1
    add portgroup to vns  h4h5h6  h4h5h6  p5  -1
    add portgroup to vns  h4h5h6  h4h5h6  p6  -1
-   sleep  5
+   sleep  10
    ${loss}=  bash ping  h5  ${h4_ip}  source_if=bond0
    Should Be True  ${loss} == 0		
    ${loss}=  bash ping  h5  ${h6_ip}  source_if=bond0
