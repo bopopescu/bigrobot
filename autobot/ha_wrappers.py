@@ -86,7 +86,8 @@ class HaControllerNode(object):
         return self._name
 
     def ip(self):
-        return self._ip
+        n = self.t.controller(self.name(), resolve_mastership=True)
+        return n.ip()
 
     def platform(self, *args, **kwargs):
         n = self.t.controller(self.name(), resolve_mastership=True)
