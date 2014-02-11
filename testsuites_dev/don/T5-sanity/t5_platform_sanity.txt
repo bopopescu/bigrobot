@@ -2,9 +2,9 @@
 
 * Setting
 Documentation    T5 Platform Smoke/Sanity Test Suite
-Suite Setup      base suite setup
-Suite Teardown   base suite teardown
-Test Setup       T5 base test setup
+Suite Setup      T5 base suite setup
+Suite Teardown   T5 base suite teardown
+#Test Setup       T5 base test setup
 #Test Teardown    T5 base test teardown
 Force Tags       T5 
 Library          keywords/BsnCommon.py
@@ -14,62 +14,58 @@ Library			 keywords_dev/don/T5Platform.py
 Library			 keywords_dev/don/T5PlatformCommon.py
 Library          keywords/Mininet.py
 Library	    	 keywords/Host.py
-Resource		 keywords_dev/prashanth/t5_dualleaf_three_rack_physical_resource.txt
+Resource		 keywords_dev/don/t5_platform_sanity_resource.txt
 
 * Variables
-${h4_ip}  192.168.0.11
-${h5_ip}  192.168.0.30
-${h6_ip}  192.168.0.31
-${h4_mac}	00:10:18:f0:e9:70
-${h5_mac}	90:e2:ba:4f:80:dc
-${h6_mac}	90:e2:ba:4e:bb:90
-${h1_intf0}  ethernet48
-${h1_intf1}  ethernet48
-${h2_intf0}  ethernet47
-${h2_intf1}  ethernet47
-${h3_intf0}  ethernet1
-${h3_intf1}  ethernet1
-${h4_intf0}  ethernet2
-${h4_intf1}  ethernet2
-${h5_intf0}  ethernet48
-${h5_intf1}  ethernet48
-${h6_intf0}  ethernet47
-${h6_intf1}  ethernet47
-${h1_tag_ip}	192.168.4.20
-${h2_tag_ip}	192.168.4.21
-${h3_tag_ip}	192.168.4.10
-${h1_tag_mac}  90:e2:ba:4e:bc:98
-${h2_tag_mac}  90:e2:ba:4f:80:b1
-${h3_tag_mac}  00:10:18:f0:eb:e0
-
+${bm0_ip}  10.0.0.1
+${bm1_ip}  10.0.0.2
+${bm2_ip}  10.0.0.3
+${bm3_ip}  10.0.0.4
+${bm4_ip}  10.0.0.5
+${bm5_ip}  10.0.0.6
+${bm0_mac}  00:00:00:00:00:01
+${bm1_mac}  00:00:00:00:00:02
+${bm2_mac}  00:00:00:00:00:03
+${bm3_mac}  00:00:00:00:00:04
+${bm4_mac}  00:00:00:00:00:05
+${bm5_mac}  00:00:00:00:00:06
+${bm0_intf0}  leaf0a-eth8
+${bm0_intf1}  leaf0b-eth8
+${bm1_intf0}  leaf0a-eth9
+${bm1_intf1}  leaf0b-eth9
+${bm2_intf0}  leaf1a-eth8
+${bm2_intf1}  leaf1b-eth8
+${bm3_intf0}  leaf1a-eth9
+${bm3_intf1}  leaf1b-eth9
+${bm4_intf0}  leaf2a-eth8
+${bm4_intf1}  leaf2b-eth8
+${bm5_intf0}  leaf2a-eth9
+${bm5_intf1}  leaf2b-eth9
 
 * Test Case 
 
+Verify HA Cluster Formation
+   [Tags]  sanity
+   rest verify show cluster
 
-Add physical switches to the controller 
-   [Tags]  smoke  sanity 
-   sleep  5
-   add fabric switch
-   sleep  5
-   rest verify fabric switch all
-   rest verify fabric link 
-   
-Add h1,h2,h3 in to a VNS and verify the connectivity
+Add all hosts to a VNS and verify connectivity, Reboot and re-verify
    [Tags]  sanity  
-   add a tenant  h1h2h3
-   add a vns  h1h2h3  h1h2h3
-   add portgroup to vns  h1h2h3  h1h2h3  p1  10
-   add portgroup to vns  h1h2h3  h1h2h3  p2  10
-   add portgroup to vns  h1h2h3  h1h2h3  p3  10
-   sleep  10
-   ${loss}=  bash ping  h1  ${h2_tag_ip}  source_if=bond0.10
-   Should Be True  ${loss} == 0 	
-   ${loss}=  bash ping  h1  ${h3_tag_ip}  source_if=bond0.10
-   Should Be True  ${loss} == 0   
-
+   add a tenant  bm_all
+   add a vns  bm_all  bm_all
+   add portgroup to vns  bm_all  bm_all  p1  -1
+   add portgroup to vns  bm_all  bm_all  p2  -1
+   add portgroup to vns  bm_all  bm_all  p3  -1
+   add portgroup to vns  bm_all  bm_all  p4  -1
+   add portgroup to vns  bm_all  bm_all  p5  -1
+   add portgroup to vns  bm_all  bm_all  p6  -1
+   sleep  15
+   mininet ping all
+   cli verify cluster master reboot
+   mininet ping all
+   delete a tenant  bm_all
 
 Add h4,h5,h6 in to a VNS and verify the connectivity
-   [Tags]  sanity  
+   [Tags]  sanity  skipped
    add a tenant  h4h5h6
    add a vns  h4h5h6  h4h5h6
    add portgroup to vns  h4h5h6  h4h5h6  p4  -1
@@ -116,7 +112,7 @@ ping h4 to h5 dual rack dual leaf static endpoints
    				
 		
 ping h1 to h2 dual leaf single rack static endpoints tag
-   [Tags]  sanity   skipped
+   [Tags]  sanity  skipped
    add a endpoint  A  A  e1 
    add portgroup to endpoint  A  A  e1  p1  10
    add a endpoint  A  A  e2 
@@ -149,61 +145,60 @@ ping h1 to h3 dual rack dual leaf static endpoints tag
    #Should Be True  ${loss} == 0  
    
 
-Delete physical switches from the controller
-	[Tags]  smoke  sanity  skipped
-	delete fabric switch  
 
 * Keywords
 
-T5 base test setup
-   base test setup
+T5 base suite setup
+   base suite setup
+   sleep  5
+   add fabric switch
+   sleep  5
+   rest verify fabric switch all
+   rest verify fabric link 
+   sleep  5
    add a portgroup  p1 
-   add interface to portgroup  leaf0-a  ${h1_intf0}  p1
-   add interface to portgroup  leaf0-b  ${h1_intf1}  p1
-   rest add portgroup lacp  p1
+   add interface to portgroup  leaf0-a  ${bm0_intf0}  p1
+   add interface to portgroup  leaf0-b  ${bm0_intf1}  p1
    add a portgroup  p2 
-   add interface to portgroup  leaf0-a  ${h2_intf0}  p2
-   add interface to portgroup  leaf0-b  ${h2_intf1}  p2
-   rest add portgroup lacp  p2
+   add interface to portgroup  leaf0-a  ${bm1_intf0}  p2
+   add interface to portgroup  leaf0-b  ${bm1_intf1}  p2
    add a portgroup  p3 
-   add interface to portgroup  leaf1-a  ${h3_intf0}  p3
-   add interface to portgroup  leaf1-b  ${h3_intf1}  p3
-   rest add portgroup lacp  p3
+   add interface to portgroup  leaf1-a  ${bm2_intf0}  p3
+   add interface to portgroup  leaf1-b  ${bm2_intf1}  p3
    add a portgroup  p4 
-   add interface to portgroup  leaf1-a  ${h4_intf0}  p4
-   add interface to portgroup  leaf1-b  ${h4_intf1}  p4
-   rest add portgroup lacp  p4
+   add interface to portgroup  leaf1-a  ${bm3_intf0}  p4
+   add interface to portgroup  leaf1-b  ${bm3_intf1}  p4
    add a portgroup  p5 
-   add interface to portgroup  leaf2-a  ${h5_intf0}  p5
-   add interface to portgroup  leaf2-b  ${h5_intf1}  p5
-   rest add portgroup lacp  p5
+   add interface to portgroup  leaf2-a  ${bm4_intf0}  p5
+   add interface to portgroup  leaf2-b  ${bm4_intf1}  p5
    add a portgroup  p6 
-   add interface to portgroup  leaf2-a  ${h6_intf0}  p6
-   add interface to portgroup  leaf2-b  ${h6_intf1}  p6
+   add interface to portgroup  leaf2-a  ${bm5_intf0}  p6
+   add interface to portgroup  leaf2-b  ${bm5_intf1}  p6
    sleep  5
-   
-T5 base test teardown
-   delete a tenant  A
-   delete interface from portgroup  leaf0-a  ${h1_intf0}  p1
-   delete interface from portgroup  leaf0-b  ${h1_intf1}  p1
-   delete interface from portgroup  leaf0-a  ${h2_intf0}  p2
-   delete interface from portgroup  leaf0-b  ${h2_intf1}  p2
-   delete interface from portgroup  leaf1-a  ${h3_intf0}  p3 
-   delete interface from portgroup  leaf1-b  ${h3_intf1}  p3
-   delete interface from portgroup  leaf1-a  ${h4_intf0}  p4
-   delete interface from portgroup  leaf1-b  ${h4_intf1}  p4
-   delete interface from portgroup  leaf2-a  ${h5_intf0}  p5
-   delete interface from portgroup  leaf2-b  ${h5_intf1}  p5
-   delete interface from portgroup  leaf2-a  ${h6_intf0}  p6 
-   delete interface from portgroup  leaf2-b  ${h6_intf1}  p6  
+
+T5 base suite teardown   
+   delete interface from portgroup  leaf0-a  ${bm0_intf0}  p1
+   delete interface from portgroup  leaf0-b  ${bm0_intf1}  p1
    delete a portgroup  p1
+   delete interface from portgroup  leaf0-a  ${bm1_intf0}  p2
+   delete interface from portgroup  leaf0-b  ${bm1_intf1}  p2
    delete a portgroup  p2
+   delete interface from portgroup  leaf1-a  ${bm2_intf0}  p3
+   delete interface from portgroup  leaf1-b  ${bm2_intf1}  p3
    delete a portgroup  p3
+   delete interface from portgroup  leaf1-a  ${bm3_intf0}  p4
+   delete interface from portgroup  leaf1-b  ${bm3_intf1}  p4
    delete a portgroup  p4
+   delete interface from portgroup  leaf2-a  ${bm4_intf0}  p5
+   delete interface from portgroup  leaf2-b  ${bm4_intf1}  p5
    delete a portgroup  p5
+   delete interface from portgroup  leaf2-a  ${bm5_intf0}  p6
+   delete interface from portgroup  leaf2-b  ${bm5_intf1}  p6
    delete a portgroup  p6
-   base test teardown
+   delete fabric switch  
+   base suite teardown
    sleep  5
+
          
 add a tenant  [Arguments]  ${tenant} 
   REST add tenant  ${tenant}    
