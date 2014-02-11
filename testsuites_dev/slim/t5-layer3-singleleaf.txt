@@ -11,7 +11,7 @@ Library         keywords_dev/prashanth/T5.py
 Library         keywords_dev/prashanth/T5Fabric.py
 Library         keywords_dev/prashanth/T5_L3.py
 Library         keywords_dev/animesh/BsnCommonShow.py
-Resource		keywords_dev/prashanth/t5_singleleaf_resource.txt
+Resource		keywords_dev/slim/t5_singleleaf_resource.txt
 
 * Variable
 ${tenant1_name}		A
@@ -82,33 +82,39 @@ ${defaultroute}		0.0.0.0/0
 * Test Cases
 Intra tenant L3 untagged traffic with static endpoints
 	L3 intra tenant untagged with static endpoints
+	[Tags]							skipped			smoke				sanity			
 
 Intra tenant L3 untagged traffic with dynamic endpoints
 	L3 intra tenant untagged with dynamic endpoints
+#	[Tags]							skipped			smoke				
 	
 Intra tenant L3 untagged traffic with dynamic host arp
 	L3 intra tenant untagged traffic with dynamic host arp
+#	[Tags]							skipped			smoke				
 
 Intra tenant L3 untagged with initial unreachable host
 	L3 intra tenant untagged with initial unreachable host
+#	[Tags]							skipped			sanity				smoke					
 
 Inter tenant L3 untagged traffic with static endpoints
 	L3 inter tenant untagged with static endpoints
+#  	[Tags]							skipped			sanity 				smoke					
 
 Intra tenant L3 untagged with destination host moved
 	L3 intra tenant untagged with host moved 
+	[Tags]							skipped		sanity				
 
 Intra tenant L3 untagged to tagged host
 	L3 intra tenant untagged to tagged host
+	[Tags]							skipped		sanity				
 
 Intra tenant L3 tagged host
 	L3 intra tenant tagged host
+	[Tags]							skipped		sanity				
 
 	
-
 * Keywords
 L3 intra tenant untagged with static endpoints
-	[Tags]										smoke				sanity			
 	add fabric switch 
 	sleep  										5						
 	REST add tenant								${tenant1_name}
@@ -120,12 +126,12 @@ L3 intra tenant untagged with static endpoints
 	REST add interface to vns  					${tenant1_name}  	${vns1_2}  		${leaf0_name} 		${leaf0_intf2} 		${untaggedvlan}	
 	REST add endpoint							${tenant1_name}		${vns1_1}		${endpoint1name}
 	REST add endpoint							${tenant1_name}		${vns1_2}		${endpoint2name}	
-	REST add endpoint_ip						${tenant1_name}		${vns1_1}		${endpoint1name}	${host0_ip}
-	REST add endpoint_ip						${tenant1_name}		${vns1_2}		${endpoint2name}	${host1_ip}
-	REST add endpoint_mac						${tenant1_name}		${vns1_1}		${endpoint1name}	${host0_mac}
-	REST add endpoint_mac						${tenant1_name}		${vns1_2}		${endpoint2name}	${host1_mac}
-	REST add endpoint_switch_attachment			${tenant1_name}		${vns1_1}		${endpoint1name}	${leaf0_name}		${leaf0_intf1}	${untaggedvlan}	
-	REST add endpoint_switch_attachment			${tenant1_name}		${vns1_2}		${endpoint2name}	${leaf0_name}		${leaf0_intf2}	${untaggedvlan}	
+	REST add endpoint ip						${tenant1_name}		${vns1_1}		${endpoint1name}	${host0_ip}
+	REST add endpoint ip						${tenant1_name}		${vns1_2}		${endpoint2name}	${host1_ip}
+	REST add endpoint mac						${tenant1_name}		${vns1_1}		${endpoint1name}	${host0_mac}
+	REST add endpoint mac						${tenant1_name}		${vns1_2}		${endpoint2name}	${host1_mac}
+	REST add endpoint switch_attachment			${tenant1_name}		${vns1_1}		${endpoint1name}	${leaf0_name}		${leaf0_intf1}	${untaggedvlan}	
+	REST add endpoint switch_attachment			${tenant1_name}		${vns1_2}		${endpoint2name}	${leaf0_name}		${leaf0_intf2}	${untaggedvlan}	
 	mininet host ipcfg   						${host0_name}		${host0_bondif}	${host0_ip}			${host0_subnet} 
 	mininet host ipcfg							${host1_name}		${host1_bondif}	${host1_ip}			${host1_subnet}
 	mininet host gw								${host0_name}		${vns1_ip1}		${host0_bondif}
@@ -142,7 +148,6 @@ L3 intra tenant untagged with static endpoints
 
 
 L3 intra tenant untagged with dynamic endpoints
-	[Tags]										smoke				
 	add fabric switch 
 	sleep  5		
 	REST add tenant  							${tenant1_name}
@@ -165,10 +170,8 @@ L3 intra tenant untagged with dynamic endpoints
 	Should Be True  							${loss} == 0
 	${endpoints_cnt}=							rest count endpoints mac
 	Should Be True  							${endpoints_cnt} == 2
-	     
 
 L3 intra tenant untagged traffic with dynamic host arp
-	[Tags]										smoke				
 	add fabric switch 
 	sleep  5		
 	REST add tenant  							${tenant1_name}
@@ -192,7 +195,6 @@ L3 intra tenant untagged traffic with dynamic host arp
 
 
 L3 intra tenant untagged with initial unreachable host 
-	[Tags]										sanity				smoke					
 	add fabric switch 
 	sleep  										5	
 	REST add tenant  							${tenant1_name}
@@ -221,7 +223,6 @@ L3 intra tenant untagged with initial unreachable host
 	Should Be True  							${endpoints_cnt} == 2
 
 L3 inter tenant untagged with static endpoints
-   	[Tags]										sanity 				smoke					
 	add fabric switch 
 	sleep										5   	
 	REST add tenant  							${tenant1_name}        
@@ -234,19 +235,19 @@ L3 inter tenant untagged with static endpoints
  	REST add interface to vns  					${tenant1_name}  	${vns1_1}  		${leaf0_name} 		${leaf0_intf1}  ${untaggedvlan}	
    	REST add interface to vns  					${tenant2_name}  	${vns2_1}  		${leaf0_name} 		${leaf0_intf2} 	${untaggedvlan}	
    	sleep 										30
-   	REST attach system to tenant routers 		${tenant1_name} 
-   	REST attach system to tenant routers 		${tenant2_name} 
-   	REST attach tenant routers to system		${tenant1_name} 
-   	REST attach tenant routers to system		${tenant2_name} 
+   	REST add system to tenant routers 		${tenant1_name} 
+   	REST add system to tenant routers 		${tenant2_name} 
+   	REST add tenant routers to system		${tenant1_name} 
+   	REST add tenant routers to system		${tenant2_name} 
    	sleep			30
    	REST add endpoint							${tenant1_name}		${vns1_1}		${endpoint1name}
 	REST add endpoint							${tenant2_name}		${vns2_1}		${endpoint2name}	
-	REST add endpoint_ip						${tenant1_name}		${vns1_1}		${endpoint1name}	${host0_ip}
-	REST add endpoint_ip						${tenant2_name}		${vns2_1}		${endpoint2name}	${host2_ip}
-	REST add endpoint_mac						${tenant1_name}		${vns1_1}		${endpoint1name}	${host0_mac}
-	REST add endpoint_mac						${tenant2_name}		${vns2_1}		${endpoint2name}	${host1_mac}
-	REST add endpoint_switch_attachment			${tenant1_name}		${vns1_1}		${endpoint1name}	${leaf0_name}		${leaf0_intf1}	${untaggedvlan}	
-	REST add endpoint_switch_attachment			${tenant2_name}		${vns2_1}		${endpoint2name}	${leaf0_name}		${leaf0_intf2}	${untaggedvlan}	
+	REST add endpoint ip						${tenant1_name}		${vns1_1}		${endpoint1name}	${host0_ip}
+	REST add endpoint ip						${tenant2_name}		${vns2_1}		${endpoint2name}	${host2_ip}
+	REST add endpoint mac						${tenant1_name}		${vns1_1}		${endpoint1name}	${host0_mac}
+	REST add endpoint mac						${tenant2_name}		${vns2_1}		${endpoint2name}	${host1_mac}
+	REST add endpoint switch attachment			${tenant1_name}		${vns1_1}		${endpoint1name}	${leaf0_name}		${leaf0_intf1}	${untaggedvlan}	
+	REST add endpoint switch attachment			${tenant2_name}		${vns2_1}		${endpoint2name}	${leaf0_name}		${leaf0_intf2}	${untaggedvlan}	
    	mininet host ipcfg   						${host0_name}		${host0_bondif}	${host0_ip}			${host0_subnet} 
    	mininet host ipcfg							${host1_name}		${host1_bondif}	${host2_ip}			${host1_subnet}
    	mininet host gw								${host0_name}		${vns1_ip1}		${host0_bondif}
@@ -262,21 +263,21 @@ L3 inter tenant untagged with static endpoints
    	${loss}=									mininet l3 ping		${host0_name}	${host1_name}		${ping_count}
    	Should Be True  							${loss} == 0
 	sleep					10
-	REST detach system to tenant routers		${tenant1_name}
+	REST delete system to tenant routers		${tenant1_name}
 	sleep					30
-	REST detach tenant routers to system		${tenant1_name}
+	REST delete tenant routers to system		${tenant1_name}
 	sleep					30
-	REST detach system to tenant routers		${tenant2_name}
-	REST detach tenant routers to system		${tenant2_name}	
+	REST delete system to tenant routers		${tenant2_name}
+	REST delete tenant routers to system		${tenant2_name}	
 	REST show running config	
 	mininet dump switch							${leaf0_name}
 	${loss}=									mininet l3 ping		${host0_name}	${host1_name}		${ping_count}
 # 	Should Be True  							${loss} == 100
 	sleep 		1
-   	REST attach system to tenant routers 		${tenant1_name} 
-   	REST attach system to tenant routers 		${tenant2_name} 
-   	REST attach tenant routers to system		${tenant1_name} 
-   	REST attach tenant routers to system		${tenant2_name} 
+   	REST add system to tenant routers 		${tenant1_name} 
+   	REST add system to tenant routers 		${tenant2_name} 
+   	REST add tenant routers to system		${tenant1_name} 
+   	REST add tenant routers to system		${tenant2_name} 
    	sleep			10
 	REST show running config   	
  	mininet dump switch							${leaf0_name}
@@ -287,7 +288,6 @@ L3 inter tenant untagged with static endpoints
 #	sleep 					30
 	
 L3 intra tenant untagged with host moved  
-	[Tags]										sanity				
 	add fabric switch 
 	sleep  5	
 	REST add tenant  							${tenant1_name}
@@ -329,7 +329,6 @@ L3 intra tenant untagged with host moved
 	sleep  										20  
 
 L3 intra tenant untagged to tagged host
-  	[Tags]										sanity				
 	add fabric switch 
 	sleep  5	
 	REST add tenant  							${tenant1_name}
@@ -368,7 +367,6 @@ L3 intra tenant untagged to tagged host
 	sleep  										20  
  
 L3 intra tenant tagged host
-	[Tags]										sanity				
 	add fabric switch 
 	sleep  										5	
 	REST add tenant  							${tenant1_name}
@@ -396,7 +394,6 @@ L3 intra tenant tagged host
 	sleep  										20  
  
 L3 ping with nexthop in a ecmp group
-	[Tags]										skipped					manual
 	add fabric switch 
 	sleep 										5	
     REST add tenant          					${tenant1_name}
@@ -415,7 +412,6 @@ L3 ping with nexthop in a ecmp group
     
 
 L3 configure dhcp relay on vns
-	[Tags]										sanity					skipped			manual
 	add fabric switch 
 	sleep 										5	
     REST add tenant          					${tenant1_name}
@@ -435,7 +431,7 @@ teardown topology
 	REST delete tenant							${tenant1_name}   
 	REST delete tenant							${tenant2_name}    
 	REST delete tenant							${tenant_system}
-	sleep 										30
+	sleep 										10
 		
 	
 	
