@@ -7,7 +7,7 @@ class Openstack(object):
 	def __init__(self):
 		pass
 
-	def openstack_get_nw_id(self, osUserName, osTenantName, osPassWord, osAuthUrl, networkName):
+	def openstack_show_nw_id(self, osUserName, osTenantName, osPassWord, osAuthUrl, networkName):
 		'''Get network id
 			Input:
 				`osXXX`        		tenant name, password, username etc credentials
@@ -41,7 +41,7 @@ else:
 			helpers.log("network %s id is: %s" % (networkName, str(netId)))   
 			return netId		
 
-	def openstack_get_flavor_id(self, osUserName, osTenantName, osPassWord, osAuthUrl, flavorName):
+	def openstack_show_flavor_id(self, osUserName, osTenantName, osPassWord, osAuthUrl, flavorName):
 		'''Get flavor id
 			Input:
 				`osXXX`        		tenant name, password, username etc credentials
@@ -65,7 +65,7 @@ else:
 			helpers.log("flavor %s id is: %s" % (flavorName, str(flavorId)))   
 			return flavorId		
 
-	def openstack_get_user_id(self, osUserName, osTenantName, osPassWord, osAuthUrl, userName):
+	def openstack_show_user_id(self, osUserName, osTenantName, osPassWord, osAuthUrl, userName):
 		'''Get user id
 			Input:
 				`osXXX`        		tenant name, password, username etc credentials
@@ -88,7 +88,7 @@ else:
 			helpers.log("user %s id is: %s" % (userName, str(userId)))   
 			return userId		
 
-	def openstack_get_role_id(self, osUserName, osTenantName, osPassWord, osAuthUrl, roleName):
+	def openstack_show_role_id(self, osUserName, osTenantName, osPassWord, osAuthUrl, roleName):
 		'''Get role id
 			Input:
 				`osXXX`        		tenant name, password, username etc credentials
@@ -109,7 +109,7 @@ else:
 		return roleId		
 
 
-	def openstack_get_tenant_id(self, osUserName, osTenantName, osPassWord, osAuthUrl, tenantName):
+	def openstack_show_tenant_id(self, osUserName, osTenantName, osPassWord, osAuthUrl, tenantName):
 		'''Get tenant id
 			Input:
 				`osXXX`        		tenant name, password, username etc credentials
@@ -128,7 +128,7 @@ else:
 		helpers.log("tenant %s id is: %s" % (tenantName, str(tenantId)))   
 		return tenantId		
 
-	def openstack_get_vm_id(self, osUserName, osTenantName, osPassWord, osAuthUrl, instanceName):
+	def openstack_show_vm_id(self, osUserName, osTenantName, osPassWord, osAuthUrl, instanceName):
 		'''Get vm id
 			Input:
 				`osXXX`        		tenant name, password, username etc credentials
@@ -147,7 +147,7 @@ else:
 		helpers.log("VM %s id is: %s" % (instanceName, str(vmId)))   
 		return vmId		
 
-	def openstack_get_vm_status(self, osUserName, osTenantName, osPassWord, osAuthUrl, instanceName):
+	def openstack_show_vm_status(self, osUserName, osTenantName, osPassWord, osAuthUrl, instanceName):
 		'''Get vm status
 			Input:
 				`osXXX`        		tenant name, password, username etc credentials
@@ -166,7 +166,7 @@ else:
 		helpers.log("VM %s status is: %s" % (instanceName, str(vmStatus)))   
 		return vmStatus		
 
-	def openstack_get_router_id(self, osUserName, osTenantName, osPassWord, osAuthUrl, routerName):
+	def openstack_show_router_id(self, osUserName, osTenantName, osPassWord, osAuthUrl, routerName):
 		'''Get router id
 			Input:
 				`osXXX`        		tenant name, password, username etc credentials
@@ -185,7 +185,7 @@ else:
 		helpers.log("router %s id is: %s" % (routerName, str(routerId)))   
 		return routerId		
 
-	def openstack_get_router_status(self, osUserName, osTenantName, osPassWord, osAuthUrl, routerName):
+	def openstack_show_router_status(self, osUserName, osTenantName, osPassWord, osAuthUrl, routerName):
 		'''Get router status
 			Input:
 				`osXXX`        		tenant name, password, username etc credentials
@@ -205,7 +205,7 @@ else:
 		return routerStatus		
 
 
-	def openstack_get_subnet_id(self, osUserName, osTenantName, osPassWord, osAuthUrl, subnetName):
+	def openstack_show_subnet_id(self, osUserName, osTenantName, osPassWord, osAuthUrl, subnetName):
 		'''Get subnet id
 			Input:
 				`osXXX`        		tenant name, password, username etc credentials
@@ -226,7 +226,7 @@ else:
 		return subnetId		
 
 
-	def openstack_get_image_id(self, osUserName, osTenantName, osPassWord, osAuthUrl, imageName):
+	def openstack_show_image_id(self, osUserName, osTenantName, osPassWord, osAuthUrl, imageName):
 		'''Get image id
 			Input:
 				`osXXX`        		tenant name, password, username etc credentials
@@ -252,7 +252,7 @@ else:
 			return imageId
 
 
-	def openstack_set_user_role(self, osUserName, osTenantName, osPassWord, osAuthUrl, userName, roleName, tenantName):
+	def openstack_add_user_role(self, osUserName, osTenantName, osPassWord, osAuthUrl, userName, roleName, tenantName):
 		''' set user role
 			Input:
 				`username`:		username of the tenant's user
@@ -264,7 +264,7 @@ else:
 		
 		h1.bash("keystone --os-username %s --os-tenant-name %s --os-password %s --os-auth-url %s user-role-add --user %s --role --tenant %s" % (osUserName, osTenantName, osPassWord, osAuthUrl, userName, roleName, tenantName))   
 		
-	def openstack_create_tenant(self, osUserName, osTenantName, osPassWord, osAuthUrl, tenantName):
+	def openstack_add_tenant(self, osUserName, osTenantName, osPassWord, osAuthUrl, tenantName):
 		'''create tenant
 			Input:
 				`osXXX`        		tenant name, password, username etc credentials
@@ -286,7 +286,7 @@ else:
 		return tenantId
 
 
-	def openstack_create_user(self, osUserName, osTenantName, osPassWord, osAuthUrl, userName, userPassword, tenantName, userEmail):
+	def openstack_add_user(self, osUserName, osTenantName, osPassWord, osAuthUrl, userName, userPassword, tenantName, userEmail):
 		'''create user
 			Input:
 				`osXXX`        		tenant name, password, username etc credentials
@@ -308,7 +308,7 @@ else:
 		helpers.log("user %s id is: %s" % (userName, str(userId)))   
 		return userId
 		
-	def openstack_create_role(self, osUserName, osTenantName, osPassWord, osAuthUrl, roleName):
+	def openstack_add_role(self, osUserName, osTenantName, osPassWord, osAuthUrl, roleName):
 		'''create user role
 			Input:
 				`osXXX`        		tenant name, password, username etc credentials
@@ -327,7 +327,7 @@ else:
 		helpers.log("role %s id is: %s" % (roleName, str(roleId)))   
 		return roleId
 
-	def openstack_create_flavor(self, osUserName, osTenantName, osPassWord, osAuthUrl, flavorName, flavorId, flavorMemSize, flavorDisk, flavorVCpu):
+	def openstack_add_flavor(self, osUserName, osTenantName, osPassWord, osAuthUrl, flavorName, flavorId, flavorMemSize, flavorDisk, flavorVCpu):
 		'''create flavor
 			Input:
 				`osXXX`        		tenant name, password, username etc credentials
@@ -359,7 +359,7 @@ else:
 		#return roleId
 		return result
 	
-	def openstack_create_image(self, osUserName, osTenantName, osPassWord, osAuthUrl, imageName, diskFormat, location):
+	def openstack_add_image(self, osUserName, osTenantName, osPassWord, osAuthUrl, imageName, diskFormat, location):
 		'''create image
 			Input:
 				`osXXX`        		tenant name, password, username etc credentials
@@ -380,7 +380,7 @@ else:
 		helpers.log("image %s id is: %s" % (imageName, str(imageId)))   
 		return imageId
 
-	def openstack_create_router(self, osUserName, osTenantName, osPassWord, osAuthUrl, tenantId, tenantName):
+	def openstack_add_router(self, osUserName, osTenantName, osPassWord, osAuthUrl, tenantId, tenantName):
 		'''create router
 			Input:
 				`osXXX`        		tenant name, password, username etc credentials
@@ -401,7 +401,7 @@ else:
 		return routerId
 
 
-	def openstack_create_net(self, osUserName, osTenantName, osPassWord, osAuthUrl, tenantId, tenantName, networkNum, external=False):
+	def openstack_add_net(self, osUserName, osTenantName, osPassWord, osAuthUrl, tenantId, tenantName, networkNum, external=False):
 		'''create network
 			Input:
 				`osXXX`        		tenant name, password, username etc credentials
@@ -429,7 +429,7 @@ else:
 		helpers.log("network %s id is: %s" % (tenantName, str(netId)))   
 		return netId
 
-	def openstack_create_subnet(self, osUserName, osTenantName, osPassWord, osAuthUrl, tenantId, tenantName, networkNum, netIP, netMask, dnsNameServers=None):
+	def openstack_add_subnet(self, osUserName, osTenantName, osPassWord, osAuthUrl, tenantId, tenantName, networkNum, netIP, netMask, dnsNameServers=None):
 		'''create subnet
 			Input:
 				`osXXX`        		tenant name, password, username etc credentials
@@ -455,7 +455,7 @@ else:
 		helpers.log("subnet id is: %s" % (str(subNetId)))   
 		return subNetId
 
-	def openstack_gen_keypair(self, osUserName, osTenantName, osPassWord, osAuthUrl, keypairName, pathToSave):
+	def openstack_add_keypair(self, osUserName, osTenantName, osPassWord, osAuthUrl, keypairName, pathToSave):
 		'''Generate openstack tenant keypair
 			Input:
 				`osXXX`        		tenant name, password, username etc credentials
@@ -469,7 +469,7 @@ else:
 		h1.bash("nova --os-username %s --os-tenant-name %s --os-password %s --os-auth-url %s keypair-add %s > %s" % (osUserName, osTenantName, osPassWord, osAuthUrl, keypairName, pathToSave))   
 		
 
-	def openstack_set_router_gw(self, osUserName, osTenantName, osPassWord, osAuthUrl, routerId, extNetId):
+	def openstack_add_router_gw(self, osUserName, osTenantName, osPassWord, osAuthUrl, routerId, extNetId):
 		'''set tenant router gateway
 			Input:
 				`osXXX`        		tenant name, password, username etc credentials
@@ -487,7 +487,7 @@ S
 		data = h1.bash_content()
 		return data
 
-	def openstack_clear_router_gw(self, osUserName, osTenantName, osPassWord, osAuthUrl, routerId):
+	def openstack_delete_router_gw(self, osUserName, osTenantName, osPassWord, osAuthUrl, routerId):
 		'''set tenant router gateway
 			Input:
 				`osXXX`        		tenant name, password, username etc credentials
@@ -505,7 +505,7 @@ S
 		return data
 		
 		
-	def openstack_attach_subnet_to_router(self, osUserName, osTenantName, osPassWord, osAuthUrl, routerId, subNetId):
+	def openstack_add_subnet_to_router(self, osUserName, osTenantName, osPassWord, osAuthUrl, routerId, subNetId):
 		'''attach subnet to tenant router
 			Input:
 				`osXXX`        		tenant name, password, username etc credentials
@@ -523,7 +523,7 @@ S
 		data = h1.bash_content()
 		return data
 		
-	def openstack_detach_subnet_to_router(self, osUserName, osTenantName, osPassWord, osAuthUrl, routerId, subNetId):
+	def openstack_delete_subnet_to_router(self, osUserName, osTenantName, osPassWord, osAuthUrl, routerId, subNetId):
 		'''detach subnet from tenant router
 			Input:
 				`osXXX`        		tenant name, password, username etc credentials
@@ -541,7 +541,7 @@ S
 		data = h1.bash_content()
 		return data
 
-	def openstack_secgroup_permit_all(self, osUserName, osTenantName, osPassWord, osAuthUrl, secgroupName):
+	def openstack_add_secgroup_permit_all(self, osUserName, osTenantName, osPassWord, osAuthUrl, secgroupName):
 		'''set tenant secgroup policy to allow all traffic
 			Input:
 				`osXXX`        		tenant name, password, username etc credentials
@@ -556,7 +556,7 @@ S
 		h1.bash("nova --os-username %s --os-tenant-name %s --os-password %s --os-auth-url %s secgroup %s icmp -1 -1 0.0.0.0/0" % (osUserName, osTenantName, osPassWord, osAuthUrl, secgroupName))   
 #		return pass
 
-	def openstack_create_instance(self, osUserName, osTenantName, osPassWord, osAuthUrl, imageId, flavorId, hostName, subnetId, keypairName):
+	def openstack_add_instance(self, osUserName, osTenantName, osPassWord, osAuthUrl, imageId, flavorId, hostName, subnetId, keypairName):
 		'''create an instance
 			Input:
 				`osXXX`        		tenant name, password, username etc credentials
@@ -583,7 +583,7 @@ nova --no-cache boot --image $ubuntuid --flavor $flavor2id T$startTenantid-NW-$s
 		return vmId
 
 
-	def openstack_get_instance_status(self, osUserName, osTenantName, osPassWord, osAuthUrl, vmId):
+	def openstack_show_instance_status(self, osUserName, osTenantName, osPassWord, osAuthUrl, vmId):
 		'''get instance status
 			Input:
 				`osXXX`        		tenant name, password, username etc credentials

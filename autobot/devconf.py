@@ -375,7 +375,8 @@ class MininetDevConf(DevConf):
     :param topology: str, in the form 'tree,4,2'
     """
     def __init__(self, name=None, host=None, user=None, password=None,
-                 controller=None, topology=None, openflow_port=None,
+                 controller=None, controller2=None, topology=None,
+                 openflow_port=None,
                  debug=0):
 
         if controller is None:
@@ -385,6 +386,7 @@ class MininetDevConf(DevConf):
 
         self.topology = topology
         self.controller = controller
+        self.controller2 = controller2
         self.openflow_port = openflow_port
         self.state = 'stopped'  # or 'started'
         super(MininetDevConf, self).__init__(host, user, password, name=name,
@@ -463,8 +465,16 @@ class T6MininetDevConf(MininetDevConf):
         if self.openflow_port is None:
             self.openflow_port = 6653
             helpers.log("Setting OpenFlow port to %d" % self.openflow_port)
-        return ("sudo /opt/t6-mininet/run.sh -c %s:%s %s"
-                % (self.controller, self.openflow_port, self.topology))
+
+        if self.controller2:
+            # Start Mininet with dual controllers
+            return ("sudo /opt/t6-mininet/run.sh -c %s:%s -c %s:%s %s"
+                % (self.controller, self.openflow_port,
+                   self.controller2, self.openflow_port,
+                   self.topology))
+        else:
+            return ("sudo /opt/t6-mininet/run.sh -c %s:%s %s"
+                    % (self.controller, self.openflow_port, self.topology))
 
 
 class HostDevConf(DevConf):

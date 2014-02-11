@@ -1,0 +1,38 @@
+#!/bin/bash
+# Wrapper script to execute a BigRobot test suite. You will need to modify the
+# following environment variables:
+#   BIGROBOT_PATH     - full path to BigRobot framework
+#   BIGROBOT_SUITE    - full path to the test suite file (tests in this suite will be executed)
+#   BIGROBOT_LOG_PATH - full path for the output logs
+
+export BIGROBOT_PATH=/home-local/vui/work/bigrobot
+export BIGROBOT_SUITE=$BIGROBOT_PATH/testsuites/T5/T5-sanity/t5_singleleaf_dualrack_ping_test_suite
+export BIGROBOT_LOG_PATH=/tmp/vui
+
+suite=$(/usr/bin/basename $BIGROBOT_SUITE)
+ds=$(/bin/date +%Y%m%d_%H%M%S)
+
+# BigRobot log directory
+export BIGROBOT_LOG_PATH_EXEC_INSTANCE="${BIGROBOT_LOG_PATH}/${suite}_${ds}"
+
+# Let BigRobot know that it's running in the CI environment (Jenkins/ABAT)
+export BIGROBOT_CI=True
+
+
+PATH=$BIGROBOT_PATH/bin:$PATH
+
+if [ ! -d "$BIGROBOT_PATH" ]; then
+    echo "ERROR: BIGROBOT_PATH $BIGROBOT_PATH is not found!"
+    exit 1
+fi
+
+if [ ! -f "${BIGROBOT_SUITE}.txt" ]; then
+    echo "ERROR: BIGROBOT_SUITE $BIGROBOT_SUITE (txt file) is not found!"
+    exit 1
+fi
+
+# Run the sanity tests
+gobot version
+gobot env
+gobot test --include=sanity
+

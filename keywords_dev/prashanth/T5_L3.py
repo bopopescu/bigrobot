@@ -8,7 +8,7 @@ class T5_L3(object):
     def __init__(self):
         pass
         
-    def rest_create_vns_ip(self, tenant, vns, ipaddr, netmask):
+    def rest_add_vns_ip(self, tenant, vns, ipaddr, netmask):
         '''Create vns router interface via command "virtual-router vns interface"
         
             Input:
@@ -64,7 +64,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
         
         
    
-    def rest_attach_tenant_routers_to_system(self, tenant):        
+    def rest_add_tenant_routers_to_system(self, tenant):        
         '''Attach tenant router to system tenant"
         
             Input:
@@ -91,7 +91,7 @@ REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[
             helpers.test_log("Output: %s" % c.rest.result_json())
             return c.rest.content() 
         
-    def rest_detach_tenant_routers_to_system(self, tenant):        
+    def rest_delete_tenant_routers_to_system(self, tenant):        
         '''detach tenant router to system tenant"
         
             Input:
@@ -117,7 +117,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
             return c.rest.content() 
         
         
-    def rest_attach_system_to_tenant_routers(self, tenant):        
+    def rest_add_system_to_tenant_routers(self, tenant):        
         '''Attach system router to tenant router"
         
             Input:
@@ -142,7 +142,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
             return c.rest.content()         
 
 
-    def rest_detach_system_to_tenant_routers(self, tenant):        
+    def rest_delete_system_to_tenant_routers(self, tenant):        
         '''detach system router from tenant router"
         
             Input:
@@ -309,7 +309,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
 
      
 
-    def rest_create_endpoint_ip(self, tenant, vnsname, endpointname, ipaddr):
+    def rest_add_endpoint_ip(self, tenant, vnsname, endpointname, ipaddr):
         '''Add nexthop to ecmp groups aks gateway pool in tenant"
         
             Input:
@@ -336,7 +336,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
             helpers.test_log("Output: %s" % c.rest.result_json())
             return c.rest.content()                         
 
-    def rest_create_endpoint_mac(self, tenant, vnsname, endpointname, mac):
+    def rest_add_endpoint_mac(self, tenant, vnsname, endpointname, mac):
         '''Add nexthop to ecmp groups aks gateway pool in tenant"
         
             Input:
@@ -364,7 +364,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
             return c.rest.content()                         
 
 
-    def rest_create_endpoint_portgroup_attachment(self, tenant, vnsname, endpointname, portgroupname, vlan):
+    def rest_add_endpoint_portgroup_attachment(self, tenant, vnsname, endpointname, portgroupname, vlan):
         '''Add nexthop to ecmp groups aks gateway pool in tenant"
         
             Input:
@@ -392,7 +392,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
             return c.rest.content()            
 
 
-    def rest_create_endpoint_switch_attachment(self, tenant, vnsname, endpointname, switchname, switchinterface, vlan):
+    def rest_add_endpoint_switch_attachment(self, tenant, vnsname, endpointname, switchname, switchinterface, vlan):
         '''Add nexthop to ecmp groups aks gateway pool in tenant"
         
             Input:
@@ -420,7 +420,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
             helpers.test_log("Output: %s" % c.rest.result_json())
             return c.rest.content()            
 
-    def rest_create_dhcp_relay(self, tenant, vnsname, dhcpserverip):
+    def rest_add_dhcp_relay(self, tenant, vnsname, dhcpserverip):
         '''Create dhcp server on tenant VNS"
         
             Input:
@@ -445,13 +445,12 @@ REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[
             helpers.test_log("Output: %s" % c.rest.result_json())
             return c.rest.content()            
 
-    def rest_toggle_dhcp_relay(self, tenant, vnsname, togglevalue):
+    def rest_enable_dhcp_relay(self, tenant, vnsname):
         '''Enable dhcp relay on tenant VNS"
         
             Input:
                 `tenant`          tenant name
                 `vnsname`         name of vns interface
-                `togglevalue`     True or False to enable or disable dhcp relay
             Return: true if configuration is successful, false otherwise
 REST-POST: PATCH http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[name="C"]/virtual-router/vns-interfaces[vns-name="C1"] {"dhcp-relay-enable": true}
 REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[name="C"]/virtual-router/vns-interfaces[vns-name="C1"] reply: ""           
@@ -463,14 +462,39 @@ REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[
         
         url = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]/virtual-router/vns-interfaces[vns-name="%s"]' % (c.base_url, tenant, vnsname)
         try:
-            c.rest.patch(url, {"dhcp-relay-enable": togglevalue})
+            c.rest.patch(url, {"dhcp-relay-enable": true})
         except:
             helpers.test_failure(c.rest.error())
         else: 
             helpers.test_log("Output: %s" % c.rest.result_json())
             return c.rest.content()            
 
-    def rest_set_dhcprelay_circuitid(self, tenant, vnsname, circuitid):
+			
+    def rest_disable_dhcp_relay(self, tenant, vnsname):
+        '''Enable dhcp relay on tenant VNS"
+        
+            Input:
+                `tenant`          tenant name
+                `vnsname`         name of vns interface
+            Return: true if configuration is successful, false otherwise
+REST-POST: PATCH http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[name="C"]/virtual-router/vns-interfaces[vns-name="C1"] {"dhcp-relay-enable": true}
+REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[name="C"]/virtual-router/vns-interfaces[vns-name="C1"] reply: ""           
+        '''        
+        t = test.Test()
+        c = t.controller()
+        
+        helpers.test_log("Input arguments: tenant = %s vns name = %s toggle values = %s" % (tenant, vnsname, togglevalue))
+        
+        url = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]/virtual-router/vns-interfaces[vns-name="%s"]' % (c.base_url, tenant, vnsname)
+        try:
+            c.rest.patch(url, {"dhcp-relay-enable": false})
+        except:
+            helpers.test_failure(c.rest.error())
+        else: 
+            helpers.test_log("Output: %s" % c.rest.result_json())
+            return c.rest.content() 			
+			
+    def rest_add_dhcprelay_circuitid(self, tenant, vnsname, circuitid):
         '''Set dhcp relay circuit id"
         
             Input:

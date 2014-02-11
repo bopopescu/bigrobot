@@ -1,5 +1,6 @@
 import autobot.helpers as helpers
 import autobot.test as test
+import re
 
 
 class Host(object):
@@ -34,7 +35,7 @@ class Host(object):
         if dest_ip:
             dest = dest_ip
         if dest_node:
-            dest = t.node(dest_node).ip
+            dest = t.node(dest_node).ip()
         status = helpers._ping(dest, node=n, *args, **kwargs)
         return status
 
@@ -72,7 +73,18 @@ class Host(object):
         """
         t = test.Test()
         n = t.node(node)
-        n.sudo("vconfig rem %s" % intf)
+        result = n.sudo("vconfig rem %s" % intf)
+        out = result["content"]
+
+        # Catch error:
+        #   ERROR: trying to remove VLAN -:eth1.20:- error: No such device
+        #
+        # Actually, Exscript will detect this error and handle it, so we
+        # should never reach here... Exscript/protocols/Protocol.py will raise
+        # InvalidCommandException('Device said:\n' + self.response)
+        if re.search(r'no such device', out, re.M | re.I):
+            helpers.test_error("vconfig error - no such device '%s'" % intf)
+
         return True
 
     def bash_network_restart(self, node):

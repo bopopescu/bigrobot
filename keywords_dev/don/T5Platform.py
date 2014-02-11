@@ -209,17 +209,21 @@ class T5Platform(object):
         masterID,slaveID = common.getNodeID(obj)
         if(masterID == -1 and slaveID == -1):
             return False
-
-        if(masterNode):
-            master.enable("reboot", prompt="Confirm Reboot \(yes to continue\)")
-            master.enable("yes")
-            helpers.log("Master is rebooting")
-            sleep(30)
-        else:
-            slave = t.controller("slave")
-            slave.enable("reboot", prompt="Confirm Reboot \(yes to continue\)")
-            slave.enable("yes")
-            helpers.log("Slave is rebooting")
+        
+        try:
+            if(masterNode):
+                master.enable("reboot", prompt="Confirm Reboot \(yes to continue\)")
+                master.enable("yes")
+                helpers.log("Master is rebooting")
+                sleep(30)
+            else:
+                slave = t.controller("slave")
+                slave.enable("reboot", prompt="Confirm Reboot \(yes to continue\)")
+                slave.enable("yes")
+                helpers.log("Slave is rebooting")
+                sleep(30)
+        except:
+            helpers.log("Node is rebooting")
             sleep(30)
        
         newMasterID, newSlaveID = common.getNodeID(obj)

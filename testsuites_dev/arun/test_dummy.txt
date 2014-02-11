@@ -1,0 +1,47 @@
+* Setting
+Documentation   This suite is my sandbox for experimentation.
+Suite Setup     base suite setup
+Suite Teardown  base suite teardown
+Test Setup      base test setup
+Test Teardown   base test teardown
+Force Tags      Vui
+Library         keywords/BsnCommon.py
+
+
+* Test Case
+Test 1
+    #[Tags]  skipped
+    mock passed
+
+Test 2
+    #[Tags]  skipped
+    mock passed
+
+Test 3
+    #[Tags]  skipped
+    mock passed
+
+Test 4
+	#[Tags]  skipped
+	mock passed
+
+Test 5
+	#[Tags]  skipped
+	mock passed
+
+Test 6
+	#[Tags]  skipped
+	mock passed
+
+Test 7
+	#[Tags]  skipped
+	mock passed
+
+Test 8
+	#[Tags]  skipped
+	mock passed
+
+Test 9
+	#[Tags]  skipped
+	mock passed
+    

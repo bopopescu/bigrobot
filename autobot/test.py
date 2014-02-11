@@ -28,20 +28,87 @@ class Test(object):
             self._setup_completed = False
             self._has_a_controller = False
             self._has_a_topo_file = False
+            self._params = {}
+            self._bigtest_node_info = {}
 
             self._bsn_config_file = ''.join((helpers.get_path_autobot_config(),
                                              '/bsn.yaml'))
             helpers.log("Loading config file %s" % self._bsn_config_file)
             self._bsn_config = helpers.load_config(self._bsn_config_file)
 
+            self._is_ci = helpers.bigrobot_continuous_integration()
+
+            controller_id = 1
+            mininet_id = 1
+            params_dict = {}
+
+            if self._is_ci.lower() == "true":
+                helpers.info("BigRobot Continuous Integration environment")
+                self._bigtest_node_info = helpers.bigtest_node_info()
+                helpers.info("BigTest node info:\n%s"
+                             % helpers.prettify(self._bigtest_node_info))
+                for key in self._bigtest_node_info:
+                    if re.match(r'^node-controller', key):
+                        c = "c" + str(controller_id)
+                        controller_id += 1
+                        ip = self._bigtest_node_info[key]['ipaddr']
+                        params_dict[c] = {}
+                        params_dict[c]['ip'] = ip
+                        helpers.debug("'%s' IP address is '%s'"
+                                      % (c, ip))
+                    if re.match(r'^node-mininet', key):
+                        m = "mn" + str(mininet_id)
+                        mininet_id += 1
+                        ip = self._bigtest_node_info[key]['ipaddr']
+                        params_dict[m] = {}
+                        params_dict[m]['ip'] = ip
+                        helpers.debug("'%s' IP address is '%s'"
+                                      % (m, ip))
+                yaml_str = helpers.to_yaml(params_dict)
+                self._params_file = '/var/run/bigtest/params.topo'
+
+                helpers.info("Writing params to file '%s'" % self._params_file)
+                helpers.file_write_once(self._params_file, yaml_str)
+
+                helpers.bigrobot_params(new_val=self._params_file)
+
             topo = helpers.bigrobot_topology()
-            if helpers.file_not_exist(topo):
+            if helpers.file_not_exists(topo):
                 helpers.warn("Topology file not specified (%s)" % topo)
                 self._topology_params = {}
             else:
                 helpers.log("Loading topology file %s" % topo)
                 self._topology_params = helpers.load_config(topo)
                 self._has_a_topo_file = True
+
+            if 'mn' in self._topology_params:
+                helpers.debug("Changing node name 'mn' to 'mn1'")
+                self._topology_params['mn1'] = self._topology_params['mn']
+                del self._topology_params['mn']
+
+            # Reading from params file and overriding attributes in
+            # topo file with values from params.
+            params_file = helpers.bigrobot_params()
+            if params_file.lower() != 'none':
+                if helpers.file_not_exists(params_file):
+                    helpers.environment_failure("Params file '%s' does not exist"
+                                                % params_file)
+                self._params = helpers.load_config(params_file)
+                for n in self._params:
+                    if n not in self._topology_params:
+                        helpers.environment_failure("Node '%s' is not specified in topo file"
+                                                    % n)
+                    for key in self._params[n]:
+                        if key not in self._topology_params[n]:
+                            helpers.warn("Node '%s' does not have attribute '%s' defined. Populating it from params file."
+                                         % (n, key))
+                        elif key in self._topology_params[n] and self._topology_params[n][key].lower() != 'dummy':
+                            helpers.warn("Node '%s' has attribute '%s' defined with value '%s'. Overriding it with value from params file."
+                                         % (n, key, self._topology_params[n][key]))
+                        helpers.info("Node '%s' attribute '%s' gets value '%s'"
+                                     % (n, key, self._params[n][key]))
+                        self._topology_params[n][key] = self._params[n][key]
+
             self._topology = {}
 
     def __init__(self):
@@ -240,7 +307,9 @@ class Test(object):
 
         return self.topology(node)
 
-    def mininet(self, name='mn', *args, **kwargs):
+    def mininet(self, name='mn1', *args, **kwargs):
+        if name == 'mn':
+            name = 'mn1'
         return self.topology(name, *args, **kwargs)
 
     def switches(self):
@@ -281,6 +350,9 @@ class Test(object):
         else:
             helpers.test_error("Impossible state.")
 
+        if node == 'mn':
+            node = 'mn1'
+
         if re.match(r'^(master|slave)$', node):
             return self.controller(*args, **kwargs)
         else:
@@ -305,15 +377,22 @@ class Test(object):
 
         if 'c1' not in params:
             helpers.warn("A controller (c1) is not defined")
+            controller_ip = None
         else:
             controller_ip = params['c1']['ip']  # Mininet needs this bit of info
             self._has_a_controller = True
             # helpers.log("Controller IP address is %s" % controller_ip)
 
+        if 'c2' not in params:
+            helpers.debug("A controller (c1) is not defined")
+            controller_ip2 = None
+        else:
+            controller_ip2 = params['c2']['ip']  # Mininet needs this bit of info
+
         for key in params:
             # Matches the following device types:
             #  Controllers: c1, c2, controller, controller1, controller2, master, slave
-            #  Mininet: mn, mn1, mn2, mininet
+            #  Mininet: mn1, mn2
             #  Switches: s1, s2, spine1, leaf1
             #
             match = re.match(r'^(c\d|controller\d?|master|slave|mn\d?|mininet\d?|s\d+|spine\d+|leaf\d+|s\d+|h\d+|tg\d+)$', key)
@@ -345,12 +424,13 @@ class Test(object):
                 else:
                     openflow_port = None
 
-                n = a_node.MininetNode(key,
-                                       host,
-                                       controller_ip,
-                                       self.mininet_user(),
-                                       self.mininet_password(),
-                                       t,
+                n = a_node.MininetNode(name=key,
+                                       ip=host,
+                                       controller_ip=controller_ip,
+                                       controller_ip2=controller_ip2,
+                                       user=self.mininet_user(),
+                                       password=self.mininet_password(),
+                                       t=t,
                                        openflow_port=openflow_port)
             elif helpers.is_host(key):
                 helpers.log("Initializing host '%s'" % key)
@@ -480,7 +560,8 @@ class Test(object):
 
         platform = n.platform()
 
-        helpers.log("Setting up HTTP session cookies for REST access")
+        helpers.log("Setting up HTTP session cookies for REST access on '%s' (platform=%s)"
+                    % (n.name(), platform))
 
         if helpers.is_bvs(platform):
             url = "/api/v1/auth/login"

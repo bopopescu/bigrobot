@@ -171,7 +171,6 @@ class T5Fabric(object):
         c.rest.get(url)
         data = c.rest.content()
         status = False
-        helpers.log("data %s" % data[0])
         for i in range (0,len(data)):
             if data[i]["dpid"] == dpid and data[i]["fabric-switch-info"]["fabric-role"] == role:
                 helpers.test_log("Fabric switch Role of %s is %s" % (str(data[i]["dpid"]), str(data[i]["fabric-switch-info"]["fabric-role"])))
@@ -249,13 +248,17 @@ class T5Fabric(object):
                                         elif data3[0]["fabric-lag"][i]["lag-type"] == "spine-broadcast-lag":
                                                 if len(data3[0]["fabric-lag"][i]["member"]) == (int(self.rest_verify_no_of_rack()) * fabric_spine_interface):
                                                     helpers.log("Spine Broadcast lag from leaf switch %s is correct , Actual = %d , Expected = %d" % (switch, int(self.rest_get_no_of_rack()), fabric_spine_interface))
+                                                    return True
                                                 else:
                                                         helpers.test_failure("Spine Broadcast lag from leaf switch %s is not correct,expected = %d,actual = %d" % (switch, (int(self.rest_get_no_of_rack()) * fabric_spine_interface), len(data3[0]["fabric-lag"][i]["member"])))
+                                                        return False
                                         elif data3[0]["fabric-lag"][i]["lag-type"] == "leaf-lag":       
                                             if len(data3[0]["fabric-lag"][i]["member"]) == fabric_peer_interface:  
                                                 helpers.log("Peer lag formation from leaf switch %s is correct,Expected = %d, Actual = %d" % (switch, fabric_peer_interface, len(data3[0]["fabric-lag"][i]["member"])))
+                                                return True
                                             else:
                                                 helpers.test_failure(" Spine lag formation from leaf %s switch is not correct,expected= %d,Actual= %d" % (switch, fabric_peer_interface, len(data3[0]["fabric-lag"][i]["member"])))
+                                                return False
         else :
             return False
     
@@ -280,11 +283,15 @@ class T5Fabric(object):
                         elif data[0]["dpid"] == dpid and data[0]["fabric-switch-info"]["lacp-port-offset"] == 100:
                             helpers.log("Pass: Fabric switch connection status for %s dual leaf is correct" % str(data[0]["fabric-switch-info"]["switch-name"]))
                             return True
-                else:
-                    helpers.log("Default fabric role is virtual for not added fabric switches")                        
+                elif data[0]["fabric-switch-info"]["suspended"] == True:
+                        helpers.log("Default fabric role is virtual for not added fabric switches")
+                        return True
+                else: 
+                        helpers.test_failure("Fabric role is virual but suspended = False ") 
+                        return False                        
             elif data[0]["fabric-switch-info"]["suspended"] == False or data[0]["fabric-switch-info"]["suspended"] == True:
                 helpers.test_failure("Fail: Switch is not connected , Fabric switch status still exists")
-                return True    
+                return False    
         else :
             return False
       
@@ -302,14 +309,16 @@ class T5Fabric(object):
         c.rest.get(url1)
         data1 = c.rest.content()
         bidir_link = 0
-        for i in range(0,len(data1[0]["link"])):
-            if data1[0]["link"][i]["link-direction"] == "bidirectional":
-                bidir_link = bidir_link + 1
-        if bidir_link == fabric_interface/2:
-            helpers.log("Pass: All Fabric links states are bidirectional")
+        if not((data1 and True) or False):       
+            for i in range(0,len(data1[0]["link"])):
+                if data1[0]["link"][i]["link-direction"] == "bidirectional":
+                    bidir_link = bidir_link + 1
+                    if bidir_link == fabric_interface/2:
+                        helpers.log("Pass: All Fabric links states are bidirectional")
+                    else:
+                        helpers.test_failure("Fail: Inconsistent state of fabric links. Fabric_Interface = %d , bidir_link = %d" % (fabric_interface, bidir_link))
         else:
-            helpers.test_failure("Fail: Inconsistent state of fabric links. Fabric_Interface = %d , bidir_link = %d" % (fabric_interface, bidir_link))
-        
+            helpers.log("Fabric switches are misconfigued")
                         
     def rest_verify_no_of_rack(self):
         t = test.Test()
@@ -329,6 +338,35 @@ class T5Fabric(object):
         total_rack = rack_count + len(rack)
         helpers.log("Total Rack in the Topology: %d" % total_rack)
         return total_rack
+    
+    def rest_verify_no_of_spine(self):
+        t = test.Test()
+        c = t.controller()
+        url = '%s/api/v1/data/controller/core/switch' % (c.base_url)
+        c.rest.get(url)
+        data = c.rest.content()
+        list_spine = []
+        for i in range(0,len(data)):
+            if data[i]["fabric-switch-info"]["fabric-role"] == "spine":
+                list_spine.append(data[i]["fabric-switch-info"]["switch-name"]) 
+                   
+        helpers.log("Total Spine in the topology: %d" % len(list_spine))
+        return list_spine
+    
+    def rest_verify_rack_lag_from_leaf(self, switch):
+        t = test.Test()
+        c = t.controller()
+        url = '%s/api/v1/data/controller/core/switch[name="%s"]?select=fabric-lag' % (c.base_url, switch)
+        c.rest.get(url)
+        data = c.rest.content()
+        for i in range(0,len(data[0]["fabric-lag"])):
+            if data[0]["fabric-lag"][i]["lag-type"] == "rack-lag":
+                                           
+                    if data[0]["fabric-lag"][i]["member"]["dst-switch"] == self.rest_verify_no_of_spine():
+                        helpers.log("Rack connectivity from leaf switch %s using all the spine switches are up" % switch)
+                    else:
+                        helpers.test_failure("Rack connectivity from leaf switch %s using all the spine switches are not up" % switch)
+    
                 
     def rest_verify_forwarding_lag(self, dpid, switch):
         '''Verify Edge port  Information in Controller Forwarding Table
@@ -339,7 +377,7 @@ class T5Fabric(object):
         '''
         t = test.Test()
         c = t.controller()
-        url = '%s/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch-id="%s"]/lag-table' % (c.base_url, dpid)
+        url = '%s/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch-name="%s"]/lag-table' % (c.base_url, switch)
         c.rest.get(url)
         data = c.rest.content()
         url1 = '%s/api/v1/data/controller/core/switch[dpid="%s"]' % (c.base_url, dpid)
@@ -353,27 +391,29 @@ class T5Fabric(object):
             if data2[0]["fabric-lag"][i]["lag-type"] == "leaf-lag":
                 interface = re.sub("\D", "", data2[0]["fabric-lag"][i]["member"][0]["src-interface"])
                 peer_intf.append(int(interface))                            
-        if data1[0]["fabric-switch-info"]["leaf-group"] == "" :
+        if data1[0]["fabric-switch-info"]["leaf-group"] == None:
             for i in range(0,len(data)):
-                if (data[i]["port"]["port-num"] == peer_intf[0]):
-                    helpers.test_failure("Peer switch edge ports are not deleted from lag table")
-                    return False
-                else:
-                    helpers.log("Peer switch edge ports are deleted from forwarding lag table")  
-                    return True
-        else:           
-            for i in range(0,len(data)):
-                if (data[i]["port"]["port-num"] == peer_intf[0]):
-                    helpers.log("Peer switch edge ports are properly added in forwarding table")
-                    return True
-                else:
-                    helpers.test_failure("Peer switch edge ports are not added in forwarding table")
-                    return False
+                for j in range(0,len(data[i]["port"])):
+                    if (data[i]["port"][j]["port-num"] == peer_intf[0]):
+                        helpers.test_failure("Peer switch edge ports are not deleted from lag table")
+                        return False
+                    else:
+                        helpers.log("Peer switch edge ports are deleted from forwarding lag table")  
+                        return True
+        else:
+                for i in range(0,len(data)):
+                    for j in range(0,len(data[i]["port"])):
+                        if (data[i]["port"][j]["port-num"]) == (peer_intf[0]):
+                            helpers.log("Peer switch edge ports are properly added in forwarding table")
+                            return True
+                        else:
+                            helpers.test_failure("Peer switch edge ports are not added in forwarding table")
+                            return False
                     
-    def rest_verify_fabric_lacp(self, switch, intf):
+    def rest_verify_fabric_interface_lacp(self, switch, intf):
         t = test.Test()
         c = t.controller()
-        url = '%s//api/v1/data/controller/core/switch[name="%s"]/interface[name="%s"]' % (c.base_url, switch, intf)      
+        url = '%s/api/v1/data/controller/core/switch[name="%s"]/interface[name="%s"]' % (c.base_url, switch, intf)      
         c.rest.get(url)
         data = c.rest.content()  
         if data[0]["lacp-active"] == True:
@@ -386,12 +426,80 @@ class T5Fabric(object):
         else:
             helpers.log("LACP is not enabled on the %s = %s" % (switch, intf))
             
-                   
+    def rest_verify_fabric_error_dual_tor_peer_link(self, rack):
+        t = test.Test()
+        c = t.controller()
+        url = '%s/api/v1/data/controller/applications/bvs/info/fabric/errors/dual-tor/peer-link-absent' % (c.base_url)      
+        c.rest.get(url)
+        data = c.rest.content()
+        if not((data and True) or False):  
+            if len(data) != 0:
+                if data["name"] == rack:
+                    helpers.log("Fabric error reported for %s" % data["name"])
+                    return True
+                else:
+                    helpers.test_failure("No Fabric error Reported for dual tor no peer link for rack %s" % data["name"])
+                    return False
+            else:
+                helpers.log("Fabric error will be none")              
                 
+    def rest_verify_forwarding_port_table(self, switch): 
+        t = test.Test()
+        c = t.controller()
+        url = '%s/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch-name="%s"]/port-table' % (c.base_url, switch) 
+        c.rest.get(url)          
+        if not c.rest.status_code_ok():
+            helpers.log("Error: forwarding output table is not returning any value") 
+            helpers.test_failure(c.rest.error())        
                 
-                
-                
-                
+    def rest_show_fabric_interface(self, switch, intf):
+        ''' 
+        Function to get the fabric interface status for validation
+        Input: switch name and interface
+        Output" Rest output of the fabric interface for various validation
+        '''
+        t = test.Test()
+        c = t.controller()
+        url = '%s/api/v1/data/controller/core/switch[name="%s"]/interface[name="%s"]' % (c.base_url, switch, intf) 
+        c.rest.get(url) 
+        return c.rest.content()
+    
+    def rest_verify_fabric_interface(self, switch, intf): 
+        ''' 
+        Function to verify the specific fabric interface status 
+        Input:  Rest Output from the function (show_fabric_interface())
+        Output" validation of the fabric interface status
+        '''
+        t = test.Test()
+        c = t.controller()
+        url = '%s/api/v1/data/controller/core/switch[name="%s"]/interface[name="%s"]' % (c.base_url, switch, intf) 
+        c.rest.get(url)  
+        data = c.rest.content()
+        helpers.log("Data %s" % data)
+        if len(data) != 0:
+            if data[0]["state"] == "down" and data[0]["type"] == "unknown":
+                helpers.log("Interface is connected to spine or Physical Interface status is down for the leaf switch") 
+            elif data[0]["state"] == "up" and data[0]["type"] == "edge":
+                    helpers.log("Inteface is connected to leaf and it is a edge port")
+            elif data[0]["state"] == "up" and data[0]["type"] == "leaf" or data[0]["state"] == "up" and data[0]["type"] == "spine":
+                    helpers.log("Interface is fabric interface")
+            else:
+                    helpers.test_failure("Interface status is not known to the fabric system , Please check the logs")
+        else:
+            helpers.test_failure("Given fabric interface is not valid")              
                           
-                  
+                 
+    def rest_verify_forwarding_port_edge(self, switcha, switchb): 
+        t = test.Test()
+        c = t.controller()
+        url_a = '%s/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch-name="%s"]/port-table' % (c.base_url, switcha) 
+        c.rest.get(url_a)          
+        data = c.rest.content()
+        url_b = '%s/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch-name="%s"]/port-table' % (c.base_url, switchb)
+        c.rest.get(url_b)
+        data1 = c.rest.content()
+        if data[0]["lag-id"] == data1[0]["lag-id"]: 
+            helpers.log("Portgroup Lag id creation in forwarding table is correct for dual rack") 
+        else:
+            helpers.test_failure("Portgroup Lag id creation in forwarding table does not match for dual rack , check the logs")                
         

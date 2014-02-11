@@ -116,3 +116,18 @@ class Mininet(object):
         mn = t.mininet()
         mn.cli('dumpt6 %s' % (switch))
         helpers.log(mn.cli_content())
+        
+    def mininet_start(self):
+        t = test.Test()
+        mn = t.mininet()
+        mn.start_mininet()
+        
+    def mininet_stop(self):
+        t = test.Test()
+        mn = t.mininet()
+        mn.stop_mininet()
+        
+    def mininet_restart(self):
+        t = test.Test()
+        mn = t.mininet()
+        mn.restart_mininet()

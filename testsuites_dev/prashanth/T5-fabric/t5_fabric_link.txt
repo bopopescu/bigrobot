@@ -6,53 +6,119 @@ Suite Setup      base suite setup
 Suite Teardown   base suite teardown
 Test Setup       base test setup
 Test Teardown    base test teardown
-Force Tags       T5 Fabric
+Force Tags       T5 
 Library          keywords/BsnCommon.py
-Library          keywords_dev/T5.py
-Library          keywords_dev/T5Fabric.py
+Library          keywords_dev/prashanth/T5.py
+Library          keywords_dev/prashanth/T5Fabric.py
 Library			 keywords/Mininet.py
-REsource         keywords_dev/t5_dualleaf_three_rack_resource.txt
+Library			 keywords/SwitchLight.py
+Resource         keywords_dev/prashanth/t5_dualleaf_three_rack_resource.txt
+
+*Variables
+${leaf0a_spine0_intf0}	ethernet30
+${leaf0a_spine0_intf1}	ethernet31
+${leaf0a_leaf0b_intf0}	ethernet39
+${leaf0a_leaf0b_intf1}	ethernet40
+${leaf0a_spine1_intf}	ethernet32
+${leaf0a_ixia_intf}		ethernet24
+${leaf0b_ixia_intf}		ethernet24
+${leaf1a_ixia_intf}		ethernet24
+${leaf1b_ixia_intf}		ethernet24
+${leaf2a_ixia_intf}		ethernet24
+${leaf2b_ixia_intf}		ethernet24
+${leaf2a_spine0_intf}	ethernet31
+${leaf2a_spine1_intf}	ethernet32
+${leaf2a_dpid}  00:00:00:00:02:00:00:05
+${leaf2b_dpid}  00:00:00:00:02:00:00:06  
+
 
 
 
 *Test Case
 
-Setup Dual Rack Dual Leaf Topology
-    configure fabric switch
+Setup Three Rack Dual Leaf Topology
+    add fabric switch
     sleep  5
-    rest check fabric switch connectivity
+    rest check fabric switch all
    
-Verify Fabric link formation  
+Verify Fabric link formation
+	[Tags]  feature  
 	REST verify fabric link 	
 
-Remove one of the spine Fabric Role and verify the link  
-	REST remove fabric role  spine     
-    sleep  5 
-	REST verify fabric link   
-
-Add the Fabric Role back for spine 
-	REST configure fabric role   spine0   spine      
+delete/add one of the spine Fabric Role and verify the link
+	[Tags]	feature  
+	REST delete fabric role  spine     
     sleep  5 
 	REST verify fabric link
+	REST add fabric role   spine0   spine      
+    sleep  5 
+	REST verify fabric link   
 	
-Remove one of the leaf in Dual Leaf setup and verify the link
-    rest remove fabric role  leaf
-    rest remove leaf group  leaf0-a
+delete one of the leaf in Dual Leaf setup and verify the link
+    rest delete fabric role  leaf
+    rest delete leaf group  leaf0-a
     sleep  5
     rest verify fabric link
-    
-Add leaf back into the setup in Dual Rack Dual leaf topology
-    rest configure fabric role  leaf0-a  leaf
-    rest configure leaf group  leaf0-a  rack0
+    sleep  5
+    rest add fabric role  leaf0-a  leaf
+    rest add leaf group  leaf0-a  rack0
     sleep  5
     rest verify fabric link
     
 Reboot spine switch spine1 and verify the fabric link
-	s1
+	[Tags]  feature
+	rest verify fabric link
+	cli restart switch  s8
+	sleep  3
+	rest verify fabric link
+	sleep  10
+	rest verify fabric link
 Reboot leaf switch and verify fabric link
+	[Tags]  feature
+	rest verify fabric link
+	cli restart switch  s1
+	sleep  3
+	rest verify fabric link
+	sleep  10
+	rest verify fabric link
 	
+Add/delete a new link between spine0 and leaf0a
+	[Tags]  feature
+	rest verify fabric link
+	cli disable interface  s1  ${leaf0a_spine0_intf1}
+	rest verify fabric link
+	cli enable interface  s1  ${leaf0a_spine0_intf1}
+	rest verify fabric link
+
+add and delete peer group link and verify the database
+	[Tags]  feature
+	rest verify fabric link
+	cli disable interface  s1  ${leaf0a_leaf0b_intf0}
+	rest verify fabric link
+	cli enable interface  s1  ${leaf0a_leaf0b_intf0}
+	rest verify fabric link
+
+Delete and Readd the Rack2
+	[Tags]  feature
+	rest delete switch  leaf2-a
+	rest delete switch  leaf2-b
+	sleep  2
+	rest verify fabric link
+	rest add switch  leaf2-a
+	rest add dpid  ${leaf2a_dpid}
+	rest add fabric role  leaf
+	rest add fabric leaf group  rack2
+	sleep  5
+	rest verify fabric link
+	rest add switch  leaf2-b
+	rest add dpid  ${leaf2b_dpid}
+	rest add fabric role  leaf
+	rest add fabric leaf group  rack2
+	sleep  5
+	rest verify fabric link
+
 Tear down config and Topology
-    remove fabric switch
+    delete fabric switch
  
 
 * Keywords  

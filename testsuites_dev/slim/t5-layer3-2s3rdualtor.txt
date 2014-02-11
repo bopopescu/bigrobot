@@ -1,0 +1,81 @@
+* Setting
+Documentation   T5 Basic L3 single leaf single rack Test Suite
+Suite Setup     base suite setup
+Suite Teardown  base suite teardown
+Test Setup      base test setup
+Test Teardown   teardown topology
+Force Tags      T5 Sanity
+Library         keywords/BsnCommon.py
+Library         keywords/Mininet.py
+Library         keywords_dev/prashanth/T5.py
+Library         keywords_dev/prashanth/T5Fabric.py
+Library         keywords_dev/prashanth/T5_L3.py
+Library         keywords_dev/animesh/BsnCommonShow.py
+Resource		keywords_dev/prashanth/t5_singleleaf_resource.txt
+
+* Variable
+${tenant1_name}		A
+${tenant2_name}		B
+${tenant_system}	system
+${vns1_1}			A1
+${vns1_2}			A2
+${vns2_1}			B1
+${vns1_ip1}			10.10.10.1
+${vns1_subnet1}		24
+${vns1_ip2}			10.10.11.1
+${vns1_subnet2}		24
+${vns2_ip1}			10.10.20.1
+${vns2_subnet1}		24
+${unknown_host}		10.99.99.99
+${leaf0_name}		leaf0
+${leaf1_name}		leaf1
+${leaf0_intf1}		leaf0-eth3
+${leaf0_intf2}		leaf0-eth4
+${leaf0_intf3}		leaf0-eth5
+${host0_ip}			10.10.10.11
+${host0_subnet}		24
+${host1_ip}			10.10.11.11
+${host1_subnet}		24
+${host2_ip}			10.10.20.11
+${host2_subnet}		24
+${gw_mac}			5c:16:c7:01:00:00
+${host0_name}		bm0
+${host1_name}		bm1
+${host2_name}		bm2
+${host0_intf}		bm0-eth0
+${host1_intf}		bm1-eth0
+${host2_intf}		bm2-eth0
+${host0_bondif}		bm0-bond0
+${host1_bondif}		bm1-bond0
+${host2_bondif}		bm2-bond0
+${vns1_vlan1}		100
+${vns1_vlan2}		4094
+${vns2_vlan1}		4091
+${ping_count}		10
+${host0_mac}		00:00:00:00:00:01
+${host1_mac}		00:00:00:00:00:02
+${host2_mac}		00:00:00:00:00:03
+${dstroute1}		10.111.0.0/16
+${dstroute2}		10.112.0.0/16
+${dstroute3}		10.113.0.0/16
+${dstroute4}		10.114.0.0/16
+${nexthopgroup1}	{"ecmp-group-name": "e1"}
+${nexthopgroup2}	{"ecmp-group-name": "e2"}
+${nexthopgroup3}	{"ip-address": "10.222.1.1"}
+${nexthopgroup4}	{"tenant-name": "Z"}
+${ecmpgroup1}		e1
+${ecmpgroup2}		e2
+${nexthop1}			10.10.10.2
+${nexthop2}			10.10.10.3
+${nexthop3}			10.10.10.4
+${nexthop4}			10.10.11.5
+${nexthop5}			10.10.11.3
+${nexthop6}			10.10.11.4
+${untaggedvlan}		-1
+${endpoint1name}	H1
+${endpoint2name}	H2
+${endpoint3name}	H3
+${dhcpserver1}		10.255.255.10
+${defaultroute}		0.0.0.0/0
+
+
