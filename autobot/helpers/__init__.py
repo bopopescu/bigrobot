@@ -221,6 +221,13 @@ def bigrobot_topology(new_val=None, default=None):
     return _env_get_and_set('BIGROBOT_TOPOLOGY', new_val, default)
 
 
+def bigrobot_continuous_integration(new_val=None, default=None):
+    """
+    Category: Get/set environment variables for BigRobot.
+    """
+    return _env_get_and_set('BIGROBOT_CI', new_val, default)
+
+
 def bigrobot_params(new_val=None, default=None):
     """
     Category: Get/set environment variables for BigRobot.
@@ -509,6 +516,12 @@ def from_yaml(yaml_str):
     Convert a YAML-formatted string to Python dict.
     """
     return yaml.load(yaml_str)
+
+def to_yaml(data):
+    """
+    Convert a Python dict to YAML-formatted string.
+    """
+    return yaml.dump(data)
 
 def get_path(filename):
     """

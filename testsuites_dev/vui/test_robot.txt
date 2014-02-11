@@ -8,6 +8,8 @@ Library         keywords_dev/vui/MyTest.py
 * Variables
 ${NAME}         "Vui Le"
 ${COUNTER}      100
+#@{MYLIST}       [ a, b, c, d, e ]
+@{MYLIST}       [ 1, 2, 3, 4, 5, 6, 7, "abc", xyz ]
 
 * Test Cases
 Test var assignment
@@ -42,12 +44,18 @@ Test dynamic string
     [Tags]           skipped
     json_to_pydict    {a:true, b:${123}, name:${NAME}}
     
-Test expression
-    [Tags]           smoke
-    ${result1}=       expr  1 + 1 + ${COUNTER}
-    ${result2}=       expr  10 / 2
-    ${result3}=       expr  ${result1} + ${result2}
-    log               Expression evaluated to result1=${result1}, result2=${result2}, result3=${result3}
+#Test expression
+    #[Tags]           skipped smoke
+    #${result1}=       expr  1 + 1 + ${COUNTER}
+    #${result2}=       expr  10 / 2
+    #${result3}=       expr  ${result1} + ${result2}
+    #log               Expression evaluated to result1=${result1}, result2=${result2}, result3=${result3}
+
+Test array variable
+    @{alist}=         create list  1  2  3  4  abc  yzx
+    #log many          @{alist}
+    #log               first entry = @{alist}[0]
+    print value       @{alist}
 
 * Keywords
 variable assignment
