@@ -359,9 +359,13 @@ class T5Fabric(object):
         url = '%s/api/v1/data/controller/core/switch[name="%s"]?select=fabric-lag' % (c.base_url, switch)
         c.rest.get(url)
         data = c.rest.content()
-        for i in range(0,len(data[0]["lag-type"])):
+        for i in range(0,len(data[0]["fabric-lag"])):
             if data[0]["fabric-lag"][i]["lag-type"] == "rack-lag":
-                if data[0]["fabric-lag"][i]["member"]["dst-switch"] == self.rest_verify_no_of_spine():
+                                           
+                    if data[0]["fabric-lag"][i]["member"]["dst-switch"] == self.rest_verify_no_of_spine():
+                        helpers.log("Rack connectivity from leaf switch %s using all the spine switches are up" % switch)
+                    else:
+                        helpers.test_failure("Rack connectivity from leaf switch %s using all the spine switches are not up" % switch)
     
                 
     def rest_verify_forwarding_lag(self, dpid, switch):
