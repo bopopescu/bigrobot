@@ -80,36 +80,52 @@ ${defaultroute}		0.0.0.0/0
 
 
 * Test Cases
+Intra tenant L3 untagged traffic with static endpoints
+	L3 intra tenant untagged with static endpoints
 
+Intra tenant L3 untagged traffic with dynamic endpoints
+	L3 intra tenant untagged with dynamic endpoints
+	
+Intra tenant L3 untagged traffic with dynamic host arp
+	L3 intra tenant untagged traffic with dynamic host arp
 
-* Test Case
-#Configure topology
-#	add fabric switch 
-#	sleep  5
+Intra tenant L3 untagged with initial unreachable host
+	L3 intra tenant untagged with initial unreachable host
 
+Inter tenant L3 untagged traffic with static endpoints
+	L3 inter tenant untagged with static endpoints
 
+Intra tenant L3 untagged with destination host moved
+	L3 intra tenant untagged with host moved 
 
+Intra tenant L3 untagged to tagged host
+	L3 intra tenant untagged to tagged host
 
+Intra tenant L3 tagged host
+	L3 intra tenant tagged host
 
-L3 untagged bm0 ping to untagged bm1 same tenant across VNS with static configuration
+	
+
+* Keywords
+L3 intra tenant untagged with static endpoints
 	[Tags]										smoke				sanity			
 	add fabric switch 
 	sleep  										5						
-	REST create tenant  						${tenant1_name}
-	REST create vns  							${tenant1_name}		${vns1_1}
-	REST create vns								${tenant1_name}		${vns1_2}
-	REST create vns ip  						${tenant1_name}  	${vns1_1}  		${vns1_ip1}	  		${vns1_subnet1}
-	REST create vns ip  						${tenant1_name}  	${vns1_2}  		${vns1_ip2}	  		${vns1_subnet2}
+	REST add tenant								${tenant1_name}
+	REST add vns								${tenant1_name}		${vns1_1}
+	REST add vns								${tenant1_name}		${vns1_2}
+	REST add vns ip  							${tenant1_name}  	${vns1_1}  		${vns1_ip1}	  		${vns1_subnet1}
+	REST add vns ip  							${tenant1_name}  	${vns1_2}  		${vns1_ip2}	  		${vns1_subnet2}
 	REST add interface to vns  					${tenant1_name}  	${vns1_1}  		${leaf0_name} 		${leaf0_intf1} 	 	${untaggedvlan}	
 	REST add interface to vns  					${tenant1_name}  	${vns1_2}  		${leaf0_name} 		${leaf0_intf2} 		${untaggedvlan}	
-	REST_create_endpoint						${tenant1_name}		${vns1_1}		${endpoint1name}
-	REST_create_endpoint						${tenant1_name}		${vns1_2}		${endpoint2name}	
-	REST_create_endpoint_ip						${tenant1_name}		${vns1_1}		${endpoint1name}	${host0_ip}
-	REST_create_endpoint_ip						${tenant1_name}		${vns1_2}		${endpoint2name}	${host1_ip}
-	REST_create_endpoint_mac					${tenant1_name}		${vns1_1}		${endpoint1name}	${host0_mac}
-	REST_create_endpoint_mac					${tenant1_name}		${vns1_2}		${endpoint2name}	${host1_mac}
-	REST_create_endpoint_switch_attachment		${tenant1_name}		${vns1_1}		${endpoint1name}	${leaf0_name}		${leaf0_intf1}	${untaggedvlan}	
-	REST_create_endpoint_switch_attachment		${tenant1_name}		${vns1_2}		${endpoint2name}	${leaf0_name}		${leaf0_intf2}	${untaggedvlan}	
+	REST add endpoint							${tenant1_name}		${vns1_1}		${endpoint1name}
+	REST add endpoint							${tenant1_name}		${vns1_2}		${endpoint2name}	
+	REST add endpoint_ip						${tenant1_name}		${vns1_1}		${endpoint1name}	${host0_ip}
+	REST add endpoint_ip						${tenant1_name}		${vns1_2}		${endpoint2name}	${host1_ip}
+	REST add endpoint_mac						${tenant1_name}		${vns1_1}		${endpoint1name}	${host0_mac}
+	REST add endpoint_mac						${tenant1_name}		${vns1_2}		${endpoint2name}	${host1_mac}
+	REST add endpoint_switch_attachment			${tenant1_name}		${vns1_1}		${endpoint1name}	${leaf0_name}		${leaf0_intf1}	${untaggedvlan}	
+	REST add endpoint_switch_attachment			${tenant1_name}		${vns1_2}		${endpoint2name}	${leaf0_name}		${leaf0_intf2}	${untaggedvlan}	
 	mininet host ipcfg   						${host0_name}		${host0_bondif}	${host0_ip}			${host0_subnet} 
 	mininet host ipcfg							${host1_name}		${host1_bondif}	${host1_ip}			${host1_subnet}
 	mininet host gw								${host0_name}		${vns1_ip1}		${host0_bondif}
@@ -125,15 +141,15 @@ L3 untagged bm0 ping to untagged bm1 same tenant across VNS with static configur
 	Should Be True  							${endpoints_cnt} == 2
 
 
-L3 untagged bm0 ping to untagged bm1 same tenant across VNS with dynamic endpoints
+L3 intra tenant untagged with dynamic endpoints
 	[Tags]										smoke				
 	add fabric switch 
 	sleep  5		
-	REST create tenant  						${tenant1_name}
-	REST create vns  							${tenant1_name}		${vns1_1}
-	REST create vns								${tenant1_name}		${vns1_2}
-	REST create vns ip  						${tenant1_name}  	${vns1_1}  		${vns1_ip1}	  		${vns1_subnet1}
-	REST create vns ip  						${tenant1_name}  	${vns1_2}  		${vns1_ip2}	  		${vns1_subnet2}
+	REST add tenant  							${tenant1_name}
+	REST add vns  								${tenant1_name}		${vns1_1}
+	REST add vns								${tenant1_name}		${vns1_2}
+	REST add vns ip  							${tenant1_name}  	${vns1_1}  		${vns1_ip1}	  		${vns1_subnet1}
+	REST add vns ip  							${tenant1_name}  	${vns1_2}  		${vns1_ip2}	  		${vns1_subnet2}
 	REST add interface to vns  					${tenant1_name}  	${vns1_1}  		${leaf0_name} 		${leaf0_intf1}  	${untaggedvlan}	
 	REST add interface to vns  					${tenant1_name}  	${vns1_2}  		${leaf0_name} 		${leaf0_intf2} 		${untaggedvlan}	
 	mininet host ipcfg   						${host0_name}		${host0_bondif}	${host0_ip}			${host0_subnet} 
@@ -151,15 +167,15 @@ L3 untagged bm0 ping to untagged bm1 same tenant across VNS with dynamic endpoin
 	Should Be True  							${endpoints_cnt} == 2
 	     
 
-L3 untagged bm0 ping to untagged bm1 same tenant across VNS dynamic host ARPing gateway
+L3 intra tenant untagged traffic with dynamic host arp
 	[Tags]										smoke				
 	add fabric switch 
 	sleep  5		
-	REST create tenant  						${tenant1_name}
-	REST create vns  							${tenant1_name}		${vns1_1}
-	REST create vns								${tenant1_name}		${vns1_2}
-	REST create vns ip  						${tenant1_name}  	${vns1_1}  		${vns1_ip1}	 	 	${vns1_subnet1}
-	REST create vns ip  						${tenant1_name}  	${vns1_2}  		${vns1_ip2}		  	${vns1_subnet2}
+	REST add tenant  							${tenant1_name}
+	REST add vns  								${tenant1_name}		${vns1_1}
+	REST add vns								${tenant1_name}		${vns1_2}
+	REST add vns ip  							${tenant1_name}  	${vns1_1}  		${vns1_ip1}	 	 	${vns1_subnet1}
+	REST add vns ip  							${tenant1_name}  	${vns1_2}  		${vns1_ip2}		  	${vns1_subnet2}
 	REST add interface to vns 				 	${tenant1_name}  	${vns1_1}  		${leaf0_name}	 	${leaf0_intf1}  ${untaggedvlan}	
 	REST add interface to vns  					${tenant1_name}  	${vns1_2}  		${leaf0_name}	 	${leaf0_intf2} 	${untaggedvlan}	
 	mininet host ipcfg   						${host0_name}		${host0_bondif}	${host0_ip}			${host0_subnet} 
@@ -175,37 +191,46 @@ L3 untagged bm0 ping to untagged bm1 same tenant across VNS dynamic host ARPing 
 	Should Be True  							${endpoints_cnt} == 2
 
 
-L3 untagged bm0 ping to untagged bm1 unreachable host on same tenant different VNS 
+L3 intra tenant untagged with initial unreachable host 
 	[Tags]										sanity				smoke					
 	add fabric switch 
 	sleep  										5	
-	REST create tenant  						${tenant1_name}
-	REST create vns  							${tenant1_name}		${vns1_1}
-	REST create vns ip							${tenant1_name}  	${vns1_1}  		${vns1_ip1}	  		${vns1_subnet1}
+	REST add tenant  							${tenant1_name}
+	REST add vns  								${tenant1_name}		${vns1_1}
+	REST add vns ip								${tenant1_name}  	${vns1_1}  		${vns1_ip1}	  		${vns1_subnet1}
 	REST add interface to vns  					${tenant1_name}  	${vns1_1}  		${leaf0_name} 		${leaf0_intf1}  ${untaggedvlan}	
 	REST add interface to vns  					${tenant1_name}  	${vns1_2}  		${leaf0_name} 		${leaf0_intf2} 	${untaggedvlan}	
 	mininet host ipcfg   						${host0_name}		${host0_bondif}	${host0_ip}			${host0_subnet} 
 	mininet host gw								${host0_name}		${vns1_ip1}		${host0_bondif}
 	mininet host arp							${host0_name}		${vns1_ip1}		${gw_mac}
 	sleep  										5
-	mininet l3 ping								${host0_name}		${host1_name} 		3
+	mininet l3 ping								${host0_name}		${host1_ip} 		3
 	sleep 										2
-	${loss}=  									mininet l3 ping		${host0_name}	${host1_name}		${ping_count}
-	sleep  										20    
+	${loss}=  									mininet l3 ping		${host0_name}	${host1_ip}		${ping_count}
+	sleep  										2    
 	Should Be True  							${loss} == 100
+	mininet host ipcfg   						${host1_name}		${host1_bondif}	${host1_ip}			${host1_subnet} 
+	mininet host gw								${host1_name}		${vns1_ip2}		${host1_bondif}
+	mininet host arp							${host1_name}		${vns1_ip2}		${gw_mac}
+	mininet l3 ping								${host0_name}		${host1_ip} 		3
+	sleep 										2
+	${loss}=  									mininet l3 ping		${host0_name}	${host1_ip}		${ping_count}
+	sleep  										2    
+	Should Be True  							${loss} == 0	
+	${endpoints_cnt}=							rest count endpoints mac
+	Should Be True  							${endpoints_cnt} == 2
 
-    
-L3 untagged bm0 ping to untagged bm1 across tenants and VNS all statically defined
+L3 inter tenant untagged with static endpoints
    	[Tags]										sanity 				smoke					
 	add fabric switch 
 	sleep										5   	
-	REST create tenant  						${tenant1_name}        
-	REST create tenant  						${tenant2_name} 
-	REST create tenant							${tenant_system}
-   	REST create vns								${tenant1_name}		${vns1_1}	      
-	REST create vns  							${tenant2_name}		${vns2_1}
-	REST create vns ip  						${tenant1_name}  	${vns1_1}  		${vns1_ip1}	  		${vns1_subnet1}
-   	REST create vns ip  						${tenant2_name}  	${vns2_1}  		${vns2_ip1}	  		${vns2_subnet1}
+	REST add tenant  							${tenant1_name}        
+	REST add tenant  							${tenant2_name} 
+	REST add tenant								${tenant_system}
+   	REST add vns								${tenant1_name}		${vns1_1}	      
+	REST add vns  								${tenant2_name}		${vns2_1}
+	REST add vns ip  							${tenant1_name}  	${vns1_1}  		${vns1_ip1}	  		${vns1_subnet1}
+   	REST add vns ip  							${tenant2_name}  	${vns2_1}  		${vns2_ip1}	  		${vns2_subnet1}
  	REST add interface to vns  					${tenant1_name}  	${vns1_1}  		${leaf0_name} 		${leaf0_intf1}  ${untaggedvlan}	
    	REST add interface to vns  					${tenant2_name}  	${vns2_1}  		${leaf0_name} 		${leaf0_intf2} 	${untaggedvlan}	
    	sleep 										30
@@ -214,14 +239,14 @@ L3 untagged bm0 ping to untagged bm1 across tenants and VNS all statically defin
    	REST attach tenant routers to system		${tenant1_name} 
    	REST attach tenant routers to system		${tenant2_name} 
    	sleep			30
-   	REST_create_endpoint						${tenant1_name}		${vns1_1}		${endpoint1name}
-	REST_create_endpoint						${tenant2_name}		${vns2_1}		${endpoint2name}	
-	REST_create_endpoint_ip						${tenant1_name}		${vns1_1}		${endpoint1name}	${host0_ip}
-	REST_create_endpoint_ip						${tenant2_name}		${vns2_1}		${endpoint2name}	${host2_ip}
-	REST_create_endpoint_mac					${tenant1_name}		${vns1_1}		${endpoint1name}	${host0_mac}
-	REST_create_endpoint_mac					${tenant2_name}		${vns2_1}		${endpoint2name}	${host1_mac}
-	REST_create_endpoint_switch_attachment		${tenant1_name}		${vns1_1}		${endpoint1name}	${leaf0_name}		${leaf0_intf1}	${untaggedvlan}	
-	REST_create_endpoint_switch_attachment		${tenant2_name}		${vns2_1}		${endpoint2name}	${leaf0_name}		${leaf0_intf2}	${untaggedvlan}	
+   	REST add endpoint							${tenant1_name}		${vns1_1}		${endpoint1name}
+	REST add endpoint							${tenant2_name}		${vns2_1}		${endpoint2name}	
+	REST add endpoint_ip						${tenant1_name}		${vns1_1}		${endpoint1name}	${host0_ip}
+	REST add endpoint_ip						${tenant2_name}		${vns2_1}		${endpoint2name}	${host2_ip}
+	REST add endpoint_mac						${tenant1_name}		${vns1_1}		${endpoint1name}	${host0_mac}
+	REST add endpoint_mac						${tenant2_name}		${vns2_1}		${endpoint2name}	${host1_mac}
+	REST add endpoint_switch_attachment			${tenant1_name}		${vns1_1}		${endpoint1name}	${leaf0_name}		${leaf0_intf1}	${untaggedvlan}	
+	REST add endpoint_switch_attachment			${tenant2_name}		${vns2_1}		${endpoint2name}	${leaf0_name}		${leaf0_intf2}	${untaggedvlan}	
    	mininet host ipcfg   						${host0_name}		${host0_bondif}	${host0_ip}			${host0_subnet} 
    	mininet host ipcfg							${host1_name}		${host1_bondif}	${host2_ip}			${host1_subnet}
    	mininet host gw								${host0_name}		${vns1_ip1}		${host0_bondif}
@@ -236,7 +261,6 @@ L3 untagged bm0 ping to untagged bm1 across tenants and VNS all statically defin
 	sleep 										1
    	${loss}=									mininet l3 ping		${host0_name}	${host1_name}		${ping_count}
    	Should Be True  							${loss} == 0
-
 	sleep					10
 	REST detach system to tenant routers		${tenant1_name}
 	sleep					30
@@ -262,16 +286,15 @@ L3 untagged bm0 ping to untagged bm1 across tenants and VNS all statically defin
 	REST delete tenant							${tenant_system}
 #	sleep 					30
 	
-  
-L3 untagged bm0 ping to untagged bm1 with destination host interface move in the same tenant across VNS
+L3 intra tenant untagged with host moved  
 	[Tags]										sanity				
 	add fabric switch 
 	sleep  5	
-	REST create tenant  						${tenant1_name}
-	REST create vns  							${tenant1_name}		${vns1_1}
-	REST create vns								${tenant1_name}		${vns1_2}
-	REST create vns ip  						${tenant1_name}  	${vns1_1}  		${vns1_ip1}	  	${vns1_subnet1}
-	REST create vns ip  						${tenant1_name}  	${vns1_2}  		${vns1_ip2}	  	${vns1_subnet2}
+	REST add tenant  							${tenant1_name}
+	REST add vns  								${tenant1_name}		${vns1_1}
+	REST add vns								${tenant1_name}		${vns1_2}
+	REST add vns ip  							${tenant1_name}  	${vns1_1}  		${vns1_ip1}	  	${vns1_subnet1}
+	REST add vns ip  							${tenant1_name}  	${vns1_2}  		${vns1_ip2}	  	${vns1_subnet2}
 	REST add interface to vns  					${tenant1_name}  	${vns1_1}  		${leaf0_name} 	${leaf0_intf1}  ${untaggedvlan}	
 	REST add interface to vns  					${tenant1_name}  	${vns1_2}  		${leaf0_name} 	${leaf0_intf2} 	${untaggedvlan}	
 	REST add interface to vns  					${tenant1_name}  	${vns1_2}  		${leaf0_name} 	${leaf0_intf3} 	${untaggedvlan}	
@@ -305,26 +328,25 @@ L3 untagged bm0 ping to untagged bm1 with destination host interface move in the
 	REST delete tenant 							${tenant1_name}        
 	sleep  										20  
 
- 
-L3 ping untagged bm0 to tagged bm1 same tenant across VNS
-	[Tags]										sanity				
+L3 intra tenant untagged to tagged host
+  	[Tags]										sanity				
 	add fabric switch 
 	sleep  5	
-	REST create tenant  						${tenant1_name}
-	REST create vns  							${tenant1_name}		${vns1_1}
-	REST create vns								${tenant1_name}		${vns1_2}
-	REST create vns ip  						${tenant1_name}  	${vns1_1}  		${vns1_ip1}	  		${vns1_subnet1}
-	REST create vns ip  						${tenant1_name}  	${vns1_2}  		${vns1_ip2}	  		${vns1_subnet2}
+	REST add tenant  							${tenant1_name}
+	REST add vns  								${tenant1_name}		${vns1_1}
+	REST add vns								${tenant1_name}		${vns1_2}
+	REST add vns ip  							${tenant1_name}  	${vns1_1}  		${vns1_ip1}	  		${vns1_subnet1}
+	REST add vns ip  							${tenant1_name}  	${vns1_2}  		${vns1_ip2}	  		${vns1_subnet2}
 	REST add interface to vns 				 	${tenant1_name}  	${vns1_1}  		${leaf0_name} 		${leaf0_intf1}  ${untaggedvlan}	
 	REST add interface to vns  					${tenant1_name}  	${vns1_2}  		${leaf0_name} 		${leaf0_intf2}	${vns1_vlan2}
-	REST_create_endpoint						${tenant1_name}		${vns1_1}		${endpoint1name}
-	REST_create_endpoint						${tenant1_name}		${vns1_2}		${endpoint2name}	
-	REST_create_endpoint_ip						${tenant1_name}		${vns1_1}		${endpoint1name}	${host0_ip}
-	REST_create_endpoint_ip						${tenant1_name}		${vns1_2}		${endpoint2name}	${host1_ip}
-	REST_create_endpoint_mac					${tenant1_name}		${vns1_1}		${endpoint1name}	${host0_mac}
-	REST_create_endpoint_mac					${tenant1_name}		${vns1_2}		${endpoint2name}	${host1_mac}
-	REST_create_endpoint_switch_attachment		${tenant1_name}		${vns1_1}		${endpoint1name}	${leaf0_name}	${leaf0_intf1}	${untaggedvlan}	
-	REST_create_endpoint_switch_attachment		${tenant1_name}		${vns1_2}		${endpoint2name}	${leaf0_name}	${leaf0_intf2}	${vns1_vlan2}
+	REST add endpoint							${tenant1_name}		${vns1_1}		${endpoint1name}
+	REST add endpoint							${tenant1_name}		${vns1_2}		${endpoint2name}	
+	REST add endpoint ip						${tenant1_name}		${vns1_1}		${endpoint1name}	${host0_ip}
+	REST add endpoint ip						${tenant1_name}		${vns1_2}		${endpoint2name}	${host1_ip}
+	REST add endpoint mac						${tenant1_name}		${vns1_1}		${endpoint1name}	${host0_mac}
+	REST add endpoint mac						${tenant1_name}		${vns1_2}		${endpoint2name}	${host1_mac}
+	REST add endpoint switch attachment			${tenant1_name}		${vns1_1}		${endpoint1name}	${leaf0_name}	${leaf0_intf1}	${untaggedvlan}	
+	REST add endpoint switch attachment			${tenant1_name}		${vns1_2}		${endpoint2name}	${leaf0_name}	${leaf0_intf2}	${vns1_vlan2}
 	REST show endpoints name					${endpoint1name}
 	REST show endpoints name					${endpoint2name}
 	REST show endpoints mac						${host0_mac}
@@ -345,15 +367,15 @@ L3 ping untagged bm0 to tagged bm1 same tenant across VNS
 	mininet l3 link untag						${host1_name}		${host1_bondif}	${vns1_vlan2}	${host1_ip}		${host1_subnet}
 	sleep  										20  
  
-L3 ping tagged bm0 to tagged bm1 single leaf single rack within tenant different VNS
+L3 intra tenant tagged host
 	[Tags]										sanity				
 	add fabric switch 
 	sleep  										5	
-	REST create tenant  						${tenant1_name}
-	REST create vns  							${tenant1_name}		${vns1_1}
-	REST create vns								${tenant1_name}		${vns1_2}
-	REST create vns ip  						${tenant1_name}  	${vns1_1}  		${vns1_ip1}	  		${vns1_subnet1}
-	REST create vns ip  						${tenant1_name}  	${vns1_2}  		${vns1_ip2}	  		${vns1_subnet2}
+	REST add tenant  							${tenant1_name}
+	REST add vns  								${tenant1_name}		${vns1_1}
+	REST add vns								${tenant1_name}		${vns1_2}
+	REST add vns ip  							${tenant1_name}  	${vns1_1}  		${vns1_ip1}	  		${vns1_subnet1}
+	REST add vns ip  							${tenant1_name}  	${vns1_2}  		${vns1_ip2}	  		${vns1_subnet2}
 	REST add interface to vns  					${tenant1_name}  	${vns1_1}  		${leaf0_name} 		${leaf0_intf1}  ${vns1_vlan1}
 	REST add interface to vns  					${tenant1_name}  	${vns1_2}  		${leaf0_name} 		${leaf0_intf2}	${vns1_vlan2}
 	mininet l3 link tag							${host0_name}		${host0_bondif}	${vns1_vlan1}		${host0_ip}		${host0_subnet}
@@ -374,11 +396,11 @@ L3 ping tagged bm0 to tagged bm1 single leaf single rack within tenant different
 	sleep  										20  
  
 L3 ping with nexthop in a ecmp group
-	[Tags]										skipped
+	[Tags]										skipped					manual
 	add fabric switch 
 	sleep 										5	
-    REST create tenant          				${tenant1_name}
-	REST create vns								${tenant1_name}         ${vns1_1}
+    REST add tenant          					${tenant1_name}
+	REST add vns								${tenant1_name}         ${vns1_1}
     REST add ecmp group							${tenant1_name}         ${ecmpgroup1}
     REST add ecmp group							${tenant1_name}         ${ecmpgroup2}
     REST add gw pool nexthop        			${tenant1_name}         ${ecmpgroup1}   ${nexthop1}
@@ -393,14 +415,14 @@ L3 ping with nexthop in a ecmp group
     
 
 L3 configure dhcp relay on vns
-	[Tags]										sanity					skipped
+	[Tags]										sanity					skipped			manual
 	add fabric switch 
 	sleep 										5	
-    REST create tenant          				${tenant1_name}
-	REST create vns								${tenant1_name}         ${vns1_1}
-	REST create vns ip  						${tenant1_name}  		${vns1_1}  		${vns1_ip1}	  	${vns1_subnet1}
+    REST add tenant          					${tenant1_name}
+	REST add vns								${tenant1_name}         ${vns1_1}
+	REST add vns ip  							${tenant1_name}  		${vns1_1}  		${vns1_ip1}	  	${vns1_subnet1}
 	REST add interface to vns  					${tenant1_name}  		${vns1_1}  		${leaf0_name} 	${leaf0_intf1}  ${untaggedvlan}		
-	REST create dhcp relay						${tenant1_name}  		${vns1_1}  		${dhcpserver1}
+	REST add dhcp relay							${tenant1_name}  		${vns1_1}  		${dhcpserver1}
 	REST toggle dhcp relay						${tenant1_name}  		${vns1_1}  		${true}
 	sleep 										5
 
@@ -408,11 +430,8 @@ L3 configure dhcp relay on vns
 
 #configure vns membership before port membership
 
-        
-    
-* Keywords
 teardown topology
-	remove fabric switch
+	delete fabric switch
 	REST delete tenant							${tenant1_name}   
 	REST delete tenant							${tenant2_name}    
 	REST delete tenant							${tenant_system}
