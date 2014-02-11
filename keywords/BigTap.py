@@ -334,31 +334,6 @@ class BigTap(object):
 ###################################################
 # All Bigtap Configuration Commands Go Here:
 ###################################################
-#    def rest_add_switch_alias(self, switch_dpid, switch_alias):
-#        '''Set Switch alias via command "switch-alias <switch_alias>"
-#
-#            Input:
-#                `switch_dpid`        DPID of switch
-#                `switch_alias`        Desired alias for switch
-#
-#            Return: true if configuration is successful, false otherwise
-#        '''
-#        try:
-#            t = test.Test()
-#        except:
-#            return False
-#        else:
-#            c = t.controller('master')
-#            try:
-#                url = '/api/v1/data/controller/core/switch[dpid="%s"]' % (str(switch_dpid))
-#                c.rest.patch(url, {"alias": str(switch_alias)})
-#            except:
-#                helpers.test_failure(c.rest.error())
-#                return False
-#            else:
-#                helpers.test_log(c.rest.content_json())
-#                return True
-
 
     def rest_add_interface_role(self, intf_name, intf_type, intf_nickname, switch_alias=None, sw_dpid=None):
         '''
