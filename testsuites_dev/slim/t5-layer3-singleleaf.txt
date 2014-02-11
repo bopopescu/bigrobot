@@ -82,35 +82,35 @@ ${defaultroute}		0.0.0.0/0
 * Test Cases
 Intra tenant L3 untagged traffic with static endpoints
 	L3 intra tenant untagged with static endpoints
-	[Tags]							skipped			smoke				sanity			
+#	[Tags]							skipped			smoke				sanity			
 
 Intra tenant L3 untagged traffic with dynamic endpoints
 	L3 intra tenant untagged with dynamic endpoints
-#	[Tags]							skipped			smoke				
+	[Tags]							skipped			smoke				
 	
 Intra tenant L3 untagged traffic with dynamic host arp
 	L3 intra tenant untagged traffic with dynamic host arp
-#	[Tags]							skipped			smoke				
+	[Tags]							skipped			smoke				
 
 Intra tenant L3 untagged with initial unreachable host
 	L3 intra tenant untagged with initial unreachable host
-#	[Tags]							skipped			sanity				smoke					
+	[Tags]							skipped			sanity				smoke					
 
 Inter tenant L3 untagged traffic with static endpoints
 	L3 inter tenant untagged with static endpoints
-#  	[Tags]							skipped			sanity 				smoke					
+  	[Tags]							skipped			sanity 				smoke					
 
 Intra tenant L3 untagged with destination host moved
 	L3 intra tenant untagged with host moved 
-	[Tags]							skipped		sanity				
+#	[Tags]							skipped		sanity				
 
 Intra tenant L3 untagged to tagged host
 	L3 intra tenant untagged to tagged host
-	[Tags]							skipped		sanity				
+#	[Tags]							skipped		sanity				
 
 Intra tenant L3 tagged host
 	L3 intra tenant tagged host
-	[Tags]							skipped		sanity				
+#	[Tags]							skipped		sanity				
 
 	
 * Keywords
