@@ -27,7 +27,7 @@ class BigTap(object):
 ###################################################
 
 
-    def rest_show_switch_flow(self, switch_alias=None, sw_dpid=None, return_value=None):
+    def rest_show_switch_flow(self, node, return_value=None):
         '''
         Objective: 
         - Returns number of flows on a switch
@@ -45,20 +45,13 @@ class BigTap(object):
         t = test.Test()
         try:
             c = t.controller('master')
+            AppCommon = AppController.AppController()
         except:
             return False
 
         else:
             try:
-                if (switch_alias is None and sw_dpid is not None):
-                    switch_dpid = sw_dpid
-                elif (switch_alias is None and sw_dpid is None):
-                    helpers.log('Either Switch DPID or Switch Alias has to be provided')
-                    return False
-                elif (switch_alias is not None and sw_dpid is None):
-                    switch_dpid = self.rest_show_switch_dpid(switch_alias)
-                else:
-                    switch_dpid = sw_dpid
+                switch_dpid = AppCommon.rest_return_switch_dpid_from_ip(node)
                 url = '/api/v1/data/controller/core/switch[dpid="%s"]?select=stats/table' % (str(switch_dpid))
                 c.rest.get(url)
                 content = c.rest.content()
@@ -695,7 +688,7 @@ class BigTap(object):
         else:
             c = t.controller('master')
             try:
-                url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]/rule[sequence="%s"]' % (str(rbac_view_name), str(policy_name), str(match_number))
+                url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]/rule[sequence=%s]' % (str(rbac_view_name), str(policy_name), str(match_number))
                 c.rest.delete(url, {})
             except:
                 helpers.test_failure(c.rest.error())
