@@ -4,62 +4,106 @@ Suite Setup      base suite setup
 Suite Teardown   base suite teardown
 Test Setup       base test setup
 Test Teardown    base test teardown
-Force Tags       T5 Fabric
+Force Tags       T5 
 Library          keywords/BsnCommon.py
-Library          keywords_dev/T5.py
-Library          keywords_dev/T5Fabric.py
-Resource         keywords_dev/t5_dualleaf_three_rack_resource.txt
+Library          keywords_dev/prashanth/T5.py
+Library          keywords_dev/prashanth/T5Fabric.py
+Library			 keywords/Mininet.py
+Resource         keywords_dev/prashanth/t5_dualleaf_three_rack_resource.txt
 
-
+*Variables
+${spine0_dpid}	 00:00:00:00:00:01:00:01
+${spine1_dpid}	 00:00:00:00:00:01:00:02
+${leaf0a_dpid}	 00:00:00:00:00:02:00:01
+${leaf2a_h6_intf}  leaf2a-eth5
+${leaf2b_h6_intf}  leaf2b-eth5
+${leaf2a_h5_intf}  leaf2a-eth4
+${leaf2b_h5_intf}  leaf2b-eth4
 
 *Test Case
-configure Dual Rack Dual Leaf Topology
-    configure fabric switch
+add Dual Rack Dual Leaf Topology
+	base suite setup
+    add fabric switch
     sleep  5
-    rest check fabric switch connectivity
+    rest verify fabric switch all
    
 Verify Fabric Lag formation from leaf node 
-	[Tags]	 functional  skipped
+	[Tags]	 feature    
 	verify fabric lag   leaf0-a
 	
 verify fabric lag formation from spine node
-	[Tags]	 functional  skipped
+	[Tags]	 feature   
     verify fabric lag   spine0
 	
-Remove the Fabric Role spine and verify the lag from leaf switch 
-	[Tags]	 functional  skipped
-	REST remove fabric role   spine       
+delete the Fabric Role spine and verify the lag from leaf switch 
+	[Tags]	 feature    
+	REST delete fabric role   spine       
     sleep  5 
 	verify fabric lag   leaf0-a
 
 Verify Fabric Lag from spine after deleting one spine
-	[Tags]	 functional  skipped 
+	[Tags]	 feature     
 	verify fabric lag   spine0
 
 Add the Fabric Role spine back and verify the lag from leaf switch
-	[Tags]	 functional  skipped
-	REST configure fabric role   spine0   spine      
+	[Tags]	 feature    
+	REST add fabric role   spine0   spine      
     sleep  5 
 	verify fabric lag   leaf0-a
 	
 Verify Fabric Lag from spine after adding back spine node 
-	[Tags]	 functional  skipped
+	[Tags]	 feature    
 	verify fabric lag   spine0
 	
-remove the peer leaf switch and check the peer-lag from the downfacing lag.
-	[Tags]	functional
-	rest verify forwarding lag  00:00:00:00:02:00:00:01  leaf0-a
+delete the peer leaf0b switch and check the peer-lag from leaf0-a switch
+	[Tags]  feature	
+	rest verify forwarding lag  ${leaf0a_dpid}  leaf0-a
 	sleep  3
-	rest remove fabric switch  leaf0-b
+	rest delete fabric switch  leaf0-b
 	sleep  3
-	rest verify forwarding lag  00:00:00:00:02:00:00:01  leaf0-a 
+	rest verify forwarding lag  ${leaf0a_dpid}  leaf0-a 
+
+port group setting for static lag
+	[Tags]  feature  
+	rest add portgroup  p1
+	rest add interface to portgroup  leaf2-a  ${leaf2a_h6_intf}  p1
+	rest add interface to portgroup  leaf2-b  ${leaf2b_h6_intf}  p1
+	sleep  3
+	rest verify fabric interface  leaf2-a  ${leaf2a_h6_intf}
+	rest verify fabric interface  leaf2-b  ${leaf2b_h6_intf}
+	rest verify forwarding port edge  leaf2-a  leaf2-b
+	# should have the same Group ID on both leaf switches of rack2
+	  
+port group setting test for lacp mode
+	[Tags]  feature
+	rest add portgroup  p2
+	rest add interface to portgroup  leaf2-a  ${leaf2a_h5_intf}  p2
+	rest add interface to portgroup  leaf2-b  ${leaf2b_h5_intf}  p2
+	sleep  3
+	rest verify fabric interface lacp  leaf2-a  ${leaf2a_h5_intf}
+	rest verify fabric interface lacp  leaf2-b  ${leaf2b_h5_intf}
+	rest verify fabric interface  leaf2-a  ${leaf2a_h6_intf}
+	rest verify fabric interface  leaf2-b  ${leaf2b_h6_intf}
+	rest verify forwarding port edge  leaf2-a  leaf2-b
+
+#rack lag detection with forwarding rack-0 to rack-2 (with add/delete link for the rack)
+	[Tags]  feature
+
+#Verify broadcast traffic forwarding on the lag
+
+#Verify Multicast forwarding on the lag
+
+#verify unknown unicast forwarding on the lag
 
 Tear down config and topology
-    remove fabric switch 
+    delete fabric switch
+    rest delete portgroup  p1
+    rest delete portgroup  p2
+    base suite teardown
  
 
 * Keywords  
 
-verify fabric lag   [Arguments]  ${switch}
+verify fabric lag   [Arguments]   ${switch}
     REST verify fabric lag   ${switch}
 

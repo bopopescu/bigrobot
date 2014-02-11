@@ -54,7 +54,7 @@ ping h5 to h6 dual leaf single rack dynamic endpoints
    [Tags]  smoke   sanity   
    add portgroup to vns  A  A  p5  -1 
    add portgroup to vns  A  A  p6  -1
-   sleep  5 
+   sleep  5
    ${loss}=  bash ping  h5  ${h6_ip}  source_if=bond0
    Should Be True  ${loss} == 0						 
 	 
