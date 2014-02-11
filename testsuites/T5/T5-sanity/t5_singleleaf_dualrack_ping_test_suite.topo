@@ -1,0 +1,18 @@
+# Topology description is in YAML format - see http://en.wikipedia.org/wiki/YAML
+#
+# c<n>: Controllers
+# s<n>: Switches
+# h<n>: Hosts (including bare metal)
+# mn  : Mininet server
+
+c1:
+  ip: dummy
+
+mn:
+  ip: dummy
+
+  type: 't6'  # required: 't6' or 'basic'
+
+  # Mininet topology
+  topology: --num-spine 2 --num-rack 2 --num-bare-metal 2 --num-hypervisor 0 
+
