@@ -6,73 +6,161 @@
 Documentation   T5 Fabric Switch Add/Delete Test
 Suite Setup     base suite setup
 Suite Teardown  base suite teardown
-Test Setup      base test setup
-Test Teardown   base test teardown
-Force Tags      T5 Sanity
+Test Setup      T5 base test setup
+Test Teardown   T5 base test teardown
+Force Tags      T5
 Library         keywords/BsnCommon.py
-Library         keywords_dev/T5.py
-Library         keywords_dev/T5Fabric.py
-Library         keywords_dev/Mininet.py
+Library         keywords_dev/prashanth/T5.py
+Library         keywords_dev/prashanth/T5Fabric.py
+Library         keywords/Mininet.py
+Resource		keywords_dev/prashanth/t5_dualleaf_three_rack_resource.txt
 
  
 * Variables
+${leaf2a_ixia_intf}		ethernet24
+${leaf0a_dpid}  00:00:00:00:00:02:00:01
+${leaf0b_dpid}  00:00:00:00:00:02:00:02
+${leaf1a_dpid}  00:00:00:00:00:02:00:03
+${leaf1b_dpid}  00:00:00:00:00:02:00:04
+${leaf2a_dpid}  00:00:00:00:00:02:00:05
+${leaf2b_dpid}  00:00:00:00:00:02:00:06
+${spine0_dpid}  00:00:00:00:00:01:00:01
+${spine1_dpid}  00:00:00:00:00:01:00:02
 
 * Test Case   
 
 Add Fabric Switch Spine and Verify the Status 
-
+  [Tags]  feature   	
   REST show fabric switch     
   # Check the fabric switch connection status once the physical switch is connected
   sleep  5
-  verify fabric switch  00:00:00:00:01:00:00:01  
+  verify fabric switch  ${spine0_dpid}  
   # status should show as virtual   
-  configure switch  spine0 
-  configure dpid  spine0  00:00:00:00:01:00:00:01 
-  configure fabric role  spine0  spine
+  add switch  spine0 
+  add dpid  spine0  ${spine0_dpid} 
+  add fabric role  spine0  spine
   sleep  5
-  verify fabric switch  00:00:00:00:01:00:00:01 
+  verify fabric switch  ${spine0_dpid}
   
 Add Fabric Switch Leaf Group and Verify the status
-
-  verify fabric switch  00:00:00:00:02:00:00:01    
-  configure switch  leaf0-a
-  configure dpid  leaf0-a  00:00:00:00:02:00:00:01 
-  configure fabric role  leaf0-a  leaf
-  configure leaf group  leaf0-a  rack0
+  [Tags]  feature   
+  verify fabric switch  ${leaf0a_dpid}    
+  add switch  leaf0-a
+  add dpid  leaf0-a  ${leaf0a_dpid} 
+  add fabric role  leaf0-a  leaf
+  add leaf group  leaf0-a  rack0
   sleep  5
-  verify fabric switch  00:00:00:00:02:00:00:01
-  configure switch  leaf0-b
-  configure dpid  leaf0-b  00:00:00:00:02:00:00:02 
-  configure fabric role  leaf0-b  leaf
-  configure leaf group  leaf0-b  rack0
+  verify fabric switch  ${leaf0a_dpid}
+  add switch  leaf0-b
+  add dpid  leaf0-b  ${leaf0b_dpid} 
+  add fabric role  leaf0-b  leaf
+  add leaf group  leaf0-b  rack0
   sleep  5
-  verify fabric switch  00:00:00:00:02:00:00:02 
+  verify fabric switch  ${leaf0b_dpid} 
  
+Add leaf group from 2 different rack and verify the status and check the fabric error
+	[Tags]	feature  
+	add switch  leaf0-a
+	add dpid  leaf0-a  ${leaf0a_dpid}
+	add fabric role  leaf0-a  leaf
+	add leaf group  leaf0-a  rack0 
+	add switch  leaf1-a
+	add dpid  leaf1-a  ${leaf1a_dpid}
+	add fabric role  leaf1-a  leaf
+	add leaf group  leaf1-a  rack0
+	rest verify fabric link
+	sleep  5
+	rest verify fabric error dual tor peer link  rack0
+	
+add 2 different leaf groups with peer link added
+    [Tags]	feature   
+	add switch  leaf0-a
+	add dpid  leaf0-a  ${leaf0a_dpid}
+	add fabric role  leaf0-a  leaf
+	add leaf group  leaf0-a  rack0 
+	add switch  leaf1-a
+	add dpid  leaf0-a  ${leaf0b_dpid}
+	add fabric role  leaf0-b  leaf
+	add leaf group  leaf0-b  rack1
+	rest verify fabric link 
+#	rest verify fabric error
+   	rest verify forwarding port table  leaf0-a  
+
+source mac check verification on spine and leaf switches
+	[Tags]  feature    
+	add switch  spine0  
+	add dpid  spine0  ${spine0_dpid}
+	add fabric role  spine0  spine
+	sleep  5
+#	rest verify forwarding interface check  spine0
+	add switch  leaf0-a
+	add dpid  leaf0-a  ${leaf0a_dpid}
+	add fabric role  leaf0-a  leaf
+	sleep  5
+	rest verify fabric link
+#	rest verify forwarding interface check  leaf0-a  
+	  
+add leaf group before leaf role to check the config error
+	[Tags]	feature   
+	add switch  leaf0-a
+	add dpid  leaf0-a  ${leaf0a_dpid}
+	add leaf group before role
+	
+add host port into spine switch and check the fabric error
+	[Tags]  feature  
+	add switch  leaf2-a
+	add dpid  spine0  ${leaf2a_dpid} 
+	add fabric role  leaf2-a  spine
+	rest show fabric interface  leaf2-a  ${leaf2a_ixia_intf}
+	rest verify fabric interface  leaf2-a  ${leaf2a_ixia_intf}  
+
 Delete Fabric switch and verify the status
+	[Tags]  feature   
+	add switch  leaf0-a
+  	add dpid  leaf0-a  ${leaf0a_dpid} 
+  	add fabric role  leaf0-a  leaf
+  	add leaf group  leaf0-a  rack0
+  	sleep  5
+  	verify fabric switch  ${leaf0a_dpid}
+    REST delete fabric switch  leaf0-a
+  	sleep  5
+  	verify fabric switch  ${leaf0a_dpid}
+  	add switch  spine0
+  	add dpid  spine0  ${spine0_dpid} 
+  	add fabric role  spine0  spine
+  	sleep  5
+  	verify fabric switch  ${spine0_dpid}
+  	REST delete fabric switch  spine0
+  	sleep  5
+  	verify fabric switch  ${spine0_dpid}
+ 
 
-  REST remove fabric switch  spine0
-  sleep  5
-  verify fabric switch  00:00:00:00:01:00:00:01
-  verify fabric switch  00:00:00:00:02:00:00:01
-  verify fabric switch  00:00:00:00:02:00:00:02
-  REST remove fabric switch  leaf0-a
-  REST remove fabric switch  leaf0-b
-
-* Keywords   
+* Keywords      
+T5 base test setup
+   base test setup
+      
+T5 base test teardown
+   delete fabric switch
+   base test teardown
+   sleep  5   
 
 verify fabric switch  [Arguments]  ${dpid} 
   REST verify fabric switch  ${dpid} 
 
-configure switch  [Arguments]  ${switch}
-  REST configure switch  ${switch}
+add switch  [Arguments]  ${switch}
+  REST add switch  ${switch}
 
-configure dpid  [Arguments]  ${switch}  ${dpid}
-  REST configure dpid  ${switch}  ${dpid}
+add dpid  [Arguments]  ${switch}  ${dpid}
+  REST add dpid  ${switch}  ${dpid}
 
-configure fabric role  [Arguments]  ${switch}  ${role}
-  REST configure fabric role  ${switch}  ${role}
+add fabric role  [Arguments]  ${switch}  ${role}
+  REST add fabric role  ${switch}  ${role}
 
-configure leaf group  [Arguments]  ${switch}  ${group}
-  REST configure leaf group  ${switch}  ${group}
+add leaf group  [Arguments]  ${switch}  ${group}
+  REST add leaf group  ${switch}  ${group}
+
+add leaf group before role  
+	${status}  rest add leaf group  leaf0-a  rack0
+	should be False  ${status} 
 
 

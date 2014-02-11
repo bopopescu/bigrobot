@@ -256,3 +256,11 @@ admin_user = glance
             if int(result['status_code']) == 400:
                 helpers.log("I expected this!!!")
             helpers.log("***** status_descr: %s" % result['status_descr'])
+
+    def print_value(self, *arg):
+        # helpers.log("arg: %s" % arg)
+        # helpers.log("arg[0]: %s" % arg[0])
+        # helpers.log("arg[1]: %s" % arg[1])
+        # helpers.log("arg[2]: %s" % arg[2])
+        for x in arg:
+            helpers.log("x: %s" % x)

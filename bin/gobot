@@ -87,6 +87,7 @@ if helpers.bigrobot_suite():
     helpers.bigrobot_topology(default=''.join((helpers.bigrobot_suite(),
                                                '.topo')))
 helpers.bigrobot_params(default='None')
+helpers.bigrobot_continuous_integration(default='False')
 helpers.bigrobot_suite_format(default='txt')
 helpers.bigrobot_exec_hint_format()
 helpers.bigrobot_debug(default=1)

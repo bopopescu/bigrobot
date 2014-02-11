@@ -11,150 +11,151 @@ Library          keywords/BsnCommon.py
 Library          keywords_dev/T5.py
 Library	         keywords_dev/T5Fabric.py
 Library          keywords/Mininet.py
-Resource	     keywords_dev/t5_singleleaf_three_rack_resource.txt
+Resource	     keywords_dev/t5_dualleaf_three_rack_resource.txt
 
 * Variables
-${bm0_ip}  10.0.0.1
-${bm1_ip}  10.0.0.2
-${bm2_ip}  10.0.0.3
-${bm3_ip}  10.0.0.4
-${bm4_ip}  10.0.0.5
-${bm5_ip}  10.0.0.6
-${bm0_mac}  00:00:00:00:00:01
-${bm1_mac}  00:00:00:00:00:02
-${bm2_mac}  00:00:00:00:00:03
-${bm3_mac}  00:00:00:00:00:04
-${bm4_mac}  00:00:00:00:00:05
-${bm5_mac}  00:00:00:00:00:06
-${bm0_intf0}  leaf0-eth5
-${bm1_intf0}  leaf0-eth6
-${bm2_intf0}  leaf1-eth5
-${bm3_intf0}  leaf1-eth6
-${bm4_intf0}  leaf2-eth5
-${bm5_intf0}  leaf2-eth6
+${h1_ip}  10.0.0.1
+${h2_ip}  10.0.0.2
+${h3_ip}  10.0.0.3
+${h4_ip}  10.0.0.4
+${h5_ip}  10.0.0.5
+${h6_ip}  10.0.0.6
+${h1_mac}  00:00:00:00:00:01
+${h2_mac}  00:00:00:00:00:02
+${h3_mac}  00:00:00:00:00:03
+${h4_mac}  00:00:00:00:00:04
+${h5_mac}  00:00:00:00:00:05
+${h6_mac}  00:00:00:00:00:06
+${h1_intf0}  leaf0-eth5
+${h2_intf0}  leaf0-eth6
+${h3_intf0}  leaf1-eth5
+${h4_intf0}  leaf1-eth6
+${h5_intf0}  leaf2-eth5
+${h6_intf0}  leaf2-eth6
 
 * Test Case 
 
-Configure Single Leaf Three Rack setup
+add Dual Leaf Three Rack setup
    [Tags]  functional
    sleep  5
-   configure fabric switch
+   add fabric switch
    sleep  5
    rest check fabric switch connectivity
    rest verify fabric link
 
-Configure Multiple VNS and membership rules
+add Multiple VNS and membership rules
    [Tags]   functional
-   create a tenant  t1
-   create a vns  t1  v1
-   create a vns  t1  v2
-   create a vns  t1  v3
-   rest add interface to vns  t1  v1  leaf0  ${bm0_intf0}  -1
-   rest add interface to vns  t1  v1  leaf2  ${bm5_intf0}  -1
-   rest add interface to vns  t1  v2  leaf0  ${bm1_intf0}  -1 
-   rest add interface to vns  t1  v2  leaf1  ${bm3_intf0}  -1
-   rest add interface to vns  t1  v3  leaf1  ${bm2_intf0}  -1 
-   rest add interface to vns  t1  v3  leaf2  ${bm4_intf0}  -1
+   add a tenant  t1
+   add a vns  t1  v1
+   add a vns  t1  v2
+   add a vns  t1  v3
+   rest add interface to vns  t1  v1  leaf0  ${h1_intf0}  -1
+   rest add interface to vns  t1  v1  leaf2  ${h6_intf0}  -1
+   rest add interface to vns  t1  v2  leaf0  ${h2_intf0}  -1 
+   rest add interface to vns  t1  v2  leaf1  ${h4_intf0}  -1
+   rest add interface to vns  t1  v3  leaf1  ${h3_intf0}  -1 
+   rest add interface to vns  t1  v3  leaf2  ${h5_intf0}  -1
    rest show tenant
-   rest show vns 
+   rest show vns
+   rest verify vns 
  
-Check forwarding between rack0-bm0 and rack2-bm5 
+Check forwarding between rack0-h1 and rack2-h6 
    [Tags]  functional
    sleep  5
-   ${loss}=  mininet ping  bm0  ${bm5_ip}
+   ${loss}=  mininet ping  h1  ${h6_ip}
    Should Be True  ${loss} == 0
-   rest verify endpoint  v1  -1  ${bm0_ip}  leaf0  ${bm0_intf0}
-   rest verify endpoint  v1  -1  ${bm5_ip}  leaf2  ${bm5_intf0}
+   rest verify endpoint  v1  -1  ${h1_ip}  leaf0  ${h1_intf0}
+   rest verify endpoint  v1  -1  ${h6_ip}  leaf2  ${h6_intf0}
    
-Check forwarding between rack0-bm1 and rack1-bm3
+Check forwarding between rack0-h2 and rack1-h4
    [Tags]  functional
-   ${loss}=  mininet ping  bm1  ${bm3_ip}
+   ${loss}=  mininet ping  h2  ${h4_ip}
    Should Be True  ${loss} == 0
 
-Check forwarding between rack1-bm2 to rack2-bm4
+Check forwarding between rack1-h3 to rack2-h5
    [Tags]  functional
-   ${loss}=  mininet ping  bm2  ${bm4_ip}
+   ${loss}=  mininet ping  h3  ${h5_ip}
    Should Be True  ${loss} == 0
 
-Check forwarding between rack0-bm0 and rack2-bm5 after deleting bm5 member-interface
+Check forwarding between rack0-h1 and rack2-h6 after deleting h6 member-interface
    [Tags]  functional
-   rest delete interface from vns  t1  v1  leaf2  ${bm5_intf0}  -1
+   rest delete interface from vns  t1  v1  leaf2  ${h6_intf0}  -1
    sleep  5
-   ${loss}=  mininet ping  bm0  ${bm5_ip}
+   ${loss}=  mininet ping  h1  ${h6_ip}
    Should Be True  ${loss} == 100
    
-Check forwarding between rack0-bm0 and rack2-bm5 after adding back member interface 
+Check forwarding between rack0-h1 and rack2-h6 after adding back member interface 
    [Tags]  functional
-   rest add interface to vns  t1  v1  leaf2  ${bm5_intf0}  -1
+   rest add interface to vns  t1  v1  leaf2  ${h6_intf0}  -1
    sleep  5
-   ${loss}=  mininet ping  bm0  ${bm5_ip}
+   ${loss}=  mininet ping  h1  ${h6_ip}
    Should Be True  ${loss} <= 20
    
-Check forwarding between rack1-bm2 and rack2-bm4 after deleting VNS
+Check forwarding between rack1-h3 and rack2-h5 after deleting VNS
    [Tags]  functional
    delete a vns  t1  v3
    sleep  5
-   ${loss}=  mininet ping  bm2  ${bm4_ip}
+   ${loss}=  mininet ping  h3  ${h5_ip}
    Should Be True  ${loss} == 100
    
-Check forwarding between rack1-bm2 and rack2-bm4 after adding VNS
+Check forwarding between rack1-h3 and rack2-h5 after adding VNS
    [Tags]  functional
-   create a vns  t1  v3
-   rest add interface to vns  t1  v3  leaf1  ${bm2_intf0}  -1 
-   rest add interface to vns  t1  v3  leaf2  ${bm4_intf0}  -1
+   add a vns  t1  v3
+   rest add interface to vns  t1  v3  leaf1  ${h3_intf0}  -1 
+   rest add interface to vns  t1  v3  leaf2  ${h5_intf0}  -1
    sleep  10
-   ${loss}=  mininet ping  bm2  ${bm4_ip}
+   ${loss}=  mininet ping  h3  ${h5_ip}
    Should Be True  ${loss} <= 20
    
-Check forwarding between rack1-bm2 and rack2-bm4 untag--tag
+Check forwarding between rack1-h3 and rack2-h5 untag--tag
    [Tags]  functional
-   rest delete interface from vns  t1  v3  leaf2  ${bm4_intf0}  -1
-   rest add interface to vns  t1  v3  leaf2  ${bm4_intf0}  100
-   mininet link tag  bm4  bm4-bond0  100  ${bm4_ip}
+   rest delete interface from vns  t1  v3  leaf2  ${h5_intf0}  -1
+   rest add interface to vns  t1  v3  leaf2  ${h5_intf0}  100
+   mininet link tag  h5  h5-bond0  100  ${h5_ip}
    sleep  5
-   ${loss}=  mininet ping  bm2  ${bm4_ip}
+   ${loss}=  mininet ping  h3  ${h5_ip}
    Should Be True  ${loss} <= 20
-   rest verify endpoint  v3  -1  ${bm2_ip}  leaf1  ${bm2_intf0}
-   rest verify endpoint  v3  100  ${bm4_ip}  leaf2  ${bm4_intf0}
+   rest verify endpoint  v3  -1  ${h3_ip}  leaf1  ${h3_intf0}
+   rest verify endpoint  v3  100  ${h5_ip}  leaf2  ${h5_intf0}
 
-Check forwarding between rack0-bm0 and rack2-bm5 after deleting tenant
+Check forwarding between rack0-h1 and rack2-h6 after deleting tenant
    [Tags]  functional
    delete a tenant  t1
    sleep  5
-   ${loss}=  mininet ping  bm0  ${bm5_ip}
+   ${loss}=  mininet ping  h1  ${h6_ip}
    Should Be True  ${loss} == 100
-   ${loss}=  mininet ping  bm2  ${bm4_ip}
+   ${loss}=  mininet ping  h3  ${h5_ip}
    Should Be True  ${loss} == 100
-   ${loss}=  mininet ping  bm1  ${bm3_ip}
+   ${loss}=  mininet ping  h2  ${h4_ip}
    Should Be True  ${loss} == 100 
 
 Tear down the config
    [Tags]  smoke  sanity 
    delete a tenant  t1
-   remove fabric switch
+   delete fabric switch
 
 * Keywords      
    
-create a tenant  [Arguments]  ${tenant} 
-  REST create tenant  ${tenant}    
+add a tenant  [Arguments]  ${tenant} 
+  REST add tenant  ${tenant}    
 
 delete a tenant  [Arguments]  ${tenant} 
   	REST delete tenant  ${tenant}    
 
-create a vns  [Arguments]  ${tenant}  ${vns}  
-	REST create vns  ${tenant}  ${vns}   
+add a vns  [Arguments]  ${tenant}  ${vns}  
+	REST add vns  ${tenant}  ${vns}   
 
 delete a vns  [Arguments]  ${tenant}  ${vns} 
   	REST delete vns  ${tenant}  ${vns}   
 
-create a portgroup  [Arguments]  ${pg}
-  	REST create portgroup  ${pg}    
+add a portgroup  [Arguments]  ${pg}
+  	REST add portgroup  ${pg}    
 
 delete a portgroup  [Arguments]  ${pg}
   	REST delete portgroup  ${pg}    
 
-create a endpoint  [Arguments]  ${tenant}  ${vns}  ${endpoint} 
-  	REST create endpoint  ${tenant}  ${vns}  ${endpoint}  
+add a endpoint  [Arguments]  ${tenant}  ${vns}  ${endpoint} 
+  	REST add endpoint  ${tenant}  ${vns}  ${endpoint}  
 
 delete a endpoint  [Arguments]  ${tenant}  ${vns}  ${endpoint}
   	REST delete endpoint  ${tenant}  ${vns}  ${endpoint}  
