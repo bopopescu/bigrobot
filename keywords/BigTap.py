@@ -292,9 +292,6 @@ class BigTap(object):
             except:
                 return False
             else:
-                if not c.rest.status_code_ok():
-                    helpers.test_failure(c.rest.error())
-                    return False
                 if(c.rest.content()):
                     content = c.rest.content()
                     return content[index][key]
@@ -370,15 +367,11 @@ class BigTap(object):
                 url = '/api/v1/data/controller/applications/bigtap/interface-config[interface="%s"][switch="%s"]' % (str(intf_name), str(switch_dpid))
                 c.rest.put(url, {"interface": str(intf_name), "switch": str(switch_dpid), 'role':str(intf_type), 'name':str(intf_nickname)})
             except:
-                helpers.test_failure(c.rest.error())
+                helpers.test_log(c.rest.error())
                 return False
             else:
-                if not c.rest.status_code_ok():
-                    helpers.test_log(c.rest.error())
-                    return False
-                else:
-                    helpers.test_log(c.rest.content_json())
-                    return True
+                helpers.test_log(c.rest.content_json())
+                return True
 
     def rest_delete_interface_role(self, intf_name, intf_type, intf_nickname, switch_alias=None, sw_dpid=None):
         '''
@@ -419,14 +412,10 @@ class BigTap(object):
                 url = '/api/v1/data/controller/applications/bigtap/interface-config[interface="%s"][switch="%s"]' % (str(intf_name), str(switch_dpid))
                 c.rest.delete(url, {'role':str(intf_type), "name": str(intf_nickname)})
             except:
-                helpers.test_failure(c.rest.error())
+                helpers.test_log(c.rest.error())
                 return False
             else:
-                if not c.rest.status_code_ok():
-                    helpers.test_failure(c.rest.error())
-                    return False
-                else:
-                    return True
+                return True
 
     def rest_delete_interface(self, intf_name, switch_alias=None, sw_dpid=None):
         '''
@@ -461,14 +450,10 @@ class BigTap(object):
                 url = '/api/v1/data/controller/core/switch[dpid="%s"]/interface[name="%s"]' % (str(switch_dpid), str(intf_name))
                 c.rest.delete(url, {})
             except:
-                helpers.test_failure(c.rest.error())
+                helpers.test_log(c.rest.error())
                 return False
             else:
-                if not c.rest.status_code_ok():
-                    helpers.test_failure(c.rest.error())
-                    return False
-                else:
-                    return True
+                return True
 
     def rest_add_policy(self, rbac_view_name, policy_name, policy_action="inactive"):
         '''
@@ -500,7 +485,7 @@ class BigTap(object):
                 try:
                     c.rest.patch(url, {"action":str(policy_action)})
                 except:
-                    helpers.test_failure(c.rest.error())
+                    helpers.test_log(c.rest.error())
                     return False
                 else:
                     return True
@@ -528,14 +513,10 @@ class BigTap(object):
                 url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]' % (str(rbac_view_name), str(policy_name))
                 c.rest.delete(url, {})
             except:
-                helpers.test_failure(c.rest.error())
+                helpers.test_log(c.rest.error())
                 return False
             else:
-                if not c.rest.status_code_ok():
-                    helpers.test_failure(c.rest.error())
-                    return False
-                else:
-                    return True
+                return True
 
     def rest_add_policy_interface(self, rbac_view_name, policy_name, intf_nickname, intf_type):
         '''
@@ -566,14 +547,10 @@ class BigTap(object):
                 url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]/%s[name="%s"]' % (str(rbac_view_name), str(policy_name), str(intf_type), str(intf_nickname))
                 c.rest.put(url, {"name": str(intf_nickname)})
             except:
-                helpers.test_failure(c.rest.error())
+                helpers.test_log(c.rest.error())
                 return False
             else:
-                if not c.rest.status_code_ok():
-                    helpers.test_failure(c.rest.error())
-                    return False
-                else:
-                    return True
+                return True
 
     def rest_delete_policy_interface(self, rbac_view_name, policy_name, intf_nickname, intf_type):
         '''
@@ -605,14 +582,10 @@ class BigTap(object):
                 url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]/%s[name="%s"]' % (str(rbac_view_name), str(policy_name), str(intf_type), str(intf_nickname))
                 c.rest.delete(url, {})
             except:
-                helpers.test_failure(c.rest.error())
+                helpers.test_log(c.rest.error())
                 return False
             else:
-                if not c.rest.status_code_ok():
-                    helpers.test_failure(c.rest.error())
-                    return False
-                else:
-                    return True
+                return True
 
     def rest_add_policy_match(self, rbac_view_name, policy_name, match_number, data):
         '''
@@ -640,13 +613,10 @@ class BigTap(object):
                 data_dict = helpers.from_json(data)
                 c.rest.put(url, data_dict)
             except:
-                helpers.test_failure(c.rest.error())
+                helpers.test_log(c.rest.error())
                 return False
             else:
-                if not c.rest.status_code_ok():
-                    return False
-                else:
-                    return True
+                return True
 
     def rest_delete_policy_match(self, rbac_view_name, policy_name, match_number):
         '''
@@ -672,7 +642,7 @@ class BigTap(object):
                 url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]/rule[sequence=%s]' % (str(rbac_view_name), str(policy_name), str(match_number))
                 c.rest.delete(url, {})
             except:
-                helpers.test_failure(c.rest.error())
+                helpers.test_log(c.rest.error())
                 return False
             else:
                 return True
@@ -725,7 +695,7 @@ class BigTap(object):
                         url_add_intf = '/api/v1/data/controller/applications/bigtap/service[name="%s"]/post-group[name="%s"]' % (str(service_name), str(post_service_intf_nickname))
                         c.rest.put(url_add_intf, {"name":str(post_service_intf_nickname)})
                     except:
-                        helpers.test_failure(c.rest.error())
+                        helpers.test_log(c.rest.error())
                         return False
                     else:
                         helpers.test_log(c.rest.content_json())
@@ -755,15 +725,10 @@ class BigTap(object):
                 url = '/api/v1/data/controller/applications/bigtap/service[name="%s"]' % (str(service_name))
                 c.rest.delete(url, {})
             except:
-                helpers.test_failure(c.rest.error())
+                helpers.test_log(c.rest.error())
                 return False
             else:
-                if not c.rest.status_code_ok():
-                    helpers.test_failure(c.rest.error())
-                    return False
-                else:
-                    helpers.test_log(c.rest.content_json())
-                    return True
+                return True
 
     def rest_add_interface_service(self, service_name, intf_type, intf_nickname):
         '''
@@ -799,15 +764,10 @@ class BigTap(object):
                     url_add_intf = '/api/v1/data/controller/applications/bigtap/service[name="%s"]/post-group[name="%s"]' % (str(service_name), str(intf_nickname))
                 c.rest.post(url_add_intf, {"name":str(intf_nickname)})
             except:
-                helpers.test_failure(c.rest.error())
+                helpers.test_log(c.rest.error())
                 return False
             else:
-                if not c.rest.status_code_ok():
-                    helpers.test_failure(c.rest.error())
-                    return False
-                else:
-                    helpers.test_log(c.rest.content_json())
-                    return True
+                return True
 
     def rest_delete_interface_service(self, service_name, intf_nickname, intf_type):
         '''
@@ -841,15 +801,10 @@ class BigTap(object):
                     url_add_intf = '/api/v1/data/controller/applications/bigtap/service[name="%s"]/post-group[name="%s"]' % (str(service_name), str(intf_nickname))
                 c.rest.delete(url_add_intf, {})
             except:
-                helpers.test_failure(c.rest.error())
+                helpers.test_log(c.rest.error())
                 return False
             else:
-                if not c.rest.status_code_ok():
-                    helpers.test_failure(c.rest.error())
-                    return False
-                else:
-                    helpers.test_log(c.rest.content_json())
-                    return True
+                return True
 
     def rest_add_service_to_policy(self, rbac_view_name, policy_name, service_name, sequence_number):
         '''
@@ -885,15 +840,10 @@ class BigTap(object):
                 url_to_add = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]/service[sequence=%s]' % (str(rbac_view_name), str(policy_name), str(sequence_number))
                 c.rest.put(url_to_add, {"name":str(service_name), "sequence": int(sequence_number)})
             except:
-                helpers.test_failure(c.rest.error())
+                helpers.test_log(c.rest.error())
                 return False
             else:
-                if not c.rest.status_code_ok():
-                    helpers.test_failure(c.rest.error())
-                    return False
-                else:
-                    helpers.test_log(c.rest.content_json())
-                    return True
+                return True
 
     def rest_delete_service_from_policy(self, rbac_view_name, policy_name, service_name):
         '''
@@ -920,15 +870,10 @@ class BigTap(object):
                 url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]/service[name="%s"]' % (str(rbac_view_name), str(policy_name), str(service_name))
                 c.rest.delete(url, {})
             except:
-                helpers.test_failure(c.rest.error())
+                helpers.test_log(c.rest.error())
                 return False
             else:
-                if not c.rest.status_code_ok():
-                    helpers.test_failure(c.rest.error())
-                    return False
-                else:
-                    helpers.test_log(c.rest.content_json())
-                    return True
+                return True
 
 # Change policy action
     def rest_add_policy_action(self, rbac_view_name, policy_name, policy_action):
@@ -973,15 +918,10 @@ class BigTap(object):
                 url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]' % (str(rbac_view_name), str(policy_name))
                 c.rest.patch(url, {"action":str(policy_action)})
             except:
-                helpers.test_failure(c.rest.error())
+                helpers.test_log(c.rest.error())
                 return False
             else:
-                if not c.rest.status_code_ok():
-                    helpers.test_failure(c.rest.error())
-                    return False
-                else:
-                    helpers.test_log(c.rest.content_json())
-                    return True
+                return True
 
 # Alias
     def rest_update_policy_action(self, rbac_view_name, policy_name, policy_action):
@@ -1014,15 +954,11 @@ class BigTap(object):
                 url = '/api/v1/data/controller/applications/bigtap/feature'
                 c.rest.patch(url, {str(feature_name): False})
             except:
-                helpers.test_failure(c.rest.error())
+                helpers.test_log(c.rest.error())
                 return False
             else:
-                if not c.rest.status_code_ok():
-                    helpers.test_log(c.rest.error())
-                    return False
-                else:
-                    helpers.test_log(c.rest.content_json())
-                    return True
+                helpers.test_log(c.rest.content_json())
+                return True
 
 # Enable bigtap feature overlap/inport-mask/tracked-host/l3-l4-mode
     def rest_enable_feature(self, feature_name):
@@ -1050,15 +986,10 @@ class BigTap(object):
                 url = '/api/v1/data/controller/applications/bigtap/feature'
                 c.rest.patch(url, {str(feature_name): True})
             except:
-                helpers.test_failure(c.rest.error())
                 return False
             else:
-                if not c.rest.status_code_ok():
-                    helpers.test_log(c.rest.error())
-                    return False
-                else:
-                    helpers.test_log(c.rest.content_json())
-                    return True
+                helpers.test_log(c.rest.content_json())
+                return True
 
 # Compare coreswitch flows
     def rest_verify_coreswitch_flows(self, flow_1, flow_2, flow_value_1, flow_value_2):
@@ -1241,7 +1172,7 @@ class BigTap(object):
         c.rest.patch(url, {"ip-address-type": str(addr_type)})
         helpers.sleep(1)
         if not c.rest.status_code_ok():
-            helpers.test_failure(c.rest.error())
+            helpers.test_log(c.rest.error())
             return False
         else:
             helpers.test_log(c.rest.content_json())
