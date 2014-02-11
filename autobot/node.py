@@ -12,7 +12,7 @@ class Node(object):
                                % name)
 
         self._name = name
-        self._ip = ip
+        self._ip = ip.lower()  # IP might be 'dummy'
         self.user = user
         self.password = password
         self.http_port = None
@@ -35,6 +35,9 @@ class Node(object):
         else:
             self.node_params = None
 
+        if self.ip() == 'dummy':
+            helpers.environment_failure("IP address for '%s' is 'dummy'. Needs to be populated."
+                                        % self.name())
         if helpers.params_is_false('set_init_ping', self.node_params):
             helpers.log("'set_init_ping' is disabled for '%s', bypassing initial ping" % name)
         else:
@@ -168,7 +171,8 @@ class ControllerNode(Node):
 
 
 class MininetNode(Node):
-    def __init__(self, name, ip, controller_ip, user, password, t,
+    def __init__(self, name, ip, controller_ip, controller_ip2,
+                 user, password, t,
                  openflow_port=None):
         super(MininetNode, self).__init__(name, ip, user, password,
                                           t.topology_params())
@@ -197,6 +201,7 @@ class MininetNode(Node):
                                                 user=user,
                                                 password=password,
                                                 controller=controller_ip,
+                                                controller2=controller_ip2,
                                                 topology=self.topology,
                                                 openflow_port=openflow_port,
                                                 debug=self.dev_debug_level)
@@ -206,6 +211,7 @@ class MininetNode(Node):
                                               user=user,
                                               password=password,
                                               controller=controller_ip,
+                                              controller2=controller_ip2,
                                               topology=self.topology,
                                               openflow_port=openflow_port,
                                               debug=self.dev_debug_level)
