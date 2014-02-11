@@ -27,7 +27,7 @@ class BigTap(object):
 ###################################################
 
 
-    def rest_show_switch_flow(self, node, return_value=None):
+    def rest_show_switch_flow(self, node, switch_alias=None, sw_dpid=None, return_value=None):
         '''
         Objective: 
         - Returns number of flows on a switch
@@ -48,10 +48,16 @@ class BigTap(object):
             AppCommon = AppController.AppController()
         except:
             return False
-
         else:
             try:
-                switch_dpid = AppCommon.rest_return_switch_dpid_from_ip(node)
+                if (switch_alias is None and sw_dpid is not None):
+                    switch_dpid = sw_dpid
+                elif (switch_alias is None and sw_dpid is None):
+                    switch_dpid = AppCommon.rest_return_switch_dpid_from_ip(node)
+                elif (switch_alias is not None and sw_dpid is None):
+                    switch_dpid = AppCommon.rest_return_switch_dpid_from_alias(switch_alias)
+                else:
+                    switch_dpid = sw_dpid
                 url = '/api/v1/data/controller/core/switch[dpid="%s"]?select=stats/table' % (str(switch_dpid))
                 c.rest.get(url)
                 content = c.rest.content()
