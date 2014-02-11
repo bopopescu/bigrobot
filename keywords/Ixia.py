@@ -3,7 +3,7 @@ import autobot.test as test
 import autobot.helpers as helpers
 
 
-class TrafficGenerator(object):
+class Ixia(object):
     def __init__(self):
         pass
 
@@ -30,4 +30,6 @@ class TrafficGenerator(object):
         return self._ixia.ix_stop_traffic(stream)
 
     def ixia_fetch_port_stats(self):
-        return self._ixia.ix_fetch_port_stats()
+        result = self._ixia.ix_fetch_port_stats()
+        helpers.log('result:\n%s' % helpers.prettify(result))
+        return result

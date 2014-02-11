@@ -1,5 +1,7 @@
 import autobot.helpers as helpers
 import autobot.test as test
+import keywords.BigTap as BigTap
+import re
 import time
  
 
@@ -15,302 +17,10 @@ class Common(object):
 ##  Finalize API
 ## 
  
-
-    def bigtap_test_setup(self):
-        test.Test()
-        self.bigtap_delete_all()
-
-    def bigtap_test_teardown(self):
-#       self.bigtap_delete_all()
-        pass
-
-    def bigtap_delete_all(self):
-        """ Clean up bigtap configuration in order: policy, address-group
-           -- Mingtao
-         """         
-        self.bigtap_delete_policy() 
-        self.bigtap_delete_address_group()
- 
-        return True   
-
- 
-    def bigtap_delete_policy(self,policy=None):
-        """ Clean up the policy: input - policy 
-            -- Mingtao
-            Usage:  ces
-        """        
-        t = test.Test()
-        c= t.controller('master')
-         
-        if policy:
-            helpers.log("this is the Policy to be cleaned: %s" % (policy))
-            url = '/api/v1/data/controller/applications/bigtap/view[name="admin-view"]/policy[name="%s"]' % policy
-            c.rest.delete(url) 
-            if not c.rest.status_code_ok():
-                helpers.test_failure(c.rest.error())                                         
-        else:
-            url = '/api/v1/data/controller/applications/bigtap/view/policy?select=info'  
-            c.rest.get(url)
-            content = c.rest.content()
-            if not c.rest.status_code_ok():
-                helpers.test_failure(c.rest.error())
-                return False
-            helpers.log("Output: %s" % c.rest.result_json()) 
-            length =len(content)              
-            helpers.log("Number of Policies is: %s" % str(length))        
-            for index in range(length):
-                name = content[index]['name']
-                helpers.log("this is the %s Policy to be cleaned: %s" % (str(index), str(name)))
-                url = '/api/v1/data/controller/applications/bigtap/view[name="admin-view"]/policy[name="%s"]' % str(name)   
-                c.rest.delete(url) 
-                if not c.rest.status_code_ok():
-                    helpers.test_failure(c.rest.error()) 
-                    return False                
-        return True   
-
-    def bigtap_delete_address_group(self,addrgroup=None):
-        """ Clean up the address-group: input - address-group
-            -- Mingtao
-            Usage:   
-        """        
-        t = test.Test()
-        c= t.controller('master') 
-         
-        if addrgroup:
-            helpers.log("this is the Address-group to be cleaned: %s" % (addrgroup))
-            url = '/api/v1/data/controller/applications/bigtap/ip-address-set[name="%s"]' % (addrgroup)   
-            c.rest.delete(url) 
-            if not c.rest.status_code_ok():
-                helpers.test_failure(c.rest.error())     
-        else:
-            url = '/api/v1/data/controller/applications/bigtap/ip-address-set'  
-            c.rest.get(url) 
-            content = c.rest.content()
-            if not c.rest.status_code_ok():
-                helpers.test_failure(c.rest.error())
-                return False
-            length =len(content)  
-            helpers.log("Number of address group is: %s" % str(length))        
-            for index in range(length):
-                name = content[index]['name']
-                helpers.log("this is the %s Address-group to be cleaned: %s" % (str(index), str(name)))
-                url = '/api/v1/data/controller/applications/bigtap/ip-address-set[name="%s"]' % (str(name))   
-                c.rest.delete(url) 
-                if not c.rest.status_code_ok():
-                    helpers.test_failure(c.rest.error())                                   
-                    return False
-        return True   
-
-    def bigtap_delete_service(self,service=None):
-        """ Clean up the address-group: input - address-group   ##TBD
-            -- Mingtao
-            Usage:  
-        """        
-        t = test.Test()
-        c= t.controller('master')   
-
-        if service:
-            helpers.log("this is the Service to be cleaned: %s" % (service))
-            url = '/api/v1/data/controller/applications/bigtap/service[name="%s"]' % (service)   
-            c.rest.delete(url) 
-            if not c.rest.status_code_ok():
-                helpers.test_failure(c.rest.error())     
-        else:
-            url = '/api/v1/data/controller/applications/bigtap/service'      
-            c.rest.get(url) 
-            content = c.rest.content()
-            if not c.rest.status_code_ok():
-                helpers.test_failure(c.rest.error())
-                return False
-            length =len(content)  
-            helpers.log("Number of services is: %s" % str(length))        
-            for index in range(length):
-                name = content[index]['name']
-                helpers.log("this is the %s service to be cleaned: %s" % (str(index), str(name)))
-                url = '/api/v1/data/controller/applications/bigtap/service[name="%s"]' % str(name)
-                c.rest.delete(url) 
-                if not c.rest.status_code_ok():
-                    helpers.test_failure(c.rest.error())                                   
-                    return False
-        return True   
-
-
-
-
-
-    def rest_add_address_group(self, name,addr_type):
-        """ create the address group and associate the type
-            -- Mingtao
-            Usage: REST rest_add_address_group     Ipv4   ipv4  
-            type - ipv4 :  ipv6
-        """
-        t = test.Test()
-        c= t.controller('master')
-        url = '/api/v1/data/controller/applications/bigtap/ip-address-set[name="%s"]'% (str(name)) 
-        c.rest.put(url,{"name": str(name)})
-        helpers.sleep(1)        
-              
-        url = '/api/v1/data/controller/applications/bigtap/ip-address-set[name="%s"]' % (str(name)) 
-        
-        c.rest.patch(url,{"ip-address-type": str(addr_type)})
-        helpers.sleep(1)
-        if not c.rest.status_code_ok():
-            helpers.test_failure(c.rest.error())
-            return False
-        else:
-            helpers.test_log(c.rest.content_json())
-            return True
   
+ 
+ 
   
-    def rest_add_address_group_entry(self,name,addr,mask):
-        """add address entries to an address group
-           -- Mingtao
-           Usage:                  
-        """
-        # create the address group and associate the type
-        t = test.Test()
-        c= t.controller('master')
-             
-        url = ('/api/v1/data/controller/applications/bigtap/ip-address-set[name="%s"]/address-mask-set[ip="%s"][ip-mask="%s"]' 
-               % (str(name),str(addr),str(mask))) 
-        
-        c.rest.put(url,{"ip": str(addr), "ip-mask": str(mask)})
-        helpers.sleep(1)
-        helpers.test_log(c.rest.content_json())
-  
-        if not c.rest.status_code_ok():
-            return False
-        else:
-            return True  
-            
-    def get_next_address(self,addr_type,base,incr): 
-        """ Generate the next address bases on the base and step.
-            -- Mingtao
-            Usage:    ipAddr = self.get_next_address(ipv4,'10.0.0.0','0.0.0.1')
-                      ipAddr = self.get_next_address(ipv6,'f001:100:0:0:0:0:0:0','0:0:0:0:0:0:0:1:0')
-            Vui - move to common
-        """
-       
-        helpers.log("the base address is: %s,  the step is: %s,  "  % (str(base), str(incr)))   
-        if addr_type == 'ipv4' or addr_type == 'ip': 
-            ip = list(map(int, base.split(".")))
-            step = list(map(int, incr.split(".")))            
-            ipAddr = []
-            for i in range(3,0,-1):
-                ip[i] += step[i]
-                if ip[i] >= 256:
-                    ip[i] = 0
-                    ip[i-1] +=1
-            ip[0] += step[0]        
-            if ip[0] >= 256:
-                ip[0] = 0
-             
-            ipAddr  = '.'.join(map(str,ip)) 
-                        
-        if addr_type == 'ipv6'  or addr_type == 'ip6':
-            ip = base.split(":")
-            step =  incr.split(":")
-            helpers.log("IP list is %s" % ip)
-            
-            ipAddr = []
-            hexip = []  
-                                 
-            for i in range(0,7):
-                index = 7 - int(i)
-                ip[index] = int(ip[index], 16) + int(step[index], 16)
-                ip[index] = hex(ip[index])
-                temp = ip[index]                                         
-                if int(temp,16) >= 65536:
-                    ip[index] = hex(0)
-                    ip[index-1] = int(ip[index-1],16) + 1
-                    ip[index-1] = hex(ip[index-1])
-                  
-                    
-            ip[0] = int(ip[0],16) + int(step[0],16)   
-            ip[0]=hex(ip[0])      
-            temp = ip[0]                               
-            if int(temp,16) >= 65536:
-                ip[0] = hex(0)
-                 
-            for i in range(0,8):
-                hexip.append('{0:x}'.format(int(ip[i],16)))  
-                                      
-            ipAddr  = ':'.join(map(str,hexip))  
-                 
-        return ipAddr
- 
-    def gen_add_address_group_entries(self,group,addr_type,base,incr,mask,number):
-        """ Generate and apply #number of ipv4/ipv6 for address-group  
-            -- Mingtao
-            Usage:
-                gen_add_address_group_entries     IPV4    ipv4     10.0.0.0     0.1.0.1        255.255.255.0     20
-                gen_add_address_group_entries     IPV6    ipv6     f001:100:0:0:0:0:0:0     0:0:0:0:0:0:0:1     
-                                                    ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff     20
-           Note:  very slow  -  2 entries per sec
-        """        
-        helpers.log("the base address is: %s,  the step is: %s,  the mask is: %s,  the Num is: %s"
-                      % (str(base), str(incr), str(mask),  str(number)))   
-         
-        self.rest_add_address_group_entry(group,base,mask)
-
-        Num = int(number) - 1            
-        for _ in range(0,int(Num)):    
-           
-            ipAddr = self.get_next_address(addr_type,base,incr)
-            self.rest_add_address_group_entry(group,ipAddr,mask)
-            base = ipAddr
-            helpers.log("the applied address is: %s %s %s "  % (addr_type, str(ipAddr), str(mask)))     
-        
-        return True               
-
-    def rest_show_address_group(self,group):
-        """ Get the rest output of "show bigtap address-group XX"
-            -- Mingtao
-            Usage:                     
-        """ 
-        t = test.Test()
-        c= t.controller('master')
-        url = '/api/v1/data/controller/applications/bigtap/ip-address-set[name="%s"]' % (str(group))  
-        c.rest.get(url)           
-        if not c.rest.status_code_ok():
-            helpers.test_failure(c.rest.error())
-               
-        if(c.rest.content()):
-            helpers.log("INFO: name: %s" % c.rest.content()[0]['name'])
-            helpers.log("INFO: type: %s" % c.rest.content()[0]['ip-address-type'])                
-            return c.rest.content()[0]
-             
-        return False
-
-    def verify_address_group(self, input_dict, group_name, group_type=None, entry=None):
-        """ Verify the  type or/and entry number bigtap address group
-            -- Mingtao
-            Usage: 
-             verify_address_group        ${input_dict}    IPV4   group_type=ipv4   entry=1                    
-        """ 
-        helpers.log("input_dict: %s" % input_dict)
-        if str(group_name) == input_dict['name']: 
-            if group_type:       
-                if group_type == input_dict['ip-address-type']:
-                    helpers.log("INFO: type is correctly reported as %s" % group_type )             
-                else:
-                    helpers.log("ERROR: type NOT correctly reported: EXPECT: %s  - ACTUAL:  %s" % (group_type, input_dict['ip-address-type']))     
-                    return False
-                            
-            if entry:
-                if int(entry) == len(input_dict['address-mask-set']): 
-                    helpers.log("INFO: number of entries: %s" % len(input_dict['address-mask-set']) )                              
-                else :
-                    helpers.log("ERROR: entry NOT correctly reported: EXPECT: %s  - ACTUAL: %s " % (entry,  len(input_dict['address-mask-set'])))      
-                    return False
-        else:
-            helpers.log("ERROR: Not correctly report the Name: EXPECT: %s  - ACTUAL: %s " % (group_name,  input_dict['name']))      
-            return False 
-            
-        return True
- 
- 
- 
     def rest_show_policy(self,policy):
         """ Get the rest output of "show bigtap policy XX"
             -- Mingtao
@@ -392,219 +102,6 @@ class Common(object):
             
         return True
  
-    def construct_policy_match(self,
-                               ip_type=None, ether_type=None,
-                               src_mac = None,
-                               dst_mac = None,
-                               ip_proto=None, 
-                               icmp=None, icmp_code=None, icmp_type=None,
-                               vlan = None, vlan_min=None, vlan_max=None,  
-                               src_ip_list =None, src_ip =None, src_ip_mask =None, 
-                               dst_ip_list =None, dst_ip =None, dst_ip_mask =None, 
-                               tos_bit =None,
-                               src_port=None,src_port_min=None,src_port_max=None,
-                               dst_port=None,dst_port_min=None,dst_port_max=None,
-                               sequence=10):
-        """ bigtap: construct the match string for policy
-            Mingtao
-        """
-        temp = '{'
-   
-        if src_mac:
-            temp += '"src-mac": "%s",' %src_mac
-        if dst_mac:
-            temp += '"dst-mac": "%s",' %dst_mac
-        
-        if icmp:
-            temp += '"ip-proto": 1,'        
-            if icmp_code:
-                temp += '"dst-tp-port": %s,' % icmp_code      
-            if icmp_type:
-                temp += '"src-tp-port": %s,' % icmp_type
-                  
-        if ether_type:
-            if ether_type == 'ipv6' or ether_type == 'ip6':
-                temp += '"ether-type": 34525,'
-            elif ether_type == 'ip' or ether_type == 'ipv4':
-                temp += '"ether-type": 2048,'
-            else:
-                temp += '"ether-type": %s,' % ether_type
-        elif ip_type:
-            if ip_type =='ip' or  ip_type =='ipv4':
-                temp += '"ether-type": 2048,'
-            else:
-                temp += '"ether-type": 34525,' 
- 
-        if ip_proto:
-            if ip_proto == 'tcp':
-                temp += '"ether-type": 2048,'
-                temp +='"ip-proto": 6,'   
-            elif ip_proto == 'tcp6':
-                temp += '"ether-type": 34525,'
-                temp +='"ip-proto": 6,'  
-            elif ip_proto == 'udp':
-                temp += '"ether-type": 2048,'                
-                temp +='"ip-proto": 17,'   
-            elif ip_proto == 'udp6':
-                temp += '"ether-type": 34525,'                
-                temp +='"ip-proto": 17,'   
-            else:
-                temp +='"ip-proto": %s,' %ip_proto  
-
-
-        if vlan:
-            temp +='"vlan":  %s ,' % vlan 
-        else:
-            if vlan_min:
-                temp +='"src-tp-port-min": %s,' % vlan_min  
-            if vlan_max:
-                temp +='"src-tp-port-min": %s,' % vlan_max  
-                    
-        if src_ip_list:
-            temp += '"src-ip-list": "%s",' % src_ip_list
-        else:
-            if src_ip:
-                temp += '"src-ip": "%s",' % src_ip  
-            if src_ip_mask:
-                temp += '"src-ip-mask": "%s",' % src_ip_mask  
-
-        if dst_ip_list:
-            temp += '"dst-ip-list": "%s",' % dst_ip_list
-        else:
-            if dst_ip:
-                temp += '"dst-ip": "%s",' % dst_ip  
-            if dst_ip_mask:
-                temp += '"dst-ip-mask": "%s",' % dst_ip_mask  
-
-        if tos_bit:
-            temp +='"ip-tos": %s,' % tos_bit
- 
-        if src_port:
-            temp +='"src-tp-port":  %s ,' % src_port  
-        else:
-            if src_port_min:
-                temp +='"src-tp-port-min": %s,' % src_port_min  
-            if src_port_max:
-                temp +='"src-tp-port-min": %s,' % src_port_max   
-                            
-        if dst_port:
-            temp +='"dst-tp-port":  %s ,' % dst_port  
-        else:
-            if dst_port_min:
-                temp +='"dst-tp-port-min": %s,' % dst_port_min  
-            if dst_port_max:
-                temp +='"dst-tp-port-min": %s,' % dst_port_max   
-                 
-        temp +='"sequence": %s}' % sequence                              
-        helpers.log("the temp is: %s"  % (str(temp)) )  
-                    
-        return temp 
-
-
-    def rest_show_run_policy(self,policy):
-        """ Get the rest output of "show run bigtap policy XX"
-            -- Mingtao
-            Usage:                     
-        """ 
-        t = test.Test()
-        c= t.controller('master')
-        url ='/api/v1/data/controller/applications/bigtap/view[policy/name="%s"]?config=true&select=policy[name="%s"]' % (policy, policy)  
-        c.rest.get(url)           
- 
-        if not c.rest.status_code_ok():
-            helpers.test_failure(c.rest.error())               
-        if(c.rest.content()):
-            helpers.log("INFO: name: %s" % c.rest.content()[0]['policy'][0])
-            if c.rest.content()[0]['policy'][0]['name'] == str(policy):          
-                return c.rest.content()[0]['policy'][0]                     
-            else:
-                helpers.test_failure("ERROR: Policy does not correctly report policy name  : %s" % c.rest.content()[0]['policy'][0]['name'])                
-                return False 
-        helpers.test_failure("ERROR: Policy does not correctly report " )      
-        return False
-
-    def rest_get_run_policy_feild(self, input_dict, policy, match=None):
-        """ Get the rest output of "show bigtap policy XX"
-            -- Mingtao
-            Usage:                     
-        """ 
-        helpers.log("Output: input_dict: %s" % input_dict)
-        
-        if input_dict['name'] == str(policy ):
-            helpers.test_log("INFO: Policy correctly reports policy name as : %s" % input_dict['name'])
-        else:
-            helpers.test_failure("ERROR: Policy does not correctly report policy name  : %s" % input_dict['name'])                
-            return False    
-        
-        if match:
-            temp =input_dict['rule']     
-            helpers.test_log("INFO: Policy  %s has %d of matches" % (policy, len(temp) ) )                  
-            return len(temp)            
-     
-        return True
- 
-    def get_next_mac(self,base,incr): 
-        """ Generate the next mac address bases on the base and step.
-            Mingtao
-            Usage:  macAddr = self.get_next_mac(base,incr)      
-            Vui - move to common
-        """
-       
-        helpers.log("the base address is: %s,  the step is: %s,  "  % (str(base), str(incr)))   
-  
-        mac = base.split(":")
-        step =  incr.split(":")
-        helpers.log("MAC list is %s" % mac)
-         
-        hexmac = []  
-                             
-        for index in range(5,0,-1):
-            mac[index] = int(mac[index], 16) + int(step[index], 16)
-            mac[index] = hex(mac[index]) 
-            temp = mac[index]                                         
-            if int(temp,16) >= 256:
-                mac[index] = hex(0)
-                mac[index-1] = int(mac[index-1],16) + 1
-                mac[index-1] = hex(mac[index-1])
-                 
-        mac[0] = int(mac[0],16) + int(step[0],16)   
-        mac[0]=hex(mac[0])  
-        
-        temp = mac[0]                                      
-        if int(temp,16) >= 256:
-            mac[0] = hex(0)
-             
-        for i in range(0,6):
-            hexmac.append('{0:02x}'.format(int(mac[i],16)))                                    
-        macAddr  = ':'.join(map(str,hexmac))  
-             
-        return macAddr
- 
-    def rest_show_policy_optimize(self,policy):
-        """ Get policy # of optimized matches
-            -- Mingtao  
-        """
-        t = test.Test()
-        c= t.controller('master')
-         
-        helpers.test_log("Input arguments: policy = %s " % (policy))  
-        url ='/api/v1/data/controller/applications/bigtap/view/policy[name="%s"]/debug' % policy
-        c.rest.get(url)
-         
-        if not c.rest.status_code_ok():
-            helpers.test_failure(c.rest.error())
-            
-        content = c.rest.content() 
-        if content[0]['name'] == str(policy):
-            helpers.test_log("Policy correctly reports policy name as : %s" % content[0]['name'])
-            temp =content[0]['optimized-match'].strip() 
-            temp = temp.split('\n')
-        else:
-            helpers.test_failure("Policy does not correctly report policy name  : %s" % content[0]['name'])                
-            return False        
-        return len(temp)
-
- 
  
  
  
@@ -616,7 +113,140 @@ class Common(object):
 # APIs to be committed to production
 ########################
    
+    def bigtap_test_setup(self):
+        test.Test()
+        bigtap = BigTap.BigTap()
+        bigtap.bigtap_delete_all()
+        bigtap.rest_disable_feature(feature_name='l3-l4-mode')
+        bigtap.rest_disable_feature(feature_name='tracked-host')        
+      
 
+    def bigtap_test_teardown(self):
+#       self.bigtap_delete_all()
+        pass
+
+
+    def rest_show_feature(self, l3_l4=None,inport_mask =None):
+        """ verify bigtap mode: l3_l4 and inport_mask
+            -- Mingtao
+        """
+        t = test.Test()
+        c= t.controller('master')
+        
+        url = '/api/v1/data/controller/applications/bigtap/info'  
+        c.rest.get(url)
+
+        if not c.rest.status_code_ok():
+            helpers.test_failure(c.rest.error())
+        data = c.rest.content()
+          
+        if l3_l4:
+            helpers.test_log("INFO: Bigtap  reports L3-L4-mode as: %s " % data[0]['l3-l4-mode'])
+            return str(data[0]['l3-l4-mode'])
+                          
+        if inport_mask:
+            if str(data[0]['inport-mask']) == str(inport_mask):            
+                helpers.test_log("INFO: Bigtap  reports inport-mask as: %s " % data[0]['inport-mask'])
+                return str(data[0]['inport-mask'])
+        return True                
+        
+
+
+
+ 
+
+    def rest_show_switch_attribute(self, dpid=None, node=None, attr="type"):
+        """ show switch attibut,  can get type 
+            -- Mingtao
+        """
+        t = test.Test()
+        c= t.controller('master')
+        bigtap = BigTap.BigTap()
+
+        if dpid is None:
+            helpers.test_log("INFO: Need to get dpid for switch %s " % node )
+            swid = bigtap.rest_show_switch_dpid(node)
+        else:
+            swid = dpid
+        url = '/api/v1/data/controller/core/switch[dpid="%s"]?select=attributes'  % swid          
+        c.rest.get(url)
+
+        if not c.rest.status_code_ok():
+            helpers.test_failure(c.rest.error())
+        data = c.rest.content()[0]["attributes"]
+    
+        if attr == "type":       
+            helpers.test_log("INFO: Switch  %s  type is %s " % (swid, data["description-data"]["hardware-description"]))              
+            return   data["description-data"]["hardware-description"] 
+        
+        return True
+
+    def verify_switch_tcam(self, node=None, l3_l4_mode=None):
+        """ verify the switch tcam size
+            -- Mingtao
+        """   
+#        t = test.Test()
+        bigtap = BigTap.BigTap()
+        
+#        sw = t.switch(node)
+        node_type = self.rest_show_switch_attribute(node=node)
+        size = bigtap.rest_show_switch_flow(switch_alias=node, return_value='maximum-entries')
+          
+        if l3_l4_mode == "True":           
+            if "LB9" in node_type:
+                if size == 4088:
+                    helpers.test_log("INFO: Switch  - %s  type - %s  and - L3-l4 mode, tcam size - %s " % (node, node_type, str(size)))  
+                    return True
+                else:
+                    helpers.test_log("ERROR: Switch - %s  type - %s  and - L3-l4 mode, tcam size expect - 4088, actual - %s " % (node, node_type, str(size)))  
+                    return False  
+           
+        else:
+            if "LB9" in node_type:
+                if size == 2044:
+                    helpers.test_log("INFO: Switch - %s  type - %s, mode -  not L3-l4, tcam size - %s " % (node, node_type, str(size)))  
+                    return True
+                else:
+                    helpers.test_log("ERROR: Switch - %s  type -%s, mode - not L3-l4, tcam size expect: - 2044, actual - %s " % (node, node_type, str(size)))  
+                    return False  
+          
+        return True
+
+ 
+    def cli_show_l3_l4(self):
+        t = test.Test()
+        c= t.controller('master')
+        string = 'show running-config bigtap |  grep l3-l4 | wc -l '
+        c.cli(string)
+        content = c.cli_content()
+        helpers.log("***** content: %s" % content)
+        lines = content.split('\r\n')
+        helpers.log("***** lines: %s" % lines)
+        if int(lines[1]) == 0:
+            helpers.log("INFO: the l3_l4 is not configured" )  
+            return "False"
+        elif int(lines[1]) == 1:
+            helpers.log("INFO: the l3_l4 is not configured" )    
+            return "True"     
+        else:
+            helpers.test_failure(c.rest.error())         
+            return False
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+ 
 
     def rest_bigtap_verify_interface_name(self,name,role,switch,if_name):
         """ verify bigtap  interface role
@@ -648,42 +278,6 @@ class Common(object):
 
 
 
-            
-
-    def rest_bigtap_verify_feature(self, l3_l4=None,inport_mask =None):
-        """ verify bigtap mode: l3_l4 and inport_mask
-            Mingtao
-        """
-        t = test.Test()
-        c= t.controller('master')
-        
-        url = '/api/v1/data/controller/applications/bigtap/info'  
-        c.rest.get(url)
-
-        if not c.rest.status_code_ok():
-            helpers.test_failure(c.rest.error())
-        data = c.rest.content()
-          
-        if l3_l4:
-            if str(data[0]['l3-l4-mode']) == str(l3_l4):            
-                helpers.test_log("Bigtap correctly reports L3-L4-mode as: %s " % data[0]['l3-l4-mode'])
-              
-            else:
-                helpers.test_failure("Bigtap NOT correctly reports L3-L4-mode as : %s --- Expect: %s " 
-                                     % (data[0]['l3-l4-mode'], str(l3_l4)))               
-               
-   
-        if inport_mask:
-            if str(data[0]['inport-mask']) == str(inport_mask):            
-                helpers.test_log("Bigtap correctly reports inport-mask as: %s " % data[0]['inport-mask'])
-              
-            else:
-                helpers.test_failure("Bigtap NOT correctly reports inport-mask as : %s --- Expect: %s "
-                                      % (data[0]['inport-mask'], str(inport_mask)))               
-                   
-        return True
-
-
 
  
  
@@ -707,7 +301,7 @@ class Common(object):
         temp = temp + " ip %s %s \n"  % (str(base),str(mask))   
         Num = int(number) - 1
         for _ in range(0,int(Num)):    
-            ipAddr = self.get_next_address(addr_type,base,incr) 
+            ipAddr = helpers.get_next_address(addr_type,base,incr) 
             base = ipAddr
             temp = temp+" ip %s %s \n"  % (str(ipAddr),str(mask)) 
             
@@ -728,12 +322,7 @@ class Common(object):
     
         
 ##############################  end APIs to be committed to production   #######################     
-
-##################################### 
-# files to be staged to product
-########################################
-           
-
+ 
     def rest_bigtap_setup_role(self,sw_name,intf,role,int_name):
         """ setup bigtap interface role
             usage:  REST bigtap setup role    S204    ethernet49    filter     S204-49 
@@ -806,7 +395,7 @@ class Common(object):
                 Num = int(number) - 1            
                 for num in range(0,int(Num)):  
                 
-                    ipAddr = self.get_next_address(addr_type,base,incr)                
+                    ipAddr = helpers.get_next_address(addr_type,base,incr)                
                     base = ipAddr   
                     new_sequence = int(sequence) + num + 1
                     temp = "%d match %s %s %s %s %s\n"  % (new_sequence, str(addr_type), str(modify_field), str(ipAddr), str(mask), str(common))                   
@@ -843,7 +432,7 @@ class Common(object):
                 match_string = self.bigtap_construct_match(ip_type=match_type, sequence=mNum, **kwargs) 
                 self.rest_bigtap_add_policy_match("admin-view", pname,mNum,match_string)         
                                                         
-                ipAddr = self.get_next_address(match_type,base,incr)
+                ipAddr = helpers.get_next_address(match_type,base,incr)
                 base = ipAddr 
                     
         if field in ('dst_port', 'src_port'): 
@@ -885,7 +474,7 @@ class Common(object):
                     match_string = self.bigtap_construct_match(ip_proto=match_type, sequence=mNum, **kwargs)   
                                                     
                 self.rest_bigtap_add_policy_match("admin-view", pname,mNum,match_string)  
-                macAddr = self.get_next_mac(base,incr)                                                                              
+                macAddr = helpers.get_next_mac(base,incr)                                                                              
                 base = macAddr
 
         if field in ('protocol'): 
@@ -1057,26 +646,25 @@ class Common(object):
     
 
 
-
-
-
-
-# the same as Animesh's 
-    def rest_bigtap_set_policy_action(self,view_name,policy_name,policy_action='inactive'):
+    def rest_show_switch_by_ip(self,ip,feild=None):
+        # not working
         t = test.Test()
-        c= t.controller('master')
-        try:
-            helpers.log("INFO:   Modify the policy %s to action %s  " % (policy_name, policy_action))        
-            url ='/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]' % (str(view_name),str(policy_name))
-            c.rest.patch(url,{"action":str(policy_action)})
-        except:
+        c = t.controller('master')
+        url = 'api/v1/data/controller/core/switch?select=alias'  
+        c.rest.get(url)
+ 
+        if not c.rest.status_code_ok():
             helpers.test_failure(c.rest.error())
             return False
-        else:
-            helpers.test_log(c.rest.content_json())
-            return True
-    
- 
+        
+        content = c.rest.content()       
+        if feild:
+            if ip == content[0]['inet-address']['ip']:
+                return content[0]['feild']
+        return content[0]['alias']
+  
+
+
 
     def  bigtap_longevity(self, during='300', flap='60'):
              
@@ -1121,6 +709,9 @@ class Common(object):
         helpers.log("Output: %s" % content) 
         helpers.log("Output in list: %s" % temp)                
         return result
+
+
+
 
 
 

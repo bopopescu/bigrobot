@@ -1,0 +1,244 @@
+== T5 Platform Sanity Test Suite ==
+
+* Setting
+Documentation    T5 Platform Smoke/Sanity Test Suite
+Suite Setup      T5 base suite setup
+Suite Teardown   T5 base suite teardown
+#Test Setup       T5 base test setup
+#Test Teardown    T5 base test teardown
+Force Tags       T5 
+Library          keywords/BsnCommon.py
+Library          keywords_dev/prashanth/T5.py
+Library	         keywords_dev/prashanth/T5Fabric.py
+Library			 keywords_dev/don/T5Platform.py
+Library			 keywords_dev/don/T5PlatformCommon.py
+Library          keywords/Mininet.py
+Library	    	 keywords/Host.py
+Resource		 keywords_dev/don/t5_platform_sanity_resource.txt
+
+* Variables
+${bm0_ip}  10.0.0.1
+${bm1_ip}  10.0.0.2
+${bm2_ip}  10.0.0.3
+${bm3_ip}  10.0.0.4
+${bm4_ip}  10.0.0.5
+${bm5_ip}  10.0.0.6
+${bm0_mac}  00:00:00:00:00:01
+${bm1_mac}  00:00:00:00:00:02
+${bm2_mac}  00:00:00:00:00:03
+${bm3_mac}  00:00:00:00:00:04
+${bm4_mac}  00:00:00:00:00:05
+${bm5_mac}  00:00:00:00:00:06
+${bm0_intf0}  leaf0a-eth8
+${bm0_intf1}  leaf0b-eth8
+${bm1_intf0}  leaf0a-eth9
+${bm1_intf1}  leaf0b-eth9
+${bm2_intf0}  leaf1a-eth8
+${bm2_intf1}  leaf1b-eth8
+${bm3_intf0}  leaf1a-eth9
+${bm3_intf1}  leaf1b-eth9
+${bm4_intf0}  leaf2a-eth8
+${bm4_intf1}  leaf2b-eth8
+${bm5_intf0}  leaf2a-eth9
+${bm5_intf1}  leaf2b-eth9
+
+* Test Case 
+
+Verify HA Cluster Formation
+   [Tags]  sanity
+   rest verify show cluster
+
+Add all hosts to a VNS and verify connectivity, Reboot and re-verify
+   [Tags]  sanity  
+   add a tenant  bm_all
+   add a vns  bm_all  bm_all
+   add portgroup to vns  bm_all  bm_all  p1  -1
+   add portgroup to vns  bm_all  bm_all  p2  -1
+   add portgroup to vns  bm_all  bm_all  p3  -1
+   add portgroup to vns  bm_all  bm_all  p4  -1
+   add portgroup to vns  bm_all  bm_all  p5  -1
+   add portgroup to vns  bm_all  bm_all  p6  -1
+   sleep  15
+   mininet ping all
+   cli verify cluster master reboot
+   mininet ping all
+   delete a tenant  bm_all
+
+Add h4,h5,h6 in to a VNS and verify the connectivity
+   [Tags]  sanity  skipped
+   add a tenant  h4h5h6
+   add a vns  h4h5h6  h4h5h6
+   add portgroup to vns  h4h5h6  h4h5h6  p4  -1
+   add portgroup to vns  h4h5h6  h4h5h6  p5  -1
+   add portgroup to vns  h4h5h6  h4h5h6  p6  -1
+   sleep  10
+   ${loss}=  bash ping  h5  ${h4_ip}  source_if=bond0
+   Should Be True  ${loss} == 0		
+   ${loss}=  bash ping  h5  ${h6_ip}  source_if=bond0
+   Should Be True  ${loss} == 0					
+   
+ ping h5 to h6 dual leaf single rack static endpoints
+   [Tags]  sanity    skipped 
+   add a endpoint  A  A  e1 
+   add a endpoint  A  A  e2 
+   add portgroup to endpoint  A   A  e2  p6  -1
+   add portgroup to endpoint  A   A  e1  p5  -1
+   REST add ip endpoint  A  A  e1  ${h5_ip}
+   REST add mac endpoint  A  A  e1  ${h5_mac}
+   REST add ip endpoint  A  A  e2  ${h6_ip}
+   REST add mac endpoint  A  A  e2  ${h6_mac}
+   add portgroup to vns  A  A  p6  -1 
+   add portgroup to vns  A  A  p5  -1
+   #sleep  5
+   #${loss}=  bash ping  h5  ${h6_ip}  source_if=bond0
+   #Should Be True  ${loss} == 0 	
+   
+		
+ping h4 to h5 dual rack dual leaf static endpoints
+   [Tags]  sanity  skipped      
+   add a endpoint  A  A  e1 
+   add a endpoint  A  A  e2 
+   add portgroup to endpoint  A   A  e2  p5  -1
+   add portgroup to endpoint  A   A  e1  p4  -1
+   REST add ip endpoint  A  A  e1  ${h4_ip}
+   REST add mac endpoint  A  A  e1  ${h4_mac}
+   REST add ip endpoint  A  A  e2  ${h5_ip}
+   REST add mac endpoint  A  A  e2  ${h5_mac}
+   add portgroup to vns  A  A  p5  -1 
+   add portgroup to vns  A  A  p4  -1 
+   #sleep  5
+   #${loss}=  bash ping  h5  ${h4_ip}  source_if=bond0
+   #Should Be True  ${loss} == 0   
+   				
+		
+ping h1 to h2 dual leaf single rack static endpoints tag
+   [Tags]  sanity  skipped
+   add a endpoint  A  A  e1 
+   add portgroup to endpoint  A  A  e1  p1  10
+   add a endpoint  A  A  e2 
+   add portgroup to endpoint  A  A  e2  p2  10
+   REST add ip endpoint  A  A  e1  ${h1_tag_ip}
+   REST add mac endpoint  A  A  e1  ${h1_tag_mac}
+   REST add ip endpoint  A  A  e2  ${h2_tag_ip}
+   REST add mac endpoint  A  A  e2  ${h2_tag_mac}
+   add portgroup to vns  A  A  p2  10 
+   add portgroup to vns  A  A  p1  10
+   #sleep  5 
+   #${loss}=  bash ping  h1  ${h2_tag_ip}  source_if=bond0.10
+   #Should Be True  ${loss} == 0
+
+   
+ping h1 to h3 dual rack dual leaf static endpoints tag 
+   [Tags]  sanity  skipped
+   add a endpoint  A  A  e1  
+   add portgroup to endpoint  A  A  e1  p1  10
+   add a endpoint  A  A  e2 
+   add portgroup to endpoint  A  A  e2  p3  10 
+   REST add ip endpoint  A  A  e1  ${h1_tag_ip}
+   REST add mac endpoint  A  A  e1  ${h1_tag_mac}
+   REST add ip endpoint  A  A  e2  ${h3_tag_ip}
+   REST add mac endpoint  A  A  e2  ${h3_tag_mac}
+   add portgroup to vns  A  A  p3  10 
+   add portgroup to vns  A  A  p1  10
+   #sleep  5
+   #${loss}=  bash ping  h1  ${h3_tag_ip}  source_if=bond0.10
+   #Should Be True  ${loss} == 0  
+   
+
+
+* Keywords
+
+T5 base suite setup
+   base suite setup
+   sleep  5
+   add fabric switch
+   sleep  5
+   rest verify fabric switch all
+   rest verify fabric link 
+   sleep  5
+   add a portgroup  p1 
+   add interface to portgroup  leaf0-a  ${bm0_intf0}  p1
+   add interface to portgroup  leaf0-b  ${bm0_intf1}  p1
+   add a portgroup  p2 
+   add interface to portgroup  leaf0-a  ${bm1_intf0}  p2
+   add interface to portgroup  leaf0-b  ${bm1_intf1}  p2
+   add a portgroup  p3 
+   add interface to portgroup  leaf1-a  ${bm2_intf0}  p3
+   add interface to portgroup  leaf1-b  ${bm2_intf1}  p3
+   add a portgroup  p4 
+   add interface to portgroup  leaf1-a  ${bm3_intf0}  p4
+   add interface to portgroup  leaf1-b  ${bm3_intf1}  p4
+   add a portgroup  p5 
+   add interface to portgroup  leaf2-a  ${bm4_intf0}  p5
+   add interface to portgroup  leaf2-b  ${bm4_intf1}  p5
+   add a portgroup  p6 
+   add interface to portgroup  leaf2-a  ${bm5_intf0}  p6
+   add interface to portgroup  leaf2-b  ${bm5_intf1}  p6
+   sleep  5
+
+T5 base suite teardown   
+   delete interface from portgroup  leaf0-a  ${bm0_intf0}  p1
+   delete interface from portgroup  leaf0-b  ${bm0_intf1}  p1
+   delete a portgroup  p1
+   delete interface from portgroup  leaf0-a  ${bm1_intf0}  p2
+   delete interface from portgroup  leaf0-b  ${bm1_intf1}  p2
+   delete a portgroup  p2
+   delete interface from portgroup  leaf1-a  ${bm2_intf0}  p3
+   delete interface from portgroup  leaf1-b  ${bm2_intf1}  p3
+   delete a portgroup  p3
+   delete interface from portgroup  leaf1-a  ${bm3_intf0}  p4
+   delete interface from portgroup  leaf1-b  ${bm3_intf1}  p4
+   delete a portgroup  p4
+   delete interface from portgroup  leaf2-a  ${bm4_intf0}  p5
+   delete interface from portgroup  leaf2-b  ${bm4_intf1}  p5
+   delete a portgroup  p5
+   delete interface from portgroup  leaf2-a  ${bm5_intf0}  p6
+   delete interface from portgroup  leaf2-b  ${bm5_intf1}  p6
+   delete a portgroup  p6
+   delete fabric switch  
+   base suite teardown
+   sleep  5
+
+         
+add a tenant  [Arguments]  ${tenant} 
+  REST add tenant  ${tenant}    
+
+delete a tenant  [Arguments]  ${tenant} 
+  	REST delete tenant  ${tenant}    
+
+add a vns  [Arguments]  ${tenant}  ${vns}  
+	REST add vns  ${tenant}  ${vns}   
+
+delete a vns  [Arguments]  ${tenant}  ${vns} 
+  	REST delete vns  ${tenant}  ${vns}   
+
+add a portgroup  [Arguments]  ${pg}
+  	REST add portgroup  ${pg}    
+
+delete a portgroup  [Arguments]  ${pg}
+  	REST delete portgroup  ${pg}    
+
+add a endpoint  [Arguments]  ${tenant}  ${vns}  ${endpoint} 
+  	REST add endpoint  ${tenant}  ${vns}  ${endpoint}  
+
+delete a endpoint  [Arguments]  ${tenant}  ${vns}  ${endpoint}
+  	REST delete endpoint  ${tenant}  ${vns}  ${endpoint}  
+
+add interface to portgroup  [Arguments]  ${switch}  ${intf}  ${pg} 
+  	REST add interface to portgroup  ${switch}  ${intf}  ${pg}  
+
+delete interface from portgroup  [Arguments]  ${switch}  ${intf}  ${pg} 
+  	REST delete interface from portgroup  ${switch}  ${intf}  ${pg}  
+
+add portgroup to vns  [Arguments]  ${tenant}  ${vns}  ${pg}  ${vlan}
+  	REST add portgroup to vns  ${tenant}  ${vns}  ${pg}  ${vlan} 
+
+add portgroup to endpoint  [Arguments]  ${tenant}  ${vns}  ${endpoint}  ${pg}  ${vlan} 
+  REST add portgroup to endpoint  ${tenant}  ${vns}  ${endpoint}  ${pg}  ${vlan} 
+
+delete portgroup from vns  [Arguments]  ${tenant}  ${vns}  ${pg}  ${vlan} 
+  REST delete portgroup from vns  ${tenant}  ${vns}  ${pg}  ${vlan}
+  
+
+
+ 

@@ -40,6 +40,10 @@ class MyTest(object):
         helpers.log("arg1: %s" % arg1)
         helpers.log("arg2: %s" % arg2)
         self.passing_kwargs_additions(**kwargs)
+        helpers.log("kwargs: %s" % kwargs)
+
+    def passing_kwargs2(self, **kwargs):
+        helpers.log("kwargs: %s" % kwargs)
 
     def enable_help(self):
         t = test.Test()
@@ -225,7 +229,7 @@ admin_user = glance
         t = test.Test()
         n = t.node(node)
         content = n.cli('show version')['content']
-        helpers.log("new_content: %s" % helpers.sanitize_expect_output(content))
+        helpers.log("new_content: %s" % helpers.strip_cli_output(content))
 
     def check_mastership(self, node):
         t = test.Test()
@@ -237,3 +241,18 @@ admin_user = glance
             controller_role = "SLAVE"
 
         helpers.log("*** I am the %s of the Universe!" % controller_role)
+
+    def restclient_show_user_negative(self):
+        t = test.Test()
+        n = t.node('c1')
+
+        n.rest.get('/api/v1/data/controller/core/aaa/local-users')
+        try:
+            n.rest.get('/api/v1/data/controller/core/aaa/local-users')
+        except:
+            result = n.rest.result()
+            helpers.log("***** result: %s" % helpers.prettify(result))
+            helpers.log("***** status_code: %s" % result['status_code'])
+            if int(result['status_code']) == 400:
+                helpers.log("I expected this!!!")
+            helpers.log("***** status_descr: %s" % result['status_descr'])

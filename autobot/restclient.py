@@ -24,16 +24,16 @@ class RestClient(object):
         self.http = httplib2.Http(timeout=RestClient.default_timeout)
 
         self.base_url = base_url
-            
-        # Be sure to keep all header keys as lower case.        
+
+        # Be sure to keep all header keys as lower case.
         self.default_header = {}
         self.default_header['content-type'] = content_type
-        
+
         self.session_cookie_url = None
         self.session_cookie = None
         self.session_cookie_loop = 0
         self.last_result = None
-        
+
         if u and p:
             self.authen_str = self.authen_encoding(u, p)
             self.default_header['authorization'] = 'Basic %s' % self.authen_str
@@ -93,7 +93,7 @@ class RestClient(object):
                     % (self.result_json(result),
                        br_utils.end_of_output_marker()),
                        level=level)
-        
+
     def content(self, result=None):
         return self.result(result)['content']
 
@@ -105,7 +105,7 @@ class RestClient(object):
                     % (self.content_json(result),
                        br_utils.end_of_output_marker()),
                        level=level)
-        
+
     def _http_request(self, url, verb='GET', data=None, session=None,
                      quiet=False, save_last_result=True):
         """
@@ -116,7 +116,7 @@ class RestClient(object):
             url = self.base_url
             if url is None:
                 helpers.environment_failure("Problem locating base URL.")
-        
+
         headers = self.default_header
 
         if session:
@@ -150,15 +150,17 @@ class RestClient(object):
         else:
             result['status_descr'] = RestClient.http_codes['unknown']
 
-        result['success'] = False
-        if code == '200':
-            result['success'] = True
-
         if save_last_result:
             self.last_result = result
 
         if not quiet:
             self.log_result(result=result, level=6)
+
+        result['success'] = False
+        if code == '200':
+            result['success'] = True
+        else:
+            helpers.test_error("REST call failed with status code %s" % code)
 
         return result
 
@@ -172,13 +174,13 @@ class RestClient(object):
 
             helpers.log("It appears the session cookie has expired. Requesting new session cookie.")
             self.request_session_cookie()
-            
+
             # Re-run command
             result = self._http_request(*args, **kwargs)
         else:
             self.session_cookie_loop = 0
         return result
-        
+
     def post(self, url, *args, **kwargs):
         return self.http_request(url, 'POST', *args, **kwargs)
 

@@ -380,9 +380,13 @@ def is_bvs(name):
     Inspect the platform type for the node. Usage:
     
     if helpers.is_bvs(n.platform():
-        ...this is a BVS controller...
+        ...this is a BVS (aka T5) controller...
     """
     return name == 'bvs'
+
+
+# Alias
+is_t5 = is_bvs
 
 
 def is_bigtap(name):
@@ -669,6 +673,10 @@ def bigtest_node_info():
             full_path_filename = "%s/%s/%s" % (my_root, node, filename)
             val = open(full_path_filename, "r").read().rstrip()
             nodes[node][filename] = val
+
+    if not nodes:
+        error_exit('Directory %s appears to be empty.' % my_root)
+
     return nodes
 
 

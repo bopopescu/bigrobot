@@ -8,7 +8,8 @@ import os
 import sys
 import platform
 import shutil
-# import argparse
+import argparse
+import robot
 
 
 def set_environment():
@@ -98,8 +99,10 @@ helpers.bigtest_path()
 helpers.python_path()
 
 ROBOT_FRAMEWORK_OPTS = (
-    '--loglevel=trace --debugfile=debug.log --exclude=skipped --outputdir=%s'
-        % helpers.bigrobot_log_path_exec_instance()
+    '--loglevel=trace',
+    '--debugfile=debug.log',
+    '--exclude=skipped',
+    '--outputdir=%s' % helpers.bigrobot_log_path_exec_instance(),
     )
     # Exclude test cases tagged as 'skipped' from execution
 
@@ -134,9 +137,7 @@ def usage():
 
     print("  Point environment variable BIGROBOT_SUITE to a test suite."
           " Select one below:")
-    for _ in suite_list:
-        # print("    export BIGROBOT_SUITE=%s" % _)
-        # print(repr(helpers.bigrobot_exec_hint_format()) % _)
+    for _ in sorted(suite_list):
         print("    " + helpers.bigrobot_exec_hint_format() % _)
 
     if not suite_list:
@@ -250,7 +251,7 @@ def create_symlinks_to_logs():
 # Gobot command definitions
 #
 
-def version_hidden_command():
+def version_hidden_command(*args):
     """
     Show the version of BigRobot.
     """
@@ -263,7 +264,7 @@ def version_hidden_command():
     print "Exscript version        %s" % exscript_version
 
 
-def suite_command():
+def suite_command(*args):
     """
     Show the text output of the test suite.
     """
@@ -272,7 +273,7 @@ def suite_command():
     run('cat %s.rst' % helpers.bigrobot_suite(), quiet=True)
 
 
-def test_command():
+def test_command(*args):
     """
     Run tests in the test suite.
     """
@@ -291,12 +292,20 @@ def test_command():
     #         --exclude=skipped \
     #         --outputdir=./mytest_20140108_052828 \
     #         mytest.txt
-    run('pybot %s %s.%s'
-        % (ROBOT_FRAMEWORK_OPTS, helpers.bigrobot_suite(), ext))
+    # run('pybot %s %s.%s'
+    #    % (ROBOT_FRAMEWORK_OPTS, helpers.bigrobot_suite(), ext))
+    opts = []
+    opts.extend(ROBOT_FRAMEWORK_OPTS)
+    if (args):
+        opts.extend(*args)
+    opts.extend([''.join((helpers.bigrobot_suite(), '.', ext))])
+
+    print("Starting Robot with options:\n%s" % helpers.prettify(opts))
+    robot.run_cli(opts)
     create_symlinks_to_logs()
 
 
-def env_command():
+def env_command(*args):
     """
     Show the environment used by the test suite (useful for debugging purpose).
     """
@@ -304,14 +313,14 @@ def env_command():
         print("%s=%s" % (env, os.environ[env]))
 
 
-def gui_command():
+def gui_command(*args):
     """
     Run the Robot Framework GUI (RIDE).
     """
     run('ride.py 2> /dev/null &', shell=True)
 
 
-def clean_command():
+def clean_command(*args):
     """
     Remove output files created from Robot runs.
     """
@@ -319,7 +328,7 @@ def clean_command():
         shell=True)
 
 
-def clean_deep_command():
+def clean_deep_command(*args):
     """
     Deep cleaning. Run 'clean' command and also remove log directories.
     """
@@ -331,7 +340,7 @@ def clean_deep_command():
             % helpers.bigrobot_suite(), shell=True)
 
 
-def codesize_hidden_command():
+def codesize_hidden_command(*args):
     """
     Check the size of BigRobot source code.
     """
@@ -340,14 +349,14 @@ def codesize_hidden_command():
     run(cmd, shell=True)
 
 
-def startremotevm_command():
+def startremotevm_command(*args):
     """
     Setup remote VMs using BigTest (executes 'bt startremotevm').
     """
     run('bt startremotevm', cwd=helpers.bigtest_path())
 
 
-def stopremotevm_command():
+def stopremotevm_command(*args):
     """
     Tear down remote VMs using BigTest (executes 'bt stopremotevm').
     """
@@ -369,7 +378,7 @@ def main(args):
         else:
             cmd = hidden_cmd
 
-    cmd_dict[cmd]()
+    cmd_dict[cmd](args[1:])
 
 
 if __name__ == '__main__':

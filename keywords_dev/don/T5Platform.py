@@ -209,17 +209,21 @@ class T5Platform(object):
         masterID,slaveID = common.getNodeID(obj)
         if(masterID == -1 and slaveID == -1):
             return False
-
-        if(masterNode):
-            master.enable("reboot", prompt="Confirm Reboot \(yes to continue\)")
-            master.enable("yes")
-            helpers.log("Master is rebooting")
-            sleep(30)
-        else:
-            slave = t.controller("slave")
-            slave.enable("reboot", prompt="Confirm Reboot \(yes to continue\)")
-            slave.enable("yes")
-            helpers.log("Slave is rebooting")
+        
+        try:
+            if(masterNode):
+                master.enable("reboot", prompt="Confirm Reboot \(yes to continue\)")
+                master.enable("yes")
+                helpers.log("Master is rebooting")
+                sleep(30)
+            else:
+                slave = t.controller("slave")
+                slave.enable("reboot", prompt="Confirm Reboot \(yes to continue\)")
+                slave.enable("yes")
+                helpers.log("Slave is rebooting")
+                sleep(30)
+        except:
+            helpers.log("Node is rebooting")
             sleep(30)
        
         newMasterID, newSlaveID = common.getNodeID(obj)
@@ -313,7 +317,7 @@ class T5Platform(object):
         self.cluster_node_shutdown(False)
         common.fabric_integrity_checker(obj,"after")
 
-    def rest_add_user(self, numUsers):
+    def rest_add_user(self, numUsers=1):
         t = test.Test()
         master = t.controller("master")
         
@@ -325,10 +329,32 @@ class T5Platform(object):
             sleep(3)
             
             if not master.rest.status_code_ok():
-                helpers.test_failure(c.rest.error())
+                helpers.test_failure(master.rest.error())
                 numErrors += 1
             else:
                 helpers.log("Successfully added user: %s " % user)
+
+        if(numErrors > 0):
+            return False
+        else:
+            return True
+
+    def rest_delete_user(self, numUsers=1):
+        t = test.Test()
+        master = t.controller("master")
+        
+        url = "/api/v1/data/controller/core/aaa/local-user"
+        numErrors = 0
+        for i in range (0, int(numUsers)):
+            user = "user" + str(i+1)
+            master.rest.delete(url, {"user-name": user})
+            sleep(3)
+            
+            if not master.rest.status_code_ok():
+                helpers.test_failure(master.rest.error())
+                numErrors += 1
+            else:
+                helpers.log("Successfully deleted user: %s " % user)
 
         if(numErrors > 0):
             return False

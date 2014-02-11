@@ -18,7 +18,8 @@ import subprocess
 import string
 import telnetlib
 import time
-import re
+# import re
+# from netaddr import *
 
 class SwitchLight(object):
 
@@ -184,6 +185,37 @@ class SwitchLight(object):
             helpers.test_failure("Could not execute ping. Please check log for errors")
             return False
 
+    def cli_ping_from_switch(self, node, remote):
+        '''
+            Objective:
+            - Execute ping command from switch  to a particular remote IP/domain address
+
+            Input:
+            | node | Reference to switch (as defined in .topo file) |
+            | remote | Remote IP or Domain Address |
+
+            Return Value:
+            - True on ping success
+            - False on ping failure
+        '''
+        try:
+            t = test.Test()
+            switch = t.switch(node)
+            cli_action = "ping -c 3 %s" + str(remote)
+            switch.enable(cli_action)
+            cli_output = switch.cli_content()
+            if "Destination Host Unreachable" in cli_output:
+                helpers.test_log(cli_output)
+                return False
+            elif "unknown host" in cli_output:
+                helpers.test_log(cli_output)
+                return False
+            else:
+                helpers.test_log(cli_output)
+                return True
+        except:
+            helpers.test_failure("Could not execute ping. Please check log for errors")
+            return False
 #######################################################################
 # All Common Controller Verification Commands Go Here:
 #######################################################################
@@ -259,40 +291,73 @@ class SwitchLight(object):
     '''
         try:
             t = test.Test()
-            s1 = t.switch(node)
-
-            s1.enable('show running-config interface')
-            run_config = s1.cli_content()
+            switch = t.switch(node)
+            switch.enable('show running-config interface')
+            run_config = switch.cli_content()
             helpers.log("Running Config O/P: \n %s" % (run_config))
             pass_count = 0
-            input1 = "interface ma1 ip-address " + str(s1.ip) + "/" + str(subnet)
+            input1 = "interface ma1 ip-address " + switch.ip() + "/" + str(subnet)
+            helpers.log("Input1:%s" % (input1))
             if input1 in run_config:
+                helpers.log("PASS:IP Address and Subnet was found in running-config")
                 pass_count = pass_count + 1
+            else:
+                helpers.log("FAIL:IP Address and Subnet was not found in running-config")
+
             input2 = "ip default-gateway " + str(gateway)
+            helpers.log("Input2:%s" % (input2))
             if input2 in run_config:
+                helpers.log("PASS:IP default gateway was found in running-config")
                 pass_count = pass_count + 1
+            else:
+                helpers.log("FAIL:IP default gateway was not found in running-config")
+
             input3 = "dns-domain " + str(dns_domain)
+            helpers.log("Input3:%s" % (input3))
             if input3 in run_config:
+                helpers.log("PASS:DNS domain was found in running-config")
                 pass_count = pass_count + 1
+            else:
+                helpers.log("FAIL:DNS domain was not found in running-config")
+
             input4 = "dns-server " + str(dns_server)
+            helpers.log("Input4:%s" % (input4))
             if input4 in run_config:
+                helpers.log("PASS:DNS server was found in running-config")
                 pass_count = pass_count + 1
-            s1.enable('show interface ma1 detail')
-            show_command = s1.cli_content()
+            else:
+                helpers.log("FAIL:DNS server was not found in running-config")
+
+            switch.enable('show interface ma1 detail')
+            show_command = switch.cli_content()
             helpers.log("Show Command O/P: \n %s" % (show_command))
             if "ma1 is up" in show_command:
+                helpers.log("PASS:MA1 is up in show interface output")
                 pass_count = pass_count + 1
-            input5 = str(s1.ip) + "/" + str(subnet)
+            else:
+                helpers.log("FAIL:MA1 is not up in show interface output")
+
+            input5 = str(switch.ip()) + "/" + str(subnet)
+            helpers.log("Input5:%s" % (input5))
             if input5 in show_command:
+                helpers.log("PASS:IP Address and Subnet was found in show interface output")
                 pass_count = pass_count + 1
+            else:
+                helpers.log("FAIL:IP Address and Subnet was not found in show interface output")
+
             if "MTU 1500 bytes, Speed 1000 Mbps" in show_command:
+                helpers.log("PASS:MTU and Speed was found in show interface output")
                 pass_count = pass_count + 1
+            else:
+                helpers.log("FAIL:MTU and Speed was not found in show interface output")
+            return True
+
             if pass_count == 7:
                 return True
             else:
                 return False
         except:
-            helpers.test_failure("Could not execute command. Please check log for errors")
+            helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
     def cli_verify_dhcp_ip_dns(self, node, subnet, dns_server, dns_domain):
@@ -338,7 +403,7 @@ class SwitchLight(object):
             helpers.log("Show Command O/P: \n %s" % (show_command))
             if "ma1 is up" in show_command:
                 pass_count = pass_count + 1
-            input4 = str(s1.ip) + "/" + str(subnet)
+            input4 = str(s1.ip()) + "/" + str(subnet)
             if input4 in show_command:
                 pass_count = pass_count + 1
             if "MTU 1500 bytes, Speed 1000 Mbps" in show_command:
@@ -350,6 +415,73 @@ class SwitchLight(object):
         except:
             helpers.test_failure("Could not execute command. Please check log for errors")
             return False
+
+    def cli_verify_crc_forwarding_is_disabled(self, node):
+        '''
+            Objective: Verify CRC Forwarding is disabled.
+            
+            Inputs:
+            | node | Reference to switch (as defined in .topo file) |
+            
+            Return Value:
+            - True on verification success
+            - False on verification failure
+        '''
+        try:
+            t = test.Test()
+            switch = t.switch(node)
+            pass_count = 0
+
+            cli_input = "show running-config forwarding"
+            switch.enable(cli_input)
+            show_output = switch.cli_content()
+            if "forwarding crc disable" in show_output:
+                pass_count = pass_count + 1
+            else:
+                helpers.test_log("FAIL: Did not see 'forwarding crc disable' in running-config")
+
+            cli_input_1 = "show forwarding crc status"
+            switch.enable(cli_input_1)
+            show_output_1 = switch.cli_content()
+            if "Packets with CRC error will be dropped on all ports" in show_output_1:
+                pass_count = pass_count + 1
+            else:
+                helpers.test_log("FAIL: Did not see 'forwarding crc disable' in running-config")
+
+            if pass_count == 2:
+                return True
+            else:
+                return False
+        except:
+            helpers.test_failure("Could not execute command. Please check log for errors")
+            return False
+
+    def cli_verify_crc_forwarding_is_enabled(self, node):
+        '''
+            Objective: Verify CRC Forwarding is disabled.
+            
+            Inputs:
+            | node | Reference to switch (as defined in .topo file) |
+            
+            Return Value:
+            - True on verification success
+            - False on verification failure
+        '''
+        try:
+            t = test.Test()
+            switch = t.switch(node)
+            cli_input_1 = "show forwarding crc status"
+            switch.enable(cli_input_1)
+            show_output = switch.cli_content()
+            if "Packets with CRC error will be forwarded on all ports" in show_output:
+                return True
+            else:
+                return False
+        except:
+            helpers.test_failure("Could not execute command. Please check log for errors")
+            return False
+
+
 #######################################################################
 # All Common Controller Configuration Commands Go Here:
 #######################################################################
@@ -605,7 +737,7 @@ class SwitchLight(object):
             helpers.test_failure("Configuration delete failed")
             return False
 
-    def cli_add_static_ip(self, console_ip, console_port, ip_address, subnet, gateway):
+    def cli_add_static_ip(self, node, subnet, gateway):
         '''
         Objective:
          - Configure static IP address configuration on switch.
@@ -623,9 +755,13 @@ class SwitchLight(object):
 
         '''
         try:
+            t = test.Test()
+            switch = t.switch(node)
             user = "admin"
             password = "adminadmin"
-            tn = telnetlib.Telnet(str(console_ip), int(console_port))
+            console_ip = t.params(node, "console_ip")
+            console_port = t.params(node, "console_port")
+            tn = telnetlib.Telnet(console_ip, console_port)
             tn.read_until("login: ", 3)
             tn.write(user + "\r\n")
             tn.read_until("Password: ", 3)
@@ -633,17 +769,17 @@ class SwitchLight(object):
             tn.read_until('')
             tn.write("\r\n" + "enable \r\n")
             tn.write("conf t \r\n")
-            tn.write("\r\n" + "interface ma1 ip-address " + str(ip_address) + "/" + str(subnet) + " \r\n")
+            tn.write("\r\n" + "interface ma1 ip-address " + str(switch.ip()) + "/" + str(subnet) + " \r\n")
             tn.write("\r\n" + "ip default-gateway " + str(gateway) + " \r\n")
             tn.write("exit" + "\r\n")
             tn.write("exit" + "\r\n")
             tn.close()
             return True
         except:
-            helpers.test_failure("Could not execute command. Please check log for errors")
+            helpers.test_log("Could not execute command. Please check log for errors")
             return False
 
-    def cli_delete_static_ip(self, console_ip, console_port, ip_address, subnet, gateway):
+    def cli_delete_static_ip(self, node, subnet, gateway):
         '''
         Objective:
         - Delete static IP address configuration on switch.
@@ -661,10 +797,13 @@ class SwitchLight(object):
         - False on configuration failure
         '''
         try:
-
+            t = test.Test()
+            switch = t.switch(node)
             user = "admin"
             password = "adminadmin"
-            tn = telnetlib.Telnet(str(console_ip), int(console_port))
+            console_ip = t.params(node, "console_ip")
+            console_port = t.params(node, "console_port")
+            tn = telnetlib.Telnet(console_ip, console_port)
             tn.read_until("login: ", 3)
             tn.write(user + "\r\n")
             tn.read_until("Password: ", 3)
@@ -672,7 +811,7 @@ class SwitchLight(object):
             tn.read_until('')
             tn.write("\r\n" + "enable \r\n")
             tn.write("\r\n" + "conf t \r\n")
-            tn.write("\r\n" + "no interface ma1 ip-address " + str(ip_address) + "/" + str(subnet) + " \r\n")
+            tn.write("\r\n" + "no interface ma1 ip-address " + str(switch.ip()) + "/" + str(subnet) + " \r\n")
             tn.write("\r\n" + "no ip default-gateway " + str(gateway) + " \r\n")
             tn.write("exit" + "\r\n")
             tn.write("exit" + "\r\n")
@@ -774,12 +913,14 @@ class SwitchLight(object):
         '''
         try:
             t = test.Test()
-            switch = t.switch(node)
+            # switch = t.switch(node)
             user = "admin"
             password = "adminadmin"
+            console_ip = t.params(node, "console_ip")
+            console_port = t.params(node, "console_port")
             try:
-                helpers.log("Switch Console IP is %s \n Switch Console Port is %s :" % (str(switch.console_ip()), int(switch.console_port())))
-                tn = telnetlib.Telnet(str(switch.console_ip()), int(switch.console_port()))
+                helpers.log("Switch Console IP is %s \n Switch Console Port is %s :" % (console_ip, console_port))
+                tn = telnetlib.Telnet(console_ip, console_port)
                 tn.read_until("login: ", 3)
                 tn.write(user + "\r\n")
                 tn.read_until("Password: ", 3)
@@ -796,10 +937,10 @@ class SwitchLight(object):
                 tn.close()
                 return True
         except:
-            helpers.test_failure("Could not configure static IP address configuration on switch. Please check log for errors")
+            helpers.test_log("Could not configure static IP address configuration on switch. Please check log for errors")
             return False
 
-    def cli_delete_dns_server_domain(self, console_ip, console_port, dns_server, dns_domain):
+    def cli_delete_dns_server_domain(self, node, dns_server, dns_domain):
         '''
         Objective:
         - Delete DNS configuration on switch.
@@ -816,9 +957,13 @@ class SwitchLight(object):
         
         '''
         try:
+            t = test.Test()
+            # switch = t.switch(node)
             user = "admin"
             password = "adminadmin"
-            tn = telnetlib.Telnet(str(console_ip), int(console_port))
+            console_ip = t.params(node, "console_ip")
+            console_port = t.params(node, "console_port")
+            tn = telnetlib.Telnet(console_ip, console_port)
             tn.read_until("login: ", 3)
             tn.write(user + "\r\n")
             tn.read_until("Password: ", 3)
@@ -831,8 +976,83 @@ class SwitchLight(object):
             tn.close()
             return True
         except:
+            helpers.test_log("Could not execute command. Please check log for errors")
+            return False
+
+    def cli_set_boot(self, node, image):
+        '''
+            Objective:
+            - Configure boot parameters on switch
+            
+            Inputs:
+            | node | Reference to switch (as defined in .topo file) |
+            | image | location and name of image |
+            | netmask | Network mask |
+            | gateway| Default Gateway for network |
+            | dns_server | IP Address of DNS Server |
+            | dns_domain | DNS Domain Address |
+            
+            Return Value:
+            - True, if configuration is successful
+            - False, if configuration is unsuccessful
+        '''
+        try:
+
+            t = test.Test()
+            s1 = t.switch(node)
+            cli_input_1 = 'boot image ' + str(image)
+            s1.config(cli_input_1)
+            helpers.test_log(s1.cli_content)
+            return True
+        except:
             helpers.test_failure("Could not execute command. Please check log for errors")
             return False
+
+
+    def cli_enable_crc_forwarding(self, node):
+        ''' 
+            Objective:
+            - Enable crc forwarding via CLI
+        
+            Input:
+            | node | Reference to switch (as defined in .topo file) |
+                
+            Return Value:
+            - True on  success
+            - False on  failure
+        '''
+        try:
+            t = test.Test()
+            s1 = t.switch(node)
+            cli_input_1 = "no forwarding crc disable"
+            s1.config(cli_input_1)
+            return True
+        except:
+            helpers.test_failure("Could not execute command. Please check log for errors")
+            return False
+
+    def cli_disable_crc_forwarding(self, node):
+        ''' 
+            Objective:
+            - Disable crc forwarding via CLI
+        
+            Input:
+            | node | Reference to switch (as defined in .topo file) |
+                
+            Return Value:
+            - True on  success
+            - False on  failure
+        '''
+        try:
+            t = test.Test()
+            s1 = t.switch(node)
+            cli_input_1 = "forwarding crc disable"
+            s1.config(cli_input_1)
+            return True
+        except:
+            helpers.test_failure("Could not execute command. Please check log for errors")
+            return False
+
 
 #######################################################################
 # All Common Switch Platform/Feature Related Commands Go Here:
@@ -1019,7 +1239,7 @@ class SwitchLight(object):
             helpers.test_failure("Could not execute command. Please check log for errors")
             return False
 
-    def snmp_cmd_opt(self, ip_address, snmp_cmd, snmpOpt, snmpCommunity, snmpOID):
+    def snmp_cmd_opt(self, node, snmp_cmd, snmpOpt, snmpCommunity, snmpOID):
         '''
             Objective:
             - Execute snmp command which  require options from local machine for a particular SNMP OID
@@ -1034,7 +1254,9 @@ class SwitchLight(object):
             - Output from SNMP Walk.
         '''
         try:
-            url = "/usr/bin/%s  -v2c %s -c %s %s %s" % (str(snmp_cmd), str(snmpOpt), str(snmpCommunity), ip_address, str(snmpOID))
+            t = test.Test()
+            switch = t.switch(node)
+            url = "/usr/bin/%s  -v2c %s -c %s %s %s" % (str(snmp_cmd), str(snmpOpt), str(snmpCommunity), switch.ip(), str(snmpOID))
             returnVal = subprocess.Popen([url], stdout=subprocess.PIPE, shell=True)
             (out, _) = returnVal.communicate()
             helpers.log("URL: %s Output: %s" % (url, out))
