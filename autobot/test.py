@@ -28,6 +28,7 @@ class Test(object):
             self._setup_completed = False
             self._has_a_controller = False
             self._has_a_topo_file = False
+            self._params = {}
 
             self._bsn_config_file = ''.join((helpers.get_path_autobot_config(),
                                              '/bsn.yaml'))
@@ -35,13 +36,37 @@ class Test(object):
             self._bsn_config = helpers.load_config(self._bsn_config_file)
 
             topo = helpers.bigrobot_topology()
-            if helpers.file_not_exist(topo):
+            if helpers.file_not_exists(topo):
                 helpers.warn("Topology file not specified (%s)" % topo)
                 self._topology_params = {}
             else:
                 helpers.log("Loading topology file %s" % topo)
                 self._topology_params = helpers.load_config(topo)
                 self._has_a_topo_file = True
+
+            # Reading from params file and overriding attributes in
+            # topo file with values from params.
+            params_file = helpers.bigrobot_params()
+            if params_file.lower() != 'none':
+                if helpers.file_not_exists(params_file):
+                    helpers.environment_failure("Params file '%s' does not exist"
+                                                % params_file)
+                self._params = helpers.load_config(params_file)
+                for n in self._params:
+                    if n not in self._topology_params:
+                        helpers.environment_failure("Node '%s' is not specified in topo file"
+                                                    % n)
+                    for key in self._params[n]:
+                        if key not in self._topology_params[n]:
+                            helpers.warn("Node '%s' does not have attribute '%s' defined. Populating it from params file."
+                                         % (n, key))
+                        elif key in self._topology_params[n] and self._topology_params[n][key].lower() != 'dummy':
+                            helpers.warn("Node '%s' has attribute '%s' defined with value '%s'. Overriding it with value from params file."
+                                         % (n, key, self._topology_params[n][key]))
+                        helpers.info("Node '%s' attribute '%s' gets value '%s'"
+                                     % (n, key, self._params[n][key]))
+                        self._topology_params[n][key] = self._params[n][key]
+
             self._topology = {}
 
     def __init__(self):
@@ -305,10 +330,17 @@ class Test(object):
 
         if 'c1' not in params:
             helpers.warn("A controller (c1) is not defined")
+            controller_ip = None
         else:
             controller_ip = params['c1']['ip']  # Mininet needs this bit of info
             self._has_a_controller = True
             # helpers.log("Controller IP address is %s" % controller_ip)
+
+        if 'c2' not in params:
+            helpers.debug("A controller (c1) is not defined")
+            controller_ip2 = None
+        else:
+            controller_ip2 = params['c2']['ip']  # Mininet needs this bit of info
 
         for key in params:
             # Matches the following device types:
@@ -345,12 +377,13 @@ class Test(object):
                 else:
                     openflow_port = None
 
-                n = a_node.MininetNode(key,
-                                       host,
-                                       controller_ip,
-                                       self.mininet_user(),
-                                       self.mininet_password(),
-                                       t,
+                n = a_node.MininetNode(name=key,
+                                       ip=host,
+                                       controller_ip=controller_ip,
+                                       controller_ip2=controller_ip2,
+                                       user=self.mininet_user(),
+                                       password=self.mininet_password(),
+                                       t=t,
                                        openflow_port=openflow_port)
             elif helpers.is_host(key):
                 helpers.log("Initializing host '%s'" % key)
@@ -480,7 +513,8 @@ class Test(object):
 
         platform = n.platform()
 
-        helpers.log("Setting up HTTP session cookies for REST access")
+        helpers.log("Setting up HTTP session cookies for REST access on '%s' (platform=%s)"
+                    % (name, platform))
 
         if helpers.is_bvs(platform):
             url = "/api/v1/auth/login"

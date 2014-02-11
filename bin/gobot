@@ -76,7 +76,7 @@ os.environ['IS_GOBOT'] = 'True'
 
 helpers.bigrobot_log_path(default='.')
 if helpers.bigrobot_suite():
-    helpers.bigrobot_log_path_exec_instance("%s/%s_%s"
+    helpers.bigrobot_log_path_exec_instance(default="%s/%s_%s"
                                             % (helpers.bigrobot_log_path(),
                                                helpers.bigrobot_suite(),
                                                helpers.ts_local()))
@@ -86,6 +86,7 @@ else:
 if helpers.bigrobot_suite():
     helpers.bigrobot_topology(default=''.join((helpers.bigrobot_suite(),
                                                '.topo')))
+helpers.bigrobot_params(default='None')
 helpers.bigrobot_suite_format(default='txt')
 helpers.bigrobot_exec_hint_format()
 helpers.bigrobot_debug(default=1)
@@ -300,7 +301,7 @@ def test_command(*args):
         opts.extend(*args)
     opts.extend([''.join((helpers.bigrobot_suite(), '.', ext))])
 
-    print("Starting Robot with options:\n%s" % helpers.prettify(opts))
+    # print("Starting Robot with options:\n%s" % helpers.prettify(opts))
     robot.run_cli(opts)
     create_symlinks_to_logs()
 

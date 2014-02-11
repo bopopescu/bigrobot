@@ -41,7 +41,7 @@ def error_exit(msg):
     sys.exit(1)
 
 
-def file_not_exist(f):
+def file_not_exists(f):
     if f is None:
         return True
     if not os.path.exists(f):
@@ -49,7 +49,11 @@ def file_not_exist(f):
     return False
 
 
-def error_exit_if_file_not_exist(msg, f):
+def file_exists(f):
+    return not file_not_exists(f)
+
+
+def error_exit_if_file_not_exists(msg, f):
     if f is None:
         error_exit(''.join((msg, ': <file_not_specified>')))
     if not os.path.exists(f):
@@ -215,6 +219,13 @@ def bigrobot_topology(new_val=None, default=None):
     Category: Get/set environment variables for BigRobot.
     """
     return _env_get_and_set('BIGROBOT_TOPOLOGY', new_val, default)
+
+
+def bigrobot_params(new_val=None, default=None):
+    """
+    Category: Get/set environment variables for BigRobot.
+    """
+    return _env_get_and_set('BIGROBOT_PARAMS', new_val, default)
 
 
 def bigtest_path(new_val=None, default=None):
