@@ -12,22 +12,30 @@ Library         keywords_dev/vui/MyTest.py
 
 * Test Case
 Test controller rest session cookie
-    bounce session cookie
     [Tags]  skipped
+    bounce session cookie
 
 Test controller reload (BigTap)
+    [Tags]  skipped
     cli reboot  c1
     #cli reload  s1
-    [Tags]  skipped
 
 Get controller handles
+    [Tags]  skipped
     #cli save running config
     cli show user
-    [Tags]  skipped
 
 Test is master
-    check mastership  c1
     [Tags]  skipped
+    check mastership  c1
 
 Test bash command
-    bash command   master  uptime
+    cli show user  c1
+    bash command   c1  uptime
+    cli reboot     c1
+    sleep          60
+    bash command   c1  df -k
+    cli show user  c1
+    bash command   c1  uname -a
+    cli show user  c1
+

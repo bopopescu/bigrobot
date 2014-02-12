@@ -4,6 +4,8 @@ from Exscript.protocols.Exception import LoginFailure, TimeoutException
 import autobot.helpers as helpers
 import autobot.utils as br_utils
 import sys
+import socket
+import re
 
 
 class DevConf(object):
@@ -11,7 +13,7 @@ class DevConf(object):
                  is_console=False,
                  console_driver=None,
                  name=None,
-                 timeout=30,
+                 timeout=None,
                  debug=0):
         if host is None:
             helpers.environment_failure("Must specify a host.")
@@ -20,47 +22,76 @@ class DevConf(object):
         if password is None:
             helpers.environment_failure("Must specify a password.")
 
-        # helpers.log("User:%s, password:%s" % (user, password))
-        account = Account(user, password)
+        self._name = name
+        self._host = host
+        self._user = user
+        self._password = password
+        self._port = port
+        self._is_console = is_console
+        self._console_driver = console_driver
+        self._debug = debug
+        self.conn = None
+        self.last_result = None
+        self.mode = 'cli'
+        self.is_prompt_changed = False
 
+        self._timeout = timeout if timeout else 30
+
+        self.connect()
+
+        helpers.debug("Setting timeout to %s seconds" % self._timeout)
+        self.conn.set_timeout(self._timeout)
+
+        driver = self.conn.get_driver()
+        helpers.log("Using devconf driver '%s' (name: '%s')"
+                    % (driver, driver.name))
+
+        # Aliases
+        self.set_prompt = self.conn.set_prompt
+
+    def connect(self):
         try:
-            if is_console:
-                helpers.log("Connecting to console %s, port %s" % (host, port))
-                self.conn = Telnet(debug=debug)
-                self.conn.connect(host, port)
+            if self._is_console:
+                helpers.log("Connecting to console %s, port %s"
+                            % (self._host, self._port))
+                self.conn = Telnet(debug=self._debug)
+                self.conn.connect(self._host, self._port)
 
-                if not console_driver:
+                if not self._console_driver:
                     helpers.log("A devconf driver is not specified for console connection")
                 else:
                     helpers.log("Setting devconf driver for console to '%s'"
-                                % console_driver)
-                    self.conn.set_driver(console_driver)
+                                % self._console_driver)
+                    self.conn.set_driver(self._console_driver)
 
                 # Note: User needs to figure out what state the console is in
                 #       and manage it themself.
 
             else:
-                auth_info = "(login:%s, password:%s)" % (user, password)
-                if port:
+                auth_info = "(login:%s, password:%s)" % (self._user, self._password)
+                if self._port:
                     helpers.log("SSH connect to host %s, port %s %s"
-                                % (host, port, auth_info))
+                                % (self._host, self._port, auth_info))
                 else:
                     helpers.log("Connecting to host %s %s"
-                                % (host, auth_info))
+                                % (self._host, auth_info))
 
-                self.conn = SSH2(debug=debug)
-                self.conn.connect(host, port)
+                account = Account(self._user, self._password)
+
+                self.conn = SSH2(debug=self._debug)
+                self.conn.connect(self._host, self._port)
                 self.conn.login(account)
         except LoginFailure:
             helpers.test_error("Login failure: Check the user name and password"
-                               " for device %s. Also try to log in manually to"
-                               " see what the error is." % host)
+                               " for device %s (user:%s, password:%s). Also try"
+                               " to log in manually to see what the error is."
+                               % (self._host, self._user, self._password))
             # helpers.log("Exception in %s" % sys.exc_info()[0])
             # raise
         except TimeoutException:
             helpers.test_error("Login failure: Timed out during SSH connnect"
                                " to device %s. Try to log in manually to see"
-                               " what the error is." % host)
+                               " what the error is." % self._host)
             # helpers.log("Exception in %s" % sys.exc_info()[0])
             # raise
         except:
@@ -71,27 +102,18 @@ class DevConf(object):
                            br_utils.end_of_output_marker()))
             raise
 
-        helpers.debug("Default timeout is set to %s seconds"
-                      % self.conn.get_timeout())
-        helpers.debug("Setting timeout to %s seconds" % timeout)
-        self.conn.set_timeout(timeout)
-
-        driver = self.conn.get_driver()
-        helpers.log("Using devconf driver '%s' (name: '%s')"
-                    % (driver, driver.name))
-
-        self._timeout = timeout
-        self._name = name
-        self.host = host
-        self.user = user
-        self.password = password
-        self.port = port
-        self.last_result = None
+        # Reset mode to 'cli' as default
         self.mode = 'cli'
-        self.is_prompt_changed = False
 
-        # Aliases
-        self.set_prompt = self.conn.set_prompt
+
+    def timeout(self, seconds=None):
+        if seconds:
+            helpers.debug("Setting timeout to %s seconds" % seconds)
+        else:
+            helpers.debug("Setting timeout to default - %s seconds" % self._timeout)
+            seconds = self._timeout
+
+        self.conn.set_timeout(self._timeout)
 
     def name(self):
         return self._name
@@ -226,17 +248,19 @@ class DevConf(object):
         return self.result()['content']
 
     def close(self):
-        helpers.log("Closing device %s" % self.host)
+        helpers.log("Closing device %s" % self._host)
 
 
 class BsnDevConf(DevConf):
     def __init__(self, name=None, host=None, user=None, password=None,
-                 port=None, is_console=False, console_driver=None, debug=0):
+                 port=None, is_console=False, console_driver=None,
+                 timeout=None, debug=0):
         super(BsnDevConf, self).__init__(host, user, password,
                                                 port=port,
                                                 is_console=is_console,
                                                 console_driver=console_driver,
                                                 name=name,
+                                                timeout=timeout,
                                                 debug=debug)
         self.mode_before_bash = None
 
@@ -258,7 +282,7 @@ class BsnDevConf(DevConf):
         super(BsnDevConf, self).cmd('exit', quiet=True)
         helpers.log("Current mode is %s" % self.mode)
 
-    def cmd(self, cmd, quiet=False, mode='cmd', prompt=None, level=5):
+    def _cmd(self, cmd, quiet=False, mode='cmd', prompt=None, level=5):
 
         # Check to make sure we're in the right mode prior to executing command
         if mode == 'cli':
@@ -297,14 +321,15 @@ class BsnDevConf(DevConf):
             if self.is_cli():
                 self.mode_before_bash = 'cli'
                 helpers.log("Switching from cli to %s mode" % mode, level=level)
+                super(BsnDevConf, self).cmd('debug bash', quiet=True, level=level)
             elif self.is_enable():
                 self.mode_before_bash = 'enable'
                 helpers.log("Switching from enable to %s mode" % mode, level=level)
+                super(BsnDevConf, self).cmd('debug bash', quiet=True, level=level)
             elif self.is_config():
                 self.mode_before_bash = 'config'
                 helpers.log("Switching from config to %s mode" % mode, level=level)
-            helpers.log("Mode previous to bash is %s" % self.mode_before_bash, level=level)
-            super(BsnDevConf, self).cmd('debug bash', quiet=True, level=level)
+                super(BsnDevConf, self).cmd('debug bash', quiet=True, level=level)
 
         self.mode = mode
         # helpers.log("Current mode is %s" % self.mode, level=level)
@@ -320,6 +345,22 @@ class BsnDevConf(DevConf):
                            level=level)
         return self.result()
 
+    def cmd(self, *args, **kwargs):
+        try:
+            self._cmd(*args, **kwargs)
+        except socket.error, e:
+            error_str = str(e)
+            helpers.log("socket.error: e: %s" % error_str)
+            if re.match(r'Socket is closed', error_str):
+                helpers.log("Socket is closed. Reconnecting...")
+                self.connect()
+                self._cmd(*args, **kwargs)
+            else:
+                helpers.log("Unexpected socket error: %s" % sys.exc_info()[0])
+                raise
+        except:
+            helpers.log("Unexpected error: %s" % sys.exc_info()[0])
+            raise
 
     def cli(self, cmd, quiet=False, prompt=False, level=5):
         return self.cmd(cmd, quiet=quiet, mode='cli', prompt=prompt, level=level)
@@ -383,7 +424,7 @@ class MininetDevConf(DevConf):
     """
     def __init__(self, name=None, host=None, user=None, password=None,
                  controller=None, controller2=None, topology=None,
-                 openflow_port=None,
+                 openflow_port=None, timeout=None,
                  debug=0):
 
         if controller is None:
@@ -397,10 +438,10 @@ class MininetDevConf(DevConf):
         self.openflow_port = openflow_port
         self.state = 'stopped'  # or 'started'
         super(MininetDevConf, self).__init__(host, user, password, name=name,
-                                             debug=debug)
+                                             timeout=timeout, debug=debug)
         self.start_mininet()
 
-    def cmd(self, cmd, quiet=False, prompt=False, level=4):
+    def _cmd(self, cmd, quiet=False, prompt=False, level=4):
         if not quiet:
             helpers.log("Execute command on '%s': %s"
                         % (self.name(), cmd), level=level)
@@ -412,6 +453,23 @@ class MininetDevConf(DevConf):
                            br_utils.end_of_output_marker()),
                            level=level)
         return self.result()
+
+    def cmd(self, *args, **kwargs):
+        try:
+            self._cmd(*args, **kwargs)
+        except socket.error, e:
+            error_str = str(e)
+            helpers.log("socket.error: e: %s" % error_str)
+            if re.match(r'Socket is closed', error_str):
+                helpers.log("Socket is closed. Reconnecting...")
+                self.connect()
+                self._cmd(*args, **kwargs)
+            else:
+                helpers.log("Unexpected socket error: %s" % sys.exc_info()[0])
+                raise
+        except:
+            helpers.log("Unexpected error: %s" % sys.exc_info()[0])
+            raise
 
     # Alias
     cli = cmd
@@ -486,15 +544,16 @@ class T6MininetDevConf(MininetDevConf):
 
 class HostDevConf(DevConf):
     def __init__(self, name=None, host=None, user=None, password=None,
-                 port=None, is_console=False, debug=0):
+                 port=None, is_console=False, timeout=None, debug=0):
         super(HostDevConf, self).__init__(host, user, password,
                                           port=port,
                                           is_console=is_console,
                                           name=name,
+                                          timeout=timeout,
                                           debug=debug)
         self.bash('uname -a')
 
-    def cmd(self, cmd, quiet=False, prompt=False, level=4):
+    def _cmd(self, cmd, quiet=False, prompt=False, level=4):
         if not quiet:
             helpers.log("Execute command on '%s': '%s'"
                         % (self.name(), cmd), level=level)
@@ -506,6 +565,23 @@ class HostDevConf(DevConf):
                            br_utils.end_of_output_marker()),
                            level=level)
         return self.result()
+
+    def cmd(self, *args, **kwargs):
+        try:
+            self._cmd(*args, **kwargs)
+        except socket.error, e:
+            error_str = str(e)
+            helpers.log("socket.error: e: %s" % error_str)
+            if re.match(r'Socket is closed', error_str):
+                helpers.log("Socket is closed. Reconnecting...")
+                self.connect()
+                self._cmd(*args, **kwargs)
+            else:
+                helpers.log("Unexpected socket error: %s" % sys.exc_info()[0])
+                raise
+        except:
+            helpers.log("Unexpected error: %s" % sys.exc_info()[0])
+            raise
 
     # Alias
     bash = cmd

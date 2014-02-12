@@ -270,5 +270,5 @@ admin_user = glance
         t = test.Test()
         n = t.node(node)
         n.bash(cmd)
-        helpers.log("Bash result: %s" % n.bash_result())
-        helpers.log("Bash content: %s" % n.bash_content())
+        # helpers.log("Bash result: %s" % n.bash_result())
+        # helpers.log("Bash content: %s" % n.bash_content())
