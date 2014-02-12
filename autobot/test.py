@@ -384,7 +384,7 @@ class Test(object):
             # helpers.log("Controller IP address is %s" % controller_ip)
 
         if 'c2' not in params:
-            helpers.debug("A controller (c1) is not defined")
+            helpers.debug("A controller (c2) is not defined")
             controller_ip2 = None
         else:
             controller_ip2 = params['c2']['ip']  # Mininet needs this bit of info
