@@ -15,13 +15,14 @@ Resource         keywords_dev/prashanth/t5_dualleaf_three_rack_resource.txt
 ${spine0_dpid}	 00:00:00:00:00:01:00:01
 ${spine1_dpid}	 00:00:00:00:00:01:00:02
 ${leaf0a_dpid}	 00:00:00:00:00:02:00:01
+${leaf0b_dpid}	 00:00:00:00:00:02:00:02
 ${leaf2a_h6_intf}  leaf2a-eth5
 ${leaf2b_h6_intf}  leaf2b-eth5
 ${leaf2a_h5_intf}  leaf2a-eth4
 ${leaf2b_h5_intf}  leaf2b-eth4
 
 *Test Case
-add Dual Rack Dual Leaf Topology
+add Three Rack Dual Leaf Topology
 	base suite setup
     add fabric switch
     sleep  5
@@ -37,13 +38,9 @@ verify fabric lag formation from spine node
 	
 delete the Fabric Role spine and verify the lag from leaf switch 
 	[Tags]	 feature    
-	REST delete fabric role   spine       
+	REST delete fabric role  spine0  spine       
     sleep  5 
 	verify fabric lag   leaf0-a
-
-Verify Fabric Lag from spine after deleting one spine
-	[Tags]	 feature     
-	verify fabric lag   spine0
 
 Add the Fabric Role spine back and verify the lag from leaf switch
 	[Tags]	 feature    
@@ -61,7 +58,13 @@ delete the peer leaf0b switch and check the peer-lag from leaf0-a switch
 	sleep  3
 	rest delete fabric switch  leaf0-b
 	sleep  3
-	rest verify forwarding lag  ${leaf0a_dpid}  leaf0-a 
+	rest verify forwarding lag  ${leaf0a_dpid}  leaf0-a
+	rest add switch  leaf0-b
+	rest add dpid  ${leaf0a_dpid}
+	rest add fabric role  leaf
+	rest add fabric leaf group  rack0
+	sleep  3
+	rest verify forwarding lag  ${leaf0a_dpid}  leaf0-a     
 
 port group setting for static lag
 	[Tags]  feature  
@@ -86,8 +89,32 @@ port group setting test for lacp mode
 	rest verify fabric interface  leaf2-b  ${leaf2b_h6_intf}
 	rest verify forwarding port edge  leaf2-a  leaf2-b
 
-#rack lag detection with forwarding rack-0 to rack-2 (with add/delete link for the rack)
+rack lag detection from rack0 leaf switch using three rack setup (delete/add spine role)
 	[Tags]  feature
+	rest verify no of spine
+	rest verify rack lag from leaf  leaf0-a  spine1
+	rest delete fabric role  spine0  spine
+	sleep  3
+	rest verify no of spine
+	rest verify rack lag from leaf  leaf0-a  spine1
+	rest add fabric role  spine0  spine
+	rest verify no of spine
+	rest verify rack lag from leaf  leaf0-a  spine1
+
+rack lag detection from rack0 leaf switch using three rack setup (add/delete spine switch)
+	[Tags]  feature
+	rest verify no of spine
+	rest verify rack lag from leaf  leaf0-a  spine1
+	rest delete fabric switch  spine0  
+	sleep  3
+	rest verify no of spine
+	rest verify rack lag from leaf  leaf0-a  spine1
+	rest add switch  spine0
+	rest add dpid  spine0  ${spine0_dpid}
+	rest add fabric role  spine0  spine
+	sleep  3
+	rest verify no of spine
+	rest verify rack lag from leaf  leaf0-a  spine1
 
 #Verify broadcast traffic forwarding on the lag
 
