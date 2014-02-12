@@ -265,3 +265,10 @@ admin_user = glance
         for x in arg:
             helpers.log("x: %s" % x)
         print "I am here"
+
+    def bash_command(self, node, cmd):
+        t = test.Test()
+        n = t.node(node)
+        n.bash(cmd)
+        helpers.log("Bash result: %s" % n.bash_result())
+        helpers.log("Bash content: %s" % n.bash_content())

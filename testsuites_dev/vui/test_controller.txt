@@ -27,3 +27,7 @@ Get controller handles
 
 Test is master
     check mastership  c1
+    [Tags]  skipped
+
+Test bash command
+    bash command   master  uptime

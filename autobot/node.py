@@ -125,6 +125,8 @@ class ControllerNode(Node):
         self.sudo = self.dev.sudo  # Sudo (part of Bash mode)
         self.cli_content = self.dev.content
         self.cli_result = self.dev.result
+        self.bash_content = self.dev.content
+        self.bash_result = self.dev.result
         self.set_prompt = self.dev.set_prompt
         self.send = self.dev.send
         self.expect = self.dev.expect
@@ -255,6 +257,8 @@ class HostNode(Node):
         self.sudo = self.dev.sudo
         self.bash_content = self.dev.content
         self.bash_result = self.dev.result
+        self.bash_content = self.dev.content
+        self.bash_result = self.dev.result
         self.set_prompt = self.dev.set_prompt
         self.send = self.dev.send
         self.expect = self.dev.expect
@@ -290,6 +294,8 @@ class SwitchNode(Node):
         self.sudo = self.dev.sudo  # Sudo (part of Bash mode)
         self.cli_content = self.dev.content
         self.cli_result = self.dev.result
+        self.bash_content = self.dev.content
+        self.bash_result = self.dev.result
         self.set_prompt = self.dev.set_prompt
         self.send = self.dev.send
         self.expect = self.dev.expect

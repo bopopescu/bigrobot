@@ -27,6 +27,7 @@ class Test(object):
             self._setup_in_progress = False
             self._setup_completed = False
             self._has_a_controller = False
+            self._has_a_single_controller = False
             self._has_a_topo_file = False
             self._params = {}
             self._bigtest_node_info = {}
@@ -246,6 +247,10 @@ class Test(object):
         n = self.topology(name)
         platform = n.platform()
 
+        if self._has_a_single_controller:
+            # helpers.debug("Topology has a single controller. Assume it's the master.")
+            return True
+
         if helpers.is_bigtap(platform) or helpers.is_bigwire(platform):
             # We don't want REST object to save the result from the REST
             # command to detect mastership.
@@ -386,6 +391,7 @@ class Test(object):
         if 'c2' not in params:
             helpers.debug("A controller (c2) is not defined")
             controller_ip2 = None
+            self._has_a_single_controller = True
         else:
             controller_ip2 = params['c2']['ip']  # Mininet needs this bit of info
 

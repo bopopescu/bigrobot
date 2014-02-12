@@ -4,6 +4,7 @@ Force Tags      Vui
 #Library         Reserve
 Library         keywords/BsnCommon.py
 Library         keywords_dev/vui/MyTest.py
+Library         OperatingSystem
 
 * Variables
 ${NAME}         "Vui Le"
@@ -44,19 +45,27 @@ Test dynamic string
     [Tags]           skipped
     json_to_pydict    {a:true, b:${123}, name:${NAME}}
     
-#Test expression
-    #[Tags]           skipped smoke
-    #${result1}=       expr  1 + 1 + ${COUNTER}
-    #${result2}=       expr  10 / 2
-    #${result3}=       expr  ${result1} + ${result2}
-    #log               Expression evaluated to result1=${result1}, result2=${result2}, result3=${result3}
+Test expression
+    [Tags]           skipped smoke
+    ${result1}=       expr  1 + 1 + ${COUNTER}
+    ${result2}=       expr  10 / 2
+    ${result3}=       expr  ${result1} + ${result2}
+    log               Expression evaluated to result1=${result1}, result2=${result2}, result3=${result3}
 
 Test array variable
+    [Tags]           skipped
     @{alist}=         create list  1  2  3  4  abc  yzx
     #log many          @{alist}
     #log               first entry = @{alist}[0]
     print value       @{alist}
     Log               ${NAME}=This is the input
+
+Test write file
+    #[Tags]           skipped
+    Append to File    /tmp/myoutput.txt  My name is ${NAME}.\n
+    Append to File    /tmp/myoutput.txt  I work at BigSwitch.\n
+    Append to File    /tmp/myoutput.txt  I'm also a woodworker.\n
+
 
 * Keywords
 variable assignment

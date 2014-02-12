@@ -11,6 +11,7 @@ class DevConf(object):
                  is_console=False,
                  console_driver=None,
                  name=None,
+                 timeout=30,
                  debug=0):
         if host is None:
             helpers.environment_failure("Must specify a host.")
@@ -70,10 +71,16 @@ class DevConf(object):
                            br_utils.end_of_output_marker()))
             raise
 
+        helpers.debug("Default timeout is set to %s seconds"
+                      % self.conn.get_timeout())
+        helpers.debug("Setting timeout to %s seconds" % timeout)
+        self.conn.set_timeout(timeout)
+
         driver = self.conn.get_driver()
         helpers.log("Using devconf driver '%s' (name: '%s')"
                     % (driver, driver.name))
 
+        self._timeout = timeout
         self._name = name
         self.host = host
         self.user = user
