@@ -1056,7 +1056,33 @@ class SwitchLight(object):
 
 #######################################################################
 # All Common Switch Platform/Feature Related Commands Go Here:
-#######################################################################
+######################################################################
+
+
+
+    def bash_execute_command(self, node, command):
+        '''
+        Objective:
+        -Execute a command in bash mode and return output
+        
+        Input:
+        | node | Reference to switch (as defined in .topo file) |
+        | command | Command to be executed |
+
+        
+        Return Value:
+        - Output on success
+        - False on configuration failure        
+        '''
+        try:
+            t = test.Test()
+            switch = t.switch(node)
+        except:
+            return False
+        else:
+            switch.bash(command)
+            bash_output = switch.cli_content()
+            return bash_output
 
     def cli_restart_switch(self, node):
         '''
@@ -1074,7 +1100,8 @@ class SwitchLight(object):
             t = test.Test()
             s1 = t.switch(node)
             cli_input = 'reload now'
-            s1.enable(cli_input)
+            s1.enable('')
+            s1.send(cli_input)
             return True
         except:
             helpers.test_failure("Could not execute command. Please check log for errors")
@@ -1574,6 +1601,11 @@ class SwitchLight(object):
             helpers.log("Input is %s" % input_value)
             try:
                 s1.config(input_value)
+                cli_output = s1.cli_content()
+                if "is not a valid interface" in cli_output:
+                    return False
+                else:
+                    return True
             except:
                 return False
             return True
