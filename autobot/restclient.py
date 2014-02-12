@@ -156,16 +156,32 @@ class RestClient(object):
         if not quiet:
             self.log_result(result=result, level=6)
 
+        #
+        # ATTENTION: RESTclient will generate an exception when the
+        # HTTP status code is anything other than:
+        #   - 200 (OK)
+        #   - 201 (Created)
+        #   - 202 (Accepted)
+        #
         result['success'] = False
-        if code == '200':
+        if int(code) in [200, 201, 202]:
             result['success'] = True
         else:
-            helpers.test_error("REST call failed with status code %s" % code)
+            if int(code) == 401 and result['status_descr'] == 'Unauthorized':
+                # Session cookie has expired. This requires exception handling
+                # by BigRobot
+                pass
+            else:
+                helpers.test_error("REST call failed with status code %s" % code)
 
         return result
 
     def http_request(self, *args, **kwargs):
         result = self._http_request(*args, **kwargs)
+
+        # !!! FIXME: Handle case where session cookie is expired for
+        # Big Switch controllers. It really shouldn't be in the generic
+        # module. Should really reside in bsn_restclient.py.
         if int(result['status_code']) == 401 and result['status_descr'] == 'Unauthorized':
             if self.session_cookie_loop > 5:
                 helpers.test_error("Detected session cookie loop.")
