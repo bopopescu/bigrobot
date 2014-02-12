@@ -8,13 +8,13 @@ Suite Teardown   T5 base suite teardown
 #Test Teardown    T5 base test teardown
 Force Tags       T5 
 Library          keywords/BsnCommon.py
-Library          keywords_dev/prashanth/T5.py
-Library	         keywords_dev/prashanth/T5Fabric.py
-Library			 keywords_dev/don/T5Platform.py
-Library			 keywords_dev/don/T5PlatformCommon.py
+Library		 keywords_dev/don/T5Platform.py
+Library		 keywords_dev/don/T5PlatformCommon.py
 Library          keywords/Mininet.py
 Library	    	 keywords/Host.py
-Resource		 keywords_dev/don/t5_platform_sanity_resource.txt
+Library          keywords_dev/prashanth/T5.py
+Library	         keywords_dev/prashanth/T5Fabric.py
+Resource	 keywords_dev/don/t5_platform_sanity_resource.txt
 
 * Variables
 ${bm0_ip}  10.0.0.1
@@ -49,7 +49,7 @@ Verify HA Cluster Formation
    rest verify show cluster
 
 Add all hosts to a VNS and verify connectivity, Reboot and re-verify
-   [Tags]  sanity  
+   [Tags]  sanity
    add a tenant  bm_all
    add a vns  bm_all  bm_all
    add portgroup to vns  bm_all  bm_all  p1  -1
@@ -61,6 +61,7 @@ Add all hosts to a VNS and verify connectivity, Reboot and re-verify
    sleep  15
    mininet ping all
    cli verify cluster master reboot
+   sleep 60
    mininet ping all
    delete a tenant  bm_all
 
@@ -153,8 +154,8 @@ T5 base suite setup
    sleep  5
    add fabric switch
    sleep  5
-   rest verify fabric switch all
-   rest verify fabric link 
+   #rest verify fabric switch all
+   #rest verify fabric link 
    sleep  5
    add a portgroup  p1 
    add interface to portgroup  leaf0-a  ${bm0_intf0}  p1
@@ -177,6 +178,7 @@ T5 base suite setup
    sleep  5
 
 T5 base suite teardown   
+   delete a tenant  bm_all
    delete interface from portgroup  leaf0-a  ${bm0_intf0}  p1
    delete interface from portgroup  leaf0-b  ${bm0_intf1}  p1
    delete a portgroup  p1

@@ -4,17 +4,17 @@
 Documentation    T5 Platform Smoke/Sanity Test Suite
 Suite Setup      base suite setup
 Suite Teardown   base suite teardown
-#Test Setup       T5 base test setup
+Test Setup       T5 base test setup
 Test Teardown    T5 base test teardown
 Force Tags       T5 
 Library          keywords/BsnCommon.py
-Library          keywords_dev/prashanth/T5.py
-Library	         keywords_dev/prashanth/T5Fabric.py
-Library			 keywords_dev/don/T5Platform.py
-Library			 keywords_dev/don/T5PlatformCommon.py
+Library		 keywords_dev/don/T5Platform.py
+Library		 keywords_dev/don/T5PlatformCommon.py
 Library          keywords/Mininet.py
 Library	    	 keywords/Host.py
-Resource		 keywords_dev/prashanth/t5_dualleaf_three_rack_physical_resource.txt
+Resource	 keywords_dev/prashanth/t5_dualleaf_three_rack_physical_resource.txt
+Library          keywords_dev/prashanth/T5.py
+Library	         keywords_dev/prashanth/T5Fabric.py
 
 * Variables
 ${h4_ip}  192.168.0.11
@@ -55,7 +55,7 @@ Add physical switches to the controller
    rest verify fabric link 
    
 Add h1,h2,h3 in to a VNS and verify the connectivity
-   [Tags]  sanity  skipped
+   [Tags]  sanity  skipped 
    add a tenant  h1h2h3
    add a vns  h1h2h3  h1h2h3
    add portgroup to vns  h1h2h3  h1h2h3  p1  10
@@ -69,7 +69,7 @@ Add h1,h2,h3 in to a VNS and verify the connectivity
 
 
 Add h4,h5,h6 in to a VNS and verify the connectivity
-   [Tags]  sanity  skipped
+   [Tags]  sanity  skipped 
    add a tenant  h4h5h6
    add a vns  h4h5h6  h4h5h6
    add portgroup to vns  h4h5h6  h4h5h6  p4  -1
