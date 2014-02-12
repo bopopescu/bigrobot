@@ -118,7 +118,7 @@ class DevConf(object):
             #              % self._timeout, level=3)
             seconds = self._timeout
 
-        self.conn.set_timeout(self._timeout)
+        self.conn.set_timeout(seconds)
 
     def name(self):
         return self._name

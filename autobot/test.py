@@ -31,6 +31,7 @@ class Test(object):
             self._has_a_topo_file = False
             self._params = {}
             self._bigtest_node_info = {}
+            self._node_roles = {}
 
             self._bsn_config_file = ''.join((helpers.get_path_autobot_config(),
                                              '/bsn.yaml'))
@@ -398,8 +399,8 @@ class Test(object):
         for key in params:
             # Matches the following device types:
             #  Controllers: c1, c2, controller, controller1, controller2, master, slave
-            #  Mininet: mn1, mn2
-            #  Switches: s1, s2, spine1, leaf1
+            #  Mininet: mn, mn1, mn2
+            #  Switches: s1, s2, spine1, leaf1, filter1, delivery1
             #
             match = re.match(r'^(c\d|controller\d?|master|slave|mn\d?|mininet\d?|s\d+|spine\d+|leaf\d+|s\d+|h\d+|tg\d+)$', key)
             if not match:
