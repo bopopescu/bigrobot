@@ -107,10 +107,15 @@ class DevConf(object):
 
 
     def timeout(self, seconds=None):
+        """
+        Set the expect timeout to 'seconds'. If not specified, reset to
+        default timeout value.
+        """
         if seconds:
-            helpers.debug("Setting timeout to %s seconds" % seconds)
+            helpers.debug("Setting timeout to %s seconds" % seconds, level=3)
         else:
-            helpers.debug("Setting timeout to default - %s seconds" % self._timeout)
+            # helpers.debug("Setting timeout to default (%s seconds)"
+            #              % self._timeout, level=3)
             seconds = self._timeout
 
         self.conn.set_timeout(self._timeout)
@@ -134,7 +139,7 @@ class DevConf(object):
         cmd = ''.join((cmd, '\r'))
         self.conn.send(cmd)
 
-    def expect(self, prompt, quiet=False, level=4):
+    def expect(self, prompt, timeout=None, quiet=False, level=4):
         """
         Invoking low-level send/expect commands to the device. This is a
         wrapper for Exscript's expect(). Use with caution!!!
@@ -144,11 +149,13 @@ class DevConf(object):
 
         See http://knipknap.github.io/exscript/api/Exscript.protocols.Protocol-class.html#expect
         """
+        if timeout: self.timeout(timeout)
         if not quiet:
             helpers.log("Expecting prompt '%s'" % prompt, level=level)
 
         try:
             ret_val = self.conn.expect(prompt)
+
             self.last_result = {'content': self.conn.response}
             if not quiet:
                 helpers.log("Expect content:\n%s%s"
@@ -170,10 +177,11 @@ class DevConf(object):
                            self.conn.buffer.__str__(),
                            br_utils.end_of_output_marker()))
             raise
+        if timeout: self.timeout()
 
         return ret_val
 
-    def waitfor(self, prompt, quiet=False, level=4):
+    def waitfor(self, prompt, timeout=None, quiet=False, level=4):
         """
         Invoking low-level send/expect commands to the device. This is a
         wrapper for Exscript's waitfor(). Use with caution!!!
@@ -183,11 +191,13 @@ class DevConf(object):
 
         See http://knipknap.github.io/exscript/api/Exscript.protocols.Protocol-class.html#waitfor
         """
+        if timeout: self.timeout(timeout)
         if not quiet:
             helpers.log("Expecting waitfor prompt '%s'" % prompt, level=level)
 
         try:
             self.conn.waitfor(prompt)
+
             self.last_result = { 'content': self.conn.response }
             if not quiet:
                 helpers.log("Waitfor (expect) content:\n%s%s"
@@ -204,8 +214,10 @@ class DevConf(object):
             helpers.log("Unexpected waitfor exception in %s"
                         % sys.exc_info()[0])
             raise
+        if timeout: self.timeout()
 
-    def cmd(self, cmd, quiet=False, mode=None, prompt=None, level=5):
+    def cmd(self, cmd, quiet=False, mode=None, prompt=None, timeout=None, level=5):
+        if timeout: self.timeout(timeout)
         if prompt:
             helpers.log("Expected prompt is '%s'" % prompt)
             self.conn.set_prompt(prompt)
@@ -219,10 +231,13 @@ class DevConf(object):
             helpers.log("Execute command: '%s'" % cmd, level=level)
 
         self.conn.execute(cmd)
+
         self.last_result = { 'content': self.conn.response }
 
         if not quiet:
             helpers.log("Command content:\n%s" % self.content(), level=level)
+
+        if timeout: self.timeout()
 
         return self.result()
 
@@ -256,12 +271,12 @@ class BsnDevConf(DevConf):
                  port=None, is_console=False, console_driver=None,
                  timeout=None, debug=0):
         super(BsnDevConf, self).__init__(host, user, password,
-                                                port=port,
-                                                is_console=is_console,
-                                                console_driver=console_driver,
-                                                name=name,
-                                                timeout=timeout,
-                                                debug=debug)
+                                         port=port,
+                                         is_console=is_console,
+                                         console_driver=console_driver,
+                                         name=name,
+                                         timeout=timeout,
+                                         debug=debug)
         self.mode_before_bash = None
 
     def is_cli(self):
@@ -282,7 +297,7 @@ class BsnDevConf(DevConf):
         super(BsnDevConf, self).cmd('exit', quiet=True)
         helpers.log("Current mode is %s" % self.mode)
 
-    def _cmd(self, cmd, quiet=False, mode='cmd', prompt=None, level=5):
+    def _cmd(self, cmd, quiet=False, mode='cmd', prompt=None, timeout=None, level=5):
 
         # Check to make sure we're in the right mode prior to executing command
         if mode == 'cli':
@@ -337,7 +352,8 @@ class BsnDevConf(DevConf):
         if not quiet:
             helpers.log("Execute command on '%s': '%s'" % (self.name(), cmd), level=level)
 
-        super(BsnDevConf, self).cmd(cmd, prompt=prompt, quiet=True)
+        super(BsnDevConf, self).cmd(cmd, prompt=prompt, timeout=timeout, quiet=True)
+
         if not quiet:
             helpers.log("%s content on '%s':\n%s%s"
                         % (mode, self.name(), self.content(),
@@ -362,21 +378,21 @@ class BsnDevConf(DevConf):
             helpers.log("Unexpected error: %s" % sys.exc_info()[0])
             raise
 
-    def cli(self, cmd, quiet=False, prompt=False, level=5):
-        return self.cmd(cmd, quiet=quiet, mode='cli', prompt=prompt, level=level)
+    def cli(self, cmd, quiet=False, prompt=False, timeout=None, level=5):
+        return self.cmd(cmd, quiet=quiet, mode='cli', prompt=prompt, timeout=timeout, level=level)
 
-    def enable(self, cmd, quiet=False, prompt=False, level=5):
-        return self.cmd(cmd, quiet=quiet, mode='enable', prompt=prompt, level=level)
+    def enable(self, cmd, quiet=False, prompt=False, timeout=None, level=5):
+        return self.cmd(cmd, quiet=quiet, mode='enable', prompt=prompt, timeout=timeout, level=level)
 
-    def config(self, cmd, quiet=False, prompt=False, level=5):
-        return self.cmd(cmd, quiet=quiet, mode='config', prompt=prompt, level=level)
+    def config(self, cmd, quiet=False, prompt=False, timeout=None, level=5):
+        return self.cmd(cmd, quiet=quiet, mode='config', prompt=prompt, timeout=timeout, level=level)
 
-    def bash(self, cmd, quiet=False, prompt=False, level=5):
-        return self.cmd(cmd, quiet=quiet, mode='bash', prompt=prompt, level=level)
+    def bash(self, cmd, quiet=False, prompt=False, timeout=None, level=5):
+        return self.cmd(cmd, quiet=quiet, mode='bash', prompt=prompt, timeout=timeout, level=level)
 
-    def sudo(self, cmd, quiet=False, prompt=False, level=5):
+    def sudo(self, cmd, quiet=False, prompt=False, timeout=None, level=5):
         return self.cmd(' '.join(('sudo', cmd)), quiet=quiet, mode='bash',
-                        prompt=prompt, level=level)
+                        prompt=prompt, timeout=timeout, level=level)
 
     def close(self):
         super(BsnDevConf, self).close()
@@ -441,12 +457,12 @@ class MininetDevConf(DevConf):
                                              timeout=timeout, debug=debug)
         self.start_mininet()
 
-    def _cmd(self, cmd, quiet=False, prompt=False, level=4):
+    def _cmd(self, cmd, quiet=False, prompt=False, timeout=None, level=4):
         if not quiet:
             helpers.log("Execute command on '%s': %s"
                         % (self.name(), cmd), level=level)
 
-        super(MininetDevConf, self).cmd(cmd, prompt=prompt, quiet=True)
+        super(MininetDevConf, self).cmd(cmd, prompt=prompt, timeout=timeout, quiet=True)
         if not quiet:
             helpers.log("Content on '%s':\n%s%s"
                         % (self.name(), self.content(),
@@ -553,12 +569,12 @@ class HostDevConf(DevConf):
                                           debug=debug)
         self.bash('uname -a')
 
-    def _cmd(self, cmd, quiet=False, prompt=False, level=4):
+    def _cmd(self, cmd, quiet=False, prompt=False, timeout=None, level=4):
         if not quiet:
             helpers.log("Execute command on '%s': '%s'"
                         % (self.name(), cmd), level=level)
 
-        super(HostDevConf, self).cmd(cmd, prompt=prompt, quiet=True)
+        super(HostDevConf, self).cmd(cmd, prompt=prompt, timeout=None, quiet=True)
         if not quiet:
             helpers.log("Content on '%s':\n%s%s"
                         % (self.name(), self.content(),

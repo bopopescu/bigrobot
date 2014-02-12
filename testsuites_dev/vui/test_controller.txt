@@ -25,11 +25,12 @@ Get controller handles
     #cli save running config
     cli show user
 
-Test is master
+Test session reconnect (SSH reconnect)
     [Tags]  skipped
     check mastership  c1
 
 Test bash command
+    [Tags]  skipped
     cli show user  c1
     bash command   c1  uptime
     cli reboot     c1
@@ -39,3 +40,5 @@ Test bash command
     bash command   c1  uname -a
     cli show user  c1
 
+Test bash command
+    bash command   c1  uname -a

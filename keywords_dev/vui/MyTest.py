@@ -269,6 +269,6 @@ admin_user = glance
     def bash_command(self, node, cmd):
         t = test.Test()
         n = t.node(node)
-        n.bash(cmd)
+        n.bash(cmd, timeout=20)
         # helpers.log("Bash result: %s" % n.bash_result())
         # helpers.log("Bash content: %s" % n.bash_content())
