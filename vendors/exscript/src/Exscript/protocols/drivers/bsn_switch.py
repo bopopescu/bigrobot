@@ -28,7 +28,7 @@ _tacacs_re = re.compile(r'[\r\n]s\/key[\S ]+\r?%s' % _password_re[0].pattern)
 # Expected prompts:
 #   CLI:     qa-1-leaf-1>
 #
-_prompt_re = [re.compile(r'[\r\n](\w+\s?@?)?[\-\w+\.:/]+(?:\([^\)]+\))?(:~)?[>#$] ?$')]
+_prompt_re = [re.compile(r'[\r\n](\w+(-?\w+)?\s?@?)?[\-\w+\.:/]+(?:\([^\)]+\))?(:~)?[>#$] ?$')]
 
 
 _error_re = [re.compile(r'%Error'),
