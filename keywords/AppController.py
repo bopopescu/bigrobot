@@ -87,8 +87,11 @@ class AppController(object):
                 c.rest.get(url)
                 content = c.rest.content()
                 for x in range(0, len(content)):
-                    if str(content[x]['inet-address']['ip']) == switch.ip():
-                        return content[x]['dpid']
+                    if content[x].has_key('inet-address'):
+                        if str(content[x]['inet-address']['ip']) == switch.ip():
+                            return content[x]['dpid']
+                    else:
+                        helpers.log("Looks like %s is a disconnected switch" % (content[x]['dpid']))
                 return False
             except:
                 return False
