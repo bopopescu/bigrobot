@@ -30,6 +30,7 @@ class BsnCommon(object):
 
     def base_suite_teardown(self):
         t = test.Test()
+        t.teardown()
         for n in t.topology():
             node = t.node(n)
             if helpers.is_controller(n) or helpers.is_mininet(n):

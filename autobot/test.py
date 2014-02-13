@@ -576,7 +576,7 @@ class Test(object):
                 node_ids.append(node)
         return node_ids
 
-    def controller_cli_firewall_allow_rest_access(self, name, node_id):
+    def _controller_cli_firewall_allow_rest_access(self, name, node_id):
         n = self.topology(name)
 
         if not n.dev:
@@ -609,7 +609,7 @@ class Test(object):
             node_ids = self.controller_get_node_ids(config)
             helpers.log("node_ids: %s" % node_ids)
             for node_id in node_ids:
-                self.controller_cli_firewall_allow_rest_access(name, node_id)
+                self._controller_cli_firewall_allow_rest_access(name, node_id)
         else:
             helpers.environment_failure("'%s' is not a known controller (platform=%s)" % (name, platform))
 
@@ -643,6 +643,8 @@ class Test(object):
             helpers.log("DevConf session is not available for node '%s'" % name)
             return
 
+        helpers.log("Setting up switches (SwitchLight)")
+
         for controller in ('c1', 'c2'):
             c = self.topology(controller, ignore_error=True)
             if c:
@@ -651,6 +653,33 @@ class Test(object):
                     n.config("controller %s port %s" % (c.ip(), openflow_port))
                 else:
                     n.config("controller %s" % c.ip())
+
+    def teardown_switch(self, name):
+        """
+        Perform teardown on SwitchLight
+        - delete the controller IP address
+        """
+        n = self.topology(name)
+
+        if not n.dev:
+            helpers.log("DevConf session is not available for node '%s'" % name)
+            return
+
+        helpers.log("Tearing down switches (SwitchLight)")
+        content = n.config("show running-config")['content']
+        lines = content.splitlines()
+
+        # Find lines with the following config statements:
+        #   controller 10.192.5.51
+        #   controller 10.192.104.1 port 6633
+        lines = filter(lambda x: 'controller' in x, lines)
+
+        for line in lines:
+            # Form commands:
+            #   no controller 10.192.5.51
+            #   no controller 10.192.104.1 port 6633
+            cmd = 'no ' + line
+            n.config(cmd)
 
     def setup(self):
         # This check ensures we  don't try to setup multiple times.
@@ -671,3 +700,11 @@ class Test(object):
                 self.setup_switch(key)
 
         self._setup_completed = True
+
+    def teardown(self):
+        params = self.topology_params()
+        for key in params:
+            if helpers.is_controller(key):
+                pass
+            elif helpers.is_switch(key):
+                self.teardown_switch(key)
