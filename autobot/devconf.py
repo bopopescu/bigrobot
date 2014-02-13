@@ -82,16 +82,16 @@ class DevConf(object):
                 self.conn.connect(self._host, self._port)
                 self.conn.login(account)
         except LoginFailure:
-            helpers.test_error("Login failure: Check the user name and password"
-                               " for device %s (user:%s, password:%s). Also try"
-                               " to log in manually to see what the error is."
-                               % (self._host, self._user, self._password))
+            helpers.environment_failure("Login failure: Check the user name and password"
+                                        " for device %s (user:%s, password:%s). Also try"
+                                        " to log in manually to see what the error is."
+                                        % (self._host, self._user, self._password))
             # helpers.log("Exception in %s" % sys.exc_info()[0])
             # raise
         except TimeoutException:
-            helpers.test_error("Login failure: Timed out during SSH connnect"
-                               " to device %s. Try to log in manually to see"
-                               " what the error is." % self._host)
+            helpers.environment_failure("Login failure: Timed out during SSH connnect"
+                                        " to device %s. Try to log in manually to see"
+                                        " what the error is." % self._host)
             # helpers.log("Exception in %s" % sys.exc_info()[0])
             # raise
         except:
@@ -162,11 +162,11 @@ class DevConf(object):
                             % (self.content(), br_utils.end_of_output_marker()),
                             level=level)
         except TimeoutException:
-            helpers.test_error("Expect failure: Timed out during expect prompt '%s'\n"
-                               "Expect buffer:\n%s%s"
-                               % (prompt,
-                                  self.conn.buffer.__str__(),
-                                  br_utils.end_of_output_marker()))
+            helpers.environment_failure("Expect failure: Timed out during expect prompt '%s'\n"
+                                        "Expect buffer:\n%s%s"
+                                        % (prompt,
+                                           self.conn.buffer.__str__(),
+                                           br_utils.end_of_output_marker()))
             # raise
             # helpers.log("Exception in %s" % sys.exc_info()[0])
             # raise
@@ -363,20 +363,21 @@ class BsnDevConf(DevConf):
 
     def cmd(self, *args, **kwargs):
         try:
-            self._cmd(*args, **kwargs)
+            result = self._cmd(*args, **kwargs)
         except socket.error, e:
             error_str = str(e)
             helpers.log("socket.error: e: %s" % error_str)
             if re.match(r'Socket is closed', error_str):
                 helpers.log("Socket is closed. Reconnecting...")
                 self.connect()
-                self._cmd(*args, **kwargs)
+                result = self._cmd(*args, **kwargs)
             else:
                 helpers.log("Unexpected socket error: %s" % sys.exc_info()[0])
                 raise
         except:
             helpers.log("Unexpected error: %s" % sys.exc_info()[0])
             raise
+        return result
 
     def cli(self, cmd, quiet=False, prompt=False, timeout=None, level=5):
         return self.cmd(cmd, quiet=quiet, mode='cli', prompt=prompt, timeout=timeout, level=level)
@@ -472,20 +473,21 @@ class MininetDevConf(DevConf):
 
     def cmd(self, *args, **kwargs):
         try:
-            self._cmd(*args, **kwargs)
+            result = self._cmd(*args, **kwargs)
         except socket.error, e:
             error_str = str(e)
             helpers.log("socket.error: e: %s" % error_str)
             if re.match(r'Socket is closed', error_str):
                 helpers.log("Socket is closed. Reconnecting...")
                 self.connect()
-                self._cmd(*args, **kwargs)
+                result = self._cmd(*args, **kwargs)
             else:
                 helpers.log("Unexpected socket error: %s" % sys.exc_info()[0])
                 raise
         except:
             helpers.log("Unexpected error: %s" % sys.exc_info()[0])
             raise
+        return result
 
     # Alias
     cli = cmd
@@ -550,9 +552,9 @@ class T6MininetDevConf(MininetDevConf):
         if self.controller2:
             # Start Mininet with dual controllers
             return ("sudo /opt/t6-mininet/run.sh -c %s:%s -c %s:%s %s"
-                % (self.controller, self.openflow_port,
-                   self.controller2, self.openflow_port,
-                   self.topology))
+                    % (self.controller, self.openflow_port,
+                       self.controller2, self.openflow_port,
+                       self.topology))
         else:
             return ("sudo /opt/t6-mininet/run.sh -c %s:%s %s"
                     % (self.controller, self.openflow_port, self.topology))
@@ -584,20 +586,21 @@ class HostDevConf(DevConf):
 
     def cmd(self, *args, **kwargs):
         try:
-            self._cmd(*args, **kwargs)
+            result = self._cmd(*args, **kwargs)
         except socket.error, e:
             error_str = str(e)
             helpers.log("socket.error: e: %s" % error_str)
             if re.match(r'Socket is closed', error_str):
                 helpers.log("Socket is closed. Reconnecting...")
                 self.connect()
-                self._cmd(*args, **kwargs)
+                result = self._cmd(*args, **kwargs)
             else:
                 helpers.log("Unexpected socket error: %s" % sys.exc_info()[0])
                 raise
         except:
             helpers.log("Unexpected error: %s" % sys.exc_info()[0])
             raise
+        return result
 
     # Alias
     bash = cmd
