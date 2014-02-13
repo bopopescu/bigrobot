@@ -82,16 +82,16 @@ class DevConf(object):
                 self.conn.connect(self._host, self._port)
                 self.conn.login(account)
         except LoginFailure:
-            helpers.test_error("Login failure: Check the user name and password"
-                               " for device %s (user:%s, password:%s). Also try"
-                               " to log in manually to see what the error is."
-                               % (self._host, self._user, self._password))
+            helpers.environment_failure("Login failure: Check the user name and password"
+                                        " for device %s (user:%s, password:%s). Also try"
+                                        " to log in manually to see what the error is."
+                                        % (self._host, self._user, self._password))
             # helpers.log("Exception in %s" % sys.exc_info()[0])
             # raise
         except TimeoutException:
-            helpers.test_error("Login failure: Timed out during SSH connnect"
-                               " to device %s. Try to log in manually to see"
-                               " what the error is." % self._host)
+            helpers.environment_failure("Login failure: Timed out during SSH connnect"
+                                        " to device %s. Try to log in manually to see"
+                                        " what the error is." % self._host)
             # helpers.log("Exception in %s" % sys.exc_info()[0])
             # raise
         except:
@@ -162,11 +162,11 @@ class DevConf(object):
                             % (self.content(), br_utils.end_of_output_marker()),
                             level=level)
         except TimeoutException:
-            helpers.test_error("Expect failure: Timed out during expect prompt '%s'\n"
-                               "Expect buffer:\n%s%s"
-                               % (prompt,
-                                  self.conn.buffer.__str__(),
-                                  br_utils.end_of_output_marker()))
+            helpers.environment_failure("Expect failure: Timed out during expect prompt '%s'\n"
+                                        "Expect buffer:\n%s%s"
+                                        % (prompt,
+                                           self.conn.buffer.__str__(),
+                                           br_utils.end_of_output_marker()))
             # raise
             # helpers.log("Exception in %s" % sys.exc_info()[0])
             # raise

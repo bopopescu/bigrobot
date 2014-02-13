@@ -198,15 +198,15 @@ class Test(object):
         """
         if node:
             if node not in self._topology_params:
-                helpers.test_error("Node '%s' is not defined in topology file"
-                                   % node)
+                helpers.environment_failure("Node '%s' is not defined in topology file"
+                                            % node)
             else:
                 if key:
                     if key not in self._topology_params[node]:
                         if default:
                             self._topology_params[node][key] = default
                             return default
-                        helpers.test_error("Node '%s' does not have attribute '%s' defined"
+                        helpers.environment_failure("Node '%s' does not have attribute '%s' defined"
                                            % (node, key))
                     else:
                         return self._topology_params[node][key]
@@ -375,7 +375,7 @@ class Test(object):
         elif 'name' in kwargs:
             node = kwargs['name']
         else:
-            helpers.test_error("Impossible state.")
+            helpers.environment_failure("Impossible state.")
 
         if node == 'mn':
             node = 'mn1'
