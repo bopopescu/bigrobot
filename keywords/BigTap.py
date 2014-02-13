@@ -236,25 +236,30 @@ class BigTap(object):
 
             if content[0]['runtime-status'] == "installed":
                 helpers.test_log("Policy correctly reports runtime status as : %s" % content[0]['runtime-status'])
+            elif content[0]['runtime-status'] == "inactive":
+                helpers.test_log("Policy correctly reports runtime status as : %s" % content[0]['runtime-status'])
             else:
                 helpers.test_failure("Policy does not correctly report runtime status as : %s" % content[0]['runtime-status'])
                 return False
 
-            if content[0]['delivery-interface-count'] == int(num_delivery_intf):
-                helpers.test_log("Policy correctly reports number of delivery interfaces as : %s" % content[0]['delivery-interface-count'])
-            else:
-                helpers.test_failure("Policy does not correctly report number of delivery interfaces  : %s" % content[0]['delivery-interface-count'])
-                return False
-
-            if content[0]['filter-interface-count'] == int(num_filter_intf):
-                helpers.test_log("Policy correctly reports number of filter interfaces as : %s" % content[0]['filter-interface-count'])
-            else:
-                helpers.test_failure("Policy does not correctly report number of filter interfaces  : %s" % content[0]['filter-interface-count'])
-                return False
+            if (num_delivery_intf is not None):
+                if content[0]['delivery-interface-count'] == int(num_delivery_intf):
+                    helpers.test_log("Policy correctly reports number of delivery interfaces as : %s" % content[0]['delivery-interface-count'])
+                else:
+                    helpers.test_failure("Policy does not correctly report number of delivery interfaces  : %s" % content[0]['delivery-interface-count'])
+                    return False
+            if (num_filter_intf is not None):
+                if content[0]['filter-interface-count'] == int(num_filter_intf):
+                    helpers.test_log("Policy correctly reports number of filter interfaces as : %s" % content[0]['filter-interface-count'])
+                else:
+                    helpers.test_failure("Policy does not correctly report number of filter interfaces  : %s" % content[0]['filter-interface-count'])
+                    return False
 
             if content[0]['detailed-status'] == "installed to forward":
                 helpers.test_log("Policy correctly reports detailed status as : %s" % content[0]['detailed-status'])
             elif content[0]['detailed-status'] == "installed to measure rate":
+                helpers.test_log("Policy correctly reports detailed status as : %s" % content[0]['detailed-status'])
+            elif content[0]['detailed-status'] == "inactive":
                 helpers.test_log("Policy correctly reports detailed status as : %s" % content[0]['detailed-status'])
             else:
                 helpers.test_failure("Policy does not correctly report detailed status as : %s" % content[0]['detailed-status'])
@@ -332,7 +337,7 @@ class BigTap(object):
 # All Bigtap Configuration Commands Go Here:
 ###################################################
 
-    def rest_add_interface_role(self, intf_name, intf_type, intf_nickname, switch_alias=None, sw_dpid=None):
+    def rest_add_interface_role(self, node, intf_name, intf_type, intf_nickname=None, switch_alias=None, sw_dpid=None):
         '''
             Objective:
             - Execute the CLI command 'bigtap role filter interface-name F1'
@@ -353,19 +358,33 @@ class BigTap(object):
             return False
         else:
             c = t.controller('master')
+            switch = t.switch(node)
             AppCommon = AppController.AppController()
             try:
                 if (switch_alias is None and sw_dpid is not None):
                     switch_dpid = sw_dpid
                 elif (switch_alias is None and sw_dpid is None):
-                    helpers.log('Either Switch DPID or Switch Alias has to be provided')
-                    return False
+                    switch_dpid = AppCommon.rest_return_switch_dpid_from_ip(node)
                 elif (switch_alias is not None and sw_dpid is None):
                     switch_dpid = AppCommon.rest_return_switch_dpid_from_alias(switch_alias)
                 else:
                     switch_dpid = sw_dpid
+
+                if(intf_nickname is None):
+                    if ((intf_type is "filter") or (intf_type is "Filter")):
+                        intfName = intf_name
+                        intfNick = str(switch.ip()).replace(".", "-") + "-F" + intfName[-2:]
+                    elif ((intf_type is "delivery") or (intf_type is "Delivery")):
+                        intfName = intf_name
+                        intfNick = str(switch.ip()).replace(".", "-") + "-D" + intfName[-2:]
+                    else:
+                        intfName = intf_name
+                        intfNick = str(switch.ip()).replace(".", "-") + "-S" + intfName[-2:]
+                else:
+                    intfNick = intf_nickname
                 url = '/api/v1/data/controller/applications/bigtap/interface-config[interface="%s"][switch="%s"]' % (str(intf_name), str(switch_dpid))
-                c.rest.put(url, {"interface": str(intf_name), "switch": str(switch_dpid), 'role':str(intf_type), 'name':str(intf_nickname)})
+                c.rest.put(url, {"interface": str(intf_name), "switch": str(switch_dpid), 'role':str(intf_type), 'name':str(intfNick)})
+
             except:
                 helpers.test_log(c.rest.error())
                 return False
@@ -373,7 +392,7 @@ class BigTap(object):
                 helpers.test_log(c.rest.content_json())
                 return True
 
-    def rest_delete_interface_role(self, intf_name, intf_type, intf_nickname, switch_alias=None, sw_dpid=None):
+    def rest_delete_interface_role(self, node, intf_name, intf_type, intf_nickname=None, switch_alias=None, sw_dpid=None):
         '''
             Objective:
             - Delete filter/service/delivery interface from switch configuration. 
@@ -397,27 +416,38 @@ class BigTap(object):
             return False
         else:
             c = t.controller('master')
+            switch = t.switch(node)
             AppCommon = AppController.AppController()
             try:
                 if (switch_alias is None and sw_dpid is not None):
                     switch_dpid = sw_dpid
                 elif (switch_alias is None and sw_dpid is None):
-                    helpers.test_log('Either Switch DPID or Switch Alias has to be provided')
-                    return False
+                    switch_dpid = AppCommon.rest_return_switch_dpid_from_ip(node)
                 elif (switch_alias is not None and sw_dpid is None):
                     switch_dpid = AppCommon.rest_return_switch_dpid_from_alias(switch_alias)
                 else:
                     switch_dpid = sw_dpid
-
+                if(intf_nickname is None):
+                    if ((intf_type is "filter") or (intf_type is "Filter")):
+                        intfName = intf_name
+                        intfNick = str(switch.ip()).replace(".", "-") + "-F" + intfName[-2:]
+                    elif ((intf_type is "delivery") or (intf_type is "Delivery")):
+                        intfName = intf_name
+                        intfNick = str(switch.ip()).replace(".", "-") + "-D" + intfName[-2:]
+                    else:
+                        intfName = intf_name
+                        intfNick = str(switch.ip()).replace(".", "-") + "-S" + intfName[-2:]
+                else:
+                    intfNick = intf_nickname
                 url = '/api/v1/data/controller/applications/bigtap/interface-config[interface="%s"][switch="%s"]' % (str(intf_name), str(switch_dpid))
-                c.rest.delete(url, {'role':str(intf_type), "name": str(intf_nickname)})
+                c.rest.delete(url, {'role':str(intf_type), "name": str(intfNick)})
             except:
                 helpers.test_log(c.rest.error())
                 return False
             else:
                 return True
 
-    def rest_delete_interface(self, intf_name, switch_alias=None, sw_dpid=None):
+    def rest_delete_interface(self, node, intf_name, switch_alias=None, sw_dpid=None):
         '''
             Objective
             - Delete interface from switch
@@ -436,13 +466,13 @@ class BigTap(object):
             return False
         else:
             c = t.controller('master')
+            switch = t.switch(node)
             AppCommon = AppController.AppController()
             try:
                 if (switch_alias is None and sw_dpid is not None):
                     switch_dpid = sw_dpid
                 elif (switch_alias is None and sw_dpid is None):
-                    helpers.log('Either Switch DPID or Switch Alias has to be provided')
-                    return False
+                    switch_dpid = AppCommon.rest_return_switch_dpid_from_ip(node)
                 elif (switch_alias is not None and sw_dpid is None):
                     switch_dpid = AppCommon.rest_return_switch_dpid_from_alias(switch_alias)
                 else:
@@ -1161,18 +1191,18 @@ class BigTap(object):
             | True | configuration add is successful.|
             | False | configuration add is unsuccessful.|
         '''
-        t = test.Test()
-        c = t.controller('master')
-        url = '/api/v1/data/controller/applications/bigtap/ip-address-set[name="%s"]' % (str(name))
-        c.rest.put(url, {"name": str(name)})
-        helpers.sleep(1)
+        try:
+            t = test.Test()
+            c = t.controller('master')
+            url = '/api/v1/data/controller/applications/bigtap/ip-address-set[name="%s"]' % (str(name))
+            c.rest.put(url, {"name": str(name)})
+            helpers.sleep(1)
 
-        url = '/api/v1/data/controller/applications/bigtap/ip-address-set[name="%s"]' % (str(name))
+            url = '/api/v1/data/controller/applications/bigtap/ip-address-set[name="%s"]' % (str(name))
 
-        c.rest.patch(url, {"ip-address-type": str(addr_type)})
-        helpers.sleep(1)
-        if not c.rest.status_code_ok():
-            helpers.test_log(c.rest.error())
+            c.rest.patch(url, {"ip-address-type": str(addr_type)})
+            helpers.sleep(1)
+        except:
             return False
         else:
             helpers.test_log(c.rest.content_json())
@@ -1193,19 +1223,20 @@ class BigTap(object):
             | False | configuration add is unsuccessful.|
         '''
         # create the address group and associate the type
-        t = test.Test()
-        c = t.controller('master')
+        try:
+            t = test.Test()
+            c = t.controller('master')
 
-        url = ('/api/v1/data/controller/applications/bigtap/ip-address-set[name="%s"]/address-mask-set[ip="%s"][ip-mask="%s"]'
-               % (str(name), str(addr), str(mask)))
+            url = ('/api/v1/data/controller/applications/bigtap/ip-address-set[name="%s"]/address-mask-set[ip="%s"][ip-mask="%s"]'
+                   % (str(name), str(addr), str(mask)))
 
-        c.rest.put(url, {"ip": str(addr), "ip-mask": str(mask)})
-        helpers.sleep(1)
-        helpers.test_log(c.rest.content_json())
-
-        if not c.rest.status_code_ok():
+            c.rest.put(url, {"ip": str(addr), "ip-mask": str(mask)})
+            helpers.sleep(1)
+            helpers.test_log(c.rest.content_json())
+        except:
             return False
         else:
+            helpers.test_log(c.rest.content_json())
             return True
 
 
