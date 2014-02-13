@@ -279,3 +279,54 @@ admin_user = glance
         c.rest.get("/rest/v1/system/ha/role")
         controllers = t.controllers()
         helpers.log("*** Controllers: %s" % controllers)
+
+    def _build_link_list(self, list):
+        updated_list = []
+        for l in list:
+            src_switch = l['src']['interface']['name']
+            src_intf = l['src']['switch-info']['switch-name']
+            dst_switch = l['dst']['interface']['name']
+            dst_intf = l['dst']['switch-info']['switch-name']
+            key = "%s %s %s %s" % (src_switch, src_intf, dst_switch, dst_intf)
+
+            # Convert unicode to ascii
+            updated_list.append(key.encode('ascii', 'ignore'))
+        return updated_list
+
+    def _list_compare(self, l1, l2):
+        l1 = sorted(l1)
+        l2 = sorted(l2)
+
+        if len(l1) != len(l2):
+            print "not same list - lengths are different"
+            return
+
+        for i, _ in enumerate(l1):
+            if l1[i] != l2[i]:
+                print "not same list - l1[%s]('%s') != l2[%s]('%s')" % (i, l1[i], i, l2[i])
+                return
+
+        print "lists are same"
+        return
+
+    def verify_fabric_links(self, node):
+        t = test.Test()
+        c = t.controller(node)
+
+        # Initial state
+        content1 = c.rest.get('/api/v1/data/controller/applications/bvs/info/fabric?select=link')['content']
+        link_list1 = self._build_link_list(content1[0]['link'])
+        helpers.log("link_list1:\n%s" % helpers.prettify(link_list1))
+
+        # Some stuff happened around here...
+
+        # Next state (after reboot)
+        content2 = c.rest.get('/api/v1/data/controller/applications/bvs/info/fabric?select=link')['content']
+        link_list2 = self._build_link_list(content2[0]['link'])
+
+        # For negative test... You can inject a bad entry
+        link_list2.append("bad entry")
+
+        helpers.log("link_list2:\n%s" % helpers.prettify(link_list2))
+
+        self._list_compare(link_list1, link_list2)
