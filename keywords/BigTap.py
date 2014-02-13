@@ -1223,19 +1223,20 @@ class BigTap(object):
             | False | configuration add is unsuccessful.|
         '''
         # create the address group and associate the type
-        t = test.Test()
-        c = t.controller('master')
+        try:
+            t = test.Test()
+            c = t.controller('master')
 
-        url = ('/api/v1/data/controller/applications/bigtap/ip-address-set[name="%s"]/address-mask-set[ip="%s"][ip-mask="%s"]'
-               % (str(name), str(addr), str(mask)))
+            url = ('/api/v1/data/controller/applications/bigtap/ip-address-set[name="%s"]/address-mask-set[ip="%s"][ip-mask="%s"]'
+                   % (str(name), str(addr), str(mask)))
 
-        c.rest.put(url, {"ip": str(addr), "ip-mask": str(mask)})
-        helpers.sleep(1)
-        helpers.test_log(c.rest.content_json())
-
-        if not c.rest.status_code_ok():
+            c.rest.put(url, {"ip": str(addr), "ip-mask": str(mask)})
+            helpers.sleep(1)
+            helpers.test_log(c.rest.content_json())
+        except:
             return False
         else:
+            helpers.test_log(c.rest.content_json())
             return True
 
 
