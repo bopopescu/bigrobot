@@ -9,7 +9,6 @@ Library         keywords/BsnCommon.py
 #Library         keywords/Controller.py
 Library         keywords_dev/vui/MyTest.py
 Library         keywords/Ixia.py
-Library		keywords_dev/arun/example.py
 
 
 * Test Case
@@ -83,17 +82,17 @@ Test IXIA4
     
  Test IXIA_7
 # Basic test case with all default values and etherytype 8100, with vlan id
-	[Tags]  skipped
     IXIA initialize        tg1
     ${stream}=             IXIA L2 add  flow=a<-b  ethertype=8100  vlan_id=199  frame_size=68
     IXIA start L2 traffic  ${stream}
-    sleep                  260
+    sleep                  10
     IXIA stop L2 traffic   ${stream}
     sleep                  10
     ${report}=             IXIA fetch port stats
 
  Test IXIA_8
 # Basic test case with bad crc
+	[Tags]  skipped
     IXIA initialize        tg1
     ${stream}=             IXIA L2 add  flow=a<-b  crc=True
     IXIA start L2 traffic  ${stream}
