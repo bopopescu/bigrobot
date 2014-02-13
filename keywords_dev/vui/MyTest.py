@@ -272,3 +272,8 @@ admin_user = glance
         n.bash(cmd, timeout=20)
         # helpers.log("Bash result: %s" % n.bash_result())
         # helpers.log("Bash content: %s" % n.bash_content())
+
+    def ha_role(self, node):
+        t = test.Test()
+        c = t.controller(node)
+        c.rest.get("/rest/v1/system/ha/role")

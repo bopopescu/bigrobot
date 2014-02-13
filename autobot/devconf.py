@@ -363,20 +363,21 @@ class BsnDevConf(DevConf):
 
     def cmd(self, *args, **kwargs):
         try:
-            self._cmd(*args, **kwargs)
+            result = self._cmd(*args, **kwargs)
         except socket.error, e:
             error_str = str(e)
             helpers.log("socket.error: e: %s" % error_str)
             if re.match(r'Socket is closed', error_str):
                 helpers.log("Socket is closed. Reconnecting...")
                 self.connect()
-                self._cmd(*args, **kwargs)
+                result = self._cmd(*args, **kwargs)
             else:
                 helpers.log("Unexpected socket error: %s" % sys.exc_info()[0])
                 raise
         except:
             helpers.log("Unexpected error: %s" % sys.exc_info()[0])
             raise
+        return result
 
     def cli(self, cmd, quiet=False, prompt=False, timeout=None, level=5):
         return self.cmd(cmd, quiet=quiet, mode='cli', prompt=prompt, timeout=timeout, level=level)
@@ -472,20 +473,21 @@ class MininetDevConf(DevConf):
 
     def cmd(self, *args, **kwargs):
         try:
-            self._cmd(*args, **kwargs)
+            result = self._cmd(*args, **kwargs)
         except socket.error, e:
             error_str = str(e)
             helpers.log("socket.error: e: %s" % error_str)
             if re.match(r'Socket is closed', error_str):
                 helpers.log("Socket is closed. Reconnecting...")
                 self.connect()
-                self._cmd(*args, **kwargs)
+                result = self._cmd(*args, **kwargs)
             else:
                 helpers.log("Unexpected socket error: %s" % sys.exc_info()[0])
                 raise
         except:
             helpers.log("Unexpected error: %s" % sys.exc_info()[0])
             raise
+        return result
 
     # Alias
     cli = cmd
@@ -550,9 +552,9 @@ class T6MininetDevConf(MininetDevConf):
         if self.controller2:
             # Start Mininet with dual controllers
             return ("sudo /opt/t6-mininet/run.sh -c %s:%s -c %s:%s %s"
-                % (self.controller, self.openflow_port,
-                   self.controller2, self.openflow_port,
-                   self.topology))
+                    % (self.controller, self.openflow_port,
+                       self.controller2, self.openflow_port,
+                       self.topology))
         else:
             return ("sudo /opt/t6-mininet/run.sh -c %s:%s %s"
                     % (self.controller, self.openflow_port, self.topology))
@@ -584,20 +586,21 @@ class HostDevConf(DevConf):
 
     def cmd(self, *args, **kwargs):
         try:
-            self._cmd(*args, **kwargs)
+            result = self._cmd(*args, **kwargs)
         except socket.error, e:
             error_str = str(e)
             helpers.log("socket.error: e: %s" % error_str)
             if re.match(r'Socket is closed', error_str):
                 helpers.log("Socket is closed. Reconnecting...")
                 self.connect()
-                self._cmd(*args, **kwargs)
+                result = self._cmd(*args, **kwargs)
             else:
                 helpers.log("Unexpected socket error: %s" % sys.exc_info()[0])
                 raise
         except:
             helpers.log("Unexpected error: %s" % sys.exc_info()[0])
             raise
+        return result
 
     # Alias
     bash = cmd
