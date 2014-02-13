@@ -29,7 +29,7 @@ Test switch uptime
 
 Test switch info
     #[Tags]  skipped
-    switch info  s1
+    switch info  leaf1
 
 Test sanitize CLI output
     [Tags]  skipped

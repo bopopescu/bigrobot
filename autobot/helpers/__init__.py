@@ -85,7 +85,7 @@ class TestError(AssertionError):
     flagging uncaught error conditions in the test libraries, such as the
     'Unknown ping error' in helpers.ping().
     """
-    ROBOT_EXIT_ON_FAILURE = True
+    # ROBOT_EXIT_ON_FAILURE = True
 
 
 class EnvironmentFailure(RuntimeError):
@@ -210,8 +210,8 @@ def bigrobot_exec_hint_format(new_val=None, default='export'):
     elif opt == 'run_gobot':
         return 'BIGROBOT_SUITE=%s gobot test'
     else:
-        test_error("Invalid option '%s'. Supported options are 'export', 'run_gobot'."
-                   % opt)
+        environment_failure("Invalid option '%s'. Supported options are 'export', 'run_gobot'."
+                            % opt)
 
 
 def bigrobot_topology(new_val=None, default=None):
@@ -356,7 +356,7 @@ def is_controller_or_error(name):
     Controller is defined as c1, c2, master, slave, ...
     """
     if not is_controller(name):
-        test_error("Node must be a controller ('c1', 'c2').")
+        environment_failure("Node must be a controller ('c1', 'c2').")
     else:
         return True
 

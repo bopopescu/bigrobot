@@ -23,13 +23,13 @@ Test controller reload (BigTap)
 Get controller handles
     [Tags]  skipped
     #cli save running config
-    cli show user
+    cli show user  c1
 
-Test session reconnect (SSH reconnect)
+Test check mastership
     [Tags]  skipped
     check mastership  c1
 
-Test bash command
+Test session reconnect (SSH reconnect)
     [Tags]  skipped
     cli show user  c1
     bash command   c1  uptime
@@ -41,4 +41,8 @@ Test bash command
     cli show user  c1
 
 Test bash command
+    [Tags]  skipped
     bash command   c1  uname -a
+
+Test get ha role
+    ha role        c1

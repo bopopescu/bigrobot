@@ -4,6 +4,8 @@
 #  openflow_port: 6633
 s1:
   ip: 10.195.0.31  # Prashanth's UNIX system
+  #alias: leaf1
+  alias: spine1
   user: admin
   password: bsn
   console_ip: 10.1.2.3

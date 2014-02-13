@@ -11,11 +11,12 @@ class Test(object):
     """
     Test class is a singleton which contains important test states for the
     current robot execution. E.g., topology information including device
-    IP addresses, roles (controller, switch, spine, leaf), interfaces, and
+    IP addresses, aliases (controller, switch, spine, leaf), interfaces, and
     so on...
     """
 
     _instance = None
+
 
     # Singleton pattern borrowed from
     # http://developer.nokia.com/Community/Wiki/How_to_make_a_singleton_in_Python
@@ -31,7 +32,20 @@ class Test(object):
             self._has_a_topo_file = False
             self._params = {}
             self._bigtest_node_info = {}
-            self._node_roles = {}
+
+            # A node in BigRobot may have a alias associated with it. One way
+            # you can refer to a node using it's defined name, e.g., 'c1',
+            # 'c2', 's1', 'mn', etc. Another way is to refer to its alias.
+            # For HA,  'master' and 'slave' are considered as dynamic aliases,
+            # since the alias will change when mastership changes. You can also
+            # define static aliases such as:
+            #    s1:
+            #        alias: leaf1
+            #    s2:
+            #        alias: spine1
+            # Test class maintains a lookup table with self._node_static_aliases.
+            #
+            self._node_static_aliases = {}
 
             self._bsn_config_file = ''.join((helpers.get_path_autobot_config(),
                                              '/bsn.yaml'))
@@ -74,14 +88,8 @@ class Test(object):
 
                 helpers.bigrobot_params(new_val=self._params_file)
 
-            topo = helpers.bigrobot_topology()
-            if helpers.file_not_exists(topo):
-                helpers.warn("Topology file not specified (%s)" % topo)
-                self._topology_params = {}
-            else:
-                helpers.log("Loading topology file %s" % topo)
-                self._topology_params = helpers.load_config(topo)
-                self._has_a_topo_file = True
+            self.load_topology()
+            self.init_alias_lookup_table()
 
             if 'mn' in self._topology_params:
                 helpers.debug("Changing node name 'mn' to 'mn1'")
@@ -112,6 +120,32 @@ class Test(object):
                         self._topology_params[n][key] = self._params[n][key]
 
             self._topology = {}
+
+        def load_topology(self):
+            topo = helpers.bigrobot_topology()
+            if helpers.file_not_exists(topo):
+                helpers.warn("Topology file not specified (%s)" % topo)
+                self._topology_params = {}
+            else:
+                helpers.log("Loading topology file %s" % topo)
+                self._topology_params = helpers.load_config(topo)
+                self._has_a_topo_file = True
+
+        def init_alias_lookup_table(self):
+            for node in self._topology_params:
+                self._node_static_aliases[node] = node
+                if 'alias' in self._topology_params[node]:
+                    alias = self._topology_params[node]['alias']
+                    self._node_static_aliases[alias] = node
+                if not re.match(r'^(leaf|spine|filter|delivery)\d+', alias):
+                    helpers.warn("Supported aliases are leaf<n>, spine<n>, filter<n>, delivery<n>")
+                    helpers.environment_failure("'%s' has alias '%s' which does not match the allowable alias names"
+                                                % (node, alias))
+            self._node_static_aliases['master'] = 'master'
+            self._node_static_aliases['slave'] = 'slave'
+            self._node_static_aliases['mn'] = 'mn1'
+            helpers.log("Node aliases:\n%s"
+                        % helpers.prettify(self._node_static_aliases))
 
     def __init__(self):
         if Test._instance is None:
@@ -155,6 +189,17 @@ class Test(object):
     def switch_password(self):
         return self.bsn_config('switch_password')
 
+    def alias(self, name, ignore_error=False):
+        """
+        :param ignore_error: (Bool) If true, don't trigger exception when
+                             name is not found.
+        """
+        if not name in self._node_static_aliases:
+            if ignore_error:
+                return name
+            helpers.environment_failure("Alias '%s' is not defined" % name)
+        return self._node_static_aliases[name]
+
     def topology_params(self, node=None, key=None, default=None):
         """
         Returns the topology dictionary.
@@ -176,24 +221,25 @@ class Test(object):
         }
         """
         if node:
+            node = self.alias(node)
             if node not in self._topology_params:
-                helpers.test_error("Node '%s' is not defined in topology file"
-                                   % node)
+                helpers.environment_failure("Node '%s' is not defined in topology file"
+                                            % node)
             else:
                 if key:
                     if key not in self._topology_params[node]:
                         if default:
                             self._topology_params[node][key] = default
                             return default
-                        helpers.test_error("Node '%s' does not have attribute '%s' defined"
+                        helpers.environment_failure("Node '%s' does not have attribute '%s' defined"
                                            % (node, key))
                     else:
                         return self._topology_params[node][key]
                 else:
                     return self._topology_params[node]
         elif key:
-            helpers.test_error("Key '%s' is defined but not associated with a node"
-                               % key)
+            helpers.environment_failure("Key '%s' is defined but not associated with a node"
+                                        % key)
         return self._topology_params
 
     # Alias
@@ -206,6 +252,7 @@ class Test(object):
         """
         authen = []
         params = self.topology_params()
+        name = self.alias(name)
         if name in params:
             node = params[name]
             if 'user' in node:
@@ -232,9 +279,11 @@ class Test(object):
 
         # helpers.prettify_log("_topology:", self._topology)
         if name and node:
+            name = self.alias(name, ignore_error=ignore_error)
             self._topology[name] = node
             return node
         elif name:
+            name = self.alias(name, ignore_error=ignore_error)
             if name not in self._topology:
                 if ignore_error:
                     return None
@@ -245,6 +294,7 @@ class Test(object):
             return self._topology
 
     def is_master_controller(self, name):
+        name = self.alias(name)
         n = self.topology(name)
         platform = n.platform()
 
@@ -288,6 +338,7 @@ class Test(object):
                   name (e.g., 'c1', 'c2', etc). 
         """
         t = self
+        name = self.alias(name)
 
         if not resolve_mastership and name in ('master', 'slave'):
             return ha_wrappers.HaControllerNode(name, t)
@@ -314,17 +365,9 @@ class Test(object):
         return self.topology(node)
 
     def mininet(self, name='mn1', *args, **kwargs):
+        name = self.alias(name)
         if name == 'mn':
             name = 'mn1'
-        return self.topology(name, *args, **kwargs)
-
-    def switches(self):
-        """
-        Get the handles of all the switches.
-        """
-        return [n for n in self.topology_params() if re.match(r'^s\d+', n)]
-
-    def traffic_generator(self, name='tg1', *args, **kwargs):
         return self.topology(name, *args, **kwargs)
 
     def traffic_generators(self):
@@ -333,7 +376,18 @@ class Test(object):
         """
         return [n for n in self.topology_params() if re.match(r'^tg\d+', n)]
 
+    def traffic_generator(self, name='tg1', *args, **kwargs):
+        name = self.alias(name)
+        return self.topology(name, *args, **kwargs)
+
+    def switches(self):
+        """
+        Get the handles of all the switches.
+        """
+        return [n for n in self.topology_params() if re.match(r'^s\d+', n)]
+
     def switch(self, name='s1', *args, **kwargs):
+        name = self.alias(name)
         return self.topology(name, *args, **kwargs)
 
     def hosts(self):
@@ -343,6 +397,7 @@ class Test(object):
         return [n for n in self.topology_params() if re.match(r'^h\d+', n)]
 
     def host(self, name='h1', *args, **kwargs):
+        name = self.alias(name)
         return self.topology(name, *args, **kwargs)
 
     def node(self, *args, **kwargs):
@@ -350,11 +405,11 @@ class Test(object):
         Returns the handle for a node. 
         """
         if len(args) >= 1:
-            node = args[0]
+            node = self.alias(args[0])
         elif 'name' in kwargs:
-            node = kwargs['name']
+            node = self.alias(kwargs['name'])
         else:
-            helpers.test_error("Impossible state.")
+            helpers.environment_failure("Impossible state.")
 
         if node == 'mn':
             node = 'mn1'
@@ -616,30 +671,3 @@ class Test(object):
                 self.setup_switch(key)
 
         self._setup_completed = True
-
-
-def test_singleton():
-    t = Test()
-    x = Test()
-    x._bsn_config = "XYZ"
-
-    assert t._bsn_config == x._bsn_config, \
-        ("t._bsn_config('%s') should equal x._bsn_config('%s')"
-         % (t._bsn_config, x._bsn_config))
-
-
-if __name__ == '__main__':
-    import os
-    import sys
-
-    os.environ['IS_GOBOT'] = 'True'
-
-    if os.environ.has_key("BIGROBOT_PATH") is False:
-        print("Error: Please set the environment variable BIGROBOT_PATH.")
-        sys.exit(1)
-    autobot_path = os.environ["BIGROBOT_PATH"]
-    sys.path.append(autobot_path)
-
-    # test_singleton()
-
-    t = Test()
