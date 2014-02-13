@@ -61,11 +61,15 @@ Test array variable
     Log               ${NAME}=This is the input
 
 Test write file
-    #[Tags]           skipped
+    [Tags]           skipped
     Append to File    /tmp/myoutput.txt  My name is ${NAME}.\n
     Append to File    /tmp/myoutput.txt  I work at BigSwitch.\n
     Append to File    /tmp/myoutput.txt  I'm also a woodworker.\n
 
+Test special character passing
+    print value       abc|123
+    print value       abc/123
+    print value       abc\\123
 
 * Keywords
 variable assignment
