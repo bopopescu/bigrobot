@@ -137,10 +137,10 @@ class Test(object):
                 if 'alias' in self._topology_params[node]:
                     alias = self._topology_params[node]['alias']
                     self._node_static_aliases[alias] = node
-                if not re.match(r'^(leaf|spine|filter|delivery)\d+', alias):
-                    helpers.warn("Supported aliases are leaf<n>, spine<n>, filter<n>, delivery<n>")
-                    helpers.environment_failure("'%s' has alias '%s' which does not match the allowable alias names"
-                                                % (node, alias))
+                    if not re.match(r'^(leaf|spine|filter|delivery)\d+', alias):
+                        helpers.warn("Supported aliases are leaf<n>, spine<n>, filter<n>, delivery<n>")
+                        helpers.environment_failure("'%s' has alias '%s' which does not match the allowable alias names"
+                                                    % (node, alias))
             self._node_static_aliases['master'] = 'master'
             self._node_static_aliases['slave'] = 'slave'
             self._node_static_aliases['mn'] = 'mn1'
