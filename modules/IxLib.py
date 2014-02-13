@@ -96,9 +96,9 @@ class Ixia(object):
             IxLib.IxCreateDeviceEthernet(ixNet,topology, mac_mults =  mac_mults, macs = macs, mac_steps = mac_steps)
         '''
         helpers.log("### Adding %s device groups" % len(topology))
-        mac_mults = [s_cnt, d_cnt]
-        mac_steps = [s_step, d_step]
-        macs = [s_mac, d_mac]
+        mac_mults = [d_cnt, s_cnt]
+        mac_steps = [d_step, s_step]
+        macs = [d_mac, s_mac]
         for topo in topology:
             self._handle.add(topo, 'deviceGroup')
         self._handle.commit()
@@ -133,6 +133,122 @@ class Ixia(object):
         helpers.log("### Done adding two device groups")
         return mac_devices
 
+    def ix_create_device_ethernet_ip(self, topology, s_cnt, d_cnt, s_mac, d_mac, s_step, d_step,
+                                     s_ip, d_ip, gw_ip = None):
+        '''
+            RETURN IXIA MAC DEVICES with Ips mapped with Topologies created with vports and added increment values accordingly
+            Ex Usage:
+            IxLib.IxCreateDeviceEthernet(ixNet,topology, mac_mults =  mac_mults, macs = macs, mac_steps = mac_steps)
+        '''
+        helpers.log("### Adding %s device groups" % len(topology))
+        handle = self._handle
+        mac_mults = [s_cnt, d_cnt]
+        mac_steps = [s_step, d_step]
+        macs = [s_mac, d_mac]
+        ips = [s_ip, d_ip]
+        gate_ips = [d_ip, s_ip]
+        topo_names = []
+        for topo in topology:
+            self._handle.add(topo, 'deviceGroup')
+        self._handle.commit()
+        topo_devices = []
+        eth_devices = []
+        for topo in topology:
+            dev_grp = self._handle.getList(topo, 'deviceGroup')
+            topo_device = self._handle.remapIds(dev_grp)[0]
+            enabled_ref = self._handle.getAttribute(topo_device, '-enabled')
+            self._handle.setMultiAttribute(enabled_ref, '-clearOverlays', False, '-pattern', 'singleValue')
+            topo_devices.append(topo_device)
+            
+        for (topo_device, multi, topo) in zip(topo_devices, mac_mults, topology):
+            helpers.log('### topo device : %s' % str(topo_device))
+            topo_name = self._handle.getAttribute(topo, '-name')
+            topo_names.append(topo_name)
+            self._handle.setAttribute(topo_device, '-multiplier', multi)
+            eth_devices.append(self._handle.add(topo_device, 'ethernet', '-name', topo_name))
+        self._handle.commit()
+        mac_devices = []  # as this are added to ixia need to remap as per ixia API's
+        ip_refs = []
+        ixia_refs = {} # Dictionary to hold the Ixia References
+        for eth_device in eth_devices:
+            mac_devices.append(self._handle.remapIds(eth_device)[0])
+        for (mac_device, mult, mac_step, mac, ip, gate_ip) in zip(mac_devices, mac_mults, mac_steps, macs, ips, gate_ips):
+            if mult <= 1:
+                m1 = self._handle.setAttribute(self._handle.getAttribute(mac_device, '-mac') + '/singleValue', '-value', mac)
+            else:
+                helpers.log('###Adding Multipier ...')
+                m1 = self._handle.setMultiAttribute(self._handle.getAttribute(mac_device, '-mac') + '/counter', '-direction',
+                                              'increment', '-start', mac, '-step', mac_step)
+            ip_name = handle.getAttribute(mac_device, '-name')
+#             ip_name = ip_name + 'IPv4\ 1'
+            print 'Ip: NAME : ', ip_name
+            
+            ip_ref = self._handle.add(mac_device, "ipv4", '-name', ip_name)
+            ip_ref_ixia = handle.remapIds(ip_ref)[0]
+            handle.commit()
+            ip_refs.append(ip_ref_ixia)
+#             handle.setMultiAttribute(handle.getAttribute(ip_ref_ixia, '-address'), '-clearOverlays', False,
+#                                      '-pattern', 'counter')
+            print 'Address: ', ip
+            ixia_refs['address'] = handle.getAttribute(ip_ref_ixia, '-address')
+            #ixia_refs['address_counter'] = handle.add(ixia_refs['address'], '-counter')
+            handle.setMultiAttribute(ixia_refs['address']+'/counter', 'direction', 'increment', '-start', ip, '-step', '0.0.0.0')
+            handle.commit()
+            #handle.remapIds(ixia_refs['address_counter'])[0]
+            
+            ixia_refs['prefix'] = handle.getAttribute(ip_ref_ixia, '-prefix')
+            ixia_refs['prefix_singleValue'] = handle.add(ixia_refs['prefix'], 'singleValue')
+            handle.setMultiAttribute(ixia_refs['prefix_singleValue'], '-value', '24')
+            handle.commit()
+            handle.remapIds(ixia_refs['prefix'])[0]
+            
+            #handle.setAttribute(handle.getAttribute(ip_ref_ixia, '-prefix') + '/singleValue', '-value', '24')
+            print 'Gateway Address: ', gate_ip
+            ixia_refs['resolveGateway'] = handle.getAttribute(ip_ref_ixia, '-resolveGateway')
+#             handle.setMultiAttribute(ixia_refs['resolveGateway'], '-clearOverlays', 'false', '-pattern', 'singleValue')
+#             handle.commit()
+            ixia_refs['resolveGateway_singleValue'] = handle.add(ixia_refs['resolveGateway'], 'singleValue')
+            handle.setMultiAttribute(ixia_refs['resolveGateway_singleValue'], '-value', 'true')
+            handle.commit()
+            ixia_refs['resolveGateway_singleValue_remap'] = handle.remapIds(ixia_refs['resolveGateway_singleValue'])[0]
+            
+            ixia_refs['gatewayIp'] = handle.getAttribute(ip_ref_ixia, '-gatewayIp')
+            ixia_refs['gatewayIp_singleValue'] = handle.add(ixia_refs['gatewayIp'], 'singleValue')
+            if gw_ip is not None:
+                handle.setMultiAttribute(ixia_refs['gatewayIp_singleValue'], '-value', gw_ip)
+            else:
+                handle.setMultiAttribute(ixia_refs['gatewayIp_singleValue'], '-value', gate_ip)
+            handle.commit()
+            handle.remapIds(ixia_refs['gatewayIp_singleValue'])
+        #self._handle.commit()
+#         helpers.log(" ## adding Name ", topology[0], topology[1])
+#         helpers.log(" ## adding Name ", mac_devices[0], mac_devices[1])
+        i = 1
+        for mac_device in mac_devices:
+            name = "Device_" + str(i)
+            self._handle.setAttribute(mac_device, '-name', name)
+            i = i +1
+        self._handle.commit()
+        helpers.log("### Done adding two device groups")
+        return ip_refs, mac_devices # return created Ip_devices and mac_devices
+
+    def ix_setup_traffic_streams_ip(self,ip1,ip2,frameType,frameSize,frameRate,frameMode):
+        handle = self._handle
+        handle.add(handle.getRoot()+'/traffic','trafficItem','-name','IPv4 traffic','-allowSelfDestined',False,'-trafficItemType','l2L3','-mergeDestinations',False,'-egressEnabled',False,'-srcDestMesh','oneToOne','-enabled',True,'-routeMesh','oneToOne','-transmitMode','interleaved','-biDirectional',False,'-trafficType','ipv4','-hostsPerNetwork',1)
+        handle.commit()
+        trItem = handle.getList(handle.getRoot()+'/traffic','trafficItem')
+        trafficItem1=handle.remapIds(trItem)[0]
+        end1 = handle.add(trafficItem1,'endpointSet','-sources',ip1,'-destinations',ip2,'-name','end1','-sourceFilter',' ','-destinationFilter',' ')
+        end2 = handle.add(trafficItem1,'endpointSet','-sources',ip2,'-destinations',ip1,'-name','end2','-sourceFilter',' ','-destinationFilter',' ')
+        handle.commit()
+        handle.setMultiAttribute(trafficItem1+'/configElement:1'+'/frameSize','-type',frameType,'-fixedSize',frameSize)
+        handle.setMultiAttribute(trafficItem1+'/configElement:2'+'/frameSize','-type',frameType,'-fixedSize',frameSize)
+        handle.setMultiAttribute(trafficItem1+'/configElement:1'+'/frameRate','-type',frameMode,'-rate',frameRate)
+        handle.setMultiAttribute(trafficItem1+'/configElement:2'+'/frameRate','-type',frameMode,'-rate',frameRate)
+        handle.setMultiAttribute(trafficItem1+'/tracking','-trackBy','sourceDestValuePair0')
+        handle.commit()
+        return trafficItem1
+    
     def ix_setup_traffic_streams_ethernet(self, mac1, mac2, frameType, frameSize, frameRate,
                                       frameMode, frameCount, flow, name, ethertype=None, vlan_id=None, crc=None):
         '''
@@ -303,7 +419,132 @@ class Ixia(object):
         helpers.log('Created Traffic Stream : %s' % traffic_stream)
         self._traffic_stream[name] = traffic_stream
         return traffic_stream
+    
+    def ixia_l3_add_hosts(self, **kwargs):
+        ix_handle = self._handle
+        ix_ports = [port for port in self._port_map_list.values()]
+        s_mac = kwargs.get('src_mac', '00:11:23:00:00:01')
+        d_mac = kwargs.get('dst_mac', '00:11:23:00:00:02')
+        d_cnt = kwargs.get('d_cnt', 1)
+        s_cnt = kwargs.get('s_cnt', 1)
+        d_step = kwargs.get('d_step', '00:00:00:01:00:00')
+        s_step = kwargs.get('s_step', '00:00:00:01:00:00')
+        s_ip = kwargs.get('src_ip', '20.0.0.1')
+        d_ip = kwargs.get('dst_ip', '20.0.0.2')
+        gw = kwargs.get('gw_ip', None)
+        port_name = kwargs.get('ixia_port', None)
+        ix_tcl_server = self._tcl_server_ip
+        
+        if ix_tcl_server is None or ix_ports is None or s_mac is None or d_mac is None:
+            helpers.warn('Please Provide Required Args for IXIA_L2_ADD helper method !!')
+            raise IxNetwork.IxNetError('Please provide Required Args for IXIA_L2_ADD helper method !!')
+        get_version = ix_handle.getVersion()
+        
+        print("###Current Version of Ixia Chassis : %s " % get_version)
+        ix_handle.setDebug(False)  # Set Debug True to print Ixia Server Interactions
+        
+        # Create vports:
+        if len(self._vports) == 0:
+            vports = self.ix_create_vports()
+            print('### vports Created : %s' % vports)
+            # Map to Chassis Physhical Ports:
+            if self.ix_map_vports_pyhsical_ports():
+                print('### Successfully mapped vport to physical ixia ports..')
+            else:
+                print('Unable to connect to Ixia Chassis')
+                return False
+        else:
+            print('### vports already Created : %s' % self._vports)
 
+        if len(self._topology) == 0:
+            # Create Topo:
+            self.ix_create_topo()
+            print('### Topology Created: %s' % self._topology)
+        else:
+            print('###Topology already created: %s' % self._topology)
+        if port_name is None:
+            helpers.warn('Please Provide Ixia Port on which to create IP Host !!')
+            raise IxNetwork.IxNetError('Please Provide Ixia Port on which to create IP Host !!')
+        else:
+            # Create Ether Device with IpDevices:
+            (ip_devices, mac_devices) = self.ix_create_device_ethernet_ip(self._topology[port_name], s_cnt, d_cnt, s_mac, d_mac, s_step, d_step, s_ip, d_ip, gw)
+            print('### Created Mac Devices with corrsponding Topos ...')
+            print "Success Creating Ip Devices !!!"
+            return ip_devices
+    
+    def ix_l3_add_stream(self, **kwargs):
+        ix_handle = self._handle
+        ix_ports = [port for port in self._port_map_list.values()]
+        s_mac = kwargs.get('src_mac', '00:11:23:00:00:01')
+        d_mac = kwargs.get('dst_mac', '00:11:23:00:00:02')
+        d_cnt = kwargs.get('d_cnt', 1)
+        s_cnt = kwargs.get('s_cnt', 1)
+        d_step = kwargs.get('d_step', '00:00:00:01:00:00')
+        s_step = kwargs.get('s_step', '00:00:00:01:00:00')
+        frame_rate = kwargs.get('frame_rate', 100)
+        frame_cnt = kwargs.get('frame_cnt', None)
+        self._frame_size = kwargs.get('frame_size', 70)
+        frame_type = kwargs.get('frame_type', 'fixed')
+        frame_mode = kwargs.get('frame_mode', 'framesPerSecond')
+        name = kwargs.get('name', 'gobot_default')
+        ethertype = kwargs.get('ethertype', None)
+        vlan_id = kwargs.get('vlan_id', None)
+        crc = kwargs.get('crc', None)
+        s_ip = kwargs.get('src_ip', '20.0.0.1')
+        d_ip = kwargs.get('dst_ip', '20.0.0.2')
+        gw = kwargs.get('gw', None)
+        ix_tcl_server = self._tcl_server_ip
+        flow = kwargs.get('flow', 'None')
+        
+        if ix_tcl_server is None or ix_ports is None or s_mac is None or d_mac is None:
+            helpers.warn('Please Provide Required Args for IXIA_L2_ADD helper method !!')
+            raise IxNetwork.IxNetError('Please provide Required Args for IXIA_L2_ADD helper method !!')
+        get_version = ix_handle.getVersion()
+        
+        print("###Current Version of Ixia Chassis : %s " % get_version)
+        ix_handle.setDebug(False)  # Set Debug True to print Ixia Server Interactions
+        
+        # Create vports:
+        if len(self._vports) == 0:
+            vports = self.ix_create_vports()
+            print('### vports Created : %s' % vports)
+            # Map to Chassis Physhical Ports:
+            if self.ix_map_vports_pyhsical_ports():
+                print('### Successfully mapped vport to physical ixia ports..')
+            else:
+                print('Unable to connect to Ixia Chassis')
+                return False
+        else:
+            print('### vports already Created : %s' % self._vports)
+
+        if len(self._topology) == 0:
+            # Create Topo:
+            self.ix_create_topo()
+            print('### Topology Created: %s' % self._topology)
+        else:
+            print('###Topology already created: %s' % self._topology)
+        create_topo = []
+        match_uni1 = re.match(r'(\w+)->(\w+)', flow)
+        match_uni2 = re.match(r'(\w+)<-(\w+)', flow)
+        match_bi = re.match(r'(\w+)<->(\w+)', flow)
+        stream_flow = ''
+        if match_uni1:
+            create_topo.append(self._topology[match_uni1.group(1).lower()])
+            create_topo.append(self._topology[match_uni1.group(2).lower()])
+            stream_flow = 'uni-directional'
+        elif match_uni2:
+            create_topo.append(self._topology[match_uni2.group(2).lower()])
+            create_topo.append(self._topology[match_uni2.group(1).lower()])
+            stream_flow = 'uni-directional'
+        elif match_bi:
+            create_topo.append(self._topology[match_bi.group(2).lower()])
+            create_topo.append(self._topology[match_bi.group(1).lower()])
+            stream_flow = 'bi-directional'
+        # Create Ether Device with IpDevices:
+        (ip_devices, mac_devices) = self.ix_create_device_ethernet_ip(create_topo, s_cnt, d_cnt, s_mac, d_mac, s_step, d_step, s_ip, d_ip, gw)
+        print('### Created Mac Devices with corrsponding Topos ...')
+        print "Success Creating Ip Devices !!!"
+        return ip_devices
     def ix_start_traffic_ethernet(self, trafficHandle):
         '''
             Returns portStatistics after starting the traffic that is configured in Traffic Stream using Mac devices and Topologies
