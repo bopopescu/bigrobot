@@ -293,22 +293,6 @@ admin_user = glance
             updated_list.append(key.encode('ascii', 'ignore'))
         return updated_list
 
-    def _list_compare(self, l1, l2):
-        l1 = sorted(l1)
-        l2 = sorted(l2)
-
-        if len(l1) != len(l2):
-            print "not same list - lengths are different"
-            return
-
-        for i, _ in enumerate(l1):
-            if l1[i] != l2[i]:
-                print "not same list - l1[%s]('%s') != l2[%s]('%s')" % (i, l1[i], i, l2[i])
-                return
-
-        print "lists are same"
-        return
-
     def verify_fabric_links(self, node):
         t = test.Test()
         c = t.controller(node)
@@ -325,8 +309,9 @@ admin_user = glance
         link_list2 = self._build_link_list(content2[0]['link'])
 
         # For negative test... You can inject a bad entry
-        link_list2.append("bad entry")
+        # link_list2.append("bad entry")
+        link_list2[10] = "bad entry"
 
         helpers.log("link_list2:\n%s" % helpers.prettify(link_list2))
 
-        self._list_compare(link_list1, link_list2)
+        return helpers.compare_list(link_list1, link_list2)

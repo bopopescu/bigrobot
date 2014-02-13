@@ -673,6 +673,29 @@ def is_same_file(file1, file2):
     return True if inode1 == inode2 else False
 
 
+def compare_list(list1, list2):
+    """
+    Compare to see whether list1 is the same as list2.
+    Return
+       - True  if lists are same
+       - False if lists are different
+    """
+    list1 = sorted(list1)
+    list2 = sorted(list2)
+
+    if len(list1) != len(list2):
+        debug("Lists are not the same - lengths are different")
+        return False
+
+    for i, _ in enumerate(list1):
+        if list1[i] != list2[i]:
+            debug("Lists are not the same - list1[%s]('%s') != list2[%s]('%s')"
+                  % (i, list1[i], i, list2[i]))
+            return False
+
+    return True
+
+
 def bigtest_node_info():
     """
     Traverse the directory /var/run/bigtest and gather all the node attributes

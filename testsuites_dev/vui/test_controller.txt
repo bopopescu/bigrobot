@@ -49,5 +49,6 @@ Test get ha role
     ha role        c1
 
 Verify fabric links (per Don)
-    verify fabric links    c1
+    ${status}=      verify fabric links    c1
+    Should be true  ${status}
 
