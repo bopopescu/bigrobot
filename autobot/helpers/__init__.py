@@ -673,7 +673,7 @@ def is_same_file(file1, file2):
     return True if inode1 == inode2 else False
 
 
-def compare_list(list1, list2):
+def list_compare(list1, list2):
     """
     Compare to see whether list1 is the same as list2.
     Return

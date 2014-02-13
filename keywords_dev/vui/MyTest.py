@@ -314,4 +314,4 @@ admin_user = glance
 
         helpers.log("link_list2:\n%s" % helpers.prettify(link_list2))
 
-        return helpers.compare_list(link_list1, link_list2)
+        return helpers.list_compare(link_list1, link_list2)
