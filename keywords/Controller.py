@@ -91,12 +91,11 @@ class Controller(object):
             helpers.is_controller_or_error(node)
             node_list = [node]
         else:
-            node_list = t.controllers()
+            node_handles = t.controllers()
 
-        for name in node_list:
-            helpers.log("Copying running-config to file on node '%s'" % name)
-            _node = t.topology(name)
-            _node.enable('copy running-config file://running-config-bigrobot')
+        for n in node_handles:
+            helpers.log("Copying running-config to file on node '%s'" % n.name())
+            n.enable('copy running-config file://running-config-bigrobot')
 
     def cli_boot_factory_default(self, node):
         """

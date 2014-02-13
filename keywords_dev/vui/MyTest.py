@@ -277,3 +277,5 @@ admin_user = glance
         t = test.Test()
         c = t.controller(node)
         c.rest.get("/rest/v1/system/ha/role")
+        controllers = t.controllers()
+        helpers.log("*** Controllers: %s" % controllers)

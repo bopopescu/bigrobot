@@ -333,7 +333,7 @@ class Test(object):
         """
         Get the handles of all the controllers.
         """
-        return [n for n in self.topology_params() if re.match(r'^c\d+', n)]
+        return [self.controller(n) for n in self.topology_params() if re.match(r'^c\d+', n)]
 
     def controller(self, name='c1', resolve_mastership=False):
         """
@@ -379,7 +379,7 @@ class Test(object):
         """
         Get the handles of all the traffic generators.
         """
-        return [n for n in self.topology_params() if re.match(r'^tg\d+', n)]
+        return [self.traffic_generator(n) for n in self.topology_params() if re.match(r'^tg\d+', n)]
 
     def traffic_generator(self, name='tg1', *args, **kwargs):
         name = self.alias(name)
@@ -389,7 +389,7 @@ class Test(object):
         """
         Get the handles of all the switches.
         """
-        return [n for n in self.topology_params() if re.match(r'^s\d+', n)]
+        return [self.switch(n) for n in self.topology_params() if re.match(r'^s\d+', n)]
 
     def switch(self, name='s1', *args, **kwargs):
         name = self.alias(name)
@@ -399,7 +399,7 @@ class Test(object):
         """
         Get the handles of all the hosts.
         """
-        return [n for n in self.topology_params() if re.match(r'^h\d+', n)]
+        return [self.host(n) for n in self.topology_params() if re.match(r'^h\d+', n)]
 
     def host(self, name='h1', *args, **kwargs):
         name = self.alias(name)
