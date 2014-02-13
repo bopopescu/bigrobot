@@ -45,4 +45,10 @@ Test bash command
     bash command   c1  uname -a
 
 Test get ha role
+    [Tags]  skipped
     ha role        c1
+
+Verify fabric links (per Don)
+    ${status}=      verify fabric links    c1
+    Should be true  ${status}
+

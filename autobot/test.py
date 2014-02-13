@@ -137,8 +137,13 @@ class Test(object):
                 if 'alias' in self._topology_params[node]:
                     alias = self._topology_params[node]['alias']
                     self._node_static_aliases[alias] = node
-                    if not re.match(r'^(leaf|spine|filter|delivery)\d+', alias):
-                        helpers.warn("Supported aliases are leaf<n>, spine<n>, filter<n>, delivery<n>")
+
+                    # BSN QA convention is to name the aliases as:
+                    #   spine0, spine1, etc.
+                    #   leaf1-a, leaf1-b, leaf2-a, leaf2-b, etc.
+                    #   s021, etc.
+                    if not re.match(r'^(leaf\d+-[ab]|spine\d+|s\d+)', alias):
+                        helpers.warn("Supported aliases are leaf{n}-{a|b}, spine{n}, s{nnn}")
                         helpers.environment_failure("'%s' has alias '%s' which does not match the allowable alias names"
                                                     % (node, alias))
             self._node_static_aliases['master'] = 'master'
@@ -328,7 +333,7 @@ class Test(object):
         """
         Get the handles of all the controllers.
         """
-        return [n for n in self.topology_params() if re.match(r'^c\d+', n)]
+        return [self.controller(n) for n in self.topology_params() if re.match(r'^c\d+', n)]
 
     def controller(self, name='c1', resolve_mastership=False):
         """
@@ -374,7 +379,7 @@ class Test(object):
         """
         Get the handles of all the traffic generators.
         """
-        return [n for n in self.topology_params() if re.match(r'^tg\d+', n)]
+        return [self.traffic_generator(n) for n in self.topology_params() if re.match(r'^tg\d+', n)]
 
     def traffic_generator(self, name='tg1', *args, **kwargs):
         name = self.alias(name)
@@ -384,7 +389,7 @@ class Test(object):
         """
         Get the handles of all the switches.
         """
-        return [n for n in self.topology_params() if re.match(r'^s\d+', n)]
+        return [self.switch(n) for n in self.topology_params() if re.match(r'^s\d+', n)]
 
     def switch(self, name='s1', *args, **kwargs):
         name = self.alias(name)
@@ -394,7 +399,7 @@ class Test(object):
         """
         Get the handles of all the hosts.
         """
-        return [n for n in self.topology_params() if re.match(r'^h\d+', n)]
+        return [self.host(n) for n in self.topology_params() if re.match(r'^h\d+', n)]
 
     def host(self, name='h1', *args, **kwargs):
         name = self.alias(name)
