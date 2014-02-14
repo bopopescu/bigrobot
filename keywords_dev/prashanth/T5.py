@@ -445,10 +445,10 @@ class T5(object):
                         return False       
        
             
-    def rest_verify_endpoint(self, vns, vlan, ipaddr, switch, intf):
+    def rest_verify_endpoint(self, vns, vlan, mac, switch, intf):
         '''Verify Dynamic Endpoint entry
         
-            Input: vns name , vlan ID , ipaddress , switch name, expected switch interface          
+            Input: vns name , vlan ID , mac , switch name, expected switch interface          
             
             Return: true if it matches Value specified
         '''
@@ -461,22 +461,22 @@ class T5(object):
                 for i in range(0,len(data)):
                     if str(data[i]["vns-name"]) == vns:
                         if str(data[i]["attachment-point"]["vlan"]) == str(vlan):
-                            if (data[i]["ip-address"] == str(ipaddr)) :
+                            if (data[i]["mac"] == str(mac)) :
                                 if (data[i]["attachment-point"]["switch-name"] == switch) :
                                     if (data[i]["attachment-point"]["interface-name"] == str(intf)) :
-                                        helpers.log("Expected Endpoints are added data matches is %s" % data[i]["ip-address"] )
+                                        helpers.log("Expected Endpoints are added data matches is %s" % data[i]["mac"] )
                                         return True
                                     else:
-                                        helpers.test_failure("Expected endpoints %s are not added" % (str(ipaddr)))
+                                        helpers.test_failure("Expected endpoints %s are not added" % (str(mac)))
                                         return False
         else:
             helpers.test_failure("Expected vns are not added %s" % vns)
             return False
             
-    def rest_verify_endpoint_static(self, vns, vlan, ipaddr, switch, intf):
+    def rest_verify_endpoint_static(self, vns, vlan, mac, switch, intf):
         '''Verify Static Endpoint entry
         
-            Input: vns name , vlan ID , ipaddress , switch name, expected switch interface          
+            Input: vns name , vlan ID , mac , switch name, expected switch interface          
             
             Return: true if it matches Value specified and added attachment point is true
          '''
@@ -489,24 +489,24 @@ class T5(object):
             for i in range(0,len(data)):
                 if str(data[i]["vns-name"]) == vns:
                     if str(data[i]["attachment-point"]["vlan"]) == str(vlan):
-                        if (data[i]["ip-address"] == str(ipaddr)) :
+                        if (data[i]["mac"] == str(mac)) :
                             if (data[i]["attachment-point"]["switch-name"] == switch) :
                                 if (data[i]["attachment-point"]["interface-name"] == str(intf)) :
                                     if (data[i]["configured-endpoint"] == True) :
-                                        helpers.log("Expected Endpoints are added data matches is %s" % data[i]["ip-address"] )
+                                        helpers.log("Expected Endpoints are added data matches is %s" % data[i]["mac"] )
                                         return True
                                     else:
-                                        helpers.test_failure("Expected endpoints %s are not added" % (str(ipaddr)))
+                                        helpers.test_failure("Expected endpoints %s are not added" % (str(mac)))
                                         return False
         else:
                 helpers.test_failure("Expected vns are not added %s" % vns)
                 return False
             
 
-    def rest_verify_endpoint_portgroup(self, vns, vlan, ipaddr, pg):
+    def rest_verify_endpoint_portgroup(self, vns, vlan, mac, pg):
         '''Verify Dynamic Endpoint entry
         
-            Input: vns name , vlan ID , ipaddress , portgroup name          
+            Input: vns name , vlan ID , mac , portgroup name          
             
             Return: true if it matches Value specified
         '''
@@ -519,21 +519,21 @@ class T5(object):
             for i in range(0,len(data)):
                 if str(data[i]["vns-name"]) == vns:
                     if str(data[i]["attachment-point"]["vlan"]) == str(vlan):
-                        if (data[i]["ip-address"] == str(ipaddr)) :
+                        if (data[i]["mac"] == str(mac)) :
                             if (data[i]["attachment-point"]["port-group-name"] == pg) :
-                                helpers.log("Expected Endpoints are added data matches is %s" % data[i]["ip-address"] )
+                                helpers.log("Expected Endpoints are added data matches is %s" % data[i]["mac"] )
                                 return True
                             else:
-                                helpers.test_failure("Expected endpoints %s are not added" % (str(ipaddr)))
+                                helpers.test_failure("Expected endpoints %s are not added" % (str(mac)))
                                 return False
         else:
             helpers.test_failure("Expected vns are not added %s" % vns)
             return False       
    
-    def rest_verify_endpoint_static_portgroup(self, vns, vlan, ipaddr, pg):
+    def rest_verify_endpoint_static_portgroup(self, vns, vlan, mac, pg):
         '''Verify Static Endpoint entry
         
-            Input: vns name , vlan ID , ipaddress , portgroup name          
+            Input: vns name , vlan ID , mac, portgroup name          
             
             Return: true if it matches Value specified and added attachment point is true
         '''
@@ -546,13 +546,13 @@ class T5(object):
                 for i in range(0,len(data)):
                     if str(data[i]["vns-name"]) == vns:
                         if str(data[i]["attachment-point"]["vlan"]) == str(vlan):
-                            if (data[i]["ip-address"] == str(ipaddr)) :
+                            if (data[i]["mac"] == str(mac)) :
                                 if (data[i]["attachment-point"]["port-group-name"] == pg) :
                                     if (data[i]["configured-endpoint"] == True) :
-                                        helpers.log("Expected Endpoints are added data matches is %s" % data[i]["ip-address"] )
+                                        helpers.log("Expected Endpoints are added data matches is %s" % data[i]["mac"] )
                                         return True
                                     else:
-                                        helpers.test_failure("Expected endpoints %s are not added" % (str(ipaddr)))
+                                        helpers.test_failure("Expected endpoints %s are not added" % (str(mac)))
                                         return False
         else:
                 helpers.test_failure("Expected vns are not added %s" % vns)
