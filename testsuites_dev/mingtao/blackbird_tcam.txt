@@ -40,7 +40,7 @@ T4.1 default config tcam size ipv4 only
     Log     TheFlow entries are: ${Flow}
     Log to file    Tcam_size   "default config tcam size ipv4 only"    ${sw1}     	
       
-	[Tags]  scaling   BigTap     rerun
+	[Tags]  scaling   BigTap     
 
 T4.2 default config tcam size ipv6 only  
     Verify L3-l4 config                     False
@@ -58,7 +58,7 @@ T4.3 default config tcam size mixed
     ${Flow}=   verify_switch_tcam_limitaion 	  ${sw1}   P1   mixed
     Log     The Flow entries are: ${Flow}	     	 
     Log to file    Tcam_size   "default config tcam size mixed"    ${sw1}        
-	[Tags]  scaling   BigTap      rerun
+	[Tags]  scaling   BigTap     
 
 
 T4.4 l3-l4 mode tcam size ipv4 only  
@@ -71,7 +71,7 @@ T4.4 l3-l4 mode tcam size ipv4 only
     ${Flow}=   verify_switch_tcam_limitaion 	  ${sw1}   P1   ipv4
     Log     The Flow entries are: ${Flow}	     	  
     Log to file    Tcam_size   "l3-l4 mode tcam size ipv4 only"    ${sw1}      
-	[Tags]  scaling   BigTap    rerun
+	[Tags]  scaling   BigTap  
 	
 T4.5 l3-l4 mode tcam size ipv6 only  
     ${result}=   rest_enable_feature      l3-l4-mode 
@@ -83,7 +83,7 @@ T4.5 l3-l4 mode tcam size ipv6 only
     ${Flow}=   verify_switch_tcam_limitaion 	  ${sw1}   P1   ipv6
     Log     The Flow entries are: ${Flow}	     	 
     Log to file    Tcam_size   "l3-l4 mode tcam size ipv6 only"    ${sw1}      
-	[Tags]  scaling   BigTap       rerun
+	[Tags]  scaling   BigTap       
 
 
 T4.6 l3-l4 mode tcam size mixed  
@@ -96,7 +96,7 @@ T4.6 l3-l4 mode tcam size mixed
     ${Flow}=   verify_switch_tcam_limitaion 	  ${sw1}   P1   mixed
     Log     The Flow entries are: ${Flow}	     
     Log to file    Tcam_size   "l3-l4 mode tcam size mixed "    ${sw1}           	 
-	[Tags]  scaling   BigTap    BT-1153    rerun
+	[Tags]  scaling   BigTap    BT-1153   
 	
 	
 	
