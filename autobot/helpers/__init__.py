@@ -32,6 +32,54 @@ _TZ = timezone("America/Los_Angeles")
 _BIGROBOT_ENV_LIST = []
 
 
+def warn(s, level=2):
+    """
+    Warn log.
+    """
+    Log().warn(s, level)
+
+
+def debug(s, level=2):
+    """
+    Debug log.
+    """
+    Log().debug(s, level)
+
+
+def trace(s, level=2):
+    """
+    Trace log.
+    """
+    Log().trace(s, level)
+
+
+def info(s, level=2):
+    """
+    Info log.
+    """
+    Log().info(s, level)
+
+
+# Alias
+test_log = info
+log = info
+
+
+def analyze(s, level=3):
+    info(s, level)
+
+
+def prettify(data):
+    """
+    Return the Python object as a pretty-print formatted string.
+    """
+    return pprint.pformat(data)
+
+
+def prettify_log(s, data, level=3):
+    analyze(''.join((s, '\n', prettify(data))), level)
+
+
 def error_msg(msg):
     print("Error: %s" % msg)
 
@@ -152,6 +200,55 @@ def _env_get_and_set(name, new_val=None, default=None):
         _BIGROBOT_ENV_LIST.append(name)
 
     return os.environ[name]
+
+
+def set_env(name, value):
+    """
+    Set the environment variable 'name' to 'value'.
+    Note: In Robot text file, you can call the keyword 'Set Environment Variable'
+          from the OperatingSystem library instead.
+    """
+    # Python's os module requires that env value be a string, not integer.
+    value = str(value)
+
+    if name in os.environ:
+        debug("Environment variable '%s' current value is: '%s'"
+              % (name, os.environ[name]))
+    os.environ[name] = value
+    debug("Environment variable '%s' new value is: '%s'"
+          % (name, os.environ[name]))
+    return os.environ[name]
+
+
+def get_env(name):
+    """
+    Get the environment variable 'name'.
+    Note: In Robot text file, you can call the keyword 'Get Environment Variable'
+          from the OperatingSystem library instead.
+    """
+    if not name in os.environ:
+        debug("Environment variable '%s' doesn't exist." % name)
+        return None
+    else:
+        debug("Environment variable '%s': '%s'"
+              % (name, os.environ[name]))
+        return os.environ[name]
+
+
+def remove_env(name):
+    """
+    Remove the environment variable 'name'.
+    Note: In Robot text file, you can call the keyword 'Remove Environment Variable'
+          from the OperatingSystem library instead.
+    """
+    if not name in os.environ:
+        debug("Environment variable '%s' doesn't exist. Removal is not required."
+              % name)
+        return False
+    else:
+        debug("Environment variable '%s' is removed" % name)
+        del os.environ[name]
+        return True
 
 
 def bigrobot_env_list():
@@ -286,54 +383,6 @@ def bigrobot_pandoc_support(new_val=None, default=None):
     Category: Get/set environment variables for BigRobot.
     """
     return _env_get_and_set('BIGROBOT_PANDOC_SUPPORT', new_val, default)
-
-
-def warn(s, level=2):
-    """
-    Warn log.
-    """
-    Log().warn(s, level)
-
-
-def debug(s, level=2):
-    """
-    Debug log.
-    """
-    Log().debug(s, level)
-
-
-def trace(s, level=2):
-    """
-    Trace log.
-    """
-    Log().trace(s, level)
-
-
-def info(s, level=2):
-    """
-    Info log.
-    """
-    Log().info(s, level)
-
-
-# Alias
-test_log = info
-log = info
-
-
-def analyze(s, level=3):
-    info(s, level)
-
-
-def prettify(data):
-    """
-    Return the Python object as a pretty-print formatted string.
-    """
-    return pprint.pformat(data)
-
-
-def prettify_log(s, data, level=3):
-    analyze(''.join((s, '\n', prettify(data))), level)
 
 
 def sleep(s):

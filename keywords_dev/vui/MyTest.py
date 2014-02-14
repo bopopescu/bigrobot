@@ -265,6 +265,7 @@ admin_user = glance
         for x in arg:
             helpers.log("x: %s" % x)
         print "I am here"
+        helpers.set_env('BIGROBOT_ERROR', 12345)
 
     def bash_command(self, node, cmd):
         t = test.Test()
