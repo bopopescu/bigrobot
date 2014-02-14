@@ -209,7 +209,8 @@ Restart process SNMPD and verify SNMP Stats
     restart snmpd
 
 * Keywords  
-snmp suite setup           
+snmp suite setup
+    base suite setup        
     cli add snmp keyword   s1   community   ro public       
     cli add snmp keyword   s1   location   CS_RACK11_6020       
     cli add snmp keyword   s1   contact   nw_admin@super_awesome_company.com       
@@ -224,8 +225,7 @@ snmp suite setup
     cli add snmp host   s2   10.192.66.230   informs   public   161  
     cli add portchannel  s2  7  43,44  L3
     cli add portchannel  s2  30  49,52  L3
-    cli add portchannel  s3  30  49,52  L3 
-   
+    cli add portchannel  s3  30  49,52  L3  
     cli enable snmp   s2             
     Sleep   30             
 
@@ -306,4 +306,5 @@ snmp suite teardown
     cli delete portchannel  s1  1
     cli delete portchannel  s2  7
     cli delete portchannel  s2  30
-    cli delete portchannel  s3  30      
+    cli delete portchannel  s3  30
+    base suite teardown      

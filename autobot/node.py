@@ -6,9 +6,9 @@ from autobot.bsn_restclient import BsnRestClient
 class Node(object):
     def __init__(self, name, ip, user=None, password=None, params=None):
         if not name:
-            helpers.test_error("Controller node name is not defined")
+            helpers.environment_failure("Node name is not defined")
         if not ip:
-            helpers.test_error("Controller IP address is not defined for '%s'"
+            helpers.environment_failure("Node IP address is not defined for '%s'"
                                % name)
 
         self._name = name
@@ -125,6 +125,8 @@ class ControllerNode(Node):
         self.sudo = self.dev.sudo  # Sudo (part of Bash mode)
         self.cli_content = self.dev.content
         self.cli_result = self.dev.result
+        self.bash_content = self.dev.content
+        self.bash_result = self.dev.result
         self.set_prompt = self.dev.set_prompt
         self.send = self.dev.send
         self.expect = self.dev.expect
@@ -144,13 +146,13 @@ class ControllerNode(Node):
         if 'console_ip' in self.node_params:
             self.console_ip = self.node_params['console_ip']
         else:
-            helpers.test_error("Console IP address is not defined for node '%s'"
-                               % self.name())
+            helpers.environment_failure("Console IP address is not defined for node '%s'"
+                                        % self.name())
         if 'console_port' in self.node_params:
             self.console_port = self.node_params['console_port']
         else:
-            helpers.test_error("Console port is not defined for node '%s'"
-                               % self.name())
+            helpers.environment_failure("Console port is not defined for node '%s'"
+                                        % self.name())
 
         if self.dev:
             driver = self.dev.driver().name()
@@ -255,6 +257,8 @@ class HostNode(Node):
         self.sudo = self.dev.sudo
         self.bash_content = self.dev.content
         self.bash_result = self.dev.result
+        self.bash_content = self.dev.content
+        self.bash_result = self.dev.result
         self.set_prompt = self.dev.set_prompt
         self.send = self.dev.send
         self.expect = self.dev.expect
@@ -290,6 +294,8 @@ class SwitchNode(Node):
         self.sudo = self.dev.sudo  # Sudo (part of Bash mode)
         self.cli_content = self.dev.content
         self.cli_result = self.dev.result
+        self.bash_content = self.dev.content
+        self.bash_result = self.dev.result
         self.set_prompt = self.dev.set_prompt
         self.send = self.dev.send
         self.expect = self.dev.expect

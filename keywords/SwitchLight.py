@@ -1056,7 +1056,33 @@ class SwitchLight(object):
 
 #######################################################################
 # All Common Switch Platform/Feature Related Commands Go Here:
-#######################################################################
+######################################################################
+
+
+
+    def bash_execute_command(self, node, command):
+        '''
+        Objective:
+        -Execute a command in bash mode and return output
+        
+        Input:
+        | node | Reference to switch (as defined in .topo file) |
+        | command | Command to be executed |
+
+        
+        Return Value:
+        - Output on success
+        - False on configuration failure        
+        '''
+        try:
+            t = test.Test()
+            switch = t.switch(node)
+        except:
+            return False
+        else:
+            switch.bash(command)
+            bash_output = switch.cli_content()
+            return bash_output
 
     def cli_restart_switch(self, node):
         '''
@@ -1074,7 +1100,8 @@ class SwitchLight(object):
             t = test.Test()
             s1 = t.switch(node)
             cli_input = 'reload now'
-            s1.enable(cli_input)
+            s1.enable('')
+            s1.send(cli_input)
             return True
         except:
             helpers.test_failure("Could not execute command. Please check log for errors")
@@ -1455,7 +1482,7 @@ class SwitchLight(object):
             helpers.test_failure("Could not execute command. Please check log for errors")
             return False
 
-    def cli_verify_portchannel_members(self, node, pc_number, intf_name):
+    def cli_verify_portchannel_members(self, node, pc_number, *intf_name_list):
         '''
             
             Objective:
@@ -1477,21 +1504,30 @@ class SwitchLight(object):
             cli_output = s1.cli_content()
             content = string.split(cli_output, '\n')
             helpers.log("Length of content %d" % (len(content)))
+            helpers.log("Length of content %d" % (len(intf_name_list)))
             if len(content) < 8 :
                 return False
+            elif len(intf_name_list) < 1:
+                helpers.test_failure("Passed interface list is empty !!")
+                return False
             else :
-                for i in range(8, len(content)):
+                pass_count = 0
+                for i in range(10, len(content) - 1):
                     intfName = ' '.join(content[i].split()).split(" ", 2)
-                    helpers.log('intfName is %s' % intfName)
-                    if len(intfName) > 1 and intfName[1] == intf_name :
-                        helpers.log("IntfName is %s \n" % (intfName[1]))
-                        return True
+                    helpers.log('intfName is %s \n %s' % (intfName, intfName[1]))
+                    for intf_name in intf_name_list:
+                        helpers.log('value is %s' % intf_name)
+                        if len(intfName) > 1 and intfName[1] == intf_name :
+                            helpers.log("IntfName is %s \n" % (intfName[1]))
+                            pass_count = pass_count + 1
+                if pass_count == len(intf_name_list):
+                    return True
             return False
         except:
             helpers.test_failure("Could not execute command. Please check log for errors")
             return False
 
-    def cli_verify_portchannel_member_state(self, node, pc_number, intf_name):
+    def cli_verify_portchannel_member_state(self, node, pc_number, *intf_name_list):
         '''
             Objective:
             - Verify if portchannel member interface is up
@@ -1514,18 +1550,23 @@ class SwitchLight(object):
             cli_output = s1.cli_content()
             content = string.split(cli_output, '\n')
             helpers.log("Length of content %d" % (len(content)))
+            helpers.log("Length of content %d" % (len(intf_name_list)))
             if len(content) < 8 :
                 return False
+            elif len(intf_name_list) < 1:
+                helpers.test_failure("Passed interface list is empty !!")
+                return False
             else :
+                pass_count = 0
                 for i in range(8, len(content)):
                     intfName = ' '.join(content[i].split()).split(" ", 2)
-                    if len(intfName) > 1 and intfName[1] == intf_name:
-                        if intfName[0] == "*":
-                            helpers.log("Intf Name is %s and state is %s \n" % (intfName[1], intfName[0]))
-                            return True
-                        else:
-                            helpers.log("Intf Name is %s and state is %s \n" % (intfName[1], intfName[0]))
-                            return False
+                    for intf_name in intf_name_list:
+                        if len(intfName) > 1 and intfName[1] == intf_name:
+                            if intfName[0] == "*":
+                                helpers.log("Intf Name is %s and state is %s \n" % (intfName[1], intfName[0]))
+                                pass_count = pass_count + 1
+                if pass_count == len(intf_name_list):
+                    return True
             return False
         except:
             helpers.test_failure("Could not execute command. Please check log for errors")
@@ -1560,6 +1601,11 @@ class SwitchLight(object):
             helpers.log("Input is %s" % input_value)
             try:
                 s1.config(input_value)
+                cli_output = s1.cli_content()
+                if "is not a valid interface" in cli_output:
+                    return False
+                else:
+                    return True
             except:
                 return False
             return True

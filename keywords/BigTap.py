@@ -27,7 +27,7 @@ class BigTap(object):
 ###################################################
 
 
-    def rest_show_switch_flow(self, switch_alias=None, sw_dpid=None, return_value=None):
+    def rest_show_switch_flow(self, node, switch_alias=None, sw_dpid=None, return_value=None):
         '''
         Objective: 
         - Returns number of flows on a switch
@@ -45,18 +45,17 @@ class BigTap(object):
         t = test.Test()
         try:
             c = t.controller('master')
+            AppCommon = AppController.AppController()
         except:
             return False
-
         else:
             try:
                 if (switch_alias is None and sw_dpid is not None):
                     switch_dpid = sw_dpid
                 elif (switch_alias is None and sw_dpid is None):
-                    helpers.log('Either Switch DPID or Switch Alias has to be provided')
-                    return False
+                    switch_dpid = AppCommon.rest_return_switch_dpid_from_ip(node)
                 elif (switch_alias is not None and sw_dpid is None):
-                    switch_dpid = self.rest_show_switch_dpid(switch_alias)
+                    switch_dpid = AppCommon.rest_return_switch_dpid_from_alias(switch_alias)
                 else:
                     switch_dpid = sw_dpid
                 url = '/api/v1/data/controller/core/switch[dpid="%s"]?select=stats/table' % (str(switch_dpid))
@@ -237,25 +236,30 @@ class BigTap(object):
 
             if content[0]['runtime-status'] == "installed":
                 helpers.test_log("Policy correctly reports runtime status as : %s" % content[0]['runtime-status'])
+            elif content[0]['runtime-status'] == "inactive":
+                helpers.test_log("Policy correctly reports runtime status as : %s" % content[0]['runtime-status'])
             else:
                 helpers.test_failure("Policy does not correctly report runtime status as : %s" % content[0]['runtime-status'])
                 return False
 
-            if content[0]['delivery-interface-count'] == int(num_delivery_intf):
-                helpers.test_log("Policy correctly reports number of delivery interfaces as : %s" % content[0]['delivery-interface-count'])
-            else:
-                helpers.test_failure("Policy does not correctly report number of delivery interfaces  : %s" % content[0]['delivery-interface-count'])
-                return False
-
-            if content[0]['filter-interface-count'] == int(num_filter_intf):
-                helpers.test_log("Policy correctly reports number of filter interfaces as : %s" % content[0]['filter-interface-count'])
-            else:
-                helpers.test_failure("Policy does not correctly report number of filter interfaces  : %s" % content[0]['filter-interface-count'])
-                return False
+            if (num_delivery_intf is not None):
+                if content[0]['delivery-interface-count'] == int(num_delivery_intf):
+                    helpers.test_log("Policy correctly reports number of delivery interfaces as : %s" % content[0]['delivery-interface-count'])
+                else:
+                    helpers.test_failure("Policy does not correctly report number of delivery interfaces  : %s" % content[0]['delivery-interface-count'])
+                    return False
+            if (num_filter_intf is not None):
+                if content[0]['filter-interface-count'] == int(num_filter_intf):
+                    helpers.test_log("Policy correctly reports number of filter interfaces as : %s" % content[0]['filter-interface-count'])
+                else:
+                    helpers.test_failure("Policy does not correctly report number of filter interfaces  : %s" % content[0]['filter-interface-count'])
+                    return False
 
             if content[0]['detailed-status'] == "installed to forward":
                 helpers.test_log("Policy correctly reports detailed status as : %s" % content[0]['detailed-status'])
             elif content[0]['detailed-status'] == "installed to measure rate":
+                helpers.test_log("Policy correctly reports detailed status as : %s" % content[0]['detailed-status'])
+            elif content[0]['detailed-status'] == "inactive":
                 helpers.test_log("Policy correctly reports detailed status as : %s" % content[0]['detailed-status'])
             else:
                 helpers.test_failure("Policy does not correctly report detailed status as : %s" % content[0]['detailed-status'])
@@ -293,9 +297,6 @@ class BigTap(object):
             except:
                 return False
             else:
-                if not c.rest.status_code_ok():
-                    helpers.test_failure(c.rest.error())
-                    return False
                 if(c.rest.content()):
                     content = c.rest.content()
                     return content[index][key]
@@ -335,33 +336,8 @@ class BigTap(object):
 ###################################################
 # All Bigtap Configuration Commands Go Here:
 ###################################################
-#    def rest_add_switch_alias(self, switch_dpid, switch_alias):
-#        '''Set Switch alias via command "switch-alias <switch_alias>"
-#
-#            Input:
-#                `switch_dpid`        DPID of switch
-#                `switch_alias`        Desired alias for switch
-#
-#            Return: true if configuration is successful, false otherwise
-#        '''
-#        try:
-#            t = test.Test()
-#        except:
-#            return False
-#        else:
-#            c = t.controller('master')
-#            try:
-#                url = '/api/v1/data/controller/core/switch[dpid="%s"]' % (str(switch_dpid))
-#                c.rest.patch(url, {"alias": str(switch_alias)})
-#            except:
-#                helpers.test_failure(c.rest.error())
-#                return False
-#            else:
-#                helpers.test_log(c.rest.content_json())
-#                return True
 
-
-    def rest_add_interface_role(self, intf_name, intf_type, intf_nickname, switch_alias=None, sw_dpid=None):
+    def rest_add_interface_role(self, node, intf_name, intf_type, intf_nickname=None, switch_alias=None, sw_dpid=None):
         '''
             Objective:
             - Execute the CLI command 'bigtap role filter interface-name F1'
@@ -382,31 +358,41 @@ class BigTap(object):
             return False
         else:
             c = t.controller('master')
+            switch = t.switch(node)
             AppCommon = AppController.AppController()
             try:
                 if (switch_alias is None and sw_dpid is not None):
                     switch_dpid = sw_dpid
                 elif (switch_alias is None and sw_dpid is None):
-                    helpers.log('Either Switch DPID or Switch Alias has to be provided')
-                    return False
+                    switch_dpid = AppCommon.rest_return_switch_dpid_from_ip(node)
                 elif (switch_alias is not None and sw_dpid is None):
                     switch_dpid = AppCommon.rest_return_switch_dpid_from_alias(switch_alias)
                 else:
                     switch_dpid = sw_dpid
+
+                if(intf_nickname is None):
+                    if ((intf_type is "filter") or (intf_type is "Filter")):
+                        intfName = intf_name
+                        intfNick = str(switch.ip()).replace(".", "-") + "-F" + intfName[-2:]
+                    elif ((intf_type is "delivery") or (intf_type is "Delivery")):
+                        intfName = intf_name
+                        intfNick = str(switch.ip()).replace(".", "-") + "-D" + intfName[-2:]
+                    else:
+                        intfName = intf_name
+                        intfNick = str(switch.ip()).replace(".", "-") + "-S" + intfName[-2:]
+                else:
+                    intfNick = intf_nickname
                 url = '/api/v1/data/controller/applications/bigtap/interface-config[interface="%s"][switch="%s"]' % (str(intf_name), str(switch_dpid))
-                c.rest.put(url, {"interface": str(intf_name), "switch": str(switch_dpid), 'role':str(intf_type), 'name':str(intf_nickname)})
+                c.rest.put(url, {"interface": str(intf_name), "switch": str(switch_dpid), 'role':str(intf_type), 'name':str(intfNick)})
+
             except:
-                helpers.test_failure(c.rest.error())
+                helpers.test_log(c.rest.error())
                 return False
             else:
-                if not c.rest.status_code_ok():
-                    helpers.test_log(c.rest.error())
-                    return False
-                else:
-                    helpers.test_log(c.rest.content_json())
-                    return True
+                helpers.test_log(c.rest.content_json())
+                return True
 
-    def rest_delete_interface_role(self, intf_name, intf_type, intf_nickname, switch_alias=None, sw_dpid=None):
+    def rest_delete_interface_role(self, node, intf_name, intf_type, intf_nickname=None, switch_alias=None, sw_dpid=None):
         '''
             Objective:
             - Delete filter/service/delivery interface from switch configuration. 
@@ -430,31 +416,38 @@ class BigTap(object):
             return False
         else:
             c = t.controller('master')
+            switch = t.switch(node)
             AppCommon = AppController.AppController()
             try:
                 if (switch_alias is None and sw_dpid is not None):
                     switch_dpid = sw_dpid
                 elif (switch_alias is None and sw_dpid is None):
-                    helpers.test_log('Either Switch DPID or Switch Alias has to be provided')
-                    return False
+                    switch_dpid = AppCommon.rest_return_switch_dpid_from_ip(node)
                 elif (switch_alias is not None and sw_dpid is None):
                     switch_dpid = AppCommon.rest_return_switch_dpid_from_alias(switch_alias)
                 else:
                     switch_dpid = sw_dpid
-
+                if(intf_nickname is None):
+                    if ((intf_type is "filter") or (intf_type is "Filter")):
+                        intfName = intf_name
+                        intfNick = str(switch.ip()).replace(".", "-") + "-F" + intfName[-2:]
+                    elif ((intf_type is "delivery") or (intf_type is "Delivery")):
+                        intfName = intf_name
+                        intfNick = str(switch.ip()).replace(".", "-") + "-D" + intfName[-2:]
+                    else:
+                        intfName = intf_name
+                        intfNick = str(switch.ip()).replace(".", "-") + "-S" + intfName[-2:]
+                else:
+                    intfNick = intf_nickname
                 url = '/api/v1/data/controller/applications/bigtap/interface-config[interface="%s"][switch="%s"]' % (str(intf_name), str(switch_dpid))
-                c.rest.delete(url, {'role':str(intf_type), "name": str(intf_nickname)})
+                c.rest.delete(url, {'role':str(intf_type), "name": str(intfNick)})
             except:
-                helpers.test_failure(c.rest.error())
+                helpers.test_log(c.rest.error())
                 return False
             else:
-                if not c.rest.status_code_ok():
-                    helpers.test_failure(c.rest.error())
-                    return False
-                else:
-                    return True
+                return True
 
-    def rest_delete_interface(self, intf_name, switch_alias=None, sw_dpid=None):
+    def rest_delete_interface(self, node, intf_name, switch_alias=None, sw_dpid=None):
         '''
             Objective
             - Delete interface from switch
@@ -473,13 +466,13 @@ class BigTap(object):
             return False
         else:
             c = t.controller('master')
+            switch = t.switch(node)
             AppCommon = AppController.AppController()
             try:
                 if (switch_alias is None and sw_dpid is not None):
                     switch_dpid = sw_dpid
                 elif (switch_alias is None and sw_dpid is None):
-                    helpers.log('Either Switch DPID or Switch Alias has to be provided')
-                    return False
+                    switch_dpid = AppCommon.rest_return_switch_dpid_from_ip(node)
                 elif (switch_alias is not None and sw_dpid is None):
                     switch_dpid = AppCommon.rest_return_switch_dpid_from_alias(switch_alias)
                 else:
@@ -487,14 +480,10 @@ class BigTap(object):
                 url = '/api/v1/data/controller/core/switch[dpid="%s"]/interface[name="%s"]' % (str(switch_dpid), str(intf_name))
                 c.rest.delete(url, {})
             except:
-                helpers.test_failure(c.rest.error())
+                helpers.test_log(c.rest.error())
                 return False
             else:
-                if not c.rest.status_code_ok():
-                    helpers.test_failure(c.rest.error())
-                    return False
-                else:
-                    return True
+                return True
 
     def rest_add_policy(self, rbac_view_name, policy_name, policy_action="inactive"):
         '''
@@ -526,7 +515,7 @@ class BigTap(object):
                 try:
                     c.rest.patch(url, {"action":str(policy_action)})
                 except:
-                    helpers.test_failure(c.rest.error())
+                    helpers.test_log(c.rest.error())
                     return False
                 else:
                     return True
@@ -554,14 +543,10 @@ class BigTap(object):
                 url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]' % (str(rbac_view_name), str(policy_name))
                 c.rest.delete(url, {})
             except:
-                helpers.test_failure(c.rest.error())
+                helpers.test_log(c.rest.error())
                 return False
             else:
-                if not c.rest.status_code_ok():
-                    helpers.test_failure(c.rest.error())
-                    return False
-                else:
-                    return True
+                return True
 
     def rest_add_policy_interface(self, rbac_view_name, policy_name, intf_nickname, intf_type):
         '''
@@ -592,14 +577,10 @@ class BigTap(object):
                 url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]/%s[name="%s"]' % (str(rbac_view_name), str(policy_name), str(intf_type), str(intf_nickname))
                 c.rest.put(url, {"name": str(intf_nickname)})
             except:
-                helpers.test_failure(c.rest.error())
+                helpers.test_log(c.rest.error())
                 return False
             else:
-                if not c.rest.status_code_ok():
-                    helpers.test_failure(c.rest.error())
-                    return False
-                else:
-                    return True
+                return True
 
     def rest_delete_policy_interface(self, rbac_view_name, policy_name, intf_nickname, intf_type):
         '''
@@ -631,14 +612,10 @@ class BigTap(object):
                 url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]/%s[name="%s"]' % (str(rbac_view_name), str(policy_name), str(intf_type), str(intf_nickname))
                 c.rest.delete(url, {})
             except:
-                helpers.test_failure(c.rest.error())
+                helpers.test_log(c.rest.error())
                 return False
             else:
-                if not c.rest.status_code_ok():
-                    helpers.test_failure(c.rest.error())
-                    return False
-                else:
-                    return True
+                return True
 
     def rest_add_policy_match(self, rbac_view_name, policy_name, match_number, data):
         '''
@@ -666,13 +643,10 @@ class BigTap(object):
                 data_dict = helpers.from_json(data)
                 c.rest.put(url, data_dict)
             except:
-                helpers.test_failure(c.rest.error())
+                helpers.test_log(c.rest.error())
                 return False
             else:
-                if not c.rest.status_code_ok():
-                    return False
-                else:
-                    return True
+                return True
 
     def rest_delete_policy_match(self, rbac_view_name, policy_name, match_number):
         '''
@@ -695,10 +669,10 @@ class BigTap(object):
         else:
             c = t.controller('master')
             try:
-                url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]/rule[sequence="%s"]' % (str(rbac_view_name), str(policy_name), str(match_number))
+                url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]/rule[sequence=%s]' % (str(rbac_view_name), str(policy_name), str(match_number))
                 c.rest.delete(url, {})
             except:
-                helpers.test_failure(c.rest.error())
+                helpers.test_log(c.rest.error())
                 return False
             else:
                 return True
@@ -751,7 +725,7 @@ class BigTap(object):
                         url_add_intf = '/api/v1/data/controller/applications/bigtap/service[name="%s"]/post-group[name="%s"]' % (str(service_name), str(post_service_intf_nickname))
                         c.rest.put(url_add_intf, {"name":str(post_service_intf_nickname)})
                     except:
-                        helpers.test_failure(c.rest.error())
+                        helpers.test_log(c.rest.error())
                         return False
                     else:
                         helpers.test_log(c.rest.content_json())
@@ -781,15 +755,10 @@ class BigTap(object):
                 url = '/api/v1/data/controller/applications/bigtap/service[name="%s"]' % (str(service_name))
                 c.rest.delete(url, {})
             except:
-                helpers.test_failure(c.rest.error())
+                helpers.test_log(c.rest.error())
                 return False
             else:
-                if not c.rest.status_code_ok():
-                    helpers.test_failure(c.rest.error())
-                    return False
-                else:
-                    helpers.test_log(c.rest.content_json())
-                    return True
+                return True
 
     def rest_add_interface_service(self, service_name, intf_type, intf_nickname):
         '''
@@ -825,15 +794,10 @@ class BigTap(object):
                     url_add_intf = '/api/v1/data/controller/applications/bigtap/service[name="%s"]/post-group[name="%s"]' % (str(service_name), str(intf_nickname))
                 c.rest.post(url_add_intf, {"name":str(intf_nickname)})
             except:
-                helpers.test_failure(c.rest.error())
+                helpers.test_log(c.rest.error())
                 return False
             else:
-                if not c.rest.status_code_ok():
-                    helpers.test_failure(c.rest.error())
-                    return False
-                else:
-                    helpers.test_log(c.rest.content_json())
-                    return True
+                return True
 
     def rest_delete_interface_service(self, service_name, intf_nickname, intf_type):
         '''
@@ -867,15 +831,10 @@ class BigTap(object):
                     url_add_intf = '/api/v1/data/controller/applications/bigtap/service[name="%s"]/post-group[name="%s"]' % (str(service_name), str(intf_nickname))
                 c.rest.delete(url_add_intf, {})
             except:
-                helpers.test_failure(c.rest.error())
+                helpers.test_log(c.rest.error())
                 return False
             else:
-                if not c.rest.status_code_ok():
-                    helpers.test_failure(c.rest.error())
-                    return False
-                else:
-                    helpers.test_log(c.rest.content_json())
-                    return True
+                return True
 
     def rest_add_service_to_policy(self, rbac_view_name, policy_name, service_name, sequence_number):
         '''
@@ -911,15 +870,10 @@ class BigTap(object):
                 url_to_add = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]/service[sequence=%s]' % (str(rbac_view_name), str(policy_name), str(sequence_number))
                 c.rest.put(url_to_add, {"name":str(service_name), "sequence": int(sequence_number)})
             except:
-                helpers.test_failure(c.rest.error())
+                helpers.test_log(c.rest.error())
                 return False
             else:
-                if not c.rest.status_code_ok():
-                    helpers.test_failure(c.rest.error())
-                    return False
-                else:
-                    helpers.test_log(c.rest.content_json())
-                    return True
+                return True
 
     def rest_delete_service_from_policy(self, rbac_view_name, policy_name, service_name):
         '''
@@ -946,15 +900,10 @@ class BigTap(object):
                 url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]/service[name="%s"]' % (str(rbac_view_name), str(policy_name), str(service_name))
                 c.rest.delete(url, {})
             except:
-                helpers.test_failure(c.rest.error())
+                helpers.test_log(c.rest.error())
                 return False
             else:
-                if not c.rest.status_code_ok():
-                    helpers.test_failure(c.rest.error())
-                    return False
-                else:
-                    helpers.test_log(c.rest.content_json())
-                    return True
+                return True
 
 # Change policy action
     def rest_add_policy_action(self, rbac_view_name, policy_name, policy_action):
@@ -999,15 +948,10 @@ class BigTap(object):
                 url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]' % (str(rbac_view_name), str(policy_name))
                 c.rest.patch(url, {"action":str(policy_action)})
             except:
-                helpers.test_failure(c.rest.error())
+                helpers.test_log(c.rest.error())
                 return False
             else:
-                if not c.rest.status_code_ok():
-                    helpers.test_failure(c.rest.error())
-                    return False
-                else:
-                    helpers.test_log(c.rest.content_json())
-                    return True
+                return True
 
 # Alias
     def rest_update_policy_action(self, rbac_view_name, policy_name, policy_action):
@@ -1040,15 +984,11 @@ class BigTap(object):
                 url = '/api/v1/data/controller/applications/bigtap/feature'
                 c.rest.patch(url, {str(feature_name): False})
             except:
-                helpers.test_failure(c.rest.error())
+                helpers.test_log(c.rest.error())
                 return False
             else:
-                if not c.rest.status_code_ok():
-                    helpers.test_log(c.rest.error())
-                    return False
-                else:
-                    helpers.test_log(c.rest.content_json())
-                    return True
+                helpers.test_log(c.rest.content_json())
+                return True
 
 # Enable bigtap feature overlap/inport-mask/tracked-host/l3-l4-mode
     def rest_enable_feature(self, feature_name):
@@ -1076,15 +1016,10 @@ class BigTap(object):
                 url = '/api/v1/data/controller/applications/bigtap/feature'
                 c.rest.patch(url, {str(feature_name): True})
             except:
-                helpers.test_failure(c.rest.error())
                 return False
             else:
-                if not c.rest.status_code_ok():
-                    helpers.test_log(c.rest.error())
-                    return False
-                else:
-                    helpers.test_log(c.rest.content_json())
-                    return True
+                helpers.test_log(c.rest.content_json())
+                return True
 
 # Compare coreswitch flows
     def rest_verify_coreswitch_flows(self, flow_1, flow_2, flow_value_1, flow_value_2):
@@ -1256,18 +1191,18 @@ class BigTap(object):
             | True | configuration add is successful.|
             | False | configuration add is unsuccessful.|
         '''
-        t = test.Test()
-        c = t.controller('master')
-        url = '/api/v1/data/controller/applications/bigtap/ip-address-set[name="%s"]' % (str(name))
-        c.rest.put(url, {"name": str(name)})
-        helpers.sleep(1)
+        try:
+            t = test.Test()
+            c = t.controller('master')
+            url = '/api/v1/data/controller/applications/bigtap/ip-address-set[name="%s"]' % (str(name))
+            c.rest.put(url, {"name": str(name)})
+            helpers.sleep(1)
 
-        url = '/api/v1/data/controller/applications/bigtap/ip-address-set[name="%s"]' % (str(name))
+            url = '/api/v1/data/controller/applications/bigtap/ip-address-set[name="%s"]' % (str(name))
 
-        c.rest.patch(url, {"ip-address-type": str(addr_type)})
-        helpers.sleep(1)
-        if not c.rest.status_code_ok():
-            helpers.test_failure(c.rest.error())
+            c.rest.patch(url, {"ip-address-type": str(addr_type)})
+            helpers.sleep(1)
+        except:
             return False
         else:
             helpers.test_log(c.rest.content_json())
@@ -1288,19 +1223,20 @@ class BigTap(object):
             | False | configuration add is unsuccessful.|
         '''
         # create the address group and associate the type
-        t = test.Test()
-        c = t.controller('master')
+        try:
+            t = test.Test()
+            c = t.controller('master')
 
-        url = ('/api/v1/data/controller/applications/bigtap/ip-address-set[name="%s"]/address-mask-set[ip="%s"][ip-mask="%s"]'
-               % (str(name), str(addr), str(mask)))
+            url = ('/api/v1/data/controller/applications/bigtap/ip-address-set[name="%s"]/address-mask-set[ip="%s"][ip-mask="%s"]'
+                   % (str(name), str(addr), str(mask)))
 
-        c.rest.put(url, {"ip": str(addr), "ip-mask": str(mask)})
-        helpers.sleep(1)
-        helpers.test_log(c.rest.content_json())
-
-        if not c.rest.status_code_ok():
+            c.rest.put(url, {"ip": str(addr), "ip-mask": str(mask)})
+            helpers.sleep(1)
+            helpers.test_log(c.rest.content_json())
+        except:
             return False
         else:
+            helpers.test_log(c.rest.content_json())
             return True
 
 

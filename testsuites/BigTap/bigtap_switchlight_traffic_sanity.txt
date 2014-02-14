@@ -158,6 +158,7 @@ Verify L2 Traffic: Traffic with CRC Errors
 * Keywords
 
 bigtap suite setup
+    base suite setup
     rest add switch alias  s1  LB7
     rest add interface role  ${filter_1}  filter  ${filter_nick}  switch_alias=${switch_1_alias}  
     rest add interface role  ${delivery_1}  delivery  ${delivery_nick}  switch_alias=${switch_1_alias}
@@ -181,3 +182,4 @@ bigtap suite teardown
     rest delete interface  ${delivery_1}  switch_alias=${switch_1_alias}
     rest delete switch alias  s1
     rest delete switch  s1
+    base suite teardown

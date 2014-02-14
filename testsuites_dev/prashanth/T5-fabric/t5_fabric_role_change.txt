@@ -10,48 +10,63 @@ Test Setup  base test setup
 Test Teardown  base test teardown
 Force Tags  T5 Sanity
 Library  keywords/BsnCommon.py
-Library  keywords_dev/T5.py
-Library  keywords_dev/T5Fabric.py
-Library	 keywords_dev/T5_L3.py
-Resource  keywords_dev/t5_dualleaf_three_rack_physical_resource.txt
+Library  keywords_dev/prashanth/T5.py
+Library  keywords_dev/prashanth/T5Fabric.py
+Library	 keywords_dev/prashanth/T5_L3.py
+Library  keywords/Mininet.py
+Resource  keywords_dev/prashanth/t5_dualleaf_three_rack_resource.txt
+
+*Variables
+${spine0_dpid}	 00:00:00:00:00:01:00:01
+${spine1_dpid}	 00:00:00:00:00:01:00:02
+${leaf0a_dpid}	 00:00:00:00:00:02:00:01
 
 
 
 * Test Case   
 
-Configure Dual Rack Dual Leaf Topology
-   configure fabric switch
+add Three Rack Dual Leaf Topology
+	[Tags]  feature
+   add fabric switch
    sleep  5
-   rest check fabric switch connectivity
+   rest verify fabric switch all
 
 Verify the Fabric Role Spine0
+	[Tags]  feature
    sleep  5 
-   check fabric switch role  00:00:00:00:01:00:00:01  spine  
+   verify fabric switch role  ${spine0_dpid}  spine  
 
-Remove/add the Fabric role spine 
-  REST remove fabric role  spine0
-  check fabric switch role  00:00:00:00:01:00:00:01  virtual
-  REST configure fabric role  spine0  spine   
+delete/add the Fabric role spine0
+	[Tags]  feature 
+  REST delete fabric role  spine0
+  sleep  3
+  verify fabric switch role  ${spine0_dpid}  virtual
+  rest verify fabric link
+  REST add fabric role  spine0  spine   
   sleep  5
-  check fabric switch role  00:00:00:00:01:00:00:01  spine 
+  verify fabric switch role  ${spine0_dpid}  spine 
+  rest verify fabric link
 
-Remove/add Fabric role leaf in dual leaf setup
-   rest remove leaf group  leaf0-a  
-   REST remove fabric role  leaf0-a  
+delete/add Fabric role leaf in dual leaf setup
+	[Tags]  feature
+   rest delete leaf group  leaf0-a  
+   REST delete fabric role  leaf0-a  
    sleep  5 
-   check fabric switch role  00:00:00:00:02:00:00:01  virtual    
-   REST configure fabric role  leaf0-a  leaf
-   REST configure leaf group  leaf0-a  rack0   
+   verify fabric switch role  ${leaf0a_dpid}  virtual 
+   rest verify fabric link   
+   REST add fabric role  leaf0-a  leaf
+   REST add leaf group  leaf0-a  rack0   
    sleep  5
-   check fabric switch role  00:00:00:00:02:00:00:01  leaf 
- 
+   verify fabric switch role  ${leaf0a_dpid}  leaf
+   rest verify fabric link
+   
 Tear down the topology
-   remove fabric switch
+   delete fabric switch
 
 * Keywords   
 
-check fabric switch role  [Arguments]  ${dpid}  ${role}
-  REST check fabric switch role  ${dpid}  ${role}
+verify fabric switch role  [Arguments]  ${dpid}  ${role}
+  REST verify fabric switch role  ${dpid}  ${role}
 
  
 

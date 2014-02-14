@@ -1,13 +1,20 @@
 * Settings
 Documentation   This suite is my sandbox for experimentation.
 Force Tags      Vui
+Suite Setup     base suite setup
+Suite Teardown  base suite teardown
+Test Setup      base test setup
+Test Teardown   base test teardown
 #Library         Reserve
 Library         keywords/BsnCommon.py
 Library         keywords_dev/vui/MyTest.py
+Library         OperatingSystem
 
 * Variables
 ${NAME}         "Vui Le"
 ${COUNTER}      100
+#@{MYLIST}       [ a, b, c, d, e ]
+@{MYLIST}       [ 1, 2, 3, 4, 5, 6, 7, "abc", xyz ]
 
 * Test Cases
 Test var assignment
@@ -43,11 +50,30 @@ Test dynamic string
     json_to_pydict    {a:true, b:${123}, name:${NAME}}
     
 Test expression
-    [Tags]           smoke
+    [Tags]           skipped smoke
     ${result1}=       expr  1 + 1 + ${COUNTER}
     ${result2}=       expr  10 / 2
     ${result3}=       expr  ${result1} + ${result2}
     log               Expression evaluated to result1=${result1}, result2=${result2}, result3=${result3}
+
+Test array variable
+    [Tags]           skipped
+    @{alist}=         create list  1  2  3  4  abc  yzx
+    #log many          @{alist}
+    #log               first entry = @{alist}[0]
+    print value       @{alist}
+    Log               ${NAME}=This is the input
+
+Test write file
+    [Tags]           skipped
+    Append to File    /tmp/myoutput.txt  My name is ${NAME}.\n
+    Append to File    /tmp/myoutput.txt  I work at BigSwitch.\n
+    Append to File    /tmp/myoutput.txt  I'm also a woodworker.\n
+
+Test special character passing
+    print value       abc|123
+    print value       abc/123
+    print value       abc\\123
 
 * Keywords
 variable assignment

@@ -11,11 +11,12 @@ class Test(object):
     """
     Test class is a singleton which contains important test states for the
     current robot execution. E.g., topology information including device
-    IP addresses, roles (controller, switch, spine, leaf), interfaces, and
+    IP addresses, aliases (controller, switch, spine, leaf), interfaces, and
     so on...
     """
 
     _instance = None
+
 
     # Singleton pattern borrowed from
     # http://developer.nokia.com/Community/Wiki/How_to_make_a_singleton_in_Python
@@ -27,22 +28,73 @@ class Test(object):
             self._setup_in_progress = False
             self._setup_completed = False
             self._has_a_controller = False
+            self._has_a_single_controller = False
             self._has_a_topo_file = False
             self._params = {}
+            self._bigtest_node_info = {}
+
+            # A node in BigRobot may have a alias associated with it. One way
+            # you can refer to a node using it's defined name, e.g., 'c1',
+            # 'c2', 's1', 'mn', etc. Another way is to refer to its alias.
+            # For HA,  'master' and 'slave' are considered as dynamic aliases,
+            # since the alias will change when mastership changes. You can also
+            # define static aliases such as:
+            #    s1:
+            #        alias: leaf1
+            #    s2:
+            #        alias: spine1
+            # Test class maintains a lookup table with self._node_static_aliases.
+            #
+            self._node_static_aliases = {}
 
             self._bsn_config_file = ''.join((helpers.get_path_autobot_config(),
                                              '/bsn.yaml'))
             helpers.log("Loading config file %s" % self._bsn_config_file)
             self._bsn_config = helpers.load_config(self._bsn_config_file)
 
-            topo = helpers.bigrobot_topology()
-            if helpers.file_not_exists(topo):
-                helpers.warn("Topology file not specified (%s)" % topo)
-                self._topology_params = {}
-            else:
-                helpers.log("Loading topology file %s" % topo)
-                self._topology_params = helpers.load_config(topo)
-                self._has_a_topo_file = True
+            self._is_ci = helpers.bigrobot_continuous_integration()
+
+            controller_id = 1
+            mininet_id = 1
+            params_dict = {}
+
+            if self._is_ci.lower() == "true":
+                helpers.info("BigRobot Continuous Integration environment")
+                self._bigtest_node_info = helpers.bigtest_node_info()
+                helpers.info("BigTest node info:\n%s"
+                             % helpers.prettify(self._bigtest_node_info))
+                for key in self._bigtest_node_info:
+                    if re.match(r'^node-controller', key):
+                        c = "c" + str(controller_id)
+                        controller_id += 1
+                        ip = self._bigtest_node_info[key]['ipaddr']
+                        params_dict[c] = {}
+                        params_dict[c]['ip'] = ip
+                        helpers.debug("'%s' IP address is '%s'"
+                                      % (c, ip))
+                    if re.match(r'^node-mininet', key):
+                        m = "mn" + str(mininet_id)
+                        mininet_id += 1
+                        ip = self._bigtest_node_info[key]['ipaddr']
+                        params_dict[m] = {}
+                        params_dict[m]['ip'] = ip
+                        helpers.debug("'%s' IP address is '%s'"
+                                      % (m, ip))
+                yaml_str = helpers.to_yaml(params_dict)
+                self._params_file = '/var/run/bigtest/params.topo'
+
+                helpers.info("Writing params to file '%s'" % self._params_file)
+                helpers.file_write_once(self._params_file, yaml_str)
+
+                helpers.bigrobot_params(new_val=self._params_file)
+
+            self.load_topology()
+            self.init_alias_lookup_table()
+
+            if 'mn' in self._topology_params:
+                helpers.debug("Changing node name 'mn' to 'mn1'")
+                self._topology_params['mn1'] = self._topology_params['mn']
+                del self._topology_params['mn']
 
             # Reading from params file and overriding attributes in
             # topo file with values from params.
@@ -68,6 +120,38 @@ class Test(object):
                         self._topology_params[n][key] = self._params[n][key]
 
             self._topology = {}
+
+        def load_topology(self):
+            topo = helpers.bigrobot_topology()
+            if helpers.file_not_exists(topo):
+                helpers.warn("Topology file not specified (%s)" % topo)
+                self._topology_params = {}
+            else:
+                helpers.log("Loading topology file %s" % topo)
+                self._topology_params = helpers.load_config(topo)
+                self._has_a_topo_file = True
+
+        def init_alias_lookup_table(self):
+            for node in self._topology_params:
+                self._node_static_aliases[node] = node
+                if 'alias' in self._topology_params[node]:
+                    alias = self._topology_params[node]['alias']
+                    self._node_static_aliases[alias] = node
+
+                    # BSN QA convention is to name the aliases as:
+                    #   spine0, spine1, etc.
+                    #   leaf1-a, leaf1-b, leaf2-a, leaf2-b, etc.
+                    #   s021, etc.
+                    if not re.match(r'^(leaf\d+-[ab]|spine\d+|s\d+)', alias):
+                        helpers.warn("Supported aliases are leaf{n}-{a|b}, spine{n}, s{nnn}")
+                        helpers.environment_failure("'%s' has alias '%s' which does not match the allowable alias names"
+                                                    % (node, alias))
+            self._node_static_aliases['master'] = 'master'
+            self._node_static_aliases['slave'] = 'slave'
+            self._node_static_aliases['mn'] = 'mn1'
+            self._node_static_aliases['mn1'] = 'mn1'
+            helpers.log("Node aliases:\n%s"
+                        % helpers.prettify(self._node_static_aliases))
 
     def __init__(self):
         if Test._instance is None:
@@ -111,6 +195,17 @@ class Test(object):
     def switch_password(self):
         return self.bsn_config('switch_password')
 
+    def alias(self, name, ignore_error=False):
+        """
+        :param ignore_error: (Bool) If true, don't trigger exception when
+                             name is not found.
+        """
+        if not name in self._node_static_aliases:
+            if ignore_error:
+                return name
+            helpers.environment_failure("Alias '%s' is not defined" % name)
+        return self._node_static_aliases[name]
+
     def topology_params(self, node=None, key=None, default=None):
         """
         Returns the topology dictionary.
@@ -132,24 +227,25 @@ class Test(object):
         }
         """
         if node:
+            node = self.alias(node)
             if node not in self._topology_params:
-                helpers.test_error("Node '%s' is not defined in topology file"
-                                   % node)
+                helpers.environment_failure("Node '%s' is not defined in topology file"
+                                            % node)
             else:
                 if key:
                     if key not in self._topology_params[node]:
                         if default:
                             self._topology_params[node][key] = default
                             return default
-                        helpers.test_error("Node '%s' does not have attribute '%s' defined"
+                        helpers.environment_failure("Node '%s' does not have attribute '%s' defined"
                                            % (node, key))
                     else:
                         return self._topology_params[node][key]
                 else:
                     return self._topology_params[node]
         elif key:
-            helpers.test_error("Key '%s' is defined but not associated with a node"
-                               % key)
+            helpers.environment_failure("Key '%s' is defined but not associated with a node"
+                                        % key)
         return self._topology_params
 
     # Alias
@@ -162,6 +258,7 @@ class Test(object):
         """
         authen = []
         params = self.topology_params()
+        name = self.alias(name)
         if name in params:
             node = params[name]
             if 'user' in node:
@@ -188,9 +285,11 @@ class Test(object):
 
         # helpers.prettify_log("_topology:", self._topology)
         if name and node:
+            name = self.alias(name, ignore_error=ignore_error)
             self._topology[name] = node
             return node
         elif name:
+            name = self.alias(name, ignore_error=ignore_error)
             if name not in self._topology:
                 if ignore_error:
                     return None
@@ -201,8 +300,13 @@ class Test(object):
             return self._topology
 
     def is_master_controller(self, name):
+        name = self.alias(name)
         n = self.topology(name)
         platform = n.platform()
+
+        if self._has_a_single_controller:
+            # helpers.debug("Topology has a single controller. Assume it's the master.")
+            return True
 
         if helpers.is_bigtap(platform) or helpers.is_bigwire(platform):
             # We don't want REST object to save the result from the REST
@@ -230,7 +334,7 @@ class Test(object):
         """
         Get the handles of all the controllers.
         """
-        return [n for n in self.topology_params() if re.match(r'^c\d+', n)]
+        return [self.controller(n) for n in self.topology_params() if re.match(r'^c\d+', n)]
 
     def controller(self, name='c1', resolve_mastership=False):
         """
@@ -240,6 +344,7 @@ class Test(object):
                   name (e.g., 'c1', 'c2', etc). 
         """
         t = self
+        name = self.alias(name)
 
         if not resolve_mastership and name in ('master', 'slave'):
             return ha_wrappers.HaControllerNode(name, t)
@@ -265,34 +370,40 @@ class Test(object):
 
         return self.topology(node)
 
-    def mininet(self, name='mn', *args, **kwargs):
-        return self.topology(name, *args, **kwargs)
-
-    def switches(self):
-        """
-        Get the handles of all the switches.
-        """
-        return [n for n in self.topology_params() if re.match(r'^s\d+', n)]
-
-    def traffic_generator(self, name='tg1', *args, **kwargs):
+    def mininet(self, name='mn1', *args, **kwargs):
+        name = self.alias(name)
+        if name == 'mn':
+            name = 'mn1'
         return self.topology(name, *args, **kwargs)
 
     def traffic_generators(self):
         """
         Get the handles of all the traffic generators.
         """
-        return [n for n in self.topology_params() if re.match(r'^tg\d+', n)]
+        return [self.traffic_generator(n) for n in self.topology_params() if re.match(r'^tg\d+', n)]
+
+    def traffic_generator(self, name='tg1', *args, **kwargs):
+        name = self.alias(name)
+        return self.topology(name, *args, **kwargs)
+
+    def switches(self):
+        """
+        Get the handles of all the switches.
+        """
+        return [self.switch(n) for n in self.topology_params() if re.match(r'^s\d+', n)]
 
     def switch(self, name='s1', *args, **kwargs):
+        name = self.alias(name)
         return self.topology(name, *args, **kwargs)
 
     def hosts(self):
         """
         Get the handles of all the hosts.
         """
-        return [n for n in self.topology_params() if re.match(r'^h\d+', n)]
+        return [self.host(n) for n in self.topology_params() if re.match(r'^h\d+', n)]
 
     def host(self, name='h1', *args, **kwargs):
+        name = self.alias(name)
         return self.topology(name, *args, **kwargs)
 
     def node(self, *args, **kwargs):
@@ -300,11 +411,14 @@ class Test(object):
         Returns the handle for a node. 
         """
         if len(args) >= 1:
-            node = args[0]
+            node = self.alias(args[0])
         elif 'name' in kwargs:
-            node = kwargs['name']
+            node = self.alias(kwargs['name'])
         else:
-            helpers.test_error("Impossible state.")
+            helpers.environment_failure("Impossible state.")
+
+        if node == 'mn':
+            node = 'mn1'
 
         if re.match(r'^(master|slave)$', node):
             return self.controller(*args, **kwargs)
@@ -337,16 +451,27 @@ class Test(object):
             # helpers.log("Controller IP address is %s" % controller_ip)
 
         if 'c2' not in params:
-            helpers.debug("A controller (c1) is not defined")
+            helpers.debug("A controller (c2) is not defined")
             controller_ip2 = None
+            self._has_a_single_controller = True
         else:
             controller_ip2 = params['c2']['ip']  # Mininet needs this bit of info
 
-        for key in params:
+        # Node initialization sequence:
+        #   It is required that we initialize the controllers first since they
+        #   may be required by the other nodes, Mininet for example.
+        all_nodes = params.keys()
+        controller_nodes = sorted(filter(lambda x: 'c' in x, all_nodes))
+        non_controller_nodes = [x for x in all_nodes if x not in controller_nodes]
+        list_of_nodes = controller_nodes + non_controller_nodes
+
+        helpers.debug("List of nodes (controllers must appear first): %s"
+                      % list_of_nodes)
+        for key in list_of_nodes:
             # Matches the following device types:
             #  Controllers: c1, c2, controller, controller1, controller2, master, slave
-            #  Mininet: mn, mn1, mn2, mininet
-            #  Switches: s1, s2, spine1, leaf1
+            #  Mininet: mn, mn1, mn2
+            #  Switches: s1, s2, spine1, leaf1, filter1, delivery1
             #
             match = re.match(r'^(c\d|controller\d?|master|slave|mn\d?|mininet\d?|s\d+|spine\d+|leaf\d+|s\d+|h\d+|tg\d+)$', key)
             if not match:
@@ -467,7 +592,7 @@ class Test(object):
                 node_ids.append(node)
         return node_ids
 
-    def controller_cli_firewall_allow_rest_access(self, name, node_id):
+    def _controller_cli_firewall_allow_rest_access(self, name, node_id):
         n = self.topology(name)
 
         if not n.dev:
@@ -500,7 +625,7 @@ class Test(object):
             node_ids = self.controller_get_node_ids(config)
             helpers.log("node_ids: %s" % node_ids)
             for node_id in node_ids:
-                self.controller_cli_firewall_allow_rest_access(name, node_id)
+                self._controller_cli_firewall_allow_rest_access(name, node_id)
         else:
             helpers.environment_failure("'%s' is not a known controller (platform=%s)" % (name, platform))
 
@@ -514,7 +639,7 @@ class Test(object):
         platform = n.platform()
 
         helpers.log("Setting up HTTP session cookies for REST access on '%s' (platform=%s)"
-                    % (name, platform))
+                    % (n.name(), platform))
 
         if helpers.is_bvs(platform):
             url = "/api/v1/auth/login"
@@ -534,6 +659,8 @@ class Test(object):
             helpers.log("DevConf session is not available for node '%s'" % name)
             return
 
+        helpers.log("Setting up switches (SwitchLight)")
+
         for controller in ('c1', 'c2'):
             c = self.topology(controller, ignore_error=True)
             if c:
@@ -542,6 +669,33 @@ class Test(object):
                     n.config("controller %s port %s" % (c.ip(), openflow_port))
                 else:
                     n.config("controller %s" % c.ip())
+
+    def teardown_switch(self, name):
+        """
+        Perform teardown on SwitchLight
+        - delete the controller IP address
+        """
+        n = self.topology(name)
+
+        if not n.dev:
+            helpers.log("DevConf session is not available for node '%s'" % name)
+            return
+
+        helpers.log("Tearing down switches (SwitchLight)")
+        content = n.config("show running-config")['content']
+        lines = content.splitlines()
+
+        # Find lines with the following config statements:
+        #   controller 10.192.5.51
+        #   controller 10.192.104.1 port 6633
+        lines = filter(lambda x: 'controller' in x, lines)
+
+        for line in lines:
+            # Form commands:
+            #   no controller 10.192.5.51
+            #   no controller 10.192.104.1 port 6633
+            cmd = 'no ' + line
+            n.config(cmd)
 
     def setup(self):
         # This check ensures we  don't try to setup multiple times.
@@ -563,29 +717,10 @@ class Test(object):
 
         self._setup_completed = True
 
-
-def test_singleton():
-    t = Test()
-    x = Test()
-    x._bsn_config = "XYZ"
-
-    assert t._bsn_config == x._bsn_config, \
-        ("t._bsn_config('%s') should equal x._bsn_config('%s')"
-         % (t._bsn_config, x._bsn_config))
-
-
-if __name__ == '__main__':
-    import os
-    import sys
-
-    os.environ['IS_GOBOT'] = 'True'
-
-    if os.environ.has_key("BIGROBOT_PATH") is False:
-        print("Error: Please set the environment variable BIGROBOT_PATH.")
-        sys.exit(1)
-    autobot_path = os.environ["BIGROBOT_PATH"]
-    sys.path.append(autobot_path)
-
-    # test_singleton()
-
-    t = Test()
+    def teardown(self):
+        params = self.topology_params()
+        for key in params:
+            if helpers.is_controller(key):
+                pass
+            elif helpers.is_switch(key):
+                self.teardown_switch(key)

@@ -1,0 +1,16 @@
+# Topology description is in YAML format - see http://en.wikipedia.org/wiki/YAML
+#
+# c<n>: Controllers
+# s<n>: Switches
+# h<n>: Hosts (including bare metal)
+# mn  : Mininet server
+
+c1:
+    ip: 10.192.96.10
+c2:
+    ip: 10.192.96.11
+
+s1:
+    ip: 10.192.75.209
+    console_ip: cs-rack11
+    console_port: 6019    

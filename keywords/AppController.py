@@ -21,9 +21,7 @@ class AppController(object):
     def __init__(self):
         pass
 
-###################################################
-# All Verify Commands Go Here:
-###################################################
+
 
 ###################################################
 # All Show Commands Go Here:
@@ -89,8 +87,11 @@ class AppController(object):
                 c.rest.get(url)
                 content = c.rest.content()
                 for x in range(0, len(content)):
-                    if str(content[x]['inet-address']['ip']) == switch.ip():
-                        return content[x]['dpid']
+                    if content[x].has_key('inet-address'):
+                        if str(content[x]['inet-address']['ip']) == switch.ip():
+                            return content[x]['dpid']
+                    else:
+                        helpers.log("Looks like %s is a disconnected switch" % (content[x]['dpid']))
                 return False
             except:
                 return False
@@ -242,3 +243,37 @@ class AppController(object):
                     else:
                         helpers.test_log(c.rest.content_json())
                         return True
+
+###################################################
+# All Verify Commands Go Here:
+###################################################
+    def rest_verify_interface_is_up(self, node, interface_name):
+        '''Verify if a given interface on a given switch is up
+        
+            Input: 
+                `switch_dpid`       DPID of the Switch
+                `interface_name`    Interface Name e.g. ethernet13
+            
+            Returns: True if the interface is up, false otherwise
+        '''
+        try:
+            t = test.Test()
+        except:
+            return False
+        else:
+            c = t.controller('master')
+            try:
+                switch_dpid = self.rest_return_switch_dpid_from_ip(node)
+                url = '/api/v1/data/controller/core/switch[interface/name="%s"][dpid="%s"]?select=interface[name="%s"]' % (interface_name, switch_dpid, interface_name)
+                c.rest.get(url)
+            except:
+                helpers.test_failure(c.rest.error())
+                return False
+            else:
+                if not c.rest.status_code_ok():
+                    helpers.test_failure(c.rest.error())
+                content = c.rest.content()
+                if (content[0]['interface'][0]['state-flags'] == 0):
+                        return True
+                else:
+                        return False

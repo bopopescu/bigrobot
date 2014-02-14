@@ -121,6 +121,14 @@ class HaControllerNode(object):
         n = self.t.controller(self.name(), resolve_mastership=True)
         return n.cli_result(*args, **kwargs)
 
+    def bash_content(self, *args, **kwargs):
+        n = self.t.controller(self.name(), resolve_mastership=True)
+        return n.bash_content(*args, **kwargs)
+
+    def bash_result(self, *args, **kwargs):
+        n = self.t.controller(self.name(), resolve_mastership=True)
+        return n.bash_result(*args, **kwargs)
+
     def set_prompt(self, *args, **kwargs):
         n = self.t.controller(self.name(), resolve_mastership=True)
         return n.set_prompt(*args, **kwargs)
