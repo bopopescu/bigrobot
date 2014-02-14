@@ -149,6 +149,7 @@ class Test(object):
             self._node_static_aliases['master'] = 'master'
             self._node_static_aliases['slave'] = 'slave'
             self._node_static_aliases['mn'] = 'mn1'
+            self._node_static_aliases['mn1'] = 'mn1'
             helpers.log("Node aliases:\n%s"
                         % helpers.prettify(self._node_static_aliases))
 
@@ -333,7 +334,7 @@ class Test(object):
         """
         Get the handles of all the controllers.
         """
-        return [n for n in self.topology_params() if re.match(r'^c\d+', n)]
+        return [self.controller(n) for n in self.topology_params() if re.match(r'^c\d+', n)]
 
     def controller(self, name='c1', resolve_mastership=False):
         """
@@ -379,7 +380,7 @@ class Test(object):
         """
         Get the handles of all the traffic generators.
         """
-        return [n for n in self.topology_params() if re.match(r'^tg\d+', n)]
+        return [self.traffic_generator(n) for n in self.topology_params() if re.match(r'^tg\d+', n)]
 
     def traffic_generator(self, name='tg1', *args, **kwargs):
         name = self.alias(name)
@@ -389,7 +390,7 @@ class Test(object):
         """
         Get the handles of all the switches.
         """
-        return [n for n in self.topology_params() if re.match(r'^s\d+', n)]
+        return [self.switch(n) for n in self.topology_params() if re.match(r'^s\d+', n)]
 
     def switch(self, name='s1', *args, **kwargs):
         name = self.alias(name)
@@ -399,7 +400,7 @@ class Test(object):
         """
         Get the handles of all the hosts.
         """
-        return [n for n in self.topology_params() if re.match(r'^h\d+', n)]
+        return [self.host(n) for n in self.topology_params() if re.match(r'^h\d+', n)]
 
     def host(self, name='h1', *args, **kwargs):
         name = self.alias(name)
@@ -456,7 +457,17 @@ class Test(object):
         else:
             controller_ip2 = params['c2']['ip']  # Mininet needs this bit of info
 
-        for key in params:
+        # Node initialization sequence:
+        #   It is required that we initialize the controllers first since they
+        #   may be required by the other nodes, Mininet for example.
+        all_nodes = params.keys()
+        controller_nodes = sorted(filter(lambda x: 'c' in x, all_nodes))
+        non_controller_nodes = [x for x in all_nodes if x not in controller_nodes]
+        list_of_nodes = controller_nodes + non_controller_nodes
+
+        helpers.debug("List of nodes (controllers must appear first): %s"
+                      % list_of_nodes)
+        for key in list_of_nodes:
             # Matches the following device types:
             #  Controllers: c1, c2, controller, controller1, controller2, master, slave
             #  Mininet: mn, mn1, mn2
