@@ -24,6 +24,7 @@ class Ixia(object):
         self._is_device_created = False
         self._started_hosts = False
         self._ip_devices = {}
+        self._arp_check = True
 
     def port_map_list(self, ports):
         # something happens here
@@ -137,7 +138,8 @@ class Ixia(object):
         return mac_devices
 
     def ix_create_device_ethernet_ip(self, topology, s_cnt, d_cnt, s_mac, d_mac, s_mac_step, d_mac_step,
-                                     src_ip, dst_ip, src_gw_ip, dst_gw_ip, s_ip_step, d_ip_step):
+                                     src_ip, dst_ip, src_gw_ip, dst_gw_ip, s_ip_step, d_ip_step, src_gw_mac = None,
+                                     dst_gw_mac = None):
         '''
             RETURN IXIA MAC DEVICES with Ips mapped with Topologies created with vports and added increment values accordingly
             Ex Usage:
@@ -151,6 +153,7 @@ class Ixia(object):
         macs = [s_mac, d_mac]
         ips = [src_ip, dst_ip]
         gw_ips = [src_gw_ip, dst_gw_ip]
+        gw_macs = [src_gw_mac, dst_gw_mac]
         topo_names = []
         
         for topo in topology:
@@ -182,7 +185,7 @@ class Ixia(object):
         ixia_refs = {} # Dictionary to hold the Ixia References
         for eth_device in eth_devices:
             mac_devices.append(self._handle.remapIds(eth_device)[0])
-        for (mac_device, mult, mac_step, mac, ip_step, ip, gw_ip) in zip(mac_devices, mac_mults, mac_steps, macs, ip_steps, ips, gw_ips):
+        for (mac_device, mult, mac_step, mac, ip_step, ip, gw_ip, gw_mac) in zip(mac_devices, mac_mults, mac_steps, macs, ip_steps, ips, gw_ips, gw_macs):
             ip_name = handle.getAttribute(mac_device, '-name')
 #             ip_name = ip_name + 'IPv4\ 1'
             helpers.log ('Ip: NAME : ' +  str(ip_name))
@@ -218,14 +221,33 @@ class Ixia(object):
             handle.setMultiAttribute(ixia_refs['prefix_singleValue'], '-value', '24')
             handle.commit()
             handle.remapIds(ixia_refs['prefix'])[0]
-            helpers.log ('Gateway Address: ' +  str(gw_ip))
+            
             ixia_refs['resolveGateway'] = handle.getAttribute(ip_device_ixia, '-resolveGateway')
             ixia_refs['resolveGateway_singleValue'] = handle.add(ixia_refs['resolveGateway'], 'singleValue')
-            handle.setMultiAttribute(ixia_refs['resolveGateway_singleValue'], '-value', 'true')
-            handle.commit()
-            ixia_refs['resolveGateway_singleValue_remap'] = handle.remapIds(ixia_refs['resolveGateway_singleValue'])[0]
-            handle.commit()
-            handle.remapIds(ixia_refs['gatewayIp_singleValue'])
+            if gw_mac is None:
+                helpers.log ('Gateway Address: ' +  str(gw_ip))
+                handle.setMultiAttribute(ixia_refs['resolveGateway_singleValue'], '-value', 'true')
+                handle.commit()
+                ixia_refs['resolveGateway_singleValue_remap'] = handle.remapIds(ixia_refs['resolveGateway_singleValue'])[0]
+                handle.commit()
+#                 handle.remapIds(ixia_refs['gatewayIp_singleValue'])[0]
+            else:
+                helpers.log('Setting Gw mac manually ..')
+                self._arp_check = False
+                handle.setMultiAttribute(ixia_refs['resolveGateway_singleValue'], '-value', 'false')
+                handle.commit()
+                ixia_refs['resolveGateway_singleValue_remap'] = handle.remapIds(ixia_refs['resolveGateway_singleValue'])[0]
+                ixia_refs['manualGatewayMac'] = handle.getAttribute(ip_device_ixia, '-manualGatewayMac')
+                ixia_refs['manualGatewayMac_singleValue'] = handle.add(ixia_refs['manualGatewayMac'], 'singleValue')
+                handle.setMultiAttribute(ixia_refs['manualGatewayMac_singleValue'], '-value', gw_mac)
+                handle.commit()
+                handle.remapIds(ixia_refs['manualGatewayMac_singleValue'])[0]
+                
+#                 ixia_refs['manualGatewayMac_counter_remap'] = handle.remapIds(ixia_refs['manualGatewayMac_counter'])[0]
+#                 ixia_refs['resolveGateway_counter'] = handle.add(ixia_refs['resolveGateway'], 'counter')
+#                 handle.setMultiAttribute(ixia_refs['resolveGateway_counter'], '-direction', 'increment',
+#                                          '-start', 'false', '-step', 'false')
+#                 handle.remapIds(ixia_refs['manualGatewayMac_counter'])[0]
         #self._handle.commit()
 #         helpers.log(" ## adding Name ", topology[0], topology[1])
 #         helpers.log(" ## adding Name ", mac_devices[0], mac_devices[1])
@@ -515,7 +537,9 @@ class Ixia(object):
         dst_gw_ip = kwargs.get('dst_gw', '20.0.0.1')
         src_ip_step = kwargs.get('src_ip_step','0.0.0.1')
         dst_ip_step = kwargs.get('dst_ip_step', '0.0.0.1')
-        gw = kwargs.get('gw', None)
+        src_gw_mac = kwargs.get('src_gw_mac', None)
+        dst_gw_mac = kwargs.get('dst_gw_mac',None)
+
         ix_tcl_server = self._tcl_server_ip
         flow = kwargs.get('flow', None)
         
@@ -566,7 +590,7 @@ class Ixia(object):
         # Create Ether Device with IpDevices:
         (ip_devices, mac_devices) = self.ix_create_device_ethernet_ip(create_topo, s_cnt, d_cnt, src_mac, dst_mac, src_mac_step, 
                                                                       dst_mac_step, src_ip, dst_ip, src_gw_ip, dst_gw_ip, src_ip_step,
-                                                                      dst_ip_step)
+                                                                      dst_ip_step, src_gw_mac, dst_gw_mac)
         helpers.log('### Created Mac Devices with corrsponding Topos ...')
         helpers.log ("Success Creating Ip Devices !!!")
         # Start the Hosts to resolve Arps of GW
@@ -605,28 +629,35 @@ class Ixia(object):
         if port_name is None:
             for topo in self._topology.values():
                 self._handle.execute('start', topo)
-            for port, topo in self._topology.iteritems():
-                i = 0
-                while True:
-                    helpers.log ('Sleeping 10 sec ..for Arps to get resolved !')
-                    time.sleep(10)   # Sleep for the gw arp to get Resolved
-                    device1 = self._handle.getList(self._topology[port], 'deviceGroup')
-                    mac_device1 = self._handle.getList(device1[0], 'ethernet')
-                    ip_device1 =  self._handle.getList(mac_device1[0], 'ipv4')
-                    resolved_mac = self._handle.getAttribute(ip_device1[0], '-resolvedGatewayMac')    
-                    helpers.log('Successfully Started L3 Hosts on Ixia Port : %s' % str(topo))
-                    helpers.log(' Resolved MAC for Gw : %s' % str(resolved_mac))
-                    match = re.match(r'.*Unresolved*.', resolved_mac[0])
-                    if match:
-                        if i < 3:
-                            continue
+            if self._arp_check:
+                for port, topo in self._topology.iteritems():
+                    i = 0
+                    while True:
+                        i = i + 1
+                        helpers.log ('Sleeping 10 sec ..for Arps to get resolved !')
+                        time.sleep(10)   # Sleep for the gw arp to get Resolved
+                        device1 = self._handle.getList(self._topology[port], 'deviceGroup')
+                        mac_device1 = self._handle.getList(device1[0], 'ethernet')
+                        ip_device1 =  self._handle.getList(mac_device1[0], 'ipv4')
+                        resolved_mac = self._handle.getAttribute(ip_device1[0], '-resolvedGatewayMac')    
+                        helpers.log('Successfully Started L3 Hosts on Ixia Port : %s' % str(topo))
+                        helpers.log(' Resolved MAC for Gw : %s' % str(resolved_mac))
+                        match = re.match(r'.*Unresolved*.', resolved_mac[0])
+                        if match:
+                            if i < 3:
+                                continue
+                            else:
+                                raise IxNetwork.IxNetError('Arp for GW not Resolved on port : %s so cannot send L3 Traffic!!' % port)
+                                break
                         else:
-                            raise IxNetwork.IxNetError('Arp for GW not Resolved on port : %s so cannot send L3 Traffic!!' % port)
-                    else:
-                        helpers.log('Arp Successfully resolved for gw on port %s !!' % port)
-                        break
-                    helpers.log (' Resolved MAC for Gw : %s' % str(resolved_mac))
-                    i = i + 1
+                            helpers.log('Arp Successfully resolved for gw on port %s !!' % port)
+                            break
+                        helpers.log (' Resolved MAC for Gw : %s' % str(resolved_mac))
+            else:
+                helpers.log('Skipping ARP RESOLUTION CHECK ..AS Manualy Gw Mac is configured')
+                helpers.log('Sleeping 20 sec for IP Host to be UP...')
+                time.sleep(30)
+                    
         else:
             self._handle.execute('start', self._topology[port_name])
             helpers.log('Successfully Started L3 Hosts on Ixia Port : %s' % str(self._port_map_list[port_name]))
