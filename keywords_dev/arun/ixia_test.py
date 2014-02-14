@@ -1,8 +1,3 @@
-'''
-Created on Jan 28, 2014
-
-@author: mallinaarun
-'''
 if __name__ == '__main__':
     import sys, time, re, os
     sys.path.append('/Users/mallinaarun/Documents/workspace/bigrobot/keywords_dev/arun')
