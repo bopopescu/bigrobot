@@ -9,6 +9,8 @@ Library          keywords/BsnCommon.py
 Library          keywords_dev/prashanth/T5.py
 Library          keywords_dev/prashanth/T5Fabric.py
 Library			 keywords/Mininet.py
+Library		     keywords/Host.py
+Library		     keywords/Ixia.py
 Resource         keywords_dev/prashanth/t5_dualleaf_three_rack_resource.txt
 
 *Variables
@@ -20,6 +22,19 @@ ${leaf2a_h6_intf}  leaf2a-eth5
 ${leaf2b_h6_intf}  leaf2b-eth5
 ${leaf2a_h5_intf}  leaf2a-eth4
 ${leaf2b_h5_intf}  leaf2b-eth4
+${leaf0a_spine0_intf0}	ethernet33
+${leaf0a_leaf0b_intf0}	ethernet39
+${leaf0a_spine1_intf0}	ethernet32
+${leaf0a_ixia_intf}		ethernet24
+${leaf0b_ixia_intf}		ethernet24
+${leaf1a_ixia_intf}		ethernet24
+${leaf1b_ixia_intf}		ethernet24
+${leaf1a_leaf1b_intf0}	ethernet39
+${leaf1a_leaf1b_intf1}	ethernet40
+${leaf2a_ixia_intf}		ethernet24
+${leaf2b_ixia_intf}		ethernet24
+${leaf2a_spine0_intf}	ethernet31
+${leaf2a_spine1_intf}	ethernet32
 
 *Test Case
 add Three Rack Dual Leaf Topology
@@ -116,16 +131,191 @@ rack lag detection from rack0 leaf switch using three rack setup (add/delete spi
 	rest verify no of spine
 	rest verify rack lag from leaf  leaf0-a  spine1
 
-#Verify broadcast traffic forwarding on the lag
+Verify broadcast traffic forwarding on the lag
+	[Tags]  feature
+	rest add tenant  t1
+	rest add vns  t1  v1
+	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
+	rest add interface to vns  t1  v1  leaf0-b  ${leaf0b_ixia_intf}  -1
+	rest add interface to vns  t1  v1  leaf1-b  ${leaf1b_ixia_intf}  -1
+	rest add interface to vns  t1  v1  leaf2-b  ${leaf2b_ixia_intf}  -1
+	sleep  3  
+	IXIA initialize        tg1
+    ${stream}=             IXIA L2 add  flow=a->b  src_mac=00:02:01:00:00:24  dst_mac=ff:ff:ff:ff:ff:ff  ethertype=0800  frame_rate=1000  frame_size=68  name=a_b_flow
+    IXIA start L2 traffic  ${stream}
+    sleep  10
+    verify traffic rate  tx_rate  rx_rate  a  b
+    verify traffic rate  tx_rate  rx_rate  a  d
+    verify traffic rate  tx_rate  rx_rate  a  f
+    IXIA stop L2 traffic  ${stream}
+    sleep  3
+    rest delete tenant  t1
+    
+Verify broadcast forwarding with spine link failover
+	[Tags]  feature
+	rest add tenant  t1
+	rest add vns  t1  v1
+	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
+	rest add interface to vns  t1  v1  leaf0-b  ${leaf0b_ixia_intf}  -1
+	rest add interface to vns  t1  v1  leaf1-b  ${leaf1b_ixia_intf}  -1
+	rest add interface to vns  t1  v1  leaf2-b  ${leaf2b_ixia_intf}  -1
+	sleep  3  
+	IXIA initialize        tg1
+    ${stream}=             IXIA L2 add  flow=a->b  src_mac=00:02:01:00:00:24  dst_mac=ff:ff:ff:ff:ff:ff  ethertype=0800  frame_rate=1000  frame_size=68  name=a_b_flow
+    IXIA start L2 traffic  ${stream}
+    sleep  10
+    verify traffic rate  tx_rate  rx_rate  a  b
+    verify traffic rate  tx_rate  rx_rate  a  d
+    verify traffic rate  tx_rate  rx_rate  a  f
+    cli disable interface  s1  ${leaf0a_spine0_intf0}
+    rest verify fabric interface  leaf0-a  ${leaf0a_spine0_intf0}
+    verify traffic rate  tx_rate  rx_rate  a  b
+    verify traffic rate  tx_rate  rx_rate  a  d
+    verify traffic rate  tx_rate  rx_rate  a  f
+    cli enable interface  s1  ${leaf0a_spine0_intf0}
+    sleep  2
+    rest verify fabric interface  leaf0-a  ${leaf0a_spine0_intf0}
+    verify traffic rate  tx_rate  rx_rate  a  b
+    verify traffic rate  tx_rate  rx_rate  a  d
+    verify traffic rate  tx_rate  rx_rate  a  f
+    cli disable interface  s1  ${leaf0a_spine1_intf0}
+    sleep  2
+    rest verify fabric interface  leaf0-a  ${leaf0a_spine1_intf0}
+    verify traffic rate  tx_rate  rx_rate  a  b
+    verify traffic rate  tx_rate  rx_rate  a  d
+    verify traffic rate  tx_rate  rx_rate  a  f
+    cli enable interface  s1  ${leaf0a_spine1_intf0}
+    rest verify fabric interface  leaf0-a  ${leaf0a_spine1_intf0}
+    sleep  2
+    verify traffic rate  tx_rate  rx_rate  a  b
+    verify traffic rate  tx_rate  rx_rate  a  d
+    verify traffic rate  tx_rate  rx_rate  a  f
+    IXIA stop L2 traffic  ${stream}
+    sleep  3
+    rest delete tenant  t1
 
-#Verify Multicast forwarding on the lag
+Verify broadcast forwarding with edge port link enable/disable
+	[Tags]  feature
+	rest add tenant  t1
+	rest add vns  t1  v1
+	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
+	rest add interface to vns  t1  v1  leaf0-b  ${leaf0b_ixia_intf}  -1
+	rest add interface to vns  t1  v1  leaf1-b  ${leaf1b_ixia_intf}  -1
+	rest add interface to vns  t1  v1  leaf2-b  ${leaf2b_ixia_intf}  -1
+	sleep  3  
+	IXIA initialize        tg1
+    ${stream}=             IXIA L2 add  flow=a->b  src_mac=00:02:01:00:00:24  dst_mac=ff:ff:ff:ff:ff:ff  ethertype=0800  frame_rate=1000  frame_size=68  name=a_b_flow
+    IXIA start L2 traffic  ${stream}
+    sleep  10
+    verify traffic rate  tx_rate  rx_rate  a  b
+    verify traffic rate  tx_rate  rx_rate  a  d
+    cli disable interface  s2  ${leaf0b_ixia_intf}
+    rest verify fabric interface  leaf0-b  ${leaf0b_ixia_intf}
+    verify traffic rate  tx_rate  rx_rate  a  b
+    verify traffic rate  tx_rate  rx_rate  a  d
+    cli enable interface  s2  ${leaf0b_ixia_intf}
+    sleep  2
+    rest verify fabric interface  leaf0-b  ${leaf0b_ixia_intf}
+    verify traffic rate  tx_rate  rx_rate  a  b
+    verify traffic rate  tx_rate  rx_rate  a  d
+    verify traffic rate  tx_rate  rx_rate  a  f
+    IXIA stop L2 traffic  ${stream}
+    sleep  3
+    rest delete tenant  t1
 
-#verify unknown unicast forwarding on the lag
+Verify broadcast traffic forwarding with single peer-link enable/disable
+	[Tags]  feature
+	rest add tenant  t1
+	rest add vns  t1  v1
+	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
+	rest add interface to vns  t1  v1  leaf0-b  ${leaf0b_ixia_intf}  -1
+	sleep  3  
+	IXIA initialize        tg1
+    ${stream}=             IXIA L2 add  flow=a->b  src_mac=00:02:01:00:00:24  dst_mac=ff:ff:ff:ff:ff:ff  ethertype=0800  frame_rate=1000  frame_size=68  name=a_b_flow
+    IXIA start L2 traffic  ${stream}
+    sleep  10
+    verify traffic rate  tx_rate  rx_rate  a  b
+    cli disable interface  s1  ${leaf0a_leaf0b_intf0}
+    sleep  2
+    rest verify fabric interface  leaf0-a  ${leaf0a_leaf0b_intf0}
+    verify traffic rate negative  tx_rate  rx_rate  a  b
+    cli enable interface  s2  ${leaf0b_ixia_intf}
+    sleep  2
+    rest verify fabric interface  leaf0-a   ${leaf0a_leaf0b_intf0}
+    verify traffic rate  tx_rate  rx_rate  a  b
+    IXIA stop L2 traffic  ${stream}
+    sleep  3
+    rest delete tenant  t1
 
+Verify Multicast forwarding on the lag
+	[Tags]  feature
+	rest add tenant  t1
+	rest add vns  t1  v1
+	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
+	rest add interface to vns  t1  v1  leaf0-b  ${leaf0b_ixia_intf}  -1
+	rest add interface to vns  t1  v1  leaf1-b  ${leaf1b_ixia_intf}  -1
+	rest add interface to vns  t1  v1  leaf2-b  ${leaf2b_ixia_intf}  -1
+	sleep  3  
+	IXIA initialize        tg1
+    ${stream}=             IXIA L2 add  flow=a->b  src_mac=00:02:01:00:00:24  dst_mac=01:00:5e:00:00:12  ethertype=0800  frame_rate=1000  frame_size=68  name=a_b_flow
+    IXIA start L2 traffic  ${stream}
+    sleep  10
+    verify traffic rate  tx_rate  rx_rate  a  b
+    verify traffic rate  tx_rate  rx_rate  a  d
+    verify traffic rate  tx_rate  rx_rate  a  f
+    IXIA stop L2 traffic  ${stream}
+    sleep  3
+    rest delete tenant  t1
+
+verify unknown unicast forwarding on the lag
+	[Tags]  feature
+	rest add tenant  t1
+	rest add vns  t1  v1
+	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
+	rest add interface to vns  t1  v1  leaf0-b  ${leaf0b_ixia_intf}  -1
+	rest add interface to vns  t1  v1  leaf1-b  ${leaf1b_ixia_intf}  -1
+	rest add interface to vns  t1  v1  leaf2-b  ${leaf2b_ixia_intf}  -1
+	sleep  3  
+	IXIA initialize        tg1
+    ${stream}=             IXIA L2 add  flow=a->b  src_mac=00:02:01:00:00:24  dst_mac=00:00:05:00:00:01  ethertype=0800  frame_rate=1000  frame_size=68  name=a_b_flow
+    IXIA start L2 traffic  ${stream}
+    sleep  10
+    verify traffic rate  tx_rate  rx_rate  a  b
+    verify traffic rate  tx_rate  rx_rate  a  d
+    verify traffic rate  tx_rate  rx_rate  a  f
+    cli disable interface  s1  ${leaf0a_spine0_intf0}
+    sleep  2
+    rest verify fabric interface  leaf0-a  ${leaf0a_spine0_intf0}
+    verify traffic rate  tx_rate  rx_rate  a  b
+    verify traffic rate  tx_rate  rx_rate  a  d
+    verify traffic rate  tx_rate  rx_rate  a  f
+    cli enable interface  s1  ${leaf0a_spine0_intf0}
+    sleep  2
+    rest verify fabric interface  leaf0-a  ${leaf0a_spine0_intf0}
+    verify traffic rate  tx_rate  rx_rate  a  b
+    verify traffic rate  tx_rate  rx_rate  a  d
+    verify traffic rate  tx_rate  rx_rate  a  f
+    cli disable interface  s1  ${leaf0a_spine1_intf0}
+    sleep  2
+    rest verify fabric interface  leaf0-a  ${leaf0a_spine1_intf0}
+    verify traffic rate  tx_rate  rx_rate  a  b
+    verify traffic rate  tx_rate  rx_rate  a  d
+    verify traffic rate  tx_rate  rx_rate  a  f
+    cli enable interface  s1  ${leaf0a_spine1_intf0}
+    rest verify fabric interface  leaf0-a  ${leaf0a_spine1_intf0}
+    sleep  2
+    verify traffic rate  tx_rate  rx_rate  a  b
+    verify traffic rate  tx_rate  rx_rate  a  d
+    verify traffic rate  tx_rate  rx_rate  a  f
+    IXIA stop L2 traffic  ${stream}
+    sleep  3
+    rest delete tenant  t1
+    
 Tear down config and topology
     delete fabric switch
     rest delete portgroup  p1
     rest delete portgroup  p2
+    rest delete tenant  t1
     base suite teardown
  
 
@@ -134,3 +324,17 @@ Tear down config and topology
 verify fabric lag   [Arguments]   ${switch}
     REST verify fabric lag   ${switch}
 
+verify traffic rate   [Arguments]  ${tx_rate}  ${rx_rate}  ${tx_intf}  ${rx_intf}
+    Sleep  5
+    ${report}=  IXIA fetch port stats
+    Log  ${report}
+    ${tx_value}=  verify dict key  ${report}  ${tx_intf}  transmitted_frame_rate
+    ${rx_value}=  verify dict key  ${report}  ${rx_intf}  received_frame_rate
+    ixia verify traffic rate  ${tx_value}  ${rx_value}
+    
+verify traffic rate negative   [Arguments]  ${tx_rate}  ${rx_rate}  ${tx_intf}  ${rx_intf}
+    Sleep  5
+    ${report}=  IXIA fetch port stats
+    ${tx_value}=  verify dict key  ${report}  ${tx_intf}  transmitted_frame_rate
+    ${rx_value}=  verify dict key  ${report}  ${rx_intf}  received_frame_rate
+    Should Be True  ${rx_value} == 0

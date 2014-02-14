@@ -2,24 +2,24 @@
 Bigtap list op l3_l4 suite setup
 	base suite setup
 	sleep   5
-	rest_add_interface_role    s207     ethernet44    filter     S207-44  
-	rest_add_interface_role    s207    ethernet46    delivery   S204-46   
- 	rest_add_interface_role    s207    ethernet48    delivery   S204-48    
+	rest_add_interface_role    s1     ethernet1    filter     S84-1  
+	rest_add_interface_role    s1    ethernet2    delivery    S84-2   
+ 	rest_add_interface_role    s1    ethernet4    delivery   S84-4    
 
 Bigtap list op l3_l4 suite teardown
-	base suite setup
-	sleep   5
-	rest_delete_interface_role    s207     ethernet44    filter     S207-44   
-	rest_delete_interface_role    s207     ethernet46    delivery   S204-46    
-	rest_delete_interface_role    s207    ethernet48    delivery   S204-48   
-	base suite teardown
-
+ 
+ 
+#	rest_delete_interface_role    s1     ethernet1    filter     S84-1   
+#	rest_delete_interface_role    s1     ethernet2    delivery   S84-2    
+#	rest_delete_interface_role    s1    ethernet4    delivery    S84-4  
+#	base suite teardown
+	sleep    5
 
 Bigtap list op l3_l4 case setup
     bigtap_delete_all 
     rest_disable_feature      l3-l4-mode 
     rest_disable_feature      tracked-host        
-    sleep  5
+    sleep    5
 
 Bigtap list op l3_l4 case teardown
    sleep  5

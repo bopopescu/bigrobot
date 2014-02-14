@@ -51,7 +51,7 @@ add Fabric setup Three Rack Dual Leaf
    rest verify fabric link 
 
 ping h5 to h6 dual leaf single rack dynamic endpoints
-   [Tags]  smoke   sanity   
+   [Tags]  smoke   sanity     
    add portgroup to vns  A  A  p5  -1 
    add portgroup to vns  A  A  p6  -1
    sleep  5
@@ -59,7 +59,7 @@ ping h5 to h6 dual leaf single rack dynamic endpoints
    Should Be True  ${loss} == 0						 
 	 
 ping h5 to h6 dual leaf single rack static endpoints
-   [Tags]  sanity    
+   [Tags]  sanity      
    add a endpoint  A  A  e1 
    add a endpoint  A  A  e2 
    add portgroup to endpoint  A   A  e2  p6  -1
@@ -75,7 +75,7 @@ ping h5 to h6 dual leaf single rack static endpoints
    Should Be True  ${loss} == 0 
 
 ping h4 to h5 dual rack dual leaf dynamic endpoints
-   [Tags]  sanity  
+   [Tags]  sanity   
    add portgroup to vns  A  A  p5  -1 
    add portgroup to vns  A  A  p4  -1
    sleep  5
@@ -83,7 +83,7 @@ ping h4 to h5 dual rack dual leaf dynamic endpoints
    Should Be True  ${loss} == 0					 
 		
 ping h4 to h5 dual rack dual leaf static endpoints
-   [Tags]  sanity        
+   [Tags]  sanity          
    add a endpoint  A  A  e1 
    add a endpoint  A  A  e2 
    add portgroup to endpoint  A   A  e2  p5  -1
@@ -99,7 +99,7 @@ ping h4 to h5 dual rack dual leaf static endpoints
    Should Be True  ${loss} == 0  
    
 ping h1 to h2 dual leaf single rack dynamic endpoints tag
-   [Tags]  sanity 
+   [Tags]  sanity   
    add portgroup to vns  A  A  p1  10 
    add portgroup to vns  A  A  p2  10 
    sleep  5
@@ -107,7 +107,7 @@ ping h1 to h2 dual leaf single rack dynamic endpoints tag
    Should Be True  ${loss} == 0 					
 		
 ping h1 to h2 dual leaf single rack static endpoints tag
-   [Tags]  sanity   
+   [Tags]  sanity    
    add a endpoint  A  A  e1 
    add portgroup to endpoint  A  A  e1  p1  10
    add a endpoint  A  A  e2 
@@ -123,7 +123,7 @@ ping h1 to h2 dual leaf single rack static endpoints tag
    Should Be True  ${loss} == 0
 
 ping h1 to h3 dual rack dual leaf dynamic endpoints tag     
-   [Tags]  sanity  
+   [Tags]  sanity    
    add portgroup to vns  A  A  p1  10 
    add portgroup to vns  A  A  p3  10 
    sleep  5
@@ -131,7 +131,7 @@ ping h1 to h3 dual rack dual leaf dynamic endpoints tag
    Should Be True  ${loss} == 0   
    
 ping h1 to h3 dual rack dual leaf static endpoints tag 
-   [Tags]  sanity  
+   [Tags]  sanity    
    add a endpoint  A  A  e1  
    add portgroup to endpoint  A  A  e1  p1  10
    add a endpoint  A  A  e2 
@@ -199,7 +199,7 @@ T5 base test setup
    add a portgroup  p6 
    add interface to portgroup  leaf2-a  ${h6_intf0}  p6
    add interface to portgroup  leaf2-b  ${h6_intf1}  p6
-   sleep  5
+   sleep  10
    
 T5 base test teardown
    delete a tenant  A
