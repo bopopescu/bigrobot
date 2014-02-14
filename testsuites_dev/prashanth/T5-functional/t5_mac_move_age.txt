@@ -1,0 +1,251 @@
+== T5 Functional L2 Test Suite ==
+
+* Setting
+Documentation    T5 BVS APP Functional VNS Mac age/move Test Suite
+Suite Setup      base suite setup
+Suite Teardown   base suite teardown
+Test Setup       base test setup
+Test Teardown    base test teardown
+Force Tags       T5 
+Library          keywords/BsnCommon.py
+Library          keywords_dev/prashanth/T5.py
+Library	         keywords_dev/prashanth/T5Fabric.py
+Library	         keywords/Switchlight.py
+Library          keywords/Mininet.py
+Library	         keywords/Host.py
+Library		     keywords/Ixia.py
+Resource	     keywords_dev/prashanth/t5_dualleaf_three_rack_physical_resource.txt
+
+* Variables
+${leaf0a_spine0_intf0}	ethernet33
+${leaf0a_leaf0b_intf0}	ethernet39
+${leaf0a_spine1_intf0}	ethernet32
+${leaf0a_ixia_intf}		ethernet24
+${leaf0b_ixia_intf}		ethernet24
+${leaf1a_ixia_intf}		ethernet24
+${leaf1b_ixia_intf}		ethernet24
+${leaf1a_leaf1b_intf0}	ethernet39
+${leaf1a_leaf1b_intf1}	ethernet40
+${leaf2a_leaf2b_intf0}  ethernet39
+${leaf2a_ixia_intf}		ethernet24
+${leaf2b_ixia_intf}		ethernet24
+${leaf2a_spine0_intf}	ethernet31
+${leaf2a_spine1_intf}	ethernet32
+${h4_ip}  192.168.0.11
+${h5_ip}  192.168.0.30
+${h6_ip}  192.168.0.31
+${h4_mac}	00:10:18:f0:e9:70
+${h5_mac}	90:e2:ba:4f:80:dc
+${h6_mac}	90:e2:ba:4e:bb:90
+${h1_intf0}  ethernet48
+${h1_intf1}  ethernet48
+${h2_intf0}  ethernet47
+${h2_intf1}  ethernet47
+${h3_intf0}  ethernet1
+${h3_intf1}  ethernet1
+${h4_intf0}  ethernet2
+${h4_intf1}  ethernet2
+${h5_intf0}  ethernet48
+${h5_intf1}  ethernet48
+${h6_intf0}  ethernet47
+${h6_intf1}  ethernet47
+${h1_tag_ip}	192.168.4.20
+${h2_tag_ip}	192.168.4.21
+${h3_tag_ip}	192.168.4.10
+${h1_tag_mac}  90:e2:ba:4e:bc:98
+${h2_tag_mac}  90:e2:ba:4f:80:b1
+${h3_tag_mac}  00:10:18:f0:eb:e0
+${leaf0b_spine0_intf0}	ethernet31
+${leaf0b_spine1_intf0}	ethernet32
+ 
+
+* Test Case 
+
+add Single Leaf Three Rack setup
+   [Tags]  feature
+   base suite setup
+   add fabric switch
+   sleep  5
+   rest verify fabric switch connectivity
+   rest verify fabric link
+   
+tagged/untagged packet Mac move within the rack0
+	[Tags]  feature
+	rest add tenant  t1
+	rest add vns  t1  v1
+	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
+	rest add interface to vns  t1  v1  leaf0-b  ${leaf0a_ixia_intf}  100  
+	IXIA initialize        tg1
+    ${stream}=             IXIA L2 add  flow=a->b  src_mac=00:02:01:00:00:24  dst_mac=00:02:02:00:00:24  ethertype=0800  frame_rate=1000  frame_size=68  name=a_b_flow
+    sleep  2
+    IXIA start L2 traffic  ${stream}
+    sleep  5
+    rest verify forwarding layer2 table  leaf0-a  ${leaf0a_ixia_intf}  00:02:01:00:00:24
+    rest verify forwarding layer2 table  leaf0-b  ${leaf0a_leaf0b_intf0}  00:02:01:00:00:24  
+    IXIA stop L2 traffic  ${stream}    
+    sleep  5
+    ${stream}=             IXIA L2 add  flow=b->a  src_mac=00:02:01:00:00:24  dst_mac=00:02:06:00:00:24  tag=100  ethertype=0800  frame_rate=1000  frame_size=68  name=b_f_flow
+    IXIA start L2 traffic  ${stream}
+    sleep  5
+    rest verify forwarding layer2 table  leaf0-b  ${leaf0b_ixia_intf}  00:02:01:00:00:24
+    rest verify forwarding layer2 table  leaf0-a  ${leaf0a_leaf0b_intf0}  00:02:01:00:00:24
+    IXIA stop L2 traffic  ${stream}
+    rest delete tenant  t1
+    sleep  5
+    
+tagged/untagged packet move between rack
+	[Tags]  feature
+    rest add tenant  t1
+	rest add vns  t1  v1
+	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
+	rest add interface to vns  t1  v1  leaf2-b  ${leaf2b_ixia_intf}  100  
+	IXIA initialize        tg1
+    ${stream}=             IXIA L2 add  flow=a->f  src_mac=00:02:01:00:00:24  dst_mac=00:02:06:00:00:24  ethertype=0800  frame_rate=1000  frame_size=68  name=a_f_flow
+    sleep  2
+    IXIA start L2 traffic  ${stream}
+    sleep  5
+    rest verify forwarding layer2 table  leaf0-a  ${leaf0a_ixia_intf}  00:02:01:00:00:24
+    IXIA stop L2 traffic  ${stream}    
+    sleep  5
+    ${stream}=             IXIA L2 add  flow=f->a  src_mac=00:02:01:00:00:24  dst_mac=00:02:06:00:00:24  tag=100  ethertype=0800  frame_rate=1000  frame_size=68  name=b_f_flow
+    IXIA start L2 traffic  ${stream}
+    sleep  5
+    rest verify forwarding layer2 table  leaf2-b  ${leaf2b_ixia_intf}  00:02:01:00:00:24
+    IXIA stop L2 traffic  ${stream}
+    rest delete tenant  t1
+    sleep  5
+
+Mac move between the vns same tenant
+	[Tags]  feature
+	rest add tenant  t1
+	rest add vns  t1  v1
+	rest add vns  t1  v2
+	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
+	rest add interface to vns  t1  v2  leaf2-b  ${leaf2b_ixia_intf}  100  
+	IXIA initialize        tg1
+    ${stream}=             IXIA L2 add  flow=a->f  src_mac=00:02:01:00:00:24  dst_mac=00:02:06:00:00:24  ethertype=0800  frame_rate=1000  frame_size=68  name=a_f_flow
+    sleep  2
+    IXIA start L2 traffic  ${stream}
+    sleep  5
+    rest verify forwarding layer2 table  leaf0-a  ${leaf0a_ixia_intf}  00:02:01:00:00:24
+    IXIA stop L2 traffic  ${stream}    
+    sleep  5
+    ${stream}=             IXIA L2 add  flow=f->a  src_mac=00:02:01:00:00:24  dst_mac=00:02:06:00:00:24  tag=100  ethertype=0800  frame_rate=1000  frame_size=68  name=b_f_flow
+    IXIA start L2 traffic  ${stream}
+    sleep  5
+    rest verify forwarding layer2 table  leaf2-b  ${leaf2b_ixia_intf}  00:02:01:00:00:24
+    IXIA stop L2 traffic  ${stream}
+    rest delete tenant  t1
+    sleep  5
+   
+Mac move between different tenants
+	[Tags]  feature
+	rest add tenant  t1
+	rest add tenant  t2
+	rest add vns  t1  v1
+	rest add vns  t2  v1
+	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
+	rest add interface to vns  t2  v1  leaf2-b  ${leaf2b_ixia_intf}  100  
+	IXIA initialize        tg1
+    ${stream}=             IXIA L2 add  flow=a->f  src_mac=00:02:01:00:00:24  dst_mac=00:02:06:00:00:24  ethertype=0800  frame_rate=1000  frame_size=68  name=a_f_flow
+    sleep  2
+    IXIA start L2 traffic  ${stream}
+    sleep  5
+    rest verify forwarding layer2 table  leaf0-a  ${leaf0a_ixia_intf}  00:02:01:00:00:24
+    IXIA stop L2 traffic  ${stream}    
+    sleep  5
+    ${stream}=             IXIA L2 add  flow=f->a  src_mac=00:02:01:00:00:24  dst_mac=00:02:06:00:00:24  tag=100  ethertype=0800  frame_rate=1000  frame_size=68  name=b_f_flow
+    IXIA start L2 traffic  ${stream}
+    sleep  5
+    rest verify forwarding layer2 table  leaf2-b  ${leaf2b_ixia_intf}  00:02:01:00:00:24
+    IXIA stop L2 traffic  ${stream}
+    rest delete tenant  t1
+    rest delete tenant  t2
+    sleep  5
+         
+Mac age test
+	[Tags]  feature
+	rest add tenant  t1
+	rest add vns  t1  v1
+	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
+	IXIA initialize        tg1
+    ${stream}=             IXIA L2 add  flow=a->b  src_mac=00:02:01:00:00:24  dst_mac=00:02:02:00:00:24  ethertype=0800  frame_rate=1000  frame_size=68  name=a_b_flow
+    sleep  2
+    IXIA start L2 traffic  ${stream}
+    sleep  5
+    rest verify forwarding layer2 table  leaf0-a  ${leaf0a_ixia_intf}  00:02:01:00:00:24
+    rest verify forwarding layer2 table  leaf0-b  ${leaf0a_leaf0b_intf0}  00:02:01:00:00:24
+    rest verify endpoint  v1  -1  00:02:01:00:00:24  leaf0-a  ${leaf0a_ixia_intf}        
+    IXIA stop L2 traffic  ${stream}    
+    sleep  320
+    ${result}=  rest verify forwarding layer2 table  leaf0-a  ${leaf0a_ixia_intf}  00:02:01:00:00:24
+    Should Not be True  ${result}  
+    ${result}=  rest verify forwarding layer2 table  leaf0-b  ${leaf0a_leaf0b_intf0}  00:02:01:00:00:24
+    Should Not be True  ${result}
+    ${result}=  rest verify endpoint  v1  -1  00:02:01:00:00:24  leaf0-a  ${leaf0a_ixia_intf}
+    Should Not be True  ${result}
+    rest delete tenant  t1
+    sleep  5
+        
+Tear down the config
+   [Tags]  smoke  sanity 
+   delete fabric switch
+   rest delete portgroup  p5
+   base suite teardown
+
+* Keywords      
+   
+add a tenant  [Arguments]  ${tenant} 
+  REST add tenant  ${tenant}    
+
+delete a tenant  [Arguments]  ${tenant} 
+  	REST delete tenant  ${tenant}    
+
+add a vns  [Arguments]  ${tenant}  ${vns}  
+	REST add vns  ${tenant}  ${vns}   
+
+delete a vns  [Arguments]  ${tenant}  ${vns} 
+  	REST delete vns  ${tenant}  ${vns}   
+
+add a portgroup  [Arguments]  ${pg}
+  	REST add portgroup  ${pg}    
+
+delete a portgroup  [Arguments]  ${pg}
+  	REST delete portgroup  ${pg}    
+
+add a endpoint  [Arguments]  ${tenant}  ${vns}  ${endpoint} 
+  	REST add endpoint  ${tenant}  ${vns}  ${endpoint}  
+
+delete a endpoint  [Arguments]  ${tenant}  ${vns}  ${endpoint}
+  	REST delete endpoint  ${tenant}  ${vns}  ${endpoint}  
+
+add interface to portgroup  [Arguments]  ${switch}  ${intf}  ${pg} 
+  	REST add interface to portgroup  ${switch}  ${intf}  ${pg}  
+
+delete interface from portgroup  [Arguments]  ${switch}  ${intf}  ${pg} 
+  	REST delete interface from portgroup  ${switch}  ${intf}  ${pg}  
+
+add portgroup to vns  [Arguments]  ${tenant}  ${vns}  ${pg}  ${vlan}
+  	REST add portgroup to vns  ${tenant}  ${vns}  ${pg}  ${vlan} 
+
+add portgroup to endpoint  [Arguments]  ${tenant}  ${vns}  ${endpoint}  ${pg}  ${vlan} 
+    REST add portgroup to endpoint  ${tenant}  ${vns}  ${endpoint}  ${pg}  ${vlan} 
+
+delete portgroup from vns  [Arguments]  ${tenant}  ${vns}  ${pg}  ${vlan} 
+    REST delete portgroup from vns  ${tenant}  ${vns}  ${pg}  ${vlan}
+
+verify traffic rate   [Arguments]  ${tx_rate}  ${rx_rate}  ${tx_intf}  ${rx_intf}
+    Sleep  5
+    ${report}=  IXIA fetch port stats
+    Log  ${report}
+    ${tx_value}=  verify dict key  ${report}  ${tx_intf}  transmitted_frame_rate
+    ${rx_value}=  verify dict key  ${report}  ${rx_intf}  received_frame_rate
+    ixia verify traffic rate  ${tx_value}  ${rx_value}
+    
+verify traffic rate negative   [Arguments]  ${tx_rate}  ${rx_rate}  ${tx_intf}  ${rx_intf}
+    Sleep  5
+    ${report}=  IXIA fetch port stats
+    ${tx_value}=  verify dict key  ${report}  ${tx_intf}  transmitted_frame_rate
+    ${rx_value}=  verify dict key  ${report}  ${rx_intf}  received_frame_rate
+    Should Not be equal  ${tx_value}  ${rx_value}
+  
