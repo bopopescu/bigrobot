@@ -226,6 +226,7 @@ class T5(object):
 
         if not c.rest.status_code_ok():
             helpers.test_failure(c.rest.error())
+            return False
 
         return c.rest.content()
    
@@ -241,6 +242,7 @@ class T5(object):
 
         if not c.rest.status_code_ok():
             helpers.test_failure(c.rest.error())
+            return False
 
         return c.rest.content()
     
@@ -256,6 +258,7 @@ class T5(object):
 
         if not c.rest.status_code_ok():
             helpers.test_failure(c.rest.error())
+            return False
 
         return c.rest.content()
     
@@ -271,6 +274,7 @@ class T5(object):
 
         if not c.rest.status_code_ok():
             helpers.test_failure(c.rest.error())
+            return False
 
         return c.rest.content()
     
@@ -286,6 +290,7 @@ class T5(object):
 
         if not c.rest.status_code_ok():
             helpers.test_failure(c.rest.error())
+            return False
 
         return c.rest.content()
             
@@ -301,6 +306,7 @@ class T5(object):
 
         if not c.rest.status_code_ok():
             helpers.test_failure(c.rest.error())
+            return False
 
         return c.rest.content()
             
@@ -316,6 +322,7 @@ class T5(object):
 
         if not c.rest.status_code_ok():
             helpers.test_failure(c.rest.error())
+            return False
 
         return c.rest.content()
             
@@ -331,6 +338,7 @@ class T5(object):
 
         if not c.rest.status_code_ok():
             helpers.test_failure(c.rest.error())
+            return False
 
         return c.rest.content() 
       
@@ -346,6 +354,7 @@ class T5(object):
 
         if not c.rest.status_code_ok():
             helpers.test_failure(c.rest.error())
+            return False
 
         return c.rest.content()
             
@@ -361,6 +370,7 @@ class T5(object):
 
         if not c.rest.status_code_ok():
             helpers.test_failure(c.rest.error())
+            return False
             
         return c.rest.content()
     
@@ -372,6 +382,7 @@ class T5(object):
         helpers.test_log("Output: %s" % c.rest.result_json())
         if not c.rest.status_code_ok():
             helpers.test_failure(c.rest.error())
+            return False
         return c.rest.content()
     
     def rest_add_mac_endpoint(self, tenant, vns, endpoint, mac):
@@ -382,6 +393,7 @@ class T5(object):
         helpers.test_log("Output: %s" % c.rest.result_json())
         if not c.rest.status_code_ok():
             helpers.test_failure(c.rest.error())
+            return False
         return c.rest.content()
     
     def rest_verify_vns(self):
@@ -610,7 +622,8 @@ class T5(object):
             if ((data[i]["lag-id"]) == 0):
                 helpers.test_failure("Lag-Id for the edge interface (switch=%s,interface=%s) is showing 0" % (switch, data[i]["port-num"]))
                 return False
-            helpers.log("Proper Lag-Id added for All edge Interfaces")         
+            helpers.log("Proper Lag-Id added for All edge Interfaces")
+            return True         
         
     def rest_verify_forwarding_vlan_xlate(self, switch, vlan, intf):
         '''Verify VNS(VLAN) Information in Controller Forwarding Table
@@ -681,7 +694,7 @@ class T5(object):
         
             Input:  Specific switch name and specific edge interfaces    
             
-            Return: Function will verify those fabric interfaces must be unatagged in a vlan.
+            Return: True or False depends on the edge interface present as untagged in a vlan
         '''
         t = test.Test()
         c = t.controller()
@@ -701,7 +714,7 @@ class T5(object):
         
             Input:  Specific switch name and specific edge interfaces    
             
-            Return: Function will verify those fabric interfaces must be unatagged in a vlan.
+            Return: return True or False depends on the edge port present as Tagged in a vlan
         '''
         t = test.Test()
         c = t.controller()
@@ -753,8 +766,11 @@ class T5(object):
             if data2[i]["mac"] == mac:
                 if data2[i]["port-num"] == lag_id and data2[i]["vlan-id"] == vlan_id:
                     helpers.log("Pass: Expected mac is present in the forwarding table with correct vlan and interface")
+                    return True
                 else:
-                    helpers.test_failure("Fail: Expected=%s:%s, actual=%s:%s" % (lag_id, vlan_id, data2[i]["port-num"], data2[i]["vlan-id"]))   
+                    helpers.test_failure("Fail: Expected=%s:%s, actual=%s:%s" % (lag_id, vlan_id, data2[i]["port-num"], data2[i]["vlan-id"]))
+                    return False   
             else:
                 helpers.test_failure("Fail:Expected mac is not present in the forwarding table")
+                return False
 
