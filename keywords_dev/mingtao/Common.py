@@ -58,6 +58,7 @@ class Common(object):
 
 
  
+ 
     def rest_show_feature(self, feature="l3-l4-mode"):
         """ verify bigtap mode: l3_l4 and inport_mask
             -- Mingtao
@@ -79,67 +80,59 @@ class Common(object):
         return str(data[0][feature])
         
          
-    def rest_show_switch_attribute(self, dpid=None, node=None, attr="type"):
-        """ show switch attibut,  can get type 
-            -- Mingtao
-        """
-        t = test.Test()
-        c= t.controller('master')
- 
-        AppCommon = AppController.AppController()        
-
-        if dpid is None:
-            helpers.test_log("INFO: Need to get dpid for switch %s " % node )
-            swid = AppCommon.rest_return_switch_dpid_from_ip(node)
-        else:
-            swid = dpid
-        url = '/api/v1/data/controller/core/switch[dpid="%s"]?select=attributes'  % swid          
-        c.rest.get(url)
-
-        if not c.rest.status_code_ok():
-            helpers.test_failure(c.rest.error())
-        data = c.rest.content()[0]["attributes"]
-    
-        if attr == "type":       
-            helpers.test_log("INFO: Switch  %s  type is %s " % (swid, data["description-data"]["hardware-description"]))              
-            return   data["description-data"]["hardware-description"] 
-        
-        return True
 
     def verify_switch_tcam_max(self, node=None, l3_l4_mode=None):
         """ verify the switch tcam size
             Usage:  verify_switch_tcam   S203    L3_l4_mode= True
             -- Mingtao
         """   
- 
+        t = test.Test()
+        s = t.switch(node) 
         bigtap = BigTap.BigTap()
-        node_type = self.rest_show_switch_attribute(node=node)
+        node_type =  s.info('model')
         size = bigtap.rest_show_switch_flow(node=node, return_value='maximum-entries')
-          
+                 
         if l3_l4_mode == "True":           
-            if "LB9" in node_type:
+            if node_type == 'LB9':
                 if size == 4088:
                     helpers.test_log("INFO: Switch  - %s  type - %s  and - L3-l4 mode, tcam size - %s " % (node, node_type, str(size)))  
                     return True
                 else:
                     helpers.test_log("ERROR: Switch - %s  type - %s  and - L3-l4 mode, tcam size expect - 4088, actual - %s " % (node, node_type, str(size)))  
                     return False  
-           
-        else:
-            if "LB9" in node_type:
-                if size == 2044:
-                    helpers.test_log("INFO: Switch - %s  type - %s, mode -  not L3-l4, tcam size - %s " % (node, node_type, str(size)))  
+            elif node_type == 'LY2':
+                if size == 2040:
+                    helpers.test_log("INFO: Switch  - %s  type - %s  and - L3-l4 mode, tcam size - %s " % (node, node_type, str(size)))  
                     return True
                 else:
-                    helpers.test_log("ERROR: Switch - %s  type -%s, mode - not L3-l4, tcam size expect: - 2044, actual - %s " % (node, node_type, str(size)))  
+                    helpers.test_log("ERROR: Switch - %s  type - %s  and - L3-l4 mode, tcam size expect - 4088, actual - %s " % (node, node_type, str(size)))  
                     return False  
-          
+                          
+        else:
+            if node_type == 'LB9':
+                if size == 2044:
+                    helpers.test_log("INFO: Switch  - %s  type - %s  and - L3-l4 mode, tcam size - %s " % (node, node_type, str(size)))  
+                    return True
+                else:
+                    helpers.test_log("ERROR: Switch - %s  type - %s  and - L3-l4 mode, tcam size expect - 4088, actual - %s " % (node, node_type, str(size)))  
+                    return False  
+            elif node_type == 'LY2':
+                if size == 1020:
+                    helpers.test_log("INFO: Switch  - %s  type - %s  and - L3-l4 mode, tcam size - %s " % (node, node_type, str(size)))  
+                    return True
+                else:
+                    helpers.test_log("ERROR: Switch - %s  type - %s  and - L3-l4 mode, tcam size expect - 4088, actual - %s " % (node, node_type, str(size)))  
+                    return False  
+           
         return True
  
  
+
     def verify_switch_tcam_limitaion(self, node,policy, match_type='mixed',base='10.0.0.0',step='0.1.0.1',v6base='1001:0:0:0:0:0:0:0',v6step='0:0:1:0:1:0:0:0'):
-        """ verify the switch tcam limitaion
+        """ verify the switch tcam flow limitaion 
             Usage:  verify_switch_tcam   S203    type
+                    type - 'ipv4'   'ipv6'   mixed
+            return:  the tcam flow entries
             -- Mingtao
         """   
         t = test.Test()
@@ -161,8 +154,7 @@ class Common(object):
             ether_type.extend(['2048'])              
             ether_type.extend(['34525'])   
             v6Flag = True
-            v4Flag = True                                 
-                                            
+            v4Flag = True                                                                             
         
         for num in ['100','20','5','1']:      
             if v4Flag is not None:
@@ -182,18 +174,21 @@ class Common(object):
                     bigtap.rest_add_address_group(name6,'ipv6')                
                     bigtap.gen_add_address_group_entries(name6,'ipv6',v6base,v6step, 'FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF', g_size)
                     v6base = helpers.get_next_address('ipv6', v6base,'11:0:0:0:0:0:0:0')  
- 
-                for ether in ether_type:
-                    if ether == '2048':
-                        Gname = name
-                        if not v4Flag:
-                            continue 
-                    elif ether == '34525':
-                        Gname = name6
-                        if not v6Flag:
-                            continue 
-                        
-                    for loop in range(0,8):           
+                                   
+                for loop in range(0,8):  
+                    if not v4Flag and not v6Flag:
+                        helpers.log("INFO:  ********* break of of the loop *****"   )                       
+                        break                                                                                        
+                    for ether in ether_type:
+                        if ether == '2048':
+                            Gname = name
+                            if not v4Flag:
+                                continue 
+                        elif ether == '34525':
+                            Gname = name6
+                            if not v6Flag:
+                                continue 
+                            
                         sequence = sequence + 10                                                       
                         if loop == 0:                
                             data = '{'+'"sequence":'+ str(sequence) +','+'"src-ip-list":'+'"'+Gname+'"'+','+'"ether-type":'+ ether+'}' 
@@ -244,12 +239,15 @@ class Common(object):
                                 if num == '1' and not v4Flag and not v6Flag:    
                                     helpers.test_log("INFO: **** # of flows is switch  - %s ***" %  str(flow))                                 
                                     return  expect_flow                                                                                                                                                                      
-                                break
+                                continue
                             else:  
                                 helpers.test_failure("ERROR: mismatch  Switch - %s  tcam expect -  %s,  actual - %s" % (node, str(expect_flow), str(flow)))                                                                  
                         else:
                             helpers.test_log("ERROR: Switch - %s  tcam expect -  %s,  actual - %s" % (node, str(expect_flow), str(flow)))  
                             helpers.test_failure("ERROR: mismatch  Switch - %s  tcam expect -  %s,  actual - %s" % (node, str(expect_flow), str(flow)))     
+
+
+
          
 
 
