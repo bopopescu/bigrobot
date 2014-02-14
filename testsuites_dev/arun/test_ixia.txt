@@ -44,7 +44,7 @@ Test IXIA4
 # Stream with Different Src and Dst Mac addresses
 # s_cnt is used to pass no of src macs, d_step is the increment value for the next mac
 # d_cnt is used to pass no of dst macs, s_step is the increment value for the next mac
-	[Tags]  skipped
+#	[Tags]  skipped
     IXIA initialize        tg1
     ${stream}=             IXIA L2 add  flow=a<->b  src_mac=00:11:23:00:00:09  dst_mac=00:11:23:00:00:99  frame_rate=10000
 	...						frame_size=68  frame_cnt=99000  dnt_cnt=50  src_cnt=50  
@@ -139,11 +139,12 @@ Test IXIA_11
     ${report}=             IXIA fetch port stats
 
 Verify L3 traffic: frame size 64 bytes
+	[Tags]  skipped
     IXIA initialize  tg1
     ${stream}=  IXIA L3 add  flow=a->b  frame_rate=10000  frame_size=64  frame_cnt=50000
-    ...		src_mac=01:02:03:04:05:06  dst_mac=01:02:03:04:05:07
-    ...		src_ip=100.1.1.1  src_gw=100.1.1.2  src_gw_mac=01:02:03:04:05:07
-    ...		dst_ip=100.1.1.2  dst_gw=100.1.1.1  dst_gw_mac=01:02:03:04:05:06  name=a_b_flow
+    ...		src_mac=01:02:03:04:05:06  dst_mac=01:02:03:04:05:07  no_arp=True
+    ...		src_ip=100.1.1.1
+    ...		dst_ip=100.1.1.2  name=a_b_flow
     IXIA start L3 traffic  ${stream}
     sleep  10
     IXIA stop L3 traffic  ${stream}
