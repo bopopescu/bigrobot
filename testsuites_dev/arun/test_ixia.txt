@@ -82,6 +82,7 @@ Test IXIA4
     
  Test IXIA_7
 # Basic test case with all default values and etherytype 8100, with vlan id
+	[Tags]  skipped
     IXIA initialize        tg1
     ${stream}=             IXIA L2 add  flow=a<-b  ethertype=8100  vlan_id=199  frame_size=68
     IXIA start L2 traffic  ${stream}
@@ -98,5 +99,15 @@ Test IXIA4
     IXIA start L2 traffic  ${stream}
     sleep                  10
     IXIA stop L2 traffic   ${stream}
+    sleep                  10
+    ${report}=             IXIA fetch port stats
+ 
+ Test IXIA_9
+# Basis test case with L3 Flow
+    IXIA initialize        tg1
+    ${stream}=             IXIA L3 add  flow=a<-b
+    IXIA start L3 traffic  ${stream}
+    sleep                  10
+    IXIA stop L3 traffic   ${stream}
     sleep                  10
     ${report}=             IXIA fetch port stats
