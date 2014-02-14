@@ -104,8 +104,20 @@ Test IXIA4
  
  Test IXIA_9
 # Basis test case with L3 Flow
+	[Tags]  skipped
     IXIA initialize        tg1
     ${stream}=             IXIA L3 add  flow=a<-b
+    IXIA start L3 traffic  ${stream}
+    sleep                  10
+    IXIA stop L3 traffic   ${stream}
+    sleep                  10
+    ${report}=             IXIA fetch port stats
+
+ Test IXIA_10
+# Basis test case with L3 Flow with more details :)
+    IXIA initialize        tg1
+    ${stream}=             IXIA L3 add  flow=a->b  src_ip=20.20.20.10  src_gw_ip=20.20.20.11
+    ...						dst_ip=20.20.20.11  dst_gw_ip=20.20.20.10
     IXIA start L3 traffic  ${stream}
     sleep                  10
     IXIA stop L3 traffic   ${stream}
