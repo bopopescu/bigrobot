@@ -9,7 +9,6 @@ Library         keywords/BsnCommon.py
 #Library         keywords/Controller.py
 Library         keywords_dev/vui/MyTest.py
 Library         keywords/Ixia.py
-Library		keywords_dev/arun/example.py
 
 
 * Test Case
@@ -48,7 +47,7 @@ Test IXIA4
 	[Tags]  skipped
     IXIA initialize        tg1
     ${stream}=             IXIA L2 add  flow=a<->b  src_mac=00:11:23:00:00:09  dst_mac=00:11:23:00:00:99  frame_rate=10000
-	...						frame_size=68  frame_cnt=99000  d_cnt=50  s_cnt=50  
+	...						frame_size=68  frame_cnt=99000  dnt_cnt=50  src_cnt=50  
 	...						d_step=00:00:00:01:00:00  s_step=00:00:00:01:00:00  name=a_b_flow
     IXIA start L2 traffic  ${stream}
     sleep                  10
@@ -57,7 +56,7 @@ Test IXIA4
     ${report}=             IXIA fetch port stats
     Log                    Report is ${report}
  
- Test IXIA_5
+Test IXIA_5
 # Basic test case with all default values and just start the flow
 	[Tags]  skipped
     IXIA initialize        tg1
@@ -70,7 +69,7 @@ Test IXIA4
     ${status}=             test tx  ${report}
     Should be true         ${status}
     
- Test IXIA_6
+Test IXIA_6
 # Basic test case with all default values and etherytype 88cc LLDP
 	[Tags]  skipped
     IXIA initialize        tg1
@@ -81,19 +80,20 @@ Test IXIA4
     sleep                  10
     ${report}=             IXIA fetch port stats
     
- Test IXIA_7
+Test IXIA_7
 # Basic test case with all default values and etherytype 8100, with vlan id
 	[Tags]  skipped
     IXIA initialize        tg1
     ${stream}=             IXIA L2 add  flow=a<-b  ethertype=8100  vlan_id=199  frame_size=68
     IXIA start L2 traffic  ${stream}
-    sleep                  260
+    sleep                  10
     IXIA stop L2 traffic   ${stream}
     sleep                  10
     ${report}=             IXIA fetch port stats
 
- Test IXIA_8
+Test IXIA_8
 # Basic test case with bad crc
+	[Tags]  skipped
     IXIA initialize        tg1
     ${stream}=             IXIA L2 add  flow=a<-b  crc=True
     IXIA start L2 traffic  ${stream}
@@ -101,3 +101,52 @@ Test IXIA4
     IXIA stop L2 traffic   ${stream}
     sleep                  10
     ${report}=             IXIA fetch port stats
+ 
+Test IXIA_9
+# Basis test case with L3 Flow
+	[Tags]  skipped
+    IXIA initialize        tg1
+    ${stream}=             IXIA L3 add  flow=a<-b
+    IXIA start L3 traffic  ${stream}
+    sleep                  10
+    IXIA stop L3 traffic   ${stream}
+    sleep                  10
+    ${report}=             IXIA fetch port stats
+
+Test IXIA_10
+# Basis test case with L3 Flow with more details :)
+	[Tags]  skipped
+    IXIA initialize        tg1
+    ${stream}=             IXIA L3 add  flow=a->b  src_ip=20.20.20.10  src_gw_ip=20.20.20.11
+    ...						dst_ip=20.20.20.11  dst_gw_ip=20.20.20.10
+    IXIA start L3 traffic  ${stream}
+    sleep                  10
+    IXIA stop L3 traffic   ${stream}
+    sleep                  10
+    ${report}=             IXIA fetch port stats
+    
+Test IXIA_11
+# Basis test case with L3 Flow with more details :)
+	[Tags]  skipped
+    IXIA initialize        tg1
+    ${stream}=             IXIA L3 add  flow=a->b  src_mac=01:02:03:04:05:06  dst_mac=01:02:03:04:05:07
+    ...						src_ip=20.20.20.10  src_gw_ip=20.20.20.11
+    ...						dst_ip=20.20.20.11  dst_gw_ip=20.20.20.10
+    IXIA start L3 traffic  ${stream}
+    sleep                  10
+    IXIA stop L3 traffic   ${stream}
+    sleep                  10
+    ${report}=             IXIA fetch port stats
+
+Verify L3 traffic: frame size 64 bytes
+    IXIA initialize  tg1
+    ${stream}=  IXIA L3 add  flow=a->b  frame_rate=10000  frame_size=64  frame_cnt=50000
+    ...		src_mac=01:02:03:04:05:06  dst_mac=01:02:03:04:05:07
+    ...		src_ip=100.1.1.1  src_gw=100.1.1.2  src_gw_mac=01:02:03:04:05:07
+    ...		dst_ip=100.1.1.2  dst_gw=100.1.1.1  dst_gw_mac=01:02:03:04:05:06  name=a_b_flow
+    IXIA start L3 traffic  ${stream}
+    sleep  10
+    IXIA stop L3 traffic  ${stream}
+    sleep                  10
+    ${report}=             IXIA fetch port stats
+    [Tags]  traffic  sanity
