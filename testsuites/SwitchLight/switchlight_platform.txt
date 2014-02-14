@@ -9,7 +9,7 @@ Library  keywords/BsnCommon.py
 Library  keywords/SwitchLight.py
 
 * Variable
-${switchlight_version}  SwitchLight 2.0.0
+${switchlight_version}  SwitchLight 1.7.5
 ${netmask}  18
 ${gateway}  10.192.64.1
 ${dns_server}  10.192.3.1
@@ -22,7 +22,7 @@ Verify one openflow controller can be configured
     delete existing controllers  s1  c2
     add openflow controller  s1  c1
     verify openflow controller  s1  c1
-    [Tags]  sanity  platform
+    [Tags]  sanity  platform  
 
 Verify controller can be modified 
     delete existing controllers  s1  c1
@@ -32,7 +32,7 @@ Verify controller can be modified
     delete existing controllers  s1  c1
     add openflow controller  s1  c2
     verify openflow controller  s1  c2
-    [Tags]  sanity  platform
+    [Tags]  sanity  platform  
 
 Verify multiple openflow controllers can be configured
     delete existing controllers  s1  c1
@@ -41,29 +41,30 @@ Verify multiple openflow controllers can be configured
     verify openflow controller  s1  c1
     add openflow controller  s1  c2
     verify openflow controller  s1  c2    
-    [Tags]  sanity  platform
+    [Tags]  sanity  platform  
 
 T5987: Verify Controller IP address is pingable
     ping remote  s1
-    [Tags]  sanity  platform
+    [Tags]  sanity  platform  
 
 T5988: Configure DNS server and DNS Domain. Verify you can ping www.bigswitch.com
     configure dns domain  s2  ${dns_server}  ${dns_domain}
+    Sleep  30
     ping from switch  s2  bigswitch.com
-    [Tags]  sanity    
+    [Tags]  sanity      
 
 T5981: Verify all interfaces show up (in show o/p from CLI)
     verify interfaces  s1
-    [Tags]  sanity    
+    [Tags]  sanity      
  
 Shutdown an interface and verify interface state is down
-    shut interface  s1  ethernet48
+    shut interface  s1  ethernet1
     Sleep  5
-    verify interface state  s1  ethernet48  down
-    unshut interface  s1  ethernet48
-    Sleep  5
-    verify interface state  s1  ethernet48  up
-    [Tags]  sanity     
+    verify interface state  s1  ethernet1  down
+    unshut interface  s1  ethernet1
+    Sleep  15
+    verify interface state  s1  ethernet1  up
+    [Tags]  sanity       
 
 T5983: Verify ma1 ip address configuration via static config
     delete static ip  s2  ${netmask}  ${gateway}
@@ -71,26 +72,35 @@ T5983: Verify ma1 ip address configuration via static config
     Sleep  5
     add static ip  s2  ${netmask}  ${gateway}
     add dns  s2  ${dns_server}  ${dns_domain}
-    Sleep  30
+    Sleep  60
     verify ip dns  s2  ${netmask}  ${gateway}  ${dns_server}  ${dns_domain}
-    [Tags]  sanity  
+    [Tags]  sanity    
     
-verify cli:show forwarding crc status
+Verify cli:show forwarding crc status
     enable crc forwarding  s1
     Sleep  5
     verify crc is enabled  s1
     disable crc forwarding  s1
     Sleep  5
     verify crc is disabled  s1
-    [Tags]  sanity  JIRA_PAN_651      
+    [Tags]  sanity  JIRA_PAN_651        
 
-verify ntp
+Verify ntp
     configure ntp server  s1  time-c.nist.gov
     Sleep  5
     verify ntp server  s1  time-c.nist.gov
     delete ntp  s1  time-c.nist.gov
-    [Tags]  sanity   
+    [Tags]  sanity     
 
+Verify ntp server after process ntp restart
+    configure ntp server  s1  time-c.nist.gov
+    Sleep  5
+    verify ntp server  s1  time-c.nist.gov
+    bash restart process  s1  ntpd
+    Sleep  5
+    verify ntp server  s1  time-c.nist.gov    
+    [Tags]  sanity
+        
 * Keywords 
 
 delete existing controllers  [Arguments]  ${switch}  ${controller}
@@ -172,10 +182,10 @@ configure ntp server  [Arguments]  ${switch}  ${ntp_server}
     ${ret_value_1}=  add ntp server  ${switch}  ${ntp_server}  
     Should Be True  ${ret_value_1}
  
- verify ntp server  [Arguments]  ${switch}  ${ntp_server}
+verify ntp server  [Arguments]  ${switch}  ${ntp_server}
      ${ret_value_1}=  verify ntp  ${switch}  ${ntp_server}  
     Should Be True  ${ret_value_1}
 
 delete ntp  [Arguments]  ${switch}  ${ntp_server}
     ${ret_value_1}=  delete ntp server  ${switch}  ${ntp_server}  
-    Should Be True  ${ret_value_1}   
+    Should Be True  ${ret_value_1}
