@@ -13,19 +13,19 @@ Library         keywords/BsnCommon.py
 Library         keywords_dev/prashanth/T5.py
 Library         keywords_dev/prashanth/T5Fabric.py
 Library         keywords/Mininet.py
-Resource		keywords_dev/prashanth/t5_dualleaf_three_rack_resource.txt
+Resource		keywords_dev/prashanth/t5_dualleaf_three_rack__physical_resource.txt
 
  
 * Variables
 ${leaf2a_ixia_intf}		ethernet24
-${leaf0a_dpid}  00:00:00:00:00:02:00:01
-${leaf0b_dpid}  00:00:00:00:00:02:00:02
-${leaf1a_dpid}  00:00:00:00:00:02:00:03
-${leaf1b_dpid}  00:00:00:00:00:02:00:04
-${leaf2a_dpid}  00:00:00:00:00:02:00:05
-${leaf2b_dpid}  00:00:00:00:00:02:00:06
-${spine0_dpid}  00:00:00:00:00:01:00:01
-${spine1_dpid}  00:00:00:00:00:01:00:02
+${leaf0a_dpid}  00:00:00:00:02:00:00:01
+${leaf0b_dpid}  00:00:00:00:02:00:00:02
+${leaf1a_dpid}  00:00:00:00:02:00:00:03
+${leaf1b_dpid}  00:00:00:00:02:00:00:04
+${leaf2a_dpid}  00:00:00:00:02:00:00:05
+${leaf2b_dpid}  00:00:00:00:02:00:00:06
+${spine0_dpid}  00:00:00:00:01:00:00:01
+${spine1_dpid}  00:00:00:00:01:00:00:02
 
 * Test Case   
 
@@ -92,14 +92,19 @@ source mac check verification on spine and leaf switches
 	add dpid  spine0  ${spine0_dpid}
 	add fabric role  spine0  spine
 	sleep  5
-#	rest verify forwarding interface check  spine0
 	add switch  leaf0-a
 	add dpid  leaf0-a  ${leaf0a_dpid}
 	add fabric role  leaf0-a  leaf
+	add leaf group  leaf0-a  rack0
 	sleep  5
+	add switch  leaf0-b
+	add dpid  leaf0-b  ${leaf0b_dpid}
+	add fabric role  leaf0-b  leaf
+	add leaf group  leaf0-b  rack0
 	rest verify fabric link
-#	rest verify forwarding interface check  leaf0-a  
-	  
+#	rest verify forwarding port source mac check  leaf0-a 
+	rest verify forwarding port source mac check  spine0  
+	   
 add leaf group before leaf role to check the config error
 	[Tags]	feature   
 	add switch  leaf0-a
