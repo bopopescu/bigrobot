@@ -26,6 +26,72 @@ class AppController(object):
 ###################################################
 # All Show Commands Go Here:
 ###################################################
+    def cli_upgrade_image(self, node=None, package=None, timeout=200, sleep_time=200):
+        '''
+            Objective:
+            - Execute CLI commands to download given upgrade package to Master (and Slave if exists) Controllers and upgrade them
+
+            Input:
+            | `package` |  URL to the upgrade package | 
+            | `node` |  Node to be upgraded. Leave empty to upgrade all nodes in your topology | 
+            | `timeout` |  Timeout (in seconds) for "upgrade" command to be execute | 
+            | `sleep` |  Time (in seconds) of sleep after upgrade, before next actions | 
+            
+            Return Value: 
+            - True if configuration is successful
+            - False otherwise
+        '''
+
+        t = test.Test()
+
+        if not package:
+            helpers.test_error("You must specify a package name")
+        if not node:
+            # assume all controllers if node is not specified
+            node_handles = t.controllers()
+            controller_qty = len(t.controllers())
+        else:
+            node_handles = [t.controller(node)]
+            controller_qty = 1
+
+
+        helpers.log("Number of controllers %s" % controller_qty)
+
+        if controller_qty > 2 or controller_qty < 1:
+            helpers.test_failure("More than two controllers or no controller configured")
+            return False
+
+
+        for i in range(0, controller_qty):
+            try:
+                if controller_qty > 1:
+                    n = t.controller('slave')
+                else:
+                    n = node_handles[0]
+
+                helpers.log("Upgrade '%s' to image '%s'" % (n.name(), package))
+                n.bash("cd /home/images/")
+                n.bash("sudo rm *")
+                n.bash("sudo wget  %s" % package)
+                n.bash("exit")
+                helpers.log("Image downloaded successfully")
+
+                n.enable('enable')
+                n.send("upgrade")
+                n.expect(r"\(yes to continue\)")
+                n.send("yes")
+                n.expect(r"Password:")
+                n.enable("adminadmin", timeout=timeout)
+                n.send("reload")
+                n.expect(r"Confirm Reload \(yes to continue\)")
+                n.send("yes")
+                helpers.sleep(sleep_time)
+            except:
+                helpers.test_failure("Output: %s" % n.cli_content())
+                return False
+        return True
+
+
     def rest_return_switch_dpid_from_alias(self, switch_alias):
         '''
         Objective: Returns switch DPID, given a switch alias
