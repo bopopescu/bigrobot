@@ -86,7 +86,7 @@ inport suite setup
     rest add switch alias  s3  L9AR3
     rest add switch alias  s4  L9AR4
     rest add switch alias  s5  LY2AR5
-    rest add switch alias  s5  LY2AR6
+    rest add switch alias  s6  LY2AR6
     rest add interface role  s1  ethernet5    filter        L9AR1-F1  
     rest add interface role  s1  ethernet6    filter        L9AR1-F2
     rest add interface role  s1  ethernet7    filter        L9AR1-F3
