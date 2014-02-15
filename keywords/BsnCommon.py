@@ -70,6 +70,16 @@ class BsnCommon(object):
         helpers.log("Express '%s' evaluated to '%s'" % (s, result))
         return result
 
+    def ixia_verify_traffic_rate(self, tx_value, rx_value):
+        tx = int(tx_value)
+        rx = int(rx_value)
+        if (rx >= (tx - 5)) and (rx <= (tx + 5)):
+            helpers.log("Pass:Traffic forwarded between 2 endpoints tx_rate:%d,rx_rate:%d" % (tx, rx))
+            return True
+        else:
+            helpers.test_failure("Fail:Traffic forward between 2 endpoints tx_rate:%d,rx_rate:%d" % (tx, rx))
+            return False
+
     def verify_dict_key(self, content, index, key):
         ''' Given a dictionary, return the value for a particular key
         

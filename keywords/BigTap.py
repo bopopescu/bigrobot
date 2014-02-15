@@ -175,7 +175,7 @@ class BigTap(object):
 ###################################################
 # All Bigtap Verify Commands Go Here:
 ###################################################
-    def rest_verify_bigtap_policy(self, policy_name, num_filter_intf=None, num_delivery_intf=None, action='forward'):
+    def rest_verify_bigtap_policy(self, policy_name, num_filter_intf=None, num_delivery_intf=None, return_value=None, action='forward'):
         '''
         Objective:
         Parse the output of cli command 'show bigtap policy <policy_name>'
@@ -184,6 +184,7 @@ class BigTap(object):
         | `policy_name` | Name of the policy being parsed | 
         | `num_filter_intf` | Number of configured Filter Interfaces in the policy | 
         | `num_delivery_intf` | Number of configured Delivery Interfaces in the policy | 
+        | `return_value` | If you need a particular value from the dictionary|
         
         Description:
         The function executes a REST GET for http://<CONTROLLER_IP>:8082/api/v1/data/controller/applications/bigtap/view/policy[name="<POLICY_NAME>"]/info
@@ -212,59 +213,62 @@ class BigTap(object):
             helpers.test_failure("Could not execute command")
             return False
         else:
-            if content[0]['name'] == str(policy_name):
-                helpers.test_log("Policy correctly reports policy name as : %s" % content[0]['name'])
+            if (return_value is not None) :
+                return content[0][return_value]
             else:
-                helpers.test_failure("Policy does not correctly report policy name  : %s" % content[0]['name'])
-                return False
-
-            if (content[0]['config-status'] == "active and forwarding") and (str(action) == "forward"):
-                helpers.test_log("Policy correctly reports config status as : %s" % content[0]['config-status'])
-            elif (content[0]['config-status'] == "active and rate measure") and (str(action) == "rate-measure"):
-                helpers.test_log("Policy correctly reports config status as : %s" % content[0]['config-status'])
-            elif (content[0]['config-status'] == "inactive") and (str(action) == "inactive"):
-                helpers.test_log("Policy correctly reports config status as : %s" % content[0]['config-status'])
-            else:
-                helpers.test_failure("Policy does not correctly report config status as : %s and passed action value is %s" % (content[0]['config-status'], str(action)))
-                return False
-
-            if content[0]['type'] == "Configured":
-                helpers.test_log("Policy correctly reports type as : %s" % content[0]['type'])
-            else:
-                helpers.test_failure("Policy does not correctly report type as : %s" % content[0]['type'])
-                return False
-
-            if content[0]['runtime-status'] == "installed":
-                helpers.test_log("Policy correctly reports runtime status as : %s" % content[0]['runtime-status'])
-            elif content[0]['runtime-status'] == "inactive":
-                helpers.test_log("Policy correctly reports runtime status as : %s" % content[0]['runtime-status'])
-            else:
-                helpers.test_failure("Policy does not correctly report runtime status as : %s" % content[0]['runtime-status'])
-                return False
-
-            if (num_delivery_intf is not None):
-                if content[0]['delivery-interface-count'] == int(num_delivery_intf):
-                    helpers.test_log("Policy correctly reports number of delivery interfaces as : %s" % content[0]['delivery-interface-count'])
+                if content[0]['name'] == str(policy_name):
+                    helpers.test_log("Policy correctly reports policy name as : %s" % content[0]['name'])
                 else:
-                    helpers.test_failure("Policy does not correctly report number of delivery interfaces  : %s" % content[0]['delivery-interface-count'])
-                    return False
-            if (num_filter_intf is not None):
-                if content[0]['filter-interface-count'] == int(num_filter_intf):
-                    helpers.test_log("Policy correctly reports number of filter interfaces as : %s" % content[0]['filter-interface-count'])
-                else:
-                    helpers.test_failure("Policy does not correctly report number of filter interfaces  : %s" % content[0]['filter-interface-count'])
+                    helpers.test_failure("Policy does not correctly report policy name  : %s" % content[0]['name'])
                     return False
 
-            if content[0]['detailed-status'] == "installed to forward":
-                helpers.test_log("Policy correctly reports detailed status as : %s" % content[0]['detailed-status'])
-            elif content[0]['detailed-status'] == "installed to measure rate":
-                helpers.test_log("Policy correctly reports detailed status as : %s" % content[0]['detailed-status'])
-            elif content[0]['detailed-status'] == "inactive":
-                helpers.test_log("Policy correctly reports detailed status as : %s" % content[0]['detailed-status'])
-            else:
-                helpers.test_failure("Policy does not correctly report detailed status as : %s" % content[0]['detailed-status'])
-                return False
-            return True
+                if (content[0]['config-status'] == "active and forwarding") and (str(action) == "forward"):
+                    helpers.test_log("Policy correctly reports config status as : %s" % content[0]['config-status'])
+                elif (content[0]['config-status'] == "active and rate measure") and (str(action) == "rate-measure"):
+                    helpers.test_log("Policy correctly reports config status as : %s" % content[0]['config-status'])
+                elif (content[0]['config-status'] == "inactive") and (str(action) == "inactive"):
+                    helpers.test_log("Policy correctly reports config status as : %s" % content[0]['config-status'])
+                else:
+                    helpers.test_failure("Policy does not correctly report config status as : %s and passed action value is %s" % (content[0]['config-status'], str(action)))
+                    return False
+
+                if content[0]['type'] == "Configured":
+                    helpers.test_log("Policy correctly reports type as : %s" % content[0]['type'])
+                else:
+                    helpers.test_failure("Policy does not correctly report type as : %s" % content[0]['type'])
+                    return False
+
+                if content[0]['runtime-status'] == "installed":
+                    helpers.test_log("Policy correctly reports runtime status as : %s" % content[0]['runtime-status'])
+                elif content[0]['runtime-status'] == "inactive":
+                    helpers.test_log("Policy correctly reports runtime status as : %s" % content[0]['runtime-status'])
+                else:
+                    helpers.test_failure("Policy does not correctly report runtime status as : %s" % content[0]['runtime-status'])
+                    return False
+
+                if (num_delivery_intf is not None):
+                    if content[0]['delivery-interface-count'] == int(num_delivery_intf):
+                        helpers.test_log("Policy correctly reports number of delivery interfaces as : %s" % content[0]['delivery-interface-count'])
+                    else:
+                        helpers.test_failure("Policy does not correctly report number of delivery interfaces  : %s" % content[0]['delivery-interface-count'])
+                        return False
+                if (num_filter_intf is not None):
+                    if content[0]['filter-interface-count'] == int(num_filter_intf):
+                        helpers.test_log("Policy correctly reports number of filter interfaces as : %s" % content[0]['filter-interface-count'])
+                    else:
+                        helpers.test_failure("Policy does not correctly report number of filter interfaces  : %s" % content[0]['filter-interface-count'])
+                        return False
+
+                if content[0]['detailed-status'] == "installed to forward":
+                    helpers.test_log("Policy correctly reports detailed status as : %s" % content[0]['detailed-status'])
+                elif content[0]['detailed-status'] == "installed to measure rate":
+                    helpers.test_log("Policy correctly reports detailed status as : %s" % content[0]['detailed-status'])
+                elif content[0]['detailed-status'] == "inactive":
+                    helpers.test_log("Policy correctly reports detailed status as : %s" % content[0]['detailed-status'])
+                else:
+                    helpers.test_failure("Policy does not correctly report detailed status as : %s" % content[0]['detailed-status'])
+                    return False
+                return True
 
     def rest_verify_policy_key(self, policy_name, method, index, key):
         '''
