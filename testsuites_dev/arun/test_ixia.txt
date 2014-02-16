@@ -117,7 +117,7 @@ Test IXIA_10
 # Basis test case with L3 Flow with more details :)
 	[Tags]  skipped
     IXIA initialize        tg1
-    ${stream}=             IXIA L3 add  flow=a->b  src_ip=20.20.20.10  src_gw_ip=20.20.20.11
+    ${stream}=             IXIA L3 add  flow=a<->b  src_ip=20.20.20.10  src_gw_ip=20.20.20.11
     ...						dst_ip=20.20.20.11  dst_gw_ip=20.20.20.10
     IXIA start L3 traffic  ${stream}
     sleep                  10
@@ -129,7 +129,7 @@ Test IXIA_11
 # Basis test case with L3 Flow with more details :)
 	[Tags]  skipped
     IXIA initialize        tg1
-    ${stream}=             IXIA L3 add  flow=a->b  src_mac=01:02:03:04:05:06  dst_mac=01:02:03:04:05:07
+    ${stream}=             IXIA L3 add  flow=a<->b  src_mac=01:02:03:04:05:06  dst_mac=01:02:03:04:05:07
     ...						src_ip=20.20.20.10  src_gw_ip=20.20.20.11
     ...						dst_ip=20.20.20.11  dst_gw_ip=20.20.20.10
     IXIA start L3 traffic  ${stream}
@@ -139,7 +139,7 @@ Test IXIA_11
     ${report}=             IXIA fetch port stats
 
 Verify L3 traffic: frame size 64 bytes
-#	[Tags]  skipped
+	[Tags]  skipped
     IXIA initialize  tg1
     ${stream}=  IXIA L3 add  flow=a<->b  frame_rate=10000  frame_size=64  frame_cnt=50000
     ...		src_mac=01:02:03:04:05:06  dst_mac=01:02:03:04:05:07  no_arp=True
@@ -150,4 +150,16 @@ Verify L3 traffic: frame size 64 bytes
     IXIA stop L3 traffic  ${stream}
     sleep                  10
     ${report}=             IXIA fetch port stats
+    [Tags]  traffic  sanity
+    
+Verify BiDirectional L3 traffic in Port Mode: S1 to S3
+    IXIA initialize  tg1
+    ${stream}=  IXIA L3 add  flow=a<->b  frame_rate=10000  frame_size=1518  frame_cnt=50000
+    ...     src_mac=01:02:03:04:05:06  dst_mac=01:02:03:04:05:07
+    ...     src_ip=100.1.1.1  src_gw=100.1.1.2  dst_ip=100.1.1.2  dst_gw=100.1.1.1  name=a_c_flow  
+    IXIA start L3 traffic  ${stream}
+    sleep  10
+    IXIA stop L3 traffic  ${stream}
+    sleep                  10
+    ${report}=             IXIA fetch port stats    
     [Tags]  traffic  sanity
