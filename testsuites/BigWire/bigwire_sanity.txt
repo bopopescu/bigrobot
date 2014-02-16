@@ -1,0 +1,194 @@
+*Settings
+Documentation  BigWire Sanity Test	Suite
+Suite Setup  bigwire suite setup
+Suite Teardown   bigwire suite teardown
+Test Setup   base test setup
+Test Teardown   base test teardown
+Force Tags   HA Scale
+Library  keywords/AppController.py
+Library  keywords/BsnCommon.py
+Library  keywords/BigWire.py
+Library  keywords/Ixia.py
+
+* Variable
+${switch1_alias}  L9BW1
+${switch2_alias}  L9BW2
+${switch3_alias}  L9BW3
+${switch4_alias}  L9BW4
+${datacenter1}  DC12
+${zone1}  Zone1
+${datacenter2}  DC34
+${zone2}  Zone2
+${pseudowire1}   dc12dc34-1
+${pseudowire2}   dc23dc34-2
+${tenant1}  bw1bw3
+${tenant2}  bw2bw4
+${switchlight_version}  SwitchLight 1.7-branch
+
+
+* Test Case
+Verify CLI BigWire Summary
+	bigwire summary
+    [Tags]  traffic  sanity    
+    
+Verify CLI BigWire Datacenter
+	bigwire datacenter
+    [Tags]  traffic  sanity    
+    
+Verify CLI BigWire Tenant
+	bigwire tenant
+    [Tags]  traffic  sanity    
+    
+Verify CLI BigWire Pseudowire
+	bigwire pseudowire
+    [Tags]  traffic  sanity    
+    
+Verify BiDirectional L2 traffic in Port Mode: S1 to S3
+    IXIA initialize  tg1
+    ${stream}=  IXIA L2 add  flow=a<->c  frame_rate=10000  frame_size=1518  frame_cnt=50000  name=a_c_flow
+    IXIA start L2 traffic  ${stream}
+    sleep  10
+    IXIA stop L2 traffic  ${stream}
+    verify results  a  transmitted_frames  c  received_frames
+    verify results  c  transmitted_frames  a  received_frames
+    [Tags]  traffic  sanity    
+
+    
+Verify BiDirectional Jumbo L2 traffic in Port Mode: S1 to S3
+    IXIA initialize  tg1
+    ${stream}=  IXIA L2 add  flow=a<->c  frame_rate=10000  frame_size=9190  frame_cnt=50000  name=a_c_flow
+    IXIA start L2 traffic  ${stream}
+    sleep  10
+    IXIA stop L2 traffic  ${stream}
+    verify results  a  transmitted_frames  c  received_frames
+    verify results  c  transmitted_frames  a  received_frames
+    [Tags]  traffic  sanity    
+
+Verify BiDirectional L2 traffic in VLAN Mode: S2 to S4
+    IXIA initialize  tg1
+    ${stream}=  IXIA L2 add  flow=b<->d  frame_rate=10000  frame_size=64  frame_cnt=50000  ethertype=8100  vlan_id=100  name=b_d_flow
+    IXIA start L2 traffic  ${stream}
+    sleep  10
+    IXIA stop L2 traffic  ${stream}
+    verify results  b  transmitted_frames  d  received_frames
+    verify results  d  transmitted_frames  b  received_frames
+    [Tags]  traffic  sanity    
+
+Verify BiDirectional Jumbo L2 traffic in VLAN Mode: S2 to S4
+    IXIA initialize  tg1
+    ${stream}=  IXIA L2 add  flow=b<->d  frame_rate=10000  frame_size=9190  frame_cnt=50000  ethertype=8100  vlan_id=100  name=b_d_flow
+    IXIA start L2 traffic  ${stream}
+    sleep  10
+    IXIA stop L2 traffic  ${stream}
+    verify results  b  transmitted_frames  d  received_frames
+    verify results  d  transmitted_frames  b  received_frames
+    [Tags]  traffic  sanity    
+
+            
+* Keywords
+bigwire suite setup
+	${switchDict}=  REST show switch
+	
+	# Assign Alias to Switch
+	rest add switch alias  s1  ${switch1_alias}
+	rest add switch alias  s2  ${switch2_alias}
+	rest add switch alias  s3  ${switch3_alias}
+	rest add switch alias  s4  ${switch4_alias}
+	
+	# add Datacenter and assign switch to datacenter
+	rest add bigwire datacenter  ${datacenter1}
+	rest add switch datacenter  s1  ${datacenter1}  ${zone1}
+	rest add switch datacenter  s2  ${datacenter1}  ${zone2}
+	rest add bigwire datacenter  ${datacenter2}
+	rest add switch datacenter  s3  ${datacenter2}  ${zone1}
+	rest add switch datacenter  s4  ${datacenter2}  ${zone2}
+	
+	# add Pseudowires
+	rest add bigwire pseudowire  ${pseudowire1}  s1  ethernet5  s3  ethernet5
+	rest add bigwire pseudowire  ${pseudowire2}  s2  ethernet9  s4  ethernet9  100
+	
+	#add Tenants
+	rest add bigwire tenant  ${tenant1}
+	rest add switch to tenant  s1  ${tenant1}  ethernet1  
+	rest add switch to tenant  s3  ${tenant1}  ethernet1
+	rest add bigwire tenant  ${tenant2}
+	rest add switch to tenant  s2  ${tenant2}  ethernet1  100
+	rest add switch to tenant  s4  ${tenant2}  ethernet1  100
+	
+	Sleep  30
+
+bigwire summary
+	${content}=  REST show bigwire command  summary
+	${num-datacenters}=  REST verify dict key  ${content}  0  num-datacenters
+	Should Be Equal As Integers  ${num-datacenters}  2
+	${num-pseudowires}=  REST verify dict key  ${content}  0  num-pseudowires
+	Should Be Equal As Integers  ${num-pseudowires}  2
+	${num-tenants}=  REST verify dict key  ${content}  0  num-tenants
+	Should Be Equal As Integers  ${num-tenants}  2
+	${num-zones}=  REST verify dict key  ${content}   0  num-zones
+	Should Be Equal As Integers  ${num-zones}  2
+	${state} =  REST verify dict key  ${content}  0  state
+	Should Be Equal As Strings  ${state}  OK
+
+bigwire datacenter
+    ${content}=  REST show bigwire command  datacenter
+    Length Should Be  ${content}  2
+    ${dc1}=  REST verify dict key  ${content}  0  name
+    Should Be Equal As Strings  ${dc1}  ${datacenter1}
+    ${numSwAct} =   REST verify dict key  ${content}  0   num-active-switches
+    Should Be Equal As Integers  ${numSwAct}  2
+    ${numSwInact} =   REST verify dict key  ${content}  0   num-inactive-switches
+    Should Be Equal As Integers  ${numSwInact}  0
+    
+bigwire tenant
+    ${content}=   REST show bigwire command  tenant
+    Length Should Be  ${content}  2
+    ${name} =   REST verify dict key  ${content}  0   name
+    Should Be Equal As Strings  ${name}  ${tenant1}
+    ${num-tenant-interface} =   REST verify dict key  ${content}  0   num-tenant-interface
+    Should Be Equal As Integers  ${num-tenant-interface}  2
+    ${num-tenant-vlan} =   REST verify dict key  ${content}  0   num-tenant-vlan
+    Should Be Equal As Integers  ${num-tenant-vlan}  1
+   
+bigwire pseudowire
+    ${content}=   REST show bigwire command  pseudowire
+    ${num-active-wires} =   REST verify dict key  ${content}  0   num-active-wires
+    Should Be Equal As Integers  ${num-active-wires}  2
+    ${num-inactive-wires} =   REST verify dict key  ${content}  0   num-inactive-wires
+    Should Be Equal As Integers  ${num-inactive-wires}  0
+    ${name} =   REST verify dict key  ${content[0]['pseudowire-wire']}  0   name
+    Should Be Equal As Strings  ${name}  ${pseudowire1}
+    ${interface1} =   REST verify dict key  ${content[0]['pseudowire-wire']}  0   interface1
+    Should Be Equal As Strings  ${interface1}  ethernet5
+    ${interface2} =   REST verify dict key  ${content[0]['pseudowire-wire']}  0   interface2
+    Should Be Equal As Strings  ${interface2}  ethernet5
+    ${state} =   REST verify dict key  ${content[0]['pseudowire-wire']}  0   state
+    Should Be Equal As Strings  ${state}  up
+    ${vlan} =   REST verify dict key  ${content[0]['pseudowire-wire']}  0   vlan
+    Should Be Equal As Integers  ${vlan}  -1
+
+verify results   [Arguments]  ${port_1}  ${transmitted_frames}  ${port_2}  ${received_frames}
+    Sleep  5
+    ${report}=  IXIA fetch port stats
+    ${tx_value}=  verify dict key  ${report}  ${port_1}  ${transmitted_frames}
+    ${rx_value}=  verify dict key  ${report}  ${port_2}  ${received_frames}
+    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}
+    Should be true  ${in_range} 
+  
+bigwire suite teardown
+	rest_delete_tenant  ${tenant1}
+	rest_delete_tenant  ${tenant2}
+	rest_delete_pseudowire  ${pseudowire1}
+	rest_delete_pseudowire  ${pseudowire2}
+	rest_delete_datacenter  ${datacenter1}
+	rest_delete_datacenter  ${datacenter2}
+    rest delete switch alias  s1
+    rest delete switch alias  s2
+    rest delete switch alias  s3
+    rest delete switch alias  s4
+    rest delete switch  s1
+    rest delete switch  s2
+    rest delete switch  s3
+    rest delete switch  s4
+	Sleep  30
+	
