@@ -283,22 +283,23 @@ class Ixia(object):
     
     def ix_setup_traffic_streams_ethernet(self, mac1, mac2, frameType, frameSize, frameRate,
                                       frameMode, frameCount, flow, name,
-                                      ethertype=None, vlan_id=None, crc=None, src_ip = None, dst_ip = None):
+                                      ethertype=None, vlan_id=None, crc=None, src_ip = None, dst_ip = None, no_arp=False):
         '''
             Returns traffic stream with 2 flows with provided mac sources
             Ex Usage:
                 IxLib.IxSetupTrafficStreamsEthernet(ixNet, mac_devices[0], mac_devices[1], frameType, frameSize, frameRate, frameMode)
         '''
-        
-        trafficStream1 = self._handle.add(self._handle.getRoot() + 'traffic', 'trafficItem', '-name',
-                                    name, '-allowSelfDestined', False, '-trafficItemType',
-                                    'l2L3', '-enabled', True, '-transmitMode', 'interleaved',
-                                    '-biDirectional', False, '-trafficType', 'ethernetVlan', '-hostsPerNetwork', '1')
-#         handle = self._handle
-#         trafficStream1 = handle.add(handle.getRoot()+'/traffic','trafficItem','-name','IPv4 traffic','-allowSelfDestined',False,
-#                    '-trafficItemType','l2L3','-mergeDestinations',False,'-egressEnabled',False,'-srcDestMesh','oneToOne',
-#                    '-enabled',True,'-routeMesh','oneToOne','-transmitMode','interleaved','-biDirectional',False,
-#                    '-trafficType','ipv4','-hostsPerNetwork',1)
+        handle = self._handle
+        if no_arp:
+            trafficStream1 = self._handle.add(self._handle.getRoot() + 'traffic', 'trafficItem', '-name',
+                                        name, '-allowSelfDestined', False, '-trafficItemType',
+                                        'l2L3', '-enabled', True, '-transmitMode', 'interleaved',
+                                        '-biDirectional', False, '-trafficType', 'ethernetVlan', '-hostsPerNetwork', '1')
+        else:
+            trafficStream1 = handle.add(handle.getRoot()+'/traffic','trafficItem','-name','IPv4 traffic','-allowSelfDestined',False,
+                       '-trafficItemType','l2L3','-mergeDestinations',False,'-egressEnabled',False,'-srcDestMesh','oneToOne',
+                       '-enabled',True,'-routeMesh','oneToOne','-transmitMode','interleaved','-biDirectional',False,
+                       '-trafficType','ipv4','-hostsPerNetwork',1)
         self._handle.commit()
         endpointSet1 = self._handle.add(trafficStream1, 'endpointSet', '-name', 'l2u', '-sources', mac1,
                                   '-destinations', mac2)
@@ -552,8 +553,7 @@ class Ixia(object):
         dst_gw_ip = kwargs.get('dst_gw', '20.0.0.1')
         src_ip_step = kwargs.get('src_ip_step','0.0.0.1')
         dst_ip_step = kwargs.get('dst_ip_step', '0.0.0.1')
-        src_gw_mac = kwargs.get('src_gw_mac', None)
-        dst_gw_mac = kwargs.get('dst_gw_mac',None)
+
         
         no_arp = kwargs.get('no_arp', 'False')
 
@@ -623,15 +623,17 @@ class Ixia(object):
             
             traffic_stream1.append(traffic_stream)
         else:
+            helpers.log('Adding L3 Stream with ARP resolution for configured Gateway')
             (ip_devices, mac_devices) = self.ix_create_device_ethernet_ip(create_topo, s_cnt, d_cnt, src_mac, dst_mac, src_mac_step, 
                                                                       dst_mac_step, src_ip, dst_ip, src_gw_ip, dst_gw_ip, src_ip_step,
                                                                       dst_ip_step)
+            self.ix_start_hosts()
+            self._started_hosts = True
             traffic_item = self.ix_setup_traffic_streams_ethernet(ip_devices[0], ip_devices[1], frame_type, self._frame_size, frame_rate, frame_mode,
                                                          frame_cnt, stream_flow, name)
             traffic_stream1.append(traffic_item)
         
-        self.ix_start_hosts()
-        self._started_hosts = True
+        
         
         helpers.log('### Created Traffic Stream with Ip Devices ...')
         helpers.log ("Success Creating Ip Traffic Stream!!!")
