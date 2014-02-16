@@ -36,180 +36,202 @@ ${delivery_nick_2}  D2
 *Test Case
 verify configuration is successful
     verify config
-    [Tags]  bigtap  ha  skipped  
+    [Tags]  bigtap  ha  
 
 Controller HA: Flap eth0 on Master Controller
     verify config
     flap eth0 controller  Master
     Sleep  30
     verify config    
-    [Tags]  bigtap  ha  skipped  
+    [Tags]  bigtap  ha  
 
 Controller HA: Restart Process Floodlight on Master Controller:
     verify config 
     restart process on controller  floodlight  Master
     Sleep  30
     verify config    
-    [Tags]  bigtap  ha  skipped
+    [Tags]  bigtap  ha
 
 Controller HA: Restart Process Floodlight on Slave Controller:
     verify config 
     restart process on controller  floodlight  Slave
     Sleep  30
     verify config    
-    [Tags]  bigtap  ha  skipped 
+    [Tags]  bigtap  ha 
 
 Controller HA: Restart Process keepalived on Master Controller:
     verify config 
     restart process on controller  keepalived  Master
     Sleep  30
     verify config    
-    [Tags]  bigtap  ha  skipped
+    [Tags]  bigtap  ha
 
 Controller HA: Restart Process keepalived on Slave Controller:
     verify config 
     restart process on controller  keepalived  Slave
     Sleep  30
     verify config    
-    [Tags]  bigtap  ha  skipped         
+    [Tags]  bigtap  ha         
     
 Controller HA: Restart Process snmpd on Master Controller:
     verify config 
     restart process on controller  snmpd  Master
     Sleep  30
     verify config    
-    [Tags]  bigtap  ha  skipped
+    [Tags]  bigtap  ha
 
 Controller HA: Restart Process snmpd on Slave Controller:
     verify config 
     restart process on controller  snmpd  Slave
     Sleep  30
     verify config    
-    [Tags]  bigtap  ha  skipped    
+    [Tags]  bigtap  ha    
  
 Controller HA: Restart Process rsyslogd on Master Controller:
     verify config 
     restart process on controller  rsyslogd  Master
     Sleep  30
     verify config    
-    [Tags]  bigtap  ha  skipped
+    [Tags]  bigtap  ha
 
 Controller HA: Restart Process rsyslogd on Slave Controller:
     verify config 
     restart process on controller  rsyslogd  Slave
     Sleep  30
     verify config    
-    [Tags]  bigtap  ha  skipped     
+    [Tags]  bigtap  ha     
  
-Controller HA: Restart Process ntpd on Master Controller:
+Controller HA: Restart Process ntp on Master Controller:
     verify config 
-    restart process on controller  ntpd  Master
+    restart process on controller  ntp  Master
     Sleep  30
     verify config    
-    [Tags]  bigtap  ha  skipped
+    [Tags]  bigtap  ha
 
-Controller HA: Restart Process ntpd on Slave Controller:
+Controller HA: Restart Process ntp on Slave Controller:
     verify config 
-    restart process on controller  ntpd  Slave
+    restart process on controller  ntp  Slave
     Sleep  30
     verify config    
-    [Tags]  bigtap  ha  skipped  
+    [Tags]  bigtap  ha  
  
-Controller HA: Restart Process cassandra on Master Controller:
+Controller HA: Restart Process collectd on Master Controller:
     verify config 
-    restart process on controller  cassandra  Master
+    restart process on controller  collectd  Master
     Sleep  30
     verify config    
-    [Tags]  bigtap  ha  skipped
+    [Tags]  bigtap  ha
 
-Controller HA: Restart Process cassandra on Slave Controller:
+Controller HA: Restart Process collectd on Slave Controller:
     verify config 
-    restart process on controller  cassandra  Slave
+    restart process on controller  collectd  Slave
     Sleep  30
     verify config    
-    [Tags]  bigtap  ha  skipped  
+    [Tags]  bigtap  ha  
+
+ Controller HA: Restart Process tacacs_plus on Master Controller:
+    verify config 
+    restart process on controller  tacacs_plus  Master
+    Sleep  30
+    verify config    
+    [Tags]  bigtap  ha
+
+ 
+Controller HA: Restart Process apache2 on Master Controller:
+    verify config 
+    restart process on controller  apache2  Master
+    Sleep  30
+    verify config    
+    [Tags]  bigtap  ha
+
+Controller HA: Restart Process apache2 on Slave Controller:
+    verify config 
+    restart process on controller  apache2  Slave
+    Sleep  30
+    verify config    
+    [Tags]  bigtap  ha 
 
 Controller HA: Reboot Slave Controller:
     verify config 
     restart controller  Master
     verify config    
-    [Tags]  bigtap  ha  skipped  
+    [Tags]  bigtap  ha  
     
 Controller HA: Reboot Master Controller:
     verify config 
     restart controller  Master
     verify config    
-    [Tags]  bigtap  ha  skipped     
+    [Tags]  bigtap  ha     
 
 Switch HA: Restart Process OFAD on filter switch
     verify config 
     bash restart process  s1  ofad
     Sleep  30
     verify config    
-    [Tags]  bigtap  ha  skipped       
+    [Tags]  bigtap  ha       
 
 Switch HA: Restart Process OFAD on delivery switch
     verify config 
     bash restart process  s2  ofad
     Sleep  30
     verify config    
-    [Tags]  bigtap  ha  skipped  
+    [Tags]  bigtap  ha  
 
 Switch HA: Restart Process snmpd on filter switch
     verify config 
     bash restart process  s1  snmpd
     Sleep  30
     verify config    
-    [Tags]  bigtap  ha  skipped    
+    [Tags]  bigtap  ha    
 
 Switch HA: Restart Process ntp on filter switch
     verify config 
     bash restart process  s1  ntp
     Sleep  30
     verify config    
-    [Tags]  bigtap  ha  skipped    
+    [Tags]  bigtap  ha    
 
 Switch HA: Restart Process fancontrol on filter switch
     verify config 
     bash restart process  s1  fancontrol
     Sleep  30
     verify config    
-    [Tags]  bigtap  ha  skipped
+    [Tags]  bigtap  ha
     
 Switch HA: Restart Process fancontrol on delivery switch
     verify config 
     bash restart process  s2  fancontrol
     Sleep  30
     verify config    
-    [Tags]  bigtap  ha  skipped    
+    [Tags]  bigtap  ha    
 
 Switch HA: Restart Process RSYSLOG on filter switch
     verify config 
     bash restart process  s1  rsyslog
     Sleep  30
     verify config    
-    [Tags]  bigtap  ha  skipped    
+    [Tags]  bigtap  ha    
 
 Switch HA: Restart Process networking on filter switch
     verify config 
     bash restart process  s1  networking
     Sleep  30
     verify config    
-    [Tags]  bigtap  ha  skipped   
+    [Tags]  bigtap  ha   
 
 Switch HA: Restart Process networking on delivery switch
     verify config 
     bash restart process  s2  networking
     Sleep  30
     verify config    
-    [Tags]  bigtap  ha  skipped
+    [Tags]  bigtap  ha
 
 Switch HA: Restart Process ssh on filter switch
     verify config 
     bash restart process  s1  ssh
     Sleep  30
     verify config    
-    [Tags]  bigtap  ha  skipped
+    [Tags]  bigtap  ha
 
 Switch HA: Restart filter switch
     verify config 
