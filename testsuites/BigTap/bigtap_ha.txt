@@ -37,14 +37,91 @@ ${delivery_nick_2}  D2
 verify configuration is successful
     verify config
     [Tags]  bigtap  ha  
+     
+Switch HA: Restart Process OFAD on filter switch
+    verify config 
+    bash restart process  s1  ofad
+    Sleep  30
+    verify config    
+    [Tags]  bigtap  ha       
 
-Controller HA: Flap eth0 on Master Controller
-    verify config
-    flap eth0 controller  Master
+Switch HA: Restart Process OFAD on delivery switch
+    verify config 
+    bash restart process  s2  ofad
     Sleep  30
     verify config    
     [Tags]  bigtap  ha  
 
+Switch HA: Restart Process snmpd on filter switch
+    verify config 
+    bash restart process  s1  snmpd
+    Sleep  30
+    verify config    
+    [Tags]  bigtap  ha    
+
+Switch HA: Restart Process ntp on filter switch
+    verify config 
+    bash restart process  s1  ntp
+    Sleep  30
+    verify config    
+    [Tags]  bigtap  ha    
+
+Switch HA: Restart Process fancontrol on filter switch
+    verify config 
+    bash restart process  s1  fancontrol
+    Sleep  30
+    verify config    
+    [Tags]  bigtap  ha
+    
+Switch HA: Restart Process fancontrol on delivery switch
+    verify config 
+    bash restart process  s2  fancontrol
+    Sleep  30
+    verify config    
+    [Tags]  bigtap  ha    
+
+Switch HA: Restart Process RSYSLOG on filter switch
+    verify config 
+    bash restart process  s1  rsyslog
+    Sleep  30
+    verify config    
+    [Tags]  bigtap  ha    
+
+Switch HA: Restart Process networking on filter switch
+    verify config 
+    bash restart process  s1  networking
+    Sleep  30
+    verify config    
+    [Tags]  bigtap  ha   
+
+Switch HA: Restart Process networking on delivery switch
+    verify config 
+    bash restart process  s2  networking
+    Sleep  30
+    verify config    
+    [Tags]  bigtap  ha
+
+Switch HA: Restart Process ssh on filter switch
+    verify config 
+    bash restart process  s1  ssh
+    Sleep  30
+    verify config    
+    [Tags]  bigtap  ha
+
+Switch HA: Restart filter switch
+    verify config 
+    cli restart switch  s1  save_config="yes"
+    Sleep  30
+    verify config    
+    [Tags]  bigtap  ha
+
+Switch HA: Restart delivery switch
+    verify config 
+    cli restart switch  s2  save_config="yes"
+    Sleep  30
+    verify config    
+    [Tags]  bigtap  ha
+  
 Controller HA: Restart Process Floodlight on Master Controller:
     verify config 
     restart process on controller  floodlight  Master
@@ -129,13 +206,12 @@ Controller HA: Restart Process collectd on Slave Controller:
     verify config    
     [Tags]  bigtap  ha  
 
- Controller HA: Restart Process tacacs_plus on Master Controller:
+Controller HA: Restart Process tacacs_plus on Master Controller:
     verify config 
     restart process on controller  tacacs_plus  Master
     Sleep  30
     verify config    
     [Tags]  bigtap  ha
-
  
 Controller HA: Restart Process apache2 on Master Controller:
     verify config 
@@ -161,89 +237,12 @@ Controller HA: Reboot Master Controller:
     verify config 
     restart controller  Master
     verify config    
-    [Tags]  bigtap  ha     
-
-Switch HA: Restart Process OFAD on filter switch
-    verify config 
-    bash restart process  s1  ofad
-    Sleep  30
-    verify config    
-    [Tags]  bigtap  ha       
-
-Switch HA: Restart Process OFAD on delivery switch
-    verify config 
-    bash restart process  s2  ofad
-    Sleep  30
-    verify config    
-    [Tags]  bigtap  ha  
-
-Switch HA: Restart Process snmpd on filter switch
-    verify config 
-    bash restart process  s1  snmpd
-    Sleep  30
-    verify config    
-    [Tags]  bigtap  ha    
-
-Switch HA: Restart Process ntp on filter switch
-    verify config 
-    bash restart process  s1  ntp
-    Sleep  30
-    verify config    
-    [Tags]  bigtap  ha    
-
-Switch HA: Restart Process fancontrol on filter switch
-    verify config 
-    bash restart process  s1  fancontrol
-    Sleep  30
-    verify config    
-    [Tags]  bigtap  ha
-    
-Switch HA: Restart Process fancontrol on delivery switch
-    verify config 
-    bash restart process  s2  fancontrol
-    Sleep  30
-    verify config    
-    [Tags]  bigtap  ha    
-
-Switch HA: Restart Process RSYSLOG on filter switch
-    verify config 
-    bash restart process  s1  rsyslog
-    Sleep  30
-    verify config    
-    [Tags]  bigtap  ha    
-
-Switch HA: Restart Process networking on filter switch
-    verify config 
-    bash restart process  s1  networking
-    Sleep  30
-    verify config    
-    [Tags]  bigtap  ha   
-
-Switch HA: Restart Process networking on delivery switch
-    verify config 
-    bash restart process  s2  networking
-    Sleep  30
-    verify config    
     [Tags]  bigtap  ha
 
-Switch HA: Restart Process ssh on filter switch
-    verify config 
-    bash restart process  s1  ssh
-    Sleep  30
-    verify config    
-    [Tags]  bigtap  ha
-
-Switch HA: Restart filter switch
-    verify config 
-    cli restart switch  s1  save_config="yes"
-    Sleep  30
-    verify config    
-    [Tags]  bigtap  ha
-
-Switch HA: Restart delivery switch
-    verify config 
-    cli restart switch  s2  save_config="yes"
-    Sleep  30
+Controller HA: Flap eth0 on Master Controller
+    verify config
+    flap eth0 controller  Master
+    Sleep  60
     verify config    
     [Tags]  bigtap  ha
                   
