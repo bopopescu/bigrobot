@@ -198,6 +198,7 @@ class BsnCommon(object):
                 helpers.test_error("Unsupported Platform %s" % (node))
         elif helpers.is_controller(node):
             helpers.log("The node is a controller")
+
             if  helpers.is_bigtap(node):
                 '''
                     BigTap NTP Server Deletion goes here

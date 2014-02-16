@@ -310,6 +310,95 @@ class AppController(object):
                         helpers.test_log(c.rest.content_json())
                         return True
 
+    def flap_eth0_controller(self, controller_role):
+        ''' Flap eth0 on Controller
+        
+            Input:
+               controller_role        Where to execute the command. Accepted values are `Master` and `Slave`
+           
+           Return Value:  True if the configuration is successful, false otherwise 
+        '''
+        try:
+            t = test.Test()
+        except:
+            return False
+        else:
+            try:
+                if (controller_role == 'Master'):
+                    c = t.controller('master')
+                else:
+                    c = t.controller('slave')
+            except:
+                helpers.test_failure(c.rest.error())
+                return False
+            else:
+                try:
+                    c.bash("echo '#!/bin/bash' > test.sh")
+                    c.bash("echo 'sleep 15' >> test.sh")
+                    c.bash("echo 'sudo ifconfig eth0 down' >> test.sh")
+                    c.bash("echo 'sudo ifconfig eth0 down' >> test.sh")
+                    c.bash("echo 'sleep 10' >> test.sh")
+                    c.bash("echo 'sudo ifconfig eth0 up' >> test.sh")
+                    c.bash("echo 'sleep 10' >> test.sh")
+                    c.bash("echo 'sudo /etc/init.d/networking restart' >> test.sh ")
+                    c.bash("echo 'sleep 10' >> test.sh")
+                    c.bash("sh test.sh &")
+                    helpers.sleep(50)
+                except:
+                    helpers.test_failure(c.rest.error())
+                    return False
+                else:
+                    return True
+
+    def restart_process_on_controller(self, process_name, controller_role):
+        '''Restart a process on controller
+        
+            Input:
+               processName        Name of process to be restarted
+               controller_role        Where to execute the command. Accepted values are `Master` and `Slave`
+           
+           Return Value:  True if the configuration is successful, false otherwise 
+        '''
+        try:
+            t = test.Test()
+            if (controller_role == 'Master'):
+                c = t.controller('master')
+            else:
+                c = t.controller('slave')
+            c.bash('sudo service ' + str(process_name) + ' restart')
+        except:
+            helpers.test_failure(c.rest.error())
+            return False
+        else:
+            return True
+
+    def restart_controller(self, controller_role):
+        '''Restart a process on controller
+        
+            Input:
+               processName        Name of process to be restarted
+               controller_role        Where to execute the command. Accepted values are `Master` and `Slave`
+           
+           Return Value:  True if the configuration is successful, false otherwise 
+        '''
+        try:
+            t = test.Test()
+            if (controller_role == 'Master'):
+                c = t.controller('master')
+            else:
+                c = t.controller('slave')
+
+            c.bash("echo '#!/bin/bash' > test_reboot.sh")
+            c.bash("echo 'sleep 15' >> test_reboot.sh")
+            c.bash("echo 'sudo reboot' >> test_reboot.sh")
+            c.bash("sh test_reboot.sh &")
+            helpers.sleep(300)
+        except:
+            helpers.test_failure(c.rest.error())
+            return False
+        else:
+            return True
+
 ###################################################
 # All Verify Commands Go Here:
 ###################################################

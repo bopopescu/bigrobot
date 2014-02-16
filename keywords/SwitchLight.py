@@ -1156,7 +1156,7 @@ class SwitchLight(object):
 
 
 
-    def cli_restart_switch(self, node):
+    def cli_restart_switch(self, node, save_config='no'):
         '''
         Objective:
         -Restart a switch
@@ -1171,9 +1171,12 @@ class SwitchLight(object):
         try:
             t = test.Test()
             s1 = t.switch(node)
+            if not "no" in save_config:
+                s1.config("copy running-config startup-config")
             cli_input = 'reload now'
             s1.enable('')
             s1.send(cli_input)
+            helpers.sleep(120)
             return True
         except:
             helpers.test_failure("Could not execute command. Please check log for errors")

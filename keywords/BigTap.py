@@ -234,8 +234,10 @@ class BigTap(object):
 
                 if content[0]['type'] == "Configured":
                     helpers.test_log("Policy correctly reports type as : %s" % content[0]['type'])
+                elif content[0]['type'] == "Dynamic":
+                    helpers.test_log("Policy correctly reports type as : %s" % content[0]['type'])
                 else:
-                    helpers.test_failure("Policy does not correctly report type as : %s" % content[0]['type'])
+                    helpers.test_failure("Policy does not correctly report type. Type seen is : %s" % content[0]['type'])
                     return False
 
                 if content[0]['runtime-status'] == "installed":
