@@ -635,7 +635,7 @@ class Ixia(object):
         
         helpers.log('### Created Traffic Stream with Ip Devices ...')
         helpers.log ("Success Creating Ip Traffic Stream!!!")
-        return traffic_stream
+        return traffic_stream1[0]
     
     def ix_start_traffic_ethernet(self, trafficHandle):
         '''
