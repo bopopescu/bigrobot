@@ -351,6 +351,7 @@ class Ixia(object):
                                       '-destinations', mac1)
             if crc is not None:
                 self._handle.setAttribute(trafficStream1 + '/highLevelStream:2', '-crc', 'badCrc')
+            
             self._handle.setAttribute(trafficStream1 + '/highLevelStream:2/' + 'frameSize', '-type', frameType)
             self._handle.setAttribute(trafficStream1 + '/highLevelStream:2/' + 'frameSize', '-fixedSize', frameSize)
             self._handle.setAttribute(trafficStream1 + '/highLevelStream:2/' + 'frameRate', '-type', frameMode)
@@ -625,9 +626,9 @@ class Ixia(object):
             (ip_devices, mac_devices) = self.ix_create_device_ethernet_ip(create_topo, s_cnt, d_cnt, src_mac, dst_mac, src_mac_step, 
                                                                       dst_mac_step, src_ip, dst_ip, src_gw_ip, dst_gw_ip, src_ip_step,
                                                                       dst_ip_step)
-            traffic_stream1 = self.ix_setup_traffic_streams_ethernet(ip_devices[0], ip_devices[1], frame_type, self._frame_size, frame_rate, frame_mode,
+            traffic_item = self.ix_setup_traffic_streams_ethernet(ip_devices[0], ip_devices[1], frame_type, self._frame_size, frame_rate, frame_mode,
                                                          frame_cnt, stream_flow, name)
-            traffic_stream1.append(traffic_stream1)
+            traffic_stream1.append(traffic_item)
         
         self.ix_start_hosts()
         self._started_hosts = True
