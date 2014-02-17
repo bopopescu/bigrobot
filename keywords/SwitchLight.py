@@ -14,12 +14,12 @@
 
 import autobot.helpers as helpers
 import autobot.test as test
+from Exscript.protocols import SSH2
+from Exscript import Account, Host
 import subprocess
 import string
 import telnetlib
 import time
-# import re
-# from netaddr import *
 
 class SwitchLight(object):
 
@@ -1059,6 +1059,76 @@ class SwitchLight(object):
 ######################################################################
 
 
+    def cli_verify_password_change(self, node, user, current_password, version_string):
+        '''
+            Objective: Return version of switch software
+            
+            Input:
+            | node | Reference to switch (as defined in .topo file) |
+    
+            Return Value:
+            - Output on configuration success
+            - False on configuration failure   
+        '''
+        t = test.Test()
+        console_ip = t.params(node, "console_ip")
+        console_port = t.params(node, "console_port")
+        tn = telnetlib.Telnet(console_ip, console_port)
+        tn.set_debuglevel(10)
+        tn.read_until("login:", 10)
+        tn.write(str(user).encode('ascii') + "\r\n".encode('ascii'))
+        tn.read_until("Password: ", 10)
+        tn.write(str(current_password).encode('ascii') + "\r\n".encode('ascii'))
+        tn.read_until('')
+        tn.write("show version \r\n".encode('ascii'))
+        helpers.sleep(4)
+        output = tn.read_very_eager()
+        helpers.log(output)
+        tn.write("logout" + "\r\n".encode('ascii'))
+        tn.close()
+        if version_string in  output:
+            return True
+        else:
+            self.cli_change_user_password(node, user, current_password, "adminadmin")
+            return False
+
+    def cli_change_user_password(self, node, user, current_password, new_password):
+        '''
+            Objective: Change the username and password for a given user
+            
+            Input:
+            | node | Reference to switch (as defined in .topo file) |
+            | username | Username for which password has to be changed |
+            | password | Desired password |
+    
+            Return Value:
+            - True on configuration success
+            - False on configuration failure         
+        '''
+        try:
+            t = test.Test()
+            console_ip = t.params(node, "console_ip")
+            console_port = t.params(node, "console_port")
+            helpers.log("Console IP is %s \n Console Port is %s \n" % (console_ip, console_port))
+            helpers.log("Username is %s \n Password is %s \n" % (user, new_password))
+            tn = telnetlib.Telnet(console_ip, console_port)
+            tn.set_debuglevel(10)
+            tn.read_until("login:", 10)
+            tn.write(str(user) + "\r\n")
+            tn.read_until("Password: ", 10)
+            tn.write(str(current_password) + "\r\n")
+            tn.read_until('')
+            tn.write("\r\n" + "enable \r\n")
+            tn.write("\r\n" + "configure \r\n")
+            tn.write("\r\n" + "username " + str(user) + " password " + str(new_password) + "\r\n")
+            tn.write("exit" + "\r\n")
+            tn.write("logout" + "\r\n")
+            tn.close()
+            return True
+        except:
+            tn.close()
+            helpers.test_failure("Could not execute command. Please check log for errors")
+            return False
 
     def bash_execute_command(self, node, command):
         '''
@@ -1084,7 +1154,9 @@ class SwitchLight(object):
             bash_output = switch.cli_content()
             return bash_output
 
-    def cli_restart_switch(self, node):
+
+
+    def cli_restart_switch(self, node, save_config='no'):
         '''
         Objective:
         -Restart a switch
@@ -1099,9 +1171,12 @@ class SwitchLight(object):
         try:
             t = test.Test()
             s1 = t.switch(node)
+            if not "no" in save_config:
+                s1.config("copy running-config startup-config")
             cli_input = 'reload now'
             s1.enable('')
             s1.send(cli_input)
+            helpers.sleep(120)
             return True
         except:
             helpers.test_failure("Could not execute command. Please check log for errors")

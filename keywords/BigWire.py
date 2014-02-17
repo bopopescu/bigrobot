@@ -14,6 +14,7 @@
 '''
 import autobot.helpers as helpers
 import autobot.test as test
+import keywords.AppController as AppController
 
 class BigWire(object):
 
@@ -24,7 +25,7 @@ class BigWire(object):
 # All Bigtap Show Commands Go Here:
 ###################################################
 
-    def rest_show_bigwire_command(self,bigwire_key):
+    def rest_show_bigwire_command(self, bigwire_key):
         '''
             Objective:
              - Execute CLI Commands "show bigwire summary", "show bigwire tenant", "show bigwire pseudowire" and "show bigwire  datacenter"
@@ -36,28 +37,28 @@ class BigWire(object):
             - Content as a dictionary after execution of command.
                 
         '''
-        
+
         try:
             t = test.Test()
         except:
             return False
         else:
-            c= t.controller('master')
+            c = t.controller('master')
             try:
                 if bigwire_key == "datacenter":
-                    bwKeyword = "datacenter-info" # "show bigwire datacenter"
+                    bwKeyword = "datacenter-info"  # "show bigwire datacenter"
                 elif bigwire_key == "pseudowire":
-                    bwKeyword = "pseudowire-info" #"show bigwire pseudowire"
+                    bwKeyword = "pseudowire-info"  # "show bigwire pseudowire"
                 elif bigwire_key == "tenant":
-                    bwKeyword = "tenant-info" #"show bigwire tenant"
-                else :                      
-                    bwKeyword = "info"      # "show bigwire summary"        
+                    bwKeyword = "tenant-info"  # "show bigwire tenant"
+                else :
+                    bwKeyword = "info"  # "show bigwire summary"
                 url = '/api/v1/data/controller/applications/bigwire/%s' % (str(bwKeyword))
                 c.rest.get(url)
             except:
                 helpers.test_failure(c.rest.error())
                 return False
-            else:  
+            else:
                 if not c.rest.status_code_ok():
                     helpers.test_failure(c.rest.error())
                 content = c.rest.content()
@@ -72,7 +73,7 @@ class BigWire(object):
 # All Bigtap Configuration Commands Go Here:
 ###################################################
 
-    def rest_create_bigwire_datacenter(self,datacenter_name):
+    def rest_add_bigwire_datacenter(self, datacenter_name):
         '''
             Objective:
             - Create BigWire Datacenter. 
@@ -90,21 +91,21 @@ class BigWire(object):
         except:
             return False
         else:
-            c= t.controller('master')
+            c = t.controller('master')
             try:
-                url='/api/v1/data/controller/applications/bigwire/datacenter[name="%s"]' % (str(datacenter_name))
+                url = '/api/v1/data/controller/applications/bigwire/datacenter[name="%s"]' % (str(datacenter_name))
                 c.rest.put(url, {"name": str(datacenter_name)})
             except:
                 helpers.test_failure(c.rest.error())
                 return False
-            else:  
+            else:
                 if not c.rest.status_code_ok():
                     helpers.test_failure(c.rest.error())
                     return False
                 else:
                     return True
-    
-    def rest_add_switch_datacenter(self,datacenter_name,switch_dpid,zone_name):
+
+    def rest_add_switch_datacenter(self, node, datacenter_name, zone_name):
         '''
             Objective:
             - Add switch to a datacenter
@@ -123,22 +124,24 @@ class BigWire(object):
         except:
             return False
         else:
-            c= t.controller('master')
+            c = t.controller('master')
+            AppCommon = AppController.AppController()
+            switch_dpid = AppCommon.rest_return_switch_dpid_from_ip(node)
             try:
-                url='/api/v1/data/controller/applications/bigwire/datacenter[name="%s"]/member-switch[dpid="%s"]' % (str(datacenter_name),str(switch_dpid))
+                url = '/api/v1/data/controller/applications/bigwire/datacenter[name="%s"]/member-switch[dpid="%s"]' % (str(datacenter_name), str(switch_dpid))
                 c.rest.put(url, {"zone": str(zone_name), "dpid": str(switch_dpid)})
             except:
                 helpers.test_failure(c.rest.error())
                 return False
-            else:  
+            else:
                 if not c.rest.status_code_ok():
                     helpers.test_failure(c.rest.error())
                     return False
                 else:
                     helpers.test_log(c.rest.content_json())
-                    return True        
-    
-    def rest_create_bigwire_pseudowire(self,pseudowire_name,switch_dpid_1,intf_name_1,switch_dpid_2,intf_name_2,vlan=0):
+                    return True
+
+    def rest_add_bigwire_pseudowire(self, pseudowire_name, node_1, intf_name_1, node_2, intf_name_2, vlan=0):
         '''
             Objective:
             - Create a bigwire pseudowire
@@ -160,9 +163,12 @@ class BigWire(object):
         except:
             return False
         else:
-            c= t.controller('master')
+            c = t.controller('master')
+            AppCommon = AppController.AppController()
+            switch_dpid_1 = AppCommon.rest_return_switch_dpid_from_ip(node_1)
+            switch_dpid_2 = AppCommon.rest_return_switch_dpid_from_ip(node_2)
             try:
-                url='/api/v1/data/controller/applications/bigwire/pseudo-wire[name="%s"]' % (str(pseudowire_name))
+                url = '/api/v1/data/controller/applications/bigwire/pseudo-wire[name="%s"]' % (str(pseudowire_name))
                 if vlan == 0:
                     c.rest.put(url, {"interface1": str(intf_name_1), "switch2": str(switch_dpid_2), "switch1": str(switch_dpid_1), "interface2": str(intf_name_2), "name": str(pseudowire_name)})
                 else:
@@ -170,15 +176,15 @@ class BigWire(object):
             except:
                 helpers.test_failure(c.rest.error())
                 return False
-            else:  
+            else:
                 if not c.rest.status_code_ok():
                     helpers.test_failure(c.rest.error())
                     return False
                 else:
                     helpers.test_log(c.rest.content_json())
-                    return True        
+                    return True
 
-    def rest_create_bigwire_tenant(self,tenant_name):
+    def rest_add_bigwire_tenant(self, tenant_name):
         '''
             Objective:
             - Create BigWire Tenant. 
@@ -196,18 +202,18 @@ class BigWire(object):
         except:
             return False
         else:
-            c= t.controller('master')
+            c = t.controller('master')
             try:
-                url='/api/v1/data/controller/applications/bigwire/tenant[name="%s"]' % (str(tenant_name))
+                url = '/api/v1/data/controller/applications/bigwire/tenant[name="%s"]' % (str(tenant_name))
                 c.rest.put(url, {"name": str(tenant_name)})
             except:
                 helpers.test_failure(c.rest.error())
                 return False
-            else:  
+            else:
                 helpers.test_log(c.rest.content_json())
                 return True
-    
-    def rest_add_switch_to_tenant(self,tenant_name,switch_dpid,intf_name,vlan=0):
+
+    def rest_add_switch_to_tenant(self, node, tenant_name, intf_name, vlan=0):
         '''
             Objective:
             - Add switch to a tenant
@@ -229,21 +235,23 @@ class BigWire(object):
         except:
             return False
         else:
-            c= t.controller('master')
-            try:  
-                url='/api/v1/data/controller/applications/bigwire/tenant[name="%s"]/tenant-interface[interface="%s"][switch="%s"]' %(str(tenant_name),str(intf_name),str(switch_dpid))
+            c = t.controller('master')
+            AppCommon = AppController.AppController()
+            switch_dpid = AppCommon.rest_return_switch_dpid_from_ip(node)
+            try:
+                url = '/api/v1/data/controller/applications/bigwire/tenant[name="%s"]/tenant-interface[interface="%s"][switch="%s"]' % (str(tenant_name), str(intf_name), str(switch_dpid))
                 if vlan == 0:
-                    c.rest.put(url,{"interface": str(intf_name), "switch": str(switch_dpid)})
+                    c.rest.put(url, {"interface": str(intf_name), "switch": str(switch_dpid)})
                 else:
-                    c.rest.put(url,{"interface": str(intf_name), "tenant-vlan": [{"vlan": int(vlan)}], "switch": str(switch_dpid)})
+                    c.rest.put(url, {"interface": str(intf_name), "tenant-vlan": [{"vlan": int(vlan)}], "switch": str(switch_dpid)})
             except:
                 helpers.test_failure(c.rest.error())
                 return False
-            else:  
+            else:
                 helpers.test_log(c.rest.content_json())
                 return True
 
-    def rest_delete_tenant(self,tenant_name):
+    def rest_delete_tenant(self, tenant_name):
         '''
         Objective:
         - Delete a tenant
@@ -260,18 +268,18 @@ class BigWire(object):
         except:
             return False
         else:
-            c= t.controller('master')
-            try:  
-                url='/api/v1/data/controller/applications/bigwire/tenant[name="%s"]'  % (str(tenant_name))    
+            c = t.controller('master')
+            try:
+                url = '/api/v1/data/controller/applications/bigwire/tenant[name="%s"]' % (str(tenant_name))
                 c.rest.delete(url, {})
             except:
                 helpers.test_failure(c.rest.error())
                 return False
-            else:  
+            else:
                 helpers.test_log(c.rest.content_json())
                 return True
-    
-    def rest_delete_pseudowire(self,pseudowire_name):
+
+    def rest_delete_pseudowire(self, pseudowire_name):
         '''
         Objective:
         - Delete a pseudowire
@@ -288,22 +296,22 @@ class BigWire(object):
         except:
             return False
         else:
-            c= t.controller('master')
+            c = t.controller('master')
             try:
-                url='/api/v1/data/controller/applications/bigwire/pseudo-wire[name="%s"]'  % (str(pseudowire_name))    
+                url = '/api/v1/data/controller/applications/bigwire/pseudo-wire[name="%s"]' % (str(pseudowire_name))
                 c.rest.delete(url, {})
             except:
                 helpers.test_failure(c.rest.error())
                 return False
-            else:  
+            else:
                 if not c.rest.status_code_ok():
                     helpers.test_failure(c.rest.error())
                     return False
                 else:
                     helpers.test_log(c.rest.content_json())
-                    return True        
-    
-    def rest_delete_datacenter(self,datacenter_name):
+                    return True
+
+    def rest_delete_datacenter(self, datacenter_name):
         '''
         Objective:
         - Delete a datacenter_name
@@ -320,13 +328,22 @@ class BigWire(object):
         except:
             return False
         else:
-            c= t.controller('master')
+            c = t.controller('master')
             try:
-                url='/api/v1/data/controller/applications/bigwire/datacenter[name="%s"]'  % (str(datacenter_name))    
+                url = '/api/v1/data/controller/applications/bigwire/datacenter[name="%s"]' % (str(datacenter_name))
                 c.rest.delete(url, {})
             except:
                 helpers.test_failure(c.rest.error())
                 return False
-            else:  
+            else:
                 helpers.test_log(c.rest.content_json())
-                return True  
+                return True
+
+    def rest_verify_dict_key(self, content, index, key):
+        ''' Given a dictionary, return the value for a particular key
+        
+            Input:Dictionary, index and required key.
+            
+            Return Value:  return the value for a particular key
+        '''
+        return content[int(index)][str(key)]

@@ -56,7 +56,7 @@ ${h2_tag_mac}  90:e2:ba:4f:80:b1
 ${h3_tag_mac}  00:10:18:f0:eb:e0
 ${leaf0b_spine0_intf0}	ethernet31
 ${leaf0b_spine1_intf0}	ethernet32
-
+ 
 
 * Test Case 
 
@@ -145,19 +145,19 @@ Traffic forwarding between multiple tag on the same interface
     ${stream}=             IXIA L2 add  flow=b->d  src_mac=00:02:02:00:00:24  dst_mac=00:02:04:00:00:24  ethertype=0800  frame_rate=1000  frame_size=68  name=b_d_flow
     IXIA start L2 traffic  ${stream}
     sleep  10
-    rest verify forwarding layer2 table  leaf0-b  ${leaf0b_ixia_intf}
+    rest verify forwarding layer2 table  leaf0-b  ${leaf0b_ixia_intf}  00:02:02:00:00:24
     verify traffic rate  tx_rate  rx_rate  b  d  
     sleep  5
     ${stream1}=             IXIA L2 add  flow=b->f  src_mac=00:02:02:00:01:24  dst_mac=00:02:06:00:00:24  tag=150  ethertype=0800  frame_rate=1000  frame_size=68  name=b_f_flow
     IXIA start L2 traffic  ${stream1}
     sleep  10
-    rest verify forwarding layer2 table  leaf0-b  ${leaf0b_ixia_intf}
+    rest verify forwarding layer2 table  leaf0-b  ${leaf0b_ixia_intf}  00:02:02:00:01:24
     verify traffic rate  tx_rate  rx_rate  b  f
     verify traffic rate  tx_rate  rx_rate  b  c
     ${stream2}=             IXIA L2 add  flow=f->b  src_mac=00:02:06:00:00:24  dst_mac=00:02:02:00:01:24  tag=200  ethertype=0800  frame_rate=1000  frame_size=68  name=f_b_flow
     IXIA start L2 traffic  ${stream2}
     sleep  10
-    rest verify forwarding layer2 table  leaf2-b  ${leaf2b_ixia_intf}
+    rest verify forwarding layer2 table  leaf2-b  ${leaf2b_ixia_intf}  00:02:06:00:00:24
     verify traffic rate  tx_rate  rx_rate  f  b
     verify traffic rate negative  tx_rate  rx_rate  b  c
     verify traffic rate negative  tx_rate  rx_rate  f  c
@@ -170,10 +170,10 @@ Traffic forwarding between multiple tag on the same interface
 Traffic forward ingress wrong vlan id
 	[Tags]  feature
     IXIA initialize        tg1
-    ${stream}=             IXIA L2 add  flow=b->c  src_mac=00:02:02:00:00:24  dst_mac=00:02:04:00:00:24  tag=350  ethertype=0800  frame_rate=1000  frame_size=68  name=f_c_flow
+    ${stream}=             IXIA L2 add  flow=b->d  src_mac=00:02:02:00:00:24  dst_mac=00:02:04:00:00:24  tag=350  ethertype=0800  frame_rate=1000  frame_size=68  name=b_d_flow
     IXIA start L2 traffic  ${stream}
     sleep  10
-    ${result}=  rest verify forwarding layer2 table  leaf0-b  ${leaf0b_ixia_intf}
+    ${result}=  rest verify forwarding layer2 table  leaf0-b  ${leaf0b_ixia_intf}  00:02:02:00:00:24
     verify traffic rate negative  tx_rate  rx_rate  b  d
     IXIA stop L2 traffic  ${stream}
    
@@ -185,8 +185,8 @@ Traffic forwarding with edge port flap
     sleep  3
     IXIA start L2 traffic  ${stream}
     sleep  10
-    rest verify forwarding layer2 table  leaf0-b  ${leaf0b_ixia_intf}
-    rest verify forwarding layer2 table  leaf2-b  ${leaf2b_ixia_intf}
+    rest verify forwarding layer2 table  leaf0-b  ${leaf0b_ixia_intf}  00:02:02:00:00:24  
+    rest verify forwarding layer2 table  leaf2-b  ${leaf2b_ixia_intf}  00:02:06:00:00:24
     verify traffic rate  tx_rate  rx_rate  b  f
     verify traffic rate  tx_rate  rx_rate  f  b
     cli disable interface  leaf0-b  ${leaf0b_ixia_intf}

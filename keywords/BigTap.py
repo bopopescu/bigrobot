@@ -172,10 +172,48 @@ class BigTap(object):
             return len(temp)
 
         return True
+
+# Mingtao
+    def cli_show_bigtap_policy(self):
+        t = test.Test()
+        c = t.controller('master')
+        string = 'show running-config bigtap policy'
+        c.cli(string)
+        content = c.cli_content()
+        return content
+
+
+
+# Mingtao
+    def rest_show_feature(self, feature="l3-l4-mode"):
+        """ 
+            Objective: Verify bigtap mode: l3_l4 and inport_mask
+            
+            Input: 
+            |Feature | Name of Feature being verified|
+        """
+        t = test.Test()
+        c = t.controller('master')
+
+        url = '/api/v1/data/controller/applications/bigtap/info'
+        c.rest.get(url)
+
+        if not c.rest.status_code_ok():
+            helpers.test_failure(c.rest.error())
+            return False
+        data = c.rest.content()
+        if not data[0][feature]:
+            helpers.test_log("INFO: ***********Bigtap does not have the %s shown *******" % feature)
+            return False
+        helpers.test_log("INFO: Bigtap reports feature: %s  -  as: %s " % (feature, data[0][feature]))
+        return str(data[0][feature])
+
+
+
 ###################################################
 # All Bigtap Verify Commands Go Here:
 ###################################################
-    def rest_verify_bigtap_policy(self, policy_name, num_filter_intf=None, num_delivery_intf=None, action='forward'):
+    def rest_verify_bigtap_policy(self, policy_name, num_filter_intf=None, num_delivery_intf=None, return_value=None, action='forward'):
         '''
         Objective:
         Parse the output of cli command 'show bigtap policy <policy_name>'
@@ -184,6 +222,7 @@ class BigTap(object):
         | `policy_name` | Name of the policy being parsed | 
         | `num_filter_intf` | Number of configured Filter Interfaces in the policy | 
         | `num_delivery_intf` | Number of configured Delivery Interfaces in the policy | 
+        | `return_value` | If you need a particular value from the dictionary|
         
         Description:
         The function executes a REST GET for http://<CONTROLLER_IP>:8082/api/v1/data/controller/applications/bigtap/view/policy[name="<POLICY_NAME>"]/info
@@ -212,59 +251,64 @@ class BigTap(object):
             helpers.test_failure("Could not execute command")
             return False
         else:
-            if content[0]['name'] == str(policy_name):
-                helpers.test_log("Policy correctly reports policy name as : %s" % content[0]['name'])
+            if (return_value is not None) :
+                return content[0][return_value]
             else:
-                helpers.test_failure("Policy does not correctly report policy name  : %s" % content[0]['name'])
-                return False
-
-            if (content[0]['config-status'] == "active and forwarding") and (str(action) == "forward"):
-                helpers.test_log("Policy correctly reports config status as : %s" % content[0]['config-status'])
-            elif (content[0]['config-status'] == "active and rate measure") and (str(action) == "rate-measure"):
-                helpers.test_log("Policy correctly reports config status as : %s" % content[0]['config-status'])
-            elif (content[0]['config-status'] == "inactive") and (str(action) == "inactive"):
-                helpers.test_log("Policy correctly reports config status as : %s" % content[0]['config-status'])
-            else:
-                helpers.test_failure("Policy does not correctly report config status as : %s and passed action value is %s" % (content[0]['config-status'], str(action)))
-                return False
-
-            if content[0]['type'] == "Configured":
-                helpers.test_log("Policy correctly reports type as : %s" % content[0]['type'])
-            else:
-                helpers.test_failure("Policy does not correctly report type as : %s" % content[0]['type'])
-                return False
-
-            if content[0]['runtime-status'] == "installed":
-                helpers.test_log("Policy correctly reports runtime status as : %s" % content[0]['runtime-status'])
-            elif content[0]['runtime-status'] == "inactive":
-                helpers.test_log("Policy correctly reports runtime status as : %s" % content[0]['runtime-status'])
-            else:
-                helpers.test_failure("Policy does not correctly report runtime status as : %s" % content[0]['runtime-status'])
-                return False
-
-            if (num_delivery_intf is not None):
-                if content[0]['delivery-interface-count'] == int(num_delivery_intf):
-                    helpers.test_log("Policy correctly reports number of delivery interfaces as : %s" % content[0]['delivery-interface-count'])
+                if content[0]['name'] == str(policy_name):
+                    helpers.test_log("Policy correctly reports policy name as : %s" % content[0]['name'])
                 else:
-                    helpers.test_failure("Policy does not correctly report number of delivery interfaces  : %s" % content[0]['delivery-interface-count'])
-                    return False
-            if (num_filter_intf is not None):
-                if content[0]['filter-interface-count'] == int(num_filter_intf):
-                    helpers.test_log("Policy correctly reports number of filter interfaces as : %s" % content[0]['filter-interface-count'])
-                else:
-                    helpers.test_failure("Policy does not correctly report number of filter interfaces  : %s" % content[0]['filter-interface-count'])
+                    helpers.test_failure("Policy does not correctly report policy name  : %s" % content[0]['name'])
                     return False
 
-            if content[0]['detailed-status'] == "installed to forward":
-                helpers.test_log("Policy correctly reports detailed status as : %s" % content[0]['detailed-status'])
-            elif content[0]['detailed-status'] == "installed to measure rate":
-                helpers.test_log("Policy correctly reports detailed status as : %s" % content[0]['detailed-status'])
-            elif content[0]['detailed-status'] == "inactive":
-                helpers.test_log("Policy correctly reports detailed status as : %s" % content[0]['detailed-status'])
-            else:
-                helpers.test_failure("Policy does not correctly report detailed status as : %s" % content[0]['detailed-status'])
-                return False
-            return True
+                if (content[0]['config-status'] == "active and forwarding") and (str(action) == "forward"):
+                    helpers.test_log("Policy correctly reports config status as : %s" % content[0]['config-status'])
+                elif (content[0]['config-status'] == "active and rate measure") and (str(action) == "rate-measure"):
+                    helpers.test_log("Policy correctly reports config status as : %s" % content[0]['config-status'])
+                elif (content[0]['config-status'] == "inactive") and (str(action) == "inactive"):
+                    helpers.test_log("Policy correctly reports config status as : %s" % content[0]['config-status'])
+                else:
+                    helpers.test_failure("Policy does not correctly report config status as : %s and passed action value is %s" % (content[0]['config-status'], str(action)))
+                    return False
+
+                if content[0]['type'] == "Configured":
+                    helpers.test_log("Policy correctly reports type as : %s" % content[0]['type'])
+                elif content[0]['type'] == "Dynamic":
+                    helpers.test_log("Policy correctly reports type as : %s" % content[0]['type'])
+                else:
+                    helpers.test_failure("Policy does not correctly report type. Type seen is : %s" % content[0]['type'])
+                    return False
+
+                if content[0]['runtime-status'] == "installed":
+                    helpers.test_log("Policy correctly reports runtime status as : %s" % content[0]['runtime-status'])
+                elif content[0]['runtime-status'] == "inactive":
+                    helpers.test_log("Policy correctly reports runtime status as : %s" % content[0]['runtime-status'])
+                else:
+                    helpers.test_failure("Policy does not correctly report runtime status as : %s" % content[0]['runtime-status'])
+                    return False
+
+                if (num_delivery_intf is not None):
+                    if content[0]['delivery-interface-count'] == int(num_delivery_intf):
+                        helpers.test_log("Policy correctly reports number of delivery interfaces as : %s" % content[0]['delivery-interface-count'])
+                    else:
+                        helpers.test_failure("Policy does not correctly report number of delivery interfaces  : %s" % content[0]['delivery-interface-count'])
+                        return False
+                if (num_filter_intf is not None):
+                    if content[0]['filter-interface-count'] == int(num_filter_intf):
+                        helpers.test_log("Policy correctly reports number of filter interfaces as : %s" % content[0]['filter-interface-count'])
+                    else:
+                        helpers.test_failure("Policy does not correctly report number of filter interfaces  : %s" % content[0]['filter-interface-count'])
+                        return False
+
+                if content[0]['detailed-status'] == "installed to forward":
+                    helpers.test_log("Policy correctly reports detailed status as : %s" % content[0]['detailed-status'])
+                elif content[0]['detailed-status'] == "installed to measure rate":
+                    helpers.test_log("Policy correctly reports detailed status as : %s" % content[0]['detailed-status'])
+                elif content[0]['detailed-status'] == "inactive":
+                    helpers.test_log("Policy correctly reports detailed status as : %s" % content[0]['detailed-status'])
+                else:
+                    helpers.test_failure("Policy does not correctly report detailed status as : %s" % content[0]['detailed-status'])
+                    return False
+                return True
 
     def rest_verify_policy_key(self, policy_name, method, index, key):
         '''
@@ -332,6 +376,169 @@ class BigTap(object):
 
         return True
 
+# Mingtao
+    def verify_switch_tcam_max(self, node=None, l3_l4_mode=None):
+        """ verify the switch tcam size
+            Usage:  verify_switch_tcam   S203    L3_l4_mode= True
+            -- Mingtao
+        """
+        t = test.Test()
+        s = t.switch(node)
+        node_type = s.info('model')
+        size = self.rest_show_switch_flow(node=node, return_value='maximum-entries')
+
+        if l3_l4_mode == "True":
+            if node_type == 'LB9':
+                if size == 4088:
+                    helpers.test_log("INFO: Switch  - %s  type - %s  and - L3-l4 mode, tcam size - %s " % (node, node_type, str(size)))
+                    return True
+                else:
+                    helpers.test_log("ERROR: Switch - %s  type - %s  and - L3-l4 mode, tcam size expect - 4088, actual - %s " % (node, node_type, str(size)))
+                    return False
+            elif node_type == 'LY2':
+                if size == 2040:
+                    helpers.test_log("INFO: Switch  - %s  type - %s  and - L3-l4 mode, tcam size - %s " % (node, node_type, str(size)))
+                    return True
+                else:
+                    helpers.test_log("ERROR: Switch - %s  type - %s  and - L3-l4 mode, tcam size expect - 4088, actual - %s " % (node, node_type, str(size)))
+                    return False
+
+        else:
+            if node_type == 'LB9':
+                if size == 2044:
+                    helpers.test_log("INFO: Switch  - %s  type - %s  and - L3-l4 mode, tcam size - %s " % (node, node_type, str(size)))
+                    return True
+                else:
+                    helpers.test_log("ERROR: Switch - %s  type - %s  and - L3-l4 mode, tcam size expect - 4088, actual - %s " % (node, node_type, str(size)))
+                    return False
+            elif node_type == 'LY2':
+                if size == 1020:
+                    helpers.test_log("INFO: Switch  - %s  type - %s  and - L3-l4 mode, tcam size - %s " % (node, node_type, str(size)))
+                    return True
+                else:
+                    helpers.test_log("ERROR: Switch - %s  type - %s  and - L3-l4 mode, tcam size expect - 4088, actual - %s " % (node, node_type, str(size)))
+                    return False
+
+        return True
+
+
+# Mingtao
+    def verify_switch_tcam_limitaion(self, node, policy, match_type='mixed', base='10.0.0.0', step='0.1.0.1', v6base='1001:0:0:0:0:0:0:0', v6step='0:0:1:0:1:0:0:0'):
+        """ verify the switch tcam flow limitaion 
+            Usage:  verify_switch_tcam   S203    type
+                    type - 'ipv4'   'ipv6'   mixed
+            return:  the tcam flow entries
+            -- Mingtao
+        """
+        t = test.Test()
+        c = t.controller('master')
+        i = 0
+        sequence = 0
+        expect_flow = 0
+        ether_type = []
+        if match_type == 'ipv4':
+            ether_type.extend(['2048'])
+            v6Flag = None
+            v4Flag = True
+        elif match_type == 'ipv6':
+            ether_type.extend(['34525'])
+            v6Flag = True
+            v4Flag = None
+        else:
+            ether_type.extend(['2048'])
+            ether_type.extend(['34525'])
+            v6Flag = True
+            v4Flag = True
+
+        for num in ['100', '20', '5', '1']:
+            if v4Flag is not None:
+                v4Flag = True
+            if v6Flag is not None:
+                v6Flag = True
+            while v4Flag or v6Flag:
+                i = i + 1
+                g_size = int(num)
+                if match_type == 'ipv4' or match_type == 'mixed' :
+                    name = 'G_' + str(i) + '_' + num
+                    self.rest_add_address_group(name, 'ipv4')
+                    self.gen_add_address_group_entries(name, 'ipv4', base, step, '255.255.255.255', g_size)
+                    base = helpers.get_next_address('ipv4', base, '5.0.0.0')
+                if match_type == 'ipv6' or match_type == 'mixed' :
+                    name6 = 'G6_' + str(i) + '_' + num
+                    self.rest_add_address_group(name6, 'ipv6')
+                    self.gen_add_address_group_entries(name6, 'ipv6', v6base, v6step, 'FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF', g_size)
+                    v6base = helpers.get_next_address('ipv6', v6base, '11:0:0:0:0:0:0:0')
+
+                for loop in range(0, 8):
+                    if not v4Flag and not v6Flag:
+                        helpers.log("INFO:  ********* break of of the loop *****")
+                        break
+                    for ether in ether_type:
+                        if ether == '2048':
+                            Gname = name
+                            if not v4Flag:
+                                continue
+                        elif ether == '34525':
+                            Gname = name6
+                            if not v6Flag:
+                                continue
+
+                        sequence = sequence + 10
+                        if loop == 0:
+                            data = '{' + '"sequence":' + str(sequence) + ',' + '"src-ip-list":' + '"' + Gname + '"' + ',' + '"ether-type":' + ether + '}'
+                        elif loop == 1:
+                            data = '{' + '"sequence":' + str(sequence) + ',' + '"dst-ip-list":' + '"' + Gname + '"' + ',' + '"ether-type":' + ether + '}'
+                        elif loop == 2:
+                            data = '{' + '"sequence":' + str(sequence) + ',' + '"src-ip-list":' + '"' + Gname + '"' + ',' + '"ip-proto": 6,' + '"src-tp-port":80,' + '"ether-type":' + ether + '}'
+                        elif loop == 3:
+                            data = '{' + '"sequence":' + str(sequence) + ',' + '"src-ip-list":' + '"' + Gname + '"' + ',' + '"ip-proto": 6,' + '"dst-tp-port":100,' + '"ether-type":' + ether + '}'
+                        elif loop == 2:
+                            data = '{' + '"sequence":' + str(sequence) + ',' + '"dst-ip-list":' + '"' + Gname + '"' + ',' + '"ip-proto": 6,' + '"src-tp-port":120,' + '"ether-type":' + ether + '}'
+                        elif loop == 3:
+                            data = '{' + '"sequence":' + str(sequence) + ',' + '"dst-ip-list":' + '"' + Gname + '"' + ',' + '"ip-proto": 6,' + '"dst-tp-port":140,' + '"ether-type":' + ether + '}'
+                        elif loop == 4:
+                            data = '{' + '"sequence":' + str(sequence) + ',' + '"src-ip-list":' + '"' + Gname + '"' + ',' + '"ip-proto": 17,' + '"dst-tp-port":160,' + '"ether-type":' + ether + '}'
+                        elif loop == 5:
+                            data = '{' + '"sequence":' + str(sequence) + ',' + '"src-ip-list":' + '"' + Gname + '"' + ',' + '"ip-proto": 17,' + '"src-tp-port":200,' + '"ether-type":' + ether + '}'
+                        elif loop == 6:
+                            data = '{' + '"sequence":' + str(sequence) + ',' + '"dst-ip-list":' + '"' + Gname + '"' + ',' + '"ip-proto": 17,' + '"dst-tp-port":240,' + '"ether-type":' + ether + '}'
+                        else:
+                            data = '{' + '"sequence":' + str(sequence) + ',' + '"dst-ip-list":' + '"' + Gname + '"' + ',' + '"ip-proto": 17,' + '"src-tp-port":280,' + '"ether-type":' + ether + '}'
+
+
+                        helpers.log("INFO:  ********* data is  %s*****" % data)
+                        if not self.rest_add_policy_match('admin-view', policy, sequence, data):
+                            helpers.test_failure(c.rest.error())
+
+                        expect_flow = expect_flow + g_size
+
+                        helpers.sleep(30)
+                        flow = self.rest_show_switch_flow(node=node)
+                        if flow == expect_flow:
+                            helpers.test_log("INFO: Switch - %s  tcam entry - %s" % (node, str(flow)))
+                        elif  flow == 0:
+                            helpers.test_log("ERROR: Switch - %s  tcam expect -  %s,  actual - %s" % (node, str(expect_flow), str(flow)))
+                            if not self.rest_delete_policy_match('admin-view', policy, sequence):
+                                helpers.test_failure(c.rest.error())
+                            expect_flow = expect_flow - g_size
+                            helpers.sleep(60)
+                            flow = self.rest_show_switch_flow(node=node)
+                            if flow == expect_flow:
+                                if ether == '2048':
+                                    v4Flag = False
+                                elif ether == '34525':
+                                    v6Flag = False
+                                helpers.test_log("INFO: ****Finished group - %s type - %s entries - %s ***" % (num, str(ether), str(expect_flow)))
+
+                                if num == '1' and not v4Flag and not v6Flag:
+                                    helpers.test_log("INFO: **** # of flows is switch  - %s ***" % str(flow))
+                                    return  expect_flow
+                                continue
+                            else:
+                                helpers.test_failure("ERROR: mismatch  Switch - %s  tcam expect -  %s,  actual - %s" % (node, str(expect_flow), str(flow)))
+                        else:
+                            helpers.test_log("ERROR: Switch - %s  tcam expect -  %s,  actual - %s" % (node, str(expect_flow), str(flow)))
+                            helpers.test_failure("ERROR: mismatch  Switch - %s  tcam expect -  %s,  actual - %s" % (node, str(expect_flow), str(flow)))
 
 ###################################################
 # All Bigtap Configuration Commands Go Here:
@@ -1396,3 +1603,302 @@ class BigTap(object):
         helpers.log("the temp is: %s" % (str(temp)))
 
         return temp
+
+
+###################################################
+# BigTap User Management
+###################################################
+
+    def rest_add_user(self, username):
+        '''
+            Objective:
+            - Add a user
+            
+            Inputs:
+            |username| Desired username for user|
+            
+            Return Value:
+            | True | On Configuration success|
+            | False | On Configuration failure|
+            
+        '''
+        try:
+            t = test.Test()
+        except:
+            return False
+        else:
+            c = t.controller('master')
+            try:
+                url = '/api/v1/data/controller/core/aaa/local-user[user-name="%s"] ' % (str(username))
+                c.rest.put(url, {"user-name": str(username)})
+            except:
+                helpers.test_log(c.rest.error())
+                return False
+            else:
+                return True
+
+
+    def rest_add_user_password(self, username, password):
+        '''
+            Objective:
+            - Set password for given user
+            
+            Inputs:
+            |username| username for which password is being configured|
+            |password| Password to be configured|            
+            
+            Return Value:
+            | True | On Configuration success|
+            | False | On Configuration failure|
+            
+        '''
+        try:
+            t = test.Test()
+        except:
+            return False
+        else:
+            c = t.controller('master')
+            try:
+                # Get the hashed value of password
+                url1 = '/api/v1/data/controller/core/aaa/hash-password[password="%s"]' % str(password)
+                c.rest.get(url1)
+                myHash = c.rest.content()
+                myHashPass = myHash[0]['hashed-password']
+                # Assign password to user
+                url2 = '/api/v1/data/controller/core/aaa/local-user[user-name="%s"]' % str(username)
+                c.rest.patch(url2, {"password": str(myHashPass)})
+            except:
+                helpers.test_log(c.rest.error())
+                return False
+            else:
+                return True
+
+    def rest_add_rbac_group(self, group_name, rbac_view):
+        '''
+            Objective:
+            - Create a group and assign bigtap rbac-permission
+            
+            Inputs:
+            |group_name| Group Name that is being configured|
+            |rbac_view| RBAC View to be associated with group|            
+            
+            Return Value:
+            | True | On Configuration success|
+            | False | On Configuration failure|
+            
+        '''
+        try:
+            t = test.Test()
+        except:
+            return False
+        else:
+            c = t.controller('master')
+            try:
+                # Create a group first
+                url1 = '/api/v1/data/controller/core/aaa/group[name="%s"]' % str(group_name)
+                c.rest.put(url1, {"name": str(group_name)})
+                # Add rbac-view to Group
+                url2 = '/api/v1/data/controller/core/aaa/group[name="%s"]/rbac-permission' % str(group_name)
+                c.rest.patch(url2, [str(rbac_view)])
+            except:
+                helpers.test_log(c.rest.error())
+                return False
+            else:
+                return True
+
+    def rest_add_user_to_group(self, username, group_name):
+        '''
+            Objective:
+            - Add a user to group
+            
+            Inputs:
+            |group_name| Group Name that is being configured|
+            |username| username which is being assigned to the group|            
+            
+            Return Value:
+            | True | On Configuration success|
+            | False | On Configuration failure|
+            
+        '''
+        try:
+            t = test.Test()
+        except:
+            return False
+        else:
+            c = t.controller('master')
+            try:
+                # Add user to Group
+                url1 = '/api/v1/data/controller/core/aaa/group[name="%s"]/user' % str(group_name)
+                c.rest.patch(url1, [str(username)])
+            except:
+                helpers.test_log(c.rest.error())
+                return False
+            else:
+                return True
+
+    def rest_add_rbac_permission(self, rbac_view):
+        '''
+            Objective:
+            - Add a user to group
+            
+            Inputs:
+            |rbac_view| RBAC group name that is being configured|
+            
+            Return Value:
+            | True | On Configuration success|
+            | False | On Configuration failure|
+            
+        '''
+        try:
+            t = test.Test()
+        except:
+            return False
+        else:
+            c = t.controller('master')
+            try:
+                # Add user to Group
+                url1 = '/api/v1/data/controller/core/aaa/rbac-permission[name="%s"]' % str(rbac_view)
+                c.rest.put(url1, {"name": str(rbac_view)})
+            except:
+                helpers.test_log(c.rest.error())
+                return False
+            else:
+                return True
+
+    def rest_add_filter_interface_to_rbac(self, rbac_view, filter_name='allow-all'):
+        '''
+            Objective:
+            - Add a filter-interface to rbac-permission
+            
+            Inputs:
+            |rbac_view| RBAC group name that is being configured|
+            |filter_name| Filter Interface that is being added|      
+            
+            Return Value:
+            | True | On Configuration success|
+            | False | On Configuration failure|
+            
+        '''
+        try:
+            t = test.Test()
+        except:
+            return False
+        else:
+            c = t.controller('master')
+            try:
+                if 'allow-all' in filter_name:
+                    url1 = '/api/v1/data/controller/core/aaa/rbac-permission[name="%s"]/bigtap' % str(rbac_view)
+                    c.rest.patch(url1, {"allow-all-filter-interface": True})
+                else:
+                    url1 = '/api/v1/data/controller/core/aaa/rbac-permission[name="%s"]/bigtap/allowed-filter-interface[name="%s"]' % (str(rbac_view), str(filter_name))
+                    c.rest.put(url1, {"name": str(filter_name)})
+            except:
+                helpers.test_log(c.rest.error())
+                return False
+            else:
+                return True
+
+    def rest_add_delivery_interface_to_rbac(self, rbac_view, delivery_name='allow-all'):
+        '''
+            Objective:
+            - Add a delivery interface to rbac-permission
+            
+            Inputs:
+            |rbac_view| RBAC group name that is being configured|
+            |delivery_name| Delivery Interface that is being added|      
+            
+            Return Value:
+            | True | On Configuration success|
+            | False | On Configuration failure|
+            
+        '''
+        try:
+            t = test.Test()
+        except:
+            return False
+        else:
+            c = t.controller('master')
+            try:
+                if 'allow-all' in delivery_name:
+                    url1 = '/api/v1/data/controller/core/aaa/rbac-permission[name="%s"]/bigtap' % str(rbac_view)
+                    c.rest.patch(url1, {"allow-all-delivery-interface": True})
+                else:
+                    url1 = '/api/v1/data/controller/core/aaa/rbac-permission[name="%s"]/bigtap/allowed-delivery-interface[name="%s"]' % (str(rbac_view), str(delivery_name))
+                    c.rest.put(url1, {"name": str(delivery_name)})
+            except:
+                helpers.test_log(c.rest.error())
+                return False
+            else:
+                return True
+
+
+    def rest_add_service_to_rbac(self, rbac_view, service_name='allow-all'):
+        '''
+            Objective:
+            - Add a service to rbac-permission
+            
+            Inputs:
+            |rbac_view| RBAC group name that is being configured|
+            |service_name| Service that is being added|      
+            
+            Return Value:
+            | True | On Configuration success|
+            | False | On Configuration failure|
+            
+        '''
+        try:
+            t = test.Test()
+        except:
+            return False
+        else:
+            c = t.controller('master')
+            try:
+                if 'allow-all' in service_name:
+                    url1 = '/api/v1/data/controller/core/aaa/rbac-permission[name="%s"]/bigtap' % str(rbac_view)
+                    c.rest.patch(url1, {"allow-all-service": True})
+                else:
+                    url1 = '/api/v1/data/controller/core/aaa/rbac-permission[name="%s"]/bigtap/allowed-service[name="%s"]' % (str(rbac_view), str(service_name))
+                    c.rest.put(url1, {"name": str(service_name)})
+            except:
+                helpers.test_log(c.rest.error())
+                return False
+            else:
+                return True
+
+
+
+    def rest_add_match_to_rbac(self, rbac_view, match_name='allow-all'):
+        '''
+            Objective:
+            - Add a service to rbac-permission
+            
+            Inputs:
+            |rbac_view| RBAC group name that is being configured|
+            |service_name| Service that is being added|      
+            
+            Return Value:
+            | True | On Configuration success|
+            | False | On Configuration failure|
+            
+        '''
+        try:
+            t = test.Test()
+        except:
+            return False
+        else:
+            c = t.controller('master')
+            try:
+                if 'allow-all' in match_name:
+                    url1 = '/api/v1/data/controller/core/aaa/rbac-permission[name="%s"]/bigtap' % str(rbac_view)
+                    c.rest.patch(url1, {"allow-all-match": True})
+                # Currently not available
+                else:
+                    helpers.test_log(c.rest.error())
+                    return False
+#                    url1 = '/api/v1/data/controller/core/aaa/rbac-permission[name="%s"]/bigtap/allowed-service[name="%s"]' % (str(rbac_view), str(match_name))
+#                    c.rest.put(url1, {"name": str(match_name)})
+            except:
+                helpers.test_log(c.rest.error())
+                return False
+            else:
+                return True

@@ -1,0 +1,715 @@
+*Settings
+Documentation  BigTap Inport Masking: Release:Blackbird Feature:Inport Masking
+Suite Setup  inport suite setup
+Suite Teardown   inport suite teardown
+Test Setup   bigtap-inport test setup
+Test Teardown  base test teardown 
+Force Tags   platform Sanity
+Library  keywords/BsnCommon.py
+Library  keywords/AppController.py
+Library  keywords/BigTap.py
+
+*Test Case
+Verify # of flows with and without Inport Mask
+    Verify Inport Mask
+    [Tags]  bigtap  inport-mask   
+    
+Verify inport masking with 4 filter interfaces on S1 and 1 delivery interface on S2
+    T6090
+    [Tags]  bigtap  inport-mask     
+        
+Verify inport masking with 4 filter interfaces on S1 and 1 delivery interface on S2 and service node on S5
+    T6091
+    [Tags]  bigtap  inport-mask  
+
+Verify inport masking with 4 filter interfaces on S1 and 1 delivery interface on S2 and service node on S2
+    T6092
+    [Tags]  bigtap  inport-mask  
+    
+Verify inport masking with 1 filter interfaces on S1 and 4 delivery interface on S2
+    T6093
+    [Tags]  bigtap  inport-mask  
+    
+Verify inport masking with 1 filter interfaces on S1 and 4 delivery interface on S2 and service node on S2
+    T6094
+    [Tags]  bigtap  inport-mask  
+    
+Verify inport masking with 4 filter interfaces on S1 and 4 delivery interfaces on S2
+    T6095
+    [Tags]  bigtap  inport-mask  
+    
+Verify inport masking with 4 filter interfaces on S1 and 4 delivery interfaces on S2 and service node on S2
+    T6096
+    [Tags]  bigtap  inport-mask  
+    
+Verify inport masking with 4 filter interfaces on S1 and 4 delivery interfaces on S2 and service nodes on S2 and S5
+    T6097
+    [Tags]  bigtap  inport-mask  
+    
+Verify inport masking with 1 filter interfaces on S1 and S4 and 1 delivery interfaces on S2
+    T6098
+    [Tags]  bigtap  inport-mask  
+    
+Verify inport masking with 1 filter interfaces on S1 and S4 and 1 delivery interfaces on S2 and service nodes on S2 and S5
+    T6099
+    [Tags]  bigtap  inport-mask  
+    
+Verify inport masking with 1 filter interfaces on S1 and S4 and 1 delivery interfaces on S2 and S3
+    T6101
+    [Tags]  bigtap  inport-mask  
+        
+Verify inport masking with 1 filter interfaces on S1 and S4 and 1 delivery interfaces on S2 and S3 and service nodes on S5
+    T6102    
+    [Tags]  bigtap  inport-mask 
+    
+Verify inport masking with 2 filter interfaces on S1 and S4 and 1 delivery interfaces on S2
+    T6103 
+    [Tags]  bigtap  inport-mask  
+    
+Verify inport masking with 2 filter interfaces on S1 and S4 and 1 delivery interfaces on S2 and service nodes on S2
+    T6104 
+    [Tags]  bigtap  inport-mask  
+    
+Verify inport masking with 2 filter interfaces on S1 and S4 and 1 delivery interfaces on S2 and S3 and service nodes on S5
+    T6105 
+    [Tags]  bigtap  inport-mask  
+        
+Verify inport masking with 2 filter interfaces on S1 and S4 and 2 delivery interfaces on S2 and S3
+    T6106     
+    [Tags]  bigtap  inport-mask  
+* Keywords
+
+inport suite setup
+    base suite setup
+    rest add switch alias  s1  L9AR1
+    rest add switch alias  s2  L9AR2
+    rest add switch alias  s3  L9AR3
+    rest add switch alias  s4  L9AR4
+    rest add switch alias  s5  LY2AR5
+    rest add switch alias  s6  LY2AR6
+    rest add interface role  s1  ethernet5    filter        L9AR1-F1  
+    rest add interface role  s1  ethernet6    filter        L9AR1-F2
+    rest add interface role  s1  ethernet7    filter        L9AR1-F3
+    rest add interface role  s1  ethernet8    filter        L9AR1-F4
+    rest add interface role  s1  ethernet9    delivery      L9AR1-D1
+    rest add interface role  s1  ethernet47   service       S1-AR1-ET47-PRE
+    rest add interface role  s1  ethernet48   service       S1-AR1-ET48-POST
+    
+    rest add interface role  s2  ethernet5    delivery      L9AR2-D1
+    rest add interface role  s2  ethernet6    delivery      L9AR2-D2
+    rest add interface role  s2  ethernet7    delivery      L9AR2-D3
+    rest add interface role  s2  ethernet8    delivery      L9AR2-D4
+    rest add interface role  s2  ethernet47   service       S2-AR2-ET47-PRE
+    rest add interface role  s2  ethernet48   service       S2-AR2-ET48-POST
+    
+    rest add interface role  s3  ethernet5    delivery      L9AR3-D1
+    rest add interface role  s3  ethernet6    delivery      L9AR3-D2
+    rest add interface role  s3  ethernet7    delivery      L9AR3-D3
+    rest add interface role  s3  ethernet8    delivery      L9AR3-D4
+    rest add interface role  s3  ethernet47   service       S3-AR3-ET47-PRE
+    rest add interface role  s3  ethernet48   service       S3-AR3-ET48-POST
+
+    rest add interface role  s4  ethernet5    filter        L9AR4-F1
+    rest add interface role  s4  ethernet6    filter        L9AR4-F2
+    rest add interface role  s4  ethernet7    delivery      L9AR4-D1
+    rest add interface role  s4  ethernet8    delivery      L9AR4-D2    
+    rest add interface role  s4  ethernet47   service       S4-AR4-ET47-PRE
+    rest add interface role  s4  ethernet48   service       S4-AR4-ET48-POST
+ 
+    rest add interface role  s5  ethernet31   service       S5-AR5-ET31-PRE
+    rest add interface role  s5  ethernet32   service       S5-AR5-ET32-POST
+ 
+    rest add interface role  s6  ethernet31   service       S6-AR6-ET31-PRE
+    rest add interface role  s6  ethernet32   service       S6-AR6-ET32-POST
+
+bigtap-inport test setup
+    REST disable feature  inport-mask
+    REST add policy  admin-view  P1  forward
+    REST add policy match  admin-view  P1  1  {"ether-type": 2048, "dst-tp-port": 80, "ip-proto": 6, "sequence": 1} 
+    REST add policy interface  admin-view  P1  L9AR1-F1  filter 
+    REST add policy interface  admin-view  P1  L9AR1-F2  filter 
+    REST add policy interface  admin-view  P1  L9AR1-F3  filter 
+    REST add policy interface  admin-view  P1  L9AR1-F4  filter 
+    REST add policy interface  admin-view  P1  L9AR1-D1  delivery 
+    REST add service  S5  S5-AR5-ET31-PRE  S5-AR5-ET32-POST  
+    REST add service  S2  S2-AR2-ET47-PRE  S2-AR2-ET48-POST  
+    Sleep  3
+
+Verify Inport Mask
+    REST verify bigtap policy  policy_name=P1  num_filter_intf=4  num_delivery_intf=1
+    REST disable feature  inport-mask
+    Sleep  2
+    ${switchFlowVal}=  REST show switch flow  s1  
+    Should Be Equal As Integers  ${switchFlowVal}  4
+    REST enable feature  inport-mask
+    Sleep  2
+    ${switchFlowVal}=  REST show switch flow  s1  
+    Should Be Equal As Integers  ${switchFlowVal}  1
+
+T6090
+    REST disable feature  inport-mask
+    REST delete policy interface  admin-view  P1  L9AR1-D1  delivery
+    REST add policy interface  admin-view  P1  L9AR2-D1  delivery
+    Sleep  2
+    ${switchFlowVal}=  REST show switch flow  s1
+    Should Be Equal As Integers  ${switchFlowVal}  4
+    ${switchFlowVa1l}=   REST show switch flow  s1
+    Should Be Equal As Integers  ${switchFlowVa1l}  4
+    REST enable feature  inport-mask
+    Sleep  2
+    ${switchFlowVal}=  REST show switch flow  s1
+    Should Be Equal As Integers  ${switchFlowVal}  1
+    ${switchFlowVa1l}=  REST show switch flow  s2
+    Should Be Equal As Integers  ${switchFlowVa1l}  1
+    ${switchFlowVa12}=  REST show switch flow  s5
+    ${switchFlowVa13}=  REST show switch flow  s6
+    rest verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  1  0
+
+T6091
+    REST disable feature  inport-mask
+    REST delete policy interface  admin-view  P1  L9AR1-D1  delivery
+    REST add service to policy  admin-view  P1  S5  1
+    REST add policy interface  admin-view  P1  L9AR2-D1  delivery
+    Sleep  2
+    ${switchFlowVal}=  REST show switch flow  s1
+    Should Be Equal As Integers  ${switchFlowVal}  4
+    ${switchFlowVa1l}=  REST show switch flow  s2
+    Should Be Equal As Integers  ${switchFlowVa1l}  1
+    REST enable feature  inport-mask
+    Sleep  2
+    ${switchFlowVal}=  REST show switch flow  s1
+    Should Be Equal As Integers  ${switchFlowVal}  1
+    ${switchFlowVa1l}=  REST show switch flow  s2  
+    Should Be Equal As Integers  ${switchFlowVa1l}  1 
+    ${switchFlowVa12}=  REST show switch flow  s5  
+    ${switchFlowVa13}=  REST show switch flow  s6
+    REST verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  1  0
+ 
+T6092
+    REST disable feature  inport-mask 
+    REST add service to policy  admin-view  P1  S2  1
+    REST delete policy interface  admin-view  P1  L9AR1-D1  delivery 
+    REST add policy interface  admin-view  P1  L9AR2-D1  delivery 
+    Sleep  2
+    ${switchFlowVal}=  REST show switch flow  s1  
+    Should Be Equal As Integers  ${switchFlowVal}  4
+    ${switchFlowVa1l}=  REST show switch flow  s2  
+    Should Be Equal As Integers  ${switchFlowVa1l}  2
+    REST enable feature  inport-mask
+    Sleep  2
+    ${switchFlowVal}=   REST show switch flow  s1  
+    Should Be Equal As Integers  ${switchFlowVal}  1
+    ${switchFlowVa1l}=   REST show switch flow  s2  
+    Should Be Equal As Integers  ${switchFlowVa1l}  2
+    ${switchFlowVa12} =   REST show switch flow  s5  
+    ${switchFlowVa13}=   REST show switch flow  s6  
+    REST verify coreswitch flows  ${switchFlowVa12}  ${switchFlowVa13}  1  0
+
+T6093
+    rest disable feature  inport-mask 
+    rest delete policy interface  admin-view  P1  L9AR1-F2  filter
+    rest delete policy interface  admin-view  P1  L9AR1-F3  filter
+    rest delete policy interface  admin-view  P1  L9AR1-F4  filter
+    rest delete policy interface  admin-view  P1  L9AR1-D1  delivery 
+    Sleep  3
+    rest add policy interface  admin-view  P1  L9AR2-D1  delivery 
+    rest add policy interface  admin-view  P1  L9AR2-D2  delivery 
+    rest add policy interface  admin-view  P1  L9AR2-D3  delivery 
+    rest add policy interface  admin-view  P1  L9AR2-D4  delivery 
+    Sleep  3
+    ${switchFlowVal} =   REST show switch flow  s1  
+    Should Be Equal As Integers  ${switchFlowVal}  1
+    ${switchFlowVa1l} =   REST show switch flow  s2  
+    Should Be Equal As Integers  ${switchFlowVa1l}  1
+    rest enable feature  inport-mask
+    Sleep  2
+    ${switchFlowVal} =   REST show switch flow  s1  
+    Should Be Equal As Integers  ${switchFlowVal}  1
+    ${switchFlowVa1l} =   REST show switch flow  s2  
+    Should Be Equal As Integers  ${switchFlowVa1l}  1
+    ${switchFlowVa12} =   REST show switch flow  s5   
+    ${switchFlowVa13} =   REST show switch flow  s6  
+    REST verify coreswitch flows  ${switchFlowVa12}   ${switchFlowVa13}  1  0
+      
+T6094
+    rest disable feature  inport-mask 
+    rest delete service from policy  admin-view  P1  S2-LB8  
+    rest delete policy interface  admin-view  P1  L9AR1-F2  filter
+    rest delete policy interface  admin-view  P1  L9AR1-F3  filter
+    rest delete policy interface  admin-view  P1  L9AR1-F4  filter
+    rest delete policy interface  admin-view  P1  L9AR1-D1  delivery 
+    Sleep  3
+    rest add service to policy  admin-view  P1  S2  1
+    rest add policy interface  admin-view  P1  L9AR2-D1  delivery 
+    rest add policy interface  admin-view  P1  L9AR2-D2  delivery 
+    rest add policy interface  admin-view  P1  L9AR2-D3  delivery 
+    rest add policy interface  admin-view  P1  L9AR2-D4  delivery 
+    Sleep  3
+    ${switchFlowVal} =   rest show switch flow  s1  
+    Should Be Equal As Integers  ${switchFlowVal}  1
+    ${switchFlowVa1l} =   rest show switch flow  s2  
+    Should Be Equal As Integers  ${switchFlowVa1l}  2
+    rest enable feature  inport-mask
+    Sleep  2
+    ${switchFlowVal} =   rest show switch flow  s1  
+    Should Be Equal As Integers  ${switchFlowVal}  1
+    ${switchFlowVa1l} =   rest show switch flow  s2  
+    Should Be Equal As Integers  ${switchFlowVa1l}  2
+    ${switchFlowVa12} =   rest show switch flow  s5  
+    ${switchFlowVa13} =   rest show switch flow  s6  
+    rest verify coreswitch flows  ${switchFlowVa12}   ${switchFlowVa13}  1  0  
+
+T6095
+    rest disable feature  inport-mask 
+    rest delete policy interface  admin-view  P1  L9AR1-D1  delivery 
+    Sleep  3
+    rest add policy interface  admin-view  P1  L9AR2-D1  delivery 
+    rest add policy interface  admin-view  P1  L9AR2-D2  delivery 
+    rest add policy interface  admin-view  P1  L9AR2-D3  delivery 
+    rest add policy interface  admin-view  P1  L9AR2-D4  delivery 
+    Sleep  3 
+    ${switchFlowVal} =   REST show switch flow  s1  
+    Should Be Equal As Integers  ${switchFlowVal}  4
+    ${switchFlowVa1l} =   REST show switch flow  s2  
+    Should Be Equal As Integers  ${switchFlowVa1l}  1
+    rest enable feature  inport-mask
+    Sleep  2
+    ${switchFlowVal} =   REST show switch flow  s1  
+    Should Be Equal As Integers  ${switchFlowVal}  1
+    ${switchFlowVa1l} =   REST show switch flow  s2  
+    Should Be Equal As Integers  ${switchFlowVa1l}  1
+    ${switchFlowVa12} =   REST show switch flow  s5  
+    ${switchFlowVa13} =   REST show switch flow  s6  
+    REST verify coreswitch flows  ${switchFlowVa12}   ${switchFlowVa13}  1  0  
+    
+T6096
+    rest disable feature  inport-mask 
+    rest delete policy interface  admin-view  P1  L9AR1-D1  delivery 
+    Sleep  3
+    rest add service to policy  admin-view  P1  S2   1
+    rest add policy interface  admin-view  P1  L9AR2-D1  delivery 
+    rest add policy interface  admin-view  P1  L9AR2-D2  delivery 
+    rest add policy interface  admin-view  P1  L9AR2-D3  delivery 
+    rest add policy interface  admin-view  P1  L9AR2-D4  delivery 
+    Sleep  3
+    ${switchFlowVal} =   REST show switch flow  s1  
+    Should Be Equal As Integers  ${switchFlowVal}  4  
+    ${switchFlowVa1l} =   REST show switch flow  s2  
+    Should Be Equal As Integers  ${switchFlowVa1l}  2
+    rest enable feature  inport-mask
+    Sleep  2
+    ${switchFlowVal} =   REST show switch flow  s1  
+    Should Be Equal As Integers  ${switchFlowVal}  1
+    ${switchFlowVa1l} =   REST show switch flow  s2  
+    Should Be Equal As Integers  ${switchFlowVa1l}  2 
+    ${switchFlowVa12} =   REST show switch flow  s5  
+    ${switchFlowVa13} =   REST show switch flow  s6  
+    REST verify coreswitch flows  ${switchFlowVa12}   ${switchFlowVa13}  1  0
+
+T6097
+    rest disable feature  inport-mask  
+    rest delete policy interface  admin-view  P1  L9AR1-D1  delivery 
+    rest add policy interface  admin-view  P1  L9AR2-D1  delivery 
+    rest add policy interface  admin-view  P1  L9AR2-D2  delivery 
+    rest add policy interface  admin-view  P1  L9AR2-D3  delivery 
+    rest add policy interface  admin-view  P1  L9AR2-D4  delivery 
+    rest add service to policy  admin-view  P1  S5   1
+    Sleep  1
+    rest add service to policy  admin-view  P1  S2   2
+    Sleep  2
+    ${switchFlowVal} =   REST show switch flow  s1  
+    Should Be Equal As Integers  ${switchFlowVal}  4
+    ${switchFlowVal1} =   REST show switch flow  s2  
+    Should Be Equal As Integers  ${switchFlowVal1}  2
+    rest enable feature  inport-mask
+    Sleep  2
+    ${switchFlowVal} =   REST show switch flow  s1  
+    Should Be Equal As Integers  ${switchFlowVal}  1
+    ${switchFlowVal1} =   REST show switch flow  s2  
+    Should Be Equal As Integers  ${switchFlowVal1}  2  
+    ${switchFlowVa12} =   REST show switch flow  s5   
+    ${switchFlowVa13} =   REST show switch flow  s6  
+    REST verify coreswitch flows  ${switchFlowVa12}   ${switchFlowVa13}  2  0
+      
+T6098
+    rest disable feature  inport-mask     
+    rest delete policy interface  admin-view  P1  L9AR1-D1  delivery 
+    rest delete policy interface  admin-view  P1  L9AR1-F2  filter 
+    rest delete policy interface  admin-view  P1  L9AR1-F3  filter 
+    rest delete policy interface  admin-view  P1  L9AR1-F4  filter 
+    rest add policy interface  admin-view  P1  L9AR4-F1  filter 
+    rest add policy interface  admin-view  P1  L9AR2-D1  delivery 
+    Sleep  2     
+    ${switchFlowVal} =   REST show switch flow  s1  
+    Should Be Equal As Integers  ${switchFlowVal}  1  
+    ${switchFlowVal2} =   REST show switch flow  s4  
+    Should Be Equal As Integers  ${switchFlowVal2}  1  
+    ${switchFlowVal1} =   REST show switch flow  s2  
+    Should Be Equal As Integers  ${switchFlowVal1}  1  
+    ${switchFlowVal3} =   REST show switch flow  s5  
+    ${switchFlowVal4} =   REST show switch flow  s6  
+    REST verify coreswitch flows  ${switchFlowVal3}   ${switchFlowVal4}  2  0  
+    rest enable feature  inport-mask     
+    Sleep  2     
+    ${switchFlowVal} =   REST show switch flow  s1  
+    Should Be Equal As Integers  ${switchFlowVal}  1  
+    ${switchFlowVal1} =   REST show switch flow  s4  
+    Should Be Equal As Integers  ${switchFlowVal1}  1  
+    ${switchFlowVal2} =   REST show switch flow  s2  
+    Should Be Equal As Integers  ${switchFlowVal2}  1  
+    ${switchFlowVal3} =   REST show switch flow  s5  
+    ${switchFlowVal4} =   REST show switch flow  s6  
+    REST verify coreswitch flows  ${switchFlowVal3}   ${switchFlowVal4}  1  0  
+
+T6099
+    rest disable feature  inport-mask     
+    rest delete policy interface  admin-view  P1  L9AR1-D1  delivery 
+    rest delete policy interface  admin-view  P1  L9AR1-F2  filter 
+    rest delete policy interface  admin-view  P1  L9AR1-F3  filter 
+    rest delete policy interface  admin-view  P1  L9AR1-F4  filter  
+    rest add policy interface  admin-view  P1  L9AR4-F1  filter 
+    rest add policy interface  admin-view  P1  L9AR2-D1  delivery 
+    rest add service to policy  admin-view  P1  S2   1
+    Sleep  2     
+    ${switchFlowVal} =   REST show switch flow  s1  
+    Should Be Equal As Integers  ${switchFlowVal}  1  
+    ${switchFlowVal1} =   REST show switch flow  s2  
+    Should Be Equal As Integers  ${switchFlowVal1}  2  
+    ${switchFlowVal2} =   REST show switch flow  s4  
+    Should Be Equal As Integers  ${switchFlowVal2}  1  
+    ${switchFlowVal3} =   REST show switch flow  s5  
+    ${switchFlowVal4} =   REST show switch flow  s6  
+    REST verify coreswitch flows  ${switchFlowVal3}   ${switchFlowVal4}  2  0  
+    rest enable feature  inport-mask     
+    Sleep  2     
+    ${switchFlowVal} =   REST show switch flow  s1  
+    Should Be Equal As Integers  ${switchFlowVal}  1  
+    ${switchFlowVal1} =   REST show switch flow  s2  
+    Should Be Equal As Integers  ${switchFlowVal1}  2  
+    ${switchFlowVal2} =   REST show switch flow  s4  
+    Should Be Equal As Integers  ${switchFlowVal2}  1  
+    ${switchFlowVal3} =   REST show switch flow  s5  
+    ${switchFlowVal4} =   REST show switch flow  s6  
+    REST verify coreswitch flows  ${switchFlowVal3}   ${switchFlowVal4}  1  0  
+    
+T6100
+    rest disable feature  inport-mask     
+    rest delete policy interface  admin-view  P1  L9AR1-D1  delivery 
+    rest delete policy interface  admin-view  P1  L9AR1-F2  filter 
+    rest delete policy interface  admin-view  P1  L9AR1-F3  filter 
+    rest delete policy interface  admin-view  P1  L9AR1-F4  filter  
+    rest add policy interface  admin-view  P1  L9AR4-F1  filter 
+    rest add policy interface  admin-view  P1  L9AR2-D1  delivery 
+    rest add service to policy  admin-view  P1  S5   1
+    Sleep  2     
+    rest add service to policy  admin-view  P1  S2   2
+    Sleep  2     
+    ${switchFlowVal} =   REST show switch flow  s1  
+    Should Be Equal As Integers  ${switchFlowVal}  1  
+    ${switchFlowVal1} =   REST show switch flow  s2  
+    Should Be Equal As Integers  ${switchFlowVal1}  2  
+    ${switchFlowVal2} =   REST show switch flow  s4  
+    Should Be Equal As Integers  ${switchFlowVal2}  1  
+    ${switchFlowVal3} =   REST show switch flow  s5  
+    ${switchFlowVal4} =   REST show switch flow  s6  
+    REST verify coreswitch flows  ${switchFlowVal3}   ${switchFlowVal4}  3  0  
+    rest enable feature  inport-mask     
+    Sleep  2     
+    ${switchFlowVal} =   REST show switch flow  sw_dpid=${switchDpid}  
+    Should Be Equal As Integers  ${switchFlowVal}  1  
+    ${switchFlowVal1} =   REST show switch flow  sw_dpid=${switchDpid1}  
+    Should Be Equal As Integers  ${switchFlowVal1}  2  
+    ${switchFlowVal2} =   REST show switch flow  sw_dpid=${switchDpid2}  
+    Should Be Equal As Integers  ${switchFlowVal2}  1  
+    ${switchFlowVal3} =   REST show switch flow  s5  
+    ${switchFlowVal4} =   REST show switch flow  s6  
+    REST verify coreswitch flows  ${switchFlowVal3}   ${switchFlowVal4}  2  0  
+
+T6101
+    rest disable feature  inport-mask     
+    rest delete policy interface  admin-view  P1  L9AR1-D1  delivery 
+    rest delete policy interface  admin-view  P1  L9AR1-F2  filter 
+    rest delete policy interface  admin-view  P1  L9AR1-F3  filter 
+    rest delete policy interface  admin-view  P1  L9AR1-F4  filter  
+    rest add policy interface  admin-view  P1  L9AR4-F1  filter 
+    rest add policy interface  admin-view  P1  L9AR2-D1  delivery 
+    rest add policy interface  admin-view  P1  L9AR3-D1  delivery 
+    Sleep  2     
+    ${switchFlowVal} =   REST show switch flow  s1  
+    Should Be Equal As Integers  ${switchFlowVal}  1  
+    ${switchFlowVal1} =   REST show switch flow  s2  
+    Should Be Equal As Integers  ${switchFlowVal1}  1  
+    ${switchFlowVal2} =   REST show switch flow  s4  
+    Should Be Equal As Integers  ${switchFlowVal2}  1  
+    ${switchFlowVal5} =   REST show switch flow  s3  
+    Should Be Equal As Integers  ${switchFlowVal5}  1  
+    ${switchFlowVal3} =   REST show switch flow  s5  
+    ${switchFlowVal4} =   REST show switch flow  s6  
+    REST verify coreswitch flows  ${switchFlowVal3}   ${switchFlowVal4}  2  0  
+    rest enable feature  inport-mask     
+    Sleep  2     
+    ${switchFlowVal} =   REST show switch flow  s1  
+    Should Be Equal As Integers  ${switchFlowVal}  1  
+    ${switchFlowVal1} =   REST show switch flow  s2  
+    Should Be Equal As Integers  ${switchFlowVal1}  1  
+    ${switchFlowVal2} =   REST show switch flow  s4  
+    Should Be Equal As Integers  ${switchFlowVal2}  1  
+    ${switchFlowVal5} =   REST show switch flow  s3  
+    Should Be Equal As Integers  ${switchFlowVal5}  1  
+    ${switchFlowVal3} =   REST show switch flow  s5  
+    ${switchFlowVal4} =   REST show switch flow  s6  
+    REST verify coreswitch flows  ${switchFlowVal3}   ${switchFlowVal4}  1  0  
+    
+T6102
+    rest disable feature  inport-mask     
+    rest delete policy interface  admin-view  P1  L9AR1-D1  delivery 
+    rest delete policy interface  admin-view  P1  L9AR1-F2  filter 
+    rest delete policy interface  admin-view  P1  L9AR1-F3  filter 
+    rest delete policy interface  admin-view  P1  L9AR1-F4  filter  
+    rest add policy interface  admin-view  P1  L9AR4-F1  filter 
+    rest add policy interface  admin-view  P1  L9AR2-D1  delivery 
+    rest add policy interface  admin-view  P1  L9AR3-D1  delivery 
+    rest add service to policy  admin-view  P1  S5   1
+    Sleep  2     
+    ${switchFlowVal} =   REST show switch flow  s1  
+    Should Be Equal As Integers  ${switchFlowVal}  1  
+    ${switchFlowVal1} =   REST show switch flow  s2  
+    Should Be Equal As Integers  ${switchFlowVal1}  1  
+    ${switchFlowVal2} =   REST show switch flow  s4  
+    Should Be Equal As Integers  ${switchFlowVal2}  3  
+    ${switchFlowVal5} =   REST show switch flow  s3  
+    Should Be Equal As Integers  ${switchFlowVal5}  1  
+    ${switchFlowVal3} =   REST show switch flow  s5  
+    ${switchFlowVal4} =   REST show switch flow  s6  
+    REST verify coreswitch flows  ${switchFlowVal3}   ${switchFlowVal4}  3  0  
+    rest enable feature  inport-mask     
+    Sleep  2     
+    ${switchFlowVal} =   REST show switch flow  s1  
+    Should Be Equal As Integers  ${switchFlowVal}  1  
+    ${switchFlowVal1} =   REST show switch flow  s2 
+    Should Be Equal As Integers  ${switchFlowVal1}  1  
+    ${switchFlowVal2} =   REST show switch flow  s4  
+    Should Be Equal As Integers  ${switchFlowVal2}  2  
+    ${switchFlowVal5} =   REST show switch flow  s3  
+    Should Be Equal As Integers  ${switchFlowVal5}  1  
+    ${switchFlowVal3} =   REST show switch flow  s5  
+    ${switchFlowVal4} =   REST show switch flow  s6  
+    REST verify coreswitch flows  ${switchFlowVal3}   ${switchFlowVal4}  2  0  
+
+T6103
+    rest disable feature  inport-mask     
+    rest delete policy interface  admin-view  P1  L9AR1-D1  delivery 
+    rest delete policy interface  admin-view  P1  L9AR1-F3  filter 
+    rest delete policy interface  admin-view  P1  L9AR1-F4  filter 
+    rest add policy interface  admin-view  P1  L9AR4-F1  filter 
+    rest add policy interface  admin-view  P1  L9AR4-F2  filter 
+    rest add policy interface  admin-view  P1  L9AR2-D1  delivery 
+    Sleep  2     
+    ${switchFlowVal} =   REST show switch flow  s1  
+    Should Be Equal As Integers  ${switchFlowVal}  2  
+    ${switchFlowVal1} =   REST show switch flow  s2  
+    Should Be Equal As Integers  ${switchFlowVal1}  1  
+    ${switchFlowVal2} =   REST show switch flow  s4  
+    Should Be Equal As Integers  ${switchFlowVal2}  2  
+    ${switchFlowVal5} =   REST show switch flow  s3  
+    Should Be Equal As Integers  ${switchFlowVal5}  0  
+    ${switchFlowVal3} =   REST show switch flow  s5  
+    ${switchFlowVal4} =   REST show switch flow  s6  
+    REST verify coreswitch flows  ${switchFlowVal3}   ${switchFlowVal4}  2  0  
+    rest enable feature  inport-mask     
+    Sleep  2     
+    ${switchFlowVal} =   REST show switch flow  s1  
+    Should Be Equal As Integers  ${switchFlowVal}  1  
+    ${switchFlowVal1} =   REST show switch flow  s2  
+    Should Be Equal As Integers  ${switchFlowVal1}  1  
+    ${switchFlowVal2} =   REST show switch flow  s4  
+    Should Be Equal As Integers  ${switchFlowVal2}  1  
+    ${switchFlowVal5} =   REST show switch flow  s3  
+    Should Be Equal As Integers  ${switchFlowVal5}  0  
+    ${switchFlowVal3} =   REST show switch flow  s5  
+    ${switchFlowVal4} =   REST show switch flow  s6 
+    REST verify coreswitch flows  ${switchFlowVal3}   ${switchFlowVal4}  1  0  
+    
+T6104
+    rest disable feature  inport-mask     
+    rest delete policy interface  admin-view  P1  L9AR1-D1  delivery 
+    rest delete policy interface  admin-view  P1  L9AR1-F3  filter 
+    rest delete policy interface  admin-view  P1  L9AR1-F4  filter 
+    rest add policy interface  admin-view  P1  L9AR4-F1  filter 
+    rest add policy interface  admin-view  P1  L9AR4-F2  filter 
+    rest add policy interface  admin-view  P1  L9AR2-D1  delivery 
+    rest add service to policy  admin-view  P1  S2   2
+    Sleep  2     
+    ${switchFlowVal} =   rest show switch flow  s1  
+    Should Be Equal As Integers  ${switchFlowVal}  2  
+    ${switchFlowVal1} =   rest show switch flow  s2  
+    Should Be Equal As Integers  ${switchFlowVal1}  2  
+    ${switchFlowVal2} =   rest show switch flow  s4  
+    Should Be Equal As Integers  ${switchFlowVal2}  2  
+    ${switchFlowVal5} =   rest show switch flow  s3  
+    Should Be Equal As Integers  ${switchFlowVal5}  0  
+    ${switchFlowVal3} =   rest show switch flow  s5  
+    ${switchFlowVal4} =   rest show switch flow  s6  
+    rest verify coreswitch flows  ${switchFlowVal3}   ${switchFlowVal4}  2  0  
+    rest enable feature  inport-mask     
+    Sleep  2     
+    ${switchFlowVal} =   rest show switch flow  s1  
+    Should Be Equal As Integers  ${switchFlowVal}  1  
+    ${switchFlowVal1} =   rest show switch flow  s2  
+    Should Be Equal As Integers  ${switchFlowVal1}  2  
+    ${switchFlowVal2} =   rest show switch flow  s4  
+    Should Be Equal As Integers  ${switchFlowVal2}  1  
+    ${switchFlowVal5} =   rest show switch flow  s3  
+    Should Be Equal As Integers  ${switchFlowVal5}  0  
+    ${switchFlowVal3} =   rest show switch flow  s5  
+    ${switchFlowVal4} =   rest show switch flow  s6  
+    rest verify coreswitch flows  ${switchFlowVal3}   ${switchFlowVal4}  1  0  
+    
+T6105
+    rest disable feature  inport-mask     
+    rest delete policy interface  admin-view  P1  L9AR1-D1  delivery 
+    rest delete policy interface  admin-view  P1  L9AR1-F3  filter 
+    rest delete policy interface  admin-view  P1  L9AR1-F4  filter 
+    rest add policy interface  admin-view  P1  L9AR4-F1  filter 
+    rest add policy interface  admin-view  P1  L9AR4-F2  filter 
+    rest add policy interface  admin-view  P1  L9AR2-D1  delivery 
+    rest add service to policy  admin-view  P1  S5   1
+    rest add service to policy  admin-view  P1  S2   2
+    Sleep  2     
+    ${switchFlowVal} =   rest show switch flow  s1  
+    Should Be Equal As Integers  ${switchFlowVal}  2  
+    ${switchFlowVal1} =   rest show switch flow  s2  
+    Should Be Equal As Integers  ${switchFlowVal1}  2  
+    ${switchFlowVal2} =   rest show switch flow  s4  
+    Should Be Equal As Integers  ${switchFlowVal2}  4  
+    ${switchFlowVal5} =   rest show switch flow  s3  
+    Should Be Equal As Integers  ${switchFlowVal5}  0  
+    ${switchFlowVal3} =   rest show switch flow  s5  
+    ${switchFlowVal4} =   rest show switch flow  s6  
+    rest verify coreswitch flows  ${switchFlowVal3}   ${switchFlowVal4}  3  0  
+    rest enable feature  inport-mask     
+    Sleep  2     
+    ${switchFlowVal} =   rest show switch flow  s1  
+    Should Be Equal As Integers  ${switchFlowVal}  1  
+    ${switchFlowVal1} =   rest show switch flow  s2  
+    Should Be Equal As Integers  ${switchFlowVal1}  2  
+    ${switchFlowVal2} =   rest show switch flow  s4  
+    Should Be Equal As Integers  ${switchFlowVal2}  2  
+    ${switchFlowVal5} =   rest show switch flow  s3  
+    Should Be Equal As Integers  ${switchFlowVal5}  0  
+    ${switchFlowVal3} =   rest show switch flow  s5  
+    ${switchFlowVal4} =   rest show switch flow  s6  
+    rest verify coreswitch flows  ${switchFlowVal3}   ${switchFlowVal4}  2  0  
+    
+T6106
+    rest disable feature  inport-mask     
+    rest delete policy interface  admin-view  P1  L9AR1-D1  delivery 
+    rest delete policy interface  admin-view  P1  L9AR1-F3  filter 
+    rest delete policy interface  admin-view  P1  L9AR1-F4  filter 
+    rest add policy interface  admin-view  P1  L9AR4-F1  filter 
+    rest add policy interface  admin-view  P1  L9AR4-F2  filter  
+    rest add policy interface  admin-view  P1  L9AR2-D1  delivery 
+    rest add policy interface  admin-view  P1  L9AR2-D2  delivery 
+    rest add policy interface  admin-view  P1  L9AR3-D1  delivery  
+    rest add policy interface  admin-view  P1  L9AR3-D2  delivery 
+    Sleep  2     
+    ${switchFlowVal} =   rest show switch flow  s1  
+    Should Be Equal As Integers  ${switchFlowVal}  2  
+    ${switchFlowVal1} =   rest show switch flow  s2  
+    Should Be Equal As Integers  ${switchFlowVal1}  1  
+    ${switchFlowVal2} =   rest show switch flow  s4  
+    Should Be Equal As Integers  ${switchFlowVal2}  2  
+    ${switchFlowVal5} =   rest show switch flow  s3  
+    Should Be Equal As Integers  ${switchFlowVal5}  1  
+    ${switchFlowVal3} =   rest show switch flow  s5  
+    ${switchFlowVal4} =   rest show switch flow  s6  
+    rest verify coreswitch flows  ${switchFlowVal3}   ${switchFlowVal4}  2  0  
+    rest enable feature  inport-mask     
+    Sleep  2     
+    ${switchFlowVal} =   rest show switch flow  s1  
+    Should Be Equal As Integers  ${switchFlowVal}  1  
+    ${switchFlowVal1} =   rest show switch flow  s2  
+    Should Be Equal As Integers  ${switchFlowVal1}  1  
+    ${switchFlowVal2} =   rest show switch flow  s4  
+    Should Be Equal As Integers  ${switchFlowVal2}  1  
+    ${switchFlowVal5} =   rest show switch flow  s3  
+    Should Be Equal As Integers  ${switchFlowVal5}  1  
+    ${switchFlowVal3} =   rest show switch flow  s5  
+    ${switchFlowVal4} =   rest show switch flow  s6  
+    rest verify coreswitch flows  ${switchFlowVal3}   ${switchFlowVal4}  1  0  
+
+
+inport suite teardown
+    REST delete policy  admin-view  P1
+    REST delete service  S5
+    REST delete service  S2
+    rest delete interface role  s1  ethernet5    filter          
+    rest delete interface role  s1  ethernet6    filter        
+    rest delete interface role  s1  ethernet7    filter
+    rest delete interface role  s1  ethernet8    filter
+    rest delete interface role  s1  ethernet9    delivery
+    rest delete interface role  s1  ethernet47   service
+    rest delete interface role  s1  ethernet48   service
+    rest delete interface role  s2  ethernet5    delivery
+    rest delete interface role  s2  ethernet6    delivery
+    rest delete interface role  s2  ethernet7    delivery
+    rest delete interface role  s2  ethernet8    delivery
+    rest delete interface role  s2  ethernet47   service
+    rest delete interface role  s2  ethernet48   service
+    rest delete interface role  s3  ethernet5    delivery
+    rest delete interface role  s3  ethernet6    delivery
+    rest delete interface role  s3  ethernet7    delivery
+    rest delete interface role  s3  ethernet8    delivery
+    rest delete interface role  s3  ethernet47   service
+    rest delete interface role  s3  ethernet48   service  
+    rest delete interface role  s4  ethernet5    filter  
+    rest delete interface role  s4  ethernet6    filter 
+    rest delete interface role  s4  ethernet7    delivery
+    rest delete interface role  s4  ethernet8    delivery
+    rest delete interface role  s4  ethernet47   service
+    rest delete interface role  s4  ethernet48   service 
+    rest delete interface role  s5  ethernet31   service
+    rest delete interface role  s5  ethernet32   service
+    rest delete interface role  s6  ethernet31   service 
+    rest delete interface role  s6  ethernet32   service    
+    rest delete interface  s1  ethernet5          
+    rest delete interface  s1  ethernet6        
+    rest delete interface  s1  ethernet7
+    rest delete interface  s1  ethernet8
+    rest delete interface  s1  ethernet9
+    rest delete interface  s1  ethernet47
+    rest delete interface  s1  ethernet48
+    rest delete interface  s2  ethernet5
+    rest delete interface  s2  ethernet6
+    rest delete interface  s2  ethernet7
+    rest delete interface  s2  ethernet8
+    rest delete interface  s2  ethernet47
+    rest delete interface  s2  ethernet48
+    rest delete interface  s3  ethernet5
+    rest delete interface  s3  ethernet6
+    rest delete interface  s3  ethernet7
+    rest delete interface  s3  ethernet8
+    rest delete interface  s3  ethernet47
+    rest delete interface  s3  ethernet48  
+    rest delete interface  s4  ethernet5  
+    rest delete interface  s4  ethernet6 
+    rest delete interface  s4  ethernet7
+    rest delete interface  s4  ethernet8 
+    rest delete interface  s4  ethernet47
+    rest delete interface  s4  ethernet48 
+    rest delete interface  s5  ethernet31
+    rest delete interface  s5  ethernet32
+    rest delete interface  s6  ethernet31 
+    rest delete interface  s6  ethernet32
+    rest delete switch alias  s1
+    rest delete switch alias  s2
+    rest delete switch alias  s3
+    rest delete switch alias  s4
+    rest delete switch alias  s5
+    rest delete switch alias  s6                          
+    rest delete switch  s1
+    rest delete switch  s2
+    rest delete switch  s3
+    rest delete switch  s4
+    rest delete switch  s5
+    rest delete switch  s6                    
