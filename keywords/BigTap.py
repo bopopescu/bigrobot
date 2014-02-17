@@ -1603,3 +1603,302 @@ class BigTap(object):
         helpers.log("the temp is: %s" % (str(temp)))
 
         return temp
+
+
+###################################################
+# BigTap User Management
+###################################################
+
+    def rest_add_user(self, username):
+        '''
+            Objective:
+            - Add a user
+            
+            Inputs:
+            |username| Desired username for user|
+            
+            Return Value:
+            | True | On Configuration success|
+            | False | On Configuration failure|
+            
+        '''
+        try:
+            t = test.Test()
+        except:
+            return False
+        else:
+            c = t.controller('master')
+            try:
+                url = '/api/v1/data/controller/core/aaa/local-user[user-name="%s"] ' % (str(username))
+                c.rest.put(url, {"user-name": str(username)})
+            except:
+                helpers.test_log(c.rest.error())
+                return False
+            else:
+                return True
+
+
+    def rest_add_user_password(self, username, password):
+        '''
+            Objective:
+            - Set password for given user
+            
+            Inputs:
+            |username| username for which password is being configured|
+            |password| Password to be configured|            
+            
+            Return Value:
+            | True | On Configuration success|
+            | False | On Configuration failure|
+            
+        '''
+        try:
+            t = test.Test()
+        except:
+            return False
+        else:
+            c = t.controller('master')
+            try:
+                # Get the hashed value of password
+                url1 = '/api/v1/data/controller/core/aaa/hash-password[password="%s"]' % str(password)
+                c.rest.get(url1)
+                myHash = c.rest.content()
+                myHashPass = myHash[0]['hashed-password']
+                # Assign password to user
+                url2 = '/api/v1/data/controller/core/aaa/local-user[user-name="%s"]' % str(username)
+                c.rest.patch(url2, {"password": str(myHashPass)})
+            except:
+                helpers.test_log(c.rest.error())
+                return False
+            else:
+                return True
+
+    def rest_add_rbac_group(self, group_name, rbac_view):
+        '''
+            Objective:
+            - Create a group and assign bigtap rbac-permission
+            
+            Inputs:
+            |group_name| Group Name that is being configured|
+            |rbac_view| RBAC View to be associated with group|            
+            
+            Return Value:
+            | True | On Configuration success|
+            | False | On Configuration failure|
+            
+        '''
+        try:
+            t = test.Test()
+        except:
+            return False
+        else:
+            c = t.controller('master')
+            try:
+                # Create a group first
+                url1 = '/api/v1/data/controller/core/aaa/group[name="%s"]' % str(group_name)
+                c.rest.put(url1, {"name": str(group_name)})
+                # Add rbac-view to Group
+                url2 = '/api/v1/data/controller/core/aaa/group[name="%s"]/rbac-permission' % str(group_name)
+                c.rest.patch(url2, [str(rbac_view)])
+            except:
+                helpers.test_log(c.rest.error())
+                return False
+            else:
+                return True
+
+    def rest_add_user_to_group(self, username, group_name):
+        '''
+            Objective:
+            - Add a user to group
+            
+            Inputs:
+            |group_name| Group Name that is being configured|
+            |username| username which is being assigned to the group|            
+            
+            Return Value:
+            | True | On Configuration success|
+            | False | On Configuration failure|
+            
+        '''
+        try:
+            t = test.Test()
+        except:
+            return False
+        else:
+            c = t.controller('master')
+            try:
+                # Add user to Group
+                url1 = '/api/v1/data/controller/core/aaa/group[name="%s"]/user' % str(group_name)
+                c.rest.patch(url1, [str(username)])
+            except:
+                helpers.test_log(c.rest.error())
+                return False
+            else:
+                return True
+
+    def rest_add_rbac_permission(self, rbac_view):
+        '''
+            Objective:
+            - Add a user to group
+            
+            Inputs:
+            |rbac_view| RBAC group name that is being configured|
+            
+            Return Value:
+            | True | On Configuration success|
+            | False | On Configuration failure|
+            
+        '''
+        try:
+            t = test.Test()
+        except:
+            return False
+        else:
+            c = t.controller('master')
+            try:
+                # Add user to Group
+                url1 = '/api/v1/data/controller/core/aaa/rbac-permission[name="%s"]' % str(rbac_view)
+                c.rest.put(url1, {"name": str(rbac_view)})
+            except:
+                helpers.test_log(c.rest.error())
+                return False
+            else:
+                return True
+
+    def rest_add_filter_interface_to_rbac(self, rbac_view, filter_name='allow-all'):
+        '''
+            Objective:
+            - Add a filter-interface to rbac-permission
+            
+            Inputs:
+            |rbac_view| RBAC group name that is being configured|
+            |filter_name| Filter Interface that is being added|      
+            
+            Return Value:
+            | True | On Configuration success|
+            | False | On Configuration failure|
+            
+        '''
+        try:
+            t = test.Test()
+        except:
+            return False
+        else:
+            c = t.controller('master')
+            try:
+                if 'allow-all' in filter_name:
+                    url1 = '/api/v1/data/controller/core/aaa/rbac-permission[name="%s"]/bigtap' % str(rbac_view)
+                    c.rest.patch(url1, {"allow-all-filter-interface": True})
+                else:
+                    url1 = '/api/v1/data/controller/core/aaa/rbac-permission[name="%s"]/bigtap/allowed-filter-interface[name="%s"]' % (str(rbac_view), str(filter_name))
+                    c.rest.put(url1, {"name": str(filter_name)})
+            except:
+                helpers.test_log(c.rest.error())
+                return False
+            else:
+                return True
+
+    def rest_add_delivery_interface_to_rbac(self, rbac_view, delivery_name='allow-all'):
+        '''
+            Objective:
+            - Add a delivery interface to rbac-permission
+            
+            Inputs:
+            |rbac_view| RBAC group name that is being configured|
+            |delivery_name| Delivery Interface that is being added|      
+            
+            Return Value:
+            | True | On Configuration success|
+            | False | On Configuration failure|
+            
+        '''
+        try:
+            t = test.Test()
+        except:
+            return False
+        else:
+            c = t.controller('master')
+            try:
+                if 'allow-all' in delivery_name:
+                    url1 = '/api/v1/data/controller/core/aaa/rbac-permission[name="%s"]/bigtap' % str(rbac_view)
+                    c.rest.patch(url1, {"allow-all-delivery-interface": True})
+                else:
+                    url1 = '/api/v1/data/controller/core/aaa/rbac-permission[name="%s"]/bigtap/allowed-delivery-interface[name="%s"]' % (str(rbac_view), str(delivery_name))
+                    c.rest.put(url1, {"name": str(delivery_name)})
+            except:
+                helpers.test_log(c.rest.error())
+                return False
+            else:
+                return True
+
+
+    def rest_add_service_to_rbac(self, rbac_view, service_name='allow-all'):
+        '''
+            Objective:
+            - Add a service to rbac-permission
+            
+            Inputs:
+            |rbac_view| RBAC group name that is being configured|
+            |service_name| Service that is being added|      
+            
+            Return Value:
+            | True | On Configuration success|
+            | False | On Configuration failure|
+            
+        '''
+        try:
+            t = test.Test()
+        except:
+            return False
+        else:
+            c = t.controller('master')
+            try:
+                if 'allow-all' in service_name:
+                    url1 = '/api/v1/data/controller/core/aaa/rbac-permission[name="%s"]/bigtap' % str(rbac_view)
+                    c.rest.patch(url1, {"allow-all-service": True})
+                else:
+                    url1 = '/api/v1/data/controller/core/aaa/rbac-permission[name="%s"]/bigtap/allowed-service[name="%s"]' % (str(rbac_view), str(service_name))
+                    c.rest.put(url1, {"name": str(service_name)})
+            except:
+                helpers.test_log(c.rest.error())
+                return False
+            else:
+                return True
+
+
+
+    def rest_add_match_to_rbac(self, rbac_view, match_name='allow-all'):
+        '''
+            Objective:
+            - Add a service to rbac-permission
+            
+            Inputs:
+            |rbac_view| RBAC group name that is being configured|
+            |service_name| Service that is being added|      
+            
+            Return Value:
+            | True | On Configuration success|
+            | False | On Configuration failure|
+            
+        '''
+        try:
+            t = test.Test()
+        except:
+            return False
+        else:
+            c = t.controller('master')
+            try:
+                if 'allow-all' in match_name:
+                    url1 = '/api/v1/data/controller/core/aaa/rbac-permission[name="%s"]/bigtap' % str(rbac_view)
+                    c.rest.patch(url1, {"allow-all-match": True})
+                # Currently not available
+                else:
+                    helpers.test_log(c.rest.error())
+                    return False
+#                    url1 = '/api/v1/data/controller/core/aaa/rbac-permission[name="%s"]/bigtap/allowed-service[name="%s"]' % (str(rbac_view), str(match_name))
+#                    c.rest.put(url1, {"name": str(match_name)})
+            except:
+                helpers.test_log(c.rest.error())
+                return False
+            else:
+                return True
