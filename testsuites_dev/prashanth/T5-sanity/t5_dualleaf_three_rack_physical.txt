@@ -18,8 +18,8 @@ Resource		 keywords_dev/prashanth/t5_dualleaf_three_rack_physical_resource.txt
 ${h4_ip}  192.168.0.11
 ${h5_ip}  192.168.0.30
 ${h6_ip}  192.168.0.31
-${h4_mac}	00:10:18:f0:e9:70
-${h5_mac}	90:e2:ba:4f:80:dc
+${h4_mac}	90:e2:ba:4f:80:b1
+${h5_mac}	90:e2:ba:4f:80:dd
 ${h6_mac}	90:e2:ba:4e:bb:90
 ${h1_intf0}  ethernet48
 ${h1_intf1}  ethernet48
@@ -51,7 +51,7 @@ add Fabric setup Three Rack Dual Leaf
    rest verify fabric link 
 
 ping h5 to h6 dual leaf single rack dynamic endpoints
-   [Tags]  smoke   sanity     
+   [Tags]  smoke   sanity       
    add portgroup to vns  A  A  p5  -1 
    add portgroup to vns  A  A  p6  -1
    sleep  5
