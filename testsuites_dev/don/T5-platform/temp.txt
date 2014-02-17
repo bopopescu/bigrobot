@@ -39,7 +39,7 @@ Verify Cluster Election Re-run
 	rest verify cluster election rerun
 
 Verify Cluster Master Reboot
-	[Tags]  HA  skipped
+	[Tags]  HA 
 	cli verify cluster master reboot
 
 Verify Cluster Slave Reboot
@@ -63,8 +63,8 @@ Delete User
 	rest delete user  3
 
 Verify Fabric Link
-	[Tags]  Temp 
-	verify endpoints
+	[Tags]  Temp  skipped
+	verify fabric lag
 	
 
 * Keywords      
