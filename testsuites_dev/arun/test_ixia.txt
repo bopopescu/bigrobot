@@ -152,7 +152,8 @@ Verify L3 traffic: frame size 64 bytes
     ${report}=             IXIA fetch port stats
     [Tags]  traffic  sanity
     
-Verify BiDirectional L3 traffic in Port Mode: S1 to S3
+Verify BiDirectional L3 traffic
+	[Tags]  skipped
     IXIA initialize  tg1
     ${stream}=  IXIA L3 add  flow=a<->b  frame_rate=10000  frame_size=1518  frame_cnt=50000
     ...     src_mac=01:02:03:04:05:06  dst_mac=01:02:03:04:05:07
@@ -163,3 +164,30 @@ Verify BiDirectional L3 traffic in Port Mode: S1 to S3
     sleep                  10
     ${report}=             IXIA fetch port stats    
     [Tags]  traffic  sanity
+    
+ BiDirectional L3 Traffic with TCP
+ 	[Tags]  skipped
+    IXIA initialize  tg1
+    ${stream}=  IXIA L3 add  flow=a<->b  frame_rate=10000  frame_size=1518  frame_cnt=50000
+    ...     src_mac=01:02:03:04:05:06  dst_mac=01:02:03:04:05:07  protocol=TCP  src_port=8001  dst_port=8002
+    ...     src_ip=100.1.1.1  src_gw=100.1.1.2  dst_ip=100.1.1.2  dst_gw=100.1.1.1  name=a_b_flow  
+    IXIA start L3 traffic  ${stream}
+    sleep  10
+    IXIA stop L3 traffic  ${stream}
+    sleep                  10
+    ${report}=             IXIA fetch port stats    
+    [Tags]  traffic  sanity
+ 
+ BiDirectional L3 Traffic with UDP
+# 	[Tags]  skipped
+    IXIA initialize  tg1
+    ${stream}=  IXIA L3 add  flow=a<->b  frame_rate=10000  frame_size=1518  frame_cnt=50000
+    ...     src_mac=01:02:03:04:05:06  dst_mac=01:02:03:04:05:07  protocol=UDP  src_port=8001  dst_port=8002
+    ...     src_ip=100.1.1.1  src_gw=100.1.1.2  dst_ip=100.1.1.2  dst_gw=100.1.1.1  name=a_b_flow  
+    IXIA start L3 traffic  ${stream}
+    sleep  10
+    IXIA stop L3 traffic  ${stream}
+    sleep                  10
+    ${report}=             IXIA fetch port stats    
+    [Tags]  traffic  sanity
+ 
