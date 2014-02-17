@@ -822,16 +822,20 @@ class Ixia(object):
             port_stats[port_stat['port']] = port_stat
         return port_stats
 
-    def ix_stop_traffic(self, traffic_stream):
+    def ix_stop_traffic(self, traffic_stream = None):
         '''
             Stops the traffis and returns port stats
             Ex Usage : IxStopTraffic(ix_handle, traffic_stream)
         '''
         handle = self._handle
         helpers.log("Stopping Traffic")
-        handle.execute('stopStatelessTraffic', traffic_stream)
-        helpers.log("Printing Statistics")
-        port_stats = self.ix_fetch_port_stats()
-        helpers.log("Port Stats : \n %s" % port_stats)
+        if traffic_stream is None:
+            helpers.log('No Traffic Stream is given, so stopping all the traffic running on this ixia Session...')
+            self._handle.execute('stop', self._handle.getRoot() + 'traffic')
+        else:
+            handle.execute('stopStatelessTraffic', traffic_stream)
+            helpers.log("Printing Statistics")
+            port_stats = self.ix_fetch_port_stats()
+            helpers.log("Port Stats : \n %s" % port_stats)
         helpers.log('Successfully Stopped the traffic for Stream %s ' % str(traffic_stream))
         return True
