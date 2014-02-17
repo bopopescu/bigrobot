@@ -432,3 +432,221 @@ class AppController(object):
                         return True
                 else:
                         return False
+
+
+
+###################################################
+# Platform: SNMP
+###################################################
+
+    def rest_show_snmp(self):
+        '''Execute CLI Command "show snmp"
+        
+            Input: N/A
+            
+            Returns: dictionary of SNMP related values
+        '''
+        try:
+            t = test.Test()
+        except:
+            return False
+        else:
+            c = t.controller('master')
+            try:
+                url = '/rest/v1/model/snmp-server-config/'
+                c.rest.get(url)
+            except:
+                helpers.test_failure(c.rest.error())
+                return False
+            else:
+                content = c.rest.content()
+                return content
+
+
+    def rest_show_snmp_host(self):
+        '''Execute CLI Command "show snmp"
+        
+            Input: N/A
+            
+            Returns: dictionary of SNMP related values
+        '''
+        try:
+            t = test.Test()
+        except:
+            return False
+        else:
+            c = t.controller('master')
+            try:
+                url = '/rest/v1/model/snmp-host-config/'
+                c.rest.get(url)
+            except:
+                helpers.test_failure(c.rest.error())
+                return False
+            else:
+                content = c.rest.content()
+                return content
+
+    def rest_add_snmp_keyword(self, keyword, value):
+        '''
+            Objective:
+            - Add snmp-server community, contact, location etc
+        
+            Input: 
+                `keyword`       DPID of the Switch
+            
+            Returns: True if the interface is up, false otherwise
+        '''
+        try:
+            t = test.Test()
+        except:
+            return False
+        else:
+            c = t.controller('master')
+            try:
+                url = '/rest/v1/model/snmp-server-config/?id=snmp'
+                if "trap-enable" in keyword:
+                    if "True" in value:
+                        c.rest.put(url, {"trap-enable": True})
+                    else:
+                        c.rest.put(url, {"trap-enable": False})
+                elif "null" in value:
+                    c.rest.put(url, {str(keyword): None})
+                else:
+                    c.rest.put(url, {str(keyword): str(value)})
+            except:
+                helpers.log(c.rest.error())
+                return False
+            else:
+                return True
+
+    def rest_add_snmp_host (self, host, udp_port):
+        '''
+            Objective:
+            - Add snmp-server host
+        
+            Input: 
+                `host`       DPID of the Switch
+                `udp_port`    UDP Port
+            
+            Returns: True if the interface is up, false otherwise
+        '''
+        try:
+            t = test.Test()
+        except:
+            return False
+        else:
+            c = t.controller('master')
+            try:
+                url = '/rest/v1/model/snmp-host-config/'
+                c.rest.put(url, {"host": str(host), "udp-port": int(udp_port)})
+            except:
+                helpers.log(c.rest.error())
+                return False
+            else:
+                return True
+
+    def rest_delete_snmp_host(self, host, udp_port):
+        '''
+            Objective:
+            - Delete snmp-server host
+        
+            Input: 
+                `host`       DPID of the Switch
+                `udp_port`    UDP Port
+            
+            Returns: True if the interface is up, false otherwise
+        '''
+        try:
+            t = test.Test()
+        except:
+            return False
+        else:
+            c = t.controller('master')
+            try:
+                url = '/rest/v1/model/snmp-host-config/?host=%s&udp-port=%s' % (host, udp_port)
+                c.rest.delete(url, {})
+            except:
+                helpers.log(c.rest.error())
+                return False
+            else:
+                return True
+
+    def rest_add_firewall_rule_snmp(self, protocol, proto_port):
+        '''
+            Objective:
+            - Open firewall port to allow UDP port
+            
+            Input: 
+                `udp_port`    UDP Port
+            
+            Returns: True if the configuration is successful, false otherwise            
+        '''
+        try:
+            t = test.Test()
+        except:
+            return False
+        else:
+            c1 = t.controller('master')
+            c2 = t.controller('slave')
+            try:
+                # Get Cluster Names:
+                url1 = "/rest/v1/system/ha/role reply"
+                c1.rest.get(url1)
+                master_output = c1.rest.content()
+                c2.rest.get(url1)
+                slave_output = c2.rest.content()
+                master_clustername = master_output['clustername']
+                slave_clustername = slave_output['clustername']
+                # Open Firewall
+                url2 = '/rest/v1/model/firewall-rule/'
+                interface_master = master_clustername + "|Ethernet|0"
+                interface_slave = slave_clustername + "|Ethernet|0"
+                c1.rest.put(url2, {"interface": str(interface_master), "vrrp-ip": "", "port": int(proto_port), "src-ip": "", "proto": str(protocol)})
+                c2.rest.put(url2, {"interface": str(interface_slave), "vrrp-ip": "", "port": int(proto_port), "src-ip": "", "proto": str(protocol)})
+            except:
+                helpers.log(c1.rest.error())
+                helpers.log(c2.rest.error())
+                return False
+            else:
+                return True
+
+
+    def rest_delete_firewall_rule_snmp(self, protocol, proto_port):
+        '''
+            Objective:
+            - Open firewall port to allow UDP port
+            
+            Input: 
+                `udp_port`    UDP Port
+            
+            Returns: True if the configuration is successful, false otherwise            
+        '''
+        try:
+            t = test.Test()
+        except:
+            return False
+        else:
+            c1 = t.controller('master')
+            c2 = t.controller('slave')
+            try:
+                # Get Cluster Names:
+                url1 = "/rest/v1/system/ha/role reply"
+                c1.rest.get(url1)
+                master_output = c1.rest.content()
+                c2.rest.get(url1)
+                slave_output = c2.rest.content()
+                master_clustername = master_output['clustername']
+                slave_clustername = slave_output['clustername']
+                # Open Firewall
+                interface_master = master_clustername + "|Ethernet|0"
+                interface_slave = slave_clustername + "|Ethernet|0"
+                urlmaster_delete = '/rest/v1/model/firewall-rule/?interface=' + interface_master + '&vrrp-ip=&port=' + str(proto_port) + '&src-ip=&proto=' + str(protocol)
+                urlslave_delete = '/rest/v1/model/firewall-rule/?interface=' + interface_slave + '&vrrp-ip=&port=' + str(proto_port) + '&src-ip=&proto=' + str(protocol)
+                c1.rest.put(interface_slave, {})
+                c2.rest.put(urlslave_delete, {})
+            except:
+                helpers.log(c1.rest.error())
+                helpers.log(c2.rest.error())
+                return False
+            else:
+                return True

@@ -89,6 +89,15 @@ class BsnCommon(object):
         '''
         return content[index][key]
 
+    def verify_json_key(self, content, index, key):
+        ''' Given a dictionary, return the value for a particular key
+        
+            Input:Dictionary, index and required key.
+            
+            Return Value:  return the value for a particular key
+        '''
+        return content[int(index)][str(key)]
+
     def add_ntp_server(self, node=None, ntp_server='0.bigswitch.pool.ntp.org'):
         '''
             Objective: Add an NTP server.
