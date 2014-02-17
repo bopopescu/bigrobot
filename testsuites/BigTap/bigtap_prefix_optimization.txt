@@ -1,5 +1,5 @@
 * Setting
-Documentation   BigTap Test Suite Release: Blackbird
+Documentation   BigTap Test Suite Release:Blackbird Feature:Prefix/VLAN Optimization
 Suite Setup     Bigtap list op l3_l4 suite setup
 Suite Teardown  Bigtap list op l3_l4 suite teardown
 Test Setup      Bigtap list op l3_l4 case setup

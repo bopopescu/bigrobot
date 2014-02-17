@@ -1,5 +1,5 @@
 * Setting
-Documentation   BigTap Test Suite
+Documentation   BigTap Test Suite Release:Blackbird Feature:L3-L4 Mode
 Suite Setup     Bigtap list op l3_l4 suite setup
 Suite Teardown  Bigtap list op l3_l4 suite teardown
 Test Setup      Bigtap list op l3_l4 case setup
@@ -9,7 +9,7 @@ Library         keywords_dev/mingtao/Common.py
 Library         keywords/BigTap.py 
 Library         keywords/BsnCommon.py  
 Library         OperatingSystem
-Resource	    testsuites_dev/mingtao/blackbird_list_op_l34_resource.txt
+Resource	testsuites/BigTap/blackbird_list_op_l34_resource.txt
 
 
 * Variable

@@ -1,5 +1,5 @@
 *Settings
-Documentation  BigTap Inport Masking: Release: Blackbird GA
+Documentation  BigTap Inport Masking: Release:Blackbird Feature:Inport Masking
 Suite Setup  inport suite setup
 Suite Teardown   inport suite teardown
 Test Setup   bigtap-inport test setup
