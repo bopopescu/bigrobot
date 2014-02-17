@@ -84,9 +84,16 @@ def error_msg(msg):
     print("Error: %s" % msg)
 
 
-def error_exit(msg):
+def error_exit(msg, exit_code=None):
+    """
+    exit_code follows the Robot Framework convention. Default is 255 which
+    matches "Unexpected internal error."
+    See https://twiki.cern.ch/twiki/bin/view/EMI/RobotFrameworkAdvancedGuide#Return_Codes
+    """
     error_msg(msg)
-    sys.exit(1)
+    if not exit_code:
+        exit_code = 255
+    sys.exit(exit_code)
 
 
 def file_not_exists(f):
@@ -101,11 +108,11 @@ def file_exists(f):
     return not file_not_exists(f)
 
 
-def error_exit_if_file_not_exists(msg, f):
+def error_exit_if_file_not_exists(msg, f, exit_code=None):
     if f is None:
         error_exit(''.join((msg, ': <file_not_specified>')))
     if not os.path.exists(f):
-        error_exit(''.join((msg, ': ', f)))
+        error_exit(''.join((msg, ': ', f)), exit_code)
 
 
 def exit_robot_immediately(msg=None):

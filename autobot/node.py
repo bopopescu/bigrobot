@@ -72,6 +72,14 @@ class Node(object):
         """
         raise NotImplementedError()
 
+    def connect(self, user, password, port=None, protocol='ssh', host=None,
+                name=None):
+        """
+        Connect to the node using either ssh or telnet.
+        Returns the session handle.
+        """
+        raise NotImplementedError()
+
 
 class ControllerNode(Node):
     def __init__(self, name, ip, user, password, t):
@@ -171,6 +179,18 @@ class ControllerNode(Node):
                                                      debug=self.dev_debug_level)
         return self.dev_console
 
+    def connect(self, user, password, port=None, protocol='ssh', host=None,
+                name=None):
+        if not host:
+            host = self.ip()
+        if not name:
+            name = self.name()
+        return devconf.ControllerDevConf(name=name,
+                                         host=host,
+                                         user=user,
+                                         password=password,
+                                         port=port,
+                                         protocol=protocol)
 
 class MininetNode(Node):
     def __init__(self, name, ip, controller_ip, controller_ip2,
@@ -229,6 +249,19 @@ class MininetNode(Node):
         self.send = self.dev.send
         self.expect = self.dev.expect
 
+    def connect(self, user, password, port=None, protocol='ssh', host=None,
+                name=None):
+        if not host:
+            host = self.ip()
+        if not name:
+            name = self.name()
+        return devconf.ControllerDevConf(name=name,
+                                         host=host,
+                                         user=user,
+                                         password=password,
+                                         port=port,
+                                         protocol=protocol)
+
 
 class HostNode(Node):
     def __init__(self, name, ip, user, password, t):
@@ -262,6 +295,19 @@ class HostNode(Node):
         self.set_prompt = self.dev.set_prompt
         self.send = self.dev.send
         self.expect = self.dev.expect
+
+    def connect(self, user, password, port=None, protocol='ssh', host=None,
+                name=None):
+        if not host:
+            host = self.ip()
+        if not name:
+            name = self.name()
+        return devconf.ControllerDevConf(name=name,
+                                         host=host,
+                                         user=user,
+                                         password=password,
+                                         port=port,
+                                         protocol=protocol)
 
 
 class SwitchNode(Node):
@@ -300,6 +346,19 @@ class SwitchNode(Node):
         self.send = self.dev.send
         self.expect = self.dev.expect
         self.info = self.dev.info
+
+    def connect(self, user, password, port=None, protocol='ssh', host=None,
+                name=None):
+        if not host:
+            host = self.ip()
+        if not name:
+            name = self.name()
+        return devconf.ControllerDevConf(name=name,
+                                         host=host,
+                                         user=user,
+                                         password=password,
+                                         port=port,
+                                         protocol=protocol)
 
 
 class IxiaNode(Node):
