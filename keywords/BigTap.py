@@ -384,9 +384,8 @@ class BigTap(object):
         """
         t = test.Test()
         s = t.switch(node)
-        bigtap = BigTap.BigTap()
         node_type = s.info('model')
-        size = bigtap.rest_show_switch_flow(node=node, return_value='maximum-entries')
+        size = self.rest_show_switch_flow(node=node, return_value='maximum-entries')
 
         if l3_l4_mode == "True":
             if node_type == 'LB9':
@@ -433,7 +432,6 @@ class BigTap(object):
         """
         t = test.Test()
         c = t.controller('master')
-        bigtap = BigTap.BigTap()
         i = 0
         sequence = 0
         expect_flow = 0
@@ -462,13 +460,13 @@ class BigTap(object):
                 g_size = int(num)
                 if match_type == 'ipv4' or match_type == 'mixed' :
                     name = 'G_' + str(i) + '_' + num
-                    bigtap.rest_add_address_group(name, 'ipv4')
-                    bigtap.gen_add_address_group_entries(name, 'ipv4', base, step, '255.255.255.255', g_size)
+                    self.rest_add_address_group(name, 'ipv4')
+                    self.gen_add_address_group_entries(name, 'ipv4', base, step, '255.255.255.255', g_size)
                     base = helpers.get_next_address('ipv4', base, '5.0.0.0')
                 if match_type == 'ipv6' or match_type == 'mixed' :
                     name6 = 'G6_' + str(i) + '_' + num
-                    bigtap.rest_add_address_group(name6, 'ipv6')
-                    bigtap.gen_add_address_group_entries(name6, 'ipv6', v6base, v6step, 'FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF', g_size)
+                    self.rest_add_address_group(name6, 'ipv6')
+                    self.gen_add_address_group_entries(name6, 'ipv6', v6base, v6step, 'FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF', g_size)
                     v6base = helpers.get_next_address('ipv6', v6base, '11:0:0:0:0:0:0:0')
 
                 for loop in range(0, 8):
@@ -509,22 +507,22 @@ class BigTap(object):
 
 
                         helpers.log("INFO:  ********* data is  %s*****" % data)
-                        if not bigtap.rest_add_policy_match('admin-view', policy, sequence, data):
+                        if not self.rest_add_policy_match('admin-view', policy, sequence, data):
                             helpers.test_failure(c.rest.error())
 
                         expect_flow = expect_flow + g_size
 
                         helpers.sleep(30)
-                        flow = bigtap.rest_show_switch_flow(node=node)
+                        flow = self.rest_show_switch_flow(node=node)
                         if flow == expect_flow:
                             helpers.test_log("INFO: Switch - %s  tcam entry - %s" % (node, str(flow)))
                         elif  flow == 0:
                             helpers.test_log("ERROR: Switch - %s  tcam expect -  %s,  actual - %s" % (node, str(expect_flow), str(flow)))
-                            if not bigtap.rest_delete_policy_match('admin-view', policy, sequence):
+                            if not self.rest_delete_policy_match('admin-view', policy, sequence):
                                 helpers.test_failure(c.rest.error())
                             expect_flow = expect_flow - g_size
                             helpers.sleep(60)
-                            flow = bigtap.rest_show_switch_flow(node=node)
+                            flow = self.rest_show_switch_flow(node=node)
                             if flow == expect_flow:
                                 if ether == '2048':
                                     v4Flag = False
