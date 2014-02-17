@@ -5,7 +5,7 @@ Documentation    T5 Platform Smoke/Sanity Test Suite
 Suite Setup      base suite setup
 Suite Teardown   base suite teardown
 Test Setup       T5 base test setup
-Test Teardown    T5 base test teardown
+#Test Teardown    T5 base test teardown
 Force Tags       T5 
 Library          keywords/BsnCommon.py
 Library		 keywords_dev/don/T5Platform.py
@@ -55,7 +55,7 @@ Add physical switches to the controller
    rest verify fabric link 
    
 Add h1,h2,h3 in to a VNS and verify the connectivity
-   [Tags]  sanity  skipped 
+   [Tags]  sanity   skipped
    add a tenant  h1h2h3
    add a vns  h1h2h3  h1h2h3
    add portgroup to vns  h1h2h3  h1h2h3  p1  10
@@ -69,7 +69,7 @@ Add h1,h2,h3 in to a VNS and verify the connectivity
 
 
 Add h4,h5,h6 in to a VNS and verify the connectivity
-   [Tags]  sanity  skipped 
+   [Tags]  sanity   skipped
    add a tenant  h4h5h6
    add a vns  h4h5h6  h4h5h6
    add portgroup to vns  h4h5h6  h4h5h6  p4  -1
@@ -150,7 +150,7 @@ ping h1 to h3 dual rack dual leaf static endpoints tag
    
 
 Delete physical switches from the controller
-	[Tags]  smoke  sanity
+	[Tags]  smoke  sanity  
 	delete fabric switch  
 
 * Keywords
