@@ -6,7 +6,7 @@
 # mn  : Mininet server
 
 c1:
-  ip: 10.192.5.51
+  ip: 10.192.99.105
 s1:
   ip: 10.195.0.33
   alias: leaf0-a
