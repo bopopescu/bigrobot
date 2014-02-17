@@ -143,4 +143,8 @@ class HaControllerNode(object):
 
     def waitfor(self, *args, **kwargs):
         n = self.t.controller(self.name(), resolve_mastership=True)
-        return n.expect(*args, **kwargs)
+        return n.waitfor(*args, **kwargs)
+
+    def connect(self, *args, **kwargs):
+        n = self.t.controller(self.name(), resolve_mastership=True)
+        return n.connect(*args, **kwargs)
