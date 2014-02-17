@@ -282,8 +282,9 @@ class Ixia(object):
         return trafficStream1
     
     def ix_setup_traffic_streams_ethernet(self, mac1, mac2, frameType, frameSize, frameRate,
-                                      frameMode, frameCount, flow, name,
-                                      ethertype=None, vlan_id=None, crc=None, src_ip = None, dst_ip = None, no_arp=False):
+                                      frameMode, frameCount, flow, name, ethertype=None, vlan_id=None,
+                                      crc=None, src_ip = None, dst_ip = None, no_arp=False,
+                                      protocol= None, src_port= None, dst_port = None):
         '''
             Returns traffic stream with 2 flows with provided mac sources
             Ex Usage:
@@ -291,11 +292,13 @@ class Ixia(object):
         '''
         handle = self._handle
         if no_arp:
+            helpers.log('Adding Basic ethernet type Stream for sending without Arp Resolution')
             trafficStream1 = self._handle.add(self._handle.getRoot() + 'traffic', 'trafficItem', '-name',
                                         name, '-allowSelfDestined', False, '-trafficItemType',
                                         'l2L3', '-enabled', True, '-transmitMode', 'interleaved',
                                         '-biDirectional', False, '-trafficType', 'ethernetVlan', '-hostsPerNetwork', '1')
         else:
+            helpers.log('Adding Ipv4 type Stream for sending with Arp Resolution')
             trafficStream1 = handle.add(handle.getRoot()+'/traffic','trafficItem','-name','IPv4 traffic','-allowSelfDestined',False,
                        '-trafficItemType','l2L3','-mergeDestinations',False,'-egressEnabled',False,'-srcDestMesh','oneToOne',
                        '-enabled',True,'-routeMesh','oneToOne','-transmitMode','interleaved','-biDirectional',False,
@@ -333,19 +336,42 @@ class Ixia(object):
                                       '-fieldValue', vlan_id)
             self._handle.setAttribute(trafficStream1 + '/highLevelStream:1/stack:"vlan-2"/field:"vlan.header.vlanTag.vlanID-3"',
                                       '-optionalEnabled', True)
+        if protocol is not None:
+            helpers.log('Adding Protocol Field in IP Header ..')
+            self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:1/stack:"ipv4-2"/field:"ipv4.header.protocol-25"',
+                                          '-countValue', 1, '-fieldValue', protocol,
+                                         '-optionalEnabled', 'true')
+            if protocol == 'TCP':
+                helpers.log('Adding Src_port: %s and Dst_Port: %s for Protocl TCP..!!!' % (src_port, dst_port))
+                self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:1/stack:"tcp-3"/field:"tcp.header.srcPort-1"',
+                                              '-countValue', 1, '-fieldValue', src_port, '-singleValue', src_port,
+                                             '-optionalEnabled', 'true', '-auto', 'false')
+                self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:1/stack:"tcp-3"/field:"tcp.header.dstPort-2"',
+                                              '-countValue', 1, '-fieldValue', dst_port, '-singleValue', dst_port,
+                                             '-optionalEnabled', 'true', '-auto', 'false')
+            if protocol == 'UDP':
+                helpers.log('Adding Src_port: %s and Dst_Port: %s for Protocl UDP..!!!' % (src_port, dst_port))
+                self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:1/stack:"udp-3"/field:"udp.header.srcPort-1"',
+                                              '-countValue', 1, '-fieldValue', src_port, '-singleValue', src_port,
+                                             '-optionalEnabled', 'true', '-auto', 'false')
+                self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:1/stack:"udp-3"/field:"udp.header.dstPort-2"',
+                                              '-countValue', 1, '-fieldValue', dst_port, '-singleValue', dst_port,
+                                             '-optionalEnabled', 'true', '-auto', 'false')
         if src_ip is not None:
-                helpers.log('Adding src_ip and dst_ip !!!')
+                helpers.log('Adding src_ip and dst_ip ..')
                 self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:1/stack:"ipv4-2"/field:"ipv4.header.srcIp-27"',
                                           '-countValue', 1, '-fieldValue', src_ip, '-singleValue', src_ip,
-                                         '-optionalEnabled', 'true')
+                                         '-optionalEnabled', 'true', '-auto', 'false')
                 self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:1/stack:"ipv4-2"/field:"ipv4.header.dstIp-28"',
                                           '-countValue', 1, '-fieldValue', dst_ip, '-singleValue', dst_ip,
-                                         '-optionalEnabled', 'true')
+                                         '-optionalEnabled', 'true', '-auto', 'false')
+
         if frameCount is not None:
             self._handle.setAttribute(trafficStream1 + '/highLevelStream:1/' + 'transmissionControl', '-type',
                                 'fixedFrameCount')
             self._handle.setAttribute(trafficStream1 + '/highLevelStream:1/' + 'transmissionControl',
                                 '-frameCount', frameCount)
+
         if flow == 'bi-directional':
             helpers.log('Adding Another  ixia end point set for Bi Directional Traffic..')
             endpointSet2 = self._handle.add(trafficStream1, 'endpointSet', '-name', 'l2u', '-sources', mac2,
@@ -383,14 +409,36 @@ class Ixia(object):
                                           '-fieldValue', vlan_id)
                 self._handle.setAttribute(trafficStream1 + '/highLevelStream:2/stack:"vlan-2"/field:"vlan.header.vlanTag.vlanID-3"',
                                           '-optionalEnabled', True)
-            if src_ip is not None:
-                helpers.log('Adding src_ip and dst_ip !!!')
-                self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:2/stack:"ipv4-2"/field:"ipv4.header.srcIp-27"',
-                                          '-countValue', 1, '-fieldValue', src_ip, '-singleValue', src_ip,
-                                         '-optionalEnabled', 'true')
-                self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:2/stack:"ipv4-2"/field:"ipv4.header.dstIp-28"',
-                                          '-countValue', 1, '-fieldValue', dst_ip, '-singleValue', dst_ip,
-                                         '-optionalEnabled', 'true')
+            
+            if protocol is not None:
+                helpers.log('Adding Protocol Field in IP Header ..')
+                self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:2/stack:"ipv4-2"/field:"ipv4.header.protocol-25"',
+                                              '-countValue', 1, '-fieldValue', protocol,
+                                             '-optionalEnabled', 'true')
+                if protocol == 'TCP':
+                    helpers.log('Adding Src_port: %s and Dst_Port: %s for Protocl TCP..!!!' % (dst_port, src_port))
+                    self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:2/stack:"tcp-3"/field:"tcp.header.srcPort-1"',
+                                                  '-countValue', 1, '-fieldValue', dst_port, '-singleValue', dst_port,
+                                                 '-optionalEnabled', 'true', '-auto', 'false')
+                    self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:2/stack:"tcp-3"/field:"tcp.header.dstPort-2"',
+                                                  '-countValue', 1, '-fieldValue', src_port, '-singleValue', src_port,
+                                                 '-optionalEnabled', 'true', '-auto', 'false')
+                if protocol == 'UDP':
+                    helpers.log('Adding Src_port: %s and Dst_Port: %s for Protocl UDP..!!!' % (src_port, dst_port))
+                    self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:2/stack:"udp-3"/field:"udp.header.srcPort-1"',
+                                                  '-countValue', 1, '-fieldValue', dst_port, '-singleValue', dst_port,
+                                                 '-optionalEnabled', 'true', '-auto', 'false')
+                    self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:2/stack:"udp-3"/field:"udp.header.dstPort-2"',
+                                                  '-countValue', 1, '-fieldValue', src_port, '-singleValue', src_port,
+                                                 '-optionalEnabled', 'true', '-auto', 'false')
+                if src_ip is not None:
+                    helpers.log('Adding src_ip and dst_ip !!!')
+                    self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:2/stack:"ipv4-2"/field:"ipv4.header.srcIp-27"',
+                                              '-countValue', 1, '-fieldValue', dst_ip, '-singleValue', dst_ip,
+                                             '-optionalEnabled', 'true')
+                    self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:2/stack:"ipv4-2"/field:"ipv4.header.dstIp-28"',
+                                              '-countValue', 1, '-fieldValue', src_ip, '-singleValue', src_ip,
+                                             '-optionalEnabled', 'true')
         self._handle.setAttribute(self._handle.getList(trafficStream1, 'tracking')[0], '-trackBy', 'trackingenabled0')
         
         self._handle.commit()
@@ -553,10 +601,13 @@ class Ixia(object):
         dst_gw_ip = kwargs.get('dst_gw', '20.0.0.1')
         src_ip_step = kwargs.get('src_ip_step','0.0.0.1')
         dst_ip_step = kwargs.get('dst_ip_step', '0.0.0.1')
+        protocol = kwargs.get('protocol','6')
+        src_port = kwargs.get('src_port', '6001')
+        dst_port = kwargs.get('dst_port', '7001')
 
         
-        no_arp = kwargs.get('no_arp', 'False')
-
+        no_arp = kwargs.get('no_arp', False)
+        
         ix_tcl_server = self._tcl_server_ip
         flow = kwargs.get('flow', None)
         
@@ -617,9 +668,12 @@ class Ixia(object):
             (ip_devices, mac_devices) = self.ix_create_device_ethernet_ip(create_topo, s_cnt, d_cnt, src_mac, dst_mac, src_mac_step, 
                                                                       dst_mac_step, src_ip, dst_ip, src_gw_ip, dst_gw_ip, src_ip_step,
                                                                       dst_ip_step, dst_mac, src_mac)
+            helpers.log('Created Mac Devices : %s ' % mac_devices)
+            
             traffic_stream = self.ix_setup_traffic_streams_ethernet(mac_devices[0], mac_devices[1],
                                                        frame_type, self._frame_size, frame_rate, frame_mode,
-                                                       frame_cnt, stream_flow, name, src_ip = src_ip, dst_ip = dst_ip)
+                                                       frame_cnt, stream_flow, name, src_ip = src_ip, dst_ip = dst_ip, protocol = protocol,
+                                                       src_port = src_port, dst_port = dst_port, no_arp = no_arp)
             
             traffic_stream1.append(traffic_stream)
         else:
@@ -630,10 +684,9 @@ class Ixia(object):
             self.ix_start_hosts()
             self._started_hosts = True
             traffic_item = self.ix_setup_traffic_streams_ethernet(ip_devices[0], ip_devices[1], frame_type, self._frame_size, frame_rate, frame_mode,
-                                                         frame_cnt, stream_flow, name)
+                                                         frame_cnt, stream_flow, name, protocol= protocol,
+                                                         src_port = src_port, dst_port = dst_port)
             traffic_stream1.append(traffic_item)
-        
-        
         
         helpers.log('### Created Traffic Stream with Ip Devices ...')
         helpers.log ("Success Creating Ip Traffic Stream!!!")
