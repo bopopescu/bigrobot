@@ -78,6 +78,9 @@ ${portgroup8}		leaf2-bm8
 ${portgroup9}		leaf2-bm9
 ${portgroup10}		leaf2-bm10
 ${portgroup11}		leaf2-bm11
+${leavegroup0}		leaf0
+${leavegroup1}		leaf1
+${leavegroup2}		leaf2
 ${bm0_ip}			10.10.11.11
 ${bm1_ip}			10.10.12.11
 ${bm2_ip}			10.10.23.11
@@ -115,7 +118,6 @@ ${bm8_bondif}		bm8-bond0
 ${bm9_bondif}		bm9-bond0
 ${bm10_bondif}		bm10-bond0
 ${bm11_bondif}		bm11-bond0
-
 ${vns1_vlan1}		101
 ${vns1_vlan2}		102
 ${vns1_vlan3}		103
@@ -253,6 +255,14 @@ setup topology
 	REST add portgroup							${portgroup9}
 	REST add portgroup							${portgroup10}
 	REST add portgroup							${portgroup11}
+	REST add leaf group							${leaf0a_name}		${leafgroup0}
+	REST add leaf group							${leaf0b_name}		${leafgroup0}
+	REST add leaf group							${leaf1a_name}		${leafgroup1}
+	REST add leaf group							${leaf1b_name}		${leafgroup1}
+	REST add leaf group							${leaf2a_name}		${leafgroup2}
+	REST add leaf group							${leaf2b_name}		${leafgroup2}
+		
+	
 	REST add interface to portgroup				${leaf0a_name}		${leaf0a_intf1}		${portgroup0} 
 	REST add interface to portgroup				${leaf0b_name}		${leaf0b_intf1}		${portgroup0} 
 	REST add interface to portgroup				${leaf0a_name}		${leaf0a_intf2}		${portgroup1} 
@@ -298,6 +308,8 @@ setup topology
 	REST add portgroup to vns					${tenant2_name}  	${vns2_2} 		${portgroup9} 		${vns2_vlan2}
 	REST add portgroup to vns					${tenant2_name}  	${vns2_3} 		${portgroup10} 		${untaggedvlan}	
 	
+teardown topology
+	sleep										1
 	
 	
 	
