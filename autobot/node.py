@@ -83,13 +83,6 @@ class Node(object):
 
 class ControllerNode(Node):
     def __init__(self, name, ip, user, password, t):
-        # If user/password info is specified in the topology params then use it
-        authen = t.topology_params_authen(name)
-        if authen[0]:
-            user = authen[0]
-        if authen[1]:
-            password = authen[1]
-
         super(ControllerNode, self).__init__(name, ip, user, password,
                                              t.topology_params())
 
@@ -122,7 +115,9 @@ class ControllerNode(Node):
 
         self.rest = BsnRestClient(base_url=self.base_url,
                                   platform=self.platform(),
-                                  host=self.ip())
+                                  host=self.ip(),
+                                  user=self.user,
+                                  password=self.password)
         self.t = t
 
         # Shortcuts
@@ -265,13 +260,6 @@ class MininetNode(Node):
 
 class HostNode(Node):
     def __init__(self, name, ip, user, password, t):
-        # If user/password info is specified in the topology params then use it
-        authen = t.topology_params_authen(name)
-        if authen[0]:
-            user = authen[0]
-        if authen[1]:
-            password = authen[1]
-
         super(HostNode, self).__init__(name, ip, user, password,
                                        t.topology_params())
 
@@ -312,13 +300,6 @@ class HostNode(Node):
 
 class SwitchNode(Node):
     def __init__(self, name, ip, user, password, t):
-        # If user/password info is specified in the topology params then use it
-        authen = t.topology_params_authen(name)
-        if authen[0]:
-            user = authen[0]
-        if authen[1]:
-            password = authen[1]
-
         super(SwitchNode, self).__init__(name, ip, user, password,
                                          t.topology_params())
 
@@ -368,7 +349,6 @@ class IxiaNode(Node):
         self._tcl_server_port = t.params(name, 'tcl_server_port', 8009)
         self._ix_version = t.params(name, 'ix_version', '7.10')
         self._ports = t.params(name, 'ports')
-        helpers.log("***** IXIA ports for '%s': %s" % (name, self._ports))
 
         super(IxiaNode, self).__init__(name, self._chassis_ip,
                                        params=t.topology_params())

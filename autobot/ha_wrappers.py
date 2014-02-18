@@ -66,6 +66,10 @@ class HaBsnRestClient(object):
         n = self.t.controller(self.name(), resolve_mastership=True)
         return n.rest.delete(*args, **kwargs)
 
+    # def request_session_cookie(self, *args, **kwargs):
+    #    n = self.t.controller(self.name(), resolve_mastership=True)
+    #    return n.rest.request_session_cookie(*args, **kwargs)
+
 
 class HaControllerNode(object):
     """
