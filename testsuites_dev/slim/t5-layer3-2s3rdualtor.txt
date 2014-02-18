@@ -78,9 +78,9 @@ ${portgroup8}		leaf2-bm8
 ${portgroup9}		leaf2-bm9
 ${portgroup10}		leaf2-bm10
 ${portgroup11}		leaf2-bm11
-${leavegroup0}		leaf0
-${leavegroup1}		leaf1
-${leavegroup2}		leaf2
+${leafgroup0}		leaf0
+${leafgroup1}		leaf1
+${leafgroup2}		leaf2
 ${bm0_ip}			10.10.11.11
 ${bm1_ip}			10.10.12.11
 ${bm2_ip}			10.10.23.11
