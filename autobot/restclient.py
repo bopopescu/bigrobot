@@ -36,13 +36,15 @@ class RestClient(object):
         self.user = user
         self.password = password
 
-        if user and password:
-            self.authen_str = self.authen_encoding(user, password)
-            self.default_header['authorization'] = 'Basic %s' % self.authen_str
+    def authen_encoding(self, user=None, password=None):
+        if not user:
+            user = self.user
+        if not password:
+            password = self.password
 
-    def authen_encoding(self, user, password):
         base64str = base64.encodestring('%s:%s' % (user, password))
-        return base64str.replace('\n', '')
+        self.default_header['authorization'] = 'Basic %s' % base64str.replace('\n', '')
+        return self.default_header['authorization']
 
     def request_session_cookie(self, url=None):
         if url:
@@ -193,7 +195,7 @@ class RestClient(object):
 
             helpers.log("It appears the session cookie has expired. Requesting new session cookie.")
             self.request_session_cookie()
-            helpers.sleep(2)
+            # helpers.sleep(2)
             # Re-run command
             result = self._http_request(*args, **kwargs)
         else:
