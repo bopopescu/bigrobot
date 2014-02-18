@@ -2,11 +2,15 @@ c1:
   #ip: 10.192.5.51     # t5
   #ip: 10.192.96.96    # bigwire
   #ip: 10.192.96.1     # bigtap
-  #ip: 10.192.104.1    # BigTap
-  ip: 10.192.106.10    # Don's T5 (for fabric testing)
+  ip: 10.192.104.1    # BigTap
+  #ip: 10.192.97.1    # Animesh's bigtap
+  #ip: 10.192.106.10    # Don's T5 (for fabric testing)
   #ip: 10.192.103.31    # Tomasz's BigTap controller (MASTER-BLOCKED upgrade test)
   #ip: 10.192.5.121    # T5 (Prashanth's)
   set_devconf_debug_level: 0
+
+#c2:
+#  ip: 10.192.97.2    # Animesh's bigtap
 
 #s1:
 #  ip: 10.195.0.34
