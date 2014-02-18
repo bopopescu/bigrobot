@@ -425,6 +425,125 @@ class Test(object):
         else:
             return self.topology(*args, **kwargs)
 
+    def node_reconnect(self, node, **kwargs):
+        helpers.log("Node reconnect for '%s'" % node)
+
+        # Resolve 'master' or 'slave' to actual name (e.g., 'c1', 'c2')
+        if helpers.is_controller(node):
+            node_name = self.controller(node, resolve_mastership=True).name()
+        else:
+            node_name = self.node(node).name()
+        helpers.log("Actual node name is '%s'" % node_name)
+        c = self.node_connect(node_name, **kwargs)
+        c.rest.request_session_cookie()
+        return self.node(node)
+
+    def node_connect(self, node, user=None, password=None,
+                     controller_ip=None, controller_ip2=None):
+        # Matches the following device types:
+        #  Controllers: c1, c2, controller, controller1, controller2, master, slave
+        #  Mininet: mn, mn1, mn2
+        #  Switches: s1, s2, spine1, leaf1, filter1, delivery1
+        #
+        match = re.match(r'^(c\d|controller\d?|master|slave|mn\d?|mininet\d?|s\d+|spine\d+|leaf\d+|s\d+|h\d+|tg\d+)$', node)
+        if not match:
+            helpers.environment_failure("Unknown/unsupported device '%s'" % node)
+
+        host = None
+        params = self.topology_params()
+        if 'ip' in params[node]:
+            host = params[node]['ip']
+
+        t = self  # Test handle
+
+
+        # Check for user name and password. Here is the order of preference:
+        # 1) prefer user/password provided in method arguments
+        # 2) else prefer user/password provided in topo file
+        # 3) else prefer user/password provided in config/bsn.yaml
+
+        authen = t.topology_params_authen(node)
+
+        if user:
+            pass
+        elif authen[0]:
+            user = authen[0]
+
+        if password:
+            pass
+        elif authen[1]:
+            password = authen[1]
+
+        if helpers.is_controller(node):
+            helpers.log("Initializing controller '%s'" % node)
+
+            if not user:
+                user = self.controller_user()
+            if not password:
+                password = self.controller_password()
+
+            n = a_node.ControllerNode(node, host, user, password, t)
+        elif helpers.is_mininet(node):
+            helpers.log("Initializing Mininet '%s'" % node)
+            if not self._has_a_controller:
+                helpers.environment_failure("Cannot bring up Mininet without a controller")
+
+            # Use the OpenFlow port defined in the controller ('c1')
+            # if it's defined.
+            if 'openflow_port' in self.topology_params()['c1']:
+                openflow_port = self.topology_params()['c1']['openflow_port']
+            else:
+                openflow_port = None
+
+            if not user:
+                user = self.mininet_user()
+            if not password:
+                password = self.mininet_password()
+
+            n = a_node.MininetNode(name=node,
+                                   ip=host,
+                                   controller_ip=controller_ip,
+                                   controller_ip2=controller_ip2,
+                                   user=user,
+                                   password=password,
+                                   t=t,
+                                   openflow_port=openflow_port)
+        elif helpers.is_host(node):
+            helpers.log("Initializing host '%s'" % node)
+            n = a_node.HostNode(node,
+                                host,
+                                self.host_user(),
+                                self.host_password(),
+                                t)
+        elif helpers.is_switch(node):
+            helpers.log("Initializing switch '%s'" % node)
+
+            if not user:
+                user = self.switch_user()
+            if not password:
+                password = self.switch_password()
+
+            n = a_node.SwitchNode(node, host, user, password, t)
+        elif helpers.is_traffic_generator(node):
+            helpers.log("Initializing traffic generator '%s'" % node)
+            if 'platform' not in self.topology_params()[node]:
+                helpers.environment_failure("Traffic generator '%s' does not have platform (e.g., platform: 'ixia')"
+                                            % node)
+            platform = self.topology_params()[node]['platform']
+            if platform.lower() == 'ixia':
+                n = a_node.IxiaNode(node, t)
+            else:
+                helpers.environment_failure("Unsupported traffic generator '%s'" % platform)
+        else:
+            helpers.environment_failure("Not able to initialize device '%s'" % node)
+        self.topology(node, n)
+
+        if n.dev:
+            helpers.log("Exscript driver for '%s': %s"
+                        % (node, n.dev.conn.get_driver()))
+            helpers.log("Node '%s' is platform '%s'" % (node, n.platform()))
+        return n
+
     def initialize(self):
         """
         Initializes the test topology. This should be called prior to test case
@@ -468,80 +587,9 @@ class Test(object):
         helpers.debug("List of nodes (controllers must appear first): %s"
                       % list_of_nodes)
         for key in list_of_nodes:
-            # Matches the following device types:
-            #  Controllers: c1, c2, controller, controller1, controller2, master, slave
-            #  Mininet: mn, mn1, mn2
-            #  Switches: s1, s2, spine1, leaf1, filter1, delivery1
-            #
-            match = re.match(r'^(c\d|controller\d?|master|slave|mn\d?|mininet\d?|s\d+|spine\d+|leaf\d+|s\d+|h\d+|tg\d+)$', key)
-            if not match:
-                helpers.environment_failure("Unknown/unsupported device '%s'" % key)
-
-            host = None
-            if 'ip' in params[key]:
-                host = params[key]['ip']
-
-            t = self  # Test handle
-
-            if helpers.is_controller(key):
-                helpers.log("Initializing controller '%s'" % key)
-                n = a_node.ControllerNode(key,
-                                          host,
-                                          self.controller_user(),
-                                          self.controller_password(),
-                                          t)
-            elif helpers.is_mininet(key):
-                helpers.log("Initializing Mininet '%s'" % key)
-                if not self._has_a_controller:
-                    helpers.environment_failure("Cannot bring up Mininet without a controller")
-
-                # Use the OpenFlow port defined in the controller ('c1')
-                # if it's defined.
-                if 'openflow_port' in self.topology_params()['c1']:
-                    openflow_port = self.topology_params()['c1']['openflow_port']
-                else:
-                    openflow_port = None
-
-                n = a_node.MininetNode(name=key,
-                                       ip=host,
-                                       controller_ip=controller_ip,
-                                       controller_ip2=controller_ip2,
-                                       user=self.mininet_user(),
-                                       password=self.mininet_password(),
-                                       t=t,
-                                       openflow_port=openflow_port)
-            elif helpers.is_host(key):
-                helpers.log("Initializing host '%s'" % key)
-                n = a_node.HostNode(key,
-                                    host,
-                                    self.host_user(),
-                                    self.host_password(),
-                                    t)
-            elif helpers.is_switch(key):
-                helpers.log("Initializing switch '%s'" % key)
-                n = a_node.SwitchNode(key,
-                                      host,
-                                      self.switch_user(),
-                                      self.switch_password(),
-                                      t)
-            elif helpers.is_traffic_generator(key):
-                helpers.log("Initializing traffic generator '%s'" % key)
-                if 'platform' not in self.topology_params()[key]:
-                    helpers.environment_failure("Traffic generator '%s' does not have platform (e.g., platform: 'ixia')"
-                                                % key)
-                platform = self.topology_params()[key]['platform']
-                if platform.lower() == 'ixia':
-                    n = a_node.IxiaNode(key, t)
-                else:
-                    helpers.environment_failure("Unsupported traffic generator '%s'" % platform)
-            else:
-                helpers.environment_failure("Not able to initialize device '%s'" % key)
-            self.topology(key, n)
-
-            if n.dev:
-                helpers.log("Exscript driver for '%s': %s"
-                            % (key, n.dev.conn.get_driver()))
-                helpers.log("Node '%s' is platform '%s'" % (key, n.platform()))
+            self.node_connect(key,
+                              controller_ip=controller_ip,
+                              controller_ip2=controller_ip2)
 
         helpers.prettify_log("self._topology: ", self._topology)
         helpers.log("Test object initialization completed.")
@@ -635,18 +683,7 @@ class Test(object):
         if not n.dev:
             helpers.log("DevConf session is not available for node '%s'" % name)
             return
-
-        platform = n.platform()
-
-        helpers.log("Setting up HTTP session cookies for REST access on '%s' (platform=%s)"
-                    % (n.name(), platform))
-
-        if helpers.is_bvs(platform):
-            url = "/api/v1/auth/login"
-        elif helpers.is_bigtap(platform) or helpers.is_bigwire(platform):
-            url = "/auth/login"
-
-        return n.rest.request_session_cookie(url)
+        return n.rest.request_session_cookie()
 
     def setup_switch(self, name):
         """

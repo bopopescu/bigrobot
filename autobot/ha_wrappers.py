@@ -66,6 +66,10 @@ class HaBsnRestClient(object):
         n = self.t.controller(self.name(), resolve_mastership=True)
         return n.rest.delete(*args, **kwargs)
 
+    # def request_session_cookie(self, *args, **kwargs):
+    #    n = self.t.controller(self.name(), resolve_mastership=True)
+    #    return n.rest.request_session_cookie(*args, **kwargs)
+
 
 class HaControllerNode(object):
     """
@@ -88,6 +92,14 @@ class HaControllerNode(object):
     def ip(self):
         n = self.t.controller(self.name(), resolve_mastership=True)
         return n.ip()
+
+    def user(self):
+        n = self.t.controller(self.name(), resolve_mastership=True)
+        return n.user()
+
+    def password(self):
+        n = self.t.controller(self.name(), resolve_mastership=True)
+        return n.password()
 
     def platform(self, *args, **kwargs):
         n = self.t.controller(self.name(), resolve_mastership=True)
@@ -143,4 +155,8 @@ class HaControllerNode(object):
 
     def waitfor(self, *args, **kwargs):
         n = self.t.controller(self.name(), resolve_mastership=True)
-        return n.expect(*args, **kwargs)
+        return n.waitfor(*args, **kwargs)
+
+    def connect(self, *args, **kwargs):
+        n = self.t.controller(self.name(), resolve_mastership=True)
+        return n.connect(*args, **kwargs)

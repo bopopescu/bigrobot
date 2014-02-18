@@ -19,7 +19,7 @@ class RestClient(object):
         'unknown': 'Unknown error (unexpected HTTP status code)'
     }
 
-    def __init__(self, base_url=None, u=None, p=None,
+    def __init__(self, base_url=None, user=None, password=None,
                  content_type='application/json'):
         self.http = httplib2.Http(timeout=RestClient.default_timeout)
 
@@ -33,21 +33,26 @@ class RestClient(object):
         self.session_cookie = None
         self.session_cookie_loop = 0
         self.last_result = None
+        self.user = user
+        self.password = password
 
-        if u and p:
-            self.authen_str = self.authen_encoding(u, p)
-            self.default_header['authorization'] = 'Basic %s' % self.authen_str
+    def authen_encoding(self, user=None, password=None):
+        if not user:
+            user = self.user
+        if not password:
+            password = self.password
 
-    def authen_encoding(self, u, p):
-        base64str = base64.encodestring('%s:%s' % (u, p))
-        return base64str.replace('\n', '')
+        base64str = base64.encodestring('%s:%s' % (user, password))
+        self.default_header['authorization'] = 'Basic %s' % base64str.replace('\n', '')
+        return self.default_header['authorization']
 
     def request_session_cookie(self, url=None):
         if url:
             self.session_cookie_url = url
         helpers.log("session_cookie_url: %s" % self.session_cookie_url)
-        result = self.post(self.session_cookie_url,
-                           {"user":"admin", "password":"adminadmin"})
+        authen = {"user":self.user, "password":self.password}
+        helpers.debug("session cookie authen info: %s" % authen)
+        result = self.post(self.session_cookie_url, authen)
         session_cookie = result['content']['session_cookie']
         self.set_session_cookie(session_cookie)
         return session_cookie
@@ -190,7 +195,7 @@ class RestClient(object):
 
             helpers.log("It appears the session cookie has expired. Requesting new session cookie.")
             self.request_session_cookie()
-
+            # helpers.sleep(2)
             # Re-run command
             result = self._http_request(*args, **kwargs)
         else:

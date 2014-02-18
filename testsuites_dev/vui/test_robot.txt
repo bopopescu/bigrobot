@@ -1,10 +1,10 @@
 * Settings
 Documentation   This suite is my sandbox for experimentation.
 Force Tags      Vui
-Suite Setup     base suite setup
-Suite Teardown  base suite teardown
-Test Setup      base test setup
-Test Teardown   base test teardown
+#Suite Setup     base suite setup
+#Suite Teardown  base suite teardown
+#Test Setup      base test setup
+#Test Teardown   base test teardown
 #Library         Reserve
 Library         keywords/BsnCommon.py
 Library         keywords_dev/vui/MyTest.py
@@ -50,7 +50,7 @@ Test dynamic string
     json_to_pydict    {a:true, b:${123}, name:${NAME}}
     
 Test expression
-    [Tags]           skipped smoke
+    [Tags]           skipped
     ${result1}=       expr  1 + 1 + ${COUNTER}
     ${result2}=       expr  10 / 2
     ${result3}=       expr  ${result1} + ${result2}
@@ -71,9 +71,22 @@ Test write file
     Append to File    /tmp/myoutput.txt  I'm also a woodworker.\n
 
 Test special character passing
+    [Tags]           skipped
     print value       abc|123
     print value       abc/123
     print value       abc\\123
+
+Test boolean value
+    [Tags]           skipped
+    ${status}=        return boolean  ${false}
+    log               Status=${status}
+    Should be true    ${status}
+    Should be true    ${status} == ${false}
+
+Test get time
+    #[Tags]           skipped
+    ${time}=          get time
+    log               Time is ${time}
 
 * Keywords
 variable assignment

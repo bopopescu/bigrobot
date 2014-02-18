@@ -1,0 +1,107 @@
+*Settings
+Documentation  BigWire SNMP Test Suite Release:Bowmore Feature:SNMP
+Suite Setup  snmp suite setup
+Suite Teardown   snmp suite teardown
+Test Setup   base test setup
+Test Teardown   base test teardown
+Force Tags   HA Scale
+
+Library  keywords/AppController.py
+Library  keywords/BsnCommon.py
+Library  keywords/BigWire.py
+
+* Variable
+
+    
+* Test Case
+Configure and Verify Configuration  
+    verify config
+
+Verify SNMP OID sysContact  
+    ${snmp_key}=  snmp get  public  sysContact.0
+    Should Contain  ${snmp_key}  Big Switch Networks
+
+Verify SNMP OID sysLocation  
+    ${snmp_key}=  snmp get  public  sysLocation.0
+    Should Contain  ${snmp_key}  Mountain View
+
+Verify SNMP OID sysDescr  
+    ${snmp_key}=  snmp get  public  sysDescr.0
+    Should Contain  ${snmp_key}  Big Wire Controller    
+
+Verify SNMP OID ifDescr  
+    ${snmp_key}=  snmp get  public  ifDescr.2
+    Should Contain  ${snmp_key}  eth0
+
+Verify SNMP OID ifType  
+    ${snmp_key}=  snmp get  public  ifType.2
+    Should Contain  ${snmp_key}  ethernetCsmacd
+    
+Verify SNMP OID ifOperStatus  
+    ${snmp_key}=  snmp get  public  ifOperStatus.2
+    Should Contain  ${snmp_key}  up
+    
+Verify SNMP OID ifAdminStatus  
+    ${snmp_key}=  snmp get  public  ifAdminStatus.2
+    Should Contain  ${snmp_key}  up     
+
+Verify snmpgetnext works as expected
+    ${snmp_key}=  snmp getnext  public  ifDescr.1
+    Should Contain  ${snmp_key}  eth0
+
+verify snmpbulkget works as expected
+    ${snmp_key}=  snmp cmd  snmpbulkget  -Cr2  public  ifDescr 
+    Should Contain  ${snmp_key}  eth0
+
+verify snmpbulkwalk works as expected
+    ${snmp_key}=  snmp cmd  snmpbulkwalk  None  public  ifDescr 
+    Should Contain  ${snmp_key}  eth0
+ 
+Restart process SNMP and verify
+    restart process on controller  snmpd  Slave
+    Sleep  10    
+    ${snmp_key}=  snmp get  public  sysDescr.0
+    Should Contain  ${snmp_key}  Big Wire Controller  
+
+Change community from public to bigswitch and verify snmp walk
+    rest add snmp keyword  community  bigswitch
+    ${snmp_key}=  snmp get  bigswitch  sysDescr.0
+    Should Contain  ${snmp_key}  Big Wire Controller   
+
+       
+* Keywords
+snmp suite setup
+    rest add snmp keyword  community  public
+    rest add snmp keyword  contact  Big Switch Networks
+    rest add snmp keyword  location  Mountain View
+    rest add snmp keyword  trap-enable  True
+    rest add snmp host  10.192.66.230  161    
+    rest add firewall rule snmp  udp  161
+    Sleep  10        
+
+verify config
+    ${snmp_output}=  rest show snmp
+    ${snmp_key}=  verify json key  ${snmp_output}  0  community  
+    Should Be Equal As Strings  ${snmp_key}  public
+    ${snmp_key}=  verify json key  ${snmp_output}  0  contact  
+    Should Be Equal As Strings  ${snmp_key}  Big Switch Networks        
+    ${snmp_key}=  verify json key  ${snmp_output}  0  location  
+    Should Be Equal As Strings  ${snmp_key}  Mountain View
+    ${snmp_key}=  verify json key  ${snmp_output}  0  trap-enable  
+    Should Be True  ${snmp_key}
+    ${snmp_output}=  rest show snmp host
+    ${snmp_key}=  verify json key  ${snmp_output}  0  host  
+    Should Be Equal As Strings  ${snmp_key}  10.192.66.230
+    ${snmp_key}=  verify json key  ${snmp_output}  0  udp-port  
+    Should Be Equal As Integers  ${snmp_key}  161
+           
+snmp suite teardown
+    rest add snmp keyword  community  null
+    rest add snmp keyword  contact  null
+    rest add snmp keyword  location  null
+    rest add snmp keyword  trap-enable  false
+    rest delete snmp host  10.192.66.230  161 
+    rest delete firewall rule snmp  udp  161     
+    base suite teardown
+    
+    

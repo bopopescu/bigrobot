@@ -13,8 +13,8 @@ class Node(object):
 
         self._name = name
         self._ip = ip.lower()  # IP might be 'dummy'
-        self.user = user
-        self.password = password
+        self._user = user
+        self._password = password
         self.http_port = None
         self.base_url = None
         self.params = params
@@ -49,6 +49,12 @@ class Node(object):
     def ip(self):
         return self._ip
 
+    def user(self):
+        return self._user
+
+    def password(self):
+        return self._password
+
     def platform(self):
         return self.dev.platform()
 
@@ -72,16 +78,17 @@ class Node(object):
         """
         raise NotImplementedError()
 
+    def connect(self, user, password, port=None, protocol='ssh', host=None,
+                name=None):
+        """
+        Connect to the node using either ssh or telnet.
+        Returns the session handle.
+        """
+        raise NotImplementedError()
+
 
 class ControllerNode(Node):
     def __init__(self, name, ip, user, password, t):
-        # If user/password info is specified in the topology params then use it
-        authen = t.topology_params_authen(name)
-        if authen[0]:
-            user = authen[0]
-        if authen[1]:
-            password = authen[1]
-
         super(ControllerNode, self).__init__(name, ip, user, password,
                                              t.topology_params())
 
@@ -114,7 +121,9 @@ class ControllerNode(Node):
 
         self.rest = BsnRestClient(base_url=self.base_url,
                                   platform=self.platform(),
-                                  host=self.ip())
+                                  host=self.ip(),
+                                  user=self._user,
+                                  password=self._password)
         self.t = t
 
         # Shortcuts
@@ -164,13 +173,25 @@ class ControllerNode(Node):
         self.dev_console = devconf.ControllerDevConf(name=self.name(),
                                                      host=self.console_ip,
                                                      port=self.console_port,
-                                                     user=self.user,
-                                                     password=self.password,
+                                                     user=self._user,
+                                                     password=self._password,
                                                      is_console=True,
                                                      console_driver=driver,
                                                      debug=self.dev_debug_level)
         return self.dev_console
 
+    def connect(self, user, password, port=None, protocol='ssh', host=None,
+                name=None):
+        if not host:
+            host = self.ip()
+        if not name:
+            name = self.name()
+        return devconf.ControllerDevConf(name=name,
+                                         host=host,
+                                         user=user,
+                                         password=password,
+                                         port=port,
+                                         protocol=protocol)
 
 class MininetNode(Node):
     def __init__(self, name, ip, controller_ip, controller_ip2,
@@ -229,16 +250,22 @@ class MininetNode(Node):
         self.send = self.dev.send
         self.expect = self.dev.expect
 
+    def connect(self, user, password, port=None, protocol='ssh', host=None,
+                name=None):
+        if not host:
+            host = self.ip()
+        if not name:
+            name = self.name()
+        return devconf.ControllerDevConf(name=name,
+                                         host=host,
+                                         user=user,
+                                         password=password,
+                                         port=port,
+                                         protocol=protocol)
+
 
 class HostNode(Node):
     def __init__(self, name, ip, user, password, t):
-        # If user/password info is specified in the topology params then use it
-        authen = t.topology_params_authen(name)
-        if authen[0]:
-            user = authen[0]
-        if authen[1]:
-            password = authen[1]
-
         super(HostNode, self).__init__(name, ip, user, password,
                                        t.topology_params())
 
@@ -263,16 +290,22 @@ class HostNode(Node):
         self.send = self.dev.send
         self.expect = self.dev.expect
 
+    def connect(self, user, password, port=None, protocol='ssh', host=None,
+                name=None):
+        if not host:
+            host = self.ip()
+        if not name:
+            name = self.name()
+        return devconf.ControllerDevConf(name=name,
+                                         host=host,
+                                         user=user,
+                                         password=password,
+                                         port=port,
+                                         protocol=protocol)
+
 
 class SwitchNode(Node):
     def __init__(self, name, ip, user, password, t):
-        # If user/password info is specified in the topology params then use it
-        authen = t.topology_params_authen(name)
-        if authen[0]:
-            user = authen[0]
-        if authen[1]:
-            password = authen[1]
-
         super(SwitchNode, self).__init__(name, ip, user, password,
                                          t.topology_params())
 
@@ -301,6 +334,19 @@ class SwitchNode(Node):
         self.expect = self.dev.expect
         self.info = self.dev.info
 
+    def connect(self, user, password, port=None, protocol='ssh', host=None,
+                name=None):
+        if not host:
+            host = self.ip()
+        if not name:
+            name = self.name()
+        return devconf.ControllerDevConf(name=name,
+                                         host=host,
+                                         user=user,
+                                         password=password,
+                                         port=port,
+                                         protocol=protocol)
+
 
 class IxiaNode(Node):
     def __init__(self, name, t):
@@ -309,7 +355,6 @@ class IxiaNode(Node):
         self._tcl_server_port = t.params(name, 'tcl_server_port', 8009)
         self._ix_version = t.params(name, 'ix_version', '7.10')
         self._ports = t.params(name, 'ports')
-        helpers.log("***** IXIA ports for '%s': %s" % (name, self._ports))
 
         super(IxiaNode, self).__init__(name, self._chassis_ip,
                                        params=t.topology_params())

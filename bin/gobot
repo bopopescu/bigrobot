@@ -279,6 +279,51 @@ def test_command(*args):
     """
     Run tests in the test suite.
     """
+    descr = ("Run a BigRobot test suite. Be sure to point the environment"
+             " variable BIGROBOT_SUITE to a test suite (e.g.,"
+             " export BIGROBOT_SUITE=mytest).")
+    parser = argparse.ArgumentParser(prog='gobot test',
+                                     description=descr)
+
+    parser.add_argument('--include', metavar=('tag1', 'tag2'), nargs='*',
+                        help='Run test cases by tags')
+    parser.add_argument('--exclude',
+                        metavar=('tag1', 'tag2'), nargs='*',
+                        help='Exclude test cases by tags')
+    parser.add_argument('--loglevel', default='debug',
+                        help="Log level (default is 'debug' else 'trace', 'info', 'warn')")
+    parser.add_argument('--debugfile', default='debug.log',
+                        help="Debug file")
+    parser.add_argument('--outputdir', default=helpers.bigrobot_log_path_exec_instance(),
+                        help="Output directory")
+
+    args = parser.parse_args(*args)
+
+    include_tags = args.include
+    exclude_tags = args.exclude
+    if exclude_tags:
+        exclude_tags.append('skipped')
+    else:
+        exclude_tags = ['skipped']
+
+    # Comparable to command options:
+    #   pybot --loglevel=debug \
+    #         --debugfile=debug.log \
+    #         --exclude=skipped \
+    #         --outputdir=./mytest_20140108_052828 \
+    #         mytest.txt
+
+    options = {
+               'exclude': exclude_tags,
+               'loglevel': args.loglevel,
+               'debugfile': args.debugfile,
+               'outputdir': args.outputdir,
+               }
+    if include_tags:
+        options['include'] = include_tags
+
+    print("Robot options:\n%s" % helpers.prettify(options))
+
     exit_if_suite_not_defined()
     exit_if_topology_not_defined()
     format_convert_and_copy(helpers.bigrobot_suite(),
@@ -288,22 +333,11 @@ def test_command(*args):
     if helpers.bigrobot_suite_format() == 'mw':
         ext = 'html'
 
-    # Command options:
-    #   pybot --loglevel=debug \
-    #         --debugfile=debug.log \
-    #         --exclude=skipped \
-    #         --outputdir=./mytest_20140108_052828 \
-    #         mytest.txt
-    # run('pybot %s %s.%s'
-    #    % (ROBOT_FRAMEWORK_OPTS, helpers.bigrobot_suite(), ext))
-    opts = []
-    opts.extend(ROBOT_FRAMEWORK_OPTS)
-    if (args):
-        opts.extend(*args)
-    opts.extend([''.join((helpers.bigrobot_suite(), '.', ext))])
+    test_suite = ''.join((helpers.bigrobot_suite(), '.', ext))
 
-    # print("Starting Robot with options:\n%s" % helpers.prettify(opts))
-    robot.run_cli(opts)
+    rc = robot.run(test_suite, **options)
+    helpers.log("Robot Framework return code is %s" % rc)
+    print("Return code is %s" % rc)
     create_symlinks_to_logs()
 
 

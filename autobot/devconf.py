@@ -9,11 +9,13 @@ import re
 
 
 class DevConf(object):
-    def __init__(self, host=None, user=None, password=None, port=None,
+    def __init__(self, host=None, user=None, password=None,
+                 port=None,
                  is_console=False,
                  console_driver=None,
                  name=None,
                  timeout=None,
+                 protocol='ssh',
                  debug=0):
         if host is None:
             helpers.environment_failure("Must specify a host.")
@@ -27,6 +29,7 @@ class DevConf(object):
         self._user = user
         self._password = password
         self._port = port
+        self._protocol = protocol
         self._is_console = is_console
         self._console_driver = console_driver
         self._debug = debug
@@ -52,35 +55,39 @@ class DevConf(object):
     def connect(self):
         try:
             if self._is_console:
-                helpers.log("Connecting to console %s, port %s"
-                            % (self._host, self._port))
-                self.conn = Telnet(debug=self._debug)
-                self.conn.connect(self._host, self._port)
+                # Console connection only supports telnet. So ignore protocol
+                # field (if specified).
+                helpers.log("Telnet to console on host %s, port %s (user:%s)"
+                            % (self._host, self._port, self._user))
+                conn = Telnet(debug=self._debug)
+                conn.connect(self._host, self._port)
 
-                if not self._console_driver:
-                    helpers.log("A devconf driver is not specified for console connection")
-                else:
+                if self._console_driver:
                     helpers.log("Setting devconf driver for console to '%s'"
                                 % self._console_driver)
-                    self.conn.set_driver(self._console_driver)
+                    conn.set_driver(self._console_driver)
 
                 # Note: User needs to figure out what state the console is in
                 #       and manage it themself.
 
-            else:
+            elif self._protocol == 'telnet' or self._protocol == 'ssh':
                 auth_info = "(login:%s, password:%s)" % (self._user, self._password)
-                if self._port:
-                    helpers.log("SSH connect to host %s, port %s %s"
-                                % (self._host, self._port, auth_info))
-                else:
-                    helpers.log("Connecting to host %s %s"
-                                % (self._host, auth_info))
-
                 account = Account(self._user, self._password)
 
-                self.conn = SSH2(debug=self._debug)
-                self.conn.connect(self._host, self._port)
-                self.conn.login(account)
+                if self._protocol == 'telnet':
+                    helpers.log("Telnet to host %s, port %s (user:%s)"
+                                % (self._host, self._port, self._user))
+                    conn = Telnet(debug=self._debug)
+                elif self._protocol == 'ssh':
+                    helpers.log("SSH connect to host %s, port %s %s"
+                                    % (self._host, self._port, auth_info))
+                    conn = SSH2(debug=self._debug)
+
+                conn.connect(self._host, self._port)
+                conn.login(account)
+
+            else:
+                helpers.environment_failure("Supported protocols are 'telnet' and 'ssh'")
         except LoginFailure:
             helpers.environment_failure("Login failure: Check the user name and password"
                                         " for device %s (user:%s, password:%s). Also try"
@@ -104,6 +111,7 @@ class DevConf(object):
 
         # Reset mode to 'cli' as default
         self.mode = 'cli'
+        self.conn = conn
 
 
     def timeout(self, seconds=None):
@@ -269,13 +277,14 @@ class DevConf(object):
 class BsnDevConf(DevConf):
     def __init__(self, name=None, host=None, user=None, password=None,
                  port=None, is_console=False, console_driver=None,
-                 timeout=None, debug=0):
+                 timeout=None, protocol='ssh', debug=0):
         super(BsnDevConf, self).__init__(host, user, password,
                                          port=port,
                                          is_console=is_console,
                                          console_driver=console_driver,
                                          name=name,
                                          timeout=timeout,
+                                         protocol=protocol,
                                          debug=debug)
         self.mode_before_bash = None
 
@@ -441,7 +450,7 @@ class MininetDevConf(DevConf):
     """
     def __init__(self, name=None, host=None, user=None, password=None,
                  controller=None, controller2=None, topology=None,
-                 openflow_port=None, timeout=None,
+                 openflow_port=None, timeout=None, protocol='ssh',
                  debug=0):
 
         if controller is None:
@@ -455,7 +464,9 @@ class MininetDevConf(DevConf):
         self.openflow_port = openflow_port
         self.state = 'stopped'  # or 'started'
         super(MininetDevConf, self).__init__(host, user, password, name=name,
-                                             timeout=timeout, debug=debug)
+                                             timeout=timeout,
+                                             protocol=protocol,
+                                             debug=debug)
         self.start_mininet()
 
     def _cmd(self, cmd, quiet=False, prompt=False, timeout=None, level=4):
@@ -562,12 +573,14 @@ class T6MininetDevConf(MininetDevConf):
 
 class HostDevConf(DevConf):
     def __init__(self, name=None, host=None, user=None, password=None,
-                 port=None, is_console=False, timeout=None, debug=0):
+                 port=None, is_console=False, timeout=None, protocol='ssh',
+                 debug=0):
         super(HostDevConf, self).__init__(host, user, password,
                                           port=port,
                                           is_console=is_console,
                                           name=name,
                                           timeout=timeout,
+                                          protocol=protocol,
                                           debug=debug)
         self.bash('uname -a')
 
