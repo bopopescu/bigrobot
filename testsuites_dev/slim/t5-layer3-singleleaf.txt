@@ -308,7 +308,7 @@ L3 intra tenant untagged with host moved
 	mininet l3 ping								${host0_name}		${host1_name} 		3
 	sleep 										2
 	${loss}=  									mininet l3 ping		${host0_name}	${host1_name} 	
-	Should Be True  							${loss} == 100
+	Should Be True  							${loss} == 0
 	sleep 										5
 	mininet link down							${host1_name}		${host1_bondif}
 	mininet link down							${host1_name}		${host1_intf}
