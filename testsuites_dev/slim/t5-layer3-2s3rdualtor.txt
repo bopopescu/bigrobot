@@ -37,7 +37,7 @@ ${vns2_ip3}			10.10.23.1
 ${vns2_subnet3}		24
 ${unknown_host}		10.99.99.99
 ${leaf0a_name}		leaf0a
-${leaf0a_name}		leaf0b
+${leaf0b_name}		leaf0b
 ${leaf1a_name}		leaf1a
 ${leaf1b_name}		leaf1b
 ${leaf2a_name}		leaf2a
@@ -183,15 +183,15 @@ Inter tenant L3 untagged traffic with static endpoints
 
 Intra tenant L3 untagged with destination host moved
 	L3 intra tenant untagged with host moved 
-#	[Tags]							skipped		sanity				
+	[Tags]							skipped		sanity				
 
 Intra tenant L3 untagged to tagged host
 	L3 intra tenant untagged to tagged host
-#	[Tags]							skipped		sanity				
+	[Tags]							skipped		sanity				
 
 Intra tenant L3 tagged host
 	L3 intra tenant tagged host
-#	[Tags]							skipped		sanity				
+	[Tags]							skipped		sanity				
 
 	
 * Keywords
