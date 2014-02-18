@@ -12,7 +12,7 @@ Library  keywords/SwitchLight.py
 Library  keywords/Ixia.py
 
 * Variable
-${switch_1_alias}  LB7
+${switch_1_alias}  AF1
 ${switchlight_version}  SwitchLight 2.0.0
 ${netmask}  18
 ${gateway}  10.192.64.1
@@ -34,6 +34,17 @@ Verify L2 traffic: frame size 64 bytes
     sleep  10
     IXIA stop L2 traffic  ${stream}
     verify results  transmitted_frames  received_frames
+    [Tags]  traffic  sanity  
+
+Verify L3 traffic: frame size 68 bytes
+    IXIA initialize  tg1
+    ${stream}=  IXIA L3 add  flow=a->b  frame_rate=10000  frame_size=68  frame_cnt=50000
+    ...     src_mac=01:02:03:04:05:06  dst_mac=01:02:03:04:05:07  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  name=a_b_flow  
+    IXIA start L3 traffic  ${stream}
+    sleep  10
+    IXIA stop L3 traffic  ${stream}
+    verify results  transmitted_frames  received_frames
     [Tags]  traffic  sanity
 
 Verify L2 traffic: frame size 128 bytes
@@ -42,6 +53,17 @@ Verify L2 traffic: frame size 128 bytes
     IXIA start L2 traffic  ${stream}
     sleep  10
     IXIA stop L2 traffic  ${stream}
+    verify results  transmitted_frames  received_frames
+    [Tags]  traffic  sanity  
+
+Verify L3 traffic: frame size 128 bytes
+    IXIA initialize  tg1
+    ${stream}=  IXIA L3 add  flow=a->b  frame_rate=10000  frame_size=128  frame_cnt=50000
+    ...     src_mac=01:02:03:04:05:06  dst_mac=01:02:03:04:05:07  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  name=a_b_flow  
+    IXIA start L3 traffic  ${stream}
+    sleep  10
+    IXIA stop L3 traffic  ${stream}
     verify results  transmitted_frames  received_frames
     [Tags]  traffic  sanity
 
@@ -52,6 +74,17 @@ Verify L2 traffic: frame size 256 bytes
     sleep  10
     IXIA stop L2 traffic  ${stream}
     verify results  transmitted_frames  received_frames
+    [Tags]  traffic  sanity  
+
+Verify L3 traffic: frame size 256 bytes
+    IXIA initialize  tg1
+    ${stream}=  IXIA L3 add  flow=a->b  frame_rate=10000  frame_size=256  frame_cnt=50000
+    ...     src_mac=01:02:03:04:05:06  dst_mac=01:02:03:04:05:07  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  name=a_b_flow  
+    IXIA start L3 traffic  ${stream}
+    sleep  10
+    IXIA stop L3 traffic  ${stream}
+    verify results  transmitted_frames  received_frames
     [Tags]  traffic  sanity
     
 Verify L2 traffic: frame size 512 bytes
@@ -60,6 +93,17 @@ Verify L2 traffic: frame size 512 bytes
     IXIA start L2 traffic  ${stream}
     sleep  10
     IXIA stop L2 traffic  ${stream}
+    verify results  transmitted_frames  received_frames
+    [Tags]  traffic  sanity  
+
+Verify L3 traffic: frame size 512 bytes
+    IXIA initialize  tg1
+    ${stream}=  IXIA L3 add  flow=a->b  frame_rate=10000  frame_size=512  frame_cnt=50000
+    ...     src_mac=01:02:03:04:05:06  dst_mac=01:02:03:04:05:07  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  name=a_b_flow  
+    IXIA start L3 traffic  ${stream}
+    sleep  10
+    IXIA stop L3 traffic  ${stream}
     verify results  transmitted_frames  received_frames
     [Tags]  traffic  sanity
     
@@ -70,6 +114,17 @@ Verify L2 traffic: frame size 1024 bytes
     sleep  10
     IXIA stop L2 traffic  ${stream}
     verify results  transmitted_frames  received_frames
+    [Tags]  traffic  sanity  
+
+Verify L3 traffic: frame size 1024 bytes
+    IXIA initialize  tg1
+    ${stream}=  IXIA L3 add  flow=a->b  frame_rate=10000  frame_size=1024  frame_cnt=50000
+    ...     src_mac=01:02:03:04:05:06  dst_mac=01:02:03:04:05:07  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  name=a_b_flow  
+    IXIA start L3 traffic  ${stream}
+    sleep  10
+    IXIA stop L3 traffic  ${stream}
+    verify results  transmitted_frames  received_frames
     [Tags]  traffic  sanity
     
 Verify L2 traffic: frame size 1518 bytes
@@ -78,6 +133,17 @@ Verify L2 traffic: frame size 1518 bytes
     IXIA start L2 traffic  ${stream}
     sleep  10
     IXIA stop L2 traffic  ${stream}
+    verify results  transmitted_frames  received_frames
+    [Tags]  traffic  sanity  
+
+Verify L3 traffic: frame size 1518 bytes
+    IXIA initialize  tg1
+    ${stream}=  IXIA L3 add  flow=a->b  frame_rate=10000  frame_size=1518  frame_cnt=50000
+    ...     src_mac=01:02:03:04:05:06  dst_mac=01:02:03:04:05:07  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  name=a_b_flow  
+    IXIA start L3 traffic  ${stream}
+    sleep  10
+    IXIA stop L3 traffic  ${stream}
     verify results  transmitted_frames  received_frames
     [Tags]  traffic  sanity
     
@@ -88,6 +154,17 @@ Verify L2 traffic: frame size 9216 bytes
     sleep  10
     IXIA stop L2 traffic  ${stream}
     verify results  transmitted_frames  received_frames
+    [Tags]  traffic  sanity  
+
+Verify L3 traffic: frame size 9216 bytes
+    IXIA initialize  tg1
+    ${stream}=  IXIA L3 add  flow=a->b  frame_rate=10000  frame_size=9216  frame_cnt=50000
+    ...     src_mac=01:02:03:04:05:06  dst_mac=01:02:03:04:05:07  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  name=a_b_flow  
+    IXIA start L3 traffic  ${stream}
+    sleep  10
+    IXIA stop L3 traffic  ${stream}
+    verify results  transmitted_frames  received_frames
     [Tags]  traffic  sanity
 
 Verify L2 Traffic: VLAN Tagged Traffic
@@ -96,6 +173,17 @@ Verify L2 Traffic: VLAN Tagged Traffic
     IXIA start L2 traffic  ${stream}
     sleep  10
     IXIA stop L2 traffic  ${stream}
+    verify results  transmitted_frames  received_frames
+    [Tags]  traffic  sanity  
+
+Verify L3 Traffic: VLAN Tagged Traffic
+    IXIA initialize  tg1
+    ${stream}=  IXIA L3 add  flow=a->b  frame_rate=10000  frame_size=9216  frame_cnt=50000  ethertype=8100  vlan_id=2048  
+    ...     src_mac=01:02:03:04:05:06  dst_mac=01:02:03:04:05:07  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  name=a_b_flow  
+    IXIA start L3 traffic  ${stream}
+    sleep  10
+    IXIA stop L3 traffic  ${stream}
     verify results  transmitted_frames  received_frames
     [Tags]  traffic  sanity
 
@@ -106,7 +194,7 @@ Verify L2 Traffic: Spanning Tree Protocol (for bridges) IEEE 802.1D
     sleep  10
     IXIA stop L2 traffic  ${stream}
     verify results  transmitted_frames  received_frames
-    [Tags]  traffic  sanity
+    [Tags]  traffic  sanity  
 
 Verify L2 Traffic: Spanning Tree Protocol (for provider bridges) IEEE 802.1AD
     IXIA initialize  tg1
@@ -115,7 +203,7 @@ Verify L2 Traffic: Spanning Tree Protocol (for provider bridges) IEEE 802.1AD
     sleep  10
     IXIA stop L2 traffic  ${stream}
     verify results  transmitted_frames  received_frames
-    [Tags]  traffic  sanity
+    [Tags]  traffic  sanity  
 
 Verify L2 Traffic: Ethernet flow control (Pause frame) IEEE 802.3x
     IXIA initialize  tg1
@@ -124,7 +212,7 @@ Verify L2 Traffic: Ethernet flow control (Pause frame) IEEE 802.3x
     sleep  10
     IXIA stop L2 traffic  ${stream}
     verify results  transmitted_frames  received_frames
-    [Tags]  traffic  sanity
+    [Tags]  traffic  sanity  
 
 Verify L2 Traffic: LLDP with ethernet ethertype
     IXIA initialize  tg1
@@ -133,7 +221,7 @@ Verify L2 Traffic: LLDP with ethernet ethertype
     sleep  10
     IXIA stop L2 traffic  ${stream}
     verify results  transmitted_frames  received_frames
-    [Tags]  traffic  sanity
+    [Tags]  traffic  sanity  
 
 Verify L2 Traffic: Ethernet OAM Protocol IEEE 802.3ah/Slow Protocols
     IXIA initialize  tg1
@@ -142,7 +230,7 @@ Verify L2 Traffic: Ethernet OAM Protocol IEEE 802.3ah/Slow Protocols
     sleep  10
     IXIA stop L2 traffic  ${stream}
     verify results  transmitted_frames  received_frames  
-    [Tags]  traffic  sanity   
+    [Tags]  traffic  sanity     
     
 Verify L2 Traffic: Traffic with CRC Errors
     cli enable crc forwarding  s1
@@ -153,14 +241,16 @@ Verify L2 Traffic: Traffic with CRC Errors
     IXIA stop L2 traffic  ${stream}
     verify results  transmitted_frames  received_crc_errored_frames
     cli disable crc forwarding  s1  
-    [Tags]  traffic  sanity        
+    [Tags]  traffic  sanity          
         
 * Keywords
 
 bigtap suite setup
-    rest add switch alias  s1  LB7
-    rest add interface role  ${filter_1}  filter  ${filter_nick}  switch_alias=${switch_1_alias}  
-    rest add interface role  ${delivery_1}  delivery  ${delivery_nick}  switch_alias=${switch_1_alias}
+    base suite setup
+    rest add switch alias  s1  AF1
+    rest add switch alias  s2  AF2
+    rest add interface role  s1  ${filter_1}  filter  ${filter_nick}   
+    rest add interface role  s2  ${delivery_1}  delivery  ${delivery_nick}
     rest add policy  admin-view  P1  forward
     rest add policy match  admin-view  P1  1  {"any-traffic": true, "sequence": 1}
     rest add policy interface  admin-view  P1  F1  filter
@@ -171,13 +261,17 @@ verify results   [Arguments]  ${transmitted_frames}  ${received_frames}
     ${report}=  IXIA fetch port stats
     ${tx_value}=  verify dict key  ${report}  a  ${transmitted_frames}
     ${rx_value}=  verify dict key  ${report}  b  ${received_frames}
-    Should be equal  ${tx_value}  ${rx_value}
+    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}
+    Should be true  ${in_range} 
 
 bigtap suite teardown
     rest delete policy  admin-view  P1
-    rest delete interface role  ${filter_1}  filter  ${filter_nick}  switch_alias=${switch_1_alias}  
-    rest delete interface role  ${delivery_1}  delivery  ${delivery_nick}  switch_alias=${switch_1_alias}
-    rest delete interface  ${filter_1}  switch_alias=${switch_1_alias}
-    rest delete interface  ${delivery_1}  switch_alias=${switch_1_alias}
+    rest delete interface role  s1  ${filter_1}  filter  ${filter_nick} 
+    rest delete interface role  s1  ${delivery_1}  delivery  ${delivery_nick}
+    rest delete interface  s1  ${filter_1}  switch_alias=${switch_1_alias}
+    rest delete interface  s2  ${delivery_1}  switch_alias=${switch_1_alias}
     rest delete switch alias  s1
+    rest delete switch alias  s2
     rest delete switch  s1
+    rest delete switch  s2
+    base suite teardown

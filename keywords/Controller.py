@@ -21,6 +21,7 @@ class Controller(object):
     def cli_show_question_mark(self, node):
         t = test.Test()
         n = t.controller(node)
+        n.cli('')
         n.send("show ?")
         n.set_prompt()
         helpers.log("***** I am here")
@@ -28,6 +29,7 @@ class Controller(object):
     def _boot_switchlight(self, node):
         t = test.Test()
         n = t.node(node)
+        n.enable('')
         n.send("reload now")
         n.expect('The system is going down for reboot')
 
@@ -40,6 +42,7 @@ class Controller(object):
     def _boot_bigtap_bigwire(self, node):
         t = test.Test()
         n = t.controller(node)
+        n.enable('')
         n.send("reload")
         n.expect(r'Confirm Reload \(yes to continue\)')
         n.send("yes")
@@ -66,7 +69,7 @@ class Controller(object):
             helpers.test_error("Reload does not recognize platform '%s'"
                                % platform)
 
-        helpers.log("Device '%s' has rebooted" % n.name)
+        helpers.log("Device '%s' has rebooted" % n.name())
 
     def cli_reboot(self, *args, **kwargs):
         """
@@ -88,12 +91,11 @@ class Controller(object):
             helpers.is_controller_or_error(node)
             node_list = [node]
         else:
-            node_list = t.controllers()
+            node_handles = t.controllers()
 
-        for name in node_list:
-            helpers.log("Copying running-config to file on node '%s'" % name)
-            _node = t.topology(name)
-            _node.enable('copy running-config file://running-config-bigrobot')
+        for n in node_handles:
+            helpers.log("Copying running-config to file on node '%s'" % n.name())
+            n.enable('copy running-config file://running-config-bigrobot')
 
     def cli_boot_factory_default(self, node):
         """

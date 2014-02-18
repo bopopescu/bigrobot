@@ -1,0 +1,309 @@
+*Settings
+Documentation  BigTap High Availability Test Suite
+Suite Setup  ha suite setup
+Suite Teardown   ha suite teardown
+Test Setup   base test setup
+Test Teardown  base test teardown 
+Force Tags   platform Sanity
+Library  keywords/BsnCommon.py
+Library  keywords/AppController.py
+Library  keywords/BigTap.py
+Library  keywords/SwitchLight.py
+Library  keywords/Ixia.py
+
+* Variable
+${switch_1_alias}  AF1
+${switchlight_version}  SwitchLight 2.0.0
+${netmask}  18
+${gateway}  10.192.64.1
+${dns_server}  10.192.3.1
+${dns_domain}  bigswitch.com
+
+${filter_1}  ethernet1  
+${filter_nick_1}  F1
+
+${filter_2}  ethernet1  
+${filter_nick_2}  F2
+
+${delivery_1}  ethernet2  
+${delivery_nick_1}  D1
+
+${delivery_2}  ethernet2  
+${delivery_nick_2}  D2
+  
+
+
+*Test Case
+verify configuration is successful
+    verify config
+    [Tags]  bigtap  ha  
+     
+Switch HA: Restart Process OFAD on filter switch
+    verify config 
+    bash restart process  s1  ofad
+    Sleep  30
+    verify config    
+    [Tags]  bigtap  ha       
+
+Switch HA: Restart Process OFAD on delivery switch
+    verify config 
+    bash restart process  s2  ofad
+    Sleep  30
+    verify config    
+    [Tags]  bigtap  ha  
+
+Switch HA: Restart Process snmpd on filter switch
+    verify config 
+    bash restart process  s1  snmpd
+    Sleep  30
+    verify config    
+    [Tags]  bigtap  ha    
+
+Switch HA: Restart Process ntp on filter switch
+    verify config 
+    bash restart process  s1  ntp
+    Sleep  30
+    verify config    
+    [Tags]  bigtap  ha    
+
+Switch HA: Restart Process fancontrol on filter switch
+    verify config 
+    bash restart process  s1  fancontrol
+    Sleep  30
+    verify config    
+    [Tags]  bigtap  ha
+    
+Switch HA: Restart Process fancontrol on delivery switch
+    verify config 
+    bash restart process  s2  fancontrol
+    Sleep  30
+    verify config    
+    [Tags]  bigtap  ha    
+
+Switch HA: Restart Process RSYSLOG on filter switch
+    verify config 
+    bash restart process  s1  rsyslog
+    Sleep  30
+    verify config    
+    [Tags]  bigtap  ha    
+
+Switch HA: Restart Process networking on filter switch
+    verify config 
+    bash restart process  s1  networking
+    Sleep  30
+    verify config    
+    [Tags]  bigtap  ha   
+
+Switch HA: Restart Process networking on delivery switch
+    verify config 
+    bash restart process  s2  networking
+    Sleep  30
+    verify config    
+    [Tags]  bigtap  ha
+
+Switch HA: Restart Process ssh on filter switch
+    verify config 
+    bash restart process  s1  ssh
+    Sleep  30
+    verify config    
+    [Tags]  bigtap  ha
+
+Switch HA: Restart filter switch
+    verify config 
+    cli restart switch  s1  save_config="yes"
+    Sleep  30
+    verify config    
+    [Tags]  bigtap  ha
+
+Switch HA: Restart delivery switch
+    verify config 
+    cli restart switch  s2  save_config="yes"
+    Sleep  30
+    verify config    
+    [Tags]  bigtap  ha
+  
+Controller HA: Restart Process Floodlight on Master Controller:
+    verify config 
+    restart process on controller  floodlight  Master
+    Sleep  30
+    verify config    
+    [Tags]  bigtap  ha
+
+Controller HA: Restart Process Floodlight on Slave Controller:
+    verify config 
+    restart process on controller  floodlight  Slave
+    Sleep  30
+    verify config    
+    [Tags]  bigtap  ha 
+
+Controller HA: Restart Process keepalived on Master Controller:
+    verify config 
+    restart process on controller  keepalived  Master
+    Sleep  30
+    verify config    
+    [Tags]  bigtap  ha
+
+Controller HA: Restart Process keepalived on Slave Controller:
+    verify config 
+    restart process on controller  keepalived  Slave
+    Sleep  30
+    verify config    
+    [Tags]  bigtap  ha         
+    
+Controller HA: Restart Process snmpd on Master Controller:
+    verify config 
+    restart process on controller  snmpd  Master
+    Sleep  30
+    verify config    
+    [Tags]  bigtap  ha
+
+Controller HA: Restart Process snmpd on Slave Controller:
+    verify config 
+    restart process on controller  snmpd  Slave
+    Sleep  30
+    verify config    
+    [Tags]  bigtap  ha    
+ 
+Controller HA: Restart Process rsyslogd on Master Controller:
+    verify config 
+    restart process on controller  rsyslogd  Master
+    Sleep  30
+    verify config    
+    [Tags]  bigtap  ha
+
+Controller HA: Restart Process rsyslogd on Slave Controller:
+    verify config 
+    restart process on controller  rsyslogd  Slave
+    Sleep  30
+    verify config    
+    [Tags]  bigtap  ha     
+ 
+Controller HA: Restart Process ntp on Master Controller:
+    verify config 
+    restart process on controller  ntp  Master
+    Sleep  30
+    verify config    
+    [Tags]  bigtap  ha
+
+Controller HA: Restart Process ntp on Slave Controller:
+    verify config 
+    restart process on controller  ntp  Slave
+    Sleep  30
+    verify config    
+    [Tags]  bigtap  ha  
+ 
+Controller HA: Restart Process collectd on Master Controller:
+    verify config 
+    restart process on controller  collectd  Master
+    Sleep  30
+    verify config    
+    [Tags]  bigtap  ha
+
+Controller HA: Restart Process collectd on Slave Controller:
+    verify config 
+    restart process on controller  collectd  Slave
+    Sleep  30
+    verify config    
+    [Tags]  bigtap  ha  
+
+Controller HA: Restart Process tacacs_plus on Master Controller:
+    verify config 
+    restart process on controller  tacacs_plus  Master
+    Sleep  30
+    verify config    
+    [Tags]  bigtap  ha
+ 
+Controller HA: Restart Process apache2 on Master Controller:
+    verify config 
+    restart process on controller  apache2  Master
+    Sleep  30
+    verify config    
+    [Tags]  bigtap  ha
+
+Controller HA: Restart Process apache2 on Slave Controller:
+    verify config 
+    restart process on controller  apache2  Slave
+    Sleep  30
+    verify config    
+    [Tags]  bigtap  ha 
+
+Controller HA: Reboot Slave Controller:
+    verify config 
+    restart controller  Master
+    verify config    
+    [Tags]  bigtap  ha  
+    
+Controller HA: Reboot Master Controller:
+    verify config 
+    restart controller  Master
+    verify config    
+    [Tags]  bigtap  ha
+
+Controller HA: Flap eth0 on Master Controller
+    verify config
+    flap eth0 controller  Master
+    Sleep  60
+    verify config    
+    [Tags]  bigtap  ha
+                  
+* Keyword
+
+ha suite setup
+    base suite setup
+    rest add switch alias  s1  APP-REGRESS-1
+    rest add switch alias  s2  APP-REGRESS-2
+    rest add switch alias  s3  APP-REGRESS-5
+    rest add switch alias  s4  APP-REGRESS-6    
+    rest add interface role  s1  ${filter_1}  filter  ${filter_nick_1}
+    rest add interface role  s2  ${filter_2}  filter  ${filter_nick_2}          
+    rest add interface role  s1  ${delivery_1}  delivery  ${delivery_nick_1}
+    rest add interface role  s2  ${delivery_2}  delivery  ${delivery_nick_2}
+    Sleep  5
+    rest add policy  admin-view  P1  forward
+    rest add policy match  admin-view  P1  1  {"any-traffic": true, "sequence": 1}
+    rest add policy interface  admin-view  P1  F1  filter
+    rest add policy interface  admin-view  P1  D1  delivery 
+    Sleep  5  
+    rest add policy  admin-view  ZP1  forward
+    rest add policy match  admin-view  ZP1  1  {"any-traffic": true, "sequence": 1}
+    rest add policy interface  admin-view  ZP1  F1  filter
+    rest add policy interface  admin-view  ZP1  D2  delivery
+    Sleep  5
+
+verify config
+    ${verify_policy1}=  rest verify bigtap policy  P1  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${verify_policy2}=  rest verify bigtap policy  ZP1  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    ${verify_policy12}=  rest verify bigtap policy  _ZP1_o_P1  num_filter_intf=1  num_delivery_intf=2
+    Should be true  ${verify_policy12}
+    ${switchFlowVal1} =   REST show switch flow  s1  
+    Should Be Equal As Integers  ${switchFlowVal1}  4  
+    ${switchFlowVal2} =   REST show switch flow  s2  
+    Should Be Equal As Integers  ${switchFlowVal2}  4   
+    ${switchFlowVal3} =   REST show switch flow  s3  
+    Should Be Equal As Integers  ${switchFlowVal3}  2      
+    ${switchFlowVal4} =   REST show switch flow  s4  
+    Should Be Equal As Integers  ${switchFlowVal4}  2  
+
+    
+ha suite teardown
+    rest delete policy  admin-view  P1
+    rest delete policy  admin-view  ZP1 
+    rest delete interface role  s1  ${filter_1}    filter          
+    rest delete interface role  s2  ${filter_2}    filter        
+    rest delete interface role  s1  ${delivery_1}    delivery
+    rest delete interface role  s2  ${delivery_2}    delivery
+    rest delete interface  s1  ${filter_1}          
+    rest delete interface  s2  ${filter_2}        
+    rest delete interface  s1  ${delivery_1}          
+    rest delete interface  s2  ${delivery_2}
+    rest delete switch alias  s1
+    rest delete switch alias  s2
+    rest delete switch alias  s3
+    rest delete switch alias  s4
+    rest delete switch  s1
+    rest delete switch  s2
+    rest delete switch  s3
+    rest delete switch  s4                           
+    base suite teardown     

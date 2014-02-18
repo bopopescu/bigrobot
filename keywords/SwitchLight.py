@@ -14,12 +14,12 @@
 
 import autobot.helpers as helpers
 import autobot.test as test
+from Exscript.protocols import SSH2
+from Exscript import Account, Host
 import subprocess
 import string
 import telnetlib
 import time
-# import re
-# from netaddr import *
 
 class SwitchLight(object):
 
@@ -1056,9 +1056,107 @@ class SwitchLight(object):
 
 #######################################################################
 # All Common Switch Platform/Feature Related Commands Go Here:
-#######################################################################
+######################################################################
 
-    def cli_restart_switch(self, node):
+
+    def cli_verify_password_change(self, node, user, current_password, version_string):
+        '''
+            Objective: Return version of switch software
+            
+            Input:
+            | node | Reference to switch (as defined in .topo file) |
+    
+            Return Value:
+            - Output on configuration success
+            - False on configuration failure   
+        '''
+        t = test.Test()
+        console_ip = t.params(node, "console_ip")
+        console_port = t.params(node, "console_port")
+        tn = telnetlib.Telnet(console_ip, console_port)
+        tn.set_debuglevel(10)
+        tn.read_until("login:", 10)
+        tn.write(str(user).encode('ascii') + "\r\n".encode('ascii'))
+        tn.read_until("Password: ", 10)
+        tn.write(str(current_password).encode('ascii') + "\r\n".encode('ascii'))
+        tn.read_until('')
+        tn.write("show version \r\n".encode('ascii'))
+        helpers.sleep(4)
+        output = tn.read_very_eager()
+        helpers.log(output)
+        tn.write("logout" + "\r\n".encode('ascii'))
+        tn.close()
+        if version_string in  output:
+            return True
+        else:
+            self.cli_change_user_password(node, user, current_password, "adminadmin")
+            return False
+
+    def cli_change_user_password(self, node, user, current_password, new_password):
+        '''
+            Objective: Change the username and password for a given user
+            
+            Input:
+            | node | Reference to switch (as defined in .topo file) |
+            | username | Username for which password has to be changed |
+            | password | Desired password |
+    
+            Return Value:
+            - True on configuration success
+            - False on configuration failure         
+        '''
+        try:
+            t = test.Test()
+            console_ip = t.params(node, "console_ip")
+            console_port = t.params(node, "console_port")
+            helpers.log("Console IP is %s \n Console Port is %s \n" % (console_ip, console_port))
+            helpers.log("Username is %s \n Password is %s \n" % (user, new_password))
+            tn = telnetlib.Telnet(console_ip, console_port)
+            tn.set_debuglevel(10)
+            tn.read_until("login:", 10)
+            tn.write(str(user) + "\r\n")
+            tn.read_until("Password: ", 10)
+            tn.write(str(current_password) + "\r\n")
+            tn.read_until('')
+            tn.write("\r\n" + "enable \r\n")
+            tn.write("\r\n" + "configure \r\n")
+            tn.write("\r\n" + "username " + str(user) + " password " + str(new_password) + "\r\n")
+            tn.write("exit" + "\r\n")
+            tn.write("logout" + "\r\n")
+            tn.close()
+            return True
+        except:
+            tn.close()
+            helpers.test_failure("Could not execute command. Please check log for errors")
+            return False
+
+    def bash_execute_command(self, node, command):
+        '''
+        Objective:
+        -Execute a command in bash mode and return output
+        
+        Input:
+        | node | Reference to switch (as defined in .topo file) |
+        | command | Command to be executed |
+
+        
+        Return Value:
+        - Output on success
+        - False on configuration failure        
+        '''
+        try:
+            t = test.Test()
+            switch = t.switch(node)
+        except:
+            return False
+        else:
+            switch.bash(command)
+            bash_output = switch.cli_content()
+            return bash_output
+
+
+
+    def cli_restart_switch(self, node, save_config='no'):
         '''
         Objective:
         -Restart a switch
@@ -1073,8 +1171,12 @@ class SwitchLight(object):
         try:
             t = test.Test()
             s1 = t.switch(node)
+            if not "no" in save_config:
+                s1.config("copy running-config startup-config")
             cli_input = 'reload now'
-            s1.enable(cli_input)
+            s1.enable('')
+            s1.send(cli_input)
+            helpers.sleep(120)
             return True
         except:
             helpers.test_failure("Could not execute command. Please check log for errors")
@@ -1455,7 +1557,7 @@ class SwitchLight(object):
             helpers.test_failure("Could not execute command. Please check log for errors")
             return False
 
-    def cli_verify_portchannel_members(self, node, pc_number, intf_name):
+    def cli_verify_portchannel_members(self, node, pc_number, *intf_name_list):
         '''
             
             Objective:
@@ -1477,21 +1579,30 @@ class SwitchLight(object):
             cli_output = s1.cli_content()
             content = string.split(cli_output, '\n')
             helpers.log("Length of content %d" % (len(content)))
+            helpers.log("Length of content %d" % (len(intf_name_list)))
             if len(content) < 8 :
                 return False
+            elif len(intf_name_list) < 1:
+                helpers.test_failure("Passed interface list is empty !!")
+                return False
             else :
-                for i in range(8, len(content)):
+                pass_count = 0
+                for i in range(10, len(content) - 1):
                     intfName = ' '.join(content[i].split()).split(" ", 2)
-                    helpers.log('intfName is %s' % intfName)
-                    if len(intfName) > 1 and intfName[1] == intf_name :
-                        helpers.log("IntfName is %s \n" % (intfName[1]))
-                        return True
+                    helpers.log('intfName is %s \n %s' % (intfName, intfName[1]))
+                    for intf_name in intf_name_list:
+                        helpers.log('value is %s' % intf_name)
+                        if len(intfName) > 1 and intfName[1] == intf_name :
+                            helpers.log("IntfName is %s \n" % (intfName[1]))
+                            pass_count = pass_count + 1
+                if pass_count == len(intf_name_list):
+                    return True
             return False
         except:
             helpers.test_failure("Could not execute command. Please check log for errors")
             return False
 
-    def cli_verify_portchannel_member_state(self, node, pc_number, intf_name):
+    def cli_verify_portchannel_member_state(self, node, pc_number, *intf_name_list):
         '''
             Objective:
             - Verify if portchannel member interface is up
@@ -1514,18 +1625,23 @@ class SwitchLight(object):
             cli_output = s1.cli_content()
             content = string.split(cli_output, '\n')
             helpers.log("Length of content %d" % (len(content)))
+            helpers.log("Length of content %d" % (len(intf_name_list)))
             if len(content) < 8 :
                 return False
+            elif len(intf_name_list) < 1:
+                helpers.test_failure("Passed interface list is empty !!")
+                return False
             else :
+                pass_count = 0
                 for i in range(8, len(content)):
                     intfName = ' '.join(content[i].split()).split(" ", 2)
-                    if len(intfName) > 1 and intfName[1] == intf_name:
-                        if intfName[0] == "*":
-                            helpers.log("Intf Name is %s and state is %s \n" % (intfName[1], intfName[0]))
-                            return True
-                        else:
-                            helpers.log("Intf Name is %s and state is %s \n" % (intfName[1], intfName[0]))
-                            return False
+                    for intf_name in intf_name_list:
+                        if len(intfName) > 1 and intfName[1] == intf_name:
+                            if intfName[0] == "*":
+                                helpers.log("Intf Name is %s and state is %s \n" % (intfName[1], intfName[0]))
+                                pass_count = pass_count + 1
+                if pass_count == len(intf_name_list):
+                    return True
             return False
         except:
             helpers.test_failure("Could not execute command. Please check log for errors")
@@ -1560,6 +1676,11 @@ class SwitchLight(object):
             helpers.log("Input is %s" % input_value)
             try:
                 s1.config(input_value)
+                cli_output = s1.cli_content()
+                if "is not a valid interface" in cli_output:
+                    return False
+                else:
+                    return True
             except:
                 return False
             return True

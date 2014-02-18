@@ -22,10 +22,19 @@ class Ixia(object):
 
     def ixia_l2_add(self, **kwargs):
         return self._ixia.ixia_l2_add(**kwargs)
-
+    
+    def ixia_l3_add(self, **kwargs):
+        return self._ixia.ix_l3_add(**kwargs)
+    
+    def ixia_start_l3_traffic(self, stream=None):
+        return self._ixia.ix_start_traffic_ethernet(stream)
+    
     def ixia_start_l2_traffic(self, stream=None):
         return self._ixia.ix_start_traffic_ethernet(stream)
 
+    def ixia_stop_l3_traffic(self, stream=None):
+        return self._ixia.ix_stop_traffic(stream)
+    
     def ixia_stop_l2_traffic(self, stream=None):
         return self._ixia.ix_stop_traffic(stream)
 

@@ -30,6 +30,7 @@ class BsnCommon(object):
 
     def base_suite_teardown(self):
         t = test.Test()
+        t.teardown()
         for n in t.topology():
             node = t.node(n)
             if helpers.is_controller(n) or helpers.is_mininet(n):
@@ -69,6 +70,16 @@ class BsnCommon(object):
         helpers.log("Express '%s' evaluated to '%s'" % (s, result))
         return result
 
+    def ixia_verify_traffic_rate(self, tx_value, rx_value):
+        tx = int(tx_value)
+        rx = int(rx_value)
+        if (rx >= (tx - 5)) and (rx <= (tx + 5)):
+            helpers.log("Pass:Traffic forwarded between 2 endpoints tx_rate:%d,rx_rate:%d" % (tx, rx))
+            return True
+        else:
+            helpers.test_failure("Fail:Traffic forward between 2 endpoints tx_rate:%d,rx_rate:%d" % (tx, rx))
+            return False
+
     def verify_dict_key(self, content, index, key):
         ''' Given a dictionary, return the value for a particular key
         
@@ -77,6 +88,15 @@ class BsnCommon(object):
             Return Value:  return the value for a particular key
         '''
         return content[index][key]
+
+    def verify_json_key(self, content, index, key):
+        ''' Given a dictionary, return the value for a particular key
+        
+            Input:Dictionary, index and required key.
+            
+            Return Value:  return the value for a particular key
+        '''
+        return content[int(index)][str(key)]
 
     def add_ntp_server(self, node=None, ntp_server='0.bigswitch.pool.ntp.org'):
         '''
@@ -187,6 +207,7 @@ class BsnCommon(object):
                 helpers.test_error("Unsupported Platform %s" % (node))
         elif helpers.is_controller(node):
             helpers.log("The node is a controller")
+
             if  helpers.is_bigtap(node):
                 '''
                     BigTap NTP Server Deletion goes here

@@ -265,3 +265,54 @@ admin_user = glance
         for x in arg:
             helpers.log("x: %s" % x)
         print "I am here"
+        helpers.set_env('BIGROBOT_ERROR', 12345)
+
+    def bash_command(self, node, cmd):
+        t = test.Test()
+        n = t.node(node)
+        n.bash(cmd, timeout=20)
+        # helpers.log("Bash result: %s" % n.bash_result())
+        # helpers.log("Bash content: %s" % n.bash_content())
+
+    def ha_role(self, node):
+        t = test.Test()
+        c = t.controller(node)
+        c.rest.get("/rest/v1/system/ha/role")
+        controllers = t.controllers()
+        helpers.log("*** Controllers: %s" % controllers)
+
+    def _build_link_list(self, list):
+        updated_list = []
+        for l in list:
+            src_switch = l['src']['interface']['name']
+            src_intf = l['src']['switch-info']['switch-name']
+            dst_switch = l['dst']['interface']['name']
+            dst_intf = l['dst']['switch-info']['switch-name']
+            key = "%s %s %s %s" % (src_switch, src_intf, dst_switch, dst_intf)
+
+            # Convert unicode to ascii
+            updated_list.append(key.encode('ascii', 'ignore'))
+        return updated_list
+
+    def verify_fabric_links(self, node):
+        t = test.Test()
+        c = t.controller(node)
+
+        # Initial state
+        content1 = c.rest.get('/api/v1/data/controller/applications/bvs/info/fabric?select=link')['content']
+        link_list1 = self._build_link_list(content1[0]['link'])
+        helpers.log("link_list1:\n%s" % helpers.prettify(link_list1))
+
+        # Some stuff happened around here...
+
+        # Next state (after reboot)
+        content2 = c.rest.get('/api/v1/data/controller/applications/bvs/info/fabric?select=link')['content']
+        link_list2 = self._build_link_list(content2[0]['link'])
+
+        # For negative test... You can inject a bad entry
+        # link_list2.append("bad entry")
+        link_list2[10] = "bad entry"
+
+        helpers.log("link_list2:\n%s" % helpers.prettify(link_list2))
+
+        return helpers.list_compare(link_list1, link_list2)

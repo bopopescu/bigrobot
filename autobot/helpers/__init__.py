@@ -32,13 +32,68 @@ _TZ = timezone("America/Los_Angeles")
 _BIGROBOT_ENV_LIST = []
 
 
+def warn(s, level=2):
+    """
+    Warn log.
+    """
+    Log().warn(s, level)
+
+
+def debug(s, level=2):
+    """
+    Debug log.
+    """
+    Log().debug(s, level)
+
+
+def trace(s, level=2):
+    """
+    Trace log.
+    """
+    Log().trace(s, level)
+
+
+def info(s, level=2):
+    """
+    Info log.
+    """
+    Log().info(s, level)
+
+
+# Alias
+test_log = info
+log = info
+
+
+def analyze(s, level=3):
+    info(s, level)
+
+
+def prettify(data):
+    """
+    Return the Python object as a pretty-print formatted string.
+    """
+    return pprint.pformat(data)
+
+
+def prettify_log(s, data, level=3):
+    analyze(''.join((s, '\n', prettify(data))), level)
+
+
 def error_msg(msg):
     print("Error: %s" % msg)
 
 
-def error_exit(msg):
+def error_exit(msg, exit_code=None):
+    """
+    exit_code follows the Robot Framework convention. Default is 255 which
+    matches "Unexpected internal error."
+    See https://twiki.cern.ch/twiki/bin/view/EMI/RobotFrameworkAdvancedGuide#Return_Codes
+    """
     error_msg(msg)
-    sys.exit(1)
+    if not exit_code:
+        exit_code = 255
+    sys.exit(exit_code)
 
 
 def file_not_exists(f):
@@ -53,11 +108,11 @@ def file_exists(f):
     return not file_not_exists(f)
 
 
-def error_exit_if_file_not_exists(msg, f):
+def error_exit_if_file_not_exists(msg, f, exit_code=None):
     if f is None:
         error_exit(''.join((msg, ': <file_not_specified>')))
     if not os.path.exists(f):
-        error_exit(''.join((msg, ': ', f)))
+        error_exit(''.join((msg, ': ', f)), exit_code)
 
 
 def exit_robot_immediately(msg=None):
@@ -85,7 +140,7 @@ class TestError(AssertionError):
     flagging uncaught error conditions in the test libraries, such as the
     'Unknown ping error' in helpers.ping().
     """
-    ROBOT_EXIT_ON_FAILURE = True
+    # ROBOT_EXIT_ON_FAILURE = True
 
 
 class EnvironmentFailure(RuntimeError):
@@ -154,6 +209,55 @@ def _env_get_and_set(name, new_val=None, default=None):
     return os.environ[name]
 
 
+def set_env(name, value):
+    """
+    Set the environment variable 'name' to 'value'.
+    Note: In Robot text file, you can call the keyword 'Set Environment Variable'
+          from the OperatingSystem library instead.
+    """
+    # Python's os module requires that env value be a string, not integer.
+    value = str(value)
+
+    if name in os.environ:
+        debug("Environment variable '%s' current value is: '%s'"
+              % (name, os.environ[name]))
+    os.environ[name] = value
+    debug("Environment variable '%s' new value is: '%s'"
+          % (name, os.environ[name]))
+    return os.environ[name]
+
+
+def get_env(name):
+    """
+    Get the environment variable 'name'.
+    Note: In Robot text file, you can call the keyword 'Get Environment Variable'
+          from the OperatingSystem library instead.
+    """
+    if not name in os.environ:
+        debug("Environment variable '%s' doesn't exist." % name)
+        return None
+    else:
+        debug("Environment variable '%s': '%s'"
+              % (name, os.environ[name]))
+        return os.environ[name]
+
+
+def remove_env(name):
+    """
+    Remove the environment variable 'name'.
+    Note: In Robot text file, you can call the keyword 'Remove Environment Variable'
+          from the OperatingSystem library instead.
+    """
+    if not name in os.environ:
+        debug("Environment variable '%s' doesn't exist. Removal is not required."
+              % name)
+        return False
+    else:
+        debug("Environment variable '%s' is removed" % name)
+        del os.environ[name]
+        return True
+
+
 def bigrobot_env_list():
     return _BIGROBOT_ENV_LIST
 
@@ -210,8 +314,8 @@ def bigrobot_exec_hint_format(new_val=None, default='export'):
     elif opt == 'run_gobot':
         return 'BIGROBOT_SUITE=%s gobot test'
     else:
-        test_error("Invalid option '%s'. Supported options are 'export', 'run_gobot'."
-                   % opt)
+        environment_failure("Invalid option '%s'. Supported options are 'export', 'run_gobot'."
+                            % opt)
 
 
 def bigrobot_topology(new_val=None, default=None):
@@ -288,54 +392,6 @@ def bigrobot_pandoc_support(new_val=None, default=None):
     return _env_get_and_set('BIGROBOT_PANDOC_SUPPORT', new_val, default)
 
 
-def warn(s, level=2):
-    """
-    Warn log.
-    """
-    Log().warn(s, level)
-
-
-def debug(s, level=2):
-    """
-    Debug log.
-    """
-    Log().debug(s, level)
-
-
-def trace(s, level=2):
-    """
-    Trace log.
-    """
-    Log().trace(s, level)
-
-
-def info(s, level=2):
-    """
-    Info log.
-    """
-    Log().info(s, level)
-
-
-# Alias
-test_log = info
-log = info
-
-
-def analyze(s, level=3):
-    info(s, level)
-
-
-def prettify(data):
-    """
-    Return the Python object as a pretty-print formatted string.
-    """
-    return pprint.pformat(data)
-
-
-def prettify_log(s, data, level=3):
-    analyze(''.join((s, '\n', prettify(data))), level)
-
-
 def sleep(s):
     """
     Sleep for <s> seconds.
@@ -356,7 +412,7 @@ def is_controller_or_error(name):
     Controller is defined as c1, c2, master, slave, ...
     """
     if not is_controller(name):
-        test_error("Node must be a controller ('c1', 'c2').")
+        environment_failure("Node must be a controller ('c1', 'c2').")
     else:
         return True
 
@@ -671,6 +727,29 @@ def is_same_file(file1, file2):
     inode2 = os.stat(file2)[1]
 
     return True if inode1 == inode2 else False
+
+
+def list_compare(list1, list2):
+    """
+    Compare to see whether list1 is the same as list2.
+    Return
+       - True  if lists are same
+       - False if lists are different
+    """
+    list1 = sorted(list1)
+    list2 = sorted(list2)
+
+    if len(list1) != len(list2):
+        debug("Lists are not the same - lengths are different")
+        return False
+
+    for i, _ in enumerate(list1):
+        if list1[i] != list2[i]:
+            debug("Lists are not the same - list1[%s]('%s') != list2[%s]('%s')"
+                  % (i, list1[i], i, list2[i]))
+            return False
+
+    return True
 
 
 def bigtest_node_info():

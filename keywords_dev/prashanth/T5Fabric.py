@@ -353,21 +353,27 @@ class T5Fabric(object):
         helpers.log("Total Spine in the topology: %d" % len(list_spine))
         return list_spine
     
-    def rest_verify_rack_lag_from_leaf(self, switch):
+    def rest_verify_rack_lag_from_leaf(self, switcha, switchb):
+        '''Verify Rack lag formation for the leaf switch mentioned in the variables to all the racks
+            Input: Leaf switch name  , any down event you are expecting to verify on
+            Output: Will check the total no of spine switches and compare against the rack connection spine switches.
+        ''' 
         t = test.Test()
         c = t.controller()
-        url = '%s/api/v1/data/controller/core/switch[name="%s"]?select=fabric-lag' % (c.base_url, switch)
+        url = '%s/api/v1/data/controller/core/switch[name="%s"]?select=fabric-lag' % (c.base_url, switcha)
         c.rest.get(url)
         data = c.rest.content()
         for i in range(0,len(data[0]["fabric-lag"])):
             if data[0]["fabric-lag"][i]["lag-type"] == "rack-lag":
-                                           
-                    if data[0]["fabric-lag"][i]["member"]["dst-switch"] == self.rest_verify_no_of_spine():
-                        helpers.log("Rack connectivity from leaf switch %s using all the spine switches are up" % switch)
-                    else:
-                        helpers.test_failure("Rack connectivity from leaf switch %s using all the spine switches are not up" % switch)
-    
-                
+                actual_spine = []
+                for j in range(0,len(data[0]["fabric-lag"][i]["member"])):
+                    if data[0]["fabric-lag"][i]["member"][j]["dst-switch"] not in actual_spine:
+                        actual_spine.append(data[0]["fabric-lag"][i]["member"][j]["dst-switch"])
+                for j in range(0,len(actual_spine)):
+                    if (str(actual_spine[j]) == str(switchb)):
+                        helpers.log("Rack connectivity from leaf switch %s using all the spine switches are up" % switcha)
+                        return True
+                           
     def rest_verify_forwarding_lag(self, dpid, switch):
         '''Verify Edge port  Information in Controller Forwarding Table
         
@@ -501,5 +507,16 @@ class T5Fabric(object):
         if data[0]["lag-id"] == data1[0]["lag-id"]: 
             helpers.log("Portgroup Lag id creation in forwarding table is correct for dual rack") 
         else:
-            helpers.test_failure("Portgroup Lag id creation in forwarding table does not match for dual rack , check the logs")                
+            helpers.test_failure("Portgroup Lag id creation in forwarding table does not match for dual rack , check the logs") 
+            
+    def ixia_verify_traffic_rate(self, tx_value, rx_value):
+        tx = int(tx_value)
+        rx = int(rx_value)
+        if (rx >= (tx - 5)) and (rx <= (tx + 5)):
+            helpers.log("Pass:Traffic forwarded between 2 endpoints tx_rate:%d,rx_rate:%d" % (tx, rx))
+            return True
+        else:
+            helpers.test_failure("Fail:Traffic forward between 2 endpoints tx_rate:%d,rx_rate:%d" % (tx, rx))
+            return False
+                                   
         

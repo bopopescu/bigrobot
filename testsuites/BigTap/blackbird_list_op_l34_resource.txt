@@ -1,19 +1,69 @@
 * Keywords
+Bigtap list op l3_l4 suite setup
+	base suite setup
+	sleep   5
+	rest_add_interface_role    s1     ethernet1    filter     S84-1  
+	rest_add_interface_role    s1    ethernet2    delivery    S84-2   
+ 	rest_add_interface_role    s1    ethernet4    delivery   S84-4    
 
+Bigtap list op l3_l4 suite teardown
  
+ 
+#	rest_delete_interface_role    s1     ethernet1    filter     S84-1   
+#	rest_delete_interface_role    s1     ethernet2    delivery   S84-2    
+#	rest_delete_interface_role    s1    ethernet4    delivery    S84-4  
+#	base suite teardown
+	sleep    5
+
+Bigtap list op l3_l4 case setup
+    bigtap_delete_all 
+    rest_disable_feature      l3-l4-mode 
+    rest_disable_feature      tracked-host        
+    sleep    5
+
+Bigtap list op l3_l4 case teardown
+   sleep  5
+
+
+Log to file    [Arguments]    ${File}     ${title}    ${sw1}
+	Append To File    ${File}    ******************* START **************************\n
+    ${time}=	Get Time    
+    Append To File    ${File}     ${time}\n	
+	Append To File    ${File}     ${title}\n
+    ${Flow}=   rest_show_switch_flow       ${sw1}		
+	Append To File    ${File}	   ========= active tcam entries is: ${Flow} ========\n
+	Append To File    ${File}    policy configure is:\n
+	${output}=   cli_show_bigtap_policy
+	Append To File    ${File}    ${output}\n	
+	Append To File    ${File}    ******************** END *****************************\n	
+  
 Verify policy running config matches   [Arguments]    ${PName}   ${matches}	 
   	${input_dict}=  rest_show_run_policy   ${PName}       
     ${num}=   rest_get_run_policy_feild    ${input_dict}   ${PName}   match=yes
     Should Be Equal As Integers    ${num}     ${matches}	
 
 Verify switch entry    [Arguments]    ${swName}   ${flow}	 
-     ${switchFlowVal}=   rest_show_switch_flow   switch_alias=${swName}
+     ${switchFlowVal}=   rest_show_switch_flow   node=${swName}
      Should Be Equal As Integers  ${switchFlowVal}   ${flow}
 
 Verify optimized match    [Arguments]    ${PName}   ${matches}	 
   	 ${numMatches}=  rest_show_policy_optimize    ${PName}  
      Should Be Equal As Integers   ${numMatches}  ${matches}	 
 
+Verify l3-l4 mode controler and tcam   [Arguments]   ${l34mode}      ${sw1}
+     ${result}=  rest_show_feature     l3-l4-mode  
+     Should Be Equal    ${result}      ${l34mode} 
+ 	 ${result}=  verify switch tcam max     ${sw1}     ${l34mode}
+     Should Be True    ${result}  
+
+Verify L3-l4 config     [Arguments]   ${l34mode}
+     ${result}=  cli_show_l3_l4 
+     Should Be Equal     ${result}    ${l34mode}
+
+
+Verify trackhost config     [Arguments]   ${trackhost}
+     ${result}=  cli_show_trackhost 
+     Should Be Equal     ${result}    ${trackhost}
 
 
 Config bigtap policy       [Arguments]    ${PName}  ${Fint}  ${Dint}	 
@@ -387,12 +437,10 @@ Apply ipv4 address group to policy     [Arguments]  ${PName}    ${GName}  ${seq}
  	${result}=  rest_add_policy_match      admin-view  ${PName}   ${seq}    {"sequence": ${seq}, "src-ip-list": ${GName}, "ether-type": 2048,"dst-ip":${bip}, "dst-ip-mask":${bmask}}  		
     Should be True    ${result}  	
 	Sleep     ${short}
-
-    ${input_dict}=   rest_show_policy    ${PName} 
-    ${result}=       verify_policy       ${input_dict}   ${PName}   action=forward
-    Should be True   ${result}   
+    ${result}=   rest_verify_bigtap_policy    ${PName}    action=forward
+     Should be True   ${result}   
  
-    ${switchFlowVal}=   rest_show_switch_flow   switch_alias=${sName}
+    ${switchFlowVal}=   rest_show_switch_flow   node=${sName}
     Should Be Equal As Integers  ${switchFlowVal}  ${num} 
 
 
@@ -432,11 +480,11 @@ Apply ipv6 address group to policy     [Arguments]  ${PName}     ${GName}  ${seq
     Should be True    ${result}  
 	Sleep     ${short}
 
-    ${input_dict}=   rest_show_policy     ${PName} 
-    ${result}=       verify_policy       ${input_dict}     ${PName}   action=forward
+    ${result}=   rest_verify_bigtap_policy    ${PName}    action=forward
+ 
     Should be True    ${result}   
  
-    ${switchFlowVal}=   rest_show_switch_flow   switch_alias=${sName}
+    ${switchFlowVal}=   rest_show_switch_flow   node=${sName}
     Should Be Equal As Integers  ${switchFlowVal}   ${num} 
 
 
@@ -671,18 +719,6 @@ Ipv6 all match option   [Arguments]    ${PName}  ${GName}    ${seq}
 
 
 
-Verify l3-l4 mode controler and tcam   [Arguments]   ${l34mode}      ${sw1}
-     ${result}=  rest_show_feature  l3_l4=${l34mode}
-     Should Be Equal    ${result}      ${l34mode} 
- 	 ${result}=  verify switch tcam     ${sw1}     ${l34mode}
-     Should Be True    ${result}  
-
-Verify L3-l4 config     [Arguments]   ${l34mode}
-     ${result}=  cli_show_l3_l4 
-     Should Be Equal     ${result}    ${l34mode}
-
-
-
 ############  test case keywords
 
 
@@ -692,7 +728,7 @@ Testcase T1.3 Address group IPv4/IPv6    [Arguments]   ${sw1}     ${sw1_f1}     
     Config bigtap policy                 IPv46_ADD     ${sw1_f1}     ${sw1_d1} 
     Apply ipv4 address group to policy   IPv46_ADD     "IPV4_10"  100  ${sw1}    40   
   	Apply ipv6 address group to policy   IPv46_ADD     "IPV6_10"  200  ${sw1}    80
-    Ipv46 address group negative         IPv46_ADD     "IPV4_10"    "IPV6_10"   500
+    Ipv46 address group policy negative  IPv46_ADD     "IPV4_10"    "IPV6_10"   500
   
 
 Testcase T2.1 Ipv4 prefix list optimization     [Arguments]   ${sw1}     ${sw1_f1}     ${sw1_d1}

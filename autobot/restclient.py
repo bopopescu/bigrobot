@@ -19,7 +19,7 @@ class RestClient(object):
         'unknown': 'Unknown error (unexpected HTTP status code)'
     }
 
-    def __init__(self, base_url=None, u=None, p=None,
+    def __init__(self, base_url=None, user=None, password=None,
                  content_type='application/json'):
         self.http = httplib2.Http(timeout=RestClient.default_timeout)
 
@@ -33,21 +33,26 @@ class RestClient(object):
         self.session_cookie = None
         self.session_cookie_loop = 0
         self.last_result = None
+        self.user = user
+        self.password = password
 
-        if u and p:
-            self.authen_str = self.authen_encoding(u, p)
-            self.default_header['authorization'] = 'Basic %s' % self.authen_str
+    def authen_encoding(self, user=None, password=None):
+        if not user:
+            user = self.user
+        if not password:
+            password = self.password
 
-    def authen_encoding(self, u, p):
-        base64str = base64.encodestring('%s:%s' % (u, p))
-        return base64str.replace('\n', '')
+        base64str = base64.encodestring('%s:%s' % (user, password))
+        self.default_header['authorization'] = 'Basic %s' % base64str.replace('\n', '')
+        return self.default_header['authorization']
 
     def request_session_cookie(self, url=None):
         if url:
             self.session_cookie_url = url
         helpers.log("session_cookie_url: %s" % self.session_cookie_url)
-        result = self.post(self.session_cookie_url,
-                           {"user":"admin", "password":"adminadmin"})
+        authen = {"user":self.user, "password":self.password}
+        helpers.debug("session cookie authen info: %s" % authen)
+        result = self.post(self.session_cookie_url, authen)
         session_cookie = result['content']['session_cookie']
         self.set_session_cookie(session_cookie)
         return session_cookie
@@ -156,16 +161,32 @@ class RestClient(object):
         if not quiet:
             self.log_result(result=result, level=6)
 
+        #
+        # ATTENTION: RESTclient will generate an exception when the
+        # HTTP status code is anything other than:
+        #   - 200 (OK)
+        #   - 201 (Created)
+        #   - 202 (Accepted)
+        #
         result['success'] = False
-        if code == '200':
+        if int(code) in [200, 201, 202]:
             result['success'] = True
         else:
-            helpers.test_error("REST call failed with status code %s" % code)
+            if int(code) == 401 and result['status_descr'] == 'Unauthorized':
+                # Session cookie has expired. This requires exception handling
+                # by BigRobot
+                pass
+            else:
+                helpers.test_error("REST call failed with status code %s" % code)
 
         return result
 
     def http_request(self, *args, **kwargs):
         result = self._http_request(*args, **kwargs)
+
+        # !!! FIXME: Handle case where session cookie is expired for
+        # Big Switch controllers. It really shouldn't be in the generic
+        # module. Should really reside in bsn_restclient.py.
         if int(result['status_code']) == 401 and result['status_descr'] == 'Unauthorized':
             if self.session_cookie_loop > 5:
                 helpers.test_error("Detected session cookie loop.")
@@ -174,7 +195,7 @@ class RestClient(object):
 
             helpers.log("It appears the session cookie has expired. Requesting new session cookie.")
             self.request_session_cookie()
-
+            # helpers.sleep(2)
             # Re-run command
             result = self._http_request(*args, **kwargs)
         else:

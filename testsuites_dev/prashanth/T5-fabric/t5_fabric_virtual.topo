@@ -6,5 +6,12 @@
 # mn  : Mininet server
 
 c1:
-  ip: 10.192.96.96
-  http_port: 8082
+  ip: 10.192.5.51
+
+mn:
+  ip: 10.192.7.81
+
+  type: 't6'
+
+  topology: --num-spine 2 --num-rack 3 --num-bare-metal 2 --num-hypervisor 0  --dual-tor
+
