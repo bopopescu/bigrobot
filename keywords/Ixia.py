@@ -42,3 +42,5 @@ class Ixia(object):
         result = self._ixia.ix_fetch_port_stats()
         helpers.log('result:\n%s' % helpers.prettify(result))
         return result
+    def ixia_clear_stats(self):
+        return self._ixia.ix_clear_stats()
