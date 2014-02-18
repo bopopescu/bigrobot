@@ -264,3 +264,4 @@ admin_user = glance
         # helpers.log("arg[2]: %s" % arg[2])
         for x in arg:
             helpers.log("x: %s" % x)
+        print "I am here"
