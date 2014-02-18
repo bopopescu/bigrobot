@@ -288,22 +288,51 @@ def test_command(*args):
     if helpers.bigrobot_suite_format() == 'mw':
         ext = 'html'
 
-    # Command options:
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument('--include', metavar=('tag1', 'tag2'), nargs='*',
+                        help='Run test cases by tags')
+    parser.add_argument('--exclude',
+                        metavar=('tag1', 'tag2'), nargs='*',
+                        help='Exclude test cases by tags')
+    parser.add_argument('--loglevel', default='debug',
+                        help="Log level (default is 'debug' else 'trace', 'info', 'warn')")
+    parser.add_argument('--debugfile', default='debug.log',
+                        help="Debug file")
+    parser.add_argument('--outputdir', default=helpers.bigrobot_log_path_exec_instance(),
+                        help="Output directory")
+
+    args = parser.parse_args(*args)
+
+    include_tags = args.include
+    exclude_tags = args.exclude
+    if exclude_tags:
+        exclude_tags.append('skipped')
+    else:
+        exclude_tags = ['skipped']
+
+    test_suite = ''.join((helpers.bigrobot_suite(), '.', ext))
+
+    # Comparable to command options:
     #   pybot --loglevel=debug \
     #         --debugfile=debug.log \
     #         --exclude=skipped \
     #         --outputdir=./mytest_20140108_052828 \
     #         mytest.txt
-    # run('pybot %s %s.%s'
-    #    % (ROBOT_FRAMEWORK_OPTS, helpers.bigrobot_suite(), ext))
-    opts = []
-    opts.extend(ROBOT_FRAMEWORK_OPTS)
-    if (args):
-        opts.extend(*args)
-    opts.extend([''.join((helpers.bigrobot_suite(), '.', ext))])
 
-    # print("Starting Robot with options:\n%s" % helpers.prettify(opts))
-    robot.run_cli(opts)
+    options = {
+               'exclude': exclude_tags,
+               'loglevel': args.loglevel,
+               'debugfile': args.debugfile,
+               'outputdir': args.outputdir,
+               }
+    if include_tags:
+        options['include'] = include_tags
+
+    print("Robot options:\n%s" % helpers.prettify(options))
+    rc = robot.run(test_suite, **options)
+    helpers.log("Robot Framework return code is %s" % rc)
+    print("Return code is %s" % rc)
     create_symlinks_to_logs()
 
 

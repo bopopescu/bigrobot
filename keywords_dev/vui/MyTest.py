@@ -316,3 +316,22 @@ admin_user = glance
         helpers.log("link_list2:\n%s" % helpers.prettify(link_list2))
 
         return helpers.list_compare(link_list1, link_list2)
+
+    def return_boolean(self, bool=True):
+        return bool
+
+    def devconf_reconnect(self):
+        t = test.Test()
+        c = t.controller('master')
+        c.bash('uname -a')
+        c.rest.get('/api/v1/data/controller/core/aaa/local-user')
+        # c_vui = c.connect('vui', 'vuile123', protocol='ssh', name='c1_vui')
+        # c_vui = c.connect('userChkPassword', 'bsnbsn', protocol='ssh', name='c1_vui')
+        # c_vui.cli('show version')
+        # c.bash('uptime')
+        # c_vui.enable('show user')
+        # c_new = t.node_reconnect(node='master', user='userChkPassword', password='bsnbsn')
+        c_new = t.node_reconnect(node='master', user='vui', password='vuile123')
+        c_new.enable("show running-config")
+        helpers.log("*** user:%s, password:%s" % (c_new.user(), c_new.password()))
+        c_new.rest.get('/api/v1/data/controller/core/aaa/local-user')
