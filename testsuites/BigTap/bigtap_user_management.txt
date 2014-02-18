@@ -1,0 +1,190 @@
+*Settings
+Documentation  BigTap User Management: Release:Blackbird Feature:User Management
+Suite Setup  bigtap suite setup
+Suite Teardown   base suite teardown
+Test Setup   base test setup
+Test Teardown  base test teardown 
+Force Tags   platform Sanity
+Library  keywords/BsnCommon.py
+Library  keywords/AppController.py
+Library  keywords/BigTap.py
+
+*Test Case
+Verify username admin can have all lower-case alphabet password
+    verify config  userChkPassword  bsnbsn    
+
+Verify username admin can have all upper-case alphabet password
+    rest add user password  userChkPassword  BSNBSN
+    verify config  userChkPassword  BSNBSN
+
+Verify username admin can have a mix of lower-case and upper-case alphabet password
+    rest add user password  userChkPassword  cLiEnTcLiEnT
+    verify config  userChkPassword  cLiEnTcLiEnT 
+    [Tags]  sanity  platform      
+
+Verify username admin can have a numeric password
+    rest add user password  userChkPassword  1234567890
+    verify config  userChkPassword  1234567890
+    [Tags]  sanity  platform      
+    
+Verify username admin can have a alphanumeric (alphabet all small) password
+    rest add user password  userChkPassword  bsn1234
+    verify config  userChkPassword  bsn1234
+    [Tags]  sanity  platform        
+    
+Verify username admin can have a alphanumeric (alphabet all caps) password
+    rest add user password  userChkPassword  BSN1234
+    verify config  userChkPassword  BSN1234
+    [Tags]  sanity  platform        
+
+Verify username admin can have a alphanumeric password with a !
+    rest add user password  userChkPassword  bSn1234!
+    verify config  userChkPassword  bSn1234!
+    [Tags]  sanity  platform        
+
+Verify username admin can have a alphanumeric password with a @
+    rest add user password  userChkPassword  bSn1234@
+    verify config  userChkPassword  bSn1234@
+    [Tags]  sanity  platform        
+
+Verify username admin can have a alphanumeric password with a #
+    rest add user password  userChkPassword  bSn1234%23
+    verify config  userChkPassword  bSn1234#
+    [Tags]  sanity  platform  
+
+Verify username admin can have a alphanumeric password with a $
+    rest add user password  userChkPassword  bSn1234$
+    verify config  userChkPassword  bSn1234$
+    [Tags]  sanity  platform        
+
+Verify username admin can have a alphanumeric password with a ?
+    rest add user password  userChkPassword  bSn1234%3F
+    verify config  userChkPassword  bSn1234?
+    [Tags]  sanity  platform       
+
+Verify username admin can have a alphanumeric password with a >
+    rest add user password  userChkPassword  bSn1234%3E
+    verify config  userChkPassword  bSn1234>
+    [Tags]  sanity  platform   
+
+Verify username admin can have a alphanumeric password with a ^
+    rest add user password  userChkPassword  bSn1234^
+    verify config  userChkPassword  bSn1234^    
+    [Tags]  sanity  platform        
+
+Verify username admin can have a alphanumeric password with a &
+    rest add user password  userChkPassword  bSn1234&
+    verify config  userChkPassword  bSn1234&
+    [Tags]  sanity  platform        
+
+Verify username admin can have a alphanumeric password with a *
+    rest add user password  userChkPassword  bSn1234*
+    verify config  userChkPassword  bSn1234*
+    [Tags]  sanity  platform        
+
+Verify username admin can have a alphanumeric password with a (
+    rest add user password  userChkPassword  bSn1234(
+    verify config  userChkPassword  bSn1234(
+    [Tags]  sanity  platform        
+
+Verify username admin can have a alphanumeric password with a )
+    rest add user password  userChkPassword  bSn1234)
+    verify config  userChkPassword  bSn1234)
+    [Tags]  sanity  platform        
+
+Verify username admin can have a alphanumeric password with a -
+    rest add user password  userChkPassword  bSn1234-
+    verify config  userChkPassword  bSn1234-
+    [Tags]  sanity  platform        
+
+Verify username admin can have a alphanumeric password with a _
+    rest add user password  userChkPassword  bSn1234_
+    verify config  userChkPassword  bSn1234_
+    [Tags]  sanity  platform        
+
+Verify username admin can have a alphanumeric password with a ;
+    rest add user password  userChkPassword  bSn1234%3B
+    verify config  userChkPassword  bSn1234;
+    [Tags]  sanity  platform       
+
+Verify username admin can have a alphanumeric password with a }
+    rest add user password  userChkPassword  bSn1234}
+    verify config  userChkPassword  bSn1234}
+    [Tags]  sanity  platform        
+
+Verify username admin can have a alphanumeric password with a {
+    rest add user password  userChkPassword  bSn1234{
+    verify config  userChkPassword  bSn1234{
+    [Tags]  sanity  platform    
+
+Verify username admin can have a alphanumeric password with a [
+    rest add user password  userChkPassword  bSn1234[
+    verify config  userChkPassword  bSn1234[
+    [Tags]  sanity  platform        
+
+Verify username admin can have a alphanumeric password with a ]
+    rest add user password  userChkPassword  bSn1234]
+    verify config  userChkPassword  bSn1234]
+    [Tags]  sanity  platform        
+
+Verify username admin can have a alphanumeric password with a |
+    rest add user password  userChkPassword  bSn|1234
+    verify config  userChkPassword  bSn|1234
+    [Tags]  sanity  platform       
+        
+Verify username admin can have a alphanumeric password with a \
+    rest add user password  userChkPassword  bSn1234%5C
+    verify config  userChkPassword  bSn1234\\ 
+    [Tags]  sanity  platform        
+        
+Verify username admin can have a alphanumeric password with a :
+    rest add user password  userChkPassword  bSn:1234
+    verify config  userChkPassword  bSn:1234
+    [Tags]  sanity  platform        
+    
+Verify username admin can have a alphanumeric password with a ,
+    rest add user password  userChkPassword  bSn,1234
+    verify config  userChkPassword  bSn,1234
+    [Tags]  sanity  platform        
+    
+Verify username admin can have a alphanumeric password with a .
+    rest add user password  userChkPassword  bSn.1234
+    verify config  userChkPassword  bSn.1234
+    [Tags]  sanity  platform           
+    
+Verify username admin can have a alphanumeric password with a <
+    rest add user password  userChkPassword  bSn1234<
+    verify config  userChkPassword  bSn1234<
+    [Tags]  sanity  platform        
+    
+Verify username admin can have a alphanumeric password with a /
+    rest add user password  userChkPassword  bSn1234/
+    verify config  userChkPassword  bSn1234/
+    [Tags]  sanity  platform        
+
+Verify username admin can have a alphanumeric password with a ~
+    rest add user password  userChkPassword  bSn1234~
+    verify config  userChkPassword  bSn1234~
+    [Tags]  sanity  platform     
+    
+Verify username admin can have a alphanumeric password with a `
+    rest add user password  userChkPassword  bSn1234`
+    verify config  userChkPassword  bSn1234`
+    [Tags]  sanity  platform  
+        
+* Keywords
+
+bigtap suite setup
+    base suite setup
+    rest add user  userChkPassword
+    rest add user password  userChkPassword  bsnbsn
+    rest add rbac group  groupChkPassword  chkpassword-view
+    rest add user to group  userChkPassword  groupChkPassword
+    rest add rbac permission  chkpassword-view
+    rest add filter interface to rbac  chkpassword-view  filter_name='allow-all'     
+    rest add delivery interface to rbac  chkpassword-view  delivery_name='allow-all' 
+    rest add match to rbac  chkpassword-view  match_name='allow-all'       
+    
+verify config  [Arguments]  ${username}  ${new_password}
+    ${content}=  rest show version  user=${username}  password=${new_password}
+    Should Contain  ${content}  Big Network Controller 3.0.0

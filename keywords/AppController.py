@@ -15,6 +15,8 @@
 
 import autobot.helpers as helpers
 import autobot.test as test
+import subprocess
+import re
 
 class AppController(object):
 
@@ -26,6 +28,21 @@ class AppController(object):
 ###################################################
 # All Show Commands Go Here:
 ###################################################
+
+    def rest_show_version(self, user="admin", password="adminadmin"):
+        t = test.Test()
+        c = t.controller('c1')
+        url = '/rest/v1/system/version'
+        if "admin" not in user:
+            c_user = t.node_reconnect(node='master', user=str(user), password=password)
+            c_user.rest.get(url)
+            content = c_user.rest.content()
+            t.node_reconnect(node='master')
+        else:
+            c.rest.get(url)
+            content = c.rest.content()
+        return content[0]['controller']
+
     def cli_upgrade_image(self, node=None, package=None, timeout=200, sleep_time=200):
         '''
             Objective:
@@ -337,13 +354,12 @@ class AppController(object):
                     c.bash("echo 'sleep 15' >> test.sh")
                     c.bash("echo 'sudo ifconfig eth0 down' >> test.sh")
                     c.bash("echo 'sudo ifconfig eth0 down' >> test.sh")
-                    c.bash("echo 'sleep 10' >> test.sh")
+                    c.bash("echo 'sleep 20' >> test.sh")
                     c.bash("echo 'sudo ifconfig eth0 up' >> test.sh")
                     c.bash("echo 'sleep 10' >> test.sh")
                     c.bash("echo 'sudo /etc/init.d/networking restart' >> test.sh ")
                     c.bash("echo 'sleep 10' >> test.sh")
                     c.bash("sh test.sh &")
-                    helpers.sleep(50)
                 except:
                     helpers.test_failure(c.rest.error())
                     return False
@@ -590,13 +606,13 @@ class AppController(object):
             c2 = t.controller('slave')
             try:
                 # Get Cluster Names:
-                url1 = "/rest/v1/system/ha/role reply"
+                url1 = "/rest/v1/system/controller"
                 c1.rest.get(url1)
                 master_output = c1.rest.content()
                 c2.rest.get(url1)
                 slave_output = c2.rest.content()
-                master_clustername = master_output['clustername']
-                slave_clustername = slave_output['clustername']
+                master_clustername = master_output['id']
+                slave_clustername = slave_output['id']
                 # Open Firewall
                 url2 = '/rest/v1/model/firewall-rule/'
                 interface_master = master_clustername + "|Ethernet|0"
@@ -650,3 +666,64 @@ class AppController(object):
                 return False
             else:
                 return True
+
+    def snmp_get(self, snmp_community, snmp_oid):
+        '''Execute SNMP Walk from local machine for a particular SNMP OID
+        
+            Input: SNMP Community and OID
+            
+            Return Value:  return the SNMP Walk O/P
+        '''
+        try:
+            t = test.Test()
+        except:
+            return False
+        else:
+            c = t.controller('master')
+            try:
+                url = "/usr/bin/snmpwalk -v2c -c %s %s %s" % (str(snmp_community), c.ip(), str(snmp_oid))
+                returnVal = subprocess.Popen([url], stdout=subprocess.PIPE, shell=True)
+                (out, _) = returnVal.communicate()
+            except:
+                return False
+            else:
+                helpers.log("URL: %s Output: %s" % (url, out))
+                return out
+
+
+    def snmp_getnext(self, snmp_community, snmp_oid):
+        '''Execute snmpgetnext from local machine for a particular SNMP OID
+        
+            Input: SNMP Community and OID
+            
+            Return Value:  return the SNMP Walk O/P
+        '''
+        t = test.Test()
+        c = t.controller()
+        url = "/usr/bin/snmpgetnext -v2c -c %s %s %s" % (str(snmp_community), c.ip(), str(snmp_oid))
+        returnVal = subprocess.Popen([url], stdout=subprocess.PIPE, shell=True)
+        (out, err) = returnVal.communicate()
+        helpers.log("URL: %s Output: %s" % (url, out))
+        return out
+
+
+    def snmp_cmd(self, snmp_cmd, snmp_options, snmp_community, snmp_oid):
+        '''Execute a generic snmp command from local machine for a particular SNMP OID
+        
+            Input: 
+                `snmp_cmd`        SNMP Command (snmpbulkget/snmpbulkwalk)
+                `snmp_options`     SNMP Command options
+                `snmp_community`   SNMP Community
+                `snmp_oid`         SNMP OID to perform walk on
+            
+            Return Value:  return the SNMP Walk O/P
+        '''
+        t = test.Test()
+        c = t.controller()
+        if snmp_options == "None" or snmp_options == "none":
+                snmp_options = " "
+        url = "/usr/bin/%s -v2c %s -c %s %s %s" % (str(snmp_cmd), str(snmp_options), str(snmp_community), c.ip(), str(snmp_oid))
+        returnVal = subprocess.Popen([url], stdout=subprocess.PIPE, shell=True)
+        (out, err) = returnVal.communicate()
+        helpers.log("URL: %s Output: %s" % (url, out))
+        return out
