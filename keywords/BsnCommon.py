@@ -70,10 +70,11 @@ class BsnCommon(object):
         helpers.log("Express '%s' evaluated to '%s'" % (s, result))
         return result
 
-    def ixia_verify_traffic_rate(self, tx_value, rx_value):
+    def ixia_verify_traffic_rate(self, tx_value, rx_value, rangev=5):
         tx = int(tx_value)
         rx = int(rx_value)
-        if (rx >= (tx - 5)) and (rx <= (tx + 5)):
+        vrange = int(rangev)
+        if (rx >= (tx - vrange)) and (rx <= (tx + vrange)):
             helpers.log("Pass:Traffic forwarded between 2 endpoints tx_rate:%d,rx_rate:%d" % (tx, rx))
             return True
         else:

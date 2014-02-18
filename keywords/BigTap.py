@@ -17,6 +17,7 @@ import autobot.helpers as helpers
 import autobot.test as test
 import keywords.AppController as AppController
 import json
+import re
 
 class BigTap(object):
 
@@ -243,15 +244,15 @@ class BigTap(object):
         try:
             t = test.Test()
             c = t.controller('master')
-            url = '/api/v1/data/controller/applications/bigtap/view/policy[name="%s"]/info' % (policy_name)
-            c.rest.get(url)
-            if not c.rest.status_code_ok():
-                helpers.test_failure(c.rest.error())
-            content = c.rest.content()
         except:
             helpers.test_failure("Could not execute command")
             return False
         else:
+            url = '/api/v1/data/controller/applications/bigtap/view/policy[name="%s"]/info' % str(policy_name)
+            c.rest.get(url)
+            if not c.rest.status_code_ok():
+                helpers.test_failure(c.rest.error())
+            content = c.rest.content()
             if (return_value is not None) :
                 return content[0][return_value]
             else:
@@ -308,6 +309,64 @@ class BigTap(object):
                     helpers.test_log("Policy correctly reports detailed status as : %s" % content[0]['detailed-status'])
                 else:
                     helpers.test_failure("Policy does not correctly report detailed status as : %s" % content[0]['detailed-status'])
+                    return False
+                return True
+
+    def rest_verify_service_interface_state_in_policy(self, node, policy_name, service_name, service_pre_interface=None, service_post_interface=None):
+        try:
+            t = test.Test()
+            c = t.controller('master')
+            AppCommon = AppController.AppController()
+
+        except:
+            helpers.test_failure("Could not execute command")
+            return False
+        else:
+            url = '/api/v1/data/controller/applications/bigtap/view/policy[name="%s"]/service-interface' % str(policy_name)
+            c.rest.get(url)
+            if not c.rest.status_code_ok():
+                helpers.test_failure(c.rest.error())
+            content = c.rest.content()
+            service_nodes = re.split(' ', service_name)
+            service_pre_interface_name = re.split(' ', service_pre_interface)
+            service_post_interface_name = re.split(' ', service_post_interface)
+            for x in range(0, len(content)):
+                if content[x]['switch'] == AppCommon.rest_return_switch_dpid_from_ip(node):
+                    helpers.log("Policy correctly shows switch dpid for service")
+                else:
+                    helpers.log("Policy does not correctly shows switch dpid for service")
+                    return False
+                if content[x]['state'] == "up":
+                    helpers.log("Policy correctly shows interface state for service as up")
+                else:
+                    helpers.log("Policy does not correctly show interface state for service as up")
+                    return False
+                service_fail = 0
+                for y in range(0, len(service_nodes)):
+                    if content[x]['service-name'] == service_nodes[y]:
+                        helpers.log("Policy correctly shows Service Name")
+                    else:
+                        service_fail = service_fail + 1
+                if service_fail == len(service_nodes):
+                    helpers.log("Service Name %s was not found in Policy" % service_name)
+                    return False
+                service_fail = 0
+                for y in range(0, len(service_pre_interface_name)):
+                    if content[x]['service-name'] == service_pre_interface_name[y]:
+                        helpers.log("Policy correctly shows Service Name")
+                    else:
+                        service_fail = service_fail + 1
+                if service_fail == len(service_nodes):
+                    helpers.log("Service Name %s was not found in Policy" % service_pre_interface)
+                    return False
+                service_fail = 0
+                for y in range(0, len(service_post_interface_name)):
+                    if content[x]['service-name'] == service_post_interface_name[y]:
+                        helpers.log("Policy correctly shows Service Name")
+                    else:
+                        service_fail = service_fail + 1
+                if service_fail == len(service_nodes):
+                    helpers.log("Service Name %s was not found in Policy" % service_post_interface)
                     return False
                 return True
 
@@ -1044,7 +1103,7 @@ class BigTap(object):
             else:
                 return True
 
-    def rest_add_service_to_policy(self, rbac_view_name, policy_name, service_name, sequence_number):
+    def rest_add_service_to_policy(self, rbac_view_name, policy_name, service_name, sequence_number, optional=False):
         '''
           Objective:
           - Add a service to a policy. This is similar to executing CLI command "use-service S1-LB7 sequence 1"
@@ -1076,7 +1135,7 @@ class BigTap(object):
             c = t.controller('master')
             try:
                 url_to_add = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]/service[sequence=%s]' % (str(rbac_view_name), str(policy_name), str(sequence_number))
-                c.rest.put(url_to_add, {"name":str(service_name), "sequence": int(sequence_number)})
+                c.rest.put(url_to_add, {"optional": bool(optional), "name":str(service_name), "sequence": int(sequence_number)})
             except:
                 helpers.test_log(c.rest.error())
                 return False
