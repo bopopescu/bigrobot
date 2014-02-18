@@ -93,6 +93,14 @@ class HaControllerNode(object):
         n = self.t.controller(self.name(), resolve_mastership=True)
         return n.ip()
 
+    def user(self):
+        n = self.t.controller(self.name(), resolve_mastership=True)
+        return n.user()
+
+    def password(self):
+        n = self.t.controller(self.name(), resolve_mastership=True)
+        return n.password()
+
     def platform(self, *args, **kwargs):
         n = self.t.controller(self.name(), resolve_mastership=True)
         return n.platform(*args, **kwargs)

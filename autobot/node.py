@@ -13,8 +13,8 @@ class Node(object):
 
         self._name = name
         self._ip = ip.lower()  # IP might be 'dummy'
-        self.user = user
-        self.password = password
+        self._user = user
+        self._password = password
         self.http_port = None
         self.base_url = None
         self.params = params
@@ -48,6 +48,12 @@ class Node(object):
 
     def ip(self):
         return self._ip
+
+    def user(self):
+        return self._user
+
+    def password(self):
+        return self._password
 
     def platform(self):
         return self.dev.platform()
@@ -116,8 +122,8 @@ class ControllerNode(Node):
         self.rest = BsnRestClient(base_url=self.base_url,
                                   platform=self.platform(),
                                   host=self.ip(),
-                                  user=self.user,
-                                  password=self.password)
+                                  user=self._user,
+                                  password=self._password)
         self.t = t
 
         # Shortcuts
@@ -167,8 +173,8 @@ class ControllerNode(Node):
         self.dev_console = devconf.ControllerDevConf(name=self.name(),
                                                      host=self.console_ip,
                                                      port=self.console_port,
-                                                     user=self.user,
-                                                     password=self.password,
+                                                     user=self._user,
+                                                     password=self._password,
                                                      is_console=True,
                                                      console_driver=driver,
                                                      debug=self.dev_debug_level)
