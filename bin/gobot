@@ -279,16 +279,11 @@ def test_command(*args):
     """
     Run tests in the test suite.
     """
-    exit_if_suite_not_defined()
-    exit_if_topology_not_defined()
-    format_convert_and_copy(helpers.bigrobot_suite(),
-                            helpers.bigrobot_log_path_exec_instance())
-
-    ext = 'txt'
-    if helpers.bigrobot_suite_format() == 'mw':
-        ext = 'html'
-
-    parser = argparse.ArgumentParser()
+    descr = ("Run a BigRobot test suite. Be sure to point the environment"
+             " variable BIGROBOT_SUITE to a test suite (e.g.,"
+             " export BIGROBOT_SUITE=mytest).")
+    parser = argparse.ArgumentParser(prog='gobot test',
+                                     description=descr)
 
     parser.add_argument('--include', metavar=('tag1', 'tag2'), nargs='*',
                         help='Run test cases by tags')
@@ -311,8 +306,6 @@ def test_command(*args):
     else:
         exclude_tags = ['skipped']
 
-    test_suite = ''.join((helpers.bigrobot_suite(), '.', ext))
-
     # Comparable to command options:
     #   pybot --loglevel=debug \
     #         --debugfile=debug.log \
@@ -330,6 +323,18 @@ def test_command(*args):
         options['include'] = include_tags
 
     print("Robot options:\n%s" % helpers.prettify(options))
+
+    exit_if_suite_not_defined()
+    exit_if_topology_not_defined()
+    format_convert_and_copy(helpers.bigrobot_suite(),
+                            helpers.bigrobot_log_path_exec_instance())
+
+    ext = 'txt'
+    if helpers.bigrobot_suite_format() == 'mw':
+        ext = 'html'
+
+    test_suite = ''.join((helpers.bigrobot_suite(), '.', ext))
+
     rc = robot.run(test_suite, **options)
     helpers.log("Robot Framework return code is %s" % rc)
     print("Return code is %s" % rc)
