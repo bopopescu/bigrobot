@@ -509,14 +509,6 @@ class T5Fabric(object):
         else:
             helpers.test_failure("Portgroup Lag id creation in forwarding table does not match for dual rack , check the logs") 
             
-    def ixia_verify_traffic_rate(self, tx_value, rx_value):
-        tx = int(tx_value)
-        rx = int(rx_value)
-        if (rx >= (tx - 5)) and (rx <= (tx + 5)):
-            helpers.log("Pass:Traffic forwarded between 2 endpoints tx_rate:%d,rx_rate:%d" % (tx, rx))
-            return True
-        else:
-            helpers.test_failure("Fail:Traffic forward between 2 endpoints tx_rate:%d,rx_rate:%d" % (tx, rx))
-            return False
+    
                                    
         
