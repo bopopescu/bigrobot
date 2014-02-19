@@ -20,27 +20,97 @@ class Ixia(object):
                                 port_map_list=tg.ports())
         self._ixia.ix_connect()
 
-    def ixia_l2_add(self, **kwargs):
-        return self._ixia.ix_l2_add(**kwargs)
+    def l2_add(self, **kwargs):
+        t = test.Test()
+        if 'node' not in kwargs:
+            node = 'tg1'
+        else:
+            node = kwargs['node']
+            del kwargs['node']
+        tg_handle = t.traffic_generator(node).handle()
+        return tg_handle.ix_l2_add(**kwargs)
     
-    def ixia_l3_add(self, **kwargs):
-        return self._ixia.ix_l3_add(**kwargs)
+    def l3_add(self, **kwargs):
+        t = test.Test()
+        if 'node' not in kwargs:
+            node = 'tg1'
+        else:
+            node = kwargs['node']
+            del kwargs['node']
+        tg_handle = t.traffic_generator(node).handle()
+        return tg_handle.ix_l3_add(**kwargs)
     
-    def ixia_start_l3_traffic(self, stream=None):
-        return self._ixia.ix_start_traffic_ethernet(stream)
-    
-    def ixia_start_l2_traffic(self, stream=None):
-        return self._ixia.ix_start_traffic_ethernet(stream)
+#     def start_l3_traffic(self, stream=None, **kwargs):
+#         t = test.Test()
+#         if 'node' not in kwargs:
+#             node = 'tg1'
+#         else:
+#             node = kwargs['node']
+#             del kwargs['node']
+#         tg_handle = t.traffic_generator(node).handle()
+#         return tg_handle._ixia.ix_start_traffic_ethernet(stream)
+     
+    def start_traffic(self, stream=None, **kwargs):
+        t = test.Test()
+        if 'node' not in kwargs:
+            node = 'tg1'
+        else:
+            node = kwargs['node']
+            del kwargs['node']
+        tg_handle = t.traffic_generator(node).handle()
+        return tg_handle.ix_start_traffic_ethernet(stream)
 
-    def ixia_stop_l3_traffic(self, stream=None):
-        return self._ixia.ix_stop_traffic(stream)
-    
-    def ixia_stop_l2_traffic(self, stream=None):
-        return self._ixia.ix_stop_traffic(stream)
+#     def stop_l3_traffic(self, stream=None, **kwargs):
+#         t = test.Test()
+#         if 'node' not in kwargs:
+#             node = 'tg1'
+#         else:
+#             node = kwargs['node']
+#             del kwargs['node']
+#         tg_handle = t.traffic_generator(node).handle()
+#         return tg_handle._ixia.ix_stop_traffic(stream)
+#     
+    def stop_traffic(self, stream=None, **kwargs):
+        t = test.Test()
+        if 'node' not in kwargs:
+            node = 'tg1'
+        else:
+            node = kwargs['node']
+            del kwargs['node']
+        tg_handle = t.traffic_generator(node).handle()
+        return tg_handle.ix_stop_traffic(stream)
 
-    def ixia_fetch_port_stats(self):
-        result = self._ixia.ix_fetch_port_stats()
+    def fetch_port_stats(self, **kwargs):
+        t = test.Test()
+        if 'node' not in kwargs:
+            node = 'tg1'
+        else:
+            node = kwargs['node']
+            del kwargs['node']
+        tg_handle = t.traffic_generator(node).handle()
+        
+        result = tg_handle.ix_fetch_port_stats()
         helpers.log('result:\n%s' % helpers.prettify(result))
         return result
-    def ixia_clear_stats(self):
-        return self._ixia.ix_clear_stats()
+    
+    def clear_stats(self, **kwargs):
+        t = test.Test()
+        if 'node' not in kwargs:
+            node = 'tg1'
+        else:
+            node = kwargs['node']
+            del kwargs['node']
+        tg_handle = t.traffic_generator(node).handle()
+        return tg_handle.ix_clear_stats()
+    
+    def delete_traffic(self, **kwargs):
+        t = test.Test()
+        if 'node' not in kwargs:
+            node = 'tg1'
+        else:
+            node = kwargs['node']
+            del kwargs['node']
+        tg_handle = t.traffic_generator(node).handle()
+        return tg_handle.ix_delete_traffic()
+    
+    

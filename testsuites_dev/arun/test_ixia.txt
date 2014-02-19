@@ -10,263 +10,273 @@ Library         keywords/BsnCommon.py
 Library         keywords_dev/vui/MyTest.py
 Library         keywords/Ixia.py
 
-
 * Test Case
 Test IXIA
     [Tags]  skipped
-    ixia info  tg1
+    info  tg1
 Uni-Direction L2 Traffic with all defaults
 # Basic test case with all default values and just start the flow
-    IXIA initialize        tg1
-    ${stream}=             IXIA L2 add  flow=a->b
-    IXIA clear stats
-    IXIA start L2 traffic  ${stream}
+    ${stream}=             L2 add  flow=a->b
+    clear stats
+    ixia.start traffic  ${stream}
     sleep                  10
-    IXIA stop L2 traffic   ${stream}
+    stop traffic   ${stream}
     sleep                  10
-    ${report}=             IXIA fetch port stats
+    ${report}=             fetch port stats
     Log                    Report is ${report}
+    delete traffic
     [Tags]  traffic  sanity
 
 Uni-Directional L2 Traffic with more args
 # Currently Supported L2 Stream args will be adding more
-    IXIA initialize        tg1
-    ${stream}=             IXIA L2 add  flow=a->b  src_mac=00:11:23:00:00:09  dst_mac=00:11:23:00:00:99  frame_rate=10000  frame_size=68  frame_cnt=99000  name=a_b_flow
-    IXIA clear stats
-    IXIA start L2 traffic  ${stream}
+    ${stream}=             L2 add  flow=a->b  src_mac=00:11:23:00:00:09  dst_mac=00:11:23:00:00:99  frame_rate=10000  frame_size=68  frame_cnt=99000  name=a_b_flow
+    clear stats
+    start traffic  ${stream}
     sleep                  10
-    IXIA stop L2 traffic   ${stream}
+    stop traffic   ${stream}
     sleep                  10
-    ${report}=             IXIA fetch port stats
+    ${report}=             fetch port stats
     Log                    Report is ${report}
-    [Tags]  traffic  sanity
+    delete traffic
+    [Tags]  traffic  sanity  run
 
 Bi-Directional L2 Traffic with different Macs
 # Stream with Different Src and Dst Mac addresses
-# s_cnt is used to pass no of src macs, d_step is the increment value for the next mac
+# s_cnt is used to pass no of src macs, dst_mac_step is the increment value for the next mac
 # d_cnt is used to pass no of dst macs, s_step is the increment value for the next mac
-    IXIA initialize        tg1
-    ${stream}=             IXIA L2 add  flow=a<->b  src_mac=00:11:23:00:00:09  dst_mac=00:11:23:00:00:99  frame_rate=10000
-	...						frame_size=68  frame_cnt=99000  dnt_cnt=50  src_cnt=50  
-	...						d_step=00:00:00:01:00:00  s_step=00:00:00:01:00:00  name=a_b_flow
-    IXIA clear stats
-    IXIA start L2 traffic  ${stream}
+    ${stream}=             L2 add  flow=a<->b  src_mac=00:11:23:00:00:09  dst_mac=00:11:23:00:00:99  frame_rate=10000
+	...						frame_size=68  frame_cnt=99000  dst_cnt=50  src_cnt=50  
+	...						dst_mac_step=00:00:00:01:00:00  src_mac_step=00:00:00:01:00:00  name=a_b_flow
+    clear stats
+    start traffic  ${stream}
     sleep                  10
-    IXIA stop L2 traffic   ${stream}
+    stop traffic   ${stream}
     sleep                  10
-    ${report}=             IXIA fetch port stats
+    ${report}=             fetch port stats
     Log                    Report is ${report}
+    delete traffic
     [Tags]  traffic  sanity
  
 Bi_Direction L2 Traffic with all Defaults
 # Basic test case with all default values and just start the flow
-    IXIA initialize        tg1
-    ${stream}=             IXIA L2 add  flow=a<->b
-    IXIA clear stats
-    IXIA start L2 traffic  ${stream}
+    ${stream}=             L2 add  flow=a<->b
+    clear stats
+    start traffic  ${stream}
     sleep                  10
-    IXIA stop L2 traffic   ${stream}
+    stop traffic   ${stream}
     sleep                  10
-    ${report}=             IXIA fetch port stats
+    ${report}=             fetch port stats
+    delete traffic
     [Tags]  traffic  sanity
     
 Bi-directional L2 Traffic with LLDP ethertype
 # Basic test case with all default values and etherytype 88cc LLDP
-    IXIA initialize        tg1
-    ${stream}=             IXIA L2 add  flow=a<->b  ethertype=88cc
-    IXIA clear stats
-    IXIA start L2 traffic  ${stream}
+    ${stream}=             L2 add  flow=a<->b  ethertype=88cc
+    clear stats
+    start traffic  ${stream}
     sleep                  260
-    IXIA stop L2 traffic   ${stream}
+    stop traffic   ${stream}
     sleep                  10
-    ${report}=             IXIA fetch port stats
+    ${report}=             fetch port stats
+    delete traffic
     [Tags]  traffic  sanity
     
 Bi-Driectional L2 Traffic with vlan_id
 # Basic test case with all default values and etherytype 8100, with vlan id
-    IXIA initialize        tg1
-    ${stream}=             IXIA L2 add  flow=a<->b  ethertype=8100  vlan_id=199  frame_size=68
-    IXIA clear stats
-    IXIA start L2 traffic  ${stream}
+    ${stream}=             L2 add  flow=a<->b  ethertype=8100  vlan_id=199  frame_size=68
+    clear stats
+    start traffic  ${stream}
     sleep                  10
-    IXIA stop L2 traffic   ${stream}
+    stop traffic   ${stream}
     sleep                  10
-    ${report}=             IXIA fetch port stats
+    ${report}=             fetch port stats
+    delete traffic
     [Tags]  traffic  sanity
 
 Bi-Directional Traffic with bad CRC
 # Basic test case with bad crc
-    IXIA initialize        tg1
-    ${stream}=             IXIA L2 add  flow=a<->b  crc=True
-    IXIA clear stats
-    IXIA start L2 traffic  ${stream}
+    ${stream}=             L2 add  flow=a<->b  crc=True
+    clear stats
+    start traffic  ${stream}
     sleep                  10
-    IXIA stop L2 traffic   ${stream}
+    stop traffic   ${stream}
     sleep                  10
-    ${report}=             IXIA fetch port stats
+    ${report}=             fetch port stats
+ 	delete traffic
  	[Tags]  traffic  sanity
  	
 Bi-Directional L3 Traffic with default args
 # Basis test case with L3 Flow
-    IXIA initialize        tg1
-    ${stream}=             IXIA L3 add  flow=a<->b
-    IXIA clear stats
-    IXIA start L3 traffic  ${stream}
+    ${stream}=             L3 add  flow=a<->b
+    clear stats
+    start traffic  ${stream}
     sleep                  10
-    IXIA stop L3 traffic   ${stream}
+    stop traffic   ${stream}
     sleep                  10
-    ${report}=             IXIA fetch port stats
+    ${report}=             fetch port stats
+	delete traffic
 	[Tags]  traffic  sanity
 	
 Bi-Directional L3 Traffic with more args
 # Basis test case with L3 Flow with more details :)
-    IXIA initialize        tg1
-    ${stream}=             IXIA L3 add  flow=a<->b  src_ip=20.20.20.10  src_gw=20.20.20.11
+    ${stream}=             L3 add  flow=a<->b  src_ip=20.20.20.10  src_gw=20.20.20.11
     ...						dst_ip=20.20.20.11  dst_gw=20.20.20.10
-    IXIA clear stats
-    IXIA start L3 traffic  ${stream}
+    clear stats
+    start traffic  ${stream}
     sleep                  10
-    IXIA stop L3 traffic   ${stream}
+    stop traffic   ${stream}
     sleep                  10
-    ${report}=             IXIA fetch port stats
+    ${report}=             fetch port stats
+    delete traffic
     [Tags]  traffic  sanity
     
 Bi-Directional L3 Traffic with more detailed args
 # Basis test case with L3 Flow with more details :)
-    IXIA initialize        tg1
-    ${stream}=             IXIA L3 add  flow=a<->b  src_mac=01:02:03:04:05:06  dst_mac=01:02:03:04:05:07
+    ${stream}=             L3 add  flow=a<->b  src_mac=01:02:03:04:05:06  dst_mac=01:02:03:04:05:07
     ...						src_ip=20.20.20.10  src_gw=20.20.20.11
     ...						dst_ip=20.20.20.11  dst_gw=20.20.20.10
-    IXIA clear stats
-    IXIA start L3 traffic  ${stream}
+    clear stats
+    start traffic  ${stream}
     sleep                  10
-    IXIA stop L3 traffic   ${stream}
+    stop traffic   ${stream}
     sleep                  10
-    ${report}=             IXIA fetch port stats
+    ${report}=             fetch port stats
+    Log                    Report is ${report}
+    delete traffic
 	[Tags]  traffic  sanity
 
 Verify L3 traffic: frame size 64 bytes
-    IXIA initialize  tg1
-    ${stream}=  IXIA L3 add  flow=a<->b  frame_rate=10000  frame_size=64  frame_cnt=50000
+    ${stream}=  L3 add  flow=a<->b  frame_rate=10000  frame_size=64  frame_cnt=50000
     ...		src_mac=01:02:03:04:05:06  dst_mac=01:02:03:04:05:07  no_arp=True
     ...		src_ip=100.1.1.1
     ...		dst_ip=100.1.1.2  name=a_b_flow
-    IXIA clear stats
-    IXIA start L3 traffic  ${stream}
+    clear stats
+    start traffic  ${stream}
     sleep  10
-    IXIA stop L3 traffic  ${stream}
+    stop traffic  ${stream}
     sleep                  10
-    ${report}=             IXIA fetch port stats
+    ${report}=             fetch port stats
+    Log                    Report is ${report}
+    delete traffic
     [Tags]  traffic  sanity
     
 Verify BiDirectional L3 traffic
-    IXIA initialize  tg1
-    ${stream}=  IXIA L3 add  flow=a<->b  frame_rate=10000  frame_size=1518  frame_cnt=50000
+    ${stream}=  L3 add  flow=a<->b  frame_rate=10000  frame_size=1518  frame_cnt=50000
     ...     src_mac=01:02:03:04:05:06  dst_mac=01:02:03:04:05:07
     ...     src_ip=100.1.1.1  src_gw=100.1.1.2  dst_ip=100.1.1.2  dst_gw=100.1.1.1  name=a_c_flow  
-    IXIA clear stats
-    IXIA start L3 traffic  ${stream}
+    clear stats
+    start traffic  ${stream}
     sleep  10
-    IXIA stop L3 traffic  ${stream}
+    stop traffic  ${stream}
     sleep                  10
-    ${report}=             IXIA fetch port stats    
+    ${report}=             fetch port stats   
+    Log                    Report is ${report}
+    delete traffic 
     [Tags]  traffic  sanity
     
 BiDirectional L3 Traffic with TCP
-    IXIA initialize  tg1
-    ${stream}=  IXIA L3 add  flow=a<->b  frame_rate=10000  frame_size=1518  frame_cnt=50000
+    ${stream}=  L3 add  flow=a<->b  frame_rate=10000  frame_size=1518  frame_cnt=50000
     ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  protocol=TCP  src_port=8001  dst_port=8002
     ...     src_ip=100.1.1.1  src_gw=100.1.1.2  dst_ip=100.1.1.2  dst_gw=100.1.1.1  name=a_b_flow  
-    IXIA clear stats
-    IXIA start L3 traffic  ${stream}
+    clear stats
+    start traffic  ${stream}
     sleep  10
-    IXIA stop L3 traffic  ${stream}
+    stop traffic  ${stream}
     sleep                  10
-    ${report}=             IXIA fetch port stats    
+    ${report}=             fetch port stats
+    Log                    Report is ${report}
+    delete traffic
     [Tags]  traffic  sanity
  
 BiDirectional L3 Traffic with UDP
-    IXIA initialize  tg1
-    ${stream}=  IXIA L3 add  flow=a<->b  frame_rate=10000  frame_size=1518  frame_cnt=50000
+    ${stream}=  L3 add  flow=a<->b  frame_rate=10000  frame_size=1518  frame_cnt=50000
     ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  protocol=UDP  src_port=8001  dst_port=8002
     ...     src_ip=100.1.1.1  src_gw=100.1.1.2  dst_ip=100.1.1.2  dst_gw=100.1.1.1  name=a_b_flow  
-    IXIA clear stats
-    IXIA start L3 traffic  ${stream}
+    clear stats
+    start traffic  ${stream}
     sleep  10
-    IXIA stop L3 traffic  ${stream}
+    stop traffic  ${stream}
     sleep                  10
-    ${report}=             IXIA fetch port stats    
+    ${report}=             fetch port stats 
+    Log                    Report is ${report}
+    delete traffic   
     [Tags]  traffic  sanity
  
 BiDirectional basic IPv6 L3 Traffic with defaults
-    IXIA initialize  tg1
-    ${stream}=  IXIA L3 add  flow=a<->b  frame_cnt=50000  frame_rate=10000  ethertype=86dd
-    IXIA clear stats
-    IXIA start L3 traffic  ${stream}
+    ${stream}=  L3 add  flow=a<->b  frame_cnt=50000  frame_rate=10000  ethertype=86dd
+    clear stats
+    start traffic  ${stream}
     sleep  10
-    IXIA stop L3 traffic  ${stream}
+    stop traffic  ${stream}
     sleep                  10
-    ${report}=             IXIA fetch port stats    
+    ${report}=             fetch port stats
+    Log                    Report is ${report}
+    delete traffic   
     [Tags]  traffic  sanity
     
 BiDirectional basic IPv6 L3 Traffic with defaults and no_arp
-    IXIA initialize  tg1
-    ${stream}=  IXIA L3 add  flow=a<->b  frame_cnt=50000  frame_rate=10000  ethertype=86dd  no_arp=True
-    IXIA clear stats
-    IXIA start L3 traffic  ${stream}
+    ${stream}=  L3 add  flow=a<->b  frame_cnt=50000  frame_rate=10000  ethertype=86dd  no_arp=True
+    clear stats
+    start traffic  ${stream}
     sleep  10
-    IXIA stop L3 traffic  ${stream}
+    stop traffic  ${stream}
     sleep                  10
-    ${report}=             IXIA fetch port stats    
+    ${report}=             fetch port stats
+    Log                    Report is ${report}
+    delete traffic    
     [Tags]  traffic  sanity
 
 BiDirectional IPv6 L3 Traffic with more args and TCP
-    IXIA initialize  tg1
-    ${stream}=  IXIA L3 add  flow=a<->b  frame_cnt=50000  frame_rate=10000  ethertype=86dd
+    ${stream}=  L3 add  flow=a<->b  frame_cnt=50000  frame_rate=10000  ethertype=86dd
     ...			src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  protocol=TCP  src_port=8001  dst_port=8002
     ...			src_ip=2001:2004:0:0:0:0:0:c4  src_gw=2001:2004:0:0:0:0:0:c5  dst_ip=2001:2004:0:0:0:0:0:c5  dst_gw=2001:2004:0:0:0:0:0:c4  name=a_b_flow
-    IXIA clear stats
-    IXIA start L3 traffic  ${stream}
+    clear stats
+    start traffic  ${stream}
     sleep  10
-    IXIA stop L3 traffic  ${stream}
+    stop traffic  ${stream}
     sleep                  10
-    ${report}=             IXIA fetch port stats    
+    ${report}=             fetch port stats
+    Log                    Report is ${report}
+    delete traffic    
     [Tags]  traffic  sanity
 
 UniDirectional IPv4 L3 Traffic with ICMP 
-    IXIA initialize  tg1
-    ${stream}=  IXIA L3 add  flow=a<->b  frame_cnt=50000  frame_rate=10000  ethertype=86dd
+    ${stream}=  L3 add  flow=a<->b  frame_cnt=50000  frame_rate=10000  ethertype=86dd
     ...			src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  protocol=ICMP  type=0  code=0
     ...			src_ip=2001:2004:0:0:0:0:0:c4  src_gw=2001:2004:0:0:0:0:0:c5  dst_ip=2001:2004:0:0:0:0:0:c5  dst_gw=2001:2004:0:0:0:0:0:c4  name=a_b_flow
-    IXIA clear stats
-    IXIA start L3 traffic  ${stream}
+    clear stats
+    start traffic  ${stream}
     sleep  10
-    IXIA stop L3 traffic  ${stream}
+    stop traffic  ${stream}
     sleep                  10
-    ${report}=             IXIA fetch port stats    
-    [Tags]  traffic  sanity
+    ${report}=             fetch port stats
+    Log                    Report is ${report}
+    delete traffic    
+    [Tags]  sanity
     
 Bi-Driectional L3 Traffic with vlan_id
 # Basic test case with all default values and etherytype 8100, with vlan id
-    IXIA initialize        tg1
-    ${stream}=             IXIA L3 add  flow=a<->b  ethertype=8100  vlan_id=199  frame_size=68
-    IXIA clear stats
-    IXIA start L3 traffic  ${stream}
+    ${stream}=             L3 add  flow=a<->b  ethertype=8100  vlan_id=199  frame_size=68
+    clear stats
+    start traffic  ${stream}
     sleep                  10
-    IXIA stop L3 traffic   ${stream}
+    stop traffic   ${stream}
     sleep                  10
-    ${report}=             IXIA fetch port stats
+    ${report}=             fetch port stats
+    Log                    Report is ${report}
+    delete traffic
     [Tags]  traffic  sanity
     
 Bi-Driectional L3 Traffic with vlan_id and crc
 # Basic test case with all default values and etherytype 8100, with vlan id
-    IXIA initialize        tg1
-    ${stream}=             IXIA L3 add  flow=a<->b  ethertype=8100  vlan_id=199  frame_size=68  crc=True
-    IXIA clear stats
-    IXIA start L3 traffic  ${stream}
+    ${stream}=             L3 add  flow=a<->b  ethertype=8100  vlan_id=199  frame_size=68  crc=True
+    clear stats
+    start traffic  ${stream}
     sleep                  10
-    IXIA stop L3 traffic   ${stream}
+    stop traffic   ${stream}
     sleep                  10
-    ${report}=             IXIA fetch port stats
-    [Tags]  traffic  sanity  run
+    ${report}=             fetch port stats
+    Log                    Report is ${report}
+    delete traffic
+    [Tags]  traffic  sanity
 

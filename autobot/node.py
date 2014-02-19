@@ -1,7 +1,7 @@
 import autobot.devconf as devconf
 import helpers
 from autobot.bsn_restclient import BsnRestClient
-
+import modules.IxLib as IxLib
 
 class Node(object):
     def __init__(self, name, ip, user=None, password=None, params=None):
@@ -347,7 +347,6 @@ class SwitchNode(Node):
                                          port=port,
                                          protocol=protocol)
 
-
 class IxiaNode(Node):
     def __init__(self, name, t):
         self._chassis_ip = t.params(name, 'chassis_ip')
@@ -358,7 +357,21 @@ class IxiaNode(Node):
 
         super(IxiaNode, self).__init__(name, self._chassis_ip,
                                        params=t.topology_params())
+        self.ixia_init()
+        
+    def ixia_init(self):
+        helpers.log("tcl_server_ip: %s" % self.tcl_server_ip())
+        helpers.log("chassis_ip: %s" % self.chassis_ip())
+        helpers.log("ports: %s" % self.ports())
 
+        self._ixia = IxLib.Ixia(tcl_server_ip=self.tcl_server_ip(),
+                                chassis_ip=self.chassis_ip(),
+                                port_map_list=self.ports())
+        self._ixia.ix_connect()
+        return self._ixia
+    
+    def handle(self):
+        return self._ixia
     def chassis_ip(self):
         return self._chassis_ip
 

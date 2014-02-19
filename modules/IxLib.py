@@ -483,12 +483,12 @@ class Ixia(object):
         helpers.log("###Starting L2 IXIA ADD Config ...")
         ix_handle = self._handle
         ix_ports = [port for port in self._port_map_list.values()]
-        s_mac = kwargs.get('src_mac', '00:11:23:00:00:01')
-        d_mac = kwargs.get('dst_mac', '00:11:23:00:00:02')
-        d_cnt = kwargs.get('d_cnt', 1)
-        s_cnt = kwargs.get('s_cnt', 1)
-        d_step = kwargs.get('d_step', '00:00:00:01:00:00')
-        s_step = kwargs.get('s_step', '00:00:00:01:00:00')
+        d_mac = kwargs.get('src_mac', '00:11:23:00:00:01')
+        s_mac = kwargs.get('dst_mac', '00:11:23:00:00:02')
+        s_cnt = kwargs.get('d_cnt', 1)
+        d_cnt = kwargs.get('s_cnt', 1)
+        s_step = kwargs.get('dst_mac_step', '00:00:00:01:00:00')
+        d_step = kwargs.get('src_mac_step', '00:00:00:01:00:00')
         frame_rate = kwargs.get('frame_rate', 100)
         frame_cnt = kwargs.get('frame_cnt', None)
         self._frame_size = kwargs.get('frame_size', 70)
@@ -541,8 +541,8 @@ class Ixia(object):
             create_topo.append(self._topology[match_uni2.group(1).lower()])
             stream_flow = 'uni-directional'
         elif match_bi:
-            create_topo.append(self._topology[match_bi.group(2).lower()])
             create_topo.append(self._topology[match_bi.group(1).lower()])
+            create_topo.append(self._topology[match_bi.group(2).lower()])
             stream_flow = 'bi-directional'
         # Create Ether Device:
         mac_devices = self.ix_create_device_ethernet(create_topo, s_cnt, d_cnt, s_mac, d_mac, s_step, d_step)
@@ -553,6 +553,10 @@ class Ixia(object):
                                                        frame_cnt, stream_flow, name, ethertype, vlan_id, crc, no_arp = no_arp)
         helpers.log('Created Traffic Stream : %s' % traffic_stream)
         self._traffic_stream[name] = traffic_stream
+        helpers.log('Applying Traffic config..')
+        self._handle.execute('apply', self._handle.getRoot() + 'traffic')
+        helpers.log('Succesfully Applied traffic Config ..')
+        self._traffi_apply = True  # Setting it False to Apply Changes while starting traffic
         return traffic_stream
     
     def ix_l3_add_hosts(self, **kwargs):
@@ -613,12 +617,12 @@ class Ixia(object):
     def ix_l3_add(self, **kwargs):
         ix_handle = self._handle
         ix_ports = [port for port in self._port_map_list.values()]
-        src_mac = kwargs.get('src_mac', '00:11:23:00:00:01')
-        dst_mac = kwargs.get('dst_mac', '00:11:23:00:00:02')
-        d_cnt = kwargs.get('dnt_cnt', 1)
-        s_cnt = kwargs.get('src_cnt', 1)
-        dst_mac_step = kwargs.get('dst_mac_step', '00:00:00:01:00:00')
-        src_mac_step = kwargs.get('src_mac_step', '00:00:00:01:00:00')
+        dst_mac = kwargs.get('src_mac', '00:11:23:00:00:01')
+        src_mac = kwargs.get('dst_mac', '00:11:23:00:00:02')
+        s_cnt = kwargs.get('dnt_cnt', 1)
+        d_cnt = kwargs.get('src_cnt', 1)
+        src_mac_step = kwargs.get('dst_mac_step', '00:00:00:01:00:00')
+        dst_mac_step = kwargs.get('src_mac_step', '00:00:00:01:00:00')
         frame_rate = kwargs.get('frame_rate', 100)
         frame_cnt = kwargs.get('frame_cnt', None)
         frame_type = kwargs.get('frame_type', 'fixed')
@@ -742,6 +746,9 @@ class Ixia(object):
         
         helpers.log('### Created Traffic Stream with Ip Devices ...')
         helpers.log ("Success Creating Ip Traffic Stream!!!")
+        self._handle.execute('apply', self._handle.getRoot() + 'traffic')
+        helpers.log('Succesfully Applied traffic Config ..')
+        self._traffi_apply = True  # Setting it True to Not Apply Changes while starting traffic
         return traffic_stream1[0]
     
     def ix_start_traffic_ethernet(self, trafficHandle):
@@ -843,14 +850,18 @@ class Ixia(object):
                 if column == 'Frames Tx. Rate':
                     port_stat['transmitted_frame_rate'] = value
                 if column == 'Valid Frames Rx. Rate':
-                    port_stat['received_frame_rate'] = value
+                    port_stat['received_valid_frame_rate'] = value
 #                 if column == 'Data Integrity Frames Rx.':
 #                     port_stat['received_invalid_frames'] = value
                 if column == 'CRC Errors':
                     port_stat['received_crc_errored_frames'] = value
                 if column == 'Bytes Rx.':
                     frames = int(value) / int(self._frame_size)
-                    port_stat['received_frames'] = str(frames)                    
+                    port_stat['received_frames'] = str(frames)
+                if column == 'Bytes Rx. Rate':
+                    frames = int(value) / int(self._frame_size)
+                    port_stat['received_frame_rate'] = str(frames)
+                                       
             port_stats[port_stat['port']] = port_stat
         return port_stats
 
@@ -881,3 +892,29 @@ class Ixia(object):
             handle.execute('clearStats')
             helpers.log('Stats Cleared Succesffuly ..')
         return True
+    
+    def ix_delete_traffic(self, stream = None):
+        '''
+            Method to delete all configured Traffic Items
+        '''
+        handle = self._handle
+        handle.remove(handle.getRoot()+'traffic'+'/trafficItem')
+        handle.commit()   
+        helpers.log('succes removing traffic Items Configured!!!')
+        if self._started_hosts:
+            for topo in self._topology:
+                self.ix_stop_hosts(topo)
+                helpers.log('Successfuly Stopped Hosts on Topology : %s ' % topo)
+        helpers.log('Sleeps 3 sec for Hosts to be Stopped')
+        time.sleep(3)
+        for topo in self._topology.values():
+            handle.remove(topo)
+            handle.commit()
+            helpers.log('Successfully Removed Topology : %s ' % str(topo))
+        self._topology = {}
+        helpers.log('Succes Removing Topologies Created !!!')
+        return True
+    
+    
+    
+    
