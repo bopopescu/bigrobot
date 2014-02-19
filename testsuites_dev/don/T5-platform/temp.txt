@@ -39,7 +39,7 @@ Verify Cluster Election Re-run
 	rest verify cluster election rerun
 
 Verify Cluster Master Reboot
-	[Tags]  HA 
+	[Tags]  HA  skipped
 	cli verify cluster master reboot
 
 Verify Cluster Slave Reboot
@@ -55,12 +55,14 @@ Verify Cluster Slave Shutdown
 	cli verify cluster slave shutdown
 
 Add User
-	[Tags]  User_Administration  skipped
-	rest add user  3
+	[Tags]  User_Administration
+	${status}=  rest add user  3 
+	Should be true  ${status}
 	
 Delete User
-	[Tags]  User_Administration  skipped
-	rest delete user  3
+	[Tags]  User_Administration  
+	${status}=  rest delete user  3
+	Should be true  ${status}
 
 Verify Fabric Link
 	[Tags]  Temp  skipped

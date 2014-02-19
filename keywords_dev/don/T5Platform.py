@@ -318,15 +318,17 @@ class T5Platform(object):
         common.fabric_integrity_checker(obj,"after")
 
     def rest_add_user(self, numUsers=1):
+        numWarn = 0
         t = test.Test()
         master = t.controller("master")
-        
         url = "/api/v1/data/controller/core/aaa/local-user"
+        usersString = []
         numErrors = 0
         for i in range (0, int(numUsers)):
             user = "user" + str(i+1)
+            usersString.append(user)
             master.rest.post(url, {"user-name": user})
-            sleep(3)
+            sleep(1)
             
             if not master.rest.status_code_ok():
                 helpers.test_failure(master.rest.error())
@@ -337,18 +339,34 @@ class T5Platform(object):
         if(numErrors > 0):
             return False
         else:
-            return True
+            url = "/api/v1/data/controller/core/aaa/local-user"
+            result = master.rest.get(url)
+            showUsers = []
+            for i in range (0, len(result["content"])):
+                showUsers.append(result["content"][i]['user-name'])
+            sleep(5)
+            for user in usersString:
+                if user not in showUsers:
+                    numWarn += 1
+                    helpers.warn("User: %s not present in the show users" % user)
+            if (numWarn > 0):
+                return False
+            else:
+                return True
 
     def rest_delete_user(self, numUsers=1):
+        numWarn = 0
         t = test.Test()
         master = t.controller("master")
-        
-        url = "/api/v1/data/controller/core/aaa/local-user"
+        usersString = []
         numErrors = 0
         for i in range (0, int(numUsers)):
+            url = "/api/v1/data/controller/core/aaa/local-user[user-name=\""
             user = "user" + str(i+1)
-            master.rest.delete(url, {"user-name": user})
-            sleep(3)
+            usersString.append(user)
+            url = url + user + "\"]"
+            master.rest.delete(url, {})
+            sleep(1)
             
             if not master.rest.status_code_ok():
                 helpers.test_failure(master.rest.error())
@@ -359,8 +377,20 @@ class T5Platform(object):
         if(numErrors > 0):
             return False
         else:
-            return True
-
+            url = "/api/v1/data/controller/core/aaa/local-user"
+            result = master.rest.get(url)
+            showUsers = []
+            for i in range (0, len(result["content"])):
+                showUsers.append(result["content"][i]['user-name'])
+            sleep(5)
+            for user in usersString:
+                if user in showUsers:
+                    numWarn += 1
+                    helpers.warn("User: %s present in the show users" % user)
+            if (numWarn > 0):
+                return False
+            else:
+                return True
 
 
 
