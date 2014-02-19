@@ -54,12 +54,14 @@ Verify Cluster Slave Shutdown
 	cli verify cluster slave shutdown
 
 Add User
-	[Tags]  User_Administration  skipped
-	rest add user  3
+	[Tags]  User_Administration
+	${status}=  rest add user  3 
+	Should be true  ${status}
 	
 Delete User
-	[Tags]  User_Administration  skipped
-	rest delete user  3
+	[Tags]  User_Administration  
+	${status}=  rest delete user  3
+	Should be true  ${status}
 
 * Keywords      
 T5 base test setup
