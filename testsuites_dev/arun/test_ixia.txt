@@ -233,3 +233,40 @@ BiDirectional IPv6 L3 Traffic with more args and TCP
     ${report}=             IXIA fetch port stats    
     [Tags]  traffic  sanity
 
+UniDirectional IPv4 L3 Traffic with ICMP 
+    IXIA initialize  tg1
+    ${stream}=  IXIA L3 add  flow=a<->b  frame_cnt=50000  frame_rate=10000  ethertype=86dd
+    ...			src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  protocol=ICMP  type=0  code=0
+    ...			src_ip=2001:2004:0:0:0:0:0:c4  src_gw=2001:2004:0:0:0:0:0:c5  dst_ip=2001:2004:0:0:0:0:0:c5  dst_gw=2001:2004:0:0:0:0:0:c4  name=a_b_flow
+    IXIA clear stats
+    IXIA start L3 traffic  ${stream}
+    sleep  10
+    IXIA stop L3 traffic  ${stream}
+    sleep                  10
+    ${report}=             IXIA fetch port stats    
+    [Tags]  traffic  sanity
+    
+Bi-Driectional L3 Traffic with vlan_id
+# Basic test case with all default values and etherytype 8100, with vlan id
+    IXIA initialize        tg1
+    ${stream}=             IXIA L3 add  flow=a<->b  ethertype=8100  vlan_id=199  frame_size=68
+    IXIA clear stats
+    IXIA start L3 traffic  ${stream}
+    sleep                  10
+    IXIA stop L3 traffic   ${stream}
+    sleep                  10
+    ${report}=             IXIA fetch port stats
+    [Tags]  traffic  sanity
+    
+Bi-Driectional L3 Traffic with vlan_id and crc
+# Basic test case with all default values and etherytype 8100, with vlan id
+    IXIA initialize        tg1
+    ${stream}=             IXIA L3 add  flow=a<->b  ethertype=8100  vlan_id=199  frame_size=68  crc=True
+    IXIA clear stats
+    IXIA start L3 traffic  ${stream}
+    sleep                  10
+    IXIA stop L3 traffic   ${stream}
+    sleep                  10
+    ${report}=             IXIA fetch port stats
+    [Tags]  traffic  sanity  run
+
