@@ -96,18 +96,6 @@ def error_exit(msg, exit_code=None):
     sys.exit(exit_code)
 
 
-def file_not_exists(f):
-    if f is None:
-        return True
-    if not os.path.exists(f):
-        return True
-    return False
-
-
-def file_exists(f):
-    return not file_not_exists(f)
-
-
 def error_exit_if_file_not_exists(msg, f, exit_code=None):
     if f is None:
         error_exit(''.join((msg, ': <file_not_specified>')))
@@ -182,12 +170,12 @@ def environment_failure(msg):
 def _env_get_and_set(name, new_val=None, default=None):
     """
     Category: Get/set environment variables for BigRobot.
-    
+
     :param name:    str, The name of the environment variable
     :param new_val: str, If specified, force set env with new_value
     :param default: str, Default fallback value
     :return: str or None, Value of the environment variable
-    
+
     Attempt to update `name` environment variable with a value.
     - If `new_val` is specified, then assign it to env (force option)
     - Else if env exists, then use it
@@ -280,7 +268,9 @@ def bigrobot_log_path_exec_instance(new_val=None, default=None):
     """
     Category: Get/set environment variables for BigRobot.
     """
-    return _env_get_and_set('BIGROBOT_LOG_PATH_EXEC_INSTANCE', new_val, default)
+    return _env_get_and_set('BIGROBOT_LOG_PATH_EXEC_INSTANCE',
+                            new_val,
+                            default)
 
 
 def bigrobot_suite(new_val=None, default=None):
@@ -296,7 +286,7 @@ def bigrobot_suite_format(new_val=None, default=None):
 
     Specify the test suite file format. The possible values include:
     mw  - MediaWiki format (obsolete)
-    txt - Robot Framework plain text format 
+    txt - Robot Framework plain text format
     """
     return _env_get_and_set('BIGROBOT_SUITE_FORMAT', new_val, default)
 
@@ -314,7 +304,8 @@ def bigrobot_exec_hint_format(new_val=None, default='export'):
     elif opt == 'run_gobot':
         return 'BIGROBOT_SUITE=%s gobot test'
     else:
-        environment_failure("Invalid option '%s'. Supported options are 'export', 'run_gobot'."
+        environment_failure("Invalid option '%s'. Supported options are"
+                            " 'export', 'run_gobot'."
                             % opt)
 
 
@@ -452,7 +443,7 @@ def is_traffic_generator(name):
 def is_bvs(name):
     """
     Inspect the platform type for the node. Usage:
-    
+
     if helpers.is_bvs(n.platform():
         ...this is a BVS (aka T5) controller...
     """
@@ -466,7 +457,7 @@ is_t5 = is_bvs
 def is_bigtap(name):
     """
     Inspect the platform type for the node. Usage:
-    
+
     if helpers.is_bigtap(n.platform():
         ...this is a BigTap controller...
     """
@@ -476,7 +467,7 @@ def is_bigtap(name):
 def is_bigwire(name):
     """
     Inspect the platform type for the node. Usage:
-    
+
     if helpers.is_bigwire(n.platform():
         ...this is a BigWire controller...
     """
@@ -486,7 +477,7 @@ def is_bigwire(name):
 def is_switchlight(name):
     """
     Inspect the platform type for the node. Usage:
-    
+
     if helpers.is_switchlight(n.platform():
         ...this is a SwitchLight switch...
     """
@@ -496,7 +487,7 @@ def is_switchlight(name):
 def is_ixia(name):
     """
     Inspect the platform type for the node. Usage:
-    
+
     if helpers.is_traffic_generator(n.platform():
         ...this is an IXIA box...
     """
@@ -535,7 +526,7 @@ def is_str(data):
 
 def is_json(data):
     """
-    Verify if the input is a valid JSON string. 
+    Verify if the input is a valid JSON string.
     """
     try:
         _ = json.loads(data)
@@ -667,6 +658,14 @@ def file_exists(filename):
     # os.path.exists doesn't detect stale symlinks (link to non-existent
     # file), so also need to check if file is a symlink
     return os.path.exists(filename) or os.path.islink(filename)
+
+
+def file_not_exists(f):
+    if f is None:
+        return True
+    if not file_exists(f):
+        return True
+    return False
 
 
 def file_remove(filename):
@@ -836,7 +835,7 @@ def run_cmd(cmd, cwd=None, ignore_stderr=False, shell=True, quiet=False):
     shell - Just pass the command string for execution in a subshell. This is
             ideal when command should run in the background (string can include
             '&') and/or command contains shell variables/wildcards.
-    
+
     Returns tuple (Boolean, String)
         success: (True,  "...success message...")
         failure: (False, "...error message...")
@@ -923,7 +922,7 @@ def ping(host, count=5, waittime=100, quiet=False):
     :param host: (Str) ping hist host
     :param count: (Int) number of packets to send
     :param waittime: (Int) time in milliseconds to wait for a reply
-    
+
     Return: (Int) loss percentage
     """
     if count < 3:
@@ -987,13 +986,13 @@ def openstack_convert_table_to_dict(input_str):
     """
     Many commands on OpenStack Nova controller will return a table output,
     e.g.,
-    
+
     root@nova-controller:~# nova --os-username admin \
                                  --os-tenant-name admin \
                                  --os-auth-url http://10.193.0.120:5000/v2.0/ \
                                  --os-password bsn
                                  image-show  Ubuntu.13.10
- 
+
         +----------------------+--------------------------------------+
         | Property             | Value                                |
         +----------------------+--------------------------------------+
@@ -1007,9 +1006,9 @@ def openstack_convert_table_to_dict(input_str):
         | OS-EXT-IMG-SIZE:size | 243662848                            |
         | id                   | 8caae5ae-66dd-4ee1-87f8-08674da401ff |
         +----------------------+--------------------------------------+
-    
+
     This function converts the table to a Python dictionary.
-    
+
     Return dictionary.
     """
     if is_list(input_str):
@@ -1035,9 +1034,9 @@ def openstack_replace_text_marker(input_file, output_file, line_marker,
     Takes an input file and search for a marker, such as '[filter:authtoken]',
     then remove the marker and all subsequent lines in the file until
     the line_marker_end is hit. A sample line_marker_end is '[filter:gzip]'.
-    
+
     Usage:
-   
+
     append_str = '''
     [filter:authtoken]
     paste.filter_factory = keystoneclient.middleware.auth_token:filter_factory
@@ -1048,11 +1047,12 @@ def openstack_replace_text_marker(input_file, output_file, line_marker,
     admin_tenant_name = service
     admin_user = glance
     '''
-    helpers.openstack_replace_text_marker(input_file='/tmp/glance-api-paste.ini',
-                                          output_file='/tmp/new-glance-api-paste.ini',
-                                          line_marker=r'^\[filter:authtoken\]',
-                                          line_marker_end=r'^\[.+',
-                                          append_string=append_str)
+    helpers.openstack_replace_text_marker(
+              input_file='/tmp/glance-api-paste.ini',
+              output_file='/tmp/new-glance-api-paste.ini',
+              line_marker=r'^\[filter:authtoken\]',
+              line_marker_end=r'^\[.+',
+              append_string=append_str)
     """
     line_marker = line_marker.strip()
     line_marker_end = line_marker_end.strip()
@@ -1098,7 +1098,7 @@ def strip_cli_output(input_str):
     The convention from the expect library (Exscript) is as followed:
       - first line contains the issued command
       - last line contains the device prompt
-    This function strips the first and last line, leaving the actual output. 
+    This function strips the first and last line, leaving the actual output.
     """
     out = text_processing_str_remove_header(input_str, 1)
     out = text_processing_str_remove_trailer(out, 1)
@@ -1109,9 +1109,9 @@ def text_processing_str_remove_to_end(input_str, line_marker):
     """
     Given a multi-line string, find the input marker and remove the content
     to end of string.
-    
+
     Usage:
-    
+
     input_str = '''
     Manufacturer: Quanta
     Model: LY2
@@ -1120,12 +1120,12 @@ def text_processing_str_remove_to_end(input_str, line_marker):
     '''
     out = helpers.text_processing_str_remove_to_end(input_str,
                                                     line_marker=r'^Uptime is')
-    
+
     Returns:
 
     Manufacturer: Quanta
     Model: LY2
-    
+
     """
     lines = input_str.split("\n")
     for i, line in enumerate(lines):
@@ -1164,10 +1164,10 @@ def ip_range_byte_mod(self, subnet, first=None, last=None, byte=None):
     """
     :param byte: (str) [Optional] The byte field in the IP address to
             modify in addition to the 4th bite field.
-    
+
     IP address anatomy:
       <byte1>.<byte2>.<byte3>.<byte4>
-    
+
     This is intended for testing TCAM optimization (per MingTao). In
     addition to changing the host byte (4th byte) of the IP address, we
     want to change a network byte as well, such as the 2nd or 3rd byte of
@@ -1196,19 +1196,20 @@ def ip_range_byte_mod(self, subnet, first=None, last=None, byte=None):
 
 def get_next_mac(base, incr):
     """
-    Contributor: Mingtao Yang 
-    Objective: 
+    Contributor: Mingtao Yang
+    Objective:
     - Generate the next mac/physical address based on the base and step.
-        
+
     Inputs:
       | base | starting mac address |
       | incr | Value by which we will increment the mac/physical address |
-        
-    Usage:  
-      | macAddr = self.get_next_mac(base,incr) |     
+
+    Usage:
+      | macAddr = self.get_next_mac(base,incr) |
     """
 
-    log("the base address is: %s,  the step is: %s,  " % (str(base), str(incr)))
+    log("the base address is: %s,  the step is: %s,  "
+        % (str(base), str(incr)))
 
     mac = base.split(":")
     step = incr.split(":")
@@ -1240,21 +1241,24 @@ def get_next_mac(base, incr):
 
 
 def get_next_address(addr_type, base, incr):
-    """ 
+    """
     Contributor: Mingtao Yang
     Objective:
     Generate the next address bases on the base and step.
-    
+
     Input:
     | addr_type | IPv4/IpV6|
     | base | Starting IP address |
     | incr | Value by which we will increment the IP address|
 
-    Usage:    ipAddr = self.get_next_address(ipv4,'10.0.0.0','0.0.0.1')
-              ipAddr = self.get_next_address(ipv6,'f001:100:0:0:0:0:0:0','0:0:0:0:0:0:0:1:0')
+    Usage:    ipAddr = self.get_next_address(
+                          ipv4,'10.0.0.0','0.0.0.1')
+              ipAddr = self.get_next_address(
+                          ipv6,'f001:100:0:0:0:0:0:0','0:0:0:0:0:0:0:1:0')
     """
 
-    log("the base address is: %s,  the step is: %s,  " % (str(base), str(incr)))
+    log("the base address is: %s,  the step is: %s,  "
+        % (str(base), str(incr)))
     if addr_type == 'ipv4' or addr_type == 'ip':
         ip = list(map(int, base.split(".")))
         step = list(map(int, incr.split(".")))

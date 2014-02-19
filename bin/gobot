@@ -4,6 +4,7 @@
 A test execution wrapper for Robot Framework.
 """
 
+from __future__ import print_function
 import os
 import sys
 import platform
@@ -110,6 +111,11 @@ ROBOT_FRAMEWORK_OPTS = (
 
 
 def get_command_dict():
+    """
+    Extract command names from functions which end with '_command' and place
+    them in a dictionary. E.g.,
+        test_command()
+    """
     commands = {}
     for x in globals():
         if not x.endswith("_command"):
@@ -120,8 +126,11 @@ def get_command_dict():
 
 
 def usage():
+    """
+    Usage information for 'gobot'.
+    """
     version_hidden_command()
-    print("Usage: gobot [command] [options]\n")
+    print("\nUsage: gobot [command] [options]\n")
 
     # Print a list of all the test suites in the current directory.
     # Files extension should match the suite extension (e.g., either
@@ -162,21 +171,31 @@ def usage():
 
 
 def is_topology_defined():
+    """
+    Check whether topo file is specified (via env BIGROBOT_TOPOLOGY) and
+    whether the file exists.
+    """
     topo = helpers.bigrobot_topology()
-    if not topo or not os.path.isfile(topo):
+    if topo and os.path.isfile(topo):
+        return True
+    else:
         # Topology file is not defined or does not exist
         return False
-    else:
-        return True
 
 
-def exit_if_topology_not_defined():
+def warn_if_topology_not_defined():
+    """
+    Create warning log if topology is not defined.
+    """
     if not is_topology_defined():
         helpers.warn("Topology file (%s) is not defined.\n"
                      % helpers.bigrobot_topology(), level=None)
 
 
 def is_suite_defined():
+    """
+    Check whether test suite file is specified (via env BIGROBOT_SUITE).
+    """
     if helpers.bigrobot_suite() is None:
         return False
     else:
@@ -184,6 +203,9 @@ def is_suite_defined():
 
 
 def exit_if_suite_not_defined():
+    """
+    Exit program if test suite is not defined.
+    """
     if not is_suite_defined():
         helpers.error_exit("BIGROBOT_SUITE environment variable required."
                            " See 'gobot help' for more information.")
@@ -195,9 +217,12 @@ def exit_if_suite_not_defined():
 
 
 def run(cmd, cwd=None, shell=True, quiet=False):
+    """
+    Execute a command.
+    """
     status, msg = helpers.run_cmd(cmd, cwd=cwd, shell=shell, quiet=quiet)
     if msg:
-        print msg
+        print(msg)
     return status
 
 
@@ -219,17 +244,25 @@ def format_convert(f, quiet=False):
 
 
 def format_convert_and_copy(f, p, quiet=False):
+    """
+    Convert the test suite source format (.mw) into .rst/.html formats. Then
+    copy all files to the log directory.
+    """
     format_convert(f, quiet)
-    if not os.path.exists(helpers.bigrobot_log_path_exec_instance()):
-        os.makedirs(helpers.bigrobot_log_path_exec_instance())
+    if not os.path.exists(p):
+        os.makedirs(p)
 
     for ext in ('mw', 'txt', 'rst', 'html'):
         filename = ''.join((f, '.', ext))
         if os.path.exists(filename):
-            shutil.copy(filename, helpers.bigrobot_log_path_exec_instance())
+            shutil.copy(filename, p)
 
 
 def create_symlinks_to_logs():
+    """
+    Create symlinks to the log files located in the log directory. These
+    symlinks provide a convenient way to access the logs.
+    """
     log_path = helpers.bigrobot_log_path()
     log_path_run = helpers.bigrobot_log_path_exec_instance()
     log_files = ['debug.log', 'syslog.txt', 'log.html', 'report.html']
@@ -257,19 +290,20 @@ def version_hidden_command(*args):
     """
     Show the version of BigRobot.
     """
-    import robot
+    _ = args  # unused, silent Pylint
     robot_framework_version = robot.version.VERSION
     import Exscript
     exscript_version = Exscript.version.__version__
-    print "BigRobot version        %s" % helpers.get_version()
-    print "Robot Framework version %s" % robot_framework_version
-    print "Exscript version        %s" % exscript_version
+    print("BigRobot version        %s" % helpers.get_version())
+    print("Robot Framework version %s" % robot_framework_version)
+    print("Exscript version        %s" % exscript_version)
 
 
 def suite_command(*args):
     """
     Show the text output of the test suite.
     """
+    _ = args  # unused, silent Pylint
     exit_if_suite_not_defined()
     format_convert(helpers.bigrobot_suite(), quiet=True)
     run('cat %s.rst' % helpers.bigrobot_suite(), quiet=True)
@@ -291,10 +325,12 @@ def test_command(*args):
                         metavar=('tag1', 'tag2'), nargs='*',
                         help='Exclude test cases by tags')
     parser.add_argument('--loglevel', default='debug',
-                        help="Log level (default is 'debug' else 'trace', 'info', 'warn')")
+                        help="Log level (default is 'debug' else 'trace',"
+                             " 'info', 'warn')")
     parser.add_argument('--debugfile', default='debug.log',
                         help="Debug file")
-    parser.add_argument('--outputdir', default=helpers.bigrobot_log_path_exec_instance(),
+    parser.add_argument('--outputdir',
+                        default=helpers.bigrobot_log_path_exec_instance(),
                         help="Output directory")
 
     args = parser.parse_args(*args)
@@ -325,7 +361,7 @@ def test_command(*args):
     print("Robot options:\n%s" % helpers.prettify(options))
 
     exit_if_suite_not_defined()
-    exit_if_topology_not_defined()
+    warn_if_topology_not_defined()
     format_convert_and_copy(helpers.bigrobot_suite(),
                             helpers.bigrobot_log_path_exec_instance())
 
@@ -345,6 +381,7 @@ def env_command(*args):
     """
     Show the environment used by the test suite (useful for debugging purpose).
     """
+    _ = args  # unused, silent Pylint
     for env in sorted(helpers.bigrobot_env_list()):
         print("%s=%s" % (env, os.environ[env]))
 
@@ -353,6 +390,7 @@ def gui_command(*args):
     """
     Run the Robot Framework GUI (RIDE).
     """
+    _ = args  # unused, silent Pylint
     run('ride.py 2> /dev/null &', shell=True)
 
 
@@ -360,6 +398,7 @@ def clean_command(*args):
     """
     Remove output files created from Robot runs.
     """
+    _ = args  # unused, silent Pylint
     run('rm -f log.html report.html output.xml debug.log syslog.txt',
         shell=True)
 
@@ -368,6 +407,7 @@ def clean_deep_command(*args):
     """
     Deep cleaning. Run 'clean' command and also remove log directories.
     """
+    _ = args  # unused, silent Pylint
     clean_command()
 
     if is_suite_defined():
@@ -380,6 +420,7 @@ def codesize_hidden_command(*args):
     """
     Check the size of BigRobot source code.
     """
+    _ = args  # unused, silent Pylint
     cmd = ''.join((helpers.bigrobot_path(), "/bin/chk-code-bloat-bigrobot",
                    " ", helpers.bigrobot_path()))
     run(cmd, shell=True)
@@ -389,6 +430,7 @@ def startremotevm_command(*args):
     """
     Setup remote VMs using BigTest (executes 'bt startremotevm').
     """
+    _ = args  # unused, silent Pylint
     run('bt startremotevm', cwd=helpers.bigtest_path())
 
 
@@ -396,10 +438,15 @@ def stopremotevm_command(*args):
     """
     Tear down remote VMs using BigTest (executes 'bt stopremotevm').
     """
+    _ = args  # unused, silent Pylint
     run('bt stopremotevm', cwd=helpers.bigtest_path())
 
 
 def main(args):
+    """
+    Launch 'gobot'. If no additional argument is specified, print the usage
+    guide.
+    """
     if not args or args[0] in ['help', '-h', '--help']:
         usage()
         sys.exit(1)
