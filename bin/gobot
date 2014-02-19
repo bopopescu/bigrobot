@@ -10,7 +10,45 @@ import sys
 import platform
 import shutil
 import argparse
-import robot
+import subprocess
+
+
+def test_and_install_package():
+    """
+    Test importing 3rd party modules required by BigRbot. If import fails,
+    then attempt to install the package.
+    """
+    def _test_and_install(package, module):
+        try:
+            return __import__(module)
+        except ImportError:
+            print("Failed to import module '%s'. Will try to install it."
+                  % module)
+            if os.stat(os.__file__).st_uid == os.getuid():
+                # Current user has permission to install module...
+                cmd = "pip install %s" % package
+            else:
+                cmd = "sudo pip install %s" % package
+            print("Executing '%s'" % cmd)
+            subprocess.call(cmd, shell=True)
+
+    packages = {
+                'pylint': 'pylint',
+                'httplib2': 'httplib2',
+                'pyyaml': 'yaml',
+                'pytz': 'pytz',
+                'ipcalc': 'ipcalc',
+                'netaddr': 'netaddr',
+                'pycrypto': 'Crypto',
+                'paramiko': 'paramiko',
+                'scp': 'scp',
+                'robotframework': 'robot',
+                # 'robotframework-ride': 'robotide',
+                # 'pep8': '???',  # not possible to test import pep8 package
+                }
+
+    for k, v in packages.iteritems():
+        _test_and_install(k, v)
 
 
 def set_environment():
@@ -45,7 +83,7 @@ def set_environment():
     os.environ['PYTHONPATH'] = os.pathsep.join(sys.path)
 
 
-def autobot_import():
+def test_autobot_import():
     """
     Test importing the Autobot package. This must work else we fail hard.
     """
@@ -62,10 +100,11 @@ def autobot_import():
         sys.exit(1)
 
 
+test_and_install_package()
 set_environment()
+test_autobot_import()
 
-# Check to ensure Autobot import works. Don't proceed otherwise...
-autobot_import()
+import robot
 import autobot.helpers as helpers
 
 
