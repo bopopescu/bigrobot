@@ -476,7 +476,7 @@ class Ixia(object):
         self._handle.commit()
         return trafficStream1
 
-    def ixia_l2_add(self, **kwargs):
+    def ix_l2_add(self, **kwargs):
         '''
             This Helper Method created L2 related Config on IXIA to start Traffic with given arguments
         '''
@@ -555,7 +555,7 @@ class Ixia(object):
         self._traffic_stream[name] = traffic_stream
         return traffic_stream
     
-    def ixia_l3_add_hosts(self, **kwargs):
+    def ix_l3_add_hosts(self, **kwargs):
         '''
             This methods adds ixia_l3 hosts and returns ip_Devices
         '''
@@ -646,6 +646,14 @@ class Ixia(object):
             dst_ip_step = kwargs.get('dst_ip_step', '0:0:0:0:0:0:1:0')
             ip_type = 'ipv6'
             self._frame_size = kwargs.get('frame_size', 140)
+        else:
+            src_ip = kwargs.get('src_ip', '20.0.0.1')
+            dst_ip = kwargs.get('dst_ip', '20.0.0.2')
+            src_gw_ip = kwargs.get('src_gw', '20.0.0.2')
+            dst_gw_ip = kwargs.get('dst_gw', '20.0.0.1')
+            src_ip_step = kwargs.get('src_ip_step','0.0.0.1')
+            dst_ip_step = kwargs.get('dst_ip_step', '0.0.0.1')
+            self._frame_size = kwargs.get('frame_size', 130)
             
         no_arp = kwargs.get('no_arp', False)
         protocol = kwargs.get('protocol','UDP')
@@ -716,7 +724,7 @@ class Ixia(object):
             
             traffic_stream = self.ix_setup_traffic_streams_ethernet(mac_devices[0], mac_devices[1],
                                                        frame_type, self._frame_size, frame_rate, frame_mode,
-                                                       frame_cnt, stream_flow, name, src_ip = src_ip, dst_ip = dst_ip, protocol = protocol,
+                                                       frame_cnt, stream_flow, name, vlan_id = vlan_id, crc = crc, src_ip = src_ip, dst_ip = dst_ip, protocol = protocol,
                                                        src_port = src_port, dst_port = dst_port, no_arp = no_arp, ethertype = ethertype)
             
             traffic_stream1.append(traffic_stream)
@@ -728,7 +736,7 @@ class Ixia(object):
             self.ix_start_hosts(ip_type = ip_type)
             self._started_hosts = True
             traffic_item = self.ix_setup_traffic_streams_ethernet(ip_devices[0], ip_devices[1], frame_type, self._frame_size, frame_rate, frame_mode,
-                                                         frame_cnt, stream_flow, name, protocol= protocol,
+                                                         frame_cnt, stream_flow, name, protocol= protocol, vlan_id = vlan_id, crc = crc,
                                                          src_port = src_port, dst_port = dst_port, ethertype = ethertype, ip_type = ip_type)
             traffic_stream1.append(traffic_item)
         
