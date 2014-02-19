@@ -458,18 +458,18 @@ REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[
         t = test.Test()
         c = t.controller()
         
-        helpers.test_log("Input arguments: tenant = %s vns name = %s toggle values = %s" % (tenant, vnsname, togglevalue))
+        helpers.test_log("Input arguments: tenant = %s vns name = %s " % (tenant, vnsname))
         
         url = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]/virtual-router/vns-interfaces[vns-name="%s"]' % (c.base_url, tenant, vnsname)
         try:
-            c.rest.patch(url, {"dhcp-relay-enable": true})
+            c.rest.patch(url, {"dhcp-relay-enable": True})
         except:
             helpers.test_failure(c.rest.error())
         else: 
             helpers.test_log("Output: %s" % c.rest.result_json())
             return c.rest.content()            
 
-			
+
     def rest_disable_dhcp_relay(self, tenant, vnsname):
         '''Enable dhcp relay on tenant VNS"
         
@@ -483,17 +483,17 @@ REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[
         t = test.Test()
         c = t.controller()
         
-        helpers.test_log("Input arguments: tenant = %s vns name = %s toggle values = %s" % (tenant, vnsname, togglevalue))
+        helpers.test_log("Input arguments: tenant = %s vns name = %s " % (tenant, vnsname))
         
         url = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]/virtual-router/vns-interfaces[vns-name="%s"]' % (c.base_url, tenant, vnsname)
         try:
-            c.rest.patch(url, {"dhcp-relay-enable": false})
+            c.rest.patch(url, {"dhcp-relay-enable": False})
         except:
             helpers.test_failure(c.rest.error())
         else: 
             helpers.test_log("Output: %s" % c.rest.result_json())
             return c.rest.content() 			
-			
+
     def rest_add_dhcprelay_circuitid(self, tenant, vnsname, circuitid):
         '''Set dhcp relay circuit id"
         
