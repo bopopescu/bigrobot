@@ -62,15 +62,17 @@ bigrobot_bin = bigrobot_path + '/bin'
 
 set_env('BIGROBOT_SUITE', bigrobot_suite)
 #set_env('BIGROBOT_LOG_PATH', bigrobot_log_path)
-set_env('BIGROBOT_LOG_PATH_EXEC_INSTANCE', get_env('BIGROBOT_LOG_PATH'))
+#set_env('BIGROBOT_LOG_PATH_EXEC_INSTANCE', get_env('BIGROBOT_LOG_PATH'))
 
 
-#suite = os.path.basename(bigrobot_suite)
-#ts = ts_local()
+suite = os.path.basename(bigrobot_suite)
+ts = ts_local()
+
 
 # BigRobot log directory
-#set_env('BIGROBOT_LOG_PATH_EXEC_INSTANCE',
-#        bigrobot_log_path + "/" + suite + "_" + ts)
+set_env('BIGROBOT_LOG_PATH_EXEC_INSTANCE',
+        get_env('BIGROBOT_LOG_PATH') + "/" + suite + "_" + ts)
+        #bigrobot_log_path + "/" + suite + "_" + ts)
 
 # Let BigRobot know that it's running in the CI environment (Jenkins/ABAT)
 set_env('BIGROBOT_CI', 'True')
@@ -86,6 +88,7 @@ print_env('BIGROBOT_PATH')
 print_env('BIGROBOT_SUITE')
 print_env('BIGROBOT_LOG_PATH')
 print_env('BIGROBOT_LOG_PATH_EXEC_INSTANCE')
+
 
 run_cmd(bigrobot_bin + "/gobot version")
 run_cmd(bigrobot_bin + "/gobot env")
