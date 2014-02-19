@@ -631,6 +631,7 @@ setup topology
 	REST add portgroup to vns					${tenant1_name}  	${vns1_1} 		${portgroup0} 		${untaggedvlan}	
 	REST add portgroup to vns					${tenant1_name}  	${vns1_2} 		${portgroup1} 		${untaggedvlan}	
 	REST add portgroup to vns					${tenant2_name}  	${vns2_3} 		${portgroup2} 		${vns2_vlan3}
+	REST add portgroup to vns					${tenant1_name}  	${vns1_1} 		${portgroup4} 		${vns1_vlan1}
 	REST add portgroup to vns					${tenant2_name}  	${vns2_1} 		${portgroup8} 		${vns2_vlan1}
 	REST add portgroup to vns					${tenant2_name}  	${vns2_2} 		${portgroup9} 		${vns2_vlan2}
 	REST add portgroup to vns					${tenant2_name}  	${vns2_3} 		${portgroup10} 		${untaggedvlan}	
