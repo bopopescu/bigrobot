@@ -25,7 +25,7 @@ Uni-Direction L2 Traffic with all defaults
     ${report}=             fetch port stats
     Log                    Report is ${report}
     delete traffic
-    [Tags]  traffic  sanity
+    [Tags]  traffic  sanity  run
 
 Uni-Directional L2 Traffic with more args
 # Currently Supported L2 Stream args will be adding more
@@ -269,6 +269,7 @@ Bi-Driectional L3 Traffic with vlan_id
     
 Bi-Driectional L3 Traffic with vlan_id and crc
 # Basic test case with all default values and etherytype 8100, with vlan id
+# Adding more description
     ${stream}=             L3 add  flow=a<->b  ethertype=8100  vlan_id=199  frame_size=68  crc=True
     clear stats
     start traffic  ${stream}
