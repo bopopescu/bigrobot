@@ -1,6 +1,8 @@
 [MESSAGES CONTROL]
+# C0103 - Invalid name "%s" (should match %s)
 # F0401 - Unable to import 'module'
-disable=C0103,F0401
+# W0142 - Used * or ** magic (This doesn't improve readability and should be used with care.)
+disable=C0103,F0401,W0142
 
 [REPORTS]
 # set the output format. Available formats are text, parseable, colorized and

@@ -17,6 +17,9 @@ def test_and_install_package():
     """
     Test importing 3rd party modules required by BigRbot. If import fails,
     then attempt to install the package.
+
+    Important: This step is performed before autobot modules can be loaded.
+    So we can't depend on aubobot.helpers and similar facilities.
     """
     def _test_and_install(package, module):
         try:
@@ -451,8 +454,9 @@ def clean_deep_command(*args):
 
     if is_suite_defined():
         # Remove log directories matching the pattern 'suite_20yymmdd_hhmmss'
-        run('rm -rfv %s_20[0-9][0-9][0-9][0-9][0-9][0-9]_[0-9][0-9][0-9][0-9][0-9][0-9]'
-            % helpers.bigrobot_suite(), shell=True)
+        c = 'rm -rfv %s_20[0-9][0-9][0-9][0-9][0-9][0-9]_[0-9][0-9][0-9][0-9][0-9][0-9]' \
+             % helpers.bigrobot_suite()
+        run(c, shell=True)
 
 
 def codesize_hidden_command(*args):
