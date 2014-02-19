@@ -188,8 +188,12 @@ Intra tenant L3 untagged with destination host moved
 	[Tags]							skipped		sanity				
 
 Intra tenant L3 untagged to tagged host
-	L3 intra tenant untagged to tagged host
-	[Tags]							skipped		sanity				
+	L3 intra tenant same leaf untagged to tagged host
+#	[Tags]							skipped		sanity				
+
+Intra tenant L3 untagged to tagged host
+	L3 intra tenant across leaf untagged to tagged host
+#	[Tags]							skipped		sanity	
 
 Intra tenant L3 tagged host
 	L3 intra tenant tagged host
@@ -234,6 +238,12 @@ L3 intra tenant same leaf untagged with static endpoints
 	sleep  										5
 	mininet l3 ping								${bm0_name}		${bm1_name} 	3
 	sleep 										2
+	mininet dump switc							${leaf0a_name}
+	mininet dump switc							${leaf0b_name}
+	mininet dump switc							${leaf1a_name}
+	mininet dump switc							${leaf1b_name}
+	mininet dump switc							${leaf2a_name}
+	mininet dump switc							${leaf2b_name}
 	${loss}=  									mininet l3 ping		${bm0_name}	${bm1_name} 	
 	Should Be True  							${loss} == 0
 	${endpoints_cnt}=							rest count endpoints mac
@@ -287,7 +297,72 @@ L3 intra tenant same leaf untagged to tagged host
 	sleep  										5
 	mininet l3 ping								${bm10_name}		${bm8_ip} 	3
 	sleep 										2
+	mininet dump switc							${leaf0a_name}
+	mininet dump switc							${leaf0b_name}
+	mininet dump switc							${leaf1a_name}
+	mininet dump switc							${leaf1b_name}
+	mininet dump switc							${leaf2a_name}
+	mininet dump switc							${leaf2b_name}
 	${loss}=  									mininet l3 ping		${bm10_name}	${bm8_ip} 	
+	Should Be True  							${loss} == 0
+	${endpoints_cnt}=							rest count endpoints mac
+	Should Be True  							${endpoints_cnt} == 6
+
+L3 intra tenant across leaf untagged to tagged host
+	REST add endpoint							${tenant1_name}		${vns1_1}		${bm0_name}
+	REST add endpoint							${tenant1_name}		${vns1_2}		${bm1_name}
+	REST add endpoint							${tenant2_name}		${vns2_3}		${bm2_name}
+	REST add endpoint							${tenant2_name}		${vns2_1}		${bm8_name}
+	REST add endpoint							${tenant2_name}		${vns2_2}		${bm9_name}
+	REST add endpoint							${tenant2_name}		${vns2_3}		${bm10_name}
+	REST add endpoint ip						${tenant1_name}		${vns1_1}		${bm0_name}			${bm0_ip}
+	REST add endpoint ip						${tenant1_name}		${vns1_2}		${bm1_name}			${bm1_ip}
+	REST add endpoint ip						${tenant2_name}		${vns2_3}		${bm2_name}			${bm2_ip}
+	REST add endpoint ip						${tenant2_name}		${vns2_1}		${bm8_name}			${bm8_ip}
+	REST add endpoint ip						${tenant2_name}		${vns2_2}		${bm9_name}			${bm9_ip}
+	REST add endpoint ip						${tenant2_name}		${vns2_3}		${bm10_name}		${bm10_ip}
+	REST add endpoint mac						${tenant1_name}		${vns1_1}		${bm0_name}			${bm0_mac}
+	REST add endpoint mac						${tenant1_name}		${vns1_2}		${bm1_name}			${bm1_mac}
+	REST add endpoint mac						${tenant2_name}		${vns2_3}		${bm2_name}			${bm2_mac}
+	REST add endpoint mac						${tenant2_name}		${vns2_1}		${bm8_name}			${bm8_mac}
+	REST add endpoint mac						${tenant2_name}		${vns2_2}		${bm9_name}			${bm9_mac}
+	REST add endpoint mac						${tenant2_name}		${vns2_3}		${bm10_name}		${bm10_mac}
+	REST add endpoint portgroup attachment		${tenant1_name}		${vns1_1}		${bm0_name}			${portgroup0}	${untaggedvlan}
+	REST add endpoint portgroup attachment		${tenant1_name}		${vns1_2}		${bm1_name}			${portgroup1}	${untaggedvlan}
+	REST add endpoint portgroup attachment		${tenant2_name}		${vns2_3}		${bm2_name}			${portgroup2}	${vns2_vlan3}
+	REST add endpoint portgroup attachment		${tenant2_name}		${vns2_1}		${bm8_name}			${portgroup8}	${vns2_vlan1}
+	REST add endpoint portgroup attachment		${tenant2_name}		${vns2_2}		${bm9_name}			${portgroup9}	${vns2_vlan2}
+	REST add endpoint portgroup attachment		${tenant2_name}		${vns2_3}		${bm10_name}		${portgroup10}	${untaggedvlan}
+	mininet host ipcfg   						${bm0_name}			${bm0_bondif}	${bm0_ip}			${vns1_subnet1}
+	mininet host ipcfg   						${bm1_name}			${bm1_bondif}	${bm1_ip}			${vns1_subnet2}
+	mininet l3 link tag							${bm2_name}			${bm2_bondif}	${vns2_vlan3}		${bm2_ip}		${vns2_subnet3}
+	mininet l3 link tag							${bm8_name}			${bm8_bondif}	${vns2_vlan1}		${bm8_ip}		${vns2_subnet1}
+	mininet l3 link tag							${bm9_name}			${bm9_bondif}	${vns2_vlan2}		${bm9_ip}		${vns2_subnet2}
+	mininet host ipcfg   						${bm10_name}		${bm10_bondif}	${bm10_ip}			${vns1_subnet1}	
+
+	mininet host gw								${bm0_name}			${vns1_ip1}		${bm0_bondif}
+	mininet host gw								${bm1_name}			${vns1_ip2}		${bm1_bondif}
+	mininet host tagged gw						${bm2_name}			${vns2_ip3}		${vns2_vlan3}
+	mininet host tagged gw						${bm8_name}			${vns2_ip1}		${vns2_vlan1}
+	mininet host tagged gw						${bm9_name}			${vns2_ip2}		${vns2_vlan2}
+	mininet host gw								${bm10_name}		${vns2_ip3}		${bm10_bondif}
+	
+	mininet host arp							${bm0_name}			${vns1_ip1}		${gw_mac}
+	mininet host arp							${bm1_name} 		${vns1_ip2}		${gw_mac}
+	mininet host arp							${bm2_name}			${vns2_ip3}		${gw_mac}
+	mininet host arp							${bm8_name} 		${vns2_ip1}		${gw_mac}
+	mininet host arp							${bm9_name}			${vns2_ip2}		${gw_mac}
+	mininet host arp							${bm10_name} 		${vns2_ip3}		${gw_mac}
+	sleep  										5
+	mininet l3 ping								${bm8_name}			${bm2_ip} 	3
+	sleep 										2
+	mininet dump switc							${leaf0a_name}
+	mininet dump switc							${leaf0b_name}
+	mininet dump switc							${leaf1a_name}
+	mininet dump switc							${leaf1b_name}
+	mininet dump switc							${leaf2a_name}
+	mininet dump switc							${leaf2b_name}
+	${loss}=  									mininet l3 ping		${bm8_name}	${bm2_ip} 	
 	Should Be True  							${loss} == 0
 	${endpoints_cnt}=							rest count endpoints mac
 	Should Be True  							${endpoints_cnt} == 6
@@ -359,6 +434,7 @@ setup topology
 	REST add portgroup to vns					${tenant2_name}  	${vns2_3} 		${portgroup10} 		${untaggedvlan}	
 	
 teardown topology
+	delete fabric switch
 	sleep										1
 	REST delete tenant							${tenant1_name}
 	REST delete tenant							${tenant2_name}
