@@ -21,7 +21,7 @@ class Ixia(object):
         self._ixia.ix_connect()
 
     def ixia_l2_add(self, **kwargs):
-        return self._ixia.ixia_l2_add(**kwargs)
+        return self._ixia.ix_l2_add(**kwargs)
     
     def ixia_l3_add(self, **kwargs):
         return self._ixia.ix_l3_add(**kwargs)
