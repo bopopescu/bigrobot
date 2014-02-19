@@ -668,7 +668,7 @@ class T5(object):
         data = c.rest.content()
         list_fabric_interface = []
         for i in range(0,len(data)):
-            if data[i]["type"] == "unknown":
+            if data[i]["type"] == "unknown" or data[i]["type"] == "edge":
                 continue
             elif data[i]["type"] == "leaf" or data[i]["type"] == "spine":
                 list_fabric_interface.append(re.sub("\D", "", data[i]["name"]))
@@ -680,14 +680,25 @@ class T5(object):
             for j in range(0,len(data1[i]["tagged-ports"])):
                 if data1[i]["tagged-ports"][j]["port-num"] not in list_tag_intf:
                     list_tag_intf.append(data1[i]["tagged-ports"][j]["port-num"])
-                    list_common_member = list(set(list_fabric_interface).intersection(list_tag_intf))
-                    if len(list_fabric_interface) == len(list_common_member):
-                        helpers.log("Pass:All fabric interfaces are in vlan as Tagged member")
-                        return True
-                    else:
-                        helpers.test_failure("Fail:All fabric interfaces are not in vlan as Tagged member")
-                        return False
+        list_common = list(set(list_fabric_interface).intersection(list_tag_intf))
+        if len(list_fabric_interface) == len(list_common):
+                    helpers.log("Pass:All fabric interfaces are in vlan as Tagged member")
+                    return True
+        else:
+                    helpers.test_failure("Fail:All fabric interfaces are not in vlan as Tagged member")
+                    return False
                 
+    def comm_elements(self, list1, list2):
+        ''' Find the common elements in the 2 lists 
+         Input: Provide 2 lists
+         Output : give the list which has common elements in those lists
+        '''
+        result = []
+        for element in list1:
+            if element in list2:
+                result.append(element)
+        return result
+    
     def rest_verify_forwarding_vlan_edge_untag_members(self, switch, intf):
         '''Verify Fabric edge interfaces status in a vlan
         
@@ -702,10 +713,14 @@ class T5(object):
         data = c.rest.content()
         interface = re.sub("\D", "", intf)
         for i in range(0,len(data)):
-            for j in range(0,len(data[i]["untagged-ports"])):
-                if data[i]["untagged-ports"][j]["port-num"] == interface:
-                    helpers.log("Pass:Given interface is present in untag memberlist of vlan-table")
-                    return True
+            try:
+                value = data[i]["untagged-ports"]
+            except KeyError:
+                pass
+            for j in range(0,len(value)):
+                    if value[j]["port-num"] == int(interface):
+                        helpers.log("Pass:Given interface is present in untag memberlist of vlan-table")
+                        return True
                
               
     def rest_verify_forwarding_vlan_edge_tag_members(self, switch, intf):
@@ -722,13 +737,17 @@ class T5(object):
         data = c.rest.content()
         interface = re.sub("\D", "", intf)
         for i in range(0,len(data)):
-            for j in range(0,len(data[i]["tagged-ports"])):
-                if data[i]["tagged-ports"][j]["port-num"] == interface:
+            try:
+                value = data[i]["tagged-ports"]
+            except KeyError:
+                pass
+            for j in range(0,len(value)):
+                if value[j]["port-num"] == int(interface):
                     helpers.log("Pass:Given interface is present in untag memberlist of vlan-table")
                     return True
                 
               
-    def rest_verify_forwarding_layer2_table(self, switch, intf, mac):
+    def rest_verify_forwarding_layer2_table_untag(self, switch, intf, mac):
         '''Verify Layer 2 MAC information in forwarding table
         
             Input:  Specific switch name , interface , mac     
@@ -752,15 +771,66 @@ class T5(object):
         data1 = c.rest.content()
         vlan_id = []
         for i in range(0,len(data1)):
-            for j in range(0,len(data1[i]["tagged-ports"])):
-                if (data1[i]["tagged-ports"][j]["port-num"] == int(interface)) or (data1[i]["untagged-ports"][j]["port-num"] == int(interface)):
+            try:
+                value = data1[i]["untagged-ports"]
+            except KeyError:
+                pass
+            for j in range(0,len(value)):
+                if (value[j]["port-num"] == int(interface)):
+                    vlan_id.append(data1[i]["vlan-id"])        
+                    #Match the mac in forwarding table with specific lag_id and vlan_id
+        url3 = '%s/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch-name="%s"]/l2-table' % (c.base_url, switch)
+        c.rest.get(url3)
+        data2 = c.rest.content()
+        for i in range(0,len(data2)):
+            if str(data2[i]["mac"]) == str(mac):
+                if data2[i]["port-num"] == lag_id[0] and data2[i]["vlan-id"] == vlan_id[0]:
+                    helpers.log("Pass: Expected mac is present in the forwarding table with correct vlan and interface")
+                    return True
+                else:
+                    helpers.test_failure("Fail: Expected=%s:%s, actual=%s:%s" % (lag_id[0], vlan_id[0], data2[i]["port-num"], data2[i]["vlan-id"]))
+                    return False   
+            else:
+                helpers.test_failure("Fail:Expected mac is not present in the forwarding table")
+                return False
+            
+    def rest_verify_forwarding_layer2_table_tag(self, switch, intf, mac):
+        '''Verify Layer 2 MAC information in forwarding table
+        
+            Input:  Specific switch name , interface , mac     
+            
+            Return: True or false based on the entry present in the forwarding table.
+        '''
+        t = test.Test()
+        c = t.controller()
+        #Get the Lag id for the Given interface
+        url = '%s/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch-name="%s"]/port-table' % (c.base_url, switch)
+        c.rest.get(url)
+        data = c.rest.content()
+        interface = re.sub("\D", "", intf)
+        lag_id = []
+        for i in range(0,len(data)):
+            if data[i]["port-num"] == int(interface):
+                lag_id.append(data[i]["lag-id"])
+                # Get the vlan-id for the given interface
+        url1 = '%s/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch-name="%s"]/vlan-table' % (c.base_url, switch)
+        c.rest.get(url1)
+        data1 = c.rest.content()
+        vlan_id = []
+        for i in range(0,len(data1)):
+            try:
+                value = data[i]["tagged-ports"]
+            except KeyError:
+                pass
+            for j in range(0,len(value)):
+                if (value[j]["port-num"] == int(interface)):
                     vlan_id.append(data1[i]["vlan-id"])
                     #Match the mac in forwarding table with specific lag_id and vlan_id
         url3 = '%s/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch-name="%s"]/l2-table' % (c.base_url, switch)
         c.rest.get(url3)
         data2 = c.rest.content()
         for i in range(0,len(data2)):
-            if data2[i]["mac"] == mac:
+            if str(data2[i]["mac"]) == str(mac):
                 if data2[i]["port-num"] == lag_id[0] and data2[i]["vlan-id"] == vlan_id[0]:
                     helpers.log("Pass: Expected mac is present in the forwarding table with correct vlan and interface")
                     return True

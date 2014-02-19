@@ -8,7 +8,7 @@ from vendors.Ixia import IxNetwork
 
 class Ixia(object):
     def __init__(self, tcl_server_ip, tcl_server_port=8009, ix_version='7.10', chassis_ip=None,
-                 port_map_list=None):
+                 port_map_list=None, clear_ownership = True):
         self._tcl_server_ip = tcl_server_ip
         self._tcl_server_port = tcl_server_port
         self._ix_version = ix_version
@@ -25,6 +25,8 @@ class Ixia(object):
         self._started_hosts = False
         self._ip_devices = {}
         self._arp_check = True
+        if clear_ownership:
+            pass
 
     def port_map_list(self, ports):
         # something happens here
@@ -860,4 +862,14 @@ class Ixia(object):
             port_stats = self.ix_fetch_port_stats()
             helpers.log("Port Stats : \n %s" % port_stats)
         helpers.log('Successfully Stopped the traffic for Stream %s ' % str(traffic_stream))
+        return True
+    def ix_clear_stats(self, port_name = None):
+        '''
+            Clears stats of give port_name or globally clears port stats
+        '''
+        handle = self._handle
+        if port_name is None:
+            helpers.log('Clearing Stats Globally on all ports initialized')
+            handle.execute('clearStats')
+            helpers.log('Stats Cleared Succesffuly ..')
         return True
