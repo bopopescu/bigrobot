@@ -62,7 +62,7 @@ bigrobot_bin = bigrobot_path + '/bin'
 
 set_env('BIGROBOT_SUITE', bigrobot_suite)
 #set_env('BIGROBOT_LOG_PATH', bigrobot_log_path)
-set_env('BIGROBOT_LOG_PATH_EXEC_INSTANCE', print_env('BIGROBOT_LOG_PATH'))
+set_env('BIGROBOT_LOG_PATH_EXEC_INSTANCE', get_env('BIGROBOT_LOG_PATH'))
 
 
 #suite = os.path.basename(bigrobot_suite)
