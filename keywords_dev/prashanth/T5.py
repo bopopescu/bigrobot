@@ -666,9 +666,7 @@ class T5(object):
                 if str(data1[i]["vlan-id"]) == str(vlan):
                     helpers.log("Vlan Translation table is creaetd properly for the given interface")
                     return True
-                else:
-                    helpers.test_failure("Vlan Translation table is not correct for the given interface, Pl debug further")
-                    return False     
+        return False          
           
     def rest_verify_forwarding_vlan_fabric_tag_members(self, switch):
         '''Verify Fabric interfaces status in a vlan
@@ -738,7 +736,7 @@ class T5(object):
                     if value[j]["port-num"] == int(interface):
                         helpers.log("Pass:Given interface is present in untag memberlist of vlan-table")
                         return True
-               
+        return False      
               
     def rest_verify_forwarding_vlan_edge_tag_members(self, switch, intf):
         '''Verify Fabric edge interfaces status in a vlan
@@ -762,7 +760,7 @@ class T5(object):
                 if value[j]["port-num"] == int(interface):
                     helpers.log("Pass:Given interface is present in untag memberlist of vlan-table")
                     return True
-                
+        return False       
               
     def rest_verify_forwarding_layer2_table_untag(self, switch, intf, mac):
         '''Verify Layer 2 MAC information in forwarding table
