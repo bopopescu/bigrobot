@@ -325,10 +325,10 @@ def create_symlinks_to_logs():
 
         # Create symlink only if source file exists
         if helpers.file_exists(source_file):
-            os.link(source_file, f)
+            os.symlink(source_file, f)
             if not helpers.file_exists(f2):
                 # Create additional symlink, unless f == f2
-                os.link(source_file, f2)
+                os.symlink(source_file, f2)
 
 #
 # Gobot command definitions
