@@ -91,6 +91,16 @@ def error_exit(msg, exit_code=None):
     See https://twiki.cern.ch/twiki/bin/view/EMI/RobotFrameworkAdvancedGuide#Return_Codes
     """
     error_msg(msg)
+
+    # For continuous integration (e.g., Jenkins with Robot-plugin), can only
+    # exit with 0 and let robot-plugin do the failure analysis. This is as per
+    # https://wiki.jenkins-ci.org/display/JENKINS/Robot+Framework+Plugin
+    # "Force your Robot script to return successfully from shell with 'exit 0'
+    # to empower the plugin in deciding if the build is success/failure
+    # (by default Robot exits with error code when there's any failed tests)"
+    if bigrobot_continuous_integration() == 'True':
+        exit_code = 0
+
     if not exit_code:
         exit_code = 255
     sys.exit(exit_code)
