@@ -307,6 +307,11 @@ def create_symlinks_to_logs():
     """
     log_path = helpers.bigrobot_log_path()
     log_path_run = helpers.bigrobot_log_path_exec_instance()
+
+    if log_path == log_path_run:
+        # Paths are identical, so don't create links
+        return
+
     log_files = ['debug.log', 'syslog.txt', 'log.html', 'report.html',
                  'output.xml']
 
