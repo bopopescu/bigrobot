@@ -1,0 +1,569 @@
+* Settings
+Force Tags      IronHorse
+Library         keywords/BsnCommon.py
+Documentation   Switch Platform - Iron Horse
+...             Section A: ONIE , Boot Loader Installation
+...
+...             Section B: Initial Configuration
+...             
+...  
+...             Section C: User Admin Authentication
+...
+...
+...             Section D: System/Admin operation
+...
+...             Section E: SNMP Interface MIBs
+...
+...             Section F: Switch Platform Environmental variables 
+...
+...             Section G: LED Test 
+...
+...             Section H: Supported SFP+, XCVR status, SR/LR optics, Link status
+...
+...             Section I: CLI Config and Show Command
+...                            List of Permissible commands from Switch, Controller 
+...
+...             Section J: Traffic Verification Test 
+...              Unknown Unicast, Broadcast, Multicast
+...              L2 MAC traffic, L3 Forwarding , Dest IP unknown traffic
+...           
+...             Section K: Logging 
+...
+...             Section L: HA test cases - Switch Platform perspective
+...                 Traffic test, Controller Failovers, Switch Reboot
+...                 Single TOR , Double TOR scenario 
+...
+...             Section M: Scale and Stress Testing
+...                        Uni-Dimensional scale test 
+
+
+### Section A: ONIE, Boot Loader Installation 
+
+* Test Cases
+Verify ONIE Installated on Switch 
+    Log     Step 1 - verify ONIE installed in switch
+    Log     Step 2 - Verify ONIE version
+    Log     Step 3 - Verify ONIE env params
+    Log     Step 4 - Verify ONIE params for controller uboot
+    Manual untested
+
+Install ONIE image on bare metal Switch 
+    Log     Step 1 - Install ONIE version on Switch
+    Log     Step 2 - verify ONIE installed in switch
+    Log     Step 3 - Verify ONIE version
+    Log     Step 4 - Verify ONIE env params
+    Log     Step 5 - Verify ONIE params for controller uboot
+    Manual untested
+
+Verify ONIE boot loader gets switchLite image
+    Log     Step 1 - Verify ONIE boot loader gets switchLite image
+    Manual untested
+    
+
+Verify console connectivity
+    Log    Step 1 - Verify access the console through telnet
+    Log    Step 2 - Verify username and password
+    Manual untested
+
+Verify UBoot version DRAM etc
+    Log    Step 1 - Verify the Uboot version
+    Log    Step 2 - Verify the DRAM 
+    Manual untested
+
+Configure Static ip address, gateway, server ip
+    Log    Step 1 - Verify the configuration of static Ip address
+    Log    Step 2 - Verify the configuration of Gateway 
+    Log    Step 3 - Verify the configuration of server ip    
+    Manual untested
+
+Reboot Switch and verify the loader parameters like IP, gateway etc
+    Log    Step 1 - Verify after reboot configuration of static Ip address
+    Log    Step 2 - Verify after reboot configuration of Gateway 
+    Log    Step 3 - Verify after reboot the configuration of server ip    
+    Manual untested
+
+Verify after loader env configuration Ping to Switch 
+    Log    Step 1 - Verify after loader env config , Ping to Switch   
+    Manual untested
+
+Verify DHCP address configuration, IP address allocation and PING
+    Log    Step 1 - Verify DHCP server configuration at loader
+    Log    Step 2 - Verify the IP address allocation 
+    Log    Step 3 - Verify the PING 
+    Manual untested 
+    
+Reboot box and Verify the IP address through DHCP server and Ping 
+    Log    Step 1 - Verify after reboot IP address allocation thru DHCP 
+    Log    Step 1 - Verify the PING connectivity 
+    Manual untested 
+   
+Verify environmental variables for CPU, RAM, PCI, Ethernet, EEPROM at loader 
+    Log    Step 1 - Verify the environmrntal variables 
+    Manual untested 
+
+Verify LED behavior during and after boot up 
+    Log    Step 1 - Verify the LED behavior during and after boot up 
+    Manual untested
+    
+Verify Switch software installation via ONIE 
+    Log    Step 1 - Verify the Switch Software installation via ONIE 
+    Manual untested 
+    
+Verify ONIE installation DHCP address allocation and Ping 
+    Log    Step 1 - Verify after ONIE installation switch IP address 
+    Log    Step 2 - Verify Ping 
+    Manual untested 
+    
+Verify network boot 
+    Log    Step 1 - if supported Verify Network Boot 
+    Manual untested 
+    
+Verify image installation using USB 
+    Log    Step 1 - Verify that the USB image installation is supported 
+    Manual untested 
+    
+Verify the recovery procedure of Switch 
+    Log    Step 1 - verify that the Switch can be recovered by the defined procedure 
+    Manual untested 
+    
+Verify Customer Deployment method
+    Log    Step 1 - Verify the package/installation procedure for Switch 
+    Manual untested 
+    
+    
+### SECTION B: Initial Configuration 
+
+Verify the Switch configuration after ZTP 
+    Log    Step 1 - Verify the Switch Configuration after ZTP 
+    Manual untested 
+    
+Verify Switch connectivity after ZTP 
+    Log    Step 1 - Verify Switch is pingable 
+    Manual untested 
+    
+Verify Switch Configuration - Allowed or Not Allowed Configuration 
+    Log    Step 1 - Verify the What Switch Configuration are allowwed/Not Allowed 
+    Manual untested 
+    
+Verify Switch DHCP address - Is it Configurable in ZTP 
+    Log    Step 1 - Verify whether Switch IP address configurable? 
+    Manual untested 
+    
+Verify invalid out of Subnet address configurable 
+    Log    Step 1 - Verify the invalid/out of subnet IP address configurable? 
+    Log    Step 2 - Any provision for deletion? 
+    Manual untested 
+    
+Verify auto-negotiation for Management Port 
+    Log    Step 1 - Verify auto-neg behavior for managament port 
+    Manual untested 
+    
+Verify Speed Duplex settings of Management Port 
+    Log    Step 1 - Verify Speed/Duplex settings of Management Port 
+    Manual untested 
+    
+Verify management port comes up after removing and reinserting cable 
+    Log    Step 1 - Verify the Management Port config after cable remove and re-insertion
+    Manual untested
+    
+Verify multiple SSH connections to Management Port 
+    Log    Step 1 - Verify multiple SSH connections to Management Port
+    Manual untested
+    
+Verify multiple telnet connections to Management Port 
+    Log    Step 1 - Verify multiple telnet connections to Management Port
+    Manual untested
+
+Verify controller configuration on Switch 
+    Log    Step 1 - Verify Master/ BAckup controller information on switch 
+    Manual untested
+    
+Verify after failure of Master Controller switch connection with backup is re established
+    Log    Step 1 - Both Controller connection is present 
+    Log    Step 2 - Master Controller fails and connection is removed 
+    Log    Step 3 - Connection to Back up controller is established 
+    Manual untested
+    
+Verify after Master Controller comes back Connection reestablished 
+    Log    Step 1 - Verify connection re-establishes after Master Controller connection comes back 
+    Log    Step 2 - Verify the correct information for Master/Backup Controller 
+    Manual untested
+
+Verify Controller List can be Modified  
+    Log    Step 1 - Verify Controller List Modification??
+    Manual untested
+    
+### Section C : Admin/User Authentication 
+### Allowed/Required From Controller Only ??
+
+Verify user admin can be configured with password adminadmin on the box 
+    Log    Step 1 - Verify user admin can be configured with password adminadmin on the box
+    Manual untested
+    
+Verify password for user admin can be changed  
+    Log    Step 1 - Verify password for user admin can be changed 
+    Manual untested
+
+Verify password for user admin cannot be of zero length   
+    Log    Step 1 - Verify password for user admin cannot be of zero length  
+    Manual untested
+
+Verify Username is case sensitive   
+    Log    Step 1 - Verify Username is case-sensitive  
+    Manual untested    
+    
+Verify Passwords are case sensitive   
+    Log    Step 1 - Verify Passwords are case-sensitive  
+    Manual untested
+
+Verify max length for passwords    
+    Log    Step 1 - Verify max-length for passwords   
+    Manual untested
+
+Verify special characters are allowed in passwords 
+    Log    Step 1 - Verify special characters are allowed in passwords   
+    Manual untested
+    
+Verify user recovery can be configured and user can login using the username password combination
+    Log    Step 1 - Verify user recovery can be configured and user can login using the username/password combination   
+    Manual untested
+
+Restart process ofad and verify users admin and recovery can re login
+    Log    Step 1 - Restart process ofad and verify users admin and recovery can re-login   
+    Manual untested
+    
+    
+### Section D: System Admin Operation
+### What is allowed from Controller and What is allowed from Switch??
+
+Verify NTP Config / Sync
+    Log    Step 1 - Verify NTP Config / Sync
+    Manual untested
+    
+Config admin save/reload operation 
+    Log    Step 1 - Config admin save/reload operation 
+    Manual untested
+    
+Config upload/ ftp / reload operation 
+    Log    Step 1 - Config upload/ ftp / reload operation 
+    Manual untested
+    
+Config DNS server config and operational output 
+    Log    Step 1 - Config DNS server config and operational output 
+    Manual untested
+    
+Verify time Zone configuration 
+    Log    Step 1 - Verify time Zone configuration 
+    Manual untested
+    
+Verify Syslog Server config - logs creation/ rollover / after reboot verification
+    Log    Step 1 - Verify Syslog Server config - logs creation/ rollover / after reboot verification
+    Manual untested
+    
+Verify SNMP server configuration  
+    Log    Step 1 -  Verify SNMP server configuration 
+    Manual untested
+    
+Verify System Admin config - reboot and persistent  
+    Log    Step 1 -  Verify System Admin config - reboot and persistent 
+    Manual untested
+    
+###
+### Section E: SNMP Interface MIBs   
+###
+###    
+ 
+ 
+
+    
+Verifying snmpget works fine 
+    Log    Step 1 -
+    Manual untested
+    
+Verifying snmpbulkget works fine
+    Log    Step 1 -Verifying snmpbulkget works fine
+    Manual untested
+    
+Verify display of pertinent parameters through SNMP matches information on switch 
+    Log    Step 1 -Verify display of pertinent parameters through SNMP matches information on switch
+    Manual untested
+    
+Verify on deletion re-addition information is still correct 
+    Log    Step 1 -Verify on deletion/re-addition information is still correct
+    Manual untested
+    
+Do SNMP V2 queries 
+    Log    Step 1 - Do SNMP V2 queries
+    Manual untested
+    
+Verifying snmpget after SNMP process restart
+    Log    Step 1 - Verifying snmpget after SNMP process restart
+    Manual untested
+    
+Verifying snmpget after switch restart
+    Log    Step 1 -Verifying snmpget after switch restart
+    Manual untested
+
+Verifying snmpget after image upgrade
+    Log    Step 1 -Verifying snmpget after image upgrade
+    Manual untested
+
+Verifying snmpget after reloading configuration from file 
+    Log    Step 1 -Verifying snmpget after reloading configuration from file 
+    Manual untested
+
+Verifying stress the agent with multiple simultaneous walks on the switch of the entire MIB tree 
+    Log    Step 1 - Verifying stress the agent with multiple simultaneous walks on the switch of the entire MIB tree 
+    Manual untested
+
+Verify UP/DOWN events are logged/reported 
+    Log    Step 1 - Verify UP/DOWN events are logged/reported 
+    Manual untested
+
+Verify interface index / interface description is in range 1-48
+    Log    Step 1 - Verify  interface index / interface description is in range 1-48
+    Manual untested
+
+Verify ifAdminStatus shows as Port is Enabled
+    Log    Step 1 - Verify  ifAdminStatus shows as Port is Enabled
+    Manual untested
+
+Verify ifInOctets Compare result with show interface command/ifconfig
+    Log    Step 1 - Verify ifInOctets Compare result with show interface command/ifconfig  
+    Manual untested
+
+Verify ifInDiscards Compare result with show interface command/ifconfig
+    Log    Step 1 - Verify ifInDiscards Compare result with show interface command/ifconfig 
+    Manual untested
+
+Verify ifInErrors Compare result with show interface command/ifconfig
+    Log    Step 1 - Verify ifInErrors Compare result with show interface command/ifconfig 
+    Manual untested
+
+Verify ifOutOctets Compare result with show interface command/ifconfig
+    Log    Step 1 - Verify ifOutOctets Compare result with show interface command/ifconfig 
+    Manual untested
+
+Verify ifOutDiscards Compare result with show interface command/ifconfig
+    Log    Step 1 - Verify  ifOutDiscards Compare result with show interface command/ifconfig
+    Manual untested
+
+Verify ifOutErrors Compare result with show interface command/ifconfig
+    Log    Step 1 - Verify ifOutErrors Compare result with show interface command/ifconfig 
+    Manual untested
+
+Verify ifOutQLen Compare result with show interface command/ifconfig
+    Log    Step 1 - Verify ifOutQLen Compare result with show interface command/ifconfig 
+    Manual untested
+
+Verify ifSpeed Compare result with show interface command/ifconfig
+    Log    Step 1 - Verify ifSpeed Compare result with show interface command/ifconfig 
+    Manual untested
+
+
+### Section F:Switch Platform Environment Variables 
+###
+###
+
+Verify the environment information is displayed
+    Log    Step 1 - Verify the environment information is displayed
+    Manual untested
+
+Verify Power Supply Status
+    Log    Step 1 - Verify Power Supply Status
+    Manual untested
+
+Verify Temperatures are in the appropriate ranges
+    Log    Step 1 - Verify Temperatures are in the appropriate ranges
+    Manual untested
+
+Verify Fans are running at normal speeds
+    Log    Step 1 - Verify Fans are running at normal speeds
+    Manual untested
+
+Verify fans are running at higher speeds when temperature increases
+    Log    Step 1 - Verify fans are running at higher speeds when temperature increases
+    Manual untested
+
+Verify alarms are generated in syslog in case of fan failure
+    Log    Step 1 - Verify alarms are generated in syslog in case of fan failure 
+    Manual untested
+
+Verify time and date information is NOT lost after reboot
+    Log    Step 1 - Verify time and date information is NOT lost after reboot
+    Manual untested
+
+Verify Periodic polling of Temp sensor fans
+    Log    Step 1 - Verify Periodic polling of Temp sensor fans
+    Manual untested
+
+Verify if fan speed/status is updated in output of show sensors
+    Log    Step 1 - Verify if fan speed/status is updated in output of show sensors
+    Manual untested
+
+Verify if temperature values and sensor status are updated in output of show sensors
+    Log    Step 1 - Verify if temperature values and sensor status are updated in output of show sensors
+    Manual untested
+
+PSU failure test - Bring up , Failure back up PSU ,alarm , messages
+    Log    Step 1 - PSU failure test - Bring up , Failure back up PSU ,alarm , messages
+    Manual untested
+    
+Verify power output when DUT use one power supply
+    Log    Step 1 - Verify power output when DUT use one power supply
+    Manual untested    
+
+Verify power output when DUT use two power supplies
+    Log    Step 1 - Verify power output when DUT use two power supplies
+    Manual untested    
+
+With both power supplies and system up and running, remove one power supply and verify
+    Log    Step 1 - With both power supplies and system up and running, remove one power supply and verify
+    Manual untested    
+
+
+Repeat previous testcase with the other power supply
+    Log    Step 1 - Repeat previous testcase with the other power supply
+    Manual untested    
+
+With one power supply and system up and running, add second power supply and verify
+    Log    Step 1 - With one power supply and system up and running, add second power supply and verify
+    Manual untested    
+
+VErify with PSU2 with the other power supply
+    Log    Step 1 - Repeat previous testcase with the other power supply
+    Manual untested    
+
+   
+### Section G: LED Test 
+###
+###
+
+Verify Activity LED and Status LED for a MGMT Port and data ports when no cable is connected
+    Log    Step 1 - Verify Activity LED and Status LED for a MGMT Port and data ports when no cable is connected
+    Manual untested    
+
+Verify Activity LED and Status LED for a MGMT Port and data ports when port is connected to TG
+    Log    Step 1 - Verify Activity LED and Status LED for a MGMT Port and data ports when port is connected to TG
+    Manual untested    
+
+Verify Activity LED and Status LED for a MGMT Port and data ports when cable is disconnected from the other end
+    Log    Step 1 - Verify Activity LED and Status LED for a MGMT Port and data ports when cable is disconnected from the other end
+    Manual untested    
+
+Verify that all the all n/w LEDs goes off when systems is halted
+    Log    Step 1 - Verify that all the all n/w LEDs goes off when systems is halted
+    Manual untested    
+
+###
+### Section H: CLI Configuration and Show commands 
+### Confirm the CLI from Controllers and Switch 
+###
+ 
+
+Verify Admin Operation command
+    Log    Step 1 - Verify Admin Operation command
+    Manual untested
+    
+Verify Show version, env, interface, alarms, running-config , etc
+    Log    Step 1 - Verify Show version, env, interface, alarms, running-config , etc
+    Manual untested
+    
+Verify Admin enable/ disable interface 
+    Log    Step 1 - Verify Admin enable/ disable interface 
+    Manual untested
+    
+Verify Admin save / partial save config allowed / config load/ reload/ merge / override
+    Log    Step 1 - Verify Admin save / partial save config allowed / config load/ reload/ merge / override
+    Manual untested
+    
+Verify Config commit error flag / invalid config / missing config part check 
+    Log    Step 1 - Verify Config commit error flag / invalid config / missing config part check 
+    Manual untested
+    
+Verify CLI reboot command option - Config persistent after save
+    Log    Step 1 - Verify CLI reboot command option - Config persistent after save
+    Manual untested
+    
+
+###
+### Section I : Traffic Test Verification
+###
+###
+
+
+
+Verify all interfaces show up (in show o/p from CLI) after s/w installation 
+    Log    Step 1 - Verify all interfaces show up (in show o/p from CLI) after s/w installation
+    Manual untested
+
+Verify that the various transceivers are detected in the uplink module and they are up and running 
+    Log    Step 1 - Verify that the various transceivers are detected in the uplink module and they are up and running
+    Manual untested
+
+Verify interface o/p is consistent and as per spec in show interfaces o/p 
+    Log    Step 1 - Verify interface o/p is consistent and as per spec in show interfaces o/p
+    Manual untested
+
+Verify line-rate traffic 
+    Log    Step 1 - Verify line-rate traffic
+    Manual untested
+
+Verify end-to-end ping (system-test) 
+    Log    Step 1 - Verify end-to-end ping (system-test)
+    Manual untested
+
+Verify auto-negotiation configurations work as expected 
+    Log    Step 1 - Verify auto-negotiation configurations work as expected
+    Manual untested
+
+Verify Auto- negotiation enabled on both ends of interface
+    Log    Step 1 - Verify Auto- negotiation enabled on both ends of interface
+    Manual untested
+
+Verify Speed/Duplex in ports 
+    Log    Step 1 - Verify Speed/Duplex in ports
+    Manual untested
+
+Verify interface state is reported correctly when cable is unplugged. 
+    Log    Step 1 - Verify interface state is reported correctly when cable is unplugged. 
+    Manual untested
+
+Verify that the options are maintained on the interface after the system reboot. 
+    Log    Step 1 - Verify that the options are maintained on the interface after the system reboot.
+    Manual untested
+
+Verify that the appropriate counters are incremented when the interface receivers error packets/oversized packets/undersized packets
+    Log    Step 1 - Verify that the appropriate counters are incremented when the interface receivers error packets/oversized packets/undersized packets
+    Manual untested
+    
+Verify Sending L2 traffic with frame size 64 bytes
+    Log    Step 1 - Verify Sending L2 traffic with frame size 64 bytes
+    Manual untested
+
+Verify Sending L2 traffic with frame size 128 bytes 
+Log    Step 1 - Verify Sending L2 traffic with frame size 128 bytes
+    Manual untested
+
+Verify Sending L2 traffic with frame size 512 bytes 
+Log    Step 1 - Verify Sending L2 traffic with frame size 512 bytes
+    Manual untested
+
+Verify Sending L2 traffic with frame size 1024 bytes 
+Log    Step 1 - Verify Sending L2 traffic with frame size 1024 bytes
+    Manual untested
+
+Verify Sending L2 traffic with frame size Jumbo 9150 bytes 
+Log    Step 1 - Verify Sending L2 traffic with frame size Jumbo 9150 bytes
+    Manual untested
+
+Verify Sending L2 traffic with mix and incremental from 64 to 9150 bytes 
+Log    Step 1 - Verify Sending L2 traffic with frame size mix and incremental from 64 to 9150 bytes
+    Manual untested
+
+Verify - Jumbo frame disabled - Sending L2 traffic with Jumbo frame size 9150 bytes 
+Log    Step 1 - Verify - Jumbo frame disabled - Sending L2 traffic with Jumbo frame size 9150 bytes 
+    Manual untested
+
+
+

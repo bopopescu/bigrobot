@@ -65,10 +65,14 @@ class Mininet(object):
         mn = t.mininet()
         mn.cli('%s arp -s %s %s' % (host, ipaddr, mac))
  
-    def mininet_l3_ping(self, src, dst, count=5):        
+    def mininet_l3_ping(self, src, dst, count=5, options="None"):        
         t = test.Test()
         mn = t.mininet()
-        mn.cli('%s ping %s -c %s -W 2' % (src, dst, count))
+        
+        if options == "None":           
+            mn.cli('%s ping %s -c %s -W 2' % (src, dst, count))
+        else:
+            mn.cli('%s ping %s -c %s -W 2 %s' % (src, dst, count, options))
         out = mn.cli_content()
         loss = helpers.any_match(out, r', (\d+)% packet loss')
         helpers.log("packet loss: %s" % loss)
