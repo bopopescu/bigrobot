@@ -55,18 +55,18 @@ Verify Cluster Slave Shutdown
 	cli verify cluster slave shutdown
 
 Add User
-	[Tags]  User_Administration
+	[Tags]  User_Administration  skipped
 	${status}=  rest add user  3 
 	Should be true  ${status}
 	
 Delete User
-	[Tags]  User_Administration  
+	[Tags]  User_Administration  skipped
 	${status}=  rest delete user  3
 	Should be true  ${status}
 
 Verify Fabric Link
-	[Tags]  Temp  skipped
-	verify fabric lag
+	[Tags]  Temp
+	do show run vns verify  bm_all  6
 	
 
 * Keywords      

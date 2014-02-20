@@ -1,5 +1,6 @@
 import autobot.helpers as helpers
 import autobot.test as test
+import keywords.Mininet as mininet
 from time import sleep
 
 switchDict_b4 = {}
@@ -80,34 +81,6 @@ class T5PlatformCommon(object):
         return fabricLink
         
     
-    def compare_fabric_link_status(self, fabricLink_b4, fabricLink_after):
-        ''' Compare fabric link status from one list to the links on the other list
-        
-            Returns: If the status is different increase Warningcount & return
-        '''
-        global warningCount
-        
-        if(helpers.list_compare(fabricLink_b4, fabricLink_after)):
-            helpers.log("Fabric Links are intact between states")
-            return warningCount
-        else:
-            helpers.warn("Got List Different from helpers")
-            helpers.log("B4 is: %s" % fabricLink_b4)
-            helpers.log("After is: %s" % fabricLink_after)
-            if(len(fabricLink_b4) > len(fabricLink_after)):
-                for fabricLink in fabricLink_b4:
-                    if fabricLink not in fabricLink_after:
-                        helpers.warn("Fabric Link: %s is not present after the state change" % fabricLink)
-                        warningCount += 1
-            else:
-                for fabricLink in fabricLink_after:
-                    if fabricLink not in fabricLink_after:
-                        helpers.warn("New fabric link: %s is present after the state change" % fabricLink)
-                        warningCount += 1
-        
-        return warningCount
-    
-    
     def verify_endpoints(self):
         t = test.Test()
         c = t.controller("master")
@@ -133,28 +106,6 @@ class T5PlatformCommon(object):
         helpers.log("endpoint list is: %s " % endpoints)
         return endpoints
     
-    
-    def compare_endpoints(self, endpoints_b4, endpoints_after):
-        ''' Compare endpoint status from one list to the endpoints in the other list
-        '''
-        global warningCount
-        
-        if(helpers.list_compare(endpoints_b4, endpoints_after)):
-            helpers.log("Endpoints are intact between states")
-            return warningCount
-        else:
-            if (len(endpoints_b4) > len(endpoints_after)):
-                for endpoint in endpoints_b4:
-                    if endpoint not in endpoints_after:
-                        helpers.warn("Endpoint: %s is not present after the state change" % endpoint)
-                        warningCount += 1
-            else:
-                for endpoint in endpoints_after:
-                    if endpoint not in endpoints_b4:
-                        helpers.warn("New endpoint: %s present after the state change" % endpoint)
-                        warningCount += 1
-                        
-        return warningCount 
            
     def verify_fabric_lags(self):
         t = test.Test()
@@ -212,9 +163,12 @@ class T5PlatformCommon(object):
                 helpers.log("Endpoints are intact between states")
             if (fabricElement == "FabricLags"):
                 helpers.log("Fabric Lags are intact between states")
-
             return warningCount
+        
         else:
+            helpers.warn("Got List Different from helpers")
+            helpers.log("B4 is: %s" % list_b4)
+            helpers.log("After is: %s" % list_after)
             if (len(list_b4) > len(list_after)):
                 for item in list_b4:
                     if item not in list_after:
@@ -311,23 +265,59 @@ class T5PlatformCommon(object):
             switchDict_after = self.verify_switch_connectivity()
             warningCount = self.compare_switch_status(switchDict_b4, switchDict_after)
             fabricLinks_after = self.verify_fabric_links()
-            #warningCount = self.compare_fabric_link_status(fabricLinks_b4, fabricLinks_after)
             warningCount = self.compare_fabric_elements(fabricLinks_b4, fabricLinks_after, "FabricLinks")
             endpoints_after = self.verify_endpoints()
-            #warningCount = self.compare_endpoints(endpoints_b4, endpoints_after)
             warningCount = self.compare_fabric_elements(endpoints_b4, endpoints_after, "FabricEndpoints")
             fabricLags_after = self.verify_fabric_lags()
             warningCount = self.compare_fabric_elements(fabricLags_b4, fabricLags_after, "FabricLags")
 
         if(warningCount == 0): 
             if(state == "after"):
-                helpers.log("Switch status are intact after the operation")
+                helpers.log("Switch status is intact after the state change operation")
             return True
         else: 
             return False
 
+        
+    def platform_ping(self, src, dst ):
+        mynet = mininet.Mininet()     
+        loss = mynet.mininet_ping(src, dst)
+        if (loss != '0'):
+            #sleep(5)
+            loss = mynet.mininet_ping(src, dst)
+            if (loss != '0'):
+                helpers.warn("Ping failed between: %s & %s" % (src,dst))
+                return True
+        return True
+    
+    def do_show_run_vns_verify(self, vnsName, numMembers):
+        t = test.Test()
+        master = t.controller("master")
+        url = "/api/v1/data/controller/applications/bvs/tenant?config=true"
+        result = master.rest.get(url)
+        helpers.log("Show run output is: %s " % result["content"][0]['vns'][0]['port-group-membership-rules'])
+        vnsList = result["content"][0]['vns'][0]['port-group-membership-rules']
+        if (len(vnsList) != int(numMembers)):
+            for i in range (0,10):
+                helpers.warn("Show run output is not correct for VNS members. Please collect support logs")
+                sleep(90)
+        else:
+            helpers.log("Show run output is correct for VNS members")
 
-
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
 
 
 
