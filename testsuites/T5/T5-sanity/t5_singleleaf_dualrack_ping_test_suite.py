@@ -70,8 +70,8 @@ ts = ts_local()
 
 
 # BigRobot log directory
-# set_env('BIGROBOT_LOG_PATH_EXEC_INSTANCE',
-#        get_env('BIGROBOT_LOG_PATH') + "/" + suite + "_" + ts)
+set_env('BIGROBOT_LOG_PATH_EXEC_INSTANCE',
+        get_env('BIGROBOT_LOG_PATH') + "/" + suite + "_" + ts)
         # bigrobot_log_path + "/" + suite + "_" + ts)
 
 # Let BigRobot know that it's running in the CI environment (Jenkins/ABAT)
