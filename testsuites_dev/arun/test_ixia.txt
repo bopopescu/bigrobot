@@ -25,7 +25,7 @@ Uni-Direction L2 Traffic with all defaults
     ${report}=             fetch port stats
     Log                    Report is ${report}
     delete traffic
-    [Tags]  traffic  sanity  run
+    [Tags]  traffic  sanity
 
 Uni-Directional L2 Traffic with more args
 # Currently Supported L2 Stream args will be adding more
@@ -38,7 +38,7 @@ Uni-Directional L2 Traffic with more args
     ${report}=             fetch port stats
     Log                    Report is ${report}
     delete traffic
-    [Tags]  traffic  sanity  run
+    [Tags]  traffic  sanity
 
 Bi-Directional L2 Traffic with different Macs
 # Stream with Different Src and Dst Mac addresses
@@ -269,7 +269,6 @@ Bi-Driectional L3 Traffic with vlan_id
     
 Bi-Driectional L3 Traffic with vlan_id and crc
 # Basic test case with all default values and etherytype 8100, with vlan id
-# Adding more description
     ${stream}=             L3 add  flow=a<->b  ethertype=8100  vlan_id=199  frame_size=68  crc=True
     clear stats
     start traffic  ${stream}
@@ -281,3 +280,15 @@ Bi-Driectional L3 Traffic with vlan_id and crc
     delete traffic
     [Tags]  traffic  sanity
 
+Bi-Directional L3 Traffic ICMP Echo
+# Basic test case with all default values and ICMP type and value
+    ${stream}=             L3 add  flow=a<->b  protocol=ICMP  icmp_type=8  icmp_code=0
+    clear stats
+    start traffic  ${stream}
+    sleep                  10
+    stop traffic   ${stream}
+    sleep                  10
+    ${report}=             fetch port stats
+    Log                    Report is ${report}
+    delete traffic
+    [Tags]  traffic  sanity  run
