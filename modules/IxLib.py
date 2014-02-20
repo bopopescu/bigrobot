@@ -617,12 +617,12 @@ class Ixia(object):
     def ix_l3_add(self, **kwargs):
         ix_handle = self._handle
         ix_ports = [port for port in self._port_map_list.values()]
-        dst_mac = kwargs.get('src_mac', '00:11:23:00:00:01')
-        src_mac = kwargs.get('dst_mac', '00:11:23:00:00:02')
-        s_cnt = kwargs.get('dnt_cnt', 1)
-        d_cnt = kwargs.get('src_cnt', 1)
-        src_mac_step = kwargs.get('dst_mac_step', '00:00:00:01:00:00')
-        dst_mac_step = kwargs.get('src_mac_step', '00:00:00:01:00:00')
+        src_mac = kwargs.get('src_mac', '00:11:23:00:00:01')
+        dst_mac = kwargs.get('dst_mac', '00:11:23:00:00:02')
+        d_cnt = kwargs.get('dnt_cnt', 1)
+        s_cnt = kwargs.get('src_cnt', 1)
+        dst_mac_step = kwargs.get('dst_mac_step', '00:00:00:01:00:00')
+        src_mac_step = kwargs.get('src_mac_step', '00:00:00:01:00:00')
         frame_rate = kwargs.get('frame_rate', 100)
         frame_cnt = kwargs.get('frame_cnt', None)
         frame_type = kwargs.get('frame_type', 'fixed')
