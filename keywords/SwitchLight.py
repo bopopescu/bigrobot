@@ -20,6 +20,7 @@ import subprocess
 import string
 import telnetlib
 import time
+import re
 
 class SwitchLight(object):
 
@@ -82,6 +83,39 @@ class SwitchLight(object):
             intf_state = lastvalue.rstrip('\n')
             helpers.log("Value in content[1] is %s \n and intf_state is %s" % (content[1], intf_state))
             return intf_state
+        except:
+            helpers.test_failure("Could not execute command. Please check log for errors")
+            return False
+
+    def cli_show_interface_statistics(self, node, intf_name):
+        '''
+            Objective:
+            - Return the Interface State of a given interface on a switch
+        
+            Input:
+            | node | Reference to switch (as defined in .topo file) |                     
+            | intf_name | Interface Name eg. ethernet1 or portchannel1 | 
+                    
+            Return Value: 
+            - Interface State of interface.
+        '''
+        try:
+            t = test.Test()
+            s1 = t.switch(node)
+            cli_input = "show interface " + str(intf_name) + " detail"
+            s1.enable(cli_input)
+            lines = string.split(s1.cli_content(), '\n')
+            return_array = {}
+            for i in lines:
+                p = i.lstrip(" ")
+                value = re.sub(' +', ' ', p)
+                if "Received" in value:
+                    return_array["received_bytes"] = int(re.split(' ', value)[1])
+                    return_array["received_packets"] = int(re.split(' ', value)[3])
+                elif "Sent" in value:
+                    return_array["sent_bytes"] = int(re.split(' ', value)[1])
+                    return_array["sent_packets"] = int(re.split(' ', value)[3])
+            return return_array
         except:
             helpers.test_failure("Could not execute command. Please check log for errors")
             return False
@@ -615,7 +649,7 @@ class SwitchLight(object):
             helpers.test_failure("Could not execute command. Please check log for errors")
             return False
 
-    def cli_add_interface_ma1(self, console_ip, console_port):
+    def cli_flap_interface_ma1(self, node):
         '''
             Objective: 
             - Flap interface ma1 on switch
@@ -629,8 +663,12 @@ class SwitchLight(object):
             - False on  failure
         '''
         try:
+            t = test.Test()
+            switch = t.switch(node)
             user = "admin"
             password = "adminadmin"
+            console_ip = t.params(node, "console_ip")
+            console_port = t.params(node, "console_port")
             tn = telnetlib.Telnet(str(console_ip), int(console_port))
             tn.read_until("login: ", 3)
             tn.write(user + "\r\n")
@@ -641,7 +679,7 @@ class SwitchLight(object):
             tn.write("\r\n" + "debug bash" + "\r\n")
             tn.write("ifconfig ma1 " + "\r\n")
             tn.write("ifconfig ma1 down" + "\r\n")
-            time.sleep(2)
+            time.sleep(8)
             tn.write("ifconfig ma1 up" + "\r\n")
             tn.write("exit" + "\r\n")
             tn.write("exit" + "\r\n")
@@ -654,6 +692,7 @@ class SwitchLight(object):
     # Alias
     def cli_update_interface_ma1(self, console_ip, console_port):
         return self.cli_add_interface_ma1(console_ip, console_port)
+
 
     def cli_execute_command(self, node, cli_input):
         '''
