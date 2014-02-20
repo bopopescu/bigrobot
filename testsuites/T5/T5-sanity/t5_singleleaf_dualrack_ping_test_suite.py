@@ -12,7 +12,7 @@ In Jenkins, set the following env in the 'Execute shell' window:
   export BIGROBOT_LOG_PATH=${JENKINS_HOME}/job/${JOB_NAME}/${BUILD_NUMBER}/robot/report
   export BIGROBOT_SUITE_RELATIVE=/testsuites/T5/T5-sanity/t5_singleleaf_dualrack_ping_test_suite
 
-"""    
+"""
 
 import os
 import sys
@@ -52,7 +52,7 @@ def get_env(name):
 
 def print_env(name):
     print("%s: %s" % (name, get_env(name)))
-    
+
 
 bigrobot_path = get_env('BIGROBOT_PATH')
 bigrobot_suite_relative = get_env('BIGROBOT_SUITE_RELATIVE')
@@ -61,8 +61,8 @@ bigrobot_log_path = bigrobot_path + '/testlogs'
 bigrobot_bin = bigrobot_path + '/bin'
 
 set_env('BIGROBOT_SUITE', bigrobot_suite)
-#set_env('BIGROBOT_LOG_PATH', bigrobot_log_path)
-#set_env('BIGROBOT_LOG_PATH_EXEC_INSTANCE', get_env('BIGROBOT_LOG_PATH'))
+# set_env('BIGROBOT_LOG_PATH', bigrobot_log_path)
+# set_env('BIGROBOT_LOG_PATH_EXEC_INSTANCE', get_env('BIGROBOT_LOG_PATH'))
 
 
 suite = os.path.basename(bigrobot_suite)
@@ -72,7 +72,7 @@ ts = ts_local()
 # BigRobot log directory
 set_env('BIGROBOT_LOG_PATH_EXEC_INSTANCE',
         get_env('BIGROBOT_LOG_PATH') + "/" + suite + "_" + ts)
-        #bigrobot_log_path + "/" + suite + "_" + ts)
+        # bigrobot_log_path + "/" + suite + "_" + ts)
 
 # Let BigRobot know that it's running in the CI environment (Jenkins/ABAT)
 set_env('BIGROBOT_CI', 'True')
