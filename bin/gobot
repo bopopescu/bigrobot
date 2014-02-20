@@ -372,9 +372,8 @@ def test_command(*args):
     parser.add_argument('--exclude',
                         metavar=('tag1', 'tag2'), nargs='*',
                         help='Exclude test cases by tags')
-    parser.add_argument('--loglevel', default='debug',
-                        help="Log level (default is 'debug' else 'trace',"
-                             " 'info', 'warn')")
+    parser.add_argument('--loglevel', default='trace',
+                        help="Log level ('trace', 'debug', 'info')")
     parser.add_argument('--debugfile', default='debug.log',
                         help="Debug file")
     parser.add_argument('--outputdir',
@@ -399,7 +398,7 @@ def test_command(*args):
 
     options = {
                'exclude': exclude_tags,
-               'loglevel': args.loglevel,
+               'loglevel': args.loglevel + ':info',
                'debugfile': args.debugfile,
                'outputdir': args.outputdir,
                }
