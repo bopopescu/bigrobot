@@ -300,10 +300,10 @@ def format_convert_and_copy(f, p, quiet=False):
             shutil.copy(filename, p)
 
 
-def create_symlinks_to_logs():
+def create_links_to_logs():
     """
-    Create symlinks to the log files located in the log directory. These
-    symlinks provide a convenient way to access the logs.
+    Create links to the log files located in the log directory. These
+    links provide a convenient way to access the logs.
     """
     log_path = helpers.bigrobot_log_path()
     log_path_run = helpers.bigrobot_log_path_exec_instance()
@@ -323,11 +323,11 @@ def create_symlinks_to_logs():
 
         source_file = '/'.join((log_path_run, f))
 
-        # Create symlink only if source file exists
+        # Create link only if source file exists
         if helpers.file_exists(source_file):
             os.link(source_file, f)
             if not helpers.file_exists(f2):
-                # Create additional symlink, unless f == f2
+                # Create additional link, unless f == f2
                 os.link(source_file, f2)
 
 #
@@ -422,7 +422,7 @@ def test_command(*args):
     rc = robot.run(test_suite, **options)
     helpers.log("Robot Framework return code is %s" % rc)
     print("Return code is %s" % rc)
-    create_symlinks_to_logs()
+    create_links_to_logs()
 
 
 def env_command(*args):
