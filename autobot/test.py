@@ -208,23 +208,28 @@ class Test(object):
 
     def topology_params(self, node=None, key=None, default=None):
         """
-        Returns the topology dictionary.
-        {   'c1': {
-                'ip': '10.192.5.116'
-            },
-            'mn': {
-                'ip': '10.192.7.205'
-            },
-            's1': {
-                'ip': '10.195.0.31',
-                'user': 'admin',
-                'password': 'bsn'
-            },
-            'h1': {
-                'ip': '10.193.0.120'
+        Usage:
+        - t.params('c1')  # return attributes for c1
+          t.params(node='c1', key='ip')
+          t.params(node='tg1', key='type', default='ixia')
+                            # if type is not defined, return 'ixia' for type
+        - If no argument is specified, return the entire topology dictionary.
+            {   'c1': {
+                    'ip': '10.192.5.116'
+                },
+                'mn': {
+                    'ip': '10.192.7.205'
+                },
+                's1': {
+                    'ip': '10.195.0.31',
+                    'user': 'admin',
+                    'password': 'bsn'
+                },
+                'h1': {
+                    'ip': '10.193.0.120'
+                }
+                ...
             }
-            ...
-        }
         """
         if node:
             node = self.alias(node)
@@ -696,16 +701,16 @@ class Test(object):
             helpers.log("DevConf session is not available for node '%s'" % name)
             return
 
-        helpers.log("Setting up switches (SwitchLight)")
-
-        for controller in ('c1', 'c2'):
-            c = self.topology(controller, ignore_error=True)
-            if c:
-                if 'openflow_port' in self.topology_params()[controller]:
-                    openflow_port = self.topology_params()[controller]['openflow_port']
-                    n.config("controller %s port %s" % (c.ip(), openflow_port))
-                else:
-                    n.config("controller %s" % c.ip())
+        if helpers.is_switchlight(n.platform()):
+            helpers.log("Setting up switches (SwitchLight)")
+            for controller in ('c1', 'c2'):
+                c = self.topology(controller, ignore_error=True)
+                if c:
+                    if 'openflow_port' in self.topology_params()[controller]:
+                        openflow_port = self.topology_params()[controller]['openflow_port']
+                        n.config("controller %s port %s" % (c.ip(), openflow_port))
+                    else:
+                        n.config("controller %s" % c.ip())
 
     def teardown_switch(self, name):
         """

@@ -1,9 +1,9 @@
-''' 
+'''
 ###  WARNING !!!!!!!
-###  
+###
 ###  This is where common code for all Controller Platforms will go in.
-###  
-###  To commit new code, please contact the Library Owner: 
+###
+###  To commit new code, please contact the Library Owner:
 ###  Vui Le (vui.le@bigswitch.com)
 ###
 ###  DO NOT COMMIT CODE WITHOUT APPROVAL FROM LIBRARY OWNER
@@ -81,20 +81,35 @@ class BsnCommon(object):
             helpers.test_failure("Fail:Traffic forward between 2 endpoints tx_rate:%d,rx_rate:%d" % (tx, rx))
             return False
 
+    def params(self, *args, **kwargs):
+        """
+        Return the value for a params (topo) attribute.
+
+        Inputs:
+        | node | reference to switch/controller as defined in .topo file |
+        | key  | name of attribute (e.g., 'ip') |
+        | default | (option) if attribute is undefined, return the value defined by default |
+
+        Return Value:
+        - Value for attribute
+        """
+        t = test.Test()
+        return t.params(*args, **kwargs)
+
     def verify_dict_key(self, content, index, key):
         ''' Given a dictionary, return the value for a particular key
-        
+
             Input:Dictionary, index and required key.
-            
+
             Return Value:  return the value for a particular key
         '''
         return content[index][key]
 
     def verify_json_key(self, content, index, key):
         ''' Given a dictionary, return the value for a particular key
-        
+
             Input:Dictionary, index and required key.
-            
+
             Return Value:  return the value for a particular key
         '''
         return content[int(index)][str(key)]
@@ -102,11 +117,11 @@ class BsnCommon(object):
     def add_ntp_server(self, node=None, ntp_server='0.bigswitch.pool.ntp.org'):
         '''
             Objective: Add an NTP server.
-            
+
             Inputs:
             | node | reference to switch/controller as defined in .topo file|
             | ntp_server | ntp server that is being configured|
-            
+
             Return Values:
             - True, if configuration add is successful.
             - False, if configuration add is unsuccessful.
@@ -116,7 +131,7 @@ class BsnCommon(object):
         if helpers.is_switch(node):
             helpers.log("Node is a switch")
             if helpers.is_switchlight(n.platform()):
-                ''' 
+                '''
                 NTP Configuration at Switch
                 '''
                 helpers.log("The node is a SwitchLight switch")
@@ -181,11 +196,11 @@ class BsnCommon(object):
     def delete_ntp_server(self, node, ntp_server):
         '''
             Objective: Delete a NTP server.
-            
+
             Inputs:
             | node | reference to switch/controller as defined in .topo file|
             | ntp_server | ntp server that is being configured|
-            
+
             Return Values:
             - True, if configuration delete is successful.
             - False, if configuration delete is unsuccessful.
@@ -195,7 +210,7 @@ class BsnCommon(object):
         if helpers.is_switch(node):
             helpers.log("Node is a switch")
             if helpers.is_switchlight(n.platform()):
-                ''' 
+                '''
                     NTP Deletion at Switch
                 '''
                 switch = t.switch(node)
@@ -257,21 +272,21 @@ class BsnCommon(object):
     def verify_ntp(self, node, ntp_server):
         '''
             Objective: Verify NTP Server Configuration is seen in running-config and in output of "show ntp server"
-            
+
              Inputs:
             | node | reference to switch/controller as defined in .topo file|
             | ntp_server | ntp server that is being configured|
-            
+
             Return Values:
             - True, if configuration delete is successful.
-            - False, if configuration delete is unsuccessful.           
+            - False, if configuration delete is unsuccessful.
         '''
         t = test.Test()
         n = t.node(node)
         if helpers.is_switch(node):
             helpers.log("Node is a switch")
             if helpers.is_switchlight(n.platform()):
-                ''' 
+                '''
                     NTP Verification at Switch
                 '''
                 switch = t.switch(node)

@@ -1,7 +1,7 @@
 * Settings
 Documentation   This suite is my sandbox for experimentation.
 Force Tags      Vui
-#Suite Setup     base suite setup
+Suite Setup     my base suite setup
 #Suite Teardown  base suite teardown
 #Test Setup      base test setup
 #Test Teardown   base test teardown
@@ -87,8 +87,14 @@ Test get time
     #[Tags]           skipped
     ${time}=          get time
     log               Time is ${time}
+    #log               LOGIN_URL = ${LOGIN_URL}
 
 * Keywords
+my base suite setup
+    base suite setup
+    #${c1_ip}            params  node=c1  key=ip
+    #set suite variable  ${LOGIN_URL}  http://${c1_ip}:8086/api/login
+
 variable assignment
     [Arguments]     ${input}
     Should be true  ${input} == 123
