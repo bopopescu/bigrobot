@@ -262,6 +262,22 @@ class T5(object):
 
         return c.rest.content()
     
+    def rest_delete_portgroup_lacp(self, pg):
+        t = test.Test()
+        c = t.controller()
+                       
+        helpers.test_log("Input arguments: port-group = %s" % (pg))
+        
+        url = '%s/api/v1/data/controller/fabric/port-group[name="%s"]' % (c.base_url, pg)
+        c.rest.delete(url, {"mode": None})
+        helpers.test_log("Output: %s" % c.rest.result_json())
+
+        if not c.rest.status_code_ok():
+            helpers.test_failure(c.rest.error())
+            return False
+
+        return c.rest.content()
+    
     def rest_delete_interface_from_portgroup(self, switch, intf, pg):
         t = test.Test()
         c = t.controller()
@@ -647,12 +663,10 @@ class T5(object):
         data1 = c.rest.content()
         for i in range(0,len(data1)):
             if data1[i]["port-num"] == lag_id[0]:
-                if data1[i]["vlan-id"] == vlan:
+                if str(data1[i]["vlan-id"]) == str(vlan):
                     helpers.log("Vlan Translation table is creaetd properly for the given interface")
                     return True
-                else:
-                    helpers.test_failure("Vlan Translation table is not correct for the given interface, Pl debug further")
-                    return False     
+        return False          
           
     def rest_verify_forwarding_vlan_fabric_tag_members(self, switch):
         '''Verify Fabric interfaces status in a vlan
@@ -671,7 +685,7 @@ class T5(object):
             if data[i]["type"] == "unknown" or data[i]["type"] == "edge":
                 continue
             elif data[i]["type"] == "leaf" or data[i]["type"] == "spine":
-                list_fabric_interface.append(re.sub("\D", "", data[i]["name"]))
+                list_fabric_interface.append(int(re.sub("\D", "", (data[i]["name"]))))
         url1 = '%s/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch-name="%s"]/vlan-table' % (c.base_url, switch)
         c.rest.get(url1)
         data1 = c.rest.content()
@@ -680,7 +694,8 @@ class T5(object):
             for j in range(0,len(data1[i]["tagged-ports"])):
                 if data1[i]["tagged-ports"][j]["port-num"] not in list_tag_intf:
                     list_tag_intf.append(data1[i]["tagged-ports"][j]["port-num"])
-        list_common = list(set(list_fabric_interface).intersection(list_tag_intf))
+        helpers.log("%s,%s" % (list_fabric_interface, list_tag_intf))            
+        list_common = list(set(list_fabric_interface).intersection(set(list_tag_intf)))
         if len(list_fabric_interface) == len(list_common):
                     helpers.log("Pass:All fabric interfaces are in vlan as Tagged member")
                     return True
@@ -716,12 +731,12 @@ class T5(object):
             try:
                 value = data[i]["untagged-ports"]
             except KeyError:
-                pass
-            for j in range(0,len(value)):
+                continue
+            for j in range(0,len(data[i]["untagged-ports"])):
                     if value[j]["port-num"] == int(interface):
                         helpers.log("Pass:Given interface is present in untag memberlist of vlan-table")
                         return True
-               
+        return False      
               
     def rest_verify_forwarding_vlan_edge_tag_members(self, switch, intf):
         '''Verify Fabric edge interfaces status in a vlan
@@ -740,12 +755,12 @@ class T5(object):
             try:
                 value = data[i]["tagged-ports"]
             except KeyError:
-                pass
-            for j in range(0,len(value)):
+                continue
+            for j in range(0,len(data[i]["tagged-ports"])):
                 if value[j]["port-num"] == int(interface):
                     helpers.log("Pass:Given interface is present in untag memberlist of vlan-table")
                     return True
-                
+        return False       
               
     def rest_verify_forwarding_layer2_table_untag(self, switch, intf, mac):
         '''Verify Layer 2 MAC information in forwarding table
@@ -774,8 +789,8 @@ class T5(object):
             try:
                 value = data1[i]["untagged-ports"]
             except KeyError:
-                pass
-            for j in range(0,len(value)):
+                continue
+            for j in range(0,len(data1[i]["untagged-ports"])):
                 if (value[j]["port-num"] == int(interface)):
                     vlan_id.append(data1[i]["vlan-id"])        
                     #Match the mac in forwarding table with specific lag_id and vlan_id
@@ -821,8 +836,8 @@ class T5(object):
             try:
                 value = data[i]["tagged-ports"]
             except KeyError:
-                pass
-            for j in range(0,len(value)):
+                continue
+            for j in range(0,len(data[i]["tagged-ports"])):
                 if (value[j]["port-num"] == int(interface)):
                     vlan_id.append(data1[i]["vlan-id"])
                     #Match the mac in forwarding table with specific lag_id and vlan_id
