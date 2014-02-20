@@ -82,6 +82,13 @@ class MyTest(object):
         s = t.switch(node)
         helpers.log("node: %s" % s)
         s.cli("show version")
+        s.cli("show uptime")
+        # s.cli("show ")
+        s.enable("show snmp")
+        s.enable("bash")
+        s.enable("ls -la")
+        s.enable("exit")
+        s.enable("show arp")
 
     def switch_show_environment(self, node):
         t = test.Test()
