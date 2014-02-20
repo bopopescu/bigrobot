@@ -28,14 +28,22 @@ _tacacs_re = re.compile(r'[\r\n]s\/key[\S ]+\r?%s' % _password_re[0].pattern)
 # Expected prompts:
 #   CLI:     qa-1-leaf-1>
 #
-_prompt_re = [re.compile(r'[\r\n](\w+(-?\w+)?\s?@?)?[\-\w+\.:/]+(?:\([^\)]+\))?(:~)?[>#$] ?$')]
+# _prompt_re = [re.compile(r'[\r\n](\w+(-?\w+)?\s?@?)?[\-\w+\.:/]+(?:\([^\)]+\))?(:~)?[>#$] ?$')]
+
+#
+# Support Arista -
+#  CLI:      arista5>
+#  Enable:   arista5#
+#  Config:   arista5(config)#
+#  Bash:     [admin@arista5 ~]$
+_prompt_re = [re.compile(r'[\r\n]\[?(\w+(-?\w+)?\s?@?)?[\-\w+\.:/]+(?:\([^\)]+\))?(:~)?( ~\])?[>#$] ?$')]
 
 
 _error_re = [re.compile(r'%Error'),
-                re.compile(r'invalid input', re.I),
-                re.compile(r'(?:incomplete|ambiguous) command', re.I),
-                re.compile(r'connection timed out', re.I),
-                re.compile(r'[^\r\n]+ not found', re.I)]
+             re.compile(r'invalid input', re.I),
+             re.compile(r'(?:incomplete|ambiguous) command', re.I),
+             re.compile(r'connection timed out', re.I),
+             re.compile(r'[^\r\n]+ not found', re.I)]
 
 
 class BsnSwitchDriver(Driver):
@@ -53,6 +61,9 @@ class BsnSwitchDriver(Driver):
         # print("string: %s" % string)
         if 'SwitchLight' in string:
             self._platform = 'switchlight'
+            return 90
+        if 'arista' in string:
+            self._platform = 'arista'
             return 90
         if _tacacs_re.search(string):
             return 50

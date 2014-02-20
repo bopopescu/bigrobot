@@ -1,20 +1,20 @@
 == T5 Platform Sanity Test Suite ==
 
 * Setting
-Documentation    T5 Platform Smoke/Sanity Test Suite
+Documentation    T5 Platform HA Smoke/Sanity Test Suite
 Suite Setup      T5 base suite setup
-#Suite Teardown   T5 base suite teardown
-#Test Setup       T5 base test setup
-#Test Teardown    T5 base test teardown
-Force Tags       T5 
+Suite Teardown  T5 base suite teardown
+#Test Setup      T5 base test setup
+#Test Teardown   T5 base test teardown
+Force Tags       T5  HA
 Library          keywords/BsnCommon.py
-Library		 keywords_dev/don/T5Platform.py
-Library		 keywords_dev/don/T5PlatformCommon.py
+Library		 	 keywords_dev/don/T5Platform.py
+Library		 	 keywords_dev/don/T5PlatformCommon.py
 Library          keywords/Mininet.py
 Library	    	 keywords/Host.py
 Library          keywords_dev/prashanth/T5.py
 Library	         keywords_dev/prashanth/T5Fabric.py
-Resource	 keywords_dev/don/t5_platform_sanity_resource.txt
+Resource	 	 keywords_dev/don/t5_platform_sanity_resource.txt
 
 * Variables
 ${bm0_ip}  10.0.0.1
@@ -45,11 +45,12 @@ ${bm5_intf1}  leaf2b-eth9
 * Test Case 
 
 Verify HA Cluster Formation
-   [Tags]  sanity
+   [Tags]  sanity  skipped
    rest verify show cluster
 
-Add all hosts to a VNS and verify connectivity
-   [Tags]  sanity  skipped
+
+Verify Single VNS Host Connectivity
+   [Tags]  sanity 
    sleep  30
    add a tenant  bm_all
    add a vns  bm_all  bm_all
@@ -59,23 +60,22 @@ Add all hosts to a VNS and verify connectivity
    add portgroup to vns  bm_all  bm_all  p4  -1
    add portgroup to vns  bm_all  bm_all  p5  -1
    add portgroup to vns  bm_all  bm_all  p6  -1
-   sleep  60
-   mininet ping all
+   sleep  30
+   do show run vns verify  bm_all  6
+   platform ping all
    
-Failover by rebooting and re-verify connectivity
+Failover By Rebooting & Re-verify Connectivity
+   [Tags]  sanity 
+   : FOR    ${Iteration}    IN RANGE    1    3
+   \	cli verify cluster master reboot
+   \	platform ping all
+
+   
+
+Failback By Rebooting & Re-verify Connectivity 5
    [Tags]  sanity  skipped
    cli verify cluster master reboot
-   sleep  60
    mininet ping all
-   delete a tenant  bm_all
-
-Failback by rebooting and re-verify connectivity
-   [Tags]  sanity  skipped
-   cli verify cluster master reboot
-   sleep  120
-   mininet ping all
-   delete a tenant  bm_all
-
 
 Add h4,h5,h6 in to a VNS and verify the connectivity
    [Tags]  sanity  skipped

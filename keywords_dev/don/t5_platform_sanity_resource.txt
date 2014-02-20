@@ -74,3 +74,18 @@ mininet ping all
    Should Be True  ${loss} == 0		
    ${loss}=  mininet ping  bm4  ${bm5_ip}
    Should Be True  ${loss} == 0		
+   
+platform ping all
+   platform ping  bm0  ${bm1_ip}
+   platform ping  bm0  ${bm2_ip}
+   platform ping  bm0  ${bm3_ip}
+   platform ping  bm0  ${bm4_ip}
+   platform ping  bm0  ${bm5_ip}
+   platform ping  bm1  ${bm2_ip}
+   platform ping  bm1  ${bm3_ip}
+   platform ping  bm1  ${bm4_ip}
+   platform ping  bm1  ${bm5_ip}
+   platform ping  bm2  ${bm3_ip}
+   platform ping  bm2  ${bm4_ip}
+   platform ping  bm2  ${bm5_ip}
+   platform ping  bm4  ${bm5_ip}

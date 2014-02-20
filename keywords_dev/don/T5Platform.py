@@ -7,103 +7,6 @@ class T5Platform(object):
 
     def __init__(self):
         pass
-   
-    def rest_add_ntp_server(self, ntp_server):
-        '''Configure the ntp server
-        
-            Input:
-                    ntp_server        NTP server IP address
-                                       
-            Returns: True if policy configuration is successful, false otherwise  
-        '''
-        t = test.Test()
-        c = t.controller()
-                        
-        url = '/api/v1/data/controller/os/config/global/time-config'  
-        c.rest.put(url, {"ntp-servers": [ntp_server]})
-        
-        if not c.rest.status_code_ok():
-            helpers.test_failure(c.rest.error())
-            return False
-
-        return True
-    
-    def rest_add_ntp_timezone(self, ntp_timezone):
-        '''Configure the ntp timezone
-        
-            Input:
-                    ntp_server        NTP server IP address
-                                       
-            Returns: True if policy configuration is successful, false otherwise  
-        '''
-        t = test.Test()
-        c = t.controller()
-                        
-        url = '/api/v1/data/controller/os/config/global/time-config'  
-        c.rest.put(url, {"time-zone": ntp_timezone})
-        
-        if not c.rest.status_code_ok():
-            helpers.test_failure(c.rest.error())
-            return False
-
-        return True
-    
-    def rest_delete_ntp_server(self, ntp_server):
-        '''Delete the ntp server
-        
-            Input:
-                    ntp_server        NTP server IP address
-                                       
-            Returns: True if policy configuration is successful, false otherwise  
-        '''
-        t = test.Test()
-        c = t.controller()
-                        
-        url = '/api/v1/data/controller/os/config/global/time-config'  
-        c.rest.delete(url, {"ntp-servers": [ntp_server]})
-        
-        if not c.rest.status_code_ok():
-            helpers.test_failure(c.rest.error())
-            return False
-
-        return True
-    
-    def rest_delete_ntp_timezone(self, ntp_timezone):
-        '''Delete the ntp timezone
-        
-            Input:
-                    ntp_server        NTP server IP address
-                                       
-            Returns: True if policy configuration is successful, false otherwise  
-        '''
-        t = test.Test()
-        c = t.controller()
-                        
-        url = '/api/v1/data/controller/os/config/global/time-config'  
-        c.rest.delete(url, {"time-zone": ntp_timezone})
-        
-        if not c.rest.status_code_ok():
-            helpers.test_failure(c.rest.error())
-            return False
-
-        return True
-
-    def rest_show_ntp_servers(self):
-        '''Return the list of NTP servers      
-                    
-            Returns: Output of 'ntpq -pn' which lists configured NTP servers and their status
-        '''
-        t = test.Test()
-        c = t.controller()
-        
-        url = '%s/api/v1/data/controller/os/action/time/ntp ' % (c.base_url)     
-        c.rest.get(url)
-        
-        if not c.rest.status_code_ok():
-            helpers.test_failure(c.rest.error())
-            return False
-        
-        return True
     
     def rest_verify_show_cluster(self):
         '''Using the 'show cluster' command verify the cluster formation across both nodes
@@ -137,7 +40,7 @@ class T5Platform(object):
 
 
 
-    def cluster_election(self, rigged):
+    def _cluster_election(self, rigged):
         ''' Invoke "cluster election" commands: re-run or take-leader
             If: "rigged" is true then verify the active controller change.
             Else: execute the election rerun
@@ -184,7 +87,7 @@ class T5Platform(object):
         '''
         obj = common()
         common.fabric_integrity_checker(obj,"before")
-        self.cluster_election(True)
+        self._cluster_election(True)
         sleep(30)
         common.fabric_integrity_checker(obj, "after")
 
@@ -193,12 +96,12 @@ class T5Platform(object):
         '''
         obj = common()
         common.fabric_integrity_checker(obj, "after")
-        self.cluster_election(False)
+        self._cluster_election(False)
         sleep(30)
         common.fabric_integrity_checker(obj, "before")
 
 
-    def cluster_node_reboot(self, masterNode=True):
+    def _cluster_node_reboot(self, masterNode=True):
 
         ''' Reboot the node
         '''
@@ -248,7 +151,7 @@ class T5Platform(object):
                 return False
 
 
-    def cluster_node_shutdown(self, masterNode=True):
+    def _cluster_node_shutdown(self, masterNode=True):
         ''' Shutdown the node
         '''
         t = test.Test()
@@ -296,25 +199,25 @@ class T5Platform(object):
     def cli_verify_cluster_master_reboot(self):
         obj = common()
         common.fabric_integrity_checker(obj,"before")
-        self.cluster_node_reboot()
+        self._cluster_node_reboot()
         common.fabric_integrity_checker(obj,"after")
 
     def cli_verify_cluster_slave_reboot(self):
         obj = common()
         common.fabric_integrity_checker(obj,"before")
-        self.cluster_node_reboot(False)
+        self._cluster_node_reboot(False)
         common.fabric_integrity_checker(obj,"after")
 
     def cli_verify_cluster_master_shutdown(self):
         obj = common()
         common.fabric_integrity_checker(obj,"before")
-        self.cluster_node_shutdown()
+        self._cluster_node_shutdown()
         common.fabric_integrity_checker(obj,"after")
 
     def cli_verify_cluster_slave_shutdown(self):
         obj = common()
         common.fabric_integrity_checker(obj,"before")
-        self.cluster_node_shutdown(False)
+        self._cluster_node_shutdown(False)
         common.fabric_integrity_checker(obj,"after")
 
     def rest_add_user(self, numUsers=1):
