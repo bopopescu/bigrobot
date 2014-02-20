@@ -324,8 +324,10 @@ admin_user = glance
 
         return helpers.list_compare(link_list1, link_list2)
 
-    def return_boolean(self, bool=True):
-        return bool
+    def return_boolean(self, boolean=True):
+        helpers.debug("**** DEBUG: I'm inside return_boolean.")
+        helpers.trace("**** TRACE: I'm inside return_boolean.")
+        return boolean
 
     def devconf_reconnect(self):
         t = test.Test()

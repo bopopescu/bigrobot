@@ -33,6 +33,7 @@ class DevConf(object):
         self._is_console = is_console
         self._console_driver = console_driver
         self._debug = debug
+        self._platform = None
         self.conn = None
         self.last_result = None
         self.mode = 'cli'
@@ -256,13 +257,26 @@ class DevConf(object):
         return self.conn.get_driver()
 
     def platform(self):
+        if self._platform:
+            return self._platform
+
         driver = self.driver()
         if hasattr(driver, 'platform'):
             # Does the driver class have the method platform() defined?
-            # See src/protocols/drivers/bsn_controller.py as an example.
-            return driver.platform()
+            # See src/Exscript/protocols/drivers/bsn_controller.py as an
+            # example.
+            #
+            # CAUTION: platform() implementation in the Exscript code is a
+            # hack to help BigRobot determine the platform of the node.
+            # Exscript maintains only one copy of the object (in a lookup
+            # table?) so the _platform in platform() is overwritten everytime
+            # a new node is instantiated. So we cache the platform info here
+            # in devconf (self._platform).
+            self._platform = driver.platform()
         else:
-            return "__undefined__"
+            self._platform = "__undefined__"
+
+        return self._platform
 
     def result(self):
         return self.last_result

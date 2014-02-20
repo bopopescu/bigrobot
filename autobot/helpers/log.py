@@ -9,7 +9,7 @@ from robot.api import logger
 
 class Log(object):
     """
-    Singleton logger. Autobot applications should write to a common log file. 
+    Singleton logger. Autobot applications should write to a common log file.
     """
     log_file = None
     is_gobot = None
@@ -19,7 +19,7 @@ class Log(object):
         Get log file name,
           from env AUTOBOT_LOG if exists,
           else from name argument if exists,
-          else assign default: /tmp/autobot_<user>.log.  
+          else assign default: /tmp/autobot_<user>.log.
         """
         if os.environ.has_key("AUTOBOT_LOG"):
             Log.log_file = os.environ["AUTOBOT_LOG"]
@@ -36,7 +36,7 @@ class Log(object):
             level += 1
             frm = inspect.stack()[level]
             mod = inspect.getmodule(frm[0])
-            filename = os.path.basename(frm[1])
+            # filename = os.path.basename(frm[1])
             lineno = frm[2]
             funcname = frm[3]
 
@@ -46,7 +46,8 @@ class Log(object):
                 funcname = '.' + funcname
 
             s = s.rstrip()
-            return "[%s:%s%s:%d] %s\n" % (filename, mod.__name__, funcname, lineno, s)
+            # return "[%s:%s%s:%d] %s\n" % (filename, mod.__name__, funcname, lineno, s)
+            return "[%s%s:%d] %s\n" % (mod.__name__, funcname, lineno, s)
         else:
             return "%s\n" % s
 

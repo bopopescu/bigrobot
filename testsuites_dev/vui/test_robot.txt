@@ -77,14 +77,14 @@ Test special character passing
     print value       abc\\123
 
 Test boolean value
-    [Tags]           skipped
-    ${status}=        return boolean  ${false}
+    #[Tags]           skipped
+    ${status}=        return boolean  ${true}
     log               Status=${status}
     Should be true    ${status}
-    Should be true    ${status} == ${false}
+    #Should be true    ${status} == ${false}
 
 Test get time
-    #[Tags]           skipped
+    [Tags]           skipped
     ${time}=          get time
     log               Time is ${time}
     #log               LOGIN_URL = ${LOGIN_URL}

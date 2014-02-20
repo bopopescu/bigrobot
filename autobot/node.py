@@ -1,5 +1,5 @@
 import autobot.devconf as devconf
-import helpers
+import autobot.helpers as helpers
 from autobot.bsn_restclient import BsnRestClient
 import modules.IxLib as IxLib
 
@@ -9,7 +9,7 @@ class Node(object):
             helpers.environment_failure("Node name is not defined")
         if not ip:
             helpers.environment_failure("Node IP address is not defined for '%s'"
-                               % name)
+                                        % name)
 
         self._name = name
         self._ip = ip.lower()  # IP might be 'dummy'
@@ -27,7 +27,8 @@ class Node(object):
         self.console_port = None
         if params:
             self.node_params = self.params[name]
-            val = helpers.params_val('set_devconf_debug_level', self.node_params)
+            val = helpers.params_val('set_devconf_debug_level',
+                                     self.node_params)
             if val is not None:
                 self.dev_debug_level = val
                 helpers.log("Devconf for '%s' set to debug level %s"
@@ -36,10 +37,13 @@ class Node(object):
             self.node_params = None
 
         if self.ip() == 'dummy':
-            helpers.environment_failure("IP address for '%s' is 'dummy'. Needs to be populated."
+            helpers.environment_failure("IP address for '%s' is 'dummy'."
+                                        " Needs to be populated."
                                         % self.name())
         if helpers.params_is_false('set_init_ping', self.node_params):
-            helpers.log("'set_init_ping' is disabled for '%s', bypassing initial ping" % name)
+            helpers.log("'set_init_ping' is disabled for '%s', bypassing"
+                        " initial ping"
+                        % name)
         else:
             self.pingable_or_die()
 
@@ -66,7 +70,6 @@ class Node(object):
         if  loss > 20:
             # We can tolerate 20% loss.
             # Consider init to be completed, so as not to be invoked again.
-            self._init_completed = True
             helpers.environment_failure("Node with IP address %s is unreachable."
                                         % self.ip())
         self.is_pingable = True
@@ -99,15 +102,17 @@ class ControllerNode(Node):
         # Note: SSH is required for both DevConf and RestClient to be
         # instantiated. These sessions go together.
         if helpers.params_is_false('set_session_ssh', self.node_params):
-            helpers.log("'set_session_ssh' is disabled for '%s', bypassing node SSH and RestClient session setup" % name)
+            helpers.log("'set_session_ssh' is disabled for '%s', bypassing"
+                        " node SSH and RestClient session setup"
+                        % name)
             return
 
-        helpers.log("name=%s host=%s user=%s password=%s" % (name, ip, user, password))
-        self.dev = devconf.ControllerDevConf(name=name,
-                                             host=ip,
-                                             user=user,
-                                             password=password,
-                                             debug=self.dev_debug_level)
+        helpers.log("name=%s host=%s user=%s password=%s"
+                    % (name, ip, user, password))
+        self.dev = self.connect(name=name,
+                                host=ip,
+                                user=user,
+                                password=password)
 
         if 'http_port' in self.node_params:
             self.http_port = self.node_params['http_port']
@@ -139,6 +144,20 @@ class ControllerNode(Node):
         self.set_prompt = self.dev.set_prompt
         self.send = self.dev.send
         self.expect = self.dev.expect
+
+    def connect(self, user, password, port=None, protocol='ssh', host=None,
+                name=None):
+        if not host:
+            host = self.ip()
+        if not name:
+            name = self.name()
+        return devconf.ControllerDevConf(name=name,
+                                         host=host,
+                                         user=user,
+                                         password=password,
+                                         port=port,
+                                         protocol=protocol,
+                                         debug=self.dev_debug_level)
 
     def is_master(self):
         """
@@ -180,64 +199,44 @@ class ControllerNode(Node):
                                                      debug=self.dev_debug_level)
         return self.dev_console
 
-    def connect(self, user, password, port=None, protocol='ssh', host=None,
-                name=None):
-        if not host:
-            host = self.ip()
-        if not name:
-            name = self.name()
-        return devconf.ControllerDevConf(name=name,
-                                         host=host,
-                                         user=user,
-                                         password=password,
-                                         port=port,
-                                         protocol=protocol)
 
 class MininetNode(Node):
-    def __init__(self, name, ip, controller_ip, controller_ip2,
-                 user, password, t,
+    def __init__(self, name, ip, user, password, t,
+                 controller_ip, controller_ip2=None,
                  openflow_port=None):
         super(MininetNode, self).__init__(name, ip, user, password,
                                           t.topology_params())
+
+        self.controller_ip = controller_ip
+        self.controller_ip2 = controller_ip2
+        self.openflow_port = openflow_port
+
         if 'topology' in self.node_params:
             self.topology = self.node_params['topology']
         else:
             helpers.environment_failure("Mininet topology is missing.")
 
         if 'type' not in self.node_params:
-            helpers.environment_failure("Must specify a Mininet type in topology file ('t6' or 'basic').")
+            helpers.environment_failure("Must specify a Mininet type in"
+                                        " topology file ('t6' or 'basic').")
 
-        mn_type = self.node_params['type'].lower()
-        if mn_type not in ('t6', 'basic'):
+        self.mn_type = self.node_params['type'].lower()
+        if self.mn_type not in ('t6', 'basic'):
             helpers.environment_failure("Mininet type must be 't6' or 'basic'.")
 
         if helpers.params_is_false('set_session_ssh', self.node_params):
-            helpers.log("'set_session_ssh' is disabled for '%s', bypassing node SSH and RestClient session setup" % name)
+            helpers.log("'set_session_ssh' is disabled for '%s', bypassing"
+                        " node SSH and RestClient session setup"
+                        % name)
             return
 
-        helpers.log("Mininet type: %s" % mn_type)
+        helpers.log("Mininet type: %s" % self.mn_type)
         helpers.log("Setting up mininet ('%s')" % name)
 
-        if mn_type == 't6':
-            self.dev = devconf.T6MininetDevConf(name=name,
-                                                host=ip,
-                                                user=user,
-                                                password=password,
-                                                controller=controller_ip,
-                                                controller2=controller_ip2,
-                                                topology=self.topology,
-                                                openflow_port=openflow_port,
-                                                debug=self.dev_debug_level)
-        elif mn_type == 'basic':
-            self.dev = devconf.MininetDevConf(name=name,
-                                              host=ip,
-                                              user=user,
-                                              password=password,
-                                              controller=controller_ip,
-                                              controller2=controller_ip2,
-                                              topology=self.topology,
-                                              openflow_port=openflow_port,
-                                              debug=self.dev_debug_level)
+        self.dev = self.connect(name=name,
+                                host=ip,
+                                user=user,
+                                password=password)
 
         # Shortcuts
         self.cli = self.dev.cli
@@ -256,12 +255,27 @@ class MininetNode(Node):
             host = self.ip()
         if not name:
             name = self.name()
-        return devconf.ControllerDevConf(name=name,
-                                         host=host,
-                                         user=user,
-                                         password=password,
-                                         port=port,
-                                         protocol=protocol)
+
+        if self.mn_type == 't6':
+            return devconf.T6MininetDevConf(name=name,
+                                            host=host,
+                                            user=user,
+                                            password=password,
+                                            controller=self.controller_ip,
+                                            controller2=self.controller_ip2,
+                                            topology=self.topology,
+                                            openflow_port=self.openflow_port,
+                                            debug=self.dev_debug_level)
+        elif self.mn_type == 'basic':
+            return devconf.MininetDevConf(name=name,
+                                          host=host,
+                                          user=user,
+                                          password=password,
+                                          controller=self.controller_ip,
+                                          controller2=self.controller_ip2,
+                                          topology=self.topology,
+                                          openflow_port=self.openflow_port,
+                                          debug=self.dev_debug_level)
 
 
 class HostNode(Node):
@@ -270,14 +284,15 @@ class HostNode(Node):
                                        t.topology_params())
 
         if helpers.params_is_false('set_session_ssh', self.node_params):
-            helpers.log("'set_session_ssh' is disabled for '%s', bypassing node SSH and RestClient session setup" % name)
+            helpers.log("'set_session_ssh' is disabled for '%s', bypassing"
+                        " node SSH and RestClient session setup"
+                        % name)
             return
 
-        self.dev = devconf.HostDevConf(name=name,
-                                       host=ip,
-                                       user=user,
-                                       password=password,
-                                       debug=self.dev_debug_level)
+        self.dev = self.connect(name=name,
+                                host=ip,
+                                user=user,
+                                password=password)
 
         # Shortcuts
         self.bash = self.dev.bash
@@ -296,12 +311,12 @@ class HostNode(Node):
             host = self.ip()
         if not name:
             name = self.name()
-        return devconf.ControllerDevConf(name=name,
-                                         host=host,
-                                         user=user,
-                                         password=password,
-                                         port=port,
-                                         protocol=protocol)
+        return devconf.HostDevConf(name=name,
+                                   host=host,
+                                   user=user,
+                                   password=password,
+                                   port=port,
+                                   protocol=protocol)
 
 
 class SwitchNode(Node):
@@ -310,14 +325,15 @@ class SwitchNode(Node):
                                          t.topology_params())
 
         if helpers.params_is_false('set_session_ssh', self.node_params):
-            helpers.log("'set_session_ssh' is disabled for '%s', bypassing node SSH and RestClient session setup" % name)
+            helpers.log("'set_session_ssh' is disabled for '%s', bypassing"
+                        " node SSH and RestClient session setup"
+                        % name)
             return
 
-        self.dev = devconf.SwitchDevConf(name=name,
-                                         host=ip,
-                                         user=user,
-                                         password=password,
-                                         debug=self.dev_debug_level)
+        self.dev = self.connect(name=name,
+                                host=ip,
+                                user=user,
+                                password=password)
 
         # Shortcuts
         self.cli = self.dev.cli  # CLI mode
@@ -340,12 +356,13 @@ class SwitchNode(Node):
             host = self.ip()
         if not name:
             name = self.name()
-        return devconf.ControllerDevConf(name=name,
-                                         host=host,
-                                         user=user,
-                                         password=password,
-                                         port=port,
-                                         protocol=protocol)
+        return devconf.SwitchDevConf(name=name,
+                                     host=host,
+                                     user=user,
+                                     password=password,
+                                     port=port,
+                                     protocol=protocol,
+                                     debug=self.dev_debug_level)
 
 class IxiaNode(Node):
     def __init__(self, name, t):
@@ -358,7 +375,7 @@ class IxiaNode(Node):
         super(IxiaNode, self).__init__(name, self._chassis_ip,
                                        params=t.topology_params())
         self.ixia_init()
-        
+
     def ixia_init(self):
         helpers.log("tcl_server_ip: %s" % self.tcl_server_ip())
         helpers.log("chassis_ip: %s" % self.chassis_ip())
@@ -369,7 +386,7 @@ class IxiaNode(Node):
                                 port_map_list=self.ports())
         self._ixia.ix_connect()
         return self._ixia
-    
+
     def handle(self):
         return self._ixia
     def chassis_ip(self):

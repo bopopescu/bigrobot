@@ -1,6 +1,7 @@
 import autobot.helpers as helpers
 import autobot.node as a_node
 import autobot.ha_wrappers as ha_wrappers
+import autobot.utils as br_utils
 import re
 # import bigtest
 # import bigtest.controller
@@ -482,12 +483,13 @@ class Test(object):
         if helpers.is_controller(node):
             helpers.log("Initializing controller '%s'" % node)
 
-            if not user:
-                user = self.controller_user()
+            user = self.controller_user() if not user else user
+
             if not password:
                 password = self.controller_password()
 
             n = a_node.ControllerNode(node, host, user, password, t)
+
         elif helpers.is_mininet(node):
             helpers.log("Initializing Mininet '%s'" % node)
             if not self._has_a_controller:
@@ -513,6 +515,7 @@ class Test(object):
                                    password=password,
                                    t=t,
                                    openflow_port=openflow_port)
+
         elif helpers.is_host(node):
             helpers.log("Initializing host '%s'" % node)
             n = a_node.HostNode(node,
@@ -520,6 +523,7 @@ class Test(object):
                                 self.host_user(),
                                 self.host_password(),
                                 t)
+
         elif helpers.is_switch(node):
             helpers.log("Initializing switch '%s'" % node)
 
@@ -529,6 +533,7 @@ class Test(object):
                 password = self.switch_password()
 
             n = a_node.SwitchNode(node, host, user, password, t)
+
         elif helpers.is_traffic_generator(node):
             helpers.log("Initializing traffic generator '%s'" % node)
             if 'platform' not in self.topology_params()[node]:
@@ -538,15 +543,21 @@ class Test(object):
             if platform.lower() == 'ixia':
                 n = a_node.IxiaNode(node, t)
             else:
-                helpers.environment_failure("Unsupported traffic generator '%s'" % platform)
+                helpers.environment_failure("Unsupported traffic generator '%s'"
+                                            % platform)
+
         else:
-            helpers.environment_failure("Not able to initialize device '%s'" % node)
+            helpers.environment_failure("Not able to initialize device '%s'"
+                                        % node)
+
         self.topology(node, n)
 
         if n.dev:
             helpers.log("Exscript driver for '%s': %s"
                         % (node, n.dev.conn.get_driver()))
-            helpers.log("Node '%s' is platform '%s'" % (node, n.platform()))
+            helpers.log("Node '%s' is platform '%s'%s"
+                        % (node, n.platform(),
+                           br_utils.end_of_output_marker()))
         return n
 
     def initialize(self):
@@ -559,6 +570,8 @@ class Test(object):
         if self._init_completed:
             # helpers.log("Test object initialization skipped.")
             return
+
+        helpers.debug("Test object initialization begins.")
         if self._init_in_progress:
             return
 
@@ -597,8 +610,9 @@ class Test(object):
                               controller_ip2=controller_ip2)
 
         helpers.prettify_log("self._topology: ", self._topology)
-        helpers.log("Test object initialization completed.")
         self._init_completed = True
+        helpers.debug("Test object initialization ends.%s"
+                      % br_utils.end_of_output_marker())
 
     def leading_spaces(self, s):
         return len(s) - len(s.lstrip(' '))
@@ -745,9 +759,11 @@ class Test(object):
         if self._setup_completed:
             # helpers.log("Test object setup skipped.")
             return
+
         if self._setup_in_progress:
             return
 
+        helpers.debug("Test object setup begins.")
         self._setup_in_progress = True
 
         params = self.topology_params()
@@ -759,11 +775,16 @@ class Test(object):
                 self.setup_switch(key)
 
         self._setup_completed = True
+        helpers.debug("Test object setup ends.%s"
+                      % br_utils.end_of_output_marker())
 
     def teardown(self):
+        helpers.debug("Test object teardown begins.")
         params = self.topology_params()
         for key in params:
             if helpers.is_controller(key):
                 pass
             elif helpers.is_switch(key):
                 self.teardown_switch(key)
+        helpers.debug("Test object teardown ends.%s"
+                      % br_utils.end_of_output_marker())
