@@ -207,6 +207,7 @@ class AppController(object):
 ###################################################
 # All Config Commands Go Here:
 ###################################################
+
     def rest_add_switch_alias(self, node, switch_alias):
         '''
             Objective:
@@ -727,3 +728,4 @@ class AppController(object):
         (out, err) = returnVal.communicate()
         helpers.log("URL: %s Output: %s" % (url, out))
         return out
+
