@@ -338,10 +338,10 @@ class Test(object):
 
     def controller(self, name='c1', resolve_mastership=False):
         """
-        :param resolve_mastership: (Bool) 
+        :param resolve_mastership: (Bool)
                 - If False, it returns the faux controller node (HaControllerNode)
                 - If True, it resolves 'master' (or 'slave') to a controller
-                  name (e.g., 'c1', 'c2', etc). 
+                  name (e.g., 'c1', 'c2', etc).
         """
         t = self
         name = self.alias(name)
@@ -408,7 +408,7 @@ class Test(object):
 
     def node(self, *args, **kwargs):
         """
-        Returns the handle for a node. 
+        Returns the handle for a node.
         """
         if len(args) >= 1:
             node = self.alias(args[0])
@@ -718,21 +718,22 @@ class Test(object):
             helpers.log("DevConf session is not available for node '%s'" % name)
             return
 
-        helpers.log("Tearing down switches (SwitchLight)")
-        content = n.config("show running-config")['content']
-        lines = content.splitlines()
+        if helpers.is_switchlight(n.platform()):
+            helpers.log("Tearing down switches (SwitchLight)")
+            content = n.config("show running-config")['content']
+            lines = content.splitlines()
 
-        # Find lines with the following config statements:
-        #   controller 10.192.5.51
-        #   controller 10.192.104.1 port 6633
-        lines = filter(lambda x: 'controller' in x, lines)
+            # Find lines with the following config statements:
+            #   controller 10.192.5.51
+            #   controller 10.192.104.1 port 6633
+            lines = filter(lambda x: 'controller' in x, lines)
 
-        for line in lines:
-            # Form commands:
-            #   no controller 10.192.5.51
-            #   no controller 10.192.104.1 port 6633
-            cmd = 'no ' + line
-            n.config(cmd)
+            for line in lines:
+                # Form commands:
+                #   no controller 10.192.5.51
+                #   no controller 10.192.104.1 port 6633
+                cmd = 'no ' + line
+                n.config(cmd)
 
     def setup(self):
         # This check ensures we  don't try to setup multiple times.
