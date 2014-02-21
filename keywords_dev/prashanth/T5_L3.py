@@ -436,7 +436,7 @@ REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[
         
         helpers.test_log("Input arguments: tenant = %s vns name = %s relay-ip = %s" % (tenant, vnsname, dhcpserverip))
         
-        url = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]/virtual-router/vns-interfaces[vns-name="%s"]' % (c.base_url, tenant, vnsname)
+        url = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]/virtual-router/vns-interfaces[vns-name="%s"]/dhcp-relay' % (c.base_url, tenant, vnsname)
         try:
             c.rest.patch(url, {"dhcp-server-ip": dhcpserverip})
         except:
@@ -452,7 +452,7 @@ REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[
                 `tenant`          tenant name
                 `vnsname`         name of vns interface
             Return: true if configuration is successful, false otherwise
-REST-POST: PATCH http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[name="C"]/virtual-router/vns-interfaces[vns-name="C1"] {"dhcp-relay-enable": true}
+REST-POST: PATCH http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[name="C"]/virtual-router/vns-interfaces[vns-name="C1"]/dhcp-relay {"dhcp-relay-enable": true}
 REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[name="C"]/virtual-router/vns-interfaces[vns-name="C1"] reply: ""           
         '''        
         t = test.Test()
@@ -460,7 +460,7 @@ REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[
         
         helpers.test_log("Input arguments: tenant = %s vns name = %s " % (tenant, vnsname))
         
-        url = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]/virtual-router/vns-interfaces[vns-name="%s"]' % (c.base_url, tenant, vnsname)
+        url = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]/virtual-router/vns-interfaces[vns-name="%s"]/dhcp-relay' % (c.base_url, tenant, vnsname)
         try:
             c.rest.patch(url, {"dhcp-relay-enable": True})
         except:
@@ -485,7 +485,7 @@ REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[
         
         helpers.test_log("Input arguments: tenant = %s vns name = %s " % (tenant, vnsname))
         
-        url = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]/virtual-router/vns-interfaces[vns-name="%s"]' % (c.base_url, tenant, vnsname)
+        url = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]/virtual-router/vns-interfaces[vns-name="%s"]/dhcp-relay' % (c.base_url, tenant, vnsname)
         try:
             c.rest.patch(url, {"dhcp-relay-enable": False})
         except:
@@ -510,7 +510,7 @@ REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[
         
         helpers.test_log("Input arguments: tenant = %s vns name = %s circuit id = %s" % (tenant, vnsname, circuitid))
         
-        url = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]/virtual-router/vns-interfaces[vns-name="%s"]' % (c.base_url, tenant, vnsname)
+        url = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]/virtual-router/vns-interfaces[vns-name="%s"]/dhcp-relay' % (c.base_url, tenant, vnsname)
         try:
             c.rest.patch(url, {"dhcp-circuit-id": circuitid})
         except:
@@ -537,7 +537,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
         
         helpers.test_log("Input arguments: tenant = %s vns name = %s dhcp server ip = %s" % (tenant, vnsname, dhcpserverip))
         
-        url = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]/virtual-router/vns-interfaces[vns-name="%s"]/dhcp-server-ip' % (c.base_url, tenant, vnsname)
+        url = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]/virtual-router/vns-interfaces[vns-name="%s"]/dhcp-relay/dhcp-server-ip' % (c.base_url, tenant, vnsname)
         try:
             c.rest.delete(url, {})
         except:
