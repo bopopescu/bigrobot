@@ -1352,60 +1352,7 @@ class SwitchLight(object):
             helpers.test_failure("Could not execute command. Please check log for errors")
             return False
 
-#   Objective: Execute snmpgetnext from local machine for a particular SNMP OID
-#   Input: SNMP Community and OID
-#   Return Value:  return the SNMP Walk O/P
-    def snmp_cmd(self, node, snmp_cmd, snmpCommunity, snmpOID):
-        '''
-            Objective:
-            - Execute snmp command which do not require options from local machine for a particular SNMP OID
-        
-            Input:
-            | node | Reference to switch (as defined in .topo file) |
-            | snmp_cmd | SNMP Command like snmpwalk, snmpget, snmpgetnext etc. |
-            | snmpCommunity | SNMP Community |   
-            | snmpOID | OID for which walk is being performed | 
-            
-            Return Value:  
-            - Output from SNMP Walk.
-        '''
-        try:
-            t = test.Test()
-            s1 = t.switch(node)
-            url = "/usr/bin/%s -v2c -c %s %s %s" % (str(snmp_cmd), str(snmpCommunity), s1.ip(), str(snmpOID))
-            returnVal = subprocess.Popen([url], stdout=subprocess.PIPE, shell=True)
-            (out, _) = returnVal.communicate()
-            helpers.log("URL: %s Output: %s" % (url, out))
-            return out
-        except:
-            helpers.test_failure("Could not execute command. Please check log for errors")
-            return False
 
-    def snmp_cmd_opt(self, node, snmp_cmd, snmpOpt, snmpCommunity, snmpOID):
-        '''
-            Objective:
-            - Execute snmp command which  require options from local machine for a particular SNMP OID
-        
-            Input:
-            | node | Reference to switch (as defined in .topo file) |
-            | snmp_cmd | SNMP Command like snmpwalk, snmpget, snmpgetnext etc. |
-            | snmpCommunity | SNMP Community |   
-            | snmpOID | OID for which walk is being performed | 
-            
-            Return Value:  
-            - Output from SNMP Walk.
-        '''
-        try:
-            t = test.Test()
-            switch = t.switch(node)
-            url = "/usr/bin/%s  -v2c %s -c %s %s %s" % (str(snmp_cmd), str(snmpOpt), str(snmpCommunity), switch.ip(), str(snmpOID))
-            returnVal = subprocess.Popen([url], stdout=subprocess.PIPE, shell=True)
-            (out, _) = returnVal.communicate()
-            helpers.log("URL: %s Output: %s" % (url, out))
-            return out
-        except:
-            helpers.test_failure("Could not execute command. Please check log for errors")
-            return False
 
 ############# SNMP CONFIGURATION ##############################
 

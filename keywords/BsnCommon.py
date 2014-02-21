@@ -16,7 +16,7 @@
 import autobot.helpers as helpers
 import autobot.test as test
 import Controller
-
+import subprocess
 
 class BsnCommon(object):
 
@@ -113,6 +113,17 @@ class BsnCommon(object):
             Return Value:  return the value for a particular key
         '''
         return content[int(index)][str(key)]
+
+    def verify_value_exist(self, value, content1, content2):
+        ''' 
+            Objective:
+            - Given two CLI outputs, verify given string exists in either of them
+        '''
+        if (value in content1) or (value in content2):
+            return True
+        else:
+            return False
+
 
     def add_ntp_server(self, node=None, ntp_server='0.bigswitch.pool.ntp.org'):
         '''
@@ -372,3 +383,99 @@ class BsnCommon(object):
                 helpers.test_error("Unsupported Platform %s" % (node))
         else:
             helpers.test_error("Unsupported Platform %s" % (node))
+
+
+
+#   Objective: Execute snmpgetnext from local machine for a particular SNMP OID
+#   Input: SNMP Community and OID
+#   Return Value:  return the SNMP Walk O/P
+    def snmp_cmd(self, node, snmp_cmd, snmpCommunity, snmpOID):
+        '''
+            Objective:
+            - Execute snmp command which do not require options from local machine for a particular SNMP OID
+        
+            Input:
+            | node | Reference to switch (as defined in .topo file) |
+            | snmp_cmd | SNMP Command like snmpwalk, snmpget, snmpgetnext etc. |
+            | snmpCommunity | SNMP Community |   
+            | snmpOID | OID for which walk is being performed | 
+            
+            Return Value:  
+            - Output from SNMP Walk.
+        '''
+        try:
+            t = test.Test()
+            s1 = t.switch(node)
+            url = "/usr/bin/%s -v2c -c %s %s %s" % (str(snmp_cmd), str(snmpCommunity), s1.ip(), str(snmpOID))
+            returnVal = subprocess.Popen([url], stdout=subprocess.PIPE, shell=True)
+            (out, _) = returnVal.communicate()
+            helpers.log("URL: %s Output: %s" % (url, out))
+            return out
+        except:
+            helpers.test_failure("Could not execute command. Please check log for errors")
+            return False
+
+    def snmp_cmd_opt(self, node, snmp_cmd, snmpOpt, snmpCommunity, snmpOID):
+        '''
+            Objective:
+            - Execute snmp command which  require options from local machine for a particular SNMP OID
+        
+            Input:
+            | node | Reference to switch (as defined in .topo file) |
+            | snmp_cmd | SNMP Command like snmpwalk, snmpget, snmpgetnext etc. |
+            | snmpCommunity | SNMP Community |   
+            | snmpOID | OID for which walk is being performed | 
+            
+            Return Value:  
+            - Output from SNMP Walk.
+        '''
+        try:
+            t = test.Test()
+            switch = t.switch(node)
+            url = "/usr/bin/%s  -v2c %s -c %s %s %s" % (str(snmp_cmd), str(snmpOpt), str(snmpCommunity), switch.ip(), str(snmpOID))
+            returnVal = subprocess.Popen([url], stdout=subprocess.PIPE, shell=True)
+            (out, _) = returnVal.communicate()
+            helpers.log("URL: %s Output: %s" % (url, out))
+            return out
+        except:
+            helpers.test_failure("Could not execute command. Please check log for errors")
+            return False
+
+    def snmp_get(self, snmp_community, snmp_oid):
+        '''Execute SNMP Walk from local machine for a particular SNMP OID
+        
+            Input: SNMP Community and OID
+            
+            Return Value:  return the SNMP Walk O/P
+        '''
+        try:
+            t = test.Test()
+        except:
+            return False
+        else:
+            c = t.controller('master')
+            try:
+                url = "/usr/bin/snmpwalk -v2c -c %s %s %s" % (str(snmp_community), c.ip(), str(snmp_oid))
+                returnVal = subprocess.Popen([url], stdout=subprocess.PIPE, shell=True)
+                (out, _) = returnVal.communicate()
+            except:
+                return False
+            else:
+                helpers.log("URL: %s Output: %s" % (url, out))
+                return out
+
+
+    def snmp_getnext(self, snmp_community, snmp_oid):
+        '''Execute snmpgetnext from local machine for a particular SNMP OID
+        
+            Input: SNMP Community and OID
+            
+            Return Value:  return the SNMP Walk O/P
+        '''
+        t = test.Test()
+        c = t.controller()
+        url = "/usr/bin/snmpgetnext -v2c -c %s %s %s" % (str(snmp_community), c.ip(), str(snmp_oid))
+        returnVal = subprocess.Popen([url], stdout=subprocess.PIPE, shell=True)
+        (out, err) = returnVal.communicate()
+        helpers.log("URL: %s Output: %s" % (url, out))
+        return out
