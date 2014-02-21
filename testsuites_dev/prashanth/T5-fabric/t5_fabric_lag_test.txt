@@ -13,20 +13,16 @@ Library		     keywords/Host.py
 Library		     keywords/Ixia.py
 Library			 keywords/SwitchLight.py
 Library	         Collections.py
-Resource         keywords_dev/prashanth/t5_dualleaf_three_rack_resource.txt
+Resource         keywords_dev/prashanth/t5_dualleaf_three_rack_physical_resource.txt
 
 *Variables
-${spine0_dpid}	 00:00:00:00:00:01:00:01
-${spine1_dpid}	 00:00:00:00:00:01:00:02
-${leaf0a_dpid}	 00:00:00:00:00:02:00:01
-${leaf0b_dpid}	 00:00:00:00:00:02:00:02
-${leaf2a_h6_intf}  leaf2a-eth5
-${leaf2b_h6_intf}  leaf2b-eth5
-${leaf2a_h5_intf}  leaf2a-eth4
-${leaf2b_h5_intf}  leaf2b-eth4
+${spine0_dpid}	 00:00:00:00:01:00:00:01
+${spine1_dpid}	 00:00:00:00:01:00:00:02
+${leaf0a_dpid}	 00:00:00:00:02:00:00:01
+${leaf0b_dpid}	 00:00:00:00:02:00:00:02
 ${leaf0a_spine0_intf0}	ethernet33
 ${leaf0a_leaf0b_intf0}	ethernet39
-${leaf0a_spine1_intf0}	ethernet32
+${leaf0a_spine1_intf0}	ethernet50
 ${leaf0a_ixia_intf}		ethernet24
 ${leaf0b_ixia_intf}		ethernet24
 ${leaf1a_ixia_intf}		ethernet24
@@ -37,7 +33,7 @@ ${leaf2a_leaf2b_intf0}  ethernet39
 ${leaf2a_ixia_intf}		ethernet24
 ${leaf2b_ixia_intf}		ethernet24
 ${leaf2a_spine0_intf0}	ethernet31
-${leaf2a_spine1_intf0}	ethernet32
+${leaf2a_spine1_intf0}	ethernet53
 ${h4_ip}  192.168.0.11
 ${h5_ip}  192.168.0.30
 ${h6_ip}  192.168.0.31
@@ -67,7 +63,8 @@ ${leaf0b_spine1_intf0}	ethernet32
 
 *Test Case
 add Three Rack Dual Leaf Topology
-	base suite setup
+	[Tags]  feature  
+	base suite setup  
     add fabric switch
     sleep  5
     rest verify fabric switch all
@@ -97,40 +94,38 @@ Verify Fabric Lag from spine after adding back spine node
 	verify fabric lag   spine0
 	
 delete the peer leaf0b switch and check the peer-lag from leaf0-a switch
-	[Tags]  feature	
+	[Tags]  feature  	
 	rest verify forwarding lag  ${leaf0a_dpid}  leaf0-a
 	sleep  3
 	rest delete fabric switch  leaf0-b
 	sleep  3
 	rest verify forwarding lag  ${leaf0a_dpid}  leaf0-a
 	rest add switch  leaf0-b
-	rest add dpid  ${leaf0a_dpid}
-	rest add fabric role  leaf
-	rest add fabric leaf group  rack0
+	rest add dpid  leaf0-b  ${leaf0b_dpid}
+	rest add fabric role  leaf0-b  leaf
+	rest add leaf group  leaf0-b  rack0
 	sleep  3
 	rest verify forwarding lag  ${leaf0a_dpid}  leaf0-a     
 
 port group setting for static lag
 	[Tags]  feature  
 	rest add portgroup  p1
-	rest add interface to portgroup  leaf2-a  ${leaf2a_h6_intf}  p1
-	rest add interface to portgroup  leaf2-b  ${leaf2b_h6_intf}  p1
+	rest add interface to portgroup  leaf2-a  ${h6_intf0}  p1
+	rest add interface to portgroup  leaf2-b  ${h6_intf1}  p1
 	sleep  3
-	rest verify fabric interface  leaf2-a  ${leaf2a_h6_intf}
-	rest verify fabric interface  leaf2-b  ${leaf2b_h6_intf}
+	rest verify fabric interface  leaf2-a  ${h6_intf0}
+	rest verify fabric interface  leaf2-b  ${h6_intf1}
 	rest verify forwarding port edge  leaf2-a  leaf2-b
 	# should have the same Group ID on both leaf switches of rack2
 	  
 port group setting test for lacp mode
 	[Tags]  feature
 	rest add portgroup  p2
-	rest add interface to portgroup  leaf2-a  ${leaf2a_h5_intf}  p2
-	rest add interface to portgroup  leaf2-b  ${leaf2b_h5_intf}  p2
+	rest add interface to portgroup  leaf2-a  ${h5_intf0}  p2
+	rest add interface to portgroup  leaf2-b  ${h5_intf1}  p2
 	sleep  3
-	rest verify fabric interface lacp  leaf2-a  ${leaf2a_h5_intf}
-	rest verify fabric interface lacp  leaf2-b  ${leaf2b_h5_intf}
-	rest verify fabric interface  leaf2-a  ${leaf2a_h6_intf}
-	rest verify fabric interface  leaf2-b  ${leaf2b_h6_intf}
+	rest verify fabric interface lacp  leaf2-a  ${h5_intf0}
+	rest verify fabric interface lacp  leaf2-b  ${h5_intf1}
 	rest verify forwarding port edge  leaf2-a  leaf2-b
 
 rack lag detection from rack0 leaf switch using three rack setup (delete/add spine role)
@@ -168,15 +163,14 @@ Verify broadcast traffic forwarding on the lag
 	rest add interface to vns  t1  v1  leaf0-b  ${leaf0b_ixia_intf}  -1
 	rest add interface to vns  t1  v1  leaf1-b  ${leaf1b_ixia_intf}  -1
 	rest add interface to vns  t1  v1  leaf2-b  ${leaf2b_ixia_intf}  -1
-	sleep  3  
-	
+	sleep  3  	
     ${stream}=             L3 add  no_arp=True  flow=a->b  src_mac=00:02:01:00:00:24  dst_mac=ff:ff:ff:ff:ff:ff  ethertype=0800  frame_rate=1000  frame_size=68  name=a_b_flow
-    start traffic  ${stream}
+    start traffic  ${stream}  
     sleep  10
     verify traffic rate  tx_rate  rx_rate  a  b
     verify traffic rate  tx_rate  rx_rate  a  d
     verify traffic rate  tx_rate  rx_rate  a  f
-    stop traffic  ${stream}
+    stop traffic  ${stream}  
     sleep  3
     rest delete tenant  t1
     
@@ -188,10 +182,9 @@ Verify broadcast forwarding with spine link failover
 	rest add interface to vns  t1  v1  leaf0-b  ${leaf0b_ixia_intf}  -1
 	rest add interface to vns  t1  v1  leaf1-b  ${leaf1b_ixia_intf}  -1
 	rest add interface to vns  t1  v1  leaf2-b  ${leaf2b_ixia_intf}  -1
-	sleep  3  
-	
+	sleep  3  	
     ${stream}=             L3 add  no_arp=True  flow=a->b  src_mac=00:02:01:00:00:24  dst_mac=ff:ff:ff:ff:ff:ff  ethertype=0800  frame_rate=1000  frame_size=68  name=a_b_flow
-    start traffic  ${stream}
+    start traffic  ${stream}  
     sleep  10
     verify traffic rate  tx_rate  rx_rate  a  b
     verify traffic rate  tx_rate  rx_rate  a  d
@@ -219,7 +212,7 @@ Verify broadcast forwarding with spine link failover
     verify traffic rate  tx_rate  rx_rate  a  b
     verify traffic rate  tx_rate  rx_rate  a  d
     verify traffic rate  tx_rate  rx_rate  a  f
-    stop traffic  ${stream}
+    stop traffic  ${stream}  
     sleep  3
     rest delete tenant  t1
 
@@ -440,7 +433,8 @@ Verify Duplicate Multicast packets on edge port groups
     sleep  5    
 
 Tear down config and topology
-    delete fabric switch
+	[Tags]  feature  
+    delete fabric switch  
     rest delete portgroup  p1
     rest delete portgroup  p2
     rest delete portgroup  p5
@@ -473,7 +467,8 @@ verify traffic packet  [Arguments]  ${tx_cnt}  ${rx_cnt}  ${tx_intf}  ${rx_intf}
     ${report}=  fetch port stats
     ${tx_value}=  verify dict key  ${report}  ${tx_intf}  transmitted_frames
     ${rx_value}=  verify dict key  ${report}  ${rx_intf}  received_valid_frames
-    Should Be True  ${tx_value} == {rx_value}
+    ${result}=  Evaluate  ${tx_value} - ${rx_value}
+    Should Be True  ${result} == -1
 
 verify port group switch interface stats  [Arguments]  ${switch}  ${switch1}  ${intf}  ${intf1}
 	${report}=  cli show interface statistics  ${switch}  ${intf}

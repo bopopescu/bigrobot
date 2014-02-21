@@ -398,25 +398,22 @@ class T5Fabric(object):
         for i in range(0,len(data2[0]["fabric-lag"])):
             if data2[0]["fabric-lag"][i]["lag-type"] == "leaf-lag":
                 interface = re.sub("\D", "", data2[0]["fabric-lag"][i]["member"][0]["src-interface"])
-                peer_intf.append(int(interface))                            
-        if data1[0]["fabric-switch-info"]["leaf-group"] == None:
-            for i in range(0,len(data)):
-                for j in range(0,len(data[i]["port"])):
-                    if (data[i]["port"][j]["port-num"] == peer_intf[0]):
-                        helpers.test_failure("Peer switch edge ports are not deleted from lag table")
-                        return False
-                    else:
-                        helpers.log("Peer switch edge ports are deleted from forwarding lag table")  
-                        return True
-        else:
+                peer_intf.append(int(interface)) 
+        if len(peer_intf) != 0:                           
+            if data1[0]["fabric-switch-info"]["leaf-group"] == None:
+                for i in range(0,len(data)):
+                    for j in range(0,len(data[i]["port"])):
+                        if (data[i]["port"][j]["port-num"] == peer_intf[0]):
+                            helpers.test_failure("Peer switch edge ports are not deleted from lag table")
+                            return False
+                   
+            else:
                 for i in range(0,len(data)):
                     for j in range(0,len(data[i]["port"])):
                         if (data[i]["port"][j]["port-num"]) == (peer_intf[0]):
                             helpers.log("Peer switch edge ports are properly added in forwarding table")
                             return True
-                        else:
-                            helpers.test_failure("Peer switch edge ports are not added in forwarding table")
-                            return False
+            return False                   
                     
     def rest_verify_fabric_interface_lacp(self, switch, intf):
         t = test.Test()
