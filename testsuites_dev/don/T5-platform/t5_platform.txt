@@ -10,49 +10,95 @@ Force Tags       T5Platform
 Library          keywords/BsnCommon.py
 Library          keywords/Mininet.py
 Library	         keywords_dev/don/T5Platform.py
-Resource	 	 keywords_dev/don/t5_singleleaf_resource.txt
 
 * Variables
 ${bm0_ip}  10.0.0.1
 ${bm1_ip}  10.0.0.2
 ${bm2_ip}  10.0.0.3
+${bm3_ip}  10.0.0.4
+${bm4_ip}  10.0.0.5
+${bm5_ip}  10.0.0.6
 ${bm0_mac}  00:00:00:00:00:01
 ${bm1_mac}  00:00:00:00:00:02
 ${bm2_mac}  00:00:00:00:00:03
-${bm0_intf0}  leaf0-eth5
-${bm1_intf0}  leaf0-eth6
-${bm2_intf0}  leaf1-eth5
+${bm3_mac}  00:00:00:00:00:04
+${bm4_mac}  00:00:00:00:00:05
+${bm5_mac}  00:00:00:00:00:06
+${bm0_intf0}  leaf0a-eth8
+${bm0_intf1}  leaf0b-eth8
+${bm1_intf0}  leaf0a-eth9
+${bm1_intf1}  leaf0b-eth9
+${bm2_intf0}  leaf1a-eth8
+${bm2_intf1}  leaf1b-eth8
+${bm3_intf0}  leaf1a-eth9
+${bm3_intf1}  leaf1b-eth9
+${bm4_intf0}  leaf2a-eth8
+${bm4_intf1}  leaf2b-eth8
+${bm5_intf0}  leaf2a-eth9
+${bm5_intf1}  leaf2b-eth9
 
 * Test Case 
 
 Verify HA Cluster Formation
-   [Tags]  HA  skipped 
+   [Tags]  HA   Cluster	 
    rest verify show cluster
    
 Verify Cluster Election Take-Leader
-	[Tags]  HA  skipped
+	[Tags]  HA  Cluster
 	rest verify cluster election take leader
 
 Verify Cluster Election Re-run
-	[Tags]  HA  skipped
+	[Tags]  HA  Cluster
 	rest verify cluster election rerun
 
 Verify Cluster Master Reboot
-	[Tags]  HA  
+	[Tags]  HA  Cluster
 	cli verify cluster master reboot
 
 Verify Cluster Slave Reboot
-	[Tags]  HA  skipped
+	[Tags]  HA  Cluster
 	cli verify cluster slave reboot
 
 Verify Cluster Master Shutdown
-	[Tags]  HA  skipped
+	[Tags]  HA  Cluster
 	cli verify cluster master shutdown
 
 Verify Cluster Slave Shutdown
-	[Tags]  HA  skipped
+	[Tags]  HA  Cluster
 	cli verify cluster slave shutdown
 
+
+Master Failover/Failback & Verify Connectivity
+   [Tags]  HA  Traffic  
+   : FOR    ${Iteration}    IN RANGE    1    3
+   \	cli verify cluster master reboot
+   \	platform ping all
+   
+Slave Failover/Failback & Verify Connectivity
+   [Tags]  HA  Traffic  
+   : FOR    ${Iteration}    IN RANGE    1    3
+   \	cli verify cluster slave reboot
+   \	platform ping all
+
+Cluster Election Take-Leader & Verify Connectivity
+   [Tags]  HA  Traffic  
+   : FOR    ${Iteration}    IN RANGE    1    3
+   \	rest verify cluster election take leader
+   \	platform ping all
+
+Cluster Election Re-run & Verify Connectivity
+   [Tags]  HA  Traffic  
+   : FOR    ${Iteration}    IN RANGE    1    3
+   \	rest verify cluster election rerun
+   \	platform ping all
+
+Head-less Mode & Verify Connectivity
+   [Tags]  HA  Traffic  
+   platform ping all
+   cli verify cluster slave shutdown
+   cli verify cluster master shutdown
+   platform ping all
+   
 Add User
 	[Tags]  User_Administration
 	${status}=  rest add user  3 
@@ -69,5 +115,96 @@ T5 base test setup
       
 T5 base test teardown
    base test teardown
+
+add fabric switch
+  rest add switch  spine0  
+  rest add dpid  spine0  00:00:00:00:00:01:00:01
+  rest add fabric role  spine0  spine 
+  rest add switch  spine1 
+  rest add dpid  spine1  00:00:00:00:00:01:00:02
+  rest add fabric role  spine1  spine
+  rest add switch  leaf0-a 
+  rest add dpid  leaf0-a  00:00:00:00:00:02:00:01
+  rest add fabric role  leaf0-a  leaf
+  rest add leaf group  leaf0-a  rack0
+  rest add switch  leaf0-b 
+  rest add dpid  leaf0-b  00:00:00:00:00:02:00:02
+  rest add fabric role  leaf0-b  leaf
+  rest add leaf group  leaf0-b  rack0
+  rest add switch  leaf1-a 
+  rest add dpid  leaf1-a  00:00:00:00:00:02:00:03
+  rest add fabric role  leaf1-a  leaf
+  rest add leaf group  leaf1-a  rack1
+  rest add switch  leaf1-b 
+  rest add dpid  leaf1-b  00:00:00:00:00:02:00:04
+  rest add fabric role  leaf1-b  leaf
+  rest add leaf group  leaf1-b  rack1
+  rest add switch  leaf2-a
+  rest add dpid  leaf2-a  00:00:00:00:00:02:00:05
+  rest add fabric role  leaf2-a  leaf
+  rest add leaf group  leaf2-a  rack2
+  rest add switch  leaf2-b 
+  rest add dpid  leaf2-b  00:00:00:00:00:02:00:06
+  rest add fabric role  leaf2-b  leaf
+  rest add leaf group  leaf2-b  rack2
   
+delete fabric switch  
+  rest delete fabric switch  spine0 
+  rest delete fabric switch  spine1 
+  rest delete fabric switch  leaf0 
+  rest delete fabric switch  leaf1 
+  rest delete fabric switch  leaf0-a 
+  rest delete fabric switch  leaf0-b 
+  rest delete fabric switch  leaf1-a 
+  rest delete fabric switch  leaf1-b 
+  rest delete fabric switch  leaf2-a 
+  rest delete fabric switch  leaf2-b 
+
+mininet ping all
+   ${loss}=  mininet ping  bm0  ${bm1_ip}
+   Should Be True  ${loss} == 0		
+   ${loss}=  mininet ping  bm0  ${bm2_ip}
+   Should Be True  ${loss} == 0		
+   ${loss}=  mininet ping  bm0  ${bm3_ip}
+   Should Be True  ${loss} == 0		
+   ${loss}=  mininet ping  bm0  ${bm4_ip}
+   Should Be True  ${loss} == 0		
+   ${loss}=  mininet ping  bm0  ${bm5_ip}
+   Should Be True  ${loss} == 0		
+   ${loss}=  mininet ping  bm1  ${bm2_ip}
+   Should Be True  ${loss} == 0	
+   ${loss}=  mininet ping  bm1  ${bm3_ip}
+   Should Be True  ${loss} == 0		
+   ${loss}=  mininet ping  bm1  ${bm4_ip}
+   Should Be True  ${loss} == 0		
+   ${loss}=  mininet ping  bm1  ${bm5_ip}
+   Should Be True  ${loss} == 0		
+   ${loss}=  mininet ping  bm2  ${bm3_ip}
+   Should Be True  ${loss} == 0
+   ${loss}=  mininet ping  bm2  ${bm4_ip}
+   Should Be True  ${loss} == 0	
+   ${loss}=  mininet ping  bm2  ${bm5_ip}
+   Should Be True  ${loss} == 0	
+   ${loss}=  mininet ping  bm3  ${bm4_ip}
+   Should Be True  ${loss} == 0			
+   ${loss}=  mininet ping  bm3  ${bm5_ip}
+   Should Be True  ${loss} == 0		
+   ${loss}=  mininet ping  bm4  ${bm5_ip}
+   Should Be True  ${loss} == 0		
+   
+platform ping all
+   platform ping  bm0  ${bm1_ip}
+   platform ping  bm0  ${bm2_ip}
+   platform ping  bm0  ${bm3_ip}
+   platform ping  bm0  ${bm4_ip}
+   platform ping  bm0  ${bm5_ip}
+   platform ping  bm1  ${bm2_ip}
+   platform ping  bm1  ${bm3_ip}
+   platform ping  bm1  ${bm4_ip}
+   platform ping  bm1  ${bm5_ip}
+   platform ping  bm2  ${bm3_ip}
+   platform ping  bm2  ${bm4_ip}
+   platform ping  bm2  ${bm5_ip}
+   platform ping  bm4  ${bm5_ip}
+
 

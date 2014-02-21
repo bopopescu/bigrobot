@@ -43,14 +43,14 @@ ${bm5_intf0}  leaf2a-eth9
 ${bm5_intf1}  leaf2b-eth9
 
 * Test Case 
-
+   
 Verify HA Cluster Formation
    [Tags]  sanity  skipped
    rest verify show cluster
 
 
 Verify Single VNS Host Connectivity
-   [Tags]  sanity 
+   [Tags]  sanity  
    sleep  30
    add a tenant  bm_all
    add a vns  bm_all  bm_all
@@ -65,16 +65,14 @@ Verify Single VNS Host Connectivity
    platform ping all
    
 Failover By Rebooting & Re-verify Connectivity
-   [Tags]  sanity 
-   : FOR    ${Iteration}    IN RANGE    1    3
+   [Tags]  sanity  
+   : FOR    ${Iteration}    IN RANGE    1    5
    \	cli verify cluster master reboot
    \	platform ping all
-
    
-
 Failback By Rebooting & Re-verify Connectivity 5
    [Tags]  sanity  skipped
-   cli verify cluster master reboot
+   cli verify cluster slave reboot
    mininet ping all
 
 Add h4,h5,h6 in to a VNS and verify the connectivity
