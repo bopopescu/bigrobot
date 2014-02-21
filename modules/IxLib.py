@@ -25,8 +25,17 @@ class Ixia(object):
         self._started_hosts = False
         self._ip_devices = {}
         self._arp_check = True
+        # Connect to IXIA Chassis and IXIA TCL Server
+        self._handle = self.ix_connect()
         if clear_ownership:
-            pass
+            for key, port in self._port_map_list.iteritems():
+                root = self._handle.getRoot()
+                hardware = self._handle.getList(root, 'availableHardware')
+                chassis = self._handle.getList(hardware[0], 'chassis')
+                ix_card = self._handle.getList(chassis[0], 'card')[int(port[1]) - 1]
+                ix_port = self._handle.getList(ix_card, 'port')[int(port[2]) -1]
+                self._handle.execute('clearOwnership', ix_port)
+                helpers.log('Success CLearing OwnerShip of Port %s !!' % key)
 
     def port_map_list(self, ports):
         # something happens here
@@ -38,12 +47,18 @@ class Ixia(object):
         return port_map_list
 
     def ix_connect(self):
-        self._handle = IxNetwork.IxNet()
-        self._handle.connect(self._tcl_server_ip, '-port', self._tcl_server_port,
+        handle = IxNetwork.IxNet()
+        # Connect to TCL Server
+        handle.connect(self._tcl_server_ip, '-port', self._tcl_server_port,
                         '-version', self._ix_version)
         # ## clear the configuration
-        asyncHandle = self._handle.setAsync().execute('newConfig')
-        self._handle.wait(asyncHandle)
+        asyncHandle = handle.setAsync().execute('newConfig')
+        handle.wait(asyncHandle)
+        # Connect to IXIA Chassis
+        chassis = handle.add(handle.getRoot() + 'availableHardware', 'chassis', '-hostname', self._chassis_ip)
+        handle.commit()
+        chassis = handle.remapIds(chassis)[0]
+        return handle
 
     def ix_create_vports(self):
         '''
@@ -66,9 +81,10 @@ class Ixia(object):
         '''
             Returns True or False after adding vports to given Physical IXIA ports
         '''
-        chassis = self._handle.add(self._handle.getRoot() + 'availableHardware', 'chassis', '-hostname', self._chassis_ip)
-        self._handle.commit()
-        chassis = self._handle.remapIds(chassis)[0]
+        root = self._handle.getRoot()
+        hardware = self._handle.getList(root, 'availableHardware')
+        chassis = self._handle.getList(hardware[0], 'chassis')[0]
+        
         for (ixport, vport) in zip(self._port_map_list.values(), self._vports):
             card = str(ixport[1])
             port = str(ixport[2])
@@ -289,7 +305,8 @@ class Ixia(object):
     def ix_setup_traffic_streams_ethernet(self, mac1, mac2, frameType, frameSize, frameRate,
                                       frameMode, frameCount, flow, name, ethertype=None, vlan_id=None,
                                       crc=None, src_ip = None, dst_ip = None, no_arp=False,
-                                      protocol= None, src_port= None, dst_port = None, ip_type = 'ipv4'):
+                                      protocol= None, src_port= None, dst_port = None,
+                                      icmp_type = None, icmp_code = None, ip_type = 'ipv4'):
         '''
             Returns traffic stream with 2 flows with provided mac sources
             Ex Usage:
@@ -383,7 +400,14 @@ class Ixia(object):
                 self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:1/stack:"udp-3"/field:"udp.header.dstPort-2"',
                                               '-countValue', 1, '-fieldValue', dst_port, '-singleValue', dst_port,
                                              '-optionalEnabled', 'true', '-auto', 'false')
-        
+            if protocol == 'ICMP':
+                helpers.log('Adding Message Type: %s and Code Value: %s for Protocl UDP..!!!' % (icmp_type, icmp_code))
+                self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:1/stack:"icmpv2-3"/field:"icmpv2.message.messageType-1"',
+                                              '-countValue', 1, '-singleValue', icmp_type,
+                                             '-optionalEnabled', 'true', '-auto', 'false')
+                self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:1/stack:"icmpv2-3"/field:"icmpv2.message.codeValue-2"',
+                                              '-countValue', 1, '-singleValue', icmp_code,
+                                             '-optionalEnabled', 'true', '-auto', 'false')
         if frameCount is not None:
             self._handle.setAttribute(trafficStream1 + '/highLevelStream:1/' + 'transmissionControl', '-type',
                                 'fixedFrameCount')
@@ -470,7 +494,14 @@ class Ixia(object):
                     self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:2/stack:"udp-3"/field:"udp.header.dstPort-2"',
                                                   '-countValue', 1, '-fieldValue', src_port, '-singleValue', src_port,
                                                  '-optionalEnabled', 'true', '-auto', 'false')
-                
+                if protocol == 'ICMP':
+                    helpers.log('Adding Message Type: %s and Code Value: %s for Protocl UDP..!!!' % (icmp_type, icmp_code))
+                    self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:2/stack:"icmpv2-3"/field:"icmpv2.message.messageType-1"',
+                                                  '-countValue', 1, '-singleValue', icmp_type,
+                                                 '-optionalEnabled', 'true', '-auto', 'false')
+                    self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:2/stack:"icmpv2-3"/field:"icmpv2.message.codeValue-2"',
+                                                  '-countValue', 1, '-singleValue', icmp_code,
+                                                 '-optionalEnabled', 'true', '-auto', 'false')
         self._handle.setAttribute(self._handle.getList(trafficStream1, 'tracking')[0], '-trackBy', 'trackingenabled0')
         
         self._handle.commit()
@@ -663,6 +694,8 @@ class Ixia(object):
         protocol = kwargs.get('protocol','UDP')
         src_port = kwargs.get('src_port', '6001')
         dst_port = kwargs.get('dst_port', '7001')
+        icmp_type =  kwargs.get('icmp_type', '0')
+        icmp_code = kwargs.get('icmp_code', '0')
         
         ix_tcl_server = self._tcl_server_ip
         flow = kwargs.get('flow', None)
@@ -728,7 +761,8 @@ class Ixia(object):
             
             traffic_stream = self.ix_setup_traffic_streams_ethernet(mac_devices[0], mac_devices[1],
                                                        frame_type, self._frame_size, frame_rate, frame_mode,
-                                                       frame_cnt, stream_flow, name, vlan_id = vlan_id, crc = crc, src_ip = src_ip, dst_ip = dst_ip, protocol = protocol,
+                                                       frame_cnt, stream_flow, name, vlan_id = vlan_id, crc = crc, src_ip = src_ip, dst_ip = dst_ip,
+                                                       protocol = protocol, icmp_type = icmp_type, icmp_code = icmp_code,
                                                        src_port = src_port, dst_port = dst_port, no_arp = no_arp, ethertype = ethertype)
             
             traffic_stream1.append(traffic_stream)
@@ -740,7 +774,8 @@ class Ixia(object):
             self.ix_start_hosts(ip_type = ip_type)
             self._started_hosts = True
             traffic_item = self.ix_setup_traffic_streams_ethernet(ip_devices[0], ip_devices[1], frame_type, self._frame_size, frame_rate, frame_mode,
-                                                         frame_cnt, stream_flow, name, protocol= protocol, vlan_id = vlan_id, crc = crc,
+                                                         frame_cnt, stream_flow, name, vlan_id = vlan_id, crc = crc,
+                                                         protocol= protocol, icmp_type = icmp_type, icmp_code = icmp_code, 
                                                          src_port = src_port, dst_port = dst_port, ethertype = ethertype, ip_type = ip_type)
             traffic_stream1.append(traffic_item)
         
