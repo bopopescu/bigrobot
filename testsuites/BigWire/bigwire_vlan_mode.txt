@@ -30,26 +30,26 @@ ${tenant2}  bw2bw4
 ${s1_tenant_interface_1}  ethernet1
 ${s1_tenant_interface_2}  ethernet9
 ${s1_tenant_interface_3}  ethernet10
-${s1_pseudowire_interface_1}  ethernet5
-${s1_pseudowire_interface_2}  ethernet6
+${s1_pseudowire_interface_1}  ethernet45
+${s1_pseudowire_interface_2}  ethernet5
 
 ${s2_tenant_interface_1}  ethernet1
 ${s2_tenant_interface_2}  ethernet5
 ${s2_tenant_interface_3}  ethernet6
-${s2_pseudowire_interface_1}  ethernet9
-${s2_pseudowire_interface_2}  ethernet10
+${s2_pseudowire_interface_1}  ethernet46
+${s2_pseudowire_interface_2}  ethernet9
 
 ${s3_tenant_interface_1}  ethernet1
 ${s3_tenant_interface_2}  ethernet9
 ${s3_tenant_interface_3}  ethernet10
-${s3_pseudowire_interface_1}  ethernet5
-${s3_pseudowire_interface_2}  ethernet6
+${s3_pseudowire_interface_1}  ethernet45
+${s3_pseudowire_interface_2}  ethernet5
 
 ${s4_tenant_interface_1}  ethernet1
 ${s4_tenant_interface_2}  ethernet5
 ${s4_tenant_interface_3}  ethernet6
-${s4_pseudowire_interface_1}  ethernet9
-${s4_pseudowire_interface_2}  ethernet10
+${s4_pseudowire_interface_1}  ethernet46
+${s4_pseudowire_interface_2}  ethernet9
 
 
 * Test Case
@@ -67,7 +67,7 @@ Verify CLI BigWire Summary
     Should Be Equal As Strings  ${state}  OK
     [Tags]  traffic  sanity
     
-S1 to S3: Verify Line Rate BiDirectional L2 traffic in Vlan Mode with frame size 64 Bytes
+S1 to S3:BiDirectional L2 traffic with frame size 64 Bytes
     ${stream}=  L2 add  flow=a<->c  frame_rate=1000000  frame_size=64  name=a_c_flow
     clear stats   
     start traffic  ${stream}
@@ -75,9 +75,9 @@ S1 to S3: Verify Line Rate BiDirectional L2 traffic in Vlan Mode with frame size
     verify results  a  transmitted_frame_rate  c  received_frame_rate
     verify results  c  transmitted_frame_rate  a  received_frame_rate
     stop traffic  ${stream}
-    [Tags]  traffic  sanity  skipped        
+    [Tags]  traffic  sanity          
 
-S2 to S4: Verify Line Rate BiDirectional L2 traffic in Vlan Mode with frame size 64 Bytes    
+S2 to S4:BiDirectional L2 traffic with frame size 64 Bytes    
     ${stream}=  L2 add  flow=e<->f  frame_rate=1000000  frame_size=64  name=e_f_flow
     clear stats   
     start traffic  ${stream}
@@ -85,9 +85,9 @@ S2 to S4: Verify Line Rate BiDirectional L2 traffic in Vlan Mode with frame size
     verify results  e  transmitted_frame_rate  f  received_frame_rate
     verify results  f  transmitted_frame_rate  e  received_frame_rate
     stop traffic  ${stream}
-    [Tags]  traffic  sanity  skipped 
+    [Tags]  traffic  sanity   
 
-S1 to S3: Verify Line Rate BiDirectional L2 traffic in Vlan Mode with frame size 128 Bytes   
+S1 to S3:BiDirectional L2 traffic with frame size 128 Bytes   
     ${stream}=  L2 add  flow=a<->c  frame_rate=500000  frame_size=128  name=a_c_flow
     clear stats 
     start traffic  ${stream}
@@ -95,9 +95,9 @@ S1 to S3: Verify Line Rate BiDirectional L2 traffic in Vlan Mode with frame size
     verify results  a  transmitted_frame_rate  c  received_frame_rate
     verify results  c  transmitted_frame_rate  a  received_frame_rate
     stop traffic  ${stream}
-    [Tags]  traffic  sanity  skipped
+    [Tags]  traffic  sanity  
 
-S2 to S4: Verify Line Rate BiDirectional L2 traffic in Vlan Mode with frame size 128 Bytes    
+S2 to S4:BiDirectional L2 traffic with frame size 128 Bytes    
     ${stream}=  L2 add  flow=e<->f  frame_rate=500000  frame_size=128  name=e_f_flow
     clear stats 
     start traffic  ${stream}
@@ -105,9 +105,9 @@ S2 to S4: Verify Line Rate BiDirectional L2 traffic in Vlan Mode with frame size
     verify results  e  transmitted_frame_rate  f  received_frame_rate
     verify results  f  transmitted_frame_rate  e  received_frame_rate
     stop traffic  ${stream}
-    [Tags]  traffic  sanity  skipped            
+    [Tags]  traffic  sanity              
     
-S1 to S3: BiDirectional L2 traffic in Vlan Mode with frame size 256 Bytes    
+S1 to S3:BiDirectional L2 traffic with frame size 256 Bytes    
     ${stream}=  L2 add  flow=a<->c  frame_rate=300000  frame_size=256  name=a_c_flow
     clear stats 
     start traffic  ${stream}
@@ -115,9 +115,9 @@ S1 to S3: BiDirectional L2 traffic in Vlan Mode with frame size 256 Bytes
     verify results  a  transmitted_frame_rate  c  received_frame_rate
     verify results  c  transmitted_frame_rate  a  received_frame_rate
     stop traffic  ${stream}
-    [Tags]  traffic  sanity  skipped 
+    [Tags]  traffic  sanity   
     
-S2 to S4: BiDirectional L2 traffic in Vlan Mode with frame size 256 Bytes    
+S2 to S4:BiDirectional L2 traffic with frame size 256 Bytes    
     ${stream}=  L2 add  flow=e<->f  frame_rate=300000  frame_size=256  name=e_f_flow
     clear stats 
     start traffic  ${stream}
@@ -125,9 +125,9 @@ S2 to S4: BiDirectional L2 traffic in Vlan Mode with frame size 256 Bytes
     verify results  e  transmitted_frame_rate  e  received_frame_rate
     verify results  f  transmitted_frame_rate  f  received_frame_rate
     stop traffic  ${stream}
-    [Tags]  traffic  sanity  skipped    
+    [Tags]  traffic  sanity      
     
-S1 to S3: BiDirectional L2 traffic in Vlan Mode with frame size 512 Bytes:     
+S1 to S3:BiDirectional L2 traffic with frame size 512 Bytes:     
     ${stream}=  L2 add  flow=a<->c  frame_rate=200000  frame_size=512  name=a_c_flow
     clear stats 
     start traffic  ${stream}
@@ -135,9 +135,9 @@ S1 to S3: BiDirectional L2 traffic in Vlan Mode with frame size 512 Bytes:
     verify results  a  transmitted_frame_rate  c  received_frame_rate
     verify results  c  transmitted_frame_rate  a  received_frame_rate
     stop traffic  ${stream}
-    [Tags]  traffic  sanity  skipped
+    [Tags]  traffic  sanity  
         
-S2 to S4: BiDirectional L2 traffic in Vlan Mode with frame size 512 Bytes:     
+S2 to S4:BiDirectional L2 traffic with frame size 512 Bytes:     
     ${stream}=  L2 add  flow=e<->f  frame_rate=200000  frame_size=512  name=e_f_flow
     clear stats 
     start traffic  ${stream}
@@ -145,9 +145,9 @@ S2 to S4: BiDirectional L2 traffic in Vlan Mode with frame size 512 Bytes:
     verify results  e  transmitted_frame_rate  f  received_frame_rate
     verify results  f  transmitted_frame_rate  e  received_frame_rate
     stop traffic  ${stream}
-    [Tags]  traffic  sanity  skipped    
+    [Tags]  traffic  sanity      
     
-S1 to S3: BiDirectional L2 traffic in Vlan Mode with frame size 1024 Bytes:     
+S1 to S3:BiDirectional L2 traffic with frame size 1024 Bytes:     
     ${stream}=  L2 add  flow=a<->c  frame_rate=100000  frame_size=1024  name=a_c_flow
     clear stats 
     start traffic  ${stream}
@@ -155,9 +155,9 @@ S1 to S3: BiDirectional L2 traffic in Vlan Mode with frame size 1024 Bytes:
     verify results  a  transmitted_frame_rate  c  received_frame_rate
     verify results  c  transmitted_frame_rate  a  received_frame_rate
     stop traffic  ${stream}
-    [Tags]  traffic  sanity  skipped    
+    [Tags]  traffic  sanity      
          
-S2 to S4: BiDirectional L2 traffic in Vlan Mode with frame size 1024 Bytes:     
+S2 to S4:BiDirectional L2 traffic with frame size 1024 Bytes:     
     ${stream}=  L2 add  flow=e<->f  frame_rate=100000  frame_size=1024  name=e_f_flow
     clear stats 
     start traffic  ${stream}
@@ -165,9 +165,9 @@ S2 to S4: BiDirectional L2 traffic in Vlan Mode with frame size 1024 Bytes:
     verify results  e  transmitted_frame_rate  f  received_frame_rate
     verify results  f  transmitted_frame_rate  e  received_frame_rate
     stop traffic  ${stream}
-    [Tags]  traffic  sanity  skipped    
+    [Tags]  traffic  sanity      
 
-S1 to S3: BiDirectional L2 traffic in Vlan Mode with frame size 1280 Bytes
+S1 to S3:BiDirectional L2 traffic with frame size 1280 Bytes
     ${stream}=  L2 add  flow=a<->c  frame_rate=90000  frame_size=1280  name=a_c_flow
     clear stats 
     start traffic  ${stream}
@@ -175,9 +175,9 @@ S1 to S3: BiDirectional L2 traffic in Vlan Mode with frame size 1280 Bytes
     verify results  a  transmitted_frame_rate  c  received_frame_rate
     verify results  c  transmitted_frame_rate  a  received_frame_rate
     stop traffic  ${stream}
-    [Tags]  traffic  sanity  skipped        
+    [Tags]  traffic  sanity          
     
-S2 to S4: BiDirectional L2 traffic in Vlan Mode with frame size 1280 Bytes
+S2 to S4:BiDirectional L2 traffic with frame size 1280 Bytes
     ${stream}=  L2 add  flow=e<->f  frame_rate=90000  frame_size=1280  name=e_f_flow
     clear stats 
     start traffic  ${stream}
@@ -185,9 +185,9 @@ S2 to S4: BiDirectional L2 traffic in Vlan Mode with frame size 1280 Bytes
     verify results  e  transmitted_frame_rate  f  received_frame_rate
     verify results  f  transmitted_frame_rate  e  received_frame_rate
     stop traffic  ${stream}
-    [Tags]  traffic  sanity  skipped     
+    [Tags]  traffic  sanity       
     
-S1 to S3: Verify Line Rate BiDirectional L2 traffic in Vlan Mode with frame size 1518 Bytes    
+S1 to S3:BiDirectional L2 traffic with frame size 1518 Bytes    
     ${stream}=  L2 add  flow=a<->c  frame_rate=75000  frame_size=1518  name=a_c_flow
     clear stats 
     start traffic  ${stream}
@@ -195,9 +195,9 @@ S1 to S3: Verify Line Rate BiDirectional L2 traffic in Vlan Mode with frame size
     verify results  a  transmitted_frame_rate  c  received_frame_rate
     verify results  c  transmitted_frame_rate  a  received_frame_rate
     stop traffic  ${stream}
-    [Tags]  traffic  sanity  skipped
+    [Tags]  traffic  sanity  
 
-S2 to S4: BiDirectional L2 traffic in Vlan Mode with frame size 1518 Bytes    
+S2 to S4:BiDirectional L2 traffic with frame size 1518 Bytes    
     ${stream}=  L2 add  flow=e<->f  frame_rate=75000  frame_size=1518  name=e_f_flow
     clear stats 
     start traffic  ${stream}
@@ -205,27 +205,27 @@ S2 to S4: BiDirectional L2 traffic in Vlan Mode with frame size 1518 Bytes
     verify results  e  transmitted_frame_rate  f  received_frame_rate
     verify results  f  transmitted_frame_rate  e  received_frame_rate
     stop traffic  ${stream}
-    [Tags]  traffic  sanity  skipped    
+    [Tags]  traffic  sanity      
 
-S1 to S3: BiDirectional L2 traffic in Vlan Mode with frame size 1522 Bytes    
+S1 to S3:BiDirectional L2 traffic with frame size 1522 Bytes    
     ${stream}=  L2 add  flow=a<->c  frame_rate=75000  frame_size=1522  name=a_c_flow
     start traffic  ${stream}
     sleep  10    
     verify results  a  transmitted_frame_rate  c  received_frame_rate
     verify results  c  transmitted_frame_rate  a  received_frame_rate
     stop traffic  ${stream}
-    [Tags]  traffic  sanity  skipped     
+    [Tags]  traffic  sanity       
 
-S2 to S4: BiDirectional L2 traffic in Vlan Mode with frame size 1522 Bytes    
+S2 to S4:BiDirectional L2 traffic with frame size 1522 Bytes    
     ${stream}=  L2 add  flow=e<->f  frame_rate=75000  frame_size=1522  name=e_f_flow
     start traffic  ${stream}
     sleep  10
     verify results  e  transmitted_frame_rate  f  received_frame_rate
     verify results  f  transmitted_frame_rate  e  received_frame_rate
     stop traffic  ${stream}
-    [Tags]  traffic  sanity  skipped                                  
+    [Tags]  traffic  sanity                                    
 
-S1 to S3: BiDirectional L2 traffic in Vlan Mode with frame size 2048 Bytes    
+S1 to S3:BiDirectional L2 traffic with frame size 2048 Bytes    
     ${stream}=  L2 add  flow=a<->c  frame_rate=50000  frame_size=2048  name=a_c_flow
     clear stats 
     start traffic  ${stream}
@@ -233,9 +233,9 @@ S1 to S3: BiDirectional L2 traffic in Vlan Mode with frame size 2048 Bytes
     verify results  a  transmitted_frame_rate  c  received_frame_rate
     verify results  c  transmitted_frame_rate  a  received_frame_rate
     stop traffic  ${stream}
-    [Tags]  traffic  sanity  skipped   
+    [Tags]  traffic  sanity     
 
-S2 to S4: BiDirectional L2 traffic in Vlan Mode with frame size 2048 Bytes    
+S2 to S4:BiDirectional L2 traffic with frame size 2048 Bytes    
     ${stream}=  L2 add  flow=e<->f  frame_rate=50000  frame_size=2048  name=e_f_flow
     clear stats 
     start traffic  ${stream}
@@ -243,9 +243,9 @@ S2 to S4: BiDirectional L2 traffic in Vlan Mode with frame size 2048 Bytes
     verify results  e  transmitted_frame_rate  f  received_frame_rate
     verify results  f  transmitted_frame_rate  e  received_frame_rate
     stop traffic  ${stream}
-    [Tags]  traffic  sanity  skipped
+    [Tags]  traffic  sanity  
 
-S1 to S3: BiDirectional L2 traffic in Vlan Mode with frame size 4096 Bytes    
+S1 to S3:BiDirectional L2 traffic with frame size 4096 Bytes    
     ${stream}=  L2 add  flow=a<->c  frame_rate=25000  frame_size=4096  name=a_c_flow
     clear stats 
     start traffic  ${stream}
@@ -253,9 +253,9 @@ S1 to S3: BiDirectional L2 traffic in Vlan Mode with frame size 4096 Bytes
     verify results  a  transmitted_frame_rate  c  received_frame_rate
     verify results  c  transmitted_frame_rate  a  received_frame_rate
     stop traffic  ${stream}
-    [Tags]  traffic  sanity  skipped
+    [Tags]  traffic  sanity  
 
-S2 to S4: BiDirectional L2 traffic in Vlan Mode with frame size 4096 Bytes    
+S2 to S4:BiDirectional L2 traffic with frame size 4096 Bytes    
     ${stream}=  L2 add  flow=e<->f  frame_rate=25000  frame_size=4096  name=e_f_flow
     clear stats 
     start traffic  ${stream}
@@ -263,9 +263,9 @@ S2 to S4: BiDirectional L2 traffic in Vlan Mode with frame size 4096 Bytes
     verify results  e  transmitted_frame_rate  f  received_frame_rate
     verify results  f  transmitted_frame_rate  e  received_frame_rate
     stop traffic  ${stream}
-    [Tags]  traffic  sanity  skipped  
+    [Tags]  traffic  sanity    
 
-S1 to S3: BiDirectional L2 traffic in Vlan Mode with frame size 8192 Bytes    
+S1 to S3:BiDirectional L2 traffic with frame size 8192 Bytes    
     ${stream}=  L2 add  flow=a<->c  frame_rate=10000  frame_size=8192  name=a_c_flow
     clear stats 
     start traffic  ${stream}
@@ -273,9 +273,9 @@ S1 to S3: BiDirectional L2 traffic in Vlan Mode with frame size 8192 Bytes
     verify results  a  transmitted_frame_rate  c  received_frame_rate
     verify results  c  transmitted_frame_rate  a  received_frame_rate
     stop traffic  ${stream}
-    [Tags]  traffic  sanity  skipped    
+    [Tags]  traffic  sanity      
      
-S2 to S4: BiDirectional L2 traffic in Vlan Mode with frame size 8192 Bytes    
+S2 to S4:BiDirectional L2 traffic with frame size 8192 Bytes    
     ${stream}=  L2 add  flow=e<->f  frame_rate=10000  frame_size=8192  name=e_f_flow
     clear stats 
     start traffic  ${stream}
@@ -283,9 +283,9 @@ S2 to S4: BiDirectional L2 traffic in Vlan Mode with frame size 8192 Bytes
     verify results  e  transmitted_frame_rate  f  received_frame_rate
     verify results  f  transmitted_frame_rate  e  received_frame_rate
     stop traffic  ${stream}
-    [Tags]  traffic  sanity  skipped   
+    [Tags]  traffic  sanity     
 
-S1 to S3: Bursty BiDirectional L2 traffic in Vlan Mode with frame size 64 Bytes:     
+S1 to S3:Bursty BiDirectional L2 traffic with frame size 64 Bytes:     
     ${stream}=  L2 add  flow=a<->c  frame_rate=10000  frame_size=64  name=a_c_flow
     clear stats 
     :FOR  ${INDEX}  IN RANGE  1  10
@@ -296,9 +296,9 @@ S1 to S3: Bursty BiDirectional L2 traffic in Vlan Mode with frame size 64 Bytes:
     \  verify results  c  transmitted_frame_rate  a  received_frame_rate
     \  stop traffic  ${stream}
     \  sleep  10
-    [Tags]  traffic  sanity  skipped    
+    [Tags]  traffic  sanity      
 
-S2 to S4: Bursty BiDirectional L2 traffic in Vlan Mode with frame size 64 Bytes:     
+S2 to S4:Bursty BiDirectional L2 traffic with frame size 64 Bytes:     
     ${stream}=  L2 add  flow=e<->f  frame_rate=10000  frame_size=64  name=e_f_flow
     clear stats 
     :FOR  ${INDEX}  IN RANGE  1  10
@@ -309,27 +309,27 @@ S2 to S4: Bursty BiDirectional L2 traffic in Vlan Mode with frame size 64 Bytes:
     \  verify results  f  transmitted_frame_rate  e  received_frame_rate
     \  stop traffic  ${stream}
     \  sleep  10
-    [Tags]  traffic  sanity  skipped 
+    [Tags]  traffic  sanity   
 
-S1 to S3: L2 broadcast traffic in Vlan Mode
+S1 to S3: L2 broadcast traffic
     ${stream}=  L2 add  flow=c->a  frame_rate=10000  frame_size=64  src_mac=00:01:02:03:04:05  dst_mac=FF:FF:FF:FF:FF:FF
     clear stats 
     start traffic  ${stream}
     sleep  10
     verify results  c  transmitted_frame_rate  a  received_frame_rate
     stop traffic  ${stream}
-    [Tags]  traffic  sanity  skipped  
+    [Tags]  traffic  sanity    
 
-S2 to S4: L2 broadcast traffic in Vlan Mode
+S2 to S4: L2 broadcast traffic
     ${stream}=  L2 add  flow=e->f  frame_rate=10000  frame_size=64  src_mac=00:01:02:03:04:05  dst_mac=FF:FF:FF:FF:FF:FF
     clear stats 
     start traffic  ${stream}
     sleep  10
     verify results  e  transmitted_frame_rate  f  received_frame_rate
     stop traffic  ${stream}
-    [Tags]  traffic  sanity  skipped
+    [Tags]  traffic  sanity  
 
-S1 to S3: BiDirectional L3 IP traffic in Vlan Mode: frame size 64 bytes
+S1 to S3:BiDirectional L3 IP traffic: frame size 64 bytes
     ${stream}=  L3 add  flow=a<->c  frame_rate=10000  frame_size=64
     ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07
     ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  name=a_c_flow
@@ -340,9 +340,9 @@ S1 to S3: BiDirectional L3 IP traffic in Vlan Mode: frame size 64 bytes
     verify results  a  transmitted_frame_rate  c  received_valid_frame_rate
     verify results  c  transmitted_frame_rate  a  received_valid_frame_rate    
     stop traffic  ${stream}
-    [Tags]  traffic  sanity  skipped
+    [Tags]  traffic  sanity  
 
-S2 to S4: BiDirectional L3 IP traffic in Vlan Mode: frame size 64 bytes
+S2 to S4:BiDirectional L3 IP traffic: frame size 64 bytes
     ${stream}=  L3 add  flow=e<->f  frame_rate=10000  frame_size=64
     ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07
     ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  name=e_f_flow
@@ -353,10 +353,10 @@ S2 to S4: BiDirectional L3 IP traffic in Vlan Mode: frame size 64 bytes
     verify results  e  transmitted_frame_rate  f  received_valid_frame_rate
     verify results  f  transmitted_frame_rate  e  received_valid_frame_rate    
     stop traffic  ${stream}
-    [Tags]  traffic  sanity  skipped
+    [Tags]  traffic  sanity  
 
     
-S1 to S2: BiDirectional L3 TCP traffic in Vlan Mode: frame size 64 bytes
+S1 to S2:BiDirectional L3 TCP traffic: frame size 64 bytes
     ${stream}=  L3 add  flow=a<->c  frame_rate=10000  frame_size=1518
     ...     src_mac=00:01:02:03:04:01  dst_mac=00:01:02:03:04:02  protocol=TCP  src_port=8001  dst_port=8002
     ...     src_ip=100.1.1.1  src_gw=100.1.1.2  dst_ip=100.1.1.2  dst_gw=100.1.1.1  name=a_c_flow
@@ -365,9 +365,9 @@ S1 to S2: BiDirectional L3 TCP traffic in Vlan Mode: frame size 64 bytes
     verify results  a  transmitted_frame_rate  c  received_valid_frame_rate
     verify results  c  transmitted_frame_rate  a  received_valid_frame_rate    
     stop traffic  ${stream}
-    [Tags]  traffic  sanity  skipped
+    [Tags]  traffic  sanity  
 
-S2 to S4:BiDirectional L3 TCP traffic in Vlan Mode: frame size 64 bytes
+S2 to S4:BiDirectional L3 TCP traffic: frame size 64 bytes
     ${stream}=  L3 add  flow=e<->f  frame_rate=10000  frame_size=1518
     ...     src_mac=00:01:02:03:04:01  dst_mac=00:01:02:03:04:02  protocol=TCP  src_port=8001  dst_port=8002
     ...     src_ip=100.1.1.1  src_gw=100.1.1.2  dst_ip=100.1.1.2  dst_gw=100.1.1.1  name=e_f_flow
@@ -376,9 +376,9 @@ S2 to S4:BiDirectional L3 TCP traffic in Vlan Mode: frame size 64 bytes
     verify results  e  transmitted_frame_rate  f  received_valid_frame_rate
     verify results  f  transmitted_frame_rate  e  received_valid_frame_rate    
     stop traffic  ${stream}
-    [Tags]  traffic  sanity  skipped    
+    [Tags]  traffic  sanity      
 
-S1 to S3:BiDirectional L3 UDP traffic in Vlan Mode: frame size 64 bytes
+S1 to S3:BiDirectional L3 UDP traffic: frame size 64 bytes
     ${stream}=  L3 add  flow=a<->c  frame_rate=10000  frame_size=1518
     ...     src_mac=00:01:02:03:04:01  dst_mac=00:01:02:03:04:02  protocol=UDP  src_port=1234  dst_port=53
     ...     src_ip=100.1.1.1  src_gw=100.1.1.2  dst_ip=100.1.1.2  dst_gw=100.1.1.1  name=a_c_flow
@@ -387,9 +387,9 @@ S1 to S3:BiDirectional L3 UDP traffic in Vlan Mode: frame size 64 bytes
     verify results  a  transmitted_frame_rate  c  received_valid_frame_rate
     verify results  c  transmitted_frame_rate  a  received_valid_frame_rate    
     stop traffic  ${stream}
-    [Tags]  traffic  sanity  skipped
+    [Tags]  traffic  sanity  
 
-S2 to S4:BiDirectional L3 UDP traffic in Vlan Mode: frame size 64 bytes
+S2 to S4:BiDirectional L3 UDP traffic: frame size 64 bytes
     ${stream}=  L3 add  flow=e<->f  frame_rate=10000  frame_size=1518
     ...     src_mac=00:01:02:03:04:01  dst_mac=00:01:02:03:04:02  protocol=UDP  src_port=1234  dst_port=53
     ...     src_ip=100.1.1.1  src_gw=100.1.1.2  dst_ip=100.1.1.2  dst_gw=100.1.1.1  name=e_f_flow
@@ -398,9 +398,9 @@ S2 to S4:BiDirectional L3 UDP traffic in Vlan Mode: frame size 64 bytes
     verify results  e  transmitted_frame_rate  f  received_valid_frame_rate
     verify results  f  transmitted_frame_rate  e  received_valid_frame_rate    
     stop traffic  ${stream}
-    [Tags]  traffic  sanity  skipped
+    [Tags]  traffic  sanity  
 
-S1 to S3:BiDirectional L3 ICMP traffic in Vlan Mode: frame size 64 bytes
+S1 to S3:BiDirectional L3 ICMP traffic: frame size 64 bytes
     ${stream}=  L3 add  flow=a<->c  frame_rate=10000  frame_size=1518
     ...     src_mac=00:01:02:03:04:01  dst_mac=00:01:02:03:04:02  protocol=ICMP  icmp_type=8  icmp_code=0
     ...     src_ip=100.1.1.1  src_gw=100.1.1.2  dst_ip=100.1.1.2  dst_gw=100.1.1.1  name=a_c_flow
@@ -409,9 +409,9 @@ S1 to S3:BiDirectional L3 ICMP traffic in Vlan Mode: frame size 64 bytes
     verify results  a  transmitted_frame_rate  c  received_valid_frame_rate
     verify results  c  transmitted_frame_rate  a  received_valid_frame_rate    
     stop traffic  ${stream}
-    [Tags]  traffic  sanity  skipped
+    [Tags]  traffic  sanity  
 
-S2 to S4:BiDirectional L3 ICMP traffic in Vlan Mode: frame size 64 bytes
+S2 to S4:BiDirectional L3 ICMP traffic: frame size 64 bytes
     ${stream}=  L3 add  flow=e<->f  frame_rate=10000  frame_size=1518
     ...     src_mac=00:01:02:03:04:01  dst_mac=00:01:02:03:04:02  protocol=ICMP  icmp_type=8  icmp_code=0
     ...     src_ip=100.1.1.1  src_gw=100.1.1.2  dst_ip=100.1.1.2  dst_gw=100.1.1.1  name=e_f_flow
@@ -420,9 +420,9 @@ S2 to S4:BiDirectional L3 ICMP traffic in Vlan Mode: frame size 64 bytes
     verify results  e  transmitted_frame_rate  f  received_valid_frame_rate
     verify results  f  transmitted_frame_rate  e  received_valid_frame_rate    
     stop traffic  ${stream}
-    [Tags]  traffic  sanity  skipped        
+    [Tags]  traffic  sanity          
     
-Configure LACP and verify end to end traffic in Vlan Mode
+Configure LACP and verify end to end traffic
     cli arista add portchannel  s5  10  9  pc_mode=active
     cli arista add portchannel  s6  10  9  pc_mode=active
     cli arista add vlan  s5  100  V100  ethernet1
@@ -448,9 +448,9 @@ Configure LACP and verify end to end traffic in Vlan Mode
     cli arista delete vlan  s5  100  V100  port-channel10        
     cli arista delete vlan  s6  100  V100  ethernet1
     cli arista delete vlan  s6  100  V100  port-channel10             
-    [Tags]  traffic  sanity  skipped
+    [Tags]  traffic  sanity  
 
-Configure Static LAG and verify end to end traffic in Vlan Mode
+Configure Static LAG and verify end to end traffic
     cli arista add portchannel  s5  10  9  pc_mode=on
     cli arista add portchannel  s6  10  9  pc_mode=on
     cli arista add vlan  s5  100  V100  ethernet1
@@ -476,7 +476,7 @@ Configure Static LAG and verify end to end traffic in Vlan Mode
     cli arista delete vlan  s5  100  V100  port-channel10        
     cli arista delete vlan  s6  100  V100  ethernet1
     cli arista delete vlan  s6  100  V100  port-channel10               
-    [Tags]  traffic  sanity  skipped
+    [Tags]  traffic  sanity  
 
 Configure RSTP and verify
     rest add bigwire tenant  dc1dc3-1
@@ -540,7 +540,7 @@ Delete and re-store datacenter configuration. Verify that traffic is re-establis
     verify results  a  transmitted_frame_rate  c  received_frame_rate
     verify results  c  transmitted_frame_rate  a  received_frame_rate
     stop traffic  ${stream}
-    [Tags]  traffic  sanity  skipped
+    [Tags]  traffic  sanity  
 
 Verify two different tenants can configure same Vlan.
     rest add bigwire tenant  ${tenant1-2}
@@ -553,7 +553,7 @@ Verify two different tenants can configure same Vlan.
     sleep  3
     rest delete tenant  ${tenant1-2}
     sleep  3
-    [Tags]  traffic  sanity  skipped
+    [Tags]  traffic  sanity  
 
 Flap link between BW1 and core network, verify traffic recovers
     ${stream}=  L2 add  flow=a<->c  frame_rate=1000000  frame_size=64  name=a_c_flow
@@ -569,7 +569,7 @@ Flap link between BW1 and core network, verify traffic recovers
     verify results  a  transmitted_frame_rate  c  received_frame_rate
     verify results  c  transmitted_frame_rate  a  received_frame_rate    
     stop traffic  ${stream}
-    [Tags]  traffic  sanity  skipped     
+    [Tags]  traffic  sanity       
 
 
 Flap link between BW3 and core network, verify traffic recovers
@@ -586,7 +586,7 @@ Flap link between BW3 and core network, verify traffic recovers
     verify results  a  transmitted_frame_rate  c  received_frame_rate
     verify results  c  transmitted_frame_rate  a  received_frame_rate    
     stop traffic  ${stream}
-    [Tags]  traffic  sanity  skipped
+    [Tags]  traffic  sanity  
 
 Flap link between BW1 and top of rack switch, verify traffic recovers
     ${stream}=  L2 add  flow=a<->c  frame_rate=1000000  frame_size=64  name=a_c_flow
@@ -602,7 +602,7 @@ Flap link between BW1 and top of rack switch, verify traffic recovers
     verify results  a  transmitted_frame_rate  c  received_frame_rate
     verify results  c  transmitted_frame_rate  a  received_frame_rate    
     stop traffic  ${stream}
-    [Tags]  traffic  sanity  skipped     
+    [Tags]  traffic  sanity       
 
 Flap link between BW3 and top of rack switch, verify traffic recovers
     ${stream}=  L2 add  flow=a<->c  frame_rate=1000000  frame_size=64  name=a_c_flow
@@ -618,7 +618,7 @@ Flap link between BW3 and top of rack switch, verify traffic recovers
     verify results  a  transmitted_frame_rate  c  received_frame_rate
     verify results  c  transmitted_frame_rate  a  received_frame_rate    
     stop traffic  ${stream}
-    [Tags]  traffic  sanity  skipped
+    [Tags]  traffic  sanity  
 
 
 Restart OFAD on BW1 and verify traffic recovers
@@ -633,7 +633,7 @@ Restart OFAD on BW1 and verify traffic recovers
     verify results  a  transmitted_frame_rate  c  received_frame_rate
     verify results  c  transmitted_frame_rate  a  received_frame_rate    
     stop traffic  ${stream}
-    [Tags]  traffic  sanity  skipped     
+    [Tags]  traffic  sanity  skipped       
 
 Restart OFAD on BW2 and verify traffic recovers
     ${stream}=  L2 add  flow=e<->f  frame_rate=1000000  frame_size=64  name=e_f_flow
@@ -647,7 +647,7 @@ Restart OFAD on BW2 and verify traffic recovers
     verify results  e  transmitted_frame_rate  f  received_frame_rate
     verify results  f  transmitted_frame_rate  e  received_frame_rate    
     stop traffic  ${stream}
-    [Tags]  traffic  sanity  skipped   
+    [Tags]  traffic  sanity  skipped     
     
 Reboot BW1 and verify traffic recovers
     ${stream}=  L2 add  flow=a<->c  frame_rate=1000000  frame_size=64  name=a_c_flow
@@ -709,16 +709,15 @@ add bigwire configuration
     rest add switch datacenter  s3  ${datacenter2}  ${zone1}
     rest add switch datacenter  s4  ${datacenter2}  ${zone2}  
     # add Pseudowires
-    rest add bigwire pseudowire  ${pseudowire1}  s1  ethernet5  s3  ethernet5  100
-    rest add bigwire pseudowire  ${pseudowire2}  s2  ethernet9  s4  ethernet9  100         
+    rest add bigwire pseudowire  ${pseudowire1}  s1  ${s1_pseudowire_interface_1}  s3  ${s3_pseudowire_interface_1}  100
+    rest add bigwire pseudowire  ${pseudowire2}  s2  ${s2_pseudowire_interface_1}  s4  ${s4_pseudowire_interface_1}  100         
     #add Tenants
     rest add bigwire tenant  ${tenant1}
     rest add switch to tenant  s1  ${tenant1}  ${s1_tenant_interface_1}  200  
     rest add switch to tenant  s3  ${tenant1}  ${s3_tenant_interface_1}  200
     rest add bigwire tenant  ${tenant2}
     rest add switch to tenant  s2  ${tenant2}  ${s2_tenant_interface_1}  
-    rest add switch to tenant  s4  ${tenant2}  ${s4_tenant_interface_1}    
-        
+    rest add switch to tenant  s4  ${tenant2}  ${s4_tenant_interface_1}          
     sleep  20
     
 delete bigwire configuration
