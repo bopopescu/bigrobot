@@ -412,22 +412,15 @@ Verify Duplicate ARP broadcast on Edge Port groups
     rest add interface to portgroup  leaf2-b  ${h5_intf1}  p5
     rest add portgroup lacp  p5
     rest add portgroup to vns  t1  v1  p5  -1
-    ${stream}=             L3 add  no_arp=True  flow=a->e  src_mac=00:02:01:00:00:24  dst_mac=ff:ff:ff:ff:ff:ff   frame_cnt=500  frame_size=68  name=a_e_flow
-    start traffic  ${stream}
-    sleep  3
-    stop traffic  ${stream}
-    clear stats
-    sleep  3
+    ${stream}=             L3 add  no_arp=True  flow=a->e  src_mac=00:02:01:00:00:24  dst_mac=ff:ff:ff:ff:ff:ff   frame_rate=100  frame_size=68  name=a_e_flow
     start traffic  ${stream}
     sleep  10  
-    verify traffic packet  tx_cnt  rx_cnt  a  e
-    verify switch interface stats  leaf2-a  ${h5_intf0}  
-    verify switch interface stats  leaf2-b  ${h5_intf1}
+    verify traffic rate  tx_rate  rx_rate  a  e
+    verify port group switch interface stats  leaf2-a  leaf2-b  ${h5_intf0}  ${h5_intf1}  
     rest delete tenant  t1
     sleep  5    
 
 Verify Duplicate Multicast packets on edge port groups  
-	[Tags]  feature
 	[Tags]  feature
 	rest add tenant  t1
 	rest add vns  t1  v1
@@ -438,17 +431,11 @@ Verify Duplicate Multicast packets on edge port groups
     rest add interface to portgroup  leaf2-b  ${h5_intf1}  p5
     rest add portgroup lacp  p5
     rest add portgroup to vns  t1  v1  p5  -1
-    ${stream}=             L3 add  no_arp=True  flow=a->e  src_mac=00:02:01:00:00:24  dst_mac=01:00:5e:00:00:12   frame_cnt=500  frame_size=68  name=a_e_flow
-    start traffic  ${stream}
-    sleep  3
-    stop traffic  ${stream}
-    clear stats
-    sleep  3
+    ${stream}=             L3 add  no_arp=True  flow=a->e  src_mac=00:02:01:00:00:24  dst_mac=01:00:5e:00:00:12   frame_rate=100  frame_size=68  name=a_e_flow
     start traffic  ${stream}
     sleep  10  
-    verify traffic packet  tx_cnt  rx_cnt  a  e
-    verify switch interface stats  leaf2-a  ${h5_intf0}  
-    verify switch interface stats  leaf2-b  ${h5_intf1}
+    verify traffic rate  tx_rate  rx_rate  a  e
+    verify port group switch interface stats  leaf2-a  leaf2-b  ${h5_intf0}  ${h5_intf1} 
     rest delete tenant  t1
     sleep  5    
 
@@ -456,6 +443,7 @@ Tear down config and topology
     delete fabric switch
     rest delete portgroup  p1
     rest delete portgroup  p2
+    rest delete portgroup  p5
     rest delete tenant  t1
     base suite teardown
  
@@ -487,15 +475,20 @@ verify traffic packet  [Arguments]  ${tx_cnt}  ${rx_cnt}  ${tx_intf}  ${rx_intf}
     ${rx_value}=  verify dict key  ${report}  ${rx_intf}  received_valid_frames
     Should Be True  ${tx_value} == {rx_value}
 
-verify switch interface stats  [Arguments]  ${switch}  ${intf}
+verify port group switch interface stats  [Arguments]  ${switch}  ${switch1}  ${intf}  ${intf1}
 	${report}=  cli show interface statistics  ${switch}  ${intf}
 	${tx_pkts_1}=  Get from Dictionary  ${report}  sent_packets
-	Sleep  1
+	sleep  1
 	${report}=  cli show interface statistics  ${switch}  ${intf}
 	${tx_pkts_2}=  Get from Dictionary  ${report}  sent_packets
 	${count}=  Evaluate  ${tx_pkts_2} - ${tx_pkts_1}
-	${result}=  Evaluate  0 < ${count} < 1001
-	Should be True  ${result}
+	${report}=  cli show interface statistics  ${switch1}  ${intf1}
+	${tx_pkts_3}=  Get from Dictionary  ${report}  sent_packets
+	sleep  1
+	${report}=  cli show interface statistics  ${switch1}  ${intf1}
+	${tx_pkts_4}=  Get from Dictionary  ${report}  sent_packets
+	${count1}=  Evaluate  ${tx_pkts_4} - ${tx_pkts_3}
+	verify switch sent pkt stats  ${count}  ${count1}  
 	
 T5 test teardown
 	delete traffic
