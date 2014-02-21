@@ -847,5 +847,15 @@ class T5(object):
                     helpers.log("Pass: Expected mac is present in the forwarding table with correct vlan and interface")
                     return True
                  
-        return False    
+        return False
+    
+    def verify_switch_sent_pkt_stats(self, count, count1):
+        count = int(count)
+        count1 = int(count1)
+        if (count >= 95 and count1 < 5) or (count1 >= 95 and count < 5):
+            helpers.log("Pass:Traffic forwarded only one port in edge port group")
+            return True
+        else:
+            helpers.test_failure("Fail:Traffic forwarded on both edge port group members")
+            return False    
 
