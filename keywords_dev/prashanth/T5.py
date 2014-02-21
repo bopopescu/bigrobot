@@ -125,13 +125,14 @@ class T5(object):
     
             return c.rest.content()
     
-    def rest_add_vns_scale(self, tenant, count=1):
+    def rest_add_vns_scale(self, tenant, count):
         t = test.Test()
         c = t.controller()
+        count = int(count)
         i = 1
-        vns = "v"
-        while i <= count:
-            vns = str(i)
+        while (i <= count):
+            vns = "v"
+            vns+=str(i)
             url = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]' % (c.base_url, tenant, vns)
             try:
                 c.rest.put(url, {"name": vns})
@@ -140,7 +141,7 @@ class T5(object):
             else:
                     if not c.rest.status_code_ok():
                         helpers.test_failure(c.rest.error())
-            return c.rest.content()
+            i = i + 1
     
     def rest_delete_vns(self, tenant, vns=None):
         t = test.Test()
