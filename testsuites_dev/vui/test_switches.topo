@@ -1,0 +1,12 @@
+c1:
+  ip: 10.192.96.1
+#c2:
+#  ip: 10.192.96.2
+s1:                   # switchlight
+  ip: 10.192.88.80
+s2:                   # arista
+  ip: 10.192.81.116
+  user: admin
+  password: arastra
+#s3:                   # switchlight
+#  ip: 10.192.88.81

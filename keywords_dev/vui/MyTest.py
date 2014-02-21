@@ -344,3 +344,9 @@ admin_user = glance
         c_new.enable("show running-config")
         helpers.log("*** user:%s, password:%s" % (c_new.user(), c_new.password()))
         c_new.rest.get('/api/v1/data/controller/core/aaa/local-user')
+
+    def return_dict(self):
+        return {'abc': 123, 'xyz': 456}
+
+    def return_list(self):
+        return [1, 2, 3, 4, 5]
