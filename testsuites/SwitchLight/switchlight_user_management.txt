@@ -9,140 +9,140 @@ Library  keywords/BsnCommon.py
 Library  keywords/SwitchLight.py
 
 * Variable
-${switchlight_version}  SwitchLight 2.0.0
+${switchlight_version}  Software Image Version: SwitchLight  
 ${netmask}  18
 ${gateway}  10.192.64.1
 ${dns_server}  10.192.3.1
 ${dns_domain}  bigswitch.com
 
 *Test Case
- Verify username admin can have all lower-case alphabet password
+Verify username admin can have all lower-case alphabet password
     verify password change  s1  clientclient
-    [Tags]  sanity  platform      
+    [Tags]  sanity  platform    
 
 Verify username admin can have all upper-case alphabet password
     verify password change  s1  CLIENTCLIENT
-    [Tags]  sanity  platform          
+    [Tags]  sanity  platform            
      
 Verify username admin can have a mix of lower-case and upper-case alphabet password
     verify password change  s1  cLiEnTcLiEnT 
-    [Tags]  sanity  platform      
+    [Tags]  sanity  platform        
 
 Verify username admin can have a numeric password
     verify password change  s1  1234567890
-    [Tags]  sanity  platform      
+    [Tags]  sanity  platform        
     
 Verify username admin can have a alphanumeric (alphabet all small) password
     verify password change  s1  bsn1234
-    [Tags]  sanity  platform      
+    [Tags]  sanity  platform        
     
 Verify username admin can have a alphanumeric (alphabet all caps) password
     verify password change  s1  BSN1234
-    [Tags]  sanity  platform      
+    [Tags]  sanity  platform        
 
 Verify username admin can have a alphanumeric password with a !
     verify password change  s1  bSn1234!
-    [Tags]  sanity  platform      
+    [Tags]  sanity  platform        
 
 Verify username admin can have a alphanumeric password with a @
     verify password change  s1  bSn1234@
-    [Tags]  sanity  platform      
+    [Tags]  sanity  platform        
 
 Verify username admin can have a alphanumeric password with a #
     verify password change  s1  bSn1234#
-    [Tags]  sanity  platform      
+    [Tags]  sanity  platform        
 
 Verify username admin can have a alphanumeric password with a $
     verify password change  s1  bSn1234$
-    [Tags]  sanity  platform      
+    [Tags]  sanity  platform        
 
 Verify username admin can have a alphanumeric password with a %
     verify password change  s1  bSn1234%
-    [Tags]  sanity  platform      
+    [Tags]  sanity  platform        
 
 Verify username admin can have a alphanumeric password with a ^
     verify password change  s1  bSn1234^    
-    [Tags]  sanity  platform      
+    [Tags]  sanity  platform        
 
 Verify username admin can have a alphanumeric password with a &
     verify password change  s1  bSn1234&
-    [Tags]  sanity  platform      
+    [Tags]  sanity  platform        
 
 Verify username admin can have a alphanumeric password with a *
     verify password change  s1  bSn1234*
-    [Tags]  sanity  platform      
+    [Tags]  sanity  platform        
 
 Verify username admin can have a alphanumeric password with a (
     verify password change  s1  bSn1234(
-    [Tags]  sanity  platform      
+    [Tags]  sanity  platform        
 
 Verify username admin can have a alphanumeric password with a )
     verify password change  s1  bSn1234)
-    [Tags]  sanity  platform      
+    [Tags]  sanity  platform        
 
 Verify username admin can have a alphanumeric password with a -
     verify password change  s1  bSn1234-
-    [Tags]  sanity  platform      
+    [Tags]  sanity  platform        
 
 Verify username admin can have a alphanumeric password with a _
     verify password change  s1  bSn1234_
-    [Tags]  sanity  platform      
+    [Tags]  sanity  platform        
 
 Verify username admin can have a alphanumeric password with a +
     verify password change  s1  bSn1234+
-    [Tags]  sanity  platform      
+    [Tags]  sanity  platform        
 
 Verify username admin can have a alphanumeric password with a }
     verify password change  s1  bSn1234}
-    [Tags]  sanity  platform      
+    [Tags]  sanity  platform        
 
 Verify username admin can have a alphanumeric password with a {
     verify password change  s1  bSn1234{
-    [Tags]  sanity  platform  
+    [Tags]  sanity  platform    
 
 Verify username admin can have a alphanumeric password with a [
     verify password change  s1  bSn1234[
-    [Tags]  sanity  platform      
+    [Tags]  sanity  platform        
 
 Verify username admin can have a alphanumeric password with a ]
     verify password change  s1  bSn1234]
-    [Tags]  sanity  platform      
+    [Tags]  sanity  platform        
 
 Verify username admin can have a alphanumeric password with a |
     verify password change  s1  bSn|1234
-    [Tags]  sanity  platform     
+    [Tags]  sanity  platform       
         
 Verify username admin can have a alphanumeric password with a \
     verify password change  s1  bSn\\1234 
-    [Tags]  sanity  platform      
+    [Tags]  sanity  platform        
         
 Verify username admin can have a alphanumeric password with a :
     verify password change  s1  bSn:1234
-    [Tags]  sanity  platform      
+    [Tags]  sanity  platform        
     
 Verify username admin can have a alphanumeric password with a ,
     verify password change  s1  bSn,1234
-    [Tags]  sanity  platform      
+    [Tags]  sanity  platform        
     
 Verify username admin can have a alphanumeric password with a .
     verify password change  s1  bSn.1234
-    [Tags]  sanity  platform         
+    [Tags]  sanity  platform           
     
 Verify username admin can have a alphanumeric password with a <
     verify password change  s1  bSn1234<
-    [Tags]  sanity  platform      
+    [Tags]  sanity  platform        
     
 Verify username admin can have a alphanumeric password with a /
     verify password change  s1  bSn1234/
-    [Tags]  sanity  platform      
+    [Tags]  sanity  platform        
 
 Verify username admin can have a alphanumeric password with a ~
     verify password change  s1  bSn1234~
-    [Tags]  sanity  platform   
+    [Tags]  sanity  platform     
     
 Verify username admin can have a alphanumeric password with a `
     verify password change  s1  bSn1234`
-    [Tags]  sanity  platform   
+    [Tags]  sanity  platform     
 
 Verify password change is persistent after process OFAD is restarted.
     cli change user password  s1  admin  adminadmin  bSn1234
@@ -150,7 +150,7 @@ Verify password change is persistent after process OFAD is restarted.
     ${verify_change}=  cli verify password change  s1  admin  bSn1234  ${switchlight_version}
     Set Global Variable  ${update_password}  bSn1234
     Should be True  ${verify_change}    
-    [Tags]  sanity  platform    
+    [Tags]  sanity  platform      
  
     
 * Keywords 
