@@ -81,6 +81,16 @@ class BsnCommon(object):
             helpers.test_failure("Fail:Traffic forward between 2 endpoints tx_rate:%d,rx_rate:%d" % (tx, rx))
             return False
 
+    def verify_switch_pkt_stats(self, count1, count2, range1=95, range2=5):
+        ''' Verify is value is within range
+        '''
+        if (count1 >= range1 and count2 < range2) or (count2 >= range1 and count1 < range2):
+            helpers.log("Pass: Value is in range")
+            return True
+        else:
+            helpers.test_failure("Fail:Value is not in range")
+            return False
+
     def params(self, *args, **kwargs):
         """
         Return the value for a params (topo) attribute.
