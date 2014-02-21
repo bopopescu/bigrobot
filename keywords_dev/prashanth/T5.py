@@ -125,6 +125,23 @@ class T5(object):
     
             return c.rest.content()
     
+    def rest_add_vns_scale(self, tenant, count=1):
+        t = test.Test()
+        c = t.controller()
+        i = 1
+        vns = "v"
+        while i <= count:
+            vns = str(i)
+            url = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]' % (c.base_url, tenant, vns)
+            try:
+                c.rest.put(url, {"name": vns})
+            except:
+                    helpers.test_failure(c.rest.error())
+            else:
+                    if not c.rest.status_code_ok():
+                        helpers.test_failure(c.rest.error())
+            return c.rest.content()
+    
     def rest_delete_vns(self, tenant, vns=None):
         t = test.Test()
         c = t.controller()
@@ -849,13 +866,5 @@ class T5(object):
                  
         return False
     
-    def verify_switch_sent_pkt_stats(self, count, count1):
-        count = int(count)
-        count1 = int(count1)
-        if (count >= 95 and count1 < 5) or (count1 >= 95 and count < 5):
-            helpers.log("Pass:Traffic forwarded only one port in edge port group")
-            return True
-        else:
-            helpers.test_failure("Fail:Traffic forwarded on both edge port group members")
-            return False    
+   
 

@@ -19,7 +19,7 @@ Resource         keywords_dev/prashanth/t5_physical_variables.txt
 
 *Test Case
 add Three Rack Dual Leaf Topology
-	[Tags]  feature    
+	[Tags]  feature        
 	base suite setup  
     add fabric switch
     sleep  5
@@ -120,7 +120,7 @@ Verify broadcast traffic forwarding on the lag
 	rest add interface to vns  t1  v1  leaf1-b  ${leaf1b_ixia_intf}  -1
 	rest add interface to vns  t1  v1  leaf2-b  ${leaf2b_ixia_intf}  -1
 	sleep  3  	
-    ${stream}=             L3 add  no_arp=True  flow=a->b  src_mac=00:02:01:00:00:24  dst_mac=ff:ff:ff:ff:ff:ff  ethertype=0800  frame_rate=1000  frame_size=68  name=a_b_flow
+    ${stream}=             L3 add  no_arp=True  flow=a->b  src_mac=00:02:01:00:00:24  dst_mac=ff:ff:ff:ff:ff:ff   frame_rate=1000  frame_size=68  name=a_b_flow
     start traffic  ${stream}  
     sleep  10
     verify traffic rate  tx_rate  rx_rate  a  b
@@ -139,7 +139,7 @@ Verify broadcast forwarding with spine link failover
 	rest add interface to vns  t1  v1  leaf1-b  ${leaf1b_ixia_intf}  -1
 	rest add interface to vns  t1  v1  leaf2-b  ${leaf2b_ixia_intf}  -1
 	sleep  3  	
-    ${stream}=             L3 add  no_arp=True  flow=a->b  src_mac=00:02:01:00:00:24  dst_mac=ff:ff:ff:ff:ff:ff  ethertype=0800  frame_rate=1000  frame_size=68  name=a_b_flow
+    ${stream}=             L3 add  no_arp=True  flow=a->b  src_mac=00:02:01:00:00:24  dst_mac=ff:ff:ff:ff:ff:ff   frame_rate=1000  frame_size=68  name=a_b_flow
     start traffic  ${stream}  
     sleep  10
     verify traffic rate  tx_rate  rx_rate  a  b
@@ -182,7 +182,7 @@ Verify broadcast forwarding with edge port link enable/disable
 	rest add interface to vns  t1  v1  leaf2-b  ${leaf2b_ixia_intf}  -1
 	sleep  3  
 	
-    ${stream}=             L3 add  no_arp=True  flow=a->b  src_mac=00:02:01:00:00:24  dst_mac=ff:ff:ff:ff:ff:ff  ethertype=0800  frame_rate=1000  frame_size=68  name=a_b_flow
+    ${stream}=             L3 add  no_arp=True  flow=a->b  src_mac=00:02:01:00:00:24  dst_mac=ff:ff:ff:ff:ff:ff  frame_rate=1000  frame_size=68  name=a_b_flow
     start traffic  ${stream}
     sleep  10
     verify traffic rate  tx_rate  rx_rate  a  b
@@ -291,7 +291,7 @@ verify unknown unicast forwarding on the lag
     sleep  5
 
 Verifying Duplicate packets for ARP broadcast over the fabric
-	[Tags]  feature
+	[Tags]  feature     
 	rest add tenant  t1
 	rest add vns  t1  v1
 	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  100
@@ -302,7 +302,6 @@ Verifying Duplicate packets for ARP broadcast over the fabric
     sleep  3
     stop traffic  ${stream}
     clear stats
-    sleep  3
     start traffic  ${stream}
     sleep  10  
     verify traffic packet  tx_cnt  rx_cnt  a  e
@@ -311,7 +310,7 @@ Verifying Duplicate packets for ARP broadcast over the fabric
     sleep  5    
 
 Verifying Duplicate packets for VRRP Multicast packets over the fabric
-	[Tags]  feature
+	[Tags]  feature      
 	rest add tenant  t1
 	rest add vns  t1  v1
 	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  100
@@ -322,7 +321,6 @@ Verifying Duplicate packets for VRRP Multicast packets over the fabric
     sleep  3
     stop traffic  ${stream}
     clear stats
-    sleep  3
     start traffic  ${stream}
     sleep  10  
     verify traffic packet  tx_cnt  rx_cnt  a  e
@@ -330,8 +328,8 @@ Verifying Duplicate packets for VRRP Multicast packets over the fabric
     rest delete tenant  t1 
     sleep  5   
 
-Verifying Duplicate packets for Non IP packets over the fabric
-	[Tags]  feature
+Verifying Duplicate packets for Non IP multicast packets over the fabric
+	[Tags]  feature    
 	rest add tenant  t1
 	rest add vns  t1  v1
 	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  100
@@ -342,7 +340,6 @@ Verifying Duplicate packets for Non IP packets over the fabric
     sleep  3
     stop traffic  ${stream}
     clear stats
-    sleep  2
     start traffic  ${stream}
     sleep  10  
     verify traffic packet  tx_cnt  rx_cnt  a  e
@@ -351,7 +348,7 @@ Verifying Duplicate packets for Non IP packets over the fabric
     sleep  5    
 
 Verify Duplicate ARP broadcast on Edge Port groups
-	[Tags]  feature  
+	[Tags]  feature    
 	rest add tenant  t1
 	rest add vns  t1  v1
 	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
@@ -375,7 +372,7 @@ Verify Duplicate ARP broadcast on Edge Port groups
     sleep  5    
 
 Verify Duplicate Multicast packets on edge port groups  
-	[Tags]  feature  
+	[Tags]  feature    
 	rest add tenant  t1
 	rest add vns  t1  v1
 	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
@@ -399,7 +396,7 @@ Verify Duplicate Multicast packets on edge port groups
     sleep  5    
 
 Tear down config and topology
-	[Tags]  feature    
+	[Tags]  feature         
     delete fabric switch  
     rest delete portgroup  p1
     rest delete portgroup  p2
@@ -434,7 +431,7 @@ verify traffic packet  [Arguments]  ${tx_cnt}  ${rx_cnt}  ${tx_intf}  ${rx_intf}
     ${tx_value}=  verify dict key  ${report}  ${tx_intf}  transmitted_frames
     ${rx_value}=  verify dict key  ${report}  ${rx_intf}  received_valid_frames
     ${result}=  Evaluate  ${tx_value} - ${rx_value}
-    Should Be True  ${result} == -1
+    Should Be True   -4 < ${result} < 1 
 
 verify port group switch interface stats  [Arguments]  ${switch}  ${switch1}  ${intf}  ${intf1}
 	${report}=  cli show interface statistics  ${switch}  ${intf}
@@ -449,7 +446,7 @@ verify port group switch interface stats  [Arguments]  ${switch}  ${switch1}  ${
 	${report}=  cli show interface statistics  ${switch1}  ${intf1}
 	${tx_pkts_4}=  Get from Dictionary  ${report}  sent_packets
 	${count1}=  Evaluate  ${tx_pkts_4} - ${tx_pkts_3}
-	verify switch sent pkt stats  ${count}  ${count1}  
+	verify switch pkt stats  ${count}  ${count1}  
 	
 T5 test teardown
 	delete traffic
