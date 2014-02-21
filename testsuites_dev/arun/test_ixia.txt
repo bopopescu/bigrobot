@@ -291,4 +291,4 @@ Bi-Directional L3 Traffic ICMP Echo
     ${report}=             fetch port stats
     Log                    Report is ${report}
     delete traffic
-    [Tags]  traffic  sanity  run
+    [Tags]  traffic  sanity

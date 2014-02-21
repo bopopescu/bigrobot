@@ -25,8 +25,17 @@ class Ixia(object):
         self._started_hosts = False
         self._ip_devices = {}
         self._arp_check = True
+        # Connect to IXIA Chassis and IXIA TCL Server
+        self._handle = self.ix_connect()
         if clear_ownership:
-            pass
+            for key, port in self._port_map_list.iteritems():
+                root = self._handle.getRoot()
+                hardware = self._handle.getList(root, 'availableHardware')
+                chassis = self._handle.getList(hardware[0], 'chassis')
+                ix_card = self._handle.getList(chassis[0], 'card')[int(port[1]) - 1]
+                ix_port = self._handle.getList(ix_card, 'port')[int(port[2]) -1]
+                self._handle.execute('clearOwnership', ix_port)
+                helpers.log('Success CLearing OwnerShip of Port %s !!' % key)
 
     def port_map_list(self, ports):
         # something happens here
@@ -38,12 +47,18 @@ class Ixia(object):
         return port_map_list
 
     def ix_connect(self):
-        self._handle = IxNetwork.IxNet()
-        self._handle.connect(self._tcl_server_ip, '-port', self._tcl_server_port,
+        handle = IxNetwork.IxNet()
+        # Connect to TCL Server
+        handle.connect(self._tcl_server_ip, '-port', self._tcl_server_port,
                         '-version', self._ix_version)
         # ## clear the configuration
-        asyncHandle = self._handle.setAsync().execute('newConfig')
-        self._handle.wait(asyncHandle)
+        asyncHandle = handle.setAsync().execute('newConfig')
+        handle.wait(asyncHandle)
+        # Connect to IXIA Chassis
+        chassis = handle.add(handle.getRoot() + 'availableHardware', 'chassis', '-hostname', self._chassis_ip)
+        handle.commit()
+        chassis = handle.remapIds(chassis)[0]
+        return handle
 
     def ix_create_vports(self):
         '''
@@ -66,9 +81,10 @@ class Ixia(object):
         '''
             Returns True or False after adding vports to given Physical IXIA ports
         '''
-        chassis = self._handle.add(self._handle.getRoot() + 'availableHardware', 'chassis', '-hostname', self._chassis_ip)
-        self._handle.commit()
-        chassis = self._handle.remapIds(chassis)[0]
+        root = self._handle.getRoot()
+        hardware = self._handle.getList(root, 'availableHardware')
+        chassis = self._handle.getList(hardware[0], 'chassis')[0]
+        
         for (ixport, vport) in zip(self._port_map_list.values(), self._vports):
             card = str(ixport[1])
             port = str(ixport[2])
