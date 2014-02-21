@@ -5,7 +5,7 @@ Documentation    Fabric Failover Test using Three Rack Dual Spine
 Suite Setup      base suite setup
 Suite Teardown   base suite teardown
 Test Setup       base test setup
-Test Teardown    base test teardown
+Test Teardown    T5 test teardown
 Force Tags       T5 
 Library          keywords/BsnCommon.py
 Library          keywords_dev/prashanth/T5.py
@@ -15,47 +15,7 @@ Library			 keywords/SwitchLight.py
 Library			 keywords/Ixia.py
 Library			 keywords/Host.py
 Resource         keywords_dev/prashanth/t5_dualleaf_three_rack_physical_resource.txt
-
-*Variables
-${leaf0a_spine0_intf0}	ethernet33
-${leaf0a_leaf0b_intf0}	ethernet39
-${leaf0a_spine1_intf0}	ethernet32
-${leaf0a_ixia_intf}		ethernet24
-${leaf0b_ixia_intf}		ethernet24
-${leaf1a_ixia_intf}		ethernet24
-${leaf1b_ixia_intf}		ethernet24
-${leaf1a_leaf1b_intf0}	ethernet39
-${leaf1a_leaf1b_intf1}	ethernet40
-${leaf2a_ixia_intf}		ethernet24
-${leaf2b_ixia_intf}		ethernet24
-${leaf2a_spine0_intf}	ethernet31
-${leaf2a_spine1_intf}	ethernet32
-${h4_ip}  192.168.0.11
-${h5_ip}  192.168.0.30
-${h6_ip}  192.168.0.31
-${h4_mac}	00:10:18:f0:e9:70
-${h5_mac}	90:e2:ba:4f:80:dc
-${h6_mac}	90:e2:ba:4e:bb:90
-${h1_intf0}  ethernet48
-${h1_intf1}  ethernet48
-${h2_intf0}  ethernet47
-${h2_intf1}  ethernet47
-${h3_intf0}  ethernet1
-${h3_intf1}  ethernet1
-${h4_intf0}  ethernet2
-${h4_intf1}  ethernet2
-${h5_intf0}  ethernet48
-${h5_intf1}  ethernet48
-${h6_intf0}  ethernet47
-${h6_intf1}  ethernet47
-${h1_tag_ip}	192.168.4.20
-${h2_tag_ip}	192.168.4.21
-${h3_tag_ip}	192.168.4.10
-${h1_tag_mac}  90:e2:ba:4e:bc:98
-${h2_tag_mac}  90:e2:ba:4f:80:b1
-${h3_tag_mac}  00:10:18:f0:eb:e0
-${leaf0b_spine0_intf0}	ethernet31
-${leaf0b_spine1_intf0}	ethernet32
+Resource         keywords_dev/prashanth/t5_physical_variables.txt
 
 *Test Case
 
@@ -72,9 +32,9 @@ Spine Link Failover/back Test from leaf0-a untagged packet(Using IXIA)
     rest add vns  t1  v1
     rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
     rest add interface to vns  t1  v1  leaf2-a  ${leaf2a_ixia_intf}  -1
-    IXIA initialize        tg1
-    ${stream}=             IXIA L2 add  flow=a<->e  src_mac=00:02:01:00:00:24  dst_mac=00:02:05:00:00:24  ethertype=0800  frame_rate=1000  frame_size=68  name=a_e_flow
-    IXIA start L2 traffic  ${stream}
+    
+    ${stream}=             L3 add  flow=a<->e  src_mac=00:02:01:00:00:24  dst_mac=00:02:05:00:00:24  ethertype=0800  frame_rate=1000  frame_size=68  name=a_e_flow
+    start traffic  ${stream}
     sleep  10
     verify traffic rate  tx_rate  rx_rate  a  e
     cli disable interface  s1  ${leaf0a_spine0_intf0}
@@ -89,19 +49,19 @@ Spine Link Failover/back Test from leaf0-a untagged packet(Using IXIA)
     cli enable interface  s1  ${leaf0a_spine1_intf0}
     sleep  5
     verify traffic rate  tx_rate  rx_rate  a  e 
-    IXIA stop L2 traffic  ${stream}
+    stop traffic  ${stream}
     sleep  5
     rest delete tenant  t1               
        
-Spine Link Failover/back test from leaf0-b tagged packet (Using IXIA)
+Spine Link Failover/back test from leaf0-b tagged packet 
 	[Tags]  feature   
 	rest add tenant  t2
     rest add vns  t2  v2
     rest add interface to vns  t2  v2  leaf0-b  ${leaf0b_ixia_intf}  100
     rest add interface to vns  t2  v2  leaf2-b  ${leaf2b_ixia_intf}  100
-    IXIA initialize        tg1
-    ${stream}=             IXIA L2 add  flow=b<->f  src_mac=00:02:02:00:00:24  dst_mac=00:02:06:00:00:24  ethertype=0800  frame_rate=1000  frame_size=68  name=b_f_flow
-    IXIA start L2 traffic  ${stream}
+    
+    ${stream}=             L3 add  flow=b<->f  src_mac=00:02:02:00:00:24  dst_mac=00:02:06:00:00:24  ethertype=0800  frame_rate=1000  frame_size=68  name=b_f_flow
+    start traffic  ${stream}
     sleep  10
     verify traffic rate  tx_rate  rx_rate  b  f
     cli disable interface  s2  ${leaf0b_spine0_intf0}
@@ -116,7 +76,7 @@ Spine Link Failover/back test from leaf0-b tagged packet (Using IXIA)
     cli enable interface  s2  ${leaf0b_spine1_intf0}
     sleep  5
     verify traffic rate  tx_rate  rx_rate  b  f 
-    IXIA stop L2 traffic  ${stream}
+    stop traffic  ${stream}
     sleep  5
     rest delete tenant  t2    
 
@@ -126,9 +86,9 @@ Peer link failover between leaf1a to leaf1b
     rest add vns  t2  v2
     rest add interface to vns  t2  v2  leaf1-a  ${leaf1a_ixia_intf}  -1
     rest add interface to vns  t2  v2  leaf1-b  ${leaf1b_ixia_intf}  -1
-    IXIA initialize        tg1
-    ${stream}=             IXIA L2 add  flow=c<->d  src_mac=00:02:03:00:00:24  dst_mac=00:02:04:00:00:24  ethertype=0800  frame_rate=1000  frame_size=68  name=c_d_flow
-    IXIA start L2 traffic  ${stream}
+    
+    ${stream}=             L3 add  flow=c<->d  src_mac=00:02:03:00:00:24  dst_mac=00:02:04:00:00:24  ethertype=0800  frame_rate=1000  frame_size=68  name=c_d_flow
+    start traffic  ${stream}
     sleep  10
     verify traffic rate  tx_rate  rx_rate  c  d
     cli disable interface  s3  ${leaf1a_leaf1b_intf0}
@@ -143,7 +103,7 @@ Peer link failover between leaf1a to leaf1b
     cli enable interface  s3  ${leaf1a_leaf1b_intf1}
     sleep  5
     verify traffic rate  tx_rate  rx_rate  c  d 
-    IXIA stop L2 traffic  ${stream}
+    stop traffic  ${stream}
     sleep  5
     rest delete tenant  t2 
 
@@ -153,9 +113,9 @@ Traffic Test between the 2 leaf with single peer link
     rest add vns  t2  v2
     rest add interface to vns  t2  v2  leaf0-a  ${leaf0a_ixia_intf}  -1
     rest add interface to vns  t2  v2  leaf0-b  ${leaf0b_ixia_intf}  -1
-    IXIA initialize        tg1
-    ${stream}=             IXIA L2 add  flow=a<->b  src_mac=00:02:01:00:00:24  dst_mac=00:02:02:00:00:24  ethertype=0800  frame_rate=1000  frame_size=68  name=a_b_flow
-    IXIA start L2 traffic  ${stream}
+    
+    ${stream}=             L3 add  flow=a<->b  src_mac=00:02:01:00:00:24  dst_mac=00:02:02:00:00:24  ethertype=0800  frame_rate=1000  frame_size=68  name=a_b_flow
+    start traffic  ${stream}
     sleep  10
     verify traffic rate  tx_rate  rx_rate  a  b
     cli disable interface  s1  ${leaf0a_leaf0b_intf0}
@@ -164,7 +124,7 @@ Traffic Test between the 2 leaf with single peer link
     cli enable interface  s1  ${leaf0a_leaf0b_intf0}
     sleep  5
     verify traffic rate  tx_rate  rx_rate  a  b
-    IXIA stop L2 traffic  ${stream}
+    stop traffic  ${stream}
     sleep  5
     rest delete tenant  t2 
 
@@ -271,6 +231,30 @@ Host Link Failover test with Host6 in Rack2 to Host 4 in Rack1
     Should Be True  ${loss} == 0
     rest delete tenant  t1    
 
+change portgroup from lacp to static and verify the forwarding
+	[Tags]  feature
+	rest add tenant  t1
+	rest add vns  t1  v1
+	rest add portgroup  p4 
+    rest add interface to portgroup  leaf1-a  ${h4_intf0}  p4
+    rest add interface to portgroup  leaf1-b  ${h4_intf1}  p4
+    rest add portgroup lacp  p4
+    rest add portgroup  p6 
+    rest add interface to portgroup  leaf2-a  ${h6_intf0}  p6
+    rest add interface to portgroup  leaf2-b  ${h6_intf1}  p6
+    rest add portgroup to vns  t1  v1  p4  -1
+    rest add portgroup to vns  t1  v1  p6  -1
+    sleep  3
+    ${loss}=  bash ping  h6  ${h4_ip}  source_if=bond0
+    Should Be True  ${loss} == 0
+    rest delete portgroup lacp  p4
+    sleep  2
+    rest verify fabric interface  leaf1-a  ${h4_intf0}
+    rest verify fabric interface  leaf1-b  ${h4_intf1}
+    ${loss}=  bash ping  h6  ${h4_ip}  source_if=bond0
+    Should Be True  ${loss} == 0
+    rest delete tenant  t1 
+     
 Tear down config and Topology
     delete fabric switch  
     rest delete portgroup  p4
@@ -284,7 +268,7 @@ Tear down config and Topology
 	
 verify traffic rate   [Arguments]  ${tx_rate}  ${rx_rate}  ${tx_intf}  ${rx_intf}
     Sleep  5
-    ${report}=  IXIA fetch port stats
+    ${report}=  fetch port stats
     Log  ${report}
     ${tx_value}=  verify dict key  ${report}  ${tx_intf}  transmitted_frame_rate
     ${rx_value}=  verify dict key  ${report}  ${rx_intf}  received_frame_rate
@@ -292,10 +276,11 @@ verify traffic rate   [Arguments]  ${tx_rate}  ${rx_rate}  ${tx_intf}  ${rx_intf
     
 verify traffic rate negative   [Arguments]  ${tx_rate}  ${rx_rate}  ${tx_intf}  ${rx_intf}
     Sleep  5
-    ${report}=  IXIA fetch port stats
+    ${report}=  fetch port stats
     ${tx_value}=  verify dict key  ${report}  ${tx_intf}  transmitted_frame_rate
     ${rx_value}=  verify dict key  ${report}  ${rx_intf}  received_frame_rate
     Should Not be equal  ${tx_value}  ${rx_value}
     
-
+T5 test teardown
+	delete traffic
 

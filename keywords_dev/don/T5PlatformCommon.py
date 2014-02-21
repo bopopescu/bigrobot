@@ -11,6 +11,7 @@ endpoints_b4 = []
 endpoints_after = []
 fabricLags_b4 = []
 fabricLags_after = []
+pingFailureCount = 0
 warningCount = 0
 
 
@@ -280,14 +281,25 @@ class T5PlatformCommon(object):
 
         
     def platform_ping(self, src, dst ):
+        global pingFailureCount
         mynet = mininet.Mininet()     
         loss = mynet.mininet_ping(src, dst)
         if (loss != '0'):
             #sleep(5)
             loss = mynet.mininet_ping(src, dst)
             if (loss != '0'):
+                if(pingFailureCount == 5):
+                    helpers.warn("5 Consecutive Ping Failures: Issuing Mininet-BugReport")
+                    mynet.mininet_bugreport()
+                    helpers.warn("PLEASE COLLECT SWITCH LOGS")
+                    sleep(1000)
                 helpers.warn("Ping failed between: %s & %s" % (src,dst))
+                pingFailureCount += 1
                 return True
+            else:
+                pingFailureCount = 0
+        else:
+            pingFailureCount = 0
         return True
     
     def do_show_run_vns_verify(self, vnsName, numMembers):
@@ -298,17 +310,16 @@ class T5PlatformCommon(object):
         helpers.log("Show run output is: %s " % result["content"][0]['vns'][0]['port-group-membership-rules'])
         vnsList = result["content"][0]['vns'][0]['port-group-membership-rules']
         if (len(vnsList) != int(numMembers)):
-            for i in range (0,10):
-                helpers.warn("Show run output is not correct for VNS members. Please collect support logs")
+            helpers.warn("Show run output is not correct for VNS members. Collecting support logs from the mininet")
+            mynet = mininet.Mininet()  
+            out = mynet.mininet_bugreport()
+            helpers.log("Bug Report Location is: %s " %  out)
+            for i in range(0, 10):
+                helpers.warn("Show run output is not correct for VNS members. Please collect switch support logs")
                 sleep(90)
         else:
             helpers.log("Show run output is correct for VNS members")
 
-            
-            
-            
-            
-            
             
             
             

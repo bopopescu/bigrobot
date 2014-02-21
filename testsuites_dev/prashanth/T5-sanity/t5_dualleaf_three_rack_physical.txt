@@ -3,7 +3,7 @@
 * Setting
 Documentation    T5 Dual Leaf Three Rack Test Suite
 Suite Setup      base suite setup
-Suite Teardown   base suite teardown
+#Suite Teardown   base suite teardown
 Test Setup       T5 base test setup
 Test Teardown    T5 base test teardown
 Force Tags       T5 
@@ -13,32 +13,7 @@ Library	         keywords_dev/prashanth/T5Fabric.py
 Library          keywords/Mininet.py
 Library	    	 keywords/Host.py
 Resource		 keywords_dev/prashanth/t5_dualleaf_three_rack_physical_resource.txt
-
-* Variables
-${h4_ip}  192.168.0.11
-${h5_ip}  192.168.0.30
-${h6_ip}  192.168.0.31
-${h4_mac}	90:e2:ba:4f:80:b1
-${h5_mac}	90:e2:ba:4f:80:dd
-${h6_mac}	90:e2:ba:4e:bb:90
-${h1_intf0}  ethernet48
-${h1_intf1}  ethernet48
-${h2_intf0}  ethernet47
-${h2_intf1}  ethernet47
-${h3_intf0}  ethernet1
-${h3_intf1}  ethernet1
-${h4_intf0}  ethernet2
-${h4_intf1}  ethernet2
-${h5_intf0}  ethernet48
-${h5_intf1}  ethernet48
-${h6_intf0}  ethernet47
-${h6_intf1}  ethernet47
-${h1_tag_ip}	192.168.4.20
-${h2_tag_ip}	192.168.4.21
-${h3_tag_ip}	192.168.4.10
-${h1_tag_mac}  90:e2:ba:4e:bc:98
-${h2_tag_mac}  90:e2:ba:4f:80:b1
-${h3_tag_mac}  00:10:18:f0:eb:e0
+Resource		 keywords_dev/prashanth/t5_physical_variables.txt
 
 * Test Case 
 
@@ -199,6 +174,7 @@ T5 base test setup
    add a portgroup  p6 
    add interface to portgroup  leaf2-a  ${h6_intf0}  p6
    add interface to portgroup  leaf2-b  ${h6_intf1}  p6
+   rest add portgroup lacp  p6
    sleep  10
    
 T5 base test teardown

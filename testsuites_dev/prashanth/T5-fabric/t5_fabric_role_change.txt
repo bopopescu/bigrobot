@@ -15,12 +15,7 @@ Library  keywords_dev/prashanth/T5Fabric.py
 Library	 keywords_dev/prashanth/T5_L3.py
 Library  keywords/Mininet.py
 Resource  keywords_dev/prashanth/t5_dualleaf_three_rack_resource.txt
-
-*Variables
-${spine0_dpid}	 00:00:00:00:00:01:00:01
-${spine1_dpid}	 00:00:00:00:00:01:00:02
-${leaf0a_dpid}	 00:00:00:00:00:02:00:01
-
+Resource  keywords_dev/prashanth/t5_physical_variables.txt
 
 
 * Test Case   
