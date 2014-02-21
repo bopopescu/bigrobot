@@ -927,7 +927,7 @@ class Ixia(object):
         handle = self._handle
         if port_name is None:
             helpers.log('Clearing Stats Globally on all ports initialized')
-            handle.execute('clearStats')
+            handle.execute('clearPortsAndTrafficStats')
             helpers.log('Stats Cleared Succesffuly ..')
         helpers.log('Sleep 5 secs for the stats to get cleared in IXIA...')
         time.sleep(5)
