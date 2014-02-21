@@ -26,6 +26,15 @@ class Mininet(object):
             
         return out
     
+    def mininet_bugreport(self):
+        t = test.Test()
+        mn = t.mininet()
+        mn.cli('bugreport')
+        out = mn.cli_content()
+        location = helpers.any_match(out, r'Bugreport left at')
+        helpers.log("Bugreport Location is: %s" % location)
+        return location
+    
     def mininet_ping(self, src, dst, count=5):        
         t = test.Test()
         mn = t.mininet()

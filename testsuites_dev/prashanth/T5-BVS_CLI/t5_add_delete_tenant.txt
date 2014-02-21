@@ -8,21 +8,52 @@ Test Setup       base test setup
 Test Teardown    base test teardown
 Force Tags       T5 
 Library          keywords/BsnCommon.py
-Library          keywords_dev/T5.py
-Library	         keywords_dev/T5Fabric.py
+Library          keywords_dev/prashanth/T5.py
+Library	         keywords_dev/prashanth/T5Fabric.py
 Library          keywords/Mininet.py
-Resource         keywords_dev/t5_dualleaf_three_rack_resource.txt
+Library			 keywords/Ixia.py
+Resource         keywords_dev/prashanth/t5_dualleaf_three_rack_resource.txt
 
 * Variables
-${bm0_ip}  10.0.0.1
-${bm1_ip}  10.0.0.2
-${bm2_ip}  10.0.0.3
-${bm0_mac}  00:00:00:00:00:01
-${bm1_mac}  00:00:00:00:00:02
-${bm2_mac}  00:00:00:00:00:03
-${bm0_intf0}  leaf0-eth5
-${bm1_intf0}  leaf0-eth6
-${bm2_intf0}  leaf1-eth5
+${leaf0a_spine0_intf0}	ethernet33
+${leaf0a_leaf0b_intf0}	ethernet39
+${leaf0a_spine1_intf0}	ethernet32
+${leaf0a_ixia_intf}		ethernet24
+${leaf0b_ixia_intf}		ethernet24
+${leaf1a_ixia_intf}		ethernet24
+${leaf1b_ixia_intf}		ethernet24
+${leaf1a_leaf1b_intf0}	ethernet39
+${leaf1a_leaf1b_intf1}	ethernet40
+${leaf2a_ixia_intf}		ethernet24
+${leaf2b_ixia_intf}		ethernet24
+${leaf2a_spine0_intf0}	ethernet31
+${leaf2a_spine1_intf0}	ethernet32
+${h4_ip}  192.168.0.11
+${h5_ip}  192.168.0.30
+${h6_ip}  192.168.0.31
+${h4_mac}	00:10:18:f0:e9:70
+${h5_mac}	90:e2:ba:4f:80:dc
+${h6_mac}	90:e2:ba:4e:bb:90
+${h1_intf0}  ethernet48
+${h1_intf1}  ethernet48
+${h2_intf0}  ethernet47
+${h2_intf1}  ethernet47
+${h3_intf0}  ethernet1
+${h3_intf1}  ethernet1
+${h4_intf0}  ethernet2
+${h4_intf1}  ethernet2
+${h5_intf0}  ethernet48
+${h5_intf1}  ethernet48
+${h6_intf0}  ethernet47
+${h6_intf1}  ethernet47
+${h1_tag_ip}	192.168.4.20
+${h2_tag_ip}	192.168.4.21
+${h3_tag_ip}	192.168.4.10
+${h1_tag_mac}  90:e2:ba:4e:bc:98
+${h2_tag_mac}  90:e2:ba:4f:80:b1
+${h3_tag_mac}  00:10:18:f0:eb:e0
+${leaf0b_spine0_intf0}	ethernet31
+${leaf0b_spine1_intf0}	ethernet32
 
 * Test Case 
 
@@ -31,7 +62,7 @@ add Dual Leaf Three Rack setup
    sleep  5
    add fabric switch
    sleep  5
-   rest check fabric switch connectivity
+   rest verify fabric switch all
    rest verify fabric link
 
 add/delete a tenant
@@ -93,6 +124,10 @@ Add/delete interface to vns
    rest verify vns interface  v1  1 
    
 add interface to multiple VNS without tag
+	[Tags]  feature
+	add tenant  t1
+	add vns  t1  v1
+	rest add interface to vns  t1  v1  leaf0-a 
 
 add interface multiple tag to a same vns
    

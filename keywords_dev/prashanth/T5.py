@@ -791,7 +791,7 @@ class T5(object):
             except KeyError:
                 continue
             for j in range(0,len(data1[i]["untagged-ports"])):
-                if (value[j]["port-num"] == int(interface)):
+                if (data1[i]["untagged-ports"][j]["port-num"] == int(interface)):
                     vlan_id.append(data1[i]["vlan-id"])        
                     #Match the mac in forwarding table with specific lag_id and vlan_id
         url3 = '%s/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch-name="%s"]/l2-table' % (c.base_url, switch)
@@ -802,12 +802,8 @@ class T5(object):
                 if data2[i]["port-num"] == lag_id[0] and data2[i]["vlan-id"] == vlan_id[0]:
                     helpers.log("Pass: Expected mac is present in the forwarding table with correct vlan and interface")
                     return True
-                else:
-                    helpers.test_failure("Fail: Expected=%s:%s, actual=%s:%s" % (lag_id[0], vlan_id[0], data2[i]["port-num"], data2[i]["vlan-id"]))
-                    return False   
-            else:
-                helpers.test_failure("Fail:Expected mac is not present in the forwarding table")
-                return False
+                  
+        return False   
             
     def rest_verify_forwarding_layer2_table_tag(self, switch, intf, mac):
         '''Verify Layer 2 MAC information in forwarding table
@@ -834,13 +830,14 @@ class T5(object):
         vlan_id = []
         for i in range(0,len(data1)):
             try:
-                value = data[i]["tagged-ports"]
+                value = data1[i]["tagged-ports"]
             except KeyError:
                 continue
-            for j in range(0,len(data[i]["tagged-ports"])):
-                if (value[j]["port-num"] == int(interface)):
+            for j in range(0,len(data1[i]["tagged-ports"])):
+                if (data1[i]["tagged-ports"][j]["port-num"] == int(interface)):
                     vlan_id.append(data1[i]["vlan-id"])
                     #Match the mac in forwarding table with specific lag_id and vlan_id
+        helpers.log("%s" % vlan_id)
         url3 = '%s/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch-name="%s"]/l2-table' % (c.base_url, switch)
         c.rest.get(url3)
         data2 = c.rest.content()
@@ -849,10 +846,16 @@ class T5(object):
                 if data2[i]["port-num"] == lag_id[0] and data2[i]["vlan-id"] == vlan_id[0]:
                     helpers.log("Pass: Expected mac is present in the forwarding table with correct vlan and interface")
                     return True
-                else:
-                    helpers.test_failure("Fail: Expected=%s:%s, actual=%s:%s" % (lag_id[0], vlan_id[0], data2[i]["port-num"], data2[i]["vlan-id"]))
-                    return False   
-            else:
-                helpers.test_failure("Fail:Expected mac is not present in the forwarding table")
-                return False
+                 
+        return False
+    
+    def verify_switch_sent_pkt_stats(self, count, count1):
+        count = int(count)
+        count1 = int(count1)
+        if (count >= 95 and count1 < 5) or (count1 >= 95 and count < 5):
+            helpers.log("Pass:Traffic forwarded only one port in edge port group")
+            return True
+        else:
+            helpers.test_failure("Fail:Traffic forwarded on both edge port group members")
+            return False    
 
