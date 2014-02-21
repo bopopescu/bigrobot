@@ -93,7 +93,7 @@ Spine Link Failover/back Test from leaf0-a untagged packet(Using IXIA)
     sleep  5
     rest delete tenant  t1               
        
-Spine Link Failover/back test from leaf0-b tagged packet (Using IXIA)
+Spine Link Failover/back test from leaf0-b tagged packet 
 	[Tags]  feature   
 	rest add tenant  t2
     rest add vns  t2  v2
