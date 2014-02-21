@@ -315,8 +315,10 @@ class T5Fabric(object):
                     bidir_link = bidir_link + 1
                     if bidir_link == fabric_interface/2:
                         helpers.log("Pass: All Fabric links states are bidirectional")
+                        return True
                     else:
                         helpers.test_failure("Fail: Inconsistent state of fabric links. Fabric_Interface = %d , bidir_link = %d" % (fabric_interface, bidir_link))
+                        return False
         else:
             helpers.log("Fabric switches are misconfigued")
                         
@@ -489,10 +491,13 @@ class T5Fabric(object):
                     helpers.log("Inteface is connected to leaf and it is a edge port")
             elif data[0]["state"] == "up" and data[0]["type"] == "leaf" or data[0]["state"] == "up" and data[0]["type"] == "spine":
                     helpers.log("Interface is fabric interface")
+                    return True
             else:
                     helpers.test_failure("Interface status is not known to the fabric system , Please check the logs")
+                    return False
         else:
-            helpers.test_failure("Given fabric interface is not valid")              
+            helpers.test_failure("Given fabric interface is not valid")
+            return False              
                           
                  
     def rest_verify_forwarding_port_edge(self, switcha, switchb): 
@@ -505,9 +510,11 @@ class T5Fabric(object):
         c.rest.get(url_b)
         data1 = c.rest.content()
         if data[0]["lag-id"] == data1[0]["lag-id"]: 
-            helpers.log("Portgroup Lag id creation in forwarding table is correct for dual rack") 
+            helpers.log("Portgroup Lag id creation in forwarding table is correct for dual rack")
+            return True 
         else:
             helpers.test_failure("Portgroup Lag id creation in forwarding table does not match for dual rack , check the logs") 
+            return False
             
     
                                    
