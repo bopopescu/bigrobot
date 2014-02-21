@@ -931,6 +931,8 @@ class Ixia(object):
             helpers.log('Stats Cleared Succesffuly ..')
         helpers.log('Sleep 5 secs for the stats to get cleared in IXIA...')
         time.sleep(5)
+        result = self.ix_fetch_port_stats()
+        helpers.log('result:\n%s' % helpers.prettify(result))
         return True
     
     def ix_delete_traffic(self, stream = None):
