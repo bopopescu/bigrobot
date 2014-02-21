@@ -384,7 +384,6 @@ class IxiaNode(Node):
         self._ixia = IxLib.Ixia(tcl_server_ip=self.tcl_server_ip(),
                                 chassis_ip=self.chassis_ip(),
                                 port_map_list=self.ports())
-        self._ixia.ix_connect()
         return self._ixia
 
     def handle(self):
