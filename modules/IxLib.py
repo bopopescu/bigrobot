@@ -801,8 +801,9 @@ class Ixia(object):
             self._traffi_apply = True
         time.sleep(2)
         # portStatistics = self._handle.getFilteredList(self._handle.getRoot()+'statistics', 'view', '-caption', 'Port Statistics')[0]
-        time.sleep(2)
+        time.sleep(5)
         self._handle.execute('startStatelessTrafficBlocking', trafficHandle)
+        time.sleep(10)
         helpers.log("### Traffic Started")
         return True
     def ix_start_hosts(self, port_name = None, ip_type='ipv4'):
@@ -891,6 +892,8 @@ class Ixia(object):
                     port_stat['received_valid_frame_rate'] = value
 #                 if column == 'Data Integrity Frames Rx.':
 #                     port_stat['received_invalid_frames'] = value
+                if column == 'Data Integrity Frames Rx.':
+                    port_stat['received_data_integrity_frames'] = value
                 if column == 'CRC Errors':
                     port_stat['received_crc_errored_frames'] = value
                 if column == 'Bytes Rx.':
@@ -918,6 +921,7 @@ class Ixia(object):
             helpers.log("Printing Statistics")
             port_stats = self.ix_fetch_port_stats()
             helpers.log("Port Stats : \n %s" % port_stats)
+        time.sleep(5)
         helpers.log('Successfully Stopped the traffic for Stream %s ' % str(traffic_stream))
         return True
     def ix_clear_stats(self, port_name = None):
