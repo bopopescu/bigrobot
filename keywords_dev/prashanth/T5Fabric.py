@@ -480,7 +480,6 @@ class T5Fabric(object):
         url = '%s/api/v1/data/controller/core/switch[name="%s"]/interface[name="%s"]' % (c.base_url, switch, intf) 
         c.rest.get(url)  
         data = c.rest.content()
-        helpers.log("Data %s" % data)
         if len(data) != 0:
             if data[0]["state"] == "down" and data[0]["type"] == "unknown":
                 helpers.log("Interface is connected to spine or Physical Interface status is down for the leaf switch") 
@@ -498,6 +497,11 @@ class T5Fabric(object):
                           
                  
     def rest_verify_forwarding_port_edge(self, switcha, switchb): 
+        ''' 
+         Function to verify Lag id for the portgroup 
+         Input:  Dual leaf switch names
+         Output" True/false based on the lag-id creation for the same edge port-groups on both the leaf switches
+        '''
         t = test.Test()
         c = t.controller()
         url_a = '%s/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch-name="%s"]/port-table' % (c.base_url, switcha) 
@@ -513,6 +517,48 @@ class T5Fabric(object):
             helpers.test_failure("Portgroup Lag id creation in forwarding table does not match for dual rack , check the logs") 
             return False
             
-    
-                                   
+    def rest_verify_forwarding_port_source_mac_check(self, switch):
+        ''' 
+        Function to verify the Source mac check status for the fabric interfaces 
+        Input:  switch name
+        Output" Find the fabric interface for the switch and check the source mac check setting
+        '''
+        t = test.Test()
+        c = t.controller()
+        url = '%s/api/v1/data/controller/core/switch[name="%s"]/interface' % (c.base_url, switch)
+        c.rest.get(url)
+        data = c.rest.content()
+        list_fabric_interface = []
+        list_fabric_edge_interface = []
+        for i in range(0,len(data)):
+            if data[i]["type"] == "unknown":
+                continue
+            elif data[i]["type"] == "edge":
+                list_fabric_edge_interface.append(int(re.sub("\D", "", (data[i]["name"]))))
+            elif data[i]["type"] == "leaf" or data[i]["type"] == "spine":
+                list_fabric_interface.append(int(re.sub("\D", "", (data[i]["name"]))))
+        url1 = '%s/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch-name="%s"]/port-table' % (c.base_url, switch) 
+        c.rest.get(url1)
+        data1 = c.rest.content()
+        if len(list_fabric_interface) != 0 or len(list_fabric_edge_interface) != 0: 
+            for i in range(0,len(data1)):
+                if data1[i]["port-num"] in list_fabric_interface:
+                    if data1[i]["is-src-mac-check-disabled"] == True:
+                        helpers.log("Source Mac check is disabled on Fabric interfaces")
+                        return True
+                    else:
+                        helpers.test_failure("Source MAC check is enabled on Fabric Interface:%s" % data1[i]["port-num"])
+                        return False
+                elif data1[i]["port-num"] in list_fabric_edge_interface:
+                    if data1[i]["is-src-mac-check-disabled"] == False:
+                        helpers.log("Source MAC check is enabled on fabric edge interfaces")
+                        return True
+                    else:
+                        helpers.log("Source MAC check is disabled on fabric edge interface:%s" % data1[i]["port-num"])
+                        return False
+        return False
+        
+        
+        
+                                  
         

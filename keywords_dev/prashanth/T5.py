@@ -733,7 +733,7 @@ class T5(object):
             except KeyError:
                 continue
             for j in range(0,len(data[i]["untagged-ports"])):
-                    if value[j]["port-num"] == int(interface):
+                    if data[i]["untagged-ports"][j]["port-num"] == int(interface):
                         helpers.log("Pass:Given interface is present in untag memberlist of vlan-table")
                         return True
         return False      
@@ -757,7 +757,7 @@ class T5(object):
             except KeyError:
                 continue
             for j in range(0,len(data[i]["tagged-ports"])):
-                if value[j]["port-num"] == int(interface):
+                if data[i]["tagged-ports"][j]["port-num"] == int(interface):
                     helpers.log("Pass:Given interface is present in untag memberlist of vlan-table")
                     return True
         return False       
