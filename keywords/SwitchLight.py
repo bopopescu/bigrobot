@@ -1138,7 +1138,8 @@ class SwitchLight(object):
             Input:
             | node | Reference to switch (as defined in .topo file) |
             | username | Username for which password has to be changed |
-            | password | Desired password |
+            | current_password | Current Password |
+            | new_password | Desired password |
     
             Return Value:
             - True on configuration success
