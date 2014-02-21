@@ -929,6 +929,8 @@ class Ixia(object):
             helpers.log('Clearing Stats Globally on all ports initialized')
             handle.execute('clearStats')
             helpers.log('Stats Cleared Succesffuly ..')
+        helpers.log('Sleep 5 secs for the stats to get cleared in IXIA...')
+        time.sleep(5)
         return True
     
     def ix_delete_traffic(self, stream = None):
@@ -936,6 +938,8 @@ class Ixia(object):
             Method to delete all configured Traffic Items
         '''
         handle = self._handle
+        self._handle.execute('stop', self._handle.getRoot() + 'traffic')
+        time.sleep(5)
         handle.remove(handle.getRoot()+'traffic'+'/trafficItem')
         handle.commit()   
         helpers.log('succes removing traffic Items Configured!!!')
@@ -951,6 +955,7 @@ class Ixia(object):
             helpers.log('Successfully Removed Topology : %s ' % str(topo))
         self._topology = {}
         helpers.log('Succes Removing Topologies Created !!!')
+        time.sleep(3)
         return True
     
     

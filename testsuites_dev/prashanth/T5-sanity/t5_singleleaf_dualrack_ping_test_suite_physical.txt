@@ -13,23 +13,8 @@ Library	         keywords_dev/prashanth/T5Fabric.py
 Library          keywords/Mininet.py
 Library			 keywords/Host.py
 Resource	     keywords_dev/prashanth/t5_singleleaf_three_rack_physical_resource.txt
+Resource		 keywords_dev/prashanth/t5_physical_variables.txt
 
-* Variables
-${h3_ip}  192.168.1.10
-${h4_ip}  192.168.1.11
-${h2_ip}  192.168.1.21
-${h3_mac}  d4:ae:52:c6:bc:cb
-${h4_mac}  d4:ae:52:c6:bb:ab
-${h2_mac}  d4:ae:52:c9:c5:35
-${h3_intf0}  ethernet20
-${h4_intf0}  ethernet26
-${h2_intf0}  ethernet26
-${h3_eth1_ip}	192.168.2.10/24
-${h4_eth1_ip}	192.168.2.11/24
-${h2_eth1_ip}	192.168.2.21/24
-${h3_tag_ip}	192.168.2.10
-${h4_tag_ip}	192.168.2.11
-${h2_tag_ip}	192.168.2.21
 
 * Test Case 
 
