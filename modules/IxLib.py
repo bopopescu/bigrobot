@@ -944,10 +944,8 @@ class Ixia(object):
             Method to delete all configured Traffic Items
         '''
         handle = self._handle
-        #traffic_apply = kwargs.get('traffic_apply', False)
-#         if traffic_apply:
         handle.execute('apply', handle.getRoot() + 'traffic')
-        helpers.log('###Applied traffic Config ..')
+        helpers.log('Applied traffic Config ..')
         self._handle.execute('stop', self._handle.getRoot() + 'traffic')
         time.sleep(5)
         handle.remove(handle.getRoot()+'traffic'+'/trafficItem')
