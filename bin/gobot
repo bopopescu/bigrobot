@@ -372,6 +372,9 @@ def test_command(*args):
     parser.add_argument('--exclude',
                         metavar=('tag1', 'tag2'), nargs='*',
                         help='Exclude test cases by tags')
+    parser.add_argument('--randomize', action='store_true', dest='randomize',
+                        default=False,
+                        help="Run test cases in random orders")
     parser.add_argument('--loglevel', default='trace',
                         help="Log level ('trace', 'debug', 'info')")
     parser.add_argument('--debugfile', default='debug.log',
@@ -404,6 +407,8 @@ def test_command(*args):
                }
     if include_tags:
         options['include'] = include_tags
+    if args.randomize:
+        options['randomize'] = 'tests'
 
     print("Robot options:\n%s" % helpers.prettify(options))
 
