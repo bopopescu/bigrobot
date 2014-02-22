@@ -904,6 +904,7 @@ class Ixia(object):
                     port_stat['received_frame_rate'] = str(frames)
                                        
             port_stats[port_stat['port']] = port_stat
+        helpers.log('result:\n%s' % helpers.prettify(port_stats))
         return port_stats
 
     def ix_stop_traffic(self, traffic_stream = None):
@@ -920,7 +921,8 @@ class Ixia(object):
             handle.execute('stopStatelessTraffic', traffic_stream)
             helpers.log("Printing Statistics")
             port_stats = self.ix_fetch_port_stats()
-            helpers.log("Port Stats : \n %s" % port_stats)
+            helpers.log('result:\n%s' % helpers.prettify(port_stats))
+    
         time.sleep(5)
         helpers.log('Successfully Stopped the traffic for Stream %s ' % str(traffic_stream))
         return True
@@ -939,13 +941,23 @@ class Ixia(object):
         helpers.log('result:\n%s' % helpers.prettify(result))
         return True
     
-    def ix_delete_traffic(self, stream = None):
+    def ix_delete_traffic(self, **kwargs):
         '''
             Method to delete all configured Traffic Items
         '''
         handle = self._handle
-        self._handle.execute('stop', self._handle.getRoot() + 'traffic')
-        time.sleep(5)
+        i = 0
+        while i < 2:
+            try:
+                handle.execute('apply', handle.getRoot() + 'traffic')
+                helpers.log('Applied traffic Config ..')
+                self._handle.execute('stop', self._handle.getRoot() + 'traffic')
+                time.sleep(5)
+                break
+            except IxNetwork.IxNetError:
+                helpers.log('Got IXIA ERROR while Applying traffic will try 2 times..')
+            i = i + 1    
+            
         handle.remove(handle.getRoot()+'traffic'+'/trafficItem')
         handle.commit()   
         helpers.log('succes removing traffic Items Configured!!!')
