@@ -10,6 +10,7 @@ Library         keywords/BsnCommon.py
 Library         keywords_dev/vui/MyTest.py
 Library         OperatingSystem
 Library         Collections
+Library         Dialogs
 Resource        variables.txt
 
 * Variables
@@ -110,14 +111,27 @@ Test list
     log              value[3]=${value[3]}
 
 Test create list
-    [Tags]           skipped
+    #[Tags]           skipped
     ${value}=        create list  abc  9999  xyz  1001
     log              value=${value}
     log              value[4]=${value[3]}
 
 Test resource file
+    [Tags]           skipped
     log              VALUE=${VALUE}
 
+Test pause execution (GUI)
+    [Tags]           skipped
+    #pause execution  A brief moment of silence. Please press OK to continue.
+    ${value}=         get value from user  Press OK to continue  OK
+    log               value=${value}
+
+Test pause execution (SHELL)
+    [Tags]           skipped
+    pause2
+
+Test return false
+    return false
 
 * Keywords
 my base suite setup
