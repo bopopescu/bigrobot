@@ -117,7 +117,7 @@ Test create list
     log              value[4]=${value[3]}
 
 Test resource file
-    #[Tags]           skipped
+    [Tags]           skipped
     log              VALUE=${VALUE}
 
 Test pause execution (GUI)
@@ -127,8 +127,11 @@ Test pause execution (GUI)
     log               value=${value}
 
 Test pause execution (SHELL)
-    #[Tags]           skipped
+    [Tags]           skipped
     pause2
+
+Test return false
+    return false
 
 * Keywords
 my base suite setup

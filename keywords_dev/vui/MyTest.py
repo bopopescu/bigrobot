@@ -366,3 +366,7 @@ admin_user = glance
         import sys
         for _ in sys.stdin:
             pass
+
+    def return_false(self):
+        return False
+
