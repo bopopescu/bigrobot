@@ -221,6 +221,7 @@ class BigTap(object):
         Parse the output of cli command 'show bigtap policy <policy_name>'
               
         Inputs:
+        
         | `policy_name` | Name of the policy being parsed | 
         | `num_filter_intf` | Number of configured Filter Interfaces in the policy | 
         | `num_delivery_intf` | Number of configured Delivery Interfaces in the policy | 

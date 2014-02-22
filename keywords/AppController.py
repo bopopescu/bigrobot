@@ -367,6 +367,25 @@ class AppController(object):
                 else:
                     return True
 
+    def rest_execute_ha_failover(self):
+        '''Execute HA failover from master controller
+        '''
+        try:
+            t = test.Test()
+        except:
+            return False
+        else:
+            c = t.controller('master')
+            try:
+                url1 = '/rest/v1/system/ha/failback'
+                c.rest.put(url1, {})
+            except:
+                helpers.test_failure(c.rest.error())
+                return False
+            else:
+                helpers.test_log(c.rest.content_json())
+                return True
+
     def restart_process_on_controller(self, process_name, controller_role):
         '''Restart a process on controller
         
