@@ -385,5 +385,6 @@ bigwire suite teardown
     rest delete switch  s1
     rest delete switch  s2
     rest delete switch  s3
-    rest delete switch  s4      
+    rest delete switch  s4
+    base suite teardown      
     sleep  20

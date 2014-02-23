@@ -770,3 +770,4 @@ bigwire suite teardown
     rest delete switch  s3
     rest delete switch  s4      
     sleep  20
+    base suite teardown
