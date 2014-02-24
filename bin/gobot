@@ -345,7 +345,9 @@ def version_hidden_command(*args):
     print("BigRobot version        %s" % helpers.get_version())
     print("Robot Framework version %s" % robot_framework_version)
     print("Exscript version        %s" % exscript_version)
-
+    pversion = sys.version_info
+    print("Python version          %s.%s.%s"
+          % (pversion.major, pversion.minor, pversion.micro))
 
 def suite_command(*args):
     """
