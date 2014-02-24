@@ -298,7 +298,7 @@ def touch_log_files():
     for f in log_files:
         file = '/'.join((helpers.bigrobot_log_path_exec_instance(), f))
         # print("Touching file %s" % file)
-        helpers.touch(file)
+        helpers.file_touch(file)
 
 
 def create_links_to_logs():

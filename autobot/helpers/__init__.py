@@ -745,7 +745,7 @@ def file_write_append_once(filename, s):
     f.close()
 
 
-def touch(fname, times=None):
+def file_touch(fname, times=None):
     """
     Like Unix 'touch' command.
     Borrowed from
