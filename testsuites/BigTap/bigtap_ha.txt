@@ -229,7 +229,8 @@ Controller HA: Restart Process apache2 on Slave Controller:
 
 Controller HA: Reboot Slave Controller:
     verify config 
-    restart controller  Master
+    restart controller  Slave
+    Sleep  120
     verify config    
     [Tags]  bigtap  ha  
     

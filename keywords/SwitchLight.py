@@ -679,7 +679,7 @@ class SwitchLight(object):
             tn.write("\r\n" + "debug bash" + "\r\n")
             tn.write("ifconfig ma1 " + "\r\n")
             tn.write("ifconfig ma1 down" + "\r\n")
-            time.sleep(8)
+            time.sleep(10)
             tn.write("ifconfig ma1 up" + "\r\n")
             tn.write("exit" + "\r\n")
             tn.write("exit" + "\r\n")

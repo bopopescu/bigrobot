@@ -1,0 +1,390 @@
+*Settings
+Documentation  BigWire Port Mode Test  Suite
+Suite Setup  bigwire suite setup
+Suite Teardown   bigwire suite teardown
+Test Setup   base test setup
+Test Teardown   bigwire test teardown
+Force Tags   HA Scale
+Library  keywords/AppController.py
+Library  keywords/BsnCommon.py
+Library  keywords/BigWire.py
+Library  keywords/Ixia.py
+Library  keywords/ThirdParty.py
+Library  keywords/SwitchLight.py
+
+* Variable
+${switch1_alias}  L9BW1
+${switch2_alias}  L9BW2
+${switch3_alias}  L9BW3
+${switch4_alias}  L9BW4
+${datacenter1}  DC12
+${zone1}  Zone1
+${datacenter2}  DC34
+${zone2}  Zone2
+${pseudowire1}   bw1bw3
+${pseudowire2}   bw2bw4
+${tenant1}  bw1bw3
+${tenant1-2}  bw1bw3-2
+${tenant2}  bw2bw4
+
+${s1_tenant_interface_1}  ethernet1
+${s1_tenant_interface_2}  ethernet9
+${s1_tenant_interface_3}  ethernet10
+${s1_pseudowire_interface_1}  ethernet45
+${s1_pseudowire_interface_2}  ethernet5
+
+${s2_tenant_interface_1}  ethernet1
+${s2_tenant_interface_2}  ethernet5
+${s2_tenant_interface_3}  ethernet6
+${s2_pseudowire_interface_1}  ethernet46
+${s2_pseudowire_interface_2}  ethernet9
+
+${s3_tenant_interface_1}  ethernet1
+${s3_tenant_interface_2}  ethernet9
+${s3_tenant_interface_3}  ethernet10
+${s3_pseudowire_interface_1}  ethernet45
+${s3_pseudowire_interface_2}  ethernet5
+
+${s4_tenant_interface_1}  ethernet1
+${s4_tenant_interface_2}  ethernet5
+${s4_tenant_interface_3}  ethernet6
+${s4_pseudowire_interface_1}  ethernet46
+${s4_pseudowire_interface_2}  ethernet9
+
+*Test Case
+verify configuration is successful
+    verify config
+    [Tags]  bigwire  ha  
+     
+Switch HA: Restart Process OFAD on BW1
+    verify config 
+    restart process and verify traffic  ofad
+    [Tags]  bigwire  ha  ofad
+
+Switch HA: Restart Process snmpd on BW1
+    verify config 
+    restart process and verify traffic  snmpd   
+    [Tags]  bigwire  ha  snmpd
+
+Switch HA: Restart Process ntp on BW1
+    verify config 
+    restart process and verify traffic  ntp  
+    [Tags]  bigwire  ha  ntp
+
+Switch HA: Restart Process fancontrol on BW1
+    verify config 
+    restart process and verify traffic  fancontrol  
+    [Tags]  bigwire  ha  fancontrol
+    
+Switch HA: Restart Process rsyslog on BW1
+    verify config 
+    restart process and verify traffic  rsyslog   
+    [Tags]  bigwire  ha  rsyslog          
+
+Switch HA: Restart Process networking on BW1
+    verify config 
+    restart process and verify traffic  networking  
+    [Tags]  bigwire  ha  networking
+
+Switch HA: Restart Process ssh on BW1
+    verify config 
+    restart process and verify traffic  ssh  
+    [Tags]  bigwire  ha  ssh
+
+Controller HA: Restart Process Floodlight on Master Controller:
+    verify config 
+    restart process on controller and verify traffic  floodlight  Master
+    Sleep  30
+    verify config    
+    [Tags]  bigwire  ha  floodlight
+
+Controller HA: Restart Process Floodlight on Slave Controller:
+    verify config 
+    restart process on controller and verify traffic  floodlight  Slave
+    Sleep  30
+    verify config    
+    [Tags]  bigwire  ha  floodlight    
+
+Controller HA: Restart Process keepalived on Master Controller:
+    verify config 
+    restart process on controller and verify traffic  keepalived  Master
+    Sleep  30
+    verify config    
+    [Tags]  bigwire  ha  keepalived
+
+Controller HA: Restart Process keepalived on Slave Controller:
+    verify config 
+    restart process on controller and verify traffic  keepalived  Slave
+    Sleep  30
+    verify config    
+    [Tags]  bigwire  ha  keepalived         
+
+Controller HA: Restart Process snmpd on Master Controller:
+    verify config 
+    restart process on controller and verify traffic  snmpd  Master
+    Sleep  30
+    verify config    
+    [Tags]  bigwire  ha  snmpd
+
+Controller HA: Restart Process snmpd on Slave Controller:
+    verify config 
+    restart process on controller and verify traffic  snmpd  Slave
+    Sleep  30
+    verify config    
+    [Tags]  bigwire  ha  snmpd    
+
+Controller HA: Restart Process rsyslogd on Master Controller:
+    verify config 
+    restart process on controller and verify traffic  rsyslogd  Master
+    Sleep  30
+    verify config    
+    [Tags]  bigwire  ha  rsyslogd
+
+Controller HA: Restart Process rsyslogd on Slave Controller:
+    verify config 
+    restart process on controller and verify traffic  rsyslogd  Slave
+    Sleep  30
+    verify config    
+    [Tags]  bigwire  ha  rsyslogd  
+
+Controller HA: Restart Process ntp on Master Controller:
+    verify config 
+    restart process on controller and verify traffic  ntp  Master
+    Sleep  30
+    verify config    
+    [Tags]  bigwire  ha  ntp
+
+Controller HA: Restart Process ntp on Slave Controller:
+    verify config 
+    restart process on controller and verify traffic  ntp  Slave
+    Sleep  30
+    verify config    
+    [Tags]  bigwire  ha  ntp
+
+Controller HA: Restart Process collectd on Master Controller:
+    verify config 
+    restart process on controller and verify traffic  collectd  Master
+    Sleep  30
+    verify config    
+    [Tags]  bigwire  ha  collectd
+
+Controller HA: Restart Process collectd on Slave Controller:
+    verify config 
+    restart process on controller and verify traffic  collectd  Slave
+    Sleep  30
+    verify config    
+    [Tags]  bigwire  ha  collectd     
+
+Controller HA: Restart Process tacacs_plus on Master Controller:
+    verify config 
+    restart process on controller and verify traffic  tacacs_plus  Master
+    Sleep  30
+    verify config    
+    [Tags]  bigwire  ha  tacacs_plus
+
+Controller HA: Restart Process tacacs_plus on Slave Controller:
+    verify config 
+    restart process on controller and verify traffic  tacacs_plus  Slave
+    Sleep  30
+    verify config    
+    [Tags]  bigwire  ha  tacacs_plus
+
+Controller HA: Restart Process apache2 on Master Controller:
+    verify config 
+    restart process on controller and verify traffic  apache2  Master
+    Sleep  30
+    verify config    
+    [Tags]  bigwire  ha  apache2
+
+Controller HA: Restart Process apache2 on Slave Controller:
+    verify config 
+    restart process on controller and verify traffic  apache2  Slave
+    Sleep  30
+    verify config    
+    [Tags]  bigwire  ha  apache2    
+
+Controller HA: Execute HA Failover and verify traffic
+    verify config
+    ${stream}=  L2 add  flow=a<->c  frame_rate=1000000  frame_size=64  name=a_c_flow
+    clear stats   
+    start traffic  ${stream}
+    sleep  5
+    verify results  a  transmitted_frame_rate  c  received_frame_rate
+    verify results  c  transmitted_frame_rate  a  received_frame_rate
+    rest execute ha failover
+    sleep  30
+    verify config 
+    verify results  a  transmitted_frame_rate  c  received_frame_rate
+    verify results  c  transmitted_frame_rate  a  received_frame_rate       
+    stop traffic  ${stream}
+    [Tags]  bigwire  ha  failover      
+
+Controller HA: Execute HA Failback and verify traffic
+    verify config
+    ${stream}=  L2 add  flow=a<->c  frame_rate=1000000  frame_size=64  name=a_c_flow
+    clear stats   
+    start traffic  ${stream}
+    sleep  5
+    verify results  a  transmitted_frame_rate  c  received_frame_rate
+    verify results  c  transmitted_frame_rate  a  received_frame_rate
+    rest execute ha failover
+    sleep  30
+    verify config 
+    verify results  a  transmitted_frame_rate  c  received_frame_rate
+    verify results  c  transmitted_frame_rate  a  received_frame_rate       
+    stop traffic  ${stream}
+    [Tags]  bigwire  ha  failback
+ 
+Controller HA: Reboot Slave Controller:
+    verify config 
+    ${stream}=  L2 add  flow=a<->c  frame_rate=1000000  frame_size=64  name=a_c_flow
+    clear stats   
+    start traffic  ${stream}
+    sleep  5
+    verify results  a  transmitted_frame_rate  c  received_frame_rate
+    verify results  c  transmitted_frame_rate  a  received_frame_rate
+    restart controller  Slave
+    sleep  120
+    verify config 
+    verify results  a  transmitted_frame_rate  c  received_frame_rate
+    verify results  c  transmitted_frame_rate  a  received_frame_rate       
+    stop traffic  ${stream}
+    [Tags]  bigwire  ha  rebootslave
+    
+Controller HA: Reboot Master Controller:
+    verify config 
+    ${stream}=  L2 add  flow=a<->c  frame_rate=1000000  frame_size=64  name=a_c_flow
+    clear stats   
+    start traffic  ${stream}
+    sleep  5
+    verify results  a  transmitted_frame_rate  c  received_frame_rate
+    verify results  c  transmitted_frame_rate  a  received_frame_rate
+    restart controller  Master
+    sleep  120
+    verify config 
+    verify results  a  transmitted_frame_rate  c  received_frame_rate
+    verify results  c  transmitted_frame_rate  a  received_frame_rate       
+    stop traffic  ${stream}
+    [Tags]  bigwire  ha  rebootmaster
+
+Controller HA: Flap eth0 on Master Controller
+    verify config
+    ${stream}=  L2 add  flow=a<->c  frame_rate=1000000  frame_size=64  name=a_c_flow
+    clear stats   
+    start traffic  ${stream}
+    sleep  5
+    verify results  a  transmitted_frame_rate  c  received_frame_rate
+    verify results  c  transmitted_frame_rate  a  received_frame_rate
+    flap eth0 controller  Master
+    sleep  120
+    verify config 
+    verify results  a  transmitted_frame_rate  c  received_frame_rate
+    verify results  c  transmitted_frame_rate  a  received_frame_rate       
+    stop traffic  ${stream}
+    [Tags]  bigwire  ha  flapeth0
+               
+* Keywords
+verify config
+    ${content}=  REST show bigwire command  summary
+    ${num-datacenters}=  REST verify dict key  ${content}  0  num-datacenters
+    Should Be Equal As Integers  ${num-datacenters}  2
+    ${num-pseudowires}=  REST verify dict key  ${content}  0  num-pseudowires
+    Should Be Equal As Integers  ${num-pseudowires}  2
+    ${num-tenants}=  REST verify dict key  ${content}  0  num-tenants
+    Should Be Equal As Integers  ${num-tenants}  2
+    ${num-zones}=  REST verify dict key  ${content}   0  num-zones
+    Should Be Equal As Integers  ${num-zones}  2
+    ${state} =  REST verify dict key  ${content}  0  state
+    Should Be Equal As Strings  ${state}  OK
+
+bigwire suite setup
+    base suite setup
+    # Assign Alias to Switch
+    rest add switch alias  s1  ${switch1_alias}
+    rest add switch alias  s2  ${switch2_alias}
+    rest add switch alias  s3  ${switch3_alias}
+    rest add switch alias  s4  ${switch4_alias}
+    add bigwire configuration
+    
+   
+verify results   [Arguments]  ${port_1}  ${tx}  ${port_2}  ${rx}
+    Sleep  5
+    ${report}=  fetch port stats
+    ${tx_value}=  verify dict key  ${report}  ${port_1}  ${tx}
+    ${rx_value}=  verify dict key  ${report}  ${port_2}  ${rx}
+    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}  rangev=100
+    Should be true  ${in_range} 
+
+bigwire test teardown
+    delete traffic
+
+add bigwire configuration
+    # add Datacenter and assign switch to datacenter
+    rest add bigwire datacenter  ${datacenter1}
+    rest add switch datacenter  s1  ${datacenter1}  ${zone1}
+    rest add switch datacenter  s2  ${datacenter1}  ${zone2}
+    rest add bigwire datacenter  ${datacenter2}
+    rest add switch datacenter  s3  ${datacenter2}  ${zone1}
+    rest add switch datacenter  s4  ${datacenter2}  ${zone2}  
+    # add Pseudowires
+    rest add bigwire pseudowire  ${pseudowire1}  s1  ${s1_pseudowire_interface_1}  s3  ${s3_pseudowire_interface_1}
+    rest add bigwire pseudowire  ${pseudowire2}  s2  ${s2_pseudowire_interface_1}  s4  ${s4_pseudowire_interface_1}         
+    #add Tenants
+    rest add bigwire tenant  ${tenant1}
+    rest add switch to tenant  s1  ${tenant1}  ${s1_tenant_interface_1}  200  
+    rest add switch to tenant  s3  ${tenant1}  ${s3_tenant_interface_1}  200
+    rest add bigwire tenant  ${tenant2}
+    rest add switch to tenant  s2  ${tenant2}  ${s2_tenant_interface_1}  
+    rest add switch to tenant  s4  ${tenant2}  ${s4_tenant_interface_1}            
+    sleep  20
+
+restart process and verify traffic  [Arguments]  ${process_name}       
+    ${stream}=  L2 add  flow=a<->c  frame_rate=1000000  frame_size=64  name=a_c_flow
+    clear stats   
+    start traffic  ${stream}
+    sleep  5
+    verify results  a  transmitted_frame_rate  c  received_frame_rate
+    verify results  c  transmitted_frame_rate  a  received_frame_rate
+    bash restart process  s1  ${process_name}
+    sleep  30
+    verify config 
+    verify results  a  transmitted_frame_rate  c  received_frame_rate
+    verify results  c  transmitted_frame_rate  a  received_frame_rate       
+    stop traffic  ${stream}   
+
+restart process on controller and verify traffic  [Arguments]  ${process_name}  ${node}       
+    ${stream}=  L2 add  flow=a<->c  frame_rate=1000000  frame_size=64  name=a_c_flow
+    clear stats   
+    start traffic  ${stream}
+    sleep  5
+    verify results  a  transmitted_frame_rate  c  received_frame_rate
+    verify results  c  transmitted_frame_rate  a  received_frame_rate
+    restart process on controller  ${process_name}  ${node}
+    sleep  30
+    verify config 
+    verify results  a  transmitted_frame_rate  c  received_frame_rate
+    verify results  c  transmitted_frame_rate  a  received_frame_rate       
+    stop traffic  ${stream} 
+
+        
+delete bigwire configuration
+    rest delete tenant  ${tenant1}
+    rest delete tenant  ${tenant2}
+    rest delete pseudowire  ${pseudowire1}
+    rest delete pseudowire  ${pseudowire2}
+    rest delete datacenter  ${datacenter1}
+    rest delete datacenter  ${datacenter2}
+    sleep  20
+      
+bigwire suite teardown
+    delete bigwire configuration
+    rest delete switch alias  s1
+    rest delete switch alias  s2
+    rest delete switch alias  s3
+    rest delete switch alias  s4
+    rest delete switch  s1
+    rest delete switch  s2
+    rest delete switch  s3
+    rest delete switch  s4
+    base suite teardown      
+    sleep  20

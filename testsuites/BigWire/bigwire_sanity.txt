@@ -87,8 +87,7 @@ Verify BiDirectional Jumbo L2 traffic in VLAN Mode: S2 to S4
             
 * Keywords
 bigwire suite setup
-	${switchDict}=  REST show switch
-	
+    base suite setup
 	# Assign Alias to Switch
 	rest add switch alias  s1  ${switch1_alias}
 	rest add switch alias  s2  ${switch2_alias}
@@ -176,12 +175,12 @@ verify results   [Arguments]  ${port_1}  ${transmitted_frames}  ${port_2}  ${rec
     Should be true  ${in_range} 
   
 bigwire suite teardown
-	rest_delete_tenant  ${tenant1}
-	rest_delete_tenant  ${tenant2}
-	rest_delete_pseudowire  ${pseudowire1}
-	rest_delete_pseudowire  ${pseudowire2}
-	rest_delete_datacenter  ${datacenter1}
-	rest_delete_datacenter  ${datacenter2}
+	rest delete tenant  ${tenant1}
+	rest delete tenant  ${tenant2}
+	rest delete pseudowire  ${pseudowire1}
+	rest delete pseudowire  ${pseudowire2}
+	rest delete datacenter  ${datacenter1}
+	rest delete datacenter  ${datacenter2}
     rest delete switch alias  s1
     rest delete switch alias  s2
     rest delete switch alias  s3
@@ -190,5 +189,6 @@ bigwire suite teardown
     rest delete switch  s2
     rest delete switch  s3
     rest delete switch  s4
+    base suite teardown
 	Sleep  30
 	

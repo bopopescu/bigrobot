@@ -1,0 +1,196 @@
+*Settings
+Documentation  BigWire Port Mode Test  Suite
+Suite Setup  bigwire suite setup
+Suite Teardown   bigwire suite teardown
+Test Setup   base test setup
+Test Teardown   base test teardown
+Force Tags   HA Scale
+Library  keywords/AppController.py
+Library  keywords/BsnCommon.py
+Library  keywords/BigWire.py
+Library  keywords/Ixia.py
+Library  keywords/ThirdParty.py
+Library  keywords/SwitchLight.py
+Library  Collections.py
+
+* Variable
+${switch1_alias}  L9BW1
+${switch2_alias}  L9BW2
+${switch3_alias}  L9BW3
+${switch4_alias}  L9BW4
+${datacenter1}  DC12
+${zone1}  Zone1
+${datacenter2}  DC34
+${zone2}  Zone2
+${pseudowire1}   bw1bw3
+${pseudowire2}   bw2bw4
+${tenant1}  bw1bw3
+${tenant1-2}  bw1bw3-2
+${tenant2}  bw2bw4
+
+${s1_tenant_interface_1}  ethernet1
+${s1_tenant_interface_2}  ethernet9
+${s1_tenant_interface_3}  ethernet10
+${s1_tenant_interface_4}  ethernet2
+${s1_pseudowire_interface_1}  ethernet45
+${s1_pseudowire_interface_2}  ethernet5
+
+${s2_tenant_interface_1}  ethernet1
+${s2_tenant_interface_2}  ethernet5
+${s2_tenant_interface_3}  ethernet6
+${s2_pseudowire_interface_1}  ethernet46
+${s2_pseudowire_interface_2}  ethernet9
+
+${s3_tenant_interface_1}  ethernet1
+${s3_tenant_interface_2}  ethernet9
+${s3_tenant_interface_3}  ethernet10
+${s3_pseudowire_interface_1}  ethernet45
+${s3_pseudowire_interface_2}  ethernet5
+
+${s4_tenant_interface_1}  ethernet1
+${s4_tenant_interface_2}  ethernet5
+${s4_tenant_interface_3}  ethernet6
+${s4_pseudowire_interface_1}  ethernet46
+${s4_pseudowire_interface_2}  ethernet9
+
+${configured_syslog_server}  10.192.66.230
+${configured_ntp_server}  time-c.nist.gov
+
+* Test Case
+Verify CLI BigWire Summary
+    ${content}=  REST show bigwire command  summary
+    ${num-datacenters}=  REST verify dict key  ${content}  0  num-datacenters
+    Should Be Equal As Integers  ${num-datacenters}  2
+    ${num-pseudowires}=  REST verify dict key  ${content}  0  num-pseudowires
+    Should Be Equal As Integers  ${num-pseudowires}  2
+    ${num-tenants}=  REST verify dict key  ${content}  0  num-tenants
+    Should Be Equal As Integers  ${num-tenants}  2
+    ${num-zones}=  REST verify dict key  ${content}   0  num-zones
+    Should Be Equal As Integers  ${num-zones}  2
+    ${state} =  REST verify dict key  ${content}  0  state
+    Should Be Equal As Strings  ${state}  OK
+    [Tags]  misc  verify
+    
+Verify ntp works 
+    verify ntpshow
+    verify ntpbash
+    [Tags]  misc  ntp
+
+Verify CLI command "show ntp"
+    ${result}=  cli verify ntp  ${configured_ntp_server}
+    Should Be True  ${result}
+    [Tags]  misc  ntp      
+    
+Verify syslog works 
+    verify syslogconfig
+    [Tags]  misc  syslog
+
+Verify CLI command "show syslog" for all logging levels
+    Run Keyword And Ignore Error  rest delete syslog  ${configured_syslog_server}  0
+    sleep  3
+    :FOR  ${INDEX}  IN RANGE  1  8
+    \  Log  ${INDEX}
+    \  rest configure syslog  ${configured_syslog_server}  ${INDEX}
+    \  sleep  3    
+    \  ${result}=  cli verify syslog  ${configured_syslog_server}  ${INDEX}
+    \  Should Be True  ${result}
+    \  Run Keyword And Ignore Error  rest delete syslog  ${configured_syslog_server}  ${INDEX}    
+    \  sleep  3
+    [Tags]  misc  syslog
+    
+Verify banner can be set
+    ${result}=  rest set banner  BigWire Test Suite
+    Should be True  ${result}
+    [Tags]  misc  banner    
+
+Verify banner works
+    ${result}=  rest verify banner
+    ${banner}=  Get from Dictionary  ${result}  message   
+    Should Be Equal As Strings  ${banner}  BigWire Test Suite    
+    [Tags]  misc  banner
+
+Verify CLI command "show banner"        
+    ${result}=  cli verify banner  BigWire Test Suite  
+    Should Be True  ${result}
+    [Tags]  misc  banner
+                                                
+* Keywords
+bigwire suite setup
+    base suite setup
+    # Assign Alias to Switch
+    rest add switch alias  s1  ${switch1_alias}
+    rest add switch alias  s2  ${switch2_alias}
+    rest add switch alias  s3  ${switch3_alias}
+    rest add switch alias  s4  ${switch4_alias}
+    add bigwire configuration
+    #Configure NTP
+    Run Keyword And Ignore Error  rest delete ntp  0.bigswitch.pool.ntp.org
+    Run Keyword And Ignore Error  rest delete syslog  ${configured_syslog_server}  0
+    rest configure ntp  ${configured_ntp_server}
+    rest configure syslog  ${configured_syslog_server}  0
+    Sleep  20
+    
+add bigwire configuration
+    # add Datacenter and assign switch to datacenter
+    rest add bigwire datacenter  ${datacenter1}
+    rest add switch datacenter  s1  ${datacenter1}  ${zone1}
+    rest add switch datacenter  s2  ${datacenter1}  ${zone2}
+    rest add bigwire datacenter  ${datacenter2}
+    rest add switch datacenter  s3  ${datacenter2}  ${zone1}
+    rest add switch datacenter  s4  ${datacenter2}  ${zone2}  
+    # add Pseudowires
+    rest add bigwire pseudowire  ${pseudowire1}  s1  ${s1_pseudowire_interface_1}  s3  ${s3_pseudowire_interface_1}
+    rest add bigwire pseudowire  ${pseudowire2}  s2  ${s2_pseudowire_interface_1}  s4  ${s4_pseudowire_interface_1}         
+    #add Tenants
+    rest add bigwire tenant  ${tenant1}
+    rest add switch to tenant  s1  ${tenant1}  ${s1_tenant_interface_1}  200  
+    rest add switch to tenant  s3  ${tenant1}  ${s3_tenant_interface_1}  200
+    rest add bigwire tenant  ${tenant2}
+    rest add switch to tenant  s2  ${tenant2}  ${s2_tenant_interface_1}  
+    rest add switch to tenant  s4  ${tenant2}  ${s4_tenant_interface_1}            
+    sleep  20
+
+verify ntpshow
+    ${ntpContent}=  rest show ntp
+    ${ntpState}=  Get from Dictionary  ${ntpContent}  enabled
+    ${ntpServer}=  Get from Dictionary  ${ntpContent}  server
+    Should Be Equal As Strings  ${ntpServer}  ${configured_ntp_server}
+    Should Be True  ${ntpState}
+
+verify ntpbash
+    ${ntpContent}=  rest verify ntp
+    Should Contain  ${ntpContent}  ${configured_ntp_server}          
+
+verify syslogconfig
+    ${syslogContent}=  rest show syslog
+    ${syslogState}=  Get from Dictionary  ${syslogContent}  logging-enabled
+    ${syslogServer}=  Get from Dictionary  ${syslogContent}  logging-server
+    ${syslogLevel}=  Get from Dictionary  ${syslogContent}  logging-level
+    Should Be True  ${syslogState}
+    Should Be Equal As Strings  ${syslogServer}  ${configured_syslog_server}
+    Should Be Equal As Integers  ${syslogLevel}  0
+
+delete bigwire configuration
+    rest delete tenant  ${tenant1}
+    rest delete tenant  ${tenant2}
+    rest delete pseudowire  ${pseudowire1}
+    rest delete pseudowire  ${pseudowire2}
+    rest delete datacenter  ${datacenter1}
+    rest delete datacenter  ${datacenter2}
+    sleep  3
+      
+bigwire suite teardown
+    delete bigwire configuration
+    rest delete switch alias  s1
+    rest delete switch alias  s2
+    rest delete switch alias  s3
+    rest delete switch alias  s4
+    rest delete switch  s1
+    rest delete switch  s2
+    rest delete switch  s3
+    rest delete switch  s4 
+    Run Keyword And Ignore Error  rest delete ntp  ${configured_ntp_server}
+    Run Keyword And Ignore Error  rest delete syslog  ${configured_syslog_server}  0
+    rest configure ntp  0.bigswitch.pool.ntp.org
+    rest delete banner         
+    sleep  3

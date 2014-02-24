@@ -30,6 +30,7 @@ ${tenant2}  bw2bw4
 ${s1_tenant_interface_1}  ethernet1
 ${s1_tenant_interface_2}  ethernet9
 ${s1_tenant_interface_3}  ethernet10
+${s1_tenant_interface_4}  ethernet2
 ${s1_pseudowire_interface_1}  ethernet45
 ${s1_pseudowire_interface_2}  ethernet5
 
@@ -555,6 +556,32 @@ Verify two different tenants can configure same Vlan.
     sleep  3
     [Tags]  traffic  sanity  
 
+Change upstream tenant port (from ixia), verify traffic from new port reaches downstream traffic port
+    ${stream}=  L2 add  flow=a<->c  frame_rate=1000000  frame_size=64  name=a_c_flow
+    clear stats   
+    start traffic  ${stream}
+    sleep  10
+    verify results  a  transmitted_frame_rate  c  received_frame_rate
+    verify results  c  transmitted_frame_rate  a  received_frame_rate    
+    stop traffic  ${stream}
+    rest delete switch from tenant  s1  ${tenant1}  ${s1_tenant_interface_1}
+    sleep  10 
+    rest add switch to tenant  s1  ${tenant1}  ${s1_tenant_interface_4}  200
+    Sleep  10
+    ${stream_1}=  L2 add  flow=g<->c  frame_rate=1000000  frame_size=64  name=g_c_flow              
+    clear stats   
+    start traffic  ${stream_1}
+    sleep  10
+    verify results  g  transmitted_frame_rate  c  received_frame_rate
+    verify results  c  transmitted_frame_rate  g  received_frame_rate    
+    stop traffic  ${stream_1}
+    rest delete switch from tenant  s1  ${tenant1}  ${s1_tenant_interface_4}
+    sleep  10 
+    rest add switch to tenant  s1  ${tenant1}  ${s1_tenant_interface_1}  200
+    Sleep  10    
+    [Tags]  traffic  sanity  T6400  
+
+
 Flap link between BW1 and core network, verify traffic recovers
     ${stream}=  L2 add  flow=a<->c  frame_rate=1000000  frame_size=64  name=a_c_flow
     clear stats   
@@ -633,7 +660,7 @@ Restart OFAD on BW1 and verify traffic recovers
     verify results  a  transmitted_frame_rate  c  received_frame_rate
     verify results  c  transmitted_frame_rate  a  received_frame_rate    
     stop traffic  ${stream}
-    [Tags]  traffic  sanity  skipped       
+    [Tags]  traffic  sanity       
 
 Restart OFAD on BW2 and verify traffic recovers
     ${stream}=  L2 add  flow=e<->f  frame_rate=1000000  frame_size=64  name=e_f_flow
@@ -647,7 +674,7 @@ Restart OFAD on BW2 and verify traffic recovers
     verify results  e  transmitted_frame_rate  f  received_frame_rate
     verify results  f  transmitted_frame_rate  e  received_frame_rate    
     stop traffic  ${stream}
-    [Tags]  traffic  sanity  skipped     
+    [Tags]  traffic  sanity     
     
 Reboot BW1 and verify traffic recovers
     ${stream}=  L2 add  flow=a<->c  frame_rate=1000000  frame_size=64  name=a_c_flow
@@ -661,7 +688,7 @@ Reboot BW1 and verify traffic recovers
     verify results  a  transmitted_frame_rate  c  received_frame_rate
     verify results  c  transmitted_frame_rate  a  received_frame_rate    
     stop traffic  ${stream}
-    [Tags]  traffic  sanity  skipped     
+    [Tags]  traffic  sanity     
 
 Reboot BW2 and verify traffic recovers
     ${stream}=  L2 add  flow=e<->f  frame_rate=1000000  frame_size=64  name=e_f_flow
@@ -675,7 +702,9 @@ Reboot BW2 and verify traffic recovers
     verify results  e  transmitted_frame_rate  f  received_frame_rate
     verify results  f  transmitted_frame_rate  e  received_frame_rate    
     stop traffic  ${stream}
-    [Tags]  traffic  sanity  skipped     
+    [Tags]  traffic  sanity
+
+         
      
                                 
 * Keywords
@@ -741,3 +770,4 @@ bigwire suite teardown
     rest delete switch  s3
     rest delete switch  s4      
     sleep  20
+    base suite teardown

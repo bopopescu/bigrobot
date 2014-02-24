@@ -23,16 +23,6 @@ s3:
 s4:
   ip: 10.192.88.83
 
-s5:
-  ip: 10.192.81.115
-  user: admin
-  password: arastra
-
-s6:
-  ip: 10.192.81.116
-  user: admin
-  password: arastra
-
 tg1:
   platform: 'ixia'
   chassis_ip: 10.192.85.151
@@ -52,6 +42,4 @@ tg1:
     e:
       name: 1/15      
     f:
-      name: 3/12
-    g:
-      name: 1/4        
+      name: 3/12      

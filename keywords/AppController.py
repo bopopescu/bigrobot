@@ -367,6 +367,25 @@ class AppController(object):
                 else:
                     return True
 
+    def rest_execute_ha_failover(self):
+        '''Execute HA failover from master controller
+        '''
+        try:
+            t = test.Test()
+        except:
+            return False
+        else:
+            c = t.controller('master')
+            try:
+                url1 = '/rest/v1/system/ha/failback'
+                c.rest.put(url1, {})
+            except:
+                helpers.test_failure(c.rest.error())
+                return False
+            else:
+                helpers.test_log(c.rest.content_json())
+                return True
+
     def restart_process_on_controller(self, process_name, controller_role):
         '''Restart a process on controller
         
@@ -668,5 +687,300 @@ class AppController(object):
             else:
                 return True
 
+# #SYSLOG
+############### SYSLOG SHOW COMMANDS ########################
+    def rest_show_syslog(self):
+        '''Execute CLI command "show syslog" and return o/p
+        
+            Returns dictionary of o/p
+        '''
+        try:
+            t = test.Test()
+        except:
+            return False
+        else:
+            c = t.controller('master')
+            try:
+                url = '/rest/v1/model/syslog-server/'
+                helpers.log("URL is %s  " % url)
+                c.rest.get(url)
+            except:
+                helpers.test_failure(c.rest.error())
+                return False
+            else:
+                content = c.rest.content()
+                return content[0]
 
+    def cli_verify_syslog(self, syslog_server, syslog_level):
+        '''Execute CLI command "show syslog" and return o/p
+        
+            Returns dictionary of o/p
+        '''
+        try:
+            t = test.Test()
+        except:
+            return False
+        else:
+            c = t.controller('master')
+            try:
+                c.enable("show syslog")
+            except:
+                return False
+            else:
+                content = c.cli_content()
+                str_search = str(syslog_server) + " " + str(syslog_level)
+                if str(str_search) in content:
+                    return True
+                else:
+                    return False
+############### SYSLOG CONFIG COMMANDS ########################
+    def rest_configure_syslog(self, syslog_server, log_level):
+        '''Configure Syslog server
+        
+            Inputs:
+                syslog_server: Name of Syslog server 
+                log_level    :  Logging Level, 0-9
+            
+            Returns: True if configuration is successful, false otherwise
+        '''
+        try:
+            t = test.Test()
+        except:
+            return False
+        else:
+            c = t.controller('master')
+            try:
+                url = '/rest/v1/model/syslog-server/'
+                c.rest.put(url, {"logging-enabled": True, "logging-server": str(syslog_server), "logging-level":int(log_level)})
+            except:
+                helpers.test_failure(c.rest.error())
+                return False
+            else:
+                helpers.test_log(c.rest.content_json())
+                return True
 
+    def rest_delete_syslog(self, syslog_server, log_level):
+        '''Delete Syslog server
+        
+            Inputs:
+                syslog_server: Name of Syslog server 
+                log_level    :  Logging Level, 0-9
+            
+            Returns: True if configuration is successful, false otherwise
+        '''
+        try:
+            t = test.Test()
+        except:
+            return False
+        else:
+            c = t.controller('master')
+            try:
+                url = '/rest/v1/model/syslog-server/?logging-enabled=True&logging-server=%s&logging-level=%d' % (str(syslog_server), int(log_level))
+                c.rest.delete(url, {})
+            except:
+                helpers.test_failure(c.rest.error())
+                return False
+            else:
+                helpers.test_log(c.rest.content_json())
+                return True
+# #NTP
+
+############### NTP SHOW COMMANDS ########################
+    def rest_show_ntp(self):
+        '''Execute CLI command "show ntp" and return o/p
+        
+            Returns dictionary of o/p
+        '''
+        try:
+            t = test.Test()
+        except:
+            return False
+        else:
+            c = t.controller('master')
+            try:
+                url = '/rest/v1/model/ntp-server/'
+                c.rest.get(url)
+            except:
+                return False
+            else:
+                content = c.rest.content()
+                return content[0]
+
+    def rest_verify_ntp(self):
+        '''Execute CLI command "show ntp" and return o/p
+        
+            Returns dictionary of o/p
+        '''
+        try:
+            t = test.Test()
+        except:
+            return False
+        else:
+            c = t.controller('master')
+            try:
+                c.bash("ntpq -p")
+            except:
+                return False
+            else:
+                content = c.cli_content()
+                return content
+
+    def cli_verify_ntp(self, ntp_server="0.bigswitch.pool.ntp.org"):
+        '''Execute CLI command "show ntp" and return o/p
+        
+            Returns dictionary of o/p
+        '''
+        try:
+            t = test.Test()
+        except:
+            return False
+        else:
+            c = t.controller('master')
+            try:
+                c.enable("show ntp")
+            except:
+                return False
+            else:
+                content = c.cli_content()
+                if str(ntp_server) in content:
+                    return True
+                else:
+                    return False
+############### NTP CONFIG COMMANDS ########################
+
+    def rest_configure_ntp(self, ntp_server):
+        '''Configure NTP server
+        
+            Inputs:
+                ntp_server: Name of NTP server 
+            
+            Returns: True if configuration is successful, false otherwise
+        '''
+        try:
+            t = test.Test()
+        except:
+            return False
+        else:
+            c = t.controller('master')
+            try:
+                url = '/rest/v1/model/ntp-server/'
+                c.rest.put(url, {"enabled": True, "server": str(ntp_server)})
+            except:
+                return False
+            else:
+                helpers.test_log(c.rest.content_json())
+                return True
+
+    def rest_delete_ntp(self, ntp_server):
+        '''Delete NTP server
+        
+            Inputs:
+                ntp_server: Name of NTP server 
+            
+            Returns: True if configuration is successful, false otherwise
+        '''
+        try:
+            t = test.Test()
+        except:
+            return False
+        else:
+            c = t.controller('master')
+            try:
+                url = '/rest/v1/model/ntp-server/?enabled=True&server=%s' % (str(ntp_server))
+                c.rest.delete(url, {})
+            except:
+                return False
+            else:
+                helpers.test_log(c.rest.content_json())
+                return True
+
+# ##Banner
+    def rest_set_banner(self, banner_message):
+        '''Set Banner on controller
+        
+            Inputs:
+                banner_message: Message to be set 
+            
+            Returns: True if configuration is successful, false otherwise
+        '''
+        try:
+            t = test.Test()
+        except:
+            return False
+        else:
+            c = t.controller('master')
+            try:
+                url = '/rest/v1/model/banner/'
+                c.rest.put(url, {"message": str(banner_message), "id": "banner"})
+            except:
+                return False
+            else:
+                helpers.test_log(c.rest.content_json())
+                return True
+
+    def rest_verify_banner(self):
+        '''Set Banner on controller
+        
+            Inputs:
+                banner_message: Message to be set 
+            
+            Returns: True if configuration is successful, false otherwise
+        '''
+        try:
+            t = test.Test()
+        except:
+            return False
+        else:
+            c = t.controller('master')
+            try:
+                url = '/rest/v1/model/banner/?id=banner'
+                c.rest.get(url)
+            except:
+                return False
+            else:
+                content = c.rest.content()
+                return content[0]
+
+    def cli_verify_banner(self, banner_message):
+        '''Execute CLI command "show ntp" and return o/p
+        
+            Returns dictionary of o/p
+        '''
+        try:
+            t = test.Test()
+        except:
+            return False
+        else:
+            c = t.controller('master')
+            try:
+                c.enable("show banner")
+            except:
+                return False
+            else:
+                content = c.cli_content()
+                if str(banner_message) in content:
+                    return True
+                else:
+                    return False
+
+    def rest_delete_banner(self):
+        '''delete Banner on controller
+        
+            Inputs:
+                banner_message: Message to be set 
+            
+            Returns: True if configuration is successful, false otherwise
+        '''
+        try:
+            t = test.Test()
+        except:
+            return False
+        else:
+            c = t.controller('master')
+            try:
+                url = '/rest/v1/model/banner/?id=banner'
+                c.rest.delete(url, {})
+            except:
+                return False
+            else:
+                return True
