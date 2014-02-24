@@ -3,7 +3,7 @@ import autobot.restclient as restclient
 import autobot.test as test
 
 
-class T5_L3(object):
+class T5L3(object):
 
     def __init__(self):
         pass
@@ -222,7 +222,8 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
     def rest_show_endpoints(self):
         t = test.Test()
         c = t.controller('master')
-        url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/endpoints' % (c.base_url)
+        
+        url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/endpoints'
         c.rest.get(url)
         helpers.log("Output: %s" % c.rest.result_json())
         data = c.rest.content()

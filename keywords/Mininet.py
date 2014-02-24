@@ -1,6 +1,6 @@
 import autobot.helpers as helpers
 import autobot.test as test
-
+import re
 
 class Mininet(object):
 
@@ -144,3 +144,15 @@ class Mininet(object):
         t = test.Test()
         mn = t.mininet()
         mn.restart_mininet()
+        
+    def mininet_verify_arp(self, host, ip):
+        t = test.Test()
+        mn = t.mininet()
+        result = mn.cli('%s arp -n %s' % (host, ip))
+        output = result["content"]
+        helpers.log("output: %s" % output)              
+        match = re.search(r'no entry', output, re.S | re.I)
+        if match:
+            return False
+        else:
+            return True        
