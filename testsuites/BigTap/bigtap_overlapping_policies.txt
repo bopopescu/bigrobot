@@ -130,7 +130,7 @@ Add a service to P1 and verify overlap policy goes away
     sleep  3
     ${verify_overlap}=  rest verify bigtap policy  _ZP1_o_P1  num_filter_intf=1  num_delivery_intf=2
     Should be true  ${verify_overlap}
-    [Tags]  bigtap  overlap  service  skipped
+    [Tags]  bigtap  overlap  service1
 
 Create two policies with different filter but same delivery interface and verify overlap policy is not created          
     rest delete policy interface  admin-view  P1  F1  filter
