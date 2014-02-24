@@ -1,0 +1,286 @@
+== T5 Fabric Traffic Failover Test ==
+
+*Settings
+Documentation    Fabric Failover Test using Three Rack Dual Spine
+Suite Setup      base suite setup
+Suite Teardown   base suite teardown
+Test Setup       base test setup
+Test Teardown    T5 test teardown
+Force Tags       T5 
+Library          keywords/BsnCommon.py
+Library          keywords/T5.py
+Library          keywords/T5Fabric.py
+Library			 keywords/Mininet.py
+Library			 keywords/SwitchLight.py
+Library			 keywords/Ixia.py
+Library			 keywords/Host.py
+Resource         testsuites/T5/t5_dualleaf_three_rack_physical_resource.txt
+Resource         testsuites/T5/t5_physical_variables.txt
+
+*Test Case
+
+Setup Three Rack Dual Leaf Topology
+	base suite setup  
+    add fabric switch
+    sleep  5
+    rest verify fabric switch all
+	rest verify fabric link 	
+
+Spine Link Failover/back Test from leaf0-a untagged packet(Using IXIA)
+    [Tags]  feature  
+    rest add tenant  t1
+    rest add vns  t1  v1
+    rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
+    rest add interface to vns  t1  v1  leaf2-a  ${leaf2a_ixia_intf}  -1
+    
+    ${stream}=             L3 add  flow=a<->e  src_mac=00:02:01:00:00:24  dst_mac=00:02:05:00:00:24  ethertype=0800  frame_rate=1000  frame_size=68  name=a_e_flow
+    start traffic  ${stream}
+    sleep  10
+    verify traffic rate  tx_rate  rx_rate  a  e
+    cli disable interface  s1  ${leaf0a_spine0_intf0}
+    sleep  5
+    verify traffic rate  tx_rate  rx_rate  a  e
+    cli enable interface  s1  ${leaf0a_spine0_intf0}
+    sleep  5
+    verify traffic rate  tx_rate  rx_rate  a  e
+    cli disable interface  s1  ${leaf0a_spine1_intf0}
+    sleep  5
+    verify traffic rate  tx_rate  rx_rate  a  e
+    cli enable interface  s1  ${leaf0a_spine1_intf0}
+    sleep  5
+    verify traffic rate  tx_rate  rx_rate  a  e 
+    stop traffic  ${stream}
+    sleep  5
+    rest delete tenant  t1               
+       
+Spine Link Failover/back test from leaf0-b tagged packet 
+	[Tags]  feature   
+	rest add tenant  t2
+    rest add vns  t2  v2
+    rest add interface to vns  t2  v2  leaf0-b  ${leaf0b_ixia_intf}  100
+    rest add interface to vns  t2  v2  leaf2-b  ${leaf2b_ixia_intf}  100
+    
+    ${stream}=             L3 add  flow=b<->f  src_mac=00:02:02:00:00:24  dst_mac=00:02:06:00:00:24  ethertype=0800  frame_rate=1000  frame_size=68  name=b_f_flow
+    start traffic  ${stream}
+    sleep  10
+    verify traffic rate  tx_rate  rx_rate  b  f
+    cli disable interface  s2  ${leaf0b_spine0_intf0}
+    sleep  5
+    verify traffic rate  tx_rate  rx_rate  b  f
+    cli enable interface  s2  ${leaf0b_spine0_intf0}
+    sleep  5
+    verify traffic rate  tx_rate  rx_rate  b  f
+    cli disable interface  s2  ${leaf0b_spine1_intf0}
+    sleep  5
+    verify traffic rate  tx_rate  rx_rate  b  f
+    cli enable interface  s2  ${leaf0b_spine1_intf0}
+    sleep  5
+    verify traffic rate  tx_rate  rx_rate  b  f 
+    stop traffic  ${stream}
+    sleep  5
+    rest delete tenant  t2    
+
+Peer link failover between leaf1a to leaf1b
+	[Tags]  feature    
+	rest add tenant  t2
+    rest add vns  t2  v2
+    rest add interface to vns  t2  v2  leaf1-a  ${leaf1a_ixia_intf}  -1
+    rest add interface to vns  t2  v2  leaf1-b  ${leaf1b_ixia_intf}  -1
+    
+    ${stream}=             L3 add  flow=c<->d  src_mac=00:02:03:00:00:24  dst_mac=00:02:04:00:00:24  ethertype=0800  frame_rate=1000  frame_size=68  name=c_d_flow
+    start traffic  ${stream}
+    sleep  10
+    verify traffic rate  tx_rate  rx_rate  c  d
+    cli disable interface  s3  ${leaf1a_leaf1b_intf0}
+    sleep  5
+    verify traffic rate  tx_rate  rx_rate  c  d
+    cli enable interface  s3  ${leaf1a_leaf1b_intf0}
+    sleep  5
+    verify traffic rate  tx_rate  rx_rate  c  d
+    cli disable interface  s3  ${leaf1a_leaf1b_intf1}
+    sleep  5
+    verify traffic rate  tx_rate  rx_rate  c  d
+    cli enable interface  s3  ${leaf1a_leaf1b_intf1}
+    sleep  5
+    verify traffic rate  tx_rate  rx_rate  c  d 
+    stop traffic  ${stream}
+    sleep  5
+    rest delete tenant  t2 
+
+Traffic Test between the 2 leaf with single peer link
+	[Tags]  feature    
+	rest add tenant  t2
+    rest add vns  t2  v2
+    rest add interface to vns  t2  v2  leaf0-a  ${leaf0a_ixia_intf}  -1
+    rest add interface to vns  t2  v2  leaf0-b  ${leaf0b_ixia_intf}  -1
+    
+    ${stream}=             L3 add  flow=a<->b  src_mac=00:02:01:00:00:24  dst_mac=00:02:02:00:00:24  ethertype=0800  frame_rate=1000  frame_size=68  name=a_b_flow
+    start traffic  ${stream}
+    sleep  10
+    verify traffic rate  tx_rate  rx_rate  a  b
+    cli disable interface  s1  ${leaf0a_leaf0b_intf0}
+    sleep  5
+    verify traffic rate negative  tx_rate  rx_rate  a  b
+    cli enable interface  s1  ${leaf0a_leaf0b_intf0}
+    sleep  5
+    verify traffic rate  tx_rate  rx_rate  a  b
+    stop traffic  ${stream}
+    sleep  5
+    rest delete tenant  t2 
+
+Reboot leaf switch with dual Host connected through lacp (Host5 to Host4)
+	[Tags]  feature 
+	rest add tenant  t1
+	rest add vns  t1  v1
+	rest add portgroup  p4 
+    rest add interface to portgroup  leaf1-a  ${h4_intf0}  p4
+    rest add interface to portgroup  leaf1-b  ${h4_intf1}  p4
+    rest add portgroup lacp  p4  
+    rest add portgroup  p5 
+    rest add interface to portgroup  leaf2-a  ${h5_intf0}  p5
+    rest add interface to portgroup  leaf2-b  ${h5_intf1}  p5
+    rest add portgroup lacp  p5
+    rest add portgroup to vns  t1  v1  p4  -1
+    rest add portgroup to vns  t1  v1  p5  -1
+    sleep  3
+    rest verify fabric interface lacp  leaf1-a  ${h4_intf0}
+    rest verify fabric interface lacp  leaf2-a  ${h5_intf0}  
+    ${loss}=  bash ping  h5  ${h4_ip}  source_if=bond0
+    Should Be True  ${loss} == 0
+    cli restart switch  s5
+    sleep  2
+    ${loss}=  bash ping  h5  ${h4_ip}  source_if=bond0
+    Should Be True  ${loss} == 0
+    sleep  90
+    cli restart switch  s6
+    sleep  2
+    ${loss}=  bash ping  h5  ${h4_ip}  source_if=bond0
+    Should Be True  ${loss} == 0
+   rest delete interface from portgroup  leaf1-a  ${h4_intf0}  p4
+   rest delete interface from portgroup  leaf1-b  ${h4_intf1}  p4
+   rest delete interface from portgroup  leaf2-a  ${h5_intf0}  p5
+   rest delete interface from portgroup  leaf2-b  ${h5_intf1}  p5
+   rest delete portgroup  p4
+   rest delete portgroup  p5
+   rest delete tenant  t1 
+
+Reboot leaf switch with dual host connected through static lag(Host6-Host4)
+	[Tags]  feature    
+	rest add tenant  t1
+	rest add vns  t1  v1
+	rest add portgroup  p4 
+    rest add interface to portgroup  leaf1-a  ${h4_intf0}  p4
+    rest add interface to portgroup  leaf1-b  ${h4_intf1}  p4
+    rest add portgroup lacp  p4
+    rest add portgroup  p6 
+    rest add interface to portgroup  leaf2-a  ${h6_intf0}  p6
+    rest add interface to portgroup  leaf2-b  ${h6_intf1}  p6
+    rest add portgroup to vns  t1  v1  p4  -1
+    rest add portgroup to vns  t1  v1  p6  -1
+    sleep  3
+    ${loss}=  bash ping  h6  ${h4_ip}  source_if=bond0
+    Should Be True  ${loss} == 0
+    cli restart switch  s5
+    sleep  2
+    ${loss}=  bash ping  h6  ${h4_ip}  source_if=bond0
+    Should Be True  ${loss} == 0
+    sleep  90
+    cli restart switch  s6
+    sleep  2
+    ${loss}=  bash ping  h6  ${h4_ip}  source_if=bond0
+    Should Be True  ${loss} == 0
+   rest delete interface from portgroup  leaf1-a  ${h4_intf0}  p4
+   rest delete interface from portgroup  leaf1-b  ${h4_intf1}  p4
+   rest delete interface from portgroup  leaf2-a  ${h5_intf0}  p5
+   rest delete interface from portgroup  leaf2-b  ${h5_intf1}  p5
+   rest delete portgroup  p4
+   rest delete portgroup  p5
+   rest delete tenant  t1 
+   
+Host Link Failover test with Host6 in Rack2 to Host 4 in Rack1
+	[Tags]  feature    
+	rest add tenant  t1
+	rest add vns  t1  v1
+	rest add portgroup  p4 
+    rest add interface to portgroup  leaf1-a  ${h4_intf0}  p4
+    rest add interface to portgroup  leaf1-b  ${h4_intf1}  p4
+    rest add portgroup lacp  p4
+    rest add portgroup  p6 
+    rest add interface to portgroup  leaf2-a  ${h6_intf0}  p6
+    rest add interface to portgroup  leaf2-b  ${h6_intf1}  p6
+    rest add portgroup to vns  t1  v1  p4  -1
+    rest add portgroup to vns  t1  v1  p6  -1
+    sleep  3
+    ${loss}=  bash ping  h6  ${h4_ip}  source_if=bond0
+    Should Be True  ${loss} == 0
+    cli disable interface  s3  ${h4_intf0}
+    sleep  3
+    ${loss}=  bash ping  h6  ${h4_ip}  source_if=bond0
+    Should Be True  ${loss} == 0
+    cli enable interface  s3  ${h4_intf0}
+    sleep  3
+    ${loss}=  bash ping  h6  ${h4_ip}  source_if=bond0
+    Should Be True  ${loss} == 0
+    cli disable interface  s4  ${h4_intf1}
+    sleep  3
+    ${loss}=  bash ping  h6  ${h4_ip}  source_if=bond0
+    Should Be True  ${loss} == 0
+    cli enable interface  s4  ${h4_intf1}
+    sleep  3
+    ${loss}=  bash ping  h6  ${h4_ip}  source_if=bond0
+    Should Be True  ${loss} == 0
+    rest delete tenant  t1    
+
+change portgroup from lacp to static and verify the forwarding
+	[Tags]  feature
+	rest add tenant  t1
+	rest add vns  t1  v1
+	rest add portgroup  p4 
+    rest add interface to portgroup  leaf1-a  ${h4_intf0}  p4
+    rest add interface to portgroup  leaf1-b  ${h4_intf1}  p4
+    rest add portgroup lacp  p4
+    rest add portgroup  p6 
+    rest add interface to portgroup  leaf2-a  ${h6_intf0}  p6
+    rest add interface to portgroup  leaf2-b  ${h6_intf1}  p6
+    rest add portgroup to vns  t1  v1  p4  -1
+    rest add portgroup to vns  t1  v1  p6  -1
+    sleep  3
+    ${loss}=  bash ping  h6  ${h4_ip}  source_if=bond0
+    Should Be True  ${loss} == 0
+    rest delete portgroup lacp  p4
+    sleep  2
+    rest verify fabric interface  leaf1-a  ${h4_intf0}
+    rest verify fabric interface  leaf1-b  ${h4_intf1}
+    ${loss}=  bash ping  h6  ${h4_ip}  source_if=bond0
+    Should Be True  ${loss} == 0
+    rest delete tenant  t1 
+     
+Tear down config and Topology
+    delete fabric switch  
+    rest delete portgroup  p4
+    rest delete portgroup  p6
+    rest delete tenant  t1
+    rest delete tenant  t2
+    base suite teardown
+ 
+
+* Keywords  
+	
+verify traffic rate   [Arguments]  ${tx_rate}  ${rx_rate}  ${tx_intf}  ${rx_intf}
+    Sleep  5
+    ${report}=  fetch port stats
+    Log  ${report}
+    ${tx_value}=  verify dict key  ${report}  ${tx_intf}  transmitted_frame_rate
+    ${rx_value}=  verify dict key  ${report}  ${rx_intf}  received_frame_rate
+    ixia verify traffic rate  ${tx_value}  ${rx_value}
+    
+verify traffic rate negative   [Arguments]  ${tx_rate}  ${rx_rate}  ${tx_intf}  ${rx_intf}
+    Sleep  5
+    ${report}=  fetch port stats
+    ${tx_value}=  verify dict key  ${report}  ${tx_intf}  transmitted_frame_rate
+    ${rx_value}=  verify dict key  ${report}  ${rx_intf}  received_frame_rate
+    Should Not be equal  ${tx_value}  ${rx_value}
+    
+T5 test teardown
+	delete traffic
+
