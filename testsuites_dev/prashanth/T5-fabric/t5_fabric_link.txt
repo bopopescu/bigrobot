@@ -13,25 +13,7 @@ Library          keywords_dev/prashanth/T5Fabric.py
 Library			 keywords/Mininet.py
 Library			 keywords/SwitchLight.py
 Resource         keywords_dev/prashanth/t5_dualleaf_three_rack_resource.txt
-
-*Variables
-${leaf0a_spine0_intf0}	ethernet30
-${leaf0a_spine0_intf1}	ethernet31
-${leaf0a_leaf0b_intf0}	ethernet39
-${leaf0a_leaf0b_intf1}	ethernet40
-${leaf0a_spine1_intf}	ethernet32
-${leaf0a_ixia_intf}		ethernet24
-${leaf0b_ixia_intf}		ethernet24
-${leaf1a_ixia_intf}		ethernet24
-${leaf1b_ixia_intf}		ethernet24
-${leaf2a_ixia_intf}		ethernet24
-${leaf2b_ixia_intf}		ethernet24
-${leaf2a_spine0_intf}	ethernet31
-${leaf2a_spine1_intf}	ethernet32
-${leaf2a_dpid}  00:00:00:00:02:00:00:05
-${leaf2b_dpid}  00:00:00:00:02:00:00:06  
-
-
+Resource		 keywords_dev/prashanth/t5_physical_variables.txt
 
 
 *Test Case
@@ -85,17 +67,17 @@ Reboot leaf switch and verify fabric link
 Add/delete a new link between spine0 and leaf0a
 	[Tags]  feature
 	rest verify fabric link
-	cli disable interface  s1  ${leaf0a_spine0_intf1}
+	cli disable interface  s1  ${leaf1a_spine0_intf1}
 	rest verify fabric link
-	cli enable interface  s1  ${leaf0a_spine0_intf1}
+	cli enable interface  s1  ${leaf1a_spine0_intf1}
 	rest verify fabric link
 
 add and delete peer group link and verify the database
 	[Tags]  feature
 	rest verify fabric link
-	cli disable interface  s1  ${leaf0a_leaf0b_intf0}
+	cli disable interface  s1  ${leaf1a_leaf1b_intf0}
 	rest verify fabric link
-	cli enable interface  s1  ${leaf0a_leaf0b_intf0}
+	cli enable interface  s1  ${leaf1a_leaf1b_intf0}
 	rest verify fabric link
 
 Delete and Readd the Rack2

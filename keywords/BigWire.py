@@ -251,6 +251,44 @@ class BigWire(object):
                 helpers.test_log(c.rest.content_json())
                 return True
 
+    def rest_delete_switch_from_tenant(self, node, tenant_name, intf_name, vlan=0):
+        '''
+            Objective:
+            - Delete switch from a tenant
+        
+           Input:
+           | tenant_name    Tenant Name  
+           | switch_dpid        DPID of switch
+               
+               intf_name     Interface Name
+               
+               Vlan            Tenant Vlan Number
+           
+            Return value: 
+            - True on success
+            - False otherwise
+        '''
+        try:
+            t = test.Test()
+        except:
+            return False
+        else:
+            c = t.controller('master')
+            AppCommon = AppController.AppController()
+            switch_dpid = AppCommon.rest_return_switch_dpid_from_ip(node)
+            try:
+                if vlan == 0:
+                    url = '/api/v1/data/controller/applications/bigwire/tenant[name="%s"]/tenant-interface[interface="%s"][switch="%s"]' % (str(tenant_name), str(intf_name), str(switch_dpid))
+                    c.rest.delete(url, {})
+                else:
+                    url = '/api/v1/data/controller/applications/bigwire/tenant[name="%s"]/tenant-interface[switch="%s"][interface="%s"]/tenant-vlan[vlan=%d]' % (str(tenant_name), str(switch_dpid), str(intf_name), int(vlan))
+                    c.rest.delete(url, {})
+            except:
+                return False
+            else:
+                helpers.test_log(c.rest.content_json())
+                return True
+
     def rest_delete_tenant(self, tenant_name):
         '''
         Objective:

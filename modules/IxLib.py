@@ -801,8 +801,9 @@ class Ixia(object):
             self._traffi_apply = True
         time.sleep(2)
         # portStatistics = self._handle.getFilteredList(self._handle.getRoot()+'statistics', 'view', '-caption', 'Port Statistics')[0]
-        time.sleep(2)
+        time.sleep(5)
         self._handle.execute('startStatelessTrafficBlocking', trafficHandle)
+        time.sleep(10)
         helpers.log("### Traffic Started")
         return True
     def ix_start_hosts(self, port_name = None, ip_type='ipv4'):
@@ -891,6 +892,8 @@ class Ixia(object):
                     port_stat['received_valid_frame_rate'] = value
 #                 if column == 'Data Integrity Frames Rx.':
 #                     port_stat['received_invalid_frames'] = value
+                if column == 'Data Integrity Frames Rx.':
+                    port_stat['received_data_integrity_frames'] = value
                 if column == 'CRC Errors':
                     port_stat['received_crc_errored_frames'] = value
                 if column == 'Bytes Rx.':
@@ -901,6 +904,7 @@ class Ixia(object):
                     port_stat['received_frame_rate'] = str(frames)
                                        
             port_stats[port_stat['port']] = port_stat
+        helpers.log('result:\n%s' % helpers.prettify(port_stats))
         return port_stats
 
     def ix_stop_traffic(self, traffic_stream = None):
@@ -917,7 +921,9 @@ class Ixia(object):
             handle.execute('stopStatelessTraffic', traffic_stream)
             helpers.log("Printing Statistics")
             port_stats = self.ix_fetch_port_stats()
-            helpers.log("Port Stats : \n %s" % port_stats)
+            helpers.log('result:\n%s' % helpers.prettify(port_stats))
+    
+        time.sleep(5)
         helpers.log('Successfully Stopped the traffic for Stream %s ' % str(traffic_stream))
         return True
     def ix_clear_stats(self, port_name = None):
@@ -927,15 +933,31 @@ class Ixia(object):
         handle = self._handle
         if port_name is None:
             helpers.log('Clearing Stats Globally on all ports initialized')
-            handle.execute('clearStats')
+            handle.execute('clearPortsAndTrafficStats')
             helpers.log('Stats Cleared Succesffuly ..')
+        helpers.log('Sleep 5 secs for the stats to get cleared in IXIA...')
+        time.sleep(5)
+        result = self.ix_fetch_port_stats()
+        helpers.log('result:\n%s' % helpers.prettify(result))
         return True
     
-    def ix_delete_traffic(self, stream = None):
+    def ix_delete_traffic(self, **kwargs):
         '''
             Method to delete all configured Traffic Items
         '''
         handle = self._handle
+        i = 0
+        while i < 2:
+            try:
+                handle.execute('apply', handle.getRoot() + 'traffic')
+                helpers.log('Applied traffic Config ..')
+                self._handle.execute('stop', self._handle.getRoot() + 'traffic')
+                time.sleep(5)
+                break
+            except IxNetwork.IxNetError:
+                helpers.log('Got IXIA ERROR while Applying traffic will try 2 times..')
+            i = i + 1    
+            
         handle.remove(handle.getRoot()+'traffic'+'/trafficItem')
         handle.commit()   
         helpers.log('succes removing traffic Items Configured!!!')
@@ -951,6 +973,7 @@ class Ixia(object):
             helpers.log('Successfully Removed Topology : %s ' % str(topo))
         self._topology = {}
         helpers.log('Succes Removing Topologies Created !!!')
+        time.sleep(3)
         return True
     
     

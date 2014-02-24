@@ -350,3 +350,64 @@ admin_user = glance
 
     def return_list(self):
         return [1, 2, 3, 4, 5]
+
+    def pause(self, msg=None):
+        if not msg:
+            msg = "Pausing... Press Ctrl-D to continue."
+        helpers.warn(msg)
+        import fileinput
+        for _ in fileinput.input():
+            pass
+
+    def pause2(self, msg=None):
+        if not msg:
+            msg = "Pausing... Press Ctrl-D to continue."
+        helpers.warn(msg)
+        import sys
+        for _ in sys.stdin:
+            pass
+
+    def return_false(self):
+        return False
+
+    def ssh_send_control_c(self):
+        t = test.Test()
+        c = t.controller('c1')
+
+        c.cli('')  # Make sure we're in CLI mode
+
+        #**** CLI walk: show ?
+        c.send('show ?', no_cr=True)
+        c.expect(r'[\r\n]\w+[#>] ')  # Match CLI prompt
+        content = c.cli_content()
+        new_content = helpers.strip_cli_output(content)
+        new_content = helpers.str_to_list(new_content)
+        helpers.log("new_content:\n%s" % helpers.prettify(new_content))
+
+        c.send(helpers.ctrl('u'))  # Erase input
+        c.expect()  # Match default CLI prompt
+
+        #**** CLI walk: show event-history ?
+        c.send('show event-history ?', no_cr=True)
+        c.expect(r'[\r\n]\w+[#>] ')  # Match CLI prompt
+        content = c.cli_content()
+        new_content = helpers.strip_cli_output(content)
+        new_content = helpers.str_to_list(new_content)
+        helpers.log("new_content:\n%s" % helpers.prettify(new_content))
+
+        c.send(helpers.ctrl('u'))  # Erase input
+        c.expect()  # Match default CLI prompt
+
+        #**** CLI walk: show event-history topology-link ?
+        c.send('show event-history topology-link ?', no_cr=True)
+        c.expect(r'[\r\n]\w+[#>] ')  # Match CLI prompt
+        content = c.cli_content()
+        new_content = helpers.strip_cli_output(content)
+        new_content = helpers.str_to_list(new_content)
+        helpers.log("new_content:\n%s" % helpers.prettify(new_content))
+
+        c.send(helpers.ctrl('u'))  # Erase input
+        c.expect()  # Match default CLI prompt
+
+        #**** Done! Just making sure some random command continues to work...
+        c.cli('show user')
