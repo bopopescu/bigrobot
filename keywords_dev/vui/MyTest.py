@@ -378,7 +378,8 @@ admin_user = glance
 
         #**** CLI walk: show ?
         c.send('show ?', no_cr=True)
-        c.expect(r'[\r\n]\w+[#>] ')  # Match CLI prompt
+        c.expect(r'[\r\n\x07][\w_-]+[#>] ')  # Match CLI prompt
+        # c.expect(r'[\r\n][\w-_]+[#>] ')  # Match CLI prompt
         content = c.cli_content()
         new_content = helpers.strip_cli_output(content)
         new_content = helpers.str_to_list(new_content)
@@ -389,7 +390,8 @@ admin_user = glance
 
         #**** CLI walk: show event-history ?
         c.send('show event-history ?', no_cr=True)
-        c.expect(r'[\r\n]\w+[#>] ')  # Match CLI prompt
+        # c.expect(r'[\r\n]\w+[#>] ')  # Match CLI prompt
+        c.expect(r'[\r\n\x07][\w_-]+[#>] ')  # Match CLI prompt
         content = c.cli_content()
         new_content = helpers.strip_cli_output(content)
         new_content = helpers.str_to_list(new_content)
@@ -400,7 +402,8 @@ admin_user = glance
 
         #**** CLI walk: show event-history topology-link ?
         c.send('show event-history topology-link ?', no_cr=True)
-        c.expect(r'[\r\n]\w+[#>] ')  # Match CLI prompt
+        # c.expect(r'[\r\n]\w+[#>] ')  # Match CLI prompt
+        c.expect(r'[\r\n\x07][\w_-]+[#>] ')  # Match CLI prompt
         content = c.cli_content()
         new_content = helpers.strip_cli_output(content)
         new_content = helpers.str_to_list(new_content)
