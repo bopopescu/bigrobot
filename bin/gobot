@@ -431,8 +431,10 @@ def test_command(*args):
 
     rc = robot.run(test_suite, **options)
     helpers.log("Robot Framework return code is %s" % rc)
-    print("Return code is %s" % rc)
+    print("Robot Framework return code is %s" % rc)
 
+    helpers.log("bigrobot_continuous_integration: %s"
+                % helpers.bigrobot_continuous_integration())
     if helpers.bigrobot_continuous_integration() == 'True':
         helpers.log("Inside continuous integration environment. Return code"
                     " set to 0.")
