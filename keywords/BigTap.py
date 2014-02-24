@@ -254,64 +254,67 @@ class BigTap(object):
             if not c.rest.status_code_ok():
                 helpers.test_failure(c.rest.error())
             content = c.rest.content()
-            if (return_value is not None) :
-                return content[0][return_value]
+            if len(content) == 0:
+                return False
             else:
-                if content[0]['name'] == str(policy_name):
-                    helpers.test_log("Policy correctly reports policy name as : %s" % content[0]['name'])
+                if (return_value is not None) :
+                    return content[0][return_value]
                 else:
-                    helpers.test_failure("Policy does not correctly report policy name  : %s" % content[0]['name'])
-                    return False
-
-                if (content[0]['config-status'] == "active and forwarding") and (str(action) == "forward"):
-                    helpers.test_log("Policy correctly reports config status as : %s" % content[0]['config-status'])
-                elif (content[0]['config-status'] == "active and rate measure") and (str(action) == "rate-measure"):
-                    helpers.test_log("Policy correctly reports config status as : %s" % content[0]['config-status'])
-                elif (content[0]['config-status'] == "inactive") and (str(action) == "inactive"):
-                    helpers.test_log("Policy correctly reports config status as : %s" % content[0]['config-status'])
-                else:
-                    helpers.test_failure("Policy does not correctly report config status as : %s and passed action value is %s" % (content[0]['config-status'], str(action)))
-                    return False
-
-                if content[0]['type'] == "Configured":
-                    helpers.test_log("Policy correctly reports type as : %s" % content[0]['type'])
-                elif content[0]['type'] == "Dynamic":
-                    helpers.test_log("Policy correctly reports type as : %s" % content[0]['type'])
-                else:
-                    helpers.test_failure("Policy does not correctly report type. Type seen is : %s" % content[0]['type'])
-                    return False
-
-                if content[0]['runtime-status'] == "installed":
-                    helpers.test_log("Policy correctly reports runtime status as : %s" % content[0]['runtime-status'])
-                elif content[0]['runtime-status'] == "inactive":
-                    helpers.test_log("Policy correctly reports runtime status as : %s" % content[0]['runtime-status'])
-                else:
-                    helpers.test_failure("Policy does not correctly report runtime status as : %s" % content[0]['runtime-status'])
-                    return False
-
-                if (num_delivery_intf is not None):
-                    if content[0]['delivery-interface-count'] == int(num_delivery_intf):
-                        helpers.test_log("Policy correctly reports number of delivery interfaces as : %s" % content[0]['delivery-interface-count'])
+                    if content[0]['name'] == str(policy_name):
+                        helpers.test_log("Policy correctly reports policy name as : %s" % content[0]['name'])
                     else:
-                        helpers.test_failure("Policy does not correctly report number of delivery interfaces  : %s" % content[0]['delivery-interface-count'])
-                        return False
-                if (num_filter_intf is not None):
-                    if content[0]['filter-interface-count'] == int(num_filter_intf):
-                        helpers.test_log("Policy correctly reports number of filter interfaces as : %s" % content[0]['filter-interface-count'])
-                    else:
-                        helpers.test_failure("Policy does not correctly report number of filter interfaces  : %s" % content[0]['filter-interface-count'])
+                        helpers.test_failure("Policy does not correctly report policy name  : %s" % content[0]['name'])
                         return False
 
-                if content[0]['detailed-status'] == "installed to forward":
-                    helpers.test_log("Policy correctly reports detailed status as : %s" % content[0]['detailed-status'])
-                elif content[0]['detailed-status'] == "installed to measure rate":
-                    helpers.test_log("Policy correctly reports detailed status as : %s" % content[0]['detailed-status'])
-                elif content[0]['detailed-status'] == "inactive":
-                    helpers.test_log("Policy correctly reports detailed status as : %s" % content[0]['detailed-status'])
-                else:
-                    helpers.test_failure("Policy does not correctly report detailed status as : %s" % content[0]['detailed-status'])
-                    return False
-                return True
+                    if (content[0]['config-status'] == "active and forwarding") and (str(action) == "forward"):
+                        helpers.test_log("Policy correctly reports config status as : %s" % content[0]['config-status'])
+                    elif (content[0]['config-status'] == "active and rate measure") and (str(action) == "rate-measure"):
+                        helpers.test_log("Policy correctly reports config status as : %s" % content[0]['config-status'])
+                    elif (content[0]['config-status'] == "inactive") and (str(action) == "inactive"):
+                        helpers.test_log("Policy correctly reports config status as : %s" % content[0]['config-status'])
+                    else:
+                        helpers.test_failure("Policy does not correctly report config status as : %s and passed action value is %s" % (content[0]['config-status'], str(action)))
+                        return False
+
+                    if content[0]['type'] == "Configured":
+                        helpers.test_log("Policy correctly reports type as : %s" % content[0]['type'])
+                    elif content[0]['type'] == "Dynamic":
+                        helpers.test_log("Policy correctly reports type as : %s" % content[0]['type'])
+                    else:
+                        helpers.test_failure("Policy does not correctly report type. Type seen is : %s" % content[0]['type'])
+                        return False
+
+                    if content[0]['runtime-status'] == "installed":
+                        helpers.test_log("Policy correctly reports runtime status as : %s" % content[0]['runtime-status'])
+                    elif content[0]['runtime-status'] == "inactive":
+                        helpers.test_log("Policy correctly reports runtime status as : %s" % content[0]['runtime-status'])
+                    else:
+                        helpers.test_failure("Policy does not correctly report runtime status as : %s" % content[0]['runtime-status'])
+                        return False
+
+                    if (num_delivery_intf is not None):
+                        if content[0]['delivery-interface-count'] == int(num_delivery_intf):
+                            helpers.test_log("Policy correctly reports number of delivery interfaces as : %s" % content[0]['delivery-interface-count'])
+                        else:
+                            helpers.test_failure("Policy does not correctly report number of delivery interfaces  : %s" % content[0]['delivery-interface-count'])
+                            return False
+                    if (num_filter_intf is not None):
+                        if content[0]['filter-interface-count'] == int(num_filter_intf):
+                            helpers.test_log("Policy correctly reports number of filter interfaces as : %s" % content[0]['filter-interface-count'])
+                        else:
+                            helpers.test_failure("Policy does not correctly report number of filter interfaces  : %s" % content[0]['filter-interface-count'])
+                            return False
+
+                    if content[0]['detailed-status'] == "installed to forward":
+                        helpers.test_log("Policy correctly reports detailed status as : %s" % content[0]['detailed-status'])
+                    elif content[0]['detailed-status'] == "installed to measure rate":
+                        helpers.test_log("Policy correctly reports detailed status as : %s" % content[0]['detailed-status'])
+                    elif content[0]['detailed-status'] == "inactive":
+                        helpers.test_log("Policy correctly reports detailed status as : %s" % content[0]['detailed-status'])
+                    else:
+                        helpers.test_failure("Policy does not correctly report detailed status as : %s" % content[0]['detailed-status'])
+                        return False
+                    return True
 
     def rest_verify_service_interface_state_in_policy(self, node, policy_name, service_name, service_pre_interface=None, service_post_interface=None):
         try:
@@ -816,6 +819,93 @@ class BigTap(object):
             else:
                 return True
 
+    def rest_update_policy_priority(self, rbac_view_name, policy_name, policy_priority=100):
+        '''
+            Objective:
+            - Update bigtap policy priority. Default value is 100.
+        
+            Input:
+             | `rbac_view_name` | RBAC View Name for eg. admin-view | 
+             | `policy_name` | Policy Name | 
+             | policy_priority| New priority value|
+            
+            Return Value: 
+            - True if configuration delete is successful
+            - False if configuration delete is unsuccessful          
+        '''
+        try:
+            t = test.Test()
+        except:
+            return False
+        else:
+            c = t.controller('master')
+            try:
+                url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]' % (str(rbac_view_name), str(policy_name))
+                c.rest.patch(url, {"priority": int(policy_priority)})
+            except:
+                helpers.test_log(c.rest.error())
+                return False
+            else:
+                return True
+
+    def rest_add_vlan_rewrite(self, rbac_view_name, policy_name, rewrite_vlan):
+        '''
+            Objective:
+            - Update bigtap policy priority. Default value is 100.
+        
+            Input:
+             | `rbac_view_name` | RBAC View Name for eg. admin-view | 
+             | `policy_name` | Policy Name | 
+             | policy_priority| New priority value|
+            
+            Return Value: 
+            - True if configuration delete is successful
+            - False if configuration delete is unsuccessful          
+        '''
+        try:
+            t = test.Test()
+        except:
+            return False
+        else:
+            c = t.controller('master')
+            try:
+                url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]' % (str(rbac_view_name), str(policy_name))
+                c.rest.patch(url, {"rewrite-vlan": int(rewrite_vlan)})
+            except:
+                helpers.test_log(c.rest.error())
+                return False
+            else:
+                return True
+
+    def rest_delete_vlan_rewrite(self, rbac_view_name, policy_name, rewrite_vlan):
+        '''
+            Objective:
+            - Update bigtap policy priority. Default value is 100.
+        
+            Input:
+             | `rbac_view_name` | RBAC View Name for eg. admin-view | 
+             | `policy_name` | Policy Name | 
+             | policy_priority| New priority value|
+            
+            Return Value: 
+            - True if configuration delete is successful
+            - False if configuration delete is unsuccessful          
+        '''
+        try:
+            t = test.Test()
+        except:
+            return False
+        else:
+            c = t.controller('master')
+            try:
+                url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"][rewrite-vlan=None]/rewrite-vlan' % (str(rbac_view_name), str(policy_name))
+                c.rest.delete(url, {})
+            except:
+                helpers.test_log(c.rest.error())
+                return False
+            else:
+                return True
+
     def rest_add_policy_interface(self, rbac_view_name, policy_name, intf_nickname, intf_type):
         '''
             Objective:
@@ -885,7 +975,7 @@ class BigTap(object):
             else:
                 return True
 
-    def rest_add_policy_match(self, rbac_view_name, policy_name, match_number, data):
+    def rest_add_policy_match(self, rbac_view_name, policy_name, match_number, data, flag=False):
         '''
             Objective:
             - Add a bigtap policy match condition.
@@ -907,11 +997,14 @@ class BigTap(object):
         else:
             c = t.controller('master')
             try:
+                helpers.log("Input data is %s" % data)
                 url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]/rule[sequence=%s]' % (str(rbac_view_name), str(policy_name), str(match_number))
-                data_dict = helpers.from_json(data)
+                if not flag:
+                    data_dict = helpers.from_json(data)
+                else:
+                    data_dict = data
                 c.rest.put(url, data_dict)
             except:
-                helpers.test_log(c.rest.error())
                 return False
             else:
                 return True
@@ -1964,3 +2057,59 @@ class BigTap(object):
                 return False
             else:
                 return True
+
+    def return_match(self, protocol=None, ip_type=None, dst_mac=None, src_mac=None, src_ip=None, dst_ip=None, src_port=None, dst_port=None, ip_tos=None, vlan=None):
+        dictionary = {}
+        data_P1 = {"sequence": 1}
+        data_P2 = {"sequence": 1}
+        chkArray_P1 = []
+        chkArray_P2 = []
+        if dst_mac is not None:
+            dictionary['dst-mac'] = str(dst_mac)
+        if src_mac is not None:
+            dictionary['src-mac'] = str(src_mac)
+        if src_ip is not None:
+            dictionary['dst-ip'] = str(src_ip)
+        if dst_ip is not None:
+            dictionary['dst-ip'] = str(dst_ip)
+        if ip_tos is not None:
+            dictionary['ip-tos'] = int(ip_tos)
+        if vlan is not None:
+            dictionary['vlan'] = int(vlan)
+        if src_port is not None:
+            dictionary['src-tp-port'] = int(src_port)
+        if dst_port is not None:
+            dictionary['dst-tp-port'] = int(dst_port)
+        if protocol is not None:
+            data_P1['ip-proto'] = int(protocol)
+            data_P2['ip-proto'] = int(protocol)
+            chkArray_P1.append('ip-proto')
+            chkArray_P2.append('ip-proto')
+        if ip_type is not None:
+            data_P1['ether-type'] = int(ip_type)
+            data_P2['ether-type'] = int(ip_type)
+            chkArray_P1.append('ether-type')
+            chkArray_P2.append('ether-type')
+        tuples = [(x, y) for x in dictionary for y in dictionary if x != y]
+        match1 = []
+        match2 = []
+        for entry in tuples:
+            if (entry[1], entry[0]) in tuples:
+                tuples.remove((entry[1], entry[0]))
+        for pair in tuples:
+            data_P1[pair[0]] = dictionary[pair[0]]
+            data_P2[pair[1]] = dictionary[pair[1]]
+            chkArray_P1.append(pair[0])
+            chkArray_P2.append(pair[1])
+            if pair[0] == "src-ip" :
+                data_P1['src-ip-mask'] = "255.255.255.0"
+            if pair[0] == "dst-ip" :
+                data_P1['dst-ip-mask'] = "255.255.255.0"
+            if pair[1] == "src-ip" :
+                data_P2['src-ip-mask'] = "255.255.255.0"
+            if pair[1] == "dst-ip" :
+                data_P2['dst-ip-mask'] = "255.255.255.0"
+            match1.append(data_P1)
+            match2.append(data_P2)
+        match = match1 + match2
+        return (match)
