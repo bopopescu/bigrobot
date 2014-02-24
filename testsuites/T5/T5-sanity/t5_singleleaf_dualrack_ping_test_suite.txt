@@ -33,7 +33,7 @@ ping bm0 to bm1 single leaf single rack dynamic endpoints
    sleep  10
    ${loss}=  mininet ping  bm0  ${bm1_ip}
    Should Be True  ${loss} == 0  
-   Should be True  ${false}
+   #Should be True  ${false}
  
 ping bm0 to bm1 single leaf single rack static endpoints
    [Tags]  sanity
