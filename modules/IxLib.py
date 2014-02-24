@@ -549,7 +549,7 @@ class Ixia(object):
         crc = kwargs.get('crc', None)
         no_arp = kwargs.get('no_arp', True)
         vlan_cnt = kwargs.get('vlan_cnt', 1)
-        vlan_step = kwargs.get('vlan_step', None)
+        vlan_step = kwargs.get('vlan_step', 1)
         
         ix_tcl_server = self._tcl_server_ip
         flow = kwargs.get('flow', 'None')
@@ -685,7 +685,7 @@ class Ixia(object):
         ethertype = kwargs.get('ethertype', '0800')
         vlan_id = kwargs.get('vlan_id', None)
         vlan_cnt = kwargs.get('vlan_cnt', 1)
-        vlan_step = kwargs.get('vlan_step', None)
+        vlan_step = kwargs.get('vlan_step', 1)
         
         crc = kwargs.get('crc', None)
         ip_type = 'ipv4'
