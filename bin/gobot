@@ -433,11 +433,11 @@ def test_command(*args):
     helpers.log("Robot Framework return code is %s" % rc)
     print("Robot Framework return code is %s" % rc)
 
-    helpers.log("bigrobot_continuous_integration: %s"
-                % helpers.bigrobot_continuous_integration())
+    print("bigrobot_continuous_integration: %s"
+          % helpers.bigrobot_continuous_integration())
     if helpers.bigrobot_continuous_integration() == 'True':
-        helpers.log("Inside continuous integration environment. Return code"
-                    " set to 0.")
+        print("Inside continuous integration environment. Return code"
+              " set to 0.")
         sys.exit(0)
     else:
         sys.exit(rc)
