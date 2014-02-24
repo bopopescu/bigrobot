@@ -143,14 +143,6 @@ helpers.bigrobot_path()
 helpers.bigtest_path()
 helpers.python_path()
 
-ROBOT_FRAMEWORK_OPTS = (
-    '--loglevel=trace',
-    '--debugfile=debug.log',
-    '--exclude=skipped',
-    '--outputdir=%s' % helpers.bigrobot_log_path_exec_instance(),
-    )
-    # Exclude test cases tagged as 'skipped' from execution
-
 
 def get_command_dict():
     """
@@ -300,6 +292,15 @@ def format_convert_and_copy(f, p, quiet=False):
             shutil.copy(filename, p)
 
 
+def touch_log_files():
+    log_files = ['debug.log', 'syslog.txt', 'log.html', 'report.html',
+                 'output.xml']
+    for f in log_files:
+        file = '/'.join((helpers.bigrobot_log_path_exec_instance(), f))
+        # print("Touching file %s" % file)
+        helpers.touch(file)
+
+
 def create_links_to_logs():
     """
     Create links to the log files located in the log directory. These
@@ -425,10 +426,12 @@ def test_command(*args):
 
     test_suite = ''.join((helpers.bigrobot_suite(), '.', ext))
 
+    touch_log_files()
+    create_links_to_logs()
+
     rc = robot.run(test_suite, **options)
     helpers.log("Robot Framework return code is %s" % rc)
     print("Return code is %s" % rc)
-    create_links_to_logs()
 
     if helpers.bigrobot_continuous_integration():
         helpers.log("Inside continuous integration environment. Return code"

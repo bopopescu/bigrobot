@@ -745,6 +745,16 @@ def file_write_append_once(filename, s):
     f.close()
 
 
+def touch(fname, times=None):
+    """
+    Like Unix 'touch' command.
+    Borrowed from
+    http://stackoverflow.com/questions/1158076/implement-touch-using-python
+    """
+    with file(fname, 'a'):
+        os.utime(fname, times)
+
+
 def is_same_file(file1, file2):
     """
     Check if file1 is the same file as file2 by comparing their inodes. This
