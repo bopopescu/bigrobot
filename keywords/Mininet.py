@@ -69,10 +69,16 @@ class Mininet(object):
         ip_addr = ipaddr + "/" + mask
         mn.cli('%s ifconfig %s %s up' % (host, intf, ip_addr) )
         
-    def mininet_host_arp(self, host, ipaddr, mac):
+    def mininet_host_add_arp(self, host, ipaddr, mac):
         t = test.Test()
         mn = t.mininet()
         mn.cli('%s arp -s %s %s' % (host, ipaddr, mac))
+        
+    def mininet_host_delete_arp(self, host, ipaddr):
+        t = test.Test()
+        mn = t.mininet()
+        mn.cli('%s arp -d %s %s' % (host, ipaddr))
+     
  
     def mininet_l3_ping(self, src, dst, count=5, options="None"):        
         t = test.Test()
@@ -145,13 +151,13 @@ class Mininet(object):
         mn = t.mininet()
         mn.restart_mininet()
         
-    def mininet_verify_arp(self, host, ip):
+    def mininet_host_verify_arp(self, host, ip):
         t = test.Test()
         mn = t.mininet()
         result = mn.cli('%s arp -n %s' % (host, ip))
         output = result["content"]
         helpers.log("output: %s" % output)              
-        match = re.search(r'no entry', output, re.S | re.I)
+        match = re.search(r'no entry|incomplete', output, re.S | re.I)
         if match:
             return False
         else:

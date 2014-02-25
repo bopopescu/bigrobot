@@ -14,29 +14,21 @@ Library         keywords_dev/prashanth/T5Fabric.py
 Library         keywords_dev/prashanth/T5L3.py
 Library         keywords_dev/animesh/BsnCommonShow.py
 Resource		keywords_dev/slim/t5_l3_dualspine.txt
-Resource		keywords_dev/slim/t5_layer3_variables.txt
+Resource		testsuites_dev/slim/t5_layer3_variables.txt
 
 
 * Test Cases
 Intra tenant L3 untagged traffic with static endpoints same rack
 	L3 intra tenant same rack untagged with static endpoints
-	[Tags]							skipped			smoke				sanity			
+#	[Tags]							skipped			smoke				sanity			
 
 Intra tenant L3 tagged traffic with static endpoints same rack
 	L3 intra tenant same rack tagged with static endpoints
-	[Tags]							skipped			smoke				sanity		
-
-Intra tenant L3 untagged traffic with dynamic endpoints same rack
-	L3 intra tenant same rack untagged with dynamic endpoints
-#	[Tags]							skipped			smoke				
-	
-Intra tenant L3 untagged traffic with dynamic host arp
-	L3 intra tenant untagged traffic with dynamic host arp
-	[Tags]							skipped			smoke				
+#	[Tags]							skipped			smoke				sanity		
 
 Intra tenant L3 untagged with initial unreachable host
 	L3 intra tenant untagged with initial unreachable host
-	[Tags]							skipped			sanity				smoke					
+#	[Tags]							skipped			sanity				smoke					
 
 Intra tenant L3 untagged with destination host moved
 	L3 intra tenant untagged with host moved 
@@ -44,58 +36,82 @@ Intra tenant L3 untagged with destination host moved
 
 Intra tenant L3 untagged to tagged host same rack
 	L3 intra tenant same rack untagged to tagged host
-	[Tags]							skipped		sanity				
+#	[Tags]							skipped		sanity				
 
 Intra tenant L3 untagged to tagged host across rack
 	L3 intra tenant across rack untagged to tagged host
-	[Tags]							skipped		sanity	
+#	[Tags]							skipped		sanity	
 
 Intra tenant L3 tagged to tagged host across rack
 	L3 intra tenant across rack tagged to tagged host
-	[Tags]							skipped		sanity	
-
-Intra tenant L3 tagged host
-	L3 intra tenant tagged host
-	[Tags]							skipped		sanity				
+#	[Tags]							skipped		sanity	
 
 Intra tenant with invalid ttl 1
 	L3 intra tenant across rack ttl1
-	[Tags]							skipped		sanity		
+#	[Tags]							skipped		sanity		
 
 Inter tenant L3 untagged traffic with static endpoints across rack
 	L3 inter tenant across rack untagged with static endpoints
-  	[Tags]							skipped			sanity 				smoke					
+# 	[Tags]							skipped			sanity 				smoke					
 		
 Inter tenant L3 tagged traffic with static endpoints across rack
 	L3 inter tenant across rack tagged with static endpoints
-  	[Tags]							skipped			sanity 				smoke	
+#  	[Tags]							skipped			sanity 				smoke	
 
 Inter tenant L3 untagged traffic with static endpoints same rack
 	L3 inter tenant same rack untagged with static endpoints
-  	[Tags]							skipped			sanity 				smoke					
+#  	[Tags]							skipped			sanity 				smoke					
 		
 Inter tenant L3 tagged traffic with static endpoints same rack
 	L3 inter tenant same rack tagged with static endpoints
-  	[Tags]							skipped			sanity 				smoke	
+#  	[Tags]							skipped			sanity 				smoke	
 	
 Inter tenant L3 untagged to tagged traffic with static endpoints same rack
 	L3 inter tenant same rack untagged to tagged with static endpoints
-  	[Tags]							skipped			sanity 				smoke	
+#  	[Tags]							skipped			sanity 				smoke	
+
+Delete and add vns with L3 intra tenant traffic with static endpoints
+	Delete and add router vns with L3 intra tenant traffic with static endpoints
+#	[Tags]							skipped			sanity			
+
 
 Intra tenant L3 untagged traffic with dynamic endpoints across rack
 	L3 intra tenant across rack untagged with dynamic endpoints
   	[Tags]							skipped			sanity 				smoke	
 
+Intra tenant L3 untagged traffic with dynamic endpoints same rack
+	L3 intra tenant same rack untagged with dynamic endpoints
+	[Tags]							skipped			smoke				
+	
+Intra tenant L3 untagged traffic with dynamic host arp
+	L3 intra tenant untagged traffic with dynamic host arp
+	[Tags]							skipped			smoke				
 
+Intra tenant L3 traffic with dynamic endpoints across rack
+	L3 intra tenant across rack with dynamic endpoints
+	[Tags]							skipped			smoke				
+
+Inter tenant L3 traffic with dynamic endpoints same rack
+	L3 inter tenant same rack tagged with dynamic endpoints
+	[Tags]							skipped			smoke				
+
+Inter tenant L3 traffic with dynamic endpoints across rack
+	L3 inter tenant across rack tagged with dynamic endpoints
+	[Tags]							skipped			smoke				
+	
+Delete and add vns with L3 intra tenant traffic with dynamic endpoints
+	Delete and add router vns with L3 intra tenant traffic with dynamic endpoints
+	[Tags]							skipped			sanity				
+	
 	
 * Keywords
 L3 intra tenant same rack untagged with static endpoints
-	endpoint static config
+	add static endpoint
 	sleep										5
 	mininet host config
 	sleep										1
-	mininet host arp							${bm0_name}			${vns1_ip1}		${gw_mac}
-	mininet host arp							${bm1_name} 		${vns1_ip2}		${gw_mac}
+	mininet host add arp						${bm0_name}			${vns1_ip1}		${gw_mac}
+	mininet host add arp						${bm1_name} 		${vns1_ip2}		${gw_mac}
 	sleep  										5
 	mininet l3 ping								${bm0_name}		${bm1_name} 	3
 	sleep 										2
@@ -109,21 +125,21 @@ L3 intra tenant same rack untagged with static endpoints
 	Should Be True  							${loss} == 0
 	${endpoints_cnt}=							rest count endpoints mac
 #	Should Be True  							${endpoints_cnt} == 7
+	delete static endpoint
 
-
-L3 intra tenant same rack tagged to tagged host
-	endpoint static config
+L3 intra tenant same rack tagged with static endpoints
+	add static endpoint
 	sleep										5
 	mininet host config
 	sleep										1
-	mininet host arp							${bm0_name}			${vns1_ip1}		${gw_mac}
-	mininet host arp							${bm1_name} 		${vns1_ip2}		${gw_mac}
-	mininet host arp							${bm2_name}			${vns2_ip3}		${gw_mac}
-	mininet host arp							${bm8_name} 		${vns2_ip1}		${gw_mac}
-	mininet host arp							${bm9_name}			${vns2_ip2}		${gw_mac}
-	mininet host arp							${bm10_name} 		${vns2_ip3}		${gw_mac}
+	mininet host add arp						${bm0_name}			${vns1_ip1}		${gw_mac}
+	mininet host add arp						${bm1_name} 		${vns1_ip2}		${gw_mac}
+	mininet host add arp						${bm2_name}			${vns2_ip3}		${gw_mac}
+	mininet host add arp						${bm8_name} 		${vns2_ip1}		${gw_mac}
+	mininet host add arp						${bm9_name}			${vns2_ip2}		${gw_mac}
+	mininet host add arp						${bm10_name} 		${vns2_ip3}		${gw_mac}
 	sleep  										5
-	mininet l3 ping								${bm8_name}			${bm9_ip} 	3
+	mininet l3 ping								${bm8_name}			${bm9_ip} 		3
 	sleep 										2
 	mininet dump switch							${leaf0a_name}
 	mininet dump switch							${leaf0b_name}
@@ -135,19 +151,75 @@ L3 intra tenant same rack tagged to tagged host
 	Should Be True  							${loss} == 0
 	${endpoints_cnt}=							rest count endpoints mac
 #	Should Be True  							${endpoints_cnt} == 7
+	delete static endpoint
 	
+L3 Intra tenant untagged with initial unreachable host
+	add static endpoint
+	sleep										1
+	mininet host config
+	sleep										1
+	mininet host add arp						${bm0_name}			${vns1_ip1}		${gw_mac}
+	mininet host add arp						${bm1_name} 		${vns1_ip2}		${gw_mac}
+	mininet host add arp						${bm2_name}			${vns2_ip3}		${gw_mac}
+	mininet host add arp						${bm8_name} 		${vns2_ip1}		${gw_mac}
+	mininet host add arp						${bm9_name}			${vns2_ip2}		${gw_mac}
+	mininet host add arp						${bm10_name} 		${vns2_ip3}		${gw_mac}
+	sleep  										1
+	${loss}=									mininet l3 ping		${bm9_name}		${bm6_ip}		10
+	Should Be True								${loss} == 100
+	sleep										1
+	mininet host ipcfg   						${bm6_name}			${bm6_bondif}	${bm6_ip}		${vns2_subnet1}	
+	mininet host gw								${bm6_name}			${vns2_ip1}		${bm6_bondif}
+	mininet host add arp							${bm6_name}			${vns2_ip1}		${gw_mac}
+	sleep										1
+	mininet l3 ping								${bm9_name}			${bm6_ip}		3
+	${loss}=									mininet l3 ping		${bm9_name}		${bm6_ip}		10
+	Should Be True								${loss} == 0
+	delete static endpoint
+
+L3 intra tenant untagged with host moved 
+	mininet host config
+	sleep  										5
+	REST add portgroup to vns					${tenant1_name}  	${vns1_2} 		${portgroup7} 		${untaggedvlan}	
+	mininet l3 ping								${bm0_name}		${vns1_ip1} 	3
+	mininet l3 ping								${bm1_name}		${vns1_ip2} 	3
+	sleep 										2
+	${value}= 	mininet host verify arp				${bm0_name} 	${vns1_ip1}
+#	Should Be True								${value} 
+	${value}= 	mininet host verify arp				${bm1_name} 	${vns1_ip2}
+#	Should Be True								${value}
+	mininet dump switch							${leaf0a_name}
+	mininet dump switch							${leaf0b_name}
+	mininet dump switch							${leaf1a_name}
+	mininet dump switch							${leaf1b_name}
+	mininet dump switch							${leaf2a_name}
+	mininet dump switch							${leaf2b_name}	
+	${loss}=  									mininet l3 ping		${bm0_name}	${bm1_name} 	
+#	Should Be True  							${loss} == 0
+	mininet link down							${bm1_name}		${bm1_bondif}
+	mininet link down							${bm7_name}		${bm7_bondif}
+	mininet host mac config						${bm7_name}		${bm7_bondif}	${bm1_mac}
+	mininet host ipcfg							${bm7_name}		${bm7_bondif}	${bm1_ip}		${vns1_subnet2}
+	mininet host gw								${bm7_name}		${vns1_ip2}		${bm2_bondif}
+	mininet link up								${bm7_name}		$(bm7_bondif}
+	sleep										1
+	mininet l3 ping								${bm0_name}		${bm1_ip}	3	
+	sleep 										1 
+	${loss}=  									mininet l3 ping		${bm0_name}	${bm1_ip} 	
+#	Should Be True  							${loss} == 0
+	delete static endpoint
 	
 L3 intra tenant same rack untagged to tagged host
-	endpoint static config
+	add static endpoint
 	sleep										5
 	mininet host config
 	sleep										1
-	mininet host arp							${bm0_name}			${vns1_ip1}		${gw_mac}
-	mininet host arp							${bm1_name} 		${vns1_ip2}		${gw_mac}
-	mininet host arp							${bm2_name}			${vns2_ip3}		${gw_mac}
-	mininet host arp							${bm8_name} 		${vns2_ip1}		${gw_mac}
-	mininet host arp							${bm9_name}			${vns2_ip2}		${gw_mac}
-	mininet host arp							${bm10_name} 		${vns2_ip3}		${gw_mac}
+	mininet host add arp						${bm0_name}			${vns1_ip1}		${gw_mac}
+	mininet host add arp						${bm1_name} 		${vns1_ip2}		${gw_mac}
+	mininet host add arp						${bm2_name}			${vns2_ip3}		${gw_mac}
+	mininet host add arp						${bm8_name} 		${vns2_ip1}		${gw_mac}
+	mininet host add arp						${bm9_name}			${vns2_ip2}		${gw_mac}
+	mininet host add arp						${bm10_name} 		${vns2_ip3}		${gw_mac}
 	sleep  										5
 	mininet l3 ping								${bm10_name}		${bm8_ip} 	3
 	sleep 										2
@@ -161,21 +233,22 @@ L3 intra tenant same rack untagged to tagged host
 	Should Be True  							${loss} == 0
 	${endpoints_cnt}=							rest count endpoints mac
 #	Should Be True  							${endpoints_cnt} == 7
+	delete static endpoint
 
 L3 intra tenant across rack untagged to tagged host
-	endpoint static config
-	sleep										5
+	add static endpoint
+	sleep										1
 	mininet host config
 	sleep										1
 
-	mininet host arp							${bm0_name}			${vns1_ip1}		${gw_mac}
-	mininet host arp							${bm1_name} 		${vns1_ip2}		${gw_mac}
-	mininet host arp							${bm2_name}			${vns2_ip3}		${gw_mac}
-	mininet host arp							${bm4_name}			${vns1_ip1}		${gw_mac}
-	mininet host arp							${bm8_name} 		${vns2_ip1}		${gw_mac}
-	mininet host arp							${bm9_name}			${vns2_ip2}		${gw_mac}
-	mininet host arp							${bm10_name} 		${vns2_ip3}		${gw_mac}
-	sleep  										5
+	mininet host add arp						${bm0_name}			${vns1_ip1}		${gw_mac}
+	mininet host add arp						${bm1_name} 		${vns1_ip2}		${gw_mac}
+	mininet host add arp						${bm2_name}			${vns2_ip3}		${gw_mac}
+	mininet host add arp						${bm4_name}			${vns1_ip1}		${gw_mac}
+	mininet host add arp						${bm8_name} 		${vns2_ip1}		${gw_mac}
+	mininet host add arp						${bm9_name}			${vns2_ip2}		${gw_mac}
+	mininet host add arp						${bm10_name} 		${vns2_ip3}		${gw_mac}
+	sleep  										1
 	mininet l3 ping								${bm4_name}			${bm1_ip} 	3
 	sleep 										2
 	mininet dump switch							${leaf0a_name}
@@ -188,21 +261,47 @@ L3 intra tenant across rack untagged to tagged host
 	Should Be True  							${loss} == 0
 	${endpoints_cnt}=							rest count endpoints mac
 #	Should Be True  							${endpoints_cnt} == 7
+	delete static endpoint
 
-L3 intra tenant across rack ttl1
-	endpoint static config
-	sleep										5
+L3 intra tenant across rack tagged to tagged host
+	add static endpoint
+	sleep 										1
 	mininet host config
 	sleep										1
+	mininet host add arp						${bm0_name}			${vns1_ip1}		${gw_mac}
+	mininet host add arp						${bm1_name} 		${vns1_ip2}		${gw_mac}
+	mininet host add arp						${bm2_name}			${vns2_ip3}		${gw_mac}
+	mininet host add arp						${bm8_name} 		${vns2_ip1}		${gw_mac}
+	mininet host add arp						${bm9_name}			${vns2_ip2}		${gw_mac}
+	mininet host add arp						${bm10_name} 		${vns2_ip3}		${gw_mac}
+	sleep  										1
+	mininet l3 ping								${bm8_name}			${bm2_ip} 		3
+	sleep 										2
+	mininet dump switch							${leaf0a_name}
+	mininet dump switch							${leaf0b_name}
+	mininet dump switch							${leaf1a_name}
+	mininet dump switch							${leaf1b_name}
+	mininet dump switch							${leaf2a_name}
+	mininet dump switch							${leaf2b_name}
+	${loss}=  									mininet l3 ping		${bm8_name}	${bm2_ip} 	
+	Should Be True  							${loss} == 0
+	${endpoints_cnt}=							rest count endpoints mac
+#	Should Be True  							${endpoints_cnt} == 7
+	delete static endpoint
 
-	mininet host arp							${bm0_name}			${vns1_ip1}		${gw_mac}
-	mininet host arp							${bm1_name} 		${vns1_ip2}		${gw_mac}
-	mininet host arp							${bm2_name}			${vns2_ip3}		${gw_mac}
-	mininet host arp							${bm4_name}			${vns1_ip1}		${gw_mac}
-	mininet host arp							${bm8_name} 		${vns2_ip1}		${gw_mac}
-	mininet host arp							${bm9_name}			${vns2_ip2}		${gw_mac}
-	mininet host arp							${bm10_name} 		${vns2_ip3}		${gw_mac}
-	sleep  										5
+L3 intra tenant across rack ttl1
+	add static endpoint
+	sleep										1
+	mininet host config
+	sleep										1
+	mininet host add arp						${bm0_name}			${vns1_ip1}		${gw_mac}
+	mininet host add arp						${bm1_name} 		${vns1_ip2}		${gw_mac}
+	mininet host add arp						${bm2_name}			${vns2_ip3}		${gw_mac}
+	mininet host add arp						${bm4_name}			${vns1_ip1}		${gw_mac}
+	mininet host add arp						${bm8_name} 		${vns2_ip1}		${gw_mac}
+	mininet host add arp						${bm9_name}			${vns2_ip2}		${gw_mac}
+	mininet host add arp						${bm10_name} 		${vns2_ip3}		${gw_mac}
+	sleep  										1
 	mininet l3 ping								${bm4_name}			${bm1_ip} 	3
 	sleep 										2
 	mininet dump switch							${leaf0a_name}
@@ -217,22 +316,94 @@ L3 intra tenant across rack ttl1
 	Should Be True  							${loss} == 0
 	${endpoints_cnt}=							rest count endpoints mac
 #	Should Be True  							${endpoints_cnt} == 7
-
-
-L3 intra tenant across rack tagged to tagged host
-
-	endpoint static config
+	delete static endpoint
+	
+L3 inter tenant across rack untagged with static endpoints
+	add static endpoint
 	sleep 										5
+	REST add tenant								${tenant_system}
+	REST add system to tenant routers 			${tenant1_name} 
+   	REST add system to tenant routers 			${tenant2_name} 
+   	REST add tenant routers to system			${tenant1_name} 
+   	REST add tenant routers to system			${tenant2_name} 
 	mininet host config
 	sleep										1
-	mininet host arp							${bm0_name}			${vns1_ip1}		${gw_mac}
-	mininet host arp							${bm1_name} 		${vns1_ip2}		${gw_mac}
-	mininet host arp							${bm2_name}			${vns2_ip3}		${gw_mac}
-	mininet host arp							${bm8_name} 		${vns2_ip1}		${gw_mac}
-	mininet host arp							${bm9_name}			${vns2_ip2}		${gw_mac}
-	mininet host arp							${bm10_name} 		${vns2_ip3}		${gw_mac}
-	sleep  										5
-	mininet l3 ping								${bm8_name}			${bm2_ip} 		3
+	mininet host add arp						${bm0_name}			${vns1_ip1}		${gw_mac}
+	mininet host add arp						${bm1_name} 		${vns1_ip2}		${gw_mac}
+	mininet host add arp						${bm2_name}			${vns2_ip3}		${gw_mac}
+	mininet host add arp						${bm4_name}			${vns1_ip1}		${gw_mac}
+	mininet host add arp						${bm8_name} 		${vns2_ip1}		${gw_mac}
+	mininet host add arp						${bm9_name}			${vns2_ip2}		${gw_mac}
+	mininet host add arp						${bm10_name} 		${vns2_ip3}		${gw_mac}
+	sleep										1
+	mininet l3 ping								${bm0_name} 		${bm10_ip}		3
+	sleep										1
+	${loss}=  									mininet l3 ping		${bm0_name}	${bm10_ip} 	
+	Should Be True  							${loss} == 0	
+	delete static endpoint
+
+L3 inter tenant across rack tagged with static endpoints
+	add static endpoint
+	sleep 										5
+	REST add tenant								${tenant_system}
+	REST add system to tenant routers 			${tenant1_name} 
+   	REST add system to tenant routers 			${tenant2_name} 
+   	REST add tenant routers to system			${tenant1_name} 
+   	REST add tenant routers to system			${tenant2_name} 
+	mininet host config
+	sleep										1
+	mininet host add arp						${bm0_name}			${vns1_ip1}		${gw_mac}
+	mininet host add arp						${bm1_name} 		${vns1_ip2}		${gw_mac}
+	mininet host add arp						${bm2_name}			${vns2_ip3}		${gw_mac}
+	mininet host add arp						${bm4_name}			${vns1_ip1}		${gw_mac}
+	mininet host add arp						${bm8_name} 		${vns2_ip1}		${gw_mac}
+	mininet host add arp						${bm9_name}			${vns2_ip2}		${gw_mac}
+	mininet host add arp						${bm10_name} 		${vns2_ip3}		${gw_mac}
+	sleep										1
+	mininet l3 ping								${bm4_name} 		${bm8_ip}		3
+	sleep										1
+	${loss}=  									mininet l3 ping		${bm4_name}	${bm8_ip} 	
+	Should Be True  							${loss} == 0	
+	delete static endpoint		
+
+L3 inter tenant same rack untagged to tagged with static endpoints
+	add static endpoint
+	sleep 										5
+	REST add tenant								${tenant_system}
+	REST add system to tenant routers 			${tenant1_name} 
+   	REST add system to tenant routers 			${tenant2_name} 
+   	REST add tenant routers to system			${tenant1_name} 
+   	REST add tenant routers to system			${tenant2_name} 
+	mininet host config
+	sleep										1
+	mininet host add arp						${bm0_name}			${vns1_ip1}		${gw_mac}
+	mininet host add arp						${bm1_name} 		${vns1_ip2}		${gw_mac}
+	mininet host add arp						${bm2_name}			${vns2_ip3}		${gw_mac}
+	mininet host add arp						${bm4_name}			${vns1_ip1}		${gw_mac}
+	mininet host add arp						${bm8_name} 		${vns2_ip1}		${gw_mac}
+	mininet host add arp						${bm9_name}			${vns2_ip2}		${gw_mac}
+	mininet host add arp						${bm10_name} 		${vns2_ip3}		${gw_mac}
+	sleep										1
+	mininet l3 ping								${bm0_name} 		${bm3_ip}		3
+	sleep										1
+	${loss}=  									mininet l3 ping		${bm0_name}	${bm3_ip} 	
+	Should Be True  							${loss} == 0	
+	delete static endpoint
+
+Delete router vns with L3 intra tenant traffic with static endpoints
+	add static endpoint
+	sleep										1
+	mininet host config
+	sleep										1
+	mininet host add arp						${bm0_name}			${vns1_ip1}		${gw_mac}
+	mininet host add arp						${bm1_name} 		${vns1_ip2}		${gw_mac}
+	mininet host add arp						${bm2_name}			${vns2_ip3}		${gw_mac}
+	mininet host add arp						${bm4_name}			${vns1_ip1}		${gw_mac}
+	mininet host add arp						${bm8_name} 		${vns2_ip1}		${gw_mac}
+	mininet host add arp						${bm9_name}			${vns2_ip2}		${gw_mac}
+	mininet host add arp						${bm10_name} 		${vns2_ip3}		${gw_mac}
+	sleep  										1
+	mininet l3 ping								${bm4_name}			${bm1_ip} 	3
 	sleep 										2
 	mininet dump switch							${leaf0a_name}
 	mininet dump switch							${leaf0b_name}
@@ -240,84 +411,28 @@ L3 intra tenant across rack tagged to tagged host
 	mininet dump switch							${leaf1b_name}
 	mininet dump switch							${leaf2a_name}
 	mininet dump switch							${leaf2b_name}
-	${loss}=  									mininet l3 ping		${bm8_name}	${bm2_ip} 	
+	${loss}=  									mininet l3 ping		${bm4_name}	${bm1_ip} 	
 	Should Be True  							${loss} == 0
 	${endpoints_cnt}=							rest count endpoints mac
 #	Should Be True  							${endpoints_cnt} == 7
-
-L3 inter tenant across rack untagged with static endpoints
-	endpoint static config
-	sleep 										5
-	REST add tenant								${tenant_system}
-	REST add system to tenant routers 			${tenant1_name} 
-   	REST add system to tenant routers 			${tenant2_name} 
-   	REST add tenant routers to system			${tenant1_name} 
-   	REST add tenant routers to system			${tenant2_name} 
-	mininet host config
 	sleep										1
-	mininet host arp							${bm0_name}			${vns1_ip1}		${gw_mac}
-	mininet host arp							${bm1_name} 		${vns1_ip2}		${gw_mac}
-	mininet host arp							${bm2_name}			${vns2_ip3}		${gw_mac}
-	mininet host arp							${bm4_name}			${vns1_ip1}		${gw_mac}
-	mininet host arp							${bm8_name} 		${vns2_ip1}		${gw_mac}
-	mininet host arp							${bm9_name}			${vns2_ip2}		${gw_mac}
-	mininet host arp							${bm10_name} 		${vns2_ip3}		${gw_mac}
+	REST delete vns ip							${tenant1_name}  	${vns1_2}  		${vns1_ip2}	  		${vns1_subnet2}
 	sleep										1
-	mininet l3 ping								${bm0_name} 		${bm10_ip}		3
+	${loss}=  									mininet l3 ping		${bm4_name}	${bm1_ip} 
+	Should Be True  							${loss} == 100
+	${endpoints_cnt}=							rest count endpoints mac
+#	Should Be True  							${endpoints_cnt} == 8
+	REST add vns ip								${tenant1_name}  	${vns1_2}  		${vns1_ip2}	  		${vns1_subnet2}
 	sleep										1
-	${loss}=  									mininet l3 ping		${bm0_name}	${bm10_ip} 	
-	Should Be True  							${loss} == 0	
+	${loss}=  									mininet l3 ping		${bm4_name}	${bm1_ip} 
+	Should Be True  							${loss} == 0
+	${endpoints_cnt}=							rest count endpoints mac
+#	Should Be True  							${endpoints_cnt} == 8
+	delete static endpoint
 	
-L3 inter tenant across rack tagged with static endpoints
-	endpoint static config
-	sleep 										5
-	REST add tenant								${tenant_system}
-	REST add system to tenant routers 			${tenant1_name} 
-   	REST add system to tenant routers 			${tenant2_name} 
-   	REST add tenant routers to system			${tenant1_name} 
-   	REST add tenant routers to system			${tenant2_name} 
-	mininet host config
-	sleep										1
-	mininet host arp							${bm0_name}			${vns1_ip1}		${gw_mac}
-	mininet host arp							${bm1_name} 		${vns1_ip2}		${gw_mac}
-	mininet host arp							${bm2_name}			${vns2_ip3}		${gw_mac}
-	mininet host arp							${bm4_name}			${vns1_ip1}		${gw_mac}
-	mininet host arp							${bm8_name} 		${vns2_ip1}		${gw_mac}
-	mininet host arp							${bm9_name}			${vns2_ip2}		${gw_mac}
-	mininet host arp							${bm10_name} 		${vns2_ip3}		${gw_mac}
-	sleep										1
-	mininet l3 ping								${bm4_name} 		${bm8_ip}		3
-	sleep										1
-	${loss}=  									mininet l3 ping		${bm4_name}	${bm8_ip} 	
-	Should Be True  							${loss} == 0	
-			
-
-L3 inter tenant same rack untagged to tagged with static endpoints
-	endpoint static config
-	sleep 										5
-	REST add tenant								${tenant_system}
-	REST add system to tenant routers 			${tenant1_name} 
-   	REST add system to tenant routers 			${tenant2_name} 
-   	REST add tenant routers to system			${tenant1_name} 
-   	REST add tenant routers to system			${tenant2_name} 
-	mininet host config
-	sleep										1
-	mininet host arp							${bm0_name}			${vns1_ip1}		${gw_mac}
-	mininet host arp							${bm1_name} 		${vns1_ip2}		${gw_mac}
-	mininet host arp							${bm2_name}			${vns2_ip3}		${gw_mac}
-	mininet host arp							${bm4_name}			${vns1_ip1}		${gw_mac}
-	mininet host arp							${bm8_name} 		${vns2_ip1}		${gw_mac}
-	mininet host arp							${bm9_name}			${vns2_ip2}		${gw_mac}
-	mininet host arp							${bm10_name} 		${vns2_ip3}		${gw_mac}
-	sleep										1
-	mininet l3 ping								${bm0_name} 		${bm3_ip}		3
-	sleep										1
-	${loss}=  									mininet l3 ping		${bm0_name}	${bm3_ip} 	
-	Should Be True  							${loss} == 0	
-
 L3 inter tenant same rack untagged with static endpoints
-	endpoint static config
-	sleep 										5
+	add static endpoint
+	sleep 										1
 	REST add tenant								${tenant_system}
 	REST add system to tenant routers 			${tenant1_name} 
    	REST add system to tenant routers 			${tenant2_name} 
@@ -325,19 +440,20 @@ L3 inter tenant same rack untagged with static endpoints
    	REST add tenant routers to system			${tenant2_name} 
 	mininet host config
 	sleep										1
-	mininet host arp							${bm0_name}			${vns1_ip1}		${gw_mac}
-	mininet host arp							${bm1_name} 		${vns1_ip2}		${gw_mac}
-	mininet host arp							${bm2_name}			${vns2_ip3}		${gw_mac}
-	mininet host arp							${bm3_name}			${vns2_ip2}		${gw_mac}
-	mininet host arp							${bm4_name}			${vns1_ip1}		${gw_mac}
-	mininet host arp							${bm8_name} 		${vns2_ip1}		${gw_mac}
-	mininet host arp							${bm9_name}			${vns2_ip2}		${gw_mac}
-	mininet host arp							${bm10_name} 		${vns2_ip3}		${gw_mac}
+	mininet host add arp						${bm0_name}			${vns1_ip1}		${gw_mac}
+	mininet host add arp						${bm1_name} 		${vns1_ip2}		${gw_mac}
+	mininet host add arp						${bm2_name}			${vns2_ip3}		${gw_mac}
+	mininet host add arp						${bm3_name}			${vns2_ip2}		${gw_mac}
+	mininet host add arp						${bm4_name}			${vns1_ip1}		${gw_mac}
+	mininet host add arp						${bm8_name} 		${vns2_ip1}		${gw_mac}
+	mininet host add arp						${bm9_name}			${vns2_ip2}		${gw_mac}
+	mininet host add arp						${bm10_name} 		${vns2_ip3}		${gw_mac}
 	sleep										1
 	mininet l3 ping								${bm3_name} 		${bm1_ip}		3
 	sleep										1
 	${loss}=  									mininet l3 ping		${bm3_name}	${bm1_ip} 	
 	Should Be True  							${loss} == 0	
+	delete static endpoint
 
 L3 intra tenant same rack untagged with dynamic endpoints
 	mininet host config
@@ -345,9 +461,9 @@ L3 intra tenant same rack untagged with dynamic endpoints
 	mininet l3 ping								${bm0_name}		${vns1_ip1} 	3
 	mininet l3 ping								${bm1_name}		${vns1_ip2} 	3
 	sleep 										2
-	${value}= 	mininet verify arp				${bm0_name} 	${vns1_ip1}
+	${value}= 	mininet host verify arp			${bm0_name} 	${vns1_ip1}
 	Should Be True								${value} 
-	${value}= 	mininet verify arp				${bm1_name} 	${vns1_ip2}
+	${value}= 	mininet host verify arp			${bm1_name} 	${vns1_ip2}
 	Should Be True								${value} 
 	mininet dump switch							${leaf0a_name}
 	mininet dump switch							${leaf0b_name}
@@ -359,6 +475,112 @@ L3 intra tenant same rack untagged with dynamic endpoints
 	Should Be True  							${loss} == 0
 	${endpoints_cnt}=							rest count endpoints mac
 
+
+L3 intra tenant untagged traffic with dynamic host arp
+	add static endpoint
+	sleep 										1
+	mininet host config
+	sleep  										5
+	mininet l3 ping								${bm0_name}		${vns1_ip1} 	3
+	mininet l3 ping								${bm1_name}		${vns1_ip2} 	3
+	sleep 										2
+	${value}= 	mininet host verify arp			${bm0_name} 	${vns1_ip1}
+	Should Be True								${value} 
+	${value}= 	mininet host verify arp			${bm1_name} 	${vns1_ip2}
+	Should Be True								${value} 
+	mininet dump switch							${leaf0a_name}
+	mininet dump switch							${leaf0b_name}
+	mininet dump switch							${leaf1a_name}
+	mininet dump switch							${leaf1b_name}
+	mininet dump switch							${leaf2a_name}
+	mininet dump switch							${leaf2b_name}
+	${loss}=  									mininet l3 ping		${bm0_name}	${bm1_name} 	
+	Should Be True  							${loss} == 0
+	${endpoints_cnt}=							rest count endpoints mac
+	delete static endpoint
+
+L3 intra tenant across rack with dynamic endpoints
+	mininet host config
+	sleep  										1
+	mininet l3 ping								${bm4_name}			${bm1_ip} 	3
+	sleep 										2
+	mininet dump switch							${leaf0a_name}
+	mininet dump switch							${leaf0b_name}
+	mininet dump switch							${leaf1a_name}
+	mininet dump switch							${leaf1b_name}
+	mininet dump switch							${leaf2a_name}
+	mininet dump switch							${leaf2b_name}
+	${loss}=  									mininet l3 ping		${bm4_name}	${bm1_ip} 	
+	Should Be True  							${loss} == 0
+	${endpoints_cnt}=							rest count endpoints mac
+#	Should Be True  							${endpoints_cnt} == 8
+
+L3 inter tenant same rack tagged with dynamic endpoints
+	REST add tenant								${tenant_system}
+	REST add system to tenant routers 			${tenant1_name} 
+   	REST add system to tenant routers 			${tenant2_name} 
+   	REST add tenant routers to system			${tenant1_name} 
+   	REST add tenant routers to system			${tenant2_name} 
+	mininet host config
+	sleep										1
+	mininet l3 ping								${bm0_name} 		${bm3_ip}		3
+	sleep										1
+	${loss}=  									mininet l3 ping		${bm0_name}	${bm3_ip} 	
+	${endpoints_cnt}=							rest count endpoints mac
+#	Should Be True  							${endpoints_cnt} == 8
+
+L3 inter tenant across rack tagged with dynamic endpoints
+	REST add tenant								${tenant_system}
+	REST add system to tenant routers 			${tenant1_name} 
+   	REST add system to tenant routers 			${tenant2_name} 
+   	REST add tenant routers to system			${tenant1_name} 
+   	REST add tenant routers to system			${tenant2_name} 
+	mininet host config
+	sleep										1
+	mininet l3 ping								${bm4_name} 		${bm8_ip}		3
+	sleep										1
+	${loss}=  									mininet l3 ping		${bm4_name}	${bm8_ip} 	
+	Should Be True  							${loss} == 0	
+	${endpoints_cnt}=							rest count endpoints mac
+#	Should Be True  							${endpoints_cnt} == 8
+			
+Delete and add router vns with L3 intra tenant traffic with dynamic endpoints
+	mininet host config
+	sleep  										1
+	mininet l3 ping								${bm4_name}			${bm1_ip} 	3
+	sleep 										2
+	mininet dump switch							${leaf0a_name}
+	mininet dump switch							${leaf0b_name}
+	mininet dump switch							${leaf1a_name}
+	mininet dump switch							${leaf1b_name}
+	mininet dump switch							${leaf2a_name}
+	mininet dump switch							${leaf2b_name}
+	${loss}=  									mininet l3 ping		${bm4_name}	${bm1_ip} 	
+	Should Be True  							${loss} == 0
+	${endpoints_cnt}=							rest count endpoints mac
+#	Should Be True  							${endpoints_cnt} == 8
+	sleep										1
+	REST delete vns ip							${tenant1_name}  	${vns1_2}  		${vns1_ip2}	  		${vns1_subnet2}
+	sleep										1
+	${loss}=  									mininet l3 ping		${bm4_name}	${bm1_ip} 
+	Should Be True  							${loss} == 100
+	mininet host delete arp						${bm1_name} 		${vns1_ip2}
+	sleep										1
+	${loss}=  									mininet l3 ping		${bm1_name}	${bm4_ip} 
+	Should Be True  							${loss} == 100
+	${value}= 									mininet host verify arp			${bm1_name} 	${vns1_ip2}
+	Should Not Be True							${value} 						
+	${endpoints_cnt}=							rest count endpoints mac
+#	Should Be True  							${endpoints_cnt} == 8
+	REST add vns ip								${tenant1_name}  	${vns1_2}  		${vns1_ip2}	  		${vns1_subnet2}
+	sleep										1
+	${loss}=  									mininet l3 ping		${bm4_name}	${bm1_ip} 
+	Should Be True  							${loss} == 0
+	${value}= 									mininet host verify arp			${bm1_name} 	${vns1_ip2}
+	Should Be True								${value} 					
+	${endpoints_cnt}=							rest count endpoints mac
+#	Should Be True  							${endpoints_cnt} == 8
+	
 
 setup topology
 	add fabric switch
@@ -447,7 +669,7 @@ teardown topology
 	REST delete portgroup						${portgroup10}
 	REST delete portgroup						${portgroup11}
 	
-endpoint static config
+add static endpoint
 	REST add endpoint							${tenant1_name}		${vns1_1}		${bm0_name}
 	REST add endpoint							${tenant1_name}		${vns1_2}		${bm1_name}
 	REST add endpoint							${tenant2_name}		${vns2_3}		${bm2_name}
@@ -480,6 +702,16 @@ endpoint static config
 	REST add endpoint portgroup attachment		${tenant2_name}		${vns2_1}		${bm8_name}			${portgroup8}	${vns2_vlan1}
 	REST add endpoint portgroup attachment		${tenant2_name}		${vns2_2}		${bm9_name}			${portgroup9}	${vns2_vlan2}
 	REST add endpoint portgroup attachment		${tenant2_name}		${vns2_3}		${bm10_name}		${portgroup10}	${untaggedvlan}	
+
+delete static endpoint
+	REST delete endpoint						${tenant1_name}		${vns1_1}		${bm0_name}
+	REST delete endpoint						${tenant1_name}		${vns1_2}		${bm1_name}
+	REST delete endpoint						${tenant2_name}		${vns2_3}		${bm2_name}
+	REST delete endpoint						${tenant2_name}		${vns2_2}		${bm3_name}
+	REST delete endpoint						${tenant1_name}		${vns1_1}		${bm4_name}
+	REST delete endpoint						${tenant2_name}		${vns2_1}		${bm8_name}
+	REST delete endpoint						${tenant2_name}		${vns2_2}		${bm9_name}
+	REST delete endpoint						${tenant2_name}		${vns2_3}		${bm10_name}				
 
 mininet host config
 	mininet host ipcfg   						${bm0_name}			${bm0_bondif}	${bm0_ip}			${vns1_subnet1}
