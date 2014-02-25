@@ -140,8 +140,8 @@ L3 intra tenant untagged with static endpoints
 	mininet host ipcfg							${host1_name}		${host1_bondif}	${host1_ip}			${host1_subnet}
 	mininet host gw								${host0_name}		${vns1_ip1}		${host0_bondif}
 	mininet host gw								${host1_name}		${vns1_ip2}		${host1_bondif}
-	mininet host arp							${host0_name}		${vns1_ip1}		${gw_mac}
-	mininet host arp							${host1_name} 		${vns1_ip2}		${gw_mac}
+	mininet host add arp							${host0_name}		${vns1_ip1}		${gw_mac}
+	mininet host add arp							${host1_name} 		${vns1_ip2}		${gw_mac}
 	sleep  										5
 	mininet l3 ping								${host0_name}		${host1_name} 	3
 	sleep 										2
@@ -165,8 +165,8 @@ L3 intra tenant untagged with dynamic endpoints
 	mininet host ipcfg							${host1_name}		${host1_bondif}	${host1_ip}			${host1_subnet}
 	mininet host gw								${host0_name}		${vns1_ip1}		${host0_bondif}
 	mininet host gw								${host1_name}		${vns1_ip2}		${host1_bondif}
-	mininet host arp							${host0_name}		${vns1_ip1}		${gw_mac}
-	mininet host arp							${host1_name} 		${vns1_ip2}		${gw_mac}
+	mininet host add arp							${host0_name}		${vns1_ip1}		${gw_mac}
+	mininet host add arp							${host1_name} 		${vns1_ip2}		${gw_mac}
 	sleep  										5
 	mininet l3 ping								${host0_name}		${host1_name} 		3
 	sleep 										2
@@ -208,7 +208,7 @@ L3 intra tenant untagged with initial unreachable host
 	REST add interface to vns  					${tenant1_name}  	${vns1_2}  		${leaf0_name} 		${leaf0_intf2} 	${untaggedvlan}	
 	mininet host ipcfg   						${host0_name}		${host0_bondif}	${host0_ip}			${host0_subnet} 
 	mininet host gw								${host0_name}		${vns1_ip1}		${host0_bondif}
-	mininet host arp							${host0_name}		${vns1_ip1}		${gw_mac}
+	mininet host add arp							${host0_name}		${vns1_ip1}		${gw_mac}
 	sleep  										5
 	mininet l3 ping								${host0_name}		${host1_ip} 		3
 	sleep 										2
@@ -217,7 +217,7 @@ L3 intra tenant untagged with initial unreachable host
 	Should Be True  							${loss} == 100
 	mininet host ipcfg   						${host1_name}		${host1_bondif}	${host1_ip}			${host1_subnet} 
 	mininet host gw								${host1_name}		${vns1_ip2}		${host1_bondif}
-	mininet host arp							${host1_name}		${vns1_ip2}		${gw_mac}
+	mininet host add arp							${host1_name}		${vns1_ip2}		${gw_mac}
 	mininet l3 ping								${host0_name}		${host1_ip} 		3
 	sleep 										2
 	${loss}=  									mininet l3 ping		${host0_name}	${host1_ip}		${ping_count}
@@ -256,8 +256,8 @@ L3 inter tenant untagged with static endpoints
    	mininet host ipcfg							${host1_name}		${host1_bondif}	${host2_ip}			${host1_subnet}
    	mininet host gw								${host0_name}		${vns1_ip1}		${host0_bondif}
    	mininet host gw								${host1_name}		${vns2_ip1}		${host1_bondif}
-   	mininet host arp							${host0_name}		${vns1_ip1}		${gw_mac}
-   	mininet host arp							${host1_name} 		${vns2_ip1}		${gw_mac}
+   	mininet host add arp							${host0_name}		${vns1_ip1}		${gw_mac}
+   	mininet host add arp							${host1_name} 		${vns2_ip1}		${gw_mac}
 	sleep  										5
 	REST show running config
 	mininet l3 ping								${host0_name}		${host1_name} 		3
@@ -306,8 +306,8 @@ L3 intra tenant untagged with host moved
 	mininet host ipcfg							${host1_name}		${host1_bondif}	${host1_ip}		${host1_subnet}
 	mininet host gw								${host0_name}		${vns1_ip1}		${host0_bondif}
 	mininet host gw								${host1_name}		${vns1_ip2}		${host1_bondif}
-	mininet host arp							${host0_name}		${vns1_ip1}		${gw_mac}
-	mininet host arp							${host1_name} 		${vns1_ip2}		${gw_mac}
+	mininet host add arp							${host0_name}		${vns1_ip1}		${gw_mac}
+	mininet host add arp							${host1_name} 		${vns1_ip2}		${gw_mac}
 	sleep  										5
 	mininet l3 ping								${host0_name}		${host1_name} 		3
 	sleep 										2
@@ -321,7 +321,7 @@ L3 intra tenant untagged with host moved
 	mininet host mac config						${host2_name}		${host2_bondif}	${host1_mac}
 	mininet host ipcfg							${host2_name}		${host2_bondif}	${host1_ip}		${host1_subnet}
 	mininet host gw								${host2_name}		${vns1_ip1}		${host2_bondif}
-	mininet host arp							${host2_name}		${vns1_ip1}		${gw_mac}
+	mininet host add arp							${host2_name}		${vns1_ip1}		${gw_mac}
 	mininet link up								${host2_name}		${host2_intf}	
 	mininet link up								${host2_name}		${host2_bondif}	
 	sleep										1
@@ -358,8 +358,8 @@ L3 intra tenant untagged to tagged host
 	mininet l3 link tag							${host1_name}		${host1_bondif}	${vns1_vlan2}		${host1_ip}		${host1_subnet}
 	mininet host gw								${host0_name}		${vns1_ip1}		${host0_bondif}
 	mininet host tagged gw						${host1_name}		${vns1_ip2}		${vns1_vlan2}
-	mininet host arp							${host0_name}		${vns1_ip1}		${gw_mac}
-	mininet host arp							${host1_name} 		${vns1_ip2}		${gw_mac}
+	mininet host add arp							${host0_name}		${vns1_ip1}		${gw_mac}
+	mininet host add arp							${host1_name} 		${vns1_ip2}		${gw_mac}
 	sleep  										5
 	mininet l3 ping								${host0_name}		${host1_ip} 		3
 	sleep 										2
@@ -384,8 +384,8 @@ L3 intra tenant tagged host
 	mininet l3 link tag							${host1_name}		${host1_bondif}	${vns1_vlan2}		${host1_ip}		${host1_subnet}
 	mininet host tagged gw						${host0_name}		${vns1_ip1}		${vns1_vlan1}
 	mininet host tagged gw						${host1_name}		${vns1_ip2}		${vns1_vlan2}
-	mininet host arp							${host0_name}		${vns1_ip1}		${gw_mac}
-	mininet host arp							${host1_name} 		${vns1_ip2}		${gw_mac}
+	mininet host add arp							${host0_name}		${vns1_ip1}		${gw_mac}
+	mininet host add arp							${host1_name} 		${vns1_ip2}		${gw_mac}
 	sleep  										5
 	mininet l3 ping								${host0_name}		${host1_name} 		3
 	sleep 										2
