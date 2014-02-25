@@ -337,6 +337,27 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
             helpers.test_log("Output: %s" % c.rest.result_json())
             return c.rest.content()                         
 
+    def rest_delete_endpoint_ip(self, tenant, vnsname, endpointname, ipaddr):
+        return True
+
+    def rest_delete_endpoint(self, tenant, vnsname, endpointname):
+        '''
+        DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[name="A"]/vns[name="A1"]/endpoints[name="bm0"] {}
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        
+        helpers.test_log("Input arguments: tenant = %s vnsname = %s endpointname = %s " % (tenant, vnsname, endpointname))
+        
+        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/endpoints[name="%s"]' % (tenant, vnsname, endpointname)
+        try:
+            c.rest.delete(url, {})
+        except:
+            helpers.test_failure(c.rest.error())
+        else: 
+            helpers.test_log("Output: %s" % c.rest.result_json())
+            return c.rest.content()                                                 
+
     def rest_add_endpoint_mac(self, tenant, vnsname, endpointname, mac):
         '''Add nexthop to ecmp groups aks gateway pool in tenant"
         
@@ -364,6 +385,34 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
             helpers.test_log("Output: %s" % c.rest.result_json())
             return c.rest.content()                         
 
+
+    def rest_delete_endpoint_mac(self, tenant, vnsname, endpointname, mac):
+        '''Add nexthop to ecmp groups aks gateway pool in tenant"
+        
+            Input:
+                `tenant`          tenant name
+                `vnsname`         vns name
+                `endpointname`    endpoint name
+                `mac`          host mac address
+            Return: true if configuration is successful, false otherwise
+            http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[name="A"]/vns[name="A1"]/endpoints[name="H1"] {"name": "H1"}
+            DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[name="A"]/vns[name="A1"]/endpoints[name="bm0"]/mac {}
+
+        '''
+        
+        t = test.Test()
+        c = t.controller('master')
+        
+        helpers.test_log("Input arguments: tenant = %s vnsname = %s endpointname = %s mac address = %s" % (tenant, vnsname, endpointname, mac))
+        
+        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/endpoints[name="%s"]/mac' % (tenant, vnsname, endpointname)
+        try:
+            c.rest.delete(url, {})
+        except:
+            helpers.test_failure(c.rest.error())
+        else: 
+            helpers.test_log("Output: %s" % c.rest.result_json())
+            return c.rest.content()                         
 
     def rest_add_endpoint_portgroup_attachment(self, tenant, vnsname, endpointname, portgroupname, vlan):
         '''Add nexthop to ecmp groups aks gateway pool in tenant"

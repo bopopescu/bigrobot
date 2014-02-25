@@ -72,7 +72,7 @@ Inter tenant L3 untagged to tagged traffic with static endpoints same rack
 
 Delete and add vns with L3 intra tenant traffic with static endpoints
 	Delete and add router vns with L3 intra tenant traffic with static endpoints
-	[Tags]							skipped			sanity			
+#	[Tags]							skipped			sanity			
 
 
 Intra tenant L3 untagged traffic with dynamic endpoints across rack
@@ -106,7 +106,7 @@ Delete and add vns with L3 intra tenant traffic with dynamic endpoints
 	
 * Keywords
 L3 intra tenant same rack untagged with static endpoints
-	endpoint static config
+	add static endpoint
 	sleep										5
 	mininet host config
 	sleep										1
@@ -128,7 +128,7 @@ L3 intra tenant same rack untagged with static endpoints
 
 
 L3 intra tenant same rack tagged with static endpoints
-	endpoint static config
+	add static endpoint
 	sleep										5
 	mininet host config
 	sleep										1
@@ -153,7 +153,7 @@ L3 intra tenant same rack tagged with static endpoints
 #	Should Be True  							${endpoints_cnt} == 7
 	
 L3 Intra tenant untagged with initial unreachable host
-	endpoint static config
+	add static endpoint
 	sleep										1
 	mininet host config
 	sleep										1
@@ -208,7 +208,7 @@ L3 intra tenant untagged with host moved
 #	Should Be True  							${loss} == 0
 	
 L3 intra tenant same rack untagged to tagged host
-	endpoint static config
+	add static endpoint
 	sleep										5
 	mininet host config
 	sleep										1
@@ -234,7 +234,7 @@ L3 intra tenant same rack untagged to tagged host
 
 
 L3 intra tenant across rack untagged to tagged host
-	endpoint static config
+	add static endpoint
 	sleep										1
 	mininet host config
 	sleep										1
@@ -261,7 +261,7 @@ L3 intra tenant across rack untagged to tagged host
 #	Should Be True  							${endpoints_cnt} == 7
 
 L3 intra tenant across rack tagged to tagged host
-	endpoint static config
+	add static endpoint
 	sleep 										1
 	mininet host config
 	sleep										1
@@ -286,7 +286,7 @@ L3 intra tenant across rack tagged to tagged host
 #	Should Be True  							${endpoints_cnt} == 7
 
 L3 intra tenant across rack ttl1
-	endpoint static config
+	add static endpoint
 	sleep										1
 	mininet host config
 	sleep										1
@@ -314,7 +314,7 @@ L3 intra tenant across rack ttl1
 #	Should Be True  							${endpoints_cnt} == 7
 
 L3 inter tenant across rack untagged with static endpoints
-	endpoint static config
+	add static endpoint
 	sleep 										5
 	REST add tenant								${tenant_system}
 	REST add system to tenant routers 			${tenant1_name} 
@@ -338,7 +338,7 @@ L3 inter tenant across rack untagged with static endpoints
 	
 
 L3 inter tenant across rack tagged with static endpoints
-	endpoint static config
+	add static endpoint
 	sleep 										5
 	REST add tenant								${tenant_system}
 	REST add system to tenant routers 			${tenant1_name} 
@@ -362,7 +362,7 @@ L3 inter tenant across rack tagged with static endpoints
 			
 
 L3 inter tenant same rack untagged to tagged with static endpoints
-	endpoint static config
+	add static endpoint
 	sleep 										5
 	REST add tenant								${tenant_system}
 	REST add system to tenant routers 			${tenant1_name} 
@@ -385,7 +385,7 @@ L3 inter tenant same rack untagged to tagged with static endpoints
 	Should Be True  							${loss} == 0	
 
 Delete router vns with L3 intra tenant traffic with static endpoints
-	endpoint static config
+	add static endpoint
 	sleep										1
 	mininet host config
 	sleep										1
@@ -424,7 +424,7 @@ Delete router vns with L3 intra tenant traffic with static endpoints
 #	Should Be True  							${endpoints_cnt} == 8
 	
 L3 inter tenant same rack untagged with static endpoints
-	endpoint static config
+	add static endpoint
 	sleep 										1
 	REST add tenant								${tenant_system}
 	REST add system to tenant routers 			${tenant1_name} 
@@ -470,7 +470,7 @@ L3 intra tenant same rack untagged with dynamic endpoints
 
 
 L3 intra tenant untagged traffic with dynamic host arp
-	endpoint static config
+	add static endpoint
 	sleep 										1
 	mininet host config
 	sleep  										5
@@ -662,7 +662,7 @@ teardown topology
 	REST delete portgroup						${portgroup10}
 	REST delete portgroup						${portgroup11}
 	
-endpoint static config
+add static endpoint
 	REST add endpoint							${tenant1_name}		${vns1_1}		${bm0_name}
 	REST add endpoint							${tenant1_name}		${vns1_2}		${bm1_name}
 	REST add endpoint							${tenant2_name}		${vns2_3}		${bm2_name}
@@ -695,6 +695,16 @@ endpoint static config
 	REST add endpoint portgroup attachment		${tenant2_name}		${vns2_1}		${bm8_name}			${portgroup8}	${vns2_vlan1}
 	REST add endpoint portgroup attachment		${tenant2_name}		${vns2_2}		${bm9_name}			${portgroup9}	${vns2_vlan2}
 	REST add endpoint portgroup attachment		${tenant2_name}		${vns2_3}		${bm10_name}		${portgroup10}	${untaggedvlan}	
+
+delete static endpoint
+	REST delete endpoint						${tenant1_name}		${vns1_1}		${bm0_name}
+	REST delete endpoint						${tenant1_name}		${vns1_2}		${bm1_name}
+	REST delete endpoint						${tenant2_name}		${vns2_3}		${bm2_name}
+	REST delete endpoint						${tenant2_name}		${vns2_2}		${bm3_name}
+	REST delete endpoint						${tenant1_name}		${vns1_1}		${bm4_name}
+	REST delete endpoint						${tenant2_name}		${vns2_1}		${bm8_name}
+	REST delete endpoint						${tenant2_name}		${vns2_2}		${bm9_name}
+	REST delete endpoint						${tenant2_name}		${vns2_3}		${bm10_name}				
 
 mininet host config
 	mininet host ipcfg   						${bm0_name}			${bm0_bondif}	${bm0_ip}			${vns1_subnet1}
