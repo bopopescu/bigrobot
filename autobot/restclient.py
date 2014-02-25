@@ -2,6 +2,7 @@ import httplib2
 import base64
 import autobot.helpers as helpers
 import autobot.utils as br_utils
+import re
 
 
 class RestClient(object):
@@ -167,17 +168,21 @@ class RestClient(object):
         #   - 200 (OK)
         #   - 201 (Created)
         #   - 202 (Accepted)
+        #   - 409 (Conflict, if description matches 'exists', else consider it
+        #          unknown)
         #
         result['success'] = False
         if int(code) in [200, 201, 202]:
             result['success'] = True
+        elif int(code) == 409 and re.match(r'.*exists', result['status_descr']):
+            # On POST when "List element already exists"
+            result['success'] = True
+        elif int(code) == 401 and result['status_descr'] == 'Unauthorized':
+            # Session cookie has expired. This requires exception handling
+            # by BigRobot
+            pass
         else:
-            if int(code) == 401 and result['status_descr'] == 'Unauthorized':
-                # Session cookie has expired. This requires exception handling
-                # by BigRobot
-                pass
-            else:
-                helpers.test_error("REST call failed with status code %s" % code)
+            helpers.test_error("REST call failed with status code %s" % code)
 
         return result
 
@@ -193,7 +198,8 @@ class RestClient(object):
             else:
                 self.session_cookie_loop += 1
 
-            helpers.log("It appears the session cookie has expired. Requesting new session cookie.")
+            helpers.log("It appears the session cookie has expired. Requesting"
+                        " new session cookie.")
             self.request_session_cookie()
             # helpers.sleep(2)
             # Re-run command
