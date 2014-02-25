@@ -20,11 +20,11 @@ Resource		testsuites_dev/slim/t5_layer3_variables.txt
 * Test Cases
 Intra tenant L3 untagged traffic with static endpoints same rack
 	L3 intra tenant same rack untagged with static endpoints
-#	[Tags]							skipped			smoke				sanity			
+	[Tags]							skipped			smoke				sanity			
 
 Intra tenant L3 tagged traffic with static endpoints same rack
 	L3 intra tenant same rack tagged with static endpoints
-#	[Tags]							skipped			smoke				sanity		
+	[Tags]							skipped			smoke				sanity		
 
 Intra tenant L3 untagged with initial unreachable host
 	L3 intra tenant untagged with initial unreachable host
@@ -36,44 +36,48 @@ Intra tenant L3 untagged with destination host moved
 
 Intra tenant L3 untagged to tagged host same rack
 	L3 intra tenant same rack untagged to tagged host
-#	[Tags]							skipped		sanity				
+	[Tags]							skipped		sanity				
 
 Intra tenant L3 untagged to tagged host across rack
 	L3 intra tenant across rack untagged to tagged host
-#	[Tags]							skipped		sanity	
+	[Tags]							skipped		sanity	
 
 Intra tenant L3 tagged to tagged host across rack
 	L3 intra tenant across rack tagged to tagged host
-#	[Tags]							skipped		sanity	
+	[Tags]							skipped		sanity	
 
 Intra tenant with invalid ttl 1
 	L3 intra tenant across rack ttl1
-#	[Tags]							skipped		sanity		
+	[Tags]							skipped		sanity		
 
 Inter tenant L3 untagged traffic with static endpoints across rack
 	L3 inter tenant across rack untagged with static endpoints
-# 	[Tags]							skipped			sanity 				smoke					
+ 	[Tags]							skipped			sanity 				smoke					
 		
 Inter tenant L3 tagged traffic with static endpoints across rack
 	L3 inter tenant across rack tagged with static endpoints
-#  	[Tags]							skipped			sanity 				smoke	
+  	[Tags]							skipped			sanity 				smoke	
 
 Inter tenant L3 untagged traffic with static endpoints same rack
 	L3 inter tenant same rack untagged with static endpoints
-#  	[Tags]							skipped			sanity 				smoke					
+  	[Tags]							skipped			sanity 				smoke					
 		
 Inter tenant L3 tagged traffic with static endpoints same rack
 	L3 inter tenant same rack tagged with static endpoints
-#  	[Tags]							skipped			sanity 				smoke	
+  	[Tags]							skipped			sanity 				smoke	
 	
 Inter tenant L3 untagged to tagged traffic with static endpoints same rack
 	L3 inter tenant same rack untagged to tagged with static endpoints
-#  	[Tags]							skipped			sanity 				smoke	
+  	[Tags]							skipped			sanity 				smoke	
 
 Delete and add vns with L3 intra tenant traffic with static endpoints
 	Delete and add router vns with L3 intra tenant traffic with static endpoints
-#	[Tags]							skipped			sanity			
+	[Tags]							skipped			sanity			
 
+Verify L3 traffic for static endpoints
+	Verify L3 traffic for static endpoints 
+	[Tags]							skipped			manual	
+	Manual	passed
 
 Intra tenant L3 untagged traffic with dynamic endpoints across rack
 	L3 intra tenant across rack untagged with dynamic endpoints
@@ -170,7 +174,7 @@ L3 Intra tenant untagged with initial unreachable host
 	sleep										1
 	mininet host ipcfg   						${bm6_name}			${bm6_bondif}	${bm6_ip}		${vns2_subnet1}	
 	mininet host gw								${bm6_name}			${vns2_ip1}		${bm6_bondif}
-	mininet host add arp							${bm6_name}			${vns2_ip1}		${gw_mac}
+	mininet host add arp						${bm6_name}			${vns2_ip1}		${gw_mac}
 	sleep										1
 	mininet l3 ping								${bm9_name}			${bm6_ip}		3
 	${loss}=									mininet l3 ping		${bm9_name}		${bm6_ip}		10
@@ -184,9 +188,9 @@ L3 intra tenant untagged with host moved
 	mininet l3 ping								${bm0_name}		${vns1_ip1} 	3
 	mininet l3 ping								${bm1_name}		${vns1_ip2} 	3
 	sleep 										2
-	${value}= 	mininet host verify arp				${bm0_name} 	${vns1_ip1}
+	${value}= 	mininet host verify arp			${bm0_name} 	${vns1_ip1}
 #	Should Be True								${value} 
-	${value}= 	mininet host verify arp				${bm1_name} 	${vns1_ip2}
+	${value}= 	mininet host verify arp			${bm1_name} 	${vns1_ip2}
 #	Should Be True								${value}
 	mininet dump switch							${leaf0a_name}
 	mininet dump switch							${leaf0b_name}
@@ -429,6 +433,16 @@ Delete router vns with L3 intra tenant traffic with static endpoints
 	${endpoints_cnt}=							rest count endpoints mac
 #	Should Be True  							${endpoints_cnt} == 8
 	delete static endpoint
+
+Verify L3 traffic for static endpoints
+	add static endpoint
+	sleep										1
+	mininet host ipcfg   						${bm0_name}			${bm0_bondif}	${bm0_ip}			${vns1_subnet1}
+	mininet host gw								${bm0_name}			${vns1_ip1}		${bm0_bondif}
+	mininet host add arp						${bm0_name}			${vns1_ip1}		${gw_mac}
+	sleep  										1
+	mininet host tcpdump						${bm10_name} 		${bm10_bondif}	icmp	 10
+		
 	
 L3 inter tenant same rack untagged with static endpoints
 	add static endpoint
@@ -646,6 +660,8 @@ setup topology
 	REST add portgroup to vns					${tenant2_name}  	${vns2_3} 		${portgroup2} 		${vns2_vlan3}
 	REST add portgroup to vns					${tenant2_name}  	${vns2_2} 		${portgroup3} 		${untaggedvlan}
 	REST add portgroup to vns					${tenant1_name}  	${vns1_1} 		${portgroup4} 		${vns1_vlan1}
+	REST add portgroup to vns					${tenant2_name}  	${vns2_1} 		${portgroup6} 		${untaggedvlan}
+	REST add portgroup to vns					${tenant1_name}  	${vns1_2} 		${portgroup7} 		${untaggedvlan}
 	REST add portgroup to vns					${tenant2_name}  	${vns2_1} 		${portgroup8} 		${vns2_vlan1}
 	REST add portgroup to vns					${tenant2_name}  	${vns2_2} 		${portgroup9} 		${vns2_vlan2}
 	REST add portgroup to vns					${tenant2_name}  	${vns2_3} 		${portgroup10} 		${untaggedvlan}	
