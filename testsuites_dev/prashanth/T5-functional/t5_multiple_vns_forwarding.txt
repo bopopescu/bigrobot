@@ -2,8 +2,8 @@
 
 * Setting
 Documentation    T5 BVS APP Functional L2 VNS forwarding Test Suite
-Suite Setup      base suite setup
-Suite Teardown   base suite teardown
+Suite Setup      T5 Functional Suite Setup
+Suite Teardown   T5 Functional Suite Teardown
 Test Setup       base test setup
 Test Teardown    T5 test teardown
 Force Tags       T5 
@@ -22,35 +22,9 @@ Resource		 keywords_dev/prashanth/t5_physical_variables.txt
 
 add Dual Leaf Three Rack setup
    [Tags]  feature        
-   base suite setup
-   add fabric switch
-   sleep  5
    rest verify fabric switch all
    rest verify fabric link
-   rest add tenant  t1
-   rest add tenant  t2
-   rest add vns  t1  v1
-   rest add vns  t1  v2
-   rest add vns  t2  v1
-   rest add tenant  t3
-   rest add vns  t3  v3
-   rest add interface to vns  t1  v1  leaf0-b  ${leaf0b_ixia_intf}  -1
-   rest add interface to vns  t1  v1  leaf1-b  ${leaf1b_ixia_intf}  -1
-   rest add interface to vns  t1  v1  leaf2-b  ${leaf2b_ixia_intf}  300
-   rest add interface to vns  t1  v2  leaf0-b  ${leaf0b_ixia_intf}  150
-   rest add interface to vns  t1  v2  leaf1-a  ${leaf1a_ixia_intf}  100
-   rest add interface to vns  t1  v2  leaf2-a  ${leaf2a_ixia_intf}  -1
-   rest add interface to vns  t1  v2  leaf2-b  ${leaf2b_ixia_intf}  200
-   rest add interface to vns  t2  v1  leaf0-a  ${leaf0a_ixia_intf}  500
-   rest add interface to vns  t2  v1  leaf2-a  ${leaf2a_ixia_intf}  500
-   rest add interface to vns  t2  v1  leaf2-b  ${leaf2b_ixia_intf}  500
-   rest add portgroup  p5
-   rest add interface to portgroup  leaf2-a  ${h5_intf0}  p5
-   rest add interface to portgroup  leaf2-b  ${h5_intf1}  p5
-   rest add portgroup lacp  p5
-   rest add portgroup to vns  t3  v3  p5  -1
-   sleep  5  
-   
+     
 check forwarding table for vlan 
    [Tags]   feature     
    rest verify forwarding vlan table  leaf0-b
@@ -361,14 +335,40 @@ Verify forwarding vlan table with deleting tenants and vns
 	rest verify forwarding vlan table  leaf2-a
 	rest verify forwarding vlan table  leaf2-b 
         
-Tear down the config
-   [Tags]  feature         
+
+* Keywords 
+T5 Functional Suite Setup
+   base suite setup
+   add fabric switch
+   sleep  5
+   rest add tenant  t1
+   rest add tenant  t2
+   rest add vns  t1  v1
+   rest add vns  t1  v2
+   rest add vns  t2  v1
+   rest add tenant  t3
+   rest add vns  t3  v3
+   rest add interface to vns  t1  v1  leaf0-b  ${leaf0b_ixia_intf}  -1
+   rest add interface to vns  t1  v1  leaf1-b  ${leaf1b_ixia_intf}  -1
+   rest add interface to vns  t1  v1  leaf2-b  ${leaf2b_ixia_intf}  300
+   rest add interface to vns  t1  v2  leaf0-b  ${leaf0b_ixia_intf}  150
+   rest add interface to vns  t1  v2  leaf1-a  ${leaf1a_ixia_intf}  100
+   rest add interface to vns  t1  v2  leaf2-a  ${leaf2a_ixia_intf}  -1
+   rest add interface to vns  t1  v2  leaf2-b  ${leaf2b_ixia_intf}  200
+   rest add interface to vns  t2  v1  leaf0-a  ${leaf0a_ixia_intf}  500
+   rest add interface to vns  t2  v1  leaf2-a  ${leaf2a_ixia_intf}  500
+   rest add interface to vns  t2  v1  leaf2-b  ${leaf2b_ixia_intf}  500
+   rest add portgroup  p5
+   rest add interface to portgroup  leaf2-a  ${h5_intf0}  p5
+   rest add interface to portgroup  leaf2-b  ${h5_intf1}  p5
+   rest add portgroup lacp  p5
+   rest add portgroup to vns  t3  v3  p5  -1     
+   
+T5 Functional Suite Teardown
    delete fabric switch
    rest delete portgroup  p5
    base suite teardown
-
-* Keywords      
-   
+   	
 add a tenant  [Arguments]  ${tenant} 
   REST add tenant  ${tenant}    
 

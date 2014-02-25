@@ -2,6 +2,7 @@ import autobot.helpers as helpers
 import autobot.restclient as restclient
 import autobot.test as test
 import re
+from netaddr import *
 
 
 class T5(object):
@@ -19,17 +20,13 @@ class T5(object):
         
         t = test.Test()
         c = t.controller()
-
-        helpers.log("Input arguments: tenant = %s" % tenant )
-                
         url = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]' % (c.base_url, tenant)
-        c.rest.put(url, {"name": tenant})
-        helpers.log("Output: %s" % c.rest.result_json())
-
-        if not c.rest.status_code_ok():
-            helpers.test_failure(c.rest.error())
-
-        return c.rest.content()
+        try:
+                c.rest.put(url, {"name": tenant})
+        except:
+                return False
+        else:
+                return True
         
     def _rest_show_tenant(self, tenant=None, negative=False):
         t = test.Test()
@@ -89,14 +86,12 @@ class T5(object):
         helpers.log("Input arguments: tenant = %s" % tenant )
         
         url = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]' % (c.base_url, tenant)
-
-        c.rest.delete(url, {"name": tenant})
-        helpers.log("Ouput: %s" % c.rest.result_json())
-
-        if not c.rest.status_code_ok():
-            helpers.test_failure(c.rest.error())
-
-        return c.rest.content()
+        try:
+            c.rest.delete(url, {"name": tenant})
+        except:
+            return False
+        else:
+            return True
 
     def test_args(self, arg1, arg2, arg3):
         try:
@@ -118,12 +113,9 @@ class T5(object):
         try:
             c.rest.put(url, {"name": vns})
         except:
-            helpers.test_failure(c.rest.error())
-        else:
-            if not c.rest.status_code_ok():
-                helpers.test_failure(c.rest.error())
-    
-            return c.rest.content()
+            return False
+        else:    
+            return True
     
     def rest_add_vns_scale(self, tenant, count):
         t = test.Test()
@@ -137,12 +129,21 @@ class T5(object):
             try:
                 c.rest.put(url, {"name": vns})
             except:
-                    helpers.test_failure(c.rest.error())
-            else:
-                    if not c.rest.status_code_ok():
-                        helpers.test_failure(c.rest.error())
+                return False
             i = i + 1
     
+    def rest_add_interface_to_all_vns(self, tenant, switch, intf):
+        t = test.Test()
+        c = t.controller()
+        url = '%s/api/v1/data/controller/applications/bvs/info/endpoint-manager/vnses[tenant-name="%s"]' % (c.base_url, tenant)
+        c.rest.get(url)
+        data = c.rest.content()
+        i = 0
+        while (i <= int(len(data))):
+                url = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/switch-port-membership-rules[switch-name="%s"][interface-name="%s"]' % (c.base_url, tenant, data[i]["name"], switch, intf)
+                c.rest.put(url, {"switch-name": switch, "interface-name": intf, "vlan": data[i]["internal-vlan"]})
+                i = i + 1
+        
     def rest_delete_vns(self, tenant, vns=None):
         t = test.Test()
         c = t.controller()
@@ -153,27 +154,21 @@ class T5(object):
         try:
             c.rest.delete(url, {"name": vns})
         except:
-            helpers.test_log("Output: %s" % c.rest.result_json())
+            return False
         else:
-            if not c.rest.status_code_ok():
-                helpers.test_failure(c.rest.error())
-
-            return c.rest.content()
+            return True
+        
     def rest_show_vns(self):
         t = test.Test()
         c = t.controller()
   
         url = '%s/api/v1/data/controller/applications/bvs/info/endpoint-manager/vnses' % (c.base_url)
-       
         try:
             c.rest.get(url)
         except:
-            helpers.test_log("Output: %s" % c.rest.result_json())
+            return False
         else:
-            if not c.rest.status_code_ok():
-                helpers.test_failure(c.rest.error())
-
-            return c.rest.content()
+            return True
      
     def rest_add_portgroup(self, pg):
         t = test.Test()
@@ -182,13 +177,12 @@ class T5(object):
         helpers.test_log("Input arguments: port-group = %s" % pg )
         
         url = '%s/api/v1/data/controller/fabric/port-group[name="%s"]' % (c.base_url, pg)
-        c.rest.put(url, {"name": pg})
-        helpers.test_log("Output: %s" % c.rest.result_json())
-
-        if not c.rest.status_code_ok():
-            helpers.test_failure(c.rest.error())
-
-        return c.rest.content()
+        try:
+            c.rest.put(url, {"name": pg})
+        except:
+            return False
+        else:
+            return True
     
     def rest_delete_portgroup(self, pg=None):
         t = test.Test()
@@ -197,14 +191,12 @@ class T5(object):
         helpers.test_log("Input arguments: port-group = %s" % pg )
         
         url = '%s/api/v1/data/controller/fabric/port-group[name="%s"]' % (c.base_url, pg)
-        c.rest.delete(url, {"name": pg})
-        helpers.test_log("Output: %s" % c.rest.result_json())
-
-        if not c.rest.status_code_ok():
-            helpers.test_failure(c.rest.error())
-
-        return c.rest.content()
-
+        try:
+            c.rest.delete(url, {"name": pg})
+        except:
+            return False
+        else:
+            return True
 
     def rest_add_endpoint(self, tenant, vns, endpoint):
         '''Add nexthop to ecmp groups aks gateway pool in tenant"
@@ -227,10 +219,9 @@ class T5(object):
         try:
             c.rest.post(url, {"name": endpoint})
         except:
-            helpers.test_failure(c.rest.error())
+            return False
         else: 
-            helpers.test_log("Output: %s" % c.rest.result_json())
-            return c.rest.content()                         
+            return True                        
         
     def rest_delete_endpoint(self, tenant, vns, endpoint=None):
         t = test.Test()
@@ -239,14 +230,12 @@ class T5(object):
         helpers.test_log("Input arguments: tenant = %s vns = %s endpoint = %s" % (tenant, vns, endpoint ))
         
         url = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/endpoints[name="%s"]' % (c.base_url, tenant, vns, endpoint)
-        c.rest.delete(url, {"name": endpoint})
-        helpers.test_log("Output: %s" % c.rest.result_json())
-
-        if not c.rest.status_code_ok():
-            helpers.test_failure(c.rest.error())
+        try:
+            c.rest.delete(url, {"name": endpoint})
+        except:
             return False
-
-        return c.rest.content()
+        else:
+            return True
    
     def rest_add_interface_to_portgroup(self, switch, intf, pg):
         t = test.Test()
@@ -255,14 +244,12 @@ class T5(object):
         helpers.test_log("Input arguments: switch-name = %s Interface-name = %s port-group = %s" % (switch, intf, pg))
         
         url = '%s/api/v1/data/controller/core/switch-config[name="%s"]/interface[name="%s"]' % (c.base_url, switch, intf)
-        c.rest.put(url, {"name": intf, "port-group-name": pg})
-        helpers.test_log("Output: %s" % c.rest.result_json())
-
-        if not c.rest.status_code_ok():
-            helpers.test_failure(c.rest.error())
+        try:
+            c.rest.put(url, {"name": intf, "port-group-name": pg})
+        except:
             return False
-
-        return c.rest.content()
+        else:
+            return True
     
     def rest_add_portgroup_lacp(self, pg):
         t = test.Test()
@@ -271,14 +258,12 @@ class T5(object):
         helpers.test_log("Input arguments: port-group = %s" % (pg))
         
         url = '%s/api/v1/data/controller/fabric/port-group[name="%s"]' % (c.base_url, pg)
-        c.rest.patch(url, {"mode": "lacp"})
-        helpers.test_log("Output: %s" % c.rest.result_json())
-
-        if not c.rest.status_code_ok():
-            helpers.test_failure(c.rest.error())
+        try:
+            c.rest.patch(url, {"mode": "lacp"})
+        except:
             return False
-
-        return c.rest.content()
+        else:
+            return True
     
     def rest_delete_portgroup_lacp(self, pg):
         t = test.Test()
@@ -287,14 +272,12 @@ class T5(object):
         helpers.test_log("Input arguments: port-group = %s" % (pg))
         
         url = '%s/api/v1/data/controller/fabric/port-group[name="%s"]' % (c.base_url, pg)
-        c.rest.delete(url, {"mode": None})
-        helpers.test_log("Output: %s" % c.rest.result_json())
-
-        if not c.rest.status_code_ok():
-            helpers.test_failure(c.rest.error())
+        try:
+            c.rest.delete(url, {"mode": None})
+        except:
             return False
-
-        return c.rest.content()
+        else:
+            return True
     
     def rest_delete_interface_from_portgroup(self, switch, intf, pg):
         t = test.Test()
@@ -303,14 +286,12 @@ class T5(object):
         helpers.test_log("Input arguments: switch-name = %s Interface-name = %s port-group = %s" % (switch, intf, pg))
         
         url = '%s/api/v1/data/controller/core/switch-config[name="%s"]/interface[name="%s"]' % (c.base_url, switch, intf)
-        c.rest.delete(url, {"core/switch-config/interface/port-group-name": pg})
-        helpers.test_log("Output: %s" % c.rest.result_json())
-
-        if not c.rest.status_code_ok():
-            helpers.test_failure(c.rest.error())
+        try:
+            c.rest.delete(url, {"core/switch-config/interface/port-group-name": pg})
+        except:
             return False
-
-        return c.rest.content()
+        else:
+            return True
     
     def rest_add_portgroup_to_vns(self, tenant, vns, pg, vlan):
         t = test.Test()
@@ -319,14 +300,12 @@ class T5(object):
         helpers.test_log("Input arguments: tenant = %s vns = %s port-group = %s vlan = %s" % (tenant, vns, pg, vlan ))
         
         url = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/port-group-membership-rules[port-group-name="%s"]' % (c.base_url, tenant, vns, pg)
-        c.rest.put(url, {"vlan": vlan, "port-group-name": pg})
-        helpers.test_log("Output: %s" % c.rest.result_json())
-
-        if not c.rest.status_code_ok():
-            helpers.test_failure(c.rest.error())
+        try:
+            c.rest.put(url, {"vlan": vlan, "port-group-name": pg})
+        except:
             return False
-
-        return c.rest.content()
+        else:
+            return True
             
     def rest_add_portgroup_to_endpoint(self, tenant, vns, endpoint, pg, vlan):
         t = test.Test()
@@ -335,14 +314,12 @@ class T5(object):
         helpers.test_log("Input arguments: tenant = %s vns = %s endpoint = %s port-group = %s vlan = %s" % (tenant, vns, endpoint, pg, vlan ))
         
         url = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/endpoints[name="%s"]/attachment-point' % (c.base_url, tenant, vns, endpoint)
-        c.rest.put(url, {"port-group-name": pg, "vlan": vlan})
-        helpers.test_log("Output: %s" % c.rest.result_json())
-
-        if not c.rest.status_code_ok():
-            helpers.test_failure(c.rest.error())
+        try:
+            c.rest.put(url, {"port-group-name": pg, "vlan": vlan})
+        except:
             return False
-
-        return c.rest.content()
+        else:
+            return True
             
     def rest_delete_portgroup_from_vns(self, tenant, vns, pg, vlan):
         t = test.Test()
@@ -351,14 +328,12 @@ class T5(object):
         helpers.test_log("Input arguments: tenant = %s vns = %s port-group = %s vlan = %s" % (tenant, vns, pg, vlan ))
         
         url = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/port-group-membership-rules[port-group-name="%s"]' % (c.base_url, tenant, vns, pg)
-        c.rest.delete(url, {"vlan": vlan})
-        helpers.test_log("Output: %s" % c.rest.result_json())
-
-        if not c.rest.status_code_ok():
-            helpers.test_failure(c.rest.error())
+        try:
+            c.rest.delete(url, {"vlan": vlan})
+        except:
             return False
-
-        return c.rest.content()
+        else:
+            return True
             
     def rest_add_interface_to_vns(self, tenant, vns, switch, intf, vlan):
         t = test.Test()
@@ -367,14 +342,12 @@ class T5(object):
         helpers.test_log("Input arguments: tenant = %s vns = %s switch-name = %s interface-name = %s vlan = %s" % (tenant, vns, switch, intf, vlan ))
         
         url = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/switch-port-membership-rules[switch-name="%s"][interface-name="%s"]' % (c.base_url, tenant, vns, switch, intf)
-        c.rest.put(url, {"switch-name": switch, "interface-name": intf, "vlan": vlan})
-        helpers.test_log("Output: %s" % c.rest.result_json())
-
-        if not c.rest.status_code_ok():
-            helpers.test_failure(c.rest.error())
+        try:
+            c.rest.put(url, {"switch-name": switch, "interface-name": intf, "vlan": vlan})
+        except:
             return False
-
-        return c.rest.content() 
+        else:
+            return True
       
     def rest_delete_interface_from_vns(self, tenant, vns, switch, intf, vlan):
         t = test.Test()
@@ -383,15 +356,13 @@ class T5(object):
         helpers.test_log("Input arguments: tenant = %s vns = %s switch-name = %s interface-name = %s vlan = %s" % (tenant, vns, switch, intf, vlan ))
         
         url = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/switch-port-membership-rules[switch-name="%s"][interface-name="%s"]' % (c.base_url, tenant, vns, switch, intf)
-        c.rest.delete(url, {"vlan": vlan})
-        helpers.test_log("Output: %s" % c.rest.result_json())
-
-        if not c.rest.status_code_ok():
-            helpers.test_failure(c.rest.error())
+        try:
+            c.rest.delete(url, {"vlan": vlan})
+        except:
             return False
-
-        return c.rest.content()
-            
+        else:
+            return True
+        
     def rest_add_interface_to_endpoint(self, tenant, vns, endpoint, switch, intf, vlan):
         t = test.Test()
         c = t.controller()
@@ -399,36 +370,34 @@ class T5(object):
         helpers.test_log("Input arguments: tenant = %s vns = %s endpoint = %s switch-name = %s interface-name = %s vlan = %s" % (tenant, vns, endpoint, switch, intf, vlan ))
         
         url = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/endpoints[name="%s"]/attachment-point' % (c.base_url, tenant, vns, endpoint)
-        c.rest.put(url, {"switch-name": switch, "interface-name": intf, "vlan": vlan})
-        helpers.test_log("Output: %s" % c.rest.result_json())
-
-        if not c.rest.status_code_ok():
-            helpers.test_failure(c.rest.error())
+        try:
+            c.rest.put(url, {"switch-name": switch, "interface-name": intf, "vlan": vlan})
+        except:
             return False
-            
-        return c.rest.content()
+        else:
+            return True
     
     def rest_add_ip_endpoint(self, tenant, vns, endpoint, ip):
         t = test.Test()
         c = t.controller()
         url = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/endpoints[name="%s"]' % (c.base_url, tenant, vns, endpoint)
-        c.rest.patch(url, {"ip-address": ip})
-        helpers.test_log("Output: %s" % c.rest.result_json())
-        if not c.rest.status_code_ok():
-            helpers.test_failure(c.rest.error())
+        try:
+            c.rest.patch(url, {"ip-address": ip})
+        except:
             return False
-        return c.rest.content()
-    
+        else:
+            return True
+
     def rest_add_mac_endpoint(self, tenant, vns, endpoint, mac):
         t = test.Test()
         c = t.controller()
         url = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/endpoints[name="%s"]' % (c.base_url, tenant, vns, endpoint)
-        c.rest.patch(url, {"mac": mac})
-        helpers.test_log("Output: %s" % c.rest.result_json())
-        if not c.rest.status_code_ok():
-            helpers.test_failure(c.rest.error())
+        try:
+            c.rest.patch(url, {"mac": mac})
+        except:
             return False
-        return c.rest.content()
+        else:
+            return True
     
     def rest_verify_vns(self):
         '''Verify VNS information
@@ -454,6 +423,34 @@ class T5(object):
                         helpers.log("No VNS are added")
                         return False
         
+    def rest_verify_vns_scale(self, count):
+        '''Verify VNS information for scale
+        
+            Input:  No of vns expected to be created          
+            
+            Return: true if it matches the added VNS (string starts with "v")
+        '''
+        t = test.Test()
+        c = t.controller()
+        url = '%s/api/v1/data/controller/applications/bvs/info/endpoint-manager/vnses' % (c.base_url)
+        c.rest.get(url)
+        data = c.rest.content()
+        if len(data) == int(count):
+            for i in range(0,len(data)):
+                if len(data) != 0:
+                        if (int(data[i]["internal-vlan"]) != 0):
+                            helpers.log("Expected VNS's are present in the config")
+                            return True
+                        else:
+                            helpers.test_failure("Expected VNS's are not present in the config")  
+                            return False     
+                else:
+                        helpers.log("No VNS are added")
+                        return False
+        else:
+                helpers.test_failure("Fail: expected:%s, Actual:%s" % (int(count), len(data)))
+                return False          
+    
     def rest_verify_tenant(self):
         '''Verify CLI tenant information
         
@@ -867,5 +864,57 @@ class T5(object):
                  
         return False
     
-   
-
+    def rest_add_endpoint_scale(self, tenant, vns, mac, endpoint, switch, intf, vlan, count):
+        ''' Adding static endpoints in a scale 
+            Input: tenant , vns , switch , interface , vlan , count (how many static endpoints), starting letter for the endpoint name
+            Output: Static creation of endpoints in a given tenant and vns with switch/interface
+        '''
+        t = test.Test()
+        c = t.controller()
+        i = 1
+        while (i <= int(count)):
+            endpoint+=str(i)
+            mac = EUI(mac).value
+            mac = "{0}".format(str(EUI(mac+i)).replace('-',':'))
+            url = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/endpoints' % (c.base_url, tenant, vns)
+            c.rest.post(url, {"name": endpoint})
+            url1 = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/endpoints[name="%s"]/attachment-point' % (c.base_url, tenant, vns, endpoint)
+            c.rest.put(url1, {"switch-name": switch, "interface-name": intf, "vlan": vlan})
+            url2 = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/endpoints[name="%s"]' % (c.base_url, tenant, vns, endpoint)     
+            c.rest.patch(url2, {"mac": mac})
+            i = i + 1
+     
+    def rest_verify_endpoints_in_vns(self, vns, count):
+        ''' Function to count no of endoint in the given VNS 
+         Input : Expected Count and vns 
+         Output: No of endoints match aginst the specifed count in vns table
+        '''
+        t = test.Test()
+        c = t.controller()
+        url = '%s/api/v1/data/controller/applications/bvs/info/endpoint-manager/vnses[name="%s"]' % (c.base_url, vns)
+        c.rest.get(url)
+        data = c.rest.content()
+        if data[0]["num-active-endpoints"] == int(count):
+            helpers.log("Pass:Expected:%s, Actual:%s" % (int(count), data[0]["num-active-endpoints"]))
+            return True
+        else:
+            helpers.test_failure("Fail: Expected:%s is not equal to Actual:%s" % (int(count), data[0]["num-active-endpoints"]))
+            return False
+    
+    def rest_verify_endpoint_in_system(self, count):
+        ''' Function to count no of endoint in the system 
+         Input : Expected Count
+         Output: No of endoints match aginst the specifed count in endpoint table
+        '''
+        t = test.Test()
+        c = t.controller()
+        url = '%s/api/v1/data/controller/applications/bvs/info/endpoint-manager/endpoints' % (c.base_url)
+        c.rest.get(url)
+        data = c.rest.content()
+        if int(len(data)) == int(count):
+            helpers.log("Pass:Expected:%s, Actual:%s" % (int(count), len(data)))
+            return True
+        else:
+            helpers.test_failure("Fail: Expected:%s is not equal to Actual:%s" % (int(count), len(data)))
+            return False
+        

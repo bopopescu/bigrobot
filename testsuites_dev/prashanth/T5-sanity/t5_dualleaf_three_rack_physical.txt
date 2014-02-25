@@ -3,7 +3,7 @@
 * Setting
 Documentation    T5 Dual Leaf Three Rack Test Suite
 Suite Setup      base suite setup
-#Suite Teardown   base suite teardown
+Suite Teardown   Tear down the config
 Test Setup       T5 base test setup
 Test Teardown    T5 base test teardown
 Force Tags       T5 
@@ -18,10 +18,7 @@ Resource		 keywords_dev/prashanth/t5_physical_variables.txt
 * Test Case 
 
 add Fabric setup Three Rack Dual Leaf 
-   [Tags]  smoke  sanity  
-   sleep  5
-   add fabric switch
-   sleep  5
+   [Tags]  smoke  sanity
    rest verify fabric switch all
    rest verify fabric link 
 
@@ -121,28 +118,7 @@ ping h1 to h3 dual rack dual leaf static endpoints tag
    ${loss}=  bash ping  h1  ${h3_tag_ip}  source_if=bond0.10
    Should Be True  ${loss} == 0  
    
-Tear down the config
-   [Tags]  smoke  sanity   
-   delete a tenant  A 
-   delete interface from portgroup  leaf0-a  ${h1_intf0}  p1
-   delete interface from portgroup  leaf0-b  ${h1_intf1}  p1
-   delete interface from portgroup  leaf0-a  ${h2_intf0}  p2
-   delete interface from portgroup  leaf0-b  ${h2_intf1}  p2
-   delete interface from portgroup  leaf1-a  ${h3_intf0}  p3 
-   delete interface from portgroup  leaf1-b  ${h3_intf1}  p3 
-   delete interface from portgroup  leaf1-a  ${h4_intf0}  p4
-   delete interface from portgroup  leaf1-b  ${h4_intf1}  p4
-   delete interface from portgroup  leaf2-a  ${h5_intf0}  p5
-   delete interface from portgroup  leaf2-b  ${h5_intf1}  p5
-   delete interface from portgroup  leaf2-a  ${h6_intf0}  p6 
-   delete interface from portgroup  leaf2-b  ${h6_intf1}  p6 
-   delete a portgroup  p1
-   delete a portgroup  p2
-   delete a portgroup  p3
-   delete a portgroup  p4
-   delete a portgroup  p5
-   delete a portgroup  p6
-   delete fabric switch
+
    
 
 * Keywords
@@ -240,5 +216,32 @@ delete portgroup from vns  [Arguments]  ${tenant}  ${vns}  ${pg}  ${vlan}
   REST delete portgroup from vns  ${tenant}  ${vns}  ${pg}  ${vlan}
   
 
-
+Tear down the config 
+   delete a tenant  A 
+   delete interface from portgroup  leaf0-a  ${h1_intf0}  p1
+   delete interface from portgroup  leaf0-b  ${h1_intf1}  p1
+   delete interface from portgroup  leaf0-a  ${h2_intf0}  p2
+   delete interface from portgroup  leaf0-b  ${h2_intf1}  p2
+   delete interface from portgroup  leaf1-a  ${h3_intf0}  p3 
+   delete interface from portgroup  leaf1-b  ${h3_intf1}  p3 
+   delete interface from portgroup  leaf1-a  ${h4_intf0}  p4
+   delete interface from portgroup  leaf1-b  ${h4_intf1}  p4
+   delete interface from portgroup  leaf2-a  ${h5_intf0}  p5
+   delete interface from portgroup  leaf2-b  ${h5_intf1}  p5
+   delete interface from portgroup  leaf2-a  ${h6_intf0}  p6 
+   delete interface from portgroup  leaf2-b  ${h6_intf1}  p6 
+   delete a portgroup  p1
+   delete a portgroup  p2
+   delete a portgroup  p3
+   delete a portgroup  p4
+   delete a portgroup  p5
+   delete a portgroup  p6
+   delete fabric switch
+   base suite teardown
+   
+base suite setup
+	base suite setup
+	add fabric switch
+    sleep  5
+	
  

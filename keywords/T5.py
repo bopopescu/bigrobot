@@ -2,6 +2,7 @@ import autobot.helpers as helpers
 import autobot.restclient as restclient
 import autobot.test as test
 import re
+from netaddr import *
 
 
 class T5(object):
@@ -128,11 +129,21 @@ class T5(object):
             try:
                 c.rest.put(url, {"name": vns})
             except:
-                    return False
-            else:
-                    return True
+                return False
             i = i + 1
     
+    def rest_add_interface_to_all_vns(self, tenant, switch, intf):
+        t = test.Test()
+        c = t.controller()
+        url = '%s/api/v1/data/controller/applications/bvs/info/endpoint-manager/vnses[tenant-name="%s"]' % (c.base_url, tenant)
+        c.rest.get(url)
+        data = c.rest.content()
+        i = 0
+        while (i <= int(len(data))):
+                url = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/switch-port-membership-rules[switch-name="%s"][interface-name="%s"]' % (c.base_url, tenant, data[i]["name"], switch, intf)
+                c.rest.put(url, {"switch-name": switch, "interface-name": intf, "vlan": data[i]["internal-vlan"]})
+                i = i + 1
+        
     def rest_delete_vns(self, tenant, vns=None):
         t = test.Test()
         c = t.controller()
@@ -412,6 +423,34 @@ class T5(object):
                         helpers.log("No VNS are added")
                         return False
         
+    def rest_verify_vns_scale(self, count):
+        '''Verify VNS information for scale
+        
+            Input:  No of vns expected to be created          
+            
+            Return: true if it matches the added VNS (string starts with "v")
+        '''
+        t = test.Test()
+        c = t.controller()
+        url = '%s/api/v1/data/controller/applications/bvs/info/endpoint-manager/vnses' % (c.base_url)
+        c.rest.get(url)
+        data = c.rest.content()
+        if len(data) == int(count):
+            for i in range(0,len(data)):
+                if len(data) != 0:
+                        if (int(data[i]["internal-vlan"]) != 0):
+                            helpers.log("Expected VNS's are present in the config")
+                            return True
+                        else:
+                            helpers.test_failure("Expected VNS's are not present in the config")  
+                            return False     
+                else:
+                        helpers.log("No VNS are added")
+                        return False
+        else:
+                helpers.test_failure("Fail: expected:%s, Actual:%s" % (int(count), len(data)))
+                return False          
+    
     def rest_verify_tenant(self):
         '''Verify CLI tenant information
         
@@ -825,5 +864,57 @@ class T5(object):
                  
         return False
     
-   
-
+    def rest_add_endpoint_scale(self, tenant, vns, mac, endpoint, switch, intf, vlan, count):
+        ''' Adding static endpoints in a scale 
+            Input: tenant , vns , switch , interface , vlan , count (how many static endpoints), starting letter for the endpoint name
+            Output: Static creation of endpoints in a given tenant and vns with switch/interface
+        '''
+        t = test.Test()
+        c = t.controller()
+        i = 1
+        while (i <= int(count)):
+            endpoint+=str(i)
+            mac = EUI(mac).value
+            mac = "{0}".format(str(EUI(mac+i)).replace('-',':'))
+            url = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/endpoints' % (c.base_url, tenant, vns)
+            c.rest.post(url, {"name": endpoint})
+            url1 = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/endpoints[name="%s"]/attachment-point' % (c.base_url, tenant, vns, endpoint)
+            c.rest.put(url1, {"switch-name": switch, "interface-name": intf, "vlan": vlan})
+            url2 = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/endpoints[name="%s"]' % (c.base_url, tenant, vns, endpoint)     
+            c.rest.patch(url2, {"mac": mac})
+            i = i + 1
+     
+    def rest_verify_endpoints_in_vns(self, vns, count):
+        ''' Function to count no of endoint in the given VNS 
+         Input : Expected Count and vns 
+         Output: No of endoints match aginst the specifed count in vns table
+        '''
+        t = test.Test()
+        c = t.controller()
+        url = '%s/api/v1/data/controller/applications/bvs/info/endpoint-manager/vnses[name="%s"]' % (c.base_url, vns)
+        c.rest.get(url)
+        data = c.rest.content()
+        if data[0]["num-active-endpoints"] == int(count):
+            helpers.log("Pass:Expected:%s, Actual:%s" % (int(count), data[0]["num-active-endpoints"]))
+            return True
+        else:
+            helpers.test_failure("Fail: Expected:%s is not equal to Actual:%s" % (int(count), data[0]["num-active-endpoints"]))
+            return False
+    
+    def rest_verify_endpoint_in_system(self, count):
+        ''' Function to count no of endoint in the system 
+         Input : Expected Count
+         Output: No of endoints match aginst the specifed count in endpoint table
+        '''
+        t = test.Test()
+        c = t.controller()
+        url = '%s/api/v1/data/controller/applications/bvs/info/endpoint-manager/endpoints' % (c.base_url)
+        c.rest.get(url)
+        data = c.rest.content()
+        if int(len(data)) == int(count):
+            helpers.log("Pass:Expected:%s, Actual:%s" % (int(count), len(data)))
+            return True
+        else:
+            helpers.test_failure("Fail: Expected:%s is not equal to Actual:%s" % (int(count), len(data)))
+            return False
+        

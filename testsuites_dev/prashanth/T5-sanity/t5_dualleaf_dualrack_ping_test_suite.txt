@@ -3,7 +3,7 @@
 * Setting
 Documentation    T5 Dual Leaf Dual Rack Test Suite
 Suite Setup      base suite setup
-Suite Teardown   base suite teardown
+Suite Teardown   Tear down the config
 Test Setup       T5 base test setup
 Test Teardown    T5 base test teardown
 Force Tags       T5 
@@ -136,6 +136,16 @@ ping bm0 to bm2 dual rack dual leaf static endpoints tag
    ${loss}=  mininet ping  bm0  ${bm2_ip}
    Should Be True  ${loss} == 0  
    
+
+   
+
+* Keywords
+
+base suite setup
+	base suite setup
+    add fabric switch
+    sleep  5
+
 Tear down the config
    [Tags]  smoke  sanity 
    delete a tenant  A 
@@ -149,9 +159,7 @@ Tear down the config
    delete a portgroup  p2
    delete a portgroup  p3
    delete fabric switch
-   
-
-* Keywords
+   base suite teardown
 
 T5 base test setup
    base test setup

@@ -39,9 +39,9 @@ ${h5_intf0}  ethernet48
 ${h5_intf1}  ethernet48
 ${h6_intf0}  ethernet47
 ${h6_intf1}  ethernet47
-${h1_tag_ip}	192.168.4.20
-${h2_tag_ip}	192.168.4.21
-${h3_tag_ip}	192.168.4.10
+${h1_tag_ip}	  192.168.4.20
+${h2_tag_ip}	  192.168.4.21
+${h3_tag_ip}	  192.168.4.10
 ${h1_tag_mac}  90:e2:ba:4e:bc:98
 ${h2_tag_mac}  90:e2:ba:4f:80:b1
 ${h3_tag_mac}  00:10:18:f0:eb:e0
@@ -59,9 +59,9 @@ ${h2_intf0}  ethernet26
 ${h3_eth1_ip}	192.168.2.10/24
 ${h4_eth1_ip}	192.168.2.11/24
 ${h2_eth1_ip}	192.168.2.21/24
-${h3_tag_ip}	192.168.2.10
-${h4_tag_ip}	192.168.2.11
-${h2_tag_ip}	192.168.2.21
+${h3_tag_ip}	  192.168.2.10
+${h4_tag_ip}  	192.168.2.11
+${h2_tag_ip} 	192.168.2.21
 
 
 

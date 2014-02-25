@@ -24,7 +24,11 @@ ${bm0_intf0}  leaf0-eth5
 ${bm1_intf0}  leaf0-eth6
 ${bm2_intf0}  leaf1-eth5
 
-* Test Case 
+* Test Case
+Verify fabric switch and link status
+	[Tags]  smoke  sanity
+	rest verify fabric switch all 
+	rest verify fabric link 
 
 ping bm0 to bm1 single leaf single rack dynamic endpoints
    [Tags]  smoke  sanity
@@ -130,11 +134,8 @@ ping bm0 to bm2 dual rack single leaf static endpoints tag
 * Keywords      
 Single Leaf Dual Rack setup
    base suite setup
-   sleep  5
    add fabric switch
    sleep  5
-   rest verify fabric switch all
-   rest verify fabric link
 
 Single Leaf Dual Rack teardown
    delete a tenant  A

@@ -2,8 +2,8 @@
 
 * Setting
 Documentation    T5 Single Leaf Dual Rack Test Suite
-Suite Setup      base suite setup
-Suite Teardown   base suite teardown
+Suite Setup      Single Leaf Three Rack Suite Setup
+Suite Teardown   Single Leaf Three Rack Suite Teardown
 Test Setup       T5 base test setup
 Test Teardown    T5 base test teardown
 Force Tags       T5 
@@ -18,11 +18,8 @@ Resource		 keywords_dev/prashanth/t5_physical_variables.txt
 
 * Test Case 
 
-add Single Leaf Dual Rack setup
+Verify fabric switch and Link
    [Tags]  smoke  sanity   
-   sleep  5
-   add fabric switch
-   sleep  5
    rest verify fabric switch all
    rest verify fabric link
 
@@ -133,16 +130,21 @@ ping h2 to h3 dual rack single leaf static endpoints tag
    ${loss}=  bash ping  h3   ${h2_tag_ip}  source_if=eth1.20
    Should Be True  ${loss} == 0  
    
-Tear down the config
-   [Tags]  smoke  sanity  
+
+* Keywords
+Single Leaf Three Rack Suite Setup
+   base suite setup
+   add fabric switch
+   sleep  5 
+   
+Single Leaf Three Rack Suite Teardown 
    delete a tenant  A
    delete fabric switch
    bash delete tag  h3  eth1.20
    bash delete tag  h4  eth1.20
    bash delete tag	h2	eth1.20
-   
-
-* Keywords      
+   base suite teardown	
+        
 T5 base test setup
    base test setup
    add a tenant  A 
@@ -152,7 +154,7 @@ T5 base test setup
 T5 base test teardown
    delete a tenant  A
    base test teardown
-   sleep  5
+ 
    
 add a tenant  [Arguments]  ${tenant} 
   REST add tenant  ${tenant}    
