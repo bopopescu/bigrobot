@@ -305,11 +305,11 @@ class BigTap(object):
                             helpers.test_failure("Policy does not correctly report number of filter interfaces  : %s" % content[0]['filter-interface-count'])
                             return False
 
-                    if content[0]['detailed-status'] == "installed to forward":
+                    if "installed to forward" in content[0]['detailed-status']:
                         helpers.test_log("Policy correctly reports detailed status as : %s" % content[0]['detailed-status'])
-                    elif content[0]['detailed-status'] == "installed to measure rate":
+                    elif "installed to measure rate" in content[0]['detailed-status']:
                         helpers.test_log("Policy correctly reports detailed status as : %s" % content[0]['detailed-status'])
-                    elif content[0]['detailed-status'] == "inactive":
+                    elif "inactive" in content[0]['detailed-status']:
                         helpers.test_log("Policy correctly reports detailed status as : %s" % content[0]['detailed-status'])
                     else:
                         helpers.test_failure("Policy does not correctly report detailed status as : %s" % content[0]['detailed-status'])
@@ -2058,39 +2058,72 @@ class BigTap(object):
             else:
                 return True
 
-    def return_match(self, protocol=None, ip_type=None, dst_mac=None, src_mac=None, src_ip=None, dst_ip=None, src_port=None, dst_port=None, ip_tos=None, vlan=None):
+    def return_match(self, protocol=None, ip_type=None, ether_type=None, dst_mac=None, src_mac=None, src_ip=None, dst_ip=None, src_port=None, src_port_min=None, src_port_max=None, dst_port_max=None, dst_port_min=None, dst_port=None, ip_tos=None, vlan=None, vlan_max=None, vlan_min=None):
         dictionary = {}
         data_P1 = {"sequence": 1}
         data_P2 = {"sequence": 1}
         chkArray_P1 = []
         chkArray_P2 = []
+
+        if src_ip is not None and dst_ip is not None:
+            if ":" in src_ip and ":" in dst_ip:
+                ipv6_flag = True
+            else:
+                ipv6_flag = False
+
         if dst_mac is not None:
             dictionary['dst-mac'] = str(dst_mac)
+
         if src_mac is not None:
             dictionary['src-mac'] = str(src_mac)
+
         if src_ip is not None:
-            dictionary['dst-ip'] = str(src_ip)
+            dictionary['src-ip'] = str(src_ip)
+
         if dst_ip is not None:
             dictionary['dst-ip'] = str(dst_ip)
+
         if ip_tos is not None:
             dictionary['ip-tos'] = int(ip_tos)
+
         if vlan is not None:
             dictionary['vlan'] = int(vlan)
+
         if src_port is not None:
             dictionary['src-tp-port'] = int(src_port)
+
         if dst_port is not None:
             dictionary['dst-tp-port'] = int(dst_port)
+
+        if src_port_max is not None:
+            dictionary['src-tp-port-max'] = int(src_port_max)
+
+        if dst_port_max is not None:
+            dictionary['dst-tp-port-max'] = int(dst_port_max)
+
+        if vlan_max is not None:
+            dictionary['vlan-max'] = int(vlan_max)
+
         if protocol is not None:
             data_P1['ip-proto'] = int(protocol)
             data_P2['ip-proto'] = int(protocol)
             chkArray_P1.append('ip-proto')
             chkArray_P2.append('ip-proto')
+
         if ip_type is not None:
             data_P1['ether-type'] = int(ip_type)
             data_P2['ether-type'] = int(ip_type)
             chkArray_P1.append('ether-type')
             chkArray_P2.append('ether-type')
+
+        if ether_type is not None:
+            data_P1['ether-type'] = int(ether_type)
+            data_P2['ether-type'] = int(ether_type)
+            chkArray_P1.append('ether-type')
+            chkArray_P2.append('ether-type')
+        helpers.log("Dictionary is %s" % dictionary)
         tuples = [(x, y) for x in dictionary for y in dictionary if x != y]
+        helpers.log("Dictionary is %s" % dictionary)
         match1 = []
         match2 = []
         for entry in tuples:
@@ -2102,14 +2135,39 @@ class BigTap(object):
             chkArray_P1.append(pair[0])
             chkArray_P2.append(pair[1])
             if pair[0] == "src-ip" :
-                data_P1['src-ip-mask'] = "255.255.255.0"
+                if ipv6_flag:
+                    data_P1['src-ip-mask'] = "ffff:ffff:ffff:ffff:0:0:0:0"
+                else:
+                    data_P1['src-ip-mask'] = "255.255.255.0"
             if pair[0] == "dst-ip" :
-                data_P1['dst-ip-mask'] = "255.255.255.0"
+                if ipv6_flag:
+                    data_P1['dst-ip-mask'] = "ffff:ffff:ffff:ffff:0:0:0:0"
+                else:
+                    data_P1['dst-ip-mask'] = "255.255.255.0"
+            if pair[0] == "src-tp-port-max" :
+                    data_P1['src-tp-port-min'] = int(src_port_min)
+            if pair[0] == "dst-tp-port-max" :
+                    data_P1['dst-tp-port-min'] = int(dst_port_min)
+            if pair[0] == "vlan-max" :
+                    data_P1['vlan-min'] = int(vlan_min)
             if pair[1] == "src-ip" :
-                data_P2['src-ip-mask'] = "255.255.255.0"
+                if ipv6_flag:
+                    data_P2['src-ip-mask'] = "ffff:ffff:ffff:ffff:0:0:0:0"
+                else:
+                    data_P2['src-ip-mask'] = "255.255.255.0"
             if pair[1] == "dst-ip" :
-                data_P2['dst-ip-mask'] = "255.255.255.0"
+                if ipv6_flag:
+                    data_P2['dst-ip-mask'] = "ffff:ffff:ffff:ffff:0:0:0:0"
+                else:
+                    data_P2['dst-ip-mask'] = "255.255.255.0"
+            if pair[1] == "src-tp-port-max" :
+                    data_P2['src-tp-port-min'] = int(src_port_min)
+            if pair[1] == "dst-tp-port-max" :
+                    data_P2['dst-tp-port-min'] = int(dst_port_min)
+            if pair[1] == "vlan-max" :
+                    data_P2['vlan-min'] = int(vlan_min)
             match1.append(data_P1)
             match2.append(data_P2)
         match = match1 + match2
+        helpers.log("Match is %s" % match)
         return (match)

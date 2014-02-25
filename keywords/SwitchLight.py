@@ -1210,13 +1210,13 @@ class SwitchLight(object):
         '''
         try:
             t = test.Test()
-            s1 = t.switch(node)
+            switch = t.switch(node)
             if not "no" in save_config:
-                s1.config("copy running-config startup-config")
+                switch.config("copy running-config startup-config")
             cli_input = 'reload now'
-            s1.enable('')
-            s1.send(cli_input)
-            helpers.sleep(120)
+            switch.enable('')
+            switch.send(cli_input)
+            helpers.sleep(150)
             return True
         except:
             helpers.test_failure("Could not execute command. Please check log for errors")
