@@ -143,14 +143,6 @@ helpers.bigrobot_path()
 helpers.bigtest_path()
 helpers.python_path()
 
-ROBOT_FRAMEWORK_OPTS = (
-    '--loglevel=trace',
-    '--debugfile=debug.log',
-    '--exclude=skipped',
-    '--outputdir=%s' % helpers.bigrobot_log_path_exec_instance(),
-    )
-    # Exclude test cases tagged as 'skipped' from execution
-
 
 def get_command_dict():
     """
@@ -300,6 +292,15 @@ def format_convert_and_copy(f, p, quiet=False):
             shutil.copy(filename, p)
 
 
+def touch_log_files():
+    log_files = ['debug.log', 'syslog.txt', 'log.html', 'report.html',
+                 'output.xml']
+    for f in log_files:
+        file = '/'.join((helpers.bigrobot_log_path_exec_instance(), f))
+        # print("Touching file %s" % file)
+        helpers.file_touch(file)
+
+
 def create_links_to_logs():
     """
     Create links to the log files located in the log directory. These
@@ -345,7 +346,9 @@ def version_hidden_command(*args):
     print("BigRobot version        %s" % helpers.get_version())
     print("Robot Framework version %s" % robot_framework_version)
     print("Exscript version        %s" % exscript_version)
-
+    pversion = sys.version_info
+    print("Python version          %s.%s.%s"
+          % (pversion.major, pversion.minor, pversion.micro))
 
 def suite_command(*args):
     """
@@ -372,6 +375,9 @@ def test_command(*args):
     parser.add_argument('--exclude',
                         metavar=('tag1', 'tag2'), nargs='*',
                         help='Exclude test cases by tags')
+    parser.add_argument('--randomize', action='store_true', dest='randomize',
+                        default=False,
+                        help="Run test cases in random orders")
     parser.add_argument('--loglevel', default='trace',
                         help="Log level ('trace', 'debug', 'info')")
     parser.add_argument('--debugfile', default='debug.log',
@@ -404,6 +410,8 @@ def test_command(*args):
                }
     if include_tags:
         options['include'] = include_tags
+    if args.randomize:
+        options['randomize'] = 'tests'
 
     print("Robot options:\n%s" % helpers.prettify(options))
 
@@ -418,10 +426,12 @@ def test_command(*args):
 
     test_suite = ''.join((helpers.bigrobot_suite(), '.', ext))
 
+    touch_log_files()
+    create_links_to_logs()
+
     rc = robot.run(test_suite, **options)
     helpers.log("Robot Framework return code is %s" % rc)
     print("Return code is %s" % rc)
-    create_links_to_logs()
 
     if helpers.bigrobot_continuous_integration():
         helpers.log("Inside continuous integration environment. Return code"

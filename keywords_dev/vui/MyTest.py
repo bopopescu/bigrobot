@@ -370,3 +370,47 @@ admin_user = glance
     def return_false(self):
         return False
 
+    def ssh_send_control_c(self):
+        t = test.Test()
+        c = t.controller('c1')
+
+        c.cli('')  # Make sure we're in CLI mode
+
+        #**** CLI walk: show ?
+        c.send('show ?', no_cr=True)
+        c.expect(r'[\r\n\x07][\w_-]+[#>] ')  # Match CLI prompt
+        # c.expect(r'[\r\n][\w-_]+[#>] ')  # Match CLI prompt
+        content = c.cli_content()
+        new_content = helpers.strip_cli_output(content)
+        new_content = helpers.str_to_list(new_content)
+        helpers.log("new_content:\n%s" % helpers.prettify(new_content))
+
+        c.send(helpers.ctrl('u'))  # Erase input
+        c.expect()  # Match default CLI prompt
+
+        #**** CLI walk: show event-history ?
+        c.send('show event-history ?', no_cr=True)
+        # c.expect(r'[\r\n]\w+[#>] ')  # Match CLI prompt
+        c.expect(r'[\r\n\x07][\w_-]+[#>] ')  # Match CLI prompt
+        content = c.cli_content()
+        new_content = helpers.strip_cli_output(content)
+        new_content = helpers.str_to_list(new_content)
+        helpers.log("new_content:\n%s" % helpers.prettify(new_content))
+
+        c.send(helpers.ctrl('u'))  # Erase input
+        c.expect()  # Match default CLI prompt
+
+        #**** CLI walk: show event-history topology-link ?
+        c.send('show event-history topology-link ?', no_cr=True)
+        # c.expect(r'[\r\n]\w+[#>] ')  # Match CLI prompt
+        c.expect(r'[\r\n\x07][\w_-]+[#>] ')  # Match CLI prompt
+        content = c.cli_content()
+        new_content = helpers.strip_cli_output(content)
+        new_content = helpers.str_to_list(new_content)
+        helpers.log("new_content:\n%s" % helpers.prettify(new_content))
+
+        c.send(helpers.ctrl('u'))  # Erase input
+        c.expect()  # Match default CLI prompt
+
+        #**** Done! Just making sure some random command continues to work...
+        c.cli('show user')

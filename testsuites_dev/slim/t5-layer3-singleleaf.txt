@@ -9,7 +9,7 @@ Library         keywords/BsnCommon.py
 Library         keywords/Mininet.py
 Library         keywords_dev/prashanth/T5.py
 Library         keywords_dev/prashanth/T5Fabric.py
-Library         keywords_dev/prashanth/T5_L3.py
+Library         keywords_dev/prashanth/T5L3.py
 Library         keywords_dev/animesh/BsnCommonShow.py
 Resource		keywords_dev/slim/t5_singleleaf_resource.txt
 
@@ -111,6 +111,10 @@ Intra tenant L3 untagged to tagged host
 Intra tenant L3 tagged host
 	L3 intra tenant tagged host
 #	[Tags]							skipped		sanity				
+
+Configure dhcp relay
+	L3 configure dhcp relay on vns
+#	[Tags]							skipped		sanity	
 
 	
 * Keywords
@@ -419,7 +423,8 @@ L3 configure dhcp relay on vns
 	REST add vns ip  							${tenant1_name}  		${vns1_1}  		${vns1_ip1}	  	${vns1_subnet1}
 	REST add interface to vns  					${tenant1_name}  		${vns1_1}  		${leaf0_name} 	${leaf0_intf1}  ${untaggedvlan}		
 	REST add dhcp relay							${tenant1_name}  		${vns1_1}  		${dhcpserver1}
-	REST toggle dhcp relay						${tenant1_name}  		${vns1_1}  		${true}
+	REST add dhcprelay circuitid				${tenant1_name}  		${vns1_1} 		this is a test
+	REST enable dhcp relay						${tenant1_name}  		${vns1_1} 
 	sleep 										5
 
 #verify port membership
@@ -431,7 +436,7 @@ teardown topology
 	REST delete tenant							${tenant1_name}   
 	REST delete tenant							${tenant2_name}    
 	REST delete tenant							${tenant_system}
-	sleep 										10
+	sleep 										1
 		
 	
 	

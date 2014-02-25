@@ -131,7 +131,7 @@ class ControllerNode(Node):
                                   password=self._password)
         self.t = t
 
-        # Shortcuts
+        # CLI Shortcuts
         self.cli = self.dev.cli  # CLI mode
         self.enable = self.dev.enable  # Enable mode
         self.config = self.dev.config  # Configuration mode
@@ -144,6 +144,17 @@ class ControllerNode(Node):
         self.set_prompt = self.dev.set_prompt
         self.send = self.dev.send
         self.expect = self.dev.expect
+
+        # REST Shortcuts
+        self.post = self.rest.post
+        self.get = self.rest.get
+        self.put = self.rest.put
+        self.patch = self.rest.patch
+        self.delete = self.rest.delete
+        self.rest_content = self.rest.content
+        self.rest_result = self.rest.result
+        self.rest_content_json = self.rest.content_json
+        self.rest_result_json = self.rest.result_json
 
     def connect(self, user, password, port=None, protocol='ssh', host=None,
                 name=None):

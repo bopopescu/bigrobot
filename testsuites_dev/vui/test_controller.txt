@@ -54,5 +54,21 @@ Verify fabric links (per Don)
     Should be true  ${status}
 
 Test devconf reconnect
-    [Tags]  smoke
+    [Tags]  skipped
     devconf reconnect
+
+Test priminitive CLI keywords
+    [Tags]  skipped
+    #config        node=master  cmd=show running-config
+    bash          master   uptime
+    #sudo          master   cat /etc/shadow
+    #cli           master   show version
+    ${result}=    bash_content    c1
+    log           result=${result}
+
+Test priminitive REST keywords
+    #[Tags]  skipped
+    get           master   /rest/v1/system/clock/local
+    ${result}=    rest_content    c1
+    log           result=${result}
+

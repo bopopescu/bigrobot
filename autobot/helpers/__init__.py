@@ -12,6 +12,7 @@ import subprocess
 import signal
 import re
 import ipcalc
+import curses.ascii as ascii
 from scp import SCPClient
 from pytz import timezone
 from autobot.version import get_version
@@ -30,6 +31,15 @@ from Exscript.util.match import any_match, first_match
 
 _TZ = timezone("America/Los_Angeles")
 _BIGROBOT_ENV_LIST = []
+
+
+def ctrl(char):
+    """
+    Returns the control character. E.g., helpers.ctrl('c') returns the value
+    for Ctrl-c which is \x03'.
+    See http://stackoverflow.com/questions/6248766/how-to-enter-the-escape-characters-for-telnet-programmatically
+    """
+    return ascii.ctrl(char)
 
 
 def warn(s, level=2):
@@ -735,6 +745,16 @@ def file_write_append_once(filename, s):
     f.close()
 
 
+def file_touch(fname, times=None):
+    """
+    Like Unix 'touch' command.
+    Borrowed from
+    http://stackoverflow.com/questions/1158076/implement-touch-using-python
+    """
+    with file(fname, 'a'):
+        os.utime(fname, times)
+
+
 def is_same_file(file1, file2):
     """
     Check if file1 is the same file as file2 by comparing their inodes. This
@@ -1124,6 +1144,11 @@ def strip_cli_output(input_str):
     out = text_processing_str_remove_trailer(out, 1)
     return out
 
+def str_to_list(input_str):
+    """
+    Convert a multi-line string into a list of strings.
+    """
+    return input_str.splitlines()
 
 def text_processing_str_remove_to_end(input_str, line_marker):
     """

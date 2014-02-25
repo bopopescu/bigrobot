@@ -125,7 +125,7 @@ class BsnCommon(object):
         return content[int(index)][str(key)]
 
     def verify_value_exist(self, value, content1, content2):
-        ''' 
+        '''
             Objective:
             - Given two CLI outputs, verify given string exists in either of them
         '''
@@ -403,14 +403,14 @@ class BsnCommon(object):
         '''
             Objective:
             - Execute snmp command which do not require options from local machine for a particular SNMP OID
-        
+
             Input:
             | node | Reference to switch (as defined in .topo file) |
             | snmp_cmd | SNMP Command like snmpwalk, snmpget, snmpgetnext etc. |
-            | snmpCommunity | SNMP Community |   
-            | snmpOID | OID for which walk is being performed | 
-            
-            Return Value:  
+            | snmpCommunity | SNMP Community |
+            | snmpOID | OID for which walk is being performed |
+
+            Return Value:
             - Output from SNMP Walk.
         '''
         try:
@@ -429,14 +429,14 @@ class BsnCommon(object):
         '''
             Objective:
             - Execute snmp command which  require options from local machine for a particular SNMP OID
-        
+
             Input:
             | node | Reference to switch (as defined in .topo file) |
             | snmp_cmd | SNMP Command like snmpwalk, snmpget, snmpgetnext etc. |
-            | snmpCommunity | SNMP Community |   
-            | snmpOID | OID for which walk is being performed | 
-            
-            Return Value:  
+            | snmpCommunity | SNMP Community |
+            | snmpOID | OID for which walk is being performed |
+
+            Return Value:
             - Output from SNMP Walk.
         '''
         try:
@@ -453,9 +453,9 @@ class BsnCommon(object):
 
     def snmp_get(self, snmp_community, snmp_oid):
         '''Execute SNMP Walk from local machine for a particular SNMP OID
-        
+
             Input: SNMP Community and OID
-            
+
             Return Value:  return the SNMP Walk O/P
         '''
         try:
@@ -474,12 +474,11 @@ class BsnCommon(object):
                 helpers.log("URL: %s Output: %s" % (url, out))
                 return out
 
-
     def snmp_getnext(self, snmp_community, snmp_oid):
         '''Execute snmpgetnext from local machine for a particular SNMP OID
-        
+
             Input: SNMP Community and OID
-            
+
             Return Value:  return the SNMP Walk O/P
         '''
         t = test.Test()
@@ -489,3 +488,93 @@ class BsnCommon(object):
         (out, err) = returnVal.communicate()
         helpers.log("URL: %s Output: %s" % (url, out))
         return out
+
+    def cli(self, node, *args, **kwargs):
+        t = test.Test()
+        n = t.node(node)
+        return n.cli(*args, **kwargs)
+
+    def enable(self, node, *args, **kwargs):
+        t = test.Test()
+        n = t.node(node)
+        return n.enable(*args, **kwargs)
+
+    def config(self, node, *args, **kwargs):
+        t = test.Test()
+        n = t.node(node)
+        return n.config(*args, **kwargs)
+
+    def bash(self, node, *args, **kwargs):
+        t = test.Test()
+        n = t.node(node)
+        return n.bash(*args, **kwargs)
+
+    def sudo(self, node, *args, **kwargs):
+        t = test.Test()
+        n = t.node(node)
+        return n.sudo(*args, **kwargs)
+
+    def cli_content(self, node, *args, **kwargs):
+        t = test.Test()
+        n = t.node(node)
+        return n.cli_content(*args, **kwargs)
+
+    def cli_result(self, node, *args, **kwargs):
+        t = test.Test()
+        n = t.node(node)
+        return n.cli_result(*args, **kwargs)
+
+    def bash_content(self, node, *args, **kwargs):
+        t = test.Test()
+        n = t.node(node)
+        return n.bash_content(*args, **kwargs)
+
+    def bash_result(self, node, *args, **kwargs):
+        t = test.Test()
+        n = t.node(node)
+        return n.bash_result(*args, **kwargs)
+
+    def post(self, node, *args, **kwargs):
+        t = test.Test()
+        n = t.node(node)
+        return n.post(*args, **kwargs)
+
+    def get(self, node, *args, **kwargs):
+        t = test.Test()
+        n = t.node(node)
+        return n.get(*args, **kwargs)
+
+    def put(self, node, *args, **kwargs):
+        t = test.Test()
+        n = t.node(node)
+        return n.put(*args, **kwargs)
+
+    def patch(self, node, *args, **kwargs):
+        t = test.Test()
+        n = t.node(node)
+        return n.patch(*args, **kwargs)
+
+    def delete(self, node, *args, **kwargs):
+        t = test.Test()
+        n = t.node(node)
+        return n.delete(*args, **kwargs)
+
+    def rest_content(self, node, *args, **kwargs):
+        t = test.Test()
+        n = t.node(node)
+        return n.rest_content(*args, **kwargs)
+
+    def rest_result(self, node, *args, **kwargs):
+        t = test.Test()
+        n = t.node(node)
+        return n.rest_result(*args, **kwargs)
+
+    def rest_content_json(self, node, *args, **kwargs):
+        t = test.Test()
+        n = t.node(node)
+        return n.rest_content_json(*args, **kwargs)
+
+    def rest_result_json(self, node, *args, **kwargs):
+        t = test.Test()
+        n = t.node(node)
+        return n.rest_result_json(*args, **kwargs)

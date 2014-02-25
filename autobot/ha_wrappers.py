@@ -7,7 +7,7 @@ class HaBsnRestClient(object):
     handling HA/mastership logic. So we have to intercept all the common
     interfaces of REST (e.g., post, get, put, patch, delete, content, result,
     etc.) to ensure we are on the correct controller prior to executing the
-    command. 
+    command.
     """
     def __init__(self, name, t):
         if name not in ('master', 'slave'):
@@ -77,7 +77,7 @@ class HaControllerNode(object):
     handling HA/mastership logic. So we have to intercept all the common
     interfaces of ControllerNode (e.g., cli, enable, config, bash,
     cli_content, cli_result, REST verbs/results, etc.) to ensure we are on the
-    correct controller prior to executing the command. 
+    correct controller prior to executing the command.
     """
     def __init__(self, name, t):
         if name not in ('master', 'slave'):
@@ -85,6 +85,34 @@ class HaControllerNode(object):
         self.t = t
         self._name = name
         self.rest = HaBsnRestClient(name, t)
+
+    # REST Shortcuts
+    def post(self, *args, **kwargs):
+        return self.rest.post(*args, **kwargs)
+
+    def get(self, *args, **kwargs):
+        return self.rest.get(*args, **kwargs)
+
+    def put(self, *args, **kwargs):
+        return self.rest.put(*args, **kwargs)
+
+    def patch(self, *args, **kwargs):
+        return self.rest.patch(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        return self.rest.delete(*args, **kwargs)
+
+    def rest_content(self, *args, **kwargs):
+        return self.rest.content(*args, **kwargs)
+
+    def rest_result(self, *args, **kwargs):
+        return self.rest.result(*args, **kwargs)
+
+    def rest_content_json(self, *args, **kwargs):
+        return self.rest.content_json(*args, **kwargs)
+
+    def rest_result_json(self, *args, **kwargs):
+        return self.rest.result_json(*args, **kwargs)
 
     def name(self):
         return self._name
@@ -160,3 +188,4 @@ class HaControllerNode(object):
     def connect(self, *args, **kwargs):
         n = self.t.controller(self.name(), resolve_mastership=True)
         return n.connect(*args, **kwargs)
+

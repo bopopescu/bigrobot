@@ -3,7 +3,7 @@ import autobot.restclient as restclient
 import autobot.test as test
 
 
-class T5_L3(object):
+class T5L3(object):
 
     def __init__(self):
         pass
@@ -21,11 +21,11 @@ class T5_L3(object):
         '''
         
         t = test.Test()
-        c = t.controller()
+        c = t.controller('master')
         
         helpers.test_log("Input arguments: tenant = %s vns = %s ipaddr = %s netmask = %s " % (tenant, vns, ipaddr, netmask ))
         
-        url = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]/virtual-router/vns-interfaces' % (c.base_url, tenant)
+        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/virtual-router/vns-interfaces' % (tenant)
         ip_addr = ipaddr + "/" + netmask
         try:
             c.rest.post(url, {"vns-name": vns, "ip-cidr": str(ip_addr), "active": True})
@@ -48,11 +48,11 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
         '''
         
         t = test.Test()
-        c = t.controller()
+        c = t.controller('master')
         
         helpers.test_log("Input arguments: tenant = %s vns = %s ipaddr = %s netmask = %s " % (tenant, vnsname, ipaddr, netmask ))
         
-        url = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]/virtual-router/vns-interfaces[vns-name="%s"]/ip-cidr' % (c.base_url, tenant, vnsname)
+        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/virtual-router/vns-interfaces[vns-name="%s"]/ip-cidr' % (tenant, vnsname)
         ip_addr = ipaddr + "/" + netmask
         try:
             c.rest.delete(url, {})
@@ -78,11 +78,11 @@ REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[
         '''
         
         t = test.Test()
-        c = t.controller()
+        c = t.controller('master')
         
         helpers.test_log("Input arguments: tenant = %s " % (tenant))
         
-        url = '%s/api/v1/data/controller/applications/bvs/tenant[name="system"]/virtual-router/tenant-interfaces[tenant-name="%s"]' % (c.base_url, tenant)
+        url = '/api/v1/data/controller/applications/bvs/tenant[name="system"]/virtual-router/tenant-interfaces[tenant-name="%s"]' % (tenant)
         try:
             c.rest.post(url, {"tenant-name": tenant, "active": True})
         except:
@@ -103,11 +103,11 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
        '''
         
         t = test.Test()
-        c = t.controller()
+        c = t.controller('master')
         
         helpers.test_log("Input arguments: tenant = %s " % (tenant))
         
-        url = '%s/api/v1/data/controller/applications/bvs/tenant[name="system"]/virtual-router/tenant-interfaces[tenant-name="%s"]' % (c.base_url, tenant)
+        url = '/api/v1/data/controller/applications/bvs/tenant[name="system"]/virtual-router/tenant-interfaces[tenant-name="%s"]' % (tenant)
         try:
             c.rest.delete(url, {})
         except:
@@ -128,11 +128,11 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
         '''
         
         t = test.Test()
-        c = t.controller()
+        c = t.controller('master')
         
         helpers.test_log("Input arguments: tenant = %s " % (tenant))
         
-        url = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]/virtual-router/tenant-interfaces[tenant-name="system"]' % (c.base_url, tenant)
+        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/virtual-router/tenant-interfaces[tenant-name="system"]' % (tenant)
         try:
             c.rest.post(url, {"tenant-name": "system", "active": True})
         except:
@@ -153,11 +153,11 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
         '''
         
         t = test.Test()
-        c = t.controller()
+        c = t.controller('master')
         
         helpers.test_log("Input arguments: tenant = %s " % (tenant))
         
-        url = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]/virtual-router/tenant-interfaces[tenant-name="system"]' % (c.base_url, tenant)
+        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/virtual-router/tenant-interfaces[tenant-name="system"]' % (tenant)
         try:
             c.rest.delete(url, {})
         except:
@@ -178,13 +178,13 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
         '''
         
         t = test.Test()
-        c = t.controller()
+        c = t.controller('master')
         
         nexthop_dict = helpers.from_json(nexthop)
         
         helpers.test_log("Input arguments: tenant = %s dstroute = %s nexthop = %s " % (tenant, dstroute, nexthop))
         
-        url = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]/virtual-router/routes' % (c.base_url, tenant)
+        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/virtual-router/routes' % (tenant)
         try:
             c.rest.post(url, {"dest-ip-subnet": dstroute, "next-hop": nexthop_dict})
         except:
@@ -205,11 +205,11 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
         '''
         
         t = test.Test()
-        c = t.controller()
+        c = t.controller('master')
         
         helpers.test_log("Input arguments: tenant = %s dstroute = %s " % (tenant, dstroute))
         
-        url = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]/virtual-router/routes' % (c.base_url, tenant)
+        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/virtual-router/routes' % (tenant)
         try:
             c.rest.delete(url, {"dest-ip-subnet": dstroute})
         except:
@@ -221,8 +221,9 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
         
     def rest_show_endpoints(self):
         t = test.Test()
-        c = t.controller()
-        url = '%s/api/v1/data/controller/applications/bvs/info/endpoint-manager/endpoints' % (c.base_url)
+        c = t.controller('master')
+        
+        url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/endpoints'
         c.rest.get(url)
         helpers.log("Output: %s" % c.rest.result_json())
         data = c.rest.content()
@@ -230,10 +231,10 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
     
     def rest_show_endpoints_name(self, endpointname):
         t = test.Test()
-        c = t.controller()
+        c = t.controller('master')
         
         endptname = "%5Bname%3D%22" + endpointname + "%22%5D" 
-        url = '%s/api/v1/data/controller/applications/bvs/info/endpoint-manager/endpoints%s' % (c.base_url, endptname)
+        url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/endpoints%s' % (endptname)
         c.rest.get(url)
         helpers.log("Output: %s" % c.rest.result_json())
         data = c.rest.content()
@@ -244,11 +245,11 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
         %5Bmac%3D%2200%3A00%3A00%3A00%3A00%3A01%22%5D
         '''
         t = test.Test()
-        c = t.controller()
+        c = t.controller('master')
         
         str1 = mac.replace(":", "%3A")
         mac_addr = "%5Bmac%3D%22" + str1 + "%22%5D" 
-        url = '%s/api/v1/data/controller/applications/bvs/info/endpoint-manager/endpoints%s' % (c.base_url, mac_addr)
+        url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/endpoints%s' % (mac_addr)
         c.rest.get(url)
         helpers.log("Output: %s" % c.rest.result_json())
         data = c.rest.content()
@@ -269,11 +270,11 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
         '''
         
         t = test.Test()
-        c = t.controller()
+        c = t.controller('master')
         
         helpers.test_log("Input arguments: tenant = %s ecmpgroup = %s" % (tenant, ecmpgroup))
         
-        url = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]/virtual-router/ecmp-groups' % (c.base_url, tenant)
+        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/virtual-router/ecmp-groups' % (tenant)
         try:
             c.rest.post(url, {"name": ecmpgroup})
         except:
@@ -294,11 +295,11 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
         '''
         
         t = test.Test()
-        c = t.controller()
+        c = t.controller('master')
         
         helpers.test_log("Input arguments: tenant = %s ecmpgroup = %s nexthop = %s" % (tenant, ecmpgroup, nexthop))
         
-        url = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]/virtual-router/ecmp-groups[name="%s"]/ip-addresses' % (c.base_url, tenant, ecmpgroup)
+        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/virtual-router/ecmp-groups[name="%s"]/ip-addresses' % (tenant, ecmpgroup)
         try:
             c.rest.put(url, {"ip-address": nexthop})
         except:
@@ -323,11 +324,11 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
         '''
         
         t = test.Test()
-        c = t.controller()
+        c = t.controller('master')
         
         helpers.test_log("Input arguments: tenant = %s vnsname = %s endpointname = %s ipaddress = %s" % (tenant, vnsname, endpointname, ipaddr))
         
-        url = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/endpoints[name="%s"]' % (c.base_url, tenant, vnsname, endpointname)
+        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/endpoints[name="%s"]' % (tenant, vnsname, endpointname)
         try:
             c.rest.patch(url, {"ip-address": ipaddr})
         except:
@@ -350,11 +351,11 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
         '''
         
         t = test.Test()
-        c = t.controller()
+        c = t.controller('master')
         
         helpers.test_log("Input arguments: tenant = %s vnsname = %s endpointname = %s mac address = %s" % (tenant, vnsname, endpointname, mac))
         
-        url = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/endpoints[name="%s"]' % (c.base_url, tenant, vnsname, endpointname)
+        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/endpoints[name="%s"]' % (tenant, vnsname, endpointname)
         try:
             c.rest.patch(url, {"mac": mac})
         except:
@@ -378,11 +379,11 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
         '''
         
         t = test.Test()
-        c = t.controller()
+        c = t.controller('master')
         
         helpers.test_log("Input arguments: tenant = %s vnsname = %s endpointname = %s portgroup = %s vlan = %s" % (tenant, vnsname, endpointname, portgroupname, vlan))
         
-        url = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/endpoints[name="%s"]/attachment-point' % (c.base_url, tenant, vnsname, endpointname)
+        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/endpoints[name="%s"]/attachment-point' % (tenant, vnsname, endpointname)
         try:
             c.rest.post(url, {"port-group-name": portgroupname, "vlan": vlan})
         except:
@@ -407,11 +408,11 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
             curl -gX PATCH -H 'Cookie: session_cookie=RKIUFOl07Dqiz10nXJcbquvUcWVJ3xYM' -d '{"switch-name": "leaf1", "interface-name": "leaf1-eth2", "vlan": -1}' 'localhost:8080/api/v1/data/controller/applications/bvs/tenant[name="B"]/vns[name="B1"]/endpoints[name="B1-H1"]/attachment-point'
         '''        
         t = test.Test()
-        c = t.controller()
+        c = t.controller('master')
         
         helpers.test_log("Input arguments: tenant = %s vnsname = %s endpointname = %s switchname = %s switch interface = %s vlan = %s" % (tenant, vnsname, endpointname, switchname, switchinterface, vlan))
         
-        url = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/endpoints[name="%s"]/attachment-point' % (c.base_url, tenant, vnsname, endpointname)
+        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/endpoints[name="%s"]/attachment-point' % (tenant, vnsname, endpointname)
         try:
             c.rest.post(url, {"switch-name": switchname, "interface-name": switchinterface, "vlan": vlan})
         except:
@@ -432,11 +433,11 @@ REST-POST: PATCH http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/t
 REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[name="C"]/virtual-router/vns-interfaces[vns-name="C1"] reply:             
         '''        
         t = test.Test()
-        c = t.controller()
+        c = t.controller('master')
         
         helpers.test_log("Input arguments: tenant = %s vns name = %s relay-ip = %s" % (tenant, vnsname, dhcpserverip))
         
-        url = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]/virtual-router/vns-interfaces[vns-name="%s"]/dhcp-relay' % (c.base_url, tenant, vnsname)
+        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/virtual-router/vns-interfaces[vns-name="%s"]/dhcp-relay' % (tenant, vnsname)
         try:
             c.rest.patch(url, {"dhcp-server-ip": dhcpserverip})
         except:
@@ -456,11 +457,11 @@ REST-POST: PATCH http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/t
 REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[name="C"]/virtual-router/vns-interfaces[vns-name="C1"] reply: ""           
         '''        
         t = test.Test()
-        c = t.controller()
+        c = t.controller('master')
         
         helpers.test_log("Input arguments: tenant = %s vns name = %s " % (tenant, vnsname))
         
-        url = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]/virtual-router/vns-interfaces[vns-name="%s"]/dhcp-relay' % (c.base_url, tenant, vnsname)
+        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/virtual-router/vns-interfaces[vns-name="%s"]/dhcp-relay' % (tenant, vnsname)
         try:
             c.rest.patch(url, {"dhcp-relay-enable": True})
         except:
@@ -481,11 +482,11 @@ REST-POST: PATCH http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/t
 REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[name="C"]/virtual-router/vns-interfaces[vns-name="C1"] reply: ""           
         '''        
         t = test.Test()
-        c = t.controller()
+        c = t.controller('master')
         
         helpers.test_log("Input arguments: tenant = %s vns name = %s " % (tenant, vnsname))
         
-        url = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]/virtual-router/vns-interfaces[vns-name="%s"]/dhcp-relay' % (c.base_url, tenant, vnsname)
+        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/virtual-router/vns-interfaces[vns-name="%s"]/dhcp-relay' % (tenant, vnsname)
         try:
             c.rest.patch(url, {"dhcp-relay-enable": False})
         except:
@@ -506,11 +507,11 @@ REST-POST: PATCH http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/t
 REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[name="C"]/virtual-router/vns-interfaces[vns-name="C1"] reply: ""          
         '''        
         t = test.Test()
-        c = t.controller()
+        c = t.controller('master')
         
         helpers.test_log("Input arguments: tenant = %s vns name = %s circuit id = %s" % (tenant, vnsname, circuitid))
         
-        url = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]/virtual-router/vns-interfaces[vns-name="%s"]/dhcp-relay' % (c.base_url, tenant, vnsname)
+        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/virtual-router/vns-interfaces[vns-name="%s"]/dhcp-relay' % (tenant, vnsname)
         try:
             c.rest.patch(url, {"dhcp-circuit-id": circuitid})
         except:
@@ -533,11 +534,11 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
      
         '''        
         t = test.Test()
-        c = t.controller()
+        c = t.controller('master')
         
         helpers.test_log("Input arguments: tenant = %s vns name = %s dhcp server ip = %s" % (tenant, vnsname, dhcpserverip))
         
-        url = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]/virtual-router/vns-interfaces[vns-name="%s"]/dhcp-relay/dhcp-server-ip' % (c.base_url, tenant, vnsname)
+        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/virtual-router/vns-interfaces[vns-name="%s"]/dhcp-relay/dhcp-server-ip' % (tenant, vnsname)
         try:
             c.rest.delete(url, {})
         except:

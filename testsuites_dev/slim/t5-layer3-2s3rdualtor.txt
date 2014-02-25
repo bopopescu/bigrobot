@@ -1,179 +1,34 @@
 * Setting
 Documentation   T5 Basic L3 two spine three leaf rack with dual-tor Test Suite
-Suite Setup     base suite setup
-Suite Teardown  base suite teardown
-Test Setup      setup topology
-Test Teardown   teardown topology
+#Suite Setup     base suite setup
+#Suite Teardown  base suite teardown
+#Test Setup      setup topology
+#Test Teardown   teardown topology
+Suite Setup		setup topology
+Suite Teardown	teardown topology
 Force Tags      T5 Sanity
 Library         keywords/BsnCommon.py
 Library         keywords/Mininet.py
 Library         keywords_dev/prashanth/T5.py
 Library         keywords_dev/prashanth/T5Fabric.py
-Library         keywords_dev/prashanth/T5_L3.py
+Library         keywords_dev/prashanth/T5L3.py
 Library         keywords_dev/animesh/BsnCommonShow.py
 Resource		keywords_dev/slim/t5_l3_dualspine.txt
-
-* Variable
-${tenant1_name}		A
-${tenant2_name}		B
-${tenant_system}	system
-${vns1_1}			A1
-${vns1_2}			A2
-${vns1_3}			A3
-${vns2_1}			B1
-${vns2_2}			B2
-${vns2_3}			B3
-${vns1_ip1}			10.10.11.1
-${vns1_subnet1}		24
-${vns1_ip2}			10.10.12.1
-${vns1_subnet2}		24
-${vns1_ip3}			10.10.13.1
-${vns1_subnet3}		24
-${vns2_ip1}			10.10.21.1
-${vns2_subnet1}		24
-${vns2_ip2}			10.10.22.1
-${vns2_subnet2}		25
-${vns2_ip3}			10.10.23.1
-${vns2_subnet3}		24
-${unknown_host}		10.99.99.99
-${leaf0a_name}		leaf0a
-${leaf0b_name}		leaf0b
-${leaf1a_name}		leaf1a
-${leaf1b_name}		leaf1b
-${leaf2a_name}		leaf2a
-${leaf2b_name}		leaf2b
-${leaf0a_intf1}		leaf0a-eth8
-${leaf0a_intf2}		leaf0a-eth9
-${leaf0a_intf3}		leaf0a-eth10
-${leaf0a_intf4}		leaf0a-eth11
-${leaf0b_intf1}		leaf0b-eth8
-${leaf0b_intf2}		leaf0b-eth9
-${leaf0b_intf3}		leaf0b-eth10
-${leaf0b_intf4}		leaf0b-eth11
-${leaf1a_intf1}		leaf1a-eth8
-${leaf1a_intf2}		leaf1a-eth9
-${leaf1a_intf3}		leaf1a-eth10
-${leaf1a_intf4}		leaf1a-eth11
-${leaf1b_intf1}		leaf1b-eth8
-${leaf1b_intf2}		leaf1b-eth9
-${leaf1b_intf3}		leaf1b-eth10
-${leaf1b_intf4}		leaf1b-eth11
-${leaf2a_intf1}		leaf2a-eth8
-${leaf2a_intf2}		leaf2a-eth9
-${leaf2a_intf3}		leaf2a-eth10
-${leaf2a_intf4}		leaf2a-eth11
-${leaf2b_intf1}		leaf2b-eth8
-${leaf2b_intf2}		leaf2b-eth9
-${leaf2b_intf3}		leaf2b-eth10
-${leaf2b_intf4}		leaf2b-eth11
-${portgroup0}		leaf0-bm0
-${portgroup1}		leaf0-bm1
-${portgroup2}		leaf0-bm2
-${portgroup3}		leaf0-bm3
-${portgroup4}		leaf1-bm4
-${portgroup5}		leaf1-bm5
-${portgroup6}		leaf1-bm6
-${portgroup7}		leaf1-bm7
-${portgroup8}		leaf2-bm8
-${portgroup9}		leaf2-bm9
-${portgroup10}		leaf2-bm10
-${portgroup11}		leaf2-bm11
-${leafgroup0}		leaf0
-${leafgroup1}		leaf1
-${leafgroup2}		leaf2
-${bm0_ip}			10.10.11.11
-${bm1_ip}			10.10.12.11
-${bm2_ip}			10.10.23.11
-${bm3_ip}			10.10.22.11
-${bm4_ip}			10.10.11.12
-${bm5_ip}			10.10.12.12
-${bm6_ip}			10.10.21.12
-${bm7_ip}			10.10.22.12
-${bm8_ip}			10.10.21.13
-${bm9_ip}			10.10.22.13
-${bm10_ip}			10.10.23.13
-${bm11_ip}			10.10.23.23
-${gw_mac}			5c:16:c7:01:00:00
-${bm0_name}			bm0
-${bm1_name}			bm1
-${bm2_name}			bm2
-${bm3_name}			bm3
-${bm4_name}			bm4
-${bm5_name}			bm5
-${bm6_name}			bm6
-${bm7_name}			bm7
-${bm8_name}			bm8
-${bm9_name}			bm9
-${bm10_name}		bm10
-${bm11_name}		bm11
-${bm0_bondif}		bm0-bond0
-${bm1_bondif}		bm1-bond0
-${bm2_bondif}		bm2-bond0
-${bm3_bondif}		bm3-bond0
-${bm4_bondif}		bm4-bond0
-${bm5_bondif}		bm5-bond0
-${bm6_bondif}		bm6-bond0
-${bm7_bondif}		bm7-bond0
-${bm8_bondif}		bm8-bond0
-${bm9_bondif}		bm9-bond0
-${bm10_bondif}		bm10-bond0
-${bm11_bondif}		bm11-bond0
-${vns1_vlan1}		101
-${vns1_vlan2}		102
-${vns1_vlan3}		103
-${vns2_vlan1}		201
-${vns2_vlan2}		202
-${vns2_vlan3}		203
-${ping_count}		10
-${bm0_mac}			00:00:00:00:00:01
-${bm1_mac}			00:00:00:00:00:02
-${bm2_mac}			00:00:00:00:00:03
-${bm3_mac}			00:00:00:00:00:04
-${bm4_mac}			00:00:00:00:00:05
-${bm5_mac}			00:00:00:00:00:06
-${bm6_mac}			00:00:00:00:00:07
-${bm7_mac}			00:00:00:00:00:08
-${bm8_mac}			00:00:00:00:00:09
-${bm9_mac}			00:00:00:00:00:0a
-${bm10_mac}			00:00:00:00:00:0b
-${bm11_mac}			00:00:00:00:00:0c
-${dstroute1}		10.111.0.0/16
-${dstroute2}		10.112.0.0/16
-${dstroute3}		10.113.0.0/16
-${dstroute4}		10.114.0.0/16
-${nexthopgroup1}	{"ecmp-group-name": "e1"}
-${nexthopgroup2}	{"ecmp-group-name": "e2"}
-${nexthopgroup3}	{"ip-address": "10.222.1.1"}
-${nexthopgroup4}	{"tenant-name": "Z"}
-${ecmpgroup1}		e1
-${ecmpgroup2}		e2
-${nexthop1}			10.10.10.2
-${nexthop2}			10.10.10.3
-${nexthop3}			10.10.10.4
-${nexthop4}			10.10.11.5
-${nexthop5}			10.10.11.3
-${nexthop6}			10.10.11.4
-${untaggedvlan}		-1
-${endpoint1name}	H1
-${endpoint2name}	H2
-${endpoint3name}	H3
-${dhcpserver1}		10.255.255.10
-${defaultroute}		0.0.0.0/0
-
+Resource		keywords_dev/slim/t5_layer3_variables.txt
 
 
 * Test Cases
 Intra tenant L3 untagged traffic with static endpoints same rack
-	L3 intra tenant same leaf untagged with static endpoints
+	L3 intra tenant same rack untagged with static endpoints
 	[Tags]							skipped			smoke				sanity			
 
 Intra tenant L3 tagged traffic with static endpoints same rack
-	L3 intra tenant same leaf tagged with static endpoints
+	L3 intra tenant same rack tagged with static endpoints
 	[Tags]							skipped			smoke				sanity		
 
-Intra tenant L3 untagged traffic with dynamic endpoints
-	L3 intra tenant untagged with dynamic endpoints
-	[Tags]							skipped			smoke				
+Intra tenant L3 untagged traffic with dynamic endpoints same rack
+	L3 intra tenant same rack untagged with dynamic endpoints
+#	[Tags]							skipped			smoke				
 	
 Intra tenant L3 untagged traffic with dynamic host arp
 	L3 intra tenant untagged traffic with dynamic host arp
@@ -188,15 +43,15 @@ Intra tenant L3 untagged with destination host moved
 	[Tags]							skipped		sanity				
 
 Intra tenant L3 untagged to tagged host same rack
-	L3 intra tenant same leaf untagged to tagged host
+	L3 intra tenant same rack untagged to tagged host
 	[Tags]							skipped		sanity				
 
 Intra tenant L3 untagged to tagged host across rack
-	L3 intra tenant across leaf untagged to tagged host
+	L3 intra tenant across rack untagged to tagged host
 	[Tags]							skipped		sanity	
 
 Intra tenant L3 tagged to tagged host across rack
-	L3 intra tenant across leaf tagged to tagged host
+	L3 intra tenant across rack tagged to tagged host
 	[Tags]							skipped		sanity	
 
 Intra tenant L3 tagged host
@@ -204,62 +59,38 @@ Intra tenant L3 tagged host
 	[Tags]							skipped		sanity				
 
 Intra tenant with invalid ttl 1
-	L3 intra tenant across leaf ttl1
+	L3 intra tenant across rack ttl1
 	[Tags]							skipped		sanity		
 
 Inter tenant L3 untagged traffic with static endpoints across rack
 	L3 inter tenant across rack untagged with static endpoints
-#  	[Tags]							skipped			sanity 				smoke					
+  	[Tags]							skipped			sanity 				smoke					
 		
 Inter tenant L3 tagged traffic with static endpoints across rack
 	L3 inter tenant across rack tagged with static endpoints
-#  	[Tags]							skipped			sanity 				smoke	
+  	[Tags]							skipped			sanity 				smoke	
 
 Inter tenant L3 untagged traffic with static endpoints same rack
 	L3 inter tenant same rack untagged with static endpoints
-#  	[Tags]							skipped			sanity 				smoke					
+  	[Tags]							skipped			sanity 				smoke					
 		
 Inter tenant L3 tagged traffic with static endpoints same rack
 	L3 inter tenant same rack tagged with static endpoints
-#  	[Tags]							skipped			sanity 				smoke	
+  	[Tags]							skipped			sanity 				smoke	
 	
 Inter tenant L3 untagged to tagged traffic with static endpoints same rack
 	L3 inter tenant same rack untagged to tagged with static endpoints
-#  	[Tags]							skipped			sanity 				smoke	
+  	[Tags]							skipped			sanity 				smoke	
 
-Inter tenant L3 untagged traffic with static endpoints across rack
-	L3 inter tenant same rack untagged with static endpoints
-#  	[Tags]							skipped			sanity 				smoke	
+Intra tenant L3 untagged traffic with dynamic endpoints across rack
+	L3 intra tenant across rack untagged with dynamic endpoints
+  	[Tags]							skipped			sanity 				smoke	
 
 
 	
 * Keywords
-L3 intra tenant same leaf untagged with static endpoints
-	# REST add endpoint							${tenant1_name}		${vns1_1}		${bm0_name}
-	# REST add endpoint							${tenant1_name}		${vns1_2}		${bm1_name}
-	# REST add endpoint							${tenant2_name}		${vns2_3}		${bm2_name}
-	# REST add endpoint							${tenant2_name}		${vns2_1}		${bm8_name}
-	# REST add endpoint							${tenant2_name}		${vns2_2}		${bm9_name}
-	# REST add endpoint							${tenant2_name}		${vns2_3}		${bm10_name}
-	# REST add endpoint ip						${tenant1_name}		${vns1_1}		${bm0_name}			${bm0_ip}
-	# REST add endpoint ip						${tenant1_name}		${vns1_2}		${bm1_name}			${bm1_ip}
-	# REST add endpoint ip						${tenant2_name}		${vns2_3}		${bm2_name}			${bm2_ip}
-	# REST add endpoint ip						${tenant2_name}		${vns2_1}		${bm8_name}			${bm8_ip}
-	# REST add endpoint ip						${tenant2_name}		${vns2_2}		${bm9_name}			${bm9_ip}
-	# REST add endpoint ip						${tenant2_name}		${vns2_3}		${bm10_name}		${bm10_ip}
-	# REST add endpoint mac						${tenant1_name}		${vns1_1}		${bm0_name}			${bm0_mac}
-	# REST add endpoint mac						${tenant1_name}		${vns1_2}		${bm1_name}			${bm1_mac}
-	# REST add endpoint mac						${tenant2_name}		${vns2_3}		${bm2_name}			${bm2_mac}
-	# REST add endpoint mac						${tenant2_name}		${vns2_1}		${bm8_name}			${bm8_mac}
-	# REST add endpoint mac						${tenant2_name}		${vns2_2}		${bm9_name}			${bm9_mac}
-	# REST add endpoint mac						${tenant2_name}		${vns2_3}		${bm10_name}		${bm10_mac}
-	# REST add endpoint portgroup attachment		${tenant1_name}		${vns1_1}		${bm0_name}			${portgroup0}	${untaggedvlan}
-	# REST add endpoint portgroup attachment		${tenant1_name}		${vns1_2}		${bm1_name}			${portgroup1}	${untaggedvlan}
-	# REST add endpoint portgroup attachment		${tenant2_name}		${vns2_3}		${bm2_name}			${portgroup2}	${vns2_vlan3}
-	# REST add endpoint portgroup attachment		${tenant2_name}		${vns2_1}		${bm8_name}			${portgroup8}	${vns2_vlan1}
-	# REST add endpoint portgroup attachment		${tenant2_name}		${vns2_2}		${bm9_name}			${portgroup9}	${vns2_vlan2}
-	# REST add endpoint portgroup attachment		${tenant2_name}		${vns2_3}		${bm10_name}		${portgroup10}	${untaggedvlan}
-	endpoint static config						
+L3 intra tenant same rack untagged with static endpoints
+	endpoint static config
 	sleep										5
 	mininet host config
 	sleep										1
@@ -277,36 +108,12 @@ L3 intra tenant same leaf untagged with static endpoints
 	${loss}=  									mininet l3 ping		${bm0_name}	${bm1_name} 	
 	Should Be True  							${loss} == 0
 	${endpoints_cnt}=							rest count endpoints mac
-	Should Be True  							${endpoints_cnt} == 7
+#	Should Be True  							${endpoints_cnt} == 7
 
 
-L3 intra tenant same leaf tagged to tagged host
-	endpoint static config						
+L3 intra tenant same rack tagged to tagged host
+	endpoint static config
 	sleep										5
-	# REST add endpoint							${tenant1_name}		${vns1_1}		${bm0_name}
-	# REST add endpoint							${tenant1_name}		${vns1_2}		${bm1_name}
-	# REST add endpoint							${tenant2_name}		${vns2_3}		${bm2_name}
-	# REST add endpoint							${tenant2_name}		${vns2_1}		${bm8_name}
-	# REST add endpoint							${tenant2_name}		${vns2_2}		${bm9_name}
-	# REST add endpoint							${tenant2_name}		${vns2_3}		${bm10_name}
-	# REST add endpoint ip						${tenant1_name}		${vns1_1}		${bm0_name}			${bm0_ip}
-	# REST add endpoint ip						${tenant1_name}		${vns1_2}		${bm1_name}			${bm1_ip}
-	# REST add endpoint ip						${tenant2_name}		${vns2_3}		${bm2_name}			${bm2_ip}
-	# REST add endpoint ip						${tenant2_name}		${vns2_1}		${bm8_name}			${bm8_ip}
-	# REST add endpoint ip						${tenant2_name}		${vns2_2}		${bm9_name}			${bm9_ip}
-	# REST add endpoint ip						${tenant2_name}		${vns2_3}		${bm10_name}		${bm10_ip}
-	# REST add endpoint mac						${tenant1_name}		${vns1_1}		${bm0_name}			${bm0_mac}
-	# REST add endpoint mac						${tenant1_name}		${vns1_2}		${bm1_name}			${bm1_mac}
-	# REST add endpoint mac						${tenant2_name}		${vns2_3}		${bm2_name}			${bm2_mac}
-	# REST add endpoint mac						${tenant2_name}		${vns2_1}		${bm8_name}			${bm8_mac}
-	# REST add endpoint mac						${tenant2_name}		${vns2_2}		${bm9_name}			${bm9_mac}
-	# REST add endpoint mac						${tenant2_name}		${vns2_3}		${bm10_name}		${bm10_mac}
-	# REST add endpoint portgroup attachment		${tenant1_name}		${vns1_1}		${bm0_name}			${portgroup0}	${untaggedvlan}
-	# REST add endpoint portgroup attachment		${tenant1_name}		${vns1_2}		${bm1_name}			${portgroup1}	${untaggedvlan}
-	# REST add endpoint portgroup attachment		${tenant2_name}		${vns2_3}		${bm2_name}			${portgroup2}	${vns2_vlan3}
-	# REST add endpoint portgroup attachment		${tenant2_name}		${vns2_1}		${bm8_name}			${portgroup8}	${vns2_vlan1}
-	# REST add endpoint portgroup attachment		${tenant2_name}		${vns2_2}		${bm9_name}			${portgroup9}	${vns2_vlan2}
-	# REST add endpoint portgroup attachment		${tenant2_name}		${vns2_3}		${bm10_name}		${portgroup10}	${untaggedvlan}
 	mininet host config
 	sleep										1
 	mininet host arp							${bm0_name}			${vns1_ip1}		${gw_mac}
@@ -327,36 +134,12 @@ L3 intra tenant same leaf tagged to tagged host
 	${loss}=  									mininet l3 ping		${bm8_name}	${bm9_ip} 	
 	Should Be True  							${loss} == 0
 	${endpoints_cnt}=							rest count endpoints mac
-	Should Be True  							${endpoints_cnt} == 7
+#	Should Be True  							${endpoints_cnt} == 7
 	
 	
-L3 intra tenant same leaf untagged to tagged host
-	endpoint static config		
+L3 intra tenant same rack untagged to tagged host
+	endpoint static config
 	sleep										5
-	# REST add endpoint							${tenant1_name}		${vns1_1}		${bm0_name}
-	# REST add endpoint							${tenant1_name}		${vns1_2}		${bm1_name}
-	# REST add endpoint							${tenant2_name}		${vns2_3}		${bm2_name}
-	# REST add endpoint							${tenant2_name}		${vns2_1}		${bm8_name}
-	# REST add endpoint							${tenant2_name}		${vns2_2}		${bm9_name}
-	# REST add endpoint							${tenant2_name}		${vns2_3}		${bm10_name}
-	# REST add endpoint ip						${tenant1_name}		${vns1_1}		${bm0_name}			${bm0_ip}
-	# REST add endpoint ip						${tenant1_name}		${vns1_2}		${bm1_name}			${bm1_ip}
-	# REST add endpoint ip						${tenant2_name}		${vns2_3}		${bm2_name}			${bm2_ip}
-	# REST add endpoint ip						${tenant2_name}		${vns2_1}		${bm8_name}			${bm8_ip}
-	# REST add endpoint ip						${tenant2_name}		${vns2_2}		${bm9_name}			${bm9_ip}
-	# REST add endpoint ip						${tenant2_name}		${vns2_3}		${bm10_name}		${bm10_ip}
-	# REST add endpoint mac						${tenant1_name}		${vns1_1}		${bm0_name}			${bm0_mac}
-	# REST add endpoint mac						${tenant1_name}		${vns1_2}		${bm1_name}			${bm1_mac}
-	# REST add endpoint mac						${tenant2_name}		${vns2_3}		${bm2_name}			${bm2_mac}
-	# REST add endpoint mac						${tenant2_name}		${vns2_1}		${bm8_name}			${bm8_mac}
-	# REST add endpoint mac						${tenant2_name}		${vns2_2}		${bm9_name}			${bm9_mac}
-	# REST add endpoint mac						${tenant2_name}		${vns2_3}		${bm10_name}		${bm10_mac}
-	# REST add endpoint portgroup attachment		${tenant1_name}		${vns1_1}		${bm0_name}			${portgroup0}	${untaggedvlan}
-	# REST add endpoint portgroup attachment		${tenant1_name}		${vns1_2}		${bm1_name}			${portgroup1}	${untaggedvlan}
-	# REST add endpoint portgroup attachment		${tenant2_name}		${vns2_3}		${bm2_name}			${portgroup2}	${vns2_vlan3}
-	# REST add endpoint portgroup attachment		${tenant2_name}		${vns2_1}		${bm8_name}			${portgroup8}	${vns2_vlan1}
-	# REST add endpoint portgroup attachment		${tenant2_name}		${vns2_2}		${bm9_name}			${portgroup9}	${vns2_vlan2}
-	# REST add endpoint portgroup attachment		${tenant2_name}		${vns2_3}		${bm10_name}		${portgroup10}	${untaggedvlan}
 	mininet host config
 	sleep										1
 	mininet host arp							${bm0_name}			${vns1_ip1}		${gw_mac}
@@ -377,10 +160,10 @@ L3 intra tenant same leaf untagged to tagged host
 	${loss}=  									mininet l3 ping		${bm10_name}	${bm8_ip} 	
 	Should Be True  							${loss} == 0
 	${endpoints_cnt}=							rest count endpoints mac
-	Should Be True  							${endpoints_cnt} == 7
+#	Should Be True  							${endpoints_cnt} == 7
 
-L3 intra tenant across leaf untagged to tagged host
-	endpoint static config						
+L3 intra tenant across rack untagged to tagged host
+	endpoint static config
 	sleep										5
 	mininet host config
 	sleep										1
@@ -404,9 +187,9 @@ L3 intra tenant across leaf untagged to tagged host
 	${loss}=  									mininet l3 ping		${bm4_name}	${bm1_ip} 	
 	Should Be True  							${loss} == 0
 	${endpoints_cnt}=							rest count endpoints mac
-	Should Be True  							${endpoints_cnt} == 7
+#	Should Be True  							${endpoints_cnt} == 7
 
-L3 intra tenant across leaf ttl1
+L3 intra tenant across rack ttl1
 	endpoint static config
 	sleep										5
 	mininet host config
@@ -433,34 +216,11 @@ L3 intra tenant across leaf ttl1
 	${loss}=  									mininet l3 ping		${bm4_name}	${bm1_ip} 	10 	-t 2
 	Should Be True  							${loss} == 0
 	${endpoints_cnt}=							rest count endpoints mac
-	Should Be True  							${endpoints_cnt} == 7
+#	Should Be True  							${endpoints_cnt} == 7
 
 
-L3 intra tenant across leaf tagged to tagged host
-	# REST add endpoint							${tenant1_name}		${vns1_1}		${bm0_name}
-	# REST add endpoint							${tenant1_name}		${vns1_2}		${bm1_name}
-	# REST add endpoint							${tenant2_name}		${vns2_3}		${bm2_name}
-	# REST add endpoint							${tenant2_name}		${vns2_1}		${bm8_name}
-	# REST add endpoint							${tenant2_name}		${vns2_2}		${bm9_name}
-	# REST add endpoint							${tenant2_name}		${vns2_3}		${bm10_name}
-	# REST add endpoint ip						${tenant1_name}		${vns1_1}		${bm0_name}			${bm0_ip}
-	# REST add endpoint ip						${tenant1_name}		${vns1_2}		${bm1_name}			${bm1_ip}
-	# REST add endpoint ip						${tenant2_name}		${vns2_3}		${bm2_name}			${bm2_ip}
-	# REST add endpoint ip						${tenant2_name}		${vns2_1}		${bm8_name}			${bm8_ip}
-	# REST add endpoint ip						${tenant2_name}		${vns2_2}		${bm9_name}			${bm9_ip}
-	# REST add endpoint ip						${tenant2_name}		${vns2_3}		${bm10_name}		${bm10_ip}
-	# REST add endpoint mac						${tenant1_name}		${vns1_1}		${bm0_name}			${bm0_mac}
-	# REST add endpoint mac						${tenant1_name}		${vns1_2}		${bm1_name}			${bm1_mac}
-	# REST add endpoint mac						${tenant2_name}		${vns2_3}		${bm2_name}			${bm2_mac}
-	# REST add endpoint mac						${tenant2_name}		${vns2_1}		${bm8_name}			${bm8_mac}
-	# REST add endpoint mac						${tenant2_name}		${vns2_2}		${bm9_name}			${bm9_mac}
-	# REST add endpoint mac						${tenant2_name}		${vns2_3}		${bm10_name}		${bm10_mac}
-	# REST add endpoint portgroup attachment		${tenant1_name}		${vns1_1}		${bm0_name}			${portgroup0}	${untaggedvlan}
-	# REST add endpoint portgroup attachment		${tenant1_name}		${vns1_2}		${bm1_name}			${portgroup1}	${untaggedvlan}
-	# REST add endpoint portgroup attachment		${tenant2_name}		${vns2_3}		${bm2_name}			${portgroup2}	${vns2_vlan3}
-	# REST add endpoint portgroup attachment		${tenant2_name}		${vns2_1}		${bm8_name}			${portgroup8}	${vns2_vlan1}
-	# REST add endpoint portgroup attachment		${tenant2_name}		${vns2_2}		${bm9_name}			${portgroup9}	${vns2_vlan2}
-	# REST add endpoint portgroup attachment		${tenant2_name}		${vns2_3}		${bm10_name}		${portgroup10}	${untaggedvlan}
+L3 intra tenant across rack tagged to tagged host
+
 	endpoint static config
 	sleep 										5
 	mininet host config
@@ -483,7 +243,7 @@ L3 intra tenant across leaf tagged to tagged host
 	${loss}=  									mininet l3 ping		${bm8_name}	${bm2_ip} 	
 	Should Be True  							${loss} == 0
 	${endpoints_cnt}=							rest count endpoints mac
-	Should Be True  							${endpoints_cnt} == 7
+#	Should Be True  							${endpoints_cnt} == 7
 
 L3 inter tenant across rack untagged with static endpoints
 	endpoint static config
@@ -578,6 +338,27 @@ L3 inter tenant same rack untagged with static endpoints
 	sleep										1
 	${loss}=  									mininet l3 ping		${bm3_name}	${bm1_ip} 	
 	Should Be True  							${loss} == 0	
+
+L3 intra tenant same rack untagged with dynamic endpoints
+	mininet host config
+	sleep  										5
+	mininet l3 ping								${bm0_name}		${vns1_ip1} 	3
+	mininet l3 ping								${bm1_name}		${vns1_ip2} 	3
+	sleep 										2
+	${value}= 	mininet verify arp				${bm0_name} 	${vns1_ip1}
+	Should Be True								${value} 
+	${value}= 	mininet verify arp				${bm1_name} 	${vns1_ip2}
+	Should Be True								${value} 
+	mininet dump switch							${leaf0a_name}
+	mininet dump switch							${leaf0b_name}
+	mininet dump switch							${leaf1a_name}
+	mininet dump switch							${leaf1b_name}
+	mininet dump switch							${leaf2a_name}
+	mininet dump switch							${leaf2b_name}
+	${loss}=  									mininet l3 ping		${bm0_name}	${bm1_name} 	
+	Should Be True  							${loss} == 0
+	${endpoints_cnt}=							rest count endpoints mac
+
 
 setup topology
 	add fabric switch
@@ -712,7 +493,7 @@ mininet host config
 	mininet host gw								${bm0_name}			${vns1_ip1}		${bm0_bondif}
 	mininet host gw								${bm1_name}			${vns1_ip2}		${bm1_bondif}
 	mininet host tagged gw						${bm2_name}			${vns2_ip3}		${vns2_vlan3}
-	mininet host gw								${bm3_name}			${vns2_ip2}		${bm3-bondif}
+	mininet host gw								${bm3_name}			${vns2_ip2}		${bm3_bondif}
 	mininet host tagged gw						${bm4_name}			${vns1_ip1}		${vns1_vlan1}
 	mininet host tagged gw						${bm8_name}			${vns2_ip1}		${vns2_vlan1}
 	mininet host tagged gw						${bm9_name}			${vns2_ip2}		${vns2_vlan2}

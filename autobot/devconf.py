@@ -132,7 +132,7 @@ class DevConf(object):
     def name(self):
         return self._name
 
-    def send(self, cmd, quiet=False, level=4):
+    def send(self, cmd, no_cr=False, quiet=False, level=4):
         """
         Invoking low-level send/expect commands to the device. This is a
         wrapper for Exscript's send(). Use with caution!!!
@@ -145,10 +145,11 @@ class DevConf(object):
         """
         if not quiet:
             helpers.log("Send command: '%s'" % cmd, level=level)
-        cmd = ''.join((cmd, '\r'))
+        if no_cr is False:
+            cmd = ''.join((cmd, '\r'))
         self.conn.send(cmd)
 
-    def expect(self, prompt, timeout=None, quiet=False, level=4):
+    def expect(self, prompt=None, timeout=None, quiet=False, level=4):
         """
         Invoking low-level send/expect commands to the device. This is a
         wrapper for Exscript's expect(). Use with caution!!!
@@ -158,6 +159,8 @@ class DevConf(object):
 
         See http://knipknap.github.io/exscript/api/Exscript.protocols.Protocol-class.html#expect
         """
+        if prompt is None:
+            prompt = self.conn.get_prompt()
         if timeout: self.timeout(timeout)
         if not quiet:
             helpers.log("Expecting prompt '%s'" % prompt, level=level)
