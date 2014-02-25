@@ -162,7 +162,6 @@ class RestClient(object):
         if not quiet:
             self.log_result(result=result, level=6)
 
-        #
         # ATTENTION: RESTclient will generate an exception when the
         # HTTP status code is anything other than:
         #   - 200 (OK)
@@ -171,6 +170,9 @@ class RestClient(object):
         #   - 409 (Conflict, if description matches 'exists', else consider it
         #          unknown)
         #
+        # Reference:
+        # http://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml
+
         result['success'] = False
         if int(code) in [200, 201, 202]:
             result['success'] = True
