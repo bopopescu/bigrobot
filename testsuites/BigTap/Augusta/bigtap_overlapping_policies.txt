@@ -113,10 +113,16 @@ Create two policies with different filter and delivery interfaces and verify ove
     rest add policy interface  admin-view  P1  F2  filter
     sleep  3    
     ${verify_overlap}=  rest verify bigtap policy  _ZP1_o_P1  num_filter_intf=1  num_delivery_intf=2
-    Should not be true  ${verify_overlap}    
+    Should not be true  ${verify_overlap}
+    rest update policy action  admin-view  P1  inactive
+    rest update policy action  admin-view  ZP1  inactive    
+    sleep  3        
     rest delete policy interface  admin-view  P1  F2  filter
     rest add policy interface  admin-view  P1  F1  filter
-    sleep  3    
+    sleep  3     
+    rest update policy action  admin-view  P1  forward
+    rest update policy action  admin-view  ZP1  forward      
+    sleep  20    
     ${verify_overlap}=  rest verify bigtap policy  _ZP1_o_P1  num_filter_intf=1  num_delivery_intf=2
     Should be true  ${verify_overlap}
     [Tags]  bigtap  overlap  unique
@@ -221,7 +227,7 @@ Verify overlap is not created when P1 and ZP1 have different protocols
     rest delete policy match  admin-view  ZP1  1
     sleep  3
     rest add policy match  admin-view  P1  1  {"ip-proto": 6, "ether-type": 2048,"sequence": 1,"dst-ip":"192.0.0.1","dst-tp-port":80,"src-ip":"192.0.0.2","src-tp-port":1234}
-    rest add policy match  admin-view  P1  1  {"ip-proto": 17, "ether-type": 2048,"sequence": 1,"dst-ip":"192.0.0.1","dst-tp-port":80,"src-ip":"192.0.0.2","src-tp-port":1234}                                
+    rest add policy match  admin-view  ZP1  1  {"ip-proto": 17, "ether-type": 2048,"sequence": 1,"dst-ip":"192.0.0.1","dst-tp-port":80,"src-ip":"192.0.0.2","src-tp-port":1234}                                
     sleep  3
     ${verify_overlap}=  rest verify bigtap policy  _ZP1_o_P1  num_filter_intf=1  num_delivery_intf=2
     Should not be true  ${verify_overlap}
@@ -246,68 +252,48 @@ Re-enable previously disabled overlap knob and verify overlapping policies are r
     Should be true  ${verify_overlap}
     [Tags]  bigtap  overlap  disableEnable
 
-Reboot filter switch and verify overlapping policies still exist
-    cli restart switch  s1
-    Sleep  30
-    ${verify_overlap}=  rest verify bigtap policy  _ZP1_o_P1  num_filter_intf=1  num_delivery_intf=2
-    Should be true  ${verify_overlap}    
-    [Tags]  bigtap  overlap  rebootSwitch
-
-Reboot delivery switch and verify overlapping policies still exist
-    cli restart switch  s2
-    Sleep  30    
-    ${verify_overlap}=  rest verify bigtap policy  _ZP1_o_P1  num_filter_intf=1  num_delivery_intf=2
-    Should be true  ${verify_overlap}    
-    [Tags]  bigtap  overlap  rebootSwitch 
-
-Reboot core switch and verify overlapping policies still exist
-    cli restart switch  s5    
-    ${verify_overlap}=  rest verify bigtap policy  _ZP1_o_P1  num_filter_intf=1  num_delivery_intf=2
-    Should be true  ${verify_overlap}    
-    [Tags]  bigtap  overlap  rebootSwitch
-
 Execute HA Failover and verify overlapping policies still exist 
     rest execute ha failover
-    sleep  30
+    sleep  60
     ${verify_overlap}=  rest verify bigtap policy  _ZP1_o_P1  num_filter_intf=1  num_delivery_intf=2
     Should be true  ${verify_overlap}    
     [Tags]  bigtap  overlap  ha
 
 Change configuration execute HA Failback and verify overlapping policies still exist
     rest delete policy match  admin-view  P1  1
-    sleep  3
+    sleep  10
     rest add policy match  admin-view  P1  1  {"src-mac": "00:12:00:00:00:01", "ether-type": 2048, "sequence": 1}
-    sleep  3         
+    sleep  10         
     rest execute ha failover
-    sleep  30
+    sleep  60
     ${verify_overlap}=  rest verify bigtap policy  _ZP1_o_P1  num_filter_intf=1  num_delivery_intf=2
     Should be true  ${verify_overlap}    
     [Tags]  bigtap  overlap  ha  
 
 Shutdown filter interface and verify overlapping policy goes away
     cli disable interface  s1  ${filter_1}
-    sleep  3  
+    sleep  30  
     ${verify_overlap}=  rest verify bigtap policy  _ZP1_o_P1  num_filter_intf=1  num_delivery_intf=2
     Should not be true  ${verify_overlap}
     [Tags]  bigtap  overlap  shutUnshut
     
 Re-enable previously shut filter interface and verify overlapping policy is re-created
     cli enable interface  s1  ${filter_1}
-    sleep  5  
+    sleep  30  
     ${verify_overlap}=  rest verify bigtap policy  _ZP1_o_P1  num_filter_intf=1  num_delivery_intf=2
     Should be true  ${verify_overlap}
     [Tags]  bigtap  overlap  shutUnshut
     
 Shutdown delivery interface and verify overlapping policy goes away
     cli disable interface  s2  ${delivery_2}
-    sleep  3  
+    sleep  30  
     ${verify_overlap}=  rest verify bigtap policy  _ZP1_o_P1  num_filter_intf=1  num_delivery_intf=2
     Should not be true  ${verify_overlap}
     [Tags]  bigtap  overlap  shutUnshut
     
 Re-enable previously shut delivery interface and verify overlapping policy is re-created
     cli enable interface  s2  ${delivery_2}
-    sleep  5  
+    sleep  30  
     ${verify_overlap}=  rest verify bigtap policy  _ZP1_o_P1  num_filter_intf=1  num_delivery_intf=2
     Should be true  ${verify_overlap}
     [Tags]  bigtap  overlap  shutUnshut
@@ -315,22 +301,43 @@ Re-enable previously shut delivery interface and verify overlapping policy is re
 Delete and re-create policies P1 and ZP1 and verify overlap polices are deleted and re-created
     rest delete policy  admin-view  P1
     rest delete policy  admin-view  ZP1
-    sleep  5
+    sleep  45
     ${verify_overlap}=  rest verify bigtap policy  _ZP1_o_P1  num_filter_intf=1  num_delivery_intf=2
     Should not be true  ${verify_overlap}
     rest add policy  admin-view  P1  forward
     rest add policy match  admin-view  P1  1  {"src-mac": "00:11:00:00:00:01", "ether-type": 2048, "sequence": 1}
     rest add policy interface  admin-view  P1  F1  filter
     rest add policy interface  admin-view  P1  D1  delivery 
-    Sleep  5  
+    Sleep  45  
     rest add policy  admin-view  ZP1  forward
     rest add policy match  admin-view  ZP1  1  {"dst-mac": "00:11:00:00:00:02", "ether-type": 2048, "sequence": 1}
     rest add policy interface  admin-view  ZP1  F1  filter
     rest add policy interface  admin-view  ZP1  D2  delivery
-    sleep  5  
+    sleep  45  
     ${verify_overlap}=  rest verify bigtap policy  _ZP1_o_P1  num_filter_intf=1  num_delivery_intf=2
     Should be true  ${verify_overlap}
-    [Tags]  bigtap  overlap  delPol                                                   
+    [Tags]  bigtap  overlap  delPol 
+
+Reboot filter switch and verify overlapping policies still exist
+    cli restart switch  s1
+    Sleep  60
+    ${verify_overlap}=  rest verify bigtap policy  _ZP1_o_P1  num_filter_intf=1  num_delivery_intf=2
+    Should be true  ${verify_overlap}    
+    [Tags]  bigtap  overlap  rebootSwitch
+
+Reboot delivery switch and verify overlapping policies still exist
+    cli restart switch  s2
+    Sleep  60    
+    ${verify_overlap}=  rest verify bigtap policy  _ZP1_o_P1  num_filter_intf=1  num_delivery_intf=2
+    Should be true  ${verify_overlap}    
+    [Tags]  bigtap  overlap  rebootSwitch 
+
+Reboot core switch and verify overlapping policies still exist
+    cli restart switch  s5
+    Sleep  60        
+    ${verify_overlap}=  rest verify bigtap policy  _ZP1_o_P1  num_filter_intf=1  num_delivery_intf=2
+    Should be true  ${verify_overlap}    
+    [Tags]  bigtap  overlap  rebootSwitch                                                  
 * Keywords
 
 overlap suite setup
@@ -372,14 +379,6 @@ verify config
     Should be true  ${verify_policy2}
     ${verify_policy12}=  rest verify bigtap policy  _ZP1_o_P1  num_filter_intf=1  num_delivery_intf=2
     Should be true  ${verify_policy12}
-    ${switchFlowVal1} =   REST show switch flow  s1  
-    Should Be Equal As Integers  ${switchFlowVal1}  3  
-    ${switchFlowVal2} =   REST show switch flow  s2  
-    Should Be Equal As Integers  ${switchFlowVal2}  2   
-    ${switchFlowVal3} =   REST show switch flow  s4  
-    Should Be Equal As Integers  ${switchFlowVal3}  2      
-    ${switchFlowVal4} =   REST show switch flow  s5  
-    Should Be Equal As Integers  ${switchFlowVal4}  1 
 
 verify protocol matches  [Arguments]  ${match_dictionary}
     ${length}=  Get Length  ${match_dictionary}
@@ -417,8 +416,14 @@ overlap suite teardown
     rest delete switch alias  s2
     rest delete switch alias  s3
     rest delete switch alias  s4
+    rest delete switch alias  s5
+    rest delete switch alias  s6
+    rest delete switch alias  s7
     rest delete switch  s1
     rest delete switch  s2
     rest delete switch  s3
-    rest delete switch  s4                           
+    rest delete switch  s4      
+    rest delete switch  s5      
+    rest delete switch  s6     
+    rest delete switch  s7                                        
     base suite teardown    
