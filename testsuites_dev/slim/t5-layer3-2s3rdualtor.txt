@@ -125,7 +125,7 @@ L3 intra tenant same rack untagged with static endpoints
 	Should Be True  							${loss} == 0
 	${endpoints_cnt}=							rest count endpoints mac
 #	Should Be True  							${endpoints_cnt} == 7
-
+	delete static endpoint
 
 L3 intra tenant same rack tagged with static endpoints
 	add static endpoint
@@ -151,6 +151,7 @@ L3 intra tenant same rack tagged with static endpoints
 	Should Be True  							${loss} == 0
 	${endpoints_cnt}=							rest count endpoints mac
 #	Should Be True  							${endpoints_cnt} == 7
+	delete static endpoint
 	
 L3 Intra tenant untagged with initial unreachable host
 	add static endpoint
@@ -174,7 +175,7 @@ L3 Intra tenant untagged with initial unreachable host
 	mininet l3 ping								${bm9_name}			${bm6_ip}		3
 	${loss}=									mininet l3 ping		${bm9_name}		${bm6_ip}		10
 	Should Be True								${loss} == 0
-	
+	delete static endpoint
 
 L3 intra tenant untagged with host moved 
 	mininet host config
@@ -206,6 +207,7 @@ L3 intra tenant untagged with host moved
 	sleep 										1 
 	${loss}=  									mininet l3 ping		${bm0_name}	${bm1_ip} 	
 #	Should Be True  							${loss} == 0
+	delete static endpoint
 	
 L3 intra tenant same rack untagged to tagged host
 	add static endpoint
@@ -231,7 +233,7 @@ L3 intra tenant same rack untagged to tagged host
 	Should Be True  							${loss} == 0
 	${endpoints_cnt}=							rest count endpoints mac
 #	Should Be True  							${endpoints_cnt} == 7
-
+	delete static endpoint
 
 L3 intra tenant across rack untagged to tagged host
 	add static endpoint
@@ -259,6 +261,7 @@ L3 intra tenant across rack untagged to tagged host
 	Should Be True  							${loss} == 0
 	${endpoints_cnt}=							rest count endpoints mac
 #	Should Be True  							${endpoints_cnt} == 7
+	delete static endpoint
 
 L3 intra tenant across rack tagged to tagged host
 	add static endpoint
@@ -284,6 +287,7 @@ L3 intra tenant across rack tagged to tagged host
 	Should Be True  							${loss} == 0
 	${endpoints_cnt}=							rest count endpoints mac
 #	Should Be True  							${endpoints_cnt} == 7
+	delete static endpoint
 
 L3 intra tenant across rack ttl1
 	add static endpoint
@@ -312,7 +316,8 @@ L3 intra tenant across rack ttl1
 	Should Be True  							${loss} == 0
 	${endpoints_cnt}=							rest count endpoints mac
 #	Should Be True  							${endpoints_cnt} == 7
-
+	delete static endpoint
+	
 L3 inter tenant across rack untagged with static endpoints
 	add static endpoint
 	sleep 										5
@@ -335,7 +340,7 @@ L3 inter tenant across rack untagged with static endpoints
 	sleep										1
 	${loss}=  									mininet l3 ping		${bm0_name}	${bm10_ip} 	
 	Should Be True  							${loss} == 0	
-	
+	delete static endpoint
 
 L3 inter tenant across rack tagged with static endpoints
 	add static endpoint
@@ -359,7 +364,7 @@ L3 inter tenant across rack tagged with static endpoints
 	sleep										1
 	${loss}=  									mininet l3 ping		${bm4_name}	${bm8_ip} 	
 	Should Be True  							${loss} == 0	
-			
+	delete static endpoint		
 
 L3 inter tenant same rack untagged to tagged with static endpoints
 	add static endpoint
@@ -383,6 +388,7 @@ L3 inter tenant same rack untagged to tagged with static endpoints
 	sleep										1
 	${loss}=  									mininet l3 ping		${bm0_name}	${bm3_ip} 	
 	Should Be True  							${loss} == 0	
+	delete static endpoint
 
 Delete router vns with L3 intra tenant traffic with static endpoints
 	add static endpoint
@@ -422,6 +428,7 @@ Delete router vns with L3 intra tenant traffic with static endpoints
 	Should Be True  							${loss} == 0
 	${endpoints_cnt}=							rest count endpoints mac
 #	Should Be True  							${endpoints_cnt} == 8
+	delete static endpoint
 	
 L3 inter tenant same rack untagged with static endpoints
 	add static endpoint
@@ -446,7 +453,7 @@ L3 inter tenant same rack untagged with static endpoints
 	sleep										1
 	${loss}=  									mininet l3 ping		${bm3_name}	${bm1_ip} 	
 	Should Be True  							${loss} == 0	
-
+	delete static endpoint
 
 L3 intra tenant same rack untagged with dynamic endpoints
 	mininet host config
@@ -490,7 +497,7 @@ L3 intra tenant untagged traffic with dynamic host arp
 	${loss}=  									mininet l3 ping		${bm0_name}	${bm1_name} 	
 	Should Be True  							${loss} == 0
 	${endpoints_cnt}=							rest count endpoints mac
-
+	delete static endpoint
 
 L3 intra tenant across rack with dynamic endpoints
 	mininet host config
