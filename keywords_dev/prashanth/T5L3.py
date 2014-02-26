@@ -30,10 +30,12 @@ class T5L3(object):
         try:
             c.rest.post(url, {"vns-name": vns, "ip-cidr": str(ip_addr), "active": True})
         except:
-            helpers.test_failure(c.rest.error())
+            #helpers.test_failure(c.rest.error())
+            return False
         else: 
-            helpers.test_log("Output: %s" % c.rest.result_json())
-            return c.rest.content()
+            #helpers.test_log("Output: %s" % c.rest.result_json())
+            #return c.rest.content()
+            return True
 
     def rest_delete_vns_ip(self, tenant, vnsname, ipaddr, netmask):
         '''Create vns router interface via command "virtual-router vns interface"
@@ -57,11 +59,12 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
         try:
             c.rest.delete(url, {})
         except:
-            helpers.test_failure(c.rest.error())
+            return False
+            #helpers.test_failure(c.rest.error())
         else: 
-            helpers.test_log("Output: %s" % c.rest.result_json())
-            return c.rest.content()
-        
+            #helpers.test_log("Output: %s" % c.rest.result_json())
+            #return c.rest.content()
+            return True
         
    
     def rest_add_tenant_routers_to_system(self, tenant):        
