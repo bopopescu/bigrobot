@@ -258,7 +258,7 @@ bigtap suite setup
         
 verify results   [Arguments]  ${transmitted_frames}  ${received_frames}
     Sleep  5
-    ${report}=  IXIA fetch port stats
+    ${report}=  fetch port stats
     ${tx_value}=  verify dict key  ${report}  a  ${transmitted_frames}
     ${rx_value}=  verify dict key  ${report}  b  ${received_frames}
     ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}
