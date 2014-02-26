@@ -1,0 +1,289 @@
+*Settings
+Documentation  Release:Blackbird Goal:RBAC Test Suite 
+Suite Setup  rbac suite setup
+Suite Teardown   rbac suite teardown
+Test Setup   base test setup
+Test Teardown  base test teardown 
+Force Tags   platform Sanity
+Library  keywords/BsnCommon.py
+Library  keywords/AppController.py
+Library  keywords/BigTap.py
+Library  keywords/SwitchLight.py
+Library  keywords/Ixia.py
+Library  Collections.py
+
+*Variable
+${filter_1}  ethernet1  
+${filter_nick_1}  F1
+${filter_2}  ethernet1  
+${filter_nick_2}  F2
+${delivery_1}  ethernet2  
+${delivery_nick_1}  D1
+${delivery_2}  ethernet2  
+${delivery_nick_2}  D2
+${base_group_name}  bigswitch
+
+*Test Case
+
+Verify user userOne and user userTwo can create and verify policies in their respective rbac views
+    ${verify_policy1}=  rest verify bigtap policy  P1  num_filter_intf=1  num_delivery_intf=1  user=userOne  password=bsnbsn
+    Should be true  ${verify_policy1}
+    ${verify_policy2}=  rest verify bigtap policy  P2  num_filter_intf=1  num_delivery_intf=1  user=userTwo  password=bsnbsn
+    Should be true  ${verify_policy2}
+    [Tags]  bigtap  rbac  verify 
+    
+Verify userOne cannot see userTwo's policy and vice-versa
+    ${verify_policy1}=  rest verify bigtap policy  P2  num_filter_intf=1  num_delivery_intf=1  user=userOne  password=bsnbsn
+    Should not be true  ${verify_policy1}
+    ${verify_policy2}=  rest verify bigtap policy  P1  num_filter_intf=1  num_delivery_intf=1  user=userTwo  password=bsnbsn
+    Should not be true  ${verify_policy2}
+    [Tags]  bigtap  rbac  verify
+    
+Verify user admin can see both userOne's as well as userTwo's policies
+    ${verify_policy1}=  rest verify bigtap policy  P2  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${verify_policy2}=  rest verify bigtap policy  P1  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy2}    
+    [Tags]  bigtap  rbac  verify
+    
+Verify user userTwoGroup can see policies in both rbac views
+    ${verify_policy1}=  rest verify bigtap policy  P1  num_filter_intf=1  num_delivery_intf=1  user=userTwoGroup  password=bsnbsn
+    Should be true  ${verify_policy1}
+    ${verify_policy2}=  rest verify bigtap policy  P2  num_filter_intf=1  num_delivery_intf=1  user=userTwoGroup  password=bsnbsn
+    Should be true  ${verify_policy2}
+    [Tags]  bigtap  rbac  verify
+    
+Verify user userTwoGroup can create a policies in both rbac views
+    rest add policy  groupOne-view  P1-1  forward  user=userTwoGroup  password=bsnbsn
+    rest add policy match  groupOne-view  P1-1  1  {"ip-proto": 6, "ether-type": 2048,"sequence": 1,"dst-ip":"190.0.0.1", "dst-ip-mask":"255.255.255.0", "dst-tp-port":53,"src-ip":"191.0.0.2", "src-ip-mask":"255.255.255.0", "src-tp-port":2345}  user=userTwoGroup  password=bsnbsn
+    rest add policy interface  groupOne-view  P1-1  F1  filter  user=userTwoGroup  password=bsnbsn
+    rest add policy interface  groupOne-view  P1-1  D1  delivery  user=userTwoGroup  password=bsnbsn
+    
+    rest add policy  groupTwo-view  P2-1  forward  user=userTwoGroup  password=bsnbsn
+    rest add policy match  groupTwo-view  P2-1  1  {"ip-proto": 17, "ether-type": 2048,"sequence": 1,"dst-ip":"110.0.0.1", "dst-ip-mask":"255.255.255.0", "dst-tp-port":153,"src-ip":"111.0.0.2", "src-ip-mask":"255.255.255.0", "src-tp-port":1221}  user=userTwoGroup  password=bsnbsn
+    rest add policy interface  groupTwo-view  P2-1  F2  filter  user=userTwoGroup  password=bsnbsn
+    rest add policy interface  groupTwo-view  P2-1  D2  delivery  user=userTwoGroup  password=bsnbsn
+    sleep  10
+    ${verify_policy1}=  rest verify bigtap policy  P1-1  num_filter_intf=1  num_delivery_intf=1  user=userTwoGroup  password=bsnbsn
+    Should be true  ${verify_policy1} 
+    ${verify_policy2}=  rest verify bigtap policy  P2-1  num_filter_intf=1  num_delivery_intf=1  user=userTwoGroup  password=bsnbsn
+    Should be true  ${verify_policy2}
+    [Tags]  bigtap  rbac  userTwoGroup  
+
+Verify userOne sees only interfaces assigned to him in running-config
+    Verify running-config  userOne  bsnbsn  ${filter_1}  ${delivery_1}  ${filter_nick_1}  ${delivery_nick_1}                       
+    [Tags]  bigtap  rbac  config 
+
+Verify TACACS based admin user 'tacacsadmin' can login and view policies across groups
+    ${verify_policy1}=  rest verify bigtap policy  P1  num_filter_intf=1  num_delivery_intf=1  user=tacacsadmin  password=adminadmin
+    Should be true  ${verify_policy1}
+    ${verify_policy2}=  rest verify bigtap policy  P2  num_filter_intf=1  num_delivery_intf=1  user=tacacsadmin  password=adminadmin
+    Should be true  ${verify_policy2}    
+    [Tags]  bigtap  rbac  tacacs  
+
+Verify TACACS based non-admin user 'tacacsalice' cannot view policies in group groupTwo    
+    ${verify_policy2}=  rest verify bigtap policy  P2  num_filter_intf=1  num_delivery_intf=1  user=tacacsalice  password=alicealice
+    Should not be true  ${verify_policy2}    
+    [Tags]  bigtap  rbac  tacacs   
+
+Verify TACACS based non-admin user 'tacacsalice' can configure policy in group web-admin
+    rest add policy  web-admin-view  P1-TACACS  forward  user=tacacsalice  password=alicealice
+    rest add policy match  web-admin-view  P1-TACACS  1  {"src-ip-mask": "255.255.255.0", "ether-type": 2048, "src-ip": "100.1.1.1", "ip-proto": 1, "sequence": 1}  user=tacacsalice  password=alicealice
+    rest add policy interface  web-admin-view  P1-TACACS  F1  filter  user=tacacsalice  password=alicealice
+    rest add policy interface  web-admin-view  P1-TACACS  D2  delivery  user=tacacsalice  password=alicealice
+    ${verify_policy1}=  rest verify bigtap policy  P1-TACACS  num_filter_intf=1  num_delivery_intf=1  user=tacacsalice  password=alicealice
+    Should be true  ${verify_policy1}   
+    [Tags]  bigtap  rbac  tacacs     
+
+Tacacs (admin-user) based login and logout of controller 100 times
+    rest set banner  RBAC TEST
+    : FOR    ${INDEX}    IN RANGE    0    101
+    \    ${banner_status}=  cli verify banner  RBAC TEST  user=tacacsadmin  password=adminadmin  
+    \    Should Be True  ${banner_status}
+    \    Sleep  1
+    [Tags]  bigtap  rbac  tacacslogin
+
+Tacacs (nonadmin-user) based login and logout of controller 100 times
+    rest set banner  RBAC TEST
+    : FOR    ${INDEX}    IN RANGE    0    101
+    \    ${banner_status}=  cli verify banner  RBAC TEST  user=tacacsalice  password=alicealice  
+    \    Should Be True  ${banner_status}
+    \    Sleep  1
+    [Tags]  bigtap  rbac  tacacslogin
+
+Create 100 groups and assign one user to all 100 groups. Verify user can login
+    rest add user  bigUser
+    rest add user password  bigUser  bsnbsn         
+    Sleep  10
+    : FOR    ${INDEX}    IN RANGE    0    101
+    \    ${group_name}=  Evaluate  str('bigswitch') + str(${INDEX})
+    \    ${group_view}=  Evaluate  str('bigswitch') + str(${INDEX}) + str('-view')
+    \    rest add rbac group  ${group_name}  ${group_view}    
+    \    rest add user to group  bigUser  ${group_name}
+    \    Sleep  1    
+    Sleep  10
+    : FOR    ${INDEX}    IN RANGE    0    101
+    \    ${group_name}=  Evaluate  str('bigswitch') + str(${INDEX})    
+    \    ${cli_output}=  cli execute show command  whoami  user=bigUser  password=bsnbsn  
+    \    Should contain  ${cli_output}  ${group_name}  
+    Sleep  10        
+    : FOR    ${INDEX}    IN RANGE    0    101
+    \    ${group_name}=  Evaluate  str('bigswitch') + str(${INDEX})
+    \    rest delete rbac group   ${group_name}
+    \    Sleep  1     
+    rest delete user  bigUser  
+    [Tags]  bigtap  rbac  scale      
+
+Create 100 users and assign all user to one group. Verify user can login
+    : FOR    ${INDEX}    IN RANGE    0    101
+    \    ${username_name}=  Evaluate  str('bigUser') + str(${INDEX})
+    \    rest add user  ${username_name}
+    \    rest add user password   ${username_name}  bsnbsn
+    \    rest add user to group  ${username_name}  groupOne
+    \    Sleep  1    
+    Sleep  10
+    : FOR    ${INDEX}    IN RANGE    0    101
+    \    ${username_name}=  Evaluate  str('bigUser') + str(${INDEX})    
+    \    ${cli_output}=  cli execute show command  whoami  user=${username_name}  password=bsnbsn  
+    \    Should contain  ${cli_output}  groupOne
+    \    Verify running-config  ${username_name}  bsnbsn  ${filter_1}  ${delivery_1}  ${filter_nick_1}  ${delivery_nick_1}
+    \    ${verify_policy1}=  rest verify bigtap policy  P1  num_filter_intf=1  num_delivery_intf=1  user=${username_name}  password=bsnbsn
+    \    Should be true  ${verify_policy1}   
+    Sleep  10        
+    : FOR    ${INDEX}    IN RANGE    0    101
+    \    ${username_name}=  Evaluate  str('bigUser') + str(${INDEX}) 
+    \    rest delete user   ${username_name}
+    \    Sleep  1  
+    [Tags]  bigtap  rbac  scale
+
+
+Create 2000 users and assign each user to unique group. Verify user can login
+    : FOR    ${INDEX}    IN RANGE    0    2000
+    \    ${username_name}=  Evaluate  str('bigUser') + str(${INDEX})
+    \    ${group_name}=  Evaluate  str('bigswitch') + str(${INDEX})
+    \    ${group_view}=  Evaluate  str('bigswitch') + str(${INDEX}) + str('-view')    
+    \    rest add user  ${username_name}
+    \    rest add user password   ${username_name}  bsnbsn
+    \    rest add rbac group  ${group_name}  ${group_view}    
+    \    rest add user to group  ${username_name}  ${group_name}    
+    \    Sleep  1    
+    Sleep  10
+    : FOR    ${INDEX}    IN RANGE    0    2000
+    \    ${group_name}=  Evaluate  str('bigswitch') + str(${INDEX})
+    \    ${username_name}=  Evaluate  str('bigUser') + str(${INDEX})        
+    \    ${cli_output}=  cli execute show command  whoami  user= ${username_name}  password=bsnbsn  
+    \    Should contain  ${cli_output}  ${group_name}
+    Sleep  10        
+    : FOR    ${INDEX}    IN RANGE    0    2000
+    \    ${username_name}=  Evaluate  str('bigUser') + str(${INDEX}) 
+    \    ${group_name}=  Evaluate  str('bigswitch') + str(${INDEX})
+    \    ${group_view}=  Evaluate  str('bigswitch') + str(${INDEX}) + str('-view')       
+    \    rest delete rbac group   ${group_name}
+    \    rest delete rbac permission  ${group_view}
+    \    rest delete user   ${username_name}            
+    \    Sleep  1  
+    [Tags]  bigtap  rbac  scale
+                
+* Keyword
+rbac suite setup
+    base suite setup
+    rest add interface role  s1  ${filter_1}  filter  ${filter_nick_1}        
+    rest add interface role  s1  ${delivery_1}  delivery  ${delivery_nick_1}
+    rest add interface role  s2  ${filter_2}  filter  ${filter_nick_2}      
+    rest add interface role  s2  ${delivery_2}  delivery  ${delivery_nick_2}
+    # Configure TACACS Server
+    rest add tacacs authentication
+    rest add tacacs authorization
+    rest add tacacs server  10.192.4.91  secret  90        
+  
+
+    # Add user userOne to group groupOne
+    rest add user  userOne
+    rest add user password  userOne  bsnbsn
+    rest add rbac group  groupOne  groupOne-view
+    rest add user to group  userOne  groupOne
+    rest add rbac permission  groupOne-view
+    rest add filter interface to rbac  groupOne-view  filter_name=F1     
+    rest add delivery interface to rbac  groupOne-view  delivery_name=D1 
+    rest add match to rbac  groupOne-view  match_name=allow-all  
+    
+    # Add user userTwo to group groupTwo
+    rest add user  userTwo
+    rest add user password  userTwo  bsnbsn
+    rest add rbac group  groupTwo  groupTwo-view
+    rest add user to group  userTwo  groupTwo
+    rest add rbac permission  groupTwo-view
+    rest add filter interface to rbac  groupTwo-view  filter_name=F2     
+    rest add delivery interface to rbac  groupTwo-view  delivery_name=D2 
+    rest add match to rbac  groupTwo-view  match_name=allow-all
+    
+    # Add user userTwoGroup who belongs to both groups
+    rest add user  userTwoGroup
+    rest add user password  userTwoGroup  bsnbsn
+    rest add user to group  userTwoGroup  groupTwo
+    rest add user to group  userTwoGroup  groupOne
+    rest add user to group  tacacsadmin  admin  
+    
+    # Add user tacacsalice to group web-admin
+    rest add rbac group  web-admin  web-admin-view
+    rest add user to group  tacacsalice  web-admin
+    rest add rbac permission  web-admin-view
+    rest add filter interface to rbac  web-admin-view  filter_name=F1     
+    rest add delivery interface to rbac  web-admin-view  delivery_name=D2 
+    rest add match to rbac  web-admin-view  match_name=allow-all
+    Sleep  15 
+    
+    #Policy configured by userOne
+    rest add policy  groupOne-view  P1  forward  user=userOne  password=bsnbsn
+    rest add policy match  groupOne-view  P1  1  {"ip-proto": 17, "ether-type": 2048,"sequence": 1,"dst-ip":"191.0.0.1", "dst-ip-mask":"255.255.255.0", "dst-tp-port":53,"src-ip":"191.0.0.2", "src-ip-mask":"255.255.255.0", "src-tp-port":2345}  user=userOne  password=bsnbsn
+    rest add policy interface  groupOne-view  P1  F1  filter  user=userOne  password=bsnbsn
+    rest add policy interface  groupOne-view  P1  D1  delivery  user=userOne  password=bsnbsn
+    sleep  3
+    #Policy configured by userTwo   
+    rest add policy  groupTwo-view  P2  forward  user=userTwo  password=bsnbsn
+    rest add policy match  groupTwo-view  P2  1  {"ip-proto": 6, "ether-type": 2048,"sequence": 1,"dst-ip":"192.0.0.1", "dst-ip-mask":"255.255.255.0", "dst-tp-port":80,"src-ip":"192.0.0.2", "src-ip-mask":"255.255.255.0", "src-tp-port":1234}  user=userTwo  password=bsnbsn
+    rest add policy interface  groupTwo-view  P2  F2  filter  user=userTwo  password=bsnbsn
+    rest add policy interface  groupTwo-view  P2  D2  delivery  user=userTwo  password=bsnbsn
+    sleep  15
+
+Verify running-config  [Arguments]  ${user}  ${password}  ${filter_interface}  ${delivery_interface}  ${finterface_nick}  ${dinterface_nick}
+    ${content}=  rest execute generic get  /api/v1/data/controller/applications/bigtap/interface-config?config=true  user=${user}  password=${password}
+    ${length}=  Get Length  ${content}
+    ${dpid1}=  rest return switch dpid from ip  s1
+    ${dpid2}=  rest return switch dpid from ip  s2
+    @{interfaces}    Create List  ${filter_interface}  ${delivery_interface}
+    @{role}    Create List  filter  delivery
+    @{name}    Create List  ${finterface_nick}  ${dinterface_nick}
+    Log  ${role[0]} 
+    : FOR    ${INDEX}    IN RANGE    0    ${length}
+    \    ${intf_role}=  Get from Dictionary  ${content[${INDEX}]}  role
+    \    Should Be Equal As Strings  ${intf_role}  ${role[${INDEX}]}   
+    \    ${interface_type}=  Get from Dictionary  ${content[${INDEX}]}  interface
+    \    Should Be Equal As Strings  ${interface_type}  ${interfaces[${INDEX}]}
+    \    ${names}=  Get from Dictionary  ${content[${INDEX}]}  name
+    \    Should Be Equal As Strings  ${names}  ${name[${INDEX}]}
+    \    ${switch}=  Get from Dictionary  ${content[${INDEX}]}  switch
+    \    Should Be Equal As Strings  ${switch}  ${dpid1}    
+
+rbac suite teardown
+    rest delete policy  groupOne-view  P1  user=userOne  password=bsnbsn  
+    rest delete policy  groupTwo-view  P2  user=userTwo  password=bsnbsn
+    rest delete policy  web-admin-view  P1-TACACS  user=tacacsalice  password=alicealice    
+    rest delete interface role  s1  ${filter_1}    filter          
+    rest delete interface role  s2  ${filter_2}    filter        
+    rest delete interface role  s1  ${delivery_1}    delivery
+    rest delete interface role  s2  ${delivery_2}    delivery
+    rest delete interface  s1  ${filter_1}          
+    rest delete interface  s2  ${filter_2}        
+    rest delete interface  s1  ${delivery_1}          
+    rest delete interface  s2  ${delivery_2}
+    rest delete rbac group  groupTwo
+    rest delete rbac group  groupOne
+    rest delete rbac group  web-admin              
+    rest delete rbac permission  groupOne-view
+    rest delete rbac permission  groupTwo-view
+    rest delete rbac permission  web-admin-view
+    rest delete user  userOne
+    rest delete user  userTwo
+    rest delete user  userTwoGroup                  
+        
