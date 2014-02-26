@@ -941,7 +941,7 @@ class AppController(object):
                 content = c.rest.content()
                 return content[0]
 
-    def cli_verify_banner(self, banner_message):
+    def cli_verify_banner(self, banner_message, user="admin", password="adminadmin"):
         '''Execute CLI command "show ntp" and return o/p
         
             Returns dictionary of o/p
@@ -953,11 +953,17 @@ class AppController(object):
         else:
             c = t.controller('master')
             try:
-                c.enable("show banner")
+                if "admin" not in user:
+                    c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                    c_user.enable("show banner")
+                    content = c_user.cli_content()
+                    t.node_reconnect(node='master')
+                else:
+                    c.enable("show banner")
+                    content = c.cli_content()
             except:
                 return False
             else:
-                content = c.cli_content()
                 if str(banner_message) in content:
                     return True
                 else:
@@ -984,3 +990,107 @@ class AppController(object):
                 return False
             else:
                 return True
+
+    def rest_add_tacacs_authentication(self):
+        '''
+            Objective: Add TACACS configuration
+            
+            Input:
+            | tacacs_server |  Tacacs Server |
+            
+            Return Value:
+            True on Success
+            False on Failure
+        '''
+        try:
+            t = test.Test()
+        except:
+            return False
+        else:
+            c = t.controller('master')
+            # Configure AAA/Authentication
+            try:
+                url = '/api/v1/data/controller/core/aaa/authenticator'
+                c.rest.put(url, [{"priority": 1, "name": "tacacs"}, {"priority": 2, "name": "local"}])
+            except:
+                helpers.test_log(c.rest.error())
+                return False
+            else:
+                return True
+
+    def rest_add_tacacs_authorization(self):
+        '''
+            Objective: Add TACACS configuration
+            
+            Input:
+            | tacacs_server |  Tacacs Server |
+            
+            Return Value:
+            True on Success
+            False on Failure
+        '''
+        try:
+            t = test.Test()
+        except:
+            return False
+        else:
+            c = t.controller('master')
+            # Configure AAA/authorization
+            try:
+                url = '/api/v1/data/controller/core/aaa/authorizer'
+                c.rest.put(url, [{"priority": 1, "name": "tacacs"}, {"priority": 2, "name": "local"}])
+            except:
+                helpers.test_log(c.rest.error())
+                return False
+            else:
+                return True
+
+    def rest_add_tacacs_server(self, tacacs_server, key, timeout=90):
+        try:
+            t = test.Test()
+        except:
+            return False
+        else:
+            c = t.controller('master')
+            # Get encoded password from key
+            try:
+                url = '/api/v1/data/controller/core/aaa/tacacs/encode-password[password="%s"]' % str(key)
+                c.rest.get(url)
+                content = c.rest.content()
+            except:
+                helpers.test_log(c.rest.error())
+                return False
+            else:
+            # Configure tacacse server
+                encoded_password = content[0]['encoded-password']
+                try:
+                    url = '/api/v1/data/controller/core/aaa/tacacs/server[server-address="%s"]' % str(tacacs_server)
+                    c.rest.put(url, {"server-address": str(tacacs_server), "secret": str(encoded_password), "timeout": int(timeout)})
+                except:
+                    helpers.test_log(c.rest.error())
+                    return False
+                else:
+                    return True
+
+    def cli_execute_show_command(self, command, user="admin", password="adminadmin"):
+        try:
+            t = test.Test()
+        except:
+            return False
+        else:
+            c = t.controller('master')
+            # Get encoded password from key
+            try:
+                if "admin" not in user:
+                    c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                    c_user.enable(command)
+                    content = c_user.cli_content()
+                    t.node_reconnect(node='master')
+                else:
+                    c.enable(command)
+                    content = c.cli_content()
+            except:
+                helpers.test_log(c.rest.error())
+                return False
+            else:
+                return content

@@ -215,7 +215,7 @@ class BigTap(object):
 ###################################################
 # All Bigtap Verify Commands Go Here:
 ###################################################
-    def rest_verify_bigtap_policy(self, policy_name, num_filter_intf=None, num_delivery_intf=None, return_value=None, action='forward'):
+    def rest_verify_bigtap_policy(self, policy_name, num_filter_intf=None, num_delivery_intf=None, return_value=None, action='forward', user="admin", password="adminadmin"):
         '''
         Objective:
         Parse the output of cli command 'show bigtap policy <policy_name>'
@@ -250,10 +250,18 @@ class BigTap(object):
             return False
         else:
             url = '/api/v1/data/controller/applications/bigtap/view/policy[name="%s"]/info' % str(policy_name)
-            c.rest.get(url)
-            if not c.rest.status_code_ok():
-                helpers.test_failure(c.rest.error())
-            content = c.rest.content()
+            if "admin" not in user:
+                c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                c_user.rest.get(url)
+                if not c_user.rest.status_code_ok():
+                    helpers.test_failure(c_user.rest.error())
+                content = c_user.rest.content()
+                t.node_reconnect(node='master')
+            else:
+                c.rest.get(url)
+                if not c.rest.status_code_ok():
+                    helpers.test_failure(c.rest.error())
+                content = c.rest.content()
             if len(content) == 0:
                 return False
             else:
@@ -284,9 +292,9 @@ class BigTap(object):
                         helpers.test_failure("Policy does not correctly report type. Type seen is : %s" % content[0]['type'])
                         return False
 
-                    if content[0]['runtime-status'] == "installed":
+                    if "installed" in content[0]['runtime-status']:
                         helpers.test_log("Policy correctly reports runtime status as : %s" % content[0]['runtime-status'])
-                    elif content[0]['runtime-status'] == "inactive":
+                    elif "inactive" in content[0]['runtime-status']:
                         helpers.test_log("Policy correctly reports runtime status as : %s" % content[0]['runtime-status'])
                     else:
                         helpers.test_failure("Policy does not correctly report runtime status as : %s" % content[0]['runtime-status'])
@@ -756,7 +764,7 @@ class BigTap(object):
             else:
                 return True
 
-    def rest_add_policy(self, rbac_view_name, policy_name, policy_action="inactive"):
+    def rest_add_policy(self, rbac_view_name, policy_name, policy_action="inactive", user="admin", password="adminadmin"):
         '''
             Objective:
             - Add a bigtap policy.
@@ -778,20 +786,30 @@ class BigTap(object):
             c = t.controller('master')
             try:
                 url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]' % (str(rbac_view_name), str(policy_name))
-                c.rest.put(url, {'name':str(policy_name)})
+                if "admin" not in user:
+                    c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                    c_user.rest.put(url, {'name':str(policy_name)})
+                    t.node_reconnect(node='master')
+                else:
+                    c.rest.put(url, {'name':str(policy_name)})
             except:
-                helpers.test_failure(c.rest.error())
+                helpers.test_log(c.rest.error())
                 return False
             else:
                 try:
-                    c.rest.patch(url, {"action":str(policy_action)})
+                    if "admin" not in user:
+                        c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                        c_user.rest.patch(url, {"action":str(policy_action)})
+                        t.node_reconnect(node='master')
+                    else:
+                        c.rest.patch(url, {"action":str(policy_action)})
                 except:
                     helpers.test_log(c.rest.error())
                     return False
                 else:
                     return True
 
-    def rest_delete_policy(self, rbac_view_name, policy_name):
+    def rest_delete_policy(self, rbac_view_name, policy_name, user="admin", password="adminadmin"):
         '''
             Objective:
             - Delete a bigtap policy.
@@ -812,7 +830,12 @@ class BigTap(object):
             c = t.controller('master')
             try:
                 url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]' % (str(rbac_view_name), str(policy_name))
-                c.rest.delete(url, {})
+                if "admin" not in user:
+                    c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                    c_user.rest.delete(url, {})
+                    t.node_reconnect(node='master')
+                else:
+                    c.rest.delete(url, {})
             except:
                 helpers.test_log(c.rest.error())
                 return False
@@ -906,7 +929,7 @@ class BigTap(object):
             else:
                 return True
 
-    def rest_add_policy_interface(self, rbac_view_name, policy_name, intf_nickname, intf_type):
+    def rest_add_policy_interface(self, rbac_view_name, policy_name, intf_nickname, intf_type, user="admin", password="adminadmin"):
         '''
             Objective:
             - Add a bigtap policy interface viz. Add a filter-interface and/or delivery-interface under a bigtap policy.
@@ -933,14 +956,19 @@ class BigTap(object):
                 else:
                     intf_type = "delivery-group"
                 url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]/%s[name="%s"]' % (str(rbac_view_name), str(policy_name), str(intf_type), str(intf_nickname))
-                c.rest.put(url, {"name": str(intf_nickname)})
+                if "admin" not in user:
+                    c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                    c_user.rest.put(url, {"name": str(intf_nickname)})
+                    t.node_reconnect(node='master')
+                else:
+                    c.rest.put(url, {"name": str(intf_nickname)})
             except:
                 helpers.test_log(c.rest.error())
                 return False
             else:
                 return True
 
-    def rest_delete_policy_interface(self, rbac_view_name, policy_name, intf_nickname, intf_type):
+    def rest_delete_policy_interface(self, rbac_view_name, policy_name, intf_nickname, intf_type, user="admin", password="adminadmin"):
         '''
             Objective:
             - Delete a bigtap policy interface viz. 
@@ -968,14 +996,19 @@ class BigTap(object):
                 else:
                     intf_type = "delivery-group"
                 url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]/%s[name="%s"]' % (str(rbac_view_name), str(policy_name), str(intf_type), str(intf_nickname))
-                c.rest.delete(url, {})
+                if "admin" not in user:
+                    c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                    c_user.rest.delete(url, {})
+                    t.node_reconnect(node='master')
+                else:
+                    c.rest.delete(url, {})
             except:
                 helpers.test_log(c.rest.error())
                 return False
             else:
                 return True
 
-    def rest_add_policy_match(self, rbac_view_name, policy_name, match_number, data, flag=False):
+    def rest_add_policy_match(self, rbac_view_name, policy_name, match_number, data, flag=False, user="admin", password="adminadmin"):
         '''
             Objective:
             - Add a bigtap policy match condition.
@@ -1003,13 +1036,18 @@ class BigTap(object):
                     data_dict = helpers.from_json(data)
                 else:
                     data_dict = data
-                c.rest.put(url, data_dict)
+                if "admin" not in user:
+                    c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                    c_user.rest.put(url, data_dict)
+                    t.node_reconnect(node='master')
+                else:
+                    c.rest.put(url, data_dict)
             except:
                 return False
             else:
                 return True
 
-    def rest_delete_policy_match(self, rbac_view_name, policy_name, match_number):
+    def rest_delete_policy_match(self, rbac_view_name, policy_name, match_number, user="admin", password="adminadmin"):
         '''
             Objective:
             - Delete a bigtap policy match condition.
@@ -1031,7 +1069,12 @@ class BigTap(object):
             c = t.controller('master')
             try:
                 url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]/rule[sequence=%s]' % (str(rbac_view_name), str(policy_name), str(match_number))
-                c.rest.delete(url, {})
+                if "admin" not in user:
+                    c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                    c_user.rest.delete(url, {})
+                    t.node_reconnect(node='master')
+                else:
+                    c.rest.delete(url, {})
             except:
                 helpers.test_log(c.rest.error())
                 return False
@@ -1039,7 +1082,7 @@ class BigTap(object):
                 return True
 
 # Add a service with Pre-Service and Post Service interface.
-    def rest_add_service(self, service_name, pre_service_intf_nickname, post_service_intf_nickname):
+    def rest_add_service(self, service_name, pre_service_intf_nickname, post_service_intf_nickname, user="admin", password="adminadmin"):
         '''
             Objective:
             - Add a bigtap service.
@@ -1076,7 +1119,12 @@ class BigTap(object):
                 try:
                     # Add Pre-Service Interface
                     url_add_intf = '/api/v1/data/controller/applications/bigtap/service[name="%s"]/pre-group[name="%s"]' % (str(service_name), str(pre_service_intf_nickname))
-                    c.rest.put(url_add_intf, {"name":str(pre_service_intf_nickname)})
+                    if "admin" not in user:
+                        c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                        c_user.rest.put(url_add_intf, {"name":str(pre_service_intf_nickname)})
+                        t.node_reconnect(node='master')
+                    else:
+                        c.rest.put(url_add_intf, {"name":str(pre_service_intf_nickname)})
                 except:
                     helpers.test_failure(c.rest.error())
                     return False
@@ -1084,7 +1132,12 @@ class BigTap(object):
                     try:
                         # Add Post-Service Interface
                         url_add_intf = '/api/v1/data/controller/applications/bigtap/service[name="%s"]/post-group[name="%s"]' % (str(service_name), str(post_service_intf_nickname))
-                        c.rest.put(url_add_intf, {"name":str(post_service_intf_nickname)})
+                        if "admin" not in user:
+                            c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                            c_user.rest.put(url_add_intf, {"name":str(post_service_intf_nickname)})
+                            t.node_reconnect(node='master')
+                        else:
+                            c.rest.put(url_add_intf, {"name":str(post_service_intf_nickname)})
                     except:
                         helpers.test_log(c.rest.error())
                         return False
@@ -1093,7 +1146,7 @@ class BigTap(object):
                         return True
 
 # Delete a service
-    def rest_delete_service(self, service_name):
+    def rest_delete_service(self, service_name, user="admin", password="adminadmin"):
         '''
             Objective:
             - Delete a bigtap service.
@@ -1114,14 +1167,19 @@ class BigTap(object):
             c = t.controller('master')
             try:
                 url = '/api/v1/data/controller/applications/bigtap/service[name="%s"]' % (str(service_name))
-                c.rest.delete(url, {})
+                if "admin" not in user:
+                    c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                    c_user.rest.delete(url, {})
+                    t.node_reconnect(node='master')
+                else:
+                    c.rest.delete(url, {})
             except:
                 helpers.test_log(c.rest.error())
                 return False
             else:
                 return True
 
-    def rest_add_interface_service(self, service_name, intf_type, intf_nickname):
+    def rest_add_interface_service(self, service_name, intf_type, intf_nickname, user="admin", password="adminadmin"):
         '''
             Objective:
             - Add a service interface to a service. 
@@ -1153,14 +1211,19 @@ class BigTap(object):
                     url_add_intf = '/api/v1/data/controller/applications/bigtap/service[name="%s"]/pre-group[name="%s"]' % (str(service_name), str(intf_nickname))
                 else:
                     url_add_intf = '/api/v1/data/controller/applications/bigtap/service[name="%s"]/post-group[name="%s"]' % (str(service_name), str(intf_nickname))
-                c.rest.post(url_add_intf, {"name":str(intf_nickname)})
+                if "admin" not in user:
+                    c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                    c_user.rest.post(url_add_intf, {"name":str(intf_nickname)})
+                    t.node_reconnect(node='master')
+                else:
+                    c.rest.post(url_add_intf, {"name":str(intf_nickname)})
             except:
                 helpers.test_log(c.rest.error())
                 return False
             else:
                 return True
 
-    def rest_delete_interface_service(self, service_name, intf_nickname, intf_type):
+    def rest_delete_interface_service(self, service_name, intf_nickname, intf_type, user="admin", password="adminadmin"):
         '''
             Objective:
             - Delete an interface from a service. This is similar to executing CLI command "no post-service S1-LB7_E4-HP1_E4-POST"
@@ -1190,14 +1253,19 @@ class BigTap(object):
                     url_add_intf = '/api/v1/data/controller/applications/bigtap/service[name="%s"]/pre-group[name="%s"]' % (str(service_name), str(intf_nickname))
                 else:
                     url_add_intf = '/api/v1/data/controller/applications/bigtap/service[name="%s"]/post-group[name="%s"]' % (str(service_name), str(intf_nickname))
-                c.rest.delete(url_add_intf, {})
+                if "admin" not in user:
+                    c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                    c_user.rest.delete(url_add_intf, {})
+                    t.node_reconnect(node='master')
+                else:
+                    c.rest.delete(url_add_intf, {})
             except:
                 helpers.test_log(c.rest.error())
                 return False
             else:
                 return True
 
-    def rest_add_service_to_policy(self, rbac_view_name, policy_name, service_name, sequence_number, optional=False):
+    def rest_add_service_to_policy(self, rbac_view_name, policy_name, service_name, sequence_number, optional=False, user="admin", password="adminadmin"):
         '''
           Objective:
           - Add a service to a policy. This is similar to executing CLI command "use-service S1-LB7 sequence 1"
@@ -1229,14 +1297,19 @@ class BigTap(object):
             c = t.controller('master')
             try:
                 url_to_add = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]/service[sequence=%s]' % (str(rbac_view_name), str(policy_name), str(sequence_number))
-                c.rest.put(url_to_add, {"optional": bool(optional), "name":str(service_name), "sequence": int(sequence_number)})
+                if "admin" not in user:
+                    c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                    c_user.rest.put(url_to_add, {"optional": bool(optional), "name":str(service_name), "sequence": int(sequence_number)})
+                    t.node_reconnect(node='master')
+                else:
+                    c.rest.put(url_to_add, {"optional": bool(optional), "name":str(service_name), "sequence": int(sequence_number)})
             except:
                 helpers.test_log(c.rest.error())
                 return False
             else:
                 return True
 
-    def rest_delete_service_from_policy(self, rbac_view_name, policy_name, service_name):
+    def rest_delete_service_from_policy(self, rbac_view_name, policy_name, service_name, user="admin", password="adminadmin"):
         '''
             Objective:
             - Delete a service from a policy. This is similar to executing CLI command "no use-service S1-LB7 sequence 1"
@@ -1259,7 +1332,12 @@ class BigTap(object):
             c = t.controller('master')
             try:
                 url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]/service[name="%s"]' % (str(rbac_view_name), str(policy_name), str(service_name))
-                c.rest.delete(url, {})
+                if "admin" not in user:
+                    c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                    c_user.rest.delete(url, {})
+                    t.node_reconnect(node='master')
+                else:
+                    c.rest.delete(url, {})
             except:
                 helpers.test_log(c.rest.error())
                 return False
@@ -1267,7 +1345,7 @@ class BigTap(object):
                 return True
 
 # Change policy action
-    def rest_add_policy_action(self, rbac_view_name, policy_name, policy_action):
+    def rest_add_policy_action(self, rbac_view_name, policy_name, policy_action, user="admin", password="adminadmin"):
         '''
           Objective:
           - Change the action field in a bigtap policy
@@ -1307,7 +1385,12 @@ class BigTap(object):
             c = t.controller('master')
             try:
                 url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]' % (str(rbac_view_name), str(policy_name))
-                c.rest.patch(url, {"action":str(policy_action)})
+                if "admin" not in user:
+                    c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                    c_user.rest.delete(url, {})
+                    t.node_reconnect(node='master')
+                else:
+                    c.rest.patch(url, {"action":str(policy_action)})
             except:
                 helpers.test_log(c.rest.error())
                 return False
@@ -1315,8 +1398,8 @@ class BigTap(object):
                 return True
 
 # Alias
-    def rest_update_policy_action(self, rbac_view_name, policy_name, policy_action):
-        return self.rest_add_policy_action(rbac_view_name, policy_name, policy_action)
+    def rest_update_policy_action(self, rbac_view_name, policy_name, policy_action, user="admin", password="adminadmin"):
+        return self.rest_add_policy_action(rbac_view_name, policy_name, policy_action, user="admin", password="adminadmin")
 
 
 # Disable bigtap feature overlap/inport-mask/tracked-host/l3-l4-mode
@@ -1791,6 +1874,35 @@ class BigTap(object):
             else:
                 return True
 
+    def rest_delete_user(self, username):
+        '''
+            Objective:
+            - Add a user
+            
+            Inputs:
+            |username| Desired username for user|
+            
+            Return Value:
+            | True | On Configuration success|
+            | False | On Configuration failure|
+            
+        '''
+        try:
+            t = test.Test()
+        except:
+            return False
+        else:
+            c = t.controller('master')
+            try:
+                url = '/api/v1/data/controller/core/aaa/local-user[user-name="%s"] ' % (str(username))
+                c.rest.delete(url, {})
+            except:
+                helpers.test_log(c.rest.error())
+                return False
+            else:
+                return True
+
+
 
     def rest_add_user_password(self, username, password):
         '''
@@ -1861,6 +1973,36 @@ class BigTap(object):
             else:
                 return True
 
+    def rest_delete_rbac_group(self, group_name):
+        '''
+            Objective:
+            - Create a group and assign bigtap rbac-permission
+            
+            Inputs:
+            |group_name| Group Name that is being configured|
+            |rbac_view| RBAC View to be associated with group|            
+            
+            Return Value:
+            | True | On Configuration success|
+            | False | On Configuration failure|
+            
+        '''
+        try:
+            t = test.Test()
+        except:
+            return False
+        else:
+            c = t.controller('master')
+            try:
+                # Create a group first
+                url1 = '/api/v1/data/controller/core/aaa/group[name="%s"]' % str(group_name)
+                c.rest.delete(url1, {})
+            except:
+                helpers.test_log(c.rest.error())
+                return False
+            else:
+                return True
+
     def rest_add_user_to_group(self, username, group_name):
         '''
             Objective:
@@ -1882,9 +2024,20 @@ class BigTap(object):
         else:
             c = t.controller('master')
             try:
-                # Add user to Group
+                #
+                url = '/api/v1/data/controller/core/aaa/group[name="%s"]' % str(group_name)
+                c.rest.get(url)
+                content = c.rest.content()
+                data1 = []
                 url1 = '/api/v1/data/controller/core/aaa/group[name="%s"]/user' % str(group_name)
-                c.rest.patch(url1, [str(username)])
+                if not "user" in content[0]:
+                    helpers.log("User does not exist")
+                    c.rest.patch(url1, [username])
+                else:
+                    data1 = content[0]['user']
+                    data1.append(username)
+                    helpers.log("User exists and data1 is %s" % data1)
+                    c.rest.patch(url1, data1)
             except:
                 helpers.test_log(c.rest.error())
                 return False
@@ -1914,6 +2067,35 @@ class BigTap(object):
                 # Add user to Group
                 url1 = '/api/v1/data/controller/core/aaa/rbac-permission[name="%s"]' % str(rbac_view)
                 c.rest.put(url1, {"name": str(rbac_view)})
+            except:
+                helpers.test_log(c.rest.error())
+                return False
+            else:
+                return True
+
+    def rest_delete_rbac_permission(self, rbac_view):
+        '''
+            Objective:
+            - Delete an rbac permission
+            
+            Inputs:
+            |rbac_view| RBAC group name that is being configured|
+            
+            Return Value:
+            | True | On Configuration success|
+            | False | On Configuration failure|
+            
+        '''
+        try:
+            t = test.Test()
+        except:
+            return False
+        else:
+            c = t.controller('master')
+            try:
+                # Add user to Group
+                url1 = '/api/v1/data/controller/core/aaa/rbac-permission[name="%s"]' % str(rbac_view)
+                c.rest.delete(url1, {})
             except:
                 helpers.test_log(c.rest.error())
                 return False
@@ -2171,3 +2353,16 @@ class BigTap(object):
         match = match1 + match2
         helpers.log("Match is %s" % match)
         return (match)
+
+    def rest_execute_generic_get(self, url, user="admin", password="adminadmin"):
+        t = test.Test()
+        c = t.controller('master')
+        if "admin" not in user:
+            c_user = t.node_reconnect(node='master', user=str(user), password=password)
+            c_user.rest.get(url)
+            content = c_user.rest.content()
+            t.node_reconnect(node='master')
+        else:
+            c.rest.get(url)
+            content = c.rest.content()
+        return content
