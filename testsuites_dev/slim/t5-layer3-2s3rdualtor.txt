@@ -648,6 +648,7 @@ Change vns ip address with L3 intra tenant traffic with dynamic endpoints
 #	Should Be True  							${endpoints_cnt} == 8
 	
 Set 32bit full mask on vns router ip
+	REST delete vns ip							${tenant1_name}  	${vns1_2}  			${vns1_ip2}		${vns1_subnet2} 		
 	${result}=									REST add vns ip		${tenant1_name}  	${vns1_2}  		10.10.99.1	  		32
 	Should Not Be True							${result} 
 

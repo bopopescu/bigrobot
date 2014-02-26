@@ -16,7 +16,8 @@ class T5L3(object):
                 `vns`           vns interface name which must be similar to VNS
                 `ipaddr`        interface ip address
                 `netmask`       vns subnet mask
-            
+            PATCH http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[name="A"]/virtual-router/vns-interfaces[vns-name="A2"] {"ip-cidr": "10.10.12.1/24"}
+
             Return: true if configuration is successful, false otherwise
         '''
         
@@ -25,10 +26,12 @@ class T5L3(object):
         
         helpers.test_log("Input arguments: tenant = %s vns = %s ipaddr = %s netmask = %s " % (tenant, vns, ipaddr, netmask ))
         
-        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/virtual-router/vns-interfaces' % (tenant)
+        #url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/virtual-router/vns-interfaces' % (tenant)
+        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/virtual-router/vns-interfaces[vns-name="%s"]' % (tenant, vns)
         ip_addr = ipaddr + "/" + netmask
         try:
-            c.rest.post(url, {"vns-name": vns, "ip-cidr": str(ip_addr), "active": True})
+            c.rest.patch(url, {"ip-cidr": str(ip_addr)})
+            #c.rest.post(url, {"vns-name": vns, "ip-cidr": str(ip_addr), "active": True})
         except:
             #helpers.test_failure(c.rest.error())
             return False
