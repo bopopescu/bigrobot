@@ -115,7 +115,13 @@ Set 32 bit full mask on vns router ip
 	Set 32bit full mask on vns router ip
 #	[Tags]							skipped			sanity			smoke	
 	
+Verify router subnet mask
+	Verify subnet mask on vns router ip
+#	[Tags]							skipped			sanity			smoke	
 
+Verify L3 inter tenant forwarding with VLSM
+	L3 inter tenant forwarding with VLSM
+#	[Tags]							skipped			sanity			smoke	
 	
 * Keywords
 L3 intra tenant same rack untagged with static endpoints
@@ -646,22 +652,84 @@ Change vns ip address with L3 intra tenant traffic with dynamic endpoints
 	Should Be True  							${loss} == 0
 	${endpoints_cnt}=							rest count endpoints mac
 #	Should Be True  							${endpoints_cnt} == 8
-	
+
+
 Set 32bit full mask on vns router ip
+	mininet host config
+	sleep  										1
+	mininet l3 ping								${bm0_name}			${bm1_ip} 	3
+	sleep										1
+	mininet dump switch							${leaf0a_name}
+	mininet dump switch							${leaf0b_name}
+	mininet dump switch							${leaf1a_name}
+	mininet dump switch							${leaf1b_name}
+	mininet dump switch							${leaf2a_name}
+	mininet dump switch							${leaf2b_name}
+	${loss}=  									mininet l3 ping		${bm0_name}		${bm1_ip} 	
+	Should Be True  							${loss} == 0
+	${endpoints_cnt}=							rest count endpoints mac
 	REST delete vns ip							${tenant1_name}  	${vns1_2}  			${vns1_ip2}		${vns1_subnet2} 		
-	${result}=									REST add vns ip		${tenant1_name}  	${vns1_2}  		10.10.99.1	  		32
+	${result}=									REST add vns ip		${tenant1_name}		${vns1_2}  		10.10.99.1	  		32
 	Should Not Be True							${result} 
+	sleep										1
+	REST add vns ip								${tenant1_name}  	${vns1_2}  			${vns1_ip2}	  	${vns1_subnet2} 
+	${loss}=  									mininet l3 ping		${bm0_name}		${bm1_ip} 	
+	Should Be True  							${loss} == 0
+	${endpoints_cnt}=							rest count endpoints mac
+		
+	
+Verify subnet mask on vns router ip
+	mininet host config
+	sleep  										1
+	mininet l3 ping								${bm0_name}			${bm1_ip} 	3
+	sleep										1
+	mininet dump switch							${leaf0a_name}
+	mininet dump switch							${leaf0b_name}
+	mininet dump switch							${leaf1a_name}
+	mininet dump switch							${leaf1b_name}
+	mininet dump switch							${leaf2a_name}
+	mininet dump switch							${leaf2b_name}
+	${loss}=  									mininet l3 ping		${bm0_name}		${bm1_ip} 	
+	Should Be True  							${loss} == 0
+	${endpoints_cnt}=							rest count endpoints mac
+	REST add vns ip								REST add vns ip		${tenant1_name}  	${vns1_1}  		10.10.11.254	  	25
+	mininet host delete arp						${bm0_name}			${vns1_ip1}
+	mininet host gw								${bm0_name}			10.10.11.254		${bm0-bond0}
+	mininet l3 ping								${bm0_name}			10.10.11.254		3
+	${result}=									mininet host verify arp		${bm0_name}		10.10.11.254
+	Should Not Be True							${result}
+	REST add vns ip								REST add vns ip		${tenant1_name}  	${vns1_1}  		10.10.11.254	  	24
+	mininet l3 ping								${bm0_name}			10.10.11.254		3
+	${result}=									mininet host verify arp		${bm0_name}		10.10.11.254
+	Should Be True								${result}
+	${loss}=  									mininet l3 ping		${bm0_name}		${bm1_ip} 	
+	Should Be True  							${loss} == 0
+	${endpoints_cnt}=							rest count endpoints mac
 
 
-
-
-
-
-
-
-
-
-
+L3 inter tenant forwarding with VLSM
+	mininet host config
+	sleep  										1
+	REST add vns ip								${tenant1_name}  	${vns1_2}  		10.10.22.254	  	25
+	mininet host ipcfg   						${bm5_name}			${bm5_bondif}	10.10.22.251		25
+	mininet host gw								${bm5_name}			10.10.22.254	${bm5_bondif}
+	add inter tenant routing
+	mininet l3 ping								${bm5_name}			${bm3_name} 	3
+	sleep										1
+	mininet dump switch							${leaf0a_name}
+	mininet dump switch							${leaf0b_name}
+	mininet dump switch							${leaf1a_name}
+	mininet dump switch							${leaf1b_name}
+	mininet dump switch							${leaf2a_name}
+	mininet dump switch							${leaf2b_name}
+	${loss}=  									mininet l3 ping		${bm5_name}		${bm3_ip} 	
+	Should Be True  							${loss} == 0
+	${endpoints_cnt}=							rest count endpoints mac
+	delete inter tenant routing
+	${loss}=  									mininet l3 ping		${bm5_name}		${bm3_ip} 	
+	Should Be True  							${loss} == 100
+	REST add vns ip								${tenant1_name}  	${vns1_2}  		${vns1_ip2}	  	${vns1_subnet2} 
+	
 
 
 
@@ -747,6 +815,7 @@ setup topology
 	REST add portgroup to vns					${tenant2_name}  	${vns2_3} 		${portgroup2} 		${vns2_vlan3}
 	REST add portgroup to vns					${tenant2_name}  	${vns2_2} 		${portgroup3} 		${untaggedvlan}
 	REST add portgroup to vns					${tenant1_name}  	${vns1_1} 		${portgroup4} 		${vns1_vlan1}
+	REST add portgroup to vns					${tenant1_name}  	${vns1_2} 		${portgroup5} 		${untagged}
 	REST add portgroup to vns					${tenant2_name}  	${vns2_1} 		${portgroup6} 		${vns2_vlan1}
 	REST add portgroup to vns					${tenant1_name}  	${vns1_2} 		${portgroup7} 		${untaggedvlan}
 	REST add portgroup to vns					${tenant2_name}  	${vns2_1} 		${portgroup8} 		${vns2_vlan1}
@@ -825,6 +894,7 @@ mininet host config
 	mininet l3 link tag							${bm2_name}			${bm2_bondif}	${vns2_vlan3}		${bm2_ip}		${vns2_subnet3}
 	mininet host ipcfg   						${bm3_name}			${bm3_bondif}	${bm3_ip}			${vns2_subnet2}
 	mininet l3 link tag							${bm4_name}			${bm4_bondif}	${vns1_vlan1}		${bm4_ip}		${vns1_subnet1}
+	mininet host ipcfg   						${bm5_name}			${bm5_bondif}	${bm5_ip}			${vns1_subnet2}
 	mininet l3 link tag							${bm8_name}			${bm8_bondif}	${vns2_vlan1}		${bm8_ip}		${vns2_subnet1}
 	mininet l3 link tag							${bm9_name}			${bm9_bondif}	${vns2_vlan2}		${bm9_ip}		${vns2_subnet2}
 	mininet host ipcfg   						${bm10_name}		${bm10_bondif}	${bm10_ip}			${vns1_subnet1}	
@@ -833,6 +903,7 @@ mininet host config
 	mininet host tagged gw						${bm2_name}			${vns2_ip3}		${vns2_vlan3}
 	mininet host gw								${bm3_name}			${vns2_ip2}		${bm3_bondif}
 	mininet host tagged gw						${bm4_name}			${vns1_ip1}		${vns1_vlan1}
+	mininet host gw								${bm5_name}			${vns1_ip2}		${bm5_bondif}
 	mininet host tagged gw						${bm8_name}			${vns2_ip1}		${vns2_vlan1}
 	mininet host tagged gw						${bm9_name}			${vns2_ip2}		${vns2_vlan2}
 	mininet host gw								${bm10_name}		${vns2_ip3}		${bm10_bondif}

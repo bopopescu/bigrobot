@@ -17,7 +17,7 @@ class T5L3(object):
                 `ipaddr`        interface ip address
                 `netmask`       vns subnet mask
             PATCH http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[name="A"]/virtual-router/vns-interfaces[vns-name="A2"] {"ip-cidr": "10.10.12.1/24"}
-
+        
             Return: true if configuration is successful, false otherwise
         '''
         
@@ -30,8 +30,9 @@ class T5L3(object):
         url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/virtual-router/vns-interfaces[vns-name="%s"]' % (tenant, vns)
         ip_addr = ipaddr + "/" + netmask
         try:
-            c.rest.patch(url, {"ip-cidr": str(ip_addr)})
+            #c.rest.patch(url, {"ip-cidr": str(ip_addr)})
             #c.rest.post(url, {"vns-name": vns, "ip-cidr": str(ip_addr), "active": True})
+            c.rest.put(url, {"vns-name": vns, "ip-cidr": str(ip_addr)})
         except:
             #helpers.test_failure(c.rest.error())
             return False
