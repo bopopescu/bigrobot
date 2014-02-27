@@ -96,3 +96,45 @@ class Host(object):
         n.sudo("/etc/init.d/networking restart")
         n.bash("route")
         return True
+
+    def bash_get_interface_ipv4(self, node, intf):
+        t = test.Test()
+        n = t.node(node)
+        result = n.sudo("sudo ifconfig %s | grep --color=never -i \"inet addr\"" % intf)
+        output = result["content"]
+        helpers.log("output: %s" % output)
+        if not output:
+            return False
+        else:
+            result = re.search('inet addr:(.*)\sBcast', output)
+            return result.group(1)
+
+    def bash_release_dhcpv4_address(self, node, intf, ipaddr):
+        
+        t = test.Test()
+        n = t.node(node)
+        n.sudo("sudo dhclient -r %s" % intf)
+        result = n.sudo("sudo ifconfig %s | grep --color=never -i \"inet addr\"" % intf)
+        output = result["content"]
+        helpers.log("output: %s" % output)
+        match = re.search(r'%s' % ipaddr, output, re.S | re.I)
+        if match:
+            return False
+        else:
+            return True
+    
+    def bash_renew_dhcpv4_address(self, node, intf):
+        '''
+             attempt to obtain an IPv4 address via dhcp. timeout is set to 10 seconds in /etc/dhcp/dhclient.conf file for ubuntu host 
+        '''
+        t = test.Test()
+        n = t.node(node)
+        n.sudo("sudo dhclient -v -4 %s" % intf)
+        result = n.sudo("sudo ifconfig %s | grep --color=never -i \"inet addr\"" % intf)
+        output = result["content"]
+        helpers.log("output: %s" % output)
+        if not output:
+            return False
+        else:
+            result = re.search('inet addr:(.*)\sBcast', output)
+            return result.group(1)
