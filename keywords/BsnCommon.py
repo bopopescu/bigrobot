@@ -75,10 +75,10 @@ class BsnCommon(object):
         rx = int(rx_value)
         vrange = int(rangev)
         if (rx >= (tx - vrange)) and (rx <= (tx + vrange)):
-            helpers.log("Pass:Traffic forwarded between 2 endpoints tx_rate:%d,rx_rate:%d" % (tx, rx))
+            helpers.log("Pass:Traffic forwarded between 2 endpoints tx:%d, rx:%d" % (tx, rx))
             return True
         else:
-            helpers.test_failure("Fail:Traffic forward between 2 endpoints tx_rate:%d,rx_rate:%d" % (tx, rx))
+            helpers.test_failure("Fail:Traffic forward between 2 endpoints tx:%d, rx:%d" % (tx, rx))
             return False
 
     def verify_switch_pkt_stats(self, count1, count2, range1=95, range2=5):
