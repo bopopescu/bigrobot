@@ -138,11 +138,15 @@ class T5(object):
         url = '%s/api/v1/data/controller/applications/bvs/info/endpoint-manager/vnses[tenant-name="%s"]' % (c.base_url, tenant)
         c.rest.get(url)
         data = c.rest.content()
-        i = 0
-        while (i <= int(len(data))):
-                url = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/switch-port-membership-rules[switch-name="%s"][interface-name="%s"]' % (c.base_url, tenant, data[i]["name"], switch, intf)
-                c.rest.put(url, {"switch-name": switch, "interface-name": intf, "vlan": data[i]["internal-vlan"]})
-                i = i + 1
+        list_vlan_id = []
+        for i in range(0, len(data)):
+            if data[i]["internal-vlan"] not in list_vlan_id:
+                list_vlan_id.append(data[i]["internal-vlan"])
+        list_vlan_id = sorted(list_vlan_id)
+        for j in range(0, len(data)):
+            if data[j]["internal-vlan"] in list_vlan_id:
+                url = '%s/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/switch-port-membership-rules[switch-name="%s"][interface-name="%s"]' % (c.base_url, tenant, data[j]["name"], switch, intf)
+                c.rest.put(url, {"switch-name": switch, "interface-name": intf, "vlan": data[j]["internal-vlan"]})
         
     def rest_delete_vns(self, tenant, vns=None):
         t = test.Test()
@@ -465,7 +469,7 @@ class T5(object):
         data = c.rest.content()
         for i in range(0,len(data)):
                 if len(data) != 0:
-                    if data[i]["tenant-name"] == re.search('t\B', 'data[i]["tenant-name"]'):
+                    if data[i]["tenant-name"] == re.search('^t.*', 'data[i]["tenant-name"]'):
                         helpers.log("Expected Tenants are present in the config")
                         return True
                     else:
