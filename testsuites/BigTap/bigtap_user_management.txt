@@ -9,6 +9,9 @@ Library  keywords/BsnCommon.py
 Library  keywords/AppController.py
 Library  keywords/BigTap.py
 
+* Variables
+${version}  Big Network Controller 3.0.1
+
 *Test Case
 Verify username userChkPassword can have all lower-case alphabet password
     verify config  userChkPassword  bsnbsn    
@@ -185,6 +188,6 @@ bigtap suite setup
     rest add delivery interface to rbac  chkpassword-view  delivery_name='allow-all' 
     rest add match to rbac  chkpassword-view  match_name='allow-all'       
     
-verify config  [Arguments]  ${username}  ${new_password}
+verify config  [Arguments]  ${username}  ${new_password}  ${version}
     ${content}=  rest show version  user=${username}  password=${new_password}
-    Should Contain  ${content}  Big Network Controller 3.0.0
+    Should Contain  ${content}  ${version}
