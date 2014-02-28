@@ -10,164 +10,164 @@ Library  keywords/AppController.py
 Library  keywords/BigTap.py
 
 *Test Case
-Verify username admin can have all lower-case alphabet password
+Verify username userChkPassword can have all lower-case alphabet password
     verify config  userChkPassword  bsnbsn    
 
-Verify username admin can have all upper-case alphabet password
+Verify username userChkPassword can have all upper-case alphabet password
     rest add user password  userChkPassword  BSNBSN
     verify config  userChkPassword  BSNBSN
 
-Verify username admin can have a mix of lower-case and upper-case alphabet password
+Verify username userChkPassword can have a mix of lower-case and upper-case alphabet password
     rest add user password  userChkPassword  cLiEnTcLiEnT
     verify config  userChkPassword  cLiEnTcLiEnT 
     [Tags]  sanity  platform      
 
-Verify username admin can have a numeric password
+Verify username userChkPassword can have a numeric password
     rest add user password  userChkPassword  1234567890
     verify config  userChkPassword  1234567890
     [Tags]  sanity  platform      
     
-Verify username admin can have a alphanumeric (alphabet all small) password
+Verify username userChkPassword can have a alphanumeric (alphabet all small) password
     rest add user password  userChkPassword  bsn1234
     verify config  userChkPassword  bsn1234
     [Tags]  sanity  platform        
     
-Verify username admin can have a alphanumeric (alphabet all caps) password
+Verify username userChkPassword can have a alphanumeric (alphabet all caps) password
     rest add user password  userChkPassword  BSN1234
     verify config  userChkPassword  BSN1234
     [Tags]  sanity  platform        
 
-Verify username admin can have a alphanumeric password with a !
+Verify username userChkPassword can have a alphanumeric password with a !
     rest add user password  userChkPassword  bSn1234!
     verify config  userChkPassword  bSn1234!
     [Tags]  sanity  platform        
 
-Verify username admin can have a alphanumeric password with a @
+Verify username userChkPassword can have a alphanumeric password with a @
     rest add user password  userChkPassword  bSn1234@
     verify config  userChkPassword  bSn1234@
     [Tags]  sanity  platform        
 
-Verify username admin can have a alphanumeric password with a #
+Verify username userChkPassword can have a alphanumeric password with a #
     rest add user password  userChkPassword  bSn1234%23
     verify config  userChkPassword  bSn1234#
     [Tags]  sanity  platform  
 
-Verify username admin can have a alphanumeric password with a $
+Verify username userChkPassword can have a alphanumeric password with a $
     rest add user password  userChkPassword  bSn1234$
     verify config  userChkPassword  bSn1234$
     [Tags]  sanity  platform        
 
-Verify username admin can have a alphanumeric password with a ?
+Verify username userChkPassword can have a alphanumeric password with a ?
     rest add user password  userChkPassword  bSn1234%3F
     verify config  userChkPassword  bSn1234?
     [Tags]  sanity  platform       
 
-Verify username admin can have a alphanumeric password with a >
+Verify username userChkPassword can have a alphanumeric password with a >
     rest add user password  userChkPassword  bSn1234%3E
     verify config  userChkPassword  bSn1234>
     [Tags]  sanity  platform   
 
-Verify username admin can have a alphanumeric password with a ^
+Verify username userChkPassword can have a alphanumeric password with a ^
     rest add user password  userChkPassword  bSn1234^
     verify config  userChkPassword  bSn1234^    
     [Tags]  sanity  platform        
 
-Verify username admin can have a alphanumeric password with a &
+Verify username userChkPassword can have a alphanumeric password with a &
     rest add user password  userChkPassword  bSn1234&
     verify config  userChkPassword  bSn1234&
     [Tags]  sanity  platform        
 
-Verify username admin can have a alphanumeric password with a *
+Verify username userChkPassword can have a alphanumeric password with a *
     rest add user password  userChkPassword  bSn1234*
     verify config  userChkPassword  bSn1234*
     [Tags]  sanity  platform        
 
-Verify username admin can have a alphanumeric password with a (
+Verify username userChkPassword can have a alphanumeric password with a (
     rest add user password  userChkPassword  bSn1234(
     verify config  userChkPassword  bSn1234(
     [Tags]  sanity  platform        
 
-Verify username admin can have a alphanumeric password with a )
+Verify username userChkPassword can have a alphanumeric password with a )
     rest add user password  userChkPassword  bSn1234)
     verify config  userChkPassword  bSn1234)
     [Tags]  sanity  platform        
 
-Verify username admin can have a alphanumeric password with a -
+Verify username userChkPassword can have a alphanumeric password with a -
     rest add user password  userChkPassword  bSn1234-
     verify config  userChkPassword  bSn1234-
     [Tags]  sanity  platform        
 
-Verify username admin can have a alphanumeric password with a _
+Verify username userChkPassword can have a alphanumeric password with a _
     rest add user password  userChkPassword  bSn1234_
     verify config  userChkPassword  bSn1234_
     [Tags]  sanity  platform        
 
-Verify username admin can have a alphanumeric password with a ;
+Verify username userChkPassword can have a alphanumeric password with a ;
     rest add user password  userChkPassword  bSn1234%3B
     verify config  userChkPassword  bSn1234;
     [Tags]  sanity  platform       
 
-Verify username admin can have a alphanumeric password with a }
+Verify username userChkPassword can have a alphanumeric password with a }
     rest add user password  userChkPassword  bSn1234}
     verify config  userChkPassword  bSn1234}
     [Tags]  sanity  platform        
 
-Verify username admin can have a alphanumeric password with a {
+Verify username userChkPassword can have a alphanumeric password with a {
     rest add user password  userChkPassword  bSn1234{
     verify config  userChkPassword  bSn1234{
     [Tags]  sanity  platform    
 
-Verify username admin can have a alphanumeric password with a [
+Verify username userChkPassword can have a alphanumeric password with a [
     rest add user password  userChkPassword  bSn1234[
     verify config  userChkPassword  bSn1234[
     [Tags]  sanity  platform        
 
-Verify username admin can have a alphanumeric password with a ]
+Verify username userChkPassword can have a alphanumeric password with a ]
     rest add user password  userChkPassword  bSn1234]
     verify config  userChkPassword  bSn1234]
     [Tags]  sanity  platform        
 
-Verify username admin can have a alphanumeric password with a |
+Verify username userChkPassword can have a alphanumeric password with a |
     rest add user password  userChkPassword  bSn|1234
     verify config  userChkPassword  bSn|1234
     [Tags]  sanity  platform       
         
-Verify username admin can have a alphanumeric password with a \
+Verify username userChkPassword can have a alphanumeric password with a \
     rest add user password  userChkPassword  bSn1234%5C
     verify config  userChkPassword  bSn1234\\ 
     [Tags]  sanity  platform        
         
-Verify username admin can have a alphanumeric password with a :
+Verify username userChkPassword can have a alphanumeric password with a :
     rest add user password  userChkPassword  bSn:1234
     verify config  userChkPassword  bSn:1234
     [Tags]  sanity  platform        
     
-Verify username admin can have a alphanumeric password with a ,
+Verify username userChkPassword can have a alphanumeric password with a ,
     rest add user password  userChkPassword  bSn,1234
     verify config  userChkPassword  bSn,1234
     [Tags]  sanity  platform        
     
-Verify username admin can have a alphanumeric password with a .
+Verify username userChkPassword can have a alphanumeric password with a .
     rest add user password  userChkPassword  bSn.1234
     verify config  userChkPassword  bSn.1234
     [Tags]  sanity  platform           
     
-Verify username admin can have a alphanumeric password with a <
+Verify username userChkPassword can have a alphanumeric password with a <
     rest add user password  userChkPassword  bSn1234<
     verify config  userChkPassword  bSn1234<
     [Tags]  sanity  platform        
     
-Verify username admin can have a alphanumeric password with a /
+Verify username userChkPassword can have a alphanumeric password with a /
     rest add user password  userChkPassword  bSn1234/
     verify config  userChkPassword  bSn1234/
     [Tags]  sanity  platform        
 
-Verify username admin can have a alphanumeric password with a ~
+Verify username userChkPassword can have a alphanumeric password with a ~
     rest add user password  userChkPassword  bSn1234~
     verify config  userChkPassword  bSn1234~
     [Tags]  sanity  platform     
     
-Verify username admin can have a alphanumeric password with a `
+Verify username userChkPassword can have a alphanumeric password with a `
     rest add user password  userChkPassword  bSn1234`
     verify config  userChkPassword  bSn1234`
     [Tags]  sanity  platform  
