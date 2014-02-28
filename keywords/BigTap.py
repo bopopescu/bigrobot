@@ -210,6 +210,28 @@ class BigTap(object):
         helpers.test_log("INFO: Bigtap reports feature: %s  -  as: %s " % (feature, data[0][feature]))
         return str(data[0][feature])
 
+#  Mingtao
+    def cli_show_feature(self, feature_name='l3-l4'):
+        t = test.Test()
+        c = t.controller('master')
+        string = 'show running-config bigtap |  grep ' + str(feature_name) + ' | wc -l '
+        c.cli(string)
+        content = c.cli_content()
+        lines = content.split('\r\n')
+        helpers.log("***** lines: %s" % lines)
+        if int(lines[1]) == 0:
+            helpers.log("INFO: the %s  NOT configured" % str(feature_name))
+            return "False"
+        elif int(lines[1]) == 1:
+            helpers.log("INFO: the %s  is configured" % str(feature_name))
+            return "True"
+        else:
+            helpers.test_failure(c.rest.error())
+            return False
+
+    def cli_show_l3_l4(self):
+        return self.cli_show_feature(self, feature_name='l3-l4')
+
 
 
 ###################################################
