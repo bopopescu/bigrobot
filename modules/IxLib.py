@@ -304,7 +304,7 @@ class Ixia(object):
     
     def ix_setup_traffic_streams_ethernet(self, mac1, mac2, frameType, frameSize, frameRate,
                                       frameMode, frameCount, flow, name, ethertype=None, vlan_id=None, vlan_cnt=1, vlan_step=None,
-                                      crc=None, src_ip = None, dst_ip = None, no_arp=False,
+                                      line_rate = None, crc=None, src_ip = None, dst_ip = None, no_arp=False,
                                       protocol= None, src_port= None, dst_port = None,
                                       icmp_type = None, icmp_code = None, ip_type = 'ipv4'):
         '''
@@ -331,8 +331,12 @@ class Ixia(object):
         self._handle.setAttribute(trafficStream1, '-enabled', True)
         self._handle.setAttribute(trafficStream1 + '/highLevelStream:1/' + 'frameSize', '-type', frameType)
         self._handle.setAttribute(trafficStream1 + '/highLevelStream:1/' + 'frameSize', '-fixedSize', frameSize)
-        self._handle.setAttribute(trafficStream1 + '/highLevelStream:1/' + 'frameRate', '-type', frameMode)
-        self._handle.setAttribute(trafficStream1 + '/highLevelStream:1/' + 'frameRate', '-rate', frameRate)
+        if line_rate is None:
+            self._handle.setAttribute(trafficStream1 + '/highLevelStream:1/' + 'frameRate', '-type', frameMode)
+            self._handle.setAttribute(trafficStream1 + '/highLevelStream:1/' + 'frameRate', '-rate', frameRate)
+        else:
+            self._handle.setAttribute(trafficStream1 + '/highLevelStream:1/' + 'frameRate', '-rate', line_rate)
+        
         if crc is not None:
             self._handle.setAttribute(trafficStream1 + '/highLevelStream:1', '-crc', 'badCrc')
         if ethertype is not None:
@@ -544,6 +548,7 @@ class Ixia(object):
         name = kwargs.get('name', 'gobot_default')
         ethertype = kwargs.get('ethertype', None)
         vlan_id = kwargs.get('vlan_id', None)
+        line_rate = kwargs.get('line_rate', None)
         if vlan_id is not None:
             ethertype = '8100'
         crc = kwargs.get('crc', None)
@@ -604,7 +609,7 @@ class Ixia(object):
         traffic_stream = self.ix_setup_traffic_streams_ethernet(mac_devices[0], mac_devices[1],
                                                        frame_type, self._frame_size, frame_rate, frame_mode,
                                                        frame_cnt, stream_flow, name, ethertype, vlan_id, vlan_cnt = vlan_cnt, vlan_step = vlan_step,
-                                                       crc = crc, no_arp = no_arp)
+                                                       crc = crc, no_arp = no_arp, line_rate = line_rate)
         helpers.log('Created Traffic Stream : %s' % traffic_stream)
         self._traffic_stream[name] = traffic_stream
         helpers.log('Applying Traffic config..')
@@ -686,6 +691,7 @@ class Ixia(object):
         vlan_id = kwargs.get('vlan_id', None)
         vlan_cnt = kwargs.get('vlan_cnt', 1)
         vlan_step = kwargs.get('vlan_step', 1)
+        line_rate = kwargs.get('line_rate', None)
         
         crc = kwargs.get('crc', None)
         ip_type = 'ipv4'
@@ -770,8 +776,8 @@ class Ixia(object):
             create_topo.append(self._topology[match_uni2.group(1).lower()])
             stream_flow = 'uni-directional'
         elif match_bi:
-            create_topo.append(self._topology[match_bi.group(2).lower()])
             create_topo.append(self._topology[match_bi.group(1).lower()])
+            create_topo.append(self._topology[match_bi.group(2).lower()])
             stream_flow = 'bi-directional'
         # Create Ether Device with IpDevices:
         
@@ -792,7 +798,7 @@ class Ixia(object):
                                                        frame_type, self._frame_size, frame_rate, frame_mode,
                                                        frame_cnt, stream_flow, name, vlan_id = vlan_id, crc = crc, src_ip = src_ip, dst_ip = dst_ip,
                                                        protocol = protocol, icmp_type = icmp_type, icmp_code = icmp_code, vlan_cnt = vlan_cnt, vlan_step = vlan_step,
-                                                       src_port = src_port, dst_port = dst_port, no_arp = no_arp, ethertype = ethertype)
+                                                       src_port = src_port, dst_port = dst_port, no_arp = no_arp, ethertype = ethertype, line_rate = line_rate)
             
             traffic_stream1.append(traffic_stream)
         else:
@@ -805,7 +811,7 @@ class Ixia(object):
             traffic_item = self.ix_setup_traffic_streams_ethernet(ip_devices[0], ip_devices[1], frame_type, self._frame_size, frame_rate, frame_mode,
                                                          frame_cnt, stream_flow, name, vlan_id = vlan_id, crc = crc, vlan_cnt = vlan_cnt, vlan_step = vlan_step,
                                                          protocol= protocol, icmp_type = icmp_type, icmp_code = icmp_code, 
-                                                         src_port = src_port, dst_port = dst_port, ethertype = ethertype, ip_type = ip_type)
+                                                         src_port = src_port, dst_port = dst_port, ethertype = ethertype, ip_type = ip_type, line_rate = line_rate)
             traffic_stream1.append(traffic_item)
         
         helpers.log('### Created Traffic Stream with Ip Devices ...')
@@ -990,10 +996,10 @@ class Ixia(object):
         handle.remove(handle.getRoot()+'traffic'+'/trafficItem')
         handle.commit()   
         helpers.log('succes removing traffic Items Configured!!!')
-        if self._started_hosts:
-            for topo in self._topology:
-                self.ix_stop_hosts(topo)
-                helpers.log('Successfuly Stopped Hosts on Topology : %s ' % topo)
+        #if self._started_hosts:
+        for topo in self._topology:
+            self.ix_stop_hosts(topo)
+            helpers.log('Successfuly Stopped Hosts on Topology : %s ' % topo)
         helpers.log('Sleeps 3 sec for Hosts to be Stopped')
         time.sleep(3)
         for topo in self._topology.values():
