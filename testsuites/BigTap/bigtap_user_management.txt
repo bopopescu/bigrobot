@@ -188,6 +188,6 @@ bigtap suite setup
     rest add delivery interface to rbac  chkpassword-view  delivery_name='allow-all' 
     rest add match to rbac  chkpassword-view  match_name='allow-all'       
     
-verify config  [Arguments]  ${username}  ${new_password}  ${version}
+verify config  [Arguments]  ${username}  ${new_password}
     ${content}=  rest show version  user=${username}  password=${new_password}
     Should Contain  ${content}  ${version}
