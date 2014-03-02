@@ -358,6 +358,33 @@ Verify (L3) Ethernet type hashing for non-IP packets
     re-enable disabled lag interfaces  s2  port-channel2  port-channel3  
     [Tags]  lag  hashing  l3ethertype
 
+Verify (L3) VLAN Id hashing for non-IP packets
+    configure lag interfaces with hash mode  L3 
+    disable other lag interfaces  s1  port-channel2  port-channel3  
+    disable other lag interfaces  s2  port-channel2  port-channel3  
+    ${stream1}=  L2 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:01
+    ...     ethertype=8100  vlan_id=100  name=a1_b_flow
+    ${stream2}=  L2 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:02
+    ...     ethertype=8100  vlan_id=101  name=a2_b_flow    
+    ${stream3}=  L2 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:03
+    ...     ethertype=8100  vlan_id=102  name=a3_b_flow
+    ${stream4}=  L2 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:04
+    ...     ethertype=8100  vlan_id=103  name=a4_b_flow    
+    ${stream5}=  L2 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:05
+    ...     ethertype=8100  vlan_id=104  name=a5_b_flow
+    ${stream6}=  L2 add  flow=a->b  frame_rate=1000  frame_size=64  frame_cnt=10000
+    ...     src_mac=00:01:02:03:04:00  dst_mac=00:02:03:04:05:06
+    ...     ethertype=8100  vlan_id=100  name=a6_b_flow    
+    send and verify traffic  
+    re-enable disabled lag interfaces  s1  port-channel2  port-channel3  
+    re-enable disabled lag interfaces  s2  port-channel2  port-channel3  
+    [Tags]  lag  hashing  l3vlan
+
 Verify (L3) IP source address hashing
     configure lag interfaces with hash mode  L3 
     disable other lag interfaces  s1  port-channel2  port-channel3  
