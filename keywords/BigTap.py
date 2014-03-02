@@ -206,33 +206,66 @@ class BigTap(object):
         data = c.rest.content()
         if not data[0][feature]:
             helpers.test_log("INFO: ***********Bigtap does not have the %s shown *******" % feature)
-            return False
+            return "False"
         helpers.test_log("INFO: Bigtap reports feature: %s  -  as: %s " % (feature, data[0][feature]))
         return str(data[0][feature])
 
 #  Mingtao
-    def cli_show_feature(self, feature_name='l3-l4'):
+    def cli_show_feature(self, feature_name="l3-l4"):
         t = test.Test()
         c = t.controller('master')
-        string = 'show running-config bigtap |  grep ' + str(feature_name) + ' | wc -l '
+        string = "show running-config bigtap |  grep " + str(feature_name) + " | wc -l "
         c.cli(string)
         content = c.cli_content()
         lines = content.split('\r\n')
         helpers.log("***** lines: %s" % lines)
         if int(lines[1]) == 0:
             helpers.log("INFO: the %s  NOT configured" % str(feature_name))
-            return "False"
+            # return "False"
+            return False
         elif int(lines[1]) == 1:
             helpers.log("INFO: the %s  is configured" % str(feature_name))
-            return "True"
+            # return "True"
+            return True
         else:
             helpers.test_failure(c.rest.error())
             return False
 
     def cli_show_l3_l4(self):
-        return self.cli_show_feature(self, feature_name='l3-l4')
+        t = test.Test()
+        c = t.controller('master')
+        string = "show running-config bigtap |  grep l3-l4 | wc -l "
+        c.cli(string)
+        content = c.cli_content()
+        lines = content.split('\r\n')
+        helpers.log("***** lines: %s" % lines)
+        if int(lines[1]) == 0:
+            helpers.log("INFO: the l3-l4  NOT configured")
+            return False
+        elif int(lines[1]) == 1:
+            helpers.log("INFO: the l3-l4  is configured")
+            return True
+        else:
+            helpers.test_failure(c.rest.error())
+            return False
 
-
+    def cli_show_trackhost(self):
+        t = test.Test()
+        c = t.controller('master')
+        string = 'show running-config bigtap |  grep trackhost | wc -l '
+        c.cli(string)
+        content = c.cli_content()
+        lines = content.split('\r\n')
+        helpers.log("***** lines: %s" % lines)
+        if int(lines[1]) == 0:
+            helpers.log("INFO: the trackhost Not configured")
+            return "False"
+        elif int(lines[1]) == 1:
+            helpers.log("INFO: the trackhost  configured")
+            return "True"
+        else:
+            helpers.test_failure(c.rest.error())
+            return False
 
 ###################################################
 # All Bigtap Verify Commands Go Here:

@@ -91,6 +91,17 @@ class BsnCommon(object):
             helpers.test_failure("Fail:Value is not in range")
             return False
 
+    def verify_value_is_in_range(self, count1, range1=0, range2=30):
+        ''' Verify is value within range
+        '''
+        helpers.log("Count is %s and range1 is %s and range2 is %s" % (count1, range1, range2))
+        if (int(range1) <= int(count1)) and (int(count1) <= int(range2)):
+            helpers.log("Pass: Value is in range")
+            return True
+        else:
+            helpers.test_failure("Fail:Value is not in range")
+            return False
+
     def params(self, *args, **kwargs):
         """
         Return the value for a params (topo) attribute.
