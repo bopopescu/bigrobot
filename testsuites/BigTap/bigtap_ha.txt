@@ -125,14 +125,14 @@ Switch HA: Restart delivery switch
 Controller HA: Restart Process Floodlight on Master Controller:
     verify config 
     restart process on controller  floodlight  Master
-    Sleep  30
+    Sleep  90
     verify config    
     [Tags]  bigtap  ha
 
 Controller HA: Restart Process Floodlight on Slave Controller:
     verify config 
     restart process on controller  floodlight  Slave
-    Sleep  30
+    Sleep  90
     verify config    
     [Tags]  bigtap  ha 
 
@@ -237,6 +237,7 @@ Controller HA: Reboot Slave Controller:
 Controller HA: Reboot Master Controller:
     verify config 
     restart controller  Master
+    Sleep  120    
     verify config    
     [Tags]  bigtap  ha
 
@@ -283,9 +284,9 @@ verify config
     ${switchFlowVal2} =   REST show switch flow  s2  
     Should Be Equal As Integers  ${switchFlowVal2}  4   
     ${switchFlowVal3} =   REST show switch flow  s3  
-    Should Be Equal As Integers  ${switchFlowVal3}  2      
+    Should Be Equal As Integers  ${switchFlowVal3}  4      
     ${switchFlowVal4} =   REST show switch flow  s4  
-    Should Be Equal As Integers  ${switchFlowVal4}  2  
+    Should Be Equal As Integers  ${switchFlowVal4}  4  
 
     
 ha suite teardown
