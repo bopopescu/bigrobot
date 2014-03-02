@@ -821,7 +821,7 @@ class Ixia(object):
         self._traffi_apply = True  # Setting it True to Not Apply Changes while starting traffic
         return traffic_stream1[0]
     
-    def ix_start_traffic_ethernet(self, trafficHandle):
+    def ix_start_traffic_ethernet(self, trafficHandle = None):
         '''
             Returns portStatistics after starting the traffic that is configured in Traffic Stream using Mac devices and Topologies
         '''
@@ -837,7 +837,12 @@ class Ixia(object):
         time.sleep(2)
         # portStatistics = self._handle.getFilteredList(self._handle.getRoot()+'statistics', 'view', '-caption', 'Port Statistics')[0]
         time.sleep(5)
-        self._handle.execute('startStatelessTrafficBlocking', trafficHandle)
+        if trafficHandle is None:
+            helpers.log('No Traffic Stream is given so, starting traffic on all configured Streams !!')
+            self._handle.execute('startStatelessTrafficBlocking', self._handle.getRoot() + 'traffic')
+        else:
+            helpers.log('Traffic Stream is given, starting traffic on given stream')
+            self._handle.execute('startStatelessTrafficBlocking', trafficHandle)
         time.sleep(10)
         helpers.log("### Traffic Started")
         return True
