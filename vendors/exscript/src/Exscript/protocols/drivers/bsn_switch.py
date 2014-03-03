@@ -39,7 +39,10 @@ _tacacs_re = re.compile(r'[\r\n]s\/key[\S ]+\r?%s' % _password_re[0].pattern)
 _prompt_re = [re.compile(r'[\r\n]\[?(\w+(-?\w+)?\s?@?)?[\-\w+\.:/]+(?:\([^\)]+\))?(:~)?( ~\])?[>#$] ?$')]
 
 
+# SwitchLight errors:
+#  Error: Invalid argument: Invalid datapath id (64-bit hex value): 11:22:GG:33:44
 _error_re = [re.compile(r'%Error'),
+             re.compile(r'invalid argument', re.I),
              re.compile(r'invalid input', re.I),
              re.compile(r'(?:incomplete|ambiguous) command', re.I),
              re.compile(r'connection timed out', re.I),

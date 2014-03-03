@@ -1546,7 +1546,6 @@ class SwitchLight(object):
 
     def cli_verify_portchannel_members(self, node, pc_number, *intf_name_list):
         '''
-            
             Objective:
             - Verify if portchannel contains the member interface that was configured 
                     
@@ -1585,6 +1584,45 @@ class SwitchLight(object):
                 if pass_count == len(intf_name_list):
                     return True
             return False
+        except:
+            helpers.test_failure("Could not execute command. Please check log for errors")
+            return False
+
+    def cli_return_member_interface_stats(self, node, pc_number, sub_interface, txrx, packet_byte="packet"):
+        '''           
+            Objective:
+            - Verify if portchannel contains the member interface that was configured 
+                    
+            Input:
+            | node | Reference to switch (as defined in .topo file) | 
+            | pcNumber | PortChannel number. Range is between 1 and 30 |                 
+                           
+            Return Value:
+            - True if member interface is present
+            - False if member interface is not present
+        '''
+        try:
+            t = test.Test()
+            s1 = t.switch(node)
+            cli_input = "show port-channel " + str(pc_number)
+            s1.enable(cli_input)
+            cli_output = s1.cli_content()
+            content = string.split(cli_output, '\n')
+            for i in range(0, len(content)):
+                if sub_interface in content[i]:
+                    txrx_value = re.split('\s+', content[i])
+                    if  "tx" in txrx.lower():
+                        if "packet" in packet_byte:
+                            return txrx_value[2]
+                        else:
+                            return txrx_value[3]
+                    elif "rx" in txrx.lower():
+                        if "packet" in packet_byte:
+                            return txrx_value[4]
+                        else:
+                            return txrx_value[5]
+                    else:
+                        return False
         except:
             helpers.test_failure("Could not execute command. Please check log for errors")
             return False

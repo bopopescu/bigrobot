@@ -8,6 +8,7 @@ Force Tags   platform Sanity
 Library  keywords/BsnCommon.py
 Library  keywords/AppController.py
 Library  keywords/BigTap.py
+Library  keywords/SwitchLight.py
 
 *Test Case
 Verify # of flows with and without Inport Mask
@@ -48,7 +49,7 @@ Verify inport masking with 4 filter interfaces on S1 and 4 delivery interfaces o
     
 Verify inport masking with 1 filter interfaces on S1 and S4 and 1 delivery interfaces on S2
     T6098
-    [Tags]  bigtap  inport-mask  
+    [Tags]  bigtap  inport-mask  T6098  
     
 Verify inport masking with 1 filter interfaces on S1 and S4 and 1 delivery interfaces on S2 and service nodes on S2 and S5
     T6099
@@ -56,27 +57,27 @@ Verify inport masking with 1 filter interfaces on S1 and S4 and 1 delivery inter
     
 Verify inport masking with 1 filter interfaces on S1 and S4 and 1 delivery interfaces on S2 and S3
     T6101
-    [Tags]  bigtap  inport-mask  
+    [Tags]  bigtap  inport-mask  T6101  
         
 Verify inport masking with 1 filter interfaces on S1 and S4 and 1 delivery interfaces on S2 and S3 and service nodes on S5
     T6102    
-    [Tags]  bigtap  inport-mask 
+    [Tags]  bigtap  inport-mask  T6102 
     
 Verify inport masking with 2 filter interfaces on S1 and S4 and 1 delivery interfaces on S2
     T6103 
-    [Tags]  bigtap  inport-mask  
+    [Tags]  bigtap  inport-mask  T6103  
     
 Verify inport masking with 2 filter interfaces on S1 and S4 and 1 delivery interfaces on S2 and service nodes on S2
     T6104 
-    [Tags]  bigtap  inport-mask  
+    [Tags]  bigtap  inport-mask  T6104  
     
 Verify inport masking with 2 filter interfaces on S1 and S4 and 1 delivery interfaces on S2 and S3 and service nodes on S5
     T6105 
-    [Tags]  bigtap  inport-mask  
+    [Tags]  bigtap  inport-mask  T6105  
         
 Verify inport masking with 2 filter interfaces on S1 and S4 and 2 delivery interfaces on S2 and S3
     T6106     
-    [Tags]  bigtap  inport-mask  
+    [Tags]  bigtap  inport-mask  T6106  
 * Keywords
 
 inport suite setup
@@ -121,6 +122,14 @@ inport suite setup
  
     rest add interface role  s6  ethernet31   service       S6-AR6-ET31-PRE
     rest add interface role  s6  ethernet32   service       S6-AR6-ET32-POST
+    cli disable interface  s1  ethernet45
+    cli disable interface  s2  ethernet46
+    cli disable interface  s3  ethernet45
+    cli disable interface  s4  ethernet46
+    cli disable interface  s5  port-channel5
+    cli disable interface  s5  port-channel6
+    cli disable interface  s6  port-channel5
+    cli disable interface  s6  port-channel6                      
 
 bigtap-inport test setup
     REST disable feature  inport-mask
@@ -343,7 +352,7 @@ T6098
     ${switchFlowVal} =   REST show switch flow  s1  
     Should Be Equal As Integers  ${switchFlowVal}  1  
     ${switchFlowVal2} =   REST show switch flow  s4  
-    Should Be Equal As Integers  ${switchFlowVal2}  1  
+    Should Be Equal As Integers  ${switchFlowVal2}  2  
     ${switchFlowVal1} =   REST show switch flow  s2  
     Should Be Equal As Integers  ${switchFlowVal1}  1  
     ${switchFlowVal3} =   REST show switch flow  s5  
@@ -376,7 +385,7 @@ T6099
     ${switchFlowVal1} =   REST show switch flow  s2  
     Should Be Equal As Integers  ${switchFlowVal1}  2  
     ${switchFlowVal2} =   REST show switch flow  s4  
-    Should Be Equal As Integers  ${switchFlowVal2}  1  
+    Should Be Equal As Integers  ${switchFlowVal2}  2  
     ${switchFlowVal3} =   REST show switch flow  s5  
     ${switchFlowVal4} =   REST show switch flow  s6  
     REST verify coreswitch flows  ${switchFlowVal3}   ${switchFlowVal4}  2  0  
@@ -409,7 +418,7 @@ T6100
     ${switchFlowVal1} =   REST show switch flow  s2  
     Should Be Equal As Integers  ${switchFlowVal1}  2  
     ${switchFlowVal2} =   REST show switch flow  s4  
-    Should Be Equal As Integers  ${switchFlowVal2}  1  
+    Should Be Equal As Integers  ${switchFlowVal2}  2  
     ${switchFlowVal3} =   REST show switch flow  s5  
     ${switchFlowVal4} =   REST show switch flow  s6  
     REST verify coreswitch flows  ${switchFlowVal3}   ${switchFlowVal4}  3  0  
@@ -440,7 +449,7 @@ T6101
     ${switchFlowVal1} =   REST show switch flow  s2  
     Should Be Equal As Integers  ${switchFlowVal1}  1  
     ${switchFlowVal2} =   REST show switch flow  s4  
-    Should Be Equal As Integers  ${switchFlowVal2}  1  
+    Should Be Equal As Integers  ${switchFlowVal2}  2  
     ${switchFlowVal5} =   REST show switch flow  s3  
     Should Be Equal As Integers  ${switchFlowVal5}  1  
     ${switchFlowVal3} =   REST show switch flow  s5  
@@ -476,7 +485,7 @@ T6102
     ${switchFlowVal1} =   REST show switch flow  s2  
     Should Be Equal As Integers  ${switchFlowVal1}  1  
     ${switchFlowVal2} =   REST show switch flow  s4  
-    Should Be Equal As Integers  ${switchFlowVal2}  3  
+    Should Be Equal As Integers  ${switchFlowVal2}  2  
     ${switchFlowVal5} =   REST show switch flow  s3  
     Should Be Equal As Integers  ${switchFlowVal5}  1  
     ${switchFlowVal3} =   REST show switch flow  s5  
@@ -489,7 +498,7 @@ T6102
     ${switchFlowVal1} =   REST show switch flow  s2 
     Should Be Equal As Integers  ${switchFlowVal1}  1  
     ${switchFlowVal2} =   REST show switch flow  s4  
-    Should Be Equal As Integers  ${switchFlowVal2}  2  
+    Should Be Equal As Integers  ${switchFlowVal2}  1  
     ${switchFlowVal5} =   REST show switch flow  s3  
     Should Be Equal As Integers  ${switchFlowVal5}  1  
     ${switchFlowVal3} =   REST show switch flow  s5  
@@ -510,7 +519,7 @@ T6103
     ${switchFlowVal1} =   REST show switch flow  s2  
     Should Be Equal As Integers  ${switchFlowVal1}  1  
     ${switchFlowVal2} =   REST show switch flow  s4  
-    Should Be Equal As Integers  ${switchFlowVal2}  2  
+    Should Be Equal As Integers  ${switchFlowVal2}  3 
     ${switchFlowVal5} =   REST show switch flow  s3  
     Should Be Equal As Integers  ${switchFlowVal5}  0  
     ${switchFlowVal3} =   REST show switch flow  s5  
@@ -545,12 +554,12 @@ T6104
     ${switchFlowVal1} =   rest show switch flow  s2  
     Should Be Equal As Integers  ${switchFlowVal1}  2  
     ${switchFlowVal2} =   rest show switch flow  s4  
-    Should Be Equal As Integers  ${switchFlowVal2}  2  
+    Should Be Equal As Integers  ${switchFlowVal2}  3  
     ${switchFlowVal5} =   rest show switch flow  s3  
     Should Be Equal As Integers  ${switchFlowVal5}  0  
     ${switchFlowVal3} =   rest show switch flow  s5  
     ${switchFlowVal4} =   rest show switch flow  s6  
-    rest verify coreswitch flows  ${switchFlowVal3}   ${switchFlowVal4}  2  0  
+    rest verify coreswitch flows  ${switchFlowVal3}   ${switchFlowVal4}  1  1  
     rest enable feature  inport-mask     
     Sleep  2     
     ${switchFlowVal} =   rest show switch flow  s1  
@@ -581,12 +590,12 @@ T6105
     ${switchFlowVal1} =   rest show switch flow  s2  
     Should Be Equal As Integers  ${switchFlowVal1}  2  
     ${switchFlowVal2} =   rest show switch flow  s4  
-    Should Be Equal As Integers  ${switchFlowVal2}  4  
+    Should Be Equal As Integers  ${switchFlowVal2}  3  
     ${switchFlowVal5} =   rest show switch flow  s3  
     Should Be Equal As Integers  ${switchFlowVal5}  0  
     ${switchFlowVal3} =   rest show switch flow  s5  
     ${switchFlowVal4} =   rest show switch flow  s6  
-    rest verify coreswitch flows  ${switchFlowVal3}   ${switchFlowVal4}  3  0  
+    rest verify coreswitch flows  ${switchFlowVal3}   ${switchFlowVal4}  2  1  
     rest enable feature  inport-mask     
     Sleep  2     
     ${switchFlowVal} =   rest show switch flow  s1  
@@ -594,12 +603,12 @@ T6105
     ${switchFlowVal1} =   rest show switch flow  s2  
     Should Be Equal As Integers  ${switchFlowVal1}  2  
     ${switchFlowVal2} =   rest show switch flow  s4  
-    Should Be Equal As Integers  ${switchFlowVal2}  2  
+    Should Be Equal As Integers  ${switchFlowVal2}  1  
     ${switchFlowVal5} =   rest show switch flow  s3  
     Should Be Equal As Integers  ${switchFlowVal5}  0  
     ${switchFlowVal3} =   rest show switch flow  s5  
     ${switchFlowVal4} =   rest show switch flow  s6  
-    rest verify coreswitch flows  ${switchFlowVal3}   ${switchFlowVal4}  2  0  
+    rest verify coreswitch flows  ${switchFlowVal3}   ${switchFlowVal4}  2  1  
     
 T6106
     rest disable feature  inport-mask     
@@ -618,12 +627,12 @@ T6106
     ${switchFlowVal1} =   rest show switch flow  s2  
     Should Be Equal As Integers  ${switchFlowVal1}  1  
     ${switchFlowVal2} =   rest show switch flow  s4  
-    Should Be Equal As Integers  ${switchFlowVal2}  2  
+    Should Be Equal As Integers  ${switchFlowVal2}  3 
     ${switchFlowVal5} =   rest show switch flow  s3  
     Should Be Equal As Integers  ${switchFlowVal5}  1  
     ${switchFlowVal3} =   rest show switch flow  s5  
     ${switchFlowVal4} =   rest show switch flow  s6  
-    rest verify coreswitch flows  ${switchFlowVal3}   ${switchFlowVal4}  2  0  
+    rest verify coreswitch flows  ${switchFlowVal3}   ${switchFlowVal4}  1  1  
     rest enable feature  inport-mask     
     Sleep  2     
     ${switchFlowVal} =   rest show switch flow  s1  
@@ -636,13 +645,21 @@ T6106
     Should Be Equal As Integers  ${switchFlowVal5}  1  
     ${switchFlowVal3} =   rest show switch flow  s5  
     ${switchFlowVal4} =   rest show switch flow  s6  
-    rest verify coreswitch flows  ${switchFlowVal3}   ${switchFlowVal4}  1  0  
+    rest verify coreswitch flows  ${switchFlowVal3}   ${switchFlowVal4}  1  1  
 
 
 inport suite teardown
     REST delete policy  admin-view  P1
     REST delete service  S5
     REST delete service  S2
+    cli enable interface  s1  ethernet45
+    cli enable interface  s2  ethernet46
+    cli enable interface  s3  ethernet45
+    cli enable interface  s4  ethernet46
+    cli enable interface  s5  port-channel5
+    cli enable interface  s5  port-channel6
+    cli enable interface  s6  port-channel5
+    cli enable interface  s6  port-channel6            
     rest delete interface role  s1  ethernet5    filter          
     rest delete interface role  s1  ethernet6    filter        
     rest delete interface role  s1  ethernet7    filter
@@ -712,4 +729,5 @@ inport suite teardown
     rest delete switch  s3
     rest delete switch  s4
     rest delete switch  s5
-    rest delete switch  s6                    
+    rest delete switch  s6
+    base suite teardown                    

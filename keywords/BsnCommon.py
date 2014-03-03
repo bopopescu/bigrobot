@@ -75,16 +75,27 @@ class BsnCommon(object):
         rx = int(rx_value)
         vrange = int(rangev)
         if (rx >= (tx - vrange)) and (rx <= (tx + vrange)):
-            helpers.log("Pass:Traffic forwarded between 2 endpoints tx_rate:%d,rx_rate:%d" % (tx, rx))
+            helpers.log("Pass:Traffic forwarded between 2 endpoints tx:%d, rx:%d" % (tx, rx))
             return True
         else:
-            helpers.test_failure("Fail:Traffic forward between 2 endpoints tx_rate:%d,rx_rate:%d" % (tx, rx))
+            helpers.test_failure("Fail:Traffic forward between 2 endpoints tx:%d, rx:%d" % (tx, rx))
             return False
 
     def verify_switch_pkt_stats(self, count1, count2, range1=95, range2=5):
         ''' Verify is value is within range
         '''
         if (count1 >= range1 and count2 < range2) or (count2 >= range1 and count1 < range2):
+            helpers.log("Pass: Value is in range")
+            return True
+        else:
+            helpers.test_failure("Fail:Value is not in range")
+            return False
+
+    def verify_value_is_in_range(self, count1, range1=0, range2=30):
+        ''' Verify is value within range
+        '''
+        helpers.log("Count is %s and range1 is %s and range2 is %s" % (count1, range1, range2))
+        if (int(range1) <= int(count1)) and (int(count1) <= int(range2)):
             helpers.log("Pass: Value is in range")
             return True
         else:

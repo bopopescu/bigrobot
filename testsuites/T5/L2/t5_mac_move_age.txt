@@ -14,8 +14,8 @@ Library	         keywords/SwitchLight.py
 Library          keywords/Mininet.py
 Library	         keywords/Host.py
 Library		     keywords/Ixia.py
-Resource	     keywords_dev/prashanth/t5_dualleaf_three_rack_physical_resource.txt
-Resource		 keywords_dev/prashanth/t5_physical_variables.txt
+Resource	     testsuites/T5/t5_dualleaf_three_rack_physical_resource.txt
+Resource		 testsuites/T5/t5_physical_variables.txt
 
 
 * Test Case 
