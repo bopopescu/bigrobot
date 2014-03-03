@@ -38,11 +38,13 @@ s6:
   alias: leaf2-b
   user: admin
   password: adminadmin
+
 s7:
   ip: 10.195.0.21
   alias: spine0
   user: admin
   password: adminadmin
+  
 s8:
   ip: 10.195.0.22
   alias: spine1
@@ -71,7 +73,7 @@ h5:
 h6:
   ip: 10.195.0.106
   user: root
-  password: bsn
+  password: bsn  
 tg1:
   platform: 'ixia'
   chassis_ip: 10.192.85.151
