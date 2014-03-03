@@ -291,7 +291,7 @@ Bi-Driectional L3 Traffic with vlan_id
     ${report}=             fetch port stats
     verify results  transmitted_frames  received_frames
     clear stats
-    [Tags]  traffic  sanity  bigtap  
+    [Tags]  traffic  sanity  bigtap 
 
 Bi-Directional L3 Traffic with multiple vlan_ids
 # Basic test case with all default values and etherytype 8100, with vlan id
@@ -304,7 +304,7 @@ Bi-Directional L3 Traffic with multiple vlan_ids
     ${report}=             fetch port stats
     verify results  transmitted_frames  received_frames
     clear stats
-    [Tags]  traffic  sanity  bigtap  
+    [Tags]  traffic  sanity  bigtap
     
 Bi-Driectional L3 Traffic with vlan_id and crc
 # Basic test case with all default values and etherytype 8100, with vlan id
@@ -316,7 +316,7 @@ Bi-Driectional L3 Traffic with vlan_id and crc
     sleep                  ${sleep_time}
     ${report}=             fetch port stats
     verify results  transmitted_frames  received_frames
-    [Tags]  traffic  sanity  bigtap 
+    [Tags]  traffic  sanity  bigtap
 
 Bi-Directional L3 Traffic ICMP Echo
 # Basic test case with all default values and ICMP type and value
@@ -329,7 +329,33 @@ Bi-Directional L3 Traffic ICMP Echo
     ${report}=             fetch port stats
     verify results  transmitted_frames  received_frames
     [Tags]  traffic  sanity  bigtap
-    
+
+Bi-Driectional L3 Traffic with differnt ethertypes and streams
+# Basic test case with all default values and etherytype 8100, with vlan id
+	${stream1}=  L3 add  flow=a->b  frame_rate=1000  frame_size=128  frame_cnt=10000
+    ...     src_mac=${src_mac}  dst_mac=${dst_mac}  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  ethertype=0800  name=a0_b_flow
+    ${stream2}=  L3 add  flow=a->b  frame_rate=1000  frame_size=128  frame_cnt=10000
+    ...     src_mac=${src_mac}  dst_mac=${dst_mac}  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  ethertype=0806  name=a1_b_flow
+    ${stream3}=  L3 add  flow=a->b  frame_rate=1000  frame_size=128  frame_cnt=10000
+    ...     src_mac=${src_mac}  dst_mac=${dst_mac}  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  ethertype=8847  name=a2_b_flow
+    ${stream4}=  L3 add  flow=a->b  frame_rate=1000  frame_size=128  frame_cnt=10000
+    ...     src_mac=${src_mac}  dst_mac=${dst_mac}  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  ethertype=8100  name=a3_b_flow
+    ${stream5}=  L3 add  flow=a->b  frame_rate=1000  frame_size=128  frame_cnt=10000
+    ...     src_mac=${src_mac}  dst_mac=${dst_mac}  no_arp=True
+    ...     src_ip=2001:0:0:0:0:0:0:01  dst_ip=2002:0:0:0:0:0:0:01  ethertype=86dd  name=a4_b_flow
+    clear stats
+    start traffic
+    sleep                  ${sleep_time}
+    stop traffic
+    sleep                  ${sleep_time}
+    ${report}=             fetch port stats
+    verify results  transmitted_frames  received_frames
+    [Tags]  traffic  sanity  bigtap
+  
 *Keywords
 atest teardown
 	delete traffic
