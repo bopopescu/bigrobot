@@ -7,7 +7,7 @@ class T5Fabric(object):
 
     def __init__(self):
 #        t = test.Test()
-#        c = t.controller()
+#        c = t.controller('master')
         pass        
 #        url = '%s/api/v1/auth/login' % c.base_url
 #        result = c.rest.post(url, {"user":"admin", "password":"adminadmin"})
@@ -21,7 +21,7 @@ class T5Fabric(object):
             Returns: gives list of connected switches
         '''
         t = test.Test()
-        c = t.controller()
+        c = t.controller('master')
         url = '%s/api/v1/data/controller/core/switch' % (c.base_url)
         c.rest.get(url)
         
@@ -33,7 +33,7 @@ class T5Fabric(object):
             Returns: Print the Total fabric links
         '''
         t = test.Test()
-        c = t.controller()
+        c = t.controller('master')
         
         url = '%s/api/v1/data/controller/applications/bvs/info/fabric?select=link' % (c.base_url)       
         c.rest.get(url)
@@ -49,7 +49,7 @@ class T5Fabric(object):
             Returns: add the fabric switch
         '''
         t = test.Test()
-        c = t.controller()
+        c = t.controller('master')
                         
         url = '%s/api/v1/data/controller/core/switch-config[name="%s"]' % (c.base_url, switch)       
         try:
@@ -62,7 +62,7 @@ class T5Fabric(object):
     
     def rest_add_dpid(self, switch, dpid):
         t = test.Test()
-        c = t.controller()
+        c = t.controller('master')
         
         url = '%s/api/v1/data/controller/core/switch-config[name="%s"]' % (c.base_url, switch)       
         try:
@@ -75,7 +75,7 @@ class T5Fabric(object):
     
     def rest_add_fabric_role(self, switch, role):
         t = test.Test()
-        c = t.controller()
+        c = t.controller('master')
         
         url = '%s/api/v1/data/controller/core/switch-config[name="%s"]' % (c.base_url, switch)       
         try:
@@ -87,7 +87,7 @@ class T5Fabric(object):
     
     def rest_add_leaf_group(self, switch, group):
         t = test.Test()
-        c = t.controller()
+        c = t.controller('master')
         
         url = '%s/api/v1/data/controller/core/switch-config[name="%s"]' % (c.base_url, switch)       
         try:
@@ -104,7 +104,7 @@ class T5Fabric(object):
            Input:  Switch name
         '''
         t = test.Test()
-        c = t.controller()
+        c = t.controller('master')
         url = '%s/api/v1/data/controller/core/switch-config[name="%s"]/leaf-group' % (c.base_url, switch)
         try:
             c.rest.delete(url, {"leaf-group": None}) 
@@ -115,7 +115,7 @@ class T5Fabric(object):
         
     def rest_delete_fabric_switch(self, switch=None):
         t = test.Test()
-        c = t.controller()
+        c = t.controller('master')
         
         url = '%s/api/v1/data/controller/core/switch-config[name="%s"]' % (c.base_url, switch)       
         try:
@@ -127,7 +127,7 @@ class T5Fabric(object):
     
     def rest_verify_fabric_switch_all(self):
         t = test.Test()
-        c = t.controller()
+        c = t.controller('master')
         url = '%s/api/v1/data/controller/core/switch' % (c.base_url)       
         c.rest.get(url)
         data = c.rest.content()
@@ -142,7 +142,7 @@ class T5Fabric(object):
     
     def rest_verify_fabric_link_after_switch_removal(self, switch):
         t = test.Test()
-        c = t.controller()
+        c = t.controller('master')
         url = '%s/api/v1/data/controller/applications/bvs/info/fabric?select=link' % (c.base_url)       
         c.rest.get(url)
         data = c.rest.content()       
@@ -155,7 +155,7 @@ class T5Fabric(object):
     
     def rest_verify_fabric_link_common(self, switch):
         t = test.Test()
-        c = t.controller()
+        c = t.controller('master')
         url = '%s/api/v1/data/controller/applications/bvs/info/fabric?select=link' % (c.base_url)       
         c.rest.get(url)
         data = c.rest.content()
@@ -167,7 +167,7 @@ class T5Fabric(object):
                          
     def rest_verify_fabric_switch_role(self, dpid, role):
         t = test.Test()
-        c = t.controller()
+        c = t.controller('master')
         url = '%s/api/v1/data/controller/core/switch' % (c.base_url)       
         c.rest.get(url)
         data = c.rest.content()
@@ -185,7 +185,7 @@ class T5Fabric(object):
 
     def rest_delete_fabric_role(self, switch, role=None):
         t = test.Test()
-        c = t.controller()
+        c = t.controller('master')
         
         url = '%s/api/v1/data/controller/core/switch-config[name="%s"]/fabric-role' % (c.base_url, switch)       
         c.rest.delete(url, {"fabric-role": role})
@@ -202,7 +202,7 @@ class T5Fabric(object):
           output : Will provide the No of lag it is suppose to form between Spine and Leaf in Dual Rack or single rack setup
         '''   
         t = test.Test()
-        c = t.controller()
+        c = t.controller('master')
         url = '%s/api/v1/data/controller/core/switch[name="%s"]/interface' % (c.base_url, switch)       
         c.rest.get(url)
         data = c.rest.content()
@@ -267,7 +267,7 @@ class T5Fabric(object):
     def rest_verify_fabric_switch(self, dpid):
         # Function verify fabric switch status for default as well after fabric role configuration
         t = test.Test()
-        c = t.controller()
+        c = t.controller('master')
         url = '%s/api/v1/data/controller/core/switch[dpid="%s"]' % (c.base_url, dpid)       
         c.rest.get(url)
         data = c.rest.content()
@@ -298,7 +298,7 @@ class T5Fabric(object):
       
     def rest_verify_fabric_link(self):
         t = test.Test()
-        c = t.controller()
+        c = t.controller('master')
         url = '%s/api/v1/data/controller/core/switch/interface' % (c.base_url)      
         c.rest.get(url)
         data = c.rest.content()  
@@ -325,7 +325,7 @@ class T5Fabric(object):
                         
     def rest_verify_no_of_rack(self):
         t = test.Test()
-        c = t.controller()
+        c = t.controller('master')
         url = '%s/api/v1/data/controller/core/switch' % (c.base_url)
         c.rest.get(url)
         data = c.rest.content()
@@ -344,7 +344,7 @@ class T5Fabric(object):
     
     def rest_verify_no_of_spine(self):
         t = test.Test()
-        c = t.controller()
+        c = t.controller('master')
         url = '%s/api/v1/data/controller/core/switch' % (c.base_url)
         c.rest.get(url)
         data = c.rest.content()
@@ -362,7 +362,7 @@ class T5Fabric(object):
             Output: Will check the total no of spine switches and compare against the rack connection spine switches.
         ''' 
         t = test.Test()
-        c = t.controller()
+        c = t.controller('master')
         url = '%s/api/v1/data/controller/core/switch[name="%s"]?select=fabric-lag' % (c.base_url, switcha)
         c.rest.get(url)
         data = c.rest.content()
@@ -385,7 +385,7 @@ class T5Fabric(object):
             Return: Match forwarding table lag/Port for peer switch edge ports
         '''
         t = test.Test()
-        c = t.controller()
+        c = t.controller('master')
         url = '%s/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch-name="%s"]/lag-table' % (c.base_url, switch)
         c.rest.get(url)
         data = c.rest.content()
@@ -418,7 +418,7 @@ class T5Fabric(object):
                     
     def rest_verify_fabric_interface_lacp(self, switch, intf):
         t = test.Test()
-        c = t.controller()
+        c = t.controller('master')
         url = '%s/api/v1/data/controller/core/switch[name="%s"]/interface[name="%s"]' % (c.base_url, switch, intf)      
         c.rest.get(url)
         data = c.rest.content()  
@@ -434,7 +434,7 @@ class T5Fabric(object):
             
     def rest_verify_fabric_error_dual_tor_peer_link(self, rack):
         t = test.Test()
-        c = t.controller()
+        c = t.controller('master')
         url = '%s/api/v1/data/controller/applications/bvs/info/fabric/errors/dual-tor/peer-link-absent' % (c.base_url)      
         c.rest.get(url)
         data = c.rest.content()
@@ -451,7 +451,7 @@ class T5Fabric(object):
                 
     def rest_verify_forwarding_port_table(self, switch): 
         t = test.Test()
-        c = t.controller()
+        c = t.controller('master')
         url = '%s/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch-name="%s"]/port-table' % (c.base_url, switch) 
         c.rest.get(url)          
         if not c.rest.status_code_ok():
@@ -465,7 +465,7 @@ class T5Fabric(object):
         Output" Rest output of the fabric interface for various validation
         '''
         t = test.Test()
-        c = t.controller()
+        c = t.controller('master')
         url = '%s/api/v1/data/controller/core/switch[name="%s"]/interface[name="%s"]' % (c.base_url, switch, intf) 
         c.rest.get(url) 
         return c.rest.content()
@@ -477,7 +477,7 @@ class T5Fabric(object):
         Output" validation of the fabric interface status
         '''
         t = test.Test()
-        c = t.controller()
+        c = t.controller('master')
         url = '%s/api/v1/data/controller/core/switch[name="%s"]/interface[name="%s"]' % (c.base_url, switch, intf) 
         c.rest.get(url)  
         data = c.rest.content()
@@ -504,7 +504,7 @@ class T5Fabric(object):
          Output" True/false based on the lag-id creation for the same edge port-groups on both the leaf switches
         '''
         t = test.Test()
-        c = t.controller()
+        c = t.controller('master')
         url_a = '%s/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch-name="%s"]/port-table' % (c.base_url, switcha) 
         c.rest.get(url_a)          
         data = c.rest.content()
@@ -525,7 +525,7 @@ class T5Fabric(object):
         Output" Find the fabric interface for the switch and check the source mac check setting
         '''
         t = test.Test()
-        c = t.controller()
+        c = t.controller('master')
         url = '%s/api/v1/data/controller/core/switch[name="%s"]/interface' % (c.base_url, switch)
         c.rest.get(url)
         data = c.rest.content()

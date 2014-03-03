@@ -34,7 +34,6 @@ tagged/untagged packet Mac move within the rack0
 	rest add vns  t1  v1
 	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
 	rest add interface to vns  t1  v1  leaf0-b  ${leaf0a_ixia_intf}  100  
-	
     ${stream}=             L3 add  no_arp=True  flow=a->b  src_mac=00:02:01:00:00:24  dst_mac=00:02:02:00:00:24  frame_rate=1000  frame_size=68  name=a_b_flow
     sleep  2
     start traffic  ${stream}
@@ -58,7 +57,6 @@ tagged/untagged packet move between rack
 	rest add vns  t1  v1
 	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
 	rest add interface to vns  t1  v1  leaf2-b  ${leaf2b_ixia_intf}  100  
-	
     ${stream}=             L3 add   no_arp=True   flow=a->f  src_mac=00:02:01:00:00:24  dst_mac=00:02:06:00:00:24   frame_rate=1000  frame_size=68  name=a_f_flow
     sleep  2
     start traffic  ${stream}
@@ -81,7 +79,6 @@ Mac move between the vns same tenant
 	rest add vns  t1  v2
 	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
 	rest add interface to vns  t1  v2  leaf2-b  ${leaf2b_ixia_intf}  100  
-	
     ${stream}=             L3 add   no_arp=True   flow=a->f  src_mac=00:02:01:00:00:24  dst_mac=00:02:06:00:00:24  frame_rate=1000  frame_size=68  name=a_f_flow
     sleep  2
     start traffic  ${stream}
@@ -105,7 +102,6 @@ Mac move between different tenants
 	rest add vns  t2  v1
 	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
 	rest add interface to vns  t2  v1  leaf2-b  ${leaf2b_ixia_intf}  100  
-	
     ${stream}=             L3 add   no_arp=True   flow=a->f  src_mac=00:02:01:00:00:24  dst_mac=00:02:06:00:00:24  frame_rate=1000  frame_size=68  name=a_f_flow
     sleep  2
     start traffic  ${stream}
@@ -127,7 +123,6 @@ Mac age test
 	rest add tenant  t1
 	rest add vns  t1  v1
 	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
-	
     ${stream}=             L3 add  no_arp=True  flow=a->b  src_mac=00:02:01:00:00:24  dst_mac=00:02:02:00:00:24  frame_rate=1000  frame_size=68  name=a_b_flow
     sleep  2
     start traffic  ${stream}
