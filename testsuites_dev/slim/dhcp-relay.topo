@@ -18,4 +18,33 @@ h2:
   user: root
   password: bsn
 
+h3:
+  ip: 10.193.0.63
+  user: root
+  password: bsn
+
+h4:
+  ip: 10.193.0.64
+  user: root
+  password: bsn
+
+s1:
+  ip: 10.193.0.31
+  user: admin
+  password: bsn
+
+s2:
+  ip: 10.193.0.33
+  user: admin
+  password: bsn
+
+s3:
+  ip: 10.193.0.208
+  user: admin
+  password: bsn
+
+s4:
+  ip: 10.193.0.209
+  user: admin
+  password: bsn
   

@@ -6,10 +6,108 @@ Documentation   Openstack setup
 #Test Teardown   teardown topology
 #Force Tags      T5 Sanity
 Library         keywords/Host.py
+Library 		keywords_dev/prashanth/T5L3.py
+
+* Variables
+${spine0_dpid}							00:99:00:00:00:01:00:01
+${leaf0a_dpid}							00:99:00:00:00:02:00:01
+${leaf0b_dpid}							00:99:00:00:00:02:00:02
+${leaf1a_dpid}							00:99:00:00:00:02:00:03
+${leaf1b_dpid}							00:99:00:00:00:02:00:04
+
+${tenant1}								A
+${tnt1_vns1}							A1
+$[tnt1_vns2}							A2
+${tnt1_vns3}							A3
+${dhcp_server}							10.193.0.61
+${dhcp_circuitid}						"&#!ten B vns B2"
+
 
 * Test Case
+Verify Host is able to get DHCP address
+	Get DHCPv4 address
 
-Get host IP address
-	${ipaddr}=	bash get interface ipv4 	h2	eth1
-
+Get DHCPv4 address
+	REST add tenant										${tenant1}
+	REST add 
+	${ipaddr}=	bash get interface ipv4 				h2	eth1
+	${result}=	bash release dhcpv4 address 			h2 	eth1		${ipaddr}
+	Should Be True										${result}
+	sleep												2
+	${ipaddr}= 	bash renew dhcpv4 address				h2 				eth1
+	Should Not Be Empty									${ipaddr}		
+	${ipaddr}= 	bash renew dhcpv4 address				h4 				eth1
+	Should Not Be Empty									${ipaddr}		
 	
+
+Topology setup
+	REST add switch								spine0
+	rest add dpid  								spine0		${spine0_dpid}
+  rest add fabric role  spine0  spine
+	REST add portgroup							${portgroup0}
+	REST add portgroup							${portgroup1}
+	REST add portgroup							${portgroup2}
+	REST add portgroup							${portgroup3}
+	REST add portgroup							${portgroup4}
+	REST add portgroup							${portgroup5}
+	REST add portgroup							${portgroup6}
+	REST add portgroup							${portgroup7}
+	REST add portgroup							${portgroup8}
+	REST add portgroup							${portgroup9}
+	REST add portgroup							${portgroup10}
+	REST add portgroup							${portgroup11}
+	REST add leaf group							${leaf0a_name}		${leafgroup0}
+	REST add leaf group							${leaf0b_name}		${leafgroup0}
+	REST add leaf group							${leaf1a_name}		${leafgroup1}
+	REST add leaf group							${leaf1b_name}		${leafgroup1}
+	REST add leaf group							${leaf2a_name}		${leafgroup2}
+	REST add leaf group							${leaf2b_name}		${leafgroup2}
+	REST add interface to portgroup				${leaf0a_name}		${leaf0a_intf1}		${portgroup0} 
+	REST add interface to portgroup				${leaf0b_name}		${leaf0b_intf1}		${portgroup0} 
+	REST add interface to portgroup				${leaf0a_name}		${leaf0a_intf2}		${portgroup1} 
+	REST add interface to portgroup				${leaf0b_name}		${leaf0b_intf2}		${portgroup1} 
+	REST add interface to portgroup				${leaf0a_name}		${leaf0a_intf3}		${portgroup2} 
+	REST add interface to portgroup				${leaf0b_name}		${leaf0b_intf3}		${portgroup2} 
+	REST add interface to portgroup				${leaf0a_name}		${leaf0a_intf4}		${portgroup3} 
+	REST add interface to portgroup				${leaf0b_name}		${leaf0b_intf4}		${portgroup3} 	
+	REST add interface to portgroup				${leaf1a_name}		${leaf1a_intf1}		${portgroup4} 
+	REST add interface to portgroup				${leaf1b_name}		${leaf1b_intf1}		${portgroup4} 
+	REST add interface to portgroup				${leaf1a_name}		${leaf1a_intf2}		${portgroup5} 
+	REST add interface to portgroup				${leaf1b_name}		${leaf1b_intf2}		${portgroup5} 
+	REST add interface to portgroup				${leaf1a_name}		${leaf1a_intf3}		${portgroup6} 
+	REST add interface to portgroup				${leaf1b_name}		${leaf1b_intf3}		${portgroup6} 
+	REST add interface to portgroup				${leaf1a_name}		${leaf1a_intf4}		${portgroup7} 
+	REST add interface to portgroup				${leaf1b_name}		${leaf1b_intf4}		${portgroup7} 
+	REST add interface to portgroup				${leaf2a_name}		${leaf2a_intf1}		${portgroup8} 
+	REST add interface to portgroup				${leaf2b_name}		${leaf2b_intf1}		${portgroup8} 
+	REST add interface to portgroup				${leaf2a_name}		${leaf2a_intf2}		${portgroup9} 
+	REST add interface to portgroup				${leaf2b_name}		${leaf2b_intf2}		${portgroup9} 
+	REST add interface to portgroup				${leaf2a_name}		${leaf2a_intf3}		${portgroup10} 
+	REST add interface to portgroup				${leaf2b_name}		${leaf2b_intf3}		${portgroup10} 
+	REST add interface to portgroup				${leaf2a_name}		${leaf2a_intf4}		${portgroup11} 
+	REST add interface to portgroup				${leaf2b_name}		${leaf2b_intf4}		${portgroup11} 	
+	REST add tenant 							${tenant1_name}
+	REST add tenant								${tenant2_name}
+	REST add vns								${tenant1_name}		${vns1_1}
+	REST add vns								${tenant1_name}		${vns1_2}
+	REST add vns								${tenant1_name}		${vns1_3}
+	REST add vns								${tenant2_name}		${vns2_1}
+	REST add vns								${tenant2_name}		${vns2_2}
+	REST add vns								${tenant2_name}		${vns2_3}
+	REST add vns ip  							${tenant1_name}  	${vns1_1}  		${vns1_ip1}	  		${vns1_subnet1} 	
+	REST add vns ip  							${tenant1_name}  	${vns1_2}  		${vns1_ip2}	  		${vns1_subnet2} 	
+	REST add vns ip  							${tenant1_name}  	${vns1_3}  		${vns1_ip3}	  		${vns1_subnet3}
+	REST add vns ip  							${tenant2_name}  	${vns2_1}  		${vns2_ip1}	  		${vns2_subnet1} 	
+	REST add vns ip  							${tenant2_name}  	${vns2_2}  		${vns2_ip2}	  		${vns2_subnet2} 	
+	REST add vns ip  							${tenant2_name}  	${vns2_3}  		${vns2_ip3}	  		${vns2_subnet3}
+	REST add portgroup to vns					${tenant1_name}  	${vns1_1} 		${portgroup0} 		${untaggedvlan}	
+	REST add portgroup to vns					${tenant1_name}  	${vns1_2} 		${portgroup1} 		${untaggedvlan}	
+	REST add portgroup to vns					${tenant2_name}  	${vns2_3} 		${portgroup2} 		${vns2_vlan3}
+	REST add portgroup to vns					${tenant2_name}  	${vns2_2} 		${portgroup3} 		${untaggedvlan}
+	REST add portgroup to vns					${tenant1_name}  	${vns1_1} 		${portgroup4} 		${vns1_vlan1}
+	REST add portgroup to vns					${tenant1_name}  	${vns1_2} 		${portgroup5} 		${untaggedvlan}
+	REST add portgroup to vns					${tenant2_name}  	${vns2_1} 		${portgroup6} 		${vns2_vlan1}
+	REST add portgroup to vns					${tenant1_name}  	${vns1_2} 		${portgroup7} 		${untaggedvlan}
+	REST add portgroup to vns					${tenant2_name}  	${vns2_1} 		${portgroup8} 		${vns2_vlan1}
+	REST add portgroup to vns					${tenant2_name}  	${vns2_2} 		${portgroup9} 		${vns2_vlan2}
+	REST add portgroup to vns					${tenant2_name}  	${vns2_3} 		${portgroup10} 		${untaggedvlan}	
