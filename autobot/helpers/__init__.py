@@ -904,7 +904,7 @@ def _ping(host, count=5, waittime=100, quiet=False, source_if=None, node=None):
         if not quiet:
             log("Ping command: %s" % cmd, level=4)
 
-        _, out = run_cmd(cmd, shell=False, quiet=True)
+        _, out = run_cmd(cmd, shell=False, quiet=True, ignore_stderr=True)
     else:
         options = ''
         if source_if:

@@ -77,7 +77,7 @@ class Mininet(object):
     def mininet_host_delete_arp(self, host, ipaddr):
         t = test.Test()
         mn = t.mininet()
-        mn.cli('%s arp -d %s %s' % (host, ipaddr))
+        mn.cli('%s arp -d %s' % (host, ipaddr))
      
  
     def mininet_l3_ping(self, src, dst, count=5, options="None"):        
