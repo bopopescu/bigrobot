@@ -710,9 +710,9 @@ class T5(object):
         data1 = c.rest.content()
         list_tag_intf = []
         for i in range(0,len(data1)):
-            for j in range(0,len(data1[i]["tagged-ports"])):
-                if data1[i]["tagged-ports"][j]["port-num"] not in list_tag_intf:
-                    list_tag_intf.append(data1[i]["tagged-ports"][j]["port-num"])
+            for j in range(0,len(data1[i]["tagged-port"])):
+                if data1[i]["tagged-port"][j]["port-num"] not in list_tag_intf:
+                    list_tag_intf.append(data1[i]["tagged-port"][j]["port-num"])
         helpers.log("%s,%s" % (list_fabric_interface, list_tag_intf))            
         list_common = list(set(list_fabric_interface).intersection(set(list_tag_intf)))
         if len(list_fabric_interface) == len(list_common):
@@ -748,11 +748,11 @@ class T5(object):
         interface = re.sub("\D", "", intf)
         for i in range(0,len(data)):
             try:
-                value = data[i]["untagged-ports"]
+                value = data[i]["untagged-port"]
             except KeyError:
                 continue
-            for j in range(0,len(data[i]["untagged-ports"])):
-                    if data[i]["untagged-ports"][j]["port-num"] == int(interface):
+            for j in range(0,len(data[i]["untagged-port"])):
+                    if data[i]["untagged-port"][j]["port-num"] == int(interface):
                         helpers.log("Pass:Given interface is present in untag memberlist of vlan-table")
                         return True
         return False      
@@ -772,11 +772,11 @@ class T5(object):
         interface = re.sub("\D", "", intf)
         for i in range(0,len(data)):
             try:
-                value = data[i]["tagged-ports"]
+                value = data[i]["tagged-port"]
             except KeyError:
                 continue
-            for j in range(0,len(data[i]["tagged-ports"])):
-                if data[i]["tagged-ports"][j]["port-num"] == int(interface):
+            for j in range(0,len(data[i]["tagged-port"])):
+                if data[i]["tagged-port"][j]["port-num"] == int(interface):
                     helpers.log("Pass:Given interface is present in untag memberlist of vlan-table")
                     return True
         return False       
@@ -806,19 +806,18 @@ class T5(object):
         vlan_id = []
         for i in range(0,len(data1)):
             try:
-                value = data1[i]["untagged-ports"]
-            except KeyError:
-                continue
-            for j in range(0,len(data1[i]["untagged-ports"])):
-                if (data1[i]["untagged-ports"][j]["port-num"] == int(interface)):
-                    vlan_id.append(data1[i]["vlan-id"])        
+                for j in range(0, len(data1[i]["untagged-port"])):
+                    if ((data1[i]["untagged-port"][j]["port-num"]) == int(interface)):
+                        vlan_id.append(data1[i]["vlan-id"])  
+            except (KeyError): 
+                helpers.warn("Warning: No untagged ports are present in the vlan")     
                     #Match the mac in forwarding table with specific lag_id and vlan_id
         url3 = '/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch-name="%s"]/l2-table' % (switch)
         c.rest.get(url3)
         data2 = c.rest.content()
         for i in range(0,len(data2)):
             if str(data2[i]["mac"]) == str(mac):
-                if data2[i]["port-num"] == lag_id[0] and data2[i]["vlan-id"] == vlan_id[0]:
+                if data2[i]["port-num"] in lag_id and data2[i]["vlan-id"] in vlan_id:
                     helpers.log("Pass: Expected mac is present in the forwarding table with correct vlan and interface")
                     return True
                   
@@ -849,11 +848,11 @@ class T5(object):
         vlan_id = []
         for i in range(0,len(data1)):
             try:
-                value = data1[i]["tagged-ports"]
+                value = data1[i]["tagged-port"]
             except KeyError:
                 continue
-            for j in range(0,len(data1[i]["tagged-ports"])):
-                if (data1[i]["tagged-ports"][j]["port-num"] == int(interface)):
+            for j in range(0,len(data1[i]["tagged-port"])):
+                if (data1[i]["tagged-port"][j]["port-num"] == int(interface)):
                     vlan_id.append(data1[i]["vlan-id"])
                     #Match the mac in forwarding table with specific lag_id and vlan_id
         helpers.log("%s" % vlan_id)
