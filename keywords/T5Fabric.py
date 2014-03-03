@@ -9,7 +9,7 @@ class T5Fabric(object):
 #        t = test.Test()
 #        c = t.controller('master')
         pass        
-#        url = '/api/v1/auth/login' % c.base_url
+#        url = '/api/v1/auth/login' % 
 #        result = c.rest.post(url, {"user":"admin", "password":"adminadmin"})
 #        session_cookie = result['content']['session_cookie']
 #        c.rest.set_session_cookie(session_cookie)
@@ -22,7 +22,7 @@ class T5Fabric(object):
         '''
         t = test.Test()
         c = t.controller('master')
-        url = '/api/v1/data/controller/core/switch' % (c.base_url)
+        url = '/api/v1/data/controller/core/switch' % ()
         c.rest.get(url)
         
         return True
@@ -35,7 +35,7 @@ class T5Fabric(object):
         t = test.Test()
         c = t.controller('master')
         
-        url = '/api/v1/data/controller/applications/bvs/info/fabric?select=link' % (c.base_url)       
+        url = '/api/v1/data/controller/applications/bvs/info/fabric?select=link' % ()       
         c.rest.get(url)
         
         return True
@@ -128,7 +128,7 @@ class T5Fabric(object):
     def rest_verify_fabric_switch_all(self):
         t = test.Test()
         c = t.controller('master')
-        url = '/api/v1/data/controller/core/switch' % (c.base_url)       
+        url = '/api/v1/data/controller/core/switch' % ()       
         c.rest.get(url)
         data = c.rest.content()
         for i in range (0,len(data)):
@@ -143,7 +143,7 @@ class T5Fabric(object):
     def rest_verify_fabric_link_after_switch_removal(self, switch):
         t = test.Test()
         c = t.controller('master')
-        url = '/api/v1/data/controller/applications/bvs/info/fabric?select=link' % (c.base_url)       
+        url = '/api/v1/data/controller/applications/bvs/info/fabric?select=link' % ()       
         c.rest.get(url)
         data = c.rest.content()       
         for i in range (0,len(data)):
@@ -156,7 +156,7 @@ class T5Fabric(object):
     def rest_verify_fabric_link_common(self, switch):
         t = test.Test()
         c = t.controller('master')
-        url = '/api/v1/data/controller/applications/bvs/info/fabric?select=link' % (c.base_url)       
+        url = '/api/v1/data/controller/applications/bvs/info/fabric?select=link' % ()       
         c.rest.get(url)
         data = c.rest.content()
         for i in range (0,len(data)):
@@ -168,7 +168,7 @@ class T5Fabric(object):
     def rest_verify_fabric_switch_role(self, dpid, role):
         t = test.Test()
         c = t.controller('master')
-        url = '/api/v1/data/controller/core/switch' % (c.base_url)       
+        url = '/api/v1/data/controller/core/switch' % ()       
         c.rest.get(url)
         data = c.rest.content()
         status = False
@@ -299,14 +299,14 @@ class T5Fabric(object):
     def rest_verify_fabric_link(self):
         t = test.Test()
         c = t.controller('master')
-        url = '/api/v1/data/controller/core/switch/interface' % (c.base_url)      
+        url = '/api/v1/data/controller/core/switch/interface' % ()      
         c.rest.get(url)
         data = c.rest.content()  
         fabric_interface = 0
         for i in range(0,len(data)):
             if data[i]["type"] == "leaf" or data[i]["type"] == "spine":
                 fabric_interface = fabric_interface + 1
-        url1 = '/api/v1/data/controller/applications/bvs/info/fabric?select=link' % (c.base_url)
+        url1 = '/api/v1/data/controller/applications/bvs/info/fabric?select=link' % ()
         c.rest.get(url1)
         data1 = c.rest.content()
         bidir_link = 0
@@ -326,7 +326,7 @@ class T5Fabric(object):
     def rest_verify_no_of_rack(self):
         t = test.Test()
         c = t.controller('master')
-        url = '/api/v1/data/controller/core/switch' % (c.base_url)
+        url = '/api/v1/data/controller/core/switch' % ()
         c.rest.get(url)
         data = c.rest.content()
         rack = []
@@ -345,7 +345,7 @@ class T5Fabric(object):
     def rest_verify_no_of_spine(self):
         t = test.Test()
         c = t.controller('master')
-        url = '/api/v1/data/controller/core/switch' % (c.base_url)
+        url = '/api/v1/data/controller/core/switch' % ()
         c.rest.get(url)
         data = c.rest.content()
         list_spine = []
@@ -435,7 +435,7 @@ class T5Fabric(object):
     def rest_verify_fabric_error_dual_tor_peer_link(self, rack):
         t = test.Test()
         c = t.controller('master')
-        url = '/api/v1/data/controller/applications/bvs/info/fabric/errors/dual-tor/peer-link-absent' % (c.base_url)      
+        url = '/api/v1/data/controller/applications/bvs/info/fabric/errors/dual-tor/peer-link-absent' % ()      
         c.rest.get(url)
         data = c.rest.content()
         if not((data and True) or False):  
