@@ -44,8 +44,8 @@ Verify L3 traffic: frame size 68 bytes
     start traffic  ${stream}
     sleep  10
     stop traffic   ${stream}
-    verify results  transmitted_frames  received_frames
-    [Tags]  traffic  sanity
+    verify results  transmitted_frames  received_valid_frames
+    [Tags]  traffic  sanity  l3basic
 
 Verify L2 traffic: frame size 128 bytes
     ${stream}=  L2 add  flow=a->b  frame_rate=10000  frame_size=128  frame_cnt=50000  name=a_b_flow
