@@ -11,7 +11,7 @@ class T5(object):
 #        t = test.Test()
 #        c = t.controller('master')
         pass        
-#        url = '/api/v1/auth/login' % c.base_url
+#        url = '/api/v1/auth/login' % 
 #        result = c.rest.post(url, {"user":"admin", "password":"adminadmin"})
 #        session_cookie = result['content']['session_cookie']
 #        c.rest.set_session_cookie(session_cookie)
@@ -37,7 +37,7 @@ class T5(object):
             url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]' % (tenant)
         else:
             # Show all tenants
-            url = '/api/v1/data/controller/applications/bvs/tenant' % (c.base_url)
+            url = '/api/v1/data/controller/applications/bvs/tenant' % ()
             
         c.rest.get(url)
         helpers.log("Output: %s" % c.rest.result_json())
@@ -166,7 +166,7 @@ class T5(object):
         t = test.Test()
         c = t.controller('master')
   
-        url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/vnses' % (c.base_url)
+        url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/vnses' % ()
         try:
             c.rest.get(url)
         except:
@@ -412,7 +412,7 @@ class T5(object):
         '''
         t = test.Test()
         c = t.controller('master')
-        url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/vnses' % (c.base_url)
+        url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/vnses' % ()
         c.rest.get(url)
         data = c.rest.content()
         for i in range(0,len(data)):
@@ -436,7 +436,7 @@ class T5(object):
         '''
         t = test.Test()
         c = t.controller('master')
-        url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/vnses' % (c.base_url)
+        url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/vnses' % ()
         c.rest.get(url)
         data = c.rest.content()
         if len(data) == int(count):
@@ -464,7 +464,7 @@ class T5(object):
         '''
         t = test.Test()
         c = t.controller('master')
-        url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/tenants' % (c.base_url)
+        url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/tenants' % ()
         c.rest.get(url)
         data = c.rest.content()
         for i in range(0,len(data)):
@@ -489,7 +489,7 @@ class T5(object):
         '''
         t = test.Test()
         c = t.controller('master')
-        url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/endpoints' % (c.base_url)
+        url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/endpoints' % ()
         c.rest.get(url)
         data = c.rest.content()
         if len(data) != 0:
@@ -517,7 +517,7 @@ class T5(object):
          '''
         t = test.Test()
         c = t.controller('master')
-        url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/endpoints' % (c.base_url)
+        url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/endpoints' % ()
         c.rest.get(url)
         data = c.rest.content()
         if len(data) != 0:
@@ -547,7 +547,7 @@ class T5(object):
         '''
         t = test.Test()
         c = t.controller('master')
-        url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/endpoints' % (c.base_url)
+        url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/endpoints' % ()
         c.rest.get(url)
         data = c.rest.content()
         if len(data) != 0:
@@ -574,7 +574,7 @@ class T5(object):
         '''
         t = test.Test()
         c = t.controller('master')
-        url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/endpoints' % (c.base_url)
+        url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/endpoints' % ()
         c.rest.get(url)
         data = c.rest.content()
         if len(data) != 0:
@@ -630,7 +630,7 @@ class T5(object):
         c.rest.get(url)
         data = c.rest.content()
         no_of_vlans = len(data)
-        url1 = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/vnses' % (c.base_url)
+        url1 = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/vnses' % ()
         c.rest.get(url1)
         data1 = c.rest.content()
         no_of_vns = len(data1)
@@ -912,7 +912,7 @@ class T5(object):
         '''
         t = test.Test()
         c = t.controller('master')
-        url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/endpoints' % (c.base_url)
+        url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/endpoints' % ()
         c.rest.get(url)
         data = c.rest.content()
         if int(len(data)) == int(count):
