@@ -4,16 +4,14 @@
 Documentation    T5 Platform HA Smoke/Sanity Test Suite
 Suite Setup      T5 base suite setup
 Suite Teardown  T5 base suite teardown
-#Test Setup      T5 base test setup
-#Test Teardown   T5 base test teardown
-Force Tags       T5  HA
+Force Tags       T5Platform  HA
 Library          keywords/BsnCommon.py
 Library		 	 keywords_dev/don/T5Platform.py
 Library		 	 keywords_dev/don/T5PlatformCommon.py
 Library          keywords/Mininet.py
 Library	    	 keywords/Host.py
-Library          keywords_dev/prashanth/T5.py
-Library	         keywords_dev/prashanth/T5Fabric.py
+Library          keywords/T5.py
+Library	         keywords/T5Fabric.py
 Resource	 	 keywords_dev/don/t5_platform_sanity_resource.txt
 
 * Variables
@@ -42,130 +40,39 @@ ${bm4_intf1}  leaf2b-eth8
 ${bm5_intf0}  leaf2a-eth9
 ${bm5_intf1}  leaf2b-eth9
 
+
 * Test Case 
    
 Verify HA Cluster Formation
-   [Tags]  sanity  skipped
+   [Tags]  smoke  sanity
    rest verify show cluster
 
+Verify Cluster Master Reboot
+	[Tags]  sanity
+	Reboot the master node & verify fabric integrity
+	
+Verify Cluster Slave Reboot
+	[Tags]  smoke  sanity
+	Reboot the Slave node & verify fabric integrity
 
-Verify Single VNS Host Connectivity
-   [Tags]  sanity  
-   sleep  30
-   add a tenant  bm_all
-   add a vns  bm_all  bm_all
-   add portgroup to vns  bm_all  bm_all  p1  -1
-   add portgroup to vns  bm_all  bm_all  p2  -1
-   add portgroup to vns  bm_all  bm_all  p3  -1
-   add portgroup to vns  bm_all  bm_all  p4  -1
-   add portgroup to vns  bm_all  bm_all  p5  -1
-   add portgroup to vns  bm_all  bm_all  p6  -1
-   sleep  30
-   do show run vns verify  bm_all  6
-   platform ping all
-   
-Failover By Rebooting & Re-verify Connectivity
-   [Tags]  sanity  
-   : FOR    ${Iteration}    IN RANGE    1    5
-   \	cli verify cluster master reboot
-   \	platform ping all
-   
-Failback By Rebooting & Re-verify Connectivity 5
-   [Tags]  sanity  skipped
-   cli verify cluster slave reboot
-   mininet ping all
-
-Add h4,h5,h6 in to a VNS and verify the connectivity
-   [Tags]  sanity  skipped
-   add a tenant  h4h5h6
-   add a vns  h4h5h6  h4h5h6
-   add portgroup to vns  h4h5h6  h4h5h6  p4  -1
-   add portgroup to vns  h4h5h6  h4h5h6  p5  -1
-   add portgroup to vns  h4h5h6  h4h5h6  p6  -1
-   sleep  10
-   ${loss}=  bash ping  h5  ${h4_ip}  source_if=bond0
-   Should Be True  ${loss} == 0		
-   ${loss}=  bash ping  h5  ${h6_ip}  source_if=bond0
-   Should Be True  ${loss} == 0					
-   
- ping h5 to h6 dual leaf single rack static endpoints
-   [Tags]  sanity    skipped 
-   add a endpoint  A  A  e1 
-   add a endpoint  A  A  e2 
-   add portgroup to endpoint  A   A  e2  p6  -1
-   add portgroup to endpoint  A   A  e1  p5  -1
-   REST add ip endpoint  A  A  e1  ${h5_ip}
-   REST add mac endpoint  A  A  e1  ${h5_mac}
-   REST add ip endpoint  A  A  e2  ${h6_ip}
-   REST add mac endpoint  A  A  e2  ${h6_mac}
-   add portgroup to vns  A  A  p6  -1 
-   add portgroup to vns  A  A  p5  -1
-   #sleep  5
-   #${loss}=  bash ping  h5  ${h6_ip}  source_if=bond0
-   #Should Be True  ${loss} == 0 	
-   
-		
-ping h4 to h5 dual rack dual leaf static endpoints
-   [Tags]  sanity  skipped      
-   add a endpoint  A  A  e1 
-   add a endpoint  A  A  e2 
-   add portgroup to endpoint  A   A  e2  p5  -1
-   add portgroup to endpoint  A   A  e1  p4  -1
-   REST add ip endpoint  A  A  e1  ${h4_ip}
-   REST add mac endpoint  A  A  e1  ${h4_mac}
-   REST add ip endpoint  A  A  e2  ${h5_ip}
-   REST add mac endpoint  A  A  e2  ${h5_mac}
-   add portgroup to vns  A  A  p5  -1 
-   add portgroup to vns  A  A  p4  -1 
-   #sleep  5
-   #${loss}=  bash ping  h5  ${h4_ip}  source_if=bond0
-   #Should Be True  ${loss} == 0   
-   				
-		
-ping h1 to h2 dual leaf single rack static endpoints tag
-   [Tags]  sanity  skipped
-   add a endpoint  A  A  e1 
-   add portgroup to endpoint  A  A  e1  p1  10
-   add a endpoint  A  A  e2 
-   add portgroup to endpoint  A  A  e2  p2  10
-   REST add ip endpoint  A  A  e1  ${h1_tag_ip}
-   REST add mac endpoint  A  A  e1  ${h1_tag_mac}
-   REST add ip endpoint  A  A  e2  ${h2_tag_ip}
-   REST add mac endpoint  A  A  e2  ${h2_tag_mac}
-   add portgroup to vns  A  A  p2  10 
-   add portgroup to vns  A  A  p1  10
-   #sleep  5 
-   #${loss}=  bash ping  h1  ${h2_tag_ip}  source_if=bond0.10
-   #Should Be True  ${loss} == 0
-
-   
-ping h1 to h3 dual rack dual leaf static endpoints tag 
-   [Tags]  sanity  skipped
-   add a endpoint  A  A  e1  
-   add portgroup to endpoint  A  A  e1  p1  10
-   add a endpoint  A  A  e2 
-   add portgroup to endpoint  A  A  e2  p3  10 
-   REST add ip endpoint  A  A  e1  ${h1_tag_ip}
-   REST add mac endpoint  A  A  e1  ${h1_tag_mac}
-   REST add ip endpoint  A  A  e2  ${h3_tag_ip}
-   REST add mac endpoint  A  A  e2  ${h3_tag_mac}
-   add portgroup to vns  A  A  p3  10 
-   add portgroup to vns  A  A  p1  10
-   #sleep  5
-   #${loss}=  bash ping  h1  ${h3_tag_ip}  source_if=bond0.10
-   #Should Be True  ${loss} == 0  
-   
-
-
+Verify Master Failover With Single Tenant
+	[Tags]  sanity 
+	Configure Single VNS & Verify Connectivity
+	Reboot Master & Re-verify Connectivity
+	
+Verify Slave Failover With Single Tenant
+   [Tags]  sanity
+   Reboot Slave & Re-verify Connectivity 
+ 
+ 
+ 
 * Keywords
-
+   
 T5 base suite setup
    base suite setup
-   sleep  5
-   add fabric switch
-   sleep  5
-   #rest verify fabric switch all
-   #rest verify fabric link 
+   ${spineList}=  Create List  00:00:00:00:00:01:00:01  00:00:00:00:00:01:00:02
+   ${leafList}=  Create List  00:00:00:00:00:02:00:01  00:00:00:00:00:02:00:02  00:00:00:00:00:02:00:03  00:00:00:00:00:02:00:04  00:00:00:00:00:02:00:05  00:00:00:00:00:02:00:06
+   auto configure fabric switch  ${spineList}  ${leafList}  2
    sleep  5
    add a portgroup  p1 
    add interface to portgroup  leaf0-a  ${bm0_intf0}  p1
@@ -207,10 +114,46 @@ T5 base suite teardown
    delete interface from portgroup  leaf2-a  ${bm5_intf0}  p6
    delete interface from portgroup  leaf2-b  ${bm5_intf1}  p6
    delete a portgroup  p6
-   delete fabric switch  
+   auto delete fabric switch  $spineList  $leafList  2
    base suite teardown
    sleep  5
 
+
+Reboot the master node & verify fabric integrity
+	${returnVal}=  cli verify cluster master reboot
+	Should Be True  ${returnVal}
+	
+	
+Reboot the Slave node & verify fabric integrity
+	${returnVal}=  cli verify cluster slave reboot
+	Should Be True  ${returnVal}
+	
+
+Configure Single VNS & Verify Connectivity
+   sleep  30
+   add a tenant  bm_all
+   add a vns  bm_all  bm_all
+   add portgroup to vns  bm_all  bm_all  p1  -1
+   add portgroup to vns  bm_all  bm_all  p2  -1
+   add portgroup to vns  bm_all  bm_all  p3  -1
+   add portgroup to vns  bm_all  bm_all  p4  -1
+   add portgroup to vns  bm_all  bm_all  p5  -1
+   add portgroup to vns  bm_all  bm_all  p6  -1
+   sleep  30
+   do show run vns verify  bm_all  6
+   platform ping all
+   
+   
+Reboot Master & Re-verify Connectivity 
+   ${returnVal}=  cli verify cluster master reboot
+   Should Be True  ${returnVal}
+   platform ping all
+   
+
+Reboot Slave & Re-verify Connectivity 
+   ${returnVal}=	cli verify cluster slave reboot
+   Should Be True  ${returnVal}
+   platform ping all
          
 add a tenant  [Arguments]  ${tenant} 
   REST add tenant  ${tenant}    

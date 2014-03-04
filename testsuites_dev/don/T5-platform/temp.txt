@@ -11,7 +11,7 @@ Library          keywords/BsnCommon.py
 Library          keywords/Mininet.py
 Library	         keywords_dev/don/T5Platform.py
 Library	         keywords_dev/don/T5PlatformCommon.py
-Resource	 	 keywords_dev/don/t5_singleleaf_resource.txt
+Library          Collections
 
 * Variables
 ${bm0_ip}  10.0.0.1
@@ -24,35 +24,180 @@ ${bm0_intf0}  leaf0-eth5
 ${bm1_intf0}  leaf0-eth6
 ${bm2_intf0}  leaf1-eth5
 
+
+${bm6_ip}  10.0.0.7
+${bm7_ip}  10.0.0.8
+${bm8_ip}  10.0.0.9
+${bm9_ip}  10.0.0.10
+${bm10_ip}  10.0.0.11
+${bm11_ip}  10.0.0.12
+${bm0-eth0}  leaf0a-eth8
+${bm0-eth1}  leaf0b-eth8
+${bm1-eth0}  leaf0a-eth9
+${bm1-eth1}  leaf0b-eth9
+${bm2-eth0}  leaf0a-eth10
+${bm2-eth1}  leaf0b-eth10
+${bm3-eth0}  leaf0a-eth11
+${bm3-eth1}  leaf0b-eth11
+${bm4-eth0}  leaf1a-eth8
+${bm4-eth1}  leaf1b-eth8
+${bm5-eth0}  leaf1a-eth9
+${bm5-eth1}  leaf1b-eth9
+${bm6-eth0}  leaf1a-eth10
+${bm6-eth1}  leaf1b-eth10
+${bm7-eth0}  leaf1a-eth11
+${bm7-eth1}  leaf1b-eth11
+${bm8-eth0}  leaf2a-eth8
+${bm8-eth1}  leaf2b-eth8
+${bm9-eth0}  leaf2a-eth9
+${bm9-eth1}  leaf2b-eth9
+${bm10-eth0}  leaf2a-eth10
+${bm10-eth1}  leaf2b-eth10
+${bm11-eth0}  leaf2a-eth11
+${bm11-eth1}  leaf2b-eth11
+
+
+
 * Test Case 
 
-Verify HA Cluster Formation
-   [Tags]  HA  skipped 
-   rest verify show cluster
+
+Verify Dual VNS Host Connectivity
+   [Tags]  sanity  skipped
+   add a portgroup  h4p0
+   add interface to portgroup  leaf0-a  ${bm0-eth0}  h4p0
+   add interface to portgroup  leaf0-b  ${bm0-eth1}  h4p0
+   add a portgroup  h4p1
+   add interface to portgroup  leaf0-a  ${bm1-eth0}  h4p1
+   add interface to portgroup  leaf0-b  ${bm1-eth1}  h4p1
+   add a portgroup  h4p2
+   add interface to portgroup  leaf0-a  ${bm2-eth0}  h4p2
+   add interface to portgroup  leaf0-b  ${bm2-eth1}  h4p2
+   add a portgroup  h4p3
+   add interface to portgroup  leaf0-a  ${bm3-eth0}  h4p3
+   add interface to portgroup  leaf0-b  ${bm3-eth1}  h4p3
+   add a portgroup  h4p4
+   add interface to portgroup  leaf1-a  ${bm4-eth0}  h4p4
+   add interface to portgroup  leaf1-b  ${bm4-eth1}  h4p4
+   add a portgroup  h4p5
+   add interface to portgroup  leaf1-a  ${bm5-eth0}  h4p5
+   add interface to portgroup  leaf1-b  ${bm5-eth1}  h4p5
+   add a portgroup  h4p6
+   add interface to portgroup  leaf1-a  ${bm6-eth0}  h4p6
+   add interface to portgroup  leaf1-b  ${bm6-eth1}  h4p6
+   add a portgroup  h4p7
+   add interface to portgroup  leaf1-a  ${bm7-eth0}  h4p7
+   add interface to portgroup  leaf1-b  ${bm7-eth1}  h4p7
+   add a portgroup  h4p8
+   add interface to portgroup  leaf2-a  ${bm8-eth0}  h4p8
+   add interface to portgroup  leaf2-b  ${bm8-eth1}  h4p8
+   add a portgroup  h4p9
+   add interface to portgroup  leaf2-a  ${bm9-eth0}  h4p9
+   add interface to portgroup  leaf2-b  ${bm9-eth1}  h4p9
+   add a portgroup  h4p10
+   add interface to portgroup  leaf2-a  ${bm10-eth0}  h4p10
+   add interface to portgroup  leaf2-b  ${bm10-eth1}  h4p10
+   add a portgroup  h4p11
+   add interface to portgroup  leaf2-a  ${bm11-eth0}  h4p11
+   add interface to portgroup  leaf2-b  ${bm11-eth1}  h4p11
+   sleep  5
    
-Verify Cluster Election Take-Leader
-	[Tags]  HA  skipped
-	rest verify cluster election take leader
+   add a tenant  bm0tobm5
+   add a vns  bm0tobm5  bm0tobm5
+   add portgroup to vns  bm0tobm5  bm0tobm5  h4p0  -1
+   add portgroup to vns  bm0tobm5  bm0tobm5  h4p1  -1
+   add portgroup to vns  bm0tobm5  bm0tobm5  h4p2  -1
+   add portgroup to vns  bm0tobm5  bm0tobm5  h4p3  -1 
+   add portgroup to vns  bm0tobm5  bm0tobm5  h4p4  -1
+   add portgroup to vns  bm0tobm5  bm0tobm5  h4p5  -1
+   sleep  5
+   
+   platform ping  bm0  ${bm1_ip}
+   platform ping  bm0  ${bm2_ip}
+   platform ping  bm0  ${bm3_ip}
+   platform ping  bm0  ${bm4_ip}
+   platform ping  bm0  ${bm5_ip}
+   platform ping  bm1  ${bm2_ip}
+   platform ping  bm1  ${bm3_ip}
+   platform ping  bm1  ${bm4_ip}
+   platform ping  bm1  ${bm5_ip}
+   platform ping  bm2  ${bm3_ip}
+   platform ping  bm2  ${bm4_ip}
+   platform ping  bm2  ${bm5_ip}
+   platform ping  bm4  ${bm5_ip}
+   
+   add a tenant  bm5tobm11
+   add a vns  bm5tobm11  bm5tobm11
+   add portgroup to vns  bm5tobm11  bm5tobm11  h4p6  -1
+   add portgroup to vns  bm5tobm11  bm5tobm11  h4p7  -1
+   add portgroup to vns  bm5tobm11  bm5tobm11  h4p8  -1
+   add portgroup to vns  bm5tobm11  bm5tobm11  h4p9  -1 
+   add portgroup to vns  bm5tobm11  bm5tobm11  h4p10  -1
+   add portgroup to vns  bm5tobm11  bm5tobm11  h4p11  -1
+   sleep  10
+   
+   platform ping  bm6  ${bm7_ip}
+   platform ping  bm6  ${bm8_ip}
+   platform ping  bm6  ${bm9_ip}
+   platform ping  bm6  ${bm10_ip}
+   platform ping  bm6  ${bm11_ip}
+   platform ping  bm7  ${bm8_ip}
+   platform ping  bm7  ${bm9_ip}
+   platform ping  bm7  ${bm10_ip}
+   platform ping  bm7  ${bm11_ip}
+   platform ping  bm8  ${bm9_ip}
+   platform ping  bm8  ${bm10_ip}
+   platform ping  bm8  ${bm11_ip}
+   platform ping  bm9  ${bm10_ip}
+   platform ping  bm9  ${bm11_ip}
+   platform ping  bm10  ${bm11_ip}
+   sleep   60
 
-Verify Cluster Election Re-run
-	[Tags]  HA  skipped
-	rest verify cluster election rerun
+Clear Config
+   [Tags]  sanity  skipped
+   delete a tenant  bm0tobm5
+   delete a tenant  bm5tobm11
+   delete interface from portgroup  leaf0-a  ${bm0-eth0}  h4p0
+   delete interface from portgroup  leaf0-b  ${bm0-eth1}  h4p0
+   delete a portgroup  h4p0
+   delete interface from portgroup  leaf0-a  ${bm1-eth0}  h4p1
+   delete interface from portgroup  leaf0-b  ${bm1-eth1}  h4p1
+   delete a portgroup  h4p1
+   delete interface from portgroup  leaf0-a  ${bm2-eth0}  h4p2
+   delete interface from portgroup  leaf0-b  ${bm2-eth1}  h4p2
+   delete a portgroup  h4p2
+   delete interface from portgroup  leaf0-a  ${bm3-eth0}  h4p3
+   delete interface from portgroup  leaf0-b  ${bm3-eth1}  h4p3
+   delete a portgroup  h4p3
+   delete interface from portgroup  leaf1-a  ${bm4-eth0}  h4p4
+   delete interface from portgroup  leaf1-b  ${bm4-eth1}  h4p4
+   delete a portgroup  h4p4
+   delete interface from portgroup  leaf1-a  ${bm5-eth0}  h4p5
+   delete interface from portgroup  leaf1-b  ${bm5-eth1}  h4p5
+   delete a portgroup  h4p5
+   delete interface from portgroup  leaf1-a  ${bm6-eth0}  h4p6
+   delete interface from portgroup  leaf1-b  ${bm6-eth1}  h4p6
+   delete a portgroup  h4p6
+   delete interface from portgroup  leaf1-a  ${bm7-eth0}  h4p7
+   delete interface from portgroup  leaf1-b  ${bm7-eth1}  h4p7
+   delete a portgroup  h4p7
+   delete interface from portgroup  leaf2-a  ${bm8-eth0}  h4p8
+   delete interface from portgroup  leaf2-b  ${bm8-eth1}  h4p8
+   delete a portgroup  h4p8
+   delete interface from portgroup  leaf2-a  ${bm9-eth0}  h4p9
+   delete interface from portgroup  leaf2-b  ${bm9-eth1}  h4p9
+   delete a portgroup  h4p9
+   delete interface from portgroup  leaf2-a  ${bm10-eth0}  h4p10
+   delete interface from portgroup  leaf2-b  ${bm10-eth1}  h4p10
+   delete a portgroup  h4p10
+   delete interface from portgroup  leaf2-a  ${bm11-eth0}  h4p11
+   delete interface from portgroup  leaf2-b  ${bm11-eth1}  h4p11
+   delete a portgroup  h4p11
+   
+   
 
-Verify Cluster Master Reboot
-	[Tags]  HA  skipped
-	cli verify cluster master reboot
-
-Verify Cluster Slave Reboot
-	[Tags]  HA  skipped
-	cli verify cluster slave reboot
-
-Verify Cluster Master Shutdown
-	[Tags]  HA  skipped
-	cli verify cluster master shutdown
-
-Verify Cluster Slave Shutdown
-	[Tags]  HA  skipped
-	cli verify cluster slave shutdown
+Verify Cluster VIP
+	[Tags]  sanity  skipped
+	cli verify cluster vip  10.192.106.20/32
 
 Add User
 	[Tags]  User_Administration  skipped
@@ -60,14 +205,12 @@ Add User
 	Should be true  ${status}
 	
 Delete User
-	[Tags]  User_Administration  skipped
+	[Tags]  User_Administration   skipped
 	${status}=  rest delete user  3
 	Should be true  ${status}
 
-Verify Fabric Link
-	[Tags]  Temp
-	do show run vns verify  bm_all  6
-	
+
+
 
 * Keywords      
 T5 base test setup
@@ -77,3 +220,15 @@ T5 base test teardown
    base test teardown
   
 
+
+T5 generic suite setup
+   base suite setup
+   ${spineList}=  Create List  00:00:00:00:00:01:00:01  00:00:00:00:00:01:00:02
+   ${leafList}=  Create List  00:00:00:00:00:02:00:01  00:00:00:00:00:02:00:02  00:00:00:00:00:02:00:03  00:00:00:00:00:02:00:04  00:00:00:00:00:02:00:05  00:00:00:00:00:02:00:06
+   auto configure fabric switch  ${spineList}  ${leafList}  2
+   sleep  5
+   
+T5 generic suite teardown
+   auto delete fabric switch  $spineList  $leafList  2
+   base suite teardown
+   sleep  5

@@ -1,15 +1,20 @@
-== T5 Platform Test Suite ==
+== T5 Platform HA Test Suite ==
 
 * Setting
 Documentation    T5 Controller Platform Test Suite
-Suite Setup      base suite setup
-Suite Teardown   base suite teardown
+Suite Setup      T5 base suite setup
+Suite Teardown   T5 base suite teardown
 Test Setup       base test setup
-#Test Teardown    base test teardown
-Force Tags       T5Platform
+Test Teardown    base test teardown
+Force Tags       T5Platform  HA
 Library          keywords/BsnCommon.py
+Library		 	 keywords_dev/don/T5Platform.py
+Library		 	 keywords_dev/don/T5PlatformCommon.py
 Library          keywords/Mininet.py
-Library	         keywords_dev/don/T5Platform.py
+Library	    	 keywords/Host.py
+Library          keywords/T5.py
+Library	         keywords/T5Fabric.py
+Resource	 	 keywords_dev/don/t5_platform_sanity_resource.txt
 
 * Variables
 ${bm0_ip}  10.0.0.1
@@ -40,157 +45,209 @@ ${bm5_intf1}  leaf2b-eth9
 * Test Case 
 
 Verify HA Cluster Formation
-   [Tags]  HA   Cluster	 
-   rest verify show cluster
+   [Tags]  ClusterFormation	 
+   Verify the cluster formation 
    
 Verify Cluster Election Take-Leader
-	[Tags]  HA  Cluster
-	rest verify cluster election take leader
-
+	[Tags]  ClusterFormation
+	Verify cluster election take leader
+	
 Verify Cluster Election Re-run
-	[Tags]  HA  Cluster
-	rest verify cluster election rerun
-
+	[Tags]  ClusterFormation
+	Verify cluster election rerun 
+	
 Verify Cluster Master Reboot
-	[Tags]  HA  Cluster
-	cli verify cluster master reboot
-
+	[Tags]  ClusterFormation
+	Reboot the master node & verify fabric integrity
+	
 Verify Cluster Slave Reboot
-	[Tags]  HA  Cluster
-	cli verify cluster slave reboot
+	[Tags]  ClusterFormation
+	Reboot the Slave node & verify fabric integrity
+
+Configure Cluster VIP & Verify Connectivity After Failover
+	[Tags]   vip  ClusterFormation
+	rest add vip  10.192.106.20
+	sleep  10
+	${returnVal}=  cli verify cluster vip  10.192.106.20/32
+	Should Be True  ${returnVal}
+
+Delete Cluster VIP
+	[Tags]   vip  ClusterFormation
+	rest delete vip
+	sleep  10
+	${returnVal}=  cli verify cluster vip  10.192.106.20/32
+	Should Be False  ${returnVal}
 
 Verify Cluster Master Shutdown
-	[Tags]  HA  Cluster
-	cli verify cluster master shutdown
-
+	[Tags]  ClusterFormation  skipped
+	Shutdown the master node & verify fabric integrity
+	
 Verify Cluster Slave Shutdown
-	[Tags]  HA  Cluster
-	cli verify cluster slave shutdown
+	[Tags]  ClusterFormation  skipped
+	Shutdown the slave node & verify fabric integrity
 
+
+##################################################
+	#####	Traffic related test cases	##### 
+##################################################
 
 Master Failover/Failback & Verify Connectivity
-   [Tags]  HA  Traffic  
-   : FOR    ${Iteration}    IN RANGE    1    3
-   \	cli verify cluster master reboot
-   \	platform ping all
+   [Tags]  Traffic  
+   Failover/Failback by rebooting the master and verify connectivity
    
 Slave Failover/Failback & Verify Connectivity
-   [Tags]  HA  Traffic  
+   [Tags]  Traffic  
+   Failover/Failback by rebooting the slave and verify connectivity
+
+Cluster Election Take-Leader & Verify Connectivity
+   [Tags]  Traffic  
+   # To be: This test case only checks the take-leader in slave.
+   # 			Need to implement this in the master
+   Failover/Failback by issuing take-leader in master & verify connectivity
+
+Cluster Election Re-run & Verify Connectivity
+   [Tags]  Traffic  
+   # To be: Make sure to do it on both master & slave when the commands
+   #		are finalized
+   Re-run the election and verify connectivity
+   
+Head-less Mode & Verify Connectivity
+   [Tags]  Traffic  skipped
+   Shutdown both the controllers and verify connectivity
+   
+
+* Keywords      
+
+Verify the cluster formation 
+	${returnVal}=  rest verify show cluster
+	Should Be True  ${returnVal}
+
+Verify cluster election take leader
+	${returnVal}=  rest verify cluster election take leader
+	Should Be True  ${returnVal}
+	
+
+Verify cluster election rerun 
+	${returnVal}=  rest verify cluster election rerun
+	Should Be True  ${returnVal}
+	
+
+Reboot the master node & verify fabric integrity
+	${returnVal}=  cli verify cluster master reboot
+	Should Be True  ${returnVal}
+	
+	
+Reboot the Slave node & verify fabric integrity
+	${returnVal}=  cli verify cluster slave reboot
+	Should Be True  ${returnVal}
+	
+	
+Shutdown the master node & verify fabric integrity
+	${returnVal}=  cli verify cluster master shutdown
+	Should Be True  ${returnVal}
+	
+
+Shutdown the slave node & verify fabric integrity
+	${returnVal}=  cli verify cluster slave shutdown
+	Should Be True  ${returnVal}
+	
+	
+Failover/Failback by rebooting the master and verify connectivity
    : FOR    ${Iteration}    IN RANGE    1    3
+   \	Log To Console   \n================ Rebooting Master - Iteration ${Iteration} ===============\n
+   \	cli verify cluster master reboot
+   \	platform ping all
+
+Failover/Failback by rebooting the slave and verify connectivity
+   : FOR    ${Iteration}    IN RANGE    1    3
+   \	Log To Console   \n================ Rebooting Slave - Iteration ${Iteration} ===============\n
    \	cli verify cluster slave reboot
    \	platform ping all
 
-Cluster Election Take-Leader & Verify Connectivity
-   [Tags]  HA  Traffic  
+Failover/Failback by issuing take-leader in master & verify connectivity
    : FOR    ${Iteration}    IN RANGE    1    3
+   \	Log To Console   \n================ Election-Take-Leader - Iteration ${Iteration} ===============\n
    \	rest verify cluster election take leader
    \	platform ping all
 
-Cluster Election Re-run & Verify Connectivity
-   [Tags]  HA  Traffic  
+Re-run the election and verify connectivity
    : FOR    ${Iteration}    IN RANGE    1    3
+   \	Log To Console   \n================ Election-Rerun - Iteration ${Iteration} ===============\n
    \	rest verify cluster election rerun
    \	platform ping all
 
-Head-less Mode & Verify Connectivity
-   [Tags]  HA  Traffic  
+Shutdown both the controllers and verify connectivity
    platform ping all
    cli verify cluster slave shutdown
    cli verify cluster master shutdown
    platform ping all
-   
-Add User
-	[Tags]  User_Administration
-	${status}=  rest add user  3 
-	Should be true  ${status}
-	
-Delete User
-	[Tags]  User_Administration  
-	${status}=  rest delete user  3
-	Should be true  ${status}
 
-* Keywords      
-T5 base test setup
-   base test setup
-      
-T5 base test teardown
-   base test teardown
 
-add fabric switch
-  rest add switch  spine0  
-  rest add dpid  spine0  00:00:00:00:00:01:00:01
-  rest add fabric role  spine0  spine 
-  rest add switch  spine1 
-  rest add dpid  spine1  00:00:00:00:00:01:00:02
-  rest add fabric role  spine1  spine
-  rest add switch  leaf0-a 
-  rest add dpid  leaf0-a  00:00:00:00:00:02:00:01
-  rest add fabric role  leaf0-a  leaf
-  rest add leaf group  leaf0-a  rack0
-  rest add switch  leaf0-b 
-  rest add dpid  leaf0-b  00:00:00:00:00:02:00:02
-  rest add fabric role  leaf0-b  leaf
-  rest add leaf group  leaf0-b  rack0
-  rest add switch  leaf1-a 
-  rest add dpid  leaf1-a  00:00:00:00:00:02:00:03
-  rest add fabric role  leaf1-a  leaf
-  rest add leaf group  leaf1-a  rack1
-  rest add switch  leaf1-b 
-  rest add dpid  leaf1-b  00:00:00:00:00:02:00:04
-  rest add fabric role  leaf1-b  leaf
-  rest add leaf group  leaf1-b  rack1
-  rest add switch  leaf2-a
-  rest add dpid  leaf2-a  00:00:00:00:00:02:00:05
-  rest add fabric role  leaf2-a  leaf
-  rest add leaf group  leaf2-a  rack2
-  rest add switch  leaf2-b 
-  rest add dpid  leaf2-b  00:00:00:00:00:02:00:06
-  rest add fabric role  leaf2-b  leaf
-  rest add leaf group  leaf2-b  rack2
-  
-delete fabric switch  
-  rest delete fabric switch  spine0 
-  rest delete fabric switch  spine1 
-  rest delete fabric switch  leaf0 
-  rest delete fabric switch  leaf1 
-  rest delete fabric switch  leaf0-a 
-  rest delete fabric switch  leaf0-b 
-  rest delete fabric switch  leaf1-a 
-  rest delete fabric switch  leaf1-b 
-  rest delete fabric switch  leaf2-a 
-  rest delete fabric switch  leaf2-b 
+Verify Single VNS Host Connectivity
+   sleep  30
+   add a tenant  bm_all
+   add a vns  bm_all  bm_all
+   add portgroup to vns  bm_all  bm_all  p1  -1
+   add portgroup to vns  bm_all  bm_all  p2  -1
+   add portgroup to vns  bm_all  bm_all  p3  -1
+   add portgroup to vns  bm_all  bm_all  p4  -1
+   add portgroup to vns  bm_all  bm_all  p5  -1
+   add portgroup to vns  bm_all  bm_all  p6  -1
+   sleep  30
+   do show run vns verify  bm_all  6
+   platform ping all
 
-mininet ping all
-   ${loss}=  mininet ping  bm0  ${bm1_ip}
-   Should Be True  ${loss} == 0		
-   ${loss}=  mininet ping  bm0  ${bm2_ip}
-   Should Be True  ${loss} == 0		
-   ${loss}=  mininet ping  bm0  ${bm3_ip}
-   Should Be True  ${loss} == 0		
-   ${loss}=  mininet ping  bm0  ${bm4_ip}
-   Should Be True  ${loss} == 0		
-   ${loss}=  mininet ping  bm0  ${bm5_ip}
-   Should Be True  ${loss} == 0		
-   ${loss}=  mininet ping  bm1  ${bm2_ip}
-   Should Be True  ${loss} == 0	
-   ${loss}=  mininet ping  bm1  ${bm3_ip}
-   Should Be True  ${loss} == 0		
-   ${loss}=  mininet ping  bm1  ${bm4_ip}
-   Should Be True  ${loss} == 0		
-   ${loss}=  mininet ping  bm1  ${bm5_ip}
-   Should Be True  ${loss} == 0		
-   ${loss}=  mininet ping  bm2  ${bm3_ip}
-   Should Be True  ${loss} == 0
-   ${loss}=  mininet ping  bm2  ${bm4_ip}
-   Should Be True  ${loss} == 0	
-   ${loss}=  mininet ping  bm2  ${bm5_ip}
-   Should Be True  ${loss} == 0	
-   ${loss}=  mininet ping  bm3  ${bm4_ip}
-   Should Be True  ${loss} == 0			
-   ${loss}=  mininet ping  bm3  ${bm5_ip}
-   Should Be True  ${loss} == 0		
-   ${loss}=  mininet ping  bm4  ${bm5_ip}
-   Should Be True  ${loss} == 0		
+T5 base suite setup
+   base suite setup
+   ${spineList}=  Create List  00:00:00:00:00:01:00:01  00:00:00:00:00:01:00:02
+   ${leafList}=  Create List  00:00:00:00:00:02:00:01  00:00:00:00:00:02:00:02  00:00:00:00:00:02:00:03  00:00:00:00:00:02:00:04  00:00:00:00:00:02:00:05  00:00:00:00:00:02:00:06
+   auto configure fabric switch  ${spineList}  ${leafList}  2
+   sleep  5
+   add a portgroup  p1 
+   add interface to portgroup  leaf0-a  ${bm0_intf0}  p1
+   add interface to portgroup  leaf0-b  ${bm0_intf1}  p1
+   add a portgroup  p2 
+   add interface to portgroup  leaf0-a  ${bm1_intf0}  p2
+   add interface to portgroup  leaf0-b  ${bm1_intf1}  p2
+   add a portgroup  p3 
+   add interface to portgroup  leaf1-a  ${bm2_intf0}  p3
+   add interface to portgroup  leaf1-b  ${bm2_intf1}  p3
+   add a portgroup  p4 
+   add interface to portgroup  leaf1-a  ${bm3_intf0}  p4
+   add interface to portgroup  leaf1-b  ${bm3_intf1}  p4
+   add a portgroup  p5 
+   add interface to portgroup  leaf2-a  ${bm4_intf0}  p5
+   add interface to portgroup  leaf2-b  ${bm4_intf1}  p5
+   add a portgroup  p6 
+   add interface to portgroup  leaf2-a  ${bm5_intf0}  p6
+   add interface to portgroup  leaf2-b  ${bm5_intf1}  p6
+   sleep  5
+   Verify Single VNS Host Connectivity
+
+T5 base suite teardown   
+   delete a tenant  bm_all
+   delete interface from portgroup  leaf0-a  ${bm0_intf0}  p1
+   delete interface from portgroup  leaf0-b  ${bm0_intf1}  p1
+   delete a portgroup  p1
+   delete interface from portgroup  leaf0-a  ${bm1_intf0}  p2
+   delete interface from portgroup  leaf0-b  ${bm1_intf1}  p2
+   delete a portgroup  p2
+   delete interface from portgroup  leaf1-a  ${bm2_intf0}  p3
+   delete interface from portgroup  leaf1-b  ${bm2_intf1}  p3
+   delete a portgroup  p3
+   delete interface from portgroup  leaf1-a  ${bm3_intf0}  p4
+   delete interface from portgroup  leaf1-b  ${bm3_intf1}  p4
+   delete a portgroup  p4
+   delete interface from portgroup  leaf2-a  ${bm4_intf0}  p5
+   delete interface from portgroup  leaf2-b  ${bm4_intf1}  p5
+   delete a portgroup  p5
+   delete interface from portgroup  leaf2-a  ${bm5_intf0}  p6
+   delete interface from portgroup  leaf2-b  ${bm5_intf1}  p6
+   delete a portgroup  p6
+   auto delete fabric switch  $spineList  $leafList  2
+   base suite teardown
+   sleep  5
+
    
 platform ping all
    platform ping  bm0  ${bm1_ip}
@@ -207,4 +264,44 @@ platform ping all
    platform ping  bm2  ${bm5_ip}
    platform ping  bm4  ${bm5_ip}
 
+
+add a tenant  [Arguments]  ${tenant} 
+  REST add tenant  ${tenant}    
+
+delete a tenant  [Arguments]  ${tenant} 
+  	REST delete tenant  ${tenant}    
+
+add a vns  [Arguments]  ${tenant}  ${vns}  
+	REST add vns  ${tenant}  ${vns}   
+
+delete a vns  [Arguments]  ${tenant}  ${vns} 
+  	REST delete vns  ${tenant}  ${vns}   
+
+add a portgroup  [Arguments]  ${pg}
+  	REST add portgroup  ${pg}    
+
+delete a portgroup  [Arguments]  ${pg}
+  	REST delete portgroup  ${pg}    
+
+add a endpoint  [Arguments]  ${tenant}  ${vns}  ${endpoint} 
+  	REST add endpoint  ${tenant}  ${vns}  ${endpoint}  
+
+delete a endpoint  [Arguments]  ${tenant}  ${vns}  ${endpoint}
+  	REST delete endpoint  ${tenant}  ${vns}  ${endpoint}  
+
+add interface to portgroup  [Arguments]  ${switch}  ${intf}  ${pg} 
+  	REST add interface to portgroup  ${switch}  ${intf}  ${pg}  
+
+delete interface from portgroup  [Arguments]  ${switch}  ${intf}  ${pg} 
+  	REST delete interface from portgroup  ${switch}  ${intf}  ${pg}  
+
+add portgroup to vns  [Arguments]  ${tenant}  ${vns}  ${pg}  ${vlan}
+  	REST add portgroup to vns  ${tenant}  ${vns}  ${pg}  ${vlan} 
+
+add portgroup to endpoint  [Arguments]  ${tenant}  ${vns}  ${endpoint}  ${pg}  ${vlan} 
+  REST add portgroup to endpoint  ${tenant}  ${vns}  ${endpoint}  ${pg}  ${vlan} 
+
+delete portgroup from vns  [Arguments]  ${tenant}  ${vns}  ${pg}  ${vlan} 
+  REST delete portgroup from vns  ${tenant}  ${vns}  ${pg}  ${vlan}
+  
 
