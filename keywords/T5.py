@@ -810,7 +810,7 @@ class T5(object):
                     if ((data1[i]["untagged-port"][j]["port-num"]) == int(interface)):
                         vlan_id.append(data1[i]["vlan-id"])  
             except (KeyError): 
-                helpers.warn("Warning: No untagged ports are present in the vlan")     
+                continue     
                     #Match the mac in forwarding table with specific lag_id and vlan_id
         url3 = '/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch-name="%s"]/l2-table' % (switch)
         c.rest.get(url3)
