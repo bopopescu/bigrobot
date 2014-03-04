@@ -2,7 +2,7 @@
 
 * Setting
 Documentation    T5 Dual Leaf Three Rack Test Suite
-Suite Setup      base suite setup
+Suite Setup      T5 base suite setup
 Suite Teardown   Tear down the config
 Test Setup       T5 base test setup
 Test Teardown    T5 base test teardown
@@ -10,7 +10,7 @@ Force Tags       T5
 Library          keywords/BsnCommon.py
 Library          keywords/T5.py
 Library	         keywords/T5Fabric.py
-Library          keywords/Mininet.py
+
 Library	    	 keywords/Host.py
 Resource		 testsuites/T5/t5_dualleaf_three_rack_physical_resource.txt
 Resource		 testsuites/T5/t5_physical_variables.txt
@@ -239,7 +239,7 @@ Tear down the config
    delete fabric switch
    base suite teardown
    
-base suite setup
+T5 base suite setup
 	base suite setup
 	add fabric switch
     sleep  5
