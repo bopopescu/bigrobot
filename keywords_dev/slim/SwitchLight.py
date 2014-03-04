@@ -1739,3 +1739,29 @@ class SwitchLight(object):
         except:
             helpers.test_failure("Could not execute command. Please check log for errors")
             return False
+
+    def cli_show_datapath(self, node):
+        try:
+            t = test.Test()
+            s1 = t.switch(node)
+        except:
+            return ''
+        else:
+            cli_input = "show datapath"
+            result = s1.enable(cli_input)['content']  
+            output = helpers.strip_cli_output(result)
+            helpers.log("result: %s" % output)
+            result = re.search(r'id(\s+)(.*)description', output, re.S | re.I)
+            return result.group(2)
+    
+    def cli_add_datapath(self, node, dpid):
+
+        t = test.Test()
+        s1 = t.switch(node)
+        try:
+            cli_input = "datapath id %s" % dpid 
+            result = s1.config(cli_input)
+        except:
+            return False
+        else:
+            return True
