@@ -355,7 +355,18 @@ Bi-Driectional L3 Traffic with differnt ethertypes and streams
     ${report}=             fetch port stats
     verify results  transmitted_frames  received_frames
     [Tags]  traffic  sanity  bigtap
-  
+ 
+Bi-Directional L3 Traffic ICMP Echo with traffic learn
+# Basic test case with all default values and ICMP type and value
+    ${stream}=             L3 add  flow=a<->b  protocol=ICMP  icmp_type=8  icmp_code=0  src_mac=${src_mac}  dst_mac=${dst_mac}
+    clear stats
+    start traffic  ${stream}  learn=True
+    sleep                  ${sleep_time}
+    stop traffic   ${stream}
+    sleep                  ${sleep_time}
+    ${report}=             fetch port stats
+    verify results  transmitted_frames  received_frames
+    [Tags]  traffic  sanity  bigtap 
 *Keywords
 atest teardown
 	delete traffic

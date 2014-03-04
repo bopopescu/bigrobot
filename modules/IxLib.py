@@ -825,7 +825,7 @@ class Ixia(object):
         self._traffi_apply = True  # Setting it True to Not Apply Changes while starting traffic
         return traffic_stream1[0]
     
-    def ix_start_traffic_ethernet(self, trafficHandle = None):
+    def ix_start_traffic_ethernet(self, trafficHandle = None, learn = False):
         '''
             Returns portStatistics after starting the traffic that is configured in Traffic Stream using Mac devices and Topologies
         '''
@@ -842,9 +842,29 @@ class Ixia(object):
         # portStatistics = self._handle.getFilteredList(self._handle.getRoot()+'statistics', 'view', '-caption', 'Port Statistics')[0]
         time.sleep(5)
         if trafficHandle is None:
+            if learn:
+                helpers.log('Starting traffic for 5 secs and stop it for learning')
+                self._handle.execute('startStatelessTrafficBlocking', self._handle.getRoot() + 'traffic')
+                time.sleep(10)
+                self.ix_stop_traffic()
+                helpers.log('Success Stopping traffic fetch port stats to make sure traffic is transmitted!!!')
+                self.ix_fetch_port_stats()
+                self.ix_clear_stats()
+                helpers.log('Fetching port stats after clearing stats')
+                self.ix_fetch_port_stats()
             helpers.log('No Traffic Stream is given so, starting traffic on all configured Streams !!')
             self._handle.execute('startStatelessTrafficBlocking', self._handle.getRoot() + 'traffic')
         else:
+            if learn:
+                helpers.log('Starting traffic for 5 secs and stop it for learning on give traffic stream')
+                self._handle.execute('startStatelessTrafficBlocking', trafficHandle)
+                time.sleep(10)
+                self.ix_stop_traffic()
+                helpers.log('Success Stopping traffic fetch port stats to make sure traffic is transmitted!!!')
+                self.ix_fetch_port_stats()
+                self.ix_clear_stats()
+                helpers.log('Fetching port stats after clearing stats')
+                self.ix_fetch_port_stats()
             helpers.log('Traffic Stream is given, starting traffic on given stream')
             self._handle.execute('startStatelessTrafficBlocking', trafficHandle)
         time.sleep(10)
@@ -990,6 +1010,15 @@ class Ixia(object):
             Method to delete all configured Traffic Items
         '''
         handle = self._handle
+        i = 0
+        while i < 2:
+            try:
+                self.ix_stop_traffic()
+                time.sleep(5)
+                break
+            except IxNetwork.IxNetError:
+                helpers.log('Got IXIA ERROR while trying to STOP the TRAFFIC will try 2 times..')
+            i = i + 1
         i = 0
         while i < 2:
             try:
