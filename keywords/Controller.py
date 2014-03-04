@@ -412,3 +412,45 @@ class Controller(object):
 
         if do_first_boot:
             self.cli_add_first_boot(node, *args, **kwargs)
+
+    def bash_scp_file(self, node, remote_file, local_path='.',
+                       password='bsn', timeout=180):
+        """
+        Objective:
+        Secure copy a file as defined in remote_file to the node.
+
+        Inputs:
+        | node | controller name as defined in .topo file |
+        | remote_file | the complete file path, in format user@host:/path/file' |
+        | local_path | the destination (default is '.') |
+        | password | password used to authenticate (default is 'bsn') |
+        | timeout | how log to wait before timeout (default is 180 seconds) |
+
+        Example:
+        | bash scp file | node=c1 | remote_file=bsn@jenkins:/var/lib/jenkins/jobs/bvs\\ master/lastSuccessful/archive/target/appliance/images/bvs/controller-upgrade-bvs-2.0.5-SNAPSHOT.pkg | local_path=. |
+
+        Return Value:
+        - True if scp succeeds
+        - False if scp fails
+        """
+        t = test.Test()
+        n = t.node(node)
+
+        helpers.log("'%s' - Copying '%s' to '%s'"
+                    % (node, remote_file, local_path))
+        n.bash('')
+        n.send('sudo scp'
+               ' -o UserKnownHostsFile=/dev/null'
+               ' -o StrictHostKeyChecking=no "%s" %s'
+               % (remote_file, local_path))
+        n.expect(r'[\r\n].+password: ')
+        n.send(password)
+        try:
+            n.expect(timeout=timeout)
+        except:
+            helpers.log('scp failed')
+            return False
+        else:
+            helpers.log('scp completed successfully')
+            return True
+

@@ -8,10 +8,10 @@ Test Setup       base test setup
 Test Teardown    T5 test teardown
 Force Tags       T5 
 Library          keywords/BsnCommon.py
-Library          keywords_dev/prashanth/T5.py
-Library	         keywords_dev/prashanth/T5Fabric.py
+Library          keywords/T5.py
+Library	         keywords/T5Fabric.py
 Library	         keywords/SwitchLight.py
-Library          keywords/Mininet.py
+
 Library	         keywords/Host.py
 Library		     keywords/Ixia.py
 Resource	     testsuites/T5/t5_dualleaf_three_rack_physical_resource.txt
@@ -21,7 +21,7 @@ Resource		 testsuites/T5/t5_physical_variables.txt
 * Test Case 
 
 add Dual Leaf Three Rack setup
-   [Tags]  feature
+   [Tags]  feature  
    base suite setup
    add fabric switch
    sleep  5
@@ -29,7 +29,7 @@ add Dual Leaf Three Rack setup
    rest verify fabric link
    
 tagged/untagged packet Mac move within the rack0
-	[Tags]  feature
+	[Tags]  feature  
 	rest add tenant  t1
 	rest add vns  t1  v1
 	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
@@ -38,7 +38,7 @@ tagged/untagged packet Mac move within the rack0
     ${stream}=             L3 add  no_arp=True  flow=a->b  src_mac=00:02:01:00:00:24  dst_mac=00:02:02:00:00:24  frame_rate=1000  frame_size=68  name=a_b_flow
     sleep  2
     start traffic  ${stream}
-    sleep  5
+    sleep  10
     rest verify forwarding layer2 table untag  leaf0-a  ${leaf0a_ixia_intf}  00:02:01:00:00:24
     rest verify forwarding layer2 table tag  leaf0-b  ${leaf0a_leaf0b_intf0}  00:02:01:00:00:24  
     stop traffic  ${stream}    
@@ -147,7 +147,7 @@ Mac age test
     sleep  5
         
 Tear down the config
-   [Tags]  feature 
+   [Tags]  feature   
    delete fabric switch
    rest delete tenant  t1
    rest delete tenant  t2

@@ -1,10 +1,10 @@
 * Setting
 Documentation   T5 Basic L3 two spine three leaf rack with dual-tor Test Suite
-#Suite Setup     base suite setup
-#Suite Teardown  base suite teardown
-#Test Setup      setup topology
-#Test Teardown   teardown topology
-Suite Setup		setup topology
+Suite Setup     base suite setup
+Suite Teardown  base suite teardown
+Test Setup      setup topology
+Test Teardown   teardown topology
+#Suite Setup		setup topology
 #Suite Teardown	teardown topology
 Force Tags      T5 Sanity
 Library         keywords/BsnCommon.py
@@ -20,96 +20,95 @@ Resource		testsuites_dev/slim/t5_layer3_variables.txt
 * Test Cases
 Intra tenant L3 untagged traffic with static endpoints same rack
 	L3 intra tenant same rack untagged with static endpoints
-	[Tags]							skipped			smoke				sanity			
+#	[Tags]							skipped			smoke				sanity			
 
 Intra tenant L3 tagged traffic with static endpoints same rack
 	L3 intra tenant same rack tagged with static endpoints
-	[Tags]							skipped			smoke				sanity		
+#	[Tags]							skipped			smoke				sanity		
 
 Intra tenant L3 untagged with initial unreachable dynamic host
 	L3 intra tenant untagged with initial unreachable dynamic host
-	[Tags]							skipped			sanity				smoke					
+#	[Tags]							skipped			sanity				smoke					
 
 Intra tenant L3 untagged with destination host moved
 	L3 intra tenant untagged with host moved 
-	[Tags]							skipped		sanity				
+#	[Tags]							skipped		sanity				
 
 Intra tenant L3 untagged to tagged host same rack
 	L3 intra tenant same rack untagged to tagged host
-	[Tags]							skipped		sanity				
+#	[Tags]							skipped		sanity				
 
 Intra tenant L3 untagged to tagged host across rack
 	L3 intra tenant across rack untagged to tagged host
-	[Tags]							skipped		sanity	
+#	[Tags]							skipped		sanity	
 
 Intra tenant L3 tagged to tagged host across rack
 	L3 intra tenant across rack tagged to tagged host
-	[Tags]							skipped		sanity	
+#	[Tags]							skipped		sanity	
 
 Intra tenant with invalid ttl 1
 	L3 intra tenant across rack ttl1
-	[Tags]							skipped		sanity		
+#	[Tags]							skipped		sanity		
 
 Inter tenant L3 untagged traffic with static endpoints across rack
 	L3 inter tenant across rack untagged with static endpoints
- 	[Tags]							skipped			sanity 				smoke					
+#	[Tags]							skipped			sanity 				smoke					
 		
 Inter tenant L3 tagged traffic with static endpoints across rack
 	L3 inter tenant across rack tagged with static endpoints
-  	[Tags]							skipped			sanity 				smoke	
+# 	[Tags]							skipped			sanity 				smoke	
 
 Inter tenant L3 untagged traffic with static endpoints same rack
 	L3 inter tenant same rack untagged with static endpoints
-  	[Tags]							skipped			sanity 				smoke					
+#  	[Tags]							skipped			sanity 				smoke					
 		
 Inter tenant L3 tagged traffic with static endpoints same rack
 	L3 inter tenant same rack tagged with static endpoints
-  	[Tags]							skipped			sanity 				smoke	
+#  	[Tags]							skipped			sanity 				smoke	
 	
 Inter tenant L3 untagged to tagged traffic with static endpoints same rack
 	L3 inter tenant same rack untagged to tagged with static endpoints
-  	[Tags]							skipped			sanity 				smoke	
+#  	[Tags]							skipped			sanity 				smoke	
 
 Delete and add vns with L3 intra tenant traffic with static endpoints
 	Delete and add router vns with L3 intra tenant traffic with static endpoints
-	[Tags]							skipped			sanity			
+#	[Tags]							skipped			sanity			
 
 Verify L3 traffic for static endpoints
 	Verify L3 traffic for static endpoints 
-	[Tags]							skipped			manual	
-	Manual	passed
+#	[Tags]							skipped			manual	
 
 Intra tenant L3 untagged traffic with dynamic endpoints across rack
 	L3 intra tenant across rack untagged with dynamic endpoints
-  	[Tags]							skipped			sanity 				smoke	
+#  	[Tags]							skipped			sanity 				smoke	
 
 Intra tenant L3 untagged traffic with dynamic endpoints same rack
 	L3 intra tenant same rack untagged with dynamic endpoints
-	[Tags]							skipped			smoke				
+#	[Tags]							skipped			smoke				
 	
 Intra tenant L3 untagged traffic with dynamic host arp
 	L3 intra tenant untagged traffic with dynamic host arp
-	[Tags]							skipped			smoke				
+#	[Tags]							skipped			smoke				
 
 Intra tenant L3 traffic with dynamic endpoints across rack
 	L3 intra tenant across rack with dynamic endpoints
-	[Tags]							skipped			smoke				
+#	[Tags]							skipped			smoke				
 
 Inter tenant L3 traffic with dynamic endpoints same rack
 	L3 inter tenant same rack tagged with dynamic endpoints
-	[Tags]							skipped			smoke				
+#	[Tags]							skipped			smoke				
 
 Inter tenant L3 traffic with dynamic endpoints across rack
 	L3 inter tenant across rack tagged with dynamic endpoints
-	[Tags]							skipped			smoke				
+#	[Tags]							skipped			smoke				
 	
 Delete and add vns with L3 intra tenant traffic with dynamic endpoints
 	Delete and add router vns with L3 intra tenant traffic with dynamic endpoints
-	[Tags]							skipped			sanity				
+#	[Tags]							skipped			sanity				
 	
 Change vns ip with L3 intra tenant traffic with dynamic endpoints
 	Change vns ip address with L3 intra tenant traffic with dynamic endpoints
-	[Tags]							skipped			sanity				
+#	[Tags]							skipped			sanity				
 		
 Set 32 bit full mask on vns router ip
 	Set 32bit full mask on vns router ip
@@ -140,6 +139,19 @@ L3 intra tenant same rack untagged with static endpoints
 	mininet dump switch							${leaf1b_name}
 	mininet dump switch							${leaf2a_name}
 	mininet dump switch							${leaf2b_name}
+	REST show forwarding switch l3 host route	${leaf0a_name}
+	REST show forwarding switch l3 host route	${leaf0b_name}
+	REST show forwarding switch l3 host route	${leaf1a_name}
+	REST show forwarding switch l3 host route	${leaf1b_name}
+	REST show forwarding switch l3 host route	${leaf2a_name}
+	REST show forwarding switch l3 host route	${leaf2b_name}	
+	REST show forwarding switch l3 cidr route	${leaf0a_name}
+	REST show forwarding switch l3 cidr route	${leaf0b_name}
+	REST show forwarding switch l3 cidr route	${leaf1a_name}
+	REST show forwarding switch l3 cidr route	${leaf1b_name}
+	REST show forwarding switch l3 cidr route	${leaf2a_name}
+	REST show forwarding switch l3 cidr route	${leaf2b_name}		
+	REST show running config
 	${loss}=  									mininet l3 ping		${bm0_name}		${bm1_name} 	
 	Should Be True  							${loss} == 0
 	${endpoints_cnt}=							rest count endpoints mac
@@ -166,6 +178,19 @@ L3 intra tenant same rack tagged with static endpoints
 	mininet dump switch							${leaf1b_name}
 	mininet dump switch							${leaf2a_name}
 	mininet dump switch							${leaf2b_name}
+	REST show forwarding switch l3 host route	${leaf0a_name}
+	REST show forwarding switch l3 host route	${leaf0b_name}
+	REST show forwarding switch l3 host route	${leaf1a_name}
+	REST show forwarding switch l3 host route	${leaf1b_name}
+	REST show forwarding switch l3 host route	${leaf2a_name}
+	REST show forwarding switch l3 host route	${leaf2b_name}	
+	REST show forwarding switch l3 cidr route	${leaf0a_name}
+	REST show forwarding switch l3 cidr route	${leaf0b_name}
+	REST show forwarding switch l3 cidr route	${leaf1a_name}
+	REST show forwarding switch l3 cidr route	${leaf1b_name}
+	REST show forwarding switch l3 cidr route	${leaf2a_name}
+	REST show forwarding switch l3 cidr route	${leaf2b_name}	
+	REST show running config
 	${loss}=  									mininet l3 ping		${bm8_name}		${bm9_ip} 	
 	Should Be True  							${loss} == 0
 	${endpoints_cnt}=							rest count endpoints mac
@@ -173,59 +198,123 @@ L3 intra tenant same rack tagged with static endpoints
 	delete static endpoint
 	
 L3 Intra tenant untagged with initial unreachable dynamic host
-	add static endpoint
+#	add static endpoint
 	sleep										1
 	mininet host config
 	sleep										1
-	mininet host add arp						${bm0_name}			${vns1_ip1}		${gw_mac}
-	mininet host add arp						${bm1_name} 		${vns1_ip2}		${gw_mac}
-	mininet host add arp						${bm2_name}			${vns2_ip3}		${gw_mac}
-	mininet host add arp						${bm8_name} 		${vns2_ip1}		${gw_mac}
-	mininet host add arp						${bm9_name}			${vns2_ip2}		${gw_mac}
-	mininet host add arp						${bm10_name} 		${vns2_ip3}		${gw_mac}
-	sleep  										1
+#	mininet host add arp						${bm0_name}			${vns1_ip1}		${gw_mac}
+#	mininet host add arp						${bm1_name} 		${vns1_ip2}		${gw_mac}
+#	mininet host add arp						${bm2_name}			${vns2_ip3}		${gw_mac}
+#	mininet host add arp						${bm8_name} 		${vns2_ip1}		${gw_mac}
+#	mininet host add arp						${bm9_name}			${vns2_ip2}		${gw_mac}
+#	mininet host add arp						${bm10_name} 		${vns2_ip3}		${gw_mac}
+#	sleep  										1
 	${loss}=									mininet l3 ping		${bm9_name}		${bm6_ip}		10
 	Should Be True								${loss} == 100
 	sleep										1
 	mininet l3 link tag							${bm6_name}			${bm6_bondif}	${vns2_vlan1}		${bm6_ip}		${vns2_subnet1}
 	mininet host tagged gw						${bm6_name}			${vns2_ip1}		${vns2_vlan1}
-	mininet host add arp						${bm6_name}			${vns2_ip1}		${gw_mac}
+#	mininet host add arp						${bm6_name}			${vns2_ip1}		${gw_mac}
 	sleep										1
-	mininet l3 ping								${bm9_name}			${bm6_ip}		3
-	${loss}=									mininet l3 ping		${bm9_name}		${bm6_ip}		10
-	Should Be True								${loss} == 0
-	delete static endpoint
-
-L3 intra tenant untagged with host moved 
-	mininet host config
-	sleep  										5
-	REST add portgroup to vns					${tenant1_name}  	${vns1_2} 		${portgroup7} 		${untaggedvlan}	
-	mininet l3 ping								${bm0_name}			${vns1_ip1} 	3
-	mininet l3 ping								${bm1_name}			${vns1_ip2} 	3
-	sleep 										2
-	${value}= 	mininet host verify arp			${bm0_name} 		${vns1_ip1}
-#	Should Be True								${value} 
-	${value}= 	mininet host verify arp			${bm1_name} 		${vns1_ip2}
-#	Should Be True								${value}
+	mininet l3 ping								${bm6_name} 		${vns2_ip1}		3
+	mininet l3 ping								${bm9_name}			${vns2_ip2}		3
+	sleep										1
 	mininet dump switch							${leaf0a_name}
 	mininet dump switch							${leaf0b_name}
 	mininet dump switch							${leaf1a_name}
 	mininet dump switch							${leaf1b_name}
 	mininet dump switch							${leaf2a_name}
-	mininet dump switch							${leaf2b_name}	
+	mininet dump switch							${leaf2b_name}
+	REST show forwarding switch l3 host route	${leaf0a_name}
+	REST show forwarding switch l3 host route	${leaf0b_name}
+	REST show forwarding switch l3 host route	${leaf1a_name}
+	REST show forwarding switch l3 host route	${leaf1b_name}
+	REST show forwarding switch l3 host route	${leaf2a_name}
+	REST show forwarding switch l3 host route	${leaf2b_name}	
+	REST show forwarding switch l3 cidr route	${leaf0a_name}
+	REST show forwarding switch l3 cidr route	${leaf0b_name}
+	REST show forwarding switch l3 cidr route	${leaf1a_name}
+	REST show forwarding switch l3 cidr route	${leaf1b_name}
+	REST show forwarding switch l3 cidr route	${leaf2a_name}
+	REST show forwarding switch l3 cidr route	${leaf2b_name}	
+	REST show running config
+	${value}= 	mininet host verify arp			${bm6_name} 	${vns2_ip1}
+	Should Be True								${value} 
+	${value}= 	mininet host verify arp			${bm9_name} 	${vns2_ip2}
+	Should Be True								${value} 
+	mininet l3 ping								${bm9_name}			${bm6_ip}		3
+	sleep										1
+	${loss}=									mininet l3 ping		${bm9_name}		${bm6_ip}		10
+	REST show endpoints
+	Should Be True								${loss} == 0
+	delete static endpoint
+
+L3 intra tenant untagged with host moved 
+	mininet host config
+	sleep  										1
+	REST add portgroup to vns					${tenant1_name}  	${vns1_2} 		${portgroup7} 		${untaggedvlan}	
+	mininet l3 ping								${bm0_name}			${vns1_ip1} 	3
+	mininet l3 ping								${bm1_name}			${vns1_ip2} 	3
+	sleep 										1
+	${value}= 	mininet host verify arp			${bm0_name} 		${vns1_ip1}
+	Should Be True								${value} 
+	${value}= 	mininet host verify arp			${bm1_name} 		${vns1_ip2}
+	Should Be True								${value}
+	mininet dump switch							${leaf0a_name}
+	mininet dump switch							${leaf0b_name}
+	mininet dump switch							${leaf1a_name}
+	mininet dump switch							${leaf1b_name}
+	mininet dump switch							${leaf2a_name}
+	mininet dump switch							${leaf2b_name}
+	REST show forwarding switch l3 host route	${leaf0a_name}
+	REST show forwarding switch l3 host route	${leaf0b_name}
+	REST show forwarding switch l3 host route	${leaf1a_name}
+	REST show forwarding switch l3 host route	${leaf1b_name}
+	REST show forwarding switch l3 host route	${leaf2a_name}
+	REST show forwarding switch l3 host route	${leaf2b_name}	
+	REST show forwarding switch l3 cidr route	${leaf0a_name}
+	REST show forwarding switch l3 cidr route	${leaf0b_name}
+	REST show forwarding switch l3 cidr route	${leaf1a_name}
+	REST show forwarding switch l3 cidr route	${leaf1b_name}
+	REST show forwarding switch l3 cidr route	${leaf2a_name}
+	REST show forwarding switch l3 cidr route	${leaf2b_name}	
+	mininet l3 ping								${bm0_name}			${bm1_name} 	3
+	sleep 										1
 	${loss}=  									mininet l3 ping		${bm0_name}		${bm1_name} 	
-#	Should Be True  							${loss} == 0
+	Should Be True  							${loss} == 0
 	mininet link down							${bm1_name}			${bm1_bondif}
 	mininet link down							${bm7_name}			${bm7_bondif}
 	mininet host mac config						${bm7_name}			${bm7_bondif}	${bm1_mac}
 	mininet host ipcfg							${bm7_name}			${bm7_bondif}	${bm1_ip}		${vns1_subnet2}
-	mininet host gw								${bm7_name}			${vns1_ip2}		${bm2_bondif}
-	mininet link up								${bm7_name}			$(bm7_bondif}
+	mininet host gw								${bm7_name}			${vns1_ip2}		${bm7_bondif}
+	mininet link up								${bm7_name}			${bm7_bondif}
+	REST show running config
 	sleep										1
+	mininet l3 ping								${bm7_name}			${vns1_ip2} 	3
+	${value}= 	mininet host verify arp			${bm7_name} 		${vns1_ip2}
+	Should Be True								${value}
+	mininet dump switch							${leaf0a_name}
+	mininet dump switch							${leaf0b_name}
+	mininet dump switch							${leaf1a_name}
+	mininet dump switch							${leaf1b_name}
+	mininet dump switch							${leaf2a_name}
+	mininet dump switch							${leaf2b_name}
+	REST show forwarding switch l3 host route	${leaf0a_name}
+	REST show forwarding switch l3 host route	${leaf0b_name}
+	REST show forwarding switch l3 host route	${leaf1a_name}
+	REST show forwarding switch l3 host route	${leaf1b_name}
+	REST show forwarding switch l3 host route	${leaf2a_name}
+	REST show forwarding switch l3 host route	${leaf2b_name}	
+	REST show forwarding switch l3 cidr route	${leaf0a_name}
+	REST show forwarding switch l3 cidr route	${leaf0b_name}
+	REST show forwarding switch l3 cidr route	${leaf1a_name}
+	REST show forwarding switch l3 cidr route	${leaf1b_name}
+	REST show forwarding switch l3 cidr route	${leaf2a_name}
+	REST show forwarding switch l3 cidr route	${leaf2b_name}		
 	mininet l3 ping								${bm0_name}			${bm1_ip}		3	
 	sleep 										1 
 	${loss}=  									mininet l3 ping		${bm0_name}		${bm1_ip} 	
-#	Should Be True  							${loss} == 0
+	Should Be True  							${loss} == 0
 	delete static endpoint
 	
 L3 intra tenant same rack untagged to tagged host
@@ -248,6 +337,19 @@ L3 intra tenant same rack untagged to tagged host
 	mininet dump switch							${leaf1b_name}
 	mininet dump switch							${leaf2a_name}
 	mininet dump switch							${leaf2b_name}
+	REST show forwarding switch l3 host route	${leaf0a_name}
+	REST show forwarding switch l3 host route	${leaf0b_name}
+	REST show forwarding switch l3 host route	${leaf1a_name}
+	REST show forwarding switch l3 host route	${leaf1b_name}
+	REST show forwarding switch l3 host route	${leaf2a_name}
+	REST show forwarding switch l3 host route	${leaf2b_name}	
+	REST show forwarding switch l3 cidr route	${leaf0a_name}
+	REST show forwarding switch l3 cidr route	${leaf0b_name}
+	REST show forwarding switch l3 cidr route	${leaf1a_name}
+	REST show forwarding switch l3 cidr route	${leaf1b_name}
+	REST show forwarding switch l3 cidr route	${leaf2a_name}
+	REST show forwarding switch l3 cidr route	${leaf2b_name}	
+	REST show running config
 	${loss}=  									mininet l3 ping		${bm10_name}	${bm8_ip} 	
 	Should Be True  							${loss} == 0
 	${endpoints_cnt}=							rest count endpoints mac
@@ -276,6 +378,19 @@ L3 intra tenant across rack untagged to tagged host
 	mininet dump switch							${leaf1b_name}
 	mininet dump switch							${leaf2a_name}
 	mininet dump switch							${leaf2b_name}
+	REST show forwarding switch l3 host route	${leaf0a_name}
+	REST show forwarding switch l3 host route	${leaf0b_name}
+	REST show forwarding switch l3 host route	${leaf1a_name}
+	REST show forwarding switch l3 host route	${leaf1b_name}
+	REST show forwarding switch l3 host route	${leaf2a_name}
+	REST show forwarding switch l3 host route	${leaf2b_name}	
+	REST show forwarding switch l3 cidr route	${leaf0a_name}
+	REST show forwarding switch l3 cidr route	${leaf0b_name}
+	REST show forwarding switch l3 cidr route	${leaf1a_name}
+	REST show forwarding switch l3 cidr route	${leaf1b_name}
+	REST show forwarding switch l3 cidr route	${leaf2a_name}
+	REST show forwarding switch l3 cidr route	${leaf2b_name}	
+	REST show running config
 	${loss}=  									mininet l3 ping		${bm4_name}		${bm1_ip} 	
 	Should Be True  							${loss} == 0
 	${endpoints_cnt}=							rest count endpoints mac
@@ -302,6 +417,19 @@ L3 intra tenant across rack tagged to tagged host
 	mininet dump switch							${leaf1b_name}
 	mininet dump switch							${leaf2a_name}
 	mininet dump switch							${leaf2b_name}
+	REST show forwarding switch l3 host route	${leaf0a_name}
+	REST show forwarding switch l3 host route	${leaf0b_name}
+	REST show forwarding switch l3 host route	${leaf1a_name}
+	REST show forwarding switch l3 host route	${leaf1b_name}
+	REST show forwarding switch l3 host route	${leaf2a_name}
+	REST show forwarding switch l3 host route	${leaf2b_name}	
+	REST show forwarding switch l3 cidr route	${leaf0a_name}
+	REST show forwarding switch l3 cidr route	${leaf0b_name}
+	REST show forwarding switch l3 cidr route	${leaf1a_name}
+	REST show forwarding switch l3 cidr route	${leaf1b_name}
+	REST show forwarding switch l3 cidr route	${leaf2a_name}
+	REST show forwarding switch l3 cidr route	${leaf2b_name}	
+	REST show running config
 	${loss}=  									mininet l3 ping		${bm8_name}		${bm2_ip} 	
 	Should Be True  							${loss} == 0
 	${endpoints_cnt}=							rest count endpoints mac
@@ -329,6 +457,19 @@ L3 intra tenant across rack ttl1
 	mininet dump switch							${leaf1b_name}
 	mininet dump switch							${leaf2a_name}
 	mininet dump switch							${leaf2b_name}
+	REST show forwarding switch l3 host route	${leaf0a_name}
+	REST show forwarding switch l3 host route	${leaf0b_name}
+	REST show forwarding switch l3 host route	${leaf1a_name}
+	REST show forwarding switch l3 host route	${leaf1b_name}
+	REST show forwarding switch l3 host route	${leaf2a_name}
+	REST show forwarding switch l3 host route	${leaf2b_name}	
+	REST show forwarding switch l3 cidr route	${leaf0a_name}
+	REST show forwarding switch l3 cidr route	${leaf0b_name}
+	REST show forwarding switch l3 cidr route	${leaf1a_name}
+	REST show forwarding switch l3 cidr route	${leaf1b_name}
+	REST show forwarding switch l3 cidr route	${leaf2a_name}
+	REST show forwarding switch l3 cidr route	${leaf2b_name}	
+	REST show running config
 	${loss}=  									mininet l3 ping		${bm4_name}		${bm1_ip} 	10 	-t 1
 	Should Be True  							${loss} == 100
 	${loss}=  									mininet l3 ping		${bm4_name}		${bm1_ip} 	10 	-t 2
@@ -350,6 +491,25 @@ L3 inter tenant across rack untagged with static endpoints
 	mininet host add arp						${bm8_name} 		${vns2_ip1}		${gw_mac}
 	mininet host add arp						${bm9_name}			${vns2_ip2}		${gw_mac}
 	mininet host add arp						${bm10_name} 		${vns2_ip3}		${gw_mac}
+	mininet dump switch							${leaf0a_name}
+	mininet dump switch							${leaf0b_name}
+	mininet dump switch							${leaf1a_name}
+	mininet dump switch							${leaf1b_name}
+	mininet dump switch							${leaf2a_name}
+	mininet dump switch							${leaf2b_name}
+	REST show forwarding switch l3 host route	${leaf0a_name}
+	REST show forwarding switch l3 host route	${leaf0b_name}
+	REST show forwarding switch l3 host route	${leaf1a_name}
+	REST show forwarding switch l3 host route	${leaf1b_name}
+	REST show forwarding switch l3 host route	${leaf2a_name}
+	REST show forwarding switch l3 host route	${leaf2b_name}	
+	REST show forwarding switch l3 cidr route	${leaf0a_name}
+	REST show forwarding switch l3 cidr route	${leaf0b_name}
+	REST show forwarding switch l3 cidr route	${leaf1a_name}
+	REST show forwarding switch l3 cidr route	${leaf1b_name}
+	REST show forwarding switch l3 cidr route	${leaf2a_name}
+	REST show forwarding switch l3 cidr route	${leaf2b_name}		
+	REST show running config
 	sleep										1
 	mininet l3 ping								${bm0_name} 		${bm10_ip}		3
 	sleep										1
@@ -371,6 +531,25 @@ L3 inter tenant across rack tagged with static endpoints
 	mininet host add arp						${bm8_name} 		${vns2_ip1}		${gw_mac}
 	mininet host add arp						${bm9_name}			${vns2_ip2}		${gw_mac}
 	mininet host add arp						${bm10_name} 		${vns2_ip3}		${gw_mac}
+	REST show running config
+	mininet dump switch							${leaf0a_name}
+	mininet dump switch							${leaf0b_name}
+	mininet dump switch							${leaf1a_name}
+	mininet dump switch							${leaf1b_name}
+	mininet dump switch							${leaf2a_name}
+	mininet dump switch							${leaf2b_name}
+	REST show forwarding switch l3 host route	${leaf0a_name}
+	REST show forwarding switch l3 host route	${leaf0b_name}
+	REST show forwarding switch l3 host route	${leaf1a_name}
+	REST show forwarding switch l3 host route	${leaf1b_name}
+	REST show forwarding switch l3 host route	${leaf2a_name}
+	REST show forwarding switch l3 host route	${leaf2b_name}	
+	REST show forwarding switch l3 cidr route	${leaf0a_name}
+	REST show forwarding switch l3 cidr route	${leaf0b_name}
+	REST show forwarding switch l3 cidr route	${leaf1a_name}
+	REST show forwarding switch l3 cidr route	${leaf1b_name}
+	REST show forwarding switch l3 cidr route	${leaf2a_name}
+	REST show forwarding switch l3 cidr route	${leaf2b_name}	
 	sleep										1
 	mininet l3 ping								${bm4_name} 		${bm8_ip}		3
 	sleep										1
@@ -392,6 +571,25 @@ L3 inter tenant same rack untagged to tagged with static endpoints
 	mininet host add arp						${bm8_name} 		${vns2_ip1}		${gw_mac}
 	mininet host add arp						${bm9_name}			${vns2_ip2}		${gw_mac}
 	mininet host add arp						${bm10_name} 		${vns2_ip3}		${gw_mac}
+	mininet dump switch							${leaf0a_name}
+	mininet dump switch							${leaf0b_name}
+	mininet dump switch							${leaf1a_name}
+	mininet dump switch							${leaf1b_name}
+	mininet dump switch							${leaf2a_name}
+	mininet dump switch							${leaf2b_name}
+	REST show forwarding switch l3 host route	${leaf0a_name}
+	REST show forwarding switch l3 host route	${leaf0b_name}
+	REST show forwarding switch l3 host route	${leaf1a_name}
+	REST show forwarding switch l3 host route	${leaf1b_name}
+	REST show forwarding switch l3 host route	${leaf2a_name}
+	REST show forwarding switch l3 host route	${leaf2b_name}	
+	REST show forwarding switch l3 cidr route	${leaf0a_name}
+	REST show forwarding switch l3 cidr route	${leaf0b_name}
+	REST show forwarding switch l3 cidr route	${leaf1a_name}
+	REST show forwarding switch l3 cidr route	${leaf1b_name}
+	REST show forwarding switch l3 cidr route	${leaf2a_name}
+	REST show forwarding switch l3 cidr route	${leaf2b_name}	
+	REST show running config
 	sleep										1
 	mininet l3 ping								${bm0_name} 		${bm3_ip}		3
 	sleep										1
@@ -421,6 +619,19 @@ Delete router vns with L3 intra tenant traffic with static endpoints
 	mininet dump switch							${leaf1b_name}
 	mininet dump switch							${leaf2a_name}
 	mininet dump switch							${leaf2b_name}
+	REST show forwarding switch l3 host route	${leaf0a_name}
+	REST show forwarding switch l3 host route	${leaf0b_name}
+	REST show forwarding switch l3 host route	${leaf1a_name}
+	REST show forwarding switch l3 host route	${leaf1b_name}
+	REST show forwarding switch l3 host route	${leaf2a_name}
+	REST show forwarding switch l3 host route	${leaf2b_name}	
+	REST show forwarding switch l3 cidr route	${leaf0a_name}
+	REST show forwarding switch l3 cidr route	${leaf0b_name}
+	REST show forwarding switch l3 cidr route	${leaf1a_name}
+	REST show forwarding switch l3 cidr route	${leaf1b_name}
+	REST show forwarding switch l3 cidr route	${leaf2a_name}
+	REST show forwarding switch l3 cidr route	${leaf2b_name}	
+	REST show running config
 	${loss}=  									mininet l3 ping		${bm4_name}		${bm1_ip} 	
 	Should Be True  							${loss} == 0
 	${endpoints_cnt}=							rest count endpoints mac
@@ -441,14 +652,14 @@ Delete router vns with L3 intra tenant traffic with static endpoints
 	delete static endpoint
 
 Verify L3 traffic for static endpoints
-	add static endpoint
-	sleep										1
-	mininet host ipcfg   						${bm0_name}			${bm0_bondif}	${bm0_ip}			${vns1_subnet1}
-	mininet host gw								${bm0_name}			${vns1_ip1}		${bm0_bondif}
-	mininet host add arp						${bm0_name}			${vns1_ip1}		${gw_mac}
-	sleep  										1
-	mininet host tcpdump						${bm10_name} 		${bm10_bondif}	icmp	 10
-		
+	#add static endpoint
+	#sleep										1
+	#mininet host ipcfg   						${bm0_name}			${bm0_bondif}	${bm0_ip}			${vns1_subnet1}
+	#mininet host gw								${bm0_name}			${vns1_ip1}		${bm0_bondif}
+	#mininet host add arp						${bm0_name}			${vns1_ip1}		${gw_mac}
+	#sleep  										1
+	#mininet host tcpdump						${bm10_name} 		${bm10_bondif}	icmp	 10
+	sleep										1	
 	
 L3 inter tenant same rack untagged with static endpoints
 	add static endpoint
@@ -464,6 +675,25 @@ L3 inter tenant same rack untagged with static endpoints
 	mininet host add arp						${bm8_name} 		${vns2_ip1}		${gw_mac}
 	mininet host add arp						${bm9_name}			${vns2_ip2}		${gw_mac}
 	mininet host add arp						${bm10_name} 		${vns2_ip3}		${gw_mac}
+	mininet dump switch							${leaf0a_name}
+	mininet dump switch							${leaf0b_name}
+	mininet dump switch							${leaf1a_name}
+	mininet dump switch							${leaf1b_name}
+	mininet dump switch							${leaf2a_name}
+	mininet dump switch							${leaf2b_name}
+	REST show forwarding switch l3 host route	${leaf0a_name}
+	REST show forwarding switch l3 host route	${leaf0b_name}
+	REST show forwarding switch l3 host route	${leaf1a_name}
+	REST show forwarding switch l3 host route	${leaf1b_name}
+	REST show forwarding switch l3 host route	${leaf2a_name}
+	REST show forwarding switch l3 host route	${leaf2b_name}	
+	REST show forwarding switch l3 cidr route	${leaf0a_name}
+	REST show forwarding switch l3 cidr route	${leaf0b_name}
+	REST show forwarding switch l3 cidr route	${leaf1a_name}
+	REST show forwarding switch l3 cidr route	${leaf1b_name}
+	REST show forwarding switch l3 cidr route	${leaf2a_name}
+	REST show forwarding switch l3 cidr route	${leaf2b_name}	
+	REST show running config
 	sleep										1
 	mininet l3 ping								${bm3_name} 		${bm1_ip}		3
 	sleep										1
@@ -491,6 +721,25 @@ L3 inter tenant same rack tagged with static endpoints
 	mininet l3 link tag							${bm6_name}			${bm6_bondif}	${vns2_vlan1}		${bm6_ip}		${vns2_subnet1}
 	mininet host tagged gw						${bm6_name}			${vns2_ip1}		${vns2_vlan1}
 	mininet host add arp						${bm6_name}			${vns2_ip1}		${gw_mac}
+	mininet dump switch							${leaf0a_name}
+	mininet dump switch							${leaf0b_name}
+	mininet dump switch							${leaf1a_name}
+	mininet dump switch							${leaf1b_name}
+	mininet dump switch							${leaf2a_name}
+	mininet dump switch							${leaf2b_name}
+	REST show forwarding switch l3 host route	${leaf0a_name}
+	REST show forwarding switch l3 host route	${leaf0b_name}
+	REST show forwarding switch l3 host route	${leaf1a_name}
+	REST show forwarding switch l3 host route	${leaf1b_name}
+	REST show forwarding switch l3 host route	${leaf2a_name}
+	REST show forwarding switch l3 host route	${leaf2b_name}	
+	REST show forwarding switch l3 cidr route	${leaf0a_name}
+	REST show forwarding switch l3 cidr route	${leaf0b_name}
+	REST show forwarding switch l3 cidr route	${leaf1a_name}
+	REST show forwarding switch l3 cidr route	${leaf1b_name}
+	REST show forwarding switch l3 cidr route	${leaf2a_name}
+	REST show forwarding switch l3 cidr route	${leaf2b_name}	
+	REST show running config
 	sleep										1
 	mininet l3 ping								${bm4_name}			${bm6_ip}		3
 	sleep 										1
@@ -499,10 +748,48 @@ L3 inter tenant same rack tagged with static endpoints
 	Should Be True  							${loss} == 0
 	${endpoints_cnt}=							rest count endpoints mac
 	delete inter tenant routing
+	
+L3 intra tenant across rack untagged with dynamic endpoints
+	delete static endpoint
+	mininet host config
+	sleep  										1
+	mininet l3 ping								${bm0_name}		${vns1_ip1} 	3
+	mininet l3 ping								${bm5_name}		${vns1_ip2} 	3
+	sleep 										2
+	${value}= 	mininet host verify arp			${bm0_name} 	${vns1_ip1}
+	Should Be True								${value} 
+	${value}= 	mininet host verify arp			${bm5_name} 	${vns1_ip2}
+	Should Be True								${value} 
+	mininet dump switch							${leaf0a_name}
+	mininet dump switch							${leaf0b_name}
+	mininet dump switch							${leaf1a_name}
+	mininet dump switch							${leaf1b_name}
+	mininet dump switch							${leaf2a_name}
+	mininet dump switch							${leaf2b_name}
+	REST show forwarding switch l3 host route	${leaf0a_name}
+	REST show forwarding switch l3 host route	${leaf0b_name}
+	REST show forwarding switch l3 host route	${leaf1a_name}
+	REST show forwarding switch l3 host route	${leaf1b_name}
+	REST show forwarding switch l3 host route	${leaf2a_name}
+	REST show forwarding switch l3 host route	${leaf2b_name}	
+	REST show forwarding switch l3 cidr route	${leaf0a_name}
+	REST show forwarding switch l3 cidr route	${leaf0b_name}
+	REST show forwarding switch l3 cidr route	${leaf1a_name}
+	REST show forwarding switch l3 cidr route	${leaf1b_name}
+	REST show forwarding switch l3 cidr route	${leaf2a_name}
+	REST show forwarding switch l3 cidr route	${leaf2b_name}	
+	REST show running config
+	mininet l3 ping								${bm0_name}		${bm5_name} 
+	sleep										1
+	${loss}=  									mininet l3 ping		${bm0_name}		${bm5_name} 	
+	Should Be True  							${loss} == 0
+	${endpoints_cnt}=							rest count endpoints mac	
+	
 
 L3 intra tenant same rack untagged with dynamic endpoints
+	delete static endpoint
 	mininet host config
-	sleep  										5
+	sleep  										1
 	mininet l3 ping								${bm0_name}		${vns1_ip1} 	3
 	mininet l3 ping								${bm1_name}		${vns1_ip2} 	3
 	sleep 										2
@@ -516,13 +803,28 @@ L3 intra tenant same rack untagged with dynamic endpoints
 	mininet dump switch							${leaf1b_name}
 	mininet dump switch							${leaf2a_name}
 	mininet dump switch							${leaf2b_name}
+	REST show forwarding switch l3 host route	${leaf0a_name}
+	REST show forwarding switch l3 host route	${leaf0b_name}
+	REST show forwarding switch l3 host route	${leaf1a_name}
+	REST show forwarding switch l3 host route	${leaf1b_name}
+	REST show forwarding switch l3 host route	${leaf2a_name}
+	REST show forwarding switch l3 host route	${leaf2b_name}	
+	REST show forwarding switch l3 cidr route	${leaf0a_name}
+	REST show forwarding switch l3 cidr route	${leaf0b_name}
+	REST show forwarding switch l3 cidr route	${leaf1a_name}
+	REST show forwarding switch l3 cidr route	${leaf1b_name}
+	REST show forwarding switch l3 cidr route	${leaf2a_name}
+	REST show forwarding switch l3 cidr route	${leaf2b_name}	
+	REST show running config
+	mininet l3 ping								${bm0_name}			${bm1_name} 	3
+	sleep 										1
 	${loss}=  									mininet l3 ping		${bm0_name}		${bm1_name} 	
 	Should Be True  							${loss} == 0
 	${endpoints_cnt}=							rest count endpoints mac
 
 
 L3 intra tenant untagged traffic with dynamic host arp
-	add static endpoint
+	delete static endpoint
 	sleep 										1
 	mininet host config
 	sleep  										5
@@ -539,12 +841,28 @@ L3 intra tenant untagged traffic with dynamic host arp
 	mininet dump switch							${leaf1b_name}
 	mininet dump switch							${leaf2a_name}
 	mininet dump switch							${leaf2b_name}
+	REST show forwarding switch l3 host route	${leaf0a_name}
+	REST show forwarding switch l3 host route	${leaf0b_name}
+	REST show forwarding switch l3 host route	${leaf1a_name}
+	REST show forwarding switch l3 host route	${leaf1b_name}
+	REST show forwarding switch l3 host route	${leaf2a_name}
+	REST show forwarding switch l3 host route	${leaf2b_name}	
+	REST show forwarding switch l3 cidr route	${leaf0a_name}
+	REST show forwarding switch l3 cidr route	${leaf0b_name}
+	REST show forwarding switch l3 cidr route	${leaf1a_name}
+	REST show forwarding switch l3 cidr route	${leaf1b_name}
+	REST show forwarding switch l3 cidr route	${leaf2a_name}
+	REST show forwarding switch l3 cidr route	${leaf2b_name}	
+	REST show running config
+	mininet l3 ping								${bm0_name}			${bm1_name} 	3
+	sleep 										1
 	${loss}=  									mininet l3 ping		${bm0_name}		${bm1_name} 	
 	Should Be True  							${loss} == 0
 	${endpoints_cnt}=							rest count endpoints mac
 	delete static endpoint
 
 L3 intra tenant across rack with dynamic endpoints
+	delete static endpoint
 	mininet host config
 	sleep  										1
 	mininet l3 ping								${bm4_name}			${bm1_ip} 	3
@@ -555,15 +873,49 @@ L3 intra tenant across rack with dynamic endpoints
 	mininet dump switch							${leaf1b_name}
 	mininet dump switch							${leaf2a_name}
 	mininet dump switch							${leaf2b_name}
+	REST show forwarding switch l3 host route	${leaf0a_name}
+	REST show forwarding switch l3 host route	${leaf0b_name}
+	REST show forwarding switch l3 host route	${leaf1a_name}
+	REST show forwarding switch l3 host route	${leaf1b_name}
+	REST show forwarding switch l3 host route	${leaf2a_name}
+	REST show forwarding switch l3 host route	${leaf2b_name}	
+	REST show forwarding switch l3 cidr route	${leaf0a_name}
+	REST show forwarding switch l3 cidr route	${leaf0b_name}
+	REST show forwarding switch l3 cidr route	${leaf1a_name}
+	REST show forwarding switch l3 cidr route	${leaf1b_name}
+	REST show forwarding switch l3 cidr route	${leaf2a_name}
+	REST show forwarding switch l3 cidr route	${leaf2b_name}	
+	REST show running config
+	mininet l3 ping								${bm4_name}			${bm1_ip} 		3
+	sleep 										1
 	${loss}=  									mininet l3 ping		${bm4_name}		${bm1_ip} 	
 	Should Be True  							${loss} == 0
 	${endpoints_cnt}=							rest count endpoints mac
 #	Should Be True  							${endpoints_cnt} == 8
 
 L3 inter tenant same rack tagged with dynamic endpoints
+	delete static endpoint
 	add inter tenant routing
 	mininet host config
-	sleep										1
+	mininet dump switch							${leaf0a_name}
+	mininet dump switch							${leaf0b_name}
+	mininet dump switch							${leaf1a_name}
+	mininet dump switch							${leaf1b_name}
+	mininet dump switch							${leaf2a_name}
+	mininet dump switch							${leaf2b_name}
+	REST show forwarding switch l3 host route	${leaf0a_name}
+	REST show forwarding switch l3 host route	${leaf0b_name}
+	REST show forwarding switch l3 host route	${leaf1a_name}
+	REST show forwarding switch l3 host route	${leaf1b_name}
+	REST show forwarding switch l3 host route	${leaf2a_name}
+	REST show forwarding switch l3 host route	${leaf2b_name}	
+	REST show forwarding switch l3 cidr route	${leaf0a_name}
+	REST show forwarding switch l3 cidr route	${leaf0b_name}
+	REST show forwarding switch l3 cidr route	${leaf1a_name}
+	REST show forwarding switch l3 cidr route	${leaf1b_name}
+	REST show forwarding switch l3 cidr route	${leaf2a_name}
+	REST show forwarding switch l3 cidr route	${leaf2b_name}	
+	REST show running config
 	mininet l3 ping								${bm0_name} 		${bm3_ip}		3
 	sleep										1
 	${loss}=  									mininet l3 ping		${bm0_name}		${bm3_ip} 	
@@ -572,8 +924,28 @@ L3 inter tenant same rack tagged with dynamic endpoints
 	delete inter tenant routing
 
 L3 inter tenant across rack tagged with dynamic endpoints
+	delete static endpoint
 	add inter tenant routing
 	mininet host config
+	mininet dump switch							${leaf0a_name}
+	mininet dump switch							${leaf0b_name}
+	mininet dump switch							${leaf1a_name}
+	mininet dump switch							${leaf1b_name}
+	mininet dump switch							${leaf2a_name}
+	mininet dump switch							${leaf2b_name}
+	REST show forwarding switch l3 host route	${leaf0a_name}
+	REST show forwarding switch l3 host route	${leaf0b_name}
+	REST show forwarding switch l3 host route	${leaf1a_name}
+	REST show forwarding switch l3 host route	${leaf1b_name}
+	REST show forwarding switch l3 host route	${leaf2a_name}
+	REST show forwarding switch l3 host route	${leaf2b_name}	
+	REST show forwarding switch l3 cidr route	${leaf0a_name}
+	REST show forwarding switch l3 cidr route	${leaf0b_name}
+	REST show forwarding switch l3 cidr route	${leaf1a_name}
+	REST show forwarding switch l3 cidr route	${leaf1b_name}
+	REST show forwarding switch l3 cidr route	${leaf2a_name}
+	REST show forwarding switch l3 cidr route	${leaf2b_name}	
+	REST show running config
 	sleep										1
 	mininet l3 ping								${bm4_name} 		${bm8_ip}		3
 	sleep										1
@@ -584,6 +956,7 @@ L3 inter tenant across rack tagged with dynamic endpoints
 	delete inter tenant routing
 			
 Delete and add router vns with L3 intra tenant traffic with dynamic endpoints
+	delete static endpoint
 	mininet host config
 	sleep  										1
 	mininet l3 ping								${bm4_name}			${bm1_ip} 	3
@@ -594,12 +967,28 @@ Delete and add router vns with L3 intra tenant traffic with dynamic endpoints
 	mininet dump switch							${leaf1b_name}
 	mininet dump switch							${leaf2a_name}
 	mininet dump switch							${leaf2b_name}
+	REST show forwarding switch l3 host route	${leaf0a_name}
+	REST show forwarding switch l3 host route	${leaf0b_name}
+	REST show forwarding switch l3 host route	${leaf1a_name}
+	REST show forwarding switch l3 host route	${leaf1b_name}
+	REST show forwarding switch l3 host route	${leaf2a_name}
+	REST show forwarding switch l3 host route	${leaf2b_name}	
+	REST show forwarding switch l3 cidr route	${leaf0a_name}
+	REST show forwarding switch l3 cidr route	${leaf0b_name}
+	REST show forwarding switch l3 cidr route	${leaf1a_name}
+	REST show forwarding switch l3 cidr route	${leaf1b_name}
+	REST show forwarding switch l3 cidr route	${leaf2a_name}
+	REST show forwarding switch l3 cidr route	${leaf2b_name}	
+	REST show running config
+	mininet l3 ping								${bm4_name}			${bm1_ip} 		3
+	sleep										1
 	${loss}=  									mininet l3 ping		${bm4_name}		${bm1_ip} 	
 	Should Be True  							${loss} == 0
 	${endpoints_cnt}=							rest count endpoints mac
 #	Should Be True  							${endpoints_cnt} == 8
 	sleep										1
 	REST delete vns ip							${tenant1_name}  	${vns1_2}  		${vns1_ip2}	  		${vns1_subnet2}
+	REST show running config
 	sleep										1
 	${loss}=  									mininet l3 ping		${bm4_name}		${bm1_ip} 
 	Should Be True  							${loss} == 100
@@ -612,6 +1001,7 @@ Delete and add router vns with L3 intra tenant traffic with dynamic endpoints
 	${endpoints_cnt}=							rest count endpoints mac
 #	Should Be True  							${endpoints_cnt} == 8
 	REST add vns ip								${tenant1_name}  	${vns1_2}  		${vns1_ip2}	  		${vns1_subnet2}
+	REST show running config
 	sleep										1
 	${loss}=  									mininet l3 ping		${bm4_name}		${bm1_ip} 
 	Should Be True  							${loss} == 0
@@ -622,6 +1012,7 @@ Delete and add router vns with L3 intra tenant traffic with dynamic endpoints
 	
 
 Change vns ip address with L3 intra tenant traffic with dynamic endpoints
+	delete static endpoint
 	mininet host config
 	sleep  										1
 	mininet l3 ping								${bm4_name}			${bm1_ip} 	3
@@ -632,10 +1023,26 @@ Change vns ip address with L3 intra tenant traffic with dynamic endpoints
 	mininet dump switch							${leaf1b_name}
 	mininet dump switch							${leaf2a_name}
 	mininet dump switch							${leaf2b_name}
+	REST show forwarding switch l3 host route	${leaf0a_name}
+	REST show forwarding switch l3 host route	${leaf0b_name}
+	REST show forwarding switch l3 host route	${leaf1a_name}
+	REST show forwarding switch l3 host route	${leaf1b_name}
+	REST show forwarding switch l3 host route	${leaf2a_name}
+	REST show forwarding switch l3 host route	${leaf2b_name}	
+	REST show forwarding switch l3 cidr route	${leaf0a_name}
+	REST show forwarding switch l3 cidr route	${leaf0b_name}
+	REST show forwarding switch l3 cidr route	${leaf1a_name}
+	REST show forwarding switch l3 cidr route	${leaf1b_name}
+	REST show forwarding switch l3 cidr route	${leaf2a_name}
+	REST show forwarding switch l3 cidr route	${leaf2b_name}	
+	REST show running config
+	mininet l3 ping								${bm4_name}			${bm1_ip} 		3
+	sleep										1
 	${loss}=  									mininet l3 ping		${bm4_name}		${bm1_ip} 	
 	Should Be True  							${loss} == 0
 	${endpoints_cnt}=							rest count endpoints mac
 #	Should Be True  							${endpoints_cnt} == 8
+	REST show running config
 	REST add vns ip  							${tenant1_name}  	${vns1_2}  		10.10.99.1	  		${vns1_subnet2} 	
 	${loss}=  									mininet l3 ping		${bm4_name}		${bm1_ip} 	
 	Should Be True  							${loss} == 100
@@ -655,6 +1062,7 @@ Change vns ip address with L3 intra tenant traffic with dynamic endpoints
 
 
 Set 32bit full mask on vns router ip
+	delete static endpoint
 	mininet host config
 	sleep  										1
 	mininet l3 ping								${bm0_name}			${bm1_ip} 	3
@@ -665,20 +1073,45 @@ Set 32bit full mask on vns router ip
 	mininet dump switch							${leaf1b_name}
 	mininet dump switch							${leaf2a_name}
 	mininet dump switch							${leaf2b_name}
+	REST show forwarding switch l3 host route	${leaf0a_name}
+	REST show forwarding switch l3 host route	${leaf0b_name}
+	REST show forwarding switch l3 host route	${leaf1a_name}
+	REST show forwarding switch l3 host route	${leaf1b_name}
+	REST show forwarding switch l3 host route	${leaf2a_name}
+	REST show forwarding switch l3 host route	${leaf2b_name}	
+	REST show forwarding switch l3 cidr route	${leaf0a_name}
+	REST show forwarding switch l3 cidr route	${leaf0b_name}
+	REST show forwarding switch l3 cidr route	${leaf1a_name}
+	REST show forwarding switch l3 cidr route	${leaf1b_name}
+	REST show forwarding switch l3 cidr route	${leaf2a_name}
+	REST show forwarding switch l3 cidr route	${leaf2b_name}	
+	REST show running config	
+	mininet l3 ping								${bm0_name}			${bm1_ip} 		3
+	sleep										1
 	${loss}=  									mininet l3 ping		${bm0_name}		${bm1_ip} 	
 	Should Be True  							${loss} == 0
 	${endpoints_cnt}=							rest count endpoints mac
+	REST show running config
 	REST delete vns ip							${tenant1_name}  	${vns1_2}  			${vns1_ip2}		${vns1_subnet2} 		
 	${result}=									REST add vns ip		${tenant1_name}		${vns1_2}  		10.10.99.1	  		32
 	Should Not Be True							${result} 
 	sleep										1
+	mininet l3 ping								${bm0_name}			${bm1_ip} 		3
+	sleep										1
+	${loss}=  									mininet l3 ping		${bm0_name}		${bm1_ip} 	
+	Should Be True  							${loss} == 100
+	${endpoints_cnt}=							rest count endpoints mac
 	REST add vns ip								${tenant1_name}  	${vns1_2}  			${vns1_ip2}	  	${vns1_subnet2} 
+	REST show running config
+	mininet l3 ping								${bm0_name}			${bm1_ip} 		3
+	sleep										1
 	${loss}=  									mininet l3 ping		${bm0_name}		${bm1_ip} 	
 	Should Be True  							${loss} == 0
 	${endpoints_cnt}=							rest count endpoints mac
 		
 	
 Verify subnet mask on vns router ip
+	delete static endpoint
 	mininet host config
 	sleep  										1
 	mininet l3 ping								${bm0_name}			${bm1_ip} 	3
@@ -689,16 +1122,31 @@ Verify subnet mask on vns router ip
 	mininet dump switch							${leaf1b_name}
 	mininet dump switch							${leaf2a_name}
 	mininet dump switch							${leaf2b_name}
+	REST show forwarding switch l3 host route	${leaf0a_name}
+	REST show forwarding switch l3 host route	${leaf0b_name}
+	REST show forwarding switch l3 host route	${leaf1a_name}
+	REST show forwarding switch l3 host route	${leaf1b_name}
+	REST show forwarding switch l3 host route	${leaf2a_name}
+	REST show forwarding switch l3 host route	${leaf2b_name}	
+	REST show forwarding switch l3 cidr route	${leaf0a_name}
+	REST show forwarding switch l3 cidr route	${leaf0b_name}
+	REST show forwarding switch l3 cidr route	${leaf1a_name}
+	REST show forwarding switch l3 cidr route	${leaf1b_name}
+	REST show forwarding switch l3 cidr route	${leaf2a_name}
+	REST show forwarding switch l3 cidr route	${leaf2b_name}	
+	REST show running config	
 	${loss}=  									mininet l3 ping		${bm0_name}		${bm1_ip} 	
 	Should Be True  							${loss} == 0
 	${endpoints_cnt}=							rest count endpoints mac
-	REST add vns ip								REST add vns ip		${tenant1_name}  	${vns1_1}  		10.10.11.254	  	25
+	REST add vns ip								${tenant1_name}  	${vns1_1}  		10.10.11.254	  	25
+	REST show running config
 	mininet host delete arp						${bm0_name}			${vns1_ip1}
 	mininet host gw								${bm0_name}			10.10.11.254		${bm0-bond0}
 	mininet l3 ping								${bm0_name}			10.10.11.254		3
 	${result}=									mininet host verify arp		${bm0_name}		10.10.11.254
 	Should Not Be True							${result}
-	REST add vns ip								REST add vns ip		${tenant1_name}  	${vns1_1}  		10.10.11.254	  	24
+	REST add vns ip								${tenant1_name}  	${vns1_1}  		10.10.11.254	  	24
+	REST show running config
 	mininet l3 ping								${bm0_name}			10.10.11.254		3
 	${result}=									mininet host verify arp		${bm0_name}		10.10.11.254
 	Should Be True								${result}
@@ -708,6 +1156,7 @@ Verify subnet mask on vns router ip
 
 
 L3 inter tenant forwarding with VLSM
+	delete static endpoint
 	mininet host config
 	sleep  										1
 	REST add vns ip								${tenant1_name}  	${vns1_2}  		10.10.22.254	  	25
@@ -722,30 +1171,75 @@ L3 inter tenant forwarding with VLSM
 	mininet dump switch							${leaf1b_name}
 	mininet dump switch							${leaf2a_name}
 	mininet dump switch							${leaf2b_name}
+	REST show forwarding switch l3 host route	${leaf0a_name}
+	REST show forwarding switch l3 host route	${leaf0b_name}
+	REST show forwarding switch l3 host route	${leaf1a_name}
+	REST show forwarding switch l3 host route	${leaf1b_name}
+	REST show forwarding switch l3 host route	${leaf2a_name}
+	REST show forwarding switch l3 host route	${leaf2b_name}	
+	REST show forwarding switch l3 cidr route	${leaf0a_name}
+	REST show forwarding switch l3 cidr route	${leaf0b_name}
+	REST show forwarding switch l3 cidr route	${leaf1a_name}
+	REST show forwarding switch l3 cidr route	${leaf1b_name}
+	REST show forwarding switch l3 cidr route	${leaf2a_name}
+	REST show forwarding switch l3 cidr route	${leaf2b_name}	
+	REST show running config	
 	${loss}=  									mininet l3 ping		${bm5_name}		${bm3_ip} 	
 	Should Be True  							${loss} == 0
 	${endpoints_cnt}=							rest count endpoints mac
 	delete inter tenant routing
+	REST show running config
 	${loss}=  									mininet l3 ping		${bm5_name}		${bm3_ip} 	
 	Should Be True  							${loss} == 100
 	REST add vns ip								${tenant1_name}  	${vns1_2}  		${vns1_ip2}	  	${vns1_subnet2} 
-	
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+Delete and add router vns with L3 intra tenant traffic with static endpoints
+	add static endpoint
+	sleep 										1
+	mininet host config
+	sleep										1
+	mininet host add arp						${bm0_name}					${vns1_ip1}		${gw_mac}
+	mininet host add arp						${bm1_name} 				${vns1_ip2}		${gw_mac}
+	mininet host add arp						${bm2_name}					${vns2_ip3}		${gw_mac}
+	mininet host add arp						${bm8_name} 				${vns2_ip1}		${gw_mac}
+	mininet host add arp						${bm9_name}					${vns2_ip2}		${gw_mac}
+	mininet host add arp						${bm10_name} 				${vns2_ip3}		${gw_mac}
+	sleep  										1
+	mininet l3 ping								${bm8_name}					${bm2_ip} 		3
+	sleep 										2
+	mininet dump switch							${leaf0a_name}
+	mininet dump switch							${leaf0b_name}
+	mininet dump switch							${leaf1a_name}
+	mininet dump switch							${leaf1b_name}
+	mininet dump switch							${leaf2a_name}
+	mininet dump switch							${leaf2b_name}
+	REST show forwarding switch l3 host route	${leaf0a_name}
+	REST show forwarding switch l3 host route	${leaf0b_name}
+	REST show forwarding switch l3 host route	${leaf1a_name}
+	REST show forwarding switch l3 host route	${leaf1b_name}
+	REST show forwarding switch l3 host route	${leaf2a_name}
+	REST show forwarding switch l3 host route	${leaf2b_name}	
+	REST show forwarding switch l3 cidr route	${leaf0a_name}
+	REST show forwarding switch l3 cidr route	${leaf0b_name}
+	REST show forwarding switch l3 cidr route	${leaf1a_name}
+	REST show forwarding switch l3 cidr route	${leaf1b_name}
+	REST show forwarding switch l3 cidr route	${leaf2a_name}
+	REST show forwarding switch l3 cidr route	${leaf2b_name}	
+	${loss}=  									mininet l3 ping				${bm8_name}		${bm2_ip} 	
+	Should Be True  							${loss} == 0
+	${endpoints_cnt}=							rest count endpoints mac
+#	Should Be True  							${endpoints_cnt} == 7
+	REST show running config
+	REST delete vns ip							${tenant2_name}				${vns2_1}  		${vns2_ip1}	  		${vns2_subnet1} 	
+	sleep										1
+	${loss}=  									mininet l3 ping				${bm8_name}		${bm2_ip} 	
+	Should Be True  							${loss} == 100
+	REST add vns ip  							${tenant2_name}  			${vns2_1}  		${vns2_ip1}	  		${vns2_subnet1} 	
+	REST show running config
+	sleep										1
+	${loss}=  									mininet l3 ping				${bm8_name}		${bm2_ip} 	
+	Should Be True  							${loss} == 0	
 
 
 
@@ -825,9 +1319,56 @@ setup topology
 teardown topology
 	delete fabric switch
 	sleep										1
+	REST delete portgroup from vns				${tenant2_name}  	${vns2_3} 		${portgroup10} 		${untaggedvlan}	
+	REST delete portgroup from vns				${tenant1_name}  	${vns1_1} 		${portgroup0} 		${untaggedvlan}	
+	REST delete portgroup from vns				${tenant1_name}  	${vns1_2} 		${portgroup1} 		${untaggedvlan}	
+	REST delete portgroup from vns				${tenant2_name}  	${vns2_3} 		${portgroup2} 		${vns2_vlan3}
+	REST delete portgroup from vns				${tenant2_name}  	${vns2_2} 		${portgroup3} 		${untaggedvlan}
+	REST delete portgroup from vns				${tenant1_name}  	${vns1_1} 		${portgroup4} 		${vns1_vlan1}
+	REST delete portgroup from vns				${tenant1_name}  	${vns1_2} 		${portgroup5} 		${untaggedvlan}
+	REST delete portgroup from vns				${tenant2_name}  	${vns2_1} 		${portgroup6} 		${vns2_vlan1}
+	REST delete portgroup from vns				${tenant1_name}  	${vns1_2} 		${portgroup7} 		${untaggedvlan}
+	REST delete portgroup from vns				${tenant2_name}  	${vns2_1} 		${portgroup8} 		${vns2_vlan1}
+	REST delete portgroup from vns				${tenant2_name}  	${vns2_2} 		${portgroup9} 		${vns2_vlan2}
+	REST delete vns ip  						${tenant1_name}  	${vns1_1}  		${vns1_ip1}	  		${vns1_subnet1} 	
+	REST delete vns ip  						${tenant1_name}  	${vns1_2}  		${vns1_ip2}	  		${vns1_subnet2} 	
+	REST delete vns ip  						${tenant1_name}  	${vns1_3}  		${vns1_ip3}	  		${vns1_subnet3}
+	REST delete vns ip  						${tenant2_name}  	${vns2_1}  		${vns2_ip1}	  		${vns2_subnet1} 	
+	REST delete vns ip  						${tenant2_name}  	${vns2_2}  		${vns2_ip2}	  		${vns2_subnet2} 	
+	REST delete vns ip  						${tenant2_name}  	${vns2_3}  		${vns2_ip3}	  		${vns2_subnet3}
+	REST delete vns								${tenant1_name}		${vns1_1}
+	REST delete vns								${tenant1_name}		${vns1_2}
+	REST delete vns								${tenant1_name}		${vns1_3}
+	REST delete vns								${tenant2_name}		${vns2_1}
+	REST delete vns								${tenant2_name}		${vns2_2}
+	REST delete vns								${tenant2_name}		${vns2_3}	
 	REST delete tenant							${tenant_system}
 	REST delete tenant							${tenant1_name}
 	REST delete tenant							${tenant2_name}
+	REST delete interface from portgroup			${leaf0a_name}		${leaf0a_intf1}		${portgroup0} 
+	REST delete interface from portgroup			${leaf0b_name}		${leaf0b_intf1}		${portgroup0} 
+	REST delete interface from portgroup			${leaf0a_name}		${leaf0a_intf2}		${portgroup1} 
+	REST delete interface from portgroup			${leaf0b_name}		${leaf0b_intf2}		${portgroup1} 
+	REST delete interface from portgroup			${leaf0a_name}		${leaf0a_intf3}		${portgroup2} 
+	REST delete interface from portgroup			${leaf0b_name}		${leaf0b_intf3}		${portgroup2} 
+	REST delete interface from portgroup			${leaf0a_name}		${leaf0a_intf4}		${portgroup3} 
+	REST delete interface from portgroup			${leaf0b_name}		${leaf0b_intf4}		${portgroup3} 	
+	REST delete interface from portgroup			${leaf1a_name}		${leaf1a_intf1}		${portgroup4} 
+	REST delete interface from portgroup			${leaf1b_name}		${leaf1b_intf1}		${portgroup4} 
+	REST delete interface from portgroup			${leaf1a_name}		${leaf1a_intf2}		${portgroup5} 
+	REST delete interface from portgroup			${leaf1b_name}		${leaf1b_intf2}		${portgroup5} 
+	REST delete interface from portgroup			${leaf1a_name}		${leaf1a_intf3}		${portgroup6} 
+	REST delete interface from portgroup			${leaf1b_name}		${leaf1b_intf3}		${portgroup6} 
+	REST delete interface from portgroup			${leaf1a_name}		${leaf1a_intf4}		${portgroup7} 
+	REST delete interface from portgroup			${leaf1b_name}		${leaf1b_intf4}		${portgroup7} 
+	REST delete interface from portgroup			${leaf2a_name}		${leaf2a_intf1}		${portgroup8} 
+	REST delete interface from portgroup			${leaf2b_name}		${leaf2b_intf1}		${portgroup8} 
+	REST delete interface from portgroup			${leaf2a_name}		${leaf2a_intf2}		${portgroup9} 
+	REST delete interface from portgroup			${leaf2b_name}		${leaf2b_intf2}		${portgroup9} 
+	REST delete interface from portgroup			${leaf2a_name}		${leaf2a_intf3}		${portgroup10} 
+	REST delete interface from portgroup			${leaf2b_name}		${leaf2b_intf3}		${portgroup10} 
+	REST delete interface from portgroup			${leaf2a_name}		${leaf2a_intf4}		${portgroup11} 
+	REST delete interface from portgroup			${leaf2b_name}		${leaf2b_intf4}		${portgroup11} 	
 	REST delete portgroup						${portgroup0}
 	REST delete portgroup						${portgroup1}
 	REST delete portgroup						${portgroup2}
@@ -840,6 +1381,7 @@ teardown topology
 	REST delete portgroup						${portgroup9}
 	REST delete portgroup						${portgroup10}
 	REST delete portgroup						${portgroup11}
+	sleep										10
 	
 add static endpoint
 	REST add endpoint							${tenant1_name}		${vns1_1}		${bm0_name}

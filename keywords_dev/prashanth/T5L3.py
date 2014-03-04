@@ -586,3 +586,68 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
             helpers.test_log("Output: %s" % c.rest.result_json())
             return c.rest.content()            
 
+    def rest_show_forwarding_switch_l3_host_route(self,switch):
+        '''
+    GET http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/info/forwarding/network/switch%5Bswitch-name%3D%22leaf0a%22%5D/l3-host-route-table
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        
+        helpers.test_log("Input arguments: switch = %s " % (switch))
+        
+        url = '/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch-name="%s"]/l3-host-route-table' % (switch)
+        try:
+            c.rest.get(url)
+        except:
+            helpers.test_failure(c.rest.error())
+        else: 
+            return c.rest.content()            
+
+    def rest_show_forwarding_switch_l3_cidr_route(self,switch):
+        '''
+    GET http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/info/forwarding/network/switch%5Bswitch-name%3D%22leaf0a%22%5D/l3-cidr-route-table
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        
+        helpers.test_log("Input arguments: switch = %s " % (switch))
+        
+        #url = '/api/v1/data/controller/applications/bvs/info/forwarding/network/switch\%5Bswitch-name\%3D\%22%s\%22\%5D/l3-cidr-route-table' % (switch)
+        url = '/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch-name="%s"]/l3-cidr-route-table' % (switch)
+        try:
+            c.rest.get(url)
+        except:
+            helpers.test_failure(c.rest.error())
+        else: 
+            return c.rest.content()            
+      
+    def rest_show_l3_cidr_table(self):
+        '''
+        GET http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/info/forwarding/network/l3-cidr-table
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        
+        url = '/api/v1/data/controller/applications/bvs/info/forwarding/network/l3-cidr-table' 
+        try:
+            c.rest.get(url)
+        except:
+            helpers.test_failure(c.rest.error())
+        else: 
+            return c.rest.content()                    
+
+    def rest_show_l3_host_table(self):
+        '''
+        GET http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/info/forwarding/network/l3-host-table
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        
+        url = '/api/v1/data/controller/applications/bvs/info/forwarding/network/l3-host-table' 
+        try:
+            c.rest.get(url)
+        except:
+            helpers.test_failure(c.rest.error())
+        else: 
+            return c.rest.content()                    
+

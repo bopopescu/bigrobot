@@ -100,29 +100,31 @@ class Host(object):
     def bash_get_interface_ipv4(self, node, intf):
         t = test.Test()
         n = t.node(node)
-        result = n.sudo("sudo ifconfig %s | grep --color=never -i \"inet addr\"" % intf)
-        output = result["content"]
+        output = n.sudo("sudo ifconfig %s | grep --color=never -i \"inet addr\"" % intf)['content']
+        return_stat = n.sudo('echo $?')['content']
+        return_stat = helpers.strip_cli_output(return_stat)
         helpers.log("output: %s" % output)
-        if not output:
-            return False
+        helpers.log("return_stat: %s" % return_stat)
+        if int(return_stat) == 1:
+            return ''
         else:
             result = re.search('inet addr:(.*)\sBcast', output)
             return result.group(1)
-
+        
     def bash_release_dhcpv4_address(self, node, intf, ipaddr):
         
         t = test.Test()
         n = t.node(node)
         n.sudo("sudo dhclient -r %s" % intf)
-        result = n.sudo("sudo ifconfig %s | grep --color=never -i \"inet addr\"" % intf)
-        output = result["content"]
-        helpers.log("output: %s" % output)
-        match = re.search(r'%s' % ipaddr, output, re.S | re.I)
-        if match:
-            return False
-        else:
+        n.sudo("sudo ifconfig %s | grep --color=never -i \"inet addr\"" % intf)['content']
+        return_stat = n.sudo('echo $?')['content']
+        return_stat = helpers.strip_cli_output(return_stat)
+        helpers.log("return_stat: %s" % return_stat)
+        if int(return_stat) == 1:
             return True
-    
+        else:
+            return False
+        
     def bash_renew_dhcpv4_address(self, node, intf):
         '''
              attempt to obtain an IPv4 address via dhcp. timeout is set to 10 seconds in /etc/dhcp/dhclient.conf file for ubuntu host 
@@ -130,11 +132,41 @@ class Host(object):
         t = test.Test()
         n = t.node(node)
         n.sudo("sudo dhclient -v -4 %s" % intf)
-        result = n.sudo("sudo ifconfig %s | grep --color=never -i \"inet addr\"" % intf)
-        output = result["content"]
-        helpers.log("output: %s" % output)
-        if not output:
-            return False
+        output = n.sudo("sudo ifconfig %s | grep --color=never -i \"inet addr\"" % intf)['content']
+        return_stat = n.sudo('echo $?')['content']
+        return_stat = helpers.strip_cli_output(return_stat)
+        helpers.log("return_stat: %s" % return_stat)
+        if int(return_stat) == 1:
+            return ''
         else:
             result = re.search('inet addr:(.*)\sBcast', output)
             return result.group(1)
+       
+    def bash_add_route(self, node, cidr, gw):
+        t = test.Test()
+        n = t.node(node)
+        n.sudo("sudo route add -net %s gw %s" %(cidr, gw))
+        return True
+    
+    def bash_delete_route(self, node, cidr, gw):
+        t = test.Test()
+        n = t.node(node)
+        n.sudo("sudo route del -net %s gw %s" %(cidr, gw))
+        return True
+    
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+                
+        
+        
