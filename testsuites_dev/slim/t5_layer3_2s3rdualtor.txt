@@ -1023,6 +1023,7 @@ Delete and add router vns with L3 intra tenant traffic with dynamic endpoints
 	REST show forwarding switch l3 cidr route	${leaf2a_name}
 	REST show forwarding switch l3 cidr route	${leaf2b_name}		
 	Should Be True  							${loss} == 0
+	mininet ifconfig intf						${bm1_name}							eth0
 	${value}= 									mininet host verify arp				${bm1_name} 	${vns1_ip2}
 	Should Be True								${value} 					
 	${endpoints_cnt}=							rest count endpoints mac

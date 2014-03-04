@@ -163,4 +163,11 @@ class Mininet(object):
         else:
             return True        
         
-        
+    def mininet_ifconfig_intf(self, host, intf):
+        t = test.Test()
+        mn = t.mininet()
+        result = mn.cli('%s ifconfig %s' % (host, intf))
+        output = result["content"]
+        helpers.log("output: %s" % output)     
+        return True
+    
