@@ -2,7 +2,7 @@
 
 * Setting
 Documentation    T5 Dual Leaf Dual Rack Test Suite
-Suite Setup      base suite setup
+Suite Setup      T5 base suite setup
 Suite Teardown   Tear down the config
 Test Setup       T5 base test setup
 Test Teardown    T5 base test teardown
@@ -141,7 +141,7 @@ ping bm0 to bm2 dual rack dual leaf static endpoints tag
 
 * Keywords
 
-base suite setup
+T5 base suite setup
 	base suite setup
     add fabric switch
     sleep  5

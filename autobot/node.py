@@ -25,7 +25,11 @@ class Node(object):
         self.dev_debug_level = 0
         self.console_ip = None
         self.console_port = None
-        if params:
+
+        # If name are in the form 'node-<ip_addr>', e.g., 'node-10.193.0.43'
+        # then they are nodes spawned directly by the user. Don't try to
+        # look up their attributes in params since they are not defined.
+        if params and not name.startswith('node-'):
             self.node_params = self.params[name]
             val = helpers.params_val('set_devconf_debug_level',
                                      self.node_params)
@@ -34,7 +38,7 @@ class Node(object):
                 helpers.log("Devconf for '%s' set to debug level %s"
                             % (name, self.dev_debug_level))
         else:
-            self.node_params = None
+            self.node_params = {}
 
         if self.ip() == 'dummy':
             helpers.environment_failure("IP address for '%s' is 'dummy'."
