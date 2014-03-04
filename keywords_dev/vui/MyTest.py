@@ -235,8 +235,12 @@ admin_user = glance
     def sanitize_cli_output(self, node):
         t = test.Test()
         n = t.node(node)
-        content = n.cli('show version')['content']
-        helpers.log("new_content: %s" % helpers.strip_cli_output(content))
+        content = n.cli('show user')['content']
+        output = helpers.strip_cli_output(content)
+        helpers.log("output:\n%s" % output)
+
+        lines = helpers.str_to_list(output)
+        helpers.log("lines:\n%s" % helpers.prettify(lines))
 
     def check_mastership(self, node):
         t = test.Test()
@@ -414,3 +418,19 @@ admin_user = glance
 
         #**** Done! Just making sure some random command continues to work...
         c.cli('show user')
+
+    def ping_from_stage_machine(self, host):
+        loss = helpers.ping(host)
+        helpers.log("Ping loss = %s" % loss)
+        if loss > 10:
+            helpers.log("Greater than 10% packet loss")
+            return False
+        else:
+            helpers.log("Less than 10% packet loss")
+            return True
+
+    def spawn_a_node(self):
+        t = test.Test()
+        n = t.node_spawn(ip='10.193.0.43')
+        # n = t.node_spawn(ip='10.193.0.43', user='adminX', password='adminadmin')
+        n.cli('show user')
