@@ -1,0 +1,62 @@
+* Setting
+Documentation   T5 Basic L3 two spine three leaf rack with dual-tor Test Suite
+Suite Setup     base suite setup
+Suite Teardown  base suite teardown
+Test Setup      setup topology
+Test Teardown   teardown topology
+#Suite Setup		setup topology
+#Suite Teardown	teardown topology
+Force Tags      T5 Sanity
+Library         keywords/BsnCommon.py
+Library         keywords/Mininet.py
+Library         keywords/T5.py
+Library         keywords/T5Fabric.py
+Library         keywords_dev/prashanth/T5L3.py
+Library         keywords_dev/animesh/BsnCommonShow.py
+Resource		keywords_dev/slim/t5_layer3_physical_resources.txt
+Resource		testsuites_dev/slim/t5_layer3_physical_variables.txt
+
+
+* Test Cases
+Intra tenant L3 untagged traffic with static endpoints same rack
+	L3 intra tenant same rack untagged with static endpoints
+#	[Tags]							skipped			smoke				sanity			
+
+Intra tenant L3 tagged traffic with static endpoints same rack
+	L3 intra tenant same rack tagged with static endpoints
+#	[Tags]							skipped			smoke				sanity		
+
+Intra tenant L3 untagged with initial unreachable dynamic host
+	L3 intra tenant untagged with initial unreachable dynamic host
+#	[Tags]							skipped			sanity				smoke					
+
+Intra tenant L3 untagged with destination host moved
+	L3 intra tenant untagged with host moved 
+#	[Tags]							skipped		sanity				
+
+
+
+
+
+	
+* Keywords
+
+base suite setup
+
+
+
+
+
+base suite teardown
+
+
+
+
+setup topology
+
+
+
+
+
+teardown topology
+

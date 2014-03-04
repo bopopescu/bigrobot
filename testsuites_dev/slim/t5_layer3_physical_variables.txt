@@ -1,0 +1,5 @@
+* Variable
+${tenant1_name}		A
+${tenant2_name}		B
+${tenant_system}	system
+$
