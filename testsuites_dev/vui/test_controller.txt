@@ -67,8 +67,19 @@ Test priminitive CLI keywords
     log           result=${result}
 
 Test priminitive REST keywords
-    #[Tags]  skipped
+    [Tags]  skipped
     get           master   /rest/v1/system/clock/local
     ${result}=    rest_content    c1
     log           result=${result}
+
+Test scp image
+    [Tags]  skipped
+    bash scp image   node=c1  remote_file=bsn@jenkins:/var/lib/jenkins/jobs/bvs\\ master/lastSuccessful/archive/target/appliance/images/bvs/controller-upgrade-bvs-2.0.5-SNAPSHOT.pkg  local_path=.
+
+Test sanitize CLI output
+    #[Tags]  skipped
+    sanitize cli output  c1
+
+Test node spawn
+    spawn a node
 

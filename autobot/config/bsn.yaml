@@ -4,11 +4,11 @@
 controller_user: admin
 controller_password: adminadmin
 
-mininet_user: mininet
-mininet_password: mininet
-
 switch_user: admin
 switch_password: adminadmin
+
+mininet_user: mininet
+mininet_password: mininet
 
 host_user: bsn
 host_password: bsn

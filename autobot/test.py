@@ -107,14 +107,19 @@ class Test(object):
                 self._params = helpers.load_config(params_file)
                 for n in self._params:
                     if n not in self._topology_params:
-                        helpers.environment_failure("Node '%s' is not specified in topo file"
+                        helpers.environment_failure("Node '%s' is not"
+                                                    " specified in topo file"
                                                     % n)
                     for key in self._params[n]:
                         if key not in self._topology_params[n]:
-                            helpers.warn("Node '%s' does not have attribute '%s' defined. Populating it from params file."
+                            helpers.warn("Node '%s' does not have attribute"
+                                         " '%s' defined. Populating it from"
+                                         " params file."
                                          % (n, key))
                         elif key in self._topology_params[n] and self._topology_params[n][key].lower() != 'dummy':
-                            helpers.warn("Node '%s' has attribute '%s' defined with value '%s'. Overriding it with value from params file."
+                            helpers.warn("Node '%s' has attribute '%s' defined"
+                                         " with value '%s'. Overriding it with"
+                                         " value from params file."
                                          % (n, key, self._topology_params[n][key]))
                         helpers.info("Node '%s' attribute '%s' gets value '%s'"
                                      % (n, key, self._params[n][key]))
@@ -444,6 +449,23 @@ class Test(object):
         c.rest.request_session_cookie()
         return self.node(node)
 
+    def node_spawn(self, ip, node=None, user=None, password=None,
+                   device_type='controller'):
+        t = self
+        if not node:
+            node = 'node-%s' % ip
+        helpers.log("Initializing controller '%s'" % node)
+        user = self.controller_user() if not user else user
+        if not password:
+            password = self.controller_password()
+
+        if device_type == 'controller':
+            n = a_node.ControllerNode(node, ip, user, password, t)
+        else:
+            helpers.environment_failure("You can only spawn nodes for device"
+                                        " types: 'controller'")
+        return n
+
     def node_connect(self, node, user=None, password=None,
                      controller_ip=None, controller_ip2=None):
         # Matches the following device types:
@@ -453,7 +475,8 @@ class Test(object):
         #
         match = re.match(r'^(c\d|controller\d?|master|slave|mn\d?|mininet\d?|s\d+|spine\d+|leaf\d+|s\d+|h\d+|tg\d+)$', node)
         if not match:
-            helpers.environment_failure("Unknown/unsupported device '%s'" % node)
+            helpers.environment_failure("Unknown/unsupported device '%s'"
+                                        % node)
 
         host = None
         params = self.topology_params()
@@ -481,19 +504,13 @@ class Test(object):
             password = authen[1]
 
         if helpers.is_controller(node):
-            helpers.log("Initializing controller '%s'" % node)
-
-            user = self.controller_user() if not user else user
-
-            if not password:
-                password = self.controller_password()
-
-            n = a_node.ControllerNode(node, host, user, password, t)
-
+            n = self.node_spawn(ip=host, node=node, user=user,
+                                password=password)
         elif helpers.is_mininet(node):
             helpers.log("Initializing Mininet '%s'" % node)
             if not self._has_a_controller:
-                helpers.environment_failure("Cannot bring up Mininet without a controller")
+                helpers.environment_failure("Cannot bring up Mininet without"
+                                            " a controller")
 
             # Use the OpenFlow port defined in the controller ('c1')
             # if it's defined.
@@ -537,7 +554,9 @@ class Test(object):
         elif helpers.is_traffic_generator(node):
             helpers.log("Initializing traffic generator '%s'" % node)
             if 'platform' not in self.topology_params()[node]:
-                helpers.environment_failure("Traffic generator '%s' does not have platform (e.g., platform: 'ixia')"
+                helpers.environment_failure("Traffic generator '%s' does not"
+                                            " have platform (e.g., platform:"
+                                            " 'ixia')"
                                             % node)
             platform = self.topology_params()[node]['platform']
             if platform.lower() == 'ixia':
@@ -663,7 +682,8 @@ class Test(object):
         n = self.topology(name)
 
         if not n.dev:
-            helpers.log("DevConf session is not available for node '%s'" % name)
+            helpers.log("DevConf session is not available for node '%s'"
+                        % name)
             return
 
         n.config('controller-node %s' % node_id)
@@ -677,7 +697,8 @@ class Test(object):
         n = self.topology(name)
 
         if not n.dev:
-            helpers.log("DevConf session is not available for node '%s'" % name)
+            helpers.log("DevConf session is not available for node '%s'"
+                        % name)
             return
 
         helpers.log("Enabling REST access via firewall filters")
@@ -694,13 +715,16 @@ class Test(object):
             for node_id in node_ids:
                 self._controller_cli_firewall_allow_rest_access(name, node_id)
         else:
-            helpers.environment_failure("'%s' is not a known controller (platform=%s)" % (name, platform))
+            helpers.environment_failure("'%s' is not a known controller"
+                                        " (platform=%s)"
+                                        % (name, platform))
 
     def setup_controller_http_session_cookie(self, name):
         n = self.topology(name)
 
         if not n.dev:
-            helpers.log("DevConf session is not available for node '%s'" % name)
+            helpers.log("DevConf session is not available for node '%s'"
+                        % name)
             return
         return n.rest.request_session_cookie()
 
@@ -712,7 +736,8 @@ class Test(object):
         n = self.topology(name)
 
         if not n.dev:
-            helpers.log("DevConf session is not available for node '%s'" % name)
+            helpers.log("DevConf session is not available for node '%s'"
+                        % name)
             return
 
         if helpers.is_switchlight(n.platform()):
@@ -722,7 +747,8 @@ class Test(object):
                 if c:
                     if 'openflow_port' in self.topology_params()[controller]:
                         openflow_port = self.topology_params()[controller]['openflow_port']
-                        n.config("controller %s port %s" % (c.ip(), openflow_port))
+                        n.config("controller %s port %s"
+                                 % (c.ip(), openflow_port))
                     else:
                         n.config("controller %s" % c.ip())
 
@@ -734,7 +760,8 @@ class Test(object):
         n = self.topology(name)
 
         if not n.dev:
-            helpers.log("DevConf session is not available for node '%s'" % name)
+            helpers.log("DevConf session is not available for node '%s'"
+                        % name)
             return
 
         if helpers.is_switchlight(n.platform()):
