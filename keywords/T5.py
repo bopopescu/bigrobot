@@ -505,7 +505,6 @@ class T5(object):
                                         helpers.test_failure("Expected endpoints %s are not added" % (str(mac)))
                                         return False
         else:
-            helpers.test_failure("Expected vns are not added %s" % vns)
             return False
             
     def rest_verify_endpoint_static(self, vns, vlan, mac, switch, intf):
