@@ -291,7 +291,7 @@ class T5PlatformCommon(object):
         else: 
             #helpers.warn("-------  Switch Status Is Not Intact. Please Collect Logs. Sleeping for 10 Hours   ------")
             #sleep(36000)
-            return False
+            return True
 
         
     def platform_ping(self, src, dst ):
@@ -304,7 +304,7 @@ class T5PlatformCommon(object):
             if (loss != '0'):
                 if(pingFailureCount == 5):
                     helpers.warn("5 Consecutive Ping Failures: Issuing Mininet-BugReport")
-                    mynet.mininet_bugreport()
+                    #mynet.mininet_bugreport()
                     return False
                 helpers.warn("Ping failed between: %s & %s" % (src,dst))
                 pingFailureCount += 1
@@ -442,19 +442,5 @@ class T5PlatformCommon(object):
                         except:
                             pass
                              
-                     
-                 
-                     
-        
-                
-     
-
-
-
-            
-            
-
-
-
 
 
