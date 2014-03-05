@@ -87,19 +87,23 @@ class T5Platform(object):
         '''
         obj = common()
         common.fabric_integrity_checker(obj,"before")
-        self._cluster_election(True)
+        returnVal = self._cluster_election(True)
+        if(not returnVal):
+            return False
         sleep(30)
-        common.fabric_integrity_checker(obj, "after")
+        return common.fabric_integrity_checker(obj, "after")
 
     def rest_verify_cluster_election_rerun(self):
         ''' Invoke "cluster election re-run" command and verify the controller state
         '''
         obj = common()
         common.fabric_integrity_checker(obj, "after")
-        self._cluster_election(False)
+        returnVal = self._cluster_election(False)
+        if(not returnVal):
+            return False
         sleep(30)
-        common.fabric_integrity_checker(obj, "before")
-
+        return common.fabric_integrity_checker(obj, "before")
+        
 
     def _cluster_node_reboot(self, masterNode=True):
 
@@ -199,26 +203,34 @@ class T5Platform(object):
     def cli_verify_cluster_master_reboot(self):
         obj = common()
         common.fabric_integrity_checker(obj,"before")
-        self._cluster_node_reboot()
-        common.fabric_integrity_checker(obj,"after")
+        returnVal = self._cluster_node_reboot()
+        if(not returnVal):
+            return False
+        return common.fabric_integrity_checker(obj,"after")
 
     def cli_verify_cluster_slave_reboot(self):
         obj = common()
         common.fabric_integrity_checker(obj,"before")
-        self._cluster_node_reboot(False)
-        common.fabric_integrity_checker(obj,"after")
+        returnVal = self._cluster_node_reboot(False)
+        if(not returnVal):
+            return False
+        return common.fabric_integrity_checker(obj,"after")
 
     def cli_verify_cluster_master_shutdown(self):
         obj = common()
         common.fabric_integrity_checker(obj,"before")
-        self._cluster_node_shutdown()
-        common.fabric_integrity_checker(obj,"after")
+        returnVal = self._cluster_node_shutdown()
+        if(not returnVal):
+            return False
+        return common.fabric_integrity_checker(obj,"after")
 
     def cli_verify_cluster_slave_shutdown(self):
         obj = common()
         common.fabric_integrity_checker(obj,"before")
-        self._cluster_node_shutdown(False)
-        common.fabric_integrity_checker(obj,"after")
+        returnVal = self._cluster_node_shutdown(False)
+        if(not returnVal):
+            return False
+        return common.fabric_integrity_checker(obj,"after")
 
     def rest_add_user(self, numUsers=1):
         numWarn = 0
@@ -296,12 +308,49 @@ class T5Platform(object):
                 return True
 
 
-
-
-     
- 
-
-
+    def rest_add_vip(self, vip):
+        
+        t = test.Test()
+        master = t.controller("master")
+        url = "/api/v1/data/controller/os/config/global/virtual-ip-config"
+        master.rest.post(url, {"ipv4-address": vip})
+        
+        url = "/api/v1/data/controller/os/config/global/virtual-ip-config"
+        result = master.rest.get(url)['content']
+        if (result[0]['ipv4-address'] == vip):
+            return True
+        else:
+            return False
+    
+    def cli_verify_cluster_vip(self, vip):
+        t = test.Test()
+        master = t.controller("master")
+        
+        content = master.bash("ip addr")['content']
+        helpers.log("CLI Content is: %s " % content)
+        splitContent = str(content).split(' ')
+        helpers.log("splitContent is: %s" % splitContent)
+        if vip not in splitContent:
+            helpers.log("VIP: %s not in the master" % vip)
+            return False
+        else:
+            helpers.log("VIP: %s is present in the master" % vip)
+            return True
+        
+        
+    def rest_delete_vip(self):
+        
+        t = test.Test()
+        master = t.controller("master")
+        url = "/api/v1/data/controller/os/config/global/virtual-ip-config"
+        content = master.rest.delete(url)['content']
+        
+        if (content):
+            helpers.log("result is: %s" % content)
+            return False
+        else:
+            
+            return True
 
 
 

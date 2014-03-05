@@ -127,7 +127,7 @@ Untag Traffic ingress on tag ports
     sleep  5 
    
 Traffic forwarding with edge port flap
-	[Tags]  feature    
+	[Tags]  feature        
 	
     ${stream}=             L3 add  no_arp=True  flow=b->f  src_mac=00:02:02:00:00:24  dst_mac=00:02:06:00:00:24  vlan_id=150  ethertype=8100  frame_rate=1000  frame_size=68  name=b_f_flow
     ${stream1}=             L3 add  no_arp=True  flow=f->b  src_mac=00:02:06:00:00:24  dst_mac=00:02:02:00:00:24  vlan_id=200  ethertype=8100  frame_rate=1000  frame_size=68  name=f_b_flow
@@ -158,7 +158,7 @@ Traffic forwarding with edge port flap
     sleep  5  
          
 Testing flooding to within a VNS when the peer-lag down..
-	[Tags]  feature       
+	[Tags]  feature         
 	
 	${stream}=             L3 add  no_arp=True  flow=e<->f  src_mac=00:02:05:00:00:24  dst_mac=00:02:06:00:00:24  vlan_id=500  ethertype=8100  frame_rate=1000  frame_size=68  name=e_f_flow
 	sleep  3
@@ -176,7 +176,7 @@ Testing flooding to within a VNS when the peer-lag down..
     sleep  5
 
 add/delete vns with traffic forwarding
-	[Tags]  feature  
+	[Tags]  feature   
 	
 	${stream}=             L3 add  no_arp=True  flow=a<->e  src_mac=00:02:01:00:00:24  dst_mac=00:02:05:00:00:24  vlan_id=500  ethertype=8100  frame_rate=1000  frame_size=68  name=a_e_flow
 	sleep  3
@@ -204,7 +204,7 @@ add/delete vns with traffic forwarding
 	sleep  5
 
 add/delete tenant with traffic forwarding
-	[Tags]  feature    
+	[Tags]  feature     
 	
 	${stream}=             L3 add  no_arp=True  flow=a<->e  src_mac=00:02:01:00:00:24  dst_mac=00:02:05:00:00:24  vlan_id=500  ethertype=8100  frame_rate=1000  frame_size=68  name=a_e_flow
 	sleep  3
@@ -233,7 +233,7 @@ add/delete tenant with traffic forwarding
 	sleep  5
 
 Spine0 reboot with multiple VNS forwarding and verify the traffic
-	[Tags]  feature  
+	[Tags]  feature    
 	
 	${stream}=             L3 add  no_arp=True  flow=a<->e  src_mac=00:02:01:00:00:24  dst_mac=00:02:05:00:00:24  vlan_id=500  ethertype=8100  frame_rate=1000  frame_size=68  name=a_e_flow
 	${stream1}=             L3 add  no_arp=True  flow=b->f  src_mac=00:02:02:00:00:24  dst_mac=00:02:06:00:00:24  frame_rate=1000  frame_size=68  name=b_f_flow
@@ -246,7 +246,7 @@ Spine0 reboot with multiple VNS forwarding and verify the traffic
 	rest verify forwarding layer2 table tag  leaf0-a  ${leaf0a_ixia_intf}  00:02:01:00:00:24
 	rest verify forwarding layer2 table tag  leaf2-a  ${leaf2a_ixia_intf}  00:02:05:00:00:24
 	rest verify forwarding layer2 table untag  leaf0-b  ${leaf0b_ixia_intf}  00:02:02:00:00:24
-	rest verify forwarding layer2 table tag  leaf2-a  ${leaf2b_ixia_intf}  00:02:06:00:00:24
+	rest verify forwarding layer2 table tag  leaf2-b  ${leaf2b_ixia_intf}  00:02:06:00:00:24
 	verify traffic rate  tx_rate  rx_rate  a  e
 	verify traffic rate  tx_rate  rx_rate  e  a
 	verify traffic rate  tx_rate  rx_rate  b  f
@@ -276,7 +276,7 @@ Spine0 reboot with multiple VNS forwarding and verify the traffic
 	sleep  5
 
 Spine1 reboot with multiple VNS forwarding and verify the traffic
-	[Tags]  feature  
+	[Tags]  feature   
 	${stream}=             L3 add  no_arp=True  flow=a<->e  src_mac=00:02:01:00:00:24  dst_mac=00:02:05:00:00:24  vlan_id=500  ethertype=8100  frame_rate=1000  frame_size=68  name=a_e_flow
 	${stream1}=             L3 add  no_arp=True  flow=b->f  src_mac=00:02:02:00:00:24  dst_mac=00:02:06:00:00:24  frame_rate=1000  frame_size=68  name=b_f_flow
 	${stream2}=             L3 add  no_arp=True  flow=f->b  src_mac=00:02:06:00:00:24  dst_mac=00:02:02:00:00:24  vlan_id=300  ethertype=8100  frame_rate=1000  frame_size=68  name=f_b_flow
@@ -367,6 +367,9 @@ T5 Functional Suite Setup
 T5 Functional Suite Teardown
    delete fabric switch
    rest delete portgroup  p5
+   rest delete tenant  t1
+   rest delete tenant  t2
+   rest delete tenant  t3
    base suite teardown
    	
 add a tenant  [Arguments]  ${tenant} 

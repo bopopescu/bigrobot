@@ -1,0 +1,277 @@
+*Settings
+Documentation  BigTap VFT  Test Suite
+Suite Setup  bigtap suite setup
+Suite Teardown   bigtap suite teardown
+Test Setup   base test setup
+Test Teardown  base test teardown 
+Force Tags   platform Sanity
+Library  keywords/BsnCommon.py
+Library  keywords/AppController.py
+Library  keywords/BigTap.py
+Library  keywords/SwitchLight.py
+Library  keywords/Ixia.py
+
+* Variable
+${switch_1_alias}  AF1
+${switchlight_version}  SwitchLight 2.0.1
+${netmask}  18
+${gateway}  10.192.64.1
+${dns_server}  10.192.3.1
+${dns_domain}  bigswitch.com
+${policy1}  P1
+${policy2}  P2
+${policy3}  P3
+
+${filter_1}  ethernet1  
+${fnick_1}  F1
+${delivery_1}  ethernet2  
+${dnick_1}  D1
+${filter_2}  ethernet5  
+${fnick_2}  F2
+${delivery_2}  ethernet6  
+${dnick_2}  D2
+${service_pre1}  ethernet47  
+${snick_pre1}  S1PRE
+${service_post1}  ethernet48  
+${snick_post1}  S1POST
+${filter_vft}  ethernet9  
+${fnick_vft}  VFT-F1
+${delivery_vft}  ethernet10 
+${dnick_vft}  VFT-D1
+
+
+*Test Case
+Verify Basic Policy
+    ${verify_policy1}=  rest verify bigtap policy  ${policy1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${verify_policy2}=  rest verify bigtap policy  ${policy2}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy2}    
+
+VFT: Add a new match condition and verify no traffic drop
+    ${stream}=  L3 add  flow=a->b  frame_rate=10000  frame_size=1518  no_arp=True
+    ...     src_mac=00:01:02:03:04:01  dst_mac=00:01:02:03:04:02  protocol=TCP  src_port=1234  dst_port=80
+    ...     src_ip=11.1.1.1  src_gw=11.1.1.2  dst_ip=11.1.1.2  dst_gw=11.1.1.1  name=a_b_flow
+    clear stats    
+    start traffic  ${stream}    
+    Sleep  5    
+    rest add policy match  admin-view  ${policy1}  20  {"src-ip-mask": "255.255.255.0", "sequence": 20, "ip-proto": 6, "src-ip": "119.1.1.1", "ether-type": 2048}
+    Sleep  5
+    stop traffic  ${stream}
+    Sleep  2
+    verify results  a  transmitted_frames  b  received_valid_frames
+    [Tags]  traffic  TC1 
+
+VFT: Delete previously added match condition and verify no traffic drop
+    ${stream}=  L3 add  flow=a->b  frame_rate=10000  frame_size=1518  no_arp=True
+    ...     src_mac=00:01:02:03:04:01  dst_mac=00:01:02:03:04:02  protocol=TCP  src_port=1234  dst_port=80
+    ...     src_ip=11.1.1.1  src_gw=11.1.1.2  dst_ip=11.1.1.2  dst_gw=11.1.1.1  name=a_b_flow
+    clear stats    
+    start traffic  ${stream}
+    rest delete policy match  admin-view  ${policy1}  20
+    Sleep  5
+    stop traffic  ${stream}
+    Sleep  2    
+    verify results  a  transmitted_frames  b  received_valid_frames   
+    [Tags]  traffic  TC2
+
+VFT: Add a new filter interface to policy and verify no traffic drop
+    ${stream}=  L3 add  flow=a->b  frame_rate=10000  frame_size=1518  no_arp=True
+    ...     src_mac=00:01:02:03:04:01  dst_mac=00:01:02:03:04:02  protocol=TCP  src_port=1234  dst_port=80
+    ...     src_ip=11.1.1.1  src_gw=11.1.1.2  dst_ip=11.1.1.2  dst_gw=11.1.1.1  name=a_b_flow
+    clear stats    
+    start traffic  ${stream}
+    rest add policy interface   admin-view  ${policy1}  ${fnick_vft}   filter
+    Sleep  5
+    stop traffic  ${stream}
+    Sleep  2    
+    verify results  a  transmitted_frames  b  received_valid_frames   
+    rest delete policy interface   admin-view  ${policy1}  ${fnick_vft}   filter
+    [Tags]  traffic  TC3 
+
+VFT: Add a new delivery interface to policy and verify no traffic drop
+    ${stream}=  L3 add  flow=a->b  frame_rate=10000  frame_size=1518  no_arp=True
+    ...     src_mac=00:01:02:03:04:01  dst_mac=00:01:02:03:04:02  protocol=TCP  src_port=1234  dst_port=80
+    ...     src_ip=11.1.1.1  src_gw=11.1.1.2  dst_ip=11.1.1.2  dst_gw=11.1.1.1  name=a_b_flow
+    clear stats    
+    start traffic  ${stream}
+    rest add policy interface   admin-view  ${policy1}  ${dnick_vft}   delivery
+    Sleep  5
+    stop traffic  ${stream}
+    Sleep  2    
+    verify results  a  transmitted_frames  b  received_valid_frames   
+    [Tags]  traffic  TC4 
+
+VFT: Delete the delivery interface added in previous testcase and verify no traffic drop
+    ${stream}=  L3 add  flow=a->b  frame_rate=10000  frame_size=1518  no_arp=True
+    ...     src_mac=00:01:02:03:04:01  dst_mac=00:01:02:03:04:02  protocol=TCP  src_port=1234  dst_port=80
+    ...     src_ip=11.1.1.1  src_gw=11.1.1.2  dst_ip=11.1.1.2  dst_gw=11.1.1.1  name=a_b_flow
+    clear stats    
+    start traffic  ${stream}
+    rest delete policy interface   admin-view  ${policy1}  ${dnick_vft}   delivery
+    Sleep  5
+    stop traffic  ${stream}
+    Sleep  2    
+    verify results  a  transmitted_frames  b  received_valid_frames   
+    [Tags]  traffic  TC5 
+
+VFT: Add a new service interface to policy and verify no traffic drop
+    ${stream}=  L3 add  flow=a->b  frame_rate=10000  frame_size=1518  no_arp=True
+    ...     src_mac=00:01:02:03:04:01  dst_mac=00:01:02:03:04:02  protocol=TCP  src_port=1234  dst_port=80
+    ...     src_ip=11.1.1.1  src_gw=11.1.1.2  dst_ip=11.1.1.2  dst_gw=11.1.1.1  name=a_b_flow
+    clear stats    
+    start traffic  ${stream}
+    rest add service to policy  admin-view  ${policy1}  S1  1 
+    Sleep  5
+    stop traffic  ${stream}
+    Sleep  2    
+    verify results  a  transmitted_frames  b  received_valid_frames   
+    rest delete service from policy  admin-view  ${policy1}  S1
+    [Tags]  traffic  TC6
+    
+VFT: Add a filter interface to unrelated policy and verify no traffic drop
+    ${stream}=  L3 add  flow=a->b  frame_rate=10000  frame_size=1518  no_arp=True
+    ...     src_mac=00:01:02:03:04:01  dst_mac=00:01:02:03:04:02  protocol=TCP  src_port=1234  dst_port=80
+    ...     src_ip=11.1.1.1  src_gw=11.1.1.2  dst_ip=11.1.1.2  dst_gw=11.1.1.1  name=a_b_flow
+    clear stats    
+    start traffic  ${stream}
+    rest add policy interface   admin-view  ${policy2}  ${fnick_vft}   filter
+    Sleep  5
+    stop traffic  ${stream}
+    Sleep  2    
+    verify results  a  transmitted_frames  b  received_valid_frames   
+    [Tags]  traffic  TC7
+
+VFT: Delete the previously added filter interface from the unrelated policy and verify no traffic drop
+    ${stream}=  L3 add  flow=a->b  frame_rate=10000  frame_size=1518  no_arp=True
+    ...     src_mac=00:01:02:03:04:01  dst_mac=00:01:02:03:04:02  protocol=TCP  src_port=1234  dst_port=80
+    ...     src_ip=11.1.1.1  src_gw=11.1.1.2  dst_ip=11.1.1.2  dst_gw=11.1.1.1  name=a_b_flow
+    clear stats    
+    start traffic  ${stream}
+    rest delete policy interface   admin-view  ${policy2}  ${fnick_vft}   filter
+    Sleep  5
+    stop traffic  ${stream}
+    Sleep  2    
+    verify results  a  transmitted_frames  b  received_valid_frames   
+    [Tags]  traffic  TC8
+
+    
+VFT: Add a delivery interface to unrelated policy and verify no traffic drop
+    ${stream}=  L3 add  flow=a->b  frame_rate=10000  frame_size=1518  no_arp=True
+    ...     src_mac=00:01:02:03:04:01  dst_mac=00:01:02:03:04:02  protocol=TCP  src_port=1234  dst_port=80
+    ...     src_ip=11.1.1.1  src_gw=11.1.1.2  dst_ip=11.1.1.2  dst_gw=11.1.1.1  name=a_b_flow
+    clear stats    
+    start traffic  ${stream}
+    rest add policy interface   admin-view  ${policy2}  ${dnick_vft}   delivery
+    Sleep  5
+    stop traffic  ${stream}
+    Sleep  2    
+    verify results  a  transmitted_frames  b  received_valid_frames   
+    [Tags]  traffic  TC9
+
+VFT: Delete the previously added delivery interface from the unrelated policy and verify no traffic drop
+    ${stream}=  L3 add  flow=a->b  frame_rate=10000  frame_size=1518  no_arp=True
+    ...     src_mac=00:01:02:03:04:01  dst_mac=00:01:02:03:04:02  protocol=TCP  src_port=1234  dst_port=80
+    ...     src_ip=11.1.1.1  src_gw=11.1.1.2  dst_ip=11.1.1.2  dst_gw=11.1.1.1  name=a_b_flow
+    clear stats    
+    start traffic  ${stream}
+    rest delete policy interface   admin-view  ${policy2}  ${dnick_vft}   delivery
+    Sleep  5
+    stop traffic  ${stream}
+    Sleep  2    
+    verify results  a  transmitted_frames  b  received_valid_frames   
+    [Tags]  traffic  TC10
+
+VFT: Add a service to unrelated policy and verify no traffic drop
+    ${stream}=  L3 add  flow=a->b  frame_rate=10000  frame_size=1518  no_arp=True
+    ...     src_mac=00:01:02:03:04:01  dst_mac=00:01:02:03:04:02  protocol=TCP  src_port=1234  dst_port=80
+    ...     src_ip=11.1.1.1  src_gw=11.1.1.2  dst_ip=11.1.1.2  dst_gw=11.1.1.1  name=a_b_flow
+    clear stats    
+    start traffic  ${stream}
+    rest add service to policy  admin-view  ${policy2}  S1  1 
+    Sleep  5
+    stop traffic  ${stream}
+    Sleep  2    
+    verify results  a  transmitted_frames  b  received_valid_frames   
+    [Tags]  traffic  TC11
+
+VFT: Delete the previously added service from the unrelated policy and verify no traffic drop
+    ${stream}=  L3 add  flow=a->b  frame_rate=10000  frame_size=1518  no_arp=True
+    ...     src_mac=00:01:02:03:04:01  dst_mac=00:01:02:03:04:02  protocol=TCP  src_port=1234  dst_port=80
+    ...     src_ip=11.1.1.1  src_gw=11.1.1.2  dst_ip=11.1.1.2  dst_gw=11.1.1.1  name=a_b_flow
+    clear stats    
+    start traffic  ${stream}
+    rest delete service from policy  admin-view  ${policy2}  S1
+    Sleep  5
+    stop traffic  ${stream}
+    Sleep  2    
+    verify results  a  transmitted_frames  b  received_valid_frames   
+    [Tags]  traffic  TC12
+
+VFT: Flap management interface on switch and verify no traffic drop
+    ${stream}=  L3 add  flow=a->b  frame_rate=10000  frame_size=1518  no_arp=True
+    ...     src_mac=00:01:02:03:04:01  dst_mac=00:01:02:03:04:02  protocol=TCP  src_port=1234  dst_port=80
+    ...     src_ip=11.1.1.1  src_gw=11.1.1.2  dst_ip=11.1.1.2  dst_gw=11.1.1.1  name=a_b_flow
+    clear stats    
+    start traffic  ${stream}
+    Sleep  5    
+    cli flap interface ma1  s1
+    Sleep  5
+    stop traffic  ${stream}
+    Sleep  2    
+    verify results  a  transmitted_frames  b  received_valid_frames   
+    [Tags]  traffic  TC13
+
+       
+* Keywords
+
+
+bigtap suite setup
+    base suite setup
+    rest add switch alias  s1  APP-REGRESS-1
+    rest add interface role  s1  ${filter_1}  filter  ${fnick_1}   
+    rest add interface role  s1  ${delivery_1}  delivery  ${dnick_1}
+    rest add interface role  s1  ${filter_2}  filter  ${fnick_2}   
+    rest add interface role  s1  ${delivery_2}  delivery  ${dnick_2}
+    rest add interface role  s1  ${filter_vft}  filter  ${fnick_vft}   
+    rest add interface role  s1  ${delivery_vft}  delivery  ${dnick_vft}
+    rest add interface role  s1  ${service_pre1}  service  ${snick_pre1}   
+    rest add interface role  s1  ${service_post1}  service  ${snick_post1}
+    rest add service  S1  S1PRE  S1POST    
+    rest add policy  admin-view  ${policy1}  forward
+    rest add policy match  admin-view  ${policy1}  1  {"src-ip-mask": "255.255.255.0", "sequence": 1, "ip-proto": 6, "src-ip": "11.1.1.1", "ether-type": 2048}
+    rest add policy match  admin-view  ${policy1}  2  {"src-ip-mask": "255.255.255.0", "sequence": 2, "ip-proto": 6, "src-ip": "12.1.1.1", "ether-type": 2048}
+    rest add policy match  admin-view  ${policy1}  3  {"src-ip-mask": "255.255.255.0", "sequence": 3, "ip-proto": 6, "src-ip": "13.1.1.1", "ether-type": 2048}
+    rest add policy match  admin-view  ${policy1}  4  {"src-ip-mask": "255.255.255.0", "sequence": 4, "ip-proto": 6, "src-ip": "14.1.1.1", "ether-type": 2048}
+    rest add policy match  admin-view  ${policy1}  5  {"src-ip-mask": "255.255.255.0", "sequence": 5, "ip-proto": 6, "src-ip": "15.1.1.1", "ether-type": 2048}
+    rest add policy match  admin-view  ${policy1}  6  {"src-ip-mask": "255.255.255.0", "sequence": 6, "ip-proto": 6, "src-ip": "16.1.1.1", "ether-type": 2048}
+    rest add policy match  admin-view  ${policy1}  7  {"src-ip-mask": "255.255.255.0", "sequence": 7, "ip-proto": 6, "src-ip": "17.1.1.1", "ether-type": 2048}
+    rest add policy interface   admin-view  ${policy1}  ${fnick_1}   filter
+    rest add policy interface   admin-view  ${policy1}  ${dnick_1}   delivery
+    rest add policy  admin-view  ${policy2}  forward
+    rest add policy match  admin-view  ${policy2}  1  {"src-ip-mask": "255.255.255.0", "sequence": 1, "ip-proto": 17, "src-ip": "29.1.1.1", "ether-type": 2048}
+    rest add policy interface   admin-view  ${policy2}  ${fnick_2}  filter
+    rest add policy interface   admin-view  ${policy2}  ${dnick_2}  delivery
+    Sleep  10
+
+verify results   [Arguments]  ${tx_port}  ${transmitted_frames}  ${rx_port}  ${received_valid_frames}
+    ${report}=  fetch port stats
+    ${tx_value}=  verify dict key  ${report}  ${tx_port}  ${transmitted_frames}
+    ${rx_value}=  verify dict key  ${report}  ${rx_port}  ${received_valid_frames}
+    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}  rangev=100
+    Should be true  ${in_range} 
+        
+bigtap suite teardown
+    rest delete policy  admin-view  ${policy1}
+    rest delete policy  admin-view  ${policy2}
+    rest delete policy  admin-view  ${policy3}          
+    rest delete interface role  s1  ${filter_1}  filter  ${fnick_1}   
+    rest delete interface role  s1  ${delivery_1}  delivery  ${dnick_1}
+    rest delete interface role  s1  ${filter_2}  filter  ${fnick_2}   
+    rest delete interface role  s1  ${delivery_2}  delivery  ${dnick_2}
+    rest delete interface role  s1  ${filter_vft}  filter  ${fnick_vft}   
+    rest delete interface role  s1  ${delivery_vft}  delivery  ${dnick_vft}    
+    rest delete interface role  s1  ${service_pre1}  service  ${snick_pre1}   
+    rest delete interface role  s1  ${service_post1}  service  ${snick_post1}    
+    rest delete service  S1
+    rest delete switch alias  s1
+    rest delete switch  s1

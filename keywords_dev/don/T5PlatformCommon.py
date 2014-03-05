@@ -2,6 +2,7 @@ import autobot.helpers as helpers
 import autobot.test as test
 import keywords.Mininet as mininet
 from time import sleep
+import keywords.T5Fabric as T5Fabric
 
 switchDict_b4 = {}
 switchDict_after = {}
@@ -13,7 +14,7 @@ fabricLags_b4 = []
 fabricLags_after = []
 pingFailureCount = 0
 warningCount = 0
-
+leafSwitchList = []
 
 class T5PlatformCommon(object):
 
@@ -51,14 +52,19 @@ class T5PlatformCommon(object):
         helpers.log("After is: %s " % switchDict_after)
         
         if(len(switchDict_b4) != len(switchDict_after)):
+            helpers.warn("-----------    Connected Switch Discrepancies    -----------")
             helpers.warn("Warning: Number of switches are different between Before & After")
             warningCount += 1
 
         for switch in switchDict_b4:
-            if switchDict_after[switch] != switchDict_b4[switch]:
-                helpers.warn("Warning: Switch status for switch %s has changed from: %s to %s " \
-                        %(switch, switchDict_b4[switch], switchDict_after[switch]))
-                warningCount += 1
+            try:
+                if switchDict_after[switch] != switchDict_b4[switch]:
+                    helpers.warn("Warning: Switch status for switch %s has changed from: %s to %s " \
+                            %(switch, switchDict_b4[switch], switchDict_after[switch]))
+                    warningCount += 1
+            except(KeyError):
+                helpers.warn("Warning: Switch: %s is not present after the state change " % (switch))
+                warningCount += 1 
 
         return warningCount
 
@@ -167,9 +173,15 @@ class T5PlatformCommon(object):
             return warningCount
         
         else:
-            helpers.warn("Got List Different from helpers")
-            helpers.log("B4 is: %s" % list_b4)
-            helpers.log("After is: %s" % list_after)
+            #helpers.warn("Got List Different from helpers")
+            #helpers.log("B4 is: %s" % list_b4)
+            #helpers.log("After is: %s" % list_after)
+            if (fabricElement == "FabricLinks"):
+                helpers.warn("-----------    Fabric Link Discrepancies    -----------")
+            if (fabricElement == "FabricEndpoints"):
+                helpers.warn("-----------    Fabric Endpoints Discrepancies    -----------")
+            if (fabricElement == "FabricLags"):
+                helpers.warn("-----------    Fabric Lags Discrepancies    -----------")
             if (len(list_b4) > len(list_after)):
                 for item in list_b4:
                     if item not in list_after:
@@ -277,7 +289,9 @@ class T5PlatformCommon(object):
                 helpers.log("Switch status is intact after the state change operation")
             return True
         else: 
-            return False
+            #helpers.warn("-------  Switch Status Is Not Intact. Please Collect Logs. Sleeping for 10 Hours   ------")
+            #sleep(36000)
+            return True
 
         
     def platform_ping(self, src, dst ):
@@ -290,14 +304,14 @@ class T5PlatformCommon(object):
             if (loss != '0'):
                 if(pingFailureCount == 5):
                     helpers.warn("5 Consecutive Ping Failures: Issuing Mininet-BugReport")
-                    mynet.mininet_bugreport()
-                    helpers.warn("PLEASE COLLECT SWITCH LOGS")
-                    sleep(1000)
+                    #mynet.mininet_bugreport()
+                    return False
                 helpers.warn("Ping failed between: %s & %s" % (src,dst))
                 pingFailureCount += 1
                 return True
             else:
                 pingFailureCount = 0
+                return True
         else:
             pingFailureCount = 0
         return True
@@ -314,23 +328,119 @@ class T5PlatformCommon(object):
             mynet = mininet.Mininet()  
             out = mynet.mininet_bugreport()
             helpers.log("Bug Report Location is: %s " %  out)
-            for i in range(0, 10):
+            for i in range(0, 2):
                 helpers.warn("Show run output is not correct for VNS members. Please collect switch support logs")
-                sleep(90)
+                sleep(30)
         else:
             helpers.log("Show run output is correct for VNS members")
 
+      
             
-            
-            
-            
-            
-            
-            
-            
-            
+    def auto_configure_fabric_switch(self, spineList, leafList, leafPerRack):
+        
+        global leafSwitchList
+        
+        Fabric = T5Fabric.T5Fabric()
+        for i,dpid in enumerate(spineList):
+            spineName = "spine"+ str(i)
+            Fabric.rest_add_switch(spineName)
+            Fabric.rest_add_dpid(spineName, dpid)
+            Fabric.rest_add_fabric_role(spineName, 'spine')
 
+        if (int(leafPerRack) == 1):
+            for i,dpid in enumerate(leafList):
+                leafName = "leaf"+str(i)+'-a'
+                leafSwitchList.append(leafName)
+                rackName = "rack"+str(i)
+                Fabric.rest_add_switch(leafName)
+                Fabric.rest_add_dpid(leafName, dpid)
+                Fabric.rest_add_fabric_role(leafName, 'leaf')
+        else:
 
+            if (int(leafPerRack) == 2):
+                if (len(leafList) % 2 == 0):
+                    numRacks = len(leafList) / 2
+                    for i in range(0,numRacks):
+                        leafName = "leaf"+str(i)+'-a'
+                        leafSwitchList.append(leafName)
+                        rackName = "rack"+str(i)
+                        dpid = leafList[i*2]
+                        Fabric.rest_add_switch(leafName)
+                        Fabric.rest_add_dpid(leafName, dpid)
+                        Fabric.rest_add_fabric_role(leafName, 'leaf')
+                        Fabric.rest_add_leaf_group(leafName, rackName)
+                        leafName = "leaf"+str(i)+'-b'
+                        leafSwitchList.append(leafName)
+                        rackName = "rack"+str(i)
+                        dpid = leafList[i*2 + 1]
+                        Fabric.rest_add_switch(leafName)
+                        Fabric.rest_add_dpid(leafName, dpid)
+                        Fabric.rest_add_fabric_role(leafName, 'leaf')
+                        Fabric.rest_add_leaf_group(leafName, rackName)
+                else:
+                    numRacks = (len(leafList) / 2) + 1
+                    for i in range(0,numRacks):
+                        leafName = "leaf"+str(i)+'-a'
+                        leafSwitchList.append(leafName)
+                        rackName = "rack"+str(i)
+                        dpid = leafList[i*2]
+                        try:
+                            testdpid = leafList[i*2 + 1]
+                            Fabric.rest_add_switch(leafName)
+                            Fabric.rest_add_dpid(leafName, dpid)
+                            Fabric.rest_add_fabric_role(leafName, 'leaf')
+                            Fabric.rest_add_leaf_group(leafName, rackName)
+                            
+                            leafName = "leaf"+str(i)+'-b'
+                            leafSwitchList.append(leafName)
+                            rackName = "rack"+str(i)
+                            dpid = leafList[i*2 + 1]
+                            Fabric.rest_add_switch(leafName)
+                            Fabric.rest_add_dpid(leafName, dpid)
+                            Fabric.rest_add_fabric_role(leafName, 'leaf')
+                            Fabric.rest_add_leaf_group(leafName, rackName)
+                            
+                        except:
+                            Fabric.rest_add_switch(leafName)
+                            Fabric.rest_add_dpid(leafName, dpid)
+                            Fabric.rest_add_fabric_role(leafName, 'leaf')
+    
 
+     
+    def auto_delete_fabric_switch(self, spineList, leafList, leafPerRack):
+        
+        numSpines = len(spineList)
+        numLeaves = len(leafList)
+        
+        Fabric = T5Fabric.T5Fabric()
+        for i in range(0,numSpines):
+            spineName = 'spine' + str(i)
+            Fabric.rest_delete_fabric_switch(spineName) 
+            
+        if (int(leafPerRack) == 1):
+            for i in range(0, int(numLeaves)):
+                leafName = "leaf"+str(i)+'-a'
+                Fabric.rest_delete_fabric_switch(leafName)
+                     
+        else:
+            if (int(leafPerRack) == 2):
+                if (numLeaves % 2 == 0):
+                    numRacks = numLeaves / 2
+                    for i in range(0,numRacks):
+                        leafName = "leaf"+str(i)+'-a'
+                        Fabric.rest_delete_fabric_switch(leafName)
+                        leafName = "leaf"+str(i)+'-b'
+                        Fabric.rest_delete_fabric_switch(leafName)
+                else:
+                    numRacks = (numLeaves / 2) + 1
+                    for i in range(0,numRacks):
+                        leafName = "leaf"+str(i)+'-a'
+                        Fabric.rest_delete_fabric_switch(leafName)
+                        try:
+                            leafName = "leaf"+str(i)+'-b'
+                            Fabric.rest_delete_fabric_switch(leafName)
+                        except:
+                            pass
+                             
 
 

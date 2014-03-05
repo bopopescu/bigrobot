@@ -413,11 +413,11 @@ class Controller(object):
         if do_first_boot:
             self.cli_add_first_boot(node, *args, **kwargs)
 
-    def bash_scp_image(self, node, remote_file, local_path='.',
+    def bash_scp_file(self, node, remote_file, local_path='.',
                        password='bsn', timeout=180):
         """
         Objective:
-        Secure copy a file (software image) as defined in remote_file to the node.
+        Secure copy a file as defined in remote_file to the node.
 
         Inputs:
         | node | controller name as defined in .topo file |
@@ -427,7 +427,7 @@ class Controller(object):
         | timeout | how log to wait before timeout (default is 180 seconds) |
 
         Example:
-        | bash scp image | node=c1 | remote_file=bsn@jenkins:/var/lib/jenkins/jobs/bvs\\ master/lastSuccessful/archive/target/appliance/images/bvs/controller-upgrade-bvs-2.0.5-SNAPSHOT.pkg | local_path=. |
+        | bash scp file | node=c1 | remote_file=bsn@jenkins:/var/lib/jenkins/jobs/bvs\\ master/lastSuccessful/archive/target/appliance/images/bvs/controller-upgrade-bvs-2.0.5-SNAPSHOT.pkg | local_path=. |
 
         Return Value:
         - True if scp succeeds

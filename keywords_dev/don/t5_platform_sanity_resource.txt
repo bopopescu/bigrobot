@@ -30,7 +30,8 @@ add fabric switch
   rest add dpid  leaf2-b  00:00:00:00:00:02:00:06
   rest add fabric role  leaf2-b  leaf
   rest add leaf group  leaf2-b  rack2
-  
+
+
 delete fabric switch  
   rest delete fabric switch  spine0 
   rest delete fabric switch  spine1 
@@ -75,7 +76,7 @@ mininet ping all
    ${loss}=  mininet ping  bm4  ${bm5_ip}
    Should Be True  ${loss} == 0		
    
-platform ping all
+ori platform ping all 
    platform ping  bm0  ${bm1_ip}
    platform ping  bm0  ${bm2_ip}
    platform ping  bm0  ${bm3_ip}
@@ -89,3 +90,32 @@ platform ping all
    platform ping  bm2  ${bm4_ip}
    platform ping  bm2  ${bm5_ip}
    platform ping  bm4  ${bm5_ip}
+   
+   
+platform ping all
+   ${returnVal}=  platform ping  bm0  ${bm1_ip}
+   Should Be True  ${returnVal}
+   ${returnVal}=  platform ping  bm0  ${bm2_ip}
+   Should Be True  ${returnVal}
+   ${returnVal}=  platform ping  bm0  ${bm3_ip}
+   Should Be True  ${returnVal}
+   ${returnVal}=  platform ping  bm0  ${bm4_ip}
+   Should Be True  ${returnVal}
+   ${returnVal}=  platform ping  bm0  ${bm5_ip}
+   Should Be True  ${returnVal}
+   ${returnVal}=  platform ping  bm1  ${bm2_ip}
+   Should Be True  ${returnVal}
+   ${returnVal}=  platform ping  bm1  ${bm3_ip}
+   Should Be True  ${returnVal}
+   ${returnVal}=  platform ping  bm1  ${bm4_ip}
+   Should Be True  ${returnVal}
+   ${returnVal}=  platform ping  bm1  ${bm5_ip}
+   Should Be True  ${returnVal}
+   ${returnVal}=  platform ping  bm2  ${bm3_ip}
+   Should Be True  ${returnVal}
+   ${returnVal}=  platform ping  bm2  ${bm4_ip}
+   Should Be True  ${returnVal}
+   ${returnVal}=  platform ping  bm2  ${bm5_ip}
+   Should Be True  ${returnVal}
+   ${returnVal}=  platform ping  bm4  ${bm5_ip}
+   Should Be True  ${returnVal}

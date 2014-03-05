@@ -77,7 +77,7 @@ class Mininet(object):
     def mininet_host_delete_arp(self, host, ipaddr):
         t = test.Test()
         mn = t.mininet()
-        mn.cli('%s arp -d %s %s' % (host, ipaddr))
+        mn.cli('%s arp -d %s' % (host, ipaddr))
      
  
     def mininet_l3_ping(self, src, dst, count=5, options="None"):        
@@ -163,4 +163,11 @@ class Mininet(object):
         else:
             return True        
         
-        
+    def mininet_ifconfig_intf(self, host, intf):
+        t = test.Test()
+        mn = t.mininet()
+        result = mn.cli('%s ifconfig %s' % (host, intf))
+        output = result["content"]
+        helpers.log("output: %s" % output)     
+        return True
+    

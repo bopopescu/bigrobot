@@ -3,8 +3,8 @@
 * Setting
 Documentation    T5 Platform Smoke/Sanity Test Suite
 Suite Setup      base suite setup
-Suite Teardown   base suite teardown
-Test Setup       T5 base test setup
+#Suite Teardown   base suite teardown
+#Test Setup       T5 base test setup
 #Test Teardown    T5 base test teardown
 Force Tags       T5 
 Library          keywords/BsnCommon.py
@@ -45,6 +45,11 @@ ${h3_tag_mac}  00:10:18:f0:eb:e0
 
 * Test Case 
 
+Failover By Rebooting & Re-verify Connectivity
+   [Tags]  sanity 
+   : FOR    ${Iteration}    IN RANGE    1    50
+   \	Log To Console   \n================ 2K Endpoints Iteration ${Iteration} ===============\n
+   \	cli verify cluster master reboot
 
 Add physical switches to the controller 
    [Tags]  smoke  sanity  skipped
@@ -150,7 +155,7 @@ ping h1 to h3 dual rack dual leaf static endpoints tag
    
 
 Delete physical switches from the controller
-	[Tags]  smoke  sanity  
+	[Tags]  smoke  sanity  skipped
 	delete fabric switch  
 
 * Keywords

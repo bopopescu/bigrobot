@@ -8,10 +8,10 @@ Test Setup       base test setup
 Test Teardown    T5 test teardown
 Force Tags       T5 
 Library          keywords/BsnCommon.py
-Library          keywords_dev/prashanth/T5.py
-Library	         keywords_dev/prashanth/T5Fabric.py
+Library          keywords/T5.py
+Library	         keywords/T5Fabric.py
 Library	         keywords/SwitchLight.py
-Library          keywords/Mininet.py
+
 Library	         keywords/Host.py
 Library		     keywords/Ixia.py
 Resource	     testsuites/T5/t5_dualleaf_three_rack_physical_resource.txt
@@ -21,7 +21,7 @@ Resource		 testsuites/T5/t5_physical_variables.txt
 * Test Case 
 
 add Dual Leaf Three Rack setup
-   [Tags]  feature
+   [Tags]  feature   
    base suite setup
    add fabric switch
    sleep  5
@@ -29,50 +29,66 @@ add Dual Leaf Three Rack setup
    rest verify fabric link
    
 tagged/untagged packet Mac move within the rack0
-	[Tags]  feature
+	[Tags]  feature    
 	rest add tenant  t1
 	rest add vns  t1  v1
 	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
-	rest add interface to vns  t1  v1  leaf0-b  ${leaf0a_ixia_intf}  100  
-	
-    ${stream}=             L3 add  no_arp=True  flow=a->b  src_mac=00:02:01:00:00:24  dst_mac=00:02:02:00:00:24  frame_rate=1000  frame_size=68  name=a_b_flow
+	rest add interface to vns  t1  v1  leaf0-b  ${leaf0a_ixia_intf}  100 
+	rest add interface to vns  t1  v1  leaf1-a  ${leaf1a_ixia_intf}  -1
+    ${stream}=             L3 add  no_arp=True  flow=a->c  src_mac=00:02:01:00:00:24  dst_mac=00:02:03:00:00:24  frame_rate=1000  frame_size=128  name=a_c_flow
+    ${stream1}=             L3 add  no_arp=True  flow=c->a  src_mac=00:02:03:00:00:24  dst_mac=00:02:01:00:00:24  frame_rate=1000  frame_size=128  name=c_a_flow
     sleep  2
     start traffic  ${stream}
+    start traffic  ${stream1}
     sleep  5
     rest verify forwarding layer2 table untag  leaf0-a  ${leaf0a_ixia_intf}  00:02:01:00:00:24
     rest verify forwarding layer2 table tag  leaf0-b  ${leaf0a_leaf0b_intf0}  00:02:01:00:00:24  
-    stop traffic  ${stream}    
+    verify traffic rate  tx_rate  rx_rate  c  a
+    stop traffic  ${stream} 
+    stop traffic  ${stream1}   
     sleep  5
-    ${stream}=             L3 add   no_arp=True   flow=b->a  src_mac=00:02:01:00:00:24  dst_mac=00:02:06:00:00:24  vlan_id=100  ethertype=8100  frame_rate=1000  frame_size=68  name=b_f_flow
-    start traffic  ${stream}
+    ${stream2}=             L3 add   no_arp=True   flow=b->c  src_mac=00:02:01:00:00:24  dst_mac=00:02:03:00:00:24  vlan_id=100  ethertype=8100  frame_rate=1000  frame_size=128  name=b_c_flow
+    start traffic  ${stream2}
+    start traffic  ${stream1}
     sleep  5
     rest verify forwarding layer2 table tag  leaf0-b   ${leaf0b_ixia_intf}  00:02:01:00:00:24
     rest verify forwarding layer2 table tag  leaf0-a  ${leaf0a_leaf0b_intf0}  00:02:01:00:00:24
-    stop traffic  ${stream}
+    verify traffic rate  tx_rate  rx_rate  c  b
+    verify traffic rate negative  tx_rate  rx_rate  c  a  
+    stop traffic  ${stream2}
+    stop traffic  ${stream1}
     rest delete tenant  t1
-    sleep  5
+    
     
 tagged/untagged packet move between rack
 	[Tags]  feature
     rest add tenant  t1
 	rest add vns  t1  v1
 	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
-	rest add interface to vns  t1  v1  leaf2-b  ${leaf2b_ixia_intf}  100  
-	
-    ${stream}=             L3 add   no_arp=True   flow=a->f  src_mac=00:02:01:00:00:24  dst_mac=00:02:06:00:00:24   frame_rate=1000  frame_size=68  name=a_f_flow
+	rest add interface to vns  t1  v1  leaf2-b  ${leaf2b_ixia_intf}  100 
+	rest add interface to vns  t1  v1  leaf1-a  ${leaf1a_ixia_intf}  -1 
+    ${stream}=             L3 add   no_arp=True   flow=a->c  src_mac=00:02:01:00:00:24  dst_mac=00:02:03:00:00:24   frame_rate=1000  frame_size=128  name=a_c_flow
+    ${stream1}=             L3 add  no_arp=True  flow=c->a  src_mac=00:02:03:00:00:24  dst_mac=00:02:01:00:00:24  frame_rate=1000  frame_size=128  name=c_a_flow
     sleep  2
     start traffic  ${stream}
+    start traffic  ${stream1}
     sleep  5
     rest verify forwarding layer2 table untag  leaf0-a  ${leaf0a_ixia_intf}  00:02:01:00:00:24
-    stop traffic  ${stream}    
+    verify traffic rate  tx_rate  rx_rate  c  a
+    stop traffic  ${stream} 
+    stop traffic  ${stream1}   
     sleep  5
-    ${stream}=             L3 add   no_arp=True   flow=f->a  src_mac=00:02:01:00:00:24  dst_mac=00:02:06:00:00:24  vlan_id=100   frame_rate=1000  frame_size=68  name=b_f_flow
-    start traffic  ${stream}
+    ${stream2}=             L3 add   no_arp=True   flow=f->c  src_mac=00:02:01:00:00:24  dst_mac=00:02:03:00:00:24  ethertype=8100  vlan_id=100   frame_rate=1000  frame_size=128  name=b_f_flow
+    start traffic  ${stream2}
+    start traffic  ${stream1}
     sleep  5
     rest verify forwarding layer2 table tag  leaf2-b  ${leaf2b_ixia_intf}  00:02:01:00:00:24
-    stop traffic  ${stream}
+    verify traffic rate  tx_rate  rx_rate  c  f
+    verify traffic rate negative  tx_rate  rx_rate  c  a
+    stop traffic  ${stream2}
+    stop traffic  ${stream1}
     rest delete tenant  t1
-    sleep  5
+  
 
 Mac move between the vns same tenant
 	[Tags]  feature
@@ -82,20 +98,20 @@ Mac move between the vns same tenant
 	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
 	rest add interface to vns  t1  v2  leaf2-b  ${leaf2b_ixia_intf}  100  
 	
-    ${stream}=             L3 add   no_arp=True   flow=a->f  src_mac=00:02:01:00:00:24  dst_mac=00:02:06:00:00:24  frame_rate=1000  frame_size=68  name=a_f_flow
+    ${stream}=             L3 add   no_arp=True   flow=a->f  src_mac=00:02:01:00:00:24  dst_mac=00:02:06:00:00:24  frame_rate=1000  frame_size=128  name=a_f_flow
     sleep  2
     start traffic  ${stream}
     sleep  5
     rest verify forwarding layer2 table untag  leaf0-a  ${leaf0a_ixia_intf}  00:02:01:00:00:24
     stop traffic  ${stream}    
     sleep  5
-    ${stream}=             L3 add   no_arp=True   flow=f->a  src_mac=00:02:01:00:00:24  dst_mac=00:02:06:00:00:24  vlan_id=100  ethertype=8100  frame_rate=1000  frame_size=68  name=b_f_flow
+    ${stream}=             L3 add   no_arp=True   flow=f->a  src_mac=00:02:01:00:00:24  dst_mac=00:02:06:00:00:24  vlan_id=100  ethertype=8100  frame_rate=1000  frame_size=128  name=b_f_flow
     start traffic  ${stream}
     sleep  5
     rest verify forwarding layer2 table tag  leaf2-b  ${leaf2b_ixia_intf}  00:02:01:00:00:24
     stop traffic  ${stream}
     rest delete tenant  t1
-    sleep  5
+   
    
 Mac move between different tenants
 	[Tags]  feature
@@ -106,21 +122,21 @@ Mac move between different tenants
 	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
 	rest add interface to vns  t2  v1  leaf2-b  ${leaf2b_ixia_intf}  100  
 	
-    ${stream}=             L3 add   no_arp=True   flow=a->f  src_mac=00:02:01:00:00:24  dst_mac=00:02:06:00:00:24  frame_rate=1000  frame_size=68  name=a_f_flow
+    ${stream}=             L3 add   no_arp=True   flow=a->f  src_mac=00:02:01:00:00:24  dst_mac=00:02:06:00:00:24  frame_rate=1000  frame_size=128  name=a_f_flow
     sleep  2
     start traffic  ${stream}
     sleep  5
     rest verify forwarding layer2 table untag  leaf0-a  ${leaf0a_ixia_intf}  00:02:01:00:00:24
     stop traffic  ${stream}    
     sleep  5
-    ${stream}=             L3 add   no_arp=True   flow=f->a  src_mac=00:02:01:00:00:24  dst_mac=00:02:06:00:00:24  vlan_id=100  ethertype=8100  frame_rate=1000  frame_size=68  name=b_f_flow
+    ${stream}=             L3 add   no_arp=True   flow=f->a  src_mac=00:02:01:00:00:24  dst_mac=00:02:06:00:00:24  vlan_id=100  ethertype=8100  frame_rate=1000  frame_size=128  name=b_f_flow
     start traffic  ${stream}
     sleep  5
     rest verify forwarding layer2 table tag  leaf2-b  ${leaf2b_ixia_intf}  00:02:01:00:00:24
     stop traffic  ${stream}
     rest delete tenant  t1
     rest delete tenant  t2
-    sleep  5
+    
          
 Mac age test
 	[Tags]  feature
@@ -128,7 +144,7 @@ Mac age test
 	rest add vns  t1  v1
 	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
 	
-    ${stream}=             L3 add  no_arp=True  flow=a->b  src_mac=00:02:01:00:00:24  dst_mac=00:02:02:00:00:24  frame_rate=1000  frame_size=68  name=a_b_flow
+    ${stream}=             L3 add  no_arp=True  flow=a->b  src_mac=00:02:01:00:00:24  dst_mac=00:02:02:00:00:24  frame_rate=1000  frame_size=128  name=a_b_flow
     sleep  2
     start traffic  ${stream}
     sleep  5
@@ -136,7 +152,7 @@ Mac age test
     rest verify forwarding layer2 table tag  leaf0-b  ${leaf0a_leaf0b_intf0}  00:02:01:00:00:24
     rest verify endpoint  v1  -1  00:02:01:00:00:24  leaf0-a  ${leaf0a_ixia_intf}        
     stop traffic  ${stream}    
-    sleep  320
+    sleep  600
     ${result}=  rest verify forwarding layer2 table untag  leaf0-a  ${leaf0a_ixia_intf}  00:02:01:00:00:24
     Should Not be True  ${result}   
     ${result}=  rest verify forwarding layer2 table tag  leaf0-b  ${leaf0a_leaf0b_intf0}  00:02:01:00:00:24
@@ -144,10 +160,10 @@ Mac age test
     ${result}=  rest verify endpoint  v1  -1  00:02:01:00:00:24  leaf0-a  ${leaf0a_ixia_intf}
     Should Not be True  ${result}
     rest delete tenant  t1
-    sleep  5
+    
         
 Tear down the config
-   [Tags]  feature 
+   [Tags]  feature     
    delete fabric switch
    rest delete tenant  t1
    rest delete tenant  t2
@@ -200,15 +216,16 @@ verify traffic rate   [Arguments]  ${tx_rate}  ${rx_rate}  ${tx_intf}  ${rx_intf
     ${report}=  fetch port stats
     Log  ${report}
     ${tx_value}=  verify dict key  ${report}  ${tx_intf}  transmitted_frame_rate
-    ${rx_value}=  verify dict key  ${report}  ${rx_intf}  received_frame_rate
+    ${rx_value}=  verify dict key  ${report}  ${rx_intf}  received_valid_frame_rate
     ixia verify traffic rate  ${tx_value}  ${rx_value}
     
 verify traffic rate negative   [Arguments]  ${tx_rate}  ${rx_rate}  ${tx_intf}  ${rx_intf}
     Sleep  5
     ${report}=  fetch port stats
     ${tx_value}=  verify dict key  ${report}  ${tx_intf}  transmitted_frame_rate
-    ${rx_value}=  verify dict key  ${report}  ${rx_intf}  received_frame_rate
+    ${rx_value}=  verify dict key  ${report}  ${rx_intf}  received_valid_frame_rate
     Should Not be equal  ${tx_value}  ${rx_value}
 T5 test teardown
 	delete traffic
+	rest delete tenant  t1
   
