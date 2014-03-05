@@ -22,17 +22,17 @@ Library		     keywords_dev/mingtao/T5_longevity.py
 * Test Case
 T1 cli walk
 	walk cli command 
-	[Tags] 	sanity     skipped 	
+	[Tags] 	sanity     
 
 Test upgrade
 	single node upgrade
-	[Tags] 	sanity    
+	[Tags] 	sanity  skipped  
 
   
  
 * Keywords
 walk cli command 
-	cli_show_walk    show
+	cli_show_walk    show  cli_walk
 #	cli_walk     
 	
 
@@ -47,7 +47,6 @@ single node upgrade
 #	upgrade launch
 #	check role
 	
-	
-	
+ 
  
 	

@@ -125,14 +125,15 @@ class T5_longevity(object):
                 return True
         return False
 
+
+
+     
  
- 
-    def cli_show_walk(self,string):
+    def cli_show_walk(self,string,file_name=None):
         t = test.Test()
         c= t.controller('master')
         c.enable('')
-        helpers.log("********* Entering CLI show  walk with ---->  %s" % string )
-
+        helpers.log("********* Entering CLI show  walk with ----> string: %s, file name: %s" % (string, file_name) )
         cli_string = string + ' ?'
         c.send(cli_string, no_cr=True)   
         c.expect(r'[\r\n\x07][\w-]+[#>] ')  
@@ -146,6 +147,16 @@ class T5_longevity(object):
         string_c =  string
         helpers.log("string for this level is: %s" % string_c)
         helpers.log("The length of string: %d" % len(temp))
+        
+        if file_name:           
+            helpers.log("opening file: %s" % file_name)     
+            fo = open(file_name,'a')
+#            fo.write(str(string))
+#            fo.write("\n")
+            fo.write(str(content))
+            fo.write("\n")
+            fo.close()  
+
         num =  len(temp)
         for line in temp:
             string =  string_c
@@ -179,9 +190,9 @@ class T5_longevity(object):
             keys = line.split(' ')
             key =keys.pop(0)
             helpers.log("*** key is - %s" % key )                                                        
-            if key == '<cr>':              
-                helpers.log(" complete CLI show command: ******%s******" % string )    
-                c.enable(string) 
+            if key == '<cr>':    
+                helpers.log(" complete CLI show command: ******%s******" % string )            
+                c.enable(string)                  
                 if num==1:                        
                     return string
             else:                     
@@ -189,8 +200,8 @@ class T5_longevity(object):
                 string = string +' '+ key      
                 helpers.log("key - %s" % ( key) )    
                 helpers.log("***** Call the cli walk again with  --- %s" % string )       
-                self.cli_show_walk(string)  
-                
+                self.cli_show_walk(string,file_name)  
+             
                 
     def cli_walk(self, string=''):
         t = test.Test()
