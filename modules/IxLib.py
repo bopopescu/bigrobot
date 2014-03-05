@@ -534,12 +534,12 @@ class Ixia(object):
         helpers.log("###Starting L2 IXIA ADD Config ...")
         ix_handle = self._handle
         ix_ports = [port for port in self._port_map_list.values()]
-        d_mac = kwargs.get('src_mac', '00:11:23:00:00:01')
-        s_mac = kwargs.get('dst_mac', '00:11:23:00:00:02')
-        s_cnt = kwargs.get('d_cnt', 1)
-        d_cnt = kwargs.get('s_cnt', 1)
-        s_step = kwargs.get('dst_mac_step', '00:00:00:01:00:00')
-        d_step = kwargs.get('src_mac_step', '00:00:00:01:00:00')
+        dst_mac = kwargs.get('src_mac', '00:11:23:00:00:01')
+        src_mac = kwargs.get('dst_mac', '00:11:23:00:00:02')
+        src_cnt = kwargs.get('dst_cnt', 1)
+        dst_cnt = kwargs.get('src_cnt', 1)
+        src_step = kwargs.get('dst_mac_step', '00:00:00:01:00:00')
+        dst_step = kwargs.get('src_mac_step', '00:00:00:01:00:00')
         frame_rate = kwargs.get('frame_rate', 100)
         frame_cnt = kwargs.get('frame_cnt', None)
         self._frame_size = kwargs.get('frame_size', 70)
@@ -558,7 +558,7 @@ class Ixia(object):
         
         ix_tcl_server = self._tcl_server_ip
         flow = kwargs.get('flow', 'None')
-        if ix_tcl_server is None or ix_ports is None or s_mac is None or d_mac is None:
+        if ix_tcl_server is None or ix_ports is None or src_mac is None or dst_mac is None:
             helpers.warn('Please Provide Required Args for IXIA_L2_ADD helper method !!')
             raise IxNetwork.IxNetError('Please provide Required Args for IXIA_L2_ADD helper method !!')
         get_version = ix_handle.getVersion()
@@ -601,7 +601,7 @@ class Ixia(object):
             create_topo.append(self._topology[match_bi.group(2).lower()])
             stream_flow = 'bi-directional'
         # Create Ether Device:
-        mac_devices = self.ix_create_device_ethernet(create_topo, s_cnt, d_cnt, s_mac, d_mac, s_step, d_step)
+        mac_devices = self.ix_create_device_ethernet(create_topo, src_cnt, dst_cnt, src_mac, dst_mac, src_step, dst_step)
         helpers.log('### Created Mac Devices with corrsponding Topos ...')
         # Create Traffic Stream:
         print vlan_cnt
@@ -825,12 +825,13 @@ class Ixia(object):
         self._traffi_apply = True  # Setting it True to Not Apply Changes while starting traffic
         return traffic_stream1[0]
     
-    def ix_start_traffic_ethernet(self, trafficHandle = None, learn = False):
+    def ix_start_traffic_ethernet(self, trafficHandle = None, **kwargs):
         '''
             Returns portStatistics after starting the traffic that is configured in Traffic Stream using Mac devices and Topologies
         '''
         helpers.log("### Starting Traffic")
         # self._handle.execute('startAllProtocols')
+        learn = kwargs.get('learn',False)
         time.sleep(2)
         if self._traffi_apply:
             helpers.log("#### No Need to Apply Ixia config already applied")
