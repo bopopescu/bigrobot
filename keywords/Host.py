@@ -154,9 +154,30 @@ class Host(object):
         n.sudo("sudo route del -net %s gw %s" %(cidr, gw))
         return True
     
-        
-        
-        
+    def bash_set_mac_address(self, node, intf, mac):
+        ''' 
+            change mac address of a host interface
+        '''
+        t = test.Test()
+        n = t.node(node)
+        n.sudo("sudo ifconfig %s hw ether %s" %(intf, mac))
+        return True        
+    
+    def bash_get_intf_mac(self, node, intf):
+        ''' 
+            return mac address of a host interface
+        '''
+        t = test.Test()
+        n = t.node(node)
+        output = n.sudo("sudo ifconfig %s | grep --color=never \"HWaddr\"" %(intf))     
+        return_stat = n.sudo('echo $?')['content']
+        return_stat = helpers.strip_cli_output(return_stat)
+        helpers.log("return_stat: %s" % return_stat)
+        if int(return_stat) == 1:
+            return ''
+        else:
+            result = re.search('HWaddr (.*)', output)
+            return result.group(1)        
         
         
         
