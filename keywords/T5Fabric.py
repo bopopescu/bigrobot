@@ -490,6 +490,8 @@ class T5Fabric(object):
             elif data[0]["state"] == "up" and data[0]["type"] == "leaf" or data[0]["state"] == "up" and data[0]["type"] == "spine":
                     helpers.log("Interface is fabric interface")
                     return True
+            elif data[0]["state"] == "quarantined" and data[0]["type"] == "unknown":
+                    helpers.log("Edge ports will not come up for the spine switches")
             else:
                     helpers.test_failure("Interface status is not known to the fabric system , Please check the logs")
                     return False
