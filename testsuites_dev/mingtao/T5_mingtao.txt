@@ -22,31 +22,33 @@ Library		     keywords_dev/mingtao/T5_longevity.py
 * Test Case
 T1 cli walk
 	walk cli command 
-	[Tags] 	sanity     
+	[Tags] 	sanity    skipped 
 
 Test upgrade
 	single node upgrade
-	[Tags] 	sanity  skipped  
-
+	[Tags] 	sanity   	JIRA-BSC-4761
   
  
 * Keywords
 walk cli command 
-	cli_show_walk    show  cli_walk
-#	cli_walk     
+	cli_exec_walk    file_name=cli_exec_walk
+	cli_enable_walk    file_name=cli_enable_walk	
+	cli_config_walk    file_name=cli_config_walk	
+    
 	
 
 single node upgrade	 
-	copy_image_from_server    
+	${result}=  rest_get_node_role
+	Should Be Equal    ${result}    active
+	copy_pkg_from_jenkins    
 	${result}= 	cli_upgrade_stage
  	Should be True     ${result} 
 	${result}= 	cli_upgrade_launch
  	Should be True     ${result}  
+ 	${result}=  rest_get_node_role
+	Should Be Equal    ${result}    active
  	
- 	  
-#	upgrade launch
-#	check role
-	
+ 	 	
  
  
 	
