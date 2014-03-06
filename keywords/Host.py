@@ -180,7 +180,18 @@ class Host(object):
             return result.group(1)        
         
         
-        
+    def bash_verify_arp(self, node, ip):
+        t = test.Test()
+        n = t.node(node)
+        result = n.sudo("sudo arp -n %s" % ip)
+        output = result["content"]
+        helpers.log("output: %s" % output)              
+        match = re.search(r'no entry|incomplete', output, re.S | re.I)
+        if match:
+            return False
+        else:
+            return True        
+             
         
         
         
