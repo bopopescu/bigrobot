@@ -1,4 +1,6 @@
 * Variable
+${bsn_ctrl1}			10.193.0.41
+${bsn_ctrl2}			10.193.0.42
 ${tenantX}			X
 ${tenantY}			Y
 ${tenantZ}			Z
@@ -40,6 +42,8 @@ ${leaf0_pc1}		leaf0-pc1
 ${leaf0_pc2}		leaf0-pc2
 ${leaf0_pc3}		leaf0-pc3
 ${leaf0_pc4}		leaf0-pc4
+${leaf0_pc5}		leaf0-pc5
+${leaf0_pc6}		leaf0-pc6
 ${leaf1_pc1}		leaf1-pc1
 ${leaf1_pc2}		leaf1-pc2
 ${leaf1_pc3}		leaf1-pc3
@@ -52,6 +56,10 @@ ${leaf0_pc3_intf1}	ethernet3
 ${leaf0_pc3_intf2}	ethernet3
 ${leaf0_pc4_intf1}	ethernet4
 ${leaf0_pc4_intf2}	ethernet4
+${leaf0_pc5_intf1}	ethernet5
+${leaf0_pc5_intf2}	ethernet6
+${leaf0_pc6_intf1}	ethernet7
+${leaf0_pc6_intf2}	ethernet8
 ${leaf1_pc1_intf1}	ethernet1
 ${leaf1_pc1_intf2}	ethernet1
 ${leaf1_pc2_intf1}	ethernet2

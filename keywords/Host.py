@@ -192,7 +192,25 @@ class Host(object):
         else:
             return True        
              
-        
+         
+    def bash_ifup_intf(self, node, intf):
+        t = test.Test()
+        n = t.node(node)
+        n.sudo("sudo ifconfig %s up" % intf)
+        return True
+    
+    def bash_ifdown_intf(self, node, intf):
+        t = test.Test()
+        n = t.node(node)
+        n.sudo("sudo ifconfig %s down" % intf)
+        return True
+
+    def bash_init_intf(self, node, intf):
+        t = test.Test()
+        n = t.node(node)
+        n.sudo("sudo ifconfig %s 0.0.0.0" % intf)
+        return True
+                        
         
         
         
