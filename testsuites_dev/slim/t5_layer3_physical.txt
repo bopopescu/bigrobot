@@ -23,19 +23,17 @@ Intra tenant L3 untagged traffic with dynamic endpoints same rack
 	L3 intra tenant same rack untagged with dynamic endpoints
 #	[Tags]							skipped			smoke				sanity			
 
+Intra tenant L3 untagged traffic with dynamic endpoints across rack
+	L3 intra tenant across rack untagged with dynamic endpoints
+#	[Tags]							skipped			smoke				sanity	
+
 Intra tenant L3 tagged traffic with dynamic endpoints same rack
 	L3 intra tenant same rack tagged with dynamic endpoints
-	[Tags]							skipped			smoke				sanity		
+#	[Tags]							skipped			smoke				sanity			
 
-Intra tenant L3 untagged with initial unreachable dynamic host
-	L3 intra tenant untagged with initial unreachable dynamic host
-	[Tags]							skipped			sanity				smoke					
-
-Intra tenant L3 untagged with destination host moved
-	L3 intra tenant untagged with host moved 
-	[Tags]							skipped		sanity				
-
-
+Intra tenant L3 tagged traffic with dynamic endpoints across rack
+	L3 intra tenant across rack tagged with dynamic endpoints
+#	[Tags]							skipped			smoke				sanity	
 
 
 	
