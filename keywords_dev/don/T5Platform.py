@@ -5,7 +5,7 @@ from time import sleep
 import keywords.Mininet as mininet
 import keywords.T5Fabric as T5Fabric
 
-
+pingFailureCount = 0
 leafSwitchList = []
 
 class T5Platform(object):
@@ -532,6 +532,7 @@ class T5Platform(object):
         numTries = 0
         t = test.Test()
         master = t.controller("master")
+    
          
         while(True):
             try:

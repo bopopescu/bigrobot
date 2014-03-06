@@ -25,7 +25,6 @@ endpoints_b4 = []
 endpoints_after = []
 fabricLags_b4 = []
 fabricLags_after = []
-pingFailureCount = 0
 warningCount = 0
 
 
