@@ -955,3 +955,60 @@ class T5(object):
             return False
         else:
             return True 
+   
+    def rest_clear_vns_stats(self, vns):
+        ''' Function to clear the VNS stats
+        Input: vns name
+        Output: given vns counters will be cleared
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        url = 'api/v1/data/controller/applications/bvs/info/stats/reset-stats/clear-vns-counters'
+        try:
+            c.rest.get(url)
+        except:
+            return False
+        else:
+            return True 
+        
+    def rest_verify_vns_stats(self, vns, frame_cnt):
+        ''' Function to verify the VNS stats
+        Input: vns name
+        Output: given vns counters will be showed
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        url = '/api/v1/data/controller/applications/bvs/info/stats/vns-stats/tenants/vnses[vns-name="%s"]' % (vns)
+        try:
+            c.rest.get(url)
+        except:
+            return False
+        else:
+            return True     
+        data = c.rest.content()
+        if data["counters"]["counters-rx-packets"] == int(frame_cnt):
+            helpers.log("Pass: Counters value Expected:%d, Actual:%d" % (int(frame_cnt), data["counters"]["counters-rx-packets"]))
+            return True
+        else:
+            return False
+        
+    def rest_verify_vns_rates(self, vns, frame_rate):
+        ''' Function to verify the VNS incoming rates
+        Input: vns name
+        Output: given vns rates will be displayed and match against the expected rate
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        url = '/api/v1/data/controller/applications/bvs/info/stats/vns-stats/tenants/vnses[vns-name="%s"]' % (vns)
+        try:
+            c.rest.get(url)
+        except:
+            return False
+        else:
+            return True     
+        data = c.rest.content()
+        if data["rates"]["rates-rx-packets"] == int(frame_rate):
+            helpers.log("Pass: Counters value Expected:%d, Actual:%d" % (int(frame_rate), data["rates"]["rates-rx-packets"]))
+            return True
+        else:
+            return False        
