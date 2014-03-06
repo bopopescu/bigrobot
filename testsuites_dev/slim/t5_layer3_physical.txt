@@ -1,11 +1,9 @@
 * Setting
 Documentation   T5 Basic L3 two spine three leaf rack with dual-tor Test Suite
-#Suite Setup     base suite setup
-#Suite Teardown  base suite teardown
+Suite Setup     base suite setup
+Suite Teardown  base suite teardown
 Test Setup      setup topology
-#Test Teardown   teardown topology
-#Suite Setup		setup topology
-#Suite Teardown	teardown topology
+Test Teardown   teardown topology
 Force Tags      T5 Sanity
 Library         keywords/BsnCommon.py
 Library         keywords/Host.py
@@ -170,6 +168,7 @@ teardown topology
 	REST delete tenant								X
 	REST delete tenant								Y
 	REST delete tenant								Z
+	delete fabric switch
 
 add fabric switch
 	CLI add dpid									s1							${spine0_dpid}
