@@ -11,7 +11,7 @@ Library          keywords/BsnCommon.py
 Library          keywords_dev/prashanth/T5.py
 Library	         keywords_dev/prashanth/T5Fabric.py
 Library	         keywords/SwitchLight.py
-Library          keywords/Mininet.py
+
 Library	         keywords/Host.py
 Library		     keywords/Ixia.py
 Resource	     keywords_dev/prashanth/t5_dualleaf_three_rack_physical_resource.txt
@@ -33,21 +33,30 @@ tagged/untagged packet Mac move within the rack0
 	rest add tenant  t1
 	rest add vns  t1  v1
 	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
-	rest add interface to vns  t1  v1  leaf0-b  ${leaf0a_ixia_intf}  100  
+	rest add interface to vns  t1  v1  leaf0-b  ${leaf0a_ixia_intf}  100 
+	rest add interface to vns  t1  v1  leaf1-a  ${leaf1a_ixia_intf}  -1
     ${stream}=             L3 add  no_arp=True  flow=a->b  src_mac=00:02:01:00:00:24  dst_mac=00:02:02:00:00:24  frame_rate=1000  frame_size=68  name=a_b_flow
+    ${stream1}=             L3 add  no_arp=True  flow=c->a  src_mac=00:02:03:00:00:24  dst_mac=00:02:01:00:00:24  frame_rate=1000  frame_size=68  name=a_b_flow
     sleep  2
     start traffic  ${stream}
+    start traffic  ${stream1}
     sleep  5
     rest verify forwarding layer2 table untag  leaf0-a  ${leaf0a_ixia_intf}  00:02:01:00:00:24
     rest verify forwarding layer2 table tag  leaf0-b  ${leaf0a_leaf0b_intf0}  00:02:01:00:00:24  
-    stop traffic  ${stream}    
+    verify traffic rate  tx_rate  rx_rate  c  a
+    stop traffic  ${stream} 
+    stop traffic  ${stream1}   
     sleep  5
     ${stream}=             L3 add   no_arp=True   flow=b->a  src_mac=00:02:01:00:00:24  dst_mac=00:02:06:00:00:24  vlan_id=100  ethertype=8100  frame_rate=1000  frame_size=68  name=b_f_flow
     start traffic  ${stream}
+    start traffic  ${stream1}
     sleep  5
     rest verify forwarding layer2 table tag  leaf0-b   ${leaf0b_ixia_intf}  00:02:01:00:00:24
     rest verify forwarding layer2 table tag  leaf0-a  ${leaf0a_leaf0b_intf0}  00:02:01:00:00:24
+    verify traffic rate  tx_rate  rx_rate  c  b
+    verify traffic rate negative  tx_rate  rx_rate  c  a  
     stop traffic  ${stream}
+    stop traffic  ${stream1}
     rest delete tenant  t1
     sleep  5
     
@@ -58,16 +67,23 @@ tagged/untagged packet move between rack
 	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
 	rest add interface to vns  t1  v1  leaf2-b  ${leaf2b_ixia_intf}  100  
     ${stream}=             L3 add   no_arp=True   flow=a->f  src_mac=00:02:01:00:00:24  dst_mac=00:02:06:00:00:24   frame_rate=1000  frame_size=68  name=a_f_flow
+    ${stream1}=             L3 add  no_arp=True  flow=c->a  src_mac=00:02:03:00:00:24  dst_mac=00:02:01:00:00:24  frame_rate=1000  frame_size=68  name=a_b_flow
     sleep  2
     start traffic  ${stream}
+    start traffic  ${stream1}
     sleep  5
     rest verify forwarding layer2 table untag  leaf0-a  ${leaf0a_ixia_intf}  00:02:01:00:00:24
-    stop traffic  ${stream}    
+    verify traffic rate  tx_rate  rx_rate  c  a
+    stop traffic  ${stream} 
+    stop traffic  ${stream1}   
     sleep  5
     ${stream}=             L3 add   no_arp=True   flow=f->a  src_mac=00:02:01:00:00:24  dst_mac=00:02:06:00:00:24  vlan_id=100   frame_rate=1000  frame_size=68  name=b_f_flow
     start traffic  ${stream}
+    start traffic  ${stream1}
     sleep  5
     rest verify forwarding layer2 table tag  leaf2-b  ${leaf2b_ixia_intf}  00:02:01:00:00:24
+    verify traffic rate  tx_rate  rx_rate  c  f
+    verify traffic rate negative  tx_rate  rx_rate  c  a
     stop traffic  ${stream}
     rest delete tenant  t1
     sleep  5

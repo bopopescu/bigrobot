@@ -110,8 +110,8 @@ add host port into spine switch and check the fabric error
 	add dpid  leaf2-a  ${leaf2a_dpid} 
 	add fabric role  leaf2-a  spine
 	rest show fabric interface  leaf2-a  ${leaf2a_ixia_intf}
-	{result}=  rest verify fabric interface  leaf2-a  ${leaf2a_ixia_intf}
-	Should Not be True  {result}  
+	${result}=  rest verify fabric interface  leaf2-a  ${leaf2a_ixia_intf}
+	Should not be True  ${result}  
 
 Delete Fabric switch and verify the status
 	[Tags]  feature   

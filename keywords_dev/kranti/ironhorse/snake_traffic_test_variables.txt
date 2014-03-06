@@ -1,0 +1,11 @@
+* Variables
+
+${leaf01_dpid}	 00:00:5c:16:c7:1d:6a:68
+
+${leaf01_ixia_intf1}    ethernet1
+${leaf01_ixia_intf2}    ethernet48
+
+
+
+
+

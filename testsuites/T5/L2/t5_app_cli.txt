@@ -102,10 +102,10 @@ add/verify a portgroup with invalid port-group and switch name
 add/verify a portgroup from different rack 
 	[Tags]  feature
 	add a portgroup  p1
-	add interface to portgroup  leaf0-a  ${h3_intf0}  p1
-	${result}=  add interface to portgroup  leaf1-a  ${h1_intf0}  p1
+	add interface to portgroup  leaf0-a  ${h1_intf0}  p1
+	${result}=  add interface to portgroup  leaf1-a  ${h3_intf0}  p1
 	Should not be True  ${result}
-	delete interface from portgroup  leaf0-a   ${h3_intf0}  p1    
+	delete interface from portgroup  leaf0-a   ${h1_intf0}  p1    
 	delete a portgroup  p1
 
 Adding same interface to multiple VNS without tag
@@ -114,8 +114,8 @@ Adding same interface to multiple VNS without tag
    add a tenant  t2
    add a vns  t1  v1
    add a vns  t2  v1
-   rest add interface to vns  t1  v1  leaf0-a  ${h3_intf0}  -1
-   ${result}=  rest add interface to vns  t2  v1  leaf0-a  ${h3_intf0}  -1
+   rest add interface to vns  t1  v1  leaf0-a  ${h1_intf0}  -1
+   ${result}=  rest add interface to vns  t2  v1  leaf0-a  ${h1_intf0}  -1
    Should not be True  ${result}
    delete a tenant  t1
    delete a tenant  t2
@@ -125,8 +125,8 @@ adding same interface to multiple VNS with same tag
 	add a tenant  t1
     add a vns  t1  v1
     add a vns  t1  v2
-   rest add interface to vns  t1  v1  leaf0-a  ${h3_intf0}  100
-   ${result}=  rest add interface to vns  t1  v2  leaf0-a  ${h3_intf0}  100
+   rest add interface to vns  t1  v1  leaf0-a  ${h1_intf0}  100
+   ${result}=  rest add interface to vns  t1  v2  leaf0-a  ${h1_intf0}  100
    Should not be True  ${result}
    delete a tenant  t1
    
@@ -134,8 +134,8 @@ add same interface to multiple tag onto same VNS
 	[Tags]  feature
 	add a tenant  t1
 	add a vns  t1  v1
-	rest add interface to vns  t1  v1  leaf0-a  ${h3_intf0}  100
-	${result}=  rest add interface to vns  t1  v1  leaf0-a  ${h3_intf0}  101 
+	rest add interface to vns  t1  v1  leaf0-a  ${h1_intf0}  100
+	${result}=  rest add interface to vns  t1  v1  leaf0-a  ${h1_intf0}  101 
 	Should not be True  ${result}
 	delete a tenant  t1
 
