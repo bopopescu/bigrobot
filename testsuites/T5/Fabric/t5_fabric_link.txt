@@ -10,7 +10,7 @@ Force Tags       T5
 Library          keywords/BsnCommon.py
 Library          keywords/T5.py
 Library          keywords/T5Fabric.py
-Library			 keywords/Mininet.py
+
 Library			 keywords/SwitchLight.py
 Resource         testsuites/T5/t5_dualleaf_three_rack_physical_resource.txt
 Resource		 testsuites/T5/t5_physical_variables.txt
@@ -99,8 +99,36 @@ Delete and Readd the Rack2
 	sleep  5
 	rest verify fabric link
 
+add portgroup lacp to 2 different rack
+	[Tags]  feature
+	rest delete switch  leaf0-a
+	rest delete switch  leaf0-b
+	rest add switch  leaf0-a
+	rest add dpid  ${leaf0a_dpid}
+	rest add fabric role  leaf
+	rest add fabric leaf group  rack5
+	rest add switch  leaf0-b
+	rest add dpid  ${leaf0b_dpid}
+	rest add fabric role  leaf
+	rest add fabric leaf group  rack6
+	sleep  3
+	rest add portgroup  p1
+	rest add portgroup lacp  p1
+	rest add interface to portgroup  leaf0-a  ${h3_intf0}  p1
+	${result}=  rest add interface to portgroup  leaf0-b  ${h3_intf1}  p1
+	Should not be True  $result}
+	sleep  2
+	rest verify fabric interface lacp  leaf0-a  ${h3_intf0}
+	rest add portgroup  p2
+	rest add portgroup lacp  p2
+	rest add interface to portgroup  leaf0-b  ${h3_intf1}  p2
+	${result}=  rest verify fabric interface lacp  leaf0-b  ${h3_intf1}
+	Should not be True  ${result}
+	
 Tear down config and Topology
     delete fabric switch
+    rest delete portgroup  p1
+    rest delete portgroup  p2
  
 
 * Keywords  
