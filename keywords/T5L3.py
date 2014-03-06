@@ -1,6 +1,7 @@
 import autobot.helpers as helpers
 import autobot.restclient as restclient
 import autobot.test as test
+import re
 
 
 class T5L3(object):
@@ -260,8 +261,12 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
         c.rest.get(url)
         helpers.log("Output: %s" % c.rest.result_json())
         data = c.rest.content()
+#        match = re.search(r'None', data, re.S)
+#       if match:
+#          return ""
+#        else:
+#            return data
         return data
-    
     
     def rest_count_endpoints_mac(self):
         data = self.rest_show_endpoints()

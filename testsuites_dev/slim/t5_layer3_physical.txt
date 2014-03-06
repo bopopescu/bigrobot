@@ -23,16 +23,24 @@ Intra tenant L3 untagged traffic with dynamic endpoints same rack
 
 Intra tenant L3 untagged traffic with dynamic endpoints across rack
 	L3 intra tenant across rack untagged with dynamic endpoints
-#	[Tags]							skipped			smoke				sanity	
+	[Tags]							skipped			smoke				sanity	
 
 Intra tenant L3 tagged traffic with dynamic endpoints same rack
 	L3 intra tenant same rack tagged with dynamic endpoints
-#	[Tags]							skipped			smoke				sanity			
+	[Tags]							skipped			smoke				sanity			
 
 Intra tenant L3 tagged traffic with dynamic endpoints across rack
 	L3 intra tenant across rack tagged with dynamic endpoints
-#	[Tags]							skipped			smoke				sanity	
+	[Tags]							skipped			smoke				sanity	
 
+
+Verify bsn send arp for unknown untagged intra tenant destination
+	Arp request for unknown untagged intra tenant destination
+	[Tags]							skipped			sanity	
+
+Verify bsn send arp for unknown tagged intra tenant destination
+	Arp request for unknown tagged intra tenant destination
+	[Tags]							skipped			sanity	
 
 	
 * Keywords
@@ -44,26 +52,37 @@ L3 intra tenant same rack untagged with dynamic endpoints
 	BASH add route								h3								10.251.2.0/24			10.251.1.1
 	BASH add route								h4								10.251.1.0/24			10.251.2.1
 	sleep										5	
-	BASH ping									h3								10.251.1.1				count=5
-	BASH ping									h4								10.251.2.1				count=5
+	BASH ping									h3								10.251.1.1				count=10
+	BASH ping									h4								10.251.2.1				count=10
 	${value} = 									BASH verify arp					h3						10.251.1.1
 	Should Be True								${value} 		
 	${value} =									BASH verify arp					h4						10.251.2.1
 	Should Be True								${value} 
+	${mac1} = 									BASH get intf mac				h3						bond0
+	${result} =									REST show endpoints mac			${mac1}
+	Should Not Be Equal As Strings				{$result}						None
+	${mac2} = 									BASH get intf mac				h4						bond0
+	${result} =									REST show endpoints mac			${mac2}
+	Should Not Be Equal As Strings				{$result}						None
 	REST show endpoints	
 	${loss} = 									BASH ping						h3						10.251.2.11 			count=10
 	Should Be True  							${loss} == 0	
 	
+	
+	
+	bash_get_intf_mac(self, node, intf):
+	
+	
 L3 intra tenant across rack untagged with dynamic endpoints
 	REST add portgroup to vns					X								X1						${leaf1_pc1}			-1
-	REST add portgroup to vns					X								X3						${leaf0_pc5}			-1
+	REST add portgroup to vns					X								X3						${leaf0_pc6}			-1
 	BASH add ip address							h3								10.251.1.11/24			bond0	
 	BASH add ip address							h2								10.251.3.11/24			bond0
 	BASH add route								h3								10.251.3.0/24			10.251.1.1
 	BASH add route								h2								10.251.1.0/24			10.251.3.1
 	sleep										5	
-	BASH ping									h3								10.251.1.1				count=5
-	BASH ping									h2								10.251.3.1				count=5
+	BASH ping									h3								10.251.1.1				count=10
+	BASH ping									h2								10.251.3.1				count=10
 	${value} = 									BASH verify arp					h3						10.251.1.1
 	Should Be True								${value} 		
 	${value} =									BASH verify arp					h2						10.251.3.1
@@ -73,17 +92,21 @@ L3 intra tenant across rack untagged with dynamic endpoints
 	Should Be True  							${loss} == 0	
 	
 L3 intra tenant same rack tagged with dynamic endpoints
+#	BASH delete tag								h3								bond0.1001
+#	BASH delete tag								h4								bond0.1002
 	REST add portgroup to vns					X								X1						${leaf1_pc1}			1001
 	REST add portgroup to vns					X								X2						${leaf1_pc2}			1002
 	BASH add tag								h3								bond0					1001
 	BASH add tag								h4								bond0					1002
-	BASH add ip address							h3								10.251.1.11/24			vlan1001	
-	BASH add ip address							h4								10.251.2.11/24			vlan1002
+	BASH ifup intf								h3								bond0.1001
+	BASH ifup intf								h4								bond0.1002
+	BASH add ip address							h3								10.251.1.11/24			bond0.1001	
+	BASH add ip address							h4								10.251.2.11/24			bond0.1002
 	BASH add route								h3								10.251.2.0/24			10.251.1.1
 	BASH add route								h4								10.251.1.0/24			10.251.2.1
 	sleep										5	
-	BASH ping									h3								10.251.1.1				count=5
-	BASH ping									h4								10.251.2.1				count=5
+	BASH ping									h3								10.251.1.1				count=10
+	BASH ping									h4								10.251.2.1				count=10
 	${value} = 									BASH verify arp					h3						10.251.1.1
 	Should Be True								${value} 		
 	${value} =									BASH verify arp					h4						10.251.2.1
@@ -91,19 +114,29 @@ L3 intra tenant same rack tagged with dynamic endpoints
 	REST show endpoints	
 	${loss} = 									BASH ping						h3						10.251.2.11 			count=10
 	Should Be True  							${loss} == 0	
+	BASH ifdown intf							h3								bond0.1001
+	BASH ifdown intf							h4								bond0.1002
+	
+	BASH delete tag								h3								bond0.1001
+	BASH delete tag								h4								bond0.1002
+	
 	
 L3 intra tenant across rack tagged with dynamic endpoints
+#	BASH delete tag								h3								bond0.1001
+#	BASH delete tag								h2								bond0.1003
 	REST add portgroup to vns					X								X1						${leaf1_pc1}			1001
-	REST add portgroup to vns					X								X3						${leaf0_pc5}			1003
+	REST add portgroup to vns					X								X3						${leaf0_pc6}			1003
 	BASH add tag								h3								bond0					1001
 	BASH add tag								h2								bond0					1003
-	BASH add ip address							h3								10.251.1.11/24			bond0	
-	BASH add ip address							h2								10.251.3.11/24			bond0
+	BASH ifup intf								h3								bond0.1001
+	BASH ifup intf								h2								bond0.1003
+	BASH add ip address							h3								10.251.1.11/24			bond0.1001
+	BASH add ip address							h2								10.251.3.11/24			bond0.1003
 	BASH add route								h3								10.251.3.0/24			10.251.1.1
 	BASH add route								h2								10.251.1.0/24			10.251.3.1
 	sleep										5	
-	BASH ping									h3								10.251.1.1				count=5
-	BASH ping									h2								10.251.3.1				count=5
+	BASH ping									h3								10.251.1.1				count=10
+	BASH ping									h2								10.251.3.1				count=10
 	${value} = 									BASH verify arp					h3						10.251.1.1
 	Should Be True								${value} 		
 	${value} =									BASH verify arp					h2						10.251.3.1
@@ -111,6 +144,82 @@ L3 intra tenant across rack tagged with dynamic endpoints
 	REST show endpoints	
 	${loss} = 									BASH ping						h3						10.251.3.11 			count=10
 	Should Be True  							${loss} == 0		
+	BASH ifdown intf							h3								bond0.1001
+	BASH ifdown intf							h2								bond0.1003
+	BASH delete tag								h3								bond0.1001
+	BASH delete tag								h2								bond0.1003
+	
+
+Arp request for unknown untagged intra tenant destination
+	REST add portgroup to vns					X								X1						${leaf1_pc1}			-1
+	REST add portgroup to vns					X								X3						${leaf0_pc6}			-1
+	BASH add ip address							h3								10.251.1.11/24			bond0	
+	BASH add ip address							h2								10.251.3.11/24			bond0
+	BASH add route								h3								10.251.3.0/24			10.251.1.1
+	BASH add route								h2								10.251.1.0/24			10.251.3.1
+	sleep										5	
+	${value} = 									BASH verify arp					h3						10.251.1.1
+	Should Not Be True							${value}
+	${value} = 									BASH verify arp					h2						10.251.3.1	
+	Should Not Be True							${value} 		
+	REST show endpoints	
+	BASH ping									h3								10.251.3.11 			count=10
+	${value} = 									BASH verify arp					h2						10.251.3.1
+	Should Be True								${value}
+	${value} = 									BASH verify arp					h3						10.251.1.1
+	Should Be True								${value}
+	REST show endpoints	
+	${loss} = 									BASH ping						h3						10.251.3.11 			count=10
+	Should Be True  							${loss} == 0		
+
+
+Arp request for unknown tagged intra tenant destination
+#	BASH delete tag								h3								bond0.1001
+#	BASH delete tag								h2								bond0.1003
+	REST add portgroup to vns					X								X1						${leaf1_pc1}			1001
+	REST add portgroup to vns					X								X3						${leaf0_pc6}			1003
+	BASH add tag								h3								bond0					1001
+	BASH add tag								h2								bond0					1003
+	BASH ifup intf								h3								bond0.1001
+	BASH ifup intf								h2								bond0.1003	
+	BASH add ip address							h3								10.251.1.11/24			bond0.1001
+	BASH add ip address							h2								10.251.3.11/24			bond0.1003
+	BASH add route								h3								10.251.3.0/24			10.251.1.1
+	BASH add route								h2								10.251.1.0/24			10.251.3.1
+	sleep										5	
+	${value} =									BASH verify arp					h2						10.251.3.1
+	Should Not Be True							${value}
+	${value} =									BASH verify arp					h3						10.251.1.1
+	Should Not Be True							${value}
+	BASH ping									h3								10.251.3.11 			count=10
+	${value} =									BASH verify arp					h2						10.251.3.1
+	Should Be True								${value} 	
+	${value} =									BASH verify arp					h3						10.251.1.1
+	Should Be True								${value} 	
+	REST show endpoints	
+	${loss} = 									BASH ping						h3						10.251.3.11 			count=10
+	Should Be True  							${loss} == 0		
+	BASH ifdown intf							h3								bond0.1001
+	BASH ifdown intf							h2								bond0.1003	
+	BASH delete tag								h3								bond0.1001
+	BASH delete tag								h2								bond0.1003
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 setup topology
 	add fabric switch

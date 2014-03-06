@@ -176,6 +176,7 @@ class Host(object):
         if int(return_stat) == 1:
             return ''
         else:
+            n.sudo('echo hahahahaa')
             result = re.search('HWaddr (.*)', output)
             return result.group(1)        
         
