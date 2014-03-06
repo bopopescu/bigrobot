@@ -174,9 +174,10 @@ class Host(object):
         return_stat = helpers.strip_cli_output(return_stat)
         helpers.log("return_stat: %s" % return_stat)
         if int(return_stat) == 1:
+            helpers.log("I am here")
             return ''
         else:
-            n.sudo('echo hahahahaa')
+            helpers.log("I am there")
             result = re.search('HWaddr (.*)', output)
             return result.group(1)        
         
