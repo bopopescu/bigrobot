@@ -1,0 +1,392 @@
+*Settings
+Documentation    T5 Platform
+Suite Setup      t5 suite setup
+Suite Teardown   t5 suite teardown
+Test Setup       base test setup
+Test Teardown    ha test teardown
+Force Tags       T5 
+Library          keywords/BsnCommon.py
+Library          keywords/SwitchLight.py
+Library          keywords/AppController.py
+Library          keywords/SwitchLight.py
+Library          keywords/Ixia.py
+Library          keywords/T5.py
+Library          keywords/T5L3.py
+Library          keywords/T5Fabric.py
+
+*Variables
+${switch1_name}      T5HA
+${tenant_1}         T5HATenant
+${vns_1}            T5HAVNS-1
+${vns_2}            T5HAVNS-2
+${interface_1}      ethernet1
+${interface_2}      ethernet48
+${src_ip}	    10.100.1.10
+${src_gw}	    10.100.1.1
+${dst_ip}	    10.100.2.10
+${dst_gw}	    10.100.2.1
+${netmask}	    24
+
+*Test Case
+      
+
+Switch HA: Restart Process snmpd on switch
+    verify snmp attribute  s1  sysLocation.0  mountainview
+    ${stream}=  L3 add  flow=a<->b  frame_rate=10000  frame_size=64
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07
+    ...     src_ip=${src_ip}  dst_ip=${dst_ip}  name=a_b_flow
+    ...     src_gw=${src_gw}  dst_gw=${dst_gw}   
+    clear stats  
+    start traffic  ${stream}
+    sleep  5
+    stop traffic  ${stream}
+    clear stats  
+    start traffic  ${stream}
+    sleep  5
+    bash restart process  s1  snmpd
+    Sleep  20
+    verify snmp attribute  s1  sysLocation.0  mountainview
+    verify results  transmitted_frame_rate  received_valid_frame_rate
+    stop traffic  ${stream}      
+    [Tags]  T5  ha  switch  restart_switch_snmp    
+
+Switch HA: Restart Process ntp on switch
+    verify ntp  s1  time-c.nist.gov
+    ${stream}=  L3 add  flow=a<->b  frame_rate=10000  frame_size=64
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07
+    ...     src_ip=${src_ip}  dst_ip=${dst_ip}  name=a_b_flow
+    ...     src_gw=${src_gw}  dst_gw=${dst_gw}   
+    clear stats  
+    start traffic  ${stream}
+    sleep  3
+    stop traffic  ${stream}
+    clear stats  
+    start traffic  ${stream}
+    sleep  5
+    bash restart process  s1  ntp
+    Sleep  20
+    verify results  transmitted_frame_rate  received_valid_frame_rate
+    verify ntp  s1  time-c.nist.gov
+    stop traffic  ${stream}        
+    [Tags]  T5  ha  switch  restart_switch_ntp    
+
+Switch HA: Restart Process fancontrol on switch
+    ${stream}=  L3 add  flow=a<->b  frame_rate=10000  frame_size=64
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07
+    ...     src_ip=${src_ip}  dst_ip=${dst_ip}  name=a_b_flow
+    ...     src_gw=${src_gw}  dst_gw=${dst_gw}   
+    clear stats  
+    start traffic  ${stream}
+    sleep  3
+    stop traffic  ${stream}
+    clear stats  
+    start traffic  ${stream}
+    sleep  5
+    bash restart process  s1  fancontrol
+    Sleep  20
+    verify results  transmitted_frame_rate  received_valid_frame_rate
+    stop traffic  ${stream}      
+    [Tags]  T5  ha  switch  restart_switch_fancontrol
+ 
+Switch HA: Restart Process RSYSLOG on switch
+    ${stream}=  L3 add  flow=a<->b  frame_rate=10000  frame_size=64
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07
+    ...     src_ip=${src_ip}  dst_ip=${dst_ip}  name=a_b_flow
+    ...     src_gw=${src_gw}  dst_gw=${dst_gw}   
+    clear stats  
+    start traffic  ${stream}
+    sleep  3
+    stop traffic  ${stream}
+    clear stats  
+    start traffic  ${stream}
+    sleep  5
+    bash restart process  s1  rsyslogd
+    Sleep  20
+    verify results  transmitted_frame_rate  received_valid_frame_rate
+    stop traffic  ${stream}      
+    [Tags]  T5  ha  switch  restart_switch_rsyslogd    
+
+Switch HA: Restart Process ssh on switch
+    ${stream}=  L3 add  flow=a<->b  frame_rate=10000  frame_size=64
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07
+    ...     src_ip=${src_ip}  dst_ip=${dst_ip}  name=a_b_flow
+    ...     src_gw=${src_gw}  dst_gw=${dst_gw}   
+    clear stats  
+    start traffic  ${stream}
+    sleep  3
+    stop traffic  ${stream}
+    clear stats  
+    start traffic  ${stream}
+    sleep  5
+    bash restart process  s1  ssh
+    Sleep  20
+    verify results  transmitted_frame_rate  received_valid_frame_rate
+    stop traffic  ${stream}    
+    [Tags]  T5  ha  switch  restart_switch_ssh
+
+Switch HA: Restart Process networking on switch
+    ${stream}=  L3 add  flow=a<->b  frame_rate=10000  frame_size=64
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07
+    ...     src_ip=${src_ip}  dst_ip=${dst_ip}  name=a_b_flow
+    ...     src_gw=${src_gw}  dst_gw=${dst_gw}   
+    clear stats  
+    start traffic  ${stream}
+    sleep  3
+    stop traffic  ${stream}
+    clear stats  
+    start traffic  ${stream}
+    sleep  5
+    bash restart process  s1  networking
+    Sleep  20
+    verify results  transmitted_frame_rate  received_valid_frame_rate
+    stop traffic  ${stream}    
+    [Tags]  T5  ha  switch  restart_switch_networking   
+
+
+
+Controller HA: Restart Process snmpd on Master Controller:
+    ${stream}=  L3 add  flow=a<->b  frame_rate=10000  frame_size=64
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07
+    ...     src_ip=${src_ip}  dst_ip=${dst_ip}  name=a_b_flow
+    ...     src_gw=${src_gw}  dst_gw=${dst_gw}   
+    clear stats  
+    start traffic  ${stream}
+    sleep  3
+    stop traffic  ${stream}
+    clear stats  
+    start traffic  ${stream}
+    sleep  5
+    restart process on controller  snmpd  Master
+    Sleep  20
+    verify results  transmitted_frame_rate  received_valid_frame_rate
+    stop traffic  ${stream}        
+    [Tags]  T5  ha  controller  restart_master_snmpd
+
+Controller HA: Restart Process snmpd on Slave Controller:
+    ${stream}=  L3 add  flow=a<->b  frame_rate=10000  frame_size=64
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07
+    ...     src_ip=${src_ip}  dst_ip=${dst_ip}  name=a_b_flow
+    ...     src_gw=${src_gw}  dst_gw=${dst_gw}   
+    clear stats  
+    start traffic  ${stream}
+    sleep  3
+    stop traffic  ${stream}
+    clear stats  
+    start traffic  ${stream}
+    sleep  5
+    restart process on controller  snmpd  Slave
+    Sleep  20
+    verify results  transmitted_frame_rate  received_valid_frame_rate
+    stop traffic  ${stream}  
+    [Tags]  T5  ha  controller  restart_slave_snmpd
+
+
+Controller HA: Restart Process rsyslogd on Master Controller:
+    ${stream}=  L3 add  flow=a<->b  frame_rate=10000  frame_size=64
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07
+    ...     src_ip=${src_ip}  dst_ip=${dst_ip}  name=a_b_flow
+    ...     src_gw=${src_gw}  dst_gw=${dst_gw}   
+    clear stats  
+    start traffic  ${stream}
+    sleep  3
+    stop traffic  ${stream}
+    clear stats  
+    start traffic  ${stream}
+    sleep  5
+    restart process on controller  rsyslogd  Master
+    Sleep  30
+    verify results  transmitted_frame_rate  received_valid_frame_rate
+    stop traffic  ${stream}        
+    [Tags]  T5  ha  controller  restart_master_rsyslogd
+
+Controller HA: Restart Process rsyslogd on Slave Controller:
+    ${stream}=  L3 add  flow=a<->b  frame_rate=10000  frame_size=64
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07
+    ...     src_ip=${src_ip}  dst_ip=${dst_ip}  name=a_b_flow
+    ...     src_gw=${src_gw}  dst_gw=${dst_gw}   
+    clear stats  
+    start traffic  ${stream}
+    sleep  3
+    stop traffic  ${stream}
+    clear stats  
+    start traffic  ${stream}
+    sleep  5
+    restart process on controller  rsyslogd  Slave
+    Sleep  20
+    verify results  transmitted_frame_rate  received_valid_frame_rate
+    stop traffic  ${stream}  
+    [Tags]  T5  ha  controller  restart_slave_rsyslogd    
+
+Controller HA: Restart Process collectd on Master Controller:
+    ${stream}=  L3 add  flow=a<->b  frame_rate=10000  frame_size=64
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07
+    ...     src_ip=${src_ip}  dst_ip=${dst_ip}  name=a_b_flow
+    ...     src_gw=${src_gw}  dst_gw=${dst_gw}   
+    clear stats  
+    start traffic  ${stream}
+    sleep  3
+    stop traffic  ${stream}
+    clear stats  
+    start traffic  ${stream}
+    sleep  5
+    restart process on controller  collectd  Master
+    Sleep  20
+    verify results  transmitted_frame_rate  received_valid_frame_rate
+    stop traffic  ${stream}        
+    [Tags]  T5  ha  controller  restart_master_collectd
+
+Controller HA: Restart Process collectd on Slave Controller:
+    ${stream}=  L3 add  flow=a<->b  frame_rate=10000  frame_size=64
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07
+    ...     src_ip=${src_ip}  dst_ip=${dst_ip}  name=a_b_flow
+    ...     src_gw=${src_gw}  dst_gw=${dst_gw}   
+    clear stats  
+    start traffic  ${stream}
+    sleep  3
+    stop traffic  ${stream}
+    clear stats  
+    start traffic  ${stream}
+    sleep  5
+    restart process on controller  collectd  Slave
+    Sleep  30
+    verify results  transmitted_frame_rate  received_valid_frame_rate
+    stop traffic  ${stream}  
+    [Tags]  T5  ha  controller  restart_slave_collectd       
+
+
+Controller HA: Restart Process nginx on Master Controller:
+    ${stream}=  L3 add  flow=a<->b  frame_rate=10000  frame_size=64
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07
+    ...     src_ip=${src_ip}  dst_ip=${dst_ip}  name=a_b_flow
+    ...     src_gw=${src_gw}  dst_gw=${dst_gw}   
+    clear stats  
+    start traffic  ${stream}
+    sleep  3
+    stop traffic  ${stream}
+    clear stats  
+    start traffic  ${stream}
+    sleep  5
+    restart process on controller  nginx  Master
+    Sleep  90
+    verify results  transmitted_frame_rate  received_valid_frame_rate
+    stop traffic  ${stream}        
+    [Tags]  T5  ha  controller  restart_master_nginx
+
+Controller HA: Restart Process nginx on Slave Controller:
+    ${stream}=  L3 add  flow=a<->b  frame_rate=10000  frame_size=64
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07
+    ...     src_ip=${src_ip}  dst_ip=${dst_ip}  name=a_b_flow
+    ...     src_gw=${src_gw}  dst_gw=${dst_gw}   
+    clear stats  
+    start traffic  ${stream}
+    sleep  3
+    stop traffic  ${stream}
+    clear stats  
+    start traffic  ${stream}
+    sleep  5
+    restart process on controller  nginx  Slave
+    Sleep  90
+    verify results  transmitted_frame_rate  received_valid_frame_rate
+    stop traffic  ${stream}  
+    [Tags]  T5  ha  controller  restart_slave_nginx  
+
+
+Controller HA: Restart Process Floodlight on Slave Controller:
+    ${stream}=  L3 add  flow=a<->b  frame_rate=10000  frame_size=64
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07
+    ...     src_ip=${src_ip}  dst_ip=${dst_ip}  name=a_b_flow
+    ...     src_gw=${src_gw}  dst_gw=${dst_gw}   
+    clear stats  
+    start traffic  ${stream}
+    sleep  3
+    stop traffic  ${stream}
+    clear stats  
+    start traffic  ${stream}
+    sleep  5
+    restart process on controller  floodlight  Slave
+    Sleep  120
+    verify results  transmitted_frame_rate  received_valid_frame_rate
+    stop traffic  ${stream}  
+    [Tags]  T5  ha  controller  restart_slave_floodlight   
+
+
+Controller HA: Restart Process Floodlight on Master Controller:
+    ${stream}=  L3 add  flow=a<->b  frame_rate=10000  frame_size=64
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07
+    ...     src_ip=${src_ip}  dst_ip=${dst_ip}  name=a_b_flow
+    ...     src_gw=${src_gw}  dst_gw=${dst_gw}   
+    clear stats  
+    start traffic  ${stream}
+    sleep  3
+    stop traffic  ${stream}
+    clear stats  
+    start traffic  ${stream}
+    sleep  5
+    restart process on controller  floodlight  Master
+    Sleep  90
+    verify results  transmitted_frame_rate  received_valid_frame_rate
+    stop traffic  ${stream}        
+    [Tags]  T5  ha  controller  restart_master_floodlight
+
+Switch HA: Restart Process OFAD on switch
+    ${stream}=  L3 add  flow=a<->b  frame_rate=10000  frame_size=128
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07
+    ...     src_ip=${src_ip}  dst_ip=${dst_ip}  name=a_b_flow
+    ...     src_gw=${src_gw}  dst_gw=${dst_gw}   
+    clear stats  
+    start traffic  ${stream}
+    sleep  3
+    stop traffic  ${stream}
+    clear stats  
+    start traffic  ${stream}
+    sleep  5
+    bash restart process  s1  ofad
+    Sleep  120
+    verify results  transmitted_frame_rate  received_valid_frame_rate
+    stop traffic  ${stream}   
+    [Tags]  T5  ha  switch  restart_switch_ofad 
+ 
+*Keywords
+
+t5 suite setup
+    base suite setup
+    cli add snmp keyword   s1   community   ro public       
+    cli add snmp keyword   s1   location   mountainview       
+    cli add snmp keyword   s1   contact   nw_admin@super_awesome_company.com       
+    cli add snmp host   s1   10.192.66.230   traps   public   161   
+    cli add snmp host   s1   10.192.66.230   informs   public   161
+    cli enable snmp   s1           
+    add ntp server  s1  time-c.nist.gov
+    verify ntp  s1  time-c.nist.gov
+    rest add switch  ${switch1_name}
+    ${switch1_dpid}=  rest return switch dpid from ip  s1
+    rest add dpid  ${switch1_name}  ${switch1_dpid}
+    rest add fabric role  ${switch1_name}  leaf      
+    rest add tenant  ${tenant_1}   
+    rest add vns  ${tenant_1}  ${vns_1} 
+    rest add vns  ${tenant_1}  ${vns_2} 
+    rest add interface to vns  ${tenant_1}   ${vns_1}   ${switch1_name}  ${interface_1}   -1
+    rest add interface to vns  ${tenant_1}   ${vns_2}   ${switch1_name}  ${interface_2}   -1    
+    rest add vns ip  ${tenant_1}   ${vns_1}  ${src_gw}  ${netmask}
+    rest add vns ip  ${tenant_1}   ${vns_2}  ${dst_gw}  ${netmask}
+    sleep  10
+
+verify results   [Arguments]  ${transmitted_frames}  ${received_frames}
+    Sleep  5
+    ${report}=  fetch port stats
+    ${tx_value}=  verify dict key  ${report}  a  ${transmitted_frames}
+    ${rx_value}=  verify dict key  ${report}  b  ${received_frames}
+    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}
+    Should be true  ${in_range} 
+
+verify snmp attribute  [Arguments]  ${switch}  ${attribute}  ${expected_value}               
+    ${snmp_key} =     snmp cmd   ${switch}   snmpget    public   ${attribute}  
+    Should Contain   ${snmp_key}   ${expected_value}
+ 
+ha test teardown
+    delete traffic
+    
+t5 suite teardown
+    rest delete tenant  ${tenant_1}
+    rest delete fabric switch  ${switch1_name}  
+    base suite teardown
