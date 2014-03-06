@@ -14,7 +14,7 @@ Library         keywords/T5Fabric.py
 Library         keywords_dev/prashanth/T5L3.py
 Library         keywords_dev/animesh/BsnCommonShow.py
 Library         keywords_dev/slim/SwitchLight.py
-Resource		keywords_dev/slim/t5_layer3_physical_resources.txt
+#Resource		keywords_dev/slim/t5_layer3_physical_resources.txt
 Resource		testsuites_dev/slim/t5_layer3_physical_variables.txt
 
 
@@ -41,30 +41,19 @@ Intra tenant L3 untagged with destination host moved
 	
 * Keywords
 L3 intra tenant same rack untagged with dynamic endpoints
-	REST add portgroup to vns					X					X1						leaf1-eth1			-1
-	REST add portgroup to vns					X					X2						leaf1-eth2			-1
+	REST add portgroup to vns					X					X1						${leaf1_pc1}			-1
+	REST add portgroup to vns					X					X2						${leaf1_pc1}			-1
 	BASH add ip address							h3					10.251.1.11/24			bond0	
 	BASH add ip address							h4					10.251.2.11/24			bond0
 	BASH add route								h3					10.251.2.0/24			10.251.1.1
 	BASH add route								h4					10.251.1.0/24			10.251.2.1
+	sleep										1
 	BASH ping									h3					10.251.1.1				count=5
 	BASH ping									h4					10.251.2.1				count=5
 	Should Be True								BASH verify arp		h3						10.251.1.1
 	Should Be True								BASH verify arp		h4						10.251.2.1
 	${result} = 								BASH ping			h3						10.251.2.11 	count=10
 	
-
-
-base suite setup
-	
-
-
-
-
-base suite teardown
-
-
-
 
 setup topology
 	add fabric switch
@@ -115,60 +104,73 @@ teardown topology
 	REST delete tenant								Z
 
 add fabric switch
-  	rest add switch  								spine0
-  	rest add dpid  									spine0  					00:99:00:00:00:01:00:01
-  	rest add fabric role  							spine0  					spine
-  	rest add switch  								spine1	
-  	rest add dpid  									spine1  					00:99:00:00:00:01:00:02
-  	rest add fabric role						  	spine1  					spine
-  	rest add switch  								leaf0a
-  	rest add dpid  									leaf0a  					00:99:00:00:00:02:00:01
-  	rest add fabric role  							leaf0a  					leaf
-  	rest add switch  								leaf0b
-  	rest add dpid  									leaf0b  					00:00:00:00:00:02:00:02
-  	rest add fabric role  							leaf0b  					leaf
-  	rest add switch  								leaf1a
-  	rest add dpid  									leaf1a  					00:00:00:00:00:02:00:03
-  	rest add fabric role  							leaf1a  					leaf
- 	rest add switch  								leaf1b
-  	rest add dpid  									leaf1b  					00:00:00:00:00:02:00:04
-  	rest add fabric role  							leaf1b  					leaf
-	REST add portgroup								leaf0-eth1
-	REST add portgroup								leaf0-eth2
-	REST add portgroup								leaf0-eth3
-	REST add portgroup								leaf0-eth4
-	REST add portgroup								leaf1-eth1
-	REST add portgroup								leaf1-eth2
-	REST add portgroup								leaf1-eth3
-	REST add portgroup								leaf1-eth4
+	CLI add dpid									s1							${spine0_dpid}
+	CLI add dpid									s2							${leaf0a_dpid}
+	CLI add dpid									s3							${leaf1a_dpid}
+	CLI add dpid									s4							${leaf1b_dpid}
+	CLI add controller								s1							${bsn_ctrl1}
+	CLI add controller								s1							${bsn_ctrl2}
+	CLI add controller								s2							${bsn_ctrl1}
+	CLI add controller								s2							${bsn_ctrl2}
+	CLI add controller								s3							${bsn_ctrl1}
+	CLI add controller								s3							${bsn_ctrl2}
+	CLI add controller								s4							${bsn_ctrl1}
+	CLI add controller								s4							${bsn_ctrl2}
+	
+  	REST add switch  								spine0
+  	REST add dpid  									spine0  					${spine0_dpid}
+  	REST add fabric role  							spine0  					spine
+  	REST add switch  								spine1	
+  	REST add dpid  									spine1  					${spine1_dpid}
+  	REST add fabric role						  	spine1  					spine
+  	REST add switch  								leaf0a
+  	REST add dpid  									leaf0a  					${leaf0a_dpid}
+  	REST add fabric role  							leaf0a  					leaf
+  	REST add switch  								leaf0b
+  	REST add dpid  									leaf0b  					${leaf0b_dpid}
+  	REST add fabric role  							leaf0b  					leaf
+  	REST add switch  								leaf1a
+  	REST add dpid  									leaf1a  					${leaf1a_dpid}
+  	REST add fabric role  							leaf1a  					leaf
+ 	REST add switch  								leaf1b
+  	REST add dpid  									leaf1b  					${leaf1b_dpid}
+  	REST add fabric role  							leaf1b  					leaf
+	REST add portgroup								${leaf0_pc1}
+	REST add portgroup								${leaf0_pc2}
+	REST add portgroup								${leaf0_pc3}
+	REST add portgroup								${leaf0_pc4}
+	REST add portgroup								${leaf1_pc1}
+	REST add portgroup								${leaf1_pc2}
+	REST add portgroup								${leaf1_pc3}
+	REST add portgroup								${leaf1_pc4}
 	REST add leaf group								leaf0a						leaf0
 	REST add leaf group								leaf0b						leaf0
 	REST add leaf group								leaf1a						leaf1
 	REST add leaf group								leaf1b						leaf1
-	REST add interface to portgroup					leaf0a						ethernet1					leaf0-eth1
-	REST add interface to portgroup					leaf0b						ethernet1					leaf0-eth1
-	REST add interface to portgroup					leaf0a						ethernet2					leaf0-eth2
-	REST add interface to portgroup					leaf0b						ethernet2					leaf0-eth2
-	REST add interface to portgroup					leaf0a						ethernet3					leaf0-eth3
-	REST add interface to portgroup					leaf0b						ethernet3					leaf0-eth3
-	REST add interface to portgroup					leaf0a						ethernet4					leaf0-eth4
-	REST add interface to portgroup					leaf0b						ethernet4					leaf0-eth4
-	REST add interface to portgroup					leaf1a						ethernet1					leaf1-eth1
-	REST add interface to portgroup					leaf1b						ethernet1					leaf1-eth1
-	REST add interface to portgroup					leaf1a						ethernet2					leaf1-eth2
-	REST add interface to portgroup					leaf1b						ethernet2					leaf1-eth2
-	REST add interface to portgroup					leaf1a						ethernet3					leaf1-eth3
-	REST add interface to portgroup					leaf1b						ethernet3					leaf1-eth3
-	REST add interface to portgroup					leaf1a						ethernet4					leaf1-eth4
-	REST add interface to portgroup					leaf1b						ethernet4					leaf1-eth4
-
+	REST add interface to portgroup					leaf0a						${leaf0_pc1_intf1}					${leaf0_pc1}
+	REST add interface to portgroup					leaf0b						${leaf0_pc1_intf2}					${leaf0_pc1}
+	REST add interface to portgroup					leaf0a						${leaf0_pc2_intf1}					${leaf0_pc2}
+	REST add interface to portgroup					leaf0b						${leaf0_pc2_intf2}					${leaf0_pc2}
+	REST add interface to portgroup					leaf0a						${leaf0_pc3_intf1}					${leaf0_pc3}
+	REST add interface to portgroup					leaf0b						${leaf0_pc3_intf2}					${leaf0_pc3}
+	REST add interface to portgroup					leaf0a						${leaf0_pc4_intf1}					${leaf0_pc4}
+	REST add interface to portgroup					leaf0b						${leaf0_pc4_intf2}					${leaf0_pc4}
+	REST add interface to portgroup					leaf1a						${leaf1_pc1_intf1}					${leaf1_pc1}
+	REST add interface to portgroup					leaf1b						${leaf1_pc1_intf2}					${leaf1_pc1}
+	REST add interface to portgroup					leaf1a						${leaf1_pc2_intf1}					${leaf1_pc2}
+	REST add interface to portgroup					leaf1b						${leaf1_pc2_intf2}					${leaf1_pc2}
+	REST add interface to portgroup					leaf1a						${leaf1_pc3_intf1}					${leaf1_pc3}
+	REST add interface to portgroup					leaf1b						${leaf1_pc3_intf2}					${leaf1_pc3}
+	REST add interface to portgroup					leaf1a						${leaf1_pc4_intf1}					${leaf1_pc4}
+	REST add interface to portgroup					leaf1b						${leaf1_pc4_intf2}					${leaf1_pc4}
+	
 
   
 delete fabric switch  
-	rest delete fabric switch  					spine0 
-	rest delete fabric switch  					spine1 
-	rest delete fabric switch  					leaf0a 
-	rest delete fabric switch  					leaf1a 
-	rest delete fabric switch  					leaf0b 
-	rest delete fabric switch  					leaf1b 
+	REST delete fabric switch  					spine0 
+	REST delete fabric switch  					spine1 
+	REST delete fabric switch  					leaf0a 
+	REST delete fabric switch  					leaf1a 
+	REST delete fabric switch  					leaf0b 
+	REST delete fabric switch  					leaf1b 
   
