@@ -154,13 +154,63 @@ class Host(object):
         n.sudo("sudo route del -net %s gw %s" %(cidr, gw))
         return True
     
+    def bash_set_mac_address(self, node, intf, mac):
+        ''' 
+            change mac address of a host interface
+        '''
+        t = test.Test()
+        n = t.node(node)
+        n.sudo("sudo ifconfig %s hw ether %s" %(intf, mac))
+        return True        
+    
+    def bash_get_intf_mac(self, node, intf):
+        ''' 
+            return mac address of a host interface
+        '''
+        t = test.Test()
+        n = t.node(node)
+        output = n.sudo("sudo ifconfig %s | grep --color=never \"HWaddr\"" %(intf))     
+        return_stat = n.sudo('echo $?')['content']
+        return_stat = helpers.strip_cli_output(return_stat)
+        helpers.log("return_stat: %s" % return_stat)
+        if int(return_stat) == 1:
+            return ''
+        else:
+            result = re.search('HWaddr (.*)', output)
+            return result.group(1)        
         
         
-        
-        
-        
-        
-        
+    def bash_verify_arp(self, node, ip):
+        t = test.Test()
+        n = t.node(node)
+        result = n.sudo("sudo arp -n %s" % ip)
+        output = result["content"]
+        helpers.log("output: %s" % output)              
+        match = re.search(r'no entry|incomplete', output, re.S | re.I)
+        if match:
+            return False
+        else:
+            return True        
+             
+         
+    def bash_ifup_intf(self, node, intf):
+        t = test.Test()
+        n = t.node(node)
+        n.sudo("sudo ifconfig %s up" % intf)
+        return True
+    
+    def bash_ifdown_intf(self, node, intf):
+        t = test.Test()
+        n = t.node(node)
+        n.sudo("sudo ifconfig %s down" % intf)
+        return True
+
+    def bash_init_intf(self, node, intf):
+        t = test.Test()
+        n = t.node(node)
+        n.sudo("sudo ifconfig %s 0.0.0.0" % intf)
+        return True
+                        
         
         
         

@@ -9,7 +9,7 @@ Test Teardown    base test teardown
 Force Tags       T5Platform  HA
 Library          keywords/BsnCommon.py
 Library		 	 keywords_dev/don/T5Platform.py
-Library		 	 keywords_dev/don/T5PlatformCommon.py
+Library		 	 keywords_dev/don/T5Utilities.py
 Library          keywords/Mininet.py
 Library	    	 keywords/Host.py
 Library          keywords/T5.py
@@ -65,14 +65,14 @@ Verify Cluster Slave Reboot
 	Reboot the Slave node & verify fabric integrity
 
 Configure Cluster VIP & Verify Connectivity After Failover
-	[Tags]   vip  ClusterFormation
+	[Tags]   vip 
 	rest add vip  10.192.106.20
 	sleep  10
 	${returnVal}=  cli verify cluster vip  10.192.106.20/32
 	Should Be True  ${returnVal}
 
 Delete Cluster VIP
-	[Tags]   vip  ClusterFormation
+	[Tags]   vip 
 	rest delete vip
 	sleep  10
 	${returnVal}=  cli verify cluster vip  10.192.106.20/32

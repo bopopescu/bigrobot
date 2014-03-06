@@ -422,16 +422,17 @@ class T5Fabric(object):
         url = '/api/v1/data/controller/core/switch[name="%s"]/interface[name="%s"]' % (switch, intf)      
         c.rest.get(url)
         data = c.rest.content()  
-        if data[0]["lacp-active"] == True:
-            if data[0]["lacp-partner-info"]["system-mac"] != None:
-                helpers.log("LACP Neibhour Is Up and active")
-                return True
-            else:
-                helpers.test_failure("LACP is enabled , LACP Partner is not seen , check the floodlight logs")
-                return False
-        else:
-            helpers.log("LACP is not enabled on the %s = %s" % (switch, intf))
-            
+        try:
+                if data[0]["lacp-active"] == True:
+                    if data[0]["lacp-partner-info"]["system-mac"] != None:
+                        helpers.log("LACP Neibhour Is Up and active")
+                        return True
+                    else:
+                        helpers.test_failure("LACP is enabled , LACP Partner is not seen , check the floodlight logs")
+                        return False
+        except KeyError:
+            return False
+           
     def rest_verify_fabric_error_dual_tor_peer_link(self, rack):
         t = test.Test()
         c = t.controller('master')
@@ -489,6 +490,8 @@ class T5Fabric(object):
             elif data[0]["state"] == "up" and data[0]["type"] == "leaf" or data[0]["state"] == "up" and data[0]["type"] == "spine":
                     helpers.log("Interface is fabric interface")
                     return True
+            elif data[0]["state"] == "quarantined" and data[0]["type"] == "unknown":
+                    helpers.log("Edge ports will not come up for the spine switches")
             else:
                     helpers.test_failure("Interface status is not known to the fabric system , Please check the logs")
                     return False
