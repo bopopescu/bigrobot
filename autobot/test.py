@@ -454,16 +454,23 @@ class Test(object):
         t = self
         if not node:
             node = 'node-%s' % ip
-        helpers.log("Initializing controller '%s'" % node)
-        user = self.controller_user() if not user else user
-        if not password:
-            password = self.controller_password()
 
         if device_type == 'controller':
+            helpers.log("Initializing controller '%s'" % node)
+            user = self.controller_user() if not user else user
+            if not password:
+                password = self.controller_password()
             n = a_node.ControllerNode(node, ip, user, password, t)
+        elif device_type == 'switch':
+            helpers.log("Initializing switch '%s'" % node)
+            if not user:
+                user = self.switch_user()
+            if not password:
+                password = self.switch_password()
+            n = a_node.SwitchNode(node, ip, user, password, t)
         else:
             helpers.environment_failure("You can only spawn nodes for device"
-                                        " types: 'controller'")
+                                        " types: 'controller', 'switch'")
         return n
 
     def node_connect(self, node, user=None, password=None,
@@ -505,7 +512,10 @@ class Test(object):
 
         if helpers.is_controller(node):
             n = self.node_spawn(ip=host, node=node, user=user,
-                                password=password)
+                                password=password, device_type='controller')
+        elif helpers.is_switch(node):
+            n = self.node_spawn(ip=host, node=node, user=user,
+                                password=password, device_type='switch')
         elif helpers.is_mininet(node):
             helpers.log("Initializing Mininet '%s'" % node)
             if not self._has_a_controller:
@@ -535,21 +545,17 @@ class Test(object):
 
         elif helpers.is_host(node):
             helpers.log("Initializing host '%s'" % node)
-            n = a_node.HostNode(node,
-                                host,
-                                self.host_user(),
-                                self.host_password(),
-                                t)
-
-        elif helpers.is_switch(node):
-            helpers.log("Initializing switch '%s'" % node)
 
             if not user:
-                user = self.switch_user()
+                user = self.host_user()
             if not password:
-                password = self.switch_password()
+                password = self.host_password()
 
-            n = a_node.SwitchNode(node, host, user, password, t)
+            n = a_node.HostNode(node,
+                                host,
+                                user=user,
+                                password=password,
+                                t=t)
 
         elif helpers.is_traffic_generator(node):
             helpers.log("Initializing traffic generator '%s'" % node)

@@ -145,31 +145,31 @@ Verify broadcast forwarding with spine link failover
     verify traffic rate  tx_rate  rx_rate  a  b
     verify traffic rate  tx_rate  rx_rate  a  d
     verify traffic rate  tx_rate  rx_rate  a  f
-    cli disable interface  s1  ${leaf0a_spine0_intf0}
+    rest disable fabric interface  leaf0-a  ${leaf0a_spine0_intf0}
+    sleep  1
     rest verify fabric interface  leaf0-a  ${leaf0a_spine0_intf0}
     verify traffic rate  tx_rate  rx_rate  a  b
     verify traffic rate  tx_rate  rx_rate  a  d
     verify traffic rate  tx_rate  rx_rate  a  f
-    cli enable interface  s1  ${leaf0a_spine0_intf0}
+    rest enable fabric interface  leaf0-a  ${leaf0a_spine0_intf0}
     sleep  2
     rest verify fabric interface  leaf0-a  ${leaf0a_spine0_intf0}
     verify traffic rate  tx_rate  rx_rate  a  b
     verify traffic rate  tx_rate  rx_rate  a  d
     verify traffic rate  tx_rate  rx_rate  a  f
-    cli disable interface  s1  ${leaf0a_spine1_intf0}
+    rest disable fabric interface  leaf0-a  ${leaf0a_spine1_intf0}
     sleep  2
     rest verify fabric interface  leaf0-a  ${leaf0a_spine1_intf0}
     verify traffic rate  tx_rate  rx_rate  a  b
     verify traffic rate  tx_rate  rx_rate  a  d
     verify traffic rate  tx_rate  rx_rate  a  f
-    cli enable interface  s1  ${leaf0a_spine1_intf0}
-    rest verify fabric interface  leaf0-a  ${leaf0a_spine1_intf0}
+    rest enable fabric interface  leaf0-a  ${leaf0a_spine1_intf0}
     sleep  2
+    rest verify fabric interface  leaf0-a  ${leaf0a_spine1_intf0}
     verify traffic rate  tx_rate  rx_rate  a  b
     verify traffic rate  tx_rate  rx_rate  a  d
     verify traffic rate  tx_rate  rx_rate  a  f
     stop traffic  ${stream}  
-    sleep  3
     rest delete tenant  t1
 
 Verify broadcast forwarding with edge port link enable/disable
@@ -187,18 +187,17 @@ Verify broadcast forwarding with edge port link enable/disable
     sleep  10
     verify traffic rate  tx_rate  rx_rate  a  b
     verify traffic rate  tx_rate  rx_rate  a  d
-    cli disable interface  s2  ${leaf0b_ixia_intf}
+    rest disable fabric interface  leaf0-b  ${leaf0b_ixia_intf}
     rest verify fabric interface  leaf0-b  ${leaf0b_ixia_intf}
     verify traffic rate  tx_rate  rx_rate  a  b
     verify traffic rate  tx_rate  rx_rate  a  d
-    cli enable interface  s2  ${leaf0b_ixia_intf}
-    sleep  2
+    rest enable fabric interface  leaf0-b  ${leaf0b_ixia_intf}
+    sleep  3
     rest verify fabric interface  leaf0-b  ${leaf0b_ixia_intf}
     verify traffic rate  tx_rate  rx_rate  a  b
     verify traffic rate  tx_rate  rx_rate  a  d
     verify traffic rate  tx_rate  rx_rate  a  f
     stop traffic  ${stream}
-    sleep  3
     rest delete tenant  t1
 
 Verify broadcast traffic forwarding with single peer-link enable/disable
@@ -213,16 +212,15 @@ Verify broadcast traffic forwarding with single peer-link enable/disable
     start traffic  ${stream}
     sleep  10
     verify traffic rate  tx_rate  rx_rate  a  b
-    cli disable interface  s1  ${leaf0a_leaf0b_intf0}
+    rest disable fabric interface  leaf0-a  ${leaf0a_leaf0b_intf0}
     sleep  2
     rest verify fabric interface  leaf0-a  ${leaf0a_leaf0b_intf0}
     verify traffic rate negative  tx_rate  rx_rate  a  b
-    cli enable interface  s2  ${leaf0b_ixia_intf}
+    rest enable fabric interface  leaf0-a  ${leaf0a_leaf0b_intf0}
     sleep  2
     rest verify fabric interface  leaf0-a   ${leaf0a_leaf0b_intf0}
     verify traffic rate  tx_rate  rx_rate  a  b
     stop traffic  ${stream}
-    sleep  3
     rest delete tenant  t1
 
 Verify Multicast forwarding on the lag
@@ -261,27 +259,27 @@ verify unknown unicast forwarding on the lag
     verify traffic rate  tx_rate  rx_rate  a  b
     verify traffic rate  tx_rate  rx_rate  a  d
     verify traffic rate  tx_rate  rx_rate  a  f
-    cli disable interface  s1  ${leaf0a_spine0_intf0}
+    rest disable fabric interface  leaf0-a  ${leaf0a_spine0_intf0}
     sleep  2
     rest verify fabric interface  leaf0-a  ${leaf0a_spine0_intf0}
     verify traffic rate  tx_rate  rx_rate  a  b
     verify traffic rate  tx_rate  rx_rate  a  d
     verify traffic rate  tx_rate  rx_rate  a  f
-    cli enable interface  s1  ${leaf0a_spine0_intf0}
+    rest enable fabric interface  leaf0-a  ${leaf0a_spine0_intf0}
     sleep  2
     rest verify fabric interface  leaf0-a  ${leaf0a_spine0_intf0}
     verify traffic rate  tx_rate  rx_rate  a  b
     verify traffic rate  tx_rate  rx_rate  a  d
     verify traffic rate  tx_rate  rx_rate  a  f
-    cli disable interface  s1  ${leaf0a_spine1_intf0}
+    rest disable fabric interface  leaf0-a  ${leaf0a_spine1_intf0}
     sleep  2
     rest verify fabric interface  leaf0-a  ${leaf0a_spine1_intf0}
     verify traffic rate  tx_rate  rx_rate  a  b
     verify traffic rate  tx_rate  rx_rate  a  d
     verify traffic rate  tx_rate  rx_rate  a  f
-    cli enable interface  s1  ${leaf0a_spine1_intf0}
-    rest verify fabric interface  leaf0-a  ${leaf0a_spine1_intf0}
+    rest enable fabric interface  leaf0-a  ${leaf0a_spine1_intf0}
     sleep  2
+    rest verify fabric interface  leaf0-a  ${leaf0a_spine1_intf0}
     verify traffic rate  tx_rate  rx_rate  a  b
     verify traffic rate  tx_rate  rx_rate  a  d
     verify traffic rate  tx_rate  rx_rate  a  f
@@ -363,9 +361,9 @@ Verify Duplicate ARP broadcast on Edge Port groups
     sleep  10  
     verify traffic rate  tx_rate  rx_rate  a  e
     verify port group switch interface stats  leaf2-a  leaf2-b  ${h5_intf0}  ${h5_intf1}
-    cli disable interface  s5  ${h5_intf0}
+    rest disable fabric interface  leaf2-a  ${h5_intf0}
     verify port group switch interface stats  leaf2-a  leaf2-b  ${h5_intf0}  ${h5_intf1}
-    cli enable interface  s5  ${h5_intf0}
+    rest enable fabric interface  leaf2-a  ${h5_intf0}
     sleep  3
     verify port group switch interface stats  leaf2-a  leaf2-b  ${h5_intf0}  ${h5_intf1}      
     rest delete tenant  t1
@@ -387,9 +385,9 @@ Verify Duplicate Multicast packets on edge port groups
     sleep  10  
     verify traffic rate  tx_rate  rx_rate  a  e
     verify port group switch interface stats  leaf2-a  leaf2-b  ${h5_intf0}  ${h5_intf1} 
-    cli disable interface  s5  ${h5_intf0}
+    rest disable fabric interface  leaf2-a  ${h5_intf0}
     verify port group switch interface stats  leaf2-a  leaf2-b  ${h5_intf0}  ${h5_intf1}
-    cli enable interface  s5  ${h5_intf0}
+    rest enable fabric interface  leaf2-a  ${h5_intf0}
     sleep  3
     verify port group switch interface stats  leaf2-a  leaf2-b  ${h5_intf0}  ${h5_intf1} 
     rest delete tenant  t1

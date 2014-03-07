@@ -247,7 +247,7 @@ Verify (L2) Ethernet type hashing for IP packets
     send and verify traffic  
     re-enable disabled lag interfaces  s1  port-channel2  port-channel3  
     re-enable disabled lag interfaces  s2  port-channel2  port-channel3       
-    [Tags]  lag  hashing  l2ethertypeip  skipped
+    [Tags]  lag  hashing  l2ethertypeip
 
 Verify (L2) VLAN Id hashing for IP packets
     disable other lag interfaces  s1  port-channel2  port-channel3  
