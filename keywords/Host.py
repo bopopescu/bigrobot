@@ -186,7 +186,7 @@ class Host(object):
             mac_addr = result.group(1)
             helpers.log("output: %s" % output)
             helpers.log("result: %s" % result)
-            mac = mac_addr.replace(" ", "")
+            mac = mac_addr.replace("\r", "")
             helpers.log("mac_addr: %s" % mac_addr)
             return mac
         
