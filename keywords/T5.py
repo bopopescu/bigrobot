@@ -1,7 +1,7 @@
 '''
 ###  WARNING !!!!!!!
 ###
-###  This is where common code for all Mininet will go in.
+###  This is where common code for all T5 will go in.
 ###
 ###  To commit new code, please contact the Library Owner:
 ###  Prashanth Padubidry (prashanth.padubidry@bigswitch.com)
@@ -32,6 +32,20 @@ class T5(object):
 #        c.rest.set_session_cookie(session_cookie)
 
     def rest_show_version(self, string, user="admin", password="adminadmin"):
+        '''
+            Objective:
+            - Return pertinent version value
+            - Executes REST API Call on URL http://127.0.0.1:8080/api/v1/data/controller/core/version/component
+        
+            Inputs:
+            |string | Pertinent version string that is being requested|
+            |username| username |
+            |password| Password|     
+            Return Value:
+            | True | On Configuration success|
+            | False | On Configuration failure|
+            
+        '''
         t = test.Test()
         c = t.controller('master')
         try:
