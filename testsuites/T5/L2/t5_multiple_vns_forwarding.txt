@@ -43,34 +43,34 @@ check fabric ports members in the vlan-table with link up/down
 	rest verify forwarding vlan fabric tag members  leaf0-a
 	rest verify forwarding vlan fabric tag members  leaf1-a
 	rest verify forwarding vlan fabric tag members  leaf2-a 
-	cli disable interface  leaf0-a  ${leaf0a_leaf0b_intf0}
+	rest disable fabric interface  leaf0-a  ${leaf0a_leaf0b_intf0}
 	sleep  3
 	rest verify forwarding vlan fabric tag members  leaf0-a
-	cli enable interface  leaf0-a  ${leaf0a_leaf0b_intf0}
+	rest enable fabric interface  leaf0-a  ${leaf0a_leaf0b_intf0}
 	sleep  3
 	rest verify forwarding vlan fabric tag members  leaf0-a
 	rest verify forwarding vlan fabric tag members  leaf0-b
-	cli disable interface  leaf0-a  ${leaf0a_spine0_intf0}
+	rest disable fabric interface  leaf0-a  ${leaf0a_spine0_intf0}
 	sleep  3
 	rest verify forwarding vlan fabric tag members  leaf0-a
 	rest verify forwarding vlan fabric tag members  leaf0-b
 	rest verify forwarding vlan fabric tag members  leaf1-a
 	rest verify forwarding vlan fabric tag members  leaf2-a
-	cli enable interface  leaf0-a  ${leaf0a_spine0_intf0}         
+	rest enable fabric interface  leaf0-a  ${leaf0a_spine0_intf0}         
 
 check edge port members in the vlan-table with linkup/down 
 	[Tags]  feature      
 	rest verify forwarding vlan edge untag members  leaf0-b  ${leaf0b_ixia_intf}  
 	rest verify forwarding vlan edge untag members  leaf1-b  ${leaf1b_ixia_intf}
-	cli disable interface  leaf0-b  ${leaf0b_ixia_intf}
+	rest disable fabric interface  leaf0-b  ${leaf0b_ixia_intf}
 	sleep  2 
 	rest verify forwarding vlan edge untag members  leaf0-b  ${leaf0b_ixia_intf}
-	cli enable interface  leaf0-b  ${leaf0b_ixia_intf}
+	rest enable fabric interface  leaf0-b  ${leaf0b_ixia_intf}
 	sleep  2
 	rest verify forwarding vlan edge untag members  leaf0-b  ${leaf0b_ixia_intf} 
-	cli disable interface  leaf0-a  ${leaf0a_ixia_intf}
+	rest disable fabric interface  leaf0-a  ${leaf0a_ixia_intf}
 	rest verify forwarding vlan edge tag members  leaf0-a  ${leaf0a_ixia_intf}
-	cli enable interface  leaf0-a  ${leaf0a_ixia_intf}
+	rest enable fabric interface  leaf0-a  ${leaf0a_ixia_intf}
 	sleep  3
 	rest verify forwarding vlan edge tag members  leaf0-a  ${leaf0a_ixia_intf}
 	
@@ -139,17 +139,17 @@ Traffic forwarding with edge port flap
     rest verify forwarding layer2 table tag  leaf2-b  ${leaf2b_ixia_intf}  00:02:06:00:00:24
     verify traffic rate  tx_rate  rx_rate  b  f
     verify traffic rate  tx_rate  rx_rate  f  b
-    cli disable interface  leaf0-b  ${leaf0b_ixia_intf}
+    rest disable fabric interface  leaf0-b  ${leaf0b_ixia_intf}
     sleep  10
     verify traffic rate negative  tx_rate  rx_rate  f  b    
-    cli enable interface  leaf0-b  ${leaf0b_ixia_intf}  
+    rest enable fabric interface  leaf0-b  ${leaf0b_ixia_intf}  
     sleep  5
     verify traffic rate  tx_rate  rx_rate  b  f
     verify traffic rate  tx_rate  rx_rate  f  b
-    cli disable interface  leaf2-b  ${leaf2b_ixia_intf}
+    rest disable fabric interface  leaf2-b  ${leaf2b_ixia_intf}
     sleep  5
     verify traffic rate negative  tx_rate  rx_rate  b  f
-    cli enable interface  leaf2-b  ${leaf2b_ixia_intf}
+    rest enable fabric interface  leaf2-b  ${leaf2b_ixia_intf}
     sleep  10
     verify traffic rate  tx_rate  rx_rate  b  f
     verify traffic rate  tx_rate  rx_rate  f  b
@@ -166,10 +166,10 @@ Testing flooding to within a VNS when the peer-lag down..
 	sleep  10
 	verify traffic rate  tx_rate  rx_rate  e  f
     verify traffic rate  tx_rate  rx_rate  f  e
-    cli disable interface  leaf2-a  ${leaf2a_leaf2b_intf0}
+    rest disable fabric interface  leaf2-a  ${leaf2a_leaf2b_intf0}
     sleep  5
     verify switch interface stats  leaf2-a  ${h5_intf0}
-    cli enable interface  leaf2-a  ${leaf2a_leaf2b_intf0}
+    rest enable fabric interface  leaf2-a  ${leaf2a_leaf2b_intf0}
     verify traffic rate  tx_rate  rx_rate  e  f
     verify traffic rate  tx_rate  rx_rate  f  e 
     stop traffic  ${stream}

@@ -35,18 +35,18 @@ Spine Link Failover/back Test from leaf0-a untagged packet(Using IXIA)
     
     ${stream}=             L3 add  no_arp=True  flow=a<->e  src_mac=00:02:01:00:00:24  dst_mac=00:02:05:00:00:24   frame_rate=1000  frame_size=128  name=a_e_flow
     start traffic  ${stream}
-    sleep  10
-    verify traffic rate  tx_rate  rx_rate  a  e
-    cli disable interface  s1  ${leaf0a_spine0_intf0}
     sleep  5
     verify traffic rate  tx_rate  rx_rate  a  e
-    cli enable interface  s1  ${leaf0a_spine0_intf0}
+    rest disable fabric interface  leaf0-a  ${leaf0a_spine0_intf0}
     sleep  5
     verify traffic rate  tx_rate  rx_rate  a  e
-    cli disable interface  s1  ${leaf0a_spine1_intf0}
+    rest enable fabric interface  leaf0-a  ${leaf0a_spine0_intf0}
     sleep  5
     verify traffic rate  tx_rate  rx_rate  a  e
-    cli enable interface  s1  ${leaf0a_spine1_intf0}
+    rest disable fabric interface  leaf0-a  ${leaf0a_spine1_intf0}
+    sleep  5
+    verify traffic rate  tx_rate  rx_rate  a  e
+    rest enable fabric interface  leaf0-a  ${leaf0a_spine1_intf0}
     sleep  5
     verify traffic rate  tx_rate  rx_rate  a  e 
     stop traffic  ${stream}
@@ -62,18 +62,18 @@ Spine Link Failover/back test from leaf0-b tagged packet
     
     ${stream}=             L3 add  no_arp=True  flow=b<->f  src_mac=00:02:02:00:00:24  dst_mac=00:02:06:00:00:24  ethertype=8100  vlan_id=100  frame_rate=1000  frame_size=128  name=b_f_flow
     start traffic  ${stream}
-    sleep  10
-    verify traffic rate  tx_rate  rx_rate  b  f
-    cli disable interface  s2  ${leaf0b_spine0_intf0}
     sleep  5
     verify traffic rate  tx_rate  rx_rate  b  f
-    cli enable interface  s2  ${leaf0b_spine0_intf0}
+    rest disable fabric interface  leaf0-b  ${leaf0b_spine0_intf0}
     sleep  5
     verify traffic rate  tx_rate  rx_rate  b  f
-    cli disable interface  s2  ${leaf0b_spine1_intf0}
+    rest enable fabric interface  leaf0-b  ${leaf0b_spine0_intf0}
     sleep  5
     verify traffic rate  tx_rate  rx_rate  b  f
-    cli enable interface  s2  ${leaf0b_spine1_intf0}
+    rest disable fabric interface  leaf0-b  ${leaf0b_spine1_intf0}
+    sleep  5
+    verify traffic rate  tx_rate  rx_rate  b  f
+    rest enable fabric interface  leaf0-b  ${leaf0b_spine1_intf0}
     sleep  5
     verify traffic rate  tx_rate  rx_rate  b  f 
     stop traffic  ${stream}
@@ -91,16 +91,16 @@ Peer link failover between leaf1a to leaf1b
     start traffic  ${stream}
     sleep  10
     verify traffic rate  tx_rate  rx_rate  c  d
-    cli disable interface  s3  ${leaf1a_leaf1b_intf0}
+    rest disable fabric interface  leaf1-a  ${leaf1a_leaf1b_intf0}
     sleep  5
     verify traffic rate  tx_rate  rx_rate  c  d
-    cli enable interface  s3  ${leaf1a_leaf1b_intf0}
+    rest enable fabric interface  leaf1-a  ${leaf1a_leaf1b_intf0}
     sleep  5
     verify traffic rate  tx_rate  rx_rate  c  d
-    cli disable interface  s3  ${leaf1a_leaf1b_intf1}
+    rest disable fabric interface  leaf1-a  ${leaf1a_leaf1b_intf1}
     sleep  5
     verify traffic rate  tx_rate  rx_rate  c  d
-    cli enable interface  s3  ${leaf1a_leaf1b_intf1}
+    rest enable fabric interface  leaf1-a  ${leaf1a_leaf1b_intf1}
     sleep  5
     verify traffic rate  tx_rate  rx_rate  c  d 
     stop traffic  ${stream}
@@ -118,10 +118,10 @@ Traffic Test between the 2 leaf with single peer link
     start traffic  ${stream}
     sleep  10
     verify traffic rate  tx_rate  rx_rate  a  b
-    cli disable interface  s1  ${leaf0a_leaf0b_intf0}
+    rest disable fabric interface  leaf0-a  ${leaf0a_leaf0b_intf0}
     sleep  5
     verify traffic rate negative  tx_rate  rx_rate  a  b
-    cli enable interface  s1  ${leaf0a_leaf0b_intf0}
+    rest enable fabric interface  leaf0-a  ${leaf0a_leaf0b_intf0}
     sleep  5
     verify traffic rate  tx_rate  rx_rate  a  b
     stop traffic  ${stream}
@@ -181,19 +181,19 @@ Host Link Failover test with Host6 in Rack2 to Host 4 in Rack1
     sleep  3
     ${loss}=  bash ping  h6  ${h4_ip}  source_if=bond0
     Should Be True  ${loss} == 0
-    cli disable interface  s3  ${h4_intf0}
+    rest disable fabric interface  leaf1-a  ${h4_intf0}
     sleep  3
     ${loss}=  bash ping  h6  ${h4_ip}  source_if=bond0
     Should Be True  ${loss} == 0
-    cli enable interface  s3  ${h4_intf0}
+    rest enable fabric interface  leaf1-a  ${h4_intf0}
     sleep  3
     ${loss}=  bash ping  h6  ${h4_ip}  source_if=bond0
     Should Be True  ${loss} == 0
-    cli disable interface  s4  ${h4_intf1}
+    rest disable fabric interface  leaf1-b  ${h4_intf1}
     sleep  3
     ${loss}=  bash ping  h6  ${h4_ip}  source_if=bond0
     Should Be True  ${loss} == 0
-    cli enable interface  s4  ${h4_intf1}
+    rest enable fabric interface  leaf1-b  ${h4_intf1}
     sleep  3
     ${loss}=  bash ping  h6  ${h4_ip}  source_if=bond0
     Should Be True  ${loss} == 0
