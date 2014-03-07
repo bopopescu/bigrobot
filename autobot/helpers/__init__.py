@@ -96,6 +96,28 @@ def prettify_log(s, data, level=3):
     analyze(''.join((s, '\n', prettify(data))), level)
 
 
+def exception_info_type():
+    return sys.exc_info()[0]
+
+
+def exception_info_value():
+    return str(sys.exc_info()[1]) + br_utils.end_of_output_marker()
+
+
+def exception_info_traceback():
+    return sys.exc_info()[2]
+
+
+def exception_info():
+    """
+    Returns printable string of tuple (type, value, traceback).
+    See http://docs.python.org/2/library/sys.html#sys.exc_info
+    """
+    (_type, _val, _) = sys.exc_info()
+    return ("type: %s\n\nvalue: %s%s"
+            % (_type, _val, br_utils.end_of_output_marker()))
+
+
 def error_msg(msg):
     print("Error: %s" % msg)
 
