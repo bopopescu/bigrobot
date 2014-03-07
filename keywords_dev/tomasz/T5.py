@@ -1433,6 +1433,40 @@ class T5(object):
             return True
 
 
+    def cli_compare_running_config_with_scp(self, destination):
+        ''' Function to compare current running config with
+        config saved in a file, via CLI line by line
+        Input: Filename
+        Output: True if successful, False otherwise
+        '''
+        helpers.test_log("Running command:\ncompare running-config scp://%s" % destination)
+        t = test.Test()
+        c = t.controller('master')
+        try:
+            #comparison = c.config("compare running-config scp://%s" % destination)['content']
+            comparison = c.config("compare running-config test-config")['content']
+            if "Error" in c.cli_content():
+                helpers.log("Error in CLI content")
+                return False
+            comparison = helpers.strip_cli_output(rc)
+            comparison = helpers.str_to_list(rc)
+
+            if (len(comparison) == 4) or (len(comparison) == 0):
+                if len(comparison) == 4 and '3c3' not in comparison[0]:
+                    helpers.log("Compared files are different")
+                    return False
+                else:
+                    helpers.log("Compared files are the same")
+            else:
+                helpers.log("Compared files are different")
+                return False
+        except:
+            helpers.test_log(c.cli_content())
+            return False
+        else:
+            return True
+
+
     def cli_delete_running_config_file(self, filename):
         ''' Function to delete running config file
         via CLI

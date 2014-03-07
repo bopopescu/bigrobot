@@ -56,8 +56,8 @@ T2.3 Copy running config to scp://, change RC, verify configs different
 	Should Be True  ${status}
 	${tenant}  Generate Random Name  Tenant  5
 	Rest Add Tenant  ${tenant}
-	#${status} =  Cli Compare Running Config with Scp  ${config name}
-	#Should Not Be True  ${status}
+	${status} =  Cli Compare Running Config with Scp  ${config name}
+	Should Not Be True  ${status}
 	Bash Clear Known Hosts
 
 
