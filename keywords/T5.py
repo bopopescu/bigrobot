@@ -1049,7 +1049,7 @@ class T5(object):
         else:
             return True
 
-    def rest_verify_vns_stats(self, vns, frame_cnt):
+    def rest_verify_vns_stats(self, vns, frame_cnt, vrange=5):
         ''' Function to verify the VNS stats
         Input: vns name
         Output: given vns counters will be showed
@@ -1057,6 +1057,7 @@ class T5(object):
         t = test.Test()
         c = t.controller('master')
         frame_cnt = int(frame_cnt)
+        vrange = int(vrange)
         url = '/api/v1/data/controller/applications/bvs/info/stats/vns-stats/tenants/vnses[vns-name="%s"]' % (vns)
         try:
             c.rest.get(url)
@@ -1065,7 +1066,7 @@ class T5(object):
         else:
             return True
         data = c.rest.content()
-        if data["counters"]["counters-rx-packets"] == frame_cnt:
+        if (data["counters"]["counters-rx-packets"] >= (frame_cnt - vrange)) and (data["counters"]["counters-rx-packets"] <= (frame_cnt + vrange)):
             helpers.log("Pass: Counters value Expected:%d, Actual:%d" % (frame_cnt, data["counters"]["counters-rx-packets"]))
             return True
         else:
