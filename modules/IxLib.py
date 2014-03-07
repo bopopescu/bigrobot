@@ -5,6 +5,7 @@
 import autobot.helpers as helpers
 import time, re
 from vendors.Ixia import IxNetwork
+import modules.IxBigtapLib as IxBigtapLib
 
 class Ixia(object):
     def __init__(self, tcl_server_ip, tcl_server_port=8009, ix_version='7.10', chassis_ip=None,
@@ -435,8 +436,12 @@ class Ixia(object):
             
             self._handle.setAttribute(trafficStream1 + '/highLevelStream:2/' + 'frameSize', '-type', frameType)
             self._handle.setAttribute(trafficStream1 + '/highLevelStream:2/' + 'frameSize', '-fixedSize', frameSize)
-            self._handle.setAttribute(trafficStream1 + '/highLevelStream:2/' + 'frameRate', '-type', frameMode)
-            self._handle.setAttribute(trafficStream1 + '/highLevelStream:2/' + 'frameRate', '-rate', frameRate)
+            if line_rate is None:
+                self._handle.setAttribute(trafficStream1 + '/highLevelStream:2/' + 'frameRate', '-type', frameMode)
+                self._handle.setAttribute(trafficStream1 + '/highLevelStream:2/' + 'frameRate', '-rate', frameRate)
+            else:
+                self._handle.setAttribute(trafficStream1 + '/highLevelStream:2/' + 'frameRate', '-rate', line_rate)
+            
             if frameCount is not None:
                 self._handle.setAttribute(trafficStream1 + '/highLevelStream:2/' + 'transmissionControl', '-type',
                                     'fixedFrameCount')
@@ -589,17 +594,60 @@ class Ixia(object):
         match_bi = re.match(r'(\w+)<->(\w+)', flow)
         stream_flow = ''
         if match_uni1:
-            create_topo.append(self._topology[match_uni1.group(1).lower()])
-            create_topo.append(self._topology[match_uni1.group(2).lower()])
+            source = match_uni1.group(1).lower()
+            destination = match_uni1.group(2).lower()
+            create_topo.append(self._topology[source])
+            create_topo.append(self._topology[destination])
             stream_flow = 'uni-directional'
+            if kwargs['bigtap']:
+                bigtap_ports = kwargs['bigtap_ports']
+                helpers.log('Changing src and dst macs as BigTap is True for bigtap Ports:...')
+                helpers.log(str(bigtap_ports))
+                ixia_macs = IxBigtapLib.create_mac_list(bigtap_ports[source]['name'], 5, False)
+                dst_mac = ixia_macs['start_mac']
+                dst_cnt = ixia_macs['count']
+                dst_step = ixia_macs['mac_step']
+                ixia_macs = IxBigtapLib.create_mac_list(bigtap_ports[destination]['name'], 5, False)
+                src_mac = ixia_macs['start_mac']
+                src_cnt = ixia_macs['count']
+                src_step = ixia_macs['mac_step']
+                
         elif match_uni2:
-            create_topo.append(self._topology[match_uni2.group(2).lower()])
-            create_topo.append(self._topology[match_uni2.group(1).lower()])
+            source = match_uni2.group(2).lower()
+            destination = match_uni2.group(1).lower()
+            create_topo.append(self._topology[source])
+            create_topo.append(self._topology[destination])
             stream_flow = 'uni-directional'
+            if kwargs['bigtap']:
+                helpers.log('Changing src and dst macs as BigTap is True for bigtap Ports:...')
+                helpers.log(str(bigtap_ports))
+                bigtap_ports = kwargs['bigtap_ports']
+                ixia_macs = IxBigtapLib.create_mac_list(bigtap_ports[source]['name'], 5, False)
+                src_mac = ixia_macs['start_mac']
+                src_cnt = ixia_macs['count']
+                src_step = ixia_macs['mac_step']
+                ixia_macs = IxBigtapLib.create_mac_list(bigtap_ports[destination]['name'], 5, False)
+                dst_mac = ixia_macs['start_mac']
+                dst_cnt = ixia_macs['count']
+                dst_step = ixia_macs['mac_step']
         elif match_bi:
-            create_topo.append(self._topology[match_bi.group(1).lower()])
-            create_topo.append(self._topology[match_bi.group(2).lower()])
+            source = match_bi.group(1).lower()
+            destination = match_bi.group(2).lower()
+            create_topo.append(self._topology[source])
+            create_topo.append(self._topology[destination])
             stream_flow = 'bi-directional'
+            if kwargs['bigtap']:
+                bigtap_ports = kwargs['bigtap_ports']
+                helpers.log('Changing src and dst macs as BigTap is True for bigtap Ports:...')
+                helpers.log(str(bigtap_ports))
+                ixia_macs = IxBigtapLib.create_mac_list(bigtap_ports[source]['name'], 5, False)
+                src_mac = ixia_macs['start_mac']
+                src_cnt = ixia_macs['count']
+                src_step = ixia_macs['mac_step']
+                ixia_macs = IxBigtapLib.create_mac_list(bigtap_ports[destination]['name'], 5, False)
+                dst_mac = ixia_macs['start_mac']
+                dst_cnt = ixia_macs['count']
+                dst_step = ixia_macs['mac_step']
         # Create Ether Device:
         mac_devices = self.ix_create_device_ethernet(create_topo, src_cnt, dst_cnt, src_mac, dst_mac, src_step, dst_step)
         helpers.log('### Created Mac Devices with corrsponding Topos ...')
