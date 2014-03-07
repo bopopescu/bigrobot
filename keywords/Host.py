@@ -169,15 +169,22 @@ class Host(object):
         '''
         t = test.Test()
         n = t.node(node)
-        output = n.sudo("sudo ifconfig %s | grep --color=never \"HWaddr\"" %(intf))     
+        output = n.sudo("sudo ifconfig %s | grep --color=never HWaddr" %(intf))     
         return_stat = n.sudo('echo $?')['content']
         return_stat = helpers.strip_cli_output(return_stat)
         helpers.log("return_stat: %s" % return_stat)
         if int(return_stat) == 1:
+            helpers.log("I am here")
             return ''
         else:
+            helpers.log("I am there")
+            helpers.log("output: %s" % output)
             result = re.search('HWaddr (.*)', output)
-            return result.group(1)        
+            mac_addr = result.group(1)
+            helpers.log("output: %s" % output)
+            helpers.log("result: %s" % result)
+            helpers.log("mac_addr: %s" % mac_addr)
+            return mac_addr
         
         
     def bash_verify_arp(self, node, ip):
