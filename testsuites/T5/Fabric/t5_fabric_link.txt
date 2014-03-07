@@ -68,18 +68,18 @@ Reboot leaf switch and verify fabric link
 Add/delete a new link between spine0 and leaf0a
 	[Tags]  feature
 	rest verify fabric link
-	cli disable interface  leaf0-a  ${leaf0a_spine0_intf0}
+	rest disable fabric interface  leaf0-a  ${leaf0a_spine0_intf0}
 	rest verify fabric link
-	cli enable interface  leaf0-a  ${leaf0a_spine0_intf0}
+	rest enable fabric interface  leaf0-a  ${leaf0a_spine0_intf0}
 	sleep  2
 	rest verify fabric link
 
 add and delete peer group link and verify the database
 	[Tags]  feature
 	rest verify fabric link
-	cli disable interface  leaf1-a  ${leaf1a_leaf1b_intf0}
+	rest disable fabric interface  leaf1-a  ${leaf1a_leaf1b_intf0}
 	rest verify fabric link
-	cli enable interface  leaf1-a  ${leaf1a_leaf1b_intf0}
+	rest enable fabric interface  leaf1-a  ${leaf1a_leaf1b_intf0}
 	rest verify fabric link
 
 Delete and Readd the Rack2
