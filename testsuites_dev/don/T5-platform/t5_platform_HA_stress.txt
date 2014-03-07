@@ -8,12 +8,12 @@ Test Setup       base test setup
 Test Teardown    base test teardown
 Force Tags       T5Platform  HA
 Library          keywords/BsnCommon.py
-Library		 	 keywords_dev/don/T5Platform.py
-Library		 	 keywords_dev/don/T5PlatformCommon.py
 Library          keywords/Mininet.py
 Library	    	 keywords/Host.py
 Library          keywords/T5.py
 Library	         keywords/T5Fabric.py
+Library	         keywords/T5Platform.py
+Library	         keywords/T5Utilities.py
 Resource	 	 keywords_dev/don/t5_platform_sanity_resource.txt
 
 * Variables

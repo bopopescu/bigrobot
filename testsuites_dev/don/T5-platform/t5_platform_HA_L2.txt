@@ -8,41 +8,28 @@ Test Setup       base test setup
 Test Teardown    base test teardown
 Force Tags       T5Platform  HA
 Library          keywords/BsnCommon.py
-Library		 	 keywords_dev/don/T5Platform.py
-Library		 	 keywords_dev/don/T5PlatformCommon.py
 Library          keywords/Mininet.py
 Library	    	 keywords/Host.py
 Library          keywords/T5.py
 Library	         keywords/T5Fabric.py
+Library	         keywords/T5Platform.py
+Library	         keywords/T5Utilities.py
 Resource	 	 keywords_dev/don/t5_platform_sanity_resource.txt
 
 * Variables
-${bm0_ip}  10.0.0.1
-${bm1_ip}  10.0.0.2
-${bm2_ip}  10.0.0.3
-${bm3_ip}  10.0.0.4
-${bm4_ip}  10.0.0.5
-${bm5_ip}  10.0.0.6
-${bm0_mac}  00:00:00:00:00:01
-${bm1_mac}  00:00:00:00:00:02
-${bm2_mac}  00:00:00:00:00:03
-${bm3_mac}  00:00:00:00:00:04
-${bm4_mac}  00:00:00:00:00:05
-${bm5_mac}  00:00:00:00:00:06
-${bm0_intf0}  leaf0a-eth8
-${bm0_intf1}  leaf0b-eth8
-${bm1_intf0}  leaf0a-eth9
-${bm1_intf1}  leaf0b-eth9
-${bm2_intf0}  leaf1a-eth8
-${bm2_intf1}  leaf1b-eth8
-${bm3_intf0}  leaf1a-eth9
-${bm3_intf1}  leaf1b-eth9
-${bm4_intf0}  leaf2a-eth8
-${bm4_intf1}  leaf2b-eth8
-${bm5_intf0}  leaf2a-eth9
-${bm5_intf1}  leaf2b-eth9
+@{spineList}  00:00:00:00:00:01:00:01  00:00:00:00:00:01:00:02
+@{leafList}  00:00:00:00:00:02:00:01  00:00:00:00:00:02:00:02  00:00:00:00:00:02:00:03  00:00:00:00:00:02:00:04  00:00:00:00:00:02:00:05  00:00:00:00:00:02:00:06
+
 
 * Test Case 
+
+Configure Multiple L2 Tenants With Single VNS & Failover
+	[Tags]	run
+	Configure 3-Rack/Dual-Leaf/2-Spine/4-Host Setup For Mininet 
+	Configure 3 Tenants with Different VLAN properties
+	Verify Connectivity in 3-Rack/Dual-Leaf/2-Spine/4-Host Setup
+	Reboot the master node & verify fabric integrity
+	Verify Connectivity in 3-Rack/Dual-Leaf/2-Spine/4-Host Setup
 
 Verify HA Cluster Formation
    [Tags]  ClusterFormation	 
@@ -65,14 +52,14 @@ Verify Cluster Slave Reboot
 	Reboot the Slave node & verify fabric integrity
 
 Configure Cluster VIP & Verify Connectivity After Failover
-	[Tags]   vip  ClusterFormation
+	[Tags]   vip 
 	rest add vip  10.192.106.20
 	sleep  10
 	${returnVal}=  cli verify cluster vip  10.192.106.20/32
 	Should Be True  ${returnVal}
 
 Delete Cluster VIP
-	[Tags]   vip  ClusterFormation
+	[Tags]   vip 
 	rest delete vip
 	sleep  10
 	${returnVal}=  cli verify cluster vip  10.192.106.20/32
@@ -116,192 +103,249 @@ Head-less Mode & Verify Connectivity
    Shutdown both the controllers and verify connectivity
    
 
+########################################################################################################################################
+
 * Keywords      
 
 Verify the cluster formation 
+
 	${returnVal}=  rest verify show cluster
 	Should Be True  ${returnVal}
 
 Verify cluster election take leader
+
 	${returnVal}=  rest verify cluster election take leader
 	Should Be True  ${returnVal}
 	
 
 Verify cluster election rerun 
+
 	${returnVal}=  rest verify cluster election rerun
 	Should Be True  ${returnVal}
 	
 
 Reboot the master node & verify fabric integrity
+
 	${returnVal}=  cli verify cluster master reboot
 	Should Be True  ${returnVal}
 	
 	
 Reboot the Slave node & verify fabric integrity
+
 	${returnVal}=  cli verify cluster slave reboot
 	Should Be True  ${returnVal}
 	
 	
 Shutdown the master node & verify fabric integrity
+
 	${returnVal}=  cli verify cluster master shutdown
 	Should Be True  ${returnVal}
 	
 
 Shutdown the slave node & verify fabric integrity
+
 	${returnVal}=  cli verify cluster slave shutdown
 	Should Be True  ${returnVal}
 	
 	
 Failover/Failback by rebooting the master and verify connectivity
+
    : FOR    ${Iteration}    IN RANGE    1    3
    \	Log To Console   \n================ Rebooting Master - Iteration ${Iteration} ===============\n
    \	cli verify cluster master reboot
    \	platform ping all
 
+
 Failover/Failback by rebooting the slave and verify connectivity
+
    : FOR    ${Iteration}    IN RANGE    1    3
    \	Log To Console   \n================ Rebooting Slave - Iteration ${Iteration} ===============\n
    \	cli verify cluster slave reboot
    \	platform ping all
 
+
 Failover/Failback by issuing take-leader in master & verify connectivity
+
    : FOR    ${Iteration}    IN RANGE    1    3
    \	Log To Console   \n================ Election-Take-Leader - Iteration ${Iteration} ===============\n
    \	rest verify cluster election take leader
    \	platform ping all
 
+
 Re-run the election and verify connectivity
+
    : FOR    ${Iteration}    IN RANGE    1    3
    \	Log To Console   \n================ Election-Rerun - Iteration ${Iteration} ===============\n
    \	rest verify cluster election rerun
    \	platform ping all
+   
 
 Shutdown both the controllers and verify connectivity
+
    platform ping all
    cli verify cluster slave shutdown
    cli verify cluster master shutdown
    platform ping all
 
 
-Verify Single VNS Host Connectivity
-   sleep  30
-   add a tenant  bm_all
-   add a vns  bm_all  bm_all
-   add portgroup to vns  bm_all  bm_all  p1  -1
-   add portgroup to vns  bm_all  bm_all  p2  -1
-   add portgroup to vns  bm_all  bm_all  p3  -1
-   add portgroup to vns  bm_all  bm_all  p4  -1
-   add portgroup to vns  bm_all  bm_all  p5  -1
-   add portgroup to vns  bm_all  bm_all  p6  -1
-   sleep  30
-   do show run vns verify  bm_all  6
-   platform ping all
 
-T5 base suite setup
-   base suite setup
-   ${spineList}=  Create List  00:00:00:00:00:01:00:01  00:00:00:00:00:01:00:02
-   ${leafList}=  Create List  00:00:00:00:00:02:00:01  00:00:00:00:00:02:00:02  00:00:00:00:00:02:00:03  00:00:00:00:00:02:00:04  00:00:00:00:00:02:00:05  00:00:00:00:00:02:00:06
+Configure 3-Rack/Dual-Leaf/2-Spine/4-Host Setup For Mininet 
+
    auto configure fabric switch  ${spineList}  ${leafList}  2
    sleep  5
-   add a portgroup  p1 
-   add interface to portgroup  leaf0-a  ${bm0_intf0}  p1
-   add interface to portgroup  leaf0-b  ${bm0_intf1}  p1
-   add a portgroup  p2 
-   add interface to portgroup  leaf0-a  ${bm1_intf0}  p2
-   add interface to portgroup  leaf0-b  ${bm1_intf1}  p2
-   add a portgroup  p3 
-   add interface to portgroup  leaf1-a  ${bm2_intf0}  p3
-   add interface to portgroup  leaf1-b  ${bm2_intf1}  p3
-   add a portgroup  p4 
-   add interface to portgroup  leaf1-a  ${bm3_intf0}  p4
-   add interface to portgroup  leaf1-b  ${bm3_intf1}  p4
-   add a portgroup  p5 
-   add interface to portgroup  leaf2-a  ${bm4_intf0}  p5
-   add interface to portgroup  leaf2-b  ${bm4_intf1}  p5
-   add a portgroup  p6 
-   add interface to portgroup  leaf2-a  ${bm5_intf0}  p6
-   add interface to portgroup  leaf2-b  ${bm5_intf1}  p6
+   Set Test Variable  ${bm0_intf0}  leaf0a-eth8
+   Set Test Variable  ${bm0_intf1}  leaf0b-eth8
+   Set Test Variable  ${bm1_intf0}  leaf0a-eth9
+   Set Test Variable  ${bm1_intf1}  leaf0b-eth9
+   Set Test Variable  ${bm2_intf0}  leaf0a-eth10
+   Set Test Variable  ${bm2_intf1}  leaf0b-eth10
+   Set Test Variable  ${bm3_intf0}  leaf0a-eth11
+   Set Test Variable  ${bm3_intf1}  leaf0b-eth11
+   Set Test Variable  ${bm4_intf0}  leaf1a-eth8
+   Set Test Variable  ${bm4_intf1}  leaf1b-eth8
+   Set Test Variable  ${bm5_intf0}  leaf1a-eth9
+   Set Test Variable  ${bm5_intf1}  leaf1b-eth9
+   Set Test Variable  ${bm6_intf0}  leaf1a-eth10
+   Set Test Variable  ${bm6_intf1}  leaf1b-eth10
+   Set Test Variable  ${bm7_intf0}  leaf1a-eth11
+   Set Test Variable  ${bm7_intf1}  leaf1b-eth11
+   Set Test Variable  ${bm8_intf0}  leaf2a-eth8
+   Set Test Variable  ${bm8_intf1}  leaf2b-eth8
+   Set Test Variable  ${bm9_intf0}  leaf2a-eth9
+   Set Test Variable  ${bm9_intf1}  leaf2b-eth9
+   Set Test Variable  ${bm10_intf0}  leaf2a-eth10
+   Set Test Variable  ${bm10_intf1}  leaf2b-eth10
+   Set Test Variable  ${bm11_intf0}  leaf2a-eth11
+   Set Test Variable  ${bm11_intf1}  leaf2b-eth11
+   
+   rest add portgroup  p0
+   rest add interface to portgroup  leaf0-a  ${bm0_intf0}  p0
+   rest add interface to portgroup  leaf0-b  ${bm0_intf1}  p0
+   rest add portgroup  p1
+   rest add interface to portgroup  leaf0-a  ${bm1_intf0}  p1
+   rest add interface to portgroup  leaf0-b  ${bm1_intf1}  p1
+   rest add portgroup  p2 
+   rest add interface to portgroup  leaf0-a  ${bm2_intf0}  p2
+   rest add interface to portgroup  leaf0-b  ${bm2_intf1}  p2
+   rest add portgroup  p3 
+   rest add interface to portgroup  leaf0-a  ${bm3_intf0}  p3
+   rest add interface to portgroup  leaf0-b  ${bm3_intf1}  p3
+   rest add portgroup  p4
+   rest add interface to portgroup  leaf1-a  ${bm4_intf0}  p4
+   rest add interface to portgroup  leaf1-b  ${bm4_intf1}  p4
+   rest add portgroup  p5
+   rest add interface to portgroup  leaf1-a  ${bm5_intf0}  p5
+   rest add interface to portgroup  leaf1-b  ${bm5_intf1}  p5
+   rest add portgroup  p6
+   rest add interface to portgroup  leaf1-a  ${bm6_intf0}  p6
+   rest add interface to portgroup  leaf1-b  ${bm6_intf1}  p6
+   rest add portgroup  p7
+   rest add interface to portgroup  leaf1-a  ${bm7_intf0}  p7
+   rest add interface to portgroup  leaf1-b  ${bm7_intf1}  p7
+   rest add portgroup  p8
+   rest add interface to portgroup  leaf2-a  ${bm8_intf0}  p8
+   rest add interface to portgroup  leaf2-b  ${bm8_intf1}  p8
+   rest add portgroup  p9
+   rest add interface to portgroup  leaf2-a  ${bm9_intf0}  p9
+   rest add interface to portgroup  leaf2-b  ${bm9_intf1}  p9
+   rest add portgroup  p10
+   rest add interface to portgroup  leaf2-a  ${bm10_intf0}  p10
+   rest add interface to portgroup  leaf2-b  ${bm10_intf1}  p10
+   rest add portgroup  p11
+   rest add interface to portgroup  leaf2-a  ${bm11_intf0}  p11
+   rest add interface to portgroup  leaf2-b  ${bm11_intf1}  p11
    sleep  5
-   Verify Single VNS Host Connectivity
+
+
+Configure 3 Tenants with Different VLAN properties
+   
+   Set Test Variable  ${bm0ip}	10.0.0.1
+   Set Test Variable  ${bm1ip}	10.0.0.2
+   Set Test Variable  ${bm2ip}	10.0.0.3
+   Set Test Variable  ${bm3ip}	10.10.10.3
+   Set Test Variable  ${bm4ip}	10.10.10.4
+   Set Test Variable  ${bm5ip}	10.10.10.5
+   Set Test Variable  ${bm6ip}	100.100.100.6
+   Set Test Variable  ${bm7ip}	100.100.100.7
+   Set Test Variable  ${bm8ip}	100.100.100.8
+   Set Test Variable  ${bm9ip}	 200.200.200.9
+   Set Test Variable  ${bm10ip}	 200.200.200.10
+   Set Test Variable  ${bm11ip}	 200.200.200.11
+   
+   rest add tenant  L2autoT1
+   rest add vns  L2autoT1  v1
+   rest add portgroup to vns  L2autoT1  v1  p0  -1
+   rest add portgroup to vns  L2autoT1  v1  p1  -1
+   rest add portgroup to vns  L2autoT1  v1  p2  -1
+   
+   rest add tenant  L2autoT2
+   rest add vns  L2autoT2  v2
+   rest add portgroup to vns  L2autoT2  v2  p3  10
+   rest add portgroup to vns  L2autoT2  v2  p4  10
+   rest add portgroup to vns  L2autoT2  v2  p5  10
+
+   rest add tenant  L2autoT3
+   rest add vns  L2autoT3  v3
+   rest add portgroup to vns  L2autoT3  v3  p6  100
+   rest add portgroup to vns  L2autoT3  v3  p7  100
+   rest add portgroup to vns  L2autoT3  v3  p8  100
+   rest add portgroup to vns  L2autoT3  v3  p9   2000
+   rest add portgroup to vns  L2autoT3  v3  p10  2000
+   rest add portgroup to vns  L2autoT3  v3  p11  2000
+
+
+   mininet link tag  bm3  bm3-bond0  10  ${bm3ip}
+   mininet link tag  bm4  bm4-bond0  10  ${bm4ip}
+   mininet link tag  bm5  bm5-bond0  10  ${bm5ip}
+   mininet link tag  bm6  bm6-bond0  100  ${bm6ip}
+   mininet link tag  bm7  bm7-bond0  100  ${bm7ip}
+   mininet link tag  bm8  bm8-bond0  100  ${bm8ip}
+   mininet link tag  bm9   bm9-bond0   2000  ${bm9ip}
+   mininet link tag  bm10  bm10-bond0  2000  ${bm10ip}
+   mininet link tag  bm11  bm11-bond0  2000  ${bm11ip}
+   sleep  30
+   
+
+Verify Connectivity in 3-Rack/Dual-Leaf/2-Spine/4-Host Setup
+
+   ###	Verify ping between L2autoT1
+   ${returnVal}=  platform ping  bm0  ${bm1ip}
+   Should Be True  ${returnVal}
+   ${returnVal}=  platform ping  bm0  ${bm2ip}
+   Should Be True  ${returnVal}
+   ${returnVal}=  platform ping  bm1  ${bm2ip}
+   Should Be True  ${returnVal}
+
+   ###	Verify ping between L2autoT2
+   ${returnVal}=  platform ping  bm3  ${bm4ip}
+   Should Be True  ${returnVal}
+   ${returnVal}=  platform ping  bm3  ${bm5ip}
+   Should Be True  ${returnVal}
+   ${returnVal}=  platform ping  bm4  ${bm5ip}
+   Should Be True  ${returnVal}
+   
+   ###	Verify ping between L2autoT3
+   ${returnVal}=  platform ping  bm6  ${bm7ip}
+   Should Be True  ${returnVal}
+   ${returnVal}=  platform ping  bm6  ${bm8ip}
+   Should Be True  ${returnVal}
+   ${returnVal}=  platform ping  bm7  ${bm8ip}
+   Should Be True  ${returnVal}
+   ${returnVal}=  platform ping  bm9  ${bm10ip}
+   Should Be True  ${returnVal}
+   ${returnVal}=  platform ping  bm9  ${bm11ip}
+   Should Be True  ${returnVal}
+   ${returnVal}=  platform ping  bm10  ${bm11ip}
+   Should Be True  ${returnVal}
+   
 
 T5 base suite teardown   
-   delete a tenant  bm_all
-   delete interface from portgroup  leaf0-a  ${bm0_intf0}  p1
-   delete interface from portgroup  leaf0-b  ${bm0_intf1}  p1
-   delete a portgroup  p1
-   delete interface from portgroup  leaf0-a  ${bm1_intf0}  p2
-   delete interface from portgroup  leaf0-b  ${bm1_intf1}  p2
-   delete a portgroup  p2
-   delete interface from portgroup  leaf1-a  ${bm2_intf0}  p3
-   delete interface from portgroup  leaf1-b  ${bm2_intf1}  p3
-   delete a portgroup  p3
-   delete interface from portgroup  leaf1-a  ${bm3_intf0}  p4
-   delete interface from portgroup  leaf1-b  ${bm3_intf1}  p4
-   delete a portgroup  p4
-   delete interface from portgroup  leaf2-a  ${bm4_intf0}  p5
-   delete interface from portgroup  leaf2-b  ${bm4_intf1}  p5
-   delete a portgroup  p5
-   delete interface from portgroup  leaf2-a  ${bm5_intf0}  p6
-   delete interface from portgroup  leaf2-b  ${bm5_intf1}  p6
-   delete a portgroup  p6
-   auto delete fabric switch  $spineList  $leafList  2
-   base suite teardown
-   sleep  5
+   rest delete tenant  L2autoT1
+   rest delete tenant  L2autoT2
+   rest delete tenant  L2autoT3
+   auto delete fabric switch  ${spineList}  ${leafList}  2
+   
 
    
-platform ping all
-   platform ping  bm0  ${bm1_ip}
-   platform ping  bm0  ${bm2_ip}
-   platform ping  bm0  ${bm3_ip}
-   platform ping  bm0  ${bm4_ip}
-   platform ping  bm0  ${bm5_ip}
-   platform ping  bm1  ${bm2_ip}
-   platform ping  bm1  ${bm3_ip}
-   platform ping  bm1  ${bm4_ip}
-   platform ping  bm1  ${bm5_ip}
-   platform ping  bm2  ${bm3_ip}
-   platform ping  bm2  ${bm4_ip}
-   platform ping  bm2  ${bm5_ip}
-   platform ping  bm4  ${bm5_ip}
-
-
-add a tenant  [Arguments]  ${tenant} 
-  REST add tenant  ${tenant}    
-
-delete a tenant  [Arguments]  ${tenant} 
-  	REST delete tenant  ${tenant}    
-
-add a vns  [Arguments]  ${tenant}  ${vns}  
-	REST add vns  ${tenant}  ${vns}   
-
-delete a vns  [Arguments]  ${tenant}  ${vns} 
-  	REST delete vns  ${tenant}  ${vns}   
-
-add a portgroup  [Arguments]  ${pg}
-  	REST add portgroup  ${pg}    
-
-delete a portgroup  [Arguments]  ${pg}
-  	REST delete portgroup  ${pg}    
-
-add a endpoint  [Arguments]  ${tenant}  ${vns}  ${endpoint} 
-  	REST add endpoint  ${tenant}  ${vns}  ${endpoint}  
-
-delete a endpoint  [Arguments]  ${tenant}  ${vns}  ${endpoint}
-  	REST delete endpoint  ${tenant}  ${vns}  ${endpoint}  
-
-add interface to portgroup  [Arguments]  ${switch}  ${intf}  ${pg} 
-  	REST add interface to portgroup  ${switch}  ${intf}  ${pg}  
-
-delete interface from portgroup  [Arguments]  ${switch}  ${intf}  ${pg} 
-  	REST delete interface from portgroup  ${switch}  ${intf}  ${pg}  
-
-add portgroup to vns  [Arguments]  ${tenant}  ${vns}  ${pg}  ${vlan}
-  	REST add portgroup to vns  ${tenant}  ${vns}  ${pg}  ${vlan} 
-
-add portgroup to endpoint  [Arguments]  ${tenant}  ${vns}  ${endpoint}  ${pg}  ${vlan} 
-  REST add portgroup to endpoint  ${tenant}  ${vns}  ${endpoint}  ${pg}  ${vlan} 
-
-delete portgroup from vns  [Arguments]  ${tenant}  ${vns}  ${pg}  ${vlan} 
-  REST delete portgroup from vns  ${tenant}  ${vns}  ${pg}  ${vlan}
-  
-
+   
+   

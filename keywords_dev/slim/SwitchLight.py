@@ -1739,29 +1739,32 @@ class SwitchLight(object):
         except:
             helpers.test_failure("Could not execute command. Please check log for errors")
             return False
-
-    def cli_show_datapath(self, node):
+        
+    def cli_add_dpid(self, node, dpid):
+        '''
+            Objective:
+            - Set switch dpid
+            
+            Input:
+            | node | Reference to switch (as defined in .topo file) | 
+            | dpid | dpid number |     
+                            
+            Return Value:
+            - True on configuration success
+            - False on configuration failure
+            
+            Examples:
+            
+                | cli add dpid | s1 |  00:00:00:00:00:00:00:00:01  |
+        '''
         try:
             t = test.Test()
             s1 = t.switch(node)
-        except:
-            return ''
-        else:
-            cli_input = "show datapath"
-            result = s1.enable(cli_input)['content']  
-            output = helpers.strip_cli_output(result)
-            helpers.log("result: %s" % output)
-            result = re.search(r'id(\s+)(.*)description', output, re.S | re.I)
-            return result.group(2)
-    
-    def cli_add_datapath(self, node, dpid):
-
-        t = test.Test()
-        s1 = t.switch(node)
-        try:
-            cli_input = "datapath id %s" % dpid 
-            result = s1.config(cli_input)
-        except:
-            return False
-        else:
+            cli_input = "datapath id  %s" % str(dpid)
+            s1.config(cli_input)
             return True
+        except:
+            helpers.test_failure("Could not execute command. Please check log for errors")
+            return False
+                
+        

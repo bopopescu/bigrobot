@@ -476,7 +476,6 @@ class T5Platform(object):
                 if(pingFailureCount == 5):
                     helpers.warn("5 Consecutive Ping Failures: Issuing Mininet-BugReport")
                     #mynet.mininet_bugreport()
-                    pingFailureCount = 0
                     return False
                 helpers.warn("Ping failed between: %s & %s" % (src,dst))
                 pingFailureCount += 1
