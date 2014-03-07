@@ -94,8 +94,8 @@ L3 intra tenant across rack untagged with dynamic endpoints
 	Should Be True  							${loss} == 0	
 	
 L3 intra tenant same rack tagged with dynamic endpoints
-#	BASH delete tag								h3								bond0.1001				soft_error=True
-#	BASH delete tag								h4								bond0.1002				soft_error=True
+	BASH delete tag								h3								bond0.1001				soft_error=${true}
+	BASH delete tag								h4								bond0.1002				soft_error=${true}
 	REST add portgroup to vns					X								X1						${leaf1_pc1}			1001
 	REST add portgroup to vns					X								X2						${leaf1_pc2}			1002
 	BASH add tag								h3								bond0					1001
