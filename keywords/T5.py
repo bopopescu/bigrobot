@@ -1094,3 +1094,18 @@ class T5(object):
             return True
         else:
             return False
+        
+    def rest_clear_fabric_interface_stats(self):
+        ''' Function to clear all the fabric interefaces
+        Input: None
+        Output: All connected switch interfaces will be cleared
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        url = 'api/v1/data/controller/applications/bvs/info/stats/reset-stats/clear-interface-counters'
+        try:
+            c.rest.get(url)
+        except:
+            return False
+        else:
+            return True 
