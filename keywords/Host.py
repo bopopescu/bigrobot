@@ -73,19 +73,24 @@ class Host(object):
         """
         t = test.Test()
         n = t.node(node)
-        result = n.sudo("vconfig rem %s" % intf)
-        out = result["content"]
 
-        # Catch error:
-        #   ERROR: trying to remove VLAN -:eth1.20:- error: No such device
-        #
-        # Actually, Exscript will detect this error and handle it, so we
-        # should never reach here... Exscript/protocols/Protocol.py will raise
-        # InvalidCommandException('Device said:\n' + self.response)
-        if re.search(r'no such device', out, re.M | re.I):
-            helpers.test_error("vconfig error - no such device '%s'" % intf,
-                               soft_error=soft_error)
-            return False
+        try:
+            n.sudo("vconfig rem %s" % intf)
+        except:
+            output = helpers.exception_info_value()
+            helpers.log("Output: %s" % output)
+
+            # Catch error:
+            #   ERROR: trying to remove VLAN -:eth1.20:- error: No such device
+            if helpers.any_match(str(output), r'error: No such devices'):
+                helpers.test_error("vconfig rem error - no such device '%s'" % intf,
+                                   soft_error)
+                return False
+            else:
+                helpers.test_error('Uncaught exception:\n%s' %
+                                   helpers.exception_info(),
+                                   soft_error)
+                return False
 
         return True
 
@@ -102,7 +107,7 @@ class Host(object):
     def bash_get_interface_ipv4(self, node, intf):
         t = test.Test()
         n = t.node(node)
-        output = n.sudo(" ifconfig %s | grep --color=never -i \"inet addr\"" % intf)['content']
+        output = n.sudo("ifconfig %s | grep --color=never -i 'inet addr'" % intf)['content']
         return_stat = n.sudo('echo $?')['content']
         return_stat = helpers.strip_cli_output(return_stat)
         helpers.log("output: %s" % output)
@@ -117,8 +122,8 @@ class Host(object):
         
         t = test.Test()
         n = t.node(node)
-        n.sudo(" dhclient -r %s" % intf)
-        n.sudo(" ifconfig %s | grep --color=never -i \"inet addr\"" % intf)['content']
+        n.sudo("dhclient -r %s" % intf)
+        n.sudo("ifconfig %s | grep --color=never -i 'inet addr'" % intf)['content']
         return_stat = n.sudo('echo $?')['content']
         return_stat = helpers.strip_cli_output(return_stat)
         helpers.log("return_stat: %s" % return_stat)
@@ -133,8 +138,8 @@ class Host(object):
         '''
         t = test.Test()
         n = t.node(node)
-        n.sudo(" dhclient -v -4 %s" % intf)
-        output = n.sudo(" ifconfig %s | grep --color=never -i \"inet addr\"" % intf)['content']
+        n.sudo("dhclient -v -4 %s" % intf)
+        output = n.sudo("ifconfig %s | grep --color=never -i 'inet addr'" % intf)['content']
         return_stat = n.sudo('echo $?')['content']
         return_stat = helpers.strip_cli_output(return_stat)
         helpers.log("return_stat: %s" % return_stat)
@@ -147,13 +152,13 @@ class Host(object):
     def bash_add_route(self, node, cidr, gw):
         t = test.Test()
         n = t.node(node)
-        n.sudo(" route add -net %s gw %s" %(cidr, gw))
+        n.sudo("route add -net %s gw %s" %(cidr, gw))
         return True
     
     def bash_delete_route(self, node, cidr, gw):
         t = test.Test()
         n = t.node(node)
-        n.sudo(" route del -net %s gw %s" %(cidr, gw))
+        n.sudo("route del -net %s gw %s" %(cidr, gw))
         return True
     
     def bash_set_mac_address(self, node, intf, mac):
@@ -162,7 +167,7 @@ class Host(object):
         '''
         t = test.Test()
         n = t.node(node)
-        n.sudo(" ifconfig %s hw ether %s" %(intf, mac))
+        n.sudo("ifconfig %s hw ether %s" %(intf, mac))
         return True        
     
     def bash_get_intf_mac(self, node, intf):
@@ -171,7 +176,7 @@ class Host(object):
         '''
         t = test.Test()
         n = t.node(node)
-        output = n.sudo(" ifconfig %s | grep --color=never HWaddr" %(intf))['content']     
+        output = n.sudo("ifconfig %s | grep --color=never HWaddr" %(intf))['content']     
         return_stat = n.sudo('echo $?')['content']
         return_stat = helpers.strip_cli_output(return_stat)
         helpers.log("return_stat: %s" % return_stat)
@@ -195,7 +200,7 @@ class Host(object):
     def bash_verify_arp(self, node, ip):
         t = test.Test()
         n = t.node(node)
-        result = n.sudo(" arp -n %s" % ip)
+        result = n.sudo("arp -n %s" % ip)
         output = result["content"]
         helpers.log("output: %s" % output)              
         match = re.search(r'no entry|incomplete', output, re.S | re.I)
@@ -208,19 +213,19 @@ class Host(object):
     def bash_ifup_intf(self, node, intf):
         t = test.Test()
         n = t.node(node)
-        n.sudo(" ifconfig %s up" % intf)
+        n.sudo("ifconfig %s up" % intf)
         return True
     
     def bash_ifdown_intf(self, node, intf):
         t = test.Test()
         n = t.node(node)
-        n.sudo(" ifconfig %s down" % intf)
+        n.sudo("ifconfig %s down" % intf)
         return True
 
     def bash_init_intf(self, node, intf):
         t = test.Test()
         n = t.node(node)
-        n.sudo(" ifconfig %s 0.0.0.0" % intf)
+        n.sudo("ifconfig %s 0.0.0.0" % intf)
         return True
                         
         
