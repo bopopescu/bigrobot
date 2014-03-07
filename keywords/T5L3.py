@@ -255,12 +255,14 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
         t = test.Test()
         c = t.controller('master')
   
-        str1 = mac.replace(":", "%3A")
+#        str1 = mac.replace(":", "%3A")
 #        str3 = str2.replace("\n", "")
 #        str4 = str3.replace("\r", "")
 #        str1 = str4.replace(" ", "")
-        mac_addr = "%5Bmac%3D%22" + str1 + "%22%5D" 
-        url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/endpoints%s' % (mac_addr)
+#        mac_addr = "%5Bmac%3D%22" + str1 + "%22%5D" 
+#        url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/endpoints%s' % (mac_addr)
+        url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/endpoints[mac="%s"]' % (mac)
+
         c.rest.get(url)
         helpers.log("Output: %s" % c.rest.result_json())
         data = c.rest.content()
