@@ -1,0 +1,125 @@
+* Setting
+Documentation   Test suite for T5 platform infra
+*Settings
+Documentation    T5 Test Suite
+Suite Setup      base suite setup
+Suite Teardown   base suite teardown
+Test Setup       base test setup
+Test Teardown    base test teardown
+Force Tags       T5 
+Library          keywords/BsnCommon.py
+Library			 keywords/Mininet.py
+Library		     keywords/Host.py
+Library		     keywords/Ixia.py
+Library		     keywords_dev/mingtao/T5_longevity.py 
+
+* Variable
+
+
+
+
+
+* Test Case
+ 
+Verify first boot of controller in standalone mode & cluster mode via manual IP assignment
+    Manual untested
+	[Tags] 	sanity    Manual   untested
+
+Verify first boot of controller in standalone mode & cluster mode via DHCP IP assignment 
+    Manual untested
+	[Tags] 	sanity    Manual   untested
+
+Verify with invalid IPs and invalid DNS server IP address
+    Manual untested
+	[Tags] 	sanity    Manual   untested
+ 
+Verify with non-standard IP address & mask
+    Manual untested
+	[Tags] 	sanity    Manual   untested
+
+Verify the behavior if user hits Ctrl+C during various stages of the first boot process
+    Manual untested
+	[Tags] 	sanity    Manual   untested
+
+Verify first boot of controller in HA mode (Manual & DHCP)
+    Manual untested
+	[Tags] 	sanity    Manual   untested
+
+Verification of CLI commands (whoami , ping , set length , history , reauth). 
+    Manual untested
+	[Tags] 	sanity    Manual   untested
+
+Verification of configs in local node mode 
+    Manual untested
+	[Tags] 	sanity    Manual   untested
+
+Verify first boot of controller when external network/ DNS/NTP server is unreachable
+    Manual untested
+	[Tags] 	sanity    Manual   untested
+
+Verify first boot of controller when Master and Slave are in different time zones
+    Manual untested
+	[Tags] 	sanity    Manual   untested
+
+Verify first boot of slave controller when Master controller is rebooting
+    Manual untested
+	[Tags] 	sanity    Manual   untested
+
+Verify first boot of controller on bare metal server
+    Manual untested
+	[Tags] 	sanity    Manual   untested
+
+Reboot the controller
+    Manual untested
+	[Tags] 	sanity    Manual   untested
+
+Shutdown the controller 
+    Manual untested
+	[Tags] 	sanity    Manual   untested
+
+Traceroute
+    Manual untested
+	[Tags] 	sanity    Manual   untested
+
+Verification of tech-support and related commands 
+    Manual untested
+	[Tags] 	sanity    Manual   untested
+
+Watch debug command output
+    Manual untested
+	[Tags] 	sanity    Manual   untested
+
+NTP setting and verification
+    Manual untested
+	[Tags] 	sanity    Manual   untested
+
+Factory default options
+    Manual untested
+	[Tags] 	sanity    Manual   untested
+
+Change IP Tables/ Firewalls
+    Manual untested
+	[Tags] 	sanity    Manual   untested
+
+Verify controller IP change after the first boot
+    Manual untested
+	[Tags] 	sanity    Manual   untested
+
+Verify the VIP change after the first boot
+    Manual untested
+	[Tags] 	sanity    Manual   untested
+
+First boot process in a appliance
+    Manual untested
+	[Tags] 	sanity    Manual   untested
+
+Controller installation with minimum/maximum supported cpu/memory configuration
+    Manual untested
+	[Tags] 	sanity    Manual   untested
+
+ 
+* Keywords
+ 
+	
+ 
+	
