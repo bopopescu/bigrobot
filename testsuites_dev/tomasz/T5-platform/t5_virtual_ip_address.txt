@@ -3,10 +3,10 @@ Documentation  		Testing Virtual IP assignment to Cluster
 Suite Setup  		Setup
 Suite Teardown   	Base Suite Teardown
 Test Setup   		Base Test Setup
-Test Teardown  		Teardown 
+Test Teardown  		Teardown
 Force Tags   		Platform  Sanity  Virtual IP
 Library  			keywords/BsnCommon.py
-Library  			keywords_dev/tomasz/T5.py
+Library  			keywords/T5.py
 
 
 *** Variables ***
@@ -25,10 +25,12 @@ T1.1 REST Configure and verify virtual IP address
 	Sleep  5 sec
 	${configured} =  Rest Show Virtual IP
 	Should Be Equal as Strings  ${configured}  ${vip}
-	${mac1} =  Rest Verify Virtual IP   ${vip}
-	${mac2} =  Rest Verify Virtual IP   master
+	${mac1} =  Rest Get MAC Using Virtual IP   ${vip}
+	${mac2} =  Rest Get MAC Using Virtual IP   master
 	Should Be Equal as Strings  ${mac1}  ${mac2}
-	
+	${state} =  Bash Verify Virtual IP  ${vip}
+	Should Be True  ${state}
+
 T1.2 REST Delete and verify virtual IP address
 	Rest Configure Virtual IP  ${vip}
 	Sleep  5 sec
@@ -36,17 +38,21 @@ T1.2 REST Delete and verify virtual IP address
 	Sleep  5 sec
 	${configured} =  Rest Show Virtual IP
 	Should Be Equal as Strings  ${configured}  None
-	Run Keyword and Expect Error  UnboundLocalError*  Rest Verify Virtual IP  ${vip}
-	
+	Run Keyword and Expect Error  UnboundLocalError*  Rest Get MAC Using Virtual IP  ${vip}
+
 T1.3 REST Virtual IP after failover in cluster
 	Rest Configure Virtual IP  ${vip}
 	Sleep  5 sec
-	${mac1} =  Rest Verify Virtual IP  ${vip}
+	${state} =  Bash Verify Virtual IP  ${vip}
+	Should Be True  ${state}
+	${mac1} =  Rest Get MAC Using Virtual IP  ${vip}
 	Rest Cluster Take Leader
 	Sleep  ${sleep}
-	${mac2} =  Rest Verify Virtual IP  ${vip}
+	${state} =  Bash Verify Virtual IP  ${vip}
+	Should Be True  ${state}
+	${mac2} =  Rest Get MAC Using Virtual IP  ${vip}
 	Should Not Be Equal as Strings  ${mac1}  ${mac2}
-	
+
 T1.4 REST Verify validation for incorrect virtual IP address
 	${state} =  Rest Configure Virtual IP  ${vip invalid}
 	Should Not Be True  ${state}
@@ -74,10 +80,12 @@ T2.1 CLI Configure and verify virtual IP address
 	Sleep  5 sec
 	${configured} =  Cli Show Virtual IP
 	Should Be Equal As Strings  ${configured}  ${vip}
-	${eth0-vip} =  Cli Verify Virtual IP  ${vip}
-	${eth0-master} =  Cli Verify Virtual IP  master
+	${eth0-vip} =  Cli Get Eth0 IP Using Virtual IP  ${vip}
+	${eth0-master} =  Cli Get Eth0 IP Using Virtual IP  master
 	Should Be Equal as Strings  ${eth0-vip}  ${eth0-master}
-	
+	${state} =  Bash Verify Virtual IP  ${vip}
+	Should Be True  ${state}
+
 T2.2 CLI Delete and verify virtual IP address
 	Cli Configure Virtual IP  ${vip}
 	Sleep  5 sec
@@ -85,16 +93,20 @@ T2.2 CLI Delete and verify virtual IP address
 	Sleep  5 sec
 	${configured} =  Cli Show Virtual IP
 	Should Be Equal As Strings  ${configured}  None
-	Run Keyword and Expect Error  UnboundLocalError*  Cli Verify Virtual IP  ${vip}
-	
+	Run Keyword and Expect Error  UnboundLocalError*  Cli Get Eth0 IP Using Virtual IP  ${vip}
+
 T2.3 CLI Virtual IP after failover in cluster
 	Cli Configure Virtual IP  ${vip}
 	Sleep  5 sec
-	${eth0-vip1} =  Cli Verify Virtual IP  ${vip}
+	${state} =  Bash Verify Virtual IP  ${vip}
+	Should Be True  ${state}
+	${eth0-vip1} =  Cli Get Eth0 IP Using Virtual IP  ${vip}
 	${failover} =  Cli Cluster Take Leader
 	Should Be True  ${failover}
 	Sleep  ${sleep}
-	${eth0-vip2} =  Cli Verify Virtual IP  ${vip}
+	${state} =  Bash Verify Virtual IP  ${vip}
+	Should Be True  ${state}
+	${eth0-vip2} =  Cli Get Eth0 IP Using Virtual IP  ${vip}
 	Should Not Be Equal as Strings  ${eth0-vip1}  ${eth0-vip2}
 
 T2.4 CLI Verify validation for incorrect virtual IP address
@@ -102,30 +114,30 @@ T2.4 CLI Verify validation for incorrect virtual IP address
 	Should Not Be True  ${state}	
 	${state} =  Cli Configure Virtual IP  ${vip string}
 	Should Not Be True  ${state}	
-	
+
 T2.5 CLI Verify it is impossible to have virtual equal to physical IP address
 	Manual Failed
 	${state} =  Cli Configure Virtual IP  ${c1_ip}
 	Should Not Be True  ${state}
 	${state} =  Cli Configure Virtual IP  ${c2_ip}
 	Should Not Be True  ${state}
-	
+
 T2.6 CLI Verify it is impossible to have 0.0.0.0 or 255.255.255.255 virtual IP address
 	Manual Failed
 	${state} =  Cli Configure Virtual IP  ${vip zeros}
 	Should Not Be True  ${state}
 	${state} =  Cli Configure Virtual IP  ${vip broadcast}
 	Should Not Be True  ${state}
-	
-	
+
+
 *** Keywords ***
 Setup
 	Base Suite Setup
 	${c1_ip_temp}    params  node=c1  key=ip
-	${c2_ip_temp}    params  node=c2  key=ip 
+	${c2_ip_temp}    params  node=c2  key=ip
 	Set Suite Variable  ${c1_ip}  ${c1_ip_temp}
-	Set Suite Variable  ${c2_ip}  ${c2_ip_temp} 
-	
+	Set Suite Variable  ${c2_ip}  ${c2_ip_temp}
+
 Teardown
 	Rest Delete Virtual IP
 	Base Test Teardown
