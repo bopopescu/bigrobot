@@ -547,9 +547,9 @@ class Test(object):
             helpers.log("Initializing host '%s'" % node)
             n = a_node.HostNode(node,
                                 host,
-                                self.host_user(),
-                                self.host_password(),
-                                t)
+                                user=user,
+                                password=password,
+                                t=t)
 
         elif helpers.is_traffic_generator(node):
             helpers.log("Initializing traffic generator '%s'" % node)
