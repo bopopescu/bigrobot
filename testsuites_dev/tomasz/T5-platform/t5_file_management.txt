@@ -32,6 +32,8 @@ T1.2 Copy running config to config://
 T1.3 Copy running config to scp://
 	${status} =  Cli Copy Running Config to Scp  ${scp destination}
 	Should Be True  ${status}
+	${status} =  Cli Compare Running Config with Scp  ${config name}
+	Should Be True  ${status}
 	Bash Clear Known Hosts
 
 

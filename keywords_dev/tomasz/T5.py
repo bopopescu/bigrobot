@@ -1443,8 +1443,8 @@ class T5(object):
         t = test.Test()
         c = t.controller('master')
         try:
-            #comparison = c.config("compare running-config scp://%s" % destination)['content']
-            comparison = c.config("compare running-config test-config")['content']
+            comparison = c.config("compare running-config scp://%s" % destination)['content']
+            #comparison = c.config("compare running-config test-config")['content']
             if "Error" in c.cli_content():
                 helpers.log("Error in CLI content")
                 return False
