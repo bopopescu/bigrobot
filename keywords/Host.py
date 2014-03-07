@@ -10,14 +10,14 @@ class Host(object):
         Perform a ping from the shell. Returns the loss percentage
         - 0   - 0% loss
         - 100 - 100% loss
-        
+
         Inputs:
         - node:      The device name as defined in the topology file, e.g., 'c1', 's1', etc.
         - dest_ip:   Ping this destination IP address
         - dest_node  Ping this destination node ('c1', 's1', etc)
         - source_if: Source interface
         - count:     Number of ping packets to send
-        
+
         Example:
         | ${lossA} = | Bash Ping | h1          | 10.192.104.1 | source_if=eth1 |
         | ${lossB} = | Bash Ping | node=master | dest_node=s1 |                |
@@ -117,9 +117,9 @@ class Host(object):
         else:
             result = re.search('inet addr:(.*)\sBcast', output)
             return result.group(1)
-        
+
     def bash_release_dhcpv4_address(self, node, intf, ipaddr):
-        
+
         t = test.Test()
         n = t.node(node)
         n.sudo("dhclient -r %s" % intf)
@@ -131,10 +131,10 @@ class Host(object):
             return True
         else:
             return False
-        
+
     def bash_renew_dhcpv4_address(self, node, intf):
         '''
-             attempt to obtain an IPv4 address via dhcp. timeout is set to 10 seconds in /etc/dhcp/dhclient.conf file for ubuntu host 
+             attempt to obtain an IPv4 address via dhcp. timeout is set to 10 seconds in /etc/dhcp/dhclient.conf file for ubuntu host
         '''
         t = test.Test()
         n = t.node(node)
@@ -148,35 +148,35 @@ class Host(object):
         else:
             result = re.search('inet addr:(.*)\sBcast', output)
             return result.group(1)
-       
+
     def bash_add_route(self, node, cidr, gw):
         t = test.Test()
         n = t.node(node)
-        n.sudo("route add -net %s gw %s" %(cidr, gw))
+        n.sudo("route add -net %s gw %s" % (cidr, gw))
         return True
-    
+
     def bash_delete_route(self, node, cidr, gw):
         t = test.Test()
         n = t.node(node)
-        n.sudo("route del -net %s gw %s" %(cidr, gw))
+        n.sudo("route del -net %s gw %s" % (cidr, gw))
         return True
-    
+
     def bash_set_mac_address(self, node, intf, mac):
-        ''' 
+        '''
             change mac address of a host interface
         '''
         t = test.Test()
         n = t.node(node)
-        n.sudo("ifconfig %s hw ether %s" %(intf, mac))
-        return True        
-    
+        n.sudo("ifconfig %s hw ether %s" % (intf, mac))
+        return True
+
     def bash_get_intf_mac(self, node, intf):
-        ''' 
+        '''
             return mac address of a host interface
         '''
         t = test.Test()
         n = t.node(node)
-        output = n.sudo("ifconfig %s | grep --color=never HWaddr" %(intf))['content']     
+        output = n.sudo("ifconfig %s | grep --color=never HWaddr" % (intf))['content']
         return_stat = n.sudo('echo $?')['content']
         return_stat = helpers.strip_cli_output(return_stat)
         helpers.log("return_stat: %s" % return_stat)
@@ -191,31 +191,31 @@ class Host(object):
             mac_addr = result.group(1)
             helpers.log("output: %s" % output)
             helpers.log("result: %s" % result)
-            #mac = mac_addr.replace("\r", "")
+            # mac = mac_addr.replace("\r", "")
             mac = mac_addr.strip(' \t\n\r')
             helpers.log("mac_addr: %s" % mac_addr)
             return mac
-        
-        
+
+
     def bash_verify_arp(self, node, ip):
         t = test.Test()
         n = t.node(node)
         result = n.sudo("arp -n %s" % ip)
         output = result["content"]
-        helpers.log("output: %s" % output)              
+        helpers.log("output: %s" % output)
         match = re.search(r'no entry|incomplete', output, re.S | re.I)
         if match:
             return False
         else:
-            return True        
-             
-         
+            return True
+
+
     def bash_ifup_intf(self, node, intf):
         t = test.Test()
         n = t.node(node)
         n.sudo("ifconfig %s up" % intf)
         return True
-    
+
     def bash_ifdown_intf(self, node, intf):
         t = test.Test()
         n = t.node(node)
@@ -227,13 +227,13 @@ class Host(object):
         n = t.node(node)
         n.sudo("ifconfig %s 0.0.0.0" % intf)
         return True
-                        
-        
-        
-        
-        
-        
-        
-                
-        
-        
+
+
+
+
+
+
+
+
+
+
