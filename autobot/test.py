@@ -556,11 +556,13 @@ class Test(object):
             if 'platform' not in self.topology_params()[node]:
                 helpers.environment_failure("Traffic generator '%s' does not"
                                             " have platform (e.g., platform:"
-                                            " 'ixia')"
+                                            " 'ixia', 'bigtap-ixia')"
                                             % node)
             platform = self.topology_params()[node]['platform']
             if platform.lower() == 'ixia':
                 n = a_node.IxiaNode(node, t)
+            elif platform.lower() == 'bigtap-ixia':
+                n = a_node.BigTapIxiaNode(node, t)
             else:
                 helpers.environment_failure("Unsupported traffic generator '%s'"
                                             % platform)
