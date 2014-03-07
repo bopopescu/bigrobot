@@ -1094,7 +1094,7 @@ class T5(object):
         data = c.rest.content()
         if data["rates-tenant-name"] == tenant and data["rates-vns-name"] == vns:
             if (data["rates"]["rates-rx-packets"] >= (frame_rate - vrange)) and (data["rates"]["rates-rx-packets"] <= (frame_rate + vrange)):
-                helpers.log("Pass: Rate value Expected:%d, Actual:%d" % (int(frame_rate), data["rates"]["rates-rx-packets"]))
+                helpers.log("Pass: Rate value Expected:%d, Actual:%d" % (frame_rate, data["rates"]["rates-rx-packets"]))
                 return True
             else:
                 return False
@@ -1146,7 +1146,7 @@ class T5(object):
         data = c.rest.content()
         if data["rates-tenant-name"] == tenant and data["rates-vns-name"] == vns:
             if (data["rates"]["rates-tx-packets"] >= (frame_rate - vrange)) and (data["rates"]["rates-tx-packets"] <= (frame_rate + vrange)):
-                helpers.log("Pass: Rate value Expected:%d, Actual:%d" % (int(frame_rate), data["rates"]["rates-rx-packets"]))
+                helpers.log("Pass: Rate value Expected:%d, Actual:%d" % (frame_rate, data["rates"]["rates-rx-packets"]))
                 return True
             else:
                 return False
