@@ -341,7 +341,7 @@ Switch HA: Restart Process OFAD on switch
     start traffic  ${stream}
     sleep  5
     bash restart process  s1  ofad
-    Sleep  120
+    Sleep  400
     verify results  transmitted_frame_rate  received_valid_frame_rate
     stop traffic  ${stream}   
     [Tags]  T5  ha  switch  restart_switch_ofad 

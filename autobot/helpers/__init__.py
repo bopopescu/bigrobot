@@ -42,6 +42,12 @@ def ctrl(char):
     return ascii.ctrl(char)
 
 
+# is_bool() needs to be defined before test_error() which uses it.
+def is_bool(data):
+    """Verify if the input is a valid Python boolean."""
+    return isinstance(data, bool)
+
+
 def warn(s, level=2):
     """
     Warn log.
@@ -88,6 +94,28 @@ def prettify(data):
 
 def prettify_log(s, data, level=3):
     analyze(''.join((s, '\n', prettify(data))), level)
+
+
+def exception_info_type():
+    return sys.exc_info()[0]
+
+
+def exception_info_value():
+    return str(sys.exc_info()[1]) + br_utils.end_of_output_marker()
+
+
+def exception_info_traceback():
+    return sys.exc_info()[2]
+
+
+def exception_info():
+    """
+    Returns printable string of tuple (type, value, traceback).
+    See http://docs.python.org/2/library/sys.html#sys.exc_info
+    """
+    (_type, _val, _) = sys.exc_info()
+    return ("type: %s\n\nvalue: %s%s"
+            % (_type, _val, br_utils.end_of_output_marker()))
 
 
 def error_msg(msg):
@@ -166,25 +194,39 @@ def test_success(msg):
     log(msg)
 
 
-def test_failure(msg):
-    """
-    Call this on test failure.
-    """
-    raise TestFailure(msg)
-
-
-def test_error(msg):
-    """
-    Call this on test error.
-    """
-    raise TestError(msg)
-
-
 def environment_failure(msg):
     """
     Call this on environmental failure.
     """
     raise EnvironmentFailure(msg)
+
+
+def test_failure(msg, soft_error=False):
+    """
+    Call this on test failure.
+    """
+    if not is_bool(soft_error):
+        environment_failure("helpers.test_failure() argument 'soft_error' must"
+                            " be a boolean.")
+    if soft_error:
+        log("Soft test failure: %s" % msg)
+        return False
+    else:
+        raise TestFailure(msg)
+
+
+def test_error(msg, soft_error=False):
+    """
+    Call this on test error.
+    """
+    if not is_bool(soft_error):
+        environment_failure("helpers.test_error() argument 'soft_error' must"
+                            " be a boolean.")
+    if soft_error:
+        log("Soft test error: %s" % msg)
+        return False
+    else:
+        raise TestError(msg)
 
 
 def _env_get_and_set(name, new_val=None, default=None):
@@ -527,11 +569,6 @@ def is_ixia(name):
 def is_scalar(data):
     """Verify if the input is a valid Python scalar."""
     return isinstance(data, (type(None), str, int, float, bool))
-
-
-def is_bool(data):
-    """Verify if the input is a valid Python boolean."""
-    return isinstance(data, bool)
 
 
 def is_int(data):

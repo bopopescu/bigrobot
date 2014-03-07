@@ -16,7 +16,7 @@ Test host
     host commands
 
 Test host ping
-    #[Tags]  skipped
+    [Tags]  skipped
     #${status}       bash ping  node=h1  dest_ip=10.192.7.210
     ${status}       bash ping  node=h1  dest_ip=10.195.0.31  source_if=eth0  count=6
     #${status}       bash ping  node=h1  dest_node=c1
@@ -27,5 +27,5 @@ Test scp command
     test scp
 
 Test bash delete tag
-    [Tags]  skipped
-    bash delete tag  h1  eth1.99
+    #[Tags]  skipped
+    bash delete tag  h1  eth1.99  soft_error=${true}

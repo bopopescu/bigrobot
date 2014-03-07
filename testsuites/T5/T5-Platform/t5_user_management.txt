@@ -1,0 +1,187 @@
+*Settings
+Documentation  T5 User Management: Release:Iron Horse Feature:User Management
+Suite Setup  base suite setup
+Suite Teardown   base suite teardown
+Test Setup   base test setup
+Test Teardown  base test teardown 
+Force Tags   platform Sanity
+Library  keywords/BsnCommon.py
+Library  keywords/T5.py
+
+* Variables
+${projectname}  Big Virtual Switch
+${version}  2.0.5-SNAPSHOT
+
+
+*Test Case
+Verify username admin can have all lower-case alphabet password
+    verify config  admin  adminadmin    
+    [Tags]  sanity  platform  basic
+    
+Verify username admin can have all upper-case alphabet password
+    rest add user password  admin  BSNBSN
+    verify config  admin  BSNBSN
+
+Verify username admin can have a mix of lower-case and upper-case alphabet password
+    rest add user password  admin  cLiEnTcLiEnT
+    verify config  admin  cLiEnTcLiEnT 
+    [Tags]  sanity  platform      
+
+Verify username admin can have a numeric password
+    rest add user password  admin  1234567890
+    verify config  admin  1234567890
+    [Tags]  sanity  platform      
+    
+Verify username admin can have a alphanumeric (alphabet all small) password
+    rest add user password  admin  bsn1234
+    verify config  admin  bsn1234
+    [Tags]  sanity  platform        
+    
+Verify username admin can have a alphanumeric (alphabet all caps) password
+    rest add user password  admin  BSN1234
+    verify config  admin  BSN1234
+    [Tags]  sanity  platform        
+
+Verify username admin can have a alphanumeric password with a !
+    rest add user password  admin  bSn1234!
+    verify config  admin  bSn1234!
+    [Tags]  sanity  platform        
+
+Verify username admin can have a alphanumeric password with a @
+    rest add user password  admin  bSn1234@
+    verify config  admin  bSn1234@
+    [Tags]  sanity  platform        
+
+Verify username admin can have a alphanumeric password with a #
+    rest add user password  admin  bSn1234%23
+    verify config  admin  bSn1234#
+    [Tags]  sanity  platform  
+
+Verify username admin can have a alphanumeric password with a $
+    rest add user password  admin  bSn1234$
+    verify config  admin  bSn1234$
+    [Tags]  sanity  platform        
+
+Verify username admin can have a alphanumeric password with a ?
+    rest add user password  admin  bSn1234%3F
+    verify config  admin  bSn1234?
+    [Tags]  sanity  platform       
+
+Verify username admin can have a alphanumeric password with a >
+    rest add user password  admin  bSn1234%3E
+    verify config  admin  bSn1234>
+    [Tags]  sanity  platform   
+
+Verify username admin can have a alphanumeric password with a ^
+    rest add user password  admin  bSn1234^
+    verify config  admin  bSn1234^    
+    [Tags]  sanity  platform        
+
+Verify username admin can have a alphanumeric password with a &
+    rest add user password  admin  bSn1234&
+    verify config  admin  bSn1234&
+    [Tags]  sanity  platform        
+
+Verify username admin can have a alphanumeric password with a *
+    rest add user password  admin  bSn1234*
+    verify config  admin  bSn1234*
+    [Tags]  sanity  platform        
+
+Verify username admin can have a alphanumeric password with a (
+    rest add user password  admin  bSn1234(
+    verify config  admin  bSn1234(
+    [Tags]  sanity  platform        
+
+Verify username admin can have a alphanumeric password with a )
+    rest add user password  admin  bSn1234)
+    verify config  admin  bSn1234)
+    [Tags]  sanity  platform        
+
+Verify username admin can have a alphanumeric password with a -
+    rest add user password  admin  bSn1234-
+    verify config  admin  bSn1234-
+    [Tags]  sanity  platform        
+
+Verify username admin can have a alphanumeric password with a _
+    rest add user password  admin  bSn1234_
+    verify config  admin  bSn1234_
+    [Tags]  sanity  platform        
+
+Verify username admin can have a alphanumeric password with a ;
+    rest add user password  admin  bSn1234%3B
+    verify config  admin  bSn1234;
+    [Tags]  sanity  platform       
+
+Verify username admin can have a alphanumeric password with a }
+    rest add user password  admin  bSn1234}
+    verify config  admin  bSn1234}
+    [Tags]  sanity  platform        
+
+Verify username admin can have a alphanumeric password with a {
+    rest add user password  admin  bSn1234{
+    verify config  admin  bSn1234{
+    [Tags]  sanity  platform    
+
+Verify username admin can have a alphanumeric password with a [
+    rest add user password  admin  bSn1234[
+    verify config  admin  bSn1234[
+    [Tags]  sanity  platform        
+
+Verify username admin can have a alphanumeric password with a ]
+    rest add user password  admin  bSn1234]
+    verify config  admin  bSn1234]
+    [Tags]  sanity  platform        
+
+Verify username admin can have a alphanumeric password with a |
+    rest add user password  admin  bSn|1234
+    verify config  admin  bSn|1234
+    [Tags]  sanity  platform       
+        
+Verify username admin can have a alphanumeric password with a \
+    rest add user password  admin  bSn1234%5C
+    verify config  admin  bSn1234\\ 
+    [Tags]  sanity  platform        
+        
+Verify username admin can have a alphanumeric password with a :
+    rest add user password  admin  bSn:1234
+    verify config  admin  bSn:1234
+    [Tags]  sanity  platform        
+    
+Verify username admin can have a alphanumeric password with a ,
+    rest add user password  admin  bSn,1234
+    verify config  admin  bSn,1234
+    [Tags]  sanity  platform        
+    
+Verify username admin can have a alphanumeric password with a .
+    rest add user password  admin  bSn.1234
+    verify config  admin  bSn.1234
+    [Tags]  sanity  platform           
+    
+Verify username admin can have a alphanumeric password with a <
+    rest add user password  admin  bSn1234<
+    verify config  admin  bSn1234<
+    [Tags]  sanity  platform        
+    
+Verify username admin can have a alphanumeric password with a /
+    rest add user password  admin  bSn1234/
+    verify config  admin  bSn1234/
+    [Tags]  sanity  platform        
+
+Verify username admin can have a alphanumeric password with a ~
+    rest add user password  admin  bSn1234~
+    verify config  admin  bSn1234~
+    [Tags]  sanity  platform     
+    
+Verify username admin can have a alphanumeric password with a `
+    rest add user password  admin  bSn1234`
+    verify config  admin  bSn1234`
+    [Tags]  sanity  platform  
+        
+* Keywords
+      
+    
+verify config  [Arguments]  ${username}  ${new_password}
+    ${content}=  rest show version  string=version  user=${username}  password=${new_password}
+    Should Contain  ${content}  ${version}
+    ${content}=  rest show version  string=project-name  user=${username}  password=${new_password}
+    Should Contain  ${content}  ${projectname}    

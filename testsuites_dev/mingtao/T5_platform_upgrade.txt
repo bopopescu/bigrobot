@@ -1,0 +1,178 @@
+* Setting
+Documentation   Test suite for T5 platform upgrade
+*Settings
+Documentation    T5 Test Suite
+Suite Setup      base suite setup
+Suite Teardown   base suite teardown
+Test Setup       base test setup
+Test Teardown    base test teardown
+Force Tags       T5 
+Library          keywords/BsnCommon.py
+Library			 keywords/Mininet.py
+Library		     keywords/Host.py
+Library		     keywords/Ixia.py
+Library		     keywords_dev/mingtao/T5_longevity.py 
+
+* Variable
+
+
+
+
+
+* Test Case
+ 
+single node upgrade
+	log     single node upgrade
+    Manual failed
+	[Tags] 	sanity    Manual 
+
+
+Check only the admin group can execute firmware upgrade
+	log     single node upgrade
+    Manual untested
+	[Tags] 	sanity    Manual   untested
+ 
+
+Verify Cluster node upgrade
+	log     single node upgrade
+    Manual untested
+	[Tags] 	sanity    Manual  untested
+
+Check only the T5 image packages are accepted and eligible for staging
+	log     single node upgrade
+    Manual untested
+	[Tags] 	sanity    Manual  untested
+
+Verify user can successfully copy upgrade packages to the controller
+	log     single node upgrade
+    Manual untested
+	[Tags] 	sanity    Manual  untested
+
+Verify copy images from external server to the controller (scp is originating from the 3rd party server)
+	log     single node upgrade
+    Manual untested
+	[Tags] 	sanity    Manual  untested
+
+Integrity checks on the image: SCP half of the image etc 
+	log     single node upgrade
+    Manual untested
+	[Tags] 	sanity    Manual  untested
+
+Only SCP support or : + wget support too?
+	log     single node upgrade
+    Manual untested
+	[Tags] 	sanity    Manual  untested
+
+Show command verification for package contents 
+	log     single node upgrade
+    Manual untested
+	[Tags] 	sanity    Manual  untested
+
+Verify user can pick & choose images for upgrade staging
+	log     single node upgrade
+    Manual untested
+	[Tags] 	sanity    Manual  untested
+
+Verify upgrade stage from both master, slave & VIP
+	log     single node upgrade
+    Manual untested
+	[Tags] 	sanity    Manual  untested
+
+Verify upgrade launch from both master, slave & VIP
+	log     single node upgrade
+    Manual untested
+	[Tags] 	sanity    Manual  untested
+
+Verify the upgrade status across the cluster
+	log     single node upgrade
+    Manual untested
+	[Tags] 	sanity    Manual  untested
+
+Verify configuration change requests are blocked during upgrade launch
+	log     single node upgrade
+    Manual untested
+	[Tags] 	sanity    Manual  untested
+
+Disconnect a switch during the upgrade launch and reconnect the switch after the upgrade
+	log     single node upgrade
+    Manual untested
+	[Tags] 	sanity    Manual  untested
+
+Verify all the switches get reconnected back to the controller cluster after the upgrade launch 
+	log     single node upgrade
+    Manual untested
+	[Tags] 	sanity    Manual  untested
+
+Verify the optimal switch rebooting pattern to ensure hitless upgrade
+	log     single node upgrade
+    Manual untested
+	[Tags] 	sanity    Manual  untested
+
+Perform upgrade without connectivity to external repositories
+	log     single node upgrade
+    Manual untested
+	[Tags] 	sanity    Manual  untested
+
+Verify the correct fabric operation after the upgrade complete
+	log     single node upgrade
+    Manual untested
+	[Tags] 	sanity    Manual  untested
+
+Verify correct fabric inconsistency checklist after the upgrade
+	log     single node upgrade
+    Manual untested
+	[Tags] 	sanity    Manual  untested
+
+Verify user can rollback upgrade in case of a failure.
+	log     single node upgrade
+    Manual untested
+	[Tags] 	sanity    Manual  untested
+
+Verify all the switches and both the controllers are successfully roll back to the older image
+	log     single node upgrade
+    Manual untested
+	[Tags] 	sanity    Manual  untested
+ 
+Verify hitless operation during upgrade rollback process
+	log     single node upgrade
+    Manual untested
+	[Tags] 	sanity    Manual  untested
+
+Verify logging during upgrades to catch upgrade failures (switch disconnect etc.)
+	log     single node upgrade
+    Manual untested
+	[Tags] 	sanity    Manual  untested
+
+Failures & recovery during upgrade process (Power loss/ Link flap)
+	log     single node upgrade
+    Manual untested
+	[Tags] 	sanity    Manual  untested
+
+Upgrading a cluster with disconnected switches
+	log     single node upgrade
+    Manual untested
+	[Tags] 	sanity    Manual  untested
+
+After the upgrade verify the config integrity 
+	log     single node upgrade
+    Manual untested
+	[Tags] 	sanity    Manual  untested
+
+Verify whether the saved configs are retained after the upgrade
+	log     single node upgrade
+    Manual untested
+	[Tags] 	sanity    Manual  untested
+
+Test downgrade 
+	log     single node upgrade
+    Manual untested
+	[Tags] 	sanity    Manual  untested
+  
+ 
+* Keywords
+ 
+	
+	
+	
+ 
+	
