@@ -22,11 +22,11 @@ Library		     keywords_dev/mingtao/T5_longevity.py
 * Test Case
 T1 cli walk
 	walk cli command 
-	[Tags] 	sanity    skipped 
+	[Tags] 	sanity    
 
 Test upgrade
 	single node upgrade
-	[Tags] 	sanity   	JIRA-BSC-4761
+	[Tags] 	sanity   	JIRA-BSC-4761  skipped
   
  
 * Keywords
