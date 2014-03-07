@@ -77,9 +77,19 @@ Test scp image
     bash scp image   node=c1  remote_file=bsn@jenkins:/var/lib/jenkins/jobs/bvs\\ master/lastSuccessful/archive/target/appliance/images/bvs/controller-upgrade-bvs-2.0.5-SNAPSHOT.pkg  local_path=.
 
 Test sanitize CLI output
-    #[Tags]  skipped
+    [Tags]  skipped
     sanitize cli output  c1
 
 Test node spawn
+    [Tags]  skipped
     spawn a node
+
+Test config hierarchy
+    [Tags]  skipped
+    config    c1  user vui
+    #config    c1  exit
+    cli       c1  show user
+
+Test new things
+    add_ntp_server  master  time-c.nist.gov
 
