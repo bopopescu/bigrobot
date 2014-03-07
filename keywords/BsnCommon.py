@@ -17,6 +17,8 @@ import autobot.helpers as helpers
 import autobot.test as test
 import Controller
 import subprocess
+from Exscript.protocols import SSH2
+from Exscript import Account, Host
 
 class BsnCommon(object):
 
@@ -214,7 +216,7 @@ class BsnCommon(object):
                 helpers.log("The node is a T5 Controller")
                 c = t.controller()
                 url = '/api/v1/data/controller/os/config/global/time-config'
-                c.rest.put(url, {"ntp-servers": [ntp_server]})
+                c.rest.put(url, {"ntp-server": [ntp_server]})
                 if not c.rest.status_code_ok():
                     helpers.test_log(c.rest.error())
                     return False
@@ -499,6 +501,31 @@ class BsnCommon(object):
         (out, err) = returnVal.communicate()
         helpers.log("URL: %s Output: %s" % (url, out))
         return out
+
+    def clear_snmpttlog(self, server):
+        t = test.Test()
+        try:
+            conn = SSH2()
+            conn.connect(server)
+            conn.login(Account("root", "bsn"))
+            conn.execute("echo > /var/log/snmptt/snmptt.log")
+        except:
+            return False
+        else:
+            return True
+
+    def  return_snmptrap_output(self, server, message):
+        try:
+            conn = SSH2()
+            conn.connect(server)
+            conn.login(Account("root", "bsn"))
+            input = "cat /var/log/snmptt/snmptt.log | grep " + str(message)
+            conn.execute(input)
+            output = conn.response
+        except:
+            return False
+        else:
+            return output
 
     def cli(self, node, *args, **kwargs):
         t = test.Test()
