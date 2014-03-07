@@ -1,5 +1,3 @@
-* Setting
-Documentation   Test suite for T5 platform upgrade
 *Settings
 Documentation    T5 Test Suite
 Suite Setup      base suite setup
@@ -21,12 +19,22 @@ Library		     keywords_dev/mingtao/T5_longevity.py
 
 * Test Case
  
-single node upgrade
+ 
+Test user can successfully copy upgrade packages to the controller
+	log	 copy upgrade packages to the controller
+	log	 covered in 'test single node upgrade' no need to run 
+	copy_pkg_from_jenkins    
+	[Tags] 	sanity   skipped	 	 
+ 
+test single node upgrade
 	log     single node upgrade
-    Manual failed
-	[Tags] 	sanity    Manual 
+	single node upgrade	 
+    
+	[Tags] 	sanity 	JIRA-BSC-4761  skipped	 
 
 
+#######
+ 
 Check only the admin group can execute firmware upgrade
 	log     single node upgrade
     Manual untested
@@ -43,20 +51,10 @@ Check only the T5 image packages are accepted and eligible for staging
     Manual untested
 	[Tags] 	sanity    Manual  untested
 
-Verify user can successfully copy upgrade packages to the controller
-	log     single node upgrade
-    Manual untested
-	[Tags] 	sanity    Manual  untested
-
-Verify copy images from external server to the controller (scp is originating from the 3rd party server)
-	log     single node upgrade
-    Manual untested
-	[Tags] 	sanity    Manual  untested
-
 Integrity checks on the image: SCP half of the image etc 
 	log     single node upgrade
-    Manual untested
-	[Tags] 	sanity    Manual  untested
+    Manual passed
+	[Tags] 	sanity    Manual   
 
 Only SCP support or : + wget support too?
 	log     single node upgrade
@@ -170,7 +168,16 @@ Test downgrade
   
  
 * Keywords
- 
+single node upgrade	 
+	${result}=  rest_get_node_role
+	Should Be Equal    ${result}    active
+	copy_pkg_from_jenkins    
+	${result}= 	cli_upgrade_stage
+ 	Should be True     ${result} 
+	${result}= 	cli_upgrade_launch
+ 	Should be True     ${result}  
+ 	${result}=  rest_get_node_role
+	Should Be Equal    ${result}    active
 	
 	
 	
