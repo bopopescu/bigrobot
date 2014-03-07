@@ -1739,4 +1739,106 @@ class T5(object):
         else:
             return True       
                                   
-
+    def rest_verify_fabric_interface_rx_stats(self, switch, intf, frame_cnt, vrange=5):
+        ''' Function to verify the fabric interface stats
+        Input: switch and interface
+        Output: reusult will be compared against the frame_cnt given in the arguments
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        url = '/api/v1/data/controller/core/switch[name="%s"]/interface[name="%s"]?select=interface-stats/interface-rx-counters' % (switch, intf)
+        frame_cnt = int(frame_cnt)
+        vrange = int(vrange)
+        try:
+            c.rest.get(url)
+        except:
+            return False
+        else:
+            return True
+        data = c.rest.content()
+        if data["interface-stats"]["interface-rx-counters"]["rxcounters-interface-name"] == intf and data["interface-stats"]["interface-rx-counters"]["rxcounters-switch-name"] == switch:
+            if (data["interface-stats"]["interface-rx-counters"]["rxcounters-packets-unicast"] >= (frame_cnt - vrange)) and (data["interface-stats"]["interface-rx-counters"]["rxcounters-packets-unicast"] <= (frame_cnt + vrange)):
+                helpers.log("Pass: Rate value Expected:%d, Actual:%d" % (frame_cnt, data["interface-stats"]["interface-rx-counters"]["rxcounters-packets-unicast"]))
+                return True
+            else:
+                return False
+        else:
+            helpers.log("Given switch name and interface name are not present in the controller")
+            
+    def rest_verify_fabric_interface_tx_stats(self, switch, intf, frame_cnt, vrange=5):
+        ''' Function to verify the fabric interface tx stats
+        Input: switch and interface
+        Output: Results will be compared against frame_cnt given
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        url = '/api/v1/data/controller/core/switch[name="%s"]/interface[name="%s"]?select=interface-stats/interface-tx-counters' % (switch, intf)
+        frame_cnt = int(frame_cnt)
+        vrange = int(vrange)
+        try:
+            c.rest.get(url)
+        except:
+            return False
+        else:
+            return True
+        data = c.rest.content()
+        if data["interface-stats"]["interface-tx-counters"]["txcounters-interface-name"] == intf and data["interface-stats"]["interface-tx-counters"]["txcounters-switch-name"] == switch:
+            if (data["interface-stats"]["interface-tx-counters"]["txcounters-packets-unicast"] >= (frame_cnt - vrange)) and (data["interface-stats"]["interface-tx-counters"]["txcounters-packets-unicast"] <= (frame_cnt + vrange)):
+                helpers.log("Pass: Rate value Expected:%d, Actual:%d" % (frame_cnt, data["interface-stats"]["interface-tx-counters"]["txcounters-packets-unicast"]))
+                return True
+            else:
+                return False
+        else:
+            helpers.log("Given switch name and interface name are not present in the controller")
+            
+    def rest_verify_fabric_interface_rx_rates(self, switch, intf, frame_rate, vrange=5):
+        ''' Function to verify the fabric interface rates
+        Input: switch and interface
+        Output: reusult will be compared against the frame_rate given in the arguments
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        url = '/api/v1/data/controller/core/switch[name="%s"]/interface[name="%s"]?select=interface-stats/interface-rx-rates' % (switch, intf)
+        frame_rate = int(frame_rate)
+        vrange = int(vrange)
+        try:
+            c.rest.get(url)
+        except:
+            return False
+        else:
+            return True
+        data = c.rest.content()
+        if data["interface-stats"]["interface-rx-rates"]["rxrates-interface-name"] == intf and data["interface-stats"]["interface-rx-rates"]["rxrates-switch-name"] == switch:
+            if (data["interface-stats"]["interface-rx-rates"]["rxrates-packets-unicast"] >= (frame_rate - vrange)) and (data["interface-stats"]["interface-rx-rates"]["rxrates-packets-unicast"] <= (frame_rate + vrange)):
+                helpers.log("Pass: Rate value Expected:%d, Actual:%d" % (frame_rate, data["interface-stats"]["interface-rx-rates"]["rxrates-packets-unicast"]))
+                return True
+            else:
+                return False
+        else:
+            helpers.log("Given switch name and interface name are not present in the controller")
+            
+    def rest_verify_fabric_interface_tx_rates(self, switch, intf, frame_rate, vrange=5):
+        ''' Function to verify the fabric interface tx rates
+        Input: switch and interface
+        Output: Results will be compared against frame_rate given
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        url = '/api/v1/data/controller/core/switch[name="%s"]/interface[name="%s"]?select=interface-stats/interface-tx-rates' % (switch, intf)
+        frame_rate = int(frame_rate)
+        vrange = int(vrange)
+        try:
+            c.rest.get(url)
+        except:
+            return False
+        else:
+            return True
+        data = c.rest.content()
+        if data["interface-stats"]["interface-tx-rates"]["txrates-interface-name"] == intf and data["interface-stats"]["interface-tx-rates"]["txrates-switch-name"] == switch:
+            if (data["interface-stats"]["interface-tx-rates"]["txrates-packets-unicast"] >= (frame_rate - vrange)) and (data["interface-stats"]["interface-tx-rates"]["txrates-packets-unicast"] <= (frame_rate + vrange)):
+                helpers.log("Pass: Rate value Expected:%d, Actual:%d" % (frame_rate, data["interface-stats"]["interface-tx-rates"]["txrates-packets-unicast"]))
+                return True
+            else:
+                return False
+        else:
+            helpers.log("Given switch name and interface name are not present in the controller")
