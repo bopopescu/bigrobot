@@ -178,6 +178,7 @@ class Host(object):
             return ''
         else:
             helpers.log("I am there")
+            helpers.log("output: %s" % output)
             result = re.search('HWaddr (.*)', output)
             mac_addr = result.group(1)
             helpers.log("output: %s" % output)
