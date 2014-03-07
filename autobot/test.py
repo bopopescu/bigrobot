@@ -545,6 +545,12 @@ class Test(object):
 
         elif helpers.is_host(node):
             helpers.log("Initializing host '%s'" % node)
+
+            if not user:
+                user = self.host_user()
+            if not password:
+                password = self.host_password()
+
             n = a_node.HostNode(node,
                                 host,
                                 user=user,
