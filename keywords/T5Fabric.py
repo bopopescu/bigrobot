@@ -562,7 +562,28 @@ class T5Fabric(object):
                         return False
         return False
         
+    def rest_disable_fabric_interface(self, switch, intf):
+        t = test.Test()
+        c = t.controller('master')
         
+        url = '/api/v1/data/controller/core/switch-config[name="%s"]/interface[name="%s"]' % (switch, intf)
+        try:
+            c.rest.patch(url, {"shutdown": True})
+        except:
+            return False
+        else:
+            return True     
+   
+    def rest_enable_fabric_interface(self, switch, intf):
+        t = test.Test()
+        c = t.controller('master')
         
+        url = '/api/v1/data/controller/core/switch-config[name="%s"]/interface[name="%s"]' % (switch, intf)
+        try:
+            c.rest.patch(url, {"shutdown": None})
+        except:
+            return False
+        else:
+            return True       
                                   
         
