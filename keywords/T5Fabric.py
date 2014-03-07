@@ -1,3 +1,18 @@
+'''
+###  WARNING !!!!!!!
+###
+###  This is where common code for all Mininet will go in.
+###
+###  To commit new code, please contact the Library Owner:
+###  Prashanth Padubidry (prashanth.padubidry@bigswitch.com)
+###
+###  DO NOT COMMIT CODE WITHOUT APPROVAL FROM LIBRARY OWNER
+###
+###  Last Updated: 03/06/2014
+###
+###  WARNING !!!!!!!
+'''
+
 import autobot.helpers as helpers
 import autobot.test as test
 import re
