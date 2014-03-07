@@ -1,3 +1,19 @@
+'''
+###  WARNING !!!!!!!
+###
+###  This is where common code for all Mininet will go in.
+###
+###  To commit new code, please contact the Library Owner:
+###  Prashanth Padubidry (prashanth.padubidry@bigswitch.com)
+###
+###  DO NOT COMMIT CODE WITHOUT APPROVAL FROM LIBRARY OWNER
+###
+###  Last Updated: 03/06/2014
+###
+###  WARNING !!!!!!!
+'''
+
+
 import autobot.helpers as helpers
 import autobot.test as test
 import re
@@ -35,16 +51,25 @@ class Mininet(object):
         helpers.log("Bugreport Location is: %s" % location)
         return location
     
-    def mininet_ping(self, src, dst, count=5):        
+    def mininet_ping(self, src, dst, count=5):
         t = test.Test()
         mn = t.mininet()
         mn.cli('%s ping %s -c %s' % (src, dst, count))
-        
+
         out = mn.cli_content()
+
+        unreachable = helpers.any_match(out, r'is unreachable')
+        if unreachable:
+            helpers.log("Network is unreachable. Assuming 100% packet loss.")
+            return 100
+
         loss = helpers.any_match(out, r', (\d+)% packet loss')
-        helpers.log("packet loss: %s" % loss)
-        return loss[0]
-    
+        if loss:
+            helpers.log("packet loss: %s" % loss)
+            return loss[0]
+
+        helpers.test_error("Uncaught condition") 
+         
     def mininet_link_tag(self, intf, intf_name, vlan, ip):        
         t = test.Test()
         mn = t.mininet()
