@@ -1,11 +1,7 @@
 import autobot.helpers as helpers
-import autobot.restclient as restclient
 import autobot.test as test
-import keywords.Host as Host
 import re
-import os
-import paramiko
-
+ 
 class T5_longevity(object):
 # This is for all the common function   - Mingtao
     def __init__(self):
@@ -163,8 +159,9 @@ class T5_longevity(object):
       
  
     def cli_get_node_role(self,device='c1'):
-        ''' rest_get_node_role
-           return the local node role:
+        ''' return the local node role
+            - mingtao
+           usage:  cli_get_node_role
            output:   active   
                      stand-by
         '''
@@ -188,7 +185,120 @@ class T5_longevity(object):
                 helpers.log("INFO: not current node  %s" % line)   
         return False     
 
+
+
+    def cli_add_user(self,user='user1',passwd='adminadmin'):
+        ''' add user
+            - mingtao
+           usage:  cli_get_node_role
+           output:   
+                      
+        '''
+  
+        t = test.Test()
+        c = t.controller('master')
+        helpers.log('INFO: Entering ==> cli_add_user ')
+        t = test.Test()   
+        c.config('user '+user) 
+        c.send('password' )
+        c.expect('Password: ')        
+        c.send(passwd)
+        c.expect('Re-enter:')
+        c.send(passwd)                
+        c.expect()        
+        return True     
+
+
+
+    def cli_group_add_users(self,group='admin',user=None):
+        '''  
+            - mingtao
+           usage:  cli_get_node_role
+           output:   
+                      
+        '''  
+        t = test.Test()
+        c = t.controller('master')
+        helpers.log('INFO: Entering ==> cli_add_user ')             
+        c.config('group '+ group) 
+        if user:
+            c.config('associate user '+user)
+        else: 
+            c.config('show running-config user | grep user')   
+            content = c.cli_content()
+            temp = helpers.strip_cli_output(content)
+            temp = helpers.str_to_list(temp)
+            helpers.log("********new_content:************\n%s" % helpers.prettify(temp))
+            temp.pop(0)
+            helpers.log("********new_content:************\n%s" % helpers.prettify(temp))            
+            for line in temp:
+                line = line.lstrip()
+                user = line.split(' ')[1]
+                helpers.log('INFO: user is: %s ' % user)  
+                if user == 'admin':
+                    continue   
+                else:                        
+                    c.config('associate user '+user)
+            
+            return True    
+
+
+    def cli_delete_user(self,user):
+        ''' delete all users except admin
+            - mingtao
+           usage:  cli_delete_user
+           output:   
+           not working          
+        '''
+  
+        t = test.Test()
+        c = t.controller('master')
+        helpers.log('INFO: Entering ==> cli_delete_user ')
+        t = test.Test() 
+        c.config('no user '+ user)
+            
+        return True
+  
+
+    def T5_cli_clean_all_users(self,user=None ):
+        ''' delete all users except admin
+            - mingtao
+           usage:  cli_delete_user
+           output:   
+                     
+        '''
+  
+        t = test.Test()
+        c = t.controller('master')
+        helpers.log('INFO: Entering ==> cli_delete_user ')
+        t = test.Test()        
+        if user: 
+            c.config('no user '+ user)     
+            return True
+        else:
+            c.config('show running-config user | grep user')   
+            content = c.cli_content()
+            temp = helpers.strip_cli_output(content)
+            temp = helpers.str_to_list(temp)
+            helpers.log("********new_content:************\n%s" % helpers.prettify(temp))
+            temp.pop(0)
+            helpers.log("********new_content:************\n%s" % helpers.prettify(temp))            
+            for line in temp:
+                line = line.lstrip()
+                user = line.split(' ')[1]
+                helpers.log('INFO: user is: %s ' % user)  
+                if user == 'admin':
+                    continue   
+                else:                        
+                    c.config('no user '+ user)
+                            
+            return True    
+
+
  
+
+
+#############################  below are for  cli walk ####################
 
     def cli_exec_walk(self, string='', file_name=None, padding=''):
         t = test.Test()
@@ -350,7 +460,15 @@ class T5_longevity(object):
             if re.match(r'.*show stats interface-stats.*',string) and key == "interface" :
                 helpers.log("INFO:  within show stats interface-stats - %s" % line)
                 num = num - 1
-                continue               
+                continue    
+            if re.match(r'.*show stats interface-stats.*',string) and key == "switch" :
+                helpers.log("INFO:  within show stats interface-stats - %s" % line)
+                num = num - 1
+                continue    
+            if re.match(r'.*show stats vns-stats.*',string) and key == "tenant" :
+                helpers.log("INFO:  within show stats interface-stats - %s" % line)
+                num = num - 1
+                continue            
       
             
             if key == '<cr>':
@@ -445,7 +563,7 @@ class T5_longevity(object):
             helpers.log("*** key is - %s" % key)
             if key == '<cr>':
                 helpers.log(" complete CLI show command: ******%s******" % string)
-                c.enable(string)
+                c.config(string)
                 if num == 1:
                     return string
             else:
