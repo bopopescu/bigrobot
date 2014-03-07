@@ -54,9 +54,6 @@ class T5_longevity(object):
         return image
 
 
-
-
-
     def cli_check_image(self):
         t = test.Test()
         c = t.controller('master')
@@ -191,95 +188,7 @@ class T5_longevity(object):
                 helpers.log("INFO: not current node  %s" % line)   
         return False     
 
-
-
-
-    def cli_show_walk(self, string='', file_name=None, padding=''):
-        t = test.Test()
-        c = t.controller('master')
-        c.enable('')
-        helpers.log("********* Entering CLI show  walk with ----> string: %s, file name: %s" % (string, file_name))
-        if string =='':
-            cli_string = '?' 
-        else: 
-            cli_string = string + ' ?'
-        c.send(cli_string, no_cr=True)
-        c.expect(r'[\r\n\x07][\w-]+[#>] ')
-        content = c.cli_content()
-        temp = helpers.strip_cli_output(content)
-        temp = helpers.str_to_list(temp)
-        helpers.log("******new_content:\n%s" % helpers.prettify(temp))
-        c.send(helpers.ctrl('u'))
-        c.expect()
-
-        string_c = string
-        helpers.log("string for this level is: %s" % string_c)
-        helpers.log("The length of string: %d" % len(temp))
-
-        if file_name:
-            helpers.log("opening file: %s" % file_name)
-            fo = open(file_name, 'a')
-            lines = []
-            lines.append((padding + string))
-            lines.append((padding + '----------'))            
-            for line in temp:
-                lines.append((padding + line))
-            lines.append((padding + '=================='))             
-            content = '\n'.join(lines)
-            fo.write(str(content))
-            fo.write("\n")
-            
-            fo.close()
-
-        num = len(temp)
-        padding = "   " + padding
-        for line in temp:
-            string = string_c
-            helpers.log(" line is - %s" % line)
-            if re.match(r'For', line) or line == "Commands:":
-                helpers.log("Ignoring line - %s" % line)
-                num = num - 1
-                continue
-            if re.match(r'^<.+', line) and not re.match(r'^<cr>', line):
-                helpers.log("Ignoring line - %s" % line)
-                num = num - 1
-                continue
-            if string == "show running-config fabric port-group":
-                helpers.log("GR - BSC-4724 Ignoring line - %s" % line)
-                num = num - 1
-                continue
-            if string == "show running-config switch":
-                helpers.log("GR - BSC-4725 Ignoring line - %s" % line)
-                num = num - 1
-                continue
-            if string == "show running-config tenant":
-                helpers.log("GR - BSC-4727 Ignoring line - %s" % line)
-                num = num - 1
-                continue
-            if string == "show switch":
-                helpers.log("GR - BSC-4729 Ignoring line - %s" % line)
-                num = num - 1
-                continue
-            if string == "show test-packet-path":
-                helpers.log("GR -   Ignoring line - %s" % line)
-                num = num - 1
-                continue
-
-            keys = line.split(' ')
-            key = keys.pop(0)
-            helpers.log("*** key is - %s" % key)
-            if key == '<cr>':
-                helpers.log(" complete CLI show command: ******%s******" % string)
-                c.enable(string)
-                if num == 1:
-                    return string
-            else:
-#                helpers.log(" string before add key --- ******%s******" % string )
-                string = string + ' ' + key
-                helpers.log("key - %s" % (key))
-                helpers.log("***** Call the cli walk again with  --- %s" % string)
-                self.cli_show_walk(string, file_name, padding)
-
+ 
 
     def cli_exec_walk(self, string='', file_name=None, padding=''):
         t = test.Test()
@@ -295,6 +204,79 @@ class T5_longevity(object):
         content = c.cli_content()
         temp = helpers.strip_cli_output(content)
         temp = helpers.str_to_list(temp)
+        helpers.log("********new_content:************\n%s" % helpers.prettify(temp))
+        c.send(helpers.ctrl('u'))
+        c.expect()
+        c.cli('')
+        
+        string_c = string
+        helpers.log("string for this level is: %s" % string_c)
+        helpers.log("The length of string: %d" % len(temp))
+
+        if file_name:
+            helpers.log("opening file: %s" % file_name)
+            fo = open(file_name, 'a')
+            lines = []
+            lines.append((padding + string))
+            lines.append((padding + '----------'))            
+            for line in temp:
+                lines.append((padding + line))
+            lines.append((padding + '=================='))             
+            content = '\n'.join(lines)
+            fo.write(str(content))
+            fo.write("\n")
+            
+            fo.close()
+
+        num = len(temp)
+        padding = "   " + padding
+        for line in temp:
+            string = string_c
+            helpers.log(" line is - %s" % line)
+            line = line.lstrip()
+            keys = line.split(' ')
+            key = keys.pop(0)
+            helpers.log("*** key is - %s" % key)            
+            if re.match(r'For', line) or line == "Commands:":
+                helpers.log("Ignoring line - %s" % line)
+                num = num - 1
+                continue
+            if key == "debug" or key == "reauth" or key == "echo" or key == "help" or key == "history" or key == "logout" or key == "ping" or key == "show" or key == "watch":
+                helpers.log("Ignore line %s" % line)
+                num = num - 1
+                continue
+            if re.match(r'^<.+', line) and not re.match(r'^<cr>', line):
+                helpers.log("Ignoring line - %s" % line)
+                num = num - 1
+                continue
+ 
+            if key == '<cr>':
+                helpers.log(" complete CLI show command: ******%s******" % string)
+                c.cli(string)
+                if num == 1:
+                    helpers.log("AT END: ******%s******" % string)                    
+                    return string
+            else:
+                string = string + ' ' + key
+                helpers.log("key - %s" % (key))
+                helpers.log("***** Call the cli walk again with  --- %s" % string)
+                self.cli_exec_walk(string,file_name, padding)
+                
+
+    def cli_enable_walk(self, string='', file_name=None, padding=''):
+        t = test.Test()
+        c = t.controller('master')
+        c.enable('')
+        helpers.log("********* Entering CLI show  walk with ----> string: %s, file name: %s" % (string, file_name))
+        if string =='':
+            cli_string = '?' 
+        else: 
+            cli_string = string + ' ?'
+        c.send(cli_string, no_cr=True)
+        c.expect(r'[\r\n\x07][\w-]+[#>] ')
+        content = c.cli_content()
+        temp = helpers.strip_cli_output(content)
+        temp = helpers.str_to_list(temp)
         helpers.log("******new_content:\n%s" % helpers.prettify(temp))
         c.send(helpers.ctrl('u'))
         c.expect()
@@ -323,7 +305,12 @@ class T5_longevity(object):
         for line in temp:
             string = string_c
             helpers.log(" line is - %s" % line)
-            if re.match(r'For', line) or line == "Commands:":
+            line = line.lstrip()
+            keys = line.split(' ')
+            key = keys.pop(0)
+            helpers.log("*** string is - %s" % string)                     
+            helpers.log("*** key is - %s" % key)          
+            if re.match(r'For', line) or line == "Commands:"or re.match(r'All', line):
                 helpers.log("Ignoring line - %s" % line)
                 num = num - 1
                 continue
@@ -351,27 +338,41 @@ class T5_longevity(object):
                 helpers.log("GR -   Ignoring line - %s" % line)
                 num = num - 1
                 continue
-
-            keys = line.split(' ')
-            key = keys.pop(0)
-            helpers.log("*** key is - %s" % key)
+            
+            if re.match(r'.*show fabric interface.*',string) and key == "switch" :
+                helpers.log("INFO:  within show fabric interface - %s" % line)
+                num = num - 1
+                continue               
+            if re.match(r'.*show fabric lacp.*',string) and key == "switch" :
+                helpers.log("INFO:  within show fabric lacp - %s" % line)
+                num = num - 1
+                continue               
+            if re.match(r'.*show stats interface-stats.*',string) and key == "interface" :
+                helpers.log("INFO:  within show stats interface-stats - %s" % line)
+                num = num - 1
+                continue               
+      
+            
             if key == '<cr>':
                 helpers.log(" complete CLI show command: ******%s******" % string)
-                c.cli(string)
+                if re.match(r'boot', string):
+                    helpers.log("Ignoring line - %s" % line)                
+                continue
+                
+                c.enable(string)
                 if num == 1:
                     return string
             else:
-#                helpers.log(" string before add key --- ******%s******" % string )
                 string = string + ' ' + key
                 helpers.log("key - %s" % (key))
                 helpers.log("***** Call the cli walk again with  --- %s" % string)
-                self.cli_exec_walk(string, file_name, padding)
+                self.cli_enable_walk(string, file_name, padding)
 
 
     def cli_config_walk(self, string='', file_name=None, padding=''):
         t = test.Test()
         c = t.controller('master')
-        c.enable('')
+        c.config('')
         helpers.log("********* Entering CLI show  walk with ----> string: %s, file name: %s" % (string, file_name))
         if string =='':
             cli_string = '?' 
@@ -385,7 +386,7 @@ class T5_longevity(object):
         helpers.log("******new_content:\n%s" % helpers.prettify(temp))
         c.send(helpers.ctrl('u'))
         c.expect()
-
+        c.config('')
         string_c = string
         helpers.log("string for this level is: %s" % string_c)
         helpers.log("The length of string: %d" % len(temp))
@@ -452,76 +453,6 @@ class T5_longevity(object):
                 string = string + ' ' + key
                 helpers.log("key - %s" % (key))
                 helpers.log("***** Call the cli walk again with  --- %s" % string)
-                self.cli_show_walk(string, file_name, padding)
+                self.cli_config_walk(string, file_name, padding)
 
-
-
-
-
-
-
-
-
-
-    def cli_walk(self, string=''):
-        t = test.Test()
-        c = t.controller('master')
-        c.cli('')
-        helpers.log("********* Entering CLI show  walk with ---->  %s" % string)
-        if string == '':
-            cli_string = '?'
-        else:
-            cli_string = string + ' ?'
-        c.send(cli_string, no_cr=True)
-        c.expect(r'[\r\n\x07][\w-]+[#>] ')
-        content = c.cli_content()
-        temp = helpers.strip_cli_output(content)
-        temp = helpers.str_to_list(temp)
-        helpers.log("******new_content:\n%s" % helpers.prettify(temp))
-        c.send(helpers.ctrl('u'))
-        c.expect()
-        c.cli('')
-
-        string_c = string
-        helpers.log("string for this level is: %s" % string_c)
-        helpers.log("The length of string: %d" % len(temp))
-        num = len(temp)
-        for line in temp:
-            string = string_c
-            helpers.log(" line is - %s" % line)
-            line = line.lstrip()
-            keys = line.split(' ')
-            key = keys.pop(0)
-
-            if key == "debug" or key == "reauth" or key == "echo" or key == "help" or key == "history" or key == "logout" or key == "ping" or key == "show" or key == "watch":
-                helpers.log("Ignore line %s" % line)
-                num = num - 1
-                continue
-            if re.match(r'For', line) or line == "Commands:":
-                helpers.log("Ignoring line - %s" % line)
-                num = num - 1
-                continue
-            if re.match(r'^<.+', line) and not re.match(r'^<cr>', line):
-                helpers.log("Ignoring line - %s" % line)
-                num = num - 1
-                continue
-            line = line.lstrip()
-            keys = line.split(' ')
-            key = keys.pop(0)
-            helpers.log("*** key is - %s" % key)
-            if key == '<cr>':
-                helpers.log(" complete CLI show command: ******%s******" % string)
-                helpers.log(" complete CLI show command: ******%d******" % num)
-                c.cli(string)
-                if num == 1:
-                    helpers.log("AT END: ******%s******" % string)
-                    return string
-            else:
-#                helpers.log(" string before add key --- ******%s******" % string )
-                string = string + ' ' + key
-                helpers.log("  key - %s" % (key))
-                helpers.log("***** Call the cli walk again with  --- %s" % string)
-                self.cli_walk(string)
-
-
-
+ 

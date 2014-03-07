@@ -1,3 +1,18 @@
+'''
+###  WARNING !!!!!!!
+###
+###  This is where common code for all Mininet will go in.
+###
+###  To commit new code, please contact the Library Owner:
+###  Prashanth Padubidry (prashanth.padubidry@bigswitch.com)
+###
+###  DO NOT COMMIT CODE WITHOUT APPROVAL FROM LIBRARY OWNER
+###
+###  Last Updated: 03/06/2014
+###
+###  WARNING !!!!!!!
+'''
+
 import autobot.helpers as helpers
 import autobot.test as test
 import re
@@ -562,7 +577,28 @@ class T5Fabric(object):
                         return False
         return False
         
+    def rest_disable_fabric_interface(self, switch, intf):
+        t = test.Test()
+        c = t.controller('master')
         
+        url = '/api/v1/data/controller/core/switch-config[name="%s"]/interface[name="%s"]' % (switch, intf)
+        try:
+            c.rest.patch(url, {"shutdown": True})
+        except:
+            return False
+        else:
+            return True     
+   
+    def rest_enable_fabric_interface(self, switch, intf):
+        t = test.Test()
+        c = t.controller('master')
         
+        url = '/api/v1/data/controller/core/switch-config[name="%s"]/interface[name="%s"]' % (switch, intf)
+        try:
+            c.rest.patch(url, {"shutdown": None})
+        except:
+            return False
+        else:
+            return True       
                                   
         

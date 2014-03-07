@@ -1,0 +1,1096 @@
+# this is a test - Mingtao
+# this is another line
+
+----------
+For help on specific commands: help <topic>
+Commands:
+  boot      Configure boot details
+  cluster   Manage cluster operational state
+  compare   Compare running-configs
+  configure Enter configure mode
+  copy      Copy to/from running-config
+  debug     Manage various cli debugging features
+  delete    Delete upgrade image
+  end       end config submode (back to login)
+  reboot    Reboot Controller
+  show      Show various information
+  shutdown  Shutdown Controller
+  upgrade   Upgrade controller/cluster
+All Available commands:
+  clear     Clear counters
+  echo      Show output of other commands
+  enable    Enter enable mode
+  exit      exit submode
+  help      Show help
+  history   Show commands recently executed
+  logout    logout
+  no        Prefix to commands to un-config
+  ping      ping a switch or ip address
+  reauth    Reauthenticate
+  set       Manage CLI sessions settings
+  watch     Show output of other commands
+  whoami    Identify the current authenticated account
+==================
+    boot
+   ----------
+   factory-default  Configure boot details
+   partition        Configure boot details
+   ==================
+       boot factory-default
+      ----------
+      <cr>   Configure boot details
+      ==================
+       boot partition
+      ----------
+      1          Select specific partition
+      2          Select specific partition
+      alternate  Select other partition
+      ==================
+          boot partition 1
+         ----------
+         <cr>   Configure boot details
+         ==================
+          boot partition 2
+         ----------
+         <cr>   Configure boot details
+         ==================
+          boot partition alternate
+         ----------
+         <cr>   Configure boot details
+         ==================
+    cluster
+   ----------
+   election  Manage cluster operational state
+   ==================
+       cluster election
+      ----------
+      re-run       Run the cluster leader election again
+      take-leader  Makes the local controller the cluster leader
+      ==================
+          cluster election re-run
+         ----------
+         <cr>   Manage cluster operational state
+         ==================
+          cluster election take-leader
+         ----------
+         <cr>   Manage cluster operational state
+         ==================
+    compare
+   ----------
+   <file>          compare file
+   config://       compare saved running-config
+   running-config  compare running-config
+   scp://          compare scp source
+   ==================
+       compare config://
+      ----------
+      <file>          compare against file
+      running-config  compare against running-config
+      scp://          compare against  scp
+      ==================
+          compare config:// running-config
+         ----------
+         ==================
+          compare config:// scp://
+         ----------
+         ==================
+       compare running-config
+      ----------
+      <file>    compare against file
+      config:// compare against saved config
+      scp://    compare against  scp
+      ==================
+          compare running-config config://
+         ----------
+         <cr>   Compare running-configs
+         ==================
+          compare running-config scp://
+         ----------
+         <cr>   Compare running-configs
+         ==================
+       compare scp://
+      ----------
+      <file>          compare against file
+      image://        compare against upgrade repository
+      running-config  compare against running-config
+      ==================
+          compare scp:// image://
+         ----------
+         <cr>   Compare running-configs
+         ==================
+          compare scp:// running-config
+         ----------
+         <cr>   Compare running-configs
+         ==================
+    configure
+   ----------
+   <cr>      Enter configure mode
+   terminal  Enter configure mode
+   ==================
+       configure terminal
+      ----------
+      <cr>   Enter configure mode
+      ==================
+    copy
+   ----------
+   <file>          copy from file
+   config://       copy from saved running-config
+   running-config  copy from running-config
+   scp://          copy from scp source
+   ==================
+       copy config://
+      ----------
+      <file>          copy to file
+      running-config  copy to running-config
+      scp://          copy to  scp
+      ==================
+          copy config:// running-config
+         ----------
+         <cr>   Copy to/from running-config
+         ==================
+          copy config:// scp://
+         ----------
+         <cr>   Copy to/from running-config
+         ==================
+       copy running-config
+      ----------
+      <file>    copy to file
+      config:// copy to saved config
+      scp://    copy to  scp
+      ==================
+          copy running-config config://
+         ----------
+         <cr>   Copy to/from running-config
+         ==================
+          copy running-config scp://
+         ----------
+         <cr>   Copy to/from running-config
+         ==================
+       copy scp://
+      ----------
+      <file>          copy to file
+      image://        copy to upgrade repository
+      running-config  copy to running-config
+      ==================
+          copy scp:// image://
+         ----------
+         <cr>   Copy to/from running-config
+         ==================
+          copy scp:// running-config
+         ----------
+         <cr>   Copy to/from running-config
+         ==================
+    debug
+   ----------
+   bash           Enter a bash shell (from mode ['login', 'enable', 'config*'])
+   cassandra-cli  Enter a cassandra shell (from mode ['login', 'enable', 'config*'])
+   cli            Display more detailed information on errors (from mode ['login', 'enable', 'config*'])
+   cli-backtrace  Display backtrace information on errors (from mode ['login', 'enable', 'config*'])
+   cli-batch      Disable any prompts to allow simpler batch processing (from mode ['login', 'enable', 'config*'])
+   description    Display verbose debug information while processing commands (from mode ['login', 'enable', 'config*'])
+   netconfig      Enter a netconfig shell (from mode ['login', 'enable', 'config*'])
+   python         Enter a python shell (from mode ['login', 'enable', 'config*'])
+   rest           Display URLs of any information retrieved via REST (from mode ['login', 'enable', 'config*'])
+   ==================
+       debug bash
+      ----------
+      <cr>   Manage various cli debugging features
+      ==================
+       debug cassandra-cli
+      ----------
+      <cr>   Manage various cli debugging features
+      ==================
+       debug cli
+      ----------
+      <cr>   Manage various cli debugging features
+      ==================
+       debug cli-backtrace
+      ----------
+      <cr>   Manage various cli debugging features
+      ==================
+       debug cli-batch
+      ----------
+      <cr>   Manage various cli debugging features
+      ==================
+       debug description
+      ----------
+      <cr>   Manage various cli debugging features
+      ==================
+       debug netconfig
+      ----------
+      <cr>   Manage various cli debugging features
+      ==================
+       debug python
+      ----------
+      <cr>   Manage various cli debugging features
+      ==================
+       debug rest
+      ----------
+      <cr>     Manage various cli debugging features
+      brief    Display both URLs and returned content for REST requests (from mode ['login', 'enable', 'config*'])
+      details  Display both URLs and returned content for REST requests (from mode ['login', 'enable', 'config*'])
+      record   record rest api activitiy (from mode ['login', 'enable', 'config*'])
+      ==================
+          debug rest brief
+         ----------
+         <cr>   Manage various cli debugging features
+         ==================
+          debug rest details
+         ----------
+         <cr>   Manage various cli debugging features
+         ==================
+          debug rest record
+         ----------
+         <record>   <string>  (from mode ['login', 'enable', 'config*'])
+         ==================
+    delete
+   ----------
+   config  Delete upgrade image
+   file    delete file (from mode login)
+   image   Delete saved config
+   ==================
+       delete config
+      ----------
+      <config name>   <string>
+      ==================
+       delete file
+      ----------
+      <file-name>   file name to list (from mode login)
+      ==================
+       delete image
+      ----------
+      <image identifier>   <string>
+      ==================
+    end
+   ----------
+   <cr>   end config submode (back to login)
+   ==================
+    reboot
+   ----------
+   <cr>   Reboot Controller
+   ==================
+    show
+   ----------
+   attachment-points  Show attachment-point details (from mode login)
+   banner             Show pre-login banner message (from mode login)
+   boot               Display boot details (from mode login)
+   bvssetting         Show bvssetting details (from mode login)
+   clock              Show current date and time (from mode login)
+   cluster            show cluster information (from mode login)
+   config             Copy to/from running-config
+   debug              show debug counters (from mode login)
+   endpoints          Show endpoint information (from mode login)
+   fabric             Show fabric information for selected switch (from mode login)
+   file               list file contents (from mode login)
+   forwarding         Show tables for selected switch (from mode login)
+   group              Show configured groups (from mode login)
+   image              Display upgrade details (from mode login)
+   link               Show links, controller managed switch to switch interfaces (from mode login)
+   local              Show pre-login banner message (from mode login)
+   logging            Display log contents (from mode login)
+   ntp                show output of ntpq for ntpd status (from mode login)
+   profile            Show user profile configuration (from mode login)
+   running-config     Show the current active configuration (from mode login)
+   session            Show active sessions (from mode login)
+   snmp               Show configured snmp details (from mode login)
+   stats              show interface stats (from mode login)
+   switch             Show switch information (from mode login)
+   system             Display system details (from mode login)
+   tacacs             Show TACACS operational state (from mode login)
+   tenant             Show endpoint information (from mode login)
+   test-packet-path   Show what path a packet will take (from mode login)
+   upgrade            Display upgrade details (from mode login)
+   user               Show configured users (from mode login)
+   version            Show current build version number (from mode login)
+   vft                Show VFT details (from mode login)
+   virtual-ip         Show management virtual IP configurations (from mode login)
+   vns                Show endpoint information (from mode login)
+   where              Show details about the currend mode (from mode login)
+   ==================
+       show attachment-points
+      ----------
+      <cr>   Show all the attachment-points in the system
+      ==================
+       show banner
+      ----------
+      <cr>   Show pre-login banner message
+      ==================
+       show boot
+      ----------
+      partition  Display boot details (from mode login)
+      ==================
+          show boot partition
+         ----------
+         <cr>     Display boot details
+         details  Display boot details (from mode login)
+         ==================
+             show boot partition details
+            ----------
+            <cr>   Display boot details
+            ==================
+       show bvssetting
+      ----------
+      <cr>   Show bvssetting details
+      ==================
+       show clock
+      ----------
+      <cr>   Show current date and time
+      ==================
+       show cluster
+      ----------
+      <cr>     show cluster information
+      brief    Display either detailed or brief information (from mode login)
+      details  Display either detailed or brief information (from mode login)
+      ==================
+          show cluster brief
+         ----------
+         <cr>   show cluster information
+         ==================
+          show cluster details
+         ----------
+         <cr>   show cluster information
+         ==================
+       show config
+      ----------
+      <config-name>   <string>
+      <cr>            Copy to/from running-config
+      ==================
+       show debug
+      ----------
+      counters  show debug counters (from mode login)
+      ==================
+          show debug counters
+         ----------
+         <cr>   show debug counters
+         ==================
+       show endpoints
+      ----------
+      <cr>              Show endpoint information
+      <endpoint-name>   Enter an endpoint name (from mode login)
+      mac               Show endpoint information (from mode login)
+      ==================
+          show endpoints mac
+         ----------
+         <cr>    Show endpoint information
+         <mac>   Enter endpoint MAC address (from mode login)
+         ==================
+       show fabric
+      ----------
+      error      Show fabric error information (from mode login)
+      interface  Show fabric interface information (from mode login)
+      lacp       Show fabric lacp information (from mode login)
+      lag        Show fabric lag information (from mode login)
+      link       Show fabric link information (from mode login)
+      switch     Show fabric information for selected switch (from mode login)
+      ==================
+          show fabric error
+         ----------
+         <cr>                   Show fabric error information
+         details                Show fabric error information (from mode login)
+         dual-tor               Show fabric error information (from mode login)
+         uni-directional-links  Show fabric error information (from mode login)
+         ==================
+             show fabric error details
+            ----------
+            <cr>   Show fabric error information
+            ==================
+             show fabric error dual-tor
+            ----------
+            inconsistent-racks                   Show fabric error information (from mode login)
+            no-port-group-configured-interfaces  Show fabric error information (from mode login)
+            peer-link-absent                     Show fabric error information (from mode login)
+            ==================
+                show fabric error dual-tor inconsistent-racks
+               ----------
+               <cr>   Show fabric error information
+               ==================
+                show fabric error dual-tor no-port-group-configured-interfaces
+               ----------
+               <cr>   Show fabric error information
+               ==================
+                show fabric error dual-tor peer-link-absent
+               ----------
+               <cr>   Show fabric error information
+               ==================
+             show fabric error uni-directional-links
+            ----------
+            <cr>     Show fabric error information
+            details  Show fabric error information (from mode login)
+            ==================
+                show fabric error uni-directional-links details
+               ----------
+               <cr>   Show fabric error information
+               ==================
+          show fabric interface
+         ----------
+         <cr>              Show fabric interface information
+         interface         Show fabric interface information (from mode login)
+         rx-counters       Show fabric interface information (from mode login)
+         rx-rates          Show fabric interface information (from mode login)
+         rx-rates-history  Show fabric interface information (from mode login)
+         switch            Show fabric interface information (from mode login)
+         tx-counters       Show fabric interface information (from mode login)
+         tx-rates          Show fabric interface information (from mode login)
+         tx-rates-history  Show fabric interface information (from mode login)
+         ==================
+             show fabric interface interface
+            ----------
+            <interface name>   IF Name selection (from mode login)
+            ==================
+             show fabric interface rx-counters
+            ----------
+            <cr>   Show fabric interface information
+            ==================
+             show fabric interface rx-rates
+            ----------
+            <cr>   Show fabric interface information
+            ==================
+             show fabric interface rx-rates-history
+            ----------
+            <cr>   Show fabric interface information
+            ==================
+             show fabric interface tx-counters
+            ----------
+            <cr>   Show fabric interface information
+            ==================
+             show fabric interface tx-rates
+            ----------
+            <cr>   Show fabric interface information
+            ==================
+             show fabric interface tx-rates-history
+            ----------
+            <cr>   Show fabric interface information
+            ==================
+          show fabric lacp
+         ----------
+         <cr>               Show fabric lacp information
+         <interface name>   IF Name selection (from mode login)
+         switch             Show fabric lacp information (from mode login)
+         ==================
+          show fabric lag
+         ----------
+         <cr>         Show fabric lag information
+         <lag name>   LAG Name selection (from mode login)
+         switch       Show fabric lag information (from mode login)
+         ==================
+             show fabric lag switch
+            ----------
+            <cr>   Show fabric lag information
+            ==================
+          show fabric link
+         ----------
+         <cr>     Show fabric link information
+         details  Show fabric link information (from mode login)
+         ==================
+             show fabric link details
+            ----------
+            <cr>   Show fabric link information
+            ==================
+          show fabric switch
+         ----------
+         <cr>   Show fabric information for selected switch
+         ==================
+       show file
+      ----------
+      <cr>          list file contents
+      <file-name>   file name to list (from mode login)
+      ==================
+       show forwarding
+      ----------
+      <cr>              
+      arp-table         show ARP table (from mode login)
+      ep-table          Show endpoint table (from mode login)
+      internal          Show internal tables (from mode login)
+      l3-cidr-table     Show el3-cidr-table (from mode login)
+      l3-host-table     Show l3-host-table (from mode login)
+      my-station-table  show my-station table (from mode login)
+      router-ip-table   show router IP table (from mode login)
+      switch            Show tables for selected switch (from mode login)
+      ==================
+          show forwarding arp-table
+         ----------
+         <cr>   
+         ==================
+          show forwarding ep-table
+         ----------
+         <cr>   
+         ==================
+          show forwarding internal
+         ----------
+         <cr>                         Show internal tables
+         ecmp-group-name-to-id-table  show ecmp group name to id mapping (from mode login)
+         lag-name-to-id-table         show LAG name to id mapping (from mode login)
+         span-name-to-id-table        show span name to id mapping (from mode login)
+         tenant-to-vrf-table          show tenant to VRF mapping (from mode login)
+         ==================
+             show forwarding internal ecmp-group-name-to-id-table
+            ----------
+            <cr>   Show internal tables
+            ==================
+             show forwarding internal lag-name-to-id-table
+            ----------
+            <cr>   Show internal tables
+            ==================
+             show forwarding internal span-name-to-id-table
+            ----------
+            <cr>   Show internal tables
+            ==================
+             show forwarding internal tenant-to-vrf-table
+            ----------
+            <cr>   Show internal tables
+            ==================
+          show forwarding l3-cidr-table
+         ----------
+         <cr>   
+         ==================
+          show forwarding l3-host-table
+         ----------
+         ==================
+          show forwarding my-station-table
+         ----------
+         ==================
+          show forwarding router-ip-table
+         ----------
+         ==================
+          show forwarding switch
+         ----------
+         ==================
+       show group
+      ----------
+      <cr>     Show configured groups
+      <name>   Alphabetic character, followed by alphanumerics (from mode login)
+      admin    Name selection
+      ==================
+          show group admin
+         ----------
+         <cr>     Show configured groups
+         details  Show configured groups (from mode login)
+         ==================
+             show group admin details
+            ----------
+            <cr>   Show configured groups
+            ==================
+       show image
+      ----------
+      <cr>     Display upgrade details
+      details  Display upgrade details (from mode login)
+      ==================
+          show image details
+         ----------
+         <cr>   Display upgrade details
+         ==================
+       show link
+      ----------
+      <cr>   Show links, controller managed switch to switch interfaces
+      ==================
+       show local
+      ----------
+      node  Show pre-login banner message (from mode login)
+      ==================
+          show local node
+         ----------
+         interfaces  Show pre-login banner message (from mode login)
+         ==================
+             show local node interfaces
+            ----------
+            <cr>       Show pre-login banner message
+            <ifname>   <local-interface>  (from mode login)
+            ethernet   Show pre-login banner message (from mode login)
+            ethernet0  Local Node Interface (type ethernet number 0)
+            ==================
+                show local node interfaces ethernet
+               ----------
+               <cr>       Show pre-login banner message
+               <number>   <integer>  (from mode login)
+               ==================
+                show local node interfaces ethernet0
+               ----------
+               <cr>   Show pre-login banner message
+               ==================
+       show logging
+      ----------
+      controller  Display log contents (from mode login)
+      syslog      Display log contents (from mode login)
+      web-access  Display log contents (from mode login)
+      web-error   Display log contents (from mode login)
+      ==================
+          show logging controller
+         ----------
+         <cr>   Display log contents
+         ==================
+          show logging syslog
+         ----------
+         <cr>   Display log contents
+         ==================
+          show logging web-access
+         ----------
+         <cr>   Display log contents
+         ==================
+          show logging web-error
+         ----------
+         <cr>   Display log contents
+         ==================
+       show ntp
+      ----------
+      <cr>   show output of ntpq for ntpd status
+      ==================
+       show profile
+      ----------
+      <cr>   Show user profile configuration
+      ==================
+       show running-config
+      ----------
+      <cr>          Show the current active configuration
+      banner        Configuration for Banner (from mode login)
+      bvssetting    Configuration for bvs setting (from mode login)
+      details       Include configuration matching default values (from mode login)
+      endpoints     Configuration for endpoints (from mode login)
+      fabric        Configuration for fabric (from mode login)
+      group         Configuration for group accounts (from mode login)
+      member-rules  Configuration for member-rules (from mode login)
+      ntp           Configuration for NTP (from mode login)
+      router        Configuration for virtual router (from mode login)
+      snmp          Configuration for SNMP (from mode login)
+      switch        Configuration for switches (from mode login)
+      tacacs        Configuration for TACACS authentication (from mode login)
+      tenant        Configuration for tenants (from mode login)
+      user          Configuration for user accounts (from mode login)
+      vns           Configuration for vns (from mode login)
+      ==================
+          show running-config banner
+         ----------
+         <cr>     Show the current active configuration
+         details  Include configuration matching default values (from mode login)
+         ==================
+             show running-config banner details
+            ----------
+            <cr>   Show the current active configuration
+            ==================
+          show running-config bvssetting
+         ----------
+         <cr>     Show the current active configuration
+         details  Include configuration matching default values (from mode login)
+         ==================
+             show running-config bvssetting details
+            ----------
+            <cr>   Show the current active configuration
+            ==================
+          show running-config details
+         ----------
+         <cr>   Show the current active configuration
+         ==================
+          show running-config endpoints
+         ----------
+         <cr>     Show the current active configuration
+         details  Include configuration matching default values (from mode login)
+         ==================
+             show running-config endpoints details
+            ----------
+            <cr>   Show the current active configuration
+            ==================
+          show running-config fabric
+         ----------
+         <cr>        Show the current active configuration
+         details     Include configuration matching default values (from mode login)
+         port-group  Show the current active configuration (from mode login)
+         ==================
+             show running-config fabric details
+            ----------
+            <cr>   Show the current active configuration
+            ==================
+             show running-config fabric port-group
+            ----------
+            <cr>           Show the current active configuration
+            <port-group>   Alphabetic character, followed by alphanumerics (from mode login)
+            details        Include configuration matching default values (from mode login)
+            ==================
+                show running-config fabric port-group details
+               ----------
+               <cr>   Show the current active configuration
+               ==================
+          show running-config group
+         ----------
+         <cr>     Show the current active configuration
+         details  Include configuration matching default values (from mode login)
+         ==================
+             show running-config group details
+            ----------
+            <cr>   Show the current active configuration
+            ==================
+          show running-config member-rules
+         ----------
+         <cr>     Show the current active configuration
+         details  Include configuration matching default values (from mode login)
+         ==================
+             show running-config member-rules details
+            ----------
+            <cr>   Show the current active configuration
+            ==================
+          show running-config ntp
+         ----------
+         <cr>     Show the current active configuration
+         details  Include configuration matching default values (from mode login)
+         ==================
+             show running-config ntp details
+            ----------
+            <cr>   Show the current active configuration
+            ==================
+          show running-config router
+         ----------
+         <cr>     Show the current active configuration
+         details  Include configuration matching default values (from mode login)
+         ==================
+             show running-config router details
+            ----------
+            <cr>   Show the current active configuration
+            ==================
+          show running-config snmp
+         ----------
+         <cr>     Show the current active configuration
+         details  Include configuration matching default values (from mode login)
+         ==================
+             show running-config snmp details
+            ----------
+            <cr>   Show the current active configuration
+            ==================
+          show running-config switch
+         ----------
+         <cr>     Show the current active configuration
+         <name>   Alphabetic character, followed by alphanumerics (from mode login)
+         details  Include configuration matching default values (from mode login)
+         ==================
+             show running-config switch details
+            ----------
+            ==================
+          show running-config tacacs
+         ----------
+         ==================
+          show running-config tenant
+         ----------
+         ==================
+          show running-config user
+         ----------
+         ==================
+          show running-config vns
+         ----------
+         <cr>     Show the current active configuration
+         details  Include configuration matching default values (from mode login)
+         ==================
+             show running-config vns details
+            ----------
+            <cr>   Show the current active configuration
+            ==================
+       show session
+      ----------
+      2                            Id selection
+      3                            Id selection
+      4                            Id selection
+      5                            Id selection
+      6                            Id selection
+      7                            Id selection
+      8                            Id selection
+      9                            Id selection
+      10                           Id selection
+      11                           Id selection
+      12                           Id selection
+      13                           Id selection
+      14                           Id selection
+      15                           Id selection
+      16                           Id selection
+      17                           Id selection
+      18                           Id selection
+      19                           Id selection
+      20                           Id selection
+      21                           Id selection
+      22                           Id selection
+      23                           Id selection
+      24                           Id selection
+      25                           Id selection
+      26                           Id selection
+      27                           Id selection
+      28                           Id selection
+      <cr>                         Show active sessions
+      <enter Session Identifier>   <integer>  (from mode login)
+      details                      Show active sessions (from mode login)
+      ==================
+          show session 2
+         ----------
+         <cr>     Show active sessions
+         details  Show active sessions (from mode login)
+         ==================
+             show session 2 details
+            ----------
+            <cr>   Show active sessions
+            ==================
+          show session 3
+         ----------
+         <cr>     Show active sessions
+         details  Show active sessions (from mode login)
+         ==================
+             show session 3 details
+            ----------
+            <cr>   Show active sessions
+            ==================
+          show session 4
+         ----------
+         <cr>     Show active sessions
+         details  Show active sessions (from mode login)
+         ==================
+             show session 4 details
+            ----------
+            <cr>   Show active sessions
+            ==================
+          show session 5
+         ----------
+         <cr>     Show active sessions
+         details  Show active sessions (from mode login)
+         ==================
+             show session 5 details
+            ----------
+            <cr>   Show active sessions
+            ==================
+          show session 6
+         ----------
+         <cr>     Show active sessions
+         details  Show active sessions (from mode login)
+         ==================
+             show session 6 details
+            ----------
+            <cr>   Show active sessions
+            ==================
+          show session 7
+         ----------
+         <cr>     Show active sessions
+         details  Show active sessions (from mode login)
+         ==================
+             show session 7 details
+            ----------
+            <cr>   Show active sessions
+            ==================
+          show session 8
+         ----------
+         <cr>     Show active sessions
+         details  Show active sessions (from mode login)
+         ==================
+             show session 8 details
+            ----------
+            <cr>   Show active sessions
+            ==================
+          show session 9
+         ----------
+         <cr>     Show active sessions
+         details  Show active sessions (from mode login)
+         ==================
+             show session 9 details
+            ----------
+            <cr>   Show active sessions
+            ==================
+          show session 10
+         ----------
+         <cr>     Show active sessions
+         details  Show active sessions (from mode login)
+         ==================
+             show session 10 details
+            ----------
+            <cr>   Show active sessions
+            ==================
+          show session 11
+         ----------
+         <cr>     Show active sessions
+         details  Show active sessions (from mode login)
+         ==================
+             show session 11 details
+            ----------
+            <cr>   Show active sessions
+            ==================
+          show session 12
+         ----------
+         <cr>     Show active sessions
+         details  Show active sessions (from mode login)
+         ==================
+             show session 12 details
+            ----------
+            <cr>   Show active sessions
+            ==================
+          show session 13
+         ----------
+         <cr>     Show active sessions
+         details  Show active sessions (from mode login)
+         ==================
+             show session 13 details
+            ----------
+            <cr>   Show active sessions
+            ==================
+          show session 14
+         ----------
+         <cr>     Show active sessions
+         details  Show active sessions (from mode login)
+         ==================
+             show session 14 details
+            ----------
+            <cr>   Show active sessions
+            ==================
+          show session 15
+         ----------
+         <cr>     Show active sessions
+         details  Show active sessions (from mode login)
+         ==================
+             show session 15 details
+            ----------
+            <cr>   Show active sessions
+            ==================
+          show session 16
+         ----------
+         <cr>     Show active sessions
+         details  Show active sessions (from mode login)
+         ==================
+             show session 16 details
+            ----------
+            <cr>   Show active sessions
+            ==================
+          show session 17
+         ----------
+         <cr>     Show active sessions
+         details  Show active sessions (from mode login)
+         ==================
+             show session 17 details
+            ----------
+            <cr>   Show active sessions
+            ==================
+          show session 18
+         ----------
+         <cr>     Show active sessions
+         details  Show active sessions (from mode login)
+         ==================
+             show session 18 details
+            ----------
+            <cr>   Show active sessions
+            ==================
+          show session 19
+         ----------
+         <cr>     Show active sessions
+         details  Show active sessions (from mode login)
+         ==================
+             show session 19 details
+            ----------
+            <cr>   Show active sessions
+            ==================
+          show session 20
+         ----------
+         <cr>     Show active sessions
+         details  Show active sessions (from mode login)
+         ==================
+             show session 20 details
+            ----------
+            <cr>   Show active sessions
+            ==================
+          show session 21
+         ----------
+         <cr>     Show active sessions
+         details  Show active sessions (from mode login)
+         ==================
+             show session 21 details
+            ----------
+            <cr>   Show active sessions
+            ==================
+          show session 22
+         ----------
+         <cr>     Show active sessions
+         details  Show active sessions (from mode login)
+         ==================
+             show session 22 details
+            ----------
+            <cr>   Show active sessions
+            ==================
+          show session 23
+         ----------
+         <cr>     Show active sessions
+         details  Show active sessions (from mode login)
+         ==================
+             show session 23 details
+            ----------
+            <cr>   Show active sessions
+            ==================
+          show session 24
+         ----------
+         <cr>     Show active sessions
+         details  Show active sessions (from mode login)
+         ==================
+             show session 24 details
+            ----------
+            <cr>   Show active sessions
+            ==================
+          show session 25
+         ----------
+         <cr>     Show active sessions
+         details  Show active sessions (from mode login)
+         ==================
+             show session 25 details
+            ----------
+            <cr>   Show active sessions
+            ==================
+          show session 26
+         ----------
+         <cr>     Show active sessions
+         details  Show active sessions (from mode login)
+         ==================
+             show session 26 details
+            ----------
+            <cr>   Show active sessions
+            ==================
+          show session 27
+         ----------
+         <cr>     Show active sessions
+         details  Show active sessions (from mode login)
+         ==================
+             show session 27 details
+            ----------
+            <cr>   Show active sessions
+            ==================
+          show session 28
+         ----------
+         <cr>     Show active sessions
+         details  Show active sessions (from mode login)
+         ==================
+             show session 28 details
+            ----------
+            <cr>   Show active sessions
+            ==================
+          show session details
+         ----------
+         <cr>   Show active sessions
+         ==================
+       show snmp
+      ----------
+      <cr>   Show configured snmp details
+      ==================
+       show stats
+      ----------
+      interface-stats  show interface stats (from mode login)
+      interval         show vns or port stats interval (from mode login)
+      tenant-stats     Show tenant stats (from mode login)
+      vns-stats        show vns stats (from mode login)
+      ==================
+          show stats interface-stats
+         ----------
+         interface         show interface stats (from mode login)
+         rx-counters       show interface stats (from mode login)
+         rx-rates          show interface stats (from mode login)
+         rx-rates-history  show interface stats (from mode login)
+         switch            show interface stats (from mode login)
+         tx-counters       show interface stats (from mode login)
+         tx-rates          show interface stats (from mode login)
+         tx-rates-history  show interface stats (from mode login)
+         ==================
+             show stats interface-stats rx-counters
+            ----------
+            <cr>   show interface stats
+            ==================
+             show stats interface-stats rx-rates
+            ----------
+            <cr>   show interface stats
+            ==================
+             show stats interface-stats rx-rates-history
+            ----------
+            <cr>   show interface stats
+            ==================

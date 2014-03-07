@@ -1,0 +1,71 @@
+
+----------
+For help on specific commands: help <topic>
+Commands:
+  clear   Clear counters
+  debug   Manage various cli debugging features
+  delete  delete file
+  echo    Show output of other commands
+  enable  Enter enable mode
+  exit    exit submode
+  help    Show help
+  history Show commands recently executed
+  logout  logout
+  no      Prefix to commands to un-config
+  ping    ping a switch or ip address
+  reauth  Reauthenticate
+  set     Manage CLI sessions settings
+  show    Show various information
+  watch   Show output of other commands
+  whoami  Identify the current authenticated account
+==================
+    clear
+   ----------
+   interface-counters  Clear interface counters
+   vns-counters        Clear VNS counters
+   ==================
+       clear interface-counters
+      ----------
+      <cr>   Clear counters
+      ==================
+       clear vns-counters
+      ----------
+      <cr>   Clear counters
+      ==================
+    delete
+   ----------
+   file  delete file
+   ==================
+       delete file
+      ----------
+      <file-name>   file name to list
+      ==================
+    enable
+   ----------
+   <cr>   Enter enable mode
+   ==================
+    exit
+   ----------
+   <cr>   exit submode
+   ==================
+    no
+   ----------
+   debug  Manage various cli debugging features
+   ==================
+    set
+   ----------
+   length  Manage CLI sessions settings
+   ==================
+       set length
+      ----------
+      <length>   Set screen length
+      term       Set screen length to current terminal length
+      ==================
+          set length term
+         ----------
+         <cr>   Manage CLI sessions settings
+         ==================
+    whoami
+   ----------
+   <cr>   Identify the current authenticated account
+   ==================
