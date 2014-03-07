@@ -350,7 +350,15 @@ class T5_longevity(object):
             if re.match(r'.*show stats interface-stats.*',string) and key == "interface" :
                 helpers.log("INFO:  within show stats interface-stats - %s" % line)
                 num = num - 1
-                continue               
+                continue    
+            if re.match(r'.*show stats interface-stats.*',string) and key == "switch" :
+                helpers.log("INFO:  within show stats interface-stats - %s" % line)
+                num = num - 1
+                continue    
+            if re.match(r'.*show stats vns-stats.*',string) and key == "tenant" :
+                helpers.log("INFO:  within show stats interface-stats - %s" % line)
+                num = num - 1
+                continue            
       
             
             if key == '<cr>':
