@@ -1049,7 +1049,7 @@ class T5(object):
         else:
             return True
 
-    def rest_verify_vns_stats(self, vns, frame_cnt, vrange=5):
+    def rest_verify_vns_stats(self, tenant, vns, frame_cnt, vrange=5):
         ''' Function to verify the VNS stats
         Input: vns name
         Output: given vns counters will be showed
@@ -1066,13 +1066,16 @@ class T5(object):
         else:
             return True
         data = c.rest.content()
-        if (data["counters"]["counters-rx-packets"] >= (frame_cnt - vrange)) and (data["counters"]["counters-rx-packets"] <= (frame_cnt + vrange)):
-            helpers.log("Pass: Counters value Expected:%d, Actual:%d" % (frame_cnt, data["counters"]["counters-rx-packets"]))
-            return True
+        if data["counters-tenant-name"] == tenant and data["counters-vns-name"] == vns:
+                    if (data["counters"]["counters-rx-packets"] >= (frame_cnt - vrange)) and (data["counters"]["counters-rx-packets"] <= (frame_cnt + vrange)):
+                        helpers.log("Pass: Counters value Expected:%d, Actual:%d" % (frame_cnt, data["counters"]["counters-rx-packets"]))
+                        return True
+                    else:
+                        return False
         else:
-            return False
+            helpers.log("Given tenant name and VNS name does not match the config")
 
-    def rest_verify_vns_rates(self, vns, frame_rate, vrange=5):
+    def rest_verify_vns_rates(self, tenant, vns, frame_rate, vrange=5):
         ''' Function to verify the VNS incoming rates
         Input: vns name
         Output: given vns rates will be displayed and match against the expected rate
@@ -1089,11 +1092,14 @@ class T5(object):
         else:
             return True
         data = c.rest.content()
-        if (data["rates"]["rates-rx-packets"] >= (frame_rate - vrange)) and (data["rates"]["rates-rx-packets"] <= (frame_rate + vrange)):
-            helpers.log("Pass: Rate value Expected:%d, Actual:%d" % (int(frame_rate), data["rates"]["rates-rx-packets"]))
-            return True
+        if data["rates-tenant-name"] == tenant and data["rates-vns-name"] == vns:
+            if (data["rates"]["rates-rx-packets"] >= (frame_rate - vrange)) and (data["rates"]["rates-rx-packets"] <= (frame_rate + vrange)):
+                helpers.log("Pass: Rate value Expected:%d, Actual:%d" % (int(frame_rate), data["rates"]["rates-rx-packets"]))
+                return True
+            else:
+                return False
         else:
-            return False
+            helpers.log("Given tenant name and vns name does not match in the config")
         
     def rest_clear_fabric_interface_stats(self):
         ''' Function to clear all the fabric interefaces
