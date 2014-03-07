@@ -283,6 +283,23 @@ Verify snmpbulkwalk works as expected
     verify snmpbulkwalk
     [Tags]  sanity  platform  snmp
         
+Verify snmptrap is generated on dataport linkflap
+    clear snmpttlog  10.192.66.230
+    sleep  10
+    cli disable interface  s1  ethernet1
+    sleep  60
+    ${output}=  return snmptrap output  10.192.66.230  "Link down on interface 1001"
+    Should contain  ${output}  Operational state: 2  
+    sleep  10
+    clear snmpttlog  10.192.66.230
+    sleep  10    
+    cli enable interface  s1  ethernet1
+    sleep  60
+    ${output}=  return snmptrap output  10.192.66.230  "Link up on interface 1001"
+    Should contain  ${output}  Operational state: 1     
+    [Tags]  sanity  platform  snmp  snmptrap 
+         
+
 Modify SNMP Community and Verify SNMP OID sysContact 
     modify community
     [Tags]  sanity  platform  snmp
