@@ -2,6 +2,7 @@ import autobot.devconf as devconf
 import autobot.helpers as helpers
 from autobot.bsn_restclient import BsnRestClient
 import modules.IxLib as IxLib
+import modules.IxBigtapLib as IxBigtapLib
 
 class Node(object):
     def __init__(self, name, ip, user=None, password=None, params=None):
@@ -396,9 +397,10 @@ class IxiaNode(Node):
         helpers.log("chassis_ip: %s" % self.chassis_ip())
         helpers.log("ports: %s" % self.ports())
 
+        helpers.log("Platform: %s" % self.platform())
         self._ixia = IxLib.Ixia(tcl_server_ip=self.tcl_server_ip(),
                                 chassis_ip=self.chassis_ip(),
-                                port_map_list=self.ports())
+                                port_map_list=self.ports())  
         return self._ixia
 
     def handle(self):
@@ -420,3 +422,63 @@ class IxiaNode(Node):
 
     def platform(self):
         return 'ixia'
+
+class BigTapIxiaNode(IxiaNode):
+    def __init__(self, name, t):
+        self._bigtap_controller_ip = t.params(name, 'bigtap_controller')['ip']
+        self._bigtap_switches = t.params(name, 'switches')
+        self._bigtap_ports = t.params(name, 'bigtap_ports')
+        self._bigtap_to_config = t.params(name,'bigtap_controller')['to_config']
+        self._switch_dpids = {'s1': '00:00:5c:16:c7:19:e7:4e'}  # FIXME to changed to getting dynamically
+        self._switch_handles = {}
+        super(BigTapIxiaNode, self).__init__(name,t)
+        self.bigtap_init(t)
+        
+    def bigtap_init(self, t):
+        helpers.log("Bigtap_ip: %s" % self._bigtap_controller)
+        helpers.log("Bigtap_switches: %s" % self._bigtap_switches)
+        helpers.log("Bigtap_Ports: %s" % self._bigtap_ports)
+        helpers.log("Bigtap IXIA Ports: %s" % self._ports)
+        
+        self._bigtap_node = t.node_spawn(self._bigtap_controller_ip, user='admin', password='adminadmin')
+        string = 'show version'
+        bigtap = self._bigtap_node
+        bigtap.cli(string)
+        content = bigtap.cli_content()  
+        print 'Printing BIGTAP VERSION:'
+        print content
+        string = 'show running-config'
+        bigtap.cli(string)
+        content = bigtap.cli_content()
+        print 'BIGTAP RUNNING CONFIG Before pushing Statics Policies'
+        print content
+        
+        for port in self._bigtap_ports.values():
+            final_macs = IxBigtapLib.create_mac_list(port['name'], 5)
+            ixia_macs = IxBigtapLib.create_mac_list(port['name'], 5, False)
+            for mac in final_macs:
+                helpers.log('Mac : %s' % mac)
+            temp_list = port['name'].split('/')
+            bigtap_switch_id = temp_list[0] # to be used for calculating switch DPID
+            bigtap_port_id = temp_list[1]
+            switch = 's'+str(bigtap_switch_id)
+            bigtap_config_rx = IxBigtapLib.create_bigtap_flow_conf_rx(self._switch_dpids[switch],
+                                                                52, ['2']) # FIXME to be changed for passing ix port from Topo file
+            bigtap_config_tx = IxBigtapLib.create_bigtap_flow_conf_tx(self._switch_dpids[switch],
+                                                                bigtap_portname = bigtap_port_id,
+                                                               ix_portname = '1', macs = final_macs)
+            
+            if self._bigtap_to_config == 'false':
+                helpers.log('Skipping Big tap Config...')
+            else:
+                helpers.log('Configuring BigTap')
+                for conf in bigtap_config_rx:
+                    print 'Executin cmd: ', conf
+                    bigtap.cli(conf)
+                for conf in bigtap_config_tx:
+                    print 'Executin cmd: ', conf
+                    bigtap.cli(conf)
+            print ixia_macs
+                                       
+    def platform(self):
+        return 'bigtap-ixia'
