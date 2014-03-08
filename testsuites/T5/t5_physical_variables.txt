@@ -21,6 +21,28 @@ ${leaf2a_ixia_intf}		ethernet24
 ${leaf2b_ixia_intf}		ethernet24
 ${leaf2a_spine0_intf0}	ethernet31
 ${leaf2a_spine1_intf0}	ethernet53
+${spine1_leaf0a_intf0}  ethernet1
+${spine1_leaf0b_intf0}  ethernet2
+${spine1_leaf1a_intf0}  ethernet9
+${spine1_leaf1b_intf0}  ethernet10
+${spine1_leaf2a_intf0}  ethernet15
+${spine1_leaf2b_intf0}  ethernet16
+${spine0_leaf0a_intf0}  ethernet33
+${spine0_leaf0b_intf0}  ethernet34
+${spine0_leaf1a_intf0}  ethernet2
+${spine0_leaf1a_intf1}  ethernet35
+${spine0_leaf1b_intf0}  ethernet36
+${spine0_leaf2a_intf0}  ethernet31
+${spine0_leaf2b_intf0}  ethernet32
+${leaf1a_spine0_intf0}  ethernet30
+${leaf1a_spine0_intf1}  ethernet31
+${leaf1a_spine1_intf0}  ethernet50
+${leaf1b_spine0_intf0}  ethernet31
+${leaf1b_spine1_intf0}  ethernet50
+${leaf2a_spine0_intf0}  ethernet31
+${leaf2a_spine1_intf0}  ethernet53
+${leaf2b_spine0_intf0}  ethernet31
+${leaf2b_spine1_intf0}  ethernet50
 ${h4_ip}  192.168.0.11
 ${h5_ip}  192.168.0.30
 ${h6_ip}  192.168.0.31
@@ -62,7 +84,5 @@ ${h2_eth1_ip}	192.168.2.21/24
 ${h3_tag_ip}	  192.168.2.10
 ${h4_tag_ip}  	192.168.2.11
 ${h2_tag_ip} 	192.168.2.21
-
-
 
 

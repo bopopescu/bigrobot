@@ -32,6 +32,7 @@ _tacacs_re = re.compile(r'[\r\n]s\/key[\S ]+\r?%s' % _password_re[0].pattern)
 #               MASTER-BLOCKED BB1301528x>
 #   Enable:     controller#
 #   Configure:  controller(config)#
+#               MY-T5-C11(config-local-user)#
 #   Debug Bash: admin@controller:~$
 #
 _prompt_re = [re.compile(r'[\r\n](\w+(-?\w+)?\s?@?)?[\-\w+\.:/]+(?:\([^\)]+\))?(:~)?[>#$] ?$')]
