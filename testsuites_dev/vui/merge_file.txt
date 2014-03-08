@@ -1,6 +1,6 @@
 ==============================================================================
 20140307 14:47:35.874 - INFO - + START SUITE: Test Controller [ ]
-bleh bleh bleh
+blah blah blah
 ==============================================================================
 20140307 14:47:35.874 - INFO - +- START SETUP: BsnCommon.Base Suite Setup [ ]
 20140307 14:47:35.961 - INFO - [autobot.test.__init__:53] Loading config file /Users/vui/Documents/workspace/myforks/bigrobot/autobot/config/bsn.yaml
