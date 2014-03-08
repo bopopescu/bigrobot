@@ -1063,8 +1063,6 @@ class T5(object):
             c.rest.get(url)
         except:
             return False
-        else:
-            return True
         data = c.rest.content()
         if data["counters-tenant-name"] == tenant and data["counters-vns-name"] == vns:
                     if (data["counters"]["counters-rx-packets"] >= (frame_cnt - vrange)) and (data["counters"]["counters-rx-packets"] <= (frame_cnt + vrange)):
@@ -1089,8 +1087,6 @@ class T5(object):
             c.rest.get(url)
         except:
             return False
-        else:
-            return True
         data = c.rest.content()
         if data["rates-tenant-name"] == tenant and data["rates-vns-name"] == vns:
             if (data["rates"]["rates-rx-packets"] >= (frame_rate - vrange)) and (data["rates"]["rates-rx-packets"] <= (frame_rate + vrange)):
@@ -1115,12 +1111,10 @@ class T5(object):
             c.rest.get(url)
         except:
             return False
-        else:
-            return True
         data = c.rest.content()
         if data["counters-tenant-name"] == tenant and data["counters-vns-name"] == vns:
-                    if (data["counters"]["counters-tx-packets"] >= (frame_cnt - vrange)) and (data["counters"]["counters-tx-packets"] <= (frame_cnt + vrange)):
-                        helpers.log("Pass: Counters value Expected:%d, Actual:%d" % (frame_cnt, data["counters"]["counters-rx-packets"]))
+                    if (int(data["counters"]["counters-tx-packets"]) >= (frame_cnt - vrange)) and (int(data["counters"]["counters-tx-packets"]) <= (frame_cnt + vrange)):
+                        helpers.log("Pass: Counters value Expected:%d, Actual:%d" % (frame_cnt, int(data["counters"]["counters-rx-packets"])))
                         return True
                     else:
                         return False
@@ -1141,12 +1135,10 @@ class T5(object):
             c.rest.get(url)
         except:
             return False
-        else:
-            return True
         data = c.rest.content()
         if data["rates-tenant-name"] == tenant and data["rates-vns-name"] == vns:
-            if (data["rates"]["rates-tx-packets"] >= (frame_rate - vrange)) and (data["rates"]["rates-tx-packets"] <= (frame_rate + vrange)):
-                helpers.log("Pass: Rate value Expected:%d, Actual:%d" % (frame_rate, data["rates"]["rates-rx-packets"]))
+            if (int(data["rates"]["rates-tx-packets"]) >= (frame_rate - vrange)) and (int(data["rates"]["rates-tx-packets"]) <= (frame_rate + vrange)):
+                helpers.log("Pass: Rate value Expected:%d, Actual:%d" % (frame_rate, int(data["rates"]["rates-rx-packets"])))
                 return True
             else:
                 return False
@@ -1753,8 +1745,6 @@ class T5(object):
             c.rest.get(url)
         except:
             return False
-        else:
-            return True
         data = c.rest.content()
         if data["interface-stats"]["interface-rx-counters"]["rxcounters-interface-name"] == intf and data["interface-stats"]["interface-rx-counters"]["rxcounters-switch-name"] == switch:
             if (data["interface-stats"]["interface-rx-counters"]["rxcounters-packets-unicast"] >= (frame_cnt - vrange)) and (data["interface-stats"]["interface-rx-counters"]["rxcounters-packets-unicast"] <= (frame_cnt + vrange)):
@@ -1779,8 +1769,6 @@ class T5(object):
             c.rest.get(url)
         except:
             return False
-        else:
-            return True
         data = c.rest.content()
         if data["interface-stats"]["interface-tx-counters"]["txcounters-interface-name"] == intf and data["interface-stats"]["interface-tx-counters"]["txcounters-switch-name"] == switch:
             if (data["interface-stats"]["interface-tx-counters"]["txcounters-packets-unicast"] >= (frame_cnt - vrange)) and (data["interface-stats"]["interface-tx-counters"]["txcounters-packets-unicast"] <= (frame_cnt + vrange)):
@@ -1805,8 +1793,6 @@ class T5(object):
             c.rest.get(url)
         except:
             return False
-        else:
-            return True
         data = c.rest.content()
         if data["interface-stats"]["interface-rx-rates"]["rxrates-interface-name"] == intf and data["interface-stats"]["interface-rx-rates"]["rxrates-switch-name"] == switch:
             if (data["interface-stats"]["interface-rx-rates"]["rxrates-packets-unicast"] >= (frame_rate - vrange)) and (data["interface-stats"]["interface-rx-rates"]["rxrates-packets-unicast"] <= (frame_rate + vrange)):
@@ -1831,8 +1817,6 @@ class T5(object):
             c.rest.get(url)
         except:
             return False
-        else:
-            return True
         data = c.rest.content()
         if data["interface-stats"]["interface-tx-rates"]["txrates-interface-name"] == intf and data["interface-stats"]["interface-tx-rates"]["txrates-switch-name"] == switch:
             if (data["interface-stats"]["interface-tx-rates"]["txrates-packets-unicast"] >= (frame_rate - vrange)) and (data["interface-stats"]["interface-tx-rates"]["txrates-packets-unicast"] <= (frame_rate + vrange)):
