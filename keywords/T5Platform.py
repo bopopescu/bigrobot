@@ -3,7 +3,7 @@ import autobot.test as test
 from T5Utilities import T5Utilities as utilities
 from time import sleep
 import keywords.Mininet as mininet
-import keywords.T5Fabric as T5Fabric
+import keywords.T5 as T5
 
 pingFailureCount = 0
 leafSwitchList = []
@@ -108,14 +108,19 @@ class T5Platform(object):
         return utilities.fabric_integrity_checker(obj, "before")
         
 
-    def _cluster_node_reboot(self, masterNode=True, singleNode=False):
+    def cluster_node_reboot(self, masterNode=True):
 
         ''' Reboot a node and verify the cluster leadership.
-            If only single Node setup : singleNode == True
             Reboot Master in dual node setup: masterNode == True
         '''
         t = test.Test()
         master = t.controller("master")
+        obj = utilities()
+        if (utilities.cli_get_num_nodes(obj) == 1):
+            singleNode = True
+        else:
+            singleNode = False
+            
 
         if(singleNode):
             masterID = self.getNodeID(False)
@@ -388,7 +393,7 @@ class T5Platform(object):
         
         global leafSwitchList
         
-        Fabric = T5Fabric.T5Fabric()
+        Fabric = T5.T5()
         for i,dpid in enumerate(spineList):
             spineName = "spine"+ str(i)
             Fabric.rest_add_switch(spineName)
@@ -460,7 +465,7 @@ class T5Platform(object):
         numSpines = len(spineList)
         numLeaves = len(leafList)
         
-        Fabric = T5Fabric.T5Fabric()
+        Fabric = T5.T5()
         for i in range(0,numSpines):
             spineName = 'spine' + str(i)
             Fabric.rest_delete_fabric_switch(spineName) 
