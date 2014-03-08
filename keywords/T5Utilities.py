@@ -3,6 +3,7 @@ import autobot.test as test
 import keywords.Mininet as mininet
 from time import sleep
 import keywords.T5Fabric as T5Fabric
+import re
 
 '''
     ::::::::::    README    ::::::::::::::
@@ -309,6 +310,32 @@ class T5Utilities(object):
                         warningCount += 1
                         
         return warningCount 
+    
+    
+    
+    def cli_get_num_nodes(self):
+        ''' 
+            Utility functions to return the number of nodes in a cluster.
+            Returns:
+                1 : single node cluster
+                2 : HA cluster
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        
+        c.cli('show cluster' )
+        content = c.cli_content()
+        temp = helpers.strip_cli_output(content)
+        temp = helpers.str_to_list(temp)
+        num = 0
+        for line in temp:          
+            match= re.match(r'.*(active|stand-by).*', line)
+            if match:
+                num = num+1                                      
+            else:
+                helpers.log("INFO: not for controller  %s" % line)  
+        helpers.log("INFO: There are %d of controller(s) in the cluster" % num)   
+        return num    
            
     
 
