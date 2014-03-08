@@ -108,7 +108,7 @@ class T5Platform(object):
         return utilities.fabric_integrity_checker(obj, "before")
         
 
-    def _cluster_node_reboot(self, singleNode=False, masterNode=True):
+    def _cluster_node_reboot(self, masterNode=True, singleNode=False):
 
         ''' Reboot a node and verify the cluster leadership.
             If only single Node setup : singleNode == True
