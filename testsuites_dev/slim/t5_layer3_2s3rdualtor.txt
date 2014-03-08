@@ -10,7 +10,7 @@ Force Tags      T5 Sanity
 Library         keywords/BsnCommon.py
 Library         keywords/Mininet.py
 Library         keywords/T5.py
-Library         keywords/T5Fabric.py
+#Library         keywords/T5Fabric.py
 Library         keywords_dev/prashanth/T5L3.py
 Library         keywords_dev/animesh/BsnCommonShow.py
 Resource		keywords_dev/slim/t5_l3_dualspine.txt
@@ -1075,8 +1075,10 @@ Change vns ip address with L3 intra tenant traffic with dynamic endpoints
 	Should Be True  							${loss} == 100
 	mininet host ipcfg   						${bm1_name}			${bm1_bondif}	${bm1_ip}			${vns1_subnet2}
 	mininet host gw								${bm1_name}			${vns1_ip2}		${bm1_bondif}
-	mininet l3 ping								${bm4_name}			10.10.99.11		3
 	${loss}=  									mininet l3 ping		${bm4_name}		10.10.99.11	
+	Should Be True  							${loss} == 100
+	mininet l3 ping								${bm4_name}			${bm1_ip} 	
+	${loss}=  									mininet l3 ping		${bm4_name}		${bm1_ip} 	
 	Should Be True  							${loss} == 0
 	${endpoints_cnt}=							rest count endpoints mac
 #	Should Be True  							${endpoints_cnt} == 8
