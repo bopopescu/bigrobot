@@ -1023,7 +1023,7 @@ Delete and add router vns with L3 intra tenant traffic with dynamic endpoints
 	REST show forwarding switch l3 cidr route	${leaf2a_name}
 	REST show forwarding switch l3 cidr route	${leaf2b_name}		
 	Should Be True  							${loss} == 0
-	mininet ifconfig intf						${bm1_name}							eth0
+	mininet ifconfig intf						${bm1_name}							${bm1_bondif}
 	${value}= 									mininet host verify arp				${bm1_name} 	${vns1_ip2}
 	Should Be True								${value} 					
 	${endpoints_cnt}=							rest count endpoints mac
@@ -1067,6 +1067,7 @@ Change vns ip address with L3 intra tenant traffic with dynamic endpoints
 	Should Be True  							${loss} == 100
 	mininet host ipcfg   						${bm1_name}			${bm1_bondif}	10.10.99.11			${vns1_subnet2}
 	mininet host gw								${bm1_name}			10.10.99.1		${bm1_bondif}
+	mininet l3 ping								${bm4_name}			10.10.99.11		3	
 	${loss}=  									mininet l3 ping		${bm4_name}		10.10.99.11	
 	Should Be True  							${loss} == 0
 	REST add vns ip  							${tenant1_name}  	${vns1_2}  		${vns1_ip2}	  		${vns1_subnet2} 	
@@ -1161,7 +1162,7 @@ Verify subnet mask on vns router ip
 	REST add vns ip								${tenant1_name}  	${vns1_1}  		10.10.11.254	  	25
 	REST show running config
 	mininet host delete arp						${bm0_name}			${vns1_ip1}
-	mininet host gw								${bm0_name}			10.10.11.254		${bm0-bond0}
+	mininet host gw								${bm0_name}			10.10.11.254		${bm0_bondif}
 	mininet l3 ping								${bm0_name}			10.10.11.254		3
 	${result}=									mininet host verify arp		${bm0_name}		10.10.11.254
 	Should Not Be True							${result}
@@ -1452,6 +1453,23 @@ delete static endpoint
 	REST delete endpoint						${tenant2_name}		${vns2_3}		${bm10_name}				
 
 mininet host config
+	mininet host ipcfg							${bm0_name}			${bm0_bondif}	0.0.0.0				0
+	mininet host ipcfg							${bm1_name}			${bm1_bondif}	0.0.0.0				0
+	mininet host ipcfg							${bm2_name}			${bm2_bondif}	0.0.0.0				0
+	mininet host ipcfg							${bm3_name}			${bm3_bondif}	0.0.0.0				0
+	mininet host ipcfg							${bm4_name}			${bm4_bondif}	0.0.0.0				0
+	mininet host ipcfg							${bm5_name}			${bm5_bondif}	0.0.0.0				0
+	mininet host ipcfg							${bm6_name}			${bm6_bondif}	0.0.0.0				0
+	mininet host ipcfg							${bm7_name}			${bm7_bondif}	0.0.0.0				0
+	mininet host ipcfg							${bm8_name}			${bm8_bondif}	0.0.0.0				0
+	mininet host ipcfg							${bm9_name}			${bm9_bondif}	0.0.0.0				0
+	mininet host ipcfg							${bm10_name}		${bm10_bondif}	0.0.0.0				0
+	mininet host ipcfg							${bm11_name}		${bm11_bondif}	0.0.0.0				0
+	mininet l3 link untag						${bm2_name}			${bm2_bondif}	{vns2_vlan3}		${bm2_ip}		${vns2_subnet3}
+	mininet l3 link untag						${bm4_name}			${bm4_bondif}	${vns1_vlan1}		${bm4_ip}		${vns1_subnet1}
+	mininet l3 link untag						${bm8_name}			${bm8_bondif}	${vns2_vlan1}		${bm8_ip}		${vns2_subnet1}
+	mininet l3 link untag						${bm9_name}			${bm9_bondif}	${vns2_vlan2}		${bm9_ip}		${vns2_subnet2}
+	sleep										1	
 	mininet host ipcfg   						${bm0_name}			${bm0_bondif}	${bm0_ip}			${vns1_subnet1}
 	mininet host ipcfg   						${bm1_name}			${bm1_bondif}	${bm1_ip}			${vns1_subnet2}
 	mininet l3 link tag							${bm2_name}			${bm2_bondif}	${vns2_vlan3}		${bm2_ip}		${vns2_subnet3}
