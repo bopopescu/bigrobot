@@ -1106,6 +1106,26 @@ class T5(object):
 #To be added
 #===========================================================
 
+    def cli_configure_virtual_ip(self, vip):
+        ''' Function to show Virtual IP of a controller via CLI
+        Input: None
+        Output: VIP address if configured, None otherwise
+        '''
+        t = test.Test()
+        c = t.controller('master')
+
+        helpers.test_log("Input arguments: virtual IP = %s" % vip)
+        try:
+            c.config("cluster")
+            c.config("virtual-ip %s" % vip)
+            assert "Error" not in c.cli_content()
+        except:
+            helpers.test_log(c.cli_content())
+            return False
+        else:
+            return True
+
+
     def cli_get_eth0_ip_using_virtual_ip(self, vip):
         ''' Function to verify that Virtual IP address
         points to some controller via CLI
@@ -1279,6 +1299,9 @@ class T5(object):
         else:
             return True
 
+#===========================================================
+#End here
+#===========================================================
 
     def cli_copy_running_config_to_config(self, filename):
         ''' Function to copy running config to config:// file
@@ -1426,6 +1449,40 @@ class T5(object):
                 if not line == config_file[index]:
                     helpers.log("difference")
                     return False
+        except:
+            helpers.test_log(c.cli_content())
+            return False
+        else:
+            return True
+
+
+    def cli_compare_running_config_with_scp(self, destination):
+        ''' Function to compare current running config with
+        config saved in a file, via CLI line by line
+        Input: Filename
+        Output: True if successful, False otherwise
+        '''
+        helpers.test_log("Running command:\ncompare running-config scp://%s" % destination)
+        t = test.Test()
+        c = t.controller('master')
+        try:
+            comparison = c.config("compare running-config scp://%s" % destination)['content']
+            #comparison = c.config("compare running-config test-config")['content']
+            if "Error" in c.cli_content():
+                helpers.log("Error in CLI content")
+                return False
+            comparison = helpers.strip_cli_output(rc)
+            comparison = helpers.str_to_list(rc)
+
+            if (len(comparison) == 4) or (len(comparison) == 0):
+                if len(comparison) == 4 and '3c3' not in comparison[0]:
+                    helpers.log("Compared files are different")
+                    return False
+                else:
+                    helpers.log("Compared files are the same")
+            else:
+                helpers.log("Compared files are different")
+                return False
         except:
             helpers.test_log(c.cli_content())
             return False

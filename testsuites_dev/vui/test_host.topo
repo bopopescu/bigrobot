@@ -5,6 +5,7 @@ h1:
   #ip: 10.192.4.11    # dev1
   #ip: 10.193.0.120  # Song's UNIX system
   ip: 10.195.0.103   # Prashanth's compute node
-  user: root
-  password: bsn
+  #ip: 10.193.0.21   # Song's compute node
+  #user: root
+  #password: bsn
 
