@@ -162,7 +162,7 @@ class BsnCommon(object):
         '''
         t = test.Test()
         n = t.node(node)
-        if helpers.is_switch(node):
+        if helpers.is_switch(n.platform()):
             helpers.log("Node is a switch")
             if helpers.is_switchlight(n.platform()):
                 '''
@@ -179,7 +179,7 @@ class BsnCommon(object):
                 helpers.test_error("Unsupported Platform %s" % (node))
         elif helpers.is_controller(node):
             helpers.log("The node is a controller")
-            if helpers.is_bigtap(node):
+            if helpers.is_bigtap(n.platform()):
                 '''
                 BigTap NTP Configuration goes here
                 '''
@@ -194,7 +194,7 @@ class BsnCommon(object):
                 else:
                     helpers.test_log(c.rest.content_json())
                     return True
-            elif helpers.is_bigwire(node):
+            elif helpers.is_bigwire(n.platform()):
                 '''
                 BigWire NTP Configuration goes here
                 '''
@@ -209,7 +209,7 @@ class BsnCommon(object):
                 else:
                     helpers.test_log(c.rest.content_json())
                     return True
-            elif helpers.is_t5(node):
+            elif helpers.is_t5(n.platform()):
                 '''
                     T5 Controller
                 '''
@@ -354,7 +354,7 @@ class BsnCommon(object):
                     return False
         elif helpers.is_controller(node):
             helpers.log("The node is a controller")
-            if  helpers.is_bigtap(node):
+            if  helpers.is_bigtap(n.platform()):
                 '''
                     BigTap NTP Server Verification goes here
                 '''
@@ -376,7 +376,7 @@ class BsnCommon(object):
                     else:
                         return False
 
-            elif helpers.is_bigwire(node):
+            elif helpers.is_bigwire(n.platform()):
                 '''
                     BigWire NTP Server Verification goes here
                 '''
@@ -398,10 +398,29 @@ class BsnCommon(object):
                     else:
                         return False
 
-            elif helpers.is_t5(node):
+            elif helpers.is_t5(n.platform()):
                 '''
                     T5 Controller NTP Server Verification goes here
                 '''
+                c = t.controller('master')
+                try:
+                    url = '/api/v1/data/controller/os/action/time/ntp'
+                    c.rest.get(url)
+                except:
+                    helpers.test_failure(c.rest.error())
+                    return False
+                else:
+                    content = c.rest.content()
+                    pass_flag = False
+                    helpers.log("Length of content is %s" % len(content))
+                    for x in range(0, len(content)):
+                        helpers.log("Value of content is %s" % content[x])
+                        if content[x] == str(ntp_server):
+                            pass_flag = True
+                    if pass_flag:
+                        return True
+                    else:
+                        return False
             else:
                 helpers.test_error("Unsupported Platform %s" % (node))
         else:
@@ -428,9 +447,9 @@ class BsnCommon(object):
         '''
         try:
             t = test.Test()
-            if "Master" or "master" in node:
+            if "master" in node:
                 node = t.controller("master")
-            elif "Slave" or "slave" in node:
+            elif "slave" in node:
                 node = t.controller("slave")
             else:
                 node = t.switch(node)
@@ -459,9 +478,9 @@ class BsnCommon(object):
         '''
         try:
             t = test.Test()
-            if "Master" or "master" in node:
+            if "master" in node:
                 node = t.controller("master")
-            elif "Slave" or "slave" in node:
+            elif "slave" in node:
                 node = t.controller("slave")
             else:
                 node = t.switch(node)
@@ -486,9 +505,9 @@ class BsnCommon(object):
         except:
             return False
         else:
-            if "Master" or "master" in node:
+            if "master" in node:
                 node = t.controller("master")
-            elif "Slave" or "slave" in node:
+            elif "slave" in node:
                 node = t.controller("slave")
             else:
                 node = t.switch(node)
@@ -510,9 +529,9 @@ class BsnCommon(object):
             Return Value:  return the SNMP Walk O/P
         '''
         t = test.Test()
-        if "Master" or "master" in node:
+        if "master" in node:
             node = t.controller("master")
-        elif "Slave" or "slave" in node:
+        elif "slave" in node:
             node = t.controller("slave")
         else:
             node = t.switch(node)
