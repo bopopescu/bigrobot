@@ -1,0 +1,99 @@
+*** Settings ***
+Documentation   	A test suite with a single test for valid login. This test has
+...             	a workflow that is created using keywords from the resource file.
+Force Tags      	GUI RBAC
+Suite Setup      	Setup
+Suite Teardown   	Teardown
+Library         	keywords/BsnCommon.py
+Library         	keywords_dev/tomasz/BigTap.py
+Library        		SeleniumLibrary
+Resource        	bigtap_resource.txt
+
+
+*** Test Cases *** 
+### Check Pages		
+T1.1 Check Main Landing Page
+	Go To Landing Page
+T1.2 Check Controller Switches Page
+    Go To Controller Switches Page
+T1.3 Check Controller Interfaces Page
+    Go To Controller Interfaces Page
+T1.4 Check Big Tap Page
+    Go To Big Tap Page
+T1.5 Check Big Tap Topology Page
+    Go To Big Tap Topology Page
+T1.6 Check Big Tap Policies Page
+    Go To Big Tap Policies Page
+T1.7 Check Big Tap IP Lists Page
+    Go To Big Tap IP Lists Page
+T1.8 Check Big Tap Services Page
+    Go To Big Tap Services Page
+T1.9 Check Big Tap Interfaces Page
+    Go To Big Tap Interfaces Page
+T1.10 Check Security Users Page
+    Go To Security Users Page
+T1.11 Check Security Groups Page
+    Go To Security Groups Page
+T1.12 Check Security RBAC Page
+    Go To Security RBAC Page
+
+
+### Check Hover					Menu						Label					Destination					Title
+T2.1 Controller Switches	
+	Check Hover					${FABRIC MENU}				${SWITCHES LABEL}		${SWITCHES URL}				${SWITCHES TITLE}
+T2.2 Controller Interfaces
+	Check Hover					${FABRIC MENU}				${INTERFACES LABEL}		${INTERFACES URL}			${INTERFACES TITLE}
+T2.3 BigTap Policies	
+	Check Hover					${BIG TAP MENU}				${POLICIES LABEL}		${POLICIES URL}				${POLICIES TITLE}
+T2.4 BigTap IP Lists	
+	Check Hover					${BIG TAP MENU}				${IP LISTS LABEL}		${IP LISTS URL}				${IP LISTS TITLE}
+T2.5 BigTap Services	
+	Check Hover					${BIG TAP MENU}				${SERVICES LABEL}		${SERVICES URL}				${SERVICES TITLE}
+T2.6 BigTap Interfaces
+	Check Hover					${BIG TAP MENU}				${BT INTERFACES LABEL}	${BT INTERFACES URL}		${BT INTERFACES TITLE}
+T2.7 Users			
+	Check Hover					${SECURITY MENU}			${USERS LABEL}			${USERS URL}				${USERS TITLE}
+T2.8 Groups			
+	Check Hover					${SECURITY MENU}			${GROUPS LABEL}			${GROUPS URL}				${GROUPS TITLE}
+T2.9 RBAC Permissions
+	Check Hover					${SECURITY MENU}			${RBAC LABEL}			${RBAC URL}					${RBAC TITLE}
+T2.10 Sign Out		
+	Check Hover					${ADMIN MENU}				${SIGN OUT LABEL} 		${LOG IN URL}				${LOG IN TITLE}
+
+
+###  Check Element			Element 
+T3 Setup
+    Go To Login Page
+    Valid Login  admin  adminadmin
+    Sleep  5 sec
+T3.1 Controller Info Pane		
+	Check Element			${CONTROLLER INFO PANE}
+T3.2 Controller Bar Pane			
+	Check Element			${CONTROLLER BAR PANE}
+T3.3 Controller Pie Pane	
+	Check Element			${CONTROLLER PIE PANE}
+T3.4 Controller Summary Pane
+	Check Element			${CONTROLLER SUMMARY PANE}
+T3.5 Controller Config Pane	
+	Check Element			${CONTROLLER CONFIG PANE}
+T3.6 Topology View Pane
+	Check Element			${TOPOLOGY VIEW PANE}
+
+
+*** Keywords ***
+Setup
+	base suite setup
+    Start Selenium Server SSL  -trustAllSSLCertificates
+    ${c1_ip}            params  node=c1  key=ip
+    set suite variable  ${SERVER}  ${c1_ip}:8443
+    Set URLs
+    CLI Start Mininet Server  tree,3
+    Rest Open GUI Port
+    Open Browser To Login Page
+    Valid Login  admin  adminadmin
+
+
+Teardown
+	Close Browser
+    Stop Selenium Server
+    base suite teardown
