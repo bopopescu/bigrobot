@@ -5,6 +5,7 @@ Suite Setup     Setup
 Suite Teardown  Teardown
 Force Tags      GUI RBAC
 Library         keywords/BsnCommon.py
+Library         keywords/AppController.py
 Library         keywords_dev/tomasz/BigTap.py
 Library        	SeleniumLibrary
 Resource        bigtap_resource.txt
@@ -50,9 +51,9 @@ Setup
 	${c1_ip}            params  node=c1  key=ip
     set suite variable  ${SERVER}  ${c1_ip}:8443
     Set URLs
-    Rest Add Tacacs Server
-    Rest AAA Authz Config Local Remote
-    Rest AAA Authn Config Local Remote
+    Rest Add Tacacs Server  10.192.4.91  secret
+    Rest Add Tacacs Authentication
+    Rest Add Tacacs Authorization
     CLI Configure User    tomasz
     CLI Configure User    test    adminadmin
     CLI Configure User    test-user-local    ,./[]<:{}`~!@#$^&*()_-1234567890
