@@ -18,35 +18,35 @@ Configure and Verify Configuration
     verify config
 
 Verify SNMP OID sysContact  
-    ${snmp_key}=  snmp get  public  sysContact.0
+    ${snmp_key}=  snmp get  master  public  sysContact.0
     Should Contain  ${snmp_key}  Big Switch Networks
 
 Verify SNMP OID sysLocation  
-    ${snmp_key}=  snmp get  public  sysLocation.0
+    ${snmp_key}=  snmp get  master  public  sysLocation.0
     Should Contain  ${snmp_key}  Mountain View
 
 Verify SNMP OID sysDescr  
-    ${snmp_key}=  snmp get  public  sysDescr.0
+    ${snmp_key}=  snmp get  master  public  sysDescr.0
     Should Contain  ${snmp_key}  Big Wire Controller    
 
 Verify SNMP OID ifDescr  
-    ${snmp_key}=  snmp get  public  ifDescr.2
+    ${snmp_key}=  snmp get  master  public  ifDescr.2
     Should Contain  ${snmp_key}  eth0
 
 Verify SNMP OID ifType  
-    ${snmp_key}=  snmp get  public  ifType.2
+    ${snmp_key}=  snmp get  master  public  ifType.2
     Should Contain  ${snmp_key}  ethernetCsmacd
     
 Verify SNMP OID ifOperStatus  
-    ${snmp_key}=  snmp get  public  ifOperStatus.2
+    ${snmp_key}=  snmp get  master  public  ifOperStatus.2
     Should Contain  ${snmp_key}  up
     
 Verify SNMP OID ifAdminStatus  
-    ${snmp_key}=  snmp get  public  ifAdminStatus.2
+    ${snmp_key}=  snmp get  master  public  ifAdminStatus.2
     Should Contain  ${snmp_key}  up     
 
 Verify snmpgetnext works as expected
-    ${snmp_key}=  snmp getnext  public  ifDescr.1
+    ${snmp_key}=  snmp getnext  master  public  ifDescr.1
     Should Contain  ${snmp_key}  eth0
 
 verify snmpbulkget works as expected
@@ -60,12 +60,12 @@ verify snmpbulkwalk works as expected
 Restart process SNMP and verify
     restart process on controller  snmpd  Slave
     Sleep  10    
-    ${snmp_key}=  snmp get  public  sysDescr.0
+    ${snmp_key}=  snmp get  master  public  sysDescr.0
     Should Contain  ${snmp_key}  Big Wire Controller  
 
 Change community from public to bigswitch and verify snmp walk
     rest add snmp keyword  community  bigswitch
-    ${snmp_key}=  snmp get  bigswitch  sysDescr.0
+    ${snmp_key}=  snmp get  master  bigswitch  sysDescr.0
     Should Contain  ${snmp_key}  Big Wire Controller   
 
        
