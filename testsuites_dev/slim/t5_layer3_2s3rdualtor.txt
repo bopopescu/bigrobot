@@ -40,11 +40,11 @@ Intra tenant L3 untagged to tagged host same rack
 
 Intra tenant L3 untagged to tagged host across rack
 	L3 intra tenant across rack untagged to tagged host
-#	[Tags]							skipped		sanity	
+#	[Tags]							skipped		sanity		smoke
 
 Intra tenant L3 tagged to tagged host across rack
 	L3 intra tenant across rack tagged to tagged host
-#	[Tags]							skipped		sanity	
+#	[Tags]							skipped		sanity		smoke
 
 Intra tenant with invalid ttl 1
 	L3 intra tenant across rack ttl1
@@ -655,9 +655,9 @@ Verify L3 traffic for static endpoints
 	#add static endpoint
 	#sleep										1
 	#mininet host ipcfg   						${bm0_name}			${bm0_bondif}	${bm0_ip}			${vns1_subnet1}
-	#mininet host gw								${bm0_name}			${vns1_ip1}		${bm0_bondif}
+	#mininet host gw							${bm0_name}			${vns1_ip1}		${bm0_bondif}
 	#mininet host add arp						${bm0_name}			${vns1_ip1}		${gw_mac}
-	#sleep  										1
+	#sleep  									1
 	#mininet host tcpdump						${bm10_name} 		${bm10_bondif}	icmp	 10
 	sleep										1	
 	
