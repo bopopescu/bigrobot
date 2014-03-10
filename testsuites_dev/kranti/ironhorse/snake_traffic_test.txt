@@ -9,12 +9,13 @@ Force Tags       T5 Switch snaketest
 ...             export BIGROBOT_SUITE=snake_traffic_test 
 ...
 ...             Section A: Traffic Verification Test 
-...                Uni-Directional L2 Traffic flow a->b with frame rate 10000 pkt size 64,256,512,1024,1518
-...                Uni-Directional L2 Traffic flow b->a with frame rate 10000 pkt size 64,256,512,1024,1518
+...                Uni-Directional L2 Traffic flow a->b with framerate 10000 pktsize 64,256,512,1024,1518
+...                Uni-Directional L2 Traffic flow a->b with linerate 10%,25%,50%,75%,100% pktsize 64,256,512,1024,1518           
 ...                Bi-Directional L2 Traffic flow a<->b with frame rate 10000 pkt size 64,256,512,1024,1518
-...                Uni-Directional L2 Traffic flow a->b with frame rate 10000 pkt size 9150 ( Jumbo frame )
-...                Uni-Directional L2 Traffic flow b->a with frame rate 10000 pkt size 9150 ( Jumbo frame )
-...           
+...                Bi-Directional L2 Traffic flow a<->b with linerate 10%,25%,50%,75%,100% pktsize 64,256,512,1024,1518
+...                Uni-Directional L2 Jumbo Traffic flow a->b with framerate 10000 pktsize 9150 ( Jumbo frame )
+...                Bi-Directional L2 Jumbo Traffic flow a<->b with linerate 100 pktsize 9150 ( Jumbo frame )
+...                Toatl Tests = 20 Test Cases      
 ...             
 Library         keywords/BsnCommon.py
 Library         keywords/AppController.py
@@ -39,7 +40,7 @@ ${sleepBefore}=   5
 ### Section A: ONIE, Boot Loader Installation 
 
 *Test Case
-Uni-Directional L2 Traffic flow=a->b traffic pktsize 64 framerate 10000
+Uni-Directional L2 Traffic flow=a->b traffic framerate 10000 pktsize 64 
     ${stream}=             L2 add  flow=a->b  src_mac=00:11:23:00:00:09  dst_mac=00:11:23:00:00:99  frame_rate=10000  frame_size=64  ethertype=8000  name=a_b_flow
     clear stats
     start traffic  ${stream}
@@ -50,213 +51,254 @@ Uni-Directional L2 Traffic flow=a->b traffic pktsize 64 framerate 10000
     sleep                  10
     ${report}=             fetch port stats
     verify results traffic  transmitted_frames  received_valid_frames  ${tolerance}        
-    [Tags]  T5  traffic  snake  run  tc1
+    [Tags]  T5  traffic  snake  
 
-Uni-Directional L2 Traffic flow=a->b totalframes pktsize 64 framerate 10000 
-# Currently Supported L2 Stream args will be adding more
-    ${stream}=             L2 add  flow=a->b  src_mac=00:11:23:00:00:09  dst_mac=00:11:23:00:00:99  frame_rate=10000  frame_size=64  ethertype=8000  name=a_b_flow
-    clear stats
-    start traffic  ${stream}
-    sleep                  10
-    stop traffic   ${stream}
-    sleep                  10
-    ${report}=             fetch port stats
-    verify results totalframes  transmitted_frames  received_valid_frames
-    [Tags]  T5  traffic  snake  run
-
-Uni-Directional L2 Traffic flow=a->b trafficrate linerate 10% pktsize 64
-# Currently Supported L2 Stream args will be adding more
+Uni-Directional L2 Traffic flow=a->b traffic linerate 10% pktsize 64
     ${stream}=             L2 add  flow=a->b  src_mac=00:11:23:00:00:09  dst_mac=00:11:23:00:00:99  line_rate=10  frame_size=64  ethertype=8000  name=a_b_flow
     clear stats
     start traffic  ${stream}
     sleep                  10
     ${report}=             fetch port stats
-    verify results trafficrate  transmitted_frame_rate  received_valid_frame_rate  ${tolerance}  
-    stop traffic   ${stream}
-    sleep                  10
-    [Tags]  T5  traffic  snake  run    
-
-Uni-Directional L2 Traffic flow=a->b totalframes linerate 10% pktsize 64
-# Currently Supported L2 Stream args will be adding more
-    ${stream}=             L2 add  flow=a->b  src_mac=00:11:23:00:00:09  dst_mac=00:11:23:00:00:99  line_rate=10  frame_size=64  ethertype=8000  name=a_b_flow
-    clear stats
-    start traffic  ${stream}
-    sleep                  10
+    verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}  
     stop traffic   ${stream}
     sleep                  10
     ${report}=             fetch port stats
-    verify results totalframes  transmitted_frames  received_valid_frames
-    [Tags]  T5  traffic  snake  run  
+    verify results traffic  transmitted_frames  received_valid_frames  ${tolerance}    
+    [Tags]  T5  traffic  snake     
 
-Uni-Directional L2 Traffic flow=a->b trafficrate pktsize 256 framerate 10000
-# Currently Supported L2 Stream args will be adding more
+Uni-Directional L2 Traffic flow=a->b traffic framerate 10000 pktsize 256 
     ${stream}=             L2 add  flow=a->b  src_mac=00:11:23:00:00:09  dst_mac=00:11:23:00:00:99  frame_rate=10000  frame_size=256  ethertype=8000  name=a_b_flow
     clear stats
     start traffic  ${stream}
     sleep                  10
     ${report}=             fetch port stats
-    verify results trafficrate  transmitted_frame_rate  received_valid_frame_rate  ${tolerance} 
-    stop traffic   ${stream}
-    sleep 10
-    [Tags]  T5  traffic  snake  run 
-
-Uni-Directional L2 Traffic flow=a->b totalframes pktsize 256 framerate 10000
-# Currently Supported L2 Stream args will be adding more
-    ${stream}=             L2 add  flow=a->b  src_mac=00:11:23:00:00:09  dst_mac=00:11:23:00:00:99  frame_rate=10000  frame_size=256  ethertype=8000  name=a_b_flow
-    clear stats
-    start traffic  ${stream}
-    sleep                  10
+    verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}  
     stop traffic   ${stream}
     sleep                  10
     ${report}=             fetch port stats
-    verify results totalframes  transmitted_frames  received_valid_frames
-    [Tags]  T5  traffic  snake  run
+    verify results traffic  transmitted_frames  received_valid_frames  ${tolerance}
+    [Tags]  T5  traffic  snake 
+    
+Uni-Directional L2 Traffic flow=a->b traffic linerate 25% pktsize 256
+    ${stream}=             L2 add  flow=a->b  src_mac=00:11:23:00:00:09  dst_mac=00:11:23:00:00:99  line_rate=25  frame_size=256  ethertype=8000  name=a_b_flow
+    clear stats
+    start traffic  ${stream}
+    sleep                  10
+    ${report}=             fetch port stats
+    verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}  
+    stop traffic   ${stream}
+    sleep                  10
+    ${report}=             fetch port stats
+    verify results traffic  transmitted_frames  received_valid_frames  ${tolerance}    
+    [Tags]  T5  traffic  snake
 
-Uni-Directional L2 Traffic flow=a->b trafficrate pktsize 512 framerate 10000 
-# Currently Supported L2 Stream args will be adding more
+Uni-Directional L2 Traffic flow=a->b traffic framerate 10000 pktsize 512 
     ${stream}=             L2 add  flow=a->b  src_mac=00:11:23:00:00:09  dst_mac=00:11:23:00:00:99  frame_rate=10000  frame_size=512  ethertype=8000  name=a_b_flow
     clear stats
     start traffic  ${stream}
     sleep                  10
     ${report}=             fetch port stats
-    verify results trafficrate  transmitted_frame_rate  received_valid_frame_rate  ${tolerance}   
-    stop traffic   ${stream}
-    sleep                  10
-    [Tags]  T5 traffic  snake  run 
-    
-Uni-Directional L2 Traffic flow=a->b totalframes pktsize 512 framerate 10000 
-# Currently Supported L2 Stream args will be adding more
-    ${stream}=             L2 add  flow=a->b  src_mac=00:11:23:00:00:09  dst_mac=00:11:23:00:00:99  frame_rate=10000  frame_size=512  ethertype=8000  name=a_b_flow
-    clear stats
-    start traffic  ${stream}
-    sleep                  10
+    verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}  
     stop traffic   ${stream}
     sleep                  10
     ${report}=             fetch port stats
-    verify results totalframes  transmitted_frames  received_valid_frames
-    [Tags]  T5 traffic  snake  run
-    
-Uni-Directional L2 Traffic flow=a->b trafficrate linerate 20% pktsize 512
-# Currently Supported L2 Stream args will be adding more
-    ${stream}=             L2 add  flow=a->b  src_mac=00:11:23:00:00:09  dst_mac=00:11:23:00:00:99  line_rate=20  frame_size=512  ethertype=8000  name=a_b_flow
+    verify results traffic  transmitted_frames  received_valid_frames  ${tolerance}
+    [Tags]  T5 traffic  snake   
+       
+Uni-Directional L2 Traffic flow=a->b traffic linerate 50% pktsize 512
+    ${stream}=             L2 add  flow=a->b  src_mac=00:11:23:00:00:09  dst_mac=00:11:23:00:00:99  line_rate=50  frame_size=512  ethertype=8000  name=a_b_flow
     clear stats
     start traffic  ${stream}
     sleep                  10
     ${report}=             fetch port stats
-    verify results trafficrate  transmitted_frame_rate  received_valid_frame_rate  ${tolerance}  
-    stop traffic   ${stream}
-    sleep                  10
-    [Tags]  T5  traffic  snake  run    
-
-Uni-Directional L2 Traffic flow=a->b totalframes linerate 20% pktsize 512
-# Currently Supported L2 Stream args will be adding more
-    ${stream}=             L2 add  flow=a->b  src_mac=00:11:23:00:00:09  dst_mac=00:11:23:00:00:99  line_rate=20  frame_size=512  ethertype=8000  name=a_b_flow
-    clear stats
-    start traffic  ${stream}
-    sleep                  10
+    verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}  
     stop traffic   ${stream}
     sleep                  10
     ${report}=             fetch port stats
-    verify results totalframes  transmitted_frames  received_valid_frames
-    [Tags]  T5  traffic  snake  run
-    
-###############    
-Uni-Directional L2 Traffic flow=a->b with frame rate 10000 pkt size 1024
-# Currently Supported L2 Stream args will be adding more
+    verify results traffic  transmitted_frames  received_valid_frames  ${tolerance}
+    [Tags]  T5  traffic  snake      
+     
+Uni-Directional L2 Traffic flow=a->b traffic framerate 10000 pktsize 1024
     ${stream}=             L2 add  flow=a->b  src_mac=00:11:23:00:00:09  dst_mac=00:11:23:00:00:99  frame_rate=10000  frame_size=1024  ethertype=8000  name=a_b_flow
     clear stats
     start traffic  ${stream}
     sleep                  10
+    ${report}=             fetch port stats
+    verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}  
     stop traffic   ${stream}
     sleep                  10
     ${report}=             fetch port stats
-    verify results  transmitted_frame_rate  received_valid_frame_rate
+    verify results traffic  transmitted_frames  received_valid_frames  ${tolerance}
     [Tags]  T5 traffic  snake    
     
-Uni-Directional L2 Traffic flow=a->b with frame rate 10000 pkt size 1518
-# Currently Supported L2 Stream args will be adding more
+Uni-Directional L2 Traffic flow=a->b traffic linerate 75% pktsize 1024
+    ${stream}=             L2 add  flow=a->b  src_mac=00:11:23:00:00:09  dst_mac=00:11:23:00:00:99  line_rate=75  frame_size=1024  ethertype=8000  name=a_b_flow
+    clear stats
+    start traffic  ${stream}
+    sleep                  10
+    ${report}=             fetch port stats
+    verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}  
+    stop traffic   ${stream}
+    sleep                  10
+    ${report}=             fetch port stats
+    verify results traffic  transmitted_frames  received_valid_frames  ${tolerance}
+    [Tags]  T5  traffic  snake
+
+Uni-Directional L2 Traffic flow=a->b traffic framerate 10000 pktsize 1518
     ${stream}=             L2 add  flow=a->b  src_mac=00:11:23:00:00:09  dst_mac=00:11:23:00:00:99  frame_rate=10000  frame_size=1518  ethertype=8000  name=a_b_flow
     clear stats
     start traffic  ${stream}
     sleep                  10
+    ${report}=             fetch port stats
+    verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}  
     stop traffic   ${stream}
     sleep                  10
     ${report}=             fetch port stats
-    verify results  transmitted_frame_rate  received_valid_frame_rate
-    [Tags]  T5 traffic  snake
+    verify results traffic  transmitted_frames  received_valid_frames  ${tolerance}
+    [Tags]  T5  traffic  snake
+
+Uni-Directional L2 Traffic flow=a->b traffic linerate 100% pktsize 1518
+    ${stream}=             L2 add  flow=a->b  src_mac=00:11:23:00:00:09  dst_mac=00:11:23:00:00:99  line_rate=100  frame_size=1518  ethertype=8000  name=a_b_flow
+    clear stats
+    start traffic  ${stream}
+    sleep                  10
+    ${report}=             fetch port stats
+    verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}  
+    stop traffic   ${stream}
+    sleep                  10
+    ${report}=             fetch port stats
+    verify results traffic  transmitted_frames  received_valid_frames  ${tolerance}
+    [Tags]  T5  traffic  snake
+        
+Bi-Directional L2 Traffic flow=a<->b with framerate 10000 pktsize 64
+    ${stream}=             L2 add  flow=a<->b  src_mac=00:11:23:00:00:99  dst_mac=00:11:23:00:00:09  frame_rate=10000  frame_size=64  ethertype=8000  name=a<->b_bidir_flow
+    clear stats
+    start traffic  ${stream}
+    sleep                  10
+    ${report}=             fetch port stats
+    verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}    
+    stop traffic   ${stream}
+    sleep                  10
+    ${report}=             fetch port stats
+    verify results traffic  transmitted_frames  received_valid_frames  ${tolerance}
+    [Tags]  T5  traffic  snake
+
+Bi-Directional L2 Traffic flow=a<->b with linerate 25% pktsize 64
+    ${stream}=             L2 add  flow=a<->b  src_mac=00:11:23:00:00:09  dst_mac=00:11:23:00:00:99  line_rate=25  frame_size=64  ethertype=8000  name=a<->b_bidir_flow
+    clear stats
+    start traffic  ${stream}
+    sleep                  10
+    ${report}=             fetch port stats
+    verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}  
+    stop traffic   ${stream}
+    sleep                  10
+    ${report}=             fetch port stats
+    verify results traffic  transmitted_frames  received_valid_frames  ${tolerance}
+    [Tags]  T5  traffic  snake
+
+Bi-Directional L2 Traffic flow=a<->b with framerate 10000 pktsize 1024
+    ${stream}=             L2 add  flow=a<->b  src_mac=00:11:23:00:00:99  dst_mac=00:11:23:00:00:09  frame_rate=10000  frame_size=1024  ethertype=8000  name=a<->b_bidir_flow
+    clear stats
+    start traffic  ${stream}
+    sleep                  10
+    ${report}=             fetch port stats
+    verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}    
+    stop traffic   ${stream}
+    sleep                  10
+    ${report}=             fetch port stats
+    verify results traffic  transmitted_frames  received_valid_frames  ${tolerance}
+    [Tags]  T5  traffic  snake
+
+Bi-Directional L2 Traffic flow=a<->b with linerate 50% pktsize 1024
+    ${stream}=             L2 add  flow=a<->b  src_mac=00:11:23:00:00:09  dst_mac=00:11:23:00:00:99  line_rate=50  frame_size=1024  ethertype=8000  name=a<->b_bidir_flow
+    clear stats
+    start traffic  ${stream}
+    sleep                  10
+    ${report}=             fetch port stats
+    verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}  
+    stop traffic   ${stream}
+    sleep                  10
+    ${report}=             fetch port stats
+    verify results traffic  transmitted_frames  received_valid_frames  ${tolerance}
+    [Tags]  T5  traffic  snake
+
+Bi-Directional L2 Traffic flow=a<->b with framerate 10000 pktsize 1518
+    ${stream}=             L2 add  flow=a<->b  src_mac=00:11:23:00:00:99  dst_mac=00:11:23:00:00:09  frame_rate=10000  frame_size=1518  ethertype=8000  name=a<->b_bidir_flow
+    clear stats
+    start traffic  ${stream}
+    sleep                  10
+    ${report}=             fetch port stats
+    verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}    
+    stop traffic   ${stream}
+    sleep                  10
+    ${report}=             fetch port stats
+    verify results traffic  transmitted_frames  received_valid_frames  ${tolerance}
+    [Tags]  T5  traffic  snake
+
+Bi-Directional L2 Traffic flow=a<->b with linerate 100% pktsize 1518
+    ${stream}=             L2 add  flow=a<->b  src_mac=00:11:23:00:00:09  dst_mac=00:11:23:00:00:99  line_rate=100  frame_size=1518  ethertype=8000  name=a<->b_bidir_flow
+    clear stats
+    start traffic  ${stream}
+    sleep                  10
+    ${report}=             fetch port stats
+    verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}  
+    stop traffic   ${stream}
+    sleep                  10
+    ${report}=             fetch port stats
+    verify results traffic  transmitted_frames  received_valid_frames  ${tolerance}
+    [Tags]  T5  traffic  snake
     
-Uni-Directional L2 Traffic flow=b->a with frame rate 10000 pkt size 64
-# Currently Supported L2 Stream args will be adding more
-    ${stream}=             L2 add  flow=b->a  src_mac=00:11:23:00:00:99  dst_mac=00:11:23:00:00:09  frame_rate=10000  frame_size=64  ethertype=8000  name=b_a_flow
+Uni-Directional L2 Jumbo Traffic flow=a->b framerate 10000 pktsize 9150
+    ${stream}=             L2 add  flow=a->b  src_mac=00:11:23:00:00:09  dst_mac=00:11:23:00:00:99  frame_rate=10000  frame_size=9150  ethertype=8000  name=a_b_flow
     clear stats
     start traffic  ${stream}
     sleep                  10
+    ${report}=             fetch port stats
+    verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}  
     stop traffic   ${stream}
     sleep                  10
     ${report}=             fetch port stats
-    verify results  transmitted_frame_rate  received_valid_frame_rate
-    [Tags]  T5 traffic  sanity snake
-    
-Uni-Directional L2 Traffic flow=b->a with frame rate 10000 pkt size 256
-# Currently Supported L2 Stream args will be adding more
-    ${stream}=             L2 add  flow=b->a  src_mac=00:11:23:00:00:99  dst_mac=00:11:23:00:00:09  frame_rate=10000  frame_size=256  ethertype=8000  name=b_a_flow
-    clear stats
-    start traffic  ${stream}
-    sleep                  10
-    stop traffic   ${stream}
-    sleep                  10
-    ${report}=             fetch port stats
-    verify results  transmitted_frame_rate  received_valid_frame_rate
-    [Tags]  T5 traffic  sanity snake
+    verify results traffic  transmitted_frames  received_valid_frames  ${tolerance}
+    [Tags]  T5  traffic  snake    
 
-Uni-Directional L2 Traffic flow=b->a with frame rate 10000 pkt size 512
-# Currently Supported L2 Stream args will be adding more
-    ${stream}=             L2 add  flow=b->a  src_mac=00:11:23:00:00:99  dst_mac=00:11:23:00:00:09  frame_rate=10000  frame_size=512  ethertype=8000  name=b_a_flow
+Uni-Directional L2 Jumbo Traffic flow=a->b linerate 100% pktsize 9150
+    ${stream}=             L2 add  flow=a->b  src_mac=00:11:23:00:00:09  dst_mac=00:11:23:00:00:99  line_rate=100  frame_size=9150  ethertype=8000  name=a_b_flow
     clear stats
     start traffic  ${stream}
     sleep                  10
+    ${report}=             fetch port stats
+    verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}  
     stop traffic   ${stream}
     sleep                  10
     ${report}=             fetch port stats
-    verify results  transmitted_frame_rate  received_valid_frame_rate
-    [Tags]  T5 traffic  sanity snake
+    verify results traffic  transmitted_frames  received_valid_frames  ${tolerance}
+    [Tags]  T5  traffic  snake
 
-Uni-Directional L2 Traffic flow=b->a with frame rate 10000 pkt size 1024
-# Currently Supported L2 Stream args will be adding more
-    ${stream}=             L2 add  flow=b->a  src_mac=00:11:23:00:00:99  dst_mac=00:11:23:00:00:09  frame_rate=10000  frame_size=1024  ethertype=8000  name=b_a_flow
+Bi-Directional L2 Jumbo Traffic flow=a<->b with framerate 10000 pktsize 9150
+    ${stream}=             L2 add  flow=a<->b  src_mac=00:11:23:00:00:99  dst_mac=00:11:23:00:00:09  frame_rate=10000  frame_size=9150  ethertype=8000  name=a<->b_bidir_flow
     clear stats
     start traffic  ${stream}
     sleep                  10
+    ${report}=             fetch port stats
+    verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}    
     stop traffic   ${stream}
     sleep                  10
     ${report}=             fetch port stats
-    verify results  transmitted_frame_rate  received_valid_frame_rate
-    [Tags]  T5 traffic  sanity snake
+    verify results traffic  transmitted_frames  received_valid_frames  ${tolerance}
+    [Tags]  T5  traffic  snake
 
-Uni-Directional L2 Traffic flow=b->a with frame rate 10000 pkt size 1518
-# Currently Supported L2 Stream args will be adding more
-    ${stream}=             L2 add  flow=b->a  src_mac=00:11:23:00:00:99  dst_mac=00:11:23:00:00:09  frame_rate=10000  frame_size=1518  ethertype=8000  name=b_a_flow
+Bi-Directional L2 Jumbo Traffic flow=a<->b with linerate 100% pktsize 9150
+    ${stream}=             L2 add  flow=a<->b  src_mac=00:11:23:00:00:09  dst_mac=00:11:23:00:00:99  line_rate=100  frame_size=9150  ethertype=8000  name=a<->b_bidir_flow
     clear stats
     start traffic  ${stream}
     sleep                  10
+    ${report}=             fetch port stats
+    verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}  
     stop traffic   ${stream}
     sleep                  10
     ${report}=             fetch port stats
-    verify results  transmitted_frame_rate  received_valid_frame_rate
-    [Tags]  T5 traffic  sanity snake
-    
-Bi-Directional L2 Traffic flow=b<->a with frame rate 10000 pkt size 64
-# Currently Supported L2 Stream args will be adding more
-    ${stream}=             L2 add  flow=b<->a  src_mac=00:11:23:00:00:99  dst_mac=00:11:23:00:00:09  frame_rate=10000  frame_size=64  ethertype=8000  name=a<->b_bidir_flow
-    clear stats
-    start traffic  ${stream}
-    sleep                  10
-    stop traffic   ${stream}
-    sleep                  10
-    ${report}=             fetch port stats
-    verify results  transmitted_frame_rate  received_valid_frame_rate
-    [Tags]  T5 traffic  sanity snake
-
+    verify results traffic  transmitted_frames  received_valid_frames  ${tolerance}
+    [Tags]  T5  traffic  snake
 
             
 * Keywords
