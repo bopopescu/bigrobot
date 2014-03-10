@@ -81,6 +81,13 @@ test_log = info
 log = info
 
 
+def summary_log(s, level=2):
+    """
+    Similar to Info log, but also write the message to stderr as well.
+    """
+    Log().info(s, level, to_stderr=True)
+
+
 def analyze(s, level=3):
     info(s, level)
 
