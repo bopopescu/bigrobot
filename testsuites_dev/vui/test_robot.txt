@@ -113,8 +113,14 @@ Test list
 Test create list
     #[Tags]           skipped
     ${value}=        create list  abc  9999  xyz  1001
+    summary log      value=${value}
+    summary log      value[4]=${value[3]}
+
+Test check list empty
+    #[Tags]           skipped
+    ${value}=        return a list
     log              value=${value}
-    log              value[4]=${value[3]}
+    Should not be true   ${value}
 
 Test resource file
     [Tags]           skipped
@@ -131,6 +137,7 @@ Test pause execution (SHELL)
     pause2
 
 Test return false
+    [Tags]           skipped
     return false
 
 * Keywords

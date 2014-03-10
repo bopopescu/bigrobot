@@ -434,3 +434,12 @@ admin_user = glance
         n = t.node_spawn(ip='10.193.0.43')
         # n = t.node_spawn(ip='10.193.0.43', user='adminX', password='adminadmin')
         n.cli('show user')
+
+    def return_a_list(self):
+        l = [1, 2, 3]
+        helpers.summary_log("Return value is %s" % l)
+        helpers.summary_log("What is the meaning of life?")
+        helpers.summary_log("Life is like a box of chocolate")
+        helpers.warn("Here I am")
+        helpers.summary_log("This is the end")
+        return l
