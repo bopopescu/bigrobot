@@ -111,13 +111,13 @@ Test list
     log              value[3]=${value[3]}
 
 Test create list
-    #[Tags]           skipped
+    [Tags]           skipped
     ${value}=        create list  abc  9999  xyz  1001
     summary log      value=${value}
     summary log      value[4]=${value[3]}
 
 Test check list empty
-    #[Tags]           skipped
+    [Tags]           skipped
     ${value}=        return a list
     log              value=${value}
     Should not be true   ${value}
@@ -139,6 +139,14 @@ Test pause execution (SHELL)
 Test return false
     [Tags]           skipped
     return false
+
+Test empty string
+    #[Tags]           skipped
+    #${value}=         set variable    ''
+    ${value}=         set empty string
+    Log               value=${value}
+    should be true    '${value}' == ''
+
 
 * Keywords
 my base suite setup
