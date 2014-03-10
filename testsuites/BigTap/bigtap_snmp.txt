@@ -10,7 +10,7 @@ Library  keywords/AppController.py
 Library  keywords/BsnCommon.py
 
 * Variable
-
+${version_string}	Big Tap Controller 3.0.0	
     
 * Test Case
 Configure and Verify Configuration  
@@ -18,66 +18,66 @@ Configure and Verify Configuration
     [Tags]  bigtap  snmp  
 
 Verify SNMP OID sysContact  
-    ${snmp_key}=  snmp get  public  sysContact.0
+    ${snmp_key}=  snmp get  master  public  sysContact.0
     Should Contain  ${snmp_key}  Big Switch Networks
     [Tags]  bigtap  snmp  
 
 Verify SNMP OID sysLocation  
-    ${snmp_key}=  snmp get  public  sysLocation.0
+    ${snmp_key}=  snmp get  master  public  sysLocation.0
     Should Contain  ${snmp_key}  Mountain View
     [Tags]  bigtap  snmp  
 
 Verify SNMP OID sysDescr  
-    ${snmp_key}=  snmp get  public  sysDescr.0
-    Should Contain  ${snmp_key}  Big Network Controller    
+    ${snmp_key}=  snmp get  master  public  sysDescr.0
+    Should Contain  ${snmp_key}     ${version_string} 
     [Tags]  bigtap  snmp  
 
 Verify SNMP OID ifDescr  
-    ${snmp_key}=  snmp get  public  ifDescr.2
+    ${snmp_key}=  snmp get  master  public  ifDescr.2
     Should Contain  ${snmp_key}  eth0
     [Tags]  bigtap  snmp  
 
 Verify SNMP OID ifType  
-    ${snmp_key}=  snmp get  public  ifType.2
+    ${snmp_key}=  snmp get  master  public  ifType.2
     Should Contain  ${snmp_key}  ethernetCsmacd
     [Tags]  bigtap  snmp  
     
 Verify SNMP OID ifOperStatus  
-    ${snmp_key}=  snmp get  public  ifOperStatus.2
+    ${snmp_key}=  snmp get  master  public  ifOperStatus.2
     Should Contain  ${snmp_key}  up
     [Tags]  bigtap  snmp  
     
 Verify SNMP OID ifAdminStatus  
-    ${snmp_key}=  snmp get  public  ifAdminStatus.2
+    ${snmp_key}=  snmp get  master  public  ifAdminStatus.2
     Should Contain  ${snmp_key}  up     
     [Tags]  bigtap  snmp  
 
 Verify snmpgetnext works as expected
-    ${snmp_key}=  snmp getnext  public  ifDescr.1
+    ${snmp_key}=  snmp getnext    master  public  ifDescr.1
     Should Contain  ${snmp_key}  eth0
     [Tags]  bigtap  snmp  
 
 verify snmpbulkget works as expected
-    ${snmp_key}=  snmp cmd  snmpbulkget  -Cr2  public  ifDescr 
+    ${snmp_key}=  snmp cmd opt  master  snmpbulkget  -Cn1 -Cr3 -Os   public  ifDescr.1 
     Should Contain  ${snmp_key}  eth0
     [Tags]  bigtap  snmp  
 
 verify snmpbulkwalk works as expected
-    ${snmp_key}=  snmp cmd  snmpbulkwalk  None  public  ifDescr 
+    ${snmp_key}=  snmp cmd opt  master  snmpbulkwalk  -Cn1 -Cr3 -Os   public  ifDescr.2 
     Should Contain  ${snmp_key}  eth0
     [Tags]  bigtap  snmp  
  
 Restart process SNMP and verify
     restart process on controller  snmpd  Slave
     Sleep  10    
-    ${snmp_key}=  snmp get  public  sysDescr.0
-    Should Contain  ${snmp_key}  Big Network Controller  
+    ${snmp_key}=  snmp get  master  public  sysDescr.0
+    Should Contain  ${snmp_key}  ${version_string} 
     [Tags]  bigtap  snmp  
 
 Change community from public to bigswitch and verify snmp walk
     rest add snmp keyword  community  bigswitch
-    ${snmp_key}=  snmp get  bigswitch  sysDescr.0
-    Should Contain  ${snmp_key}  Big Network Controller   
+    ${snmp_key}=  snmp get  master  bigswitch  sysDescr.0
+    Should Contain  ${snmp_key}  ${version_string}   
     [Tags]  bigtap  snmp  
 
        
@@ -87,8 +87,9 @@ snmp suite setup
     rest add snmp keyword  contact  Big Switch Networks
     rest add snmp keyword  location  Mountain View
     rest add snmp keyword  trap-enable  True
-    rest add snmp host  10.192.66.230  161    
-    rest add firewall rule snmp  udp  161
+    rest add snmp host  10.192.3.22  162    
+    rest add snmp host  10.192.66.230  162    
+    rest add firewall rule snmp  udp  162
     Sleep  10        
 
 verify config
@@ -103,9 +104,13 @@ verify config
     Should Be True  ${snmp_key}
     ${snmp_output}=  rest show snmp host
     ${snmp_key}=  verify json key  ${snmp_output}  0  host  
-    Should Be Equal As Strings  ${snmp_key}  10.192.66.230
+    Should Be Equal As Strings  ${snmp_key}  10.192.3.22
     ${snmp_key}=  verify json key  ${snmp_output}  0  udp-port  
-    Should Be Equal As Integers  ${snmp_key}  161
+    Should Be Equal As Integers  ${snmp_key}  162
+    ${snmp_key}=  verify json key  ${snmp_output}  1  host  
+    Should Be Equal As Strings  ${snmp_key}  10.192.66.230
+    ${snmp_key}=  verify json key  ${snmp_output}  1  udp-port  
+    Should Be Equal As Integers  ${snmp_key}  162
            
 snmp suite teardown
     rest add snmp keyword  community  null

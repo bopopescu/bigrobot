@@ -1106,6 +1106,26 @@ class T5(object):
 #To be added
 #===========================================================
 
+    def cli_configure_virtual_ip(self, vip):
+        ''' Function to show Virtual IP of a controller via CLI
+        Input: None
+        Output: VIP address if configured, None otherwise
+        '''
+        t = test.Test()
+        c = t.controller('master')
+
+        helpers.test_log("Input arguments: virtual IP = %s" % vip)
+        try:
+            c.config("cluster")
+            c.config("virtual-ip %s" % vip)
+            assert "Error" not in c.cli_content()
+        except:
+            helpers.test_log(c.cli_content())
+            return False
+        else:
+            return True
+
+
     def cli_get_eth0_ip_using_virtual_ip(self, vip):
         ''' Function to verify that Virtual IP address
         points to some controller via CLI

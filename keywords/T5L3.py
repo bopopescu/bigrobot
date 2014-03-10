@@ -271,6 +271,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
 #          return ""
 #        else:
 #            return data
+        helpers.log("data: %s" % data)
         return data
     
     def rest_count_endpoints_mac(self):

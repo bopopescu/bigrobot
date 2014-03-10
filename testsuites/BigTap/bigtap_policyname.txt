@@ -1,0 +1,303 @@
+*Settings
+Documentation  BigTap Suite Release:Blackbird
+Suite Setup  bigtap suite setup
+Suite Teardown   bigtap suite teardown
+Test Setup   base test setup
+Test Teardown   bigtap test teardown
+Force Tags   bigtap Platform
+
+Library  keywords/AppController.py
+Library  keywords/BigTap.py
+Library  keywords/BsnCommon.py
+
+* Variable
+${version_string}   Big Tap Controller 3.0.0
+
+* Test Case
+Verify policy name can have all lower-case alphabet in its name
+    setup interfaces  F1  D1 
+    setup policy  policyname  F1  D1    
+    REST verify bigtap policy  policy_name=policyname  num_filter_intf=1  num_delivery_intf=1
+    REST delete policy  admin-view  policyname
+    [Tags]  verifyconfig
+
+Verify policy can have all upper-case alphabet in its name  
+    setup interfaces  F1  D1
+    setup policy  POLICYNAME  F1  D1    
+    REST verify bigtap policy  policy_name=POLICYNAME  num_filter_intf=1  num_delivery_intf=1
+    REST delete policy  admin-view  POLICYNAME
+
+Verify policy can have a mix of lower-case and upper-case alphabet in its name  
+    setup interfaces  F1  D1
+    setup policy  pOlIcYnAmE  F1  D1    
+    REST verify bigtap policy  policy_name=pOlIcYnAmE  num_filter_intf=1  num_delivery_intf=1
+    REST delete policy  admin-view  pOlIcYnAmE
+
+Verify policy name can have alphanumeric (alphabet all lower-case) characters in its name  
+    setup interfaces  F1  D1
+    setup policy  policy1234  F1  D1    
+    REST verify bigtap policy  policy_name=policy1234  num_filter_intf=1  num_delivery_intf=1
+    REST delete policy  admin-view  policy1234        
+
+Verify policy name can have alphanumeric (alphabet all upper-case) characters in its name  
+    setup interfaces  F1  D1
+    setup policy  POLICYNAME1234  F1  D1    
+    REST verify bigtap policy  policy_name=POLICYNAME1234  num_filter_intf=1  num_delivery_intf=1
+    REST delete policy  admin-view  POLICYNAME1234
+
+Verify policy name can have an alphanumeric name with a !  
+    setup interfaces  F1  D1
+    setup policy  pOlIcYnAmE!  F1  D1    
+    REST verify bigtap policy  policy_name=pOlIcYnAmE!  num_filter_intf=1  num_delivery_intf=1
+    REST delete policy  admin-view  pOlIcYnAmE!        
+
+Verify policy name can have an alphanumeric name with a @  
+    setup interfaces  F1  D1
+    setup policy  pOlIcYnAmE@  F1  D1    
+    REST verify bigtap policy  policy_name=pOlIcYnAmE@  num_filter_intf=1  num_delivery_intf=1
+    REST delete policy  admin-view  pOlIcYnAmE@
+          
+Verify policy name can have an alphanumeric name with a #  
+    setup interfaces  F1  D1
+    setup policy  pOlIcYnAmE%23  F1  D1    
+    REST verify bigtap policy  policy_name=pOlIcYnAmE%23  num_filter_intf=1  num_delivery_intf=1
+    REST delete policy  admin-view  pOlIcYnAmE%23          
+
+Verify policy name can have an alphanumeric name with a $  
+    setup interfaces  F1  D1
+    setup policy  pOlIcYnAmE$  F1  D1    
+    REST verify bigtap policy  policy_name=pOlIcYnAmE$  num_filter_intf=1  num_delivery_intf=1
+    REST delete policy  admin-view  pOlIcYnAmE$          
+
+Verify policy name can have an alphanumeric name with a ?  
+    setup interfaces  F1  D1
+    setup policy  pOlIcYnAmE%3F  F1  D1    
+    REST verify bigtap policy  policy_name=pOlIcYnAmE%3F  num_filter_intf=1  num_delivery_intf=1
+    REST delete policy  admin-view  pOlIcYnAmE%3F
+
+Verify policy name can have an alphanumeric name with a >  
+    setup interfaces  F1  D1
+    setup policy  pOlIcYnAmE%3E  F1  D1    
+    REST verify bigtap policy  policy_name=pOlIcYnAmE%3E  num_filter_intf=1  num_delivery_intf=1
+    REST delete policy  admin-view  pOlIcYnAmE%3E
+
+Verify policy name can have an alphanumeric name with a ^  
+    setup interfaces  F1  D1
+    setup policy  pOlIcYnAmE^  F1  D1    
+    REST verify bigtap policy  policy_name=pOlIcYnAmE^  num_filter_intf=1  num_delivery_intf=1
+    REST delete policy  admin-view  pOlIcYnAmE^
+    
+Verify policy name can have an alphanumeric name with a &  
+    setup interfaces  F1  D1
+    setup policy  pOlIcYnAmE&  F1  D1    
+    REST verify bigtap policy  policy_name=pOlIcYnAmE&  num_filter_intf=1  num_delivery_intf=1
+    REST delete policy  admin-view  pOlIcYnAmE&
+    
+Verify policy name can have an alphanumeric name with a *  
+    setup interfaces  F1  D1
+    setup policy  pOlIcYnAmE*  F1  D1    
+    REST verify bigtap policy  policy_name=pOlIcYnAmE*  num_filter_intf=1  num_delivery_intf=1
+    REST delete policy  admin-view  pOlIcYnAmE*                           
+
+Verify policy name can have an alphanumeric name with a (  
+    setup interfaces  F1  D1
+    setup policy  pOlIcYnAmE(  F1  D1    
+    REST verify bigtap policy  policy_name=pOlIcYnAmE(  num_filter_intf=1  num_delivery_intf=1
+    REST delete policy  admin-view  pOlIcYnAmE(          
+
+Verify policy name can have an alphanumeric name with a )  
+    setup interfaces  F1  D1
+    setup policy  pOlIcYnAmE)  F1  D1    
+    REST verify bigtap policy  policy_name=pOlIcYnAmE)  num_filter_intf=1  num_delivery_intf=1
+    REST delete policy  admin-view  pOlIcYnAmE)
+
+Verify policy name can have an alphanumeric name with a -  
+    setup interfaces  F1  D1
+    setup policy  pOlIcYnAmE-  F1  D1    
+    REST verify bigtap policy  policy_name=pOlIcYnAmE-  num_filter_intf=1  num_delivery_intf=1
+    REST delete policy  admin-view  pOlIcYnAmE-
+              
+Verify policy name can have an alphanumeric name with a _  
+    setup interfaces  F1  D1
+    setup policy  pOlIcYnAmE_  F1  D1    
+    REST verify bigtap policy  policy_name=pOlIcYnAmE_  num_filter_intf=1  num_delivery_intf=1
+    REST delete policy  admin-view  pOlIcYnAmE_          
+          
+Verify policy name can have an alphanumeric name with a ;  
+    setup interfaces  F1  D1
+    setup policy  pOlIcYnAmE%3B  F1  D1    
+    REST verify bigtap policy  policy_name=pOlIcYnAmE%3B  num_filter_intf=1  num_delivery_intf=1
+    REST delete policy  admin-view  pOlIcYnAmE%3B
+
+Verify policy name can have an alphanumeric name with a }  
+    setup interfaces  F1  D1
+    setup policy  pOlIcYnAmE}  F1  D1    
+    REST verify bigtap policy  policy_name=pOlIcYnAmE}  num_filter_intf=1  num_delivery_intf=1
+    REST delete policy  admin-view  pOlIcYnAmE}
+
+Verify policy name can have an alphanumeric name with a {  
+    setup interfaces  F1  D1
+    setup policy  pOlIcYnAmE{  F1  D1    
+    REST verify bigtap policy  policy_name=pOlIcYnAmE{  num_filter_intf=1  num_delivery_intf=1
+    REST delete policy  admin-view  pOlIcYnAmE{
+
+Verify policy name can have an alphanumeric name with a [  
+    setup interfaces  F1  D1
+    setup policy  pOlIcYnAmE[  F1  D1    
+    REST verify bigtap policy  policy_name=pOlIcYnAmE[  num_filter_intf=1  num_delivery_intf=1
+    REST delete policy  admin-view  pOlIcYnAmE[
+
+Verify policy name can have an alphanumeric name with a ]  
+    setup interfaces  F1  D1
+    setup policy  pOlIcYnAmE]  F1  D1    
+    REST verify bigtap policy  policy_name=pOlIcYnAmE]  num_filter_intf=1  num_delivery_intf=1
+    REST delete policy  admin-view  pOlIcYnAmE]    
+
+Verify policy name can have an alphanumeric name with a |  
+    setup interfaces  F1  D1
+    setup policy  pOlIcYnAmE|  F1  D1    
+    REST verify bigtap policy  policy_name=pOlIcYnAmE|  num_filter_intf=1  num_delivery_intf=1
+    REST delete policy  admin-view  pOlIcYnAmE|           
+
+Verify policy name can have an alphanumeric name with a \  
+    setup interfaces  F1  D1
+    setup policy  pOlIcYnAmE%5C  F1  D1    
+    REST verify bigtap policy  policy_name=pOlIcYnAmE%5C  num_filter_intf=1  num_delivery_intf=1
+    REST delete policy  admin-view  pOlIcYnAmE%5C 
+
+Verify policy name can have an alphanumeric name with a :  
+    setup interfaces  F1  D1
+    setup policy  pOlIcY:nAmE  F1  D1    
+    REST verify bigtap policy  policy_name=pOlIcY:nAmE  num_filter_intf=1  num_delivery_intf=1
+    REST delete policy  admin-view  pOlIcY:nAmE 
+
+Verify policy name can have an alphanumeric name with a ,  
+    setup interfaces  F1  D1
+    setup policy  pOlIcY,nAmE  F1  D1    
+    REST verify bigtap policy  policy_name=pOlIcY,nAmE  num_filter_intf=1  num_delivery_intf=1
+    REST delete policy  admin-view  pOlIcY,nAmE 
+
+Verify policy name can have an alphanumeric name with a .  
+    setup interfaces  F1  D1
+    setup policy  pOlIcY.nAmE  F1  D1    
+    REST verify bigtap policy  policy_name=pOlIcY.nAmE  num_filter_intf=1  num_delivery_intf=1
+    REST delete policy  admin-view  pOlIcY.nAmE                
+
+Verify policy name can have an alphanumeric name with a <  
+    setup interfaces  F1  D1
+    setup policy  pOlIcY<nAmE  F1  D1    
+    REST verify bigtap policy  policy_name=pOlIcY<nAmE  num_filter_intf=1  num_delivery_intf=1
+    REST delete policy  admin-view  pOlIcY<nAmE 
+
+Verify policy name can have an alphanumeric name with a /  
+    setup interfaces  F1  D1
+    setup policy  pOlIcYnAmE/  F1  D1    
+    REST verify bigtap policy  policy_name=pOlIcYnAmE/  num_filter_intf=1  num_delivery_intf=1
+    REST delete policy  admin-view  pOlIcYnAmE/ 
+
+Verify policy name can have an alphanumeric name with a ~  
+    setup interfaces  F1  D1
+    setup policy  pOlIcYnAmE~  F1  D1    
+    REST verify bigtap policy  policy_name=pOlIcYnAmE~  num_filter_intf=1  num_delivery_intf=1
+    REST delete policy  admin-view  pOlIcYnAmE~ 
+    
+Verify policy name can have an alphanumeric name with a `  
+    setup interfaces  F1  D1
+    setup policy  pOlIcYnAmE`  F1  D1    
+    REST verify bigtap policy  policy_name=pOlIcYnAmE`  num_filter_intf=1  num_delivery_intf=1
+    REST delete policy  admin-view  pOlIcYnAmE`
+
+########
+Verify filter and delivery names can have all lower-case alphabet in their name
+    setup interfaces  filterinterface  deliveryinterface 
+    setup policy  policyname  filterinterface  deliveryinterface    
+    REST verify bigtap policy  policy_name=policyname  num_filter_intf=1  num_delivery_intf=1
+    REST delete policy  admin-view  policyname
+    [Tags]  bigtap  interfacenames
+    
+Verify filter and delivery names can have all upper-case alphabet in their name
+    setup interfaces  FILTERINTERFACE  DELIVERYINTERFACE 
+    setup policy  policyname  FILTERINTERFACE  DELIVERYINTERFACE    
+    REST verify bigtap policy  policy_name=policyname  num_filter_intf=1  num_delivery_intf=1
+    REST delete policy  admin-view  policyname
+    [Tags]  bigtap  interfacenames
+    
+Verify filter and delivery names can have a mix of lower-case and upper-case alphabet in their name
+    setup interfaces  fIlTeRiNtErFaCe  dEliVeRyiNtErFaCe 
+    setup policy  policyname  fIlTeRiNtErFaCe  dEliVeRyiNtErFaCe    
+    REST verify bigtap policy  policy_name=policyname  num_filter_intf=1  num_delivery_intf=1
+    REST delete policy  admin-view  policyname
+    [Tags]  bigtap  interfacenames
+    
+Verify filter and delivery names can have alphanumeric (alphabet all lower-case) characters in their name
+    setup interfaces  filterinterface1234  deliveryinterface1234 
+    setup policy  policyname  filterinterface1234  deliveryinterface1234    
+    REST verify bigtap policy  policy_name=policyname  num_filter_intf=1  num_delivery_intf=1
+    REST delete policy  admin-view  policyname
+    [Tags]  bigtap  interfacenames
+    
+Verify filter and delivery names can have have alphanumeric (alphabet all upper-case) characters in their name
+    setup interfaces  FILTERINTERFACE1234  DELIVERYINTERFACE1234 
+    setup policy  policyname  FILTERINTERFACE1234  DELIVERYINTERFACE1234    
+    REST verify bigtap policy  policy_name=policyname  num_filter_intf=1  num_delivery_intf=1
+    REST delete policy  admin-view  policyname
+    [Tags]  bigtap  interfacenames
+    
+Verify filter and delivery names can have alphanumeric name with a . in their name
+    setup interfaces  FILTER.INTERFACE  DELIVERY.INTERFACE
+    setup policy  policyname  FILTER.INTERFACE  DELIVERY.INTERFACE    
+    REST verify bigtap policy  policy_name=policyname  num_filter_intf=1  num_delivery_intf=1
+    REST delete policy  admin-view  policyname
+    [Tags]  bigtap  interfacenames
+    
+Verify filter and delivery names can have alphanumeric name with a : in their name
+    setup interfaces  FILTER:INTERFACE  DELIVERY:INTERFACE
+    setup policy  policyname  FILTER:INTERFACE  DELIVERY:INTERFACE        
+    REST verify bigtap policy  policy_name=policyname  num_filter_intf=1  num_delivery_intf=1
+    REST delete policy  admin-view  policyname
+    [Tags]  bigtap  interfacenames  jira-bt-1187
+    
+Verify filter and delivery names can have alphanumeric name with a - in their name
+    setup interfaces  FILTER-INTERFACE  DELIVERY-INTERFACE 
+    setup policy  policyname  FILTER-INTERFACE  DELIVERY-INTERFACE    
+    REST verify bigtap policy  policy_name=policyname  num_filter_intf=1  num_delivery_intf=1
+    REST delete policy  admin-view  policyname    
+    [Tags]  bigtap  interfacenames
+    
+Verify filter and delivery names can have alphanumeric name with a _ in their name
+    setup interfaces  FILTER_INTERFACE  DELIVERY_INTERFACE 
+    setup policy  policyname  FILTER_INTERFACE  DELIVERY_INTERFACE    
+    REST verify bigtap policy  policy_name=policyname  num_filter_intf=1  num_delivery_intf=1
+    REST delete policy  admin-view  policyname 
+    [Tags]  bigtap  interfacenames
+
+                                        
+* Keywords
+
+bigtap suite setup
+    base suite setup
+    rest add switch alias  s1  AF1-LB9    
+
+setup interfaces  [Arguments]  ${filter_name}  ${delivery_name}  
+    rest add interface role  s1  ethernet1    filter        ${filter_name}  
+    rest add interface role  s1  ethernet2    delivery      ${delivery_name}
+    Sleep  2    
+     
+setup policy  [Arguments]  ${policyName}  ${filter_name}  ${delivery_name}
+    REST add policy  admin-view  ${policyName}  forward
+    REST add policy match  admin-view  ${policyName}  1  {"ether-type": 2048, "dst-tp-port": 80, "ip-proto": 6, "sequence": 1} 
+    REST add policy interface  admin-view  ${policyName}  ${filter_name}  filter 
+    REST add policy interface  admin-view  ${policyName}  ${delivery_name}  delivery
+    Sleep  2     
+
+bigtap test teardown
+    rest delete interface role  s1  ethernet1    filter 
+    rest delete interface role  s1  ethernet2    delivery     
+    rest delete interface  s1  ethernet1          
+    rest delete interface  s1  ethernet2
+    Sleep  2        
+
+bigtap suite teardown
+    rest delete switch alias  s1
+    rest delete switch  s1
+    base suite teardown

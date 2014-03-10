@@ -3,7 +3,7 @@ import autobot.test as test
 from T5Utilities import T5Utilities as utilities
 from time import sleep
 import keywords.Mininet as mininet
-import keywords.T5Fabric as T5Fabric
+import keywords.T5 as T5
 
 pingFailureCount = 0
 leafSwitchList = []
@@ -108,16 +108,31 @@ class T5Platform(object):
         return utilities.fabric_integrity_checker(obj, "before")
         
 
-    def _cluster_node_reboot(self, masterNode=True):
+    def cluster_node_reboot(self, masterNode=True):
 
-        ''' Reboot the node
+        ''' Reboot a node and verify the cluster leadership.
+            Reboot Master in dual node setup: masterNode == True
         '''
         t = test.Test()
         master = t.controller("master")
+        obj = utilities()
+        if (utilities.cli_get_num_nodes(obj) == 1):
+            singleNode = True
+        else:
+            singleNode = False
+            
 
-        masterID,slaveID = self.getNodeID()
-        if(masterID == -1 and slaveID == -1):
-            return False
+        if(singleNode):
+            masterID = self.getNodeID(False)
+        else:
+            masterID,slaveID = self.getNodeID()
+        
+        if(singleNode):
+            if (masterID == -1):
+                return False
+        else:
+            if(masterID == -1 and slaveID == -1):
+                return False
         
         try:
             if(masterNode):
@@ -135,26 +150,43 @@ class T5Platform(object):
             helpers.log("Node is rebooting")
             sleep(90)
        
-        newMasterID, newSlaveID = self.getNodeID()
-        if(newMasterID == -1 and newSlaveID == -1):
-            return False
-
-        if(masterNode):
-            if(masterID == newSlaveID and slaveID == newMasterID):
-                helpers.log("Pass: After the reboot cluster is stable - Master is : %s / Slave is: %s" % (newMasterID, newSlaveID))
-                return True
-            else:
-                helpers.log("Fail: Reboot Failed. Cluster is not stable. Before the master reboot Master is: %s / Slave is : %s \n \
-                        After the reboot Master is: %s / Slave is : %s " %(masterID, slaveID, newMasterID, newSlaveID))
+        if(singleNode):
+            newMasterID = self.getNodeID(False)
+        else:
+            newMasterID, newSlaveID = self.getNodeID()
+            
+        if(singleNode):
+            if (newMasterID == -1):
                 return False
         else:
-            if(masterID == newMasterID and slaveID == newSlaveID):
-                helpers.log("Pass: After the reboot cluster is stable - Master is : %s / Slave is: %s" % (newMasterID, newSlaveID))
+            if(newMasterID == -1 and newSlaveID == -1):
+                return False
+
+
+        if(singleNode):
+            if(masterID == newMasterID):
+                helpers.log("Pass: After the reboot cluster is stable - Master is still : %s " % (newMasterID))
                 return True
             else:
-                helpers.log("Fail: Reboot Failed. Cluster is not stable. Before the slave reboot Master is: %s / Slave is : %s \n \
-                        After the reboot Master is: %s / Slave is : %s " %(masterID, slaveID, newMasterID, newSlaveID))
-                return False
+                helpers.log("Fail: Reboot Failed. Cluster is not stable.  Before the reboot Master is: %s  \n \
+                    After the reboot Master is: %s " %(masterID, newMasterID))
+        else:
+            if(masterNode):
+                if(masterID == newSlaveID and slaveID == newMasterID):
+                    helpers.log("Pass: After the reboot cluster is stable - Master is : %s / Slave is: %s" % (newMasterID, newSlaveID))
+                    return True
+                else:
+                    helpers.log("Fail: Reboot Failed. Cluster is not stable. Before the master reboot Master is: %s / Slave is : %s \n \
+                            After the reboot Master is: %s / Slave is : %s " %(masterID, slaveID, newMasterID, newSlaveID))
+                    return False
+            else:
+                if(masterID == newMasterID and slaveID == newSlaveID):
+                    helpers.log("Pass: After the reboot cluster is stable - Master is : %s / Slave is: %s" % (newMasterID, newSlaveID))
+                    return True
+                else:
+                    helpers.log("Fail: Reboot Failed. Cluster is not stable. Before the slave reboot Master is: %s / Slave is : %s \n \
+                            After the reboot Master is: %s / Slave is : %s " %(masterID, slaveID, newMasterID, newSlaveID))
+                    return False
 
 
     def _cluster_node_shutdown(self, masterNode=True):
@@ -361,7 +393,7 @@ class T5Platform(object):
         
         global leafSwitchList
         
-        Fabric = T5Fabric.T5Fabric()
+        Fabric = T5.T5()
         for i,dpid in enumerate(spineList):
             spineName = "spine"+ str(i)
             Fabric.rest_add_switch(spineName)
@@ -433,7 +465,7 @@ class T5Platform(object):
         numSpines = len(spineList)
         numLeaves = len(leafList)
         
-        Fabric = T5Fabric.T5Fabric()
+        Fabric = T5.T5()
         for i in range(0,numSpines):
             spineName = 'spine' + str(i)
             Fabric.rest_delete_fabric_switch(spineName) 

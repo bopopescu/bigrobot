@@ -11,6 +11,7 @@ class T5_longevity(object):
     def copy_pkg_from_jenkins(self):
         '''copy_pkg_from_jenkins
             copy the latest upgrade package from Jenkin
+            modify
         
         '''
         t = test.Test()
@@ -169,7 +170,7 @@ class T5_longevity(object):
         t = test.Test()
         c = t.controller(device)
         helpers.log('INFO: Entering ==> cli_get_node_role ')
-        t = test.Test()
+    
         
         c.cli('show cluster' )
         content = c.cli_content()
@@ -185,7 +186,60 @@ class T5_longevity(object):
                 helpers.log("INFO: not current node  %s" % line)   
         return False     
 
+    def rest_get_num_nodes(self):
+        ''' rest_get_node_role
+           return the local node role:
+           output:   active   
+                     stand-by
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        helpers.log('INFO: Entering ==> rest_get_node_role ')
+        t = test.Test()
+        
+        url = '/api/v1/data/controller/cluster'  
+        c.rest.get(url)
+        if not c.rest.status_code_ok():
+            helpers.test_failure(c.rest.error())
 
+        if(c.rest.content()):
+            num = len(c.rest.content()[0]['status']['nodes'])
+            helpers.log("INFO: There are %d of controller in cluster" %  num)
+            for index in range(0,num):
+                
+                hostname = c.rest.content()[0]['status']['nodes'][index]['hostname']
+                helpers.log("INFO: hostname is: %s" % hostname )
+                  
+            return num
+        else:
+            helpers.test_failure(c.rest.error())      
+
+    def cli_get_num_nodes(self):
+        ''' rest_get_node_role
+           return the local node role:
+           output:   active   
+                     stand-by
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        helpers.log('INFO: Entering ==> rest_get_node_role ')
+        
+        c.cli('show cluster' )
+        content = c.cli_content()
+        temp = helpers.strip_cli_output(content)
+        temp = helpers.str_to_list(temp)
+        num = 0
+        for line in temp:          
+            helpers.log("INFO: line is - %s" % line)
+            match= re.match(r'.*(active|stand-by).*', line)
+            if match:
+                helpers.log("INFO: role is: %s" % match.group(1))  
+                num = num+1                                      
+            else:
+                helpers.log("INFO: not for controller  %s" % line)  
+        helpers.log("INFO: there are %d of controllers in the cluster" % num)   
+        return num    
+  
 
     def cli_add_user(self,user='user1',passwd='adminadmin'):
         ''' add user
