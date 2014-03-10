@@ -1224,7 +1224,11 @@ class T5(object):
             c.send("reauth")
             c.expect(r"Password:")
             c.config("adminadmin")
-            c.send("cluster election take-leader")
+            c.config("cluster")
+            c.send("failover")
+            if "Error" in c.cli_content():
+                helpers.log("Error in CLI content")
+                return False
             c.expect(r"Election may cause role transition: enter \"yes\" \(or \"y\"\) to continue:")
             c.config("yes")
         except:
@@ -1333,6 +1337,44 @@ class T5(object):
         c = t.controller('master')
         try:
             c.config("copy running-config %s" % filename)
+            assert "Error" not in c.cli_content()
+        except:
+            helpers.test_log(c.cli_content())
+            return False
+        else:
+            return True
+
+
+    def cli_copy_file_to_running_config(self, filename):
+        ''' Function to copy file to running config
+        via CLI
+        Input: Filename
+        Output: True if successful, False otherwise
+        '''
+        helpers.test_log("Running command:\ncopy %s running-config" % filename)
+        t = test.Test()
+        c = t.controller('master')
+        try:
+            c.config("copy %s running-config" % filename)
+            assert "Error" not in c.cli_content()
+        except:
+            helpers.test_log(c.cli_content())
+            return False
+        else:
+            return True
+
+
+    def cli_copy_config_to_running_config(self, filename):
+        ''' Function to copy config:// to running config
+        via CLI
+        Input: Filename
+        Output: True if successful, False otherwise
+        '''
+        helpers.test_log("Running command:\ncopy config://%s running-config" % filename)
+        t = test.Test()
+        c = t.controller('master')
+        try:
+            c.config("copy config://%s running-config" % filename)
             assert "Error" not in c.cli_content()
         except:
             helpers.test_log(c.cli_content())

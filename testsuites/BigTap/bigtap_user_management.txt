@@ -14,7 +14,8 @@ ${version}  Big Network Controller 3.0.1
 
 *Test Case
 Verify username userChkPassword can have all lower-case alphabet password
-    verify config  userChkPassword  bsnbsn    
+    verify config  userChkPassword  bsnbsn
+    [Tags]  sanity  platform  basic        
 
 Verify username userChkPassword can have all upper-case alphabet password
     rest add user password  userChkPassword  BSNBSN

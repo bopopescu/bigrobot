@@ -1,0 +1,272 @@
+== T5 Functional L2 Test Suite ==
+
+* Setting
+Documentation    T5 BVS APP Functional VNS Mac age/move Test Suite
+Suite Setup      base suite setup
+Suite Teardown   base suite teardown
+Test Setup       base test setup
+Test Teardown    T5 test teardown
+Force Tags       T5 
+Library          keywords/BsnCommon.py
+Library          keywords/T5.py
+Library	         keywords/T5Fabric.py
+Library	         keywords/SwitchLight.py
+
+Library	         keywords/Host.py
+Library		     keywords/Ixia.py
+Resource	     testsuites/T5/t5_dualleaf_three_rack_physical_resource.txt
+Resource		 testsuites/T5/t5_physical_variables.txt
+*Variables
+${mac1}		00:00:05:00:00:00
+${mac2}		00:00:06:00:00:00
+
+
+* Test Case 
+
+add Dual Leaf Three Rack setup
+   [Tags]  feature
+  	base suite setup
+  	add fabric switch
+  	sleep  5
+  	rest verify fabric switch all
+  	rest verify fabric link
+ 	rest add tenant  t1
+	rest add vns  t1  v1
+	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
+	rest add interface to vns  t1  v1  leaf1-a  ${leaf1a_ixia_intf}  -1
+	rest add interface to vns  t1  v1  leaf2-a  ${leaf2a_ixia_intf}  -1
+	rest add interface to vns  t1  v1  leaf0-b  ${leaf0b_ixia_intf}  -1
+	rest add interface to vns  t1  v1  leaf1-b  ${leaf1b_ixia_intf}  -1
+	rest add interface to vns  t1  v1  leaf2-b  ${leaf2b_ixia_intf}  -1
+   
+Add 1000 dynamic mac into the system and check forwarding and make sure aging also works for 1000 mac
+	[Tags]  feature  scaling  
+	${stream}=             L3 add  no_arp=True  flow=a<->c  src_mac=00:00:01:00:00:01  dst_mac=00:00:02:00:00:01  src_cnt=500  dst_cnt=500    frame_rate=1000  frame_size=128  name=a_c_flow
+    start traffic  ${stream}
+    sleep  5
+    rest verify endpoint in system  1000
+    verify traffic rate  tx_rate  rx_rate  a  c
+    verify traffic rate  tx_rate  rx_rate  c  a
+    stop traffic  ${stream}
+    sleep  600
+    rest verify endpoint in system  0
+	    
+Add 10000 dynamic mac into the system and check forwarding and make sure aging also works for 10000 mac
+	[Tags]  feature  scaling  
+	${stream}=             L3 add  no_arp=True  flow=a<->c  src_mac=00:00:01:00:00:01  dst_mac=00:00:02:00:00:01  src_cnt=5000  dst_cnt=5000    frame_rate=5000  frame_size=128  name=a_c_flow
+    start traffic  ${stream}
+    sleep  5
+    rest verify endpoint in system  10000
+    verify traffic rate  tx_rate  rx_rate  a  c
+    verify traffic rate  tx_rate  rx_rate  c  a
+    stop traffic  ${stream}
+	sleep  600
+    rest verify endpoint in system  0
+
+Add 16000 dynamic mac into the system and check forwarding and make sure aging also works for 16000 mac
+	[Tags]  feature  scaling  
+	${stream}=             L3 add  no_arp=True  flow=a<->c  src_mac=00:00:01:00:00:01  dst_mac=00:00:02:00:00:01  src_cnt=8000  dst_cnt=8000    frame_rate=8000  frame_size=128  name=a_c_flow
+    start traffic  ${stream}
+    sleep  20
+    rest verify endpoint in system  16000
+    verify traffic rate  tx_rate  rx_rate  a  c
+    verify traffic rate  tx_rate  rx_rate  c  a
+    stop traffic  ${stream}
+	sleep  600
+    rest verify endpoint in system  0
+
+Add 48k dynamic mac into the system and check forwarding and make sure aging also works for 48k mac
+	[Tags]  feature  scaling  
+	
+	${stream}=             L3 add  no_arp=True  flow=a<->c  src_mac=00:00:01:00:00:01  dst_mac=00:00:02:00:00:01  src_cnt=8000  dst_cnt=8000    frame_rate=8000  frame_size=128  name=a_c_flow
+    ${stream1}=             L3 add  no_arp=True  flow=b<->f  src_mac=00:00:03:00:00:01  dst_mac=00:00:04:00:00:01  src_cnt=8000  dst_cnt=8000    frame_rate=8000  frame_size=68  name=b_f_flow
+    ${stream2}=             L3 add  no_arp=True  flow=d<->e  src_mac=00:00:05:00:00:01  dst_mac=00:00:06:00:00:01  src_cnt=8000  dst_cnt=8000    frame_rate=8000  frame_size=68  name=b_f_flow
+    start traffic  ${stream}
+    start traffic  ${stream1}
+    start traffic  ${stream2}
+    sleep  120
+    rest verify endpoint in system  48000
+    verify traffic rate  tx_rate  rx_rate  a  c
+    verify traffic rate  tx_rate  rx_rate  c  a
+    verify traffic rate  tx_rate  rx_rate  b  f
+    verify traffic rate  tx_rate  rx_rate  f  b
+    verify traffic rate  tx_rate  rx_rate  d  e
+    verify traffic rate  tx_rate  rx_rate  e  d
+    stop traffic  ${stream}
+    stop traffic  ${stream1}
+    stop traffic  ${stream2}
+	sleep  350
+    rest verify endpoint in system  0
+    rest delete tenant  t1
+	
+Add 4k static endpoints and check the forwarding
+	[Tags]  feature  scaling
+	rest add tenant  t1
+	rest add vns  t1  v1
+	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
+	rest add interface to vns  t1  v1  leaf1-a  ${leaf1a_ixia_intf}  -1
+	rest add interface to vns  t1  v1  leaf2-a  ${leaf2a_ixia_intf}  -1
+	rest add interface to vns  t1  v1  leaf0-b  ${leaf0b_ixia_intf}  -1
+	rest add interface to vns  t1  v1  leaf1-b  ${leaf1b_ixia_intf}  -1
+	rest add interface to vns  t1  v1  leaf2-b  ${leaf2b_ixia_intf}  -1
+	rest add endpoint scale  t1  v1  ${mac1}  a  leaf0-a  ${leaf0a_ixia_intf}  -1  2000
+  	rest add endpoint scale  t1  v1  ${mac2}  c  leaf1-a  ${leaf1a_ixia_intf}  -1  2000
+	sleep  10
+	rest verify endpoint in vns  v1  4000
+	${stream}=             L3 add  no_arp=True  flow=a<->c  src_mac=00:00:05:00:00:01  dst_mac=00:00:06:00:00:01  src_cnt=2000  dst_cnt=2000  frame_rate=2000  frame_size=68  name=a_c_flow
+    start traffic  ${stream}
+    sleep  30
+    verify traffic rate  tx_rate  rx_rate  a  c
+    verify traffic rate  tx_rate  rx_rate  c  a
+    stop traffic  ${stream}
+    rest delete tenant  t1
+	    
+Add 16k static endpoints and check the forwarding
+	[Tags]  feature  scaling
+  	rest add tenant  t1
+	rest add vns  t1  v1
+	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
+	rest add interface to vns  t1  v1  leaf1-a  ${leaf1a_ixia_intf}  -1
+	rest add interface to vns  t1  v1  leaf2-a  ${leaf2a_ixia_intf}  -1
+	rest add interface to vns  t1  v1  leaf0-b  ${leaf0b_ixia_intf}  -1
+	rest add interface to vns  t1  v1  leaf1-b  ${leaf1b_ixia_intf}  -1
+	rest add interface to vns  t1  v1  leaf2-b  ${leaf2b_ixia_intf}  -1
+  	rest add endpoint scale  t1  v1  ${mac1}  a  leaf0-a  ${leaf0a_ixia_intf}  -1  8000
+  	rest add endpoint scale  t1  v1  ${mac2}  c  leaf1-a  ${leaf1a_ixia_intf}  -1  8000
+	sleep  60
+	rest verify endpoint in vns  v1  16000
+	${stream}=             L3 add  no_arp=True  flow=a<->c  src_mac=00:00:05:00:00:01  dst_mac=00:00:06:00:00:01  src_cnt=8000  dst_cnt=8000  frame_rate=8000  frame_size=68  name=a_c_flow
+    start traffic  ${stream}
+    sleep  30
+    verify traffic rate  tx_rate  rx_rate  a  c
+    verify traffic rate  tx_rate  rx_rate  c  a
+    stop traffic  ${stream}
+    rest delete tenant  t1
+        
+Mac move at scale 1k mac between rack
+	[Tags]  feature  scaling
+	rest add tenant  t1
+	rest add vns  t1  v1
+	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
+	rest add interface to vns  t1  v1  leaf1-a  ${leaf1a_ixia_intf}  -1
+	rest add interface to vns  t1  v1  leaf2-a  ${leaf2a_ixia_intf}  -1
+	rest add interface to vns  t1  v1  leaf0-b  ${leaf0b_ixia_intf}  -1
+	rest add interface to vns  t1  v1  leaf1-b  ${leaf1b_ixia_intf}  -1
+	rest add interface to vns  t1  v1  leaf2-b  ${leaf2b_ixia_intf}  -1 
+	${stream}=             L3 add  no_arp=True  flow=a->c  src_mac=00:00:01:00:00:01  dst_mac=00:00:02:00:00:01  src_cnt=1000    frame_rate=1000  frame_size=68  name=a_c_flow
+	${stream1}=             L3 add  no_arp=True  flow=c->a  src_mac=00:00:02:00:00:01  dst_mac=00:00:01:00:00:01  dst_cnt=1000    frame_rate=1000  frame_size=68  name=c_a_flow
+    start traffic  ${stream}
+    start traffic  ${stream1}
+    sleep  60
+    rest verify endpoint in system  1000
+    rest verify forwarding layer2 table untag  leaf0-a  ${leaf0a_ixia_intf}  00:00:01:00:00:01
+    verify traffic rate  tx_rate  rx_rate  c  a
+    stop traffic  ${stream}
+    stop traffic  ${stream1}
+    ${stream2}=             L3 add  no_arp=True  flow=e->c  src_mac=00:00:01:00:00:01  dst_mac=00:00:02:00:00:01  src_cnt=1000   frame_rate=1000  frame_size=68  name=e_c_flow
+    start traffic  ${stream2}
+    start traffic  ${stream1}
+    sleep  60
+    rest verify forwarding layer2 table untag  leaf2-a  ${leaf2a_ixia_intf}  00:00:01:00:00:01
+    verify traffic rate  tx_rate  rx_rate  c  e
+    verify traffic rate negative  tx_rate  rx_rate  c  a  
+    stop traffic  ${stream2}
+    stop traffic  ${stream1}
+    rest delete tenant  t1
+
+Mac move at scale 16k  between rack
+	[Tags]  feature  scaling
+	rest add tenant  t1
+	rest add vns  t1  v1
+	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
+	rest add interface to vns  t1  v1  leaf1-a  ${leaf1a_ixia_intf}  -1
+	rest add interface to vns  t1  v1  leaf2-a  ${leaf2a_ixia_intf}  -1
+	rest add interface to vns  t1  v1  leaf0-b  ${leaf0b_ixia_intf}  -1
+	rest add interface to vns  t1  v1  leaf1-b  ${leaf1b_ixia_intf}  -1
+	rest add interface to vns  t1  v1  leaf2-b  ${leaf2b_ixia_intf}  -1 
+	${stream}=             L3 add  no_arp=True  flow=a->c  src_mac=00:01:01:00:00:01  dst_mac=00:02:02:00:00:01  src_cnt=16000    frame_rate=16000  frame_size=68  name=a_c_flow
+	${stream1}=             L3 add  no_arp=True  flow=c->a  src_mac=00:02:02:00:00:01  dst_mac=00:01:01:00:00:01  dst_cnt=16000    frame_rate=16000  frame_size=68  name=c_a_flow
+    start traffic  ${stream}
+    start traffic  ${stream1}
+    sleep  60
+    rest verify endpoint in system  16000
+    rest verify forwarding layer2 table untag  leaf0-a  ${leaf0a_ixia_intf}  00:00:01:00:00:01
+    verify traffic rate  tx_rate  rx_rate  c  a
+    stop traffic  ${stream}
+    stop traffic  ${stream1}
+    ${stream2}=             L3 add  no_arp=True  flow=e->c  src_mac=00:01:01:00:00:01  dst_mac=00:02:02:00:00:01  src_cnt=16000   frame_rate=16000  frame_size=68  name=e_c_flow
+    start traffic  ${stream2}
+    start traffic  ${stream1}
+    sleep  60
+    rest verify forwarding layer2 table untag  leaf2-a  ${leaf2a_ixia_intf}  00:00:01:00:00:01
+    verify traffic rate  tx_rate  rx_rate  c  e
+    verify traffic rate negative  tx_rate  rx_rate  c  a  
+    stop traffic  ${stream2}
+    stop traffic  ${stream1}
+    rest delete tenant  t1
+
+Tear down the config
+   [Tags]  feature 
+   delete fabric switch
+   rest delete tenant  t1
+   base suite teardown
+
+* Keywords      
+   
+add a tenant  [Arguments]  ${tenant} 
+  REST add tenant  ${tenant}    
+
+delete a tenant  [Arguments]  ${tenant} 
+  	REST delete tenant  ${tenant}    
+
+add a vns  [Arguments]  ${tenant}  ${vns}  
+	REST add vns  ${tenant}  ${vns}   
+
+delete a vns  [Arguments]  ${tenant}  ${vns} 
+  	REST delete vns  ${tenant}  ${vns}   
+
+add a portgroup  [Arguments]  ${pg}
+  	REST add portgroup  ${pg}    
+
+delete a portgroup  [Arguments]  ${pg}
+  	REST delete portgroup  ${pg}    
+
+add a endpoint  [Arguments]  ${tenant}  ${vns}  ${endpoint} 
+  	REST add endpoint  ${tenant}  ${vns}  ${endpoint}  
+
+delete a endpoint  [Arguments]  ${tenant}  ${vns}  ${endpoint}
+  	REST delete endpoint  ${tenant}  ${vns}  ${endpoint}  
+
+add interface to portgroup  [Arguments]  ${switch}  ${intf}  ${pg} 
+  	REST add interface to portgroup  ${switch}  ${intf}  ${pg}  
+
+delete interface from portgroup  [Arguments]  ${switch}  ${intf}  ${pg} 
+  	REST delete interface from portgroup  ${switch}  ${intf}  ${pg}  
+
+add portgroup to vns  [Arguments]  ${tenant}  ${vns}  ${pg}  ${vlan}
+  	REST add portgroup to vns  ${tenant}  ${vns}  ${pg}  ${vlan} 
+
+add portgroup to endpoint  [Arguments]  ${tenant}  ${vns}  ${endpoint}  ${pg}  ${vlan} 
+    REST add portgroup to endpoint  ${tenant}  ${vns}  ${endpoint}  ${pg}  ${vlan} 
+
+delete portgroup from vns  [Arguments]  ${tenant}  ${vns}  ${pg}  ${vlan} 
+    REST delete portgroup from vns  ${tenant}  ${vns}  ${pg}  ${vlan}
+
+verify traffic rate   [Arguments]  ${tx_rate}  ${rx_rate}  ${tx_intf}  ${rx_intf}
+    Sleep  5
+    ${report}=  fetch port stats
+    Log  ${report}
+    ${tx_value}=  verify dict key  ${report}  ${tx_intf}  transmitted_frame_rate
+    ${rx_value}=  verify dict key  ${report}  ${rx_intf}  received_valid_frame_rate
+    ixia verify traffic rate  ${tx_value}  ${rx_value}
+    
+verify traffic rate negative   [Arguments]  ${tx_rate}  ${rx_rate}  ${tx_intf}  ${rx_intf}
+    Sleep  5
+    ${report}=  fetch port stats
+    ${tx_value}=  verify dict key  ${report}  ${tx_intf}  transmitted_frame_rate
+    ${rx_value}=  verify dict key  ${report}  ${rx_intf}  received_valid_frame_rate
+    Should Not be equal  ${tx_value}  ${rx_value}
+T5 test teardown
+	delete traffic
+	
+  

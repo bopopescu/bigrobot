@@ -118,11 +118,13 @@ class Host(object):
             result = re.search('inet addr:(.*)\sBcast', output)
             return result.group(1)
 
-    def bash_release_dhcpv4_address(self, node, intf, ipaddr):
+
+    def bash_release_dhcpv4_address(self, node, intf):
 
         t = test.Test()
         n = t.node(node)
         n.sudo("dhclient -r %s" % intf)
+        return True
         n.sudo("ifconfig %s | grep --color=never -i 'inet addr'" % intf)['content']
         return_stat = n.sudo('echo $?')['content']
         return_stat = helpers.strip_cli_output(return_stat)
@@ -229,11 +231,21 @@ class Host(object):
         return True
 
 
-
-
-
-
-
+    def bash_check_service_status(self, node, processname):
+        t = test.Test()
+        n = t.node(node)
+        output = n.sudo("service %s status" % processname)['content']       
+        helpers.log("output: %s" % output)
+        match = re.search(r'unrecognized service', output, re.S | re.I)
+        if match:
+            return 'unrecognized service'
+        match = re.search(r'is not running', output, re.S | re.I)
+        if match:
+            return 'is not running'
+        match = re.search(r'start\/running', output, re.S | re.I)
+        if match:
+            return 'is started'
+        
 
 
 
