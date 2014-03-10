@@ -164,7 +164,7 @@ class BsnCommon(object):
             helpers.log("Node is a switch")
             if helpers.is_switchlight(n.platform()):
                 '''
-                NTP Configuration at Switch
+                    Switch
                 '''
                 helpers.log("The node is a SwitchLight switch")
                 switch = t.switch(node)
@@ -177,6 +177,9 @@ class BsnCommon(object):
         elif helpers.is_controller(node):
             helpers.log("The node is a controller")
             if helpers.is_bigtap(n.platform()):
+                '''
+                    BigTap Controller
+                '''
                 c = t.controller('master')
                 url = '/rest/v1/system/version'
                 if user == "admin":
@@ -189,6 +192,9 @@ class BsnCommon(object):
                     t.node_reconnect(node='master')
                 return content[0]['controller']
             elif helpers.is_bigwire(n.platform()):
+                '''
+                    BigWire Controller
+                '''
                 c = t.controller('master')
                 url = '/rest/v1/system/version'
                 if user == "admin":
