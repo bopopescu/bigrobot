@@ -349,6 +349,32 @@ class T5_longevity(object):
             return True    
 
 
+    def cli_take_sanpshot(self,save='yes',compare=None, run_config=None):
+        ''' take snap shot of the  system state
+            - mingtao
+           usage:  cli_delete_user
+           output:   
+                     
+        '''
+  
+        t = test.Test()
+        c = t.controller('master')
+        helpers.log('INFO: Entering ==> cli_take_sanpshot')
+ 
+        if run_config: 
+            c.enable('show running-config')     
+            content = c.cli_content()       
+            helpers.log("********new_content:************\n%s" % content)      
+            match= re.match(r'.*version(.*)', content)
+            if match:
+                helpers.log("INFO: version is: %s" % match.group(1))       
+                helpers.log("INFO: config is is: %s" % match.group(2))                          
+                return  True
+        
+        return True    
+
+ 
+ 
  
 
 
