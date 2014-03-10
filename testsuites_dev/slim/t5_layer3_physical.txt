@@ -273,7 +273,7 @@ L3 intra tenant same rack tagged with static endpoints
 	REST add endpoint							X								X1						X1_pc1
 	REST add endpoint							X								X2						X2_pc2
 	REST add endpoint ip						X								X1						X1_pc1					10.251.1.11
-	REST add endpoint ip						X								X2						X2_pc2					10.251.3.11
+	REST add endpoint ip						X								X2						X2_pc2					10.251.2.11
 	${mac1} = 									BASH get intf mac				h3						bond0
 	REST add endpoint mac						X								X1						X1_pc1					${mac1}
 	REST add endpoint portgroup attachment		X								X1						X1_pc1					${leaf1_pc1}				1001	
@@ -290,7 +290,7 @@ L3 intra tenant same rack tagged with static endpoints
 	BASH add ip address							h4								10.251.2.11/24			bond0.1002
 	BASH add route								h3								10.251.2.0/24			10.251.1.1
 	BASH add route								h4								10.251.1.0/24			10.251.2.1
-	sleep										5	
+	sleep										10	
 	${value} = 									BASH verify arp					h3						10.251.1.1
 	Should Not Be True							${value} 		
 	${value} =									BASH verify arp					h4						10.251.2.1
@@ -321,7 +321,7 @@ L3 intra tenant across rack tagged with static endpoints
 	REST add endpoint							X								X1						X1_pc1
 	REST add endpoint							X								X3						X3_pc6
 	REST add endpoint ip						X								X1						X1_pc1					10.251.1.11
-	REST add endpoint ip						X								X3						X3_pc6					10.251.2.11
+	REST add endpoint ip						X								X3						X3_pc6					10.251.3.11
 	${mac1} = 									BASH get intf mac				h3						bond0
 	REST add endpoint mac						X								X1						X1_pc1					${mac1}
 	REST add endpoint portgroup attachment		X								X1						X1_pc1					${leaf1_pc1}				1001	
