@@ -1341,6 +1341,44 @@ class T5(object):
             return True
 
 
+    def cli_copy_file_to_running_config(self, filename):
+        ''' Function to copy file to running config
+        via CLI
+        Input: Filename
+        Output: True if successful, False otherwise
+        '''
+        helpers.test_log("Running command:\ncopy %s running-config" % filename)
+        t = test.Test()
+        c = t.controller('master')
+        try:
+            c.config("copy %s running-config" % filename)
+            assert "Error" not in c.cli_content()
+        except:
+            helpers.test_log(c.cli_content())
+            return False
+        else:
+            return True
+
+
+    def cli_copy_config_to_running_config(self, filename):
+        ''' Function to copy config:// to running config
+        via CLI
+        Input: Filename
+        Output: True if successful, False otherwise
+        '''
+        helpers.test_log("Running command:\ncopy config://%s running-config" % filename)
+        t = test.Test()
+        c = t.controller('master')
+        try:
+            c.config("copy config://%s running-config" % filename)
+            assert "Error" not in c.cli_content()
+        except:
+            helpers.test_log(c.cli_content())
+            return False
+        else:
+            return True
+
+
     def cli_copy_running_config_to_scp(self, destination):
         ''' Function to copy running config to remote scp
         via CLI
