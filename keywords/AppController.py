@@ -29,19 +29,7 @@ class AppController(object):
 # All Show Commands Go Here:
 ###################################################
 
-    def rest_show_version(self, user="admin", password="adminadmin"):
-        t = test.Test()
-        c = t.controller('c1')
-        url = '/rest/v1/system/version'
-        if "admin" not in user:
-            c_user = t.node_reconnect(node='master', user=str(user), password=password)
-            c_user.rest.get(url)
-            content = c_user.rest.content()
-            t.node_reconnect(node='master')
-        else:
-            c.rest.get(url)
-            content = c.rest.content()
-        return content[0]['controller']
+
 
     def cli_upgrade_image(self, node=None, package=None, timeout=200, sleep_time=200):
         '''
