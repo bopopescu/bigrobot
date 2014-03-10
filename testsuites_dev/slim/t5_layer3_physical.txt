@@ -8,7 +8,7 @@ Force Tags      T5 Sanity
 Library         keywords/BsnCommon.py
 Library         keywords/Host.py
 Library         keywords/T5.py
-Library         keywords/T5Fabric.py
+#Library         keywords/T5Fabric.py
 Library         keywords/T5L3.py
 Library         keywords_dev/animesh/BsnCommonShow.py
 Library         keywords_dev/slim/SwitchLight.py
@@ -182,6 +182,9 @@ L3 intra tenant across rack tagged with dynamic endpoints
 	
 
 L3 intra tenant same rack untagged with static endpoints
+	BASH delete tag								h2								bond0.1003				soft_error=${true}
+	BASH delete tag								h3								bond0.1001				soft_error=${true}
+	BASH delete tag								h4								bond0.1002				soft_error=${true}
 	REST add portgroup to vns					X								X1						${leaf1_pc1}			-1
 	REST add portgroup to vns					X								X2						${leaf1_pc2}			-1
 	REST add endpoint							X								X1						X1_pc1
