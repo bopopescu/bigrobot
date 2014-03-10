@@ -53,6 +53,7 @@ Intra tenant L3 tagged traffic with static endpoints across rack
 	
 * Keywords
 L3 intra tenant same rack untagged with dynamic endpoints
+	initialize host
 	REST add portgroup to vns					X								X1						${leaf1_pc1}			-1
 	REST add portgroup to vns					X								X2						${leaf1_pc2}			-1
 	BASH add ip address							h3								10.251.1.11/24			bond0	
@@ -78,6 +79,7 @@ L3 intra tenant same rack untagged with dynamic endpoints
 	
 	
 L3 intra tenant across rack untagged with dynamic endpoints
+	initialize host
 	REST add portgroup to vns					X								X1						${leaf1_pc1}			-1
 	REST add portgroup to vns					X								X3						${leaf0_pc6}			-1
 	BASH add ip address							h3								10.251.1.11/24			bond0	
@@ -102,8 +104,7 @@ L3 intra tenant across rack untagged with dynamic endpoints
 	Should Be True  							${loss} == 0	
 	
 L3 intra tenant same rack tagged with dynamic endpoints
-	BASH delete tag								h3								bond0.1001				soft_error=${true}
-	BASH delete tag								h4								bond0.1002				soft_error=${true}
+	initialize host
 	REST add portgroup to vns					X								X1						${leaf1_pc1}			1001
 	REST add portgroup to vns					X								X2						${leaf1_pc2}			1002
 	BASH add tag								h3								bond0					1001
@@ -142,8 +143,7 @@ L3 intra tenant same rack tagged with dynamic endpoints
 	
 	
 L3 intra tenant across rack tagged with dynamic endpoints
-	BASH delete tag								h3								bond0.1001				soft_error=${true}
-	BASH delete tag								h2								bond0.1003				soft_error=${true}
+	initialize host
 	REST add portgroup to vns					X								X1						${leaf1_pc1}			1001
 	REST add portgroup to vns					X								X3						${leaf0_pc6}			1003
 	BASH add tag								h3								bond0					1001
@@ -182,9 +182,7 @@ L3 intra tenant across rack tagged with dynamic endpoints
 	
 
 L3 intra tenant same rack untagged with static endpoints
-	BASH delete tag								h2								bond0.1003				soft_error=${true}
-	BASH delete tag								h3								bond0.1001				soft_error=${true}
-	BASH delete tag								h4								bond0.1002				soft_error=${true}
+	initialize host
 	REST add portgroup to vns					X								X1						${leaf1_pc1}			-1
 	REST add portgroup to vns					X								X2						${leaf1_pc2}			-1
 	REST add endpoint							X								X1						X1_pc1
@@ -232,7 +230,15 @@ L3 intra tenant same rack untagged with static endpoints
 
 
 
-
+initialize host
+	BASH delete tag								h2								bond0.1003				soft_error=${true}
+	BASH delete tag								h3								bond0.1001				soft_error=${true}
+	BASH delete tag								h4								bond0.1002				soft_error=${true}
+	BASH init intf								h1								bond0
+	BASH init intf								h2								bond0
+	BASH init intf								h3								bond0
+	BASH init intf								h4								bond0
+	
 
 
 
