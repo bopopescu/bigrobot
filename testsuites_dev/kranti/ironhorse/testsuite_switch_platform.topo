@@ -1,4 +1,37 @@
-#Define the controller ip
-c1:
-   #ip: 10.192.5.71
+# Topology description is in YAML format - see http://en.wikipedia.org/wiki/YAML
+#
+# c<n>: Controllers
+# s<n>: Switches
+# h<n>: Hosts (including bare metal)
+# mn  : Mininet server
+# tg1 : Tester like Ixia
+
+
+s1:
     ip: 10.192.107.11
+    console_ip: cs-rack10
+    console_port: 6015
+
+#s2:
+#    ip: 10.192.107.12
+#    console_ip: cs-rack10
+#    console_port: 6016
+
+c1:
+    ip: 10.192.107.4
+c2:
+    ip: 10.192.107.5
+
+
+#tg1:
+#  platform: 'ixia'
+#  chassis_ip: 10.192.85.151
+#  tcl_server_ip: 10.194.64.172
+#  tcl_server_port: 8009
+#  ix_version: '7.10'
+#  set_init_ping: false
+#  ports:
+#    a:
+#      name: 4/21
+#    b:
+#      name: 4/22

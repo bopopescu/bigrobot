@@ -701,7 +701,7 @@ Verify - Jumbo frame disabled - Sending L2 traffic with Jumbo frame size 9150 by
     Manual untested
 
 Test the Oversubscription of 40Gig Links between Leaf and Spines
-    Log    Step 1 - Test the  Oversubscription of 40Gig Links between Leaf and Spines
+    Log   Step 1 - Test the  Oversubscription of 40Gig Links between Leaf and Spines
     [Tags]  Manual-untested
     Manual untested
     
