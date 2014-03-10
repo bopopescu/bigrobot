@@ -1876,3 +1876,11 @@ class T5(object):
                         return False
         else:
             helpers.log("Given tenant name does not match the config")
+            
+    def cli_show_fabric_link(self):
+        ''' Function to show the CLI fabric link 
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        url = 'api/v1/data/controller/applications/bvs/info/fabric?select=link'
+        c.rest.get(url)
