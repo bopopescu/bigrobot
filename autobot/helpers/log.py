@@ -51,7 +51,7 @@ class Log(object):
         else:
             return "%s\n" % s
 
-    def log(self, s, level=1):
+    def log(self, s, level=1, to_stderr=False):
         """
         Write to INFO log.
         """
@@ -66,7 +66,10 @@ class Log(object):
             f.write(msg)
             f.close()
         else:
-            logger.info(msg)
+            if to_stderr:
+                sys.stderr.write('\n' + msg)
+            else:
+                logger.info(msg)
 
     # Alias
     info = log

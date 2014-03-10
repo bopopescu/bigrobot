@@ -63,6 +63,9 @@ class BsnCommon(object):
     def manual_failed(self):
         raise AssertionError("MANUAL FAILED")
 
+    def summary_log(self, msg):
+        helpers.summary_log(msg, level=2)
+
     def show_test_topology_params(self):
         t = test.Test()
         helpers.log("Test topology params: %s" % helpers.prettify(t.topology_params()))
