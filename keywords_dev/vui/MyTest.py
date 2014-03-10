@@ -443,3 +443,6 @@ admin_user = glance
         helpers.warn("Here I am")
         helpers.summary_log("This is the end")
         return l
+
+    def set_empty_string(self):
+        return 'aa'

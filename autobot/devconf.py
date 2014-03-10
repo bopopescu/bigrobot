@@ -52,6 +52,7 @@ class DevConf(object):
 
         # Aliases
         self.set_prompt = self.conn.set_prompt
+        self.get_prompt = self.conn.get_prompt
 
     def connect(self):
         try:

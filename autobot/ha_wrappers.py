@@ -173,6 +173,10 @@ class HaControllerNode(object):
         n = self.t.controller(self.name(), resolve_mastership=True)
         return n.set_prompt(*args, **kwargs)
 
+    def get_prompt(self, *args, **kwargs):
+        n = self.t.controller(self.name(), resolve_mastership=True)
+        return n.get_prompt(*args, **kwargs)
+
     def send(self, *args, **kwargs):
         n = self.t.controller(self.name(), resolve_mastership=True)
         return n.send(*args, **kwargs)
