@@ -1053,7 +1053,7 @@ class T5(object):
         c = t.controller('master')
         frame_cnt = int(frame_cnt)
         vrange = int(vrange)
-        url = '/api/v1/data/controller/applications/bvs/info/stats/vns-stats/tenants/vnses[vns-name="%s"]' % (vns)
+        url = '/api/v1/data/controller/applications/bvs/info/stats/vns-stats/tenants[tenant-name="%s"]/vnses[vns-name="%s"]' % (tenant, vns)
         c.rest.get(url)
         data = c.rest.content()
         if data[0]["tenant-name"] == tenant and data[0]["vns-name"] == vns:
@@ -1073,7 +1073,7 @@ class T5(object):
         '''
         t = test.Test()
         c = t.controller('master')
-        url = '/api/v1/data/controller/applications/bvs/info/stats/vns-stats/tenants/vnses[vns-name="%s"]' % (vns)
+        url = '/api/v1/data/controller/applications/bvs/info/stats/vns-stats/tenants[tenant-name="%s"]/vnses[vns-name="%s"]' % (tenant, vns)
         frame_rate = int(frame_rate)
         vrange = int(vrange)
         try:
@@ -1100,7 +1100,7 @@ class T5(object):
         c = t.controller('master')
         frame_cnt = int(frame_cnt)
         vrange = int(vrange)
-        url = '/api/v1/data/controller/applications/bvs/info/stats/vns-stats/tenants/vnses[vns-name="%s"]' % (vns)
+        url = '/api/v1/data/controller/applications/bvs/info/stats/vns-stats/tenants[tenant-name="%s"]/vnses[vns-name="%s"]' % (tenant, vns)
         c.rest.get(url)
         data = c.rest.content()
         if data[0]["tenant-name"] == tenant and data[0]["vns-name"] == vns:
@@ -1120,7 +1120,7 @@ class T5(object):
         '''
         t = test.Test()
         c = t.controller('master')
-        url = '/api/v1/data/controller/applications/bvs/info/stats/vns-stats/tenants/vnses[vns-name="%s"]' % (vns)
+        url = '/api/v1/data/controller/applications/bvs/info/stats/vns-stats/tenants[tenant-name="%s"]/vnses[vns-name="%s"]' % (tenant, vns)
         frame_rate = int(frame_rate)
         vrange = int(vrange)
         c.rest.get(url)
