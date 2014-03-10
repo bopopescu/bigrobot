@@ -1789,4 +1789,90 @@ class T5(object):
         else:
             helpers.log("Given switch name and interface name are not present in the controller")
 
-
+    def rest_verify_tenant_rx_stats(self, tenant, frame_cnt, vrange=5):
+        ''' Function to verify the Tenant stats
+        Input: Tenant name , matching frame count , if required user can provide range as well for the frame count match
+        Output: given Tenant counters will be showed and matched aginst the value
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        frame_cnt = int(frame_cnt)
+        vrange = int(vrange)
+        url = '/api/v1/data/controller/applications/bvs/info/stats/tenant-stats/tenants[tenant-name="%s"]' % (tenant)
+        c.rest.get(url)
+        data = c.rest.content()
+        if data[0]["tenant-name"] == tenant:
+                    if (int(data[0]["counters"]["counters-rx-packets"]) >= (frame_cnt - vrange)) and (int(data[0]["counters"]["counters-rx-packets"]) <= (frame_cnt + vrange)):
+                        helpers.log("Pass: Tenant Counters value Expected:%d, Actual:%d" % (frame_cnt, int(data[0]["counters"]["counters-rx-packets"])))
+                        return True
+                    else:
+                        helpers.test_failure("Tenant counter value does not match,Expected:%d,Actual:%d" % (frame_cnt, int(data[0]["counters"]["counters-rx-packets"])))
+                        return False
+        else:
+            helpers.log("Given tenant name does not match the config")
+            
+    def rest_verify_tenant_tx_stats(self, tenant, frame_cnt, vrange=5):
+        ''' Function to verify the Tenant Tx stats
+        Input: Tenant name , matching frame count , if required user can provide range as well for the frame count match
+        Output: given Tenant counters will be showed and matched aginst the value
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        frame_cnt = int(frame_cnt)
+        vrange = int(vrange)
+        url = '/api/v1/data/controller/applications/bvs/info/stats/tenant-stats/tenants[tenant-name="%s"]' % (tenant)
+        c.rest.get(url)
+        data = c.rest.content()
+        if data[0]["tenant-name"] == tenant:
+                    if (int(data[0]["counters"]["counters-tx-packets"]) >= (frame_cnt - vrange)) and (int(data[0]["counters"]["counters-tx-packets"]) <= (frame_cnt + vrange)):
+                        helpers.log("Pass: Tenant Counters value Expected:%d, Actual:%d" % (frame_cnt, int(data[0]["counters"]["counters-tx-packets"])))
+                        return True
+                    else:
+                        helpers.test_failure("Tenant counter value does not match,Expected:%d,Actual:%d" % (frame_cnt, int(data[0]["counters"]["counters-tx-packets"])))
+                        return False
+        else:
+            helpers.log("Given tenant name does not match the config")
+            
+    def rest_verify_tenant_rx_rates(self, tenant, frame_rate, vrange=5):
+        ''' Function to verify the Tenant Tx stats
+        Input: Tenant name , matching frame count , if required user can provide range as well for the frame count match
+        Output: given Tenant counters will be showed and matched aginst the value
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        frame_rate = int(frame_rate)
+        vrange = int(vrange)
+        url = '/api/v1/data/controller/applications/bvs/info/stats/tenant-stats/tenants[tenant-name="%s"]' % (tenant)
+        c.rest.get(url)
+        data = c.rest.content()
+        if data[0]["tenant-name"] == tenant:
+                    if (int(data[0]["rates"]["rates-rx-packets"]) >= (frame_rate - vrange)) and (int(data[0]["rates"]["rates-rx-packets"]) <= (frame_rate + vrange)):
+                        helpers.log("Pass: Tenant Counters value Expected:%d, Actual:%d" % (frame_rate, int(data[0]["rates"]["rates-rx-packets"])))
+                        return True
+                    else:
+                        helpers.test_failure("Tenant counter value does not match,Expected:%d,Actual:%d" % (frame_rate, int(data[0]["rates"]["rates-rx-packets"])))
+                        return False
+        else:
+            helpers.log("Given tenant name does not match the config")
+            
+    def rest_verify_tenant_tx_rates(self, tenant, frame_rate, vrange=5):
+        ''' Function to verify the Tenant Tx stats
+        Input: Tenant name , matching frame count , if required user can provide range as well for the frame count match
+        Output: given Tenant counters will be showed and matched aginst the value
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        frame_rate = int(frame_rate)
+        vrange = int(vrange)
+        url = '/api/v1/data/controller/applications/bvs/info/stats/tenant-stats/tenants[tenant-name="%s"]' % (tenant)
+        c.rest.get(url)
+        data = c.rest.content()
+        if data[0]["tenant-name"] == tenant:
+                    if (int(data[0]["rates"]["rates-tx-packets"]) >= (frame_rate - vrange)) and (int(data[0]["rates"]["rates-tx-packets"]) <= (frame_rate + vrange)):
+                        helpers.log("Pass: Tenant Counters value Expected:%d, Actual:%d" % (frame_rate, int(data[0]["rates"]["rates-tx-packets"])))
+                        return True
+                    else:
+                        helpers.test_failure("Tenant counter value does not match,Expected:%d,Actual:%d" % (frame_rate, int(data[0]["rates"]["rates-tx-packets"])))
+                        return False
+        else:
+            helpers.log("Given tenant name does not match the config")
