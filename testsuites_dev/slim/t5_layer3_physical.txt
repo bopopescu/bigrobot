@@ -217,7 +217,7 @@ L3 intra tenant same rack untagged with static endpoints
 	Should Be True  							${loss} == 0	
 
 	${result} =									REST show endpoints mac			00:11:22:33:44:55
-	Should Not Be Equal As Strings				{$result}						None
+	Should Not Be Equal As Strings				{$result}						[]
 
 
 
