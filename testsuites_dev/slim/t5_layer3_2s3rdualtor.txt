@@ -919,6 +919,7 @@ L3 inter tenant same rack tagged with dynamic endpoints
 	mininet l3 ping								${bm0_name} 		${bm3_ip}		3
 	sleep										1
 	${loss}=  									mininet l3 ping		${bm0_name}		${bm3_ip} 	
+	Should Be True  							${loss} == 0	
 	${endpoints_cnt}=							rest count endpoints mac
 #	Should Be True  							${endpoints_cnt} == 8
 	delete inter tenant routing
@@ -1264,10 +1265,6 @@ Delete and add router vns with L3 intra tenant traffic with static endpoints
 	sleep										1
 	${loss}=  									mininet l3 ping				${bm8_name}		${bm2_ip} 	
 	Should Be True  							${loss} == 0	
-
-
-
-
 
 setup topology
 	add fabric switch
