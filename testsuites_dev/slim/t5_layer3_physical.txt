@@ -35,11 +35,11 @@ Intra tenant L3 tagged traffic with dynamic endpoints across rack
 
 Intra tenant L3 untagged traffic with static endpoints same rack
 	L3 intra tenant same rack untagged with static endpoints
-#	[Tags]							skipped			smoke				sanity			
+	[Tags]							skipped			smoke				sanity			
 
 Intra tenant L3 untagged traffic with static endpoints across rack
 	L3 intra tenant across rack untagged with static endpoints
-	[Tags]							skipped			smoke				sanity	
+#	[Tags]							skipped			smoke				sanity	
 
 Intra tenant L3 tagged traffic with static endpoints same rack
 	L3 intra tenant same rack tagged with static endpoints
@@ -69,10 +69,10 @@ L3 intra tenant same rack untagged with dynamic endpoints
 	Should Be True								${value} 
 	${mac1} = 									BASH get intf mac				h3						bond0
 	${result} =									REST show endpoints mac			${mac1}
-	Should Not Be Equal As Strings				{$result}						None
+	Should Be True								${result}						
 	${mac2} = 									BASH get intf mac				h4						bond0
 	${result} =									REST show endpoints mac			${mac2}
-	Should Not Be Equal As Strings				{$result}						None
+	Should Be True								${result}						
 	REST show endpoints	
 	${loss} = 									BASH ping						h3						10.251.2.11 			count=10
 	Should Be True  							${loss} == 0	
@@ -95,10 +95,10 @@ L3 intra tenant across rack untagged with dynamic endpoints
 	Should Be True								${value} 	
 	${mac1} = 									BASH get intf mac				h3						bond0
 	${result} =									REST show endpoints mac			${mac1}
-	Should Not Be Equal As Strings				{$result}						None
+	Should Be True								${result}						
 	${mac2} = 									BASH get intf mac				h2						bond0
 	${result} =									REST show endpoints mac			${mac2}
-	Should Not Be Equal As Strings				{$result}						None
+	Should Be True								${result}						
 	REST show endpoints	
 	${loss} = 									BASH ping						h3						10.251.3.11 			count=10
 	Should Be True  							${loss} == 0	
@@ -129,10 +129,10 @@ L3 intra tenant same rack tagged with dynamic endpoints
 	Should Be True								${value} 	
 	${mac1} = 									BASH get intf mac				h3						bond0
 	${result} =									REST show endpoints mac			${mac1}
-	Should Not Be Equal As Strings				{$result}						None
+	Should Be True								${result}						
 	${mac2} = 									BASH get intf mac				h4						bond0
 	${result} =									REST show endpoints mac			${mac2}
-	Should Not Be Equal As Strings				{$result}						None
+	Should Be True								${result}						
 	REST show endpoints		
 	${loss} = 									BASH ping						h3						10.251.2.11 			count=10
 	Should Be True  							${loss} == 0	
@@ -163,15 +163,15 @@ L3 intra tenant across rack tagged with dynamic endpoints
 	Should Not Be True							${value} 	
 	BASH ping									h3								10.251.3.11				count=10
 	${value} = 									BASH verify arp					h3						10.251.1.1
-	Should Be True							${value} 		
+	Should Be True								${value} 		
 	${value} =									BASH verify arp					h2						10.251.3.1
-	Should Be True							${value} 		
+	Should Be True								${value} 		
 	${mac1} = 									BASH get intf mac				h3						bond0
 	${result} =									REST show endpoints mac			${mac1}
-	Should Not Be Equal As Strings				{$result}						None
+	Should Be True								${result}						
 	${mac2} = 									BASH get intf mac				h2						bond0
 	${result} =									REST show endpoints mac			${mac2}
-	Should Not Be Equal As Strings				{$result}						None
+	Should Be True								${result}						
 	REST show endpoints		
 	${loss} = 									BASH ping						h3						10.251.3.11 			count=10
 	Should Be True  							${loss} == 0		
@@ -199,7 +199,7 @@ L3 intra tenant same rack untagged with static endpoints
 	BASH add ip address							h4								10.251.2.11/24			bond0
 	BASH add route								h3								10.251.2.0/24			10.251.1.1
 	BASH add route								h4								10.251.1.0/24			10.251.2.1
-	sleep										5	
+	sleep										10	
 	BASH ping									h3								10.251.1.1				count=10
 	BASH ping									h4								10.251.2.1				count=10
 	${value} = 									BASH verify arp					h3						10.251.1.1
@@ -208,20 +208,51 @@ L3 intra tenant same rack untagged with static endpoints
 	Should Be True								${value} 
 	${mac1} = 									BASH get intf mac				h3						bond0
 	${result} =									REST show endpoints mac			${mac1}
-	Should Not Be Equal As Strings				{$result}						None
+	Should Be True								${result}						
 	${mac2} = 									BASH get intf mac				h4						bond0
 	${result} =									REST show endpoints mac			${mac2}
-	Should Not Be Equal As Strings				{$result}						None
+	Should Be True								${result}						
 	REST show endpoints	
 	${loss} = 									BASH ping						h3						10.251.2.11 			count=10
 	Should Be True  							${loss} == 0	
 
-	${result} =									REST show endpoints mac			00:11:22:33:44:55
-	Should Not Be Equal As Strings				{$result}						[]
 
-
-
-
+L3 intra tenant across rack untagged with static endpoints
+	initialize host
+	REST add portgroup to vns					X								X1						${leaf1_pc1}			-1
+	REST add portgroup to vns					X								X3						${leaf0_pc6}			-1
+	REST add endpoint							X								X1						X1_pc1
+	REST add endpoint							X								X3						X3_pc6
+	REST add endpoint ip						X								X1						X1_pc1					10.251.1.11
+	REST add endpoint ip						X								X3						X3_pc6					10.251.3.11
+	${mac1} = 									BASH get intf mac				h3						bond0
+	REST add endpoint mac						X								X1						X1_pc1					${mac1}
+	REST add endpoint portgroup attachment		X								X1						X1_pc1					${leaf1_pc1}				-1	
+	${mac2} = 									BASH get intf mac				h2						bond0
+	REST add endpoint mac						X								X3						X3_pc6					${mac2}
+	REST add endpoint portgroup attachment		X								X3						X3_pc6					${leaf0_pc6}				-1	
+	REST add portgroup to vns					X								X1						${leaf1_pc1}			-1
+	REST add portgroup to vns					X								X3						${leaf0_pc6}			-1
+	BASH add ip address							h3								10.251.1.11/24			bond0	
+	BASH add ip address							h2								10.251.3.11/24			bond0
+	BASH add route								h3								10.251.3.0/24			10.251.1.1
+	BASH add route								h2								10.251.1.0/24			10.251.3.1
+	sleep										10	
+	BASH ping									h3								10.251.1.1				count=10
+	BASH ping									h2								10.251.3.1				count=10
+	${value} = 									BASH verify arp					h3						10.251.1.1
+	Should Be True								${value} 		
+	${value} =									BASH verify arp					h2						10.251.3.1
+	Should Be True								${value} 	
+	${mac1} = 									BASH get intf mac				h3						bond0
+	${result} =									REST show endpoints mac			${mac1}
+	Should Be True								${result}						
+	${mac2} = 									BASH get intf mac				h2						bond0
+	${result} =									REST show endpoints mac			${mac2}
+	Should Be True								${result}						
+	REST show endpoints	
+	${loss} = 									BASH ping						h3						10.251.3.11 			count=10
+	Should Be True  							${loss} == 0	
 
 
 
