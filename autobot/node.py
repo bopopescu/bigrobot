@@ -146,6 +146,7 @@ class ControllerNode(Node):
         self.bash_content = self.dev.content
         self.bash_result = self.dev.result
         self.set_prompt = self.dev.set_prompt
+        self.get_prompt = self.dev.get_prompt
         self.send = self.dev.send
         self.expect = self.dev.expect
 
@@ -272,6 +273,7 @@ class MininetNode(Node):
         self.restart_mininet = self.dev.restart_mininet
         self.stop_mininet = self.dev.stop_mininet
         self.set_prompt = self.dev.set_prompt
+        self.get_prompt = self.dev.get_prompt
         self.send = self.dev.send
         self.expect = self.dev.expect
 
@@ -330,6 +332,7 @@ class HostNode(Node):
         self.bash_content = self.dev.content
         self.bash_result = self.dev.result
         self.set_prompt = self.dev.set_prompt
+        self.get_prompt = self.dev.get_prompt
         self.send = self.dev.send
         self.expect = self.dev.expect
 
@@ -374,6 +377,7 @@ class SwitchNode(Node):
         self.bash_content = self.dev.content
         self.bash_result = self.dev.result
         self.set_prompt = self.dev.set_prompt
+        self.get_prompt = self.dev.get_prompt
         self.send = self.dev.send
         self.expect = self.dev.expect
         self.info = self.dev.info
