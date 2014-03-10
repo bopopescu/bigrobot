@@ -3,8 +3,8 @@ Documentation  BigTap High Availability Test Suite
 Suite Setup  ha suite setup
 Suite Teardown   ha suite teardown
 Test Setup   base test setup
-Test Teardown  base test teardown 
-Force Tags   platform Sanity
+Test Teardown  ha test teardown 
+Force Tags   bigtap  ha
 Library  keywords/BsnCommon.py
 Library  keywords/AppController.py
 Library  keywords/BigTap.py
@@ -12,242 +12,229 @@ Library  keywords/SwitchLight.py
 Library  keywords/Ixia.py
 
 * Variable
-${switch_1_alias}  AF1
-${switchlight_version}  SwitchLight 2.0.0
-${netmask}  18
-${gateway}  10.192.64.1
-${dns_server}  10.192.3.1
-${dns_domain}  bigswitch.com
+${switchlight_version}  SwitchLight 2.0.1
+
 
 ${filter_1}  ethernet1  
 ${filter_nick_1}  F1
+${filter_nick_1A}  FILTER1
 
 ${filter_2}  ethernet1  
 ${filter_nick_2}  F2
 
 ${delivery_1}  ethernet2  
 ${delivery_nick_1}  D1
+${delivery_nick_1A}  DELIVERY1
 
 ${delivery_2}  ethernet2  
 ${delivery_nick_2}  D2
-  
-
-
+${delivery_nick_2A}  DELIVERY2
+        
 *Test Case
 verify configuration is successful
     verify config
-    [Tags]  bigtap  ha  
-     
-Switch HA: Restart Process OFAD on filter switch
-    verify config 
-    bash restart process  s1  ofad
-    Sleep  30
-    verify config    
-    [Tags]  bigtap  ha       
+    ${stream}=  L2 add  flow=a->d  line_rate=100  frame_size=1518  name=a_bd_flow
+    clear stats 
+    start traffic  ${stream}
+    sleep  10
+    verify results  a  transmitted_frame_rate  b  received_valid_frame_rate
+    verify results  a  transmitted_frame_rate  d  received_valid_frame_rate
+    stop traffic  ${stream}    
+    [Tags]  base 
 
-Switch HA: Restart Process OFAD on delivery switch
-    verify config 
-    bash restart process  s2  ofad
-    Sleep  30
-    verify config    
-    [Tags]  bigtap  ha  
-
-Switch HA: Restart Process snmpd on filter switch
-    verify config 
-    bash restart process  s1  snmpd
-    Sleep  30
-    verify config    
-    [Tags]  bigtap  ha    
-
-Switch HA: Restart Process ntp on filter switch
-    verify config 
-    bash restart process  s1  ntp
-    Sleep  30
-    verify config    
-    [Tags]  bigtap  ha    
-
-Switch HA: Restart Process fancontrol on filter switch
-    verify config 
-    bash restart process  s1  fancontrol
-    Sleep  30
-    verify config    
-    [Tags]  bigtap  ha
-    
-Switch HA: Restart Process fancontrol on delivery switch
-    verify config 
-    bash restart process  s2  fancontrol
-    Sleep  30
-    verify config    
-    [Tags]  bigtap  ha    
-
-Switch HA: Restart Process RSYSLOG on filter switch
-    verify config 
-    bash restart process  s1  rsyslog
-    Sleep  30
-    verify config    
-    [Tags]  bigtap  ha    
-
-Switch HA: Restart Process networking on filter switch
-    verify config 
-    bash restart process  s1  networking
-    Sleep  30
-    verify config    
-    [Tags]  bigtap  ha   
-
-Switch HA: Restart Process networking on delivery switch
-    verify config 
-    bash restart process  s2  networking
-    Sleep  30
-    verify config    
-    [Tags]  bigtap  ha
-
-Switch HA: Restart Process ssh on filter switch
-    verify config 
-    bash restart process  s1  ssh
-    Sleep  30
-    verify config    
-    [Tags]  bigtap  ha
-
-Switch HA: Restart filter switch
-    verify config 
-    cli restart switch  s1  save_config="yes"
-    Sleep  30
-    verify config    
-    [Tags]  bigtap  ha
-
-Switch HA: Restart delivery switch
-    verify config 
-    cli restart switch  s2  save_config="yes"
-    Sleep  30
-    verify config    
-    [Tags]  bigtap  ha
-  
-Controller HA: Restart Process Floodlight on Master Controller:
-    verify config 
-    restart process on controller  floodlight  Master
-    Sleep  90
-    verify config    
-    [Tags]  bigtap  ha
-
-Controller HA: Restart Process Floodlight on Slave Controller:
-    verify config 
-    restart process on controller  floodlight  Slave
-    Sleep  90
-    verify config    
-    [Tags]  bigtap  ha 
-
-Controller HA: Restart Process keepalived on Master Controller:
-    verify config 
-    restart process on controller  keepalived  Master
-    Sleep  30
-    verify config    
-    [Tags]  bigtap  ha
-
-Controller HA: Restart Process keepalived on Slave Controller:
-    verify config 
-    restart process on controller  keepalived  Slave
-    Sleep  30
-    verify config    
-    [Tags]  bigtap  ha         
-    
-Controller HA: Restart Process snmpd on Master Controller:
-    verify config 
-    restart process on controller  snmpd  Master
-    Sleep  30
-    verify config    
-    [Tags]  bigtap  ha
-
-Controller HA: Restart Process snmpd on Slave Controller:
-    verify config 
-    restart process on controller  snmpd  Slave
-    Sleep  30
-    verify config    
-    [Tags]  bigtap  ha    
- 
-Controller HA: Restart Process rsyslogd on Master Controller:
-    verify config 
-    restart process on controller  rsyslogd  Master
-    Sleep  30
-    verify config    
-    [Tags]  bigtap  ha
-
-Controller HA: Restart Process rsyslogd on Slave Controller:
-    verify config 
-    restart process on controller  rsyslogd  Slave
-    Sleep  30
-    verify config    
-    [Tags]  bigtap  ha     
- 
-Controller HA: Restart Process ntp on Master Controller:
-    verify config 
-    restart process on controller  ntp  Master
-    Sleep  30
-    verify config    
-    [Tags]  bigtap  ha
-
-Controller HA: Restart Process ntp on Slave Controller:
-    verify config 
-    restart process on controller  ntp  Slave
-    Sleep  30
-    verify config    
-    [Tags]  bigtap  ha  
- 
-Controller HA: Restart Process collectd on Master Controller:
-    verify config 
-    restart process on controller  collectd  Master
-    Sleep  30
-    verify config    
-    [Tags]  bigtap  ha
-
-Controller HA: Restart Process collectd on Slave Controller:
-    verify config 
-    restart process on controller  collectd  Slave
-    Sleep  30
-    verify config    
-    [Tags]  bigtap  ha  
-
-Controller HA: Restart Process tacacs_plus on Master Controller:
-    verify config 
-    restart process on controller  tacacs_plus  Master
-    Sleep  30
-    verify config    
-    [Tags]  bigtap  ha
- 
-Controller HA: Restart Process apache2 on Master Controller:
-    verify config 
-    restart process on controller  apache2  Master
-    Sleep  30
-    verify config    
-    [Tags]  bigtap  ha
-
-Controller HA: Restart Process apache2 on Slave Controller:
-    verify config 
-    restart process on controller  apache2  Slave
-    Sleep  30
-    verify config    
-    [Tags]  bigtap  ha 
-
-Controller HA: Reboot Slave Controller:
-    verify config 
-    restart controller  Slave
-    Sleep  120
-    verify config    
-    [Tags]  bigtap  ha  
-    
-Controller HA: Reboot Master Controller:
-    verify config 
-    restart controller  Master
-    Sleep  120    
-    verify config    
-    [Tags]  bigtap  ha
-
-Controller HA: Flap eth0 on Master Controller
+Flap filter interface and verify traffic is restored        
     verify config
-    flap eth0 controller  Master
-    Sleep  60
-    verify config    
-    [Tags]  bigtap  ha
-                  
+    ${stream}=  L2 add  flow=a->d  line_rate=100  frame_size=1518  name=a_bd_flow
+    clear stats 
+    start traffic  ${stream}
+    sleep  5
+    verify results  a  transmitted_frame_rate  b  received_valid_frame_rate
+    verify results  a  transmitted_frame_rate  d  received_valid_frame_rate
+    cli disable interface  s1  ${filter_1}
+    sleep  5
+    cli enable interface  s1  ${filter_1}
+    sleep  5
+    verify config
+    verify results  a  transmitted_frame_rate  b  received_valid_frame_rate
+    verify results  a  transmitted_frame_rate  d  received_valid_frame_rate              
+    stop traffic  ${stream}    
+    [Tags]  filter 
+
+Flap delivery interfaces and verify traffic is restored        
+    verify config
+    ${stream}=  L2 add  flow=a->d  line_rate=100  frame_size=1518  name=a_bd_flow
+    clear stats 
+    start traffic  ${stream}
+    sleep  5
+    verify results  a  transmitted_frame_rate  b  received_valid_frame_rate
+    verify results  a  transmitted_frame_rate  d  received_valid_frame_rate
+    cli disable interface  s1  ${delivery_1}
+    cli disable interface  s1  ${delivery_2}    
+    sleep  5
+    cli enable interface  s1  ${delivery_1}
+    cli enable interface  s1  ${delivery_2}    
+    sleep  5
+    verify config
+    verify results  a  transmitted_frame_rate  b  received_valid_frame_rate
+    verify results  a  transmitted_frame_rate  d  received_valid_frame_rate              
+    stop traffic  ${stream}    
+    [Tags]  delivery 
+
+Shutdown one core interface and verify traffic is unaffected        
+    verify config
+    ${stream}=  L2 add  flow=a->d  line_rate=100  frame_size=1518  name=a_bd_flow
+    clear stats 
+    start traffic  ${stream}
+    sleep  5
+    verify results  a  transmitted_frame_rate  b  received_valid_frame_rate
+    verify results  a  transmitted_frame_rate  d  received_valid_frame_rate
+    cli disable interface  s1  port-channel1
+    sleep  5
+    verify config
+    verify results  a  transmitted_frame_rate  b  received_valid_frame_rate
+    verify results  a  transmitted_frame_rate  d  received_valid_frame_rate
+    cli enable interface  s1  port-channel1
+    sleep  5
+    verify config
+    verify results  a  transmitted_frame_rate  b  received_valid_frame_rate
+    verify results  a  transmitted_frame_rate  d  received_valid_frame_rate                      
+    stop traffic  ${stream}    
+    [Tags]  core 
+
+Rename filter interface and verify traffic flow
+    delete bigtap configuration
+    base policy config  ${filter_1}  ${filter_2}  ${delivery_1}  ${delivery_2}  ${filter_nick_1A}  ${filter_nick_2}  ${delivery_nick_1}  ${delivery_nick_2}
+    verify config
+    ${stream}=  L2 add  flow=a->d  line_rate=100  frame_size=1518  name=a_bd_flow
+    clear stats 
+    start traffic  ${stream}
+    sleep  10
+    verify results  a  transmitted_frame_rate  b  received_valid_frame_rate
+    verify results  a  transmitted_frame_rate  d  received_valid_frame_rate
+    stop traffic  ${stream}
+    rest delete policy  admin-view  P1
+    rest delete policy  admin-view  ZP1
+    base policy config  ${filter_1}  ${filter_2}  ${delivery_1}  ${delivery_2}  ${filter_nick_1}  ${filter_nick_2}  ${delivery_nick_1}  ${delivery_nick_2}    
+    [Tags]  renameFilter
+
+Rename delivery interface and verify traffic flow
+    delete bigtap configuration
+    base policy config  ${filter_1}  ${filter_2}  ${delivery_1}  ${delivery_2}  ${filter_nick_1}  ${filter_nick_2}  ${delivery_nick_1A}  ${delivery_nick_2A}
+    verify config
+    ${stream}=  L2 add  flow=a->d  line_rate=100  frame_size=1518  name=a_bd_flow
+    clear stats 
+    start traffic  ${stream}
+    sleep  10
+    verify results  a  transmitted_frame_rate  b  received_valid_frame_rate
+    verify results  a  transmitted_frame_rate  d  received_valid_frame_rate
+    stop traffic  ${stream}
+    delete bigtap configuration
+    base policy config  ${filter_1}  ${filter_2}  ${delivery_1}  ${delivery_2}  ${filter_nick_1}  ${filter_nick_2}  ${delivery_nick_1}  ${delivery_nick_2}    
+    [Tags]  renameDelivery
+
+
+Add and remove an additional filter interface to policy and verify no traffic drop is seen
+    ${stream}=  L2 add  flow=a->d  line_rate=100  frame_size=1518  name=a_bd_flow
+    clear stats 
+    start traffic  ${stream}
+    sleep  5
+    rest add policy interface  admin-view  P1  ${filter_nick_2}  filter    
+    verify results  a  transmitted_frame_rate  b  received_valid_frame_rate
+    verify results  a  transmitted_frame_rate  d  received_valid_frame_rate
+    sleep  5
+    rest delete policy interface  admin-view  P1  ${filter_nick_2}  filter
+    verify results  a  transmitted_frame_rate  b  received_valid_frame_rate
+    verify results  a  transmitted_frame_rate  d  received_valid_frame_rate        
+    stop traffic  ${stream}
+    [Tags]  add-delete-filter
+    
+Deactivate and activate bigtap policy 50 times
+    ${stream}=  L2 add  flow=a->d  line_rate=100  frame_size=1518  name=a_bd_flow
+    clear stats 
+    start traffic  ${stream}
+    :FOR  ${INDEX}  IN RANGE  1  50
+    \   Log  ${INDEX}
+    \   verify results  a  transmitted_frame_rate  b  received_valid_frame_rate
+    \   verify results  a  transmitted_frame_rate  d  received_valid_frame_rate
+    \   rest update policy action  admin-view  P1  inactive
+    \   sleep  2
+    \   rest update policy action  admin-view  P1  forward
+    \   sleep  2
+    \   verify results  a  transmitted_frame_rate  b  received_valid_frame_rate
+    \   verify results  a  transmitted_frame_rate  d  received_valid_frame_rate        
+    stop traffic  ${stream}
+    [Tags]  activate-deactivate                   
+
+Flap between action active and rate-measure in a bigtap policy 50 times
+    ${stream}=  L2 add  flow=a->d  line_rate=100  frame_size=1518  name=a_bd_flow
+    clear stats 
+    start traffic  ${stream}
+    :FOR  ${INDEX}  IN RANGE  1  50
+    \   Log  ${INDEX}
+    \   verify results  a  transmitted_frame_rate  b  received_valid_frame_rate
+    \   verify results  a  transmitted_frame_rate  d  received_valid_frame_rate
+    \   rest update policy action  admin-view  P1  rate-measure
+    \   sleep  2
+    \   rest update policy action  admin-view  P1  forward
+    \   sleep  2
+    \   verify results  a  transmitted_frame_rate  b  received_valid_frame_rate
+    \   verify results  a  transmitted_frame_rate  d  received_valid_frame_rate        
+    stop traffic  ${stream}
+    [Tags]  active-ratemeasure                   
+
+
+Delete and re-add bigtap policy 50 times
+    ${stream}=  L2 add  flow=a->d  line_rate=100  frame_size=1518  name=a_bd_flow
+    clear stats 
+    start traffic  ${stream}
+    :FOR  ${INDEX}  IN RANGE  1  50
+    \   Log  ${INDEX}
+    \   verify results  a  transmitted_frame_rate  b  received_valid_frame_rate
+    \   verify results  a  transmitted_frame_rate  d  received_valid_frame_rate
+    \   rest delete policy  admin-view  P1
+    \   rest delete policy  admin-view  ZP1 
+    \   sleep  2
+    \   base policy config  ${filter_1}  ${filter_2}  ${delivery_1}  ${delivery_2}  ${filter_nick_1}  ${filter_nick_2}  ${delivery_nick_1}  ${delivery_nick_2}
+    \   sleep  2
+    \   verify results  a  transmitted_frame_rate  b  received_valid_frame_rate
+    \   verify results  a  transmitted_frame_rate  d  received_valid_frame_rate        
+    stop traffic  ${stream}
+    [Tags]  delete-add                   
+
+Enable and disable feature overlap 50 times     
+    ${stream}=  L2 add  flow=a->d  line_rate=100  frame_size=1518  name=a_bd_flow
+    clear stats 
+    start traffic  ${stream}
+    :FOR  ${INDEX}  IN RANGE  1  50
+    \   Log  ${INDEX}
+    \   verify results  a  transmitted_frame_rate  b  received_valid_frame_rate
+    \   verify results  a  transmitted_frame_rate  d  received_valid_frame_rate
+    \   rest disable feature  overlap
+    \   sleep  2
+    \   rest enable feature  overlap
+    \   sleep  2
+    \   verify results  a  transmitted_frame_rate  b  received_valid_frame_rate
+    \   verify results  a  transmitted_frame_rate  d  received_valid_frame_rate        
+    stop traffic  ${stream}
+    [Tags]  enable-disable-overlap      
+
+Enable and disable feature inport-mask 50 times     
+    ${stream}=  L2 add  flow=a->d  line_rate=100  frame_size=1518  name=a_bd_flow
+    clear stats 
+    start traffic  ${stream}
+    :FOR  ${INDEX}  IN RANGE  1  50
+    \   Log  ${INDEX}
+    \   verify results  a  transmitted_frame_rate  b  received_valid_frame_rate
+    \   verify results  a  transmitted_frame_rate  d  received_valid_frame_rate
+    \   rest disable feature  inport-mask
+    \   sleep  2
+    \   rest enable feature  inport-mask
+    \   sleep  2
+    \   verify results  a  transmitted_frame_rate  b  received_valid_frame_rate
+    \   verify results  a  transmitted_frame_rate  d  received_valid_frame_rate        
+    stop traffic  ${stream}
+    [Tags]  enable-disable-inport   
+                        
 * Keyword
 
 ha suite setup
@@ -256,22 +243,25 @@ ha suite setup
     rest add switch alias  s2  APP-REGRESS-2
     rest add switch alias  s3  APP-REGRESS-5
     rest add switch alias  s4  APP-REGRESS-6    
-    rest add interface role  s1  ${filter_1}  filter  ${filter_nick_1}
-    rest add interface role  s2  ${filter_2}  filter  ${filter_nick_2}          
-    rest add interface role  s1  ${delivery_1}  delivery  ${delivery_nick_1}
-    rest add interface role  s2  ${delivery_2}  delivery  ${delivery_nick_2}
-    Sleep  5
+    base policy config  ${filter_1}  ${filter_2}  ${delivery_1}  ${delivery_2}  ${filter_nick_1}  ${filter_nick_2}  ${delivery_nick_1}  ${delivery_nick_2}      
+
+base policy config   [Arguments]  ${filter_interface_1}  ${filter_interface_2}  ${delivery_interface_1}  ${delivery_interface_2}  ${filterNick1}  ${filterNick2}  ${deliveryNick1}  ${deliveryNick2}  
+    rest add interface role  s1  ${filter_interface_1}  filter  ${filterNick1}
+    rest add interface role  s2  ${filter_interface_2}  filter  ${filterNick2}          
+    rest add interface role  s1  ${delivery_interface_1}  delivery  ${deliveryNick1}
+    rest add interface role  s2  ${delivery_interface_2}  delivery  ${deliveryNick2}
+    Sleep  2
     rest add policy  admin-view  P1  forward
     rest add policy match  admin-view  P1  1  {"any-traffic": true, "sequence": 1}
-    rest add policy interface  admin-view  P1  F1  filter
-    rest add policy interface  admin-view  P1  D1  delivery 
-    Sleep  5  
+    rest add policy interface  admin-view  P1  ${filterNick1}  filter
+    rest add policy interface  admin-view  P1  ${deliveryNick1}  delivery 
+    Sleep  2  
     rest add policy  admin-view  ZP1  forward
     rest add policy match  admin-view  ZP1  1  {"any-traffic": true, "sequence": 1}
-    rest add policy interface  admin-view  ZP1  F1  filter
-    rest add policy interface  admin-view  ZP1  D2  delivery
-    Sleep  5
-
+    rest add policy interface  admin-view  ZP1  ${filterNick1}  filter
+    rest add policy interface  admin-view  ZP1  ${deliveryNick2}  delivery
+    Sleep  30
+    
 verify config
     ${verify_policy1}=  rest verify bigtap policy  P1  num_filter_intf=1  num_delivery_intf=1
     Should be true  ${verify_policy1}
@@ -282,14 +272,17 @@ verify config
     ${switchFlowVal1} =   REST show switch flow  s1  
     Should Be Equal As Integers  ${switchFlowVal1}  4  
     ${switchFlowVal2} =   REST show switch flow  s2  
-    Should Be Equal As Integers  ${switchFlowVal2}  4   
-    ${switchFlowVal3} =   REST show switch flow  s3  
-    Should Be Equal As Integers  ${switchFlowVal3}  4      
-    ${switchFlowVal4} =   REST show switch flow  s4  
-    Should Be Equal As Integers  ${switchFlowVal4}  4  
+    Should Be Equal As Integers  ${switchFlowVal2}  4
 
-    
-ha suite teardown
+verify results   [Arguments]  ${port_1}  ${tx}  ${port_2}  ${rx}
+    Sleep  5
+    ${report}=  fetch port stats
+    ${tx_value}=  verify dict key  ${report}  ${port_1}  ${tx}
+    ${rx_value}=  verify dict key  ${report}  ${port_2}  ${rx}
+    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}  rangev=100
+    Should be true  ${in_range} 
+
+delete bigtap configuration
     rest delete policy  admin-view  P1
     rest delete policy  admin-view  ZP1 
     rest delete interface role  s1  ${filter_1}    filter          
@@ -300,6 +293,13 @@ ha suite teardown
     rest delete interface  s2  ${filter_2}        
     rest delete interface  s1  ${delivery_1}          
     rest delete interface  s2  ${delivery_2}
+    Sleep  30
+    
+ha test teardown
+    delete traffic
+    
+ha suite teardown
+    delete bigtap configuration
     rest delete switch alias  s1
     rest delete switch alias  s2
     rest delete switch alias  s3
@@ -308,4 +308,4 @@ ha suite teardown
     rest delete switch  s2
     rest delete switch  s3
     rest delete switch  s4                           
-    base suite teardown     
+    base suite teardown   

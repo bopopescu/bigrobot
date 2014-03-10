@@ -29,20 +29,3 @@ s4:
     ip: 10.192.88.85
     console_ip: cs-rack11
     console_port: 6012
-
-tg1:
-  platform: 'ixia'
-  chassis_ip: 10.192.85.151
-  tcl_server_ip: 10.194.64.172
-  tcl_server_port: 8009
-  ix_version: '7.10'
-  set_init_ping: false
-  ports:
-    a:
-      name: 1/3
-    b:
-      name: 1/4
-    c:
-      name: 1/15
-    d:
-      name: 1/16
