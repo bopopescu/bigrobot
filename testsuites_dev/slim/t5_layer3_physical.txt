@@ -8,7 +8,6 @@ Force Tags      T5 Sanity
 Library         keywords/BsnCommon.py
 Library         keywords/Host.py
 Library         keywords/T5.py
-#Library         keywords/T5Fabric.py
 Library         keywords/T5L3.py
 Library         keywords_dev/animesh/BsnCommonShow.py
 Library         keywords_dev/slim/SwitchLight.py
@@ -39,21 +38,24 @@ Intra tenant L3 untagged traffic with static endpoints same rack
 
 Intra tenant L3 untagged traffic with static endpoints across rack
 	L3 intra tenant across rack untagged with static endpoints
-#	[Tags]							skipped			smoke				sanity	
+	[Tags]							skipped			smoke				sanity	
 
 Intra tenant L3 tagged traffic with static endpoints same rack
 	L3 intra tenant same rack tagged with static endpoints
-	[Tags]							skipped			smoke				sanity			
+#	[Tags]							skipped			smoke				sanity			
 
 Intra tenant L3 tagged traffic with static endpoints across rack
 	L3 intra tenant across rack tagged with static endpoints
-	[Tags]							skipped			smoke				sanity	
+#	[Tags]							skipped			smoke				sanity	
 
 
 	
 * Keywords
 L3 intra tenant same rack untagged with dynamic endpoints
-	initialize host
+	BASH ifup intf								h1 								bond0
+	BASH ifup intf								h2								bond0
+	BASH ifup intf								h3								bond0
+	BASH ifup intf								h4								bond0		
 	REST add portgroup to vns					X								X1						${leaf1_pc1}			-1
 	REST add portgroup to vns					X								X2						${leaf1_pc2}			-1
 	BASH add ip address							h3								10.251.1.11/24			bond0	
@@ -79,7 +81,10 @@ L3 intra tenant same rack untagged with dynamic endpoints
 	
 	
 L3 intra tenant across rack untagged with dynamic endpoints
-	initialize host
+	BASH ifup intf								h1 								bond0
+	BASH ifup intf								h2								bond0
+	BASH ifup intf								h3								bond0
+	BASH ifup intf								h4								bond0		
 	REST add portgroup to vns					X								X1						${leaf1_pc1}			-1
 	REST add portgroup to vns					X								X3						${leaf0_pc6}			-1
 	BASH add ip address							h3								10.251.1.11/24			bond0	
@@ -104,7 +109,10 @@ L3 intra tenant across rack untagged with dynamic endpoints
 	Should Be True  							${loss} == 0	
 	
 L3 intra tenant same rack tagged with dynamic endpoints
-	initialize host
+	BASH ifup intf								h1 								bond0
+	BASH ifup intf								h2								bond0
+	BASH ifup intf								h3								bond0
+	BASH ifup intf								h4								bond0		
 	REST add portgroup to vns					X								X1						${leaf1_pc1}			1001
 	REST add portgroup to vns					X								X2						${leaf1_pc2}			1002
 	BASH add tag								h3								bond0					1001
@@ -136,14 +144,13 @@ L3 intra tenant same rack tagged with dynamic endpoints
 	REST show endpoints		
 	${loss} = 									BASH ping						h3						10.251.2.11 			count=10
 	Should Be True  							${loss} == 0	
-	BASH ifdown intf							h3								bond0.1001
-	BASH ifdown intf							h4								bond0.1002
-	BASH delete tag								h3								bond0.1001
-	BASH delete tag								h4								bond0.1002
 	
 	
 L3 intra tenant across rack tagged with dynamic endpoints
-	initialize host
+	BASH ifup intf								h1 								bond0
+	BASH ifup intf								h2								bond0
+	BASH ifup intf								h3								bond0
+	BASH ifup intf								h4								bond0		
 	REST add portgroup to vns					X								X1						${leaf1_pc1}			1001
 	REST add portgroup to vns					X								X3						${leaf0_pc6}			1003
 	BASH add tag								h3								bond0					1001
@@ -175,14 +182,12 @@ L3 intra tenant across rack tagged with dynamic endpoints
 	REST show endpoints		
 	${loss} = 									BASH ping						h3						10.251.3.11 			count=10
 	Should Be True  							${loss} == 0		
-	BASH ifdown intf							h3								bond0.1001
-	BASH ifdown intf							h2								bond0.1003
-	BASH delete tag								h3								bond0.1001
-	BASH delete tag								h2								bond0.1003
-	
 
 L3 intra tenant same rack untagged with static endpoints
-	initialize host
+	BASH ifup intf								h1 								bond0
+	BASH ifup intf								h2								bond0
+	BASH ifup intf								h3								bond0
+	BASH ifup intf								h4								bond0		
 	REST add portgroup to vns					X								X1						${leaf1_pc1}			-1
 	REST add portgroup to vns					X								X2						${leaf1_pc2}			-1
 	REST add endpoint							X								X1						X1_pc1
@@ -218,7 +223,10 @@ L3 intra tenant same rack untagged with static endpoints
 
 
 L3 intra tenant across rack untagged with static endpoints
-	initialize host
+	BASH ifup intf								h1 								bond0
+	BASH ifup intf								h2								bond0
+	BASH ifup intf								h3								bond0
+	BASH ifup intf								h4								bond0	
 	REST add portgroup to vns					X								X1						${leaf1_pc1}			-1
 	REST add portgroup to vns					X								X3						${leaf0_pc6}			-1
 	REST add endpoint							X								X1						X1_pc1
@@ -255,7 +263,112 @@ L3 intra tenant across rack untagged with static endpoints
 	Should Be True  							${loss} == 0	
 
 
+L3 intra tenant same rack tagged with static endpoints
+	BASH ifup intf								h1 								bond0
+	BASH ifup intf								h2								bond0
+	BASH ifup intf								h3								bond0
+	BASH ifup intf								h4								bond0		
+	REST add portgroup to vns					X								X1						${leaf1_pc1}			1001
+	REST add portgroup to vns					X								X2						${leaf1_pc2}			1002
+	REST add endpoint							X								X1						X1_pc1
+	REST add endpoint							X								X2						X2_pc2
+	REST add endpoint ip						X								X1						X1_pc1					10.251.1.11
+	REST add endpoint ip						X								X2						X2_pc2					10.251.3.11
+	${mac1} = 									BASH get intf mac				h3						bond0
+	REST add endpoint mac						X								X1						X1_pc1					${mac1}
+	REST add endpoint portgroup attachment		X								X1						X1_pc1					${leaf1_pc1}				1001	
+	${mac2} = 									BASH get intf mac				h4						bond0
+	REST add endpoint mac						X								X2						X2_pc1					${mac2}
+	REST add endpoint portgroup attachment		X								X2						X2_pc1					${leaf1_pc1}				1002	
+	REST add portgroup to vns					X								X1						${leaf1_pc1}			1001
+	REST add portgroup to vns					X								X2						${leaf1_pc2}			1002
+	BASH add tag								h3								bond0					1001
+	BASH add tag								h4								bond0					1002
+	BASH ifup intf								h3								bond0.1001
+	BASH ifup intf								h4								bond0.1002
+	BASH add ip address							h3								10.251.1.11/24			bond0.1001	
+	BASH add ip address							h4								10.251.2.11/24			bond0.1002
+	BASH add route								h3								10.251.2.0/24			10.251.1.1
+	BASH add route								h4								10.251.1.0/24			10.251.2.1
+	sleep										5	
+	${value} = 									BASH verify arp					h3						10.251.1.1
+	Should Not Be True							${value} 		
+	${value} =									BASH verify arp					h4						10.251.2.1
+	Should Not Be True							${value} 	
+	BASH ping									h3								10.251.2.11				count=10
+	${value} = 									BASH verify arp					h3						10.251.1.1
+	Should Be True								${value} 		
+	${value} =									BASH verify arp					h4						10.251.2.1
+	Should Be True								${value} 	
+	${mac1} = 									BASH get intf mac				h3						bond0
+	${result} =									REST show endpoints mac			${mac1}
+	Should Be True								${result}						
+	${mac2} = 									BASH get intf mac				h4						bond0
+	${result} =									REST show endpoints mac			${mac2}
+	Should Be True								${result}						
+	REST show endpoints		
+	${loss} = 									BASH ping						h3						10.251.2.11 			count=10
+	Should Be True  							${loss} == 0	
+	
+		
+L3 intra tenant across rack tagged with static endpoints
+	BASH ifup intf								h1 								bond0
+	BASH ifup intf								h2								bond0
+	BASH ifup intf								h3								bond0
+	BASH ifup intf								h4								bond0		
+	REST add portgroup to vns					X								X1						${leaf1_pc1}			1001
+	REST add portgroup to vns					X								X3						${leaf0_pc6}			1003
+	REST add endpoint							X								X1						X1_pc1
+	REST add endpoint							X								X3						X3_pc6
+	REST add endpoint ip						X								X1						X1_pc1					10.251.1.11
+	REST add endpoint ip						X								X3						X3_pc6					10.251.2.11
+	${mac1} = 									BASH get intf mac				h3						bond0
+	REST add endpoint mac						X								X1						X1_pc1					${mac1}
+	REST add endpoint portgroup attachment		X								X1						X1_pc1					${leaf1_pc1}				1001	
+	${mac2} = 									BASH get intf mac				h2						bond0
+	REST add endpoint mac						X								X3						X3_pc6					${mac2}
+	REST add endpoint portgroup attachment		X								X3						X3_pc6					${leaf0_pc6}				1003
+	REST add portgroup to vns					X								X1						${leaf1_pc1}			1001
+	REST add portgroup to vns					X								X3						${leaf0_pc6}			1003
+	BASH add tag								h3								bond0					1001
+	BASH add tag								h2								bond0					1003
+	BASH ifup intf								h3								bond0.1001
+	BASH ifup intf								h2								bond0.1003
+	BASH add ip address							h3								10.251.1.11/24			bond0.1001
+	BASH add ip address							h2								10.251.3.11/24			bond0.1003
+	BASH add route								h3								10.251.3.0/24			10.251.1.1
+	BASH add route								h2								10.251.1.0/24			10.251.3.1
+	sleep										10	
+#	BASH ping									h3								10.251.1.1				count=10
+#	BASH ping									h2								10.251.3.1				count=10
+	${value} = 									BASH verify arp					h3						10.251.1.1
+	Should Not Be True							${value} 		
+	${value} =									BASH verify arp					h2						10.251.3.1
+	Should Not Be True							${value} 	
+	BASH ping									h3								10.251.3.11				count=10
+	${value} = 									BASH verify arp					h3						10.251.1.1
+	Should Be True								${value} 		
+	${value} =									BASH verify arp					h2						10.251.3.1
+	Should Be True								${value} 		
+	${mac1} = 									BASH get intf mac				h3						bond0
+	${result} =									REST show endpoints mac			${mac1}
+	Should Be True								${result}						
+	${mac2} = 									BASH get intf mac				h2						bond0
+	${result} =									REST show endpoints mac			${mac2}
+	Should Be True								${result}						
+	REST show endpoints		
+	${loss} = 									BASH ping						h3						10.251.3.11 			count=10
+	Should Be True  							${loss} == 0		
 
+	
+	
+	
+	
+	
+	
+	
+	
+	
 
 
 
@@ -270,11 +383,16 @@ initialize host
 	BASH init intf								h2								bond0
 	BASH init intf								h3								bond0
 	BASH init intf								h4								bond0
+	BASH ifdown intf							h1 								bond0
+	BASH ifdown intf							h2								bond0
+	BASH ifdown intf							h3								bond0
+	BASH ifdown intf							h4								bond0
 	
 
 
 
 setup topology
+	initialize host
 	add fabric switch
 	sleep 											1
 	REST add tenant 								X
@@ -298,14 +416,6 @@ setup topology
 	REST add vns ip  								Z							Z1				10.253.1.1				24	
 	REST add vns ip  								Z							Z2				10.253.2.1				24	
 	REST add vns ip  								Z							Z3				10.253.3.1				24	
-	BASH ifup intf									h1							bond0
-	BASH ifup intf									h2							bond0
-	BASH ifup intf									h3							bond0
-	BASH ifup intf									h4							bond0
-	BASH init intf									h1							bond0
-	BASH init intf									h2							bond0
-	BASH init intf									h3							bond0
-	BASH init intf									h4							bond0
 	
 
 teardown topology
@@ -331,6 +441,8 @@ teardown topology
 	REST delete tenant								Y
 	REST delete tenant								Z
 	delete fabric switch
+	initialize host
+	
 
 add fabric switch
 	CLI add dpid									s1							${spine0_dpid}
