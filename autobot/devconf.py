@@ -468,7 +468,7 @@ class MininetDevConf(DevConf):
     def __init__(self, name=None, host=None, user=None, password=None,
                  controller=None, controller2=None, topology=None,
                  openflow_port=None, timeout=None, protocol='ssh',
-                 debug=0):
+                 debug=0, is_start_mininet=True):
 
         if controller is None:
             helpers.environment_failure("Must specify a controller for Mininet.")
@@ -484,7 +484,11 @@ class MininetDevConf(DevConf):
                                              timeout=timeout,
                                              protocol=protocol,
                                              debug=debug)
-        self.start_mininet()
+        if not is_start_mininet:
+            helpers.log("Not starting Mininet session (is_start_mininet=%s)" %
+                        is_start_mininet)
+        else:
+            self.start_mininet()
 
     def _cmd(self, cmd, quiet=False, prompt=False, timeout=None, level=4):
         if not quiet:
