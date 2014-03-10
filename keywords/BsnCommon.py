@@ -107,6 +107,13 @@ class BsnCommon(object):
             helpers.test_failure("Fail:Value is not in range")
             return False
 
+    def rest_return_dictionary_from_get(self, url):
+        t = test.Test()
+        c = t.controller('master')
+        c.rest.get(url)
+        content = c.rest.content()
+        return content
+
     def params(self, *args, **kwargs):
         """
         Return the value for a params (topo) attribute.
@@ -150,6 +157,77 @@ class BsnCommon(object):
         else:
             return False
 
+    def rest_show_version(self, node="master", string="version", user="admin", password="adminadmin"):
+        t = test.Test()
+        n = t.node(node)
+        if helpers.is_switch(n.platform()):
+            helpers.log("Node is a switch")
+            if helpers.is_switchlight(n.platform()):
+                '''
+                    Switch
+                '''
+                helpers.log("The node is a SwitchLight switch")
+                switch = t.switch(node)
+                cli_input_1 = "show version"
+                switch.enable(cli_input_1)
+                show_output = switch.cli_content()
+                return show_output
+            else:
+                helpers.test_error("Unsupported Platform %s" % (node))
+        elif helpers.is_controller(node):
+            helpers.log("The node is a controller")
+            if helpers.is_bigtap(n.platform()):
+                '''
+                    BigTap Controller
+                '''
+                c = t.controller('master')
+                url = '/rest/v1/system/version'
+                if user == "admin":
+                    c.rest.get(url)
+                    content = c.rest.content()
+                else:
+                    c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                    c_user.rest.get(url)
+                    content = c_user.rest.content()
+                    t.node_reconnect(node='master')
+                return content[0]['controller']
+            elif helpers.is_bigwire(n.platform()):
+                '''
+                    BigWire Controller
+                '''
+                c = t.controller('master')
+                url = '/rest/v1/system/version'
+                if user == "admin":
+                    c.rest.get(url)
+                    content = c.rest.content()
+                else:
+                    c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                    c_user.rest.get(url)
+                    content = c_user.rest.content()
+                    t.node_reconnect(node='master')
+                return content[0]['controller']
+            elif helpers.is_t5(n.platform()):
+                '''
+                    T5 Controller
+                '''
+                helpers.log("The node is a T5 Controller")
+                c = t.controller()
+                url = '/api/v1/data/controller/core/version/appliance'
+                if user == "admin":
+                    c.rest.get(url)
+                    content = c.rest.content()
+                    output_value = content[0][string]
+                else:
+                    c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                    c_user.rest.get(url)
+                    content = c_user.rest.content()
+                    output_value = content[0][string]
+                    t.node_reconnect(node='master')
+                return output_value
+            else:
+                helpers.test_error("Unsupported Platform %s" % (node))
+        else:
+            helpers.test_error("Unsupported Platform %s" % (node))
 
     def add_ntp_server(self, node=None, ntp_server='0.bigswitch.pool.ntp.org'):
         '''
