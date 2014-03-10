@@ -1696,7 +1696,7 @@ class T5(object):
         '''
         t = test.Test()
         c = t.controller('master')
-        url = '/api/v1/data/controller/core/switch[name="%s"]/interface[name="%s"]?select=interface-stats/interface-rx-counters' % (switch, intf)
+        url = '/api/v1/data/controller/applications/bvs/info/stats/interface-stats/switches[switch-name="%s"]/interfaces[interface-name="%s"]' % (switch, intf)
         frame_cnt = int(frame_cnt)
         vrange = int(vrange)
         c.rest.get(url)
@@ -1724,7 +1724,7 @@ class T5(object):
         '''
         t = test.Test()
         c = t.controller('master')
-        url = '/api/v1/data/controller/core/switch[name="%s"]/interface[name="%s"]?select=interface-stats/interface-tx-counters' % (switch, intf)
+        url = '/api/v1/data/controller/applications/bvs/info/stats/interface-stats/switches[switch-name="%s"]/interfaces[interface-name="%s"]' % (switch, intf)
         frame_cnt = int(frame_cnt)
         vrange = int(vrange)
         c.rest.get(url)
@@ -1752,7 +1752,7 @@ class T5(object):
         '''
         t = test.Test()
         c = t.controller('master')
-        url = '/api/v1/data/controller/core/switch[name="%s"]/interface[name="%s"]?select=interface-stats/interface-rx-rates' % (switch, intf)
+        url = '/api/v1/data/controller/applications/bvs/info/stats/interface-stats/switches[switch-name="%s"]/interfaces[interface-name="%s"]' % (switch, intf)
         frame_rate = int(frame_rate)
         vrange = int(vrange)
         c.rest.get(url)
@@ -1774,7 +1774,7 @@ class T5(object):
         '''
         t = test.Test()
         c = t.controller('master')
-        url = '/api/v1/data/controller/core/switch[name="%s"]/interface[name="%s"]?select=interface-stats/interface-tx-rates' % (switch, intf)
+        url = '/api/v1/data/controller/applications/bvs/info/stats/interface-stats/switches[switch-name="%s"]/interfaces[interface-name="%s"]' % (switch, intf)
         frame_rate = int(frame_rate)
         vrange = int(vrange)
         c.rest.get(url)
