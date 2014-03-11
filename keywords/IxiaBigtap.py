@@ -41,6 +41,8 @@ class IxiaBigtap(object):
             node = kwargs['node']
             del kwargs['node']
         tg_handle = t.traffic_generator(node).handle()
+        kwargs['bigtap'] = True
+        kwargs['bigtap_ports'] = t.traffic_generator(node)._bigtap_ports
         return tg_handle.ix_l3_add(**kwargs)
     
 #     def start_l3_traffic(self, stream=None, **kwargs):
@@ -92,7 +94,7 @@ class IxiaBigtap(object):
             del kwargs['node']
         tg_handle = t.traffic_generator(node).handle()
         
-        result = tg_handle.ix_fetch_port_stats()
+        result = tg_handle.ix_fetch_port_stats(**kwargs)
         helpers.log('result:\n%s' % helpers.prettify(result))
         return result
     
