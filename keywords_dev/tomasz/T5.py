@@ -1306,17 +1306,16 @@ class T5(object):
 #End here
 #===========================================================
 
-    def cli_copy_running_config_to_config(self, filename):
-        ''' Function to copy running config to config:// file
-        via CLI
+    def cli_copy(self, _from, _to):
+        ''' Generic function to copy via CLI
         Input: Filename
         Output: True if successful, False otherwise
         '''
-        helpers.test_log("Running command:\ncopy running-config config://%s" % filename)
+        helpers.test_log("Running command:\ncopy %s %s" % (_from, _to))
         t = test.Test()
         c = t.controller('master')
         try:
-            c.config("copy running-config config://%s" % filename)
+            c.config("copy %s %s" % (_from, _to))
             assert "Error" not in c.cli_content()
         except:
             helpers.test_log(c.cli_content())
@@ -1324,62 +1323,6 @@ class T5(object):
         else:
             return True
 
-
-    def cli_copy_running_config_to_file(self, filename):
-        ''' Function to copy running config to regular file
-        via CLI
-        Input: Filename
-        Output: True if successful, False otherwise
-        '''
-        helpers.test_log("Running command:\ncopy running-config %s" % filename)
-        t = test.Test()
-        c = t.controller('master')
-        try:
-            c.config("copy running-config %s" % filename)
-            assert "Error" not in c.cli_content()
-        except:
-            helpers.test_log(c.cli_content())
-            return False
-        else:
-            return True
-
-
-    def cli_copy_file_to_running_config(self, filename):
-        ''' Function to copy file to running config
-        via CLI
-        Input: Filename
-        Output: True if successful, False otherwise
-        '''
-        helpers.test_log("Running command:\ncopy %s running-config" % filename)
-        t = test.Test()
-        c = t.controller('master')
-        try:
-            c.config("copy %s running-config" % filename)
-            assert "Error" not in c.cli_content()
-        except:
-            helpers.test_log(c.cli_content())
-            return False
-        else:
-            return True
-
-
-    def cli_copy_config_to_running_config(self, filename):
-        ''' Function to copy config:// to running config
-        via CLI
-        Input: Filename
-        Output: True if successful, False otherwise
-        '''
-        helpers.test_log("Running command:\ncopy config://%s running-config" % filename)
-        t = test.Test()
-        c = t.controller('master')
-        try:
-            c.config("copy config://%s running-config" % filename)
-            assert "Error" not in c.cli_content()
-        except:
-            helpers.test_log(c.cli_content())
-            return False
-        else:
-            return True
 
 
     def cli_copy_scp_to_running_config(self, source):
