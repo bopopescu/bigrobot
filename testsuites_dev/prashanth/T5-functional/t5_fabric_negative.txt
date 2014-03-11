@@ -91,29 +91,34 @@ shutdown the switch and check the links are down in the switch
      
 verify fabric interface cli 
 	[Tags]  feature
-	${result}=  rest show fabric interface switch  leaf0-a
+	${result}=  cli show fabric interface switch  leaf0-a
 	Should be True  ${result}
 	
 verify fabric lag cli
 	[Tags]  feature
-	${result}=  rest show fabric lag switch  leaf0-a
+	${result}=  cli show fabric lag switch  leaf0-a
 	Should be True  ${result}
 	
 verify fabric switch cli
 	[Tags]  feature
-	${result}=  rest show fabric switch  leaf0-a
+	${result}=  cli show fabric switch  leaf0-a
 	Should be True  ${result}
 	
 verify fabric lacp cli
 	[Tags]  feature
-	${result}=  rest show fabric lacp switch  leaf0-a
+	${result}=  cli show fabric lacp switch  leaf0-a
 	Should be True  ${result}
 	
 verify fabric link cli
 	[Tags]  feature
-	${result}=  rest show fabric link  
+	${result}=  cli show fabric link  
 	Should be True  ${result}
 
+verify fabric lag any_leaf
+	[Tags]  feature
+	${result}=  cli show fabric lag   any_leaf 
+	Should be True  ${result}
+	
 Tear down config and Topology
     delete fabric switch  
     rest delete portgroup  p4
