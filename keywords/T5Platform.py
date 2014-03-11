@@ -111,7 +111,7 @@ class T5Platform(object):
             c.send("reauth")
             c.expect(r"Password:")
             c.config("adminadmin")
-            c.send("cluster election take-leader")
+            c.send("failover")
             c.expect(r"Election may cause role transition: enter \"yes\" \(or \"y\"\) to continue:")
             c.config("yes")
         except:
