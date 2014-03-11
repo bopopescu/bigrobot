@@ -7,7 +7,7 @@ tg1:
   #set_init_ping: false
   bigtap_controller:
    ip: 10.192.109.200
-   to_config: false
+   set_bigtap_config: false
   switches: 
    s1:
     ip: 10.192.75.230
@@ -15,14 +15,26 @@ tg1:
    a:
     name: 2/7
     bigtap: 1/1
-    type: tx
+    type: tx, rx
    b:
     name: 2/8
     bigtap: 1/2
-    type: rx
+    type: tx, rx
   bigtap_ports:
-   a:
+   e:
     name: 1/9
-   b:
+   f:
     name: 1/10
+   g:
+    name: 1/13
+   h:
+    name: 1/14
+   i:
+    name: 1/25
+   j:
+    name: 1/26
+   k:
+    name: 1/35
+   l:
+    name: 1/36
   
