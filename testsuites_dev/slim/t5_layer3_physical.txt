@@ -377,7 +377,7 @@ L3 intra tenant dhcp relay with circuit id on same rack
 	BASH add ip address							h1								10.252.1.9/24			eth1	
 	BASH add route								h1								10.252.2.0/24			10.252.1.1
 	REST add dhcp relay							Y								Y2						10.252.1.9
-	REST add dhcprelay circuitid				Y								Y2						'&#!ten Y vns Y2'
+	REST add dhcprelay circuitid				Y								Y2						&#!ten Y vns Y2
 	REST enable dhcp relay						Y								Y2	
 	sleep										10
 	${value} = 									BASH release dhcpv4 address		h2						bond0
