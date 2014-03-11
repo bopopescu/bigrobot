@@ -1,11 +1,10 @@
 * Settings
-Force Tags      T5 IronHorse
 Documentation   Switch Platform Snake Traffic Test - Iron Horse T5
 Suite Setup      T5 snake test setup
-Suite Teardown   T5 snake test teardown
+#Suite Teardown   T5 snake test teardown
 Test Setup       base test setup
-Test Teardown    base test teardown
-Force Tags       T5 Switch snaketest
+Test Teardown    atest teardown
+Force Tags       T5  traffic  snake
 ...             export BIGROBOT_SUITE=snake_traffic_test 
 ...
 ...             Section A: Traffic Verification Test 
@@ -15,7 +14,7 @@ Force Tags       T5 Switch snaketest
 ...                Bi-Directional L2 Traffic flow a<->b with linerate 10%,25%,50%,75%,100% pktsize 64,256,512,1024,1518
 ...                Uni-Directional L2 Jumbo Traffic flow a->b with framerate 10000 pktsize 9150 ( Jumbo frame )
 ...                Bi-Directional L2 Jumbo Traffic flow a<->b with linerate 100 pktsize 9150 ( Jumbo frame )
-...                Toatl Tests = 20 Test Cases      
+...                Total Tests = 20 Test Cases      
 ...             
 Library         keywords/BsnCommon.py
 Library         keywords/AppController.py
@@ -51,7 +50,7 @@ Uni-Directional L2 Traffic flow=a->b traffic framerate 10000 pktsize 64
     sleep                  10
     ${report}=             fetch port stats
     verify results traffic  transmitted_frames  received_valid_frames  ${tolerance}        
-    [Tags]  T5  traffic  snake  
+    [Tags]  T5  traffic  snake  tc1
 
 Uni-Directional L2 Traffic flow=a->b traffic linerate 10% pktsize 64
     ${stream}=             L2 add  flow=a->b  src_mac=00:11:23:00:00:09  dst_mac=00:11:23:00:00:99  line_rate=10  frame_size=64  ethertype=8000  name=a_b_flow
@@ -64,7 +63,7 @@ Uni-Directional L2 Traffic flow=a->b traffic linerate 10% pktsize 64
     sleep                  10
     ${report}=             fetch port stats
     verify results traffic  transmitted_frames  received_valid_frames  ${tolerance}    
-    [Tags]  T5  traffic  snake     
+    [Tags]  T5  traffic  snake  tc1     
 
 Uni-Directional L2 Traffic flow=a->b traffic framerate 10000 pktsize 256 
     ${stream}=             L2 add  flow=a->b  src_mac=00:11:23:00:00:09  dst_mac=00:11:23:00:00:99  frame_rate=10000  frame_size=256  ethertype=8000  name=a_b_flow
@@ -318,6 +317,9 @@ T5 snake test teardown
    rest delete fabric switch  ${switch_alias} 
    base test teardown
    sleep  5   
+
+atest teardown
+    delete traffic
 
 verify results traffic   [Arguments]  ${transmitted_frame_rate}  ${received_valid_frame_rate}  ${tolerance}
     Sleep  5
