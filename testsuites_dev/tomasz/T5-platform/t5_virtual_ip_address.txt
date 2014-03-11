@@ -15,6 +15,7 @@ ${vip string}	  	test-ip-address
 ${vip zeros}		0.0.0.0
 ${vip broadcast}	255.255.255.255
 ${sleep}			45 sec
+#test
 
 
 *** Test Cases ***
