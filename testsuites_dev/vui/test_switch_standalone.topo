@@ -1,0 +1,4 @@
+s1:
+  ip: 10.193.0.33   # Song's SwitchLight
+  user: admin
+  password: bsn
