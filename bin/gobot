@@ -375,6 +375,12 @@ def test_command(*args):
     parser.add_argument('--exclude',
                         metavar=('tag1', 'tag2'), nargs='*',
                         help='Exclude test cases by tags')
+    parser.add_argument('--test',
+                        metavar=('name1', 'name2'), nargs='*',
+                        help='Run test cases by name (must match entire string)')
+    parser.add_argument('--testmatch',
+                        metavar=('name1', 'name2'), nargs='*',
+                        help='Run test cases by name (match anywhere)')
     parser.add_argument('--randomize', action='store_true', dest='randomize',
                         default=False,
                         help="Run test cases in random orders")
@@ -394,6 +400,7 @@ def test_command(*args):
         exclude_tags.append('skipped')
     else:
         exclude_tags = ['skipped']
+    print("test_case_names: %s" % args.test)
 
     # Comparable to command options:
     #   pybot --loglevel=debug \
@@ -412,6 +419,13 @@ def test_command(*args):
         options['include'] = include_tags
     if args.randomize:
         options['randomize'] = 'tests'
+    if args.test:
+        options['test'] = args.test
+    if args.testmatch:
+        if 'test' not in options:
+            options['test'] = []
+        for tc in args.testmatch:
+            options['test'].append("*" + tc + "*")
 
     print("Robot options:\n%s" % helpers.prettify(options))
 
