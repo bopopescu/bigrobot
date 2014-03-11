@@ -50,6 +50,48 @@ class T5_longevity(object):
 
         return image
 
+    def cli_scp_file (self,remote,local='running-config',passwd='bsn',flag='from'):
+        '''cli scp file
+            copy to/from 
+            usage:    cli_scp_file  bsn@qa-kvm-32:/home/mingtao/config_new  config_new    
+                      cli_scp_file  bsn@qa-kvm-32:/home/mingtao/config_new  config_new   adminadmin    to
+            output:
+              - mingtao
+                 
+        '''
+        t = test.Test()
+        c = t.controller('master')                 
+        c.enable('')
+        if flag == 'to':
+            string = 'copy ' +local + ' scp://'+remote 
+        if flag == 'from':
+            string = 'copy scp://'+ remote + ' ' + local
+        
+        helpers.log("INFO:  string is: %s " % string )        
+        c.send(string)
+        c.expect(r'[\r\n].+password: |[\r\n].+(yes/no)?')
+        content = c.cli_content()
+        helpers.log("*****Output is :\n%s" % content)
+        if re.match(r'.*password:.* ', content):
+            helpers.log("INFO:  need to provide passwd " )
+            c.send(passwd)
+        elif re.match(r'.+(yes/no)?', content):
+            helpers.log("INFO:  need to send yes, then provide passwd " )
+            c.send('yes')
+            c.expect(r'[\r\n].+password: ')
+            c.send(passwd)
+        
+        try:
+            c.expect(timeout=180)
+        except:
+            helpers.log('scp failed')
+            return False
+        else:
+            helpers.log('scp completed successfully')
+        return True
+
+
+
 
     def cli_check_image(self):
         t = test.Test()
@@ -195,7 +237,7 @@ class T5_longevity(object):
         t = test.Test()
         c = t.controller('master')
         helpers.log('INFO: Entering ==> rest_get_node_role ')
-        t = test.Test()
+   
         
         url = '/api/v1/data/controller/cluster'  
         c.rest.get(url)
@@ -239,6 +281,31 @@ class T5_longevity(object):
                 helpers.log("INFO: not for controller  %s" % line)  
         helpers.log("INFO: there are %d of controllers in the cluster" % num)   
         return num    
+
+    def cli_whoami(self):
+        '''  
+           return user name and group
+           output:  name   
+                    group
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        helpers.log('INFO: Entering ==> cli_whoami ')
+        
+        
+        c.cli('whoami' )
+        content = c.cli_content()
+        temp = helpers.strip_cli_output(content)
+        temp = helpers.str_to_list(temp)
+        helpers.log("INFO: temp is - %s" % temp) 
+        temp.pop(0)     
+        for line in temp:          
+            helpers.log("INFO: line is - %s,  " % line)
+           
+       
+        return True   
+  
+
   
 
     def cli_add_user(self,user='user1',passwd='adminadmin'):
@@ -264,7 +331,7 @@ class T5_longevity(object):
 
 
 
-    def cli_group_add_users(self,group='admin',user=None):
+    def cli_group_add_users(self,group=None,user=None):
         '''  
             - mingtao
            usage:  cli_get_node_role
@@ -273,7 +340,9 @@ class T5_longevity(object):
         '''  
         t = test.Test()
         c = t.controller('master')
-        helpers.log('INFO: Entering ==> cli_add_user ')             
+        helpers.log('INFO: Entering ==> cli_add_user ')    
+        if group is None:
+            group = 'admin'         
         c.config('group '+ group) 
         if user:
             c.config('associate user '+user)
@@ -349,7 +418,7 @@ class T5_longevity(object):
             return True    
 
 
-    def cli_take_sanpshot(self,save='yes',compare=None, run_config=None):
+    def cli_take_sanpshot(self,run_config=None,fabric_switch=None):
         ''' take snap shot of the  system state
             - mingtao
            usage:  cli_delete_user
@@ -364,14 +433,23 @@ class T5_longevity(object):
         if run_config: 
             c.enable('show running-config')     
             content = c.cli_content()       
-            helpers.log("********new_content:************\n%s" % content)      
-            match= re.match(r'.*version(.*)', content)
-            if match:
-                helpers.log("INFO: version is: %s" % match.group(1))       
-                helpers.log("INFO: config is is: %s" % match.group(2))                          
-                return  True
+            helpers.log("********content in string:************\n%s" % content)       
+            temp = helpers.strip_cli_output(content)
+            temp = helpers.str_to_list(temp)
+            helpers.log("********content is list************\n%s" % helpers.prettify(temp))
+            config = temp[5:]
+            content = '\n'.join(config)
+            helpers.log("********config :************\n%s" % content)                 
+            return  content
+        if fabric_switch: 
+            c.enable('show fabric switch')     
+            content = c.cli_content()       
+            helpers.log("********content in string:************\n%s" % content)       
+            temp = helpers.strip_cli_output(content)
+            helpers.log("********string :************\n%s" % temp)                   
+            return  temp
         
-        return True    
+        return False    
 
  
  
@@ -573,11 +651,13 @@ class T5_longevity(object):
         c.config('')
         helpers.log("********* Entering CLI show  walk with ----> string: %s, file name: %s" % (string, file_name))
         if string =='':
+#            c.config('exit')
             cli_string = '?' 
         else: 
             cli_string = string + ' ?'
         c.send(cli_string, no_cr=True)
-        c.expect(r'[\r\n\x07][\w-]+[#>] ')
+        c.expect(r'[\r\n\x07].+[#>] ')
+ 
         content = c.cli_content()
         temp = helpers.strip_cli_output(content)
         temp = helpers.str_to_list(temp)
@@ -608,36 +688,22 @@ class T5_longevity(object):
         padding = "   " + padding
         for line in temp:
             string = string_c
+            line = line.lstrip()
             helpers.log(" line is - %s" % line)
             if re.match(r'For', line) or line == "Commands:":
                 helpers.log("Ignoring line - %s" % line)
                 num = num - 1
                 continue
+            if re.match(r'All', line)  :
+                helpers.log("Ignoring line - %s" % line)
+                num = num - 1
+                break
+            
             if re.match(r'^<.+', line) and not re.match(r'^<cr>', line):
                 helpers.log("Ignoring line - %s" % line)
                 num = num - 1
                 continue
-            if string == "show running-config fabric port-group":
-                helpers.log("GR - BSC-4724 Ignoring line - %s" % line)
-                num = num - 1
-                continue
-            if string == "show running-config switch":
-                helpers.log("GR - BSC-4725 Ignoring line - %s" % line)
-                num = num - 1
-                continue
-            if string == "show running-config tenant":
-                helpers.log("GR - BSC-4727 Ignoring line - %s" % line)
-                num = num - 1
-                continue
-            if string == "show switch":
-                helpers.log("GR - BSC-4729 Ignoring line - %s" % line)
-                num = num - 1
-                continue
-            if string == "show test-packet-path":
-                helpers.log("GR -   Ignoring line - %s" % line)
-                num = num - 1
-                continue
-
+ 
             keys = line.split(' ')
             key = keys.pop(0)
             helpers.log("*** key is - %s" % key)
