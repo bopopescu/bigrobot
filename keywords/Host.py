@@ -1,3 +1,18 @@
+'''
+###  WARNING !!!!!!!
+###
+###  This is where common code for Host will go in.
+###
+###  To commit new code, please contact the Library Owner:
+###  Vui Le (vui.le@bigswitch.com)
+###
+###  DO NOT COMMIT CODE WITHOUT APPROVAL FROM LIBRARY OWNER
+###
+###  Last Updated: 03/11/2014
+###
+###  WARNING !!!!!!!
+'''
+
 import autobot.helpers as helpers
 import autobot.test as test
 import re
@@ -24,6 +39,8 @@ class Host(object):
         =>
         - ${lossA} = 0
         - ${lossB} = 100
+
+        See also Controller.cli ping.
         """
         t = test.Test()
         n = t.node(node)
@@ -36,7 +53,8 @@ class Host(object):
             dest = dest_ip
         if dest_node:
             dest = t.node(dest_node).ip()
-        status = helpers._ping(dest, node=n, *args, **kwargs)
+        status = helpers._ping(dest, node_handle=n, mode='bash',
+                               *args, **kwargs)
         return status
 
     def bash_add_tag(self, node, intf, vlan):
@@ -234,7 +252,7 @@ class Host(object):
     def bash_check_service_status(self, node, processname):
         t = test.Test()
         n = t.node(node)
-        output = n.sudo("service %s status" % processname)['content']       
+        output = n.sudo("service %s status" % processname)['content']
         helpers.log("output: %s" % output)
         match = re.search(r'unrecognized service', output, re.S | re.I)
         if match:
@@ -245,7 +263,7 @@ class Host(object):
         match = re.search(r'start\/running', output, re.S | re.I)
         if match:
             return 'is started'
-        
+
 
 
 
