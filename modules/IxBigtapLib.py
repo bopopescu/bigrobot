@@ -48,12 +48,13 @@ def create_bigtap_flow_conf_tx(switch_dpid, bigtap_portname, ix_portname, macs):
     bigtap_config.append('configure')
     
     for mac, i  in zip(macs, xrange(1,len(macs) +1)):
-        if ix_portname == bigtap_portname:
+        if bigtap_portname in ix_portname:
             print 'No inline Delivery as both are SAME !!!!'
         else:
-            bigtap_config.append('bigtap policy etherne'+bigtap_portname+' rbac-permission admin-view')
+            bigtap_config.append('bigtap policy ethernet'+bigtap_portname+' rbac-permission admin-view')
             bigtap_config.append('action forward')
-            bigtap_config.append('inline-filter-interface '+switch_dpid+' ethernet'+ix_portname)
+            for ix_port in ix_portname:
+                bigtap_config.append('inline-filter-interface '+switch_dpid+' ethernet'+ix_port)
             bigtap_config.append('inline-delivery-interface '+switch_dpid+' ethernet'+bigtap_portname)
             bigtap_config.append(str(i)+' match mac src-mac '+mac)
     return bigtap_config
