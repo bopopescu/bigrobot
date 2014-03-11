@@ -17,6 +17,7 @@ import autobot.helpers as helpers
 import autobot.test as test
 import Controller
 import subprocess
+import math
 from Exscript.protocols import SSH2
 from Exscript import Account, Host
 
@@ -73,8 +74,8 @@ class BsnCommon(object):
         return result
 
     def ixia_verify_traffic_rate(self, tx_value, rx_value, rangev=5):
-        tx = int(tx_value)
-        rx = int(rx_value)
+        tx = math.ceil(float(tx_value))
+        rx = math.ceil(float(rx_value))
         vrange = int(rangev)
         if (rx >= (tx - vrange)) and (rx <= (tx + vrange)):
             helpers.log("Pass:Traffic forwarded between 2 endpoints tx:%d, rx:%d" % (tx, rx))
