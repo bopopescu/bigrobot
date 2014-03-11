@@ -377,7 +377,10 @@ def test_command(*args):
                         help='Exclude test cases by tags')
     parser.add_argument('--test',
                         metavar=('tag1', 'tag2'), nargs='*',
-                        help='Run test cases by name')
+                        help='Run test cases by name (must match entire string)')
+    parser.add_argument('--testmatch',
+                        metavar=('tag1', 'tag2'), nargs='*',
+                        help='Run test cases by name (match anywhere)')
     parser.add_argument('--randomize', action='store_true', dest='randomize',
                         default=False,
                         help="Run test cases in random orders")
@@ -418,6 +421,11 @@ def test_command(*args):
         options['randomize'] = 'tests'
     if args.test:
         options['test'] = args.test
+    if args.testmatch:
+        if 'test' not in options:
+            options['test'] = []
+        for tc in args.testmatch:
+            options['test'].append("*" + tc + "*")
 
     print("Robot options:\n%s" % helpers.prettify(options))
 
