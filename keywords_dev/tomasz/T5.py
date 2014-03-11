@@ -1224,7 +1224,6 @@ class T5(object):
             c.send("reauth")
             c.expect(r"Password:")
             c.config("adminadmin")
-            c.config("cluster")
             c.send("failover")
             if "Error" in c.cli_content():
                 helpers.log("Error in CLI content")
@@ -1382,6 +1381,33 @@ class T5(object):
         else:
             return True
 
+
+    def cli_copy_scp_to_running_config(self, source):
+        ''' Function to copy config from remote scp:// to running-config
+        via CLI
+        Input: Source
+        Output: True if successful, False otherwise
+        '''
+        helpers.test_log("Running command:\ncopy scp://%s running-config" % source)
+        t = test.Test()
+        c = t.controller('master')
+        try:
+            c.config("config")
+            c.send("copy scp://%s running-config" % source)
+            #try:
+            #    c.expect(r"Are you sure you want to continue connecting \(yes/no\)?")
+            #    c.send("yes")
+            #except:
+            #    helpers.test_log("Apparently already RSA key fingerprint stored")
+            c.expect("Password")
+            c.config("adminadmin")
+            cli_content = c.cli_content()
+            assert "Error" not in cli_content
+        except:
+            helpers.test_log(c.cli_content())
+            return False
+        else:
+            return True
 
     def cli_copy_running_config_to_scp(self, destination):
         ''' Function to copy running config to remote scp

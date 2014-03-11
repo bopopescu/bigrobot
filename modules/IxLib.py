@@ -5,6 +5,7 @@
 import autobot.helpers as helpers
 import time, re
 from vendors.Ixia import IxNetwork
+import modules.IxBigtapLib as IxBigtapLib
 
 class Ixia(object):
     def __init__(self, tcl_server_ip, tcl_server_port=8009, ix_version='7.10', chassis_ip=None,
@@ -149,8 +150,10 @@ class Ixia(object):
         self._handle.commit()
 #         helpers.log(" ## adding Name ", topology[0], topology[1])
 #         helpers.log(" ## adding Name ", mac_devices[0], mac_devices[1])
+        i = 1
         for mac_device in mac_devices:
-            self._handle.setAttribute(mac_device, '-name', 'SND_RCV Device')
+            self._handle.setAttribute(mac_device, '-name', 'SND_RCV Device'+str(i))
+            i = i + 1
         self._handle.commit()
         helpers.log("### Done adding two device groups")
         return mac_devices
@@ -435,8 +438,12 @@ class Ixia(object):
             
             self._handle.setAttribute(trafficStream1 + '/highLevelStream:2/' + 'frameSize', '-type', frameType)
             self._handle.setAttribute(trafficStream1 + '/highLevelStream:2/' + 'frameSize', '-fixedSize', frameSize)
-            self._handle.setAttribute(trafficStream1 + '/highLevelStream:2/' + 'frameRate', '-type', frameMode)
-            self._handle.setAttribute(trafficStream1 + '/highLevelStream:2/' + 'frameRate', '-rate', frameRate)
+            if line_rate is None:
+                self._handle.setAttribute(trafficStream1 + '/highLevelStream:2/' + 'frameRate', '-type', frameMode)
+                self._handle.setAttribute(trafficStream1 + '/highLevelStream:2/' + 'frameRate', '-rate', frameRate)
+            else:
+                self._handle.setAttribute(trafficStream1 + '/highLevelStream:2/' + 'frameRate', '-rate', line_rate)
+            
             if frameCount is not None:
                 self._handle.setAttribute(trafficStream1 + '/highLevelStream:2/' + 'transmissionControl', '-type',
                                     'fixedFrameCount')
@@ -588,24 +595,75 @@ class Ixia(object):
         match_uni2 = re.match(r'(\w+)<-(\w+)', flow)
         match_bi = re.match(r'(\w+)<->(\w+)', flow)
         stream_flow = ''
+        is_bigtap = kwargs.get('bigtap', False)
         if match_uni1:
-            create_topo.append(self._topology[match_uni1.group(1).lower()])
-            create_topo.append(self._topology[match_uni1.group(2).lower()])
+            source = match_uni1.group(1).lower()
+            destination = match_uni1.group(2).lower()
             stream_flow = 'uni-directional'
+            if is_bigtap:
+                create_topo.append(self._topology['a'])  ## FIX Need to dynamical get from TOPO file
+                create_topo.append(self._topology['b'])
+                bigtap_ports = kwargs['bigtap_ports']
+                helpers.log('Changing src and dst macs as BigTap is True for bigtap Ports:...')
+                helpers.log(str(bigtap_ports))
+                ixia_macs = IxBigtapLib.create_mac_list(bigtap_ports[source]['name'], 5, False)
+                dst_mac = ixia_macs['start_mac']
+                dst_cnt = ixia_macs['count']
+                dst_step = ixia_macs['mac_step']
+                ixia_macs = IxBigtapLib.create_mac_list(bigtap_ports[destination]['name'], 5, False)
+                src_mac = ixia_macs['start_mac']
+                src_cnt = ixia_macs['count']
+                src_step = ixia_macs['mac_step']
+            else:
+                create_topo.append(self._topology[source])
+                create_topo.append(self._topology[destination])
+                
         elif match_uni2:
-            create_topo.append(self._topology[match_uni2.group(2).lower()])
-            create_topo.append(self._topology[match_uni2.group(1).lower()])
+            source = match_uni2.group(2).lower()
+            destination = match_uni2.group(1).lower()
             stream_flow = 'uni-directional'
+            if is_bigtap:
+                create_topo.append(self._topology['a'])
+                create_topo.append(self._topology['b'])
+                helpers.log('Changing src and dst macs as BigTap is True for bigtap Ports:...')
+                helpers.log(str(bigtap_ports))
+                bigtap_ports = kwargs['bigtap_ports']
+                ixia_macs = IxBigtapLib.create_mac_list(bigtap_ports[source]['name'], 5, False)
+                src_mac = ixia_macs['start_mac']
+                src_cnt = ixia_macs['count']
+                src_step = ixia_macs['mac_step']
+                ixia_macs = IxBigtapLib.create_mac_list(bigtap_ports[destination]['name'], 5, False)
+                dst_mac = ixia_macs['start_mac']
+                dst_cnt = ixia_macs['count']
+                dst_step = ixia_macs['mac_step']
+            else:
+                create_topo.append(self._topology[source])
+                create_topo.append(self._topology[destination])
         elif match_bi:
-            create_topo.append(self._topology[match_bi.group(1).lower()])
-            create_topo.append(self._topology[match_bi.group(2).lower()])
+            source = match_bi.group(1).lower()
+            destination = match_bi.group(2).lower()
             stream_flow = 'bi-directional'
+            if is_bigtap:
+                create_topo.append(self._topology['a'])
+                create_topo.append(self._topology['b'])
+                bigtap_ports = kwargs['bigtap_ports']
+                helpers.log('Changing src and dst macs as BigTap is True for bigtap Ports:...')
+                helpers.log(str(bigtap_ports))
+                ixia_macs = IxBigtapLib.create_mac_list(bigtap_ports[source]['name'], 5, False)
+                src_mac = ixia_macs['start_mac']
+                src_cnt = ixia_macs['count']
+                src_step = ixia_macs['mac_step']
+                ixia_macs = IxBigtapLib.create_mac_list(bigtap_ports[destination]['name'], 5, False)
+                dst_mac = ixia_macs['start_mac']
+                dst_cnt = ixia_macs['count']
+                dst_step = ixia_macs['mac_step']
+            else:
+                create_topo.append(self._topology[source])
+                create_topo.append(self._topology[destination])
         # Create Ether Device:
         mac_devices = self.ix_create_device_ethernet(create_topo, src_cnt, dst_cnt, src_mac, dst_mac, src_step, dst_step)
         helpers.log('### Created Mac Devices with corrsponding Topos ...')
         # Create Traffic Stream:
-        print vlan_cnt
-        print type(vlan_cnt)
         traffic_stream = self.ix_setup_traffic_streams_ethernet(mac_devices[0], mac_devices[1],
                                                        frame_type, self._frame_size, frame_rate, frame_mode,
                                                        frame_cnt, stream_flow, name, ethertype, vlan_id, vlan_cnt = vlan_cnt, vlan_step = vlan_step,
@@ -931,45 +989,80 @@ class Ixia(object):
         helpers.log('Successully sent arp !!')
         return True
     
-    def ix_fetch_port_stats(self):
+    def ix_fetch_port_stats(self, **kwargs):
         '''
             Returns Dictionary with Port Tx and Rx real time results
         '''
+        stream = kwargs.get('stream', None)
         handle = self._handle
         port_stats = {}
-        portStatistics = handle.getFilteredList(handle.getRoot() + 'statistics', 'view', '-caption', 'Port Statistics')[0]
-        col_names = handle.getAttribute(portStatistics + '/page', '-columnCaptions')
-        stats = handle.getAttribute(portStatistics + '/page', '-rowValues')
-        for stat in stats:
+        if stream is None:
+            helpers.log('Fetching all Ixia Port Stats defined in Topo File ..')
+            portStatistics = handle.getFilteredList(handle.getRoot() + 'statistics', 'view', '-caption', 'Port Statistics')[0]
+            col_names = handle.getAttribute(portStatistics + '/page', '-columnCaptions')
+            stats = handle.getAttribute(portStatistics + '/page', '-rowValues')
+            for stat in stats:
+                port_stat = {}
+                for column, value in zip(col_names, stat[0]):
+                    if column == 'Stat Name':
+                        port_stat['physical_port'] = value
+                    if column == 'Port Name':
+                        port_stat['port'] = value
+                    if column == 'Frames Tx.':
+                        port_stat['transmitted_frames'] = value
+                    if column == 'Valid Frames Rx.':
+                        port_stat['received_valid_frames'] = value
+                    if column == 'Frames Tx. Rate':
+                        port_stat['transmitted_frame_rate'] = value
+                    if column == 'Valid Frames Rx. Rate':
+                        port_stat['received_valid_frame_rate'] = value
+    #                 if column == 'Data Integrity Frames Rx.':
+    #                     port_stat['received_invalid_frames'] = value
+                    if column == 'Data Integrity Frames Rx.':
+                        port_stat['received_data_integrity_frames'] = value
+                    if column == 'CRC Errors':
+                        port_stat['received_crc_errored_frames'] = value
+                    if column == 'Bytes Rx.':
+                        frames = int(value) / int(self._frame_size)
+                        port_stat['received_frames'] = str(frames)
+                    if column == 'Bytes Rx. Rate':
+                        frames = int(value) / int(self._frame_size)
+                        port_stat['received_frame_rate'] = str(frames)
+                                           
+                port_stats[port_stat['port']] = port_stat
+            helpers.log('result:\n%s' % helpers.prettify(port_stats))
+        else:
+            traffic_item_name = handle.getAttribute(stream, '-name')
+            helpers.log('Fetching Port Stats for Traffic Item : %s' % traffic_item_name)
+            portStatistics = handle.getFilteredList(handle.getRoot() + 'statistics', 'view', '-caption', 'Traffic Item Statistics')[0]
+            col_names = handle.getAttribute(portStatistics + '/page', '-columnCaptions')
+            stats = handle.getAttribute(portStatistics + '/page', '-rowValues')
+            get_stats = False
             port_stat = {}
-            for column, value in zip(col_names, stat[0]):
-                if column == 'Stat Name':
-                    port_stat['physical_port'] = value
-                if column == 'Port Name':
-                    port_stat['port'] = value
-                if column == 'Frames Tx.':
-                    port_stat['transmitted_frames'] = value
-                if column == 'Valid Frames Rx.':
-                    port_stat['received_valid_frames'] = value
-                if column == 'Frames Tx. Rate':
-                    port_stat['transmitted_frame_rate'] = value
-                if column == 'Valid Frames Rx. Rate':
-                    port_stat['received_valid_frame_rate'] = value
-#                 if column == 'Data Integrity Frames Rx.':
-#                     port_stat['received_invalid_frames'] = value
-                if column == 'Data Integrity Frames Rx.':
-                    port_stat['received_data_integrity_frames'] = value
-                if column == 'CRC Errors':
-                    port_stat['received_crc_errored_frames'] = value
-                if column == 'Bytes Rx.':
-                    frames = int(value) / int(self._frame_size)
-                    port_stat['received_frames'] = str(frames)
-                if column == 'Bytes Rx. Rate':
-                    frames = int(value) / int(self._frame_size)
-                    port_stat['received_frame_rate'] = str(frames)
-                                       
-            port_stats[port_stat['port']] = port_stat
-        helpers.log('result:\n%s' % helpers.prettify(port_stats))
+            for stat in stats:
+                get_stats = False
+                for column, value in zip(col_names, stat[0]):
+                    if column == 'Traffic Item':
+                        if value == traffic_item_name:
+                            helpers.log('Adding TRAFFIC ITEM Name ...!!!!')
+                            port_stat['Traffic_item'] = value
+                            get_stats = True
+                    if get_stats:
+                        if column == 'Tx Frames':
+                            port_stat['transmitted_frames'] = value
+                        if column == 'Rx Frames':
+                            port_stat['received_frames'] = value
+                            port_stat['received_valid_frames'] = value
+                        if column == 'Loss %':
+                            port_stat['loss_percentage'] = value
+                        if column == 'Tx Frame Rate':
+                            port_stat['transmitted_frame_rate'] = value
+                        if column == 'Rx Frame Rate':
+                            port_stat['received_frame_rate'] = value
+                        if column == 'Frames Delta':
+                            port_stat['frames_delta'] = value
+            port_stats[port_stat['Traffic_item']] = port_stat
+        helpers.log('result:\n%s' % helpers.prettify(port_stats))  
         return port_stats
 
     def ix_stop_traffic(self, traffic_stream = None):

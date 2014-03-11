@@ -1,0 +1,407 @@
+* Setting
+Documentation   This suite is my sandbox for experimentation.
+Suite Setup     base suite setup
+Suite Teardown  base suite teardown
+Test Setup      base test setup
+#Test Teardown   atest teardown
+Force Tags      Vui
+Library         keywords/BsnCommon.py
+#Library         keywords/Controller.py
+Library         keywords_dev/vui/MyTest.py
+Library         keywords/IxiaBigtap.py
+
+
+* Variable
+${src_mac}  00:00:01:01:22:99  
+${src_mac_step}  00:00:00:01:00:00
+${src_cnt}  100
+${dst_mac}  00:02:01:01:22:99
+${dst_cnt}  100
+${dst_mac_step}  00:00:00:01:00:00
+${frame_rate}  1000
+${frame_cnt}  50000
+${frame_size}  160
+${sleep_time}  10
+${vlan_id}  199
+${line_rate}  100
+
+* Test Case
+Test IXIA
+    [Tags]  skipped
+    info  tg1
+Uni-Dir L2 Traffic with all defaults and learn traffic with Accton Switch
+# Basic test case with all default values and just start the flow
+    ${stream1}=             L2 add  flow=a->b  frame_rate=${frame_rate}  name=a_b_flow
+    ${stream2}=             L2 add  flow=c->d  frame_rate=${frame_rate}  name=c_d_flow
+    ${stream3}=             L2 add  flow=e->f  frame_rate=${frame_rate}  name=e_f_flow
+    ${stream4}=             L2 add  flow=g->h  frame_rate=${frame_rate}  name=g_h_flow
+    ${stream5}=             L2 add  flow=i->j  frame_rate=${frame_rate}  name=i_j_flow
+    ${stream6}=             L2 add  flow=k->l  frame_rate=${frame_rate}  name=k_l_flow
+    clear stats
+    start traffic
+    sleep                  ${sleep_time}
+#    ${report}=             fetch port stats  stream=${stream}
+    ${report}=             fetch port stats  stream=${stream1}
+    ${report}=             fetch port stats  stream=${stream2}
+	${report}=             fetch port stats  stream=${stream3}
+	${report}=             fetch port stats  stream=${stream4}
+	${report}=             fetch port stats  stream=${stream5}
+	${report}=             fetch port stats  stream=${stream6}
+    verify results  transmitted_frame_rate  received_frame_rate  ${stream1}  a_b_flow
+    verify results  transmitted_frame_rate  received_frame_rate  ${stream2}  c_d_flow
+    verify results  transmitted_frame_rate  received_frame_rate  ${stream3}  e_f_flow
+    verify results  transmitted_frame_rate  received_frame_rate  ${stream4}  g_h_flow
+    verify results  transmitted_frame_rate  received_frame_rate  ${stream5}  i_j_flow
+    verify results  transmitted_frame_rate  received_frame_rate  ${stream6}  k_l_flow
+    stop traffic
+    [Tags]  traffic  sanity  bigtap
+
+Uni-Direction L2 Traffic with all defaults and learn traffic
+# Basic test case with all default values and just start the flow
+	${stream3}=             L2 add  flow=e<->f  frame_rate=${frame_rate}  name=e_f_flow
+    ${stream4}=             L2 add  flow=g<->h  frame_rate=${frame_rate}  name=g_h_flow
+    ${stream5}=             L2 add  flow=i<->j  frame_rate=${frame_rate}  name=i_j_flow
+    ${stream6}=             L2 add  flow=k<->l  frame_rate=${frame_rate}  name=k_l_flow
+    clear stats
+    start traffic
+    sleep                  ${sleep_time}
+	${report}=             fetch port stats  stream=${stream3}
+	${report}=             fetch port stats  stream=${stream4}
+	${report}=             fetch port stats  stream=${stream5}
+	${report}=             fetch port stats  stream=${stream6}
+    verify results  transmitted_frame_rate  received_frame_rate  ${stream3}  e_f_flow
+    verify results  transmitted_frame_rate  received_frame_rate  ${stream4}  g_h_flow
+    verify results  transmitted_frame_rate  received_frame_rate  ${stream5}  i_j_flow
+    verify results  transmitted_frame_rate  received_frame_rate  ${stream6}  k_l_flow
+    stop traffic
+    [Tags]  traffic  sanity  bigtap  run    
+Bi-Direction L2 Traffic with line rate
+# Basic test case with all default values and just start the flow
+    ${stream}=             L2 add  flow=a<->b  src_mac=${src_mac}  dst_mac=${dst_mac}  line_rate=${line_rate}
+    clear stats
+    start traffic  ${stream}
+    sleep                  ${sleep_time}
+    verify results  transmitted_frame_rate  received_frame_rate
+    stop traffic   ${stream}
+    sleep                  ${sleep_time}
+    ${report}=             fetch port stats
+    verify results  transmitted_frames  received_frames
+    [Tags]  traffic  sanity  bigtap
+Uni-Directional L2 Traffic with more args
+# Currently Supported L2 Stream args will be adding more
+    ${stream}=             L2 add  flow=a->b  src_mac=${src_mac}  dst_mac=${dst_mac}  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=${frame_cnt}  name=a_b_flow
+    clear stats
+    start traffic  ${stream}
+    sleep                  ${sleep_time}
+    stop traffic   ${stream}
+    sleep                  ${sleep_time}
+    ${report}=             fetch port stats
+    verify results  transmitted_frames  received_frames
+    [Tags]  traffic  sanity  bigtap
+
+Bi-Directional L2 Traffic with different Macs
+# Stream with Different Src and Dst Mac addresses
+# s_cnt is used to pass no of src macs, dst_mac_step is the increment value for the next mac
+# d_cnt is used to pass no of dst macs, s_step is the increment value for the next mac
+    ${stream}=             L2 add  flow=a<->b  src_mac=${src_mac}  dst_mac=${dst_mac}  frame_rate=${frame_rate}
+	...						frame_size=${frame_size}  frame_cnt=${frame_cnt}  dst_cnt=${dst_cnt}  src_cnt=${src_cnt}
+	...						dst_mac_step=00:00:00:01:00:00  src_mac_step=00:00:00:01:00:00  name=a_b_flow
+    clear stats
+    start traffic  ${stream}
+    sleep                  ${sleep_time}
+    stop traffic   ${stream}
+    sleep                  ${sleep_time}
+    ${report}=             fetch port stats
+    verify results  transmitted_frames  received_frames
+    [Tags]  traffic  sanity  bigtap
+ 
+Bi_Direction L2 Traffic with all Defaults
+# Basic test case with all default values and just start the flow
+    ${stream}=             L2 add  flow=a<->b  src_mac=${src_mac}  dst_mac=${dst_mac}
+    clear stats
+    start traffic  ${stream}
+    sleep                  ${sleep_time}
+    stop traffic   ${stream}
+    sleep                  ${sleep_time}
+    ${report}=             fetch port stats
+    verify results  transmitted_frames  received_frames
+    [Tags]  traffic  sanity  bigtap
+    
+Bi-directional L2 Traffic with LLDP ethertype
+# Basic test case with all default values and etherytype 88cc LLDP
+    ${stream}=             L2 add  flow=a<->b  ethertype=88cc  src_mac=${src_mac}  dst_mac=${dst_mac}
+    clear stats
+    start traffic  ${stream}
+    sleep                  ${sleep_time}
+    stop traffic   ${stream}
+    sleep                  ${sleep_time}
+    ${report}=             fetch port stats
+    verify results  transmitted_frames  received_frames
+    [Tags]  traffic  sanity  
+    
+Bi-Driectional L2 Traffic with vlan_id
+# Basic test case with all default values and etherytype 8100, with vlan id
+    ${stream}=             L2 add  flow=a<->b  vlan_id=${vlan_id}  frame_size=${frame_size}  src_mac=${src_mac}  dst_mac=${dst_mac}
+    clear stats
+    start traffic  ${stream}
+    sleep                  ${sleep_time}
+    stop traffic   ${stream}
+    sleep                  ${sleep_time}
+    ${report}=             fetch port stats
+    verify results  transmitted_frames  received_frames
+    [Tags]  traffic  sanity  bigtap
+
+Bi-Directional L2 Traffic with multiple vlan_ids
+# Basic test case with all default values and etherytype 8100, with vlan id
+    ${stream}=             L2 add  flow=a<->b  vlan_id=${vlan_id}  vlan_cnt=200  vlan_step=5  frame_size=${frame_size}  src_mac=${src_mac}  dst_mac=${dst_mac}
+    clear stats
+    start traffic  ${stream}
+    sleep                  ${sleep_time}
+    stop traffic   ${stream}
+    sleep                  ${sleep_time}
+    ${report}=             fetch port stats
+    verify results  transmitted_frames  received_frames
+    [Tags]  traffic  sanity  bigtap
+
+Bi-Directional Traffic with bad CRC
+# Basic test case with bad crc
+    ${stream}=             L2 add  flow=a<->b  crc=True  src_mac=${src_mac}  dst_mac=${dst_mac}
+    clear stats
+    start traffic  ${stream}
+    sleep                  ${sleep_time}
+    stop traffic   ${stream}
+    sleep                  ${sleep_time}
+    ${report}=             fetch port stats
+    verify results  transmitted_frames  received_frames
+ 	[Tags]  traffic  sanity  bigtap
+ 	
+Bi-Directional L3 Traffic with default args
+# Basis test case with L3 Flow
+    ${stream}=             L3 add  flow=a<->b  src_mac=${src_mac}  dst_mac=${dst_mac}
+    clear stats
+    start traffic  ${stream}
+    sleep                  ${sleep_time}
+    stop traffic   ${stream}
+    sleep                  ${sleep_time}
+    ${report}=             fetch port stats
+    verify results  transmitted_frames  received_frames
+	[Tags]  traffic  sanity  bigtap
+	
+Bi-Directional L3 Traffic with more args
+# Basis test case with L3 Flow with more details :)
+    ${stream}=             L3 add  flow=a<->b  src_ip=20.20.20.10  src_gw=20.20.20.11
+    ...						dst_ip=20.20.20.11  dst_gw=20.20.20.10  src_mac=${src_mac}  dst_mac=${dst_mac}
+    clear stats
+    start traffic  ${stream}
+    sleep                  ${sleep_time}
+    stop traffic   ${stream}
+    sleep                  ${sleep_time}
+    ${report}=             fetch port stats
+    verify results  transmitted_frames  received_frames
+    [Tags]  traffic  sanity  bigtap
+    
+Bi-Directional L3 Traffic with more detailed args
+# Basis test case with L3 Flow with more details :)
+    ${stream}=             L3 add  flow=a<->b  src_mac=${src_mac}  dst_mac=${dst_mac}
+    ...						src_ip=20.20.20.10  src_gw=20.20.20.11
+    ...						dst_ip=20.20.20.11  dst_gw=20.20.20.10
+    clear stats
+    start traffic  ${stream}
+    sleep                  ${sleep_time}
+    stop traffic   ${stream}
+    sleep                  ${sleep_time}
+    ${report}=             fetch port stats
+    verify results  transmitted_frames  received_frames
+	[Tags]  traffic  sanity  bigtap
+
+Verify L3 traffic: frame size 68 bytes
+    ${stream}=  L3 add  flow=a<->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=${frame_cnt}
+    ...		src_mac=${src_mac}  dst_mac=${dst_mac}  no_arp=True
+    ...		src_ip=100.1.1.1
+    ...		dst_ip=100.1.1.2  name=a_b_flow
+    clear stats
+    start traffic  ${stream}
+    sleep  10
+    stop traffic  ${stream}
+    sleep                  ${sleep_time}
+    ${report}=             fetch port stats
+    verify results  transmitted_frames  received_frames
+    [Tags]  traffic  sanity  bigtap
+    
+Verify BiDirectional L3 traffic
+    ${stream}=  L3 add  flow=a<->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=${frame_cnt}
+    ...     src_mac=${src_mac}  dst_mac=${dst_mac}
+    ...     src_ip=100.1.1.1  src_gw=100.1.1.2  dst_ip=100.1.1.2  dst_gw=100.1.1.1  name=a_c_flow  
+    clear stats
+    start traffic  ${stream}
+    sleep  10
+    stop traffic  ${stream}
+    sleep                  ${sleep_time}
+    ${report}=             fetch port stats
+    verify results  transmitted_frames  received_frames
+    [Tags]  traffic  sanity  bigtap
+    
+BiDirectional L3 Traffic with TCP
+    ${stream}=  L3 add  flow=a<->b  frame_rate=${frame_size}  frame_size=${frame_size}  frame_cnt=${frame_cnt}
+    ...     src_mac=${src_mac}  dst_mac=${dst_mac}  protocol=TCP  src_port=8001  dst_port=8002
+    ...     src_ip=100.1.1.1  src_gw=100.1.1.2  dst_ip=100.1.1.2  dst_gw=100.1.1.1  name=a_b_flow  
+    clear stats
+    start traffic  ${stream}
+    sleep  10
+    stop traffic  ${stream}
+    sleep                  ${sleep_time}
+    ${report}=             fetch port stats
+    verify results  transmitted_frames  received_frames
+    [Tags]  traffic  sanity  bigtap
+ 
+BiDirectional L3 Traffic with UDP
+    ${stream}=  L3 add  flow=a<->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=${frame_cnt}
+    ...     src_mac=${src_mac}  dst_mac=${dst_mac}  protocol=UDP  src_port=8001  dst_port=8002
+    ...     src_ip=100.1.1.1  src_gw=100.1.1.2  dst_ip=100.1.1.2  dst_gw=100.1.1.1  name=a_b_flow  
+    clear stats
+    start traffic  ${stream}
+    sleep  10
+    stop traffic  ${stream}
+    sleep                  ${sleep_time}
+    ${report}=             fetch port stats
+    verify results  transmitted_frames  received_frames
+    [Tags]  traffic  sanity  bigtap
+ 
+BiDirectional basic IPv6 L3 Traffic with defaults
+    ${stream}=  L3 add  flow=a<->b  frame_cnt=${frame_cnt}  frame_rate=${frame_rate}  ethertype=86dd  src_mac=${src_mac}  dst_mac=${dst_mac}
+    clear stats
+    start traffic  ${stream}
+    sleep  10
+    stop traffic  ${stream}
+    sleep                  ${sleep_time}
+    ${report}=             fetch port stats
+    verify results  transmitted_frames  received_frames
+    [Tags]  traffic  sanity  bigtap
+    
+BiDirectional basic IPv6 L3 Traffic with defaults and no_arp
+    ${stream}=  L3 add  flow=a<->b  frame_cnt=${frame_cnt}  frame_rate=${frame_rate}  ethertype=86dd  no_arp=True  src_mac=${src_mac}  dst_mac=${dst_mac}
+    clear stats
+    start traffic  ${stream}
+    sleep  10
+    stop traffic  ${stream}
+    sleep                  ${sleep_time}
+    ${report}=             fetch port stats
+    verify results  transmitted_frames  received_frames
+    [Tags]  traffic  sanity  bigtap
+
+BiDirectional IPv6 L3 Traffic with more args and TCP
+    ${stream}=  L3 add  flow=a<->b  frame_cnt=${frame_cnt}  frame_rate=${frame_rate}  ethertype=86dd
+    ...			src_mac=${src_mac}  dst_mac=${dst_mac}  protocol=TCP  src_port=8001  dst_port=8002
+    ...			src_ip=2001:2004:0:0:0:0:0:c4  src_gw=2001:2004:0:0:0:0:0:c5  dst_ip=2001:2004:0:0:0:0:0:c5  dst_gw=2001:2004:0:0:0:0:0:c4  name=a_b_flow
+    clear stats
+    start traffic  ${stream}
+    sleep  10
+    stop traffic  ${stream}
+    sleep                  ${sleep_time}
+    ${report}=             fetch port stats
+    verify results  transmitted_frames  received_frames
+    [Tags]  traffic  sanity  bigtap
+
+UniDirectional IPv6 L3 Traffic with ICMP 
+    ${stream}=  L3 add  flow=a<->b  frame_cnt=${frame_cnt}  frame_rate=${frame_rate}  ethertype=86dd
+    ...			src_mac=${src_mac}  dst_mac=${dst_mac}  protocol=ICMP  type=0  code=0
+    ...			src_ip=2001:2004:0:0:0:0:0:c4  src_gw=2001:2004:0:0:0:0:0:c5  dst_ip=2001:2004:0:0:0:0:0:c5  dst_gw=2001:2004:0:0:0:0:0:c4  name=a_b_flow
+    clear stats
+    start traffic  ${stream}
+    sleep  10
+    stop traffic  ${stream}
+    sleep                  ${sleep_time}
+    ${report}=             fetch port stats
+    verify results  transmitted_frames  received_frames
+    [Tags]  traffic  sanity  bigtap
+    
+Bi-Driectional L3 Traffic with vlan_id
+# Basic test case with all default values and etherytype 8100, with vlan id
+    ${stream}=             L3 add  flow=a<->b  vlan_id=${vlan_id}  frame_size=${frame_size}  src_mac=${src_mac}  dst_mac=${dst_mac}
+    clear stats
+    start traffic  ${stream}
+    sleep                  ${sleep_time}
+    stop traffic   ${stream}
+    sleep                  ${sleep_time}
+    ${report}=             fetch port stats
+    verify results  transmitted_frames  received_frames
+    clear stats
+    [Tags]  traffic  sanity  bigtap 
+
+Bi-Directional L3 Traffic with multiple vlan_ids
+# Basic test case with all default values and etherytype 8100, with vlan id
+    ${stream}=             L3 add  flow=a<->b  vlan_id=${vlan_id}  frame_size=${frame_size}  vlan_cnt=200  vlan_step=10  src_mac=${src_mac}  dst_mac=${dst_mac}
+    clear stats
+    start traffic  ${stream}
+    sleep                  ${sleep_time}
+    stop traffic   ${stream}
+    sleep                  ${sleep_time}
+    ${report}=             fetch port stats
+    verify results  transmitted_frames  received_frames
+    clear stats
+    [Tags]  traffic  sanity  bigtap
+    
+Bi-Driectional L3 Traffic with vlan_id and crc
+# Basic test case with all default values and etherytype 8100, with vlan id
+    ${stream}=             L3 add  flow=a<->b  ethertype=8100  vlan_id=${vlan_id}  frame_size=${frame_size}  crc=True  src_mac=${src_mac}  dst_mac=${dst_mac}
+    clear stats
+    start traffic  ${stream}
+    sleep                  ${sleep_time}
+    stop traffic   ${stream}
+    sleep                  ${sleep_time}
+    ${report}=             fetch port stats
+    verify results  transmitted_frames  received_frames
+    [Tags]  traffic  sanity  bigtap
+
+Bi-Directional L3 Traffic ICMP Echo
+# Basic test case with all default values and ICMP type and value
+    ${stream}=             L3 add  flow=a<->b  protocol=ICMP  icmp_type=8  icmp_code=0  src_mac=${src_mac}  dst_mac=${dst_mac}
+    clear stats
+    start traffic  ${stream}
+    sleep                  ${sleep_time}
+    stop traffic   ${stream}
+    sleep                  ${sleep_time}
+    ${report}=             fetch port stats
+    verify results  transmitted_frames  received_frames
+    [Tags]  traffic  sanity  bigtap
+
+Bi-Driectional L3 Traffic with differnt ethertypes and streams
+# Basic test case with all default values and etherytype 8100, with vlan id
+	${stream1}=  L3 add  flow=c->d  frame_rate=1000  frame_size=128  frame_cnt=10000
+    ...       no_arp=True  name=a0_b_flow    
+    ${stream2}=  L3 add  flow=e->f  frame_rate=1000  frame_size=128  frame_cnt=10000
+    ...     no_arp=True src_ip=100.1.1.1  dst_ip=100.1.1.2  name=a1_b_flow 
+    
+    ${stream3}=  L3 add  flow=g->h  frame_rate=1000  frame_size=128  frame_cnt=10000
+    ...     no_arp=True  src_ip=100.1.1.1  dst_ip=100.1.1.2  name=a2_b_flow
+    
+    clear stats
+    start traffic
+    sleep                  10000
+    stop traffic
+    sleep                  ${sleep_time}
+    ${report}=             fetch port stats
+    verify results  transmitted_frames  received_frames
+    [Tags]  traffic  sanity  bigtap
+ 
+Bi-Directional L3 Traffic ICMP Echo with traffic learn
+# Basic test case with all default values and ICMP type and value
+    ${stream}=             L3 add  flow=a<->b  protocol=ICMP  icmp_type=8  icmp_code=0  src_mac=${src_mac}  dst_mac=${dst_mac}
+    clear stats
+    start traffic  ${stream}  learn=True
+    sleep                  ${sleep_time}
+    stop traffic   ${stream}
+    sleep                  ${sleep_time}
+    ${report}=             fetch port stats
+    verify results  transmitted_frames  received_frames
+    [Tags]  traffic  sanity  bigtap
+*Keywords
+atest teardown
+	delete traffic
+verify results   [Arguments]  ${transmitted_frames}  ${received_frames}  ${stream}  ${stream_name}
+    Sleep  5
+    ${report}=  fetch port stats  stream=${stream}  
+    ${tx_value}=  verify dict key  ${report}  ${stream_name}  ${transmitted_frames}
+    ${rx_value}=  verify dict key  ${report}  ${stream_name}  ${received_frames}
+    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}
+    Should be true  ${in_range}
