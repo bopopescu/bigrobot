@@ -376,10 +376,10 @@ def test_command(*args):
                         metavar=('tag1', 'tag2'), nargs='*',
                         help='Exclude test cases by tags')
     parser.add_argument('--test',
-                        metavar=('tag1', 'tag2'), nargs='*',
+                        metavar=('name1', 'name2'), nargs='*',
                         help='Run test cases by name (must match entire string)')
     parser.add_argument('--testmatch',
-                        metavar=('tag1', 'tag2'), nargs='*',
+                        metavar=('name1', 'name2'), nargs='*',
                         help='Run test cases by name (match anywhere)')
     parser.add_argument('--randomize', action='store_true', dest='randomize',
                         default=False,
