@@ -146,6 +146,7 @@ class ControllerNode(Node):
         self.bash_content = self.dev.content
         self.bash_result = self.dev.result
         self.set_prompt = self.dev.set_prompt
+        self.get_prompt = self.dev.get_prompt
         self.send = self.dev.send
         self.expect = self.dev.expect
 
@@ -229,15 +230,26 @@ class MininetNode(Node):
         if 'topology' in self.node_params:
             self.topology = self.node_params['topology']
         else:
-            helpers.environment_failure("Mininet topology is missing.")
+            helpers.environment_failure("%s: Mininet topology is missing."
+                                        % name)
 
         if 'type' not in self.node_params:
-            helpers.environment_failure("Must specify a Mininet type in"
-                                        " topology file ('t6' or 'basic').")
+            helpers.environment_failure("%s: Must specify a Mininet type in"
+                                        " topology file ('t6' or 'basic')."
+                                        % name)
+
+        if 'start_mininet' not in self.node_params:
+            self._start_mininet = True
+        else:
+            self._start_mininet = self.node_params['start_mininet']
+            if not helpers.is_bool(self._start_mininet):
+                helpers.environment_failure("%s: 'start_mininet' must be a boolean value"
+                                            % name)
 
         self.mn_type = self.node_params['type'].lower()
         if self.mn_type not in ('t6', 'basic'):
-            helpers.environment_failure("Mininet type must be 't6' or 'basic'.")
+            helpers.environment_failure("%s: Mininet type must be 't6' or 'basic'."
+                                        % name)
 
         if helpers.params_is_false('set_session_ssh', self.node_params):
             helpers.log("'set_session_ssh' is disabled for '%s', bypassing"
@@ -261,6 +273,7 @@ class MininetNode(Node):
         self.restart_mininet = self.dev.restart_mininet
         self.stop_mininet = self.dev.stop_mininet
         self.set_prompt = self.dev.set_prompt
+        self.get_prompt = self.dev.get_prompt
         self.send = self.dev.send
         self.expect = self.dev.expect
 
@@ -280,7 +293,8 @@ class MininetNode(Node):
                                             controller2=self.controller_ip2,
                                             topology=self.topology,
                                             openflow_port=self.openflow_port,
-                                            debug=self.dev_debug_level)
+                                            debug=self.dev_debug_level,
+                                            is_start_mininet=self._start_mininet)
         elif self.mn_type == 'basic':
             return devconf.MininetDevConf(name=name,
                                           host=host,
@@ -290,7 +304,8 @@ class MininetNode(Node):
                                           controller2=self.controller_ip2,
                                           topology=self.topology,
                                           openflow_port=self.openflow_port,
-                                          debug=self.dev_debug_level)
+                                          debug=self.dev_debug_level,
+                                          is_start_mininet=self._start_mininet)
 
 
 class HostNode(Node):
@@ -317,6 +332,7 @@ class HostNode(Node):
         self.bash_content = self.dev.content
         self.bash_result = self.dev.result
         self.set_prompt = self.dev.set_prompt
+        self.get_prompt = self.dev.get_prompt
         self.send = self.dev.send
         self.expect = self.dev.expect
 
@@ -361,6 +377,7 @@ class SwitchNode(Node):
         self.bash_content = self.dev.content
         self.bash_result = self.dev.result
         self.set_prompt = self.dev.set_prompt
+        self.get_prompt = self.dev.get_prompt
         self.send = self.dev.send
         self.expect = self.dev.expect
         self.info = self.dev.info

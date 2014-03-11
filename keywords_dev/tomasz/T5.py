@@ -1224,7 +1224,11 @@ class T5(object):
             c.send("reauth")
             c.expect(r"Password:")
             c.config("adminadmin")
-            c.send("cluster election take-leader")
+            c.config("cluster")
+            c.send("failover")
+            if "Error" in c.cli_content():
+                helpers.log("Error in CLI content")
+                return False
             c.expect(r"Election may cause role transition: enter \"yes\" \(or \"y\"\) to continue:")
             c.config("yes")
         except:

@@ -13,88 +13,7 @@ class T5Platform(object):
     def __init__(self):
         pass    
     
-    def rest_verify_show_cluster(self):
-        '''Using the 'show cluster' command verify the cluster formation across both nodes
-	   Also check for the formation integrity
-	'''
-        try:
-            t = test.Test()
-            c1 = t.controller("c1")
-            c2 = t.controller("c2")
-            url = '/api/v1/data/controller/cluster'
-            
-            result = c1.rest.get(url)['content']
-            reported_active_by_c1 = result[0]['status']['domain-leader']['leader-id']
-            
-            result = c2.rest.get(url)['content']
-            reported_active_by_c2 = result[0]['status']['domain-leader']['leader-id']
-            
-            if(reported_active_by_c1 != reported_active_by_c2):
-                helpers.log("Both controllers %s & %s are declaring themselves as active" \
-                        % (reported_active_by_c1, reported_active_by_c2))
-                helpers.test_failure("Error: Inconsistent active/stand-By cluster formation detected")
-                return False
-            else:
-                helpers.log("Active controller id is: %s " % reported_active_by_c1)
-                helpers.log("Pass: Consistent active/standby cluster formation verified")
-                return True
-            
-        except Exception, err:
-            helpers.test_failure("Exception in: rest_verify_ha_cluster %s : %s " % (Exception, err))
-            return False
 
-
-
-    def _cluster_election(self, rigged):
-        ''' Invoke "cluster election" commands: re-run or take-leader
-            If: "rigged" is true then verify the active controller change.
-            Else: execute the election rerun
-        '''
-        t = test.Test()
-        slave = t.controller("slave")
-        master = t.controller("master")
-
-        masterID,slaveID = self.getNodeID()
-        if(masterID == -1 and slaveID == -1):
-            return False
-
-        helpers.log("Current slave ID is : %s / Current master ID is: %s" % (slaveID, masterID))
-
-        url = '/api/v1/data/controller/cluster/config/new-election'
-
-        if(rigged):
-            slave.rest.post(url, {"rigged": True})
-        else:
-            slave.rest.post(url, {"rigged": False})
-        
-        sleep(30)
-
-        newMasterID = self.getNodeID(False)
-        if(newMasterID == -1):
-            return False
-
-        if(masterID == newMasterID):
-            if(rigged):
-                helpers.test_failure("Fail: Master didn't change after executing take-leader")
-                return False
-            else:
-                helpers.log("Pass: Leader election re-run successful - Leader %s  is intact " % (masterID))
-                return True
-        else:
-            helpers.log("Pass: Take-Leader successful - Leader changed from %s to %s" % (masterID, newMasterID))
-            return True
-
-
-    def rest_verify_cluster_election_take_leader(self):
-        ''' Invoke "cluster election take-leader" command and verify the controller state
-        '''
-        obj = utilities()
-        utilities.fabric_integrity_checker(obj,"before")
-        returnVal = self._cluster_election(True)
-        if(not returnVal):
-            return False
-        sleep(30)
-        return utilities.fabric_integrity_checker(obj, "after")
 
     def rest_verify_cluster_election_rerun(self):
         ''' Invoke "cluster election re-run" command and verify the controller state
@@ -157,82 +76,6 @@ class T5Platform(object):
                 return False
 
 
-    def _cluster_node_shutdown(self, masterNode=True):
-        ''' Shutdown the node
-        '''
-        t = test.Test()
-        master = t.controller("master")
-        obj = utilities()
-
-        masterID,slaveID = self.getNodeID()
-        if(masterID == -1 and slaveID == -1):
-            return False
-
-        if(masterNode):
-            master.enable("shutdown", prompt="Confirm Shutdown \(yes to continue\)")
-            master.enable("yes")
-            helpers.log("Master is shutting down")
-            sleep(10)
-        else:
-            slave = t.controller("slave")
-            slave.enable("shutdown", prompt="Confirm Shutdown \(yes to continue\)")
-            slave.enable("yes")
-            helpers.log("Slave is shutting down")
-            sleep(10)
-
-        newMasterID = self.getNodeID(False)
-        if(newMasterID == -1):
-            return False
-
-        if(masterNode):
-            if(slaveID == newMasterID):
-                helpers.log("Pass: After the shutdown cluster is stable - New master is : %s " % (newMasterID))
-                return True
-            else:
-                helpers.log("Fail: Shutdown Failed. Cluster is not stable. Before the master node shutdown Master is: %s / Slave is : %s \n \
-                        After the shutdown Master is: %s " %(masterID, slaveID, newMasterID))
-                return False
-        else:
-            if(masterID == newMasterID):
-                helpers.log("Pass: After the slave shutdown cluster is stable - Master is still: %s " % (newMasterID))
-                return True
-            else:
-                helpers.log("Fail: Shutdown failed. Cluster is not stable. Before the slave shutdown Master is: %s / Slave is : %s \n \
-                        After the shutdown Master is: %s " %(masterID, slaveID, newMasterID))
-                return False
-
-
-    def cli_verify_cluster_master_reboot(self):
-        obj = utilities()
-        utilities.fabric_integrity_checker(obj,"before")
-        returnVal = self._cluster_node_reboot()
-        if(not returnVal):
-            return False
-        return utilities.fabric_integrity_checker(obj,"after")
-
-    def cli_verify_cluster_slave_reboot(self):
-        obj = utilities()
-        utilities.fabric_integrity_checker(obj,"before")
-        returnVal = self._cluster_node_reboot(False)
-        if(not returnVal):
-            return False
-        return utilities.fabric_integrity_checker(obj,"after")
-
-    def cli_verify_cluster_master_shutdown(self):
-        obj = utilities()
-        utilities.fabric_integrity_checker(obj,"before")
-        returnVal = self._cluster_node_shutdown()
-        if(not returnVal):
-            return False
-        return utilities.fabric_integrity_checker(obj,"after")
-
-    def cli_verify_cluster_slave_shutdown(self):
-        obj = utilities()
-        utilities.fabric_integrity_checker(obj,"before")
-        returnVal = self._cluster_node_shutdown(False)
-        if(not returnVal):
-            return False
-        return utilities.fabric_integrity_checker(obj,"after")
 
     def rest_add_user(self, numUsers=1):
         numWarn = 0
@@ -355,140 +198,6 @@ class T5Platform(object):
             return True
 
 
-
-
-    def auto_configure_fabric_switch(self, spineList, leafList, leafPerRack):
-        
-        global leafSwitchList
-        
-        Fabric = T5Fabric.T5Fabric()
-        for i,dpid in enumerate(spineList):
-            spineName = "spine"+ str(i)
-            Fabric.rest_add_switch(spineName)
-            Fabric.rest_add_dpid(spineName, dpid)
-            Fabric.rest_add_fabric_role(spineName, 'spine')
-
-        if (int(leafPerRack) == 1):
-            for i,dpid in enumerate(leafList):
-                leafName = "leaf"+str(i)+'-a'
-                leafSwitchList.append(leafName)
-                rackName = "rack"+str(i)
-                Fabric.rest_add_switch(leafName)
-                Fabric.rest_add_dpid(leafName, dpid)
-                Fabric.rest_add_fabric_role(leafName, 'leaf')
-        else:
-
-            if (int(leafPerRack) == 2):
-                if (len(leafList) % 2 == 0):
-                    numRacks = len(leafList) / 2
-                    for i in range(0,numRacks):
-                        leafName = "leaf"+str(i)+'-a'
-                        leafSwitchList.append(leafName)
-                        rackName = "rack"+str(i)
-                        dpid = leafList[i*2]
-                        Fabric.rest_add_switch(leafName)
-                        Fabric.rest_add_dpid(leafName, dpid)
-                        Fabric.rest_add_fabric_role(leafName, 'leaf')
-                        Fabric.rest_add_leaf_group(leafName, rackName)
-                        leafName = "leaf"+str(i)+'-b'
-                        leafSwitchList.append(leafName)
-                        rackName = "rack"+str(i)
-                        dpid = leafList[i*2 + 1]
-                        Fabric.rest_add_switch(leafName)
-                        Fabric.rest_add_dpid(leafName, dpid)
-                        Fabric.rest_add_fabric_role(leafName, 'leaf')
-                        Fabric.rest_add_leaf_group(leafName, rackName)
-                else:
-                    numRacks = (len(leafList) / 2) + 1
-                    for i in range(0,numRacks):
-                        leafName = "leaf"+str(i)+'-a'
-                        leafSwitchList.append(leafName)
-                        rackName = "rack"+str(i)
-                        dpid = leafList[i*2]
-                        try:
-                            testdpid = leafList[i*2 + 1]
-                            Fabric.rest_add_switch(leafName)
-                            Fabric.rest_add_dpid(leafName, dpid)
-                            Fabric.rest_add_fabric_role(leafName, 'leaf')
-                            Fabric.rest_add_leaf_group(leafName, rackName)
-                            
-                            leafName = "leaf"+str(i)+'-b'
-                            leafSwitchList.append(leafName)
-                            rackName = "rack"+str(i)
-                            dpid = leafList[i*2 + 1]
-                            Fabric.rest_add_switch(leafName)
-                            Fabric.rest_add_dpid(leafName, dpid)
-                            Fabric.rest_add_fabric_role(leafName, 'leaf')
-                            Fabric.rest_add_leaf_group(leafName, rackName)
-                            
-                        except:
-                            Fabric.rest_add_switch(leafName)
-                            Fabric.rest_add_dpid(leafName, dpid)
-                            Fabric.rest_add_fabric_role(leafName, 'leaf')
-    
-
-     
-    def auto_delete_fabric_switch(self, spineList, leafList, leafPerRack):
-        
-        numSpines = len(spineList)
-        numLeaves = len(leafList)
-        
-        Fabric = T5Fabric.T5Fabric()
-        for i in range(0,numSpines):
-            spineName = 'spine' + str(i)
-            Fabric.rest_delete_fabric_switch(spineName) 
-            
-        if (int(leafPerRack) == 1):
-            for i in range(0, int(numLeaves)):
-                leafName = "leaf"+str(i)+'-a'
-                Fabric.rest_delete_fabric_switch(leafName)
-                     
-        else:
-            if (int(leafPerRack) == 2):
-                if (numLeaves % 2 == 0):
-                    numRacks = numLeaves / 2
-                    for i in range(0,numRacks):
-                        leafName = "leaf"+str(i)+'-a'
-                        Fabric.rest_delete_fabric_switch(leafName)
-                        leafName = "leaf"+str(i)+'-b'
-                        Fabric.rest_delete_fabric_switch(leafName)
-                else:
-                    numRacks = (numLeaves / 2) + 1
-                    for i in range(0,numRacks):
-                        leafName = "leaf"+str(i)+'-a'
-                        Fabric.rest_delete_fabric_switch(leafName)
-                        try:
-                            leafName = "leaf"+str(i)+'-b'
-                            Fabric.rest_delete_fabric_switch(leafName)
-                        except:
-                            pass
-                             
-                             
-                             
-    def platform_ping(self, src, dst ):
-        global pingFailureCount
-        mynet = mininet.Mininet()     
-        loss = mynet.mininet_ping(src, dst)
-        if (loss != '0'):
-            #sleep(5)
-            loss = mynet.mininet_ping(src, dst)
-            if (loss != '0'):
-                if(pingFailureCount == 5):
-                    helpers.warn("5 Consecutive Ping Failures: Issuing Mininet-BugReport")
-                    #mynet.mininet_bugreport()
-                    pingFailureCount = 0
-                    return False
-                helpers.warn("Ping failed between: %s & %s" % (src,dst))
-                pingFailureCount += 1
-                return True
-            else:
-                pingFailureCount = 0
-                return True
-        else:
-            pingFailureCount = 0
-        return True
-    
-    
     
     def do_show_run_vns_verify(self, vnsName, numMembers):
         t = test.Test()
@@ -511,65 +220,39 @@ class T5Platform(object):
 
 
 
-    def getNodeID(self, slaveNode=True):
-        
-        '''         
-        Description:
-        -    This function will handout the NodeID's for master & slave nodes 
-        
-        Objective:
-        -    This is designed to be resilient to node failures in HA environments. Eg: If the node is not
-            reachable or it's powered down this function will handle the logic
-            
-        Inputs:
-        |    boolean: slaveNode  |  Whether secondary node is available in the system. Default is True
-        
-        Outputs:
-        |    If slaveNode: return (masterID, slaveID
-        |    else:    return (masterID)
+    def rest_add_monitor_session(self, sessionID):
 
-        
-        ''' 
-        numTries = 0
         t = test.Test()
         master = t.controller("master")
-    
-         
-        while(True):
-            try:
-                showUrl = '/api/v1/data/controller/cluster'
-                helpers.log("Master is : %s " % master.name)
-                result = master.rest.get(showUrl)['content']
-                masterID = result[0]['status']['local-node-id']
-                break 
-            except(KeyError):
-                if(numTries < 5):
-                    helpers.log("Warning: KeyError detected during master ID retrieval. Sleeping for 10 seconds")
-                    sleep(10)
-                    numTries += 1
-                else:
-                    helpers.log("Error: KeyError detected during master ID retrieval")
-                    return (-1, -1)
-
-        if(slaveNode):
-            slave = t.controller("slave")
-            while(True):
-                try:
-                    showUrl = '/api/v1/data/controller/cluster'
-                    result = slave.rest.get(showUrl)['content']
-                    slaveID = result[0]['status']['local-node-id']
-                    break 
-                except(KeyError):
-                    if(numTries < 5):
-                        helpers.log("Warning: KeyError detected during slave ID retrieval. Sleeping for 10 seconds")
-                        sleep(10)
-                        numTries += 1
-                    else:
-                        helpers.log("Error: KeyError detected during slave ID retrieval")
-                        return (-1,-1)
+        url = "/api/v1/data/controller/fabric/monitor-session[id=" + sessionID+"]"
+        
+        master.rest.put(url, {"id": sessionID})
+        
+        url = "/api/v1/data/controller/fabric/monitor-session?config=true"
+        
+        result = master.rest.get(url)['content']
+        try:
+            for session in result:
+                if (str(session['id']) == sessionID):
+                    return True
+        except(KeyError):
+            return False
+        
+        return False
 
 
-        if(slaveNode):
-            return (masterID, slaveID)
-        else:
-            return masterID
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   

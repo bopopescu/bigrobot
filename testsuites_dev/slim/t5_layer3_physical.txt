@@ -48,6 +48,10 @@ Intra tenant L3 tagged traffic with static endpoints across rack
 	L3 intra tenant across rack tagged with static endpoints
 #	[Tags]							skipped			smoke				sanity	
 
+Intra tenant dhcp relay with circuit id
+	L3 intra tenant dhcp relay with circuit id on same rack
+#	[Tags]							skipped			smoke				sanity	
+	
 
 	
 * Keywords
@@ -361,16 +365,39 @@ L3 intra tenant across rack tagged with static endpoints
 	Should Be True  							${loss} == 0		
 
 	
+L3 intra tenant dhcp relay with circuit id on same rack
+	BASH ifup intf								h1 								bond0
+	BASH ifup intf								h2								bond0
+	BASH ifup intf								h3								bond0
+	BASH ifup intf								h4								bond0	
+	REST add portgroup to vns					Y								Y1						${leaf0_pc1}			-1
+	REST add portgroup to vns					Y								Y2						${leaf0_pc2}			-1
+	BASH add ip address							h1								10.252.1.11/24			bond0	
+	BASH add route								h1								10.252.2.0/24			10.252.1.1
+	REST add dhcp relay							Y								Y2						10.252.1.9
+	REST add dhcprelay circuitid				Y								Y2						'&#!ten B vns B2'
+	REST enable dhcp relay						Y								Y2	
+	sleep										10
+	${value} = 									BASH release dhcpv4 address		h2						bond0
+	Should Be True								${value}
+	sleep										2
+	${ipAddr} = 								BASH renew dhcpv4 address		h2						bond0
+	Should Not Be True							${ipAddr} == ''
+	BASH ping									h1								${ipAddr}				count=10
+	${value} = 									BASH verify arp					h1						10.252.1.1
+	Should Be True								${value} 		
+	${value} =									BASH verify arp					h2						10.252.2.1
+	Should Be True								${value} 	
+	${mac1} = 									BASH get intf mac				h1						bond0
+	${result} =									REST show endpoints mac			${mac1}
+	Should Be True								${result}						
+	${mac2} = 									BASH get intf mac				h2						bond0
+	${result} =									REST show endpoints mac			${mac2}
+	Should Be True								${result}						
+	REST show endpoints	
+	${loss} = 									BASH ping						h1						${ipAddr} 			count=10
+	Should Be True  							${loss} == 0	
 	
-	
-	
-	
-	
-	
-	
-	
-
-
 
 
 

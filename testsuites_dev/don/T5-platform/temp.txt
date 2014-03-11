@@ -11,11 +11,11 @@ Library          keywords/BsnCommon.py
 Library          keywords/Mininet.py
 Library          Collections
 Library          keywords/T5.py
-Library	         keywords/T5Fabric.py
 Library	         keywords/T5L3.py
-Library	         keywords/T5Platform.py
+#Library	         keywords/T5Platform.py
 Library	         keywords/T5Utilities.py
 Resource	 	 keywords_dev/don/t5_platform_sanity_resource.txt
+Library	         keywords_dev/don/T5Platform.py
 
 * Variables
 @{spineList}  00:00:00:00:00:01:00:01  00:00:00:00:00:01:00:02
@@ -23,6 +23,11 @@ Resource	 	 keywords_dev/don/t5_platform_sanity_resource.txt
 
 
 * Test Case 
+
+
+Configure Span
+	[Tags]  span
+	rest add monitor session  1
 
 
 Multiple L2 Tenants Single VNS HA Test
