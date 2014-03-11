@@ -2,14 +2,13 @@
 
 * Setting
 Documentation    T5 BVS APP Functional VNS Scale Test Suite
-#Suite Setup      base suite setup
-#Suite Teardown   base suite teardown
+Suite Setup      base suite setup
+Suite Teardown   base suite teardown
 Test Setup       base test setup
 Test Teardown    T5 test teardown
 Force Tags       T5 
 Library          keywords/BsnCommon.py
-Library          keywords/T5.py
-Library	         keywords/T5Fabric.py
+Library          keywords_dev/prashanth/T5.py
 Library	         keywords/SwitchLight.py
 Library          keywords/Mininet.py
 Library	         keywords/Host.py
@@ -40,6 +39,7 @@ create 100 vns and verify the table and forwarding
 	rest add interface to all vns  t1  leaf1-a  ${leaf1a_ixia_intf}
 	sleep  10
 	rest verify vns scale  100
+	rest verify membership port count  2
 	${stream}=             L3 add  no_arp=True  flow=a<->c  src_mac=00:00:01:00:00:01  dst_mac=00:00:02:00:00:01  src_cnt=100  dst_cnt=100  ethertype=8100  vlan_id=1  vlan_cnt=100  frame_rate=100  frame_size=68  name=a_c_flow
     start traffic  ${stream}
     sleep  5
@@ -48,8 +48,7 @@ create 100 vns and verify the table and forwarding
     verify traffic rate  tx_rate  rx_rate  c  a
     stop traffic  ${stream}
 	rest delete tenant  t1
-    sleep  10
-
+   
 create 1k vns and verify the table and forwarding
 	[Tags]  feature  scale
   	rest add tenant  t1
@@ -58,6 +57,7 @@ create 1k vns and verify the table and forwarding
 	rest add interface to all vns  t1  leaf1-a  ${leaf1a_ixia_intf}
 	sleep  10
 	rest verify vns scale  1000
+	rest verify membership port count  2
 	${stream}=             L3 add  no_arp=True  flow=a<->c  src_mac=00:00:01:00:00:01  dst_mac=00:00:02:00:00:01  src_cnt=1000  dst_cnt=1000  ethertype=8100  vlan_id=1  vlan_cnt=1000  frame_rate=1000  frame_size=68  name=a_c_flow
     start traffic  ${stream}
     sleep  30
@@ -66,7 +66,6 @@ create 1k vns and verify the table and forwarding
     verify traffic rate  tx_rate  rx_rate  c  a
     stop traffic  ${stream}
 	rest delete tenant  t1
-    sleep  5
     ${result}=  rest verify tenant
     Should not be True  ${result}
     
@@ -78,20 +77,21 @@ create  4k vns and verify the table and forwarding
 	rest add interface to all vns  t1  leaf1-a  ${leaf1a_ixia_intf}
 	sleep  10
 	rest verify vns scale  4090
+	rest verify membership port count  2
 	${stream}=             L3 add  no_arp=True  flow=a<->c  src_mac=00:00:01:00:00:01  dst_mac=00:00:02:00:00:01  src_cnt=4090  dst_cnt=4090  ethertype=8100  vlan_id=1  vlan_cnt=4090  frame_rate=4090  frame_size=68  name=a_c_flow
     start traffic  ${stream}
-    sleep  180
+    sleep  90
     rest verify endpoint in system  4090
     verify traffic rate  tx_rate  rx_rate  a  c
     verify traffic rate  tx_rate  rx_rate  c  a
     stop traffic  ${stream}
 	rest delete tenant  t1
-    sleep  5
     ${result}=  rest verify tenant
     Should not be True  ${result}
 
+
 Tear down the config
-   [Tags]  feature     
+   [Tags]  feature       
    delete fabric switch
    rest delete tenant  t1
    base suite teardown

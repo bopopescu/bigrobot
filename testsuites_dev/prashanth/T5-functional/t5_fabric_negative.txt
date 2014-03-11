@@ -25,7 +25,7 @@ Setup Three Rack Dual Leaf Topology
 	rest verify fabric link 	
 
 With 2k mac entries , Remove the Leaf switch and Readd the leaf switch
-    [Tags]  feature  
+    [Tags]  feature  Manual  Tested  
     rest add tenant  t1
     rest add vns  t1  v1
     rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
@@ -51,7 +51,7 @@ With 2k mac entries , Remove the Leaf switch and Readd the leaf switch
     rest delete tenant  t1               
      
 shutdown the switch and check the links are down in the switch
-	[Tags]  feature
+	[Tags]  feature  Manual  Untested
 	rest add tenant  t1
 	rest add vns  t1  v1
 	rest add portgroup  p4 
@@ -92,32 +92,44 @@ shutdown the switch and check the links are down in the switch
 verify fabric interface cli 
 	[Tags]  feature
 	${result}=  cli show fabric interface switch  leaf0-a
-	Should be True  ${result}
+	Should Not be Empty  ${result}
 	
 verify fabric lag cli
 	[Tags]  feature
 	${result}=  cli show fabric lag switch  leaf0-a
-	Should be True  ${result}
+	Should Not be Empty  ${result}
 	
 verify fabric switch cli
 	[Tags]  feature
 	${result}=  cli show fabric switch  leaf0-a
-	Should be True  ${result}
+	Should Not be Empty  ${result}
 	
 verify fabric lacp cli
 	[Tags]  feature
 	${result}=  cli show fabric lacp switch  leaf0-a
-	Should be True  ${result}
+	Should Not be Empty  ${result}
 	
 verify fabric link cli
 	[Tags]  feature
 	${result}=  cli show fabric link  
-	Should be True  ${result}
+	Should Not be Empty  ${result}
 
 verify fabric lag any_leaf
 	[Tags]  feature
 	${result}=  cli show fabric lag   any_leaf 
-	Should be True  ${result}
+	Should Not be Empty  ${result}
+	
+Test forwarding entry when the switch falls below 50% spine links
+	[Tags]  feature  Manual  Untested
+
+Changes to existing fabric configuration
+	[Tags]  feature  Manual  Untested
+
+When the controller disconnect from the switch , verify LLDP packets are indeed processed in the pswitch
+	[Tags]  feature  Manual  Tested
+	bash delete controller  leaf0-a  c1
+	bash delete controller  leaf0-a  c2
+	bash show debug ofad
 	
 Tear down config and Topology
     delete fabric switch  
