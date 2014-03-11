@@ -1,6 +1,18 @@
-"""
-Keyword library: Controller
-"""
+'''
+###  WARNING !!!!!!!
+###
+###  This is where common code for Controller will go in.
+###
+###  To commit new code, please contact the Library Owner:
+###  Vui Le (vui.le@bigswitch.com)
+###
+###  DO NOT COMMIT CODE WITHOUT APPROVAL FROM LIBRARY OWNER
+###
+###  Last Updated: 03/11/2014
+###
+###  WARNING !!!!!!!
+'''
+
 import autobot.helpers as helpers
 import autobot.test as test
 
@@ -453,4 +465,39 @@ class Controller(object):
         else:
             helpers.log('scp completed successfully')
             return True
+
+    def cli_ping(self, node, dest_ip=None, dest_node=None, *args, **kwargs):
+        """
+        Perform a ping from the CLI. Returns the loss percentage
+        - 0   - 0% loss
+        - 100 - 100% loss
+
+        Inputs:
+        - node:      The device name as defined in the topology file, e.g., 'c1', 's1', etc.
+        - dest_ip:   Ping this destination IP address
+        - dest_node  Ping this destination node ('c1', 's1', etc)
+
+        Example:
+        | ${lossA} = | Bash Ping | h1          | 10.192.104.1 |
+        | ${lossB} = | Bash Ping | node=master | dest_node=s1 |
+        =>
+        - ${lossA} = 0
+        - ${lossB} = 100
+
+        See also Host.bash ping.
+        """
+        t = test.Test()
+        n = t.node(node)
+
+        if not dest_ip and not dest_node:
+            helpers.test_error("Must specify 'dest_ip' or 'dest_node'")
+        if dest_ip and dest_node:
+            helpers.test_error("Specify 'dest_ip' or 'dest_node' but not both")
+        if dest_ip:
+            dest = dest_ip
+        if dest_node:
+            dest = t.node(dest_node).ip()
+        status = helpers._ping(dest, node_handle=n, mode='cli',
+                               *args, **kwargs)
+        return status
 
