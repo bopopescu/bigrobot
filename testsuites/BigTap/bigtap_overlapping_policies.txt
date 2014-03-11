@@ -213,9 +213,10 @@ Verify overlap is not created when P1 and ZP1 have different protocols
     rest delete policy match  admin-view  P1  1
     rest delete policy match  admin-view  ZP1  1
     sleep  15
-    rest add policy match  admin-view  P1  1  {"ip-proto": 6, "ether-type": 2048,"sequence": 1,"dst-ip":"192.0.0.1","dst-tp-port":80,"src-ip":"192.0.0.2","src-tp-port":1234}
-    rest add policy match  admin-view  ZP1  1  {"ip-proto": 17, "ether-type": 2048,"sequence": 1,"dst-ip":"192.0.0.1","dst-tp-port":80,"src-ip":"192.0.0.2","src-tp-port":1234}                                
+    rest add policy match  admin-view  P1  1  {"ip-proto": 6, "ether-type": 2048,"sequence": 1,"dst-ip":"192.0.0.1", "dst-ip-mask":"255.255.255.0", "dst-tp-port":80,"src-ip":"192.0.0.2", "src-ip-mask":"255.255.255.0","src-tp-port":1234}
+    rest add policy match  admin-view  ZP1  1  {"ip-proto": 17, "ether-type": 2048,"sequence": 1,"dst-ip":"192.0.0.1", "dst-ip-mask":"255.255.255.0","dst-tp-port":80,"src-ip":"192.0.0.2", "src-ip-mask":"255.255.255.0","src-tp-port":1234}                                
     sleep  15
+    verify component policies exist    
     verify overlap does not exist
     rest add policy match  admin-view  P1  1  {"src-mac": "00:11:00:00:00:01", "ether-type": 2048, "sequence": 1}
     rest add policy match  admin-view  ZP1  1  {"dst-mac": "00:11:00:00:00:02", "ether-type": 2048, "sequence": 1}    
@@ -227,9 +228,10 @@ Verify overlap is not created when P1 has IPv4 matches and ZP1 has IPv6 matches
     rest delete policy match  admin-view  P1  1
     rest delete policy match  admin-view  ZP1  1
     sleep  15
-    rest add policy match  admin-view  P1  1  {"ip-proto": 6, "ether-type": 2048,"sequence": 1,"dst-ip":"192.0.0.1","dst-tp-port":80,"src-ip":"192.0.0.2","src-tp-port":1234}
-    rest add policy match  admin-view  ZP1  1  {"ip-proto": 6, "ether-type": 34525,"sequence": 1,"dst-ip":"2001::2","dst-tp-port":80,"src-ip":"2001::1","src-tp-port":1234}                                
+    rest add policy match  admin-view  P1  1  {"ip-proto": 6, "ether-type": 2048,"sequence": 1,"dst-ip":"192.0.0.1", "dst-ip-mask":"255.255.255.0","dst-tp-port":80,"src-ip":"192.0.0.2", "src-ip-mask":"255.255.255.0","src-tp-port":1234}
+    rest add policy match  admin-view  ZP1  1  {"ip-proto": 6, "ether-type": 34525,"sequence": 1,"dst-ip":"2001::2", "dst-ip-mask":"ffff:ffff:ffff:ffff:0:0:0:0","dst-tp-port":80,"src-ip":"2001::1", "src-ip-mask":"ffff:ffff:ffff:ffff:0:0:0:0","src-tp-port":1234}                                
     sleep  15
+    verify component policies exist
     verify overlap does not exist
     rest add policy match  admin-view  P1  1  {"src-mac": "00:11:00:00:00:01", "ether-type": 2048, "sequence": 1}
     rest add policy match  admin-view  ZP1  1  {"dst-mac": "00:11:00:00:00:02", "ether-type": 2048, "sequence": 1}    

@@ -5,7 +5,7 @@ Suite Teardown  Bigtap list op l3_l4 suite teardown
 Test Setup      Bigtap list op l3_l4 case setup
 Test Teardown   Bigtap list op l3_l4 case teardown
 Force Tags      BigTap
-Library         keywords_dev/mingtao/Common.py
+#Library         keywords_dev/mingtao/Common.py
 Library         keywords/BigTap.py 
 Library         keywords/BsnCommon.py  
 Library         OperatingSystem
@@ -33,7 +33,8 @@ ${sw1_d2}  S84-4
  
 
 T3.1 Default l3-l4: Test ipv4/6 group and optimization 
-    Verify L3-l4 config         False
+    ${result}=  cli_show_l3_l4
+    Should not be true  ${result}
     Verify l3-l4 mode controler and tcam    False   ${sw1}
  	Testcase T1.3 Address group IPv4/IPv6     ${sw1}     ${sw1_f1}     ${sw1_d1}
 	bigtap delete all 
@@ -58,7 +59,8 @@ T3.2 Enable l3-l4: Test ipv4/6 group and optimization
 
 
 T3.3 Change l3-l4 with policy with no mac configured
-    Verify L3-l4 config       				False
+    ${result}=  cli_show_l3_l4
+    Should not be true  ${result}
     Verify l3-l4 mode controler and tcam    False   ${sw1}  
 	Testcase T1.3 Address group IPv4/IPv6     ${sw1}     ${sw1_f1}     ${sw1_d1} 
     ${Flow1}=   rest_show_switch_flow       ${sw1}	
@@ -79,7 +81,8 @@ T3.3 Change l3-l4 with policy with no mac configured
 
 
 T3.4 ipv4 mac can be configured/not configured correctly  
-    Verify L3-l4 config       				False
+    ${result}=  cli_show_l3_l4
+    Should not be true  ${result}
     Verify l3-l4 mode controler and tcam    False   ${sw1}  
     Config bigtap policy                 P1    ${sw1_f1}     ${sw1_d1}	    
     Config ipv4 mac+ ip src + dst + vlan range + tcp dsts port range    P1   10  "11:11:11:11:11:11"  "22:22:22:22:22:22"  "111.111.111.0"  "255.255.255.0"   11  12   51  52
@@ -102,7 +105,8 @@ T3.4 ipv4 mac can be configured/not configured correctly
 
 
 T3.5 ipv6 mac can be configured/not configured correctly  
-    Verify L3-l4 config       				False
+    ${result}=  cli_show_l3_l4
+    Should not be true  ${result}
     Verify l3-l4 mode controler and tcam    False   ${sw1}  
     Config bigtap policy                  P1    ${sw1_f1}     ${sw1_d1}	    
     Config ipv6 mac all negative          P1   30     "11:11:11:11:11:11"  "22:22:22:22:22:22" 
@@ -133,7 +137,8 @@ T3.5 ipv6 mac can be configured/not configured correctly
 
 
 T3.6 feature integration: l3_l4 & trackhost BT-1144  
-    Verify L3-l4 config       				False
+    ${result}=  cli_show_l3_l4
+    Should not be true  ${result}
     Verify l3-l4 mode controler and tcam    False   ${sw1}  
     ${result}=   rest_enable_feature        tracked-host  
     Sleep	                               ${medium} 

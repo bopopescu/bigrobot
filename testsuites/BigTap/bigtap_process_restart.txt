@@ -31,7 +31,10 @@ ${delivery_nick_1}  D1
 ${delivery_2}  ethernet2  
 ${delivery_nick_2}  D2
   
-
+*Test Case
+verify configuration is successful
+    verify config
+    [Tags]  bigtap  ha 
 
 *Test Case
 verify configuration is successful
