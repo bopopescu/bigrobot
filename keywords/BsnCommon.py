@@ -218,12 +218,17 @@ class BsnCommon(object):
                     content = c.rest.content()
                     output_value = content[0][string]
                 else:
-                    c_user = t.node_reconnect(node='master', user=str(user), password=password)
-                    c_user.rest.get(url)
-                    content = c_user.rest.content()
-                    output_value = content[0][string]
-                    t.node_reconnect(node='master')
-                return output_value
+                    try:
+                        c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                        c_user.rest.get(url)
+                        content = c_user.rest.content()
+                        output_value = content[0][string]
+                    except:
+                        t.node_reconnect(node='master')
+                        return False
+                    else:
+                        t.node_reconnect(node='master')
+                        return output_value
             else:
                 helpers.test_error("Unsupported Platform %s" % (node))
         else:

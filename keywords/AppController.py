@@ -1006,6 +1006,34 @@ class AppController(object):
             else:
                 return True
 
+    def rest_delete_tacacs_authentication(self):
+        '''
+            Objective: Add TACACS configuration
+            
+            Input:
+            | tacacs_server |  Tacacs Server |
+            
+            Return Value:
+            True on Success
+            False on Failure
+        '''
+        try:
+            t = test.Test()
+        except:
+            return False
+        else:
+            c = t.controller('master')
+            # Configure AAA/Authentication
+            try:
+                url = '/api/v1/data/controller/core/aaa/authenticator'
+                c.rest.delete(url, {})
+            except:
+                helpers.test_log(c.rest.error())
+                return False
+            else:
+                return True
+
+
     def rest_add_tacacs_authorization(self):
         '''
             Objective: Add TACACS configuration
@@ -1027,6 +1055,33 @@ class AppController(object):
             try:
                 url = '/api/v1/data/controller/core/aaa/authorizer'
                 c.rest.put(url, [{"priority": 1, "name": "tacacs"}, {"priority": 2, "name": "local"}])
+            except:
+                helpers.test_log(c.rest.error())
+                return False
+            else:
+                return True
+
+    def rest_delete_tacacs_authorization(self):
+        '''
+            Objective: Add TACACS configuration
+            
+            Input:
+            | tacacs_server |  Tacacs Server |
+            
+            Return Value:
+            True on Success
+            False on Failure
+        '''
+        try:
+            t = test.Test()
+        except:
+            return False
+        else:
+            c = t.controller('master')
+            # Configure AAA/authorization
+            try:
+                url = '/api/v1/data/controller/core/aaa/authorizer'
+                c.rest.delete(url, {})
             except:
                 helpers.test_log(c.rest.error())
                 return False
@@ -1059,6 +1114,37 @@ class AppController(object):
                     return False
                 else:
                     return True
+
+    def rest_delete_tacacs_server(self, tacacs_server):
+        try:
+            t = test.Test()
+        except:
+            return False
+        else:
+            c = t.controller('master')
+            # Get encoded password from key
+            try:
+                url = '/api/v1/data/controller/core/aaa/tacacs/server[server-address="%s"]/secret' % str(tacacs_server)
+                c.rest.delete(url, {})
+            except:
+                helpers.test_log(c.rest.error())
+                return False
+            else:
+                try:
+                    url = '/api/v1/data/controller/core/aaa/tacacs/server[server-address="%s"]/timeout' % str(tacacs_server)
+                    c.rest.delete(url, {})
+                except:
+                    helpers.test_log(c.rest.error())
+                    return False
+                else:
+                    try:
+                        url = '/api/v1/data/controller/core/aaa/tacacs/server[server-address="%s"]' % str(tacacs_server)
+                        c.rest.delete(url, {})
+                    except:
+                        helpers.test_log(c.rest.error())
+                        return False
+                    else:
+                        return True
 
     def cli_execute_show_command(self, command, user="admin", password="adminadmin"):
         try:

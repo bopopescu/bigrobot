@@ -2074,6 +2074,7 @@ class BigTap(object):
         '''
         try:
             t = test.Test()
+            t.node_reconnect(node='master')
         except:
             return False
         else:
@@ -2093,6 +2094,25 @@ class BigTap(object):
                     data1.append(username)
                     helpers.log("User exists and data1 is %s" % data1)
                     c.rest.patch(url1, data1)
+            except:
+                helpers.test_log(c.rest.error())
+                return False
+            else:
+                return True
+
+    def cli_delete_user_from_group(self, username, group_name):
+        try:
+            t = test.Test()
+        except:
+            return False
+        else:
+            c = t.controller('master')
+            try:
+                #
+                cli_input_1 = "group " + str(group_name)
+                c.config(cli_input_1)
+                cli_input_2 = "no associate user " + str(username)
+                c.config(cli_input_2)
             except:
                 helpers.test_log(c.rest.error())
                 return False
