@@ -942,27 +942,40 @@ def run_cmd(cmd, cwd=None, ignore_stderr=False, shell=True, quiet=False):
         return (True, out)
 
 
-def _ping(host, count=5, waittime=100, quiet=False, source_if=None, node=None):
-    if not node:
+def _ping(host, count=5, waittime=100, quiet=False, source_if=None,
+          node_handle=None, mode=None):
+    if not node_handle:
         cmd = "ping -c %s -W %s %s" % (count, waittime, host)
         if not quiet:
             log("Ping command: %s" % cmd, level=4)
 
         _, out = run_cmd(cmd, shell=False, quiet=True, ignore_stderr=True)
     else:
-        options = ''
-        if source_if:
-            options = "-I %s " % source_if
+        if mode == 'bash':
+            options = ''
+            if source_if:
+                options = "-I %s " % source_if
 
-        # On Ubuntu, use -w (deadline) to timeout after n seconds. Set it to
-        # be the same as count. On Unbuntu, if the destination is not pingable,
-        # it will keep attempting to ping until deadline is reache.
-        cmd = "ping -c %s -w %s %s%s" % (count, count, options, host)
-        if not quiet:
-            log("Ping command: %s" % cmd, level=4)
-
-        result = node.bash(cmd)
-        out = result["content"]
+            # On Ubuntu, use -w (deadline) to timeout after n seconds. Set it
+            # to be the same as count. On Unbuntu, if the destination is not
+            # pingable, it will keep attempting to ping until deadline is
+            # reached.
+            cmd = "ping -c %s -w %s %s%s" % (count, count, options, host)
+            if not quiet:
+                log("Ping command: %s" % cmd, level=4)
+            result = node_handle.bash(cmd)
+            out = result["content"]
+        elif mode == 'cli':
+            if source_if:
+                test_error("source_if option not supported for controller CLI ping.")
+            cmd = "ping %s" % (host)
+            if not quiet:
+                log("Ping command: %s" % cmd, level=4)
+            result = node_handle.cli(cmd)
+            out = result["content"]
+        else:
+            test_error("Unknown mode '%s'. Only 'bash' or 'cli' supported."
+                       % mode)
 
     if not quiet:
         log("Ping output:\n%s" % out, level=4)
@@ -971,8 +984,22 @@ def _ping(host, count=5, waittime=100, quiet=False, source_if=None, node=None):
     #   3 packets transmitted, 3 received, 0% packet loss, time 2003ms
     #   3 packets transmitted, 0 received, +3 errors, 100% packet loss, time 2014ms
     #       This is when ping failed with 'ping -c 3 -w 4 -I eth0 101.195.0.131'
+    #
     # Mac OS X output:
     #   3 packets transmitted, 3 packets received, 0.0% packet loss
+    #
+    # BigSwitch controller output:
+    #   localhost> ping qa-kvm-32
+    #   PING qa-kvm-32.bigswitch.com (10.192.88.32) 56(84) bytes of data.
+    #   64 bytes from qa-kvm-32.bigswitch.com (10.192.88.32): icmp_req=1 ttl=64 time=16.1 ms
+    #   64 bytes from qa-kvm-32.bigswitch.com (10.192.88.32): icmp_req=2 ttl=64 time=0.550 ms
+    #   64 bytes from qa-kvm-32.bigswitch.com (10.192.88.32): icmp_req=3 ttl=64 time=0.548 ms
+    #   64 bytes from qa-kvm-32.bigswitch.com (10.192.88.32): icmp_req=4 ttl=64 time=0.512 ms
+    #   64 bytes from qa-kvm-32.bigswitch.com (10.192.88.32): icmp_req=5 ttl=64 time=0.540 ms
+    #
+    #   --- qa-kvm-32.bigswitch.com ping statistics ---
+    #   5 packets transmitted, 5 received, 0% packet loss, time 4007ms
+    #   rtt min/avg/max/mdev = 0.512/3.669/16.196/6.263 ms
 
     if source_if:
         match = re.search(r'ping: unknown iface (\w+)', out, re.M | re.I)

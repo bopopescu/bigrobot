@@ -91,5 +91,9 @@ Test config hierarchy
     cli       c1  show user
 
 Test new things
+    [Tags]  skipped
     add_ntp_server  master  time-c.nist.gov
+
+Test config block
+    config block
 

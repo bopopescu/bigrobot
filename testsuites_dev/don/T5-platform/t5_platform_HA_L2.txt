@@ -11,7 +11,7 @@ Library          keywords/BsnCommon.py
 Library          keywords/Mininet.py
 Library	    	 keywords/Host.py
 Library          keywords/T5.py
-Library	         keywords/T5Fabric.py
+#Library	         keywords/T5Fabric.py
 Library	         keywords/T5Platform.py
 Library	         keywords/T5Utilities.py
 Resource	 	 keywords_dev/don/t5_platform_sanity_resource.txt
@@ -337,13 +337,20 @@ Verify Connectivity in 3-Rack/Dual-Leaf/2-Spine/4-Host Setup
    Should Be True  ${returnVal}
    ${returnVal}=  platform ping  bm10  ${bm11ip}
    Should Be True  ${returnVal}
-   
+
+
+T5 base suite setup
+
+	base suite setup
+
 
 T5 base suite teardown   
+
    rest delete tenant  L2autoT1
    rest delete tenant  L2autoT2
    rest delete tenant  L2autoT3
    auto delete fabric switch  ${spineList}  ${leafList}  2
+   base suite teardown
    
 
    

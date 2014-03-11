@@ -1,0 +1,130 @@
+*Settings
+Documentation  T5 Tacacs Test Suite Release:Iron Horse
+Suite Setup  base suite setup
+Suite Teardown   base suite teardown
+Test Setup   tacacs test setup
+Test Teardown   tacacs test teardown
+Force Tags   T5 Platform
+
+Library  keywords/T5.py
+Library  keywords/T5Platform.py
+Library  keywords/AppController.py
+Library  keywords/BsnCommon.py
+Library  keywords/BigTap.py
+Library  Collections.py
+
+* Variable
+${projectname}  Big Virtual Switch Appliance
+${version}      2.0.5-SNAPSHOT  
+    
+* Test Case
+Verify Running-Configuration
+    Verify Tacacs Configuration  0  10.192.4.91  300
+    Verify AAA Authentication Configuration                      
+    [Tags]  verifyconfig
+
+Verify tacacs server key is not shown in clear text 
+    ${myDictionary}=  rest return dictionary from get  /api/v1/data/controller/core/aaa/tacacs?config=true
+    ${value}=  Get from dictionary  ${myDictionary[0]}  server
+    ${secret}=  Get from dictionary  ${value[0]}  secret
+    Should not be equal as strings  ${secret}  secret
+    [Tags]  verify-tacacs-secret
+        
+Add user tacacsadmin to group admin and verify access
+    verify version  tacacsadmin  adminadmin  ${true}
+    [Tags]  add-tacacs-user
+
+Verify remote authentication with open source tacacs
+    rest delete tacacs server  10.192.4.91
+    rest add tacacs server  10.192.66.100  secret  300
+    verify version  tacacsadmin  adminadmin  ${true}
+    rest delete tacacs server  10.192.66.100    
+    [Tags]  tacacs-linux
+
+Verify multiple tacacs servers can be configured 
+    rest add tacacs server  10.192.66.100  secret  200
+    Verify Tacacs Configuration  0  10.192.4.91  300
+    Verify Tacacs Configuration  1  10.192.66.100  200
+    rest delete tacacs server  10.192.66.100        
+    [Tags]  multiple-tacacs-server
+
+Verify second tacacs server is used when the first is unreachable   
+    rest delete tacacs server  10.192.4.91
+    rest add tacacs server  10.192.97.20   secret  300
+    rest add tacacs server  10.192.66.100  secret  200 
+    Verify Tacacs Configuration  0  10.192.66.100  200
+    Verify Tacacs Configuration  1  10.192.97.20   300    
+    verify version  tacacsadmin  adminadmin  ${true}
+    rest delete tacacs server  10.192.66.100
+    rest delete tacacs server  10.192.97.20 
+    [Tags]  second-tacacs-server
+            
+Configure mismatched tacacs secret and verify tacacs user cannot login
+    rest delete tacacs server  10.192.4.91
+    rest add tacacs server  10.192.4.91  bsnbsn  300
+    ${content}=  rest show version  string=version  user=tacacsadmin  password=adminadmin
+    Should not be true  ${content}
+    [Tags]  mismatched-secret
+
+Verify that when AAA is configured for tacacs only, local AAA should not work even though local user-accounts are configured
+    rest add tacacs authentication  tacacs=${true}  tacacs_priority=1  local=${false}  local_priority=2  username=tacacsadmin  password=adminadmin
+    verify version  tacacsadmin  adminadmin   ${false}
+    ${content}=  rest show version  string=version  user=admin  password=adminadmin   local=${false}
+    Should not be true  ${content}            
+    rest add tacacs authentication  tacacs=${true}  tacacs_priority=1  local=${true}  local_priority=2  username=tacacsadmin  password=adminadmin
+    [Tags]  only-tacacs  run
+                
+Delete tacacs server from configuration and verify tacacs user has no access
+    rest delete tacacs server  10.192.4.91
+    ${content}=  rest show version  string=version  user=tacacsadmin  password=adminadmin
+    Should not be true  ${content}
+    [Tags]  deletetacacs  run
+
+Delete user tacacsadmin from group admin and verify access
+    cli delete user from group  tacacsadmin  admin
+    ${content}=  rest show version  string=version  user=tacacsadmin  password=adminadmin
+    Should not be true  ${content}
+    rest add user to group  tacacsadmin  admin
+    [Tags]  deleteuser  run 
+        
+* Keywords
+
+tacacs test setup
+    rest add tacacs server  10.192.4.91  secret  300
+    rest add tacacs authentication
+    rest add user to group  tacacsadmin  admin
+    
+Verify Tacacs Configuration  [Arguments]  ${index}  ${tacacs-server}  ${timeout}
+    ${myDictionary}=  rest return dictionary from get  /api/v1/data/controller/core/aaa/tacacs?config=true
+    ${value}=  Get from dictionary  ${myDictionary[0]}  server
+    ${server-address}=  Get from dictionary  ${value[${index}]}  server-address
+    ${timeout}=  Get from dictionary  ${value[${index}]}  timeout
+    ${tacacs-timeout}=  Convert to Integer  ${timeout}  
+    Should be equal as strings  ${server-address}  ${tacacs-server}
+    Should be equal as integers  ${tacacs-timeout}  ${timeout}
+    summary log  Verify tacacs configuration is a PASS    
+
+Verify AAA Authentication Configuration    
+    ${myDictionary}=  rest return dictionary from get  /api/v1/data/controller/core/aaa/authenticator
+    ${value}=  Get from dictionary  ${myDictionary[0]}  name
+    Should be equal as strings  ${value}  tacacs
+    ${priority}=  Get from dictionary  ${myDictionary[0]}  priority
+    ${tacacs-priority}=  Convert to Integer  ${priority}
+    Should be equal as integers  ${tacacs-priority}  1
+    ${value}=  Get from dictionary  ${myDictionary[1]}  name
+    Should be equal as strings  ${value}  local
+    ${priority}=  Get from dictionary  ${myDictionary[1]}  priority
+    ${tacacs-priority}=  Convert to Integer  ${priority}
+    Should be equal as integers  ${tacacs-priority}  2
+    summary log  Verify AAA Authentication configuration is a PASS
+
+verify version  [Arguments]  ${username}  ${new_password}  ${local}
+    ${content}=  rest show version  string=version  user=${username}  password=${new_password}  local=${local}
+    Should Contain  ${content}  ${version}
+    ${content}=  rest show version  string=name  user=${username}  password=${new_password}  local=${local}
+    Should Contain  ${content}  ${projectname}
+
+tacacs test teardown
+    cli delete user from group  tacacsadmin  admin
+    rest delete tacacs server  10.192.4.91
+    rest delete tacacs authentication      

@@ -33,6 +33,8 @@ class Test(object):
             self._has_a_topo_file = False
             self._params = {}
             self._bigtest_node_info = {}
+            self._current_controller_master = None
+            self._current_controller_slave = None
 
             # A node in BigRobot may have a alias associated with it. One way
             # you can refer to a node using it's defined name, e.g., 'c1',
@@ -366,16 +368,22 @@ class Test(object):
             elif self.is_master_controller('c2'):
                 node = 'c2'
             else:
-                helpers.environment_failure("Neither 'c1' nor 'c2' is the master. This is an impossible state!")
+                helpers.environment_failure("Neither 'c1' nor 'c2' is the"
+                                            " master. This is an impossible"
+                                            " state!")
             helpers.log("Device '%s' is the master" % node)
+            self._current_controller_master = node
         elif name == 'slave':
             if not self.is_master_controller('c1'):
                 node = 'c1'
             elif not self.is_master_controller('c2'):
                 node = 'c2'
             else:
-                helpers.environment_failure("Neither 'c1' nor 'c2' is the slave. This is an impossible state!")
+                helpers.environment_failure("Neither 'c1' nor 'c2' is the"
+                                            " slave. This is an impossible"
+                                            " state!")
             helpers.log("Device '%s' is the slave" % node)
+            self._current_controller_slave = node
         else:
             node = name
 
@@ -439,9 +447,25 @@ class Test(object):
     def node_reconnect(self, node, **kwargs):
         helpers.log("Node reconnect for '%s'" % node)
 
-        # Resolve 'master' or 'slave' to actual name (e.g., 'c1', 'c2')
+        # Resolve 'master' or 'slave' to actual name (e.g., 'c1', 'c2'). But
+        # don't do it using REST since we've probably lost the connection.
         if helpers.is_controller(node):
-            node_name = self.controller(node, resolve_mastership=True).name()
+            if node == 'master':
+                if self._current_controller_master:
+                    node_name = self._current_controller_master
+                else:
+                    helpers.environment_failure("Unable to resolve actual name"
+                                                " of master controller.")
+            elif node == 'slave':
+                if self._current_controller_slave:
+                    node_name = self._current_controller_slave
+                else:
+                    helpers.environment_failure("Unable to resolve actual name"
+                                                " of slave controller.")
+            else:
+                node_name = node
+
+            # node_name = self.controller(node, resolve_mastership=True).name()
         else:
             node_name = self.node(node).name()
         helpers.log("Actual node name is '%s'" % node_name)
@@ -562,11 +586,13 @@ class Test(object):
             if 'platform' not in self.topology_params()[node]:
                 helpers.environment_failure("Traffic generator '%s' does not"
                                             " have platform (e.g., platform:"
-                                            " 'ixia')"
+                                            " 'ixia', 'bigtap-ixia')"
                                             % node)
             platform = self.topology_params()[node]['platform']
             if platform.lower() == 'ixia':
                 n = a_node.IxiaNode(node, t)
+            elif platform.lower() == 'bigtap-ixia':
+                n = a_node.BigTapIxiaNode(node, t)
             else:
                 helpers.environment_failure("Unsupported traffic generator '%s'"
                                             % platform)

@@ -1,0 +1,145 @@
+== T5 Fabric Traffic Failover Test ==
+
+*Settings
+Documentation    Fabric Failover Test using Three Rack Dual Spine
+Suite Setup      base suite setup
+Suite Teardown   base suite teardown
+Test Setup       base test setup
+Test Teardown    T5 test teardown
+Force Tags       T5 
+Library          keywords/BsnCommon.py
+Library          keywords/T5.py
+Library			 keywords/SwitchLight.py
+Library			 keywords/Ixia.py
+Library			 keywords/Host.py
+Resource         testsuites/T5/t5_dualleaf_three_rack_physical_resource.txt
+Resource         testsuites/T5/t5_physical_variables.txt
+
+*Test Case
+
+Setup Three Rack Dual Leaf Topology
+	base suite setup  
+    add fabric switch
+    sleep  5
+    rest verify fabric switch all
+	rest verify fabric link 	
+
+With 2k mac entries , Remove the Leaf switch and Readd the leaf switch
+    [Tags]  feature  
+    rest add tenant  t1
+    rest add vns  t1  v1
+    rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
+    rest add interface to vns  t1  v1  leaf1-a  ${leaf1a_ixia_intf}  -1
+    ${stream}=             L3 add  flow=a<->e  src_mac=00:00:01:00:00:01  dst_mac=00:00:02:00:00:01  src_cnt=1000  dst_cnt=1000  frame_rate=1000  frame_size=68  name=a_c_flow
+    start traffic  ${stream}
+    sleep  100
+    rest verify endpoint in vns  v1  2000
+    rest delete fabric switch  leaf0-a
+    ${result}=   rest verify forwarding vlan fabric tag members  leaf0-a
+    Should be True  $result} = None
+    rest add switch  leaf0-a
+    rest add dpid  leaf0-a  ${leaf0a_dpid}
+    rest add fabric role  leaf0-a  leaf
+    rest add leaf group  leaf0-a  rack0
+    sleep  3
+    rest verify fabric switch role  ${leaf0a_dpid}  leaf
+    rest verify fabric link
+    rest verify forwarding vlan fabric tag members  leaf0-a
+    cli switch  debug ofad
+    stop traffic  ${stream}
+    sleep  5
+    rest delete tenant  t1               
+     
+shutdown the switch and check the links are down in the switch
+	[Tags]  feature
+	rest add tenant  t1
+	rest add vns  t1  v1
+	rest add portgroup  p4 
+    rest add interface to portgroup  leaf1-a  ${h4_intf0}  p4
+    rest add interface to portgroup  leaf1-b  ${h4_intf1}  p4
+    rest add portgroup lacp  p4  
+    rest add portgroup  p5 
+    rest add interface to portgroup  leaf2-a  ${h5_intf0}  p5
+    rest add interface to portgroup  leaf2-b  ${h5_intf1}  p5
+    rest add portgroup lacp  p5
+    rest add portgroup to vns  t1  v1  p4  -1
+    rest add portgroup to vns  t1  v1  p5  -1
+    sleep  3
+    rest verify fabric interface lacp  leaf1-a  ${h4_intf0}
+    rest verify fabric interface lacp  leaf2-a  ${h5_intf0}  
+    ${loss}=  bash ping  h5  ${h4_ip}  source_if=bond0
+    Should Be True  ${loss} == 0
+    rest add shutdown to fabric switch  leaf2-a   
+    sleep  2
+    ${result}=  rest cli show interface state  leaf2-a  ${h5_intf0}
+    Should not be True  ${result}   
+    ${loss}=  bash ping  h5  ${h4_ip}  source_if=bond0
+    Should Be True  ${loss} == 0
+    rest delete shutdown from fabric switch  leaf2-a
+    sleep  3
+    ${result}=  rest cli show interface state  leaf2-a  ${h5_intf0}
+    Should be True  ${result}
+    ${loss}=  bash ping  h5  ${h4_ip}  source_if=bond0
+    Should Be True  ${loss} == 0
+   rest delete interface from portgroup  leaf1-a  ${h4_intf0}  p4
+   rest delete interface from portgroup  leaf1-b  ${h4_intf1}  p4
+   rest delete interface from portgroup  leaf2-a  ${h5_intf0}  p5
+   rest delete interface from portgroup  leaf2-b  ${h5_intf1}  p5
+   rest delete portgroup  p4
+   rest delete portgroup  p5
+   rest delete tenant  t1 
+     
+verify fabric interface cli 
+	[Tags]  feature
+	${result}=  rest show fabric interface switch  leaf0-a
+	Should be True  ${result}
+	
+verify fabric lag cli
+	[Tags]  feature
+	${result}=  rest show fabric lag switch  leaf0-a
+	Should be True  ${result}
+	
+verify fabric switch cli
+	[Tags]  feature
+	${result}=  rest show fabric switch  leaf0-a
+	Should be True  ${result}
+	
+verify fabric lacp cli
+	[Tags]  feature
+	${result}=  rest show fabric lacp switch  leaf0-a
+	Should be True  ${result}
+	
+verify fabric link cli
+	[Tags]  feature
+	${result}=  rest show fabric link  
+	Should be True  ${result}
+
+Tear down config and Topology
+    delete fabric switch  
+    rest delete portgroup  p4
+    rest delete portgroup  p6
+    rest delete tenant  t1
+    rest delete tenant  t2
+    base suite teardown
+ 
+
+* Keywords  
+	
+verify traffic rate   [Arguments]  ${tx_rate}  ${rx_rate}  ${tx_intf}  ${rx_intf}
+    Sleep  5
+    ${report}=  fetch port stats
+    Log  ${report}
+    ${tx_value}=  verify dict key  ${report}  ${tx_intf}  transmitted_frame_rate
+    ${rx_value}=  verify dict key  ${report}  ${rx_intf}  received_valid_frame_rate
+    ixia verify traffic rate  ${tx_value}  ${rx_value}
+    
+verify traffic rate negative   [Arguments]  ${tx_rate}  ${rx_rate}  ${tx_intf}  ${rx_intf}
+    Sleep  5
+    ${report}=  fetch port stats
+    ${tx_value}=  verify dict key  ${report}  ${tx_intf}  transmitted_frame_rate
+    ${rx_value}=  verify dict key  ${report}  ${rx_intf}  received_valid_frame_rate
+    Should Not be equal  ${tx_value}  ${rx_value}
+    
+T5 test teardown
+	delete traffic
+

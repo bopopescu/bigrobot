@@ -2,6 +2,7 @@ import autobot.devconf as devconf
 import autobot.helpers as helpers
 from autobot.bsn_restclient import BsnRestClient
 import modules.IxLib as IxLib
+import modules.IxBigtapLib as IxBigtapLib
 
 class Node(object):
     def __init__(self, name, ip, user=None, password=None, params=None):
@@ -146,6 +147,7 @@ class ControllerNode(Node):
         self.bash_content = self.dev.content
         self.bash_result = self.dev.result
         self.set_prompt = self.dev.set_prompt
+        self.get_prompt = self.dev.get_prompt
         self.send = self.dev.send
         self.expect = self.dev.expect
 
@@ -229,15 +231,26 @@ class MininetNode(Node):
         if 'topology' in self.node_params:
             self.topology = self.node_params['topology']
         else:
-            helpers.environment_failure("Mininet topology is missing.")
+            helpers.environment_failure("%s: Mininet topology is missing."
+                                        % name)
 
         if 'type' not in self.node_params:
-            helpers.environment_failure("Must specify a Mininet type in"
-                                        " topology file ('t6' or 'basic').")
+            helpers.environment_failure("%s: Must specify a Mininet type in"
+                                        " topology file ('t6' or 'basic')."
+                                        % name)
+
+        if 'start_mininet' not in self.node_params:
+            self._start_mininet = True
+        else:
+            self._start_mininet = self.node_params['start_mininet']
+            if not helpers.is_bool(self._start_mininet):
+                helpers.environment_failure("%s: 'start_mininet' must be a boolean value"
+                                            % name)
 
         self.mn_type = self.node_params['type'].lower()
         if self.mn_type not in ('t6', 'basic'):
-            helpers.environment_failure("Mininet type must be 't6' or 'basic'.")
+            helpers.environment_failure("%s: Mininet type must be 't6' or 'basic'."
+                                        % name)
 
         if helpers.params_is_false('set_session_ssh', self.node_params):
             helpers.log("'set_session_ssh' is disabled for '%s', bypassing"
@@ -261,6 +274,7 @@ class MininetNode(Node):
         self.restart_mininet = self.dev.restart_mininet
         self.stop_mininet = self.dev.stop_mininet
         self.set_prompt = self.dev.set_prompt
+        self.get_prompt = self.dev.get_prompt
         self.send = self.dev.send
         self.expect = self.dev.expect
 
@@ -280,7 +294,8 @@ class MininetNode(Node):
                                             controller2=self.controller_ip2,
                                             topology=self.topology,
                                             openflow_port=self.openflow_port,
-                                            debug=self.dev_debug_level)
+                                            debug=self.dev_debug_level,
+                                            is_start_mininet=self._start_mininet)
         elif self.mn_type == 'basic':
             return devconf.MininetDevConf(name=name,
                                           host=host,
@@ -290,7 +305,8 @@ class MininetNode(Node):
                                           controller2=self.controller_ip2,
                                           topology=self.topology,
                                           openflow_port=self.openflow_port,
-                                          debug=self.dev_debug_level)
+                                          debug=self.dev_debug_level,
+                                          is_start_mininet=self._start_mininet)
 
 
 class HostNode(Node):
@@ -317,6 +333,7 @@ class HostNode(Node):
         self.bash_content = self.dev.content
         self.bash_result = self.dev.result
         self.set_prompt = self.dev.set_prompt
+        self.get_prompt = self.dev.get_prompt
         self.send = self.dev.send
         self.expect = self.dev.expect
 
@@ -361,6 +378,7 @@ class SwitchNode(Node):
         self.bash_content = self.dev.content
         self.bash_result = self.dev.result
         self.set_prompt = self.dev.set_prompt
+        self.get_prompt = self.dev.get_prompt
         self.send = self.dev.send
         self.expect = self.dev.expect
         self.info = self.dev.info
@@ -396,9 +414,10 @@ class IxiaNode(Node):
         helpers.log("chassis_ip: %s" % self.chassis_ip())
         helpers.log("ports: %s" % self.ports())
 
+        helpers.log("Platform: %s" % self.platform())
         self._ixia = IxLib.Ixia(tcl_server_ip=self.tcl_server_ip(),
                                 chassis_ip=self.chassis_ip(),
-                                port_map_list=self.ports())
+                                port_map_list=self.ports())  
         return self._ixia
 
     def handle(self):
@@ -420,3 +439,70 @@ class IxiaNode(Node):
 
     def platform(self):
         return 'ixia'
+
+class BigTapIxiaNode(IxiaNode):
+    def __init__(self, name, t):
+        self._bigtap_controller_ip = t.params(name, 'bigtap_controller')['ip']
+        self._bigtap_switches = t.params(name, 'switches')
+        self._bigtap_ports = t.params(name, 'bigtap_ports')
+        self._bigtap_to_config = t.params(name,'bigtap_controller')['set_bigtap_config']
+        self._switch_dpids = {'s1': '00:00:5c:16:c7:19:e7:4e'}  # FIXME: will be changing to getdynamically
+        self._switch_handles = {}
+        super(BigTapIxiaNode, self).__init__(name,t)
+        self.bigtap_init(t)
+        
+    def bigtap_init(self, t):
+        helpers.log("Bigtap_ip: %s" % self._bigtap_controller_ip)
+        helpers.log("Bigtap_switches: %s" % self._bigtap_switches)
+        helpers.log("Bigtap_Ports: %s" % self._bigtap_ports)
+        helpers.log("Bigtap IXIA Ports: %s" % self._ports)
+        
+        self._bigtap_node = t.node_spawn(self._bigtap_controller_ip, user='admin', password='adminadmin')
+        #string = 'show version'
+        bigtap = self._bigtap_node
+        #bigtap.cli(string)
+        #content = bigtap.cli_content()  
+        #helpers.log('Printing BIGTAP VERSION:')
+        #helpers.log(content)
+        #string = 'show running-config'
+        #bigtap.cli(string)
+        #content = bigtap.cli_content()
+        #helpers.log('BIGTAP RUNNING CONFIG Before pushing Statics Policies')
+        #helpers.log(content)
+        for switch in self._bigtap_switches.iteritems():
+            self._switch_handles[switch[0]] = t.node_spawn(switch[1]['ip'], user='admin',
+                                                           password='adminadmin', device_type = 'switch')
+            string = 'show version'
+            self._switch_handles[switch[0]].cli(string)
+            helpers.log('Displaying Switch : %s version ' % switch[0])
+            helpers.log(self._switch_handles[switch[0]].cli_content())
+        
+        for port in self._bigtap_ports.values():
+            final_macs = IxBigtapLib.create_mac_list(port['name'], 5)
+            ixia_macs = IxBigtapLib.create_mac_list(port['name'], 5, False)
+            for mac in final_macs:
+                helpers.log('Mac : %s' % mac)
+            temp_list = port['name'].split('/')
+            bigtap_switch_id = temp_list[0] # to be used for calculating switch DPID
+            bigtap_port_id = temp_list[1]
+            switch = 's'+str(bigtap_switch_id)
+            bigtap_config_rx = IxBigtapLib.create_bigtap_flow_conf_rx(self._switch_dpids[switch],
+                                                                52, ['1', '2']) # FIXME to be changed for passing ix port from Topo file
+            bigtap_config_tx = IxBigtapLib.create_bigtap_flow_conf_tx(self._switch_dpids[switch],
+                                                                bigtap_portname = bigtap_port_id,
+                                                               ix_portname = ['1','2'], macs = final_macs)
+
+            if not self._bigtap_to_config:
+                helpers.log('Skipping Big tap Config...')
+            else:
+                helpers.log('Configuring BigTap')
+                for conf in bigtap_config_rx:
+                    print 'Executing cmd: ', conf
+                    bigtap.cli(conf)
+                for conf in bigtap_config_tx:
+                    print 'Executing cmd: ', conf
+                    bigtap.cli(conf)
+            print ixia_macs
+                                       
+    def platform(self):
+        return 'bigtap-ixia'

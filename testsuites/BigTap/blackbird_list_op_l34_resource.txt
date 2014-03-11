@@ -53,7 +53,7 @@ Verify optimized match    [Arguments]    ${PName}   ${matches}
 Verify l3-l4 mode controler and tcam   [Arguments]   ${l34mode}      ${sw1}
      ${result}=  rest_show_feature     l3-l4-mode  
      Should Be Equal    ${result}      ${l34mode} 
- 	 ${result}=  verify switch tcam max     ${sw1}     ${l34mode}
+     ${result}=  verify switch tcam max     ${sw1}     ${l34mode}
      Should Be True    ${result}  
 
 Verify L3-l4 config     [Arguments]   ${l34mode}

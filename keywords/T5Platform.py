@@ -95,6 +95,31 @@ class T5Platform(object):
             return False
         sleep(30)
         return utilities.fabric_integrity_checker(obj, "after")
+    
+    
+    def cli_cluster_take_leader(self):
+        ''' Function to trigger failover to slave controller via CLI
+        Input: None
+        Output: True if successful, False otherwise
+        '''
+        t = test.Test()
+        c = t.controller('slave')
+
+        helpers.log("Failover")
+        try:
+            c.config("config")
+            c.send("reauth")
+            c.expect(r"Password:")
+            c.config("adminadmin")
+            c.send("failover")
+            c.expect(r"Election may cause role transition: enter \"yes\" \(or \"y\"\) to continue:")
+            c.config("yes")
+        except:
+            helpers.test_log(c.cli_content())
+            return False
+        else:
+            return True
+
 
     def rest_verify_cluster_election_rerun(self):
         ''' Invoke "cluster election re-run" command and verify the controller state
@@ -237,7 +262,7 @@ class T5Platform(object):
     def cli_verify_cluster_master_reboot(self):
         obj = utilities()
         utilities.fabric_integrity_checker(obj,"before")
-        returnVal = self._cluster_node_reboot()
+        returnVal = self.cluster_node_reboot()
         if(not returnVal):
             return False
         return utilities.fabric_integrity_checker(obj,"after")
@@ -245,7 +270,7 @@ class T5Platform(object):
     def cli_verify_cluster_slave_reboot(self):
         obj = utilities()
         utilities.fabric_integrity_checker(obj,"before")
-        returnVal = self._cluster_node_reboot(False)
+        returnVal = self.cluster_node_reboot(False)
         if(not returnVal):
             return False
         return utilities.fabric_integrity_checker(obj,"after")
@@ -340,52 +365,6 @@ class T5Platform(object):
                 return False
             else:
                 return True
-
-
-    def rest_add_vip(self, vip):
-        
-        t = test.Test()
-        master = t.controller("master")
-        url = "/api/v1/data/controller/os/config/global/virtual-ip-config"
-        master.rest.post(url, {"ipv4-address": vip})
-        
-        url = "/api/v1/data/controller/os/config/global/virtual-ip-config"
-        result = master.rest.get(url)['content']
-        if (result[0]['ipv4-address'] == vip):
-            return True
-        else:
-            return False
-    
-    def cli_verify_cluster_vip(self, vip):
-        t = test.Test()
-        master = t.controller("master")
-        
-        content = master.bash("ip addr")['content']
-        helpers.log("CLI Content is: %s " % content)
-        splitContent = str(content).split(' ')
-        helpers.log("splitContent is: %s" % splitContent)
-        if vip not in splitContent:
-            helpers.log("VIP: %s not in the master" % vip)
-            return False
-        else:
-            helpers.log("VIP: %s is present in the master" % vip)
-            return True
-        
-        
-    def rest_delete_vip(self):
-        
-        t = test.Test()
-        master = t.controller("master")
-        url = "/api/v1/data/controller/os/config/global/virtual-ip-config"
-        content = master.rest.delete(url)['content']
-        
-        if (content):
-            helpers.log("result is: %s" % content)
-            return False
-        else:
-            
-            return True
-
 
 
 
@@ -604,3 +583,196 @@ class T5Platform(object):
             return (masterID, slaveID)
         else:
             return masterID
+        
+        
+        
+    def rest_configure_virtual_ip(self, vip):
+        ''' Function to configure Virtual IP of the cluster via REST
+        Input: VIP address
+        Output: True if successful, False otherwise
+        '''
+        t = test.Test()
+        c = t.controller('master')
+
+        helpers.log("Input arguments: virtual IP = %s" % vip)
+        try:
+            url = '/api/v1/data/controller/os/config/global/virtual-ip-config'
+            c.rest.post(url, {"ipv4-address": vip})
+        except:
+            return False
+        else:
+            return True
+
+
+    def rest_delete_virtual_ip(self):
+        ''' Function to delete Virtual IP from a controller via REST
+        Input: None
+        Output: True if successful, False otherwise
+        '''
+        t = test.Test()
+        c = t.controller('master')
+
+        helpers.log("Deleting virtual IP address")
+        try:
+            url = '/api/v1/data/controller/os/config/global/virtual-ip-config'
+            c.rest.delete(url)
+        except:
+            return False
+        else:
+            return True
+ 
+        
+        
+    def cli_configure_virtual_ip(self, vip):
+        ''' Function to show Virtual IP of a controller via CLI
+        Input: None
+        Output: VIP address if configured, None otherwise
+        '''
+        t = test.Test()
+        c = t.controller('master')
+
+        helpers.test_log("Input arguments: virtual IP = %s" % vip)
+        try:
+            c.config("cluster")
+            c.config("virtual-ip %s" % vip)
+            assert "Error" not in c.cli_content()
+        except:
+            helpers.test_log(c.cli_content())
+            return False
+        else:
+            return True
+
+
+    def cli_get_eth0_ip_using_virtual_ip(self, vip):
+        ''' Function to verify that Virtual IP address
+        points to some controller via CLI
+        Input: VIP address
+        Output: Eth0 IP address of the controller that Virtual IP points to
+        '''
+        t = test.Test()
+        try:
+            if 'master' in vip:
+                c = t.controller('master')
+            else:
+                c = t.node_spawn(ip=vip)
+            content = c.cli('show local node interfaces ethernet0')['content']
+            output = helpers.strip_cli_output(content)
+            lines = helpers.str_to_list(output)
+            assert "Network-interfaces" in lines[0]
+            rows = lines[3].split(' ')
+        except:
+            helpers.test_log(c.cli_content())
+            return None
+        else:
+            return rows[3]
+
+
+    def cli_show_virtual_ip(self):
+        ''' Function to show Virtual IP of a controller via CLI
+        Input: None
+        Output: VIP address if configured, None otherwise
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        try:
+            content = c.cli('show virtual-ip')['content']
+            output = helpers.strip_cli_output(content)
+            lines = helpers.str_to_list(output)
+            assert(len(lines) == 3)
+            assert "ipv4 address" in lines[0]
+        except:
+            helpers.test_log(c.cli_content())
+            return None
+        else:
+            return lines[2].strip()
+
+
+    def bash_verify_virtual_ip(self, vip):
+        ''' Function to show Virtual IP of a controller via CLI/Bash
+        Input: None
+        Output: VIP address if configured, None otherwise
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        try:
+            content = c.bash('ip addr')['content']
+            output = helpers.strip_cli_output(content)
+            if vip not in output:
+                helpers.test_log("VIP: %s not in the master" % vip)
+                return False
+        except:
+            helpers.test_log(c.cli_content())
+            return False
+        else:
+            helpers.log("VIP: %s is present in the master" % vip)
+            return True
+
+
+    def cli_delete_virtual_ip(self):
+        ''' Function to delete Virtual IP from a controller via CLI
+        Input: None
+        Output: True if successful, False otherwise
+        '''
+        t = test.Test()
+        c = t.controller('master')
+
+        helpers.test_log("Deleting virtual IP address")
+        try:
+            c.config("cluster")
+            c.config("no virtual-ip")
+        except:
+            helpers.test_log(c.cli_content())
+            return False
+        else:
+            return True
+        
+        
+    def rest_get_mac_using_virtual_ip(self, vip):
+        ''' Function to verify that Virtual IP address
+        points to some controller via REST
+        Input: VIP address
+        Output: Mac address of the controller that Virtual IP points to
+        '''
+        t = test.Test()
+        try:
+            if 'master' in vip:
+                c = t.controller('master')
+            else:
+                c = t.node_spawn(ip=vip)
+
+            helpers.log("Getting MAC address of the controller")
+            url = '/api/v1/data/controller/os/action/network-interface'
+            c.rest.get(url)
+            content = c.rest.content()
+        except:
+            helpers.test_log(c.rest.error())
+            return False
+        else:
+            return content[0]['hardware-address']
+
+
+    def rest_show_virtual_ip(self):
+        ''' Function to show Virtual IP of a controller via REST
+        Input: None
+        Output: VIP address if configured, None otherwise
+        '''
+        t = test.Test()
+        c = t.controller('master')
+
+        helpers.log("Getting virtual IP address")
+        try:
+            url = '/api/v1/data/controller/os/config/global/virtual-ip-config'
+            c.rest.get(url)
+            content = c.rest.content()
+        except:
+            helpers.test_failure(c.rest.error())
+            return False
+        else:
+            if len(content[0]) > 0:
+                return content[0]['ipv4-address']
+            else:
+                return None
+        
+        
+        
+        

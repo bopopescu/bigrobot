@@ -4,9 +4,8 @@ Suite Setup  		Setup
 Suite Teardown   	Base Suite Teardown
 Test Setup   		Base Test Setup
 Test Teardown  		Teardown
-Force Tags   		Platform  Sanity  Virtual IP
 Library  			keywords/BsnCommon.py
-Library  			keywords/T5.py
+Library  			keywords/T5Platform.py
 
 
 *** Variables ***
@@ -16,7 +15,6 @@ ${vip string}	  	test-ip-address
 ${vip zeros}		0.0.0.0
 ${vip broadcast}	255.255.255.255
 ${sleep}			45 sec
-
 
 *** Test Cases ***
 ### REST FUNCTIONS
@@ -30,6 +28,7 @@ T1.1 REST Configure and verify virtual IP address
 	Should Be Equal as Strings  ${mac1}  ${mac2}
 	${state} =  Bash Verify Virtual IP  ${vip}
 	Should Be True  ${state}
+	[Tags]  T5  Virtual IP  REST  Platform
 
 T1.2 REST Delete and verify virtual IP address
 	Rest Configure Virtual IP  ${vip}
@@ -39,25 +38,28 @@ T1.2 REST Delete and verify virtual IP address
 	${configured} =  Rest Show Virtual IP
 	Should Be Equal as Strings  ${configured}  None
 	Run Keyword and Expect Error  UnboundLocalError*  Rest Get MAC Using Virtual IP  ${vip}
+	[Tags]  T5  Virtual IP  REST  Platform
 
 T1.3 REST Virtual IP after failover in cluster
+### add validation for ssh keys when implemented
 	Rest Configure Virtual IP  ${vip}
 	Sleep  5 sec
 	${state} =  Bash Verify Virtual IP  ${vip}
 	Should Be True  ${state}
 	${mac1} =  Rest Get MAC Using Virtual IP  ${vip}
-	Rest Cluster Take Leader
-	Sleep  ${sleep}
+	Rest Verify Cluster Election Take Leader
 	${state} =  Bash Verify Virtual IP  ${vip}
 	Should Be True  ${state}
 	${mac2} =  Rest Get MAC Using Virtual IP  ${vip}
 	Should Not Be Equal as Strings  ${mac1}  ${mac2}
+	[Tags]  T5  Virtual IP  REST  Platform
 
 T1.4 REST Verify validation for incorrect virtual IP address
 	${state} =  Rest Configure Virtual IP  ${vip invalid}
 	Should Not Be True  ${state}
 	${state} =  Rest Configure Virtual IP  ${vip string}
 	Should Not Be True  ${state}
+	[Tags]  T5  Virtual IP  REST  Platform
 
 T1.5 REST Verify it is impossible to have virtual equal to physical IP address
 	Manual Failed
@@ -65,6 +67,7 @@ T1.5 REST Verify it is impossible to have virtual equal to physical IP address
 	Should Not Be True  ${state}
 	${state} =  Rest Configure Virtual IP  ${c2_ip}
 	Should Not Be True  ${state}
+	[Tags]  T5  Virtual IP  REST  Platform
 
 T1.6 REST Verify it is impossible to have 0.0.0.0 or 255.255.255.255 virtual IP address
 	Manual Failed
@@ -72,6 +75,7 @@ T1.6 REST Verify it is impossible to have 0.0.0.0 or 255.255.255.255 virtual IP 
 	Should Not Be True  ${state}
 	${state} =  Rest Configure Virtual IP  ${vip broadcast}
 	Should Not Be True  ${state}
+	[Tags]  T5  Virtual IP  REST  Platform
 
 
 ### CLI FUNCTIONS
@@ -85,6 +89,7 @@ T2.1 CLI Configure and verify virtual IP address
 	Should Be Equal as Strings  ${eth0-vip}  ${eth0-master}
 	${state} =  Bash Verify Virtual IP  ${vip}
 	Should Be True  ${state}
+	[Tags]  T5  Virtual IP  CLI  Platform
 
 T2.2 CLI Delete and verify virtual IP address
 	Cli Configure Virtual IP  ${vip}
@@ -94,8 +99,10 @@ T2.2 CLI Delete and verify virtual IP address
 	${configured} =  Cli Show Virtual IP
 	Should Be Equal As Strings  ${configured}  None
 	Run Keyword and Expect Error  UnboundLocalError*  Cli Get Eth0 IP Using Virtual IP  ${vip}
+	[Tags]  T5  Virtual IP  CLI  Platform
 
 T2.3 CLI Virtual IP after failover in cluster
+### add validation for ssh keys when implemented
 	Cli Configure Virtual IP  ${vip}
 	Sleep  5 sec
 	${state} =  Bash Verify Virtual IP  ${vip}
@@ -108,12 +115,14 @@ T2.3 CLI Virtual IP after failover in cluster
 	Should Be True  ${state}
 	${eth0-vip2} =  Cli Get Eth0 IP Using Virtual IP  ${vip}
 	Should Not Be Equal as Strings  ${eth0-vip1}  ${eth0-vip2}
+	[Tags]  T5  Virtual IP  CLI  Platform
 
 T2.4 CLI Verify validation for incorrect virtual IP address
 	${state} =  Cli Configure Virtual IP  ${vip invalid}
 	Should Not Be True  ${state}	
 	${state} =  Cli Configure Virtual IP  ${vip string}
-	Should Not Be True  ${state}	
+	Should Not Be True  ${state}
+	[Tags]  T5  Virtual IP  CLI  Platform
 
 T2.5 CLI Verify it is impossible to have virtual equal to physical IP address
 	Manual Failed
@@ -121,6 +130,7 @@ T2.5 CLI Verify it is impossible to have virtual equal to physical IP address
 	Should Not Be True  ${state}
 	${state} =  Cli Configure Virtual IP  ${c2_ip}
 	Should Not Be True  ${state}
+	[Tags]  T5  Virtual IP  CLI  Platform
 
 T2.6 CLI Verify it is impossible to have 0.0.0.0 or 255.255.255.255 virtual IP address
 	Manual Failed
@@ -128,6 +138,7 @@ T2.6 CLI Verify it is impossible to have 0.0.0.0 or 255.255.255.255 virtual IP a
 	Should Not Be True  ${state}
 	${state} =  Cli Configure Virtual IP  ${vip broadcast}
 	Should Not Be True  ${state}
+	[Tags]  T5  Virtual IP  CLI  Platform
 
 
 *** Keywords ***

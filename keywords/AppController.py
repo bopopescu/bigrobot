@@ -29,19 +29,7 @@ class AppController(object):
 # All Show Commands Go Here:
 ###################################################
 
-    def rest_show_version(self, user="admin", password="adminadmin"):
-        t = test.Test()
-        c = t.controller('c1')
-        url = '/rest/v1/system/version'
-        if "admin" not in user:
-            c_user = t.node_reconnect(node='master', user=str(user), password=password)
-            c_user.rest.get(url)
-            content = c_user.rest.content()
-            t.node_reconnect(node='master')
-        else:
-            c.rest.get(url)
-            content = c.rest.content()
-        return content[0]['controller']
+
 
     def cli_upgrade_image(self, node=None, package=None, timeout=200, sleep_time=200):
         '''
@@ -991,7 +979,7 @@ class AppController(object):
             else:
                 return True
 
-    def rest_add_tacacs_authentication(self):
+    def rest_add_tacacs_authentication(self, tacacs=True, tacacs_priority=1, local=True, local_priority=2, username="admin", password="adminadmin"):
         '''
             Objective: Add TACACS configuration
             
@@ -1011,12 +999,56 @@ class AppController(object):
             # Configure AAA/Authentication
             try:
                 url = '/api/v1/data/controller/core/aaa/authenticator'
-                c.rest.put(url, [{"priority": 1, "name": "tacacs"}, {"priority": 2, "name": "local"}])
+                if (tacacs is True) and (local is True):
+                    data = [{"priority": int(tacacs_priority), "name": "tacacs"}, {"priority": int(local_priority), "name": "local"}]
+                elif (tacacs is True) and (local is False):
+                    data = [{"priority": int(tacacs_priority), "name": "tacacs"}]
+                elif (tacacs is False) and (local is True):
+                    data = [{"priority": int(local_priority), "name": "local"}]
+                else:
+                    helpers.log("THIS IS AN IMPOSSIBLE SITUATION")
+
+                if username == "admin":
+                    c.rest.put(url, data)
+                else:
+                    c_user = t.node_reconnect(node='master', user=str(username), password=password)
+                    c_user.put(url, data)
+                    if local is True:
+                        t.node_reconnect(node='master')
+            except:
+                t.node_reconnect(node='master')
+                helpers.test_log(c.rest.error())
+                return False
+            else:
+                return True
+
+    def rest_delete_tacacs_authentication(self):
+        '''
+            Objective: Add TACACS configuration
+            
+            Input:
+            | tacacs_server |  Tacacs Server |
+            
+            Return Value:
+            True on Success
+            False on Failure
+        '''
+        try:
+            t = test.Test()
+        except:
+            return False
+        else:
+            c = t.controller('master')
+            # Configure AAA/Authentication
+            try:
+                url = '/api/v1/data/controller/core/aaa/authenticator'
+                c.rest.delete(url, {})
             except:
                 helpers.test_log(c.rest.error())
                 return False
             else:
                 return True
+
 
     def rest_add_tacacs_authorization(self):
         '''
@@ -1039,6 +1071,33 @@ class AppController(object):
             try:
                 url = '/api/v1/data/controller/core/aaa/authorizer'
                 c.rest.put(url, [{"priority": 1, "name": "tacacs"}, {"priority": 2, "name": "local"}])
+            except:
+                helpers.test_log(c.rest.error())
+                return False
+            else:
+                return True
+
+    def rest_delete_tacacs_authorization(self):
+        '''
+            Objective: Add TACACS configuration
+            
+            Input:
+            | tacacs_server |  Tacacs Server |
+            
+            Return Value:
+            True on Success
+            False on Failure
+        '''
+        try:
+            t = test.Test()
+        except:
+            return False
+        else:
+            c = t.controller('master')
+            # Configure AAA/authorization
+            try:
+                url = '/api/v1/data/controller/core/aaa/authorizer'
+                c.rest.delete(url, {})
             except:
                 helpers.test_log(c.rest.error())
                 return False
@@ -1071,6 +1130,37 @@ class AppController(object):
                     return False
                 else:
                     return True
+
+    def rest_delete_tacacs_server(self, tacacs_server):
+        try:
+            t = test.Test()
+        except:
+            return False
+        else:
+            c = t.controller('master')
+            # Get encoded password from key
+            try:
+                url = '/api/v1/data/controller/core/aaa/tacacs/server[server-address="%s"]/secret' % str(tacacs_server)
+                c.rest.delete(url, {})
+            except:
+                helpers.test_log(c.rest.error())
+                return False
+            else:
+                try:
+                    url = '/api/v1/data/controller/core/aaa/tacacs/server[server-address="%s"]/timeout' % str(tacacs_server)
+                    c.rest.delete(url, {})
+                except:
+                    helpers.test_log(c.rest.error())
+                    return False
+                else:
+                    try:
+                        url = '/api/v1/data/controller/core/aaa/tacacs/server[server-address="%s"]' % str(tacacs_server)
+                        c.rest.delete(url, {})
+                    except:
+                        helpers.test_log(c.rest.error())
+                        return False
+                    else:
+                        return True
 
     def cli_execute_show_command(self, command, user="admin", password="adminadmin"):
         try:
