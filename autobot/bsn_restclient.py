@@ -5,7 +5,7 @@ import helpers
 
 class BsnRestClient(RestClient):
     """
-    REST Client for Big Switch devices. 
+    REST Client for Big Switch devices.
     """
     def __init__(self, base_url=None, user=None, password=None,
                  content_type='application/json', host=None, platform=None):
@@ -43,7 +43,8 @@ class BsnRestClient(RestClient):
             else:
                 helpers.environment_failure("Platform=%s, unmatched URL=%s"
                                             % (self.platform, url))
-        elif helpers.is_bigtap(self.platform) or helpers.is_bigwire(self.platform):
+        elif (helpers.is_bigtap(self.platform) or
+              helpers.is_bigwire(self.platform)):
             if re.match(r'^(/api/v1/|/auth/login)', url):
                 http_port = 8082
                 return "http://%s:%s%s" % (self.host, http_port, url)
@@ -58,13 +59,15 @@ class BsnRestClient(RestClient):
                                         self.platform)
 
     def request_session_cookie(self, url=None):
-        helpers.log("Setting up HTTP session cookies for REST access on '%s' (platform=%s)"
+        helpers.log("Request a new HTTP session cookies for REST access on"
+                    " '%s' (platform=%s)"
                     % (self.host, self.platform))
 
         if not url:
             if helpers.is_bvs(self.platform):
                 url = "/api/v1/auth/login"
-            elif helpers.is_bigtap(self.platform) or helpers.is_bigwire(self.platform):
+            elif (helpers.is_bigtap(self.platform) or
+                  helpers.is_bigwire(self.platform)):
                 url = "/auth/login"
         return super(BsnRestClient, self).request_session_cookie(url)
 

@@ -157,7 +157,7 @@ class BsnCommon(object):
         else:
             return False
 
-    def rest_show_version(self, node="master", string="version", user="admin", password="adminadmin"):
+    def rest_show_version(self, node="master", string="version", user="admin", password="adminadmin", local=True):
         t = test.Test()
         n = t.node(node)
         if helpers.is_switch(n.platform()):
@@ -214,9 +214,15 @@ class BsnCommon(object):
                 c = t.controller()
                 url = '/api/v1/data/controller/core/version/appliance'
                 if user == "admin":
-                    c.rest.get(url)
-                    content = c.rest.content()
-                    output_value = content[0][string]
+                    try:
+                        t.node_reconnect(node='master')
+                        c.rest.get(url)
+                        content = c.rest.content()
+                        output_value = content[0][string]
+                    except:
+                        return False
+                    else:
+                        return output_value
                 else:
                     try:
                         c_user = t.node_reconnect(node='master', user=str(user), password=password)
@@ -227,7 +233,8 @@ class BsnCommon(object):
                         t.node_reconnect(node='master')
                         return False
                     else:
-                        t.node_reconnect(node='master')
+                        if local is True:
+                            t.node_reconnect(node='master')
                         return output_value
             else:
                 helpers.test_error("Unsupported Platform %s" % (node))

@@ -979,7 +979,7 @@ class AppController(object):
             else:
                 return True
 
-    def rest_add_tacacs_authentication(self):
+    def rest_add_tacacs_authentication(self, tacacs=True, tacacs_priority=1, local=True, local_priority=2, username="admin", password="adminadmin"):
         '''
             Objective: Add TACACS configuration
             
@@ -999,8 +999,24 @@ class AppController(object):
             # Configure AAA/Authentication
             try:
                 url = '/api/v1/data/controller/core/aaa/authenticator'
-                c.rest.put(url, [{"priority": 1, "name": "tacacs"}, {"priority": 2, "name": "local"}])
+                if (tacacs is True) and (local is True):
+                    data = [{"priority": int(tacacs_priority), "name": "tacacs"}, {"priority": int(local_priority), "name": "local"}]
+                elif (tacacs is True) and (local is False):
+                    data = [{"priority": int(tacacs_priority), "name": "tacacs"}]
+                elif (tacacs is False) and (local is True):
+                    data = [{"priority": int(local_priority), "name": "local"}]
+                else:
+                    helpers.log("THIS IS AN IMPOSSIBLE SITUATION")
+
+                if username == "admin":
+                    c.rest.put(url, data)
+                else:
+                    c_user = t.node_reconnect(node='master', user=str(username), password=password)
+                    c_user.put(url, data)
+                    if local is True:
+                        t.node_reconnect(node='master')
             except:
+                t.node_reconnect(node='master')
                 helpers.test_log(c.rest.error())
                 return False
             else:
