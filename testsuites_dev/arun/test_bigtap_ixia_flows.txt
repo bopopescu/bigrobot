@@ -10,6 +10,7 @@ Library         keywords/BsnCommon.py
 Library         keywords_dev/vui/MyTest.py
 Library         keywords/IxiaBigtap.py
 
+
 * Variable
 ${src_mac}  00:00:01:01:22:99  
 ${src_mac_step}  00:00:00:01:00:00
@@ -28,18 +29,52 @@ ${line_rate}  100
 Test IXIA
     [Tags]  skipped
     info  tg1
+Uni-Dir L2 Traffic with all defaults and learn traffic with Accton Switch
+# Basic test case with all default values and just start the flow
+    ${stream1}=             L2 add  flow=a->b  frame_rate=${frame_rate}  name=a_b_flow
+    ${stream2}=             L2 add  flow=c->d  frame_rate=${frame_rate}  name=c_d_flow
+    ${stream3}=             L2 add  flow=e->f  frame_rate=${frame_rate}  name=e_f_flow
+    ${stream4}=             L2 add  flow=g->h  frame_rate=${frame_rate}  name=g_h_flow
+    ${stream5}=             L2 add  flow=i->j  frame_rate=${frame_rate}  name=i_j_flow
+    ${stream6}=             L2 add  flow=k->l  frame_rate=${frame_rate}  name=k_l_flow
+    clear stats
+    start traffic
+    sleep                  ${sleep_time}
+#    ${report}=             fetch port stats  stream=${stream}
+    ${report}=             fetch port stats  stream=${stream1}
+    ${report}=             fetch port stats  stream=${stream2}
+	${report}=             fetch port stats  stream=${stream3}
+	${report}=             fetch port stats  stream=${stream4}
+	${report}=             fetch port stats  stream=${stream5}
+	${report}=             fetch port stats  stream=${stream6}
+    verify results  transmitted_frame_rate  received_frame_rate  ${stream1}  a_b_flow
+    verify results  transmitted_frame_rate  received_frame_rate  ${stream2}  c_d_flow
+    verify results  transmitted_frame_rate  received_frame_rate  ${stream3}  e_f_flow
+    verify results  transmitted_frame_rate  received_frame_rate  ${stream4}  g_h_flow
+    verify results  transmitted_frame_rate  received_frame_rate  ${stream5}  i_j_flow
+    verify results  transmitted_frame_rate  received_frame_rate  ${stream6}  k_l_flow
+    stop traffic
+    [Tags]  traffic  sanity  bigtap
+
 Uni-Direction L2 Traffic with all defaults and learn traffic
 # Basic test case with all default values and just start the flow
-    ${stream}=             L2 add  flow=a->b  src_mac=${src_mac}  dst_mac=${dst_mac}
+	${stream3}=             L2 add  flow=e<->f  frame_rate=${frame_rate}  name=e_f_flow
+    ${stream4}=             L2 add  flow=g<->h  frame_rate=${frame_rate}  name=g_h_flow
+    ${stream5}=             L2 add  flow=i<->j  frame_rate=${frame_rate}  name=i_j_flow
+    ${stream6}=             L2 add  flow=k<->l  frame_rate=${frame_rate}  name=k_l_flow
     clear stats
-    start traffic  ${stream}
-    sleep                  1000
-    stop traffic   ${stream}
+    start traffic
     sleep                  ${sleep_time}
-    ${report}=             fetch port stats
-    verify results  transmitted_frames  received_valid_frames
-    [Tags]  traffic  sanity  bigtap  run
-    
+	${report}=             fetch port stats  stream=${stream3}
+	${report}=             fetch port stats  stream=${stream4}
+	${report}=             fetch port stats  stream=${stream5}
+	${report}=             fetch port stats  stream=${stream6}
+    verify results  transmitted_frame_rate  received_frame_rate  ${stream3}  e_f_flow
+    verify results  transmitted_frame_rate  received_frame_rate  ${stream4}  g_h_flow
+    verify results  transmitted_frame_rate  received_frame_rate  ${stream5}  i_j_flow
+    verify results  transmitted_frame_rate  received_frame_rate  ${stream6}  k_l_flow
+    stop traffic
+    [Tags]  traffic  sanity  bigtap  run    
 Bi-Direction L2 Traffic with line rate
 # Basic test case with all default values and just start the flow
     ${stream}=             L2 add  flow=a<->b  src_mac=${src_mac}  dst_mac=${dst_mac}  line_rate=${line_rate}
@@ -332,24 +367,17 @@ Bi-Directional L3 Traffic ICMP Echo
 
 Bi-Driectional L3 Traffic with differnt ethertypes and streams
 # Basic test case with all default values and etherytype 8100, with vlan id
-	${stream1}=  L3 add  flow=a->b  frame_rate=1000  frame_size=128  frame_cnt=10000
-    ...     src_mac=${src_mac}  dst_mac=${dst_mac}  no_arp=True
-    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  ethertype=0800  name=a0_b_flow
-    ${stream2}=  L3 add  flow=a->b  frame_rate=1000  frame_size=128  frame_cnt=10000
-    ...     src_mac=${src_mac}  dst_mac=${dst_mac}  no_arp=True
-    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  ethertype=0806  name=a1_b_flow
-    ${stream3}=  L3 add  flow=a->b  frame_rate=1000  frame_size=128  frame_cnt=10000
-    ...     src_mac=${src_mac}  dst_mac=${dst_mac}  no_arp=True
-    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  ethertype=8847  name=a2_b_flow
-    ${stream4}=  L3 add  flow=a->b  frame_rate=1000  frame_size=128  frame_cnt=10000
-    ...     src_mac=${src_mac}  dst_mac=${dst_mac}  no_arp=True
-    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  ethertype=8100  name=a3_b_flow
-    ${stream5}=  L3 add  flow=a->b  frame_rate=1000  frame_size=128  frame_cnt=10000
-    ...     src_mac=${src_mac}  dst_mac=${dst_mac}  no_arp=True
-    ...     src_ip=2001:0:0:0:0:0:0:01  dst_ip=2002:0:0:0:0:0:0:01  ethertype=86dd  name=a4_b_flow
+	${stream1}=  L3 add  flow=c->d  frame_rate=1000  frame_size=128  frame_cnt=10000
+    ...       no_arp=True  name=a0_b_flow    
+    ${stream2}=  L3 add  flow=e->f  frame_rate=1000  frame_size=128  frame_cnt=10000
+    ...     no_arp=True src_ip=100.1.1.1  dst_ip=100.1.1.2  name=a1_b_flow 
+    
+    ${stream3}=  L3 add  flow=g->h  frame_rate=1000  frame_size=128  frame_cnt=10000
+    ...     no_arp=True  src_ip=100.1.1.1  dst_ip=100.1.1.2  name=a2_b_flow
+    
     clear stats
     start traffic
-    sleep                  ${sleep_time}
+    sleep                  10000
     stop traffic
     sleep                  ${sleep_time}
     ${report}=             fetch port stats
@@ -370,10 +398,10 @@ Bi-Directional L3 Traffic ICMP Echo with traffic learn
 *Keywords
 atest teardown
 	delete traffic
-verify results   [Arguments]  ${transmitted_frames}  ${received_frames}
+verify results   [Arguments]  ${transmitted_frames}  ${received_frames}  ${stream}  ${stream_name}
     Sleep  5
-    ${report}=  fetch port stats
-    ${tx_value}=  verify dict key  ${report}  a  ${transmitted_frames}
-    ${rx_value}=  verify dict key  ${report}  b  ${received_frames}
+    ${report}=  fetch port stats  stream=${stream}  
+    ${tx_value}=  verify dict key  ${report}  ${stream_name}  ${transmitted_frames}
+    ${rx_value}=  verify dict key  ${report}  ${stream_name}  ${received_frames}
     ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}
-    Should be true  ${in_range} 
+    Should be true  ${in_range}
