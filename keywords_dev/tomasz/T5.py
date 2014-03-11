@@ -1534,13 +1534,19 @@ class T5(object):
         t = test.Test()
         c = t.controller('master')
         try:
-            comparison = c.config("compare running-config scp://%s" % destination)['content']
-            #comparison = c.config("compare running-config test-config")['content']
+            c.config("config")
+            c.send("compare running-config scp://%s" % destination)
+            c.expect("Password:")
+            rc = c.config("adminadmin")['content']
             if "Error" in c.cli_content():
                 helpers.log("Error in CLI content")
                 return False
             comparison = helpers.strip_cli_output(rc)
-            comparison = helpers.str_to_list(rc)
+            comparison = helpers.str_to_list(comparison)
+
+            helpers.test_log("Length of comp: %s" % str(len(comparison)))
+            for line in comparison:
+                helpers.test_log("Comparison-conatins: %s" % str(line))
 
             if (len(comparison) == 4) or (len(comparison) == 0):
                 if len(comparison) == 4 and '3c3' not in comparison[0]:
@@ -1552,6 +1558,48 @@ class T5(object):
                 helpers.log("Compared files are different")
                 return False
         except:
+            helpers.test_log(comparison)
+            helpers.test_log(c.cli_content())
+            return False
+        else:
+            return True
+
+
+    def cli_compare_scp_with_running_config(self, destination):
+        ''' Function to compare file in SCP location with
+        current running-config, via CLI line by line
+        Input: SCP location
+        Output: True if successful, False otherwise
+        '''
+        helpers.test_log("Running command:\ncompare scp://%s running-config" % destination)
+        t = test.Test()
+        c = t.controller('master')
+        try:
+            c.config("config")
+            c.send("compare scp://%s running-config" % destination)
+            c.expect("Password:")
+            rc = c.config("adminadmin")['content']
+            if "Error" in c.cli_content():
+                helpers.log("Error in CLI content")
+                return False
+            comparison = helpers.strip_cli_output(rc)
+            comparison = helpers.str_to_list(comparison)
+
+            helpers.test_log("Length of comp: %s" % str(len(comparison)))
+            for line in comparison:
+                helpers.test_log("Comparison-conatins: %s" % line)
+
+            if (len(comparison) == 4) or (len(comparison) == 0):
+                if len(comparison) == 4 and '3c3' not in comparison[0]:
+                    helpers.log("Compared files are different")
+                    return False
+                else:
+                    helpers.log("Compared files are the same")
+            else:
+                helpers.log("Compared files are different")
+                return False
+        except:
+            helpers.test_log(comparison)
             helpers.test_log(c.cli_content())
             return False
         else:

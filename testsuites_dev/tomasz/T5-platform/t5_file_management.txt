@@ -3,7 +3,7 @@ Documentation  		Testing File Management - copying RC to other locations
 Suite Setup  		Base Suite Setup
 Suite Teardown   	Base Suite Teardown
 Test Setup   		Base Test Setup
-Test Teardown  		Base Test Teardown
+Test Teardown  		Teardown
 Force Tags   		Platform  Sanity  File Management
 Library  			keywords/BsnCommon.py
 Library  			keywords_dev/tomasz/T5.py
@@ -32,8 +32,10 @@ T1.2 Copy running config to config://
 T1.3 Copy running config to scp://
 	${status} =  Cli Copy Running Config to Scp  ${scp location}
 	Should Be True  ${status}
-	#${status} =  Cli Compare Running Config with Scp  ${config name}
-	#Should Be True  ${status}
+	${status} =  Cli Compare Running Config with Scp  ${scp location}
+	Should Be True  ${status}
+	${status} =  Cli Compare Scp with Running Config  ${scp location}
+	Should Be True  ${status}
 	Bash Clear Known Hosts
 
 
@@ -58,7 +60,9 @@ T2.3 Copy running config to scp://, change RC, verify configs different
 	Should Be True  ${status}
 	${tenant}  Generate Random Name  Tenant  5
 	Rest Add Tenant  ${tenant}
-	${status} =  Cli Compare Running Config with Scp  ${config name}
+	${status} =  Cli Compare Running Config with Scp  ${scp location}
+	Should Not Be True  ${status}
+	${status} =  Cli Compare Scp with Running Config  ${scp location}
 	Should Not Be True  ${status}
 	Bash Clear Known Hosts
 
@@ -119,7 +123,7 @@ T5.2 Copy running config to file, copy RC from file to scp://, verify
 T5.3 Copy running config to config://, copy RC from config:// to file, verify
 T5.4 Copy running config to config://, copy RC from config:// to scp://, verify
 T5.5 Copy running config to scp://, copy RC from scp:// to file, verify
-T5.6 (?) Copy running config to scp://, copy RC from scp:// to image, verify
+T5.6 (?) Copy running config to scp://, copy RC from scp:// to image, verify (negative test case)
 
 T6.1 Verify correct processing of special characters in file name
 T6.2 Verify correct processing of special characters in config:// name
@@ -155,3 +159,8 @@ Generate Random Name
     ${regex}  Generate Random String  ${suffix_len}  [NUMBERS]
     ${name}  Catenate  SEPARATOR=  ${prefix}  ${regex}
     [Return]  ${name}
+
+
+Teardown
+	Bash Clear Known Hosts
+	Base Test Teardown
