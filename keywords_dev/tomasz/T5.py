@@ -1224,7 +1224,6 @@ class T5(object):
             c.send("reauth")
             c.expect(r"Password:")
             c.config("adminadmin")
-            c.config("cluster")
             c.send("failover")
             if "Error" in c.cli_content():
                 helpers.log("Error in CLI content")
