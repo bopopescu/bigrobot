@@ -72,21 +72,20 @@ Verify that when AAA is configured for tacacs only, local AAA should not work ev
     ${content}=  rest show version  string=version  user=admin  password=adminadmin   local=${false}
     Should not be true  ${content}            
     rest add tacacs authentication  tacacs=${true}  tacacs_priority=1  local=${true}  local_priority=2  username=tacacsadmin  password=adminadmin
-    [Tags]  only-tacacs  skipped
+    [Tags]  only-tacacs  run
                 
 Delete tacacs server from configuration and verify tacacs user has no access
     rest delete tacacs server  10.192.4.91
     ${content}=  rest show version  string=version  user=tacacsadmin  password=adminadmin
     Should not be true  ${content}
-    [Tags]  deletetacacs
+    [Tags]  deletetacacs  run
 
 Delete user tacacsadmin from group admin and verify access
     cli delete user from group  tacacsadmin  admin
     ${content}=  rest show version  string=version  user=tacacsadmin  password=adminadmin
     Should not be true  ${content}
-    sleep  10    
     rest add user to group  tacacsadmin  admin
-    [Tags]  deleteuser  skipped
+    [Tags]  deleteuser  run 
         
 * Keywords
 
