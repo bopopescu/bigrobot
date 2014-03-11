@@ -446,3 +446,30 @@ admin_user = glance
 
     def set_empty_string(self):
         return 'aa'
+
+    def config_block(self):
+        t = test.Test()
+        c = t.controller('c1')
+
+        # Import regex module
+        import re
+
+        c.config('')
+        c.send('?')
+
+        prompt_re = r'[\r\n\x07]?[\w-]+\(([\w-]+)\)[#>] '
+        c.expect(prompt_re)
+        content = c.cli_content()
+        helpers.log("********** CONTENT ************\n%s" % content)
+
+        # Content is a multiline string. Convert it to a list of strings. Then
+        # get the last entry which should be the prompt.
+        prompt_str = helpers.str_to_list(content)[-1]
+
+        helpers.log("Prompt: '%s'" % prompt_str)
+
+        match = re.match(prompt_re, prompt_str)
+        if match:
+            print "Match! Found: %s" % match.group(1)
+        else:
+            print "No match"
