@@ -54,7 +54,7 @@ Verify fabric links (per Don)
     Should be true  ${status}
 
 Test devconf reconnect
-    [Tags]  skipped
+    #[Tags]  skipped
     devconf reconnect
 
 Test priminitive CLI keywords
@@ -91,5 +91,6 @@ Test config hierarchy
     cli       c1  show user
 
 Test new things
+    [Tags]  skipped
     add_ntp_server  master  time-c.nist.gov
 
