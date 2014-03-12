@@ -1204,22 +1204,31 @@ def text_processing_str_remove_trailer(input_str, n):
     return '\n'.join(lines[:-n])
 
 
-def strip_cli_output(input_str):
-    """
-    The convention from the expect library (Exscript) is as followed:
-      - first line contains the issued command
-      - last line contains the device prompt
-    This function strips the first and last line, leaving the actual output.
-    """
-    out = text_processing_str_remove_header(input_str, 1)
-    out = text_processing_str_remove_trailer(out, 1)
-    return out
-
 def str_to_list(input_str):
     """
     Convert a multi-line string into a list of strings.
     """
     return input_str.splitlines()
+
+
+def strip_cli_output(input_str, to_list=False):
+    """
+    The convention from the expect library (Exscript) is as followed:
+      - first line contains the issued command
+      - last line contains the device prompt
+    This function strips the first and last line, leaving the actual output.
+
+    Returns:
+      - a multi-line string by default
+      - a list of strings, if to_list=True
+    """
+    out = text_processing_str_remove_header(input_str, 1)
+    out = text_processing_str_remove_trailer(out, 1)
+    if to_list:
+        return str_to_list(out)
+    else:
+        return out
+
 
 def text_processing_str_remove_to_end(input_str, line_marker):
     """

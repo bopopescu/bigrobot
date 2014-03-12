@@ -95,5 +95,13 @@ Test new things
     add_ntp_server  master  time-c.nist.gov
 
 Test config block
+    [Tags]  skipped
     config block
 
+Test controller cli ping
+    [Tags]  skipped
+    cli ping   c1   qa-kvm-32
+
+Test bash file listing
+    #[Tags]  skipped
+    bash ls    master  /home/admin
