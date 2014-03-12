@@ -1336,20 +1336,20 @@ class T5(object):
         helpers.test_log("Running command:\ncopy %s %s" % (src, dst))
         t = test.Test()
         c = t.controller('master')
+        c.config("config")
+        c.send("copy %s %s" % (src, dst))
+        c.expect(r'[\r\n].+password: |[\r\n].+(yes/no)?')
+        content = c.cli_content()
+        helpers.log("*****Output is :\n%s" % content)
+        if re.match(r'.*password:.* ', content):
+            helpers.log("INFO:  need to provide passwd " )
+            c.send(passwd)
+        elif re.match(r'.+(yes/no)?', content):
+            helpers.log("INFO:  need to send yes, then provide passwd " )
+            c.send('yes')
+            c.expect(r'Password:')
+            c.send(passwd)
         try:
-            c.send("copy %s %s" % (src, dst))
-            c.expect(r'[\r\n].+password: |[\r\n].+(yes/no)?')
-            content = c.cli_content()
-            helpers.log("*****Output is :\n%s" % content)
-            if re.match(r'.*password:.* ', content):
-                helpers.log("INFO:  need to provide passwd " )
-                c.send(passwd)
-            elif re.match(r'.+(yes/no)?', content):
-                helpers.log("INFO:  need to send yes, then provide passwd " )
-                c.send('yes')
-                c.expect(r'Password:')
-                c.send(passwd)
-
             c.expect(timeout=180)
         except:
             helpers.log('scp failed')
