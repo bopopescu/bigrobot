@@ -473,35 +473,3 @@ admin_user = glance
             print "Match! Found: %s" % match.group(1)
         else:
             print "No match"
-
-    def bash_ls(self, node, path):
-        """
-        A routine for processing output from 'ls -l <path>'. Gave it to Mingtao
-        to extend it further.
-        """
-        t = test.Test()
-        n = t.node(node)
-        content = n.bash('ls -l %s' % path)['content']
-        lines = helpers.strip_cli_output(content, to_list=True)
-
-        # Output:
-        # total 691740
-        # -rw-r--r-- 1 root root 708335092 2014-03-03 13:08 controller-upgrade-bvs-2.0.5-SNAPSHOT.pkg
-        # -rw-r--r-- 1 bsn  bsn          0 2014-03-12 10:05 blah blah.txt
-
-        # Strip first line ('total <nnnnn>')
-        lines = lines[1:]
-        helpers.log("lines: %s" % helpers.prettify(lines))
-        for line in lines:
-            fields = line.split()
-            # fields[0] = file/dir
-            # fields[1] = no of links
-            # fields[2] = user
-            # fields[3] = group
-            # fields[4] = size
-            # fields[5] = date
-            # fields[6] = time
-            # fields[7]+ = filename (may contain spaces)
-            size = fields[4]
-            filename = ' '.join(fields[7:])
-            helpers.log("size:'%s'  filename:'%s'" % (size, filename))

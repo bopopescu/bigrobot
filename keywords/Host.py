@@ -136,7 +136,6 @@ class Host(object):
             result = re.search('inet addr:(.*)\sBcast', output)
             return result.group(1)
 
-
     def bash_release_dhcpv4_address(self, node, intf):
 
         t = test.Test()
@@ -216,7 +215,6 @@ class Host(object):
             helpers.log("mac_addr: %s" % mac_addr)
             return mac
 
-
     def bash_verify_arp(self, node, ip):
         t = test.Test()
         n = t.node(node)
@@ -228,7 +226,6 @@ class Host(object):
             return False
         else:
             return True
-
 
     def bash_ifup_intf(self, node, intf):
         t = test.Test()
@@ -248,7 +245,6 @@ class Host(object):
         n.sudo("ifconfig %s 0.0.0.0" % intf)
         return True
 
-
     def bash_check_service_status(self, node, processname):
         t = test.Test()
         n = t.node(node)
@@ -264,6 +260,50 @@ class Host(object):
         if match:
             return 'is started'
 
+    def bash_ls(self, node, path):
+        """
+        Execute 'ls -l <path>' on a device.
 
+        Inputs:
+        | node | reference to switch/controller/host as defined in .topo file |
+        | path | directory to get listing for |
 
+        Example:
+        - bash ls    master    /home/admin
+        - bash ls    h1        /etc/passwd
+
+        Return Value:
+        - Dictionary with file name as key. Value contains list of fields, where
+            - fields[0] = file/dir
+            - fields[1] = no of links
+            - fields[2] = user
+            - fields[3] = group
+            - fields[4] = size
+            - fields[5] = date
+            - fields[6] = time
+        """
+        t = test.Test()
+        n = t.node(node)
+        content = n.bash('ls -l %s' % path)['content']
+        lines = helpers.strip_cli_output(content, to_list=True)
+
+        # Output:
+        # total 691740
+        # -rw-r--r-- 1 root root 708335092 2014-03-03 13:08 controller-upgrade-bvs-2.0.5-SNAPSHOT.pkg
+        # -rw-r--r-- 1 bsn  bsn          0 2014-03-12 10:05 blah blah.txt
+
+        # Strip first line ('total <nnnnn>')
+        lines = lines[1:]
+        helpers.log("lines: %s" % helpers.prettify(lines))
+
+        files = {}
+
+        for line in lines:
+            fields = line.split()
+            # fields[7]+ contains filename (may have spaces in name)
+            filename = ' '.join(fields[7:])
+            files[filename] = fields[0:6]
+
+        helpers.log("files: %s" % helpers.prettify(files))
+        return files
 
