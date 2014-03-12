@@ -7,8 +7,7 @@ Test Teardown    T5 test teardown
 Force Tags       T5 
 Library          keywords/BsnCommon.py
 Library          keywords/T5.py
-Library          keywords/T5Fabric.py
-Library			 keywords/Mininet.py
+Library          keywords/T5Platform.py
 Library		     keywords/Host.py
 Library		     keywords/Ixia.py
 Library			 keywords/SwitchLight.py
@@ -392,6 +391,30 @@ Verify Duplicate Multicast packets on edge port groups
     verify port group switch interface stats  leaf2-a  leaf2-b  ${h5_intf0}  ${h5_intf1} 
     rest delete tenant  t1
     sleep  5    
+
+Master node reboot failover with broadcast traffic forwarding
+	[Tags]  feature
+	rest add tenant  t1
+	rest add vns  t1  v1
+	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
+	rest add interface to vns  t1  v1  leaf0-b  ${leaf0b_ixia_intf}  -1
+	rest add interface to vns  t1  v1  leaf1-b  ${leaf1b_ixia_intf}  -1
+	rest add interface to vns  t1  v1  leaf2-b  ${leaf2b_ixia_intf}  -1
+	sleep  3  	
+    ${stream}=             L3 add  no_arp=True  flow=a->b  src_mac=00:02:01:00:00:24  dst_mac=ff:ff:ff:ff:ff:ff   frame_rate=1000  frame_size=68  name=a_b_flow
+    start traffic  ${stream}  
+    sleep  10
+    verify traffic rate  tx_rate  rx_rate  a  b
+    verify traffic rate  tx_rate  rx_rate  a  d
+    verify traffic rate  tx_rate  rx_rate  a  f
+    cli verify cluster master reboot
+    sleep  2
+    verify traffic rate  tx_rate  rx_rate  a  b
+    verify traffic rate  tx_rate  rx_rate  a  d
+    verify traffic rate  tx_rate  rx_rate  a  f
+    stop traffic  ${stream}  
+    rest delete tenant  t1
+	
 
 Tear down config and topology
 	[Tags]  feature         

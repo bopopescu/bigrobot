@@ -10,7 +10,7 @@ Force Tags       T5
 Library          keywords/BsnCommon.py
 Library          keywords/T5.py
 Library          keywords/T5Fabric.py
-
+Library          keywords/T5Platform.py
 Library			 keywords/SwitchLight.py
 Library			 keywords/Ixia.py
 Library			 keywords/Host.py
@@ -230,6 +230,49 @@ change portgroup from lacp to static and verify the forwarding
     Should Be True  ${loss} == 0
     rest delete tenant  t1 
      
+HA failover with lacp host
+	[Tags]  feature
+	rest add tenant  t1
+	rest add vns  t1  v1
+	rest add portgroup  p4 
+    rest add interface to portgroup  leaf1-a  ${h4_intf0}  p4
+    rest add interface to portgroup  leaf1-b  ${h4_intf1}  p4
+    rest add portgroup lacp  p4
+    rest add portgroup  p6 
+    rest add portgroup lacp  p6
+    rest add interface to portgroup  leaf2-a  ${h6_intf0}  p6
+    rest add interface to portgroup  leaf2-b  ${h6_intf1}  p6
+    rest add portgroup to vns  t1  v1  p4  -1
+    rest add portgroup to vns  t1  v1  p6  -1
+    sleep  3
+    ${loss}=  bash ping  h6  ${h4_ip}  source_if=bond0
+    Should Be True  ${loss} == 0
+    cli verify cluster master reboot
+    sleep  2
+    rest verify fabric interface  leaf1-a  ${h4_intf0}
+    rest verify fabric interface  leaf1-b  ${h4_intf1}
+    ${loss}=  bash ping  h6  ${h4_ip}  source_if=bond0
+    Should Be True  ${loss} == 0
+    rest delete tenant  t1 
+
+HA failover with tag traffic forwarding from ixia
+	[Tags]  feature
+	rest add tenant  t2
+    rest add vns  t2  v2
+    rest add interface to vns  t2  v2  leaf0-b  ${leaf0b_ixia_intf}  100
+    rest add interface to vns  t2  v2  leaf2-b  ${leaf2b_ixia_intf}  100
+    
+    ${stream}=             L3 add  no_arp=True  flow=b<->f  src_mac=00:02:02:00:00:24  dst_mac=00:02:06:00:00:24  ethertype=8100  vlan_id=100  frame_rate=1000  frame_size=128  name=b_f_flow
+    start traffic  ${stream}
+    sleep  5
+    verify traffic rate  tx_rate  rx_rate  b  f
+    cli verify cluster master reboot
+    sleep  2
+    verify traffic rate  tx_rate  rx_rate  b  f 
+    stop traffic  ${stream}
+    sleep  5
+    rest delete tenant  t2    
+
 Tear down config and Topology
     delete fabric switch  
     rest delete portgroup  p4
