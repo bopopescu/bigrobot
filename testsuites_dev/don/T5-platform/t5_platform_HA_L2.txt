@@ -14,7 +14,7 @@ Library          keywords/T5.py
 #Library	         keywords/T5Fabric.py
 Library	         keywords/T5Platform.py
 Library	         keywords/T5Utilities.py
-Resource	 	 keywords_dev/don/t5_platform_sanity_resource.txt
+#Resource	 	 keywords_dev/don/t5_platform_sanity_resource.txt
 
 * Variables
 @{spineList}  00:00:00:00:00:01:00:01  00:00:00:00:00:01:00:02
@@ -24,7 +24,7 @@ Resource	 	 keywords_dev/don/t5_platform_sanity_resource.txt
 * Test Case 
 
 Configure Multiple L2 Tenants With Single VNS & Failover
-	[Tags]	run
+	[Tags]	sanity  L2
 	Configure 3-Rack/Dual-Leaf/2-Spine/4-Host Setup For Mininet 
 	Configure 3 Tenants with Different VLAN properties
 	Verify Connectivity in 3-Rack/Dual-Leaf/2-Spine/4-Host Setup
@@ -32,45 +32,45 @@ Configure Multiple L2 Tenants With Single VNS & Failover
 	Verify Connectivity in 3-Rack/Dual-Leaf/2-Spine/4-Host Setup
 
 Verify HA Cluster Formation
-   [Tags]  ClusterFormation	 
+   [Tags]  sanity
    Verify the cluster formation 
    
 Verify Cluster Election Take-Leader
-	[Tags]  ClusterFormation
+	[Tags]  sanity  
 	Verify cluster election take leader
 	
 Verify Cluster Election Re-run
-	[Tags]  ClusterFormation
+	[Tags]  sanity  
 	Verify cluster election rerun 
 	
 Verify Cluster Master Reboot
-	[Tags]  ClusterFormation
+	[Tags]  sanity
 	Reboot the master node & verify fabric integrity
 	
 Verify Cluster Slave Reboot
-	[Tags]  ClusterFormation
+	[Tags]  sanity
 	Reboot the Slave node & verify fabric integrity
 
 Configure Cluster VIP & Verify Connectivity After Failover
-	[Tags]   vip 
+	[Tags]   vip   skipped
 	rest add vip  10.192.106.20
 	sleep  10
 	${returnVal}=  cli verify cluster vip  10.192.106.20/32
 	Should Be True  ${returnVal}
 
 Delete Cluster VIP
-	[Tags]   vip 
+	[Tags]   vip  sanity  skipped
 	rest delete vip
 	sleep  10
 	${returnVal}=  cli verify cluster vip  10.192.106.20/32
 	Should Be False  ${returnVal}
 
 Verify Cluster Master Shutdown
-	[Tags]  ClusterFormation  skipped
+	[Tags]  sanity  skipped
 	Shutdown the master node & verify fabric integrity
 	
 Verify Cluster Slave Shutdown
-	[Tags]  ClusterFormation  skipped
+	[Tags]  sanity  skipped
 	Shutdown the slave node & verify fabric integrity
 
 
@@ -79,27 +79,27 @@ Verify Cluster Slave Shutdown
 ##################################################
 
 Master Failover/Failback & Verify Connectivity
-   [Tags]  Traffic  
+   [Tags]  sanity  L2  
    Failover/Failback by rebooting the master and verify connectivity
    
 Slave Failover/Failback & Verify Connectivity
-   [Tags]  Traffic  
+   [Tags]  sanity  L2  
    Failover/Failback by rebooting the slave and verify connectivity
 
 Cluster Election Take-Leader & Verify Connectivity
-   [Tags]  Traffic  
+   [Tags]  sanity  L2    
    # To be: This test case only checks the take-leader in slave.
    # 			Need to implement this in the master
    Failover/Failback by issuing take-leader in master & verify connectivity
 
 Cluster Election Re-run & Verify Connectivity
-   [Tags]  Traffic  
+   [Tags]  sanity  L2    
    # To be: Make sure to do it on both master & slave when the commands
    #		are finalized
    Re-run the election and verify connectivity
    
 Head-less Mode & Verify Connectivity
-   [Tags]  Traffic  skipped
+   [Tags]  sanity  L2  skipped
    Shutdown both the controllers and verify connectivity
    
 
@@ -153,7 +153,7 @@ Failover/Failback by rebooting the master and verify connectivity
    : FOR    ${Iteration}    IN RANGE    1    3
    \	Log To Console   \n================ Rebooting Master - Iteration ${Iteration} ===============\n
    \	cli verify cluster master reboot
-   \	platform ping all
+   \	Verify Connectivity in 3-Rack/Dual-Leaf/2-Spine/4-Host Setup
 
 
 Failover/Failback by rebooting the slave and verify connectivity
@@ -161,7 +161,7 @@ Failover/Failback by rebooting the slave and verify connectivity
    : FOR    ${Iteration}    IN RANGE    1    3
    \	Log To Console   \n================ Rebooting Slave - Iteration ${Iteration} ===============\n
    \	cli verify cluster slave reboot
-   \	platform ping all
+   \	Verify Connectivity in 3-Rack/Dual-Leaf/2-Spine/4-Host Setup
 
 
 Failover/Failback by issuing take-leader in master & verify connectivity
@@ -169,7 +169,7 @@ Failover/Failback by issuing take-leader in master & verify connectivity
    : FOR    ${Iteration}    IN RANGE    1    3
    \	Log To Console   \n================ Election-Take-Leader - Iteration ${Iteration} ===============\n
    \	rest verify cluster election take leader
-   \	platform ping all
+   \	Verify Connectivity in 3-Rack/Dual-Leaf/2-Spine/4-Host Setup
 
 
 Re-run the election and verify connectivity
@@ -177,15 +177,15 @@ Re-run the election and verify connectivity
    : FOR    ${Iteration}    IN RANGE    1    3
    \	Log To Console   \n================ Election-Rerun - Iteration ${Iteration} ===============\n
    \	rest verify cluster election rerun
-   \	platform ping all
+   \	Verify Connectivity in 3-Rack/Dual-Leaf/2-Spine/4-Host Setup
    
 
 Shutdown both the controllers and verify connectivity
 
-   platform ping all
+   Verify Connectivity in 3-Rack/Dual-Leaf/2-Spine/4-Host Setup
    cli verify cluster slave shutdown
    cli verify cluster master shutdown
-   platform ping all
+   Verify Connectivity in 3-Rack/Dual-Leaf/2-Spine/4-Host Setup
 
 
 
