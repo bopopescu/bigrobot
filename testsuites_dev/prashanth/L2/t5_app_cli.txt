@@ -1,0 +1,192 @@
+== T5 feature CLI Test Suite ==
+
+* Setting
+Documentation    T5 BVS APP feature CLI Test Suite
+Suite Setup      base suite setup
+Suite Teardown   base suite teardown
+Test Setup       base test setup
+Test Teardown    base test teardown
+Force Tags       T5 
+Library          keywords/BsnCommon.py
+Library          keywords/T5.py
+Library	         keywords/T5Fabric.py
+Library          keywords/Mininet.py
+Library			 keywords/Ixia.py
+Resource         testsuites/T5/t5_dualleaf_three_rack_physical_resource.txt
+Resource		 testsuites/T5/t5_physical_variables.txt
+
+* Test Case 
+
+add Dual Leaf Three Rack setup
+   [Tags]  feature
+   base suite setup
+   add fabric switch
+   sleep  5
+   rest verify fabric switch all
+   rest verify fabric link
+
+add/delete a tenant with different characters
+   [Tags]   feature
+   add a tenant  t1
+   sleep  1
+   rest verify tenant
+   delete a tenant  t1
+   rest verify tenant
+   add a tenant  '45'
+   ${result}=  add a tenant  '.65'
+   Should not be True  ${result} 
+   add a tenant  'abcdefghijklmnopqrstuvwxyz'
+   ${result}=  add a tenant  '#65'
+   Should not be True  ${result}
+   delete a tenant  '45'
+   delete a tenant  'abcdefghijklmnopqrstuvwxyz'  
+   
+add tenant of same name
+	[Tags]  feature 
+	add a tenant  t1
+	add a tenant  t1
+	rest verify tenant
+	delete a tenant  t1  
+
+add/delete a vns
+   [Tags]  feature
+   add a tenant  t1
+   add a vns  t1  v1 
+   rest verify vns
+   delete a vns  t1  v1
+   rest verify vns
+   rest add vns   t1  45
+   ${result}=  rest add vns  t1  '.65'
+   Should not be True  ${result} 
+   rest add vns  t1  'abcdefghijklmnopqrstuvwxyz'
+   rest add vns  t1  '666'
+   ${result}=  rest add vns  t1  '.65'
+   Should not be True  ${result} 
+
+add a multiple vns different name single tenant 
+   [Tags]  feature
+   add a tenant  t1
+   add a vns  t1  v1
+   add a vns  t1  v2
+   add a vns  t1  v3
+   rest verify vns  
+   delete a tenant  t1
+
+add a multiple vns same name single tenant 
+   [Tags]  feature
+   add a tenant  t1
+   add a vns  t1  v1
+   add a vns  t1  v1
+   rest verify vns  
+   delete a tenant  t1   
+   
+add a multiple vns same name on different tenant
+	[Tags]  feature
+   add a tenant  t1
+   add a tenant  t2
+   add a vns  t1  v1
+   add a vns  t2  v1
+   rest verify vns  
+   delete a tenant  t1
+   delete a tenant  t2 
+   
+add/verify a portgroup with invalid port-group and switch name
+   [Tags]  feature  
+   rest add portgroup  p1
+   ${result}=  rest add portgroup  '12'
+   Should not be True  ${result}
+   ${result}=  add interface to portgroup  '12'  ${leaf0a_ixia_intf}  p1
+   Should not be True  ${result}
+   delete a portgroup  p1
+   
+add/verify a portgroup from different rack 
+	[Tags]  feature
+	add a portgroup  p1
+	add interface to portgroup  leaf0-a  ${h1_intf0}  p1
+	${result}=  add interface to portgroup  leaf1-a  ${h3_intf0}  p1
+	Should not be True  ${result}
+	delete interface from portgroup  leaf0-a   ${h1_intf0}  p1    
+	delete a portgroup  p1
+
+Adding same interface to multiple VNS without tag
+   [Tags]  feature
+   add a tenant  t1
+   add a tenant  t2
+   add a vns  t1  v1
+   add a vns  t2  v1
+   rest add interface to vns  t1  v1  leaf0-a  ${h1_intf0}  -1
+   ${result}=  rest add interface to vns  t2  v1  leaf0-a  ${h1_intf0}  -1
+   Should not be True  ${result}
+   delete a tenant  t1
+   delete a tenant  t2
+   
+adding same interface to multiple VNS with same tag
+	[Tags]  feature
+	add a tenant  t1
+    add a vns  t1  v1
+    add a vns  t1  v2
+   rest add interface to vns  t1  v1  leaf0-a  ${h1_intf0}  100
+   ${result}=  rest add interface to vns  t1  v2  leaf0-a  ${h1_intf0}  100
+   Should not be True  ${result}
+   delete a tenant  t1
+   
+add same interface to multiple tag onto same VNS
+	[Tags]  feature
+	add a tenant  t1
+	add a vns  t1  v1
+	rest add interface to vns  t1  v1  leaf0-a  ${h1_intf0}  100
+	${result}=  rest add interface to vns  t1  v1  leaf0-a  ${h1_intf0}  101 
+	Should not be True  ${result}
+	delete a tenant  t1
+
+Tear down the config
+   [Tags]  feature
+   delete fabric switch
+   base suite teardown
+
+* Keywords      
+T5 base test setup
+   base test setup
+      
+T5 base test teardown
+   base test teardown
+   
+add a tenant  [Arguments]  ${tenant} 
+  REST add tenant  ${tenant}    
+
+delete a tenant  [Arguments]  ${tenant} 
+  	REST delete tenant  ${tenant}    
+
+add a vns  [Arguments]  ${tenant}  ${vns}  
+	REST add vns  ${tenant}  ${vns}   
+
+delete a vns  [Arguments]  ${tenant}  ${vns} 
+  	REST delete vns  ${tenant}  ${vns}   
+
+add a portgroup  [Arguments]  ${pg}
+  	REST add portgroup  ${pg}    
+
+delete a portgroup  [Arguments]  ${pg}
+  	REST delete portgroup  ${pg}    
+
+add a endpoint  [Arguments]  ${tenant}  ${vns}  ${endpoint} 
+  	REST add endpoint  ${tenant}  ${vns}  ${endpoint}  
+
+delete a endpoint  [Arguments]  ${tenant}  ${vns}  ${endpoint}
+  	REST delete endpoint  ${tenant}  ${vns}  ${endpoint}  
+
+add interface to portgroup  [Arguments]  ${switch}  ${intf}  ${pg} 
+  	REST add interface to portgroup  ${switch}  ${intf}  ${pg}  
+
+delete interface from portgroup  [Arguments]  ${switch}  ${intf}  ${pg} 
+  	REST delete interface from portgroup  ${switch}  ${intf}  ${pg}  
+
+add portgroup to vns  [Arguments]  ${tenant}  ${vns}  ${pg}  ${vlan}
+  	REST add portgroup to vns  ${tenant}  ${vns}  ${pg}  ${vlan} 
+
+add portgroup to endpoint  [Arguments]  ${tenant}  ${vns}  ${endpoint}  ${pg}  ${vlan} 
+    REST add portgroup to endpoint  ${tenant}  ${vns}  ${endpoint}  ${pg}  ${vlan} 
+
+delete portgroup from vns  [Arguments]  ${tenant}  ${vns}  ${pg}  ${vlan} 
+    REST delete portgroup from vns  ${tenant}  ${vns}  ${pg}  ${vlan}
+  
