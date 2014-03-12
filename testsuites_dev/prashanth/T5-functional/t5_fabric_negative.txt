@@ -92,34 +92,34 @@ shutdown the switch and check the links are down in the switch
    rest delete portgroup  p5
    rest delete tenant  t1 
      
-verify fabric interface cli 
+verify interface cli 
 	[Tags]  feature
-	${result}=  cli show fabric interface switch  leaf0-a
+	${result}=  cli show interface  
 	Should Not be Empty  ${result}
 	
-verify fabric lag cli
+verify lag cli
 	[Tags]  feature
-	${result}=  cli show fabric lag switch  leaf0-a
+	${result}=  cli show lag switch  leaf0-a
 	Should Not be Empty  ${result}
 	
-verify fabric switch cli
+verify switch cli
 	[Tags]  feature
-	${result}=  cli show fabric switch  leaf0-a
+	${result}=  cli show switch  leaf0-a
 	Should Not be Empty  ${result}
 	
-verify fabric lacp cli
+verify lacp cli
 	[Tags]  feature
-	${result}=  cli show fabric lacp switch  leaf0-a
+	${result}=  cli show lacp switch  leaf0-a
 	Should Not be Empty  ${result}
 	
-verify fabric link cli
+verify link cli
 	[Tags]  feature
-	${result}=  cli show fabric link  
+	${result}=  cli show link  
 	Should Not be Empty  ${result}
 
-verify fabric lag any_leaf
+verify lag any_leaf cli
 	[Tags]  feature
-	${result}=  cli show fabric lag   any_leaf 
+	${result}=  cli show lag   any_leaf 
 	Should Not be Empty  ${result}
 	
 Test forwarding entry when the switch falls below 50% spine links
