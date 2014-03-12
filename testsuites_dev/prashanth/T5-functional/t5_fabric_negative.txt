@@ -25,7 +25,7 @@ Setup Three Rack Dual Leaf Topology
 	rest verify fabric link 	
 
 With 2k mac entries , Remove the Leaf switch and Readd the leaf switch
-    [Tags]  feature  
+    [Tags]  feature  Manual  tested  
     rest add tenant  t1
     rest add vns  t1  v1
     rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
@@ -34,9 +34,10 @@ With 2k mac entries , Remove the Leaf switch and Readd the leaf switch
     start traffic  ${stream}
     sleep  100
     rest verify endpoint in vns  v1  2000
+    verify traffic rate  tx_rate  rx_rate  a  e
+    verify traffic rate  tx_rate  rx_rate  e  a
     rest delete fabric switch  leaf0-a
-    ${result}=   rest verify forwarding vlan fabric tag members  leaf0-a
-    Should be True  $result} = None
+    rest verify endpoint in vns  v1  1000
     rest add switch  leaf0-a
     rest add dpid  leaf0-a  ${leaf0a_dpid}
     rest add fabric role  leaf0-a  leaf
@@ -45,13 +46,15 @@ With 2k mac entries , Remove the Leaf switch and Readd the leaf switch
     rest verify fabric switch role  ${leaf0a_dpid}  leaf
     rest verify fabric link
     rest verify forwarding vlan fabric tag members  leaf0-a
-    cli switch  debug ofad
+    sleep  50
+    verify traffic rate  tx_rate  rx_rate  a  e
+    verify traffic rate  tx_rate  rx_rate  e  a
+    rest verify endpoint in vns  v1  2000
     stop traffic  ${stream}
-    sleep  5
     rest delete tenant  t1               
      
 shutdown the switch and check the links are down in the switch
-	[Tags]  feature
+	[Tags]  feature  Manual  untested
 	rest add tenant  t1
 	rest add vns  t1  v1
 	rest add portgroup  p4 
@@ -91,29 +94,46 @@ shutdown the switch and check the links are down in the switch
      
 verify fabric interface cli 
 	[Tags]  feature
-	${result}=  rest show fabric interface switch  leaf0-a
-	Should be True  ${result}
+	${result}=  cli show fabric interface switch  leaf0-a
+	Should Not be Empty  ${result}
 	
 verify fabric lag cli
 	[Tags]  feature
-	${result}=  rest show fabric lag switch  leaf0-a
-	Should be True  ${result}
+	${result}=  cli show fabric lag switch  leaf0-a
+	Should Not be Empty  ${result}
 	
 verify fabric switch cli
 	[Tags]  feature
-	${result}=  rest show fabric switch  leaf0-a
-	Should be True  ${result}
+	${result}=  cli show fabric switch  leaf0-a
+	Should Not be Empty  ${result}
 	
 verify fabric lacp cli
 	[Tags]  feature
-	${result}=  rest show fabric lacp switch  leaf0-a
-	Should be True  ${result}
+	${result}=  cli show fabric lacp switch  leaf0-a
+	Should Not be Empty  ${result}
 	
 verify fabric link cli
 	[Tags]  feature
-	${result}=  rest show fabric link  
-	Should be True  ${result}
+	${result}=  cli show fabric link  
+	Should Not be Empty  ${result}
 
+verify fabric lag any_leaf
+	[Tags]  feature
+	${result}=  cli show fabric lag   any_leaf 
+	Should Not be Empty  ${result}
+	
+Test forwarding entry when the switch falls below 50% spine links
+	[Tags]  feature  Manual  untested
+
+Changes to existing fabric configuration
+	[Tags]  feature  Manual  untested
+
+When the controller disconnect from the switch , verify LLDP packets are indeed processed in the pswitch
+	[Tags]  feature  Manual  tested
+	bash delete controller  leaf0-a  c1
+	bash delete controller  leaf0-a  c2
+	bash show debug ofad
+	
 Tear down config and Topology
     delete fabric switch  
     rest delete portgroup  p4

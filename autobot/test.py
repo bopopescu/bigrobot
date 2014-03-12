@@ -444,35 +444,6 @@ class Test(object):
         else:
             return self.topology(*args, **kwargs)
 
-    def node_reconnect(self, node, **kwargs):
-        helpers.log("Node reconnect for '%s'" % node)
-
-        # Resolve 'master' or 'slave' to actual name (e.g., 'c1', 'c2'). But
-        # don't do it using REST since we've probably lost the connection.
-        if helpers.is_controller(node):
-            if node == 'master':
-                if self._current_controller_master:
-                    node_name = self._current_controller_master
-                else:
-                    helpers.environment_failure("Unable to resolve actual name"
-                                                " of master controller.")
-            elif node == 'slave':
-                if self._current_controller_slave:
-                    node_name = self._current_controller_slave
-                else:
-                    helpers.environment_failure("Unable to resolve actual name"
-                                                " of slave controller.")
-            else:
-                node_name = node
-
-            # node_name = self.controller(node, resolve_mastership=True).name()
-        else:
-            node_name = self.node(node).name()
-        helpers.log("Actual node name is '%s'" % node_name)
-        c = self.node_connect(node_name, **kwargs)
-        c.rest.request_session_cookie()
-        return self.node(node)
-
     def node_spawn(self, ip, node=None, user=None, password=None,
                    device_type='controller'):
         t = self
@@ -610,6 +581,35 @@ class Test(object):
                         % (node, n.platform(),
                            br_utils.end_of_output_marker()))
         return n
+
+    def node_reconnect(self, node, **kwargs):
+        helpers.log("Node reconnect for '%s'" % node)
+
+        # Resolve 'master' or 'slave' to actual name (e.g., 'c1', 'c2'). But
+        # don't do it using REST since we've probably lost the connection.
+        if helpers.is_controller(node):
+            if node == 'master':
+                if self._current_controller_master:
+                    node_name = self._current_controller_master
+                else:
+                    helpers.environment_failure("Unable to resolve actual name"
+                                                " of master controller.")
+            elif node == 'slave':
+                if self._current_controller_slave:
+                    node_name = self._current_controller_slave
+                else:
+                    helpers.environment_failure("Unable to resolve actual name"
+                                                " of slave controller.")
+            else:
+                node_name = node
+
+            # node_name = self.controller(node, resolve_mastership=True).name()
+        else:
+            node_name = self.node(node).name()
+        helpers.log("Actual node name is '%s'" % node_name)
+        c = self.node_connect(node_name, **kwargs)
+        c.rest.request_session_cookie()
+        return self.node(node)
 
     def initialize(self):
         """
