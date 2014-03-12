@@ -9,6 +9,7 @@ Test Teardown    T5 test teardown
 Force Tags       T5 
 Library          keywords/BsnCommon.py
 Library          keywords/T5.py
+Library          keywords/T5Platform.py
 Library	         keywords/SwitchLight.py
 Library	         keywords/Host.py
 Library		     keywords/Ixia.py
@@ -285,6 +286,7 @@ verify interface rx/tx broadcast packet stats different rack
     sleep  180
     rest verify vns rx stats  t1  v1  10000
     rest verify vns tx stats  t1  v1  10000
+    rest verify fabric interface tx stats  leaf1-a  ${leaf1a_ixia_intf}  10000
     rest delete tenant  t1
 	
 verify interface rx/tx multicast packets stats
@@ -310,6 +312,7 @@ verify interface rx/tx multicast packets stats
     sleep  180
     rest verify vns rx stats  t1  v1  10000
     rest verify vns tx stats  t1  v1  10000
+    rest verify fabric interface tx stats  leaf1-a  ${leaf1a_ixia_intf}  10000
     rest delete tenant  t1
 
 verify interface LLDP/control packet count different rack
@@ -335,6 +338,7 @@ verify interface LLDP/control packet count different rack
     sleep  180
     rest verify vns rx stats  t1  v1  10000
     rest verify vns tx stats  t1  v1  10000
+    rest verify fabric interface tx stats  leaf1-a  ${leaf1a_ixia_intf}  10000
     rest delete tenant  t1
 
 verify multiple vns counters different rack
@@ -411,7 +415,6 @@ verify multiple vns counters on 2 different tenant
     
 verify the single tenant stats 
 	[Tags]  feature
-	[Tags]  feature   
 	rest add tenant  t1
 	rest add vns  t1  v1
 	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
@@ -541,6 +544,46 @@ verify multiple tenant rates
     rest delete tenant  t1
     rest delete tenant  t2
        
+Master node controller reboot with multiple vns/interface stats
+	[Tags]  feature
+	rest add tenant  t1
+	rest add vns  t1  v1
+	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
+	rest add interface to vns  t1  v1  leaf1-a  ${leaf1a_ixia_intf}  100     
+	rest add vns  t1  v2
+	rest add interface to vns  t1  v2  leaf2-a  ${leaf2a_ixia_intf}  100
+	rest add interface to vns  t1  v2  leaf1-a  ${leaf1a_ixia_intf}  200  
+    ${stream}=             L3 add  no_arp=True  flow=a->c  src_mac=00:02:01:00:00:24  dst_mac=00:02:03:00:00:24  frame_rate=10  frame_cnt=10  frame_size=68  name=a_c_flow
+    ${stream1}=			   L3 add  no_arp=True  flow=c->a  src_mac=00:02:03:00:00:24  dst_mac=00:02:01:00:00:24  ethertype=8100  vlan_id=100  frame_rate=1000  frame_cnt=10000  frame_size=68  name=c_a_flow	
+    ${stream2}=             L3 add  no_arp=True  flow=e->c  src_mac=00:02:05:00:00:24  dst_mac=00:02:03:01:00:24  ethertype=8100  vlan_id=100  frame_rate=10  frame_cnt=10  frame_size=68  name=e_c_flow
+    ${stream3}=			   L3 add  no_arp=True  flow=c->e  src_mac=00:02:03:01:00:24  dst_mac=00:02:05:00:00:24  ethertype=8100  vlan_id=200  frame_rate=1000  frame_cnt=10000  frame_size=68  name=c_e_flow
+    start traffic
+    sleep  7  
+    stop traffic 
+    clear stats
+    rest clear fabric interface stats 
+    rest clear vns stats  v1
+    rest clear vns stats  v2
+    sleep  120
+    cli verify cluster master reboot
+    rest clear fabric interface stats 
+    rest clear vns stats  v1
+    rest clear vns stats  v2
+    rest verify tenant rx stats  t1   0
+    rest verify tenant tx stats  t1   0
+    rest verify vns rx stats  t1  v1  0
+    rest verify vns rx stats  t1  v2  0
+    start traffic  ${stream1}
+    start traffic  ${stream3}
+    sleep  180
+    rest verify tenant rx stats  t1  20000
+    rest verify tenant tx stats  t1  20000
+    rest verify vns rx stats  t1  v1  10000
+    rest verify vns tx stats  t1  v2  10000
+    rest verify fabric interface tx stats  leaf0-a  ${leaf0a_ixia_intf}  10000
+    rest verify fabric interface tx stats  leaf2-a  ${leaf2a_ixia_intf}  10000
+    rest delete tenant  t1 
+	
 * Keywords 
 T5 Functional Suite Setup
    base suite setup
