@@ -123,7 +123,7 @@ Test check list empty
     Should not be true   ${value}
 
 Test resource file
-    [Tags]           skipped
+    #[Tags]           skipped
     log              VALUE=${VALUE}
 
 Test pause execution (GUI)
@@ -137,7 +137,7 @@ Test pause execution (SHELL)
     pause2
 
 Test return false
-    [Tags]           skipped
+    #[Tags]           skipped
     return false
 
 Test empty string
