@@ -49,6 +49,7 @@ Add 1000 dynamic mac into the system and check forwarding and make sure aging al
     verify traffic rate  tx_rate  rx_rate  c  a
     stop traffic  ${stream}
     sleep  600
+    summary log  waiting 10 minutes for 1000 mac age
     rest verify endpoint in system  0
 	    
 Add 10000 dynamic mac into the system and check forwarding and make sure aging also works for 10000 mac

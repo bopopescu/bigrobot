@@ -1877,10 +1877,23 @@ class T5(object):
         else:
             helpers.log("Given tenant name does not match the config")
             
-    def cli_show_fabric_link(self):
-        ''' Function to show the CLI fabric link 
+    def rest_verify_membership_port_count(self, count):
+        ''' Function to verify the membership port count for each vns
+        Input:  provide how many port counts user is expecting in each VNS
+        Output: Function will go through each VNS and match the provided count (e.g , 1000 vns , 2 ports each)
         '''
         t = test.Test()
         c = t.controller('master')
-        url = 'api/v1/data/controller/applications/bvs/info/fabric?select=link'
+        count = int(count)
+        url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/vnses'
         c.rest.get(url)
+        data = c.rest.content()
+        for i in range(0,len(data)):
+            if int(data[i]["num-ports"]) == count:
+                helpers.log("Expected membership ports:%d are present in the each VNS" % count)
+                return True
+            else:
+                helpers.test_failure("Expected membership ports are not present in VNS :%s" % data[i]["name"])
+                return False
+
+        
