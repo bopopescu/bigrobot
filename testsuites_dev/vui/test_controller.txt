@@ -6,6 +6,7 @@ Test Setup      base test setup
 Test Teardown   base test teardown
 Force Tags      Vui
 Library         keywords/BsnCommon.py
+Library         keywords/Host.py
 Library         keywords/Controller.py
 Library         keywords_dev/vui/MyTest.py
 
@@ -104,4 +105,5 @@ Test controller cli ping
 
 Test bash file listing
     #[Tags]  skipped
-    bash ls    master  /home/admin
+    ${result}=    bash ls    master  /home/admin
+    log           result=${result}
