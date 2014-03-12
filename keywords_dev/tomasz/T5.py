@@ -1316,13 +1316,47 @@ class T5(object):
         c = t.controller('master')
         try:
             c.config("copy %s %s" % (_from, _to))
-            assert "Error" not in c.cli_content()
+            if "Error" in c.cli_content():
+                helpers.test_failure(c.cli_content())
         except:
-            helpers.test_log(c.cli_content())
+            helpers.test_failure(c.cli_content())
             return False
         else:
             return True
 
+
+    def cli_copy_scp(self, src, dst, passwd='bsn'):
+        ''' Generic function to copy via CLI, using SCP
+        Input: From, To, Password for scp connection
+        Output: True if successful, False otherwise
+        '''
+        if not (("scp://" in src) or ("scp://" in dst)):
+            helpers.test_failure("No scp location in source nor destination")
+            return False
+        helpers.test_log("Running command:\ncopy %s %s" % (src, dst))
+        t = test.Test()
+        c = t.controller('master')
+        try:
+            c.send("copy %s %s" % (src, dst))
+            c.expect(r'[\r\n].+password: |[\r\n].+(yes/no)?')
+            content = c.cli_content()
+            helpers.log("*****Output is :\n%s" % content)
+            if re.match(r'.*password:.* ', content):
+                helpers.log("INFO:  need to provide passwd " )
+                c.send(passwd)
+            elif re.match(r'.+(yes/no)?', content):
+                helpers.log("INFO:  need to send yes, then provide passwd " )
+                c.send('yes')
+                c.expect(r'Password:')
+                c.send(passwd)
+
+            c.expect(timeout=180)
+        except:
+            helpers.log('scp failed')
+            return False
+        else:
+            helpers.log('scp completed successfully')
+        return True
 
 
     def cli_copy_scp_to_running_config(self, source):
