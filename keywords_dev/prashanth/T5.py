@@ -1896,14 +1896,14 @@ class T5(object):
                 helpers.test_failure("Expected membership ports are not present in VNS :%s" % data[i]["name"])
                 return False
 
-    def cli_show_interface(self, intf=None):
+    def cli_show_interface(self, switch=None, intf=None):
         ''' Function to show interface using controller CLI
         Input: interface name , if not given default = None
         Output: Execute show inteface from CLI and verify the output is not empty.
         '''
         t = test.Test()
         c = t.controller('master')
-        c.cli("show interface %s" % intf)
+        c.cli("show interface %s %s" % switch, intf)
         result = c.cli_content()
         return result
     

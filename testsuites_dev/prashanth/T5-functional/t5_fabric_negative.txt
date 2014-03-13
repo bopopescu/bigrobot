@@ -97,6 +97,8 @@ verify interface cli
 	[Tags]  feature
 	${result}=  cli show interface  
 	Should Not be Empty  ${result}
+	${result}=  cli show interface  leaf0-a  ethernet50  
+	Should Not be Empty  ${result}
 	
 verify lag cli
 	[Tags]  feature
@@ -131,6 +133,8 @@ verify lag any_leaf cli
 	
 Test forwarding entry when the switch falls below 50% spine links
 	[Tags]  feature  Manual  untested
+	verify fabric link
+	rest delete fabric switch
 
 Changes to existing fabric configuration
 	[Tags]  feature  Manual  untested
