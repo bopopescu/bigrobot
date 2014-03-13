@@ -754,13 +754,15 @@ class T5_longevity(object):
             string = string_c
             helpers.log(" line is - %s" % temp)
             newline = temp[index].lstrip()
+            if 'All Available commands:' in newline:
+                break
             keys = newline.split(' ')
             key = keys.pop(0)
             helpers.log("*** key is - %s" % key)
             if re.match(r'For', newline) or "Commands:" in newline:
                 helpers.log("Ignoring line - %s" % newline)
                 continue
-            elif "exit" in key  or "echo" in key or "help" in key or "history" in key or "logout" in key or "ping" in key or "show" in key  or "watch" in key:
+            elif "exit" in key  or "echo" in key or "help" in key or "history" in key or "logout" in key or "ping" in key or "watch" in key:
                 helpers.log("Ignore line %s" % newline)
                 continue
             elif re.match(r'^<.+', newline) and not re.match(r'^<cr>', newline):
@@ -774,6 +776,8 @@ class T5_longevity(object):
                     return string
                 else:
                     continue
+            # elif "All" in key:
+            #    break
             else:
                 # index = index + 1
                 key = key.lstrip()
