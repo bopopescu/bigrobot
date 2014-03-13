@@ -1896,4 +1896,58 @@ class T5(object):
                 helpers.test_failure("Expected membership ports are not present in VNS :%s" % data[i]["name"])
                 return False
 
-        
+    def cli_show_interface(self, intf=None):
+        ''' Function to show interface using controller CLI
+        Input: interface name , if not given default = None
+        Output: Execute show inteface from CLI and verify the output is not empty.
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        c.cli("show interface %s" % intf)
+        result = c.cli_content()
+        return result
+    
+    def cli_show_switch(self, switch=None):
+        ''' Function to show switch using controller CLI
+        Input: switch name , if not given it will be none
+        Output: Execute show switch from CLI and verify the output is not empty
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        c.cli("show switch %s" % switch)
+        result = c.cli_content()
+        return result
+    
+    def cli_show_lag(self, switch=None, lag_name=None):
+        ''' Function to show lag using controller CLI
+        Input: switch and type of lag , Default= none
+        Output: Execute show lag from CLI and verify the output is not empty
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        c.cli("show lag %s %s" % switch, lag_name)
+        result = c.cli_content()
+        return result
+    
+    def cli_show_lacp(self, switch=None):
+        ''' Function to show lacp using controller CLI
+        Input: Switch , Default=None
+        Output: Execute show lacp from CLI and verify the output is not empty
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        c.cli("show lacp %s" % switch)
+        result = c.cli_content()
+        return result
+    
+    def cli_show_link(self):
+        ''' Function to show link using controller CLI
+        Input: None
+        Output: Execute show link from CLI and verify the output is not empty
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        c.cli("show link")
+        result = c.cli_content()
+        return result
+   

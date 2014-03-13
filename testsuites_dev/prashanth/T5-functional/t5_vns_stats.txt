@@ -23,7 +23,7 @@ add Single Leaf Three Rack setup
    [Tags]  feature        
    rest verify fabric switch all
    rest verify fabric link
-	
+
 Verify single VNS rx/tx stats between rack
 	[Tags]  feature   
 	rest add tenant  t1
