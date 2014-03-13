@@ -2,7 +2,7 @@
 Documentation  		Testing File Management - copying RC to other locations
 Suite Setup  		Base Suite Setup
 Suite Teardown   	Base Suite Teardown
-Test Setup   		Base Test Setup
+Test Setup   		Setup
 Test Teardown  		Teardown
 Force Tags   		Platform  Sanity  File Management
 Library  			keywords/BsnCommon.py
@@ -11,143 +11,273 @@ Library        		String
 
 
 *** Variables ***
-${file}				config-file
-${config name}		config-config
-${config}			config://config-config
+${scp}				scp://recovery@10.197.128.37:config-scp
+${scp double}		scp://scp://recovery@10.197.128.37:config-scp
 ${scp location}		recovery@10.197.128.37:config-scp
+${file}				config-file
+${config}			config://config-config
+${config double}	config://config://config-config
+${config name}		config-config
+${image}			image://image-file
+${image double}		image://image://image-file
 
 
 *** Test Cases ***
 T1.1 Copy running config to file
-	${status} =  Cli Copy  running-config  ${file}
-	Should Be True  ${status}
-	${status} =  Cli Compare Running Config with File Line By Line  ${file}
-	Should Be True  ${status}
+	Cli Copy  running-config  ${file}
+	Compare RC with File Line By Line  ${file}
+	Compare  running-config  ${file}
 
 T1.2 Copy running config to config://
-	${status} =  Cli Copy  running-config  ${config}
-	Should Be True  ${status}
-	${status} =  Cli Compare Running Config with Config Line By Line  ${config name}
-	Should Be True  ${status}
+	Cli Copy  running-config  ${config}
+	Compare RC with Config Line By Line  ${config}
+	Compare  running-config  ${config}
 
 T1.3 Copy running config to scp://
-	${status} =  Cli Copy Running Config to Scp  ${scp location}
-	Should Be True  ${status}
-	${status} =  Cli Compare Running Config with Scp  ${scp location}
-	Should Be True  ${status}
-	${status} =  Cli Compare Scp with Running Config  ${scp location}
-	Should Be True  ${status}
-	Bash Clear Known Hosts
+	Cli Copy Scp  running-config  ${scp}
+	Compare Scp  running-config  ${scp}
 
 
 T2.1 Copy running config to file, change RC, verify configs different
-	${status} =  Cli Copy  running-config  ${file}
-	Should Be True  ${status}
-	${tenant}  Generate Random Name  Tenant  5
-	Rest Add Tenant  ${tenant}
-	${status} =  Cli Compare Running Config with File Line By Line  ${file}
-	Should Not Be True  ${status}
+	Cli Copy  running-config  ${file}
+	Modify Running Config
+	Compare RC with File Line By Line Negative  ${file}
+	Compare Negative  running-config  ${file}
 
 T2.2 Copy running config to config://, change RC, verify configs different
-	${status} =  Cli Copy  running-config  ${config}
-	Should Be True  ${status}
-	${tenant}  Generate Random Name  Tenant  5
-	Rest Add Tenant  ${tenant}
-	${status} =  Cli Compare Running Config with Config Line By Line  ${config name}
-	Should Not Be True  ${status}
+	Cli Copy  running-config  ${config}
+	Modify Running Config
+	Compare RC with Config Line By Line Negative  ${config}
+	Compare Negative  running-config  ${config}
 
 T2.3 Copy running config to scp://, change RC, verify configs different
-	${status} =  Cli Copy Running Config to Scp  ${scp location}
-	Should Be True  ${status}
-	${tenant}  Generate Random Name  Tenant  5
-	Rest Add Tenant  ${tenant}
-	${status} =  Cli Compare Running Config with Scp  ${scp location}
-	Should Not Be True  ${status}
-	${status} =  Cli Compare Scp with Running Config  ${scp location}
-	Should Not Be True  ${status}
-	Bash Clear Known Hosts
+	Cli Copy Scp  running-config  ${scp}
+	Modify Running Config
+	Compare Scp Negative  running-config  ${scp}
 
 
 T3.1 Delete file with RC
-	${status} =  Cli Copy  running-config  ${file}
-	Should Be True  ${status}
+	Cli Copy  running-config  ${file}
 	${status} =  Cli Delete Running Config File  ${file}
 	Should Be True  ${status}
-	${status} =  Cli Compare Running Config with File Line By Line  ${file}
-	Should Not Be True  ${status}
+	Compare RC with Config Line By Line Negative  ${file}
 
 T3.2 Delete config:// with RC
-	${status} =  Cli Copy  running-config  ${config}
-	Should Be True  ${status}
+	Cli Copy  running-config  ${config}
 	${status} =  Cli Delete Running Config Config File  ${config name}
 	Should Be True  ${status}
-	${status} =  Cli Compare Running Config with Config Line By Line  ${config name}
-	Should Not Be True  ${status}
+	Compare RC with Config Line By Line Negative  ${config}
 
 
 T4.1 Copy running config to file, change RC, restore, verify no change in RC
-	${status} =  Cli Copy  running-config  ${file}
-	Should Be True  ${status}
+	Cli Copy  running-config  ${file}
 	${tenant}  Generate Random Name  Tenant  5
 	Rest Add Tenant  ${tenant}
-	${status} =  Cli Copy  running-config  backup
-	Should Be True  ${status}
-	${status} =  Cli Copy  ${file}  running-config
-	Should Be True  ${status}
+	Cli Copy  running-config  backup
+	Cli Copy  ${file}  running-config
 	${status} =  Cli Compare Running Config with File Line By Line  backup
 	Should Be True  ${status}
+	Compare  running-config  backup
 
 T4.2 Copy running config to config://, change RC, restore, verify old RC restored
-	${status} =  Cli Copy  running-config  ${config}
-	Should Be True  ${status}
-	${tenant}  Generate Random Name  Tenant  5
-	Rest Add Tenant  ${tenant}
-	${status} =  Cli Copy  ${config}  running-config
-	Should Be True  ${status}
+	Cli Copy  running-config  ${config}
+	Modify Running Config
+	Cli Copy  ${config}  running-config
+	Compare RC with Config Line By Line  ${config}
 	${status} =  Cli Compare Running Config with Config Line By Line  ${config name}
 	Should Be True  ${status}
+	Compare  running-config  ${config}
 
 T4.3 Copy running config to scp://, change RC, restore, verify no change in RC
-	${status} =  Cli Copy Running Config to Scp  ${scp location}
-	Should Be True  ${status}
-	${tenant}  Generate Random Name  Tenant  5
-	Rest Add Tenant  ${tenant}
-	${status} =  Cli Copy  running-config  backup
-	Should Be True  ${status}
-	${status} =  Cli Copy Scp to Running Config  ${scp location}
-	Should Be True  ${status}
+	Cli Copy Scp  running-config  ${scp}
+	Modify Running Config
+	Cli Copy  running-config  backup
+	Cli Copy Scp  ${scp}  running-config
 	${status} =  Cli Compare Running Config with File Line By Line  backup
 	Should Be True  ${status}
+	${status} =  Cli Compare Scp  running-config  ${scp}
+	Should Not Be True  ${status}
+	${status} =  Cli Compare Scp  ${scp}  running-config
+	Should Not Be True  ${status}
+	${status} =  Cli Compare  running-config  backup
+	Should Be True  ${status}
+	${status} =  Cli Compare  backup  running-config
+	Should Be True  ${status}
+
 
 T5.1 Copy running config to file, copy RC from file to other file, verify
+	Cli Copy  running-config  ${file}
+	Cli Copy  ${file}  file-new
+	${status} =  Cli Compare Running Config with File Line By Line  file-new
+	Should Be True  ${status}
+	${status} =  Cli Compare  running-config  file-new
+	Should Be True  ${status}
+	${status} =  Cli Compare  file-new  running-config
+	Should Be True  ${status}
+
 T5.2 Copy running config to file, copy RC from file to scp://, verify
+	Cli Copy  running-config  ${file}
+	Cli Copy Scp  ${file}  ${scp}
+	${status} =  Cli Compare Scp  running-config  ${scp}
+	Should Be True  ${status}
+	${status} =  Cli Compare Scp  ${scp}  running-config
+	Should Be True  ${status}
+
 T5.3 Copy running config to config://, copy RC from config:// to file, verify
+	Cli Copy  running-config  ${file}
+	Run Keyword and Expect Error  *Error: Invalid Use: file not config file*  Cli Copy  ${file}  config://config-new
+
 T5.4 Copy running config to config://, copy RC from config:// to scp://, verify
+	Cli Copy  running-config  ${config}
+	Cli Copy Scp  ${config}  ${scp}
+	Compare Scp  ${config}  ${scp}
+	Compare Scp  running-config  ${scp}
+
 T5.5 Copy running config to scp://, copy RC from scp:// to file, verify
+	Cli Copy Scp  running-config  ${scp}
+	Cli Copy Scp  ${scp}  ${file}
+	Compare  running-config  ${file}
+
 T5.6 (?) Copy running config to scp://, copy RC from scp:// to image, verify (negative test case)
+	Cli Copy Scp  running-config  ${scp}
+	Cli Copy Scp  ${scp}  ${image}
 
-T6.1 Verify correct processing of special characters in file name
-T6.2 Verify correct processing of special characters in config:// name
+T5.7 Copy running config to config://, copy config:// to scp://, copy from scp:// to file, copy file to config://, copy config:// to RC
+	Cli Copy  running-config  ${config}
+	Modify Running Config
+	Cli Copy  running-config  backup
+	Cli Copy Scp  ${config}  ${scp}
+	Cli Copy Scp  ${scp}  ${file}
+	Cli Copy  ${file}  config://config-new
+	Cli Copy  config://config-new  running-config
+	Compare  ${config}  running-config
+	Compare Negative  backup  running-config
+
+T6.1.1 Verify filename containing ~
+	Validate Filename  test~test
+T6.1.2 Verify filename containing !
+	Validate Filename  test!test
+T6.1.3 Verify filename containing -
+	Validate Filename  test-test
+T6.1.4 Verify filename containing _
+	Validate Filename  test_test
+
+T6.2.1 Verify config:// name containing ~
+	Validate Filename  config://test~test
+T6.2.2 Verify config:// name containing !
+	Validate Filename  config://test!test
+T6.2.3 Verify config:// name containing -
+	Validate Filename  config://test-test
+T6.2.4 Verify config:// name containing _
+	Validate Filename  config://test_test
+
 T6.3 Verify correct processing of special characters in scp:// name (?)
-T6.4 Verify empty file name is not allowed
-T6.5 Verify empty config:// name is not allowed
-T6.6 Verify empty scp:// name is not allowed
+	Cli Copy Scp  running-config  scp://recovery@10.197.128.37:test#test
+	Compare Scp  running-config  scp://recovery@10.197.128.37:test#test
+	Cli Copy Scp  scp://recovery@10.197.128.37:test#test   running-config
 
+T6.4 Verify empty file name is not allowed
+	Run Keyword and Expect Error  *Error: Unexpected end of command*  Cli Copy  running-config  ${EMPTY}
+
+T6.5 Verify empty config:// name is not allowed
+	Run Keyword and Expect Error  *Error: Invalid Use: copy: config:// a requires filename after slashes*  Cli Copy  running-config  config://
+
+T6.6 Verify empty scp:// name is not allowed
+	Run Keyword and Expect Error  *Error: Invalid Use: No scp path after scp://*  Cli Copy Scp  running-config  scp://
+
+T6.7 Verify scp://scp:// not correct in copy function
+	Run Keyword and Expect Error  *ssh: Could not resolve hostname scp: Name or service not known*  Cli Copy Scp  running-config  ${scp double}
+	Run Keyword and Expect Error  *ssh: Could not resolve hostname scp: Name or service not known*  Cli Copy Scp  ${scp double}  running-config
+
+T6.8 Verify config-double not correct in copy and compare
+	Run Keyword and Expect Error  *Error: Invalid Use: %s must not include / *  Cli Copy  running-config  ${config double}
+	Run Keyword and Expect Error  *Error: Invalid Use: %s must not include / *  Cli Copy  ${config double}  running-config
+
+#T6.9 Verify image-double not correct in copy and compare
+
+### and check verifications for empty file names + error messages
 T7.1 Verify comparison function between running-config and file
-T7.1 Verify comparison function between running-config and config://
-T7.1 Verify comparison function between running-config and scp://
-T7.1 Verify comparison function between file and config://
-T7.1 Verify comparison function between file and running-config
-T7.1 Verify comparison function between file and scp://
-T7.1 Verify comparison function between file and file
-T7.1 Verify comparison function between scp:// and file
-T7.1 Verify comparison function between scp:// and image://
-T7.1 Verify comparison function between scp:// and config://
-T7.1 Verify comparison function between scp:// and running-confing
-T7.1 Verify comparison function between config:// and file
-T7.1 Verify comparison function between config:// and config://
-T7.1 Verify comparison function between config:// and scp://
-T7.1 Verify comparison function between config:// and running-config
+	Cli Copy  running-config  ${file}
+	Compare  running-config  ${file}
+	Modify Running Config
+	Compare Negative  running-config  ${file}
+
+T7.2 Verify comparison function between running-config and config://
+	Cli Copy  running-config  ${config}
+	Compare  running-config  ${config}
+	Modify Running Config
+	Compare Negative  running-config  ${config}
+
+T7.3 Verify comparison function between running-config and scp://
+	Cli Copy Scp  running-config  ${scp}
+	Compare Scp  running-config  ${scp}
+	Modify Running Config
+	Compare Scp Negative  running-config  ${scp}
+
+T7.4 Verify comparison function between file and config://
+	Cli Copy  running-config  ${file}
+	Cli Copy  running-config  ${config}
+	Compare  ${file}  ${config}
+	Modify Running Config
+	Cli Copy  running-config  file-new
+	Cli Copy  running-config  config://config-new
+	Compare Negative  file-new  ${config}
+	Compare Negative  ${file}  config://config-new
+
+T7.5 Verify comparison function between file and running-config
+	Cli Copy  running-config  ${file}
+	Compare  ${file}  running-config
+	Modify Running Config
+	Compare Negative  ${file}  running-config
+
+T7.6 Verify comparison function between file and scp://
+	Cli Copy  running-config  ${file}
+	Cli Copy Scp  running-config  ${scp}
+	Compare Scp  ${file}  ${scp}
+	Modify Running Config
+	Cli Copy running-config  file-new
+	Cli Copy Scp running-config  scp://recovery@10.197.128.37:config-scp-new
+	Compare Scp Negative  file-new  ${scp}
+	Compare Scp Negative  ${file}  scp://recovery@10.197.128.37:config-scp-new
+
+T7.7 Verify comparison function between file and file
+	Cli Copy  running-config  file1
+	Cli Copy  running-config  file2
+	Compare  file1  file2
+	Modify Running Config
+	Cli Copy  running-config  ${file}
+	Compare Negative  file1  ${file}
+	Compare Negative  file2  ${file}
+
+#T7.8 Verify comparison function between scp:// and file
+
+#???T7.9 Verify comparison function between scp:// and image://
+
+T7.10 Verify comparison function between scp:// and config://
+	Cli Copy  running-config  ${config}
+	Cli Copy Scp  running-config  ${scp}
+	Compare Scp  ${config}  ${scp}
+	Modify Running Config
+	Cli Copy running-config  config://config-new
+	Cli Copy Scp running-config  scp://recovery@10.197.128.37:config-scp-new
+	Compare Scp Negative  config://config-new  ${scp}
+	Compare Scp Negative  config://config-new  scp://recovery@10.197.128.37:config-scp-new
+
+#T7.11 Verify comparison function between scp:// and running-confing
+
+#T7.12 Verify comparison function between config:// and file
+T7.13 Verify comparison function between config:// and config://
+	Cli Copy  running-config  config://config-new1
+	Cli Copy  running-config  config://config-new2
+	Compare  config://config-new1  config://config-new2
+	Modify Running Config
+	Cli Copy  running-config  ${config}
+	Compare Negative  config://config-new1  ${config}
+	Compare Negative  config://config-new2  ${config}
+#T7.14 Verify comparison function between config:// and scp://
+#T7.15 Verify comparison function between config:// and running-config
+
+
 
 
 
@@ -161,7 +291,71 @@ Generate Random Name
     ${name}  Catenate  SEPARATOR=  ${prefix}  ${regex}
     [Return]  ${name}
 
+Setup
+	Base Test Setup
+	Modify Running Config
+
+Modify Running Config
+	${tenant}  Generate Random Name  Tenant  5
+	Rest Add Tenant  ${tenant}
 
 Teardown
 	Bash Clear Known Hosts
+	Cli Copy  config://startup-config  running-config
 	Base Test Teardown
+
+Compare
+	[Arguments]  ${first}  ${second}
+	${status} =  Cli Compare  ${first}  ${second}
+	Should Be True  ${status}
+	${status} =  Cli Compare  ${second}  ${first}
+	Should Be True  ${status}
+
+Compare Negative
+	[Arguments]  ${first}  ${second}
+	${status} =  Cli Compare  ${first}  ${second}
+	Should Not Be True  ${status}
+	${status} =  Cli Compare  ${second}  ${first}
+	Should Not Be True  ${status}
+
+Compare Scp
+	[Arguments]  ${first}  ${second}
+	${status} =  Cli Compare Scp  ${first}  ${second}
+	Should Be True  ${status}
+	${status} =  Cli Compare Scp  ${second}  ${first}
+	Should Be True  ${status}
+
+Compare Scp Negative
+	[Arguments]  ${first}  ${second}
+	${status} =  Cli Compare Scp  ${first}  ${second}
+	Should Not Be True  ${status}
+	${status} =  Cli Compare Scp  ${second}  ${first}
+	Should Not Be True  ${status}
+
+Compare RC with File Line By Line
+	[Arguments]  ${file}
+	${status} =  Cli Compare Running Config with File Line By Line  ${file}
+	Should Be True  ${status}
+
+Compare RC with File Line By Line Negative
+	[Arguments]  ${file}
+	${status} =  Cli Compare Running Config with File Line By Line  ${file}
+	Should Not Be True  ${status}
+
+Compare RC with Config Line By Line
+	[Arguments]  ${file}
+	${status} =  Cli Compare Running Config with Config Line By Line  ${file}
+	Should Be True  ${status}
+
+Compare RC with Config Line By Line Negative
+	[Arguments]  ${file}
+	${status} =  Cli Compare Running Config with Config Line By Line  ${file}
+	Should Not Be True  ${status}
+
+Validate Filename
+	[Arguments]  ${file}
+	Cli Copy  running-config  ${file}
+	Compare  running-config  ${file}
+	Cli Copy  ${file}  running-config
+	Cli Delete  ${file}
+	#Run Keyword and Expect Error  Error: Invalid Use*  Cli Delete  ${file}
