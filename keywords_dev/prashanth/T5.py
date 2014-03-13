@@ -1950,4 +1950,26 @@ class T5(object):
         c.cli("show link")
         result = c.cli_content()
         return result
+    
+    def rest_verify_stats_interval(self, intf_value=60, vns_value=600):
+        ''' Function to configure stats interval value for interface and vns
+        Input: interface interval value and vns interval value , Default = None 
+        Output: Set the configured number and verify the interval setting
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        intf_value = int(intf_value)
+        vns_value = int(vns_value)
+        url = '/api/v1/data/controller/applications/bvs/config-stats'
+        c.rest.patch(url, {"interface-stats-interval": intf_value})
+        url1 = '/api/v1/data/controller/applications/bvs/config-stats'
+        c.rest.patch(url1, {"vns-stats-interval": vns_value})
+        c.rest.get(url)
+        data = c.rest.content()
+        if int(data["interface-stats-interval"]) == intf_value and int(data["vns-stats-interval"]) == vns_value:
+            helpers.log("Interval value provided is correct")
+            return True
+        else:
+            helpers.test_failure("Interval value does not match Actual:%d , Expected:%d" % intf_value, int(data["interface-stats-interval"]))
+            return False    
    
