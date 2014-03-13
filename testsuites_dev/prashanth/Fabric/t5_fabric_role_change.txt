@@ -1,0 +1,66 @@
+== T5 Fabric Role Verification Test ==
+
+
+* Setting 
+
+Documentation  T5 Fabric Role Change Test suite
+Suite Setup  base suite setup
+Suite Teardown  base suite teardown
+Test Setup  base test setup
+Test Teardown  base test teardown
+Force Tags  T5 Sanity
+Library  keywords/BsnCommon.py
+Library  keywords/T5.py
+Library  keywords/T5Fabric.py
+Library  keywords/Mininet.py
+Resource  testsuites/T5/t5_dualleaf_three_rack_physical_resource.txt
+Resource  testsuites/T5/t5_physical_variables.txt
+
+
+* Test Case   
+
+add Three Rack Dual Leaf Topology
+	[Tags]  feature
+   add fabric switch
+   sleep  5
+   rest verify fabric switch all
+
+Verify the Fabric Role Spine0
+	[Tags]  feature
+   sleep  5 
+   verify fabric switch role  ${spine0_dpid}  spine  
+
+delete/add the Fabric role spine0
+	[Tags]  feature 
+  REST delete fabric role  spine0
+  sleep  3
+  verify fabric switch role  ${spine0_dpid}  virtual
+  rest verify fabric link
+  REST add fabric role  spine0  spine   
+  sleep  5
+  verify fabric switch role  ${spine0_dpid}  spine 
+  rest verify fabric link
+
+delete/add Fabric role leaf in dual leaf setup
+	[Tags]  feature
+   rest delete leaf group  leaf0-a  
+   REST delete fabric role  leaf0-a  
+   sleep  5 
+   verify fabric switch role  ${leaf0a_dpid}  virtual 
+   rest verify fabric link   
+   REST add fabric role  leaf0-a  leaf
+   REST add leaf group  leaf0-a  rack0   
+   sleep  5
+   verify fabric switch role  ${leaf0a_dpid}  leaf
+   rest verify fabric link
+   
+Tear down the topology
+   delete fabric switch
+
+* Keywords   
+
+verify fabric switch role  [Arguments]  ${dpid}  ${role}
+  REST verify fabric switch role  ${dpid}  ${role}
+
+ 
+

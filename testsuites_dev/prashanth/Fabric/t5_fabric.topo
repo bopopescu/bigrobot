@@ -8,6 +8,8 @@
 c1:
   ip: 10.192.99.105
   
+c2:
+  ip: 10.192.99.106
 
 s1:
   ip: 10.195.0.33
@@ -61,7 +63,7 @@ h3:
   ip: 10.195.0.101
   user: root
   password: bsn
-h5:
+h4:
   ip: 10.195.0.102
   user: root
   password: bsn
