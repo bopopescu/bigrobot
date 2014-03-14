@@ -68,7 +68,7 @@ Setup Tenant and VNS
 
 T1 cli walk
 	walk cli command 
-	[Tags] 	sanity  
+	[Tags] 	sanity  run  
 
 Test upgrade
 	single node upgrade
