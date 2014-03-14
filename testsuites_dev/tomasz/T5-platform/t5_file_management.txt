@@ -14,6 +14,7 @@ Library        		String
 ${scp}				scp://recovery@10.197.128.37:config-scp
 ${scp double}		scp://scp://recovery@10.197.128.37:config-scp
 ${scp location}		recovery@10.197.128.37:config-scp
+${scp inexistent}   scp://recovery@10.197.128.37:inexistent
 ${file}				config-file
 ${config}			config://config-config
 ${config double}	config://config://config-config
@@ -172,28 +173,43 @@ T6.2.4 Verify config:// name containing _
 	Validate Filename  config://test_test
 
 T6.3 Verify correct processing of special characters in scp:// name (?)
+	Cli Reconnect
 	Cli Copy Scp  running-config  scp://recovery@10.197.128.37:test#test
+	Cli Reconnect
 	Compare Scp  running-config  scp://recovery@10.197.128.37:test#test
+	Cli Reconnect
 	Cli Copy Scp  scp://recovery@10.197.128.37:test#test   running-config
 
 T6.4 Verify empty file name is not allowed
 	Run Keyword and Expect Error  *Error: Unexpected end of command*  Cli Copy  running-config  ${EMPTY}
 
 T6.5 Verify empty config:// name is not allowed
-	Run Keyword and Expect Error  *Error: Invalid Use: copy: config:// a requires filename after slashes*  Cli Copy  running-config  config://
+	Run Keyword and Expect Error  *Error: Invalid Use: copy: config:// requires a filename after slashes*  Cli Copy  running-config  config://
 
 T6.6 Verify empty scp:// name is not allowed
 	Run Keyword and Expect Error  *Error: Invalid Use: No scp path after scp://*  Cli Copy Scp  running-config  scp://
 
 T6.7 Verify scp://scp:// not correct in copy function
+	Cli Reconnect
 	Run Keyword and Expect Error  *ssh: Could not resolve hostname scp: Name or service not known*  Cli Copy Scp  running-config  ${scp double}
+	Cli Reconnect
 	Run Keyword and Expect Error  *ssh: Could not resolve hostname scp: Name or service not known*  Cli Copy Scp  ${scp double}  running-config
 
-T6.8 Verify config-double not correct in copy and compare
-	Run Keyword and Expect Error  *Error: Invalid Use: %s must not include / *  Cli Copy  running-config  ${config double}
-	Run Keyword and Expect Error  *Error: Invalid Use: %s must not include / *  Cli Copy  ${config double}  running-config
+T6.8 Verify scp://scp:// not correct in compare function
+	Cli Reconnect
+	Run Keyword and Expect Error  *ssh: Could not resolve hostname scp: Name or service not known*  Cli Compare Scp  running-config  ${scp double}
+	Cli Reconnect
+	Run Keyword and Expect Error  *ssh: Could not resolve hostname scp: Name or service not known*  Cli Compare Scp  ${scp double}  running-config
 
-#T6.9 Verify image-double not correct in copy and compare
+T6.9 Verify config://config:// not correct in copy function
+	Run Keyword and Expect Error  *Error: Invalid Use: * must not include / *  Cli Copy  running-config  ${config double}
+	Run Keyword and Expect Error  *Error: Invalid Use: * must not include / *  Cli Copy  ${config double}  running-config
+
+T6.10 Verify config://config:// not correct in compare function
+	Run Keyword and Expect Error  *Error: Invalid Use: * must not include / *  Cli Compare  running-config  ${config double}
+	Run Keyword and Expect Error  *Error: Invalid Use: * must not include / *  Cli Compare  ${config double}  running-config
+
+#T6.11 Verify image-double not correct in copy and compare
 
 ### and check verifications for empty file names + error messages
 T7.1 Verify comparison function between running-config and file
@@ -241,6 +257,7 @@ T7.6 Verify comparison function between file and scp://
 	Compare Scp Negative  ${file}  scp://recovery@10.197.128.37:config-scp-new
 
 T7.7 Verify comparison function between file and file
+	Cli Reconnect
 	Cli Copy  running-config  file1
 	Cli Copy  running-config  file2
 	Compare  file1  file2
@@ -249,11 +266,8 @@ T7.7 Verify comparison function between file and file
 	Compare Negative  file1  ${file}
 	Compare Negative  file2  ${file}
 
-#T7.8 Verify comparison function between scp:// and file
 
-#???T7.9 Verify comparison function between scp:// and image://
-
-T7.10 Verify comparison function between scp:// and config://
+T7.8 Verify comparison function between scp:// and config://
 	Cli Copy  running-config  ${config}
 	Cli Copy Scp  running-config  ${scp}
 	Compare Scp  ${config}  ${scp}
@@ -263,10 +277,8 @@ T7.10 Verify comparison function between scp:// and config://
 	Compare Scp Negative  config://config-new  ${scp}
 	Compare Scp Negative  config://config-new  scp://recovery@10.197.128.37:config-scp-new
 
-#T7.11 Verify comparison function between scp:// and running-confing
-
-#T7.12 Verify comparison function between config:// and file
-T7.13 Verify comparison function between config:// and config://
+T7.9 Verify comparison function between config:// and config://
+	Cli Reconnect
 	Cli Copy  running-config  config://config-new1
 	Cli Copy  running-config  config://config-new2
 	Compare  config://config-new1  config://config-new2
@@ -274,14 +286,116 @@ T7.13 Verify comparison function between config:// and config://
 	Cli Copy  running-config  ${config}
 	Compare Negative  config://config-new1  ${config}
 	Compare Negative  config://config-new2  ${config}
-#T7.14 Verify comparison function between config:// and scp://
-#T7.15 Verify comparison function between config:// and running-config
+
+T7.10 Verify comparison function between running-config and inexistent file
+	Run Keyword and Expect Error  *Error: Invalid Use: inexistent does not exist*
+	...  Cli Compare  running-config  inexistent
+	Run Keyword and Expect Error  *Error: Invalid Use: inexistent does not exist*
+	...  Cli Compare  inexistent  running-config
+
+T7.11 Verify comparison function between running-config and inexistent config://file
+	Run Keyword and Expect Error  *Error: Invalid Use: config://inexistent does not exist*
+	...  Cli Compare  running-config  config://inexistent
+	Run Keyword and Expect Error  *Error: Invalid Use: config://inexistent does not exist*
+	...  Cli Compare  config://inexistent  running-config
+
+T7.12 Verify comparison function between running-config and inexistent scp://file
+	Manual Failed
+	Run Keyword and Expect Error  *Error: Invalid Use: scp://inexistent does not exist*
+	...  Cli Compare Scp  running-config  ${scp inexistent}
+	Run Keyword and Expect Error  *Error: Invalid Use: scp://inexistent does not exist*
+	...  Cli Compare Scp  ${scp inexistent}  running-config
+
+T7.13 Verify comparison function between file and inexistent config://file
+	Cli Copy  running-config  ${file}
+	Run Keyword and Expect Error  *Error: Invalid Use: config://inexistent does not exist*
+	...  Cli Compare  ${file}  config://inexistent
+	Run Keyword and Expect Error  *Error: Invalid Use: config://inexistent does not exist*
+	...  Cli Compare  config://inexistent  ${file}
+
+T7.14 Verify comparison function between file and inexistent scp://
+	Manual Failed
+	Cli Copy  running-config  ${file}
+	Run Keyword and Expect Error  *  Cli Compare Scp  ${file}  ${scp inexistent}
+	Run Keyword and Expect Error  *  Cli Compare Scp  ${scp inexistent}  ${file}
+
+T7.15 Verify comparison function between file and inexistent file
+	Cli Copy  running-config  ${file}
+	Run Keyword and Expect Error  *Error: Invalid Use: inexistent does not exist*
+	...  Cli Compare  ${file}  inexistent
+	Run Keyword and Expect Error  *Error: Invalid Use: inexistent does not exist*
+	...  Cli Compare  inexistent  ${file}
+
+T7.16 Verify comparison function between inexistent file and inexistent file
+	Run Keyword and Expect Error  *Error: Invalid Use: inexistent1 does not exist*
+	...  Cli Compare  inexistent1  inexistent2
+
+T7.17 Verify comparison function between config://file and inexistent file
+	Cli Copy  running-config  ${config}
+	Run Keyword and Expect Error  *Error: Invalid Use: inexistent does not exist*
+	...  Cli Compare  ${config}  inexistent
+	Run Keyword and Expect Error  *Error: Invalid Use: inexistent does not exist*
+	...  Cli Compare  inexistent  ${config}
+
+T7.18 Verify comparison function between config://file and inexistent scp://
+	Manual Failed
+	Cli Copy  running-config  ${config}
+	Run Keyword and Expect Error  *Error: running command*inexistent*
+	...  Cli Compare Scp  ${config}  ${scp inexistent}
+	Cli Reconnect
+	Run Keyword and Expect Error  *
+	...  Cli Compare Scp  ${scp inexistent}  ${config}
+
+T7.19 Verify comparison function between config://file and inexistent config://
+	Cli Copy  running-config  ${config}
+	Run Keyword and Expect Error  *Error: Invalid Use: config://inexistent does not exist*
+	...  Cli Compare  ${config}  config://inexistent
+	Run Keyword and Expect Error  *Error: Invalid Use: config://inexistent does not exist*
+	...  Cli Compare  config://inexistent  ${config}
+
+T7.20 Verify comparison function between inexistent config://file and inexistent config://
+	Run Keyword and Expect Error  *Error: Invalid Use: config://inexistent1 does not exist*
+	...  Cli Compare  config://inexistent1  config://inexistent2
+
+T7.21 Verify comparison function between scp:// and inexistent file
+	Cli Copy Scp  running-config  ${scp}
+	Run Keyword and Expect Error  *Error: Invalid Use: inexistent does not exist*
+	...  Cli Compare Scp  ${scp}  inexistent
+	Cli Reconnect
+	Run Keyword and Expect Error  *Error: Invalid Use: inexistent does not exist*
+	...  Cli Compare Scp  inexistent  ${scp}
+
+T7.22 Verify comparison function between scp:// and inexistent config://file
+	Cli Copy Scp  running-config  ${scp}
+	Run Keyword and Expect Error  *Error: Invalid Use: config://inexistent does not exist*
+	...  Cli Compare Scp  ${scp}  config://inexistent
+	Cli Reconnect
+	Run Keyword and Expect Error  *Error: Invalid Use: config://inexistent does not exist*
+	...  Cli Compare Scp  config://inexistent  ${scp}
 
 
+T8.1 Verify deletion of file
+	Cli Copy  running-config  ${file}
+	Cli Delete  ${file}
+
+T8.2 Verify deletion of inexistent file
+	Run Keyword and Expect Error  *Error: Invalid Use: File "*" not found*  Cli Delete  inexistent
+
+T8.3 Verify deletion of config://file
+	Cli Copy  running-config  ${config}
+	Cli Delete  ${config}
+
+T8.4 Verify deletion of inexistent config://file
+	Run Keyword and Expect Error  *Error: Invalid Use: * does not exist*  Cli Delete  config://inexistent
+
+#T9.1 Verify impossible to copy to invalid SCP
+	#Cli Copy Scp  running-config  scp://invalid
+	#Cli Copy Scp  running-config  scp://scp-no-colon@1.2.3.4
+#T9.1 Verify impossible to copy from invalid SCP
+#T9.2 Verify impossible to compare with invalid SCP
 
 
-
-
+#???T7.9 Verify comparison function between scp:// and image://
 
 
 *** Keywords ***
@@ -300,8 +414,10 @@ Modify Running Config
 	Rest Add Tenant  ${tenant}
 
 Teardown
+	Cli Reconnect
 	Bash Clear Known Hosts
 	Cli Copy  config://startup-config  running-config
+	Cli Reconnect
 	Base Test Teardown
 
 Compare
@@ -358,4 +474,4 @@ Validate Filename
 	Compare  running-config  ${file}
 	Cli Copy  ${file}  running-config
 	Cli Delete  ${file}
-	#Run Keyword and Expect Error  Error: Invalid Use*  Cli Delete  ${file}
+	Run Keyword and Expect Error  *Error: Invalid Use:*not*  Cli Delete  ${file}
