@@ -18,6 +18,7 @@ import autobot.test as test
 import Controller
 import subprocess
 import math
+import sys
 import re
 from Exscript.protocols import SSH2
 from Exscript import Account, Host
@@ -76,6 +77,23 @@ class BsnCommon(object):
         result = eval(s)
         helpers.log("Express '%s' evaluated to '%s'" % (s, result))
         return result
+
+    def pause(self, msg=None):
+        """
+        Pause execution. Press Control-D to continue.
+
+        Inputs:
+        | msg | Message to display when paused. Else print "Pausing... Press Ctrl-D to continue." |
+
+        Return Value:
+        - True
+        """
+        if not msg:
+            msg = "Pausing... Press Ctrl-D to continue."
+        helpers.warn(msg)
+        for _ in sys.stdin:
+            pass
+        return True
 
     def ixia_verify_traffic_rate(self, tx_value, rx_value, rangev=5):
         tx = math.ceil(float(tx_value))

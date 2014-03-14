@@ -133,15 +133,15 @@ Test pause execution (GUI)
     log               value=${value}
 
 Test pause execution (SHELL)
-    [Tags]           skipped
-    pause2
+    #[Tags]           skipped
+    pause
 
 Test return false
-    #[Tags]           skipped
+    [Tags]           skipped
     return false
 
 Test empty string
-    #[Tags]           skipped
+    [Tags]           skipped
     #${value}=         set variable    ''
     ${value}=         set empty string
     Log               value=${value}
