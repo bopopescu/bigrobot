@@ -12,6 +12,7 @@ import subprocess
 import signal
 import re
 import ipcalc
+import platform
 import curses.ascii as ascii
 from scp import SCPClient
 from pytz import timezone
@@ -942,25 +943,35 @@ def run_cmd(cmd, cwd=None, ignore_stderr=False, shell=True, quiet=False):
         return (True, out)
 
 
-def _ping(host, count=5, waittime=100, quiet=False, source_if=None,
-          node_handle=None, mode=None):
+def _ping(host, count=5, timeout=5, quiet=False, source_if=None,
+          node_handle=None, mode=None, ttl=None):
+
+    cmd = "ping -c %s" % count
+    if source_if:
+        cmd = "%s -I %s" % (cmd, source_if)
+
+    # Ping initiated from the staging machine (likely is your MacBook)
+    if not node_handle and platform.system() == 'Darwin':
+        # MacOS X platform
+        if ttl:
+            cmd = "%s -T %s" % (cmd, ttl)
+        if timeout:
+            cmd = "%s -t %s" % (cmd, timeout)
+    else:
+        # Linux platform
+        if ttl:
+            cmd = "%s -t %s" % (cmd, ttl)
+        if timeout:
+            cmd = "%s -W %s" % (cmd, timeout)
+
+    cmd = "%s %s" % (cmd, host)
+
     if not node_handle:
-        cmd = "ping -c %s -W %s %s" % (count, waittime, host)
         if not quiet:
             log("Ping command: %s" % cmd, level=4)
-
         _, out = run_cmd(cmd, shell=False, quiet=True, ignore_stderr=True)
     else:
         if mode == 'bash':
-            options = ''
-            if source_if:
-                options = "-I %s " % source_if
-
-            # On Ubuntu, use -w (deadline) to timeout after n seconds. Set it
-            # to be the same as count. On Unbuntu, if the destination is not
-            # pingable, it will keep attempting to ping until deadline is
-            # reached.
-            cmd = "ping -c %s -w %s %s%s" % (count, count, options, host)
             if not quiet:
                 log("Ping command: %s" % cmd, level=4)
             result = node_handle.bash(cmd)
@@ -968,6 +979,9 @@ def _ping(host, count=5, waittime=100, quiet=False, source_if=None,
         elif mode == 'cli':
             if source_if:
                 test_error("source_if option not supported for controller CLI ping.")
+
+            # Ping command on Controller is very basic. It doesn't support
+            # any option.
             cmd = "ping %s" % (host)
             if not quiet:
                 log("Ping command: %s" % cmd, level=4)
@@ -1027,23 +1041,23 @@ def _ping(host, count=5, waittime=100, quiet=False, source_if=None,
     test_error("Unknown ping error. Please check the output log.")
 
 
-def ping(host, count=5, waittime=100, quiet=False):
+def ping(host, count=5, timeout=5, quiet=False):
     """
     Unix ping.
     :param host: (Str) ping hist host
     :param count: (Int) number of packets to send
-    :param waittime: (Int) time in milliseconds to wait for a reply
+    :param timeout: (Int) time in seconds to wait for a reply
 
     Return: (Int) loss percentage
     """
     if count < 3:
         count = 3  # minimum count
-    loss = _ping(host, count=1, waittime=100, quiet=quiet)
+    loss = _ping(host, count=1, timeout=1, quiet=quiet)
     if loss > 0:
-        loss = _ping(host, count=1, waittime=100, quiet=quiet)
+        loss = _ping(host, count=1, timeout=1, quiet=quiet)
     if loss > 0:
         count -= 2
-        loss = _ping(host, count=count, waittime=waittime, quiet=quiet)
+        loss = _ping(host, count=count, timeout=timeout, quiet=quiet)
     return loss
 
 
