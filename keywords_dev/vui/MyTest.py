@@ -476,3 +476,12 @@ admin_user = glance
         c = t.controller('c1')
         c.config('user vui')
         c.cli('show user')
+
+    def test_expect_prompts(self):
+        t = test.Test()
+        c = t.controller('c1')
+        c.cli('')
+        c.send('show user')
+        opts = c.expect(['blah', 'bleh', c.get_prompt()])
+        helpers.log("opts[0]: %s" % opts[0])  # 0 matches 'blah' and so on
+        helpers.log("opts[1]: %s" % opts[1])  # re.match object (<_sre.SRE_Match object at 0x106ffe1f8>)

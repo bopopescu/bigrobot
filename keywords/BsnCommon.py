@@ -883,3 +883,15 @@ class BsnCommon(object):
         t = test.Test()
         n = t.node(node)
         return n.rest_result_json(*args, **kwargs)
+
+    def get_node_name(self, node):
+        """
+        Get the name of a node
+
+        Input: logical node name, e.g., 'c1', 'master', 'slave', etc.
+
+        Return Value:  actual node name, e.g., 'c1', 'c2', 's1'
+        """
+        t = test.Test()
+        n = t.node(node)
+        return n.name()
