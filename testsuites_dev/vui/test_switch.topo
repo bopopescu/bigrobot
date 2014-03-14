@@ -10,3 +10,4 @@ s1:
   password: bsn
   console_ip: 10.1.2.3
   console_port: 1234
+  #set_session_ssh: false
