@@ -104,6 +104,15 @@ Test controller cli ping
     cli ping   c1   qa-kvm-32
 
 Test bash file listing
-    #[Tags]  skipped
+    [Tags]  skipped
     ${result}=    bash ls    master  /home/admin
     log           result=${result}
+
+Test config walk
+    [Tags]  skipped
+    config walk
+
+Test exit nested config
+    #[Tags]  skipped
+    exit nested config
+
