@@ -89,7 +89,7 @@ class Ixia(object):
             del kwargs['node']
         tg_handle = t.traffic_generator(node).handle()
         
-        result = tg_handle.ix_fetch_port_stats()
+        result = tg_handle.ix_fetch_port_stats(**kwargs)
         helpers.log('result:\n%s' % helpers.prettify(result))
         return result
     

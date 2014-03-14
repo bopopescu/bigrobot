@@ -324,7 +324,7 @@ class Ixia(object):
                                         '-biDirectional', False, '-trafficType', 'ethernetVlan', '-hostsPerNetwork', '1')
         else:
             helpers.log('Adding %s type Stream for sending with Arp Resolution' % ip_type)
-            trafficStream1 = handle.add(handle.getRoot()+'/traffic','trafficItem','-name',ip_type+' traffic','-allowSelfDestined',False,
+            trafficStream1 = handle.add(handle.getRoot()+'/traffic','trafficItem','-name', name,'-allowSelfDestined',False,
                        '-trafficItemType','l2L3','-mergeDestinations',False,'-egressEnabled',False,'-srcDestMesh','oneToOne',
                        '-enabled',True,'-routeMesh','oneToOne','-transmitMode','interleaved','-biDirectional',False,
                        '-trafficType', ip_type,'-hostsPerNetwork',1)
@@ -994,6 +994,7 @@ class Ixia(object):
             Returns Dictionary with Port Tx and Rx real time results
         '''
         stream = kwargs.get('stream', None)
+        helpers.log('Got the Stream Arguments %s' % str(kwargs))
         handle = self._handle
         port_stats = {}
         if stream is None:

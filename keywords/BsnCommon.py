@@ -18,6 +18,7 @@ import autobot.test as test
 import Controller
 import subprocess
 import math
+import re
 from Exscript.protocols import SSH2
 from Exscript import Account, Host
 
@@ -184,14 +185,28 @@ class BsnCommon(object):
                 c = t.controller('master')
                 url = '/rest/v1/system/version'
                 if user == "admin":
-                    c.rest.get(url)
-                    content = c.rest.content()
+                    try:
+                        t.node_reconnect(node='master')
+                        c.rest.get(url)
+                        content = c.rest.content()
+                        output_value = content[0]['controller']
+                    except:
+                        return False
+                    else:
+                        return output_value
                 else:
-                    c_user = t.node_reconnect(node='master', user=str(user), password=password)
-                    c_user.rest.get(url)
-                    content = c_user.rest.content()
-                    t.node_reconnect(node='master')
-                return content[0]['controller']
+                    try:
+                        c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                        c_user.rest.get(url)
+                        content = c_user.rest.content()
+                        output_value = content[0]['controller']
+                    except:
+                        t.node_reconnect(node='master')
+                        return False
+                    else:
+                        if local is True:
+                            t.node_reconnect(node='master')
+                        return output_value
             elif helpers.is_bigwire(n.platform()):
                 '''
                     BigWire Controller
@@ -309,8 +324,9 @@ class BsnCommon(object):
                 '''
                 helpers.log("The node is a T5 Controller")
                 c = t.controller()
-                url = '/api/v1/data/controller/os/config/global/time-config'
-                c.rest.put(url, {"ntp-server": [ntp_server]})
+                url = '/api/v1/data/controller/os/config/global/time-config/ntp-server'
+                helpers.log("URL is %s \n and \n ntp server is %s" % (url, ntp_server))
+                c.rest.patch(url, [str(ntp_server)])
                 if not c.rest.status_code_ok():
                     helpers.test_log(c.rest.error())
                     return False
@@ -352,7 +368,7 @@ class BsnCommon(object):
         elif helpers.is_controller(node):
             helpers.log("The node is a controller")
 
-            if  helpers.is_bigtap(node):
+            if  helpers.is_bigtap(n.platform()):
                 '''
                     BigTap NTP Server Deletion goes here
                 '''
@@ -366,7 +382,7 @@ class BsnCommon(object):
                 else:
                     helpers.test_log(c.rest.content_json())
                     return True
-            elif helpers.is_bigwire(node):
+            elif helpers.is_bigwire(n.platform()):
                 '''
                     BigWire NTP Server Deletion goes here
                 '''
@@ -380,13 +396,105 @@ class BsnCommon(object):
                 else:
                     helpers.test_log(c.rest.content_json())
                     return True
-            elif helpers.is_t5(node):
+            elif helpers.is_t5(n.platform()):
                 '''
                     T5 Controller NTP Server Deletion goes here
                 '''
                 c = t.controller()
                 url = '/api/v1/data/controller/os/config/global/time-config'
+                helpers.log("URL is %s" % url)
                 c.rest.delete(url, {"ntp-servers": [ntp_server]})
+                if not c.rest.status_code_ok():
+                    helpers.test_log(c.rest.error())
+                    return False
+                else:
+                    helpers.sleep(1)
+                    return True
+            else:
+                helpers.test_error("Unsupported Platform %s" % (node))
+        else:
+            helpers.test_error("Unsupported Platform %s" % (node))
+
+    def add_ntp_timezone(self, node=None, time_zone='America/Los_Angeles'):
+        '''
+            Objective: Add an NTP server.
+
+            Inputs:
+            | node | reference to switch/controller as defined in .topo file|
+            | ntp_server | ntp server that is being configured|
+
+            Return Values:
+            - True, if configuration add is successful.
+            - False, if configuration add is unsuccessful.
+        '''
+        t = test.Test()
+        n = t.node(node)
+        if helpers.is_switch(n.platform()):
+            helpers.log("Node is a switch")
+            if helpers.is_switchlight(n.platform()):
+                '''
+                TimeZone Configuration at Switch
+                '''
+                return True
+            else:
+                helpers.test_error("Unsupported Platform %s" % (node))
+        elif helpers.is_controller(node):
+            helpers.log("The node is a controller")
+            if helpers.is_bigtap(n.platform()):
+                '''
+                BigTap TimeZone Configuration goes here
+                '''
+                helpers.log("The node is a BigTap Controller")
+                c = t.controller('master')
+                url = '/rest/v1/model/controller-node/'
+                c.rest.get(url)
+                content = c.rest.content()
+                count = 0
+                for j in range(0, 2):
+                    controller_id = content[j]['id']
+                    url1 = '/rest/v1/model/controller-node/?id=%s' % controller_id
+                    c.rest.put(url1, {"time-zone": str(time_zone)})
+                    if not c.rest.status_code_ok():
+                        helpers.test_failure(c.rest.error())
+                        return False
+                    else:
+                        count = count + 1
+                if count == 2:
+                    return True
+                else:
+                    return False
+            elif helpers.is_bigwire(n.platform()):
+                '''
+                BigWire TimeZone Configuration goes here
+                '''
+                helpers.log("The node is a BigTap Controller")
+                c = t.controller('master')
+                url = '/rest/v1/model/controller-node/'
+                c.rest.get(url)
+                content = c.rest.content()
+                count = 0
+                for j in range(0, 2):
+                    controller_id = content[j]['id']
+                    url1 = '/rest/v1/model/controller-node/?id=%s' % controller_id
+                    c.rest.put(url1, {"time-zone": str(time_zone)})
+                    if not c.rest.status_code_ok():
+                        helpers.test_failure(c.rest.error())
+                        return False
+                    else:
+                        count = count + 1
+                if count == 2:
+                    return True
+                else:
+                    return False
+            elif helpers.is_t5(n.platform()):
+                '''
+                    T5 Controller
+                '''
+                helpers.log("The node is a T5 Controller")
+                c = t.controller()
+                url = '/api/v1/data/controller/os/config/global/time-config'
+                helpers.log("URL is %s \n and \n ntp server is %s" % (url, time_zone))
+                c.rest.patch(url, {"time-zone": str(time_zone)})
                 if not c.rest.status_code_ok():
                     helpers.test_log(c.rest.error())
                     return False
@@ -396,6 +504,8 @@ class BsnCommon(object):
                 helpers.test_error("Unsupported Platform %s" % (node))
         else:
             helpers.test_error("Unsupported Platform %s" % (node))
+
+
 
     def verify_ntp(self, node, ntp_server):
         '''
@@ -506,11 +616,17 @@ class BsnCommon(object):
                 else:
                     content = c.rest.content()
                     pass_flag = False
+                    bashcommand = "/usr/bin/host %s" % (str(ntp_server))
+                    returnVal = subprocess.Popen([bashcommand], stdout=subprocess.PIPE, shell=True)
+                    (out, _) = returnVal.communicate()
+                    iparray = re.split('\s+', out)
+                    helpers.log("NTP Server IP is %s" % iparray[3])
                     helpers.log("Length of content is %s" % len(content))
                     for x in range(0, len(content)):
-                        helpers.log("Value of content is %s" % content[x])
-                        if content[x] == str(ntp_server):
+                        if iparray[3] in content[x]['status']:
+                            helpers.log("Value of content is %s" % content[x]['status'])
                             pass_flag = True
+                            break
                     if pass_flag:
                         return True
                     else:

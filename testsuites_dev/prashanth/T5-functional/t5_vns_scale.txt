@@ -9,6 +9,7 @@ Test Teardown    T5 test teardown
 Force Tags       T5 
 Library          keywords/BsnCommon.py
 Library          keywords/T5.py
+Library          keywords/T5Platform.py
 Library	         keywords/SwitchLight.py
 Library          keywords/Mininet.py
 Library	         keywords/Host.py
@@ -90,6 +91,30 @@ create 4k vns and verify the table and forwarding
     ${result}=  rest verify tenant
     Should not be True  ${result}
 
+Master controller node reboot with 4k vns
+	[Tags]  feature  scale  run
+  	rest add tenant  t1
+	rest add vns scale  t1  4090
+	summary log  system create a 4k vns
+	rest add interface to all vns  t1  leaf0-a  ${leaf0a_ixia_intf}
+	rest add interface to all vns  t1  leaf1-a  ${leaf1a_ixia_intf}
+	summary log  system add 2 ports to each vns
+	rest verify vns scale  4090
+	rest verify membership port count  2
+	${stream}=             L3 add  no_arp=True  flow=a<->c  src_mac=00:00:01:00:00:01  dst_mac=00:00:02:00:00:01  src_cnt=4090  dst_cnt=4090  ethertype=8100  vlan_id=1  vlan_cnt=4090  frame_rate=4090  frame_size=68  name=a_c_flow
+    start traffic  ${stream}
+    sleep  90
+    rest verify endpoint in system  4090
+    verify traffic rate  tx_rate  rx_rate  a  c
+    verify traffic rate  tx_rate  rx_rate  c  a
+    cli verify cluster master reboot
+    sleep  2
+    verify traffic rate  tx_rate  rx_rate  a  c
+    verify traffic rate  tx_rate  rx_rate  c  a
+    stop traffic  ${stream}
+	rest delete tenant  t1
+    ${result}=  rest verify tenant
+    Should not be True  ${result}
 
 Tear down the config
    [Tags]  feature       

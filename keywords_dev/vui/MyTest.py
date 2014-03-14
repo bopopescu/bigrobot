@@ -2,6 +2,7 @@ import autobot.helpers as helpers
 import autobot.restclient as restclient
 import autobot.test as test
 import keywords.Host as Host
+import re
 
 def testing123():
     pass
@@ -451,9 +452,6 @@ admin_user = glance
         t = test.Test()
         c = t.controller('c1')
 
-        # Import regex module
-        import re
-
         c.config('')
         c.send('?')
 
@@ -473,3 +471,16 @@ admin_user = glance
             print "Match! Found: %s" % match.group(1)
         else:
             print "No match"
+
+    def config_walk(self):
+        t = test.Test()
+        c = t.controller('c1')
+        c.cli('reauth admin', prompt='Password: ')
+        c.send('adminadmin')
+        c.expect()
+
+    def exit_nested_config(self):
+        t = test.Test()
+        c = t.controller('c1')
+        c.config('user vui')
+        c.cli('show user')
