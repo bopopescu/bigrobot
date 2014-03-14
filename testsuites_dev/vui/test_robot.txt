@@ -134,7 +134,7 @@ Test pause execution (GUI)
 
 Test pause execution (SHELL)
     #[Tags]           skipped
-    pause
+    pause            Freeze!!!
 
 Test return false
     [Tags]           skipped

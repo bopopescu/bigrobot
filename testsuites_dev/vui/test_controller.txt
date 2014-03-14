@@ -117,3 +117,10 @@ Test exit nested config
     [Tags]  skipped
     exit nested config
 
+Test get node name
+    ${name}=      get node name    master
+    Log           I am the ${name} of the Universe!
+
+    ${name}=      get node name    c1
+    Log           I am the ${name} of the Universe!
+
