@@ -83,7 +83,7 @@ class Node(object):
                                         " have an IP address defined"
                                         % self.name())
         helpers.log("Ping %s ('%s')" % (self.ip(), self.name()))
-        loss = helpers.ping(self.ip(), count=3, waittime=1000)
+        loss = helpers.ping(self.ip(), count=3, timeout=10)
         if  loss > 20:
             # We can tolerate 20% loss.
             # Consider init to be completed, so as not to be invoked again.
