@@ -139,6 +139,7 @@ T2.6 CLI Verify it is impossible to have 0.0.0.0 or 255.255.255.255 virtual IP a
 	${state} =  Cli Configure Virtual IP  ${vip broadcast}
 	Should Not Be True  ${state}
 	[Tags]  T5  Virtual IP  CLI  Platform
+#(BSC-4925) Virtual IP not functional after chaning the time-zone(?) right after first boot
 
 
 *** Keywords ***
