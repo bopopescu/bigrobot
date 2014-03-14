@@ -356,20 +356,12 @@ admin_user = glance
     def return_list(self):
         return [1, 2, 3, 4, 5]
 
-    def pause(self, msg=None):
+    def pauseX(self, msg=None):
         if not msg:
             msg = "Pausing... Press Ctrl-D to continue."
         helpers.warn(msg)
         import fileinput
         for _ in fileinput.input():
-            pass
-
-    def pause2(self, msg=None):
-        if not msg:
-            msg = "Pausing... Press Ctrl-D to continue."
-        helpers.warn(msg)
-        import sys
-        for _ in sys.stdin:
             pass
 
     def return_false(self):
