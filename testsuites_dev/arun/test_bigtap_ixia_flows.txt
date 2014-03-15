@@ -58,21 +58,16 @@ Uni-Dir L2 Traffic with all defaults and learn traffic with Accton Switch
 
 Uni-Direction L2 Traffic with all defaults and learn traffic
 # Basic test case with all default values and just start the flow
-	${stream3}=             L2 add  flow=e<->f  frame_rate=${frame_rate}  name=e_f_flow
-    ${stream4}=             L2 add  flow=g<->h  frame_rate=${frame_rate}  name=g_h_flow
-    ${stream5}=             L2 add  flow=i<->j  frame_rate=${frame_rate}  name=i_j_flow
-    ${stream6}=             L2 add  flow=k<->l  frame_rate=${frame_rate}  name=k_l_flow
+	${stream3}=             L2 add  flow=e->f  frame_rate=${frame_rate}  name=e_f_flow
+    ${stream4}=             L2 add  flow=g->h  frame_rate=${frame_rate}  name=g_h_flow
     clear stats
     start traffic
     sleep                  ${sleep_time}
 	${report}=             fetch port stats  stream=${stream3}
 	${report}=             fetch port stats  stream=${stream4}
-	${report}=             fetch port stats  stream=${stream5}
-	${report}=             fetch port stats  stream=${stream6}
     verify results  transmitted_frame_rate  received_frame_rate  ${stream3}  e_f_flow
     verify results  transmitted_frame_rate  received_frame_rate  ${stream4}  g_h_flow
-    verify results  transmitted_frame_rate  received_frame_rate  ${stream5}  i_j_flow
-    verify results  transmitted_frame_rate  received_frame_rate  ${stream6}  k_l_flow
+
     stop traffic
     [Tags]  traffic  sanity  bigtap  run    
 Bi-Direction L2 Traffic with line rate
