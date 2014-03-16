@@ -2,6 +2,7 @@ import autobot.helpers as helpers
 import autobot.restclient as restclient
 import autobot.test as test
 import keywords.Host as Host
+import re
 
 def testing123():
     pass
@@ -355,20 +356,12 @@ admin_user = glance
     def return_list(self):
         return [1, 2, 3, 4, 5]
 
-    def pause(self, msg=None):
+    def pauseX(self, msg=None):
         if not msg:
             msg = "Pausing... Press Ctrl-D to continue."
         helpers.warn(msg)
         import fileinput
         for _ in fileinput.input():
-            pass
-
-    def pause2(self, msg=None):
-        if not msg:
-            msg = "Pausing... Press Ctrl-D to continue."
-        helpers.warn(msg)
-        import sys
-        for _ in sys.stdin:
             pass
 
     def return_false(self):
@@ -451,9 +444,6 @@ admin_user = glance
         t = test.Test()
         c = t.controller('c1')
 
-        # Import regex module
-        import re
-
         c.config('')
         c.send('?')
 
@@ -473,3 +463,25 @@ admin_user = glance
             print "Match! Found: %s" % match.group(1)
         else:
             print "No match"
+
+    def config_walk(self):
+        t = test.Test()
+        c = t.controller('c1')
+        c.cli('reauth admin', prompt='Password: ')
+        c.send('adminadmin')
+        c.expect()
+
+    def exit_nested_config(self):
+        t = test.Test()
+        c = t.controller('c1')
+        c.config('user vui')
+        c.cli('show user')
+
+    def test_expect_prompts(self):
+        t = test.Test()
+        c = t.controller('c1')
+        c.cli('')
+        c.send('show user')
+        opts = c.expect(['blah', 'bleh', c.get_prompt()])
+        helpers.log("opts[0]: %s" % opts[0])  # 0 matches 'blah' and so on
+        helpers.log("opts[1]: %s" % opts[1])  # re.match object (<_sre.SRE_Match object at 0x106ffe1f8>)

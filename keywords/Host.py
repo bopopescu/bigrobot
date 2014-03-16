@@ -32,6 +32,7 @@ class Host(object):
         - dest_node  Ping this destination node ('c1', 's1', etc)
         - source_if: Source interface
         - count:     Number of ping packets to send
+        - ttl:       IP Time-to-live
 
         Example:
         | ${lossA} = | Bash Ping | h1          | 10.192.104.1 | source_if=eth1 |
@@ -262,7 +263,7 @@ class Host(object):
 
     def bash_ls(self, node, path):
         """
-        Execute 'ls -l <path>' on a device.
+        Execute 'ls -l --time-style=+%Y-%m-%d <path>' on a device.
 
         Inputs:
         | node | reference to switch/controller/host as defined in .topo file |
@@ -279,12 +280,11 @@ class Host(object):
             - fields[2] = user
             - fields[3] = group
             - fields[4] = size
-            - fields[5] = date
-            - fields[6] = time
+            - fields[5] = datetime
         """
         t = test.Test()
         n = t.node(node)
-        content = n.bash('ls -l %s' % path)['content']
+        content = n.bash('ls -l --time-style=+%%Y-%%m-%%d %s' % path)['content']
         lines = helpers.strip_cli_output(content, to_list=True)
 
         # Output:
@@ -294,16 +294,21 @@ class Host(object):
 
         # Strip first line ('total <nnnnn>')
         lines = lines[1:]
-        helpers.log("lines: %s" % helpers.prettify(lines))
+        # helpers.log("lines: %s" % helpers.prettify(lines))
 
         files = {}
 
         for line in lines:
             fields = line.split()
-            # fields[7]+ contains filename (may have spaces in name)
-            filename = ' '.join(fields[7:])
+            helpers.log("fields: %s" % fields)
+            # fields[6]+ contains filename (may have spaces in name)
+            filename = ' '.join(fields[6:])
+
+            # If file is a symlink, remove the symlink (leave just the name)
+            # E.g., 'blkid.tab -> /dev/.blkid.tab'
+            filename = re.sub('-> .*$', '', filename)
             files[filename] = fields[0:6]
 
-        helpers.log("files: %s" % helpers.prettify(files))
+        helpers.log("files:\n%s" % helpers.prettify(files))
         return files
 

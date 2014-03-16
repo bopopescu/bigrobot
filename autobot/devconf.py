@@ -150,6 +150,22 @@ class DevConf(object):
             cmd = ''.join((cmd, '\r'))
         self.conn.send(cmd)
 
+    def prompt_str(self, prompt):
+        prompt_str_list = []
+        if helpers.is_list(prompt):
+            for p in prompt:
+                if hasattr(p, 'match'):
+                    prompt_str_list.append(p.pattern)
+                else:
+                    prompt_str_list.append(p)
+        else:
+            p = prompt
+            if hasattr(p, 'match'):
+                prompt_str_list.append(p.pattern)
+            else:
+                prompt_str_list.append(p)
+        return prompt_str_list
+
     def expect(self, prompt=None, timeout=None, quiet=False, level=4):
         """
         Invoking low-level send/expect commands to the device. This is a
@@ -161,10 +177,19 @@ class DevConf(object):
         See http://knipknap.github.io/exscript/api/Exscript.protocols.Protocol-class.html#expect
         """
         if prompt is None:
+            # User might have changed the prompt. So be sure to set it back
+            # to default prompt first.
+            self.conn.set_prompt()
+
+            # Now get default prompt.
             prompt = self.conn.get_prompt()
+        else:
+            prompt = helpers.list_flatten(prompt)
+
         if timeout: self.timeout(timeout)
         if not quiet:
-            helpers.log("Expecting prompt '%s'" % prompt, level=level)
+            helpers.log("Expecting prompt: %s" % self.prompt_str(prompt),
+                        level=level)
 
         try:
             ret_val = self.conn.expect(prompt)
@@ -175,9 +200,9 @@ class DevConf(object):
                             % (self.content(), br_utils.end_of_output_marker()),
                             level=level)
         except TimeoutException:
-            helpers.environment_failure("Expect failure: Timed out during expect prompt '%s'\n"
+            helpers.environment_failure("Expect failure: Timed out during expect prompt: %s\n"
                                         "Expect buffer:\n%s%s"
-                                        % (prompt,
+                                        % (self.prompt_str(prompt),
                                            self.conn.buffer.__str__(),
                                            br_utils.end_of_output_marker()))
             # raise
@@ -204,9 +229,20 @@ class DevConf(object):
 
         See http://knipknap.github.io/exscript/api/Exscript.protocols.Protocol-class.html#waitfor
         """
+        if prompt is None:
+            # User might have changed the prompt. So be sure to set it back
+            # to default prompt first.
+            self.conn.set_prompt()
+
+            # Now get default prompt.
+            prompt = self.conn.get_prompt()
+        else:
+            prompt = helpers.list_flatten(prompt)
+
         if timeout: self.timeout(timeout)
         if not quiet:
-            helpers.log("Expecting waitfor prompt '%s'" % prompt, level=level)
+            helpers.log("Expecting waitfor prompt: %s"
+                        % self.prompt_str(prompt), level=level)
 
         try:
             self.conn.waitfor(prompt)
@@ -217,8 +253,8 @@ class DevConf(object):
                             % (self.content(), br_utils.end_of_output_marker()),
                             level=level)
         except TimeoutException:
-            helpers.log("Waitfor failure: Timed out during waitfor prompt '%s'"
-                        % prompt)
+            helpers.log("Waitfor failure: Timed out during waitfor prompt: %s"
+                        % self.prompt_str(prompt))
             helpers.log("Waitfor buffer <%s>" % self.conn.buffer.__str__())
             raise
             # helpers.log("Exception in %s" % sys.exc_info()[0])
@@ -232,12 +268,13 @@ class DevConf(object):
     def cmd(self, cmd, quiet=False, mode=None, prompt=None, timeout=None, level=5):
         if timeout: self.timeout(timeout)
         if prompt:
-            helpers.log("Expected prompt is '%s'" % prompt)
+            prompt = helpers.list_flatten(prompt)
+            helpers.log("Expected prompt: %s" % self.prompt_str(prompt))
             self.conn.set_prompt(prompt)
             self.is_prompt_changed = True
         else:
             if self.is_prompt_changed:
-                helpers.log("Resetting default prompt")
+                helpers.log("Resetting expect prompt to default")
                 self.conn.set_prompt()
 
         if not quiet:
@@ -336,7 +373,7 @@ class BsnDevConf(DevConf):
                 super(BsnDevConf, self).cmd('exit', quiet=True, level=level)
             elif self.is_config():
                 helpers.log("Switching from config to %s mode" % mode, level=level)
-                super(BsnDevConf, self).cmd('exit', quiet=True)
+                super(BsnDevConf, self).cmd('end', quiet=True)
                 super(BsnDevConf, self).cmd('exit', quiet=True)
         elif mode == 'enable':
             if self.is_bash():
@@ -347,7 +384,7 @@ class BsnDevConf(DevConf):
                 super(BsnDevConf, self).cmd('enable', quiet=True, level=level)
             elif self.is_config():
                 helpers.log("Switching from config to %s mode" % mode, level=level)
-                super(BsnDevConf, self).cmd('exit', quiet=True, level=level)
+                super(BsnDevConf, self).cmd('end', quiet=True, level=level)
         elif mode == 'config':
             if self.is_bash():
                 self.exit_bash_mode(mode)

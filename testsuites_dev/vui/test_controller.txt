@@ -105,5 +105,22 @@ Test controller cli ping
 
 Test bash file listing
     #[Tags]  skipped
-    ${result}=    bash ls    master  /home/admin
-    log           result=${result}
+    #${result}=    bash ls    master  /home/admin
+    ${result}=    bash ls    master  /etc
+    #log           result=${result}
+
+Test config walk
+    [Tags]  skipped
+    config walk
+
+Test exit nested config
+    [Tags]  skipped
+    exit nested config
+
+Test get node name
+    ${name}=      get node name    master
+    Log           I am the ${name} of the Universe!
+
+    ${name}=      get node name    c1
+    Log           I am the ${name} of the Universe!
+
