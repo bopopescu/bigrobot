@@ -374,28 +374,6 @@ class AppController(object):
                 helpers.test_log(c.rest.content_json())
                 return True
 
-    def restart_process_on_controller(self, process_name, controller_role):
-        '''Restart a process on controller
-        
-            Input:
-               processName        Name of process to be restarted
-               controller_role        Where to execute the command. Accepted values are `Master` and `Slave`
-           
-           Return Value:  True if the configuration is successful, false otherwise 
-        '''
-        try:
-            t = test.Test()
-            if (controller_role == 'Master'):
-                c = t.controller('master')
-            else:
-                c = t.controller('slave')
-            c.bash('sudo service ' + str(process_name) + ' restart')
-        except:
-            helpers.test_failure(c.rest.error())
-            return False
-        else:
-            return True
-
     def restart_controller(self, controller_role):
         '''Restart a process on controller
         
