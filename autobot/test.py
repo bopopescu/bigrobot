@@ -317,9 +317,9 @@ class Test(object):
         n = self.topology(name)
         platform = n.platform()
 
-        # if self._has_a_single_controller:
+        if self._has_a_single_controller:
             # helpers.debug("Topology has a single controller. Assume it's the master.")
-        #    return True
+            return True
 
         if helpers.is_bigtap(platform) or helpers.is_bigwire(platform):
             # We don't want REST object to save the result from the REST
