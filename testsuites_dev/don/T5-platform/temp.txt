@@ -27,7 +27,11 @@ Library	         keywords_dev/don/T5Platform.py
 
 Configure Span
 	[Tags]  span
-	rest add monitor session  1
+	${returnVal} =  rest add monitor session  1  leaf0-a  leaf0-eth6  leaf0-a  leaf0-eth4
+	Should be true  ${returnVal}
+	
+	${returnVal} =  rest verify monitor session  1  leaf0-a  leaf0-eth6  leaf0-b  leaf0-eth4
+	Should be true  ${returnVal}
 
 
 Multiple L2 Tenants Single VNS HA Test

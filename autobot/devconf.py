@@ -592,9 +592,10 @@ class MininetDevConf(DevConf):
         self.cli("exit", quiet=False)
         self.state = 'stopped'
 
-    def restart_mininet(self, new_topology=None):
+    def restart_mininet(self, new_topology=None, sleep=5):
         helpers.log("Restarting Mininet topology on '%s'" % self.name())
         self.stop_mininet()
+        helpers.sleep(sleep)
         self.start_mininet(new_topology)
 
     def close(self):
