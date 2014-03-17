@@ -369,6 +369,16 @@ class T5Platform(object):
 
 
     def auto_configure_fabric_switch(self, spineList, leafList, leafPerRack):
+        ''' Add leaf & spine switches to the running-config. 
+            Usage: 
+                * Variables
+                @{spineList}  00:00:00:00:00:01:00:01  00:00:00:00:00:01:00:02
+                @{leafList}  00:00:00:00:00:02:00:01  00:00:00:00:00:02:00:02  00:00:00:00:00:02:00:03  00:00:00:00:00:02:00:04
+                
+                Test T5Setup
+                    [Tags]  Setup
+                    auto configure fabric switch  ${spineList}  ${leafList}  2
+        '''
         
         global leafSwitchList
         
@@ -440,6 +450,16 @@ class T5Platform(object):
 
      
     def auto_delete_fabric_switch(self, spineList, leafList, leafPerRack):
+        ''' Delete all the switches in the running-config. Use as running config cleanup function. (teardown)
+            Usage: 
+                * Variables
+                @{spineList}  00:00:00:00:00:01:00:01  00:00:00:00:00:01:00:02
+                @{leafList}  00:00:00:00:00:02:00:01  00:00:00:00:00:02:00:02  00:00:00:00:00:02:00:03  00:00:00:00:00:02:00:04
+                
+                Test T5TearDown
+                    [Tags]  Teardown
+                    auto delete fabric switch  ${spineList}  ${leafList}  2
+        '''
         
         numSpines = len(spineList)
         numLeaves = len(leafList)
@@ -474,7 +494,22 @@ class T5Platform(object):
                         except:
                             pass
                              
-                             
+    
+    def auto_delete_fabric_portgroups(self):
+        ''' Delete all the port groups in the running-config. Use as running config cleanup function. (teardown)
+        '''
+        
+        url = "/api/v1/data/controller/fabric/port-group?config=true"
+        t = test.Test()
+        master = t.controller("master")
+        
+        result = master.rest.get(url)['content']
+        
+        for pg in result:
+            url = "/api/v1/data/controller/fabric/port-group[name=\""+ pg['name'] + "\"]"
+            master.rest.delete(url, {})
+
+             
                              
     def platform_ping(self, src, dst ):
         global pingFailureCount
@@ -774,5 +809,354 @@ class T5Platform(object):
                 return None
         
         
+    def rest_add_monitor_session(self, sessionID, srcSwitch, srcInt, dstSwitch, dstInt):
+        '''
+            Add a monitor session (SPAN) to the switch
+            Inputs: sessionID - Session ID for the monitor session
+                    srcSwitch/Int - Source switch & interface
+                    dstSwitch/Int - Destination switch & interface
+            Returns:
+                True - If the configuration went through without any errors
+                False - If the configuration action fails
+        '''
+
+        t = test.Test()
+        master = t.controller("master")
+        url = "/api/v1/data/controller/fabric/monitor-session[id=" + sessionID+"]"
+        
+        master.rest.put(url, {"id": sessionID})
+                
+        url = "/api/v1/data/controller/fabric/monitor-session[id=" + sessionID + "]/source[switch-name=\"" +srcSwitch +"\"][interface-name=\"" + srcInt+ "\"]"
+        result = master.rest.put(url, {"switch-name": srcSwitch , "interface-name": srcInt})
+
+        url = "/api/v1/data/controller/fabric/monitor-session[id=" + sessionID + "]/destination[switch-name=\"" +dstSwitch +"\"][interface-name=\"" + dstInt+ "\"]"
+        result = master.rest.put(url, {"switch-name": srcSwitch , "interface-name": dstInt})
+        
+        if master.rest.status_code_ok():
+            return True
+        else:
+            return False
+        
+    
+    def rest_delete_monitor_session(self, sessionID):
+        
+        t = test.Test()
+        master = t.controller("master") 
+        url = "/api/v1/data/controller/fabric/monitor-session[id=" + sessionID+"]"
+        
+        master.rest.delete(url, {"id": sessionID})
+        
+        if master.rest.status_code_ok():
+            return True
+        else:
+            return False
         
         
+    def rest_verify_monitor_session(self, sessionID, srcSwitch, srcInt, dstSwitch, dstInt):
+        '''
+            Verify a monitor session (SPAN) in the switch. This uses "show run monitor-session" command
+            for the verification 
+            Inputs: sessionID - Session ID for the monitor session
+                    srcSwitch/Int - Source switch & interface
+                    dstSwitch/Int - Destination switch & interface
+            Returns:
+                True - If the session exits
+                False - If the session doesn't exists
+        '''
+        
+        t = test.Test()
+        master = t.controller("master")
+        
+        foundSession = False
+        url = "/api/v1/data/controller/fabric/monitor-session?config=true"
+        result = master.rest.get(url)['content']
+        
+        try:
+            for session in result:
+                if (str(session['id']) == sessionID):
+                    foundSession = True
+                    if(session['source'][0]['switch-name'] != srcSwitch):
+                        helpers.log("Wrong source switch in the monitor session %s : %s" % (sessionID, srcSwitch))
+                        return False
+                    if(session['source'][0]['interface-name'] != srcInt):
+                        helpers.log("Wrong source interface in the monitor session %s : %s" % (sessionID, srcInt))
+                        return False
+                    if(session['destination'][0]['switch-name'] != dstSwitch):
+                        helpers.log("Wrong destination switch in the monitor session %s : %s" % (sessionID, dstSwitch))
+                        return False
+                    if(session['destination'][0]['interface-name'] != dstInt):
+                        helpers.log("Wrong destination interface in the monitor session %s : %s" % (sessionID, dstInt))
+                        return False
+                    pass
+                    
+        except(KeyError):
+            helpers.warn("KeyError detected: One of the fields are missing from the monitor session")
+            helpers.log(session)
+            return False
+
+        if(foundSession):
+            return True
+        else:
+            helpers.log("Monitor session is not found in the running config")
+            return False
+
+
+
+
+    def cli_compare(self, src, dst, node='master', scp_passwd='adminadmin'):
+        ''' Generic function to compare via CLI, using SCP
+        Input:
+        Src, Dst - source and destination of compare command
+        Scp_Password - password for scp connection
+        Node - pointing to Master or Slave controller
+        Output: True if successful, False otherwise
+         '''
+        helpers.test_log("Running command:\ncompare %s %s" % (src, dst))
+        t = test.Test()
+        c = t.controller(node)
+        c.config("config")
+        c.send("compare %s %s" % (src, dst))
+        options = c.expect([r'Password: ', r'\(yes/no\)\?', c.get_prompt()])
+        content = c.cli_content()
+        helpers.log("*****Output is :\n%s" % content)
+        try:
+            if  ('Could not resolve' in content) or ('Error' in content) or ('No such file or directory' in content):
+                helpers.test_failure(content)
+                return False
+            elif options[0] == 0 :
+                helpers.log("INFO:  need to provide passwd " )
+                output = c.config(scp_passwd)['content']
+            elif options[0] == 1:
+                helpers.log("INFO:  need to send yes, then provide passwd " )
+                c.send('yes')
+                c.expect(r'Password:')
+                output = c.config(scp_passwd)['content']
+        except:
+            helpers.test_failure(c.cli_content())
+            return False
+
+        output = c.cli_content()
+        helpers.log("Output *** %s " % output)
+        if ("Error" in output) or ('No such file or directory' in output):
+            helpers.test_failure(c.cli_content())
+            return False
+
+        output = helpers.strip_cli_output(output)
+        output = helpers.str_to_list(output)
+        if options[0] < 2:
+            for index, line in enumerate(output):
+                if '100%' in line:
+                    output = output[(index+1):]
+                    break
+
+        helpers.log("Cropped output *** %s " % output)
+        if len(output) == 0:
+            helpers.log("Files are identical")
+            return True
+
+        for line in output:
+            if re.match(r'[0-9].*|< \!|---|> \!|< \Z|> \Z|\Z', line):
+                helpers.log("OK: %s" % line)
+                continue
+            else:
+                helpers.log("files different at line:\n%s" % line)
+                return False
+
+        if helpers.any_match(c.cli_content(), r'Error'):
+            helpers.test_failure(c.cli_content())
+            return False
+        return True
+
+
+    def cli_copy(self, src, dst, node='master', scp_passwd='adminadmin'):
+        ''' Generic function to copy via CLI, using SCP
+        Input:
+        Src, Dst - source and destination of copy command
+        Scp_Password - password for scp connection
+        Node - pointing to Master or Slave controller
+        Output: True if successful, False otherwise
+        '''
+        helpers.test_log("Running command:\ncopy %s %s" % (src, dst))
+        t = test.Test()
+        c = t.controller(node)
+        c.config("config")
+        c.send("copy %s %s" % (src, dst))
+        options = c.expect([r'Password: ', r'\(yes/no\)\?', c.get_prompt()])
+        content = c.cli_content()
+        helpers.log("*****Output is :\n%s" % content)
+        if  ('Could not resolve' in content) or ('Error' in content) or ('No such file or directory' in content):
+            helpers.test_failure(content)
+            return False
+
+        if options[0] < 2:
+            if options[0] == 0 :
+                helpers.log("INFO:  need to provide passwd " )
+                c.send(scp_passwd)
+            elif options[0] == 1:
+                helpers.log("INFO:  need to send yes, then provide passwd " )
+                c.send('yes')
+                c.expect(r'Password:')
+                c.send(scp_passwd)
+            try:
+                c.expect(c.get_prompt(), timeout=180)
+                if not (helpers.any_match(c.cli_content(), r'100%') or helpers.any_match(c.cli_content(), r'Lines Applied')):
+                    helpers.test_failure(c.cli_content())
+                    return False
+            except:
+                helpers.log('scp failed')
+                helpers.test_failure(c.cli_content())
+                return False
+            else:
+                helpers.log('scp completed successfully')
+        else:
+            c.config("config")
+
+        content = c.cli_content()
+        if helpers.any_match(content, r'Error') or  helpers.any_match(content, r'input stream empty') or \
+        helpers.any_match(content, r'Lines Applied\: None') or helpers.any_match(content, r'Preserving Session'):
+            helpers.test_failure(c.cli_content())
+            return False
+        return True
+
+
+    def cli_compare_running_config_with_file_line_by_line(self, filename):
+        ''' Function to compare current running config with
+        config saved in a file, via CLI line by line
+        Input: Filename
+        Output: True if successful, False otherwise
+        '''
+        helpers.test_log("Comparing output of 'show running-config' with 'show file %s'" % filename)
+        t = test.Test()
+        c = t.controller('master')
+        try:
+            rc = c.config("show running-config")['content']
+            if "Error" in c.cli_content():
+                helpers.log("Error in CLI content")
+                return False
+            rc = helpers.strip_cli_output(rc)
+            rc = helpers.str_to_list(rc)
+            config_file = c.config("show file %s" % filename)['content']
+            if "Error" in c.cli_content():
+                helpers.log("Error in CLI content")
+                return False
+            config_file = helpers.strip_cli_output(config_file)
+            config_file = helpers.str_to_list(config_file)
+
+            if not len(rc) == len(config_file):
+                helpers.log("Length of RC is different than lenght of RC in file")
+                return False
+            for index,line in enumerate(rc):
+                line_temp = "%s: %s" % (filename, line)
+                helpers.log("Comparing '%s' and '%s'" % (line_temp, config_file[index]))
+                if 'Current Time' in line_temp:
+                    assert 'Current Time' in config_file[index]
+                    continue
+                if not line_temp == config_file[index]:
+                    helpers.log("difference")
+                    return False
+        except:
+            helpers.test_log(c.cli_content())
+            return False
+        else:
+            return True
+
+
+    def cli_compare_running_config_with_config_line_by_line(self, filename):
+        ''' Function to compare current running config with
+        config saved in config://, via CLI line by line
+        Input: Filename
+        Output: True if successful, False otherwise
+        '''
+        helpers.test_log("Comparing output of 'show running-config' with 'show config %s'" % filename)
+        t = test.Test()
+        c = t.controller('master')
+        try:
+            rc = c.config("show running-config")['content']
+            if "Error" in c.cli_content():
+                helpers.log("Error in CLI content")
+                return False
+            rc = helpers.strip_cli_output(rc)
+            rc = helpers.str_to_list(rc)
+            config_file = c.config("show config %s" % filename)['content']
+            if "Error" in c.cli_content():
+                helpers.log("Error in CLI content")
+                return False
+            config_file = helpers.strip_cli_output(config_file)
+            config_file = helpers.str_to_list(config_file)
+
+            helpers.log("length is %s" % len(rc))
+            helpers.log("length is %s" % len(config_file))
+
+            rc = rc[3:]
+            config_file = config_file[7:]
+
+            if not len(rc) == len(config_file):
+                helpers.log("Length of RC is different than lenght of RC in config")
+                return False
+            for index,line in enumerate(rc):
+                helpers.log("Comparing '%s' and '%s'" % (line, config_file[index]))
+                if not line == config_file[index]:
+                    helpers.log("difference")
+                    return False
+        except:
+            helpers.test_log(c.cli_content())
+            return False
+        else:
+            return True
+
+    def cli_delete(self, filename):
+        ''' Function to delete file
+        via CLI
+        Input: Filename
+        Output: True if successful, False otherwise
+        '''
+
+        if re.match(r'image://.*', filename):
+            name = re.split(r'image://', filename)
+            cmd = "delete image %s" % name[1]
+        elif re.match(r'config://.*', filename):
+            name = re.split(r'config://', filename)
+            cmd = "delete config %s" % name[1]
+        else:
+            cmd = "delete file %s" % filename
+
+        helpers.test_log("Running command:\n%s" % cmd)
+        t = test.Test()
+        c = t.controller('master')
+        if re.match(r'config://.*', filename):
+            helpers.test_log("Deleting config://, expecting confirmation prompt")
+            c.config("config")
+            c.send(cmd)
+            c.expect(r'[\r\n].+continue+.*|Error.*')
+            if 'Error' in c.cli_content():
+                helpers.test_failure(c.cli_content())
+                return False
+            c.config("yes")
+        else:
+            helpers.test_log("Deleting file")
+            c.config(cmd)
+        if helpers.any_match(c.cli_content(), r'Error'):
+            helpers.test_failure(c.cli_content())
+            return False
+        return True
+
+
+    def bash_clear_known_hosts(self):
+        ''' Function to delete known SSH RSA keys
+        via CLI/BASH
+        Output: True if successful, False otherwise
+        '''
+        helpers.test_log("Running command:\ndebug bash; > .ssh/known_hosts")
+        t = test.Test()
+        c = t.controller('master')
+        try:
+            c.config("config")
+            c.bash("> .ssh/known_hosts")
+            if "Error" in c.cli_content():
+                helpers.log("Error in CLI content")
+                return False
+        except:
+            helpers.test_log(c.cli_content())
+            return False
+        else:
+            return True
