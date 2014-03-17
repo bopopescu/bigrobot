@@ -316,3 +316,10 @@ class Host(object):
         helpers.log("files:\n%s" % helpers.prettify(files))
         return files
 
+    def bash_delete_arp(self, node, ipaddr):
+        t = test.Test()
+        n = t.node(node)
+        n.sudo("arp -d %s " % ipaddr)
+        return True
+        
+        
