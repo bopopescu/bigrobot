@@ -1,14 +1,13 @@
 *Settings
-Documentation  BigWire SNMP Test Suite Release:Bowmore Feature:SNMP
+Documentation  T5 SNMP Test Suite Release:Iron Horse Feature:SNMP
 Suite Setup  snmp suite setup
 Suite Teardown   snmp suite teardown
 Test Setup   base test setup
 Test Teardown   base test teardown
-Force Tags   BigWire  SNMP
+Force Tags   T5 SNMP
 Library  keywords/BsnCommon.py
 
 * Variable
-${version_string}  Big Wire Controller 1.0.0 
 
     
 * Test Case
@@ -38,12 +37,12 @@ Verify SNMP OID sysLocation on Slave
     
 Verify SNMP OID sysDescr on Master  
     ${snmp_key}=  snmp get  master  public  sysDescr.0
-    Should Contain  ${snmp_key}  ${version_string}    
+    Should Contain  ${snmp_key}  Big Virtual Switch Appliance    
     [Tags]  sysDescr  master
     
 Verify SNMP OID sysDescr on Slave  
     ${snmp_key}=  snmp get  slave  public  sysDescr.0
-    Should Contain  ${snmp_key}  ${version_string}    
+    Should Contain  ${snmp_key}  Big Virtual Switch Appliance    
     [Tags]  sysDescr  slave  
       
 Verify SNMP OID ifDescr on Master  
@@ -120,20 +119,20 @@ Restart process SNMP on Master controller and verify snmpget
     restart process on controller  snmpd  master
     Sleep  10    
     ${snmp_key}=  snmp get  master  public  sysDescr.0
-    Should Contain  ${snmp_key}  ${version_string}  
+    Should Contain  ${snmp_key}  Big Virtual Switch Appliance  
     [Tags]  restart  
  
 Restart process SNMP on Slave controller and verify snmpget
     restart process on controller  snmpd  slave
     Sleep  10    
     ${snmp_key}=  snmp get  slave  public  sysDescr.0
-    Should Contain  ${snmp_key}  ${version_string}  
+    Should Contain  ${snmp_key}  Big Virtual Switch Appliance  
     [Tags]  restart 
     
 Change community from public to bigswitch and verify snmp walk
     rest add snmp keyword  community  bigswitch
     ${snmp_key}=  snmp get  master  bigswitch  sysDescr.0
-    Should Contain  ${snmp_key}  ${version_string}   
+    Should Contain  ${snmp_key}  Big Virtual Switch Appliance   
     [Tags]  bigtap  snmp  
 
        
@@ -142,11 +141,9 @@ snmp suite setup
     rest add snmp keyword  community  public
     rest add snmp keyword  contact  Big Switch Networks
     rest add snmp keyword  location  Mountain View
-    rest add snmp keyword  trap-enable  True
-    rest add snmp host  10.192.3.22  162
+    rest add snmp keyword  trap-enabled  True
     rest add snmp host  10.192.66.230  162    
-    rest add firewall rule  protocol=udp  proto_port=161
-    rest add firewall rule  protocol=udp  proto_port=162    
+    rest add firewall rule  service=snmp
     Sleep  10        
 
 verify config
@@ -157,27 +154,21 @@ verify config
     Should Be Equal As Strings  ${snmp_key}  Big Switch Networks        
     ${snmp_key}=  verify json key  ${snmp_output}  0  location  
     Should Be Equal As Strings  ${snmp_key}  Mountain View
-    ${snmp_key}=  verify json key  ${snmp_output}  0  trap-enable  
+    ${snmp_key}=  verify json key  ${snmp_output}  0  trap-enabled  
     Should Be True  ${snmp_key}
-    ${snmp_output}=  rest show snmp host
-    ${snmp_key}=  verify json key  ${snmp_output}  0  host
-    Should Be Equal As Strings  ${snmp_key}  10.192.3.22
-    ${snmp_key}=  verify json key  ${snmp_output}  0  udp-port
-    Should Be Equal As Integers  ${snmp_key}  162
-    ${snmp_key}=  verify json key  ${snmp_output}  1  host
-    Should Be Equal As Strings  ${snmp_key}  10.192.66.230
-    ${snmp_key}=  verify json key  ${snmp_output}  1  udp-port
-    Should Be Equal As Integers  ${snmp_key}  162
+    ${snmp_key}=  verify json key  ${snmp_output}  0  trap-host
+    ${new_snmp_key}=  verify json key  ${snmp_key}  0  ipaddr      
+    Should Be Equal As Strings  ${new_snmp_key}  10.192.66.230
+    ${new_snmp_key}=  verify json key  ${snmp_key}  0  udp-port       
+    Should Be Equal As Integers  ${new_snmp_key}  162
            
 snmp suite teardown
     rest add snmp keyword  community  null
     rest add snmp keyword  contact  null
     rest add snmp keyword  location  null
     rest add snmp keyword  trap-enable  false
-    rest delete snmp host  10.192.3.22  162
     rest delete snmp host  10.192.66.230  162 
-    rest delete firewall rule  protocol=udp  proto_port=161
-    rest delete firewall rule  protocol=udp  proto_port=162        
+    rest delete firewall rule  service=snmp    
     base suite teardown
     
     

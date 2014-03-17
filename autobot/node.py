@@ -8,14 +8,11 @@ class Node(object):
     def __init__(self, name, ip, user=None, password=None, params=None):
         if not name:
             helpers.environment_failure("Node name is not defined")
-        if not ip:
-            helpers.environment_failure("Node IP address is not defined for '%s'"
-                                        % name)
 
         self._name = name
-        self._ip = ip.lower()  # IP might be 'dummy'
         self._user = user
         self._password = password
+        self._ip = None
         self.http_port = None
         self.base_url = None
         self.params = params
@@ -40,6 +37,17 @@ class Node(object):
                             % (name, self.dev_debug_level))
         else:
             self.node_params = {}
+
+        if not ip:
+            if helpers.params_is_false('set_session_ssh', self.node_params):
+                # set_session_ssh is False, so IP address doesn't have to be
+                # defined
+                pass
+            else:
+                helpers.environment_failure("Node IP address is not defined for '%s'"
+                                            % name)
+        else:
+            self._ip = ip.lower()  # IP might be 'dummy'
 
         if self.ip() == 'dummy':
             helpers.environment_failure("IP address for '%s' is 'dummy'."
@@ -70,13 +78,18 @@ class Node(object):
     def pingable_or_die(self):
         if self.is_pingable:
             return True
+        if self.ip() is None:
+            helpers.environment_failure("Ping failure - Node '%s' does not"
+                                        " have an IP address defined"
+                                        % self.name())
         helpers.log("Ping %s ('%s')" % (self.ip(), self.name()))
-        loss = helpers.ping(self.ip(), count=3, waittime=1000)
+        loss = helpers.ping(self.ip(), count=3, timeout=10)
         if  loss > 20:
             # We can tolerate 20% loss.
             # Consider init to be completed, so as not to be invoked again.
-            helpers.environment_failure("Node with IP address %s is unreachable."
-                                        % self.ip())
+            helpers.environment_failure("Ping failure - Node '%s' with IP"
+                                        " address %s is unreachable."
+                                        % (self.name(), self.ip()))
         self.is_pingable = True
         return True
 
@@ -253,7 +266,8 @@ class MininetNode(Node):
         else:
             self._start_mininet = self.node_params['start_mininet']
             if not helpers.is_bool(self._start_mininet):
-                helpers.environment_failure("%s: 'start_mininet' must be a boolean value"
+                helpers.environment_failure("%s: 'start_mininet' must be a"
+                                            " boolean value"
                                             % name)
 
         self.mn_type = self.node_params['type'].lower()
@@ -477,7 +491,8 @@ class BigTapIxiaNode(IxiaNode):
         helpers.log("Bigtap_Ports: %s" % self._bigtap_ports)
         helpers.log("Bigtap IXIA Ports: %s" % self._ports)
 
-        self._bigtap_node = t.node_spawn(self._bigtap_controller_ip, user='admin', password='adminadmin')
+        self._bigtap_node = t.node_spawn(self._bigtap_controller_ip,
+                                         user='admin', password='adminadmin')
         # string = 'show version'
         bigtap = self._bigtap_node
         # bigtap.cli(string)
@@ -490,8 +505,10 @@ class BigTapIxiaNode(IxiaNode):
         # helpers.log('BIGTAP RUNNING CONFIG Before pushing Statics Policies')
         # helpers.log(content)
         for switch in self._bigtap_switches.iteritems():
-            self._switch_handles[switch[0]] = t.node_spawn(switch[1]['ip'], user='admin',
-                                                           password='adminadmin', device_type='switch')
+            self._switch_handles[switch[0]] = t.node_spawn(switch[1]['ip'],
+                                                           user='admin',
+                                                           password='adminadmin',
+                                                           device_type='switch')
             string = 'show version'
             self._switch_handles[switch[0]].cli(string)
             helpers.log('Displaying Switch : %s version ' % switch[0])
