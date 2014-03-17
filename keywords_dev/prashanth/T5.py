@@ -694,7 +694,7 @@ class T5(object):
     def rest_verify_forwarding_port(self, switch):
         '''Verify Edge port  Information in Controller Forwarding Table
 
-            Input:  Specific DPID of the switch
+            Input:  switch name
 
             Return: port table with associated Lag id will be provided
         '''
@@ -1974,10 +1974,32 @@ class T5(object):
             return False    
    
     def rest_verify_host_lag(self, switcha, intf0, switchb, intf1):
-        '''Function to verify host lag
-        Input: Provide switch a , switch b , interfaces
-        Output:Verify both switch lag id is same in controller forwarding table
+        ''' Function to verify host lag formation
+        Input: dual rack switch name and specific interface which host is connected 
+        Output: verify the lag id for the given interface from both switch
         '''
         t = test.Test()
         c = t.controller('master')
-        
+        intf0 = re.sub("\D", "", intf0)
+        intf1 = re.sub("\D", "", intf1)
+        lag_id_a = []
+        lag_id_b = []
+        url_a = '/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch-name="%s"]/port-table' % (switcha)
+        c.rest.get(url_a) 
+        data = c.rest.content()
+        url_b = '/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch-name="%s"]/port-table' % (switchb)
+        c.rest.get(url_b) 
+        data1 = c.rest.content()
+        for i in range(0, len(data)):
+            if data[i]["port-num"] == int(intf0):
+                lag_id_a.append(data[i]["lag-id"])
+        for i in range(0, len(data1)):
+            if data1[i]["port-num"] == int(intf1):
+                lag_id_b.append(data1[i]["lag-id"])
+        if lag_id_a[0] == lag_id_b[0]:
+            helpers.log("BM Downlink lag are properly created for dual rack")
+            return True
+        else:
+            helpers.test_failure("BM Downlink lag are not properly created for dual rack %d:%d" % lag_id_a[0], lag_id_b[0])
+            return True
+    
