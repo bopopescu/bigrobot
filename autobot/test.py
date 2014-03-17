@@ -574,9 +574,9 @@ class Test(object):
 
         self.topology(node, n)
 
-        if n.dev:
+        if n.devconf():
             helpers.log("Exscript driver for '%s': %s"
-                        % (node, n.dev.conn.get_driver()))
+                        % (node, n.devconf().conn.get_driver()))
             helpers.log("Node '%s' is platform '%s'%s"
                         % (node, n.platform(),
                            br_utils.end_of_output_marker()))
@@ -713,7 +713,7 @@ class Test(object):
     def _controller_cli_firewall_allow_rest_access(self, name, node_id):
         n = self.topology(name)
 
-        if not n.dev:
+        if not n.devconf():
             helpers.log("DevConf session is not available for node '%s'"
                         % name)
             return
@@ -728,7 +728,7 @@ class Test(object):
     def setup_controller_firewall_allow_rest_access(self, name):
         n = self.topology(name)
 
-        if not n.dev:
+        if not n.devconf():
             helpers.log("DevConf session is not available for node '%s'"
                         % name)
             return
@@ -754,7 +754,7 @@ class Test(object):
     def setup_controller_http_session_cookie(self, name):
         n = self.topology(name)
 
-        if not n.dev:
+        if not n.devconf():
             helpers.log("DevConf session is not available for node '%s'"
                         % name)
             return
@@ -767,7 +767,7 @@ class Test(object):
         """
         n = self.topology(name)
 
-        if not n.dev:
+        if not n.devconf():
             helpers.log("DevConf session is not available for node '%s'"
                         % name)
             return
@@ -791,7 +791,7 @@ class Test(object):
         """
         n = self.topology(name)
 
-        if not n.dev:
+        if not n.devconf():
             helpers.log("DevConf session is not available for node '%s'"
                         % name)
             return

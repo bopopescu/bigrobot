@@ -12,6 +12,10 @@ Library         keywords_dev/vui/MyTest.py
 
 * Test Case
 Test sending control-c
-    #[Tags]  skipped
+    [Tags]  skipped
     ssh send control c
+
+Test expect prompts
+    #[Tags]  skipped
+    test expect prompts
 
