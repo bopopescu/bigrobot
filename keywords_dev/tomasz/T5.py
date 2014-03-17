@@ -1306,111 +1306,40 @@ class T5(object):
 #End here
 #===========================================================
 
-    def cli_reconnect(self):
-        t = test.Test()
-        c = t.node_reconnect(node='master')
-
-    def cli_reset(self):
-        t = test.Test()
-        c = t.controller('master')
-        content = c.cli_content()
 
 
-    def cli_copy(self, src, dst):
-        ''' Generic function to copy via CLI
-        Input: Src and Dst for copy command
-        Output: True if successful, False otherwise
-        '''
-        if (("scp://" in src) or ("scp://" in dst)):
-            helpers.test_failure("Did you mean to use keyword Cli Compare Scp, dedicated for SCP handling")
-            return False
-        helpers.test_log("Running command:\ncopy %s %s" % (src, dst))
-        t = test.Test()
-        c = t.controller('master')
-        c.config("config")
-        try:
-            c.config("copy %s %s" % (src, dst))
-            if "Error" in c.cli_content():
-                helpers.test_failure(c.cli_content())
-        except:
-            helpers.test_failure(c.cli_content())
-            return False
-        else:
-            return True
-
-
-    def cli_compare(self, first, second):
-        ''' Generic function to compare files via CLI
-        Input: First, Second files
-        Output: True if successful, False otherwise
-        '''
-        if (("scp://" in first) or ("scp://" in second)):
-            helpers.test_failure("Did you mean to use keyword Cli Compare Scp, dedicated for SCP handling")
-            return False
-        helpers.test_log("Running command:\ncompare %s %s" % (first, second))
-        t = test.Test()
-        c = t.controller('master')
-        c.config("config")
-        output = c.config("compare %s %s" % (first, second))['content']
-        if "Error" in c.cli_content():
-            helpers.test_failure(c.cli_content())
-            return False
-
-        output = helpers.strip_cli_output(output)
-        output = helpers.str_to_list(output)
-        if len(output) == 0:
-            helpers.log("Files are identical")
-            return True
-        if len(output) == 1 and output[0] == ("compare %s %s" % (first, second)):
-            helpers.log("Files are identical")
-            return True
-
-        for line in output:
-            if re.match(r'[0-9].*|< \!|---|> \!|< \Z|> \Z', line):
-                helpers.log("OK: %s" % line)
-                continue
-            else:
-                helpers.log("files different at line:\n%s" % line)
-                return False
-        return True
-
-
-    def cli_compare_scp(self, src, dst, passwd='adminadmin'):
+    def cli_compare(self, src, dst, node='master', scp_passwd='adminadmin'):
         ''' Generic function to compare via CLI, using SCP
-        Input: Src, Dst for copy command and Password for scp connection
+        Input:
+        Src, Dst - source and destination of compare command
+        Scp_Password - password for scp connection
+        Node - pointing to Master or Slave controller
         Output: True if successful, False otherwise
-        '''
-        if not (("scp://" in src) or ("scp://" in dst)):
-            helpers.test_failure("No scp location in source nor destination")
-            return False
+         '''
         helpers.test_log("Running command:\ncompare %s %s" % (src, dst))
         t = test.Test()
-        c = t.controller('master')
-        prompt = c.get_prompt()
-        prompt = 'BVS1209'
-        helpers.log("prompt is %s" % prompt)
+        c = t.controller(node)
         c.config("config")
         c.send("compare %s %s" % (src, dst))
-        c.expect(r'[\r\n].+Password: |[\r\n].+(yes/no)?|[\r\n].*BVS1209')
-        #c.expect(r'[\r\n].+Password: |[\r\n].+(yes/no)?|ssh: Could not resolve.*|[\r\n]*Error.*|.*No such file or directory.*')
+        options = c.expect([r'Password: ', r'\(yes/no\)\?', c.get_prompt()])
         content = c.cli_content()
         helpers.log("*****Output is :\n%s" % content)
         try:
-            if  ('Could not resolve' in content) or ('Error' in content) or ('ssh: Could not resolve' in content):
+            if  ('Could not resolve' in content) or ('Error' in content) or ('No such file or directory' in content):
                 helpers.test_failure(content)
                 return False
-            elif re.match(r'.*Password:.* ', content):
+            elif options[0] == 0 :
                 helpers.log("INFO:  need to provide passwd " )
-                output = c.config(passwd)['content']
-            elif re.match(r'.+(yes/no)?', content):
+                output = c.config(scp_passwd)['content']
+            elif options[0] == 1:
                 helpers.log("INFO:  need to send yes, then provide passwd " )
                 c.send('yes')
                 c.expect(r'Password:')
-                output = c.config(passwd)['content']
+                output = c.config(scp_passwd)['content']
         except:
             helpers.test_failure(c.cli_content())
             return False
-        
+
         output = c.cli_content()
         helpers.log("Output *** %s " % output)
         if ("Error" in output) or ('No such file or directory' in output):
@@ -1419,10 +1348,11 @@ class T5(object):
 
         output = helpers.strip_cli_output(output)
         output = helpers.str_to_list(output)
-        for index, line in enumerate(output):
-            if '100%' in line:
-                output = output[(index+1):]
-                break
+        if options[0] < 2:
+            for index, line in enumerate(output):
+                if '100%' in line:
+                    output = output[(index+1):]
+                    break
         
         helpers.log("Cropped output *** %s " % output)
         if len(output) == 0:
@@ -1436,104 +1366,62 @@ class T5(object):
             else:
                 helpers.log("files different at line:\n%s" % line)
                 return False
-        return True
-
-
-    def cli_copy_scp(self, src, dst, passwd='adminadmin'):
-        ''' Generic function to copy via CLI, using SCP
-        Input: Src, Dst for copy command and Password for scp connection
-        Output: True if successful, False otherwise
-        '''
-        if not (("scp://" in src) or ("scp://" in dst)):
-            helpers.test_failure("No scp location in source nor destination")
-            return False
-        helpers.test_log("Running command:\ncopy %s %s" % (src, dst))
-        t = test.Test()
-        c = t.controller('master')
-        c.config("config")
-        c.send("copy %s %s" % (src, dst))
-        c.expect(r'[\r\n].+Password: |[\r\n].+(yes/no)?|ssh: Could not resolve.*|Error.*')
-        content = c.cli_content()
-        helpers.log("*****Output is :\n%s" % content)
-        if  ('Could not resolve' in content) or ('Error' in content):
-            helpers.test_failure(content)
-            return False
-        elif re.match(r'.*Password:.* ', content):
-            helpers.log("INFO:  need to provide passwd " )
-            c.send(passwd)
-        elif re.match(r'.+(yes/no)?', content):
-            helpers.log("INFO:  need to send yes, then provide passwd " )
-            c.send('yes')
-            c.expect(r'Password:')
-            c.send(passwd)
-        try:
-            c.expect(timeout=180)
-            if "Error" in c.cli_content():
-                helpers.test_failure(c.cli_content())
-                return False
-        except:
-            helpers.log('scp failed')
+        
+        if helpers.any_match(c.cli_content(), r'Error'):
             helpers.test_failure(c.cli_content())
             return False
-        else:
-            helpers.log('scp completed successfully')
         return True
 
-# 
-#     def cli_copy_scp_to_running_config(self, source):
-#         ''' Function to copy config from remote scp:// to running-config
-#         via CLI
-#         Input: Source
-#         Output: True if successful, False otherwise
-#         '''
-#         helpers.test_log("Running command:\ncopy scp://%s running-config" % source)
-#         t = test.Test()
-#         c = t.controller('master')
-#         try:
-#             c.config("config")
-#             c.send("copy scp://%s running-config" % source)
-#             #try:
-#             #    c.expect(r"Are you sure you want to continue connecting \(yes/no\)?")
-#             #    c.send("yes")
-#             #except:
-#             #    helpers.test_log("Apparently already RSA key fingerprint stored")
-#             c.expect("Password")
-#             c.config("adminadmin")
-#             cli_content = c.cli_content()
-#             assert "Error" not in cli_content
-#         except:
-#             helpers.test_log(c.cli_content())
-#             return False
-#         else:
-#             return True
 
-#     def cli_copy_running_config_to_scp(self, destination):
-#         ''' Function to copy running config to remote scp
-#         via CLI
-#         Input: Destination
-#         Output: True if successful, False otherwise
-#         '''
-#         helpers.test_log("Running command:\ncopy running-config scp://%s" % destination)
-#         t = test.Test()
-#         c = t.controller('master')
-#         try:
-#             c.config("config")
-#             c.send("copy running-config scp://%s" % destination)
-#             try:
-#                 c.expect(r"Are you sure you want to continue connecting \(yes/no\)?")
-#                 c.send("yes")
-#             except:
-#                 helpers.test_log("Apparently already RSA key fingerprint stored")
-#             c.expect("Password")
-#             c.config("adminadmin")
-#             cli_content = c.cli_content()
-#             assert "100%" in cli_content
-#             assert "Error" not in cli_content
-#         except:
-#             helpers.test_log(c.cli_content())
-#             return False
-#         else:
-#             return True
+    def cli_copy(self, src, dst, node='master', scp_passwd='adminadmin'):
+        ''' Generic function to copy via CLI, using SCP
+        Input:
+        Src, Dst - source and destination of copy command
+        Scp_Password - password for scp connection
+        Node - pointing to Master or Slave controller
+        Output: True if successful, False otherwise
+        '''
+        helpers.test_log("Running command:\ncopy %s %s" % (src, dst))
+        t = test.Test()
+        c = t.controller(node)
+        c.config("config")
+        c.send("copy %s %s" % (src, dst))
+        options = c.expect([r'Password: ', r'\(yes/no\)\?', c.get_prompt()])
+        content = c.cli_content()
+        helpers.log("*****Output is :\n%s" % content)
+        if  ('Could not resolve' in content) or ('Error' in content) or ('No such file or directory' in content):
+            helpers.test_failure(content)
+            return False
+
+        if options[0] < 2:
+            if options[0] == 0 :
+                helpers.log("INFO:  need to provide passwd " )
+                c.send(scp_passwd)
+            elif options[0] == 1:
+                helpers.log("INFO:  need to send yes, then provide passwd " )
+                c.send('yes')
+                c.expect(r'Password:')
+                c.send(scp_passwd)
+            try:
+                c.expect(c.get_prompt(), timeout=180)
+                if not (helpers.any_match(c.cli_content(), r'100%') or helpers.any_match(c.cli_content(), r'Lines Applied')):
+                    helpers.test_failure(c.cli_content())
+                    return False
+            except:
+                helpers.log('scp failed')
+                helpers.test_failure(c.cli_content())
+                return False
+            else:
+                helpers.log('scp completed successfully')
+        else:
+            c.config("config")
+
+        content = c.cli_content()
+        if helpers.any_match(content, r'Error') or  helpers.any_match(content, r'input stream empty') or \
+        helpers.any_match(content, r'Lines Applied\: None') or helpers.any_match(content, r'Preserving Session'):
+            helpers.test_failure(c.cli_content())
+            return False
+        return True
 
 
     def cli_compare_running_config_with_file_line_by_line(self, filename):
@@ -1640,7 +1528,6 @@ class T5(object):
         helpers.test_log("Running command:\n%s" % cmd)
         t = test.Test()
         c = t.controller('master')
-        #try:
         if re.match(r'config://.*', filename):
             helpers.test_log("Deleting config://, expecting confirmation prompt")
             c.config("config")
@@ -1653,60 +1540,10 @@ class T5(object):
         else:
             helpers.test_log("Deleting file")
             c.config(cmd)
-        if "Error" in c.cli_content():
+        if helpers.any_match(c.cli_content(), r'Error'):
             helpers.test_failure(c.cli_content())
             return False
         return True
-        #except:
-        #    helpers.log("test failure")
-        #    helpers.test_failure(c.cli_content())
-        #    return False
-        #else:
-        #    helpers.test_log(c.cli_content())
-        #    return True
-
-# 
-#     def cli_delete_running_config_file(self, filename):
-#         ''' Function to delete running config file
-#         via CLI
-#         Input: Filename
-#         Output: True if successful, False otherwise
-#         '''
-#         helpers.test_log("Running command:\ndelete file %s" % filename)
-#         t = test.Test()
-#         c = t.controller('master')
-#         try:
-#             c.config("delete file %s" % filename)
-#             assert "Error" not in c.cli_content()
-#         except:
-#             helpers.test_log(c.cli_content())
-#             return False
-#         else:
-#             return True
-# 
-# 
-#     def cli_delete_running_config_config_file(self, filename):
-#         ''' Function to delete running config file
-#         via CLI
-#         Input: Filename
-#         Output: True if successful, False otherwise
-#         '''
-#         helpers.test_log("Running command:\ndelete config %s" % filename)
-#         t = test.Test()
-#         c = t.controller('master')
-#         try:
-#             c.config("config")
-#             c.send("delete config %s" % filename)
-#             c.expect(r"proceed \(\"yes\" or \"y\" to continue\):")
-#             c.config("yes")
-#             if "Error" in c.cli_content():
-#                 helpers.log("Error in CLI content")
-#                 return False
-#         except:
-#             helpers.test_log(c.cli_content())
-#             return False
-#         else:
-#             return True
 
 
     def bash_clear_known_hosts(self):
