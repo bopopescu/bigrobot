@@ -111,7 +111,8 @@ class Node(object):
         """
         Returns the devconf handle.
         """
-        raise NotImplementedError()
+        # raise NotImplementedError()
+        return None
 
 
 class ControllerNode(Node):

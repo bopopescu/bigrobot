@@ -43,7 +43,7 @@ class DevConf(object):
 
         self.connect()
 
-        helpers.debug("Setting timeout to %s seconds" % self._timeout)
+        helpers.debug("Setting expect timeout to %s seconds" % self._timeout)
         self.conn.set_timeout(self._timeout)
 
         driver = self.conn.get_driver()
