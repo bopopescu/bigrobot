@@ -317,9 +317,9 @@ class Test(object):
         n = self.topology(name)
         platform = n.platform()
 
-        if self._has_a_single_controller:
+        # if self._has_a_single_controller:
             # helpers.debug("Topology has a single controller. Assume it's the master.")
-            return True
+        #    return True
 
         if helpers.is_bigtap(platform) or helpers.is_bigwire(platform):
             # We don't want REST object to save the result from the REST
@@ -335,6 +335,12 @@ class Test(object):
             result = n.rest.get("/api/v1/data/controller/cluster",
                                 save_last_result=False)
             content = result['content']
+
+            if 'domain-leader' not in content[0]['status']:
+                helpers.environment_failure("HA issue - 'domain-leader' is not found.")
+            if 'leader-id' not in content[0]['status']['domain-leader']:
+                helpers.environment_failure("HA issue - 'leader-id' is not found.")
+
             leader_id = content[0]['status']['domain-leader']['leader-id']
             local_node_id = content[0]['status']['local-node-id']
 
