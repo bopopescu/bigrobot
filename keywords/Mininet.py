@@ -171,10 +171,10 @@ class Mininet(object):
         mn = t.mininet(node)
         mn.stop_mininet()
 
-    def mininet_restart(self, node='mn1', new_topology=None):
+    def mininet_restart(self, node='mn1', new_topology=None, sleep=5):
         t = test.Test()
         mn = t.mininet(node)
-        mn.restart_mininet(new_topology)
+        mn.restart_mininet(new_topology, sleep=sleep)
 
     def mininet_host_verify_arp(self, host, ip):
         t = test.Test()
