@@ -114,6 +114,26 @@ Traffic forward ingress wrong vlan id
     stop traffic  ${stream}
     sleep  5
 
+Check broadcast source mac learning on the controller
+	[Tags]  feature
+	 ${stream}=             L3 add  no_arp=True  flow=b->d  src_mac=ff:ff:ff:ff:ff:ff  dst_mac=00:02:04:00:00:24  vlan_id=150  ethertype=8100  frame_rate=1000    frame_size=68  name=b_d_flow
+    start traffic  ${stream}
+    sleep  10
+    ${result}=  rest verify forwarding layer2 table tag  leaf0-b  ${leaf0b_ixia_intf}  ff:ff:ff:ff:ff:ff
+    Should Not be True  ${result}
+    verify traffic rate negative  tx_rate  rx_rate  b  d
+    stop traffic  ${stream}
+
+Check multicast source mac learning on the controller
+	[Tags]  feature
+	 ${stream}=             L3 add  no_arp=True  flow=b->d  src_mac=01:00:5e:00:00:01  dst_mac=00:02:04:00:00:24  vlan_id=150  ethertype=8100  frame_rate=1000    frame_size=68  name=b_d_flow
+    start traffic  ${stream}
+    sleep  10
+    ${result}=  rest verify forwarding layer2 table tag  leaf0-b  ${leaf0b_ixia_intf}  01:00:5e:00:00:01
+    Should Not be True  ${result}
+    verify traffic rate negative  tx_rate  rx_rate  b  d
+    stop traffic  ${stream}       
+
 Untag Traffic ingress on tag ports
 	[Tags]  feature     
 	
