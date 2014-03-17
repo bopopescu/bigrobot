@@ -836,6 +836,27 @@ def list_compare(list1, list2):
     return True
 
 
+def list_flatten(alist):
+    """
+    Given a list, such as [0, 1, 2, [3, 4, 5], 6, [7, 8]], flatten it.
+    Caveat: It only flattens one level... for now...
+
+    Return
+       - New list (flattened)
+    """
+    if not is_list(alist):
+        return alist
+
+    # Else we're dealing with a list...
+    result = []
+    for entry in alist:
+        if is_list(entry):
+            _ = [result.append(i) for i in entry]
+        else:
+            result.append(entry)
+    return result
+
+
 def bigtest_node_info():
     """
     Traverse the directory /var/run/bigtest and gather all the node attributes
