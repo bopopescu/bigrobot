@@ -13,3 +13,5 @@ mininet_password: mininet
 host_user: bsn
 host_password: bsn
 
+host_root_user: root
+host_root_password: bsn

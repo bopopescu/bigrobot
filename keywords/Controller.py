@@ -109,16 +109,53 @@ class Controller(object):
             helpers.log("Copying running-config to file on node '%s'" % n.name())
             n.enable('copy running-config file://running-config-bigrobot')
 
-    def cli_boot_factory_default(self, node):
+    def cli_boot_factory_default(self, node, timeout=360):
         """
         Runs boot factory-default. This will cause the SSH connection to disappear and the session would need to be restarted.
         """
         t = test.Test()
         n = t.node(node)
-        n.enable("boot factory-default", prompt=r'Do you want to continue \[no\]\? ')
-        n.enable("yes", prompt='Enter NEW admin password: ')
-        n.enable("adminadmin", prompt='Repeat NEW admin password: ')
-        n.enable("adminadmin", prompt='UNAVAILABLE localhost')
+        if helpers.is_bigtap(n.platform()):
+            helpers.log("Boot factory-default on '%s' (Big Tap Controller)" % node)
+            n.enable("boot factory-default", prompt=r'Do you want to continue \[no\]\? ')
+            n.enable("yes", prompt='Enter NEW admin password: ')
+            n.enable("adminadmin", prompt='Repeat NEW admin password: ')
+            n.enable("adminadmin", prompt='UNAVAILABLE localhost')
+        elif helpers.is_bvs(n.platform()):
+            helpers.log("Boot factory-default on '%s' (BVS)" % node)
+            helpers.summary_log('BVS boot factory may take a bit of time. Setting timeout to %s seconds.' % timeout)
+
+            # vui-bvs> enable
+            # vui-bvs# boot factory-default
+            # boot factory default: will over-write the alternate partition
+            # proceed ("yes" or "y" to continue): y
+            # boot factory default: loading image into stage partition
+            # boot factory default: checking integrity of new partition
+            # boot factory default: New Partition Ready
+            # factory default: ready for reboot
+            # boot factory default: reboot? ("yes" or "y" to continue): y
+            #
+            # Broadcast message from root@blah
+            #    (unknown) at 20:32 ...
+            #
+            # The system is going down for reboot NOW!
+            # Connection to 10.192.104.2 closed by remote host.
+            # Connection to 10.192.104.2 closed.
+
+            n.enable('')
+            n.send('boot factory-default')
+            n.expect(r'proceed \("yes" or "y" to continue\)')
+            n.send('y')
+            n.expect(r'loading image into stage partition', timeout=timeout)
+            n.expect(r'checking integrity of new partition', timeout=timeout)
+            n.expect(r'New Partition Ready', timeout=timeout)
+            n.expect(r'ready for reboot', timeout=timeout)
+            n.expect(r'"yes" or "y" to continue\): ', timeout=timeout)
+            n.send('y')
+            # n.expect(r'system is going down for reboot')
+            helpers.summary_log("'%s' has been rebooted." % node)
+        else:
+            helpers.test_error("Boot factory-default is only supported on 'bvs' and 'bigtap'")
 
         # At this point, device is rebooted and we lose the session handle.
         # Connect to device console to complete first-boot.

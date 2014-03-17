@@ -583,9 +583,9 @@ class Test(object):
         if n.devconf():
             helpers.log("Exscript driver for '%s': %s"
                         % (node, n.devconf().conn.get_driver()))
-            helpers.log("Node '%s' is platform '%s'%s"
-                        % (node, n.platform(),
-                           br_utils.end_of_output_marker()))
+        helpers.log("Node '%s' is platform '%s'%s"
+                    % (node, n.platform(),
+                       br_utils.end_of_output_marker()))
         return n
 
     def node_reconnect(self, node, **kwargs):
