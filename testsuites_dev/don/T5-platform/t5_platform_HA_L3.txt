@@ -7,14 +7,15 @@ Suite Setup      base suite setup
 Suite Teardown   base suite teardown
 #Test Setup       base test setup
 #Test Teardown    base test teardown
-Force Tags       T5Platform  HA
+Force Tags       Platform  HA
 Library          keywords/BsnCommon.py
 Library          keywords/Mininet.py
 Library          keywords/T5.py
-Library	         keywords/T5Fabric.py
 Library	         keywords/T5L3.py
 Library	         keywords/T5Platform.py
 Library	         keywords/T5Utilities.py
+
+
 
 * Variables
 @{spineList}  00:00:00:00:00:01:00:01  00:00:00:00:00:01:00:02
@@ -24,7 +25,7 @@ Library	         keywords/T5Utilities.py
 * Test Case 
 
 Single Tenant Multiple VNS HA Test
-	[Tags]	L3
+	[Tags]	sanity  L3  Traffic  
 	Configure 3-Rack/Dual-Leaf/2-Spine/2-Host Setup For Mininet
 	Configure 1 Tenant with Multiple VNSs & Gateway Interfaces
 	Verify Connectivity in 3-Rack/Dual-Leaf/2-Spine/2-Host Setup
@@ -33,7 +34,7 @@ Single Tenant Multiple VNS HA Test
 	
 
 Two Tenants With Multiple VNS HA Test
-	[Tags]	L32
+	[Tags]	sanity  L3  Traffic
 	Configure 3-Rack/Dual-Leaf/2-Spine/4-Host Setup For Mininet 
 	Configure 2 Tenants with Multiple VNSs & Gateway Interfaces
 	Verify Connectivity in 3-Rack/Dual-Leaf/2-Spine/4-Host Setup
@@ -59,7 +60,7 @@ T5 base test teardown
 
 
 Configure 3-Rack/Dual-Leaf/2-Spine/2-Host Setup For Mininet
-
+   mininet restart    node=mn1    new_topology=--num-spine 2 --num-rack 3 --num-bare-metal 2 --num-hypervisor 0 --dual-tor
    auto configure fabric switch  ${spineList}  ${leafList}  2
    sleep  5
    Set Test Variable  ${bm0_intf0}  leaf0a-eth8
@@ -172,7 +173,7 @@ Reboot the master node & verify fabric integrity
 
 
 Configure 3-Rack/Dual-Leaf/2-Spine/4-Host Setup For Mininet 
-
+   mininet restart    node=mn1    new_topology=--num-spine 2 --num-rack 3 --num-bare-metal 4 --num-hypervisor 0 --dual-tor
    auto configure fabric switch  ${spineList}  ${leafList}  2
    sleep  5
    Set Test Variable  ${bm0_intf0}  leaf0a-eth8

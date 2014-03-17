@@ -369,6 +369,16 @@ class T5Platform(object):
 
 
     def auto_configure_fabric_switch(self, spineList, leafList, leafPerRack):
+        ''' Add leaf & spine switches to the running-config. 
+            Usage: 
+                * Variables
+                @{spineList}  00:00:00:00:00:01:00:01  00:00:00:00:00:01:00:02
+                @{leafList}  00:00:00:00:00:02:00:01  00:00:00:00:00:02:00:02  00:00:00:00:00:02:00:03  00:00:00:00:00:02:00:04
+                
+                Test T5Setup
+                    [Tags]  Setup
+                    auto configure fabric switch  ${spineList}  ${leafList}  2
+        '''
         
         global leafSwitchList
         
@@ -440,6 +450,16 @@ class T5Platform(object):
 
      
     def auto_delete_fabric_switch(self, spineList, leafList, leafPerRack):
+        ''' Delete all the switches in the running-config. Use as running config cleanup function. (teardown)
+            Usage: 
+                * Variables
+                @{spineList}  00:00:00:00:00:01:00:01  00:00:00:00:00:01:00:02
+                @{leafList}  00:00:00:00:00:02:00:01  00:00:00:00:00:02:00:02  00:00:00:00:00:02:00:03  00:00:00:00:00:02:00:04
+                
+                Test T5TearDown
+                    [Tags]  Teardown
+                    auto delete fabric switch  ${spineList}  ${leafList}  2
+        '''
         
         numSpines = len(spineList)
         numLeaves = len(leafList)
@@ -474,7 +494,22 @@ class T5Platform(object):
                         except:
                             pass
                              
-                             
+    
+    def auto_delete_fabric_portgroups(self):
+        ''' Delete all the port groups in the running-config. Use as running config cleanup function. (teardown)
+        '''
+        
+        url = "/api/v1/data/controller/fabric/port-group?config=true"
+        t = test.Test()
+        master = t.controller("master")
+        
+        result = master.rest.get(url)['content']
+        
+        for pg in result:
+            url = "/api/v1/data/controller/fabric/port-group[name=\""+ pg['name'] + "\"]"
+            master.rest.delete(url, {})
+
+             
                              
     def platform_ping(self, src, dst ):
         global pingFailureCount
@@ -774,5 +809,96 @@ class T5Platform(object):
                 return None
         
         
+    def rest_add_monitor_session(self, sessionID, srcSwitch, srcInt, dstSwitch, dstInt):
+        '''
+            Add a monitor session (SPAN) to the switch
+            Inputs: sessionID - Session ID for the monitor session
+                    srcSwitch/Int - Source switch & interface
+                    dstSwitch/Int - Destination switch & interface
+            Returns:
+                True - If the configuration went through without any errors
+                False - If the configuration action fails
+        '''
+
+        t = test.Test()
+        master = t.controller("master")
+        url = "/api/v1/data/controller/fabric/monitor-session[id=" + sessionID+"]"
+        
+        master.rest.put(url, {"id": sessionID})
+                
+        url = "/api/v1/data/controller/fabric/monitor-session[id=" + sessionID + "]/source[switch-name=\"" +srcSwitch +"\"][interface-name=\"" + srcInt+ "\"]"
+        result = master.rest.put(url, {"switch-name": srcSwitch , "interface-name": srcInt})
+
+        url = "/api/v1/data/controller/fabric/monitor-session[id=" + sessionID + "]/destination[switch-name=\"" +dstSwitch +"\"][interface-name=\"" + dstInt+ "\"]"
+        result = master.rest.put(url, {"switch-name": srcSwitch , "interface-name": dstInt})
+        
+        if master.rest.status_code_ok():
+            return True
+        else:
+            return False
+        
+    
+    def rest_delete_monitor_session(self, sessionID):
+        
+        t = test.Test()
+        master = t.controller("master") 
+        url = "/api/v1/data/controller/fabric/monitor-session[id=" + sessionID+"]"
+        
+        master.rest.delete(url, {"id": sessionID})
+        
+        if master.rest.status_code_ok():
+            return True
+        else:
+            return False
+        
+        
+    def rest_verify_monitor_session(self, sessionID, srcSwitch, srcInt, dstSwitch, dstInt):
+        '''
+            Verify a monitor session (SPAN) in the switch. This uses "show run monitor-session" command
+            for the verification 
+            Inputs: sessionID - Session ID for the monitor session
+                    srcSwitch/Int - Source switch & interface
+                    dstSwitch/Int - Destination switch & interface
+            Returns:
+                True - If the session exits
+                False - If the session doesn't exists
+        '''
+        
+        t = test.Test()
+        master = t.controller("master")
+        
+        foundSession = False
+        url = "/api/v1/data/controller/fabric/monitor-session?config=true"
+        result = master.rest.get(url)['content']
+        
+        try:
+            for session in result:
+                if (str(session['id']) == sessionID):
+                    foundSession = True
+                    if(session['source'][0]['switch-name'] != srcSwitch):
+                        helpers.log("Wrong source switch in the monitor session %s : %s" % (sessionID, srcSwitch))
+                        return False
+                    if(session['source'][0]['interface-name'] != srcInt):
+                        helpers.log("Wrong source interface in the monitor session %s : %s" % (sessionID, srcInt))
+                        return False
+                    if(session['destination'][0]['switch-name'] != dstSwitch):
+                        helpers.log("Wrong destination switch in the monitor session %s : %s" % (sessionID, dstSwitch))
+                        return False
+                    if(session['destination'][0]['interface-name'] != dstInt):
+                        helpers.log("Wrong destination interface in the monitor session %s : %s" % (sessionID, dstInt))
+                        return False
+                    pass
+                    
+        except(KeyError):
+            helpers.warn("KeyError detected: One of the fields are missing from the monitor session")
+            helpers.log(session)
+            return False
+
+        if(foundSession):
+            return True
+        else:
+            helpers.log("Monitor session is not found in the running config")
+            return False
+
         
         
