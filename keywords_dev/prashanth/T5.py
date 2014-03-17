@@ -1973,3 +1973,11 @@ class T5(object):
             helpers.test_failure("Interval value does not match Actual:%d , Expected:%d" % intf_value, int(data["interface-stats-interval"]))
             return False    
    
+    def rest_verify_host_lag(self, switcha, intf0, switchb, intf1):
+        '''Function to verify host lag
+        Input: Provide switch a , switch b , interfaces
+        Output:Verify both switch lag id is same in controller forwarding table
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        
