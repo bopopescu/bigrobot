@@ -48,26 +48,14 @@ ${leaf1_pc1}		leaf1-pc1
 ${leaf1_pc2}		leaf1-pc2
 ${leaf1_pc3}		leaf1-pc3
 ${leaf1_pc4}		leaf1-pc4
-${leaf0_pc1_intf1}	ethernet1
-${leaf0_pc1_intf2}	ethernet1
-${leaf0_pc2_intf1}	ethernet2
-${leaf0_pc2_intf2}	ethernet2
-${leaf0_pc3_intf1}	ethernet3
-${leaf0_pc3_intf2}	ethernet3
-${leaf0_pc4_intf1}	ethernet4
-${leaf0_pc4_intf2}	ethernet4
-${leaf0_pc5_intf1}	ethernet5
-${leaf0_pc5_intf2}	ethernet6
-${leaf0_pc6_intf1}	ethernet7
-${leaf0_pc6_intf2}	ethernet8
+${leaf0_pc1_intf1}	ethernet48
+${leaf0_pc1_intf2}	ethernet48
+${leaf0_pc2_intf1}	ethernet47
+${leaf0_pc2_intf2}	ethernet47
 ${leaf1_pc1_intf1}	ethernet1
 ${leaf1_pc1_intf2}	ethernet1
 ${leaf1_pc2_intf1}	ethernet2
 ${leaf1_pc2_intf2}	ethernet2
-${leaf1_pc3_intf1}	ethernet3
-${leaf1_pc3_intf2}	ethernet3
-${leaf1_pc4_intf1}	ethernet4
-${leaf1_pc4_intf2}	ethernet4
 
 
 

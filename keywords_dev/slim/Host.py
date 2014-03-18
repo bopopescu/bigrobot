@@ -264,7 +264,20 @@ class Host(object):
         match = re.search(r'start\/running', output, re.S | re.I)
         if match:
             return 'is started'
-
+       
+    def bash_start_service(self, node, processname):
+        t = test.Test()
+        n = t.node(node)
+        n.sudo("service %s start" % processname)
+        return True
+    
+    def bash_stop_service(self, node, processname):
+        t = test.Test()
+        n = t.node(node)
+        n.sudo("service %s stop" % processname)
+        return True       
+        
+        
     def bash_ls(self, node, path):
         """
         Execute 'ls -l --time-style=+%Y-%m-%d <path>' on a device.
