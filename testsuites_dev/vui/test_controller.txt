@@ -137,4 +137,4 @@ Test get node ID
 
 Test SSH connection
     #[Tags]  skipped
-    verify ssh connection   c1   admin   adminadmin
+    verify ssh connection   node=c1   user=admin   password=adminadmin
