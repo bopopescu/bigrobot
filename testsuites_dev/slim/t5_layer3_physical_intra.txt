@@ -74,6 +74,13 @@ Verify L3 endpoint aging
 Verify L3 ttl 1 is not being forwarded
 	Check L3 ttl 1 is dropped
 #	[Tags]							skipped			sanity			
+
+Change router vns ip
+	Change router ip address
+#	[Tags]							skipped			sanity			
+
+	
+
 	
 * Keywords
 L3 intra tenant same rack untagged with dynamic endpoints
@@ -735,6 +742,76 @@ Check L3 ttl 1 is dropped
    	Should Contain X Times						${result}						Time to live exceeded	10
    	
 
+Change router ip address
+	BASH ifup intf								h1 								bond0
+	BASH ifup intf								h2								bond0
+	BASH ifup intf								h3								bond0
+	BASH ifup intf								h4								bond0		
+	REST add portgroup to vns					X								X1						${leaf1_pc1}			-1
+	REST add portgroup to vns					X								X2						${leaf1_pc2}			-1
+	BASH add ip address							h3								10.251.1.11/24			bond0	
+	BASH add ip address							h4								10.251.2.11/24			bond0
+	BASH add route								h3								10.251.2.0/24			10.251.1.1
+	BASH add route								h4								10.251.1.0/24			10.251.2.1
+	sleep										10	
+	BASH ping									h3								10.251.1.1				count=10
+	BASH ping									h4								10.251.2.1				count=10
+	${value} = 									BASH verify arp					h3						10.251.1.1
+	Should Be True								${value} 		
+	${value} =									BASH verify arp					h4						10.251.2.1
+	Should Be True								${value} 
+	${mac1} = 									BASH get intf mac				h3						bond0
+	${result} =									REST show endpoints mac			${mac1}
+	Should Be True								${result}						
+	${mac2} = 									BASH get intf mac				h4						bond0
+	${result} =									REST show endpoints mac			${mac2}
+	Should Be True								${result}						
+	REST show endpoints	
+	${loss} = 									BASH ping						h3						10.251.2.11 			count=10
+	Should Be True  							${loss} == 0	
+	REST add vns ip  							X								X1						10.251.4.1				24	
+	${loss} = 									BASH ping						h3						10.251.2.11 			count=10
+	Should Be True  							${loss} == 0	
+	${mac1} = 									BASH get intf mac				h3						bond0
+	${result} =									REST show endpoints mac			${mac1}
+	Should Be True								${result}							
+	BASH delete arp								h3								10.251.1.1
+	${value} =									BASH verify arp					h3						10.251.1.1
+	Should Not Be True							${value} 
+	BASH add ip address							h3								10.251.4.11/24			bond0	
+	BASH add route								h3								10.251.2.0/24			10.251.4.1
+	BASH add route								h4								10.251.4.0/24			10.251.2.1
+	BASH ping									h3								10.251.2.11 			count=10
+	${loss} = 									BASH ping						h3						10.251.2.11 			count=10
+	Should Be True  							${loss} == 0		
+	sleep										1
+	${result} =									REST show endpoints mac			${mac1}
+	Should Contain								${result}						10.251.4.11
+	${result} =									REST show endpoints mac			${mac2}
+	Should Contain								${result}						10.251.2.11
+	REST add vns ip  							X								X1						10.251.1.1				24	
+	BASH delete arp								h3								10.251.4.1
+	${value} =									BASH verify arp					h3						10.251.4.1
+	Should Not Be True							${value} 
+	BASH add ip address							h3								10.251.1.11/24			bond0	
+	BASH ping									h3								10.251.2.11 			count=10
+	${loss} = 									BASH ping						h3						10.251.2.11 			count=10
+	Should Be True  							${loss} == 0		
+	sleep										1
+	${result} =									REST show endpoints mac			${mac1}
+	Should Contain								${result}						10.251.1.11
+	${result} =									REST show endpoints mac			${mac2}
+	Should Contain								${result}						10.251.2.11			
+	
+
+
+
+
+
+
+
+
+
 
 
 initialize host
@@ -749,8 +826,10 @@ initialize host
 	BASH ifdown intf							h2								bond0
 	BASH ifdown intf							h3								bond0
 	BASH ifdown intf							h4								bond0
-	
-
+	BASH release dhcpv4 address					h1								bond0
+	BASH release dhcpv4 address					h2								bond0
+	BASH release dhcpv4 address					h3								bond0
+	BASH release dhcpv4 address					h4								bond0
 
 
 setup topology
