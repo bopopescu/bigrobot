@@ -6,7 +6,7 @@ Suite Setup      T5 base suite setup
 Suite Teardown   T5 base suite teardown
 Test Setup       base test setup
 Test Teardown    base test teardown
-Force Tags       T5Platform  HA
+Force Tags       T5Platform  HA  L2
 Library          keywords/BsnCommon.py
 Library          keywords/Mininet.py
 Library	    	 keywords/Host.py
@@ -24,7 +24,7 @@ Library	         keywords/T5Utilities.py
 * Test Case 
 
 Configure Multiple L2 Tenants With Single VNS & Failover
-	[Tags]	sanity  L2
+	[Tags]	sanity  feature
 	Configure 3-Rack/Dual-Leaf/2-Spine/4-Host Setup For Mininet 
 	Configure 3 Tenants with Different VLAN properties
 	Verify Connectivity in 3-Rack/Dual-Leaf/2-Spine/4-Host Setup
@@ -32,23 +32,23 @@ Configure Multiple L2 Tenants With Single VNS & Failover
 	Verify Connectivity in 3-Rack/Dual-Leaf/2-Spine/4-Host Setup
 
 Verify HA Cluster Formation
-   [Tags]  sanity
+   [Tags]  sanity  feature
    Verify the cluster formation 
    
 Verify Cluster Election Take-Leader
-	[Tags]  sanity  
+	[Tags]  sanity  feature 
 	Verify cluster election take leader
 	
 Verify Cluster Election Re-run
-	[Tags]  sanity  
+	[Tags]  feature  
 	Verify cluster election rerun 
 	
 Verify Cluster Master Reboot
-	[Tags]  sanity
+	[Tags]  sanity  feature
 	Reboot the master node & verify fabric integrity
 	
 Verify Cluster Slave Reboot
-	[Tags]  sanity
+	[Tags]  sanity  feature
 	Reboot the Slave node & verify fabric integrity
 
 Configure Cluster VIP & Verify Connectivity After Failover
@@ -66,11 +66,11 @@ Delete Cluster VIP
 	Should Be False  ${returnVal}
 
 Verify Cluster Master Shutdown
-	[Tags]  sanity  skipped
+	[Tags]  feature  skipped
 	Shutdown the master node & verify fabric integrity
 	
 Verify Cluster Slave Shutdown
-	[Tags]  sanity  skipped
+	[Tags]  feature  skipped
 	Shutdown the slave node & verify fabric integrity
 
 
@@ -79,27 +79,27 @@ Verify Cluster Slave Shutdown
 ##################################################
 
 Master Failover/Failback & Verify Connectivity
-   [Tags]  sanity  L2  
+   [Tags]  feature  
    Failover/Failback by rebooting the master and verify connectivity
    
 Slave Failover/Failback & Verify Connectivity
-   [Tags]  sanity  L2  
+   [Tags]  feature 
    Failover/Failback by rebooting the slave and verify connectivity
 
 Cluster Election Take-Leader & Verify Connectivity
-   [Tags]  sanity  L2    
+   [Tags]  feature    
    # To be: This test case only checks the take-leader in slave.
    # 			Need to implement this in the master
    Failover/Failback by issuing take-leader in master & verify connectivity
 
 Cluster Election Re-run & Verify Connectivity
-   [Tags]  sanity  L2    
+   [Tags]  feature   
    # To be: Make sure to do it on both master & slave when the commands
    #		are finalized
    Re-run the election and verify connectivity
    
 Head-less Mode & Verify Connectivity
-   [Tags]  sanity  L2  skipped
+   [Tags]  feature  skipped
    Shutdown both the controllers and verify connectivity
    
 
@@ -308,6 +308,19 @@ Configure 3 Tenants with Different VLAN properties
 
 Verify Connectivity in 3-Rack/Dual-Leaf/2-Spine/4-Host Setup
 
+   Set Test Variable  ${bm0ip}	10.0.0.1
+   Set Test Variable  ${bm1ip}	10.0.0.2
+   Set Test Variable  ${bm2ip}	10.0.0.3
+   Set Test Variable  ${bm3ip}	10.10.10.3
+   Set Test Variable  ${bm4ip}	10.10.10.4
+   Set Test Variable  ${bm5ip}	10.10.10.5
+   Set Test Variable  ${bm6ip}	100.100.100.6
+   Set Test Variable  ${bm7ip}	100.100.100.7
+   Set Test Variable  ${bm8ip}	100.100.100.8
+   Set Test Variable  ${bm9ip}	 200.200.200.9
+   Set Test Variable  ${bm10ip}	 200.200.200.10
+   Set Test Variable  ${bm11ip}	 200.200.200.11
+
    ###	Verify ping between L2autoT1
    ${returnVal}=  platform ping  bm0  ${bm1ip}
    Should Be True  ${returnVal}
@@ -350,6 +363,7 @@ T5 base suite teardown
    rest delete tenant  L2autoT2
    rest delete tenant  L2autoT3
    auto delete fabric switch  ${spineList}  ${leafList}  2
+   auto delete fabric portgroups
    base suite teardown
    
 
