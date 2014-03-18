@@ -8,312 +8,21 @@ class T5_longevity(object):
         pass
 
  
-    def copy_pkg_from_jenkins(self):
-        '''copy_pkg_from_jenkins
-            copy the latest upgrade package from Jenkin
-            modify
-        
-        '''
-        t = test.Test()
-        c = t.controller('master')
-        image = self.cli_check_image()
-        helpers.log('INFO: *******system image is: %s ' % image)
-        if str(image) == '-1':
-            helpers.log("INFO: system NOT have image, copying image")
-            c.config('')
-            string = 'copy "scp://bsn@jenkins:/var/lib/jenkins/jobs/bvs master/lastSuccessful/archive/target/appliance/images/bvs/controller-upgrade-bvs-2.0.5-SNAPSHOT.pkg"'
-            c.send(string + ' image://')
-#            c.expect(r'[\r\n].+password: ') 
-            c.expect(r'[\r\n].+password: |[\r\n].+(yes/no)?')
-            content = c.cli_content()
-            helpers.log("*****Output is :\n%s" % content)
-            if re.match(r'.*password:.* ', content):
-                helpers.log("INFO:  need to provide passwd " )
-                c.send('bsn')
-            elif re.match(r'.+(yes/no)?', content):
-                helpers.log("INFO:  need to send yes, then provide passwd " )
-                c.send('yes')
-                c.expect(r'[\r\n].+password: ')
-                c.send('bsn')
-            
-            try:
-                c.expect(timeout=180)
-            except:
-                helpers.log('scp failed')
-                return False
-            else:
-                helpers.log('scp completed successfully')
-                image = self.cli_check_image()
-
-        else:
-            helpers.log("INFO: system has image: %s" % image)
-
-        return image
-
-    def cli_scp_file (self,remote,local='running-config',passwd='bsn',flag='from'):
-        '''cli scp file
-            copy to/from 
-            usage:    cli_scp_file  bsn@qa-kvm-32:/home/mingtao/config_new  config_new    
-                      cli_scp_file  bsn@qa-kvm-32:/home/mingtao/config_new  config_new   adminadmin    to
-            output:
-              - mingtao
-                 
-        '''
-        t = test.Test()
-        c = t.controller('master')                 
-        c.enable('')
-        if flag == 'to':
-            string = 'copy ' +local + ' scp://'+remote 
-        if flag == 'from':
-            string = 'copy scp://'+ remote + ' ' + local
-        
-        helpers.log("INFO:  string is: %s " % string )        
-        c.send(string)
-        c.expect(r'[\r\n].+password: |[\r\n].+(yes/no)?')
-        content = c.cli_content()
-        helpers.log("*****Output is :\n%s" % content)
-        if re.match(r'.*password:.* ', content):
-            helpers.log("INFO:  need to provide passwd " )
-            c.send(passwd)
-        elif re.match(r'.+(yes/no)?', content):
-            helpers.log("INFO:  need to send yes, then provide passwd " )
-            c.send('yes')
-            c.expect(r'[\r\n].+password: ')
-            c.send(passwd)
-        
-        try:
-            c.expect(timeout=180)
-        except:
-            helpers.log('scp failed')
-            return False
-        else:
-            helpers.log('scp completed successfully')
-        return True
 
 
-
-
-    def cli_check_image(self):
-        t = test.Test()
-        c = t.controller('master')
-        c.enable('')
-        c.enable("show image")
-        content = c.cli_content()
-        helpers.log("*****Output is :\n%s" % content)
-        temp = helpers.strip_cli_output(content)
-        temp = helpers.str_to_list(temp)
-        helpers.log("*****Output list   is :\n%s" % temp)
-        if len(temp) == 1 and 'None.' in temp:
-            helpers.log("INFO:  ***image is not in controller******")
-            return -1
-        else:
-            temp.pop(0);temp.pop(0)
-            helpers.log("INFO:  ***image is available: %s" % temp)
-            line = temp[0].split()
-            image = line[3]
-            helpers.log("INFO: ***image is available: %s" % image)
-
-        return image
-
-
-    def cli_upgrade_stage(self, image=None):
-        t = test.Test()
-        c = t.controller('master')
-        helpers.log('INFO: Entering ==> cli_upgrade_stage ')
-        c.config('')
-        if image is None:
-            c.send('upgrade stage')
-        else:
-            c.send('upgrade stage ' + image)
-        c.expect(r'[\r\n].+: ')
-        content = c.cli_content()
-        helpers.log("*****Output is :\n%s" % content)
-        c.send("yes")
-        try:
-            c.expect(timeout=180)
-        except:
-            helpers.log('stage did not finish within 180 second ')
-            return False
-        else:
-            content = c.cli_content()
-            helpers.log("INFO:*****Content Output is :\n%s" % content)
-            temp = helpers.str_to_list(content)
-            helpers.log("INFO:*****temp Output is :\n%s" % temp)
-            for line in temp:
-                helpers.log("line is : %s" % line)
-                if re.match(r'Upgrade stage: Upgrade Staged', line):
-                    helpers.log('stage completed successfully')
-                    return True
-        return False
-
-    def cli_upgrade_launch(self):
-        t = test.Test()
-        c = t.controller('master')
-        helpers.log('INFO: Entering ==> cli_upgrade_launch ')
-        c.config('')
-        c.send('upgrade launch')
-        c.expect(r'[\r\n].+: ')
-        content = c.cli_content()
-        helpers.log("*****Output is :\n%s" % content)
-        c.send("yes")
-         
-        try:
-            c.expect(r'[\r\n].+Rebooting.*')
-        except:
-            helpers.log('ERROR: upgrade launch NOT successfully')
-            return False
-        else:
-            helpers.log('INFO: upgrade launch  successfully')
-            return True
-        return False
-
-    def rest_get_node_role(self,device='c1'):
-        ''' rest_get_node_role
-           return the local node role:
-           output:   active   
-                     stand-by
-        '''
-        t = test.Test()
-        c = t.controller(device)
-        helpers.log('INFO: Entering ==> rest_get_node_role ')
-        t = test.Test()
-        
-        url = '/api/v1/data/controller/cluster'  
-        c.rest.get(url)
-        if not c.rest.status_code_ok():
-            helpers.test_failure(c.rest.error())
-
-        if(c.rest.content()):
-            local_id = c.rest.content()[0]['status']['local-node-id']
-            helpers.log("INFO: local node ID: %s" %  local_id)
-            if c.rest.content()[0]['status']['domain-leader']:
-                leader_id = c.rest.content()[0]['status']['domain-leader']['leader-id']
-                helpers.log("INFO: domain-leader: %s" % c.rest.content()[0]['status']['domain-leader']['leader-id'])
-                if local_id == leader_id:
-                    return 'active'
-                else:
-                    return 'stand-by'
-                
-            else:
-                helpers.log("ERROR: there is no domain-leader" ) 
-                helpers.test_failure('ERROR: There is no domain-leader')
-        return False     
-
-      
+#########################  end of commit   ######################
  
-    def cli_get_node_role(self,device='c1'):
-        ''' return the local node role
-            - mingtao
-           usage:  cli_get_node_role
-           output:   active   
-                     stand-by
-        '''
-  
-        t = test.Test()
-        c = t.controller(device)
-        helpers.log('INFO: Entering ==> cli_get_node_role ')
-    
-        
-        c.cli('show cluster' )
-        content = c.cli_content()
-        temp = helpers.strip_cli_output(content)
-        temp = helpers.str_to_list(temp)
-        for line in temp:          
-            helpers.log("INFO: line is - %s" % line)
-            match= re.match(r'.*(active|stand-by).* Current', line)
-            if match:
-                helpers.log("INFO: role is: %s" % match.group(1))                          
-                return  match.group(1)
-            else:
-                helpers.log("INFO: not current node  %s" % line)   
-        return False     
-
-    def rest_get_num_nodes(self):
-        ''' rest_get_node_role
-           return the local node role:
-           output:   active   
-                     stand-by
-        '''
-        t = test.Test()
-        c = t.controller('master')
-        helpers.log('INFO: Entering ==> rest_get_node_role ')
-   
-        
-        url = '/api/v1/data/controller/cluster'  
-        c.rest.get(url)
-        if not c.rest.status_code_ok():
-            helpers.test_failure(c.rest.error())
-
-        if(c.rest.content()):
-            num = len(c.rest.content()[0]['status']['nodes'])
-            helpers.log("INFO: There are %d of controller in cluster" %  num)
-            for index in range(0,num):
-                
-                hostname = c.rest.content()[0]['status']['nodes'][index]['hostname']
-                helpers.log("INFO: hostname is: %s" % hostname )
-                  
-            return num
-        else:
-            helpers.test_failure(c.rest.error())      
-
-    def cli_get_num_nodes(self):
-        ''' rest_get_node_role
-           return the local node role:
-           output:   active   
-                     stand-by
-        '''
-        t = test.Test()
-        c = t.controller('master')
-        helpers.log('INFO: Entering ==> rest_get_node_role ')
-        
-        c.cli('show cluster' )
-        content = c.cli_content()
-        temp = helpers.strip_cli_output(content)
-        temp = helpers.str_to_list(temp)
-        num = 0
-        for line in temp:          
-            helpers.log("INFO: line is - %s" % line)
-            match= re.match(r'.*(active|stand-by).*', line)
-            if match:
-                helpers.log("INFO: role is: %s" % match.group(1))  
-                num = num+1                                      
-            else:
-                helpers.log("INFO: not for controller  %s" % line)  
-        helpers.log("INFO: there are %d of controllers in the cluster" % num)   
-        return num    
-
-    def cli_whoami(self):
-        '''  
-           return user name and group
-           output:  name   
-                    group
-        '''
-        t = test.Test()
-        c = t.controller('master')
-        helpers.log('INFO: Entering ==> cli_whoami ')
-        
-        
-        c.cli('whoami' )
-        content = c.cli_content()
-        temp = helpers.strip_cli_output(content)
-        temp = helpers.str_to_list(temp)
-        helpers.log("INFO: temp is - %s" % temp) 
-        temp.pop(0)     
-        for line in temp:          
-            helpers.log("INFO: line is - %s,  " % line)
-           
-       
-        return True   
   
 
-  
+
 
     def cli_add_user(self,user='user1',passwd='adminadmin'):
-        ''' add user
-            - mingtao
-           usage:  cli_get_node_role
-           output:   
-                      
+        '''
+          cli add user to the system, can only run at master
+          Author: Mingtao
+          input:   user = username,  passwd  = password                                       
+          usage:   
+          output:   True                            
         '''
   
         t = test.Test()
@@ -333,10 +42,12 @@ class T5_longevity(object):
 
     def cli_group_add_users(self,group=None,user=None):
         '''  
-            - mingtao
-           usage:  cli_get_node_role
-           output:   
-                      
+          cli add user to group, can only run at master
+          Author: Mingtao
+          input:   group  - if group not give, will user admin
+                  user    - if user not given, will add all uers                             
+          usage:   
+          output:   True                            
         '''  
         t = test.Test()
         c = t.controller('master')
@@ -366,35 +77,65 @@ class T5_longevity(object):
             return True    
 
 
+    def rest_get_user_group(self,user):
+        '''  
+          get the group for a user, can only run at master
+          Author: Mingtao
+          input:   
+                  user    - if user not given, will add all uers                             
+          usage:   
+          output:   group                          
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        helpers.log('INFO: Entering ==> rest_get_user_group ')
+   
+        
+        url = '/api/v1/data/controller/core/aaa/group[user="%s"]'  % user
+        c.rest.get(url)
+        if not c.rest.status_code_ok():
+            helpers.test_failure(c.rest.error())
+
+        if(c.rest.content()):
+            helpers.log('INFO: content is: %s ' %c.rest.content())        
+
+            if user in c.rest.content()[0]['user']:    
+                helpers.log('INFO: inside  ')        
+                return  c.rest.content()[0]['name']          
+        else:
+            helpers.test_failure(c.rest.error())      
+
+
     def cli_delete_user(self,user):
-        ''' delete all users except admin
-            - mingtao
-           usage:  cli_delete_user
-           output:   
-           not working          
+        '''  
+          delete users can only run at master
+          Author: Mingtao
+          input:  user                        
+          usage:   
+          output:   True                            
+           
         '''
   
         t = test.Test()
         c = t.controller('master')
         helpers.log('INFO: Entering ==> cli_delete_user ')
-        t = test.Test() 
-        c.config('no user '+ user)
-            
+        c.config('no user '+ user)    
         return True
   
 
     def T5_cli_clean_all_users(self,user=None ):
-        ''' delete all users except admin
-            - mingtao
-           usage:  cli_delete_user
-           output:   
-                     
+        ''' 
+        delete all users except admin
+          Author: Mingtao
+          input:  user                        
+          usage:   
+          output:   True                                                
         '''
   
         t = test.Test()
         c = t.controller('master')
         helpers.log('INFO: Entering ==> cli_delete_user ')
-        t = test.Test()        
+      
         if user: 
             c.config('no user '+ user)     
             return True
@@ -418,42 +159,6 @@ class T5_longevity(object):
             return True    
 
 
-    def cli_take_sanpshot(self,run_config=None,fabric_switch=None):
-        ''' take snap shot of the  system state
-            - mingtao
-           usage:  cli_delete_user
-           output:   
-                     
-        '''
-  
-        t = test.Test()
-        c = t.controller('master')
-        helpers.log('INFO: Entering ==> cli_take_sanpshot')
- 
-        if run_config: 
-            c.enable('show running-config')     
-            content = c.cli_content()       
-            helpers.log("********content in string:************\n%s" % content)       
-            temp = helpers.strip_cli_output(content)
-            temp = helpers.str_to_list(temp)
-            helpers.log("********content is list************\n%s" % helpers.prettify(temp))
-            config = temp[5:]
-            content = '\n'.join(config)
-            helpers.log("********config :************\n%s" % content)                 
-            return  content
-        if fabric_switch: 
-            c.enable('show fabric switch')     
-            content = c.cli_content()       
-            helpers.log("********content in string:************\n%s" % content)       
-            temp = helpers.strip_cli_output(content)
-            helpers.log("********string :************\n%s" % temp)                   
-            return  temp
-        
-        return False    
-
- 
- 
- 
 
 
 #############################  below are for  cli walk ####################
@@ -719,4 +424,193 @@ class T5_longevity(object):
                 helpers.log("***** Call the cli walk again with  --- %s" % string)
                 self.cli_config_walk(string, file_name, padding)
 
- 
+
+### this is Tomaz's API
+    def cli_copy_running_config_to_file(self,node='master',filename='config_save' ):
+        ''' Function to copy running config to regular file
+        via CLI
+        Input: Filename
+        Output: True if successful, False otherwise
+        '''
+        helpers.test_log("Running command:\ncopy running-config %s" % filename)
+        t = test.Test()
+        c = t.controller(node)
+        try:
+            c.config("copy running-config %s" % filename)
+            assert "Error" not in c.cli_content()
+        except:
+            helpers.test_log(c.cli_content())
+            return False
+        else:
+            return True
+
+    def bash_ls(self, node, path):
+        """
+        Execute 'ls -l <path>' on a device.
+
+        Inputs:
+        | node | reference to switch/controller/host as defined in .topo file |
+        | path | directory to get listing for |
+
+        Example:
+        - bash ls    master    /home/admin
+        - bash ls    h1        /etc/passwd
+
+        Return Value:
+        - Dictionary with file name as key. Value contains list of fields, where
+            - fields[0] = file/dir
+            - fields[1] = no of links
+            - fields[2] = user
+            - fields[3] = group
+            - fields[4] = size
+            - fields[5] = date
+            - fields[6] = time
+        """
+        t = test.Test()
+        n = t.node(node)
+        content = n.bash('ls -l %s' % path)['content']
+        lines = helpers.strip_cli_output(content, to_list=True)
+
+        # Output:
+        # total 691740
+        # -rw-r--r-- 1 root root 708335092 2014-03-03 13:08 controller-upgrade-bvs-2.0.5-SNAPSHOT.pkg
+        # -rw-r--r-- 1 bsn  bsn          0 2014-03-12 10:05 blah blah.txt
+
+        # Strip first line ('total <nnnnn>')
+        lines = lines[1:]
+        helpers.log("lines: %s" % helpers.prettify(lines))
+
+        files = {}
+
+        for line in lines:
+            fields = line.split()
+            # fields[7]+ contains filename (may have spaces in name)
+            filename = ' '.join(fields[7:])
+            files[filename] = fields[0:6]
+
+        helpers.log("files: %s" % helpers.prettify(files))
+        return files
+
+
+
+    def bash_ntpq(self, node):
+        """
+        Execute 'ntpq -pn' on a device.
+        Author:    Mingtao
+        Inputs:
+        | node | reference to switch/controller/host as defined in .topo file |
+  
+        Example:
+        Return Value:
+        - Dictionary with remote as key. Value contains offset
+          {'*204.2.134.164': {'offset': '-0.225'}, '+74.120.8.2': {'offset': '3.819'}}
+        """
+        t = test.Test()
+        n = t.node(node)
+        content = n.bash('ntpq -pn' )['content']
+        lines = helpers.strip_cli_output(content, to_list=True)
+        lines = lines[2:]
+        helpers.log("lines: %s" % helpers.prettify(lines))
+
+        ntpinfo = {}
+
+        for line in lines:
+            fields = line.split()
+            remote = fields[0]
+            helpers.log("lines: %s  - field:  %s" % (line, fields))  
+            ntpinfo[remote]={}
+            ntpinfo[remote]['offset']=fields[8] 
+        helpers.log("INFO:  ntpinfo is \n  %s" % helpers.prettify(ntpinfo))                                     
+        return ntpinfo
+    
+    
+    def check_ntp_whitin(self, node,tolerance='250' ):
+        """
+        verify ntp offset whin range
+        Author:    Mingtao
+        Example:   check_ntp_whitin   c1   250
+        """
+        ntpinfo = self.bash_ntpq(node)           
+        helpers.log("ntp info : %s" % helpers.prettify(ntpinfo))
+        for ntp in ntpinfo:
+            offset =  ntpinfo[ntp]['offset']
+            helpers.log("INFO:  offset for remote %s  is  %s - %.3f" % (ntp, offset,float(offset)  ))  
+            if float(ntpinfo[ntp]['offset']) > 250  or float(ntpinfo[ntp]['offset']) < -250:
+                helpers.log("ERROR: %s  is more than 250 ms" % ntpinfo[ntp]['offset'] )
+                return False
+                                     
+        return True
+
+
+    def rest_delete_cluster_nodes(self,node='slave'):
+        '''  
+           delete 
+           output:       
+            TBD
+    
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        helpers.log('INFO: Entering ==> rest_get_node_role ')
+   
+        
+        url = '/api/v1/data/controller/cluster'  
+        c.rest.get(url)
+        if not c.rest.status_code_ok():
+            helpers.test_failure(c.rest.error())
+
+        if(c.rest.content()):
+            num = len(c.rest.content()[0]['status']['nodes'])
+            helpers.log("INFO: There are %d of controller in cluster" %  num)
+            for index in range(0,num):
+                
+                hostname = c.rest.content()[0]['status']['nodes'][index]['hostname']
+                helpers.log("INFO: hostname is: %s" % hostname )
+                  
+            return num
+        else:
+            helpers.test_failure(c.rest.error())      
+
+
+
+    def cli_scp_file (self,remote,node='master',local='running-config',passwd='bsn',flag='from'):
+        '''cli scp file
+            copy to/from 
+            usage:    cli_scp_file  bsn@qa-kvm-32:/home/mingtao/config_new  config_new    
+                      cli_scp_file  bsn@qa-kvm-32:/home/mingtao/config_new  config_new   adminadmin    to
+            output:
+              - mingtao
+                 
+        '''
+        t = test.Test()
+        c = t.controller(node)                 
+        c.enable('')
+        if flag == 'to':
+            string = 'copy ' +local + ' scp://'+remote 
+        if flag == 'from':
+            string = 'copy scp://'+ remote + ' ' + local
+        
+        helpers.log("INFO:  string is: %s " % string )        
+        c.send(string)
+        c.expect(r'[\r\n].+password: |[\r\n].+(yes/no)?')
+        content = c.cli_content()
+        helpers.log("*****Output is :\n%s" % content)
+        if re.match(r'.*password:.* ', content):
+            helpers.log("INFO:  need to provide passwd " )
+            c.send(passwd)
+        elif re.match(r'.+(yes/no)?', content):
+            helpers.log("INFO:  need to send yes, then provide passwd " )
+            c.send('yes')
+            c.expect(r'[\r\n].+password: ')
+            c.send(passwd)
+        
+        try:
+            c.expect(timeout=180)
+        except:
+            helpers.log('scp failed')
+            return False
+        else:
+            helpers.log('scp completed successfully')
+        return True
+
+
