@@ -1669,26 +1669,37 @@ class T5(object):
     def rest_disable_fabric_interface(self, switch, intf):
         t = test.Test()
         c = t.controller('master')
-
+        url0 = '/api/v1/data/controller/core/switch-config[name="%s"]/interface[name="%s"]' % (switch, intf)
+        c.rest.put(url0, {"name": str(intf)})
         url = '/api/v1/data/controller/core/switch-config[name="%s"]/interface[name="%s"]' % (switch, intf)
-        try:
-            c.rest.patch(url, {"shutdown": True})
-        except:
-            return False
-        else:
+        c.rest.patch(url, {"shutdown": True})
+        helpers.sleep(2)
+        url1 = '/api/v1/data/controller/core/switch/interface[switch-name="%s"][name="%s"]' % (switch, intf)
+        c.rest.get(url1)
+        data = c.rest.content()
+        if data[0]["state"] == "down":
+            helpers.log("Interface state is down")
             return True
+        else:
+            helpers.test_failure("Interface did not go down:state is still Up, open the bug for inteface disable status")
+            return False
 
     def rest_enable_fabric_interface(self, switch, intf):
         t = test.Test()
         c = t.controller('master')
 
         url = '/api/v1/data/controller/core/switch-config[name="%s"]/interface[name="%s"]' % (switch, intf)
-        try:
-            c.rest.patch(url, {"shutdown": None})
-        except:
-            return False
-        else:
+        c.rest.delete(url, {"shutdown": None})
+        helpers.sleep(2)        
+        url1 = '/api/v1/data/controller/core/switch/interface[switch-name="%s"][name="%s"]' % (switch, intf)
+        c.rest.get(url1)
+        data = c.rest.content()
+        if data[0]["state"] == "up":
+            helpers.log("Interface state is up")
             return True
+        else:
+            helpers.test_failure("Interface did not come up:state is still down, open the bug for inteface enable status")
+            return False
 
     def rest_verify_fabric_interface_rx_stats(self, switch, intf, frame_cnt, vrange=5):
         ''' Function to verify the fabric interface stats
@@ -1967,7 +1978,7 @@ class T5(object):
         c.rest.patch(url1, {"vns-stats-interval": vns_value})
         c.rest.get(url)
         data = c.rest.content()
-        if int(data["interface-stats-interval"]) == intf_value and int(data["vns-stats-interval"]) == vns_value:
+        if int(data[0]["interface-stats-interval"]) == intf_value and int(data[0]["vns-stats-interval"]) == vns_value:
             helpers.log("Interval value provided is correct")
             return True
         else:
