@@ -41,7 +41,6 @@ s6:
   alias: leaf2-b
   user: admin
   password: adminadmin
-
 s7:
   ip: 10.195.0.21
   alias: spine0

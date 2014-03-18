@@ -66,6 +66,13 @@ class Node(object):
     def ip(self):
         return self._ip
 
+    def node_id(self):
+        """
+        Node-id is mainly supported for BVS platform but that may change over
+        time. For now, all derived nodes should simply return None.
+        """
+        return None
+
     def user(self):
         return self._user
 
@@ -206,6 +213,44 @@ class ControllerNode(Node):
         """
         node = self.name()
         return self.t.is_master_controller(node)
+
+    def node_id(self):
+        """
+        Node-id is mainly supported for BVS platform but that may change over
+        time. For now, all derived nodes should simply return None.
+
+        For BVS, get the node-id for the specified node. The REST
+        'show cluster' API has 'local-node-id' which is the node-id for the
+        node we want.
+
+        Input: Node name (e.g., 'master', 'c1', 'c2', etc.)
+        Output: Integer value for the node-id
+        """
+        node = self.name()
+        n = self.t.controller(node)
+        if not helpers.is_bvs(n.platform()):
+            return None
+
+        count = 0
+        while(True):
+            try:
+                url = '/api/v1/data/controller/cluster'
+                content = n.rest.get(url)['content']
+                nodeid = content[0]['status']['local-node-id']
+                helpers.log("'%s' has local-node-id %s" % (node, nodeid))
+                break
+            except(KeyError):
+                if(count < 5):
+                    helpers.warn("'%s' KeyError while retrieving"
+                                 " local-node-id. Sleeping for 10 seconds."
+                                 % node)
+                    helpers.sleep(10)
+                    count += 1
+                else:
+                    helpers.test_error("'%s' KeyError while retrieving"
+                                       " local-node-id."
+                                       % node)
+        return nodeid
 
     def console(self):
         if self.dev_console:
