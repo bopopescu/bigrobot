@@ -1424,11 +1424,23 @@ class BsnCommon(object):
 
     def get_node_id(self, node):
         """
-        Get the node-id of a node
+        Get the node-id of a node.
 
         Input: logical node name, e.g., 'c1', 'master', 'slave', etc.
 
-        Return Value:  actual node-id
+        Return Value:  actual node-id for BVS platform, else None
+        """
+        t = test.Test()
+        n = t.node(node)
+        return n.node_id()
+
+    def get_node_ip(self, node):
+        """
+        Get the IP address of a node
+
+        Input: logical node name, e.g., 'c1', 'master', 'slave', etc.
+
+        Return Value:  actual IP address
         """
         t = test.Test()
         n = t.node(node)
