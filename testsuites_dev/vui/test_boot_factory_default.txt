@@ -7,10 +7,14 @@ Library         keywords/Controller.py
 
 
 * Test Cases
-Test first boot
+Test cli first boot
     [Documentation]   Performing a boot factory-default
     #[Tags]           skipped
     cli boot factory default  c1
+
+Test first boot configuration
+    [Tags]           skipped
+    cli add first boot bvs  c1  10.192.104.2
 
 
 
