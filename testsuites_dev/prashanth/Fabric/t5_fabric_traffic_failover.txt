@@ -146,16 +146,16 @@ Reboot leaf switch with dual Host connected through lacp (Host5 to Host4)
     rest verify fabric interface lacp  leaf1-a  ${h4_intf0}
     rest verify fabric interface lacp  leaf2-a  ${h5_intf0}  
     ${loss}=  bash ping  h5  ${h4_ip}  source_if=bond0
-    Should Be True  ${loss} == 0
+    Should Be True  ${loss} < 50
     cli restart switch  leaf2-a
     sleep  2
     ${loss}=  bash ping  h5  ${h4_ip}  source_if=bond0
-    Should Be True  ${loss} == 0
+    Should Be True  ${loss} < 50
     sleep  90
     cli restart switch  leaf2-b
     sleep  2
     ${loss}=  bash ping  h5  ${h4_ip}  source_if=bond0
-    Should Be True  ${loss} == 0
+    Should Be True  ${loss} < 50
    rest delete interface from portgroup  leaf1-a  ${h4_intf0}  p4
    rest delete interface from portgroup  leaf1-b  ${h4_intf1}  p4
    rest delete interface from portgroup  leaf2-a  ${h5_intf0}  p5
@@ -182,23 +182,23 @@ Host Link Failover test with Host6 in Rack2 to Host 4 in Rack1
     rest add portgroup to vns  t1  v1  p6  -1
     sleep  3
     ${loss}=  bash ping  h6  ${h4_ip}  source_if=bond0
-    Should Be True  ${loss} == 0
+    Should Be True  ${loss} < 50
     rest disable fabric interface  leaf1-a  ${h4_intf0}
     sleep  3
     ${loss}=  bash ping  h6  ${h4_ip}  source_if=bond0
-    Should Be True  ${loss} == 0
+    Should Be True  ${loss} < 50
     rest enable fabric interface  leaf1-a  ${h4_intf0}
     sleep  3
     ${loss}=  bash ping  h6  ${h4_ip}  source_if=bond0
-    Should Be True  ${loss} == 0
+    Should Be True  ${loss} < 50
     rest disable fabric interface  leaf1-b  ${h4_intf1}
     sleep  3
     ${loss}=  bash ping  h6  ${h4_ip}  source_if=bond0
-    Should Be True  ${loss} == 0
+    Should Be True  ${loss} < 50
     rest enable fabric interface  leaf1-b  ${h4_intf1}
     sleep  3
     ${loss}=  bash ping  h6  ${h4_ip}  source_if=bond0
-    Should Be True  ${loss} == 0
+    Should Be True  ${loss} < 50
     rest delete tenant  t1 
     rest delete interface from portgroup  leaf1-a  ${h4_intf0}  p4
     rest delete interface from portgroup  leaf1-b  ${h4_intf1}  p4
@@ -223,13 +223,13 @@ change portgroup from lacp to static and verify the forwarding
     rest add portgroup to vns  t1  v1  p6  -1
     sleep  3
     ${loss}=  bash ping  h6  ${h4_ip}  source_if=bond0
-    Should Be True  ${loss} == 0
+    Should Be True  ${loss} < 50
     rest delete portgroup lacp  p4
     sleep  2
     rest verify fabric interface  leaf1-a  ${h4_intf0}
     rest verify fabric interface  leaf1-b  ${h4_intf1}
     ${loss}=  bash ping  h6  ${h4_ip}  source_if=bond0
-    Should Be True  ${loss} == 0
+    Should Be True  ${loss} < 50
     rest delete tenant  t1 
      
 HA failover with lacp host
@@ -248,13 +248,13 @@ HA failover with lacp host
     rest add portgroup to vns  t1  v1  p6  -1
     sleep  3
     ${loss}=  bash ping  h6  ${h4_ip}  source_if=bond0
-    Should Be True  ${loss} == 0
+    Should Be True  ${loss} < 50
     cli verify cluster master reboot
     sleep  2
     rest verify fabric interface  leaf1-a  ${h4_intf0}
     rest verify fabric interface  leaf1-b  ${h4_intf1}
     ${loss}=  bash ping  h6  ${h4_ip}  source_if=bond0
-    Should Be True  ${loss} == 0
+    Should Be True  ${loss} < 50
     rest delete tenant  t1 
 
 HA failover with tag traffic forwarding from ixia
