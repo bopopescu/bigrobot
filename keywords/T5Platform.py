@@ -2,6 +2,7 @@ import autobot.helpers as helpers
 import autobot.test as test
 from T5Utilities import T5Utilities as utilities
 from time import sleep
+import re
 import keywords.Mininet as mininet
 import keywords.T5 as T5
 

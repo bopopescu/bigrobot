@@ -1,12 +1,13 @@
 *** Settings ***
 Documentation  		Testing File Management - copying RC to other locations
-Suite Setup  		Base Suite Setup
+Suite Setup  		File Suite Setup
 Suite Teardown   	Base Suite Teardown
 Test Setup   		Setup
 Test Teardown  		Teardown
 Force Tags   		Platform  Sanity  File Management
 Library  			keywords/BsnCommon.py
-Library  			keywords_dev/tomasz/T5.py
+Library  			keywords/T5Platform.py
+Library  			keywords/T5.py
 Library        		String
 
 
@@ -40,6 +41,7 @@ T1.2 Copy running config to config://
 T1.3 Copy running config to scp://
 	Cli Copy  running-config  ${scp}
 	Compare  running-config  ${scp}
+	[Tags]  SCP
 
 
 T2.1 Copy running config to file, change RC, verify configs different
@@ -58,6 +60,7 @@ T2.3 Copy running config to scp://, change RC, verify configs different
 	Cli Copy  running-config  ${scp}
 	Modify Running Config
 	Compare Negative  running-config  ${scp}
+	[Tags]  SCP
 
 
 T3.1 Verify deletion of file
@@ -119,6 +122,7 @@ T4.3 Copy running config to scp://, change RC, restore, verify no change in RC
 	Should Be True  ${status}
 	${status} =  Cli Compare  backup  running-config
 	Should Be True  ${status}
+	[Tags]  SCP
 
 
 T5.1 Copy running config to file, copy RC from file to other file, verify
@@ -148,18 +152,22 @@ T5.4 Copy running config to config://, copy RC from config:// to scp://, verify
 	Cli Copy  ${config}  ${scp}
 	Compare  ${config}  ${scp}
 	Compare  running-config  ${scp}
-	[Tags]  BSC-4955
+	[Tags]  BSC-4955  SCP
 
 T5.5 Copy running config to scp://, copy RC from scp:// to file, verify
 	Cli Copy  running-config  ${scp}
 	Cli Copy  ${scp}  ${file}
 	Compare  running-config  ${file}
+	[Tags]  SCP
 
-T5.6 Copy running config to scp://, copy RC from scp:// to image, verify (negative test case)
+T5.6.1 Copy running config to scp://, copy RC from scp:// to image, verify
 	Cli Copy  running-config  ${scp}
-	#Run Keyword and Expect Error  *Error: Invalid Use: corrupted image*  Cli Copy  ${scp}  ${image}
 	Run Keyword and Expect Error  *Error: Invalid Use: Image target must only be image://*  Cli Copy  ${scp}  ${image}
-	[Tags]  BSC-4956
+	[Tags]  BSC-4956  SCP
+T5.6.2 Copy running config to scp://, copy RC from scp:// to image, verify
+	Cli Copy  running-config  ${scp}
+	Run Keyword and Expect Error  *Error: Invalid Use: corrupted image*  Cli Copy  ${scp}  image://
+	[Tags]  BSC-4956  SCP
 
 T5.7 Copy running config to config://, copy config:// to scp://, copy from scp:// to file, copy file to config://, copy config:// to RC
 	Cli Copy  running-config  ${config}
@@ -171,105 +179,137 @@ T5.7 Copy running config to config://, copy config:// to scp://, copy from scp:/
 	Cli Copy  config://config-new  running-config
 	Compare  ${config}  running-config
 	Compare Negative  backup  running-config
-
+	[Tags]  SCP
 
 T5.8.1 Verify: compare running-config scp://<running-config>
 	Cli Copy  running-config  ${scp RC}
 	Compare  running-config  ${scp RC}
+	[Tags]  SCP
 
 T5.8.2 Verify: compare running-config scp://<file>
 	Cli Copy  running-config  ${file}
 	Cli Copy  ${file}  ${scp file}
 	Compare  running-config  ${scp file}
+	[Tags]  SCP
 
 T5.8.3 Verify: compare running-config scp://<config://>
 	Cli Copy  running-config  ${config}
 	Cli Copy  ${config}  ${scp config}
 	Compare  running-config  ${scp config}
+	[Tags]  SCP
 
 T5.8.4 Verify: compare <file> scp://<running-config>
 	Cli Copy  running-config  ${file}
 	Cli Copy  running-config  ${scp RC}
 	Compare  ${file}  ${scp RC}
+	[Tags]  SCP
 
 T5.8.5 Verify: compare <file> scp://<file>
 	Cli Copy  running-config  ${file}
 	Cli Copy  ${file}  ${scp file}
 	Compare  ${file}  ${scp file}
+	[Tags]  SCP
 
 T5.8.6 Verify: compare <file> scp://<config://>
 	Cli Copy  running-config  ${file}
 	Cli Copy  running-config  ${config}
 	Cli Copy  ${config}  ${scp config}
 	Compare  ${file}  ${scp config}
+	[Tags]  SCP
 
 T5.8.7 Verify: compare <config://> scp://<running-config>
 	Cli Copy  running-config  ${config}
 	Cli Copy  running-config  ${scp RC}
 	Compare  ${config}  ${scp RC}
+	[Tags]  SCP
 
 T5.8.8 Verify: compare <config://> scp://<file>
 	Cli Copy  running-config  ${file}
 	Cli Copy  running-config  ${config}
 	Cli Copy  ${file}  ${scp file}
 	Compare  ${config}  ${scp file}
+	[Tags]  SCP
 
 T5.8.9 Verify: compare <config://> scp://<config://>
 	Cli Copy  running-config  ${config}
 	Cli Copy  ${config}  ${scp config}
 	Compare  ${config}  ${scp config}
+	[Tags]  SCP
 
 
-T6.1.1 Verify filename containing ~
+
+T6.1.1 Verify Filename containing ~
 	Validate Filename  test~test
-T6.1.2 Verify filename containing !
+	[Tags]  Filename
+T6.1.2 Verify Filename containing !
 	Validate Filename  test!test
-T6.1.3 Verify filename containing -
+	[Tags]  Filename
+T6.1.3 Verify Filename containing -
 	Validate Filename  test-test
-T6.1.4 Verify filename containing _
+	[Tags]  Filename
+T6.1.4 Verify Filename containing _
 	Validate Filename  test_test
+	[Tags]  Filename
 
 T6.2.1 Verify config:// name containing ~
 	Validate Filename  config://test~test
+	[Tags]  Filename
 T6.2.2 Verify config:// name containing !
 	Validate Filename  config://test!test
+	[Tags]  Filename
 T6.2.3 Verify config:// name containing -
 	Validate Filename  config://test-test
+	[Tags]  Filename
 T6.2.4 Verify config:// name containing _
 	Validate Filename  config://test_test
+	[Tags]  Filename
 
 T6.3 Verify correct processing of special characters in scp:// name (?)
 	Cli Copy  running-config  scp://recovery@10.197.128.37:test#test
 	Compare  running-config  scp://recovery@10.197.128.37:test#test
 	Cli Copy  scp://recovery@10.197.128.37:test#test   running-config
+	[Tags]  Filename  SCP
 
 T6.4 Verify empty file name is not allowed
 	Run Keyword and Expect Error  *Error: Unexpected end of command*  Cli Copy  running-config  ${EMPTY}
+	[Tags]  Filename
 
 T6.5 Verify empty config:// name is not allowed
 	Run Keyword and Expect Error  *Error: Invalid Use: copy: config:// requires a filename after slashes*  Cli Copy  running-config  config://
+	[Tags]  Filename
 
 T6.6 Verify empty scp:// name is not allowed
 	Run Keyword and Expect Error  *Error: Invalid Use: No scp path after scp://*  Cli Copy  running-config  scp://
+	[Tags]  Filename  SCP
 
 T6.7 Verify scp://scp:// not correct in copy function
 	Run Keyword and Expect Error  *ssh: Could not resolve hostname scp: Name or service not known*  Cli Copy  running-config  ${scp double}
 	Run Keyword and Expect Error  *ssh: Could not resolve hostname scp: Name or service not known*  Cli Copy  ${scp double}  running-config
-	[Tags]  BSC-4904
+	Run Keyword and Expect Error  *ssh: Could not resolve hostname scp: Name or service not known*  Cli Copy  ${file}  ${scp double}
+	Run Keyword and Expect Error  *ssh: Could not resolve hostname scp: Name or service not known*  Cli Copy  ${scp double}  ${file}
+	Run Keyword and Expect Error  *ssh: Could not resolve hostname scp: Name or service not known*  Cli Copy  ${config}  ${scp double}
+	Run Keyword and Expect Error  *ssh: Could not resolve hostname scp: Name or service not known*  Cli Copy  ${scp double}  ${config}
+	Run Keyword and Expect Error  *ssh: Could not resolve hostname scp: Name or service not known*  Cli Copy  ${scp double}  ${image}
+	[Tags]  BSC-4904  SCP  Filename
 
 T6.8 Verify scp://scp:// not correct in compare function
 	Run Keyword and Expect Error  *ssh: Could not resolve hostname scp: Name or service not known*  Cli Compare  running-config  ${scp double}
 	Run Keyword and Expect Error  *ssh: Could not resolve hostname scp: Name or service not known*  Cli Compare  ${scp double}  running-config
+	[Tags]  SCP  Filename
 
 T6.9 Verify config://config:// not correct in copy function
 	Run Keyword and Expect Error  *Error: Invalid Use: * must not include / *  Cli Copy  running-config  ${config double}
 	Run Keyword and Expect Error  *Error: Invalid Use: * must not include / *  Cli Copy  ${config double}  running-config
+	[Tags]  Filename
 
 T6.10 Verify config://config:// not correct in compare function
 	Run Keyword and Expect Error  *Error: Invalid Use: * must not include / *  Cli Compare  running-config  ${config double}
 	Run Keyword and Expect Error  *Error: Invalid Use: * must not include / *  Cli Compare  ${config double}  running-config
+	[Tags]  Filename
 
-#T6.11 Verify image-double not correct in copy and compare
+T6.11 Verify image-double not correct in copy and compare
+	Run Keyword and Expect Error  *Error: Invalid Use: corrupted image*  Cli Copy  ${scp}  image://image://
+	[Tags]  BSC-4957  Filename
 
 ### and check verifications for empty file names + error messages
 T7.1 Verify comparison function between running-config and file
@@ -289,6 +329,7 @@ T7.3 Verify comparison function between running-config and scp://
 	Compare  running-config  ${scp}
 	Modify Running Config
 	Compare Negative  running-config  ${scp}
+	[Tags]  SCP
 
 T7.4 Verify comparison function between file and config://
 	Cli Copy  running-config  ${file}
@@ -315,6 +356,7 @@ T7.6 Verify comparison function between file and scp://
 	Cli Copy  running-config  scp://recovery@10.197.128.37:config-scp-new
 	Compare Negative  file-new  ${scp}
 	Compare Negative  ${file}  scp://recovery@10.197.128.37:config-scp-new
+	[Tags]  SCP
 
 T7.7 Verify comparison function between file and file
 	Cli Copy  running-config  file1
@@ -324,7 +366,6 @@ T7.7 Verify comparison function between file and file
 	Cli Copy  running-config  ${file}
 	Compare Negative  file1  ${file}
 	Compare Negative  file2  ${file}
-
 
 T7.8 Verify comparison function between scp:// and config://
 	Cli Copy  running-config  ${config}
@@ -336,6 +377,7 @@ T7.8 Verify comparison function between scp:// and config://
 	Compare  config://config-new  scp://recovery@10.197.128.37:config-scp-new
 	Compare Negative  config://config-new  ${scp}
 	Compare Negative  config://config-new  ${config}
+	[Tags]  SCP
 
 T7.9 Verify comparison function between config:// and config://
 	Cli Copy  running-config  config://config-new1
@@ -363,6 +405,7 @@ T7.12 Verify comparison function between running-config and inexistent scp://fil
 	...  Cli Compare  running-config  ${scp inexistent}
 	Run Keyword and Expect Error  *scp: inexistent: No such file or directory*
 	...  Cli Compare  ${scp inexistent}  running-config
+	[Tags]  SCP
 
 T7.13 Verify comparison function between file and inexistent config://file
 	Cli Copy  running-config  ${file}
@@ -375,6 +418,7 @@ T7.14 Verify comparison function between file and inexistent scp://
 	Cli Copy  running-config  ${file}
 	Run Keyword and Expect Error  *  Cli Compare  ${file}  ${scp inexistent}
 	Run Keyword and Expect Error  *  Cli Compare  ${scp inexistent}  ${file}
+	[Tags]  SCP
 
 T7.15 Verify comparison function between file and inexistent file
 	Cli Copy  running-config  ${file}
@@ -400,6 +444,7 @@ T7.18 Verify comparison function between config://file and inexistent scp://
 	...  Cli Compare  ${config}  ${scp inexistent}
 	Run Keyword and Expect Error  *scp: inexistent: No such file or directory*
 	...  Cli Compare  ${scp inexistent}  ${config}
+	[Tags]  SCP
 
 T7.19 Verify comparison function between config://file and inexistent config://
 	Cli Copy  running-config  ${config}
@@ -418,6 +463,7 @@ T7.21 Verify comparison function between scp:// and inexistent file
 	...  Cli Compare  ${scp}  inexistent
 	Run Keyword and Expect Error  *Error: Invalid Use: inexistent does not exist*
 	...  Cli Compare  inexistent  ${scp}
+	[Tags]  SCP
 
 T7.22 Verify comparison function between scp:// and inexistent config://file
 	Cli Copy  running-config  ${scp}
@@ -425,6 +471,13 @@ T7.22 Verify comparison function between scp:// and inexistent config://file
 	...  Cli Compare  ${scp}  config://inexistent
 	Run Keyword and Expect Error  *Error: Invalid Use: config://inexistent does not exist*
 	...  Cli Compare  config://inexistent  ${scp}
+	[Tags]  SCP
+
+T7.23 Verify comparison function between scp:// and image:// - negative
+	Cli Copy  running-config  ${scp}
+	Run Keyword and Expect Error  *Error: Invalid Use: unsupported compare scp://* for scp*
+	...  Cli Compare  ${scp}  image://
+	[Tags]  SCP
 
 
 T8.1 Verify deletion of file
@@ -447,21 +500,21 @@ T9.1 Verify impossible to copy to invalid SCP
 	...  Cli Copy  running-config  scp://invalid
 	Run Keyword and Expect Error  *Error: Invalid Use: scp path must contain ':'*
 	...  Cli Copy  running-config  scp://scp-no-colon@1.2.3.4
+	[Tags]  SCP
 
 T9.2 Verify impossible to copy from invalid SCP
 	Run Keyword and Expect Error  *Error: Invalid Use: scp path must contain ':'*
 	...  Cli Copy  scp://invalid  running-config
 	Run Keyword and Expect Error  *Error: Invalid Use: scp path must contain ':'*
 	...  Cli Copy  scp://scp-no-colon@1.2.3.4  running-config
+	[Tags]  SCP
 
 T9.3 Verify impossible to compare with invalid SCP
 	Run Keyword and Expect Error  *Error: Invalid Use: scp path must contain ':'*
 	...  Compare  running-config  scp://invalid
 	Run Keyword and Expect Error  *Error: Invalid Use: scp path must contain ':'*
 	...  Compare  running-config  scp://scp-no-colon@1.2.3.4
-
-
-#???T7.9 Verify comparison function between scp:// and image://
+	[Tags]  SCP
 
 
 *** Keywords ***
@@ -470,6 +523,12 @@ Generate Random Name
     ${regex}  Generate Random String  ${suffix_len}  [NUMBERS]
     ${name}  Catenate  SEPARATOR=  ${prefix}  ${regex}
     [Return]  ${name}
+
+File Suite Setup
+	Base Suite Setup
+	Cli Copy  running-config  config://startup-config
+	Cli Copy  running-config  config://startup-config  node=slave
+	Bash  master  curl -g -H "Cookie: session_cookie\=$FL_SESSION_COOKIE" localhost:8080/api/v1/data/controller/core/aaa/accounting -X DELETE -d '{"name": "local"}'
 
 Setup
 	Base Test Setup
