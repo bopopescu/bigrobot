@@ -962,9 +962,11 @@ teardown topology
 
 add fabric switch
 	CLI add dpid									s1							${spine0_dpid}
-	CLI add dpid									s2							${leaf0a_dpid}
-	CLI add dpid									s3							${leaf1a_dpid}
-	CLI add dpid									s4							${leaf1b_dpid}
+	CLI add dpid									s2							${spine1_dpid}
+	CLI add dpid									s3							${leaf0a_dpid}
+	CLI add dpid									s4							${leaf0b_dpid}
+	CLI add dpid									s5							${leaf1a_dpid}
+	CLI add dpid									s6							${leaf1b_dpid}
 #	CLI add controller								s1							${bsn_ctrl1}
 #	CLI add controller								s1							${bsn_ctrl2}
 #	CLI add controller								s2							${bsn_ctrl1}
