@@ -1,0 +1,105 @@
+* Settings
+Documentation    T5 single node upgrade
+Suite Setup      base suite setup
+Suite Teardown   base suite teardown
+Test Setup       T5 platform case setup
+Test Teardown    T5 platform case teardown
+Force Tags       T5 
+Library          keywords/BsnCommon.py
+Library			 keywords/Mininet.py
+Library		     keywords/Host.py
+Library		     keywords/Ixia.py
+Library		     keywords_dev/mingtao/T5_longevity.py
+Library	         keywords/T5Platform.py
+Resource	     testsuites_dev/mingtao/T5_mingtao_resource.txt 
+
+* Variable
+
+
+
+* Test Case
+
+	 
+test single node upgrade
+	log     single node upgrade
+	upgrade    master   active   active 
+ 
+	[Tags] 	sanity  
+
+Test image copy and delete
+	copy_pkg_from_jenkins  
+	${num}  ${image}=	   cli_check_image
+    log   there are ${num} images as ${image} in controller	
+	${result}=   cli_delete_image	 
+ 	 Should be True     ${result} 	
+ 
+	[Tags] 	sanity      
+
+Show command verification for package contents 
+     log   covered in Test image copy and delete
+	[Tags] 	sanity  
+ 
+After the upgrade verify the config integrity 
+	log   covered in 'test single node upgrade'    
+    
+	[Tags] 	sanity     
+
+
+Verify whether the saved configs are retained after the upgrade
+	log   covered in 'test single node upgrade'  
+   
+	[Tags] 	sanity    
+
+
+Check only the T5 image packages are accepted and eligible for staging
+	log     only the T5 image packages are accepted
+    ${result}=   copy_pkg_from_server  bsn@qa-kvm-32:/home/mingtao/bigtap-3.0.0-upgrade-2014.02.27.1852.pkg    soft_error=True
+ 	Should not be True     ${result}     
+	[Tags] 	feature   
+ 	
+
+Integrity checks on the image: SCP half of the image etc 
+	log   SCP half of the image etc  
+    Manual passed
+	[Tags] 	feature    Manual   
+
+  
+Only SCP support or : + wget support too?
+	log   copy for cli is the only way
+    Manual passed
+	[Tags] 	feature   
+
+
+Verify user can pick & choose images for upgrade staging
+	log   user can pick & choose images for upgrade staging   
+	copy_pkg_from_jenkins  
+	copy_pkg_from_server  bsn@qa-kvm-32:/home/mingtao/controller-upgrade-bvs-2.0.5-SNAPSHOT.pkg    
+	${num}  ${image}=	  cli_check_image
+ 	log   there are ${num} images as ${image} in controller
+	cli_upgrade_stage   master  ${image[0]}
+ 	cli_upgrade_stage   master   ${image[1]}  
+	[Tags] 	feature  
+
+ 
+Test downgrade 
+	log     downgrade
+	copy_pkg_from_server  bsn@qa-kvm-32:/home/mingtao/controller-upgrade-bvs-2.0.5-SNAPSHOT.pkg   
+	${num}  ${image}=	   cli_check_image	
+	${current}=   rest_get_ver 	
+	${result}=  Evaluate  ${image[0]}<${current}
+    Should be True     ${result} 
+	cli_upgrade_stage   master  ${image[0]}
+		    
+	[Tags] 	feature    
+
+
+Check only the admin group can execute controller image upgrade
+	create user   user1   adminadmin  group1 
+	cli_reauth   user1   adminadmin   	
+	${result}=  cli_check_image   soft_error=True
+ 	Should not be True     ${result}  
+  		 
+	[Tags] 	feature   
+  
+ 
+	
