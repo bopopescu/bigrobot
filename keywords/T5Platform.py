@@ -6,6 +6,7 @@ import re
 import keywords.Mininet as mininet
 import keywords.T5 as T5
 import keywords.Host as Host
+import keywords.BsnCommon as BsnCommon
 
 
 pingFailureCount = 0
@@ -192,7 +193,6 @@ class T5Platform(object):
                     helpers.log("Trying to connect to the IP Address: %s - Try %s" % (ipAddr, count))
                 else:
                     break
-                
        
         if(singleNode):
             newMasterID = self.getNodeID(False)
