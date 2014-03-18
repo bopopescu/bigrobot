@@ -923,7 +923,7 @@ class T5Platform(object):
         c = t.controller(node)
         c.config("config")
         c.send("compare %s %s" % (src, dst))
-        options = c.expect([r'Password: ', r'\(yes/no\)\?', c.get_prompt()])
+        options = c.expect([r'[Pp]assword: ', r'\(yes/no\)\?', c.get_prompt()])
         content = c.cli_content()
         helpers.log("*****Output is :\n%s" % content)
         try:
@@ -936,7 +936,7 @@ class T5Platform(object):
             elif options[0] == 1:
                 helpers.log("INFO:  need to send yes, then provide passwd " )
                 c.send('yes')
-                c.expect(r'Password:')
+                c.expect(r'[Pp]assword:')
                 output = c.config(scp_passwd)['content']
         except:
             helpers.test_failure(c.cli_content())
@@ -988,7 +988,7 @@ class T5Platform(object):
         c = t.controller(node)
         c.config("config")
         c.send("copy %s %s" % (src, dst))
-        options = c.expect([r'Password: ', r'\(yes/no\)\?', c.get_prompt()])
+        options = c.expect([r'[Pp]assword: ', r'\(yes/no\)\?', c.get_prompt()])
         content = c.cli_content()
         helpers.log("*****Output is :\n%s" % content)
         if  ('Could not resolve' in content) or ('Error' in content) or ('No such file or directory' in content):
@@ -1002,7 +1002,7 @@ class T5Platform(object):
             elif options[0] == 1:
                 helpers.log("INFO:  need to send yes, then provide passwd " )
                 c.send('yes')
-                c.expect(r'Password:')
+                c.expect(r'[Pp]assword:')
                 c.send(scp_passwd)
             try:
                 c.expect(c.get_prompt(), timeout=180)
