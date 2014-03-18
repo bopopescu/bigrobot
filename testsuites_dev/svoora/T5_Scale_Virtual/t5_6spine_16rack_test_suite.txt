@@ -1,0 +1,362 @@
+== T5 Scale Test Suite ==
+
+* Setting
+Documentation    T5 Scale Test Suite
+Suite Setup      base suite setup
+Suite Teardown   base suite teardown
+#Test Setup       T5 base test setup
+#Test Teardown    T5 base test teardown
+Force Tags       T5 
+Library          keywords/BsnCommon.py
+Library          keywords_dev/svoora/T5.py
+Library	         keywords_dev/svoora/T5Fabric.py
+Library			 keywords_dev/svoora/T5_Scale.py
+Library		 	 keywords/T5Platform.py
+Library			 keywords/T5L3.py
+Library          keywords/Mininet.py
+
+
+* Variables
+${cfg_file_path}		/home/svoora/temp.txt
+${cfg_file_server}		10.192.108.10
+${file_server_passwd}	bsn
+${copied_file}			file_from_server.cfg
+${monitor_file}			exception_file.log
+${bm1_ip}				10.0.0.47
+* Test Case 
+
+copy config file to controller
+	[Tags]  scale
+	Log To console  Getting config file server
+	copy config from server  ${cfg_file_path}  ${cfg_file_server}  ${file_server_passwd}  ${copied_file} 
+	verify file  ${copied_file}
+	Log To Console  Verifiing cluster formation
+	${returnVal}=  rest verify show cluster
+	Should Be True  ${returnVal}
+	
+config controller with copied config file
+	[Tags]  scale
+	Log To console  Copying file to running-config
+	start monitoring the exception
+	#${file_exist}=  verify file  ${copied_file}
+	#Should Be True  ${file_exist}
+	${return}=  cli copy file to running config  ${copied_file}	
+	Should Be True  ${return}
+	sleep  60
+	stop monitoring the exception
+	parse monitoring file
+	
+start mininet topology
+	[Tags]  scale
+	Log To Console  Starting mininet topology
+	start monitoring the exception
+	mininet start	
+	sleep  100
+	pause               UNDER MININET!!!!
+	verify fabric switch link and errors
+	stop monitoring the exception
+	parse monitoring file
+	
+ping bms to check L2 fwding
+	[Tags]  scale	
+	Log to console  Pinging from bm0 to ${bm1_ip}
+    ${loss}=  mininet ping  bm0  ${bm1_ip}
+    pause                UNDER MININET!!!!
+    Should Be True  ${loss} == 0
+    Run Keyword Unless  ${loss} == 0    Collect Logs  ping failed so collecting all logs from Collect_Logs					 
+			
+	
+ping bms to check L3 fwding
+	[Tags]  scale
+	Log To Console  Removing Tenant1 and adding its vns to Tenant0
+	rest delete tenant  Tenant1
+	rest add vns ip  Tenant0  Tenant1-VNS1  10.10.2.1  24
+	rest add vns  Tenant0  Tenant1-VNS1
+	rest add portgroup to vns  Tenant0  Tenant1-VNS1  leaf0-bm1  -1
+	rest add portgroup to vns  Tenant0  Tenant1-VNS1  leaf15-bm46  -1
+	Log To console  Configuring mininet bms
+	mininet host ipcfg  bm0  bm0-bond0  10.10.1.2  24
+	mininet host ipcfg  bm5  bm5-bond0  10.10.1.3  24
+	mininet host ipcfg  bm1  bm1-bond0  10.10.2.2  24
+	mininet host ipcfg  bm4  bm4-bond0  10.10.2.3  24
+	
+	mininet host gw  bm0  10.10.1.1  bm0-bond0
+	mininet host gw  bm5  10.10.1.1  bm5-bond0
+	mininet host gw  bm1  10.10.2.1  bm1-bond0
+	mininet host gw  bm4  10.10.2.1  bm4-bond0
+	
+	Log To console  Checking ping between vns
+	${loss}=  mininet l3 ping  bm0  10.10.2.2
+	Should Be True  ${loss} < 100
+	#Test pause execution (SHELL)
+    pause            Freeze!!!
+	${loss}=  mininet l3 ping  bm1  10.10.1.2
+	Should Be True  ${loss} < 100
+	${loss}=  mininet l3 ping  bm5  10.10.2.3
+	Should Be True  ${loss} < 100
+	${loss}=  mininet l3 ping  bm4  10.10.1.3
+	Should Be True  ${loss} < 100
+	
+Remove spine0 and check L2/L3 
+	[Tags]  scale
+	Log To Console  Removing spine0 from configuation
+	start monitoring the exception
+	rest delete fabric switch  spine0 
+	
+	Log to console  Pinging from bm0 to 10.10.1.3
+    ${loss}=  mininet ping  bm0  10.10.1.3
+    Should Be True  ${loss} < 100
+    Run Keyword Unless  ${loss} < 100    Collect Logs  ping failed so collecting all logs from Collect_Logs					 
+	stop monitoring the exception
+	sleep 5
+	parse monitoring file
+	Log To console  Configuring mininet bms
+	mininet host ipcfg  bm0  bm0-bond0  10.10.1.2  24
+	mininet host ipcfg  bm5  bm5-bond0  10.10.1.3  24
+	mininet host ipcfg  bm1  bm1-bond0  10.10.2.2  24
+	mininet host ipcfg  bm4  bm4-bond0  10.10.2.3  24
+	
+	mininet host gw  bm0  10.10.1.1  bm0-bond0
+	mininet host gw  bm5  10.10.1.1  bm5-bond0
+	mininet host gw  bm1  10.10.2.1  bm1-bond0
+	mininet host gw  bm4  10.10.2.1  bm4-bond0
+	
+	Log To console  Checking ping between vns
+	${loss}=  mininet l3 ping  bm0  10.10.2.2
+	Should Be True  ${loss} < 100
+	${loss}=  mininet l3 ping  bm1  10.10.1.2
+	Should Be True  ${loss} < 100
+	${loss}=  mininet l3 ping  bm5  10.10.2.3
+	Should Be True  ${loss} < 100
+	${loss}=  mininet l3 ping  bm4  10.10.1.3
+	Should Be True  ${loss} < 100
+	
+Add spine0 back and check L2/L3
+	[Tags]  scale
+	Log To Console  Adding back spine0
+	start monitoring the exception
+	rest add switch  spine0
+	rest add dpid  spine0  00:00:00:00:00:01:00:01
+	rest add fabric role  spine0  spine		
+	
+	Log to console  Pinging from bm0 to 10.10.1.3
+    ${loss}=  mininet ping  bm0  10.10.1.3
+    Should Be True  ${loss} < 100
+    Run Keyword Unless  ${loss} < 100    Collect Logs  ping failed so collecting all logs from Collect_Logs					 
+	stop monitoring the exception
+	sleep 5
+	parse monitoring file
+	
+	Log To console  Configuring mininet bms
+	mininet host ipcfg  bm0  bm0-bond0  10.10.1.2  24
+	mininet host ipcfg  bm5  bm5-bond0  10.10.1.3  24
+	mininet host ipcfg  bm1  bm1-bond0  10.10.2.2  24
+	mininet host ipcfg  bm4  bm4-bond0  10.10.2.3  24
+	
+	mininet host gw  bm0  10.10.1.1  bm0-bond0
+	mininet host gw  bm5  10.10.1.1  bm5-bond0
+	mininet host gw  bm1  10.10.2.1  bm1-bond0
+	mininet host gw  bm4  10.10.2.1  bm4-bond0
+	
+	Log To console  Checking ping between vns
+	${loss}=  mininet l3 ping  bm0  10.10.2.2
+	Should Be True  ${loss} < 100
+	${loss}=  mininet l3 ping  bm1  10.10.1.2
+	Should Be True  ${loss} < 100
+	${loss}=  mininet l3 ping  bm5  10.10.2.3
+	Should Be True  ${loss} < 100
+	${loss}=  mininet l3 ping  bm4  10.10.1.3
+	Should Be True  ${loss} < 100
+	
+stop and start mininet and verify L2/L3 fwding
+	[Tags]  scale
+	Log To Console  Stopping mininet in topo
+	start monitoring the exception
+	mininet stop	
+	sleep  100
+	pause               UNDER MININET!!!!
+	parse monitoring file
+	sleep 100
+	Log To Console  Starting mininet in topo
+	start monitoring the exception
+	mininet start	
+	sleep  100
+	pause               UNDER MININET!!!!
+	parse monitoring file
+	
+	Log to Console  Verifing Traffic
+	Log to console  Pinging from bm0 to 10.10.1.3
+    ${loss}=  mininet ping  bm0  10.10.1.3
+    Should Be True  ${loss} < 100
+    Run Keyword Unless  ${loss} < 100    Collect Logs  ping failed so collecting all logs from Collect_Logs					 
+	
+	Log To console  Configuring mininet bms
+	mininet host ipcfg  bm0  bm0-bond0  10.10.1.2  24
+	mininet host ipcfg  bm5  bm5-bond0  10.10.1.3  24
+	mininet host ipcfg  bm1  bm1-bond0  10.10.2.2  24
+	mininet host ipcfg  bm4  bm4-bond0  10.10.2.3  24
+	
+	mininet host gw  bm0  10.10.1.1  bm0-bond0
+	mininet host gw  bm5  10.10.1.1  bm5-bond0
+	mininet host gw  bm1  10.10.2.1  bm1-bond0
+	mininet host gw  bm4  10.10.2.1  bm4-bond0
+	
+	Log To console  Checking ping between vns
+	${loss}=  mininet l3 ping  bm0  10.10.2.2
+	Should Be True  ${loss} < 100
+	${loss}=  mininet l3 ping  bm1  10.10.1.2
+	Should Be True  ${loss} < 100
+	${loss}=  mininet l3 ping  bm5  10.10.2.3
+	Should Be True  ${loss} < 100
+	${loss}=  mininet l3 ping  bm4  10.10.1.3
+	Should Be True  ${loss} < 100
+	
+	 
+reboot master controller and verify L2/L3 fwding
+	[Tags] scale
+	Log To Console  Rebooting master controller	 
+	start monitoring the exception
+	cli verify cluster master reboot
+	sleep  20
+	stop monitoring the exception
+	parse monitoring file
+	
+	Log To console  Checking L2/L3 fwding
+	Log to console  Pinging from bm0 to 10.10.1.3
+    ${loss}=  mininet ping  bm0  10.10.1.3
+    Should Be True  ${loss} < 100
+    Run Keyword Unless  ${loss} < 100    Collect Logs  ping failed so collecting all logs from Collect_Logs					 
+	
+	Log To console  Configuring mininet bms
+	mininet host ipcfg  bm0  bm0-bond0  10.10.1.2  24
+	mininet host ipcfg  bm5  bm5-bond0  10.10.1.3  24
+	mininet host ipcfg  bm1  bm1-bond0  10.10.2.2  24
+	mininet host ipcfg  bm4  bm4-bond0  10.10.2.3  24
+	
+	mininet host gw  bm0  10.10.1.1  bm0-bond0
+	mininet host gw  bm5  10.10.1.1  bm5-bond0
+	mininet host gw  bm1  10.10.2.1  bm1-bond0
+	mininet host gw  bm4  10.10.2.1  bm4-bond0
+	
+	Log To console  Checking ping between vns
+	${loss}=  mininet l3 ping  bm0  10.10.2.2
+	Should Be True  ${loss} < 100
+	${loss}=  mininet l3 ping  bm1  10.10.1.2
+	Should Be True  ${loss} < 100
+	${loss}=  mininet l3 ping  bm5  10.10.2.3
+	Should Be True  ${loss} < 100
+	${loss}=  mininet l3 ping  bm4  10.10.1.3
+	Should Be True  ${loss} < 100
+	
+reboot slave controller and verify L2/L3 fwding
+	[Tags] scale
+	Log To Console  Rebooting slave controller	 
+	start monitoring the exception
+	cli verify cluster slave reboot
+	sleep  20
+	stop monitoring the exception
+	parse monitoring file
+	
+	Log To console  Checking L2/L3 fwding
+	Log to console  Pinging from bm0 to 10.10.1.3
+    ${loss}=  mininet ping  bm0  10.10.1.3
+    Should Be True  ${loss} < 100
+    Run Keyword Unless  ${loss} < 100    Collect Logs  ping failed so collecting all logs from Collect_Logs					 
+	
+	Log To console  Configuring mininet bms
+	mininet host ipcfg  bm0  bm0-bond0  10.10.1.2  24
+	mininet host ipcfg  bm5  bm5-bond0  10.10.1.3  24
+	mininet host ipcfg  bm1  bm1-bond0  10.10.2.2  24
+	mininet host ipcfg  bm4  bm4-bond0  10.10.2.3  24
+	
+	mininet host gw  bm0  10.10.1.1  bm0-bond0
+	mininet host gw  bm5  10.10.1.1  bm5-bond0
+	mininet host gw  bm1  10.10.2.1  bm1-bond0
+	mininet host gw  bm4  10.10.2.1  bm4-bond0
+	
+	Log To console  Checking ping between vns
+	${loss}=  mininet l3 ping  bm0  10.10.2.2
+	Should Be True  ${loss} < 100
+	${loss}=  mininet l3 ping  bm1  10.10.1.2
+	Should Be True  ${loss} < 100
+	${loss}=  mininet l3 ping  bm5  10.10.2.3
+	Should Be True  ${loss} < 100
+	${loss}=  mininet l3 ping  bm4  10.10.1.3
+	Should Be True  ${loss} < 100
+
+cluster failover and verify L2/L3 fwding
+	[Tags] scale
+	Log To Console  cluster failover	 
+	start monitoring the exception
+	rest verify cluster election take leader
+	sleep  20
+	stop monitoring the exception
+	parse monitoring file
+	
+	Log To console  Checking L2/L3 fwding
+	Log to console  Pinging from bm0 to 10.10.1.3
+    ${loss}=  mininet ping  bm0  10.10.1.3
+    Should Be True  ${loss} < 100
+    Run Keyword Unless  ${loss} < 100    Collect Logs  ping failed so collecting all logs from Collect_Logs					 
+	
+	Log To console  Configuring mininet bms
+	mininet host ipcfg  bm0  bm0-bond0  10.10.1.2  24
+	mininet host ipcfg  bm5  bm5-bond0  10.10.1.3  24
+	mininet host ipcfg  bm1  bm1-bond0  10.10.2.2  24
+	mininet host ipcfg  bm4  bm4-bond0  10.10.2.3  24
+	
+	mininet host gw  bm0  10.10.1.1  bm0-bond0
+	mininet host gw  bm5  10.10.1.1  bm5-bond0
+	mininet host gw  bm1  10.10.2.1  bm1-bond0
+	mininet host gw  bm4  10.10.2.1  bm4-bond0
+	
+	Log To console  Checking ping between vns
+	${loss}=  mininet l3 ping  bm0  10.10.2.2
+	Should Be True  ${loss} < 100
+	${loss}=  mininet l3 ping  bm1  10.10.1.2
+	Should Be True  ${loss} < 100
+	${loss}=  mininet l3 ping  bm5  10.10.2.3
+	Should Be True  ${loss} < 100
+	${loss}=  mininet l3 ping  bm4  10.10.1.3
+	Should Be True  ${loss} < 100
+	
+	
+	
+* Keywords
+
+
+start monitoring the exception
+	Log To console  Starting to monitor Exception logs
+	start monitor exception  ${monitor_file}
+	${pid}=  pid return monitor file  master
+	Should Be True  ${pid}
+	${pid}=  pid return monitor file  slave
+	Should Be True  ${pid}
+
+stop monitoring the exception
+	Log To Console  Stopping the monitor Exception logs
+	${pid}=  pid return monitor file  master
+	stop monitor exception  ${pid}  master
+	${pid}=  pid return monitor file  slave
+	stop monitor exception  ${pid}  slave
+	
+parse monitoring file
+	Log To Console  Looking for exceptions in the file
+	${size}=  parse exception  master  ${monitor_file}
+	Should Be True  ${size} == 0
+	${size}=  parse exception  slave  ${monitor_file}
+	Should Be True  ${size} == 0
+
+verify fabric switch link and errors
+	Log To Console  Verifing the fabric switch and links
+	rest verify fabric switch all
+	rest verify fabric link
+	${result}=  rest verify fabric errors
+	Should Be True  ${result} == 0
+	
+		
+
+Collect Logs  [Arguments]  ${text}
+    Log To Console  ${text}
+	Dump Show Commands
+ 

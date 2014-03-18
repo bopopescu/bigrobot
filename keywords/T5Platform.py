@@ -5,7 +5,7 @@ from time import sleep
 import re
 import keywords.Mininet as mininet
 import keywords.T5 as T5
-import re
+import keywords.Host as Host
 
 
 pingFailureCount = 0
@@ -1215,7 +1215,7 @@ class T5Platform(object):
             c.expect(r'[\r\n].+password: |[\r\n].+(yes/no)?')
             content = c.cli_content()
             helpers.log("*****Output is :\n%s" % content)
-            if re.match(r'.*password:.* ', content):
+            if re.match(r'.*password:.*', content):
                 helpers.log("INFO:  need to provide passwd " )
                 c.send('bsn')
             elif re.match(r'.+(yes/no)?', content):
@@ -1225,7 +1225,7 @@ class T5Platform(object):
                 c.send('bsn')
             
             try:
-                c.expect(timeout=180)
+                c.expect(timeout=300)
             except:
                 helpers.log('scp failed')
                 return False
@@ -1416,10 +1416,10 @@ class T5Platform(object):
                 c.send('upgrade stage ' + image) 
         else:
             c.send('upgrade stage ' + image)
-        c.expect(r'[\r\n].+: ')      
+        c.expect(r'[\r\n].*to continue.*')      
         c.send("yes")
         try:
-            c.expect(timeout=180)
+            c.expect(timeout=900)
         except:
             helpers.log('stage did not finish within 180 second ')
             return False
@@ -1487,7 +1487,8 @@ class T5Platform(object):
         t = test.Test()
         c = t.controller(node)
         helpers.log('INFO: Entering ==> cli_take_sanpshot')
- 
+        host = Host.Host()    
+        
         if run_config: 
             c.enable('show running-config')     
             content = c.cli_content()       
@@ -1507,7 +1508,7 @@ class T5Platform(object):
             helpers.log("********string :************\n%s" % temp)                   
             return  temp
         if filepath:
-            fileinfo = self.bash_ls(node, filepath)
+            fileinfo = host.bash_ls(node, filepath)
             helpers.log("********file info is************\n%s" % fileinfo)    
             return fileinfo         
         return False    
@@ -1840,6 +1841,148 @@ class T5Platform(object):
         helpers.log("INFO:  topinfo is \n  %s" % helpers.prettify(topinfo))                                          
         return topinfo 
  
+    def cli_add_user(self,user='user1',passwd='adminadmin'):
+        '''
+          cli add user to the system, can only run at master
+          Author: Mingtao
+          input:   user = username,  passwd  = password                                       
+          usage:   
+          output:   True                            
+        '''
+  
+        t = test.Test()
+        c = t.controller('master')
+        helpers.log('INFO: Entering ==> cli_add_user ')
+        t = test.Test()   
+        c.config('user '+user) 
+        c.send('password' )
+        c.expect('Password: ')        
+        c.send(passwd)
+        c.expect('Re-enter:')
+        c.send(passwd)                
+        c.expect()        
+        return True     
+
+
+
+    def cli_group_add_users(self,group=None,user=None):
+        '''  
+          cli add user to group, can only run at master
+          Author: Mingtao
+          input:   group  - if group not give, will user admin
+                  user    - if user not given, will add all uers                             
+          usage:   
+          output:   True                            
+        '''  
+        t = test.Test()
+        c = t.controller('master')
+        helpers.log('INFO: Entering ==> cli_add_user ')    
+        if group is None:
+            group = 'admin'         
+        c.config('group '+ group) 
+        if user:
+            c.config('associate user '+user)
+        else: 
+            c.config('show running-config user | grep user')   
+            content = c.cli_content()
+            temp = helpers.strip_cli_output(content)
+            temp = helpers.str_to_list(temp)
+            helpers.log("********new_content:************\n%s" % helpers.prettify(temp))
+            temp.pop(0)
+            helpers.log("********new_content:************\n%s" % helpers.prettify(temp))            
+            for line in temp:
+                line = line.lstrip()
+                user = line.split(' ')[1]
+                helpers.log('INFO: user is: %s ' % user)  
+                if user == 'admin':
+                    continue   
+                else:                        
+                    c.config('associate user '+user)
+            
+            return True    
+
+
+    def rest_get_user_group(self,user):
+        '''  
+          get the group for a user, can only run at master
+          Author: Mingtao
+          input:   
+                  user    - if user not given, will add all uers                             
+          usage:   
+          output:   group                          
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        helpers.log('INFO: Entering ==> rest_get_user_group ')
+   
+        
+        url = '/api/v1/data/controller/core/aaa/group[user="%s"]'  % user
+        c.rest.get(url)
+        if not c.rest.status_code_ok():
+            helpers.test_failure(c.rest.error())
+
+        if(c.rest.content()):
+            helpers.log('INFO: content is: %s ' %c.rest.content())        
+
+            if user in c.rest.content()[0]['user']:    
+                helpers.log('INFO: inside  ')        
+                return  c.rest.content()[0]['name']          
+        else:
+            helpers.test_failure(c.rest.error())      
+
+
+    def cli_delete_user(self,user):
+        '''  
+          delete users can only run at master
+          Author: Mingtao
+          input:  user                        
+          usage:   
+          output:   True                            
+           
+        '''
+  
+        t = test.Test()
+        c = t.controller('master')
+        helpers.log('INFO: Entering ==> cli_delete_user ')
+        c.config('no user '+ user)    
+        return True
+  
+
+    def T5_cli_clean_all_users(self,user=None ):
+        ''' 
+        delete all users except admin
+          Author: Mingtao
+          input:  user                        
+          usage:   
+          output:   True                                                
+        '''
+  
+        t = test.Test()
+        c = t.controller('master')
+        helpers.log('INFO: Entering ==> cli_delete_user ')
+      
+        if user: 
+            c.config('no user '+ user)     
+            return True
+        else:
+            c.config('show running-config user | grep user')   
+            content = c.cli_content()
+            temp = helpers.strip_cli_output(content)
+            temp = helpers.str_to_list(temp)
+            helpers.log("********new_content:************\n%s" % helpers.prettify(temp))
+            temp.pop(0)
+            helpers.log("********new_content:************\n%s" % helpers.prettify(temp))            
+            for line in temp:
+                line = line.lstrip()
+                user = line.split(' ')[1]
+                helpers.log('INFO: user is: %s ' % user)  
+                if user == 'admin':
+                    continue   
+                else:                        
+                    c.config('no user '+ user)
+                            
+            return True    
+
 
 
     

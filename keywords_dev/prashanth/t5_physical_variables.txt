@@ -7,9 +7,9 @@ ${leaf1a_dpid}	 00:00:00:00:02:00:00:03
 ${leaf1b_dpid}	 00:00:00:00:02:00:00:04
 ${leaf2a_dpid}	 00:00:00:00:02:00:00:05
 ${leaf2b_dpid}	 00:00:00:00:02:00:00:06
-${leaf0a_spine0_intf0}	ethernet33
+${leaf0a_spine0_intf0}	ethernet49
 ${leaf0a_leaf0b_intf0}	ethernet39
-${leaf0a_spine1_intf0}	ethernet50
+${leaf0a_spine1_intf0}	ethernet52
 ${leaf0a_ixia_intf}		ethernet24
 ${leaf0b_ixia_intf}		ethernet24
 ${leaf1a_ixia_intf}		ethernet24
@@ -19,8 +19,8 @@ ${leaf1a_leaf1b_intf1}	ethernet40
 ${leaf2a_leaf2b_intf0}  ethernet39
 ${leaf2a_ixia_intf}		ethernet24
 ${leaf2b_ixia_intf}		ethernet24
-${leaf2a_spine0_intf0}	ethernet31
-${leaf2a_spine1_intf0}	ethernet53
+${leaf2a_spine0_intf0}	ethernet49
+${leaf2a_spine1_intf0}	ethernet52
 ${h4_ip}  192.168.0.11
 ${h5_ip}  192.168.0.30
 ${h6_ip}  192.168.0.31

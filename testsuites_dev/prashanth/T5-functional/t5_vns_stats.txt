@@ -23,7 +23,13 @@ add Single Leaf Three Rack setup
    [Tags]  feature        
    rest verify fabric switch all
    rest verify fabric link
-	
+   
+Verify stats interval setting
+	[Tags]  feature
+	rest verify stats interval  
+	rest verify stats interval  70  610
+	rest verify stats interval  60  60
+
 Verify single VNS rx/tx stats between rack
 	[Tags]  feature   
 	rest add tenant  t1
