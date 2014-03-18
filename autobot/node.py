@@ -111,7 +111,8 @@ class Node(object):
         """
         Returns the devconf handle.
         """
-        raise NotImplementedError()
+        # raise NotImplementedError()
+        return None
 
 
 class ControllerNode(Node):
@@ -378,6 +379,11 @@ class HostNode(Node):
 
     def devconf(self):
         return self.dev
+
+
+class OpenStackNode(HostNode):
+    def __init__(self, name, ip, user, password, t):
+        super(OpenStackNode, self).__init__(name, ip, user, password, t)
 
 
 class SwitchNode(Node):

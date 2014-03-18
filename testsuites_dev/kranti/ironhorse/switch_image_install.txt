@@ -7,28 +7,24 @@ Force Tags      T5 Switch Install
            
 Library         keywords/BsnCommon.py
 Library         keywords_dev/kranti/ironhorse/switchimageinstall.py
-Resource        keywords_dev/kranti/ironhorse/snake_traffic_test_variables.txt
+Resource        keywords_dev/kranti/ironhorse/switchimageinstall_variables.txt
 
 *Variables
-${conRack}          cs-rack10
-${conPort}          6015
-${user}             root
-${passwd}           bsn
-${serverIp}=        10.192.74.102
-${sleepBefore}=     10
-${sleepAfter}=      30 
-${installer_path}=  "/export/switchlight/autobuilds/master/"
-${installer_pkg}=   "latest.switchlight-powerpc-release.all.installer"
-${installer_cmd1}=  "setenv sl_url 'http://10.192.74.102/export/switchlight/autobuilds/master/latest.switchlight-powerpc-release.all.installer'"
-${installer_cmd2}=  "setenv sl_ip \$\{ipaddr\}::\$\{gatewayip\}:\$\{netmask\}::eth1:off"
-${installer_cmd3}=  "setenv onie_debugargs install_url=\$\{sl_url\} ip=\$\{sl_ip\}"
-${installer_cmd4}=  "run onie_bootcmd"
-${loader_intf}=     ma1
-${switch_ip}=       ""
-${default_gateway}=  "10.192.64.1"
-${dns_ip}=            "10.192.3.1"
-${domain_name}=       "bigswitch.com"
-
+#${installer_path}=  "/export/switchlight/autobuilds/master/"
+#${installer_pkg}=   "latest.switchlight-powerpc-release.all.installer"
+#${installer_cmd1}=  "setenv sl_url 'http://10.192.74.102/export/switchlight/autobuilds/master/latest.switchlight-powerpc-release.all.installer'"
+#${installer_cmd2}=  "setenv sl_ip \$\{ipaddr\}::\$\{gatewayip\}:\$\{netmask\}::eth1:off"
+#${installer_cmd3}=  "setenv onie_debugargs install_url=\$\{sl_url\} ip=\$\{sl_ip\}"
+#${installer_cmd4}=  "run onie_bootcmd"
+#${newSwitchflag}=     "false"
+${newSwitchIp}=        "10.192.107.11"
+${netMask}=            "255.255.192.0"
+${gatwayIp}=           "10.192.64.1"
+#${swLightUrl}=  "setenv sl_url 'http://10.192.74.102/export/switchlight/autobuilds/master/latest.switchlight-powerpc-release.all.installer'"
+#${swLightenv}=  "setenv sl_ip ${ipaddr}::${gatewayip}:${netmask}::eth0:off"
+#${swLightonie}=  "setenv onie_debugargs install_url=${sl_url} ip=${sl_ip}"
+#${swLightImagePath}=   "wget http://10.192.74.102/export/switchlight/autobuilds/master/latest.switchlight-powerpc-internal-t5.swi"
+#${swLightFlash}=    "echo \"SWI=flash2:latest.switchlight-powerpc-internal-t5.swi\"  >/mnt/flash/boot-config"
 
 
 #### First Login using console 
@@ -73,18 +69,17 @@ ${domain_name}=       "bigswitch.com"
 
 *Test Case
 Install the SwithcLight Installer on ONIE enabled Switch 
-    T5 switchLight Install
+     switchLight image install  s1  true  ${newSwitchIp}  ${netMask}  ${gatwayIp}      
     [Tags]  T5  swLight  Install  run
 
             
 * Keywords
       
-T5 test setup
-   base test setup   
+#T5 test setup
+#   base test setup   
                    
-T5 test teardown
-   base test teardown
-   sleep  5   
+#T5 test teardown
+#   base test teardown
+#   sleep  5   
 
-T5 switchLight Install
-   switchLight image install  ${conRack}  ${conPort}
+

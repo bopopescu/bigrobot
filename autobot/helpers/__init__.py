@@ -494,6 +494,14 @@ def is_host(name):
     return True if match else False
 
 
+def is_openstack_server(name):
+    """
+    OpenStack server is defined as os1, os2, os3, ...
+    """
+    match = re.match(r'^(os\d+)$', name)
+    return True if match else False
+
+
 def is_mininet(name):
     """
     Mininet is defined as mn, mn1, or mininet
@@ -811,6 +819,50 @@ def is_same_file(file1, file2):
     inode2 = os.stat(file2)[1]
 
     return True if inode1 == inode2 else False
+
+
+def dict_compare(dict1, dict2, ignore_keys=None):
+    """
+    Compare to see whether dict1 is the same as dict2. You can provide a list
+    of keys to ignore in the comparison.
+
+    Usage:
+    status = helpers.dict_compare(mydict1, mydict2, ignore_keys=['abc', 'xyz'])
+
+    Return
+       - True  if dictionaries are same
+       - False if dictionaries are different
+    """
+
+    keys1 = sorted(dict1.keys())
+    keys2 = sorted(dict2.keys())
+    combined_keys = keys1 + list(set(keys2) - set(keys1))
+
+    ignore = []
+    if ignore_keys:
+        if is_scalar(ignore_keys):
+            ignore.append(ignore_keys)
+        else:
+            ignore = ignore_keys
+
+    for k in combined_keys:
+        if k in ignore:
+            print "Ignoring key '%s'" % k
+            continue
+
+        if k in dict1 and k in dict2:
+            if dict1[k] == dict2[k]:
+                pass
+            else:
+                print "Dictionaries differ at key '%s'" % k
+                return False
+        elif k in dict1:
+            print "First dictionary contains key '%s'" % k
+            return False
+        else:
+            print "Second dictionary contains key '%s'" % k
+            return False
+    return True
 
 
 def list_compare(list1, list2):

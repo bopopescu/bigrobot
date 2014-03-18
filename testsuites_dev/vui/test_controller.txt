@@ -104,7 +104,7 @@ Test controller cli ping
     cli ping   c1   qa-kvm-32
 
 Test bash file listing
-    #[Tags]  skipped
+    [Tags]  skipped
     #${result}=    bash ls    master  /home/admin
     ${result}=    bash ls    master  /etc
     #log           result=${result}
@@ -118,9 +118,12 @@ Test exit nested config
     exit nested config
 
 Test get node name
+    [Tags]  skipped
     ${name}=      get node name    master
     Log           I am the ${name} of the Universe!
 
     ${name}=      get node name    c1
     Log           I am the ${name} of the Universe!
 
+Test show verson
+    cli          master   show version

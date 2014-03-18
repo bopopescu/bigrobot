@@ -1,9 +1,11 @@
 c1:
   #ip: 10.192.5.71
   #ip: 10.192.104.1
-  ip: 10.192.5.191
-  console_ip: blade-1-a.bigswitch.com
-  console_port: 15902
+  ip: 10.192.104.2
+  console_kvm_server: qa-kvm-32
+  console_vm_name: vui-bvs
+  #console_ip: blade-1-a.bigswitch.com
+  #console_port: 15902
   #set_init_ping: false            # default: true
   #set_session_ssh: false          # default: true
   #set_devconf_debug_level: 5      # default: 0
