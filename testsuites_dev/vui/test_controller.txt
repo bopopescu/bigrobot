@@ -131,7 +131,10 @@ Test show verson
     cli          master   show version
 
 Test get node ID
-    #[Tags]  skipped
+    [Tags]  skipped
     ${nodeid}=  get node id  master
     Log         Node ID is ${nodeid}
 
+Test SSH connection
+    #[Tags]  skipped
+    verify ssh connection   c1   admin   adminadmin
