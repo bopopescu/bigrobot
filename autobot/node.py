@@ -381,6 +381,11 @@ class HostNode(Node):
         return self.dev
 
 
+class OpenStackNode(HostNode):
+    def __init__(self, name, ip, user, password, t):
+        super(OpenStackNode, self).__init__(name, ip, user, password, t)
+
+
 class SwitchNode(Node):
     def __init__(self, name, ip, user, password, t):
         super(SwitchNode, self).__init__(name, ip, user, password,
