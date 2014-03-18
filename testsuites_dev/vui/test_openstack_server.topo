@@ -1,0 +1,5 @@
+os1:
+  ip: 10.195.0.107   # Prashanth's compute node
+  #user: root
+  #password: bsn
+

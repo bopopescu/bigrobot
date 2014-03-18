@@ -421,6 +421,16 @@ class Test(object):
         name = self.alias(name)
         return self.topology(name, *args, **kwargs)
 
+    def openstack_servers(self):
+        """
+        Get the handles of all the OpenStack servers.
+        """
+        return [self.openstack_server(n) for n in self.topology_params() if re.match(r'^os\d+', n)]
+
+    def openstack_server(self, name='os1', *args, **kwargs):
+        name = self.alias(name)
+        return self.topology(name, *args, **kwargs)
+
     def hosts(self):
         """
         Get the handles of all the hosts.
@@ -480,8 +490,11 @@ class Test(object):
         #  Controllers: c1, c2, controller, controller1, controller2, master, slave
         #  Mininet: mn, mn1, mn2
         #  Switches: s1, s2, spine1, leaf1, filter1, delivery1
+        #  Hosts: h1, h2, h3
+        #  OpenStack servers: os1, os2
+        #  Traffic generators: tg1, tg2
         #
-        match = re.match(r'^(c\d|controller\d?|master|slave|mn\d?|mininet\d?|s\d+|spine\d+|leaf\d+|s\d+|h\d+|tg\d+)$', node)
+        match = re.match(r'^(c\d|controller\d?|master|slave|mn\d?|mininet\d?|s\d+|spine\d+|leaf\d+|s\d+|h\d+|tg\d+|os\d+)$', node)
         if not match:
             helpers.environment_failure("Unknown/unsupported device '%s'"
                                         % node)
@@ -557,6 +570,20 @@ class Test(object):
                                 user=user,
                                 password=password,
                                 t=t)
+
+        elif helpers.is_openstack_server(node):
+            helpers.log("Initializing OpenStack server '%s'" % node)
+
+            if not user:
+                user = self.host_user()
+            if not password:
+                password = self.host_password()
+
+            n = a_node.OpenStackNode(node,
+                                      host,
+                                      user=user,
+                                      password=password,
+                                      t=t)
 
         elif helpers.is_traffic_generator(node):
             helpers.log("Initializing traffic generator '%s'" % node)
