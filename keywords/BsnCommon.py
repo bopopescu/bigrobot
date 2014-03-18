@@ -20,6 +20,10 @@ import subprocess
 import math
 import sys
 import re
+import socket
+import paramiko
+from paramiko.client import SSHClient
+from paramiko.ssh_exception import BadHostKeyException, AuthenticationException, SSHException
 from Exscript.protocols import SSH2
 from Exscript import Account, Host
 
@@ -1445,3 +1449,34 @@ class BsnCommon(object):
         t = test.Test()
         n = t.node(node)
         return n.node_id()
+
+    def verify_ssh_connection(self, node, user='dummy', password='dummy'):
+        """
+        Test the SSH connection to see whether it is working.
+        SSH authentication is considered a success (it may be because we
+        provided a bad user name or password). SSH time out and other
+        exceptions will result in failure.
+
+        Return Value:
+          - True on success
+          - False on failure
+        """
+        t = test.Test()
+        n = t.node(node)
+        ip = n.ip()
+
+        status = True
+        try:
+            ssh = SSHClient()
+            ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+            ssh.connect(ip, username=user, password=password, timeout=5)
+        except AuthenticationException as e:
+            print("SSH error: %s But that's okay." % e)
+        except (BadHostKeyException, SSHException, socket.error) as e:
+            print("SSH error: %s" % e)
+            status = False
+        else:
+            pass
+        return status
+
+
