@@ -161,6 +161,37 @@ class Controller(object):
         # Connect to device console to complete first-boot.
         helpers.log("Boot factory-default completed on '%s'. System should be rebooting." % node)
 
+    def cli_add_first_boot_bvs(self,
+                               node,
+                               ip_address,
+                               netmask='',
+                               gateway='',
+                               dns_server='',
+                               dns_search='',
+                               ntp_server='',
+                               ):
+        """
+        First boot setup fpr BVS - It will then connect to the console to
+        complete the first-boot configuration steps (call
+        'cli add first boot').
+        """
+        t = test.Test()
+
+        helpers.log("Getting the console session for '%s'" % node)
+        helpers.test_error("Exit early")
+
+
+        n = t.node(node).console()
+        n.send('')  # press <Enter> and expect to see the login prompt
+
+
+        loss = helpers.ping(ip_address)
+        if loss < 50:
+            helpers.log("Node '%s' has survived first-boot!" % node)
+            return True
+        else:
+            return False
+
     def cli_add_first_boot(self,
                            node,
                            ip_address,
