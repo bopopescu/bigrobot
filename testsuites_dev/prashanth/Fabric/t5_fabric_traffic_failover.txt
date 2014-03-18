@@ -147,12 +147,12 @@ Reboot leaf switch with dual Host connected through lacp (Host5 to Host4)
     rest verify fabric interface lacp  leaf2-a  ${h5_intf0}  
     ${loss}=  bash ping  h5  ${h4_ip}  source_if=bond0
     Should Be True  ${loss} == 0
-    cli restart switch  s5
+    cli restart switch  leaf2-a
     sleep  2
     ${loss}=  bash ping  h5  ${h4_ip}  source_if=bond0
     Should Be True  ${loss} == 0
     sleep  90
-    cli restart switch  s6
+    cli restart switch  leaf2-b
     sleep  2
     ${loss}=  bash ping  h5  ${h4_ip}  source_if=bond0
     Should Be True  ${loss} == 0
@@ -163,6 +163,8 @@ Reboot leaf switch with dual Host connected through lacp (Host5 to Host4)
    rest delete portgroup  p4
    rest delete portgroup  p5
    rest delete tenant  t1 
+   bash execute command  leaf2-a  ofad-ctl autoneg 24
+   bash execute command  leaf2-b  ofad-ctl autoneg 24
   
 Host Link Failover test with Host6 in Rack2 to Host 4 in Rack1
 	[Tags]  feature    

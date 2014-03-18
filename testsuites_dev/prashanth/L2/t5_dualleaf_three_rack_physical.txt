@@ -10,7 +10,6 @@ Force Tags       T5
 Library          keywords/BsnCommon.py
 Library          keywords/T5.py
 Library	         keywords/T5Fabric.py
-
 Library	    	 keywords/Host.py
 Resource		 testsuites/T5/t5_dualleaf_three_rack_physical_resource.txt
 Resource		 testsuites/T5/t5_physical_variables.txt
@@ -31,7 +30,7 @@ ping h5 to h6 dual leaf single rack dynamic endpoints
    Should Be True  ${loss} == 0						 
 	 
 ping h5 to h6 dual leaf single rack static endpoints
-   [Tags]  sanity      
+   [Tags]  sanity        
    add a endpoint  A  A  e1 
    add a endpoint  A  A  e2 
    add portgroup to endpoint  A   A  e2  p6  -1
@@ -47,7 +46,7 @@ ping h5 to h6 dual leaf single rack static endpoints
    Should Be True  ${loss} == 0 
 
 ping h4 to h5 dual rack dual leaf dynamic endpoints
-   [Tags]  sanity   
+   [Tags]  sanity     
    add portgroup to vns  A  A  p5  -1 
    add portgroup to vns  A  A  p4  -1
    sleep  5
@@ -55,7 +54,7 @@ ping h4 to h5 dual rack dual leaf dynamic endpoints
    Should Be True  ${loss} == 0					 
 		
 ping h4 to h5 dual rack dual leaf static endpoints
-   [Tags]  sanity          
+   [Tags]  sanity            
    add a endpoint  A  A  e1 
    add a endpoint  A  A  e2 
    add portgroup to endpoint  A   A  e2  p5  -1
