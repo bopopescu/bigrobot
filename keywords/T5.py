@@ -355,6 +355,7 @@ class T5(object):
         helpers.test_log("Input arguments: tenant = %s vns = %s port-group = %s vlan = %s" % (tenant, vns, pg, vlan))
 
         url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/port-group-membership-rules[port-group-name="%s"]' % (tenant, vns, pg)
+        
         try:
             c.rest.put(url, {"vlan": vlan, "port-group-name": pg})
         except:
