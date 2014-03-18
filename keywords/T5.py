@@ -1669,13 +1669,14 @@ class T5(object):
     def rest_disable_fabric_interface(self, switch, intf):
         t = test.Test()
         c = t.controller('master')
-
+        url0 = '/api/v1/data/controller/core/switch-config[name="%s"]/interface[name="%s"]' % (switch, intf)
+        c.rest.put(url0, {"name": str(intf)})
         url = '/api/v1/data/controller/core/switch-config[name="%s"]/interface[name="%s"]' % (switch, intf)
         c.rest.patch(url, {"shutdown": True})
+        helpers.sleep(2)
         url1 = '/api/v1/data/controller/core/switch/interface[switch-name="%s"][name="%s"]' % (switch, intf)
         c.rest.get(url1)
         data = c.rest.content()
-        helpers.sleep(5)
         if data[0]["state"] == "down":
             helpers.log("Interface state is down")
             return True
@@ -1689,10 +1690,10 @@ class T5(object):
 
         url = '/api/v1/data/controller/core/switch-config[name="%s"]/interface[name="%s"]' % (switch, intf)
         c.rest.delete(url, {"shutdown": None})
+        helpers.sleep(2)        
         url1 = '/api/v1/data/controller/core/switch/interface[switch-name="%s"][name="%s"]' % (switch, intf)
         c.rest.get(url1)
         data = c.rest.content()
-        helpers.sleep(5) 
         if data[0]["state"] == "up":
             helpers.log("Interface state is up")
             return True
