@@ -299,7 +299,15 @@ verify traffic rate negative   [Arguments]  ${tx_rate}  ${rx_rate}  ${tx_intf}  
     ${report}=  fetch port stats
     ${tx_value}=  verify dict key  ${report}  ${tx_intf}  transmitted_frame_rate
     ${rx_value}=  verify dict key  ${report}  ${rx_intf}  received_valid_frame_rate
-    Should Not be equal  ${tx_value}  ${rx_value}
+    Should Be True  ${rx_value} == 0
+
+verify traffic packet  [Arguments]  ${tx_cnt}  ${rx_cnt}  ${tx_intf}  ${rx_intf}
+	Sleep  5
+    ${report}=  fetch port stats
+    ${tx_value}=  verify dict key  ${report}  ${tx_intf}  transmitted_frames
+    ${rx_value}=  verify dict key  ${report}  ${rx_intf}  received_valid_frames
+    ${result}=  Evaluate  ${tx_value} - ${rx_value}
+    Should Be True   -4 < ${result} < 1
     
 T5 test teardown
 	delete traffic
