@@ -64,6 +64,9 @@ Reboot leaf switch and verify fabric link
 	rest verify fabric link
 	sleep  10
 	rest verify fabric link
+	bash execute command  leaf0-a  ofad-ctl autoneg 24
+	bash execute command  leaf0-a  ofad-ctl autoneg 25
+	bash execute command  leaf0-a  ofad-ctl autoneg 26
 	
 Add/delete a new link between spine0 and leaf0a
 	[Tags]  feature
@@ -132,6 +135,9 @@ Tear down config and Topology
     rest delete portgroup  p1
     rest delete portgroup  p2
     base suite teardown
+    bash execute command  leaf0-a  ofad-ctl autoneg 24
+	bash execute command  leaf0-a  ofad-ctl autoneg 25
+	bash execute command  leaf0-a  ofad-ctl autoneg 26
  
 
 * Keywords  
