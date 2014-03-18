@@ -809,7 +809,7 @@ class T5Platform(object):
                 return None
         
         
-    def rest_add_monitor_session(self, sessionID, srcSwitch, srcInt, dstSwitch, dstInt):
+    def rest_add_monitor_session(self, sessionID, srcSwitch, srcInt, dstSwitch, dstInt, **kwargs):
         '''
             Add a monitor session (SPAN) to the switch
             Inputs: sessionID - Session ID for the monitor session
@@ -827,7 +827,7 @@ class T5Platform(object):
         master.rest.put(url, {"id": sessionID})
                 
         url = "/api/v1/data/controller/fabric/monitor-session[id=" + sessionID + "]/source[switch-name=\"" +srcSwitch +"\"][interface-name=\"" + srcInt+ "\"]"
-        result = master.rest.put(url, {"switch-name": srcSwitch , "interface-name": srcInt})
+        result = master.rest.put(url, {"direction": kwargs.get("direction"), "switch-name": srcSwitch , "interface-name": srcInt})
 
         url = "/api/v1/data/controller/fabric/monitor-session[id=" + sessionID + "]/destination[switch-name=\"" +dstSwitch +"\"][interface-name=\"" + dstInt+ "\"]"
         result = master.rest.put(url, {"switch-name": srcSwitch , "interface-name": dstInt})
@@ -852,7 +852,7 @@ class T5Platform(object):
             return False
         
         
-    def rest_verify_monitor_session(self, sessionID, srcSwitch, srcInt, dstSwitch, dstInt):
+    def rest_verify_monitor_session(self, sessionID, srcSwitch, srcInt, dstSwitch, dstInt, **kwargs):
         '''
             Verify a monitor session (SPAN) in the switch. This uses "show run monitor-session" command
             for the verification 
@@ -881,12 +881,16 @@ class T5Platform(object):
                     if(session['source'][0]['interface-name'] != srcInt):
                         helpers.log("Wrong source interface in the monitor session %s : %s" % (sessionID, srcInt))
                         return False
+                    if(session['source'][0]['direction'] != kwargs.get('direction')):
+                        helpers.log("Wrong source interface direction in the monitor session %s : %s: %s" % (sessionID, srcInt, kwargs.get('direction')))
+                        return False
                     if(session['destination'][0]['switch-name'] != dstSwitch):
                         helpers.log("Wrong destination switch in the monitor session %s : %s" % (sessionID, dstSwitch))
                         return False
                     if(session['destination'][0]['interface-name'] != dstInt):
                         helpers.log("Wrong destination interface in the monitor session %s : %s" % (sessionID, dstInt))
                         return False
+                    
                     pass
                     
         except(KeyError):
