@@ -20,7 +20,7 @@ Resource		 testsuites/T5/t5_physical_variables.txt
 * Test Case 
 
 add Single Leaf Three Rack setup
-   [Tags]  feature        
+   [Tags]  feature  run        
    rest verify fabric switch all
    rest verify fabric link
    
@@ -31,7 +31,7 @@ Verify stats interval setting
 	rest verify stats interval  60  60
 
 Verify single VNS rx/tx stats between rack
-	[Tags]  feature   
+	[Tags]  feature  run   
 	rest add tenant  t1
 	rest add vns  t1  v1
 	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
@@ -655,7 +655,7 @@ verify traffic rate negative   [Arguments]  ${tx_rate}  ${rx_rate}  ${tx_intf}  
     ${report}=  fetch port stats
     ${tx_value}=  verify dict key  ${report}  ${tx_intf}  transmitted_frame_rate
     ${rx_value}=  verify dict key  ${report}  ${rx_intf}  received_valid_frame_rate
-    Should Not be equal  ${tx_value}  ${rx_value}
+    Should Be True  ${rx_value} == 0
 
 verify switch interface stats  [Arguments]  ${switch}  ${intf}
 	${report}=  cli show interface statistics  ${switch}  ${intf}

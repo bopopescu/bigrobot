@@ -9,7 +9,6 @@ Test Teardown    T5 test teardown
 Force Tags       T5 
 Library          keywords/BsnCommon.py
 Library          keywords/T5.py
-Library          keywords/T5Fabric.py
 Library          keywords/T5Platform.py
 Library			 keywords/SwitchLight.py
 Library			 keywords/Ixia.py
@@ -20,14 +19,15 @@ Resource         testsuites/T5/t5_physical_variables.txt
 *Test Case
 
 Setup Three Rack Dual Leaf Topology
-	base suite setup  
+	[Tags]  feature  run
+	base suite setup     
     add fabric switch
     sleep  5
     rest verify fabric switch all
 	rest verify fabric link 	
 
 Spine Link Failover/back Test from leaf0-a untagged packet(Using IXIA)
-    [Tags]  feature  
+    [Tags]  feature  run 
     rest add tenant  t1
     rest add vns  t1  v1
     rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
@@ -108,7 +108,7 @@ Peer link failover between leaf1a to leaf1b
     rest delete tenant  t2 
 
 Traffic Test between the 2 leaf with single peer link
-	[Tags]  feature    
+	[Tags]  feature  run    
 	rest add tenant  t1
     rest add vns  t1  v2
     rest add interface to vns  t1  v2  leaf0-a  ${leaf0a_ixia_intf}  200
@@ -153,7 +153,7 @@ Reboot leaf switch with dual Host connected through lacp (Host5 to Host4)
     Should Be True  ${loss} < 50
     sleep  90
     cli restart switch  leaf2-b
-    sleep  2
+    sleep  90
     ${loss}=  bash ping  h5  ${h4_ip}  source_if=bond0
     Should Be True  ${loss} < 50
    rest delete interface from portgroup  leaf1-a  ${h4_intf0}  p4
@@ -259,6 +259,8 @@ HA failover with lacp host
 
 HA failover with tag traffic forwarding from ixia
 	[Tags]  feature
+	bash execute command  leaf2-a  ofad-ctl autoneg 24
+    bash execute command  leaf2-b  ofad-ctl autoneg 24
 	rest add tenant  t2
     rest add vns  t2  v2
     rest add interface to vns  t2  v2  leaf0-b  ${leaf0b_ixia_intf}  100
@@ -276,6 +278,7 @@ HA failover with tag traffic forwarding from ixia
     rest delete tenant  t2    
 
 Tear down config and Topology
+	[Tags]  feature  run
     delete fabric switch  
     rest delete portgroup  p4
     rest delete portgroup  p6
