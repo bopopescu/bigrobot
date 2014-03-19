@@ -21,67 +21,67 @@ Intra tenant L3 untagged traffic with dynamic endpoints same rack
 
 Intra tenant L3 untagged traffic with dynamic endpoints across rack
 	L3 intra tenant across rack untagged with dynamic endpoints
-#	[Tags]							skipped			smoke				sanity	
+	[Tags]							skipped			smoke				sanity	
 
 Intra tenant L3 tagged traffic with dynamic endpoints same rack
 	L3 intra tenant same rack tagged with dynamic endpoints
-#	[Tags]							skipped			smoke				sanity			
+	[Tags]							skipped			smoke				sanity			
 
 Intra tenant L3 tagged traffic with dynamic endpoints across rack
 	L3 intra tenant across rack tagged with dynamic endpoints
-#	[Tags]							skipped			smoke				sanity	
+	[Tags]							skipped			smoke				sanity	
 
 Intra tenant L3 untagged traffic with static endpoints same rack
 	L3 intra tenant same rack untagged with static endpoints
-#	[Tags]							skipped			smoke				sanity			
+	[Tags]							skipped			smoke				sanity			
 
 Intra tenant L3 untagged traffic with static endpoints across rack
 	L3 intra tenant across rack untagged with static endpoints
-#	[Tags]							skipped			smoke				sanity	
+	[Tags]							skipped			smoke				sanity	
 
 Intra tenant L3 tagged traffic with static endpoints same rack
 	L3 intra tenant same rack tagged with static endpoints
-#	[Tags]							skipped			smoke				sanity			
+	[Tags]							skipped			smoke				sanity			
 
 Intra tenant L3 tagged traffic with static endpoints across rack
 	L3 intra tenant across rack tagged with static endpoints
-#	[Tags]							skipped			smoke				sanity	
+	[Tags]							skipped			smoke				sanity	
 
 Intra tenant dhcp relay 
 	L3 intra tenant dhcp relay on same rack
-#	[Tags]							skipped			smoke				sanity	
+	[Tags]							skipped			smoke				sanity	
 	
 Intra tenant dhcp relay with circuit id
 	L3 intra tenant dhcp relay with circuit id on same rack
-#	[Tags]							skipped			smoke				sanity	
+	[Tags]							skipped			smoke				sanity	
 
 Add and delete untagged endpoints with existing host
 	L3 add and delete untagged endpoints with existing host
-#	[Tags]							skipped			sanity	
+	[Tags]							skipped			sanity	
 	
 Add and delete tagged endpoints with existing host
 	L3 add and delete tagged endpoints with existing host
-#	[Tags]							skipped			sanity	
+	[Tags]							skipped			sanity	
 		
 Change L3 endpoint from untagged to tagged and back		
 	L3 change endpoint from untagged to tagged and back	
-#	[Tags]							skipped			sanity	
+	[Tags]							skipped			sanity	
 
 Verify L3 endpoint aging
 	Check L3 endpoint aging 
-#	[Tags]							skipped			sanity	
+	[Tags]							skipped			sanity	
 	
 Verify L3 ttl 1 is not being forwarded
 	Check L3 ttl 1 is dropped
-#	[Tags]							skipped			sanity			
+	[Tags]							skipped			sanity			
 
 Change router vns ip
 	Change router ip address
-#	[Tags]							skipped			sanity			
+	[Tags]							skipped			sanity			
 
 Delete and add router vns ip
 	Delete and add router vns ip 
-#	[Tags]							skipped			sanity			
+	[Tags]							skipped			sanity			
 			
 	
 
@@ -91,28 +91,30 @@ L3 intra tenant same rack untagged with dynamic endpoints
 	BASH ifup intf								h1 								bond0
 	BASH ifup intf								h2								bond0
 	BASH ifup intf								h3								bond0
-	BASH ifup intf								h4								bond0		
+	BASH ifup intf								h4								bond0	
+	BASH ifup intf								h5								bond0	
+	BASH ifup intf								h6								bond0			
 	REST add portgroup to vns					X								X1						${leaf1_pc1}			-1
 	REST add portgroup to vns					X								X2						${leaf1_pc2}			-1
-	BASH add ip address							h3								10.251.1.11/24			bond0	
-	BASH add ip address							h4								10.251.2.11/24			bond0
-	BASH add route								h3								10.251.2.0/24			10.251.1.1
-	BASH add route								h4								10.251.1.0/24			10.251.2.1
+	BASH add ip address							h5								10.251.1.11/24			bond0	
+	BASH add ip address							h6								10.251.2.11/24			bond0
+	BASH add route								h5								10.251.2.0/24			10.251.1.1
+	BASH add route								h6								10.251.1.0/24			10.251.2.1
 	sleep										10	
-	BASH ping									h3								10.251.1.1				count=10
-	BASH ping									h4								10.251.2.1				count=10
-	${value} = 									BASH verify arp					h3						10.251.1.1
+	BASH ping									h5								10.251.1.1				count=10
+	BASH ping									h6								10.251.2.1				count=10
+	${value} = 									BASH verify arp					h5						10.251.1.1
 	Should Be True								${value} 		
-	${value} =									BASH verify arp					h4						10.251.2.1
+	${value} =									BASH verify arp					h6						10.251.2.1
 	Should Be True								${value} 
-	${mac1} = 									BASH get intf mac				h3						bond0
+	${mac1} = 									BASH get intf mac				h5						bond0
 	${result} =									REST show endpoints mac			${mac1}
 	Should Be True								${result}						
-	${mac2} = 									BASH get intf mac				h4						bond0
+	${mac2} = 									BASH get intf mac				h6						bond0
 	${result} =									REST show endpoints mac			${mac2}
 	Should Be True								${result}						
 	REST show endpoints	
-	${loss} = 									BASH ping						h3						10.251.2.11 			count=10
+	${loss} = 									BASH ping						h5						10.251.2.11 			count=10
 	Should Be True  							${loss} == 0	
 	
 	
@@ -897,14 +899,20 @@ initialize host
 	BASH init intf								h2								bond0
 	BASH init intf								h3								bond0
 	BASH init intf								h4								bond0
+	BASH init intf								h5								bond0
+	BASH init intf								h6								bond0
 	BASH ifdown intf							h1 								bond0
 	BASH ifdown intf							h2								bond0
 	BASH ifdown intf							h3								bond0
 	BASH ifdown intf							h4								bond0
+	BASH ifdown intf							h5								bond0
+	BASH ifdown intf							h6								bond0	
 	BASH release dhcpv4 address					h1								bond0
 	BASH release dhcpv4 address					h2								bond0
 	BASH release dhcpv4 address					h3								bond0
 	BASH release dhcpv4 address					h4								bond0
+	BASH release dhcpv4 address					h5								bond0
+	BASH release dhcpv4 address					h6								bond0
 
 
 setup topology
@@ -967,6 +975,9 @@ add fabric switch
 	CLI add dpid									s4							${leaf0b_dpid}
 	CLI add dpid									s5							${leaf1a_dpid}
 	CLI add dpid									s6							${leaf1b_dpid}
+	CLI add dpid									s7							${leaf2a_dpid}
+	CLI add dpid									s8							${leaf2b_dpid}
+	
 #	CLI add controller								s1							${bsn_ctrl1}
 #	CLI add controller								s1							${bsn_ctrl2}
 #	CLI add controller								s2							${bsn_ctrl1}
@@ -991,7 +1002,14 @@ add fabric switch
 	Should Be True									${result}
 	${result} = 									CLI verify controller       s4							c2
 	Should Be True									${result}
-	
+	${result} = 									CLI verify controller       s5							c1
+	Should Be True									${result}
+	${result} = 									CLI verify controller       s5							c2
+	Should Be True									${result}
+	${result} = 									CLI verify controller       s6							c1
+	Should Be True									${result}
+	${result} = 									CLI verify controller       s6							c2
+	Should Be True									${result}		
   	REST add switch  								spine0
   	REST add dpid  									spine0  					${spine0_dpid}
   	REST add fabric role  							spine0  					spine
@@ -1010,6 +1028,12 @@ add fabric switch
  	REST add switch  								leaf1b
   	REST add dpid  									leaf1b  					${leaf1b_dpid}
   	REST add fabric role  							leaf1b  					leaf
+  	REST add switch  								leaf2a
+  	REST add dpid  									leaf2a  					${leaf2a_dpid}
+  	REST add fabric role  							leaf2a  					leaf
+ 	REST add switch  								leaf2b
+  	REST add dpid  									leaf2b  					${leaf2b_dpid}
+  	REST add fabric role  							leaf2b  					leaf  	
 	REST add portgroup								${leaf0_pc1}
 	REST add portgroup								${leaf0_pc2}
 #	REST add portgroup								${leaf0_pc3}
@@ -1020,10 +1044,16 @@ add fabric switch
 	REST add portgroup								${leaf1_pc2}
 #	REST add portgroup								${leaf1_pc3}
 #	REST add portgroup								${leaf1_pc4}
+	REST add portgroup								${leaf2_pc1}
+	REST add portgroup								${leaf2_pc2}
+
 	REST add leaf group								leaf0a						leaf0
 	REST add leaf group								leaf0b						leaf0
 	REST add leaf group								leaf1a						leaf1
 	REST add leaf group								leaf1b						leaf1
+	REST add leaf group								leaf2a						leaf2
+	REST add leaf group								leaf2b						leaf2
+	
 	REST add interface to portgroup					leaf0a						${leaf0_pc1_intf1}					${leaf0_pc1}
 	REST add interface to portgroup					leaf0b						${leaf0_pc1_intf2}					${leaf0_pc1}
 	REST add interface to portgroup					leaf0a						${leaf0_pc2_intf1}					${leaf0_pc2}
@@ -1044,7 +1074,10 @@ add fabric switch
 #	REST add interface to portgroup					leaf1b						${leaf1_pc3_intf2}					${leaf1_pc3}
 #	REST add interface to portgroup					leaf1a						${leaf1_pc4_intf1}					${leaf1_pc4}
 #	REST add interface to portgroup					leaf1b						${leaf1_pc4_intf2}					${leaf1_pc4}
-	
+	REST add interface to portgroup					leaf2a						${leaf2_pc1_intf1}					${leaf2_pc1}
+	REST add interface to portgroup					leaf2b						${leaf2_pc1_intf2}					${leaf2_pc1}
+	REST add interface to portgroup					leaf2a						${leaf2_pc2_intf1}					${leaf2_pc2}
+	REST add interface to portgroup					leaf2b						${leaf2_pc2_intf2}					${leaf2_pc2}	
   
 delete fabric switch  
 	REST delete fabric switch  						spine0 
