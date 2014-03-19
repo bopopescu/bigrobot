@@ -182,6 +182,7 @@ class T5(object):
             except:
                 return False
             i = i + 1
+        return True
 
     def rest_add_interface_to_all_vns(self, tenant, switch, intf):
         t = test.Test()
@@ -198,7 +199,8 @@ class T5(object):
             if data[j]["internal-vlan"] in list_vlan_id:
                 url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/switch-port-membership-rules[switch-name="%s"][interface-name="%s"]' % (tenant, data[j]["name"], switch, intf)
                 c.rest.put(url, {"switch-name": switch, "interface-name": intf, "vlan": data[j]["internal-vlan"]})
-
+        return True
+    
     def rest_delete_vns(self, tenant, vns=None):
         t = test.Test()
         c = t.controller('master')
