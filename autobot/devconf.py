@@ -634,17 +634,6 @@ class HostDevConf(DevConf):
         super(HostDevConf, self).__init__(*args, **kwargs)
         self.bash('uname -a')
 
-        self.send("virsh console %s" % self._console_info['libvirt_vm_name'])
-
-        # if self._console_info['driver']:
-        #    helpers.log("Setting devconf driver for console to '%s'"
-        #                % self._console_info['driver'])
-        #    conn.set_driver(self._console_info['driver'])
-
-        driver = self.conn.get_driver()
-        helpers.log("Using devconf driver '%s' (name: '%s')"
-                    % (driver, driver.name))
-
     def _cmd(self, cmd, quiet=False, prompt=False, timeout=None, level=4):
         if not quiet:
             helpers.log("Execute command on '%s': '%s'"
