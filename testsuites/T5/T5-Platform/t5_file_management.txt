@@ -283,13 +283,15 @@ T6.6 Verify empty scp:// name is not allowed
 	[Tags]  Filename  SCP
 
 T6.7 Verify scp://scp:// not correct in copy function
+	Cli Copy  running-config  ${file}
+	Cli Copy  running-config  ${config}
 	Run Keyword and Expect Error  *ssh: Could not resolve hostname scp: Name or service not known*  Cli Copy  running-config  ${scp double}
 	Run Keyword and Expect Error  *ssh: Could not resolve hostname scp: Name or service not known*  Cli Copy  ${scp double}  running-config
 	Run Keyword and Expect Error  *ssh: Could not resolve hostname scp: Name or service not known*  Cli Copy  ${file}  ${scp double}
 	Run Keyword and Expect Error  *ssh: Could not resolve hostname scp: Name or service not known*  Cli Copy  ${scp double}  ${file}
 	Run Keyword and Expect Error  *ssh: Could not resolve hostname scp: Name or service not known*  Cli Copy  ${config}  ${scp double}
 	Run Keyword and Expect Error  *ssh: Could not resolve hostname scp: Name or service not known*  Cli Copy  ${scp double}  ${config}
-	Run Keyword and Expect Error  *ssh: Could not resolve hostname scp: Name or service not known*  Cli Copy  ${scp double}  ${image}
+	Run Keyword and Expect Error  *ssh: Could not resolve hostname scp: Name or service not known*  Cli Copy  ${scp double}  image://
 	[Tags]  BSC-4904  SCP  Filename
 
 T6.8 Verify scp://scp:// not correct in compare function
@@ -298,17 +300,17 @@ T6.8 Verify scp://scp:// not correct in compare function
 	[Tags]  SCP  Filename
 
 T6.9 Verify config://config:// not correct in copy function
-	Run Keyword and Expect Error  *Error: Invalid Use: * must not include / *  Cli Copy  running-config  ${config double}
-	Run Keyword and Expect Error  *Error: Invalid Use: * must not include / *  Cli Copy  ${config double}  running-config
+	Run Keyword and Expect Error  *Error: Invalid Use: config://config://* must not include / *  Cli Copy  running-config  ${config double}
+	Run Keyword and Expect Error  *Error: Invalid Use: config://config://* must not include / *  Cli Copy  ${config double}  running-config
 	[Tags]  Filename
 
 T6.10 Verify config://config:// not correct in compare function
-	Run Keyword and Expect Error  *Error: Invalid Use: * must not include / *  Cli Compare  running-config  ${config double}
-	Run Keyword and Expect Error  *Error: Invalid Use: * must not include / *  Cli Compare  ${config double}  running-config
+	Run Keyword and Expect Error  *Error: Invalid Use: config://config://* must not include / *  Cli Compare  running-config  ${config double}
+	Run Keyword and Expect Error  *Error: Invalid Use: config://config://* must not include / *  Cli Compare  ${config double}  running-config
 	[Tags]  Filename
 
 T6.11 Verify image-double not correct in copy and compare
-	Run Keyword and Expect Error  *Error: Invalid Use: corrupted image*  Cli Copy  ${scp}  image://image://
+	Run Keyword and Expect Error  *Error: Invalid Use: Image target must only be image://*  Cli Copy  ${scp}  image://image://
 	[Tags]  BSC-4957  Filename
 
 ### and check verifications for empty file names + error messages
@@ -416,8 +418,10 @@ T7.13 Verify comparison function between file and inexistent config://file
 
 T7.14 Verify comparison function between file and inexistent scp://
 	Cli Copy  running-config  ${file}
-	Run Keyword and Expect Error  *  Cli Compare  ${file}  ${scp inexistent}
-	Run Keyword and Expect Error  *  Cli Compare  ${scp inexistent}  ${file}
+	Run Keyword and Expect Error  *scp: inexistent: No such file or directory*
+	...  Cli Compare  ${file}  ${scp inexistent}
+	Run Keyword and Expect Error  *scp: inexistent: No such file or directory*
+	...  Cli Compare  ${scp inexistent}  ${file}
 	[Tags]  SCP
 
 T7.15 Verify comparison function between file and inexistent file
@@ -516,6 +520,9 @@ T9.3 Verify impossible to compare with invalid SCP
 	...  Compare  running-config  scp://scp-no-colon@1.2.3.4
 	[Tags]  SCP
 
+T9.4 Verify impossible to copy from inexistent SCP
+	Run Keyword and Expect Error  *scp: inexistent: No such file or directory*  Cli Copy  ${scp inexistent}  running-config
+	[Tags]  SCP
 
 *** Keywords ***
 Generate Random Name
