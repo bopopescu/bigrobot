@@ -310,6 +310,9 @@ class ControllerNode(Node):
         return nodeid
 
     def console(self, driver=None):
+        if self.dev_console:
+            return self.dev_console
+
         super(ControllerNode, self).console(driver)
 
         if self._console_info['type'] == 'telnet':
@@ -336,8 +339,15 @@ class ControllerNode(Node):
                                                    console_info=self._console_info,
                                                    debug=self.dev_debug_level)
 
-        # if self._console_info['type'] == 'libvirt':
-        #    self.dev_console.sudo('ls -la')
+        if self._console_info['type'] == 'libvirt':
+            self.dev_console.send("virsh console %s" % self._console_info['libvirt_vm_name'])
+
+        # FIXME!!! The code below is not working. Figure out why...
+
+        # if self._console_info['driver']:
+        #    helpers.log("Setting devconf driver for console to '%s'"
+        #                % self._console_info['driver'])
+        #    self.dev_console.conn.set_driver(self._console_info['driver'])
 
         return self.dev_console
 
