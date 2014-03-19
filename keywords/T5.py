@@ -2017,3 +2017,25 @@ class T5(object):
             helpers.test_failure("BM Downlink lag are not properly created for dual rack %d:%d" % lag_id_a[0], lag_id_b[0])
             return True
     
+    def rest_verify_interface_stats_brief(self, switch, intf, frame_cnt, vrange=5):
+        ''' Function to verify the Interface stats brief
+        Input: switch name and interface
+        Output: verify stats brief with both rx and tx on the same CLI output for a given switch and interface
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        frame_cnt = int(frame_cnt)
+        vrange = int(vrange)
+        url = '/api/v1/data/controller/applications/bvs/info/stats/interface-stats/interface[switch-name="%s"][interface-name="%s"]?select=brief' % (switch, intf)
+        c.rest.get(url)
+        data = c.rest.content()
+        if data[0]["switch-name"] == switch and data[0]["interface-name"] == intf:
+                    if (int(data[0]["brief"]["rx-unicast-packet"]) >= (frame_cnt - vrange)) and (int(data[0]["brief"]["rx-unicast-packet"]) <= (frame_cnt + vrange)):
+                        if (int(data[0]["brief"]["tx-unicast-packet"]) >= (frame_cnt - vrange)) and (int(data[0]["brief"]["tx-unicast-packet"]) <= (frame_cnt + vrange)):
+                            helpers.log("Pass: Stats-brief counter for interface rx:%d, tx:%d" % (int(data[0]["brief"]["rx-unicast-packet"]), int(data[0]["brief"]["tx-unicast-packet"])))
+                            return True
+                        else:
+                            helpers.test_failure("rx, tx counter for a interface does not match,rx:%d,tx:%d" % (int(data[0]["brief"]["rx-unicast-packet"]), int(data[0]["brief"]["tx-unicast-packet"])))
+                            return False
+        else:
+            helpers.log("Given interface name is not valid")
