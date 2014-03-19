@@ -1450,12 +1450,20 @@ class BsnCommon(object):
         n = t.node(node)
         return n.node_id()
 
-    def verify_ssh_connection(self, node, user='dummy', password='dummy'):
+    def verify_ssh_connection(self, node, sleep=10, iterations=5,
+                              user='dummy', password='dummy'):
         """
         Test the SSH connection to see whether it is working.
         SSH authentication is considered a success (it may be because we
         provided a bad user name or password). SSH time out and other
         exceptions will result in failure.
+
+        Inputs:
+          - node: 'c1', 's1', 'h1', 'master', etc.
+          - sleep: number of seconds to sleep before retry (on failure). Default is 10.
+          - iterations: number of retries (on failure). Default is 5.
+          - user: user name. Default is 'dummy' which will result in authen failure, but that's okay.
+          - password: Default is 'dummy' which will result in authen failure, but that's okay.
 
         Return Value:
           - True on success
@@ -1465,18 +1473,26 @@ class BsnCommon(object):
         n = t.node(node)
         ip = n.ip()
 
-        status = True
-        try:
-            ssh = SSHClient()
-            ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-            ssh.connect(ip, username=user, password=password, timeout=5)
-        except AuthenticationException as e:
-            print("SSH error: %s But that's okay." % e)
-        except (BadHostKeyException, SSHException, socket.error) as e:
-            print("SSH error: %s" % e)
-            status = False
-        else:
-            pass
+        iterations = int(iterations)
+        status = False
+
+        while not status and iterations > 0:
+            try:
+                ssh = SSHClient()
+                ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+                ssh.connect(ip, username=user, password=password, timeout=5)
+            except AuthenticationException as e:
+                print("SSH error: %s But that's okay." % e)
+                status = True
+            except (BadHostKeyException, SSHException, socket.error) as e:
+                print("SSH error: %s" % e)
+            else:
+                status = True
+
+            iterations -= 1
+            if not status and iterations > 0:
+                helpers.sleep(sleep)
+
         return status
 
 
