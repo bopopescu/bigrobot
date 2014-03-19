@@ -136,5 +136,9 @@ Test get node ID
     Log         Node ID is ${nodeid}
 
 Test SSH connection
-    #[Tags]  skipped
+    [Tags]  skipped
     verify ssh connection   node=c1   user=admin   password=adminadmin
+
+Test console connection
+    #[Tags]  skipped
+    test console  master
