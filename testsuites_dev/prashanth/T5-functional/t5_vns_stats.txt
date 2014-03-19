@@ -23,7 +23,7 @@ add Single Leaf Three Rack setup
    [Tags]  feature  run        
    rest verify fabric switch all
    rest verify fabric link
-   
+      
 Verify stats interval setting
 	[Tags]  feature
 	rest verify stats interval  
@@ -32,6 +32,7 @@ Verify stats interval setting
 
 Verify single VNS rx/tx stats between rack
 	[Tags]  feature  run   
+	rest verify stats interval  60  60
 	rest add tenant  t1
 	rest add vns  t1  v1
 	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
@@ -58,6 +59,7 @@ Verify single VNS rx/tx stats between rack
    
 Verify single VNS rx/tx stats within same rack
 	[Tags]  feature          
+	rest verify stats interval  60  60
 	rest add switch  leaf0-b
 	rest add dpid  leaf0-b  ${leaf0b_dpid}
 	rest add fabric role  leaf0-b  leaf
@@ -89,7 +91,8 @@ Verify single VNS rx/tx stats within same rack
     rest delete tenant  t1
     
 Verify single vns rx/tx rates same rack
-	[Tags]  feature        
+	[Tags]  feature
+	rest verify stats interval  60  60        
     rest add switch  leaf0-b
 	rest add dpid  leaf0-b  ${leaf0b_dpid}
 	rest add fabric role  leaf0-b  leaf
@@ -122,7 +125,8 @@ Verify single vns rx/tx rates same rack
     rest delete tenant  t1
 
 verify single vns rx/tx rates different rack
-	[Tags]  feature        
+	[Tags]  feature 
+	rest verify stats interval  60  60       
 	rest add tenant  t1
 	rest add vns  t1  v1
 	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
@@ -149,7 +153,8 @@ verify single vns rx/tx rates different rack
     rest delete tenant  t1
    
 verify interface rx/tx stats different rack
-	[Tags]  feature          
+	[Tags]  feature
+	rest verify stats interval  60  60          
 	rest add tenant  t1
 	rest add vns  t1  v1
 	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
@@ -175,7 +180,8 @@ verify interface rx/tx stats different rack
     rest delete tenant  t1
    
 verify interface rx/tx stats same rack
-	[Tags]  feature          
+	[Tags]  feature
+	rest verify stats interval  60  60          
 	rest add switch  leaf0-b
 	rest add dpid  leaf0-b  ${leaf0b_dpid}
 	rest add fabric role  leaf0-b  leaf
@@ -209,7 +215,8 @@ verify interface rx/tx stats same rack
     rest delete tenant  t1
 	
 verify interface rx/tx rates different rack
-	[Tags]  feature          
+	[Tags]  feature
+	rest verify stats interval  60  60          
 	rest add tenant  t1
 	rest add vns  t1  v1
 	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
@@ -236,7 +243,8 @@ verify interface rx/tx rates different rack
     rest delete tenant  t1
    
 verify interface rx/tx stats same rack
-	[Tags]  feature          
+	[Tags]  feature
+	rest verify stats interval  60  60          
 	rest add switch  leaf0-b
 	rest add dpid  leaf0-b  ${leaf0b_dpid}
 	rest add fabric role  leaf0-b  leaf
@@ -270,7 +278,8 @@ verify interface rx/tx stats same rack
     rest delete tenant  t1
 
 verify interface rx/tx broadcast packet stats different rack
-	[Tags]  feature  
+	[Tags]  feature
+	rest verify stats interval  60  60  
 	rest add tenant  t1
 	rest add vns  t1  v1
 	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
@@ -297,6 +306,7 @@ verify interface rx/tx broadcast packet stats different rack
 	
 verify interface rx/tx multicast packets stats
 	[Tags]  feature
+	rest verify stats interval  60  60
 	rest add tenant  t1
 	rest add vns  t1  v1
 	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
@@ -323,6 +333,7 @@ verify interface rx/tx multicast packets stats
 
 verify interface LLDP/control packet count different rack
 	[Tags]  feature
+	rest verify stats interval  60  60
 	rest add tenant  t1
 	rest add vns  t1  v1
 	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
@@ -349,6 +360,7 @@ verify interface LLDP/control packet count different rack
 
 verify multiple vns counters different rack
 	[Tags]  feature
+	rest verify stats interval  60  60
 	rest add tenant  t1
 	rest add vns  t1  v1
 	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
@@ -384,6 +396,7 @@ verify multiple vns counters different rack
 
 verify multiple vns counters on 2 different tenant 
 	[Tags]  feature
+	rest verify stats interval  60  60
 	rest add tenant  t1
 	rest add vns  t1  v1
 	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
@@ -421,6 +434,7 @@ verify multiple vns counters on 2 different tenant
     
 verify the single tenant stats 
 	[Tags]  feature
+	rest verify stats interval  60  60
 	rest add tenant  t1
 	rest add vns  t1  v1
 	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
@@ -447,6 +461,7 @@ verify the single tenant stats
 	
 verify single tenant stats using multiple VNS 
 	[Tags]  feature
+	rest verify stats interval  60  60
 	rest add tenant  t1
 	rest add vns  t1  v1
 	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
@@ -480,6 +495,7 @@ verify single tenant stats using multiple VNS
 
 verify multiple tenant stats 
 	[Tags]  feature
+	rest verify stats interval  60  60
 	rest add tenant  t1
 	rest add vns  t1  v1
 	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
@@ -517,6 +533,7 @@ verify multiple tenant stats
     
 verify multiple tenant rates 
  	[Tags]  feature
+ 	rest verify stats interval  60  60
  	rest add tenant  t1
 	rest add vns  t1  v1
 	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
@@ -552,6 +569,7 @@ verify multiple tenant rates
        
 Master node controller reboot with multiple vns/interface stats
 	[Tags]  feature
+	rest verify stats interval  60  60
 	rest add tenant  t1
 	rest add vns  t1  v1
 	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
