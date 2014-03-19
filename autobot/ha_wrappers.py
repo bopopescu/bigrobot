@@ -204,3 +204,7 @@ class HaControllerNode(object):
     def console(self, *args, **kwargs):
         n = self.t.controller(self.logical_name(), resolve_mastership=True)
         return n.console(*args, **kwargs)
+
+    def close_console(self, *args, **kwargs):
+        n = self.t.controller(self.logical_name(), resolve_mastership=True)
+        return n.console(*args, **kwargs)

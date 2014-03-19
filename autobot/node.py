@@ -99,11 +99,69 @@ class Node(object):
         self.is_pingable = True
         return True
 
-    def console(self):
+    def console(self, driver=None):
         """
-        Inheriting class needs to define this method.
+        Inheriting class needs to further extend this method.
         """
-        raise NotImplementedError()
+        if self.dev_console:
+            return self.dev_console
+
+        if 'console' in self.node_params:
+            self._console_info = self.node_params['console']
+        else:
+            helpers.environment_failure("Console info is not defined for node '%s'"
+                                        % self.name())
+
+        if 'ip' in self._console_info:
+            if 'port' in self._console_info:
+                self._console_info['type'] = 'telnet'
+                self._console_info['protocol'] = 'telnet'
+            elif 'libvirt_vm_name' in self._console_info:
+                self._console_info['type'] = 'libvirt'
+                self._console_info['protocol'] = 'ssh'
+                self._console_info['port'] = None
+            else:
+                helpers.environment_failure("Supported console types are telnet (IP and port) and libvirt (IP and VM name)")
+        else:
+            helpers.environment_failure("Console needs an IP and a port or VM name (for libvirt)")
+
+        if 'user' not in self._console_info:
+            self._console_info['user'] = self._user
+        if 'password' not in self._console_info:
+            self._console_info['password'] = self._password
+
+        if driver:
+            self._console_info['driver'] = driver
+        elif self.dev:
+            # helpers.log("driver: %s" % self.dev.driver().name())
+            # self._console_info['driver'] = self.dev.driver().name()
+            helpers.log("driver: %s" % self.dev.driver())
+            self._console_info['driver'] = self.dev.driver()
+        else:
+            self._console_info['driver'] = None
+
+        helpers.log("Using devconf driver '%s' for console to '%s'"
+                    % (driver, self.name()))
+
+        # This is where we need to instantiate a devconf object,
+        # if applicable.
+
+    def close_console(self):
+        """
+        Exit out the current console session.
+        For libvirt, it's simply:
+            ^]
+        For telnet, it's:
+            ^]
+            telnet> quit
+        """
+        h = self.console()
+        if self._console_info['type'] == 'libvirt':
+            h.send(helpers.ctrl(']'))
+        elif self._console_info['type'] == 'telnet':
+            h.send(helpers.ctrl(']'))
+            h.expect(r'telnet> ')
+            h.send('quit')
 
     def connect(self, user, password, port=None, protocol='ssh', host=None,
                 name=None):
@@ -252,47 +310,11 @@ class ControllerNode(Node):
         return nodeid
 
     def console(self, driver=None):
-        if self.dev_console:
-            return self.dev_console
-
-        if 'console' in self.node_params:
-            self._console_info = self.node_params['console']
-        else:
-            helpers.environment_failure("Console info is not defined for node '%s'"
-                                        % self.name())
-
-        if 'ip' in self._console_info:
-            if 'port' in self._console_info:
-                self._console_info['type'] = 'telnet'
-                self._console_info['protocol'] = 'telnet'
-            elif 'libvirt_vm_name' in self._console_info:
-                self._console_info['type'] = 'libvirt'
-                self._console_info['protocol'] = 'ssh'
-                self._console_info['port'] = None
-            else:
-                helpers.environment_failure("Supported console types are telnet (IP and port) and libvirt (IP and VM name)")
-        else:
-            helpers.environment_failure("Console needs an IP and a port or VM name (for libvirt)")
-
-        if 'user' not in self._console_info:
-            self._console_info['user'] = self._user
-        if 'password' not in self._console_info:
-            self._console_info['password'] = self._password
-
-        if driver:
-            self._console_info['driver'] = driver
-        elif self.dev:
-            # helpers.log("driver: %s" % self.dev.driver().name())
-            # self._console_info['driver'] = self.dev.driver().name()
-            helpers.log("driver: %s" % self.dev.driver())
-            self._console_info['driver'] = self.dev.driver()
-        else:
-            self._console_info['driver'] = None
-
-        helpers.log("Using devconf driver '%s' for console to '%s'"
-                    % (driver, self.name()))
+        super(ControllerNode, self).console(driver)
 
         if self._console_info['type'] == 'telnet':
+            # For telnet console, requirements are an IP address and a port
+            # number.
             self.dev_console = devconf.ControllerDevConf(name=self.name(),
                                                          host=self._console_info['ip'],
                                                          port=self._console_info['port'],
@@ -302,6 +324,9 @@ class ControllerNode(Node):
                                                          console_info=self._console_info,
                                                          debug=self.dev_debug_level)
         elif self._console_info['type'] == 'libvirt':
+            # For libvirt console, requirements are an IP address (of the
+            # KVM server) and the libvirt VM name (libvirt_vm_name). We will
+            # first SSH to the KVM server, then execute 'virsh console <name>'.
             self.dev_console = devconf.HostDevConf(name=self.name(),
                                                    host=self._console_info['ip'],
                                                    port=self._console_info['port'],
@@ -412,6 +437,9 @@ class MininetNode(Node):
     def devconf(self):
         return self.dev
 
+    def console(self, driver=None):
+        helpers.environment_failure("Console is currently not supported for Mininet node.")
+
 
 class HostNode(Node):
     def __init__(self, name, ip, user, password, t):
@@ -456,6 +484,9 @@ class HostNode(Node):
 
     def devconf(self):
         return self.dev
+
+    def console(self, driver=None):
+        helpers.environment_failure("Console is currently not supported for Host node.")
 
 
 class OpenStackNode(HostNode):
@@ -512,6 +543,9 @@ class SwitchNode(Node):
     def devconf(self):
         return self.dev
 
+    def console(self, driver=None):
+        helpers.environment_failure("Console is currently not supported for Switch node.")
+
 
 class IxiaNode(Node):
     def __init__(self, name, t):
@@ -555,6 +589,9 @@ class IxiaNode(Node):
 
     def platform(self):
         return 'ixia'
+
+    def console(self, driver=None):
+        helpers.environment_failure("Console is currently not supported for Ixia node.")
 
 
 class BigTapIxiaNode(IxiaNode):
