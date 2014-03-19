@@ -6,6 +6,7 @@ import re
 import keywords.Mininet as mininet
 import keywords.T5 as T5
 import keywords.Host as Host
+import keywords.BsnCommon as BsnCommon
 
 
 pingFailureCount = 0
@@ -164,19 +165,34 @@ class T5Platform(object):
         
         try:
             if(masterNode):
-                master.enable("reboot", prompt="Confirm Reboot \(yes to continue\)")
+                ipAddr = master.ip()
+                master.enable("system reboot", prompt="Confirm \(yes to continue\)")
                 master.enable("yes")
                 helpers.log("Master is rebooting")
                 sleep(90)
             else:
                 slave = t.controller("slave")
-                slave.enable("reboot", prompt="Confirm Reboot \(yes to continue\)")
+                ipAddr = slave.ip()
+                slave.enable("system reboot", prompt="Confirm \(yes to continue\)")
                 slave.enable("yes")
                 helpers.log("Slave is rebooting")
                 sleep(90)
         except:
             helpers.log("Node is rebooting")
             sleep(90)
+            count = 0
+            while (True):
+                loss = helpers.ping(ipAddr)
+                helpers.log("loss is: %s" % loss)
+                if(loss != 0):
+                    if (count > 5): 
+                        helpers.warn("Cannot connect to the IP Address: %s - Tried for 5 Minutes" % ipAddr)
+                        return False
+                    sleep(60)
+                    count += 1
+                    helpers.log("Trying to connect to the IP Address: %s - Try %s" % (ipAddr, count))
+                else:
+                    break
        
         if(singleNode):
             newMasterID = self.getNodeID(False)
@@ -573,7 +589,7 @@ class T5Platform(object):
         |    boolean: slaveNode  |  Whether secondary node is available in the system. Default is True
         
         Outputs:
-        |    If slaveNode: return (masterID, slaveID
+        |    If slaveNode: return (masterID, slaveID)
         |    else:    return (masterID)
 
         
@@ -597,7 +613,10 @@ class T5Platform(object):
                     numTries += 1
                 else:
                     helpers.log("Error: KeyError detected during master ID retrieval")
-                    return (-1, -1)
+                    if slaveNode:
+                        return (-1, -1)
+                    else:
+                        return -1
 
         if(slaveNode):
             slave = t.controller("slave")
