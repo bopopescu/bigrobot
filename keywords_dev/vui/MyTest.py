@@ -511,3 +511,12 @@ vui@Vuis-MacBook-Pro$
         t = test.Test()
         os1 = t.openstack_server('os1')
         os1.sudo('cat /etc/shadow')
+
+    def test_console(self, node):
+        t = test.Test()
+        n = t.node(node)
+        n_console = n.console()
+        n_console.expect(r'Escape character.*[\r\n]')
+        n_console.send('')
+        n_console.expect(r'Big Virtual Switch Appliance.*[\r\n]')
+        n_console.expect(r'login:')

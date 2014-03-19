@@ -13,16 +13,15 @@ class Node(object):
         self._user = user
         self._password = password
         self._ip = None
+        self._console_info = None
         self.http_port = None
         self.base_url = None
         self.params = params
         self.is_pingable = False
         self.rest = None  # REST handle
         self.dev = None  # DevConf handle (SSH)
-        self.dev_console = None
+        self.dev_console = None  # Console handle
         self.dev_debug_level = 0
-        self.console_ip = None
-        self.console_port = None
 
         # If name are in the form 'node-<ip_addr>', e.g., 'node-10.193.0.43'
         # then they are nodes spawned directly by the user. Don't try to
@@ -252,36 +251,69 @@ class ControllerNode(Node):
                                        % node)
         return nodeid
 
-    def console(self):
+    def console(self, driver=None):
         if self.dev_console:
             return self.dev_console
 
-        if 'console_ip' in self.node_params:
-            self.console_ip = self.node_params['console_ip']
+        if 'console' in self.node_params:
+            self._console_info = self.node_params['console']
         else:
-            helpers.environment_failure("Console IP address is not defined for node '%s'"
-                                        % self.name())
-        if 'console_port' in self.node_params:
-            self.console_port = self.node_params['console_port']
-        else:
-            helpers.environment_failure("Console port is not defined for node '%s'"
+            helpers.environment_failure("Console info is not defined for node '%s'"
                                         % self.name())
 
-        if self.dev:
-            driver = self.dev.driver().name()
+        if 'ip' in self._console_info:
+            if 'port' in self._console_info:
+                self._console_info['type'] = 'telnet'
+                self._console_info['protocol'] = 'telnet'
+            elif 'libvirt_vm_name' in self._console_info:
+                self._console_info['type'] = 'libvirt'
+                self._console_info['protocol'] = 'ssh'
+                self._console_info['port'] = None
+            else:
+                helpers.environment_failure("Supported console types are telnet (IP and port) and libvirt (IP and VM name)")
         else:
-            driver = None
+            helpers.environment_failure("Console needs an IP and a port or VM name (for libvirt)")
+
+        if 'user' not in self._console_info:
+            self._console_info['user'] = self._user
+        if 'password' not in self._console_info:
+            self._console_info['password'] = self._password
+
+        if driver:
+            self._console_info['driver'] = driver
+        elif self.dev:
+            # helpers.log("driver: %s" % self.dev.driver().name())
+            # self._console_info['driver'] = self.dev.driver().name()
+            helpers.log("driver: %s" % self.dev.driver())
+            self._console_info['driver'] = self.dev.driver()
+        else:
+            self._console_info['driver'] = None
 
         helpers.log("Using devconf driver '%s' for console to '%s'"
                     % (driver, self.name()))
-        self.dev_console = devconf.ControllerDevConf(name=self.name(),
-                                                     host=self.console_ip,
-                                                     port=self.console_port,
-                                                     user=self._user,
-                                                     password=self._password,
-                                                     is_console=True,
-                                                     console_driver=driver,
-                                                     debug=self.dev_debug_level)
+
+        if self._console_info['type'] == 'telnet':
+            self.dev_console = devconf.ControllerDevConf(name=self.name(),
+                                                         host=self._console_info['ip'],
+                                                         port=self._console_info['port'],
+                                                         user=self._console_info['user'],
+                                                         password=self._console_info['password'],
+                                                         protocol=self._console_info['protocol'],
+                                                         console_info=self._console_info,
+                                                         debug=self.dev_debug_level)
+        elif self._console_info['type'] == 'libvirt':
+            self.dev_console = devconf.HostDevConf(name=self.name(),
+                                                   host=self._console_info['ip'],
+                                                   port=self._console_info['port'],
+                                                   user=self._console_info['user'],
+                                                   password=self._console_info['password'],
+                                                   protocol=self._console_info['protocol'],
+                                                   console_info=self._console_info,
+                                                   debug=self.dev_debug_level)
+
+        # if self._console_info['type'] == 'libvirt':
+        #    self.dev_console.sudo('ls -la')
+
         return self.dev_console
 
 

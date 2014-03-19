@@ -11,8 +11,7 @@ import re
 class DevConf(object):
     def __init__(self, host=None, user=None, password=None,
                  port=None,
-                 is_console=False,
-                 console_driver=None,
+                 console_info=None,
                  name=None,
                  timeout=None,
                  protocol='ssh',
@@ -30,8 +29,7 @@ class DevConf(object):
         self._password = password
         self._port = port
         self._protocol = protocol
-        self._is_console = is_console
-        self._console_driver = console_driver
+        self._console_info = console_info
         self._debug = debug
         self._platform = None
         self.conn = None
@@ -56,23 +54,7 @@ class DevConf(object):
 
     def connect(self):
         try:
-            if self._is_console:
-                # Console connection only supports telnet. So ignore protocol
-                # field (if specified).
-                helpers.log("Telnet to console on host %s, port %s (user:%s)"
-                            % (self._host, self._port, self._user))
-                conn = Telnet(debug=self._debug)
-                conn.connect(self._host, self._port)
-
-                if self._console_driver:
-                    helpers.log("Setting devconf driver for console to '%s'"
-                                % self._console_driver)
-                    conn.set_driver(self._console_driver)
-
-                # Note: User needs to figure out what state the console is in
-                #       and manage it themself.
-
-            elif self._protocol == 'telnet' or self._protocol == 'ssh':
+            if self._protocol == 'telnet' or self._protocol == 'ssh':
                 auth_info = "(login:%s, password:%s)" % (self._user, self._password)
                 account = Account(self._user, self._password)
 
@@ -86,7 +68,20 @@ class DevConf(object):
                     conn = SSH2(debug=self._debug)
 
                 conn.connect(self._host, self._port)
-                conn.login(account)
+
+                if self._console_info:
+                    if self._console_info['type'] == 'telnet':
+                        helpers.log("Connecting to console via telnet")
+                    elif self._console_info['type'] == 'libvirt':
+                        helpers.log("Connecting to console via ssh (libvirt console)")
+                        conn.login(account)
+                    else:
+                        helpers.environment_failure("Unsupported console type")
+
+                    # Note: User needs to figure out what state the console is in
+                    #       and manage it themself.
+                else:
+                    conn.login(account)
 
             else:
                 helpers.environment_failure("Supported protocols are 'telnet' and 'ssh'")
@@ -104,11 +99,15 @@ class DevConf(object):
             # helpers.log("Exception in %s" % sys.exc_info()[0])
             # raise
         except:
-            helpers.log("Unexpected SSH login exception in %s\n"
-                        "Expect buffer:\n%s%s"
-                        % (sys.exc_info()[0],
-                           self.conn.buffer.__str__(),
-                           br_utils.end_of_output_marker()))
+            if hasattr(self.conn, 'buffer'):
+                helpers.log("Unexpected SSH login exception in %s\n"
+                            "Expect buffer:\n%s%s"
+                            % (sys.exc_info()[0],
+                               self.conn.buffer.__str__(),
+                               br_utils.end_of_output_marker()))
+            else:
+                helpers.log("Unexpected SSH login exception in %s"
+                            % (sys.exc_info()[0]))
             raise
 
         # Reset mode to 'cli' as default
@@ -331,12 +330,11 @@ class DevConf(object):
 
 class BsnDevConf(DevConf):
     def __init__(self, name=None, host=None, user=None, password=None,
-                 port=None, is_console=False, console_driver=None,
+                 port=None, console_info=None,
                  timeout=None, protocol='ssh', debug=0):
         super(BsnDevConf, self).__init__(host, user, password,
                                          port=port,
-                                         is_console=is_console,
-                                         console_driver=console_driver,
+                                         console_info=console_info,
                                          name=name,
                                          timeout=timeout,
                                          protocol=protocol,
@@ -632,17 +630,20 @@ class T6MininetDevConf(MininetDevConf):
 
 
 class HostDevConf(DevConf):
-    def __init__(self, name=None, host=None, user=None, password=None,
-                 port=None, is_console=False, timeout=None, protocol='ssh',
-                 debug=0):
-        super(HostDevConf, self).__init__(host, user, password,
-                                          port=port,
-                                          is_console=is_console,
-                                          name=name,
-                                          timeout=timeout,
-                                          protocol=protocol,
-                                          debug=debug)
+    def __init__(self, *args, **kwargs):
+        super(HostDevConf, self).__init__(*args, **kwargs)
         self.bash('uname -a')
+
+        self.send("virsh console %s" % self._console_info['libvirt_vm_name'])
+
+        # if self._console_info['driver']:
+        #    helpers.log("Setting devconf driver for console to '%s'"
+        #                % self._console_info['driver'])
+        #    conn.set_driver(self._console_info['driver'])
+
+        driver = self.conn.get_driver()
+        helpers.log("Using devconf driver '%s' (name: '%s')"
+                    % (driver, driver.name))
 
     def _cmd(self, cmd, quiet=False, prompt=False, timeout=None, level=4):
         if not quiet:
