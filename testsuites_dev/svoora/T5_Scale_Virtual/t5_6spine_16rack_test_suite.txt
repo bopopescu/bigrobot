@@ -8,7 +8,7 @@ Suite Teardown   base suite teardown
 #Test Teardown    T5 base test teardown
 Force Tags       T5 
 Library          keywords/BsnCommon.py
-Library          keywords_dev/svoora/T5.py
+Library          keywords/T5.py
 Library	         keywords_dev/svoora/T5Fabric.py
 Library			 keywords_dev/svoora/T5_Scale.py
 Library		 	 keywords/T5Platform.py
@@ -213,7 +213,7 @@ stop and start mininet and verify L2/L3 fwding
 	
 	 
 reboot master controller and verify L2/L3 fwding
-	[Tags] scale
+	[Tags]  scale
 	Log To Console  Rebooting master controller	 
 	start monitoring the exception
 	cli verify cluster master reboot
@@ -249,7 +249,7 @@ reboot master controller and verify L2/L3 fwding
 	Should Be True  ${loss} < 100
 	
 reboot slave controller and verify L2/L3 fwding
-	[Tags] scale
+	[Tags]  scale
 	Log To Console  Rebooting slave controller	 
 	start monitoring the exception
 	cli verify cluster slave reboot
@@ -285,7 +285,7 @@ reboot slave controller and verify L2/L3 fwding
 	Should Be True  ${loss} < 100
 
 cluster failover and verify L2/L3 fwding
-	[Tags] scale
+	[Tags]  scale
 	Log To Console  cluster failover	 
 	start monitoring the exception
 	rest verify cluster election take leader
