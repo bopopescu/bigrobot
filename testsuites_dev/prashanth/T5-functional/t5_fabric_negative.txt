@@ -95,40 +95,51 @@ shutdown the switch and check the links are down in the switch
      
 verify interface cli 
 	[Tags]  feature
-	${result}=  cli show interface  
+	${result}=  cli  c1   show interface  
 	Should Not be Empty  ${result}
-	${result}=  cli show interface  leaf0-a  ethernet50  
+	${result}=  cli  c1  show interface ${leaf0a_spine0_intf0}
 	Should Not be Empty  ${result}
-	
+		
 verify lag cli
 	[Tags]  feature
-	${result}=  cli show lag  
+	${result}=  cli  c1  show lag  
 	Should Not be Empty  ${result}
-    ${result}=  cli show lag  leaf0-a  
+    ${result}=  cli  c1   show lag switch leaf0-a  
 	Should Not be Empty  ${result}	
 
 verify switch cli
 	[Tags]  feature
-	${result}=  cli show switch  
+	${result}=  cli  c1  show switch  
 	Should Not be Empty  ${result}
-	${result}=  cli show switch  leaf0-a
+	${result}=  cli  c1  show switch leaf0-a
+	Should Not be Empty  ${result}
+	${result}=  cli  c1  show switch leaf0-a interface ${leaf0a_spine0_intf0} 
 	Should Not be Empty  ${result}
 	
 verify lacp cli
 	[Tags]  feature
-	${result}=  cli show lacp  
+	rest add tenant  t1
+	rest add vns  t1  v1
+	rest add portgroup  p4 
+    rest add interface to portgroup  leaf1-a  ${h4_intf0}  p4
+    rest add interface to portgroup  leaf1-b  ${h4_intf1}  p4
+    rest add portgroup lacp  p4  
+    sleep  3
+	${result}=  cli  c1  show lacp  
 	Should Not be Empty  ${result}
-	${result}=  cli show lacp  leaf0-a
+	${result}=  cli  c1  show lacp switch leaf0-a
+	Should Not be Empty  ${result}
+	${result}=  cli  c1  show lacp switch leaf0-a interface ${h4_intf0} 
 	Should Not be Empty  ${result}
 	
 verify link cli
 	[Tags]  feature
-	${result}=  cli show link  
+	${result}=  cli  c1  show link  
 	Should Not be Empty  ${result}
 
 verify lag any_leaf cli
 	[Tags]  feature
-	${result}=  cli show lag  spine0  any_leaf 
+	${result}=  cli  c1  show lag switch spine0 any_leaf 
 	Should Not be Empty  ${result}
 	
 Test forwarding entry when the switch falls below 50% spine links
