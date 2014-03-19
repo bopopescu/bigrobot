@@ -163,7 +163,7 @@ class Controller(object):
 
     def cli_add_first_boot_bvs(self,
                                node,
-                               ip_address,
+                               ip_address=None,
                                netmask='',
                                gateway='',
                                dns_server='',
@@ -176,15 +176,170 @@ class Controller(object):
         'cli add first boot').
         """
         t = test.Test()
+        n = t.node(node)
+
+        if not ip_address:
+            ip_address = n.ip()
 
         helpers.log("Getting the console session for '%s'" % node)
+        n_console = n.console()
+
+        """ Note: Below is the basic first boot question/answer output.
+
+        root@qa-kvm-32:~# virsh console vui-bvs
+        Connected to domain vui-bvs
+        Escape character is ^]
+
+        Big Virtual Switch Appliance 2.0.5-SNAPSHOT (bvs master #1223)
+        Log in as 'admin' to configure
+
+        controller login: admin                                            <===
+        Last login: Mon Mar 17 20:28:31 UTC 2014 from 10.192.123.117 on pts/0
+
+        The programs included with the Ubuntu system are free software;
+        the exact distribution terms for each program are described in the
+        individual files in /usr/share/doc/*/copyright.
+
+        Ubuntu comes with ABSOLUTELY NO WARRANTY, to the extent permitted by
+        applicable law.
+        <clear screen>
+
+        This product is governed by an End User License Agreement (EULA).
+        You must accept this EULA to continue using this product.
+
+        You can view this EULA by typing 'View', or from our website at:
+        http://www.bigswitch.com/eula
+
+        Do you accept the EULA for this product? (Yes/No/View) [Yes] > Yes <===
+
+        Running system pre-check
+
+        Found eth0
+        Found 2 CPU cores
+        Found 2.00 GB of memory
+
+        Finished system pre-check
+
+
+        Starting first-time setup
+
+
+        Local Node Configuration
+        ------------------------
+
+        Password for emergency recovery user > bsn                         <===
+        Retype Password for emergency recovery user > bsn                  <===
+        Please choose an IP mode:
+
+        [1] Manual
+        [2] Automatic via DHCP
+
+        > 1                                                                <===
+        IP address [0.0.0.0/0] > 10.192.104.2                              <===
+        CIDR prefix length [24] > 18                                       <===
+        Default gateway address (Optional) > 10.192.64.1                   <===
+        DNS server address (Optional) > 10.192.3.1                         <===
+        DNS search domain (Optional) > bigswitch.com                       <===
+        Hostname > blah                                                    <===
+
+        Controller Clustering
+        ---------------------
+
+        Please choose a cluster option:
+
+        [1] Start a new cluster
+        [2] Join an existing cluster
+
+        > 1                                                                <===
+        Cluster name > bleh                                                <===
+        Cluster description (Optional) > [enter]                           <===
+        Administrator password for cluster > adminadmin                    <===
+        Retype Administrator password for cluster > adminadmin             <===
+
+        System Time
+        -----------
+
+        Enter NTP server [0.bigswitch.pool.ntp.org] > [enter]              <===
+
+        Menu
+        ----
+
+        Please choose an option:
+
+        [ 1] Apply settings
+        [ 2] Reset and start over
+        [ 3] Update Emergency Recovery Password   (***)
+        [ 4] Update IP Auto/Manual                (Manual)
+        [ 5] Update Local IP Address              (10.192.104.2)
+        [ 6] Update CIDR Prefix Length            (18)
+        [ 7] Update Gateway                       (10.192.64.1)
+        [ 8] Update DNS Server                    (10.192.3.1)
+        [ 9] Update DNS Search Domain             (bigswitch.com)
+        [10] Update Hostname                      (blah)
+        [11] Update Cluster Option                (Start a new cluster)
+        [12] Update Cluster Name                  (bleh)
+        [13] Update Cluster Description           (<none>)
+        [14] Update Cluster Admin Password        (***)
+        [15] Update NTP Server                    (0.bigswitch.pool.ntp.org)
+
+        [1] > 1                                                            <===
+        [Stage 0] Initializing system
+        [Stage 1] Configuring controller
+          Waiting for network configuration
+          IP address on eth0 is 10.192.104.2
+          Generating cryptographic keys
+          Retrieving time from NTP server 0.bigswitch.pool.ntp.org
+        [Stage 2] Configuring cluster
+          Cluster configured successfully.
+          Current node ID is 3146
+          All cluster nodes:
+            Node 3146: 10.192.104.2:6642
+
+        First-time setup is complete!
+
+        Press enter to continue > [enter]                                  <===
+
+        Big Virtual Switch Appliance 2.0.5-SNAPSHOT (bvs master #1223)
+        Log in as 'admin' to configure
+
+        blah login: admin                                                  <===
+        Password: *****                                                    <===
+
+        Last login: Mon Mar 17 19:01:17 UTC 2014 on ttyS0
+        Big Virtual Switch Appliance 2.0.5-SNAPSHOT (bvs master #1223)
+        Logged in as admin, 2014-03-17 20:24:20.843000 UTC, auth from blah
+        blah>
+        """
+
+        n_console.expect(r'Escape character.*[\r\n]')
+        n_console.send('')  # press <Enter> and expect to see the login prompt
+
+        # We might be in midst of a previously failed first boot setup.
+        # Interrupt it (Control-C) and press <Enter> to log out...
+        n_console.send(helpers.ctrl('c'))
+        helpers.sleep(2)
+        n_console.send('')
+
+        n_console.expect(r'Big Virtual Switch Appliance.*[\r\n]')
+        n_console.expect(r'login:')
+        n_console.send('admin')
+        n_console.expect(r'Do you accept the EULA.* > ')
+        n_console.send('Yes')
+        n_console.expect(r'Password for emergency recovery user > ')
+        n_console.send('bsn')
+        n_console.expect(r'Retype Password for emergency recovery user > ')
+        n_console.send('bsn')
+        n_console.expect(r'Please choose an IP mode:.*[\r\n]')
+        n_console.expect(r'> ')
+        n_console.send('1')
+        n_console.expect(r'IP address .* > ')
+
+
+
         helpers.test_error("Exit early")
 
 
-        n = t.node(node).console()
-        n.send('')  # press <Enter> and expect to see the login prompt
-
-
+        # Check that controller is now pingable.
         loss = helpers.ping(ip_address)
         if loss < 50:
             helpers.log("Node '%s' has survived first-boot!" % node)

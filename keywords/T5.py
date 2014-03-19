@@ -2017,7 +2017,7 @@ class T5(object):
             helpers.test_failure("BM Downlink lag are not properly created for dual rack %d:%d" % lag_id_a[0], lag_id_b[0])
             return True
     
-    def rest_verify_interface_stats_brief(self, switch, intf, frame_cnt, vrange=5):
+    def rest_verify_fabric_interface_stats_brief(self, switch, intf, frame_cnt, vrange=5):
         ''' Function to verify the Interface stats brief
         Input: switch name and interface
         Output: verify stats brief with both rx and tx on the same CLI output for a given switch and interface
@@ -2039,3 +2039,31 @@ class T5(object):
                             return False
         else:
             helpers.log("Given interface name is not valid")
+            
+    def rest_delete_all_tenants(self):
+        '''
+        delete all the tenants in the system
+        output:  True
+                 False
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        helpers.log("********* rest_delete_all_tenants " )
+        url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/tenants'
+        c.rest.get(url)
+        content = c.rest.content()
+        if not c.rest.status_code_ok():
+            helpers.test_failure(c.rest.error())
+            return False
+        helpers.log("Output: %s" % c.rest.result_json())
+        length = len(content)
+        helpers.log("USER INFO: Number of tenant to be deleted: %s" % str(length))
+        for index in range(length):
+            name = content[index]['tenant-name']
+            helpers.log("Tenant being deleted is %s " % name)
+            url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]' %  name 
+            c.rest.delete(url, {"name": name})
+            if not c.rest.status_code_ok():
+                helpers.test_failure(c.rest.error())
+                return False
+        return True
