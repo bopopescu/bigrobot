@@ -1159,6 +1159,32 @@ setup topology
 	REST add vns ip  								Z							Z1				10.253.1.1				24	
 	REST add vns ip  								Z							Z2				10.253.2.1				24	
 	REST add vns ip  								Z							Z3				10.253.3.1				24	
+	REST add interface to portgroup					leaf0a						${leaf0_pc1_intf1}					${leaf0_pc1}
+	REST add interface to portgroup					leaf0b						${leaf0_pc1_intf2}					${leaf0_pc1}
+	REST add interface to portgroup					leaf0a						${leaf0_pc2_intf1}					${leaf0_pc2}
+	REST add interface to portgroup					leaf0b						${leaf0_pc2_intf2}					${leaf0_pc2}
+#	REST add interface to portgroup					leaf0a						${leaf0_pc3_intf1}					${leaf0_pc3}
+#	REST add interface to portgroup					leaf0b						${leaf0_pc3_intf2}					${leaf0_pc3}
+#	REST add interface to portgroup					leaf0a						${leaf0_pc4_intf1}					${leaf0_pc4}
+#	REST add interface to portgroup					leaf0b						${leaf0_pc4_intf2}					${leaf0_pc4}
+#	REST add interface to portgroup					leaf0a						${leaf0_pc5_intf1}					${leaf0_pc5}
+#	REST add interface to portgroup					leaf0a						${leaf0_pc5_intf2}					${leaf0_pc5}
+#	REST add interface to portgroup					leaf0a						${leaf0_pc6_intf1}					${leaf0_pc6}
+#	REST add interface to portgroup					leaf0a						${leaf0_pc6_intf2}					${leaf0_pc6}
+	REST add interface to portgroup					leaf1a						${leaf1_pc1_intf1}					${leaf1_pc1}
+	REST add interface to portgroup					leaf1b						${leaf1_pc1_intf2}					${leaf1_pc1}
+	REST add interface to portgroup					leaf1a						${leaf1_pc2_intf1}					${leaf1_pc2}
+	REST add interface to portgroup					leaf1b						${leaf1_pc2_intf2}					${leaf1_pc2}
+#	REST add interface to portgroup					leaf1a						${leaf1_pc3_intf1}					${leaf1_pc3}
+#	REST add interface to portgroup					leaf1b						${leaf1_pc3_intf2}					${leaf1_pc3}
+#	REST add interface to portgroup					leaf1a						${leaf1_pc4_intf1}					${leaf1_pc4}
+#	REST add interface to portgroup					leaf1b						${leaf1_pc4_intf2}					${leaf1_pc4}
+	REST add interface to portgroup					leaf2a						${leaf2_pc1_intf1}					${leaf2_pc1}
+	REST add interface to portgroup					leaf2b						${leaf2_pc1_intf2}					${leaf2_pc1}
+	REST add interface to portgroup					leaf2a						${leaf2_pc2_intf1}					${leaf2_pc2}
+	REST add interface to portgroup					leaf2b						${leaf2_pc2_intf2}					${leaf2_pc2}	
+  	
+	
 	
 
 teardown topology
@@ -1259,31 +1285,7 @@ T5 base suite setup
 #	REST add leaf group								leaf2a						leaf2
 #	REST add leaf group								leaf2b						leaf2
 	
-	REST add interface to portgroup					leaf0a						${leaf0_pc1_intf1}					${leaf0_pc1}
-	REST add interface to portgroup					leaf0b						${leaf0_pc1_intf2}					${leaf0_pc1}
-	REST add interface to portgroup					leaf0a						${leaf0_pc2_intf1}					${leaf0_pc2}
-	REST add interface to portgroup					leaf0b						${leaf0_pc2_intf2}					${leaf0_pc2}
-#	REST add interface to portgroup					leaf0a						${leaf0_pc3_intf1}					${leaf0_pc3}
-#	REST add interface to portgroup					leaf0b						${leaf0_pc3_intf2}					${leaf0_pc3}
-#	REST add interface to portgroup					leaf0a						${leaf0_pc4_intf1}					${leaf0_pc4}
-#	REST add interface to portgroup					leaf0b						${leaf0_pc4_intf2}					${leaf0_pc4}
-#	REST add interface to portgroup					leaf0a						${leaf0_pc5_intf1}					${leaf0_pc5}
-#	REST add interface to portgroup					leaf0a						${leaf0_pc5_intf2}					${leaf0_pc5}
-#	REST add interface to portgroup					leaf0a						${leaf0_pc6_intf1}					${leaf0_pc6}
-#	REST add interface to portgroup					leaf0a						${leaf0_pc6_intf2}					${leaf0_pc6}
-	REST add interface to portgroup					leaf1a						${leaf1_pc1_intf1}					${leaf1_pc1}
-	REST add interface to portgroup					leaf1b						${leaf1_pc1_intf2}					${leaf1_pc1}
-	REST add interface to portgroup					leaf1a						${leaf1_pc2_intf1}					${leaf1_pc2}
-	REST add interface to portgroup					leaf1b						${leaf1_pc2_intf2}					${leaf1_pc2}
-#	REST add interface to portgroup					leaf1a						${leaf1_pc3_intf1}					${leaf1_pc3}
-#	REST add interface to portgroup					leaf1b						${leaf1_pc3_intf2}					${leaf1_pc3}
-#	REST add interface to portgroup					leaf1a						${leaf1_pc4_intf1}					${leaf1_pc4}
-#	REST add interface to portgroup					leaf1b						${leaf1_pc4_intf2}					${leaf1_pc4}
-	REST add interface to portgroup					leaf2a						${leaf2_pc1_intf1}					${leaf2_pc1}
-	REST add interface to portgroup					leaf2b						${leaf2_pc1_intf2}					${leaf2_pc1}
-	REST add interface to portgroup					leaf2a						${leaf2_pc2_intf1}					${leaf2_pc2}
-	REST add interface to portgroup					leaf2b						${leaf2_pc2_intf2}					${leaf2_pc2}	
-  
+
   
 T5 base suite teardown
 	delete fabric switch  
