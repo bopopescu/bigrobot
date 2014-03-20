@@ -15,20 +15,40 @@ Library	         keywords/T5L3.py
 #Library	         keywords/T5Platform.py
 Library	         keywords/T5Utilities.py
 Resource	 	 keywords_dev/don/t5_platform_sanity_resource.txt
-Library	         keywords_dev/don/T5Platform.py
+Library	         keywords/T5Platform.py
+Library	         keywords_dev/don/T5Platform_DJ.py
 
 * Variables
-@{spineList}  00:00:00:00:00:01:00:01  00:00:00:00:00:01:00:02
+@{spineList}  00:00:00:00:00:01:00:01  00:00:00:00:00:01:00:02  00:00:00:00:00:01:00:03
 @{leafList}  00:00:00:00:00:02:00:01  00:00:00:00:00:02:00:02  00:00:00:00:00:02:00:03  00:00:00:00:00:02:00:04  00:00:00:00:00:02:00:05  00:00:00:00:00:02:00:06
 
 
 * Test Case 
 
 
-Configure Span
-	[Tags]  span
-	rest add monitor session  1
-
+Temporary Test
+	[Tags]  temp
+	cluster node reboot
+	
+	
+Configure A Tenant
+	[Tags]  span  one
+	#mininet start    node=mn1    new_topology=--num-spine 3 --num-rack 6 --num-bare-metal 2 --num-hypervisor 0
+	auto configure fabric switch  ${spineList}  ${leafList}  1
+	Configure Tenants with Different Properties
+	Configure Span sessions
+	Verify Connectivity in 3-Rack/Single-Leaf/3-Spine/2-Host Setup
+	
+	
+Verify Span
+    [Tags]  span 
+	${returnVal} =  rest verify monitor session  1  leaf0-a  leaf0-eth6  leaf0-a  leaf0-eth4 
+	Should not be true  ${returnVal}
+	
+Delete Span
+	[Tags]  span  sanity
+	${returnVal} =  rest delete monitor session  1 
+	Should be true  ${returnVal}
 
 Multiple L2 Tenants Single VNS HA Test
 	[Tags]	run
@@ -40,84 +60,102 @@ Multiple L2 Tenants Single VNS HA Test
 
 Delete Switches
    [Tags]	clean
-   rest delete tenant  L2autoT1
-   rest delete tenant  L2autoT2
-   rest delete tenant  L2autoT3
-   auto delete fabric switch  ${spineList}  ${leafList}  2
+   rest delete tenant  autoT1
+   rest delete tenant  autoT2
+   rest delete tenant  autoT3
+   auto delete fabric switch  ${spineList}  ${leafList}  1
+   rest delete monitor session  1 
+   rest delete monitor session  2
+   rest delete monitor session  3
+   rest delete monitor session  4
+   rest delete monitor session  5
+   rest delete monitor session  6
+   auto delete fabric portgroups
 
 
 #########################################################################
 
 * keywords
    
-Configure 3-Rack/Dual-Leaf/2-Spine/4-Host Setup For Mininet 
+  
+Configure Tenants with Different Properties
 
-   auto configure fabric switch  ${spineList}  ${leafList}  2
-   sleep  5
-   Set Test Variable  ${bm0_intf0}  leaf0a-eth8
-   Set Test Variable  ${bm0_intf1}  leaf0b-eth8
-   Set Test Variable  ${bm1_intf0}  leaf0a-eth9
-   Set Test Variable  ${bm1_intf1}  leaf0b-eth9
-   Set Test Variable  ${bm2_intf0}  leaf0a-eth10
-   Set Test Variable  ${bm2_intf1}  leaf0b-eth10
-   Set Test Variable  ${bm3_intf0}  leaf0a-eth11
-   Set Test Variable  ${bm3_intf1}  leaf0b-eth11
-   Set Test Variable  ${bm4_intf0}  leaf1a-eth8
-   Set Test Variable  ${bm4_intf1}  leaf1b-eth8
-   Set Test Variable  ${bm5_intf0}  leaf1a-eth9
-   Set Test Variable  ${bm5_intf1}  leaf1b-eth9
-   Set Test Variable  ${bm6_intf0}  leaf1a-eth10
-   Set Test Variable  ${bm6_intf1}  leaf1b-eth10
-   Set Test Variable  ${bm7_intf0}  leaf1a-eth11
-   Set Test Variable  ${bm7_intf1}  leaf1b-eth11
-   Set Test Variable  ${bm8_intf0}  leaf2a-eth8
-   Set Test Variable  ${bm8_intf1}  leaf2b-eth8
-   Set Test Variable  ${bm9_intf0}  leaf2a-eth9
-   Set Test Variable  ${bm9_intf1}  leaf2b-eth9
-   Set Test Variable  ${bm10_intf0}  leaf2a-eth10
-   Set Test Variable  ${bm10_intf1}  leaf2b-eth10
-   Set Test Variable  ${bm11_intf0}  leaf2a-eth11
-   Set Test Variable  ${bm11_intf1}  leaf2b-eth11
+   Set Test Variable  ${vns3ip}  20.20.20.100
+   Set Test Variable  ${vns4ip}  40.40.40.100
+   Set Test Variable  ${subMask}  24
+   Set Test Variable  ${bm4ip}  10.10.10.4
+   Set Test Variable  ${bm6ip}  10.10.10.6
+   Set Test Variable  ${bm8ip}  20.20.20.8
+   Set Test Variable  ${bm10ip}  40.40.40.10
    
-   rest add portgroup  p0
-   rest add interface to portgroup  leaf0-a  ${bm0_intf0}  p0
-   rest add interface to portgroup  leaf0-b  ${bm0_intf1}  p0
-   rest add portgroup  p1
-   rest add interface to portgroup  leaf0-a  ${bm1_intf0}  p1
-   rest add interface to portgroup  leaf0-b  ${bm1_intf1}  p1
-   rest add portgroup  p2 
-   rest add interface to portgroup  leaf0-a  ${bm2_intf0}  p2
-   rest add interface to portgroup  leaf0-b  ${bm2_intf1}  p2
-   rest add portgroup  p3 
-   rest add interface to portgroup  leaf0-a  ${bm3_intf0}  p3
-   rest add interface to portgroup  leaf0-b  ${bm3_intf1}  p3
-   rest add portgroup  p4
-   rest add interface to portgroup  leaf1-a  ${bm4_intf0}  p4
-   rest add interface to portgroup  leaf1-b  ${bm4_intf1}  p4
-   rest add portgroup  p5
-   rest add interface to portgroup  leaf1-a  ${bm5_intf0}  p5
-   rest add interface to portgroup  leaf1-b  ${bm5_intf1}  p5
-   rest add portgroup  p6
-   rest add interface to portgroup  leaf1-a  ${bm6_intf0}  p6
-   rest add interface to portgroup  leaf1-b  ${bm6_intf1}  p6
-   rest add portgroup  p7
-   rest add interface to portgroup  leaf1-a  ${bm7_intf0}  p7
-   rest add interface to portgroup  leaf1-b  ${bm7_intf1}  p7
-   rest add portgroup  p8
-   rest add interface to portgroup  leaf2-a  ${bm8_intf0}  p8
-   rest add interface to portgroup  leaf2-b  ${bm8_intf1}  p8
-   rest add portgroup  p9
-   rest add interface to portgroup  leaf2-a  ${bm9_intf0}  p9
-   rest add interface to portgroup  leaf2-b  ${bm9_intf1}  p9
-   rest add portgroup  p10
-   rest add interface to portgroup  leaf2-a  ${bm10_intf0}  p10
-   rest add interface to portgroup  leaf2-b  ${bm10_intf1}  p10
-   rest add portgroup  p11
-   rest add interface to portgroup  leaf2-a  ${bm11_intf0}  p11
-   rest add interface to portgroup  leaf2-b  ${bm11_intf1}  p11
-   sleep  5
+   
+   rest add tenant  autoT1
+   rest add vns  autoT1  v1
+   rest add interface to vns  autoT1  v1  leaf0-a  leaf0-eth7  -1
+   rest add interface to vns  autoT1  v1  leaf1-a  leaf1-eth7  -1
+   
+   rest add tenant  autoT2
+   rest add vns  autoT2  v2
+   rest add interface to vns  autoT2  v2  leaf2-a  leaf2-eth7  10
+   rest add interface to vns  autoT2  v2  leaf3-a  leaf3-eth7  10
+   mininet link tag  bm4  bm4-bond0  10  ${bm4ip}
+   mininet link tag  bm6  bm6-bond0  10  ${bm6ip}
+   
+   rest add tenant  autoT3
+   rest add vns  autoT3  v3
+   rest add interface to vns  autoT3  v3  leaf4-a  leaf4-eth7  20
+   rest add vns  autoT3  v4
+   rest add interface to vns  autoT3  v4  leaf5-a  leaf5-eth7  40
+   rest add vns ip  autoT3  v3  ${vns3ip}  ${subMask}
+   rest add vns ip  autoT3  v4  ${vns4ip}  ${subMask}
+   mininet host ipcfg  bm8  bm8-bond0  ${bm8ip}  ${subMask}
+   mininet host gw  bm8  ${vns3ip}  bm8-bond0
+   mininet host ipcfg  bm10  bm10-bond0  ${bm10ip}  ${subMask}
+   mininet host gw  bm10  ${vns4ip}  bm10-bond0
 
    
+
+Configure Span sessions
+  
+	${returnVal} =  rest add monitor session  1  leaf0-a  leaf0-eth7  leaf0-a  leaf0-eth8  direction=both
+	Should be true  ${returnVal}
+	${returnVal} =  rest verify monitor session  1  leaf0-a  leaf0-eth7  leaf0-a  leaf0-eth8  direction=both
+	Should be true  ${returnVal}
+	${returnVal} =  rest add monitor session  2  leaf1-a  leaf1-eth7  leaf1-a  leaf1-eth8  direction=both
+	Should be true  ${returnVal}
+	${returnVal} =  rest verify monitor session  2  leaf1-a  leaf1-eth7  leaf1-a  leaf1-eth8  direction=both
+	Should be true  ${returnVal}
+	${returnVal} =  rest add monitor session  3  leaf2-a  leaf2-eth7  leaf2-a  leaf2-eth8  direction=ingress
+	Should be true  ${returnVal}
+	${returnVal} =  rest verify monitor session  3  leaf2-a  leaf2-eth7  leaf2-a  leaf2-eth8  direction=ingress
+	Should be true  ${returnVal}
+	${returnVal} =  rest add monitor session  4  leaf3-a  leaf3-eth7  leaf3-a  leaf3-eth8  direction=egress
+	Should be true  ${returnVal}
+	${returnVal} =  rest verify monitor session  4  leaf3-a  leaf3-eth7  leaf3-a  leaf3-eth8  direction=egress
+	Should be true  ${returnVal}
+	${returnVal} =  rest add monitor session  5  leaf4-a  leaf4-eth7  leaf4-a  leaf4-eth8  direction=ingress
+	Should be true  ${returnVal}
+	${returnVal} =  rest verify monitor session  5  leaf4-a  leaf4-eth7  leaf4-a  leaf4-eth8  direction=ingress
+	Should be true  ${returnVal}
+	${returnVal} =  rest add monitor session  6  leaf5-a  leaf5-eth7  leaf5-a  leaf5-eth8  direction=egress
+	Should be true  ${returnVal}
+	${returnVal} =  rest verify monitor session  6  leaf5-a  leaf5-eth7  leaf5-a  leaf5-eth8  direction=egress
+	Should be true  ${returnVal}
+
+
+Verify Connectivity in 3-Rack/Single-Leaf/3-Spine/2-Host Setup
+
+   Set Test Variable  ${bm4ip}  10.10.10.4
+   Set Test Variable  ${bm6ip}  10.10.10.6
+   Set Test Variable  ${bm8ip}  20.20.20.8
+   Set Test Variable  ${bm10ip}  40.40.40.10
+   
+   ###	Verify ping between autoT1
+   ${returnVal}=  platform ping  bm0  ${bm1ip}
+   Should Be True  ${returnVal}
+   ${returnVal}=  platform ping  bm0  ${bm2ip}
+   Should Be True  ${returnVal}
+
 
 Configure 3 Tenants with Different VLAN properties
    
@@ -171,6 +209,19 @@ Configure 3 Tenants with Different VLAN properties
    
 Verify Connectivity in 3-Rack/Dual-Leaf/2-Spine/4-Host Setup
 
+   Set Test Variable  ${bm0ip}	10.0.0.1
+   Set Test Variable  ${bm1ip}	10.0.0.2
+   Set Test Variable  ${bm2ip}	10.0.0.3
+   Set Test Variable  ${bm3ip}	10.10.10.3
+   Set Test Variable  ${bm4ip}	10.10.10.4
+   Set Test Variable  ${bm5ip}	10.10.10.5
+   Set Test Variable  ${bm6ip}	100.100.100.6
+   Set Test Variable  ${bm7ip}	100.100.100.7
+   Set Test Variable  ${bm8ip}	100.100.100.8
+   Set Test Variable  ${bm9ip}	 200.200.200.9
+   Set Test Variable  ${bm10ip}	 200.200.200.10
+   Set Test Variable  ${bm11ip}	 200.200.200.11
+
    ###	Verify ping between L2autoT1
    ${returnVal}=  platform ping  bm0  ${bm1ip}
    Should Be True  ${returnVal}
@@ -207,4 +258,9 @@ Reboot the master node & verify fabric integrity
 	${returnVal}=  cli verify cluster master reboot
 	Should Be True  ${returnVal}
    
-   
+
+
+
+
+
+

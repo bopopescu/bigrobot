@@ -12,6 +12,7 @@ import subprocess
 import signal
 import re
 import ipcalc
+import platform
 import curses.ascii as ascii
 from scp import SCPClient
 from pytz import timezone
@@ -493,6 +494,14 @@ def is_host(name):
     return True if match else False
 
 
+def is_openstack_server(name):
+    """
+    OpenStack server is defined as os1, os2, os3, ...
+    """
+    match = re.match(r'^(os\d+)$', name)
+    return True if match else False
+
+
 def is_mininet(name):
     """
     Mininet is defined as mn, mn1, or mininet
@@ -812,6 +821,50 @@ def is_same_file(file1, file2):
     return True if inode1 == inode2 else False
 
 
+def dict_compare(dict1, dict2, ignore_keys=None):
+    """
+    Compare to see whether dict1 is the same as dict2. You can provide a list
+    of keys to ignore in the comparison.
+
+    Usage:
+    status = helpers.dict_compare(mydict1, mydict2, ignore_keys=['abc', 'xyz'])
+
+    Return
+       - True  if dictionaries are same
+       - False if dictionaries are different
+    """
+
+    keys1 = sorted(dict1.keys())
+    keys2 = sorted(dict2.keys())
+    combined_keys = keys1 + list(set(keys2) - set(keys1))
+
+    ignore = []
+    if ignore_keys:
+        if is_scalar(ignore_keys):
+            ignore.append(ignore_keys)
+        else:
+            ignore = ignore_keys
+
+    for k in combined_keys:
+        if k in ignore:
+            print "Ignoring key '%s'" % k
+            continue
+
+        if k in dict1 and k in dict2:
+            if dict1[k] == dict2[k]:
+                pass
+            else:
+                print "Dictionaries differ at key '%s'" % k
+                return False
+        elif k in dict1:
+            print "First dictionary contains key '%s'" % k
+            return False
+        else:
+            print "Second dictionary contains key '%s'" % k
+            return False
+    return True
+
+
 def list_compare(list1, list2):
     """
     Compare to see whether list1 is the same as list2.
@@ -833,6 +886,27 @@ def list_compare(list1, list2):
             return False
 
     return True
+
+
+def list_flatten(alist):
+    """
+    Given a list, such as [0, 1, 2, [3, 4, 5], 6, [7, 8]], flatten it.
+    Caveat: It only flattens one level... for now...
+
+    Return
+       - New list (flattened)
+    """
+    if not is_list(alist):
+        return alist
+
+    # Else we're dealing with a list...
+    result = []
+    for entry in alist:
+        if is_list(entry):
+            _ = [result.append(i) for i in entry]
+        else:
+            result.append(entry)
+    return result
 
 
 def bigtest_node_info():
@@ -942,25 +1016,35 @@ def run_cmd(cmd, cwd=None, ignore_stderr=False, shell=True, quiet=False):
         return (True, out)
 
 
-def _ping(host, count=5, waittime=100, quiet=False, source_if=None,
-          node_handle=None, mode=None):
+def _ping(host, count=5, timeout=5, quiet=False, source_if=None,
+          node_handle=None, mode=None, ttl=None):
+
+    cmd = "ping -c %s" % count
+    if source_if:
+        cmd = "%s -I %s" % (cmd, source_if)
+
+    # Ping initiated from the staging machine (likely is your MacBook)
+    if not node_handle and platform.system() == 'Darwin':
+        # MacOS X platform
+        if ttl:
+            cmd = "%s -T %s" % (cmd, ttl)
+        if timeout:
+            cmd = "%s -t %s" % (cmd, timeout)
+    else:
+        # Linux platform
+        if ttl:
+            cmd = "%s -t %s" % (cmd, ttl)
+        if timeout:
+            cmd = "%s -W %s" % (cmd, timeout)
+
+    cmd = "%s %s" % (cmd, host)
+
     if not node_handle:
-        cmd = "ping -c %s -W %s %s" % (count, waittime, host)
         if not quiet:
             log("Ping command: %s" % cmd, level=4)
-
         _, out = run_cmd(cmd, shell=False, quiet=True, ignore_stderr=True)
     else:
         if mode == 'bash':
-            options = ''
-            if source_if:
-                options = "-I %s " % source_if
-
-            # On Ubuntu, use -w (deadline) to timeout after n seconds. Set it
-            # to be the same as count. On Unbuntu, if the destination is not
-            # pingable, it will keep attempting to ping until deadline is
-            # reached.
-            cmd = "ping -c %s -w %s %s%s" % (count, count, options, host)
             if not quiet:
                 log("Ping command: %s" % cmd, level=4)
             result = node_handle.bash(cmd)
@@ -968,6 +1052,9 @@ def _ping(host, count=5, waittime=100, quiet=False, source_if=None,
         elif mode == 'cli':
             if source_if:
                 test_error("source_if option not supported for controller CLI ping.")
+
+            # Ping command on Controller is very basic. It doesn't support
+            # any option.
             cmd = "ping %s" % (host)
             if not quiet:
                 log("Ping command: %s" % cmd, level=4)
@@ -1027,23 +1114,23 @@ def _ping(host, count=5, waittime=100, quiet=False, source_if=None,
     test_error("Unknown ping error. Please check the output log.")
 
 
-def ping(host, count=5, waittime=100, quiet=False):
+def ping(host, count=5, timeout=5, quiet=False):
     """
     Unix ping.
     :param host: (Str) ping hist host
     :param count: (Int) number of packets to send
-    :param waittime: (Int) time in milliseconds to wait for a reply
+    :param timeout: (Int) time in seconds to wait for a reply
 
     Return: (Int) loss percentage
     """
     if count < 3:
         count = 3  # minimum count
-    loss = _ping(host, count=1, waittime=100, quiet=quiet)
+    loss = _ping(host, count=1, timeout=1, quiet=quiet)
     if loss > 0:
-        loss = _ping(host, count=1, waittime=100, quiet=quiet)
+        loss = _ping(host, count=1, timeout=1, quiet=quiet)
     if loss > 0:
         count -= 2
-        loss = _ping(host, count=count, waittime=waittime, quiet=quiet)
+        loss = _ping(host, count=count, timeout=timeout, quiet=quiet)
     return loss
 
 

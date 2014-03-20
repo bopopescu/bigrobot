@@ -134,19 +134,26 @@ Test pause execution (GUI)
 
 Test pause execution (SHELL)
     [Tags]           skipped
-    pause2
+    pause            Freeze!!!
 
 Test return false
-    #[Tags]           skipped
+    [Tags]           skipped
     return false
 
 Test empty string
-    #[Tags]           skipped
+    [Tags]           skipped
     #${value}=         set variable    ''
     ${value}=         set empty string
     Log               value=${value}
     should be true    '${value}' == ''
 
+Test should contain x times
+    #[Tags]           skipped
+    ${result}=        ping result
+    Log               Result = ${result}
+    Should contain X times    ${result}    bytes from 10.192.4.11    12    It's not a match!
+    #Should contain X times    ${result}    bytes From 10.192.4.11    10
+   
 
 * Keywords
 my base suite setup
@@ -159,5 +166,4 @@ variable assignment
     Should be true  ${input} == 123
     ${temp}=        Set Variable  123${input}
     Should be true  ${temp} == 123123
-
 

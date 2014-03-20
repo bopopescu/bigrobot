@@ -3,79 +3,15 @@ import autobot.test as test
 from T5Utilities import T5Utilities as utilities
 from time import sleep
 import keywords.Mininet as mininet
-import keywords.T5Fabric as T5Fabric
 
 pingFailureCount = 0
 leafSwitchList = []
 
-class T5Platform(object):
+class T5Platform_DJ(object):
 
     def __init__(self):
         pass    
     
-
-
-    def rest_verify_cluster_election_rerun(self):
-        ''' Invoke "cluster election re-run" command and verify the controller state
-        '''
-        obj = utilities()
-        utilities.fabric_integrity_checker(obj, "after")
-        returnVal = self._cluster_election(False)
-        if(not returnVal):
-            return False
-        sleep(30)
-        return utilities.fabric_integrity_checker(obj, "before")
-        
-
-    def _cluster_node_reboot(self, masterNode=True):
-
-        ''' Reboot the node
-        '''
-        t = test.Test()
-        master = t.controller("master")
-
-        masterID,slaveID = self.getNodeID()
-        if(masterID == -1 and slaveID == -1):
-            return False
-        
-        try:
-            if(masterNode):
-                master.enable("reboot", prompt="Confirm Reboot \(yes to continue\)")
-                master.enable("yes")
-                helpers.log("Master is rebooting")
-                sleep(90)
-            else:
-                slave = t.controller("slave")
-                slave.enable("reboot", prompt="Confirm Reboot \(yes to continue\)")
-                slave.enable("yes")
-                helpers.log("Slave is rebooting")
-                sleep(90)
-        except:
-            helpers.log("Node is rebooting")
-            sleep(90)
-       
-        newMasterID, newSlaveID = self.getNodeID()
-        if(newMasterID == -1 and newSlaveID == -1):
-            return False
-
-        if(masterNode):
-            if(masterID == newSlaveID and slaveID == newMasterID):
-                helpers.log("Pass: After the reboot cluster is stable - Master is : %s / Slave is: %s" % (newMasterID, newSlaveID))
-                return True
-            else:
-                helpers.log("Fail: Reboot Failed. Cluster is not stable. Before the master reboot Master is: %s / Slave is : %s \n \
-                        After the reboot Master is: %s / Slave is : %s " %(masterID, slaveID, newMasterID, newSlaveID))
-                return False
-        else:
-            if(masterID == newMasterID and slaveID == newSlaveID):
-                helpers.log("Pass: After the reboot cluster is stable - Master is : %s / Slave is: %s" % (newMasterID, newSlaveID))
-                return True
-            else:
-                helpers.log("Fail: Reboot Failed. Cluster is not stable. Before the slave reboot Master is: %s / Slave is : %s \n \
-                        After the reboot Master is: %s / Slave is : %s " %(masterID, slaveID, newMasterID, newSlaveID))
-                return False
-
-
 
     def rest_add_user(self, numUsers=1):
         numWarn = 0
@@ -218,41 +154,3 @@ class T5Platform(object):
             helpers.log("Show run output is correct for VNS members")
 
 
-
-
-    def rest_add_monitor_session(self, sessionID):
-
-        t = test.Test()
-        master = t.controller("master")
-        url = "/api/v1/data/controller/fabric/monitor-session[id=" + sessionID+"]"
-        
-        master.rest.put(url, {"id": sessionID})
-        
-        url = "/api/v1/data/controller/fabric/monitor-session?config=true"
-        
-        result = master.rest.get(url)['content']
-        try:
-            for session in result:
-                if (str(session['id']) == sessionID):
-                    return True
-        except(KeyError):
-            return False
-        
-        return False
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-   

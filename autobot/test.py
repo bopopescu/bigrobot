@@ -335,6 +335,12 @@ class Test(object):
             result = n.rest.get("/api/v1/data/controller/cluster",
                                 save_last_result=False)
             content = result['content']
+
+            if 'domain-leader' not in content[0]['status']:
+                helpers.environment_failure("HA issue - 'domain-leader' is not found.")
+            if 'leader-id' not in content[0]['status']['domain-leader']:
+                helpers.environment_failure("HA issue - 'leader-id' is not found.")
+
             leader_id = content[0]['status']['domain-leader']['leader-id']
             local_node_id = content[0]['status']['local-node-id']
 
@@ -415,6 +421,16 @@ class Test(object):
         name = self.alias(name)
         return self.topology(name, *args, **kwargs)
 
+    def openstack_servers(self):
+        """
+        Get the handles of all the OpenStack servers.
+        """
+        return [self.openstack_server(n) for n in self.topology_params() if re.match(r'^os\d+', n)]
+
+    def openstack_server(self, name='os1', *args, **kwargs):
+        name = self.alias(name)
+        return self.topology(name, *args, **kwargs)
+
     def hosts(self):
         """
         Get the handles of all the hosts.
@@ -474,8 +490,11 @@ class Test(object):
         #  Controllers: c1, c2, controller, controller1, controller2, master, slave
         #  Mininet: mn, mn1, mn2
         #  Switches: s1, s2, spine1, leaf1, filter1, delivery1
+        #  Hosts: h1, h2, h3
+        #  OpenStack servers: os1, os2
+        #  Traffic generators: tg1, tg2
         #
-        match = re.match(r'^(c\d|controller\d?|master|slave|mn\d?|mininet\d?|s\d+|spine\d+|leaf\d+|s\d+|h\d+|tg\d+)$', node)
+        match = re.match(r'^(c\d|controller\d?|master|slave|mn\d?|mininet\d?|s\d+|spine\d+|leaf\d+|s\d+|h\d+|tg\d+|os\d+)$', node)
         if not match:
             helpers.environment_failure("Unknown/unsupported device '%s'"
                                         % node)
@@ -552,6 +571,20 @@ class Test(object):
                                 password=password,
                                 t=t)
 
+        elif helpers.is_openstack_server(node):
+            helpers.log("Initializing OpenStack server '%s'" % node)
+
+            if not user:
+                user = self.host_user()
+            if not password:
+                password = self.host_password()
+
+            n = a_node.OpenStackNode(node,
+                                      host,
+                                      user=user,
+                                      password=password,
+                                      t=t)
+
         elif helpers.is_traffic_generator(node):
             helpers.log("Initializing traffic generator '%s'" % node)
             if 'platform' not in self.topology_params()[node]:
@@ -574,9 +607,9 @@ class Test(object):
 
         self.topology(node, n)
 
-        if n.dev:
+        if n.devconf():
             helpers.log("Exscript driver for '%s': %s"
-                        % (node, n.dev.conn.get_driver()))
+                        % (node, n.devconf().conn.get_driver()))
             helpers.log("Node '%s' is platform '%s'%s"
                         % (node, n.platform(),
                            br_utils.end_of_output_marker()))
@@ -713,7 +746,7 @@ class Test(object):
     def _controller_cli_firewall_allow_rest_access(self, name, node_id):
         n = self.topology(name)
 
-        if not n.dev:
+        if not n.devconf():
             helpers.log("DevConf session is not available for node '%s'"
                         % name)
             return
@@ -728,7 +761,7 @@ class Test(object):
     def setup_controller_firewall_allow_rest_access(self, name):
         n = self.topology(name)
 
-        if not n.dev:
+        if not n.devconf():
             helpers.log("DevConf session is not available for node '%s'"
                         % name)
             return
@@ -754,7 +787,7 @@ class Test(object):
     def setup_controller_http_session_cookie(self, name):
         n = self.topology(name)
 
-        if not n.dev:
+        if not n.devconf():
             helpers.log("DevConf session is not available for node '%s'"
                         % name)
             return
@@ -767,7 +800,7 @@ class Test(object):
         """
         n = self.topology(name)
 
-        if not n.dev:
+        if not n.devconf():
             helpers.log("DevConf session is not available for node '%s'"
                         % name)
             return
@@ -791,7 +824,7 @@ class Test(object):
         """
         n = self.topology(name)
 
-        if not n.dev:
+        if not n.devconf():
             helpers.log("DevConf session is not available for node '%s'"
                         % name)
             return

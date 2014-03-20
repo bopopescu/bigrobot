@@ -11,8 +11,7 @@ import re
 class DevConf(object):
     def __init__(self, host=None, user=None, password=None,
                  port=None,
-                 is_console=False,
-                 console_driver=None,
+                 console_info=None,
                  name=None,
                  timeout=None,
                  protocol='ssh',
@@ -30,8 +29,7 @@ class DevConf(object):
         self._password = password
         self._port = port
         self._protocol = protocol
-        self._is_console = is_console
-        self._console_driver = console_driver
+        self._console_info = console_info
         self._debug = debug
         self._platform = None
         self.conn = None
@@ -43,7 +41,7 @@ class DevConf(object):
 
         self.connect()
 
-        helpers.debug("Setting timeout to %s seconds" % self._timeout)
+        helpers.debug("Setting expect timeout to %s seconds" % self._timeout)
         self.conn.set_timeout(self._timeout)
 
         driver = self.conn.get_driver()
@@ -56,23 +54,7 @@ class DevConf(object):
 
     def connect(self):
         try:
-            if self._is_console:
-                # Console connection only supports telnet. So ignore protocol
-                # field (if specified).
-                helpers.log("Telnet to console on host %s, port %s (user:%s)"
-                            % (self._host, self._port, self._user))
-                conn = Telnet(debug=self._debug)
-                conn.connect(self._host, self._port)
-
-                if self._console_driver:
-                    helpers.log("Setting devconf driver for console to '%s'"
-                                % self._console_driver)
-                    conn.set_driver(self._console_driver)
-
-                # Note: User needs to figure out what state the console is in
-                #       and manage it themself.
-
-            elif self._protocol == 'telnet' or self._protocol == 'ssh':
+            if self._protocol == 'telnet' or self._protocol == 'ssh':
                 auth_info = "(login:%s, password:%s)" % (self._user, self._password)
                 account = Account(self._user, self._password)
 
@@ -86,7 +68,20 @@ class DevConf(object):
                     conn = SSH2(debug=self._debug)
 
                 conn.connect(self._host, self._port)
-                conn.login(account)
+
+                if self._console_info:
+                    if self._console_info['type'] == 'telnet':
+                        helpers.log("Connecting to console via telnet")
+                    elif self._console_info['type'] == 'libvirt':
+                        helpers.log("Connecting to console via ssh (libvirt console)")
+                        conn.login(account)
+                    else:
+                        helpers.environment_failure("Unsupported console type")
+
+                    # Note: User needs to figure out what state the console is in
+                    #       and manage it themself.
+                else:
+                    conn.login(account)
 
             else:
                 helpers.environment_failure("Supported protocols are 'telnet' and 'ssh'")
@@ -104,11 +99,15 @@ class DevConf(object):
             # helpers.log("Exception in %s" % sys.exc_info()[0])
             # raise
         except:
-            helpers.log("Unexpected SSH login exception in %s\n"
-                        "Expect buffer:\n%s%s"
-                        % (sys.exc_info()[0],
-                           self.conn.buffer.__str__(),
-                           br_utils.end_of_output_marker()))
+            if hasattr(self.conn, 'buffer'):
+                helpers.log("Unexpected SSH login exception in %s\n"
+                            "Expect buffer:\n%s%s"
+                            % (sys.exc_info()[0],
+                               self.conn.buffer.__str__(),
+                               br_utils.end_of_output_marker()))
+            else:
+                helpers.log("Unexpected SSH login exception in %s"
+                            % (sys.exc_info()[0]))
             raise
 
         # Reset mode to 'cli' as default
@@ -150,6 +149,22 @@ class DevConf(object):
             cmd = ''.join((cmd, '\r'))
         self.conn.send(cmd)
 
+    def prompt_str(self, prompt):
+        prompt_str_list = []
+        if helpers.is_list(prompt):
+            for p in prompt:
+                if hasattr(p, 'match'):
+                    prompt_str_list.append(p.pattern)
+                else:
+                    prompt_str_list.append(p)
+        else:
+            p = prompt
+            if hasattr(p, 'match'):
+                prompt_str_list.append(p.pattern)
+            else:
+                prompt_str_list.append(p)
+        return prompt_str_list
+
     def expect(self, prompt=None, timeout=None, quiet=False, level=4):
         """
         Invoking low-level send/expect commands to the device. This is a
@@ -161,10 +176,19 @@ class DevConf(object):
         See http://knipknap.github.io/exscript/api/Exscript.protocols.Protocol-class.html#expect
         """
         if prompt is None:
+            # User might have changed the prompt. So be sure to set it back
+            # to default prompt first.
+            self.conn.set_prompt()
+
+            # Now get default prompt.
             prompt = self.conn.get_prompt()
+        else:
+            prompt = helpers.list_flatten(prompt)
+
         if timeout: self.timeout(timeout)
         if not quiet:
-            helpers.log("Expecting prompt '%s'" % prompt, level=level)
+            helpers.log("Expecting prompt: %s" % self.prompt_str(prompt),
+                        level=level)
 
         try:
             ret_val = self.conn.expect(prompt)
@@ -175,9 +199,9 @@ class DevConf(object):
                             % (self.content(), br_utils.end_of_output_marker()),
                             level=level)
         except TimeoutException:
-            helpers.environment_failure("Expect failure: Timed out during expect prompt '%s'\n"
+            helpers.environment_failure("Expect failure: Timed out during expect prompt: %s\n"
                                         "Expect buffer:\n%s%s"
-                                        % (prompt,
+                                        % (self.prompt_str(prompt),
                                            self.conn.buffer.__str__(),
                                            br_utils.end_of_output_marker()))
             # raise
@@ -204,9 +228,20 @@ class DevConf(object):
 
         See http://knipknap.github.io/exscript/api/Exscript.protocols.Protocol-class.html#waitfor
         """
+        if prompt is None:
+            # User might have changed the prompt. So be sure to set it back
+            # to default prompt first.
+            self.conn.set_prompt()
+
+            # Now get default prompt.
+            prompt = self.conn.get_prompt()
+        else:
+            prompt = helpers.list_flatten(prompt)
+
         if timeout: self.timeout(timeout)
         if not quiet:
-            helpers.log("Expecting waitfor prompt '%s'" % prompt, level=level)
+            helpers.log("Expecting waitfor prompt: %s"
+                        % self.prompt_str(prompt), level=level)
 
         try:
             self.conn.waitfor(prompt)
@@ -217,8 +252,8 @@ class DevConf(object):
                             % (self.content(), br_utils.end_of_output_marker()),
                             level=level)
         except TimeoutException:
-            helpers.log("Waitfor failure: Timed out during waitfor prompt '%s'"
-                        % prompt)
+            helpers.log("Waitfor failure: Timed out during waitfor prompt: %s"
+                        % self.prompt_str(prompt))
             helpers.log("Waitfor buffer <%s>" % self.conn.buffer.__str__())
             raise
             # helpers.log("Exception in %s" % sys.exc_info()[0])
@@ -232,12 +267,13 @@ class DevConf(object):
     def cmd(self, cmd, quiet=False, mode=None, prompt=None, timeout=None, level=5):
         if timeout: self.timeout(timeout)
         if prompt:
-            helpers.log("Expected prompt is '%s'" % prompt)
+            prompt = helpers.list_flatten(prompt)
+            helpers.log("Expected prompt: %s" % self.prompt_str(prompt))
             self.conn.set_prompt(prompt)
             self.is_prompt_changed = True
         else:
             if self.is_prompt_changed:
-                helpers.log("Resetting default prompt")
+                helpers.log("Resetting expect prompt to default")
                 self.conn.set_prompt()
 
         if not quiet:
@@ -294,12 +330,11 @@ class DevConf(object):
 
 class BsnDevConf(DevConf):
     def __init__(self, name=None, host=None, user=None, password=None,
-                 port=None, is_console=False, console_driver=None,
+                 port=None, console_info=None,
                  timeout=None, protocol='ssh', debug=0):
         super(BsnDevConf, self).__init__(host, user, password,
                                          port=port,
-                                         is_console=is_console,
-                                         console_driver=console_driver,
+                                         console_info=console_info,
                                          name=name,
                                          timeout=timeout,
                                          protocol=protocol,
@@ -336,7 +371,7 @@ class BsnDevConf(DevConf):
                 super(BsnDevConf, self).cmd('exit', quiet=True, level=level)
             elif self.is_config():
                 helpers.log("Switching from config to %s mode" % mode, level=level)
-                super(BsnDevConf, self).cmd('exit', quiet=True)
+                super(BsnDevConf, self).cmd('end', quiet=True)
                 super(BsnDevConf, self).cmd('exit', quiet=True)
         elif mode == 'enable':
             if self.is_bash():
@@ -347,7 +382,7 @@ class BsnDevConf(DevConf):
                 super(BsnDevConf, self).cmd('enable', quiet=True, level=level)
             elif self.is_config():
                 helpers.log("Switching from config to %s mode" % mode, level=level)
-                super(BsnDevConf, self).cmd('exit', quiet=True, level=level)
+                super(BsnDevConf, self).cmd('end', quiet=True, level=level)
         elif mode == 'config':
             if self.is_bash():
                 self.exit_bash_mode(mode)
@@ -555,9 +590,10 @@ class MininetDevConf(DevConf):
         self.cli("exit", quiet=False)
         self.state = 'stopped'
 
-    def restart_mininet(self, new_topology=None):
+    def restart_mininet(self, new_topology=None, sleep=5):
         helpers.log("Restarting Mininet topology on '%s'" % self.name())
         self.stop_mininet()
+        helpers.sleep(sleep)
         self.start_mininet(new_topology)
 
     def close(self):
@@ -594,16 +630,8 @@ class T6MininetDevConf(MininetDevConf):
 
 
 class HostDevConf(DevConf):
-    def __init__(self, name=None, host=None, user=None, password=None,
-                 port=None, is_console=False, timeout=None, protocol='ssh',
-                 debug=0):
-        super(HostDevConf, self).__init__(host, user, password,
-                                          port=port,
-                                          is_console=is_console,
-                                          name=name,
-                                          timeout=timeout,
-                                          protocol=protocol,
-                                          debug=debug)
+    def __init__(self, *args, **kwargs):
+        super(HostDevConf, self).__init__(*args, **kwargs)
         self.bash('uname -a')
 
     def _cmd(self, cmd, quiet=False, prompt=False, timeout=None, level=4):

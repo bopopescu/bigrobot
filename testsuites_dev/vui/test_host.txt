@@ -18,7 +18,9 @@ Test host
 Test host ping
     #[Tags]  skipped
     #${status}       bash ping  node=h1  dest_ip=10.192.7.210
-    ${status}       bash ping  node=h1  dest_ip=10.195.0.31  source_if=eth0  count=6
+    ${status}=       bash ping  node=h1  dest_ip=10.195.0.31  source_if=eth0  count=6  ttl=3
+    ${result}=       bash content  node=h1
+    log              result from bash ping is ${result}
     #${status}       bash ping  node=h1  dest_node=c1
     Should be true  ${status} == 0
 

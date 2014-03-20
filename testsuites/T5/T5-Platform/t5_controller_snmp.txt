@@ -1,0 +1,174 @@
+*Settings
+Documentation  T5 SNMP Test Suite Release:Iron Horse Feature:SNMP
+Suite Setup  snmp suite setup
+Suite Teardown   snmp suite teardown
+Test Setup   base test setup
+Test Teardown   base test teardown
+Force Tags   T5 SNMP
+Library  keywords/BsnCommon.py
+
+* Variable
+
+    
+* Test Case
+Configure and Verify Configuration  
+    verify config
+    [Tags]  verify  
+
+Verify SNMP OID sysContact on Master  
+    ${snmp_key}=  snmp get  master  public  sysContact.0
+    Should Contain  ${snmp_key}  Big Switch Networks
+    [Tags]  sysContact  master  
+
+Verify SNMP OID sysContact on Slave  
+    ${snmp_key}=  snmp get  slave  public  sysContact.0
+    Should Contain  ${snmp_key}  Big Switch Networks
+    [Tags]  sysContact  slave
+    
+Verify SNMP OID sysLocation on Master  
+    ${snmp_key}=  snmp get  master  public  sysLocation.0
+    Should Contain  ${snmp_key}  Mountain View
+    [Tags]  sysLocation  master  
+    
+Verify SNMP OID sysLocation on Slave  
+    ${snmp_key}=  snmp get  slave  public  sysLocation.0
+    Should Contain  ${snmp_key}  Mountain View
+    [Tags]  sysLocation  slave  
+    
+Verify SNMP OID sysDescr on Master  
+    ${snmp_key}=  snmp get  master  public  sysDescr.0
+    Should Contain  ${snmp_key}  Big Virtual Switch Appliance    
+    [Tags]  sysDescr  master
+    
+Verify SNMP OID sysDescr on Slave  
+    ${snmp_key}=  snmp get  slave  public  sysDescr.0
+    Should Contain  ${snmp_key}  Big Virtual Switch Appliance    
+    [Tags]  sysDescr  slave  
+      
+Verify SNMP OID ifDescr on Master  
+    ${snmp_key}=  snmp get  master  public  ifDescr.2
+    Should Contain  ${snmp_key}  eth0
+    [Tags]  ifDescr  master
+      
+Verify SNMP OID ifDescr on Slave  
+    ${snmp_key}=  snmp get  slave  public  ifDescr.2
+    Should Contain  ${snmp_key}  eth0
+    [Tags]  ifDescr  slave    
+   
+Verify SNMP OID ifType on Master  
+    ${snmp_key}=  snmp get  master  public  ifType.2
+    Should Contain  ${snmp_key}  ethernetCsmacd
+    [Tags]  ifType  master
+   
+Verify SNMP OID ifType on Slave  
+    ${snmp_key}=  snmp get  slave  public  ifType.2
+    Should Contain  ${snmp_key}  ethernetCsmacd
+    [Tags]  ifType  master    
+
+Verify SNMP OID ifOperStatus on Master  
+    ${snmp_key}=  snmp get  master  public  ifOperStatus.2
+    Should Contain  ${snmp_key}  up
+    [Tags]  ifOperStatus  master  
+
+Verify SNMP OID ifOperStatus on Slave  
+    ${snmp_key}=  snmp get  slave  public  ifOperStatus.2
+    Should Contain  ${snmp_key}  up
+    [Tags]  ifOperStatus  slave  
+    
+Verify SNMP OID ifAdminStatus on Master   
+    ${snmp_key}=  snmp get  master  public  ifAdminStatus.2
+    Should Contain  ${snmp_key}  up     
+    [Tags]  ifAdminStatus  master 
+    
+Verify SNMP OID ifAdminStatus on Slave  
+    ${snmp_key}=  snmp get  slave  public  ifAdminStatus.2
+    Should Contain  ${snmp_key}  up     
+    [Tags]  ifAdminStatus  slave     
+
+Verify snmpgetnext works as expected on Master
+    ${snmp_key}=  snmp getnext  master  public  ifDescr.1
+    Should Contain  ${snmp_key}  eth0
+    [Tags]  snmpgetnext  master
+     
+Verify snmpgetnext works as expected on Slave
+    ${snmp_key}=  snmp getnext  slave  public  ifDescr.1
+    Should Contain  ${snmp_key}  eth0
+    [Tags]  snmpgetnext  slave           
+    
+verify snmpbulkget works as expected on Master
+    ${snmp_key}=  snmp cmd  master  snmpbulkget  public  ifDescr 
+    Should Contain  ${snmp_key}  eth0
+    [Tags]  snmpbulkget  master
+
+verify snmpbulkget works as expected on Slave
+    ${snmp_key}=  snmp cmd  slave  snmpbulkget  public  ifDescr 
+    Should Contain  ${snmp_key}  eth0
+    [Tags]  snmpbulkget  slave     
+
+verify snmpbulkwalk works as expected on Master
+    ${snmp_key}=  snmp cmd  master  snmpbulkwalk  public  ifDescr 
+    Should Contain  ${snmp_key}  eth0
+    [Tags]  snmpbulkwalk  master   
+
+verify snmpbulkwalk works as expected on Slave
+    ${snmp_key}=  snmp cmd  slave  snmpbulkwalk  public  ifDescr 
+    Should Contain  ${snmp_key}  eth0
+    [Tags]  snmpbulkwalk  slave  
+
+Restart process SNMP on Master controller and verify snmpget
+    restart process on controller  snmpd  master
+    Sleep  10    
+    ${snmp_key}=  snmp get  master  public  sysDescr.0
+    Should Contain  ${snmp_key}  Big Virtual Switch Appliance  
+    [Tags]  restart  
+ 
+Restart process SNMP on Slave controller and verify snmpget
+    restart process on controller  snmpd  slave
+    Sleep  10    
+    ${snmp_key}=  snmp get  slave  public  sysDescr.0
+    Should Contain  ${snmp_key}  Big Virtual Switch Appliance  
+    [Tags]  restart 
+    
+Change community from public to bigswitch and verify snmp walk
+    rest add snmp keyword  community  bigswitch
+    ${snmp_key}=  snmp get  master  bigswitch  sysDescr.0
+    Should Contain  ${snmp_key}  Big Virtual Switch Appliance   
+    [Tags]  bigtap  snmp  
+
+       
+* Keywords
+snmp suite setup
+    rest add snmp keyword  community  public
+    rest add snmp keyword  contact  Big Switch Networks
+    rest add snmp keyword  location  Mountain View
+    rest add snmp keyword  trap-enabled  True
+    rest add snmp host  10.192.66.230  162    
+    rest add firewall rule  service=snmp
+    Sleep  10        
+
+verify config
+    ${snmp_output}=  rest show snmp
+    ${snmp_key}=  verify json key  ${snmp_output}  0  community  
+    Should Be Equal As Strings  ${snmp_key}  public
+    ${snmp_key}=  verify json key  ${snmp_output}  0  contact  
+    Should Be Equal As Strings  ${snmp_key}  Big Switch Networks        
+    ${snmp_key}=  verify json key  ${snmp_output}  0  location  
+    Should Be Equal As Strings  ${snmp_key}  Mountain View
+    ${snmp_key}=  verify json key  ${snmp_output}  0  trap-enabled  
+    Should Be True  ${snmp_key}
+    ${snmp_key}=  verify json key  ${snmp_output}  0  trap-host
+    ${new_snmp_key}=  verify json key  ${snmp_key}  0  ipaddr      
+    Should Be Equal As Strings  ${new_snmp_key}  10.192.66.230
+    ${new_snmp_key}=  verify json key  ${snmp_key}  0  udp-port       
+    Should Be Equal As Integers  ${new_snmp_key}  162
+           
+snmp suite teardown
+    rest add snmp keyword  community  null
+    rest add snmp keyword  contact  null
+    rest add snmp keyword  location  null
+    rest add snmp keyword  trap-enable  false
+    rest delete snmp host  10.192.66.230  162 
+    rest delete firewall rule  service=snmp    
+    base suite teardown
+    
+    

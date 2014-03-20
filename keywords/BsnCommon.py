@@ -18,6 +18,12 @@ import autobot.test as test
 import Controller
 import subprocess
 import math
+import sys
+import re
+import socket
+import paramiko
+from paramiko.client import SSHClient
+from paramiko.ssh_exception import BadHostKeyException, AuthenticationException, SSHException
 from Exscript.protocols import SSH2
 from Exscript import Account, Host
 
@@ -75,6 +81,23 @@ class BsnCommon(object):
         result = eval(s)
         helpers.log("Express '%s' evaluated to '%s'" % (s, result))
         return result
+
+    def pause(self, msg=None):
+        """
+        Pause execution. Press Control-D to continue.
+
+        Inputs:
+        | msg | Message to display when paused. Else print "Pausing... Press Ctrl-D to continue." |
+
+        Return Value:
+        - True
+        """
+        if not msg:
+            msg = "Pausing... Press Ctrl-D to continue."
+        helpers.warn(msg)
+        for _ in sys.stdin:
+            pass
+        return True
 
     def ixia_verify_traffic_rate(self, tx_value, rx_value, rangev=5):
         tx = math.ceil(float(tx_value))
@@ -184,14 +207,28 @@ class BsnCommon(object):
                 c = t.controller('master')
                 url = '/rest/v1/system/version'
                 if user == "admin":
-                    c.rest.get(url)
-                    content = c.rest.content()
+                    try:
+                        t.node_reconnect(node='master')
+                        c.rest.get(url)
+                        content = c.rest.content()
+                        output_value = content[0]['controller']
+                    except:
+                        return False
+                    else:
+                        return output_value
                 else:
-                    c_user = t.node_reconnect(node='master', user=str(user), password=password)
-                    c_user.rest.get(url)
-                    content = c_user.rest.content()
-                    t.node_reconnect(node='master')
-                return content[0]['controller']
+                    try:
+                        c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                        c_user.rest.get(url)
+                        content = c_user.rest.content()
+                        output_value = content[0]['controller']
+                    except:
+                        t.node_reconnect(node='master')
+                        return False
+                    else:
+                        if local is True:
+                            t.node_reconnect(node='master')
+                        return output_value
             elif helpers.is_bigwire(n.platform()):
                 '''
                     BigWire Controller
@@ -309,8 +346,9 @@ class BsnCommon(object):
                 '''
                 helpers.log("The node is a T5 Controller")
                 c = t.controller()
-                url = '/api/v1/data/controller/os/config/global/time-config'
-                c.rest.put(url, {"ntp-server": [ntp_server]})
+                url = '/api/v1/data/controller/os/config/global/time-config/ntp-server'
+                helpers.log("URL is %s \n and \n ntp server is %s" % (url, ntp_server))
+                c.rest.patch(url, [str(ntp_server)])
                 if not c.rest.status_code_ok():
                     helpers.test_log(c.rest.error())
                     return False
@@ -352,7 +390,7 @@ class BsnCommon(object):
         elif helpers.is_controller(node):
             helpers.log("The node is a controller")
 
-            if  helpers.is_bigtap(node):
+            if  helpers.is_bigtap(n.platform()):
                 '''
                     BigTap NTP Server Deletion goes here
                 '''
@@ -366,7 +404,7 @@ class BsnCommon(object):
                 else:
                     helpers.test_log(c.rest.content_json())
                     return True
-            elif helpers.is_bigwire(node):
+            elif helpers.is_bigwire(n.platform()):
                 '''
                     BigWire NTP Server Deletion goes here
                 '''
@@ -380,13 +418,105 @@ class BsnCommon(object):
                 else:
                     helpers.test_log(c.rest.content_json())
                     return True
-            elif helpers.is_t5(node):
+            elif helpers.is_t5(n.platform()):
                 '''
                     T5 Controller NTP Server Deletion goes here
                 '''
                 c = t.controller()
                 url = '/api/v1/data/controller/os/config/global/time-config'
+                helpers.log("URL is %s" % url)
                 c.rest.delete(url, {"ntp-servers": [ntp_server]})
+                if not c.rest.status_code_ok():
+                    helpers.test_log(c.rest.error())
+                    return False
+                else:
+                    helpers.sleep(1)
+                    return True
+            else:
+                helpers.test_error("Unsupported Platform %s" % (node))
+        else:
+            helpers.test_error("Unsupported Platform %s" % (node))
+
+    def add_ntp_timezone(self, node=None, time_zone='America/Los_Angeles'):
+        '''
+            Objective: Add an NTP server.
+
+            Inputs:
+            | node | reference to switch/controller as defined in .topo file|
+            | ntp_server | ntp server that is being configured|
+
+            Return Values:
+            - True, if configuration add is successful.
+            - False, if configuration add is unsuccessful.
+        '''
+        t = test.Test()
+        n = t.node(node)
+        if helpers.is_switch(n.platform()):
+            helpers.log("Node is a switch")
+            if helpers.is_switchlight(n.platform()):
+                '''
+                TimeZone Configuration at Switch
+                '''
+                return True
+            else:
+                helpers.test_error("Unsupported Platform %s" % (node))
+        elif helpers.is_controller(node):
+            helpers.log("The node is a controller")
+            if helpers.is_bigtap(n.platform()):
+                '''
+                BigTap TimeZone Configuration goes here
+                '''
+                helpers.log("The node is a BigTap Controller")
+                c = t.controller('master')
+                url = '/rest/v1/model/controller-node/'
+                c.rest.get(url)
+                content = c.rest.content()
+                count = 0
+                for j in range(0, 2):
+                    controller_id = content[j]['id']
+                    url1 = '/rest/v1/model/controller-node/?id=%s' % controller_id
+                    c.rest.put(url1, {"time-zone": str(time_zone)})
+                    if not c.rest.status_code_ok():
+                        helpers.test_failure(c.rest.error())
+                        return False
+                    else:
+                        count = count + 1
+                if count == 2:
+                    return True
+                else:
+                    return False
+            elif helpers.is_bigwire(n.platform()):
+                '''
+                BigWire TimeZone Configuration goes here
+                '''
+                helpers.log("The node is a BigTap Controller")
+                c = t.controller('master')
+                url = '/rest/v1/model/controller-node/'
+                c.rest.get(url)
+                content = c.rest.content()
+                count = 0
+                for j in range(0, 2):
+                    controller_id = content[j]['id']
+                    url1 = '/rest/v1/model/controller-node/?id=%s' % controller_id
+                    c.rest.put(url1, {"time-zone": str(time_zone)})
+                    if not c.rest.status_code_ok():
+                        helpers.test_failure(c.rest.error())
+                        return False
+                    else:
+                        count = count + 1
+                if count == 2:
+                    return True
+                else:
+                    return False
+            elif helpers.is_t5(n.platform()):
+                '''
+                    T5 Controller
+                '''
+                helpers.log("The node is a T5 Controller")
+                c = t.controller()
+                url = '/api/v1/data/controller/os/config/global/time-config'
+                helpers.log("URL is %s \n and \n ntp server is %s" % (url, time_zone))
+                c.rest.patch(url, {"time-zone": str(time_zone)})
                 if not c.rest.status_code_ok():
                     helpers.test_log(c.rest.error())
                     return False
@@ -396,6 +526,8 @@ class BsnCommon(object):
                 helpers.test_error("Unsupported Platform %s" % (node))
         else:
             helpers.test_error("Unsupported Platform %s" % (node))
+
+
 
     def verify_ntp(self, node, ntp_server):
         '''
@@ -506,11 +638,17 @@ class BsnCommon(object):
                 else:
                     content = c.rest.content()
                     pass_flag = False
+                    bashcommand = "/usr/bin/host %s" % (str(ntp_server))
+                    returnVal = subprocess.Popen([bashcommand], stdout=subprocess.PIPE, shell=True)
+                    (out, _) = returnVal.communicate()
+                    iparray = re.split('\s+', out)
+                    helpers.log("NTP Server IP is %s" % iparray[3])
                     helpers.log("Length of content is %s" % len(content))
                     for x in range(0, len(content)):
-                        helpers.log("Value of content is %s" % content[x])
-                        if content[x] == str(ntp_server):
+                        if iparray[3] in content[x]['status']:
+                            helpers.log("Value of content is %s" % content[x]['status'])
                             pass_flag = True
+                            break
                     if pass_flag:
                         return True
                     else:
@@ -520,7 +658,511 @@ class BsnCommon(object):
         else:
             helpers.test_error("Unsupported Platform %s" % (node))
 
+######################################################################
+##########   PLATFORM SNMP
+######################################################################
 
+    def rest_show_snmp(self, node="master"):
+        '''Execute CLI Command "show snmp"
+
+            Input: N/A
+
+            Returns: dictionary of SNMP related values
+        '''
+        t = test.Test()
+        n = t.node(node)
+        if helpers.is_controller(node):
+            helpers.log("The node is a controller")
+            if helpers.is_bigtap(n.platform()):
+                '''
+                BigTap SNMP Configuration goes here
+                '''
+                helpers.log("The node is a BigTap Controller")
+                c = t.controller('master')
+                try:
+                    url = '/rest/v1/model/snmp-server-config/'
+                    c.rest.get(url)
+                except:
+                    helpers.test_failure(c.rest.error())
+                    return False
+                else:
+                    content = c.rest.content()
+                    return content
+            elif helpers.is_bigwire(n.platform()):
+                '''
+                BigWire SNMP Configuration goes here
+                '''
+                helpers.log("The node is a BigTap Controller")
+                c = t.controller('master')
+                try:
+                    url = '/rest/v1/model/snmp-server-config/'
+                    c.rest.get(url)
+                except:
+                    helpers.test_failure(c.rest.error())
+                    return False
+                else:
+                    content = c.rest.content()
+                    return content
+            elif helpers.is_t5(n.platform()):
+                '''
+                    T5 Controller
+                '''
+                helpers.log("The node is a T5 Controller")
+                c = t.controller('master')
+                try:
+                    url = '/api/v1/data/controller/os/config/global/snmp-config'
+                    c.rest.get(url)
+                except:
+                    helpers.test_failure(c.rest.error())
+                    return False
+                else:
+                    content = c.rest.content()
+                    return content
+            else:
+                helpers.test_error("Unsupported Platform %s" % (node))
+        else:
+            helpers.test_error("Unsupported Platform %s" % (node))
+
+    def rest_show_snmp_host(self, node="master"):
+        '''Execute CLI Command "show snmp"
+
+            Input: N/A
+
+            Returns: dictionary of SNMP related values
+        '''
+        t = test.Test()
+        n = t.node(node)
+        if helpers.is_controller(node):
+            helpers.log("The node is a controller")
+            if helpers.is_bigtap(n.platform()):
+                '''
+                BigTap SNMP Configuration goes here
+                '''
+                helpers.log("The node is a BigTap Controller")
+                c = t.controller('master')
+                try:
+                    url = '/rest/v1/model/snmp-host-config/'
+                    c.rest.get(url)
+                except:
+                    helpers.test_failure(c.rest.error())
+                    return False
+                else:
+                    content = c.rest.content()
+                    return content
+            elif helpers.is_bigwire(n.platform()):
+                '''
+                BigWire SNMP Configuration goes here
+                '''
+                helpers.log("The node is a BigTap Controller")
+                c = t.controller('master')
+                try:
+                    url = '/rest/v1/model/snmp-host-config/'
+                    c.rest.get(url)
+                except:
+                    helpers.test_failure(c.rest.error())
+                    return False
+                else:
+                    content = c.rest.content()
+                    return content
+            else:
+                helpers.test_error("Unsupported Platform %s" % (node))
+        else:
+            helpers.test_error("Unsupported Platform %s" % (node))
+
+    def rest_add_snmp_keyword(self, keyword, value, node="master"):
+        '''
+            Objective:
+            - Add snmp-server community, contact, location etc
+
+            Input:
+                `keyword`       DPID of the Switch
+
+            Returns: True if the interface is up, false otherwise
+        '''
+        t = test.Test()
+        n = t.node(node)
+        if helpers.is_controller(node):
+            helpers.log("The node is a controller")
+            if helpers.is_bigtap(n.platform()):
+                '''
+                BigTap SNMP Configuration goes here
+                '''
+                helpers.log("The node is a BigTap Controller")
+                c = t.controller('master')
+                try:
+                        url = '/rest/v1/model/snmp-server-config/?id=snmp'
+                        if "trap-enable" in keyword:
+                            if "True" in value:
+                                c.rest.put(url, {"trap-enable": True})
+                            else:
+                                c.rest.put(url, {"trap-enable": False})
+                        elif "null" in value:
+                            c.rest.put(url, {str(keyword): None})
+                        else:
+                            c.rest.put(url, {str(keyword): str(value)})
+                except:
+                        helpers.log(c.rest.error())
+                        return False
+                else:
+                        return True
+            elif helpers.is_bigwire(n.platform()):
+                '''
+                BigWire SNMP Configuration goes here
+                '''
+                helpers.log("The node is a BigTap Controller")
+                c = t.controller('master')
+                try:
+                        url = '/rest/v1/model/snmp-server-config/?id=snmp'
+                        if "trap-enable" in keyword:
+                            if "True" in value:
+                                c.rest.put(url, {"trap-enable": True})
+                            else:
+                                c.rest.put(url, {"trap-enable": False})
+                        elif "null" in value:
+                            c.rest.put(url, {str(keyword): None})
+                        else:
+                            c.rest.put(url, {str(keyword): str(value)})
+                except:
+                        helpers.log(c.rest.error())
+                        return False
+                else:
+                        return True
+            elif helpers.is_t5(n.platform()):
+                '''
+                    T5 Controller
+                '''
+                helpers.log("The node is a T5 Controller")
+                try:
+                    c = t.controller("master")
+                    url = '/api/v1/data/controller/os/config/global/snmp-config'
+                    if "trap-enable" in keyword:
+                        if "True" in value:
+                            c.rest.patch(url, {"trap-enable": True})
+                        else:
+                            c.rest.patch(url, {"trap-enable": False})
+                    elif "null" in value:
+                        url1 = url + '/' + str(keyword)
+                        c.rest.delete(url1, {})
+                    else:
+                        c.rest.patch(url, {str(keyword): str(value)})
+                except:
+                        helpers.log(c.rest.error())
+                        return False
+                else:
+                        return True
+            else:
+                helpers.test_error("Unsupported Platform %s" % (node))
+        else:
+            helpers.test_error("Unsupported Platform %s" % (node))
+
+
+    def rest_add_snmp_host (self, host, udp_port, node="master"):
+        '''
+            Objective:
+            - Add snmp-server host
+
+            Input:
+                `host`       DPID of the Switch
+                `udp_port`    UDP Port
+
+            Returns: True if the interface is up, false otherwise
+        '''
+        t = test.Test()
+        n = t.node(node)
+        if helpers.is_controller(node):
+            helpers.log("The node is a controller")
+            if helpers.is_bigtap(n.platform()):
+                '''
+                BigTap SNMP Configuration goes here
+                '''
+                helpers.log("The node is a BigTap Controller")
+                c = t.controller('master')
+                try:
+                    url = '/rest/v1/model/snmp-host-config/'
+                    c.rest.put(url, {"host": str(host), "udp-port": int(udp_port)})
+                except:
+                    helpers.log(c.rest.error())
+                    return False
+                else:
+                    return True
+            elif helpers.is_bigwire(n.platform()):
+                '''
+                BigWire SNMP Configuration goes here
+                '''
+                helpers.log("The node is a BigTap Controller")
+                c = t.controller('master')
+                try:
+                    url = '/rest/v1/model/snmp-host-config/'
+                    c.rest.put(url, {"host": str(host), "udp-port": int(udp_port)})
+                except:
+                    helpers.log(c.rest.error())
+                    return False
+                else:
+                    return True
+            elif helpers.is_t5(n.platform()):
+                '''
+                    T5 Controller
+                '''
+                helpers.log("The node is a T5 Controller")
+                c = t.controller('master')
+                try:
+                    url = '/api/v1/data/controller/os/config/global/snmp-config/trap-host[ipaddr="%s"]' % str(host)
+                    c.rest.put(url, {"ipaddr": str(host), "udp-port": int(udp_port)})
+                except:
+                    helpers.log(c.rest.error())
+                    return False
+                else:
+                    return True
+            else:
+                helpers.test_error("Unsupported Platform %s" % (node))
+        else:
+            helpers.test_error("Unsupported Platform %s" % (node))
+
+
+    def rest_delete_snmp_host(self, host, udp_port, node="master"):
+        '''
+            Objective:
+            - Delete snmp-server host
+
+            Input:
+                `host`       DPID of the Switch
+                `udp_port`    UDP Port
+
+            Returns: True if the interface is up, false otherwise
+        '''
+        t = test.Test()
+        n = t.node(node)
+        if helpers.is_controller(node):
+            helpers.log("The node is a controller")
+            if helpers.is_bigtap(n.platform()):
+                '''
+                BigTap SNMP Configuration goes here
+                '''
+                helpers.log("The node is a BigTap Controller")
+                c = t.controller('master')
+                try:
+                    url = '/rest/v1/model/snmp-host-config/?host=%s&udp-port=%s' % (host, udp_port)
+                    c.rest.delete(url, {})
+                except:
+                    helpers.log(c.rest.error())
+                    return False
+                else:
+                    return True
+            elif helpers.is_bigwire(n.platform()):
+                '''
+                BigWire SNMP Configuration goes here
+                '''
+                helpers.log("The node is a BigTap Controller")
+                c = t.controller('master')
+                try:
+                    url = '/rest/v1/model/snmp-host-config/?host=%s&udp-port=%s' % (host, udp_port)
+                    c.rest.delete(url, {})
+                except:
+                    helpers.log(c.rest.error())
+                    return False
+                else:
+                    return True
+            elif helpers.is_t5(n.platform()):
+                '''
+                    T5 Controller
+                '''
+                helpers.log("The node is a T5 Controller")
+                c = t.controller('master')
+                try:
+                    url = '/api/v1/data/controller/os/config/global/snmp-config/trap-host[ipaddr="%s"]' % str(host)
+                    c.rest.delete(url, {"udp-port": int(udp_port)})
+                except:
+                    helpers.log(c.rest.error())
+                    return False
+                else:
+                    return True
+            else:
+                helpers.test_error("Unsupported Platform %s" % (node))
+        else:
+            helpers.test_error("Unsupported Platform %s" % (node))
+
+
+    def rest_add_firewall_rule(self, service="snmp", protocol="udp", proto_port="162", node="master"):
+        '''
+            Objective:
+            - Open firewall port to allow UDP port
+
+            Input:
+                `udp_port`    UDP Port
+
+            Returns: True if the configuration is successful, false otherwise
+        '''
+        t = test.Test()
+        n = t.node(node)
+        if helpers.is_controller(node):
+            helpers.log("The node is a controller")
+            if helpers.is_bigtap(n.platform()):
+                '''
+                BigTap SNMP Configuration goes here
+                '''
+                helpers.log("The node is a BigTap Controller")
+                c1 = t.controller('master')
+                c2 = t.controller('slave')
+                try:
+                    # Get Cluster Names:
+                    url1 = "/rest/v1/system/controller"
+                    c1.rest.get(url1)
+                    master_output = c1.rest.content()
+                    c2.rest.get(url1)
+                    slave_output = c2.rest.content()
+                    master_clustername = master_output['id']
+                    slave_clustername = slave_output['id']
+                    # Open Firewall
+                    url2 = '/rest/v1/model/firewall-rule/'
+                    interface_master = master_clustername + "|Ethernet|0"
+                    interface_slave = slave_clustername + "|Ethernet|0"
+                    c1.rest.put(url2, {"interface": str(interface_master), "vrrp-ip": "", "port": int(proto_port), "src-ip": "", "proto": str(protocol)})
+                    c2.rest.put(url2, {"interface": str(interface_slave), "vrrp-ip": "", "port": int(proto_port), "src-ip": "", "proto": str(protocol)})
+                except:
+                    helpers.log(c1.rest.error())
+                    helpers.log(c2.rest.error())
+                    return False
+                else:
+                    return True
+            elif helpers.is_bigwire(n.platform()):
+                '''
+                BigWire SNMP Configuration goes here
+                '''
+                helpers.log("The node is a BigTap Controller")
+                c1 = t.controller('master')
+                c2 = t.controller('slave')
+                try:
+                    # Get Cluster Names:
+                    url1 = "/rest/v1/system/controller"
+                    c1.rest.get(url1)
+                    master_output = c1.rest.content()
+                    c2.rest.get(url1)
+                    slave_output = c2.rest.content()
+                    master_clustername = master_output['id']
+                    slave_clustername = slave_output['id']
+                    # Open Firewall
+                    url2 = '/rest/v1/model/firewall-rule/'
+                    interface_master = master_clustername + "|Ethernet|0"
+                    interface_slave = slave_clustername + "|Ethernet|0"
+                    c1.rest.put(url2, {"interface": str(interface_master), "vrrp-ip": "", "port": int(proto_port), "src-ip": "", "proto": str(protocol)})
+                    c2.rest.put(url2, {"interface": str(interface_slave), "vrrp-ip": "", "port": int(proto_port), "src-ip": "", "proto": str(protocol)})
+                except:
+                    helpers.log(c1.rest.error())
+                    helpers.log(c2.rest.error())
+                    return False
+                else:
+                    return True
+            elif helpers.is_t5(n.platform()):
+                '''
+                    T5 Controller
+                '''
+                helpers.log("The node is a T5 Controller")
+                c1 = t.controller('master')
+                c2 = t.controller('slave')
+                try:
+                    url = '/api/v1/data/controller/os/config/local-node/network-config/network-interface[type="ethernet"][number=0]/service[service-name="%s"]' % str(service)
+                    c1.rest.put(url, {"service-name": str(service)})
+                    c2.rest.put(url, {"service-name": str(service)})
+                except:
+                    return False
+                else:
+                    return True
+            else:
+                helpers.test_error("Unsupported Platform %s" % (node))
+        else:
+            helpers.test_error("Unsupported Platform %s" % (node))
+
+    def rest_delete_firewall_rule(self, service="snmp", protocol="udp", proto_port="162", node="master"):
+        '''
+            Objective:
+            - Open firewall port to allow UDP port
+
+            Input:
+                `udp_port`    UDP Port
+
+            Returns: True if the configuration is successful, false otherwise
+        '''
+        t = test.Test()
+        n = t.node(node)
+        if helpers.is_controller(node):
+            helpers.log("The node is a controller")
+            if helpers.is_bigtap(n.platform()):
+                '''
+                BigTap SNMP Configuration goes here
+                '''
+                helpers.log("The node is a BigTap Controller")
+                c1 = t.controller('master')
+                c2 = t.controller('slave')
+                try:
+                    # Get Cluster Names:
+                    url1 = "/rest/v1/system/ha/role reply"
+                    c1.rest.get(url1)
+                    master_output = c1.rest.content()
+                    c2.rest.get(url1)
+                    slave_output = c2.rest.content()
+                    master_clustername = master_output['clustername']
+                    slave_clustername = slave_output['clustername']
+                    # Open Firewall
+                    interface_master = master_clustername + "|Ethernet|0"
+                    interface_slave = slave_clustername + "|Ethernet|0"
+                    urlmaster_delete = '/rest/v1/model/firewall-rule/?interface=' + interface_master + '&vrrp-ip=&port=' + str(proto_port) + '&src-ip=&proto=' + str(protocol)
+                    urlslave_delete = '/rest/v1/model/firewall-rule/?interface=' + interface_slave + '&vrrp-ip=&port=' + str(proto_port) + '&src-ip=&proto=' + str(protocol)
+                    c1.rest.put(interface_slave, {})
+                    c2.rest.put(urlslave_delete, {})
+                except:
+                    helpers.log(c1.rest.error())
+                    helpers.log(c2.rest.error())
+                    return False
+                else:
+                    return True
+            elif helpers.is_bigwire(n.platform()):
+                '''
+                BigWire SNMP Configuration goes here
+                '''
+                helpers.log("The node is a BigTap Controller")
+                c1 = t.controller('master')
+                c2 = t.controller('slave')
+                try:
+                    # Get Cluster Names:
+                    url1 = "/rest/v1/system/ha/role reply"
+                    c1.rest.get(url1)
+                    master_output = c1.rest.content()
+                    c2.rest.get(url1)
+                    slave_output = c2.rest.content()
+                    master_clustername = master_output['clustername']
+                    slave_clustername = slave_output['clustername']
+                    # Open Firewall
+                    interface_master = master_clustername + "|Ethernet|0"
+                    interface_slave = slave_clustername + "|Ethernet|0"
+                    urlmaster_delete = '/rest/v1/model/firewall-rule/?interface=' + interface_master + '&vrrp-ip=&port=' + str(proto_port) + '&src-ip=&proto=' + str(protocol)
+                    urlslave_delete = '/rest/v1/model/firewall-rule/?interface=' + interface_slave + '&vrrp-ip=&port=' + str(proto_port) + '&src-ip=&proto=' + str(protocol)
+                    c1.rest.put(interface_slave, {})
+                    c2.rest.put(urlslave_delete, {})
+                except:
+                    helpers.log(c1.rest.error())
+                    helpers.log(c2.rest.error())
+                    return False
+                else:
+                    return True
+            elif helpers.is_t5(n.platform()):
+                '''
+                    T5 Controller
+                '''
+                helpers.log("The node is a T5 Controller")
+                c1 = t.controller('master')
+                c2 = t.controller('slave')
+                try:
+                    url = '/api/v1/data/controller/os/config/local-node/network-config/network-interface[type="ethernet"][number=0]/service[service-name="%s"]' % str(service)
+                    c1.rest.delete(url, {})
+                    c2.rest.delete(url, {})
+                except:
+                    return False
+                else:
+                    return True
+            else:
+                helpers.test_error("Unsupported Platform %s" % (node))
+        else:
+            helpers.test_error("Unsupported Platform %s" % (node))
 
 #   Objective: Execute snmpgetnext from local machine for a particular SNMP OID
 #   Input: SNMP Community and OID
@@ -660,6 +1302,28 @@ class BsnCommon(object):
         else:
             return output
 
+    def restart_process_on_controller(self, process_name, controller_role):
+        '''Restart a process on controller
+
+            Input:
+               processName        Name of process to be restarted
+               controller_role        Where to execute the command. Accepted values are `Master` and `Slave`
+
+           Return Value:  True if the configuration is successful, false otherwise
+        '''
+        try:
+            t = test.Test()
+            if (controller_role == 'Master'):
+                c = t.controller('master')
+            else:
+                c = t.controller('slave')
+            c.bash('sudo service ' + str(process_name) + ' restart')
+        except:
+            helpers.test_failure(c.rest.error())
+            return False
+        else:
+            return True
+
     def cli(self, node, *args, **kwargs):
         t = test.Test()
         n = t.node(node)
@@ -749,3 +1413,86 @@ class BsnCommon(object):
         t = test.Test()
         n = t.node(node)
         return n.rest_result_json(*args, **kwargs)
+
+    def get_node_name(self, node):
+        """
+        Get the name of a node
+
+        Input: logical node name, e.g., 'c1', 'master', 'slave', etc.
+
+        Return Value:  actual node name, e.g., 'c1', 'c2', 's1'
+        """
+        t = test.Test()
+        n = t.node(node)
+        return n.name()
+
+    def get_node_id(self, node):
+        """
+        Get the node-id of a node.
+
+        Input: logical node name, e.g., 'c1', 'master', 'slave', etc.
+
+        Return Value:  actual node-id for BVS platform, else None
+        """
+        t = test.Test()
+        n = t.node(node)
+        return n.node_id()
+
+    def get_node_ip(self, node):
+        """
+        Get the IP address of a node
+
+        Input: logical node name, e.g., 'c1', 'master', 'slave', etc.
+
+        Return Value:  actual IP address
+        """
+        t = test.Test()
+        n = t.node(node)
+        return n.node_id()
+
+    def verify_ssh_connection(self, node, sleep=10, iterations=5,
+                              user='dummy', password='dummy'):
+        """
+        Test the SSH connection to see whether it is working.
+        SSH authentication is considered a success (it may be because we
+        provided a bad user name or password). SSH time out and other
+        exceptions will result in failure.
+
+        Inputs:
+          - node: 'c1', 's1', 'h1', 'master', etc.
+          - sleep: number of seconds to sleep before retry (on failure). Default is 10.
+          - iterations: number of retries (on failure). Default is 5.
+          - user: user name. Default is 'dummy' which will result in authen failure, but that's okay.
+          - password: Default is 'dummy' which will result in authen failure, but that's okay.
+
+        Return Value:
+          - True on success
+          - False on failure
+        """
+        t = test.Test()
+        n = t.node(node)
+        ip = n.ip()
+
+        iterations = int(iterations)
+        status = False
+
+        while not status and iterations > 0:
+            try:
+                ssh = SSHClient()
+                ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+                ssh.connect(ip, username=user, password=password, timeout=5)
+            except AuthenticationException as e:
+                print("SSH error: %s But that's okay." % e)
+                status = True
+            except (BadHostKeyException, SSHException, socket.error) as e:
+                print("SSH error: %s" % e)
+            else:
+                status = True
+
+            iterations -= 1
+            if not status and iterations > 0:
+                helpers.sleep(sleep)
+
+        return status
+
+

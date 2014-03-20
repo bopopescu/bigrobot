@@ -282,7 +282,7 @@ else:
 		out_dict = helpers.openstack_convert_table_to_dict(output)
 		result1 = out_dict["id"]
 		tenantId = result1["value"]
-		helpers.log("image %s id is: %s" % (tenantName, str(tenantId)))   
+		helpers.log("tenant %s id is: %s" % (tenantName, str(tenantId)))   
 		return tenantId
 
 

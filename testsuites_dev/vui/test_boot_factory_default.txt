@@ -7,10 +7,26 @@ Library         keywords/Controller.py
 
 
 * Test Cases
-Test first boot
+Test cli first boot
     [Documentation]   Performing a boot factory-default
-    #[Tags]           skipped
+    [Tags]           skipped
     cli boot factory default  c1
 
+Test first boot configuration
+    [Tags]           skipped
+    cli add first boot   node=c1
+    ...                  ip_address=10.192.104.2  netmask=18
+    ...                  gateway=10.192.64.1
+    ...                  dns_server=10.192.3.1  dns_search=bigswitch.com
 
+Test cli boot factory default and first boot
+    #[Tags]           skipped
+    ${status}=       cli boot factory default and first boot
+    ...                  node=c1
+#    ...                  ip_address=10.192.104.2  netmask=18
+    ...                  ip_address=10.192.104.2/18
+    ...                  gateway=10.192.64.1
+    ...                  dns_server=10.192.3.1  dns_search=bigswitch.com
+    Log              status=${status}
+    Should be true   ${status}
 

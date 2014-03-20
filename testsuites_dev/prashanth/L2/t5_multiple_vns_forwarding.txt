@@ -114,6 +114,26 @@ Traffic forward ingress wrong vlan id
     stop traffic  ${stream}
     sleep  5
 
+Check broadcast source mac learning on the controller
+	[Tags]  feature
+	 ${stream}=             L3 add  no_arp=True  flow=b->d  src_mac=ff:ff:ff:ff:ff:ff  dst_mac=00:02:04:00:00:24  vlan_id=150  ethertype=8100  frame_rate=1000    frame_size=68  name=b_d_flow
+    start traffic  ${stream}
+    sleep  10
+    ${result}=  rest verify forwarding layer2 table tag  leaf0-b  ${leaf0b_ixia_intf}  ff:ff:ff:ff:ff:ff
+    Should Not be True  ${result}
+    verify traffic rate negative  tx_rate  rx_rate  b  d
+    stop traffic  ${stream}
+
+Check multicast source mac learning on the controller
+	[Tags]  feature
+	 ${stream}=             L3 add  no_arp=True  flow=b->d  src_mac=01:00:5e:00:00:01  dst_mac=00:02:04:00:00:24  vlan_id=150  ethertype=8100  frame_rate=1000    frame_size=68  name=b_d_flow
+    start traffic  ${stream}
+    sleep  10
+    ${result}=  rest verify forwarding layer2 table tag  leaf0-b  ${leaf0b_ixia_intf}  01:00:5e:00:00:01
+    Should Not be True  ${result}
+    verify traffic rate negative  tx_rate  rx_rate  b  d
+    stop traffic  ${stream}       
+
 Untag Traffic ingress on tag ports
 	[Tags]  feature     
 	
@@ -456,7 +476,15 @@ verify traffic rate negative   [Arguments]  ${tx_rate}  ${rx_rate}  ${tx_intf}  
     ${report}=  fetch port stats
     ${tx_value}=  verify dict key  ${report}  ${tx_intf}  transmitted_frame_rate
     ${rx_value}=  verify dict key  ${report}  ${rx_intf}  received_valid_frame_rate
-    Should Not be equal  ${tx_value}  ${rx_value}
+    Should Be True  ${rx_value} == 0
+
+verify traffic packet  [Arguments]  ${tx_cnt}  ${rx_cnt}  ${tx_intf}  ${rx_intf}
+	Sleep  5
+    ${report}=  fetch port stats
+    ${tx_value}=  verify dict key  ${report}  ${tx_intf}  transmitted_frames
+    ${rx_value}=  verify dict key  ${report}  ${rx_intf}  received_valid_frames
+    ${result}=  Evaluate  ${tx_value} - ${rx_value}
+    Should Be True   -4 < ${result} < 1
 
 verify switch interface stats  [Arguments]  ${switch}  ${intf}
 	${report}=  cli show interface statistics  ${switch}  ${intf}
