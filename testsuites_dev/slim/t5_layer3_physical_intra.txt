@@ -12,7 +12,7 @@ Library         keywords/T5L3.py
 Library         keywords_dev/animesh/BsnCommonShow.py
 Library         keywords_dev/slim/SwitchLight.py
 Resource		testsuites_dev/slim/t5_layer3_physical_intra_variables.txt
-Resource		testsuites/t5_dualleaf_three_rack_physical_resource.txt
+Resource		testsuites/T5/t5_dualleaf_three_rack_physical_resource.txt
 
 
 * Test Cases
