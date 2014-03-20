@@ -242,10 +242,10 @@ L3 intra tenant same rack untagged with static endpoints
 	REST add endpoint ip						X								X2						X2_pc2					10.251.2.11
 	${mac1} = 									BASH get intf mac				h5						bond0
 	REST add endpoint mac						X								X1						X1_pc1					${mac1}
-	REST add endpoint portgroup attachment		X								X1						X1_pc1					${leaf1_pc1}				-1	
+	REST add endpoint portgroup attachment		X								X1						X1_pc1					${leaf2_pc1}				-1	
 	${mac2} = 									BASH get intf mac				h6						bond0
 	REST add endpoint mac						X								X2						X2_pc2					${mac2}
-	REST add endpoint portgroup attachment		X								X2						X2_pc2					${leaf1_pc2}				-1	
+	REST add endpoint portgroup attachment		X								X2						X2_pc2					${leaf2_pc2}				-1	
 	BASH add ip address							h5								10.251.1.11/24			bond0	
 	BASH add ip address							h6								10.251.2.11/24			bond0
 	BASH add route								h5								10.251.2.0/24			10.251.1.1
@@ -283,12 +283,12 @@ L3 intra tenant across rack untagged with static endpoints
 	REST add endpoint ip						X								X3						X3_pc6					10.251.3.11
 	${mac1} = 									BASH get intf mac				h4						bond0
 	REST add endpoint mac						X								X1						X1_pc1					${mac1}
-	REST add endpoint portgroup attachment		X								X1						X1_pc1					${leaf1_pc1}				-1	
+	REST add endpoint portgroup attachment		X								X1						X1_pc1					${leaf1_pc2}				-1	
 	${mac2} = 									BASH get intf mac				h5						bond0
 	REST add endpoint mac						X								X3						X3_pc6					${mac2}
-	REST add endpoint portgroup attachment		X								X3						X3_pc6					${leaf0_pc1}				-1	
-	REST add portgroup to vns					X								X1						${leaf1_pc1}			-1
-	REST add portgroup to vns					X								X3						${leaf0_pc1}			-1
+	REST add endpoint portgroup attachment		X								X3						X3_pc6					${leaf2_pc1}				-1	
+	REST add portgroup to vns					X								X1						${leaf1_pc2}			-1
+	REST add portgroup to vns					X								X3						${leaf2_pc1}			-1
 	BASH add ip address							h4								10.251.1.11/24			bond0	
 	BASH add ip address							h5								10.251.3.11/24			bond0
 	BASH add route								h4								10.251.3.0/24			10.251.1.1
@@ -326,12 +326,12 @@ L3 intra tenant same rack tagged with static endpoints
 	REST add endpoint ip						X								X2						X2_pc2					10.251.2.11
 	${mac1} = 									BASH get intf mac				h1						bond0
 	REST add endpoint mac						X								X1						X1_pc1					${mac1}
-	REST add endpoint portgroup attachment		X								X1						X1_pc1					${leaf1_pc1}				1001	
+	REST add endpoint portgroup attachment		X								X1						X1_pc1					${leaf0_pc1}				1001	
 	${mac2} = 									BASH get intf mac				h2						bond0
 	REST add endpoint mac						X								X2						X2_pc1					${mac2}
-	REST add endpoint portgroup attachment		X								X2						X2_pc1					${leaf1_pc1}				1002	
-	REST add portgroup to vns					X								X1						${leaf1_pc1}			1001
-	REST add portgroup to vns					X								X2						${leaf1_pc2}			1002
+	REST add endpoint portgroup attachment		X								X2						X2_pc1					${leaf0_pc2}				1002	
+	REST add portgroup to vns					X								X1						${leaf0_pc1}			1001
+	REST add portgroup to vns					X								X2						${leaf0_pc2}			1002
 	BASH add tag								h1								bond0					1001
 	BASH add tag								h2								bond0					1002
 	BASH ifup intf								h1								bond0.1001
@@ -376,12 +376,12 @@ L3 intra tenant across rack tagged with static endpoints
 	REST add endpoint ip						X								X3						X3_pc6					10.251.3.11
 	${mac1} = 									BASH get intf mac				h1						bond0
 	REST add endpoint mac						X								X1						X1_pc1					${mac1}
-	REST add endpoint portgroup attachment		X								X1						X1_pc1					${leaf1_pc1}				1001	
+	REST add endpoint portgroup attachment		X								X1						X1_pc1					${leaf0_pc1}				1001	
 	${mac2} = 									BASH get intf mac				h3						bond0
 	REST add endpoint mac						X								X3						X3_pc6					${mac2}
-	REST add endpoint portgroup attachment		X								X3						X3_pc6					${leaf0_pc1}				1003
-	REST add portgroup to vns					X								X1						${leaf1_pc1}			1001
-	REST add portgroup to vns					X								X3						${leaf0_pc1}			1003
+	REST add endpoint portgroup attachment		X								X3						X3_pc6					${leaf1_pc1}				1003
+	REST add portgroup to vns					X								X1						${leaf0_pc1}			1001
+	REST add portgroup to vns					X								X3						${leaf1_pc1}			1003
 	BASH add tag								h1								bond0					1001
 	BASH add tag								h3								bond0					1003
 	BASH ifup intf								h1								bond0.1001
