@@ -307,6 +307,7 @@ class Ixia(object):
     
     def ix_setup_traffic_streams_ethernet(self, mac1, mac2, frameType, frameSize, frameRate,
                                       frameMode, frameCount, flow, name, ethertype=None, vlan_id=None, vlan_cnt=1, vlan_step=None,
+                                      burst_count = None, burst_gap = None,
                                       line_rate = None, crc=None, src_ip = None, dst_ip = None, no_arp=False,
                                       protocol= None, src_port= None, dst_port = None,
                                       icmp_type = None, icmp_code = None, ip_type = 'ipv4'):
@@ -334,12 +335,30 @@ class Ixia(object):
         self._handle.setAttribute(trafficStream1, '-enabled', True)
         self._handle.setAttribute(trafficStream1 + '/highLevelStream:1/' + 'frameSize', '-type', frameType)
         self._handle.setAttribute(trafficStream1 + '/highLevelStream:1/' + 'frameSize', '-fixedSize', frameSize)
-        if line_rate is None:
-            self._handle.setAttribute(trafficStream1 + '/highLevelStream:1/' + 'frameRate', '-type', frameMode)
-            self._handle.setAttribute(trafficStream1 + '/highLevelStream:1/' + 'frameRate', '-rate', frameRate)
-        else:
+        
+        if line_rate is not None:
+            helpers.log('Adding Line Rate Value !')
             self._handle.setAttribute(trafficStream1 + '/highLevelStream:1/' + 'frameRate', '-rate', line_rate)
         
+        if burst_count is not None:
+            helpers.log('Adding BURST COUNT and BURST GAP !!!!')
+            self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:1/' + 'transmissionControl', '-interStreamGap', 0,
+                                           '-burstPacketCount', burst_count, '-type', 'custom',
+                                 '-interBurstGap', burst_gap, '-enableInterBurstGap', True)
+            self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:1/' + 'frameRate', '-rate', frameRate,
+                                           '-enforceMinimumInterPacketGap', 0)
+        
+        helpers.log('Adding Frame Rate !!!!')
+        self._handle.setAttribute(trafficStream1 + '/highLevelStream:1/' + 'frameRate', '-type', frameMode)
+        self._handle.setAttribute(trafficStream1 + '/highLevelStream:1/' + 'frameRate', '-rate', frameRate)
+            
+        if frameCount is not None:
+            self._handle.setAttribute(trafficStream1 + '/highLevelStream:1/' + 'transmissionControl', '-type',
+                                'fixedFrameCount')
+            self._handle.setAttribute(trafficStream1 + '/highLevelStream:1/' + 'transmissionControl',
+                                '-frameCount', frameCount)
+        
+                
         if crc is not None:
             self._handle.setAttribute(trafficStream1 + '/highLevelStream:1', '-crc', 'badCrc')
         if ethertype is not None:
@@ -423,11 +442,7 @@ class Ixia(object):
                 self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:1/stack:"icmpv2-3"/field:"icmpv2.message.codeValue-2"',
                                               '-countValue', 1, '-singleValue', icmp_code,
                                              '-optionalEnabled', 'true', '-auto', 'false')
-        if frameCount is not None:
-            self._handle.setAttribute(trafficStream1 + '/highLevelStream:1/' + 'transmissionControl', '-type',
-                                'fixedFrameCount')
-            self._handle.setAttribute(trafficStream1 + '/highLevelStream:1/' + 'transmissionControl',
-                                '-frameCount', frameCount)
+        
 
         if flow == 'bi-directional':
             helpers.log('Adding Another  ixia end point set for Bi Directional Traffic..')
@@ -438,17 +453,33 @@ class Ixia(object):
             
             self._handle.setAttribute(trafficStream1 + '/highLevelStream:2/' + 'frameSize', '-type', frameType)
             self._handle.setAttribute(trafficStream1 + '/highLevelStream:2/' + 'frameSize', '-fixedSize', frameSize)
-            if line_rate is None:
-                self._handle.setAttribute(trafficStream1 + '/highLevelStream:2/' + 'frameRate', '-type', frameMode)
-                self._handle.setAttribute(trafficStream1 + '/highLevelStream:2/' + 'frameRate', '-rate', frameRate)
-            else:
+            
+            if line_rate is not None:
+                helpers.log('Adding Line Rate Value !')
                 self._handle.setAttribute(trafficStream1 + '/highLevelStream:2/' + 'frameRate', '-rate', line_rate)
+        
+            if burst_count is not None:
+                helpers.log('Adding BURST COUNT and BURST GAP !!!!')
+                self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:2/' + 'transmissionControl', '-interStreamGap', 0,
+                                               '-burstPacketCount', burst_count, '-type', 'custom',
+                                     '-interBurstGap', burst_gap, '-enableInterBurstGap', True)
+                self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:2/' + 'frameRate', '-rate', frameRate,
+                                               '-enforceMinimumInterPacketGap', 0)
+            
+            helpers.log('Adding Frame Rate !!!!')
+            self._handle.setAttribute(trafficStream1 + '/highLevelStream:2/' + 'frameRate', '-type', frameMode)
+            self._handle.setAttribute(trafficStream1 + '/highLevelStream:2/' + 'frameRate', '-rate', frameRate)
             
             if frameCount is not None:
                 self._handle.setAttribute(trafficStream1 + '/highLevelStream:2/' + 'transmissionControl', '-type',
                                     'fixedFrameCount')
                 self._handle.setAttribute(trafficStream1 + '/highLevelStream:2/' + 'transmissionControl', '-frameCount',
                                     frameCount)
+            elif burst_count is not None:
+                helpers.log('Adding BURST COUNT and BURST GAP !!!!')
+                self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:2/' + 'transmissionControl', '-interStreamGap ', 0,
+                                               '-burstPacketCount ', burst_count, '-type', 'custom ', '-minGapBytes', 12,
+                                     '-interBurstGap ', burst_gap, '-enableInterBurstGap ', True)
             if ethertype is not None:
                 self._handle.setAttribute(trafficStream1 + '/highLevelStream:2/stack:"ethernet-1"/field:"ethernet.header.etherType-3"',
                                           '-auto', False)
@@ -556,6 +587,8 @@ class Ixia(object):
         ethertype = kwargs.get('ethertype', None)
         vlan_id = kwargs.get('vlan_id', None)
         line_rate = kwargs.get('line_rate', None)
+        burst_count = kwargs.get('burst_count', None)
+        burst_gap = kwargs.get('burst_gap', None)
         if vlan_id is not None:
             ethertype = '8100'
         crc = kwargs.get('crc', None)
@@ -667,6 +700,7 @@ class Ixia(object):
         traffic_stream = self.ix_setup_traffic_streams_ethernet(mac_devices[0], mac_devices[1],
                                                        frame_type, self._frame_size, frame_rate, frame_mode,
                                                        frame_cnt, stream_flow, name, ethertype, vlan_id, vlan_cnt = vlan_cnt, vlan_step = vlan_step,
+                                                       burst_count = burst_count, burst_gap = burst_gap,
                                                        crc = crc, no_arp = no_arp, line_rate = line_rate)
         helpers.log('Created Traffic Stream : %s' % traffic_stream)
         self._traffic_stream[name] = traffic_stream
@@ -751,6 +785,8 @@ class Ixia(object):
         vlan_step = kwargs.get('vlan_step', 1)
         line_rate = kwargs.get('line_rate', None)
         protocol = kwargs.get('protocol', None)
+        burst_count = kwargs.get('burst_count', None)
+        burst_gap = kwargs.get('burst_gap', None)
         
         crc = kwargs.get('crc', None)
         ip_type = 'ipv4'
@@ -860,6 +896,7 @@ class Ixia(object):
                                                        frame_type, self._frame_size, frame_rate, frame_mode,
                                                        frame_cnt, stream_flow, name, vlan_id = vlan_id, crc = crc, src_ip = src_ip, dst_ip = dst_ip,
                                                        protocol = protocol, icmp_type = icmp_type, icmp_code = icmp_code, vlan_cnt = vlan_cnt, vlan_step = vlan_step,
+                                                       burst_count = burst_count, burst_gap = burst_gap,
                                                        src_port = src_port, dst_port = dst_port, no_arp = no_arp, ethertype = ethertype, line_rate = line_rate)
             
             traffic_stream1.append(traffic_stream)
@@ -872,6 +909,7 @@ class Ixia(object):
             self._started_hosts = True
             traffic_item = self.ix_setup_traffic_streams_ethernet(ip_devices[0], ip_devices[1], frame_type, self._frame_size, frame_rate, frame_mode,
                                                          frame_cnt, stream_flow, name, vlan_id = vlan_id, crc = crc, vlan_cnt = vlan_cnt, vlan_step = vlan_step,
+                                                         burst_count = burst_count, burst_gap = burst_gap,
                                                          protocol= protocol, icmp_type = icmp_type, icmp_code = icmp_code, 
                                                          src_port = src_port, dst_port = dst_port, ethertype = ethertype, ip_type = ip_type, line_rate = line_rate)
             traffic_stream1.append(traffic_item)
