@@ -987,18 +987,18 @@ add fabric switch
 #	CLI add controller								s4							${bsn_ctrl1}
 #	CLI add controller								s4							${bsn_ctrl2}
 
-	CLI delete controller							s1							10.192.99.105
-	CLI delete controller							s1							10.192.99.106
-	CLI delete controller							s2							10.192.99.105
-	CLI delete controller							s2							10.192.99.106
-	CLI delete controller							s3							10.192.99.105
-	CLI delete controller							s3							10.192.99.106
-	CLI delete controller							s4							10.192.99.105
-	CLI delete controller							s4							10.192.99.106
-	CLI delete controller							s5							10.192.99.105
-	CLI delete controller							s5							10.192.99.106
-	CLI delete controller							s6							10.192.99.105
-	CLI delete controller							s6							10.192.99.106
+#	CLI delete controller							s1							10.192.99.105
+#	CLI delete controller							s1							10.192.99.106
+#	CLI delete controller							s2							10.192.99.105
+#	CLI delete controller							s2							10.192.99.106
+#	CLI delete controller							s3							10.192.99.105
+#	CLI delete controller							s3							10.192.99.106
+#	CLI delete controller							s4							10.192.99.105
+#	CLI delete controller							s4							10.192.99.106
+#	CLI delete controller							s5							10.192.99.105
+#	CLI delete controller							s5							10.192.99.106
+#	CLI delete controller							s6							10.192.99.105
+#	CLI delete controller							s6							10.192.99.106
 	
 
 	${result} = 									CLI verify controller		s1							c1		
