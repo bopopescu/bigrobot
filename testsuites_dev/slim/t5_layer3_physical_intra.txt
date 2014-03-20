@@ -11,6 +11,7 @@ Library         keywords/T5.py
 Library         keywords/T5L3.py
 Library         keywords_dev/animesh/BsnCommonShow.py
 Library         keywords_dev/slim/SwitchLight.py
+Library			autobot/helpers/__init__.py
 Resource		testsuites_dev/slim/t5_layer3_physical_intra_variables.txt
 Resource		testsuites/T5/t5_dualleaf_three_rack_physical_resource.txt
 
@@ -18,86 +19,87 @@ Resource		testsuites/T5/t5_dualleaf_three_rack_physical_resource.txt
 * Test Cases
 Intra tenant L3 untagged traffic with dynamic endpoints same rack
 	L3 intra tenant same rack untagged with dynamic endpoints
-#	[Tags]							skipped			smoke				sanity			
+	[Tags]							skipped			smoke				sanity			
 
 Intra tenant L3 untagged traffic with dynamic endpoints across rack
 	L3 intra tenant across rack untagged with dynamic endpoints
-#	[Tags]							skipped			smoke				sanity	
+	[Tags]							skipped			smoke				sanity	
 
 Intra tenant L3 tagged traffic with dynamic endpoints same rack
 	L3 intra tenant same rack tagged with dynamic endpoints
-#	[Tags]							skipped			smoke				sanity			
+	[Tags]							skipped			smoke				sanity			
 
 Intra tenant L3 tagged traffic with dynamic endpoints across rack
 	L3 intra tenant across rack tagged with dynamic endpoints
-#	[Tags]							skipped			smoke				sanity	
+	[Tags]							skipped			smoke				sanity	
 
 Intra tenant L3 untagged traffic with static endpoints same rack
 	L3 intra tenant same rack untagged with static endpoints
-#	[Tags]							skipped			smoke				sanity			
+	[Tags]							skipped			smoke				sanity			
 
 Intra tenant L3 untagged traffic with static endpoints across rack
 	L3 intra tenant across rack untagged with static endpoints
-#	[Tags]							skipped			smoke				sanity	
+	[Tags]							skipped			smoke				sanity	
 
 Intra tenant L3 tagged traffic with static endpoints same rack
 	L3 intra tenant same rack tagged with static endpoints
-#	[Tags]							skipped			smoke				sanity			
+	[Tags]							skipped			smoke				sanity			
 
 Intra tenant L3 tagged traffic with static endpoints across rack
 	L3 intra tenant across rack tagged with static endpoints
-#	[Tags]							skipped			smoke				sanity	
+	[Tags]							skipped			smoke				sanity	
 
 Intra tenant dhcp relay 
 	L3 intra tenant dhcp relay on same rack
-#	[Tags]							skipped			smoke				sanity	
+	[Tags]							skipped			smoke				sanity	
 	
 Intra tenant dhcp relay with circuit id
 	L3 intra tenant dhcp relay with circuit id on same rack
-#	[Tags]							skipped			smoke				sanity	
+	[Tags]							skipped			smoke				sanity	
 
 Intra tenant dhcp relay across rack
 	L3 intra tenant dhcp relay across rack
-#	[Tags]							skipped			smoke				sanity	
+	[Tags]							skipped			smoke				sanity	
 	
 Intra tenant dhcp relay with circuit id across rack
 	L3 intra tenant dhcp relay with circuit id across rack
-#	[Tags]							skipped			smoke				sanity	
+	[Tags]							skipped			smoke				sanity	
 
 Delete and Add dhcp relay
 	L3 dhcp request without dhcp relay enabled
-#	[Tags]							skipped			sanity	
+	[Tags]							skipped			sanity	
 
 Add and delete untagged endpoints with existing host
 	L3 add and delete untagged endpoints with existing host
-#	[Tags]							skipped			sanity	
+	[Tags]							skipped			sanity	
 	
 Add and delete tagged endpoints with existing host
 	L3 add and delete tagged endpoints with existing host
-#	[Tags]							skipped			sanity	
+	[Tags]							skipped			sanity	
 		
 Change L3 endpoint from untagged to tagged and back		
 	L3 change endpoint from untagged to tagged and back	
-#	[Tags]							skipped			sanity	
+	[Tags]							skipped			sanity	
 
 Verify L3 endpoint aging
 	Check L3 endpoint aging 
-#	[Tags]							skipped			sanity	
+	[Tags]							skipped			sanity	
 	
 Verify L3 ttl 1 is not being forwarded
 	Check L3 ttl 1 is dropped
-#	[Tags]							skipped			sanity			
+	[Tags]							skipped			sanity			
 
 Change router vns ip
 	Change router ip address
-#	[Tags]							skipped			sanity			
+	[Tags]							skipped			sanity			
 
 Delete and add router vns ip
 	Delete and add router vns ip 
-#	[Tags]							skipped			sanity			
+	[Tags]							skipped			sanity			
 			
-	
-
+Scale 4k VNS
+	Scale 4k VNS in one tenant
+#	[Tags]							skipped			scale			
 	
 * Keywords
 L3 intra tenant same rack untagged with dynamic endpoints
@@ -1114,6 +1116,19 @@ Set 32bit full mask on vns router ip
 	${loss} = 									BASH ping						h3						10.251.2.11 			count=10
 	Should Be True  							${loss} == 0	
 
+
+Scale 4k VNS in one tenant
+	REST delete tenant							X
+	REST delete tenant							Y
+	REST delete tenant							Z
+	REST add tenant								A
+	${ipAddr} = 								10.0.0.1
+	: FOR 										${i}							IN RANGE 				1	1000
+		REST add vns							A								A-${i}
+		REST add vns ip							A								A-${i}					${ipAddr}			24
+		${ipAddr} =								get next address				ipv4					${ipAddr}			0.0.1.0			
+		
+		
 
 initialize host
 	BASH delete tag								h1								bond0.1001				soft_error=${true}
