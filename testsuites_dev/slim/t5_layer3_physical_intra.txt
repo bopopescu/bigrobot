@@ -435,7 +435,7 @@ L3 intra tenant dhcp relay on same rack
 	REST add dhcp relay							Y								Y3						10.252.1.9
 	REST enable dhcp relay						Y								Y3	
 	sleep										5
-	${h1_ip} = 									BASH get intf ipv4				h1						
+	${h1_ip} = 									BASH get intf ipv4				h1						bond0				
 	Should Be Equal As Strings					${h1_ip}						10.252.1.9	
 	${h1_mac} =									BASH get intf mac				h1						bond0
 	###### another hac to overcome jira PAN 726
