@@ -1,9 +1,9 @@
 * Setting
 Documentation   T5 Basic L3 two spine three leaf rack with dual-tor Test Suite
 Suite Setup     T5 base suite setup
-#Suite Teardown  T5 base suite teardown
+Suite Teardown  T5 base suite teardown
 Test Setup      setup topology
-#Test Teardown   teardown topology
+Test Teardown   teardown topology
 Force Tags      T5 Sanity
 Library         keywords/BsnCommon.py
 Library         keywords_dev/slim/Host.py
@@ -22,75 +22,79 @@ Intra tenant L3 untagged traffic with dynamic endpoints same rack
 
 Intra tenant L3 untagged traffic with dynamic endpoints across rack
 	L3 intra tenant across rack untagged with dynamic endpoints
-	[Tags]							skipped			smoke				sanity	
+#	[Tags]							skipped			smoke				sanity	
 
 Intra tenant L3 tagged traffic with dynamic endpoints same rack
 	L3 intra tenant same rack tagged with dynamic endpoints
-	[Tags]							skipped			smoke				sanity			
+#	[Tags]							skipped			smoke				sanity			
 
 Intra tenant L3 tagged traffic with dynamic endpoints across rack
 	L3 intra tenant across rack tagged with dynamic endpoints
-	[Tags]							skipped			smoke				sanity	
+#	[Tags]							skipped			smoke				sanity	
 
 Intra tenant L3 untagged traffic with static endpoints same rack
 	L3 intra tenant same rack untagged with static endpoints
-	[Tags]							skipped			smoke				sanity			
+#	[Tags]							skipped			smoke				sanity			
 
 Intra tenant L3 untagged traffic with static endpoints across rack
 	L3 intra tenant across rack untagged with static endpoints
-	[Tags]							skipped			smoke				sanity	
+#	[Tags]							skipped			smoke				sanity	
 
 Intra tenant L3 tagged traffic with static endpoints same rack
 	L3 intra tenant same rack tagged with static endpoints
-	[Tags]							skipped			smoke				sanity			
+#	[Tags]							skipped			smoke				sanity			
 
 Intra tenant L3 tagged traffic with static endpoints across rack
 	L3 intra tenant across rack tagged with static endpoints
-	[Tags]							skipped			smoke				sanity	
+#	[Tags]							skipped			smoke				sanity	
 
 Intra tenant dhcp relay 
 	L3 intra tenant dhcp relay on same rack
-	[Tags]							skipped			smoke				sanity	
+#	[Tags]							skipped			smoke				sanity	
 	
 Intra tenant dhcp relay with circuit id
 	L3 intra tenant dhcp relay with circuit id on same rack
-	[Tags]							skipped			smoke				sanity	
+#	[Tags]							skipped			smoke				sanity	
 
 Intra tenant dhcp relay across rack
 	L3 intra tenant dhcp relay across rack
-	[Tags]							skipped			smoke				sanity	
+#	[Tags]							skipped			smoke				sanity	
 	
 Intra tenant dhcp relay with circuit id across rack
 	L3 intra tenant dhcp relay with circuit id across rack
-	[Tags]							skipped			smoke				sanity	
+#	[Tags]							skipped			smoke				sanity	
+
+Delete and Add dhcp relay
+	L3 dhcp request without dhcp relay enabled
+#	[Tags]							skipped			sanity	
 
 Add and delete untagged endpoints with existing host
 	L3 add and delete untagged endpoints with existing host
-	[Tags]							skipped			sanity	
+#	[Tags]							skipped			sanity	
 	
 Add and delete tagged endpoints with existing host
 	L3 add and delete tagged endpoints with existing host
-	[Tags]							skipped			sanity	
+#	[Tags]							skipped			sanity	
 		
 Change L3 endpoint from untagged to tagged and back		
 	L3 change endpoint from untagged to tagged and back	
-	[Tags]							skipped			sanity	
+#	[Tags]							skipped			sanity	
 
 Verify L3 endpoint aging
 	Check L3 endpoint aging 
-	[Tags]							skipped			sanity	
+#	[Tags]							skipped			sanity	
 	
 Verify L3 ttl 1 is not being forwarded
 	Check L3 ttl 1 is dropped
-	[Tags]							skipped			sanity			
+#	[Tags]							skipped			sanity			
 
 Change router vns ip
 	Change router ip address
-	[Tags]							skipped			sanity			
+#	[Tags]							skipped			sanity			
 
 Delete and add router vns ip
 	Delete and add router vns ip 
-	[Tags]							skipped			sanity			
+#	[Tags]							skipped			sanity			
 			
 	
 
@@ -707,7 +711,9 @@ L3 dhcp request without dhcp relay enabled
 	sleep										5
 	${ipAddr} = 								BASH renew dhcpv4 address		h5						bond0
 	Should Not Be Empty							${ipAddr}
-
+	BASH ping									h1								${ipAddr} 				count=10
+	${loss} = 									BASH ping						h1						${ipAddr} 			count=10
+	Should Be True  							${loss} == 0	
 
 
 L3 add and delete untagged endpoints with existing host
