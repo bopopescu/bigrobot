@@ -20,7 +20,7 @@ ${dst_mac_step}  00:00:00:01:00:00
 ${frame_rate}  1000
 ${frame_cnt}  50000
 ${frame_size}  160
-${sleep_time}  10
+${sleep_time}  15
 ${vlan_id}  199
 ${line_rate}  100
 ${stream_name}  a_b_flow
@@ -305,11 +305,11 @@ Bi-Directional L3 Traffic with multiple vlan_ids
     ${report}=             fetch port stats  stream=${stream}
     verify results  transmitted_frames  received_frames  ${stream}  ${stream_name}
     clear stats
-    [Tags]  traffic  sanity  bigtap
+    [Tags]  traffic  sanity  bigtap  run
     
 Bi-Driectional L3 Traffic with vlan_id and crc
 # Basic test case with all default values and etherytype 8100, with vlan id
-    ${stream}=             L3 add  name=${stream_name}  flow=a<->b  ethertype=8100  vlan_id=${vlan_id}  frame_size=${frame_size}  crc=True  src_mac=${src_mac}  dst_mac=${dst_mac}
+    ${stream}=             L3 add  name=${stream_name}  flow=a<->b  ethertype=8100  vlan_id=${vlan_id}  frame_size=${frame_size}  crc=True  src_mac=${src_mac}  dst_mac=${dst_mac}  no_arp=True
     clear stats
     start traffic  ${stream}
     sleep                  ${sleep_time}
@@ -321,7 +321,7 @@ Bi-Driectional L3 Traffic with vlan_id and crc
 
 Bi-Directional L3 Traffic ICMP Echo
 # Basic test case with all default values and ICMP type and value
-    ${stream}=             L3 add  name=${stream_name}  flow=a<->b  protocol=ICMP  icmp_type=8  icmp_code=0  src_mac=${src_mac}  dst_mac=${dst_mac}
+    ${stream}=             L3 add  name=${stream_name}  flow=a<->b  protocol=ICMP  icmp_type=8  icmp_code=0  src_mac=${src_mac}  dst_mac=${dst_mac}  no_arp=True
     clear stats
     start traffic  ${stream}
     sleep                  ${sleep_time}
@@ -329,7 +329,7 @@ Bi-Directional L3 Traffic ICMP Echo
     sleep                  ${sleep_time}
     ${report}=             fetch port stats  stream=${stream}
     verify results  transmitted_frames  received_frames  ${stream}  ${stream_name}
-    [Tags]  traffic  sanity  bigtap
+    [Tags]  traffic  sanity  bigtap  run
 
 Bi-Driectional L3 Traffic with differnt ethertypes and streams
 # Basic test case with all default values and etherytype 8100, with vlan id

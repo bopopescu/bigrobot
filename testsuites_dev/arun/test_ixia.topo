@@ -7,6 +7,6 @@ tg1:
   #set_init_ping: false
   ports:
     a:
-      name: 4/31
+      name: 2/7
     b:
-      name: 4/32
+      name: 2/8
