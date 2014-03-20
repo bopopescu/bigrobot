@@ -1767,4 +1767,13 @@ class SwitchLight(object):
             helpers.test_failure("Could not execute command. Please check log for errors")
             return False
                 
-        
+    def cli_delete_dpid(self, node):
+        try:
+            t = test.Test()
+            s1 = t.switch(node)
+            cli_input = "no datapath id "
+            s1.config(cli_input)
+            return True
+        except:
+            helpers.test_failure("Could not execute command. Please check log for errors")
+            return False        
