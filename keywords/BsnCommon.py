@@ -20,6 +20,10 @@ import subprocess
 import math
 import sys
 import re
+import socket
+import paramiko
+from paramiko.client import SSHClient
+from paramiko.ssh_exception import BadHostKeyException, AuthenticationException, SSHException
 from Exscript.protocols import SSH2
 from Exscript import Account, Host
 
@@ -660,9 +664,9 @@ class BsnCommon(object):
 
     def rest_show_snmp(self, node="master"):
         '''Execute CLI Command "show snmp"
-        
+
             Input: N/A
-            
+
             Returns: dictionary of SNMP related values
         '''
         t = test.Test()
@@ -721,9 +725,9 @@ class BsnCommon(object):
 
     def rest_show_snmp_host(self, node="master"):
         '''Execute CLI Command "show snmp"
-        
+
             Input: N/A
-            
+
             Returns: dictionary of SNMP related values
         '''
         t = test.Test()
@@ -769,10 +773,10 @@ class BsnCommon(object):
         '''
             Objective:
             - Add snmp-server community, contact, location etc
-        
-            Input: 
+
+            Input:
                 `keyword`       DPID of the Switch
-            
+
             Returns: True if the interface is up, false otherwise
         '''
         t = test.Test()
@@ -856,11 +860,11 @@ class BsnCommon(object):
         '''
             Objective:
             - Add snmp-server host
-        
-            Input: 
+
+            Input:
                 `host`       DPID of the Switch
                 `udp_port`    UDP Port
-            
+
             Returns: True if the interface is up, false otherwise
         '''
         t = test.Test()
@@ -919,11 +923,11 @@ class BsnCommon(object):
         '''
             Objective:
             - Delete snmp-server host
-        
-            Input: 
+
+            Input:
                 `host`       DPID of the Switch
                 `udp_port`    UDP Port
-            
+
             Returns: True if the interface is up, false otherwise
         '''
         t = test.Test()
@@ -982,11 +986,11 @@ class BsnCommon(object):
         '''
             Objective:
             - Open firewall port to allow UDP port
-            
-            Input: 
+
+            Input:
                 `udp_port`    UDP Port
-            
-            Returns: True if the configuration is successful, false otherwise            
+
+            Returns: True if the configuration is successful, false otherwise
         '''
         t = test.Test()
         n = t.node(node)
@@ -1072,11 +1076,11 @@ class BsnCommon(object):
         '''
             Objective:
             - Open firewall port to allow UDP port
-            
-            Input: 
+
+            Input:
                 `udp_port`    UDP Port
-            
-            Returns: True if the configuration is successful, false otherwise            
+
+            Returns: True if the configuration is successful, false otherwise
         '''
         t = test.Test()
         n = t.node(node)
@@ -1300,12 +1304,12 @@ class BsnCommon(object):
 
     def restart_process_on_controller(self, process_name, controller_role):
         '''Restart a process on controller
-        
+
             Input:
                processName        Name of process to be restarted
                controller_role        Where to execute the command. Accepted values are `Master` and `Slave`
-           
-           Return Value:  True if the configuration is successful, false otherwise 
+
+           Return Value:  True if the configuration is successful, false otherwise
         '''
         try:
             t = test.Test()
@@ -1421,3 +1425,74 @@ class BsnCommon(object):
         t = test.Test()
         n = t.node(node)
         return n.name()
+
+    def get_node_id(self, node):
+        """
+        Get the node-id of a node.
+
+        Input: logical node name, e.g., 'c1', 'master', 'slave', etc.
+
+        Return Value:  actual node-id for BVS platform, else None
+        """
+        t = test.Test()
+        n = t.node(node)
+        return n.node_id()
+
+    def get_node_ip(self, node):
+        """
+        Get the IP address of a node
+
+        Input: logical node name, e.g., 'c1', 'master', 'slave', etc.
+
+        Return Value:  actual IP address
+        """
+        t = test.Test()
+        n = t.node(node)
+        return n.node_id()
+
+    def verify_ssh_connection(self, node, sleep=10, iterations=5,
+                              user='dummy', password='dummy'):
+        """
+        Test the SSH connection to see whether it is working.
+        SSH authentication is considered a success (it may be because we
+        provided a bad user name or password). SSH time out and other
+        exceptions will result in failure.
+
+        Inputs:
+          - node: 'c1', 's1', 'h1', 'master', etc.
+          - sleep: number of seconds to sleep before retry (on failure). Default is 10.
+          - iterations: number of retries (on failure). Default is 5.
+          - user: user name. Default is 'dummy' which will result in authen failure, but that's okay.
+          - password: Default is 'dummy' which will result in authen failure, but that's okay.
+
+        Return Value:
+          - True on success
+          - False on failure
+        """
+        t = test.Test()
+        n = t.node(node)
+        ip = n.ip()
+
+        iterations = int(iterations)
+        status = False
+
+        while not status and iterations > 0:
+            try:
+                ssh = SSHClient()
+                ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+                ssh.connect(ip, username=user, password=password, timeout=5)
+            except AuthenticationException as e:
+                print("SSH error: %s But that's okay." % e)
+                status = True
+            except (BadHostKeyException, SSHException, socket.error) as e:
+                print("SSH error: %s" % e)
+            else:
+                status = True
+
+            iterations -= 1
+            if not status and iterations > 0:
+                helpers.sleep(sleep)
+
+        return status
+
+

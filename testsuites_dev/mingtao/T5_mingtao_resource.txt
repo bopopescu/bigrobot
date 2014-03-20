@@ -1,0 +1,77 @@
+* Keywords
+
+T5 platform case setup
+    sleep    5
+
+T5 platform case teardown
+   sleep  5
+
+
+
+upgrade   [Arguments]   ${node}   ${c_role}   ${e_role}
+ 	cli_copy_running_config_to_file    ${node}    config_try
+	${result}=  rest_get_node_role     ${node} 
+	Should Be Equal    ${result}     ${c_role}
+ 	${A}=   cli_take_snapshot   ${node}  run_config=yes	
+  	${C}=  cli_take_snapshot    ${node}  filepath=/home/admin	
+  		 	
+	copy_pkg_from_jenkins    ${node}
+	${result}= 	cli_upgrade_stage    ${node}
+ 	Should be True     ${result}  
+	${result}= 	cli_upgrade_launch    ${node}
+ 	Should be True     ${result}  
+ 	
+ 	sleep  180
+ 	${result}=  rest_get_node_role   ${node}
+	Should Be Equal    ${result}     ${e_role}
+ 	${B}=   cli_take_snapshot    ${node}   run_config=yes	
+  	Should Be Equal    ${A}    ${B}	 	
+ 	${D}=  cli_take_snapshot    ${node}   filepath=/home/admin		
+  	Should Be Equal    ${C}    ${D}	 		
+
+ 
+
+Test whoami ping reauth with admin
+	log  cli whoami with admin
+	test cli whoami     admin   admin
+	log  cli ping
+	${lossA}=   cli_Ping  master  dest_ip=qa-kvm-32
+	Should Be Equal As Integers  ${lossA}   0
+    log  cli reauth with admin
+    cli_reauth
+
+Test whoami ping reauth with non admin
+    log  cli reauth with non admin user1
+    create user   user1   adminadmin  group1
+    cli_reauth   user1   adminadmin
+	log  cli whoami with non admin
+	test cli whoami    user1   group1
+ 	log  cli ping
+	${lossA}=   cli_Ping  master  dest_ip=qa-kvm-32
+	Should Be Equal As Integers  ${lossA}   0
+    cli_reauth   admin   adminadmin	
+	cli_delete_user   user1   
+ 
+
+test cli whoami    [Arguments]    ${user}     ${group}
+	 ${result}=  cli_whoami
+	 Should Be Equal    ${result[0]}    ${user}
+	 Should Be Equal    ${result[1]}    ${group}
+
+
+reboot node and verify it role
+	cluster_node_reboot    True    
+ 
+
+walk cli command 
+#	cli_exec_walk    file_name=cli_exec_walk
+#	cli_enable_walk    file_name=cli_enable_walk	
+#	cli_config_walk    file_name=cli_config_walk	
+
+     
+ 
+create user    [Arguments]    ${user}     ${passwd}   ${group}
+	cli_add_user 	  ${user}     ${passwd}   	
+ 	cli_group_add_users    ${group}    ${user}
+  
+	
