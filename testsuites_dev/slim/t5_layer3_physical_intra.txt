@@ -1,9 +1,9 @@
 * Setting
 Documentation   T5 Basic L3 two spine three leaf rack with dual-tor Test Suite
-Suite Setup     base suite setup
-Suite Teardown  base suite teardown
+Suite Setup     T5 base suite setup
+#Suite Teardown  T5 base suite teardown
 Test Setup      setup topology
-Test Teardown   teardown topology
+#Test Teardown   teardown topology
 Force Tags      T5 Sanity
 Library         keywords/BsnCommon.py
 Library         keywords_dev/slim/Host.py
@@ -12,6 +12,7 @@ Library         keywords/T5L3.py
 Library         keywords_dev/animesh/BsnCommonShow.py
 Library         keywords_dev/slim/SwitchLight.py
 Resource		testsuites_dev/slim/t5_layer3_physical_intra_variables.txt
+Resource		testsuites/t5_dualleaf_three_rack_physical_resource.txt
 
 
 * Test Cases
@@ -21,75 +22,75 @@ Intra tenant L3 untagged traffic with dynamic endpoints same rack
 
 Intra tenant L3 untagged traffic with dynamic endpoints across rack
 	L3 intra tenant across rack untagged with dynamic endpoints
-#	[Tags]							skipped			smoke				sanity	
+	[Tags]							skipped			smoke				sanity	
 
 Intra tenant L3 tagged traffic with dynamic endpoints same rack
 	L3 intra tenant same rack tagged with dynamic endpoints
-#	[Tags]							skipped			smoke				sanity			
+	[Tags]							skipped			smoke				sanity			
 
 Intra tenant L3 tagged traffic with dynamic endpoints across rack
 	L3 intra tenant across rack tagged with dynamic endpoints
-#	[Tags]							skipped			smoke				sanity	
+	[Tags]							skipped			smoke				sanity	
 
 Intra tenant L3 untagged traffic with static endpoints same rack
 	L3 intra tenant same rack untagged with static endpoints
-#	[Tags]							skipped			smoke				sanity			
+	[Tags]							skipped			smoke				sanity			
 
 Intra tenant L3 untagged traffic with static endpoints across rack
 	L3 intra tenant across rack untagged with static endpoints
-#	[Tags]							skipped			smoke				sanity	
+	[Tags]							skipped			smoke				sanity	
 
 Intra tenant L3 tagged traffic with static endpoints same rack
 	L3 intra tenant same rack tagged with static endpoints
-#	[Tags]							skipped			smoke				sanity			
+	[Tags]							skipped			smoke				sanity			
 
 Intra tenant L3 tagged traffic with static endpoints across rack
 	L3 intra tenant across rack tagged with static endpoints
-#	[Tags]							skipped			smoke				sanity	
+	[Tags]							skipped			smoke				sanity	
 
 Intra tenant dhcp relay 
 	L3 intra tenant dhcp relay on same rack
-#	[Tags]							skipped			smoke				sanity	
+	[Tags]							skipped			smoke				sanity	
 	
 Intra tenant dhcp relay with circuit id
 	L3 intra tenant dhcp relay with circuit id on same rack
-#	[Tags]							skipped			smoke				sanity	
+	[Tags]							skipped			smoke				sanity	
 
 Intra tenant dhcp relay across rack
 	L3 intra tenant dhcp relay across rack
-#	[Tags]							skipped			smoke				sanity	
+	[Tags]							skipped			smoke				sanity	
 	
 Intra tenant dhcp relay with circuit id across rack
 	L3 intra tenant dhcp relay with circuit id across rack
-#	[Tags]							skipped			smoke				sanity	
+	[Tags]							skipped			smoke				sanity	
 
 Add and delete untagged endpoints with existing host
 	L3 add and delete untagged endpoints with existing host
-#	[Tags]							skipped			sanity	
+	[Tags]							skipped			sanity	
 	
 Add and delete tagged endpoints with existing host
 	L3 add and delete tagged endpoints with existing host
-#	[Tags]							skipped			sanity	
+	[Tags]							skipped			sanity	
 		
 Change L3 endpoint from untagged to tagged and back		
 	L3 change endpoint from untagged to tagged and back	
-#	[Tags]							skipped			sanity	
+	[Tags]							skipped			sanity	
 
 Verify L3 endpoint aging
 	Check L3 endpoint aging 
-#	[Tags]							skipped			sanity	
+	[Tags]							skipped			sanity	
 	
 Verify L3 ttl 1 is not being forwarded
 	Check L3 ttl 1 is dropped
-#	[Tags]							skipped			sanity			
+	[Tags]							skipped			sanity			
 
 Change router vns ip
 	Change router ip address
-#	[Tags]							skipped			sanity			
+	[Tags]							skipped			sanity			
 
 Delete and add router vns ip
 	Delete and add router vns ip 
-#	[Tags]							skipped			sanity			
+	[Tags]							skipped			sanity			
 			
 	
 
@@ -1117,39 +1118,10 @@ teardown topology
 	initialize host
 	
 
-add fabric switch
-	CLI add dpid									s1							${spine0_dpid}
-	CLI add dpid									s2							${spine1_dpid}
-	CLI add dpid									s3							${leaf0a_dpid}
-	CLI add dpid									s4							${leaf0b_dpid}
-	CLI add dpid									s5							${leaf1a_dpid}
-	CLI add dpid									s6							${leaf1b_dpid}
-	CLI add dpid									s7							${leaf2a_dpid}
-	CLI add dpid									s8							${leaf2b_dpid}
-	
-#	CLI add controller								s1							${bsn_ctrl1}
-#	CLI add controller								s1							${bsn_ctrl2}
-#	CLI add controller								s2							${bsn_ctrl1}
-#	CLI add controller								s2							${bsn_ctrl2}
-#	CLI add controller								s3							${bsn_ctrl1}
-#	CLI add controller								s3							${bsn_ctrl2}
-#	CLI add controller								s4							${bsn_ctrl1}
-#	CLI add controller								s4							${bsn_ctrl2}
-
-#	CLI delete controller							s1							10.192.99.105
-#	CLI delete controller							s1							10.192.99.106
-#	CLI delete controller							s2							10.192.99.105
-#	CLI delete controller							s2							10.192.99.106
-#	CLI delete controller							s3							10.192.99.105
-#	CLI delete controller							s3							10.192.99.106
-#	CLI delete controller							s4							10.192.99.105
-#	CLI delete controller							s4							10.192.99.106
-#	CLI delete controller							s5							10.192.99.105
-#	CLI delete controller							s5							10.192.99.106
-#	CLI delete controller							s6							10.192.99.105
-#	CLI delete controller							s6							10.192.99.106
-	
-
+T5 base suite setup
+	base suite setup
+	add fabric switch
+	sleep 											5
 	${result} = 									CLI verify controller		s1							c1		
 	Should Be True									${result}
 	${result} = 									CLI verify controller   	s1							c2
@@ -1174,49 +1146,49 @@ add fabric switch
 	Should Be True									${result}
 	${result} = 									CLI verify controller       s6							c2
 	Should Be True									${result}		
-  	REST add switch  								spine0
-  	REST add dpid  									spine0  					${spine0_dpid}
-  	REST add fabric role  							spine0  					spine
-  	REST add switch  								spine1	
-  	REST add dpid  									spine1  					${spine1_dpid}
-  	REST add fabric role						  	spine1  					spine
-  	REST add switch  								leaf0a
-  	REST add dpid  									leaf0a  					${leaf0a_dpid}
-  	REST add fabric role  							leaf0a  					leaf
-  	REST add switch  								leaf0b
-  	REST add dpid  									leaf0b  					${leaf0b_dpid}
-  	REST add fabric role  							leaf0b  					leaf
-  	REST add switch  								leaf1a
-  	REST add dpid  									leaf1a  					${leaf1a_dpid}
-  	REST add fabric role  							leaf1a  					leaf
- 	REST add switch  								leaf1b
-  	REST add dpid  									leaf1b  					${leaf1b_dpid}
-  	REST add fabric role  							leaf1b  					leaf
-  	REST add switch  								leaf2a
-  	REST add dpid  									leaf2a  					${leaf2a_dpid}
-  	REST add fabric role  							leaf2a  					leaf
- 	REST add switch  								leaf2b
-  	REST add dpid  									leaf2b  					${leaf2b_dpid}
-  	REST add fabric role  							leaf2b  					leaf  	
-	REST add portgroup								${leaf0_pc1}
-	REST add portgroup								${leaf0_pc2}
-#	REST add portgroup								${leaf0_pc3}
-#	REST add portgroup								${leaf0_pc4}
-#	REST add portgroup								${leaf0_pc5}
-#	REST add portgroup								${leaf0_pc6}	
-	REST add portgroup								${leaf1_pc1}
-	REST add portgroup								${leaf1_pc2}
-#	REST add portgroup								${leaf1_pc3}
-#	REST add portgroup								${leaf1_pc4}
-	REST add portgroup								${leaf2_pc1}
-	REST add portgroup								${leaf2_pc2}
+  	# REST add switch  								spine0
+  	# REST add dpid  									spine0  					${spine0_dpid}
+  	# REST add fabric role  							spine0  					spine
+  	# REST add switch  								spine1	
+  	# REST add dpid  									spine1  					${spine1_dpid}
+  	# REST add fabric role						  	spine1  					spine
+  	# REST add switch  								leaf0a
+  	# REST add dpid  									leaf0a  					${leaf0a_dpid}
+  	# REST add fabric role  							leaf0a  					leaf
+  	# REST add switch  								leaf0b
+  	# REST add dpid  									leaf0b  					${leaf0b_dpid}
+  	# REST add fabric role  							leaf0b  					leaf
+  	# REST add switch  								leaf1a
+  	# REST add dpid  									leaf1a  					${leaf1a_dpid}
+  	# REST add fabric role  							leaf1a  					leaf
+ 	# REST add switch  								leaf1b
+  	# REST add dpid  									leaf1b  					${leaf1b_dpid}
+  	# REST add fabric role  							leaf1b  					leaf
+  	# REST add switch  								leaf2a
+  	# REST add dpid  									leaf2a  					${leaf2a_dpid}
+  	# REST add fabric role  							leaf2a  					leaf
+ 	# REST add switch  								leaf2b
+  	# REST add dpid  									leaf2b  					${leaf2b_dpid}
+  	# REST add fabric role  							leaf2b  					leaf  	
+	# REST add portgroup								${leaf0_pc1}
+	# REST add portgroup								${leaf0_pc2}
+	# REST add portgroup								${leaf0_pc3}
+	# REST add portgroup								${leaf0_pc4}
+	# REST add portgroup								${leaf0_pc5}
+	# REST add portgroup								${leaf0_pc6}	
+	# REST add portgroup								${leaf1_pc1}
+	# REST add portgroup								${leaf1_pc2}
+	# REST add portgroup								${leaf1_pc3}
+	# REST add portgroup								${leaf1_pc4}
+	# REST add portgroup								${leaf2_pc1}
+	# REST add portgroup								${leaf2_pc2}
 
-	REST add leaf group								leaf0a						leaf0
-	REST add leaf group								leaf0b						leaf0
-	REST add leaf group								leaf1a						leaf1
-	REST add leaf group								leaf1b						leaf1
-	REST add leaf group								leaf2a						leaf2
-	REST add leaf group								leaf2b						leaf2
+#	REST add leaf group								leaf0a						leaf0
+#	REST add leaf group								leaf0b						leaf0
+#	REST add leaf group								leaf1a						leaf1
+#	REST add leaf group								leaf1b						leaf1
+#	REST add leaf group								leaf2a						leaf2
+#	REST add leaf group								leaf2b						leaf2
 	
 	REST add interface to portgroup					leaf0a						${leaf0_pc1_intf1}					${leaf0_pc1}
 	REST add interface to portgroup					leaf0b						${leaf0_pc1_intf2}					${leaf0_pc1}
@@ -1243,22 +1215,10 @@ add fabric switch
 	REST add interface to portgroup					leaf2a						${leaf2_pc2_intf1}					${leaf2_pc2}
 	REST add interface to portgroup					leaf2b						${leaf2_pc2_intf2}					${leaf2_pc2}	
   
-delete fabric switch  
-	REST delete fabric switch  						spine0 
-	REST delete fabric switch  						spine1 
-	REST delete fabric switch  						leaf0a 
-	REST delete fabric switch  						leaf1a 
-	REST delete fabric switch  						leaf0b 
-	REST delete fabric switch  						leaf1b 
-	REST delete fabric switch  						leaf2b 
-	REST delete fabric switch  						leaf2b 
-	CLI delete dpid									s1
-	CLI delete dpid									s2
-	CLI delete dpid									s3
-	CLI delete dpid									s4
-	CLI delete dpid									s5
-	CLI delete dpid									s6
-	
+  
+T5 base suite teardown
+	delete fabric switch  
+
 
 	
   	
