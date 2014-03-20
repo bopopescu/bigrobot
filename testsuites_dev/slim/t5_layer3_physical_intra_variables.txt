@@ -67,4 +67,5 @@ ${leaf2_pc1_intf2}	ethernet47
 ${leaf2_pc2_intf1}	ethernet48
 ${leaf2_pc2_intf2}	ethernet48
 
+${ipAddr1}			10.0.0.1
 

@@ -1122,11 +1122,10 @@ Scale 4k VNS in one tenant
 	REST delete tenant							Y
 	REST delete tenant							Z
 	REST add tenant								A
-	${ipAddr} = 								10.0.0.1
 	: FOR 										${i}							IN RANGE 				1	1000
 		REST add vns							A								A-${i}
-		REST add vns ip							A								A-${i}					${ipAddr}			24
-		${ipAddr} =								get next address				ipv4					${ipAddr}			0.0.1.0			
+		REST add vns ip							A								A-${i}					${ipAddr1}			24
+		${ipAddr} =								get next address				ipv4					${ipAddr1}			0.0.1.0			
 		
 		
 
