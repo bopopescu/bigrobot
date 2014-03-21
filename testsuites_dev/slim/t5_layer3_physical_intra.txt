@@ -1165,6 +1165,8 @@ Change tagged host endpoint IP address
 	__init__.sleep										5
 	${result} =									REST show endpoints mac			${mac2}
 	${ipAddr} = 								Get From Dictionary				${result}				ip-address
+	
+	
 	Should Be Equal								${ipAddr}						10.251.3.212
 #	Should Contain								${result}						10.251.3.212
 	${loss} = 									BASH ping						h1						10.251.3.212			count=10
