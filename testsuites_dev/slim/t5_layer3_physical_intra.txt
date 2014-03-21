@@ -1220,6 +1220,7 @@ Static endpoint with dynamic host showing up on another port
 	REST add portgroup to vns					X								X3						${leaf2_pc1}			-1
 	REST add portgroup to vns					X								X3						${leaf2_pc2}			-1
 	BASH add tag								h2								bond0					1002
+	BASH ifup intf								h2								bond0.1002
 	BASH add ip address							h2								10.251.3.22/24			bond0.1002
 	BASH add ip address							h4								10.251.3.24/24			bond0
 	BASH add ip address							h5								10.251.3.25/24			bond0
