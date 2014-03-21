@@ -1,9 +1,9 @@
 * Setting
 Documentation   T5 Basic L3 two spine three leaf rack with dual-tor Test Suite
 Suite Setup     T5 base suite setup
-Suite Teardown  T5 base suite teardown
+#Suite Teardown  T5 base suite teardown
 Test Setup      setup topology
-Test Teardown   teardown topology
+#Test Teardown   teardown topology
 Force Tags      T5 Sanity
 Library         keywords/BsnCommon.py
 Library         keywords_dev/slim/Host.py
@@ -102,7 +102,7 @@ Delete and add router vns ip
 
 Change tagged endpoint IP address
 	Change tagged host endpoint IP address
-#	[Tags]							skipped			sanity		
+	[Tags]							skipped			sanity		
 
 
 Configure static endpoint with host showing up on another port
@@ -1215,12 +1215,12 @@ Static endpoint with dynamic host showing up on another port
 	REST show endpoints		
 	${loss} = 									BASH ping						h1						10.251.3.11 			count=10
 	Should Be True  							${loss} == 0		
-	REST add portgroup to vns					X								X3						${leaf0_pc2}			1003
+	REST add portgroup to vns					X								X3						${leaf0_pc2}			1002
 	REST add portgroup to vns					X								X3						${leaf1_pc2}			-1
 	REST add portgroup to vns					X								X3						${leaf2_pc1}			-1
 	REST add portgroup to vns					X								X3						${leaf2_pc2}			-1
-	BASH add tag								h2								bond0					1003
-	BASH add ip address							h2								10.251.3.22/24			bond0.1003
+	BASH add tag								h2								bond0					1002
+	BASH add ip address							h2								10.251.3.22/24			bond0.1002
 	BASH add ip address							h4								10.251.3.24/24			bond0
 	BASH add ip address							h5								10.251.3.25/24			bond0
 	BASH add route								h2								10.251.1.0/24			10.251.3.1
@@ -1229,7 +1229,7 @@ Static endpoint with dynamic host showing up on another port
 	BASH ping									h2								10.251.1.11				count=5
 	${loss} = 									BASH ping						h2						10.251.1.11				count=5
 	Should Be True								${loss} == 0
-	${mac3} = 									BASH get intf mac				h2						bond0.1003
+	${mac3} = 									BASH get intf mac				h2						bond0.1002
 	${result} =									REST show endpoints mac			${mac3}
 	Should Be True								${result}	
 	REST add endpoint							X								X3						X3_host1
@@ -1280,6 +1280,9 @@ initialize host
 	BASH delete tag								h1								bond0.1001				soft_error=${true}
 	BASH delete tag								h2								bond0.1002				soft_error=${true}
 	BASH delete tag								h3								bond0.1003				soft_error=${true}
+	BASH delete tag								h4								bond0.1004				soft_error=${true}
+	BASH delete tag								h5								bond0.1005				soft_error=${true}
+	BASH delete tag								h6								bond0.1006				soft_error=${true}
 	
 	BASH init intf								h1								bond0
 	BASH init intf								h2								bond0
