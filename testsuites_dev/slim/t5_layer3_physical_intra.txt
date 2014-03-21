@@ -102,7 +102,7 @@ Scale 4k VNS
 	[Tags]							skipped			scale		
 
 Change tagged endpoint IP address
-	Change tagged ost endpoint IP address
+	Change tagged host endpoint IP address
 #	[Tags]							skipped			sanity			
 	
 * Keywords
