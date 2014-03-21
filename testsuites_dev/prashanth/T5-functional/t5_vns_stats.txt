@@ -88,7 +88,7 @@ verify CLI switch interface rx and tx counter output for all possible options
 	Should Not be Empty  ${result}
 	rest delete tenant  t1
 	
-verify CLI interface rx and tx rate output for all possible options
+verify CLI switch interface rx and tx rate output for all possible options
 	[Tags]  feature
 	rest add tenant  t1
 	rest add vns  t1  v1	
@@ -310,7 +310,7 @@ verify interface rx/tx rates different rack
     stop traffic  ${stream}
     rest delete tenant  t1
    
-verify interface rx/tx stats same rack
+verify interface rx/tx rates same rack
 	[Tags]  feature
 	rest verify stats interval  30  30          
 	rest add switch  leaf0-b
