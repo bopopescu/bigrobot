@@ -703,6 +703,7 @@ L3 dhcp request without dhcp relay enabled
 	REST show endpoints	
 	${loss} = 									BASH ping						h1						${ipAddr} 			count=10
 	Should Be True  							${loss} == 0	
+	REST disable dhcp relay						Y								Y3
 	REST delete dhcp relay						Y								Y3						10.252.1.9
 	BASH release dhcpv4 address					h5								bond0
 	__init__.sleep										5
@@ -1122,7 +1123,7 @@ Scale 4k VNS in one tenant
 	REST delete tenant							Y
 	REST delete tenant							Z
 	REST add tenant								A
-	${ipAddr} =  								Set Variable					"10.0.0.1"
+	${ipAddr} =  								Set Variable					10.0.0.1
 	: FOR 										${i}							IN RANGE 				1	1000
 	\	REST add vns							A								A-${i}
 	\	REST add vns ip							A								A-${i}					${ipAddr}			24
