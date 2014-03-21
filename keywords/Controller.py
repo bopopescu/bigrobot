@@ -391,7 +391,7 @@ class Controller(object):
         n_console.send('')
 
         helpers.log("Closing console connection for '%s'" % node)
-        n.close_console()
+        n.console_close()
 
         helpers.sleep(3)  # Sleep for a few seconds just in case...
 
