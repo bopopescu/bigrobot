@@ -1239,8 +1239,10 @@ Static endpoint with dynamic host showing up on another port
 	REST add endpoint portgroup attachment		X								X3						X3_host1				${leaf2_pc2}				-1
 	sleep										1
 	${result} =									REST show endpoints mac			${mac3}
-	${content} = 								${result[0]}
-	${attachpoint} = 							Get From Dictionary				${content[attachment-point]}					port-group-name				
+#	Log                                         result[0] = ${result[0]}
+#	Log                                         result[0][attachment-point] = ${result[0]['attachment-point']}
+#	Log                                         result[0][attachment-point][port-group-name] = ${result[0]['attachment-point']['port-group-name']}
+	${attachpoint} = 							Set Variable					${result[0]['attachment-point']['port-group-name']}					
 	Should Contain								${attachpoint}					${leaf2_pc2}
 	${loss} = 									BASH ping						h2						10.251.1.11				count=10
 	Should Be True								${loss} == 100
