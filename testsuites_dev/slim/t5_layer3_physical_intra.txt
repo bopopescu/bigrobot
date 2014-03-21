@@ -1162,9 +1162,11 @@ Change tagged host endpoint IP address
 	Should Be True  							${loss} == 0		
 	BASH add ip address							h3								10.251.3.212/24			bond0.1003
 	BASH ping									h1								10.251.3.212			count=10
-	sleep										5
+	__init__.sleep										5
 	${result} =									REST show endpoints mac			${mac2}
-	Should Contain								${result}						10.251.3.212
+	${ipAddr} = 								Get From Dictionary				${result}				ip-address
+	Should Be Equal								${ipAddr}						10.251.3.212
+#	Should Contain								${result}						10.251.3.212
 	${loss} = 									BASH ping						h1						10.251.3.212			count=10
 	Should Be True  							${loss} == 0	 						
 	
