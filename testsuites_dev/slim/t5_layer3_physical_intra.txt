@@ -711,7 +711,7 @@ L3 dhcp request without dhcp relay enabled
 	Should Be Empty								${ipAddr}
 	__init__.sleep										5
 	REST add dhcp relay							Y								Y3						10.252.1.9
-	__init__.sleep										5
+	__init__.sleep										20
 	${ipAddr} = 								BASH renew dhcpv4 address		h5						bond0
 	Should Not Be Empty							${ipAddr}
 	BASH ping									h1								${ipAddr} 				count=10
@@ -761,7 +761,7 @@ L3 add and delete untagged endpoints with existing host
 	${result} =									REST show endpoints mac			${mac1}
 	Should Not Be True							${result}	
 	__init__.sleep										1
-	${value} = 									BASH verify arp					h6						10.251.1.1
+	${value} = 									BASH verify arp					h5						10.251.1.1
 	Should Be True								${value} 		
 	REST add portgroup to vns					X								X1						${leaf2_pc1}			-1
 	__init__.sleep										5
@@ -820,7 +820,7 @@ L3 add and delete tagged endpoints with existing host
 	Should Be True								${value} 		
 	REST add portgroup to vns					X								X1						${leaf0_pc1}			1001
 	__init__.sleep										5
-	BASH ping									h1								10.251.1.1				count=10
+	BASH ping									h1								10.251.3.11				count=10
 	__init__.sleep										1
 	${result} =									REST show endpoints mac			${mac1}
 	Should Be True								${result}	
@@ -1008,6 +1008,7 @@ Change router ip address
 	${loss} = 									BASH ping						h3						10.251.2.11 			count=10
 	Should Be True  							${loss} == 0	
 	REST add vns ip  							X								X1						10.251.4.1				24	
+### Expectation is arp is learned on host so L3 forwarding should still happen though vns ip is changed	
 	${loss} = 									BASH ping						h3						10.251.2.11 			count=10
 	Should Be True  							${loss} == 0	
 	${mac1} = 									BASH get intf mac				h3						bond0
