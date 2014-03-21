@@ -97,14 +97,23 @@ Change router vns ip
 Delete and add router vns ip
 	Delete and add router vns ip 
 	[Tags]							skipped			sanity			
+
+
+
+Change tagged endpoint IP address
+	Change tagged host endpoint IP address
+#	[Tags]							skipped			sanity		
+
+
+Configure static endpoint with host showing up on another port
+	Static endpoint with dynamic host showing up on another port
+#	[Tags]							skipped			sanity		
+
 			
 Scale 4k VNS
 	Scale 4k VNS in one tenant
 	[Tags]							skipped			scale		
-
-Change tagged endpoint IP address
-	Change tagged host endpoint IP address
-#	[Tags]							skipped			sanity			
+	
 	
 * Keywords
 L3 intra tenant same rack untagged with dynamic endpoints
@@ -1163,18 +1172,95 @@ Change tagged host endpoint IP address
 	Should Be True  							${loss} == 0		
 	BASH add ip address							h3								10.251.3.212/24			bond0.1003
 	BASH ping									h1								10.251.3.212			count=10
-	__init__.sleep										5
+	__init__.sleep								5
 	${result} =									REST show endpoints mac			${mac2}
-	${ipAddr} = 								Get From Dictionary				${result}				ip-address
-	
-	
+	${ipAddr} = 								Get From Dictionary				${result[0]}				ip-address
 	Should Be Equal								${ipAddr}						10.251.3.212
-#	Should Contain								${result}						10.251.3.212
 	${loss} = 									BASH ping						h1						10.251.3.212			count=10
 	Should Be True  							${loss} == 0	 						
 	
-Static endpoint and dynamic host
-
+Static endpoint with dynamic host showing up on another port
+	BASH ifup intf								h1 								bond0
+	BASH ifup intf								h2								bond0
+	BASH ifup intf								h3								bond0
+	BASH ifup intf								h4								bond0
+	BASH ifup intf								h5								bond0
+	BASH ifup intf								h6								bond0	
+	REST add portgroup to vns					X								X1						${leaf0_pc1}			1001
+	REST add portgroup to vns					X								X3						${leaf1_pc1}			1003
+	BASH add tag								h1								bond0					1001
+	BASH add tag								h3								bond0					1003
+	BASH ifup intf								h1								bond0.1001
+	BASH ifup intf								h3								bond0.1003
+	BASH add ip address							h1								10.251.1.11/24			bond0.1001
+	BASH add ip address							h3								10.251.3.11/24			bond0.1003
+	BASH add route								h1								10.251.3.0/24			10.251.1.1
+	BASH add route								h3								10.251.1.0/24			10.251.3.1
+	__init__.sleep								20	
+	${value} = 									BASH verify arp					h1						10.251.1.1
+	Should Not Be True							${value} 		
+	${value} =									BASH verify arp					h3						10.251.3.1
+	Should Not Be True							${value} 	
+	BASH ping									h1								10.251.3.11				count=10
+	${value} = 									BASH verify arp					h1						10.251.1.1
+	Should Be True								${value} 		
+	${value} =									BASH verify arp					h3						10.251.3.1
+	Should Be True								${value} 		
+	${mac1} = 									BASH get intf mac				h1						bond0.1001
+	${result} =									REST show endpoints mac			${mac1}
+	Should Be True								${result}						
+	${mac2} = 									BASH get intf mac				h3						bond0.1003
+	${result} =									REST show endpoints mac			${mac2}
+	Should Be True								${result}						
+	REST show endpoints		
+	${loss} = 									BASH ping						h1						10.251.3.11 			count=10
+	Should Be True  							${loss} == 0		
+	REST add portgroup to vns					X								X3						${leaf0_pc2}			1003
+	REST add portgroup to vns					X								X3						${leaf1_pc2}			-1
+	REST add portgroup to vns					X								X3						${leaf2_pc1}			-1
+	REST add portgroup to vns					X								X3						${leaf2_pc2}			-1
+	BASH add tag								h2								bond0					1003
+	BASH add ip address							h2								10.251.3.22/24			bond0.1003
+	BASH add ip address							h4								10.251.3.24/24			bond0
+	BASH add ip address							h5								10.251.3.25/24			bond0
+	BASH add route								h2								10.251.1.0/24			10.251.3.1
+	BASH add route								h4								10.251.1.0/24			10.251.3.1
+	BASH add route								h5								10.251.1.0/24			10.251.3.1
+	BASH ping									h2								10.251.1.11				count=5
+	${loss} = 									BASH ping						h2						10.251.1.11				count=5
+	Should Be True								${loss} == 0
+	${mac3} = 									BASH get intf mac				h2						bond0.1003
+	${result} =									REST show endpoints mac			${mac3}
+	Should Be True								${result}	
+	REST add endpoint							X								X3						X3_host1
+	REST add endpoint ip						X								X3						X3_host1				10.251.3.22
+	REST add endpoint mac						X								X3						X3_host1				${mac3}
+	REST add endpoint portgroup attachment		X								X3						X3_host1				${leaf2_pc2}				-1
+	sleep										1
+	${result} =									REST show endpoints mac			${mac3}
+	${attachpoint} = 							Get From Dictionary				${result[0][attachment-point]}					port-group-name
+	Should Contain								${attachpoint}					${leaf2_pc2}
+	${loss} = 									BASH ping						h2						10.251.1.11				count=10
+	Should Be True								${loss} == 100
+	${loss} = 									BASH ping						h2						10.251.3.24				count=10
+	Should Be True								${loss} == 100
+	${loss} = 									BASH ping						h2						10.251.3.25				count=10
+	Should Be True								${loss} == 100
+	REST delete endpoint						X								X3						X3_host1
+	sleep										1
+	${loss} = 									BASH ping						h2						10.251.3.24				count=10
+	Should Be True								${loss} == 0
+	${loss} = 									BASH ping						h2						10.251.3.25				count=10
+	Should Be True								${loss} == 0
+	${loss} = 									BASH ping						h2						10.251.1.11				count=10
+	Should Be True								${loss} == 0
+	
+	
+	
+	
+	
+	
+	
 
 Scale 4k VNS in one tenant
 
