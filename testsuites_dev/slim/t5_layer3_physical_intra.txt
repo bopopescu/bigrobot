@@ -20,89 +20,89 @@ Resource		testsuites/T5/t5_dualleaf_three_rack_physical_resource.txt
 * Test Cases
 Intra tenant L3 untagged traffic with dynamic endpoints same rack
 	L3 intra tenant same rack untagged with dynamic endpoints
-	[Tags]							skipped			smoke				sanity			
+#	[Tags]							skipped			smoke				sanity			
 
 Intra tenant L3 untagged traffic with dynamic endpoints across rack
 	L3 intra tenant across rack untagged with dynamic endpoints
-	[Tags]							skipped			smoke				sanity	
+#	[Tags]							skipped			smoke				sanity	
 
 Intra tenant L3 tagged traffic with dynamic endpoints same rack
 	L3 intra tenant same rack tagged with dynamic endpoints
-	[Tags]							skipped			smoke				sanity			
+#	[Tags]							skipped			smoke				sanity			
 
 Intra tenant L3 tagged traffic with dynamic endpoints across rack
 	L3 intra tenant across rack tagged with dynamic endpoints
-	[Tags]							skipped			smoke				sanity	
+#	[Tags]							skipped			smoke				sanity	
 
 Intra tenant L3 untagged traffic with static endpoints same rack
 	L3 intra tenant same rack untagged with static endpoints
-	[Tags]							skipped			smoke				sanity			
+#	[Tags]							skipped			smoke				sanity			
 
 Intra tenant L3 untagged traffic with static endpoints across rack
 	L3 intra tenant across rack untagged with static endpoints
-	[Tags]							skipped			smoke				sanity	
+#	[Tags]							skipped			smoke				sanity	
 
 Intra tenant L3 tagged traffic with static endpoints same rack
 	L3 intra tenant same rack tagged with static endpoints
-	[Tags]							skipped			smoke				sanity			
+#	[Tags]							skipped			smoke				sanity			
 
 Intra tenant L3 tagged traffic with static endpoints across rack
 	L3 intra tenant across rack tagged with static endpoints
-	[Tags]							skipped			smoke				sanity	
+#	[Tags]							skipped			smoke				sanity	
 
 Intra tenant dhcp relay 
 	L3 intra tenant dhcp relay on same rack
-	[Tags]							skipped			smoke				sanity	
+#	[Tags]							skipped			smoke				sanity	
 	
 Intra tenant dhcp relay with circuit id
 	L3 intra tenant dhcp relay with circuit id on same rack
-	[Tags]							skipped			smoke				sanity	
+#	[Tags]							skipped			smoke				sanity	
 
 Intra tenant dhcp relay across rack
 	L3 intra tenant dhcp relay across rack
-	[Tags]							skipped			smoke				sanity	
+#	[Tags]							skipped			smoke				sanity	
 	
 Intra tenant dhcp relay with circuit id across rack
 	L3 intra tenant dhcp relay with circuit id across rack
-	[Tags]							skipped			smoke				sanity	
+#	[Tags]							skipped			smoke				sanity	
 
 Delete and Add dhcp relay
 	L3 dhcp request without dhcp relay enabled
-	[Tags]							skipped			sanity	
+#	[Tags]							skipped			sanity	
 
 Add and delete untagged endpoints with existing host
 	L3 add and delete untagged endpoints with existing host
-	[Tags]							skipped			sanity	
+#	[Tags]							skipped			sanity	
 	
 Add and delete tagged endpoints with existing host
 	L3 add and delete tagged endpoints with existing host
-	[Tags]							skipped			sanity	
+#	[Tags]							skipped			sanity	
 		
 Change L3 endpoint from untagged to tagged and back		
 	L3 change endpoint from untagged to tagged and back	
-	[Tags]							skipped			sanity	
+#	[Tags]							skipped			sanity	
 
 Verify L3 endpoint aging
 	Check L3 endpoint aging 
-	[Tags]							skipped			sanity	
+#	[Tags]							skipped			sanity	
 	
 Verify L3 ttl 1 is not being forwarded
 	Check L3 ttl 1 is dropped
-	[Tags]							skipped			sanity			
+#	[Tags]							skipped			sanity			
 
 Change router vns ip
 	Change router ip address
-	[Tags]							skipped			sanity			
+#	[Tags]							skipped			sanity			
 
 Delete and add router vns ip
 	Delete and add router vns ip 
-	[Tags]							skipped			sanity			
+#	[Tags]							skipped			sanity			
 
 
 
 Change tagged endpoint IP address
 	Change tagged host endpoint IP address
-	[Tags]							skipped			sanity		
+#	[Tags]							skipped			sanity		
 
 
 Configure static endpoint with host showing up on another port
@@ -1237,7 +1237,7 @@ Static endpoint with dynamic host showing up on another port
 	REST add endpoint ip						X								X3						X3_host1				10.251.3.22
 	REST add endpoint mac						X								X3						X3_host1				${mac3}
 	REST add endpoint portgroup attachment		X								X3						X3_host1				${leaf2_pc2}				-1
-	sleep										1
+	__init__.sleep								1
 	${result} =									REST show endpoints mac			${mac3}
 #	Log                                         result[0] = ${result[0]}
 #	Log                                         result[0][attachment-point] = ${result[0]['attachment-point']}
@@ -1251,7 +1251,7 @@ Static endpoint with dynamic host showing up on another port
 	${loss} = 									BASH ping						h2						10.251.3.25				count=10
 	Should Be True								${loss} == 100
 	REST delete endpoint						X								X3						X3_host1
-	sleep										1
+	__init__.sleep								1
 	${loss} = 									BASH ping						h2						10.251.3.24				count=10
 	Should Be True								${loss} == 0
 	${loss} = 									BASH ping						h2						10.251.3.25				count=10
