@@ -1,0 +1,784 @@
+== T5 Functional L2 Test Suite ==
+
+* Setting
+Documentation    T5 BVS APP Functional VNS/Fabric Interface Stats Test suite
+Suite Setup      T5 Functional Suite Setup
+Suite Teardown   T5 Functional Suite Teardown
+Test Setup       base test setup
+Test Teardown    T5 test teardown
+Force Tags       T5 
+Library          keywords/BsnCommon.py
+Library          keywords/T5.py
+Library          keywords/T5Platform.py
+Library	         keywords/SwitchLight.py
+Library	         keywords/Host.py
+Library		     keywords/Ixia.py
+Library			 Collections.py
+Resource	     testsuites/T5/t5_singleleaf_three_rack_physical_resource.txt
+Resource		 testsuites/T5/t5_physical_variables.txt
+
+* Test Case 
+
+add Single Leaf Three Rack setup
+   [Tags]  feature         
+   rest verify fabric switch all
+   rest verify fabric link
+      
+Verify stats interval setting
+	[Tags]  feature
+	rest verify stats interval  
+	rest verify stats interval  70  610
+	rest verify stats interval  60  60
+	
+verify show vns and tenant counters CLI output
+	[Tags]  feature  stats
+	rest add tenant  t1
+	rest add vns  t1  v1	
+	${result}=  cli  c1  show vns v1 counter 
+	Should Not be Empty  ${result}
+	${result}=  cli  c1  show tenant t1 counter  
+	Should Not be Empty  ${result}
+	${result}=  cli  c1  show tenant t1 vns v1 counter 
+	Should Not be Empty  ${result}
+	rest delete tenant  t1
+
+verify show vns and tenant rate CLI output
+	[Tags]  feature  stats
+	rest add tenant  t1
+	rest add vns  t1  v1	
+	${result}=  cli  c1  show vns v1 rate 
+	Should Not be Empty  ${result}
+	${result}=  cli  c1  show tenant t1 rate  
+	Should Not be Empty  ${result}
+	${result}=  cli  c1  show tenant t1 vns v1 rate 
+	Should Not be Empty  ${result}
+	rest delete tenant  t1
+	
+verify CLI interface rx and tx counter output for all possible options
+	[Tags]  feature
+	rest add tenant  t1
+	rest add vns  t1  v1	
+	${result}=  cli  c1  show interface ${leaf0a_ixia_intf} rx-counter  
+	Should Not be Empty  ${result}
+	${result}=  cli  c1  show interface ${leaf0a_ixia_intf} tx-counter   
+	Should Not be Empty  ${result}
+	${result}=  cli  c1  show interface ${leaf0a_ixia_intf} stats-brief  
+	Should Not be Empty  ${result}
+	rest delete tenant  t1
+
+verify CLI interface rx and tx rate output for all possible options
+	[Tags]  feature
+	rest add tenant  t1
+	rest add vns  t1  v1	
+	${result}=  cli  c1  show interface ${leaf0a_ixia_intf} rx-rate  
+	Should Not be Empty  ${result}
+	${result}=  cli  c1  show interface ${leaf0a_ixia_intf} tx-rate   
+	Should Not be Empty  ${result}
+	rest delete tenant  t1
+	
+verify CLI switch interface rx and tx counter output for all possible options
+	[Tags]  feature
+	rest add tenant  t1
+	rest add vns  t1  v1	
+	${result}=  cli  c1  show switch leaf0-a interface ${leaf0a_ixia_intf} rx-counter  
+	Should Not be Empty  ${result}
+	${result}=  cli  c1  show switch leaf0-a interface ${leaf0a_ixia_intf} tx-counter   
+	Should Not be Empty  ${result}
+	${result}=  cli  c1  show switch leaf0-a interface ${leaf0a_ixia_intf} stats-brief  
+	Should Not be Empty  ${result}
+	rest delete tenant  t1
+	
+verify CLI switch interface rx and tx rate output for all possible options
+	[Tags]  feature
+	rest add tenant  t1
+	rest add vns  t1  v1	
+	${result}=  cli  c1  show switch leaf0-a interface ${leaf0a_ixia_intf} rx-rate  
+	Should Not be Empty  ${result}
+	${result}=  cli  c1  show switch leaf0-a interface ${leaf0a_ixia_intf} tx-rate   
+	Should Not be Empty  ${result}
+	rest delete tenant  t1
+	
+Verify single VNS rx/tx stats between rack
+	[Tags]  feature     
+	rest verify stats interval  30  30
+	rest add tenant  t1
+	rest add vns  t1  v1
+	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
+	rest add interface to vns  t1  v1  leaf1-a  ${leaf1a_ixia_intf}  100     
+	rest clear vns stats  v1
+    ${stream}=             L3 add  no_arp=True  flow=a->c  src_mac=00:02:01:00:00:24  dst_mac=00:02:03:00:00:24  frame_rate=1000  frame_cnt=10000  frame_size=68  name=a_c_flow
+    ${stream1}=			   L3 add  no_arp=True  flow=c->a  src_mac=00:02:03:00:00:24  dst_mac=00:02:01:00:00:24  ethertype=8100  vlan_id=100  frame_rate=10  frame_cnt=10  frame_size=68  name=c_a_flow	
+    start traffic
+    sleep  7  
+    stop traffic 
+    clear stats
+    rest clear fabric interface stats 
+    rest clear vns stats  v1
+    sleep  60
+    rest clear fabric interface stats 
+    rest clear vns stats  v1
+    rest verify vns rx stats  t1  v1  0
+    rest verify vns tx stats  t1  v1  0
+    start traffic  ${stream}
+    sleep  60
+    rest verify vns rx stats  t1  v1  10000
+    rest verify vns tx stats  t1  v1  10000
+    rest delete tenant  t1
+   
+Verify single VNS rx/tx stats within same rack
+	[Tags]  feature          
+	rest verify stats interval  30  30
+	rest add switch  leaf0-b
+	rest add dpid  leaf0-b  ${leaf0b_dpid}
+	rest add fabric role  leaf0-b  leaf
+	rest add leaf group  leaf0-b  rack0
+	rest add leaf group  leaf0-a  rack0
+	rest verify fabric link
+	rest add tenant  t1
+	rest add vns  t1  v1
+	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
+	rest add interface to vns  t1  v1  leaf0-b  ${leaf0b_ixia_intf}  -1    
+	${stream}=             L3 add  no_arp=True  flow=a->b  src_mac=00:02:01:00:00:24  dst_mac=00:02:02:00:00:24  frame_rate=1000  frame_cnt=10000  frame_size=68  name=a_b_flow
+    ${stream1}=			   L3 add  no_arp=True  flow=b->a  src_mac=00:02:02:00:00:24  dst_mac=00:02:01:00:00:24  frame_rate=10  frame_cnt=10  frame_size=68  name=b_a_flow	
+    start traffic
+    sleep  7 
+    stop traffic  
+    clear stats
+    rest clear fabric interface stats
+    rest clear vns stats  v1
+    sleep  60
+    rest clear fabric interface stats
+    rest clear vns stats  v1
+    rest verify vns rx stats  t1  v1  0
+    rest verify vns tx stats  t1  v1  0
+    start traffic  ${stream}
+    sleep  60
+    rest verify vns rx stats  t1  v1  20000
+    rest verify vns tx stats  t1  v1  20000
+    rest delete fabric switch  leaf0-b
+    rest delete tenant  t1
+    
+Verify single vns rx/tx rates same rack
+	[Tags]  feature  
+	rest verify stats interval  30  30        
+    rest add switch  leaf0-b
+	rest add dpid  leaf0-b  ${leaf0b_dpid}
+	rest add fabric role  leaf0-b  leaf
+	rest add leaf group  leaf0-b  rack0
+	rest add leaf group  leaf0-a  rack0
+	rest verify fabric link
+	rest add tenant  t1
+	rest add vns  t1  v1
+	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
+	rest add interface to vns  t1  v1  leaf0-b  ${leaf0b_ixia_intf}  -1    
+	${stream}=             L3 add  no_arp=True  flow=a->b  src_mac=00:02:01:00:00:24  dst_mac=00:02:02:00:00:24  frame_rate=1000   frame_size=68  name=a_b_flow
+    ${stream1}=			   L3 add  no_arp=True  flow=b->a  src_mac=00:02:02:00:00:24  dst_mac=00:02:01:00:00:24  frame_rate=10  frame_cnt=10  frame_size=68  name=b_a_flow	
+    start traffic
+    sleep  7  
+    stop traffic  
+    clear stats
+    rest clear fabric interface stats
+    rest clear vns stats  v1
+    sleep  60
+    rest clear fabric interface stats
+    rest clear vns stats  v1
+    rest verify vns rx stats  t1  v1  0
+    rest verify vns tx stats  t1  v1  0
+    start traffic  ${stream}
+    sleep  120
+    rest verify vns rx rates  t1  v1  2000
+    rest verify vns tx rates  t1  v1  2000
+    stop traffic  ${stream}
+    rest delete fabric switch  leaf0-b
+    rest delete tenant  t1
+
+verify single vns rx/tx rates different rack
+	[Tags]  feature 
+	rest verify stats interval  30  30       
+	rest add tenant  t1
+	rest add vns  t1  v1
+	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
+	rest add interface to vns  t1  v1  leaf1-a  ${leaf1a_ixia_intf}  100     
+	rest clear vns stats  v1
+    ${stream}=             L3 add  no_arp=True  flow=a->c  src_mac=00:02:01:00:00:24  dst_mac=00:02:03:00:00:24  frame_rate=1000  frame_size=68  name=a_c_flow
+    ${stream1}=			   L3 add  no_arp=True  flow=c->a  src_mac=00:02:03:00:00:24  dst_mac=00:02:01:00:00:24  ethertype=8100  vlan_id=100  frame_rate=10  frame_cnt=10  frame_size=68  name=c_a_flow	
+    start traffic
+    sleep  7  
+    stop traffic  
+    clear stats
+    rest clear fabric interface stats
+    rest clear vns stats  v1
+    sleep  60
+    rest clear fabric interface stats
+    rest clear vns stats  v1
+    rest verify vns rx stats  t1  v1  0
+    rest verify vns tx stats  t1  v1  0
+    start traffic  ${stream}
+    sleep  120
+    rest verify vns rx rates  t1  v1  1000
+    rest verify vns tx rates  t1  v1  1000
+    stop traffic  ${stream}   
+    rest delete tenant  t1
+   
+verify interface rx/tx stats different rack
+	[Tags]  feature
+	rest verify stats interval  30  30          
+	rest add tenant  t1
+	rest add vns  t1  v1
+	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
+	rest add interface to vns  t1  v1  leaf1-a  ${leaf1a_ixia_intf}  100     
+	rest clear vns stats  v1
+    ${stream}=             L3 add  no_arp=True  flow=a->c  src_mac=00:02:01:00:00:24  dst_mac=00:02:03:00:00:24  frame_rate=1000  frame_cnt=10000  frame_size=68  name=a_c_flow
+    ${stream1}=			   L3 add  no_arp=True  flow=c->a  src_mac=00:02:03:00:00:24  dst_mac=00:02:01:00:00:24  ethertype=8100  vlan_id=100  frame_rate=10  frame_cnt=10  frame_size=68  name=c_a_flow	
+    start traffic 
+    sleep  7 
+    stop traffic  
+    clear stats
+    rest clear fabric interface stats
+    sleep  60
+    rest clear fabric interface stats
+    start traffic  ${stream}
+    sleep  60
+    rest verify fabric interface rx stats  leaf0-a  ${leaf0a_ixia_intf}  10000
+    rest verify fabric interface tx stats  leaf0-a  ${leaf0a_spine1_intf0}  10000
+    rest verify fabric interface rx stats  spine1  ${spine1_leaf0a_intf0}  10000
+    rest verify fabric interface tx stats  spine1  ${spine1_leaf1a_intf0}  10000
+    rest verify fabric interface tx stats  leaf1-a  ${leaf1a_ixia_intf}  10000
+    rest verify fabric interface rx stats  leaf1-a  ${leaf1a_spine1_intf0}  10000
+    rest delete tenant  t1
+   
+verify interface rx/tx stats same rack
+	[Tags]  feature
+	rest verify stats interval  30  30          
+	rest add switch  leaf0-b
+	rest add dpid  leaf0-b  ${leaf0b_dpid}
+	rest add fabric role  leaf0-b  leaf
+	rest add leaf group  leaf0-b  rack0
+	rest add leaf group  leaf0-a  rack0
+	rest verify fabric link
+	rest add tenant  t1
+	rest add vns  t1  v1
+	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
+	rest add interface to vns  t1  v1  leaf0-b  ${leaf0b_ixia_intf}  -1     
+	rest clear vns stats  v1
+    ${stream}=             L3 add  no_arp=True  flow=a->b  src_mac=00:02:01:00:00:24  dst_mac=00:02:02:00:00:24  frame_rate=1000  frame_cnt=10000  frame_size=68  name=a_b_flow
+    ${stream1}=			   L3 add  no_arp=True  flow=b->a  src_mac=00:02:02:00:00:24  dst_mac=00:02:01:00:00:24  frame_rate=10  frame_cnt=10  frame_size=68  name=b_a_flow	
+    start traffic
+    sleep  7  
+    stop traffic  
+    clear stats
+    rest clear fabric interface stats
+    sleep  60
+    rest clear fabric interface stats
+    start traffic  ${stream}
+    sleep  60
+    rest verify fabric interface rx stats  leaf0-a  ${leaf0a_ixia_intf}  10000
+    rest verify fabric interface tx stats  leaf0-b  ${leaf0b_ixia_intf}  10000
+    rest verify fabric interface tx stats  leaf0-a  ${leaf0a_leaf0b_intf0}  10000
+    rest verify fabric interface rx stats  spine1  ${spine1_leaf0a_intf0}  0
+    stop traffic  ${stream}
+    rest delete fabric switch  leaf0-b
+    rest delete tenant  t1
+	
+verify interface rx/tx rates different rack
+	[Tags]  feature
+	rest verify stats interval  30  30          
+	rest add tenant  t1
+	rest add vns  t1  v1
+	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
+	rest add interface to vns  t1  v1  leaf1-a  ${leaf1a_ixia_intf}  100     
+	rest clear vns stats  v1
+    ${stream}=             L3 add  no_arp=True  flow=a->c  src_mac=00:02:01:00:00:24  dst_mac=00:02:03:00:00:24  frame_rate=1000  frame_size=68  name=a_c_flow
+    ${stream1}=			   L3 add  no_arp=True  flow=c->a  src_mac=00:02:03:00:00:24  dst_mac=00:02:01:00:00:24  ethertype=8100  vlan_id=100  frame_rate=10  frame_cnt=10  frame_size=68  name=c_a_flow	
+    start traffic 
+    sleep  7 
+    stop traffic  
+    clear stats
+    rest clear fabric interface stats
+    sleep  60
+    rest clear fabric interface stats
+    start traffic  ${stream}
+    sleep  120
+    rest verify fabric interface rx rates  leaf0-a  ${leaf0a_ixia_intf}  1000
+    rest verify fabric interface tx rates  leaf0-a  ${leaf0a_spine1_intf0}  1000
+    rest verify fabric interface rx rates  spine1  ${spine1_leaf0a_intf0}  1000
+    rest verify fabric interface tx rates  spine1  ${spine1_leaf1a_intf0}  1000
+    rest verify fabric interface tx rates  leaf1-a  ${leaf1a_ixia_intf}  1000
+    rest verify fabric interface rx rates  leaf1-a  ${leaf1a_spine1_intf0}  1000
+    stop traffic  ${stream}
+    rest delete tenant  t1
+   
+verify interface rx/tx rates same rack
+	[Tags]  feature
+	rest verify stats interval  30  30          
+	rest add switch  leaf0-b
+	rest add dpid  leaf0-b  ${leaf0b_dpid}
+	rest add fabric role  leaf0-b  leaf
+	rest add leaf group  leaf0-b  rack0
+	rest add leaf group  leaf0-a  rack0
+	rest verify fabric link
+	rest add tenant  t1
+	rest add vns  t1  v1
+	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
+	rest add interface to vns  t1  v1  leaf0-b  ${leaf0b_ixia_intf}  -1     
+	rest clear vns stats  v1
+    ${stream}=             L3 add  no_arp=True  flow=a->b  src_mac=00:02:01:00:00:24  dst_mac=00:02:02:00:00:24  frame_rate=1000  frame_size=68  name=a_b_flow
+    ${stream1}=			   L3 add  no_arp=True  flow=b->a  src_mac=00:02:02:00:00:24  dst_mac=00:02:01:00:00:24  frame_rate=10  frame_cnt=10  frame_size=68  name=b_a_flow	
+    start traffic
+    sleep  7  
+    stop traffic  
+    clear stats
+    rest clear fabric interface stats
+    sleep  60
+    rest clear fabric interface stats
+    start traffic  ${stream}
+    sleep  120
+    rest verify fabric interface rx rates  leaf0-a  ${leaf0a_ixia_intf}  1000
+    rest verify fabric interface tx rates  leaf0-b  ${leaf0b_ixia_intf}  1000
+    stop traffic  ${stream}
+    rest delete fabric switch  leaf0-b
+    rest delete tenant  t1
+
+verify interface rx/tx broadcast packet stats different rack
+	[Tags]  feature
+	rest verify stats interval  30  30  
+	rest add tenant  t1
+	rest add vns  t1  v1
+	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
+	rest add interface to vns  t1  v1  leaf1-a  ${leaf1a_ixia_intf}  100     
+	rest clear vns stats  v1
+    ${stream}=             L3 add  no_arp=True  flow=a->c  src_mac=00:02:01:00:00:24  dst_mac=ff:ff:ff:ff:ff:ff  frame_rate=1000  frame_cnt=10000  frame_size=68  name=a_c_flow
+    start traffic
+    sleep  7  
+    stop traffic 
+    clear stats
+    rest clear fabric interface stats 
+    rest clear vns stats  v1
+    sleep  60
+    rest clear fabric interface stats 
+    rest clear vns stats  v1
+    rest verify vns rx stats  t1  v1  0
+    rest verify vns tx stats  t1  v1  0
+    start traffic  ${stream}
+    sleep  60
+    rest verify vns rx stats  t1  v1  10000
+    rest verify vns tx stats  t1  v1  10000
+    rest verify fabric interface tx stats  leaf1-a  ${leaf1a_ixia_intf}  10000
+    rest delete tenant  t1
+	
+verify interface rx/tx multicast packets stats
+	[Tags]  feature  
+	rest verify stats interval  30  30
+	rest add tenant  t1
+	rest add vns  t1  v1
+	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
+	rest add interface to vns  t1  v1  leaf1-a  ${leaf1a_ixia_intf}  100     
+	rest clear vns stats  v1
+    ${stream}=             L3 add  no_arp=True  flow=a->c  src_mac=00:02:01:00:00:24  dst_mac=01:00:5e:00:00:01  frame_rate=1000  frame_cnt=10000  frame_size=68  name=a_c_flow
+    start traffic
+    sleep  7  
+    stop traffic 
+    clear stats
+    rest clear fabric interface stats 
+    rest clear vns stats  v1
+    sleep  60
+    rest clear fabric interface stats 
+    rest clear vns stats  v1
+    rest verify vns rx stats  t1  v1  0
+    rest verify vns tx stats  t1  v1  0
+    start traffic  ${stream}
+    sleep  60
+    rest verify vns rx stats  t1  v1  10000  
+    rest verify vns tx stats  t1  v1  10000
+    rest verify fabric interface tx stats  leaf1-a  ${leaf1a_ixia_intf}  10000  7
+    rest delete tenant  t1
+
+verify interface LLDP/control packet count different rack
+	[Tags]  feature  
+	rest verify stats interval  30  30
+	rest add tenant  t1
+	rest add vns  t1  v1
+	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
+	rest add interface to vns  t1  v1  leaf1-a  ${leaf1a_ixia_intf}  100     
+	rest clear vns stats  v1
+    ${stream}=             L2 add  no_arp=True  flow=a->c  src_mac=00:02:01:00:00:24  dst_mac=01:80:c2:00:00:0e  frame_rate=1000  frame_cnt=10000  frame_size=68  name=a_c_flow
+    start traffic
+    sleep  7  
+    stop traffic 
+    clear stats
+    rest clear fabric interface stats 
+    rest clear vns stats  v1
+    sleep  60
+    rest clear fabric interface stats 
+    rest clear vns stats  v1
+    rest verify vns rx stats  t1  v1  0
+    rest verify vns tx stats  t1  v1  0
+    start traffic  ${stream}
+    sleep  60
+    rest verify vns tx stats  t1  v1  0
+    rest verify fabric interface tx stats  leaf1-a  ${leaf1a_ixia_intf}  0
+    rest delete tenant  t1
+
+verify multiple vns counters different rack
+	[Tags]  feature  
+	rest verify stats interval  30  30
+	rest add tenant  t1
+	rest add vns  t1  v1
+	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
+	rest add interface to vns  t1  v1  leaf1-a  ${leaf1a_ixia_intf}  100     
+	rest add vns  t1  v2
+	rest add interface to vns  t1  v2  leaf2-a  ${leaf2a_ixia_intf}  100
+	rest add interface to vns  t1  v2  leaf1-a  ${leaf1a_ixia_intf}  200  
+    ${stream}=             L3 add  no_arp=True  flow=a->c  src_mac=00:02:01:00:00:24  dst_mac=00:02:03:00:00:24  frame_rate=10  frame_cnt=10  frame_size=68  name=a_c_flow
+    ${stream1}=			   L3 add  no_arp=True  flow=c->a  src_mac=00:02:03:00:00:24  dst_mac=00:02:01:00:00:24  ethertype=8100  vlan_id=100  frame_rate=1000  frame_cnt=10000  frame_size=68  name=c_a_flow	
+    ${stream2}=             L3 add  no_arp=True  flow=e->c  src_mac=00:02:05:00:00:24  dst_mac=00:02:03:01:00:24  ethertype=8100  vlan_id=100  frame_rate=10  frame_cnt=10  frame_size=68  name=e_c_flow
+    ${stream3}=			   L3 add  no_arp=True  flow=c->e  src_mac=00:02:03:01:00:24  dst_mac=00:02:05:00:00:24  ethertype=8100  vlan_id=200  frame_rate=1000  frame_cnt=10000  frame_size=68  name=c_e_flow
+    start traffic
+    sleep  7  
+    stop traffic 
+    clear stats
+    rest clear fabric interface stats 
+    rest clear vns stats  v1
+    rest clear vns stats  v2
+    sleep  60
+    rest clear fabric interface stats 
+    rest clear vns stats  v1
+    rest clear vns stats  v2
+    rest verify vns rx stats  t1  v1  0
+    rest verify vns tx stats  t1  v2  0
+    start traffic  ${stream1}
+    sleep  20
+    start traffic  ${stream3}
+    sleep  60
+    rest verify vns rx stats  t1  v1  10000
+    rest verify vns tx stats  t1  v1  10000
+    rest verify vns rx stats  t1  v2  10000
+    rest verify vns tx stats  t1  v2  10000
+    rest delete tenant  t1
+
+verify multiple vns counters on 2 different tenant 
+	[Tags]  feature    
+	rest verify stats interval  30  30
+	rest add tenant  t1
+	rest add vns  t1  v1
+	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
+	rest add interface to vns  t1  v1  leaf1-a  ${leaf1a_ixia_intf}  100     
+	rest add tenant  t2
+	rest add vns  t2  v1
+	rest add interface to vns  t2  v1  leaf2-a  ${leaf2a_ixia_intf}  100
+	rest add interface to vns  t2  v1  leaf1-a  ${leaf1a_ixia_intf}  200  
+    ${stream}=             L3 add  no_arp=True  flow=a->c  src_mac=00:02:01:00:00:24  dst_mac=00:02:03:00:00:24  frame_rate=10  frame_cnt=10  frame_size=68  name=a_c_flow
+    ${stream1}=			   L3 add  no_arp=True  flow=c->a  src_mac=00:02:03:00:00:24  dst_mac=00:02:01:00:00:24  ethertype=8100  vlan_id=100  frame_rate=1000  frame_cnt=10000  frame_size=68  name=c_a_flow	
+    ${stream2}=             L3 add  no_arp=True  flow=e->c  src_mac=00:02:05:00:00:24  dst_mac=00:02:03:01:00:24  ethertype=8100  vlan_id=100  frame_rate=10  frame_cnt=10  frame_size=68  name=e_c_flow
+    ${stream3}=			   L3 add  no_arp=True  flow=c->e  src_mac=00:02:03:01:00:24  dst_mac=00:02:05:00:00:24  ethertype=8100  vlan_id=200  frame_rate=1000  frame_cnt=10000  frame_size=68  name=c_e_flow
+    start traffic
+    sleep  7  
+    stop traffic 
+    clear stats
+    rest clear fabric interface stats 
+    rest clear vns stats  v1
+    sleep  60
+    rest clear fabric interface stats 
+    rest clear vns stats  v1
+    rest verify vns rx stats  t1  v1  0
+    rest verify vns tx stats  t1  v1  0
+    rest verify vns rx stats  t2  v1  0
+    rest verify vns tx stats  t2  v1  0
+    start traffic  ${stream1}
+    sleep  20
+    start traffic  ${stream3}
+    sleep  60
+    rest verify vns rx stats  t1  v1  10000
+    rest verify vns tx stats  t1  v1  10000
+    rest verify vns rx stats  t2  v1  10000
+    rest verify vns tx stats  t2  v1  10000
+    rest delete tenant  t1
+    rest delete tenant  t2
+    
+verify the single tenant stats 
+	[Tags]  feature
+	rest verify stats interval  30  30
+	rest add tenant  t1
+	rest add vns  t1  v1
+	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
+	rest add interface to vns  t1  v1  leaf1-a  ${leaf1a_ixia_intf}  100     
+	rest clear vns stats  v1
+    ${stream}=             L3 add  no_arp=True  flow=a->c  src_mac=00:02:01:00:00:24  dst_mac=00:02:03:00:00:24  frame_rate=1000  frame_cnt=10000  frame_size=68  name=a_c_flow
+    ${stream1}=			   L3 add  no_arp=True  flow=c->a  src_mac=00:02:03:00:00:24  dst_mac=00:02:01:00:00:24  ethertype=8100  vlan_id=100  frame_rate=10  frame_cnt=10  frame_size=68  name=c_a_flow	
+    start traffic
+    sleep  7  
+    stop traffic 
+    clear stats
+    rest clear fabric interface stats 
+    rest clear vns stats  v1
+    sleep  60
+    rest clear fabric interface stats 
+    rest clear vns stats  v1
+    rest verify tenant rx stats  t1  0
+    rest verify tenant tx stats  t1  0
+    start traffic  ${stream}
+    sleep  60
+    rest verify tenant rx stats  t1  10000
+    rest verify tenant tx stats  t1  10000
+    rest delete tenant  t1
+	
+verify single tenant stats using multiple VNS 
+	[Tags]  feature
+	rest verify stats interval  30  30
+	rest add tenant  t1
+	rest add vns  t1  v1
+	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
+	rest add interface to vns  t1  v1  leaf1-a  ${leaf1a_ixia_intf}  100     
+	rest add vns  t1  v2
+	rest add interface to vns  t1  v2  leaf2-a  ${leaf2a_ixia_intf}  100
+	rest add interface to vns  t1  v2  leaf1-a  ${leaf1a_ixia_intf}  200  
+    ${stream}=             L3 add  no_arp=True  flow=a->c  src_mac=00:02:01:00:00:24  dst_mac=00:02:03:00:00:24  frame_rate=10  frame_cnt=10  frame_size=68  name=a_c_flow
+    ${stream1}=			   L3 add  no_arp=True  flow=c->a  src_mac=00:02:03:00:00:24  dst_mac=00:02:01:00:00:24  ethertype=8100  vlan_id=100  frame_rate=1000  frame_cnt=10000  frame_size=68  name=c_a_flow	
+    ${stream2}=             L3 add  no_arp=True  flow=e->c  src_mac=00:02:05:00:00:24  dst_mac=00:02:03:01:00:24  ethertype=8100  vlan_id=100  frame_rate=10  frame_cnt=10  frame_size=68  name=e_c_flow
+    ${stream3}=			   L3 add  no_arp=True  flow=c->e  src_mac=00:02:03:01:00:24  dst_mac=00:02:05:00:00:24  ethertype=8100  vlan_id=200  frame_rate=1000  frame_cnt=10000  frame_size=68  name=c_e_flow
+    start traffic
+    sleep  7  
+    stop traffic 
+    clear stats
+    rest clear fabric interface stats 
+    rest clear vns stats  v1
+    rest clear vns stats  v2
+    sleep  60
+    rest clear fabric interface stats 
+    rest clear vns stats  v1
+    rest clear vns stats  v2
+    rest verify tenant rx stats  t1   0
+    rest verify tenant tx stats  t1   0
+    start traffic  ${stream1}
+    sleep  20
+    start traffic  ${stream3}
+    sleep  60
+    rest verify tenant rx stats  t1  20000
+    rest verify tenant tx stats  t1  20000
+    rest delete tenant  t1 
+
+verify multiple tenant stats 
+	[Tags]  feature
+	rest verify stats interval  30  30
+	rest add tenant  t1
+	rest add vns  t1  v1
+	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
+	rest add interface to vns  t1  v1  leaf1-a  ${leaf1a_ixia_intf}  100     
+	rest add tenant  t2
+	rest add vns  t2  v1
+	rest add interface to vns  t2  v1  leaf2-a  ${leaf2a_ixia_intf}  100
+	rest add interface to vns  t2  v1  leaf1-a  ${leaf1a_ixia_intf}  200  
+    ${stream}=             L3 add  no_arp=True  flow=a->c  src_mac=00:02:01:00:00:24  dst_mac=00:02:03:00:00:24  frame_rate=10  frame_cnt=10  frame_size=68  name=a_c_flow
+    ${stream1}=			   L3 add  no_arp=True  flow=c->a  src_mac=00:02:03:00:00:24  dst_mac=00:02:01:00:00:24  ethertype=8100  vlan_id=100  frame_rate=1000  frame_cnt=10000  frame_size=68  name=c_a_flow	
+    ${stream2}=             L3 add  no_arp=True  flow=e->c  src_mac=00:02:05:00:00:24  dst_mac=00:02:03:01:00:24  ethertype=8100  vlan_id=100  frame_rate=10  frame_cnt=10  frame_size=68  name=e_c_flow
+    ${stream3}=			   L3 add  no_arp=True  flow=c->e  src_mac=00:02:03:01:00:24  dst_mac=00:02:05:00:00:24  ethertype=8100  vlan_id=200  frame_rate=1000  frame_cnt=10000  frame_size=68  name=c_e_flow
+    start traffic
+    sleep  7  
+    stop traffic 
+    clear stats
+    rest clear fabric interface stats 
+    rest clear vns stats  v1
+    sleep  60
+    rest clear fabric interface stats 
+    rest clear vns stats  v1
+    rest verify tenant rx stats  t1   0
+    rest verify tenant tx stats  t1   0
+    rest verify tenant rx stats  t2   0
+    rest verify tenant tx stats  t2   0
+    start traffic  ${stream1}
+    sleep  20
+    start traffic  ${stream3}
+    sleep  60
+    rest verify tenant rx stats  t1   10000
+    rest verify tenant tx stats  t1   10000
+    rest verify tenant rx stats  t2   10000
+    rest verify tenant tx stats  t2   10000
+    rest delete tenant  t1
+    rest delete tenant  t2
+    
+verify multiple tenant rates 
+ 	[Tags]  feature
+ 	rest verify stats interval  30  30
+ 	rest add tenant  t1
+	rest add vns  t1  v1
+	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
+	rest add interface to vns  t1  v1  leaf1-a  ${leaf1a_ixia_intf}  100     
+	rest add tenant  t2
+	rest add vns  t2  v1
+	rest add interface to vns  t2  v1  leaf2-a  ${leaf2a_ixia_intf}  100
+	rest add interface to vns  t2  v1  leaf1-a  ${leaf1a_ixia_intf}  200  
+    ${stream}=             L3 add  no_arp=True  flow=a->c  src_mac=00:02:01:00:00:24  dst_mac=00:02:03:00:00:24  frame_rate=10  frame_cnt=10  frame_size=68  name=a_c_flow
+    ${stream1}=			   L3 add  no_arp=True  flow=c->a  src_mac=00:02:03:00:00:24  dst_mac=00:02:01:00:00:24  ethertype=8100  vlan_id=100  frame_rate=1000   frame_size=68  name=c_a_flow	
+    ${stream2}=             L3 add  no_arp=True  flow=e->c  src_mac=00:02:05:00:00:24  dst_mac=00:02:03:01:00:24  ethertype=8100  vlan_id=100  frame_rate=10  frame_cnt=10  frame_size=68  name=e_c_flow
+    ${stream3}=			   L3 add  no_arp=True  flow=c->e  src_mac=00:02:03:01:00:24  dst_mac=00:02:05:00:00:24  ethertype=8100  vlan_id=200  frame_rate=1000   frame_size=68  name=c_e_flow
+    start traffic
+    sleep  7  
+    stop traffic 
+    clear stats
+    rest clear fabric interface stats 
+    rest clear vns stats  v1
+    sleep  60
+    rest clear fabric interface stats 
+    rest clear vns stats  v1
+    rest verify tenant rx stats  t1   0
+    rest verify tenant rx stats  t2   0
+    start traffic  ${stream1}
+    sleep  5
+    start traffic  ${stream3}
+    sleep  120
+    rest verify tenant rx rates  t1   1000
+    rest verify tenant tx rates  t1   1000
+    rest verify tenant rx rates  t2   1000
+    rest verify tenant tx rates  t2   1000
+    rest delete tenant  t1
+    rest delete tenant  t2
+       
+Master node controller reboot with multiple vns/interface stats
+	[Tags]  feature
+	rest verify stats interval  30  30
+	rest add tenant  t1
+	rest add vns  t1  v1
+	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
+	rest add interface to vns  t1  v1  leaf1-a  ${leaf1a_ixia_intf}  100     
+	rest add vns  t1  v2
+	rest add interface to vns  t1  v2  leaf2-a  ${leaf2a_ixia_intf}  100
+	rest add interface to vns  t1  v2  leaf1-a  ${leaf1a_ixia_intf}  200  
+    ${stream}=             L3 add  no_arp=True  flow=a->c  src_mac=00:02:01:00:00:24  dst_mac=00:02:03:00:00:24  frame_rate=10  frame_cnt=10  frame_size=68  name=a_c_flow
+    ${stream1}=			   L3 add  no_arp=True  flow=c->a  src_mac=00:02:03:00:00:24  dst_mac=00:02:01:00:00:24  ethertype=8100  vlan_id=100  frame_rate=1000  frame_cnt=10000  frame_size=68  name=c_a_flow	
+    ${stream2}=             L3 add  no_arp=True  flow=e->c  src_mac=00:02:05:00:00:24  dst_mac=00:02:03:01:00:24  ethertype=8100  vlan_id=100  frame_rate=10  frame_cnt=10  frame_size=68  name=e_c_flow
+    ${stream3}=			   L3 add  no_arp=True  flow=c->e  src_mac=00:02:03:01:00:24  dst_mac=00:02:05:00:00:24  ethertype=8100  vlan_id=200  frame_rate=1000  frame_cnt=10000  frame_size=68  name=c_e_flow
+    start traffic
+    sleep  7  
+    stop traffic 
+    clear stats
+    rest clear fabric interface stats 
+    rest clear vns stats  v1
+    rest clear vns stats  v2
+    sleep  60
+    cli verify cluster master reboot
+    rest clear fabric interface stats 
+    rest clear vns stats  v1
+    rest clear vns stats  v2
+    rest verify tenant rx stats  t1   0
+    rest verify tenant tx stats  t1   0
+    rest verify vns rx stats  t1  v1  0
+    rest verify vns rx stats  t1  v2  0
+    start traffic  ${stream1}
+    sleep  20
+    start traffic  ${stream3}
+    sleep  60
+    rest verify tenant rx stats  t1  20000
+    rest verify tenant tx stats  t1  20000
+    rest verify vns rx stats  t1  v1  10000
+    rest verify vns tx stats  t1  v2  10000
+    rest verify fabric interface tx stats  leaf0-a  ${leaf0a_ixia_intf}  10000
+    rest verify fabric interface tx stats  leaf2-a  ${leaf2a_ixia_intf}  10000
+    rest delete tenant  t1 
+	
+Verify interface stats using stats-brief (Both RX and TX stats)
+	[Tags]  feature
+	rest verify stats interval  30  30
+	rest add tenant  t1
+	rest add vns  t1  v1
+	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
+	rest add interface to vns  t1  v1  leaf1-a  ${leaf1a_ixia_intf}  100     
+	${stream}=             L3 add  no_arp=True  flow=a->c  src_mac=00:02:01:00:00:24  dst_mac=00:02:03:00:00:24  frame_rate=1000  frame_cnt=10000  frame_size=68  name=a_c_flow
+    ${stream1}=			   L3 add  no_arp=True  flow=c->a  src_mac=00:02:03:00:00:24  dst_mac=00:02:01:00:00:24  ethertype=8100  vlan_id=100  frame_rate=1000  frame_cnt=10000  frame_size=68  name=c_a_flow	
+    start traffic
+    sleep  7  
+    stop traffic 
+    clear stats
+    rest clear fabric interface stats 
+    rest clear vns stats  v1
+    rest clear vns stats  v2
+    sleep  60
+    start traffic  ${stream}
+    sleep  20
+    start traffic  ${stream1}
+	sleep  60
+	rest verify fabric interface stats brief  leaf0-a  ${leaf0a_ixia_intf}  10000
+	rest verify fabric interface stats brief  leaf1-a  ${leaf1a_ixia_intf}  10000
+	rest delete tenant  t1
+		
+* Keywords 
+T5 Functional Suite Setup
+   base suite setup
+   add fabric switch
+   rest delete fabric switch  spine0
+         
+T5 Functional Suite Teardown
+   delete fabric switch
+   rest delete tenant  t1
+   rest delete tenant  t2
+   rest delete tenant  t3
+   base suite teardown
+   	
+add a tenant  [Arguments]  ${tenant} 
+  REST add tenant  ${tenant}    
+
+delete a tenant  [Arguments]  ${tenant} 
+  	REST delete tenant  ${tenant}    
+
+add a vns  [Arguments]  ${tenant}  ${vns}  
+	REST add vns  ${tenant}  ${vns}   
+
+delete a vns  [Arguments]  ${tenant}  ${vns} 
+  	REST delete vns  ${tenant}  ${vns}   
+
+add a portgroup  [Arguments]  ${pg}
+  	REST add portgroup  ${pg}    
+
+delete a portgroup  [Arguments]  ${pg}
+  	REST delete portgroup  ${pg}    
+
+add a endpoint  [Arguments]  ${tenant}  ${vns}  ${endpoint} 
+  	REST add endpoint  ${tenant}  ${vns}  ${endpoint}  
+
+delete a endpoint  [Arguments]  ${tenant}  ${vns}  ${endpoint}
+  	REST delete endpoint  ${tenant}  ${vns}  ${endpoint}  
+
+add interface to portgroup  [Arguments]  ${switch}  ${intf}  ${pg} 
+  	REST add interface to portgroup  ${switch}  ${intf}  ${pg}  
+
+delete interface from portgroup  [Arguments]  ${switch}  ${intf}  ${pg} 
+  	REST delete interface from portgroup  ${switch}  ${intf}  ${pg}  
+
+add portgroup to vns  [Arguments]  ${tenant}  ${vns}  ${pg}  ${vlan}
+  	REST add portgroup to vns  ${tenant}  ${vns}  ${pg}  ${vlan} 
+
+add portgroup to endpoint  [Arguments]  ${tenant}  ${vns}  ${endpoint}  ${pg}  ${vlan} 
+    REST add portgroup to endpoint  ${tenant}  ${vns}  ${endpoint}  ${pg}  ${vlan} 
+
+delete portgroup from vns  [Arguments]  ${tenant}  ${vns}  ${pg}  ${vlan} 
+    REST delete portgroup from vns  ${tenant}  ${vns}  ${pg}  ${vlan}
+
+verify traffic rate   [Arguments]  ${tx_rate}  ${rx_rate}  ${tx_intf}  ${rx_intf}
+    Sleep  5
+    ${report}=  fetch port stats
+    Log  ${report}
+    ${tx_value}=  verify dict key  ${report}  ${tx_intf}  transmitted_frame_rate
+    ${rx_value}=  verify dict key  ${report}  ${rx_intf}  received_valid_frame_rate
+    ixia verify traffic rate  ${tx_value}  ${rx_value}
+    
+verify traffic rate negative   [Arguments]  ${tx_rate}  ${rx_rate}  ${tx_intf}  ${rx_intf}
+    Sleep  5
+    ${report}=  fetch port stats
+    ${tx_value}=  verify dict key  ${report}  ${tx_intf}  transmitted_frame_rate
+    ${rx_value}=  verify dict key  ${report}  ${rx_intf}  received_valid_frame_rate
+    Should Be True  ${rx_value} == 0
+
+verify switch interface stats  [Arguments]  ${switch}  ${intf}
+	${report}=  cli show interface statistics  ${switch}  ${intf}
+	${tx_pkts_1}=  Get from Dictionary  ${report}  sent_packets
+	Sleep  1
+	${report}=  cli show interface statistics  ${switch}  ${intf}
+	${tx_pkts_2}=  Get from Dictionary  ${report}  sent_packets
+	${count}=  Evaluate  ${tx_pkts_2} - ${tx_pkts_1}
+	${result}=  Evaluate  0 < ${count} < 1001
+	Should be True  ${result}
+	
+T5 test teardown
+	delete traffic
+	rest delete fabric switch  leaf0-b  
+	rest delete tenant  t1
+	rest delete tenant  t2
