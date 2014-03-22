@@ -16,18 +16,32 @@ Resource		 testsuites/T5/t5_physical_variables.txt
 
 * Test Case 
 
+bring up host bond0 interface
+	bring up h1 bond0
+	sleep  2
+	bring up h2 bond0
+	sleep  2
+	bring up h3 bond0
+	sleep  2
+	bring up h4 bond0
+	sleep  2
+	bring up h5 bond0
+	sleep  2
+	bring up h6 bond0
+	sleep  2
+	
 add Fabric setup Three Rack Dual Leaf 
    [Tags]  smoke  sanity
    rest verify fabric switch all
    rest verify fabric link 
-
+   
 ping h5 to h6 dual leaf single rack dynamic endpoints
    [Tags]  smoke   sanity       
    add portgroup to vns  A  A  p5  -1 
    add portgroup to vns  A  A  p6  -1
    sleep  5
    ${loss}=  bash ping  h5  ${h6_ip}  source_if=bond0
-   Should Be True  ${loss} == 0						 
+   Should Be True  ${loss} < 50						 
 	 
 ping h5 to h6 dual leaf single rack static endpoints
    [Tags]  sanity        
@@ -43,7 +57,7 @@ ping h5 to h6 dual leaf single rack static endpoints
    add portgroup to vns  A  A  p5  -1
    sleep  5
    ${loss}=  bash ping  h5  ${h6_ip}  source_if=bond0
-   Should Be True  ${loss} == 0 
+   Should Be True  ${loss} < 50 
 
 ping h4 to h5 dual rack dual leaf dynamic endpoints
    [Tags]  sanity     
@@ -51,7 +65,7 @@ ping h4 to h5 dual rack dual leaf dynamic endpoints
    add portgroup to vns  A  A  p4  -1
    sleep  5
    ${loss}=  bash ping  h5  ${h4_ip}  source_if=bond0
-   Should Be True  ${loss} == 0					 
+   Should Be True  ${loss} < 50					 
 		
 ping h4 to h5 dual rack dual leaf static endpoints
    [Tags]  sanity            
@@ -67,7 +81,7 @@ ping h4 to h5 dual rack dual leaf static endpoints
    add portgroup to vns  A  A  p4  -1 
    sleep  5
    ${loss}=  bash ping  h5  ${h4_ip}  source_if=bond0
-   Should Be True  ${loss} == 0  
+   Should Be True  ${loss} < 50  
    
 ping h1 to h2 dual leaf single rack dynamic endpoints tag
    [Tags]  sanity   
@@ -75,7 +89,7 @@ ping h1 to h2 dual leaf single rack dynamic endpoints tag
    add portgroup to vns  A  A  p2  10 
    sleep  5
    ${loss}=  bash ping  h1  ${h2_tag_ip}  source_if=bond0.10
-   Should Be True  ${loss} == 0 					
+   Should Be True  ${loss} < 50 					
 		
 ping h1 to h2 dual leaf single rack static endpoints tag
    [Tags]  sanity    
@@ -91,7 +105,7 @@ ping h1 to h2 dual leaf single rack static endpoints tag
    add portgroup to vns  A  A  p1  10
    sleep  5 
    ${loss}=  bash ping  h1  ${h2_tag_ip}  source_if=bond0.10
-   Should Be True  ${loss} == 0
+   Should Be True  ${loss} < 50
 
 ping h1 to h3 dual rack dual leaf dynamic endpoints tag     
    [Tags]  sanity    
@@ -99,7 +113,7 @@ ping h1 to h3 dual rack dual leaf dynamic endpoints tag
    add portgroup to vns  A  A  p3  10 
    sleep  5
    ${loss}=  bash ping  h1  ${h3_tag_ip}  source_if=bond0.10
-   Should Be True  ${loss} == 0   
+   Should Be True  ${loss} < 50   
    
 ping h1 to h3 dual rack dual leaf static endpoints tag 
    [Tags]  sanity    
@@ -115,7 +129,7 @@ ping h1 to h3 dual rack dual leaf static endpoints tag
    add portgroup to vns  A  A  p1  10
    sleep  5
    ${loss}=  bash ping  h1  ${h3_tag_ip}  source_if=bond0.10
-   Should Be True  ${loss} == 0  
+   Should Be True  ${loss} < 50  
    
 
    
@@ -151,7 +165,7 @@ T5 base test setup
    add interface to portgroup  leaf2-b  ${h6_intf1}  p6
    rest add portgroup lacp  p6
    sleep  10
-   
+      
 T5 base test teardown
    delete a tenant  A
    delete interface from portgroup  leaf0-a  ${h1_intf0}  p1
@@ -241,6 +255,29 @@ Tear down the config
 T5 base suite setup
 	base suite setup
 	add fabric switch
-    sleep  5
+	sleep  5
 	
- 
+bring up h1 bond0
+	bash init intf  h1  bond0.10
+    bash add ip address  h1  ${h1_tag_ip}/24  bond0.10
+    bash ifup intf  h1  bond0 
+bring up h2 bond0
+	bash init intf  h2  bond0.10
+    bash add ip address  h2  ${h2_tag_ip}/24  bond0.10
+    bash ifup intf  h2  bond0
+bring up h3 bond0
+	bash init intf  h3  bond0.10
+    bash add ip address  h3  ${h3_tag_ip}/24  bond0.10
+    bash ifup intf  h3  bond0 
+bring up h4 bond0
+	bash init intf  h4  bond0
+    bash add ip address  h4  ${h4_ip}/24  bond0
+    bash ifup intf  h4  bond0
+bring up h5 bond0
+	bash init intf  h5  bond0
+    bash add ip address  h5  ${h5_ip}/24  bond0
+    bash ifup intf  h5  bond0
+bring up h6 bond0
+	bash init intf  h6  bond0
+    bash add ip address  h6  ${h6_ip}/24  bond0
+    bash ifup intf  h6  bond0  
