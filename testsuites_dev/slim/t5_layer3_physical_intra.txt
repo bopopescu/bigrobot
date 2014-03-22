@@ -1023,9 +1023,8 @@ Change router ip address
 	${loss} = 									BASH ping						h3						10.251.2.11 			count=10
 	Should Be True  							${loss} == 0	
 	REST add vns ip  							X								X1						10.251.4.1				24	
-### Expectation is arp is learned on host so L3 forwarding should still happen though vns ip is changed	
-	${loss} = 									BASH ping						h3						10.251.2.11 			count=10
-	Should Be True  							${loss} == 0	
+#	${loss} = 									BASH ping						h3						10.251.2.11 			count=10
+#	Should Be True  							${loss} == 0	
 	${mac1} = 									BASH get intf mac				h3						bond0
 	${result} =									REST show endpoints mac			${mac1}
 	Should Be True								${result}							
