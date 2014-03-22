@@ -20,7 +20,7 @@ Resource		 testsuites/T5/t5_physical_variables.txt
 * Test Case 
 
 add Single Leaf Three Rack setup
-   [Tags]  feature  run        
+   [Tags]  feature         
    rest verify fabric switch all
    rest verify fabric link
       
@@ -99,7 +99,7 @@ verify CLI switch interface rx and tx rate output for all possible options
 	rest delete tenant  t1
 	
 Verify single VNS rx/tx stats between rack
-	[Tags]  feature  run   
+	[Tags]  feature     
 	rest verify stats interval  30  30
 	rest add tenant  t1
 	rest add vns  t1  v1
@@ -159,7 +159,7 @@ Verify single VNS rx/tx stats within same rack
     rest delete tenant  t1
     
 Verify single vns rx/tx rates same rack
-	[Tags]  feature
+	[Tags]  feature  
 	rest verify stats interval  30  30        
     rest add switch  leaf0-b
 	rest add dpid  leaf0-b  ${leaf0b_dpid}
@@ -185,7 +185,7 @@ Verify single vns rx/tx rates same rack
     rest verify vns rx stats  t1  v1  0
     rest verify vns tx stats  t1  v1  0
     start traffic  ${stream}
-    sleep  60
+    sleep  120
     rest verify vns rx rates  t1  v1  2000
     rest verify vns tx rates  t1  v1  2000
     stop traffic  ${stream}
@@ -214,7 +214,7 @@ verify single vns rx/tx rates different rack
     rest verify vns rx stats  t1  v1  0
     rest verify vns tx stats  t1  v1  0
     start traffic  ${stream}
-    sleep  60
+    sleep  120
     rest verify vns rx rates  t1  v1  1000
     rest verify vns tx rates  t1  v1  1000
     stop traffic  ${stream}   
@@ -273,11 +273,9 @@ verify interface rx/tx stats same rack
     start traffic  ${stream}
     sleep  60
     rest verify fabric interface rx stats  leaf0-a  ${leaf0a_ixia_intf}  10000
-    rest verify fabric interface tx stats  leaf0-a  ${leaf0a_spine1_intf0}  10000
-    rest verify fabric interface rx stats  spine1  ${spine1_leaf0a_intf0}  10000
-    rest verify fabric interface tx stats  spine1  ${spine1_leaf1a_intf0}  10000
-    rest verify fabric interface tx stats  leaf1-a  ${leaf1a_ixia_intf}  10000
-    rest verify fabric interface rx stats  leaf1-a  ${leaf1a_spine1_intf0}  10000
+    rest verify fabric interface tx stats  leaf0-b  ${leaf0b_ixia_intf}  10000
+    rest verify fabric interface tx stats  leaf0-a  ${leaf0a_leaf0b_intf0}  10000
+    rest verify fabric interface rx stats  spine1  ${spine1_leaf0a_intf0}  0
     stop traffic  ${stream}
     rest delete fabric switch  leaf0-b
     rest delete tenant  t1
@@ -300,7 +298,7 @@ verify interface rx/tx rates different rack
     sleep  60
     rest clear fabric interface stats
     start traffic  ${stream}
-    sleep  60
+    sleep  120
     rest verify fabric interface rx rates  leaf0-a  ${leaf0a_ixia_intf}  1000
     rest verify fabric interface tx rates  leaf0-a  ${leaf0a_spine1_intf0}  1000
     rest verify fabric interface rx rates  spine1  ${spine1_leaf0a_intf0}  1000
@@ -334,13 +332,9 @@ verify interface rx/tx rates same rack
     sleep  60
     rest clear fabric interface stats
     start traffic  ${stream}
-    sleep  60
+    sleep  120
     rest verify fabric interface rx rates  leaf0-a  ${leaf0a_ixia_intf}  1000
-    rest verify fabric interface tx rates  leaf0-a  ${leaf0a_spine1_intf0}  1000
-    rest verify fabric interface rx rates  spine1  ${spine1_leaf0a_intf0}  1000
-    rest verify fabric interface tx rates  spine1  ${spine1_leaf1a_intf0}  1000
-    rest verify fabric interface tx rates  leaf1-a  ${leaf1a_ixia_intf}  1000
-    rest verify fabric interface rx rates  leaf1-a  ${leaf1a_spine1_intf0}  1000
+    rest verify fabric interface tx rates  leaf0-b  ${leaf0b_ixia_intf}  1000
     stop traffic  ${stream}
     rest delete fabric switch  leaf0-b
     rest delete tenant  t1
@@ -373,7 +367,7 @@ verify interface rx/tx broadcast packet stats different rack
     rest delete tenant  t1
 	
 verify interface rx/tx multicast packets stats
-	[Tags]  feature
+	[Tags]  feature  
 	rest verify stats interval  30  30
 	rest add tenant  t1
 	rest add vns  t1  v1
@@ -394,13 +388,13 @@ verify interface rx/tx multicast packets stats
     rest verify vns tx stats  t1  v1  0
     start traffic  ${stream}
     sleep  60
-    rest verify vns rx stats  t1  v1  10000
+    rest verify vns rx stats  t1  v1  10000  
     rest verify vns tx stats  t1  v1  10000
-    rest verify fabric interface tx stats  leaf1-a  ${leaf1a_ixia_intf}  10000
+    rest verify fabric interface tx stats  leaf1-a  ${leaf1a_ixia_intf}  10000  7
     rest delete tenant  t1
 
 verify interface LLDP/control packet count different rack
-	[Tags]  feature
+	[Tags]  feature  
 	rest verify stats interval  30  30
 	rest add tenant  t1
 	rest add vns  t1  v1
@@ -421,13 +415,12 @@ verify interface LLDP/control packet count different rack
     rest verify vns tx stats  t1  v1  0
     start traffic  ${stream}
     sleep  60
-    rest verify vns rx stats  t1  v1  10000
-    rest verify vns tx stats  t1  v1  10000
-    rest verify fabric interface tx stats  leaf1-a  ${leaf1a_ixia_intf}  10000
+    rest verify vns tx stats  t1  v1  0
+    rest verify fabric interface tx stats  leaf1-a  ${leaf1a_ixia_intf}  0
     rest delete tenant  t1
 
 verify multiple vns counters different rack
-	[Tags]  feature
+	[Tags]  feature  
 	rest verify stats interval  30  30
 	rest add tenant  t1
 	rest add vns  t1  v1
@@ -454,6 +447,7 @@ verify multiple vns counters different rack
     rest verify vns rx stats  t1  v1  0
     rest verify vns tx stats  t1  v2  0
     start traffic  ${stream1}
+    sleep  20
     start traffic  ${stream3}
     sleep  60
     rest verify vns rx stats  t1  v1  10000
@@ -463,7 +457,7 @@ verify multiple vns counters different rack
     rest delete tenant  t1
 
 verify multiple vns counters on 2 different tenant 
-	[Tags]  feature
+	[Tags]  feature    
 	rest verify stats interval  30  30
 	rest add tenant  t1
 	rest add vns  t1  v1
@@ -491,6 +485,7 @@ verify multiple vns counters on 2 different tenant
     rest verify vns rx stats  t2  v1  0
     rest verify vns tx stats  t2  v1  0
     start traffic  ${stream1}
+    sleep  20
     start traffic  ${stream3}
     sleep  60
     rest verify vns rx stats  t1  v1  10000
@@ -555,6 +550,7 @@ verify single tenant stats using multiple VNS
     rest verify tenant rx stats  t1   0
     rest verify tenant tx stats  t1   0
     start traffic  ${stream1}
+    sleep  20
     start traffic  ${stream3}
     sleep  60
     rest verify tenant rx stats  t1  20000
@@ -590,6 +586,7 @@ verify multiple tenant stats
     rest verify tenant rx stats  t2   0
     rest verify tenant tx stats  t2   0
     start traffic  ${stream1}
+    sleep  20
     start traffic  ${stream3}
     sleep  60
     rest verify tenant rx stats  t1   10000
@@ -626,8 +623,9 @@ verify multiple tenant rates
     rest verify tenant rx stats  t1   0
     rest verify tenant rx stats  t2   0
     start traffic  ${stream1}
+    sleep  5
     start traffic  ${stream3}
-    sleep  60
+    sleep  120
     rest verify tenant rx rates  t1   1000
     rest verify tenant tx rates  t1   1000
     rest verify tenant rx rates  t2   1000
@@ -666,6 +664,7 @@ Master node controller reboot with multiple vns/interface stats
     rest verify vns rx stats  t1  v1  0
     rest verify vns rx stats  t1  v2  0
     start traffic  ${stream1}
+    sleep  20
     start traffic  ${stream3}
     sleep  60
     rest verify tenant rx stats  t1  20000
@@ -694,8 +693,9 @@ Verify interface stats using stats-brief (Both RX and TX stats)
     rest clear vns stats  v2
     sleep  60
     start traffic  ${stream}
+    sleep  20
     start traffic  ${stream1}
-	sleep 60
+	sleep  60
 	rest verify fabric interface stats brief  leaf0-a  ${leaf0a_ixia_intf}  10000
 	rest verify fabric interface stats brief  leaf1-a  ${leaf1a_ixia_intf}  10000
 	rest delete tenant  t1
@@ -778,4 +778,7 @@ verify switch interface stats  [Arguments]  ${switch}  ${intf}
 	Should be True  ${result}
 	
 T5 test teardown
-	delete traffic  
+	delete traffic
+	rest delete fabric switch  leaf0-b  
+	rest delete tenant  t1
+	rest delete tenant  t2
