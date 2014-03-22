@@ -90,8 +90,8 @@ class DevConf(object):
                                         " for device %s (user:%s, password:%s). Also try"
                                         " to log in manually to see what the error is."
                                         % (self._host, self._user, self._password))
-            # helpers.log("Exception in %s" % sys.exc_info()[0])
-            # raise
+            helpers.log("Exception in %s" % sys.exc_info()[0])
+            raise
         except TimeoutException:
             helpers.environment_failure("Login failure: Timed out during SSH connnect"
                                         " to device %s. Try to log in manually to see"
@@ -633,17 +633,6 @@ class HostDevConf(DevConf):
     def __init__(self, *args, **kwargs):
         super(HostDevConf, self).__init__(*args, **kwargs)
         self.bash('uname -a')
-
-        self.send("virsh console %s" % self._console_info['libvirt_vm_name'])
-
-        # if self._console_info['driver']:
-        #    helpers.log("Setting devconf driver for console to '%s'"
-        #                % self._console_info['driver'])
-        #    conn.set_driver(self._console_info['driver'])
-
-        driver = self.conn.get_driver()
-        helpers.log("Using devconf driver '%s' (name: '%s')"
-                    % (driver, driver.name))
 
     def _cmd(self, cmd, quiet=False, prompt=False, timeout=None, level=4):
         if not quiet:

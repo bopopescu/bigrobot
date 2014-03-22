@@ -68,6 +68,7 @@ class Log(object):
         else:
             if to_stderr:
                 sys.stderr.write('\n' + msg)
+                logger.info(msg)
             else:
                 logger.info(msg)
 

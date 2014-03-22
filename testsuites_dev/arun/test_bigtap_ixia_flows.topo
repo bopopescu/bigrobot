@@ -10,7 +10,8 @@ tg1:
    set_bigtap_config: false
   switches: 
    s1:
-    ip: 10.192.75.230
+    ip: 10.192.109.223
+    dipid: 00:00:5c:16:c7:19:e7:4e
   ports:
    a:
     name: 2/7
@@ -28,13 +29,4 @@ tg1:
    g:
     name: 1/13
    h:
-    name: 1/14
-   i:
-    name: 1/25
-   j:
-    name: 1/26
-   k:
-    name: 1/35
-   l:
-    name: 1/36
-  
+    name: 1/14  

@@ -15,6 +15,7 @@
 
 import autobot.helpers as helpers
 import autobot.test as test
+import re
 
 
 class Controller(object):
@@ -160,21 +161,31 @@ class Controller(object):
         # At this point, device is rebooted and we lose the session handle.
         # Connect to device console to complete first-boot.
         helpers.log("Boot factory-default completed on '%s'. System should be rebooting." % node)
+        return True
 
-    def cli_add_first_boot_bvs(self,
-                               node,
-                               ip_address=None,
-                               netmask='',
-                               gateway='',
-                               dns_server='',
-                               dns_search='',
-                               ntp_server='',
-                               ):
+    def cli_add_first_boot(self,
+                           node,
+                           ip_address=None,
+                           netmask='',
+                           gateway='',
+                           dns_server='',
+                           dns_search='',
+                           ntp_server='',
+                           hostname='mycontroller',
+                           cluster_name='mycluster',
+                           cluster_descr='',
+                           admin_password='adminadmin',
+                           platform='bvs',
+                           ):
         """
         First boot setup fpr BVS - It will then connect to the console to
         complete the first-boot configuration steps (call
         'cli add first boot').
         """
+
+        if platform != 'bvs':
+            helpers.test_error("Only 'bvs' platform is supported")
+
         t = test.Test()
         n = t.node(node)
 
@@ -184,7 +195,7 @@ class Controller(object):
         helpers.log("Getting the console session for '%s'" % node)
         n_console = n.console()
 
-        """ Note: Below is the basic first boot question/answer output.
+        _ = """ Note: Below is the basic first boot question/answer output.
 
         root@qa-kvm-32:~# virsh console vui-bvs
         Connected to domain vui-bvs
@@ -325,37 +336,182 @@ class Controller(object):
         n_console.send('admin')
         n_console.expect(r'Do you accept the EULA.* > ')
         n_console.send('Yes')
+
+        n_console.expect(r'Local Node Configuration')
         n_console.expect(r'Password for emergency recovery user > ')
         n_console.send('bsn')
         n_console.expect(r'Retype Password for emergency recovery user > ')
         n_console.send('bsn')
         n_console.expect(r'Please choose an IP mode:.*[\r\n]')
         n_console.expect(r'> ')
-        n_console.send('1')
+        n_console.send('1')  # Manual
         n_console.expect(r'IP address .* > ')
+        n_console.send(ip_address)
 
+        if not re.match(r'.*/\d+', ip_address):
+            # Send netmask if IP address doesn't contain prefix length
+            n_console.expect(r'CIDR prefix length .* > ')
+            n_console.send(netmask)
 
+        n_console.expect(r'Default gateway address .* > ')
+        n_console.send(gateway)
+        n_console.expect(r'DNS server address .* > ')
+        n_console.send(dns_server)
+        n_console.expect(r'DNS search domain .* > ')
+        n_console.send(dns_search)
+        n_console.expect(r'Hostname > ')
+        n_console.send(hostname)
 
-        helpers.test_error("Exit early")
+        n_console.expect(r'Controller Clustering')
+        n_console.expect(r'> ')
+        n_console.send('1')  # Start a new cluster
+        n_console.expect(r'Cluster name > ')
+        n_console.send(cluster_name)
+        n_console.expect(r'Cluster description .* > ')
+        n_console.send(cluster_descr)
+        n_console.expect(r'Administrator password for cluster > ')
+        n_console.send(admin_password)
+        n_console.expect(r'Retype .* > ')
+        n_console.send(admin_password)
 
+        n_console.expect(r'System Time')
+        n_console.expect(r'Enter NTP server .* > ')
+        n_console.send(ntp_server)
+
+        n_console.expect(r'Please choose an option:.*[\r\n]')
+        n_console.expect(r'\[1\] > ')
+        n_console.send('1')  # Apply settings
+
+        n_console.expect(r'Initializing system.*[\r\n]')
+        n_console.expect(r'Configuring controller.*[\r\n]')
+        n_console.expect(r'Configuring cluster.*[\r\n]')
+        n_console.expect(r'First-time setup is complete.*[\r\n]')
+
+        n_console.expect(r'Press enter to continue > ')
+        n_console.send('')
+
+        helpers.log("Closing console connection for '%s'" % node)
+        n.console_close()
+
+        helpers.sleep(3)  # Sleep for a few seconds just in case...
 
         # Check that controller is now pingable.
-        loss = helpers.ping(ip_address)
+        # First remove the prefix from the IP address.
+        new_ip_address = re.sub(r'/\d+$', '', ip_address)
+        loss = helpers.ping(new_ip_address)
         if loss < 50:
             helpers.log("Node '%s' has survived first-boot!" % node)
             return True
         else:
             return False
 
-    def cli_add_first_boot(self,
-                           node,
-                           ip_address,
-                           netmask='',
-                           gateway='',
-                           dns_server='',
-                           dns_search='',
-                           ntp_server='',
-                           timezone='America/Los_Angeles'):
+    def cli_boot_factory_default_and_first_boot(self, node, reboot_sleep=60,
+                                                **kwargs):
+        """
+        Call 'cli boot factory default' to put device in first-boot mode. Then call 'cli_add_first_boot' to configure the device.
+        """
+        do_factory_boot = True
+        do_first_boot = True
+
+        if not helpers.is_controller(node):
+            helpers.test_error("Node must be a controller ('c1', 'c2').")
+
+        if do_factory_boot:
+            self.cli_boot_factory_default(node)
+            helpers.log("Sleeping for %s seconds before first boot setup"
+                        % reboot_sleep)
+            helpers.sleep(reboot_sleep)
+
+        if do_first_boot:
+            return self.cli_add_first_boot(node, **kwargs)
+
+    def bash_scp_file(self, node, remote_file, local_path='.',
+                       password='bsn', timeout=180):
+        """
+        Objective:
+        Secure copy a file as defined in remote_file to the node.
+
+        Inputs:
+        | node | controller name as defined in .topo file |
+        | remote_file | the complete file path, in format user@host:/path/file' |
+        | local_path | the destination (default is '.') |
+        | password | password used to authenticate (default is 'bsn') |
+        | timeout | how log to wait before timeout (default is 180 seconds) |
+
+        Example:
+        | bash scp file | node=c1 | remote_file=bsn@jenkins:/var/lib/jenkins/jobs/bvs\\ master/lastSuccessful/archive/target/appliance/images/bvs/controller-upgrade-bvs-2.0.5-SNAPSHOT.pkg | local_path=. |
+
+        Return Value:
+        - True if scp succeeds
+        - False if scp fails
+        """
+        t = test.Test()
+        n = t.node(node)
+
+        helpers.log("'%s' - Copying '%s' to '%s'"
+                    % (node, remote_file, local_path))
+        n.bash('')
+        n.send('sudo scp'
+               ' -o UserKnownHostsFile=/dev/null'
+               ' -o StrictHostKeyChecking=no "%s" %s'
+               % (remote_file, local_path))
+        n.expect(r'[\r\n].+password: ')
+        n.send(password)
+        try:
+            n.expect(timeout=timeout)
+        except:
+            helpers.log('scp failed')
+            return False
+        else:
+            helpers.log('scp completed successfully')
+            return True
+
+    def cli_ping(self, node, dest_ip=None, dest_node=None, *args, **kwargs):
+        """
+        Perform a ping from the CLI. Returns the loss percentage
+        - 0   - 0% loss
+        - 100 - 100% loss
+
+        Inputs:
+        - node:      The device name as defined in the topology file, e.g., 'c1', 's1', etc.
+        - dest_ip:   Ping this destination IP address
+        - dest_node  Ping this destination node ('c1', 's1', etc)
+
+        Example:
+        | ${lossA} = | Bash Ping | h1          | 10.192.104.1 |
+        | ${lossB} = | Bash Ping | node=master | dest_node=s1 |
+        =>
+        - ${lossA} = 0
+        - ${lossB} = 100
+
+        See also Host.bash ping.
+        """
+        t = test.Test()
+        n = t.node(node)
+
+        if not dest_ip and not dest_node:
+            helpers.test_error("Must specify 'dest_ip' or 'dest_node'")
+        if dest_ip and dest_node:
+            helpers.test_error("Specify 'dest_ip' or 'dest_node' but not both")
+        if dest_ip:
+            dest = dest_ip
+        if dest_node:
+            dest = t.node(dest_node).ip()
+        status = helpers._ping(dest, node_handle=n, mode='cli',
+                               *args, **kwargs)
+        return status
+
+_ = ''' These methods are candidates for removal...
+
+    def cli_add_first_boot_bigtap(self,
+                                  node,
+                                  ip_address,
+                                  netmask='',
+                                  gateway='',
+                                  dns_server='',
+                                  dns_search='',
+                                  ntp_server='',
+                                  timezone='America/Los_Angeles'):
         """
         First boot setup - It will then connect to the console to complete the
         first-boot configuration steps (call 'cli add first boot').
@@ -467,18 +623,18 @@ class Controller(object):
         else:
             return False
 
-    def cli_add_first_boot2(self,
-                            node,
-                            ip_address,
-                            hostname='',
-                            netmask='',
-                            gateway='',
-                            dns_server='',
-                            dns_server2='',
-                            dns_search='',
-                            controller_ip='',
-                            ntp_server='',
-                            timezone='America/Los_Angeles'):
+    def cli_add_first_boot_bigtap2(self,
+                                   node,
+                                   ip_address,
+                                   hostname='',
+                                   netmask='',
+                                   gateway='',
+                                   dns_server='',
+                                   dns_server2='',
+                                   dns_search='',
+                                   controller_ip='',
+                                   ntp_server='',
+                                   timezone='America/Los_Angeles'):
         """
         First boot setup - connect to the console to complete the first-boot configuration steps.
         It calls keyword 'cli add first boot'.
@@ -628,99 +784,4 @@ class Controller(object):
             return True
         else:
             return False
-
-    def cli_boot_factory_default_and_first_boot(self, node, *args, **kwargs):
-        """
-        Call 'cli boot factory default' to put device in first-boot mode. Then call 'cli_add_first_boot' to configure the device.
-        """
-        do_factory_boot = True
-        do_first_boot = True
-
-        if not helpers.is_controller(node):
-            helpers.test_error("Node must be a controller ('c1', 'c2').")
-
-        if do_factory_boot:
-            self.cli_boot_factory_default(node)
-            sec = 30
-            helpers.log("Sleeping for %s seconds" % sec)
-            helpers.sleep(sec)
-
-        if do_first_boot:
-            self.cli_add_first_boot(node, *args, **kwargs)
-
-    def bash_scp_file(self, node, remote_file, local_path='.',
-                       password='bsn', timeout=180):
-        """
-        Objective:
-        Secure copy a file as defined in remote_file to the node.
-
-        Inputs:
-        | node | controller name as defined in .topo file |
-        | remote_file | the complete file path, in format user@host:/path/file' |
-        | local_path | the destination (default is '.') |
-        | password | password used to authenticate (default is 'bsn') |
-        | timeout | how log to wait before timeout (default is 180 seconds) |
-
-        Example:
-        | bash scp file | node=c1 | remote_file=bsn@jenkins:/var/lib/jenkins/jobs/bvs\\ master/lastSuccessful/archive/target/appliance/images/bvs/controller-upgrade-bvs-2.0.5-SNAPSHOT.pkg | local_path=. |
-
-        Return Value:
-        - True if scp succeeds
-        - False if scp fails
-        """
-        t = test.Test()
-        n = t.node(node)
-
-        helpers.log("'%s' - Copying '%s' to '%s'"
-                    % (node, remote_file, local_path))
-        n.bash('')
-        n.send('sudo scp'
-               ' -o UserKnownHostsFile=/dev/null'
-               ' -o StrictHostKeyChecking=no "%s" %s'
-               % (remote_file, local_path))
-        n.expect(r'[\r\n].+password: ')
-        n.send(password)
-        try:
-            n.expect(timeout=timeout)
-        except:
-            helpers.log('scp failed')
-            return False
-        else:
-            helpers.log('scp completed successfully')
-            return True
-
-    def cli_ping(self, node, dest_ip=None, dest_node=None, *args, **kwargs):
-        """
-        Perform a ping from the CLI. Returns the loss percentage
-        - 0   - 0% loss
-        - 100 - 100% loss
-
-        Inputs:
-        - node:      The device name as defined in the topology file, e.g., 'c1', 's1', etc.
-        - dest_ip:   Ping this destination IP address
-        - dest_node  Ping this destination node ('c1', 's1', etc)
-
-        Example:
-        | ${lossA} = | Bash Ping | h1          | 10.192.104.1 |
-        | ${lossB} = | Bash Ping | node=master | dest_node=s1 |
-        =>
-        - ${lossA} = 0
-        - ${lossB} = 100
-
-        See also Host.bash ping.
-        """
-        t = test.Test()
-        n = t.node(node)
-
-        if not dest_ip and not dest_node:
-            helpers.test_error("Must specify 'dest_ip' or 'dest_node'")
-        if dest_ip and dest_node:
-            helpers.test_error("Specify 'dest_ip' or 'dest_node' but not both")
-        if dest_ip:
-            dest = dest_ip
-        if dest_node:
-            dest = t.node(dest_node).ip()
-        status = helpers._ping(dest, node_handle=n, mode='cli',
-                               *args, **kwargs)
-        return status
-
+'''

@@ -20,10 +20,12 @@ ${dst_mac_step}  00:00:00:01:00:00
 ${frame_rate}  1000
 ${frame_cnt}  50000
 ${frame_size}  160
-${sleep_time}  10
+${sleep_time}  5
 ${vlan_id}  199
 ${line_rate}  100
 ${stream_name}  a_b_flow
+${burst_count}  1000
+${burst_gap}  1000
 
 * Test Case
 Test IXIA
@@ -53,6 +55,34 @@ Bi-Direction L2 Traffic with line rate
     ${report}=             fetch port stats  stream=${stream}
     verify results  transmitted_frames  received_frames  ${stream}  ${stream_name}
     [Tags]  traffic  sanity
+
+Bi-Direction L2 Traffic with Burst count options
+# Basic test case with all default values and just start the flow
+    ${stream}=             L2 add  name=${stream_name}  flow=a<->b  src_mac=${src_mac}  dst_mac=${dst_mac}
+    ...						burst_count=${burst_count}  burst_gap=${burst_gap}
+    clear stats
+    ixia.start traffic  ${stream}
+    sleep                  ${sleep_time}
+    verify results  transmitted_frame_rate  received_frame_rate  ${stream}  ${stream_name}
+    stop traffic   ${stream}
+    sleep                  ${sleep_time}
+    ${report}=             fetch port stats  stream=${stream}
+    verify results  transmitted_frames  received_frames  ${stream}  ${stream_name}
+    [Tags]  traffic  sanity  bigtap
+
+Bi-Direction L3 Traffic with Burst count options
+# Basic test case with all default values and just start the flow
+    ${stream}=             L3 add  name=${stream_name}  flow=a<->b  src_mac=${src_mac}  dst_mac=${dst_mac}
+    ...						burst_count=${burst_count}  burst_gap=${burst_gap}
+    clear stats
+    ixia.start traffic  ${stream}
+    sleep                  ${sleep_time}
+    verify results  transmitted_frame_rate  received_frame_rate  ${stream}  ${stream_name}
+    stop traffic   ${stream}
+    sleep                  ${sleep_time}
+    ${report}=             fetch port stats  stream=${stream}
+    verify results  transmitted_frames  received_frames  ${stream}  ${stream_name}
+    [Tags]  traffic  sanity  bigtap
 Uni-Directional L2 Traffic with more args
 # Currently Supported L2 Stream args will be adding more
     ${stream}=             L2 add  name=${stream_name}  flow=a->b  src_mac=${src_mac}  dst_mac=${dst_mac}  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=${frame_cnt}
@@ -187,7 +217,7 @@ Verify L3 traffic: frame size 68 bytes
     ...		dst_ip=100.1.1.2
     clear stats
     start traffic  ${stream}
-    sleep  10
+    sleep  ${sleep_time}
     stop traffic  ${stream}
     sleep                  ${sleep_time}
     ${report}=             fetch port stats  stream=${stream}
@@ -200,7 +230,7 @@ Verify BiDirectional L3 traffic
     ...     src_ip=100.1.1.1  src_gw=100.1.1.2  dst_ip=100.1.1.2  dst_gw=100.1.1.1 
     clear stats
     start traffic  ${stream}
-    sleep  10
+    sleep  ${sleep_time}
     stop traffic  ${stream}
     sleep                  ${sleep_time}
     ${report}=             fetch port stats  stream=${stream}
@@ -213,7 +243,7 @@ BiDirectional L3 Traffic with TCP
     ...     src_ip=100.1.1.1  src_gw=100.1.1.2  dst_ip=100.1.1.2  dst_gw=100.1.1.1 
     clear stats
     start traffic  ${stream}
-    sleep  10
+    sleep  ${sleep_time}
     stop traffic  ${stream}
     sleep                  ${sleep_time}
     ${report}=             fetch port stats  stream=${stream}
@@ -226,7 +256,7 @@ BiDirectional L3 Traffic with UDP
     ...     src_ip=100.1.1.1  src_gw=100.1.1.2  dst_ip=100.1.1.2  dst_gw=100.1.1.1  
     clear stats
     start traffic  ${stream}
-    sleep  10
+    sleep  ${sleep_time}
     stop traffic  ${stream}
     sleep                  ${sleep_time}
     ${report}=             fetch port stats  stream=${stream}
@@ -237,7 +267,7 @@ BiDirectional basic IPv6 L3 Traffic with defaults
     ${stream}=  L3 add  name=${stream_name}  flow=a<->b  frame_cnt=${frame_cnt}  frame_rate=${frame_rate}  ethertype=86dd  src_mac=${src_mac}  dst_mac=${dst_mac}
     clear stats
     start traffic  ${stream}
-    sleep  10
+    sleep  ${sleep_time}
     stop traffic  ${stream}
     sleep                  ${sleep_time}
     ${report}=             fetch port stats  stream=${stream}
@@ -248,7 +278,7 @@ BiDirectional basic IPv6 L3 Traffic with defaults and no_arp
     ${stream}=  L3 add  name=${stream_name}  flow=a<->b  frame_cnt=${frame_cnt}  frame_rate=${frame_rate}  ethertype=86dd  no_arp=True  src_mac=${src_mac}  dst_mac=${dst_mac}
     clear stats
     start traffic  ${stream}
-    sleep  10
+    sleep  ${sleep_time}
     stop traffic  ${stream}
     sleep                  ${sleep_time}
     ${report}=             fetch port stats  stream=${stream}
@@ -261,7 +291,7 @@ BiDirectional IPv6 L3 Traffic with more args and TCP
     ...			src_ip=2001:2004:0:0:0:0:0:c4  src_gw=2001:2004:0:0:0:0:0:c5  dst_ip=2001:2004:0:0:0:0:0:c5  dst_gw=2001:2004:0:0:0:0:0:c4
     clear stats
     start traffic  ${stream}
-    sleep  10
+    sleep  ${sleep_time}
     stop traffic  ${stream}
     sleep                  ${sleep_time}
     ${report}=             fetch port stats  stream=${stream}
@@ -274,7 +304,7 @@ UniDirectional IPv6 L3 Traffic with ICMP
     ...			src_ip=2001:2004:0:0:0:0:0:c4  src_gw=2001:2004:0:0:0:0:0:c5  dst_ip=2001:2004:0:0:0:0:0:c5  dst_gw=2001:2004:0:0:0:0:0:c4
     clear stats
     start traffic  ${stream}
-    sleep  10
+    sleep  ${sleep_time}
     stop traffic  ${stream}
     sleep                  ${sleep_time}
     ${report}=             fetch port stats  stream=${stream}
@@ -309,7 +339,7 @@ Bi-Directional L3 Traffic with multiple vlan_ids
     
 Bi-Driectional L3 Traffic with vlan_id and crc
 # Basic test case with all default values and etherytype 8100, with vlan id
-    ${stream}=             L3 add  name=${stream_name}  flow=a<->b  ethertype=8100  vlan_id=${vlan_id}  frame_size=${frame_size}  crc=True  src_mac=${src_mac}  dst_mac=${dst_mac}
+    ${stream}=             L3 add  name=${stream_name}  flow=a<->b  ethertype=8100  vlan_id=${vlan_id}  frame_size=${frame_size}  crc=True  src_mac=${src_mac}  dst_mac=${dst_mac}  no_arp=True
     clear stats
     start traffic  ${stream}
     sleep                  ${sleep_time}
@@ -321,7 +351,7 @@ Bi-Driectional L3 Traffic with vlan_id and crc
 
 Bi-Directional L3 Traffic ICMP Echo
 # Basic test case with all default values and ICMP type and value
-    ${stream}=             L3 add  name=${stream_name}  flow=a<->b  protocol=ICMP  icmp_type=8  icmp_code=0  src_mac=${src_mac}  dst_mac=${dst_mac}
+    ${stream}=             L3 add  name=${stream_name}  flow=a<->b  protocol=ICMP  icmp_type=8  icmp_code=0  src_mac=${src_mac}  dst_mac=${dst_mac}  no_arp=True
     clear stats
     start traffic  ${stream}
     sleep                  ${sleep_time}

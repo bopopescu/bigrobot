@@ -1856,7 +1856,7 @@ class T5(object):
         c = t.controller('master')
         frame_rate = int(frame_rate)
         vrange = int(vrange)
-        url = '/api/v1/data/controller/applications/bvs/info/stats/tenant-stats/tenants[tenant-name="%s"]?select=rate' % (tenant)
+        url = '/api/v1/data/controller/applications/bvs/info/stats/tenant-stats/tenant[tenant-name="%s"]?select=rate' % (tenant)
         c.rest.get(url)
         data = c.rest.content()
         if data[0]["tenant-name"] == tenant:
@@ -1878,7 +1878,7 @@ class T5(object):
         c = t.controller('master')
         frame_rate = int(frame_rate)
         vrange = int(vrange)
-        url = '/api/v1/data/controller/applications/bvs/info/stats/tenant-stats/tenants[tenant-name="%s"]?select=rate' % (tenant)
+        url = '/api/v1/data/controller/applications/bvs/info/stats/tenant-stats/tenant[tenant-name="%s"]?select=rate' % (tenant)
         c.rest.get(url)
         data = c.rest.content()
         if data[0]["tenant-name"] == tenant:
