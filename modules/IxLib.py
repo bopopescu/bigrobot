@@ -159,7 +159,8 @@ class Ixia(object):
         return mac_devices
 
     def ix_create_device_ethernet_ip(self, topology, s_cnt, d_cnt, s_mac, d_mac, s_mac_step, d_mac_step,
-                                     src_ip, dst_ip, src_gw_ip, dst_gw_ip, s_ip_step, d_ip_step, src_gw_mac = None,
+                                     src_ip, dst_ip, src_gw_ip, dst_gw_ip, s_ip_step, d_ip_step,
+                                     s_gw_step, d_gw_step, src_gw_mac = None,
                                      dst_gw_mac = None, ip_type = 'ipv4'):
         '''
             RETURN IXIA MAC DEVICES with Ips mapped with Topologies created with vports and added increment values accordingly
@@ -170,11 +171,13 @@ class Ixia(object):
         handle = self._handle
         mac_mults = [s_cnt, d_cnt]
         mac_steps = [s_mac_step, d_mac_step]
-        ip_steps = [s_ip_step, d_ip_step]
         macs = [s_mac, d_mac]
         ips = [src_ip, dst_ip]
+        ip_steps = [s_ip_step, d_ip_step]
         gw_ips = [src_gw_ip, dst_gw_ip]
+        gw_steps = [s_gw_step, d_gw_step]
         gw_macs = [src_gw_mac, dst_gw_mac]
+        
         topo_names = []
         
         for topo in topology:
@@ -206,9 +209,11 @@ class Ixia(object):
         ixia_refs = {} # Dictionary to hold the Ixia References
         for eth_device in eth_devices:
             mac_devices.append(self._handle.remapIds(eth_device)[0])
-        for (mac_device, mult, mac_step, mac, ip_step, ip, gw_ip, gw_mac) in zip(mac_devices, mac_mults, mac_steps, macs, ip_steps, ips, gw_ips, gw_macs):
+        for (mac_device, mult, mac_step, mac, ip_step, ip, gw_step, gw_ip, gw_mac) in zip(mac_devices, mac_mults, mac_steps, macs, ip_steps, ips, gw_steps, gw_ips, gw_macs):
             ip_name = handle.getAttribute(mac_device, '-name')
 #             ip_name = ip_name + 'IPv4\ 1'
+            helpers.log('Values:')
+            helpers.log('Mac Device:%s\nMac_Multi:%s\nMac_Step:%s\nMac:%s\nIP_Steps:%s\nIP:%s\nGW_STEP:%s\nGW_IP:%s\nGW_MAC:%s' %(mac_device, mult, mac_step, mac, ip_step, ip, gw_step, gw_ip, gw_mac))
             helpers.log ('Ip: NAME : ' +  str(ip_name))
             ip_device = self._handle.add(mac_device, ip_type, '-name', ip_name)
             ip_device_ixia = handle.remapIds(ip_device)[0]
@@ -229,13 +234,18 @@ class Ixia(object):
                 
                 
             else:
-                helpers.log('###Adding Multipier ...for mac and Ip')
+                helpers.log('Adding Multipier ...for mac and Ip')
+                helpers.log('Adding Mac: %s with mac_step : %s' % (mac, mac_step))
+                
                 m1 = self._handle.setMultiAttribute(self._handle.getAttribute(mac_device, '-mac') + '/counter', '-direction',
                                               'increment', '-start', mac, '-step', mac_step)
+                helpers.log('Adding IP : %s with ip_step : %s' % (ip, ip_step))
                 handle.setMultiAttribute(ixia_refs['address']+'/counter', 'direction', 'increment', '-start', ip, '-step', ip_step)
                 ixia_refs['gatewayIp'] = handle.getAttribute(ip_device_ixia, '-gatewayIp')
+                handle.setMultiAttribute(ixia_refs['gatewayIp'], '-clearOverlays ', False, '-pattern', 'counter')
                 ixia_refs['gatewayIp_counter'] = handle.add(ixia_refs['gatewayIp'], 'counter')
-                handle.setMultiAttribute(ixia_refs['gatewayIp_counter'],'direction', 'increment', '-start', gw_ip, '-step', ip_step)
+                helpers.log('Adding GW_IP : %s with gw_ip_step : %s' % (gw_ip, gw_step))
+                handle.setMultiAttribute(ixia_refs['gatewayIp']+'/counter', 'direction', 'increment', '-start', gw_ip, '-step', gw_step)
                 
             handle.commit()
             #handle.remapIds(ixia_refs['address_counter'])[0]
@@ -770,7 +780,7 @@ class Ixia(object):
         ix_ports = [port for port in self._port_map_list.values()]
         src_mac = kwargs.get('src_mac', '00:11:23:00:00:01')
         dst_mac = kwargs.get('dst_mac', '00:11:23:00:00:02')
-        d_cnt = kwargs.get('dnt_cnt', 1)
+        d_cnt = kwargs.get('dst_cnt', 1)
         s_cnt = kwargs.get('src_cnt', 1)
         dst_mac_step = kwargs.get('dst_mac_step', '00:00:00:01:00:00')
         src_mac_step = kwargs.get('src_mac_step', '00:00:00:01:00:00')
@@ -798,7 +808,9 @@ class Ixia(object):
             src_ip = kwargs.get('src_ip', '20.0.0.1')
             dst_ip = kwargs.get('dst_ip', '20.0.0.2')
             src_gw_ip = kwargs.get('src_gw', '20.0.0.2')
+            src_gw_step = kwargs.get('src_gw_step', '0.0.1.0')
             dst_gw_ip = kwargs.get('dst_gw', '20.0.0.1')
+            dst_gw_step = kwargs.get('src_gw_step', '0.0.1.0')
             src_ip_step = kwargs.get('src_ip_step','0.0.0.1')
             dst_ip_step = kwargs.get('dst_ip_step', '0.0.0.1')
             self._frame_size = kwargs.get('frame_size', 130)
@@ -808,7 +820,9 @@ class Ixia(object):
             src_ip = kwargs.get('src_ip', '2001:0:0:0:0:0:0:c4')
             dst_ip = kwargs.get('dst_ip', '2001:0:0:0:0:0:0:c5')
             src_gw_ip = kwargs.get('src_gw', '2001:0:0:0:0:0:0:c5')
+            src_gw_step = kwargs.get('src_gw_step', '2001:0:0:0:0:0:0:1')
             dst_gw_ip = kwargs.get('dst_gw', '2001:0:0:0:0:0:0:c4')
+            dst_gw_step = kwargs.get('dst_gw_step', '2001:0:0:0:0:0:0:1')
             src_ip_step = kwargs.get('src_ip_step','0:0:0:0:0:0:1:0')
             dst_ip_step = kwargs.get('dst_ip_step', '0:0:0:0:0:0:1:0')
             ip_type = 'ipv6'
@@ -818,7 +832,9 @@ class Ixia(object):
             src_ip = kwargs.get('src_ip', '20.0.0.1')
             dst_ip = kwargs.get('dst_ip', '20.0.0.2')
             src_gw_ip = kwargs.get('src_gw', '20.0.0.2')
+            src_gw_step = kwargs.get('src_gw_step', '0.0.1.0')
             dst_gw_ip = kwargs.get('dst_gw', '20.0.0.1')
+            dst_gw_step = kwargs.get('src_gw_step', '0.0.1.0')
             src_ip_step = kwargs.get('src_ip_step','0.0.0.1')
             dst_ip_step = kwargs.get('dst_ip_step', '0.0.0.1')
             self._frame_size = kwargs.get('frame_size', 130)
@@ -889,7 +905,7 @@ class Ixia(object):
             helpers.log('Adding Stream with Ethernet devices as no_arp is True!!!')
             (ip_devices, mac_devices) = self.ix_create_device_ethernet_ip(create_topo, s_cnt, d_cnt, src_mac, dst_mac, src_mac_step, 
                                                                       dst_mac_step, src_ip, dst_ip, src_gw_ip, dst_gw_ip, src_ip_step,
-                                                                      dst_ip_step, dst_mac, src_mac, ip_type = ip_type)
+                                                                      dst_ip_step, src_gw_step, dst_gw_step, dst_mac, src_mac, ip_type = ip_type)
             helpers.log('Created Mac Devices : %s ' % mac_devices)
             
             traffic_stream = self.ix_setup_traffic_streams_ethernet(mac_devices[0], mac_devices[1],
@@ -904,7 +920,7 @@ class Ixia(object):
             helpers.log('Adding L3 Stream with ARP resolution for configured Gateway')
             (ip_devices, mac_devices) = self.ix_create_device_ethernet_ip(create_topo, s_cnt, d_cnt, src_mac, dst_mac, src_mac_step, 
                                                                       dst_mac_step, src_ip, dst_ip, src_gw_ip, dst_gw_ip, src_ip_step,
-                                                                      dst_ip_step, ip_type = ip_type)
+                                                                      dst_ip_step, src_gw_step, dst_gw_step, ip_type = ip_type)
             self.ix_start_hosts(ip_type = ip_type)
             self._started_hosts = True
             traffic_item = self.ix_setup_traffic_streams_ethernet(ip_devices[0], ip_devices[1], frame_type, self._frame_size, frame_rate, frame_mode,
@@ -1111,10 +1127,14 @@ class Ixia(object):
         '''
         handle = self._handle
         helpers.log("Stopping Traffic")
-        if traffic_stream is None:
+        ixia_traffic_state = handle.getAttribute(handle.getRoot()+'traffic', '-state')
+        if str(ixia_traffic_state) == 'stopped':
+            helpers.log('IXIA TRAFFIC CURRENTLY NOT RUNNING ..NO NEED STOP TRAFFIC AGAIN!')
+        elif traffic_stream is None:
             helpers.log('No Traffic Stream is given, so stopping all the traffic running on this ixia Session...')
             self._handle.execute('stop', self._handle.getRoot() + 'traffic')
         else:
+            helpers.log('CURRENT TRAFFIC STATE IN IXIA %s' % str(ixia_traffic_state))
             handle.execute('stopStatelessTraffic', traffic_stream)
             helpers.log("Printing Statistics")
             port_stats = self.ix_fetch_port_stats()
@@ -1143,27 +1163,12 @@ class Ixia(object):
             Method to delete all configured Traffic Items
         '''
         handle = self._handle
-        i = 0
-        while i < 2:
-            try:
-                self.ix_stop_traffic()
-                time.sleep(5)
-                break
-            except IxNetwork.IxNetError:
-                helpers.log('Got IXIA ERROR while trying to STOP the TRAFFIC will try 2 times..')
-            i = i + 1
-        i = 0
-        while i < 2:
-            try:
-                handle.execute('apply', handle.getRoot() + 'traffic')
-                helpers.log('Applied traffic Config ..')
-                self._handle.execute('stop', self._handle.getRoot() + 'traffic')
-                time.sleep(5)
-                break
-            except IxNetwork.IxNetError:
-                helpers.log('Got IXIA ERROR while Applying traffic will try 2 times..')
-            i = i + 1    
-            
+        ixia_traffic_state = handle.getAttribute(handle.getRoot()+'traffic', '-state')
+        if str(ixia_traffic_state) == 'started':
+            helpers.log("Traffic is Still Running , Stopping the Traffic before deleting traffic item..")
+            self.ix_stop_traffic()
+        else:
+            helpers.log("Traffic Already Stopped in Testcase No need to Stop the Traffic !!")         
         handle.remove(handle.getRoot()+'traffic'+'/trafficItem')
         handle.commit()   
         helpers.log('succes removing traffic Items Configured!!!')
