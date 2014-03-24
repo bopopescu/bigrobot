@@ -1,9 +1,9 @@
 * Setting
 Documentation   T5 Basic L3 two spine three leaf rack with dual-tor Test Suite
 Suite Setup     T5 base suite setup
-#Suite Teardown  T5 base suite teardown
+Suite Teardown  T5 base suite teardown
 Test Setup      setup topology
-#Test Teardown   teardown topology
+Test Teardown   teardown topology
 Force Tags      T5 Sanity
 Library         keywords/BsnCommon.py
 Library         keywords_dev/slim/Host.py
@@ -139,6 +139,8 @@ L3 intra tenant same rack untagged with dynamic endpoints
 	REST show endpoints	
 	${loss} = 									BASH ping						h5						10.251.2.11 			count=10
 	Should Be True  							${loss} == 0	
+	BASH delete route							h5								10.251.2.0/24			10.251.1.1
+	BASH delete route							h6								10.251.1.0/24			10.251.2.1
 	
 	
 L3 intra tenant across rack untagged with dynamic endpoints
@@ -170,6 +172,9 @@ L3 intra tenant across rack untagged with dynamic endpoints
 	REST show endpoints	
 	${loss} = 									BASH ping						h5						10.251.3.11 			count=10
 	Should Be True  							${loss} == 0	
+	BASH delete route							h5								10.251.3.0/24			10.251.1.1
+	BASH delete route							h4								10.251.1.0/24			10.251.3.1
+
 	
 L3 intra tenant same rack tagged with dynamic endpoints
 	BASH ifup intf								h1 								bond0
@@ -209,6 +214,8 @@ L3 intra tenant same rack tagged with dynamic endpoints
 	REST show endpoints		
 	${loss} = 									BASH ping						h1						10.251.2.11 			count=10
 	Should Be True  							${loss} == 0	
+	BASH delete route							h1								10.251.2.0/24			10.251.1.1
+	BASH delete route							h2								10.251.1.0/24			10.251.2.1
 	
 	
 L3 intra tenant across rack tagged with dynamic endpoints
@@ -249,6 +256,9 @@ L3 intra tenant across rack tagged with dynamic endpoints
 	REST show endpoints		
 	${loss} = 									BASH ping						h1						10.251.3.11 			count=10
 	Should Be True  							${loss} == 0		
+	BASH delete route							h1								10.251.3.0/24			10.251.1.1
+	BASH delete route							h3								10.251.1.0/24			10.251.3.1
+
 
 L3 intra tenant same rack untagged with static endpoints
 	BASH ifup intf								h1 								bond0
@@ -289,6 +299,8 @@ L3 intra tenant same rack untagged with static endpoints
 	REST show endpoints	
 	${loss} = 									BASH ping						h5						10.251.2.11 			count=10
 	Should Be True  							${loss} == 0	
+	BASH delete route							h5								10.251.2.0/24			10.251.1.1
+	BASH delete route							h6								10.251.1.0/24			10.251.2.1
 
 
 L3 intra tenant across rack untagged with static endpoints
@@ -332,6 +344,8 @@ L3 intra tenant across rack untagged with static endpoints
 	REST show endpoints	
 	${loss} = 									BASH ping						h4						10.251.3.11 			count=10
 	Should Be True  							${loss} == 0	
+	BASH delete route							h4								10.251.3.0/24			10.251.1.1
+	BASH delete route							h5								10.251.1.0/24			10.251.3.1
 
 
 L3 intra tenant same rack tagged with static endpoints
@@ -382,6 +396,8 @@ L3 intra tenant same rack tagged with static endpoints
 	REST show endpoints		
 	${loss} = 									BASH ping						h1						10.251.2.11 			count=10
 	Should Be True  							${loss} == 0	
+	BASH delete route							h1								10.251.2.0/24			10.251.1.1
+	BASH delete route							h2								10.251.1.0/24			10.251.2.1
 	
 		
 L3 intra tenant across rack tagged with static endpoints
@@ -434,6 +450,8 @@ L3 intra tenant across rack tagged with static endpoints
 	REST show endpoints		
 	${loss} = 									BASH ping						h1						10.251.3.11 			count=10
 	Should Be True  							${loss} == 0		
+	BASH delete route							h1								10.251.3.0/24			10.251.1.1
+	BASH delete route							h3								10.251.1.0/24			10.251.3.1
 
 
 L3 intra tenant dhcp relay on same rack
@@ -493,6 +511,7 @@ L3 intra tenant dhcp relay on same rack
 	REST show endpoints	
 	${loss} = 									BASH ping						h1						${ipAddr} 			count=10
 	Should Be True  							${loss} == 0	
+	BASH delete route							h1								10.252.3.0/24			10.252.1.1
 
 
 L3 intra tenant dhcp relay with circuit id on same rack
@@ -543,6 +562,7 @@ L3 intra tenant dhcp relay with circuit id on same rack
 	REST show endpoints	
 	${loss} = 									BASH ping						h1						${ipAddr} 			count=10
 	Should Be True  							${loss} == 0	
+	BASH delete route							h1								10.252.2.0/24			10.252.1.1
 
 
 L3 intra tenant dhcp relay across rack
@@ -566,7 +586,7 @@ L3 intra tenant dhcp relay across rack
 	BASH add route								h1								10.252.3.0/24			10.252.1.1
 	REST add dhcp relay							Y								Y3						10.252.1.9
 	REST enable dhcp relay						Y								Y3	
-	__init__.sleep										20
+	__init__.sleep								20
 	${h1_ip} = 									BASH get intf ipv4				h1						bond0				
 	Should Be Equal As Strings					${h1_ip}						10.252.1.9	
 	${h1_mac} =									BASH get intf mac				h1						bond0
@@ -587,7 +607,7 @@ L3 intra tenant dhcp relay across rack
 	__init__.sleep										1
 	${ipAddr} = 								BASH renew dhcpv4 address		h5						bond0
 	Should Not Be Empty							${ipAddr}
-	__init__.sleep										10
+	__init__.sleep								10
 	BASH ping									h1								${ipAddr}				count=10
 	${value} = 									BASH verify arp					h1						10.252.1.1
 	Should Be True								${value} 		
@@ -602,7 +622,8 @@ L3 intra tenant dhcp relay across rack
 	REST show endpoints	
 	${loss} = 									BASH ping						h1						${ipAddr} 			count=10
 	Should Be True  							${loss} == 0	
-
+	BASH delete route							h1								10.252.3.0/24			10.252.1.1
+	
 
 L3 intra tenant dhcp relay with circuit id across rack
 	BASH ifdown intf							h1 								bond0
@@ -652,6 +673,7 @@ L3 intra tenant dhcp relay with circuit id across rack
 	REST show endpoints	
 	${loss} = 									BASH ping						h1						${ipAddr} 			count=10
 	Should Be True  							${loss} == 0	
+	BASH delete route							h1								10.252.2.0/24			10.252.1.1
 
 
 L3 dhcp request without dhcp relay enabled
@@ -726,6 +748,7 @@ L3 dhcp request without dhcp relay enabled
 	BASH ping									h1								${ipAddr} 				count=10
 	${loss} = 									BASH ping						h1						${ipAddr} 			count=10
 	Should Be True  							${loss} == 0	
+	BASH delete route							h1								10.252.3.0/24			10.252.1.1
 
 
 L3 add and delete untagged endpoints with existing host
@@ -780,6 +803,8 @@ L3 add and delete untagged endpoints with existing host
 	BASH ping									h6								10.251.1.11				count=3
 	${loss} = 									BASH ping						h6						10.251.1.11				count=10
 	Should Be True  							${loss} == 0	
+	BASH delete route							h5								10.251.2.0/24			10.251.1.1
+	BASH delete route							h6								10.251.1.0/24			10.251.2.1
 		
 
 L3 add and delete tagged endpoints with existing host
@@ -835,6 +860,8 @@ L3 add and delete tagged endpoints with existing host
 	Should Be True								${result}	
 	${loss} = 									BASH ping						h3						10.251.1.11				count=10
 	Should Be True  							${loss} == 0		
+	BASH delete route							h1								10.251.3.0/24			10.251.1.1
+	BASH delete route							h3								10.251.1.0/24			10.251.3.1
 
 
 L3 change endpoint from untagged to tagged and back
@@ -910,6 +937,8 @@ L3 change endpoint from untagged to tagged and back
 	Should Be True								${result}	
 	${loss} = 									BASH ping						h5						10.251.2.11				count=10
 	Should Be True  							${loss} == 0	
+	BASH delete route							h5								10.251.2.0/24			10.251.1.1
+	BASH delete route							h6								10.251.1.0/24			10.251.2.1
 
 	
 Check L3 endpoint aging 
@@ -949,6 +978,8 @@ Check L3 endpoint aging
 	__init__.sleep										600
 	${result} =									REST show endpoints mac			${mac1}
 	Should Not Be True							${result}		
+	BASH delete route							h3								10.251.2.0/24			10.251.1.1
+	BASH delete route							h4								10.251.1.0/24			10.251.2.1
 					
 
 Check L3 ttl 1 is dropped
@@ -985,6 +1016,8 @@ Check L3 ttl 1 is dropped
 	${result} =       							BASH content 					h3
     log              							result from bash ping is ${result}
    	Should Contain X Times						${result}						Time to live exceeded	10
+ 	BASH delete route							h3								10.251.2.0/24			10.251.1.1
+	BASH delete route							h4								10.251.1.0/24			10.251.2.1
    	
 
 Change router ip address
@@ -1026,6 +1059,8 @@ Change router ip address
 	${value} =									BASH verify arp					h3						10.251.1.1
 	Should Not Be True							${value} 
 	BASH add ip address							h3								10.251.4.11/24			bond0	
+	BASH delete route							h3								10.251.2.0/24			10.251.1.1
+	BASH delete route							h4								10.251.1.0/24			10.251.2.1
 	BASH add route								h3								10.251.2.0/24			10.251.4.1
 	BASH add route								h4								10.251.4.0/24			10.251.2.1
 	BASH ping									h3								10.251.2.11 			count=10
@@ -1033,14 +1068,21 @@ Change router ip address
 	Should Be True  							${loss} == 0		
 	__init__.sleep								1
 	${result} =									REST show endpoints mac			${mac1}
-	Should Contain								${result}						10.251.4.11
+
+	${ipAddr1} = 								Set Variable					${result[0]['ip-address']}	
+	Should Be Equal								${ipAddr1}						10.251.4.11
+#	Should Contain								${result}						10.251.4.11
 	${result} =									REST show endpoints mac			${mac2}
-	Should Contain								${result}						10.251.2.11
+	${ipAddr2} = 								Set Variable					${result[0]['ip-address']}	
+	Should Be Equal								${ipAddr2}						10.251.2.11
+#	Should Contain								${result}						10.251.2.11
 	REST add vns ip  							X								X1						10.251.1.1				24	
 	BASH delete arp								h3								10.251.4.1
 	${value} =									BASH verify arp					h3						10.251.4.1
 	Should Not Be True							${value} 
 	BASH add ip address							h3								10.251.1.11/24			bond0	
+	BASH delete route							h3								10.251.2.0/24			10.251.4.1
+	BASH add route								h3								10.251.2.0/24			10.251.1.1
 	BASH ping									h3								10.251.2.11 			count=10
 	${loss} = 									BASH ping						h3						10.251.2.11 			count=10
 	Should Be True  							${loss} == 0		
@@ -1049,6 +1091,8 @@ Change router ip address
 	Should Contain								${result}						10.251.1.11
 	${result} =									REST show endpoints mac			${mac2}
 	Should Contain								${result}						10.251.2.11			
+	BASH delete route							h3								10.251.2.0/24			10.251.1.1
+	BASH delete route							h4								10.251.4.0/24			10.251.2.1
 	
 
 Delete and add router vns ip
@@ -1101,6 +1145,8 @@ Delete and add router vns ip
 	Should Be True								${value} 
 	${loss} = 									BASH ping						h4						10.251.1.11				count=10
 	Should Be True  							${loss} == 0		 	
+	BASH delete route							h3								10.251.2.0/24			10.251.1.1
+	BASH delete route							h4								10.251.1.0/24			10.251.2.1
 
 
 Set 32bit full mask on vns router ip
@@ -1171,6 +1217,9 @@ Change tagged host endpoint IP address
 	Should Be Equal								${ipAddr}						10.251.3.212
 	${loss} = 									BASH ping						h1						10.251.3.212			count=10
 	Should Be True  							${loss} == 0	 						
+	BASH delete route							h1								10.251.3.0/24			10.251.1.1
+	BASH delete route							h3								10.251.1.0/24			10.251.3.1	
+
 	
 Static endpoint with dynamic host showing up on another port
 	BASH ifup intf								h1 								bond0
@@ -1252,6 +1301,11 @@ Static endpoint with dynamic host showing up on another port
 	Should Be True								${loss} == 0
 	${loss} = 									BASH ping						h2						10.251.1.11				count=10
 	Should Be True								${loss} == 0
+	BASH delete route							h1								10.251.3.0/24			10.251.1.1
+	BASH delete route							h3								10.251.1.0/24			10.251.3.1
+	BASH delete route							h2								10.251.1.0/24			10.251.3.1
+	BASH delete route							h4								10.251.1.0/24			10.251.3.1
+	BASH delete route							h5								10.251.1.0/24			10.251.3.1
 	
 	
 	
