@@ -1,0 +1,71 @@
+* Setting
+Documentation   T5 L3 two spine three leaf rack with dual-tor Test Scaling Suite
+Suite Setup     T5 base suite setup
+#Suite Teardown  T5 base suite teardown
+Test Setup      setup topology
+#Test Teardown   teardown topology
+Force Tags      T5 Sanity
+Library         keywords/BsnCommon.py
+Library         keywords_dev/slim/Host.py
+Library         keywords/T5.py
+Library         keywords/T5L3.py
+Library         keywords_dev/animesh/BsnCommonShow.py
+Library         keywords_dev/slim/SwitchLight.py
+Library	        Collections.py
+Library			autobot/helpers/__init__.py
+Resource		testsuites_dev/slim/t5_layer3_physical_intra_variables.txt
+Resource		testsuites/T5/t5_dualleaf_three_rack_physical_resource.txt
+
+
+* Test Cases
+Intra tenant one Tenant 4k VNS 
+	One Tenant 4k VNS with one host each
+#	[Tags]							skipped			scale							
+
+
+* Test Cases
+Delete and add tagged ports to one tenant 4k VNS
+	Delete and add tagged ports to one tenant 4k VNS with one host each
+#	[Tags]							skipped			scale							
+
+
+* Test Cases
+Delete and add 2k VNS with traffic
+	Delete and add 2k VNS with traffic running with one host each
+#	[Tags]							skipped			scale				
+
+
+* Test Cases
+L3 endpoint host move with traffic
+	Move 2k host endpoint to another tagged port
+#	[Tags]							skipped			scale				
+
+		
+* Test Cases
+Combined scaling one tenant 4k vns with 48k host
+	Combined scaling with one tenant 4k vns with 48k host
+#	[Tags]							skipped			scale				
+		
+			
+* Test Cases
+Delete and add scale config multiple times
+	Delete and add scale config multiple times
+#	[Tags]							skipped			scale				
+			
+			
+			
+
+	
+
+Scale 4k VNS in one tenant
+
+#	REST delete tenant							X
+#	REST delete tenant							Y
+#	REST delete tenant							Z
+#	REST add tenant								A
+#	${ipAddr} =  								Set Variable					10.0.0.1
+#	: FOR 										${i}							IN RANGE 				1	1000
+#	\	REST add vns							A								A-${i}
+#	\	REST add vns ip							A								A-${i}					${ipAddr}			24
+#	\	${ipAddr} =								get next address				ipv4					${ipAddr}			0.0.1.0			
+					

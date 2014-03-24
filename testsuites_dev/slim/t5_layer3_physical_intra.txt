@@ -98,8 +98,6 @@ Delete and add router vns ip
 	Delete and add router vns ip 
 #	[Tags]							skipped			sanity			
 
-
-
 Change tagged endpoint IP address
 	Change tagged host endpoint IP address
 #	[Tags]							skipped			sanity		
@@ -109,11 +107,7 @@ Configure static endpoint with host showing up on another port
 	Static endpoint with dynamic host showing up on another port
 #	[Tags]							skipped			sanity		
 
-			
-Scale 4k VNS
-	Scale 4k VNS in one tenant
-	[Tags]							skipped			scale		
-	
+
 	
 * Keywords
 L3 intra tenant same rack untagged with dynamic endpoints
@@ -1238,10 +1232,11 @@ Static endpoint with dynamic host showing up on another port
 	REST add endpoint portgroup attachment		X								X3						X3_host1				${leaf2_pc2}				-1
 	__init__.sleep								1
 	${result} =									REST show endpoints mac			${mac3}
-#	Log                                         result[0] = ${result[0]}
-#	Log                                         result[0][attachment-point] = ${result[0]['attachment-point']}
-#	Log                                         result[0][attachment-point][port-group-name] = ${result[0]['attachment-point']['port-group-name']}
-	${attachpoint} = 							Set Variable					${result[0]['attachment-point']['port-group-name']}					
+	Log                                         result[0] = ${result[0]}
+	Log                                         result[0][attachment-point] = ${result[0]['attachment-point']}
+	Log                                         result[0][attachment-point][port-group-name] = ${result[0]['attachment-point']['port-group-name']}
+	${attachpoint} = 							Set Variable					${result[0]['attachment-point']['port-group-name']}	
+	Log											attachpoint = 					${attachpoint}				
 	Should Contain								${attachpoint}					${leaf2_pc2}
 	${loss} = 									BASH ping						h2						10.251.1.11				count=10
 	Should Be True								${loss} == 100
@@ -1263,20 +1258,7 @@ Static endpoint with dynamic host showing up on another port
 	
 	
 	
-	
 
-Scale 4k VNS in one tenant
-
-#	REST delete tenant							X
-#	REST delete tenant							Y
-#	REST delete tenant							Z
-#	REST add tenant								A
-#	${ipAddr} =  								Set Variable					10.0.0.1
-#	: FOR 										${i}							IN RANGE 				1	1000
-#	\	REST add vns							A								A-${i}
-#	\	REST add vns ip							A								A-${i}					${ipAddr}			24
-#	\	${ipAddr} =								get next address				ipv4					${ipAddr}			0.0.1.0			
-		
 		
 
 initialize host
