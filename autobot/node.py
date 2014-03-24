@@ -99,12 +99,14 @@ class Node(object):
         self.is_pingable = True
         return True
 
-    def console(self, driver=None):
+    def console(self, driver=None, force_reconnect=False):
         """
         Inheriting class needs to further extend this method.
         """
-        if self.dev_console:
+        if self.dev_console and not force_reconnect:
             return self.dev_console
+        else:
+            helpers.log("Reconnecting to console for node '%s'" % self.name())
 
         if 'console' in self.node_params:
             self._console_info = self.node_params['console']
@@ -121,9 +123,12 @@ class Node(object):
                 self._console_info['protocol'] = 'ssh'
                 self._console_info['port'] = None
             else:
-                helpers.environment_failure("Supported console types are telnet (IP and port) and libvirt (IP and VM name)")
+                helpers.environment_failure("Supported console types are"
+                                            " telnet (IP and port) and libvirt"
+                                            " (IP and VM name)")
         else:
-            helpers.environment_failure("Console needs an IP and a port or VM name (for libvirt)")
+            helpers.environment_failure("Console needs an IP and a port or"
+                                        " VM name (for libvirt)")
 
         if 'user' not in self._console_info:
             self._console_info['user'] = self._user
@@ -146,7 +151,10 @@ class Node(object):
         # This is where we need to instantiate a devconf object,
         # if applicable.
 
-    def close_console(self):
+    def console_reconnect(self, driver=None):
+        raise NotImplementedError()
+
+    def console_close(self):
         """
         Exit out the current console session.
         For libvirt, it's simply:
@@ -309,9 +317,11 @@ class ControllerNode(Node):
                                        % node)
         return nodeid
 
-    def console(self, driver=None):
-        if self.dev_console:
+    def console(self, driver=None, force_reconnect=False):
+        if self.dev_console and not force_reconnect:
             return self.dev_console
+        else:
+            helpers.log("Reconnecting to console for node '%s'" % self.name())
 
         super(ControllerNode, self).console(driver)
 
@@ -350,6 +360,13 @@ class ControllerNode(Node):
         #    self.dev_console.conn.set_driver(self._console_info['driver'])
 
         return self.dev_console
+
+    def console_reconnect(self, driver=None):
+        # Delay for 1 second to allow the output to settle.
+        helpers.sleep(1)
+        if self._console_info['type'] == 'libvirt':
+            self.dev_console.send("virsh console %s" % self._console_info['libvirt_vm_name'])
+            return self.dev_console
 
 
 class MininetNode(Node):
@@ -653,12 +670,11 @@ class BigTapIxiaNode(IxiaNode):
             bigtap_switch_id = temp_list[0]  # to be used for calculating switch DPID
             bigtap_port_id = temp_list[1]
             switch = 's' + str(bigtap_switch_id)
-            bigtap_config_rx = IxBigtapLib.create_bigtap_flow_conf_rx(self._switch_dpids[switch],
+            bigtap_config_rx = IxBigtapLib.create_bigtap_flow_conf_rx(self._bigtap_switches[switch]['dipid'],
                                                                 52, ['1', '2'])  # FIXME to be changed for passing ix port from Topo file
-            bigtap_config_tx = IxBigtapLib.create_bigtap_flow_conf_tx(self._switch_dpids[switch],
+            bigtap_config_tx = IxBigtapLib.create_bigtap_flow_conf_tx(self._bigtap_switches[switch]['dipid'],
                                                                 bigtap_portname=bigtap_port_id,
                                                                ix_portname=['1', '2'], macs=final_macs)
-
             if not self._bigtap_to_config:
                 helpers.log('Skipping Big tap Config...')
             else:

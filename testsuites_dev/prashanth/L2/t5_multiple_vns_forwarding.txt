@@ -392,6 +392,12 @@ Verify forwarding vlan table with deleting tenants and vns
 T5 Functional Suite Setup
    base suite setup
    add fabric switch
+   bring up h1 bond0
+   bring up h2 bond0
+   bring up h3 bond0
+   bring up h4 bond0
+   bring up h5 bond0
+   bring up h6 bond0
    sleep  5
    rest add tenant  t1
    rest add tenant  t2
@@ -497,4 +503,29 @@ verify switch interface stats  [Arguments]  ${switch}  ${intf}
 	Should be True  ${result}
 	
 T5 test teardown
-	delete traffic  
+	delete traffic 
+
+bring up h1 bond0
+	bash init intf  h1  bond0.10
+    bash add ip address  h1  ${h1_tag_ip}/24  bond0.10
+    bash ifup intf  h1   bond0 
+bring up h2 bond0
+	bash init intf  h2  bond0.10
+    bash add ip address  h2  ${h2_tag_ip}/24  bond0.10
+    bash ifup intf  h2  bond0
+bring up h3 bond0
+	bash init intf  h3  bond0.10
+    bash add ip address  h3  ${h3_tag_ip}/24  bond0.10
+    bash ifup intf  h3  bond0 
+bring up h4 bond0
+	bash init intf  h4  bond0
+    bash add ip address  h4  ${h4_ip}/24  bond0
+    bash ifup intf  h4  bond0
+bring up h5 bond0
+	bash init intf  h5  bond0
+    bash add ip address  h5  ${h5_ip}/24  bond0
+    bash ifup intf  h5  bond0
+bring up h6 bond0
+	bash init intf  h6  bond0
+    bash add ip address  h6  ${h6_ip}/24  bond0
+    bash ifup intf  h6  bond0  

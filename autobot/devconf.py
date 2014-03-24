@@ -90,8 +90,8 @@ class DevConf(object):
                                         " for device %s (user:%s, password:%s). Also try"
                                         " to log in manually to see what the error is."
                                         % (self._host, self._user, self._password))
-            # helpers.log("Exception in %s" % sys.exc_info()[0])
-            # raise
+            helpers.log("Exception in %s" % sys.exc_info()[0])
+            raise
         except TimeoutException:
             helpers.environment_failure("Login failure: Timed out during SSH connnect"
                                         " to device %s. Try to log in manually to see"

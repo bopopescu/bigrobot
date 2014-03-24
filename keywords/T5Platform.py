@@ -9,7 +9,8 @@ import keywords.Host as Host
 import keywords.BsnCommon as BsnCommon
 
 
-pingFailureCount = 0
+mininetPingFails = 0
+hostPingFails = 0
 leafSwitchList = []
 
 class T5Platform(object):
@@ -531,27 +532,57 @@ class T5Platform(object):
              
                              
     def platform_ping(self, src, dst ):
-        global pingFailureCount
+        '''
+            Extended mininet_ping function to handle ping failures gracefully for platform HA test cases
+            Retry ping 5 times and report failures / Issue Bug reports / Sleeps accordingly
+        '''
+        global mininetPingFails
         mynet = mininet.Mininet()     
         loss = mynet.mininet_ping(src, dst)
         if (loss != '0'):
             #sleep(5)
             loss = mynet.mininet_ping(src, dst)
             if (loss != '0'):
-                if(pingFailureCount == 5):
+                if(mininetPingFails == 5):
                     helpers.warn("5 Consecutive Ping Failures: Issuing Mininet-BugReport")
                     #mynet.mininet_bugreport()
                     return False
                 helpers.warn("Ping failed between: %s & %s" % (src,dst))
-                pingFailureCount += 1
+                mininetPingFails += 1
                 return True
             else:
-                pingFailureCount = 0
+                mininetPingFails = 0
                 return True
         else:
-            pingFailureCount = 0
+            mininetPingFails = 0
         return True
     
+    def platform_bash_ping(self, src, dst):
+        '''
+            Extended bash_ping function to handle ping failures gracefully for platform HA test cases
+            Retry ping 5 times and report failures / Issue Bug reports / Sleeps accordingly
+        '''
+        global hostPingFails
+        myhost = Host.Host()
+        loss = myhost.bash_ping(src, dst)
+        if (loss != '0'):
+            sleep(30)
+            loss = myhost.bash_ping(src, dst)
+            if (loss != '0'):
+                if(hostPingFails == 5):
+                    helpers.warn("5 Consecutive Ping Failures: Please collect logs from the physical host")
+                    #mynet.mininet_bugreport()
+                    return False
+                helpers.warn("Ping failed between: %s & %s" % (src,dst))
+                hostPingFails += 1
+                return True
+            else:
+                hostPingFails = 0
+                return True
+        else:
+            hostPingFails = 0
+        return True
+        
     
     
     def do_show_run_vns_verify(self, vnsName, numMembers):
