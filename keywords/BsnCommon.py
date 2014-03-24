@@ -835,9 +835,9 @@ class BsnCommon(object):
                 try:
                     c = t.controller("master")
                     url = '/api/v1/data/controller/os/config/global/snmp-config'
-                    if "trap-enable" in keyword:
+                    if "trap-enabled" in keyword:
                         if "True" in value:
-                            c.rest.patch(url, {"trap-enable": True})
+                            c.rest.patch(url, {"trap-enabled": True})
                         else:
                             c.rest.patch(url, {"trap-enable": False})
                     elif "null" in value:
