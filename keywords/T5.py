@@ -1310,14 +1310,14 @@ class T5(object):
         url = '/api/v1/data/controller/core/switch[name="%s"]/interface' % (switch)
         c.rest.get(url)
         data = c.rest.content()
-        url1 = '/api/v1/data/controller/core/switch[name="%s"]' % (switch)
+        url1 = '/api/v1/data/controller/core/switch-config[name="%s"]?select=name' % (switch)
         c.rest.get(url1)
         data1 = c.rest.content()
         url2 = '/api/v1/data/controller/core/switch[name="%s"]?select=fabric-lag' % (switch)
         c.rest.get(url2)
         data3 = c.rest.content()
-        if str(data1[0]["fabric-switch-info"]["switch-name"]) == str(switch):
-            if data1[0]["fabric-switch-info"]["fabric-role"] == "spine":
+        if str(data1[0]["name"]) == str(switch):
+            if data1[0]["fabric-role"] == "spine":
                 fabric_interface = 0
                 rack_lag = 0
                 for i in range(0,len(data)):
@@ -1332,7 +1332,7 @@ class T5(object):
                 else:
                                 helpers.test_failure("No of Rack lag from %s is incorrect,Expected = %d, Actual = %d " % (switch, fabric_interface, rack_lag))
                                 return False
-            elif data1[0]["fabric-switch-info"]["fabric-role"] == "leaf":
+            elif data1[0]["fabric-role"] == "leaf":
                     fabric_spine_interface = 0
                     fabric_peer_interface = 0
                     for i in range(0,len(data)):
@@ -1505,7 +1505,7 @@ class T5(object):
                 interface = re.sub("\D", "", data2[0]["fabric-lag"][i]["member"][0]["src-interface"])
                 peer_intf.append(int(interface))
         if len(peer_intf) != 0:
-            if data1[0]["fabric-switch-info"]["leaf-group"] == None:
+            if data1[0]["leaf-group"] == None:
                 for i in range(0,len(data)):
                     for j in range(0,len(data[i]["port"])):
                         if (data[i]["port"][j]["port-num"] == peer_intf[0]):
