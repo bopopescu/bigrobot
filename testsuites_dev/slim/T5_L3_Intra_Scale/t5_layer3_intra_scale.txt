@@ -26,53 +26,61 @@ Intra tenant one Tenant 4k VNS
 * Test Cases
 Delete and add tagged ports to one tenant 4k VNS
 	Delete and add tagged ports to one tenant 4k VNS with one host each
-#	[Tags]							skipped			scale							
+	[Tags]							skipped			scale							
 
 
 * Test Cases
 Delete and add 2k VNS with traffic
 	Delete and add 2k VNS with traffic running with one host each
-#	[Tags]							skipped			scale				
+	[Tags]							skipped			scale				
 
 
 * Test Cases
 L3 endpoint host move with traffic
 	Move 2k host endpoint to another tagged port
-#	[Tags]							skipped			scale				
+	[Tags]							skipped			scale				
 
 		
 * Test Cases
 Combined scaling one tenant 4k vns with 48k host
 	Combined scaling with one tenant 4k vns with 48k host
-#	[Tags]							skipped			scale				
+	[Tags]							skipped			scale				
 		
 			
 * Test Cases
 Delete and add scale config multiple times
 	Delete and add scale config multiple times
-#	[Tags]							skipped			scale				
-			
-			
+	[Tags]							skipped			scale				
 			
 
+* Test Cases
+DHCP request from 48k host across 4k vns
+	Generate dhcp request from 48k host across 4k vns
+	[Tags]							skipped			scale				
+						
+		
 	
 
-Scale 4k VNS in one tenant
-
-#	REST delete tenant							X
-#	REST delete tenant							Y
-#	REST delete tenant							Z
-#	REST add tenant								A
-#	${ipAddr} =  								Set Variable					10.0.0.1
-#	: FOR 										${i}							IN RANGE 				1	1000
-#	\	REST add vns							A								A-${i}
-#	\	REST add vns ip							A								A-${i}					${ipAddr}			24
-#	\	${ipAddr} =								get next address				ipv4					${ipAddr}			0.0.1.0			
+One Tenant 4k VNS with one host each
+	REST delete tenant							X
+	REST delete tenant							Y
+	REST delete tenant							Z
+	REST add tenant								A
+	REST add tenant								B
+	${ipAddr} =  								Set Variable					20.0.0.1
+	: FOR 										${i}							IN RANGE 				1					2047
+	\	REST add vns							A								A-${i}
+	\	REST add vns ip							A								A-${i}					${ipAddr}			24
+	\	${ipAddr} =								get next address				ipv4					${ipAddr}			0.0.1.0
+	\	REST add interface to vns				A								A-${i}					leaf0-a				ethernet24		${i}			
 				
+	${ipAddr} =  								Set Variable					30.0.0.1
+	: FOR 										${i}							IN RANGE 				2048				4096
+	\	REST add vns							B								B-${i}
+	\	REST add vns ip							B								B-${i}					${ipAddr}			24
+	\	${ipAddr} =								get next address				ipv4					${ipAddr}			0.0.1.0
+	\	REST add interface to vns				B								B-${i}					leaf1-a				ethernet24		${i}			
 				
-
-
-
 
 		
 
