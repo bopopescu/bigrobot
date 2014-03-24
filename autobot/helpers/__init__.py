@@ -494,6 +494,14 @@ def is_host(name):
     return True if match else False
 
 
+def is_openstack_server(name):
+    """
+    OpenStack server is defined as os1, os2, os3, ...
+    """
+    match = re.match(r'^(os\d+)$', name)
+    return True if match else False
+
+
 def is_mininet(name):
     """
     Mininet is defined as mn, mn1, or mininet

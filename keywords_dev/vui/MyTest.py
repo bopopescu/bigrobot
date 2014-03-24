@@ -485,3 +485,38 @@ admin_user = glance
         opts = c.expect(['blah', 'bleh', c.get_prompt()])
         helpers.log("opts[0]: %s" % opts[0])  # 0 matches 'blah' and so on
         helpers.log("opts[1]: %s" % opts[1])  # re.match object (<_sre.SRE_Match object at 0x106ffe1f8>)
+
+    def ping_result(self):
+        s = """ping -c 10 dev1
+PING dev1.bigswitch.com (10.192.4.11): 56 data bytes
+64 bytes from 10.192.4.11: icmp_seq=0 ttl=61 time=4.098 ms
+64 bytes from 10.192.4.11: icmp_seq=1 ttl=61 time=0.563 ms
+64 bytes from 10.192.4.11: icmp_seq=2 ttl=61 time=0.626 ms
+64 bytes from 10.192.4.11: icmp_seq=3 ttl=61 time=0.654 ms
+64 bytes from 10.192.4.11: icmp_seq=4 ttl=61 time=0.578 ms
+64 bytes from 10.192.4.11: icmp_seq=5 ttl=61 time=0.589 ms
+64 bytes from 10.192.4.11: icmp_seq=6 ttl=61 time=0.628 ms
+64 bytes from 10.192.4.11: icmp_seq=7 ttl=61 time=8.381 ms
+64 bytes from 10.192.4.11: icmp_seq=8 ttl=61 time=0.644 ms
+64 bytes from 10.192.4.11: icmp_seq=9 ttl=61 time=0.619 ms
+
+--- dev1.bigswitch.com ping statistics ---
+10 packets transmitted, 10 packets received, 0.0% packet loss
+round-trip min/avg/max/stddev = 0.563/1.738/8.381/2.446 ms
+vui@Vuis-MacBook-Pro$
+"""
+        return s
+
+    def openstack_server_interact(self):
+        t = test.Test()
+        os1 = t.openstack_server('os1')
+        os1.sudo('cat /etc/shadow')
+
+    def test_console(self, node):
+        t = test.Test()
+        n = t.node(node)
+        n_console = n.console()
+        n_console.expect(r'Escape character.*[\r\n]')
+        n_console.send('')
+        n_console.expect(r'Big Virtual Switch Appliance.*[\r\n]')
+        n_console.expect(r'login:')

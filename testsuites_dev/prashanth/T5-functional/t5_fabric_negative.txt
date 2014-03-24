@@ -21,6 +21,12 @@ Resource         testsuites/T5/t5_physical_variables.txt
 Setup Three Rack Dual Leaf Topology
 	base suite setup  
     add fabric switch
+    bring up h1 bond0
+    bring up h2 bond0
+    bring up h3 bond0
+    bring up h4 bond0
+    bring up h5 bond0
+    bring up h6 bond0
     sleep  5
     rest verify fabric switch all
 	rest verify fabric link 	
@@ -95,36 +101,57 @@ shutdown the switch and check the links are down in the switch
      
 verify interface cli 
 	[Tags]  feature
-	${result}=  cli show interface  
+	${result}=  cli  c1   show interface  
 	Should Not be Empty  ${result}
-	
+	${result}=  cli  c1  show interface ${leaf0a_spine0_intf0}
+	Should Not be Empty  ${result}
+		
 verify lag cli
 	[Tags]  feature
-	${result}=  cli show lag switch  leaf0-a
+	${result}=  cli  c1  show lag  
 	Should Not be Empty  ${result}
-	
+    ${result}=  cli  c1   show lag switch leaf0-a  
+	Should Not be Empty  ${result}	
+
 verify switch cli
 	[Tags]  feature
-	${result}=  cli show switch  leaf0-a
+	${result}=  cli  c1  show switch  
+	Should Not be Empty  ${result}
+	${result}=  cli  c1  show switch leaf0-a
+	Should Not be Empty  ${result}
+	${result}=  cli  c1  show switch leaf0-a interface ${leaf0a_spine0_intf0} 
 	Should Not be Empty  ${result}
 	
 verify lacp cli
 	[Tags]  feature
-	${result}=  cli show lacp switch  leaf0-a
+	rest add tenant  t1
+	rest add vns  t1  v1
+	rest add portgroup  p4 
+    rest add interface to portgroup  leaf1-a  ${h4_intf0}  p4
+    rest add interface to portgroup  leaf1-b  ${h4_intf1}  p4
+    rest add portgroup lacp  p4  
+    sleep  3
+	${result}=  cli  c1  show lacp  
+	Should Not be Empty  ${result}
+	${result}=  cli  c1  show lacp switch leaf0-a
+	Should Not be Empty  ${result}
+	${result}=  cli  c1  show lacp switch leaf0-a interface ${h4_intf0} 
 	Should Not be Empty  ${result}
 	
 verify link cli
 	[Tags]  feature
-	${result}=  cli show link  
+	${result}=  cli  c1  show link  
 	Should Not be Empty  ${result}
 
 verify lag any_leaf cli
 	[Tags]  feature
-	${result}=  cli show lag   any_leaf 
+	${result}=  cli  c1  show lag switch spine0 any_leaf 
 	Should Not be Empty  ${result}
 	
 Test forwarding entry when the switch falls below 50% spine links
 	[Tags]  feature  Manual  untested
+	verify fabric link
+	rest delete fabric switch
 
 Changes to existing fabric configuration
 	[Tags]  feature  Manual  untested
@@ -164,3 +191,27 @@ verify traffic rate negative   [Arguments]  ${tx_rate}  ${rx_rate}  ${tx_intf}  
 T5 test teardown
 	delete traffic
 
+bring up h1 bond0
+	bash init intf  h1  bond0.10
+    bash add ip address  h1  ${h1_tag_ip}/24  bond0.10
+    bash ifup intf  h1  bond0 
+bring up h2 bond0
+	bash init intf  h2  bond0.10
+    bash add ip address  h2  ${h2_tag_ip}/24  bond0.10
+    bash ifup intf  h2  bond0
+bring up h3 bond0
+	bash init intf  h3  bond0.10
+    bash add ip address  h3  ${h3_tag_ip}/24  bond0.10
+    bash ifup intf  h3  bond0 
+bring up h4 bond0
+	bash init intf  h4  bond0
+    bash add ip address  h4  ${h4_ip}/24  bond0
+    bash ifup intf  h4  bond0
+bring up h5 bond0
+	bash init intf  h5  bond0
+    bash add ip address  h5  ${h5_ip}/24  bond0
+    bash ifup intf  h5  bond0
+bring up h6 bond0
+	bash init intf  h6  bond0
+    bash add ip address  h6  ${h6_ip}/24  bond0
+    bash ifup intf  h6  bond0  

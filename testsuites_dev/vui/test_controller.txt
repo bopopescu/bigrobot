@@ -6,6 +6,7 @@ Test Setup      base test setup
 Test Teardown   base test teardown
 Force Tags      Vui
 Library         keywords/BsnCommon.py
+Library         keywords/T5.py
 Library         keywords/Host.py
 Library         keywords/Controller.py
 Library         keywords_dev/vui/MyTest.py
@@ -104,7 +105,7 @@ Test controller cli ping
     cli ping   c1   qa-kvm-32
 
 Test bash file listing
-    #[Tags]  skipped
+    [Tags]  skipped
     #${result}=    bash ls    master  /home/admin
     ${result}=    bash ls    master  /etc
     #log           result=${result}
@@ -118,9 +119,26 @@ Test exit nested config
     exit nested config
 
 Test get node name
+    [Tags]  skipped
     ${name}=      get node name    master
     Log           I am the ${name} of the Universe!
 
     ${name}=      get node name    c1
     Log           I am the ${name} of the Universe!
 
+Test show verson
+    [Tags]  skipped
+    cli          master   show version
+
+Test get node ID
+    [Tags]  skipped
+    ${nodeid}=  get node id  master
+    Log         Node ID is ${nodeid}
+
+Test SSH connection
+    [Tags]  skipped
+    verify ssh connection   node=c1   user=admin   password=adminadmin
+
+Test console connection
+    #[Tags]  skipped
+    test console  master

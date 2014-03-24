@@ -13,16 +13,15 @@ class Node(object):
         self._user = user
         self._password = password
         self._ip = None
+        self._console_info = None
         self.http_port = None
         self.base_url = None
         self.params = params
         self.is_pingable = False
         self.rest = None  # REST handle
         self.dev = None  # DevConf handle (SSH)
-        self.dev_console = None
+        self.dev_console = None  # Console handle
         self.dev_debug_level = 0
-        self.console_ip = None
-        self.console_port = None
 
         # If name are in the form 'node-<ip_addr>', e.g., 'node-10.193.0.43'
         # then they are nodes spawned directly by the user. Don't try to
@@ -66,6 +65,13 @@ class Node(object):
     def ip(self):
         return self._ip
 
+    def node_id(self):
+        """
+        Node-id is mainly supported for BVS platform but that may change over
+        time. For now, all derived nodes should simply return None.
+        """
+        return None
+
     def user(self):
         return self._user
 
@@ -93,11 +99,77 @@ class Node(object):
         self.is_pingable = True
         return True
 
-    def console(self):
+    def console(self, driver=None, force_reconnect=False):
         """
-        Inheriting class needs to define this method.
+        Inheriting class needs to further extend this method.
         """
+        if self.dev_console and not force_reconnect:
+            return self.dev_console
+        else:
+            helpers.log("Reconnecting to console for node '%s'" % self.name())
+
+        if 'console' in self.node_params:
+            self._console_info = self.node_params['console']
+        else:
+            helpers.environment_failure("Console info is not defined for node '%s'"
+                                        % self.name())
+
+        if 'ip' in self._console_info:
+            if 'port' in self._console_info:
+                self._console_info['type'] = 'telnet'
+                self._console_info['protocol'] = 'telnet'
+            elif 'libvirt_vm_name' in self._console_info:
+                self._console_info['type'] = 'libvirt'
+                self._console_info['protocol'] = 'ssh'
+                self._console_info['port'] = None
+            else:
+                helpers.environment_failure("Supported console types are"
+                                            " telnet (IP and port) and libvirt"
+                                            " (IP and VM name)")
+        else:
+            helpers.environment_failure("Console needs an IP and a port or"
+                                        " VM name (for libvirt)")
+
+        if 'user' not in self._console_info:
+            self._console_info['user'] = self._user
+        if 'password' not in self._console_info:
+            self._console_info['password'] = self._password
+
+        if driver:
+            self._console_info['driver'] = driver
+        elif self.dev:
+            # helpers.log("driver: %s" % self.dev.driver().name())
+            # self._console_info['driver'] = self.dev.driver().name()
+            helpers.log("driver: %s" % self.dev.driver())
+            self._console_info['driver'] = self.dev.driver()
+        else:
+            self._console_info['driver'] = None
+
+        helpers.log("Using devconf driver '%s' for console to '%s'"
+                    % (driver, self.name()))
+
+        # This is where we need to instantiate a devconf object,
+        # if applicable.
+
+    def console_reconnect(self, driver=None):
         raise NotImplementedError()
+
+    def console_close(self):
+        """
+        Exit out the current console session.
+        For libvirt, it's simply:
+            ^]
+        For telnet, it's:
+            ^]
+            telnet> quit
+        """
+        h = self.console()
+        if self._console_info['type'] == 'libvirt':
+            h.send(helpers.ctrl(']'))
+        elif self._console_info['type'] == 'telnet':
+            h.send(helpers.ctrl(']'))
+            h.expect(r'telnet> ')
+            h.send('quit')
 
     def connect(self, user, password, port=None, protocol='ssh', host=None,
                 name=None):
@@ -207,37 +279,94 @@ class ControllerNode(Node):
         node = self.name()
         return self.t.is_master_controller(node)
 
-    def console(self):
-        if self.dev_console:
+    def node_id(self):
+        """
+        Node-id is mainly supported for BVS platform but that may change over
+        time. For now, all derived nodes should simply return None.
+
+        For BVS, get the node-id for the specified node. The REST
+        'show cluster' API has 'local-node-id' which is the node-id for the
+        node we want.
+
+        Input: Node name (e.g., 'master', 'c1', 'c2', etc.)
+        Output: Integer value for the node-id
+        """
+        node = self.name()
+        n = self.t.controller(node)
+        if not helpers.is_bvs(n.platform()):
+            return None
+
+        count = 0
+        while(True):
+            try:
+                url = '/api/v1/data/controller/cluster'
+                content = n.rest.get(url)['content']
+                nodeid = content[0]['status']['local-node-id']
+                helpers.log("'%s' has local-node-id %s" % (node, nodeid))
+                break
+            except(KeyError):
+                if(count < 5):
+                    helpers.warn("'%s' KeyError while retrieving"
+                                 " local-node-id. Sleeping for 10 seconds."
+                                 % node)
+                    helpers.sleep(10)
+                    count += 1
+                else:
+                    helpers.test_error("'%s' KeyError while retrieving"
+                                       " local-node-id."
+                                       % node)
+        return nodeid
+
+    def console(self, driver=None, force_reconnect=False):
+        if self.dev_console and not force_reconnect:
             return self.dev_console
-
-        if 'console_ip' in self.node_params:
-            self.console_ip = self.node_params['console_ip']
         else:
-            helpers.environment_failure("Console IP address is not defined for node '%s'"
-                                        % self.name())
-        if 'console_port' in self.node_params:
-            self.console_port = self.node_params['console_port']
-        else:
-            helpers.environment_failure("Console port is not defined for node '%s'"
-                                        % self.name())
+            helpers.log("Reconnecting to console for node '%s'" % self.name())
 
-        if self.dev:
-            driver = self.dev.driver().name()
-        else:
-            driver = None
+        super(ControllerNode, self).console(driver)
 
-        helpers.log("Using devconf driver '%s' for console to '%s'"
-                    % (driver, self.name()))
-        self.dev_console = devconf.ControllerDevConf(name=self.name(),
-                                                     host=self.console_ip,
-                                                     port=self.console_port,
-                                                     user=self._user,
-                                                     password=self._password,
-                                                     is_console=True,
-                                                     console_driver=driver,
-                                                     debug=self.dev_debug_level)
+        if self._console_info['type'] == 'telnet':
+            # For telnet console, requirements are an IP address and a port
+            # number.
+            self.dev_console = devconf.ControllerDevConf(name=self.name(),
+                                                         host=self._console_info['ip'],
+                                                         port=self._console_info['port'],
+                                                         user=self._console_info['user'],
+                                                         password=self._console_info['password'],
+                                                         protocol=self._console_info['protocol'],
+                                                         console_info=self._console_info,
+                                                         debug=self.dev_debug_level)
+        elif self._console_info['type'] == 'libvirt':
+            # For libvirt console, requirements are an IP address (of the
+            # KVM server) and the libvirt VM name (libvirt_vm_name). We will
+            # first SSH to the KVM server, then execute 'virsh console <name>'.
+            self.dev_console = devconf.HostDevConf(name=self.name(),
+                                                   host=self._console_info['ip'],
+                                                   port=self._console_info['port'],
+                                                   user=self._console_info['user'],
+                                                   password=self._console_info['password'],
+                                                   protocol=self._console_info['protocol'],
+                                                   console_info=self._console_info,
+                                                   debug=self.dev_debug_level)
+
+        if self._console_info['type'] == 'libvirt':
+            self.dev_console.send("virsh console %s" % self._console_info['libvirt_vm_name'])
+
+        # FIXME!!! The code below is not working. Figure out why...
+
+        # if self._console_info['driver']:
+        #    helpers.log("Setting devconf driver for console to '%s'"
+        #                % self._console_info['driver'])
+        #    self.dev_console.conn.set_driver(self._console_info['driver'])
+
         return self.dev_console
+
+    def console_reconnect(self, driver=None):
+        # Delay for 1 second to allow the output to settle.
+        helpers.sleep(1)
+        if self._console_info['type'] == 'libvirt':
+            self.dev_console.send("virsh console %s" % self._console_info['libvirt_vm_name'])
+            return self.dev_console
 
 
 class MininetNode(Node):
@@ -335,6 +464,9 @@ class MininetNode(Node):
     def devconf(self):
         return self.dev
 
+    def console(self, driver=None):
+        helpers.environment_failure("Console is currently not supported for Mininet node.")
+
 
 class HostNode(Node):
     def __init__(self, name, ip, user, password, t):
@@ -379,6 +511,14 @@ class HostNode(Node):
 
     def devconf(self):
         return self.dev
+
+    def console(self, driver=None):
+        helpers.environment_failure("Console is currently not supported for Host node.")
+
+
+class OpenStackNode(HostNode):
+    def __init__(self, name, ip, user, password, t):
+        super(OpenStackNode, self).__init__(name, ip, user, password, t)
 
 
 class SwitchNode(Node):
@@ -430,6 +570,9 @@ class SwitchNode(Node):
     def devconf(self):
         return self.dev
 
+    def console(self, driver=None):
+        helpers.environment_failure("Console is currently not supported for Switch node.")
+
 
 class IxiaNode(Node):
     def __init__(self, name, t):
@@ -473,6 +616,9 @@ class IxiaNode(Node):
 
     def platform(self):
         return 'ixia'
+
+    def console(self, driver=None):
+        helpers.environment_failure("Console is currently not supported for Ixia node.")
 
 
 class BigTapIxiaNode(IxiaNode):
@@ -524,12 +670,11 @@ class BigTapIxiaNode(IxiaNode):
             bigtap_switch_id = temp_list[0]  # to be used for calculating switch DPID
             bigtap_port_id = temp_list[1]
             switch = 's' + str(bigtap_switch_id)
-            bigtap_config_rx = IxBigtapLib.create_bigtap_flow_conf_rx(self._switch_dpids[switch],
+            bigtap_config_rx = IxBigtapLib.create_bigtap_flow_conf_rx(self._bigtap_switches[switch]['dipid'],
                                                                 52, ['1', '2'])  # FIXME to be changed for passing ix port from Topo file
-            bigtap_config_tx = IxBigtapLib.create_bigtap_flow_conf_tx(self._switch_dpids[switch],
+            bigtap_config_tx = IxBigtapLib.create_bigtap_flow_conf_tx(self._bigtap_switches[switch]['dipid'],
                                                                 bigtap_portname=bigtap_port_id,
                                                                ix_portname=['1', '2'], macs=final_macs)
-
             if not self._bigtap_to_config:
                 helpers.log('Skipping Big tap Config...')
             else:
