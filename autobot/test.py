@@ -745,12 +745,6 @@ class Test(object):
 
     def _controller_cli_firewall_allow_rest_access(self, name, node_id):
         n = self.topology(name)
-
-        if not n.devconf():
-            helpers.log("DevConf session is not available for node '%s'"
-                        % name)
-            return
-
         n.config('controller-node %s' % node_id)
         n.config('interface Ethernet 0')
         n.config('firewall allow tcp 8000')
@@ -761,19 +755,12 @@ class Test(object):
     def setup_controller_firewall_allow_rest_access(self, name):
         n = self.topology(name)
 
-        if not n.devconf():
-            helpers.log("DevConf session is not available for node '%s'"
-                        % name)
-            return
-
         helpers.log("Enabling REST access via firewall filters")
         platform = n.platform()
 
         if helpers.is_bvs(platform):
-            # Currently REST is enabled by default
-            pass
+            helpers.log("REST is enabled by default for BVS platform")
         elif helpers.is_bigtap(platform) or helpers.is_bigwire(platform):
-            self.controller_cli_show_version(name)
             config = self.controller_cli_show_running_config(name)
             node_ids = self.controller_get_node_ids(config)
             helpers.log("node_ids: %s" % node_ids)
@@ -786,12 +773,23 @@ class Test(object):
 
     def setup_controller_http_session_cookie(self, name):
         n = self.topology(name)
+        return n.rest.request_session_cookie()
+
+
+    def setup_controller(self, name):
+        """
+        Perform setup on BSN controllers
+        """
+        n = self.topology(name)
 
         if not n.devconf():
             helpers.log("DevConf session is not available for node '%s'"
                         % name)
             return
-        return n.rest.request_session_cookie()
+
+        self.controller_cli_show_version(name)
+        self.setup_controller_firewall_allow_rest_access(name)
+        self.setup_controller_http_session_cookie(name)
 
     def setup_switch(self, name):
         """
@@ -859,10 +857,10 @@ class Test(object):
         self._setup_in_progress = True
 
         params = self.topology_params()
+        helpers.debug("Topology info:\n%s" % helpers.prettify(params))
         for key in params:
             if helpers.is_controller(key):
-                self.setup_controller_firewall_allow_rest_access(key)
-                self.setup_controller_http_session_cookie(key)
+                self.setup_controller(key)
             elif helpers.is_switch(key):
                 self.setup_switch(key)
 

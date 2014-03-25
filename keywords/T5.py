@@ -233,7 +233,8 @@ class T5(object):
 
         helpers.test_log("Input arguments: port-group = %s" % pg)
 
-        url = '/api/v1/data/controller/fabric/port-group[name="%s"]' % (pg)
+        url = '/api/v1/data/controller/applications/bvs/port-group[name="%s"]' % (pg)
+
         try:
             c.rest.put(url, {"name": pg})
         except:
@@ -302,7 +303,7 @@ class T5(object):
 
         url = '/api/v1/data/controller/core/switch-config[name="%s"]/interface[name="%s"]' % (switch, intf)
         try:
-            c.rest.put(url, {"name": intf, "port-group-name": pg})
+            c.rest.put(url, {"name": intf, "port-group": pg})
         except:
             return False
         else:
@@ -314,7 +315,9 @@ class T5(object):
 
         helpers.test_log("Input arguments: port-group = %s" % (pg))
 
-        url = '/api/v1/data/controller/fabric/port-group[name="%s"]' % (pg)
+        #url = '/api/v1/data/controller/fabric/port-group[name="%s"]' % (pg)
+        url = '/api/v1/data/controller/applications/bvs/port-group[name="%s"]' % (pg)
+        
         try:
             c.rest.patch(url, {"mode": "lacp"})
         except:

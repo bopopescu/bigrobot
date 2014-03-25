@@ -293,7 +293,8 @@ class BsnCommon(object):
         '''
         t = test.Test()
         n = t.node(node)
-        if helpers.is_switch(n.platform()):
+        helpers.log("Platform is %s" % (n.platform()))
+        if helpers.is_switch(node):
             helpers.log("Node is a switch")
             if helpers.is_switchlight(n.platform()):
                 '''
@@ -307,7 +308,7 @@ class BsnCommon(object):
                 switch.config(cli_input_2)
                 return True
             else:
-                helpers.test_error("Unsupported Platform %s" % (node))
+                helpers.test_error("Unsupported Switch Platform %s" % (node))
         elif helpers.is_controller(node):
             helpers.log("The node is a controller")
             if helpers.is_bigtap(n.platform()):
@@ -835,9 +836,9 @@ class BsnCommon(object):
                 try:
                     c = t.controller("master")
                     url = '/api/v1/data/controller/os/config/global/snmp-config'
-                    if "trap-enable" in keyword:
+                    if "trap-enabled" in keyword:
                         if "True" in value:
-                            c.rest.patch(url, {"trap-enable": True})
+                            c.rest.patch(url, {"trap-enabled": True})
                         else:
                             c.rest.patch(url, {"trap-enable": False})
                     elif "null" in value:
@@ -1448,7 +1449,7 @@ class BsnCommon(object):
         """
         t = test.Test()
         n = t.node(node)
-        return n.node_id()
+        return n.node_ip()
 
     def verify_ssh_connection(self, node, sleep=10, iterations=5,
                               user='dummy', password='dummy'):

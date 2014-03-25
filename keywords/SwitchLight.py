@@ -235,7 +235,7 @@ class SwitchLight(object):
         try:
             t = test.Test()
             switch = t.switch(node)
-            cli_action = "ping -c 3 %s" + str(remote)
+            cli_action = "ping  " + str(remote)
             switch.enable(cli_action)
             cli_output = switch.cli_content()
             if "Destination Host Unreachable" in cli_output:

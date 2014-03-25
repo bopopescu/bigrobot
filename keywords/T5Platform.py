@@ -92,6 +92,8 @@ class T5Platform(object):
 
     def rest_verify_cluster_election_take_leader(self):
         ''' Invoke "cluster election take-leader" command and verify the controller state
+            This function will invoke the take_leader functionality and verify the fabric integrity between 
+            before and after states
         '''
         obj = utilities()
         utilities.fabric_integrity_checker(obj,"before")
@@ -519,14 +521,14 @@ class T5Platform(object):
         ''' Delete all the port groups in the running-config. Use as running config cleanup function. (teardown)
         '''
         
-        url = "/api/v1/data/controller/fabric/port-group?config=true"
+        url = "/api/v1/data/controller/applications/bvs/port-group?config=true"
         t = test.Test()
         master = t.controller("master")
         
         result = master.rest.get(url)['content']
-        
+
         for pg in result:
-            url = "/api/v1/data/controller/fabric/port-group[name=\""+ pg['name'] + "\"]"
+            url = '/api/v1/data/controller/applications/bvs/port-group[name="%s"]' %  pg['name']
             master.rest.delete(url, {})
 
              
@@ -565,7 +567,7 @@ class T5Platform(object):
         global hostPingFails
         myhost = Host.Host()
         loss = myhost.bash_ping(src, dst)
-        if (loss != '0'):
+        if (loss != 0):
             sleep(30)
             loss = myhost.bash_ping(src, dst)
             if (loss != '0'):

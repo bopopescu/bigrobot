@@ -6,16 +6,22 @@
 # mn  : Mininet server
 
 c1:
-    ip: 10.192.96.10
+    ip: 10.192.97.15
 c2:
-    ip: 10.192.96.11
+    ip: 10.192.97.16
 
 s1:
-    ip: 10.192.88.80
+    ip: 10.192.75.232
     console_ip: cs-rack11
-    console_port: 6003    
+    console_port: 6038    
+
+
+#s1:
+#    ip: 10.192.88.80
+#    console_ip: cs-rack11
+#    console_port: 6003    
     
-s2:
-    ip: 10.192.88.81
-    console_ip: 10.192.2.89
-    console_port: 6004
+#s2:
+#    ip: 10.192.88.81
+#    console_ip: 10.192.2.89
+#    console_port: 6004
