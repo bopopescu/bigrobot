@@ -9,7 +9,7 @@ Suite Teardown   base suite teardown
 Force Tags       T5 
 Library          keywords/BsnCommon.py
 Library          keywords/T5.py
-Library	         keywords_dev/svoora/T5Fabric.py
+#Library	         keywords_dev/svoora/T5Fabric.py
 Library			 keywords_dev/svoora/T5_Scale.py
 Library		 	 keywords/T5Platform.py
 Library			 keywords/T5L3.py
@@ -22,11 +22,14 @@ ${cfg_file_server}		10.192.108.10
 ${file_server_passwd}	bsn
 ${copied_file}			file_from_server.cfg
 ${monitor_file}			exception_file.log
-${bm1_ip}				10.0.0.47
+${bm1_ip}				10.0.0.6
+#${m_pg} 				leaf1-bm4
+${m_pg}					leaf15-bm46
+
 * Test Case 
 
 copy config file to controller
-	[Tags]  scale
+	#[Tags]  scale
 	Log To console  Getting config file server
 	copy config from server  ${cfg_file_path}  ${cfg_file_server}  ${file_server_passwd}  ${copied_file} 
 	verify file  ${copied_file}
@@ -51,17 +54,28 @@ start mininet topology
 	Log To Console  Starting mininet topology
 	start monitoring the exception
 	mininet start	
-	sleep  100
-	pause               UNDER MININET!!!!
+	sleep  60
+	#pause               UNDER MININET!!!!
 	verify fabric switch link and errors
 	stop monitoring the exception
 	parse monitoring file
 	
 ping bms to check L2 fwding
 	[Tags]  scale	
-	Log to console  Pinging from bm0 to ${bm1_ip}
-    ${loss}=  mininet ping  bm0  ${bm1_ip}
-    pause                UNDER MININET!!!!
+	Log To console  Configuring mininet bms
+	mininet host ipcfg  bm0  bm0-bond0  10.10.1.2  24
+	mininet host ipcfg  bm5  bm5-bond0  10.10.1.3  24
+	mininet host ipcfg  bm1  bm1-bond0  10.10.2.2  24
+	mininet host ipcfg  bm4  bm4-bond0  10.10.2.3  24
+	
+	mininet host gw  bm0  10.10.1.1  bm0-bond0
+	mininet host gw  bm5  10.10.1.1  bm5-bond0
+	mininet host gw  bm1  10.10.2.1  bm1-bond0
+	mininet host gw  bm4  10.10.2.1  bm4-bond0
+	
+	Log to console  Pinging from bm0 to bm5
+    ${loss}=  mininet ping  bm0  bm5
+    #pause                UNDER MININET!!!!
     Should Be True  ${loss} == 0
     Run Keyword Unless  ${loss} == 0    Collect Logs  ping failed so collecting all logs from Collect_Logs					 
 			
@@ -73,7 +87,7 @@ ping bms to check L3 fwding
 	rest add vns ip  Tenant0  Tenant1-VNS1  10.10.2.1  24
 	rest add vns  Tenant0  Tenant1-VNS1
 	rest add portgroup to vns  Tenant0  Tenant1-VNS1  leaf0-bm1  -1
-	rest add portgroup to vns  Tenant0  Tenant1-VNS1  leaf15-bm46  -1
+	rest add portgroup to vns  Tenant0  Tenant1-VNS1  ${m_pg}   -1
 	Log To console  Configuring mininet bms
 	mininet host ipcfg  bm0  bm0-bond0  10.10.1.2  24
 	mininet host ipcfg  bm5  bm5-bond0  10.10.1.3  24
@@ -89,7 +103,7 @@ ping bms to check L3 fwding
 	${loss}=  mininet l3 ping  bm0  10.10.2.2
 	Should Be True  ${loss} < 100
 	#Test pause execution (SHELL)
-    pause            Freeze!!!
+    #pause            Freeze!!!
 	${loss}=  mininet l3 ping  bm1  10.10.1.2
 	Should Be True  ${loss} < 100
 	${loss}=  mininet l3 ping  bm5  10.10.2.3
@@ -102,14 +116,14 @@ Remove spine0 and check L2/L3
 	Log To Console  Removing spine0 from configuation
 	start monitoring the exception
 	rest delete fabric switch  spine0 
+	sleep  5
+	stop monitoring the exception
+	parse monitoring file
 	
 	Log to console  Pinging from bm0 to 10.10.1.3
     ${loss}=  mininet ping  bm0  10.10.1.3
     Should Be True  ${loss} < 100
     Run Keyword Unless  ${loss} < 100    Collect Logs  ping failed so collecting all logs from Collect_Logs					 
-	stop monitoring the exception
-	sleep 5
-	parse monitoring file
 	Log To console  Configuring mininet bms
 	mininet host ipcfg  bm0  bm0-bond0  10.10.1.2  24
 	mininet host ipcfg  bm5  bm5-bond0  10.10.1.3  24
@@ -138,14 +152,14 @@ Add spine0 back and check L2/L3
 	rest add switch  spine0
 	rest add dpid  spine0  00:00:00:00:00:01:00:01
 	rest add fabric role  spine0  spine		
+	sleep  5
+	stop monitoring the exception
+	parse monitoring file
 	
 	Log to console  Pinging from bm0 to 10.10.1.3
     ${loss}=  mininet ping  bm0  10.10.1.3
     Should Be True  ${loss} < 100
     Run Keyword Unless  ${loss} < 100    Collect Logs  ping failed so collecting all logs from Collect_Logs					 
-	stop monitoring the exception
-	sleep 5
-	parse monitoring file
 	
 	Log To console  Configuring mininet bms
 	mininet host ipcfg  bm0  bm0-bond0  10.10.1.2  24
@@ -174,21 +188,17 @@ stop and start mininet and verify L2/L3 fwding
 	start monitoring the exception
 	mininet stop	
 	sleep  100
-	pause               UNDER MININET!!!!
+	#pause               UNDER MININET!!!!
+	stop monitoring the exception
 	parse monitoring file
-	sleep 100
+	sleep  100
 	Log To Console  Starting mininet in topo
 	start monitoring the exception
 	mininet start	
 	sleep  100
-	pause               UNDER MININET!!!!
+	#pause               UNDER MININET!!!!
+	stop monitoring the exception
 	parse monitoring file
-	
-	Log to Console  Verifing Traffic
-	Log to console  Pinging from bm0 to 10.10.1.3
-    ${loss}=  mininet ping  bm0  10.10.1.3
-    Should Be True  ${loss} < 100
-    Run Keyword Unless  ${loss} < 100    Collect Logs  ping failed so collecting all logs from Collect_Logs					 
 	
 	Log To console  Configuring mininet bms
 	mininet host ipcfg  bm0  bm0-bond0  10.10.1.2  24
@@ -200,6 +210,13 @@ stop and start mininet and verify L2/L3 fwding
 	mininet host gw  bm5  10.10.1.1  bm5-bond0
 	mininet host gw  bm1  10.10.2.1  bm1-bond0
 	mininet host gw  bm4  10.10.2.1  bm4-bond0
+	
+	Log to Console  Verifing Traffic
+	Log to console  Pinging from bm0 to 10.10.1.3
+    ${loss}=  mininet ping  bm0  10.10.1.3
+    Should Be True  ${loss} < 100
+    Run Keyword Unless  ${loss} < 100    Collect Logs  ping failed so collecting all logs from Collect_Logs					 
+	
 	
 	Log To console  Checking ping between vns
 	${loss}=  mininet l3 ping  bm0  10.10.2.2
@@ -342,10 +359,10 @@ stop monitoring the exception
 	
 parse monitoring file
 	Log To Console  Looking for exceptions in the file
-	${size}=  parse exception  master  ${monitor_file}
-	Should Be True  ${size} == 0
-	${size}=  parse exception  slave  ${monitor_file}
-	Should Be True  ${size} == 0
+	${size}=  parse exception  c1  ${monitor_file}
+	#Should Be True  ${size} == 0
+	${size}=  parse exception  c2  ${monitor_file}
+	#Should Be True  ${size} == 0
 
 verify fabric switch link and errors
 	Log To Console  Verifing the fabric switch and links
