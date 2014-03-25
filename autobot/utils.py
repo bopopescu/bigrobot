@@ -15,6 +15,7 @@ def strip_cruds_before_table_begins(input_list):
     """
     i = 0
     for s in input_list:
+        s = s.rstrip()
         if re.match(r'^[\+-]+$', s):
             break
         i += 1
@@ -29,6 +30,7 @@ def strip_cruds_after_table_ends(input_list):
     """
     i = 0
     for s in reversed(input_list):
+        s = s.rstrip()
         if re.match(r'^[\+-]+$', s):
             break
         i += 1
