@@ -73,7 +73,7 @@ class Test(object):
                 node_names = self._bigtest_node_info.keys()
                 if bigtest_nodes:
                     node_names = ['node-' + n for n in bigtest_nodes.split(',')]
-                    helpers.info("Found env BIGTEST_NODES. Limitting nodes to %s."
+                    helpers.info("Found env BIGTEST_NODES. Limiting nodes to %s."
                                  % node_names)
 
                 for key in node_names:
