@@ -83,16 +83,16 @@ class Test(object):
                         ip = self._bigtest_node_info[key]['ipaddr']
                         params_dict[c] = {}
                         params_dict[c]['ip'] = ip
-                        helpers.debug("'%s' IP address is '%s'"
-                                      % (c, ip))
+                        helpers.debug("'%s' IP address is '%s' (bigtest node '%s')"
+                                      % (c, ip, key))
                     if re.match(r'^node-mininet', key):
                         m = "mn" + str(mininet_id)
                         mininet_id += 1
                         ip = self._bigtest_node_info[key]['ipaddr']
                         params_dict[m] = {}
                         params_dict[m]['ip'] = ip
-                        helpers.debug("'%s' IP address is '%s'"
-                                      % (m, ip))
+                        helpers.debug("'%s' IP address is '%s' (bigtest node '%s')"
+                                      % (m, ip, key))
                 yaml_str = helpers.to_yaml(params_dict)
 
                 # This file contain a list of nodes:
