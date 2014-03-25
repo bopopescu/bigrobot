@@ -123,7 +123,7 @@ Test check list empty
     Should not be true   ${value}
 
 Test resource file
-    #[Tags]           skipped
+    [Tags]           skipped
     log              VALUE=${VALUE}
 
 Test pause execution (GUI)
@@ -148,12 +148,19 @@ Test empty string
     should be true    '${value}' == ''
 
 Test should contain x times
-    #[Tags]           skipped
+    [Tags]           skipped
     ${result}=        ping result
     Log               Result = ${result}
     Should contain X times    ${result}    bytes from 10.192.4.11    12    It's not a match!
     #Should contain X times    ${result}    bytes From 10.192.4.11    10
    
+Test get a dict
+    #[Tags]           skipped
+    ${result}=        return dict
+    Log               Result = ${result['def']}
+    Log               Result = ${result['def'][0]}
+    Log               Result = ${result['def'][0]['second']}
+
 
 * Keywords
 my base suite setup
