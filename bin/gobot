@@ -441,18 +441,22 @@ def test_command(*args):
     test_suite = ''.join((helpers.bigrobot_suite(), '.', ext))
 
     touch_log_files()
-    create_links_to_logs()
+    if helpers.bigrobot_continuous_integration() == 'True':
+        # Don't create links to log files under CI environment
+        pass
+    else:
+        create_links_to_logs()
 
     rc = robot.run(test_suite, **options)
     helpers.log("Robot Framework return code is %s" % rc)
     print("Robot Framework return code is %s" % rc)
 
-    if helpers.bigrobot_continuous_integration() == 'True':
-        print("Inside continuous integration environment. Return code"
-              " set to 0.")
-        sys.exit(0)
-    else:
-        sys.exit(rc)
+    #if helpers.bigrobot_continuous_integration() == 'True':
+    #    print("Inside continuous integration environment. Return code"
+    #          " set to 0.")
+    #    sys.exit(0)
+    #else:
+    sys.exit(rc)
 
 
 def env_command(*args):
