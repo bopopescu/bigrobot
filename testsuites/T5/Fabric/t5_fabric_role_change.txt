@@ -34,7 +34,7 @@ delete/add the Fabric role spine0
 	[Tags]  feature 
   REST delete fabric role  spine0
   sleep  3
-  verify fabric switch role  ${spine0_dpid}  virtual
+  verify fabric switch role  ${spine0_dpid}  unknown
   rest verify fabric link
   REST add fabric role  spine0  spine   
   sleep  5
@@ -46,7 +46,7 @@ delete/add Fabric role leaf in dual leaf setup
    rest delete leaf group  leaf0-a  
    REST delete fabric role  leaf0-a  
    sleep  5 
-   verify fabric switch role  ${leaf0a_dpid}  virtual 
+   verify fabric switch role  ${leaf0a_dpid}  unknown
    rest verify fabric link   
    REST add fabric role  leaf0-a  leaf
    REST add leaf group  leaf0-a  rack0   

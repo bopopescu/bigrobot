@@ -24,12 +24,12 @@ Verify fabric switch and Link
    rest verify fabric link
 
 ping h3 to h4 single leaf single rack dynamic endpoints
-   [Tags]  smoke  sanity     
+   [Tags]  smoke  sanity  run     
    rest add interface to vns  A  A  leaf1-a  ${h3_intf0_single}  -1 
    rest add interface to vns  A  A  leaf1-a  ${h4_intf0_single}  -1 
    sleep  5
    ${loss}=  bash ping  h3  ${h4_single_ip}  source_if=eth1
-   Should Be True  ${loss} == 0  
+   Should Be True  ${loss} < 50  
  
 ping h3 to h4 single leaf single rack static endpoints
    [Tags]  sanity       
@@ -45,7 +45,7 @@ ping h3 to h4 single leaf single rack static endpoints
    rest add interface to vns  A  A  leaf1-a  ${h3_intf0_single}  -1
    sleep  5 
    ${loss}=  bash ping  h3   ${h4_single_ip}  source_if=eth1
-   Should Be True  ${loss} == 0
+   Should Be True  ${loss} < 50
    
 ping h2 to h3 dual rack single leaf dynamic endpoints
    [Tags]  smoke  sanity     
@@ -53,7 +53,7 @@ ping h2 to h3 dual rack single leaf dynamic endpoints
    rest add interface to vns  A  A  leaf0-a  ${h2_intf0_single}  -1 
    sleep  5 
    ${loss}=  bash ping  h3   ${h2_single_ip}  source_if=eth1
-   Should Be True  ${loss} == 0 					 
+   Should Be True  ${loss} < 50 					 
 		
 ping h2 to h3 dual rack single leaf static endpoints 
    [Tags]  sanity        
@@ -69,7 +69,7 @@ ping h2 to h3 dual rack single leaf static endpoints
    rest add interface to vns  A  A  leaf1-a  ${h3_intf0_single}  -1
    sleep  5 
    ${loss}=  bash ping  h3  ${h2_single_ip}  source_if=eth1
-   Should Be True  ${loss} == 0   
+   Should Be True  ${loss} < 50   
    
 ping h3 to h4 single leaf single rack dynamic endpoints tag
    [Tags]  smoke  sanity     
@@ -88,7 +88,7 @@ ping h3 to h4 single leaf single rack dynamic endpoints tag
    bash network restart  h2
    sleep  5
    ${loss}=  bash ping  h3  ${h4_tag_single_ip}  source_if=eth1.20
-   Should Be True  ${loss} == 0  					
+   Should Be True  ${loss} < 50  					
 		
 ping h3 to h4 single leaf single rack static endpoints tag
    [Tags]  sanity    
@@ -104,7 +104,7 @@ ping h3 to h4 single leaf single rack static endpoints tag
    rest add interface to vns  A  A  leaf1-a  ${h3_intf0_single}  20
    sleep  5 
    ${loss}=  bash ping  h3  ${h4_tag_single_ip}  source_if=eth1.20
-   Should Be True  ${loss} == 0
+   Should Be True  ${loss} < 50
 
 ping h2 to h3 dual rack single leaf dynamic endpoints tag     
    [Tags]  smoke  sanity      
@@ -112,7 +112,7 @@ ping h2 to h3 dual rack single leaf dynamic endpoints tag
    rest add interface to vns  A  A  leaf0-a  ${h2_intf0_single}  20
    sleep  5
    ${loss}=  bash ping  h3  ${h2_tag_single_ip}  source_if=eth1.20
-   Should Be True  ${loss} == 0    
+   Should Be True  ${loss} < 50    
    
 ping h2 to h3 dual rack single leaf static endpoints tag 
    [Tags]  sanity   
@@ -128,13 +128,16 @@ ping h2 to h3 dual rack single leaf static endpoints tag
    rest add interface to vns  A  A  leaf1-a  ${h3_intf0_single}  20
    sleep  5 
    ${loss}=  bash ping  h3   ${h2_tag_single_ip}  source_if=eth1.20
-   Should Be True  ${loss} == 0  
+   Should Be True  ${loss} < 50  
    
 
 * Keywords
 Single Leaf Three Rack Suite Setup
    base suite setup
    add fabric switch
+   bring up eth1 h3
+   bring up eth1 h4
+   bring up eth1 h2
    sleep  5 
    
 Single Leaf Three Rack Suite Teardown 
@@ -195,6 +198,19 @@ add portgroup to endpoint  [Arguments]  ${tenant}  ${vns}  ${endpoint}  ${pg}  $
 delete portgroup from vns  [Arguments]  ${tenant}  ${vns}  ${pg}  ${vlan} 
     REST delete portgroup from vns  ${tenant}  ${vns}  ${pg}  ${vlan}
     
+bring up eth1 h3
+	bash init intf  h3  eth1
+    bash add ip address  h3  ${h3_single_ip}/24  eth1
+    bash ifup intf  h3  eth1 
+bring up eth1 h4
+	bash init intf  h4  eth1
+    bash add ip address  h4  ${h4_single_ip}/24  eth1
+    bash ifup intf  h4  eth1
+bring up eth1 h2
+	bash init intf  h2  eth1
+    bash add ip address  h2  ${h2_single_ip}/24  eth1
+    bash ifup intf  h2  eth1
+
 
   
 

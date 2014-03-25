@@ -267,6 +267,10 @@ class T5Utilities(object):
                 3) Fabric Lags
         '''
         global warningCount
+        helpers.log("Before State Change Total # of Fabric Elements: %s " % len(list_b4))
+        helpers.log("Before State Change : %s " % list_b4)
+        helpers.log("After State Change Total # of Fabric Elements: %s " % len(list_after))
+        helpers.log("After State Change: %s " % list_after)
         
         if(helpers.list_compare(list_b4, list_after)):
             if (fabricElement == "FabricLinks"):

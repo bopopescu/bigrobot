@@ -399,7 +399,7 @@ Bi-Directional L3 Traffic ICMP Echo with traffic learn
     verify results  transmitted_frames  received_frames  ${stream}  ${stream_name}
     [Tags]  traffic  sanity  bigtap
 
-Bi-Directional L3 Traffic with different Hosts
+Bi-Directional L3 Traffic with different Hosts in differnt Vlans and networks
 # Basic test case with all default values and ICMP type and value
     ${stream}=             L3 add  name=${stream_name}  flow=a<->b  src_mac=${src_mac}  dst_mac=${dst_mac}
     ...						src_cnt=${src_cnt}  dst_cnt=${dst_cnt}  src_ip=20.0.0.1  dst_ip=20.0.0.2

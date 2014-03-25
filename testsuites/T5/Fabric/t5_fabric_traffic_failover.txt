@@ -9,7 +9,6 @@ Test Teardown    T5 test teardown
 Force Tags       T5 
 Library          keywords/BsnCommon.py
 Library          keywords/T5.py
-Library          keywords/T5Fabric.py
 Library          keywords/T5Platform.py
 Library			 keywords/SwitchLight.py
 Library			 keywords/Ixia.py
@@ -20,14 +19,21 @@ Resource         testsuites/T5/t5_physical_variables.txt
 *Test Case
 
 Setup Three Rack Dual Leaf Topology
-	base suite setup  
+	[Tags]  feature  run
+	base suite setup     
     add fabric switch
+    bring up h1 bond0
+    bring up h2 bond0
+    bring up h3 bond0
+    bring up h4 bond0
+    bring up h5 bond0
+    bring up h6 bond0
     sleep  5
     rest verify fabric switch all
 	rest verify fabric link 	
 
 Spine Link Failover/back Test from leaf0-a untagged packet(Using IXIA)
-    [Tags]  feature  
+    [Tags]  feature  run 
     rest add tenant  t1
     rest add vns  t1  v1
     rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
@@ -108,7 +114,7 @@ Peer link failover between leaf1a to leaf1b
     rest delete tenant  t2 
 
 Traffic Test between the 2 leaf with single peer link
-	[Tags]  feature    
+	[Tags]  feature  run    
 	rest add tenant  t1
     rest add vns  t1  v2
     rest add interface to vns  t1  v2  leaf0-a  ${leaf0a_ixia_intf}  200
@@ -146,16 +152,16 @@ Reboot leaf switch with dual Host connected through lacp (Host5 to Host4)
     rest verify fabric interface lacp  leaf1-a  ${h4_intf0}
     rest verify fabric interface lacp  leaf2-a  ${h5_intf0}  
     ${loss}=  bash ping  h5  ${h4_ip}  source_if=bond0
-    Should Be True  ${loss} == 0
-    cli restart switch  s5
+    Should Be True  ${loss} < 50
+    cli restart switch  leaf2-a
     sleep  2
     ${loss}=  bash ping  h5  ${h4_ip}  source_if=bond0
-    Should Be True  ${loss} == 0
+    Should Be True  ${loss} < 50
     sleep  90
-    cli restart switch  s6
-    sleep  2
+    cli restart switch  leaf2-b
+    sleep  90
     ${loss}=  bash ping  h5  ${h4_ip}  source_if=bond0
-    Should Be True  ${loss} == 0
+    Should Be True  ${loss} < 50
    rest delete interface from portgroup  leaf1-a  ${h4_intf0}  p4
    rest delete interface from portgroup  leaf1-b  ${h4_intf1}  p4
    rest delete interface from portgroup  leaf2-a  ${h5_intf0}  p5
@@ -163,6 +169,8 @@ Reboot leaf switch with dual Host connected through lacp (Host5 to Host4)
    rest delete portgroup  p4
    rest delete portgroup  p5
    rest delete tenant  t1 
+   bash execute command  leaf2-a  ofad-ctl autoneg 24
+   bash execute command  leaf2-b  ofad-ctl autoneg 24
   
 Host Link Failover test with Host6 in Rack2 to Host 4 in Rack1
 	[Tags]  feature    
@@ -180,23 +188,23 @@ Host Link Failover test with Host6 in Rack2 to Host 4 in Rack1
     rest add portgroup to vns  t1  v1  p6  -1
     sleep  3
     ${loss}=  bash ping  h6  ${h4_ip}  source_if=bond0
-    Should Be True  ${loss} == 0
+    Should Be True  ${loss} < 50
     rest disable fabric interface  leaf1-a  ${h4_intf0}
     sleep  3
     ${loss}=  bash ping  h6  ${h4_ip}  source_if=bond0
-    Should Be True  ${loss} == 0
+    Should Be True  ${loss} < 50
     rest enable fabric interface  leaf1-a  ${h4_intf0}
     sleep  3
     ${loss}=  bash ping  h6  ${h4_ip}  source_if=bond0
-    Should Be True  ${loss} == 0
+    Should Be True  ${loss} < 50
     rest disable fabric interface  leaf1-b  ${h4_intf1}
     sleep  3
     ${loss}=  bash ping  h6  ${h4_ip}  source_if=bond0
-    Should Be True  ${loss} == 0
+    Should Be True  ${loss} < 50
     rest enable fabric interface  leaf1-b  ${h4_intf1}
     sleep  3
     ${loss}=  bash ping  h6  ${h4_ip}  source_if=bond0
-    Should Be True  ${loss} == 0
+    Should Be True  ${loss} < 50
     rest delete tenant  t1 
     rest delete interface from portgroup  leaf1-a  ${h4_intf0}  p4
     rest delete interface from portgroup  leaf1-b  ${h4_intf1}  p4
@@ -221,13 +229,13 @@ change portgroup from lacp to static and verify the forwarding
     rest add portgroup to vns  t1  v1  p6  -1
     sleep  3
     ${loss}=  bash ping  h6  ${h4_ip}  source_if=bond0
-    Should Be True  ${loss} == 0
+    Should Be True  ${loss} < 50
     rest delete portgroup lacp  p4
     sleep  2
     rest verify fabric interface  leaf1-a  ${h4_intf0}
     rest verify fabric interface  leaf1-b  ${h4_intf1}
     ${loss}=  bash ping  h6  ${h4_ip}  source_if=bond0
-    Should Be True  ${loss} == 0
+    Should Be True  ${loss} < 50
     rest delete tenant  t1 
      
 HA failover with lacp host
@@ -246,17 +254,19 @@ HA failover with lacp host
     rest add portgroup to vns  t1  v1  p6  -1
     sleep  3
     ${loss}=  bash ping  h6  ${h4_ip}  source_if=bond0
-    Should Be True  ${loss} == 0
+    Should Be True  ${loss} < 50
     cli verify cluster master reboot
     sleep  2
     rest verify fabric interface  leaf1-a  ${h4_intf0}
     rest verify fabric interface  leaf1-b  ${h4_intf1}
     ${loss}=  bash ping  h6  ${h4_ip}  source_if=bond0
-    Should Be True  ${loss} == 0
+    Should Be True  ${loss} < 50
     rest delete tenant  t1 
 
 HA failover with tag traffic forwarding from ixia
 	[Tags]  feature
+	bash execute command  leaf2-a  ofad-ctl autoneg 24
+    bash execute command  leaf2-b  ofad-ctl autoneg 24
 	rest add tenant  t2
     rest add vns  t2  v2
     rest add interface to vns  t2  v2  leaf0-b  ${leaf0b_ixia_intf}  100
@@ -274,6 +284,7 @@ HA failover with tag traffic forwarding from ixia
     rest delete tenant  t2    
 
 Tear down config and Topology
+	[Tags]  feature  run
     delete fabric switch  
     rest delete portgroup  p4
     rest delete portgroup  p6
@@ -297,10 +308,42 @@ verify traffic rate negative   [Arguments]  ${tx_rate}  ${rx_rate}  ${tx_intf}  
     ${report}=  fetch port stats
     ${tx_value}=  verify dict key  ${report}  ${tx_intf}  transmitted_frame_rate
     ${rx_value}=  verify dict key  ${report}  ${rx_intf}  received_valid_frame_rate
-    Should Not be equal  ${tx_value}  ${rx_value}
+    Should Be True  ${rx_value} == 0
+
+verify traffic packet  [Arguments]  ${tx_cnt}  ${rx_cnt}  ${tx_intf}  ${rx_intf}
+	Sleep  5
+    ${report}=  fetch port stats
+    ${tx_value}=  verify dict key  ${report}  ${tx_intf}  transmitted_frames
+    ${rx_value}=  verify dict key  ${report}  ${rx_intf}  received_valid_frames
+    ${result}=  Evaluate  ${tx_value} - ${rx_value}
+    Should Be True   -4 < ${result} < 1
     
 T5 test teardown
 	delete traffic
 	rest delete tenant  t1
 	rest delete tenant  t2
 
+bring up h1 bond0
+	bash init intf  h1  bond0.10
+    bash add ip address  h1  ${h1_tag_ip}/24  bond0.10
+    bash ifup intf  h1   bond0 
+bring up h2 bond0
+	bash init intf  h2  bond0.10
+    bash add ip address  h2  ${h2_tag_ip}/24  bond0.10
+    bash ifup intf  h2  bond0
+bring up h3 bond0
+	bash init intf  h3  bond0.10
+    bash add ip address  h3  ${h3_tag_ip}/24  bond0.10
+    bash ifup intf  h3  bond0 
+bring up h4 bond0
+	bash init intf  h4  bond0
+    bash add ip address  h4  ${h4_ip}/24  bond0
+    bash ifup intf  h4  bond0
+bring up h5 bond0
+	bash init intf  h5  bond0
+    bash add ip address  h5  ${h5_ip}/24  bond0
+    bash ifup intf  h5  bond0
+bring up h6 bond0
+	bash init intf  h6  bond0
+    bash add ip address  h6  ${h6_ip}/24  bond0
+    bash ifup intf  h6  bond0  
