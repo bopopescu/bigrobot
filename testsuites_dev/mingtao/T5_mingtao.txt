@@ -1,6 +1,4 @@
-* Setting
-Documentation   BigTap Test Suite
-*Settings
+* Settings
 Documentation    T5 Test Suite
 Suite Setup      base suite setup
 Suite Teardown   base suite teardown
@@ -8,47 +6,128 @@ Test Setup       base test setup
 Test Teardown    base test teardown
 Force Tags       T5 
 Library          keywords/BsnCommon.py
+Library          keywords/Controller.py
 Library			 keywords/Mininet.py
 Library		     keywords/Host.py
 Library		     keywords/Ixia.py
-Library		     keywords_dev/mingtao/T5_longevity.py 
+Library		     keywords_dev/mingtao/T5_longevity.py
+Library	         keywords/T5.py
+Library	         keywords/T5Platform.py
+Library	         keywords/Controller.py
+Resource	     testsuites_dev/mingtao/T5_mingtao_resource.txt 
 
 * Variable
-
-
+${leaf0a_ixia_intf}   leaf0-eth5 
+${short}  1
+${medium}  10
+${long}   30
+${verylong}    180 
 
 
 
 * Test Case
 T1 cli walk
 	walk cli command 
-	[Tags] 	sanity    
-
-Test upgrade
-	single node upgrade
-	[Tags] 	sanity   	JIRA-BSC-4761  skipped
+	[Tags] 	sanity    skipped
   
- 
-* Keywords
-walk cli command 
-	cli_exec_walk    file_name=cli_exec_walk
-	cli_enable_walk    file_name=cli_enable_walk	
-	cli_config_walk    file_name=cli_config_walk	
-    
-	
+HA cluster upgrade
+	${master}=  get_node_name   master
+	${slave}=   get_node_name   slave
+	upgrade    ${slave}   stand-by   active  
+	upgrade    ${master}   stand-by  stand-by  		 			
+	[Tags] 	sanity    	skipped
+	 
 
-single node upgrade	 
-	${result}=  rest_get_node_role
-	Should Be Equal    ${result}    active
-	copy_pkg_from_jenkins    
-	${result}= 	cli_upgrade_stage
- 	Should be True     ${result} 
-	${result}= 	cli_upgrade_launch
- 	Should be True     ${result}  
- 	${result}=  rest_get_node_role
-	Should Be Equal    ${result}    active
- 	
- 	 	
+T1 Setup the testbed
+	log  config syslog server snmp
+	log  config scale tenant and vns
+	rest_delete_all_tenants	
+	rest_add_tenant_vns_scale	 2   2
+	log  config member interface
+	rest add interface to all vns  T1  leaf0-a  ${leaf0a_ixia_intf}
+	rest verify vns scale  2
+	rest verify membership port count  1
+	log  config end point	
+     
+	[Tags] 	sanity    skipped
  
+test single node upgrade
+	log     single node upgrade
+	upgrade    master   active   active 
  
+	[Tags] 	sanity 	 skipped
+
+
 	
+ 
+
+
+ 	
+Verify first boot of controller in standalone mode via dhcp
+	cli_boot_factory_default	c2
+	sleep  ${verylong}
+  	controller first boot dhcp    c2  no  yes     
+	[Tags] 	sanity   skipped
+
+
+ 
+
+first boot of controller in HA mode via static IP no boot factory default
+  	controller first boot static   c1  no    10.192.105.20   18   10.192.64.1   10.192.3.1   bigswitch.com   MY-T5-C20   10.192.105.20 
+   	controller first boot static   c2  yes   10.192.105.30   18   10.192.64.1   10.192.3.1   bigswitch.com   MY-T5-C30   10.192.105.20 
+	[Tags] 	sanity    skipped
+
+
+Test first boot of controller menu cluster for standalone
+	cli_boot_factory_default	c2
+	sleep  180	
+  	first_boot_controller_initial_node_setup   c2  no   10.192.105.30   18   10.192.64.1   10.192.3.1   bigswitch.com   MY-T5-C30 
+	first_boot_controller_initial_cluster_setup 	c2   no   
+	first_boot_controller_menu_cluster_name   c2    C20 
+	first_boot_controller_menu_cluster_desr   c2    single node  
+	first_boot_controller_menu_cluster_passwd    c2  adminadmin
+ 
+	[Tags] 	sanity  firstboot  skipped
+
+ 
+
+ Verify with invalid IP
+ 	cli_boot_factory_default	c2
+	sleep  180	
+  	first_boot_controller_initial_node_setup   c2  no   10.192.105.30   18   10.192.64.1   10.192.3.1   bigswitch.com   MY-T5-C30 
+	first_boot_controller_initial_cluster_setup 	c2   no   
+	first_boot_controller_menu_IP   c2   300.0.0.0    18   invalid_input=True
+    log   broadcast address   
+#	first_boot_controller_menu_IP   c2   255.255.255.255    18   invalid_input=True	
+#	first_boot_controller_menu_IP   c2   224.0.0.0    18   invalid_input=True
+	first_boot_controller_menu_IP   c2   0.0.0.0      18   invalid_input=True	
+	first_boot_controller_menu_IP   c2   100.100.100.100.100      18   invalid_input=True	
+	first_boot_controller_menu_IP   c2   1f.2f.3f.0      18   invalid_input=True		
+	
+	first_boot_controller_menu_IP   c2   10.192.105.30/18   
+			 
+	first_boot_controller_menu_apply      c2	
+    
+	[Tags] 	sanity   firstboot      
+ 
+
+
+
+
+
+	
+Test first boot of controller cluster
+	cli_boot_factory_default	c2
+	sleep  180	
+  	first_boot_controller_initial_setup   c2  no   10.192.105.30   18   10.192.64.1   10.192.3.1   bigswitch.com   MY-T5-C30   10.192.105.20
+ 	
+ 	first_boot_controller_menu_apply      c2    	
+
+	[Tags] 	sanity   skipped
+	
+	
+test get node ip
+	${ip}=   get node ip   c2
+	log   ip of the node is  ${ip}	
+	[Tags] 	sanity   skipped
+ 
