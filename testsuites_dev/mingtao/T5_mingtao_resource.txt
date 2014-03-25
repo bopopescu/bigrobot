@@ -1,12 +1,39 @@
 * Keywords
 
+
+first boot of controller    [Arguments]   ${node}   ${ipaddr}   ${netmask}   ${gateway}   ${dns_server}  ${dns_search}   ${ntp_server}
+ 	${time}= 	Get Time     year,month,day
+ 	log  time is ${time}, the date is ${time[0]}
+# 	${A}=   cli_take_snapshot   ${node}  run_config=yes	  
+#	cli_copy  	src=running-config  dst=scp://bsn@qa-kvm-32:/home/mingtao/config_${time[0]}_${time[1]}_${time[2]}  scp_passwd=bsn
+	
+#	cli_boot_factory_default	${node}	 
+	T5_longevity.cli add first boot   ${node}   ${ipaddr}   ${netmask}   ${gateway}   ${dns_server}  ${dns_search}   ${ntp_server}
+	
+#	cli_copy  	dst=running-config  src=scp://bsn@qa-kvm-32:/home/mingtao/config_${time[0]}_${time[1]}_${time[2]}  scp_passwd=bsn
+# 	${B}=   cli_take_snapshot   ${node}  run_config=yes	  
+#  	Should Be Equal    ${A}    ${B}	 	
+
+
+controller first boot static   [Arguments]   ${node}   ${join_cluster}  ${dhcp}  ${ipaddr}   ${netmask}   ${gateway}  ${dns_server}  ${dns_search}  ${hostname}  
+	first_boot_controller   ${node}   ${join_cluster}   ${dhcp}  ${ipaddr}   ${netmask}   ${gateway}  ${dns_server}  ${dns_search}    ${hostname}   
+
+
+controller first boot static 2nd   [Arguments]   ${node}   ${join_cluster}  ${dhcp}  ${ipaddr}   ${netmask}   ${gateway}  ${dns_server}  ${dns_search}  ${hostname}   ${cluster_ip}
+	first_boot_controller   ${node}   ${join_cluster}   ${dhcp}  ${ipaddr}   ${netmask}   ${gateway}  ${dns_server}  ${dns_search}    ${hostname}    ${cluster_ip} 
+
+
+
+ 
+controller first boot dhcp   [Arguments]   ${node}   ${join_cluster}  ${dhcp}  
+	first_boot_controller   ${node}   ${join_cluster}   ${dhcp}   
+
+ 
 T5 platform case setup
     sleep    5
 
 T5 platform case teardown
    sleep  5
-
-
 
 upgrade   [Arguments]   ${node}   ${c_role}   ${e_role}
  	cli_copy_running_config_to_file    ${node}    config_try
@@ -28,8 +55,6 @@ upgrade   [Arguments]   ${node}   ${c_role}   ${e_role}
   	Should Be Equal    ${A}    ${B}	 	
  	${D}=  cli_take_snapshot    ${node}   filepath=/home/admin		
   	Should Be Equal    ${C}    ${D}	 		
-
- 
 
 Test whoami ping reauth with admin
 	log  cli whoami with admin
@@ -62,7 +87,6 @@ test cli whoami    [Arguments]    ${user}     ${group}
 reboot node and verify it role
 	cluster_node_reboot    True    
  
-
 walk cli command 
 #	cli_exec_walk    file_name=cli_exec_walk
 #	cli_enable_walk    file_name=cli_enable_walk	
