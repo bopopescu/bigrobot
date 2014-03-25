@@ -9,7 +9,7 @@ Library  keywords/BsnCommon.py
 Library  keywords/SwitchLight.py
 
 * Variable
-${switchlight_version}  SwitchLight 1.7.5
+${switchlight_version}  SwitchLight
 ${netmask}  18
 ${gateway}  10.192.64.1
 ${dns_server}  10.192.3.1
@@ -22,7 +22,7 @@ Verify one openflow controller can be configured
     delete existing controllers  s1  c2
     add openflow controller  s1  c1
     verify openflow controller  s1  c1
-    [Tags]  sanity  platform  
+    [Tags]  t5  platform  
 
 Verify controller can be modified 
     delete existing controllers  s1  c1
@@ -32,7 +32,7 @@ Verify controller can be modified
     delete existing controllers  s1  c1
     add openflow controller  s1  c2
     verify openflow controller  s1  c2
-    [Tags]  sanity  platform  
+    [Tags]  t5  platform  
 
 Verify multiple openflow controllers can be configured
     delete existing controllers  s1  c1
@@ -41,21 +41,21 @@ Verify multiple openflow controllers can be configured
     verify openflow controller  s1  c1
     add openflow controller  s1  c2
     verify openflow controller  s1  c2    
-    [Tags]  sanity  platform  
+    [Tags]  t5  platform  
 
 T5987: Verify Controller IP address is pingable
     ping remote  s1
-    [Tags]  sanity  platform  
+    [Tags]  t5  platform  
 
 T5988: Configure DNS server and DNS Domain. Verify you can ping www.bigswitch.com
-    configure dns domain  s2  ${dns_server}  ${dns_domain}
+    configure dns domain  s1  ${dns_server}  ${dns_domain}
     Sleep  30
-    ping from switch  s2  bigswitch.com
-    [Tags]  sanity      
+    cli ping from switch  s1  bigswitch.com
+    [Tags]  t5  platform      
 
 T5981: Verify all interfaces show up (in show o/p from CLI)
     verify interfaces  s1
-    [Tags]  sanity      
+    [Tags]  t5  platform      
  
 Shutdown an interface and verify interface state is down
     shut interface  s1  ethernet1
@@ -64,17 +64,17 @@ Shutdown an interface and verify interface state is down
     unshut interface  s1  ethernet1
     Sleep  15
     verify interface state  s1  ethernet1  up
-    [Tags]  sanity       
+    [Tags]  t5  platform  jira-pan-741       
 
 T5983: Verify ma1 ip address configuration via static config
-    delete static ip  s2  ${netmask}  ${gateway}
-    delete dns  s2  ${dns_server}  ${dns_domain}  
+    delete static ip  s1  ${netmask}  ${gateway}
+    delete dns  s1  ${dns_server}  ${dns_domain}  
     Sleep  5
-    add static ip  s2  ${netmask}  ${gateway}
-    add dns  s2  ${dns_server}  ${dns_domain}
+    add static ip  s1  ${netmask}  ${gateway}
+    add dns  s1  ${dns_server}  ${dns_domain}
     Sleep  60
-    verify ip dns  s2  ${netmask}  ${gateway}  ${dns_server}  ${dns_domain}
-    [Tags]  sanity    
+    verify ip dns  s1  ${netmask}  ${gateway}  ${dns_server}  ${dns_domain}
+    [Tags]  t5  platform    
     
 Verify cli:show forwarding crc status
     enable crc forwarding  s1
@@ -90,7 +90,7 @@ Verify ntp
     Sleep  5
     verify ntp server  s1  time-c.nist.gov
     delete ntp  s1  time-c.nist.gov
-    [Tags]  sanity     
+    [Tags]  t5  platform  ntp     
 
 Verify ntp server after process ntp restart
     configure ntp server  s1  time-c.nist.gov
@@ -99,7 +99,7 @@ Verify ntp server after process ntp restart
     bash restart process  s1  ntpd
     Sleep  5
     verify ntp server  s1  time-c.nist.gov    
-    [Tags]  sanity
+    [Tags]  t5  platform  ntp
         
 * Keywords 
 

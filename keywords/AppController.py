@@ -435,10 +435,6 @@ class AppController(object):
                 else:
                         return False
 
-
-
-
-
 # #SYSLOG
 ############### SYSLOG SHOW COMMANDS ########################
     def rest_show_syslog(self):
