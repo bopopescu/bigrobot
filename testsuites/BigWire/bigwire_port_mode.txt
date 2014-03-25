@@ -443,13 +443,13 @@ Configure LACP and verify end to end traffic
     verify results  d  transmitted_frame_rate  b  received_valid_frame_rate        
     stop traffic  ${stream}
     rest delete tenant  dc1dc3-lag1
-    cli arista delete portchannel  s5  10  9
-    cli arista delete portchannel  s6  10  9
-    cli arista delete vlan  s5  100  V100  ethernet1
     cli arista delete vlan  s5  100  V100  port-channel10        
+    cli arista delete vlan  s5  100  V100  ethernet1
+    cli arista delete vlan  s6  100  V100  port-channel10        
     cli arista delete vlan  s6  100  V100  ethernet1
-    cli arista delete vlan  s6  100  V100  port-channel10             
-    [Tags]  traffic  sanity  
+    cli arista delete portchannel  s5  10  9
+    cli arista delete portchannel  s6  10  9    
+    [Tags]  traffic  lacp  
 
 Configure Static LAG and verify end to end traffic
     cli arista add portchannel  s5  10  9  pc_mode=on
@@ -477,7 +477,7 @@ Configure Static LAG and verify end to end traffic
     cli arista delete vlan  s5  100  V100  port-channel10        
     cli arista delete vlan  s6  100  V100  ethernet1
     cli arista delete vlan  s6  100  V100  port-channel10               
-    [Tags]  traffic  sanity  
+    [Tags]  traffic  staticLag  run  
 
 Configure RSTP and verify
     rest add bigwire tenant  dc1dc3-1
@@ -500,7 +500,7 @@ Configure RSTP and verify
     cli arista execute command  s5  spanning-tree mode none
     cli arista execute command  s6  spanning-tree mode none
     rest delete tenant  dc1dc3-1
-    [Tags]  traffic  sanity
+    [Tags]  traffic  rstp  run
 
 Configure MSTP and verify
     rest add bigwire tenant  dc1dc3-1

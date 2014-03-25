@@ -23,7 +23,7 @@ ${pseudowire1}   dc12dc34-1
 ${pseudowire2}   dc23dc34-2
 ${tenant1}  bw1bw3
 ${tenant2}  bw2bw4
-${switchlight_version}  SwitchLight 1.7-branch
+${switchlight_version}  SwitchLight 2.0.2
 
 
 * Test Case
@@ -44,42 +44,38 @@ Verify CLI BigWire Pseudowire
     [Tags]  traffic  sanity    
     
 Verify BiDirectional L2 traffic in Port Mode: S1 to S3
-    IXIA initialize  tg1
-    ${stream}=  IXIA L2 add  flow=a<->c  frame_rate=10000  frame_size=1518  frame_cnt=50000  name=a_c_flow
-    IXIA start L2 traffic  ${stream}
+    ${stream}=  L2 add  flow=a<->c  frame_rate=10000  frame_size=1518  frame_cnt=50000  name=a_c_flow
+    start traffic  ${stream}
     sleep  10
-    IXIA stop L2 traffic  ${stream}
+    stop traffic  ${stream}
     verify results  a  transmitted_frames  c  received_frames
     verify results  c  transmitted_frames  a  received_frames
     [Tags]  traffic  sanity    
 
     
 Verify BiDirectional Jumbo L2 traffic in Port Mode: S1 to S3
-    IXIA initialize  tg1
-    ${stream}=  IXIA L2 add  flow=a<->c  frame_rate=10000  frame_size=9190  frame_cnt=50000  name=a_c_flow
-    IXIA start L2 traffic  ${stream}
+    ${stream}=  L2 add  flow=a<->c  frame_rate=10000  frame_size=9190  frame_cnt=50000  name=a_c_flow
+    start traffic  ${stream}
     sleep  10
-    IXIA stop L2 traffic  ${stream}
+    stop traffic  ${stream}
     verify results  a  transmitted_frames  c  received_frames
     verify results  c  transmitted_frames  a  received_frames
     [Tags]  traffic  sanity    
 
 Verify BiDirectional L2 traffic in VLAN Mode: S2 to S4
-    IXIA initialize  tg1
-    ${stream}=  IXIA L2 add  flow=b<->d  frame_rate=10000  frame_size=64  frame_cnt=50000  ethertype=8100  vlan_id=100  name=b_d_flow
-    IXIA start L2 traffic  ${stream}
+    ${stream}=  L2 add  flow=b<->d  frame_rate=10000  frame_size=64  frame_cnt=50000  ethertype=8100  vlan_id=100  name=b_d_flow
+    start traffic  ${stream}
     sleep  10
-    IXIA stop L2 traffic  ${stream}
+    stop traffic  ${stream}
     verify results  b  transmitted_frames  d  received_frames
     verify results  d  transmitted_frames  b  received_frames
     [Tags]  traffic  sanity    
 
 Verify BiDirectional Jumbo L2 traffic in VLAN Mode: S2 to S4
-    IXIA initialize  tg1
-    ${stream}=  IXIA L2 add  flow=b<->d  frame_rate=10000  frame_size=9190  frame_cnt=50000  ethertype=8100  vlan_id=100  name=b_d_flow
-    IXIA start L2 traffic  ${stream}
+    ${stream}=  L2 add  flow=b<->d  frame_rate=10000  frame_size=9190  frame_cnt=50000  ethertype=8100  vlan_id=100  name=b_d_flow
+    start traffic  ${stream}
     sleep  10
-    IXIA stop L2 traffic  ${stream}
+    stop traffic  ${stream}
     verify results  b  transmitted_frames  d  received_frames
     verify results  d  transmitted_frames  b  received_frames
     [Tags]  traffic  sanity    
@@ -168,7 +164,7 @@ bigwire pseudowire
 
 verify results   [Arguments]  ${port_1}  ${transmitted_frames}  ${port_2}  ${received_frames}
     Sleep  5
-    ${report}=  IXIA fetch port stats
+    ${report}=  fetch port stats
     ${tx_value}=  verify dict key  ${report}  ${port_1}  ${transmitted_frames}
     ${rx_value}=  verify dict key  ${report}  ${port_2}  ${received_frames}
     ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}
