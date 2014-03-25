@@ -1449,7 +1449,7 @@ class BsnCommon(object):
         """
         t = test.Test()
         n = t.node(node)
-        return n.node_id()
+        return n.node_ip()
 
     def verify_ssh_connection(self, node, sleep=10, iterations=5,
                               user='dummy', password='dummy'):
