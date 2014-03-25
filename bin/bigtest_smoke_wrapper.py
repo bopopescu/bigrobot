@@ -9,16 +9,8 @@ This script is called by the BigTest wrapper to execute the smoke tests in
 a BigRobot test suite. As an example, see:
 bigtest/bigtest/smoketest/T5,T5-sanity,t5_singleleaf_dualrack_ping_test_suite.py
 
-Which contains:
-
-  #!/bin/sh -x
-  pwd; ../bigrobot/bin/bigtest_smoke_wrapper.py $0 $@
-
-Sample usage:
-  $ bigtest_smoke_wrapper.py <suite_file> --nodes 'controller-c01n01-065,mininet-c01n01-065'
-  where
-  <suite_file>: bigtest/smoketest/T5,T5-sanity,t5_singleleaf_dualrack_ping_test_suite.py
-
+This script exports the environment variable BIGTEST_NODES and executes
+'gobot test ...'
 """
 
 import os
@@ -29,7 +21,32 @@ import datetime
 from pytz import timezone
 
 
+def usage():
+    s = """\nUsage: bigtest_smoke_wrapper.py <suite> --node <nodes> [gobot_options]
+
+Example:
+$ bigtest_smoke_wrapper.py \\
+    bigtest/smoketest/T5,T5-sanity,t5_singleleaf_dualrack_ping_test_suite.py \\
+    --nodes 'controller-c01n01-065,mininet-c01n01-065'
+    """
+    print(s)
+    sys.exit(1)
+
+
+if len(sys.argv) < 3:
+    usage()
+
 SUITE_FILE = sys.argv[1]
+
+if sys.argv[2] == '--nodes':
+    NODES = sys.argv[3]
+else:
+    usage()
+
+ARGS = ''
+
+if len(sys.argv) > 4:
+    ARGS = sys.argv[4:]
 
 
 def error_exit(msg):
@@ -112,6 +129,7 @@ print("\n============== BigRobot smoke: Init ==============")
 print("SUITE_FILE: %s" % SUITE_FILE)
 set_and_print_env('BIGROBOT_CI', 'True')
 set_and_print_env('BIGTEST_PATH', get_base_path() + '/bigtest')
+set_and_print_env('BIGTEST_NODES', NODES)
 set_and_print_env('BIGROBOT_PATH', get_base_path() + '/bigrobot')
 set_and_print_env('BIGROBOT_BIN', get_env('BIGROBOT_PATH') + '/bin')
 set_and_print_env('BIGROBOT_LOG_PATH', get_env('BIGTEST_PATH') + '/testlogs')
@@ -142,7 +160,8 @@ run_cmd(get_env('BIGROBOT_BIN') + "/gobot version")
 run_cmd(get_env('BIGROBOT_BIN') + "/gobot env")
 
 print("\n============== BigRobot smoke: Start test  ==============")
-status = run_cmd(get_env('BIGROBOT_BIN') + "/gobot test --include=smoke")
+status = run_cmd(get_env('BIGROBOT_BIN') +
+                 "/gobot test --include=smoke %s" % ' '.join(ARGS))
 
 print("\n============== BigRobot smoke: End test (exit status=%s) =============="
       % status)

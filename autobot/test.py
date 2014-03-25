@@ -3,9 +3,6 @@ import autobot.node as a_node
 import autobot.ha_wrappers as ha_wrappers
 import autobot.utils as br_utils
 import re
-# import bigtest
-# import bigtest.controller
-# from bigtest.util import *
 
 
 class Test(object):
@@ -84,6 +81,12 @@ class Test(object):
                         helpers.debug("'%s' IP address is '%s'"
                                       % (m, ip))
                 yaml_str = helpers.to_yaml(params_dict)
+
+                # This file contain a list of nodes:
+                #   c1: {ip: 10.192.5.221}
+                #   c2: {ip: 10.192.5.222}
+                #   mn1: {ip: 10.192.7.175}
+                #   ...and so on...
                 self._params_file = '/var/run/bigtest/params.topo'
 
                 helpers.info("Writing params to file '%s'" % self._params_file)
@@ -99,8 +102,14 @@ class Test(object):
                 self._topology_params['mn1'] = self._topology_params['mn']
                 del self._topology_params['mn']
 
-            # Reading from params file and overriding attributes in
-            # topo file with values from params.
+            self.merge_params_attributes()
+
+            self._topology = {}
+
+        def merge_params_attributes(self):
+            """
+            Reading from params file and merge attributes with topo file
+            """
             params_file = helpers.bigrobot_params()
             if params_file.lower() != 'none':
                 if helpers.file_not_exists(params_file):
@@ -126,8 +135,6 @@ class Test(object):
                         helpers.info("Node '%s' attribute '%s' gets value '%s'"
                                      % (n, key, self._params[n][key]))
                         self._topology_params[n][key] = self._params[n][key]
-
-            self._topology = {}
 
         def load_topology(self):
             topo = helpers.bigrobot_topology()
