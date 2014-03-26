@@ -145,11 +145,13 @@ L3 intra tenant same rack untagged with dynamic endpoints
 	BASH ifup intf								h6								bond0			
 	REST add portgroup to vns					X								X1						${leaf2_pc1}			-1
 	REST add portgroup to vns					X								X2						${leaf2_pc2}			-1
+	REST add interface to vns					X								X1						${leaf0-a}				${ixia1}				-1
+	REST add interface to vns					X								X2						${leaf1-a}				${ixia3}				-1
 	BASH add ip address							h5								10.251.1.11/24			bond0	
 	BASH add ip address							h6								10.251.2.11/24			bond0
 	BASH add route								h5								10.251.2.0/24			10.251.1.1
 	BASH add route								h6								10.251.1.0/24			10.251.2.1
-	__init__.sleep										20	
+	__init__.sleep								20	
 	BASH ping									h5								10.251.1.1				count=10
 	BASH ping									h6								10.251.2.1				count=10
 	${value} = 									BASH verify arp					h5						10.251.1.1
@@ -165,6 +167,13 @@ L3 intra tenant same rack untagged with dynamic endpoints
 	REST show endpoints	
 	${loss} = 									BASH ping						h5						10.251.2.11 			count=10
 	Should Be True  							${loss} == 0	
+	${stream1}=  								L3 add  						name=stream1		  	flow=a->c 				frame_rate=1000  			frame_size=128  			frame_cnt=10000
+	...     									src_ip=10.251.1.101				dst_ip=10.251.2.201		ethertype=0800 			name=a0_b_flow
+    start traffic  								${stream1}
+    sleep  10
+    stop traffic								${stream1}
+    verify results 								transmitted_frames  			received_frames  		${stream1}  				${stream_name}
+    
 	BASH delete route							h5								10.251.2.0/24			10.251.1.1
 	BASH delete route							h6								10.251.1.0/24			10.251.2.1
 	
@@ -1759,5 +1768,12 @@ T5 base suite teardown
 	REST delete portgroup								${leaf2_pc1}
 	REST delete portgroup								${leaf2_pc2}
 
-	
+
+verify results   [Arguments]  ${transmitted_frames}  ${received_frames}  ${stream}  ${stream_name}
+    Sleep  5
+    ${report}=  fetch port stats  stream=${stream}  
+    ${tx_value}=  verify dict key  ${report}  ${stream_name}  ${transmitted_frames}
+    ${rx_value}=  verify dict key  ${report}  ${stream_name}  ${received_frames}
+    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}
+    Should be true  ${in_range}	
   	
