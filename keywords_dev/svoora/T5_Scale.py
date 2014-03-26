@@ -147,7 +147,7 @@ class T5_Scale(object):
             else:
                 #FIXME: Need to copy log file to external server
                 helpers.log("Exceptions found in the file, !!!FILE A BUG!!! and dumping exceptions log to logfile")
-                if role == 'master':
+                if role == 'c1':
                     c.sudo('cat c1_%s' % (file_name))
                 else:
                     c.sudo('cat c2_%s' % (file_name))
@@ -225,7 +225,30 @@ class T5_Scale(object):
         return return_flag
     
         
-       
+def Dump_Show_Commands(self):
+        t = test.Test()
+        c = t.controller('master')
+        cmdList = [
+           'show running-config',
+           'show debug counters',
+           'show cluster details',
+           'show switch',
+           'show fabric switch',
+           'show fabric interface',
+           'show fabric lacp',
+           'show fabric lag',
+           'show fabric link',
+           'show fabric error',
+           'show tenant',
+           'show vns',
+           'show endpoints',
+           'show forwarding',
+           ]
+        content=""
+        for cmd in cmdList:
+            c.cli(cmd)
+            content = content + c.cli_content()
+        return content       
         
            
         

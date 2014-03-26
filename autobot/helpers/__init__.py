@@ -402,9 +402,16 @@ def bigrobot_params(new_val=None, default=None):
 
 def bigtest_path(new_val=None, default=None):
     """
-    Category: Get/set environment variables for BigRobot.
+    Category: Get/set environment variables for BigTest.
     """
     return _env_get_and_set('BIGTEST_PATH', new_val, default)
+
+
+def bigtest_nodes(new_val=None, default=None):
+    """
+    Category: Get/set environment variables for BigTest.
+    """
+    return _env_get_and_set('BIGTEST_NODES', new_val, default)
 
 
 def python_path(new_val=None, default=None):

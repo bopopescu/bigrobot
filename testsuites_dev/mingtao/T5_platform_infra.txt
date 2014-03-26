@@ -1,6 +1,4 @@
-* Setting
-Documentation   Test suite for T5 platform infra
-*Settings
+* Settings
 Documentation    T5 Test Suite
 Suite Setup      base suite setup
 Suite Teardown   base suite teardown
@@ -8,94 +6,204 @@ Test Setup       base test setup
 Test Teardown    base test teardown
 Force Tags       T5 
 Library          keywords/BsnCommon.py
+Library          keywords/Controller.py
 Library			 keywords/Mininet.py
 Library		     keywords/Host.py
 Library		     keywords/Ixia.py
-Library		     keywords_dev/mingtao/T5_longevity.py 
+Library		     keywords_dev/mingtao/T5_longevity.py
+Library	         keywords/T5.py
+Library	         keywords/T5Platform.py
+Library	         keywords/Controller.py
+ 
+Resource	     testsuites_dev/mingtao/T5_mingtao_resource.txt 
 
 * Variable
+${leaf0a_ixia_intf}   leaf0-eth5 
+${short}  1
+${medium}  10
+${long}   30
+${verylong}    180 
+
 
 
 
 
 
 * Test Case
+
+first boot of controller in HA mode via static IP after boot factory default
+	cli_boot_factory_default	c1
+	sleep  ${verylong}	
+  	controller first boot static        c1  no  no   10.192.105.20   18   10.192.64.1   10.192.3.1   bigswitch.com   MY-T5-C20
+	cli_boot_factory_default	c2
+	sleep  ${verylong}	
+   	controller first boot static 2nd    c2  yes  no   10.192.105.30   18   10.192.64.1   10.192.3.1   bigswitch.com   MY-T5-C30     10.192.105.20
+	[Tags] 	sanity    firstboot
+
+
+Factory default options
+    Log   covered in first boot
+    Manual passed
+	[Tags] 	sanity   firstboot
+
+
+Test controller reboot
+ 	reboot node and verify it role
  
-Verify first boot of controller in standalone mode & cluster mode via manual IP assignment
-    Manual untested
-	[Tags] 	sanity    Manual   untested
+	[Tags] 	sanity    infra
+
+Verification of CLI commands (whoami , ping , set length , history , reauth)
+	log   cli with admin and non admin	 
+	Test whoami ping reauth with admin
+	Test whoami ping reauth with non admin  
+    log  manual pass for: set length,history
+	
+	[Tags] 	sanity    cli
+
+Traceroute
+	Log  traceroute in bash
+    Manual passed
+	[Tags] 	sanity  infra  Manual    
+
+Watch debug command output
+    Log  watch debug/delete is not useful
+    Manual failed
+	[Tags] 	sanity   cli  Manual   
+
+	 
+first boot of controller in standalone mode via static IP after boot factory default
+ 	
+	cli_boot_factory_default	c1
+	sleep  180	
+  	controller first boot static    c1  no  no   10.192.105.30   18   10.192.64.1   10.192.3.1   bigswitch.com   MY-T5-C30
+	[Tags] 	sanity    firstboot  skipped
+
+Test first boot of controller menu node for standalone
+	cli_boot_factory_default	c2
+	sleep  180	
+  	first_boot_controller_initial_node_setup   c2  no   10.192.105.30   18   10.192.64.1   10.192.3.1   bigswitch.com   MY-T5-C30 
+	first_boot_controller_initial_cluster_setup 	c2   no   
+	first_boot_controller_menu_recovery   c2    adminadmin
+	first_boot_controller_menu_IP         c2    10.192.105.30  18   
+	first_boot_controller_menu_gateway    c2   10.192.64.1
+	first_boot_controller_menu_dnsserver  c2   10.192.3.1
+	first_boot_controller_menu_domain	  c2   bigswitch.com
+	first_boot_controller_menu_name       c2   C30
+	first_boot_controller_menu_apply      c2
+ 
+	[Tags] 	sanity     firstboot
+
+ 
+ Verify with invalid DNS server IP address
+ 	cli_boot_factory_default	c2
+	sleep  180	
+  	first_boot_controller_initial_node_setup   c2  no   10.192.105.30   18   10.192.64.1   10.192.3.1   bigswitch.com   MY-T5-C30 
+	first_boot_controller_initial_cluster_setup 	c2   no   
+	first_boot_controller_menu_dnsserver  c2   300.0.0.1   invalid_input=True
+	first_boot_controller_menu_dnsserver  c2   100.0.0.1.0   invalid_input=True
+	Log   broadcast as dns server address
+#	first_boot_controller_menu_dnsserver  c2   255.255.255.255   invalid_input=True	
+#	first_boot_controller_menu_dnsserver  c2   224.0.0.0   invalid_input=True	
+	first_boot_controller_menu_dnsserver  c2   2f.3f.0.0   invalid_input=True	
+	first_boot_controller_menu_dnsserver  c2   0.0.0.0     invalid_input=True		
+	first_boot_controller_menu_dnsserver  c2   10.192.3.1    
+	first_boot_controller_menu_apply      c2	
+    
+	[Tags] 	sanity     firstboot   JIRA-BSC-5031   
+ 
+ 
+ Verify with invalid mask
+ 	cli_boot_factory_default	c2
+	sleep  180	
+  	first_boot_controller_initial_node_setup   c2  no   10.192.105.30   18   10.192.64.1   10.192.3.1   bigswitch.com   MY-T5-C30 
+	first_boot_controller_initial_cluster_setup 	c2   no   
+	first_boot_controller_menu_prefix   c2   35   invalid_input=True
+	first_boot_controller_menu_prefix   c2   32   invalid_input=True
+	first_boot_controller_menu_prefix   c2   31   invalid_input=True				
+	log    0 is accepted as valid mask
+#	first_boot_controller_menu_prefix   c2   0   invalid_input=True	
+	first_boot_controller_menu_prefix   c2   18   
+ 	first_boot_controller_menu_apply      c2	
+    
+	[Tags] 	sanity   firstboot     JIRA-BSC-5032    
+ 
+  
+Verify with invalid IP
+ 	cli_boot_factory_default	c2
+	sleep  180	
+  	first_boot_controller_initial_node_setup   c2  no   10.192.105.30   18   10.192.64.1   10.192.3.1   bigswitch.com   MY-T5-C30 
+	first_boot_controller_initial_cluster_setup 	c2   no   
+	first_boot_controller_menu_IP   c2   300.0.0.0    18   invalid_input=True
+    log   broadcast address   
+#	first_boot_controller_menu_IP   c2   255.255.255.255    18   invalid_input=True	
+#	first_boot_controller_menu_IP   c2   224.0.0.0    18   invalid_input=True
+	first_boot_controller_menu_IP   c2   0.0.0.0      18   invalid_input=True	
+	first_boot_controller_menu_IP   c2   100.100.100.100.100      18   invalid_input=True	
+	first_boot_controller_menu_IP   c2   1f.2f.3f.0      18   invalid_input=True		
+	
+	first_boot_controller_menu_IP   c2   10.192.105.30/18   
+			 
+	first_boot_controller_menu_apply      c2	
+    
+	[Tags] 	sanity   firstboot       JIRA-BSC-5031    
+ 
+
+
+
+ 
+
+
+#########  
+ 
 
 Verify first boot of controller in standalone mode & cluster mode via DHCP IP assignment 
     Manual untested
-	[Tags] 	sanity    Manual   untested
-
-Verify with invalid IPs and invalid DNS server IP address
-    Manual untested
-	[Tags] 	sanity    Manual   untested
- 
-Verify with non-standard IP address & mask
-    Manual untested
-	[Tags] 	sanity    Manual   untested
+	[Tags] 	sanity    Manual   untested  firstboot
 
 Verify the behavior if user hits Ctrl+C during various stages of the first boot process
     Manual untested
-	[Tags] 	sanity    Manual   untested
+	[Tags] 	sanity    Manual   untested   firstboot
 
-Verify first boot of controller in HA mode (Manual & DHCP)
+Verify first boot of controller in HA mode ( DHCP)
     Manual untested
-	[Tags] 	sanity    Manual   untested
+	[Tags] 	sanity    Manual   untested   firstboot
 
-Verification of CLI commands (whoami , ping , set length , history , reauth). 
-    Manual untested
-	[Tags] 	sanity    Manual   untested
 
 Verification of configs in local node mode 
     Manual untested
-	[Tags] 	sanity    Manual   untested
+	[Tags] 	sanity    Manual   untested  firstboot
 
-Verify first boot of controller when external network/ DNS/NTP server is unreachable
+Verify first boot of controller when external DNS/NTP server is unreachable
     Manual untested
-	[Tags] 	sanity    Manual   untested
+	[Tags] 	sanity    Manual   untested   firstboot
 
 Verify first boot of controller when Master and Slave are in different time zones
     Manual untested
-	[Tags] 	sanity    Manual   untested
+	[Tags] 	sanity    Manual   untested   firstboot
 
 Verify first boot of slave controller when Master controller is rebooting
     Manual untested
-	[Tags] 	sanity    Manual   untested
+	[Tags] 	sanity    Manual   untested   firstboot
 
 Verify first boot of controller on bare metal server
     Manual untested
-	[Tags] 	sanity    Manual   untested
+	[Tags] 	sanity    Manual   untested    firstboot
 
-Reboot the controller
-    Manual untested
-	[Tags] 	sanity    Manual   untested
 
 Shutdown the controller 
     Manual untested
 	[Tags] 	sanity    Manual   untested
 
-Traceroute
+
+Verification of tech-support and related commands  
     Manual untested
 	[Tags] 	sanity    Manual   untested
 
-Verification of tech-support and related commands 
-    Manual untested
-	[Tags] 	sanity    Manual   untested
-
-Watch debug command output
-    Manual untested
-	[Tags] 	sanity    Manual   untested
 
 NTP setting and verification
     Manual untested
-	[Tags] 	sanity    Manual   untested
+	[Tags] 	sanity    Manual   untested   ntp
 
-Factory default options
-    Manual untested
-	[Tags] 	sanity    Manual   untested
 
 Change IP Tables/ Firewalls
     Manual untested
@@ -103,23 +211,20 @@ Change IP Tables/ Firewalls
 
 Verify controller IP change after the first boot
     Manual untested
-	[Tags] 	sanity    Manual   untested
+	[Tags] 	sanity    Manual   untested    firstboot
 
 Verify the VIP change after the first boot
     Manual untested
-	[Tags] 	sanity    Manual   untested
+	[Tags] 	sanity    Manual   untested   firstboot
 
 First boot process in a appliance
     Manual untested
-	[Tags] 	sanity    Manual   untested
+	[Tags] 	sanity    Manual   untested   firstboot
 
 Controller installation with minimum/maximum supported cpu/memory configuration
     Manual untested
-	[Tags] 	sanity    Manual   untested
+	[Tags] 	sanity    Manual   untested   firstboot
 
  
-* Keywords
- 
-	
  
 	
