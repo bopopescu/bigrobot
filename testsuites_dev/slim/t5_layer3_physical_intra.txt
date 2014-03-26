@@ -9,6 +9,7 @@ Library         keywords/BsnCommon.py
 Library         keywords_dev/slim/Host.py
 Library         keywords/T5.py
 Library         keywords/T5L3.py
+Library         keywords/T5Platform.py
 Library         keywords_dev/animesh/BsnCommonShow.py
 Library         keywords_dev/slim/SwitchLight.py
 Library	        Collections.py
@@ -72,19 +73,19 @@ Delete and Add dhcp relay
 
 Add and delete untagged endpoints with existing host
 	L3 add and delete untagged endpoints with existing host
-#	[Tags]							skipped			sanity	
+#	[Tags]							skipped			feature	
 	
 Add and delete tagged endpoints with existing host
 	L3 add and delete tagged endpoints with existing host
-#	[Tags]							skipped			sanity	
+#	[Tags]							skipped			feature	
 		
 Change L3 endpoint from untagged to tagged and back		
 	L3 change endpoint from untagged to tagged and back	
-#	[Tags]							skipped			sanity	
+#	[Tags]							skipped			feature	
 
 Verify L3 endpoint aging
 	Check L3 endpoint aging 
-#	[Tags]							skipped			sanity	
+#	[Tags]							skipped			feature	
 	
 Verify L3 ttl 1 is not being forwarded
 	Check L3 ttl 1 is dropped
@@ -92,15 +93,15 @@ Verify L3 ttl 1 is not being forwarded
 
 Change router vns ip
 	Change router ip address
-#	[Tags]							skipped			sanity			
+#	[Tags]							skipped			feature			
 
 Delete and add router vns ip
 	Delete and add router vns ip 
-#	[Tags]							skipped			sanity			
+#	[Tags]							skipped			feature			
 
 Change tagged endpoint IP address
 	Change tagged host endpoint IP address
-#	[Tags]							skipped			sanity		
+#	[Tags]							skipped			feature		
 
 
 Configure static endpoint with host showing up on another port
@@ -108,6 +109,31 @@ Configure static endpoint with host showing up on another port
 #	[Tags]							skipped			sanity		
 
 
+Verify subnet mask is properly applied on router vns
+	Verify subnet mask on vns router ip
+#	[Tags]							skipped			feature		
+
+Verify vlsm forwarding
+	Verify vlsm forwarding
+#	[Tags]							skipped			feature		
+
+Small Scale with 100 vns 		
+	One Tenant 100 VNS with one host each
+#	[Tags]							skipped			feature		
+	
+Configure overlapping router IP 	
+	Configure overlapping IP on same tenant across VNS	
+#	[Tags]							skipped			feature		
+	
+
+Trigger controller HA failover via CLI
+	Controller HA failover via CLI	
+#	[Tags]							skipped			feature			
+	
+Trigger controller HA failover via reboot
+	Controller HA failover via reboot
+#	[Tags]							skipped			feature			
+	
 	
 * Keywords
 L3 intra tenant same rack untagged with dynamic endpoints
@@ -1308,12 +1334,233 @@ Static endpoint with dynamic host showing up on another port
 	BASH delete route							h5								10.251.1.0/24			10.251.3.1
 	
 	
-	
-	
-	
+Verify subnet mask on vns router ip
+	BASH ifup intf								h1 								bond0
+	BASH ifup intf								h2								bond0
+	BASH ifup intf								h3								bond0
+	BASH ifup intf								h4								bond0	
+	BASH ifup intf								h5								bond0	
+	BASH ifup intf								h6								bond0			
+	REST add portgroup to vns					X								X1						${leaf2_pc1}			-1
+	REST add portgroup to vns					X								X2						${leaf2_pc2}			-1
+	REST add portgroup to vns					X								X2						${leaf1_pc2}			-1
+	BASH add ip address							h4								10.251.2.212/25			bond0
+	BASH add ip address							h5								10.251.1.211/25			bond0	
+	BASH add ip address							h6								10.251.2.211/25			bond0
+	BASH add route								h5								10.251.2.128/25			10.251.1.254
+	BASH add route								h6								10.251.1.128/25			10.251.2.254
+	__init__.sleep								20	
+	BASH ping									h5								10.251.2.211			count=10
+	${value} = 									BASH verify arp					h5						10.251.1.254
+	Should Not Be True							${value} 		
+	${value} =									BASH verify arp					h6						10.251.2.254
+	Should Not Be True							${value} 
+	${mac1} = 									BASH get intf mac				h5						bond0
+	${result} =									REST show endpoints mac			${mac1}
+	Should Be True								${result}						
+	${mac2} = 									BASH get intf mac				h6						bond0
+	${result} =									REST show endpoints mac			${mac2}
+	Should Be True								${result}						
+	REST show endpoints	
+	BASH ping									h6								10.251.2.212			count=10
+	${loss} = 									BASH ping						h6						10.251.2.212			count=10
+	Should Be True								${loss} == 0
+	REST add vns ip  							X								X1						10.251.1.254			25
+	REST add vns ip  							X								X2						10.251.2.254			25
+	sleep										5
+	BASH ping									h5								10.251.2.211			count=10
+	${value} = 									BASH verify arp					h5						10.251.1.254
+	Should Be True								${value} 		
+	${value} =									BASH verify arp					h6						10.251.2.254
+	Should Be True								${value} 
+	${loss} = 									BASH ping						h5						10.251.2.11 			count=10
+	Should Be True  							${loss} == 0	
+	BASH delete route							h5								10.251.2.128/25			10.251.1.254
+	BASH delete route							h6								10.251.1.128/25			10.251.2.254
 	
 
+Verify vlsm forwarding
+	BASH ifup intf								h1 								bond0
+	BASH ifup intf								h2								bond0
+	BASH ifup intf								h3								bond0
+	BASH ifup intf								h4								bond0	
+	BASH ifup intf								h5								bond0	
+	BASH ifup intf								h6								bond0			
+	REST add vns ip								X								X1						10.251.0.1				17
+	REST add vns ip								X								X2						10.252.0.1				25
+	REST add portgroup to vns					X								X1						${leaf1_pc2}			-1
+	REST add portgroup to vns					X								X2						${leaf2_pc1}			-1
+	BASH add ip address							h4								10.251.2.212/17			bond0
+	BASH add ip address							h5								10.252.0.211/25			bond0	
+	BASH add route								h4								10.252.0.0/25			10.251.0.1
+	BASH add route								h5								10.251.0.0/17			10.252.0.1
+	__init__.sleep								20	
+	BASH ping									h5								10.252.0.211			count=10
+	${value} = 									BASH verify arp					h5						10.252.0.1
+	Should Not Be True							${value} 		
+	${value} =									BASH verify arp					h4						10.251.0.1
+	Should Not Be True							${value} 
+	${mac1} = 									BASH get intf mac				h5						bond0
+	${result} =									REST show endpoints mac			${mac1}
+	Should Be True								${result}						
+	${mac2} = 									BASH get intf mac				h4						bond0
+	${result} =									REST show endpoints mac			${mac2}
+	Should Be True								${result}						
+	REST show endpoints	
+	${loss} = 									BASH ping						h5						10.252.0.211			count=10
+	Should Be True								${loss} == 0
+	BASH delete route							h4								10.252.0.0/25			10.251.0.1
+	BASH delete route							h5								10.251.0.0/17			10.252.0.1
 		
+
+One Tenant 100 VNS with one host each
+	REST delete tenant							X
+	REST delete tenant							Y
+	REST delete tenant							Z
+	REST add tenant								A
+	REST add tenant								B
+	${ipAddr} =  								Set Variable					20.0.0.1
+	: FOR 										${i}							IN RANGE 				1					100
+	\	REST add vns							A								A-${i}
+	\	REST add vns ip							A								A-${i}					${ipAddr}			24
+	\	${ipAddr} =								get next address				ipv4					${ipAddr}			0.0.1.0
+	\	REST add interface to vns				A								A-${i}					leaf0-a				ethernet24		${i}			
+				
+	${ipAddr} =  								Set Variable					30.0.0.1
+	: FOR 										${i}							IN RANGE 				101					200
+	\	REST add vns							B								B-${i}
+	\	REST add vns ip							B								B-${i}					${ipAddr}			24
+	\	${ipAddr} =								get next address				ipv4					${ipAddr}			0.0.1.0
+	\	REST add interface to vns				B								B-${i}					leaf1-a				ethernet24		${i}			
+				
+
+Configure overlapping IP on same tenant across VNS
+	REST add tenant									A
+	REST add vns									A							X1
+	REST add vns									A							X2
+	REST add vns									A							X3
+	REST add vns ip  								A							X1				10.101.0.1				24	
+	${result} = 									REST add vns ip  			A				X2						10.101.0.1				25
+	Should Not Be True								${result}
+	${result} = 									REST add vns ip  			A				X2						10.101.0.2				25
+	Should Not Be True								${result}
+	${result} = 									REST add vns ip  			A				X2						10.101.0.254			17				
+	Should Not Be True								${result}
+	${result} = 									REST add vns ip  			A				X2						10.101.0.255			24
+	Should Not Be True								${result}
+	REST delete vns ip								A							X1				10.101.0.1				24
+	${result} = 									REST add vns ip  			A				X2						10.101.0.1				25
+	Should Be True									${result}
+	REST delete vns ip								A							X2				10.101.0.1				25
+	${result} = 									REST add vns ip  			A				X2						10.101.0.2				25
+	Should Be True									${result}
+	REST delete vns ip								A							X2				10.101.0.2				25
+	${result} = 									REST add vns ip  			A				X2						10.101.0.254			17				
+	Should Be True									${result}
+	REST delete vns ip  							A							X2				10.101.0.254			17		
+	${result} = 									REST add vns ip  			A				X2						10.101.0.255			24
+	Should Be True									${result}	
+
+
+Controller HA failover via CLI
+	BASH ifup intf								h1 								bond0
+	BASH ifup intf								h2								bond0
+	BASH ifup intf								h3								bond0
+	BASH ifup intf								h4								bond0
+	BASH ifup intf								h5								bond0
+	BASH ifup intf								h6								bond0	
+	REST add portgroup to vns					X								X1						${leaf0_pc1}			1001
+	REST add portgroup to vns					X								X3						${leaf1_pc1}			1003
+	BASH add tag								h1								bond0					1001
+	BASH add tag								h3								bond0					1003
+	BASH ifup intf								h1								bond0.1001
+	BASH ifup intf								h3								bond0.1003
+	BASH add ip address							h1								10.251.1.11/24			bond0.1001
+	BASH add ip address							h3								10.251.3.11/24			bond0.1003
+	BASH add route								h1								10.251.3.0/24			10.251.1.1
+	BASH add route								h3								10.251.1.0/24			10.251.3.1
+	__init__.sleep								20	
+	${value} = 									BASH verify arp					h1						10.251.1.1
+	Should Not Be True							${value} 		
+	${value} =									BASH verify arp					h3						10.251.3.1
+	Should Not Be True							${value} 	
+	BASH ping									h1								10.251.3.11				count=10
+	${value} = 									BASH verify arp					h1						10.251.1.1
+	Should Be True								${value} 		
+	${value} =									BASH verify arp					h3						10.251.3.1
+	Should Be True								${value} 		
+	${mac1} = 									BASH get intf mac				h1						bond0.1001
+	${result} =									REST show endpoints mac			${mac1}
+	Should Be True								${result}						
+	${mac2} = 									BASH get intf mac				h3						bond0.1003
+	${result} =									REST show endpoints mac			${mac2}
+	Should Be True								${result}						
+	REST show endpoints		
+	${loss} = 									BASH ping						h1						10.251.3.11 			count=10
+	Should Be True  							${loss} == 0		
+	${value} = 									REST verify cluster election take leader
+	Should Be True								${value}
+	${loss} = 									BASH ping						h1						10.251.3.11 			count=10
+	Should Be True  							${loss} == 0		
+	BASH delete route							h1								10.251.3.0/24			10.251.1.1
+	BASH delete route							h3								10.251.1.0/24			10.251.3.1
+
+
+Controller HA failover via reboot
+	BASH ifup intf								h1 								bond0
+	BASH ifup intf								h2								bond0
+	BASH ifup intf								h3								bond0
+	BASH ifup intf								h4								bond0
+	BASH ifup intf								h5								bond0
+	BASH ifup intf								h6								bond0	
+	REST add portgroup to vns					X								X1						${leaf0_pc1}			1001
+	REST add portgroup to vns					X								X3						${leaf1_pc1}			1003
+	BASH add tag								h1								bond0					1001
+	BASH add tag								h3								bond0					1003
+	BASH ifup intf								h1								bond0.1001
+	BASH ifup intf								h3								bond0.1003
+	BASH add ip address							h1								10.251.1.11/24			bond0.1001
+	BASH add ip address							h3								10.251.3.11/24			bond0.1003
+	BASH add route								h1								10.251.3.0/24			10.251.1.1
+	BASH add route								h3								10.251.1.0/24			10.251.3.1
+	__init__.sleep								20	
+	${value} = 									BASH verify arp					h1						10.251.1.1
+	Should Not Be True							${value} 		
+	${value} =									BASH verify arp					h3						10.251.3.1
+	Should Not Be True							${value} 	
+	BASH ping									h1								10.251.3.11				count=10
+	${value} = 									BASH verify arp					h1						10.251.1.1
+	Should Be True								${value} 		
+	${value} =									BASH verify arp					h3						10.251.3.1
+	Should Be True								${value} 		
+	${mac1} = 									BASH get intf mac				h1						bond0.1001
+	${result} =									REST show endpoints mac			${mac1}
+	Should Be True								${result}						
+	${mac2} = 									BASH get intf mac				h3						bond0.1003
+	${result} =									REST show endpoints mac			${mac2}
+	Should Be True								${result}						
+	REST show endpoints		
+	${loss} = 									BASH ping						h1						10.251.3.11 			count=10
+	Should Be True  							${loss} == 0		
+	${value} = 									CLI verify cluster master reboot
+	Should Be True								${value}
+	${loss} = 									BASH ping						h1						10.251.3.11 			count=10
+	Should Be True  							${loss} == 0		
+	BASH delete route							h1								10.251.3.0/24			10.251.1.1
+	BASH delete route							h3								10.251.1.0/24			10.251.3.1
+		
+
+Spine reboot
+
+
+
+#cli_restart_switch
+
+
+Leaf reboot
+
+
+
 
 initialize host
 	BASH delete tag								h1								bond0.1001				soft_error=${true}
@@ -1486,6 +1733,13 @@ T5 base suite setup
 	# REST add portgroup								${leaf1_pc4}
 	# REST add portgroup								${leaf2_pc1}
 	# REST add portgroup								${leaf2_pc2}
+	REST add port-group								${leaf0_pc1}
+	REST add port-group								${leaf0_pc2}
+	REST add port-group								${leaf1_pc1}
+	REST add port-group								${leaf1_pc2}
+	REST add port-group								${leaf2_pc1}
+	REST add port-group								${leaf2_pc2}
+	
 
 #	REST add leaf group								leaf0a						leaf0
 #	REST add leaf group								leaf0b						leaf0
@@ -1493,7 +1747,7 @@ T5 base suite setup
 #	REST add leaf group								leaf1b						leaf1
 #	REST add leaf group								leaf2a						leaf2
 #	REST add leaf group								leaf2b						leaf2
-	
+		
 
   
 T5 base suite teardown

@@ -58,7 +58,8 @@ DHCP request from 48k host across 4k vns
 	Generate dhcp request from 48k host across 4k vns
 	[Tags]							skipped			scale				
 						
-		
+
+* Keywords		
 	
 
 One Tenant 4k VNS with one host each
@@ -82,7 +83,24 @@ One Tenant 4k VNS with one host each
 	\	REST add interface to vns				B								B-${i}					leaf1-a				ethernet24		${i}			
 				
 
-		
+Delete and add tagged ports to one tenant 4k VNS with one host each
+
+
+Delete and add 2k VNS with traffic running with one host each
+
+
+Move 2k host endpoint to another tagged port
+
+
+Combined scaling with one tenant 4k vns with 48k host
+
+
+Delete and add scale config multiple times
+
+
+Generate dhcp request from 48k host across 4k vns	
+
+
 
 initialize host
 	BASH delete tag								h1								bond0.1001				soft_error=${true}
