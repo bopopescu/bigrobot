@@ -105,7 +105,7 @@ Test create dict
     log              value['abc']=${value['abc']}
 
 Test list
-    [Tags]           skipped
+    [Tags]           smoke
     ${value}=        return list
     log              value=${value}
     log              value[3]=${value[3]}
@@ -141,7 +141,7 @@ Test return false
     return false
 
 Test empty string
-    #[Tags]           skipped
+    [Tags]           smoke
     ${value}=         set variable    ''
     #${value}=         set empty string
     Log               value=${value}
@@ -155,7 +155,7 @@ Test should contain x times
     #Should contain X times    ${result}    bytes From 10.192.4.11    10
    
 Test get a dict
-    #[Tags]           skipped
+    [Tags]           smoke
     ${result}=        return dict
     Log               Result = ${result['def']}
     Log               Result = ${result['def'][0]}
