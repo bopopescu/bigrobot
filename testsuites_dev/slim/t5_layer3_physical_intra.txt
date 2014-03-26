@@ -1752,7 +1752,12 @@ T5 base suite setup
   
 T5 base suite teardown
 	delete fabric switch  
-
+	REST delete portgroup								${leaf0_pc1}
+	REST delete portgroup								${leaf0_pc2}
+	REST delete portgroup								${leaf1_pc1}
+	REST delete portgroup								${leaf1_pc2}
+	REST delete portgroup								${leaf2_pc1}
+	REST delete portgroup								${leaf2_pc2}
 
 	
   	
