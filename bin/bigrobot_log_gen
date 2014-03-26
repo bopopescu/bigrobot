@@ -1,0 +1,12 @@
+#!/bin/sh -x
+# Call Robot Framework's rebot to generate the consolidated log.
+# rebot unfortunately returns with a non-zero exit code which causes
+# Jenkins build to fail. So here we wrap it with a successful exit.
+# This script assumes that we're in a log directory where all the
+# Robot log files are found. E.g.,
+#   /home/bsn/workspace/VuiTest/bigtest/testlogs/
+# 
+
+rebot --name T5 --output master_output.xml --splitlog `find . -name output.xml`
+exit 0
+
