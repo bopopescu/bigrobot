@@ -248,7 +248,7 @@ class T5(object):
 
         helpers.test_log("Input arguments: port-group = %s" % pg)
 
-        url = '/api/v1/data/controller/fabric/port-group[name="%s"]' % (pg)
+        url = '/api/v1/data/controller/applications/bvs/port-group[name="%s"]' % (pg)
         try:
             c.rest.delete(url, {"name": pg})
         except:

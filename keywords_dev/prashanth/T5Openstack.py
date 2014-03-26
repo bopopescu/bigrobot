@@ -380,7 +380,14 @@ class T5Openstack(object):
 		'''				
 		t = test.Test()
 		os1 = t.openstack_server('os1')		
-		os1.bash("neutron net-delete %s " % (netName))               
+		result = os1.bash("neutron net-delete %s " % (netName)) 
+		output = result["content"]		
+		match = re.search(r'Unable to find network', output)
+		if match:
+			helpers.log("Network Not found")
+			return True
+		else:
+			return True	              
 	
 	def openstack_add_subnet(self, tenantName, netName, subnetName, subnet_ip, dnsNameServers=None):
 		'''create subnet
@@ -537,8 +544,14 @@ S
 		'''
 		t = test.Test()
 		os1 = t.openstack_server('os1')
-		os1.bash("nova delete %s" % (instanceName))              
-		return True
+		result = os1.bash("nova delete %s" % (instanceName))              
+		output = result["content"]		
+		match = re.search(r'No server with a name', output)
+		if match:
+			helpers.log("instance Not found")
+			return True
+		else:
+			return True	
 	
 	def openstack_verify_tenant(self, tenantName):
 		'''function to verify tenant in BSN controller
