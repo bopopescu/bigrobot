@@ -351,7 +351,10 @@ admin_user = glance
         c_new.rest.get('/api/v1/data/controller/core/aaa/local-user')
 
     def return_dict(self):
-        return {'abc': 123, 'xyz': 456}
+        return {'abc': 123,
+                'xyz': 456,
+                'def': [ { 'first': 1, 'second': 2} ]
+                }
 
     def return_list(self):
         return [1, 2, 3, 4, 5]
@@ -520,3 +523,16 @@ vui@Vuis-MacBook-Pro$
         n_console.send('')
         n_console.expect(r'Big Virtual Switch Appliance.*[\r\n]')
         n_console.expect(r'login:')
+
+    def test_console_reconnect(self, node):
+        t = test.Test()
+        n = t.node(node)
+        n_console = n.console()
+        n_console.send('')
+        n_console.expect(r'login:')
+        n_console.send(helpers.ctrl(']'))
+        helpers.sleep(1)
+        n_console = n.console_reconnect()
+        n_console.send('')
+        n_console.expect(r'login:')
+        n.console_close()

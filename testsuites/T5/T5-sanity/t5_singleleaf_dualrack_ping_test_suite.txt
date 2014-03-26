@@ -8,10 +8,10 @@ Test Setup       T5 base test setup
 Test Teardown    T5 base test teardown
 Force Tags       T5 
 Library          keywords/BsnCommon.py
-Library          keywords_dev/prashanth/T5.py
-Library	         keywords_dev/prashanth/T5Fabric.py
+Library          keywords/T5.py
+Library	         keywords/T5Fabric.py
 Library          keywords/Mininet.py
-Resource	     keywords_dev/prashanth/t5_singleleaf_resource.txt
+Resource	     testsuites/T5/t5_singleleaf_resource.txt
 
 * Variables
 ${bm0_ip}  10.0.0.1
@@ -24,7 +24,11 @@ ${bm0_intf0}  leaf0-eth5
 ${bm1_intf0}  leaf0-eth6
 ${bm2_intf0}  leaf1-eth5
 
-* Test Case 
+* Test Case
+Verify fabric switch and link status
+	[Tags]  smoke  sanity
+	rest verify fabric switch all 
+	rest verify fabric link 
 
 ping bm0 to bm1 single leaf single rack dynamic endpoints
    [Tags]  smoke  sanity
@@ -33,7 +37,6 @@ ping bm0 to bm1 single leaf single rack dynamic endpoints
    sleep  10
    ${loss}=  mininet ping  bm0  ${bm1_ip}
    Should Be True  ${loss} == 0  
-   #Should be True  ${false}
  
 ping bm0 to bm1 single leaf single rack static endpoints
    [Tags]  sanity
@@ -52,7 +55,7 @@ ping bm0 to bm1 single leaf single rack static endpoints
    Should Be True  ${loss} == 0
    
 ping bm0 to bm2 dual rack single leaf dynamic endpoints
-   #[Tags]  smoke  sanity
+   [Tags]  sanity
    rest add interface to vns  A  A  leaf0  ${bm0_intf0}  -1 
    rest add interface to vns  A  A  leaf1  ${bm2_intf0}  -1 
    sleep  10 
@@ -76,7 +79,7 @@ ping bm0 to bm2 dual rack single leaf static endpoints
    Should Be True  ${loss} == 0   
    
 ping bm0 to bm1 single leaf single rack dynamic endpoints tag
-   #[Tags]  smoke  sanity
+   [Tags]  sanity
    rest add interface to vns  A  A  leaf0  ${bm0_intf0}  10 
    rest add interface to vns  A  A  leaf0  ${bm1_intf0}  10 
    mininet link tag  bm0  bm0-bond0  10  ${bm0_ip}
@@ -102,7 +105,7 @@ ping bm0 to bm1 single leaf single rack static endpoints tag
    Should Be True  ${loss} == 0
 
 ping bm0 to bm2 dual rack single leaf dynamic endpoints tag     
-   #[Tags]  smoke  sanity
+   [Tags]  sanity
    rest add interface to vns  A  A  leaf0  ${bm0_intf0}  10 
    rest add interface to vns  A  A  leaf1  ${bm2_intf0}  10
    mininet link tag  bm2  bm2-bond0  10  ${bm2_ip}
@@ -126,14 +129,13 @@ ping bm0 to bm2 dual rack single leaf static endpoints tag
    ${loss}=  mininet ping  bm0  ${bm2_ip}
    Should Be True  ${loss} == 0  
    
+   
+
 * Keywords      
 Single Leaf Dual Rack setup
    base suite setup
-   sleep  5
    add fabric switch
    sleep  5
-   rest verify fabric switch all
-   rest verify fabric link
 
 Single Leaf Dual Rack teardown
    delete a tenant  A

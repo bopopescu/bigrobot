@@ -233,7 +233,8 @@ class T5(object):
 
         helpers.test_log("Input arguments: port-group = %s" % pg)
 
-        url = '/api/v1/data/controller/fabric/port-group[name="%s"]' % (pg)
+        url = '/api/v1/data/controller/applications/bvs/port-group[name="%s"]' % (pg)
+
         try:
             c.rest.put(url, {"name": pg})
         except:
@@ -302,7 +303,7 @@ class T5(object):
 
         url = '/api/v1/data/controller/core/switch-config[name="%s"]/interface[name="%s"]' % (switch, intf)
         try:
-            c.rest.put(url, {"name": intf, "port-group-name": pg})
+            c.rest.put(url, {"name": intf, "port-group": pg})
         except:
             return False
         else:
@@ -314,7 +315,9 @@ class T5(object):
 
         helpers.test_log("Input arguments: port-group = %s" % (pg))
 
-        url = '/api/v1/data/controller/fabric/port-group[name="%s"]' % (pg)
+        #url = '/api/v1/data/controller/fabric/port-group[name="%s"]' % (pg)
+        url = '/api/v1/data/controller/applications/bvs/port-group[name="%s"]' % (pg)
+        
         try:
             c.rest.patch(url, {"mode": "lacp"})
         except:
@@ -1238,9 +1241,7 @@ class T5(object):
         c.rest.get(url)
         data = c.rest.content()
         for i in range (0,len(data)):
-            if data[i]["fabric-switch-info"]["suspended"] is True and (data[i]["fabric-switch-info"]["fabric-role"] == "leaf" or data[i]["fabric-switch-info"]["fabric-role"] == "spine"):
-                helpers.test_failure("Fabric manager status is incorrect")
-            elif data[i]["fabric-switch-info"]["suspended"] is False and (data[i]["fabric-switch-info"]["fabric-role"] == "virtual"):
+            if (data[i]["suspended"] is True) and (data[i]["fabric-role"] == "leaf" or data[i]["fabric-role"] == "spine"):
                 helpers.test_failure("Fabric manager status is incorrect")
         helpers.log("Fabric manager status is correct")
 
@@ -1279,8 +1280,8 @@ class T5(object):
         data = c.rest.content()
         status = False
         for i in range (0,len(data)):
-            if data[i]["dpid"] == dpid and data[i]["fabric-switch-info"]["fabric-role"] == role:
-                helpers.test_log("Fabric switch Role of %s is %s" % (str(data[i]["dpid"]), str(data[i]["fabric-switch-info"]["fabric-role"])))
+            if data[i]["dpid"] == dpid and data[i]["fabric-role"] == role:
+                helpers.test_log("Fabric switch Role of %s is %s" % (str(data[i]["dpid"]), str(data[i]["fabric-role"])))
                 status = True
                 return True
                 break
@@ -1312,14 +1313,14 @@ class T5(object):
         url = '/api/v1/data/controller/core/switch[name="%s"]/interface' % (switch)
         c.rest.get(url)
         data = c.rest.content()
-        url1 = '/api/v1/data/controller/core/switch[name="%s"]' % (switch)
+        url1 = '/api/v1/data/controller/core/switch-config[name="%s"]?select=name' % (switch)
         c.rest.get(url1)
         data1 = c.rest.content()
         url2 = '/api/v1/data/controller/core/switch[name="%s"]?select=fabric-lag' % (switch)
         c.rest.get(url2)
         data3 = c.rest.content()
-        if str(data1[0]["fabric-switch-info"]["switch-name"]) == str(switch):
-            if data1[0]["fabric-switch-info"]["fabric-role"] == "spine":
+        if str(data1[0]["name"]) == str(switch):
+            if data1[0]["fabric-role"] == "spine":
                 fabric_interface = 0
                 rack_lag = 0
                 for i in range(0,len(data)):
@@ -1334,7 +1335,7 @@ class T5(object):
                 else:
                                 helpers.test_failure("No of Rack lag from %s is incorrect,Expected = %d, Actual = %d " % (switch, fabric_interface, rack_lag))
                                 return False
-            elif data1[0]["fabric-switch-info"]["fabric-role"] == "leaf":
+            elif data1[0]["fabric-role"] == "leaf":
                     fabric_spine_interface = 0
                     fabric_peer_interface = 0
                     for i in range(0,len(data)):
@@ -1379,24 +1380,24 @@ class T5(object):
         data = c.rest.content()
         if data[0]["dpid"] == dpid:
             if data[0]["connected"]:
-                if data[0]["fabric-switch-info"]["fabric-role"] != "virtual":
-                    if data[0]["fabric-switch-info"]["fabric-role"] == "spine" and data[0]["fabric-switch-info"]["suspended"] == False:
+                if data[0]["fabric-role"] != "virtual":
+                    if data[0]["fabric-role"] == "spine" and data[0]["suspended"] == False:
                         helpers.log("Pass: Fabric switch connection status for spine is correct")
                         return True
-                    elif data[0]["fabric-switch-info"]["fabric-role"] == "leaf" and data[0]["fabric-switch-info"]["suspended"] == False and data[0]["fabric-switch-info"]["leaf-group"] != '':
-                        if data[0]["dpid"] == dpid and data[0]["fabric-switch-info"]["lacp-port-offset"] == 0:
-                            helpers.log("Pass: Fabric switch connection status for %s dual leaf is correct" % str(data[0]["fabric-switch-info"]["switch-name"]))
+                    elif data[0]["fabric-role"] == "leaf" and data[0]["suspended"] == False and data[0]["leaf-group"] != '':
+                        if data[0]["dpid"] == dpid and data[0]["lacp-port-offset"] == 0:
+                            helpers.log("Pass: Fabric switch connection status for %s dual leaf is correct" % str(data[0]["switch-name"]))
                             return True
-                        elif data[0]["dpid"] == dpid and data[0]["fabric-switch-info"]["lacp-port-offset"] == 100:
-                            helpers.log("Pass: Fabric switch connection status for %s dual leaf is correct" % str(data[0]["fabric-switch-info"]["switch-name"]))
+                        elif data[0]["dpid"] == dpid and data[0]["lacp-port-offset"] == 100:
+                            helpers.log("Pass: Fabric switch connection status for %s dual leaf is correct" % str(data[0]["switch-name"]))
                             return True
-                elif data[0]["fabric-switch-info"]["suspended"] == True:
+                elif data[0]["suspended"] == True:
                         helpers.log("Default fabric role is virtual for not added fabric switches")
                         return True
                 else:
                         helpers.test_failure("Fabric role is virual but suspended = False ")
                         return False
-            elif data[0]["fabric-switch-info"]["suspended"] == False or data[0]["fabric-switch-info"]["suspended"] == True:
+            elif data[0]["suspended"] == False or data[0]["suspended"] == True:
                 helpers.test_failure("Fail: Switch is not connected , Fabric switch status still exists")
                 return False
         else :
@@ -1438,11 +1439,11 @@ class T5(object):
         rack = []
         rack_count = 0
         for i in range(0,len(data)):
-            if data[i]["fabric-switch-info"]["fabric-role"] == "leaf":
-                if data[i]["fabric-switch-info"]["leaf-group"] == None:
+            if data[i]["fabric-role"] == "leaf":
+                if data[i]["leaf-group"] == None:
                     rack_count = rack_count + 1
-                elif not data[i]["fabric-switch-info"]["leaf-group"] in rack:
-                    rack.append(data[i]["fabric-switch-info"]["leaf-group"])
+                elif not data[i]["leaf-group"] in rack:
+                    rack.append(data[i]["leaf-group"])
 
         total_rack = rack_count + len(rack)
         helpers.log("Total Rack in the Topology: %d" % total_rack)
@@ -1456,8 +1457,8 @@ class T5(object):
         data = c.rest.content()
         list_spine = []
         for i in range(0,len(data)):
-            if data[i]["fabric-switch-info"]["fabric-role"] == "spine":
-                list_spine.append(data[i]["fabric-switch-info"]["switch-name"])
+            if data[i]["fabric-role"] == "spine":
+                list_spine.append(data[i]["switch-name"])
 
         helpers.log("Total Spine in the topology: %d" % len(list_spine))
         return list_spine
@@ -1507,7 +1508,7 @@ class T5(object):
                 interface = re.sub("\D", "", data2[0]["fabric-lag"][i]["member"][0]["src-interface"])
                 peer_intf.append(int(interface))
         if len(peer_intf) != 0:
-            if data1[0]["fabric-switch-info"]["leaf-group"] == None:
+            if data1[0]["leaf-group"] == None:
                 for i in range(0,len(data)):
                     for j in range(0,len(data[i]["port"])):
                         if (data[i]["port"][j]["port-num"] == peer_intf[0]):

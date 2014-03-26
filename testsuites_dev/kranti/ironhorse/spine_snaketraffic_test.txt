@@ -1,11 +1,11 @@
 * Settings
-Documentation   SPINE Switch Platform Snake Traffic Test - Iron Horse T5
-Suite Setup      T5 snake test setup
+Documentation   Switch Platform Snake Traffic Test - Iron Horse T5
+#Suite Setup      T5 snake test setup
 #Suite Teardown   T5 snake test teardown
 Test Setup       base test setup
 Test Teardown    atest teardown
-Force Tags       T5  Spine  traffic  snake
-...             export BIGROBOT_SUITE=spine_snaketraffic_test 
+Force Tags       T5  traffic  snake
+...             export BIGROBOT_SUITE=snake_traffic_test 
 ...
 ...             Section A: Traffic Verification Test 
 ...                Uni-Directional L2 Traffic flow a->b with framerate 10000 pktsize 64,256,512,1024,1518
@@ -28,21 +28,36 @@ Resource        keywords_dev/kranti/ironhorse/snake_traffic_test_variables.txt
 
 *Variables
 ${j}    1
-${switch_alias}=  SnakeTestLeaf01
-${tenant}=        SnakeTenant
-${count}=         24  
+${switch_alias1}=  spineasleaf
+${switch_alias2}=  leaf01
+${switch_alias3}=  leaf02
+${tenant}=        SnakeTenant 
+${vns}=           v1
+${vlan}=          -1
+${switch1_name}=  leaf01
+${intf_1}=        ethernet1
+${intf_2}=        ethernet2
+${intf_3}=        ethernet3
+${intf_4}=        ethernet4
+
+${switch2_name}=  leaf02
+${intf_6}=        ethernet45
+${intf_7}=        ethernet46
+${intf_8}=        ethernet47
+${intf_9}=        ethernet48
+
+${count}=         1 
 ${ratetolerance}=     10
 ${tolerance}=         5
 ${sleepAfter}=    10
 ${sleepBefore}=   5
 
+
+### Section A: ONIE, Boot Loader Installation 
+
 *Test Case
 Uni-Directional L2 Traffic flow=a->b traffic framerate 10000 pktsize 64 
     ${stream}=             L2 add  flow=a->b  src_mac=00:11:23:00:00:09  dst_mac=00:11:23:00:00:99  frame_rate=10000  frame_size=64  ethertype=8000  name=a_b_flow
-    clear stats
-    start traffic  ${stream}
-    sleep                  3
-    stop traffic   ${stream}    
     clear stats
     start traffic  ${stream}
     sleep                  10
@@ -65,7 +80,7 @@ Uni-Directional L2 Traffic flow=a->b traffic linerate 10% pktsize 64
     sleep                  10
     ${report}=             fetch port stats
     verify results traffic  transmitted_frames  received_valid_frames  ${tolerance}    
-    [Tags]  T5  traffic  snake  tc1     
+    [Tags]  T5  traffic  snake       
 
 Uni-Directional L2 Traffic flow=a->b traffic framerate 10000 pktsize 256 
     ${stream}=             L2 add  flow=a->b  src_mac=00:11:23:00:00:09  dst_mac=00:11:23:00:00:99  frame_rate=10000  frame_size=256  ethertype=8000  name=a_b_flow
@@ -182,7 +197,7 @@ Bi-Directional L2 Traffic flow=a<->b with framerate 10000 pktsize 64
     sleep                  10
     ${report}=             fetch port stats
     verify results traffic  transmitted_frames  received_valid_frames  ${tolerance}
-    [Tags]  T5  traffic  snake
+    [Tags]  T5  traffic  snake  
 
 Bi-Directional L2 Traffic flow=a<->b with linerate 25% pktsize 64
     ${stream}=             L2 add  flow=a<->b  src_mac=00:11:23:00:00:09  dst_mac=00:11:23:00:00:99  line_rate=25  frame_size=64  ethertype=8000  name=a<->b_bidir_flow
@@ -195,7 +210,7 @@ Bi-Directional L2 Traffic flow=a<->b with linerate 25% pktsize 64
     sleep                  10
     ${report}=             fetch port stats
     verify results traffic  transmitted_frames  received_valid_frames  ${tolerance}
-    [Tags]  T5  traffic  snake
+    [Tags]  T5  traffic  snake  tc1
 
 Bi-Directional L2 Traffic flow=a<->b with framerate 10000 pktsize 1024
     ${stream}=             L2 add  flow=a<->b  src_mac=00:11:23:00:00:99  dst_mac=00:11:23:00:00:09  frame_rate=10000  frame_size=1024  ethertype=8000  name=a<->b_bidir_flow
@@ -306,13 +321,35 @@ Bi-Directional L2 Jumbo Traffic flow=a<->b with linerate 100% pktsize 9150
       
 T5 snake test setup
    base test setup
-   rest add switch  ${switch_alias}
-   ${swDpid}=  rest return switch dpid from ip  s1
-   rest add dpid  ${switch_alias}   ${swDpid}
-   rest add fabric role  ${switch_alias}  leaf      
+   rest add switch  ${switch_alias1}
+   ${swDpid1}=  rest return switch dpid from ip  s1
+   rest add dpid  ${switch_alias1}   ${swDpid1}
+   rest add fabric role  ${switch_alias1}  leaf
+      
+   rest add switch  ${switch_alias2}
+   ${swDpid2}=  rest return switch dpid from ip  s2
+   rest add dpid  ${switch_alias2}   ${swDpid2}
+   rest add fabric role  ${switch_alias2}  leaf
+   
+   rest add switch  ${switch_alias3}
+   ${swDpid3}=  rest return switch dpid from ip  s3
+   rest add dpid  ${switch_alias3}   ${swDpid3}
+   rest add fabric role  ${switch_alias3}  leaf
+      
    rest add tenant  ${tenant}
-   rest add vns scale  ${tenant}  ${count}
-   add interface to vns snake config  ${tenant}  ${count}
+   rest add vns  ${tenant}  ${vns}
+   
+   rest add interface to vns  ${tenant}  ${vns}  ${switch1_name}  ${intf_1}  ${vlan} 
+   rest add interface to vns  ${tenant}  ${vns}  ${switch1_name}  ${intf_2}  ${vlan}
+   rest add interface to vns  ${tenant}  ${vns}  ${switch1_name}  ${intf_3}  ${vlan}
+   rest add interface to vns  ${tenant}  ${vns}  ${switch1_name}  ${intf_4}  ${vlan}
+   
+   
+   rest add interface to vns  ${tenant}  ${vns}  ${switch2_name}  ${intf_6}  ${vlan} 
+   rest add interface to vns  ${tenant}  ${vns}  ${switch2_name}  ${intf_7}  ${vlan}
+   rest add interface to vns  ${tenant}  ${vns}  ${switch2_name}  ${intf_8}  ${vlan}
+   rest add interface to vns  ${tenant}  ${vns}  ${switch2_name}  ${intf_9}  ${vlan}
+   
                 
 T5 snake test teardown
    rest delete tenant  ${tenant}  
