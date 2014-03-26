@@ -2,46 +2,12 @@ import autobot.helpers as helpers
 import autobot.test as test
 import re
 
-class Openstack(object):
+class T5Openstack(object):
 
 	def __init__(self):
 		pass
 
-	def openstack_show_nw_id(self, osUserName, osTenantName, osPassWord, osAuthUrl, networkName):
-		'''Get network id
-			Input:
-				`osXXX`        		tenant name, password, username etc credentials
-				`networkName`       network name for that particular tenant
-			Return: id of network
-			
-			matchObj = re.match( r'(.*) are (.*?) .*', line, re.M|re.I)
-
-if matchObj:
-   print "matchObj.group() : ", matchObj.group()
-   print "matchObj.group(1) : ", matchObj.group(1)
-   print "matchObj.group(2) : ", matchObj.group(2)
-else:
-   print "No match!!"
-			
-		'''
-		t = test.Test()
-		os1 = t.openstack_server('os1')
-		
-		result = os1.bash("neutron --os-username %s --os-tenant-name %s --os-password %s --os-auth-url %s net-show %s" % (osUserName, osTenantName, osPassWord, osAuthUrl, networkName))
-		output = result["content"]
-		helpers.log("output: %s" % output)
-		
-		match = re.search(r'Unable to find network with', output, re.S | re.I)
-		if match:
-			return False
-		else:
-			out_dict = helpers.openstack_convert_table_to_dict(output)
-			result1 = out_dict["id"]
-			netId = result1["value"]
-			helpers.log("network %s id is: %s" % (networkName, str(netId)))   
-			return netId		
-
-	def openstack_show_flavor_id(self, osUserName, osTenantName, osPassWord, osAuthUrl, flavorName):
+	def openstack_show_flavor(self, osUserName, osTenantName, osPassWord, osAuthUrl, flavorName):
 		'''Get flavor id
 			Input:
 				`osXXX`        		tenant name, password, username etc credentials
@@ -65,7 +31,7 @@ else:
 			helpers.log("flavor %s id is: %s" % (flavorName, str(flavorId)))   
 			return flavorId		
 
-	def openstack_show_user_id(self, osUserName, osTenantName, osPassWord, osAuthUrl, userName):
+	def openstack_show_user(self, osUserName, osTenantName, osPassWord, osAuthUrl, userName):
 		'''Get user id
 			Input:
 				`osXXX`        		tenant name, password, username etc credentials
@@ -88,7 +54,7 @@ else:
 			helpers.log("user %s id is: %s" % (userName, str(userId)))   
 			return userId		
 
-	def openstack_show_role_id(self, osUserName, osTenantName, osPassWord, osAuthUrl, roleName):
+	def openstack_show_role(self, osUserName, osTenantName, osPassWord, osAuthUrl, roleName):
 		'''Get role id
 			Input:
 				`osXXX`        		tenant name, password, username etc credentials
@@ -125,45 +91,38 @@ else:
 		tenantId = out_dict["id"]["value"]
 		return tenantId		
 
-	def openstack_show_vm(self, osUserName, osTenantName, osPassWord, osAuthUrl, instanceName):
-		'''Get vm id
-			Input:
-				`osXXX`        		tenant name, password, username etc credentials
-				`instanceName`      vm's name
-			Return: id of vm
-		'''	
-		t = test.Test()
-		os1 = t.openstack_server('os1')
-
-		result = os1.bash("nova --os-username %s --os-tenant-name %s --os-password %s --os-auth-url %s show %s" % (osUserName, osTenantName, osPassWord, osAuthUrl, instanceName))              
-		output = result["content"]
-		helpers.log("output: %s" % output)
-		out_dict = helpers.openstack_convert_table_to_dict(output)
-		result1 = out_dict["id"]
-		vmId = result1["value"]
-		helpers.log("VM %s id is: %s" % (instanceName, str(vmId)))   
-		return vmId		
-
-	def openstack_show_vm_status(self, osUserName, osTenantName, osPassWord, osAuthUrl, instanceName):
+	def openstack_show_instance_all(self):
 		'''Get vm status
 			Input:
-				`osXXX`        		tenant name, password, username etc credentials
-				`instanceName`       vm's name
+				make sure to source the specific tenant rc file which contains , tenant name , user , password
+				show all instance
 			Return: vm status
 		'''
 		t = test.Test()
 		os1 = t.openstack_server('os1')
-
-		result = os1.bash("nova --os-username %s --os-tenant-name %s --os-password %s --os-auth-url %s show %s" % (osUserName, osTenantName, osPassWord, osAuthUrl, instanceName))              
+		os1.bash("nova list")             
+		return True
+	
+	def openstack_show_instance_ip(self, instanceName, netName):
+		'''Get instance id 
+			Input:
+				instance name to be provided
+				net name for the IP address
+			Return: instance IP.
+		'''
+		t = test.Test()
+		os1 = t.openstack_server('os1')
+		result = os1.bash("nova show %s" % instanceName)             
 		output = result["content"]
-		helpers.log("output: %s" % output)
 		out_dict = helpers.openstack_convert_table_to_dict(output)
-		result1 = out_dict["status"]
-		vmStatus = result1["value"]
-		helpers.log("VM %s status is: %s" % (instanceName, str(vmStatus)))   
-		return vmStatus		
-
-	def openstack_show_router_id(self, osUserName, osTenantName, osPassWord, osAuthUrl, routerName):
+		if out_dict["status"]["value"] == "ACTIVE":
+			network = netName+" "+"network"
+			instanceIp = out_dict[network]["value"]
+			return instanceIp
+		else:
+			helpers.log("Instance is not active in nova controller")
+			
+	def openstack_show_router(self, routerName):
 		'''Get router id
 			Input:
 				`osXXX`        		tenant name, password, username etc credentials
@@ -173,13 +132,11 @@ else:
 		t = test.Test()
 		os1 = t.openstack_server('os1')
 
-		result = os1.bash("neutron --os-username %s --os-tenant-name %s --os-password %s --os-auth-url %s router-show %s" % (osUserName, osTenantName, osPassWord, osAuthUrl, routerName))              
+		result = os1.bash("neutron router-show %s" % (routerName))              
 		output = result["content"]
 		helpers.log("output: %s" % output)
 		out_dict = helpers.openstack_convert_table_to_dict(output)
-		result1 = out_dict["id"]
-		routerId = result1["value"]
-		helpers.log("router %s id is: %s" % (routerName, str(routerId)))   
+		routerId = out_dict["id"]["value"]
 		return routerId		
 
 	def openstack_show_router_status(self, osUserName, osTenantName, osPassWord, osAuthUrl, routerName):
@@ -223,7 +180,26 @@ else:
 			subnetId = out_dict["network_id"]["value"]
 			return subnetId		
 
-	def openstack_show_image_id(self, imageName):
+	def openstack_show_net(self, netName):
+		'''Get Nova net Id
+			Input:
+				net Name : created during the test using openstack add net
+			Return: id of of the net to be used for instance creation.
+		'''
+		t = test.Test()
+		os1 = t.openstack_server('os1')
+		result = os1.bash("nova network-show %s" % (netName))              
+		output = result["content"]		
+		match = re.search(r'ERROR: No network with a name', output)
+		if match:
+			helpers.log("Network Not found")
+			return ''
+		else:
+			out_dict = helpers.openstack_convert_table_to_dict(output)
+			netId = out_dict["id"]["value"]
+			return netId	
+	
+	def openstack_show_image(self, imageName):
 		'''Get image id
 			Input:
 				`osXXX`        		tenant name, password, username etc credentials
@@ -240,14 +216,14 @@ else:
 		else:
 			#output = helpers.strip_cli_output(output)
 			out_dict = helpers.openstack_convert_table_to_dict(output)
-			image_id = None
+			imageId = None
 			for key in out_dict:
 				name = out_dict[key]['name']
 				match = re.search(imageName, name)
 				if match:
-					image_id = key
+					imageId = key
 					break
-		return image_id
+		return imageId
 
 	def openstack_source(self, source_name):
 		'''Get image id
@@ -257,19 +233,7 @@ else:
 		t = test.Test()
 		os1 = t.openstack_server('os1')
 		os1.bash("source /home/stack/devstack/%s" % source_name)
-		
-	def openstack_add_user_role(self, osUserName, osTenantName, osPassWord, osAuthUrl, userName, roleName, tenantName):
-		''' set user role
-			Input:
-				`username`:		username of the tenant's user
-				`rolename`:		rolename
-				`tenantname`:	name of tenant
-		'''
-		t = test.Test()
-		os1 = t.openstack_server('os1')
-		
-		os1.bash("keystone --os-username %s --os-tenant-name %s --os-password %s --os-auth-url %s user-role-add --user %s --role --tenant %s" % (osUserName, osTenantName, osPassWord, osAuthUrl, userName, roleName, tenantName))   
-		
+	
 	def openstack_add_tenant(self, tenantName):
 		'''create tenant
 			Input:
@@ -319,25 +283,6 @@ else:
 		os1 = t.openstack_server('os1')
 		os1.bash("keystone user-delete %s" % userName)
 		return True
-	
-	def openstack_add_role(self, osUserName, osTenantName, osPassWord, osAuthUrl, roleName):
-		'''create user role
-			Input:
-				`osXXX`        		tenant name, password, username etc credentials
-				`roleName`			role name
-			Return: id of role
-		'''		
-		t = test.Test()
-		os1 = t.openstack_server('os1')
-
-		result = os1.bash("keystone --os-username %s --os-tenant-name %s --os-password %s --os-auth-url %s role-create --name %s" % (osUserName, osTenantName, osPassWord, osAuthUrl, roleName))              
-		output = result["content"]
-		helpers.log("output: %s" % output)
-		out_dict = helpers.openstack_convert_table_to_dict(output)
-		result1 = out_dict["id"]
-		roleId = result1["value"]
-		helpers.log("role %s id is: %s" % (roleName, str(roleId)))   
-		return roleId
 
 	def openstack_add_flavor(self, osUserName, osTenantName, osPassWord, osAuthUrl, flavorName, flavorId, flavorMemSize, flavorDisk, flavorVCpu):
 		'''create flavor
@@ -383,36 +328,34 @@ else:
 		t = test.Test()
 		os1 = t.openstack_server('os1')
 
-		result = os1.bash("glance --os-username %s --os-tenant-name %s --os-password %s --os-auth-url %s image-create --name %s --is-public True --container-format bare --disk-format %s --copy-from %s " % (osUserName, osTenantName, osPassWord, osAuthUrl, imageName, diskFormat, location ))              
-		output = result["content"]
-		helpers.log("output: %s" % output)
-		out_dict = helpers.openstack_convert_table_to_dict(output)
-		result1 = out_dict["id"]
-		imageId = result1["value"]
-		helpers.log("image %s id is: %s" % (imageName, str(imageId)))   
-		return imageId
+		os1.bash("glance --os-username %s --os-tenant-name %s --os-password %s --os-auth-url %s image-create --name %s --is-public True --container-format bare --disk-format %s --copy-from %s " % (osUserName, osTenantName, osPassWord, osAuthUrl, imageName, diskFormat, location ))              
+		return True
 
-	def openstack_add_router(self, osUserName, osTenantName, osPassWord, osAuthUrl, tenantId, tenantName):
+	def openstack_add_router(self, tenantName, routerName):
 		'''create router
 			Input:
-				`osXXX`        		tenant name, password, username etc credentials
-				`tenantId`			ID of the tenant for the router creation. 
-				`tenantName`		Name of Tenant
+				tenantName`		Name of Tenant
+				router name 
 			Return: id of created Router
 		'''				
 		t = test.Test()
 		os1 = t.openstack_server('os1')
+		tenantId = self.openstack_show_tenant(tenantName)
+		os1.bash("neutron router-create --tenant-id %s %s" % (tenantId, routerName))              
+		return True
 
-		result = os1.bash("neutron --os-username %s --os-tenant-name %s --os-password %s --os-auth-url %s router-create --tenant-id %s %s-Router " % (osUserName, osTenantName, osPassWord, osAuthUrl, tenantId, tenantName))              
-		output = result["content"]
-		helpers.log("output: %s" % output)
-		out_dict = helpers.openstack_convert_table_to_dict(output)
-		result1 = out_dict["id"]
-		routerId = result1["value"]
-		helpers.log("tenant %s router id is: %s" % (tenantName, str(routerId)))   
-		return routerId
-
-
+	def openstack_delete_router(self, routerName):
+		'''Delete router
+			Input:
+				tenantName`		Name of Tenant
+				router name 
+			Return: id of created Router
+		'''				
+		t = test.Test()
+		os1 = t.openstack_server('os1')
+		os1.bash("neutron router-delete %s" % (routerName))              
+		return True
+	
 	def openstack_add_net(self, tenantName, netName, external=False):
 		'''create network
 			Input:
@@ -437,8 +380,14 @@ else:
 		'''				
 		t = test.Test()
 		os1 = t.openstack_server('os1')		
-		os1.bash("neutron net-delete %s " % (netName))               
-		return True
+		result = os1.bash("neutron net-delete %s " % (netName)) 
+		output = result["content"]		
+		match = re.search(r'Unable to find network', output)
+		if match:
+			helpers.log("Network Not found")
+			return True
+		else:
+			return True	              
 	
 	def openstack_add_subnet(self, tenantName, netName, subnetName, subnet_ip, dnsNameServers=None):
 		'''create subnet
@@ -455,20 +404,33 @@ else:
 			os1.bash("neutron subnet-create --tenant-id %s --name %s %s %s --dns_nameservers list=true %s" % (tenantId, netName, subnetName, subnet_ip, dnsNameServers))   
 		return True
 
-	def openstack_add_keypair(self, osUserName, osTenantName, osPassWord, keypairName, pathToSave):
+	def openstack_add_keypair(self, keypairName, pathToSave):
 		'''Generate openstack tenant keypair
 			Input:
-				`osXXX`        		tenant name, password, username etc credentials
+				For this function make sure to call source "open_rc or any rc file" to get the user name /password for that tenant
 				`keypairName`			Keypair name 
 				`pathToSave`		Path to save public key on nova controller
 			Return: no data is returned
 		'''				
 		t = test.Test()
 		os1 = t.openstack_server('os1')
-		os1.bash("nova --os-username %s --os-tenant-name %s --os-password %s keypair-add %s > %s" % (osUserName, osTenantName, osPassWord, keypairName, pathToSave)) 
+		os1.bash("nova keypair-add %s > %s" % (keypairName, pathToSave))
+		os1.bash("chmod 600 %s" % pathToSave) 
 		return True  
 		
-
+	def openstack_delete_keypair(self, keypairName):
+		'''delete a keypair
+			Input:
+				For this function make sure to call source "open_rc or any rc file" to get the user name /password for that tenant
+				`keypairName`			Keypair name 
+				
+			Return: no data is returned
+		'''				
+		t = test.Test()
+		os1 = t.openstack_server('os1')
+		os1.bash("nova keypair-delete %s" % (keypairName))
+		return True  
+	
 	def openstack_add_router_gw(self, osUserName, osTenantName, osPassWord, osAuthUrl, routerId, extNetId):
 		'''set tenant router gateway
 			Input:
@@ -519,7 +481,7 @@ S
 		t = test.Test()
 		os1 = t.openstack_server('os1')
 		
-		os1.bash("neutron --os-username %s --os-tenant-name %s --os-password %s --os-auth-url %s router-interface-add %s %s" % (osUserName, osTenantName, osPassWord, osAuthUrl, routerId, subNetId))   
+		os1.bash("neutron router-interface-add %s %s" % (osUserName, osTenantName, osPassWord, osAuthUrl, routerId, subNetId))   
 		data = os1.bash_content()
 		return data
 		
@@ -554,42 +516,43 @@ S
 		os1.bash("nova --os-username %s --os-tenant-name %s --os-password %s --os-auth-url %s secgroup %s tcp 1 65535 0.0.0.0/0" % (osUserName, osTenantName, osPassWord, osAuthUrl, secgroupName))   
 		os1.bash("nova --os-username %s --os-tenant-name %s --os-password %s --os-auth-url %s secgroup %s udp 1 65535 0.0.0.0/0" % (osUserName, osTenantName, osPassWord, osAuthUrl, secgroupName))   
 		os1.bash("nova --os-username %s --os-tenant-name %s --os-password %s --os-auth-url %s secgroup %s icmp -1 -1 0.0.0.0/0" % (osUserName, osTenantName, osPassWord, osAuthUrl, secgroupName))   
-#		return pass
-
-	def openstack_show_instance_status(self, osUserName, osTenantName, osPassWord, osAuthUrl, vmId):
-		'''get instance status
-			Input:
-				`osXXX`        		tenant name, password, username etc credentials
-				`vmId`				Instance ID or instance name. 
-			Return: status of instance
-		'''
-
-		t = test.Test()
-		os1 = t.openstack_server('os1')
-
-		result = os1.bash("nova --os-username %s --os-tenant-name %s --os-password %s --os-auth-url %s show %s" % (osUserName, osTenantName, osPassWord, osAuthUrl, vmId))              
-		output = result["content"]
-		helpers.log("output: %s" % output)
-		out_dict = helpers.openstack_convert_table_to_dict(output)
-		result1 = out_dict["status"]
-		vmStatus = result1["value"]
-		helpers.log("instance %s status is: %s" % (vmId, str(vmStatus)))   
-		return vmStatus
-		
+		return True
 	
-	def openstack_delete_instance(self, osUserName, osTenantName, osPassWord, osAuthUrl, vmId):
+	def openstack_add_instance(self, imageName, keypairName, netName, instanceName):
 		'''delete instance
 			Input:
-				`osXXX`        		tenant name, password, username etc credentials
-				`vmId`				Instance ID or instance name to be deleted. 
-			Return: empty string
+				imageName : e.g cirros , ubuntu etc
+				keypairName: keypair created in the testcase
+				subnetName : subnet name created during the test
+				instanceName: any name to identigy the instance 
+				flavor selection : 1:tiny , 2:small, 3:medium , 4: large
+			Return: True 
 		'''
-
 		t = test.Test()
 		os1 = t.openstack_server('os1')
-
-		os1.bash("nova --os-username %s --os-tenant-name %s --os-password %s --os-auth-url %s delete %s" % (osUserName, osTenantName, osPassWord, osAuthUrl, vmId))              
-#		return pass
+		imageId = self.openstack_show_image(imageName)
+		netId = self.openstack_show_net(netName)
+		os1.bash("nova boot --flavor 2 --image %s --key-name %s --nic net-id=%s %s" % (imageId, keypairName, netId, instanceName))
+		return True
+	
+	def openstack_delete_instance(self, instanceName):
+		'''delete instance
+			Input:
+				source the tenant rc file which which includes , tenant name , user, passowrd
+				`instanceName`			instance name to be deleted. 
+			Return: empty string
+		'''
+		t = test.Test()
+		os1 = t.openstack_server('os1')
+		result = os1.bash("nova delete %s" % (instanceName))              
+		output = result["content"]		
+		match = re.search(r'No server with a name', output)
+		if match:
+			helpers.log("instance Not found")
+			return True
+		else:
+			return True	
+	
 	def openstack_verify_tenant(self, tenantName):
 		'''function to verify tenant in BSN controller
 			Input:
@@ -642,4 +605,22 @@ S
 			else:
 				helpers.test_failure("Expected vns is not deleted from the controller")	
 				return False
-						
+	
+	def openstack_verify_endpoint(self, instanceName, netName):
+		'''function to verify endpoint in BSN controller
+			Input:
+				instance Name
+			Return: verify the endpoint is created and active
+		'''
+		t = test.Test()
+		c = t.controller('master')
+		url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/endpoints'
+		c.rest.get(url)
+		data = c.rest.content()
+		instanceIp = self.openstack_show_instance_ip(instanceName, netName)
+		for i in range(0,len(data)):
+			if str(data[i]["ip-address"]) == str(instanceIp) and str(data[i]["state"]) == "Active":
+				helpers.log("Pass: Openstack endpoints are present in the BSN controller")
+				return True
+		helpers.test_failure("Expected openstack endpoints are not present in BSN controller")
+		return False	

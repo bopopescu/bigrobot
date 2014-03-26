@@ -1,0 +1,146 @@
+== T5 Functional Openstack Integration work flow test ==
+
+* Setting
+Documentation    T5 BVS APP Functional Openstack integration 3 tier work flow test suite
+Suite Setup      T5 Functional Suite Setup
+Suite Teardown   T5 Functional Suite Teardown
+Test Setup       T5 base test setup
+Test Teardown    T5 base test teardown
+Force Tags       T5 
+Library          keywords/BsnCommon.py
+Library          keywords/T5.py
+Library          keywords/T5Platform.py
+Library	         keywords/SwitchLight.py
+Library	         keywords/Host.py
+Library          keywords_dev/prashanth/T5Openstack.py
+Library			 Collections.py
+Resource		 testsuites/T5/t5_physical_variables.txt
+Resource         testsuites_dev/prashanth/t5-openstack/t5_openstack_variables.txt
+
+* Test Case 
+
+add/delete VM instance single app network 
+	[Tags]   openstack
+	openstack add net  t5test  app
+	openstack add subnet  t5test  app  app  30.0.0.0/24 
+	openstack verify tenant  t5test
+	openstack verify vns  t5test  app
+	openstack add instance  cirros  t5test  app  app-inst1
+	sleep  15
+	openstack show instance all
+	openstack verify endpoint  app-inst1  app
+	openstack delete instance  app-inst1
+	sleep  2
+	${result}=  openstack verify endpoint  app-inst1  app
+	Should not be True  ${result}
+	openstack delete keypair  t5test
+	openstack delete net  app
+	   
+add/delete multiple VM instance single app network 
+	[Tags]   openstack
+	openstack add net  t5test  app
+	openstack add subnet  t5test  app  app  30.0.0.0/24 
+	openstack verify tenant  t5test
+	openstack verify vns  t5test  app
+	openstack add instance  cirros  t5test  app  app-inst1
+	openstack add instance  cirros  t5test  app  app-inst2
+	sleep  15
+	openstack show instance all
+	openstack verify endpoint  app-inst1  app
+	openstack verify endpoint  app-inst2  app
+	openstack delete instance  app-inst1
+	sleep  2
+	${result}=  openstack verify endpoint  app-inst1  app
+	Should not be True  ${result}
+	openstack delete instance  app-inst2
+	sleep  2
+	${result}=  openstack verify endpoint  app-inst2  app
+	Should not be True  ${result}
+	openstack delete keypair  t5test
+	openstack delete net  app
+
+Test 3 tier app in single tenant
+	[Tags]   openstack
+	openstack add net  t5test  app
+	openstack add subnet  t5test  app  app  30.0.0.0/24 
+	openstack verify tenant  t5test
+	openstack verify vns  t5test  app
+	openstack add net  t5test  web
+	openstack add subnet  t5test  web  web  30.0.1.0/24
+	openstack verify vns  t5test  web
+	openstack add net  t5test  db
+	openstack add subnet  t5test  db  db  30.0.2.0/24
+	openstack verify vns  t5test  db
+	openstack add instance  cirros  t5test  app  app-inst1
+	openstack add instance  cirros  t5test  app  app-inst2
+	openstack add instance  cirros  t5test  web  web-inst1
+	openstack add instance  cirros  t5test  web  web-inst2
+	openstack add instance  cirros  t5test  db  db-inst1
+	openstack add instance  cirros  t5test  db  db-inst2
+	sleep  20
+	openstack show instance all
+	openstack verify endpoint  app-inst1  app
+	openstack verify endpoint  app-inst2  app
+	openstack verify endpoint  web-inst1  web
+	openstack verify endpoint  web-inst2  web
+	openstack verify endpoint  db-inst1  db
+	openstack verify endpoint  db-inst2  db
+	openstack delete instance  app-inst1
+	sleep  2
+	${result}=  openstack verify endpoint  app-inst1  app
+	Should not be True  ${result}
+	openstack delete instance  app-inst2
+	sleep  2
+	${result}=  openstack verify endpoint  app-inst2  app
+	Should not be True  ${result}
+	openstack delete instance  web-inst1
+	sleep  2
+	${result}=  openstack verify endpoint  web-inst1  web
+	Should not be True  ${result}
+	openstack delete instance  web-inst2
+	sleep  2
+	${result}=  openstack verify endpoint  web-inst2  web
+	Should not be True  ${result}
+	openstack delete instance  db-inst1
+	sleep  2
+	${result}=  openstack verify endpoint  db-inst1  db
+	Should not be True  ${result}
+	openstack delete instance  db-inst2
+	sleep  2
+	${result}=  openstack verify endpoint  db-inst2  db
+	Should not be True  ${result}
+	openstack delete keypair  t5test
+	openstack delete net  app
+	openstack delete net  web
+	openstack delete net  db
+		
+* keywords
+T5 Functional Suite Setup
+	base suite setup
+  	openstack source  keystone_rc
+  	openstack add tenant  t5test
+  	openstack add user  t5test  t5test  t5test  t5test@t5test.com
+  	sleep  2
+  	openstack source  t5test_rc
+  	openstack add keypair  t5test  /home/stack/devstack/t5test	
+  	
+T5 Functional Suite Teardown
+	openstack source  keystone_rc
+	openstack delete tenant  t5test
+	openstack delete user  t5test
+	openstack delete instance  app-inst1
+	openstack delete net  app
+	openstack delete net  app
+	openstack delete net  web
+	openstack delete net  db
+	base suite teardown
+
+T5 base test setup
+	base test setup
+
+T5 base test teardown
+	openstack delete instance  app-inst1
+	openstack delete instance  app-inst2
+	openstack delete net  app
+	base test teardown
+	openstack delete net  app 
