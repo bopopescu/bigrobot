@@ -1733,12 +1733,12 @@ T5 base suite setup
 	# REST add portgroup								${leaf1_pc4}
 	# REST add portgroup								${leaf2_pc1}
 	# REST add portgroup								${leaf2_pc2}
-	REST add port-group								${leaf0_pc1}
-	REST add port-group								${leaf0_pc2}
-	REST add port-group								${leaf1_pc1}
-	REST add port-group								${leaf1_pc2}
-	REST add port-group								${leaf2_pc1}
-	REST add port-group								${leaf2_pc2}
+	REST add portgroup								${leaf0_pc1}
+	REST add portgroup								${leaf0_pc2}
+	REST add portgroup								${leaf1_pc1}
+	REST add portgroup								${leaf1_pc2}
+	REST add portgroup								${leaf2_pc1}
+	REST add portgroup								${leaf2_pc2}
 	
 
 #	REST add leaf group								leaf0a						leaf0
