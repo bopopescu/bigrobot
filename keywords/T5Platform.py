@@ -28,16 +28,13 @@ class T5Platform(object):
         try:
             t = test.Test()
             if 'c1' in kwargs:
-                helpers.warn("found c1: %s" % kwargs.get('c1'))
                 c1 = t.node_spawn(ip=kwargs.get('c1'))
             else:
                 c1 = t.controller("c1")
             if 'c2' in kwargs:
                 c2 = t.node_spawn(ip=kwargs.get('c2'))
-                helpers.warn("found c2: %s" % kwargs.get('c2'))
             else:
                 c2 = t.controller("c2")
-            
             
             url = '/api/v1/data/controller/cluster'
             
@@ -61,7 +58,9 @@ class T5Platform(object):
             helpers.test_failure("Exception in: rest_verify_ha_cluster %s : %s " % (Exception, err))
             return False
 
-
+    def temp_function(self):
+        
+        self.rest_verify_show_cluster(c1='10.210.144.15', c2='10.210.144.16')
 
     def _cluster_election(self, rigged):
         ''' Invoke "cluster election" commands: re-run or take-leader
