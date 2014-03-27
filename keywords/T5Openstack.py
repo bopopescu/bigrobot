@@ -367,9 +367,19 @@ class T5Openstack(object):
 		os1 = t.openstack_server('os1')
 		tenantId = self.openstack_show_tenant(tenantName)
 		if external is False:
-			os1.bash("neutron net-create --tenant-id %s %s " % (tenantId, netName))             
+			try:
+				os1.bash("neutron net-create --tenant-id %s %s " % (tenantId, netName)) 
+			except:
+				output = helpers.exception_info_value()	
+				helpers.log("Output: %s" % output) 
+				return False           
 		else:
-			os1.bash("neutron net-create --tenant-id %s %s --router:external=True" % (tenantId, netName))  
+			try:
+				os1.bash("neutron net-create --tenant-id %s %s --router:external=True" % (tenantId, netName)) 
+			except:
+				output = helpers.exception_info_value()	
+				helpers.log("Output: %s" % output) 
+				return False 
 		return True
 
 	def openstack_delete_net(self, netName):
@@ -380,7 +390,13 @@ class T5Openstack(object):
 		'''				
 		t = test.Test()
 		os1 = t.openstack_server('os1')		
-		os1.bash("neutron net-delete %s " % (netName))               
+		try:
+			os1.bash("neutron net-delete %s " % (netName)) 
+		except:
+			output = helpers.exception_info_value()
+			helpers.log("Output: %s" % output)
+			return True
+		return True             
 	
 	def openstack_add_subnet(self, tenantName, netName, subnetName, subnet_ip, dnsNameServers=None):
 		'''create subnet
@@ -392,9 +408,19 @@ class T5Openstack(object):
 		os1 = t.openstack_server('os1')
 		tenantId = self.openstack_show_tenant(tenantName)
 		if dnsNameServers is None:
-			os1.bash("neutron subnet-create --tenant-id %s --name %s %s %s" % (tenantId, netName, subnetName, subnet_ip))   
+			try:
+				os1.bash("neutron subnet-create --tenant-id %s --name %s %s %s" % (tenantId, netName, subnetName, subnet_ip)) 
+			except:
+				output = helpers.exception_info_value() 
+				helpers.log("Output: %s" % output)
+				return False 
 		else:	
-			os1.bash("neutron subnet-create --tenant-id %s --name %s %s %s --dns_nameservers list=true %s" % (tenantId, netName, subnetName, subnet_ip, dnsNameServers))   
+			try:
+				os1.bash("neutron subnet-create --tenant-id %s --name %s %s %s --dns_nameservers list=true %s" % (tenantId, netName, subnetName, subnet_ip, dnsNameServers)) 
+			except:
+				output = helpers.exception_info_value() 
+				helpers.log("Output: %s" % output)
+				return False
 		return True
 
 	def openstack_add_keypair(self, keypairName, pathToSave):
@@ -537,7 +563,12 @@ S
 		'''
 		t = test.Test()
 		os1 = t.openstack_server('os1')
-		os1.bash("nova delete %s" % (instanceName))              
+		try:
+			os1.bash("nova delete %s" % (instanceName))              
+		except:
+			output = helpers.exception_info_value()
+			helpers.log("Output: %s" % output)
+			return True		
 		return True
 	
 	def openstack_verify_tenant(self, tenantName):

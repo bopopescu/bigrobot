@@ -1,0 +1,313 @@
+== T5 Platform SPAN Test Suite - Physical Colo Test Bed ==
+
+* Setting
+Documentation    T5 Controller Platform Test Suite - SPAN Verification
+Suite Setup      base suite setup
+Suite Teardown   base suite teardown
+#Suite Setup      T5 base suite setup
+#Suite Teardown   T5 base suite teardown
+#Test Setup       base test setup
+#Test Teardown    base test teardown
+Force Tags       T5Platform  SPAN
+Library          keywords/BsnCommon.py
+Library          keywords/Mininet.py
+Library	    	 keywords/Host.py
+Library          keywords/T5.py
+Library	         keywords/T5L3.py
+Library	         keywords/T5Platform.py
+Library	         keywords/T5Utilities.py
+
+* Variables
+@{spineList}  04:00:00:00:01:00:00:01
+@{leafList}   04:00:00:00:02:00:00:01  04:00:00:00:02:00:00:02  04:00:00:00:02:00:00:03
+
+${s1SrcSwitch}  leaf0-a
+${s1SrcInt}		ethernet7
+${s1DstSwitch}	leaf0-a
+${s1DstInt}		ethernet30
+${s1VerifyHost}  h1
+${s1VerifyInt}	eth2
+
+${s2SrcSwitch}  leaf0-a
+${s2SrcInt}		ethernet8
+${s2DstSwitch}	leaf0-a
+${s2DstInt}		ethernet31
+${s2VerifyHost}  h2
+${s2VerifyInt}	eth2
+
+${s3SrcSwitch}  leaf0-a
+${s3SrcInt}		ethernet9
+${s3DstSwitch}	leaf0-a
+${s3DstInt}		ethernet32
+${s3VerifyHost}  h3
+${s3VerifyInt}	eth2
+
+${s4SrcSwitch}  spine0
+${s4SrcInt}		ethernet1
+${s4DstSwitch}	spine0
+${s4DstInt}		ethernet30
+${s4VerifyHost}  h4
+${s4VerifyInt}	eth2
+
+
+* Test Case 
+
+Configure Multiple L2 Tenants With Single VNS & Failover
+
+	[Tags]	feature
+	Configure 3-Rack/Dual-Leaf/2-Spine/2-Host Setup For Physical Regression Topology 
+	Configure 2 Tenants with Different VLAN properties
+
+Create Span Sessions
+
+	[Tags]  feature   
+	Configure Span sessions
+	Verify Span sessions creation
+	
+	
+Activate & Deactivate Span Sessions & Verify Traffic From Destination
+
+	[Tags]  feature 	
+	Activate Span Session 1 & Verify Traffic From Receiving End
+	sleep  5
+	Deactivate Span Session 1 & Verify Traffic From Receiving End
+	sleep  5
+	Activate Span Session 2 & Verify Traffic From Receiving End
+	sleep  5
+	Deactivate Span Session 2 & Verify Traffic From Receiving End
+	sleep  5
+	Activate Span Session 3 & Verify Traffic From Receiving End
+	sleep  5
+	Deactivate Span Session 3 & Verify Traffic From Receiving End
+	sleep  5
+	Activate Span Session 4 & Verify Traffic From Receiving End
+	sleep  5
+	Deactivate Span Session 4 & Verify Traffic From Receiving End
+	
+
+Delete Span Sessions
+	[Tags]  feature   
+	Delete Span sessions
+	Verify Span sessions deletion
+	
+   
+Clean Config
+	[Tags]  clean
+    rest delete tenant  autoT1
+    rest delete tenant  autoT2
+    auto delete fabric switch  ${spineList}  ${leafList}  2
+    auto delete fabric portgroups
+
+########################################################################################################################################
+
+* Keywords      
+
+
+Configure 3-Rack/Dual-Leaf/2-Spine/2-Host Setup For Physical Regression Topology 
+
+   auto configure fabric switch  ${spineList}  ${leafList}  2
+   sleep  30
+   Set Test Variable  ${h1_intf0}  ethernet17
+   Set Test Variable  ${h1_intf1}  ethernet17
+   Set Test Variable  ${h2_intf0}  ethernet18
+   Set Test Variable  ${h2_intf1}  ethernet18
+   Set Test Variable  ${h3_intf0}  ethernet19
+   Set Test Variable  ${h3_intf1}  ethernet19
+   Set Test Variable  ${h4_intf0}  ethernet2
+   Set Test Variable  ${h4_intf1}  ethernet2
+   Set Test Variable  ${h5_intf0}  ethernet47
+   Set Test Variable  ${h5_intf1}  ethernet47
+   Set Test Variable  ${h6_intf0}  ethernet48
+   Set Test Variable  ${h6_intf1}  ethernet48
+   
+   
+   rest add portgroup  p1
+   rest add interface to portgroup  leaf0-a  ${h1_intf0}  p1
+   rest add interface to portgroup  leaf0-b  ${h1_intf1}  p1
+   rest add portgroup  p2
+   rest add interface to portgroup  leaf0-a  ${h2_intf0}  p2
+   rest add interface to portgroup  leaf0-b  ${h2_intf1}  p2
+   rest add portgroup  p3
+   rest add interface to portgroup  leaf1-a  ${h3_intf0}  p3
+   rest add interface to portgroup  leaf1-b  ${h3_intf1}  p3
+   rest add portgroup  p4
+   rest add interface to portgroup  leaf1-a  ${h4_intf0}  p4
+   rest add interface to portgroup  leaf1-b  ${h4_intf1}  p4
+   rest add portgroup  p5
+   rest add interface to portgroup  leaf2-a  ${h5_intf0}  p5
+   rest add interface to portgroup  leaf2-b  ${h5_intf1}  p5
+   rest add portgroup  p6
+   rest add interface to portgroup  leaf2-a  ${h6_intf0}  p6
+   rest add interface to portgroup  leaf2-b  ${h6_intf1}  p6
+   sleep  10
+
+
+Configure 2 Tenants with Different VLAN properties
+   
+   Set Test Variable  ${subMask}  24
+   Set Test Variable  ${h1bond10ip}  192.168.4.20
+   Set Test Variable  ${h2bond10ip}	 192.168.4.21
+   Set Test Variable  ${h3bond10ip}	 192.168.4.10
+   Set Test Variable  ${vns1ip}  192.168.4.100
+   
+   Set Test Variable  ${h4bond0ip} 	192.168.0.11
+   Set Test Variable  ${h5bond0ip}	192.168.0.30
+   Set Test Variable  ${h6bond0ip}	192.168.0.31
+   Set Test Variable  ${vns2ip}  192.168.0.100
+   
+   Set Test Variable  ${h1ip}	192.168.1.20
+   Set Test Variable  ${h2ip}	192.168.1.21
+   Set Test Variable  ${h3ip}	192.168.1.10
+   Set Test Variable  ${h4ip}	192.168.1.11
+
+   rest add tenant  autoT1
+   rest add vns  autoT1  v1
+   rest add portgroup to vns  autoT1  v1  p0  10
+   rest add portgroup to vns  autoT1  v1  p1  10
+   rest add portgroup to vns  autoT1  v1  p2  10
+   rest add vns ip  autoT1  v1  ${vns1ip}  ${subMask}
+   rest add vns  autoT1  v2
+   rest add portgroup to vns  autoT1  v2  p3  -1
+   rest add portgroup to vns  autoT1  v2  p4  -1
+   rest add portgroup to vns  autoT1  v2  p5  -1
+   rest add vns ip  autoT1  v2  ${vns2ip}  ${subMask}
+   
+   rest add tenant  autoT2
+   rest add vns  autoT2  v3
+   rest add interface to vns  autoT2  v3  leaf0-a  ethernet25  -1
+   rest add interface to vns  autoT2  v3  leaf0-a  ethernet25  -1
+   rest add interface to vns  autoT2  v3  leaf1-a  ethernet25  -1
+   rest add interface to vns  autoT2  v3  leaf1-a  ethernet26  -1
+
+   sleep  30
+   
+
+
+Configure Span sessions
+  
+	${returnVal} =  rest add monitor session  1  ${s1SrcSwitch}  ${s1SrcInt}  ${s1DstSwitch}  ${s1DstInt}  direction=both 
+	Should be true  ${returnVal}
+	${returnVal} =  rest add monitor session  2  ${s2SrcSwitch}  ${s2SrcInt}  ${s2DstSwitch}  ${s2DstInt}  direction=ingress 
+	Should be true  ${returnVal}
+	${returnVal} =  rest add monitor session  3  ${s3SrcSwitch}  ${s3SrcInt}  ${s3DstSwitch}  ${s3DstInt}  direction=egress 
+	Should be true  ${returnVal}
+	${returnVal} =  rest add monitor session  4  ${s4SrcSwitch}  ${s4SrcInt}  ${s4DstSwitch}  ${s4DstInt}  direction=both 
+	Should be true  ${returnVal}
+	
+	
+Verify Span sessions creation
+
+	${returnVal} =  rest verify monitor session  1  ${s1SrcSwitch}  ${s1SrcInt}  ${s1DstSwitch}  ${s1DstInt}  direction=both 
+	Should be true  ${returnVal}
+	${returnVal} =  rest verify monitor session  2  ${s2SrcSwitch}  ${s2SrcInt}  ${s2DstSwitch}  ${s2DstInt}  direction=ingress 
+	Should be true  ${returnVal}
+	${returnVal} =  rest verify monitor session  3  ${s3SrcSwitch}  ${s3SrcInt}  ${s3DstSwitch}  ${s3DstInt}  direction=egress 
+	Should be true  ${returnVal}
+	${returnVal} =  rest verify monitor session  4  ${s4SrcSwitch}  ${s4SrcInt}  ${s4DstSwitch}  ${s4DstInt}  direction=both 
+	Should be true  ${returnVal}
+
+
+
+Activate Span Session 1 & Verify Traffic From Receiving End
+
+	${returnVal} =  rest activate monitor session  1
+	Should be true  ${returnVal}
+	sleep  5
+	${returnVal} =  platform tcp dump  ${s1VerifyHost}  ${s1VerifyInt}  ICMP echo request.*ICMP echo reply
+	Should be true  ${returnVal}
+
+Deactivate Span Session 1 & Verify Traffic From Receiving End
+
+	${returnVal} =  rest deactivate monitor session  1
+	Should be true  ${returnVal}
+	sleep  5
+	${returnVal} =  platform tcp dump  ${s1VerifyHost}  ${s1VerifyInt}  ICMP echo request.*ICMP echo reply
+	Should not be true  ${returnVal}
+
+Activate Span Session 2 & Verify Traffic From Receiving End
+
+	${returnVal} =  rest activate monitor session  2
+	Should be true  ${returnVal}
+	sleep  5
+	${returnVal} =  platform tcp dump  ${s2VerifyHost}  ${s2VerifyInt}  ICMP echo request.*ICMP echo reply
+	Should be true  ${returnVal}
+
+Deactivate Span Session 2 & Verify Traffic From Receiving End
+
+	${returnVal} =  rest deactivate monitor session  2
+	Should be true  ${returnVal}
+	sleep  5
+	${returnVal} =  platform tcp dump  ${s2VerifyHost}  ${s2VerifyInt}  ICMP echo request.*ICMP echo reply
+	Should not be true  ${returnVal}
+	
+Activate Span Session 3 & Verify Traffic From Receiving End
+
+	${returnVal} =  rest activate monitor session  3
+	Should be true  ${returnVal}
+	sleep  5
+	${returnVal} =  platform tcp dump  ${s3VerifyHost}  ${s3VerifyInt}  ICMP echo request.*ICMP echo reply
+	Should be true  ${returnVal}
+
+Deactivate Span Session 3 & Verify Traffic From Receiving End
+
+	${returnVal} =  rest deactivate monitor session  3
+	Should be true  ${returnVal}
+	sleep  5
+	${returnVal} =  platform tcp dump  ${s3VerifyHost}  ${s3VerifyInt}  ICMP echo request.*ICMP echo reply
+	Should not be true  ${returnVal}
+
+Activate Span Session 4 & Verify Traffic From Receiving End
+
+	${returnVal} =  rest activate monitor session  4
+	Should be true  ${returnVal}
+	sleep  5
+	${returnVal} =  platform tcp dump  ${s4VerifyHost}  ${s4VerifyInt}  ICMP echo request.*ICMP echo reply
+	Should be true  ${returnVal}
+
+Deactivate Span Session 4 & Verify Traffic From Receiving End
+
+	${returnVal} =  rest deactivate monitor session  4
+	Should be true  ${returnVal}
+	sleep  5
+	${returnVal} =  platform tcp dump  ${s4VerifyHost}  ${s4VerifyInt}  ICMP echo request.*ICMP echo reply
+	Should not be true  ${returnVal}
+
+
+Delete Span sessions
+
+	${returnVal} =  rest delete monitor session  1 
+	Should be true  ${returnVal}
+	${returnVal} =  rest delete monitor session  2
+	Should be true  ${returnVal}
+	${returnVal} =  rest delete monitor session  3
+	Should be true  ${returnVal}
+
+
+Verify Span sessions deletion
+
+	${returnVal} =  rest verify monitor session  1  ${s1SrcSwitch}  ${s1SrcInt}  ${s1DstSwitch}  ${s1DstInt}  direction=both 
+	Should not be true  ${returnVal}
+	${returnVal} =  rest verify monitor session  2  ${s2SrcSwitch}  ${s2SrcInt}  ${s2DstSwitch}  ${s2DstInt}  direction=ingress 
+	Should not be true  ${returnVal}
+	${returnVal} =  rest verify monitor session  3  ${s3SrcSwitch}  ${s3SrcInt}  ${s3DstSwitch}  ${s3DstInt}  direction=egress 
+	Should not be true  ${returnVal}
+
+
+
+T5 base suite setup
+
+	base suite setup
+
+
+T5 base suite teardown   
+
+   rest delete tenant  autoT1
+   rest delete tenant  autoT2
+   auto delete fabric switch  ${spineList}  ${leafList}  2
+   auto delete fabric portgroups
+   base suite teardown
+   
+
+   
+   
+   
