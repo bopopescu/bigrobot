@@ -4,8 +4,8 @@
 Documentation    T5 BVS APP Functional Openstack integration work flow test suite
 Suite Setup      T5 Functional Suite Setup
 Suite Teardown   T5 Functional Suite Teardown
-Test Setup       T5 base test setup
-Test Teardown    T5 base test teardown
+Test Setup       base test setup
+Test Teardown    base test teardown
 Force Tags       T5 
 Library          keywords/BsnCommon.py
 Library          keywords/T5.py
@@ -81,19 +81,36 @@ add/delete multiple network in a project
 	openstack add user  app-tenant  app  app  app@app.com 
 	openstack add net  app-tenant  app-net
 	openstack add subnet  app-tenant  app-net  app-net  30.0.0.0/24 
+	sleep  2
 	openstack verify vns  app-tenant  app-net
 	openstack add net  app-tenant  app-net1
 	openstack add subnet  app-tenant  app-net1  app-net1  30.0.1.0/24
+	sleep  2
 	openstack verify vns  app-tenant  app-net1
-	openstack add net  app-tenant  app-net1
+	openstack add net  app-tenant  app-net2
 	openstack add subnet  app-tenant  app-net2  app-net2  30.0.2.0/24
+	sleep  2
 	openstack verify vns  app-tenant  app-net2
 	openstack delete net  app-net
-	openstack verify vns  app-tenant  app-net
 	openstack delete net  app-net1
-	openstack verify vns  app-tenant  app-net1
 	openstack delete net  app-net2
-	openstack verify vns  app-tenant  app-net2
+	sleep  2
+	rest verify vns
+	openstack verify vns  app-tenant  app-net
+
+checking multiple network same subnet in a single tenant
+	[Tags]  openstack
+	openstack add tenant   app-tenant 
+	openstack add user  app-tenant  app  app  app@app.com 
+	openstack add net  app-tenant  app-net
+	openstack add subnet  app-tenant  app-net  app-net  30.0.0.0/24 
+	sleep  2
+	openstack verify vns  app-tenant  app-net
+	openstack add net  app-tenant  app-net1
+	openstack add subnet  app-tenant  app-net1  app-net1  30.0.0.0/24
+	sleep  2	
+	${result}=  openstack verify vns  app-tenant  app-net2
+	Should not be True  ${result}
 	
 * keywords
 T5 Functional Suite Setup
@@ -103,6 +120,8 @@ T5 Functional Suite Setup
 T5 Functional Suite Teardown
 	openstack delete tenant  app-tenant
 	openstack delete user  app
-	openstack delete net  app-net  
+	openstack delete net  app-net 
+	openstack delete net  app-net1
+	openstack delete net  app-net2 
 	base suite teardown
   
