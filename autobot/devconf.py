@@ -86,28 +86,30 @@ class DevConf(object):
             else:
                 helpers.environment_failure("Supported protocols are 'telnet' and 'ssh'")
         except LoginFailure:
-            helpers.environment_failure("Login failure: Check the user name and password"
-                                        " for device %s (user:%s, password:%s). Also try"
-                                        " to log in manually to see what the error is."
-                                        % (self._host, self._user, self._password))
+            helpers.warn("Login failure: Check the user name and password"
+                         " for device %s (user:%s, password:%s). Also try"
+                         " to log in manually to see what the error is."
+                         % (self._host, self._user, self._password))
+            helpers.environment_failure("LoginFailure")
             helpers.log("Exception in %s" % sys.exc_info()[0])
             raise
         except TimeoutException:
-            helpers.environment_failure("Login failure: Timed out during SSH connnect"
-                                        " to device %s. Try to log in manually to see"
-                                        " what the error is." % self._host)
+            helpers.warn("Login failure: Timed out during SSH connnect"
+                         " to device %s. Try to log in manually to see"
+                         " what the error is." % self._host)
+            helpers.environment_failure("TimeoutException")
             # helpers.log("Exception in %s" % sys.exc_info()[0])
             # raise
         except:
             if hasattr(self.conn, 'buffer'):
-                helpers.log("Unexpected SSH login exception in %s\n"
-                            "Expect buffer:\n%s%s"
-                            % (sys.exc_info()[0],
-                               self.conn.buffer.__str__(),
-                               br_utils.end_of_output_marker()))
+                helpers.warn("Unexpected SSH login exception in %s\n"
+                             "Expect buffer:\n%s%s"
+                             % (sys.exc_info()[0],
+                                self.conn.buffer.__str__(),
+                                br_utils.end_of_output_marker()))
             else:
-                helpers.log("Unexpected SSH login exception in %s"
-                            % (sys.exc_info()[0]))
+                helpers.warn("Unexpected SSH login exception in %s"
+                             % (sys.exc_info()[0]))
             raise
 
         # Reset mode to 'cli' as default
