@@ -374,9 +374,8 @@ class T5Openstack(object):
 				helpers.log("Output: %s" % output) 
 				return False           
 		else:
-			os1.bash("neutron net-create --tenant-id %s %s --router:external=True" % (tenantId, netName)) 
 			try:
-				os1.bash("neutron net-create --tenant-id %s %s " % (tenantId, netName)) 
+				os1.bash("neutron net-create --tenant-id %s %s --router:external=True" % (tenantId, netName)) 
 			except:
 				output = helpers.exception_info_value()	
 				helpers.log("Output: %s" % output) 
