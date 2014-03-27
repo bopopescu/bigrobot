@@ -1,7 +1,9 @@
 #!/bin/sh -x
 # Call Robot Framework's rebot to generate the consolidated log.
 # rebot unfortunately returns with a non-zero exit code which causes
-# Jenkins build to fail. So here we wrap it with a successful exit.
+# the Jenkins build to fail (rebot returns the same error code as
+# gobot, so the error code is the number of test cases which have
+# failed). As a workaround, we force it to exit successfully always.
 # This script assumes that we're in a log directory where all the
 # Robot log files are found. E.g.,
 #   /home/bsn/workspace/VuiTest/bigtest/testlogs/
