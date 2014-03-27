@@ -481,8 +481,8 @@ class T5(object):
                             helpers.test_failure("Expected VNS's are not present in the config")
                             return False
                 else:
-                        helpers.log("No VNS are added")
-                        return False
+                        helpers.log("No VNS are present")
+                        return True
 
     def rest_verify_vns_scale(self, count):
         '''Verify VNS information for scale
