@@ -1,0 +1,127 @@
+== T5 Functional Openstack Integration work flow test ==
+
+* Setting
+Documentation    T5 BVS APP Functional Openstack integration work flow test suite
+Suite Setup      T5 Functional Suite Setup
+Suite Teardown   T5 Functional Suite Teardown
+Test Setup       base test setup
+Test Teardown    base test teardown
+Force Tags       T5 
+Library          keywords/BsnCommon.py
+Library          keywords/T5.py
+Library          keywords/T5Platform.py
+Library	         keywords/SwitchLight.py
+Library	         keywords/Host.py
+Library		     keywords/Ixia.py
+Library          keywords_dev/prashanth/T5Openstack.py
+Library			 Collections.py
+Resource		 testsuites/T5/t5_physical_variables.txt
+Resource         testsuites_dev/prashanth/t5-openstack/t5_openstack_variables.txt
+
+* Test Case 
+
+add/delete single project openstack 
+	[Tags]   openstack
+	openstack add tenant   app-tenant 
+	openstack add user  app-tenant  app  app  app@app.com 
+	openstack add net  app-tenant  app-net
+	openstack add subnet  app-tenant  app-net  app-net  30.0.0.0/24 
+	openstack verify tenant  app-tenant
+	openstack delete net  app-net
+	${result}=  openstack verify tenant  app-tenant
+	Should not be True  ${result}
+
+   	
+add/delete single subnet from openstack
+	[Tags]  openstack
+	openstack add tenant   app-tenant 
+	openstack add user  app-tenant  app  app  app@app.com 
+	openstack add net  app-tenant  app-net
+	openstack add subnet  app-tenant  app-net  app-net  30.0.0.0/24 
+	openstack verify vns  app-tenant  app-net
+	openstack delete net  app-net
+	openstack verify vns  app-tenant  app-net
+	
+add/delete multiple projects in openstack
+	[Tags]   openstack
+	openstack add tenant   app-tenant 
+	openstack add user  app-tenant  app  app  app@app.com 
+	openstack add net  app-tenant  app-net
+	openstack add subnet  app-tenant  app-net  app-net  30.0.0.0/24 
+	openstack verify tenant  app-tenant
+	openstack add tenant   web-tenant 
+	openstack add user  web-tenant  web  web  web@web.com 
+	openstack add net  web-tenant  web-net
+	openstack add subnet  web-tenant  web-net  web-net  30.0.1.0/24 
+	openstack verify tenant  web-tenant
+	openstack add tenant   db-tenant 
+	openstack add user  db-tenant  db  db  db@db.com 
+	openstack add net  db-tenant  db-net
+	openstack add subnet  db-tenant  db-net  db-net  30.0.2.0/24 
+	openstack verify tenant  db-tenant
+	openstack delete net  db-net
+	openstack delete net  web-net
+	openstack delete net  app-net
+	${result}=  openstack verify tenant  app-tenant
+	Should not be True  ${result}	
+	${result}=  openstack verify tenant  web-tenant
+	Should not be True  ${result}
+	${result}=  openstack verify tenant  db-tenant
+	Should not be True  ${result}
+	openstack delete tenant  app-tenant
+	openstack delete tenant  web-tenant
+	openstack delete tenant  db-tenant
+	openstack delete user  app
+	openstack delete user  web
+	openstack delete user  db
+
+add/delete multiple network in a project
+	[Tags]  openstack
+	openstack add tenant   app-tenant 
+	openstack add user  app-tenant  app  app  app@app.com 
+	openstack add net  app-tenant  app-net
+	openstack add subnet  app-tenant  app-net  app-net  30.0.0.0/24 
+	sleep  2
+	openstack verify vns  app-tenant  app-net
+	openstack add net  app-tenant  app-net1
+	openstack add subnet  app-tenant  app-net1  app-net1  30.0.1.0/24
+	sleep  2
+	openstack verify vns  app-tenant  app-net1
+	openstack add net  app-tenant  app-net2
+	openstack add subnet  app-tenant  app-net2  app-net2  30.0.2.0/24
+	sleep  2
+	openstack verify vns  app-tenant  app-net2
+	openstack delete net  app-net
+	openstack delete net  app-net1
+	openstack delete net  app-net2
+	sleep  2
+	rest verify vns
+	openstack verify vns  app-tenant  app-net
+
+checking multiple network same subnet in a single tenant
+	[Tags]  openstack
+	openstack add tenant   app-tenant 
+	openstack add user  app-tenant  app  app  app@app.com 
+	openstack add net  app-tenant  app-net
+	openstack add subnet  app-tenant  app-net  app-net  30.0.0.0/24 
+	sleep  2
+	openstack verify vns  app-tenant  app-net
+	openstack add net  app-tenant  app-net1
+	openstack add subnet  app-tenant  app-net1  app-net1  30.0.0.0/24
+	sleep  2	
+	${result}=  openstack verify vns  app-tenant  app-net2
+	Should not be True  ${result}
+	
+* keywords
+T5 Functional Suite Setup
+	base suite setup
+  	openstack source  keystone_rc	
+  	
+T5 Functional Suite Teardown
+	openstack delete tenant  app-tenant
+	openstack delete user  app
+	openstack delete net  app-net 
+	openstack delete net  app-net1
+	openstack delete net  app-net2 
+	base suite teardown
+  
