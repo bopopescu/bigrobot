@@ -1,0 +1,2 @@
+* Variables
+${VALUE}    1234567

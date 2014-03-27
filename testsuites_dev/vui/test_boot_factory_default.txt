@@ -4,6 +4,7 @@ Force Tags      Vui
 #Library         Reserve
 Library         keywords/BsnCommon.py
 Library         keywords/Controller.py
+Library         keywords_dev/vui/MyTest.py
 
 
 * Test Cases
@@ -20,7 +21,7 @@ Test first boot configuration
     ...                  dns_server=10.192.3.1  dns_search=bigswitch.com
 
 Test cli boot factory default and first boot
-    #[Tags]           skipped
+    [Tags]           skipped
     ${status}=       cli boot factory default and first boot
     ...                  node=c1
 #    ...                  ip_address=10.192.104.2  netmask=18
@@ -30,3 +31,5 @@ Test cli boot factory default and first boot
     Log              status=${status}
     Should be true   ${status}
 
+Test console reconnect
+    test console reconnect  c1

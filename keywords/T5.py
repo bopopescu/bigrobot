@@ -233,7 +233,8 @@ class T5(object):
 
         helpers.test_log("Input arguments: port-group = %s" % pg)
 
-        url = '/api/v1/data/controller/fabric/port-group[name="%s"]' % (pg)
+        url = '/api/v1/data/controller/applications/bvs/port-group[name="%s"]' % (pg)
+
         try:
             c.rest.put(url, {"name": pg})
         except:
@@ -247,7 +248,7 @@ class T5(object):
 
         helpers.test_log("Input arguments: port-group = %s" % pg)
 
-        url = '/api/v1/data/controller/fabric/port-group[name="%s"]' % (pg)
+        url = '/api/v1/data/controller/applications/bvs/port-group[name="%s"]' % (pg)
         try:
             c.rest.delete(url, {"name": pg})
         except:
@@ -302,7 +303,7 @@ class T5(object):
 
         url = '/api/v1/data/controller/core/switch-config[name="%s"]/interface[name="%s"]' % (switch, intf)
         try:
-            c.rest.put(url, {"name": intf, "port-group-name": pg})
+            c.rest.put(url, {"name": intf, "port-group": pg})
         except:
             return False
         else:
@@ -314,7 +315,9 @@ class T5(object):
 
         helpers.test_log("Input arguments: port-group = %s" % (pg))
 
-        url = '/api/v1/data/controller/fabric/port-group[name="%s"]' % (pg)
+        #url = '/api/v1/data/controller/fabric/port-group[name="%s"]' % (pg)
+        url = '/api/v1/data/controller/applications/bvs/port-group[name="%s"]' % (pg)
+        
         try:
             c.rest.patch(url, {"mode": "lacp"})
         except:
@@ -478,8 +481,8 @@ class T5(object):
                             helpers.test_failure("Expected VNS's are not present in the config")
                             return False
                 else:
-                        helpers.log("No VNS are added")
-                        return False
+                        helpers.log("No VNS are present")
+                        return True
 
     def rest_verify_vns_scale(self, count):
         '''Verify VNS information for scale
@@ -551,7 +554,7 @@ class T5(object):
                     if str(data[i]["vns-name"]) == vns:
                         if str(data[i]["attachment-point"]["vlan"]) == str(vlan):
                             if (data[i]["mac"] == str(mac)) :
-                                if (data[i]["attachment-point"]["switch-name"] == switch) :
+                                if (data[i]["attachment-point"]["name"] == switch) :
                                     if (data[i]["attachment-point"]["interface-name"] == str(intf)) :
                                         helpers.log("Expected Endpoints are added data matches is %s" % data[i]["mac"])
                                         return True
@@ -578,7 +581,7 @@ class T5(object):
                 if str(data[i]["vns-name"]) == vns:
                     if str(data[i]["attachment-point"]["vlan"]) == str(vlan):
                         if (data[i]["mac"] == str(mac)) :
-                            if (data[i]["attachment-point"]["switch-name"] == switch) :
+                            if (data[i]["attachment-point"]["name"] == switch) :
                                 if (data[i]["attachment-point"]["interface-name"] == str(intf)) :
                                     if (data[i]["configured-endpoint"] == True) :
                                         helpers.log("Expected Endpoints are added data matches is %s" % data[i]["mac"])
@@ -1382,11 +1385,11 @@ class T5(object):
                         helpers.log("Pass: Fabric switch connection status for spine is correct")
                         return True
                     elif data[0]["fabric-role"] == "leaf" and data[0]["suspended"] == False and data[0]["leaf-group"] != '':
-                        if data[0]["dpid"] == dpid and data[0]["lacp-port-offset"] == 0:
-                            helpers.log("Pass: Fabric switch connection status for %s dual leaf is correct" % str(data[0]["switch-name"]))
+                        if data[0]["dpid"] == dpid and data[0]["lacp-interface-offset"] == 0:
+                            helpers.log("Pass: Fabric switch connection status for %s dual leaf is correct" % str(data[0]["name"]))
                             return True
-                        elif data[0]["dpid"] == dpid and data[0]["lacp-port-offset"] == 100:
-                            helpers.log("Pass: Fabric switch connection status for %s dual leaf is correct" % str(data[0]["switch-name"]))
+                        elif data[0]["dpid"] == dpid and data[0]["lacp-interface-offset"] == 100:
+                            helpers.log("Pass: Fabric switch connection status for %s dual leaf is correct" % str(data[0]["name"]))
                             return True
                 elif data[0]["suspended"] == True:
                         helpers.log("Default fabric role is virtual for not added fabric switches")
@@ -1455,7 +1458,7 @@ class T5(object):
         list_spine = []
         for i in range(0,len(data)):
             if data[i]["fabric-role"] == "spine":
-                list_spine.append(data[i]["switch-name"])
+                list_spine.append(data[i]["name"])
 
         helpers.log("Total Spine in the topology: %d" % len(list_spine))
         return list_spine
@@ -1741,7 +1744,7 @@ class T5(object):
         vrange = int(vrange)
         c.rest.get(url)
         data = c.rest.content()
-        if data[0]["interface-name"] == intf and data[0]["switch-name"] == switch:
+        if data[0]["interface-name"] == intf and data[0]["name"] == switch:
             if (data[0]["tx-counter"]["unicast-packet"] >= (frame_cnt - vrange)) and (data[0]["tx-counter"]["unicast-packet"] <= (frame_cnt + vrange)):
                 helpers.log("Pass: Rate value Expected:%d, Actual:%d" % (frame_cnt, data[0]["tx-counter"]["unicast-packet"]))
                 return True
@@ -1769,7 +1772,7 @@ class T5(object):
         vrange = int(vrange)
         c.rest.get(url)
         data = c.rest.content()
-        if data[0]["interface-name"] == intf and data[0]["switch-name"] == switch:
+        if data[0]["interface-name"] == intf and data[0]["name"] == switch:
             if (data[0]["rx-rate"]["unicast-packet-rate"] >= (frame_rate - vrange)) and (data[0]["rx-rate"]["unicast-packet-rate"] <= (frame_rate + vrange)):
                 helpers.log("Pass: Rate value Expected:%d, Actual:%d" % (frame_rate, data[0]["rx-rate"]["unicast-packet-rate"]))
                 return True
@@ -1791,7 +1794,7 @@ class T5(object):
         vrange = int(vrange)
         c.rest.get(url)
         data = c.rest.content()
-        if data[0]["interface-name"] == intf and data[0]["switch-name"] == switch:
+        if data[0]["interface-name"] == intf and data[0]["name"] == switch:
             if (data[0]["tx-rate"]["unicast-packet-rate"] >= (frame_rate - vrange)) and (data[0]["tx-rate"]["unicast-packet-rate"] <= (frame_rate + vrange)):
                 helpers.log("Pass: Rate value Expected:%d, Actual:%d" % (frame_rate, data[0]["tx-rate"]["unicast-packet-rate"]))
                 return True
@@ -2027,7 +2030,7 @@ class T5(object):
         url = '/api/v1/data/controller/applications/bvs/info/stats/interface-stats/interface[switch-name="%s"][interface-name="%s"]?select=brief' % (switch, intf)
         c.rest.get(url)
         data = c.rest.content()
-        if data[0]["switch-name"] == switch and data[0]["interface-name"] == intf:
+        if data[0]["name"] == switch and data[0]["interface-name"] == intf:
                     if (int(data[0]["brief"]["rx-unicast-packet"]) >= (frame_cnt - vrange)) and (int(data[0]["brief"]["rx-unicast-packet"]) <= (frame_cnt + vrange)):
                         if (int(data[0]["brief"]["tx-unicast-packet"]) >= (frame_cnt - vrange)) and (int(data[0]["brief"]["tx-unicast-packet"]) <= (frame_cnt + vrange)):
                             helpers.log("Pass: Stats-brief counter for interface rx:%d, tx:%d" % (int(data[0]["brief"]["rx-unicast-packet"]), int(data[0]["brief"]["tx-unicast-packet"])))

@@ -618,7 +618,7 @@ Flap link between BW3 and top of rack switch, verify traffic recovers
     verify results  a  transmitted_frame_rate  c  received_frame_rate
     verify results  c  transmitted_frame_rate  a  received_frame_rate    
     stop traffic  ${stream}
-    [Tags]  traffic  sanity  
+    [Tags]  traffic  sanity  run 
 
 
 Restart OFAD on BW1 and verify traffic recovers
@@ -633,7 +633,7 @@ Restart OFAD on BW1 and verify traffic recovers
     verify results  a  transmitted_frame_rate  c  received_frame_rate
     verify results  c  transmitted_frame_rate  a  received_frame_rate    
     stop traffic  ${stream}
-    [Tags]  traffic  sanity  skipped       
+    [Tags]  traffic  sanity  run     
 
 Restart OFAD on BW2 and verify traffic recovers
     ${stream}=  L2 add  flow=e<->f  frame_rate=1000000  frame_size=64  name=e_f_flow
@@ -647,7 +647,7 @@ Restart OFAD on BW2 and verify traffic recovers
     verify results  e  transmitted_frame_rate  f  received_frame_rate
     verify results  f  transmitted_frame_rate  e  received_frame_rate    
     stop traffic  ${stream}
-    [Tags]  traffic  sanity  skipped     
+    [Tags]  traffic  sanity  run
     
 Reboot BW1 and verify traffic recovers
     ${stream}=  L2 add  flow=a<->c  frame_rate=1000000  frame_size=64  name=a_c_flow
@@ -661,7 +661,7 @@ Reboot BW1 and verify traffic recovers
     verify results  a  transmitted_frame_rate  c  received_frame_rate
     verify results  c  transmitted_frame_rate  a  received_frame_rate    
     stop traffic  ${stream}
-    [Tags]  traffic  sanity  skipped     
+    [Tags]  traffic  sanity  run
 
 Reboot BW2 and verify traffic recovers
     ${stream}=  L2 add  flow=e<->f  frame_rate=1000000  frame_size=64  name=e_f_flow
@@ -675,7 +675,7 @@ Reboot BW2 and verify traffic recovers
     verify results  e  transmitted_frame_rate  f  received_frame_rate
     verify results  f  transmitted_frame_rate  e  received_frame_rate    
     stop traffic  ${stream}
-    [Tags]  traffic  sanity  skipped     
+    [Tags]  traffic  sanity  run
      
                                 
 * Keywords
