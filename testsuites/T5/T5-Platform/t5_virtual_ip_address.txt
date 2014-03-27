@@ -9,7 +9,8 @@ Library  			keywords/T5Platform.py
 
 
 *** Variables ***
-${vip}  			10.192.103.200
+${vip}  			10.192.103.111
+${vip bis} 			10.192.103.123
 ${vip invalid}  	10.192.103.333
 ${vip string}	  	test-ip-address
 ${vip zeros}		0.0.0.0
@@ -77,6 +78,20 @@ T1.6 REST Verify it is impossible to have 0.0.0.0 or 255.255.255.255 virtual IP 
 	Should Not Be True  ${state}
 	[Tags]  T5  Virtual IP  REST  Platform
 
+T1.7 REST Change Virtual IP address
+	Rest Configure Virtual IP  ${vip}
+	Sleep  5 sec
+	${configured} =  Rest Show Virtual IP
+	Should Be Equal as Strings  ${configured}  ${vip}
+	${mac1} =  Rest Get MAC Using Virtual IP   ${vip}
+	Rest Configure Virtual IP  ${vip bis}
+	Sleep  5 sec
+	${configured} =  Rest Show Virtual IP
+	Should Be Equal as Strings  ${configured}  ${vip bis}
+	${mac2} =  Rest Get MAC Using Virtual IP   ${vip bis}
+	Should Be Equal as Strings  ${mac1}  ${mac2}
+	[Tags]  T5  Virtual IP  REST  Platform
+
 
 ### CLI FUNCTIONS
 T2.1 CLI Configure and verify virtual IP address
@@ -138,6 +153,20 @@ T2.6 CLI Verify it is impossible to have 0.0.0.0 or 255.255.255.255 virtual IP a
 	Should Not Be True  ${state}
 	${state} =  Cli Configure Virtual IP  ${vip broadcast}
 	Should Not Be True  ${state}
+	[Tags]  T5  Virtual IP  CLI  Platform
+
+T2.7 CLI Change Virtual IP address
+	Cli Configure Virtual IP  ${vip}
+	Sleep  5 sec
+	${configured} =  Cli Show Virtual IP
+	Should Be Equal As Strings  ${configured}  ${vip}
+	${eth0-vip} =  Cli Get Eth0 IP Using Virtual IP  ${vip}
+	Cli Configure Virtual IP  ${vip bis}
+	Sleep  5 sec
+	${configured} =  Cli Show Virtual IP
+	Should Be Equal As Strings  ${configured}  ${vip bis}
+	${eth0-vip-bis} =  Cli Get Eth0 IP Using Virtual IP  ${vip bis}
+	Should Be Equal as Strings  ${eth0-vip}  ${eth0-vip-bis}
 	[Tags]  T5  Virtual IP  CLI  Platform
 #(BSC-4925) Virtual IP not functional after chaning the time-zone(?) right after first boot
 
