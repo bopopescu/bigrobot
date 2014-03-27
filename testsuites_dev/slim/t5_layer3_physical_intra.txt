@@ -13,6 +13,7 @@ Library         keywords/T5Platform.py
 Library         keywords_dev/animesh/BsnCommonShow.py
 Library         keywords_dev/slim/SwitchLight.py
 Library	        Collections.py
+Library         keywords/Ixia.py
 Library			autobot/helpers/__init__.py
 Resource		testsuites_dev/slim/t5_layer3_physical_intra_variables.txt
 Resource		testsuites/T5/t5_dualleaf_three_rack_physical_resource.txt

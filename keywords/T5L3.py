@@ -721,7 +721,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
             #return c.rest.content()
             return True
 
-    def rest_apply_policy_on_tenant(self, tenant, intf='system', polname):
+    def rest_apply_policy_on_tenant(self, tenant, polname, intf="system"):
         '''Create a tenant policy
         
             Input:
