@@ -15,57 +15,57 @@ Library         keywords_dev/slim/SwitchLight.py
 Library	        Collections.py
 Library         keywords/Ixia.py
 Library			autobot/helpers/__init__.py
-Resource		testsuites_dev/slim/t5_layer3_physical_intra_variables.txt
+Resource		testsuites_dev/slim/T5_L3_physical_inter/t5_layer3_physical_inter_variables.txt
 Resource		testsuites/T5/t5_dualleaf_three_rack_physical_resource.txt
 
 
 * Test Cases
-Intra tenant L3 untagged traffic with dynamic endpoints same rack
-	L3 intra tenant same rack untagged with dynamic endpoints
+Inter tenant L3 untagged traffic with dynamic endpoints same rack
+	L3 inter tenant same rack untagged with dynamic endpoints
 #	[Tags]							skipped			smoke				sanity			
 
-Intra tenant L3 untagged traffic with dynamic endpoints across rack
-	L3 intra tenant across rack untagged with dynamic endpoints
+Inter tenant L3 untagged traffic with dynamic endpoints across rack
+	L3 inter tenant across rack untagged with dynamic endpoints
 	[Tags]							skipped			smoke				sanity	
 
-Intra tenant L3 tagged traffic with dynamic endpoints same rack
-	L3 intra tenant same rack tagged with dynamic endpoints
+inter tenant L3 tagged traffic with dynamic endpoints same rack
+	L3 inter tenant same rack tagged with dynamic endpoints
 	[Tags]							skipped			smoke				sanity			
 
-Intra tenant L3 tagged traffic with dynamic endpoints across rack
-	L3 intra tenant across rack tagged with dynamic endpoints
+inter tenant L3 tagged traffic with dynamic endpoints across rack
+	L3 inter tenant across rack tagged with dynamic endpoints
 	[Tags]							skipped			smoke				sanity	
 
-Intra tenant L3 untagged traffic with static endpoints same rack
-	L3 intra tenant same rack untagged with static endpoints
+inter tenant L3 untagged traffic with static endpoints same rack
+	L3 inter tenant same rack untagged with static endpoints
 	[Tags]							skipped			smoke				sanity			
 
-Intra tenant L3 untagged traffic with static endpoints across rack
-	L3 intra tenant across rack untagged with static endpoints
+inter tenant L3 untagged traffic with static endpoints across rack
+	L3 inter tenant across rack untagged with static endpoints
 	[Tags]							skipped			smoke				sanity	
 
-Intra tenant L3 tagged traffic with static endpoints same rack
-	L3 intra tenant same rack tagged with static endpoints
+inter tenant L3 tagged traffic with static endpoints same rack
+	L3 inter tenant same rack tagged with static endpoints
 	[Tags]							skipped			smoke				sanity			
 
-Intra tenant L3 tagged traffic with static endpoints across rack
-	L3 intra tenant across rack tagged with static endpoints
+inter tenant L3 tagged traffic with static endpoints across rack
+	L3 inter tenant across rack tagged with static endpoints
 	[Tags]							skipped			smoke				sanity	
 
-Intra tenant dhcp relay 
-	L3 intra tenant dhcp relay on same rack
+inter tenant dhcp relay 
+	L3 inter tenant dhcp relay on same rack
 	[Tags]							skipped			smoke				sanity	
 	
-Intra tenant dhcp relay with circuit id
-	L3 intra tenant dhcp relay with circuit id on same rack
+inter tenant dhcp relay with circuit id
+	L3 inter tenant dhcp relay with circuit id on same rack
 	[Tags]							skipped			smoke				sanity	
 
-Intra tenant dhcp relay across rack
-	L3 intra tenant dhcp relay across rack
+inter tenant dhcp relay across rack
+	L3 inter tenant dhcp relay across rack
 	[Tags]							skipped			smoke				sanity	
 	
-Intra tenant dhcp relay with circuit id across rack
-	L3 intra tenant dhcp relay with circuit id across rack
+inter tenant dhcp relay with circuit id across rack
+	L3 inter tenant dhcp relay with circuit id across rack
 	[Tags]							skipped			smoke				sanity	
 
 Delete and Add dhcp relay
@@ -104,7 +104,6 @@ Change tagged endpoint IP address
 	Change tagged host endpoint IP address
 	[Tags]							skipped			feature		
 
-
 Configure static endpoint with host showing up on another port
 	Static endpoint with dynamic host showing up on another port
 	[Tags]							skipped			sanity		
@@ -137,7 +136,7 @@ Trigger controller HA failover via reboot
 	
 	
 * Keywords
-L3 intra tenant same rack untagged with dynamic endpoints
+L3 inter tenant same rack untagged with dynamic endpoints
 	BASH ifup intf								h1 								bond0
 	BASH ifup intf								h2								bond0
 	BASH ifup intf								h3								bond0
@@ -179,7 +178,7 @@ L3 intra tenant same rack untagged with dynamic endpoints
 	BASH delete route							h6								10.251.1.0/24			10.251.2.1
 	
 	
-L3 intra tenant across rack untagged with dynamic endpoints
+L3 inter tenant across rack untagged with dynamic endpoints
 	BASH ifup intf								h1 								bond0
 	BASH ifup intf								h2								bond0
 	BASH ifup intf								h3								bond0
@@ -212,7 +211,7 @@ L3 intra tenant across rack untagged with dynamic endpoints
 	BASH delete route							h4								10.251.1.0/24			10.251.3.1
 
 	
-L3 intra tenant same rack tagged with dynamic endpoints
+L3 inter tenant same rack tagged with dynamic endpoints
 	BASH ifup intf								h1 								bond0
 	BASH ifup intf								h2								bond0
 	BASH ifup intf								h3								bond0
@@ -254,7 +253,7 @@ L3 intra tenant same rack tagged with dynamic endpoints
 	BASH delete route							h2								10.251.1.0/24			10.251.2.1
 	
 	
-L3 intra tenant across rack tagged with dynamic endpoints
+L3 inter tenant across rack tagged with dynamic endpoints
 	BASH ifup intf								h1 								bond0
 	BASH ifup intf								h2								bond0
 	BASH ifup intf								h3								bond0
@@ -296,7 +295,7 @@ L3 intra tenant across rack tagged with dynamic endpoints
 	BASH delete route							h3								10.251.1.0/24			10.251.3.1
 
 
-L3 intra tenant same rack untagged with static endpoints
+L3 inter tenant same rack untagged with static endpoints
 	BASH ifup intf								h1 								bond0
 	BASH ifup intf								h2								bond0
 	BASH ifup intf								h3								bond0
@@ -339,7 +338,7 @@ L3 intra tenant same rack untagged with static endpoints
 	BASH delete route							h6								10.251.1.0/24			10.251.2.1
 
 
-L3 intra tenant across rack untagged with static endpoints
+L3 inter tenant across rack untagged with static endpoints
 	BASH ifup intf								h1 								bond0
 	BASH ifup intf								h2								bond0
 	BASH ifup intf								h3								bond0
@@ -384,7 +383,7 @@ L3 intra tenant across rack untagged with static endpoints
 	BASH delete route							h5								10.251.1.0/24			10.251.3.1
 
 
-L3 intra tenant same rack tagged with static endpoints
+L3 inter tenant same rack tagged with static endpoints
 	BASH ifup intf								h1 								bond0
 	BASH ifup intf								h2								bond0
 	BASH ifup intf								h3								bond0
@@ -436,7 +435,7 @@ L3 intra tenant same rack tagged with static endpoints
 	BASH delete route							h2								10.251.1.0/24			10.251.2.1
 	
 		
-L3 intra tenant across rack tagged with static endpoints
+L3 inter tenant across rack tagged with static endpoints
 	BASH ifup intf								h1 								bond0
 	BASH ifup intf								h2								bond0
 	BASH ifup intf								h3								bond0
@@ -490,7 +489,7 @@ L3 intra tenant across rack tagged with static endpoints
 	BASH delete route							h3								10.251.1.0/24			10.251.3.1
 
 
-L3 intra tenant dhcp relay on same rack
+L3 inter tenant dhcp relay on same rack
 	BASH ifdown intf							h1 								bond0
 	BASH ifdown intf							h2								bond0
 	BASH ifdown intf							h3								bond0
@@ -550,7 +549,7 @@ L3 intra tenant dhcp relay on same rack
 	BASH delete route							h1								10.252.3.0/24			10.252.1.1
 
 
-L3 intra tenant dhcp relay with circuit id on same rack
+L3 inter tenant dhcp relay with circuit id on same rack
 	BASH ifdown intf							h1 								bond0
 	BASH ifdown intf							h2								bond0
 	BASH ifdown intf							h3								bond0
@@ -601,7 +600,7 @@ L3 intra tenant dhcp relay with circuit id on same rack
 	BASH delete route							h1								10.252.2.0/24			10.252.1.1
 
 
-L3 intra tenant dhcp relay across rack
+L3 inter tenant dhcp relay across rack
 	BASH ifdown intf							h1 								bond0
 	BASH ifdown intf							h2								bond0
 	BASH ifdown intf							h3								bond0
@@ -661,7 +660,7 @@ L3 intra tenant dhcp relay across rack
 	BASH delete route							h1								10.252.3.0/24			10.252.1.1
 	
 
-L3 intra tenant dhcp relay with circuit id across rack
+L3 inter tenant dhcp relay with circuit id across rack
 	BASH ifdown intf							h1 								bond0
 	BASH ifdown intf							h2								bond0
 	BASH ifdown intf							h3								bond0
