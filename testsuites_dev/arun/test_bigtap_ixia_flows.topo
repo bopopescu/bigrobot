@@ -11,7 +11,7 @@ tg1:
   switches: 
    s1:
     ip: 10.192.109.223
-    dipid: 00:00:5c:16:c7:19:e7:4e
+    dpid: 00:00:5c:16:c7:19:e7:4e
   ports:
    a:
     name: 2/7
