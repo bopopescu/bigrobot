@@ -2112,11 +2112,13 @@ class T5Platform(object):
         self.first_boot_controller_initial_cluster_setup(node,join_cluster,cluster_ip )        
         new_ip_address = self.first_boot_controller_menu_apply(node)
         helpers.sleep(3)  # Sleep for a few seconds just in case...
+        helpers.log("new_ip_address = '%s'" % new_ip_address)
         loss = helpers.ping(new_ip_address)
         if loss < 50:
             helpers.log("Node '%s' has survived first-boot!" % node)
-            return True
+            return new_ip_address
         else:
+            helpers.test_failure('ERROR: the controller is not reachable')
             return False
 
 
@@ -2321,9 +2323,9 @@ class T5Platform(object):
         content = n_console.content()
      
         helpers.log("content is:  %s" % content)              
-        match = re.search(r'IP address on eth0 is (.*)[\r\n]', content)
+        match = re.search(r'IP address on eth0 is (\d+\.\d+\.\d+\.\d+).*[\r\n]', content)
         new_ip_address = match.group(1)
-        helpers.log("new_ip_address: %s" % new_ip_address)  
+        helpers.log("new_ip_address: '%s'" % new_ip_address)  
                      
         n_console.expect(r'Configuring cluster.*[\r\n]')
         n_console.expect(r'First-time setup is complete.*[\r\n]')
@@ -2805,4 +2807,3 @@ class T5Platform(object):
             
 
 
-    
