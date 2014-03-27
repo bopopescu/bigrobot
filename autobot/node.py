@@ -198,7 +198,9 @@ class ControllerNode(Node):
 
         # Note: SSH is required for both DevConf and RestClient to be
         # instantiated. These sessions go together.
-        if helpers.params_is_false('set_session_ssh', self.node_params):
+        if (not t.init_completed()
+            and helpers.params_is_false('set_session_ssh',
+                                        self.node_params)):
             helpers.log("'set_session_ssh' is disabled for '%s', bypassing"
                         " node SSH and RestClient session setup"
                         % name)
@@ -405,7 +407,9 @@ class MininetNode(Node):
             helpers.environment_failure("%s: Mininet type must be 't6' or 'basic'."
                                         % name)
 
-        if helpers.params_is_false('set_session_ssh', self.node_params):
+        if (not t.init_completed()
+            and helpers.params_is_false('set_session_ssh',
+                                        self.node_params)):
             helpers.log("'set_session_ssh' is disabled for '%s', bypassing"
                         " node SSH and RestClient session setup"
                         % name)
@@ -473,7 +477,9 @@ class HostNode(Node):
         super(HostNode, self).__init__(name, ip, user, password,
                                        t.topology_params())
 
-        if helpers.params_is_false('set_session_ssh', self.node_params):
+        if (not t.init_completed()
+            and helpers.params_is_false('set_session_ssh',
+                                        self.node_params)):
             helpers.log("'set_session_ssh' is disabled for '%s', bypassing"
                         " node SSH and RestClient session setup"
                         % name)
@@ -526,7 +532,9 @@ class SwitchNode(Node):
         super(SwitchNode, self).__init__(name, ip, user, password,
                                          t.topology_params())
 
-        if helpers.params_is_false('set_session_ssh', self.node_params):
+        if (not t.init_completed()
+            and helpers.params_is_false('set_session_ssh',
+                                        self.node_params)):
             helpers.log("'set_session_ssh' is disabled for '%s', bypassing"
                         " node SSH and RestClient session setup"
                         % name)
