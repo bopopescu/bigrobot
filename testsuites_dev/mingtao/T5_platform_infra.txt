@@ -31,20 +31,40 @@ ${verylong}    180
 
 * Test Case
 
-first boot of controller in HA mode via static IP after boot factory default
-	cli_boot_factory_default	c1
-	sleep  ${verylong}	
-  	controller first boot static        c1  no  no   10.192.105.20   18   10.192.64.1   10.192.3.1   bigswitch.com   MY-T5-C20
-	cli_boot_factory_default	c2
-	sleep  ${verylong}	
-   	controller first boot static 2nd    c2  yes  no   10.192.105.30   18   10.192.64.1   10.192.3.1   bigswitch.com   MY-T5-C30     10.192.105.20
+T1.1 first boot of controller in HA mode via static IP after boot factory default
+	log   VIP-running_config-factory default-vip-running_config
+#	Verify VIP function 	 10.192.105.50   	
+#	Cli Copy  running-config   scp://bsn@qa-kvm-32:/home/mingtao/config_try    scp_passwd=bsn
+ 	${A}=   cli_take_snapshot   master  run_config=yes	
+	
+ 
+#	cli_boot_factory_default	c1
+#	sleep  ${verylong}	
+#  	controller first boot static        c1  no  no   10.192.105.20   18   10.192.64.1   10.192.3.1   bigswitch.com   MY-T5-C20
+#	cli_boot_factory_default	c2
+#	sleep  ${verylong}	
+#   controller first boot static 2nd    c2  yes  no   10.192.105.30   18   10.192.64.1   10.192.3.1   bigswitch.com   MY-T5-C30     10.192.105.20
+#	Cli Copy   scp://bsn@qa-kvm-32:/home/mingtao/config_try  running-config  scp_passwd=bsn
+	${B}=   cli_take_snapshot   master   run_config=yes		
+  	Should Be Equal    ${A}    ${B}	 	
+#	Verify VIP function 	 10.192.105.51  
+   	
+   	
 	[Tags] 	sanity    firstboot
+
+Verify the VIP change after the first boot
+     Log   covered in first boot T1.1
+	[Tags] 	sanity      firstboot
 
 
 Factory default options
-    Log   covered in first boot
-    Manual passed
+    Log   covered in first boot T1.1
+     
 	[Tags] 	sanity   firstboot
+
+Verify config after the first boot
+     Log   covered in first boot T1.1
+	[Tags] 	sanity      firstboot
 
 
 Test controller reboot
@@ -76,7 +96,7 @@ first boot of controller in standalone mode via static IP after boot factory def
 	cli_boot_factory_default	c1
 	sleep  180	
   	controller first boot static    c1  no  no   10.192.105.30   18   10.192.64.1   10.192.3.1   bigswitch.com   MY-T5-C30
-	[Tags] 	sanity    firstboot  skipped
+	[Tags] 	sanity    firstboot   
 
 Test first boot of controller menu node for standalone
 	cli_boot_factory_default	c2
@@ -147,31 +167,37 @@ Verify with invalid IP
     
 	[Tags] 	sanity   firstboot       JIRA-BSC-5031    
  
+Verify the behavior if user hits Ctrl+C during various stages of the first boot process
+	cli_boot_factory_default	c2
+	sleep  180	
+  	first_boot_controller_initial_node_setup   c2  no   10.192.105.30   18   10.192.64.1   10.192.3.1   bigswitch.com   MY-T5-C30 
+	first_boot_controller_ctl_c                c2
+	first_boot_controller_initial_cluster_setup 	c2   no   
+	first_boot_controller_ctl_c                c2
+ 	first_boot_controller_menu_apply      c2    	    
+	[Tags] 	sanity    Manual   untested   firstboot
 
-
+  
+ 
+Verify first boot of controller in  standlaone (DHCP)  
+    log  single node dhcp
+#	first_boot_controller   c1   no   yes      
+	[Tags] 	sanity     firstboot
 
  
+Verify first boot of controller in HA mode ( DHCP)
+     log  dhcp for multiple node
+  	[Tags] 	sanity     firstboot
+
 
 
 #########  
  
 
-Verify first boot of controller in standalone mode & cluster mode via DHCP IP assignment 
-    Manual untested
-	[Tags] 	sanity    Manual   untested  firstboot
-
-Verify the behavior if user hits Ctrl+C during various stages of the first boot process
-    Manual untested
-	[Tags] 	sanity    Manual   untested   firstboot
-
-Verify first boot of controller in HA mode ( DHCP)
-    Manual untested
-	[Tags] 	sanity    Manual   untested   firstboot
-
-
 Verification of configs in local node mode 
-    Manual untested
-	[Tags] 	sanity    Manual   untested  firstboot
+	log   not able to show the config
+    Manual failed
+	[Tags] 	sanity    Manual   firstboot
 
 Verify first boot of controller when external DNS/NTP server is unreachable
     Manual untested
@@ -192,17 +218,12 @@ Verify first boot of controller on bare metal server
 
 Shutdown the controller 
     Manual untested
-	[Tags] 	sanity    Manual   untested
+	[Tags] 	sanity    Manual   untested  infra
 
 
 Verification of tech-support and related commands  
     Manual untested
-	[Tags] 	sanity    Manual   untested
-
-
-NTP setting and verification
-    Manual untested
-	[Tags] 	sanity    Manual   untested   ntp
+	[Tags] 	sanity    Manual   untested  infra
 
 
 Change IP Tables/ Firewalls
@@ -213,10 +234,7 @@ Verify controller IP change after the first boot
     Manual untested
 	[Tags] 	sanity    Manual   untested    firstboot
 
-Verify the VIP change after the first boot
-    Manual untested
-	[Tags] 	sanity    Manual   untested   firstboot
-
+ 
 First boot process in a appliance
     Manual untested
 	[Tags] 	sanity    Manual   untested   firstboot
