@@ -877,15 +877,14 @@ class T5Platform(object):
 
         t = test.Test()
         master = t.controller("master")
-        
-        url = '/api/v1/data/controller/applications/bvs/monitor-session[id=%s]' % (sessionID)
+        url = "/api/v1/data/controller/fabric/monitor-session[id=" + sessionID+"]"
         
         master.rest.put(url, {"id": sessionID})
                 
-        url = '/api/v1/data/controller/applications/bvs/monitor-session[id=%s]/source[switch-name="%s"][interface-name="%s"]' % (sessionID, srcSwitch, srcInt)
+        url = "/api/v1/data/controller/fabric/monitor-session[id=" + sessionID + "]/source[switch-name=\"" +srcSwitch +"\"][interface-name=\"" + srcInt+ "\"]"
         result = master.rest.put(url, {"direction": kwargs.get("direction"), "switch-name": srcSwitch , "interface-name": srcInt})
 
-        url = '/api/v1/data/controller/applications/bvs/monitor-session[id=%s]/destination[switch-name="%s"][interface-name="%s"]' % (sessionID, dstSwitch, dstInt)
+        url = "/api/v1/data/controller/fabric/monitor-session[id=" + sessionID + "]/destination[switch-name=\"" +dstSwitch +"\"][interface-name=\"" + dstInt+ "\"]"
         result = master.rest.put(url, {"switch-name": srcSwitch , "interface-name": dstInt})
         
         if master.rest.status_code_ok():
@@ -894,39 +893,11 @@ class T5Platform(object):
             return False
         
     
-    def rest_activate_monitor_session(self, sessionID):
-        
-        t = test.Test()
-        master = t.controller("master")
-        url = '/api/v1/data/controller/applications/bvs/monitor-session[id=%s]' % (sessionID)
-        
-        master.rest.patch(url, {"active": 'true'})
-        
-        if master.rest.status_code_ok():
-                return True
-        else:
-                return False
-            
-    
-    def rest_deactivate_monitor_session(self, sessionID):
-        t = test.Test()
-        master = t.controller("master")
-        
-        url = '/api/v1/data/controller/applications/bvs/monitor-session[id=%s]/active' % (sessionID)
-        
-        master.rest.delete(url)
-        
-        if master.rest.status_code_ok():
-                return True
-        else:
-                return False
-            
-    
     def rest_delete_monitor_session(self, sessionID):
         
         t = test.Test()
         master = t.controller("master") 
-        url = '/api/v1/data/controller/applications/bvs/monitor-session[id=%s]' % (sessionID)
+        url = "/api/v1/data/controller/fabric/monitor-session[id=" + sessionID+"]"
         
         master.rest.delete(url, {"id": sessionID})
         
@@ -952,7 +923,7 @@ class T5Platform(object):
         master = t.controller("master")
         
         foundSession = False
-        url = "/api/v1/data/controller/applications/bvs/monitor-session?config=true"
+        url = "/api/v1/data/controller/fabric/monitor-session?config=true"
         result = master.rest.get(url)['content']
         
         try:
@@ -989,21 +960,6 @@ class T5Platform(object):
             return False
 
 
-    def platform_tcp_dump(self, host, interface, searchString):
-        
-        t = test.Test()
-        n = t.node(host)
-
-        output = n.bash("timeout 5 tcpdump -i %s" % interface )
-        helpers.log("tcpdump output is: %s" % output['content'])
-            
-        match = re.search(r"%s" % searchString, output['content'], re.S | re.I)
-        
-        if match:
-            return True
-        else:
-            helpers.log("TCPDump match not found")
-            return False
 
 
     def cli_compare(self, src, dst, node='master', scp_passwd='adminadmin'):
