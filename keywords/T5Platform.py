@@ -18,14 +18,27 @@ class T5Platform(object):
     def __init__(self):
         pass    
     
-    def rest_verify_show_cluster(self):
+    def rest_verify_show_cluster(self, **kwargs):
+        
         '''Using the 'show cluster' command verify the cluster formation across both nodes
-	   Also check for the formation integrity
-	'''
+	       Also check for the formation integrity
+	       Additional inputs: IP Addresses of the Controllers can be specified as: 'c1=a.b.c.d  c2=a.b.e.f'
+	    '''
+         
         try:
             t = test.Test()
-            c1 = t.controller("c1")
-            c2 = t.controller("c2")
+            if 'c1' in kwargs:
+                helpers.warn("found c1: %s" % kwargs.get('c1'))
+                c1 = t.node_spawn(ip=kwargs.get('c1'))
+            else:
+                c1 = t.controller("c1")
+            if 'c2' in kwargs:
+                c2 = t.node_spawn(ip=kwargs.get('c2'))
+                helpers.warn("found c2: %s" % kwargs.get('c2'))
+            else:
+                c2 = t.controller("c2")
+            
+            
             url = '/api/v1/data/controller/cluster'
             
             result = c1.rest.get(url)['content']
