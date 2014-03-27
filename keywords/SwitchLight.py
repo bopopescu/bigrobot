@@ -1195,7 +1195,11 @@ class SwitchLight(object):
         else:
             switch.bash(command)
             bash_output = switch.cli_content()
-            return bash_output
+            new_output = bash_output.split('\n')
+            del new_output[0]
+            del new_output[-1]
+            user_output = '\n'.join(new_output)
+            return user_output
 
 
 
