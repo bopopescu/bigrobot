@@ -991,6 +991,11 @@ class T5Platform(object):
 
     def platform_tcp_dump(self, host, interface, searchString):
         
+        ''' Platform specific tcpdump verification.
+        Input: host -> hostname from the topo file
+                interface -> interfaces of the host that tcpdump would get excuted
+                searchString -> String to search in the tcpdump output
+        '''
         t = test.Test()
         n = t.node(host)
 
