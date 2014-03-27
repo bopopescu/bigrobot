@@ -19,12 +19,15 @@ ${scp config}		scp://recovery@10.197.128.37:config-config-scp
 ${scp double}		scp://scp://recovery@10.197.128.37:config-scp
 ${scp location}		recovery@10.197.128.37:config-scp
 ${scp inexistent}   scp://recovery@10.197.128.37:inexistent
+${scp switch}		scp://recovery@10.197.128.37:scp-switch
 ${file}				config-file
 ${config}			config://config-config
 ${config double}	config://config://config-config
 ${config name}		config-config
 ${image}			image://image-file
 ${image double}		image://image://image-file
+@{spineList}		00:00:00:00:00:01:00:01  00:00:00:00:00:01:00:02
+@{leafList}			00:00:00:00:00:02:00:01  00:00:00:00:00:02:00:02  00:00:00:00:00:02:00:03  00:00:00:00:00:02:00:04
 
 
 *** Test Cases ***
@@ -114,14 +117,15 @@ T4.3 Copy running config to scp://, change RC, restore, verify no change in RC
 	Cli Copy  ${scp}  running-config
 	${status} =  Cli Compare Running Config with File Line By Line  backup
 	Should Be True  ${status}
-	${status} =  Cli Compare  running-config  ${scp}
-	Should Not Be True  ${status}
-	${status} =  Cli Compare  ${scp}  running-config
-	Should Not Be True  ${status}
-	${status} =  Cli Compare  running-config  backup
-	Should Be True  ${status}
-	${status} =  Cli Compare  backup  running-config
-	Should Be True  ${status}
+	Compare Negative  running-config  ${scp}
+	Compare  running-config  backup
+	[Tags]  SCP
+
+T4.4 Copy from scp:// and compare with previous running-config
+	Manual Failed
+	Cli Copy  running-config  backup
+	Cli Copy  ${scp switch}  running-config
+	Compare Negative  backup  running-config
 	[Tags]  SCP
 
 
@@ -236,6 +240,63 @@ T5.8.9 Verify: compare <config://> scp://<config://>
 	Compare  ${config}  ${scp config}
 	[Tags]  SCP
 
+T5.9.1 Verify: copy scp://<running-config> running-config
+	Cli Copy  running-config  ${scp RC}
+	Cli Copy  ${scp RC}  running-config
+	Compare  ${scp RC}  running-config
+	[Tags]  SCP
+
+T5.9.2 Verify: copy scp://<running-config> file
+	Cli Copy  running-config  ${scp RC}
+	Cli Copy  ${scp RC}  ${file}
+	Compare  ${scp RC}  ${file}
+	[Tags]  SCP
+
+T5.9.3 Verify: copy scp://<running-config> config://
+	Cli Copy  running-config  ${scp RC}
+	Run Keyword and Expect Error  *Error: copy: scp://* invalid config file*  Cli Copy  ${scp RC}  ${config}
+	[Tags]  SCP
+
+T5.9.4 Verify: copy scp://<file> running-config
+	Cli Copy  running-config  ${file}
+	Cli Copy  ${file}  ${scp file}
+	Cli Copy  ${scp file}  running-config
+	Compare  ${scp file}  running-config
+	[Tags]  SCP
+
+T5.9.5 Verify: copy scp://<file> file
+	Cli Copy  running-config  ${file}
+	Cli Copy  ${file}  ${scp file}
+	Cli Copy  ${scp file}  ${file}
+	Compare  ${scp file}  ${file}
+	[Tags]  SCP
+
+T5.9.6 Verify: copy scp://<file> config://
+	Cli Copy  running-config  ${file}
+	Cli Copy  ${file}  ${scp file}
+	Run Keyword and Expect Error  *Error: copy: scp://* invalid config file*  Cli Copy  ${scp file}  ${config}
+	[Tags]  SCP
+
+T5.9.7 Verify: copy scp://<config://> running-config
+	Cli Copy  running-config  ${config}
+	Cli Copy  ${config}  ${scp config}
+	Cli Copy  ${scp config}  running-config
+	Compare  ${scp config}  running-config
+	[Tags]  SCP
+
+T5.9.8 Verify: copy scp://<config://> file
+	Cli Copy  running-config  ${config}
+	Cli Copy  ${config}  ${scp config}
+	Cli Copy  ${scp config}  ${file}
+	Compare  ${scp config}  ${file}
+	[Tags]  SCP
+
+T5.9.9 Verify: copy scp://<config://> config
+	Cli Copy  running-config  ${config}
+	Cli Copy  ${config}  ${scp config}
+	Cli Copy  ${scp config}  ${config}
+	Compare  ${scp config}  ${config}
+	[Tags]  SCP
 
 
 T6.1.1 Verify Filename containing ~
@@ -521,7 +582,7 @@ T9.3 Verify impossible to compare with invalid SCP
 	[Tags]  SCP
 
 T9.4 Verify impossible to copy from inexistent SCP
-	Run Keyword and Expect Error  *scp: inexistent: No such file or directory*  Cli Copy  ${scp inexistent}  running-config
+	Run Keyword and Expect Error  *Error: Invalid Use: : No such file or directory*  Cli Copy  ${scp inexistent}  running-config
 	[Tags]  SCP
 
 *** Keywords ***
@@ -533,19 +594,22 @@ Generate Random Name
 
 File Suite Setup
 	Base Suite Setup
+	Bash  master  curl -g -H "Cookie: session_cookie\=$FL_SESSION_COOKIE" localhost:8080/api/v1/data/controller/core/aaa/accounting -X DELETE -d '{"name": "local"}'
 	Cli Copy  running-config  config://startup-config
 	Cli Copy  running-config  config://startup-config  node=slave
-	Bash  master  curl -g -H "Cookie: session_cookie\=$FL_SESSION_COOKIE" localhost:8080/api/v1/data/controller/core/aaa/accounting -X DELETE -d '{"name": "local"}'
 
 Setup
 	Base Test Setup
-	Modify Running Config
 	Rest Add Tenant  TenantTest12345
 
 Modify Running Config
 	${tenant}  Generate Random Name  Tenant  5
 	Rest Add Tenant  ${tenant}
 	Rest Delete Tenant  TenantTest12345
+    auto configure fabric switch   ${spineList}   ${leafList}   2
+    Config  master  group test
+    Config  master  port-group test
+    Config  master  user test
 
 Teardown
 	Bash Clear Known Hosts
