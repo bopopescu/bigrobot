@@ -707,19 +707,25 @@ class T5Platform(object):
         Output: Eth0 IP address of the controller that Virtual IP points to
         '''
         t = test.Test()
+        c = None
         try:
             if 'master' in vip:
                 c = t.controller('master')
             else:
+                helpers.log("Spawning VIP %s" % vip)
                 c = t.node_spawn(ip=vip)
+                helpers.log("Successfully spawned VIP %s" % vip)
+
             content = c.cli('show local node interfaces ethernet0')['content']
             output = helpers.strip_cli_output(content)
             lines = helpers.str_to_list(output)
             assert "Network-interfaces" in lines[0]
             rows = lines[3].split(' ')
         except:
-            helpers.test_log(c.cli_content())
-            return None
+            helpers.test_failure("Exception info: %s" % helpers.exception_info())
+            if c:
+                helpers.test_log(c.rest.error())
+            return ''
         else:
             return rows[3]
 
@@ -744,13 +750,13 @@ class T5Platform(object):
             return lines[2].strip()
 
 
-    def bash_verify_virtual_ip(self, vip):
+    def bash_verify_virtual_ip(self, vip, node='master'):
         ''' Function to show Virtual IP of a controller via CLI/Bash
         Input: None
         Output: VIP address if configured, None otherwise
         '''
         t = test.Test()
-        c = t.controller('master')
+        c = t.controller(node)
         try:
             content = c.bash('ip addr')['content']
             output = helpers.strip_cli_output(content)
@@ -791,19 +797,24 @@ class T5Platform(object):
         Output: Mac address of the controller that Virtual IP points to
         '''
         t = test.Test()
+        c = None
         try:
             if 'master' in vip:
                 c = t.controller('master')
             else:
+                helpers.log("Spawning VIP %s" % vip)
                 c = t.node_spawn(ip=vip)
+                helpers.log("Successfully spawned VIP %s" % vip)
 
             helpers.log("Getting MAC address of the controller")
             url = '/api/v1/data/controller/os/action/network-interface'
             c.rest.get(url)
             content = c.rest.content()
         except:
-            helpers.test_log(c.rest.error())
-            return False
+            helpers.test_failure("Exception info: %s" % helpers.exception_info())
+            if c:
+                helpers.test_log(c.rest.error())
+            return ''
         else:
             return content[0]['hardware-address']
 
