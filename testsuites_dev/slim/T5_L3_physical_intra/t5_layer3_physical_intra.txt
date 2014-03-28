@@ -1,9 +1,9 @@
 * Setting
 Documentation   T5 Basic L3 two spine three leaf rack with dual-tor Test Suite
 Suite Setup     T5 base suite setup
-Suite Teardown  T5 base suite teardown
+#Suite Teardown  T5 base suite teardown
 Test Setup      setup topology
-Test Teardown   teardown topology
+#Test Teardown   teardown topology
 Force Tags      T5 Sanity
 Library         keywords/BsnCommon.py
 Library         keywords_dev/slim/Host.py
@@ -22,7 +22,7 @@ Resource		testsuites/T5/t5_dualleaf_three_rack_physical_resource.txt
 * Test Cases
 Intra tenant L3 untagged traffic with dynamic endpoints same rack
 	L3 intra tenant same rack untagged with dynamic endpoints
-#	[Tags]							skipped			smoke				sanity			
+	[Tags]							skipped			smoke				sanity			
 
 Intra tenant L3 untagged traffic with dynamic endpoints across rack
 	L3 intra tenant across rack untagged with dynamic endpoints
@@ -108,7 +108,6 @@ Configure static endpoint with host showing up on another port
 	Static endpoint with dynamic host showing up on another port
 	[Tags]							skipped			sanity		
 
-
 Verify subnet mask is properly applied on router vns
 	Verify subnet mask on vns router ip
 	[Tags]							skipped			feature		
@@ -119,19 +118,42 @@ Verify vlsm forwarding
 
 Small Scale with 100 vns 		
 	One Tenant 100 VNS with one host each
-	[Tags]							skipped			feature		
+	[Tags]							skipped			feature			scale
 	
 Configure overlapping router IP 	
 	Configure overlapping IP on same tenant across VNS	
 	[Tags]							skipped			feature		
 	
-
 Trigger controller HA failover via CLI
 	Controller HA failover via CLI	
-	[Tags]							skipped			feature			
+#	[Tags]							skipped			feature			
 	
 Trigger controller HA failover via reboot
 	Controller HA failover via reboot
+	[Tags]							skipped			feature			
+
+Spine reboot
+	Reboot spine0 via CLI
+	[Tags]							skipped			feature			
+
+Leaf reboot
+	Reboot Leaf0 via CLI
+	[Tags]							skipped			feature			
+
+Spine connect and disconnect to controller
+	Connect and Disconnect spine to controller
+	[Tags]							skipped			feature			
+	
+Leaf connect and disconnect to controller	
+	Connect and disconnect one leaf in dual tor to controller
+	[Tags]							skipped			feature			
+
+Spine to leaf link flap
+	Flap link between leaf and spine
+	[Tags]							skipped			feature			
+
+Leaf to host link flap
+	Flap bond interface towards host
 	[Tags]							skipped			feature			
 	
 	
@@ -167,13 +189,12 @@ L3 intra tenant same rack untagged with dynamic endpoints
 	REST show endpoints	
 	${loss} = 									BASH ping						h5						10.251.2.11 			count=10
 	Should Be True  							${loss} == 0	
-	${stream1}=  								L3 add  						name=stream1		  	flow=a->c 				frame_rate=1000  			frame_size=128  			frame_cnt=10000
+	${stream1}=  								L3 add  						name=stream1		  	flow=a<->c 				frame_rate=100000  			frame_size=128  			frame_cnt=10000000
 	...     									src_ip=10.251.1.101				src_gw=10.251.1.1		dst_ip=10.251.2.201		dst_gw=10.251.2.1			 			
     start traffic  								${stream1}
-    sleep  10
+    __init__.sleep  10
     stop traffic								${stream1}
     verify results 								transmitted_frames  			received_frames  		${stream1}  			stream1
-    
 	BASH delete route							h5								10.251.2.0/24			10.251.1.1
 	BASH delete route							h6								10.251.1.0/24			10.251.2.1
 	
@@ -1488,6 +1509,8 @@ Controller HA failover via CLI
 	BASH add ip address							h3								10.251.3.11/24			bond0.1003
 	BASH add route								h1								10.251.3.0/24			10.251.1.1
 	BASH add route								h3								10.251.1.0/24			10.251.3.1
+	REST add interface to vns					X								X1						${leaf0-a}				${ixia1}				-1
+	REST add interface to vns					X								X3						${leaf1-a}				${ixia3}				-1	
 	__init__.sleep								20	
 	${value} = 									BASH verify arp					h1						10.251.1.1
 	Should Not Be True							${value} 		
@@ -1507,12 +1530,28 @@ Controller HA failover via CLI
 	REST show endpoints		
 	${loss} = 									BASH ping						h1						10.251.3.11 			count=10
 	Should Be True  							${loss} == 0		
+	${stream1}=  								L3 add  						name=stream1		  	flow=a<->c 				frame_rate=100000  			frame_size=128  			frame_cnt=2000000
+	...     									src_ip=10.251.1.101				src_cnt=100				src_ip_step=0.0.0.0 	src_gw=10.251.1.1		
+	...											dst_ip=10.251.3.101				dst_cnt=100				dst_ip_step=0.0.0.1		dst_gw=10.251.3.1 
+    start traffic  								${stream1}
+    __init__.sleep  							20
+    stop traffic								${stream1}
+    verify results 								transmitted_frames  			received_frames  		${stream1}  			stream1
+	__init__.sleep								5
+	start traffic								${stream1}
+	__init__.sleep								5
 	${value} = 									REST verify cluster election take leader
 	Should Be True								${value}
+	__init__.sleep								15
+	stop traffic								${stream1}
+    verify results 								transmitted_frames  			received_frames  		${stream1}  			stream1
 	${loss} = 									BASH ping						h1						10.251.3.11 			count=10
 	Should Be True  							${loss} == 0		
 	BASH delete route							h1								10.251.3.0/24			10.251.1.1
 	BASH delete route							h3								10.251.1.0/24			10.251.3.1
+
+
+
 
 
 Controller HA failover via reboot
@@ -1558,16 +1597,73 @@ Controller HA failover via reboot
 	BASH delete route							h1								10.251.3.0/24			10.251.1.1
 	BASH delete route							h3								10.251.1.0/24			10.251.3.1
 		
+Reboot spine0 via CLI
+	BASH ifup intf								h1 								bond0
+	BASH ifup intf								h2								bond0
+	BASH ifup intf								h3								bond0
+	BASH ifup intf								h4								bond0	
+	BASH ifup intf								h5								bond0	
+	BASH ifup intf								h6								bond0			
+	REST add portgroup to vns					X								X1						${leaf2_pc1}			-1
+	REST add portgroup to vns					X								X2						${leaf2_pc2}			-1
+	REST add interface to vns					X								X1						${leaf0-a}				${ixia1}				-1
+	REST add interface to vns					X								X2						${leaf1-a}				${ixia3}				-1
+	BASH add ip address							h5								10.251.1.11/24			bond0	
+	BASH add ip address							h6								10.251.2.11/24			bond0
+	BASH add route								h5								10.251.2.0/24			10.251.1.1
+	BASH add route								h6								10.251.1.0/24			10.251.2.1
+	__init__.sleep								20	
+	BASH ping									h5								10.251.1.1				count=10
+	BASH ping									h6								10.251.2.1				count=10
+	${value} = 									BASH verify arp					h5						10.251.1.1
+	Should Be True								${value} 		
+	${value} =									BASH verify arp					h6						10.251.2.1
+	Should Be True								${value} 
+	${mac1} = 									BASH get intf mac				h5						bond0
+	${result} =									REST show endpoints mac			${mac1}
+	Should Be True								${result}						
+	${mac2} = 									BASH get intf mac				h6						bond0
+	${result} =									REST show endpoints mac			${mac2}
+	Should Be True								${result}						
+	REST show endpoints	
+	${loss} = 									BASH ping						h5						10.251.2.11 			count=10
+	Should Be True  							${loss} == 0	
 
-Spine reboot
+
+
+	${stream1}=  								L3 add  						name=stream1		  	flow=a->c 				frame_rate=1000  			frame_size=128  			frame_cnt=10000
+	...     									src_ip=10.251.1.101				src_cnt=100				src_ip_step=0.0.0.1 	src_gw=10.251.1.1		
+	...											dst_ip=10.251.2.101				dst_cnt=100				dst_ip_step=0.0.0.1		dst_gw=10.251.2.1			 			
+    start traffic  								${stream1}
+    sleep  10
+    stop traffic								${stream1}
+    verify results 								transmitted_frames  			received_frames  		${stream1}  			stream1
+	CLI restart switch							s0
+	__init__.sleep								180 
+ 
+    
+	BASH delete route							h5								10.251.2.0/24			10.251.1.1
+	BASH delete route							h6								10.251.1.0/24			10.251.2.1
+	
+
+Reboot Leaf0 via CLI
 
 
 
-#cli_restart_switch
+Connect and Disconnect spine to controller
 
 
-Leaf reboot
+Connect and disconnect one leaf in dual tor to controller
+	
 
+Flap link between leaf and spine
+
+
+
+#rest_disable_fabric_interface(self, switch, intf):
+#rest_enable_fabric_interface(self, switch, intf):
+
+Flap bond interface towards host
 
 
 

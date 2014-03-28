@@ -22,52 +22,41 @@ Intra tenant one Tenant 4k VNS
 	One Tenant 4k VNS with one host each
 #	[Tags]							skipped			scale							
 
-
-* Test Cases
 Delete and add tagged ports to one tenant 4k VNS
 	Delete and add tagged ports to one tenant 4k VNS with one host each
 	[Tags]							skipped			scale							
 
-
-* Test Cases
 Delete and add 2k VNS with traffic
 	Delete and add 2k VNS with traffic running with one host each
 	[Tags]							skipped			scale				
 
-
-* Test Cases
 L3 endpoint host move with traffic
 	Move 2k host endpoint to another tagged port
 	[Tags]							skipped			scale				
 
+48k L3 endpoint across one tenant two vns
+	Generate 48k L3 endpoint across one tenant two vns
+	[Tags]							skipped			scale				
 		
-* Test Cases
 Combined scaling one tenant 4k vns with 48k host
 	Combined scaling with one tenant 4k vns with 48k host
 	[Tags]							skipped			scale				
 		
-			
-* Test Cases
 Delete and add scale config multiple times
 	Delete and add scale config multiple times
 	[Tags]							skipped			scale				
-			
 
-* Test Cases
 DHCP request from 48k host across 4k vns
 	Generate dhcp request from 48k host across 4k vns
 	[Tags]							skipped			scale				
 						
 
 * Keywords		
-	
-
 One Tenant 4k VNS with one host each
 	REST delete tenant							X
 	REST delete tenant							Y
 	REST delete tenant							Z
 	REST add tenant								A
-	REST add tenant								B
 	${ipAddr} =  								Set Variable					20.0.0.1
 	: FOR 										${i}							IN RANGE 				1					2047
 	\	REST add vns							A								A-${i}
@@ -75,14 +64,21 @@ One Tenant 4k VNS with one host each
 	\	${ipAddr} =								get next address				ipv4					${ipAddr}			0.0.1.0
 	\	REST add interface to vns				A								A-${i}					leaf0-a				ethernet24		${i}			
 				
-	${ipAddr} =  								Set Variable					30.0.0.1
+	${ipAddr} =  								Set Variable					40.0.0.1
 	: FOR 										${i}							IN RANGE 				2048				4096
-	\	REST add vns							B								B-${i}
-	\	REST add vns ip							B								B-${i}					${ipAddr}			24
+	\	REST add vns							A								B-${i}
+	\	REST add vns ip							A								B-${i}					${ipAddr}			24
 	\	${ipAddr} =								get next address				ipv4					${ipAddr}			0.0.1.0
-	\	REST add interface to vns				B								B-${i}					leaf1-a				ethernet24		${i}			
+	\	REST add interface to vns				A								B-${i}					leaf1-a				ethernet24		${i}			
 				
 
+
+  ${stream}=             L3 add  name=${stream_name}  flow=a<->b  src_mac=${src_mac}  dst_mac=${dst_mac}
+    ...						src_cnt=${src_cnt}  dst_cnt=${dst_cnt}  src_ip=20.0.0.1  dst_ip=20.0.0.2
+    ...						src_ip_step=0.0.1.0  dst_ip_step=0.0.1.0  src_gw=20.0.0.2  src_gw_step=0.0.1.0
+    ...						dst_gw=20.0.0.1  dst_gw_step=0.0.1.0  vlan_id=2  vlan_cnt=${src_cnt}
+    
+    
 Delete and add tagged ports to one tenant 4k VNS with one host each
 
 
@@ -90,6 +86,9 @@ Delete and add 2k VNS with traffic running with one host each
 
 
 Move 2k host endpoint to another tagged port
+
+
+Generate 48k L3 endpoint across one tenant two vns
 
 
 Combined scaling with one tenant 4k vns with 48k host
