@@ -1530,21 +1530,17 @@ Controller HA failover via CLI
 	REST show endpoints		
 	${loss} = 									BASH ping						h1						10.251.3.11 			count=10
 	Should Be True  							${loss} == 0		
-#	${stream1}=  								L3 add  						name=stream1		  	flow=a<->c 				frame_rate=100000  			frame_size=128  			frame_cnt=2000000
-#	...     									src_ip=10.251.1.101				src_cnt=100				src_ip_step=0.0.0.1 	src_gw=10.251.1.1		
-#	...											dst_ip=10.251.3.101				dst_cnt=100				dst_ip_step=0.0.0.1		dst_gw=10.251.3.1 
-#   start traffic  								${stream1}
-#    __init__.sleep  							20
-#    stop traffic								${stream1}
-#    verify results 								transmitted_frames  			received_frames  		${stream1}  			stream1
+	${stream1}=  								L3 add  						name=stream1		  	flow=a<->c 				frame_rate=100000  			frame_size=128  			frame_cnt=2000000
+	...     									src_ip=10.251.1.101				src_cnt=10				src_ip_step=0.0.0.1 	src_gw=10.251.1.1		
+	...											dst_ip=10.251.3.101				dst_cnt=10				dst_ip_step=0.0.0.1		dst_gw=10.251.3.1 
+   	start traffic  								${stream1}
 	__init__.sleep								5
-#	start traffic								${stream1}
-#	__init__.sleep								5
+	verify traffic rate  						tx_rate  						rx_rate  				a  						c
 	${value} = 									REST verify cluster election take leader
 	Should Be True								${value}
-#	__init__.sleep								15
-#	stop traffic								${stream1}
- #   verify results 								transmitted_frames  			received_frames  		${stream1}  			stream1
+	__init__.sleep								15
+	stop traffic								${stream1}
+   	verify results 								transmitted_frames  			received_frames  		${stream1}  			stream1
 	${loss} = 									BASH ping						h1						10.251.3.11 			count=10
 	Should Be True  							${loss} == 0		
 	BASH delete route							h1								10.251.3.0/24			10.251.1.1
@@ -1873,3 +1869,11 @@ verify results   [Arguments]  ${transmitted_frames}  ${received_frames}  ${strea
     ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}
     Should be true  ${in_range}	
   	
+	
+verify traffic rate   [Arguments]  ${tx_rate}  ${rx_rate}  ${tx_intf}  ${rx_intf}
+    Sleep  5
+    ${report}=  fetch port stats
+    Log  ${report}
+    ${tx_value}=  verify dict key  ${report}  ${tx_intf}  transmitted_frame_rate
+    ${rx_value}=  verify dict key  ${report}  ${rx_intf}  received_valid_frame_rate
+    ixia verify traffic rate  ${tx_value}  ${rx_value}
