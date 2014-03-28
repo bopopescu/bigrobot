@@ -45,21 +45,21 @@ ${bm5_intf1}  leaf2b-eth9
 * Test Case 
 
 Master Failover/Failback Stress Test For 25 Times
-   [Tags]  Traffic  
+   [Tags]  Stress  
    Failover/Failback by rebooting the master and verify connectivity
    
 Slave Failover/Failback Stress Test For 25 Times
-   [Tags]  Traffic  
+   [Tags]  Stress  
    Failover/Failback by rebooting the slave and verify connectivity
 
 Cluster Election Take-Leader Stress Test For 25 Times
-   [Tags]  Traffic  
+   [Tags]  Stress  
    # To be: This test case only checks the take-leader in slave.
    # 			Need to implement this in the master
    Failover/Failback by issuing take-leader in master & verify connectivity
 
 Cluster Election Re-run Stress Test For 25 Times
-   [Tags]  Traffic  
+   [Tags]  Stress  
    # To be: Make sure to do it on both master & slave when the commands
    #		are finalized
    Re-run the election and verify connectivity
