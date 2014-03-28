@@ -1,7 +1,7 @@
 == T5 Functional L2 Test Suite ==
 
 * Setting
-Documentation    T5 BVS APP Functional VNS Mac age/move Test Suite
+Documentation    T5 BVS APP Functional VNS Mac Scale Learning/age/move Test Suite
 Suite Setup      base suite setup
 Suite Teardown   base suite teardown
 Test Setup       base test setup
@@ -24,7 +24,7 @@ ${mac2}		00:00:06:00:00:00
 * Test Case 
 
 add Dual Leaf Three Rack setup
-   [Tags]  feature
+   [Tags]  feature  run
   	base suite setup
   	add fabric switch
   	sleep  5
@@ -40,21 +40,40 @@ add Dual Leaf Three Rack setup
 	rest add interface to vns  t1  v1  leaf2-b  ${leaf2b_ixia_intf}  -1
    
 Add 1000 dynamic mac into the system and check forwarding and make sure aging also works for 1000 mac
-	[Tags]  feature  scaling  
-	${stream}=             L3 add  no_arp=True  flow=a<->c  src_mac=00:00:01:00:00:01  dst_mac=00:00:02:00:00:01  src_cnt=500  dst_cnt=500    frame_rate=1000  frame_size=128  name=a_c_flow
+	[Tags]  feature  scaling  run  
+	${stream}=             L3 add  no_arp=True  flow=a<->c  src_mac=00:00:01:00:00:01  dst_mac=00:00:02:00:00:01  src_cnt=500  dst_cnt=500  dst_mac_step=00:00:00:00:00:01  src_mac_step=00:00:00:00:00:01  frame_rate=1000  frame_size=128  name=a_c_flow
     start traffic  ${stream}
     sleep  5
     rest verify endpoint in system  1000
+    sleep  65 
+    ${result}=  bash execute command  leaf0-a  ofad-ctl ft L2 | wc -l 
+    ${count}=	Convert to integer  ${result}   
+    Should be True  ${count} > 1000
+    ${result}=  bash execute command  leaf2-a  ofad-ctl ft L2 | wc -l
+    ${count}=	Convert to integer  ${result}   
+    Should be True  ${count} > 1000
+    ${result}=  bash execute command  spine0  ofad-ctl ft L2 | wc -l
+    ${count}=	Convert to integer  ${result}   
+    Should be True  ${count} > 1000
     verify traffic rate  tx_rate  rx_rate  a  c
     verify traffic rate  tx_rate  rx_rate  c  a
     stop traffic  ${stream}
     sleep  600
     summary log  waiting 10 minutes for 1000 mac age
     rest verify endpoint in system  0
+    ${result}=  bash execute command  leaf0-a  ofad-ctl ft L2 | wc -l 
+    ${count}=	Convert to integer  ${result}   
+    Should be True  ${count} < 7
+    ${result}=  bash execute command  leaf2-a  ofad-ctl ft L2 | wc -l
+    ${count}=	Convert to integer  ${result}   
+    Should be True  ${count} < 7
+    ${result}=  bash execute command  spine0  ofad-ctl ft L2 | wc -l
+    ${count}=	Convert to integer  ${result}   
+    Should be True  ${count} < 7
 	    
 Add 10000 dynamic mac into the system and check forwarding and make sure aging also works for 10000 mac
 	[Tags]  feature  scaling  
-	${stream}=             L3 add  no_arp=True  flow=a<->c  src_mac=00:00:01:00:00:01  dst_mac=00:00:02:00:00:01  src_cnt=5000  dst_cnt=5000    frame_rate=5000  frame_size=128  name=a_c_flow
+	${stream}=             L3 add  no_arp=True  flow=a<->c  src_mac=00:00:01:00:00:01  dst_mac=00:00:02:00:00:01  src_cnt=5000  dst_cnt=5000  dst_mac_step=00:00:00:00:00:01  src_mac_step=00:00:00:00:00:01  frame_rate=5000  frame_size=128  name=a_c_flow
     start traffic  ${stream}
     sleep  5
     rest verify endpoint in system  10000
@@ -178,7 +197,7 @@ Add 16k static endpoints and check the forwarding
     rest delete tenant  t1
         
 Master controller node reboot with 16k endpoints
-	[Tags]  feature
+	[Tags]  feature  scaling
 	rest add tenant  t1
 	rest add vns  t1  v1
 	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
@@ -266,7 +285,7 @@ Mac move at scale 16k  between rack
     rest delete tenant  t1
 
 Tear down the config
-   [Tags]  feature 
+   [Tags]  feature  run   
    delete fabric switch
    rest delete tenant  t1
    base suite teardown
