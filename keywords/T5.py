@@ -1594,7 +1594,6 @@ class T5(object):
         url = '/api/v1/data/controller/core/switch[interface/name="%s"][dpid="%s"]?select=interface[name="%s"]' % (intf, dpid, intf)
         c.rest.get(url)
         data = c.rest.content()
-        helpers.log("data=:%s" % data[0])
         if len(data) != 0:
             if data[0]["interface"][0]["state"] == "down" and data[0]["interface"][0]["type"] == "unknown":
                 helpers.log("Interface is connected to spine or Physical Interface status is down for the leaf switch")
@@ -1697,8 +1696,8 @@ class T5(object):
         c.rest.get(url1)
         data1 = c.rest.content()
         dpid = data1[0]["dpid"]
-        url1 = '/api/v1/data/controller/core/switch[interface/name="%s"][dpid="%s"]?select=interface[name="%s"]' % (intf, dpid, intf)
-        c.rest.get(url1)
+        url2 = '/api/v1/data/controller/core/switch[interface/name="%s"][dpid="%s"]?select=interface[name="%s"]' % (intf, dpid, intf)
+        c.rest.get(url2)
         data = c.rest.content()
         if data[0]["interface"][0]["state"] == "down":
             helpers.log("Interface state is down")
@@ -1713,13 +1712,13 @@ class T5(object):
 
         url = '/api/v1/data/controller/core/switch-config[name="%s"]/interface[name="%s"]' % (switch, intf)
         c.rest.delete(url, {"shutdown": None})
-        helpers.sleep(2)        
+        helpers.sleep(5)        
         url1 = '/api/v1/data/controller/core/switch[name="%s"]' % (switch)
         c.rest.get(url1)
         data1 = c.rest.content()
         dpid = data1[0]["dpid"]
-        url1 = '/api/v1/data/controller/core/switch[interface/name="%s"][dpid="%s"]?select=interface[name="%s"]' % (intf, dpid, intf)
-        c.rest.get(url1)
+        url2 = '/api/v1/data/controller/core/switch[interface/name="%s"][dpid="%s"]?select=interface[name="%s"]' % (intf, dpid, intf)
+        c.rest.get(url2)
         data = c.rest.content()
         if data[0]["interface"][0]["state"] == "up":
             helpers.log("Interface state is up")
