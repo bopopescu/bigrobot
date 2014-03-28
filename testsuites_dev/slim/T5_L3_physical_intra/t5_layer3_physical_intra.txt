@@ -15,7 +15,7 @@ Library         keywords_dev/slim/SwitchLight.py
 Library	        Collections.py
 Library         keywords/Ixia.py
 Library			autobot/helpers/__init__.py
-Resource		testsuites_dev/slim/slim/T5_L3_physical_intra/t5_layer3_physical_intra_variables.txt
+Resource		testsuites_dev/slim/T5_L3_physical_intra/t5_layer3_physical_intra_variables.txt
 Resource		testsuites/T5/t5_dualleaf_three_rack_physical_resource.txt
 
 
@@ -1516,7 +1516,7 @@ Controller HA failover via CLI
 	Should Not Be True							${value} 		
 	${value} =									BASH verify arp					h3						10.251.3.1
 	Should Not Be True							${value} 	
-	BASH ping									h1								10.251.3.11				count=10
+	BASH ping									h1								10.251.3.11				count=30
 	${value} = 									BASH verify arp					h1						10.251.1.1
 	Should Be True								${value} 		
 	${value} =									BASH verify arp					h3						10.251.3.1
@@ -1530,21 +1530,21 @@ Controller HA failover via CLI
 	REST show endpoints		
 	${loss} = 									BASH ping						h1						10.251.3.11 			count=10
 	Should Be True  							${loss} == 0		
-	${stream1}=  								L3 add  						name=stream1		  	flow=a<->c 				frame_rate=100000  			frame_size=128  			frame_cnt=2000000
-	...     									src_ip=10.251.1.101				src_cnt=100				src_ip_step=0.0.0.0 	src_gw=10.251.1.1		
-	...											dst_ip=10.251.3.101				dst_cnt=100				dst_ip_step=0.0.0.1		dst_gw=10.251.3.1 
-    start traffic  								${stream1}
-    __init__.sleep  							20
-    stop traffic								${stream1}
-    verify results 								transmitted_frames  			received_frames  		${stream1}  			stream1
+#	${stream1}=  								L3 add  						name=stream1		  	flow=a<->c 				frame_rate=100000  			frame_size=128  			frame_cnt=2000000
+#	...     									src_ip=10.251.1.101				src_cnt=100				src_ip_step=0.0.0.1 	src_gw=10.251.1.1		
+#	...											dst_ip=10.251.3.101				dst_cnt=100				dst_ip_step=0.0.0.1		dst_gw=10.251.3.1 
+#   start traffic  								${stream1}
+#    __init__.sleep  							20
+#    stop traffic								${stream1}
+#    verify results 								transmitted_frames  			received_frames  		${stream1}  			stream1
 	__init__.sleep								5
-	start traffic								${stream1}
-	__init__.sleep								5
+#	start traffic								${stream1}
+#	__init__.sleep								5
 	${value} = 									REST verify cluster election take leader
 	Should Be True								${value}
-	__init__.sleep								15
-	stop traffic								${stream1}
-    verify results 								transmitted_frames  			received_frames  		${stream1}  			stream1
+#	__init__.sleep								15
+#	stop traffic								${stream1}
+ #   verify results 								transmitted_frames  			received_frames  		${stream1}  			stream1
 	${loss} = 									BASH ping						h1						10.251.3.11 			count=10
 	Should Be True  							${loss} == 0		
 	BASH delete route							h1								10.251.3.0/24			10.251.1.1
