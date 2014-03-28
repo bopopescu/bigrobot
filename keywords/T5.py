@@ -1313,10 +1313,11 @@ class T5(object):
         url = '/api/v1/data/controller/core/switch[name="%s"]/interface' % (switch)
         c.rest.get(url)
         data = c.rest.content()
-        url1 = '/api/v1/data/controller/core/switch-config[name="%s"]?select=name' % (switch)
+        url1 = '/api/v1/data/controller/core/switch[name="%s"]' % (switch)
         c.rest.get(url1)
         data1 = c.rest.content()
-        url2 = '/api/v1/data/controller/core/switch[name="%s"]?select=fabric-lag' % (switch)
+        dpid = data1[0]["dpid"]
+        url2 = '/api/v1/data/controller/core/switch[dpid="%s"]?select=fabric-lag' % (dpid)
         c.rest.get(url2)
         data3 = c.rest.content()
         if str(data1[0]["name"]) == str(switch):
@@ -1327,7 +1328,7 @@ class T5(object):
                     if data[i]["type"] == "leaf":
                         fabric_interface = fabric_interface + 1
                 for i in range(0,len(data3[0]["fabric-lag"])):
-                        if (data3[0]["fabric-lag"][i]["lag-type"]) == "rack-lag":
+                        if (data3[0]["fabric-lag"][i]["lag-type"]) == "rack":
                             rack_lag = rack_lag + int(len(data3[0]["fabric-lag"][i]["member"]))
                 if (int(rack_lag) == int(fabric_interface)):
                                 helpers.log("No of Rack lag from  %s is correct,Expected = %d, Actual = %d " % (switch, fabric_interface, rack_lag))
@@ -1346,21 +1347,21 @@ class T5(object):
                                     fabric_peer_interface = fabric_peer_interface + 1
 
                     for i in range(0,len(data3[0]["fabric-lag"])):
-                                        if data3[0]["fabric-lag"][i]["lag-type"] == "spine-lag":
+                                        if data3[0]["fabric-lag"][i]["lag-type"] == "spine":
                                             if (int(len(data3[0]["fabric-lag"][i]["member"])) == int(fabric_spine_interface)):
                                                 helpers.log("Spine lag formation from leaf switch %s is correct,Expected = %d, Actual = %d, " % (switch, fabric_spine_interface, len(data3[0]["fabric-lag"][i]["member"])))
                                                 return True
                                             else:
                                                 helpers.test_failure(" Spine lag formation from leaf %s switch is not correct,Expected = %d, Actual = %d" % (switch, fabric_spine_interface, len(data3[0]["fabric-lag"][i]["member"])))
                                                 return False
-                                        elif data3[0]["fabric-lag"][i]["lag-type"] == "spine-broadcast-lag":
+                                        elif data3[0]["fabric-lag"][i]["lag-type"] == "spine-broadcast":
                                                 if len(data3[0]["fabric-lag"][i]["member"]) == (int(self.rest_verify_no_of_rack()) * fabric_spine_interface):
                                                     helpers.log("Spine Broadcast lag from leaf switch %s is correct , Actual = %d , Expected = %d" % (switch, int(self.rest_get_no_of_rack()), fabric_spine_interface))
                                                     return True
                                                 else:
                                                         helpers.test_failure("Spine Broadcast lag from leaf switch %s is not correct,expected = %d,actual = %d" % (switch, (int(self.rest_get_no_of_rack()) * fabric_spine_interface), len(data3[0]["fabric-lag"][i]["member"])))
                                                         return False
-                                        elif data3[0]["fabric-lag"][i]["lag-type"] == "leaf-lag":
+                                        elif data3[0]["fabric-lag"][i]["lag-type"] == "leaf":
                                             if len(data3[0]["fabric-lag"][i]["member"]) == fabric_peer_interface:
                                                 helpers.log("Peer lag formation from leaf switch %s is correct,Expected = %d, Actual = %d" % (switch, fabric_peer_interface, len(data3[0]["fabric-lag"][i]["member"])))
                                                 return True
@@ -1586,18 +1587,22 @@ class T5(object):
         '''
         t = test.Test()
         c = t.controller('master')
-        url = '/api/v1/data/controller/core/switch[name="%s"]/interface[name="%s"]' % (switch, intf)
+        url1 = '/api/v1/data/controller/core/switch[name="%s"]' % (switch)
+        c.rest.get(url1)
+        data1 = c.rest.content()
+        dpid = data1[0]["dpid"]
+        url = '/api/v1/data/controller/core/switch[interface/name="%s"][dpid="%s"]?select=interface[name="%s"]' % (intf, dpid, intf)
         c.rest.get(url)
         data = c.rest.content()
         if len(data) != 0:
-            if data[0]["state"] == "down" and data[0]["type"] == "unknown":
+            if data[0]["interface"][0]["state"] == "down" and data[0]["interface"][0]["type"] == "unknown":
                 helpers.log("Interface is connected to spine or Physical Interface status is down for the leaf switch")
-            elif data[0]["state"] == "up" and data[0]["type"] == "edge":
+            elif data[0]["interface"][0]["state"] == "up" and data[0]["interface"][0]["type"] == "edge":
                     helpers.log("Inteface is connected to leaf and it is a edge port")
-            elif data[0]["state"] == "up" and data[0]["type"] == "leaf" or data[0]["state"] == "up" and data[0]["type"] == "spine":
+            elif data[0]["interface"][0]["state"] == "up" and data[0]["interface"][0]["type"] == "leaf" or data[0]["interface"][0]["state"] == "up" and data[0]["interface"][0]["type"] == "spine":
                     helpers.log("Interface is fabric interface")
                     return True
-            elif data[0]["state"] == "quarantined" and data[0]["type"] == "unknown":
+            elif data[0]["interface"][0]["state"] == "quarantined" and data[0]["interface"][0]["type"] == "unknown":
                     helpers.log("Edge ports will not come up for the spine switches")
             else:
                     helpers.test_failure("Interface status is not known to the fabric system , Please check the logs")
@@ -1607,7 +1612,7 @@ class T5(object):
             return False
 
 
-    def rest_verify_forwarding_port_edge(self, switcha, switchb):
+    def rest_verify_forwarding_port_edge(self, switcha, intf0, switchb, intf1):
         '''
          Function to verify Lag id for the portgroup
          Input:  Dual leaf switch names
@@ -1615,13 +1620,23 @@ class T5(object):
         '''
         t = test.Test()
         c = t.controller('master')
+        intf0 = int(re.sub("\D", "", intf0))
+        intf1 = int(re.sub("\D", "", intf1))
         url_a = '/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch-name="%s"]/port-table' % (switcha)
         c.rest.get(url_a)
         data = c.rest.content()
         url_b = '/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch-name="%s"]/port-table' % (switchb)
         c.rest.get(url_b)
         data1 = c.rest.content()
-        if data[0]["lag-id"] == data1[0]["lag-id"]:
+        lag_id_a = []
+        lag_id_b = []
+        for i in range(0,len(data)):
+            if data[i]["port-num"] == intf0:
+                lag_id_a.append(data[i]["lag-id"])
+        for i in range(0,len(data1)):
+            if data[i]["port-num"] == intf1:
+                lag_id_b.append(data[i]["lag-id"])
+        if lag_id_a[0] == lag_id_b[0]:
             helpers.log("Portgroup Lag id creation in forwarding table is correct for dual rack")
             return True
         else:
@@ -1677,10 +1692,14 @@ class T5(object):
         url = '/api/v1/data/controller/core/switch-config[name="%s"]/interface[name="%s"]' % (switch, intf)
         c.rest.patch(url, {"shutdown": True})
         helpers.sleep(2)
-        url1 = '/api/v1/data/controller/core/switch/interface[switch-name="%s"][name="%s"]' % (switch, intf)
+        url1 = '/api/v1/data/controller/core/switch[name="%s"]' % (switch)
         c.rest.get(url1)
+        data1 = c.rest.content()
+        dpid = data1[0]["dpid"]
+        url2 = '/api/v1/data/controller/core/switch[interface/name="%s"][dpid="%s"]?select=interface[name="%s"]' % (intf, dpid, intf)
+        c.rest.get(url2)
         data = c.rest.content()
-        if data[0]["state"] == "down":
+        if data[0]["interface"][0]["state"] == "down":
             helpers.log("Interface state is down")
             return True
         else:
@@ -1693,11 +1712,15 @@ class T5(object):
 
         url = '/api/v1/data/controller/core/switch-config[name="%s"]/interface[name="%s"]' % (switch, intf)
         c.rest.delete(url, {"shutdown": None})
-        helpers.sleep(2)        
-        url1 = '/api/v1/data/controller/core/switch/interface[switch-name="%s"][name="%s"]' % (switch, intf)
+        helpers.sleep(5)        
+        url1 = '/api/v1/data/controller/core/switch[name="%s"]' % (switch)
         c.rest.get(url1)
+        data1 = c.rest.content()
+        dpid = data1[0]["dpid"]
+        url2 = '/api/v1/data/controller/core/switch[interface/name="%s"][dpid="%s"]?select=interface[name="%s"]' % (intf, dpid, intf)
+        c.rest.get(url2)
         data = c.rest.content()
-        if data[0]["state"] == "up":
+        if data[0]["interface"][0]["state"] == "up":
             helpers.log("Interface state is up")
             return True
         else:

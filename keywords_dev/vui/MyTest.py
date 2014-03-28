@@ -350,6 +350,10 @@ admin_user = glance
         helpers.log("*** user:%s, password:%s" % (c_new.user(), c_new.password()))
         c_new.rest.get('/api/v1/data/controller/core/aaa/local-user')
 
+    def controller_reconnect(self):
+        t = test.Test()
+        t.node_reconnect('c1')
+
     def return_dict(self):
         return {'abc': 123,
                 'xyz': 456,
@@ -523,6 +527,34 @@ vui@Vuis-MacBook-Pro$
         n_console.send('')
         n_console.expect(r'Big Virtual Switch Appliance.*[\r\n]')
         n_console.expect(r'login:')
+
+    def test_console2(self, node):
+        t = test.Test()
+        n = t.node(node)
+        n_console = n.console()
+        n_console.expect(r'Escape character.*[\r\n]')
+
+        n_console.send('')
+        n_console.expect(r'admin.*\$ ')
+
+        n_console.send('find /etc')
+        helpers.log("Sleeping for 3 seconds")
+        helpers.sleep(3)
+        # n_console.expect(r'.*')
+        n_console.expect(r'admin.*\$ ')
+
+        n_console.send('')
+        n_console.expect(r'admin.*\$ ')
+
+        n_console.send('pwd')
+        n_console.expect(r'admin.*\$ ')
+
+        n_console.send('env')
+        n_console.expect(r'admin.*\$ ')
+
+        n_console.send('')
+        n_console.expect(r'admin.*\$ ')
+
 
     def test_console_reconnect(self, node):
         t = test.Test()

@@ -109,7 +109,7 @@ checking multiple network same subnet in a single tenant
 	openstack add net  app-tenant  app-net1
 	openstack add subnet  app-tenant  app-net1  app-net1  30.0.0.0/24
 	sleep  2	
-	${result}=  openstack verify vns  app-tenant  app-net2
+	${result}=  openstack verify vns  app-tenant  app-net1
 	Should not be True  ${result}
 	
 * keywords

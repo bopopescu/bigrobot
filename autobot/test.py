@@ -718,6 +718,13 @@ class Test(object):
         helpers.debug("Test object initialization ends.%s"
                       % br_utils.end_of_output_marker())
 
+    def init_completed(self):
+        """
+        We may need to do something only during the initialization phase of
+        the test object. This flag tells us if we've completed the init phase.
+        """
+        return self._init_completed
+
     def leading_spaces(self, s):
         return len(s) - len(s.lstrip(' '))
 
