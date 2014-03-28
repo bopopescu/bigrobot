@@ -40,7 +40,7 @@ add Dual Leaf Three Rack setup
 	rest add interface to vns  t1  v1  leaf2-b  ${leaf2b_ixia_intf}  -1
    
 Add 1000 dynamic mac into the system and check forwarding and make sure aging also works for 1000 mac
-	[Tags]  feature  scaling  run  
+	[Tags]  feature  scaling    
 	${stream}=             L3 add  no_arp=True  flow=a<->c  src_mac=00:00:01:00:00:01  dst_mac=00:00:02:00:00:01  src_cnt=500  dst_cnt=500  dst_mac_step=00:00:00:00:00:01  src_mac_step=00:00:00:00:00:01  frame_rate=1000  frame_size=128  name=a_c_flow
     start traffic  ${stream}
     sleep  5
@@ -71,17 +71,69 @@ Add 1000 dynamic mac into the system and check forwarding and make sure aging al
     ${count}=	Convert to integer  ${result}   
     Should be True  ${count} < 7
 	    
+Add 4000 dynamic mac into the system and check forwarding and make sure aging also works for 4000 mac
+	[Tags]  feature  scaling  run  
+	${stream}=             L3 add  no_arp=True  flow=a<->c  src_mac=00:00:01:00:00:01  dst_mac=00:00:02:00:00:01  src_cnt=2000  dst_cnt=2000  dst_mac_step=00:00:00:00:00:01  src_mac_step=00:00:00:00:00:01  frame_rate=1000  frame_size=128  name=a_c_flow
+    start traffic  ${stream}
+    sleep  7
+    rest verify endpoint in system  4000
+    sleep  300 
+    ${result}=  bash execute command  leaf0-a  ofad-ctl ft L2 | wc -l 
+    ${count}=	Convert to integer  ${result}   
+    Should be True  ${count} > 4000
+    ${result}=  bash execute command  leaf2-a  ofad-ctl ft L2 | wc -l
+    ${count}=	Convert to integer  ${result}   
+    Should be True  ${count} > 4000
+    ${result}=  bash execute command  spine0  ofad-ctl ft L2 | wc -l
+    ${count}=	Convert to integer  ${result}   
+    Should be True  ${count} > 4000
+    verify traffic rate  tx_rate  rx_rate  a  c
+    verify traffic rate  tx_rate  rx_rate  c  a
+    stop traffic  ${stream}
+    sleep  600
+    summary log  waiting 10 minutes for 4000 mac age
+    rest verify endpoint in system  0
+    ${result}=  bash execute command  leaf0-a  ofad-ctl ft L2 | wc -l 
+    ${count}=	Convert to integer  ${result}   
+    Should be True  ${count} < 7
+    ${result}=  bash execute command  leaf2-a  ofad-ctl ft L2 | wc -l
+    ${count}=	Convert to integer  ${result}   
+    Should be True  ${count} < 7
+    ${result}=  bash execute command  spine0  ofad-ctl ft L2 | wc -l
+    ${count}=	Convert to integer  ${result}   
+    Should be True  ${count} < 7
+
+
 Add 10000 dynamic mac into the system and check forwarding and make sure aging also works for 10000 mac
 	[Tags]  feature  scaling  
 	${stream}=             L3 add  no_arp=True  flow=a<->c  src_mac=00:00:01:00:00:01  dst_mac=00:00:02:00:00:01  src_cnt=5000  dst_cnt=5000  dst_mac_step=00:00:00:00:00:01  src_mac_step=00:00:00:00:00:01  frame_rate=5000  frame_size=128  name=a_c_flow
     start traffic  ${stream}
-    sleep  5
+    sleep  20
     rest verify endpoint in system  10000
+    sleep  700
+    ${result}=  bash execute command  leaf0-a  ofad-ctl ft L2 | wc -l 
+    ${count}=	Convert to integer  ${result}   
+    Should be True  ${count} > 10000
+    ${result}=  bash execute command  leaf2-a  ofad-ctl ft L2 | wc -l
+    ${count}=	Convert to integer  ${result}   
+    Should be True  ${count} > 10000
+    ${result}=  bash execute command  spine0  ofad-ctl ft L2 | wc -l
+    ${count}=	Convert to integer  ${result}   
+    Should be True  ${count} > 10000
     verify traffic rate  tx_rate  rx_rate  a  c
     verify traffic rate  tx_rate  rx_rate  c  a
     stop traffic  ${stream}
 	sleep  600
     rest verify endpoint in system  0
+    ${result}=  bash execute command  leaf0-a  ofad-ctl ft L2 | wc -l 
+    ${count}=	Convert to integer  ${result}   
+    Should be True  ${count} < 7
+    ${result}=  bash execute command  leaf2-a  ofad-ctl ft L2 | wc -l
+    ${count}=	Convert to integer  ${result}   
+    Should be True  ${count} < 7
+    ${result}=  bash execute command  spine0  ofad-ctl ft L2 | wc -l
+    ${count}=	Convert to integer  ${result}   
+    Should be True  ${count} < 7
 
 Add 16000 dynamic mac into the system and check forwarding and make sure aging also works for 16000 mac
 	[Tags]  feature  scaling  

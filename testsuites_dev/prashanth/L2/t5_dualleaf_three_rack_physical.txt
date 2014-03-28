@@ -31,15 +31,15 @@ bring up host bond0 interface
 	sleep  2
 	
 add Fabric setup Three Rack Dual Leaf 
-   [Tags]  smoke  sanity
+   [Tags]  smoke  sanity  run
    rest verify fabric switch all
    rest verify fabric link 
    
 ping h5 to h6 dual leaf single rack dynamic endpoints
-   [Tags]  smoke   sanity       
+   [Tags]  smoke   sanity  run       
    add portgroup to vns  A  A  p5  -1 
    add portgroup to vns  A  A  p6  -1
-   sleep  5
+   sleep  20
    ${loss}=  bash ping  h5  ${h6_ip}  source_if=bond0
    Should Be True  ${loss} < 50						 
 	 
