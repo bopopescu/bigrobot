@@ -14,11 +14,17 @@ Test cli first boot
     cli boot factory default  c1
 
 Test first boot configuration
-    [Tags]           skipped
+    #[Tags]           skipped
     cli add first boot   node=c1
     ...                  ip_address=10.192.104.2  netmask=18
     ...                  gateway=10.192.64.1
     ...                  dns_server=10.192.3.1  dns_search=bigswitch.com
+    controller reconnect
+    run show version
+
+Test run show version
+    [Tags]           skipped
+    run show version
 
 Test cli boot factory default and first boot
     [Tags]           skipped
@@ -32,4 +38,9 @@ Test cli boot factory default and first boot
     Should be true   ${status}
 
 Test console reconnect
+    [Tags]           skipped
     test console reconnect  c1
+
+* Keywords
+run show version
+    cli         c1   show version
