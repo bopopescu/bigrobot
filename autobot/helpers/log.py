@@ -51,6 +51,15 @@ class Log(object):
         else:
             return "%s\n" % s
 
+    def _write_to_file(self, msg):
+        if Log.log_file is None:
+            # Probably impossible to reach here...
+            raise RuntimeError("You must specify an Autobot log file")
+
+        f = open(Log.log_file, "a")
+        f.write(msg)
+        f.close()
+
     def log(self, s, level=1, to_stderr=False):
         """
         Write to INFO log.
@@ -58,13 +67,7 @@ class Log(object):
         msg = self._format_log(s, level)
 
         if not gobot.is_gobot():
-            if Log.log_file is None:
-                # Probably impossible to reach here...
-                raise RuntimeError("You must specify an Autobot log file")
-
-            f = open(Log.log_file, "a")
-            f.write(msg)
-            f.close()
+            self._write_to_file('INFO ' + msg)
         else:
             if to_stderr:
                 sys.stderr.write('\n' + msg)
@@ -77,12 +80,21 @@ class Log(object):
 
     def warn(self, s, level=1):
         msg = self._format_log(s, level)
-        logger.warn(msg)
+        if not gobot.is_gobot():
+            self._write_to_file('WARN ' + msg)
+        else:
+            logger.warn(msg)
 
     def debug(self, s, level=1):
         msg = self._format_log(s, level)
-        logger.debug(msg)
+        if not gobot.is_gobot():
+            self._write_to_file('DEBUG ' + msg)
+        else:
+            logger.debug(msg)
 
     def trace(self, s, level=1):
         msg = self._format_log(s, level)
-        logger.trace(msg)
+        if not gobot.is_gobot():
+            self._write_to_file('TRACE ' + msg)
+        else:
+            logger.trace(msg)
