@@ -4,7 +4,7 @@
 Documentation    Fabric Failover Test using Three Rack Dual Spine
 Suite Setup      base suite setup
 Suite Teardown   base suite teardown
-Test Setup       base test setup
+Test Setup       T5 test setup
 Test Teardown    T5 test teardown
 Force Tags       T5 
 Library          keywords/BsnCommon.py
@@ -318,10 +318,15 @@ verify traffic packet  [Arguments]  ${tx_cnt}  ${rx_cnt}  ${tx_intf}  ${rx_intf}
     ${result}=  Evaluate  ${tx_value} - ${rx_value}
     Should Be True   -4 < ${result} < 1
     
+T5 test setup
+	base test setup
+	bring up 1 gig interface
+
 T5 test teardown
 	delete traffic
 	rest delete tenant  t1
 	rest delete tenant  t2
+	base test teardown
 
 bring up h1 bond0
 	bash init intf  h1  bond0.10
@@ -346,4 +351,15 @@ bring up h5 bond0
 bring up h6 bond0
 	bash init intf  h6  bond0
     bash add ip address  h6  ${h6_ip}/24  bond0
-    bash ifup intf  h6  bond0  
+    bash ifup intf  h6  bond0 
+bring up 1 gig interface
+	bash execute command  leaf0-a  ofad-ctl autoneg 24
+	bash execute command  leaf0-a  ofad-ctl autoneg 25
+	bash execute command  leaf0-a  ofad-ctl autoneg 26
+	bash execute command  leaf0-b  ofad-ctl autoneg 24
+	bash execute command  leaf1-a  ofad-ctl autoneg 24
+	bash execute command  leaf1-a  ofad-ctl autoneg 25
+	bash execute command  leaf1-a  ofad-ctl autoneg 26
+	bash execute command  leaf1-b  ofad-ctl autoneg 24
+	bash execute command  leaf2-a  ofad-ctl autoneg 24
+	bash execute command  leaf2-b  ofad-ctl autoneg 24 
