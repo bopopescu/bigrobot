@@ -65,7 +65,7 @@ def scp_vmdk_to_kvm(**kwargs):
     kvm_handle.bash('sudo cp controller-bvs-2.0.7-SNAPSHOT.vmdk ../images/%s.vmdk' % vm_name)
     kvm_vmdk_path = "/var/lib/libvirt/images/%s.vmdk" % vm_name
     #vm_name = "%s_BVS" % current_user
-    helpers.log("Success copying latest VMDK to KVM Host to Location: %s" % kvm_vmdk_path)
+    helpers.log("1. Success copying latest VMDK to KVM Host to Location: %s" % kvm_vmdk_path)
     print   "1. Success Copying Latest BVS VMDK to %s on KVM Host!!" % kvm_vmdk_path
 
 def create_vm_on_kvm(**kwargs):
@@ -78,7 +78,9 @@ def create_vm_on_kvm(**kwargs):
                         --import     --noautoconsole" % (vm_name, kvm_vmdk_path)
     helpers.log('Creating VM on KVM Host...')
     if "Domain creation completed." in kvm_handle.bash(virt_install_cmd)['content']:
+        helpers.log("2. Success Creating VM with Name: %s on KVM_Host: %s" % (vm_name, kvm_host))
         print "2. Success Creating VM with Name: %s on KVM_Host: %s" % (vm_name, kvm_host)
+        helpers.log("Current Running VMs on KVM_HOST : \n %s" % kvm_handle.bash('sudo virsh list --all')['content'])
     else:
         print "FAILURE CREATING VM  :( Need to debug ..."
         
@@ -89,9 +91,13 @@ def main(*args):
     helpers.log("Creating VM with Name: %s " % vm_name)
     connect_to_kvm_host(hostname = kvm_host, user = kvm_user,
                                      password = kvm_pwd, name = 'kvm_host')
+    if vm_name in kvm_handle.bash('sudo virsh list --all')['content']:
+        helpers.log("VM with given name %s already exists in KVM Host %s\nExisting.." % (vm_name, kvm_host))
+        print "VM with given name %s already exists in KVM Host %s\nPlease use different name\nExisting.." % (vm_name, kvm_host)
+        sys.exit(1)
+        
     scp_vmdk_to_kvm(kvm_handle = kvm_handle)
     create_vm_on_kvm()
-    
     
 if __name__ == '__main__':
     if len(sys.argv) < 2:
