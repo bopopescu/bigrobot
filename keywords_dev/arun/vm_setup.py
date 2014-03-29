@@ -86,7 +86,6 @@ def main(*args):
     global vm_name
     vm_name = current_user + '_' + args[0][0]
     print "Creating VM with Name : %s" % vm_name
-    raw_input()
     helpers.log("Creating VM with Name: %s " % vm_name)
     connect_to_kvm_host(hostname = kvm_host, user = kvm_user,
                                      password = kvm_pwd, name = 'kvm_host')
