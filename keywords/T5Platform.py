@@ -1603,8 +1603,10 @@ class T5Platform(object):
             helpers.log("********content is list************\n%s" % helpers.prettify(temp))
             config = temp[5:]
             content = '\n'.join(config)
-            helpers.log("********config :************\n%s" % content)                 
-            return  content
+            helpers.log("********config :************\n%s" % content)  
+            new_content = re.sub(r'\s+hashed-password.*$','\n  remove-passwd',content,flags=re.M)  
+            helpers.log("********config after remove passwd :************\n%s" % new_content)                          
+            return  new_content
         if fabric_switch: 
             c.enable('show fabric switch')     
             content = c.cli_content()       
@@ -2119,8 +2121,7 @@ class T5Platform(object):
 
         """ 
         helpers.log("Entering ====>  first_boot_controller node:'%s' " % node)
-        
-        self.first_boot_controller_initial_node_setup(node,dhcp,ip_address,netmask)
+        self.first_boot_controller_initial_node_setup(node,dhcp,ip_address,netmask,gateway,dns_server,dns_search,hostname)
         self.first_boot_controller_initial_cluster_setup(node,join_cluster,cluster_ip )        
         new_ip_address = self.first_boot_controller_menu_apply(node)
         helpers.sleep(3)  # Sleep for a few seconds just in case...
@@ -2344,7 +2345,7 @@ class T5Platform(object):
         n_console.expect(r'Press enter to continue > ')
         n_console.send('')
         #helpers.log("Closing console connection for '%s'" % node)
-        n.console_close()
+        #n.console_close()
 
         helpers.sleep(3)  # Sleep for a few seconds just in case...
         return new_ip_address

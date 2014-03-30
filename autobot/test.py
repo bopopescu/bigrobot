@@ -107,7 +107,10 @@ class Test(object):
 
                 helpers.bigrobot_params(new_val=self._params_file)
 
-            self.load_topology()
+            self._topology_params = self.load_topology()
+            if self._topology_params:
+                self._has_a_topo_file = True
+
             self.init_alias_lookup_table()
 
             if 'mn' in self._topology_params:
@@ -153,11 +156,11 @@ class Test(object):
             topo = helpers.bigrobot_topology()
             if helpers.file_not_exists(topo):
                 helpers.warn("Topology file not specified (%s)" % topo)
-                self._topology_params = {}
+                topo = {}
             else:
                 helpers.log("Loading topology file %s" % topo)
-                self._topology_params = helpers.load_config(topo)
-                self._has_a_topo_file = True
+                topo = helpers.load_config(topo)
+            return topo
 
         def init_alias_lookup_table(self):
             for node in self._topology_params:
