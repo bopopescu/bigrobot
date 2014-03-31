@@ -97,19 +97,41 @@ class Test(object):
                             params_dict[m]['ip'] = ip
                             helpers.debug("'%s' IP address is '%s' (bigtest node '%s')"
                                           % (m, ip, key))
-                    yaml_str = helpers.to_yaml(params_dict)
+                elif self._testbed_type.lower() == "libvirt":
+                    # TODO: We need to add the code to process libvirt nodes...
+                    helpers.test_error("Libvirt testbed is not yet supported.")
+                elif self._testbed_type.lower() == "static":
+                    static_nodes = helpers.nodes_static()
 
-                    # This file contain a list of nodes:
-                    #   c1: {ip: 10.192.5.221}
-                    #   c2: {ip: 10.192.5.222}
-                    #   mn1: {ip: 10.192.7.175}
-                    #   ...and so on...
-                    self._params_file = helpers.bigrobot_log_path_exec_instance() + '/params.topo'
+                    # Expecting a YAML config.
+                    if static_nodes:
+                        match = re.match(r'^file:(.+)$', static_nodes)
+                        if match:
+                            file = match.group(1)
+                            if helpers.file_not_exists(file):
+                                helpers.test_error("NODES_STATIC file '%s' does not exist." % file)
+                            else:
+                                params_dict = helpers.load_config(file)
+                        else:
+                            helpers.test_error("For static testbed, env NODES_STATIC has format 'file:<path_and_filename>'.")
+                    else:
+                        helpers.test_error("For static testbed, must define env NODES_STATIC. Format is:\n"
+                                           "\texport NODES_STATIC=file:<path_and_filename>")
+                else:
+                    helpers.test_error("Supported testbed type is 'bigtest', 'libvirt', or 'static'.")
 
-                    helpers.info("Writing params to file '%s'" % self._params_file)
-                    helpers.file_write_once(self._params_file, yaml_str)
+                yaml_str = helpers.to_yaml(params_dict)
 
-                    helpers.bigrobot_params(new_val=self._params_file)
+                # This file contain a list of nodes:
+                #   c1: {ip: 10.192.5.221}
+                #   c2: {ip: 10.192.5.222}
+                #   mn1: {ip: 10.192.7.175}
+                #   ...and so on...
+                self._params_file = helpers.bigrobot_log_path_exec_instance() + '/params.topo'
+
+                helpers.info("Writing params to file '%s'" % self._params_file)
+                helpers.file_write_once(self._params_file, yaml_str)
+                helpers.bigrobot_params(new_val=self._params_file)
 
             self._topology_params = self.load_topology()
             if self._topology_params:
