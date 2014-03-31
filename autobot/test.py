@@ -132,10 +132,10 @@ class Test(object):
                     helpers.environment_failure("Params file '%s' does not exist"
                                                 % params_file)
                 self._params = helpers.load_config(params_file)
-                for n in self._params:
-                    if n not in self._topology_params:
+                for n in self._topology_params:
+                    if n not in self._params:
                         helpers.environment_failure("Node '%s' is not"
-                                                    " specified in topo file"
+                                                    " specified in params file"
                                                     % n)
                     for key in self._params[n]:
                         if key not in self._topology_params[n]:
