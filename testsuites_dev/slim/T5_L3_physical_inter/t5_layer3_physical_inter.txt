@@ -1606,6 +1606,7 @@ setup topology
 	REST add tenant 								X
 	REST add tenant									Y
 	REST add tenant									Z
+	REST add tenant									system
 	REST add vns									X							X1
 	REST add vns									X							X2
 	REST add vns									X							X3
@@ -1654,12 +1655,14 @@ setup topology
 	REST add system to tenant routers 				X
 	REST add system to tenant routers 				Y
 	REST add system to tenant routers 				Z
-	REST add policy									X							allow_all
-	REST add policy									Y							allow_all
-	${result} = 									REST add policy item		X					allow_all			10		permit 			{"tenant-name": "X"}, "dst": {"tenant-name": "system"}
-	Should Be True									${result}
-	${result} = 									REST add policy item		X					allow_all			20		permit			{"tenant-name": "system"}, "dst": {"tenant-name": "X"}
-	Should Be True									${result}
+#	REST add policy									X							allow_all
+#	REST add policy									Y							allow_all
+#	${result} = 									REST add policy item		X					allow_all			10		permit 			{"tenant-name": "X"}, "dst": {"tenant-name": "system"}
+#	Should Be True									${result}
+#	${result} = 									REST add policy item		X					allow_all			20		permit			{"tenant-name": "system"}, "dst": {"tenant-name": "X"}
+#	Should Be True									${result}
+	REST add static routes							X							10.252.0.0/16		system
+	REST add static routes							X							10.252.0.0/16		system
 		
 	
 
