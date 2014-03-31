@@ -1,0 +1,59 @@
+*** Settings ***
+Documentation  		Various CLI commands
+Suite Setup  		My Suite Setup
+Suite Teardown   	Base Suite Teardown
+Test Setup   		Setup
+Test Teardown  		Teardown
+Force Tags   		Platform
+Library  			keywords/BsnCommon.py
+Library  			keywords/T5Platform.py
+Library  			keywords/T5.py
+Library        		String
+
+*** Variables ***
+
+*** Test Cases ***
+T1 Verify autocompletion for mac addresses
+	Cli Run  switch bb-3
+	Cli Run and Verify Output
+	...  mac ? 5c:16:c7:13:46:b4
+	...  5c:16:c7:13:46:b4 Unassigned switch
+	[Tags]  BSC-5065
+
+T2 Shutdown interface, verify, bring it up, verify
+	Cli Run  show running-config
+        Cli Run  switch bb-3
+        Cli Run  fabric-role leaf
+        Cli Run  mac 5c:16:c7:13:46:b4
+        Cli Run  interface ethernet1
+        Cli Run  shutdown
+        Sleep  5 sec
+        Cli Run and Verify Output
+        ...  show interface ethernet1 detail
+        ...  ethernet1 is admin down
+        ...  flag=True
+        ...  node_type=switch
+        ...  node=s3
+        Cli Run  no shutdown
+        Sleep  5 sec
+        Cli Run and Verify Output
+        ...  show interface ethernet1 detail
+        ...  ethernet1 is up
+        ...  flag=True
+        ...  node_type=switch
+        ...  node=s3
+        [Tags]  BSC-5070
+
+*** Keywords ***
+My Suite Setup
+	Base Suite Setup
+	Cli Copy  running-config  config://startup-config
+
+Setup
+	Base Test Setup
+        Cli Run  enable
+        Cli Run  config
+
+Teardown
+	Cli Copy  config://startup-config  running-config
+	Base Test Teardown
