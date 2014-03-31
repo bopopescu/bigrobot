@@ -52,47 +52,78 @@ class Test(object):
             helpers.log("Loading config file %s" % self._bsn_config_file)
             self._bsn_config = helpers.load_config(self._bsn_config_file)
 
-            self._is_ci = helpers.bigrobot_continuous_integration()
+            # self._is_ci = helpers.bigrobot_continuous_integration()
+            # if self._is_ci.lower() == "true":
+            #    helpers.info("BigRobot Continuous Integration environment")
+            #    ...do something...
 
             controller_id = 1
             mininet_id = 1
             params_dict = {}
 
-            if self._is_ci.lower() == "true":
-                helpers.info("BigRobot Continuous Integration environment")
-                self._bigtest_node_info = helpers.bigtest_node_info()
-                helpers.info("BigTest node info:\n%s"
-                             % helpers.prettify(self._bigtest_node_info))
+            self._testbed_type = helpers.bigrobot_testbed()
+            if self._testbed_type:
+                helpers.info("BIGROBOT_TESTBED: %s" % self._testbed_type)
+                if self._testbed_type.lower() == "bigtest":
+                    self._bigtest_node_info = helpers.bigtest_node_info()
+                    helpers.info("BigTest node info:\n%s"
+                                 % helpers.prettify(self._bigtest_node_info))
 
-                # Nodes format:
-                #   'controller-c02n01-047,mininet-c02n01-047'
-                # BigTest's "bt startremotevm" is able to bring up multiple
-                # clusters. We need to make sure to use only the VMs in the
-                # clusters assigned, else there will be conflicts.
-                bigtest_nodes = helpers.bigtest_nodes()
-                node_names = self._bigtest_node_info.keys()
-                if bigtest_nodes:
-                    node_names = ['node-' + n for n in bigtest_nodes.split(',')]
-                    helpers.info("Found env BIGTEST_NODES. Limiting nodes to %s."
-                                 % node_names)
+                    # BigTest node format:
+                    #   'controller-c02n01-047,mininet-c02n01-047'
+                    # BigTest's "bt startremotevm" is able to bring up multiple
+                    # clusters. We need to make sure to use only the VMs in the
+                    # clusters assigned, else there will be conflicts.
+                    bigtest_nodes = helpers.bigrobot_params_input()
+                    node_names = self._bigtest_node_info.keys()
+                    if bigtest_nodes:
+                        node_names = ['node-' + n for n in bigtest_nodes.split(',')]
+                        helpers.info("Found env BIGROBOT_PARAMS_INPUT. Limiting nodes to %s."
+                                     % node_names)
 
-                for key in node_names:
-                    if re.match(r'^node-controller', key):
-                        c = "c" + str(controller_id)
-                        controller_id += 1
-                        ip = self._bigtest_node_info[key]['ipaddr']
-                        params_dict[c] = {}
-                        params_dict[c]['ip'] = ip
-                        helpers.debug("'%s' IP address is '%s' (bigtest node '%s')"
-                                      % (c, ip, key))
-                    if re.match(r'^node-mininet', key):
-                        m = "mn" + str(mininet_id)
-                        mininet_id += 1
-                        ip = self._bigtest_node_info[key]['ipaddr']
-                        params_dict[m] = {}
-                        params_dict[m]['ip'] = ip
-                        helpers.debug("'%s' IP address is '%s' (bigtest node '%s')"
-                                      % (m, ip, key))
+                    for key in node_names:
+                        if re.match(r'^node-controller', key):
+                            c = "c" + str(controller_id)
+                            controller_id += 1
+                            ip = self._bigtest_node_info[key]['ipaddr']
+                            params_dict[c] = {}
+                            params_dict[c]['ip'] = ip
+                            helpers.debug("'%s' IP address is '%s' (bigtest node '%s')"
+                                          % (c, ip, key))
+                        if re.match(r'^node-mininet', key):
+                            m = "mn" + str(mininet_id)
+                            mininet_id += 1
+                            ip = self._bigtest_node_info[key]['ipaddr']
+                            params_dict[m] = {}
+                            params_dict[m]['ip'] = ip
+                            helpers.debug("'%s' IP address is '%s' (bigtest node '%s')"
+                                          % (m, ip, key))
+
+                elif self._testbed_type.lower() == "libvirt":
+                    # TODO: We need to add the code to process libvirt nodes...
+                    helpers.test_error("Libvirt testbed is not yet supported.")
+
+                elif self._testbed_type.lower() == "static":
+                    static_nodes = helpers.bigrobot_params_input()
+                    helpers.info("Static node info: %s" % static_nodes)
+
+                    # Expecting a YAML config.
+                    if static_nodes:
+                        match = re.match(r'^file:(.+)$', static_nodes)
+                        if match:
+                            file = match.group(1)
+                            if helpers.file_not_exists(file):
+                                helpers.test_error("BIGROBOT_PARAMS_INPUT file '%s' does not exist." % file)
+                            else:
+                                params_dict = helpers.load_config(file)
+                        else:
+                            helpers.test_error("For static testbed, env BIGROBOT_PARAMS_INPUT has format 'file:<path_and_filename>'.")
+                    else:
+                        helpers.test_error("For static testbed, must define env BIGROBOT_PARAMS_INPUT. Format is:\n"
+                                           "\texport BIGROBOT_PARAMS_INPUT=file:<path_and_filename>")
+                else:
+                    helpers.test_error("Supported testbed type is 'bigtest', 'libvirt', or 'static'.")
+
                 yaml_str = helpers.to_yaml(params_dict)
 
                 # This file contain a list of nodes:
@@ -104,7 +135,6 @@ class Test(object):
 
                 helpers.info("Writing params to file '%s'" % self._params_file)
                 helpers.file_write_once(self._params_file, yaml_str)
-
                 helpers.bigrobot_params(new_val=self._params_file)
 
             self._topology_params = self.load_topology()
