@@ -22,9 +22,3 @@ c1:
 #  ip: 10.195.0.34
 #  user: admin
 #  password: bsn
-
-#mn:
-#  ip: 10.192.7.39
-#  type: 't6'  # required: 't6' or 'basic'
-#  topology: --num-spine 0 --num-rack 1 --num-bare-metal 2 --num-hypervisor 0
-
