@@ -131,7 +131,7 @@ Test SSH connection
     verify ssh connection   node=c1   user=admin   password=adminadmin
 
 Test console connection
-    #[Tags]  skipped
+    [Tags]  skipped
     test console2  master
 
 Test show version
