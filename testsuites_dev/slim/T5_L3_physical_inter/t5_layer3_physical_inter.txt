@@ -1648,8 +1648,19 @@ setup topology
 	REST add interface to portgroup					leaf2-b						${leaf2_pc1_intf2}					${leaf2_pc1}
 	REST add interface to portgroup					leaf2-a						${leaf2_pc2_intf1}					${leaf2_pc2}
 	REST add interface to portgroup					leaf2-b						${leaf2_pc2_intf2}					${leaf2_pc2}	
-  	
-	
+	REST add tenant routers to system				X
+	REST add tenant routers to system				Y
+	REST add tenant routers to system				Z
+	REST add system to tenant routers 				X
+	REST add system to tenant routers 				Y
+	REST add system to tenant routers 				Z
+	REST add policy									X							allow_all
+	REST add policy									Y							allow_all
+	${result} = 									REST add policy item		X					allow_all			10		{"action": "permit", "src": {"tenant-name": "X"}, "dst": {"tenant-name": "system"}, "seq": 10}
+	Should Be True									${result}
+	${result} = 									REST add policy item		X					allow_all			20		{"action": "permit", "src": {"tenant-name": "system"}, "dst": {"tenant-name": "X"}, "seq": 20}
+	Should Be True									${result}
+		
 	
 
 teardown topology

@@ -669,8 +669,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
             Input:
                 `tenant`        tenant name
                 `polname`        name of policy
-            PATCH http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[name="A"]/virtual-router/vns-interfaces[vns-name="A2"] {"ip-cidr": "10.10.12.1/24"}
-        
+       
             Return: true if configuration is successful, false otherwise
         '''
         
@@ -699,7 +698,6 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
                 `tenant`        tenant name
                 `vnsname`        vns name
                 `polname`        name of policy
-            PATCH http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[name="A"]/virtual-router/vns-interfaces[vns-name="A2"] {"ip-cidr": "10.10.12.1/24"}
         
             Return: true if configuration is successful, false otherwise
         '''
@@ -728,7 +726,6 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
                 `tenant`        tenant name
                 `vnsname`        vns name
                 `polname`        name of policy
-            PATCH http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[name="A"]/virtual-router/vns-interfaces[vns-name="A2"] {"ip-cidr": "10.10.12.1/24"}
         
             Return: true if configuration is successful, false otherwise
         '''
@@ -751,3 +748,30 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
             return True
 
 
+    def rest_add_policy_item(self, tenant, polname, seqnum, data):
+        '''add a policy item
+        
+            Input:
+                `tenant`        tenant name
+                `polname`        name of policy
+                `seqnum`        sequence number
+                `data`            policy data
+            http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[name="A"]/virtual-router/policy-lists[name="p2"]/rules[seq=10] {"src": {"vns-name": "A1", "tenant-name": "A"}, "seq": 10, "dst": {"cidr": "10.1.1.1/24"}, "ip-proto": 6, "action": "next-hop", "next-hop": {"ip-address": "10.1.1.1"}}
+            Return: true if configuration is successful, false otherwise
+        '''
+        
+        t = test.Test()
+        c = t.controller('master')
+        
+        helpers.test_log("Input arguments: tenant = %s policy name = %s sequence number = %s data = %s " % (tenant, polname, seqnum, data))
+        
+        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/virtual-router/policy-lists[name="%s"]/rules[seq=%s]' % (tenant, polname, seqnum)
+        try:
+            c.rest.post(url, {"src": data})
+        except:
+            #helpers.test_failure(c.rest.error())
+            return False
+        else: 
+            #helpers.test_log("Output: %s" % c.rest.result_json())
+            #return c.rest.content()
+            return True
