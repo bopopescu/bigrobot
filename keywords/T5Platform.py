@@ -480,6 +480,7 @@ class T5Platform(object):
                             Fabric.rest_add_switch(leafName)
                             Fabric.rest_add_dpid(leafName, dpid)
                             Fabric.rest_add_fabric_role(leafName, 'leaf')
+                            Fabric.rest_add_leaf_group(leafName, rackName)
     
 
      
