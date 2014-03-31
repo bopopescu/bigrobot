@@ -62,53 +62,54 @@ class Test(object):
             params_dict = {}
 
             self._testbed_type = helpers.bigrobot_testbed()
-            if self._testbed_type.lower() == "bigtest":
-                self._bigtest_node_info = helpers.bigtest_node_info()
-                helpers.info("BigTest node info:\n%s"
-                             % helpers.prettify(self._bigtest_node_info))
+            if self._testbed_type:
+                if self._testbed_type.lower() == "bigtest":
+                    self._bigtest_node_info = helpers.bigtest_node_info()
+                    helpers.info("BigTest node info:\n%s"
+                                 % helpers.prettify(self._bigtest_node_info))
 
-                # BigTest node format:
-                #   'controller-c02n01-047,mininet-c02n01-047'
-                # BigTest's "bt startremotevm" is able to bring up multiple
-                # clusters. We need to make sure to use only the VMs in the
-                # clusters assigned, else there will be conflicts.
-                bigtest_nodes = helpers.nodes_bigtest()
-                node_names = self._bigtest_node_info.keys()
-                if bigtest_nodes:
-                    node_names = ['node-' + n for n in bigtest_nodes.split(',')]
-                    helpers.info("Found env BIGTEST_NODES. Limiting nodes to %s."
-                                 % node_names)
+                    # BigTest node format:
+                    #   'controller-c02n01-047,mininet-c02n01-047'
+                    # BigTest's "bt startremotevm" is able to bring up multiple
+                    # clusters. We need to make sure to use only the VMs in the
+                    # clusters assigned, else there will be conflicts.
+                    bigtest_nodes = helpers.nodes_bigtest()
+                    node_names = self._bigtest_node_info.keys()
+                    if bigtest_nodes:
+                        node_names = ['node-' + n for n in bigtest_nodes.split(',')]
+                        helpers.info("Found env BIGTEST_NODES. Limiting nodes to %s."
+                                     % node_names)
 
-                for key in node_names:
-                    if re.match(r'^node-controller', key):
-                        c = "c" + str(controller_id)
-                        controller_id += 1
-                        ip = self._bigtest_node_info[key]['ipaddr']
-                        params_dict[c] = {}
-                        params_dict[c]['ip'] = ip
-                        helpers.debug("'%s' IP address is '%s' (bigtest node '%s')"
-                                      % (c, ip, key))
-                    if re.match(r'^node-mininet', key):
-                        m = "mn" + str(mininet_id)
-                        mininet_id += 1
-                        ip = self._bigtest_node_info[key]['ipaddr']
-                        params_dict[m] = {}
-                        params_dict[m]['ip'] = ip
-                        helpers.debug("'%s' IP address is '%s' (bigtest node '%s')"
-                                      % (m, ip, key))
-                yaml_str = helpers.to_yaml(params_dict)
+                    for key in node_names:
+                        if re.match(r'^node-controller', key):
+                            c = "c" + str(controller_id)
+                            controller_id += 1
+                            ip = self._bigtest_node_info[key]['ipaddr']
+                            params_dict[c] = {}
+                            params_dict[c]['ip'] = ip
+                            helpers.debug("'%s' IP address is '%s' (bigtest node '%s')"
+                                          % (c, ip, key))
+                        if re.match(r'^node-mininet', key):
+                            m = "mn" + str(mininet_id)
+                            mininet_id += 1
+                            ip = self._bigtest_node_info[key]['ipaddr']
+                            params_dict[m] = {}
+                            params_dict[m]['ip'] = ip
+                            helpers.debug("'%s' IP address is '%s' (bigtest node '%s')"
+                                          % (m, ip, key))
+                    yaml_str = helpers.to_yaml(params_dict)
 
-                # This file contain a list of nodes:
-                #   c1: {ip: 10.192.5.221}
-                #   c2: {ip: 10.192.5.222}
-                #   mn1: {ip: 10.192.7.175}
-                #   ...and so on...
-                self._params_file = helpers.bigrobot_log_path_exec_instance() + '/params.topo'
+                    # This file contain a list of nodes:
+                    #   c1: {ip: 10.192.5.221}
+                    #   c2: {ip: 10.192.5.222}
+                    #   mn1: {ip: 10.192.7.175}
+                    #   ...and so on...
+                    self._params_file = helpers.bigrobot_log_path_exec_instance() + '/params.topo'
 
-                helpers.info("Writing params to file '%s'" % self._params_file)
-                helpers.file_write_once(self._params_file, yaml_str)
+                    helpers.info("Writing params to file '%s'" % self._params_file)
+                    helpers.file_write_once(self._params_file, yaml_str)
 
-                helpers.bigrobot_params(new_val=self._params_file)
+                    helpers.bigrobot_params(new_val=self._params_file)
 
             self._topology_params = self.load_topology()
             if self._topology_params:
