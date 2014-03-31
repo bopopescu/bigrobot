@@ -393,6 +393,13 @@ def bigrobot_continuous_integration(new_val=None, default=None):
     return _env_get_and_set('BIGROBOT_CI', new_val, default)
 
 
+def bigrobot_params_input(new_val=None, default=None):
+    """
+    Category: Get/set environment variables for BigRobot.
+    """
+    return _env_get_and_set('BIGROBOT_PARAMS_INPUT', new_val, default)
+
+
 def bigrobot_params(new_val=None, default=None):
     """
     Category: Get/set environment variables for BigRobot.

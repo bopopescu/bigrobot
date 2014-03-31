@@ -63,6 +63,7 @@ class Test(object):
 
             self._testbed_type = helpers.bigrobot_testbed()
             if self._testbed_type:
+                helpers.info("BIGROBOT_TESTBED: %s" % self._testbed_type)
                 if self._testbed_type.lower() == "bigtest":
                     self._bigtest_node_info = helpers.bigtest_node_info()
                     helpers.info("BigTest node info:\n%s"
@@ -73,11 +74,11 @@ class Test(object):
                     # BigTest's "bt startremotevm" is able to bring up multiple
                     # clusters. We need to make sure to use only the VMs in the
                     # clusters assigned, else there will be conflicts.
-                    bigtest_nodes = helpers.nodes_bigtest()
+                    bigtest_nodes = helpers.bigrobot_params_input()
                     node_names = self._bigtest_node_info.keys()
                     if bigtest_nodes:
                         node_names = ['node-' + n for n in bigtest_nodes.split(',')]
-                        helpers.info("Found env BIGTEST_NODES. Limiting nodes to %s."
+                        helpers.info("Found env BIGROBOT_PARAMS_INPUT. Limiting nodes to %s."
                                      % node_names)
 
                     for key in node_names:
@@ -97,11 +98,14 @@ class Test(object):
                             params_dict[m]['ip'] = ip
                             helpers.debug("'%s' IP address is '%s' (bigtest node '%s')"
                                           % (m, ip, key))
+
                 elif self._testbed_type.lower() == "libvirt":
                     # TODO: We need to add the code to process libvirt nodes...
                     helpers.test_error("Libvirt testbed is not yet supported.")
+
                 elif self._testbed_type.lower() == "static":
-                    static_nodes = helpers.nodes_static()
+                    static_nodes = helpers.bigrobot_params_input()
+                    helpers.info("Static node info: %s" % static_nodes)
 
                     # Expecting a YAML config.
                     if static_nodes:
@@ -109,14 +113,14 @@ class Test(object):
                         if match:
                             file = match.group(1)
                             if helpers.file_not_exists(file):
-                                helpers.test_error("NODES_STATIC file '%s' does not exist." % file)
+                                helpers.test_error("BIGROBOT_PARAMS_INPUT file '%s' does not exist." % file)
                             else:
                                 params_dict = helpers.load_config(file)
                         else:
-                            helpers.test_error("For static testbed, env NODES_STATIC has format 'file:<path_and_filename>'.")
+                            helpers.test_error("For static testbed, env BIGROBOT_PARAMS_INPUT has format 'file:<path_and_filename>'.")
                     else:
-                        helpers.test_error("For static testbed, must define env NODES_STATIC. Format is:\n"
-                                           "\texport NODES_STATIC=file:<path_and_filename>")
+                        helpers.test_error("For static testbed, must define env BIGROBOT_PARAMS_INPUT. Format is:\n"
+                                           "\texport BIGROBOT_PARAMS_INPUT=file:<path_and_filename>")
                 else:
                     helpers.test_error("Supported testbed type is 'bigtest', 'libvirt', or 'static'.")
 
