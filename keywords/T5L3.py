@@ -767,7 +767,8 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
         
         url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/virtual-router/policy-lists[name="%s"]/rules[seq=%s]' % (tenant, polname, seqnum)
         try:
-            c.rest.post(url, {"src": data})
+            #c.rest.post(url, {"src": data})
+            c.rest.post(url, {data})
         except:
             #helpers.test_failure(c.rest.error())
             return False
