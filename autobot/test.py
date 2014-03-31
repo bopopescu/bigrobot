@@ -52,24 +52,27 @@ class Test(object):
             helpers.log("Loading config file %s" % self._bsn_config_file)
             self._bsn_config = helpers.load_config(self._bsn_config_file)
 
-            self._is_ci = helpers.bigrobot_continuous_integration()
+            # self._is_ci = helpers.bigrobot_continuous_integration()
+            # if self._is_ci.lower() == "true":
+            #    helpers.info("BigRobot Continuous Integration environment")
+            #    ...do something...
 
             controller_id = 1
             mininet_id = 1
             params_dict = {}
 
-            if self._is_ci.lower() == "true":
-                helpers.info("BigRobot Continuous Integration environment")
+            self._testbed_type = helpers.bigrobot_testbed()
+            if self._testbed_type.lower() == "bigtest":
                 self._bigtest_node_info = helpers.bigtest_node_info()
                 helpers.info("BigTest node info:\n%s"
                              % helpers.prettify(self._bigtest_node_info))
 
-                # Nodes format:
+                # BigTest node format:
                 #   'controller-c02n01-047,mininet-c02n01-047'
                 # BigTest's "bt startremotevm" is able to bring up multiple
                 # clusters. We need to make sure to use only the VMs in the
                 # clusters assigned, else there will be conflicts.
-                bigtest_nodes = helpers.bigtest_nodes()
+                bigtest_nodes = helpers.nodes_bigtest()
                 node_names = self._bigtest_node_info.keys()
                 if bigtest_nodes:
                     node_names = ['node-' + n for n in bigtest_nodes.split(',')]

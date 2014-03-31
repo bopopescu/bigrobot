@@ -407,11 +407,45 @@ def bigtest_path(new_val=None, default=None):
     return _env_get_and_set('BIGTEST_PATH', new_val, default)
 
 
-def bigtest_nodes(new_val=None, default=None):
+def bigrobot_testbed(new_val=None, default=None):
+    """
+    Category: Get/set environment variables for BigRobot.
+    Possible values:
+        'bigtest'
+        'libvirt'
+        'static'
+        None - (default) assume static attributes are defined in .topo file
+    """
+    return _env_get_and_set('BIGROBOT_TESTBED', new_val, default)
+
+
+def nodes_bigtest(new_val=None, default=None):
     """
     Category: Get/set environment variables for BigTest.
+    Format:
+        'controller-c01n01-065,mininet-c01n01-065'
     """
-    return _env_get_and_set('BIGTEST_NODES', new_val, default)
+    return _env_get_and_set('NODES_BIGTEST', new_val, default)
+
+
+def nodes_libvirt(new_val=None, default=None):
+    """
+    Category: Get/set environment variables for BigRobot.
+    Format:
+        '<server>:<user>_<node-type>_<id>,<server>:<user>_<node-type>_<id>,...'
+    E.g.,
+        'qa-kvm-32:vui_c1_1234,qa-kvm-32:vui_mn1_1234'
+    """
+    return _env_get_and_set('NODES_LIBVIRT', new_val, default)
+
+
+def nodes_static(new_val=None, default=None):
+    """
+    Category: Get/set environment variables for BigRobot.
+    Format:
+        'c1:{ip:1.2.3.4},mn1:{ip:1.2.3.8}'
+    """
+    return _env_get_and_set('NODES_STATIC', new_val, default)
 
 
 def python_path(new_val=None, default=None):
