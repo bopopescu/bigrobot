@@ -1,11 +1,9 @@
 == T5 Platform HA Test Suite - Physical Regression Test Bed ==
 
 * Setting
-Documentation    T5 Controller Platform Test Suite - Physical Regression Testbed
-Suite Setup      base suite setup
-Suite Teardown   base suite teardown
-#Suite Setup      T5 base suite setup
-#Suite Teardown   T5 base suite teardown
+Documentation    T5 Controller Platform Test Suite - Colo Testbed
+Suite Setup      T5 base suite setup
+Suite Teardown   T5 base suite teardown
 #Test Setup       base test setup
 #Test Teardown    base test teardown
 Force Tags       T5Platform  HA  L2
@@ -25,7 +23,7 @@ Library	         keywords/T5Utilities.py
 * Test Case 
 
 Configure Multiple L2 Tenants With Single VNS & Failover
-	[Tags]	sanity  feature  skipped
+	[Tags]	sanity  feature
 	Configure 3-Rack/Dual-Leaf/2-Spine/2-Host Setup For Physical Regression Topology 
 	Configure 2 Tenants with Different VLAN properties
 	Verify Connectivity in 3-Rack/Dual-Leaf/2-Spine/2-Host Physical Regression Topology 
@@ -79,8 +77,8 @@ Cluster Election Re-run & Verify Connectivity
    Re-run the election and verify connectivity
    
    
-Delete Configuration
-	[Tags]  clean
+Clean Config
+    [Tags]  clean
     rest delete tenant  autoT1
     rest delete tenant  autoT2
     auto delete fabric switch  ${spineList}  ${leafList}  2
@@ -163,12 +161,12 @@ Configure 3-Rack/Dual-Leaf/2-Spine/2-Host Setup For Physical Regression Topology
    Set Test Variable  ${h2_intf1}  ethernet18
    Set Test Variable  ${h3_intf0}  ethernet19
    Set Test Variable  ${h3_intf1}  ethernet19
-   Set Test Variable  ${h4_intf0}  ethernet2
-   Set Test Variable  ${h4_intf1}  ethernet2
-   Set Test Variable  ${h5_intf0}  ethernet47
-   Set Test Variable  ${h5_intf1}  ethernet47
-   Set Test Variable  ${h6_intf0}  ethernet48
-   Set Test Variable  ${h6_intf1}  ethernet48
+   Set Test Variable  ${h4_intf0}  ethernet17
+   Set Test Variable  ${h4_intf1}  ethernet18
+   Set Test Variable  ${h5_intf0}  ethernet19
+   Set Test Variable  ${h5_intf1}  ethernet20
+   Set Test Variable  ${h6_intf0}  ethernet21
+   Set Test Variable  ${h6_intf1}  ethernet22
    
    
    rest add portgroup  p1
@@ -178,32 +176,32 @@ Configure 3-Rack/Dual-Leaf/2-Spine/2-Host Setup For Physical Regression Topology
    rest add interface to portgroup  leaf0-a  ${h2_intf0}  p2
    rest add interface to portgroup  leaf0-b  ${h2_intf1}  p2
    rest add portgroup  p3
-   rest add interface to portgroup  leaf1-a  ${h3_intf0}  p3
-   rest add interface to portgroup  leaf1-b  ${h3_intf1}  p3
+   rest add interface to portgroup  leaf0-a  ${h3_intf0}  p3
+   rest add interface to portgroup  leaf0-b  ${h3_intf1}  p3
    rest add portgroup  p4
    rest add interface to portgroup  leaf1-a  ${h4_intf0}  p4
-   rest add interface to portgroup  leaf1-b  ${h4_intf1}  p4
+   rest add interface to portgroup  leaf1-a  ${h4_intf1}  p4
    rest add portgroup  p5
-   rest add interface to portgroup  leaf2-a  ${h5_intf0}  p5
-   rest add interface to portgroup  leaf2-b  ${h5_intf1}  p5
+   rest add interface to portgroup  leaf1-a  ${h5_intf0}  p5
+   rest add interface to portgroup  leaf1-a  ${h5_intf1}  p5
    rest add portgroup  p6
-   rest add interface to portgroup  leaf2-a  ${h6_intf0}  p6
-   rest add interface to portgroup  leaf2-b  ${h6_intf1}  p6
+   rest add interface to portgroup  leaf1-a  ${h6_intf0}  p6
+   rest add interface to portgroup  leaf1-a  ${h6_intf1}  p6
    sleep  10
 
 
 Configure 2 Tenants with Different VLAN properties
    
    Set Test Variable  ${subMask}  24
-   Set Test Variable  ${h1bond10ip}  192.168.4.20
-   Set Test Variable  ${h2bond10ip}	 192.168.4.21
-   Set Test Variable  ${h3bond10ip}	 192.168.4.10
-   Set Test Variable  ${vns1ip}  192.168.4.100
+   Set Test Variable  ${h1bond10ip}  10.10.10.21
+   Set Test Variable  ${h2bond10ip}	 10.10.10.22
+   Set Test Variable  ${h3bond10ip}	 10.10.10.23
+   Set Test Variable  ${vns1ip}  10.10.10.100
    
-   Set Test Variable  ${h4bond0ip} 	192.168.0.11
-   Set Test Variable  ${h5bond0ip}	192.168.0.30
-   Set Test Variable  ${h6bond0ip}	192.168.0.31
-   Set Test Variable  ${vns2ip}  192.168.0.100
+   Set Test Variable  ${h4bond0ip} 	20.20.20.24
+   Set Test Variable  ${h5bond0ip}	20.20.20.25
+   Set Test Variable  ${h6bond0ip}	20.20.20.26
+   Set Test Variable  ${vns2ip}  20.20.20.100
    
    Set Test Variable  ${h1ip}	192.168.1.20
    Set Test Variable  ${h2ip}	192.168.1.21
@@ -212,37 +210,39 @@ Configure 2 Tenants with Different VLAN properties
 
    rest add tenant  autoT1
    rest add vns  autoT1  v1
-   rest add portgroup to vns  autoT1  v1  p0  10
    rest add portgroup to vns  autoT1  v1  p1  10
    rest add portgroup to vns  autoT1  v1  p2  10
-   rest add vns ip  autoT1  v1  ${vns1ip}  ${subMask}
-   rest add vns  autoT1  v2
-   rest add portgroup to vns  autoT1  v2  p3  -1
-   rest add portgroup to vns  autoT1  v2  p4  -1
-   rest add portgroup to vns  autoT1  v2  p5  -1
-   rest add vns ip  autoT1  v2  ${vns2ip}  ${subMask}
+   rest add portgroup to vns  autoT1  v1  p3  10
+   #rest add vns ip  autoT1  v1  ${vns1ip}  ${subMask}
    
-   rest add tenant  autoT2
-   rest add vns  autoT2  v3
-   rest add interface to vns  autoT2  v3  leaf0-a  ethernet25  -1
-   rest add interface to vns  autoT2  v3  leaf0-a  ethernet25  -1
-   rest add interface to vns  autoT2  v3  leaf1-a  ethernet25  -1
-   rest add interface to vns  autoT2  v3  leaf1-a  ethernet26  -1
+   rest add vns  autoT1  v2
+   rest add portgroup to vns  autoT1  v2  p3  20
+   rest add portgroup to vns  autoT1  v2  p4  20
+   rest add portgroup to vns  autoT1  v2  p5  20
+   #rest add vns ip  autoT1  v2  ${vns2ip}  ${subMask}
+   
+   #rest add tenant  autoT2
+   #rest add vns  autoT2  v3
+   #rest add interface to vns  autoT2  v3  leaf0-a  ethernet25  -1
+   #rest add interface to vns  autoT2  v3  leaf0-a  ethernet25  -1
+   #rest add interface to vns  autoT2  v3  leaf1-a  ethernet25  -1
+   #rest add interface to vns  autoT2  v3  leaf1-a  ethernet26  -1
 
    sleep  30
    
 
 Verify Connectivity in 3-Rack/Dual-Leaf/2-Spine/2-Host Physical Regression Topology 
 
-   Set Test Variable  ${h1bond10ip}  192.168.4.20
-   Set Test Variable  ${h2bond10ip}	 192.168.4.21
-   Set Test Variable  ${h3bond10ip}	 192.168.4.10
-   Set Test Variable  ${vns1ip}  192.168.4.100
+   Set Test Variable  ${subMask}  24
+   Set Test Variable  ${h1bond10ip}  10.10.10.21
+   Set Test Variable  ${h2bond10ip}	 10.10.10.22
+   Set Test Variable  ${h3bond10ip}	 10.10.10.23
+   Set Test Variable  ${vns1ip}  10.10.10.100
    
-   Set Test Variable  ${h4bond0ip} 	192.168.0.11
-   Set Test Variable  ${h5bond0ip}	192.168.0.30
-   Set Test Variable  ${h6bond0ip}	192.168.0.31
-   Set Test Variable  ${vns2ip}  192.168.0.100
+   Set Test Variable  ${h4bond0ip} 	20.20.20.24
+   Set Test Variable  ${h5bond0ip}	20.20.20.25
+   Set Test Variable  ${h6bond0ip}	20.20.20.26
+   Set Test Variable  ${vns2ip}  20.20.20.100
    
    Set Test Variable  ${h1ip}	192.168.1.20
    Set Test Variable  ${h2ip}	192.168.1.21
@@ -268,18 +268,18 @@ Verify Connectivity in 3-Rack/Dual-Leaf/2-Spine/2-Host Physical Regression Topol
    
    
    ###	Verify ping between autoT2
-   ${returnVal}=  platform bash ping  h1  ${h2ip}
-   Should Be True  ${returnVal}  
-   ${returnVal}=  platform bash ping  h1  ${h3ip}
-   Should Be True  ${returnVal}  
-   ${returnVal}=  platform bash ping  h1  ${h4ip}
-   Should Be True  ${returnVal}  
-   ${returnVal}=  platform bash ping  h2  ${h3ip}
-   Should Be True  ${returnVal}  
-   ${returnVal}=  platform bash ping  h2  ${h4ip}
-   Should Be True  ${returnVal}  
-   ${returnVal}=  platform bash ping  h3  ${h4ip}
-   Should Be True  ${returnVal}  
+   #${returnVal}=  platform bash ping  h1  ${h2ip}
+   #Should Be True  ${returnVal}  
+   #${returnVal}=  platform bash ping  h1  ${h3ip}
+   #Should Be True  ${returnVal}  
+   #${returnVal}=  platform bash ping  h1  ${h4ip}
+   #Should Be True  ${returnVal}  
+   #${returnVal}=  platform bash ping  h2  ${h3ip}
+   #Should Be True  ${returnVal}  
+   #${returnVal}=  platform bash ping  h2  ${h4ip}
+   #Should Be True  ${returnVal}  
+   #${returnVal}=  platform bash ping  h3  ${h4ip}
+   #Should Be True  ${returnVal}  
    
 
 T5 base suite setup

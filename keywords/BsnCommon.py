@@ -1449,7 +1449,40 @@ class BsnCommon(object):
         """
         t = test.Test()
         n = t.node(node)
-        return n.node_ip()
+        return n.ip()
+
+    def get_next_mac(self, *args, **kwargs):
+        """
+        Contributor: Mingtao Yang
+        Objective:
+        - Generate the next mac/physical address based on the base and step.
+
+        Inputs:
+          | base | starting mac address |
+          | incr | Value by which we will increment the mac/physical address |
+
+        Usage:
+          | macAddr = self.get_next_mac(base,incr) |
+        """
+        helpers.get_next_mac(*args, **kwargs)
+
+    def get_next_address(self, *args, **kwargs):
+        """
+        Contributor: Mingtao Yang
+        Objective:
+        Generate the next address bases on the base and step.
+
+        Input:
+        | addr_type | IPv4/IpV6|
+        | base | Starting IP address |
+        | incr | Value by which we will increment the IP address|
+
+        Usage:    ipAddr = self.get_next_address(
+                              ipv4,'10.0.0.0','0.0.0.1')
+                  ipAddr = self.get_next_address(
+                              ipv6,'f001:100:0:0:0:0:0:0','0:0:0:0:0:0:0:1:0')
+        """
+        helpers.get_next_address(*args, **kwargs)
 
     def verify_ssh_connection(self, node, sleep=10, iterations=5,
                               user='dummy', password='dummy'):
