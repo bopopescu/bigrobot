@@ -1,0 +1,233 @@
+*** Settings ***
+Documentation  		Various CLI commands
+Suite Setup  		File Suite Setup
+Suite Teardown   	Base Suite Teardown
+Test Setup   		Setup
+Test Teardown  		Teardown
+Force Tags   		Platform
+Library  			keywords/BsnCommon.py
+Library  			keywords/T5Platform.py
+Library  			keywords/T5.py
+Library        		String
+
+*** Variables ***
+
+*** Test Cases ***
+T1 Test
+	Cli Run  show running-config
+
+T2.1 No Show This in config mode
+	Run Keyword and Expect Error
+	...  *Error: no matching commands*
+	...  Cli Run  no show this
+	[TAGS]  show
+T2.2 No Show This in config-switch submode
+	Cli Run  switch test
+	Run Keyword and Expect Error
+	...  *Error: no matching commands*
+	...  Cli Run  no show this
+	[TAGS]  BSC-5042  show
+T2.3 No Show This in config-tenant submode
+	Cli Run  tenant test
+	Run Keyword and Expect Error
+	...  *Error: no matching commands*
+	...  Cli Run  no show this
+	[TAGS]  BSC-5042  show
+T2.4 No Show This in config-cluster submode
+	Cli Run  cluster
+	Run Keyword and Expect Error
+	...  *Error: no matching commands*
+	...  Cli Run  no show this
+	[TAGS]  BSC-5042  show
+
+T3 "no snmp-server community ro <foo>" in config-switch submode
+	Cli Run  snmp-server community ro test
+	Cli Run  switch test
+	Cli Run  no snmp-server community ro test
+	Cli Run and Verify Output
+	...  show run snmp
+	...  snmp-server community ro test
+	...  flag=False
+	[TAGS]  BSC-5039  show  snmp
+
+T4 Monitor session
+	Run Keyword and Expect Error
+	...  *Error: Invalid argument: range: not an integer:*r*
+	...  Cli Run  monitor session r
+	[TAGS]  monitor session  BSC-5012
+
+T5 Monitor session
+	Cli Run  monitor session 1
+	Run Keyword and Expect Error
+	...  *Error: Invalid argument: range: not an integer:*tcp*
+	...  Cli Run  source switch test interface eth1 ip-proto tcp
+	[TAGS]  monitor session  BSC-5017
+
+T6 Monitor session
+	Cli Run  monitor session 1
+	Run Keyword and Expect Error
+	...  *Error: Invalid argument: syntax: expected [a-zA-Z][-.0-9a-zA-Z_]*$ for: 3*
+	...  Cli Run  destination switch test interface 3
+	[TAGS]  monitor session  BSC-5017
+
+T7 Autocompletions for user full name
+	Cli Run  user test
+	Cli Run and Verify Output
+	...  full-name ? 'test user'
+	...  <full-name>
+	Cli Run and Verify Output
+	...  full-name ? 'test user'
+	...  r'Default admin'
+	...  flag=False
+	[TAGS]  BSC-5015  user management
+
+T8 Escaping quote and double quote strings - user full-name
+	Cli Run  user test
+	Cli Run  full-name "test test"
+	Cli Run and Verify Output
+	...  show running-config user
+	...  full-name 'test test'
+	Cli Run  full-name 'test test'
+	Cli Run and Verify Output
+	...  show running-config user
+	...  full-name 'test test'
+	Cli Run  full-name test
+	Cli Run and Verify Output
+	...  show running-config user
+	...  full-name test
+	Cli Run  full-name 'test\\n'
+	Cli Run and Verify Output
+	...  show running-config user
+	...  full-name 'test\\n'\r
+	#...  full-name \"test\\r\\n\'\'\'\"
+	Cli Run  full-name "'''"
+	Cli Run and Verify Output
+	...  show running-config user
+	...  full-name "'''"
+	Cli Run  full-name '"""'
+	Cli Run and Verify Output
+	...  show running-config user
+	...  full-name '"""'
+
+T9 Escaping quote and double quote strings - switch name
+	Run Keyword and Expect Error
+	...  *Error: Unbalanced Quote*
+	...  Cli Run  switch test"test
+	Run Keyword and Expect Error
+	...  *Error: Invalid argument: Invalid Alphabetic character, followed by alphanumerics: 'test"test'; Invalid characters in identifier*
+	...  Cli Run  switch 'test"test'
+	Run Keyword and Expect Error
+	...  *Error: Unbalanced Quote*
+	...  Cli Run  switch test'test
+
+T10 Escaping quote and double quote strings - user name
+	Run Keyword and Expect Error
+	...  *Error: Unbalanced Quote*
+	...  Cli Run  user test"test
+	Run Keyword and Expect Error
+	...  *Error: Unbalanced Quote*
+	...  Cli Run  user test'test
+	Run Keyword and Expect Error
+	...  *Error: Invalid argument: Invalid Alphabetic character, followed by alphanumerics: 'test"test'; Invalid characters in identifier*
+	...  Cli Run  user 'test"test'
+	Run Keyword and Expect Error
+	...  *Error: Invalid argument: Invalid Alphabetic character, followed by alphanumerics: "test''test"; Invalid characters in identifier*
+	...  Cli Run  user "test''test"
+
+T11.1 User \n
+        Run Keyword and Expect Error
+        ...  TestError: REST call failed with status code 400
+	...  My Rest Add User  a\n
+T11.2 User \n
+	Run Keyword and Expect Error
+        ...  TestError: REST call failed with status code 400
+	...  My Rest Add User  a\n
+T11.3 User \n
+	Run Keyword and Expect Error
+        ...  TestError: REST call failed with status code 400
+	...  My Rest Add User  a\naa
+T11.4 User \n
+	Run Keyword and Expect Error
+        ...  TestError: REST call failed with status code 400
+	...  My Rest Add User  \\
+T11.5 User \n
+	Run Keyword and Expect Error
+        ...  TestError: REST call failed with status code 400
+	...  My Rest Add User  \r
+T11.6 User \n
+	Run Keyword and Expect Error
+        ...  TestError: REST call failed with status code 400
+	...  My Rest Add User  rrse"
+T11.7 User \n
+	Run Keyword and Expect Error
+        ...  TestError: REST call failed with status code 400
+	...  My Rest Add User  \n\r
+T11.8 User \n
+	Run Keyword and Expect Error
+        ...  TestError: REST call failed with status code 400
+	...  My Rest Add User  \n\r
+
+T12.1 show this in config-cluster submode
+	Cli Run  cluster
+	Cli Run  show this
+	[Tags]  BSC-5061
+T12.2 show this in config-switch-if submode
+	Cli Run  switch test
+	Cli Run  interface eth1 
+	Cli Run  show this 
+	[Tags]  BSC-5061
+
+T13 user a\n
+	Cli Run  user 'a\n'
+
+T14 a\n in banner
+	Cli Run  banner 'a\\n'
+	Cli Run and Verify Output
+	...  show running-config banner
+	...  banner 'a\\n'
+	Cli Run and Verify Output
+	...  show banner
+	...  Banner : a\r
+T15 'from mode ...' in login mode
+	Cli Run  enable
+	Cli Run  exit
+	Cli Run and Verify Output
+	...  ? enable
+	...  from mode
+	...  flag=False
+	Cli Run and Verify Output
+	...  ? enable
+	...  show
+	[Tags]  BSC-5020
+
+T16 Switch commands in config-switch-if submode
+	Cli Run  switch test
+	Cli Run  interface eth1
+	Run Keyword and Expect Error  *Unknown command*  Cli Run  fabric-role spine
+	Run Keyword and Expect Error  *Unknown command*  Cli Run  fabric-role leaf
+	Run Keyword and Expect Error  *Unknown command*  Cli Run  mac 11:11:11:11:11:11
+	Run Keyword and Expect Error  *Unknown command*  Cli Run  leaf-group test
+	[Tags]  BSC-5067
+
+*** Keywords ***
+Generate Random Name
+	[Arguments]  ${prefix}  ${suffix_len}
+    ${regex}  Generate Random String  ${suffix_len}  [NUMBERS]
+    ${name}  Catenate  SEPARATOR=  ${prefix}  ${regex}
+    [Return]  ${name}
+
+File Suite Setup
+	Base Suite Setup
+	Bash  master  curl -g -H "Cookie: session_cookie\=$FL_SESSION_COOKIE" localhost:8080/api/v1/data/controller/core/aaa/accounting -X DELETE -d '{"name": "local"}'
+	Cli Copy  running-config  config://startup-config
+	Cli Copy  running-config  config://startup-config  node=slave
+
+Setup
+	Base Test Setup
+	Cli Run  ena
+	Cli Run  conf
+
+Teardown
+	Bash Clear Known Hosts
+	Cli Copy  config://startup-config  running-config
+	Base Test Teardown
