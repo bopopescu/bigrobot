@@ -144,19 +144,19 @@ L3 inter tenant same rack untagged with dynamic endpoints
 	BASH ifup intf								h5								bond0	
 	BASH ifup intf								h6								bond0			
 	REST add portgroup to vns					X								X1						${leaf2_pc1}			-1
-	REST add portgroup to vns					X								X2						${leaf2_pc2}			-1
+	REST add portgroup to vns					Y								Y1						${leaf2_pc2}			-1
 	REST add interface to vns					X								X1						${leaf0-a}				${ixia1}				-1
-	REST add interface to vns					X								X2						${leaf1-a}				${ixia3}				-1
+	REST add interface to vns					Y								Y1						${leaf1-a}				${ixia3}				-1
 	BASH add ip address							h5								10.251.1.11/24			bond0	
-	BASH add ip address							h6								10.251.2.11/24			bond0
-	BASH add route								h5								10.251.2.0/24			10.251.1.1
-	BASH add route								h6								10.251.1.0/24			10.251.2.1
+	BASH add ip address							h6								10.252.1.11/24			bond0
+	BASH add route								h5								10.252.1.0/24			10.251.1.1
+	BASH add route								h6								10.251.1.0/24			10.252.1.1
 	__init__.sleep								20	
 	BASH ping									h5								10.251.1.1				count=10
-	BASH ping									h6								10.251.2.1				count=10
+	BASH ping									h6								10.252.1.1				count=10
 	${value} = 									BASH verify arp					h5						10.251.1.1
 	Should Be True								${value} 		
-	${value} =									BASH verify arp					h6						10.251.2.1
+	${value} =									BASH verify arp					h6						10.252.1.1
 	Should Be True								${value} 
 	${mac1} = 									BASH get intf mac				h5						bond0
 	${result} =									REST show endpoints mac			${mac1}
@@ -165,17 +165,17 @@ L3 inter tenant same rack untagged with dynamic endpoints
 	${result} =									REST show endpoints mac			${mac2}
 	Should Be True								${result}						
 	REST show endpoints	
-	${loss} = 									BASH ping						h5						10.251.2.11 			count=10
+	${loss} = 									BASH ping						h5						10.252.1.11 			count=10
 	Should Be True  							${loss} == 0	
 	${stream1}=  								L3 add  						name=stream1		  	flow=a->c 				frame_rate=1000  			frame_size=128  			frame_cnt=10000
-	...     									src_ip=10.251.1.101				src_gw=10.251.1.1		dst_ip=10.251.2.201		dst_gw=10.251.2.1			 			
+	...     									src_ip=10.251.1.101				src_gw=10.251.1.1		dst_ip=10.252.1.101		dst_gw=10.252.1.1			 			
     start traffic  								${stream1}
     sleep  10
     stop traffic								${stream1}
     verify results 								transmitted_frames  			received_frames  		${stream1}  			stream1
     
-	BASH delete route							h5								10.251.2.0/24			10.251.1.1
-	BASH delete route							h6								10.251.1.0/24			10.251.2.1
+	BASH delete route							h5								10.252.1.0/24			10.251.1.1
+	BASH delete route							h6								10.251.1.0/24			10.252.1.1
 	
 	
 L3 inter tenant across rack untagged with dynamic endpoints
