@@ -1661,8 +1661,8 @@ setup topology
 #	Should Be True									${result}
 #	${result} = 									REST add policy item		X					allow_all			20		permit			{"tenant-name": "system"}, "dst": {"tenant-name": "X"}
 #	Should Be True									${result}
-	REST add static routes							X							10.252.0.0/16		system
-	REST add static routes							X							10.252.0.0/16		system
+	REST add static routes							X							10.252.0.0/16		 {"tenant-name": "system"}
+	REST add static routes							Y							10.251.0.0/16		 {"tenant-name": "system"}
 		
 	
 
