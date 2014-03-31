@@ -1656,9 +1656,9 @@ setup topology
 	REST add system to tenant routers 				Z
 	REST add policy									X							allow_all
 	REST add policy									Y							allow_all
-	${result} = 									REST add policy item		X					allow_all			10		{"action": "permit", "src": {"tenant-name": "X"}, "dst": {"tenant-name": "system"}, "seq": 10}
+	${result} = 									REST add policy item		X					allow_all			10		permit 			{"tenant-name": "X"}, "dst": {"tenant-name": "system"}
 	Should Be True									${result}
-	${result} = 									REST add policy item		X					allow_all			20		{"action": "permit", "src": {"tenant-name": "system"}, "dst": {"tenant-name": "X"}, "seq": 20}
+	${result} = 									REST add policy item		X					allow_all			20		permit			{"tenant-name": "system"}, "dst": {"tenant-name": "X"}
 	Should Be True									${result}
 		
 	

@@ -748,7 +748,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
             return True
 
 
-    def rest_add_policy_item(self, tenant, polname, seqnum, data):
+    def rest_add_policy_item(self, tenant, polname, seqnum, polaction, data):
         '''add a policy item
         
             Input:
@@ -763,12 +763,12 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
         t = test.Test()
         c = t.controller('master')
         
-        helpers.test_log("Input arguments: tenant = %s policy name = %s sequence number = %s data = %s " % (tenant, polname, seqnum, data))
+        helpers.test_log("Input arguments: tenant = %s policy name = %s sequence number = %s data = %s action = %s " % (tenant, polname, seqnum, data, polaction))
         
         url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/virtual-router/policy-lists[name="%s"]/rules[seq=%s]' % (tenant, polname, seqnum)
         try:
-            #c.rest.post(url, {"src": data})
-            c.rest.post(url, {data})
+            c.rest.post(url, {"action": polaction, "seq": seqnum, "src": data})
+          
         except:
             #helpers.test_failure(c.rest.error())
             return False
