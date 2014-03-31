@@ -18,14 +18,24 @@ class T5Platform(object):
     def __init__(self):
         pass    
     
-    def rest_verify_show_cluster(self):
+    def rest_verify_show_cluster(self, **kwargs):
+        
         '''Using the 'show cluster' command verify the cluster formation across both nodes
-	   Also check for the formation integrity
-	'''
+	       Also check for the formation integrity
+	       Additional inputs: IP Addresses of the Controllers can be specified as: 'c1=a.b.c.d  c2=a.b.e.f'
+	    '''
+         
         try:
             t = test.Test()
-            c1 = t.controller("c1")
-            c2 = t.controller("c2")
+            if 'c1' in kwargs:
+                c1 = t.node_spawn(ip=kwargs.get('c1'))
+            else:
+                c1 = t.controller("c1")
+            if 'c2' in kwargs:
+                c2 = t.node_spawn(ip=kwargs.get('c2'))
+            else:
+                c2 = t.controller("c2")
+            
             url = '/api/v1/data/controller/cluster'
             
             result = c1.rest.get(url)['content']
@@ -48,7 +58,9 @@ class T5Platform(object):
             helpers.test_failure("Exception in: rest_verify_ha_cluster %s : %s " % (Exception, err))
             return False
 
-
+    def temp_function(self):
+        
+        self.rest_verify_show_cluster(c1='10.210.144.15', c2='10.210.144.16')
 
     def _cluster_election(self, rigged):
         ''' Invoke "cluster election" commands: re-run or take-leader
@@ -468,6 +480,7 @@ class T5Platform(object):
                             Fabric.rest_add_switch(leafName)
                             Fabric.rest_add_dpid(leafName, dpid)
                             Fabric.rest_add_fabric_role(leafName, 'leaf')
+                            Fabric.rest_add_leaf_group(leafName, rackName)
     
 
      
@@ -1591,8 +1604,10 @@ class T5Platform(object):
             helpers.log("********content is list************\n%s" % helpers.prettify(temp))
             config = temp[5:]
             content = '\n'.join(config)
-            helpers.log("********config :************\n%s" % content)                 
-            return  content
+            helpers.log("********config :************\n%s" % content)  
+            new_content = re.sub(r'\s+hashed-password.*$','\n  remove-passwd',content,flags=re.M)  
+            helpers.log("********config after remove passwd :************\n%s" % new_content)                          
+            return  new_content
         if fabric_switch: 
             c.enable('show fabric switch')     
             content = c.cli_content()       
@@ -2107,8 +2122,7 @@ class T5Platform(object):
 
         """ 
         helpers.log("Entering ====>  first_boot_controller node:'%s' " % node)
-        
-        self.first_boot_controller_initial_node_setup(node,dhcp,ip_address,netmask)
+        self.first_boot_controller_initial_node_setup(node,dhcp,ip_address,netmask,gateway,dns_server,dns_search,hostname)
         self.first_boot_controller_initial_cluster_setup(node,join_cluster,cluster_ip )        
         new_ip_address = self.first_boot_controller_menu_apply(node)
         helpers.sleep(3)  # Sleep for a few seconds just in case...
@@ -2332,7 +2346,7 @@ class T5Platform(object):
         n_console.expect(r'Press enter to continue > ')
         n_console.send('')
         #helpers.log("Closing console connection for '%s'" % node)
-        n.console_close()
+        #n.console_close()
 
         helpers.sleep(3)  # Sleep for a few seconds just in case...
         return new_ip_address

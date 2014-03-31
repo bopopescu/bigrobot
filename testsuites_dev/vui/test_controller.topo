@@ -4,8 +4,9 @@ c1:
   #ip: 10.192.96.1     # bigtap
   #ip: 10.192.104.1    # BigTap
   #ip: 10.193.0.43      # Song's BVS
-  #ip: 10.192.104.2      
-  ip: 10.193.0.41      # Song's
+  #ip: 10.192.104.2      # vui-bvs (libvirt vm)
+  ip: dummy
+  #ip: 10.193.0.41      # Song's
   #ip: 10.193.0.43      # Testing StrictHostKeyChecking issue
   #ip: 10.192.97.1    # Animesh's bigtap
   #ip: 10.192.106.10    # Don's T5 (for fabric testing)

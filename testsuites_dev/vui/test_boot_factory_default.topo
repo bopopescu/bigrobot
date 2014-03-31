@@ -5,8 +5,8 @@ c1:
 
   #set_devconf_debug_level: 5      # default: 0
 
-  #set_init_ping: false            # default: true
-  #set_session_ssh: false          # default: true
+  set_init_ping: false            # default: true
+  set_session_ssh: false          # default: true
   console:
     ip: qa-kvm-32
     libvirt_vm_name: vui-bvs
