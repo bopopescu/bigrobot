@@ -1,8 +1,4 @@
 c1:
-  #ip: 10.192.5.51     # t5
-  #ip: 10.192.96.96    # bigwire
-  #ip: 10.192.96.1     # bigtap
-  #ip: 10.192.104.1    # BigTap
   #ip: 10.193.0.43      # Song's BVS
   #ip: 10.192.104.2      # vui-bvs (libvirt vm)
   ip: dummy
