@@ -1337,6 +1337,8 @@ setup topology
 	REST add portgroup to vns					${tenant2_name}  	${vns2_1} 		${portgroup8} 		${vns2_vlan1}
 	REST add portgroup to vns					${tenant2_name}  	${vns2_2} 		${portgroup9} 		${vns2_vlan2}
 	REST add portgroup to vns					${tenant2_name}  	${vns2_3} 		${portgroup10} 		${untaggedvlan}	
+	REST add static routes						${tenant1_name}		0.0.0.0/0		 {"tenant-name": "system"}
+	REST add static routes						${tenant2_name}		0.0.0.0/0		 {"tenant-name": "system"}	
 	
 teardown topology
 	delete fabric switch
