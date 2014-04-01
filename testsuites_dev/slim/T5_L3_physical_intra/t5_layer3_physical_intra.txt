@@ -1754,7 +1754,14 @@ Connect and Disconnect spine to controller
 	...											dst_ip=10.251.3.101				dst_cnt=10				dst_ip_step=0.0.0.1		dst_gw=10.251.3.1			 			
     start traffic  								${stream1}
     sleep  										5
-    CLI enable disable controller				s1								5
+#    CLI enable disable controller				s1								5
+
+	: FOR 										${i}							IN RANGE 				1					5
+	\	CLI delete controller					s1								c1
+	\	sleep									10
+	\	CLI add controller						s1								c1
+	\	sleep									10
+	
     verify traffic rate  						tx_rate  						rx_rate  				a  						c
   	sleep										10
 	stop traffic								${stream1}
@@ -1806,7 +1813,12 @@ Connect and disconnect one leaf in dual tor to controller
 	...											dst_ip=10.251.3.101				dst_cnt=10				dst_ip_step=0.0.0.1		dst_gw=10.251.3.1			 			
     start traffic  								${stream1}
     sleep  										5
-    CLI enable disable controller				s3								5
+#    CLI enable disable controller				s3								5
+	: FOR 										${i}							IN RANGE 				1					5
+	\	CLI delete controller					s3								c1
+	\	sleep									10
+	\	CLI add controller						s3								c1
+	\	sleep									10
     verify traffic rate  						tx_rate  						rx_rate  				a  						c
   	sleep										10
 	stop traffic								${stream1}
