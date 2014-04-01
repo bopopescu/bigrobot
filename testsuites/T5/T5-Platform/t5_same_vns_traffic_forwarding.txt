@@ -1,0 +1,428 @@
+*Settings
+Documentation    T5 Platform
+Suite Setup      t5 suite setup
+Suite Teardown   t5 suite teardown
+Test Setup       base test setup
+Test Teardown    ha test teardown
+Force Tags       T5 
+Library          keywords/BsnCommon.py
+Library          keywords/SwitchLight.py
+Library          keywords/AppController.py
+Library          keywords/SwitchLight.py
+Library          keywords/Ixia.py
+Library          keywords/T5.py
+
+*Variables
+${switch1_name}      T5HA
+${tenant_1}         T5HATenant
+${vns_1}            T5HAVNS
+${interface_1}      ethernet3
+${interface_2}      ethernet4
+${src_ip}       10.100.1.10
+${src_gw}       10.100.2.10
+${dst_ip}       10.100.2.10
+${dst_gw}       10.100.1.10  
+
+
+*Test Case
+
+Verify ICMP Packet of death
+    ${stream}=  L3 add  flow=a->b  protocol=ICMP  icmp_type=8  icmp_code=0  
+    ...     src_mac=00:15:65:33:BA:AC  dst_mac=FF:FF:FF:FF:FF:FF
+    ...     src_ip=10.41.22.248   dst_ip=10.41.22.99  name=a_b_flow
+    ...     src_gw=10.41.22.99   dst_gw=10.41.22.248  no_arp=True  
+    clear stats  
+    start traffic  ${stream}
+    sleep  5
+    verify results  transmitted_frame_rate  a  received_valid_frame_rate  b
+    sleep  5    
+    stop traffic   ${stream} 
+    [Tags]  traffic  icmpPoD  run 
+
+Verify L2 traffic: frame size 64 bytes
+    ${stream}=  L2 add  flow=a<->b  frame_rate=10000  frame_size=64  name=a_b_flow
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07
+    clear stats  
+    start traffic  ${stream}
+    sleep  3
+    stop traffic   ${stream}
+    clear stats  
+    start traffic  ${stream}
+    sleep  5
+    verify results  transmitted_frame_rate  a  received_valid_frame_rate  b
+    verify results  transmitted_frame_rate  b  received_valid_frame_rate  a 
+    sleep  5    
+    stop traffic   ${stream}    
+    [Tags]  traffic  L264  run  
+
+Verify L3 traffic: frame size 68 bytes
+    ${stream}=  L3 add  flow=a<->b  frame_rate=10000  frame_size=68
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07
+    ...     src_ip=${src_ip}   dst_ip=${dst_ip}  name=a_b_flow
+    ...     src_gw=${src_gw}   dst_gw=${dst_gw}
+    clear stats  
+    start traffic  ${stream}
+    sleep  5
+    verify results  transmitted_frame_rate  a  received_valid_frame_rate  b
+    verify results  transmitted_frame_rate  b  received_valid_frame_rate  a 
+    sleep  5    
+    stop traffic   ${stream}   
+    [Tags]  traffic  run  l3basic
+
+Verify L2 traffic: frame size 128 bytes
+    ${stream}=  L2 add  flow=a<->b  frame_rate=10000  frame_size=128  name=a_b_flow
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07
+    clear stats  
+    start traffic  ${stream}
+    sleep  3
+    stop traffic   ${stream}
+    clear stats  
+    start traffic  ${stream}
+    sleep  5
+    verify results  transmitted_frame_rate  a  received_valid_frame_rate  b
+    verify results  transmitted_frame_rate  b  received_valid_frame_rate  a 
+    sleep  5    
+    stop traffic   ${stream}   
+    [Tags]  traffic  run  
+
+Verify L3 traffic: frame size 128 bytes
+    ${stream}=  L3 add  flow=a<->b  frame_rate=10000  frame_size=128
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07
+    ...     src_ip=${src_ip}   dst_ip=${dst_ip}  name=a_b_flow
+    ...     src_gw=${src_gw}   dst_gw=${dst_gw}
+    clear stats  
+    start traffic  ${stream}
+    sleep  5
+    verify results  transmitted_frame_rate  a  received_valid_frame_rate  b
+    verify results  transmitted_frame_rate  b  received_valid_frame_rate  a 
+    sleep  5    
+    stop traffic   ${stream} 
+    [Tags]  traffic  run
+
+Verify L2 traffic: frame size 256 bytes
+    ${stream}=  L2 add  flow=a<->b  frame_rate=10000  frame_size=256  name=a_b_flow
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07
+    clear stats  
+    start traffic  ${stream}
+    sleep  3
+    stop traffic   ${stream}
+    clear stats  
+    start traffic  ${stream}
+    sleep  5
+    verify results  transmitted_frame_rate  a  received_valid_frame_rate  b
+    verify results  transmitted_frame_rate  b  received_valid_frame_rate  a 
+    sleep  5    
+    stop traffic   ${stream} 
+    [Tags]  traffic  run  
+
+Verify L3 traffic: frame size 256 bytes
+    ${stream}=  L3 add  flow=a<->b  frame_rate=10000  frame_size=256
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07
+    ...     src_ip=${src_ip}   dst_ip=${dst_ip}  name=a_b_flow
+    ...     src_gw=${src_gw}   dst_gw=${dst_gw}
+    clear stats  
+    start traffic  ${stream}
+    sleep  5
+    verify results  transmitted_frame_rate  a  received_valid_frame_rate  b
+    verify results  transmitted_frame_rate  b  received_valid_frame_rate  a 
+    sleep  5    
+    stop traffic   ${stream} 
+    [Tags]  traffic  run
+    
+Verify L2 traffic: frame size 512 bytes
+    ${stream}=  L2 add  flow=a<->b  frame_rate=10000  frame_size=512  name=a_b_flow
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07
+    clear stats  
+    start traffic  ${stream}
+    sleep  3
+    stop traffic   ${stream}
+    clear stats  
+    start traffic  ${stream}
+    sleep  5
+    verify results  transmitted_frame_rate  a  received_valid_frame_rate  b
+    verify results  transmitted_frame_rate  b  received_valid_frame_rate  a 
+    sleep  5    
+    stop traffic   ${stream} 
+    [Tags]  traffic  run  
+
+Verify L3 traffic: frame size 512 bytes
+    ${stream}=  L3 add  flow=a<->b  frame_rate=10000  frame_size=512
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07
+    ...     src_ip=${src_ip}   dst_ip=${dst_ip}  name=a_b_flow
+    ...     src_gw=${src_gw}   dst_gw=${dst_gw}
+    clear stats  
+    start traffic  ${stream}
+    sleep  5
+    verify results  transmitted_frame_rate  a  received_valid_frame_rate  b
+    verify results  transmitted_frame_rate  b  received_valid_frame_rate  a 
+    sleep  5    
+    stop traffic   ${stream} 
+    [Tags]  traffic  run
+    
+Verify L2 traffic: frame size 1024 bytes
+    ${stream}=  L2 add  flow=a<->b  frame_rate=10000  frame_size=1024  name=a_b_flow
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07
+    clear stats  
+    start traffic  ${stream}
+    sleep  3
+    stop traffic   ${stream}
+    clear stats  
+    start traffic  ${stream}
+    sleep  5
+    verify results  transmitted_frame_rate  a  received_valid_frame_rate  b
+    verify results  transmitted_frame_rate  b  received_valid_frame_rate  a 
+    sleep  5    
+    stop traffic   ${stream} 
+    [Tags]  traffic  run  
+    
+Verify L3 traffic: frame size 1024 bytes
+    ${stream}=  L3 add  flow=a<->b  frame_rate=10000  frame_size=1024
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07
+    ...     src_ip=${src_ip}   dst_ip=${dst_ip}  name=a_b_flow
+    ...     src_gw=${src_gw}   dst_gw=${dst_gw}
+    clear stats  
+    start traffic  ${stream}
+    sleep  5
+    verify results  transmitted_frame_rate  a  received_valid_frame_rate  b
+    verify results  transmitted_frame_rate  b  received_valid_frame_rate  a 
+    sleep  5    
+    stop traffic   ${stream} 
+    [Tags]  traffic  run
+    
+Verify L2 traffic: frame size 1518 bytes
+    ${stream}=  L2 add  flow=a<->b  frame_rate=10000  frame_size=1518  name=a_b_flow
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07
+    clear stats  
+    start traffic  ${stream}
+    sleep  3
+    stop traffic   ${stream}
+    clear stats  
+    start traffic  ${stream}
+    sleep  5
+    verify results  transmitted_frame_rate  a  received_valid_frame_rate  b
+    verify results  transmitted_frame_rate  b  received_valid_frame_rate  a 
+    sleep  5    
+    stop traffic   ${stream} 
+    [Tags]  traffic  run  
+
+Verify L3 traffic: frame size 1518 bytes
+    ${stream}=  L3 add  flow=a<->b  frame_rate=10000  frame_size=1518
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07
+    ...     src_ip=${src_ip}   dst_ip=${dst_ip}  name=a_b_flow
+    ...     src_gw=${src_gw}   dst_gw=${dst_gw}
+    clear stats  
+    start traffic  ${stream}
+    sleep  5
+    verify results  transmitted_frame_rate  a  received_valid_frame_rate  b
+    verify results  transmitted_frame_rate  b  received_valid_frame_rate  a 
+    sleep  5    
+    stop traffic   ${stream} 
+    [Tags]  traffic  run
+
+    
+Verify L2 traffic: frame size 2048 bytes
+    ${stream}=  L2 add  flow=a<->b  frame_rate=10000  frame_size=2048  name=a_b_flow
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07
+    clear stats  
+    start traffic  ${stream}
+    sleep  3
+    stop traffic   ${stream}
+    clear stats  
+    start traffic  ${stream}
+    sleep  5
+    verify results  transmitted_frame_rate  a  received_valid_frame_rate  b
+    verify results  transmitted_frame_rate  b  received_valid_frame_rate  a 
+    sleep  5    
+    stop traffic   ${stream} 
+    [Tags]  traffic  run  
+
+Verify L3 traffic: frame size 2048 bytes
+    ${stream}=  L3 add  flow=a<->b  frame_rate=10000  frame_size=2048
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07
+    ...     src_ip=${src_ip}   dst_ip=${dst_ip}  name=a_b_flow
+    ...     src_gw=${src_gw}   dst_gw=${dst_gw}
+    clear stats  
+    start traffic  ${stream}
+    sleep  5
+    verify results  transmitted_frame_rate  a  received_valid_frame_rate  b
+    verify results  transmitted_frame_rate  b  received_valid_frame_rate  a 
+    sleep  5    
+    stop traffic   ${stream} 
+    [Tags]  traffic  run
+    
+Verify L2 traffic: frame size 4096 bytes
+    ${stream}=  L2 add  flow=a<->b  frame_rate=10000  frame_size=4096  name=a_b_flow
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07
+    clear stats  
+    start traffic  ${stream}
+    sleep  3
+    stop traffic   ${stream}
+    clear stats  
+    start traffic  ${stream}
+    sleep  5
+    verify results  transmitted_frame_rate  a  received_valid_frame_rate  b
+    verify results  transmitted_frame_rate  b  received_valid_frame_rate  a 
+    sleep  5    
+    stop traffic   ${stream} 
+    [Tags]  traffic  run  
+
+Verify L3 traffic: frame size 4096 bytes
+    ${stream}=  L3 add  flow=a<->b  frame_rate=10000  frame_size=4096
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07
+    ...     src_ip=${src_ip}   dst_ip=${dst_ip}  name=a_b_flow
+    ...     src_gw=${src_gw}   dst_gw=${dst_gw}
+    clear stats  
+    start traffic  ${stream}
+    sleep  5
+    verify results  transmitted_frame_rate  a  received_valid_frame_rate  b
+    verify results  transmitted_frame_rate  b  received_valid_frame_rate  a 
+    sleep  5    
+    stop traffic   ${stream} 
+    [Tags]  traffic  run
+    
+Verify L2 traffic: frame size 9216 bytes
+    ${stream}=  L2 add  flow=a<->b  frame_rate=10000  frame_size=9216  name=a_b_flow
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07
+    clear stats  
+    start traffic  ${stream}
+    sleep  3
+    stop traffic   ${stream}
+    clear stats  
+    start traffic  ${stream}
+    sleep  5
+    verify results  transmitted_frame_rate  a  received_valid_frame_rate  b
+    verify results  transmitted_frame_rate  b  received_valid_frame_rate  a 
+    sleep  5    
+    stop traffic   ${stream} 
+    [Tags]  traffic  run  
+
+Verify L3 traffic: frame size 9216 bytes
+    ${stream}=  L3 add  flow=a<->b  frame_rate=10000  frame_size=9216
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07
+    ...     src_ip=${src_ip}   dst_ip=${dst_ip}  name=a_b_flow
+    ...     src_gw=${src_gw}   dst_gw=${dst_gw}
+    clear stats  
+    start traffic  ${stream}
+    sleep  5
+    verify results  transmitted_frame_rate  a  received_valid_frame_rate  b
+    verify results  transmitted_frame_rate  b  received_valid_frame_rate  a 
+    sleep  5    
+    stop traffic   ${stream}     
+    [Tags]  traffic  run
+
+Verify L2 Traffic: VLAN Tagged Traffic
+    ${stream}=  L2 add  flow=a<->b  frame_rate=10000  frame_size=128  ethertype=8100  vlan_id=2048  name=a_b_flow
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07
+    rest delete tenant  ${tenant_1}
+    t5 tenant add  2048
+    sleep  10
+    clear stats  
+    start traffic  ${stream}
+    sleep  3
+    stop traffic   ${stream}
+    clear stats  
+    start traffic  ${stream}
+    sleep  5
+    verify results  transmitted_frame_rate  a  received_valid_frame_rate  b
+    verify results  transmitted_frame_rate  b  received_valid_frame_rate  a 
+    sleep  5    
+    stop traffic   ${stream}     
+    rest delete tenant  ${tenant_1}
+    t5 tenant add  -1  
+    [Tags]  traffic  run  l2vlan  
+
+Verify L3 Traffic: VLAN Tagged Traffic
+    ${stream}=  L3 add  flow=a<->b  frame_rate=10000  frame_size=128  ethertype=8100  vlan_id=2048  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07
+    ...     src_ip=${src_ip}   dst_ip=${dst_ip}  name=a_b_flow
+    ...     src_gw=${src_gw}   dst_gw=${dst_gw}   
+    rest delete tenant  ${tenant_1}
+    t5 tenant add  2048
+    sleep  10
+    clear stats  
+    start traffic  ${stream}
+    sleep  3
+    stop traffic   ${stream}
+    clear stats  
+    start traffic  ${stream}
+    sleep  5
+    verify results  transmitted_frame_rate  a  received_valid_frame_rate  b
+    verify results  transmitted_frame_rate  b  received_valid_frame_rate  a 
+    sleep  5    
+    stop traffic   ${stream}     
+    rest delete tenant  ${tenant_1}
+    t5 tenant add  -1  
+    [Tags]  traffic  run  l3vlan
+
+Line Rate: L2 Traffic with frame Size 1518
+    ${stream}=  L2 add  flow=a<->b  frame_size=1518  line_rate=100  name=a_b_flow
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07
+    clear stats  
+    start traffic  ${stream}
+    sleep  3
+    stop traffic   ${stream}
+    clear stats  
+    start traffic  ${stream}
+    sleep  5
+    verify results  transmitted_frame_rate  a  received_valid_frame_rate  b
+    verify results  transmitted_frame_rate  b  received_valid_frame_rate  a 
+    sleep  5    
+    stop traffic   ${stream}
+    [Tags]  traffic  linerate  run            
+
+
+Line Rate: L2 Broadcast traffic with frame Size 1518
+    ${stream}=  L2 add  flow=a->b  frame_size=1518  line_rate=100  name=a_b_flow
+    ...     src_mac=00:02:03:04:05:06  dst_mac=FF:FF:FF:FF:FF:FF
+    clear stats  
+    start traffic  ${stream}
+    sleep  10
+    stop traffic   ${stream}
+    clear stats     
+    start traffic  ${stream}
+    sleep  5
+    verify results  transmitted_frame_rate  a  received_valid_frame_rate  b
+    sleep  5
+    stop traffic  ${stream}   
+    [Tags]  traffic  broadcast  run   
+        
+*Keywords
+
+t5 tenant add  [Arguments]  ${vlan} 
+    rest add tenant  ${tenant_1}   
+    rest add vns  ${tenant_1}  ${vns_1} 
+    rest add interface to vns  ${tenant_1}   ${vns_1}   ${switch1_name}  ${interface_1}   ${vlan}
+    rest add interface to vns  ${tenant_1}   ${vns_1}   ${switch1_name}  ${interface_2}   ${vlan}
+    sleep  5    
+    
+t5 suite setup
+    base suite setup
+    rest add switch  ${switch1_name}  
+    ${switch1_dpid}=  rest return switch dpid from ip  s1
+    rest add dpid  ${switch1_name}  ${switch1_dpid}
+    rest add fabric role  ${switch1_name}  leaf      
+    t5 tenant add  -1
+
+verify results   [Arguments]  ${transmitted_frames}  ${txport}  ${received_frames}  ${rxport}
+    Sleep  5
+    ${report}=  fetch port stats
+    ${tx_value}=  verify dict key  ${report}  ${txport}  ${transmitted_frames}
+    ${txStatus}=  Evaluate  ${tx_value} > 0
+    Should be True  ${txStatus}    
+    ${rx_value}=  verify dict key  ${report}  ${rxport}  ${received_frames}
+    ${rxStatus}=  Evaluate  ${rx_value} > 0
+    Should be True  ${rxStatus}         
+    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}  20
+    Should be true  ${in_range} 
+
+verify snmp attribute  [Arguments]  ${switch}  ${attribute}  ${expected_value}               
+    ${snmp_key} =     snmp cmd   ${switch}   snmpget    public   ${attribute}  
+    Should Contain   ${snmp_key}   ${expected_value}
+ 
+ha test teardown
+    delete traffic
+    
+t5 suite teardown
+    rest delete tenant  ${tenant_1}
+    rest delete fabric switch  ${switch1_name}  
+    base suite teardown
