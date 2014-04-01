@@ -614,7 +614,7 @@ S
 					helpers.log("Openstack tenant not present in the BSN controller")
 					return False
 		else:
-			url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/tenants'
+			url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/tenants[[tenant-name="%s"]' % tenantId
 			c.rest.get(url)	
 			data = c.rest.content()
 			if len(data) == 0:
@@ -627,7 +627,7 @@ S
 	def openstack_verify_endpoint(self, instanceName, netName):
 		'''function to verify endpoint in BSN controller
 			Input:
-				instance Name
+				instance Name and netname
 			Return: verify the endpoint is created and active
 		'''
 		t = test.Test()

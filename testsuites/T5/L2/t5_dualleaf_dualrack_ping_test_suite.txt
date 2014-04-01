@@ -9,7 +9,6 @@ Test Teardown    T5 base test teardown
 Force Tags       T5 
 Library          keywords/BsnCommon.py
 Library          keywords/T5.py
-Library	         keywords/T5Fabric.py
 Library          keywords/Mininet.py
 Resource		 testsuites/T5/t5_dualleaf_resource.txt
 
@@ -147,7 +146,6 @@ T5 base suite setup
     sleep  5
 
 Tear down the config
-   [Tags]  smoke  sanity 
    delete a tenant  A 
    delete interface from portgroup  leaf0-a  ${bm0_intf0}  p1
    delete interface from portgroup  leaf0-b  ${bm0_intf1}  p1
