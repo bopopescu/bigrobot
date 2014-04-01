@@ -153,8 +153,8 @@ Verify L3 ICMP traffic
     clear stats  
     start traffic  ${stream}
     sleep  5
-    verify results  transmitted_frame_rate  a  received_valid_frame_rate  b
-    verify results  transmitted_frame_rate  b  received_valid_frame_rate  a 
+    verify results  transmitted_frame_rate  a  received_frame_rate  b
+    verify results  transmitted_frame_rate  b  received_frame_rate  a 
     sleep  5    
     stop traffic   ${stream} 
     [Tags]  traffic  L3  ICMP
