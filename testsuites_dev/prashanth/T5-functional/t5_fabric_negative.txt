@@ -32,19 +32,18 @@ Setup Three Rack Dual Leaf Topology
 	rest verify fabric link 	
 
 With 2k mac entries , Remove the Leaf switch and Readd the leaf switch
-    [Tags]  feature  Manual  tested  
+    [Tags]  feature  
     rest add tenant  t1
     rest add vns  t1  v1
     rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
-    rest add interface to vns  t1  v1  leaf1-a  ${leaf1a_ixia_intf}  -1
-    ${stream}=             L3 add  flow=a<->e  src_mac=00:00:01:00:00:01  dst_mac=00:00:02:00:00:01  src_cnt=1000  dst_cnt=1000  frame_rate=1000  frame_size=68  name=a_c_flow
+    rest add interface to vns  t1  v1  leaf2-a  ${leaf2a_ixia_intf}  -1
+    ${stream}=             L3 add  no_arp=True  flow=a<->e  src_mac=00:00:01:00:00:01  dst_mac=00:00:02:00:00:01  src_cnt=1000  dst_cnt=1000  dst_mac_step=00:00:00:00:00:01  src_mac_step=00:00:00:00:00:01  frame_rate=1000  frame_size=68  name=a_e_flow
     start traffic  ${stream}
-    sleep  100
-    rest verify endpoint in vns  v1  2000
+    rest verify endpoint in system  2000
     verify traffic rate  tx_rate  rx_rate  a  e
     verify traffic rate  tx_rate  rx_rate  e  a
     rest delete fabric switch  leaf0-a
-    rest verify endpoint in vns  v1  1000
+    rest verify endpoint in system  1000
     rest add switch  leaf0-a
     rest add dpid  leaf0-a  ${leaf0a_dpid}
     rest add fabric role  leaf0-a  leaf
@@ -53,10 +52,10 @@ With 2k mac entries , Remove the Leaf switch and Readd the leaf switch
     rest verify fabric switch role  ${leaf0a_dpid}  leaf
     rest verify fabric link
     rest verify forwarding vlan fabric tag members  leaf0-a
-    sleep  50
+    sleep  15
     verify traffic rate  tx_rate  rx_rate  a  e
     verify traffic rate  tx_rate  rx_rate  e  a
-    rest verify endpoint in vns  v1  2000
+    rest verify endpoint in system  2000
     stop traffic  ${stream}
     rest delete tenant  t1               
      
@@ -79,25 +78,23 @@ shutdown the switch and check the links are down in the switch
     rest verify fabric interface lacp  leaf2-a  ${h5_intf0}  
     ${loss}=  bash ping  h5  ${h4_ip}  source_if=bond0
     Should Be True  ${loss} == 0
-    rest add shutdown to fabric switch  leaf2-a   
+    rest add shutdown fabric switch  leaf2-a   
     sleep  2
-    ${result}=  rest cli show interface state  leaf2-a  ${h5_intf0}
-    Should not be True  ${result}   
+    rest verify fabric interface  leaf2-a  ${h5_intf0}  
     ${loss}=  bash ping  h5  ${h4_ip}  source_if=bond0
     Should Be True  ${loss} == 0
-    rest delete shutdown from fabric switch  leaf2-a
+    rest delete shutdown fabric switch  leaf2-a
     sleep  3
-    ${result}=  rest cli show interface state  leaf2-a  ${h5_intf0}
-    Should be True  ${result}
+    rest verify fabric interface  leaf2-a  ${h5_intf0}  
     ${loss}=  bash ping  h5  ${h4_ip}  source_if=bond0
     Should Be True  ${loss} == 0
-   rest delete interface from portgroup  leaf1-a  ${h4_intf0}  p4
-   rest delete interface from portgroup  leaf1-b  ${h4_intf1}  p4
-   rest delete interface from portgroup  leaf2-a  ${h5_intf0}  p5
-   rest delete interface from portgroup  leaf2-b  ${h5_intf1}  p5
-   rest delete portgroup  p4
-   rest delete portgroup  p5
-   rest delete tenant  t1 
+    rest delete interface from portgroup  leaf1-a  ${h4_intf0}  p4
+    rest delete interface from portgroup  leaf1-b  ${h4_intf1}  p4
+    rest delete interface from portgroup  leaf2-a  ${h5_intf0}  p5
+    rest delete interface from portgroup  leaf2-b  ${h5_intf1}  p5
+    rest delete portgroup  p4
+    rest delete portgroup  p5
+    rest delete tenant  t1 
      
 verify interface cli 
 	[Tags]  feature
