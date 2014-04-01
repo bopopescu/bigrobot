@@ -125,5 +125,159 @@ class T5_longevity(object):
         n_console.send(option) 
   
         return True
+    
+    
+    
+    def first_boot_controller_menu_apply_negative(self,node, **kwargs):
+        """
+        First boot setup III: connect to the console to apply the setting. 
+            this is negative, if wrong gw is given. then NTP and DNS can not be reached
+        First boot setup Menu :  Apply settings
+    
+        Author: Mingtao       
+        """
+        t = test.Test()
+        n = t.node(node)
+        helpers.log("Entering ====>  first_boot_controller_menu_1 for node: '%s'" % node)
+        helpers.log("Getting the console session for '%s'" % node)
+        n_console = n.console() 
+        n_console.expect(r'\[1\] > ')
+        helpers.log("[1] Apply settings " )      
+        content = n_console.content()
+        helpers.log("USER INFO: the content is '%s'" % content) 
+        match = re.search(r'\[\s*(\d+)\] Apply settings.*[\r\n$]', content)
+        if match:
+            option = match.group(1)
+            helpers.log("USER INFO: the option is %s" % option) 
+        else:
+            helpers.log("USER ERROR: there is no match" )             
+            return False                 
+                  
+        n_console.send(option)  # Apply settings
+        n_console.expect(r'Initializing system.*[\r\n]')
+        n_console.expect(r'Configuring controller.*[\r\n]')
+        n_console.expect(r'Waiting for network configuration.*[\r\n]')        
+        options=n_console.expect([r'Unable to resolve domains with DNS.*[\r\n]',r'No route to host.*[\r\n]'],timeout=300)
+        if options[0] == 0:
+            n_console.expect(r'Retrieving time from NTP server.*[\r\n]',timeout=120)
+            n_console.expect(r'unreachable now.*[\r\n]',timeout=120)        
+            n_console.expect(r'Configuring cluster.*[\r\n]',timeout=120) 
+        if options[0] == 1 : 
+            helpers.log("USER INFO: need to correct cluster ip") 
+        try:
+            options = n_console.expect([r'\[1\] >', r'First-time setup is complete.*[\r\n]'], timeout =120)    
+        except:
+            content = n_console.content()    
+            helpers.log("*****Output is :*******\n%s" % content)           
+            helpers.log("USER ERROR: there is no match") 
+            helpers.test_failure('There is no match')
+        else:
+            content = n_console.content()    
+            helpers.log("*****Output is :*******\n%s" % content)  
+       
+            if options[0] == 0 :                 
+                helpers.summary_log("*****Need to correct parameter *******  "  )       
+                if 'gateway' in kwargs:
+                    gateway=kwargs.get('gateway')
+                    match = re.search(r'\[\s*(\d+)\] Update Gateway.*[\r\n$]', content)
+                    if match:
+                        option = match.group(1)
+                        helpers.log("USER INFO: the option is %s" % option) 
+                    else:
+                        helpers.log("USER ERROR: there is no match" )             
+                        return False                 
+                    n_console.send(option)  # Apply settings     
+                    n_console.expect(r'Gateway.*')               
+                    n_console.expect(r'Default gateway address.*> ')
+                    n_console.send(gateway)
+                    n_console.expect(r'\[1\] >')
+                    content = n_console.content()  
+                if 'dns' in kwargs:
+                    dns=kwargs.get('dns')
+                    match = re.search(r'\[\s*(\d+)\] Update DNS Server.*[\r\n$]', content)
+                    if match:
+                        option = match.group(1)
+                        helpers.log("USER INFO: the option is %s" % option) 
+                    else:
+                        helpers.log("USER ERROR: there is no match" )             
+                        return False                 
+                    n_console.send(option)  # Apply settings     
+                    n_console.expect(r'DNS Server.*')               
+                    n_console.expect(r'DNS server address.* > ')
+                    n_console.send(dns)
+                    n_console.expect(r'\[1\] >')
+                if 'cluster_ip' in kwargs:
+                    clusterip=kwargs.get('cluster_ip')
+                    match = re.search(r'\[\s*(\d+)\] Update Existing Node IP Address.*[\r\n$]', content)
+                    if match:
+                        option = match.group(1)
+                        helpers.log("USER INFO: the option is %s" % option) 
+                    else:
+                        helpers.log("USER ERROR: there is no match" )             
+                        return False                 
+                    n_console.send(option)  # Apply settings     
+                    n_console.expect(r'Existing Node IP Address.*')               
+                    n_console.expect(r'Existing node IP.* > ')
+                    n_console.send(clusterip)
+                    n_console.expect(r'\[1\] >')
+                                            
+                n_console.send('')  # Apply settings
+                n_console.expect(r'Initializing system.*[\r\n]',timeout=120)
+                n_console.expect(r'Configuring controller.*[\r\n]',timeout=120)                              
+                n_console.expect(r'Configuring cluster.*[\r\n]',timeout=120)
+                n_console.expect(r'First-time setup is complete.*[\r\n]',timeout=120)
+                n_console.expect(r'Press enter to continue > ')
+                n_console.send('')
+                helpers.sleep(3)  # Sleep for a few seconds just in case...
+                return True             
+               
+            if options[0] == 1 :                 
+                helpers.log("*****first boot complete *******  "  )   
+                n_console.expect(r'Press enter to continue > ')
+                n_console.send('')    
+                helpers.summary_log('First boot complete even the NTP/DNS not reachable' )
+        helpers.sleep(3)  # Sleep for a few seconds just in case...
+        return True
+
+    def cli_show_local_config(self,node):
+        '''
+        show the local node config
+        '''
+      
+        t = test.Test()
+        c = t.controller(node)
+    
+        c.enable('')
+        c.enable("show local-config")
+        content = c.cli_content()
+        helpers.log("*****Output is :\n%s" % content)
+        temp = helpers.strip_cli_output(content)
+        temp = helpers.str_to_list(temp)
+        helpers.log("*****Output list   is :\n%s" % temp)
+             
+        localinfo = {}    
+        for line in temp:          
+            line = line.lstrip()
+            helpers.log(" line is - %s" % line)            
+            if (re.match(r'.*hostname .*', line)): 
+                match = re.match(r'.*hostname (.*)', line)        
+                localinfo['hostname'] = match.group(1)
+            
+            elif (re.match(r'.*dns search.*', line)): 
+                match = re.match(r'.*dns search (.*)', line)        
+                localinfo['domain'] = match.group(1)
+             
+            elif (re.match(r'.*dns server.*', line)): 
+                match = re.match(r'.*dns server (.*)', line)        
+                localinfo['dns'] = match.group(1)
+            
+            elif (re.match(r'.*ip.* gateway.*', line)): 
+                match = re.match(r'.*ip (\d+\.\d+\.\d+\.\d+)/(\d+) gateway (\d+\.\d+\.\d+\.\d+)', line)        
+                localinfo['ip'] = match.group(1)
+                localinfo['mask'] = match.group(2)
+                localinfo['gateway'] = match.group(3)
+             
+            helpers.log("INFO: *** local node info *** \n  %s" % localinfo)      
+        return localinfo      
         
   
