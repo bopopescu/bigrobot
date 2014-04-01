@@ -2198,12 +2198,13 @@ class T5Platform(object):
 
         if not ip_address:
             ip_address = n.ip()
-
+        helpers.log("Entering ===> first_boot_controller_initial_node_setup: '%s', %s, %s, %s, %s, %s, %s, %s " \
+                    % (node, dhcp, ip_address, netmask, gateway, dns_server, dns_search, hostname))
         helpers.log("Getting the console session for '%s'" % node)
         n_console = n.console()
 
         options = n_console.expect([r'Escape character.*[\r\n]', r'login:',r'Local Node Configuration'])
-        print("*****USER INFO:  options is ****\n %s" % (options,))        
+    
         content = n_console.content()
         helpers.log("*****Output is :*******\n%s" % content)
         if options[0]<2:
@@ -2271,7 +2272,8 @@ class T5Platform(object):
   
         t = test.Test()
         n = t.node(node)
- 
+        helpers.log("Entering ===> first_boot_controller_initial_cluster_setup: '%s', %s, %s, %s, %s, %s, %s" \
+                    % (node, join_cluster, cluster_ip, cluster_passwd, cluster_descr, admin_password, ntp_server)) 
         helpers.log("Getting the console session for '%s'" % node)
         n_console = n.console()        
 #        n_console.expect(r'Controller Clustering')
@@ -2598,7 +2600,7 @@ class T5Platform(object):
         helpers.sleep(3)  # Sleep for a few seconds just in case...
         return True
             
-    def first_boot_controller_menu_cluster_name(self,node,name='MY-T5-C'):
+    def first_boot_controller_menu_cluster_name(self,node,name='MY-T5-C',invalid_input=False):
         """
        First boot setup Menu :   Update Cluster Name
         """
@@ -2607,22 +2609,29 @@ class T5Platform(object):
         helpers.log("Entering ====> Update Cluster Name for node: '%s'" % node)
         helpers.log("Getting the console session for '%s'" % node)
         n_console = n.console()
-        n_console.expect(r'\[1\] > ')                
+          
+        options = n_console.expect([r'\[1\] > ',r'Cluster name.* > '])             
         content = n_console.content()
         helpers.log("USER INFO: the content is '%s'" % content) 
-        match = re.search(r'\[\s*(\d+)\] Update Cluster Name.*[\r\n$]', content)
-        if match:
-            option = match.group(1)
-            helpers.log("USER INFO: the optin is %s" % option) 
-        else:
-            helpers.log("USER ERROR: there is no match" )             
-            return False                 
-        n_console.send(option)  # Apply settings    
-        n_console.expect(r'Cluster Name.*')                
-        n_console.expect(r'Cluster name.* > ')
+        if options[0] == 0:   
+            match = re.search(r'\[\s*(\d+)\] Update Cluster Name.*[\r\n$]', content)
+            if match:
+                option = match.group(1)
+                helpers.log("USER INFO: the option is %s" % option) 
+            else:
+                helpers.log("USER ERROR: there is no match" )             
+                return False                 
+            n_console.send(option)  # Apply settings                
+            n_console.expect(r'Cluster Name.*')                
+            n_console.expect(r'Cluster name.* > ')
+            
         n_console.send(name)
-        n_console.expect(r'Please choose an option:.*[\r\n$]')   
-          
+        if invalid_input:
+            helpers.log("USER INFO: in invalid input,  this is negative case" ) 
+            n_console.expect(r'Error: Invalid.*')                                    
+        else:
+            n_console.expect(r'Please choose an option:.*[\r\n$]')   
+           
         helpers.sleep(3)  # Sleep for a few seconds just in case...
         return True
  
