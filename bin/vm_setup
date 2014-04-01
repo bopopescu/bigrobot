@@ -17,6 +17,9 @@ kvm_vmdk_path = None
 vm_name = None
 
 # Adding Gobot Path to sys path for Exscript APIs
+# sys.path.append("/home/%s/workspace/bigrobot/modules" % current_user)
+# sys.path.append("/home/%s/workspace/bigrobot/vendors/exscript/src" % current_user)
+# sys.path.append("/home/%s/workspace/bigrobot/" % current_user)
 bigrobot_path = os.path.dirname(__file__) + '/..'
 exscript_path = bigrobot_path + '/vendors/exscript/src'
 sys.path.insert(0, bigrobot_path)
