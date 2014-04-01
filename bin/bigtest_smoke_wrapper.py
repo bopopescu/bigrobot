@@ -9,8 +9,8 @@ This script is called by the BigTest wrapper to execute the smoke tests in
 a BigRobot test suite. As an example, see:
 bigtest/bigtest/smoketest/T5,T5-sanity,t5_singleleaf_dualrack_ping_test_suite.py
 
-This script exports the environment variable BIGROBOT_PARAMS_INPUT and executes
-'gobot test ...'
+This script exports the environment variables BIGROBOT_TESTBED and
+BIGROBOT_PARAMS_INPUT, then executes 'gobot test ...'
 """
 
 import os
@@ -129,6 +129,7 @@ print("\n============== BigRobot smoke: Init ==============")
 print("SUITE_FILE: %s" % SUITE_FILE)
 set_and_print_env('BIGROBOT_CI', 'True')
 set_and_print_env('BIGTEST_PATH', get_base_path() + '/bigtest')
+set_and_print_env('BIGROBOT_TESTBED', 'bigtest')
 set_and_print_env('BIGROBOT_PARAMS_INPUT', NODES)
 set_and_print_env('BIGROBOT_PATH', get_base_path() + '/bigrobot')
 set_and_print_env('BIGROBOT_BIN', get_env('BIGROBOT_PATH') + '/bin')
