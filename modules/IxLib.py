@@ -586,8 +586,8 @@ class Ixia(object):
         src_mac = kwargs.get('dst_mac', '00:11:23:00:00:02')
         src_cnt = kwargs.get('dst_cnt', 1)
         dst_cnt = kwargs.get('src_cnt', 1)
-        src_step = kwargs.get('dst_mac_step', '00:00:00:01:00:00')
-        dst_step = kwargs.get('src_mac_step', '00:00:00:01:00:00')
+        src_step = kwargs.get('dst_mac_step', '00:00:00:00:00:01')
+        dst_step = kwargs.get('src_mac_step', '00:00:00:00:00:01')
         frame_rate = kwargs.get('frame_rate', 100)
         frame_cnt = kwargs.get('frame_cnt', None)
         self._frame_size = kwargs.get('frame_size', 70)
@@ -730,8 +730,8 @@ class Ixia(object):
         d_mac = kwargs.get('dst_mac', '00:11:23:00:00:02')
         d_cnt = kwargs.get('d_cnt', 1)
         s_cnt = kwargs.get('s_cnt', 1)
-        d_step = kwargs.get('d_step', '00:00:00:01:00:00')
-        s_step = kwargs.get('s_step', '00:00:00:01:00:00')
+        d_step = kwargs.get('d_step', '00:00:00:00:00:01')
+        s_step = kwargs.get('s_step', '00:00:00:00:00:01')
         s_ip = kwargs.get('src_ip', '20.0.0.1')
         d_ip = kwargs.get('dst_ip', '20.0.0.2')
         gw = kwargs.get('gw_ip', None)
@@ -782,8 +782,8 @@ class Ixia(object):
         dst_mac = kwargs.get('dst_mac', '00:11:23:00:00:02')
         d_cnt = kwargs.get('dst_cnt', 1)
         s_cnt = kwargs.get('src_cnt', 1)
-        dst_mac_step = kwargs.get('dst_mac_step', '00:00:00:01:00:00')
-        src_mac_step = kwargs.get('src_mac_step', '00:00:00:01:00:00')
+        dst_mac_step = kwargs.get('dst_mac_step', '00:00:00:00:00:01')
+        src_mac_step = kwargs.get('src_mac_step', '00:00:00:00:00:01')
         frame_rate = kwargs.get('frame_rate', 100)
         frame_cnt = kwargs.get('frame_cnt', None)
         frame_type = kwargs.get('frame_type', 'fixed')
@@ -903,6 +903,7 @@ class Ixia(object):
         traffic_stream1 = []
         if no_arp == 'True':
             helpers.log('Adding Stream with Ethernet devices as no_arp is True!!!')
+            self._arp_check = False
             (ip_devices, mac_devices) = self.ix_create_device_ethernet_ip(create_topo, s_cnt, d_cnt, src_mac, dst_mac, src_mac_step, 
                                                                       dst_mac_step, src_ip, dst_ip, src_gw_ip, dst_gw_ip, src_ip_step,
                                                                       dst_ip_step, src_gw_step, dst_gw_step, dst_mac, src_mac, ip_type = ip_type)
@@ -918,6 +919,7 @@ class Ixia(object):
             traffic_stream1.append(traffic_stream)
         else:
             helpers.log('Adding L3 Stream with ARP resolution for configured Gateway')
+            self._arp_check = True
             (ip_devices, mac_devices) = self.ix_create_device_ethernet_ip(create_topo, s_cnt, d_cnt, src_mac, dst_mac, src_mac_step, 
                                                                       dst_mac_step, src_ip, dst_ip, src_gw_ip, dst_gw_ip, src_ip_step,
                                                                       dst_ip_step, src_gw_step, dst_gw_step, ip_type = ip_type)
