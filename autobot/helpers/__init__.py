@@ -393,6 +393,13 @@ def bigrobot_continuous_integration(new_val=None, default=None):
     return _env_get_and_set('BIGROBOT_CI', new_val, default)
 
 
+def bigrobot_params_input(new_val=None, default=None):
+    """
+    Category: Get/set environment variables for BigRobot.
+    """
+    return _env_get_and_set('BIGROBOT_PARAMS_INPUT', new_val, default)
+
+
 def bigrobot_params(new_val=None, default=None):
     """
     Category: Get/set environment variables for BigRobot.
@@ -407,11 +414,16 @@ def bigtest_path(new_val=None, default=None):
     return _env_get_and_set('BIGTEST_PATH', new_val, default)
 
 
-def bigtest_nodes(new_val=None, default=None):
+def bigrobot_testbed(new_val=None, default=None):
     """
-    Category: Get/set environment variables for BigTest.
+    Category: Get/set environment variables for BigRobot.
+    Possible values:
+        'bigtest'
+        'libvirt'
+        'static'
+        None - (default) assume static attributes are defined in .topo file
     """
-    return _env_get_and_set('BIGTEST_NODES', new_val, default)
+    return _env_get_and_set('BIGROBOT_TESTBED', new_val, default)
 
 
 def python_path(new_val=None, default=None):
