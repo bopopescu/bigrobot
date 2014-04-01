@@ -22,11 +22,6 @@ Test controller reload (BigTap)
     cli reboot  c1
     #cli reload  s1
 
-Get controller handles
-    [Tags]  skipped
-    #cli save running config
-    cli show user  c1
-
 Test check mastership
     [Tags]  skipped
     check mastership  c1
@@ -126,10 +121,6 @@ Test get node name
     ${name}=      get node name    c1
     Log           I am the ${name} of the Universe!
 
-Test show verson
-    [Tags]  skipped
-    cli          master   show version
-
 Test get node ID
     [Tags]  skipped
     ${nodeid}=  get node id  master
@@ -140,5 +131,15 @@ Test SSH connection
     verify ssh connection   node=c1   user=admin   password=adminadmin
 
 Test console connection
-    #[Tags]  skipped
+    [Tags]  skipped
     test console2  master
+
+Test show version
+    [Tags]  skipped
+    cli          master   show version
+
+Get controller handles
+    #[Tags]  skipped
+    #cli save running config
+    cli show user  c1
+
