@@ -96,7 +96,7 @@ Add 10000 dynamic mac into the system and check forwarding and make sure aging a
 	[Tags]  feature  scaling  run  
 	${stream}=             L3 add  no_arp=True  flow=a<->c  src_mac=00:00:01:00:00:01  dst_mac=00:00:02:00:00:01  src_cnt=5000  dst_cnt=5000  dst_mac_step=00:00:00:00:00:01  src_mac_step=00:00:00:00:00:01  frame_rate=1000  frame_size=128  name=a_c_flow
     start traffic  ${stream}
-    sleep  4
+    sleep  10
     rest verify endpoint in system  10000
     ${result}=  bash execute command  leaf0-a  ofad-ctl ft L2 | wc -l 
     ${count}=	Convert to integer  ${result}   
@@ -126,7 +126,7 @@ Add 16000 dynamic mac into the system and check forwarding and make sure aging a
 	[Tags]  feature  scaling  run  
 	${stream}=             L3 add  no_arp=True  flow=a<->c  src_mac=00:00:01:00:00:01  dst_mac=00:00:02:00:00:01  src_cnt=8000  dst_cnt=8000    frame_rate=1000  frame_size=128  name=a_c_flow
     start traffic  ${stream}
-	sleep  10   
+	sleep  30   
     rest verify endpoint in system  16000
     ${result}=  bash execute command  leaf0-a  ofad-ctl ft L2 | wc -l 
     ${count}=	Convert to integer  ${result}   
@@ -302,7 +302,7 @@ Mac move at scale 1k mac between rack
     stop traffic  ${stream2}
     stop traffic  ${stream1}
 
-Mac move at scale 16k  between rack
+Mac move at scale 16k between rack
 	[Tags]  feature  scaling  run
 	${stream}=             L3 add  no_arp=True  flow=a->c  src_mac=00:01:01:00:00:01  dst_mac=00:02:02:00:00:01  src_cnt=8000    frame_rate=1000  frame_size=68  name=a_c_flow
 	${stream1}=             L3 add  no_arp=True  flow=c->a  src_mac=00:02:02:00:00:01  dst_mac=00:01:01:00:00:01  dst_cnt=8000    frame_rate=1000  frame_size=68  name=c_a_flow
@@ -385,10 +385,13 @@ verify traffic rate negative   [Arguments]  ${tx_rate}  ${rx_rate}  ${tx_intf}  
     ${tx_value}=  verify dict key  ${report}  ${tx_intf}  transmitted_frame_rate
     ${rx_value}=  verify dict key  ${report}  ${rx_intf}  received_valid_frame_rate
     Should Not be equal  ${tx_value}  ${rx_value}
+
 T5 test teardown
 	delete traffic
 	delete a tenant  t1
+	sleep  2
 	base test teardown
+
 T5 test setup
 	base test setup
 	rest add tenant  t1
