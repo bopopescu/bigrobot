@@ -19,14 +19,14 @@ BSN note: This was borrowed from shell.py and customize for Big Switch Networks.
 import re
 from Exscript.protocols.drivers.driver import Driver
 
-_user_re     = [re.compile(r'(user|login): $', re.I)]
+_user_re = [re.compile(r'(user|login): $', re.I)]
 _password_re = [re.compile(r'Password: ?$')]
-_linux_re    = re.compile(r'\blinux\b', re.I)
+_linux_re = re.compile(r'\blinux\b', re.I)
 
 class UnixShellDriver(Driver):
     def __init__(self):
         Driver.__init__(self, 'shell_unix')
-        self.user_re     = _user_re
+        self.user_re = _user_re
         self.password_re = _password_re
 
         # BSN tweak to specify what platform this device is.
@@ -35,7 +35,7 @@ class UnixShellDriver(Driver):
     def check_head_for_os(self, string):
         if 'Welcome to Ubuntu' in string:
             self._platform = 'ubuntu'
-            return 80
+            return 89
         if _linux_re.search(string):
             self._platform = 'generic_unix'
             return 70
@@ -43,7 +43,7 @@ class UnixShellDriver(Driver):
             self._platform = 'generic_unix2'
             return 20
         return 0
-    
+
     # BSN tweaks - all methods below
     def platform(self):
         return self._platform
