@@ -1271,7 +1271,6 @@ class T5(object):
         url = '/api/v1/data/controller/applications/bvs/info/fabric?select=link' % ()
         c.rest.get(url)
         data = c.rest.content()
-<<<<<<< HEAD
         link = 0
         for i in range (0,len(data)):
             if data[i]["link"]["link-direction"] == "bidirectional":
@@ -1282,13 +1281,6 @@ class T5(object):
         else:
             helpers.test_failure("Expected links are not present expected:%d,Actual:%d" % int(count), int(link))
             return False
-=======
-        for i in range (0, len(data)):
-            if data[i]["link"]["dst"]["switch-info"]["switch-name"] == switch and data[i]["link"]["link-direction"] == "bidirectional":
-                helpers.test_log("%s Fabric Links not deleted" % str(data[i]["link"]["dst"]["switch-info"]["switch-name"]))
-
-        return True
->>>>>>> upstream/master
 
     def rest_verify_fabric_switch_role(self, dpid, role):
         t = test.Test()
