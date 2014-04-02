@@ -1260,17 +1260,27 @@ class T5(object):
 
         return True
 
-    def rest_verify_fabric_link_common(self, switch):
+    def rest_verify_fabric_link_common(self, count=16):
+        '''
+        Function to count the no of bi-directional links present in dual leaf three rack topology
+        input: No of links expected (default is 16 in dual leaf , three rack regression topology)
+        Output: True or False
+        '''
         t = test.Test()
         c = t.controller('master')
         url = '/api/v1/data/controller/applications/bvs/info/fabric?select=link' % ()
         c.rest.get(url)
         data = c.rest.content()
+        link = 0
         for i in range (0,len(data)):
-            if data[i]["link"]["dst"]["switch-info"]["switch-name"] == switch and data[i]["link"]["link-direction"] == "bidirectional":
-                helpers.test_log("%s Fabric Links not deleted" % str(data[i]["link"]["dst"]["switch-info"]["switch-name"]))
-
-        return True
+            if data[i]["link"]["link-direction"] == "bidirectional":
+                link = link + 1
+        if int(link) == int(count):
+            helpers.test_log("%s Fabric Links not deleted" % str(data[i]["link"]["dst"]["switch-info"]["switch-name"]))
+            return True
+        else:
+            helpers.test_failure("Expected links are not present expected:%d,Actual:%d" % int(count), int(link))
+            return False
 
     def rest_verify_fabric_switch_role(self, dpid, role):
         t = test.Test()
