@@ -15,11 +15,11 @@ s1:
   alias: leaf0-a
   user: admin
   password: adminadmin
-#s2:
-#  ip: 10.195.0.34
-#  alias: leaf0-b
-#  user: admin
-#  password: adminadmin
+s2:
+  ip: 10.195.0.34
+  alias: leaf0-b
+  user: admin
+  password: adminadmin
 s3:
   ip: 10.195.0.35
   alias: leaf1-a
@@ -62,7 +62,7 @@ h3:
   ip: 10.195.0.101
   user: root
   password: bsn
-h5:
+h4:
   ip: 10.195.0.102
   user: root
   password: bsn
@@ -84,8 +84,8 @@ tg1:
   ports:
     a:
       name: 2/1
-#    b:
-#      name: 2/2 
+    b:
+      name: 2/2 
     c:
       name: 2/3
     d:

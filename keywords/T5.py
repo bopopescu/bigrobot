@@ -2091,3 +2091,36 @@ class T5(object):
                 helpers.test_failure(c.rest.error())
                 return False
         return True
+    
+    def rest_add_shutdown_fabric_switch(self, switch):
+        '''
+        add shutdown command to switch
+        input: switch name
+        output:  True
+                 False
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        url = '/api/v1/data/controller/core/switch-config[name="%s"]' % switch
+        try:
+            c.rest.patch(url, {"shutdown": True})
+        except:
+            return False
+        else:
+            return True
+    def rest_delete_shutdown_fabric_switch(self, switch):
+        '''
+        delete shutdown command to switch
+        input: switch name
+        output:  True
+                 False
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        url = '/api/v1/data/controller/core/switch-config[name="%s"]' % switch
+        try:
+            c.rest.delete(url, {"shutdown": None})
+        except:
+            return False
+        else:
+            return True
