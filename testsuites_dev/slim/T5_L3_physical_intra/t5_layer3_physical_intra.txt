@@ -1921,7 +1921,7 @@ Flap bond interface towards host
 	${attachpoint} = 							Set Variable					${result[0]['attachment-point']['port-group-name']}	
 	Should Contain								${attachpoint}					${leaf0_pc1}
 	${vlanid} = 								Set Variable					${result[0]['attachment-point']['vlan']}	
-	Should Be Equal	As Numbers					${vlanid}						1001	
+	Should Be Equal	As Integers					${vlanid}						${1001}		
 	${mac2} = 									BASH get intf mac				h3						bond0.1003
 	${result} =									REST show endpoints mac			${mac2}
 	Should Be True								${result}						
@@ -1936,7 +1936,7 @@ Flap bond interface towards host
 	${attachpoint} = 							Set Variable					${result[0]['attachment-point']['port-group-name']}	
 	Should Contain								${attachpoint}					${leaf0_pc1}
 	${vlanid} = 								Set Variable					${result[0]['attachment-point']['vlan']}	
-	Should Be Equal	As Numbers					${vlanid}						1001	
+	Should Be Equal	As Integers					${vlanid}						${1001}		
 	BASH ifup intf								h1								eth2
 	BASH ifdown intf							h1								eth3
 	${loss} = 									BASH ping						h1						10.251.3.11 			count=10
@@ -1946,7 +1946,7 @@ Flap bond interface towards host
 	${attachpoint} = 							Set Variable					${result[0]['attachment-point']['port-group-name']}	
 	Should Contain								${attachpoint}					${leaf0_pc1}
 	${vlanid} = 								Set Variable					${result[0]['attachment-point']['vlan']}	
-	Should Be Equal	As Numbers					${vlanid}						1001	
+	Should Be Equal	As Integers					${vlanid}						${1001}		
 	sleep 										5
 	BASH ifdown intf							h1								eth2
 	BASH ifdown intf							h1								eth3
@@ -1962,7 +1962,7 @@ Flap bond interface towards host
 	${attachpoint} = 							Set Variable					${result[0]['attachment-point']['port-group-name']}	
 	Should Contain								${attachpoint}					${leaf0_pc1}
 	${vlanid} = 								Set Variable					${result[0]['attachment-point']['vlan']}	
-	Should Be Equal	As Numbers					${vlanid}						1001	
+	Should Be Equal	As Integers					${vlanid}						${1001}	
 	BASH delete route							h1								10.251.3.0/24			10.251.1.1
 	BASH delete route							h3								10.251.1.0/24			10.251.3.1
 

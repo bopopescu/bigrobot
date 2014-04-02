@@ -261,7 +261,7 @@ class Host(object):
         match = re.search(r'is not running', output, re.S | re.I)
         if match:
             return 'is not running'
-        match = re.search(r'start\/running', output, re.S | re.I)
+        match = re.search(r'(start|running)', output, re.S | re.I)
         if match:
             return 'is started'
        
