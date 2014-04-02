@@ -2126,7 +2126,7 @@ class T5(object):
             return True
 
 
-    def rest_clean_user_configuration(self):
+    def clean_configuration(self):
         '''
             Objective: Delete all user configuration
         '''
