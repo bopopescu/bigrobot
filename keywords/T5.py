@@ -1991,7 +1991,7 @@ class T5(object):
 
     def rest_verify_stats_interval(self, intf_value=60, vns_value=600):
         ''' Function to configure stats interval value for interface and vns
-        Input: interface interval value and vns interval value , Default = None 
+        Input: interface interval value and vns interval value , Default = None
         Output: Set the configured number and verify the interval setting
         '''
         t = test.Test()
@@ -2013,7 +2013,7 @@ class T5(object):
 
     def rest_verify_host_lag(self, switcha, intf0, switchb, intf1):
         ''' Function to verify host lag formation
-        Input: dual rack switch name and specific interface which host is connected 
+        Input: dual rack switch name and specific interface which host is connected
         Output: verify the lag id for the given interface from both switch
         '''
         t = test.Test()
@@ -2219,3 +2219,4 @@ class T5(object):
         # disable remote logging
         url_disable_remotelog = '/api/v1/data/controller/os/config/global/logging-config/logging-enabled'
         c.rest.delete(url_disable_remotelog, {})
+        return True
