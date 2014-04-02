@@ -58,9 +58,6 @@ class T5Platform(object):
             helpers.test_failure("Exception in: rest_verify_ha_cluster %s : %s " % (Exception, err))
             return False
 
-    def temp_function(self):
-        
-        self.rest_verify_show_cluster(c1='10.210.144.15', c2='10.210.144.16')
 
     def _cluster_election(self, rigged):
         ''' Invoke "cluster election" commands: re-run or take-leader
@@ -117,12 +114,16 @@ class T5Platform(object):
     
     
     def cli_cluster_take_leader(self):
-        ''' Function to trigger failover to slave controller via CLI
-        Input: None
-        Output: True if successful, False otherwise
+        ''' Function to trigger failover to slave controller via CLI. This function will verify the 
+            fabric integrity between states
+            
+            Input: None
+            Output: True if successful, False otherwise
         '''
         t = test.Test()
         c = t.controller('slave')
+        obj = utilities()
+        utilities.fabric_integrity_checker(obj,"before")
 
         helpers.log("Failover")
         try:
@@ -133,11 +134,12 @@ class T5Platform(object):
             c.send("failover")
             c.expect(r"Election may cause role transition: enter \"yes\" \(or \"y\"\) to continue:")
             c.config("yes")
+            sleep(30)
         except:
             helpers.test_log(c.cli_content())
             return False
         else:
-            return True
+            return utilities.fabric_integrity_checker(obj, "after")
 
 
     def rest_verify_cluster_election_rerun(self):
@@ -580,10 +582,10 @@ class T5Platform(object):
         global hostPingFails
         myhost = Host.Host()
         loss = myhost.bash_ping(src, dst)
-        if (loss != 0):
+        if (loss == '100'):
             sleep(30)
             loss = myhost.bash_ping(src, dst)
-            if (loss != '0'):
+            if (loss == '100'):
                 if(hostPingFails == 5):
                     helpers.warn("5 Consecutive Ping Failures: Please collect logs from the physical host")
                     #mynet.mininet_bugreport()
@@ -2536,8 +2538,8 @@ class T5Platform(object):
         if invalid_input:
             helpers.log("USER INFO: in invalid input,  this is negative case" ) 
             n_console.expect(r'Error: Invalid.*')                                    
-        else:
-            n_console.expect(r'Please choose an option:.*[\r\n$]')   
+#        else:
+#            n_console.expect(r'Please choose an option:.*[\r\n$]')   
           
         helpers.sleep(3)  # Sleep for a few seconds just in case...
         return True
@@ -2630,8 +2632,8 @@ class T5Platform(object):
         if invalid_input:
             helpers.log("USER INFO: in invalid input,  this is negative case" ) 
             n_console.expect(r'Error: Invalid.*')                                    
-        else:
-            n_console.expect(r'Please choose an option:.*[\r\n$]')   
+#        else:
+#            n_console.expect(r'Please choose an option:.*[\r\n$]')   
            
         helpers.sleep(3)  # Sleep for a few seconds just in case...
         return True
