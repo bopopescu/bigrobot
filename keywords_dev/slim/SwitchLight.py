@@ -1781,3 +1781,4 @@ class SwitchLight(object):
         except:
             helpers.test_failure("Could not execute command. Please check log for errors")
             return False        
+

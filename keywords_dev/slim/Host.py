@@ -253,7 +253,7 @@ class Host(object):
     def bash_check_service_status(self, node, processname):
         t = test.Test()
         n = t.node(node)
-        output = n.sudo("service %s status" % processname)['content']
+        output = n.bash("service %s status" % processname)['content']
         helpers.log("output: %s" % output)
         match = re.search(r'unrecognized service', output, re.S | re.I)
         if match:
