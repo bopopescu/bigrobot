@@ -537,7 +537,7 @@ class SwitchLight(object):
             c = t.controller('master')
             s1 = t.switch(node)
             mycount = 1
-            while mycount <= iteration:
+            while mycount <= int(iteration):
                 cli_input = "no controller " + str(c.ip())
                 s1.config(cli_input)
                 s1.enable('show running-config openflow')
@@ -547,15 +547,19 @@ class SwitchLight(object):
                 s1.config(cli_input_1)
                 s1.enable('show running-config openflow')
                 helpers.log("Output of show running-config openflow after re-enabling controller %s" % (s1.cli_content()))
-                if iteration > mycount:
+                helpers.log("mycount is %s" % mycount)
+                helpers.log("iteration is %s" % iteration)
+                if mycount < int(iteration):
+                    helpers.log('My Count is %s' % (mycount))
                     mycount = mycount + 1
                     helpers.sleep(10)
-                elif mycount == iteration :
+                else:
                     helpers.log('Exiting from loop')
-            return True
+                    return True
         except:
             helpers.test_failure("Could not execute command. Please check log for errors")
             return False
+        
 
     def cli_disable_interface(self, node, interface_name):
         ''' 

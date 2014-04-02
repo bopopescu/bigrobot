@@ -149,23 +149,23 @@ Spine connect and disconnect to controller
 	
 Leaf connect and disconnect to controller	
 	Connect and disconnect one leaf in dual tor to controller
-#	[Tags]							skipped			feature			
+	[Tags]							skipped			feature			
 
 Spine to leaf link flap
 	Flap link between leaf and spine
-#	[Tags]							skipped			feature			
+	[Tags]							skipped			feature			
 
 Leaf to host link flap
 	Flap bond interface towards host
-#	[Tags]							skipped			feature			
+	[Tags]							skipped			feature			
 	
 Restart ofad process on spine
 	restart ofad on spine
-#	[Tags]							skipped			feature			
+	[Tags]							skipped			feature			
 	
 Restart ofad process on leaf	
 	restart ofad on leaf
-#	[Tags]							skipped			feature			
+	[Tags]							skipped			feature			
 	
 	
 * Keywords
@@ -1754,14 +1754,14 @@ Connect and Disconnect spine to controller
 	...											dst_ip=10.251.3.101				dst_cnt=10				dst_ip_step=0.0.0.1		dst_gw=10.251.3.1			 			
     start traffic  								${stream1}
     sleep  										5
-#    CLI enable disable controller				s1								5
+    CLI enable disable controller				s1								5
 
-	: FOR 										${i}							IN RANGE 				1						5
-	\	CLI delete controller					s1								c1
-	\	CLI add controller						s1								c1
+#	: FOR 										${i}							IN RANGE 				1						5
+#	\	CLI delete controller					s1								c1
+#	\	CLI add controller						s1								c1
 	
     verify traffic rate  						tx_rate  						rx_rate  				a  						c
-  	sleep										10
+  	sleep										5
 	stop traffic								${stream1}
 #	verify results 								transmitted_frames  			received_valid_frames  		${stream1}  			stream1
 	verify traffic packet						tx_cnt							rx_cnt					a						c
