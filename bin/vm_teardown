@@ -2,7 +2,7 @@
 '''
 Wrapper Script to spwan cotroller VMs on KVM Machine
 '''
-import os, re, sys, subprocess, datetime, getpass
+import os, re, sys, subprocess, datetime, getpass, argparse
 from pytz import timezone
 
 
@@ -17,15 +17,16 @@ kvm_vmdk_path = None
 vm_name = None
 
 # Adding Gobot Path to sys path for Exscript APIs
-sys.path.append("/home/%s/workspace/bigrobot/modules" % current_user)
-sys.path.append("/home/%s/workspace/bigrobot/vendors/exscript/src" % current_user)
-sys.path.append("/home/%s/workspace/bigrobot/" % current_user)
+bigrobot_path = os.path.dirname(__file__) + '/..'
+exscript_path = bigrobot_path + '/vendors/exscript/src'
+sys.path.insert(0, bigrobot_path)
+sys.path.insert(1, exscript_path)
+print "Detailed log can be tailed at /tmp/robot.log  or /tmp/autobot_%s.log" % current_user
 import autobot.helpers as helpers
 from autobot.devconf import HostDevConf
 
 def usage():
     s = """\nUsage: vm_teardown <name>
-
 Example:
 $ vm_teardown \\
     <name>
@@ -43,37 +44,54 @@ def connect_to_kvm_host(**kwargs):
             protocol = 'ssh', timeout=100, name = name)
 
 def get_vm_running_state():
+    virsh_list_out = kvm_handle.bash('sudo virsh list --all | grep %s | awk \'{print $3}\'' % vm_name)['content']
+    temp_list = virsh_list_out.split('\n')
+    if len(temp_list) > 2:
+        return temp_list[1]
+    else:
+        return ''
     pass
 
-def tear_down_vm():
+def destroy_vm():
     if "destroyed" in kvm_handle.bash("sudo virsh destroy %s" % vm_name)['content']:
         print "1. Successfully Powered Down"
     else:
         print "Issue with Shutting down VM using virsh \nPlease debug on KVM Host %s \n Exiting.." % kvm_host
         sys.exit(1)
+    
+def undefine_vm():
     if "undefined" in kvm_handle.bash("sudo virsh undefine %s" % vm_name)['content']:
         print "2. Successfully Deleted !"
     else:
         print "Issue with Deleting VM using virsh \nPlease debug on KVM Host %s \n Exiting.." % kvm_host
         sys.exit(1)
-          
+
 def main(*args):
-    global vm_name
-    vm_name = args[0][0]
     connect_to_kvm_host(hostname = kvm_host, user = kvm_user,
                                      password = kvm_pwd, name = 'kvm_host')
-    if vm_name in kvm_handle.bash('sudo virsh list --all')['content']:
+    vm_state = get_vm_running_state()
+    if 'running' in vm_state:
         print "Tearing down VM with Name : %s" % vm_name
-        helpers.log("Tearing down VM with Name: %s " % vm_name)
-        tear_down_vm()
+        helpers.log("Tearing down VM with Name on kvm host: %s " % vm_name)
+        destroy_vm()
+        undefine_vm()
+    elif 'shut' in vm_state:
+        print "Deleting down the VM : %s" % vm_name
+        helpers.log("Deleting down the VM : %s" % vm_name)
+        undefine_vm()
     else:
         helpers.log("VM with given name %s doesn't exits in KVM Host! %s\nExisting.." % (vm_name, kvm_host))
         print "VM with given name %s doens't exists in KVM Host %s\nWe are good!\nExisting.." % (vm_name, kvm_host)
         sys.exit(1)
-        
+   
 if __name__ == '__main__':
-    if len(sys.argv) < 2:
-        usage()
-    main(sys.argv[1:])
+    parser = argparse.ArgumentParser()
+    parser.add_argument("vm_name", help = "This name is used to delete VM in KVM Hosts maintained for QA")
+    parser.add_argument("--kvm_host", help = "Use this option to specify differnt KVM Host from defautl KVM Hosts maintained by QA Team")
+    args = parser.parse_args()
+    vm_name = args.vm_name
+    if args.kvm_host is not None:
+        kvm_host = args.kvm_host
+    main()
 
 print "Success !!!"

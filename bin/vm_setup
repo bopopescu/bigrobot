@@ -4,7 +4,7 @@ Wrapper Script to spwan cotroller VMs on KVM Machine
 Usage:
 
 '''
-import os, re, sys, subprocess, datetime, getpass, time
+import os, re, sys, subprocess, datetime, getpass, time, argparse
 from pytz import timezone
 
 
@@ -102,6 +102,12 @@ def scp_vmdk_to_kvm(**kwargs):
     helpers.log("1. Success copying latest VMDK to KVM Host to Location: %s" % kvm_vmdk_path)
     print   "1. Success Copying Latest BVS VMDK to %s on KVM Host!!" % kvm_vmdk_path
 
+def cp_vmdk_to_images(**kwargs):
+    global kvm_vmdk_path
+    vmdk = kwargs.get('vmdk', None)
+    kvm_handle.bash("sudo cp %s /var/lib/libvirt/images/%s.vmdk" % (vmdk, vm_name))
+    kvm_vmdk_path = "/var/lib/libvirt/images/%s.vmdk" % vm_name
+    helpers.log("Success copying image !!")
 def create_vm_on_kvm(**kwargs):
     virt_install_cmd = "sudo virt-install     \
                         --connect qemu:///system     \
@@ -111,12 +117,12 @@ def create_vm_on_kvm(**kwargs):
                         --disk path=%s,device=disk,format=vmdk     \
                         --import     --noautoconsole    \
                         --network=bridge:br0,model=virtio" % (vm_name, kvm_vmdk_path)
-    helpers.log('Creating VM on KVM Host...')
+    helpers.log("Creating VM on KVM Host with virt-install cmd: \n%s..." % virt_install_cmd)
     if "Domain creation completed." in kvm_handle.bash(virt_install_cmd)['content']:
         helpers.log("2. Success Creating VM with Name: %s on KVM_Host: %s" % (vm_name, kvm_host))
         print "2. Success Creating VM with Name: %s on KVM_Host: %s" % (vm_name, kvm_host)
         helpers.log("Waiting for VM to boot up..")
-        time.sleep(60)
+        time.sleep(30)
         helpers.log("Current Running VMs on KVM_HOST : \n %s" % kvm_handle.bash('sudo virsh list --all')['content'])
     else:
         print "FAILURE CREATING VM  :( Need to debug ..."
@@ -131,7 +137,7 @@ def create_temp_topo(**kwargs):
       console: \n\
         ip: %s\n\
         libvirt_vm_name: %s\n\
-        user: bsn\n\
+        user: root\n\
         password: bsn\n" %(kvm_host, vm_name)
     tem_topo.write(topo_text)
     tem_topo.close()
@@ -161,36 +167,44 @@ def configure_vm_first_boot(**kwargs):
 
 def close_kvm_handle():
     pass        # FIX ME Need to graceful Close KVM Handle        
+
 def main(*args):
-    global vm_name
-    if not args or args[0][0] in ['help', '-h', '--help']:
-        usage()
-        sys.exit(1)
-    vm_name = current_user + '_' + args[0][0] + '_' + datetime.datetime.now().strftime("%m%d%H%M")
-    cluster_ip = None
-    if len(args[0]) > 1:
-        helpers.log("Assigning Cluster_ip ..")
-        cluster_ip = args[0][1]
+    global vm_name, kvm_vmdk_path, kvm_host
+    args = parser.parse_args()
+    vm_name = current_user + '_' + args.vm_name + '_' + datetime.datetime.now().strftime("%m%d%H%M")
     print "Creating VM with Name : %s" % vm_name
     helpers.log("Creating VM with Name: %s " % vm_name)
-    connect_to_kvm_host(hostname = kvm_host, user = kvm_user,
+    if args.kvm_host is None:
+        helpers.log("Connecting to default KVM Host...")
+        connect_to_kvm_host(hostname = kvm_host, user = kvm_user,
                                      password = kvm_pwd, name = 'kvm_host')
+    else:
+        helpers.log("Connecting to KVM HOST : %s " % args.kvm_host)
+        kvm_host = args.kvm_host
+        connect_to_kvm_host(hostname = args.kvm_host, user = kvm_user,
+                                     password = kvm_pwd, name = 'kvm_host')
+        
     if vm_name in kvm_handle.bash('sudo virsh list --all')['content']:
         helpers.log("VM with given name %s already exists in KVM Host %s\nExisting.." % (vm_name, kvm_host))
         print "VM with given name %s already exists in KVM Host %s\nPlease use different name\nExisting.." % (vm_name, kvm_host)
         sys.exit(1)
-           
-    scp_vmdk_to_kvm(kvm_handle = kvm_handle)
+    if args.vmdk_path is None:
+        helpers.log("no VMDK path is given copying from latest bvs build from jenkins server")
+        scp_vmdk_to_kvm(kvm_handle = kvm_handle)
+    else:
+        helpers.log("VMDK path is provided using it locally NO SCP just copy to images..")
+        cp_vmdk_to_images(vmdk = args.vmdk_path)
+             
     create_vm_on_kvm()
     create_temp_topo()
-    configure_vm_first_boot(cluster_ip = cluster_ip)
-     
-    #t = test.Test()
+    configure_vm_first_boot(cluster_ip = args.cluster_ip)
     
 if __name__ == '__main__':
-    if len(sys.argv) < 2:
-        usage()
-    main(sys.argv[1:])
-
-print "Success !!!"
+    parser = argparse.ArgumentParser()
+    parser.add_argument("vm_name", help = "This name will included in KVM VM with a timestampa and user running this vm_setup")
+    parser.add_argument("--cluster_ip", help = "This ip is used as Cluster while configurint first boot created bvs VM")
+    parser.add_argument("--vmdk_path", help = "Use this option if VMDK is local to KVM Host and this instance is running on same KVM Host")
+    parser.add_argument("--kvm_host", help = "Use this option to specify differnt KVM Host from defautl KVM Hosts maintained by QA Team")
+    main()
+    print "Success !!!"
     
