@@ -19,7 +19,8 @@ Resource         testsuites/T5/t5_physical_variables.txt
 *Test Case
 
 Setup Three Rack Dual Leaf Topology
-	base suite setup  
+	[Tags]  feature  run
+	base suite setup   
     add fabric switch
     bring up h1 bond0
     bring up h2 bond0
@@ -32,7 +33,7 @@ Setup Three Rack Dual Leaf Topology
 	rest verify fabric link 	
 
 With 2k mac entries , Remove the Leaf switch and Readd the leaf switch
-    [Tags]  feature  
+    [Tags]  feature  run  
     rest add tenant  t1
     rest add vns  t1  v1
     rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
@@ -44,6 +45,7 @@ With 2k mac entries , Remove the Leaf switch and Readd the leaf switch
     verify traffic rate  tx_rate  rx_rate  e  a
     rest verify fabric link common
     rest delete fabric switch  leaf0-a
+    sleep  2
     rest verify endpoint in system  1000
     rest add switch  leaf0-a
     rest add dpid  leaf0-a  ${leaf0a_dpid}
@@ -79,20 +81,19 @@ shutdown the switch and check the links are down in the switch
     rest verify fabric interface lacp  leaf1-a  ${h4_intf0}
     rest verify fabric interface lacp  leaf2-a  ${h5_intf0}  
     ${loss}=  bash ping  h5  ${h4_ip}  source_if=bond0
-    Should Be True  ${loss} == 0
+    Should Be True  ${loss} < 50
     rest add shutdown fabric switch  leaf2-a   
     sleep  2
-    ${result}=  rest verify fabric link common
-    Should not be True  ${result}
+    rest verify fabric link common  13
     rest verify fabric interface  leaf2-a  ${h5_intf0}  
     ${loss}=  bash ping  h5  ${h4_ip}  source_if=bond0
-    Should Be True  ${loss} == 0
+    Should Be True  ${loss} < 50
     rest delete shutdown fabric switch  leaf2-a
     sleep  3
     rest verify fabric interface  leaf2-a  ${h5_intf0} 
     rest verify fabric link common 
     ${loss}=  bash ping  h5  ${h4_ip}  source_if=bond0
-    Should Be True  ${loss} == 0
+    Should Be True  ${loss} < 50
     rest delete interface from portgroup  leaf1-a  ${h4_intf0}  p4
     rest delete interface from portgroup  leaf1-b  ${h4_intf1}  p4
     rest delete interface from portgroup  leaf2-a  ${h5_intf0}  p5
@@ -166,9 +167,10 @@ reboot both the controllers to make sure all the switches indeed connected
 	rest verify fabric link common
 	
 Tear down config and Topology
-    delete fabric switch  
+	[Tags]  feature  run
+    delete fabric switch   
     rest delete portgroup  p4
-    rest delete portgroup  p6
+    rest delete portgroup  p5
     rest delete tenant  t1
     rest delete tenant  t2
     base suite teardown
