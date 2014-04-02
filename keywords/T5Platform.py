@@ -2536,8 +2536,8 @@ class T5Platform(object):
         if invalid_input:
             helpers.log("USER INFO: in invalid input,  this is negative case" ) 
             n_console.expect(r'Error: Invalid.*')                                    
-        else:
-            n_console.expect(r'Please choose an option:.*[\r\n$]')   
+#        else:
+#            n_console.expect(r'Please choose an option:.*[\r\n$]')   
           
         helpers.sleep(3)  # Sleep for a few seconds just in case...
         return True
@@ -2630,8 +2630,8 @@ class T5Platform(object):
         if invalid_input:
             helpers.log("USER INFO: in invalid input,  this is negative case" ) 
             n_console.expect(r'Error: Invalid.*')                                    
-        else:
-            n_console.expect(r'Please choose an option:.*[\r\n$]')   
+#        else:
+#            n_console.expect(r'Please choose an option:.*[\r\n$]')   
            
         helpers.sleep(3)  # Sleep for a few seconds just in case...
         return True

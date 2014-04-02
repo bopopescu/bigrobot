@@ -35,7 +35,7 @@ class BsnCommon(object):
     def base_suite_setup(self):
         test.Test().topology()
         obj = Controller.Controller()
-        obj.cli_save_running_config()
+#        obj.cli_save_running_config()
 
     def base_suite_teardown(self):
         t = test.Test()
