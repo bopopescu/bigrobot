@@ -1272,14 +1272,14 @@ class T5(object):
         c.rest.get(url)
         data = c.rest.content()
         link = 0
-        for i in range (0,len(data)):
-            if data[i]["link"]["link-direction"] == "bidirectional":
+        for i in range (0,len(data[0]["link"])):
+            if data[0]["link"][i]["link-direction"] == "bidirectional":
                 link = link + 1
         if int(link) == int(count):
-            helpers.test_log("Expected links are present,expected:%d,Actual:%d" % int(count), int(link))
+            helpers.test_log("Expected links are present,expected:%d,Actual:%d" % (int(count), int(link)))
             return True
         else:
-            helpers.test_failure("Expected links are not present, expected:%d,Actual:%d" % int(count), int(link))
+            helpers.test_failure("Expected links are not present, expected:%d,Actual:%d" % (int(count), int(link)))
             return False
 
     def rest_verify_fabric_switch_role(self, dpid, role):
