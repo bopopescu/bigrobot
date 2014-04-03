@@ -150,11 +150,6 @@ verify lag any_leaf cli
 	[Tags]  feature
 	${result}=  cli  c1  show lag switch spine0 any_leaf 
 	Should Not be Empty  ${result}
-	
-Test forwarding entry when the switch falls below 50% spine links
-	[Tags]  feature  Manual  untested
-	verify fabric link
-	rest delete fabric switch
 
 reboot both the controllers to make sure all the switches indeed connected
 	[Tags]  bugs  
