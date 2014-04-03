@@ -382,6 +382,7 @@ class T5PlatformThreads(Thread):
                 return True
             else:
                 print ("Connection Failure in Thread %s After Rebooting Switch: %s" % (self.threadID, self.arg))
+                return False
         except:
             helpers.test_failure("Failure during switch:%s reboot" % (switchName))
             print ("Failure during switch:%s reboot" % (switchName))
