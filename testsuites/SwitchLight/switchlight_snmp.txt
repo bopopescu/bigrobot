@@ -12,24 +12,28 @@ Library  keywords/SwitchLight.py
 
 * Variable
 ${switchlight_version}  SwitchLight
+${snmp_contact}  nw_admin@super_awesome_switch.com
+${snmp_location_1}  CS_RACK11_6004
+${snmp_location_2}  CS_RACK11_6013    
 ${oneGlb9_name}  ethernet48
 ${tenGlb9_name}  ethernet51
 ${tenGly2_name}  ethernet31
 ${fortyGly2_name}  ethernet52
 
+
 *Test Case
-Configure and Verify Configuration via CLI on LB9 and LY2  
+Configure and Verify Configuration via CLI   
     verify config
     [Tags]  sanity  platform  snmp  basic    
 
 Verify SNMP OID sysContact  
-    verify snmp attribute  s1  sysContact.0  nw_admin@super_awesome_company.com
-    verify snmp attribute  s2  sysContact.0  nw_admin@super_awesome_company.com
+    verify snmp attribute  s1  sysContact.0  ${snmp_contact}
+    verify snmp attribute  s2  sysContact.0  ${snmp_contact}
     [Tags]  sanity  platform  snmp  common    
 
 Verify SNMP OID sysLocation 
-    verify snmp attribute  s1  sysLocation.0  CS_RACK11_6004
-    verify snmp attribute  s2  sysLocation.0  CS_RACK11_6013
+    verify snmp attribute  s1  sysLocation.0  ${snmp_location_1}
+    verify snmp attribute  s2  sysLocation.0  ${snmp_location_2}
     [Tags]  sanity  platform  snmp  common    
 
 Verify SNMP OID sysDescr  
@@ -316,8 +320,8 @@ Restart process SNMPD and verify SNMP Stats
 snmp suite setup
     base suite setup        
     cli add snmp keyword   s1   community   ro public       
-    cli add snmp keyword   s1   location   CS_RACK11_6004       
-    cli add snmp keyword   s1   contact   nw_admin@super_awesome_company.com       
+    cli add snmp keyword   s1   location   ${snmp_location_1}       
+    cli add snmp keyword   s1   contact   ${snmp_contact}       
     cli add snmp host   s1   10.192.66.230   traps   public   162   
     cli add snmp host   s1   10.192.66.230   informs   public   162
     cli add portchannel  s1  1  49-50  L3
@@ -325,8 +329,8 @@ snmp suite setup
     cli add portchannel  s4  1  13-20  L2          
     cli enable snmp   s1              
     cli add snmp keyword   s2   community   ro public       
-    cli add snmp keyword   s2   location   CS_RACK11_6013       
-    cli add snmp keyword   s2   contact   nw_admin@super_awesome_company.com       
+    cli add snmp keyword   s2   location   ${snmp_location_2}       
+    cli add snmp keyword   s2   contact   ${snmp_contact}       
     cli add snmp host   s2   10.192.66.230   traps   public   162   
     cli add snmp host   s2   10.192.66.230   informs   public   162  
     cli add portchannel  s2  2  7,8  L3
@@ -337,14 +341,14 @@ snmp suite setup
 
 verify config               
     ${snmp_output}=  cli show snmp   s1        
-    Should Contain   ${snmp_output}   CS_RACK11_6004        `                                           
-    Should Contain   ${snmp_output}   nw_admin@super_awesome_company.com        
+    Should Contain   ${snmp_output}   ${snmp_location_1}        `                                           
+    Should Contain   ${snmp_output}   ${snmp_contact}        
     Should Contain   ${snmp_output}   public        
     Should Contain   ${snmp_output}   enabled  
     cli verify portchannel  s1  1       
     ${snmp_output}=  cli show snmp  s2        
-    Should Contain   ${snmp_output}   CS_RACK11_6013        
-    Should Contain   ${snmp_output}   nw_admin@super_awesome_company.com        
+    Should Contain   ${snmp_output}   ${snmp_location_2}        
+    Should Contain   ${snmp_output}   ${snmp_contact}        
     Should Contain   ${snmp_output}   public        
     Should Contain   ${snmp_output}   enabled  
     cli verify portchannel  s2  6
@@ -369,7 +373,7 @@ modify community
     cli delete snmp keyword  s1  community  ro public
     cli add snmp keyword  s1  community  ro bigswitch
     ${snmp_key}=  snmp cmd  s1  snmpget   bigswitch  sysContact.0
-    Should Contain  ${snmp_key}  nw_admin@super_awesome_company.com
+    Should Contain  ${snmp_key}  ${snmp_contact}
     cli delete snmp keyword  s1  community  ro bigswitch
     cli add snmp keyword  s1  community  ro public
 
@@ -385,28 +389,28 @@ disable snmp
     ${snmp_output} =   cli show snmp  s1
     Should Contain  ${snmp_output}  enabled
     ${snmp_key}=  snmp cmd  s1  snmpget   public  sysContact.0
-    Should Contain  ${snmp_key}  nw_admin@super_awesome_company.com
+    Should Contain  ${snmp_key}  ${snmp_contact}
 
 restart snmpd
     bash restart process  s1   snmpd
     ${snmp_output}=  cli show snmp  s1
-    Should Contain  ${snmp_output}  CS_RACK11_6004
-    Should Contain  ${snmp_output}  nw_admin@super_awesome_company.com
+    Should Contain  ${snmp_output}  ${snmp_location_1}
+    Should Contain  ${snmp_output}  ${snmp_contact}
     Should Contain  ${snmp_output}  public
     ${snmp_key}=  snmp cmd  s1  snmpget  public  sysContact.0
-    Should Contain  ${snmp_key}  nw_admin@super_awesome_company.com 
+    Should Contain  ${snmp_key}  ${snmp_contact} 
 
 snmp suite teardown  
     cli disable switch snmp   s1            
     cli delete snmp keyword   s1   community   ro public       
-    cli delete snmp keyword   s1   location   CS_RACK11_6004  
-    cli delete snmp keyword   s1   contact   nw_admin@super_awesome_company.com       
+    cli delete snmp keyword   s1   location   ${snmp_location_1}  
+    cli delete snmp keyword   s1   contact   ${snmp_contact}       
     cli delete snmp host   s1   10.192.66.230   traps   public   162   
     cli delete snmp host   s1   10.192.66.230   informs   public   162       
     cli disable switch snmp   s2         
     cli delete snmp keyword   s2   community   ro public       
-    cli delete snmp keyword   s2   location   CS_RACK11_6013       
-    cli delete snmp keyword   s2   contact   nw_admin@super_awesome_company.com       
+    cli delete snmp keyword   s2   location   ${snmp_location_2}       
+    cli delete snmp keyword   s2   contact   ${snmp_contact}       
     cli delete snmp host   s2   10.192.66.230   traps   public   162   
     cli delete snmp host   s2   10.192.66.230   informs   public   162
     cli delete portchannel  s1  1
