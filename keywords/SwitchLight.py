@@ -327,7 +327,7 @@ class SwitchLight(object):
         cli_input_1 = "show controller"
         s1.enable(cli_input_1)
         cli_output_1 = s1.cli_content()
-        ip_array = cli_output_1.split("/n")
+        ip_array = cli_output_1.rstrip().split('\n')
         fail_count = 0
         for x in range(0, len(ip_array)):
             if (str(c.ip()) in ip_array[x]):
