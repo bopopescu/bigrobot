@@ -1,13 +1,12 @@
 import autobot.helpers as helpers
 import autobot.test as test
 from T5Utilities import T5Utilities as utilities
+from T5Utilities import T5PlatformThreads
 from time import sleep
 import re
 import keywords.Mininet as mininet
 import keywords.T5 as T5
 import keywords.Host as Host
-import keywords.BsnCommon as BsnCommon
-
 
 mininetPingFails = 0
 hostPingFails = 0
@@ -326,6 +325,82 @@ class T5Platform(object):
         if(not returnVal):
             return False
         return utilities.fabric_integrity_checker(obj,"after")
+
+
+
+    def verify_HA_with_disruption(self, disruptMode="switchReboot", disruptTime="during", failoverMode="failover", **kwargs ):
+        '''
+            This function will carry out different disruptions during failovers & verify fabric 
+            integrity. Disruptions will carry out in distributed manner. For eg. if disruptMode is "switchReboot", this
+            functions will schedule a dedicated thread to each switch reboot while carrying out failover function as defined by 
+            'disruptTime' argument.
+            
+            Inputs:
+                disruptMode  : "switchReboot"    - Reboot leaf or spine switch eg: "switch=spine0"  / "switch=spine0 leaf0-a"
+                
+                disruptTime : Disruptions happens 'during' or 'before" the HA event
+                
+                failoverMode : "failover"     - Failover by issuing failover command (default)
+                               "masterReboot" - Failover by rebooting active controller  
+                               
+                kwargs: "switch=spien0 leaf0-a"                
+                                
+        '''
+        
+        obj = utilities()
+        utilities.fabric_integrity_checker(obj,"before")
+        
+        threadCounter = 0
+        threadList = []
+
+        if (disruptMode == "switchReboot"):
+            switchList = kwargs.get('switch').split(' ')
+            for i,switch in enumerate(switchList):
+                threadList.append("thread" + '%s' % threadCounter)
+                threadList[i] = T5PlatformThreads(threadCounter, "switchReboot", switch)
+                threadCounter += 1
+            
+        disruptThreadCounter = threadCounter
+        if(len(threadList)== 0):
+            helpers.warn("No disruptMode arguments were detected. Exiting")
+            return False
+        
+        if(failoverMode == "failover"):
+            threadList.append("thread" + '%s' % threadCounter)
+            threadList[len(threadList)-1] = T5PlatformThreads(threadCounter, "failover", "")
+            threadCounter += 1
+        elif(failoverMode == "activeReboot"):
+            threadList.append("thread" + '%s' % threadCounter)
+            threadList[len(threadList)-1] = T5PlatformThreads(threadCounter, "activeReboot", "")
+            threadCounter += 1
+        elif(failoverMode == "standbyReboot"):
+            threadList.append("thread" + '%s' % threadCounter)
+            threadList[len(threadList)-1] = T5PlatformThreads(threadCounter, "standbyReboot", "")
+            threadCounter += 1
+
+
+        if(disruptTime == "during"):
+            for thread in threadList:
+                helpers.log("Starting thread: %s" % thread)
+                thread.start()
+        elif(disruptTime == "before"):    
+            for i,thread in enumerate(threadList):
+                helpers.log("Starting thread: %s" % thread)
+                thread.start()
+                if (i == disruptThreadCounter-1):
+                    sleep(45)
+
+        for thread in threadList:
+            helpers.log("Joining thread: %s" % thread)
+            thread.join()
+            
+        sleep(30)
+        return utilities.fabric_integrity_checker(obj,"after")
+        
+        # Create new threads
+        #thread1 = Thread(target= self._verify_HA_duringReboot(kwargs.get("switch")))
+        #thread2 = Thread(target= self.cli_cluster_take_leader())
+        
 
     def rest_add_user(self, numUsers=1):
         numWarn = 0
