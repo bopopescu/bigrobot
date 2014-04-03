@@ -1272,7 +1272,7 @@ class T5(object):
         c.rest.get(url)
         data = c.rest.content()
         link = 0
-        for i in range (0,len(data[0]["link"])):
+        for i in range (0, len(data[0]["link"])):
             if data[0]["link"][i]["link-direction"] == "bidirectional":
                 link = link + 1
         if int(link) == int(count):
@@ -2136,55 +2136,59 @@ class T5(object):
             return True
 
 
-    def clean_configuration(self):
+    def clean_configuration(self, node='master'):
         '''
             Objective: Delete all user configuration
         '''
         t = test.Test()
-        c = t.controller('master')
-        # Delete all tenants
+        c = t.controller(node)
+
+        helpers.log("Attempting to delete all tenants")
         url_get_tenant = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/tenants'
         try:
             c.rest.get(url_get_tenant)
             content = c.rest.content()
         except:
-            return False
+            pass
         else:
             if (content):
                 for i in range (0, len(content)):
                     url_tenant_delete = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]' % content[i]['tenant-name']
                     c.rest.delete(url_tenant_delete, {})
-        # Delete all switches
+
+        helpers.log("Attempting to delete all switches")
         url_get_switches = '/api/v1/data/controller/core/switch'
         try:
             c.rest.get(url_get_switches)
             content = c.rest.content()
         except:
-            return False
+            pass
         else:
             if (content):
                 for i in range (0, len(content)):
                     url_switch_delete = '/api/v1/data/controller/core/switch-config[name="%s"]' % content[i]['name']
                     c.rest.delete(url_switch_delete, {})
-        # Delete all port-groups
+
+        helpers.log("Attempting to delete all port-groups")
         url_get_portgrp = '/api/v1/data/controller/applications/bvs/port-group?config=true'
         try:
             c.rest.get(url_get_portgrp)
             content = c.rest.content()
         except:
-            return False
+            pass
         else:
             if (content):
                 for i in range (0, len(content)):
                     url_portgrp_delete = '/api/v1/data/controller/applications/bvs/port-group[name="%s"]' % content[i]['name']
                     c.rest.delete(url_portgrp_delete, {})
-        # Delete NTP configuration
+
+        helpers.log("Attempting to delete NTP configurations")
         url_get_ntpservers = '/api/v1/data/controller/os/config/global/time-config?config=true'
         try:
             c.rest.get(url_get_ntpservers)
             content = c.rest.content()
         except:
-            return False
+            pass
         else:
             if (content[0]['ntp-server']):
                 ntp_list = content[0]['ntp-server']
@@ -2192,7 +2196,8 @@ class T5(object):
                     ntp_list.pop(0)
                     url_ntp_delete = '/api/v1/data/controller/os/config/global/time-config/ntp-server'
                     c.rest.put(url_ntp_delete, ntp_list)
-        # Delete SNMP Configuration
+
+        helpers.log("Attempting to delete SNMP Configurations")
         # Delete SNMP location
         url_delete_snmp_location = '/api/v1/data/controller/os/config/global/snmp-config/location'
         c.rest.delete(url_delete_snmp_location, {})
@@ -2217,7 +2222,7 @@ class T5(object):
                     url_delete_trap = '/api/v1/data/controller/os/config/global/snmp-config/trap-host[ipaddr="%s"]' % str(content[0]['trap-host'][i]['ipaddr'])
                     c.rest.delete(url_delete_trap, {})
 
-        # Delete Logging Servers
+        helpers.log("Attempting to delete logging server configurations")
         url_get_logging = '/api/v1/data/controller/os/config/global/logging-config?config=true'
         c.rest.get(url_get_logging)
         content = c.rest.content()
@@ -2226,7 +2231,8 @@ class T5(object):
                 for i in range (0, len(content[0]['logging-server'])):
                     url_delete_logserver = '/api/v1/data/controller/os/config/global/logging-config/logging-server[server="%s"]' % str(content[0]['logging-server'][i]['server'])
                     c.rest.delete(url_delete_logserver, {})
-        # disable remote logging
+
+        helpers.log("Attempting to disable remote logging")
         url_disable_remotelog = '/api/v1/data/controller/os/config/global/logging-config/logging-enabled'
         c.rest.delete(url_disable_remotelog, {})
         return True

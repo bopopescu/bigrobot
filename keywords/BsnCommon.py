@@ -16,6 +16,7 @@
 import autobot.helpers as helpers
 import autobot.test as test
 import Controller
+import T5
 import subprocess
 import math
 import sys
@@ -33,18 +34,23 @@ class BsnCommon(object):
         pass
 
     def base_suite_setup(self):
-        test.Test().topology()
-        obj = Controller.Controller()
-#        obj.cli_save_running_config()
+        t = test.Test()
+        t.topology()
+        t5 = T5.T5()
+        for node in t.topology():
+            n = t.node(node)
+            if helpers.is_controller(node) and helpers.is_t5(n.platform()):
+                helpers.log("Running clean config on '%s' (establishing baseline config setup)" % node)
+                t5.clean_configuration(node)
 
     def base_suite_teardown(self):
         t = test.Test()
+        for node in t.topology():
+            n = t.node(node)
+            if helpers.is_controller(node) or helpers.is_mininet(node):
+                helpers.log("Closing device connection for node '%s'" % node)
+                n.dev.close()
         t.teardown()
-        for n in t.topology():
-            node = t.node(n)
-            if helpers.is_controller(n) or helpers.is_mininet(n):
-                helpers.log("Closing device connection for node '%s'" % n)
-                node.dev.close()
 
     def base_test_setup(self):
         test.Test()
