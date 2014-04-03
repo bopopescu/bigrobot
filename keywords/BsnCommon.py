@@ -347,9 +347,18 @@ class BsnCommon(object):
                 '''
                 helpers.log("The node is a T5 Controller")
                 c = t.controller()
-                url = '/api/v1/data/controller/os/config/global/time-config/ntp-server'
-                helpers.log("URL is %s \n and \n ntp server is %s" % (url, ntp_server))
-                c.rest.patch(url, [str(ntp_server)])
+                url_get_ntp = '/api/v1/data/controller/os/config/global/time-config?config=true'
+                c.rest.get(url_get_ntp)
+                content = c.rest.content()
+                if ('ntp-server' in content[0]):
+                    ntp_list = content[0]['ntp-server']
+                    ntp_list.append(ntp_server)
+                    url = '/api/v1/data/controller/os/config/global/time-config/ntp-server'
+                    c.rest.patch(url, ntp_list)
+                else:
+                    url = '/api/v1/data/controller/os/config/global/time-config/ntp-server'
+                    helpers.log("URL is %s \n and \n ntp server is %s" % (url, ntp_server))
+                    c.rest.patch(url, [str(ntp_server)])
                 if not c.rest.status_code_ok():
                     helpers.test_log(c.rest.error())
                     return False
@@ -529,6 +538,57 @@ class BsnCommon(object):
             helpers.test_error("Unsupported Platform %s" % (node))
 
 
+    def delete_ntp_timezone(self, node=None, time_zone='America/Los_Angeles'):
+        '''
+            Objective: Add an NTP server.
+
+            Inputs:
+            | node | reference to switch/controller as defined in .topo file|
+            | ntp_server | ntp server that is being configured|
+
+            Return Values:
+            - True, if configuration add is successful.
+            - False, if configuration add is unsuccessful.
+        '''
+        t = test.Test()
+        n = t.node(node)
+        if helpers.is_switch(n.platform()):
+            helpers.log("Node is a switch")
+            if helpers.is_switchlight(n.platform()):
+                '''
+                TimeZone Configuration at Switch
+                '''
+                return True
+            else:
+                helpers.test_error("Unsupported Platform %s" % (node))
+        elif helpers.is_controller(node):
+            helpers.log("The node is a controller")
+            if helpers.is_bigtap(n.platform()):
+                '''
+                BigTap TimeZone Configuration goes here
+                '''
+            elif helpers.is_bigwire(n.platform()):
+                '''
+                BigWire TimeZone Configuration goes here
+                '''
+            elif helpers.is_t5(n.platform()):
+                '''
+                    T5 Controller
+                '''
+                helpers.log("The node is a T5 Controller")
+                c = t.controller()
+                url = '/api/v1/data/controller/os/config/global/time-config/time-zone'
+                helpers.log("URL is %s \n and \n ntp server is %s" % (url, time_zone))
+                c.rest.delete(url, {})
+                if not c.rest.status_code_ok():
+                    helpers.test_log(c.rest.error())
+                    return False
+                else:
+                    return True
+            else:
+                helpers.test_error("Unsupported Platform %s" % (node))
+        else:
+            helpers.test_error("Unsupported Platform %s" % (node))
 
     def verify_ntp(self, node, ntp_server):
         '''
@@ -629,7 +689,7 @@ class BsnCommon(object):
                 '''
                     T5 Controller NTP Server Verification goes here
                 '''
-                c = t.controller('master')
+                c = t.controller(node)
                 try:
                     url = '/api/v1/data/controller/os/action/time/ntp'
                     c.rest.get(url)
@@ -654,6 +714,59 @@ class BsnCommon(object):
                         return True
                     else:
                         return False
+            else:
+                helpers.test_error("Unsupported Platform %s" % (node))
+        else:
+            helpers.test_error("Unsupported Platform %s" % (node))
+
+
+
+    def verify_timezone(self, node, ntp_zone):
+        '''
+            Objective: Verify NTP Server Configuration is seen in running-config and in output of "show ntp server"
+
+             Inputs:
+            | node | reference to switch/controller as defined in .topo file|
+            | ntp_server | ntp server that is being configured|
+
+            Return Values:
+            - True, if configuration delete is successful.
+            - False, if configuration delete is unsuccessful.
+        '''
+        t = test.Test()
+        n = t.node(node)
+        if helpers.is_switch(node):
+            helpers.log("Node is a switch")
+            if helpers.is_switchlight(n.platform()):
+                '''
+                    NTP Verification at Switch
+                '''
+        elif helpers.is_controller(node):
+            helpers.log("The node is a controller")
+            if  helpers.is_bigtap(n.platform()):
+                '''
+                    BigTap NTP Server Verification goes here
+                '''
+
+            elif helpers.is_bigwire(n.platform()):
+                '''
+                    BigWire NTP Server Verification goes here
+                '''
+
+            elif helpers.is_t5(n.platform()):
+                '''
+                    T5 Controller NTP Server Verification goes here
+                '''
+                c = t.controller(node)
+                bashcommand = "date +%Z"
+                returnVal = c.bash(bashcommand)
+                helpers.log("Output is %s" % returnVal['content'])
+                out = returnVal['content'].split('\n')
+                helpers.log("Output is %s" % out)
+                if str(ntp_zone) in out[1] :
+                    return True
+                else:
+                    return False
             else:
                 helpers.test_error("Unsupported Platform %s" % (node))
         else:

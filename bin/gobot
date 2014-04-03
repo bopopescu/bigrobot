@@ -11,6 +11,7 @@ import platform
 import shutil
 import argparse
 import subprocess
+import robot
 
 
 def test_and_install_package():
@@ -107,9 +108,7 @@ test_and_install_package()
 set_environment()
 test_autobot_import()
 
-import robot
 import autobot.helpers as helpers
-
 
 #
 # Gobot initialization
@@ -451,11 +450,11 @@ def test_command(*args):
     helpers.log("Robot Framework return code is %s" % rc)
     print("Robot Framework return code is %s" % rc)
 
-    #if helpers.bigrobot_continuous_integration() == 'True':
+    # if helpers.bigrobot_continuous_integration() == 'True':
     #    print("Inside continuous integration environment. Return code"
     #          " set to 0.")
     #    sys.exit(0)
-    #else:
+    # else:
     sys.exit(rc)
 
 
