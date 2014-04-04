@@ -33,7 +33,7 @@ add Dual Leaf Three Rack setup
    rest verify fabric link
 
 create 100 vns and verify the table and forwarding
-	[Tags]  feature  scale  
+	[Tags]  scale  
 	rest add tenant  t1
 	rest add vns scale  t1  100
 	rest add interface to all vns  t1  leaf0-a  ${leaf0a_ixia_intf}
@@ -43,15 +43,14 @@ create 100 vns and verify the table and forwarding
 	rest verify membership port count  2
 	${stream}=             L3 add  no_arp=True  flow=a<->c  src_mac=00:00:01:00:00:01  dst_mac=00:00:02:00:00:01  src_cnt=100  dst_cnt=100  ethertype=8100  vlan_id=1  vlan_cnt=100  frame_rate=100  frame_size=68  name=a_c_flow
     start traffic  ${stream}
-    sleep  5
-    rest verify endpoint in system  100
+    rest verify endpoint in system  200
     verify traffic rate  tx_rate  rx_rate  a  c
     verify traffic rate  tx_rate  rx_rate  c  a
     stop traffic  ${stream}
 	rest delete tenant  t1
    
 create 1k vns and verify the table and forwarding
-	[Tags]  feature  scale
+	[Tags]  scale
   	rest add tenant  t1
 	rest add vns scale  t1  1000
 	rest add interface to all vns  t1  leaf0-a  ${leaf0a_ixia_intf}
@@ -61,17 +60,17 @@ create 1k vns and verify the table and forwarding
 	rest verify membership port count  2
 	${stream}=             L3 add  no_arp=True  flow=a<->c  src_mac=00:00:01:00:00:01  dst_mac=00:00:02:00:00:01  src_cnt=1000  dst_cnt=1000  ethertype=8100  vlan_id=1  vlan_cnt=1000  frame_rate=1000  frame_size=68  name=a_c_flow
     start traffic  ${stream}
-    sleep  30
-    rest verify endpoint in system  1000
+    rest verify endpoint in system  2000
     verify traffic rate  tx_rate  rx_rate  a  c
     verify traffic rate  tx_rate  rx_rate  c  a
     stop traffic  ${stream}
 	rest delete tenant  t1
+	sleep  4
     ${result}=  rest verify tenant
     Should not be True  ${result}
     
 create 4k vns and verify the table and forwarding
-	[Tags]  feature  scale  run
+	[Tags]  scale  run
   	rest add tenant  t1
 	rest add vns scale  t1  4090
 	summary log  system create a 4k vns
@@ -80,19 +79,19 @@ create 4k vns and verify the table and forwarding
 	summary log  system add 2 ports to each vns
 	rest verify vns scale  4090
 	rest verify membership port count  2
-	${stream}=             L3 add  no_arp=True  flow=a<->c  src_mac=00:00:01:00:00:01  dst_mac=00:00:02:00:00:01  src_cnt=4090  dst_cnt=4090  ethertype=8100  vlan_id=1  vlan_cnt=4090  frame_rate=4090  frame_size=68  name=a_c_flow
+	${stream}=             L3 add  no_arp=True  flow=a<->c  src_mac=00:00:01:00:00:01  dst_mac=00:00:02:00:00:01  src_cnt=4090  dst_cnt=4090  ethertype=8100  vlan_id=1  vlan_cnt=4090  frame_rate=1000  frame_size=68  name=a_c_flow
     start traffic  ${stream}
-    sleep  90
-    rest verify endpoint in system  4090
+    rest verify endpoint in system  8180
     verify traffic rate  tx_rate  rx_rate  a  c
     verify traffic rate  tx_rate  rx_rate  c  a
     stop traffic  ${stream}
 	rest delete tenant  t1
+	sleep  5
     ${result}=  rest verify tenant
     Should not be True  ${result}
 
 Master controller node reboot with 4k vns
-	[Tags]  feature  scale  run
+	[Tags]  scale  run
   	rest add tenant  t1
 	rest add vns scale  t1  4090
 	summary log  system create a 4k vns
@@ -101,10 +100,9 @@ Master controller node reboot with 4k vns
 	summary log  system add 2 ports to each vns
 	rest verify vns scale  4090
 	rest verify membership port count  2
-	${stream}=             L3 add  no_arp=True  flow=a<->c  src_mac=00:00:01:00:00:01  dst_mac=00:00:02:00:00:01  src_cnt=4090  dst_cnt=4090  ethertype=8100  vlan_id=1  vlan_cnt=4090  frame_rate=4090  frame_size=68  name=a_c_flow
+	${stream}=             L3 add  no_arp=True  flow=a<->c  src_mac=00:00:01:00:00:01  dst_mac=00:00:02:00:00:01  src_cnt=4090  dst_cnt=4090  ethertype=8100  vlan_id=1  vlan_cnt=4090  frame_rate=1000  frame_size=68  name=a_c_flow
     start traffic  ${stream}
-    sleep  90
-    rest verify endpoint in system  4090
+    rest verify endpoint in system  8180
     verify traffic rate  tx_rate  rx_rate  a  c
     verify traffic rate  tx_rate  rx_rate  c  a
     cli verify cluster master reboot
@@ -113,6 +111,7 @@ Master controller node reboot with 4k vns
     verify traffic rate  tx_rate  rx_rate  c  a
     stop traffic  ${stream}
 	rest delete tenant  t1
+	sleep  5
     ${result}=  rest verify tenant
     Should not be True  ${result}
 
@@ -193,4 +192,5 @@ verify traffic
 T5 test teardown
 	delete traffic
 	rest delete tenant  t1
+	sleep  5
   

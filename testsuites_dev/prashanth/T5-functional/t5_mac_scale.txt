@@ -32,8 +32,8 @@ add Dual Leaf Three Rack setup
   	rest verify fabric link common
    
 Add 1000 dynamic mac into the system and check forwarding and make sure aging also works for 1000 mac
-	[Tags]  feature  scaling  run    
-	${stream}=             L3 add  no_arp=True  flow=a<->c  src_mac=00:00:01:00:00:01  dst_mac=00:00:02:00:00:01  src_cnt=500  dst_cnt=500  dst_mac_step=00:00:00:00:00:01  src_mac_step=00:00:00:00:00:01  frame_rate=1000  frame_size=128  name=a_c_flow
+	[Tags]  scaling  run    
+	${stream}=             L3 add  no_arp=True  flow=a<->c  src_mac=00:00:01:00:00:01  dst_mac=00:00:02:00:00:01  src_cnt=500  dst_cnt=500   frame_rate=1000  frame_size=128  name=a_c_flow
     start traffic  ${stream}
     rest verify endpoint in system  1000
     ${result}=  bash execute command  leaf0-a  ofad-ctl ft L2 | wc -l 
@@ -48,8 +48,8 @@ Add 1000 dynamic mac into the system and check forwarding and make sure aging al
     verify traffic rate  tx_rate  rx_rate  a  c
     verify traffic rate  tx_rate  rx_rate  c  a
     stop traffic  ${stream}
-    sleep  600
     summary log  waiting 10 minutes for 1000 mac age
+    sleep  600
     rest verify endpoint in system  0
     ${result}=  bash execute command  leaf0-a  ofad-ctl ft L2 | wc -l 
     ${count}=	Convert to integer  ${result}   
@@ -62,8 +62,8 @@ Add 1000 dynamic mac into the system and check forwarding and make sure aging al
     Should be True  ${count} < 8
 	    
 Add 4000 dynamic mac into the system and check forwarding and make sure aging also works for 4000 mac
-	[Tags]  feature  scaling  run   
-	${stream}=             L3 add  no_arp=True  flow=a<->c  src_mac=00:00:01:00:00:01  dst_mac=00:00:02:00:00:01  src_cnt=2000  dst_cnt=2000  dst_mac_step=00:00:00:00:00:01  src_mac_step=00:00:00:00:00:01  frame_rate=1000  frame_size=128  name=a_c_flow
+	[Tags]  scaling  run   
+	${stream}=             L3 add  no_arp=True  flow=a<->c  src_mac=00:00:01:00:00:01  dst_mac=00:00:02:00:00:01  src_cnt=2000  dst_cnt=2000   frame_rate=1000  frame_size=128  name=a_c_flow
     start traffic  ${stream}
     rest verify endpoint in system  4000
     ${result}=  bash execute command  leaf0-a  ofad-ctl ft L2 | wc -l 
@@ -78,8 +78,8 @@ Add 4000 dynamic mac into the system and check forwarding and make sure aging al
     verify traffic rate  tx_rate  rx_rate  a  c
     verify traffic rate  tx_rate  rx_rate  c  a
     stop traffic  ${stream}
-    sleep  600
     summary log  waiting 10 minutes for 4000 mac age
+    sleep  600
     rest verify endpoint in system  0
     ${result}=  bash execute command  leaf0-a  ofad-ctl ft L2 | wc -l 
     ${count}=	Convert to integer  ${result}   
@@ -93,10 +93,10 @@ Add 4000 dynamic mac into the system and check forwarding and make sure aging al
 
 
 Add 10000 dynamic mac into the system and check forwarding and make sure aging also works for 10000 mac
-	[Tags]  feature  scaling  run  
-	${stream}=             L3 add  no_arp=True  flow=a<->c  src_mac=00:00:01:00:00:01  dst_mac=00:00:02:00:00:01  src_cnt=5000  dst_cnt=5000  dst_mac_step=00:00:00:00:00:01  src_mac_step=00:00:00:00:00:01  frame_rate=1000  frame_size=128  name=a_c_flow
+	[Tags]  scaling  run  
+	${stream}=             L3 add  no_arp=True  flow=a<->c  src_mac=00:00:01:00:00:01  dst_mac=00:00:02:00:00:01  src_cnt=5000  dst_cnt=5000   frame_rate=1000  frame_size=128  name=a_c_flow
     start traffic  ${stream}
-    sleep  30
+    sleep  20
     rest verify endpoint in system  10000
     ${result}=  bash execute command  leaf0-a  ofad-ctl ft L2 | wc -l 
     ${count}=	Convert to integer  ${result}   
@@ -110,6 +110,7 @@ Add 10000 dynamic mac into the system and check forwarding and make sure aging a
     verify traffic rate  tx_rate  rx_rate  a  c
     verify traffic rate  tx_rate  rx_rate  c  a
     stop traffic  ${stream}
+    summary log  waiting 10 minutes for 10000 mac age
 	sleep  600
     rest verify endpoint in system  0
     ${result}=  bash execute command  leaf0-a  ofad-ctl ft L2 | wc -l 
@@ -123,10 +124,10 @@ Add 10000 dynamic mac into the system and check forwarding and make sure aging a
     Should be True  ${count} < 8
 
 Add 16000 dynamic mac into the system and check forwarding and make sure aging also works for 16000 mac
-	[Tags]  feature  scaling  run  
-	${stream}=             L3 add  no_arp=True  flow=a<->c  src_mac=00:00:01:00:00:01  dst_mac=00:00:02:00:00:01  src_cnt=8000  dst_cnt=8000    frame_rate=1000  frame_size=128  name=a_c_flow
+	[Tags]  scaling  run  
+	${stream}=             L3 add  no_arp=True  flow=a<->c  src_mac=00:00:01:00:00:01  dst_mac=00:00:02:00:00:01  src_cnt=8000  dst_cnt=8000  frame_rate=1000  frame_size=128  name=a_c_flow
     start traffic  ${stream}
-	sleep  60   
+	sleep  40   
     rest verify endpoint in system  16000
     ${result}=  bash execute command  leaf0-a  ofad-ctl ft L2 | wc -l 
     ${count}=	Convert to integer  ${result}   
@@ -140,6 +141,7 @@ Add 16000 dynamic mac into the system and check forwarding and make sure aging a
     verify traffic rate  tx_rate  rx_rate  a  c
     verify traffic rate  tx_rate  rx_rate  c  a
     stop traffic  ${stream}
+    summary log  waiting 10 minutes for 16000 mac age
 	sleep  600
     rest verify endpoint in system  0
     ${result}=  bash execute command  leaf0-a  ofad-ctl ft L2 | wc -l 
@@ -153,14 +155,14 @@ Add 16000 dynamic mac into the system and check forwarding and make sure aging a
     Should be True  ${count} < 8
     
 Add 48k dynamic mac into the system and check forwarding and make sure aging also works for 48k mac
-	[Tags]  feature  scaling  run  
+	[Tags]  scaling  run  
 	${stream}=             L3 add  no_arp=True  flow=a<->c  src_mac=00:00:01:00:00:01  dst_mac=00:00:02:00:00:01  src_cnt=8000  dst_cnt=8000    frame_rate=1000  frame_size=128  name=a_c_flow
     ${stream1}=             L3 add  no_arp=True  flow=b<->f  src_mac=00:00:03:00:00:01  dst_mac=00:00:04:00:00:01  src_cnt=8000  dst_cnt=8000    frame_rate=1000  frame_size=128  name=b_f_flow
     ${stream2}=             L3 add  no_arp=True  flow=d<->e  src_mac=00:00:05:00:00:01  dst_mac=00:00:06:00:00:01  src_cnt=8000  dst_cnt=8000    frame_rate=1000  frame_size=128  name=b_f_flow
     start traffic  ${stream}
     start traffic  ${stream1}
     start traffic  ${stream2}
-    sleep  100
+    sleep  90
     rest verify endpoint in system  48000
     ${result}=  bash execute command  leaf0-a  ofad-ctl ft L2 | wc -l 
     ${count}=	Convert to integer  ${result}   
@@ -180,6 +182,7 @@ Add 48k dynamic mac into the system and check forwarding and make sure aging als
     stop traffic  ${stream}
     stop traffic  ${stream1}
     stop traffic  ${stream2}
+    summary log  waiting 10 minutes for 48000 mac age
 	sleep  600
     rest verify endpoint in system  0
     ${result}=  bash execute command  leaf0-a  ofad-ctl ft L2 | wc -l 
@@ -193,8 +196,7 @@ Add 48k dynamic mac into the system and check forwarding and make sure aging als
     Should be True  ${count} < 8
 	    
 Master controller node reboot with 48k mac entries
-	[Tags]  feature  run
-	[Tags]  feature  scaling  
+	[Tags]  scaling  run
 	
 	${stream}=             L3 add  no_arp=True  flow=a<->c  src_mac=00:00:01:00:00:01  dst_mac=00:00:02:00:00:01  src_cnt=8000  dst_cnt=8000    frame_rate=8000  frame_size=128  name=a_c_flow
     ${stream1}=             L3 add  no_arp=True  flow=b<->f  src_mac=00:00:03:00:00:01  dst_mac=00:00:04:00:00:01  src_cnt=8000  dst_cnt=8000    frame_rate=8000  frame_size=68  name=b_f_flow
@@ -202,7 +204,7 @@ Master controller node reboot with 48k mac entries
     start traffic  ${stream}
     start traffic  ${stream1}
     start traffic  ${stream2}
-    sleep  100
+    sleep  90
     rest verify endpoint in system  48000
     ${result}=  bash execute command  leaf0-a  ofad-ctl ft L2 | wc -l 
     ${count}=	Convert to integer  ${result}   
@@ -230,6 +232,7 @@ Master controller node reboot with 48k mac entries
     stop traffic  ${stream}
     stop traffic  ${stream1}
     stop traffic  ${stream2}
+    summary log  waiting 10 minutes for 48000 mac age
 	sleep  600
     rest verify endpoint in system  0
     ${result}=  bash execute command  leaf0-a  ofad-ctl ft L2 | wc -l 
@@ -243,7 +246,7 @@ Master controller node reboot with 48k mac entries
     Should be True  ${count} < 8
 	
 Add 4k static endpoints and check the forwarding
-	[Tags]  feature  scaling
+	[Tags]  scaling
 	rest add endpoint scale  t1  v1  ${mac1}  a  leaf0-a  ${leaf0a_ixia_intf}  -1  2000
   	rest add endpoint scale  t1  v1  ${mac2}  c  leaf1-a  ${leaf1a_ixia_intf}  -1  2000
 	sleep  40
@@ -255,7 +258,7 @@ Add 4k static endpoints and check the forwarding
     stop traffic  ${stream}
 	    
 Add 16k static endpoints and check the forwarding
-	[Tags]  feature  scaling
+	[Tags]  scaling
   	rest add endpoint scale  t1  v1  ${mac1}  a  leaf0-a  ${leaf0a_ixia_intf}  -1  8000
   	rest add endpoint scale  t1  v1  ${mac2}  c  leaf1-a  ${leaf1a_ixia_intf}  -1  8000
 	sleep  100
@@ -267,7 +270,7 @@ Add 16k static endpoints and check the forwarding
     stop traffic  ${stream}
         
 Master controller node reboot with 16k endpoints
-	[Tags]  feature  scaling
+	[Tags]  scaling
   	rest add endpoint scale  t1  v1  ${mac1}  a  leaf0-a  ${leaf0a_ixia_intf}  -1  8000
   	rest add endpoint scale  t1  v1  ${mac2}  c  leaf1-a  ${leaf1a_ixia_intf}  -1  8000
 	sleep  60
@@ -283,7 +286,7 @@ Master controller node reboot with 16k endpoints
     stop traffic  ${stream}
     
 Mac move at scale 1k mac between rack
-	[Tags]  feature  scaling  run
+	[Tags]  scaling  run
 	${stream}=             L3 add  no_arp=True  flow=a->c  src_mac=00:00:01:00:00:01  dst_mac=00:00:02:00:00:01  src_cnt=1000    frame_rate=1000  frame_size=68  name=a_c_flow
 	${stream1}=             L3 add  no_arp=True  flow=c->a  src_mac=00:00:02:00:00:01  dst_mac=00:00:01:00:00:01  dst_cnt=1000    frame_rate=1000  frame_size=68  name=c_a_flow
     start traffic  ${stream}
@@ -303,12 +306,12 @@ Mac move at scale 1k mac between rack
     stop traffic  ${stream1}
 
 Mac move at scale 16k between rack
-	[Tags]  feature  scaling  run
+	[Tags]  scaling  run
 	${stream}=             L3 add  no_arp=True  flow=a->c  src_mac=00:01:01:00:00:01  dst_mac=00:02:02:00:00:01  src_cnt=8000    frame_rate=1000  frame_size=68  name=a_c_flow
 	${stream1}=             L3 add  no_arp=True  flow=c->a  src_mac=00:02:02:00:00:01  dst_mac=00:01:01:00:00:01  dst_cnt=8000    frame_rate=1000  frame_size=68  name=c_a_flow
     start traffic  ${stream}
     start traffic  ${stream1}
-    sleep  60  
+    sleep  40  
     rest verify endpoint in system  16000
     rest verify forwarding layer2 table untag  leaf0-a  ${leaf0a_ixia_intf}  00:00:01:00:00:01
     verify traffic rate  tx_rate  rx_rate  c  a
