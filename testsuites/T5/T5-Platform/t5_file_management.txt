@@ -20,6 +20,9 @@ ${scp double}		scp://scp://recovery@10.197.128.37:config-scp
 ${scp location}		recovery@10.197.128.37:config-scp
 ${scp inexistent}   scp://recovery@10.197.128.37:inexistent
 ${scp switch}		scp://recovery@10.197.128.37:scp-switch
+${scp image}		scp://recovery@10.197.128.37:controller-upgrade-bvs-2.0.7-SNAPSHOT.pkg
+${scp image corrupted}		scp://recovery@10.197.128.37:controller-upgrade-bvs-2.0.7-SNAPSHOT-corrupted.pkg
+${scp image bigtap}		scp://recovery@10.197.128.37:bigtap-3.0.0-upgrade-2014.03.22.0200.pkg
 ${file}				config-file
 ${config}			config://config-config
 ${config double}	config://config://config-config
@@ -122,7 +125,6 @@ T4.3 Copy running config to scp://, change RC, restore, verify no change in RC
 	[Tags]  SCP
 
 T4.4 Copy from scp:// and compare with previous running-config
-	Manual Failed
 	Cli Copy  running-config  backup
 	Cli Copy  ${scp switch}  running-config
 	Compare Negative  backup  running-config
@@ -170,7 +172,7 @@ T5.6.1 Copy running config to scp://, copy RC from scp:// to image, verify
 	[Tags]  BSC-4956  SCP
 T5.6.2 Copy running config to scp://, copy RC from scp:// to image, verify
 	Cli Copy  running-config  ${scp}
-	Run Keyword and Expect Error  *Error: Invalid Use: corrupted image*  Cli Copy  ${scp}  image://
+	Run Keyword and Expect Error  *Error: Invalid Use: integrity validation failed: not an image bundle*  Cli Copy  ${scp}  image://
 	[Tags]  BSC-4956  SCP
 
 T5.7 Copy running config to config://, copy config:// to scp://, copy from scp:// to file, copy file to config://, copy config:// to RC
@@ -239,6 +241,13 @@ T5.8.9 Verify: compare <config://> scp://<config://>
 	Cli Copy  ${config}  ${scp config}
 	Compare  ${config}  ${scp config}
 	[Tags]  SCP
+
+T5.8.10 Verify: compare scp:// image://
+	Cli Copy  running-config  ${scp file}
+	Run Keyword and Expect Error
+	...  *Error: Invalid Use: unsupported compare scp://* for scp*
+	...  Cli Compare  ${scp file}  image://
+	[Tags]  SCP  Image
 
 T5.9.1 Verify: copy scp://<running-config> running-config
 	Cli Copy  running-config  ${scp RC}
@@ -582,8 +591,25 @@ T9.3 Verify impossible to compare with invalid SCP
 	[Tags]  SCP
 
 T9.4 Verify impossible to copy from inexistent SCP
-	Run Keyword and Expect Error  *Error: Invalid Use: : No such file or directory*  Cli Copy  ${scp inexistent}  running-config
+	Run Keyword and Expect Error  *Error: Invalid Use: inexistent: No such file or directory*  Cli Copy  ${scp inexistent}  running-config
 	[Tags]  SCP
+
+T10.1 Verify validation function of scp:// to image:// - textfile
+	Run Keyword and Expect Error
+	...  *Validating Image Contents: check for expected contents*
+	...  Cli Copy  ${scp}  image://
+T10.2 Verify validation function of scp:// to image:// - bigtap upgrade package
+	Run Keyword and Expect Error
+	...  *Error: Invalid Use: integrity validation failed: missing file in bundle: supported-matrix*
+	...  Cli Copy  ${scp image bigtap}  image://
+T10.3 Verify validation function of scp:// to image:// - corrupted image
+	Run Keyword and Expect Error
+	...  *Error: Invalid Use: integrity validation failed: not an image bundle*
+	...  Cli Copy  ${scp image corrupted}  image://
+T10.4 Verify validation function of scp:// to image:// - proper image
+	Cli Copy  ${scp image}  image://
+	Cli Delete  image://master
+
 
 *** Keywords ***
 Generate Random Name
@@ -614,6 +640,7 @@ Modify Running Config
 Teardown
 	Bash Clear Known Hosts
 	Cli Copy  config://startup-config  running-config
+	Bash  master  curl -g -H "Cookie: session_cookie\=$FL_SESSION_COOKIE" localhost:8080/api/v1/data/controller/core/aaa/accounting -X DELETE -d '{"name": "local"}'
 	Base Test Teardown
 
 Compare
