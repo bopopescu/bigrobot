@@ -719,8 +719,8 @@ class T5Platform(object):
             content = c.cli('show local node interfaces ethernet0')['content']
             output = helpers.strip_cli_output(content)
             lines = helpers.str_to_list(output)
-            assert "Network-interfaces" in lines[0]
-            rows = lines[3].split(' ')
+            assert "IP Address" in lines[0]
+            rows = lines[2].split(' ')
         except:
             helpers.test_failure("Exception info: %s" % helpers.exception_info())
             if c:
@@ -761,13 +761,13 @@ class T5Platform(object):
             content = c.bash('ip addr')['content']
             output = helpers.strip_cli_output(content)
             if vip not in output:
-                helpers.test_log("VIP: %s not in the master" % vip)
+                helpers.test_log("VIP: %s not configured on %s" % (vip, node))
                 return False
         except:
             helpers.test_log(c.cli_content())
             return False
         else:
-            helpers.log("VIP: %s is present in the master" % vip)
+            helpers.log("VIP: %s is configired on %s" % (vip, node))
             return True
 
 
@@ -1036,7 +1036,7 @@ class T5Platform(object):
                 c.send(scp_passwd)
             try:
                 c.expect(c.get_prompt(), timeout=180)
-                if not (helpers.any_match(c.cli_content(), r'100%') or helpers.any_match(c.cli_content(), r'Lines Applied')):
+                if not (helpers.any_match(c.cli_content(), r'100%') or helpers.any_match(c.cli_content(), r'applied \d. updates') or helpers.any_match(c.cli_content(), r'Lines Applied')):
                     helpers.test_failure(c.cli_content())
                     return False
             except:
@@ -1083,12 +1083,11 @@ class T5Platform(object):
                 helpers.log("Length of RC is different than lenght of RC in file")
                 return False
             for index,line in enumerate(rc):
-                line_temp = "%s: %s" % (filename, line)
-                helpers.log("Comparing '%s' and '%s'" % (line_temp, config_file[index]))
-                if 'Current Time' in line_temp:
+                helpers.log("Comparing '%s' and '%s'" % (line, config_file[index]))
+                if 'Current Time' in line:
                     assert 'Current Time' in config_file[index]
                     continue
-                if not line_temp == config_file[index]:
+                if not line == config_file[index]:
                     helpers.log("difference")
                     return False
         except:
@@ -1123,9 +1122,9 @@ class T5Platform(object):
 
             helpers.log("length is %s" % len(rc))
             helpers.log("length is %s" % len(config_file))
-
-            rc = rc[3:]
-            config_file = config_file[7:]
+            #Cropping headers of the outputs
+            rc = rc[5:]
+            config_file = config_file[8:]
 
             if not len(rc) == len(config_file):
                 helpers.log("Length of RC is different than lenght of RC in config")
@@ -1160,8 +1159,8 @@ class T5Platform(object):
         helpers.test_log("Running command:\n%s" % cmd)
         t = test.Test()
         c = t.controller('master')
-        if re.match(r'config://.*', filename):
-            helpers.test_log("Deleting config://, expecting confirmation prompt")
+        if re.match(r'config://.*', filename) or re.match(r'image://.*', filename) :
+            helpers.test_log("Deleting config:// or image://, expecting confirmation prompt")
             c.config("config")
             c.send(cmd)
             c.expect(r'[\r\n].+continue+.*|Error.*')
