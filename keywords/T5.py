@@ -2166,8 +2166,9 @@ class T5(object):
         else:
             if (content):
                 for i in range (0, len(content)):
-                    url_switch_delete = '/api/v1/data/controller/core/switch-config[name="%s"]' % content[i]['name']
-                    c.rest.delete(url_switch_delete, {})
+                    if 'name' in content[i]:
+                        url_switch_delete = '/api/v1/data/controller/core/switch-config[name="%s"]' % content[i]['name']
+                        c.rest.delete(url_switch_delete, {})
 
         helpers.log("Attempting to delete all port-groups")
         url_get_portgrp = '/api/v1/data/controller/applications/bvs/port-group?config=true'
