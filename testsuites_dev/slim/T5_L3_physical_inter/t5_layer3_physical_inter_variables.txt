@@ -78,3 +78,18 @@ ${leaf2_pc1_intf1}	ethernet47
 ${leaf2_pc1_intf2}	ethernet47
 ${leaf2_pc2_intf1}	ethernet48
 ${leaf2_pc2_intf2}	ethernet48
+
+${leaf0-a_spine0}	ethernet49
+${leaf0-b_spine0}	ethernet49
+${leaf1-a_spine0}	ethernet49
+${leaf1-b_spine0}	ethernet49
+${leaf2-a_spine0}	ethernet49
+${leaf2-b_spine0}	ethernet49
+${leaf0-a_spine1}	ethernet52
+${leaf0-b_spine1}	ethernet52
+${leaf1-a_spine1}	ethernet52
+${leaf1-b_spine1}	ethernet52
+${leaf2-a_spine1}	ethernet52
+${leaf2-b_spine1}	ethernet52
+
+
