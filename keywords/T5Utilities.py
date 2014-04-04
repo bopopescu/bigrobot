@@ -1,9 +1,7 @@
 import autobot.helpers as helpers
 import autobot.test as test
-import keywords.Mininet as mininet
-from time import sleep
-import keywords.T5Fabric as T5Fabric
 import re
+from BsnCommon import BsnCommon as bsnCommon
 
 '''
     ::::::::::    README    ::::::::::::::
@@ -342,10 +340,75 @@ class T5Utilities(object):
         return num    
            
     
+''' Following class will perform T5 platform related multithreading activities
+    Instantiating this class is done by functions reside in T5Platform. 
+    
+    Extends threading.Thread
+'''
 
+from threading import Thread
 
-      
+class T5PlatformThreads(Thread):
+    
+    def __init__(self, threadID, name, arg):
+            Thread.__init__(self)
+            self.threadID = threadID
+            self.name = name
+            self.arg = arg
             
-
-
+    def run(self):
+        if(self.name == "switchReboot"):
+            self.switch_reboot(self.arg)
+        if(self.name == "failover"):
+            self.controller_failover()
+        if(self.name == "activeReboot"):
+            self.controller_reboot('master')
+        if(self.name == "standbyReboot"):
+            self.controller_reboot('slave')
+        
+    def switch_reboot(self, switchName):
+        try:
+            #helpers.log("Starting Thread %s For Rebooting Switch: %s" % (self.threadID, self.arg))
+            print ("Starting Thread %s For Rebooting Switch: %s" % (self.threadID, self.arg))
+            t = test.Test()
+            switch = t.switch(switchName)
+            cli_input = 'reload now'
+            switch.enable('')
+            switch.send(cli_input)
+            helpers.sleep(60)
+            common = bsnCommon()
+            if(common.verify_ssh_connection(switchName)):
+                print ("Exiting Thread %s After Rebooting Switch: %s" % (self.threadID, self.arg))
+                return True
+            else:
+                print ("Connection Failure in Thread %s After Rebooting Switch: %s" % (self.threadID, self.arg))
+                return False
+        except:
+            helpers.test_failure("Failure during switch:%s reboot" % (switchName))
+            print ("Failure during switch:%s reboot" % (switchName))
+            return False
+        
+    def controller_failover(self):  
+        from T5Platform import T5Platform
+        platform = T5Platform()
+        #helpers.log("Exiting Thread %s After Rebooting Switch: %s" % (self.threadID, self.arg))
+        print ("Starting Thread %s For Controller Failover" % (self.threadID))    
+        returnVal =  platform._cluster_election(True)
+        print ("Exiting Thread %s After Controller Failover" % (self.threadID))
+        return returnVal
+        
+    def controller_reboot(self, node):
+        from T5Platform import T5Platform
+        platform = T5Platform()
+        print ("Starting Thread %s For Controller Reboot for Node: " % (self.threadID), node) 
+        if (node=="master"):
+            returnVal = platform.cluster_node_reboot()
+        else:
+            returnVal = platform.cluster_node_reboot(False)
+        print ("Exiting Thread %s After Controller Reboot for Node: " % (self.threadID), node)
+        return returnVal
+        
+        
+        
+        
 

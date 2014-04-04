@@ -22,15 +22,6 @@ from netaddr import *
 
 class T5(object):
 
-    def __init__(self):
-#        t = test.Test()
-#        c = t.controller('master')
-        pass
-#        url = '/api/v1/auth/login' %
-#        result = c.rest.post(url, {"user":"admin", "password":"adminadmin"})
-#        session_cookie = result['content']['session_cookie']
-#        c.rest.set_session_cookie(session_cookie)
-
     def rest_add_user_password(self, username, password):
         '''
             Objective:
@@ -200,7 +191,7 @@ class T5(object):
                 url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/switch-port-membership-rules[switch-name="%s"][interface-name="%s"]' % (tenant, data[j]["name"], switch, intf)
                 c.rest.put(url, {"switch-name": switch, "interface-name": intf, "vlan": data[j]["internal-vlan"]})
         return True
-    
+
     def rest_delete_vns(self, tenant, vns=None):
         t = test.Test()
         c = t.controller('master')
@@ -315,9 +306,9 @@ class T5(object):
 
         helpers.test_log("Input arguments: port-group = %s" % (pg))
 
-        #url = '/api/v1/data/controller/fabric/port-group[name="%s"]' % (pg)
+        # url = '/api/v1/data/controller/fabric/port-group[name="%s"]' % (pg)
         url = '/api/v1/data/controller/applications/bvs/port-group[name="%s"]' % (pg)
-        
+
         try:
             c.rest.patch(url, {"mode": "lacp"})
         except:
@@ -359,10 +350,10 @@ class T5(object):
 
         helpers.test_log("Input arguments: tenant = %s vns = %s port-group = %s vlan = %s" % (tenant, vns, pg, vlan))
 
-        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/port-group-membership-rules[port-group-name="%s"]' % (tenant, vns, pg)
-        
+        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/port-group-membership-rule[port-group="%s"]' % (tenant, vns, pg)
+
         try:
-            c.rest.put(url, {"vlan": vlan, "port-group-name": pg})
+            c.rest.put(url, {"vlan": vlan, "port-group": pg})
         except:
             return False
         else:
@@ -1177,7 +1168,7 @@ class T5(object):
         try:
             c.rest.patch(url, {"dpid": dpid})
         except:
-            helpers.log("Error: Invalid argument: Invalid switch id (8-hex bytes): %s; switch %s doesn't exist" % (dpid,switch))
+            helpers.log("Error: Invalid argument: Invalid switch id (8-hex bytes): %s; switch %s doesn't exist" % (dpid, switch))
             return False
         else:
             return True
@@ -1240,7 +1231,7 @@ class T5(object):
         url = '/api/v1/data/controller/core/switch' % ()
         c.rest.get(url)
         data = c.rest.content()
-        for i in range (0,len(data)):
+        for i in range (0, len(data)):
             if (data[i]["suspended"] is True) and (data[i]["fabric-role"] == "leaf" or data[i]["fabric-role"] == "spine"):
                 helpers.test_failure("Fabric manager status is incorrect")
         helpers.log("Fabric manager status is correct")
@@ -1253,24 +1244,34 @@ class T5(object):
         url = '/api/v1/data/controller/applications/bvs/info/fabric?select=link' % ()
         c.rest.get(url)
         data = c.rest.content()
-        for i in range (0,len(data)):
+        for i in range (0, len(data)):
             if data[i]["link"]["dst"]["switch-info"]["switch-name"] == switch and data[i]["link"]["link-direction"] == "bidirectional":
                 helpers.test_failure("%s Fabric Links not deleted" % str(data[i]["link"]["dst"]["switch-info"]["switch-name"]))
                 break
 
         return True
 
-    def rest_verify_fabric_link_common(self, switch):
+    def rest_verify_fabric_link_common(self, count=16):
+        '''
+        Function to count the no of bi-directional links present in dual leaf three rack topology
+        input: No of links expected (default is 16 in dual leaf , three rack regression topology)
+        Output: True or False
+        '''
         t = test.Test()
         c = t.controller('master')
         url = '/api/v1/data/controller/applications/bvs/info/fabric?select=link' % ()
         c.rest.get(url)
         data = c.rest.content()
-        for i in range (0,len(data)):
-            if data[i]["link"]["dst"]["switch-info"]["switch-name"] == switch and data[i]["link"]["link-direction"] == "bidirectional":
-                helpers.test_log("%s Fabric Links not deleted" % str(data[i]["link"]["dst"]["switch-info"]["switch-name"]))
-
-        return True
+        link = 0
+        for i in range (0, len(data[0]["link"])):
+            if data[0]["link"][i]["link-direction"] == "bidirectional":
+                link = link + 1
+        if int(link) == int(count):
+            helpers.test_log("Expected links are present,expected:%d,Actual:%d" % (int(count), int(link)))
+            return True
+        else:
+            helpers.test_failure("Expected links are not present, expected:%d,Actual:%d" % (int(count), int(link)))
+            return False
 
     def rest_verify_fabric_switch_role(self, dpid, role):
         t = test.Test()
@@ -1279,7 +1280,7 @@ class T5(object):
         c.rest.get(url)
         data = c.rest.content()
         status = False
-        for i in range (0,len(data)):
+        for i in range (0, len(data)):
             if data[i]["dpid"] == dpid and data[i]["fabric-role"] == role:
                 helpers.test_log("Fabric switch Role of %s is %s" % (str(data[i]["dpid"]), str(data[i]["fabric-role"])))
                 status = True
@@ -1324,10 +1325,10 @@ class T5(object):
             if data1[0]["fabric-role"] == "spine":
                 fabric_interface = 0
                 rack_lag = 0
-                for i in range(0,len(data)):
+                for i in range(0, len(data)):
                     if data[i]["type"] == "leaf":
                         fabric_interface = fabric_interface + 1
-                for i in range(0,len(data3[0]["fabric-lag"])):
+                for i in range(0, len(data3[0]["fabric-lag"])):
                         if (data3[0]["fabric-lag"][i]["lag-type"]) == "rack":
                             rack_lag = rack_lag + int(len(data3[0]["fabric-lag"][i]["member"]))
                 if (int(rack_lag) == int(fabric_interface)):
@@ -1339,14 +1340,14 @@ class T5(object):
             elif data1[0]["fabric-role"] == "leaf":
                     fabric_spine_interface = 0
                     fabric_peer_interface = 0
-                    for i in range(0,len(data)):
+                    for i in range(0, len(data)):
                                 if data[i]["type"] == "spine":
                                     fabric_spine_interface = fabric_spine_interface + 1
 
                                 elif data[i]["type"] == "leaf":
                                     fabric_peer_interface = fabric_peer_interface + 1
 
-                    for i in range(0,len(data3[0]["fabric-lag"])):
+                    for i in range(0, len(data3[0]["fabric-lag"])):
                                         if data3[0]["fabric-lag"][i]["lag-type"] == "spine":
                                             if (int(len(data3[0]["fabric-lag"][i]["member"])) == int(fabric_spine_interface)):
                                                 helpers.log("Spine lag formation from leaf switch %s is correct,Expected = %d, Actual = %d, " % (switch, fabric_spine_interface, len(data3[0]["fabric-lag"][i]["member"])))
@@ -1411,7 +1412,7 @@ class T5(object):
         c.rest.get(url)
         data = c.rest.content()
         fabric_interface = 0
-        for i in range(0,len(data)):
+        for i in range(0, len(data)):
             if data[i]["type"] == "leaf" or data[i]["type"] == "spine":
                 fabric_interface = fabric_interface + 1
         url1 = '/api/v1/data/controller/applications/bvs/info/fabric?select=link' % ()
@@ -1419,10 +1420,10 @@ class T5(object):
         data1 = c.rest.content()
         bidir_link = 0
         if not((data1 and True) or False):
-            for i in range(0,len(data1[0]["link"])):
+            for i in range(0, len(data1[0]["link"])):
                 if data1[0]["link"][i]["link-direction"] == "bidirectional":
                     bidir_link = bidir_link + 1
-                    if bidir_link == fabric_interface/2:
+                    if bidir_link == fabric_interface / 2:
                         helpers.log("Pass: All Fabric links states are bidirectional")
                         return True
                     else:
@@ -1439,7 +1440,7 @@ class T5(object):
         data = c.rest.content()
         rack = []
         rack_count = 0
-        for i in range(0,len(data)):
+        for i in range(0, len(data)):
             if data[i]["fabric-role"] == "leaf":
                 if data[i]["leaf-group"] == None:
                     rack_count = rack_count + 1
@@ -1457,7 +1458,7 @@ class T5(object):
         c.rest.get(url)
         data = c.rest.content()
         list_spine = []
-        for i in range(0,len(data)):
+        for i in range(0, len(data)):
             if data[i]["fabric-role"] == "spine":
                 list_spine.append(data[i]["name"])
 
@@ -1474,13 +1475,13 @@ class T5(object):
         url = '/api/v1/data/controller/core/switch[name="%s"]?select=fabric-lag' % (switcha)
         c.rest.get(url)
         data = c.rest.content()
-        for i in range(0,len(data[0]["fabric-lag"])):
+        for i in range(0, len(data[0]["fabric-lag"])):
             if data[0]["fabric-lag"][i]["lag-type"] == "rack-lag":
                 actual_spine = []
-                for j in range(0,len(data[0]["fabric-lag"][i]["member"])):
+                for j in range(0, len(data[0]["fabric-lag"][i]["member"])):
                     if data[0]["fabric-lag"][i]["member"][j]["dst-switch"] not in actual_spine:
                         actual_spine.append(data[0]["fabric-lag"][i]["member"][j]["dst-switch"])
-                for j in range(0,len(actual_spine)):
+                for j in range(0, len(actual_spine)):
                     if (str(actual_spine[j]) == str(switchb)):
                         helpers.log("Rack connectivity from leaf switch %s using all the spine switches are up" % switcha)
                         return True
@@ -1504,21 +1505,21 @@ class T5(object):
         c.rest.get(url2)
         data2 = c.rest.content()
         peer_intf = []
-        for i in range(0,len(data2[0]["fabric-lag"])):
+        for i in range(0, len(data2[0]["fabric-lag"])):
             if data2[0]["fabric-lag"][i]["lag-type"] == "leaf-lag":
                 interface = re.sub("\D", "", data2[0]["fabric-lag"][i]["member"][0]["src-interface"])
                 peer_intf.append(int(interface))
         if len(peer_intf) != 0:
             if data1[0]["leaf-group"] == None:
-                for i in range(0,len(data)):
-                    for j in range(0,len(data[i]["port"])):
+                for i in range(0, len(data)):
+                    for j in range(0, len(data[i]["port"])):
                         if (data[i]["port"][j]["port-num"] == peer_intf[0]):
                             helpers.test_failure("Peer switch edge ports are not deleted from lag table")
                             return False
 
             else:
-                for i in range(0,len(data)):
-                    for j in range(0,len(data[i]["port"])):
+                for i in range(0, len(data)):
+                    for j in range(0, len(data[i]["port"])):
                         if (data[i]["port"][j]["port-num"]) == (peer_intf[0]):
                             helpers.log("Peer switch edge ports are properly added in forwarding table")
                             return True
@@ -1630,10 +1631,10 @@ class T5(object):
         data1 = c.rest.content()
         lag_id_a = []
         lag_id_b = []
-        for i in range(0,len(data)):
+        for i in range(0, len(data)):
             if data[i]["port-num"] == intf0:
                 lag_id_a.append(data[i]["lag-id"])
-        for i in range(0,len(data1)):
+        for i in range(0, len(data1)):
             if data[i]["port-num"] == intf1:
                 lag_id_b.append(data[i]["lag-id"])
         if lag_id_a[0] == lag_id_b[0]:
@@ -1656,7 +1657,7 @@ class T5(object):
         data = c.rest.content()
         list_fabric_interface = []
         list_fabric_edge_interface = []
-        for i in range(0,len(data)):
+        for i in range(0, len(data)):
             if data[i]["type"] == "unknown":
                 continue
             elif data[i]["type"] == "edge":
@@ -1667,7 +1668,7 @@ class T5(object):
         c.rest.get(url1)
         data1 = c.rest.content()
         if len(list_fabric_interface) != 0 or len(list_fabric_edge_interface) != 0:
-            for i in range(0,len(data1)):
+            for i in range(0, len(data1)):
                 if data1[i]["port-num"] in list_fabric_interface:
                     if data1[i]["is-src-mac-check-disabled"] == True:
                         helpers.log("Source Mac check is disabled on Fabric interfaces")
@@ -1712,7 +1713,7 @@ class T5(object):
 
         url = '/api/v1/data/controller/core/switch-config[name="%s"]/interface[name="%s"]' % (switch, intf)
         c.rest.delete(url, {"shutdown": None})
-        helpers.sleep(5)        
+        helpers.sleep(5)
         url1 = '/api/v1/data/controller/core/switch[name="%s"]' % (switch)
         c.rest.get(url1)
         data1 = c.rest.content()
@@ -1739,7 +1740,7 @@ class T5(object):
         vrange = int(vrange)
         c.rest.get(url)
         data = c.rest.content()
-        if data[0]["interface-name"] == intf and data[0]["switch-name"] == switch:
+        if data[0]["interface-name"] == intf and data[0]["name"] == switch:
             if (data[0]["rx-counter"]["unicast-packet"] >= (frame_cnt - vrange)) and (data[0]["rx-counter"]["unicast-packet"] <= (frame_cnt + vrange)):
                 helpers.log("Pass: Rate value Expected:%d, Actual:%d" % (frame_cnt, data[0]["rx-counter"]["unicast-packet"]))
                 return True
@@ -1848,7 +1849,7 @@ class T5(object):
                         return False
         else:
             helpers.log("Given tenant name does not match the config")
-            
+
     def rest_verify_tenant_tx_stats(self, tenant, frame_cnt, vrange=5):
         ''' Function to verify the Tenant Tx stats
         Input: Tenant name , matching frame count , if required user can provide range as well for the frame count match
@@ -1870,7 +1871,7 @@ class T5(object):
                         return False
         else:
             helpers.log("Given tenant name does not match the config")
-            
+
     def rest_verify_tenant_rx_rates(self, tenant, frame_rate, vrange=5):
         ''' Function to verify the Tenant Tx stats
         Input: Tenant name , matching frame count , if required user can provide range as well for the frame count match
@@ -1892,7 +1893,7 @@ class T5(object):
                         return False
         else:
             helpers.log("Given tenant name does not match the config")
-            
+
     def rest_verify_tenant_tx_rates(self, tenant, frame_rate, vrange=5):
         ''' Function to verify the Tenant Tx stats
         Input: Tenant name , matching frame count , if required user can provide range as well for the frame count match
@@ -1914,7 +1915,7 @@ class T5(object):
                         return False
         else:
             helpers.log("Given tenant name does not match the config")
-            
+
     def rest_verify_membership_port_count(self, count):
         ''' Function to verify the membership port count for each vns
         Input:  provide how many port counts user is expecting in each VNS
@@ -1926,7 +1927,7 @@ class T5(object):
         url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/vnses'
         c.rest.get(url)
         data = c.rest.content()
-        for i in range(0,len(data)):
+        for i in range(0, len(data)):
             if int(data[i]["num-ports"]) == count:
                 helpers.log("Expected membership ports:%d are present in the each VNS" % count)
                 return True
@@ -1944,7 +1945,7 @@ class T5(object):
         c.cli("show interface %s %s" % switch, intf)
         result = c.cli_content()
         return result
-    
+
     def cli_show_switch(self, switch=None):
         ''' Function to show switch using controller CLI
         Input: switch name , if not given it will be none
@@ -1955,7 +1956,7 @@ class T5(object):
         c.cli("show switch %s" % switch)
         result = c.cli_content()
         return result
-    
+
     def cli_show_lag(self, switch=None, lag_name=None):
         ''' Function to show lag using controller CLI
         Input: switch and type of lag , Default= none
@@ -1966,7 +1967,7 @@ class T5(object):
         c.cli("show lag %s %s" % switch, lag_name)
         result = c.cli_content()
         return result
-    
+
     def cli_show_lacp(self, switch=None):
         ''' Function to show lacp using controller CLI
         Input: Switch , Default=None
@@ -1977,7 +1978,7 @@ class T5(object):
         c.cli("show lacp %s" % switch)
         result = c.cli_content()
         return result
-    
+
     def cli_show_link(self):
         ''' Function to show link using controller CLI
         Input: None
@@ -1988,10 +1989,10 @@ class T5(object):
         c.cli("show link")
         result = c.cli_content()
         return result
-    
+
     def rest_verify_stats_interval(self, intf_value=60, vns_value=600):
         ''' Function to configure stats interval value for interface and vns
-        Input: interface interval value and vns interval value , Default = None 
+        Input: interface interval value and vns interval value , Default = None
         Output: Set the configured number and verify the interval setting
         '''
         t = test.Test()
@@ -2009,11 +2010,11 @@ class T5(object):
             return True
         else:
             helpers.test_failure("Interval value does not match Actual:%d , Expected:%d" % intf_value, int(data["interface-stats-interval"]))
-            return False    
-   
+            return False
+
     def rest_verify_host_lag(self, switcha, intf0, switchb, intf1):
         ''' Function to verify host lag formation
-        Input: dual rack switch name and specific interface which host is connected 
+        Input: dual rack switch name and specific interface which host is connected
         Output: verify the lag id for the given interface from both switch
         '''
         t = test.Test()
@@ -2023,10 +2024,10 @@ class T5(object):
         lag_id_a = []
         lag_id_b = []
         url_a = '/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch-name="%s"]/port-table' % (switcha)
-        c.rest.get(url_a) 
+        c.rest.get(url_a)
         data = c.rest.content()
         url_b = '/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch-name="%s"]/port-table' % (switchb)
-        c.rest.get(url_b) 
+        c.rest.get(url_b)
         data1 = c.rest.content()
         for i in range(0, len(data)):
             if data[i]["port-num"] == int(intf0):
@@ -2040,7 +2041,7 @@ class T5(object):
         else:
             helpers.test_failure("BM Downlink lag are not properly created for dual rack %d:%d" % lag_id_a[0], lag_id_b[0])
             return True
-    
+
     def rest_verify_fabric_interface_stats_brief(self, switch, intf, frame_cnt, vrange=5):
         ''' Function to verify the Interface stats brief
         Input: switch name and interface
@@ -2063,7 +2064,7 @@ class T5(object):
                             return False
         else:
             helpers.log("Given interface name is not valid")
-            
+
     def rest_delete_all_tenants(self):
         '''
         delete all the tenants in the system
@@ -2072,7 +2073,7 @@ class T5(object):
         '''
         t = test.Test()
         c = t.controller('master')
-        helpers.log("********* rest_delete_all_tenants " )
+        helpers.log("********* rest_delete_all_tenants ")
         url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/tenants'
         c.rest.get(url)
         content = c.rest.content()
@@ -2085,9 +2086,50 @@ class T5(object):
         for index in range(length):
             name = content[index]['tenant-name']
             helpers.log("Tenant being deleted is %s " % name)
-            url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]' %  name 
+            url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]' % name
             c.rest.delete(url, {"name": name})
             if not c.rest.status_code_ok():
                 helpers.test_failure(c.rest.error())
                 return False
         return True
+
+    def rest_add_shutdown_fabric_switch(self, switch):
+        '''
+        add shutdown command to switch
+        input: switch name
+        output:  True
+                 False
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        url = '/api/v1/data/controller/core/switch-config[name="%s"]' % switch
+        try:
+            c.rest.patch(url, {"shutdown": True})
+        except:
+            return False
+        else:
+            return True
+    def rest_delete_shutdown_fabric_switch(self, switch):
+        '''
+        delete shutdown command to switch
+        input: switch name
+        output:  True
+                 False
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        url = '/api/v1/data/controller/core/switch-config[name="%s"]' % switch
+        try:
+            c.rest.delete(url, {"shutdown": None})
+        except:
+            return False
+        else:
+            return True
+
+
+    def clean_configuration(self, node='master'):
+        '''
+            Objective: Delete all user configuration
+        '''
+        t = test.Test()
+        return t.t5_clean_configuration(node)

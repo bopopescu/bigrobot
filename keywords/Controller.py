@@ -147,7 +147,7 @@ class Controller(object):
             n.send('boot factory-default')
             n.expect(r'proceed \("yes" or "y" to continue\)')
             n.send('y')
-            n.expect(r'loading image into stage partition', timeout=timeout)
+            n.expect(r'copying image into alternate partition', timeout=timeout)
             n.expect(r'checking integrity of new partition', timeout=timeout)
             n.expect(r'New Partition Ready', timeout=timeout)
             n.expect(r'ready for reboot', timeout=timeout)

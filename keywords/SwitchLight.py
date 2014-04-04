@@ -267,7 +267,7 @@ class SwitchLight(object):
             Return Value:
             - True on verification success
             - False on verification failure
-    '''
+        '''
         try:
             t = test.Test()
             c = t.controller(controller)
@@ -305,6 +305,41 @@ class SwitchLight(object):
                 return False
         except:
             helpers.test_failure("Could not execute command. Please check log for errors")
+            return False
+
+    def cli_return_ofaux_channel_count(self, node, controller):
+        '''
+            Objective:
+            - Configure controller IP address on switch
+
+            Input:
+            | node | Reference to switch (as defined in .topo file) |
+            | controller_ip | IP Address of Controller |
+            | controller_role | Role of controller (Active/Backup) |
+
+            Return Value:
+            - True on verification success
+            - False on verification failure
+        '''
+        t = test.Test()
+        c = t.controller(controller)
+        s1 = t.switch(node)
+        cli_input_1 = "show controller"
+        s1.enable(cli_input_1)
+        cli_output_1 = s1.cli_content()
+        ip_array = cli_output_1.rstrip().split('\n')
+        fail_count = 0
+        for x in range(0, len(ip_array)):
+            if (str(c.ip()) in ip_array[x]):
+                temp_string = ' '.join(ip_array[x].split())
+                aux_array = temp_string.split()
+                if "CONNECTED" not in aux_array[1]:
+                    return False
+                else:
+                    return aux_array[3]
+            else:
+                fail_count = fail_count + 1
+        if (fail_count > 0):
             return False
 
     def cli_verify_ip_dns(self, node, subnet, gateway, dns_server, dns_domain):
@@ -537,7 +572,7 @@ class SwitchLight(object):
             c = t.controller('master')
             s1 = t.switch(node)
             mycount = 1
-            while mycount <= iteration:
+            while mycount <= int(iteration):
                 cli_input = "no controller " + str(c.ip())
                 s1.config(cli_input)
                 s1.enable('show running-config openflow')
@@ -547,12 +582,13 @@ class SwitchLight(object):
                 s1.config(cli_input_1)
                 s1.enable('show running-config openflow')
                 helpers.log("Output of show running-config openflow after re-enabling controller %s" % (s1.cli_content()))
-                if iteration > mycount:
+                if mycount < int(iteration):
+                    helpers.log('My Count is %s' % (mycount))
                     mycount = mycount + 1
                     helpers.sleep(10)
-                elif mycount == iteration :
+                else:
                     helpers.log('Exiting from loop')
-            return True
+                    return True
         except:
             helpers.test_failure("Could not execute command. Please check log for errors")
             return False

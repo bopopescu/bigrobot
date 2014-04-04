@@ -1,0 +1,10 @@
+* Variables
+${os_admin_user}	  admin
+${os_pwd}  	bigswitchrocks
+${os_url} 	http://10.195.0.107:8000/
+${os_ten1_user}  app
+${os_ten2_user}  web
+
+
+
+
