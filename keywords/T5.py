@@ -1749,7 +1749,7 @@ class T5(object):
         vrange = int(vrange)
         c.rest.get(url)
         data = c.rest.content()
-        if data[0]["interface-name"] == intf and data[0]["switch-name"] == switch:
+        if data[0]["interface-name"] == intf and data[0]["name"] == switch:
             if (data[0]["rx-counter"]["unicast-packet"] >= (frame_cnt - vrange)) and (data[0]["rx-counter"]["unicast-packet"] <= (frame_cnt + vrange)):
                 helpers.log("Pass: Rate value Expected:%d, Actual:%d" % (frame_cnt, data[0]["rx-counter"]["unicast-packet"]))
                 return True

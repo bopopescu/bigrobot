@@ -69,7 +69,7 @@ delete the peer leaf0b switch and check the peer-lag from leaf0-a switch
 	rest verify forwarding lag  ${leaf0a_dpid}  leaf0-a     
 
 port group setting for static lag
-	[Tags]  feature  run  
+	[Tags]  feature  
 	rest add portgroup  p1
 	rest add interface to portgroup  leaf2-a  ${h6_intf0}  p1
 	rest add interface to portgroup  leaf2-b  ${h6_intf1}  p1
@@ -137,7 +137,7 @@ Verify broadcast traffic forwarding on the lag
     rest delete tenant  t1
     
 Verify broadcast forwarding with spine link failover
-	[Tags]  feature  
+	[Tags]  feature  run  
 	rest add tenant  t1
 	rest add vns  t1  v1
 	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
@@ -250,7 +250,7 @@ Verify Multicast forwarding on the lag
     rest delete tenant  t1
 
 verify unknown unicast forwarding on the lag
-	[Tags]  feature  
+	[Tags]  feature  run  
 	rest add tenant  t1
 	rest add vns  t1  v1
 	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
