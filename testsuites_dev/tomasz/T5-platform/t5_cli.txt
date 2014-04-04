@@ -99,7 +99,10 @@ T8 Escaping quote and double quote strings - user full-name
 	Cli Run and Verify Output
 	...  show running-config user
 	...  full-name 'test\\n'\r
-	#...  full-name \"test\\r\\n\'\'\'\"
+	Cli Run  full-name \"test\\r\\n\'\'\'\"
+	Cli Run and Verify Output
+	...  show running-config user
+	...  full-name \"test\\r\\n\'\'\'\"
 	Cli Run  full-name "'''"
 	Cli Run and Verify Output
 	...  show running-config user
@@ -108,6 +111,15 @@ T8 Escaping quote and double quote strings - user full-name
 	Cli Run and Verify Output
 	...  show running-config user
 	...  full-name '"""'
+	Cli Run  full-name "''''"
+	Cli Run and Verify Output
+	...  show running-config user
+	...  full-name "''''"
+	Cli Run  full-name '""""'
+	Cli Run and Verify Output
+	...  show running-config user
+	...  full-name '""""'
+	[Tags]  BSC-5010  BSC-5011
 
 T9 Escaping quote and double quote strings - switch name
 	Run Keyword and Expect Error
@@ -134,38 +146,26 @@ T10 Escaping quote and double quote strings - user name
 	...  *Error: Invalid argument: Invalid Alphabetic character, followed by alphanumerics: "test''test"; Invalid characters in identifier*
 	...  Cli Run  user "test''test"
 
-T11.1 User \n
+T11 User \n via REST
         Run Keyword and Expect Error
         ...  TestError: REST call failed with status code 400
 	...  My Rest Add User  a\n
-T11.2 User \n
-	Run Keyword and Expect Error
-        ...  TestError: REST call failed with status code 400
-	...  My Rest Add User  a\n
-T11.3 User \n
 	Run Keyword and Expect Error
         ...  TestError: REST call failed with status code 400
 	...  My Rest Add User  a\naa
-T11.4 User \n
 	Run Keyword and Expect Error
         ...  TestError: REST call failed with status code 400
 	...  My Rest Add User  \\
-T11.5 User \n
 	Run Keyword and Expect Error
         ...  TestError: REST call failed with status code 400
 	...  My Rest Add User  \r
-T11.6 User \n
 	Run Keyword and Expect Error
         ...  TestError: REST call failed with status code 400
 	...  My Rest Add User  rrse"
-T11.7 User \n
 	Run Keyword and Expect Error
         ...  TestError: REST call failed with status code 400
 	...  My Rest Add User  \n\r
-T11.8 User \n
-	Run Keyword and Expect Error
-        ...  TestError: REST call failed with status code 400
-	...  My Rest Add User  \n\r
+	[Tags]  BSC-5051  REST
 
 T12.1 show this in config-cluster submode
 	Cli Run  cluster
@@ -177,8 +177,21 @@ T12.2 show this in config-switch-if submode
 	Cli Run  show this 
 	[Tags]  BSC-5061
 
-T13 user a\n
-	Cli Run  user 'a\n'
+T13 Characters \n and \r in identifiers
+	Run Keyword and Expect Error
+	...  *Error: Invalid argument: Invalid Alphabetic * Invalid characters in identifier*
+	...  Cli Run  user 'a\\n'
+	Run Keyword and Expect Error
+	...  *Error: Invalid argument: Invalid Alphabetic * Invalid characters in identifier*
+	...  Cli Run  user 'a\\r'
+	Run Keyword and Expect Error
+	...  *Error: Unbalanced Quote*
+	...  Cli Run  switch 'a\\n\\n'b'
+	Run Keyword and Expect Error
+	...  *Error: Invalid argument: Invalid Alphabetic * Invalid characters in identifier*
+	...  Cli Run  tenant 'a\\n\\r\\n \\r\\n'
+	[Tags]  BSC-5051  BSC-5011
+
 
 T14 a\n in banner
 	Cli Run  banner 'a\\n'
@@ -209,6 +222,165 @@ T16 Switch commands in config-switch-if submode
 	Run Keyword and Expect Error  *Unknown command*  Cli Run  leaf-group test
 	[Tags]  BSC-5067
 
+T17 DNS configuration
+	Cli Run  local node
+	Cli Run  interface ethernet0
+	Cli Run  dns search google.com
+	Run Keyword and Expect Error
+	...  *Error: Invalid argument: Invalid IP address (dotted quad): 8.8.8.88888; invalid string pattern*
+	...  Cli Run  dns server 8.8.8.88888
+	Cli Run  dns server 8.8.8.8
+	Sleep  2 sec
+	Log  Checking changes in local-config
+	Cli Run and Verify Output
+	...  show local-config
+	...  8.8.8.8
+	Cli Run and Verify Output
+	...  show local-config
+	...  google.com
+	Cli Run and Verify Output
+	...  show local-config
+	...  10.192.3.1
+	Cli Run and Verify Output
+	...  show local-config
+	...  bigswitch.com
+	Log  Checking changes in bash NetworkManager
+	Cli Run  debug bash
+	Cli Run and Verify Output
+	...  sudo cat /etc/NetworkManager/system-connections/eth0
+	...  8.8.8.8
+	Cli Run and Verify Output
+	...  sudo cat /etc/NetworkManager/system-connections/eth0
+	...  google.com
+	Cli Run and Verify Output
+	...  sudo cat /etc/NetworkManager/system-connections/eth0
+	...  10.192.3.1
+	Cli Run and Verify Output
+	...  sudo cat /etc/NetworkManager/system-connections/eth0
+	...  bigswitch.com
+	Cli Run  exit
+	Log  Checking there are no changes on Slave
+	Cli Run and Verify Output
+	...  show local-config
+	...  8.8.8.8
+	...  flag=False
+	...  node=slave
+	Cli Run and Verify Output
+	...  show local-config
+	...  google.com
+	...  flag=False
+	...  node=slave
+	Cli Run  debug bash  node=slave
+	Cli Run and Verify Output
+	...  sudo cat /etc/NetworkManager/system-connections/eth0
+	...  8.8.8.8
+	...  flag=False
+	...  node=slave
+	Cli Run and Verify Output
+	...  sudo cat /etc/NetworkManager/system-connections/eth0
+	...  google.com
+	...  flag=False
+	...  node=slave
+
+	Cli Run  no dns search google.com
+	Cli Run  no dns server 8.8.8.8
+	Sleep  2 sec
+	Log  Checking changes in local-config
+	Cli Run and Verify Output
+	...  show local-config
+	...  8.8.8.8
+	...  flag=False
+	Cli Run and Verify Output
+	...  show local-config
+	...  google.com
+	...  flag=False
+	Cli Run and Verify Output
+	...  show local-config
+	...  10.192.3.1
+	Cli Run and Verify Output
+	...  show local-config
+	...  bigswitch.com
+	Log  Checking changes in bash NetworkManager
+	Cli Run  debug bash
+	Cli Run and Verify Output
+	...  sudo cat /etc/NetworkManager/system-connections/eth0
+	...  8.8.8.8
+	...  flag=False
+	Cli Run and Verify Output
+	...  sudo cat /etc/NetworkManager/system-connections/eth0
+	...  google.com
+	...  flag=False
+	Cli Run and Verify Output
+	...  sudo cat /etc/NetworkManager/system-connections/eth0
+	...  10.192.3.1
+	Cli Run and Verify Output
+	...  sudo cat /etc/NetworkManager/system-connections/eth0
+	...  bigswitch.com
+	Cli Run  exit
+	[Tags]  DNS  BSC-5060
+
+T18 'no stats' command
+	Cli Run  tenant test
+	Run Keyword and Expect Error
+	...  *Error: no matching commands*
+	...  Cli Run  no stats vns interval 15
+	Cli Run and Verify Output
+	...  show run tenant
+	...  tenant test
+	Cli Run  monitor session 1
+	Run Keyword and Expect Error
+	...  *Error: no matching commands*
+	...  Cli Run  no stats interface interval 15
+	Cli Run and Verify Output
+	...  show run monitor
+	...  monitor session 1
+	[Tags]  BSC-5043
+
+T19 'show this' in -vns and -endpoint submodes
+	Cli Run  tenant A
+	Cli Run  router
+	Cli Run  vns A1
+	Cli Run  member-port-group rack0pg1 vlan untagged
+	Cli Run  member-port-group rack1pg1 vlan untagged
+	Cli Run  endpoint host1
+	Cli Run  ip 10.0.0.1
+	Cli Run  vns A2
+	Cli Run  member-port-group rack0pg2 vlan untagged
+	Cli Run  member-port-group rack1pg2 vlan untagged
+	Cli Run  config
+	Cli Run  tenant A
+	Cli Run  vns A1
+	Cli Run and Verify Output
+	...  show this
+	...  vns A2
+	...  flag=False
+	Cli Run  endpoint host1
+	Cli Run and Verify Output
+	...  show this
+	...  vns A2
+	...  flag=False
+	[Tags]  BSC-5085
+
+T20 AAA Accounting round-robin support
+	Cli Run  tacacs server host 1.2.3.4 timeout 5 key secret
+	Cli Run  tacacs server host 10.192.64.1 timeout 5 key secret
+	Cli Run  tacacs server host 10.192.3.1 timeout 5 key secret
+	Cli Run  tacacs server host 10.192.4.91 timeout 5 key secret
+	Cli Run  aaa accounting exec default start-stop group tacacs+  cmd_timeout=30
+	Cli Run  config
+	Cli Run  tenant test
+	[Tags]  BSC-5019  AAA  TACACS
+
+T21 Escaping special characters in quoted strings
+	Cli Run  snmp-server community ro "tests\\n \\r \\n '''"
+	Cli Run and Verify Output
+	...  show run snmp
+	...  snmp-server community ro "tests\\n \\r \\n '''"
+	Cli Run  snmp-server location 'Location \\n \\r \\n """"'
+	Cli Run and Verify Output
+	...  show run snmp
+	...  snmp-server location 'Location \\n \\r \\n """"'
+	[Tags]  BSC-5011
 *** Keywords ***
 Generate Random Name
 	[Arguments]  ${prefix}  ${suffix_len}
@@ -228,6 +400,6 @@ Setup
 	Cli Run  conf
 
 Teardown
-	Bash Clear Known Hosts
+	Cli Run  no aaa accounting exec default start-stop group tacacs+  cmd_timeout=30
 	Cli Copy  config://startup-config  running-config
 	Base Test Teardown
