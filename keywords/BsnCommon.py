@@ -36,12 +36,6 @@ class BsnCommon(object):
     def base_suite_setup(self):
         t = test.Test()
         t.topology()
-        t5 = T5.T5()
-        for node in t.topology():
-            n = t.node(node)
-            if helpers.is_controller(node) and helpers.is_t5(n.platform()):
-                helpers.log("Running clean config on '%s' (establishing baseline config setup)" % node)
-                t5.clean_configuration(node)
 
     def base_suite_teardown(self):
         t = test.Test()
