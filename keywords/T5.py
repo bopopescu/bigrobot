@@ -517,7 +517,7 @@ class T5(object):
         data = c.rest.content()
         for i in range(0, len(data)):
                 if len(data) != 0:
-                    if data[i]["tenant"] == re.search('^t.*', 'data[i]["tenant"]'):
+                    if data[i]["name"] == re.search('^t.*', 'data[i]["name"]'):
                         helpers.log("Expected tenant are present in the config")
                         return True
                     else:
@@ -1837,10 +1837,10 @@ class T5(object):
         c = t.controller('master')
         frame_cnt = int(frame_cnt)
         vrange = int(vrange)
-        url = '/api/v1/data/controller/applications/bvs/info/stats/tenant-stats/tenant[tenant="%s"]?select=counter' % (tenant)
+        url = '/api/v1/data/controller/applications/bvs/info/stats/tenant-stats/tenant[tenant-name="%s"]?select=counter' % (tenant)
         c.rest.get(url)
         data = c.rest.content()
-        if data[0]["tenant"] == tenant:
+        if data[0]["tenant-name"] == tenant:
                     if (int(data[0]["counter"]["rx-packet"]) >= (frame_cnt - vrange)) and (int(data[0]["counter"]["rx-packet"]) <= (frame_cnt + vrange)):
                         helpers.log("Pass: Tenant Counters value Expected:%d, Actual:%d" % (frame_cnt, int(data[0]["counter"]["rx-packet"])))
                         return True
@@ -1859,10 +1859,10 @@ class T5(object):
         c = t.controller('master')
         frame_cnt = int(frame_cnt)
         vrange = int(vrange)
-        url = '/api/v1/data/controller/applications/bvs/info/stats/tenant-stats/tenant[tenant="%s"]?select=counter' % (tenant)
+        url = '/api/v1/data/controller/applications/bvs/info/stats/tenant-stats/tenant[tenant-name="%s"]?select=counter' % (tenant)
         c.rest.get(url)
         data = c.rest.content()
-        if data[0]["tenant"] == tenant:
+        if data[0]["tenant-name"] == tenant:
                     if (int(data[0]["counter"]["tx-packet"]) >= (frame_cnt - vrange)) and (int(data[0]["counter"]["tx-packet"]) <= (frame_cnt + vrange)):
                         helpers.log("Pass: Tenant Counters value Expected:%d, Actual:%d" % (frame_cnt, int(data[0]["counter"]["tx-packet"])))
                         return True
@@ -1881,10 +1881,10 @@ class T5(object):
         c = t.controller('master')
         frame_rate = int(frame_rate)
         vrange = int(vrange)
-        url = '/api/v1/data/controller/applications/bvs/info/stats/tenant-stats/tenant[tenant="%s"]?select=rate' % (tenant)
+        url = '/api/v1/data/controller/applications/bvs/info/stats/tenant-stats/tenant[tenant-name="%s"]?select=rate' % (tenant)
         c.rest.get(url)
         data = c.rest.content()
-        if data[0]["tenant"] == tenant:
+        if data[0]["tenant-name"] == tenant:
                     if (int(data[0]["rate"]["rx-packet-rate"]) >= (frame_rate - vrange)) and (int(data[0]["rate"]["rx-packet-rate"]) <= (frame_rate + vrange)):
                         helpers.log("Pass: Tenant Counters value Expected:%d, Actual:%d" % (frame_rate, int(data[0]["rate"]["rx-packet-rate"])))
                         return True
@@ -1903,10 +1903,10 @@ class T5(object):
         c = t.controller('master')
         frame_rate = int(frame_rate)
         vrange = int(vrange)
-        url = '/api/v1/data/controller/applications/bvs/info/stats/tenant-stats/tenant[tenant="%s"]?select=rate' % (tenant)
+        url = '/api/v1/data/controller/applications/bvs/info/stats/tenant-stats/tenant[tenant-name="%s"]?select=rate' % (tenant)
         c.rest.get(url)
         data = c.rest.content()
-        if data[0]["tenant"] == tenant:
+        if data[0]["tenant-name"] == tenant:
                     if (int(data[0]["rate"]["tx-packet-rate"]) >= (frame_rate - vrange)) and (int(data[0]["rate"]["tx-packet-rate"]) <= (frame_rate + vrange)):
                         helpers.log("Pass: Tenant Counters value Expected:%d, Actual:%d" % (frame_rate, int(data[0]["rate"]["tx-packet-rate"])))
                         return True
