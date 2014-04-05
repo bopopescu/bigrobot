@@ -275,7 +275,7 @@ def main(*args):
         print "Succes Creating Mininet vm!!"
         helpers.log("Configuring IP for mininet if provided")
         configure_mininet_ip(ip = args.ip)
-        sys.exit(1)
+        sys.exit(0)
     
     
     configure_vm_first_boot(cluster_ip = args.cluster_ip, ip_address = args.ip,
