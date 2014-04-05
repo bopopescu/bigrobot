@@ -79,7 +79,9 @@ class Node(object):
         return self._password
 
     def platform(self):
-        return self.dev.platform()
+        if self.dev:
+            return self.dev.platform()
+        return 'undef'
 
     def pingable_or_die(self):
         if self.is_pingable:
@@ -677,19 +679,19 @@ class BigTapIxiaNode(IxiaNode):
             temp_list = port['name'].split('/')
             bigtap_switch_id = temp_list[0]  # to be used for calculating switch DPID
             bigtap_port_id = temp_list[1]
-            
-            switch = 's'+str(bigtap_switch_id)
+
+            switch = 's' + str(bigtap_switch_id)
             bigtap_config_rx = IxBigtapLib.create_bigtap_flow_conf_rx(self._bigtap_switches[switch]['dpid'],
-                                                                52, ['1', '2']) # FIXME to be changed for passing ix port from Topo file
+                                                                52, ['1', '2'])  # FIXME to be changed for passing ix port from Topo file
             bigtap_config_tx = IxBigtapLib.create_bigtap_flow_conf_tx(self._bigtap_switches[switch]['dpid'],
-                                                                bigtap_portname = bigtap_port_id,
-                                                               ix_portname = ['1','2'], macs = final_macs)
+                                                                bigtap_portname=bigtap_port_id,
+                                                               ix_portname=['1', '2'], macs=final_macs)
 
             if not self._bigtap_to_config:
                 helpers.log('Skipping Big tap Config...')
             else:
                 helpers.log('Configuring Switches with bigtap Controller IP')
-                #FIXE ME need to add configuring switches with bigtap controller and enabling bi-directional flows in Bigtap
+                # FIXE ME need to add configuring switches with bigtap controller and enabling bi-directional flows in Bigtap
                 helpers.log('Configuring BigTap')
                 for conf in bigtap_config_rx:
                     print 'Executing cmd: ', conf
