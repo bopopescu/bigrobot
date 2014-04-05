@@ -181,7 +181,8 @@ def create_temp_topo(**kwargs):
     
 def configure_vm_first_boot(**kwargs):
     # Using Mingtao's First Boot Function to configure spawned VM in KVM
-    
+    helpers.log("SLeeping 20 sec ..for VM to Boot UP....")
+    time.sleep(20)
     helpers.log("Success setting up gobot Env!")
     cluster_ip = kwargs.get("cluster_ip", None)
     ip_address = kwargs.get("ip_address", None)
@@ -265,6 +266,8 @@ def main(*args):
     # Creating VM on KVM Host with above generated kvm_vmdk_path using virsh-install cmd 
     create_vm_on_kvm(vm_type = args.vm_type)
     create_temp_topo()
+    
+    # set the BIG ROBOT Topo file for console connections
     helpers.bigrobot_topology("/tmp/temp.topo")
     helpers.bigrobot_params("none")
     if args.vm_type == 'mininet':
