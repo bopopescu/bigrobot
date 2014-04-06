@@ -30,7 +30,7 @@ Setup Three Rack Dual Leaf Topology
     bring up h6 bond0
     sleep  5
     rest verify fabric switch all
-	rest verify fabric link 	
+	rest verify fabric link common 	
 
 With 2k mac entries , Remove the Leaf switch and Readd the leaf switch
     [Tags]  feature  run  
@@ -38,7 +38,7 @@ With 2k mac entries , Remove the Leaf switch and Readd the leaf switch
     rest add vns  t1  v1
     rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
     rest add interface to vns  t1  v1  leaf2-a  ${leaf2a_ixia_intf}  -1
-    ${stream}=             L3 add  no_arp=True  flow=a<->e  src_mac=00:00:01:00:00:01  dst_mac=00:00:02:00:00:01  src_cnt=1000  dst_cnt=1000  dst_mac_step=00:00:00:00:00:01  src_mac_step=00:00:00:00:00:01  frame_rate=1000  frame_size=68  name=a_e_flow
+    ${stream}=             L3 add  no_arp=True  flow=a<->e  src_mac=00:00:01:00:00:01  dst_mac=00:00:02:00:00:01  src_cnt=1000  dst_cnt=1000   frame_rate=1000  frame_size=68  name=a_e_flow
     start traffic  ${stream}
     rest verify endpoint in system  2000
     verify traffic rate  tx_rate  rx_rate  a  e
@@ -155,10 +155,11 @@ reboot both the controllers to make sure all the switches indeed connected
 	[Tags]  bugs  
 	rest verify fabric link common
 	cli verify cluster master reboot
-	sleep  10
+	sleep  3
 	rest verify fabric link common
-	cli verify cluster master reboot
 	sleep  10
+	cli verify cluster master reboot
+	sleep  3
 	rest verify fabric link common
 	
 Tear down config and Topology
