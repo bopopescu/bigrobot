@@ -1171,6 +1171,17 @@ class Ixia(object):
             self.ix_stop_traffic()
         else:
             helpers.log("Traffic Already Stopped in Testcase No need to Stop the Traffic !!")         
+        root = handle.getRoot()
+        traffic_item = handle.getList(root, 'traffic')
+        traffic_streams = handle.getList(traffic_item[0],'trafficItem')
+        if len(traffic_streams) == 0:
+            helpers.log("No Traffic Streams Configure we are goot no need to Delete streams !")
+        else:
+            for stream in traffic_streams:
+                handle.remove(stream)
+            handle.commit()
+            helpers.log("Success Removing configured traffic flow !!!")
+        helpers.log("Succes deleting Traffic Strems!!")
         handle.remove(handle.getRoot()+'traffic'+'/trafficItem')
         handle.commit()   
         helpers.log('succes removing traffic Items Configured!!!')
