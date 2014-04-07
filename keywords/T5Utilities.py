@@ -491,9 +491,6 @@ class T5PlatformThreads(Thread):
         if(self.name == "standbyReboot"):
             self.controller_reboot('slave')
     
-    def join(self):
-        Thread.join(self)
-        return self._return
         
     def switch_reboot(self, switchName):
         try:
@@ -537,22 +534,3 @@ class T5PlatformThreads(Thread):
         print ("Exiting Thread %s After Controller Reboot for Node: " % (self.threadID), node)
         return returnVal
     
-
-        
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
