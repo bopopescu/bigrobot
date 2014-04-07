@@ -2131,6 +2131,15 @@ setup topology
 	REST add vns									Z							Z1
 	REST add vns									Z							Z2
 	REST add vns									Z							Z3
+	REST add router intf							X							X1
+	REST add router intf							X							X2
+	REST add router intf							X							X3
+	REST add router intf							Y							Y1
+	REST add router intf							Y							Y2
+	REST add router intf							Y							Y3
+	REST add router intf							Z							Z1
+	REST add router intf							Z							Z2
+	REST add router intf							Z							Z3
 	REST add vns ip  								X							X1				10.251.1.1				24	
 	REST add vns ip  								X							X2				10.251.2.1				24	
 	REST add vns ip  								X							X3				10.251.3.1				24	

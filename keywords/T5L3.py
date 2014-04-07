@@ -19,6 +19,10 @@ class T5L3(object):
                 `netmask`       vns subnet mask
                 `private`        true or false 
             PATCH http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant%5Bname%3D%22X%22%5D/virtual-router/vns-interfaces%5Bvns-name%3D%22X1%22%5D {"ip-cidr": "10.251.1.1/24", "private": false}
+            
+            PUT http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant%5Bname%3D%22X%22%5D/virtual-router/vns-interfaces%5Bvns-name%3D%22X1%22%5D {"vns-name": "X1"}
+
+
             Return: true if configuration is successful, false otherwise
         '''
         
@@ -789,3 +793,58 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
             #helpers.test_log("Output: %s" % c.rest.result_json())
             #return c.rest.content()
             return True
+        
+    def rest_add_router_intf(self, tenant, vns):
+        '''Create vns router interface via command "virtual-router vns interface"
+        
+            Input:
+                `tenant`        tenant name
+                `vns`           vns interface name which must be similar to VNS
+            PUT http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant%5Bname%3D%22X%22%5D/virtual-router/vns-interfaces%5Bvns-name%3D%22X1%22%5D {"vns-name": "X1"}
+            Return: true if configuration is successful, false otherwise
+        '''
+        
+        t = test.Test()
+        c = t.controller('master')
+        
+        helpers.test_log("Input arguments: tenant = %s vns = %s " % (tenant, vns))
+        
+        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/virtual-router/vns-interfaces[vns-name="%s"]' % (tenant, vns)
+        try:
+            c.rest.put(url, {"vns-name": vns})
+        except:
+            #helpers.test_failure(c.rest.error())
+            return False
+        else: 
+            #helpers.test_log("Output: %s" % c.rest.result_json())
+            #return c.rest.content()
+            return True    
+        
+    def rest_del_router_intf(self, tenant, vns):
+        '''Create vns router interface via command "virtual-router vns interface"
+        
+            Input:
+                `tenant`        tenant name
+                `vns`           vns interface name which must be similar to VNS
+             DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant%5Bname%3D%22X%22%5D/virtual-router/vns-interfaces%5Bvns-name%3D%22X1%22%5D {}
+            Return: true if configuration is successful, false otherwise
+        '''
+        
+        t = test.Test()
+        c = t.controller('master')
+        
+        helpers.test_log("Input arguments: tenant = %s vns = %s " % (tenant, vns))
+        
+        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/virtual-router/vns-interfaces[vns-name="%s"]' % (tenant, vns)
+        try:
+            c.rest.delete(url, {})
+        except:
+            #helpers.test_failure(c.rest.error())
+            return False
+        else: 
+            #helpers.test_log("Output: %s" % c.rest.result_json())
+            #return c.rest.content()
+            return True            
+        
+        
+        
