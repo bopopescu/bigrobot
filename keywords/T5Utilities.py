@@ -26,6 +26,7 @@ fabricLags_b4 = []
 fabricLags_after = []
 warningCount = 0
 
+floodlightMonitorFlag = False
 
 class T5Utilities(object):
 
@@ -340,6 +341,130 @@ class T5Utilities(object):
         return num    
            
     
+    def start_floodlight_monitor(self):
+        global floodlightMonitorFlag
+        
+        try:
+            t = test.Test()
+            c1 = t.controller('c1')
+            c2 = t.controller('c2')
+            
+            # Add rm of the file if file already exist in case of a new test
+            c1.sudo("tail -f /var/log/floodlight/floodlight.log | grep --line-buffered ERROR > %s &" % "c1_floodlight_dump.txt")
+            c2.sudo("tail -f /var/log/floodlight/floodlight.log | grep --line-buffered ERROR > %s &" % "c2_floodlight_dump.txt")
+            
+            floodlightMonitorFlag = True
+            return True
+        
+        except:
+            helpers.log("Exception occured while starting the floodlight monitor")
+            return False
+                        
+    def restart_floodlight_monitor(self):
+        
+        global floodlightMonitorFlag
+        
+        if(floodlightMonitorFlag):
+            t = test.Test()
+            c1 = t.controller('c1')
+            c2 = t.controller('c2')
+        
+            c1.sudo("tail -f /var/log/floodlight/floodlight.log | grep --line-buffered ERROR >> %s &" % "c1_floodlight_dump.txt")
+            c2.sudo("tail -f /var/log/floodlight/floodlight.log | grep --line-buffered ERROR >> %s &" % "c2_floodlight_dump.txt")
+            
+            return True
+        else:
+            pass
+    
+    
+    def stop_floodlight_monitor(self):
+        
+        global floodlightMonitorFlag
+        
+        if(floodlightMonitorFlag):
+            c1_pid = self.get_floodlight_monitor_pid('c1')
+            c2_pid = self.get_floodlight_monitor_pid('c2')
+            t = test.Test()
+            c1 = t.controller('c1')
+            c2 = t.controller('c2')
+            helpers.log("Stopping Floodlight Monitor on C1")
+            c1.sudo('kill %s' % (c1_pid))
+            helpers.log("Stopping Floodlight Monitor on C2")
+            c2.sudo('kill %s' % (c2_pid))
+            
+            floodlightMonitorFlag = False
+            
+            try:
+                helpers.log("****************    Floodlight Log From C1    ****************")
+                helpers.log(c1.sudo('cat c1_floodlight_dump.txt'))
+            except(AttributeError):
+                helpers.log("No Errors From Floodlight Monitor on C1")
+            try:
+                helpers.log("****************    Floodlight Log From C2    ****************")
+                helpers.log(c2.sudo('cat c2_floodlight_dump.txt'))
+            except(AttributeError):
+                helpers.log("No Errors From Floodlight Monitor on C2")
+            
+            
+            #return self.get_floodlight_errors('c1', "c1_floodlight_dump")
+            #return self.get_floodlight_errors('c2', "c2_floodlight_dump")
+            return True
+            
+                
+                
+                      
+        else:
+            helpers.log("FloodlightMonitorFlag is not set: Returning False")
+            return False
+            
+    
+    def get_floodlight_monitor_pid(self, role):
+        t = test.Test()
+        c = t.controller(role)
+        helpers.log("Verifing for monitor job")
+        c_result = c.sudo('ps ax | grep tail | grep sudo')
+        helpers.log("dumping sudo o/p:%s" % (c_result['content']))
+        split = re.split('\s+',c_result['content'])
+        #FIXME: Need to find another way to regex, to get pid rather splitting
+        if split[9]:
+            pid = split[9]
+            return pid
+        else:
+            return 0
+    
+    
+    
+    def get_floodlight_errors(self, role, file_name):
+        t = test.Test()
+        c = t.controller(role)
+        helpers.log("checking file exist in the controller")
+        result = c.sudo("ls -ltr | grep %s" % (file_name))
+        helpers.log(" monitor file: %s" % (result['content']))
+        if re.findall(file_name,result['content']):
+            helpers.log("File found, continuing parsing")
+            split = re.split('\s+',result['content'])
+            helpers.log ("dumping list of file %s" % (split))
+            helpers.log("checking file size now")
+            #FIXME: Need to check file size correctly
+            size = split[10]
+            helpers.log("Exception log file size:%s" % (size))
+            if size == '0':
+                helpers.log("no exceptions found, you are good")
+                return True
+            else:
+                #FIXME: Need to copy log file to external server
+                helpers.log("Exceptions found in the file, !!!FILE A BUG!!! and dumping exceptions log to logfile")
+                if role == 'c1':
+                    c.sudo('cat c1_%s' % (file_name))
+                else:
+                    c.sudo('cat c2_%s' % (file_name))
+                return False
+        else:
+            helpers.log("File not Found")
+            return False   
+    
+           
+    
 ''' Following class will perform T5 platform related multithreading activities
     Instantiating this class is done by functions reside in T5Platform. 
     
@@ -347,6 +472,7 @@ class T5Utilities(object):
 '''
 
 from threading import Thread
+from time import sleep
 
 class T5PlatformThreads(Thread):
     
@@ -355,16 +481,23 @@ class T5PlatformThreads(Thread):
             self.threadID = threadID
             self.name = name
             self.arg = arg
+            self._return = None
             
     def run(self):
         if(self.name == "switchReboot"):
-            self.switch_reboot(self.arg)
+            self._return = self.switch_reboot(self.arg)
         if(self.name == "failover"):
-            self.controller_failover()
+            self._return = self.controller_failover()
         if(self.name == "activeReboot"):
-            self.controller_reboot('master')
+            self._return = self.controller_reboot('master')
         if(self.name == "standbyReboot"):
-            self.controller_reboot('slave')
+            self._return = self.controller_reboot('slave')
+        if(self.name == "monitorFloodlight"):
+            self._return = self.start_floodlight_monitor(self.arg)
+    
+    def join(self):
+        Thread.join(self)
+        return self._return
         
     def switch_reboot(self, switchName):
         try:
@@ -407,8 +540,107 @@ class T5PlatformThreads(Thread):
             returnVal = platform.cluster_node_reboot(False)
         print ("Exiting Thread %s After Controller Reboot for Node: " % (self.threadID), node)
         return returnVal
+    
+    def floodlight_monitor(self,node):
+                t = test.Test()
+                
+                c = t.controller(node)
         
+                print("INFO: connecting to bash mode in both controllers")
+                print("INFO: Checking if file already exist in the controller")
+                
+                try:
+                    while(1):
+                        monitorCommand =  "sudo tail -f /var/log/floodlight/floodlight.log | grep --line-buffered DEBUG >> %s &" % (node+"_floodlight_dump.txt")
+                        #c.sudo(monitorCommand, prompt='Broadcast message')
+                        c.sudo(monitorCommand)
+                        
+                        sleep(30)
+                        common = bsnCommon()
+                        if(common.verify_ssh_connection(c.ip())):
+                            print ("Restarting Monitor Thread On: %s After Rebooting" % node)
+                            return True
+                except:
+                    print "Exception from monitor thread for node: %" % (node)
         
+'''
+import multiprocessing
+platformProcesses = []
+class T5PlatformProcess():
         
+        def __init__(self):
+            pass
         
+        def floodlight_monitor(self,node):
+                t = test.Test()
+                
+                c = t.controller(node)
+        
+                print("INFO: connecting to bash mode in both controllers")
+                print("INFO: Checking if file already exist in the controller")
+                
+                try:
+                    while(1):
+                        monitorCommand =  "sudo tail -f /var/log/floodlight/floodlight.log | grep --line-buffered DEBUG >> %s &" % (node+"_floodlight_dump.txt")
+                        c.sudo(monitorCommand, prompt='Broadcast message')
+                        sleep(30)
+                        common = bsnCommon()
+                        if(common.verify_ssh_connection(c.ip())):
+                            print ("Restarting Monitor Thread On: %s After Rebooting" % node)
+                            return True
+                except:
+                    print "Exception from monitor thread for node: %" % (node)
+                
+            
+            
+        def start_floodlight_monitor(self):
+            global platformProcesses    
+            
+            try:
+                t = test.Test()
+                p1 = multiprocessing.Process(name = "c1Monitor", target=self.floodlight_monitor('c1'), args='c1')
+                p2 = multiprocessing.Process(name = "c2Monitor", target=self.floodlight_monitor('c2'), args='c2')
+                platformProcesses.append(p1)
+                platformProcesses.append(p2)
+                
+                p1.start()
+                p2.start()
+            except:
+                print "Exception Occured while starting T5 Processes"
+                return False
+            else:
+                return True
+        
+        def stop_floodlight_monitor(self):
+            global platformProcesses 
+            
+            try:
+                platformProcesses[0].terminate()
+                platformProcesses[1].terminate()
+            except:
+                print "Exception Occured while terminating T5 Processes"
+                return False
+            
+            else:
+                return True
+        
+'''         
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
