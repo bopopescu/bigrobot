@@ -59,6 +59,88 @@ class SwitchLight(object):
             helpers.test_failure("Could not execute command. Please check log for errors")
             return False
 
+    def cli_clear_interface_statistics(self, node):
+        '''
+        '''
+        try:
+            t = test.Test()
+            switch = t.switch(node)
+            cli_input = "clear interface statistics"
+            switch.enable(cli_input)
+            return True
+        except:
+            helpers.test_failure("Could not execute command. Please check log for errors")
+            return False
+
+    def cli_return_interface_counter_brief(self, node, intf_name, intf_counter='state'):
+        '''
+            Objective:
+            - Return interface counter from o/p of show interface
+            
+            Input:
+            | node | Reference to switch (as defined in .topo file) |                     
+            | intf_name | Interface Name eg. ethernet1 or portchannel1 | 
+            | intf_counter | State, Speed, RX or TX field |
+                    
+            Return Value: 
+            - Interface State of interface.
+        '''
+        try:
+            t = test.Test()
+            switch = t.switch(node)
+            cli_input = "show interface"
+            switch.enable(cli_input)
+        except:
+            helpers.test_failure("Could not execute command. Please check log for errors")
+            return False
+        else:
+            content = string.split(switch.cli_content(), '\n')
+            flag_intf_found = False
+            for i in range(0, len(content)):
+                if(str(intf_name) in content[i]):
+                    helpers.log("Interface %s found in show interfaces output" % str(intf_name))
+                    flag_intf_found = True
+                    temp_intf_string = ' '.join(content[i].split())
+                    intf_array = temp_intf_string.split()
+                    helpers.log("This is intf_array %s" % intf_array)
+                    if (("state" in intf_counter) or ("State" in intf_counter) or ("STATE" in intf_counter)):
+                        if (str('*') in intf_array[0]):
+                            return 'up'
+                        else:
+                            return 'down'
+                    elif (("speed" in intf_counter) or ("Speed" in intf_counter) or ("SPEED" in intf_counter)):
+                        if ('1G' in intf_array[2]):
+                            return '1G'
+                        elif ('10G' in intf_array[2]):
+                            return '10G'
+                        elif  ('40G' in intf_array[2]):
+                            return '40G'
+                        else:
+                            return False
+                    elif (("rx" in intf_counter) or ("Rx" in intf_counter) or ("RX" in intf_counter)):
+                        if ('port-channel' in temp_intf_string):
+                            return int(intf_array[2])
+                        else:
+                            if (len(intf_array) > 4):
+                                return int(intf_array[3])
+                            else:
+                                return int(intf_array[2])
+                    elif (("tx" in intf_counter) or ("Tx" in intf_counter) or ("TX" in intf_counter)):
+                        if ('port-channel' in temp_intf_string):
+                            return int(intf_array[3])
+                        else:
+                            if (len(intf_array) > 4):
+                                return int(intf_array[4])
+                            else:
+                                return int(intf_array[3])
+                    else:
+                        helpers.log("No such field %s exists in output of show interfaces" % str(intf_counter))
+                        return False
+            if not flag_intf_found:
+                helpers.log("Interface %s was not found in show interfaces output" % str(intf_name))
+                return False
+
+
     def cli_show_interface_state(self, node, intf_name):
         '''
             Objective:
