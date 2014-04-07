@@ -1,0 +1,918 @@
+*Settings
+Documentation  BigTap Rewrite Vlan Test Suite
+Suite Setup  bigtap suite setup
+Suite Teardown   bigtap suite teardown
+Test Setup   bigtap test setup
+Test Teardown  bigtap test teardown 
+Force Tags   platform Sanity
+Library  keywords/BsnCommon.py
+Library  keywords/AppController.py
+Library  keywords/BigTap.py
+Library  keywords/SwitchLight.py
+Library  keywords/Ixia.py
+
+* Variable
+${switchlight_version}  SwitchLight 2.0.2
+${switch_1_alias}   APP-RLB9-1
+${switch_2_alias}   APP-RLB9-2
+${switch_3_alias}   APP-RLY2-5
+
+${policy_name_1}    POLICY1
+${policy_name_2}    POLICY2
+
+${vlan_rewrite_1}   1000
+${vlan_rewrite_2}   1001
+
+${filter_1}  ethernet1  
+${filter_1_nick}  VLAN-REWRITE-F1
+${filter_2}  ethernet2  
+${filter_2_nick}  VLAN-REWRITE-F2
+${delivery_1}  ethernet1  
+${delivery_1_nick}  VLAN-REWRITE-D1
+${delivery_2}  ethernet2  
+${delivery_2_nick}  VLAN-REWRITE-D2
+
+
+*Test Case
+
+Verify intial configuration
+    REST verify bigtap policy  policy_name=${policy_name_1}   num_filter_intf=1  num_delivery_intf=1
+    REST verify bigtap policy  policy_name=${policy_name_2}   num_filter_intf=1  num_delivery_intf=1
+    [Tags]  verifyconfig
+
+Verify traffic with match any
+    ${stream1}=  L3 add  flow=a->c  frame_rate=10000  frame_cnt=50000   
+    ...     src_mac=00:11:01:01:01:01  dst_mac=00:11:01:01:01:02  no_arp=True
+    ...     src_ip=10.1.101.1  dst_ip=10.1.101.2  name=a_c_flow
+    ${stream2}=  L3 add  flow=b->d  frame_rate=10000  frame_cnt=50000   
+    ...     src_mac=00:12:01:01:01:01  dst_mac=00:12:01:01:01:02  no_arp=True
+    ...     src_ip=10.1.102.1  dst_ip=10.1.102.2  name=b_d_flow    
+    clear stats  
+    start traffic
+    sleep  5
+    stop traffic
+    verify results  a  transmitted_frames  c  received_crc_errored_frames
+    verify results  b  transmitted_frames  d  received_crc_errored_frames       
+    [Tags]  intf-vlanrewrite  match-any
+
+Verify traffic with match on src-mac
+    rest add policy match  admin-view  ${policy_name_1}  1  {"src-mac": "00:11:01:01:01:01", "sequence": 1}
+    rest add policy match  admin-view  ${policy_name_2}  1  {"src-mac": "00:12:01:01:01:01", "sequence": 1}
+    sleep  5
+    REST verify bigtap policy  policy_name=${policy_name_1}   num_filter_intf=1  num_delivery_intf=1
+    REST verify bigtap policy  policy_name=${policy_name_2}   num_filter_intf=1  num_delivery_intf=1    
+    ${stream1}=  L3 add  flow=a->c  frame_rate=10000  frame_cnt=50000   
+    ...     src_mac=00:11:01:01:01:01  dst_mac=00:11:01:01:01:02  no_arp=True
+    ...     src_ip=10.1.101.1  dst_ip=10.1.101.2  name=a_c_flow
+    ${stream2}=  L3 add  flow=b->d  frame_rate=10000  frame_cnt=50000   
+    ...     src_mac=00:12:01:01:01:01  dst_mac=00:12:01:01:01:02  no_arp=True
+    ...     src_ip=10.1.102.1  dst_ip=10.1.102.2  name=b_d_flow    
+    clear stats  
+    start traffic
+    sleep  5
+    stop traffic
+    verify results  a  transmitted_frames  c  received_crc_errored_frames
+    verify results  b  transmitted_frames  d  received_crc_errored_frames      
+    [Tags]  intf-vlanrewrite  match-mac
+
+Verify traffic with match on dst-mac
+    rest add policy match  admin-view  ${policy_name_1}  1  {"dst-mac": "00:11:01:01:01:02", "sequence": 1}
+    rest add policy match  admin-view  ${policy_name_2}  1  {"dst-mac": "00:12:01:01:01:02", "sequence": 1}
+    sleep  5
+    REST verify bigtap policy  policy_name=${policy_name_1}   num_filter_intf=1  num_delivery_intf=1
+    REST verify bigtap policy  policy_name=${policy_name_2}   num_filter_intf=1  num_delivery_intf=1    
+    ${stream1}=  L3 add  flow=a->c  frame_rate=10000  frame_cnt=50000   
+    ...     src_mac=00:11:01:01:01:01  dst_mac=00:11:01:01:01:02  no_arp=True
+    ...     src_ip=10.1.101.1  dst_ip=10.1.101.2  name=a_c_flow
+    ${stream2}=  L3 add  flow=b->d  frame_rate=10000  frame_cnt=50000   
+    ...     src_mac=00:12:01:01:01:01  dst_mac=00:12:01:01:01:02  no_arp=True
+    ...     src_ip=10.1.102.1  dst_ip=10.1.102.2  name=b_d_flow    
+    clear stats  
+    start traffic
+    sleep  5
+    stop traffic
+    verify results  a  transmitted_frames  c  received_crc_errored_frames
+    verify results  b  transmitted_frames  d  received_crc_errored_frames      
+    [Tags]  intf-vlanrewrite  match-mac
+
+
+Verify traffic with match on ethertype
+    rest add policy match  admin-view  ${policy_name_1}  1  {"sequence": 1, "ether-type": 8943}
+    rest add policy match  admin-view  ${policy_name_2}  1  {"sequence": 1, "ether-type": 8943}
+    sleep  5
+    REST verify bigtap policy  policy_name=${policy_name_1}   num_filter_intf=1  num_delivery_intf=1
+    REST verify bigtap policy  policy_name=${policy_name_2}   num_filter_intf=1  num_delivery_intf=1    
+    ${stream1}=  L2 add  flow=a->c  frame_rate=10000  frame_cnt=100000  ethertype=22ef   
+    ...     src_mac=00:11:01:01:01:01  dst_mac=00:11:01:01:01:02  name=a_c_flow
+    ${stream2}=  L2 add  flow=b->d  frame_rate=10000  frame_cnt=100000  ethertype=22ef   
+    ...     src_mac=00:12:01:01:01:01  dst_mac=00:12:01:01:01:02  name=b_d_flow
+    clear stats  
+    start traffic
+    sleep  5
+    stop traffic
+    verify results  a  transmitted_frames  c  received_crc_errored_frames
+    verify results  b  transmitted_frames  d  received_crc_errored_frames      
+    [Tags]  intf-vlanrewrite  match-ethertype    
+
+Verify traffic with match on IPv4
+    rest add policy match  admin-view  ${policy_name_1}  1  {"sequence": 1, "ether-type": 2048}
+    rest add policy match  admin-view  ${policy_name_2}  1  {"sequence": 1, "ether-type": 2048}
+    sleep  5
+    REST verify bigtap policy  policy_name=${policy_name_1}   num_filter_intf=1  num_delivery_intf=1
+    REST verify bigtap policy  policy_name=${policy_name_2}   num_filter_intf=1  num_delivery_intf=1    
+    ${stream1}=  L3 add  flow=a->c  frame_rate=10000  frame_cnt=50000   
+    ...     src_mac=00:11:01:01:01:01  dst_mac=00:11:01:01:01:02  no_arp=True
+    ...     src_ip=10.1.101.1  dst_ip=10.1.101.2  name=a_c_flow
+    ${stream2}=  L3 add  flow=b->d  frame_rate=10000  frame_cnt=50000   
+    ...     src_mac=00:12:01:01:01:01  dst_mac=00:12:01:01:01:02  no_arp=True
+    ...     src_ip=10.1.102.1  dst_ip=10.1.102.2  name=b_d_flow  
+    clear stats  
+    start traffic
+    sleep  5
+    stop traffic
+    verify results  a  transmitted_frames  c  received_crc_errored_frames
+    verify results  b  transmitted_frames  d  received_crc_errored_frames      
+    [Tags]  intf-vlanrewrite  matchip 
+
+Verify traffic with match on IPv4 src-ip
+    rest add policy match  admin-view  ${policy_name_1}  1  {"src-ip-mask": "255.255.224.0", "sequence": 1, "src-ip": "10.1.101.1", "ether-type": 2048}
+    rest add policy match  admin-view  ${policy_name_2}  1  {"src-ip-mask": "255.255.224.0", "sequence": 1, "src-ip": "10.1.102.1", "ether-type": 2048}
+    sleep  5
+    REST verify bigtap policy  policy_name=${policy_name_1}   num_filter_intf=1  num_delivery_intf=1
+    REST verify bigtap policy  policy_name=${policy_name_2}   num_filter_intf=1  num_delivery_intf=1    
+    ${stream1}=  L3 add  flow=a->c  frame_rate=10000  frame_cnt=50000   
+    ...     src_mac=00:11:01:01:01:01  dst_mac=00:11:01:01:01:02  no_arp=True
+    ...     src_ip=10.1.101.1  dst_ip=10.1.101.2  name=a_c_flow
+    ${stream2}=  L3 add  flow=b->d  frame_rate=10000  frame_cnt=50000   
+    ...     src_mac=00:12:01:01:01:01  dst_mac=00:12:01:01:01:02  no_arp=True
+    ...     src_ip=10.1.102.1  dst_ip=10.1.102.2  name=b_d_flow  
+    clear stats  
+    start traffic
+    sleep  5
+    stop traffic
+    verify results  a  transmitted_frames  c  received_crc_errored_frames
+    verify results  b  transmitted_frames  d  received_crc_errored_frames      
+    [Tags]  intf-vlanrewrite  matchsrcip 
+
+Verify traffic with match on IPv4 dst-ip
+    rest add policy match  admin-view  ${policy_name_1}  1  {"dst-ip-mask": "255.255.224.0", "sequence": 1, "dst-ip": "10.1.101.2", "ether-type": 2048}
+    rest add policy match  admin-view  ${policy_name_2}  1  {"dst-ip-mask": "255.255.224.0", "sequence": 1, "dst-ip": "10.1.102.2", "ether-type": 2048}
+    sleep  5
+    REST verify bigtap policy  policy_name=${policy_name_1}   num_filter_intf=1  num_delivery_intf=1
+    REST verify bigtap policy  policy_name=${policy_name_2}   num_filter_intf=1  num_delivery_intf=1    
+    ${stream1}=  L3 add  flow=a->c  frame_rate=10000  frame_cnt=50000   
+    ...     src_mac=00:11:01:01:01:01  dst_mac=00:11:01:01:01:02  no_arp=True
+    ...     src_ip=10.1.101.1  dst_ip=10.1.101.2  name=a_c_flow
+    ${stream2}=  L3 add  flow=b->d  frame_rate=10000  frame_cnt=50000   
+    ...     src_mac=00:12:01:01:01:01  dst_mac=00:12:01:01:01:02  no_arp=True
+    ...     src_ip=10.1.102.1  dst_ip=10.1.102.2  name=b_d_flow  
+    clear stats  
+    start traffic
+    sleep  5
+    stop traffic
+    verify results  a  transmitted_frames  c  received_crc_errored_frames
+    verify results  b  transmitted_frames  d  received_crc_errored_frames      
+    [Tags]  intf-vlanrewrite  matchdstip     
+
+Verify traffic with match on IPv4 TCP
+    rest add policy match  admin-view  ${policy_name_1}  1  {"sequence": 1, "ip-proto": 6, "ether-type": 2048}
+    rest add policy match  admin-view  ${policy_name_2}  1  {"sequence": 1, "ip-proto": 6, "ether-type": 2048}
+    sleep  5
+    REST verify bigtap policy  policy_name=${policy_name_1}   num_filter_intf=1  num_delivery_intf=1
+    REST verify bigtap policy  policy_name=${policy_name_2}   num_filter_intf=1  num_delivery_intf=1    
+    ${stream1}=  L3 add  flow=a->c  frame_rate=10000  frame_cnt=50000   
+    ...     src_mac=00:11:01:01:01:01  dst_mac=00:11:01:01:01:02  no_arp=True
+    ...     src_ip=10.1.101.1  dst_ip=10.1.101.2  protocol=TCP  src_port=101  dst_port=102
+    ...     name=a_c_flow    
+    ${stream2}=  L3 add  flow=b->d  frame_rate=10000  frame_cnt=50000   
+    ...     src_mac=00:12:01:01:01:01  dst_mac=00:12:01:01:01:02  no_arp=True
+    ...     src_ip=10.1.102.1  dst_ip=10.1.102.2  protocol=TCP  src_port=8001  dst_port=8002
+    ...     name=b_d_flow  
+    clear stats  
+    start traffic
+    sleep  5
+    stop traffic
+    verify results  a  transmitted_frames  c  received_crc_errored_frames
+    verify results  b  transmitted_frames  d  received_crc_errored_frames      
+    [Tags]  intf-vlanrewrite  matchtcp                
+
+Verify traffic with match on IPv4 TCP SRC-PORT
+    rest add policy match  admin-view  ${policy_name_1}  1  {"src-tp-port": 65535, "ether-type": 2048, "ip-proto": 6, "sequence": 1}
+    rest add policy match  admin-view  ${policy_name_2}  1  {"src-tp-port": 1024, "ether-type": 2048, "ip-proto": 6, "sequence": 1}
+    sleep  5
+    REST verify bigtap policy  policy_name=${policy_name_1}   num_filter_intf=1  num_delivery_intf=1
+    REST verify bigtap policy  policy_name=${policy_name_2}   num_filter_intf=1  num_delivery_intf=1    
+    ${stream1}=  L3 add  flow=a->c  frame_rate=10000  frame_cnt=50000   
+    ...     src_mac=00:11:01:01:01:01  dst_mac=00:11:01:01:01:02  no_arp=True
+    ...     protocol=TCP  src_port=65535  dst_port=80
+    ...     src_ip=10.1.101.1  dst_ip=10.1.101.2  name=a_c_flow
+    ${stream2}=  L3 add  flow=b->d  frame_rate=10000  frame_cnt=50000   
+    ...     src_mac=00:12:01:01:01:01  dst_mac=00:12:01:01:01:02  no_arp=True
+    ...     protocol=TCP  src_port=1024  dst_port=80    
+    ...     src_ip=10.1.102.1  dst_ip=10.1.102.2  name=b_d_flow  
+    clear stats  
+    start traffic
+    sleep  5
+    stop traffic
+    verify results  a  transmitted_frames  c  received_crc_errored_frames
+    verify results  b  transmitted_frames  d  received_crc_errored_frames      
+    [Tags]  intf-vlanrewrite  matchtcpsrcport
+
+Verify traffic with match on IPv4 TCP SRC-PORT RANGE
+    rest add policy match  admin-view  ${policy_name_1}  1  {"src-tp-port-max": 65535, "ether-type": 2048, "src-tp-port-min": 65000, "ip-proto": 6, "sequence": 1}
+    rest add policy match  admin-view  ${policy_name_2}  1  {"src-tp-port-max": 1024, "ether-type": 2048, "src-tp-port-min": 1, "ip-proto": 6, "sequence": 1}
+    sleep  5
+    REST verify bigtap policy  policy_name=${policy_name_1}   num_filter_intf=1  num_delivery_intf=1
+    REST verify bigtap policy  policy_name=${policy_name_2}   num_filter_intf=1  num_delivery_intf=1    
+    ${stream1}=  L3 add  flow=a->c  frame_rate=10000  frame_cnt=50000   
+    ...     src_mac=00:11:01:01:01:01  dst_mac=00:11:01:01:01:02  no_arp=True
+    ...     protocol=TCP  src_port=65035  dst_port=80
+    ...     src_ip=10.1.101.1  dst_ip=10.1.101.2  name=a_c_flow
+    ${stream2}=  L3 add  flow=b->d  frame_rate=10000  frame_cnt=50000   
+    ...     src_mac=00:12:01:01:01:01  dst_mac=00:12:01:01:01:02  no_arp=True
+    ...     protocol=TCP  src_port=1024  dst_port=80    
+    ...     src_ip=10.1.102.1  dst_ip=10.1.102.2  name=b_d_flow  
+    clear stats  
+    start traffic
+    sleep  5
+    stop traffic
+    verify results  a  transmitted_frames  c  received_crc_errored_frames
+    verify results  b  transmitted_frames  d  received_crc_errored_frames      
+    [Tags]  intf-vlanrewrite  matchtcpsrcport
+    
+
+Verify traffic with match on IPv4 TCP DST-PORT
+    rest add policy match  admin-view  ${policy_name_1}  1  {"ether-type": 2048, "dst-tp-port": 65535, "ip-proto": 6, "sequence": 1}
+    rest add policy match  admin-view  ${policy_name_2}  1  {"ether-type": 2048, "dst-tp-port": 1025, "ip-proto": 6, "sequence": 1}
+    sleep  5
+    REST verify bigtap policy  policy_name=${policy_name_1}   num_filter_intf=1  num_delivery_intf=1
+    REST verify bigtap policy  policy_name=${policy_name_2}   num_filter_intf=1  num_delivery_intf=1    
+    ${stream1}=  L3 add  flow=a->c  frame_rate=10000  frame_cnt=50000   
+    ...     src_mac=00:11:01:01:01:01  dst_mac=00:11:01:01:01:02  no_arp=True
+    ...     protocol=TCP  src_port=80  dst_port=65535
+    ...     src_ip=10.1.101.1  dst_ip=10.1.101.2  name=a_c_flow
+    ${stream2}=  L3 add  flow=b->d  frame_rate=10000  frame_cnt=50000   
+    ...     src_mac=00:12:01:01:01:01  dst_mac=00:12:01:01:01:02  no_arp=True
+    ...     protocol=TCP  src_port=80  dst_port=1025    
+    ...     src_ip=10.1.102.1  dst_ip=10.1.102.2  name=b_d_flow   
+    clear stats  
+    start traffic
+    sleep  5
+    stop traffic
+    verify results  a  transmitted_frames  c  received_crc_errored_frames
+    verify results  b  transmitted_frames  d  received_crc_errored_frames      
+    [Tags]  intf-vlanrewrite  matchtcpdstport    
+
+Verify traffic with match on IPv4 TCP DST-PORT RANGE
+    rest add policy match  admin-view  ${policy_name_1}  1  {"dst-tp-port-min": 65000, "ether-type": 2048, "dst-tp-port-max": 65535, "ip-proto": 6, "sequence": 1}
+    rest add policy match  admin-view  ${policy_name_2}  1  {"dst-tp-port-min": 1, "ether-type": 2048, "dst-tp-port-max": 1024, "ip-proto": 6, "sequence": 1}
+    sleep  5
+    REST verify bigtap policy  policy_name=${policy_name_1}   num_filter_intf=1  num_delivery_intf=1
+    REST verify bigtap policy  policy_name=${policy_name_2}   num_filter_intf=1  num_delivery_intf=1    
+    ${stream1}=  L3 add  flow=a->c  frame_rate=10000  frame_cnt=50000   
+    ...     src_mac=00:11:01:01:01:01  dst_mac=00:11:01:01:01:02  no_arp=True
+    ...     protocol=TCP  src_port=80  dst_port=65535
+    ...     src_ip=10.1.101.1  dst_ip=10.1.101.2  name=a_c_flow
+    ${stream2}=  L3 add  flow=b->d  frame_rate=10000  frame_cnt=50000   
+    ...     src_mac=00:12:01:01:01:01  dst_mac=00:12:01:01:01:02  no_arp=True
+    ...     protocol=TCP  src_port=1080  dst_port=1024    
+    ...     src_ip=10.1.102.1  dst_ip=10.1.102.2  name=b_d_flow  
+    clear stats  
+    start traffic
+    sleep  5
+    stop traffic
+    verify results  a  transmitted_frames  c  received_crc_errored_frames
+    verify results  b  transmitted_frames  d  received_crc_errored_frames      
+    [Tags]  intf-vlanrewrite  matchtcpdstport     
+ 
+
+Verify traffic with match on IPv4 UDP
+    rest add policy match  admin-view  ${policy_name_1}  1  {"sequence": 1, "ip-proto": 17, "ether-type": 2048}
+    rest add policy match  admin-view  ${policy_name_2}  1  {"sequence": 1, "ip-proto": 17, "ether-type": 2048}
+    sleep  5
+    REST verify bigtap policy  policy_name=${policy_name_1}   num_filter_intf=1  num_delivery_intf=1
+    REST verify bigtap policy  policy_name=${policy_name_2}   num_filter_intf=1  num_delivery_intf=1    
+    ${stream1}=  L3 add  flow=a->c  frame_rate=10000  frame_cnt=50000   
+    ...     src_mac=00:11:01:01:01:01  dst_mac=00:11:01:01:01:02  no_arp=True
+    ...     src_ip=10.1.101.1  dst_ip=10.1.101.2  protocol=UDP  src_port=101  dst_port=102
+    ...     name=a_c_flow    
+    ${stream2}=  L3 add  flow=b->d  frame_rate=10000  frame_cnt=50000   
+    ...     src_mac=00:12:01:01:01:01  dst_mac=00:12:01:01:01:02  no_arp=True
+    ...     src_ip=10.1.102.1  dst_ip=10.1.102.2  protocol=UDP  src_port=8001  dst_port=8002
+    ...     name=b_d_flow  
+    clear stats  
+    start traffic
+    sleep  5
+    stop traffic
+    verify results  a  transmitted_frames  c  received_crc_errored_frames
+    verify results  b  transmitted_frames  d  received_crc_errored_frames      
+    [Tags]  intf-vlanrewrite  matchtcp                
+
+Verify traffic with match on IPv4 UDP SRC-PORT
+    rest add policy match  admin-view  ${policy_name_1}  1  {"src-tp-port": 65535, "ether-type": 2048, "ip-proto": 17, "sequence": 1}
+    rest add policy match  admin-view  ${policy_name_2}  1  {"src-tp-port": 53, "ether-type": 2048, "ip-proto": 17, "sequence": 1}
+    sleep  5
+    REST verify bigtap policy  policy_name=${policy_name_1}   num_filter_intf=1  num_delivery_intf=1
+    REST verify bigtap policy  policy_name=${policy_name_2}   num_filter_intf=1  num_delivery_intf=1    
+    ${stream1}=  L3 add  flow=a->c  frame_rate=10000  frame_cnt=50000   
+    ...     src_mac=00:11:01:01:01:01  dst_mac=00:11:01:01:01:02  no_arp=True
+    ...     protocol=UDP  src_port=65535  dst_port=80
+    ...     src_ip=10.1.101.1  dst_ip=10.1.101.2  name=a_c_flow
+    ${stream2}=  L3 add  flow=b->d  frame_rate=10000  frame_cnt=50000   
+    ...     src_mac=00:12:01:01:01:01  dst_mac=00:12:01:01:01:02  no_arp=True
+    ...     protocol=UDP  src_port=53  dst_port=80    
+    ...     src_ip=10.1.102.1  dst_ip=10.1.102.2  name=b_d_flow  
+    clear stats  
+    start traffic
+    sleep  5
+    stop traffic
+    verify results  a  transmitted_frames  c  received_crc_errored_frames
+    verify results  b  transmitted_frames  d  received_crc_errored_frames      
+    [Tags]  intf-vlanrewrite  matchtcpsrcport
+
+Verify traffic with match on IPv4 UDP SRC-PORT RANGE
+    rest add policy match  admin-view  ${policy_name_1}  1  {"src-tp-port-max": 65535, "ether-type": 2048, "src-tp-port-min": 65000, "ip-proto": 17, "sequence": 1}
+    rest add policy match  admin-view  ${policy_name_2}  1  {"src-tp-port-max": 1024, "ether-type": 2048, "src-tp-port-min": 1, "ip-proto": 17, "sequence": 1}
+    sleep  5
+    REST verify bigtap policy  policy_name=${policy_name_1}   num_filter_intf=1  num_delivery_intf=1
+    REST verify bigtap policy  policy_name=${policy_name_2}   num_filter_intf=1  num_delivery_intf=1    
+    ${stream1}=  L3 add  flow=a->c  frame_rate=10000  frame_cnt=50000   
+    ...     src_mac=00:11:01:01:01:01  dst_mac=00:11:01:01:01:02  no_arp=True
+    ...     protocol=UDP  src_port=65035  dst_port=80
+    ...     src_ip=10.1.101.1  dst_ip=10.1.101.2  name=a_c_flow
+    ${stream2}=  L3 add  flow=b->d  frame_rate=10000  frame_cnt=50000   
+    ...     src_mac=00:12:01:01:01:01  dst_mac=00:12:01:01:01:02  no_arp=True
+    ...     protocol=UDP  src_port=53  dst_port=80    
+    ...     src_ip=10.1.102.1  dst_ip=10.1.102.2  name=b_d_flow  
+    clear stats  
+    start traffic
+    sleep  5
+    stop traffic
+    verify results  a  transmitted_frames  c  received_crc_errored_frames
+    verify results  b  transmitted_frames  d  received_crc_errored_frames      
+    [Tags]  intf-vlanrewrite  matchtcpsrcport
+    
+
+Verify traffic with match on IPv4 UDP DST-PORT
+    rest add policy match  admin-view  ${policy_name_1}  1  {"ether-type": 2048, "dst-tp-port": 65535, "ip-proto": 17, "sequence": 1}
+    rest add policy match  admin-view  ${policy_name_2}  1  {"ether-type": 2048, "dst-tp-port": 1025, "ip-proto": 17, "sequence": 1}
+    sleep  5
+    REST verify bigtap policy  policy_name=${policy_name_1}   num_filter_intf=1  num_delivery_intf=1
+    REST verify bigtap policy  policy_name=${policy_name_2}   num_filter_intf=1  num_delivery_intf=1    
+    ${stream1}=  L3 add  flow=a->c  frame_rate=10000  frame_cnt=50000   
+    ...     src_mac=00:11:01:01:01:01  dst_mac=00:11:01:01:01:02  no_arp=True
+    ...     protocol=UDP  src_port=80  dst_port=65535
+    ...     src_ip=10.1.101.1  dst_ip=10.1.101.2  name=a_c_flow
+    ${stream2}=  L3 add  flow=b->d  frame_rate=10000  frame_cnt=50000   
+    ...     src_mac=00:12:01:01:01:01  dst_mac=00:12:01:01:01:02  no_arp=True
+    ...     protocol=UDP  src_port=80  dst_port=1025    
+    ...     src_ip=10.1.102.1  dst_ip=10.1.102.2  name=b_d_flow   
+    clear stats  
+    start traffic
+    sleep  5
+    stop traffic
+    verify results  a  transmitted_frames  c  received_crc_errored_frames
+    verify results  b  transmitted_frames  d  received_crc_errored_frames      
+    [Tags]  intf-vlanrewrite  matchtcpdstport    
+
+Verify traffic with match on IPv4 UDP DST-PORT RANGE
+    rest add policy match  admin-view  ${policy_name_1}  1  {"dst-tp-port-min": 65000, "ether-type": 2048, "dst-tp-port-max": 65535, "ip-proto": 17, "sequence": 1}
+    rest add policy match  admin-view  ${policy_name_2}  1  {"dst-tp-port-min": 1, "ether-type": 2048, "dst-tp-port-max": 1024, "ip-proto": 17, "sequence": 1}
+    sleep  5
+    REST verify bigtap policy  policy_name=${policy_name_1}   num_filter_intf=1  num_delivery_intf=1
+    REST verify bigtap policy  policy_name=${policy_name_2}   num_filter_intf=1  num_delivery_intf=1    
+    ${stream1}=  L3 add  flow=a->c  frame_rate=10000  frame_cnt=50000   
+    ...     src_mac=00:11:01:01:01:01  dst_mac=00:11:01:01:01:02  no_arp=True
+    ...     protocol=UDP  src_port=80  dst_port=65535
+    ...     src_ip=10.1.101.1  dst_ip=10.1.101.2  name=a_c_flow
+    ${stream2}=  L3 add  flow=b->d  frame_rate=10000  frame_cnt=50000   
+    ...     src_mac=00:12:01:01:01:01  dst_mac=00:12:01:01:01:02  no_arp=True
+    ...     protocol=UDP  src_port=1080  dst_port=1024    
+    ...     src_ip=10.1.102.1  dst_ip=10.1.102.2  name=b_d_flow  
+    clear stats  
+    start traffic
+    sleep  5
+    stop traffic
+    verify results  a  transmitted_frames  c  received_crc_errored_frames
+    verify results  b  transmitted_frames  d  received_crc_errored_frames      
+    [Tags]  intf-vlanrewrite  matchtcpdstport  
+
+######
+
+Verify traffic with match on IPv6
+    rest add policy match  admin-view  ${policy_name_1}  1  {"sequence": 1, "ether-type": 34525}
+    rest add policy match  admin-view  ${policy_name_2}  1  {"sequence": 1, "ether-type": 34525}
+    sleep  5
+    REST verify bigtap policy  policy_name=${policy_name_1}   num_filter_intf=1  num_delivery_intf=1
+    REST verify bigtap policy  policy_name=${policy_name_2}   num_filter_intf=1  num_delivery_intf=1    
+    ${stream1}=  L3 add  flow=a->c  frame_rate=10000  frame_cnt=50000  ethertype=86dd   
+    ...     src_mac=00:11:01:01:01:01  dst_mac=00:11:01:01:01:02  no_arp=True
+    ...     src_ip=2002:0:0:0:0:0:0:1  dst_ip=2001:0:0:0:0:0:0:1  name=a_c_flow
+    ${stream2}=  L3 add  flow=b->d  frame_rate=10000  frame_cnt=50000  ethertype=86dd   
+    ...     src_mac=00:12:01:01:01:01  dst_mac=00:12:01:01:01:02  no_arp=True
+    ...     src_ip=2002:0:0:0:1:0:0:1  dst_ip=2001:0:0:0:1:0:0:1  name=b_d_flow  
+    clear stats  
+    start traffic
+    sleep  5
+    stop traffic
+    verify results  a  transmitted_frames  c  received_crc_errored_frames
+    verify results  b  transmitted_frames  d  received_crc_errored_frames      
+    [Tags]  intf-vlanrewrite  matchip6 
+
+
+Verify traffic with match on IPv6 Src IP (unicast)
+    rest add policy match  admin-view  ${policy_name_1}  1  {"src-ip-mask": "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff", "sequence": 1, "src-ip": "2001::1", "ether-type": 34525}
+    rest add policy match  admin-view  ${policy_name_2}  1  {"src-ip-mask": "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff", "sequence": 1, "src-ip": "2003::1", "ether-type": 34525}
+    sleep  5
+    REST verify bigtap policy  policy_name=${policy_name_1}   num_filter_intf=1  num_delivery_intf=1
+    REST verify bigtap policy  policy_name=${policy_name_2}   num_filter_intf=1  num_delivery_intf=1    
+    ${stream1}=  L3 add  flow=a->c  frame_rate=10000  frame_cnt=50000  ethertype=86dd   
+    ...     src_mac=00:11:01:01:01:01  dst_mac=00:11:01:01:01:02  no_arp=True
+    ...     src_ip=2001:0:0:0:0:0:0:1  dst_ip=2002:0:0:0:0:0:0:1  name=a_c_flow
+    ${stream2}=  L3 add  flow=b->d  frame_rate=10000  frame_cnt=50000  ethertype=86dd   
+    ...     src_mac=00:12:01:01:01:01  dst_mac=00:12:01:01:01:02  no_arp=True
+    ...     src_ip=2003:0:0:0:0:0:0:1  dst_ip=2002:0:0:0:1:0:0:1  name=b_d_flow  
+    clear stats  
+    start traffic
+    sleep  5
+    stop traffic
+    verify results  a  transmitted_frames  c  received_crc_errored_frames
+    verify results  b  transmitted_frames  d  received_crc_errored_frames      
+    [Tags]  intf-vlanrewrite  matchip6-srcip 
+
+Verify traffic with match on IPv6 Src IP (Link Local Unicast)
+    rest add policy match  admin-view  ${policy_name_1}  1  {"src-ip-mask": "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff", "sequence": 1, "src-ip": "FE80:0:0:0:211:FF:FE00:101", "ether-type": 34525}
+    rest add policy match  admin-view  ${policy_name_2}  1  {"src-ip-mask": "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff", "sequence": 1, "src-ip": "2003::1", "ether-type": 34525}
+    sleep  5
+    REST verify bigtap policy  policy_name=${policy_name_1}   num_filter_intf=1  num_delivery_intf=1
+    REST verify bigtap policy  policy_name=${policy_name_2}   num_filter_intf=1  num_delivery_intf=1    
+    ${stream1}=  L3 add  flow=a->c  frame_rate=10000  frame_cnt=50000  ethertype=86dd   
+    ...     src_mac=00:11:01:01:01:01  dst_mac=00:11:01:01:01:02  no_arp=True
+    ...     src_ip=FE80:0:0:0:211:FF:FE00:101  dst_ip=2002:0:0:0:0:0:0:1  name=a_c_flow
+    ${stream2}=  L3 add  flow=b->d  frame_rate=10000  frame_cnt=50000  ethertype=86dd   
+    ...     src_mac=00:12:01:01:01:01  dst_mac=00:12:01:01:01:02  no_arp=True
+    ...     src_ip=2003:0:0:0:0:0:0:1  dst_ip=2002:0:0:0:1:0:0:1  name=b_d_flow  
+    clear stats  
+    start traffic
+    sleep  5
+    stop traffic
+    verify results  a  transmitted_frames  c  received_crc_errored_frames
+    verify results  b  transmitted_frames  d  received_crc_errored_frames      
+    [Tags]  intf-vlanrewrite  matchip6-srcip-ll 
+    
+
+
+Verify traffic with match on IPv6 DST IP (Global unicast)
+    rest add policy match  admin-view  ${policy_name_1}  1  {"dst-ip-mask": "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff", "sequence": 1, "dst-ip": "2001::1", "ether-type": 34525}
+    rest add policy match  admin-view  ${policy_name_2}  1  {"dst-ip-mask": "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff", "sequence": 1, "dst-ip": "2003::1", "ether-type": 34525}
+    sleep  5
+    REST verify bigtap policy  policy_name=${policy_name_1}   num_filter_intf=1  num_delivery_intf=1
+    REST verify bigtap policy  policy_name=${policy_name_2}   num_filter_intf=1  num_delivery_intf=1    
+    ${stream1}=  L3 add  flow=a->c  frame_rate=10000  frame_cnt=50000  ethertype=86dd   
+    ...     src_mac=00:11:01:01:01:01  dst_mac=00:11:01:01:01:02  no_arp=True
+    ...     dst_ip=2001:0:0:0:0:0:0:1  src_ip=2002:0:0:0:0:0:0:1  name=a_c_flow
+    ${stream2}=  L3 add  flow=b->d  frame_rate=10000  frame_cnt=50000  ethertype=86dd   
+    ...     src_mac=00:12:01:01:01:01  dst_mac=00:12:01:01:01:02  no_arp=True
+    ...     dst_ip=2003:0:0:0:0:0:0:1  src_ip=2002:0:0:0:1:0:0:1  name=b_d_flow  
+    clear stats  
+    start traffic
+    sleep  5
+    stop traffic
+    verify results  a  transmitted_frames  c  received_crc_errored_frames
+    verify results  b  transmitted_frames  d  received_crc_errored_frames      
+    [Tags]  intf-vlanrewrite  matchip6-dstip  
+
+Verify traffic with match on IPv6 Dst IP (Link Local Unicast)
+    rest add policy match  admin-view  ${policy_name_1}  1  {"dst-ip-mask": "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff", "sequence": 1, "dst-ip": "FE80:0:0:0:211:FF:FE00:101", "ether-type": 34525}
+    rest add policy match  admin-view  ${policy_name_2}  1  {"dst-ip-mask": "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff", "sequence": 1, "dst-ip": "2003::1", "ether-type": 34525}
+    sleep  5
+    REST verify bigtap policy  policy_name=${policy_name_1}   num_filter_intf=1  num_delivery_intf=1
+    REST verify bigtap policy  policy_name=${policy_name_2}   num_filter_intf=1  num_delivery_intf=1    
+    ${stream1}=  L3 add  flow=a->c  frame_rate=10000  frame_cnt=50000  ethertype=86dd   
+    ...     src_mac=00:11:01:01:01:01  dst_mac=00:11:01:01:01:02  no_arp=True
+    ...     dst_ip=FE80:0:0:0:211:FF:FE00:101  src_ip=2002:0:0:0:0:0:0:1  name=a_c_flow
+    ${stream2}=  L3 add  flow=b->d  frame_rate=10000  frame_cnt=50000  ethertype=86dd   
+    ...     src_mac=00:12:01:01:01:01  dst_mac=00:12:01:01:01:02  no_arp=True
+    ...     dst_ip=2003:0:0:0:0:0:0:1  src_ip=2002:0:0:0:1:0:0:1  name=b_d_flow  
+    clear stats  
+    start traffic
+    sleep  5
+    stop traffic
+    verify results  a  transmitted_frames  c  received_crc_errored_frames
+    verify results  b  transmitted_frames  d  received_crc_errored_frames      
+    [Tags]  intf-vlanrewrite  matchip6-dstip-ll 
+
+
+Verify traffic with match on TCP6
+    rest add policy match  admin-view  ${policy_name_1}  1  {"sequence": 1, "ip-proto": 6, "ether-type": 34525}
+    rest add policy match  admin-view  ${policy_name_2}  1  {"sequence": 1, "ip-proto": 6, "ether-type": 34525}
+    sleep  5
+    REST verify bigtap policy  policy_name=${policy_name_1}   num_filter_intf=1  num_delivery_intf=1
+    REST verify bigtap policy  policy_name=${policy_name_2}   num_filter_intf=1  num_delivery_intf=1    
+    ${stream1}=  L3 add  flow=a->c  frame_rate=10000  frame_cnt=50000  ethertype=86dd   
+    ...     src_mac=00:11:01:01:01:01  dst_mac=00:11:01:01:01:02  no_arp=True
+    ...     src_ip=2001:0:0:0:0:0:0:1  dst_ip=2002:0:0:0:0:0:0:1  name=a_c_flow
+    ...     protocol=TCP  src_port=65535  dst_port=80    
+    ${stream2}=  L3 add  flow=b->d  frame_rate=10000  frame_cnt=50000  ethertype=86dd   
+    ...     src_mac=00:12:01:01:01:01  dst_mac=00:12:01:01:01:02  no_arp=True
+    ...     src_ip=2003:0:0:0:0:0:0:1  dst_ip=2002:0:0:0:1:0:0:1  name=b_d_flow
+    ...     protocol=TCP  src_port=80  dst_port=65535      
+    clear stats  
+    start traffic
+    sleep  5
+    stop traffic
+    verify results  a  transmitted_frames  c  received_crc_errored_frames
+    verify results  b  transmitted_frames  d  received_crc_errored_frames      
+    [Tags]  intf-vlanrewrite  matchtcp6
+
+
+Verify traffic with match on TCP6 SRC-PORT
+    rest add policy match  admin-view  ${policy_name_1}  1  {"src-tp-port": 65535, "ether-type": 34525, "ip-proto": 6, "sequence": 1}
+    rest add policy match  admin-view  ${policy_name_2}  1  {"src-tp-port": 80, "ether-type": 34525, "ip-proto": 6, "sequence": 1}
+    sleep  5
+    REST verify bigtap policy  policy_name=${policy_name_1}   num_filter_intf=1  num_delivery_intf=1
+    REST verify bigtap policy  policy_name=${policy_name_2}   num_filter_intf=1  num_delivery_intf=1    
+    ${stream1}=  L3 add  flow=a->c  frame_rate=10000  frame_cnt=50000  ethertype=86dd   
+    ...     src_mac=00:11:01:01:01:01  dst_mac=00:11:01:01:01:02  no_arp=True
+    ...     src_ip=2001:0:0:0:0:0:0:1  dst_ip=2002:0:0:0:0:0:0:1  name=a_c_flow
+    ...     protocol=TCP  src_port=65535  dst_port=80    
+    ${stream2}=  L3 add  flow=b->d  frame_rate=10000  frame_cnt=50000  ethertype=86dd   
+    ...     src_mac=00:12:01:01:01:01  dst_mac=00:12:01:01:01:02  no_arp=True
+    ...     src_ip=2003:0:0:0:0:0:0:1  dst_ip=2002:0:0:0:1:0:0:1  name=b_d_flow
+    ...     protocol=TCP  src_port=80  dst_port=65535      
+    clear stats  
+    start traffic
+    sleep  5
+    stop traffic
+    verify results  a  transmitted_frames  c  received_crc_errored_frames
+    verify results  b  transmitted_frames  d  received_crc_errored_frames      
+    [Tags]  intf-vlanrewrite  matchtcp6
+
+
+Verify traffic with match on TCP6 DST-PORT
+    rest add policy match  admin-view  ${policy_name_1}  1  {"ether-type": 34525, "dst-tp-port": 80, "ip-proto": 6, "sequence": 1}
+    rest add policy match  admin-view  ${policy_name_2}  1  {"ether-type": 34525, "dst-tp-port": 65535, "ip-proto": 6, "sequence": 1}
+    sleep  5
+    REST verify bigtap policy  policy_name=${policy_name_1}   num_filter_intf=1  num_delivery_intf=1
+    REST verify bigtap policy  policy_name=${policy_name_2}   num_filter_intf=1  num_delivery_intf=1    
+    ${stream1}=  L3 add  flow=a->c  frame_rate=10000  frame_cnt=50000  ethertype=86dd   
+    ...     src_mac=00:11:01:01:01:01  dst_mac=00:11:01:01:01:02  no_arp=True
+    ...     src_ip=2001:0:0:0:0:0:0:1  dst_ip=2002:0:0:0:0:0:0:1  name=a_c_flow
+    ...     protocol=TCP  src_port=65535  dst_port=80    
+    ${stream2}=  L3 add  flow=b->d  frame_rate=10000  frame_cnt=50000  ethertype=86dd   
+    ...     src_mac=00:12:01:01:01:01  dst_mac=00:12:01:01:01:02  no_arp=True
+    ...     src_ip=2003:0:0:0:0:0:0:1  dst_ip=2002:0:0:0:1:0:0:1  name=b_d_flow
+    ...     protocol=TCP  src_port=80  dst_port=65535      
+    clear stats  
+    start traffic
+    sleep  5
+    stop traffic
+    verify results  a  transmitted_frames  c  received_crc_errored_frames
+    verify results  b  transmitted_frames  d  received_crc_errored_frames      
+    [Tags]  intf-vlanrewrite  matchtcp6
+
+
+Verify traffic with match on TCP6 SRC-PORT RANGE
+    rest add policy match  admin-view  ${policy_name_1}  1  {"src-tp-port-max": 65535, "ether-type": 34525, "src-tp-port-min": 65000, "ip-proto": 6, "sequence": 1}
+    rest add policy match  admin-view  ${policy_name_2}  1  {"src-tp-port-max": 1024, "ether-type": 34525, "src-tp-port-min": 1, "ip-proto": 6, "sequence": 1}
+    sleep  5
+    REST verify bigtap policy  policy_name=${policy_name_1}   num_filter_intf=1  num_delivery_intf=1
+    REST verify bigtap policy  policy_name=${policy_name_2}   num_filter_intf=1  num_delivery_intf=1    
+    ${stream1}=  L3 add  flow=a->c  frame_rate=10000  frame_cnt=50000  ethertype=86dd   
+    ...     src_mac=00:11:01:01:01:01  dst_mac=00:11:01:01:01:02  no_arp=True
+    ...     src_ip=2001:0:0:0:0:0:0:1  dst_ip=2002:0:0:0:0:0:0:1  name=a_c_flow
+    ...     protocol=TCP  src_port=65300  dst_port=4000    
+    ${stream2}=  L3 add  flow=b->d  frame_rate=10000  frame_cnt=50000  ethertype=86dd   
+    ...     src_mac=00:12:01:01:01:01  dst_mac=00:12:01:01:01:02  no_arp=True
+    ...     src_ip=2003:0:0:0:0:0:0:1  dst_ip=2002:0:0:0:1:0:0:1  name=b_d_flow
+    ...     protocol=TCP  src_port=80  dst_port=4000      
+    clear stats  
+    start traffic
+    sleep  5
+    stop traffic
+    verify results  a  transmitted_frames  c  received_crc_errored_frames
+    verify results  b  transmitted_frames  d  received_crc_errored_frames      
+    [Tags]  intf-vlanrewrite  matchtcp6
+
+
+Verify traffic with match on TCP6 DST-PORT RANGE
+    rest add policy match  admin-view  ${policy_name_1}  1  {"dst-tp-port-min": 65000, "ether-type": 34525, "dst-tp-port-max": 65535, "ip-proto": 6, "sequence": 1}
+    rest add policy match  admin-view  ${policy_name_2}  1  {"dst-tp-port-min": 1, "ether-type": 34525, "dst-tp-port-max": 1025, "ip-proto": 6, "sequence": 1}
+    sleep  5
+    REST verify bigtap policy  policy_name=${policy_name_1}   num_filter_intf=1  num_delivery_intf=1
+    REST verify bigtap policy  policy_name=${policy_name_2}   num_filter_intf=1  num_delivery_intf=1    
+    ${stream1}=  L3 add  flow=a->c  frame_rate=10000  frame_cnt=50000  ethertype=86dd   
+    ...     src_mac=00:11:01:01:01:01  dst_mac=00:11:01:01:01:02  no_arp=True
+    ...     src_ip=2001:0:0:0:0:0:0:1  dst_ip=2002:0:0:0:0:0:0:1  name=a_c_flow
+    ...     protocol=TCP  src_port=4000  dst_port=65300    
+    ${stream2}=  L3 add  flow=b->d  frame_rate=10000  frame_cnt=50000  ethertype=86dd   
+    ...     src_mac=00:12:01:01:01:01  dst_mac=00:12:01:01:01:02  no_arp=True
+    ...     src_ip=2003:0:0:0:0:0:0:1  dst_ip=2002:0:0:0:1:0:0:1  name=b_d_flow
+    ...     protocol=TCP  src_port=4000  dst_port=80      
+    clear stats  
+    start traffic
+    sleep  5
+    stop traffic
+    verify results  a  transmitted_frames  c  received_crc_errored_frames
+    verify results  b  transmitted_frames  d  received_crc_errored_frames      
+    [Tags]  intf-vlanrewrite  matchtcp6            
+
+
+Verify traffic with match on UDP6
+    rest add policy match  admin-view  ${policy_name_1}  1  {"sequence": 1, "ip-proto": 17, "ether-type": 34525}
+    rest add policy match  admin-view  ${policy_name_2}  1  {"sequence": 1, "ip-proto":17, "ether-type": 34525}
+    sleep  5
+    REST verify bigtap policy  policy_name=${policy_name_1}   num_filter_intf=1  num_delivery_intf=1
+    REST verify bigtap policy  policy_name=${policy_name_2}   num_filter_intf=1  num_delivery_intf=1    
+    ${stream1}=  L3 add  flow=a->c  frame_rate=10000  frame_cnt=50000  ethertype=86dd   
+    ...     src_mac=00:11:01:01:01:01  dst_mac=00:11:01:01:01:02  no_arp=True
+    ...     src_ip=2001:0:0:0:0:0:0:1  dst_ip=2002:0:0:0:0:0:0:1  name=a_c_flow
+    ...     protocol=UDP  src_port=65535  dst_port=80    
+    ${stream2}=  L3 add  flow=b->d  frame_rate=10000  frame_cnt=50000  ethertype=86dd   
+    ...     src_mac=00:12:01:01:01:01  dst_mac=00:12:01:01:01:02  no_arp=True
+    ...     src_ip=2003:0:0:0:0:0:0:1  dst_ip=2002:0:0:0:1:0:0:1  name=b_d_flow
+    ...     protocol=UDP  src_port=80  dst_port=65535      
+    clear stats  
+    start traffic
+    sleep  5
+    stop traffic
+    verify results  a  transmitted_frames  c  received_crc_errored_frames
+    verify results  b  transmitted_frames  d  received_crc_errored_frames      
+    [Tags]  intf-vlanrewrite  matchUDP6
+
+
+Verify traffic with match on UDP6 SRC-PORT
+    rest add policy match  admin-view  ${policy_name_1}  1  {"src-tp-port": 65535, "ether-type": 34525, "ip-proto":17, "sequence": 1}
+    rest add policy match  admin-view  ${policy_name_2}  1  {"src-tp-port": 80, "ether-type": 34525, "ip-proto":17, "sequence": 1}
+    sleep  5
+    REST verify bigtap policy  policy_name=${policy_name_1}   num_filter_intf=1  num_delivery_intf=1
+    REST verify bigtap policy  policy_name=${policy_name_2}   num_filter_intf=1  num_delivery_intf=1    
+    ${stream1}=  L3 add  flow=a->c  frame_rate=10000  frame_cnt=50000  ethertype=86dd   
+    ...     src_mac=00:11:01:01:01:01  dst_mac=00:11:01:01:01:02  no_arp=True
+    ...     src_ip=2001:0:0:0:0:0:0:1  dst_ip=2002:0:0:0:0:0:0:1  name=a_c_flow
+    ...     protocol=UDP  src_port=65535  dst_port=80    
+    ${stream2}=  L3 add  flow=b->d  frame_rate=10000  frame_cnt=50000  ethertype=86dd   
+    ...     src_mac=00:12:01:01:01:01  dst_mac=00:12:01:01:01:02  no_arp=True
+    ...     src_ip=2003:0:0:0:0:0:0:1  dst_ip=2002:0:0:0:1:0:0:1  name=b_d_flow
+    ...     protocol=UDP  src_port=80  dst_port=65535      
+    clear stats  
+    start traffic
+    sleep  5
+    stop traffic
+    verify results  a  transmitted_frames  c  received_crc_errored_frames
+    verify results  b  transmitted_frames  d  received_crc_errored_frames      
+    [Tags]  intf-vlanrewrite  matchUDP6
+
+
+Verify traffic with match on UDP6 DST-PORT
+    rest add policy match  admin-view  ${policy_name_1}  1  {"ether-type": 34525, "dst-tp-port": 80, "ip-proto":17, "sequence": 1}
+    rest add policy match  admin-view  ${policy_name_2}  1  {"ether-type": 34525, "dst-tp-port": 65535, "ip-proto":17, "sequence": 1}
+    sleep  5
+    REST verify bigtap policy  policy_name=${policy_name_1}   num_filter_intf=1  num_delivery_intf=1
+    REST verify bigtap policy  policy_name=${policy_name_2}   num_filter_intf=1  num_delivery_intf=1    
+    ${stream1}=  L3 add  flow=a->c  frame_rate=10000  frame_cnt=50000  ethertype=86dd   
+    ...     src_mac=00:11:01:01:01:01  dst_mac=00:11:01:01:01:02  no_arp=True
+    ...     src_ip=2001:0:0:0:0:0:0:1  dst_ip=2002:0:0:0:0:0:0:1  name=a_c_flow
+    ...     protocol=UDP  src_port=65535  dst_port=80    
+    ${stream2}=  L3 add  flow=b->d  frame_rate=10000  frame_cnt=50000  ethertype=86dd   
+    ...     src_mac=00:12:01:01:01:01  dst_mac=00:12:01:01:01:02  no_arp=True
+    ...     src_ip=2003:0:0:0:0:0:0:1  dst_ip=2002:0:0:0:1:0:0:1  name=b_d_flow
+    ...     protocol=UDP  src_port=80  dst_port=65535      
+    clear stats  
+    start traffic
+    sleep  5
+    stop traffic
+    verify results  a  transmitted_frames  c  received_crc_errored_frames
+    verify results  b  transmitted_frames  d  received_crc_errored_frames      
+    [Tags]  intf-vlanrewrite  matchUDP6
+
+
+Verify traffic with match on UDP6 SRC-PORT RANGE
+    rest add policy match  admin-view  ${policy_name_1}  1  {"src-tp-port-max": 65535, "ether-type": 34525, "src-tp-port-min": 65000, "ip-proto":17, "sequence": 1}
+    rest add policy match  admin-view  ${policy_name_2}  1  {"src-tp-port-max": 1024, "ether-type": 34525, "src-tp-port-min": 1, "ip-proto":17, "sequence": 1}
+    sleep  5
+    REST verify bigtap policy  policy_name=${policy_name_1}   num_filter_intf=1  num_delivery_intf=1
+    REST verify bigtap policy  policy_name=${policy_name_2}   num_filter_intf=1  num_delivery_intf=1    
+    ${stream1}=  L3 add  flow=a->c  frame_rate=10000  frame_cnt=50000  ethertype=86dd   
+    ...     src_mac=00:11:01:01:01:01  dst_mac=00:11:01:01:01:02  no_arp=True
+    ...     src_ip=2001:0:0:0:0:0:0:1  dst_ip=2002:0:0:0:0:0:0:1  name=a_c_flow
+    ...     protocol=UDP  src_port=65300  dst_port=4000    
+    ${stream2}=  L3 add  flow=b->d  frame_rate=10000  frame_cnt=50000  ethertype=86dd   
+    ...     src_mac=00:12:01:01:01:01  dst_mac=00:12:01:01:01:02  no_arp=True
+    ...     src_ip=2003:0:0:0:0:0:0:1  dst_ip=2002:0:0:0:1:0:0:1  name=b_d_flow
+    ...     protocol=UDP  src_port=80  dst_port=4000      
+    clear stats  
+    start traffic
+    sleep  5
+    stop traffic
+    verify results  a  transmitted_frames  c  received_crc_errored_frames
+    verify results  b  transmitted_frames  d  received_crc_errored_frames      
+    [Tags]  intf-vlanrewrite  matchUDP6
+
+
+Verify traffic with match on UDP6 DST-PORT RANGE
+    rest add policy match  admin-view  ${policy_name_1}  1  {"dst-tp-port-min": 65000, "ether-type": 34525, "dst-tp-port-max": 65535, "ip-proto":17, "sequence": 1}
+    rest add policy match  admin-view  ${policy_name_2}  1  {"dst-tp-port-min": 1, "ether-type": 34525, "dst-tp-port-max": 1025, "ip-proto":17, "sequence": 1}
+    sleep  5
+    REST verify bigtap policy  policy_name=${policy_name_1}   num_filter_intf=1  num_delivery_intf=1
+    REST verify bigtap policy  policy_name=${policy_name_2}   num_filter_intf=1  num_delivery_intf=1    
+    ${stream1}=  L3 add  flow=a->c  frame_rate=10000  frame_cnt=50000  ethertype=86dd   
+    ...     src_mac=00:11:01:01:01:01  dst_mac=00:11:01:01:01:02  no_arp=True
+    ...     src_ip=2001:0:0:0:0:0:0:1  dst_ip=2002:0:0:0:0:0:0:1  name=a_c_flow
+    ...     protocol=UDP  src_port=4000  dst_port=65300    
+    ${stream2}=  L3 add  flow=b->d  frame_rate=10000  frame_cnt=50000  ethertype=86dd   
+    ...     src_mac=00:12:01:01:01:01  dst_mac=00:12:01:01:01:02  no_arp=True
+    ...     src_ip=2003:0:0:0:0:0:0:1  dst_ip=2002:0:0:0:1:0:0:1  name=b_d_flow
+    ...     protocol=UDP  src_port=4000  dst_port=80      
+    clear stats  
+    start traffic
+    sleep  5
+    stop traffic
+    verify results  a  transmitted_frames  c  received_crc_errored_frames
+    verify results  b  transmitted_frames  d  received_crc_errored_frames      
+    [Tags]  intf-vlanrewrite  matchUDP6
+
+Verify traffic with match on IPv4, strip vlan
+    rest add policy match  admin-view  ${policy_name_1}  1  {"sequence": 1, "ether-type": 2048}
+    rest add policy match  admin-view  ${policy_name_2}  1  {"sequence": 1, "ether-type": 2048}
+    rest add stripvlan to policy  ${policy_name_1}  
+    rest add stripvlan to policy  ${policy_name_2}      
+    sleep  5
+    REST verify bigtap policy  policy_name=${policy_name_1}   num_filter_intf=1  num_delivery_intf=1
+    REST verify bigtap policy  policy_name=${policy_name_2}   num_filter_intf=1  num_delivery_intf=1    
+    ${stream1}=  L3 add  flow=a->c  frame_rate=10000  frame_cnt=50000   
+    ...     src_mac=00:11:01:01:01:01  dst_mac=00:11:01:01:01:02  no_arp=True
+    ...     src_ip=10.1.101.1  dst_ip=10.1.101.2  name=a_c_flow
+    ${stream2}=  L3 add  flow=b->d  frame_rate=10000  frame_cnt=50000   
+    ...     src_mac=00:12:01:01:01:01  dst_mac=00:12:01:01:01:02  no_arp=True
+    ...     src_ip=10.1.102.1  dst_ip=10.1.102.2  name=b_d_flow  
+    clear stats  
+    start traffic
+    sleep  5
+    stop traffic
+    verify results  a  transmitted_frames  c  received_frames
+    verify results  b  transmitted_frames  d  received_frames
+    rest delete stripvlan from policy  ${policy_name_1}
+    rest delete stripvlan from policy  ${policy_name_1}
+    Sleep  5      
+    [Tags]  intf-vlanrewrite  stripvlan 
+
+
+Verify traffic with match on IPv6, strip vlan
+    rest add policy match  admin-view  ${policy_name_1}  1  {"sequence": 1, "ether-type": 34525}
+    rest add policy match  admin-view  ${policy_name_2}  1  {"sequence": 1, "ether-type": 34525}
+    rest add stripvlan to policy  ${policy_name_1}  
+    rest add stripvlan to policy  ${policy_name_2}      
+    sleep  5
+    REST verify bigtap policy  policy_name=${policy_name_1}   num_filter_intf=1  num_delivery_intf=1
+    REST verify bigtap policy  policy_name=${policy_name_2}   num_filter_intf=1  num_delivery_intf=1    
+    ${stream1}=  L3 add  flow=a->c  frame_rate=10000  frame_cnt=50000  ethertype=86dd   
+    ...     src_mac=00:11:01:01:01:01  dst_mac=00:11:01:01:01:02  no_arp=True
+    ...     src_ip=2002:0:0:0:0:0:0:1  dst_ip=2001:0:0:0:0:0:0:1  name=a_c_flow
+    ${stream2}=  L3 add  flow=b->d  frame_rate=10000  frame_cnt=50000  ethertype=86dd   
+    ...     src_mac=00:12:01:01:01:01  dst_mac=00:12:01:01:01:02  no_arp=True
+    ...     src_ip=2002:0:0:0:1:0:0:1  dst_ip=2001:0:0:0:1:0:0:1  name=b_d_flow  
+    clear stats  
+    start traffic
+    sleep  5
+    stop traffic
+    verify results  a  transmitted_frames  c  received_frames
+    verify results  b  transmitted_frames  d  received_frames
+    rest delete stripvlan from policy  ${policy_name_1}
+    rest delete stripvlan from policy  ${policy_name_1}
+    Sleep  5      
+    [Tags]  intf-vlanrewrite  stripvlan
+
+
+Verify traffic with match on L2 IPv4 Multicast MAC Address
+    rest add policy match  admin-view  ${policy_name_1}  1  {"dst-mac": "01:00:5E:00:00:01", "sequence": 1}
+    rest add policy match  admin-view  ${policy_name_2}  1  {"dst-mac": "01:00:5E:01:00:01", "sequence": 1}
+    sleep  5
+    REST verify bigtap policy  policy_name=${policy_name_1}   num_filter_intf=1  num_delivery_intf=1
+    REST verify bigtap policy  policy_name=${policy_name_2}   num_filter_intf=1  num_delivery_intf=1    
+    ${stream1}=  L2 add  flow=a->c  frame_rate=10000  frame_cnt=50000   
+    ...     src_mac=00:11:01:01:01:01  dst_mac=01:00:5E:00:00:01
+    ${stream2}=  L2 add  flow=b->d  frame_rate=10000  frame_cnt=50000   
+    ...     src_mac=00:12:01:01:01:01  dst_mac=01:00:5E:01:00:01
+    clear stats  
+    start traffic
+    sleep  5
+    stop traffic
+    verify results  a  transmitted_frames  c  received_crc_errored_frames
+    verify results  b  transmitted_frames  d  received_crc_errored_frames 
+    [Tags]  intf-vlanrewrite  ipv4-multicast 
+
+Verify traffic with match on IPv4 Multicast Dst-IP Address
+    rest add policy match  admin-view  ${policy_name_1}  1  {"dst-ip-mask": "255.255.224.0", "sequence": 1, "dst-ip": "225.0.0.1", "ether-type": 2048}
+    rest add policy match  admin-view  ${policy_name_2}  1  {"dst-ip-mask": "255.255.224.0", "sequence": 1, "dst-ip": "10.1.102.2", "ether-type": 2048}
+    sleep  5
+    REST verify bigtap policy  policy_name=${policy_name_1}   num_filter_intf=1  num_delivery_intf=1
+    REST verify bigtap policy  policy_name=${policy_name_2}   num_filter_intf=1  num_delivery_intf=1    
+    ${stream1}=  L3 add  flow=a->c  frame_rate=10000  frame_cnt=50000   
+    ...     src_mac=00:11:01:01:01:01  dst_mac=01:00:5E:00:00:01  no_arp=True
+    ...     src_ip=10.1.101.1  dst_ip=225.0.0.1  name=a_c_flow
+    ${stream2}=  L3 add  flow=b->d  frame_rate=10000  frame_cnt=50000   
+    ...     src_mac=00:12:01:01:01:01  dst_mac=00:12:01:01:01:02  no_arp=True
+    ...     src_ip=10.1.102.1  dst_ip=10.1.102.2  name=b_d_flow  
+    clear stats  
+    start traffic
+    sleep  5
+    stop traffic
+    verify results  a  transmitted_frames  c  received_crc_errored_frames
+    verify results  b  transmitted_frames  d  received_crc_errored_frames  
+    [Tags]  intf-vlanrewrite  ipv4-multicast 
+
+
+Verify traffic with match on L2 IPv6 Multicast MAC Address
+    rest add policy match  admin-view  ${policy_name_1}  1  {"dst-mac": "33:33:5E:00:00:01", "sequence": 1}
+    rest add policy match  admin-view  ${policy_name_2}  1  {"dst-mac": "33:33:5E:01:00:01", "sequence": 1}
+    sleep  5
+    REST verify bigtap policy  policy_name=${policy_name_1}   num_filter_intf=1  num_delivery_intf=1
+    REST verify bigtap policy  policy_name=${policy_name_2}   num_filter_intf=1  num_delivery_intf=1    
+    ${stream1}=  L2 add  flow=a->c  frame_rate=10000  frame_cnt=50000   
+    ...     src_mac=00:11:01:01:01:01  dst_mac=33:33:5E:00:00:01
+    ${stream2}=  L2 add  flow=b->d  frame_rate=10000  frame_cnt=50000   
+    ...     src_mac=00:12:01:01:01:01  dst_mac=33:33:5E:01:00:01
+    clear stats  
+    start traffic
+    sleep  5
+    stop traffic
+    verify results  a  transmitted_frames  c  received_crc_errored_frames
+    verify results  b  transmitted_frames  d  received_crc_errored_frames 
+    [Tags]  intf-vlanrewrite  ipv6-multicast 
+
+Verify traffic with match on IPv6 Multicast Dst-IP Address
+    rest add policy match  admin-view  ${policy_name_1}  1  {"dst-ip-mask": "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff", "sequence": 1, "dst-ip": "ff02::1", "ether-type": 34525}
+    rest add policy match  admin-view  ${policy_name_2}  1  {"dst-ip-mask": "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff", "sequence": 1, "dst-ip": "ff02::2", "ether-type": 34525}
+    sleep  5
+    REST verify bigtap policy  policy_name=${policy_name_1}   num_filter_intf=1  num_delivery_intf=1
+    REST verify bigtap policy  policy_name=${policy_name_2}   num_filter_intf=1  num_delivery_intf=1    
+    ${stream1}=  L3 add  flow=a->c  frame_rate=10000  frame_cnt=50000  ethertype=86dd   
+    ...     src_mac=00:11:01:01:01:01  dst_mac=33:33:5E:00:00:01  no_arp=True
+    ...     dst_ip=ff02::1  src_ip=2002:0:0:0:0:0:0:1  name=a_c_flow
+    ${stream2}=  L3 add  flow=b->d  frame_rate=10000  frame_cnt=50000  ethertype=86dd   
+    ...     src_mac=00:12:01:01:01:01  dst_mac=33:33:5E:01:00:01  no_arp=True
+    ...     dst_ip=ff02::2  src_ip=2002:0:0:0:1:0:0:1  name=b_d_flow  
+    clear stats  
+    start traffic
+    sleep  5
+    stop traffic
+    verify results  a  transmitted_frames  c  received_crc_errored_frames
+    verify results  b  transmitted_frames  d  received_crc_errored_frames      
+    [Tags]  intf-vlanrewrite  ipv6-multicast 
+
+
+* Keywords
+
+bigtap suite setup
+    base suite setup
+    rest add switch alias  s1  ${switch_1_alias}
+    rest add switch alias  s2  ${switch_2_alias}
+    rest add switch alias  s3  ${switch_3_alias}       
+    rest add interface role  s1  ${filter_1}  filter  ${filter_1_nick}  rewrite_vlan=${vlan_rewrite_1}
+    rest add interface role  s1  ${filter_2}  filter  ${filter_2_nick}  rewrite_vlan=${vlan_rewrite_2}
+    rest add interface role  s2  ${delivery_1}  delivery  ${delivery_1_nick}
+    rest add interface role  s2  ${delivery_2}  delivery  ${delivery_2_nick}           
+    rest add policy  admin-view  ${policy_name_1}  forward
+    rest add policy match  admin-view  ${policy_name_1}  1  {"any-traffic": true, "sequence": 1}
+    rest add policy interface  admin-view  ${policy_name_1}  ${filter_1_nick}  filter
+    rest add policy interface  admin-view  ${policy_name_1}  ${delivery_1_nick}  delivery 
+    rest add policy  admin-view  ${policy_name_2}  forward
+    rest add policy match  admin-view  ${policy_name_2}  1  {"any-traffic": true, "sequence": 1}
+    rest add policy interface  admin-view  ${policy_name_2}  ${filter_2_nick}  filter
+    rest add policy interface  admin-view  ${policy_name_2}  ${delivery_2_nick}  delivery
+    Sleep  5        
+
+verify results   [Arguments]  ${port_1}  ${tx}  ${port_2}  ${rx}  
+    Sleep  5
+    ${report}=  fetch port stats
+    ${tx_value}=  verify dict key  ${report}  ${port_1}  ${tx}
+    ${rx_value}=  verify dict key  ${report}  ${port_2}  ${rx}
+    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}  rangev=100
+    Should be true  ${in_range} 
+
+bigtap test setup
+    delete traffic
+
+bigtap test teardown
+    delete traffic
+
+bigtap suite teardown
+    rest delete policy  admin-view   ${policy_name_1}
+    rest delete policy  admin-view   ${policy_name_2}
+    rest delete interface role  s1  ${filter_1}  filter  ${filter_1_nick} 
+    rest delete interface role  s1  ${filter_2}  filter  ${filter_2_nick} 
+    rest delete interface role  s2  ${delivery_1}  delivery  ${delivery_1_nick}
+    rest delete interface role  s2  ${delivery_2}  delivery  ${delivery_2_nick}
+    rest delete interface  s1  ${filter_1}  switch_alias=${switch_1_alias}
+    rest delete interface  s1  ${filter_2}  switch_alias=${switch_1_alias}    
+    rest delete interface  s2  ${delivery_1}  switch_alias=${switch_2_alias}
+    rest delete interface  s2  ${delivery_2}  switch_alias=${switch_2_alias}    
+    rest delete switch alias  s1
+    rest delete switch alias  s2
+    rest delete switch alias  s3    
+    rest delete switch  s1
+    rest delete switch  s2
+    rest delete switch  s3    
+    base suite teardown
+

@@ -66,6 +66,10 @@ def undefine_vm():
         print "Issue with Deleting VM using virsh \nPlease debug on KVM Host %s \n Exiting.." % kvm_host
         sys.exit(1)
 
+def delete_storage_file():
+    kvm_handle.bash("sudo rm -rf /var/lib/libvirt/images/%s.vmdk" % vm_name )
+    helpers.log("Success Removing Storage files of VM !!")
+
 def main(*args):
     connect_to_kvm_host(hostname = kvm_host, user = kvm_user,
                                      password = kvm_pwd, name = 'kvm_host')
@@ -83,6 +87,7 @@ def main(*args):
         helpers.log("VM with given name %s doesn't exits in KVM Host! %s\nExisting.." % (vm_name, kvm_host))
         print "VM with given name %s doens't exists in KVM Host %s\nWe are good!\nExisting.." % (vm_name, kvm_host)
         sys.exit(1)
+    delete_storage_file()
    
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
