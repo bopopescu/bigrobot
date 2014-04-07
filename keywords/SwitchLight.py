@@ -120,7 +120,7 @@ class SwitchLight(object):
             helpers.test_failure("Could not execute command. Please check log for errors")
             return False
 
-    def cli_show_interfaces(self, node):
+    def cli_show_all_interfaces(self, node, intf_count=52):
         '''
             Objective:
             - Verify all 52 interfaces are seen in switch
@@ -137,7 +137,8 @@ class SwitchLight(object):
             s1 = t.switch(node)
             count = 1
             intf_pass_count = 0
-            while count < 53:
+            loop_count = int(intf_count) + 1
+            while count < loop_count:
                 intf_name = "ethernet" + str(count)
                 cli_input = "show interface ethernet" + str(count) + " detail"
                 s1.enable(cli_input)
@@ -146,7 +147,7 @@ class SwitchLight(object):
                     intf_pass_count = intf_pass_count + 1
                 helpers.log("Interface %s \n Output is %s \n ======\n" % (intf_name, cli_output))
                 count = count + 1
-            if intf_pass_count == 52:
+            if intf_pass_count == int(intf_count):
                 return True
             else:
                 return False
