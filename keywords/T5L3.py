@@ -9,7 +9,7 @@ class T5L3(object):
     def __init__(self):
         pass
         
-    def rest_add_vns_ip(self, tenant, vns, ipaddr, netmask):
+    def rest_add_vns_ip(self, tenant, vns, ipaddr, netmask, private=False):
         '''Create vns router interface via command "virtual-router vns interface"
         
             Input:
@@ -17,15 +17,15 @@ class T5L3(object):
                 `vns`           vns interface name which must be similar to VNS
                 `ipaddr`        interface ip address
                 `netmask`       vns subnet mask
-            PATCH http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[name="A"]/virtual-router/vns-interfaces[vns-name="A2"] {"ip-cidr": "10.10.12.1/24"}
-        
+                `private`        true or false 
+            PATCH http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant%5Bname%3D%22X%22%5D/virtual-router/vns-interfaces%5Bvns-name%3D%22X1%22%5D {"ip-cidr": "10.251.1.1/24", "private": false}
             Return: true if configuration is successful, false otherwise
         '''
         
         t = test.Test()
         c = t.controller('master')
         
-        helpers.test_log("Input arguments: tenant = %s vns = %s ipaddr = %s netmask = %s " % (tenant, vns, ipaddr, netmask ))
+        helpers.test_log("Input arguments: tenant = %s vns = %s ipaddr = %s netmask = %s private = %s " % (tenant, vns, ipaddr, netmask, private))
         
         #url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/virtual-router/vns-interfaces' % (tenant)
         url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/virtual-router/vns-interfaces[vns-name="%s"]' % (tenant, vns)
@@ -33,7 +33,8 @@ class T5L3(object):
         try:
             #c.rest.patch(url, {"ip-cidr": str(ip_addr)})
             #c.rest.post(url, {"vns-name": vns, "ip-cidr": str(ip_addr), "active": True})
-            c.rest.put(url, {"vns-name": vns, "ip-cidr": str(ip_addr)})
+#            c.rest.put(url, {"vns-name": vns, "ip-cidr": str(ip_addr)})
+            c.rest.patch(url, {"ip-cidr": str(ip_addr), "private": private})
         except:
             #helpers.test_failure(c.rest.error())
             return False
