@@ -472,7 +472,6 @@ class T5Utilities(object):
 '''
 
 from threading import Thread
-from time import sleep
 
 class T5PlatformThreads(Thread):
     
@@ -481,19 +480,16 @@ class T5PlatformThreads(Thread):
             self.threadID = threadID
             self.name = name
             self.arg = arg
-            self._return = None
             
     def run(self):
         if(self.name == "switchReboot"):
-            self._return = self.switch_reboot(self.arg)
+            self.switch_reboot(self.arg)
         if(self.name == "failover"):
-            self._return = self.controller_failover()
+            self.controller_failover()
         if(self.name == "activeReboot"):
-            self._return = self.controller_reboot('master')
+            self.controller_reboot('master')
         if(self.name == "standbyReboot"):
-            self._return = self.controller_reboot('slave')
-        if(self.name == "monitorFloodlight"):
-            self._return = self.start_floodlight_monitor(self.arg)
+            self.controller_reboot('slave')
     
     def join(self):
         Thread.join(self)
@@ -541,90 +537,6 @@ class T5PlatformThreads(Thread):
         print ("Exiting Thread %s After Controller Reboot for Node: " % (self.threadID), node)
         return returnVal
     
-    def floodlight_monitor(self,node):
-                t = test.Test()
-                
-                c = t.controller(node)
-        
-                print("INFO: connecting to bash mode in both controllers")
-                print("INFO: Checking if file already exist in the controller")
-                
-                try:
-                    while(1):
-                        monitorCommand =  "sudo tail -f /var/log/floodlight/floodlight.log | grep --line-buffered DEBUG >> %s &" % (node+"_floodlight_dump.txt")
-                        #c.sudo(monitorCommand, prompt='Broadcast message')
-                        c.sudo(monitorCommand)
-                        
-                        sleep(30)
-                        common = bsnCommon()
-                        if(common.verify_ssh_connection(c.ip())):
-                            print ("Restarting Monitor Thread On: %s After Rebooting" % node)
-                            return True
-                except:
-                    print "Exception from monitor thread for node: %" % (node)
-        
-'''
-import multiprocessing
-platformProcesses = []
-class T5PlatformProcess():
-        
-        def __init__(self):
-            pass
-        
-        def floodlight_monitor(self,node):
-                t = test.Test()
-                
-                c = t.controller(node)
-        
-                print("INFO: connecting to bash mode in both controllers")
-                print("INFO: Checking if file already exist in the controller")
-                
-                try:
-                    while(1):
-                        monitorCommand =  "sudo tail -f /var/log/floodlight/floodlight.log | grep --line-buffered DEBUG >> %s &" % (node+"_floodlight_dump.txt")
-                        c.sudo(monitorCommand, prompt='Broadcast message')
-                        sleep(30)
-                        common = bsnCommon()
-                        if(common.verify_ssh_connection(c.ip())):
-                            print ("Restarting Monitor Thread On: %s After Rebooting" % node)
-                            return True
-                except:
-                    print "Exception from monitor thread for node: %" % (node)
-                
-            
-            
-        def start_floodlight_monitor(self):
-            global platformProcesses    
-            
-            try:
-                t = test.Test()
-                p1 = multiprocessing.Process(name = "c1Monitor", target=self.floodlight_monitor('c1'), args='c1')
-                p2 = multiprocessing.Process(name = "c2Monitor", target=self.floodlight_monitor('c2'), args='c2')
-                platformProcesses.append(p1)
-                platformProcesses.append(p2)
-                
-                p1.start()
-                p2.start()
-            except:
-                print "Exception Occured while starting T5 Processes"
-                return False
-            else:
-                return True
-        
-        def stop_floodlight_monitor(self):
-            global platformProcesses 
-            
-            try:
-                platformProcesses[0].terminate()
-                platformProcesses[1].terminate()
-            except:
-                print "Exception Occured while terminating T5 Processes"
-                return False
-            
-            else:
-                return True
-        
-'''         
 
         
 
