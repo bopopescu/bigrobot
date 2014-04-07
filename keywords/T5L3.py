@@ -236,7 +236,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
         t = test.Test()
         c = t.controller('master')
         
-        url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/endpoints'
+        url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/endpoint'
         c.rest.get(url)
         helpers.log("Output: %s" % c.rest.result_json())
         data = c.rest.content()
@@ -247,7 +247,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
         c = t.controller('master')
         
         endptname = "%5Bname%3D%22" + endpointname + "%22%5D" 
-        url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/endpoints%s' % (endptname)
+        url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/endpoint%s' % (endptname)
         c.rest.get(url)
         helpers.log("Output: %s" % c.rest.result_json())
         data = c.rest.content()
@@ -255,6 +255,8 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
     
     def rest_show_endpoints_mac(self, mac):
         '''
+        REST-SIMPLE: GET http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/info/endpoint-manager/endpoint%5Bmac%3D%2290%3Ae2%3Aba%3A4e%3Abb%3A90%22%5D
+
         %5Bmac%3D%2200%3A00%3A00%3A00%3A00%3A01%22%5D
         '''
         t = test.Test()
@@ -266,7 +268,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
 #        str1 = str4.replace(" ", "")
 #        mac_addr = "%5Bmac%3D%22" + str1 + "%22%5D" 
 #        url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/endpoints%s' % (mac_addr)
-        url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/endpoints[mac="%s"]' % (mac)
+        url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/endpoint[mac="%s"]' % (mac)
 
         c.rest.get(url)
         helpers.log("Output: %s" % c.rest.result_json())
