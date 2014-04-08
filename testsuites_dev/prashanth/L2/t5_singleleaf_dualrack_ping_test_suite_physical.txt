@@ -9,8 +9,6 @@ Test Teardown    T5 base test teardown
 Force Tags       T5 
 Library          keywords/BsnCommon.py
 Library          keywords/T5.py
-Library	         keywords/T5Fabric.py
-Library          keywords/Mininet.py
 Library			 keywords/Host.py
 Resource	     testsuites/T5/t5_singleleaf_three_rack_physical_resource.txt
 Resource		 testsuites/T5/t5_physical_variables.txt
@@ -138,6 +136,7 @@ Single Leaf Three Rack Suite Setup
    bring up eth1 h3
    bring up eth1 h4
    bring up eth1 h2
+   bring up 1 gig interface
    sleep  5 
    
 Single Leaf Three Rack Suite Teardown 
@@ -210,7 +209,17 @@ bring up eth1 h2
 	bash init intf  h2  eth1
     bash add ip address  h2  ${h2_single_ip}/24  eth1
     bash ifup intf  h2  eth1
-
+bring up 1 gig interface
+	bash execute command  leaf0-a  ofad-ctl autoneg 24
+	bash execute command  leaf0-a  ofad-ctl autoneg 25
+	bash execute command  leaf0-a  ofad-ctl autoneg 26
+	bash execute command  leaf0-b  ofad-ctl autoneg 24
+	bash execute command  leaf1-a  ofad-ctl autoneg 24
+	bash execute command  leaf1-a  ofad-ctl autoneg 25
+	bash execute command  leaf1-a  ofad-ctl autoneg 26
+	bash execute command  leaf1-b  ofad-ctl autoneg 24
+	bash execute command  leaf2-a  ofad-ctl autoneg 24
+	bash execute command  leaf2-b  ofad-ctl autoneg 24 
 
   
 
