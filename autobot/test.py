@@ -836,9 +836,9 @@ class Test(object):
         return n.rest.request_session_cookie()
 
 
-    def setup_controller(self, name):
+    def setup_controller_pre_clean_config(self, name):
         """
-        Perform setup on BSN controllers
+        Perform setup on BSN controllers before calling clean configuration.
         """
         n = self.topology(name)
 
@@ -847,13 +847,45 @@ class Test(object):
                         % name)
             return
 
+        helpers.log("Setting up controllers - before clean config")
+
         self.controller_cli_show_version(name)
         self.setup_controller_firewall_allow_rest_access(name)
         self.setup_controller_http_session_cookie(name)
 
-    def setup_switch(self, name):
+    def setup_controller_post_clean_config(self, name):
         """
-        Perform setup on SwitchLight
+        Perform setup on BSN controllers after calling clean configuration.
+        """
+        n = self.topology(name)
+
+        if not n.devconf():
+            # helpers.log("DevConf session is not available for node '%s'"
+            #            % name)
+            return
+
+        helpers.log("Setting up controllers - after clean config")
+        # For now it's just a placeholder...
+
+    def setup_switch_pre_clean_config(self, name):
+        """
+        Perform setup on SwitchLight after calling clean configuration.
+        - configure the controller IP address and (optional) port
+        """
+        n = self.topology(name)
+
+        if not n.devconf():
+            # helpers.log("DevConf session is not available for node '%s'"
+            #            % name)
+            return
+
+        if helpers.is_switchlight(n.platform()):
+            helpers.log("Setting up switches (SwitchLight) - before clean config")
+            # For now it's just a placeholder...
+
+    def setup_switch_post_clean_config(self, name):
+        """
+        Perform setup on SwitchLight after calling clean configuration.
         - configure the controller IP address and (optional) port
         """
         n = self.topology(name)
@@ -864,7 +896,7 @@ class Test(object):
             return
 
         if helpers.is_switchlight(n.platform()):
-            helpers.log("Setting up switches (SwitchLight)")
+            helpers.log("Setting up switches (SwitchLight) - after clean config")
             for controller in ('c1', 'c2'):
                 c = self.topology(controller, ignore_error=True)
                 if c:
@@ -918,11 +950,24 @@ class Test(object):
 
         params = self.topology_params()
         helpers.debug("Topology info:\n%s" % helpers.prettify(params))
+
         for key in params:
             if helpers.is_controller(key):
-                self.setup_controller(key)
+                self.setup_controller_pre_clean_config(key)
             elif helpers.is_switch(key):
-                self.setup_switch(key)
+                self.setup_switch_pre_clean_config(key)
+
+        for key in params:
+            n = self.node(key)
+            if helpers.is_controller(key) and helpers.is_t5(n.platform()):
+                helpers.log("Running clean config on T5 controller '%s' (establishing baseline config setup)" % key)
+                self.t5_clean_configuration(key)
+
+        for key in params:
+            if helpers.is_controller(key):
+                self.setup_controller_post_clean_config(key)
+            elif helpers.is_switch(key):
+                self.setup_switch_post_clean_config(key)
 
         self._setup_completed = True
         helpers.debug("Test object setup ends.%s"
@@ -938,3 +983,105 @@ class Test(object):
                 self.teardown_switch(key)
         helpers.debug("Test object teardown ends.%s"
                       % br_utils.end_of_output_marker())
+
+    def t5_clean_configuration(self, name):
+        '''
+            Objective: Delete all user configuration
+        '''
+        t = self
+        c = t.controller(name)
+
+        helpers.log("Attempting to delete all tenants")
+        url_get_tenant = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/tenants'
+        try:
+            c.rest.get(url_get_tenant)
+            content = c.rest.content()
+        except:
+            pass
+        else:
+            if (content):
+                for i in range (0, len(content)):
+                    url_tenant_delete = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]' % content[i]['tenant-name']
+                    c.rest.delete(url_tenant_delete, {})
+
+        helpers.log("Attempting to delete all switches")
+        url_get_switches = '/api/v1/data/controller/core/switch'
+        try:
+            c.rest.get(url_get_switches)
+            content = c.rest.content()
+        except:
+            pass
+        else:
+            if (content):
+                for i in range (0, len(content)):
+                    if 'name' in content[i]:
+                        url_switch_delete = '/api/v1/data/controller/core/switch-config[name="%s"]' % content[i]['name']
+                        c.rest.delete(url_switch_delete, {})
+
+        helpers.log("Attempting to delete all port-groups")
+        url_get_portgrp = '/api/v1/data/controller/applications/bvs/port-group?config=true'
+        try:
+            c.rest.get(url_get_portgrp)
+            content = c.rest.content()
+        except:
+            pass
+        else:
+            if (content):
+                for i in range (0, len(content)):
+                    url_portgrp_delete = '/api/v1/data/controller/applications/bvs/port-group[name="%s"]' % content[i]['name']
+                    c.rest.delete(url_portgrp_delete, {})
+
+        helpers.log("Attempting to delete NTP configurations")
+        url_get_ntpservers = '/api/v1/data/controller/os/config/global/time-config?config=true'
+        try:
+            c.rest.get(url_get_ntpservers)
+            content = c.rest.content()
+        except:
+            pass
+        else:
+            if (content[0]['ntp-server']):
+                ntp_list = content[0]['ntp-server']
+                for i in range (0, len(ntp_list)):
+                    ntp_list.pop(0)
+                    url_ntp_delete = '/api/v1/data/controller/os/config/global/time-config/ntp-server'
+                    c.rest.put(url_ntp_delete, ntp_list)
+
+        helpers.log("Attempting to delete SNMP Configurations")
+        # Delete SNMP location
+        url_delete_snmp_location = '/api/v1/data/controller/os/config/global/snmp-config/location'
+        c.rest.delete(url_delete_snmp_location, {})
+        # Delete SNMP Contact
+        url_delete_snmp_contact = '/api/v1/data/controller/os/config/global/snmp-config/contact'
+        c.rest.delete(url_delete_snmp_contact, {})
+        # Disable SNMP Trap
+        url_delete_snmp_trap = '/api/v1/data/controller/os/config/global/snmp-config/trap-enabled'
+        c.rest.delete(url_delete_snmp_trap, {})
+        # Delete SNMP community
+        url_delete_snmp_community = '/api/v1/data/controller/os/config/global/snmp-config/community'
+        c.rest.delete(url_delete_snmp_community, {})
+        # Delete SNMP Trap Hosts
+        url_get_snmphost = '/api/v1/data/controller/os/config/global/snmp-config?config=true'
+        c.rest.get(url_get_snmphost)
+        content = c.rest.content()
+        if(content):
+            if ('trap-host' in content[0]):
+                for i in range (0, len(content[0]['trap-host'])):
+                    url_delete_trap = '/api/v1/data/controller/os/config/global/snmp-config/trap-host[ipaddr="%s"]/udp-port' % str(content[0]['trap-host'][i]['ipaddr'])
+                    c.rest.delete(url_delete_trap, {})
+                    url_delete_trap = '/api/v1/data/controller/os/config/global/snmp-config/trap-host[ipaddr="%s"]' % str(content[0]['trap-host'][i]['ipaddr'])
+                    c.rest.delete(url_delete_trap, {})
+
+        helpers.log("Attempting to delete logging server configurations")
+        url_get_logging = '/api/v1/data/controller/os/config/global/logging-config?config=true'
+        c.rest.get(url_get_logging)
+        content = c.rest.content()
+        if(content):
+            if ('logging-server' in content[0]):
+                for i in range (0, len(content[0]['logging-server'])):
+                    url_delete_logserver = '/api/v1/data/controller/os/config/global/logging-config/logging-server[server="%s"]' % str(content[0]['logging-server'][i]['server'])
+                    c.rest.delete(url_delete_logserver, {})
+
+        helpers.log("Attempting to disable remote logging")
+        url_disable_remotelog = '/api/v1/data/controller/os/config/global/logging-config/logging-enabled'
+        c.rest.delete(url_disable_remotelog, {})
+        return True
