@@ -21,7 +21,7 @@ Resource		testsuites/T5/t5_dualleaf_three_rack_physical_resource.txt
 * Test Cases
 Intra tenant L3 untagged traffic with dynamic endpoints same rack
 	L3 intra tenant same rack untagged with dynamic endpoints
-#	[Tags]							skipped			smoke				sanity			
+	[Tags]							skipped			smoke				sanity			
 
 Intra tenant L3 untagged traffic with dynamic endpoints across rack
 	L3 intra tenant across rack untagged with dynamic endpoints
@@ -161,7 +161,7 @@ Leaf to host link flap
 	
 Restart ofad process on spine
 	restart ofad on spine
-	[Tags]							skipped			feature			
+#	[Tags]							skipped			feature			
 	
 Restart ofad process on leaf	
 	restart ofad on leaf
@@ -261,8 +261,8 @@ L3 intra tenant same rack tagged with dynamic endpoints
 	BASH add route								h1								10.251.2.0/24			10.251.1.1
 	BASH add route								h2								10.251.1.0/24			10.251.2.1
 	sleep										20	
-#	BASH ping									h1								10.251.1.1				count=10
-#	BASH ping									h2								10.251.2.1				count=10
+	BASH ping									h1								10.251.1.1				count=10
+	BASH ping									h2								10.251.2.1				count=10
 	${value} = 									BASH verify arp					h1						10.251.1.1
 	Should Not Be True							${value} 		
 	${value} =									BASH verify arp					h2						10.251.2.1
@@ -653,7 +653,7 @@ L3 intra tenant dhcp relay across rack
 	BASH add route								h1								10.252.3.0/24			10.252.1.1
 	REST add dhcp relay							Y								Y3						10.252.1.9
 	REST enable dhcp relay						Y								Y3	
-	sleep								20
+	sleep										20
 	${h1_ip} = 									BASH get intf ipv4				h1						bond0				
 	Should Be Equal As Strings					${h1_ip}						10.252.1.9	
 	${h1_mac} =									BASH get intf mac				h1						bond0
@@ -674,7 +674,7 @@ L3 intra tenant dhcp relay across rack
 	sleep										1
 	${ipAddr} = 								BASH renew dhcpv4 address		h5						bond0
 	Should Not Be Empty							${ipAddr}
-	sleep								10
+	sleep										10
 	BASH ping									h1								${ipAddr}				count=10
 	${value} = 									BASH verify arp					h1						10.252.1.1
 	Should Be True								${value} 		
@@ -755,16 +755,16 @@ L3 dhcp request without dhcp relay enabled
 	BASH ifup intf								h1								bond0
 	BASH add ip address							h1								10.252.1.9/24			bond0					
 	BASH start service							h1								isc-dhcp-server
-	sleep								1
+	sleep										1
 	${value} = 									BASH check service status		h1						isc-dhcp-server
 	Should Contain								${value}						is started
-	sleep								1
+	sleep										1
 	REST add portgroup to vns					Y								Y1						${leaf0_pc1}			-1
 	REST add portgroup to vns					Y								Y3						${leaf2_pc1}			-1
 	BASH add route								h1								10.252.3.0/24			10.252.1.1
 	REST add dhcp relay							Y								Y3						10.252.1.9
 	REST enable dhcp relay						Y								Y3	
-	sleep								20
+	sleep										20
 	${h1_ip} = 									BASH get intf ipv4				h1						bond0				
 	Should Be Equal As Strings					${h1_ip}						10.252.1.9	
 	${h1_mac} =									BASH get intf mac				h1						bond0
@@ -776,16 +776,16 @@ L3 dhcp request without dhcp relay enabled
 	BASH ping									h1 								10.252.1.1				count=5
 	${result} = 								REST show endpoints mac			${h1_mac}
 	Should Not Be Empty							${result}
-	sleep								1
+	sleep										1
 	${value} = 									BASH verify arp					h1						10.252.1.1
 	Should Be True								${value} 		
-	sleep								1
+	sleep										1
 	${value} = 									BASH release dhcpv4 address		h5						bond0
 	Should Be True								${value}
-	sleep								1
+	sleep										1
 	${ipAddr} = 								BASH renew dhcpv4 address		h5						bond0
 	Should Not Be Empty							${ipAddr}
-	sleep								10
+	sleep										10
 	BASH ping									h1								${ipAddr}				count=10
 	${value} = 									BASH verify arp					h1						10.252.1.1
 	Should Be True								${value} 		
@@ -803,13 +803,13 @@ L3 dhcp request without dhcp relay enabled
 	REST disable dhcp relay						Y								Y3
 	REST delete dhcp relay						Y								Y3						10.252.1.9
 	BASH release dhcpv4 address					h5								bond0
-	sleep								5
+	sleep										5
 	${ipAddr} = 								BASH renew dhcpv4 address		h5						bond0
 	Should Be Empty								${ipAddr}
-	sleep								5
+	sleep										5
 	REST add dhcp relay							Y								Y3						10.252.1.9
 	REST enable dhcp relay						Y								Y3
-	sleep								20
+	sleep										20
 	${ipAddr} = 								BASH renew dhcpv4 address		h5						bond0
 	Should Not Be Empty							${ipAddr}
 	BASH ping									h1								${ipAddr} 				count=10
@@ -1549,7 +1549,7 @@ Controller HA failover via CLI
    	start traffic  								${stream1}
 	sleep										20
 	stop traffic								${stream1}
-   	verify results 								transmitted_frames  			received_frames  		${stream1}  			stream1
+   	verify results 								transmitted_frames  			received_valid_frames  		${stream1}  			stream1
 	start traffic  								${stream1}
 	sleep										5
 	verify traffic rate  						tx_rate  						rx_rate  				a  						c
@@ -1557,7 +1557,7 @@ Controller HA failover via CLI
 	Should Be True								${value}
 	sleep										15
 	stop traffic								${stream1}
-   	verify results 								transmitted_frames  			received_frames  		${stream1}  			stream1
+   	verify results 								transmitted_frames  			received_valid_frames  		${stream1}  			stream1
 	${loss} = 									BASH ping						h1						10.251.3.11 			count=10
 	Should Be True  							${loss} == 0		
 	BASH delete route							h1								10.251.3.0/24			10.251.1.1
@@ -1608,7 +1608,7 @@ Controller HA failover via reboot
     start traffic  								${stream1}
 	sleep										20
 	stop traffic								${stream1}
-   	verify results 								transmitted_frames  			received_frames  		${stream1}  			stream1
+   	verify results 								transmitted_frames  			received_valid_frames  		${stream1}  			stream1
 	start traffic  								${stream1}
 	sleep										5
 	verify traffic rate  						tx_rate  						rx_rate  				a  						c
@@ -1616,7 +1616,7 @@ Controller HA failover via reboot
 	Should Be True								${value}
 	sleep										15
 	stop traffic								${stream1}
-   	verify results 								transmitted_frames  			received_frames  		${stream1}  			stream1	
+   	verify results 								transmitted_frames  			received_valid_frames  		${stream1}  			stream1	
 	${loss} = 									BASH ping						h1						10.251.3.11 			count=10
 	Should Be True  							${loss} == 0		
 	BASH delete route							h1								10.251.3.0/24			10.251.1.1
@@ -1662,7 +1662,7 @@ Reboot spine0 via CLI
     CLI restart switch							s1
 	sleep										10
  	stop traffic								${stream1}
-    verify results 								transmitted_frames  			received_frames  		${stream1}  			stream1
+    verify results 								transmitted_frames  			received_valid_frames  		${stream1}  			stream1
 	BASH delete route							h5								10.251.2.0/24			10.251.1.1
 	BASH delete route							h6								10.251.1.0/24			10.251.2.1
 	
@@ -1706,7 +1706,7 @@ Reboot Leaf0 via CLI
     CLI restart switch							s3
 	sleep										200 
  	stop traffic								${stream1}
-    verify results 								transmitted_frames  			received_frames  		${stream1}  			stream1
+    verify results 								transmitted_frames  			received_valid_frames  		${stream1}  			stream1
 	BASH delete route							h5								10.251.2.0/24			10.251.1.1
 	BASH delete route							h6								10.251.1.0/24			10.251.2.1
 
@@ -1828,7 +1828,7 @@ Connect and disconnect one leaf in dual tor to controller
     \	verify traffic rate  					tx_rate  						rx_rate  				a  						c
   	sleep										1
 	stop traffic								${stream1}
-#	verify results 								transmitted_frames  			received_frames  		${stream1}  			stream1
+#	verify results 								transmitted_frames  			received_valid_frames  		${stream1}  			stream1
 	verify traffic packet						tx_cnt							rx_cnt					a						c
 	BASH delete route							h1								10.251.3.0/24			10.251.1.1
 	BASH delete route							h3								10.251.1.0/24			10.251.3.1
@@ -1883,7 +1883,7 @@ Flap link between leaf and spine
 	CLI enable interface						s3								${leaf0-a_spine0}	
   	sleep										10
 	stop traffic								${stream1}
-	verify results 								transmitted_frames  			received_frames  		${stream1}  			stream1
+	verify results 								transmitted_frames  			received_valid_frames  		${stream1}  			stream1
 	BASH delete route							h1								10.251.3.0/24			10.251.1.1
 	BASH delete route							h3								10.251.1.0/24			10.251.3.1
 		
@@ -2010,7 +2010,7 @@ restart ofad on spine
 	verify traffic rate  						tx_rate  						rx_rate  				a  						c
 	sleep										10
 	stop traffic								${stream1}
-#	verify results 								transmitted_frames  			received_frames  		${stream1}  			stream1
+	calculate loss								transmitted_frames  			received_valid_frames  		${stream1}  			stream1
 	BASH delete route							h1								10.251.3.0/24			10.251.1.1
 	BASH delete route							h3								10.251.1.0/24			10.251.3.1
 
@@ -2071,7 +2071,7 @@ restart ofad on leaf
 	verify traffic rate  						tx_rate  						rx_rate  				a  						c
 	sleep										10
 	stop traffic								${stream1}
-#	verify results 								transmitted_frames  			received_frames  		${stream1}  			stream1
+	calculate loss								transmitted_frames  			received_valid_frames  		${stream1}  			stream1
 	BASH delete route							h1								10.251.3.0/24			10.251.1.1
 	BASH delete route							h3								10.251.1.0/24			10.251.3.1
 
@@ -2305,6 +2305,13 @@ verify results   [Arguments]  ${transmitted_frames}  ${received_frames}  ${strea
  	Log 		${in_range}
    Should be true  ${in_range}	
   	
+calculate loss	 [Arguments]  ${transmitted_frames}  ${received_frames}  ${stream}  ${stream_name}
+    Sleep  5
+    ${report}=  fetch port stats  stream=${stream}  
+    ${tx_value}=  verify dict key  ${report}  ${stream_name}  ${transmitted_frames}
+    ${rx_value}=  verify dict key  ${report}  ${stream_name}  ${received_frames}
+	${loss} = 	Evaluate ${tx_value}-${rx_value}
+	Log 	${loss}
 	
 verify traffic rate   [Arguments]  ${tx_rate}  ${rx_rate}  ${tx_intf}  ${rx_intf}
     Sleep  5
