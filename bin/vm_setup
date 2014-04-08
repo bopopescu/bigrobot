@@ -18,7 +18,7 @@ vmdk_name = "/var/lib/jenkins/jobs/bvs\ master/lastSuccessful/archive/target/app
 mininet_vmdk = "/var/lib/jenkins/jobs/t6-mininet-vm/builds/lastSuccessfulBuild/archive/t6-mininet-vm/ubuntu-kvm/t6-mininet.vmdk"
 vmdk_path = "/var/lib/jenkins/jobs/bvs\ master/lastSuccessful/archive/target/appliance/images/bvs/"
 kvm_host = "10.192.104.13"
-kvm_user = "bsn"
+kvm_user = "root"
 kvm_pwd = "bsn"
 current_user = getpass.getuser()
 
