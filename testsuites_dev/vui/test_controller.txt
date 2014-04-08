@@ -139,7 +139,11 @@ Test show version
     cli          master   show version
 
 Get controller handles
-    #[Tags]  skipped
+    [Tags]  skipped
     #cli save running config
     cli show user  c1
+
+Trigger InvalidCommandException
+    #[Tags]  skipped
+    bash  c1  echo 'command is not found'
 
