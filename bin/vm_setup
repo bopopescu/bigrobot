@@ -293,4 +293,3 @@ if __name__ == '__main__':
     parser.add_argument("--vm_type", help = "Please provide type as bvs/mininet")
     main()
     print "Success !!!"
-    

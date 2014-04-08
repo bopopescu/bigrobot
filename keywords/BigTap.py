@@ -671,7 +671,7 @@ class BigTap(object):
 # All Bigtap Configuration Commands Go Here:
 ###################################################
 
-    def rest_add_interface_role(self, node, intf_name, intf_type, intf_nickname=None, switch_alias=None, sw_dpid=None):
+    def rest_add_interface_role(self, node, intf_name, intf_type, intf_nickname=None, switch_alias=None, sw_dpid=None, rewrite_vlan=5000):
         '''
             Objective:
             - Execute the CLI command 'bigtap role filter interface-name F1'
@@ -717,8 +717,10 @@ class BigTap(object):
                 else:
                     intfNick = intf_nickname
                 url = '/api/v1/data/controller/applications/bigtap/interface-config[interface="%s"][switch="%s"]' % (str(intf_name), str(switch_dpid))
-                c.rest.put(url, {"interface": str(intf_name), "switch": str(switch_dpid), 'role':str(intf_type), 'name':str(intfNick)})
-
+                if int(rewrite_vlan) > 4096:
+                    c.rest.put(url, {"interface": str(intf_name), "switch": str(switch_dpid), 'role':str(intf_type), 'name':str(intfNick)})
+                else:
+                    c.rest.put(url, {"interface": str(intf_name), "switch": str(switch_dpid), 'role':str(intf_type), 'name':str(intfNick), "rewrite-vlan": int(rewrite_vlan)})
             except:
                 helpers.test_log(c.rest.error())
                 return False
@@ -1124,6 +1126,76 @@ class BigTap(object):
             c = t.controller('master')
             try:
                 url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]/rule[sequence=%s]' % (str(rbac_view_name), str(policy_name), str(match_number))
+                if "admin" not in user:
+                    c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                    c_user.rest.delete(url, {})
+                    t.node_reconnect(node='master')
+                else:
+                    c.rest.delete(url, {})
+            except:
+                helpers.test_log(c.rest.error())
+                return False
+            else:
+                return True
+
+# Add strip-vlan
+    def rest_add_stripvlan_to_policy(self, policy_name, rbac_view_name="admin-view", user="admin", password="adminadmin"):
+        '''
+            Objective:
+            - Strip Vlan from incoming traffic that matches policy.
+        
+            Input:
+            | `policy_name`| Name of Policy | 
+            | `rbac_view_name`| Name of RBAC View. Default is admin-view | 
+            
+            Return Value: 
+            - True if configuration add is successful
+            - False if configuration add is unsuccessful  
+        
+        '''
+        try:
+            t = test.Test()
+        except:
+            return False
+        else:
+            c = t.controller('master')
+            try:
+                url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]' % (str(rbac_view_name), str(policy_name))
+                if "admin" not in user:
+                    c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                    c_user.rest.patch(url, {"strip-vlan": True})
+                    t.node_reconnect(node='master')
+                else:
+                    c.rest.patch(url, {"strip-vlan": True})
+            except:
+                helpers.test_log(c.rest.error())
+                return False
+            else:
+                return True
+
+# Add strip-vlan
+    def rest_delete_stripvlan_from_policy(self, policy_name, rbac_view_name="admin-view", user="admin", password="adminadmin"):
+        '''
+            Objective:
+            - Stop removing Vlans from incoming traffic that matches policy.
+        
+            Input:
+            | `policy_name`| Name of Policy | 
+            | `rbac_view_name`| Name of RBAC View. Default is admin-view | 
+            
+            Return Value: 
+            - True if configuration add is successful
+            - False if configuration add is unsuccessful  
+        
+        '''
+        try:
+            t = test.Test()
+        except:
+            return False
+        else:
+            c = t.controller('master')
+            try:
+                url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"][strip-vlan="None"]/strip-vlan' % (str(rbac_view_name), str(policy_name))
                 if "admin" not in user:
                     c_user = t.node_reconnect(node='master', user=str(user), password=password)
                     c_user.rest.delete(url, {})
