@@ -249,7 +249,7 @@ Verify Multicast forwarding on the lag
     sleep  3
     rest delete tenant  t1
 
-verify unknown unicast forwarding on the lag
+verify unknown unicast forwarding on the lag with spine link failover
 	[Tags]  feature  run  
 	rest add tenant  t1
 	rest add vns  t1  v1
