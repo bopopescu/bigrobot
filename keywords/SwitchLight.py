@@ -276,6 +276,70 @@ class SwitchLight(object):
             helpers.test_failure("Could not execute command. Please check log for errors")
             return False
 
+    def cli_show_environment(self, node, element="System", hardware_element="Fan", hardware_element_number=1):
+        '''
+            Objective: 
+            -- Execute CLI command "show environment" on the switch and return requested element
+            
+            Inputs:
+            | node | Switch on which command is being executed | 
+            | element | System or PSU |
+            | hardware_element | Fan or Temperature |
+            | hardware_element_number | Option between 1 and 4 |
+            
+            Return Value:
+            - Value for hardware_element on success
+            - False in case of failure 
+        '''
+        try:
+            t = test.Test()
+            switch = t.switch(node)
+            cli_input = "show environment"
+            switch.enable(cli_input)
+        except:
+            helpers.test_failure("Could not execute command. Please check log for errors")
+            return False
+        else:
+            content = string.split(switch.cli_content(), '\n')
+            if "Fan" in hardware_element:
+                element_id = str(hardware_element) + "  " + str(hardware_element_number)
+            elif "Temp" in hardware_element:
+                element_id = str(hardware_element) + " " + str(hardware_element_number)
+            flag_element_found = False
+            if ("System" in element):
+                element_index = content.index('System:\r')
+            elif ("PSU1" in element):
+                element_index = content.index('PSU 1:\r')
+            elif ("PSU2" in element):
+                element_index = content.index('PSU 2:\r')
+            else:
+                helpers.log("Element does not exist")
+                return False
+            helpers.log("Element_INDEX is %s" % element_index)
+            helpers.log("Old Content is %s \n and its length is %s" % (content, len(content)))
+            for x in range(0, element_index):
+                content.pop(0)
+            helpers.log("New Content is %s \n and its length is %s" % (content, len(content)))
+            for i in range(0, len(content)):
+                temp_element_string = content[i].lstrip()
+                if(element_id in temp_element_string):
+                    helpers.log("Element %s was found in output of 'show environment'" % element_id)
+                    flag_element_found = True
+                    temp_element_string = ' '.join(content[i].split())
+                    element_array = temp_element_string.split()
+                    if "Temp" in hardware_element:
+                        element1_array = element_array[2].split('.')
+                        if int(element1_array[1][:1]) == 0:
+                            temperature = str(element1_array[0][1:])
+                        else:
+                            temperature = str(element1_array[0][1:]) + "." + str(element1_array[1][:1])
+                        return int(temperature)
+                    else:
+                        return element_array[2]
+            if flag_element_found is False:
+                helpers.log("Element %s was not found in show environment output" % str(element_id))
+                return False
+
     def ping_from_local(self, node):
         '''
             Objective:

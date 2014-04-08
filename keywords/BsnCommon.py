@@ -1095,6 +1095,10 @@ class BsnCommon(object):
         else:
             helpers.test_error("Unsupported Platform %s" % (node))
 
+    def return_snmp_value(self, orignal_string):
+        temp_array = orignal_string.split()
+        array_length = len(temp_array)
+        return temp_array[array_length - 1]
 
     def rest_add_firewall_rule(self, service="snmp", protocol="udp", proto_port="162", node="master"):
         '''
