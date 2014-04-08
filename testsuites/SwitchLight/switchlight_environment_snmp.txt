@@ -1,0 +1,81 @@
+*Settings
+Documentation  BigTap Rewrite Vlan Test Suite
+Suite Setup  base suite setup
+Suite Teardown   base suite teardown
+Test Setup   base test setup
+Test Teardown  base test teardown 
+Force Tags   platform Sanity
+Library  keywords/BsnCommon.py
+Library  keywords/SwitchLight.py
+Library  Collections.py
+
+* Variable
+${switchlight_version}  SwitchLight 2.0.2
+
+* Test Case
+
+Verify System Fan Status on LB9
+    Verify Fan Status  s1  System  Fan  1   public   .1.3.6.1.4.1.2021.13.16.3.1.3.1
+    Verify Fan Status  s1  System  Fan  2   public   .1.3.6.1.4.1.2021.13.16.3.1.3.5
+    Verify Fan Status  s1  System  Fan  3   public   .1.3.6.1.4.1.2021.13.16.3.1.3.9
+    Verify Fan Status  s1  System  Fan  4   public   .1.3.6.1.4.1.2021.13.16.3.1.3.13
+
+Verify System Temperature Status on LB9
+    Verify Temperature Status  s1  System  Temp  1  public   .1.3.6.1.4.1.2021.13.16.2.1.3.1
+    Verify Temperature Status  s1  System  Temp  2  public   .1.3.6.1.4.1.2021.13.16.2.1.3.5
+    Verify Temperature Status  s1  System  Temp  3  public   .1.3.6.1.4.1.2021.13.16.2.1.3.9
+    Verify Temperature Status  s1  System  Temp  4  public   .1.3.6.1.4.1.2021.13.16.2.1.3.13
+    Verify Temperature Status  s1  System  Temp  5  public   .1.3.6.1.4.1.2021.13.16.2.1.3.17                        
+
+Verify PSU1 Fan Status on LB9
+    Verify Fan Status  s1  PSU1  Fan  1   public   .1.3.6.1.4.1.2021.13.16.3.1.3.33
+
+Verify PSU1 Temperature Status on LB9
+    Verify Temperature Status  s1  PSU1  Temp  1   public   .1.3.6.1.4.1.2021.13.16.2.1.3.81
+    Verify Temperature Status  s1  PSU1  Temp  2   public   .1.3.6.1.4.1.2021.13.16.2.1.3.84
+    Verify Temperature Status  s1  PSU1  Temp  3   public   .1.3.6.1.4.1.2021.13.16.2.1.3.86
+
+Verify System Fan Status on LY2
+    Verify Fan Status  s2  System  Fan  1   public   .1.3.6.1.4.1.2021.13.16.3.1.3.1
+    Verify Fan Status  s2  System  Fan  2   public   .1.3.6.1.4.1.2021.13.16.3.1.3.2
+    Verify Fan Status  s2  System  Fan  3   public   .1.3.6.1.4.1.2021.13.16.3.1.3.3
+    Verify Fan Status  s2  System  Fan  4   public   .1.3.6.1.4.1.2021.13.16.3.1.3.4
+
+Verify System Temperature Status on LY2
+    Verify Temperature Status  s2  System  Temp  1   public   .1.3.6.1.4.1.2021.13.16.2.1.3.1
+    Verify Temperature Status  s2  System  Temp  2   public   .1.3.6.1.4.1.2021.13.16.2.1.3.2
+    Verify Temperature Status  s2  System  Temp  3   public   .1.3.6.1.4.1.2021.13.16.2.1.3.3
+    Verify Temperature Status  s2  System  Temp  4   public   .1.3.6.1.4.1.2021.13.16.2.1.3.4
+    Verify Temperature Status  s2  System  Temp  5   public   .1.3.6.1.4.1.2021.13.16.2.1.3.5  
+
+Verify PSU1 Fan Status on LY2
+    Verify Fan Status  s2  PSU1  Fan  1   public   .1.3.6.1.4.1.2021.13.16.3.1.3.5
+
+Verify PSU1 Temperature Status on LY2
+    Verify Temperature Status  s2  PSU1  Temp  1   public   .1.3.6.1.4.1.2021.13.16.2.1.3.6
+    Verify Temperature Status  s2  PSU1  Temp  2   public   .1.3.6.1.4.1.2021.13.16.2.1.3.9
+    Verify Temperature Status  s2  PSU1  Temp  3   public   .1.3.6.1.4.1.2021.13.16.2.1.3.11            
+
+Verify PSU2 Fan Status on LY2
+    Verify Fan Status  s2  PSU2  Fan  1   public   .1.3.6.1.4.1.2021.13.16.3.1.3.6
+
+Verify PSU2 Temperature Status on LY2
+    Verify Temperature Status  s2  PSU2  Temp  1   public   .1.3.6.1.4.1.2021.13.16.2.1.3.14
+    Verify Temperature Status  s2  PSU2  Temp  2   public   .1.3.6.1.4.1.2021.13.16.2.1.3.19
+
+
+*Keywords
+
+Verify Fan Status  [Arguments]  ${node}  ${element}  ${hardware_element}  ${hardware_element_number}  ${snmp_community}   ${snmp_oid}
+    ${fan1_value}=  cli show environment  ${node}  element=${element}  hardware_element=${hardware_element}  hardware_element_number=${hardware_element_number}
+    ${snmp_value1} =     snmp cmd   ${node}   snmpget    ${snmp_community}   ${snmp_oid}
+    ${compare_value_1}=  return snmp value  ${snmp_value1}
+    Should Be Equal As Integers  ${compare_value_1}  ${fan1_value}
+
+Verify Temperature Status  [Arguments]  ${node}  ${element}  ${hardware_element}  ${hardware_element_number}  ${snmp_community}   ${snmp_oid}
+    ${snmp_value1} =     snmp cmd   ${node}   snmpget    ${snmp_community}   ${snmp_oid}
+    ${temp1}=  cli show environment  ${node}  element=${element}  hardware_element=${hardware_element}  hardware_element_number=${hardware_element_number}
+    ${compare_value_1}=  return snmp value  ${snmp_value1}
+    ${TEMP1_VALUE}=   EVALUATE    ${compare_value_1} / 1000
+    ${my_value}=    Convert to Integer  ${temp1}
+    Should be equal as integers  ${TEMP1_VALUE}   ${my_value} 

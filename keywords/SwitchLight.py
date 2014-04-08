@@ -59,6 +59,88 @@ class SwitchLight(object):
             helpers.test_failure("Could not execute command. Please check log for errors")
             return False
 
+    def cli_clear_interface_statistics(self, node):
+        '''
+        '''
+        try:
+            t = test.Test()
+            switch = t.switch(node)
+            cli_input = "clear interface statistics"
+            switch.enable(cli_input)
+            return True
+        except:
+            helpers.test_failure("Could not execute command. Please check log for errors")
+            return False
+
+    def cli_return_interface_counter_brief(self, node, intf_name, intf_counter='state'):
+        '''
+            Objective:
+            - Return interface counter from o/p of show interface
+            
+            Input:
+            | node | Reference to switch (as defined in .topo file) |                     
+            | intf_name | Interface Name eg. ethernet1 or portchannel1 | 
+            | intf_counter | State, Speed, RX or TX field |
+                    
+            Return Value: 
+            - Interface State of interface.
+        '''
+        try:
+            t = test.Test()
+            switch = t.switch(node)
+            cli_input = "show interface"
+            switch.enable(cli_input)
+        except:
+            helpers.test_failure("Could not execute command. Please check log for errors")
+            return False
+        else:
+            content = string.split(switch.cli_content(), '\n')
+            flag_intf_found = False
+            for i in range(0, len(content)):
+                if(str(intf_name) in content[i]):
+                    helpers.log("Interface %s found in show interfaces output" % str(intf_name))
+                    flag_intf_found = True
+                    temp_intf_string = ' '.join(content[i].split())
+                    intf_array = temp_intf_string.split()
+                    helpers.log("This is intf_array %s" % intf_array)
+                    if (("state" in intf_counter) or ("State" in intf_counter) or ("STATE" in intf_counter)):
+                        if (str('*') in intf_array[0]):
+                            return 'up'
+                        else:
+                            return 'down'
+                    elif (("speed" in intf_counter) or ("Speed" in intf_counter) or ("SPEED" in intf_counter)):
+                        if ('1G' in intf_array[2]):
+                            return '1G'
+                        elif ('10G' in intf_array[2]):
+                            return '10G'
+                        elif  ('40G' in intf_array[2]):
+                            return '40G'
+                        else:
+                            return False
+                    elif (("rx" in intf_counter) or ("Rx" in intf_counter) or ("RX" in intf_counter)):
+                        if ('port-channel' in temp_intf_string):
+                            return int(intf_array[2])
+                        else:
+                            if (len(intf_array) > 4):
+                                return int(intf_array[3])
+                            else:
+                                return int(intf_array[2])
+                    elif (("tx" in intf_counter) or ("Tx" in intf_counter) or ("TX" in intf_counter)):
+                        if ('port-channel' in temp_intf_string):
+                            return int(intf_array[3])
+                        else:
+                            if (len(intf_array) > 4):
+                                return int(intf_array[4])
+                            else:
+                                return int(intf_array[3])
+                    else:
+                        helpers.log("No such field %s exists in output of show interfaces" % str(intf_counter))
+                        return False
+            if not flag_intf_found:
+                helpers.log("Interface %s was not found in show interfaces output" % str(intf_name))
+                return False
+
+
     def cli_show_interface_state(self, node, intf_name):
         '''
             Objective:
@@ -120,7 +202,7 @@ class SwitchLight(object):
             helpers.test_failure("Could not execute command. Please check log for errors")
             return False
 
-    def cli_show_interfaces(self, node):
+    def cli_show_all_interfaces(self, node, intf_count=52):
         '''
             Objective:
             - Verify all 52 interfaces are seen in switch
@@ -137,7 +219,8 @@ class SwitchLight(object):
             s1 = t.switch(node)
             count = 1
             intf_pass_count = 0
-            while count < 53:
+            loop_count = int(intf_count) + 1
+            while count < loop_count:
                 intf_name = "ethernet" + str(count)
                 cli_input = "show interface ethernet" + str(count) + " detail"
                 s1.enable(cli_input)
@@ -146,7 +229,7 @@ class SwitchLight(object):
                     intf_pass_count = intf_pass_count + 1
                 helpers.log("Interface %s \n Output is %s \n ======\n" % (intf_name, cli_output))
                 count = count + 1
-            if intf_pass_count == 52:
+            if intf_pass_count == int(intf_count):
                 return True
             else:
                 return False
@@ -192,6 +275,70 @@ class SwitchLight(object):
         except:
             helpers.test_failure("Could not execute command. Please check log for errors")
             return False
+
+    def cli_show_environment(self, node, element="System", hardware_element="Fan", hardware_element_number=1):
+        '''
+            Objective: 
+            -- Execute CLI command "show environment" on the switch and return requested element
+            
+            Inputs:
+            | node | Switch on which command is being executed | 
+            | element | System or PSU |
+            | hardware_element | Fan or Temperature |
+            | hardware_element_number | Option between 1 and 4 |
+            
+            Return Value:
+            - Value for hardware_element on success
+            - False in case of failure 
+        '''
+        try:
+            t = test.Test()
+            switch = t.switch(node)
+            cli_input = "show environment"
+            switch.enable(cli_input)
+        except:
+            helpers.test_failure("Could not execute command. Please check log for errors")
+            return False
+        else:
+            content = string.split(switch.cli_content(), '\n')
+            if "Fan" in hardware_element:
+                element_id = str(hardware_element) + "  " + str(hardware_element_number)
+            elif "Temp" in hardware_element:
+                element_id = str(hardware_element) + " " + str(hardware_element_number)
+            flag_element_found = False
+            if ("System" in element):
+                element_index = content.index('System:\r')
+            elif ("PSU1" in element):
+                element_index = content.index('PSU 1:\r')
+            elif ("PSU2" in element):
+                element_index = content.index('PSU 2:\r')
+            else:
+                helpers.log("Element does not exist")
+                return False
+            helpers.log("Element_INDEX is %s" % element_index)
+            helpers.log("Old Content is %s \n and its length is %s" % (content, len(content)))
+            for x in range(0, element_index):
+                content.pop(0)
+            helpers.log("New Content is %s \n and its length is %s" % (content, len(content)))
+            for i in range(0, len(content)):
+                temp_element_string = content[i].lstrip()
+                if(element_id in temp_element_string):
+                    helpers.log("Element %s was found in output of 'show environment'" % element_id)
+                    flag_element_found = True
+                    temp_element_string = ' '.join(content[i].split())
+                    element_array = temp_element_string.split()
+                    if "Temp" in hardware_element:
+                        element1_array = element_array[2].split('.')
+                        if int(element1_array[1][:1]) == 0:
+                            temperature = str(element1_array[0][1:])
+                        else:
+                            temperature = str(element1_array[0][1:]) + "." + str(element1_array[1][:1])
+                        return int(temperature)
+                    else:
+                        return element_array[2]
+            if flag_element_found is False:
+                helpers.log("Element %s was not found in show environment output" % str(element_id))
+                return False
 
     def ping_from_local(self, node):
         '''

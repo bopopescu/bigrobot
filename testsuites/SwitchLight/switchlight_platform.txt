@@ -128,7 +128,7 @@ configure dns domain  [Arguments]  ${switch}  ${dns_server}  ${dns_domain}
     Should Be True  ${ret_value_1}
 
 verify interfaces  [Arguments]  ${switch}
-    cli show interfaces  ${switch}
+    cli show all interfaces  ${switch}
 
 shut interface  [Arguments]  ${switch}  ${interface}
     ${ret_value_1}=  cli disable interface  ${switch}  ${interface}
