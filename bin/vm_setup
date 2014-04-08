@@ -181,8 +181,8 @@ def create_temp_topo(**kwargs):
     
 def configure_vm_first_boot(**kwargs):
     # Using Mingtao's First Boot Function to configure spawned VM in KVM
-    helpers.log("SLeeping 30 sec ..for VM to Boot UP....")
-    time.sleep(30)
+    helpers.log("SLeeping 60 sec ..for VM to Boot UP....This time should bring down soon..")
+    time.sleep(60)
     helpers.log("Success setting up gobot Env!")
     cluster_ip = kwargs.get("cluster_ip", None)
     ip_address = kwargs.get("ip_address", None)
