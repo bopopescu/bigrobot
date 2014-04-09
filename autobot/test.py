@@ -951,24 +951,28 @@ class Test(object):
         params = self.topology_params()
         helpers.debug("Topology info:\n%s" % helpers.prettify(params))
 
-        for key in params:
-            if helpers.is_controller(key):
-                self.setup_controller_pre_clean_config(key)
-            elif helpers.is_switch(key):
-                self.setup_switch_pre_clean_config(key)
+        if helpers.bigrobot_test_setup().lower() != 'false':
+            for key in params:
+                if helpers.is_controller(key):
+                    self.setup_controller_pre_clean_config(key)
+                elif helpers.is_switch(key):
+                    self.setup_switch_pre_clean_config(key)
 
-        for key in params:
-            n = self.node(key)
-            if (helpers.is_controller(key) and helpers.is_t5(n.platform())
-                and self.is_master_controller(key)):
-                helpers.log("Running clean config on T5 controller '%s' (establishing baseline config setup)" % key)
-                self.t5_clean_configuration(key)
+            for key in params:
+                n = self.node(key)
+                if (helpers.is_controller(key) and helpers.is_t5(n.platform())
+                    and self.is_master_controller(key)):
+                    helpers.log("Running clean config on T5 controller '%s'"
+                                " (establishing baseline config setup)" % key)
+                    self.t5_clean_configuration(key)
 
-        for key in params:
-            if helpers.is_controller(key):
-                self.setup_controller_post_clean_config(key)
-            elif helpers.is_switch(key):
-                self.setup_switch_post_clean_config(key)
+            for key in params:
+                if helpers.is_controller(key):
+                    self.setup_controller_post_clean_config(key)
+                elif helpers.is_switch(key):
+                    self.setup_switch_post_clean_config(key)
+        else:
+            helpers.debug("Env BIGROBOT_TEST_SETUP is False. Skip device setup.")
 
         self._setup_completed = True
         helpers.debug("Test object setup ends.%s"
