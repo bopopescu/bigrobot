@@ -4,7 +4,7 @@
 Documentation    Fabric Failover Test using Three Rack Dual Spine
 Suite Setup      base suite setup
 Suite Teardown   base suite teardown
-Test Setup       base test setup
+Test Setup       T5 test setup
 Test Teardown    T5 test teardown
 Force Tags       T5 
 Library          keywords/BsnCommon.py
@@ -101,7 +101,7 @@ shutdown the switch and check the links are down in the switch
     rest delete portgroup  p4
     rest delete portgroup  p5
     rest delete tenant  t1 
-     
+	
 verify interface cli 
 	[Tags]  feature
 	${result}=  cli  c1   show interface  
@@ -191,6 +191,23 @@ verify traffic rate negative   [Arguments]  ${tx_rate}  ${rx_rate}  ${tx_intf}  
     
 T5 test teardown
 	delete traffic
+	base test teardown
+
+T5 test setup
+	base test setup
+	bring up 1 gig interface
+	
+bring up 1 gig interface
+	bash execute command  leaf0-a  ofad-ctl autoneg 24
+	bash execute command  leaf0-a  ofad-ctl autoneg 25
+	bash execute command  leaf0-a  ofad-ctl autoneg 26
+	bash execute command  leaf0-b  ofad-ctl autoneg 24
+	bash execute command  leaf1-a  ofad-ctl autoneg 24
+	bash execute command  leaf1-a  ofad-ctl autoneg 25
+	bash execute command  leaf1-a  ofad-ctl autoneg 26
+	bash execute command  leaf1-b  ofad-ctl autoneg 24
+	bash execute command  leaf2-a  ofad-ctl autoneg 24
+	bash execute command  leaf2-b  ofad-ctl autoneg 24
 
 bring up h1 bond0
 	bash init intf  h1  bond0.10

@@ -59,6 +59,13 @@ Test expression
     ${result3}=       expr  ${result1} + ${result2}
     log               Expression evaluated to result1=${result1}, result2=${result2}, result3=${result3}
 
+Test evaluation
+    #[Tags]           skipped
+    ${result1}=       evaluate  1 + 1 + ${COUNTER}
+    ${result2}=       evaluate  10 / 2
+    ${result3}=       evaluate  ${result1} + ${result2}
+    log               Expression evaluated to result1=${result1}, result2=${result2}, result3=${result3}
+
 Test array variable
     [Tags]           skipped
     @{alist}=         create list  1  2  3  4  abc  yzx
@@ -155,7 +162,7 @@ Test should contain x times
     #Should contain X times    ${result}    bytes From 10.192.4.11    10
    
 Test get a dict
-    #[Tags]           skipped
+    [Tags]           skipped
     ${result}=        return dict
     Log               Result = ${result['def']}
     Log               Result = ${result['def'][0]}
