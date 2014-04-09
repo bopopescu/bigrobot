@@ -11,14 +11,16 @@ class KVMOperations(object):
         disk_path = kwargs.get("disk_path", None)
         vm_name = kwargs.get("vm_name", None)
         ram = kwargs.get("ram", "1024")
-        virt_install_cmd = "sudo virt-install     \
-                            --connect qemu:///system     \
-                            -r %s     \
-                            -n %s     \
-                            --disk path=%s,device=disk,format=vmdk     \
-                            --import     --noautoconsole    \
-                            --network=bridge:br0,model=virtio    \
-                            --graphics vnc" % (ram, vm_name, disk_path)
+        vcpus = kwargs.get("cpus", "1")
+        virt_install_cmd = "sudo virt-install \
+                            --connect qemu:///system \
+                            -r %s \
+                            -n %s \
+                            --vcpus=%s \
+                            --disk path=%s,device=disk,format=qcow2 \
+                            --import     --noautoconsole \
+                            --network=bridge:br0,model=virtio \
+                            --graphics vnc" % (ram, vm_name, vcpus, disk_path)
         helpers.log("Creating VM on KVM Host with virt-install cmd: \n%s..." % virt_install_cmd)
         if "Domain creation completed." in kvm_handle.bash(virt_install_cmd)['content']:
             return True
@@ -83,7 +85,7 @@ class KVMOperations(object):
                                                 vm_name = vm_name)
         else:
             vm_creation = self._virt_install_vm(kvm_handle = kvm_handle, disk_path = kvm_vmdk_path,
-                                                vm_name = vm_name, ram = "2048")
+                                                vm_name = vm_name, ram = "2048", cpus = "2")
         
         if vm_creation:
             helpers.log("2. Success Creating VM with Name: %s on KVM_Host: %s" % (vm_name, kvm_host))
@@ -94,7 +96,7 @@ class KVMOperations(object):
         
         if kvm_vmdk_path1 is not None:
             vm_creation = self._virt_install_vm(kvm_handle = kvm_handle, disk_path = kvm_vmdk_path1,
-                                                vm_name = vm_backup_name, ram = "2048")
+                                                vm_name = vm_backup_name, ram = "2048", cpus = "2")
             if vm_creation:
                 helpers.log("2-a. Success Creating VM with Name: %s on KVM_Host: %s" % (vm_backup_name, kvm_host))
                 print "2-a. Success Creating VM with Name: %s on KVM_Host: %s" % (vm_backup_name, kvm_host)
