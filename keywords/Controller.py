@@ -90,7 +90,8 @@ class Controller(object):
         """
         return self.cli_reload(*args, **kwargs)
 
-    def cli_save_running_config(self, node=None):
+    def cli_save_running_config(self, node=None,
+                                dest_file='running-config-bigrobot'):
         """
         Save the running configuration on the controller.
         This will write the config file to
@@ -102,13 +103,17 @@ class Controller(object):
         t = test.Test()
         if node:
             helpers.is_controller_or_error(node)
-            node_list = [node]
+            node_handles = [t.controller(node)]
         else:
             node_handles = t.controllers()
 
         for n in node_handles:
-            helpers.log("Copying running-config to file on node '%s'" % n.name())
-            n.enable('copy running-config file://running-config-bigrobot')
+            helpers.log("Copying running-config to file on node '%s'"
+                        % n.name())
+            if helpers.is_t5(n.platform()):
+                n.enable('copy running-config config://%s' % dest_file)
+            else:
+                n.enable('copy running-config file://%s' % dest_file)
 
     def cli_boot_factory_default(self, node, timeout=360):
         """
