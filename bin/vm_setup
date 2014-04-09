@@ -14,7 +14,7 @@ import robot    # import to force append local robot libraries than python insta
 
 
 
-vmdk_name = "/var/lib/jenkins/jobs/bvs\ master/lastSuccessful/archive/target/appliance/images/bvs/controller-bvs-2.0.7-SNAPSHOT.qcow2"
+vmdk_name = "/var/lib/jenkins/jobs/bvs\ master/lastSuccessful/archive/target/appliance/images/bvs/controller-bvs-2.0.8-SNAPSHOT.qcow2"
 mininet_vmdk = "/var/lib/jenkins/jobs/t6-mininet-vm/builds/lastSuccessfulBuild/archive/t6-mininet-vm/ubuntu-kvm/t6-mininet.vmdk"
 vmdk_path = "/var/lib/jenkins/jobs/bvs\ master/lastSuccessful/archive/target/appliance/images/bvs/"
 kvm_host = "10.192.104.13"
@@ -98,7 +98,7 @@ def scp_vmdk_to_kvm(**kwargs):
     output = kvm_handle.bash('uname -a')
     helpers.log("KVM Host Details : \n %s" % output['content'])
     kvm_handle.bash('cd /var/lib/libvirt/')
-    file_name = "controller-bvs-2.0.7-SNAPSHOT.qcow2"
+    file_name = "controller-bvs-2.0.8-SNAPSHOT.qcow2"
     if "No such file or directory" in kvm_handle.bash('cd bvs_images/')['content']:
         helpers.log("No BVS_IMAGES dir in KVM Host @ /var/lib/libvirt creating one to store bvs vmdks") 
         kvm_handle.bash('sudo mkdir bvs_images')
