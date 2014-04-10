@@ -1006,7 +1006,7 @@ class Test(object):
         else:
             if (content):
                 for i in range (0, len(content)):
-                    url_tenant_delete = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]' % content[i]['tenant-name']
+                    url_tenant_delete = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]' % content[i]['name']
                     c.rest.delete(url_tenant_delete, {})
 
         helpers.log("Attempting to delete all switches")
