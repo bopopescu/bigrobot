@@ -11,10 +11,10 @@ Library         keywords/BsnCommon.py
 Library         keywords/Mininet.py
 Library         keywords/T5.py
 #Library         keywords/T5Fabric.py
-Library         keywords_dev/prashanth/T5L3.py
+Library         keywords/T5L3.py
 Library         keywords_dev/animesh/BsnCommonShow.py
 Resource		keywords_dev/slim/t5_l3_dualspine.txt
-Resource		testsuites_dev/slim/t5_layer3_variables.txt
+Resource		testsuites_dev/slim/T5_L3_virtual/t5_layer3_variables.txt
 
 
 * Test Cases
@@ -1337,6 +1337,8 @@ setup topology
 	REST add portgroup to vns					${tenant2_name}  	${vns2_1} 		${portgroup8} 		${vns2_vlan1}
 	REST add portgroup to vns					${tenant2_name}  	${vns2_2} 		${portgroup9} 		${vns2_vlan2}
 	REST add portgroup to vns					${tenant2_name}  	${vns2_3} 		${portgroup10} 		${untaggedvlan}	
+	REST add static routes						${tenant1_name}		0.0.0.0/0		 {"tenant-name": "system"}
+	REST add static routes						${tenant2_name}		0.0.0.0/0		 {"tenant-name": "system"}	
 	
 teardown topology
 	delete fabric switch
