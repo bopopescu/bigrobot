@@ -407,6 +407,13 @@ def bigrobot_params(new_val=None, default=None):
     return _env_get_and_set('BIGROBOT_PARAMS', new_val, default)
 
 
+def bigrobot_test_setup(new_val=None, default='True'):
+    """
+    Category: Get/set environment variables for BigRobot.
+    """
+    return _env_get_and_set('BIGROBOT_TEST_SETUP', new_val, default)
+
+
 def bigtest_path(new_val=None, default=None):
     """
     Category: Get/set environment variables for BigTest.
@@ -541,7 +548,7 @@ def is_bvs(name):
     """
     Inspect the platform type for the node. Usage:
 
-    if helpers.is_bvs(n.platform():
+    if helpers.is_bvs(n.platform()):
         ...this is a BVS (aka T5) controller...
     """
     return name == 'bvs'

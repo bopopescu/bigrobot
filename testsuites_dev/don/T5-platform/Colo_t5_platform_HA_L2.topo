@@ -11,28 +11,59 @@ c1:
 c2:
   ip: 10.210.144.16
 
+s1:
+  ip: 10.210.144.101
+  alias: leaf0-a
+  user: admin
+  password: adminadmin
+
+s2:
+  ip: 10.210.144.102
+  alias: leaf0-b
+  user: admin
+  password: adminadmin
+
+s3:
+  ip: 10.210.144.103
+  alias: leaf1-a
+  user: admin
+  password: adminadmin
+  
+s4:
+  ip: 10.210.144.110
+  alias: spine0
+  user: admin
+  password: adminadmin
+
+s4:
+  ip: 10.210.144.111
+  alias: spine1
+  user: admin
+  password: adminadmin
 
 h1:
-  ip: 10.210.144.21
+  ip: 10.210.144.51
   user: root
   password: bsn
-h2:
-  ip: 10.210.144.22
+
+#h2:
+  #ip: 10.210.144.52
   user: root
   password: bsn
-#h3:
-  #ip: 10.210.144.23
+  
+h3:
+  ip: 10.210.144.53
   user: root
   password: bsn
 h4:
-  ip: 10.210.144.24
+  ip: 10.210.144.54
   user: root
   password: bsn
 h5:
-  ip: 10.210.144.25
+  ip: 10.210.144.55
   user: root
   password: bsn
 h6:
-  ip: 10.210.144.26
+  ip: 10.210.144.56
   user: root
   password: bsn

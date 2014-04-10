@@ -951,23 +951,28 @@ class Test(object):
         params = self.topology_params()
         helpers.debug("Topology info:\n%s" % helpers.prettify(params))
 
-        for key in params:
-            if helpers.is_controller(key):
-                self.setup_controller_pre_clean_config(key)
-            elif helpers.is_switch(key):
-                self.setup_switch_pre_clean_config(key)
+        if helpers.bigrobot_test_setup().lower() != 'false':
+            for key in params:
+                if helpers.is_controller(key):
+                    self.setup_controller_pre_clean_config(key)
+                elif helpers.is_switch(key):
+                    self.setup_switch_pre_clean_config(key)
 
-        for key in params:
-            n = self.node(key)
-            if helpers.is_controller(key) and helpers.is_t5(n.platform()):
-                helpers.log("Running clean config on T5 controller '%s' (establishing baseline config setup)" % key)
-                self.t5_clean_configuration(key)
+            for key in params:
+                n = self.node(key)
+                if (helpers.is_controller(key) and helpers.is_t5(n.platform())
+                    and self.is_master_controller(key)):
+                    helpers.log("Running clean config on T5 controller '%s'"
+                                " (establishing baseline config setup)" % key)
+                    self.t5_clean_configuration(key)
 
-        for key in params:
-            if helpers.is_controller(key):
-                self.setup_controller_post_clean_config(key)
-            elif helpers.is_switch(key):
-                self.setup_switch_post_clean_config(key)
+            for key in params:
+                if helpers.is_controller(key):
+                    self.setup_controller_post_clean_config(key)
+                elif helpers.is_switch(key):
+                    self.setup_switch_post_clean_config(key)
+        else:
+            helpers.debug("Env BIGROBOT_TEST_SETUP is False. Skip device setup.")
 
         self._setup_completed = True
         helpers.debug("Test object setup ends.%s"
@@ -1044,32 +1049,71 @@ class Test(object):
                 for i in range (0, len(ntp_list)):
                     ntp_list.pop(0)
                     url_ntp_delete = '/api/v1/data/controller/os/config/global/time-config/ntp-server'
-                    c.rest.put(url_ntp_delete, ntp_list)
+                    try:
+                        c.rest.put(url_ntp_delete, ntp_list)
+                    except:
+                        pass
+                    else:
+                        helpers.log("NTP configuration successfully deleted")
 
         helpers.log("Attempting to delete SNMP Configurations")
         # Delete SNMP location
         url_delete_snmp_location = '/api/v1/data/controller/os/config/global/snmp-config/location'
-        c.rest.delete(url_delete_snmp_location, {})
+        try:
+            c.rest.delete(url_delete_snmp_location, {})
+        except:
+            pass
+        else:
+            helpers.log("SNMP Location configuration successfully deleted")
         # Delete SNMP Contact
         url_delete_snmp_contact = '/api/v1/data/controller/os/config/global/snmp-config/contact'
-        c.rest.delete(url_delete_snmp_contact, {})
+        try:
+            c.rest.delete(url_delete_snmp_contact, {})
+        except:
+            pass
+        else:
+            helpers.log("SNMP Contact configuration successfully deleted")
         # Disable SNMP Trap
         url_delete_snmp_trap = '/api/v1/data/controller/os/config/global/snmp-config/trap-enabled'
-        c.rest.delete(url_delete_snmp_trap, {})
+        try:
+            c.rest.delete(url_delete_snmp_trap, {})
+        except:
+            pass
+        else:
+            helpers.log("SNMP Trap configuration successfully deleted")
         # Delete SNMP community
         url_delete_snmp_community = '/api/v1/data/controller/os/config/global/snmp-config/community'
-        c.rest.delete(url_delete_snmp_community, {})
+        try:
+            c.rest.delete(url_delete_snmp_community, {})
+        except:
+            pass
+        else:
+            helpers.log("SNMP Community configuration successfully deleted")
         # Delete SNMP Trap Hosts
         url_get_snmphost = '/api/v1/data/controller/os/config/global/snmp-config?config=true'
-        c.rest.get(url_get_snmphost)
-        content = c.rest.content()
-        if(content):
-            if ('trap-host' in content[0]):
-                for i in range (0, len(content[0]['trap-host'])):
-                    url_delete_trap = '/api/v1/data/controller/os/config/global/snmp-config/trap-host[ipaddr="%s"]/udp-port' % str(content[0]['trap-host'][i]['ipaddr'])
-                    c.rest.delete(url_delete_trap, {})
-                    url_delete_trap = '/api/v1/data/controller/os/config/global/snmp-config/trap-host[ipaddr="%s"]' % str(content[0]['trap-host'][i]['ipaddr'])
-                    c.rest.delete(url_delete_trap, {})
+        try:
+            c.rest.get(url_get_snmphost)
+        except:
+            pass
+        else:
+            helpers.log("SNMP GET configuration successful")
+            content = c.rest.content()
+            if(content):
+                if ('trap-host' in content[0]):
+                    for i in range (0, len(content[0]['trap-host'])):
+                        url_delete_trap = '/api/v1/data/controller/os/config/global/snmp-config/trap-host[ipaddr="%s"]/udp-port' % str(content[0]['trap-host'][i]['ipaddr'])
+                        try:
+                            c.rest.delete(url_delete_trap, {})
+                        except:
+                            pass
+                        else:
+                            url_delete_trap = '/api/v1/data/controller/os/config/global/snmp-config/trap-host[ipaddr="%s"]' % str(content[0]['trap-host'][i]['ipaddr'])
+                            try:
+                                c.rest.delete(url_delete_trap, {})
+                            except:
+                                pass
+                            else:
+                                helpers.log("SNMP Trap configuration successfully deleted")
 
         helpers.log("Attempting to delete logging server configurations")
         url_get_logging = '/api/v1/data/controller/os/config/global/logging-config?config=true'
@@ -1079,7 +1123,12 @@ class Test(object):
             if ('logging-server' in content[0]):
                 for i in range (0, len(content[0]['logging-server'])):
                     url_delete_logserver = '/api/v1/data/controller/os/config/global/logging-config/logging-server[server="%s"]' % str(content[0]['logging-server'][i]['server'])
-                    c.rest.delete(url_delete_logserver, {})
+                    try:
+                        c.rest.delete(url_delete_logserver, {})
+                    except:
+                        pass
+                    else:
+                        helpers.log("Logging server configuration successfully deleted")
 
         helpers.log("Attempting to disable remote logging")
         url_disable_remotelog = '/api/v1/data/controller/os/config/global/logging-config/logging-enabled'

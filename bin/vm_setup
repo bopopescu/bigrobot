@@ -14,8 +14,8 @@ import robot    # import to force append local robot libraries than python insta
 
 
 
-vmdk_name = "/var/lib/jenkins/jobs/bvs\ master/lastSuccessful/archive/target/appliance/images/bvs/controller-bvs-2.0.7-SNAPSHOT.qcow2"
-mininet_vmdk = "/var/lib/jenkins/jobs/t6-mininet-vm/builds/lastSuccessfulBuild/archive/t6-mininet-vm/ubuntu-kvm/t6-mininet.vmdk"
+vmdk_name = "/var/lib/jenkins/jobs/bvs\ master/lastSuccessful/archive/target/appliance/images/bvs/controller-bvs-2.0.8-SNAPSHOT.qcow2"
+mininet_vmdk = "/var/lib/jenkins/jobs/t6-mininet-vm/builds/lastSuccessfulBuild/archive/t6-mininet-vm/ubuntu-kvm/t6-mininet.qcow2"
 vmdk_path = "/var/lib/jenkins/jobs/bvs\ master/lastSuccessful/archive/target/appliance/images/bvs/"
 kvm_host = "10.192.104.13"
 kvm_user = "root"
@@ -38,8 +38,6 @@ sys.path.insert(1, exscript_path)
 print "Detailed log can be tailed at /tmp/robot.log  or /tmp/autobot_%s.log" % current_user
 
 import autobot.helpers as helpers
-from autobot.devconf import HostDevConf
-from keywords.T5Platform import T5Platform
 from keywords.KVMOperations import KVMOperations
 import autobot.test as test
 
@@ -75,211 +73,42 @@ Success !!!
 real    3m11.699s
 user    0m3.888s
 sys    0m0.132s
-
-
-
     """
     print(s)
     sys.exit(1)
-
-def connect_to_kvm_host(**kwargs):
-    global kvm_handle
-    hostname = kwargs.get('hostname', None)
-    user = kwargs.get('user', None)
-    password = kwargs.get('password', None)
-    name = kwargs.get('name', None)
-    kvm_handle = HostDevConf(host = hostname, user = user, password = password,
-            protocol = 'ssh', timeout=100, name = name)
     
-def scp_vmdk_to_kvm(**kwargs):
-    # for getting the latest jenkins build from jenkins server kvm_host ssh key should be copied to jenkins server
-    global vm_name, kvm_vmdk_path, kvm_vmdk_path1
-    vm_type = kwargs.get('vm_type', "bvs")
-    output = kvm_handle.bash('uname -a')
-    helpers.log("KVM Host Details : \n %s" % output['content'])
-    kvm_handle.bash('cd /var/lib/libvirt/')
-    file_name = "controller-bvs-2.0.7-SNAPSHOT.qcow2"
-    if "No such file or directory" in kvm_handle.bash('cd bvs_images/')['content']:
-        helpers.log("No BVS_IMAGES dir in KVM Host @ /var/lib/libvirt creating one to store bvs vmdks") 
-        kvm_handle.bash('sudo mkdir bvs_images')
-        kvm_handle.bash('sudo chmod -R 777 bvs_images/')
-    else:
-        helpers.log('BVS_IMAGES dir exists in KVM Host @ /var/lib/libvirt/bvs_images/ copying latest vmdkd from jenkins server')
-    
-    kvm_handle.bash('sudo chmod -R 777 ../bvs_images/')
-    kvm_handle.bash('cd bvs_images')
-    helpers.log("Latest VMDK will be copied to location : %s at KVM Host" % kvm_handle.bash('pwd')['content'])
-    
-    # For below SCP to work we need to have Kvm Pub Key in jenkins build server..
-    helpers.log("Executing Scp cmd to copy latest bvs vmdk to KVM Server")
-    if vm_type == "mininet":
-        kvm_handle.bash('scp "bsn@jenkins:%s" .' % mininet_vmdk, timeout=100)['content']
-        file_name = "t6-mininet.vmdk"
-    else:
-        kvm_handle.bash('scp "bsn@jenkins:%s" .' % vmdk_name, timeout=100)['content']
-    kvm_handle.bash('sudo cp %s ../images/%s.qcow2' % (file_name,vm_name))
-    
-    if vm_backup_name is not None:
-        kvm_handle.bash('sudo cp %s ../images/%s.qcow2' % (file_name,vm_backup_name))
-        kvm_vmdk_path1 = "/var/lib/libvirt/images/%s.qcow2" % vm_backup_name
-        helpers.log("Success copying vmdk for slave VM")
-        
-    kvm_vmdk_path = "/var/lib/libvirt/images/%s.qcow2" % vm_name
-    #vm_name = "%s_BVS" % current_user
-    helpers.log("1. Success copying latest qcow to KVM Host to Location: %s" % kvm_vmdk_path)
-    print   "1. Success Copying Latest BVS qcow to %s on KVM Host!!" % kvm_vmdk_path
-
-def cp_vmdk_to_images(**kwargs):
-    global kvm_vmdk_path, kvm_vmdk_path1
-    vmdk = kwargs.get('vmdk', None)
-    kvm_handle.bash("sudo cp %s /var/lib/libvirt/images/%s.qcow2" % (vmdk, vm_name))
-    kvm_vmdk_path = "/var/lib/libvirt/images/%s.qcow2" % vm_name
-    if vm_backup_name is not None:
-        kvm_handle.bash("sudo cp %s /var/lib/libvirt/images/%s.qcow2" % (vmdk, vm_backup_name))
-        kvm_vmdk_path1 = "/var/lib/libvirt/images/%s.qcow2" % vm_backup_name
-    helpers.log("Success copying image !!")
-
-def create_vm_on_kvm(**kwargs):
-    vm_type = kwargs.get("vm_type", "bvs")
-    kvm_ops.create_vm_on_kvm_host(vm_type = vm_type, vmdk_path = kvm_vmdk_path,
-                                  vm_name = vm_name, kvm_handle = kvm_handle, kvm_host  = kvm_host,
-                                  vm_backup_name = vm_backup_name, vmdk_path1 = kvm_vmdk_path1)
-
-def create_temp_topo(**kwargs):
-    # Creating a temp topo file for using first boot keywords
-    tem_topo = open("/tmp/temp.topo", "wb")
-    topo_text = " c1:\n\
-      ip: 10.192.105.20\n\
-      set_init_ping: false            # default: true\n\
-      set_session_ssh: false          # default: true\n\
-      console: \n\
-        ip: %s\n\
-        libvirt_vm_name: %s\n\
-        user: root\n\
-        password: bsn\n\
- c2:\n\
-  ip: 10.192.105.20\n\
-  set_init_ping: false            # default: true\n\
-  set_session_ssh: false          # default: true\n\
-  console: \n\
-   ip: %s\n\
-   libvirt_vm_name: %s\n\
-   user: root\n\
-   password: bsn\n\
- c3:\n\
-  ip: 10.192.105.20\n\
-  set_init_ping: false            # default: true\n\
-  set_session_ssh: false          # default: true\n\
-  console: \n\
-   ip: %s\n\
-   libvirt_vm_name: %s\n\
-   user: root\n\
-   password: bsn\n" %(kvm_host, vm_name, kvm_host, vm_backup_name, kvm_host, vm_name)
-    tem_topo.write(topo_text)
-    tem_topo.close()
-    helpers.log("Success Create a Temp TOPO FILE")
-    
-def configure_vm_first_boot(**kwargs):
-    # Using Mingtao's First Boot Function to configure spawned VM in KVM
-    helpers.log("SLeeping 60 sec ..for VM to Boot UP....This time should bring down soon..")
-    time.sleep(60)
-    helpers.log("Success setting up gobot Env!")
-    cluster_ip = kwargs.get("cluster_ip", None)
-    ip_address = kwargs.get("ip_address", None)
-    backup_ip_address = kwargs.get("backup_ip_address", None)
-    
-    
-    t5_platform = T5Platform()
-    # configure firstboot till IP adress
-    if ip_address is not None:
-        print "Static IP is given using ip: %s for VM" % ip_address
-        helpers.log("Static IP is given using ip: %s for VM" % ip_address)
-        t5_platform.first_boot_controller_initial_node_setup("c1", ip_address= ip_address, hostname = current_user + "-bvs1")
-    else:
-        t5_platform.first_boot_controller_initial_node_setup("c1", dhcp = "yes", hostname = current_user + "-bvs1")
-    # Apply setting and add cluster Ip if provided
-    if cluster_ip is not None:
-        t5_platform.first_boot_controller_initial_cluster_setup("c1", join_cluster = "yes", cluster_ip = cluster_ip)
-        print "Success Adding BVS VM to Cluster !"
-    else:
-        t5_platform.first_boot_controller_initial_cluster_setup("c1")
-        
-    new_ip_address = t5_platform.first_boot_controller_menu_apply("c1")
-    print "3. Success configuring first boot Controller IP : %s" % str(new_ip_address)
-    
-    if backup_ip_address is not None:
-        print "Static IP is given using ip: %s for VM" % backup_ip_address
-        helpers.log("Static IP is given using ip: %s for VM" % backup_ip_address)
-        t5_platform.first_boot_controller_initial_node_setup("c2", ip_address= backup_ip_address, hostname = current_user + "-bvs2")
-        helpers.log("Configuring cluster for backup vm...")
-        t5_platform.first_boot_controller_initial_cluster_setup("c2", join_cluster = "yes", cluster_ip = new_ip_address)
-        new_ip_address1 = t5_platform.first_boot_controller_menu_apply("c2")
-        print "3-a. Success configuring first boot Controller for backup with IP : %s" % str(new_ip_address1)
-
-def configure_mininet_ip(**kwargs):
-    ip = kwargs.get("ip", None)
-    kvm_ops.set_mininet_ip(node = "c3", ip = ip)
-    print "Success configuring mininet with IP : %s" % ip
-    
-def close_kvm_handle():
-    pass        # FIX ME Need to graceful Close KVM Handle        
 
 def main(*args):
     global vm_name, kvm_vmdk_path, kvm_host, vm_backup_name
     args = parser.parse_args()
     vm_name = current_user + '_' + args.vm_name + '_' + datetime.datetime.now().strftime("%m%d%H%M")
+    vm_host_name = current_user + "-bvs-1"
     print "Creating VM with Name : %s" % vm_name
     helpers.log("Creating VM with Name: %s " % vm_name)
     
-    if args.kvm_host is None:
-        helpers.log("Connecting to default KVM Host...")
-        connect_to_kvm_host(hostname = kvm_host, user = kvm_user,
-                                     password = kvm_pwd, name = 'kvm_host')
-    else:
-        helpers.log("Connecting to KVM HOST : %s " % args.kvm_host)
+    if args.kvm_host is not None:
         kvm_host = args.kvm_host
-        connect_to_kvm_host(hostname = args.kvm_host, user = kvm_user,
-                                     password = kvm_pwd, name = 'kvm_host')
+    
+    if args.netmask is None:
+        args.netmask = "18"
+    
+    active_vm = kvm_ops.vm_setup(kvm_host = kvm_host, kvm_user = kvm_user, kvm_password = kvm_pwd,
+                     vm_type = args.vm_type, qcow_path = args.qcow_path, ip = args.active_ip,
+                     netmask = args.netmask, vm_name = vm_name, vm_host_name = vm_host_name)
+    helpers.log("Created Active VM: \n%s" % active_vm)
+    standby_vm = None
     if args.standby_vm is not None:
+        test.Test._instance = None
         vm_backup_name = current_user + '_' + args.standby_vm + '_' + datetime.datetime.now().strftime("%m%d%H%M")
+        vm_host_name = current_user + "-bvs-2"
         print "Creating Backup VM with Name : %s" % vm_backup_name
         helpers.log("Creating Slave VM with Name : %s" % vm_backup_name)
-        if vm_backup_name in kvm_handle.bash('sudo virsh list --all')['content']:
-            helpers.log("VM with given name %s already exists in KVM Host %s\nExisting.." % (vm_name, kvm_host))
-            print "VM with given name %s already exists in KVM Host %s\nPlease use different name\nExisting.." % (vm_name, kvm_host)
-            sys.exit(1)
-        
-    if vm_name in kvm_handle.bash('sudo virsh list --all')['content']:
-        helpers.log("VM with given name %s already exists in KVM Host %s\nExisting.." % (vm_name, kvm_host))
-        print "VM with given name %s already exists in KVM Host %s\nPlease use different name\nExisting.." % (vm_name, kvm_host)
-        sys.exit(1)
+        standby_vm = kvm_ops.vm_setup(kvm_host = kvm_host, kvm_user = kvm_user, kvm_password = kvm_pwd,
+                     vm_type = args.vm_type, qcow_path = args.qcow_path, ip = args.standby_ip,
+                     netmask = args.netmask, vm_name = vm_backup_name, cluster_ip = args.active_ip,
+                     vm_host_name = vm_host_name, scp = False)
+        helpers.log("Created Backup VM :\n%s" % standby_vm)
     
-    if args.vm_type == "mininet":
-        args.qcow_path = "/var/lib/libvirt/bvs_images/latest_mininet.qcow2"
-        
-    if args.qcow_path is None:
-        helpers.log("no VMDK path is given copying from latest bvs build from jenkins server")
-        scp_vmdk_to_kvm(kvm_handle = kvm_handle, vm_type = args.vm_type)
-    else:
-        helpers.log("VMDK path is provided using it locally NO SCP just copy to images..")
-        cp_vmdk_to_images(vmdk = args.qcow_path)
-    # Creating VM on KVM Host with above generated kvm_vmdk_path using virsh-install cmd 
-    create_vm_on_kvm(vm_type = args.vm_type)
-    create_temp_topo()
-    
-    # set the BIG ROBOT Topo file for console connections
-    helpers.bigrobot_topology("/tmp/temp.topo")
-    helpers.bigrobot_params("none")
-    if args.vm_type == 'mininet':
-        #FIX ME configure mininet with user specified ip / return the DHCP ip of mininet VM
-        print "Succes Creating Mininet vm!!"
-        helpers.log("Configuring IP for mininet if provided")
-        configure_mininet_ip(ip = args.active_ip)
-        sys.exit(0)
-    
-    
-    configure_vm_first_boot(cluster_ip = args.cluster_ip, ip_address = args.active_ip,
-                            backup_ip_address = args.standby_ip)
     
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -287,6 +116,7 @@ if __name__ == '__main__':
     parser.add_argument("--standby_vm", help = "This name used for standby vm")
     parser.add_argument("--standby_ip", help = "This ip is used for standby vm")
     parser.add_argument("--cluster_ip", help = "This ip is used as Cluster IP while configurint first boot for created bvs VM")
+    parser.add_argument("--netmask", help = "This netmask is used to configure both active and standby vms")
     parser.add_argument("--qcow_path", help = "Use this option if qcow is local to KVM Host and this instance is running on same KVM Host reduces \
                                                 time in Scp'ing qcow to KVM HOST")
     parser.add_argument("--kvm_host", help = "Use this option to specify differnt KVM Host from defautl KVM Hosts maintained by QA Team")
