@@ -170,7 +170,7 @@ class KVMOperations(object):
 
         new_ip_address = t5_platform.first_boot_controller_menu_apply("c1")
         helpers.summary_log("3. Success configuring first boot Controller IP : %s" % str(new_ip_address))
-        return True
+        return new_ip_address
 
 
     def vm_setup(self, **kwargs):
@@ -184,6 +184,8 @@ class KVMOperations(object):
             qcow_path = kwargs.get("qcow_path", None)
             qcow_vm_path = None
             ip = kwargs.get("ip", None)
+            if ip == 'None':
+                ip = None
             cluster_ip = kwargs.get("cluster_ip", None)
             netmask = kwargs.get("netmask", "18")
             return_dict = {}
@@ -240,10 +242,8 @@ class KVMOperations(object):
                 helpers.log("Configuring IP for mininet if provided")
                 self.set_mininet_ip(node="c1", ip=ip)
                 return return_dict
-
-            if self._configure_vm_first_boot(cluster_ip=cluster_ip, ip_address=ip, netmask=netmask,
-                                             vm_host_name=vm_host_name):
-                helpers.log("Success Configuring First for VM : %s.." % vm_name)
+            return_dict['vm_ip'] = self._configure_vm_first_boot(cluster_ip=cluster_ip, ip_address=ip, netmask=netmask,
+                                             vm_host_name=vm_host_name)    
             s = helpers.file_read_once("/tmp/%s.log" % vm_name)
             return_dict['result'] = s
             return return_dict
