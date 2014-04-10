@@ -105,6 +105,9 @@ def main(*args):
                      netmask=args.netmask, vm_name=vm_name, vm_host_name=vm_host_name,
                      scp=scp)
     helpers.log("Created Active VM: \n%s" % active_vm)
+    if args.active_ip is None:
+        helpers.summary_log("Using Cluster IP : %s" % active_vm['vm_ip'])
+        args.active_ip = active_vm['vm_ip']
     standby_vm = None
     if args.standby_vm is not None:
         test.Test._instance = None
@@ -115,7 +118,7 @@ def main(*args):
                      vm_type=args.vm_type, qcow_path=args.qcow_path, ip=args.standby_ip,
                      netmask=args.netmask, vm_name=vm_backup_name, cluster_ip=args.active_ip,
                      vm_host_name=vm_host_name, scp=False)
-        helpers.summary_log("Created Backup VM :\n%s" % standby_vm)
+        helpers.log("Created Backup VM :\n%s" % standby_vm)
 
 
 if __name__ == '__main__':
