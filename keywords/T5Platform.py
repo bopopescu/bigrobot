@@ -161,6 +161,7 @@ class T5Platform(object):
         t = test.Test()
         master = t.controller("master")
         obj = utilities()
+        
         if (utilities.cli_get_num_nodes(obj) == 1):
             singleNode = True
         else:
@@ -232,6 +233,11 @@ class T5Platform(object):
                     After the reboot Master is: %s " %(masterID, newMasterID))
         else:
             if(masterNode):
+                obj.restart_floodlight_monitor("slave")
+            else:
+                obj.restart_floodlight_monitor("master")
+            
+            if(masterNode):      
                 if(masterID == newSlaveID and slaveID == newMasterID):
                     helpers.log("Pass: After the reboot cluster is stable - Master is : %s / Slave is: %s" % (newMasterID, newSlaveID))
                     return True
