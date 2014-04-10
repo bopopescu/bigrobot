@@ -14,7 +14,6 @@ Library          keywords/Mininet.py
 Library	    	 keywords/Host.py
 Resource	 keywords_dev/prashanth/t5_dualleaf_three_rack_physical_resource.txt
 Library          keywords_dev/prashanth/T5.py
-Library	         keywords_dev/prashanth/T5Fabric.py
 
 * Variables
 ${h4_ip}  192.168.0.11

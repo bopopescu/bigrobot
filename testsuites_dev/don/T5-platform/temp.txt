@@ -2,7 +2,7 @@
 
 * Setting
 Documentation    T5 Controller Platform Test Suite
-#Suite Setup      base suite setup
+Suite Setup      base suite setup
 #Suite Teardown   base suite teardown
 #Test Setup       base test setup
 #Test Teardown    base test teardown
@@ -12,11 +12,11 @@ Library          keywords/Mininet.py
 Library          Collections
 Library          keywords/T5.py
 Library	         keywords/T5L3.py
-#Library	         keywords/T5Platform.py
-Library	         keywords/T5Utilities.py
-Resource	 	 keywords_dev/don/t5_platform_sanity_resource.txt
 Library	         keywords/T5Platform.py
-Library	         keywords_dev/don/T5Platform_DJ.py
+Library	         keywords/T5Utilities.py
+#Resource	 	 keywords_dev/don/t5_platform_sanity_resource.txt
+Library	         keywords/T5Platform.py
+
 
 * Variables
 @{spineList}  00:00:00:00:00:01:00:01  00:00:00:00:00:01:00:02  00:00:00:00:00:01:00:03
@@ -26,10 +26,13 @@ Library	         keywords_dev/don/T5Platform_DJ.py
 * Test Case 
 
 
-temp 
+Temp
 	[Tags]  temp
-	temp function
-	
+	${returnVal}=	start floodlight monitor
+	Should be true	${returnVal}
+	sleep  30
+	${returnVal}=	stop floodlight monitor
+	Should be true	${returnVal}
 	
 Configure A Tenant
 	[Tags]  span  one

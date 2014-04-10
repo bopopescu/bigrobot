@@ -2,7 +2,6 @@ import autobot.helpers as helpers
 import autobot.test as test
 import keywords.Mininet as mininet
 from time import sleep
-import keywords.T5Fabric as T5Fabric
 
 '''
     ::::::::::    README    ::::::::::::::

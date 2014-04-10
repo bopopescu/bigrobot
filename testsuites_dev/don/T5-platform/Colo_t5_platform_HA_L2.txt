@@ -3,7 +3,7 @@
 * Setting
 Documentation    T5 Controller Platform Test Suite - Colo Testbed
 Suite Setup      T5 base suite setup
-Suite Teardown   T5 base suite teardown
+#Suite Teardown   T5 base suite teardown
 #Test Setup       base test setup
 #Test Teardown    base test teardown
 Force Tags       T5Platform  HA  L2
@@ -16,19 +16,24 @@ Library	         keywords/T5Platform.py
 Library	         keywords/T5Utilities.py
 
 * Variables
-@{spineList}  04:00:00:00:01:00:00:01
-@{leafList}  04:00:00:00:02:00:00:01  04:00:00:00:02:00:00:02  04:00:00:00:02:00:00:03
+@{spineList}  00:00:04:00:01:00:00:01  00:00:04:00:01:00:00:02
+@{leafList}  00:00:04:00:02:00:00:01  00:00:04:00:02:00:00:02  00:00:04:00:02:00:00:03
 
 
 * Test Case 
+
+Temp
+	[Tags]  temp1
+	rest add vns ip  autoT1  v1  10.10.10.100   24
+	rest add vns ip  autoT1  v2  20.20.20.100   24
 
 Configure Multiple L2 Tenants With Single VNS & Failover
 	[Tags]	sanity  feature
 	Configure 3-Rack/Dual-Leaf/2-Spine/2-Host Setup For Physical Regression Topology 
 	Configure 2 Tenants with Different VLAN properties
 	Verify Connectivity in 3-Rack/Dual-Leaf/2-Spine/2-Host Physical Regression Topology 
-	Reboot the master node & verify fabric integrity
-	Verify Connectivity in 3-Rack/Dual-Leaf/2-Spine/2-Host Physical Regression Topology 
+	#Reboot the master node & verify fabric integrity
+	#Verify Connectivity in 3-Rack/Dual-Leaf/2-Spine/2-Host Physical Regression Topology 
 
 Verify HA Cluster Formation
    [Tags]  sanity  feature
@@ -45,11 +50,6 @@ Verify Cluster Election Re-run
 Verify Cluster Master Reboot
 	[Tags]  sanity  feature
 	Reboot the master node & verify fabric integrity
-	
-Failover/Failback by rebooting the master and verify connectivity
-   : FOR    ${Iteration}    IN RANGE    1    26
-   \	Log To Console   \n================ Rebooting Master - Iteration ${Iteration} ===============\n
-   \	Reboot the master node & verify fabric integrity
 	
 Verify Cluster Slave Reboot
 	[Tags]  sanity  feature
@@ -70,13 +70,26 @@ Cluster Election Take-Leader & Verify Connectivity
    # 			Need to implement this in the master
    Failover/Failback by issuing take-leader in master & verify connectivity
 
-Cluster Election Re-run & Verify Connectivity
-   [Tags]  feature   
-   # To be: Make sure to do it on both master & slave when the commands
-   #		are finalized
-   Re-run the election and verify connectivity
-   
-   
+Reboot Peer Leaf Switch During Failover & Verify Connectivity
+	[Tags]  feature  
+	
+	Reboot the master node & verify fabric integrity
+
+Stress Configure & Delete Multiple L3 Tenants With Single VNS & Failover
+	[Tags]	stress
+	: FOR    ${Iteration}    IN RANGE    1    26
+	\	Log To Console   \n================ Configure & Delete L3 Tenants & Failover - Iteration ${Iteration} ===============\n
+	\	rest delete tenant  autoT1
+    \	rest delete tenant  autoT2
+   	\	auto delete fabric switch  ${spineList}  ${leafList}  2
+    \	auto delete fabric portgroups
+    \	sleep  60
+	\	Configure 3-Rack/Dual-Leaf/2-Spine/2-Host Setup For Physical Regression Topology 
+	\	Configure 2 Tenants with Different VLAN properties
+	\	Verify Connectivity in 3-Rack/Dual-Leaf/2-Spine/2-Host Physical Regression Topology 
+	\	Reboot the master node & verify fabric integrity
+	\	Verify Connectivity in 3-Rack/Dual-Leaf/2-Spine/2-Host Physical Regression Topology    
+
 Clean Config
     [Tags]  clean
     rest delete tenant  autoT1
@@ -118,38 +131,35 @@ Reboot the Slave node & verify fabric integrity
 	
 	
 Failover/Failback by rebooting the master and verify connectivity
-
    : FOR    ${Iteration}    IN RANGE    1    3
    \	Log To Console   \n================ Rebooting Master - Iteration ${Iteration} ===============\n
-   \	cli verify cluster master reboot
-   \	Verify Connectivity in 3-Rack/Dual-Leaf/2-Spine/2-Host Physical Regression Topology 
-
-
-Failover/Failback by rebooting the slave and verify connectivity
-
-   : FOR    ${Iteration}    IN RANGE    1    3
-   \	Log To Console   \n================ Rebooting Slave - Iteration ${Iteration} ===============\n
-   \	cli verify cluster slave reboot
-   \	Verify Connectivity in 3-Rack/Dual-Leaf/2-Spine/2-Host Physical Regression Topology 
-
-
-Failover/Failback by issuing take-leader in master & verify connectivity
-
-   : FOR    ${Iteration}    IN RANGE    1    3
-   \	Log To Console   \n================ Election-Take-Leader - Iteration ${Iteration} ===============\n
-   \	rest verify cluster election take leader
-   \	Verify Connectivity in 3-Rack/Dual-Leaf/2-Spine/2-Host Physical Regression Topology 
-
-
-Re-run the election and verify connectivity
-
-   : FOR    ${Iteration}    IN RANGE    1    3
-   \	Log To Console   \n================ Election-Rerun - Iteration ${Iteration} ===============\n
-   \	rest verify cluster election rerun
+   \	${returnVal}=  cli verify cluster master reboot
+   \	Should Be True  ${returnVal}
    \	Verify Connectivity in 3-Rack/Dual-Leaf/2-Spine/2-Host Physical Regression Topology 
    
 
+Failover/Failback by rebooting the slave and verify connectivity
+   : FOR    ${Iteration}    IN RANGE    1    3
+   \	Log To Console   \n================ Rebooting Slave - Iteration ${Iteration} ===============\n
+   \	${returnVal}=	cli verify cluster slave reboot
+   \	Should Be True  ${returnVal}
+   \	Verify Connectivity in 3-Rack/Dual-Leaf/2-Spine/2-Host Physical Regression Topology 
+   
 
+Failover/Failback by issuing take-leader in master & verify connectivity
+   : FOR    ${Iteration}    IN RANGE    1    3
+   \	Log To Console   \n================ Election-Take-Leader - Iteration ${Iteration} ===============\n
+   \	${returnVal}=  rest verify cluster election take leader
+   \	Should Be True  ${returnVal}
+   \	Verify Connectivity in 3-Rack/Dual-Leaf/2-Spine/2-Host Physical Regression Topology 
+
+Re-run the election and verify connectivity
+   : FOR    ${Iteration}    IN RANGE    1    3
+   \	Log To Console   \n================ Election-Rerun - Iteration ${Iteration} ===============\n
+   \	${returnVal}=	rest verify cluster election rerun
+   \	Should Be True  ${returnVal}
+   \	Verify Connectivity in 3-Rack/Dual-Leaf/2-Spine/2-Host Physical Regression Topology 
+   
 
 Configure 3-Rack/Dual-Leaf/2-Spine/2-Host Setup For Physical Regression Topology 
 
@@ -172,21 +182,27 @@ Configure 3-Rack/Dual-Leaf/2-Spine/2-Host Setup For Physical Regression Topology
    rest add portgroup  p1
    rest add interface to portgroup  leaf0-a  ${h1_intf0}  p1
    rest add interface to portgroup  leaf0-b  ${h1_intf1}  p1
+   rest add portgroup lacp  p1
    rest add portgroup  p2
    rest add interface to portgroup  leaf0-a  ${h2_intf0}  p2
    rest add interface to portgroup  leaf0-b  ${h2_intf1}  p2
+   rest add portgroup lacp  p2
    rest add portgroup  p3
    rest add interface to portgroup  leaf0-a  ${h3_intf0}  p3
    rest add interface to portgroup  leaf0-b  ${h3_intf1}  p3
+   rest add portgroup lacp  p3
    rest add portgroup  p4
    rest add interface to portgroup  leaf1-a  ${h4_intf0}  p4
    rest add interface to portgroup  leaf1-a  ${h4_intf1}  p4
+   rest add portgroup lacp  p4
    rest add portgroup  p5
    rest add interface to portgroup  leaf1-a  ${h5_intf0}  p5
    rest add interface to portgroup  leaf1-a  ${h5_intf1}  p5
+   rest add portgroup lacp  p5
    rest add portgroup  p6
    rest add interface to portgroup  leaf1-a  ${h6_intf0}  p6
    rest add interface to portgroup  leaf1-a  ${h6_intf1}  p6
+   rest add portgroup lacp  p6
    sleep  10
 
 
@@ -213,13 +229,13 @@ Configure 2 Tenants with Different VLAN properties
    rest add portgroup to vns  autoT1  v1  p1  10
    rest add portgroup to vns  autoT1  v1  p2  10
    rest add portgroup to vns  autoT1  v1  p3  10
-   #rest add vns ip  autoT1  v1  ${vns1ip}  ${subMask}
+   rest add vns ip  autoT1  v1  ${vns1ip}  ${subMask}
    
    rest add vns  autoT1  v2
-   rest add portgroup to vns  autoT1  v2  p3  20
    rest add portgroup to vns  autoT1  v2  p4  20
    rest add portgroup to vns  autoT1  v2  p5  20
-   #rest add vns ip  autoT1  v2  ${vns2ip}  ${subMask}
+   rest add portgroup to vns  autoT1  v2  p6  20
+   rest add vns ip  autoT1  v2  ${vns2ip}  ${subMask}
    
    #rest add tenant  autoT2
    #rest add vns  autoT2  v3
@@ -237,19 +253,19 @@ Verify Connectivity in 3-Rack/Dual-Leaf/2-Spine/2-Host Physical Regression Topol
    Set Test Variable  ${h1bond10ip}  10.10.10.21
    Set Test Variable  ${h2bond10ip}	 10.10.10.22
    Set Test Variable  ${h3bond10ip}	 10.10.10.23
-   Set Test Variable  ${vns1ip}  10.10.10.100
+   Set Test Variable  ${vns1ip}  	 10.10.10.100
    
-   Set Test Variable  ${h4bond0ip} 	20.20.20.24
-   Set Test Variable  ${h5bond0ip}	20.20.20.25
-   Set Test Variable  ${h6bond0ip}	20.20.20.26
-   Set Test Variable  ${vns2ip}  20.20.20.100
+   Set Test Variable  ${h4bond20ip} 	20.20.20.24
+   Set Test Variable  ${h5bond20ip}		20.20.20.25
+   Set Test Variable  ${h6bond20ip}		20.20.20.26
+   Set Test Variable  ${vns2ip}  		20.20.20.100
    
    Set Test Variable  ${h1ip}	192.168.1.20
    Set Test Variable  ${h2ip}	192.168.1.21
    Set Test Variable  ${h3ip}	192.168.1.10
    Set Test Variable  ${h4ip}	192.168.1.11
    
-   ###	Verify ping between autoT1-v1   
+   ###	Verify L2 ping between autoT1-v1   
    ${returnVal}=  platform bash ping  h1  ${h2bond10ip}
    Should Be True  ${returnVal}  
    ${returnVal}=  platform bash ping  h1  ${h3bond10ip}
@@ -258,13 +274,29 @@ Verify Connectivity in 3-Rack/Dual-Leaf/2-Spine/2-Host Physical Regression Topol
    Should Be True  ${returnVal}  
    
 
-   ###	Verify ping between autoT1-v2
-   ${returnVal}=  platform bash ping  h4  ${h5bond0ip}
+   ###	Verify L2 ping between autoT1-v2
+   ${returnVal}=  platform bash ping  h4  ${h5bond20ip}
    Should Be True  ${returnVal}  
-   ${returnVal}=  platform bash ping  h4  ${h6bond0ip}
+   ${returnVal}=  platform bash ping  h4  ${h6bond20ip}
    Should Be True  ${returnVal}  
-   ${returnVal}=  platform bash ping  h5  ${h6bond0ip}
+   ${returnVal}=  platform bash ping  h5  ${h6bond20ip}
    Should Be True  ${returnVal}   
+   
+   ###	Verify L3 ping between autoT1-v1 & autoT1-v2
+   ${returnVal}=  platform bash ping  h1  ${h4bond20ip}
+   Should Be True  ${returnVal}
+   ${returnVal}=  platform bash ping  h1  ${h5bond20ip}
+   Should Be True  ${returnVal}
+   ${returnVal}=  platform bash ping  h1  ${h6bond20ip}
+   Should Be True  ${returnVal}
+  
+   ${returnVal}=  platform bash ping  h4  ${h2bond10ip}
+   Should Be True  ${returnVal}
+   ${returnVal}=  platform bash ping  h5  ${h2bond10ip}
+   Should Be True  ${returnVal}
+   ${returnVal}=  platform bash ping  h6  ${h2bond10ip}
+   Should Be True  ${returnVal}
+   
    
    
    ###	Verify ping between autoT2
