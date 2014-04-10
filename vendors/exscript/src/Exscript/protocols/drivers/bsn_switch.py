@@ -36,7 +36,13 @@ _tacacs_re = re.compile(r'[\r\n]s\/key[\S ]+\r?%s' % _password_re[0].pattern)
 #  Enable:   arista5#
 #  Config:   arista5(config)#
 #  Bash:     [admin@arista5 ~]$
-_prompt_re = [re.compile(r'[\r\n]\[?(\w+(-?\w+)?\s?@?)?[\-\w+\.:/]+(?:\([^\)]+\))?(:~)?( ~\])?[>#$] ?$')]
+#
+# Special case:
+#  Bash:      root@kk-spine01:~#
+#            ^ note the extra space
+#              See https://bigswitch.atlassian.net/browse/PAN-772
+
+_prompt_re = [re.compile(r'[\r\n]\s?\[?(\w+(-?\w+)?\s?@?)?[\-\w+\.:/]+(?:\([^\)]+\))?(:~)?( ~\])?[>#$] ?$')]
 
 
 # SwitchLight errors:
