@@ -997,7 +997,7 @@ class Test(object):
         c = t.controller(name)
 
         helpers.log("Attempting to delete all tenants")
-        url_get_tenant = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/tenants'
+        url_get_tenant = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/tenant'
         try:
             c.rest.get(url_get_tenant)
             content = c.rest.content()
