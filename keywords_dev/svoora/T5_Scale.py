@@ -225,7 +225,7 @@ class T5_Scale(object):
         return return_flag
     
         
-def Dump_Show_Commands(self):
+    def Dump_Show_Commands(self):
         t = test.Test()
         c = t.controller('master')
         cmdList = [
@@ -250,7 +250,100 @@ def Dump_Show_Commands(self):
             content = content + c.cli_content()
         return content       
         
-           
+       
+    def compare_configuration(self):
+        '''
+        Compare Configuration syncs between master and standby
+        '''
+        t = test.Test()
+        c_master = t.controller('master')
+        c_slave = t.controller('slave') # Need to check if 'standby' exists
+        helpers.log("Verifying all tenants")
+        url_get_tenant = '/api/v1/data/controller/applications/bvs/tenant?config=true'
+        try:
+            c_master.rest.get(url_get_tenant)
+            master_content = c_master.rest.content()
+            c_slave.rest.get(url_get_tenant)
+            slave_content = c_slave.rest.content()
+        
+        except:
+            pass
+        else:
+            if (master_content and slave_content):
+                for i in range (0, len(master_content)):
+                    if (master_content[i]['name'] != slave_content[i]['name']):
+                        helpers.log("Tenant config is not in sync")
+                        return False
+            else:
+                helpers.log("TENANT:::Configuration is not present in Master or Salve")
+            helpers.log("Tenant Configuration is in sync")
+                    
+        helpers.log("Verifying switch configurations")
+        url_get_switches= '/api/v1/data/controller/core/switch-config?config=true'
+        try:
+            c_master.rest.get(url_get_switches)
+            master_content = c_master.rest.content()
+            c_slave.rest.get(url_get_switches)
+            slave_content = c_slave.rest.content()
+        except:
+            pass
+        else:
+            if (master_content and slave_content):
+                for i in range (0, len(master_content)):
+                    if (master_content[i]['name'] != slave_content[i]['name'] and master_content[i]['dpid'] != slave_content[i]['dpid']):
+                        helpers.log("Switches are not in Sync")
+                        return False   # Need to Check content length as well
+            else:
+                helpers.log("SWITCH:::Configuration is not present in Master or Salve")
+                
+            helpers.log("Switch Configuration is in Sync")
+                        
+        helpers.log("Verifying all port-groups")
+        url_get_portgrp = '/api/v1/data/controller/applications/bvs/port-group?config=true'
+        try:
+            c_master.rest.get(url_get_portgrp)
+            master_content = c_master.rest.content()
+            c_slave.rest.get(url_get_portgrp)
+            slave_content = c_slave.rest.content()
+        except:
+            pass
+        else:
+            if (master_content and slave_content):
+                for i in range (0, len(master_content)):
+                    if (master_content[i]['name'] != slave_content[i]['name']):
+                        helpers.log("Port-Group config is not in Sync")
+                        return False
+            else:
+                helpers.log("PORT-GROUP:::Configuration is not present in Master or Salve")
+                
+            helpers.log("Port-Group Configuration is in Sync")               
+
+        helpers.log("Verifying NTP configurations")
+        url_get_ntpservers = '/api/v1/data/controller/os/config/global/time-config?config=true'
+        try:
+            c._master.rest.get(url_get_ntpservers)
+            master_content = c_master.rest.content()
+            c._slave.rest.get(url_get_ntpservers)
+            slave_content = c_slave.rest.content()
+        
+        except:
+            pass
+        else:
+            if (master_content and slave_content):
+                for i in range (0, len(master_content)):
+                    if (master_content[i]['ntp-server'] != slave_content[i]['ntp-server']):
+                        helpers.log("NTP config is not in sync")
+                        return False
+            else:
+                helpers.log("NTP:::Configuration is not present in Master or Salve")
+                
+            helpers.log("NTP Configuration is in Sync")
+                
+        helpers.log("Config is in sync between Active and Standby")
+        return True
+
+    
+        
         
         
         
