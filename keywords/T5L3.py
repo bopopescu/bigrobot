@@ -18,10 +18,7 @@ class T5L3(object):
                 `ipaddr`        interface ip address
                 `netmask`       vns subnet mask
                 `private`        true or false 
-            PATCH http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant%5Bname%3D%22X%22%5D/virtual-router/vns-interfaces%5Bvns-name%3D%22X1%22%5D {"ip-cidr": "10.251.1.1/24", "private": false}
-            
-            PUT http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant%5Bname%3D%22X%22%5D/virtual-router/vns-interfaces%5Bvns-name%3D%22X1%22%5D {"vns-name": "X1"}
-
+            POST http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant%5Bname%3D%22X%22%5D/virtual-router/vns-interfaces%5Bvns-name%3D%22X1%22%5D/ip-subnet {"ip-cidr": "10.10.0.1/24", "private": false}
 
             Return: true if configuration is successful, false otherwise
         '''
@@ -32,13 +29,13 @@ class T5L3(object):
         helpers.test_log("Input arguments: tenant = %s vns = %s ipaddr = %s netmask = %s private = %s " % (tenant, vns, ipaddr, netmask, private))
         
         #url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/virtual-router/vns-interfaces' % (tenant)
-        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/virtual-router/vns-interfaces[vns-name="%s"]' % (tenant, vns)
+        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/virtual-router/vns-interfaces[vns-name="%s"]/ip-subnet' % (tenant, vns)
         ip_addr = ipaddr + "/" + netmask
         try:
             #c.rest.patch(url, {"ip-cidr": str(ip_addr)})
             #c.rest.post(url, {"vns-name": vns, "ip-cidr": str(ip_addr), "active": True})
 #            c.rest.put(url, {"vns-name": vns, "ip-cidr": str(ip_addr)})
-            c.rest.patch(url, {"ip-cidr": str(ip_addr), "private": private})
+            c.rest.post(url, {"ip-cidr": str(ip_addr), "private": private})
         except:
             #helpers.test_failure(c.rest.error())
             return False
