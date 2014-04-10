@@ -2,9 +2,11 @@
 '''
 Wrapper Script to spwan cotroller VMs on KVM Machine
 '''
-import os, re, sys, subprocess, datetime, getpass, argparse
-from pytz import timezone
-import robot    # import to force append local robot libraries than python installed packages
+import os
+import sys
+import getpass
+import argparse
+import robot  # import to force append local robot libraries than python installed packages
 
 
 vmdk_name = "controller-bvs-2.0.7-SNAPSHOT.vmdk"
@@ -23,7 +25,6 @@ exscript_path = bigrobot_path + '/vendors/exscript/src'
 sys.path.insert(0, bigrobot_path)
 sys.path.insert(1, exscript_path)
 print "Detailed log can be tailed at /tmp/robot.log  or /tmp/autobot_%s.log" % current_user
-import autobot.helpers as helpers
 from keywords.KVMOperations import KVMOperations
 
 def usage():
@@ -37,20 +38,23 @@ $ vm_teardown \\
 
 def main(*args):
     kvm_op = KVMOperations()
-    if kvm_op.teardown_vm_on_kvm_host(kvm_host = kvm_host, vm_name = vm_name,
-                                      kvm_user = kvm_user, kvm_password = kvm_pwd):
+    result = kvm_op.vm_teardown(kvm_host=kvm_host,
+                                vm_name=vm_name,
+                                kvm_user=kvm_user,
+                                kvm_password=kvm_pwd)
+    if result['status_code'] == True:
         print "VM TearDown Success!!"
     else:
-        print "VM TearDown Failure !!"
-    
+        print "VM TearDown Failure!!\n%s" % result['status_descr']
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument("vm_name", help = "This name is used to delete VM in KVM Hosts maintained for QA")
-    parser.add_argument("--kvm_host", help = "Use this option to specify differnt KVM Host from defautl KVM Hosts maintained by QA Team")
+    parser.add_argument("vm_name", help="This name is used to delete VM in KVM Hosts maintained for QA")
+    parser.add_argument("--kvm_host", help="Use this option to specify differnt KVM Host from defautl KVM Hosts maintained by QA Team")
     args = parser.parse_args()
     vm_name = args.vm_name
     if args.kvm_host is not None:
         kvm_host = args.kvm_host
     main()
 
-print "Success !!!"
+print "Success!!!"
