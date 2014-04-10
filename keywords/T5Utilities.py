@@ -26,6 +26,7 @@ fabricLags_b4 = []
 fabricLags_after = []
 warningCount = 0
 
+floodlightMonitorFlag = False
 
 class T5Utilities(object):
 
@@ -183,7 +184,7 @@ class T5Utilities(object):
         '''
         t = test.Test()
         c = t.controller("master")
-        url = "/api/v1/data/controller/applications/bvs/info/endpoint-manager/endpoints"
+        url = "/api/v1/data/controller/applications/bvs/info/endpoint-manager/endpoint"
         result = c.rest.get(url)['content']
         endpoints = []
         try:
@@ -340,6 +341,103 @@ class T5Utilities(object):
         return num    
            
     
+    def start_floodlight_monitor(self):
+        global floodlightMonitorFlag
+        
+        try:
+            t = test.Test()
+            c1 = t.controller('c1')
+            c2 = t.controller('c2')
+            c1_pidList = self.get_floodlight_monitor_pid('c1')
+            c2_pidList = self.get_floodlight_monitor_pid('c2')
+            for c1_pid in c1_pidList:
+                c1.sudo('kill %s' % (c1_pid))
+            for c2_pid in c2_pidList:
+                c2.sudo('kill %s' % (c2_pid))
+            
+            # Add rm of the file if file already exist in case of a new test
+            c1.sudo("tail -f /var/log/floodlight/floodlight.log | grep --line-buffered ERROR > %s &" % "c1_floodlight_dump.txt")
+            c2.sudo("tail -f /var/log/floodlight/floodlight.log | grep --line-buffered ERROR > %s &" % "c2_floodlight_dump.txt")
+            
+            floodlightMonitorFlag = True
+            return True
+        
+        except:
+            helpers.log("Exception occured while starting the floodlight monitor")
+            return False
+                        
+    def restart_floodlight_monitor(self, node):
+        
+        global floodlightMonitorFlag
+        
+        if(floodlightMonitorFlag):
+            t = test.Test()
+            c = t.controller(node)
+            result = c.sudo('ls *_dump.txt')
+            filename = re.split('\n', result['content'])[1:-1]
+            c.sudo("tail -f /var/log/floodlight/floodlight.log | grep --line-buffered ERROR >> %s &" % filename[0].strip('\r'))
+            return True
+        else:
+            return True
+            
+    
+    
+    def stop_floodlight_monitor(self):
+        
+        global floodlightMonitorFlag
+        
+        if(floodlightMonitorFlag):
+            c1_pidList = self.get_floodlight_monitor_pid('c1')
+            c2_pidList = self.get_floodlight_monitor_pid('c2')
+            t = test.Test()
+            c1 = t.controller('c1')
+            c2 = t.controller('c2')
+            helpers.log("Stopping Floodlight Monitor on C1")
+            for c1_pid in c1_pidList:
+                c1.sudo('kill %s' % (c1_pid))
+            helpers.log("Stopping Floodlight Monitor on C2")
+            for c2_pid in c2_pidList:
+                c2.sudo('kill %s' % (c2_pid))
+            floodlightMonitorFlag = False
+            
+            try:
+                helpers.log("****************    Floodlight Log From C1    ****************")
+                result = c1.sudo('cat c1_floodlight_dump.txt')
+                split = re.split('\n', result['content'])[1:-1]
+                if split:
+                    helpers.warn("Floodlight Errors Were Detected At: %s " % helpers.ts_long_local())
+                    
+            except(AttributeError):
+                helpers.log("No Errors From Floodlight Monitor on C1")
+                
+            try:
+                helpers.log("****************    Floodlight Log From C2    ****************")
+                result = c2.sudo('cat c2_floodlight_dump.txt')
+                split = re.split('\n', result['content'])[1:-1]
+                if split:
+                    helpers.warn("Floodlight Errors Were Detected At: %s " % helpers.ts_long_local())
+            except(AttributeError):
+                helpers.log("No Errors From Floodlight Monitor on C2")
+            
+            return True
+            
+        else:
+            helpers.log("FloodlightMonitorFlag is not set: Returning False")
+            return False
+            
+            
+        
+    def get_floodlight_monitor_pid(self, role):
+        t = test.Test()
+        c = t.controller(role)
+        helpers.log("Verifing for monitor job")
+        c_result = c.sudo('ps ax | grep tail | grep sudo | awk \'{print $1}\'')
+        split = re.split('\n',c_result['content'])
+        pidList = split[1:-1]
+        return pidList
+    
+    
+
 ''' Following class will perform T5 platform related multithreading activities
     Instantiating this class is done by functions reside in T5Platform. 
     
@@ -365,6 +463,7 @@ class T5PlatformThreads(Thread):
             self.controller_reboot('master')
         if(self.name == "standbyReboot"):
             self.controller_reboot('slave')
+    
         
     def switch_reboot(self, switchName):
         try:
@@ -407,8 +506,4 @@ class T5PlatformThreads(Thread):
             returnVal = platform.cluster_node_reboot(False)
         print ("Exiting Thread %s After Controller Reboot for Node: " % (self.threadID), node)
         return returnVal
-        
-        
-        
-        
-
+    

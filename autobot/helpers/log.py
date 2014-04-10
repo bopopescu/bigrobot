@@ -67,13 +67,15 @@ class Log(object):
         msg = self._format_log(s, level)
 
         if not gobot.is_gobot():
+            # This is the log to use outside of gobot environment, such as for
+            # standalone applications.
+            if to_stderr:
+                sys.stderr.write(s + '\n')
             self._write_to_file('INFO ' + msg)
         else:
             if to_stderr:
                 sys.stderr.write('\n' + msg)
-                logger.info(msg)
-            else:
-                logger.info(msg)
+            logger.info(msg)
 
     # Alias
     info = log

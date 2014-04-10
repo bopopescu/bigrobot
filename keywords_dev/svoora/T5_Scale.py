@@ -225,7 +225,7 @@ class T5_Scale(object):
         return return_flag
     
         
-def Dump_Show_Commands(self):
+    def Dump_Show_Commands(self):
         t = test.Test()
         c = t.controller('master')
         cmdList = [
@@ -250,7 +250,154 @@ def Dump_Show_Commands(self):
             content = content + c.cli_content()
         return content       
         
-           
+       
+    def compare_configuration(self):
+        '''
+        Compare Configuration syncs between master and standby
+        '''
+        t = test.Test()
+        c_master = t.controller('master')
+        c_slave = t.controller('slave') 
+        helpers.log("Verifying all tenants")
+        url_get_tenant = '/api/v1/data/controller/applications/bvs/tenant?config=true'
+        try:
+            c_master.rest.get(url_get_tenant)
+            master_content = c_master.rest.content()
+            c_slave.rest.get(url_get_tenant)
+            slave_content = c_slave.rest.content()
+        
+        except:
+            pass
+        else:
+            if (master_content and slave_content):
+                for i in range (0, len(master_content)-1):
+                    if (master_content[i]['name'] != slave_content[i]['name']):
+                        helpers.log("Tenant config is not in sync")
+                        return False
+                    if (master_content[i]['virtual-router']['active']):
+                         helpers.log("Route config present in master")
+                         
+                         for j in range (0, len(master_content[i]['virtual-router']['routes'])-1):
+                             
+                             if (master_content[i]['virtual-router']['routes'][j]['next-hop']['tenant-name'] != slave_content[i]['virtual-router']['routes'][j]['next-hop']['tenant-name']
+                                and master_content[i]['virtual-router']['routes'][j]['dest-ip-subnet'] != slave_content[i]['virtual-router']['routes'][j]['dest-ip-subnet']):
+                                helpers.log("Routes did not match")
+                                return False
+                         for j in range (0, len(master_content[i]['virtual-router']['vns-interfaces'])-1):
+                            
+                             if (master_content[i]['virtual-router']['vns-interfaces'][j]['ip-cidr'] != slave_content[i]['virtual-router']['vns-interfaces'][j]['ip-cidr']
+                                 and master_content[i]['virtual-router']['vns-interfaces'][j]['vns-name'] != slave_content[i]['virtual-router']['vns-interfaces'][j]['vns-name']):
+                                 helpers.log("VNS interfaces did not match")
+                                 return False
+                    for j in range (0, len(master_content[i]['vns'])-1):
+                        
+                        if (master_content[i]['vns'][j]['name'] != slave_content[i]['vns'][j]['name']):
+                            helpers.log("VNS names do not match")
+                            return False
+                        for k in range (0, len(master_content[i]['vns'][j]['port-group-membership-rule'])-1):
+                            helpers.log(" Now in nested first k loop: %d" % k)
+                            if (master_content[i]['vns'][j]['port-group-membership-rule'][k]['port-group'] != slave_content[i]['vns'][j]['port-group-membership-rule'][k]['port-group']):
+                                helpers.log("Port-Group Membership rule do not match")
+                                return False
+                      
+            else:
+                helpers.log("TENANT:::Configuration is not present in Master or Salve")
+            helpers.log("Tenant Configuration is in sync")
+                    
+        helpers.log("Verifying switch configurations")
+        url_get_switches= '/api/v1/data/controller/core/switch-config?config=true'
+        try:
+            c_master.rest.get(url_get_switches)
+            master_content = c_master.rest.content()
+            c_slave.rest.get(url_get_switches)
+            slave_content = c_slave.rest.content()
+        except:
+            pass
+        else:
+            if (master_content and slave_content):
+                for i in range (0, len(master_content)-1):
+                    if (master_content[i]['name'] != slave_content[i]['name'] and master_content[i]['dpid'] != slave_content[i]['dpid']):
+                        helpers.log("Switches are not in Sync")
+                        return False   # Need to Check content length as well
+            else:
+                helpers.log("SWITCH:::Configuration is not present in Master or Salve")
+                
+            helpers.log("Switch Configuration is in Sync")
+                        
+        helpers.log("Verifying all port-groups")
+        url_get_portgrp = '/api/v1/data/controller/applications/bvs/port-group?config=true'
+        try:
+            c_master.rest.get(url_get_portgrp)
+            master_content = c_master.rest.content()
+            c_slave.rest.get(url_get_portgrp)
+            slave_content = c_slave.rest.content()
+        except:
+            pass
+        else:
+            if (master_content and slave_content):
+                for i in range (0, len(master_content)-1):
+                    if (master_content[i]['name'] != slave_content[i]['name']):
+                        helpers.log("Port-Group config is not in Sync")
+                        return False
+            else:
+                helpers.log("PORT-GROUP:::Configuration is not present in Master or Salve")
+                
+            helpers.log("Port-Group Configuration is in Sync")               
+
+        helpers.log("Verifying NTP configurations")
+        url_get_ntpservers = '/api/v1/data/controller/os/config/global/time-config?config=true'
+        try:
+            c._master.rest.get(url_get_ntpservers)
+            master_content = c_master.rest.content()
+            c._slave.rest.get(url_get_ntpservers)
+            slave_content = c_slave.rest.content()
+        
+        except:
+            pass
+        else:
+            if (master_content and slave_content):
+                for i in range (0, len(master_content)-1):
+                    if (master_content[i]['ntp-server'] != slave_content[i]['ntp-server']):
+                        helpers.log("NTP config is not in sync")
+                        return False
+            else:
+                helpers.log("NTP:::Configuration is not present in Master or Salve")
+                
+        helpers.log("NTP Configuration is in Sync")
+        
+        helpers.log("Verifing snmp configuration")
+        url_get_snmp_location = '/api/v1/data/controller/os/config/global/snmp-config?config=true'
+        try:
+            c._master.rest.get(url_get_snmp_location)
+            master_content = c_master.rest.content()
+            c._slave.rest.get(url_get_snmp_location)
+            slave_content = c_slave.rest.content()
+        
+        except:
+            pass
+        else:
+            if (master_content and slave_content):
+                for i in range (0, len(master_content)-1):
+                    if (master_content[i]['contact'] != slave_content[i]['contact']
+                        and master_content[i]['location'] != slave_content[i]['location']
+                        and master_content[i]['community'] != slave_content[i]['community']):
+                        helpers.log("SNMP config is not in sync")
+                        return False
+                    for j in range (0, len(master_content[i]['trap-host'])-1):
+                        if (master_content[i]['trap-host'][j]['ipaddr'] != slave_content[i]['trap-host'][j]['ipaddr']
+                            and master_content[i]['trap-host'][j]['udp-port'] != slave_content[i]['trap-host'][j]['udp-port']):
+                            helpers.log("SNMP::Trap config is not in sync")
+                            return False
+            else:
+                helpers.log("SNMP:::Configuration is not present in Master or Salve")
+                
+        helpers.log("SNMP Configuration is in Sync")
+                
+        helpers.log("Config is in sync between Active and Standby")
+        return True
+
+    
+        
         
         
         

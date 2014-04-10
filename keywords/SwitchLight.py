@@ -850,6 +850,8 @@ class SwitchLight(object):
                 s1.config(cli_input_1)
                 s1.enable('show running-config openflow')
                 helpers.log("Output of show running-config openflow after re-enabling controller %s" % (s1.cli_content()))
+                helpers.log("mycount is %s" % mycount)
+                helpers.log("iteration is %s" % iteration)
                 if mycount < int(iteration):
                     helpers.log('My Count is %s' % (mycount))
                     mycount = mycount + 1

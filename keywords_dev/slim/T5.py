@@ -8,7 +8,7 @@
 ###
 ###  DO NOT COMMIT CODE WITHOUT APPROVAL FROM LIBRARY OWNER
 ###
-###  Last Updated: 03/06/2014
+###  Last Updated: 04/06/2014
 ###
 ###  WARNING !!!!!!!
 '''
@@ -21,15 +21,6 @@ from netaddr import *
 
 
 class T5(object):
-
-    def __init__(self):
-#        t = test.Test()
-#        c = t.controller('master')
-        pass
-#        url = '/api/v1/auth/login' %
-#        result = c.rest.post(url, {"user":"admin", "password":"adminadmin"})
-#        session_cookie = result['content']['session_cookie']
-#        c.rest.set_session_cookie(session_cookie)
 
     def rest_add_user_password(self, username, password):
         '''
@@ -53,7 +44,6 @@ class T5(object):
             c = t.controller('master')
             try:
                 # Get the hashed value of password
-                helpers.log("Password is %s" % json.dumps(password))
                 url1 = '/api/v1/data/controller/core/aaa/hash-password[password=%s]' % json.dumps(password)
                 c.rest.get(url1)
                 myHash = c.rest.content()
@@ -87,7 +77,7 @@ class T5(object):
             # Show a specific tenant
             url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]' % (tenant)
         else:
-            # Show all tenants
+            # Show all tenant
             url = '/api/v1/data/controller/applications/bvs/tenant' % ()
 
         c.rest.get(url)
@@ -98,11 +88,11 @@ class T5(object):
 
         data = c.rest.content()
 
-        # If showing all tenants, then we don't need to check further
+        # If showing all tenant, then we don't need to check further
         if tenant is None:
             return data
 
-        # Search list of tenants to find a match
+        # Search list of tenant to find a match
         for t in data:
             actual_tenant = t['name']
             if actual_tenant == tenant:
@@ -187,7 +177,7 @@ class T5(object):
     def rest_add_interface_to_all_vns(self, tenant, switch, intf):
         t = test.Test()
         c = t.controller('master')
-        url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/vnses[tenant-name="%s"]' % (tenant)
+        url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/vns[tenant="%s"]' % (tenant)
         c.rest.get(url)
         data = c.rest.content()
         list_vlan_id = []
@@ -197,8 +187,8 @@ class T5(object):
         list_vlan_id = sorted(list_vlan_id)
         for j in range(0, len(data)):
             if data[j]["internal-vlan"] in list_vlan_id:
-                url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/switch-port-membership-rules[switch-name="%s"][interface-name="%s"]' % (tenant, data[j]["name"], switch, intf)
-                c.rest.put(url, {"switch-name": switch, "interface-name": intf, "vlan": data[j]["internal-vlan"]})
+                url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/switch-port-membership-rule[switch="%s"][interface="%s"]' % (tenant, data[j]["name"], switch, intf)
+                c.rest.put(url, {"switch": switch, "interface": intf, "vlan": data[j]["internal-vlan"]})
         return True
 
     def rest_delete_vns(self, tenant, vns=None):
@@ -219,7 +209,7 @@ class T5(object):
         t = test.Test()
         c = t.controller('master')
 
-        url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/vnses' % ()
+        url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/vns' % ()
         try:
             c.rest.get(url)
         except:
@@ -264,7 +254,7 @@ class T5(object):
                 `vns`         vns name
                 `endpoint`    endpoint name
             Return: true if configuration is successful, false otherwise
-            http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[name="A"]/vns[name="A1"]/endpoints[name="H1"] {"name": "H1"}
+            http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[name="A"]/vns[name="A1"]/endpoint[name="H1"] {"name": "H1"}
 
         '''
 
@@ -273,7 +263,7 @@ class T5(object):
 
         helpers.test_log("Input arguments: tenant = %s, vns = %s, endpoint = %s" % (tenant, vns, endpoint))
 
-        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/endpoints' % (tenant, vns)
+        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/endpoint' % (tenant, vns)
         try:
             c.rest.post(url, {"name": endpoint})
         except:
@@ -287,7 +277,7 @@ class T5(object):
 
         helpers.test_log("Input arguments: tenant = %s vns = %s endpoint = %s" % (tenant, vns, endpoint))
 
-        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/endpoints[name="%s"]' % (tenant, vns, endpoint)
+        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/endpoint[name="%s"]' % (tenant, vns, endpoint)
         try:
             c.rest.delete(url, {"name": endpoint})
         except:
@@ -299,7 +289,7 @@ class T5(object):
         t = test.Test()
         c = t.controller('master')
 
-        helpers.test_log("Input arguments: switch-name = %s Interface-name = %s port-group = %s" % (switch, intf, pg))
+        helpers.test_log("Input arguments: switch = %s interface = %s port-group = %s" % (switch, intf, pg))
 
         url = '/api/v1/data/controller/core/switch-config[name="%s"]/interface[name="%s"]' % (switch, intf)
         try:
@@ -343,11 +333,11 @@ class T5(object):
         t = test.Test()
         c = t.controller('master')
 
-        helpers.test_log("Input arguments: switch-name = %s Interface-name = %s port-group = %s" % (switch, intf, pg))
+        helpers.test_log("Input arguments: switch = %s interface = %s port-group = %s" % (switch, intf, pg))
 
         url = '/api/v1/data/controller/core/switch-config[name="%s"]/interface[name="%s"]' % (switch, intf)
         try:
-            c.rest.delete(url, {"core/switch-config/interface/port-group-name": pg})
+            c.rest.delete(url, {"core/switch-config/interface/port-group": pg})
         except:
             return False
         else:
@@ -359,10 +349,10 @@ class T5(object):
 
         helpers.test_log("Input arguments: tenant = %s vns = %s port-group = %s vlan = %s" % (tenant, vns, pg, vlan))
 
-        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/port-group-membership-rules[port-group-name="%s"]' % (tenant, vns, pg)
+        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/port-group-membership-rule[port-group="%s"]' % (tenant, vns, pg)
 
         try:
-            c.rest.put(url, {"vlan": vlan, "port-group-name": pg})
+            c.rest.put(url, {"vlan": vlan, "port-group": pg})
         except:
             return False
         else:
@@ -374,9 +364,9 @@ class T5(object):
 
         helpers.test_log("Input arguments: tenant = %s vns = %s endpoint = %s port-group = %s vlan = %s" % (tenant, vns, endpoint, pg, vlan))
 
-        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/endpoints[name="%s"]/attachment-point' % (tenant, vns, endpoint)
+        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/endpoint[name="%s"]/attachment-point' % (tenant, vns, endpoint)
         try:
-            c.rest.put(url, {"port-group-name": pg, "vlan": vlan})
+            c.rest.put(url, {"port-group": pg, "vlan": vlan})
         except:
             return False
         else:
@@ -388,7 +378,7 @@ class T5(object):
 
         helpers.test_log("Input arguments: tenant = %s vns = %s port-group = %s vlan = %s" % (tenant, vns, pg, vlan))
 
-        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/port-group-membership-rules[port-group-name="%s"]' % (tenant, vns, pg)
+        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/port-group-membership-rule[port-group="%s"]' % (tenant, vns, pg)
         try:
             c.rest.delete(url, {"vlan": vlan})
         except:
@@ -400,11 +390,11 @@ class T5(object):
         t = test.Test()
         c = t.controller('master')
 
-        helpers.test_log("Input arguments: tenant = %s vns = %s switch-name = %s interface-name = %s vlan = %s" % (tenant, vns, switch, intf, vlan))
+        helpers.test_log("Input arguments: tenant = %s vns = %s switch = %s interface = %s vlan = %s" % (tenant, vns, switch, intf, vlan))
 
-        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/switch-port-membership-rules[switch-name="%s"][interface-name="%s"]' % (tenant, vns, switch, intf)
+        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/switch-port-membership-rule[switch="%s"][interface="%s"]' % (tenant, vns, switch, intf)
         try:
-            c.rest.put(url, {"switch-name": switch, "interface-name": intf, "vlan": vlan})
+            c.rest.put(url, {"switch": switch, "interface": intf, "vlan": vlan})
         except:
             return False
         else:
@@ -414,9 +404,9 @@ class T5(object):
         t = test.Test()
         c = t.controller('master')
 
-        helpers.test_log("Input arguments: tenant = %s vns = %s switch-name = %s interface-name = %s vlan = %s" % (tenant, vns, switch, intf, vlan))
+        helpers.test_log("Input arguments: tenant = %s vns = %s switch = %s interface = %s vlan = %s" % (tenant, vns, switch, intf, vlan))
 
-        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/switch-port-membership-rules[switch-name="%s"][interface-name="%s"]' % (tenant, vns, switch, intf)
+        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/switch-port-membership-rule[switch="%s"][interface="%s"]' % (tenant, vns, switch, intf)
         try:
             c.rest.delete(url, {"vlan": vlan})
         except:
@@ -428,11 +418,11 @@ class T5(object):
         t = test.Test()
         c = t.controller('master')
 
-        helpers.test_log("Input arguments: tenant = %s vns = %s endpoint = %s switch-name = %s interface-name = %s vlan = %s" % (tenant, vns, endpoint, switch, intf, vlan))
+        helpers.test_log("Input arguments: tenant = %s vns = %s endpoint = %s switch = %s interface = %s vlan = %s" % (tenant, vns, endpoint, switch, intf, vlan))
 
-        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/endpoints[name="%s"]/attachment-point' % (tenant, vns, endpoint)
+        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/endpoint[name="%s"]/attachment-point' % (tenant, vns, endpoint)
         try:
-            c.rest.put(url, {"switch-name": switch, "interface-name": intf, "vlan": vlan})
+            c.rest.put(url, {"switch": switch, "interface": intf, "vlan": vlan})
         except:
             return False
         else:
@@ -441,7 +431,7 @@ class T5(object):
     def rest_add_ip_endpoint(self, tenant, vns, endpoint, ip):
         t = test.Test()
         c = t.controller('master')
-        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/endpoints[name="%s"]' % (tenant, vns, endpoint)
+        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/endpoint[name="%s"]' % (tenant, vns, endpoint)
         try:
             c.rest.patch(url, {"ip-address": ip})
         except:
@@ -452,7 +442,7 @@ class T5(object):
     def rest_add_mac_endpoint(self, tenant, vns, endpoint, mac):
         t = test.Test()
         c = t.controller('master')
-        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/endpoints[name="%s"]' % (tenant, vns, endpoint)
+        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/endpoint[name="%s"]' % (tenant, vns, endpoint)
         try:
             c.rest.patch(url, {"mac": mac})
         except:
@@ -469,7 +459,7 @@ class T5(object):
         '''
         t = test.Test()
         c = t.controller('master')
-        url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/vnses' % ()
+        url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/vns' % ()
         c.rest.get(url)
         data = c.rest.content()
         for i in range(0, len(data)):
@@ -493,7 +483,7 @@ class T5(object):
         '''
         t = test.Test()
         c = t.controller('master')
-        url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/vnses' % ()
+        url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/vns' % ()
         c.rest.get(url)
         data = c.rest.content()
         if len(data) == int(count):
@@ -521,19 +511,19 @@ class T5(object):
         '''
         t = test.Test()
         c = t.controller('master')
-        url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/tenants' % ()
+        url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/tenant' % ()
         c.rest.get(url)
         data = c.rest.content()
         for i in range(0, len(data)):
                 if len(data) != 0:
-                    if data[i]["tenant-name"] == re.search('^t.*', 'data[i]["tenant-name"]'):
-                        helpers.log("Expected Tenants are present in the config")
+                    if data[i]["name"] == re.search('^t.*', 'data[i]["name"]'):
+                        helpers.log("Expected tenant are present in the config")
                         return True
                     else:
-                        helpers.test_failure("Expected Tenants are not present in the config")
+                        helpers.test_failure("Expected tenant are not present in the config")
                         return False
                 else:
-                        helpers.log("No tenants are added")
+                        helpers.log("No tenant are added")
                         return False
 
 
@@ -546,20 +536,20 @@ class T5(object):
         '''
         t = test.Test()
         c = t.controller('master')
-        url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/endpoints' % ()
+        url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/endpoint' % ()
         c.rest.get(url)
         data = c.rest.content()
         if len(data) != 0:
                 for i in range(0, len(data)):
-                    if str(data[i]["vns-name"]) == vns:
+                    if str(data[i]["vns"]) == vns:
                         if str(data[i]["attachment-point"]["vlan"]) == str(vlan):
                             if (data[i]["mac"] == str(mac)) :
                                 if (data[i]["attachment-point"]["name"] == switch) :
-                                    if (data[i]["attachment-point"]["interface-name"] == str(intf)) :
-                                        helpers.log("Expected Endpoints are added data matches is %s" % data[i]["mac"])
+                                    if (data[i]["attachment-point"]["interface"] == str(intf)) :
+                                        helpers.log("Expected endpoint are added data matches is %s" % data[i]["mac"])
                                         return True
                                     else:
-                                        helpers.test_failure("Expected endpoints %s are not added" % (str(mac)))
+                                        helpers.test_failure("Expected endpoint %s are not added" % (str(mac)))
                                         return False
         else:
             return False
@@ -573,21 +563,21 @@ class T5(object):
          '''
         t = test.Test()
         c = t.controller('master')
-        url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/endpoints' % ()
+        url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/endpoint' % ()
         c.rest.get(url)
         data = c.rest.content()
         if len(data) != 0:
             for i in range(0, len(data)):
-                if str(data[i]["vns-name"]) == vns:
+                if str(data[i]["vns"]) == vns:
                     if str(data[i]["attachment-point"]["vlan"]) == str(vlan):
                         if (data[i]["mac"] == str(mac)) :
                             if (data[i]["attachment-point"]["name"] == switch) :
-                                if (data[i]["attachment-point"]["interface-name"] == str(intf)) :
+                                if (data[i]["attachment-point"]["interface"] == str(intf)) :
                                     if (data[i]["configured-endpoint"] == True) :
-                                        helpers.log("Expected Endpoints are added data matches is %s" % data[i]["mac"])
+                                        helpers.log("Expected endpoint are added data matches is %s" % data[i]["mac"])
                                         return True
                                     else:
-                                        helpers.test_failure("Expected endpoints %s are not added" % (str(mac)))
+                                        helpers.test_failure("Expected endpoint %s are not added" % (str(mac)))
                                         return False
         else:
                 helpers.test_failure("Expected vns are not added %s" % vns)
@@ -603,19 +593,19 @@ class T5(object):
         '''
         t = test.Test()
         c = t.controller('master')
-        url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/endpoints' % ()
+        url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/endpoint' % ()
         c.rest.get(url)
         data = c.rest.content()
         if len(data) != 0:
             for i in range(0, len(data)):
-                if str(data[i]["vns-name"]) == vns:
+                if str(data[i]["vns"]) == vns:
                     if str(data[i]["attachment-point"]["vlan"]) == str(vlan):
                         if (data[i]["mac"] == str(mac)) :
-                            if (data[i]["attachment-point"]["port-group-name"] == pg) :
-                                helpers.log("Expected Endpoints are added data matches is %s" % data[i]["mac"])
+                            if (data[i]["attachment-point"]["port-group"] == pg) :
+                                helpers.log("Expected endpoint are added data matches is %s" % data[i]["mac"])
                                 return True
                             else:
-                                helpers.test_failure("Expected endpoints %s are not added" % (str(mac)))
+                                helpers.test_failure("Expected endpoint %s are not added" % (str(mac)))
                                 return False
         else:
             helpers.test_failure("Expected vns are not added %s" % vns)
@@ -630,20 +620,20 @@ class T5(object):
         '''
         t = test.Test()
         c = t.controller('master')
-        url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/endpoints' % ()
+        url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/endpoint' % ()
         c.rest.get(url)
         data = c.rest.content()
         if len(data) != 0:
                 for i in range(0, len(data)):
-                    if str(data[i]["vns-name"]) == vns:
+                    if str(data[i]["vns"]) == vns:
                         if str(data[i]["attachment-point"]["vlan"]) == str(vlan):
                             if (data[i]["mac"] == str(mac)) :
-                                if (data[i]["attachment-point"]["port-group-name"] == pg) :
+                                if (data[i]["attachment-point"]["port-group"] == pg) :
                                     if (data[i]["configured-endpoint"] == True) :
-                                        helpers.log("Expected Endpoints are added data matches is %s" % data[i]["mac"])
+                                        helpers.log("Expected endpoint are added data matches is %s" % data[i]["mac"])
                                         return True
                                     else:
-                                        helpers.test_failure("Expected endpoints %s are not added" % (str(mac)))
+                                        helpers.test_failure("Expected endpoint %s are not added" % (str(mac)))
                                         return False
         else:
                 helpers.test_failure("Expected vns are not added %s" % vns)
@@ -658,7 +648,7 @@ class T5(object):
         '''
         t = test.Test()
         c = t.controller('master')
-        url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/vnses[name="%s"]' % (vns)
+        url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/vns[name="%s"]' % (vns)
         c.rest.get(url)
         data = c.rest.content()
         if data[0]["name"] == vns:
@@ -682,11 +672,11 @@ class T5(object):
         '''
         t = test.Test()
         c = t.controller('master')
-        url = '/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch-name="%s"]/vlan-table' % (switch)
+        url = '/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch="%s"]/vlan-table' % (switch)
         c.rest.get(url)
         data = c.rest.content()
         no_of_vlans = len(data)
-        url1 = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/vnses' % ()
+        url1 = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/vns' % ()
         c.rest.get(url1)
         data1 = c.rest.content()
         no_of_vns = len(data1)
@@ -706,7 +696,7 @@ class T5(object):
         '''
         t = test.Test()
         c = t.controller('master')
-        url = '/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch-name="%s"]/port-table' % (switch)
+        url = '/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch="%s"]/port-table' % (switch)
         c.rest.get(url)
         data = c.rest.content()
         for i in range(0, len(data)):
@@ -725,7 +715,7 @@ class T5(object):
         '''
         t = test.Test()
         c = t.controller('master')
-        url = '/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch-name="%s"]/port-table' % (switch)
+        url = '/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch="%s"]/port-table' % (switch)
         c.rest.get(url)
         data = c.rest.content()
         interface = re.sub("\D", "", intf)
@@ -733,7 +723,7 @@ class T5(object):
         for i in range(0, len(data)):
             if data[i]["port-num"] == int(interface):
                 lag_id.append(data[i]["lag-id"])
-        url1 = '/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch-name="%s"]/vlan-xlate-table' % (switch)
+        url1 = '/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch="%s"]/vlan-xlate-table' % (switch)
         c.rest.get(url1)
         data1 = c.rest.content()
         for i in range(0, len(data1)):
@@ -761,7 +751,7 @@ class T5(object):
                 continue
             elif data[i]["type"] == "leaf" or data[i]["type"] == "spine":
                 list_fabric_interface.append(int(re.sub("\D", "", (data[i]["name"]))))
-        url1 = '/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch-name="%s"]/vlan-table' % (switch)
+        url1 = '/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch="%s"]/vlan-table' % (switch)
         c.rest.get(url1)
         data1 = c.rest.content()
         list_tag_intf = []
@@ -798,7 +788,7 @@ class T5(object):
         '''
         t = test.Test()
         c = t.controller('master')
-        url = '/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch-name="%s"]/vlan-table' % (switch)
+        url = '/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch="%s"]/vlan-table' % (switch)
         c.rest.get(url)
         data = c.rest.content()
         interface = re.sub("\D", "", intf)
@@ -822,7 +812,7 @@ class T5(object):
         '''
         t = test.Test()
         c = t.controller('master')
-        url = '/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch-name="%s"]/vlan-table' % (switch)
+        url = '/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch="%s"]/vlan-table' % (switch)
         c.rest.get(url)
         data = c.rest.content()
         interface = re.sub("\D", "", intf)
@@ -847,7 +837,7 @@ class T5(object):
         t = test.Test()
         c = t.controller('master')
         # Get the Lag id for the Given interface
-        url = '/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch-name="%s"]/port-table' % (switch)
+        url = '/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch="%s"]/port-table' % (switch)
         c.rest.get(url)
         data = c.rest.content()
         interface = re.sub("\D", "", intf)
@@ -856,7 +846,7 @@ class T5(object):
             if data[i]["port-num"] == int(interface):
                 lag_id.append(data[i]["lag-id"])
                 # Get the vlan-id for the given interface
-        url1 = '/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch-name="%s"]/vlan-table' % (switch)
+        url1 = '/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch="%s"]/vlan-table' % (switch)
         c.rest.get(url1)
         data1 = c.rest.content()
         vlan_id = []
@@ -868,7 +858,7 @@ class T5(object):
             except (KeyError):
                 continue
                     # Match the mac in forwarding table with specific lag_id and vlan_id
-        url3 = '/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch-name="%s"]/l2-table' % (switch)
+        url3 = '/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch="%s"]/l2-table' % (switch)
         c.rest.get(url3)
         data2 = c.rest.content()
         for i in range(0, len(data2)):
@@ -889,7 +879,7 @@ class T5(object):
         t = test.Test()
         c = t.controller('master')
         # Get the Lag id for the Given interface
-        url = '/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch-name="%s"]/port-table' % (switch)
+        url = '/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch="%s"]/port-table' % (switch)
         c.rest.get(url)
         data = c.rest.content()
         interface = re.sub("\D", "", intf)
@@ -898,7 +888,7 @@ class T5(object):
             if data[i]["port-num"] == int(interface):
                 lag_id.append(data[i]["lag-id"])
                 # Get the vlan-id for the given interface
-        url1 = '/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch-name="%s"]/vlan-table' % (switch)
+        url1 = '/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch="%s"]/vlan-table' % (switch)
         c.rest.get(url1)
         data1 = c.rest.content()
         vlan_id = []
@@ -912,7 +902,7 @@ class T5(object):
                     vlan_id.append(data1[i]["vlan-id"])
                     # Match the mac in forwarding table with specific lag_id and vlan_id
         helpers.log("%s" % vlan_id)
-        url3 = '/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch-name="%s"]/l2-table' % (switch)
+        url3 = '/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch="%s"]/l2-table' % (switch)
         c.rest.get(url3)
         data2 = c.rest.content()
         for i in range(0, len(data2)):
@@ -924,9 +914,9 @@ class T5(object):
         return False
 
     def rest_add_endpoint_scale(self, tenant, vns, mac, endpoint, switch, intf, vlan, count):
-        ''' Adding static endpoints in a scale
-            Input: tenant , vns , switch , interface , vlan , count (how many static endpoints), starting letter for the endpoint name
-            Output: Static creation of endpoints in a given tenant and vns with switch/interface
+        ''' Adding static endpoint in a scale
+            Input: tenant , vns , switch , interface , vlan , count (how many static endpoint), starting letter for the endpoint name
+            Output: Static creation of endpoint in a given tenant and vns with switch/interface
         '''
         t = test.Test()
         c = t.controller('master')
@@ -935,11 +925,11 @@ class T5(object):
             endpoint += str(i)
             mac = EUI(mac).value
             mac = "{0}".format(str(EUI(mac + i)).replace('-', ':'))
-            url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/endpoints' % (tenant, vns)
+            url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/endpoint' % (tenant, vns)
             c.rest.post(url, {"name": endpoint})
-            url1 = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/endpoints[name="%s"]/attachment-point' % (tenant, vns, endpoint)
-            c.rest.put(url1, {"switch-name": switch, "interface-name": intf, "vlan": vlan})
-            url2 = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/endpoints[name="%s"]' % (tenant, vns, endpoint)
+            url1 = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/endpoint[name="%s"]/attachment-point' % (tenant, vns, endpoint)
+            c.rest.put(url1, {"switch": switch, "interface": intf, "vlan": vlan})
+            url2 = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/endpoint[name="%s"]' % (tenant, vns, endpoint)
             c.rest.patch(url2, {"mac": mac})
             i = i + 1
 
@@ -950,14 +940,14 @@ class T5(object):
         '''
         t = test.Test()
         c = t.controller('master')
-        url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/vnses[name="%s"]' % (vns)
+        url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/vns[name="%s"]' % (vns)
         c.rest.get(url)
         data = c.rest.content()
-        if data[0]["num-active-endpoints"] == int(count):
-            helpers.log("Pass:Expected:%s, Actual:%s" % (int(count), data[0]["num-active-endpoints"]))
+        if data[0]["num-active-endpoint"] == int(count):
+            helpers.log("Pass:Expected:%s, Actual:%s" % (int(count), data[0]["num-active-endpoint"]))
             return True
         else:
-            helpers.test_failure("Fail: Expected:%s is not equal to Actual:%s" % (int(count), data[0]["num-active-endpoints"]))
+            helpers.test_failure("Fail: Expected:%s is not equal to Actual:%s" % (int(count), data[0]["num-active-endpoint"]))
             return False
 
     def rest_verify_endpoint_in_system(self, count):
@@ -967,7 +957,7 @@ class T5(object):
         '''
         t = test.Test()
         c = t.controller('master')
-        url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/endpoints' % ()
+        url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/endpoint' % ()
         c.rest.get(url)
         data = c.rest.content()
         if int(len(data)) == int(count):
@@ -1032,10 +1022,10 @@ class T5(object):
         c = t.controller('master')
         frame_cnt = int(frame_cnt)
         vrange = int(vrange)
-        url = '/api/v1/data/controller/applications/bvs/info/stats/vns-stats/vns[vns-name="%s"][tenant-name="%s"]?select=counter' % (vns, tenant)
+        url = '/api/v1/data/controller/applications/bvs/info/stats/vns-stats/vns[vns="%s"][tenant="%s"]?select=counter' % (vns, tenant)
         c.rest.get(url)
         data = c.rest.content()
-        if data[0]["tenant-name"] == tenant and data[0]["vns-name"] == vns:
+        if data[0]["tenant"] == tenant and data[0]["vns"] == vns:
                     if (int(data[0]["counter"]["rx-packet"]) >= (frame_cnt - vrange)) and (int(data[0]["counter"]["rx-packet"]) <= (frame_cnt + vrange)):
                         helpers.log("Pass: Counters value Expected:%d, Actual:%d" % (frame_cnt, int(data[0]["counter"]["rx-packet"])))
                         return True
@@ -1052,7 +1042,7 @@ class T5(object):
         '''
         t = test.Test()
         c = t.controller('master')
-        url = '/api/v1/data/controller/applications/bvs/info/stats/vns-stats/vns[vns-name="%s"][tenant-name="%s"]?select=rate' % (vns, tenant)
+        url = '/api/v1/data/controller/applications/bvs/info/stats/vns-stats/vns[vns="%s"][tenant="%s"]?select=rate' % (vns, tenant)
         frame_rate = int(frame_rate)
         vrange = int(vrange)
         try:
@@ -1060,7 +1050,7 @@ class T5(object):
         except:
             return False
         data = c.rest.content()
-        if data[0]["tenant-name"] == tenant and data[0]["vns-name"] == vns:
+        if data[0]["tenant"] == tenant and data[0]["vns"] == vns:
             if (int(data[0]["rate"]["rx-packet-rate"]) >= (frame_rate - vrange)) and (int(data[0]["rate"]["rx-packet-rate"]) <= (frame_rate + vrange)):
                 helpers.log("Pass: Rate value Expected:%d, Actual:%d" % (frame_rate, int(data[0]["rate"]["rx-packet-rate"])))
                 return True
@@ -1079,10 +1069,10 @@ class T5(object):
         c = t.controller('master')
         frame_cnt = int(frame_cnt)
         vrange = int(vrange)
-        url = '/api/v1/data/controller/applications/bvs/info/stats/vns-stats/vns[vns-name="%s"][tenant-name="%s"]?select=counter' % (vns, tenant)
+        url = '/api/v1/data/controller/applications/bvs/info/stats/vns-stats/vns[vns="%s"][tenant="%s"]?select=counter' % (vns, tenant)
         c.rest.get(url)
         data = c.rest.content()
-        if data[0]["tenant-name"] == tenant and data[0]["vns-name"] == vns:
+        if data[0]["tenant"] == tenant and data[0]["vns"] == vns:
                     if (int(data[0]["counter"]["tx-packet"]) >= (frame_cnt - vrange)) and (int(data[0]["counter"]["tx-packet"]) <= (frame_cnt + vrange)):
                         helpers.log("Pass: Counters value Expected:%d, Actual:%d" % (frame_cnt, int(data[0]["counter"]["tx-packet"])))
                         return True
@@ -1099,12 +1089,12 @@ class T5(object):
         '''
         t = test.Test()
         c = t.controller('master')
-        url = '/api/v1/data/controller/applications/bvs/info/stats/vns-stats/vns[vns-name="%s"][tenant-name="%s"]?select=rate' % (vns, tenant)
+        url = '/api/v1/data/controller/applications/bvs/info/stats/vns-stats/vns[vns="%s"][tenant="%s"]?select=rate' % (vns, tenant)
         frame_rate = int(frame_rate)
         vrange = int(vrange)
         c.rest.get(url)
         data = c.rest.content()
-        if data[0]["tenant-name"] == tenant and data[0]["vns-name"] == vns:
+        if data[0]["tenant"] == tenant and data[0]["vns"] == vns:
             if (int(data[0]["rate"]["tx-packet-rate"]) >= (frame_rate - vrange)) and (int(data[0]["rate"]["tx-packet-rate"]) <= (frame_rate + vrange)):
                 helpers.log("Pass: Rate value Expected:%d, Actual:%d" % (frame_rate, int(data[0]["rate"]["tx-packet-rate"])))
                 return True
@@ -1254,8 +1244,8 @@ class T5(object):
         c.rest.get(url)
         data = c.rest.content()
         for i in range (0, len(data)):
-            if data[i]["link"]["dst"]["switch-info"]["switch-name"] == switch and data[i]["link"]["link-direction"] == "bidirectional":
-                helpers.test_failure("%s Fabric Links not deleted" % str(data[i]["link"]["dst"]["switch-info"]["switch-name"]))
+            if data[i]["link"]["dst"]["switch-info"]["switch"] == switch and data[i]["link"]["link-direction"] == "bidirectional":
+                helpers.test_failure("%s Fabric Links not deleted" % str(data[i]["link"]["dst"]["switch-info"]["switch"]))
                 break
 
         return True
@@ -1272,14 +1262,14 @@ class T5(object):
         c.rest.get(url)
         data = c.rest.content()
         link = 0
-        for i in range (0,len(data)):
-            if data[i]["link"]["link-direction"] == "bidirectional":
+        for i in range (0, len(data[0]["link"])):
+            if data[0]["link"][i]["link-direction"] == "bidirectional":
                 link = link + 1
         if int(link) == int(count):
-            helpers.test_log("Expected links are present,expected:%d,Actual:%d" % int(count), int(link))
+            helpers.test_log("Expected links are present,expected:%d,Actual:%d" % (int(count), int(link)))
             return True
         else:
-            helpers.test_failure("Expected links are not present, expected:%d,Actual:%d" % int(count), int(link))
+            helpers.test_failure("Expected links are not present, expected:%d,Actual:%d" % (int(count), int(link)))
             return False
 
     def rest_verify_fabric_switch_role(self, dpid, role):
@@ -1504,7 +1494,7 @@ class T5(object):
         '''
         t = test.Test()
         c = t.controller('master')
-        url = '/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch-name="%s"]/lag-table' % (switch)
+        url = '/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch="%s"]/lag-table' % (switch)
         c.rest.get(url)
         data = c.rest.content()
         url1 = '/api/v1/data/controller/core/switch[dpid="%s"]' % (dpid)
@@ -1571,7 +1561,7 @@ class T5(object):
     def rest_verify_forwarding_port_table(self, switch):
         t = test.Test()
         c = t.controller('master')
-        url = '/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch-name="%s"]/port-table' % (switch)
+        url = '/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch="%s"]/port-table' % (switch)
         c.rest.get(url)
         if not c.rest.status_code_ok():
             helpers.log("Error: forwarding output table is not returning any value")
@@ -1632,10 +1622,10 @@ class T5(object):
         c = t.controller('master')
         intf0 = int(re.sub("\D", "", intf0))
         intf1 = int(re.sub("\D", "", intf1))
-        url_a = '/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch-name="%s"]/port-table' % (switcha)
+        url_a = '/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch="%s"]/port-table' % (switcha)
         c.rest.get(url_a)
         data = c.rest.content()
-        url_b = '/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch-name="%s"]/port-table' % (switchb)
+        url_b = '/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch="%s"]/port-table' % (switchb)
         c.rest.get(url_b)
         data1 = c.rest.content()
         lag_id_a = []
@@ -1673,7 +1663,7 @@ class T5(object):
                 list_fabric_edge_interface.append(int(re.sub("\D", "", (data[i]["name"]))))
             elif data[i]["type"] == "leaf" or data[i]["type"] == "spine":
                 list_fabric_interface.append(int(re.sub("\D", "", (data[i]["name"]))))
-        url1 = '/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch-name="%s"]/port-table' % (switch)
+        url1 = '/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch="%s"]/port-table' % (switch)
         c.rest.get(url1)
         data1 = c.rest.content()
         if len(list_fabric_interface) != 0 or len(list_fabric_edge_interface) != 0:
@@ -1744,12 +1734,12 @@ class T5(object):
         '''
         t = test.Test()
         c = t.controller('master')
-        url = '/api/v1/data/controller/applications/bvs/info/stats/interface-stats/interface[switch-name="%s"][interface-name="%s"]?select=rx-counter' % (switch, intf)
+        url = '/api/v1/data/controller/applications/bvs/info/stats/interface-stats/interface[switch="%s"][interface="%s"]?select=rx-counter' % (switch, intf)
         frame_cnt = int(frame_cnt)
         vrange = int(vrange)
         c.rest.get(url)
         data = c.rest.content()
-        if data[0]["interface-name"] == intf and data[0]["switch-name"] == switch:
+        if data[0]["interface"] == intf and data[0]["name"] == switch:
             if (data[0]["rx-counter"]["unicast-packet"] >= (frame_cnt - vrange)) and (data[0]["rx-counter"]["unicast-packet"] <= (frame_cnt + vrange)):
                 helpers.log("Pass: Rate value Expected:%d, Actual:%d" % (frame_cnt, data[0]["rx-counter"]["unicast-packet"]))
                 return True
@@ -1772,12 +1762,12 @@ class T5(object):
         '''
         t = test.Test()
         c = t.controller('master')
-        url = '/api/v1/data/controller/applications/bvs/info/stats/interface-stats/interface[switch-name="%s"][interface-name="%s"]?select=tx-counter' % (switch, intf)
+        url = '/api/v1/data/controller/applications/bvs/info/stats/interface-stats/interface[switch="%s"][interface="%s"]?select=tx-counter' % (switch, intf)
         frame_cnt = int(frame_cnt)
         vrange = int(vrange)
         c.rest.get(url)
         data = c.rest.content()
-        if data[0]["interface-name"] == intf and data[0]["name"] == switch:
+        if data[0]["interface"] == intf and data[0]["name"] == switch:
             if (data[0]["tx-counter"]["unicast-packet"] >= (frame_cnt - vrange)) and (data[0]["tx-counter"]["unicast-packet"] <= (frame_cnt + vrange)):
                 helpers.log("Pass: Rate value Expected:%d, Actual:%d" % (frame_cnt, data[0]["tx-counter"]["unicast-packet"]))
                 return True
@@ -1800,12 +1790,12 @@ class T5(object):
         '''
         t = test.Test()
         c = t.controller('master')
-        url = '/api/v1/data/controller/applications/bvs/info/stats/interface-stats/interface[switch-name="%s"][interface-name="%s"]?select=rx-rate' % (switch, intf)
+        url = '/api/v1/data/controller/applications/bvs/info/stats/interface-stats/interface[switch="%s"][interface="%s"]?select=rx-rate' % (switch, intf)
         frame_rate = int(frame_rate)
         vrange = int(vrange)
         c.rest.get(url)
         data = c.rest.content()
-        if data[0]["interface-name"] == intf and data[0]["name"] == switch:
+        if data[0]["interface"] == intf and data[0]["name"] == switch:
             if (data[0]["rx-rate"]["unicast-packet-rate"] >= (frame_rate - vrange)) and (data[0]["rx-rate"]["unicast-packet-rate"] <= (frame_rate + vrange)):
                 helpers.log("Pass: Rate value Expected:%d, Actual:%d" % (frame_rate, data[0]["rx-rate"]["unicast-packet-rate"]))
                 return True
@@ -1822,12 +1812,12 @@ class T5(object):
         '''
         t = test.Test()
         c = t.controller('master')
-        url = '/api/v1/data/controller/applications/bvs/info/stats/interface-stats/interface[switch-name="%s"][interface-name="%s"]?select=tx-rate' % (switch, intf)
+        url = '/api/v1/data/controller/applications/bvs/info/stats/interface-stats/interface[switch="%s"][interface="%s"]?select=tx-rate' % (switch, intf)
         frame_rate = int(frame_rate)
         vrange = int(vrange)
         c.rest.get(url)
         data = c.rest.content()
-        if data[0]["interface-name"] == intf and data[0]["name"] == switch:
+        if data[0]["interface"] == intf and data[0]["name"] == switch:
             if (data[0]["tx-rate"]["unicast-packet-rate"] >= (frame_rate - vrange)) and (data[0]["tx-rate"]["unicast-packet-rate"] <= (frame_rate + vrange)):
                 helpers.log("Pass: Rate value Expected:%d, Actual:%d" % (frame_rate, data[0]["tx-rate"]["unicast-packet-rate"]))
                 return True
@@ -1933,7 +1923,7 @@ class T5(object):
         t = test.Test()
         c = t.controller('master')
         count = int(count)
-        url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/vnses'
+        url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/vns'
         c.rest.get(url)
         data = c.rest.content()
         for i in range(0, len(data)):
@@ -2032,10 +2022,10 @@ class T5(object):
         intf1 = re.sub("\D", "", intf1)
         lag_id_a = []
         lag_id_b = []
-        url_a = '/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch-name="%s"]/port-table' % (switcha)
+        url_a = '/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch="%s"]/port-table' % (switcha)
         c.rest.get(url_a)
         data = c.rest.content()
-        url_b = '/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch-name="%s"]/port-table' % (switchb)
+        url_b = '/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch="%s"]/port-table' % (switchb)
         c.rest.get(url_b)
         data1 = c.rest.content()
         for i in range(0, len(data)):
@@ -2060,10 +2050,10 @@ class T5(object):
         c = t.controller('master')
         frame_cnt = int(frame_cnt)
         vrange = int(vrange)
-        url = '/api/v1/data/controller/applications/bvs/info/stats/interface-stats/interface[switch-name="%s"][interface-name="%s"]?select=brief' % (switch, intf)
+        url = '/api/v1/data/controller/applications/bvs/info/stats/interface-stats/interface[switch="%s"][interface="%s"]?select=brief' % (switch, intf)
         c.rest.get(url)
         data = c.rest.content()
-        if data[0]["name"] == switch and data[0]["interface-name"] == intf:
+        if data[0]["name"] == switch and data[0]["interface"] == intf:
                     if (int(data[0]["brief"]["rx-unicast-packet"]) >= (frame_cnt - vrange)) and (int(data[0]["brief"]["rx-unicast-packet"]) <= (frame_cnt + vrange)):
                         if (int(data[0]["brief"]["tx-unicast-packet"]) >= (frame_cnt - vrange)) and (int(data[0]["brief"]["tx-unicast-packet"]) <= (frame_cnt + vrange)):
                             helpers.log("Pass: Stats-brief counter for interface rx:%d, tx:%d" % (int(data[0]["brief"]["rx-unicast-packet"]), int(data[0]["brief"]["tx-unicast-packet"])))
@@ -2076,14 +2066,14 @@ class T5(object):
 
     def rest_delete_all_tenants(self):
         '''
-        delete all the tenants in the system
+        delete all the tenant in the system
         output:  True
                  False
         '''
         t = test.Test()
         c = t.controller('master')
-        helpers.log("********* rest_delete_all_tenants ")
-        url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/tenants'
+        helpers.log("********* rest_delete_all_tenant ")
+        url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/tenant'
         c.rest.get(url)
         content = c.rest.content()
         if not c.rest.status_code_ok():
@@ -2093,7 +2083,7 @@ class T5(object):
         length = len(content)
         helpers.log("USER INFO: Number of tenant to be deleted: %s" % str(length))
         for index in range(length):
-            name = content[index]['tenant-name']
+            name = content[index]['name']
             helpers.log("Tenant being deleted is %s " % name)
             url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]' % name
             c.rest.delete(url, {"name": name})
@@ -2136,99 +2126,9 @@ class T5(object):
             return True
 
 
-    def clean_configuration(self):
+    def clean_configuration(self, node='master'):
         '''
             Objective: Delete all user configuration
         '''
         t = test.Test()
-        c = t.controller('master')
-        # Delete all tenants
-#        url_get_tenant = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/tenants'
-        url_get_tenant = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/tenant'
-
-        try:
-            c.rest.get(url_get_tenant)
-            content = c.rest.content()
-        except:
-            return False
-        else:
-            if (content):
-                for i in range (0, len(content)):
-                    url_tenant_delete = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]' % content[i]['tenant-name']
-                    c.rest.delete(url_tenant_delete, {})
-        # Delete all switches
-        url_get_switches = '/api/v1/data/controller/core/switch'
-        try:
-            c.rest.get(url_get_switches)
-            content = c.rest.content()
-        except:
-            return False
-        else:
-            if (content):
-                for i in range (0, len(content)):
-                    url_switch_delete = '/api/v1/data/controller/core/switch-config[name="%s"]' % content[i]['name']
-                    c.rest.delete(url_switch_delete, {})
-        # Delete all port-groups
-        url_get_portgrp = '/api/v1/data/controller/applications/bvs/port-group?config=true'
-        try:
-            c.rest.get(url_get_portgrp)
-            content = c.rest.content()
-        except:
-            return False
-        else:
-            if (content):
-                for i in range (0, len(content)):
-                    url_portgrp_delete = '/api/v1/data/controller/applications/bvs/port-group[name="%s"]' % content[i]['name']
-                    c.rest.delete(url_portgrp_delete, {})
-        # Delete NTP configuration
-        url_get_ntpservers = '/api/v1/data/controller/os/config/global/time-config?config=true'
-        try:
-            c.rest.get(url_get_ntpservers)
-            content = c.rest.content()
-        except:
-            return False
-        else:
-            if (content[0]['ntp-server']):
-                ntp_list = content[0]['ntp-server']
-                for i in range (0, len(ntp_list)):
-                    ntp_list.pop(0)
-                    url_ntp_delete = '/api/v1/data/controller/os/config/global/time-config/ntp-server'
-                    c.rest.put(url_ntp_delete, ntp_list)
-        # Delete SNMP Configuration
-        # Delete SNMP location
-        url_delete_snmp_location = '/api/v1/data/controller/os/config/global/snmp-config/location'
-        c.rest.delete(url_delete_snmp_location, {})
-        # Delete SNMP Contact
-        url_delete_snmp_contact = '/api/v1/data/controller/os/config/global/snmp-config/contact'
-        c.rest.delete(url_delete_snmp_contact, {})
-        # Disable SNMP Trap
-        url_delete_snmp_trap = '/api/v1/data/controller/os/config/global/snmp-config/trap-enabled'
-        c.rest.delete(url_delete_snmp_trap, {})
-        # Delete SNMP community
-        url_delete_snmp_community = '/api/v1/data/controller/os/config/global/snmp-config/community'
-        c.rest.delete(url_delete_snmp_community, {})
-        # Delete SNMP Trap Hosts
-        url_get_snmphost = '/api/v1/data/controller/os/config/global/snmp-config?config=true'
-        c.rest.get(url_get_snmphost)
-        content = c.rest.content()
-        if(content):
-            if ('trap-host' in content[0]):
-                for i in range (0, len(content[0]['trap-host'])):
-                    url_delete_trap = '/api/v1/data/controller/os/config/global/snmp-config/trap-host[ipaddr="%s"]/udp-port' % str(content[0]['trap-host'][i]['ipaddr'])
-                    c.rest.delete(url_delete_trap, {})
-                    url_delete_trap = '/api/v1/data/controller/os/config/global/snmp-config/trap-host[ipaddr="%s"]' % str(content[0]['trap-host'][i]['ipaddr'])
-                    c.rest.delete(url_delete_trap, {})
-
-        # Delete Logging Servers
-        url_get_logging = '/api/v1/data/controller/os/config/global/logging-config?config=true'
-        c.rest.get(url_get_logging)
-        content = c.rest.content()
-        if(content):
-            if ('logging-server' in content[0]):
-                for i in range (0, len(content[0]['logging-server'])):
-                    url_delete_logserver = '/api/v1/data/controller/os/config/global/logging-config/logging-server[server="%s"]' % str(content[0]['logging-server'][i]['server'])
-                    c.rest.delete(url_delete_logserver, {})
-        # disable remote logging
-        url_disable_remotelog = '/api/v1/data/controller/os/config/global/logging-config/logging-enabled'
-        c.rest.delete(url_disable_remotelog, {})
-        return True
+        return t.t5_clean_configuration(node)

@@ -1,0 +1,286 @@
+* Setting
+Documentation   T5 L3 two spine three leaf rack with dual-tor Test Scaling Suite
+Suite Setup     T5 base suite setup
+Suite Teardown  T5 base suite teardown
+Test Setup      setup topology
+Test Teardown   teardown topology
+Force Tags      T5 Sanity
+Library         keywords/BsnCommon.py
+Library         keywords_dev/slim/Host.py
+Library         keywords/T5.py
+Library         keywords/T5L3.py
+Library         keywords_dev/animesh/BsnCommonShow.py
+Library         keywords_dev/slim/SwitchLight.py
+Library	        Collections.py
+Library			autobot/helpers/__init__.py
+Resource		testsuites_dev/slim/t5_layer3_physical_intra_variables.txt
+Resource		testsuites/T5/t5_dualleaf_three_rack_physical_resource.txt
+
+
+* Test Cases
+Intra tenant one Tenant 4k VNS 
+	One Tenant 4k VNS with one host each
+#	[Tags]							skipped			scale							
+
+Delete and add tagged ports to one tenant 4k VNS
+	Delete and add tagged ports to one tenant 4k VNS with one host each
+	[Tags]							skipped			scale							
+
+Delete and add 2k VNS with traffic
+	Delete and add 2k VNS with traffic running with one host each
+	[Tags]							skipped			scale				
+
+L3 endpoint host move with traffic
+	Move 2k host endpoint to another tagged port
+	[Tags]							skipped			scale				
+
+48k L3 endpoint across one tenant two vns
+	Generate 48k L3 endpoint across one tenant two vns
+	[Tags]							skipped			scale				
+		
+Combined scaling one tenant 4k vns with 48k host
+	Combined scaling with one tenant 4k vns with 48k host
+	[Tags]							skipped			scale				
+		
+Delete and add scale config multiple times
+	Delete and add scale config multiple times
+	[Tags]							skipped			scale				
+
+DHCP request from 48k host across 4k vns
+	Generate dhcp request from 48k host across 4k vns
+	[Tags]							skipped			scale				
+						
+
+* Keywords		
+One Tenant 4k VNS with one host each
+	REST delete tenant							X
+	REST delete tenant							Y
+	REST delete tenant							Z
+	REST add tenant								A
+	${ipAddr} =  								Set Variable					20.0.0.1
+	: FOR 										${i}							IN RANGE 				1					2047
+	\	REST add vns							A								A-${i}
+	\	REST add vns ip							A								A-${i}					${ipAddr}			24
+	\	${ipAddr} =								get next address				ipv4					${ipAddr}			0.0.1.0
+	\	REST add interface to vns				A								A-${i}					leaf0-a				ethernet24		${i}			
+				
+	${ipAddr} =  								Set Variable					40.0.0.1
+	: FOR 										${i}							IN RANGE 				2048				4096
+	\	REST add vns							A								B-${i}
+	\	REST add vns ip							A								B-${i}					${ipAddr}			24
+	\	${ipAddr} =								get next address				ipv4					${ipAddr}			0.0.1.0
+	\	REST add interface to vns				A								B-${i}					leaf1-a				ethernet24		${i}			
+				
+
+
+  ${stream}=             L3 add  name=${stream_name}  flow=a<->b  src_mac=${src_mac}  dst_mac=${dst_mac}
+    ...						src_cnt=${src_cnt}  dst_cnt=${dst_cnt}  src_ip=20.0.0.1  dst_ip=20.0.0.2
+    ...						src_ip_step=0.0.1.0  dst_ip_step=0.0.1.0  src_gw=20.0.0.2  src_gw_step=0.0.1.0
+    ...						dst_gw=20.0.0.1  dst_gw_step=0.0.1.0  vlan_id=2  vlan_cnt=${src_cnt}
+    
+    
+Delete and add tagged ports to one tenant 4k VNS with one host each
+
+
+Delete and add 2k VNS with traffic running with one host each
+
+
+Move 2k host endpoint to another tagged port
+
+
+Generate 48k L3 endpoint across one tenant two vns
+
+
+Combined scaling with one tenant 4k vns with 48k host
+
+
+Delete and add scale config multiple times
+
+
+Generate dhcp request from 48k host across 4k vns	
+
+
+
+initialize host
+	BASH delete tag								h1								bond0.1001				soft_error=${true}
+	BASH delete tag								h2								bond0.1002				soft_error=${true}
+	BASH delete tag								h3								bond0.1003				soft_error=${true}
+	BASH delete tag								h4								bond0.1004				soft_error=${true}
+	BASH delete tag								h5								bond0.1005				soft_error=${true}
+	BASH delete tag								h6								bond0.1006				soft_error=${true}
+	
+	BASH init intf								h1								bond0
+	BASH init intf								h2								bond0
+	BASH init intf								h3								bond0
+	BASH init intf								h4								bond0
+	BASH init intf								h5								bond0
+	BASH init intf								h6								bond0
+	BASH ifdown intf							h1 								bond0
+	BASH ifdown intf							h2								bond0
+	BASH ifdown intf							h3								bond0
+	BASH ifdown intf							h4								bond0
+	BASH ifdown intf							h5								bond0
+	BASH ifdown intf							h6								bond0	
+	BASH release dhcpv4 address					h1								bond0
+	BASH release dhcpv4 address					h2								bond0
+	BASH release dhcpv4 address					h3								bond0
+	BASH release dhcpv4 address					h4								bond0
+	BASH release dhcpv4 address					h5								bond0
+	BASH release dhcpv4 address					h6								bond0
+
+
+setup topology
+	initialize host
+	add fabric switch
+	__init__.sleep 											1
+	REST add tenant 								X
+	REST add tenant									Y
+	REST add tenant									Z
+	REST add vns									X							X1
+	REST add vns									X							X2
+	REST add vns									X							X3
+	REST add vns									Y							Y1
+	REST add vns									Y							Y2
+	REST add vns									Y							Y3
+	REST add vns									Z							Z1
+	REST add vns									Z							Z2
+	REST add vns									Z							Z3
+	REST add vns ip  								X							X1				10.251.1.1				24	
+	REST add vns ip  								X							X2				10.251.2.1				24	
+	REST add vns ip  								X							X3				10.251.3.1				24	
+	REST add vns ip  								Y							Y1				10.252.1.1				24	
+	REST add vns ip  								Y							Y2				10.252.2.1				24	
+	REST add vns ip  								Y							Y3				10.252.3.1				24	
+	REST add vns ip  								Z							Z1				10.253.1.1				24	
+	REST add vns ip  								Z							Z2				10.253.2.1				24	
+	REST add vns ip  								Z							Z3				10.253.3.1				24	
+	REST add interface to portgroup					leaf0-a						${leaf0_pc1_intf1}					${leaf0_pc1}
+	REST add interface to portgroup					leaf0-b						${leaf0_pc1_intf2}					${leaf0_pc1}
+	REST add interface to portgroup					leaf0-a						${leaf0_pc2_intf1}					${leaf0_pc2}
+	REST add interface to portgroup					leaf0-b						${leaf0_pc2_intf2}					${leaf0_pc2}
+#	REST add interface to portgroup					leaf0-a						${leaf0_pc3_intf1}					${leaf0_pc3}
+#	REST add interface to portgroup					leaf0-b						${leaf0_pc3_intf2}					${leaf0_pc3}
+#	REST add interface to portgroup					leaf0-a						${leaf0_pc4_intf1}					${leaf0_pc4}
+#	REST add interface to portgroup					leaf0-b						${leaf0_pc4_intf2}					${leaf0_pc4}
+#	REST add interface to portgroup					leaf0-a						${leaf0_pc5_intf1}					${leaf0_pc5}
+#	REST add interface to portgroup					leaf0-a						${leaf0_pc5_intf2}					${leaf0_pc5}
+#	REST add interface to portgroup					leaf0-a						${leaf0_pc6_intf1}					${leaf0_pc6}
+#	REST add interface to portgroup					leaf0-a						${leaf0_pc6_intf2}					${leaf0_pc6}
+	REST add interface to portgroup					leaf1-a						${leaf1_pc1_intf1}					${leaf1_pc1}
+	REST add interface to portgroup					leaf1-b						${leaf1_pc1_intf2}					${leaf1_pc1}
+	REST add interface to portgroup					leaf1-a						${leaf1_pc2_intf1}					${leaf1_pc2}
+	REST add interface to portgroup					leaf1-b						${leaf1_pc2_intf2}					${leaf1_pc2}
+#	REST add interface to portgroup					leaf1-a						${leaf1_pc3_intf1}					${leaf1_pc3}
+#	REST add interface to portgroup					leaf1-b						${leaf1_pc3_intf2}					${leaf1_pc3}
+#	REST add interface to portgroup					leaf1-a						${leaf1_pc4_intf1}					${leaf1_pc4}
+#	REST add interface to portgroup					leaf1-b						${leaf1_pc4_intf2}					${leaf1_pc4}
+	REST add interface to portgroup					leaf2-a						${leaf2_pc1_intf1}					${leaf2_pc1}
+	REST add interface to portgroup					leaf2-b						${leaf2_pc1_intf2}					${leaf2_pc1}
+	REST add interface to portgroup					leaf2-a						${leaf2_pc2_intf1}					${leaf2_pc2}
+	REST add interface to portgroup					leaf2-b						${leaf2_pc2_intf2}					${leaf2_pc2}	
+  	
+	
+	
+
+teardown topology
+	REST delete vns ip  							X							X1				10.251.1.1				24	
+	REST delete vns ip  							X							X2				10.251.2.1				24	
+	REST delete vns ip  							X							X3				10.251.3.1				24	
+	REST delete vns ip  							Y							Y1				10.252.1.1				24	
+	REST delete vns ip  							Y							Y2				10.252.2.1				24	
+	REST delete vns ip  							Y							Y3				10.252.3.1				24	
+	REST delete vns ip  							Z							Z1				10.253.1.1				24	
+	REST delete vns ip  							Z							Z2				10.253.2.1				24	
+	REST delete vns ip  							Z							Z3				10.253.3.1				24	
+	REST delete vns									X							X1
+	REST delete vns									X							X2
+	REST delete vns									X							X3
+	REST delete vns									Y							Y1
+	REST delete vns									Y							Y2
+	REST delete vns									Y							Y3
+	REST delete vns									Z							Z1
+	REST delete vns									Z							Z2
+	REST delete vns									Z							Z3
+	REST delete tenant								X
+	REST delete tenant								Y
+	REST delete tenant								Z
+	delete fabric switch
+	initialize host
+	
+
+T5 base suite setup
+	base suite setup
+	add fabric switch
+	__init__.sleep 											5
+	${result} = 									CLI verify controller		s1							c1		
+	Should Be True									${result}
+	${result} = 									CLI verify controller   	s1							c2
+	Should Be True									${result}
+	${result} = 									CLI verify controller       s2							c1
+	Should Be True									${result}
+	${result} = 									CLI verify controller       s2							c2
+	Should Be True									${result}
+	${result} = 									CLI verify controller       s3							c1
+	Should Be True									${result}
+	${result} = 									CLI verify controller       s3							c2
+	Should Be True									${result}
+	${result} = 									CLI verify controller       s4							c1
+	Should Be True									${result}
+	${result} = 									CLI verify controller       s4							c2
+	Should Be True									${result}
+	${result} = 									CLI verify controller       s5							c1
+	Should Be True									${result}
+	${result} = 									CLI verify controller       s5							c2
+	Should Be True									${result}
+	${result} = 									CLI verify controller       s6							c1
+	Should Be True									${result}
+	${result} = 									CLI verify controller       s6							c2
+	Should Be True									${result}		
+  	# REST add switch  								spine0
+  	# REST add dpid  									spine0  					${spine0_dpid}
+  	# REST add fabric role  							spine0  					spine
+  	# REST add switch  								spine1	
+  	# REST add dpid  									spine1  					${spine1_dpid}
+  	# REST add fabric role						  	spine1  					spine
+  	# REST add switch  								leaf0a
+  	# REST add dpid  									leaf0a  					${leaf0a_dpid}
+  	# REST add fabric role  							leaf0a  					leaf
+  	# REST add switch  								leaf0b
+  	# REST add dpid  									leaf0b  					${leaf0b_dpid}
+  	# REST add fabric role  							leaf0b  					leaf
+  	# REST add switch  								leaf1a
+  	# REST add dpid  									leaf1a  					${leaf1a_dpid}
+  	# REST add fabric role  							leaf1a  					leaf
+ 	# REST add switch  								leaf1b
+  	# REST add dpid  									leaf1b  					${leaf1b_dpid}
+  	# REST add fabric role  							leaf1b  					leaf
+  	# REST add switch  								leaf2a
+  	# REST add dpid  									leaf2a  					${leaf2a_dpid}
+  	# REST add fabric role  							leaf2a  					leaf
+ 	# REST add switch  								leaf2b
+  	# REST add dpid  									leaf2b  					${leaf2b_dpid}
+  	# REST add fabric role  							leaf2b  					leaf  	
+	# REST add portgroup								${leaf0_pc1}
+	# REST add portgroup								${leaf0_pc2}
+	# REST add portgroup								${leaf0_pc3}
+	# REST add portgroup								${leaf0_pc4}
+	# REST add portgroup								${leaf0_pc5}
+	# REST add portgroup								${leaf0_pc6}	
+	# REST add portgroup								${leaf1_pc1}
+	# REST add portgroup								${leaf1_pc2}
+	# REST add portgroup								${leaf1_pc3}
+	# REST add portgroup								${leaf1_pc4}
+	# REST add portgroup								${leaf2_pc1}
+	# REST add portgroup								${leaf2_pc2}
+
+#	REST add leaf group								leaf0a						leaf0
+#	REST add leaf group								leaf0b						leaf0
+#	REST add leaf group								leaf1a						leaf1
+#	REST add leaf group								leaf1b						leaf1
+#	REST add leaf group								leaf2a						leaf2
+#	REST add leaf group								leaf2b						leaf2
+	
+
+  
+T5 base suite teardown
+	delete fabric switch  					
