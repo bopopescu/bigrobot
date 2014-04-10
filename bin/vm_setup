@@ -4,13 +4,13 @@ Wrapper Script to spwan cotroller VMs on KVM Machine
 Usage:
 
 '''
-import os 
-import sys 
+import os
+import sys
 import datetime
 import getpass
 import time
-import argparse 
-import robot    # import to force append local robot libraries than python installed packages
+import argparse
+import robot  # import to force append local robot libraries than python installed packages
 
 
 
@@ -22,7 +22,7 @@ kvm_user = "root"
 kvm_pwd = "bsn"
 current_user = getpass.getuser()
 
-#Below are global Variables used accross the helpers methods below
+# Below are global Variables used accross the helpers methods below
 kvm_handle = None
 kvm_vmdk_path = None
 kvm_vmdk_path1 = None
@@ -76,51 +76,59 @@ sys    0m0.132s
     """
     print(s)
     sys.exit(1)
-    
+
 
 def main(*args):
     global vm_name, kvm_vmdk_path, kvm_host, vm_backup_name
     args = parser.parse_args()
     vm_name = current_user + '_' + args.vm_name + '_' + datetime.datetime.now().strftime("%m%d%H%M")
     vm_host_name = current_user + "-bvs-1"
-    print "Creating VM with Name : %s" % vm_name
-    helpers.log("Creating VM with Name: %s " % vm_name)
-    
+    helpers.summary_log("Creating VM with Name: %s " % vm_name)
+
+    _ = helpers.get_env("VM_SETUP_SCP")
+    if _ and _.lower() == "false":
+        helpers.summary_log("Environment variable VM_SETUP_SCP is False."
+                            " Don't scp image (use the latest image on"
+                            " KVM server).")
+        scp = False
+    else:
+        scp = True
+
     if args.kvm_host is not None:
         kvm_host = args.kvm_host
-    
+
     if args.netmask is None:
         args.netmask = "18"
-    
-    active_vm = kvm_ops.vm_setup(kvm_host = kvm_host, kvm_user = kvm_user, kvm_password = kvm_pwd,
-                     vm_type = args.vm_type, qcow_path = args.qcow_path, ip = args.active_ip,
-                     netmask = args.netmask, vm_name = vm_name, vm_host_name = vm_host_name)
+
+    active_vm = kvm_ops.vm_setup(kvm_host=kvm_host, kvm_user=kvm_user, kvm_password=kvm_pwd,
+                     vm_type=args.vm_type, qcow_path=args.qcow_path, ip=args.active_ip,
+                     netmask=args.netmask, vm_name=vm_name, vm_host_name=vm_host_name,
+                     scp=scp)
     helpers.log("Created Active VM: \n%s" % active_vm)
     standby_vm = None
     if args.standby_vm is not None:
         test.Test._instance = None
         vm_backup_name = current_user + '_' + args.standby_vm + '_' + datetime.datetime.now().strftime("%m%d%H%M")
         vm_host_name = current_user + "-bvs-2"
-        print "Creating Backup VM with Name : %s" % vm_backup_name
-        helpers.log("Creating Slave VM with Name : %s" % vm_backup_name)
-        standby_vm = kvm_ops.vm_setup(kvm_host = kvm_host, kvm_user = kvm_user, kvm_password = kvm_pwd,
-                     vm_type = args.vm_type, qcow_path = args.qcow_path, ip = args.standby_ip,
-                     netmask = args.netmask, vm_name = vm_backup_name, cluster_ip = args.active_ip,
-                     vm_host_name = vm_host_name, scp = False)
-        helpers.log("Created Backup VM :\n%s" % standby_vm)
-    
-    
+        helpers.summary_log("Creating Slave VM with Name : %s" % vm_backup_name)
+        standby_vm = kvm_ops.vm_setup(kvm_host=kvm_host, kvm_user=kvm_user, kvm_password=kvm_pwd,
+                     vm_type=args.vm_type, qcow_path=args.qcow_path, ip=args.standby_ip,
+                     netmask=args.netmask, vm_name=vm_backup_name, cluster_ip=args.active_ip,
+                     vm_host_name=vm_host_name, scp=False)
+        helpers.summary_log("Created Backup VM :\n%s" % standby_vm)
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument("vm_name", help = "This name will be included in KVM with a timestampa and user running this vm_setup")
-    parser.add_argument("--standby_vm", help = "This name used for standby vm")
-    parser.add_argument("--standby_ip", help = "This ip is used for standby vm")
-    parser.add_argument("--cluster_ip", help = "This ip is used as Cluster IP while configurint first boot for created bvs VM")
-    parser.add_argument("--netmask", help = "This netmask is used to configure both active and standby vms")
-    parser.add_argument("--qcow_path", help = "Use this option if qcow is local to KVM Host and this instance is running on same KVM Host reduces \
+    parser.add_argument("vm_name", help="This name will be included in KVM with a timestampa and user running this vm_setup")
+    parser.add_argument("--standby_vm", help="This name used for standby vm")
+    parser.add_argument("--standby_ip", help="This ip is used for standby vm")
+    parser.add_argument("--cluster_ip", help="This ip is used as Cluster IP while configurint first boot for created bvs VM")
+    parser.add_argument("--netmask", help="This netmask is used to configure both active and standby vms")
+    parser.add_argument("--qcow_path", help="Use this option if qcow is local to KVM Host and this instance is running on same KVM Host reduces \
                                                 time in Scp'ing qcow to KVM HOST")
-    parser.add_argument("--kvm_host", help = "Use this option to specify differnt KVM Host from defautl KVM Hosts maintained by QA Team")
-    parser.add_argument("--active_ip", help = "This IP will be configured for the spawned VM")
-    parser.add_argument("--vm_type", help = "Please provide type as bvs/mininet")
+    parser.add_argument("--kvm_host", help="Use this option to specify differnt KVM Host from defautl KVM Hosts maintained by QA Team")
+    parser.add_argument("--active_ip", help="This IP will be configured for the spawned VM")
+    parser.add_argument("--vm_type", help="Please provide type as bvs/mininet")
     main()
     print "Success !!!"
