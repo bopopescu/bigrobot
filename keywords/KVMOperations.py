@@ -112,17 +112,15 @@ class KVMOperations(object):
 
         if scp:
             helpers.log("Executing Scp cmd to copy latest bvs vmdk to KVM Server")
-            kvm_handle.send('pwd')
-            kvm_handle.expect()
-            kvm_handle.send("scp -o UserKnownHostsFile=\/dev\/null -o StrictHostKeyChecking=no \"bsn@jenkins:%s\" ." % remote_qcow_path)
-            options = kvm_handle.expect([r'.*#', r'.*$ ', r'.*password:'])
-            if options[0] == 2:
-                helpers.log('sending passwor bsn')
-                kvm_handle.send('bsn')
-                kvm_handle.expect()
-            content = kvm_handle.content()
-            helpers.log("Contenet : %s " % content)
-            helpers.log ("Success SCP'ing latest Jenkins build !!")
+            scp_cmd = "scp -o \"UserKnownHostsFile=/dev/null\" -o StrictHostKeyChecking=no \"bsn@jenkins:%s\" ." % remote_qcow_path
+            scp_cmd_out = kvm_handle.bash(scp_cmd, prompt = [r'.*password:', r'.*#', r'.*$ '])['content']
+            if "password" in scp_cmd_out:
+                helpers.log( "sending bsn passoword..")
+                helpers.log(kvm_handle.bash('bsn')['content'])
+            else:
+                helpers.log("SCP should be done:\n%s" % scp_cmd_out)
+            helpers.summary_log("Success SCP'ing latest Jenkins build !!")
+
         else:
             helpers.log("Skipping SCP expecting the VMDK already SCP'ed to kvm_host..")
         file_name = remote_qcow_path.split('/')[-1]
