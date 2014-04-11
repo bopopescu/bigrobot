@@ -110,10 +110,19 @@ class KVMOperations(object):
         kvm_handle.bash('cd bvs_images')
         helpers.log("Latest VMDK will be copied to location : %s at KVM Host" % kvm_handle.bash('pwd')['content'])
 
-        # FIX ME For below SCP to work we need to have Kvm Pub Key in jenkins build server..
         if scp:
             helpers.log("Executing Scp cmd to copy latest bvs vmdk to KVM Server")
-            kvm_handle.bash('scp "bsn@jenkins:%s" .' % remote_qcow_path, timeout=100)['content']
+            kvm_handle.send('pwd')
+            kvm_handle.expect()
+            kvm_handle.send('scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no "bsn@jenkins:%s" .' % remote_qcow_path)
+            options = kvm_handle.expect([r'.*#', r'.*$ ', r'.*password:'])
+            if options[0] == 2:
+                helpers.log('sending passwor bsn')
+                kvm_handle.send('bsn')
+                kvm_handle.expect()
+            content = kvm_handle.content()
+            helpers.log("Contenet : %s " % content)
+            helpers.log ("Success SCP'ing latest Jenkins build !!")
         else:
             helpers.log("Skipping SCP expecting the VMDK already SCP'ed to kvm_host..")
         file_name = remote_qcow_path.split('/')[-1]

@@ -110,7 +110,7 @@ def main(*args):
                                  netmask=args.netmask,
                                  vm_name=vm_name,
                                  vm_host_name=vm_host_name,
-                                 scp=False)
+                                 scp=scp)
     helpers.log("Created Active VM: \n%s" % active_vm)
 
     if active_vm['status_code'] == False:
@@ -140,7 +140,7 @@ def main(*args):
                                       vm_name=vm_backup_name,
                                       cluster_ip=args.active_ip,
                                       vm_host_name=vm_host_name,
-                                      scp=scp)
+                                      scp=False)
         helpers.log("Created Backup VM :\n%s" % standby_vm)
 
         if standby_vm['status_code'] == False:
