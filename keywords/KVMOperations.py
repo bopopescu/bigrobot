@@ -114,7 +114,7 @@ class KVMOperations(object):
             helpers.log("Executing Scp cmd to copy latest bvs vmdk to KVM Server")
             kvm_handle.send('pwd')
             kvm_handle.expect()
-            kvm_handle.send('scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no "bsn@jenkins:%s" .' % remote_qcow_path)
+            kvm_handle.send('scp -o UserKnownHostsFile=\/dev\/null -o StrictHostKeyChecking=no \"bsn@jenkins:%s\" .' % remote_qcow_path)
             options = kvm_handle.expect([r'.*#', r'.*$ ', r'.*password:'])
             if options[0] == 2:
                 helpers.log('sending passwor bsn')
