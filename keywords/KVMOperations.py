@@ -174,6 +174,11 @@ class KVMOperations(object):
 
 
     def vm_setup(self, **kwargs):
+        result = {
+                  "status_code": True,
+                  "status_descr": "Success",
+                  }
+
         try:
             kvm_host = kwargs.get("kvm_host", "10.192.104.13")
             kvm_user = kwargs.get("kvm_user", "root")
@@ -188,7 +193,6 @@ class KVMOperations(object):
                 ip = None
             cluster_ip = kwargs.get("cluster_ip", None)
             netmask = kwargs.get("netmask", "18")
-            return_dict = {}
             remote_qcow_bvs_path = kwargs.get("remote_qcow_bvs_path", "/var/lib/jenkins/jobs/bvs\ master/lastSuccessful/archive/target/appliance/images/bvs/controller-bvs-2.0.8-SNAPSHOT.qcow2")
             remote_qcow_mininet_path = kwargs.get("remote_qcow_mininet_path", "/var/lib/jenkins/jobs/t6-mininet-vm/builds/lastSuccessfulBuild/archive/t6-mininet-vm/ubuntu-kvm/t6-mininet.qcow2")
             scp = kwargs.get("scp", True)
@@ -232,26 +236,37 @@ class KVMOperations(object):
             self.create_vm_on_kvm_host(vm_type=vm_type, qcow_path=qcow_vm_path,
                                   vm_name=vm_name, kvm_handle=kvm_handle, kvm_host=kvm_host)
             self._create_temp_topo(kvm_host=kvm_host, vm_name=vm_name)
-            return_dict['vm_name'] = vm_name
-            return_dict['kvm_host'] = kvm_host
-            return_dict['image_path'] = qcow_vm_path
-            return_dict['vm_ip'] = ip
+            result['vm_name'] = vm_name
+            result['kvm_host'] = kvm_host
+            result['image_path'] = qcow_vm_path
+            result['vm_ip'] = ip
+            result['content'] = helpers.file_read_once("/tmp/%s.log" % vm_name)
+
             if vm_type == 'mininet':
                 # FIX ME configure mininet with user specified ip / return the DHCP ip of mininet VM
                 helpers.log("Succes Creating Mininet vm!!")
                 helpers.log("Configuring IP for mininet if provided")
                 self.set_mininet_ip(node="c1", ip=ip)
-                return return_dict
-            return_dict['vm_ip'] = self._configure_vm_first_boot(cluster_ip=cluster_ip, ip_address=ip, netmask=netmask,
-                                             vm_host_name=vm_host_name)    
-            s = helpers.file_read_once("/tmp/%s.log" % vm_name)
-            return_dict['result'] = s
-            return return_dict
+                return result
+
+            # For controller, attempt First Boot
+            result['vm_ip'] = self._configure_vm_first_boot(cluster_ip=cluster_ip,
+                                                            ip_address=ip,
+                                                            netmask=netmask,
+                                                            vm_host_name=vm_host_name)
+            return result
         except Exception as inst:
             helpers.log("Exception Details %s" % inst)
-            return inst
+            result['status_code'] = False
+            result['status_descr'] = inst
+            return result
 
-    def teardown_vm_on_kvm_host(self, **kwargs):
+    def vm_teardown(self, **kwargs):
+        result = {
+                  "status_code": True,
+                  "status_descr": "Success",
+                  }
+
         try:
             kvm_host = kwargs.get("kvm_host", "10.192.104.13")
             kvm_user = kwargs.get("kvm_user", "root")
@@ -267,15 +282,17 @@ class KVMOperations(object):
                 helpers.summary_log("Deleting down the VM : %s" % vm_name)
                 self._undefine_vm(kvm_handle=kvm_handle, vm_name=vm_name)
             else:
-                helpers.summary_log("VM with given name %s doesn't exits in KVM Host! %s" % (vm_name, kvm_host))
-                return True
+                helpers.summary_log("VM with given name %s doesn't exists on KVM host! %s" % (vm_name, kvm_host))
+                result['status_code'] = False
+                result['status_descr'] = "VM name doesn't exist on KVM host"
+                return result
             self._delete_vm_storage_file(kvm_handle=kvm_handle, vm_name=vm_name)
-            return True
+            return result
         except Exception as inst:
             helpers.log("Exception Details %s" % inst)
-            return False
-
-    vm_teardown = teardown_vm_on_kvm_host
+            result['status_code'] = False
+            result['status_descr'] = inst
+            return result
 
     def set_mininet_ip(self, **kwargs):
         t = test.Test()

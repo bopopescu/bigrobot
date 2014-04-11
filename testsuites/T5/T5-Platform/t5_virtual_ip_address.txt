@@ -10,7 +10,7 @@ Library  			keywords/T5Platform.py
 
 *** Variables ***
 ${vip}  			10.192.103.111
-${vip bis} 			10.192.103.123
+${vip bis} 			10.192.103.222
 ${vip invalid}  	10.192.103.333
 ${vip string}	  	test-ip-address
 ${vip zeros}		0.0.0.0
@@ -28,7 +28,7 @@ T1.1 REST Configure and verify virtual IP address
 	${mac1} =  Rest Get MAC Using Virtual IP   ${vip}
 	${mac2} =  Rest Get MAC Using Virtual IP   master
 	Should Be Equal as Strings  ${mac1}  ${mac2}
-	[Tags]  T5  Virtual IP  REST  Platform
+	[Tags]  T5  Virtual IP  REST  Platform  Smoke
 
 T1.2 REST Delete and verify virtual IP address
 	Rest Configure Virtual IP  ${vip}
@@ -39,7 +39,7 @@ T1.2 REST Delete and verify virtual IP address
 	Should Be Equal as Strings  ${configured}  None
 	Run Keyword and Expect Error  *Node * is unreachable*  Rest Get MAC Using Virtual IP  ${vip}
 	Verify VIP neither on Master nor Slave Bash  ${vip}
-	[Tags]  T5  Virtual IP  REST  Platform
+	[Tags]  T5  Virtual IP  REST  Platform  Smoke
 
 T1.3 REST Virtual IP after failover in cluster
 ### add validation for ssh keys when implemented
@@ -71,7 +71,6 @@ T1.5 REST Verify it is impossible to have virtual equal to physical IP address
 	[Tags]  T5  Virtual IP  REST  Platform
 
 T1.6 REST Verify it is impossible to have 0.0.0.0 or 255.255.255.255 virtual IP address
-        Manual Failed
 	${state} =  Rest Configure Virtual IP  ${vip zeros}
 	Should Not Be True  ${state}
 	Verify VIP neither on Master nor Slave Bash  ${vip zeros}
@@ -94,7 +93,7 @@ T1.7 REST Change Virtual IP address
 	Should Be Equal as Strings  ${configured}  ${vip bis}
 	${mac2} =  Rest Get MAC Using Virtual IP   ${vip bis}
 	Should Be Equal as Strings  ${mac1}  ${mac2}
-	[Tags]  T5  Virtual IP  REST  Platform
+	[Tags]  T5  Virtual IP  REST  Platform  Smoke
 
 
 ### CLI FUNCTIONS
@@ -109,7 +108,7 @@ T2.1 CLI Configure and verify virtual IP address
 	Should Be Equal as Strings  ${eth0-vip}  ${eth0-master}
 	${state} =  Bash Verify Virtual IP  ${vip}
 	Should Be True  ${state}
-	[Tags]  T5  Virtual IP  CLI  Platform
+	[Tags]  T5  Virtual IP  CLI  Platform  Smoke
 
 T2.2 CLI Delete and verify virtual IP address
 	Cli Configure Virtual IP  ${vip}
@@ -120,7 +119,7 @@ T2.2 CLI Delete and verify virtual IP address
 	Should Be Equal As Strings  ${configured}  None
 	Run Keyword and Expect Error  *Node * is unreachable*  Cli Get Eth0 IP Using Virtual IP  ${vip}
 	Verify VIP neither on Master nor Slave Bash  ${vip}
-	[Tags]  T5  Virtual IP  CLI  Platform
+	[Tags]  T5  Virtual IP  CLI  Platform  Smoke
 
 T2.3 CLI Virtual IP after failover in cluster
 ### add validation for ssh keys when implemented
@@ -154,7 +153,6 @@ T2.5 CLI Verify it is impossible to have virtual equal to physical IP address
 	[Tags]  T5  Virtual IP  CLI  Platform
 
 T2.6 CLI Verify it is impossible to have 0.0.0.0 or 255.255.255.255 virtual IP address
-        Manual Failed
 	${state} =  Cli Configure Virtual IP  ${vip zeros}
 	Should Not Be True  ${state}
 	Verify VIP neither on Master nor Slave Bash  ${vip zeros}
@@ -165,20 +163,24 @@ T2.6 CLI Verify it is impossible to have 0.0.0.0 or 255.255.255.255 virtual IP a
 
 T2.7 CLI Change Virtual IP address
 	Cli Configure Virtual IP  ${vip}
-	Sleep  5 sec
+	Sleep  10 sec
 	${configured} =  Cli Show Virtual IP
 	Should Be Equal As Strings  ${configured}  ${vip}
 	${eth0-vip} =  Cli Get Eth0 IP Using Virtual IP  ${vip}
 	Cli Configure Virtual IP  ${vip bis}
-	Sleep  5 sec
+	Sleep  15 sec
 	Verify VIP neither on Master nor Slave Bash  ${vip}
 	Verify VIP only on Master Bash  ${vip bis}
 	${configured} =  Cli Show Virtual IP
 	Should Be Equal As Strings  ${configured}  ${vip bis}
 	${eth0-vip-bis} =  Cli Get Eth0 IP Using Virtual IP  ${vip bis}
 	Should Be Equal as Strings  ${eth0-vip}  ${eth0-vip-bis}
-	[Tags]  T5  Virtual IP  CLI  Platform
+	[Tags]  T5  Virtual IP  CLI  Platform  Smoke
+
+
 #(BSC-4925) Virtual IP not functional after chaning the time-zone(?) right after first boot
+#Check if switch can connect to controller via Virtual IP
+#Change virtual IP right after failover and verify
 
 
 *** Keywords ***

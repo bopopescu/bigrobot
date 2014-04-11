@@ -175,7 +175,7 @@ T12.2 show this in config-switch-if submode
 	Cli Run  switch test
 	Cli Run  interface eth1 
 	Cli Run  show this 
-	[Tags]  BSC-5061
+	[Tags]  BSC-5135
 
 T13 Characters \n and \r in identifiers
 	Run Keyword and Expect Error
@@ -366,9 +366,14 @@ T20 AAA Accounting round-robin support
 	Cli Run  tacacs server host 10.192.64.1 timeout 5 key secret
 	Cli Run  tacacs server host 10.192.3.1 timeout 5 key secret
 	Cli Run  tacacs server host 10.192.4.91 timeout 5 key secret
-	Cli Run  aaa accounting exec default start-stop group tacacs+  cmd_timeout=30
+	Cli Run  aaa accounting exec default start-stop group tacacs+  cmd_timeout=60
 	Cli Run  config
 	Cli Run  tenant test
+	Cli Run  tacacs server host 10.197.128.32 timeout 5 key secret
+	Cli Run  no tacacs server host 10.192.4.91 timeout 5 key secret  cmd_timeout=30
+	Cli Run  config
+	Cli Run  tenant test1
+	Cli Run  no aaa accounting exec default start-stop group tacacs+  cmd_timeout=30
 	[Tags]  BSC-5019  AAA  TACACS
 
 T21 Escaping special characters in quoted strings
@@ -381,6 +386,36 @@ T21 Escaping special characters in quoted strings
 	...  show run snmp
 	...  snmp-server location 'Location \\n \\r \\n """"'
 	[Tags]  BSC-5011
+
+T22 no debug rest in config-session submode
+	${session_id} =  Cli Get Session Hash
+        Cli Run  enable
+        Cli Run  config
+        Cli Run  session ${session_id}
+        Cli Run and Verify Output
+        ...  no debug rest
+        ...  Warning: submode exited due to deleted object
+	...  flag=False
+	[Tags]  BSC-5116  session
+
+T23 show this in config-session submode
+	${session_id} =  Cli Get Session Hash
+        Cli Run  enable
+        Cli Run  config
+	Cli Run  session ${session_id}
+        Cli Run  show this
+	[Tags]  BSC-5115  session
+
+T24 image build number after downloading second image
+	Manual Passed
+	[Tags]  BSC-5102
+
+T25 Polish characters in commands
+	Cli Run  snmp-server location 'Ko\\0xc5\\0x9bciuszki 34, \\0xc5\\0x81\\0xc3\\0xb3d\\0xc5\\0xba'
+	Cli Run and Verify Output
+	...  show running-config snmp
+	...  snmp-server location 'Ko\\0xc5\\0x9bciuszki 34, \\0xc5\\0x81\\0xc3\\0xb3d\\0xc5\\0xba'
+
 *** Keywords ***
 Generate Random Name
 	[Arguments]  ${prefix}  ${suffix_len}
@@ -396,10 +431,9 @@ File Suite Setup
 
 Setup
 	Base Test Setup
-	Cli Run  ena
-	Cli Run  conf
+        Cli Run  enable
+        Cli Run  config
 
 Teardown
-	Cli Run  no aaa accounting exec default start-stop group tacacs+  cmd_timeout=30
 	Cli Copy  config://startup-config  running-config
 	Base Test Teardown

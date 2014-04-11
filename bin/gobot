@@ -134,6 +134,17 @@ helpers.bigrobot_suite_format(default='txt')
 helpers.bigrobot_exec_hint_format()
 helpers.bigrobot_debug(default=1)
 
+# !!! FIXME: 2014-04-10 Exscript's Protocol.py sys.stderr is closed for some
+#     reason, which causes SSH2._dbg() to fail. Still not able to figure out
+#     what is causing this (it used to work fine). The workaround is to write
+#     the Exscript debug log to a file instead. We achieve this by setting
+#     an environment variable BIGROBOT_EXSCRIPT_DEBUG_LOG_PATH which
+#      Exscript's Protocol will pick up.
+#
+#     Note: This env should only be set after bigrobot_log_path_exec_instance()
+#           is set.
+helpers.bigrobot_excript_debug_log_path(default=helpers.bigrobot_log_path_exec_instance())
+
 # !!! FIXME: We're doing away with Pandoc support (required by .mw format)
 #     since .txt format is much more flexible. Can get rid of all things
 #     relating to pandoc at some point.

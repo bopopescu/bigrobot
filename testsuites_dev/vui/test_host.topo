@@ -8,4 +8,4 @@ h1:
   #ip: 10.193.0.21   # Song's compute node
   #user: root
   #password: bsn
-
+  set_devconf_debug_level: 5
