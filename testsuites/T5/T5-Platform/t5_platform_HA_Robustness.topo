@@ -1,0 +1,61 @@
+# Topology description is in YAML format - see http://en.wikipedia.org/wiki/YAML
+#
+# c<n>: Controllers
+# s<n>: Switches
+# h<n>: Hosts (including bare metal)
+# mn  : Mininet server
+
+c1:
+  ip: 10.210.144.15
+ 
+c2:
+  ip: 10.210.144.16
+
+s1:
+  ip: 10.210.144.101
+  alias: leaf0-a
+  user: admin
+  password: adminadmin
+
+s2:
+  ip: 10.210.144.102
+  alias: leaf0-b
+  user: admin
+  password: adminadmin
+
+s3:
+  ip: 10.210.144.103
+  alias: leaf1-a
+  user: admin
+  password: adminadmin
+  
+s4:
+  ip: 10.210.144.121
+  alias: spine0
+  user: admin
+  password: adminadmin
+
+h1:
+  ip: 10.210.144.21
+  user: root
+  password: bsn
+h2:
+  ip: 10.210.144.22
+  user: root
+  password: bsn
+#h3:
+  #ip: 10.210.144.23
+  user: root
+  password: bsn
+h4:
+  ip: 10.210.144.24
+  user: root
+  password: bsn
+h5:
+  ip: 10.210.144.25
+  user: root
+  password: bsn
+h6:
+  ip: 10.210.144.26
+  user: root
+  password: bsn
