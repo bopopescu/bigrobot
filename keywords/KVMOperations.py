@@ -65,6 +65,10 @@ class KVMOperations(object):
         name = kwargs.get('name', "kvm_host")
         kvm_handle = HostDevConf(host=hostname, user=user, password=password,
                 protocol='ssh', timeout=100, name=name)
+        # JENKINS sets the default TERM to dumb changing to xterm
+        helpers.log("ENV after connecting to KVM HOST:\n%s" % kvm_handle.bash('env')['content'])
+        kvm_handle.bash('export TERM=xterm')
+        helpers.log("ENV after setting  TERM KVM HOST:\n%s" % kvm_handle.bash('env')['content'])
         return kvm_handle
 
     def _get_vm_running_state(self, **kwargs):
