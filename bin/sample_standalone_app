@@ -7,7 +7,8 @@ to set env variables IS_GOBOT and AUTOBOT_LOG.
 
 import os
 import sys
-import robot
+import robot  # import to force append local robot libraries than python installed packages
+
 
 # Determine BigRobot path(s) based on this executable (which resides in
 # the bin/ directory.
