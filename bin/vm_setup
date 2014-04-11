@@ -103,11 +103,9 @@ def main(*args):
         args.netmask = "18"
 
     term = helpers.get_env("TERM")
-    print "TERM Value:"
-    print term
+    helpers.log("TERM Value: %s" % term)
     helpers.set_env("TERM", "xterm")
-    print "New TERM Value:"
-    print term
+    helpers.log("New TERM Value: %s" % term)
 
     active_vm = kvm_ops.vm_setup(kvm_host=kvm_host,
                                  kvm_user=kvm_user,
