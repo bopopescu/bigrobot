@@ -343,6 +343,15 @@ def bigrobot_log_path_exec_instance(new_val=None, default=None):
                             default)
 
 
+def bigrobot_excript_debug_log_path(new_val=None, default=None):
+    """
+    Category: Get/set environment variables for BigRobot.
+    """
+    return _env_get_and_set('BIGROBOT_EXSCRIPT_DEBUG_LOG_PATH',
+                            new_val,
+                            default)
+
+
 def bigrobot_suite(new_val=None, default=None):
     """
     Category: Get/set environment variables for BigRobot.

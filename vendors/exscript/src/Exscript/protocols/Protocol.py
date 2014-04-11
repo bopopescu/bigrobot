@@ -263,7 +263,18 @@ class Protocol(object):
         else:
             self.stdout = stdout
         if stderr is None:
-            self.stderr = sys.stderr
+            # self.stderr = sys.stderr
+
+            # VUI: Workaround to stderr getting closed. See 'bin/gobot' for
+            #      more details.
+            #
+            if 'BIGROBOT_EXSCRIPT_DEBUG_LOG_PATH' in os.environ:
+                p = os.environ['BIGROBOT_EXSCRIPT_DEBUG_LOG_PATH']
+                if not os.path.exists(p):
+                    os.makedirs(p)
+            else:
+                p = '/tmp'
+            self.stderr = open(p + "/exscript_debug.log", 'w')
         else:
             self.stderr = stderr
         if logfile is None:
