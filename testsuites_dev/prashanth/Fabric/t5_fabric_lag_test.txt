@@ -118,7 +118,8 @@ rack lag detection from rack0 leaf switch using three rack setup (add/delete spi
 	rest verify rack lag from leaf  leaf0-a  spine1
 
 Verify broadcast traffic forwarding on the lag
-	[Tags]  feature  
+	[Tags]  feature
+	rest verify fabric link common  
 	rest add tenant  t1
 	rest add vns  t1  v1
 	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
@@ -137,7 +138,7 @@ Verify broadcast traffic forwarding on the lag
     rest delete tenant  t1
     
 Verify broadcast forwarding with spine link failover
-	[Tags]  feature  run  
+	[Tags]  feature  run
 	rest add tenant  t1
 	rest add vns  t1  v1
 	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
@@ -483,6 +484,7 @@ T5 test setup
 T5 test teardown
 	delete traffic
 	rest delete tenant  t1
+	rest clean switch interface
 	base test teardown
 	
 bring up h1 bond0
