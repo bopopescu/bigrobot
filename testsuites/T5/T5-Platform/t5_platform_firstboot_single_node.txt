@@ -1,0 +1,201 @@
+* Settings
+Documentation    T5 Test Suite
+Suite Setup      base suite setup
+Suite Teardown   base suite teardown
+Test Setup       base test setup
+Test Teardown    base test teardown
+Force Tags       T5 
+Library          keywords/BsnCommon.py
+Library          keywords/Controller.py
+Library			 keywords/Mininet.py
+Library		     keywords/Host.py
+Library		     keywords/Ixia.py
+Library		     keywords_dev/mingtao/T5_longevity.py
+Library	         keywords/T5.py
+Library	         keywords/T5Platform.py
+Library	         keywords/Controller.py
+ 
+Resource	     testsuites_dev/mingtao/t5_platform_infra_resource.txt 
+
+* Variable
+ 
+${short}  1
+${medium}  10
+${long}   30
+${verylong}    120 
+${gw}           10.192.64.1
+${dns}          10.192.3.1
+${domain}        bigswitch.com 
+${mask}	         18
+${VIP1}         10.192.105.150
+${VIP2}         10.192.105.151
+${namec1}       MY-T5-C30
+${namec2}       MY-T5-C10
+${ipcno}        10.192.105.255
+${colo}         210
+
+
+* Test Case
+
+Set variable
+	${ipc1}=   get node ip   c1
+	Set Suite Variable    ${ipc1}
+  	${time}=  Get Time     year,month,day
+ 	${file}=  Set Variable  config${time[0]}${time[1]}${time[2]}
+	Set Suite Variable       ${file} 		
+	${ip}=   ip_to_list    ${ipc1}
+	log   ip address is ${ip}
+	Run Keyword if   ${ip[1]}==${colo}	 set colo variables  
+  
+	[Tags] 	sanity   feature  
+
+ 
+## first boot with single controller	 
+T2.1 first boot of controller in standalone via static IP after boot factory default	
+ 	cli_boot_factory_default	c1
+	sleep  ${verylong}	
+  	controller first boot static        c1  no  no   ${ipc1}   ${mask}   ${gw}   ${dns}   ${domain}   ${namec1}
+  	
+	Verification local node config      c1   ${namec1}   ${ipc1}   ${mask}   ${gw}   ${dns}   ${domain} 	
+  	
+	[Tags] 	sanity  firstboot    
+
+T2.2 Test first boot of controller menu node for standalone
+	cli_boot_factory_default	c1
+	sleep  ${verylong}	
+  	first_boot_controller_initial_node_setup        c1  no   ${ipc1}   ${mask}   ${gw}   ${dns}   ${domain}   ${namec1}
+	first_boot_controller_initial_cluster_setup 	c1  no   
+	first_boot_controller_menu_recovery             c1  adminadmin
+	first_boot_controller_menu_IP                   c1  ${ipc1}   ${mask}  
+	first_boot_controller_menu_gateway   			c1  ${gw}
+	first_boot_controller_menu_dnsserver            c1  ${dns}  
+	first_boot_controller_menu_domain	            c1  ${domain}
+	first_boot_controller_menu_name                 c1  ${namec1}
+	first_boot_controller_menu_apply                c1
+ 
+	[Tags] 	sanity  firstboot
+
+ 
+T2.3 Verify with invalid DNS server IP address
+	cli_boot_factory_default	c1
+	sleep  ${verylong}	
+  	first_boot_controller_initial_node_setup        c1  no   ${ipc1}   ${mask}   ${gw}   ${dns}   ${domain}   ${namec1}
+	first_boot_controller_initial_cluster_setup 	c1  no  
+	first_boot_controller_menu_dnsserver            c1   300.0.0.1     invalid_input=True
+	first_boot_controller_menu_dnsserver            c1   100.0.0.1.0   invalid_input=True
+	Log   broadcast as dns server address
+#	first_boot_controller_menu_dnsserver            c1   255.255.255.255   invalid_input=True	
+#	first_boot_controller_menu_dnsserver            c1   224.0.0.0   invalid_input=True	
+	first_boot_controller_menu_dnsserver            c1   2f.3f.0.0   invalid_input=True	
+	first_boot_controller_menu_dnsserver            c1   0.0.0.0     invalid_input=True		
+	first_boot_controller_menu_dnsserver            c1   ${dns}   
+	first_boot_controller_menu_apply                c1	
+    
+	[Tags] 	feature     firstboot   JIRA-BSC-5031   
+ 
+ 
+T2.4 Verify with invalid mask
+	cli_boot_factory_default	c1
+	sleep  ${verylong}	
+  	first_boot_controller_initial_node_setup        c1  no   ${ipc1}   ${mask}   ${gw}   ${dns}   ${domain}   ${namec1}
+	first_boot_controller_initial_cluster_setup 	c1  no  
+	first_boot_controller_menu_prefix               c1   35   invalid_input=True
+	first_boot_controller_menu_prefix               c1   32   invalid_input=True
+	first_boot_controller_menu_prefix               c1   31   invalid_input=True				
+	log    0 is accepted as valid mask
+#	first_boot_controller_menu_prefix               c1   0   invalid_input=True	
+	first_boot_controller_menu_prefix               c1   ${mask}    
+ 	first_boot_controller_menu_apply                c1	
+    
+	[Tags] 	feature   firstboot     JIRA-BSC-5032    
+ 
+  
+T2.5 Verify with invalid IP
+	cli_boot_factory_default	c1
+	sleep  ${verylong}	
+  	first_boot_controller_initial_node_setup        c1  no   ${ipc1}   ${mask}   ${gw}   ${dns}   ${domain}   ${namec1}
+	first_boot_controller_initial_cluster_setup 	c1  no  
+	first_boot_controller_menu_IP                   c1   300.0.0.1     invalid_input=True
+    log   broadcast address   
+#	first_boot_controller_menu_IP                   c1   255.255.255.255    18   invalid_input=True	
+#	first_boot_controller_menu_IP                   c1   224.0.0.0    18   invalid_input=True
+	first_boot_controller_menu_IP                   c1   0.0.0.0      18   invalid_input=True	
+	first_boot_controller_menu_IP                   c1   100.100.100.100.100      18   invalid_input=True	
+	first_boot_controller_menu_IP                   c1   1f.2f.3f.0      18   invalid_input=True			
+	first_boot_controller_menu_IP                   c1   ${ipc1}/${mask}  			 
+	first_boot_controller_menu_apply                c1	
+    
+	[Tags] 	feature   firstboot  JIRA-BSC-5031    
+
+T2.6 Test first boot of controller menu cluster for standalone
+	cli_boot_factory_default	c1
+	sleep  ${verylong}	
+  	first_boot_controller_initial_node_setup        c1  no   ${ipc1}   ${mask}   ${gw}   ${dns}   ${domain}   ${namec1}
+	first_boot_controller_initial_cluster_setup 	c1  no   
+	first_boot_controller_menu_cluster_name         c1  MY-T5-C1
+	first_boot_controller_menu_cluster_desr         c1  MY-T5-controller  
+	first_boot_controller_menu_cluster_passwd   	c1  adminadmin
+ 	first_boot_controller_menu_apply                c1
+ 
+	[Tags] 	feature  firstboot   
+
+
+T2.7 Test first boot of controller menu update cluster  
+	cli_boot_factory_default	c1
+	sleep  ${verylong}	
+  	first_boot_controller_initial_node_setup        c1  no   ${ipc1}   ${mask}   ${gw}   ${dns}   ${domain}   ${namec1}
+	first_boot_controller_initial_cluster_setup 	c1  no   
+	first_boot_controller_menu_cluster_option_apply         c1    	 
+ 
+	[Tags] 	sanity     firstboot   
+		
+T2.8 Test first boot of controller join cluster with same ip and itself
+ 	log   "10.192.105.30, SAME AS Local IP Address"
+ 	
+	[Tags] 	sanity  Maunal    firstboot 	 
+	
+	
+
+T2.9 Test first boot of controller menu invalid cluster name
+	cli_boot_factory_default	c1
+	sleep  ${verylong}	
+  	first_boot_controller_initial_node_setup        c1  no   ${ipc1}   ${mask}   ${gw}   ${dns}   ${domain}   ${namec1}
+	first_boot_controller_initial_cluster_setup 	c1  no   
+	first_boot_controller_menu_cluster_name         c1     name=MY-T5,	  invalid_input=True	
+	first_boot_controller_menu_cluster_name         c1     name=1MY-T5 	  invalid_input=True	
+	first_boot_controller_menu_cluster_name         c1     name=_MY-T5 	  invalid_input=True
+	first_boot_controller_menu_cluster_name         c1     name=.MY-T5 	  invalid_input=True
+	first_boot_controller_menu_cluster_name         c1     name=-MY-T5 	  invalid_input=True
+	first_boot_controller_menu_cluster_name         c1     name=MY.T5
+	first_boot_controller_menu_apply                c1
+		 			
+	[Tags] 	sanity     firstboot 	 
+ 
+
+T2.10 Test first boot of controller menu reset and start over for standalone
+	cli_boot_factory_default	c1
+	sleep  ${verylong}	
+  	first_boot_controller_initial_node_setup        c1  no   ${ipc1}   ${mask}   ${gw}   ${dns}   ${domain}   ${namec1}
+	first_boot_controller_initial_cluster_setup 	c1  no   
+	first_boot_controller_menu_reset                c1   
+  	first_boot_controller_initial_node_setup        c1  no   ${ipc1}   ${mask}   ${gw}   ${dns}   ${domain}   ${namec1}
+	first_boot_controller_initial_cluster_setup 	c1  no   
+ 
+	first_boot_controller_menu_apply                c1
+ 
+	[Tags] 	sanity     firstboot 	 
+
+ 
+T2.11 Verify the behavior if user hits Ctrl+C during various stages of the first boot process
+	cli_boot_factory_default	c1
+	sleep  ${verylong}	
+  	first_boot_controller_initial_node_setup        c1  no   ${ipc1}   ${mask}   ${gw}   ${dns}   ${domain}   ${namec1}
+	first_boot_controller_ctl_c      	            c1
+	first_boot_controller_initial_cluster_setup 	c1  no  
+ 	first_boot_controller_ctl_c                     c1
+ 	first_boot_controller_menu_apply                c1   	
+ 	log  need to care the ctl_c after the apply
+ 	    
+	[Tags] 	feature   firstboot    JIRA-BSC_5064
+
+  
