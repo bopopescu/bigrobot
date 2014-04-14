@@ -28,9 +28,13 @@ Test switch uptime
     switch uptime  s1
 
 Test switch info
-    #[Tags]  skipped
+    [Tags]  skipped
     switch info  spine0
 
 Test sanitize CLI output
     [Tags]  skipped
     sanitize cli output  s1
+
+Test debug bash
+    #[Tags]  skipped
+    bash     s1   ls -la
