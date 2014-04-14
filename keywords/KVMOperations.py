@@ -1,6 +1,7 @@
 import autobot.helpers as helpers
 import autobot.test as test
 import time
+import re
 from autobot.devconf import HostDevConf
 from keywords.T5Platform import T5Platform
 
@@ -92,16 +93,30 @@ class KVMOperations(object):
         helpers.log("Success copying image !!")
         return kvm_qcow_path
 
-    def _scp_file_to_kvm_host(self, **kwargs):
+    def _get_latest_jenkins_build_number(self, jenkins_server = '10.192.4.89', jenkins_user = 'bsn', jenkins_password = 'bsn'):
+        jenkins_handle = HostDevConf(host=jenkins_server, user=jenkins_user, password=jenkins_password,
+                    protocol='ssh', timeout=100, name="jenkins_host")
+        output = jenkins_handle.bash('ls -ltr /var/lib/jenkins/jobs/bvs\ master/builds | grep lastSuccessfulBuild')['content']
+        output_lines = output.split('\n')
+        latest_build_number = output_lines[1].split('->')[-1]
+        return latest_build_number.strip()
+    
+    def _get_latest_kvm_build_number(self, kvm_handle = None):
+        output = kvm_handle.bash('ls -ltr /var/lib/libvirt/bvs_images/ | grep bvs| awk \'{print $9}\'')['content']
+        output_lines = output.split('\n')
+        latest_image =  output_lines[-2]
+        match = re.match(r'.*bvs-(\d+).*', latest_image)
+        if match:
+            return match.group(1)
+        else:
+            return 0
+        
+    def _scp_file_to_kvm_host(self, vm_name = None, remote_qcow_path = None, kvm_handle = None, scp = True):
         # for getting the latest jenkins build from jenkins server kvm_host ssh key should be copied to jenkins server
-        vm_name = kwargs.get("vm_name", None)
-        remote_qcow_path = kwargs.get("remote_qcow_path", None)
-        kvm_handle = kwargs.get("kvm_handle", None)
-        scp = kwargs.get("scp", True)
         output = kvm_handle.bash('uname -a')
         helpers.log("KVM Host Details : \n %s" % output['content'])
         kvm_handle.bash('cd /var/lib/libvirt/')
-
+        
 
         if "No such file or directory" in kvm_handle.bash('cd bvs_images/')['content']:
             helpers.log("No BVS_IMAGES dir in KVM Host @ /var/lib/libvirt creating one to store bvs vmdks")
@@ -113,21 +128,28 @@ class KVMOperations(object):
         kvm_handle.bash('sudo chmod -R 777 ../bvs_images/')
         kvm_handle.bash('cd bvs_images')
         helpers.log("Latest VMDK will be copied to location : %s at KVM Host" % kvm_handle.bash('pwd')['content'])
-
+        file_name = remote_qcow_path.split('/')[-1]
         if scp:
             helpers.log("Executing Scp cmd to copy latest bvs vmdk to KVM Server")
-            scp_cmd = "scp -o \"UserKnownHostsFile=/dev/null\" -o StrictHostKeyChecking=no \"bsn@jenkins:%s\" ." % remote_qcow_path
-            scp_cmd_out = kvm_handle.bash(scp_cmd, prompt = [r'.*password:', r'.*#', r'.*$ '])['content']
-            if "password" in scp_cmd_out:
-                helpers.log( "sending bsn passoword..")
-                helpers.log(kvm_handle.bash('bsn')['content'])
+            latest_build_number = self._get_latest_jenkins_build_number()
+            latest_kvm_build_number = self._get_latest_kvm_build_number(kvm_handle)
+            file_name = "controller-bvs-%s.qcow2" % latest_build_number
+            helpers.log("Latest Build Number on KVM Host: %s" % latest_kvm_build_number)
+            helpers.log("Latest Build Number on Jenkins: %s" % latest_build_number)
+            if int(latest_kvm_build_number) == int(latest_build_number):
+                helpers.log("Skipping SCP as the latest build on jenkins server did not change from the latest on KVM Host")
             else:
-                helpers.log("SCP should be done:\n%s" % scp_cmd_out)
-            helpers.summary_log("Success SCP'ing latest Jenkins build !!")
-
+                scp_cmd = "scp -o \"UserKnownHostsFile=/dev/null\" -o StrictHostKeyChecking=no \"bsn@jenkins:%s\" %s" % (remote_qcow_path, file_name)
+                scp_cmd_out = kvm_handle.bash(scp_cmd, prompt = [r'.*password:', r'.*#', r'.*$ '])['content']
+                if "password" in scp_cmd_out:
+                    helpers.log( "sending bsn passoword..")
+                    helpers.log(kvm_handle.bash('bsn')['content'])
+                else:
+                    helpers.log("SCP should be done:\n%s" % scp_cmd_out)
+                helpers.summary_log("Success SCP'ing latest Jenkins build !!")
         else:
             helpers.log("Skipping SCP expecting the VMDK already SCP'ed to kvm_host..")
-        file_name = remote_qcow_path.split('/')[-1]
+        
 
         kvm_handle.bash('sudo cp %s ../images/%s.qcow2' % (file_name, vm_name))
 

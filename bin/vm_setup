@@ -102,6 +102,7 @@ def main(*args):
     if args.netmask is None:
         args.netmask = "18"
 
+    # Setting below enviornment Variables for Jenkins CI
     term = helpers.get_env("TERM")
     helpers.log("TERM Value: %s" % term)
     helpers.set_env("TERM", "xterm")
