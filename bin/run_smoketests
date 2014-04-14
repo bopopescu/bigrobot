@@ -6,6 +6,10 @@
 #echo "Disable BVS smoke test for the interim."
 #exit 0
 
+testsuites="\
+testsuites_dev/vui/test_robot \
+"
+
 mesg() {
     ts=$(date "+%Y-%m-%d %H:%M:%S")
     echo "$ts $1"
@@ -31,11 +35,7 @@ if [ -d "$testlogs_path" ]; then
     mv $testlogs_path "$testlogs_path.$timestamp"
 fi
 
-# Execute smoke test suites
-for suite in \
-    testsuites_dev/vui/test_robot \
-    ;
-do
+for suite in `echo $testsuites`; do
     ./bigrobot_smoke_wrapper.py $suite
 done
 
