@@ -226,6 +226,7 @@ class T5Platform(object):
 
         if(singleNode):
             if(masterID == newMasterID):
+                obj.restart_floodlight_monitor("master")
                 helpers.log("Pass: After the reboot cluster is stable - Master is still : %s " % (newMasterID))
                 return True
             else:
