@@ -14,7 +14,7 @@ Library         keywords_dev/animesh/BsnCommonShow.py
 Library         keywords_dev/slim/SwitchLight.py
 Library	        Collections.py
 Library         keywords/Ixia.py
-Library			autobot/helpers/__init__.py
+#Library			autobot/helpers/__init__.py
 Resource		testsuites_dev/slim/T5_L3_physical_inter/t5_layer3_physical_inter_variables.txt
 Resource		testsuites/T5/t5_dualleaf_three_rack_physical_resource.txt
 
@@ -142,12 +142,12 @@ L3 inter tenant same rack untagged with dynamic endpoints
 	REST show endpoints	
 	${loss} = 									BASH ping						h5						10.252.1.11 			count=10
 	Should Be True  							${loss} == 0	
-	${stream1}=  								L3 add  						name=stream1		  	flow=a<->b 				frame_rate=1000  			frame_size=9216  			frame_cnt=10000
-	...     									src_ip=10.251.1.101				src_gw=10.251.1.1		dst_ip=10.252.1.101		dst_gw=10.252.1.1			 			
-    start traffic  								${stream1}
-    sleep  10
-    stop traffic								${stream1}
-    verify results 								transmitted_frames  			received_valid_frames	${stream1}  			stream1
+#	${stream1}=  								L3 add  						name=stream1		  	flow=a<->b 				frame_rate=1000  			frame_size=9216  			frame_cnt=10000
+#	...     									src_ip=10.251.1.101				src_gw=10.251.1.1		dst_ip=10.252.1.101		dst_gw=10.252.1.1			 			
+#   start traffic  								${stream1}
+#   sleep  10
+#   stop traffic								${stream1}
+#    verify results 								transmitted_frames  			received_valid_frames	${stream1}  			stream1
  	BASH delete route							h5								10.252.1.0/24			10.251.1.1
 	BASH delete route							h6								10.251.1.0/24			10.252.1.1
 	
@@ -183,12 +183,12 @@ L3 inter tenant across rack untagged with dynamic endpoints
 	REST show endpoints	
 	${loss} = 									BASH ping						h5						10.252.1.11 			count=10
 	Should Be True  							${loss} == 0	
-	${stream1}=  								L3 add  						name=stream1		  	flow=a<->c 				frame_rate=1000  			frame_size=9216  			frame_cnt=10000
-	...     									src_ip=10.251.1.101				src_gw=10.251.1.1		dst_ip=10.252.1.101		dst_gw=10.252.1.1			 			
-    start traffic  								${stream1}
-    sleep  10
-    stop traffic								${stream1}
-    verify results 								transmitted_frames  			received_valid_frames  		${stream1}  			stream1
+#	${stream1}=  								L3 add  						name=stream1		  	flow=a<->c 				frame_rate=1000  			frame_size=9216  			frame_cnt=10000
+#	...     									src_ip=10.251.1.101				src_gw=10.251.1.1		dst_ip=10.252.1.101		dst_gw=10.252.1.1			 			
+#   start traffic  								${stream1}
+#   sleep  10
+#   stop traffic								${stream1}
+#   verify results 								transmitted_frames  			received_valid_frames  		${stream1}  			stream1
  	BASH delete route							h5								10.252.0.0/16			10.251.1.1
 	BASH delete route							h4								10.251.0.0/16			10.252.1.1
 	
@@ -674,6 +674,9 @@ teardown topology
 	REST delete tenant								X
 	REST delete tenant								Y
 	REST delete tenant								Z
+	REST delete tenant routers to system			X
+	REST delete tenant routers to system			Y
+	REST delete tenant routers to system			Z
 	delete fabric switch
 	initialize host
 	
