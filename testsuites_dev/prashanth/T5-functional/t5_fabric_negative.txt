@@ -1,7 +1,7 @@
 == T5 Fabric Traffic Failover Test ==
 
 *Settings
-Documentation    Fabric Failover Test using Three Rack Dual Spine
+Documentation    Fabric negative and bugs test suite
 Suite Setup      base suite setup
 Suite Teardown   base suite teardown
 Test Setup       T5 test setup
@@ -101,55 +101,6 @@ shutdown the switch and check the links are down in the switch
     rest delete portgroup  p4
     rest delete portgroup  p5
     rest delete tenant  t1 
-	
-verify interface cli 
-	[Tags]  feature
-	${result}=  cli  c1   show interface  
-	Should Not be Empty  ${result}
-	${result}=  cli  c1  show interface ${leaf0a_spine0_intf0}
-	Should Not be Empty  ${result}
-		
-verify lag cli
-	[Tags]  feature
-	${result}=  cli  c1  show lag  
-	Should Not be Empty  ${result}
-    ${result}=  cli  c1   show lag switch leaf0-a  
-	Should Not be Empty  ${result}	
-
-verify switch cli
-	[Tags]  feature
-	${result}=  cli  c1  show switch  
-	Should Not be Empty  ${result}
-	${result}=  cli  c1  show switch leaf0-a
-	Should Not be Empty  ${result}
-	${result}=  cli  c1  show switch leaf0-a interface ${leaf0a_spine0_intf0} 
-	Should Not be Empty  ${result}
-	
-verify lacp cli
-	[Tags]  feature
-	rest add tenant  t1
-	rest add vns  t1  v1
-	rest add portgroup  p4 
-    rest add interface to portgroup  leaf1-a  ${h4_intf0}  p4
-    rest add interface to portgroup  leaf1-b  ${h4_intf1}  p4
-    rest add portgroup lacp  p4  
-    sleep  3
-	${result}=  cli  c1  show lacp  
-	Should Not be Empty  ${result}
-	${result}=  cli  c1  show lacp switch leaf0-a
-	Should Not be Empty  ${result}
-	${result}=  cli  c1  show lacp switch leaf0-a interface ${h4_intf0} 
-	Should Not be Empty  ${result}
-	
-verify link cli
-	[Tags]  feature
-	${result}=  cli  c1  show link  
-	Should Not be Empty  ${result}
-
-verify lag any_leaf cli
-	[Tags]  feature
-	${result}=  cli  c1  show lag switch spine0 any_leaf 
-	Should Not be Empty  ${result}
 
 reboot both the controllers to make sure all the switches indeed connected
 	[Tags]  bugs  
@@ -161,14 +112,154 @@ reboot both the controllers to make sure all the switches indeed connected
 	cli verify cluster master reboot
 	sleep  3
 	rest verify fabric link common
+
+Test Data center falls below 50% link verify forwarding table for the switch removal update
+	[Tags]  feature
+	rest verify fabric link common
+	rest delete fabric switch  spine1
+	sleep  2
+	rest verify forwarding lag  ${leaf2a_dpid}  leaf2-a
+	rest delete fabric switch  spine0
+	sleep  2
+	rest verify forwarding lag  ${leaf2a_dpid}  leaf2-a
+	rest delete fabric switch  leaf2-b
+	sleep  2
+	${result}=  rest verify forwarding lag  ${leaf2a_dpid}  leaf2-a  
+	Should not be True  ${result}
+	rest add switch  spine0
+    rest add dpid  spine0  ${spine0_dpid}
+    rest add fabric role  spine0  spine
+    rest add switch  spine1
+    rest add dpid  spine1  ${spine1_dpid}
+    rest add fabric role  spine1  spine
+    rest add switch  leaf2-b
+    rest add dpid  leaf2-b  ${leaf2b_dpid}
+    rest add fabric role  leaf2-b  leaf 
+    rest add leaf group  leaf2-b  rack2
+    sleep  2
+    rest verify fabric link common
+
+Test VFT push to non connected switches
+	[Tags]  feature
+	cli delete controller  spine0  c1
+	cli delete controller  spine0  c2
+	cli delete controller  spine1  c1
+	cli delete controller  spine1  c2 
+	cli delete controller  leaf0-a  c1
+	cli delete controller  leaf0-a  c2
+	cli delete controller  leaf0-b  c1
+	cli delete controller  leaf0-b  c2
+	cli delete controller  leaf1-a  c1
+	cli delete controller  leaf1-a  c2
+	cli delete controller  leaf1-b  c1
+	cli delete controller  leaf1-b  c2
+	cli delete controller  leaf2-a  c1
+	cli delete controller  leaf2-a  c2
+	cli delete controller  leaf2-b  c1
+	cli delete controller  leaf2-b  c2
+	sleep  20
+	rest verify fabric link common  0
+	cli add controller  spine0  c1
+	cli add controller  spine0  c2
+	cli add controller  spine1  c1
+	cli add controller  spine1  c2
+	cli add controller  leaf2-a  c1
+	cli add controller  leaf2-a  c2
+	cli add controller  leaf2-b  c1
+	cli add controller  leaf2-b  c2
+	sleep  5
+	rest add tenant  t1
+	rest add vns  t1  v1
+	rest add portgroup  p5 
+    rest add interface to portgroup  leaf2-a  ${h5_intf0}  p5
+    rest add interface to portgroup  leaf2-b  ${h5_intf1}  p5
+    rest add portgroup lacp  p5  
+    rest add portgroup  p6 
+    rest add interface to portgroup  leaf2-a  ${h6_intf0}  p6
+    rest add interface to portgroup  leaf2-b  ${h6_intf1}  p6
+    rest add portgroup lacp  p6
+    rest add portgroup to vns  t1  v1  p5  -1
+    rest add portgroup to vns  t1  v1  p6  -1
+    sleep  3
+    rest verify fabric link common
+    rest verify fabric interface lacp  leaf2-a  ${h5_intf0}
+    rest verify fabric interface lacp  leaf2-b  ${h6_intf0}  
+    ${loss}=  bash ping  h5  ${h6_ip}  source_if=bond0
+    Should Be True  ${loss} < 50
+    rest delete tenant  t1
+	
+check forwarding port and lag table consisteny between switch and controller
+	[Tags]  bugs
+	cli delete controller  spine0  c1
+	cli delete controller  spine0  c2
+	cli delete controller  spine1  c1
+	cli delete controller  spine1  c2 
+	cli delete controller  leaf2-a  c1
+	cli delete controller  leaf2-a  c2
+	cli delete controller  leaf2-b  c1
+	cli delete controller  leaf2-b  c2
+	sleep  10
+	cli add controller  spine0  c1
+	cli add controller  spine0  c2
+	cli add controller  spine1  c1
+	cli add controller  spine1  c2
+	cli add controller  leaf2-a  c1
+	cli add controller  leaf2-a  c2
+	cli add controller  leaf2-b  c1
+	cli add controller  leaf2-b  c2
+	sleep  2
+	rest verify forwarding port source mac check  leaf2-a
+	rest verify forwarding port source mac check  leaf2-b
+	${result}=  bash execute command  leaf2-a  ofad-ctl ft L2 | grep DISABLED | wc -l
+    ${count}=	Convert to integer  ${result}   
+    Should be True  ${count} = 3
+	${result}=  bash execute command  leaf2-a  ofad-ctl ft L2 | grep 81 | wc -l
+    ${count}=	Convert to integer  ${result}   
+    Should be True  ${count} = 2
+	
+verifying flow reconsilation when new switch is connected to the fabric
+	[Tags]  jira-bvs-1206
+	rest add tenant  t1
+	rest add vns  t1  v1
+    rest add interface to vns  t1  v1  leaf2-a  ${leaf2a_ixia_intf}  -1 
+    sleep  3
+	cli delete controller  spine0  c1
+	cli delete controller  spine0  c2
+	cli delete controller  spine1  c1
+	cli delete controller  spine1  c2 
+	cli delete controller  leaf0-a  c1
+	cli delete controller  leaf0-a  c2
+	cli delete controller  leaf0-b  c1
+	cli delete controller  leaf0-b  c2
+	cli delete controller  leaf1-a  c1
+	cli delete controller  leaf1-a  c2
+	cli delete controller  leaf1-b  c1
+	cli delete controller  leaf1-b  c2
+	cli delete controller  leaf2-a  c1
+	cli delete controller  leaf2-a  c2
+	cli delete controller  leaf2-b  c1
+	cli delete controller  leaf2-b  c2
+	sleep  10
+	${result}=  bash execute command  leaf2-a  ofad-ctl ft vlan | grep 49 | wc -l
+    ${count}=	Convert to integer  ${result}   
+    Should be True  ${count} = 2
+    clean configuration
+    sleep  3
+    rest add switch  leaf2-a
+    rest add dpid  leaf2-a  ${leaf2a_dpid}
+    rest add fabric role  leaf2-a  leaf
+    rest add leaf group  leaf2-a  rack2
+    sleep  2
+    cli add controller  leaf2-a  c1
+    cli add controller  leaf2-a  c2
+    sleep  2
+	${result}=  bash execute command  leaf2-a  ofad-ctl ft vlan | grep 49 | wc -l
+    ${count}=	Convert to integer  ${result}   
+    Should be True  ${count} = 0
 	
 Tear down config and Topology
-	[Tags]  feature  run
-    delete fabric switch   
-    rest delete portgroup  p4
-    rest delete portgroup  p5
-    rest delete tenant  t1
-    rest delete tenant  t2
+	[Tags]  
+	clean configuration
     base suite teardown
  
 
