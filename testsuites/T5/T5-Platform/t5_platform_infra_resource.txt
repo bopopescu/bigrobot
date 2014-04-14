@@ -1,0 +1,120 @@
+* Keywords
+
+set colo variables  
+	Set Suite Variable  ${gw}      10.210.1.1
+	Set Suite Variable  ${mask}    16
+	Set Suite Variable  ${VIP1}    10.210.96.150
+	Set Suite Variable  ${VIP2}    10.210.96.151
+ 	Set Suite Variable  ${namec1}    MY-C1
+	Set Suite Variable  ${namec2}    MY-C2
+	Set Suite Variable  ${ipcno}    10.210.96.255	 
+
+
+
+#  first boot  
+
+controller first boot static   [Arguments]   ${node}   ${join_cluster}  ${dhcp}  ${ipaddr}   ${netmask}   ${gateway}  ${dns_server}  ${dns_search}  ${hostname}  
+	first_boot_controller    ${node}   ${join_cluster}   ${dhcp}  ${ipaddr}   ${netmask}   ${gateway}  ${dns_server}  ${dns_search}    ${hostname}   
+
+
+controller first boot static 2nd   [Arguments]   ${node}   ${join_cluster}  ${dhcp}  ${ipaddr}   ${netmask}   ${gateway}  ${dns_server}  ${dns_search}  ${hostname}   ${cluster_ip}
+	first_boot_controller   ${node}   ${join_cluster}   ${dhcp}  ${ipaddr}   ${netmask}   ${gateway}  ${dns_server}  ${dns_search}    ${hostname}    ${cluster_ip} 
+
+
+
+# upgrade  
+
+upgrade   [Arguments]   ${node}   ${c_role}   ${e_role}
+  	 
+	${result}=  rest_get_node_role     ${node} 
+	Should Be Equal    ${result}     ${c_role}
+ 	${A}=   cli_take_snapshot   ${node}  run_config=yes	
+  	${C}=  cli_take_snapshot    ${node}  filepath=/home/admin	
+  		 	
+	copy_pkg_from_jenkins    ${node}
+	${result}= 	cli_upgrade_stage    ${node}
+ 	Should be True     ${result}  
+	${result}= 	cli_upgrade_launch    ${node}
+ 	Should be True     ${result}  
+ 	
+ 	sleep  180
+ 	${result}=  rest_get_node_role   ${node}
+	Should Be Equal    ${result}     ${e_role}
+ 	${B}=   cli_take_snapshot    ${node}   run_config=yes	
+  	Should Be Equal    ${A}    ${B}	 	
+ 	${D}=  cli_take_snapshot    ${node}   filepath=/home/admin		
+  	Should Be Equal    ${C}    ${D}	 		
+
+
+# miscellaneous
+Test whoami ping reauth with admin
+	log  cli whoami with admin
+	test cli whoami     admin   admin
+	log  cli ping
+	${lossA}=   cli_Ping  master  dest_ip=qa-kvm-32
+	Should Be Equal As Integers  ${lossA}   0
+    log  cli reauth with admin
+    cli_reauth
+
+Test whoami ping reauth with non admin
+    log  cli reauth with non admin user1
+    create user   user1   adminadmin  group1
+    cli_reauth   user1   adminadmin
+	log  cli whoami with non admin
+	test cli whoami    user1   group1
+ 	log  cli ping
+	${lossA}=   cli_Ping  master  dest_ip=qa-kvm-32
+	Should Be Equal As Integers  ${lossA}   0
+    cli_reauth   admin   adminadmin	
+	cli_delete_user   user1   
+ 
+
+test cli whoami    [Arguments]    ${user}     ${group}
+	 ${result}=  cli_whoami
+	 Should Be Equal    ${result[0]}    ${user}
+	 Should Be Equal    ${result[1]}    ${group}
+
+reboot node and verify it role
+	cluster_node_reboot    True    
+ 
+walk cli command 
+#	cli_exec_walk    file_name=cli_exec_walk
+#	cli_enable_walk    file_name=cli_enable_walk	
+#	cli_config_walk    file_name=cli_config_walk	
+
+     
+create user    [Arguments]    ${user}     ${passwd}   ${group}
+	cli_add_user 	  ${user}     ${passwd}   	
+ 	cli_group_add_users    ${group}    ${user}
+
+
+Verify VIP function    [Arguments]   ${vip} 
+	T5Platform.Rest Configure Virtual IP  ${vip}
+	 sleep  5
+	${configured} =  Rest Show Virtual IP
+	Should Be Equal as Strings  ${configured}  ${vip}
+	${mac1} =  Rest Get MAC Using Virtual IP   ${vip}
+	${mac2} =  Rest Get MAC Using Virtual IP   master
+	Should Be Equal as Strings  ${mac1}  ${mac2}
+
+
+Verify NTP time zone      [Arguments]  ${node}  ${timezone}
+ 	rest_controller_add_ntp_timezone    ${node}  ${timezone}
+  	controller_verify_timezone   ${node}  ${timezone}
+
+Verification local node config    [Arguments]  ${node}  ${hostname}  ${ip}   ${mask}  ${gateway}   ${dns}  ${domain} 
+	${localinfo}=  cli_show_local_config      ${node} 
+	Should Be Equal as Strings 		${hostname}      ${localinfo['hostname']}
+	Should Be Equal as Strings 		${ip}      ${localinfo['ip']}   
+	Should Be Equal as Strings 		${mask}      ${localinfo['mask']}
+	Should Be Equal as Strings 		${gateway}      ${localinfo['gateway']}   
+	Should Be Equal as Strings 		${dns}      ${localinfo['dns']}
+	Should Be Equal as Strings 		${domain}      ${localinfo['domain']}   
+
+Verify config in master and backup   
+ 	${c1config}=   cli_take_snapshot   c1  run_config=yes	 
+ 	${c2config}=   cli_take_snapshot   c2  run_config=yes	
+	Should Be Equal as Strings  ${c1config}  ${c2config}
+	Set Suite Variable       ${c1config}
+ 
+ 
