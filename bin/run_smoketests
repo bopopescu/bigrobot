@@ -8,6 +8,7 @@
 
 testsuites="\
 testsuites_dev/vui/test_robot \
+testsuites/T5/L2/t5_dualleaf_dualrack_ping_test_suite \
 "
 
 mesg() {

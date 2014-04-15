@@ -3,7 +3,7 @@ Documentation   This suite is my sandbox for experimentation.
 Suite Setup     base suite setup
 Suite Teardown  base suite teardown
 Test Setup      base test setup
-Test Teardown   atest teardown
+#Test Teardown   atest teardown
 Force Tags      Vui
 Library         keywords/BsnCommon.py
 #Library         keywords/Controller.py
@@ -26,6 +26,8 @@ ${line_rate}  100
 ${stream_name}  a_b_flow
 ${burst_count}  1000
 ${burst_gap}  1000
+${src_ip}  20.0.0.10
+${dst_ip}  20.0.0.20
 
 * Test Case
 Test IXIA
@@ -264,7 +266,8 @@ BiDirectional L3 Traffic with UDP
     [Tags]  traffic  sanity  bigtap
  
 BiDirectional basic IPv6 L3 Traffic with defaults
-    ${stream}=  L3 add  name=${stream_name}  flow=a<->b  frame_cnt=${frame_cnt}  frame_rate=${frame_rate}  ethertype=86dd  src_mac=${src_mac}  dst_mac=${dst_mac}
+    ${stream}=  L3 add  name=${stream_name}  flow=a->b  frame_cnt=${frame_cnt}  frame_rate=${frame_rate}  ethertype=86dd  
+    ...			src_mac=${src_mac}  dst_mac=${dst_mac}  vlan_id=${vlan_id}  no_arp=True
     clear stats
     start traffic  ${stream}
     sleep  ${sleep_time}
@@ -272,7 +275,7 @@ BiDirectional basic IPv6 L3 Traffic with defaults
     sleep                  ${sleep_time}
     ${report}=             fetch port stats  stream=${stream}
     verify results  transmitted_frames  received_frames  ${stream}  ${stream_name}
-    [Tags]  traffic  sanity
+    [Tags]  traffic  sanity  run
     
 BiDirectional basic IPv6 L3 Traffic with defaults and no_arp
     ${stream}=  L3 add  name=${stream_name}  flow=a<->b  frame_cnt=${frame_cnt}  frame_rate=${frame_rate}  ethertype=86dd  no_arp=True  src_mac=${src_mac}  dst_mac=${dst_mac}
@@ -313,7 +316,8 @@ UniDirectional IPv6 L3 Traffic with ICMP
     
 Bi-Driectional L3 Traffic with vlan_id
 # Basic test case with all default values and etherytype 8100, with vlan id
-    ${stream}=             L3 add  name=${stream_name}  flow=a<->b  vlan_id=${vlan_id}  frame_size=${frame_size}  src_mac=${src_mac}  dst_mac=${dst_mac}
+    ${stream}=  L3 add  name=${stream_name}  flow=a<->b  vlan_id=${vlan_id}  frame_size=${frame_size}  
+    ...			src_mac=${src_mac}  dst_mac=${dst_mac}  no_arp=True
     clear stats
     start traffic  ${stream}
     sleep                  ${sleep_time}
@@ -322,7 +326,7 @@ Bi-Driectional L3 Traffic with vlan_id
     ${report}=             fetch port stats  stream=${stream}
     verify results  transmitted_frames  received_frames  ${stream}  ${stream_name}
     clear stats
-    [Tags]  traffic  sanity  bigtap 
+    [Tags]  traffic  sanity  bigtap
 
 Bi-Directional L3 Traffic with multiple vlan_ids
 # Basic test case with all default values and etherytype 8100, with vlan id
@@ -399,6 +403,21 @@ Bi-Directional L3 Traffic ICMP Echo with traffic learn
     verify results  transmitted_frames  received_frames  ${stream}  ${stream_name}
     [Tags]  traffic  sanity  bigtap
 
+Verify L3 ICMP traffic
+    ${stream}=  L3 add  flow=a<->b  frame_size=1518   frame_rate=10000
+    ...     src_mac=${src_mac}  dst_mac=${dst_mac}
+    ...     protocol=ICMP  icmp_type=8  icmp_code=0
+    ...     src_ip=${src_ip}   dst_ip=${dst_ip}  name=a_b_flow
+    ...     src_gw=${dst_ip}   dst_gw=${src_ip}
+    clear stats  
+    start traffic  ${stream}
+    sleep  5
+    verify results  transmitted_frame_rate  received_frame_rate  ${stream}  ${stream_name}
+    verify results1  a  transmitted_frame_rate  b  received_valid_frame_rate
+    sleep  5    
+    stop traffic   ${stream} 
+    [Tags]  traffic  L3
+    
 Bi-Directional L3 Traffic with different Hosts in differnt Vlans and networks
 # Basic test case with all default values and ICMP type and value
     ${stream}=             L3 add  name=${stream_name}  flow=a<->b  src_mac=${src_mac}  dst_mac=${dst_mac}
@@ -423,3 +442,10 @@ verify results   [Arguments]  ${transmitted_frames}  ${received_frames}  ${strea
     ${rx_value}=  verify dict key  ${report}  ${stream_name}  ${received_frames}
     ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}
     Should be true  ${in_range}
+verify results1   [Arguments]  ${port_1}  ${transmitted_frames}  ${port_2}  ${received_frames}
+    Sleep  5
+    ${report}=  fetch port stats
+    ${tx_value}=  verify dict key  ${report}  ${port_1}  ${transmitted_frames}
+    ${rx_value}=  verify dict key  ${report}  ${port_2}  ${received_frames}
+    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}
+    Should be true  ${in_range} 

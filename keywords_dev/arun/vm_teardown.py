@@ -17,15 +17,16 @@ kvm_vmdk_path = None
 vm_name = None
 
 # Adding Gobot Path to sys path for Exscript APIs
-sys.path.append("/home/%s/workspace/bigrobot/modules" % current_user)
-sys.path.append("/home/%s/workspace/bigrobot/vendors/exscript/src" % current_user)
-sys.path.append("/home/%s/workspace/bigrobot/" % current_user)
+bigrobot_path = os.path.dirname(__file__) + '/..'
+exscript_path = bigrobot_path + '/vendors/exscript/src'
+sys.path.insert(0, bigrobot_path)
+sys.path.insert(1, exscript_path)
+print "Detailed log can be tailed at /tmp/robot.log  or /tmp/autobot_%s.log" % current_user
 import autobot.helpers as helpers
 from autobot.devconf import HostDevConf
 
 def usage():
     s = """\nUsage: vm_teardown <name>
-
 Example:
 $ vm_teardown \\
     <name>
@@ -43,6 +44,7 @@ def connect_to_kvm_host(**kwargs):
             protocol = 'ssh', timeout=100, name = name)
 
 def get_vm_running_state():
+    return kvm_handle.bash('sudo virsh list --all | grep %s | awk \'{print $3}\'' % vm_name)['content']
     pass
 
 def tear_down_vm():
@@ -59,12 +61,16 @@ def tear_down_vm():
           
 def main(*args):
     global vm_name
-    vm_name = current_user + '_' + args[0][0]
+    if not args or args[0][0] in ['help', '-h', '--help']:
+        usage()
+        sys.exit(1)
+    vm_name = args[0][0]
     connect_to_kvm_host(hostname = kvm_host, user = kvm_user,
                                      password = kvm_pwd, name = 'kvm_host')
+    
     if vm_name in kvm_handle.bash('sudo virsh list --all')['content']:
         print "Tearing down VM with Name : %s" % vm_name
-        helpers.log("Tearing down VM with Name: %s " % vm_name)
+        helpers.log("Tearing down VM with Name on kvm host: %s " % vm_name)
         tear_down_vm()
     else:
         helpers.log("VM with given name %s doesn't exits in KVM Host! %s\nExisting.." % (vm_name, kvm_host))
@@ -72,8 +78,11 @@ def main(*args):
         sys.exit(1)
         
 if __name__ == '__main__':
-    if len(sys.argv) < 2:
-        usage()
-    main(sys.argv[1:])
+    global vm_name
+    vm_name = sys.argv[1]
+    print get_vm_running_state()
+#     if len(sys.argv) < 2:
+#         usage()
+#     main(sys.argv[1:])
 
 print "Success !!!"
