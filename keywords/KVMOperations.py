@@ -118,10 +118,10 @@ class KVMOperations(object):
 
         # FIX ME For below SCP to work we need to have Kvm Pub Key in jenkins build server..
         if scp:
-            helpers.log("Executing Scp cmd to copy latest bvs vmdk to KVM Server")
+            helpers.log("Executing scp cmd to copy latest bvs vmdk to KVM Server")
             kvm_handle.bash('scp "bsn@jenkins:%s" .' % remote_qcow_path, timeout=100)['content']
         else:
-            helpers.log("Skipping SCP expecting the VMDK already SCP'ed to kvm_host..")
+            helpers.log("Skipping scp - expecting the VMDK already scp'ed to kvm_host..")
         file_name = remote_qcow_path.split('/')[-1]
 
         kvm_handle.bash('sudo cp %s ../images/%s.qcow2' % (file_name, vm_name))
@@ -130,12 +130,11 @@ class KVMOperations(object):
         # vm_name = "%s_BVS" % current_user
         return local_qcow_path
 
-    def _create_temp_topo(self, **kwargs):
+    def _create_temp_topo(self, vm_name, kvm_host=KVM_SERVER):
         # Creating a temp topo file for using first boot keywords
-        kvm_host = kwargs.get("kvm_host", KVM_SERVER)
-        vm_name = kwargs.get("vm_name", None)
-        tem_topo = open("/tmp/temp.topo", "wb")
-        topo_text = " c1:\n\
+        topo_file = "/tmp/%s.topo" % vm_name
+        topo = open(topo_file, "wb")
+        config = " c1:\n\
           ip: 10.192.105.20\n\
           set_init_ping: false            # default: true\n\
           set_session_ssh: false          # default: true\n\
@@ -144,9 +143,10 @@ class KVMOperations(object):
             libvirt_vm_name: %s\n\
             user: %s\n\
             password: %s\n" % (kvm_host, vm_name, KVM_USER, KVM_PASSWORD)
-        tem_topo.write(topo_text)
-        tem_topo.close()
-        helpers.log("Success Create a Temp TOPO FILE")
+        topo.write(config)
+        topo.close()
+        helpers.log("Success in creating topo file %s" % topo_file)
+        return topo_file
 
     def _configure_vm_first_boot(self, **kwargs):
         # Using Mingtao's First Boot Function to configure spawned VM in KVM
@@ -203,8 +203,9 @@ class KVMOperations(object):
             remote_qcow_mininet_path = kwargs.get("remote_qcow_mininet_path", "/var/lib/jenkins/jobs/t6-mininet-vm/builds/lastSuccessfulBuild/archive/t6-mininet-vm/ubuntu-kvm/t6-mininet.qcow2")
             scp = kwargs.get("scp", True)
 
+            topo_file = self._create_temp_topo(kvm_host=kvm_host, vm_name=vm_name)
             # set the BIG ROBOT Topo file for console connections
-            helpers.bigrobot_topology("/tmp/temp.topo")
+            helpers.bigrobot_topology(topo_file)
             helpers.bigrobot_params("none")
             # export IS_GOBOT="False"
             # AUTOBOT_LOG=/tmp/robot.log
@@ -223,7 +224,7 @@ class KVMOperations(object):
             else:
                 helpers.log("no VMDK path is given copying from latest bvs build from jenkins server")
                 if vm_type == 'mininet':
-                    helpers.log("Scping Latest Mininet qcow file from jenkins to kvm Host..")
+                    helpers.log("Scp'ing Latest Mininet qcow file from jenkins to kvm Host..")
                     qcow_vm_path = self._scp_file_to_kvm_host(kvm_handle=kvm_handle,
                                                               remote_qcow_path=remote_qcow_mininet_path)
                 else:
@@ -233,7 +234,7 @@ class KVMOperations(object):
                                                                   remote_qcow_path=remote_qcow_bvs_path,
                                                                   vm_name=vm_name)
                     else:
-                        helpers.log("Skipping SCP expecting latest BVS image already in KVM...")
+                        helpers.log("Skipping scp expecting latest BVS image already in KVM...")
                         qcow_path = "/var/lib/libvirt/bvs_images/controller-bvs-2.0.8-SNAPSHOT.qcow2"
                         qcow_vm_path = self._cp_qcow_to_images_folder(kvm_handle=kvm_handle, qcow_path=qcow_path,
                                                               vm_name=vm_name)
@@ -241,7 +242,6 @@ class KVMOperations(object):
             helpers.log("Creating VM on KVM Host with Name : %s " % vm_name)
             self.create_vm_on_kvm_host(vm_type=vm_type, qcow_path=qcow_vm_path,
                                   vm_name=vm_name, kvm_handle=kvm_handle, kvm_host=kvm_host)
-            self._create_temp_topo(kvm_host=kvm_host, vm_name=vm_name)
             result['vm_name'] = vm_name
             result['kvm_host'] = kvm_host
             result['image_path'] = qcow_vm_path
@@ -250,7 +250,7 @@ class KVMOperations(object):
 
             if vm_type == 'mininet':
                 # FIX ME configure mininet with user specified ip / return the DHCP ip of mininet VM
-                helpers.log("Succes Creating Mininet vm!!")
+                helpers.log("Success Creating Mininet vm!!")
                 helpers.log("Configuring IP for mininet if provided")
                 self.set_mininet_ip(node="c1", ip=ip)
                 return result
