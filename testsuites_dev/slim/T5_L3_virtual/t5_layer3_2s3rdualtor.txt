@@ -4,13 +4,10 @@ Suite Setup     base suite setup
 Suite Teardown  base suite teardown
 Test Setup      setup topology
 Test Teardown   teardown topology
-#Suite Setup		setup topology
-#Suite Teardown	teardown topology
 Force Tags      T5 Sanity
 Library         keywords/BsnCommon.py
 Library         keywords/Mininet.py
 Library         keywords/T5.py
-#Library         keywords/T5Fabric.py
 Library         keywords/T5L3.py
 Library         keywords_dev/animesh/BsnCommonShow.py
 Resource		keywords_dev/slim/t5_l3_dualspine.txt
