@@ -168,8 +168,8 @@ def main(*args):
     topo = open(topo_file, "w")
     config = " c1:\n\
       ip: %s\n\
-      set_init_ping: false            # default: true\n\
-      set_session_ssh: false          # default: true\n\
+      #set_init_ping: false            # default: true\n\
+      #set_session_ssh: false          # default: true\n\
       console: \n\
         ip: %s\n\
         libvirt_vm_name: %s\n\
