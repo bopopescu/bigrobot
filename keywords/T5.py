@@ -922,16 +922,17 @@ class T5(object):
         c = t.controller('master')
         i = 1
         while (i <= int(count)):
-            endpoint += str(i)
+            endpoint_new = "%s_%d" % (endpoint, i)
             mac = EUI(mac).value
             mac = "{0}".format(str(EUI(mac + i)).replace('-', ':'))
             url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/endpoint' % (tenant, vns)
-            c.rest.post(url, {"name": endpoint})
-            url1 = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/endpoint[name="%s"]/attachment-point' % (tenant, vns, endpoint)
+            c.rest.post(url, {"name": endpoint_new})
+            url1 = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/endpoint[name="%s"]/attachment-point' % (tenant, vns, endpoint_new)
             c.rest.put(url1, {"switch": switch, "interface": intf, "vlan": vlan})
-            url2 = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/endpoint[name="%s"]' % (tenant, vns, endpoint)
+            url2 = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/endpoint[name="%s"]' % (tenant, vns, endpoint_new)
             c.rest.patch(url2, {"mac": mac})
             i = i + 1
+        return True
 
     def rest_verify_endpoints_in_vns(self, vns, count):
         ''' Function to count no of endoint in the given VNS
@@ -943,11 +944,11 @@ class T5(object):
         url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/vns[name="%s"]' % (vns)
         c.rest.get(url)
         data = c.rest.content()
-        if data[0]["num-active-endpoint"] == int(count):
-            helpers.log("Pass:Expected:%s, Actual:%s" % (int(count), data[0]["num-active-endpoint"]))
+        if data[0]["active-endpoint-count"] == int(count):
+            helpers.log("Pass:Expected:%s, Actual:%s" % (int(count), data[0]["active-endpoint-count"]))
             return True
         else:
-            helpers.test_failure("Fail: Expected:%s is not equal to Actual:%s" % (int(count), data[0]["num-active-endpoint"]))
+            helpers.test_failure("Fail: Expected:%s is not equal to Actual:%s" % (int(count), data[0]["active-endpoint-count"]))
             return False
 
     def rest_verify_endpoint_in_system(self, count):
