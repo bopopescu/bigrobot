@@ -4,6 +4,12 @@ import time
 from autobot.devconf import HostDevConf
 from keywords.T5Platform import T5Platform
 
+
+KVM_SERVER = '10.192.104.13'
+KVM_USER = 'root'
+KVM_PASSWORD = 'bsn'
+
+
 class KVMOperations(object):
 
     def __init__(self):
@@ -59,9 +65,9 @@ class KVMOperations(object):
         return True
 
     def _connect_to_kvm_host(self, **kwargs):
-        hostname = kwargs.get('hostname', "10.192.104.13")
-        user = kwargs.get('user', "root")
-        password = kwargs.get('password', "bsn")
+        hostname = kwargs.get('hostname', KVM_SERVER)
+        user = kwargs.get('user', KVM_USER)
+        password = kwargs.get('password', KVM_PASSWORD)
         name = kwargs.get('name', "kvm_host")
         kvm_handle = HostDevConf(host=hostname, user=user, password=password,
                 protocol='ssh', timeout=100, name=name)
@@ -126,7 +132,7 @@ class KVMOperations(object):
 
     def _create_temp_topo(self, **kwargs):
         # Creating a temp topo file for using first boot keywords
-        kvm_host = kwargs.get("kvm_host", None)
+        kvm_host = kwargs.get("kvm_host", KVM_SERVER)
         vm_name = kwargs.get("vm_name", None)
         tem_topo = open("/tmp/temp.topo", "wb")
         topo_text = " c1:\n\
@@ -136,8 +142,8 @@ class KVMOperations(object):
           console: \n\
             ip: %s\n\
             libvirt_vm_name: %s\n\
-            user: root\n\
-            password: bsn\n" % (kvm_host, vm_name)
+            user: %s\n\
+            password: %s\n" % (kvm_host, vm_name, KVM_USER, KVM_PASSWORD)
         tem_topo.write(topo_text)
         tem_topo.close()
         helpers.log("Success Create a Temp TOPO FILE")
@@ -180,9 +186,9 @@ class KVMOperations(object):
                   }
 
         try:
-            kvm_host = kwargs.get("kvm_host", "10.192.104.13")
-            kvm_user = kwargs.get("kvm_user", "root")
-            kvm_password = kwargs.get("kvm_password", "bsn")
+            kvm_host = kwargs.get("kvm_host", KVM_SERVER)
+            kvm_user = kwargs.get("kvm_user", KVM_USER)
+            kvm_password = kwargs.get("kvm_password", KVM_PASSWORD)
             vm_name = kwargs.get("vm_name", None)
             vm_host_name = kwargs.get("vm_host_name", None)
             vm_type = kwargs.get("vm_type", "bvs")
@@ -261,28 +267,31 @@ class KVMOperations(object):
             result['status_descr'] = inst
             return result
 
-    def vm_teardown(self, **kwargs):
+    def vm_teardown(self, vm_name, kvm_host=KVM_SERVER,
+                    kvm_user=KVM_USER, kvm_password=KVM_PASSWORD):
         result = {
+                  "vm_name": vm_name,
                   "status_code": True,
                   "status_descr": "Success",
                   }
 
         try:
-            kvm_host = kwargs.get("kvm_host", "10.192.104.13")
-            kvm_user = kwargs.get("kvm_user", "root")
-            kvm_password = kwargs.get("kvm_password", "bsn")
-            vm_name = kwargs.get("vm_name", None)
-            kvm_handle = self._connect_to_kvm_host(hostname=kvm_host, user=kvm_user, password=kvm_password)
-            vm_state = self._get_vm_running_state(kvm_handle=kvm_handle, vm_name=vm_name)
+            kvm_handle = self._connect_to_kvm_host(hostname=kvm_host,
+                                                   user=kvm_user,
+                                                   password=kvm_password)
+            vm_state = self._get_vm_running_state(kvm_handle=kvm_handle,
+                                                  vm_name=vm_name)
             if 'running' in vm_state:
-                helpers.summary_log("Tearing down VM with Name on kvm host: %s " % vm_name)
+                helpers.summary_log("Tearing down VM with Name on kvm host: %s"
+                                    % vm_name)
                 self._destroy_vm(kvm_handle=kvm_handle, vm_name=vm_name)
                 self._undefine_vm(kvm_handle=kvm_handle, vm_name=vm_name)
             elif 'shut' in vm_state:
                 helpers.summary_log("Deleting down the VM : %s" % vm_name)
                 self._undefine_vm(kvm_handle=kvm_handle, vm_name=vm_name)
             else:
-                helpers.summary_log("VM with given name %s doesn't exists on KVM host! %s" % (vm_name, kvm_host))
+                helpers.summary_log("VM with given name %s doesn't exists on KVM host! %s"
+                                    % (vm_name, kvm_host))
                 result['status_code'] = False
                 result['status_descr'] = "VM name doesn't exist on KVM host"
                 return result
@@ -305,7 +314,8 @@ class KVMOperations(object):
         if not ip:
             ip = n.ip()
 
-        helpers.log("Setting IP : %s for Linux Node : %s using ifconfig" % (ip, node))
+        helpers.log("Setting IP : %s for Linux Node : %s using ifconfig"
+                    % (ip, node))
         n_console = n.console()
         n_console.send('')
 #         helpers.log("Sleeping 20 secs...")
