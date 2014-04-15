@@ -99,13 +99,13 @@ class Test(object):
                             helpers.debug("'%s' IP address is '%s' (bigtest node '%s')"
                                           % (m, ip, key))
 
-                elif self._testbed_type.lower() == "libvirt":
-                    # TODO: We need to add the code to process libvirt nodes...
-                    helpers.test_error("Libvirt testbed is not yet supported.")
+                elif (self._testbed_type.lower() == "static" or
+                      self._testbed_type.lower() == "libvirt"):
 
-                elif self._testbed_type.lower() == "static":
+                    # Static nodes and libvirt nodes are similarly defined.
                     static_nodes = helpers.bigrobot_params_input()
-                    helpers.info("Static node info: %s" % static_nodes)
+                    helpers.info("Static (or libvirt) node info: %s"
+                                 % static_nodes)
 
                     # Expecting a YAML config.
                     if static_nodes:
