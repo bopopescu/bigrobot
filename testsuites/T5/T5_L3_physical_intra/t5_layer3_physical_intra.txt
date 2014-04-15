@@ -117,10 +117,7 @@ Verify vlsm forwarding
 Verify split horizon forwarding
 	Verify l3 forwarding on one arm router
 	[Tags]							feature			manual		
-	
-Small Scale with 100 vns 		
-	One Tenant 100 VNS with one host each
-	[Tags]							feature			scale
+
 	
 Configure overlapping router IP 	
 	Configure overlapping IP on same tenant across VNS	
@@ -168,6 +165,10 @@ Restart ofad process on leaf
 	
 L3 traffic behavior in headless mode
 	L3 intra tenant traffic behavior in headless mode 
+	Log								manual untested
+#	[Tags]							manual			untested			feature			
+
+L3 intra tenant traceroute
 	Log								manual untested
 #	[Tags]							manual			untested			feature			
 		
