@@ -24,13 +24,11 @@ Library	         keywords/T5Utilities.py
 
 Configure Multiple L2 Tenants With Single VNS & Failover
 	[Tags]	sanity  feature
-	start floodlight monitor
 	Configure 3-Rack/Dual-Leaf/2-Spine/4-Host Setup For Mininet 
 	Configure 3 Tenants with Different VLAN properties
 	Verify Connectivity in 3-Rack/Dual-Leaf/2-Spine/4-Host Setup
 	Reboot the master node & verify fabric integrity
 	Verify Connectivity in 3-Rack/Dual-Leaf/2-Spine/4-Host Setup
-	stop floodlight monitor
 
 Verify HA Cluster Formation
    [Tags]  smoke  sanity  feature
