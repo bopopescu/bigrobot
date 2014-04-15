@@ -332,7 +332,8 @@ class T5Utilities(object):
         temp = helpers.str_to_list(temp)
         num = 0
         for line in temp:          
-            match= re.match(r'.*(active|stand-by).*', line)
+            #match= re.match(r'.*(active|stand-by).*', line)
+            match= re.match(r'.*(leader|follower).*', line)
             if match:
                 num = num+1                                      
             else:
@@ -422,8 +423,7 @@ class T5Utilities(object):
             return True
             
         else:
-            helpers.log("FloodlightMonitorFlag is not set: Returning False")
-            return False
+            helpers.log("FloodlightMonitorFlag is not set: Returning")
             
             
         

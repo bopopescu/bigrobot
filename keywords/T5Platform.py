@@ -226,6 +226,7 @@ class T5Platform(object):
 
         if(singleNode):
             if(masterID == newMasterID):
+                obj.restart_floodlight_monitor("master")
                 helpers.log("Pass: After the reboot cluster is stable - Master is still : %s " % (newMasterID))
                 return True
             else:
@@ -244,6 +245,7 @@ class T5Platform(object):
                 else:
                     helpers.log("Fail: Reboot Failed. Cluster is not stable. Before the master reboot Master is: %s / Slave is : %s \n \
                             After the reboot Master is: %s / Slave is : %s " %(masterID, slaveID, newMasterID, newSlaveID))
+                    obj.stop_floodlight_monitor()
                     return False
             else:
                 if(masterID == newMasterID and slaveID == newSlaveID):
@@ -252,6 +254,7 @@ class T5Platform(object):
                 else:
                     helpers.log("Fail: Reboot Failed. Cluster is not stable. Before the slave reboot Master is: %s / Slave is : %s \n \
                             After the reboot Master is: %s / Slave is : %s " %(masterID, slaveID, newMasterID, newSlaveID))
+                    obj.stop_floodlight_monitor()
                     return False
 
 
@@ -1826,34 +1829,6 @@ class T5Platform(object):
         else:
             helpers.test_failure(c.rest.error())      
  
-
-    def cli_get_num_nodes(self):
-        '''  
-          return the number of nodes in the system  
-          Author: Mingtao
-          input:                                        
-          usage:   
-          output:   1  or 2 
-        '''
-        t = test.Test()
-        c = t.controller('master')
-        helpers.log('INFO: Entering ==> rest_get_node_role ')
-        
-        c.cli('show cluster' )
-        content = c.cli_content()
-        temp = helpers.strip_cli_output(content)
-        temp = helpers.str_to_list(temp)
-        num = 0
-        for line in temp:          
-            helpers.log("INFO: line is - %s" % line)
-            match= re.match(r'.*(active|stand-by).*', line)
-            if match:
-                helpers.log("INFO: role is: %s" % match.group(1))  
-                num = num+1                                      
-            else:
-                helpers.log("INFO: not for controller  %s" % line)  
-        helpers.log("INFO: there are %d of controllers in the cluster" % num)   
-        return num    
 
     def cli_whoami(self):
         '''  
