@@ -1928,7 +1928,7 @@ class T5(object):
         c.rest.get(url)
         data = c.rest.content()
         for i in range(0, len(data)):
-            if int(data[i]["num-ports"]) == count:
+            if int(data[i]["port-count"]) == count:
                 helpers.log("Expected membership ports:%d are present in the each VNS" % count)
                 return True
             else:
