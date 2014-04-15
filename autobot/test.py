@@ -1132,5 +1132,11 @@ class Test(object):
 
         helpers.log("Attempting to disable remote logging")
         url_disable_remotelog = '/api/v1/data/controller/os/config/global/logging-config/logging-enabled'
-        c.rest.delete(url_disable_remotelog, {})
+        try:
+            c.rest.delete(url_disable_remotelog, {})
+        except:
+            pass
+        else:
+            helpers.log("Remote logging successfully deleted")
+
         return True
