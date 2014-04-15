@@ -31,11 +31,6 @@ if [ ! -x "./gobot" ]; then
     err_exit "Error: Script can only be run from bin/ of bigrobot path."
 fi
 
-if [ -d "$testlogs_path" ]; then
-    # Previous test logs exist. Move them aside.
-    mv $testlogs_path "$testlogs_path.$timestamp"
-fi
-
 for suite in `echo $testsuites`; do
     ./bigrobot_smoke_wrapper.py $suite
 done

@@ -18,6 +18,7 @@ LOG_BASE_PATH = '/var/log/kvm_operations'
 class KVMOperations(object):
 
     def __init__(self):
+        global LOG_BASE_PATH
         # Note: You might need to manually create the directory for
         # LOG_BASE_PATH since the execution process may not have root
         # permission. E.g.,
@@ -148,7 +149,7 @@ class KVMOperations(object):
             else:
                 return 0
         elif vm_type == 'mininet':
-            output = kvm_handle.bash('ls -ltr /var/lib/libvirt/bvs_images/ | grep bvs| awk \'{print $9}\'')['content']
+            output = kvm_handle.bash('ls -ltr /var/lib/libvirt/bvs_images/ | grep mininet| awk \'{print $9}\'')['content']
             output_lines = output.split('\n')
             latest_image = output_lines[-2]
             match = re.match(r'.*mininet-(\d+).*', latest_image)
@@ -163,7 +164,7 @@ class KVMOperations(object):
         output = kvm_handle.bash('uname -a')
         helpers.log("KVM Host Details : \n %s" % output['content'])
         kvm_handle.bash('cd /var/lib/libvirt/')
-
+        helpers.log (" GOT VM_TYPE : %s" % vm_type)
 
         if "No such file or directory" in kvm_handle.bash('cd bvs_images/')['content']:
             helpers.log("No BVS_IMAGES dir in KVM Host @ /var/lib/libvirt creating one to store bvs vmdks")
@@ -276,7 +277,6 @@ class KVMOperations(object):
 
             remote_qcow_bvs_path = kwargs.get("remote_qcow_bvs_path", "/var/lib/jenkins/jobs/bvs\ master/lastSuccessful/archive/target/appliance/images/bvs/controller-bvs-2.0.8-SNAPSHOT.qcow2")
             remote_qcow_mininet_path = kwargs.get("remote_qcow_mininet_path", "/var/lib/jenkins/jobs/t6-mininet-vm/builds/lastSuccessfulBuild/archive/t6-mininet-vm/ubuntu-kvm/t6-mininet.qcow2")
-            scp = kwargs.get("scp", True)
 
             topo_file = self._create_temp_topo(kvm_host=kvm_host, vm_name=vm_name)
             # set the BIG ROBOT Topo file for console connections
@@ -301,7 +301,8 @@ class KVMOperations(object):
                 if vm_type == 'mininet':
                     helpers.log("Scp'ing Latest Mininet qcow file from jenkins to kvm Host..")
                     qcow_vm_path = self._scp_file_to_kvm_host(kvm_handle=kvm_handle,
-                                                              remote_qcow_path=remote_qcow_mininet_path, vm_type='mininet')
+                                                              remote_qcow_path=remote_qcow_mininet_path, vm_type='mininet',
+                                                              vm_name = vm_name)
                 else:
                     helpers.log("Scp'ing Latest BVS qcow file from jenkins to kvm Host..")
                     qcow_vm_path = self._scp_file_to_kvm_host(kvm_handle=kvm_handle,
@@ -326,7 +327,7 @@ class KVMOperations(object):
                 # FIX ME configure mininet with user specified ip / return the DHCP ip of mininet VM
                 helpers.log("Success Creating Mininet vm!!")
                 helpers.log("Configuring IP for mininet if provided")
-                self.set_mininet_ip(node="c1", ip=ip)
+                result['vm_ip'] = self.set_mininet_ip(node="c1", ip=ip, get_ip = True)
                 return result
 
             # For controller, attempt First Boot
@@ -383,9 +384,11 @@ class KVMOperations(object):
         t = test.Test()
         node = kwargs.get("node", "c1")
         ip = kwargs.get("ip", None)
+        get_ip = kwargs.get("get_ip", True)
         n = t.node(node)
 
-
+        helpers.log("Sleeping 30 sec from mininet to come up..")
+        time.sleep(30)
         if not ip:
             ip = n.ip()
 
@@ -406,8 +409,21 @@ class KVMOperations(object):
         n_console.expect()
 #         n_console.bash('pwd')
 #         n_console.expect()
-        n_console.send('sudo ifconfig eth0 %s netmask 255.255.192.0' % ip)
-        n_console.expect()
+        if get_ip:
+            helpers.log("Just getting DHCP IP from Mininet VM ..")
+            n_console.send('sudo ifconfig | grep inet | awk \'{print $2}\'')
+            n_console.expect()
+            output = n_console.content()
+            output_lines = output.split('\n')
+            helpers.log("Mininet IP Content:")
+            ips = output_lines[1].split(':')
+            helpers.log("Mininet IP is : %s" % ips[1])
+            return ips[1]   
+        else:
+            helpers.log("Setting IP on Mininet VM ...")
+            n_console.send('sudo ifconfig eth0 %s netmask 255.255.192.0' % ip)
+            n_console.expect()
+        
         helpers.log("Success configuring Static IP !!")
         """
         n_console.expect(r'%s' % prompt)
