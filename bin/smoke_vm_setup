@@ -163,7 +163,7 @@ def main(*args):
                                 % mininet_vm['status_descr'])
             sys.exit(1)
     #Creating a temp topo file for using first boot keywords
-    topo_file = helpers.get_env("BIGROBOT_PARAMS_INPUT")
+    topo_file = helpers.get_env("BIGROBOT_PARAMS_INPUT_PRE")
     topo = open(topo_file, "wb")
     config = " c1:\n\
       ip: %s\n\
