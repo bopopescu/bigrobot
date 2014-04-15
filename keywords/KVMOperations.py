@@ -122,8 +122,8 @@ class KVMOperations(object):
         helpers.log("Success copying image !!")
         return kvm_qcow_path
 
-    def _get_latest_jenkins_build_number(self, vm_type = 'bvs', jenkins_server = '10.192.4.89', jenkins_user = 'bsn',
-                                         jenkins_password = 'bsn'):
+    def _get_latest_jenkins_build_number(self, vm_type='bvs', jenkins_server='10.192.4.89', jenkins_user='bsn',
+                                         jenkins_password='bsn'):
         jenkins_handle = HostDevConf(host=jenkins_server, user=jenkins_user, password=jenkins_password,
                     protocol='ssh', timeout=100, name="jenkins_host")
         output = None
@@ -131,17 +131,17 @@ class KVMOperations(object):
             output = jenkins_handle.bash('ls -ltr /var/lib/jenkins/jobs/bvs\ master/builds | grep lastSuccessfulBuild')['content']
         elif vm_type == 'mininet':
             output = jenkins_handle.bash('ls -ltr /var/lib/jenkins/jobs/t6-mininet-vm/builds | grep lastSuccessfulBuild')['content']
-            
+
         output_lines = output.split('\n')
         latest_build_number = output_lines[1].split('->')[-1]
         return latest_build_number.strip()
-    
-    def _get_latest_kvm_build_number(self, vm_type = 'bvs', kvm_handle = None):
+
+    def _get_latest_kvm_build_number(self, vm_type='bvs', kvm_handle=None):
         output = None
         if vm_type == 'bvs':
             output = kvm_handle.bash('ls -ltr /var/lib/libvirt/bvs_images/ | grep bvs| awk \'{print $9}\'')['content']
             output_lines = output.split('\n')
-            latest_image =  output_lines[-2]
+            latest_image = output_lines[-2]
             match = re.match(r'.*bvs-(\d+).*', latest_image)
             if match:
                 return match.group(1)
@@ -150,20 +150,20 @@ class KVMOperations(object):
         elif vm_type == 'mininet':
             output = kvm_handle.bash('ls -ltr /var/lib/libvirt/bvs_images/ | grep bvs| awk \'{print $9}\'')['content']
             output_lines = output.split('\n')
-            latest_image =  output_lines[-2]
+            latest_image = output_lines[-2]
             match = re.match(r'.*mininet-(\d+).*', latest_image)
             if match:
                 return match.group(1)
             else:
                 return 0
-        
-        
-    def _scp_file_to_kvm_host(self, vm_name = None, remote_qcow_path = None, kvm_handle = None, vm_type = "bvs"):
+
+
+    def _scp_file_to_kvm_host(self, vm_name=None, remote_qcow_path=None, kvm_handle=None, vm_type="bvs"):
         # for getting the latest jenkins build from jenkins server kvm_host ssh key should be copied to jenkins server
         output = kvm_handle.bash('uname -a')
         helpers.log("KVM Host Details : \n %s" % output['content'])
         kvm_handle.bash('cd /var/lib/libvirt/')
-        
+
 
         if "No such file or directory" in kvm_handle.bash('cd bvs_images/')['content']:
             helpers.log("No BVS_IMAGES dir in KVM Host @ /var/lib/libvirt creating one to store bvs vmdks")
@@ -190,9 +190,9 @@ class KVMOperations(object):
 
         else:
             scp_cmd = "scp -o \"UserKnownHostsFile=/dev/null\" -o StrictHostKeyChecking=no \"bsn@jenkins:%s\" %s" % (remote_qcow_path, file_name)
-            scp_cmd_out = kvm_handle.bash(scp_cmd, prompt = [r'.*password:', r'.*#', r'.*$ '])['content']
+            scp_cmd_out = kvm_handle.bash(scp_cmd, prompt=[r'.*password:', r'.*#', r'.*$ '])['content']
             if "password" in scp_cmd_out:
-                helpers.log( "sending bsn passoword..")
+                helpers.log("sending bsn passoword..")
                 helpers.log(kvm_handle.bash('bsn')['content'])
             else:
                 helpers.log("SCP should be done:\n%s" % scp_cmd_out)
@@ -437,7 +437,7 @@ class KVMOperations(object):
                                                 vm_name=vm_name)
         else:
             vm_creation = self._virt_install_vm(kvm_handle=kvm_handle, disk_path=kvm_vmdk_path,
-                                                vm_name=vm_name, ram="4096", cpus="2")
+                                                vm_name=vm_name, ram="2048", cpus="2")
 
         if vm_creation:
             helpers.summary_log("2. Success Creating VM with Name: %s on KVM_Host: %s" % (vm_name, kvm_host))
