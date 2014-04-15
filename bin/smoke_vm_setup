@@ -175,7 +175,7 @@ def main(*args):
         libvirt_vm_name: %s\n\
         user: %s\n\
         password: %s\n\
-      mn:\n\
+      mn1:\n\
        ip: %s\n\
        \n" % (active_vm['vm_ip'], kvm_host, active_vm['vm_name'], kvm_user, kvm_pwd, mininet_vm['vm_ip'])
     topo.write(config)
