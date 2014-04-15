@@ -1659,7 +1659,7 @@ class T5Platform(object):
     
     
     
-    def cli_take_snapshot(self,node='master', run_config=None,fabric_switch=None,filepath=None):
+    def cli_take_snapshot(self,node='master', run_config=None, local_node=None, fabric_switch=None,filepath=None):
         ''' 
           take snapshot of the system, can only take snapshot one by one  
           Author: Mingtao
@@ -1688,6 +1688,8 @@ class T5Platform(object):
             content = '\n'.join(config)
             helpers.log("********config :************\n%s" % content)  
             new_content = re.sub(r'\s+hashed-password.*$','\n  remove-passwd',content,flags=re.M)  
+            if local_node is None:
+                new_content = re.sub(r'local node.*! user','\n  remove-local-node',new_content,flags=re.DOTALL)               
             helpers.log("********config after remove passwd :************\n%s" % new_content)                          
             return  new_content
         if fabric_switch: 
