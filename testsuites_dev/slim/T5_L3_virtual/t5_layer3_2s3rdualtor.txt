@@ -125,8 +125,8 @@ L3 intra tenant same rack untagged with static endpoints
 	sleep										5
 	mininet host config
 	sleep										1
-	mininet host add arp						${bm0_name}			${vns1_ip1}		${gw_mac}
-	mininet host add arp						${bm1_name} 		${vns1_ip2}		${gw_mac}
+#	mininet host add arp						${bm0_name}			${vns1_ip1}		${gw_mac}
+#	mininet host add arp						${bm1_name} 		${vns1_ip2}		${gw_mac}
 	sleep  										5
 	mininet l3 ping								${bm0_name}			${bm1_name} 	3
 	sleep 										2
@@ -160,12 +160,12 @@ L3 intra tenant same rack tagged with static endpoints
 	sleep										5
 	mininet host config
 	sleep										1
-	mininet host add arp						${bm0_name}			${vns1_ip1}		${gw_mac}
-	mininet host add arp						${bm1_name} 		${vns1_ip2}		${gw_mac}
-	mininet host add arp						${bm2_name}			${vns2_ip3}		${gw_mac}
-	mininet host add arp						${bm8_name} 		${vns2_ip1}		${gw_mac}
-	mininet host add arp						${bm9_name}			${vns2_ip2}		${gw_mac}
-	mininet host add arp						${bm10_name} 		${vns2_ip3}		${gw_mac}
+#	mininet host add arp						${bm0_name}			${vns1_ip1}		${gw_mac}
+#	mininet host add arp						${bm1_name} 		${vns1_ip2}		${gw_mac}
+#	mininet host add arp						${bm2_name}			${vns2_ip3}		${gw_mac}
+#	mininet host add arp						${bm8_name} 		${vns2_ip1}		${gw_mac}
+#	mininet host add arp						${bm9_name}			${vns2_ip2}		${gw_mac}
+#	mininet host add arp						${bm10_name} 		${vns2_ip3}		${gw_mac}
 	sleep  										5
 	mininet l3 ping								${bm8_name}			${bm9_ip} 		3
 	sleep 										2
