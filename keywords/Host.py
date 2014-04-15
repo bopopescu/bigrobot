@@ -261,6 +261,19 @@ class Host(object):
         if match:
             return 'is started'
 
+    def bash_start_service(self, node, processname):
+        t = test.Test()
+        n = t.node(node)
+        n.sudo("service %s start" % processname)
+        return True
+    
+    def bash_stop_service(self, node, processname):
+        t = test.Test()
+        n = t.node(node)
+        n.sudo("service %s stop" % processname)
+        return True       
+        
+        
     def bash_ls(self, node, path):
         """
         Execute 'ls -l --time-style=+%Y-%m-%d <path>' on a device.
@@ -312,3 +325,9 @@ class Host(object):
         helpers.log("files:\n%s" % helpers.prettify(files))
         return files
 
+
+    def bash_delete_arp(self, node, ipaddr):
+        t = test.Test()
+        n = t.node(node)
+        n.sudo("arp -d %s " % ipaddr)
+        return True
