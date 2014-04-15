@@ -6,44 +6,24 @@
 # mn  : Mininet server
 
 c1:
-    ip: 10.192.96.30
+    ip: 10.192.97.1
 c2:
-    ip: 10.192.96.40
+    ip: 10.192.97.2
 
 s1:
-    ip: 10.192.88.80
-    console_ip: cs-rack11
-    console_port: 6003    
+    ip: 10.192.75.196
 
 s2:
-    ip: 10.192.88.81
-    console_ip: cs-rack11
-    console_port: 6004
+    ip: 10.192.75.192
 
 s3:
-    ip: 10.192.88.82
-    console_ip: cs-rack11
-    console_port: 6002
+    ip: 10.192.75.193
 
 s4:
-    ip: 10.192.88.83
-    console_ip: cs-rack11
-    console_port: 6011
+    ip: 10.192.75.194
 
 s5:
-    ip: 10.192.88.84
-    console_ip: cs-rack11
-    console_port: 6013
-
-s6:
-    ip: 10.192.88.85
-    console_ip: cs-rack11
-    console_port: 6012
-
-s7:
-    ip: 10.192.88.86
-    console_ip: cs-rack11
-    console_port: 6005
+    ip: 10.192.75.195
 
 tg1:
   platform: 'ixia'
@@ -54,6 +34,56 @@ tg1:
   set_init_ping: false
   ports:
     a:
-      name: 1/3
+      name: 3/11
     b:
-      name: 1/16
+      name: 2/11
+
+
+
+#s1:
+#    ip: 10.192.88.80
+#    console_ip: cs-rack11
+#    console_port: 6003    
+
+#s2:
+#    ip: 10.192.88.81
+#    console_ip: cs-rack11
+#    console_port: 6004
+
+#s3:
+#    ip: 10.192.88.82
+#    console_ip: cs-rack11
+#    console_port: 6002
+
+#s4:
+#    ip: 10.192.88.83
+#    console_ip: cs-rack11
+#    console_port: 6011
+
+#s5:
+#    ip: 10.192.88.84
+#    console_ip: cs-rack11
+#    console_port: 6013
+
+#s6:
+#    ip: 10.192.88.85
+#    console_ip: cs-rack11
+#    console_port: 6012
+
+#s7:
+#    ip: 10.192.88.86
+#    console_ip: cs-rack11
+#    console_port: 6005
+
+#tg1:
+#  platform: 'ixia'
+#  chassis_ip: 10.192.85.151
+#  tcl_server_ip: 10.194.64.172
+#  tcl_server_port: 8009
+#  ix_version: '7.10'
+#  set_init_ping: false
+#  ports:
+#    a:
+#      name: 1/3
+#    b:
+#      name: 1/16

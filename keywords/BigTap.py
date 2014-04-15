@@ -67,7 +67,7 @@ class BigTap(object):
                 helpers.test_failure("Could not execute command")
                 return False
             else:
-                if return_value:
+                if return_value is not None:
                     return content[0]['stats']['table'][1][return_value]
                 else:
                     return content[0]['stats']['table'][1]['active-count']
