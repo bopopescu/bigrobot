@@ -1,0 +1,58 @@
+#!/bin/bash -x
+# Description: Runs the smoke tests in the BigRobot suites during pre-merge.
+# Assumption: The current working directory is bin/ under bigrobot path.
+#
+
+#echo "Disable BVS smoke test for the interim."
+#exit 0
+
+testsuites="\
+testsuites_dev/vui/test_robot \
+"
+
+mesg() {
+    ts=$(date "+%Y-%m-%d %H:%M:%S")
+    echo "$ts $1"
+}
+
+err_exit() {
+    mesg $1
+    exit 1
+}
+
+testlogs_path=../testlogs
+
+timestamp=$(date "+%Y-%m-%d,%H%M%S")
+
+mesg "$0 (`pwd`): Pre-merge execution of smoke tests in BigTest and BigRobot."
+
+if [ ! -x "./gobot" ]; then
+    err_exit "Error: Script can only be run from bin/ of bigrobot path."
+fi
+
+if [ -d "$testlogs_path" ]; then
+    # Previous test logs exist. Move them aside.
+    mv $testlogs_path "$testlogs_path.$timestamp"
+fi
+
+for suite in `echo $testsuites`; do
+    ./bigrobot_smoke_wrapper.py $suite
+done
+
+# Generate BigRobot log/report.
+(cd $testlogs_path; ../bin/bigrobot_log_gen)
+
+# Process test results - get a count of total tests PASSED/FAILED.
+
+result_file=$testlogs_path/test_results.txt
+find $testlogs_path -name PASSED -o -name FAILED > $result_file
+total_count=$(cat $result_file | wc -l)
+failed_count=$(cat $result_file | grep FAILED | wc -l)
+mesg "Total smoke test suites: $total_count ($failed_count failed)."
+if [ $failed_count -gt 0 ]; then
+    mesg "Failed smoke test suites:"
+    grep FAILED $result_file
+fi
+
+exit $failed_count
+

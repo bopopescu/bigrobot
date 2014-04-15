@@ -1,0 +1,428 @@
+* Settings
+Documentation     T5  Switch Platform Traffic Test suite- Iron Horse
+Suite Setup       T5 switch platform test setup
+Suite Teardown    T5 switch platform test teardown
+Test Setup        base test setup
+Test Teardown     atest teardown
+Force Tags        T5  switch  Platform  traffic
+...             
+...            
+...                        
+Library         keywords/BsnCommon.py
+Library         keywords/SwitchLight.py
+Library         keywords/AppController.py
+Library         keywords/Ixia.py 
+Library         keywords/T5.py     
+Library         String
+Resource        keywords_dev/kranti/ironhorse/snake_traffic_test_variables.txt
+
+*Variables
+
+${j}    1
+${switch1_name}=  spine01
+${switch2_name}=  leaf01
+${switch3_name}=  leaf02
+${tenant}=        testTenant 
+${vns}=           v1
+${vlan}=          -1
+${intf_1}=        ethernet1
+${intf_2}=        ethernet2
+${intf_3}=        ethernet3
+${intf_4}=        ethernet4
+
+${intf_6}=        ethernet45
+${intf_7}=        ethernet46
+${intf_8}=        ethernet47
+${intf_9}=        ethernet48
+
+${count}=         1 
+${ratetolerance}=     10
+${tolerance}=         5
+${sleepAfter}=    10
+${sleepBefore}=   5
+
+ 
+
+*Test Case
+
+###
+### Section I : Traffic Test Verification
+###
+###
+
+Uni-Directional L2 Traffic flow=a->b traffic framerate 10000 pktsize 64 
+    ${stream}=     L2 add  flow=a->b  src_mac=00:11:01:00:00:01  dst_mac=00:11:01:00:00:02  frame_rate=10000  frame_size=64  ethertype=8000  name=a_b_flow
+    start traffic  ${stream}
+    sleep          5
+    stop traffic   ${stream}
+    sleep          5
+    clear stats
+    start traffic  ${stream}
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
+    stop traffic   ${stream}
+    #sleep          10
+    #${report}=     fetch port stats
+    #verify results traffic  transmitted_frames  received_valid_frames  ${tolerance}        
+    [Tags]  T5  switch  traffic   
+
+Uni-Directional L2 Traffic flow=a->b traffic linerate 10% pktsize 64
+    ${stream}=     L2 add  flow=a->b  src_mac=00:11:01:00:00:03  dst_mac=00:11:01:00:00:04  line_rate=10  frame_size=64  ethertype=8000  name=a_b_flow
+    start traffic  ${stream}
+    sleep          5
+    stop traffic   ${stream}
+    sleep          5
+    clear stats
+    start traffic  ${stream}
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}  
+    stop traffic   ${stream}
+    #sleep          10
+    #${report}=     fetch port stats
+    #verify results traffic  transmitted_frames  received_valid_frames  ${tolerance}    
+    [Tags]  T5  switch  traffic         
+
+Uni-Directional L2 Traffic flow=a->b traffic framerate 10000 pktsize 256 
+    ${stream}=     L2 add  flow=a->b  src_mac=00:11:01:00:00:05  dst_mac=00:11:01:00:00:06  frame_rate=10000  frame_size=256  ethertype=8000  name=a_b_flow
+    start traffic  ${stream}
+    sleep          5
+    stop traffic   ${stream}
+    sleep          5
+    clear stats
+    start traffic  ${stream}
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
+    stop traffic   ${stream}
+    #sleep          10
+    #${report}=     fetch port stats
+    #verify results traffic  transmitted_frames  received_valid_frames  ${tolerance}        
+    [Tags]  T5  switch  traffic   
+
+Uni-Directional L2 Traffic flow=a->b traffic linerate 25% pktsize 256
+    ${stream}=     L2 add  flow=a->b  src_mac=00:11:01:00:00:07  dst_mac=00:11:01:00:00:08  line_rate=25  frame_size=256  ethertype=8000  name=a_b_flow
+    start traffic  ${stream}
+    sleep          5
+    stop traffic   ${stream}
+    sleep          5
+    clear stats
+    start traffic  ${stream}
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}  
+    stop traffic   ${stream}
+    #sleep          10
+    #${report}=     fetch port stats
+    #verify results traffic  transmitted_frames  received_valid_frames  ${tolerance}    
+    [Tags]  T5  switch  traffic         
+
+Uni-Directional L2 Traffic flow=a->b traffic framerate 10000 pktsize 512 
+    ${stream}=     L2 add  flow=a->b  src_mac=00:11:01:00:01:01  dst_mac=00:11:01:00:01:02  frame_rate=10000  frame_size=512  ethertype=8000  name=a_b_flow
+    start traffic  ${stream}
+    sleep          5
+    stop traffic   ${stream}
+    sleep          5
+    clear stats
+    start traffic  ${stream}
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
+    stop traffic   ${stream}
+    #sleep          10
+    #${report}=     fetch port stats
+    #verify results traffic  transmitted_frames  received_valid_frames  ${tolerance}        
+    [Tags]  T5  switch  traffic
+
+Uni-Directional L2 Traffic flow=a->b traffic linerate 50% pktsize 512
+    ${stream}=     L2 add  flow=a->b  src_mac=00:11:01:00:00:07  dst_mac=00:11:01:00:00:08  line_rate=50  frame_size=512  ethertype=8000  name=a_b_flow
+    start traffic  ${stream}
+    sleep          5
+    stop traffic   ${stream}
+    sleep          5
+    clear stats
+    start traffic  ${stream}
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}  
+    stop traffic   ${stream}
+    #sleep          10
+    #${report}=     fetch port stats
+    #verify results traffic  transmitted_frames  received_valid_frames  ${tolerance}    
+    [Tags]  T5  switch  traffic         
+
+Bi-Directional L2 Traffic flow=a<->b traffic framerate 10000 pktsize 1024
+    ${stream}=     L2 add  flow=a<->b  src_mac=00:11:01:00:02:01  dst_mac=00:11:01:00:02:02  frame_rate=10000  frame_size=1024  ethertype=8000  name=a_b_bidir_flow
+    start traffic  ${stream}
+    sleep          5
+    stop traffic   ${stream}
+    sleep          5
+    clear stats
+    start traffic  ${stream}
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_frame_rate  ${ratetolerance}  
+    stop traffic   ${stream}
+    [Tags]  T5  switch  traffic  
+
+Bi-Directional L2 Traffic flow=a<->b traffic framerate 10000 pktsize 1518
+    ${stream}=     L2 add  flow=a<->b  src_mac=00:11:01:00:04:01  dst_mac=00:11:01:00:04:02  frame_rate=10000  frame_size=1518  ethertype=8000  name=a_b_bidir_flow
+    start traffic  ${stream}
+    sleep          5
+    stop traffic   ${stream}
+    sleep          5
+    clear stats
+    start traffic  ${stream}
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_frame_rate  ${ratetolerance}  
+    stop traffic   ${stream}
+    [Tags]  T5  switch  traffic  
+
+Bi-Directional L2 Traffic flow=a<->b traffic linerate 75% pktsize 1518
+    ${stream}=     L2 add  flow=a<->b  src_mac=00:11:01:00:03:01  dst_mac=00:11:01:00:03:02  line_rate=75  frame_size=1518  ethertype=8000  name=a_b_bidir_flow
+    start traffic  ${stream}
+    sleep          5
+    stop traffic   ${stream}
+    sleep          5
+    clear stats
+    start traffic  ${stream}
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_frame_rate  ${ratetolerance}  
+    stop traffic   ${stream}
+    [Tags]  T5  switch  traffic  
+
+Bi-Directional L2 Traffic flow=a<->b traffic linerate 100% pktsize 1518
+    ${stream}=     L2 add  flow=a<->b  src_mac=00:11:01:00:05:01  dst_mac=00:11:01:00:05:02  line_rate=100  frame_size=1518  ethertype=8000  name=a_b_bidir_flow
+    start traffic  ${stream}
+    sleep          5
+    stop traffic   ${stream}
+    sleep          5
+    clear stats
+    start traffic  ${stream}
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_frame_rate  ${ratetolerance}  
+    stop traffic   ${stream}
+    [Tags]  T5  switch  traffic  
+
+Uni-Directional L2 Traffic flow=a->b traffic linerate 10% pktsize 9150
+    ${stream}=     L2 add  flow=a->b  src_mac=00:11:01:00:01:0e  dst_mac=00:11:01:00:01:0f  line_rate=10  frame_size=9150  ethertype=8000  name=a_b_jumbo_flow
+    start traffic  ${stream}
+    sleep          5
+    stop traffic   ${stream}
+    sleep          5
+    clear stats
+    start traffic  ${stream}
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_frame_rate  ${ratetolerance}  
+    stop traffic   ${stream}
+    [Tags]  T5  switch  traffic  
+
+Bi-Directional L2 Traffic flow=a<->b traffic linerate 10% pktsize 9150
+    ${stream}=     L2 add  flow=a<->b  src_mac=00:11:01:00:01:0a  dst_mac=00:11:01:00:01:0b  line_rate=10  frame_size=9150  ethertype=8000  name=a_b_bidir_jumbo_flow
+    start traffic  ${stream}
+    sleep          5
+    stop traffic   ${stream}
+    sleep          5
+    clear stats
+    start traffic  ${stream}
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_frame_rate  ${ratetolerance}  
+    stop traffic   ${stream}
+    [Tags]  T5  switch  traffic  
+
+Verify all interfaces show up after sw installation 
+    Log    Step 1 - Verify all interfaces show up after sw installation
+    [Tags]  Manual-untested
+    Manual untested
+
+Verify that the various transceivers are detected in the uplink module and they are up and running 
+    Log    Step 1 - Verify that the various transceivers are detected in the uplink module and they are up and running
+    [Tags]  Manual-untested
+    Manual untested
+
+Verify interface op is consistent and as per spec in show interfaces op 
+    Log    Step 1 - Verify interface op is consistent and as per spec in show interfaces op
+    [Tags]  Manual-untested
+    Manual untested
+
+Verify line-rate traffic 
+    Log    Step 1 - Verify line-rate traffic
+    [Tags]  Manual-untested
+    Manual untested
+
+Verify end-to-end ping system-test 
+    Log    Step 1 - Verify end-to-end ping system-test
+    [Tags]  Manual-untested
+    Manual untested
+
+Verify auto-negotiation configurations work as expected 
+    Log    Step 1 - Verify auto-negotiation configurations work as expected
+    [Tags]  Manual-untested
+    Manual untested
+
+Verify Auto- negotiation enabled on both ends of interface
+    Log    Step 1 - Verify Auto- negotiation enabled on both ends of interface
+    [Tags]  Manual-untested
+    Manual untested
+
+Verify Speed/Duplex in ports 
+    Log    Step 1 - Verify Speed/Duplex in ports
+    [Tags]  Manual-untested
+    Manual untested
+
+Verify interface state is reported correctly when cable is unplugged. 
+    Log    Step 1 - Verify interface state is reported correctly when cable is unplugged. 
+    [Tags]  Manual-untested
+    Manual untested
+
+Verify that the options are maintained on the interface after the system reboot. 
+    Log    Step 1 - Verify that the options are maintained on the interface after the system reboot.
+    [Tags]  Manual-untested
+    Manual untested
+
+Verify that the appropriate counters are incremented when the interface receivers error oversized undersized packets
+    Log    Step 1 - Verify that the appropriate counters are incremented when the interface receivers error oversized undersized packets
+    [Tags]  Manual-untested
+    Manual untested
+    
+Verify Sending L2 traffic with frame size 64 bytes
+    Log    Step 1 - Verify Sending L2 traffic with frame size 64 bytes
+    [Tags]  Manual-untested
+    Manual untested
+
+Verify Sending L2 traffic with frame size 128 bytes 
+    Log    Step 1 - Verify Sending L2 traffic with frame size 128 bytes
+    [Tags]  Manual-untested
+    Manual untested
+
+Verify Sending L2 traffic with frame size 512 bytes 
+    Log    Step 1 - Verify Sending L2 traffic with frame size 512 bytes
+    [Tags]  Manual-untested
+    Manual untested
+
+Verify Sending L2 traffic with frame size 1024 bytes 
+    Log    Step 1 - Verify Sending L2 traffic with frame size 1024 bytes
+    [Tags]  Manual-untested
+    Manual untested
+
+Verify Sending L2 traffic with frame size Jumbo 9150 bytes 
+    Log    Step 1 - Verify Sending L2 traffic with frame size Jumbo 9150 bytes
+    [Tags]  Manual-untested
+    Manual untested
+
+Verify Sending L2 traffic with mix and incremental from 64 to 9150 bytes 
+    Log    Step 1 - Verify Sending L2 traffic with frame size mix and incremental from 64 to 9150 bytes
+    [Tags]  Manual-untested
+    Manual untested
+
+Verify - Jumbo frame disabled - Sending L2 traffic with Jumbo frame size 9150 bytes 
+    Log    Step 1 - Verify - Jumbo frame disabled - Sending L2 traffic with Jumbo frame size 9150 bytes 
+    [Tags]  Manual-untested
+    Manual untested
+
+Test the Oversubscription of 40Gig Links between Leaf and Spines
+    Log   Step 1 - Test the  Oversubscription of 40Gig Links between Leaf and Spines
+    [Tags]  Manual-untested
+    Manual untested
+    
+Test the hashing algorithm between the leaf and spine with multiple links
+    Log    Step 1 - Test the hashing algorithm between the leaf and spine with multiple links
+    [Tags]  Manual-untested
+    Manual untested
+
+
+* Keywords
+      
+T5 switch platform test setup
+   base test setup
+   rest add switch  ${switch1_name}
+   ${swDpid1}=  rest return switch dpid from ip  s1
+   rest add dpid  ${switch1_name}   ${swDpid1}
+   rest add fabric role  ${switch1_name}  spine
+      
+   rest add switch  ${switch2_name}
+   ${swDpid2}=  rest return switch dpid from ip  s2
+   rest add dpid  ${switch2_name}   ${swDpid2}
+   rest add fabric role  ${switch2_name}  leaf
+   
+   rest add switch  ${switch3_name}
+   ${swDpid3}=  rest return switch dpid from ip  s3
+   rest add dpid  ${switch3_name}   ${swDpid3}
+   rest add fabric role  ${switch3_name}  leaf
+      
+   rest add tenant  ${tenant}
+   rest add vns  ${tenant}  ${vns}
+   
+   rest add interface to vns  ${tenant}  ${vns}  ${switch2_name}  ${intf_1}  ${vlan} 
+   rest add interface to vns  ${tenant}  ${vns}  ${switch2_name}  ${intf_2}  ${vlan}
+   rest add interface to vns  ${tenant}  ${vns}  ${switch2_name}  ${intf_3}  ${vlan}
+   rest add interface to vns  ${tenant}  ${vns}  ${switch2_name}  ${intf_4}  ${vlan}
+   
+   
+   rest add interface to vns  ${tenant}  ${vns}  ${switch3_name}  ${intf_6}  ${vlan} 
+   rest add interface to vns  ${tenant}  ${vns}  ${switch3_name}  ${intf_7}  ${vlan}
+   rest add interface to vns  ${tenant}  ${vns}  ${switch3_name}  ${intf_8}  ${vlan}
+   rest add interface to vns  ${tenant}  ${vns}  ${switch3_name}  ${intf_9}  ${vlan}
+   
+                
+T5 switch platform test teardown
+   rest delete tenant  ${tenant}  
+   rest delete fabric switch  ${switch1_name} 
+   rest delete fabric switch  ${switch2_name}
+   rest delete fabric switch  ${switch3_name}
+   base test teardown
+   sleep  5   
+
+atest teardown
+    delete traffic
+
+
+
+verify results traffic   [Arguments]  ${transmitted_frame_rate}  ${received_valid_frame_rate}  ${tolerance}
+    Sleep  5
+    ${report}=  fetch port stats
+    ${tx_value}=  verify dict key  ${report}  a  ${transmitted_frame_rate}
+    ${rx_value}=  verify dict key  ${report}  b  ${received_valid_frame_rate}
+    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}  ${tolerance} 
+    Should be true  ${in_range} 
+
+verify results totalframes   [Arguments]  ${transmitted_frames}  ${received_valid_frames}
+    Sleep  5
+    ${report}=  fetch port stats
+    ${tx_value}=  verify dict key  ${report}  a  ${transmitted_frames}
+    ${rx_value}=  verify dict key  ${report}  b  ${received_valid_frames}
+    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}
+    Should be true  ${in_range} 
+
+add interface to vns snake config   [Arguments]  ${tenant}  ${count}
+    ${range}=  Evaluate  ${count} + 1
+    : FOR  ${i}  IN RANGE  1  ${range}
+    \  Log  ${i} 
+    \  Log  ${j}
+    \  ${vns_name}=  Evaluate  str('v') + str(${i})
+    \  ${intf_name_1}=  Evaluate  str('ethernet') + str(${j})
+    \  ${k}=  Evaluate  ${j} + 1
+    \  ${intf_name_2}=  Evaluate  str('ethernet') + str(${k})          
+    \  rest add interface to vns  ${tenant}  ${vns_name}  ${switch_alias}  ${intf_name_1}  -1
+    \  rest add interface to vns  ${tenant}  ${vns_name}  ${switch_alias}  ${intf_name_2}  -1
+    \  ${j}=  Evaluate  ${j} + 2
+        
+delete interface from vns snake config   [Arguments]  ${tenant}  ${count}
+    ${range}=  Evaluate  ${count} + 1
+    : FOR  ${i}  IN RANGE  1  ${range}
+    \  Log  ${i} 
+    \  Log  ${j}
+    \  ${vns_name}=  Evaluate  str('v') + str(${i})
+    \  ${intf_name_1}=  Evaluate  str('ethernet') + str(${j})
+    \  ${k}=  Evaluate  ${j} + 1
+    \  ${intf_name_2}=  Evaluate  str('ethernet') + str(${k})          
+    \  rest delete interface from vns  ${tenant}  ${vns_name}  ${switch_alias}  ${intf_name_1}  -1
+    \  rest delete interface from vns  ${tenant}  ${vns_name}  ${switch_alias}  ${intf_name_2}  -1
+    \  ${j}=  Evaluate  ${j} + 2
+    
