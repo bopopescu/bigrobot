@@ -12,8 +12,8 @@ Library  keywords/SwitchLight.py
 Library  keywords/Ixia.py
 
 * Variable
-${switch_1_alias}  AF1
-${switchlight_version}  SwitchLight 2.0.1
+${switch_alias}  APP-RLB9-1
+${switchlight_version}  SwitchLight 2.0.3
 ${netmask}  18
 ${gateway}  10.192.64.1
 ${dns_server}  10.192.3.1
@@ -227,7 +227,7 @@ VFT: Flap management interface on switch and verify no traffic drop
 
 bigtap suite setup
     base suite setup
-    rest add switch alias  s1  APP-REGRESS-1
+    rest add switch alias  s1  ${switch_alias}
     rest add interface role  s1  ${filter_1}  filter  ${fnick_1}   
     rest add interface role  s1  ${delivery_1}  delivery  ${dnick_1}
     rest add interface role  s1  ${filter_2}  filter  ${fnick_2}   
