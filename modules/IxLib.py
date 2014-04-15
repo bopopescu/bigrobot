@@ -794,18 +794,17 @@ class Ixia(object):
         vlan_cnt = kwargs.get('vlan_cnt', 1)
         vlan_step = kwargs.get('vlan_step', 1)
         line_rate = kwargs.get('line_rate', None)
-        protocol = kwargs.get('protocol', 'UDP')
+        protocol = kwargs.get('protocol', None)
         burst_count = kwargs.get('burst_count', None)
         burst_gap = kwargs.get('burst_gap', None)
         
         crc = kwargs.get('crc', None)
         ip_type = 'ipv4'
-        if ethertype == '86dd':
-                ip_type = 'ipv6'    
         if vlan_id is not None:
             ethertype = '8100'
+            protocol = kwargs.get('protocol','UDP')
             
-        if ip_type == 'ipv4':
+        if ethertype == '0800':
             src_ip = kwargs.get('src_ip', '20.0.0.1')
             dst_ip = kwargs.get('dst_ip', '20.0.0.2')
             src_gw_ip = kwargs.get('src_gw', '20.0.0.2')
@@ -815,8 +814,9 @@ class Ixia(object):
             src_ip_step = kwargs.get('src_ip_step','0.0.0.1')
             dst_ip_step = kwargs.get('dst_ip_step', '0.0.0.1')
             self._frame_size = kwargs.get('frame_size', 130)
+            protocol = kwargs.get('protocol','UDP')
             
-        elif ip_type == 'ipv6':
+        elif ethertype == '86dd':
             src_ip = kwargs.get('src_ip', '2001:0:0:0:0:0:0:c4')
             dst_ip = kwargs.get('dst_ip', '2001:0:0:0:0:0:0:c5')
             src_gw_ip = kwargs.get('src_gw', '2001:0:0:0:0:0:0:c5')
@@ -827,7 +827,7 @@ class Ixia(object):
             dst_ip_step = kwargs.get('dst_ip_step', '0:0:0:0:0:0:1:0')
             ip_type = 'ipv6'
             self._frame_size = kwargs.get('frame_size', 140)
-            
+            protocol = kwargs.get('protocol','UDP')
         else:
             src_ip = kwargs.get('src_ip', '20.0.0.1')
             dst_ip = kwargs.get('dst_ip', '20.0.0.2')
