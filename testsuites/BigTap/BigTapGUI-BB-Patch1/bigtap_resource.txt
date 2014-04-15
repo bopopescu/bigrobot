@@ -45,7 +45,7 @@ ${TIMEOUT}						10 sec
 ${PERIOD}						3 sec
 
 ### Menu
-${FABRIC MENU}		  			xpath=//a[@class='nav' and contains(text(), 'Fabric')]
+${CONTROLLER MENU}		  			xpath=//a[@class='nav' and contains(text(), 'Controller')]
 ${BIG TAP MENU}			  		xpath=//a[@class='nav' and contains(text(), 'Big Tap')]
 ${SECURITY MENU}		  		xpath=//a[@class='nav' and contains(text(), 'Security')]
 ${ADMIN MENU}			  		xpath=//div[@class='nav' and contains(text(), 'Default admin')]
