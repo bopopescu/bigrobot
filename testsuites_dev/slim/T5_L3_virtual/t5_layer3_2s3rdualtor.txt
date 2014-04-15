@@ -1317,6 +1317,12 @@ setup topology
 	REST add vns								${tenant2_name}		${vns2_1}
 	REST add vns								${tenant2_name}		${vns2_2}
 	REST add vns								${tenant2_name}		${vns2_3}
+	REST add router intf						${tenant1_name}		${vns1_1}
+	REST add router intf						${tenant1_name}		${vns1_2}
+	REST add router intf						${tenant1_name}		${vns1_3}
+	REST add router intf						${tenant2_name}		${vns2_1}
+	REST add router intf						${tenant2_name}		${vns2_2}
+	REST add router intf						${tenant2_name}		${vns2_3}	
 	REST add vns ip  							${tenant1_name}  	${vns1_1}  		${vns1_ip1}	  		${vns1_subnet1} 	
 	REST add vns ip  							${tenant1_name}  	${vns1_2}  		${vns1_ip2}	  		${vns1_subnet2} 	
 	REST add vns ip  							${tenant1_name}  	${vns1_3}  		${vns1_ip3}	  		${vns1_subnet3}
