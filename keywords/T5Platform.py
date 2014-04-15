@@ -3190,3 +3190,47 @@ class T5Platform(object):
         return dfinfo[directory]['usedpercent']
 
 
+
+    def rest_test_path(self, **kwargs):
+        
+        t = test.Test()
+        c = t.controller('master')
+        
+        
+        url = '/api/v1/data/controller/applications/bvs/test/path/setup-result'
+        
+        if(kwargs.get('test-name')):
+            url = url + '[test-name="%s"]' % (kwargs.get('test-name'))
+        if(kwargs.get('timeout')):
+            url = url + '[timeout="%s"]' % (kwargs.get('timeout'))
+        if(kwargs.get('dst-vns')):
+            url = url + '[dst-vns="%s"]' % (kwargs.get('dst-vns'))
+        if(kwargs.get('dst-tenant')):
+            url = url + '[dst-tenant="%s"]' % (kwargs.get('dst-tenant'))
+        if(kwargs.get('ip-protocol')):
+            url = url + '[ip-protocol="%s"]' % (kwargs.get('ip-protocol'))
+        if(kwargs.get('src-ip')):
+            url = url + '[src-ip="%s"]' % (kwargs.get('src-ip'))
+        if(kwargs.get('src-vns')):
+            url = url + '[src-vns="%s"]' % (kwargs.get('src-vns'))
+        if(kwargs.get('dst-ip')):
+            url = url + '[dst-ip="%s"]' % (kwargs.get('dst-ip'))
+        if(kwargs.get('src-tenant')):
+            url = url + '[src-tenant="%s"]' % (kwargs.get('src-tenant'))
+            
+        
+        c.rest.get(url)
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
