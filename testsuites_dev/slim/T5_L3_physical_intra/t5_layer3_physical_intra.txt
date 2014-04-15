@@ -14,7 +14,7 @@ Library         keywords_dev/animesh/BsnCommonShow.py
 Library         keywords_dev/slim/SwitchLight.py
 Library	        Collections.py
 Library         keywords/Ixia.py
-Resource		testsuites_dev/slim/T5_L3_physical_intra/t5_layer3_physical_intra_variables.txt
+Resource		testsuites/T5_L3_physical_intra/t5_layer3_physical_intra_variables.txt
 Resource		testsuites/T5/t5_dualleaf_three_rack_physical_resource.txt
 
 
@@ -167,6 +167,11 @@ Restart ofad process on leaf
 	restart ofad on leaf
 #	[Tags]							skipped			feature			
 	
+L3 traffic behavior in headless mode
+	L3 intra tenant traffic behavior in headless mode 
+	Log								manual untested
+#	[Tags]							manual			untested			feature			
+		
 	
 * Keywords
 L3 intra tenant same rack untagged with dynamic endpoints
@@ -2074,6 +2079,12 @@ restart ofad on leaf
 	calculate loss								transmitted_frames  			received_valid_frames  		${stream1}  			stream1
 	BASH delete route							h1								10.251.3.0/24			10.251.1.1
 	BASH delete route							h3								10.251.1.0/24			10.251.3.1
+
+
+L3 intra tenant traffic behavior in headless mode 
+ 	Manual failed
+
+
 
 initialize host
 	BASH delete tag								h1								bond0.1001				soft_error=${true}
