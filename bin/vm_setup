@@ -86,16 +86,7 @@ def main(*args):
                + datetime.datetime.now().strftime("%m%d%H%M"))
     vm_host_name = current_user + "-bvs-1"
     helpers.summary_log("Creating VM with Name: %s " % vm_name)
-
-    _ = helpers.get_env("VM_SETUP_SCP")
-    if _ and _.lower() == "false":
-        helpers.summary_log("Environment variable VM_SETUP_SCP is False."
-                            " Don't scp image (use the latest image on"
-                            " KVM server).")
-        scp = False
-    else:
-        scp = True
-
+    
     if args.kvm_host is not None:
         kvm_host = args.kvm_host
 
@@ -115,8 +106,7 @@ def main(*args):
                                  qcow_path=args.qcow_path, ip=args.active_ip,
                                  netmask=args.netmask,
                                  vm_name=vm_name,
-                                 vm_host_name=vm_host_name,
-                                 scp=scp)
+                                 vm_host_name=vm_host_name)
     helpers.log("Created Active VM: \n%s" % active_vm)
 
     if active_vm['status_code'] == False:
@@ -145,8 +135,7 @@ def main(*args):
                                       netmask=args.netmask,
                                       vm_name=vm_backup_name,
                                       cluster_ip=args.active_ip,
-                                      vm_host_name=vm_host_name,
-                                      scp=False)
+                                      vm_host_name=vm_host_name)
         helpers.log("Created Backup VM :\n%s" % standby_vm)
 
         if standby_vm['status_code'] == False:
