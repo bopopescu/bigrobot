@@ -1,6 +1,13 @@
 #!/usr/bin/env python
 '''
 Wrapper Script to spwan cotroller VMs on KVM Machine
+Usage:
+vm_setup c4
+Creating VM with Name : amallina_c4_03312321
+1. Success Copying Latest BVS VMDK to /var/lib/libvirt/images/amallina_c4_03312321.vmdk on KVM Host!!
+2. Success Creating VM with Name: amallina_c4_03312321 on KVM_Host: 10.192.104.13
+3. Success configuring first boot Controller IP : 10.192.93.255
+Success !!!
 '''
 import os, re, sys, subprocess, datetime, getpass, time
 from pytz import timezone
@@ -21,7 +28,7 @@ bigrobot_path = os.path.dirname(__file__) + '/..'
 exscript_path = bigrobot_path + '/vendors/exscript/src'
 sys.path.insert(0, bigrobot_path)
 sys.path.insert(1, exscript_path)
-print bigrobot_path
+print "Detailed log can be found at /tmp/robot.log"
 
 import autobot.helpers as helpers
 from autobot.devconf import HostDevConf
