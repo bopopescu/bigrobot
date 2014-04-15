@@ -1442,6 +1442,14 @@ add static endpoint
 	REST add endpoint portgroup attachment		${tenant2_name}		${vns2_3}		${bm10_name}		${portgroup10}	${untaggedvlan}	
 
 delete static endpoint
+	REST delete endpoint portgroup attachment		${tenant1_name}		${vns1_1}		${bm0_name}			${portgroup0}	${untaggedvlan}
+	REST delete endpoint portgroup attachment		${tenant1_name}		${vns1_2}		${bm1_name}			${portgroup1}	${untaggedvlan}
+	REST delete endpoint portgroup attachment		${tenant2_name}		${vns2_3}		${bm2_name}			${portgroup2}	${vns2_vlan3}
+	REST delete endpoint portgroup attachment		${tenant2_name}		${vns2_2}		${bm3_name}			${portgroup3}	${untaggedvlan}
+	REST delete endpoint portgroup attachment		${tenant1_name}		${vns1_1}		${bm4_name}			${portgroup4}	${vns1_vlan1}
+	REST delete endpoint portgroup attachment		${tenant2_name}		${vns2_1}		${bm8_name}			${portgroup8}	${vns2_vlan1}
+	REST delete endpoint portgroup attachment		${tenant2_name}		${vns2_2}		${bm9_name}			${portgroup9}	${vns2_vlan2}
+	REST delete endpoint portgroup attachment		${tenant2_name}		${vns2_3}		${bm10_name}		${portgroup10}	${untaggedvlan}	
 	REST delete endpoint						${tenant1_name}		${vns1_1}		${bm0_name}
 	REST delete endpoint						${tenant1_name}		${vns1_2}		${bm1_name}
 	REST delete endpoint						${tenant2_name}		${vns2_3}		${bm2_name}
