@@ -165,7 +165,7 @@ def main(*args):
     #Creating a temp topo file for using first boot keywords
     topo_file = helpers.get_env("BIGROBOT_PARAMS_INPUT_PRE")
     helpers.summary_log("USING TOPO FILE : %s" % topo_file)
-    topo = open(topo_file, "wb")
+    topo = open(topo_file, "w")
     config = " c1:\n\
       ip: %s\n\
       set_init_ping: false            # default: true\n\
