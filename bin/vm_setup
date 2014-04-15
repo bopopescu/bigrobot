@@ -107,8 +107,13 @@ def main(*args):
                                  netmask=args.netmask,
                                  vm_name=vm_name,
                                  vm_host_name=vm_host_name)
+    # temporarily setting ACTIVE_VM env for jenkins vm_setup
+    if args.vm_type == 'mininet':
+        helpers.set_env("MININET_VM", active_vm['vm_name'])
+    else:
+        helpers.set_env("ACTIVE_VM", active_vm['vm_name'])
     helpers.log("Created Active VM: \n%s" % active_vm)
-
+    
     if active_vm['status_code'] == False:
         helpers.summary_log("VM setup failure on active vm!!\n%s"
                             % active_vm['status_descr'])
@@ -137,7 +142,8 @@ def main(*args):
                                       cluster_ip=args.active_ip,
                                       vm_host_name=vm_host_name)
         helpers.log("Created Backup VM :\n%s" % standby_vm)
-
+        # temporarily setting STANDBY_VM env for jenkins vm_setup
+        helpers.set_env("STANDBY_VM", standby_vm['vm_name'])
         if standby_vm['status_code'] == False:
             helpers.summary_log("VM setup failure on standby vm!!\n%s"
                                 % active_vm['status_descr'])

@@ -10,20 +10,7 @@
 #  set_init_ping: false            # default: true
 #  set_session_ssh: false          # default: true
   console:
-    ip: qa-kvm-32
-    libvirt_vm_name: MY-T5-C20
+    ip: 10.192.104.13
+    libvirt_vm_name: amallina-c1
     user: bsn
     password: bsn
- 
-
- c2:
-  ip: 10.192.105.30   
-#  set_init_ping: false            # default: true
-#  set_session_ssh: false          # default: true
-  console:
-    ip: qa-kvm-32
-    libvirt_vm_name: MY-T5-C30
-    user: bsn
-    password: bsn
- 
-  
