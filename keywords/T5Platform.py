@@ -3191,11 +3191,10 @@ class T5Platform(object):
 
 
 
-    def rest_test_path(self, **kwargs):
+    def rest_configure_testpath(self, **kwargs):
         
         t = test.Test()
         c = t.controller('master')
-        
         
         url = '/api/v1/data/controller/applications/bvs/test/path/setup-result'
         
@@ -3221,8 +3220,50 @@ class T5Platform(object):
         
         c.rest.get(url)
         
+    def rest_verify_testpath(self, pathName):
         
+        t = test.Test()
+        c = t.controller("master")
         
+        url = '/api/v1/data/controller/applications/bvs/test/path/all-test'
+        
+        try:
+            result = c.rest.get(url)['content']
+            for testpath in result:
+                if testpath['test-name'] == pathName:
+                    helpers.log("Found path: %s in the test-path config" % pathName)
+                    return True
+        except:
+            helpers.test_failure(c.rest.error())           
+            return False
+        else:
+            helpers.log("Didn't find path: %s in the test-path config" % pathName)
+            return False
+        
+    def rest_verify_testpath_timeout(self,pathName):
+        
+        t = test.Test()
+        c = t.controller("master")
+        
+        url = '/api/v1/data/controller/applications/bvs/test/path/all-test'
+        
+        try:
+            result = c.rest.get(url)['content']
+            for testpath in result:
+                if testpath['test-name'] == pathName:
+                    if testpath['test-state'] == "TIMEDOUT":
+                        helpers.log("Test Path: %s in TIMEDOUT state" % pathName)
+                        return True
+                    else:
+                        helpers.log("Test Path: %s not in TIMEDOUT state" % pathName)
+                        return False
+                        
+        except:
+            helpers.test_failure(c.rest.error())           
+            return False
+        else:
+            helpers.log("Didn't find path: %s in the test-path config" % pathName)
+            return False
         
         
         
