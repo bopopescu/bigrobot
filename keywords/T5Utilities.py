@@ -28,6 +28,7 @@ warningCount = 0
 
 floodlightMonitorFlag = False
 
+
 class T5Utilities(object):
 
     def __init__(self):
@@ -190,8 +191,8 @@ class T5Utilities(object):
         try:
             for i in range(0, len(result)):
                 mac = result[i]['mac']
-                tenant = result[i]['tenant-name']
-                vns = result[i]['vns-name']
+                tenant = result[i]['tenant']
+                vns = result[i]['vns']
                 try:
                     ip = result[i]['ip-address']
                     key = "%s-%s-%s-%s" % (mac,ip,tenant,vns)
@@ -352,9 +353,11 @@ class T5Utilities(object):
             c1_pidList = self.get_floodlight_monitor_pid('c1')
             c2_pidList = self.get_floodlight_monitor_pid('c2')
             for c1_pid in c1_pidList:
-                c1.sudo('kill %s' % (c1_pid))
+                if (re.match("^d", c1_pid)):
+                    c1.sudo('kill %s' % (c1_pid))
             for c2_pid in c2_pidList:
-                c2.sudo('kill %s' % (c2_pid))
+                if (re.match("^d", c2_pid)):
+                    c2.sudo('kill %s' % (c2_pid))
             
             # Add rm of the file if file already exist in case of a new test
             c1.sudo("tail -f /var/log/floodlight/floodlight.log | grep --line-buffered ERROR > %s &" % "c1_floodlight_dump.txt")
@@ -395,10 +398,10 @@ class T5Utilities(object):
             c2 = t.controller('c2')
             helpers.log("Stopping Floodlight Monitor on C1")
             for c1_pid in c1_pidList:
-                c1.sudo('kill %s' % (c1_pid))
+                c1.sudo('kill -9 %s' % (c1_pid))
             helpers.log("Stopping Floodlight Monitor on C2")
             for c2_pid in c2_pidList:
-                c2.sudo('kill %s' % (c2_pid))
+                c2.sudo('kill -9 %s' % (c2_pid))
             floodlightMonitorFlag = False
             
             try:
