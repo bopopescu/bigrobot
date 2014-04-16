@@ -69,7 +69,7 @@ delete the peer leaf0b switch and check the peer-lag from leaf0-a switch
 	rest verify forwarding lag  ${leaf0a_dpid}  leaf0-a     
 
 port group setting for static lag
-	[Tags]  feature  
+	[Tags]  feature  run  
 	rest add portgroup  p1
 	rest add interface to portgroup  leaf2-a  ${h6_intf0}  p1
 	rest add interface to portgroup  leaf2-b  ${h6_intf1}  p1
@@ -80,7 +80,7 @@ port group setting for static lag
 	# should have the same Group ID on both leaf switches of rack2
 	  
 port group setting test for lacp mode
-	[Tags]  feature
+	[Tags]  feature  
 	rest add portgroup  p2
 	rest add interface to portgroup  leaf2-a  ${h5_intf0}  p2
 	rest add interface to portgroup  leaf2-b  ${h5_intf1}  p2
@@ -138,7 +138,7 @@ Verify broadcast traffic forwarding on the lag
     rest delete tenant  t1
     
 Verify broadcast forwarding with spine link failover
-	[Tags]  feature  run
+	[Tags]  feature  
 	rest add tenant  t1
 	rest add vns  t1  v1
 	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
@@ -196,7 +196,7 @@ Verify broadcast forwarding with edge port link enable/disable
     verify traffic rate  tx_rate  rx_rate  a  d
     rest disable fabric interface  leaf0-b  ${leaf0b_ixia_intf}
     rest verify fabric interface  leaf0-b  ${leaf0b_ixia_intf}
-    verify traffic rate  tx_rate  rx_rate  a  b
+    verify traffic rate negative  tx_rate  rx_rate  a  b
     verify traffic rate  tx_rate  rx_rate  a  d
     rest enable fabric interface  leaf0-b  ${leaf0b_ixia_intf}
     sleep  3
@@ -251,7 +251,7 @@ Verify Multicast forwarding on the lag
     rest delete tenant  t1
 
 verify unknown unicast forwarding on the lag with spine link failover
-	[Tags]  feature  run  
+	[Tags]  feature    
 	rest add tenant  t1
 	rest add vns  t1  v1
 	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
@@ -425,7 +425,7 @@ Master node reboot failover with broadcast traffic forwarding
 	
 
 Tear down config and topology
-	[Tags]  feature  run         
+	[Tags]  feature  run        
     delete fabric switch  
     rest delete portgroup  p1
     rest delete portgroup  p2
@@ -483,6 +483,12 @@ T5 test setup
 
 T5 test teardown
 	delete traffic
+	rest delete portgroup  p1
+	rest delete portgroup  p2
+	rest delete portgroup  p3
+	rest delete portgroup  p4
+	rest delete portgroup  p5
+	rest delete portgroup  p6
 	rest delete tenant  t1
 	rest clean switch interface
 	base test teardown

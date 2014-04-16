@@ -675,7 +675,7 @@ class T5(object):
         url = '/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch-name="%s"]?select=vlan-table' % (switch)
         c.rest.get(url)
         data = c.rest.content()
-        no_of_vlans = len(data)
+        no_of_vlans = len(data[0]["vlan-table"])
         url1 = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/vns' % ()
         c.rest.get(url1)
         data1 = c.rest.content()
@@ -699,8 +699,8 @@ class T5(object):
         url = '/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch-name="%s"]?select=port-table' % (switch)
         c.rest.get(url)
         data = c.rest.content()
-        for i in range(0, len(data)):
-            if ((data[i]["lag-id"]) == 0):
+        for i in range(0, len(data[0]["port-table"])):
+            if ((data[0]["port-table"][i]["lag-id"]) == 0):
                 helpers.test_failure("Lag-Id for the edge interface (switch=%s,interface=%s) is showing 0" % (switch, data[i]["port-num"]))
                 return False
             helpers.log("Proper Lag-Id added for All edge Interfaces")
@@ -720,17 +720,21 @@ class T5(object):
         data = c.rest.content()
         interface = re.sub("\D", "", intf)
         lag_id = []
-        for i in range(0, len(data)):
-            if data[i]["port-num"] == int(interface):
-                lag_id.append(data[i]["lag-id"])
+        for i in range(0, len(data[0]["port-table"])):
+            if str(data[0]["port-table"][i]["port-num"]) == str(interface):
+                lag_id.append(data[0]["port-table"][i]["lag-id"])
+            else:
+                continue
         url1 = '/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch-name="%s"]?select=vlan-xlate-table' % (switch)
         c.rest.get(url1)
         data1 = c.rest.content()
-        for i in range(0, len(data1)):
-            if data1[i]["port-num"] == lag_id[0]:
-                if str(data1[i]["vlan-id"]) == str(vlan):
+        for i in range(0, len(data1[0]["vlan-xlate-table"])):
+            if data1["vlan-xlate-table"][i]["port-num"] == lag_id[0]:
+                if str(data1["vlan-xlate-table"][i]["vlan-id"]) == str(vlan):
                     helpers.log("Vlan Translation table is creaetd properly for the given interface")
                     return True
+            else:
+                continue
         return False
 
     def rest_verify_forwarding_vlan_fabric_tag_members(self, switch):
@@ -751,20 +755,15 @@ class T5(object):
                 continue
             elif data[i]["type"] == "leaf" or data[i]["type"] == "spine":
                 list_fabric_interface.append(int(re.sub("\D", "", (data[i]["name"]))))
-        url1 = '/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch-name="%s"]?select=vlan-table' % (switch)
+        url1 = '/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch-name="%s"]?select=vlan-member-table' % (switch)
         c.rest.get(url1)
         data1 = c.rest.content()
-        list_tag_intf = []
-        for i in range(0, len(data1)):
-            for j in range(0, len(data1[i]["tagged-port"])):
-                if data1[i]["tagged-port"][j]["port-num"] not in list_tag_intf:
-                    list_tag_intf.append(data1[i]["tagged-port"][j]["port-num"])
-        helpers.log("%s,%s" % (list_fabric_interface, list_tag_intf))
-        list_common = list(set(list_fabric_interface).intersection(set(list_tag_intf)))
-        if len(list_fabric_interface) == len(list_common):
+        for i in range(0, len(data1[0]["vlan-member-table"])):
+                list_common = list(set(list_fabric_interface).intersection(set(data1[0]["vlan-member-table"][i]["tagged-port"])))
+                if len(list_fabric_interface) == len(list_common):
                     helpers.log("Pass:All fabric interfaces are in vlan as Tagged member")
                     return True
-        else:
+                else:
                     helpers.test_failure("Fail:All fabric interfaces are not in vlan as Tagged member")
                     return False
 
@@ -788,19 +787,20 @@ class T5(object):
         '''
         t = test.Test()
         c = t.controller('master')
-        url = '/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch-name="%s"]?select=vlan-table' % (switch)
+        url = '/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch-name="%s"]?select=vlan-member-table' % (switch)
         c.rest.get(url)
         data = c.rest.content()
         interface = re.sub("\D", "", intf)
-        for i in range(0, len(data)):
+        for i in range(0, len(data[0]["vlan-member-table"])):
             try:
-                value = data[i]["untagged-port"]
+                value = data[0]["vlan-member-table"][i]["untagged-port"]
             except KeyError:
                 continue
-            for j in range(0, len(data[i]["untagged-port"])):
-                    if data[i]["untagged-port"][j]["port-num"] == int(interface):
-                        helpers.log("Pass:Given interface is present in untag memberlist of vlan-table")
+            if str(interface) in data[0]["vlan-member-table"][i]["untagged-port"]:
+                        helpers.log("Pass:Given interface is present in untag memberlist of vlan-member-table")
                         return True
+            else:
+                continue
         return False
 
     def rest_verify_forwarding_vlan_edge_tag_members(self, switch, intf):
@@ -812,19 +812,20 @@ class T5(object):
         '''
         t = test.Test()
         c = t.controller('master')
-        url = '/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch-name="%s"]?select=vlan-table' % (switch)
+        url = '/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch-name="%s"]?select=vlan-member-table' % (switch)
         c.rest.get(url)
         data = c.rest.content()
         interface = re.sub("\D", "", intf)
-        for i in range(0, len(data)):
+        for i in range(0, len(data[0]["vlan-member-table"])):
             try:
-                value = data[i]["tagged-port"]
+                value = data[0]["vlan-member-table"][i]["tagged-port"]
             except KeyError:
                 continue
-            for j in range(0, len(data[i]["tagged-port"])):
-                if data[i]["tagged-port"][j]["port-num"] == int(interface):
-                    helpers.log("Pass:Given interface is present in untag memberlist of vlan-table")
+            if interface in data[0]["vlan-member-table"][i]["tagged-port"]:
+                    helpers.log("Pass:Given interface is present in tag memberlist of vlan-table")
                     return True
+            else:
+                continue
         return False
 
     def rest_verify_forwarding_layer2_table_untag(self, switch, intf, mac):
@@ -842,30 +843,33 @@ class T5(object):
         data = c.rest.content()
         interface = re.sub("\D", "", intf)
         lag_id = []
-        for i in range(0, len(data)):
-            if data[i]["port-num"] == int(interface):
-                lag_id.append(data[i]["lag-id"])
+        for i in range(0, len(data[0]["port-table"])):
+            if str(data[0]["port-table"][i]["port-num"]) == str(interface):
+                lag_id.append(data[0]["port-table"][i]["lag-id"])
                 # Get the vlan-id for the given interface
-        url1 = '/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch-name="%s"]?select=vlan-table' % (switch)
+            else:
+                continue
+        url1 = '/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch-name="%s"]?select=vlan-member-table' % (switch)
         c.rest.get(url1)
         data1 = c.rest.content()
         vlan_id = []
-        for i in range(0, len(data1)):
+        for i in range(0, len(data1[0]["vlan-member-table"])):
             try:
-                for j in range(0, len(data1[i]["untagged-port"])):
-                    if ((data1[i]["untagged-port"][j]["port-num"]) == int(interface)):
-                        vlan_id.append(data1[i]["vlan-id"])
+                    if int(interface) in (data1[0]["vlan-member-table"][i]["untagged-port"]):
+                        vlan_id.append(data1[0]["vlan-member-table"][i]["vlan-id"])
             except (KeyError):
                 continue
                     # Match the mac in forwarding table with specific lag_id and vlan_id
         url3 = '/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch-name="%s"]?select=l2-table' % (switch)
         c.rest.get(url3)
         data2 = c.rest.content()
-        for i in range(0, len(data2)):
-            if str(data2[i]["mac"]) == str(mac):
-                if data2[i]["port-num"] in lag_id and data2[i]["vlan-id"] in vlan_id:
+        for i in range(0, len(data2[0]["l2-table"])):
+            if str(data2[0]["l2-table"][i]["mac"]) == str(mac):
+                if data2[0]["l2-table"][i]["port-num"] in lag_id and data2[0]["l2-table"][i]["vlan-id"] in vlan_id:
                     helpers.log("Pass: Expected mac is present in the forwarding table with correct vlan and interface")
                     return True
+            else:
+                continue
 
         return False
 
@@ -884,32 +888,36 @@ class T5(object):
         data = c.rest.content()
         interface = re.sub("\D", "", intf)
         lag_id = []
-        for i in range(0, len(data)):
-            if data[i]["port-num"] == int(interface):
-                lag_id.append(data[i]["lag-id"])
+        for i in range(0, len(data[0]["port-table"])):
+            if str(data[0]["port-table"][i]["port-num"]) == str(interface):
+                lag_id.append(data[0]["port-table"][i]["lag-id"])
                 # Get the vlan-id for the given interface
-        url1 = '/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch-name="%s"]?select=vlan-table' % (switch)
+            else:
+                continue
+        url1 = '/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch-name="%s"]?select=vlan-member-table' % (switch)
         c.rest.get(url1)
         data1 = c.rest.content()
         vlan_id = []
-        for i in range(0, len(data1)):
+        for i in range(0, len(data1[0]["vlan-member-table"])):
             try:
-                value = data1[i]["tagged-port"]
+                value = data1[0]["vlan-member-table"][i]["tagged-port"]
             except KeyError:
                 continue
-            for j in range(0, len(data1[i]["tagged-port"])):
-                if (data1[i]["tagged-port"][j]["port-num"] == int(interface)):
-                    vlan_id.append(data1[i]["vlan-id"])
+                if int(interface) in data1[0]["vlan-member-table"][i]["tagged-port"]:
+                    vlan_id.append(data1[0]["vlan-member-table"][i]["vlan-id"])
                     # Match the mac in forwarding table with specific lag_id and vlan_id
-        helpers.log("%s" % vlan_id)
+                else:
+                    continue
         url3 = '/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch-name="%s"]?select=l2-table' % (switch)
         c.rest.get(url3)
         data2 = c.rest.content()
-        for i in range(0, len(data2)):
-            if str(data2[i]["mac"]) == str(mac):
-                if data2[i]["port-num"] == lag_id[0] and data2[i]["vlan-id"] == vlan_id[0]:
+        for i in range(0, len(data2[0]["l2-table"])):
+            if str(data2[0]["l2-table"][i]["mac"]) == str(mac):
+                if data2[0]["l2-table"][i]["port-num"] == lag_id[0] and data2[0]["l2-table"][i]["vlan-id"] == vlan_id[0]:
                     helpers.log("Pass: Expected mac is present in the forwarding table with correct vlan and interface")
                     return True
+            else:
+                continue
 
         return False
 
@@ -1509,18 +1517,18 @@ class T5(object):
             if data2[0]["fabric-lag"][i]["lag-type"] == "leaf-lag":
                 interface = re.sub("\D", "", data2[0]["fabric-lag"][i]["member"][0]["src-interface"])
                 peer_intf.append(int(interface))
+            else:
+                continue
         if len(peer_intf) != 0:
             if data1[0]["leaf-group"] == None:
-                for i in range(0, len(data)):
-                    for j in range(0, len(data[i]["port"])):
-                        if (data[i]["port"][j]["port-num"] == peer_intf[0]):
+                for i in range(0, len(data[0]["lag-table"])):
+                        if peer_intf[0] in data[0]["lag-table"][i]["port"]:
                             helpers.test_failure("Peer switch edge ports are not deleted from lag table")
                             return False
 
             else:
-                for i in range(0, len(data)):
-                    for j in range(0, len(data[i]["port"])):
-                        if (data[i]["port"][j]["port-num"]) == (peer_intf[0]):
+                for i in range(0, len(data[0]["lag-table"])):
+                        if peer_intf[0] in data[0]["lag-table"][i]["port"]:
                             helpers.log("Peer switch edge ports are properly added in forwarding table")
                             return True
             return False
@@ -1621,8 +1629,8 @@ class T5(object):
         '''
         t = test.Test()
         c = t.controller('master')
-        intf0 = int(re.sub("\D", "", intf0))
-        intf1 = int(re.sub("\D", "", intf1))
+        intf0 = (re.sub("\D", "", intf0))
+        intf1 = (re.sub("\D", "", intf1))
         url_a = '/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch-name="%s"]?select=port-table' % (switcha)
         c.rest.get(url_a)
         data = c.rest.content()
@@ -1631,12 +1639,17 @@ class T5(object):
         data1 = c.rest.content()
         lag_id_a = []
         lag_id_b = []
-        for i in range(0, len(data)):
-            if data[i]["port-num"] == intf0:
-                lag_id_a.append(data[i]["lag-id"])
-        for i in range(0, len(data1)):
-            if data[i]["port-num"] == intf1:
-                lag_id_b.append(data[i]["lag-id"])
+        for i in range(0, len(data[0]["port-table"])):
+            if str(data[0]["port-table"][i]["port-num"]) == str(intf0):
+                    helpers.log("adding the lag id=%s" % data[0]["port-table"][i]["lag-id"])
+                    lag_id_a.append(data[0]["port-table"][i]["lag-id"])
+            else:
+                continue
+        for i in range(0, len(data1[0]["port-table"])):
+            if str(data1[0]["port-table"][i]["port-num"]) == str(intf1):
+                lag_id_b.append(data1[0]["port-table"][i]["lag-id"])
+            else:
+                continue
         if lag_id_a[0] == lag_id_b[0]:
             helpers.log("Portgroup Lag id creation in forwarding table is correct for dual rack")
             return True
@@ -1668,20 +1681,20 @@ class T5(object):
         c.rest.get(url1)
         data1 = c.rest.content()
         if len(list_fabric_interface) != 0 or len(list_fabric_edge_interface) != 0:
-            for i in range(0, len(data1)):
-                if data1[i]["port-num"] in list_fabric_interface:
-                    if data1[i]["is-src-mac-check-disabled"] == True:
+            for i in range(0, len(data1[0]["port-table"])):
+                if data1[0]["port-table"][i]["port-num"] in list_fabric_interface:
+                    if data1[0]["port-table"][i]["is-src-mac-check-disabled"] == True:
                         helpers.log("Source Mac check is disabled on Fabric interfaces")
                         return True
                     else:
-                        helpers.test_failure("Source MAC check is enabled on Fabric Interface:%s" % data1[i]["port-num"])
+                        helpers.test_failure("Source MAC check is enabled on Fabric Interface:%s" % data1[0]["port-table"][i]["port-num"])
                         return False
-                elif data1[i]["port-num"] in list_fabric_edge_interface:
-                    if data1[i]["is-src-mac-check-disabled"] == False:
+                elif data1[0]["port-table"][i]["port-num"] in list_fabric_edge_interface:
+                    if data1[0]["port-table"][i]["is-src-mac-check-disabled"] == False:
                         helpers.log("Source MAC check is enabled on fabric edge interfaces")
                         return True
                     else:
-                        helpers.log("Source MAC check is disabled on fabric edge interface:%s" % data1[i]["port-num"])
+                        helpers.log("Source MAC check is disabled on fabric edge interface:%s" % data1[0]["port-table"][i]["port-num"])
                         return False
         return False
 
