@@ -180,6 +180,7 @@ class KVMOperations(object):
         latest_build_number = self._get_latest_jenkins_build_number(vm_type)
         latest_kvm_build_number = self._get_latest_kvm_build_number(vm_type, kvm_handle)
         if build_number is not None:
+            helpers.log("Build Number is provided resetting latest builds to %s" % build_number)
             latest_build_number = build_number
             latest_kvm_build_number = build_number
         file_name = None
@@ -313,7 +314,7 @@ class KVMOperations(object):
                     helpers.log("Scp'ing Latest BVS qcow file from jenkins to kvm Host..")
                     qcow_vm_path = self._scp_file_to_kvm_host(kvm_handle=kvm_handle,
                                                               remote_qcow_path=remote_qcow_bvs_path,
-                                                              vm_name=vm_name)
+                                                              vm_name=vm_name, build_number = build_number)
 
             helpers.log("Creating VM on KVM Host with Name : %s " % vm_name)
             self.create_vm_on_kvm_host(vm_type=vm_type,
