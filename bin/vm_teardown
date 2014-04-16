@@ -4,10 +4,9 @@ Wrapper Script to spwan cotroller VMs on KVM Machine
 '''
 import os
 import sys
-import time
 import getpass
 import argparse
-import robot  # import to force append local robot libraries than python installed packages
+import robot
 
 
 vmdk_name = "controller-bvs-2.0.7-SNAPSHOT.vmdk"
@@ -25,9 +24,10 @@ bigrobot_path = os.path.dirname(__file__) + '/..'
 exscript_path = bigrobot_path + '/vendors/exscript/src'
 sys.path.insert(0, bigrobot_path)
 sys.path.insert(1, exscript_path)
-print "Log messages are captured in /tmp/autobot_%s.log" % current_user
+# print "Log messages are captured in /tmp/autobot_%s.log" % current_user
 import autobot.helpers as helpers
 from keywords.KVMOperations import KVMOperations
+
 
 def usage():
     s = """\nUsage: vm_teardown <name>
@@ -38,42 +38,43 @@ $ vm_teardown \\
     print(s)
     sys.exit(1)
 
+
 def main(*args):
     args = parser.parse_args()
     kvm_op = KVMOperations()
-    if args.vm_list is not None:
-        helpers.summary_log("Reading VM names from give File : %s" % args.vm_list)
+    if args.vm_list:
+        helpers.summary_log("Reading VM names from give File : %s"
+                            % args.vm_list)
         lists = helpers.file_read_once(args.vm_list)
         vms = lists.split('\n')
-        for vm in vms[:-1]:
-            helpers.summary_log("Tearing Down VM: %s" % vm)
-            result = kvm_op.vm_teardown(kvm_host=kvm_host,
-                                vm_name=vm.strip(),
-                                kvm_user=kvm_user,
-                                kvm_password=kvm_pwd)
-            if result['status_code'] == True:
-                print "VM TearDown Success!!"
-            else:
-                print "VM TearDown Failure!!\n%s" % result['status_descr']
-            time.sleep(2) #sleep for jenkins run Teardowns
     else:
+        vms = vm_name
+
+    for vm in vms:
+        helpers.summary_log("Tearing Down VM: %s" % vm)
         result = kvm_op.vm_teardown(kvm_host=kvm_host,
-                                    vm_name=vm_name,
+                                    vm_name=vm.strip(),
                                     kvm_user=kvm_user,
                                     kvm_password=kvm_pwd)
         if result['status_code'] == True:
             print "VM TearDown Success!!"
         else:
             print "VM TearDown Failure!!\n%s" % result['status_descr']
+        time.sleep(2) #sleep for jenkins to run Teardowns
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument("vm_name", help="This name is used to delete VM in KVM Hosts maintained for QA")
-    parser.add_argument("--vm_list", help="Please provide a file name with list of vm's that need to teardown on KVM_HOST")
-    parser.add_argument("--kvm_host", help="Use this option to specify differnt KVM Host from defautl KVM Hosts maintained by QA Team")
+    parser.add_argument("vm_name", nargs='+',
+                        help=("List of VMs to tear down"))
+    parser.add_argument("--vm_list",
+                        help="File name with list of VMs to teardown")
+    parser.add_argument("--kvm_host",
+                        help=("Specify a KVM host which is different from the"
+                              " one maintained by QA"))
     args = parser.parse_args()
     vm_name = args.vm_name
-    if args.kvm_host is not None:
+    if args.kvm_host:
         kvm_host = args.kvm_host
     main()
 
