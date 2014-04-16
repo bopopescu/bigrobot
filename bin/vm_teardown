@@ -44,7 +44,7 @@ def main(*args):
         helpers.summary_log("Reading VM names from give File : %s" % args.vm_list)
         lists = helpers.file_read_once(args.vm_list)
         vms = lists.split('\n')
-        for vm in vms:
+        for vm in vms[:-1]:
             helpers.summary_log("Tearing Down VM: %s" % vm)
             result = kvm_op.vm_teardown(kvm_host=kvm_host,
                                 vm_name=vm,
