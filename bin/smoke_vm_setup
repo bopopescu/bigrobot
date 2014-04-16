@@ -106,7 +106,8 @@ def main(*args):
                                  qcow_path=args.qcow_path, ip=args.active_ip,
                                  netmask=args.netmask,
                                  vm_name=vm_name,
-                                 vm_host_name=vm_host_name)
+                                 vm_host_name=vm_host_name,
+                                 build_number = args.build_number)
     
     if active_vm['status_code'] == False:
         helpers.summary_log("VM setup failure on active vm!!\n%s"
@@ -134,7 +135,8 @@ def main(*args):
                                       netmask=args.netmask,
                                       vm_name=vm_backup_name,
                                       cluster_ip=args.active_ip,
-                                      vm_host_name=vm_host_name)
+                                      vm_host_name=vm_host_name,
+                                      build_number = args.build_number)
         helpers.log("Created Backup VM :\n%s" % standby_vm)
         if standby_vm['status_code'] == False:
             helpers.summary_log("VM setup failure on standby vm!!\n%s"
@@ -156,7 +158,8 @@ def main(*args):
                                       ip=args.mininet_ip,
                                       netmask=args.netmask,
                                       vm_name=vm_mininet_name,
-                                      vm_host_name=vm_host_name)
+                                      vm_host_name=vm_host_name,
+                                      build_number = '63')
         helpers.log("Created Mininet VM :\n%s" % mininet_vm)
         if mininet_vm['status_code'] == False:
             helpers.summary_log("VM setup failure on standby vm!!\n%s"
@@ -205,9 +208,11 @@ if __name__ == '__main__':
     parser.add_argument("--vm_type",
                         help="Please provide type as bvs/mininet")
     parser.add_argument("--mininet_vm",
-                        help="Please provide type as bvs/mininet")
+                        help="This will be used as mininet_vm name")
     parser.add_argument("--mininet_ip",
-                        help="Please provide type as bvs/mininet")
+                        help="This will be used as mininet vm ip")
+    parser.add_argument("--build_number",
+                        help="This build will be picked from jenkins")
     main()
     print "Success!!!"
     sys.exit(0)

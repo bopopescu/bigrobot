@@ -35,9 +35,6 @@ bigrobot_path = os.path.dirname(__file__) + '/..'
 exscript_path = bigrobot_path + '/vendors/exscript/src'
 sys.path.insert(0, bigrobot_path)
 sys.path.insert(1, exscript_path)
-print("Detailed log can be tailed at /tmp/robot.log  or /tmp/autobot_%s.log"
-      % current_user)
-
 import autobot.helpers as helpers
 from keywords.KVMOperations import KVMOperations
 import autobot.test as test

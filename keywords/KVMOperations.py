@@ -159,7 +159,7 @@ class KVMOperations(object):
                 return 0
 
 
-    def _scp_file_to_kvm_host(self, vm_name=None, remote_qcow_path=None, kvm_handle=None, vm_type="bvs"):
+    def _scp_file_to_kvm_host(self, vm_name=None, remote_qcow_path=None, kvm_handle=None, vm_type="bvs", build_number = None):
         # for getting the latest jenkins build from jenkins server kvm_host ssh key should be copied to jenkins server
         output = kvm_handle.bash('uname -a')
         helpers.log("KVM Host Details : \n %s" % output['content'])
@@ -179,6 +179,10 @@ class KVMOperations(object):
         helpers.log("Executing Scp cmd to copy latest bvs vmdk to KVM Server")
         latest_build_number = self._get_latest_jenkins_build_number(vm_type)
         latest_kvm_build_number = self._get_latest_kvm_build_number(vm_type, kvm_handle)
+        if build_number is not None:
+            helpers.log("Build Number is provided resetting latest builds to %s" % build_number)
+            latest_build_number = build_number
+            latest_kvm_build_number = build_number
         file_name = None
         if vm_type == 'bvs':
             file_name = "controller-bvs-%s.qcow2" % latest_build_number
@@ -186,6 +190,8 @@ class KVMOperations(object):
             file_name = "mininet-%s.qcow2" % latest_build_number
         helpers.log("Latest Build Number on KVM Host: %s" % latest_kvm_build_number)
         helpers.log("Latest Build Number on Jenkins: %s" % latest_build_number)
+
+            
         if int(latest_kvm_build_number) == int(latest_build_number):
             helpers.log("Skipping SCP as the latest build on jenkins server did not change from the latest on KVM Host")
 
@@ -267,6 +273,7 @@ class KVMOperations(object):
             qcow_path = kwargs.get("qcow_path", None)
             qcow_vm_path = None
             ip = kwargs.get("ip", None)
+            build_number = kwargs.get("build_number", None)
             if ip == 'None':
                 ip = None
             cluster_ip = kwargs.get("cluster_ip", None)
@@ -302,12 +309,12 @@ class KVMOperations(object):
                     helpers.log("Scp'ing Latest Mininet qcow file from jenkins to kvm Host..")
                     qcow_vm_path = self._scp_file_to_kvm_host(kvm_handle=kvm_handle,
                                                               remote_qcow_path=remote_qcow_mininet_path, vm_type='mininet',
-                                                              vm_name = vm_name)
+                                                              vm_name = vm_name, build_number = build_number)
                 else:
                     helpers.log("Scp'ing Latest BVS qcow file from jenkins to kvm Host..")
                     qcow_vm_path = self._scp_file_to_kvm_host(kvm_handle=kvm_handle,
                                                               remote_qcow_path=remote_qcow_bvs_path,
-                                                              vm_name=vm_name)
+                                                              vm_name=vm_name, build_number = build_number)
 
             helpers.log("Creating VM on KVM Host with Name : %s " % vm_name)
             self.create_vm_on_kvm_host(vm_type=vm_type,
@@ -388,7 +395,7 @@ class KVMOperations(object):
         n = t.node(node)
 
         helpers.log("Sleeping 30 sec from mininet to come up..")
-        time.sleep(30)
+        time.sleep(45)
         if not ip:
             ip = n.ip()
 
