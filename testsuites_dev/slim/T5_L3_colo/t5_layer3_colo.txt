@@ -348,50 +348,6 @@ T5 base suite setup
 	Should Be True									${result}
 	${result} = 									CLI verify controller       s4							c2
 	Should Be True									${result}
-	${result} = 									CLI verify controller       s5							c1
-	Should Be True									${result}
-	${result} = 									CLI verify controller       s5							c2
-	Should Be True									${result}
-	${result} = 									CLI verify controller       s6							c1
-	Should Be True									${result}
-	${result} = 									CLI verify controller       s6							c2
-	Should Be True									${result}		
-  	# REST add switch  								spine0
-  	# REST add dpid  									spine0  					${spine0_dpid}
-  	# REST add fabric role  							spine0  					spine
-  	# REST add switch  								spine1	
-  	# REST add dpid  									spine1  					${spine1_dpid}
-  	# REST add fabric role						  	spine1  					spine
-  	# REST add switch  								leaf0a
-  	# REST add dpid  									leaf0a  					${leaf0a_dpid}
-  	# REST add fabric role  							leaf0a  					leaf
-  	# REST add switch  								leaf0b
-  	# REST add dpid  									leaf0b  					${leaf0b_dpid}
-  	# REST add fabric role  							leaf0b  					leaf
-  	# REST add switch  								leaf1a
-  	# REST add dpid  									leaf1a  					${leaf1a_dpid}
-  	# REST add fabric role  							leaf1a  					leaf
- 	# REST add switch  								leaf1b
-  	# REST add dpid  									leaf1b  					${leaf1b_dpid}
-  	# REST add fabric role  							leaf1b  					leaf
-  	# REST add switch  								leaf2a
-  	# REST add dpid  									leaf2a  					${leaf2a_dpid}
-  	# REST add fabric role  							leaf2a  					leaf
- 	# REST add switch  								leaf2b
-  	# REST add dpid  									leaf2b  					${leaf2b_dpid}
-  	# REST add fabric role  							leaf2b  					leaf  	
-	# REST add portgroup								${leaf0_pc1}
-	# REST add portgroup								${leaf0_pc2}
-	# REST add portgroup								${leaf0_pc3}
-	# REST add portgroup								${leaf0_pc4}
-	# REST add portgroup								${leaf0_pc5}
-	# REST add portgroup								${leaf0_pc6}	
-	# REST add portgroup								${leaf1_pc1}
-	# REST add portgroup								${leaf1_pc2}
-	# REST add portgroup								${leaf1_pc3}
-	# REST add portgroup								${leaf1_pc4}
-	# REST add portgroup								${leaf2_pc1}
-	# REST add portgroup								${leaf2_pc2}
 	REST add portgroup								${leaf0_pc1}
 	REST add portgroup								${leaf0_pc2}
 	REST add portgroup								${leaf1_pc1}
@@ -399,16 +355,6 @@ T5 base suite setup
 	REST add portgroup								${leaf2_pc1}
 	REST add portgroup								${leaf2_pc2}
 		
-	
-
-#	REST add leaf group								leaf0a						leaf0
-#	REST add leaf group								leaf0b						leaf0
-#	REST add leaf group								leaf1a						leaf1
-#	REST add leaf group								leaf1b						leaf1
-#	REST add leaf group								leaf2a						leaf2
-#	REST add leaf group								leaf2b						leaf2
-		
-
   
 T5 base suite teardown
 	delete fabric switch  
