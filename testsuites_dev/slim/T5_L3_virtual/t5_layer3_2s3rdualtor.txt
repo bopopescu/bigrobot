@@ -1069,7 +1069,7 @@ Change vns ip address with L3 intra tenant traffic with dynamic endpoints
 	${loss}=  									mininet l3 ping		${bm4_name}		10.10.99.11	
 	Should Be True  							${loss} == 0
 	REST add vns ip  							${tenant1_name}  	${vns1_2}  		${vns1_ip2}	  		${vns1_subnet2} 
-	sleep										1	
+	sleep										5	
 	${loss}=  									mininet l3 ping		${bm4_name}		10.10.99.11	
 	Should Be True  							${loss} == 100
 	mininet host ipcfg   						${bm1_name}			${bm1_bondif}	${bm1_ip}			${vns1_subnet2}

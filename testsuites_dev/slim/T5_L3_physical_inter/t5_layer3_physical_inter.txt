@@ -87,6 +87,7 @@ Overlapping IP with vlsm with and without private keyword
 
 One public IP and multiple private IP
 
+Verify private IP is able to communicate with other vns in the same tenant
 
 
 Controller HA failover via CLI
