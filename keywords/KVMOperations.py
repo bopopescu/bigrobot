@@ -118,6 +118,7 @@ class KVMOperations(object):
         kvm_handle = kwargs.get("kvm_handle", None)
         qcow_path = kwargs.get("qcow_path", None)
         vm_name = kwargs.get("vm_name", None)
+        qcow_path = qcow_path.replace(" ", "\ ")
         kvm_handle.bash("sudo cp %s /var/lib/libvirt/images/%s.qcow2" % (qcow_path, vm_name))
         kvm_qcow_path = "/var/lib/libvirt/images/%s.qcow2" % vm_name
         helpers.log("Success copying image !!")
