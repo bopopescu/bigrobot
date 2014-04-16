@@ -435,8 +435,100 @@ class T5Utilities(object):
         split = re.split('\n',c_result['content'])
         pidList = split[1:-1]
         return pidList
-    
-    
+
+
+    def cli_run(self, command, node='master', cmd_timeout=5):
+	''' Function that runs specified CLI command on given node
+	    with given timeout. It searches for error messages
+	    in command's return value
+	    command - CLI command to run
+	    node - node on which command will be run
+	    cmd_timeout - time for prompt to come back
+        '''
+        helpers.test_log("Running command: %s on node %s" % (command, node))
+        t = test.Test()
+        c = t.controller(node)
+        try:
+            c.cli(command, timeout=cmd_timeout)
+            if "Error" in c.cli_content():
+                helpers.test_failure(c.cli_content())
+                return False
+        except:
+            helpers.test_failure(c.cli_content())
+            return False
+        else:
+            return True
+
+
+
+    def cli_run_and_verify_output(self, command, expected, flag='True', node_type='controller', node='master', cmd_timeout=5):
+	''' Function that runs specified CLI command on given node
+	    with given timeout. It checks if expected string shows up
+	    in command's return value
+	    command - CLI command to run
+	    expected - the expected string
+	    flag - flag to specify whether expected value is desired (true) or no (false)
+	    node_type - controller or switch
+	    node - node on which command will be run
+	    cmd_timeout - time for prompt to come back
+        '''
+        helpers.test_log("Running command: %s on node %s" % (command, node))
+        t = test.Test()
+        if node_type == 'controller':
+            c = t.controller(node)
+        if node_type == 'switch':
+            c = t.switch(node)
+        try:
+            c.send(command)
+            c.expect([c.get_prompt()], timeout=cmd_timeout)
+            if "Error" in c.cli_content():
+                helpers.test_failure(c.cli_content())
+                return False
+            content = c.cli_content()
+            content = helpers.strip_cli_output(content)
+            helpers.log("Length of contents is %s" % str(len(content)))
+            if not content:
+                if flag=='True':
+                    helpers.log("Failure: expecting \n%s but the output is empty" % (expected, content))
+                    helpers.test_failure(content, expected)
+                    return False
+                else:
+                    helpers.log("Not expecting \n%s and the output is empty" % expected)
+                    return True
+
+            helpers.log("Expected result is %s" % str(helpers.any_match(content, expected)))
+
+            if expected in content and flag=='True':
+                helpers.log("Expecting %s in \n%s \nand got it" % (expected, content))
+                return True
+            elif (expected not in content) and flag=='False':
+                helpers.log("Not expecting %s in \n%s \nand did not get it" % (expected, content))
+                return True
+            else:
+                helpers.log("Failure: expecting %s in \n%s \nto be %s" % (expected, content, flag))
+                helpers.test_failure(content, expected)
+                return False
+        except:
+            helpers.test_failure(c.cli_content())
+            return False
+        else:
+            return True
+
+    def cli_get_session_hash(self):
+	''' Function that returns hash value of session id'''
+        helpers.test_log("Getting hash of sesison id")
+        t = test.Test()
+        c = t.controller('master')
+        content = c.config("show session")['content']
+        output = helpers.strip_cli_output(content)
+        lines = helpers.str_to_list(output)
+        for i,line in enumerate(lines):
+            if '*' in line:
+                line = line.split()
+                helpers.test_log("Session hash is %s" % line[2])
+                return line[2]
+        return None
+
 
 ''' Following class will perform T5 platform related multithreading activities
     Instantiating this class is done by functions reside in T5Platform. 
