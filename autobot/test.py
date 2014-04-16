@@ -906,6 +906,7 @@ class Test(object):
                                  % (c.ip(), openflow_port))
                     else:
                         n.config("controller %s" % c.ip())
+            n.config("copy running-config startup-config")
 
     def teardown_switch(self, name):
         """

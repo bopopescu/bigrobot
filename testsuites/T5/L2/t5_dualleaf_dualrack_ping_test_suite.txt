@@ -28,6 +28,13 @@ ${bm2_intf1}  leaf1b-eth8
 
 * Test Case 
 
+basic cli show commands test case
+   [Tags]  smoke  sanity
+   cli  c1  show version
+   cli  c1  show running-config
+   cli  c1  show cluster
+   cli  c1  show switch
+   
 add Fabric setup Dual Rack Dual Leaf 
    [Tags]  smoke  sanity
    sleep  5
