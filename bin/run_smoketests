@@ -32,11 +32,11 @@ if [ ! -x "./gobot" ]; then
 fi
 
 for suite in `echo $testsuites`; do
-    ./bigrobot_smoke_wrapper.py $suite
+    ./bigrobot_smoke_wrapper.py "$suite"
 done
 
 # Generate BigRobot log/report.
-(cd $testlogs_path; ../bin/bigrobot_log_gen)
+(cd "$testlogs_path"; ../bin/bigrobot_log_gen)
 
 # Process test results - get a count of total tests PASSED/FAILED.
 
