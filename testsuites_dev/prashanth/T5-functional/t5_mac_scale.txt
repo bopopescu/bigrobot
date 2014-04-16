@@ -268,14 +268,28 @@ Add 4k static endpoints and check the forwarding
     verify traffic rate  tx_rate  rx_rate  c  a
     stop traffic  ${stream}
 	    
+Add 8k static endpoints and check the forwarding
+	[Tags]  scaling  
+	rest add endpoint scale  t1  v1  ${mac1}  a  leaf0-a  ${leaf0a_ixia_intf}  -1  4000
+  	rest add endpoint scale  t1  v1  ${mac2}  c  leaf1-a  ${leaf1a_ixia_intf}  -1  4000
+	sleep  2
+	rest verify endpoints in vns  v1  8000
+	${stream}=             L3 add  no_arp=True  flow=a<->c  src_mac=00:00:05:00:00:01  dst_mac=00:00:06:00:00:01  src_cnt=4000  dst_cnt=4000  frame_rate=1000  frame_size=68  name=a_c_flow
+    start traffic  ${stream}
+    sleep  3
+    verify traffic rate  tx_rate  rx_rate  a  c
+    verify traffic rate  tx_rate  rx_rate  c  a
+    stop traffic  ${stream}
+
 Add 16k static endpoints and check the forwarding
 	[Tags]  scaling
   	rest add endpoint scale  t1  v1  ${mac1}  a  leaf0-a  ${leaf0a_ixia_intf}  -1  8000
   	rest add endpoint scale  t1  v1  ${mac2}  c  leaf1-a  ${leaf1a_ixia_intf}  -1  8000
 	sleep  2
 	rest verify endpoints in vns  v1  16000
-	${stream}=             L3 add  no_arp=True  flow=a<->c  src_mac=00:00:05:00:00:01  dst_mac=00:00:06:00:00:01  src_cnt=8000  dst_cnt=8000  frame_rate=8000  frame_size=68  name=a_c_flow
+	${stream}=             L3 add  no_arp=True  flow=a<->c  src_mac=00:00:05:00:00:01  dst_mac=00:00:06:00:00:01  src_cnt=8000  dst_cnt=8000  frame_rate=1000  frame_size=68  name=a_c_flow
     start traffic  ${stream}
+    sleep  20  
     verify traffic rate  tx_rate  rx_rate  a  c
     verify traffic rate  tx_rate  rx_rate  c  a
     stop traffic  ${stream}
