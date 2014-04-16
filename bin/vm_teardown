@@ -47,7 +47,7 @@ def main(*args):
         for vm in vms[:-1]:
             helpers.summary_log("Tearing Down VM: %s" % vm)
             result = kvm_op.vm_teardown(kvm_host=kvm_host,
-                                vm_name=vm,
+                                vm_name=vm.strip(),
                                 kvm_user=kvm_user,
                                 kvm_password=kvm_pwd)
             if result['status_code'] == True:
