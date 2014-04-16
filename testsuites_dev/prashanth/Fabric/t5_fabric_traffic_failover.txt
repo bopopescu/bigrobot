@@ -33,7 +33,7 @@ Setup Three Rack Dual Leaf Topology
 	rest verify fabric link 	
 
 Spine Link Failover/back Test from leaf0-a untagged packet(Using IXIA)
-    [Tags]  feature  run 
+    [Tags]  feature  
     rest add tenant  t1
     rest add vns  t1  v1
     rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
@@ -60,7 +60,7 @@ Spine Link Failover/back Test from leaf0-a untagged packet(Using IXIA)
     rest delete tenant  t1               
        
 Spine Link Failover/back test from leaf0-b tagged packet 
-	[Tags]  feature  run   
+	[Tags]  feature   
 	rest add tenant  t2
     rest add vns  t2  v2
     rest add interface to vns  t2  v2  leaf0-b  ${leaf0b_ixia_intf}  100
@@ -114,7 +114,7 @@ Peer link failover between leaf1a to leaf1b
     rest delete tenant  t2 
 
 Traffic Test between the 2 leaf with single peer link
-	[Tags]  feature  run    
+	[Tags]  feature      
 	rest add tenant  t1
     rest add vns  t1  v2
     rest add interface to vns  t1  v2  leaf0-a  ${leaf0a_ixia_intf}  200
@@ -135,7 +135,7 @@ Traffic Test between the 2 leaf with single peer link
     rest delete tenant  t1 
 
 Reboot leaf switch with dual Host connected through lacp (Host5 to Host4)
-	[Tags]  feature 
+	[Tags]  feature  run 
 	rest add tenant  t1
 	rest add vns  t1  v1
 	rest add portgroup  p4 
@@ -173,7 +173,7 @@ Reboot leaf switch with dual Host connected through lacp (Host5 to Host4)
    bash execute command  leaf2-b  ofad-ctl autoneg 24
   
 Host Link Failover test with Host6 in Rack2 to Host 4 in Rack1
-	[Tags]  feature    
+	[Tags]  feature  run    
 	rest add tenant  t1
 	rest add vns  t1  v1
 	rest add portgroup  p4 
@@ -214,7 +214,7 @@ Host Link Failover test with Host6 in Rack2 to Host 4 in Rack1
     rest delete portgroup  p4  
 
 change portgroup from lacp to static and verify the forwarding
-	[Tags]  feature
+	[Tags]  feature  run
 	rest add tenant  t1
 	rest add vns  t1  v1
 	rest add portgroup  p4 

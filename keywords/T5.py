@@ -544,7 +544,7 @@ class T5(object):
                     if str(data[i]["vns"]) == vns:
                         if str(data[i]["attachment-point"]["vlan"]) == str(vlan):
                             if (data[i]["mac"] == str(mac)) :
-                                if (data[i]["attachment-point"]["name"] == switch) :
+                                if (data[i]["attachment-point"]["switch"] == switch) :
                                     if (data[i]["attachment-point"]["interface"] == str(intf)) :
                                         helpers.log("Expected endpoint are added data matches is %s" % data[i]["mac"])
                                         return True
@@ -676,11 +676,12 @@ class T5(object):
         c.rest.get(url)
         data = c.rest.content()
         no_of_vlans = len(data[0]["vlan-table"])
+        no_of_user_vlan = int(no_of_vlans) - 1
         url1 = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/vns' % ()
         c.rest.get(url1)
         data1 = c.rest.content()
         no_of_vns = len(data1)
-        if (int(no_of_vns) == int(no_of_vlans)):
+        if (int(no_of_vns) == int(no_of_user_vlan)):
                 helpers.log("Vlan Entries are present in forwarding table Actual:%d = Expected:%d" % (int(no_of_vns), int(no_of_vlans)))
                 return True
         else:
@@ -855,7 +856,7 @@ class T5(object):
         vlan_id = []
         for i in range(0, len(data1[0]["vlan-member-table"])):
             try:
-                    if int(interface) in (data1[0]["vlan-member-table"][i]["untagged-port"]):
+                    if str(interface) in (data1[0]["vlan-member-table"][i]["untagged-port"]):
                         vlan_id.append(data1[0]["vlan-member-table"][i]["vlan-id"])
             except (KeyError):
                 continue
@@ -868,6 +869,8 @@ class T5(object):
                 if data2[0]["l2-table"][i]["port-num"] in lag_id and data2[0]["l2-table"][i]["vlan-id"] in vlan_id:
                     helpers.log("Pass: Expected mac is present in the forwarding table with correct vlan and interface")
                     return True
+                else:
+                    helpers.log("Fail: Expected mac is not present in forwarding table with correct vlan and interface")
             else:
                 continue
 
@@ -903,7 +906,7 @@ class T5(object):
                 value = data1[0]["vlan-member-table"][i]["tagged-port"]
             except KeyError:
                 continue
-                if int(interface) in data1[0]["vlan-member-table"][i]["tagged-port"]:
+                if str(interface) in data1[0]["vlan-member-table"][i]["tagged-port"]:
                     vlan_id.append(data1[0]["vlan-member-table"][i]["vlan-id"])
                     # Match the mac in forwarding table with specific lag_id and vlan_id
                 else:
@@ -913,9 +916,12 @@ class T5(object):
         data2 = c.rest.content()
         for i in range(0, len(data2[0]["l2-table"])):
             if str(data2[0]["l2-table"][i]["mac"]) == str(mac):
-                if data2[0]["l2-table"][i]["port-num"] == lag_id[0] and data2[0]["l2-table"][i]["vlan-id"] == vlan_id[0]:
+                if data2[0]["l2-table"][i]["port-num"] in lag_id and data2[0]["l2-table"][i]["vlan-id"] in vlan_id:
                     helpers.log("Pass: Expected mac is present in the forwarding table with correct vlan and interface")
                     return True
+                else:
+                    helpers.log("Fail:Expected mac is not present in the forwarding table with correct vlan and interface")
+                    return False
             else:
                 continue
 
@@ -1031,10 +1037,10 @@ class T5(object):
         c = t.controller('master')
         frame_cnt = int(frame_cnt)
         vrange = int(vrange)
-        url = '/api/v1/data/controller/applications/bvs/info/stats/vns-stats/vns[vns="%s"][tenant="%s"]?select=counter' % (vns, tenant)
+        url = '/api/v1/data/controller/applications/bvs/info/stats/vns-stats/vns[vns-name="%s"][tenant-name="%s"]?select=counter' % (vns, tenant)
         c.rest.get(url)
         data = c.rest.content()
-        if data[0]["tenant"] == tenant and data[0]["vns"] == vns:
+        if data[0]["tenant-name"] == tenant and data[0]["vns-name"] == vns:
                     if (int(data[0]["counter"]["rx-packet"]) >= (frame_cnt - vrange)) and (int(data[0]["counter"]["rx-packet"]) <= (frame_cnt + vrange)):
                         helpers.log("Pass: Counters value Expected:%d, Actual:%d" % (frame_cnt, int(data[0]["counter"]["rx-packet"])))
                         return True
@@ -1051,7 +1057,7 @@ class T5(object):
         '''
         t = test.Test()
         c = t.controller('master')
-        url = '/api/v1/data/controller/applications/bvs/info/stats/vns-stats/vns[vns="%s"][tenant="%s"]?select=rate' % (vns, tenant)
+        url = '/api/v1/data/controller/applications/bvs/info/stats/vns-stats/vns[vns-name="%s"][tenant-name="%s"]?select=rate' % (vns, tenant)
         frame_rate = int(frame_rate)
         vrange = int(vrange)
         try:
@@ -1059,7 +1065,7 @@ class T5(object):
         except:
             return False
         data = c.rest.content()
-        if data[0]["tenant"] == tenant and data[0]["vns"] == vns:
+        if data[0]["tenant-name"] == tenant and data[0]["vns-name"] == vns:
             if (int(data[0]["rate"]["rx-packet-rate"]) >= (frame_rate - vrange)) and (int(data[0]["rate"]["rx-packet-rate"]) <= (frame_rate + vrange)):
                 helpers.log("Pass: Rate value Expected:%d, Actual:%d" % (frame_rate, int(data[0]["rate"]["rx-packet-rate"])))
                 return True
@@ -1078,10 +1084,10 @@ class T5(object):
         c = t.controller('master')
         frame_cnt = int(frame_cnt)
         vrange = int(vrange)
-        url = '/api/v1/data/controller/applications/bvs/info/stats/vns-stats/vns[vns="%s"][tenant="%s"]?select=counter' % (vns, tenant)
+        url = '/api/v1/data/controller/applications/bvs/info/stats/vns-stats/vns[vns-name="%s"][tenant-name="%s"]?select=counter' % (vns, tenant)
         c.rest.get(url)
         data = c.rest.content()
-        if data[0]["tenant"] == tenant and data[0]["vns"] == vns:
+        if data[0]["tenant-name"] == tenant and data[0]["vns-name"] == vns:
                     if (int(data[0]["counter"]["tx-packet"]) >= (frame_cnt - vrange)) and (int(data[0]["counter"]["tx-packet"]) <= (frame_cnt + vrange)):
                         helpers.log("Pass: Counters value Expected:%d, Actual:%d" % (frame_cnt, int(data[0]["counter"]["tx-packet"])))
                         return True
@@ -1098,12 +1104,12 @@ class T5(object):
         '''
         t = test.Test()
         c = t.controller('master')
-        url = '/api/v1/data/controller/applications/bvs/info/stats/vns-stats/vns[vns="%s"][tenant="%s"]?select=rate' % (vns, tenant)
+        url = '/api/v1/data/controller/applications/bvs/info/stats/vns-stats/vns[vns-name="%s"][tenant-name="%s"]?select=rate' % (vns, tenant)
         frame_rate = int(frame_rate)
         vrange = int(vrange)
         c.rest.get(url)
         data = c.rest.content()
-        if data[0]["tenant"] == tenant and data[0]["vns"] == vns:
+        if data[0]["tenant-name"] == tenant and data[0]["vns-name"] == vns:
             if (int(data[0]["rate"]["tx-packet-rate"]) >= (frame_rate - vrange)) and (int(data[0]["rate"]["tx-packet-rate"]) <= (frame_rate + vrange)):
                 helpers.log("Pass: Rate value Expected:%d, Actual:%d" % (frame_rate, int(data[0]["rate"]["tx-packet-rate"])))
                 return True
