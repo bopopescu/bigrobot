@@ -785,6 +785,32 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
             #return c.rest.content()
             return True
 
+    def rest_delete_policy(self, tenant, polname):
+        ''' Deleting a tenant policy
+            Input:
+                    'tenant'        tenant name
+                    'polname'        policy name to be deleted
+                    
+            Return: treu if deletetion successful, else false
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        
+        helpers.test_log("To be deleted: Input arguments: tenant = %s policy name = %s  " % (tenant, polname ))
+        
+        #url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/virtual-router/vns-interfaces' % (tenant)
+        #url_delete = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/virtual-router/policy-lists[name="%s"] {}'
+        url_delete_polname = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/virtual-router/policy-lists[name="%s"]' % (tenant, polname)
+        try:
+            c.rest.delete(url_delete_polname, {})
+        except:
+            #helpers.test_failure(c.rest.error())
+            return False
+        else: 
+            #helpers.test_log("Output: %s" % c.rest.result_json())
+            #return c.rest.content()
+            return True
+
 
     def rest_apply_policy_on_vns(self, tenant, vnsname, polname):
         '''Create a tenant policy
@@ -814,6 +840,35 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
             #return c.rest.content()
             return True
 
+    def rest_remove_policy_on_vns(self, tenant, vnsname, polname):
+        '''Remove a tenant policy
+        
+            Input:
+                `tenant`        tenant name
+                `vnsname`        vns name
+                `polname`        name of policy
+        
+            Return: true if configuration is successful, false otherwise
+        '''
+        
+        t = test.Test()
+        c = t.controller('master')
+        
+        helpers.test_log("Input arguments: tenant = %s vns name = %s policy name = %s  " % (tenant, vnsname, polname ))
+        
+        #url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/virtual-router/vns-interfaces' % (tenant)
+        url_remove_policy = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/virtual-router/vns-interfaces[vns-name="%s"]/inbound-policy-name' % (tenant, vnsname)
+        try:
+            c.rest.delete(url_remove_policy, {})
+        except:
+            #helpers.test_failure(c.rest.error())
+            return False
+        else: 
+            #helpers.test_log("Output: %s" % c.rest.result_json())
+            #return c.rest.content()
+            return True
+
+
     def rest_apply_policy_on_tenant(self, tenant, polname, intf="system"):
         '''Create a tenant policy
         
@@ -834,6 +889,34 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
         url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/virtual-router/tenant-interfaces[tenant-name="%s"]' % (tenant, intf)
         try:
             c.rest.patch(url, {"inbound-policy-name": polname})
+        except:
+            #helpers.test_failure(c.rest.error())
+            return False
+        else: 
+            #helpers.test_log("Output: %s" % c.rest.result_json())
+            #return c.rest.content()
+            return True
+
+    def rest_remove_policy_on_tenant(self, tenant, polname, intf="system"):
+        '''Remove a tenant policy
+        
+            Input:
+                `tenant`        tenant name
+                `vnsname`        vns name
+                `polname`        name of policy
+        
+            Return: true if configuration is successful, false otherwise
+        '''
+        
+        t = test.Test()
+        c = t.controller('master')
+        
+        helpers.test_log("Input arguments: tenant = %s interface = %s policy name = %s  " % (tenant, intf, polname ))
+        
+        #url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/virtual-router/vns-interfaces' % (tenant)
+        url_remove_policy = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/virtual-router/tenant-interfaces[tenant-name="%s"]/inbound-policy-name' % (tenant, intf)
+        try:
+            c.rest.delete(url_remove_policy, {})
         except:
             #helpers.test_failure(c.rest.error())
             return False

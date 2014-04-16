@@ -1662,7 +1662,7 @@ class T5Platform(object):
     
     
     
-    def cli_take_snapshot(self,node='master', run_config=None,fabric_switch=None,filepath=None):
+    def cli_take_snapshot(self,node='master', run_config=None, local_node=None, fabric_switch=None,filepath=None):
         ''' 
           take snapshot of the system, can only take snapshot one by one  
           Author: Mingtao
@@ -1691,6 +1691,8 @@ class T5Platform(object):
             content = '\n'.join(config)
             helpers.log("********config :************\n%s" % content)  
             new_content = re.sub(r'\s+hashed-password.*$','\n  remove-passwd',content,flags=re.M)  
+            if local_node is None:
+                new_content = re.sub(r'local node.*! user','\n  remove-local-node',new_content,flags=re.DOTALL)               
             helpers.log("********config after remove passwd :************\n%s" % new_content)                          
             return  new_content
         if fabric_switch: 
@@ -3188,3 +3190,47 @@ class T5Platform(object):
         return dfinfo[directory]['usedpercent']
 
 
+
+    def rest_test_path(self, **kwargs):
+        
+        t = test.Test()
+        c = t.controller('master')
+        
+        
+        url = '/api/v1/data/controller/applications/bvs/test/path/setup-result'
+        
+        if(kwargs.get('test-name')):
+            url = url + '[test-name="%s"]' % (kwargs.get('test-name'))
+        if(kwargs.get('timeout')):
+            url = url + '[timeout="%s"]' % (kwargs.get('timeout'))
+        if(kwargs.get('dst-vns')):
+            url = url + '[dst-vns="%s"]' % (kwargs.get('dst-vns'))
+        if(kwargs.get('dst-tenant')):
+            url = url + '[dst-tenant="%s"]' % (kwargs.get('dst-tenant'))
+        if(kwargs.get('ip-protocol')):
+            url = url + '[ip-protocol="%s"]' % (kwargs.get('ip-protocol'))
+        if(kwargs.get('src-ip')):
+            url = url + '[src-ip="%s"]' % (kwargs.get('src-ip'))
+        if(kwargs.get('src-vns')):
+            url = url + '[src-vns="%s"]' % (kwargs.get('src-vns'))
+        if(kwargs.get('dst-ip')):
+            url = url + '[dst-ip="%s"]' % (kwargs.get('dst-ip'))
+        if(kwargs.get('src-tenant')):
+            url = url + '[src-tenant="%s"]' % (kwargs.get('src-tenant'))
+            
+        
+        c.rest.get(url)
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        

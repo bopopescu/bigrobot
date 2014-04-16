@@ -7,7 +7,8 @@
 #exit 0
 
 testsuites="\
-testsuites_dev/vui/test_robot \
+testsuites/T5/L2/t5_singleleaf_dualrack_ping_test_suite \
+testsuites/T5/L2/t5_dualleaf_dualrack_ping_test_suite \
 "
 
 mesg() {
@@ -24,23 +25,18 @@ testlogs_path=../testlogs
 
 timestamp=$(date "+%Y-%m-%d,%H%M%S")
 
-mesg "$0 (`pwd`): Pre-merge execution of smoke tests in BigTest and BigRobot."
+mesg "$0 (`pwd`): Pre-merge execution of smoke tests in BigRobot."
 
 if [ ! -x "./gobot" ]; then
     err_exit "Error: Script can only be run from bin/ of bigrobot path."
 fi
 
-if [ -d "$testlogs_path" ]; then
-    # Previous test logs exist. Move them aside.
-    mv $testlogs_path "$testlogs_path.$timestamp"
-fi
-
 for suite in `echo $testsuites`; do
-    ./bigrobot_smoke_wrapper.py $suite
+    ./bigrobot_smoke_wrapper.py "$suite"
 done
 
 # Generate BigRobot log/report.
-(cd $testlogs_path; ../bin/bigrobot_log_gen)
+(cd "$testlogs_path"; ../bin/bigrobot_log_gen)
 
 # Process test results - get a count of total tests PASSED/FAILED.
 

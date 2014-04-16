@@ -75,6 +75,9 @@ def run_cmd(cmd):
     print("Executing '%s'" % cmd)
     return subprocess.call(cmd, shell=True)
 
+def run_cmd_spaces(*args):
+    print ("Executing '%s'" % str(args))
+    return subprocess.call(args, shell=False)
 
 def set_env(name, value):
     os.environ[name] = value
@@ -145,12 +148,17 @@ if not os.path.exists(get_env('BIGROBOT_SUITE') + '.txt'):
     error_exit("ERROR: BIGROBOT_SUITE %s.txt is not found!"
                % get_env('BIGROBOT_SUITE'))
 
-run_cmd(get_env('BIGROBOT_BIN') + "/gobot version")
-run_cmd(get_env('BIGROBOT_BIN') + "/gobot env")
+run_cmd_spaces(get_env('BIGROBOT_BIN') + "/gobot", "version")
+run_cmd_spaces(get_env('BIGROBOT_BIN') + "/gobot", "env")
+#run_cmd(get_env('BIGROBOT_BIN') + "/gobot version")
+#run_cmd(get_env('BIGROBOT_BIN') + "/gobot env")
 
 print("\n============== BigRobot smoke: Start test  ==============")
-status = run_cmd(get_env('BIGROBOT_BIN') +
-                 "/gobot test --include=smoke %s" % ' '.join(ARGS))
+#status = run_cmd(get_env('BIGROBOT_BIN') +
+#                  "/gobot test --include=smoke %s" % ' '.join(ARGS))
+status = run_cmd_spaces(get_env('BIGROBOT_BIN') +
+                 "/gobot", "test", "--include=smoke %s" % ' '.join(ARGS))
+
 print "Status: %s" % status
 
 if status == 0:
@@ -161,4 +169,3 @@ else:
 print("\n============== BigRobot smoke: End test (exit status=%s) =============="
       % status)
 sys.exit(status)
-

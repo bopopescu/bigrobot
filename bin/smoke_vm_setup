@@ -35,6 +35,9 @@ bigrobot_path = os.path.dirname(__file__) + '/..'
 exscript_path = bigrobot_path + '/vendors/exscript/src'
 sys.path.insert(0, bigrobot_path)
 sys.path.insert(1, exscript_path)
+print("Detailed log can be tailed at /tmp/robot.log  or /tmp/autobot_%s.log"
+      % current_user)
+
 import autobot.helpers as helpers
 from keywords.KVMOperations import KVMOperations
 import autobot.test as test
@@ -55,7 +58,7 @@ Success !!!
 
 real    3m4.757s
 user    0m3.808s
-sys     0m0.128s
+sys    0m0.128s
 
 Below is adding a slave to above created VM using above IP Address:
 
@@ -70,7 +73,7 @@ Success !!!
 
 real    3m11.699s
 user    0m3.888s
-sys     0m0.132s
+sys    0m0.132s
     """
     print(s)
     sys.exit(1)
@@ -83,7 +86,7 @@ def main(*args):
                + datetime.datetime.now().strftime("%m%d%H%M"))
     vm_host_name = current_user + "-bvs-1"
     helpers.summary_log("Creating VM with Name: %s " % vm_name)
-
+    
     if args.kvm_host is not None:
         kvm_host = args.kvm_host
 
@@ -100,23 +103,12 @@ def main(*args):
                                  kvm_user=kvm_user,
                                  kvm_password=kvm_pwd,
                                  vm_type=args.vm_type,
-                                 qcow_path=args.qcow_path,
-                                 remote_qcow_bvs_path=args.jenkins_qcow_path,
-                                 ip=args.active_ip,
+                                 qcow_path=args.qcow_path, ip=args.active_ip,
                                  netmask=args.netmask,
                                  vm_name=vm_name,
-                                 vm_host_name=vm_host_name)
-
-    if not active_vm['status_code']:
-        helpers.error_exit("Error in VM setup\n%s" % active_vm['status_descr'])
-
-    # temporarily setting ACTIVE_VM env for jenkins vm_setup
-    if args.vm_type == 'mininet':
-        helpers.set_env("MININET_VM", active_vm['vm_name'])
-    else:
-        helpers.set_env("ACTIVE_VM", active_vm['vm_name'])
-    helpers.log("Created Active VM: \n%s" % active_vm)
-
+                                 vm_host_name=vm_host_name,
+                                 build_number = args.build_number)
+    
     if active_vm['status_code'] == False:
         helpers.summary_log("VM setup failure on active vm!!\n%s"
                             % active_vm['status_descr'])
@@ -143,20 +135,61 @@ def main(*args):
                                       netmask=args.netmask,
                                       vm_name=vm_backup_name,
                                       cluster_ip=args.active_ip,
-                                      vm_host_name=vm_host_name)
+                                      vm_host_name=vm_host_name,
+                                      build_number = args.build_number)
         helpers.log("Created Backup VM :\n%s" % standby_vm)
-        # temporarily setting STANDBY_VM env for jenkins vm_setup
-        helpers.set_env("STANDBY_VM", standby_vm['vm_name'])
         if standby_vm['status_code'] == False:
             helpers.summary_log("VM setup failure on standby vm!!\n%s"
                                 % active_vm['status_descr'])
             sys.exit(1)
+    mininet_vm = None
+    args.vm_type = "mininet"
+    if args.mininet_vm is not None:
+        test.Test._instance = None
+        vm_mininet_name = (current_user + '_' + args.mininet_vm + '_'
+                          + datetime.datetime.now().strftime("%m%d%H%M"))
+        vm_host_name = current_user + "-mininet"
+        helpers.summary_log("Creating Mininet VM with Name : %s"
+                            % vm_mininet_name)
+        mininet_vm = kvm_ops.vm_setup(kvm_host=kvm_host,
+                                      kvm_user=kvm_user,
+                                      kvm_password=kvm_pwd,
+                                      vm_type=args.vm_type,
+                                      ip=args.mininet_ip,
+                                      netmask=args.netmask,
+                                      vm_name=vm_mininet_name,
+                                      vm_host_name=vm_host_name,
+                                      build_number = '63')
+        helpers.log("Created Mininet VM :\n%s" % mininet_vm)
+        if mininet_vm['status_code'] == False:
+            helpers.summary_log("VM setup failure on standby vm!!\n%s"
+                                % mininet_vm['status_descr'])
+            sys.exit(1)
+    #Creating a temp topo file for using first boot keywords
+    topo_file = helpers.get_env("BIGROBOT_PARAMS_INPUT_PRE")
+    helpers.summary_log("USING TOPO FILE : %s" % topo_file)
+    topo = open(topo_file, "w")
+    config = " c1:\n\
+      ip: %s\n\
+      #set_init_ping: false            # default: true\n\
+      #set_session_ssh: false          # default: true\n\
+      console: \n\
+        ip: %s\n\
+        libvirt_vm_name: %s\n\
+        user: %s\n\
+        password: %s\n\
+ mn1:\n\
+       ip: %s\n\
+       \n" % (active_vm['vm_ip'], kvm_host, active_vm['vm_name'], kvm_user, kvm_pwd, mininet_vm['vm_ip'])
+    topo.write(config)
+    topo.close()
+    helpers.log("Success in creating topo file %s" % topo_file)
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("vm_name",
-                        help="This name will be included in KVM with a timestamp and user running this vm_setup")
+                        help="This name will be included in KVM with a timestampa and user running this vm_setup")
     parser.add_argument("--standby_vm",
                         help="This name used for standby vm")
     parser.add_argument("--standby_ip",
@@ -167,15 +200,19 @@ if __name__ == '__main__':
                         help="This netmask is used to configure both active and standby vms")
     parser.add_argument("--qcow_path",
                         help=("Use this option if qcow is local to KVM Host and this instance is running on same KVM Host reduces"
-                              " time in Scp'ing qcow to KVM host"))
-    parser.add_argument("--jenkins_qcow_path",
-                        help=("Use this option to SCP qcow image from Jenkins server to KVM host"))
+                              " time in Scp'ing qcow to KVM HOST"))
     parser.add_argument("--kvm_host",
-                        help="Use this option to specify differnt KVM Host from defautl KVM hosts maintained by QA Team")
+                        help="Use this option to specify differnt KVM Host from defautl KVM Hosts maintained by QA Team")
     parser.add_argument("--active_ip",
                         help="This IP will be configured for the spawned VM")
     parser.add_argument("--vm_type",
                         help="Please provide type as bvs/mininet")
+    parser.add_argument("--mininet_vm",
+                        help="This will be used as mininet_vm name")
+    parser.add_argument("--mininet_ip",
+                        help="This will be used as mininet vm ip")
+    parser.add_argument("--build_number",
+                        help="This build will be picked from jenkins")
     main()
     print "Success!!!"
     sys.exit(0)

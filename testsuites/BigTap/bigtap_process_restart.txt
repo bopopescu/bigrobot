@@ -13,7 +13,7 @@ Library  keywords/Ixia.py
 
 * Variable
 ${switch_1_alias}  AF1
-${switchlight_version}  SwitchLight 2.0.0
+${switchlight_version}  SwitchLight 2.0.2
 ${netmask}  18
 ${gateway}  10.192.64.1
 ${dns_server}  10.192.3.1
@@ -30,11 +30,7 @@ ${delivery_nick_1}  D1
 
 ${delivery_2}  ethernet2  
 ${delivery_nick_2}  D2
-  
-*Test Case
-verify configuration is successful
-    verify config
-    [Tags]  bigtap  ha 
+
 
 *Test Case
 verify configuration is successful
@@ -274,6 +270,7 @@ ha suite setup
     rest add policy interface  admin-view  ZP1  F1  filter
     rest add policy interface  admin-view  ZP1  D2  delivery
     Sleep  5
+    verify config
 
 verify config
     ${verify_policy1}=  rest verify bigtap policy  P1  num_filter_intf=1  num_delivery_intf=1
@@ -289,7 +286,7 @@ verify config
     ${switchFlowVal3} =   REST show switch flow  s3  
     Should Be Equal As Integers  ${switchFlowVal3}  4      
     ${switchFlowVal4} =   REST show switch flow  s4  
-    Should Be Equal As Integers  ${switchFlowVal4}  4  
+    Should Be Equal As Integers  ${switchFlowVal4}  2  
 
     
 ha suite teardown

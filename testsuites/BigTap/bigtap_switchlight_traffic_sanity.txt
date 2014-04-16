@@ -18,122 +18,122 @@ ${netmask}  18
 ${gateway}  10.192.64.1
 ${dns_server}  10.192.3.1
 ${dns_domain}  bigswitch.com
-${filter_1}  ethernet1  
-${filter_nick}  F1
-${delivery_1}  ethernet2  
-${delivery_nick}  D1
+${filter_1}  ethernet47  
+${filter_nick}  TRAFFIC-SANITY-F1
+${delivery_1}  ethernet1  
+${delivery_nick}  TRAFFIC-SANITY-D1
   
 
 
 *Test Case
 
 Verify L2 traffic: frame size 64 bytes
-    ${stream}=  L2 add  flow=a->b  frame_rate=10000  frame_size=64  frame_cnt=50000  name=a_b_flow
+    ${stream}=  L2 add  flow=a->b  line_rate=100  frame_size=64  name=a_b_flow
     clear stats    
     start traffic  ${stream}
     sleep  10
+    verify results  transmitted_frame_rate  received_valid_frame_rate    
     stop traffic  ${stream}
-    verify results  transmitted_frames  received_valid_frames
-    [Tags]  traffic  sanity  
+    [Tags]  traffic  fs64  
 
 Verify L3 traffic: frame size 68 bytes
-    ${stream}=  L3 add  flow=a->b  frame_rate=10000  frame_size=68  frame_cnt=50000
+    ${stream}=  L3 add  flow=a->b  line_rate=100  frame_size=68  
     ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
     ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  name=a_b_flow
     clear stats  
     start traffic  ${stream}
     sleep  10
-    stop traffic   ${stream}
-    verify results  transmitted_frames  received_valid_frames
+    verify results  transmitted_frame_rate  received_valid_frame_rate    
+    stop traffic  ${stream}
     [Tags]  traffic  sanity  l3basic
 
 Verify L2 traffic: frame size 128 bytes
-    ${stream}=  L2 add  flow=a->b  frame_rate=10000  frame_size=128  frame_cnt=50000  name=a_b_flow
+    ${stream}=  L2 add  flow=a->b  line_rate=100  frame_size=128  name=a_b_flow
     clear stats
     start traffic  ${stream}
     sleep  10
+    verify results  transmitted_frame_rate  received_valid_frame_rate    
     stop traffic  ${stream}
-    verify results  transmitted_frames  received_valid_frames
     [Tags]  traffic  sanity  
 
 Verify L3 traffic: frame size 128 bytes
-    ${stream}=  L3 add  flow=a->b  frame_rate=10000  frame_size=128  frame_cnt=50000
+    ${stream}=  L3 add  flow=a->b  line_rate=100  frame_size=128
     ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
     ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  name=a_b_flow
     clear stats  
     start traffic  ${stream}
     sleep  10
-    stop traffic   ${stream}
-    verify results  transmitted_frames  received_valid_frames
+    verify results  transmitted_frame_rate  received_valid_frame_rate    
+    stop traffic  ${stream}
     [Tags]  traffic  sanity
 
 Verify L2 traffic: frame size 256 bytes
-    ${stream}=  L2 add  flow=a->b  frame_rate=10000  frame_size=256  frame_cnt=50000  name=a_b_flow
+    ${stream}=  L2 add  flow=a->b  line_rate=100  frame_size=256  name=a_b_flow
     clear stats
     start traffic  ${stream}
     sleep  10
+    verify results  transmitted_frame_rate  received_valid_frame_rate    
     stop traffic  ${stream}
-    verify results  transmitted_frames  received_valid_frames
     [Tags]  traffic  sanity  
 
 Verify L3 traffic: frame size 256 bytes
-    ${stream}=  L3 add  flow=a->b  frame_rate=10000  frame_size=256  frame_cnt=50000
+    ${stream}=  L3 add  flow=a->b  line_rate=100  frame_size=256
     ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
     ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  name=a_b_flow
     clear stats  
     start traffic  ${stream}
     sleep  10
-    stop traffic   ${stream}
-    verify results  transmitted_frames  received_valid_frames
+    verify results  transmitted_frame_rate  received_valid_frame_rate    
+    stop traffic  ${stream}
     [Tags]  traffic  sanity
     
 Verify L2 traffic: frame size 512 bytes
-    ${stream}=  L2 add  flow=a->b  frame_rate=10000  frame_size=512  frame_cnt=50000  name=a_b_flow
+    ${stream}=  L2 add  flow=a->b  line_rate=100  frame_size=512  name=a_b_flow
     start traffic  ${stream}
     clear stats
     sleep  10
+    verify results  transmitted_frame_rate  received_valid_frame_rate    
     stop traffic  ${stream}
-    verify results  transmitted_frames  received_valid_frames
     [Tags]  traffic  sanity  
 
 Verify L3 traffic: frame size 512 bytes
-    ${stream}=  L3 add  flow=a->b  frame_rate=10000  frame_size=512  frame_cnt=50000
+    ${stream}=  L3 add  flow=a->b  line_rate=100  frame_size=512  
     ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
     ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  name=a_b_flow
     clear stats  
     start traffic  ${stream}
     sleep  10
-    stop traffic   ${stream}
-    verify results  transmitted_frames  received_valid_frames
+    verify results  transmitted_frame_rate  received_valid_frame_rate    
+    stop traffic  ${stream}
     [Tags]  traffic  sanity
     
 Verify L2 traffic: frame size 1024 bytes
-    ${stream}=  L2 add  flow=a->b  frame_rate=10000  frame_size=1024  frame_cnt=50000  name=a_b_flow
+    ${stream}=  L2 add  flow=a->b  line_rate=100  frame_size=1024  name=a_b_flow
     clear stats
     start traffic  ${stream}
     sleep  10
+    verify results  transmitted_frame_rate  received_valid_frame_rate    
     stop traffic  ${stream}
-    verify results  transmitted_frames  received_valid_frames
     [Tags]  traffic  sanity  
     
 Verify L3 traffic: frame size 1024 bytes
-    ${stream}=  L3 add  flow=a->b  frame_rate=10000  frame_size=1024  frame_cnt=50000
+    ${stream}=  L3 add  flow=a->b  line_rate=100  frame_size=1024
     ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
     ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  name=a_b_flow
     clear stats  
     start traffic  ${stream}
     sleep  10
-    stop traffic   ${stream}
-    verify results  transmitted_frames  received_valid_frames
+    verify results  transmitted_frame_rate  received_valid_frame_rate    
+    stop traffic  ${stream}
     [Tags]  traffic  sanity
     
 Verify L2 traffic: frame size 1518 bytes
-    ${stream}=  L2 add  flow=a->b  frame_rate=10000  frame_size=1518  frame_cnt=50000  name=a_b_flow
+    ${stream}=  L2 add  flow=a->b  line_rate=100  frame_size=1518  name=a_b_flow
     clear stats
     start traffic  ${stream}
     sleep  10
+    verify results  transmitted_frame_rate  received_valid_frame_rate    
     stop traffic  ${stream}
-    verify results  transmitted_frames  received_valid_frames
     [Tags]  traffic  sanity  
 
 Verify L3 traffic: frame size 1518 bytes
@@ -177,15 +177,15 @@ Verify L2 Traffic: VLAN Tagged Traffic
     [Tags]  traffic  sanity  
 
 Verify L3 Traffic: VLAN Tagged Traffic
-    ${stream}=  L3 add  flow=a->b  frame_rate=10000  frame_size=9216  frame_cnt=50000  ethertype=8100  vlan_id=2048  
+    ${stream}=  L3 add  flow=a->b  line_rate=100  frame_size=1518  ethertype=8100  vlan_id=2048  
     ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
     ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  name=a_b_flow
     clear stats  
     start traffic  ${stream}
     sleep  10
-    stop traffic   ${stream}
-    verify results  transmitted_frames  received_valid_frames
-    [Tags]  traffic  sanity
+    verify results  transmitted_frame_rate  received_valid_frame_rate    
+    stop traffic  ${stream}
+    [Tags]  traffic  l3vlan
 
 Verify L2 Traffic: Spanning Tree Protocol (for bridges) IEEE 802.1D
     ${stream}=  L2 add  flow=a->b  frame_rate=10000  frame_size=64  frame_cnt=50000  ethertype=0802  src_mac=00:11:12:13:14:01  dst_mac=01:80:c2:00:00:00  name=a_b_flow
@@ -247,8 +247,11 @@ Verify L2 Traffic: Traffic with CRC Errors
 
 bigtap suite setup
     base suite setup
-    rest add switch alias  s1  AF1
-    rest add switch alias  s2  AF2
+    rest add switch alias  s1  DC1G-ACCTON-1
+    rest add switch alias  s2  AC1G-ACCTON-1
+    rest add switch alias  s3  AC1G-ACCTON-2
+    rest add switch alias  s4  AC10G-ACCTON-1
+    rest add switch alias  s5  AC10G-ACCTON-2     
     rest add interface role  s1  ${filter_1}  filter  ${filter_nick}   
     rest add interface role  s2  ${delivery_1}  delivery  ${delivery_nick}
     rest add policy  admin-view  P1  forward

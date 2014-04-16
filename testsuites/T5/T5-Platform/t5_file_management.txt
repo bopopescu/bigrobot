@@ -625,6 +625,8 @@ T10.3 Verify validation function of scp:// to image:// - corrupted image
 T10.4 Verify validation function of scp:// to image:// - proper image
 	Cli Copy  ${scp image}  image://
 	Cli Delete  image://master
+T10.5 Verify suggestions for deleting multiple images
+	Manual Passed
 
 
 *** Keywords ***
