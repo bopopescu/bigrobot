@@ -8,7 +8,7 @@ Force Tags   BigTap  SNMP
 Library  keywords/BsnCommon.py
 
 * Variable
-${version_string}  Big Tap Controller 3.0.0 
+${version_string}  Big Tap Controller 3.1.0 
 
     
 * Test Case

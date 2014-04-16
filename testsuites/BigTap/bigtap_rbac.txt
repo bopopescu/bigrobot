@@ -58,7 +58,6 @@ Verify user userTwoGroup can create a policies in both rbac views
     rest add policy match  groupOne-view  P1-1  1  {"ip-proto": 6, "ether-type": 2048,"sequence": 1,"dst-ip":"190.0.0.1", "dst-ip-mask":"255.255.255.0", "dst-tp-port":53,"src-ip":"191.0.0.2", "src-ip-mask":"255.255.255.0", "src-tp-port":2345}  user=userTwoGroup  password=bsnbsn
     rest add policy interface  groupOne-view  P1-1  F1  filter  user=userTwoGroup  password=bsnbsn
     rest add policy interface  groupOne-view  P1-1  D1  delivery  user=userTwoGroup  password=bsnbsn
-    
     rest add policy  groupTwo-view  P2-1  forward  user=userTwoGroup  password=bsnbsn
     rest add policy match  groupTwo-view  P2-1  1  {"ip-proto": 17, "ether-type": 2048,"sequence": 1,"dst-ip":"110.0.0.1", "dst-ip-mask":"255.255.255.0", "dst-tp-port":153,"src-ip":"111.0.0.2", "src-ip-mask":"255.255.255.0", "src-tp-port":1221}  user=userTwoGroup  password=bsnbsn
     rest add policy interface  groupTwo-view  P2-1  F2  filter  user=userTwoGroup  password=bsnbsn
@@ -82,16 +81,16 @@ Verify TACACS based admin user 'tacacsadmin' can login and view policies across 
     [Tags]  bigtap  rbac  tacacs  
 
 Verify TACACS based non-admin user 'tacacsalice' cannot view policies in group groupTwo    
-    ${verify_policy2}=  rest verify bigtap policy  P2  num_filter_intf=1  num_delivery_intf=1  user=tacacsalice  password=alicealice
+    ${verify_policy2}=  rest verify bigtap policy  P2  num_filter_intf=1  num_delivery_intf=1  user=tacacsalice  password=clientclient
     Should not be true  ${verify_policy2}    
     [Tags]  bigtap  rbac  tacacs   
 
 Verify TACACS based non-admin user 'tacacsalice' can configure policy in group web-admin
-    rest add policy  web-admin-view  P1-TACACS  forward  user=tacacsalice  password=alicealice
-    rest add policy match  web-admin-view  P1-TACACS  1  {"src-ip-mask": "255.255.255.0", "ether-type": 2048, "src-ip": "100.1.1.1", "ip-proto": 1, "sequence": 1}  user=tacacsalice  password=alicealice
-    rest add policy interface  web-admin-view  P1-TACACS  F1  filter  user=tacacsalice  password=alicealice
-    rest add policy interface  web-admin-view  P1-TACACS  D2  delivery  user=tacacsalice  password=alicealice
-    ${verify_policy1}=  rest verify bigtap policy  P1-TACACS  num_filter_intf=1  num_delivery_intf=1  user=tacacsalice  password=alicealice
+    rest add policy  web-admin-view  P1-TACACS  forward  user=tacacsalice  password=clientclient
+    rest add policy match  web-admin-view  P1-TACACS  1  {"src-ip-mask": "255.255.255.0", "ether-type": 2048, "src-ip": "100.1.1.1", "ip-proto": 1, "sequence": 1}  user=tacacsalice  password=clientclient
+    rest add policy interface  web-admin-view  P1-TACACS  F1  filter  user=tacacsalice  password=clientclient
+    rest add policy interface  web-admin-view  P1-TACACS  D2  delivery  user=tacacsalice  password=clientclient
+    ${verify_policy1}=  rest verify bigtap policy  P1-TACACS  num_filter_intf=1  num_delivery_intf=1  user=tacacsalice  password=clientclient
     Should be true  ${verify_policy1}   
     [Tags]  bigtap  rbac  tacacs     
 
@@ -106,7 +105,7 @@ Tacacs (admin-user) based login and logout of controller 100 times
 Tacacs (nonadmin-user) based login and logout of controller 100 times
     rest set banner  RBAC TEST
     : FOR    ${INDEX}    IN RANGE    0    101
-    \    ${banner_status}=  cli verify banner  RBAC TEST  user=tacacsalice  password=alicealice  
+    \    ${banner_status}=  cli verify banner  RBAC TEST  user=tacacsalice  password=clientclient  
     \    Should Be True  ${banner_status}
     \    Sleep  1
     [Tags]  bigtap  rbac  tacacslogin
@@ -268,7 +267,7 @@ Verify running-config  [Arguments]  ${user}  ${password}  ${filter_interface}  $
 rbac suite teardown
     rest delete policy  groupOne-view  P1  user=userOne  password=bsnbsn  
     rest delete policy  groupTwo-view  P2  user=userTwo  password=bsnbsn
-    rest delete policy  web-admin-view  P1-TACACS  user=tacacsalice  password=alicealice    
+    rest delete policy  web-admin-view  P1-TACACS  user=tacacsalice  password=clientclient    
     rest delete interface role  s1  ${filter_1}    filter          
     rest delete interface role  s2  ${filter_2}    filter        
     rest delete interface role  s1  ${delivery_1}    delivery

@@ -107,12 +107,6 @@ def main(*args):
                                  netmask=args.netmask,
                                  vm_name=vm_name,
                                  vm_host_name=vm_host_name)
-    # temporarily setting ACTIVE_VM env for jenkins vm_setup
-    if args.vm_type == 'mininet':
-        helpers.set_env("MININET_VM", active_vm['vm_name'])
-    else:
-        helpers.set_env("ACTIVE_VM", active_vm['vm_name'])
-    helpers.log("Created Active VM: \n%s" % active_vm)
     
     if active_vm['status_code'] == False:
         helpers.summary_log("VM setup failure on active vm!!\n%s"
@@ -142,12 +136,51 @@ def main(*args):
                                       cluster_ip=args.active_ip,
                                       vm_host_name=vm_host_name)
         helpers.log("Created Backup VM :\n%s" % standby_vm)
-        # temporarily setting STANDBY_VM env for jenkins vm_setup
-        helpers.set_env("STANDBY_VM", standby_vm['vm_name'])
         if standby_vm['status_code'] == False:
             helpers.summary_log("VM setup failure on standby vm!!\n%s"
                                 % active_vm['status_descr'])
             sys.exit(1)
+    mininet_vm = None
+    args.vm_type = "mininet"
+    if args.mininet_vm is not None:
+        test.Test._instance = None
+        vm_mininet_name = (current_user + '_' + args.mininet_vm + '_'
+                          + datetime.datetime.now().strftime("%m%d%H%M"))
+        vm_host_name = current_user + "-mininet"
+        helpers.summary_log("Creating Mininet VM with Name : %s"
+                            % vm_mininet_name)
+        mininet_vm = kvm_ops.vm_setup(kvm_host=kvm_host,
+                                      kvm_user=kvm_user,
+                                      kvm_password=kvm_pwd,
+                                      vm_type=args.vm_type,
+                                      ip=args.mininet_ip,
+                                      netmask=args.netmask,
+                                      vm_name=vm_mininet_name,
+                                      vm_host_name=vm_host_name)
+        helpers.log("Created Mininet VM :\n%s" % mininet_vm)
+        if mininet_vm['status_code'] == False:
+            helpers.summary_log("VM setup failure on standby vm!!\n%s"
+                                % mininet_vm['status_descr'])
+            sys.exit(1)
+    #Creating a temp topo file for using first boot keywords
+    topo_file = helpers.get_env("BIGROBOT_PARAMS_INPUT_PRE")
+    helpers.summary_log("USING TOPO FILE : %s" % topo_file)
+    topo = open(topo_file, "w")
+    config = " c1:\n\
+      ip: %s\n\
+      #set_init_ping: false            # default: true\n\
+      #set_session_ssh: false          # default: true\n\
+      console: \n\
+        ip: %s\n\
+        libvirt_vm_name: %s\n\
+        user: %s\n\
+        password: %s\n\
+ mn1:\n\
+       ip: %s\n\
+       \n" % (active_vm['vm_ip'], kvm_host, active_vm['vm_name'], kvm_user, kvm_pwd, mininet_vm['vm_ip'])
+    topo.write(config)
+    topo.close()
+    helpers.log("Success in creating topo file %s" % topo_file)
 
 
 if __name__ == '__main__':
@@ -170,6 +203,10 @@ if __name__ == '__main__':
     parser.add_argument("--active_ip",
                         help="This IP will be configured for the spawned VM")
     parser.add_argument("--vm_type",
+                        help="Please provide type as bvs/mininet")
+    parser.add_argument("--mininet_vm",
+                        help="Please provide type as bvs/mininet")
+    parser.add_argument("--mininet_ip",
                         help="Please provide type as bvs/mininet")
     main()
     print "Success!!!"

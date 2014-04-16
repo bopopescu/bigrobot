@@ -1,0 +1,146 @@
+== T5 Platform Visibility Test Suite - Physical Colo Test Bed ==
+
+* Setting
+Documentation    T5 Controller Platform Test Suite - SPAN Verification
+Suite Setup      base suite setup
+Suite Teardown   base suite teardown
+#Suite Setup      T5 base suite setup
+#Suite Teardown   T5 base suite teardown
+#Test Setup       base test setup
+#Test Teardown    base test teardown
+Force Tags       T5Platform  SPAN
+Library          keywords/BsnCommon.py
+Library          keywords/Mininet.py
+Library	    	 keywords/Host.py
+Library          keywords/T5.py
+Library	         keywords/T5L3.py
+Library	         keywords/T5Platform.py
+Library	         keywords/T5Utilities.py
+
+* Variables
+@{spineList}  04:00:00:00:01:00:00:01
+@{leafList}   04:00:00:00:02:00:00:01  04:00:00:00:02:00:00:02  04:00:00:00:02:00:00:03
+
+${s1SrcSwitch}  leaf0-a
+${s1SrcInt}		ethernet7
+${s1DstSwitch}	leaf0-a
+${s1DstInt}		ethernet30
+${s1VerifyHost}  h1
+${s1VerifyInt}	eth2
+
+${s2SrcSwitch}  leaf0-a
+${s2SrcInt}		ethernet8
+${s2DstSwitch}	leaf0-a
+${s2DstInt}		ethernet31
+${s2VerifyHost}  h2
+${s2VerifyInt}	eth2
+
+${s3SrcSwitch}  leaf0-a
+${s3SrcInt}		ethernet9
+${s3DstSwitch}	leaf0-a
+${s3DstInt}		ethernet32
+${s3VerifyHost}  h3
+${s3VerifyInt}	eth2
+
+${s4SrcSwitch}  spine0
+${s4SrcInt}		ethernet1
+${s4DstSwitch}	spine0
+${s4DstInt}		ethernet30
+${s4VerifyHost}  h4
+${s4VerifyInt}	eth2
+
+
+* Test Case 
+
+T1 Configure SPAN for both directions 
+	[Tags] Span manual-untested
+    manual untested
+    
+T2 Configure SPAN for only ingress & egress directions
+	[Tags] Span manual-untested
+    manual untested
+
+T3 Configure SPAN for a particular source MAC/Port/IP-CIDR
+	[Tags] manual-untested
+    manual untested
+
+T4 Configure SPAN for a particular destination MAC/Port/IP-CIDR
+	[Tags] Span manual-untested
+    manual untested
+
+T5 Configure SPAN for a particular ether-type/ip protocol/ip-dscp/ip-ecn
+	[Tags] Span manual-untested
+    manual untested
+
+T6 Configure SPAN for a particular tenant
+	[Tags] Span manual-untested
+    manual untested
+    
+####### Test Path
+    
+T7 Verify test packet path with L2 traffic within a single leaf switch between 2 members from the same tenant
+	[Tags] manual-untested
+    manual untested
+    
+T8 Verify test packet path with L2 traffic within peer leaf switches between 2 member from the same tenant
+	[Tags] manual-untested
+    manual untested
+    
+T9 Verify test packet path with L2 traffic between different racks amongst 2 members from the same tenant  
+	[Tags] manual-untested
+    manual untested
+    
+T10 Verify test packet path with L2 traffic to an unknown destination originating from a tenant which spans across multiple racks
+	[Tags] manual-untested
+    manual untested
+
+T11 Verify the updated paths in test packet path with L2 traffic within a single tenant while introducing path failures
+	[Tags] manual-untested
+    manual untested
+    
+T12 Verify test packet path with L3 traffic within a single leaf switch between 2 members from different tenants
+	[Tags] manual-untested
+    manual untested
+
+T13 Verify test packet path with L3 traffic within peer leaf switches between 2 member from different tenants
+	[Tags] manual-untested
+    manual untested
+
+T14 Verify test packet path with L3 traffic between different racks amongst 2 members from the different tenants
+	[Tags] manual-untested
+    manual untested
+    
+T15 Verify test packet path with L3 traffic to an unknown destination originating from a tenant which spans across multiple racks
+	[Tags] manual-untested
+    manual untested
+    
+T16 Verify the updated paths in test packet path with L3 traffic between multiple tenants while introducing path failures
+	[Tags] manual-untested
+    manual untested
+
+T17 Verify all the CLI options for the test packet path command
+	[Tags] manual-untested
+    manual untested
+    
+T18 Flow Trace on ARP, Ping, UDP & TCP
+	[Tags] manual-untested
+    manual untested
+    
+T19 Flow Trace on MAC, VLAN, IP, L4-Port
+	[Tags] manual-untested
+    manual untested
+    
+T20 Flow Trace on src-endpoint, dest-endpoint, src-l4-port, dst-l4-port
+	[Tags] manual-untested
+    manual untested
+    
+    
+###### Visibility
+
+T21 Verify LED support:  “beacon switch”
+
+T22 OF packet capture details
+
+T23 Wireshark capabilities from the controller
+
+

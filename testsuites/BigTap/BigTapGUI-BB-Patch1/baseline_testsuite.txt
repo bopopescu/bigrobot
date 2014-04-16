@@ -40,9 +40,9 @@ T1.12 Check Security RBAC Page
 
 ### Check Hover					Menu						Label					Destination					Title
 T2.1 Controller Switches	
-	Check Hover					${FABRIC MENU}				${SWITCHES LABEL}		${SWITCHES URL}				${SWITCHES TITLE}
+	Check Hover					${CONTROLLER MENU}			${SWITCHES LABEL}		${SWITCHES URL}				${SWITCHES TITLE}
 T2.2 Controller Interfaces
-	Check Hover					${FABRIC MENU}				${INTERFACES LABEL}		${INTERFACES URL}			${INTERFACES TITLE}
+	Check Hover					${CONTROLLER MENU}			${INTERFACES LABEL}		${INTERFACES URL}			${INTERFACES TITLE}
 T2.3 BigTap Policies	
 	Check Hover					${BIG TAP MENU}				${POLICIES LABEL}		${POLICIES URL}				${POLICIES TITLE}
 T2.4 BigTap IP Lists	
@@ -83,7 +83,7 @@ T3.6 Topology View Pane
 *** Keywords ***
 Setup
 	base suite setup
-    Start Selenium Server SSL  -trustAllSSLCertificates
+    Start Selenium Server  -trustAllSSLCertificates
     ${c1_ip}            params  node=c1  key=ip
     set suite variable  ${SERVER}  ${c1_ip}:8443
     Set URLs
