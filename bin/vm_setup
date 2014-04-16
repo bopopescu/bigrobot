@@ -55,7 +55,7 @@ Success !!!
 
 real    3m4.757s
 user    0m3.808s
-sys    0m0.128s
+sys     0m0.128s
 
 Below is adding a slave to above created VM using above IP Address:
 
@@ -70,7 +70,7 @@ Success !!!
 
 real    3m11.699s
 user    0m3.888s
-sys    0m0.132s
+sys     0m0.132s
     """
     print(s)
     sys.exit(1)
@@ -83,7 +83,7 @@ def main(*args):
                + datetime.datetime.now().strftime("%m%d%H%M"))
     vm_host_name = current_user + "-bvs-1"
     helpers.summary_log("Creating VM with Name: %s " % vm_name)
-    
+
     if args.kvm_host is not None:
         kvm_host = args.kvm_host
 
@@ -100,17 +100,23 @@ def main(*args):
                                  kvm_user=kvm_user,
                                  kvm_password=kvm_pwd,
                                  vm_type=args.vm_type,
-                                 qcow_path=args.qcow_path, ip=args.active_ip,
+                                 qcow_path=args.qcow_path,
+                                 remote_qcow_bvs_path=args.jenkins_qcow_path,
+                                 ip=args.active_ip,
                                  netmask=args.netmask,
                                  vm_name=vm_name,
                                  vm_host_name=vm_host_name)
+
+    if not active_vm['status_code']:
+        helpers.error_exit("Error in VM setup\n%s" % active_vm['status_descr'])
+
     # temporarily setting ACTIVE_VM env for jenkins vm_setup
     if args.vm_type == 'mininet':
         helpers.set_env("MININET_VM", active_vm['vm_name'])
     else:
         helpers.set_env("ACTIVE_VM", active_vm['vm_name'])
     helpers.log("Created Active VM: \n%s" % active_vm)
-    
+
     if active_vm['status_code'] == False:
         helpers.summary_log("VM setup failure on active vm!!\n%s"
                             % active_vm['status_descr'])
@@ -150,7 +156,7 @@ def main(*args):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("vm_name",
-                        help="This name will be included in KVM with a timestampa and user running this vm_setup")
+                        help="This name will be included in KVM with a timestamp and user running this vm_setup")
     parser.add_argument("--standby_vm",
                         help="This name used for standby vm")
     parser.add_argument("--standby_ip",
@@ -161,9 +167,11 @@ if __name__ == '__main__':
                         help="This netmask is used to configure both active and standby vms")
     parser.add_argument("--qcow_path",
                         help=("Use this option if qcow is local to KVM Host and this instance is running on same KVM Host reduces"
-                              " time in Scp'ing qcow to KVM HOST"))
+                              " time in Scp'ing qcow to KVM host"))
+    parser.add_argument("--jenkins_qcow_path",
+                        help=("Use this option to SCP qcow image from Jenkins server to KVM host"))
     parser.add_argument("--kvm_host",
-                        help="Use this option to specify differnt KVM Host from defautl KVM Hosts maintained by QA Team")
+                        help="Use this option to specify differnt KVM Host from defautl KVM hosts maintained by QA Team")
     parser.add_argument("--active_ip",
                         help="This IP will be configured for the spawned VM")
     parser.add_argument("--vm_type",
