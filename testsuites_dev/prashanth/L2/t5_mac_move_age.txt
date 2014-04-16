@@ -152,16 +152,12 @@ Mac age test
     rest verify endpoint  v1  -1  00:02:01:00:00:24  leaf0-a  ${leaf0a_ixia_intf}        
     stop traffic  ${stream}    
     sleep  600
-    ${result}=  rest verify forwarding layer2 table untag  leaf0-a  ${leaf0a_ixia_intf}  00:02:01:00:00:24
-    Should Not be True  ${result}   
-    ${result}=  rest verify forwarding layer2 table tag  leaf0-b  ${leaf0a_leaf0b_intf0}  00:02:01:00:00:24
-    Should Not be True  ${result}
     ${result}=  rest verify endpoint  v1  -1  00:02:01:00:00:24  leaf0-a  ${leaf0a_ixia_intf}
     Should Not be True  ${result}
     rest delete tenant  t1
     
 MAC move test after master controller node reboot
-	[Tags]  feature  run 
+	[Tags]  feature  
 	rest add tenant  t1
 	rest add vns  t1  v1
 	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
@@ -192,7 +188,7 @@ MAC move test after master controller node reboot
     rest delete tenant  t1        
 
 Test mac age after master node controller reboot
-	[Tags]  feature  run
+	[Tags]  feature  
 	rest add tenant  t1
 	rest add vns  t1  v1
 	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1

@@ -133,11 +133,15 @@ class T5Openstack(object):
 		os1 = t.openstack_server('os1')
 
 		result = os1.bash("neutron router-show %s" % (routerName))              
-		output = result["content"]
-		helpers.log("output: %s" % output)
-		out_dict = helpers.openstack_convert_table_to_dict(output)
-		routerId = out_dict["id"]["value"]
-		return routerId		
+		output = result["content"]		
+		match = re.search(r'Unable to find router with name', output)
+		if match:
+			helpers.log("router Not found")
+			return ''
+		else:
+			out_dict = helpers.openstack_convert_table_to_dict(output)
+			routerId = out_dict["id"]["value"]
+			return routerId		
 
 	def openstack_show_router_status(self, osUserName, osTenantName, osPassWord, osAuthUrl, routerName):
 		'''Get router status
@@ -341,7 +345,12 @@ class T5Openstack(object):
 		t = test.Test()
 		os1 = t.openstack_server('os1')
 		tenantId = self.openstack_show_tenant(tenantName)
-		os1.bash("neutron router-create --tenant-id %s %s" % (tenantId, routerName))              
+		try:
+			os1.bash("neutron router-create --tenant-id %s %s" % (tenantId, routerName))              
+		except:
+			output = helpers.exception_info_value()	
+			helpers.log("Output: %s" % output)
+			return False
 		return True
 
 	def openstack_delete_router(self, routerName):
@@ -353,7 +362,12 @@ class T5Openstack(object):
 		'''				
 		t = test.Test()
 		os1 = t.openstack_server('os1')
-		os1.bash("neutron router-delete %s" % (routerName))              
+		try:
+			os1.bash("neutron router-delete %s" % (routerName))
+		except:
+			output = helpers.exception_info_value()	
+			helpers.log("Output: %s" % output)
+			return False              
 		return True
 	
 	def openstack_add_net(self, tenantName, netName, external=False):
@@ -486,7 +500,7 @@ S
 		return data
 		
 		
-	def openstack_add_subnet_to_router(self, osUserName, osTenantName, osPassWord, osAuthUrl, routerId, subNetId):
+	def openstack_add_subnet_to_router(self, routerName, subnetName):
 		'''attach subnet to tenant router
 			Input:
 				`osXXX`        		tenant name, password, username etc credentials
@@ -499,12 +513,13 @@ S
 		'''
 		t = test.Test()
 		os1 = t.openstack_server('os1')
-		
-		os1.bash("neutron router-interface-add %s %s" % (osUserName, osTenantName, osPassWord, osAuthUrl, routerId, subNetId))   
+		routerId = self.openstack_show_router(routerName)
+		subnetId = self.openstack_show_subnet(subnetName)
+		os1.bash("neutron router-interface-add %s %s" % (routerId, subnetId))   
 		data = os1.bash_content()
 		return data
 		
-	def openstack_delete_subnet_to_router(self, osUserName, osTenantName, osPassWord, osAuthUrl, routerId, subNetId):
+	def openstack_delete_subnet_to_router(self, routerName, subnetName):
 		'''detach subnet from tenant router
 			Input:
 				`osXXX`        		tenant name, password, username etc credentials
@@ -517,8 +532,9 @@ S
 		'''
 		t = test.Test()
 		os1 = t.openstack_server('os1')
-		
-		os1.bash("neutron --os-username %s --os-tenant-name %s --os-password %s --os-auth-url %s router-interface-delete %s %s" % (osUserName, osTenantName, osPassWord, osAuthUrl, routerId, subNetId))   
+		routerId = self.openstack_show_router(routerName)
+		subnetId = self.openstack_show_subnet(subnetName)
+		os1.bash("neutron  router-interface-delete %s %s" % (routerId, subnetId))
 		data = os1.bash_content()
 		return data
 
@@ -641,4 +657,26 @@ S
 				helpers.log("Pass: Openstack endpoints are present in the BSN controller")
 				return True
 		helpers.test_failure("Expected openstack endpoints are not present in BSN controller")
-		return False	
+		return False
+	
+	def openstack_verify_router(self, routerName):
+		'''Get router id
+			Input:router name
+			Output : Check the status to "Active"
+		'''
+		t = test.Test()
+		os1 = t.openstack_server('os1')
+		result = os1.bash("neutron router-show %s" % (routerName))              
+		output = result["content"]		
+		match = re.search(r'Unable to find router with name', output)
+		if match:
+			helpers.log("router Not found")
+			return ''
+		else:
+			out_dict = helpers.openstack_convert_table_to_dict(output)
+			if out_dict["status"]["value"] == "ACTIVE":
+				helpers.log("Pass: Router is active in the tenant")
+				return True
+			else:
+				helpers.test_failure("Fail: router status is not active")
+				return False

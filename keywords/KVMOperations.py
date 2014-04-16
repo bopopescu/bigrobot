@@ -12,7 +12,7 @@ from keywords.T5Platform import T5Platform
 KVM_SERVER = '10.192.104.13'
 KVM_USER = 'root'
 KVM_PASSWORD = 'bsn'
-LOG_BASE_PATH = '/var/log/kvm_operations'
+LOG_BASE_PATH = '/var/log/vm_operations'
 
 
 class KVMOperations(object):
@@ -45,17 +45,19 @@ class KVMOperations(object):
         vm_name = kwargs.get("vm_name", None)
         ram = kwargs.get("ram", "1024")
         vcpus = kwargs.get("cpus", "1")
-        virt_install_cmd = "sudo virt-install \
-                            --connect qemu:///system \
-                            -r %s \
-                            -n %s \
-                            --vcpus=%s \
-                            --disk path=%s,device=disk,format=qcow2 \
-                            --import     --noautoconsole \
-                            --network=bridge:br0,model=virtio \
-                            --graphics vnc" % (ram, vm_name, vcpus, disk_path)
-        helpers.log("Creating VM on KVM Host with virt-install cmd: \n%s..." % virt_install_cmd)
-        if "Domain creation completed." in kvm_handle.bash(virt_install_cmd)['content']:
+        virt_install_cmd = ("sudo virt-install"
+                            " --connect qemu:///system"
+                            " -r %s"
+                            " -n %s"
+                            " --vcpus=%s"
+                            " --disk path=%s,device=disk,format=qcow2"
+                            " --import --noautoconsole"
+                            " --network=bridge:br0,model=virtio"
+                            " --graphics vnc"
+                            % (ram, vm_name, vcpus, disk_path))
+        helpers.log("Creating VM on KVM host:\n%s" % virt_install_cmd)
+        content = kvm_handle.bash(virt_install_cmd)['content']
+        if "Domain creation completed." in content:
             return True
         else:
             return False
@@ -65,7 +67,7 @@ class KVMOperations(object):
         vm_name = kwargs.get("vm_name", None)
 
         if "destroyed" in kvm_handle.bash("sudo virsh destroy %s" % vm_name)['content']:
-            helpers.log ("1. Successfully Powered Down")
+            helpers.log ("Successfully powered down VM (destroyed)")
             return True
         else:
             helpers.log("Issue with Shutting down VM using virsh \nPlease debug on KVM Host \n Exiting..")
@@ -118,6 +120,7 @@ class KVMOperations(object):
         kvm_handle = kwargs.get("kvm_handle", None)
         qcow_path = kwargs.get("qcow_path", None)
         vm_name = kwargs.get("vm_name", None)
+        qcow_path = qcow_path.replace(" ", "\ ")
         kvm_handle.bash("sudo cp %s /var/lib/libvirt/images/%s.qcow2" % (qcow_path, vm_name))
         kvm_qcow_path = "/var/lib/libvirt/images/%s.qcow2" % vm_name
         helpers.log("Success copying image !!")
@@ -159,7 +162,7 @@ class KVMOperations(object):
                 return 0
 
 
-    def _scp_file_to_kvm_host(self, vm_name=None, remote_qcow_path=None, kvm_handle=None, vm_type="bvs", build_number = None):
+    def _scp_file_to_kvm_host(self, vm_name=None, remote_qcow_path=None, kvm_handle=None, vm_type="bvs", build_number=None):
         # for getting the latest jenkins build from jenkins server kvm_host ssh key should be copied to jenkins server
         output = kvm_handle.bash('uname -a')
         helpers.log("KVM Host Details : \n %s" % output['content'])
@@ -191,7 +194,7 @@ class KVMOperations(object):
         helpers.log("Latest Build Number on KVM Host: %s" % latest_kvm_build_number)
         helpers.log("Latest Build Number on Jenkins: %s" % latest_build_number)
 
-            
+
         if int(latest_kvm_build_number) == int(latest_build_number):
             helpers.log("Skipping SCP as the latest build on jenkins server did not change from the latest on KVM Host")
 
@@ -309,12 +312,12 @@ class KVMOperations(object):
                     helpers.log("Scp'ing Latest Mininet qcow file from jenkins to kvm Host..")
                     qcow_vm_path = self._scp_file_to_kvm_host(kvm_handle=kvm_handle,
                                                               remote_qcow_path=remote_qcow_mininet_path, vm_type='mininet',
-                                                              vm_name = vm_name, build_number = build_number)
+                                                              vm_name=vm_name, build_number=build_number)
                 else:
                     helpers.log("Scp'ing Latest BVS qcow file from jenkins to kvm Host..")
                     qcow_vm_path = self._scp_file_to_kvm_host(kvm_handle=kvm_handle,
                                                               remote_qcow_path=remote_qcow_bvs_path,
-                                                              vm_name=vm_name, build_number = build_number)
+                                                              vm_name=vm_name, build_number=build_number)
 
             helpers.log("Creating VM on KVM Host with Name : %s " % vm_name)
             self.create_vm_on_kvm_host(vm_type=vm_type,
@@ -334,7 +337,7 @@ class KVMOperations(object):
                 # FIX ME configure mininet with user specified ip / return the DHCP ip of mininet VM
                 helpers.log("Success Creating Mininet vm!!")
                 helpers.log("Configuring IP for mininet if provided")
-                result['vm_ip'] = self.set_mininet_ip(node="c1", ip=ip, get_ip = True)
+                result['vm_ip'] = self.set_mininet_ip(node="c1", ip=ip, get_ip=True)
                 return result
 
             # For controller, attempt First Boot
@@ -425,12 +428,12 @@ class KVMOperations(object):
             helpers.log("Mininet IP Content:")
             ips = output_lines[1].split(':')
             helpers.log("Mininet IP is : %s" % ips[1])
-            return ips[1]   
+            return ips[1]
         else:
             helpers.log("Setting IP on Mininet VM ...")
             n_console.send('sudo ifconfig eth0 %s netmask 255.255.192.0' % ip)
             n_console.expect()
-        
+
         helpers.log("Success configuring Static IP !!")
         """
         n_console.expect(r'%s' % prompt)
