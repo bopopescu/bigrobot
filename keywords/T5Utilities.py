@@ -354,10 +354,10 @@ class T5Utilities(object):
             c2_pidList = self.get_floodlight_monitor_pid('c2')
             for c1_pid in c1_pidList:
                 if (re.match("^d", c1_pid)):
-                    c1.sudo('kill %s' % (c1_pid))
+                    c1.sudo('kill -9 %s' % (c1_pid))
             for c2_pid in c2_pidList:
                 if (re.match("^d", c2_pid)):
-                    c2.sudo('kill %s' % (c2_pid))
+                    c2.sudo('kill -9 %s' % (c2_pid))
             
             # Add rm of the file if file already exist in case of a new test
             c1.sudo("tail -f /var/log/floodlight/floodlight.log | grep --line-buffered ERROR > %s &" % "c1_floodlight_dump.txt")
