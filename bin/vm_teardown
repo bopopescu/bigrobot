@@ -25,6 +25,7 @@ exscript_path = bigrobot_path + '/vendors/exscript/src'
 sys.path.insert(0, bigrobot_path)
 sys.path.insert(1, exscript_path)
 print "Detailed log can be tailed at /tmp/robot.log  or /tmp/autobot_%s.log" % current_user
+import autobot.helpers as helpers
 from keywords.KVMOperations import KVMOperations
 
 def usage():
@@ -37,19 +38,37 @@ $ vm_teardown \\
     sys.exit(1)
 
 def main(*args):
+    args = parser.parse_args()
     kvm_op = KVMOperations()
-    result = kvm_op.vm_teardown(kvm_host=kvm_host,
-                                vm_name=vm_name,
+    if args.vm_list is not None:
+        helpers.summary_log("Reading VM names from give File : %s" % args.vm_list)
+        lists = helpers.file_read_once(args.vm_list)
+        vms = lists.split('\n')
+        for vm in vms:
+            helpers.summary_log("Tearing Down VM: %s" % vm)
+            result = kvm_op.vm_teardown(kvm_host=kvm_host,
+                                vm_name=vm,
                                 kvm_user=kvm_user,
                                 kvm_password=kvm_pwd)
-    if result['status_code'] == True:
-        print "VM TearDown Success!!"
+            if result['status_code'] == True:
+                print "VM TearDown Success!!"
+            else:
+                print "VM TearDown Failure!!\n%s" % result['status_descr']
+        
     else:
-        print "VM TearDown Failure!!\n%s" % result['status_descr']
+        result = kvm_op.vm_teardown(kvm_host=kvm_host,
+                                    vm_name=vm_name,
+                                    kvm_user=kvm_user,
+                                    kvm_password=kvm_pwd)
+        if result['status_code'] == True:
+            print "VM TearDown Success!!"
+        else:
+            print "VM TearDown Failure!!\n%s" % result['status_descr']
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("vm_name", help="This name is used to delete VM in KVM Hosts maintained for QA")
+    parser.add_argument("--vm_list", help="Please provide a file name with list of vm's that need to teardown on KVM_HOST")
     parser.add_argument("--kvm_host", help="Use this option to specify differnt KVM Host from defautl KVM Hosts maintained by QA Team")
     args = parser.parse_args()
     vm_name = args.vm_name
