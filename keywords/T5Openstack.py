@@ -184,6 +184,24 @@ class T5Openstack(object):
 			subnetId = out_dict["network_id"]["value"]
 			return subnetId		
 
+	def openstack_show_subnet_ip(self, subnetName):
+		'''Get subnet gateway IP address
+			Input: subnet Name
+			Output: gateway IP
+		'''
+		t = test.Test()
+		os1 = t.openstack_server('os1')
+		result = os1.bash("neutron subnet-show %s" % (subnetName))              
+		output = result["content"]		
+		match = re.search(r'Unable to find subnet with name', output)
+		if match:
+			helpers.log("subnet Not found")
+			return ''
+		else:
+			out_dict = helpers.openstack_convert_table_to_dict(output)
+			subnetIp = out_dict["gateway_ip"]["value"]
+			return subnetIp		
+	
 	def openstack_show_net(self, netName):
 		'''Get Nova net Id
 			Input:
@@ -595,12 +613,12 @@ S
 		'''
 		t = test.Test()
 		c = t.controller('master')
-		url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/tenants'
+		url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/tenant'
 		c.rest.get(url)
 		data = c.rest.content()
 		tenantId = self.openstack_show_tenant(tenantName)
 		for i in range(0,len(data)):
-			if str(data[i]["tenant-name"]) == str(tenantId):
+			if str(data[i]["name"]) == str(tenantId):
 				helpers.log("Pass: Openstack tenant are present in the BSN controller")
 				return True
 		return False
@@ -616,10 +634,10 @@ S
 		tenantId = self.openstack_show_tenant(tenantName)
 		netId = self.openstack_show_subnet(subnetName)
 		if netId != '':
-			url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/vnses[tenant-name="%s"][name="%s"]' % (tenantId, netId)	      
+			url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/vns[tenant="%s"][name="%s"]' % (tenantId, netId)	      
 			c.rest.get(url)
 			data = c.rest.content()
-			if data[0]["tenant-name"] == tenantId:
+			if data[0]["tenant"] == tenantId:
 				if data[0]["name"] == netId:
 					helpers.log("Pass: Openstack networks are present in the BSN controller")
 					return True
@@ -630,7 +648,7 @@ S
 					helpers.log("Openstack tenant not present in the BSN controller")
 					return False
 		else:
-			url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/tenants'
+			url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/tenant'
 			c.rest.get(url)	
 			data = c.rest.content()
 			if len(data) == 0:
@@ -648,7 +666,7 @@ S
 		'''
 		t = test.Test()
 		c = t.controller('master')
-		url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/endpoints'
+		url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/endpoint'
 		c.rest.get(url)
 		data = c.rest.content()
 		instanceIp = self.openstack_show_instance_ip(instanceName, netName)
@@ -660,7 +678,7 @@ S
 		return False
 	
 	def openstack_verify_router(self, routerName):
-		'''Get router id
+		'''verify router creation status through horizon
 			Input:router name
 			Output : Check the status to "Active"
 		'''
@@ -680,3 +698,21 @@ S
 			else:
 				helpers.test_failure("Fail: router status is not active")
 				return False
+	
+	def openstack_verify_router_interface(self, subnetName):
+		'''verify router gateway IP creaetd in endpoint
+			Input:subnetName
+			Output : Verify the subnet gateway IP created in endpoint
+		'''
+		t = test.Test()
+		c = t.controller('master')
+		url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/endpoint'
+		c.rest.get(url)
+		data = c.rest.content()
+		subnetIp = self.openstack_show_subnet_ip(subnetName)
+		for i in range(0,len(data)):
+			if str(data[i]["ip-address"]) == str(subnetIp) and str(data[i]["state"]) == "Active":
+				helpers.log("Pass: Router interface creaetd as endpoint in controller")
+				return True
+		helpers.test_failure("Fail:router interface not present in controller endpoint table")
+		return False

@@ -195,11 +195,11 @@ Add 48k dynamic mac into the system and check forwarding and make sure aging als
     Should be True  ${count} < 8
 	    
 Master controller node reboot with 48k mac entries
-	[Tags]  scaling  skipped 
+	[Tags]  scaling   
 	
-	${stream}=             L3 add  no_arp=True  flow=a<->c  src_mac=00:00:01:00:00:01  dst_mac=00:00:02:00:00:01  src_cnt=8000  dst_cnt=8000    frame_rate=8000  frame_size=128  name=a_c_flow
-    ${stream1}=             L3 add  no_arp=True  flow=b<->f  src_mac=00:00:03:00:00:01  dst_mac=00:00:04:00:00:01  src_cnt=8000  dst_cnt=8000    frame_rate=8000  frame_size=68  name=b_f_flow
-    ${stream2}=             L3 add  no_arp=True  flow=d<->e  src_mac=00:00:05:00:00:01  dst_mac=00:00:06:00:00:01  src_cnt=8000  dst_cnt=8000    frame_rate=8000  frame_size=68  name=b_f_flow
+	${stream}=             L3 add  no_arp=True  flow=a<->c  src_mac=00:00:01:00:00:01  dst_mac=00:00:02:00:00:01  src_cnt=8000  dst_cnt=8000    frame_rate=1000  frame_size=128  name=a_c_flow
+    ${stream1}=             L3 add  no_arp=True  flow=b<->f  src_mac=00:00:03:00:00:01  dst_mac=00:00:04:00:00:01  src_cnt=8000  dst_cnt=8000    frame_rate=1000  frame_size=68  name=b_f_flow
+    ${stream2}=             L3 add  no_arp=True  flow=d<->e  src_mac=00:00:05:00:00:01  dst_mac=00:00:06:00:00:01  src_cnt=8000  dst_cnt=8000    frame_rate=1000  frame_size=68  name=b_f_flow
     start traffic  ${stream}
     start traffic  ${stream1}
     start traffic  ${stream2}
@@ -244,6 +244,47 @@ Master controller node reboot with 48k mac entries
     ${count}=	Convert to integer  ${result}   
     Should be True  ${count} < 8
 	
+Add 96k dynamic mac into the system and check forwarding and make sure aging also works for 96k mac
+	[Tags]  scaling  run 
+	${stream}=             L3 add  no_arp=True  flow=a<->c  src_mac=00:00:01:00:00:01  dst_mac=00:00:02:00:00:01  src_cnt=16000  dst_cnt=16000    frame_rate=1000  frame_size=128  name=a_c_flow
+    ${stream1}=             L3 add  no_arp=True  flow=b<->f  src_mac=00:00:03:00:00:01  dst_mac=00:00:04:00:00:01  src_cnt=16000  dst_cnt=16000    frame_rate=1000  frame_size=128  name=b_f_flow
+    ${stream2}=             L3 add  no_arp=True  flow=d<->e  src_mac=00:00:05:00:00:01  dst_mac=00:00:06:00:00:01  src_cnt=16000  dst_cnt=16000    frame_rate=1000  frame_size=128  name=b_f_flow
+    start traffic  ${stream}
+    start traffic  ${stream1}
+    start traffic  ${stream2}
+    sleep  180
+    rest verify endpoint in system  96000
+    ${result}=  bash execute command  leaf0-a  ofad-ctl ft L2 | wc -l 
+    ${count}=	Convert to integer  ${result}   
+    Should be True  ${count} > 96000
+    ${result}=  bash execute command  leaf2-a  ofad-ctl ft L2 | wc -l
+    ${count}=	Convert to integer  ${result}   
+    Should be True  ${count} > 96000
+    ${result}=  bash execute command  spine0  ofad-ctl ft L2 | wc -l
+    ${count}=	Convert to integer  ${result}   
+    Should be True  ${count} > 96000
+    verify traffic rate  tx_rate  rx_rate  a  c
+    verify traffic rate  tx_rate  rx_rate  c  a
+    verify traffic rate  tx_rate  rx_rate  b  f
+    verify traffic rate  tx_rate  rx_rate  f  b
+    verify traffic rate  tx_rate  rx_rate  d  e
+    verify traffic rate  tx_rate  rx_rate  e  d
+    stop traffic  ${stream}
+    stop traffic  ${stream1}
+    stop traffic  ${stream2}
+    summary log  waiting 10 minutes for 96000 mac age
+	sleep  600
+    rest verify endpoint in system  0
+    ${result}=  bash execute command  leaf0-a  ofad-ctl ft L2 | wc -l 
+    ${count}=	Convert to integer  ${result}   
+    Should be True  ${count} < 8
+    ${result}=  bash execute command  leaf2-a  ofad-ctl ft L2 | wc -l
+    ${count}=	Convert to integer  ${result}   
+    Should be True  ${count} < 8
+    ${result}=  bash execute command  spine0  ofad-ctl ft L2 | wc -l
+    ${count}=	Convert to integer  ${result}   
+    Should be True  ${count} < 8
+
 Add 1k static endpoints and check the forwarding
 	[Tags]  scaling  
 	rest add endpoint scale  t1  v1  ${mac1}  a  leaf0-a  ${leaf0a_ixia_intf}  -1  500
@@ -281,7 +322,7 @@ Add 8k static endpoints and check the forwarding
     verify traffic rate  tx_rate  rx_rate  c  a
     stop traffic  ${stream}
 
-Add 16k static endpoints and check the forwarding
+Add 16k static endpoints and check the forwarding also check with master reboot
 	[Tags]  scaling
   	rest add endpoint scale  t1  v1  ${mac1}  a  leaf0-a  ${leaf0a_ixia_intf}  -1  8000
   	rest add endpoint scale  t1  v1  ${mac2}  c  leaf1-a  ${leaf1a_ixia_intf}  -1  8000
@@ -292,19 +333,6 @@ Add 16k static endpoints and check the forwarding
     sleep  20  
     verify traffic rate  tx_rate  rx_rate  a  c
     verify traffic rate  tx_rate  rx_rate  c  a
-    stop traffic  ${stream}
-        
-Master controller node reboot with 16k endpoints
-	[Tags]  scaling  skipped
-  	rest add endpoint scale  t1  v1  ${mac1}  a  leaf0-a  ${leaf0a_ixia_intf}  -1  8000
-  	rest add endpoint scale  t1  v1  ${mac2}  c  leaf1-a  ${leaf1a_ixia_intf}  -1  8000
-	sleep  60
-	rest verify endpoints in vns  v1  16000
-	${stream}=             L3 add  no_arp=True  flow=a<->c  src_mac=00:00:05:00:00:01  dst_mac=00:00:06:00:00:01  src_cnt=8000  dst_cnt=8000  frame_rate=1000  frame_size=68  name=a_c_flow
-    start traffic  ${stream}
-    sleep  20
-    verify traffic rate  tx_rate  rx_rate  a  c
-    verify traffic rate  tx_rate  rx_rate  c  a
     cli verify cluster master reboot
     sleep  2
     verify traffic rate  tx_rate  rx_rate  a  c
@@ -313,11 +341,11 @@ Master controller node reboot with 16k endpoints
     
 Mac move at scale 1k mac between rack
 	[Tags]  scaling    
-	${stream}=             L3 add  no_arp=True  flow=a->c  src_mac=00:00:01:00:00:01  dst_mac=00:00:02:00:00:01  src_cnt=1000    frame_rate=1000  frame_size=68  name=a_c_flow
+	${stream}=            L3 add  no_arp=True  flow=a->c  src_mac=00:00:01:00:00:01  dst_mac=00:00:02:00:00:01  src_cnt=1000    frame_rate=1000  frame_size=68  name=a_c_flow
 	${stream1}=             L3 add  no_arp=True  flow=c->a  src_mac=00:00:02:00:00:01  dst_mac=00:00:01:00:00:01  dst_cnt=1000    frame_rate=1000  frame_size=68  name=c_a_flow
     start traffic  ${stream}
     start traffic  ${stream1}
-    rest verify endpoint in system  1000
+    rest verify endpoint in system  1001
     rest verify forwarding layer2 table untag  leaf0-a  ${leaf0a_ixia_intf}  00:00:01:00:00:01
     verify traffic rate  tx_rate  rx_rate  c  a
     stop traffic  ${stream}
@@ -332,27 +360,65 @@ Mac move at scale 1k mac between rack
     stop traffic  ${stream1}
 
 Mac move at scale 16k between rack
-	[Tags]  scaling  
-	${stream}=             L3 add  no_arp=True  flow=a->c  src_mac=00:01:01:00:00:01  dst_mac=00:02:02:00:00:01  src_cnt=8000    frame_rate=1000  frame_size=68  name=a_c_flow
-	${stream1}=             L3 add  no_arp=True  flow=c->a  src_mac=00:02:02:00:00:01  dst_mac=00:01:01:00:00:01  dst_cnt=8000    frame_rate=1000  frame_size=68  name=c_a_flow
+	[Tags]  scaling   
+	${stream}=             L3 add  no_arp=True  flow=a->c  src_mac=00:01:01:00:00:01  dst_mac=00:02:02:00:00:01  src_cnt=16000    frame_rate=1000  frame_size=68  name=a_c_flow
+	${stream1}=             L3 add  no_arp=True  flow=c->a  src_mac=00:02:02:00:00:01  dst_mac=00:01:01:00:00:01  dst_cnt=16000    frame_rate=1000  frame_size=68  name=c_a_flow
     start traffic  ${stream}
     start traffic  ${stream1}
     sleep  20  
-    rest verify endpoint in system  16000
-    rest verify forwarding layer2 table untag  leaf0-a  ${leaf0a_ixia_intf}  00:00:01:00:00:01
+    rest verify endpoint in system  16001
+    rest verify forwarding layer2 table untag  leaf0-a  ${leaf0a_ixia_intf}  00:01:01:00:00:01
     verify traffic rate  tx_rate  rx_rate  c  a
     stop traffic  ${stream}
     stop traffic  ${stream1}
-    ${stream2}=             L3 add  no_arp=True  flow=e->c  src_mac=00:01:01:00:00:01  dst_mac=00:02:02:00:00:01  src_cnt=8000   frame_rate=1000  frame_size=68  name=e_c_flow
+    ${stream2}=             L3 add  no_arp=True  flow=e->c  src_mac=00:01:01:00:00:01  dst_mac=00:02:02:00:00:01  src_cnt=16000   frame_rate=1000  frame_size=68  name=e_c_flow
     start traffic  ${stream2}
     start traffic  ${stream1}
-    sleep  10
-    rest verify forwarding layer2 table untag  leaf2-a  ${leaf2a_ixia_intf}  00:00:01:00:00:01
+    sleep  20
+    rest verify forwarding layer2 table untag  leaf2-a  ${leaf2a_ixia_intf}  00:01:01:00:00:01
     verify traffic rate  tx_rate  rx_rate  c  e
     verify traffic rate negative  tx_rate  rx_rate  c  a  
     stop traffic  ${stream2}
     stop traffic  ${stream1}
 
+Mac move at scale 48k between rack
+	[Tags]  scaling  run   
+	${stream}=             L3 add  no_arp=True  flow=a->c  src_mac=00:01:01:00:00:01  dst_mac=00:02:02:00:00:01  src_cnt=24000    frame_rate=1000  frame_size=68  name=a_c_flow
+	${stream1}=             L3 add  no_arp=True  flow=c->a  src_mac=00:02:02:00:00:01  dst_mac=00:01:01:00:00:01  dst_cnt=24000    frame_rate=1000  frame_size=68  name=c_a_flow
+	${stream2}=             L3 add  no_arp=True  flow=b->d  src_mac=00:03:03:00:00:01  dst_mac=00:04:04:00:00:01  src_cnt=24000    frame_rate=1000  frame_size=68  name=b_d_flow
+	${stream3}=             L3 add  no_arp=True  flow=d->b  src_mac=00:04:04:00:00:01  dst_mac=00:03:03:00:00:01  dst_cnt=24000    frame_rate=1000  frame_size=68  name=d_b_flow
+    start traffic  ${stream}
+    start traffic  ${stream1}
+    start traffic  ${stream2}
+    start traffic  ${stream3}
+    sleep  100  
+    rest verify endpoint in system  48002
+    rest verify forwarding layer2 table untag  leaf0-a  ${leaf0a_ixia_intf}  00:01:01:00:00:01
+    rest verify forwarding layer2 table untag  leaf0-b  ${leaf0b_ixia_intf}  00:03:03:00:00:01
+    verify traffic rate  tx_rate  rx_rate  c  a
+    verify traffic rate  tx_rate  rx_rate  d  b
+    stop traffic  ${stream}
+    stop traffic  ${stream1}
+    stop traffic  ${stream2}
+    stop traffic  ${stream3}
+    ${stream4}=             L3 add  no_arp=True  flow=e->c  src_mac=00:01:01:00:00:01  dst_mac=00:02:02:00:00:01  src_cnt=24000   frame_rate=1000  frame_size=68  name=e_c_flow
+    ${stream5}=             L3 add  no_arp=True  flow=f->d  src_mac=00:03:03:00:00:01  dst_mac=00:04:04:00:00:01  src_cnt=24000   frame_rate=1000  frame_size=68  name=e_c_flow    
+    start traffic  ${stream4}
+    start traffic  ${stream5}
+    start traffic  ${stream1}
+    start traffic  ${stream3}
+    sleep  100
+    rest verify forwarding layer2 table untag  leaf2-a  ${leaf2a_ixia_intf}  00:01:01:00:00:01
+    rest verify forwarding layer2 table untag  leaf2-b  ${leaf2b_ixia_intf}  00:03:03:00:00:01
+    verify traffic rate  tx_rate  rx_rate  c  e
+    verify traffic rate negative  tx_rate  rx_rate  c  a  
+    verify traffic rate  tx_rate  rx_rate  d  f
+    verify traffic rate negative  tx_rate  rx_rate  d  b    
+    stop traffic  ${stream3}
+    stop traffic  ${stream1}
+    stop traffic  ${stream4}
+    stop traffic  ${stream5}
+        
 Tear down the config
    [Tags]  feature  run    
    delete fabric switch
