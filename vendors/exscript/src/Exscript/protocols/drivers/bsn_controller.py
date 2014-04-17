@@ -41,6 +41,7 @@ _prompt_re = [re.compile(r'[\r\n\x07](\w+(-?\w+)?\s?@?)?[\-\w+\.:/]+(?:\([^\)]+\
 
 _error_re = [re.compile(r'%Error'),
                 re.compile(r'invalid input', re.I),
+                re.compile(r'Error: running command'),
                 re.compile(r'(?:incomplete|ambiguous) command', re.I),
                 re.compile(r'connection timed out', re.I),
                 re.compile(r'[^\r\n]+ not found', re.I)]
