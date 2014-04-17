@@ -169,7 +169,7 @@ class Test(object):
                                                     % n)
                     for key in self._params[n]:
                         if key not in self._topology_params[n]:
-                            helpers.warn("Node '%s' does not have attribute"
+                            helpers.info("Node '%s' does not have attribute"
                                          " '%s' defined. Populating it from"
                                          " params file."
                                          % (n, key))
