@@ -380,11 +380,11 @@ T20.2 TACACS Default timeout
 	Cli Run  tacacs server timeout 10
 	Cli Run  tacacs server host 5.5.5.5 timeout 5 key secret
 	Cli Run  tacacs server host 1.2.3.4
-	Cli Run  aaa accounting exec default start-stop group tacacs+  cmd_timeout=20
-	Cli Run  no aaa accounting exec default start-stop group tacacs+  cmd_timeout=50
+	Cli Run  aaa accounting exec default start-stop group tacacs+  cmd_timeout=31
+	Cli Run  no aaa accounting exec default start-stop group tacacs+  cmd_timeout=46
 	Cli Run  no tacacs server timeout 10
-	Cli Run  aaa accounting exec default start-stop group tacacs+  cmd_timeout=80
-	Cli Run  no aaa accounting exec default start-stop group tacacs+  cmd_timeout=150
+	Cli Run  aaa accounting exec default start-stop group tacacs+  cmd_timeout=71
+	Cli Run  no aaa accounting exec default start-stop group tacacs+  cmd_timeout=141
 	[Tags]  BSC-5088  AAA  TACACS
 
 T21 Escaping special characters in quoted strings
@@ -485,6 +485,7 @@ Setup
 
 Teardown
 	Cli Run  exit
-	Config  master  no aaa accounting exec default start-stop group tacacs+  timeout=200
+	Cli Run  config
+	Cli  master  no aaa accounting exec default start-stop group tacacs+  timeout=200
 	Cli Copy  config://startup-config  running-config
 	Base Test Teardown
