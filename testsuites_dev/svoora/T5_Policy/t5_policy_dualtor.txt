@@ -20,80 +20,510 @@ Resource		testsuites_dev/svoora/T5_Policy/t5_policy_variables.txt
 
 T1 Interface tenant permit policy src-ip to dest-ip 
 	[Tags]
-	Policy tenant interface permit src-ip to dest-ip 
+	Policy tenant interface  10  permit  ${policy_bm1_ip}  ${policy_bm0_ip}
+	${loss}=									mininet l3 ping		${bm1_name}				${bm0_name}		3
+	sleep										1
+	Should Be True  							${loss} == 0 
+
 T2 Interface tenant deny policy src-ip to dest-ip
+	[Tags]
+	Policy tenant interface  10  deny  ${policy_bm1_ip}  ${policy_bm0_ip}
+	${loss}=									mininet l3 ping		${bm1_name}				${bm0_name}		3
+	sleep										1
+	Should Be True  							${loss} == 100
+	 
 T3 Interface tenant permit policy src-mask to dest-ip
+	[Tags]
+	Policy tenant interface  10  permit  ${policy_vns2_ip1}  ${policy_bm0_ip}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	sleep										1
+	Should Be True  							${loss} == 0
+	
 T4 Interface tenant deny policy src-mask to dest-ip
+	[Tags]
+	Policy tenant interface  10  deny  ${policy_vns2_ip1}  ${policy_bm0_ip}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	sleep										1
+	Should Be True  							${loss} == 100
+	
 T5 Interface tenant deny policy src-ip to dest-mask
+	[Tags]
+	Policy tenant interface  10  deny  ${policy_bm6_ip}  ${policy_bm0_ip}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	sleep										1
+	Should Be True  							${loss} == 100
+	
 T6 Interface tenant permit policy src-mask to dest-mask
+	[Tags]
+	Policy tenant interface  10  permit  ${policy_vns2_ip1}  ${policy_vns1_ip1}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	sleep										1
+	Should Be True  							${loss} == 0
+	
 T7 Interface tenant permit policy src-ip to dest-vns
+	[Tags]
+	Policy tenant interface  10  permit  ${policy_bm6_ip}  ${policy_vns1}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	sleep										1
+	Should Be True  							${loss} == 0
+	
 T8 Interface tenant deny policy src-ip to dest-vns
+	[Tags]
+	Policy tenant interface  10  deny  ${policy_bm6_ip}  ${policy_vns1}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	sleep										1
+	Should Be True  							${loss} == 100
+	
 T9 Interface tenant permit src-ip to dest-tenant
+[Tags]
+	Policy tenant interface  10  permit  ${policy_bm6_ip}  ${policy_tenant1}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	sleep										1
+	Should Be True  							${loss} == 0
+	
 T10 Interface tenant deny src-ip to dest-tenant
+[Tags]
+	Policy tenant interface  10  deny  ${policy_bm6_ip}  ${policy_tenant1}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	sleep										1
+	Should Be True  							${loss} == 100
+	
+######  **  ANY need more investigation  **  ########
 T11 Interface tenant permit policy src-ip to any
+[Tags]
+	Policy tenant interface  10  deny  ${policy_bm6_ip}  ${policy_bm0_ip}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	sleep										1
+	Should Be True  							${loss} == 100
+	
+######  **  ANY need more investigation  **  ########
 T12 Interface tenant deny policy src-ip to any
+	[Tags]
+	Policy tenant interface  10  deny  ${policy_vns2_ip}  ${policy_bm0_ip}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	sleep										1
+	Should Be True  							${loss} == 100
+	
 T13 Interface tenant permit policy src-tenant to dest-ip
+	[Tags]
+	Policy tenant interface  10  permit  ${policy_tenant2}  ${policy_bm0_ip}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	sleep										1
+	Should Be True  							${loss} == 0
+	
 T14 Interface tenant deny policy src-tenant to dest-ip
+	[Tags]
+	Policy tenant interface  10  deny  ${policy_tenant2	}  ${policy_bm0_ip}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	sleep										1
+	Should Be True  							${loss} == 100
+	
 T15 Interface tenant permit policy src-tenant to dest-tenant
+	[Tags]
+	Policy tenant interface  10  permit  ${policy_tenant2}  ${policy_tenant1}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	sleep										1
+	Should Be True  							${loss} == 0
+	
 T16 Interface tenant deny policy src-tenant to dest-tenant
+	[Tags]
+	Policy tenant interface  10  deny  ${policy_tenant2}  ${policy_tenant1}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	sleep										1
+	Should Be True  							${loss} == 100
+	
 T17 Interface tenant permit policy src-tenant to dest-vns
+	[Tags]
+	Policy tenant interface  10  permit  ${policy_tenant2}  ${policy_vns1}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	sleep										1
+	Should Be True  							${loss} == 0
+	
 T18 Interface tenant deny policy src-tenant to dest-vns
+	[Tags]
+	Policy tenant interface  10  deny  ${policy_tenant2}  ${policy_vns1}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	sleep										1
+	Should Be True  							${loss} == 100
+
+######  **  ANY need more investigation  **  ########	
 T19 Interface tenant permit policy src-tenant to any
+	[Tags]
+	Policy tenant interface  10  permit  ${policy_tenant2}  ${policy_tenant1}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	sleep										1
+	Should Be True  							${loss} == 100
+
+######  **  ANY need more investigation  **  ########	
 T20 Interface tenant deny policy src-tenant to any
-
+	[Tags]
+	Policy tenant interface  10  deny  ${policy_tenant2}  ${policy_tenant1}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	sleep										1
+	Should Be True  							${loss} == 100
+	
 T21 Interface tenant permit policy src-vns to dest-ip
+	[Tags]
+	Policy tenant interface  10  permit  ${policy_vns4}  ${policy_bm0_ip}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	sleep										1
+	Should Be True  							${loss} == 0
+	
 T22 Interface tenant deny policy src-vns to dest-ip
+	[Tags]
+	Policy tenant interface  10  deny  ${policy_vns4}  ${policy_bm0_ip}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	sleep										1
+	Should Be True  							${loss} == 100
+	
 T23 Interface tenant permit policy src-vns to dest-tenant
+	[Tags]
+	Policy tenant interface  10  permit  ${policy_vns4}  ${policy_tenant1}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	sleep										1
+	Should Be True  							${loss} == 0
+	
 T24 Interface tenant deny policy src-vns to dest-tenant
+	[Tags]
+	Policy tenant interface  10  deny  ${policy_vns4}  ${policy_tenant1}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	sleep										1
+	Should Be True  							${loss} == 100
+	
 T25 Interface tenant permit policy src-vns to dest-vns
+	[Tags]
+	Policy tenant interface  10  permit  ${policy_vns4}  ${policy_vns1}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	sleep										1
+	Should Be True  							${loss} == 0
+	
 T26 Interface tenant deny policy src-vns to dest-vns
-T27 Interface tenant permit policy src-vns to any
-T28 Interface tenant deny policy src-vns to any
+	[Tags]
+	Policy tenant interface  10  deny  ${policy_vns4}  ${policy_vns1}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	sleep										1
+	Should Be True  							${loss} == 100
 
+######  **  ANY need more investigation  **  ########		
+T27 Interface tenant permit policy src-vns to any
+	[Tags]
+	Policy tenant interface  10  permit  ${policy_tenant2}  ${policy_tenant1}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	sleep										1
+	Should Be True  							${loss} == 100
+	
+######  **  ANY need more investigation  **  ########	
+T28 Interface tenant deny policy src-vns to any
+	[Tags]
+	Policy tenant interface  10  deny  ${policy_tenant2}  ${policy_tenant1}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	sleep										1
+	Should Be True  							${loss} == 100
+	
+######  **  ANY need more investigation  **  ########	
 T29 Interface tenant permit policy any to dest-ip
+	[Tags]
+	Policy tenant interface  10  deny  ${policy_tenant2}  ${policy_tenant1}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	sleep										1
+	Should Be True  							${loss} == 100
+	
+######  **  ANY need more investigation  **  ########	
 T30 Interface tenant deny policy any to dest-ip
+	[Tags]
+	Policy tenant interface  10  deny  ${policy_tenant2}  ${policy_tenant1}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	sleep										1
+	Should Be True  							${loss} == 100
+	
+######  **  ANY need more investigation  **  ########	
 T31 Interface tenant permit policy any to dest-tenant
+	[Tags]
+	Policy tenant interface  10  deny  ${policy_tenant2}  ${policy_tenant1}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	sleep										1
+	Should Be True  							${loss} == 100
+	
+######  **  ANY need more investigation  **  ########	
 T32 Interface tenant deny policy any to dest-tenant
+	[Tags]
+	Policy tenant interface  10  deny  ${policy_tenant2}  ${policy_tenant1}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	sleep										1
+	Should Be True  							${loss} == 100
+	
+######  **  ANY need more investigation  **  ########	
 T33 Interface tenant permit policy any to dest-vns
+	[Tags]
+	Policy tenant interface  10  deny  ${policy_tenant2}  ${policy_tenant1}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	sleep										1
+	Should Be True  							${loss} == 100
+	
+######  **  ANY need more investigation  **  ########	
 T34 Interface tenant deny policy any to dest-vns
+	[Tags]
+	Policy tenant interface  10  deny  ${policy_tenant2}  ${policy_tenant1}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	sleep										1
+	Should Be True  							${loss} == 100
+	
+######  **  ANY need more investigation  **  ########	
 T35 Interface tenant permit policy any to any
+	[Tags]
+	Policy tenant interface  10  deny  ${policy_tenant2}  ${policy_tenant1}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	sleep										1
+	Should Be True  							${loss} == 100
+	
+######  **  ANY need more investigation  **  ########	
 T36 Interface tenant deny policy any to any
+	[Tags]
+	Policy tenant interface  10  deny  ${policy_tenant2}  ${policy_tenant1}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	sleep										1
+	Should Be True  							${loss} == 100
 
 
 T37 Interface vns permit policy src-ip to dest-ip 
+	[Tags]
+	Policy vns interface  10  permit  ${policy_bm6_ip}  ${policy_bm0_ip}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	sleep										1
+	Should Be True  							${loss} == 0
+
 T38 Interface vns deny policy src-ip to dest-ip
+	[Tags]
+	Policy vns interface  10  deny  ${policy_bm6_ip}  ${policy_bm0_ip}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	sleep										1
+	Should Be True  							${loss} == 100
+
 T39 Interface vns permit policy src-ip to dest-vns
+	[Tags]
+	Policy vns interface  10  permit  ${policy_bm6_ip}  ${policy_vns1}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	sleep										1
+	Should Be True  							${loss} == 0
+
 T40 Interface vns deny policy src-ip to dest-vns
+	[Tags]
+	Policy vns interface  10  deny  ${policy_bm6_ip}  ${policy_vns1}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	sleep										1
+	Should Be True  							${loss} == 100
+
 T41 Interface vns permit src-ip to dest-tenant
+	[Tags]
+	Policy vns interface  10  permit  ${policy_bm6_ip}  ${policy_tenant1}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	sleep										1
+	Should Be True  							${loss} == 0
+
 T42 Interface vns deny src-ip to dest-tenant
+	[Tags]
+	Policy vns interface  10  deny  ${policy_bm6_ip}  ${policy_tenant1}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	sleep										1
+	Should Be True  							${loss} == 100
+
+######  **  ANY need more investigation  **  ########	
 T43 Interface vns permit policy src-ip to any
+	[Tags]
+	Policy vns interface  10  permit  ${policy_bm6_ip}  ${policy_bm0_ip}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	sleep										1
+	Should Be True  							${loss} == 0
+
+######  **  ANY need more investigation  **  ########	
 T44 Interface vns deny policy src-ip to any
+	[Tags]
+	Policy vns interface  10  permit  ${policy_bm6_ip}  ${policy_bm0_ip}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	sleep										1
+	Should Be True  							${loss} == 0
+
 T45 Interface vns permit policy src-tenant to dest-ip
+	[Tags]
+	Policy vns interface  10  permit  ${policy_tenant2}  ${policy_bm0_ip}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	sleep										1
+	Should Be True  							${loss} == 0
+
 T46 Interface vns deny policy src-tenant to dest-ip
+	[Tags]
+	Policy vns interface  10  deny  ${policy_tenant2}  ${policy_bm0_ip}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	sleep										1
+	Should Be True  							${loss} == 100
+
 T47 Interface vns permit policy src-tenant to dest-tenant
+	[Tags]
+	Policy vns interface  10  permit  ${policy_tenant2}  ${policy_tenant1}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	sleep										1
+	Should Be True  							${loss} == 0
+
 T48 Interface vns deny policy src-tenant to dest-tenant
+	[Tags]
+	Policy vns interface  10  deny  ${policy_tenant2}  ${policy_tenant1}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	sleep										1
+	Should Be True  							${loss} == 100
+
 T49 Interface vns permit policy src-tenant to dest-vns
+	[Tags]
+	Policy vns interface  10  permit  ${policy_tenant2}  ${policy_vns1}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	sleep										1
+	Should Be True  							${loss} == 0
+
 T50 Interface vns deny policy src-tenant to dest-vns
+	[Tags]
+	Policy vns interface  10  deny  ${policy_tenant2}  ${policy_vns1}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	sleep										1
+	Should Be True  							${loss} == 100
+
+######  **  ANY need more investigation  **  ########	
 T51 Interface vns permit policy src-tenant to any
+	[Tags]
+	Policy vns interface  10  permit  ${policy_tenant2}  ${policy_bm0_ip}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	sleep										1
+	Should Be True  							${loss} == 0
+
+######  **  ANY need more investigation  **  ########	
 T52 Interface vns deny policy src-tenant to any
+	[Tags]
+	Policy vns interface  10  permit  ${policy_bm6_ip}  ${policy_bm0_ip}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	sleep										1
+	Should Be True  							${loss} == 0
+
 
 T53 Interface vns permit policy src-vns to dest-ip
-T54 Interface vns deny policy src-vns to dest-ip
-T55 Interface vns permit policy src-vns to dest-tenant
-T56 Interface vns deny policy src-vns to dest-tenant
-T57 Interface vns permit policy src-vns to dest-vns
-T58 Interface vns deny policy src-vns to dest-vns
-T59 Interface vns permit policy src-vns to any
-T60 Interface vns deny policy src-vns to any
+	[Tags]
+	Policy vns interface  10  permit  ${policy_vns4}  ${policy_bm0_ip}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	sleep										1
+	Should Be True  							${loss} == 0
 
+T54 Interface vns deny policy src-vns to dest-ip
+	[Tags]
+	Policy vns interface  10  deny  ${policy_vns4}  ${policy_bm0_ip}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	sleep										1
+	Should Be True  							${loss} == 100
+
+T55 Interface vns permit policy src-vns to dest-tenant
+	[Tags]
+	Policy vns interface  10  permit  ${policy_vns4}  ${policy_bm0_ip}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	sleep										1
+	Should Be True  							${loss} == 0
+
+T56 Interface vns deny policy src-vns to dest-tenant
+	[Tags]
+	Policy vns interface  10  deny  ${policy_vns4}  ${policy_tenant2}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	sleep										1
+	Should Be True  							${loss} == 100
+
+T57 Interface vns permit policy src-vns to dest-vns
+	[Tags]
+	Policy vns interface  10  permit  ${policy_vns4}  ${policy_vns1}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	sleep										1
+	Should Be True  							${loss} == 0
+
+T58 Interface vns deny policy src-vns to dest-vns
+	[Tags]
+	Policy vns interface  10  deny  ${policy_vns4}  ${policy_vns1}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	sleep										1
+	Should Be True  							${loss} == 100
+
+######  **  ANY need more investigation  **  ########	
+T59 Interface vns permit policy src-vns to any
+	[Tags]
+	Policy vns interface  10  permit  ${policy_bm6_ip}  ${policy_bm0_ip}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	sleep										1
+	Should Be True  							${loss} == 0
+
+######  **  ANY need more investigation  **  ########	
+T60 Interface vns deny policy src-vns to any
+	[Tags]
+	Policy vns interface  10  permit  ${policy_bm6_ip}  ${policy_bm0_ip}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	sleep										1
+	Should Be True  							${loss} == 0
+
+######  **  ANY need more investigation  **  ########	
 T61 Interface vns permit policy any to dest-ip
+	[Tags]
+	Policy vns interface  10  permit  ${policy_bm6_ip}  ${policy_bm0_ip}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	sleep										1
+	Should Be True  							${loss} == 0
+
+######  **  ANY need more investigation  **  ########	
 T62 Interface vns deny policy any to dest-ip
+	[Tags]
+	Policy vns interface  10  permit  ${policy_bm6_ip}  ${policy_bm0_ip}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	sleep										1
+	Should Be True  							${loss} == 0
+
+######  **  ANY need more investigation  **  ########	
 T63 Interface vns permit policy any to dest-tenant
+	[Tags]
+	Policy vns interface  10  permit  ${policy_bm6_ip}  ${policy_bm0_ip}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	sleep										1
+	Should Be True  							${loss} == 0
+
+######  **  ANY need more investigation  **  ########	
 T64 Interface vns deny policy any to dest-tenant
+	[Tags]
+	Policy vns interface  10  permit  ${policy_bm6_ip}  ${policy_bm0_ip}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	sleep										1
+	Should Be True  							${loss} == 0
+
+######  **  ANY need more investigation  **  ########	
 T65 Interface vns permit policy any to dest-vns
+	[Tags]
+	Policy vns interface  10  permit  ${policy_bm6_ip}  ${policy_bm0_ip}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	sleep										1
+	Should Be True  							${loss} == 0
+
+######  **  ANY need more investigation  **  ########	
 T66 Interface vns deny policy any to dest-vns
+	[Tags]
+	Policy vns interface  10  permit  ${policy_bm6_ip}  ${policy_bm0_ip}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	sleep										1
+	Should Be True  							${loss} == 0
+
+######  **  ANY need more investigation  **  ########	
 T67 Interface vns permit policy any to any
+	[Tags]
+	Policy vns interface  10  permit  ${policy_bm6_ip}  ${policy_bm0_ip}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	sleep										1
+	Should Be True  							${loss} == 0
+
+######  **  ANY need more investigation  **  ########	
 T68 Interface vns deny policy any to any
+	[Tags]
+	Policy vns interface  10  permit  ${policy_bm6_ip}  ${policy_bm0_ip}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	sleep										1
+	Should Be True  							${loss} == 0
+
 
 
 T69 Interface tenant and vns permit policy src-ip to dest-ip
@@ -362,15 +792,26 @@ delete inter tenant routing
 	REST delete system to tenant routers		${tenant2_name}
 	REST delete tenant							${tenant_system}
 	
-Policy tenant interface permit src-ip to dest-ip 
+Policy tenant interface  [Arguments]  ${seq}  ${action}  ${src}  ${dst} 
 	add inter tenant routing
 	mininet host config
 	REST add policy								${tenant1_name}		${tenant1_polname}		
 	REST add policy								${tenant2_name}		${tenant2_polname}
-	REST add policy item						${tenant1_name}		${tenant1_polname}		10		permit		${policy_ip1}		${policy_ip2}
+	REST add policy item						${tenant1_name}		${tenant1_polname}		${seq}		${action}		${src}		${dst}
 	REST apply policy on tenant					${tenant1_name}		${tenant1_polname}
+	common dumps
 
-common tests	
+Policy vns interface  [Arguments]  ${seq}  ${action}  ${src}  ${dst} 
+	add inter tenant routing
+	mininet host config
+	REST add policy								${tenant1_name}		${tenant1_polname}		
+	REST add policy								${tenant2_name}		${tenant2_polname}
+	REST add policy item						${tenant1_name}		${tenant1_polname}		${seq}		${action}		${src}		${dst}
+	REST apply policy on vns					${tenant1_name}		${tenant1_polname}
+	common dumps
+	
+
+common dumps	
 	mininet dump switch							${leaf0a_name}
 	mininet dump switch							${leaf0b_name}
 	mininet dump switch							${leaf1a_name}
@@ -391,10 +832,10 @@ common tests
 	REST show forwarding switch l3 cidr route	${leaf2b_name}	
 	REST show running config
 	sleep										1
-	mininet l3 ping								${bm4_name} 		${bm8_ip}		3
-	sleep										1
-	${loss}=  									mininet l3 ping		${bm4_name}		${bm8_ip} 	
-	Should Be True  							${loss} == 0	
-	${endpoints_cnt}=							rest count endpoints mac
-#	Should Be True  							${endpoints_cnt} == 8
-	delete inter tenant routing	
+	#mininet l3 ping							${bm4_name} 		${bm8_ip}		3
+	#sleep										1
+	#${loss}=  									mininet l3 ping		${bm4_name}		${bm8_ip} 	
+	#Should Be True  							${loss} == 0	
+	#${endpoints_cnt}=							rest count endpoints mac
+#	#Should Be True  							${endpoints_cnt} == 8
+	#delete inter tenant routing	
