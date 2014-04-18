@@ -133,11 +133,15 @@ class T5Openstack(object):
 		os1 = t.openstack_server('os1')
 
 		result = os1.bash("neutron router-show %s" % (routerName))              
-		output = result["content"]
-		helpers.log("output: %s" % output)
-		out_dict = helpers.openstack_convert_table_to_dict(output)
-		routerId = out_dict["id"]["value"]
-		return routerId		
+		output = result["content"]		
+		match = re.search(r'Unable to find router with name', output)
+		if match:
+			helpers.log("router Not found")
+			return ''
+		else:
+			out_dict = helpers.openstack_convert_table_to_dict(output)
+			routerId = out_dict["id"]["value"]
+			return routerId		
 
 	def openstack_show_router_status(self, osUserName, osTenantName, osPassWord, osAuthUrl, routerName):
 		'''Get router status
@@ -180,6 +184,24 @@ class T5Openstack(object):
 			subnetId = out_dict["network_id"]["value"]
 			return subnetId		
 
+	def openstack_show_subnet_ip(self, subnetName):
+		'''Get subnet gateway IP address
+			Input: subnet Name
+			Output: gateway IP
+		'''
+		t = test.Test()
+		os1 = t.openstack_server('os1')
+		result = os1.bash("neutron subnet-show %s" % (subnetName))              
+		output = result["content"]		
+		match = re.search(r'Unable to find subnet with name', output)
+		if match:
+			helpers.log("subnet Not found")
+			return ''
+		else:
+			out_dict = helpers.openstack_convert_table_to_dict(output)
+			subnetIp = out_dict["gateway_ip"]["value"]
+			return subnetIp		
+	
 	def openstack_show_net(self, netName):
 		'''Get Nova net Id
 			Input:
@@ -341,7 +363,12 @@ class T5Openstack(object):
 		t = test.Test()
 		os1 = t.openstack_server('os1')
 		tenantId = self.openstack_show_tenant(tenantName)
-		os1.bash("neutron router-create --tenant-id %s %s" % (tenantId, routerName))              
+		try:
+			os1.bash("neutron router-create --tenant-id %s %s" % (tenantId, routerName))              
+		except:
+			output = helpers.exception_info_value()	
+			helpers.log("Output: %s" % output)
+			return False
 		return True
 
 	def openstack_delete_router(self, routerName):
@@ -353,7 +380,12 @@ class T5Openstack(object):
 		'''				
 		t = test.Test()
 		os1 = t.openstack_server('os1')
-		os1.bash("neutron router-delete %s" % (routerName))              
+		try:
+			os1.bash("neutron router-delete %s" % (routerName))
+		except:
+			output = helpers.exception_info_value()	
+			helpers.log("Output: %s" % output)
+			return False              
 		return True
 	
 	def openstack_add_net(self, tenantName, netName, external=False):
@@ -486,7 +518,7 @@ S
 		return data
 		
 		
-	def openstack_add_subnet_to_router(self, osUserName, osTenantName, osPassWord, osAuthUrl, routerId, subNetId):
+	def openstack_add_subnet_to_router(self, routerName, subnetName):
 		'''attach subnet to tenant router
 			Input:
 				`osXXX`        		tenant name, password, username etc credentials
@@ -499,12 +531,17 @@ S
 		'''
 		t = test.Test()
 		os1 = t.openstack_server('os1')
+		routerId = self.openstack_show_router(routerName)
+		subnetId = self.openstack_show_subnet(subnetName)
+		try:
+			os1.bash("neutron router-interface-add %s %s" % (routerId, subnetId))   
+		except:
+			output = helpers.exception_info_value()	
+			helpers.log("Output: %s" % output) 
+			return False
+		return True
 		
-		os1.bash("neutron router-interface-add %s %s" % (osUserName, osTenantName, osPassWord, osAuthUrl, routerId, subNetId))   
-		data = os1.bash_content()
-		return data
-		
-	def openstack_delete_subnet_to_router(self, osUserName, osTenantName, osPassWord, osAuthUrl, routerId, subNetId):
+	def openstack_delete_subnet_to_router(self, routerName, subnetName):
 		'''detach subnet from tenant router
 			Input:
 				`osXXX`        		tenant name, password, username etc credentials
@@ -517,10 +554,15 @@ S
 		'''
 		t = test.Test()
 		os1 = t.openstack_server('os1')
-		
-		os1.bash("neutron --os-username %s --os-tenant-name %s --os-password %s --os-auth-url %s router-interface-delete %s %s" % (osUserName, osTenantName, osPassWord, osAuthUrl, routerId, subNetId))   
-		data = os1.bash_content()
-		return data
+		routerId = self.openstack_show_router(routerName)
+		subnetId = self.openstack_show_subnet(subnetName)
+		try:
+			os1.bash("neutron  router-interface-delete %s %s" % (routerId, subnetId))
+		except:
+			output = helpers.exception_info_value()	
+			helpers.log("Output: %s" % output) 
+			return False
+		return True
 
 	def openstack_add_secgroup_permit_all(self, osUserName, osTenantName, osPassWord, osAuthUrl, secgroupName):
 		'''set tenant secgroup policy to allow all traffic
@@ -579,12 +621,12 @@ S
 		'''
 		t = test.Test()
 		c = t.controller('master')
-		url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/tenants'
+		url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/tenant'
 		c.rest.get(url)
 		data = c.rest.content()
 		tenantId = self.openstack_show_tenant(tenantName)
 		for i in range(0,len(data)):
-			if str(data[i]["tenant-name"]) == str(tenantId):
+			if str(data[i]["name"]) == str(tenantId):
 				helpers.log("Pass: Openstack tenant are present in the BSN controller")
 				return True
 		return False
@@ -600,10 +642,10 @@ S
 		tenantId = self.openstack_show_tenant(tenantName)
 		netId = self.openstack_show_subnet(subnetName)
 		if netId != '':
-			url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/vnses[tenant-name="%s"][name="%s"]' % (tenantId, netId)	      
+			url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/vns[tenant="%s"][name="%s"]' % (tenantId, netId)	      
 			c.rest.get(url)
 			data = c.rest.content()
-			if data[0]["tenant-name"] == tenantId:
+			if data[0]["tenant"] == tenantId:
 				if data[0]["name"] == netId:
 					helpers.log("Pass: Openstack networks are present in the BSN controller")
 					return True
@@ -614,7 +656,7 @@ S
 					helpers.log("Openstack tenant not present in the BSN controller")
 					return False
 		else:
-			url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/tenants'
+			url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/tenant'
 			c.rest.get(url)	
 			data = c.rest.content()
 			if len(data) == 0:
@@ -632,7 +674,7 @@ S
 		'''
 		t = test.Test()
 		c = t.controller('master')
-		url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/endpoints'
+		url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/endpoint'
 		c.rest.get(url)
 		data = c.rest.content()
 		instanceIp = self.openstack_show_instance_ip(instanceName, netName)
@@ -641,4 +683,44 @@ S
 				helpers.log("Pass: Openstack endpoints are present in the BSN controller")
 				return True
 		helpers.test_failure("Expected openstack endpoints are not present in BSN controller")
-		return False	
+		return False
+	
+	def openstack_verify_router(self, routerName):
+		'''verify router creation status through horizon
+			Input:router name
+			Output : Check the status to "Active"
+		'''
+		t = test.Test()
+		os1 = t.openstack_server('os1')
+		result = os1.bash("neutron router-show %s" % (routerName))              
+		output = result["content"]		
+		match = re.search(r'Unable to find router with name', output)
+		if match:
+			helpers.log("router Not found")
+			return ''
+		else:
+			out_dict = helpers.openstack_convert_table_to_dict(output)
+			if out_dict["status"]["value"] == "ACTIVE":
+				helpers.log("Pass: Router is active in the tenant")
+				return True
+			else:
+				helpers.test_failure("Fail: router status is not active")
+				return False
+	
+	def openstack_verify_router_interface(self, subnetName):
+		'''verify router gateway IP creaetd in endpoint
+			Input:subnetName
+			Output : Verify the subnet gateway IP created in endpoint
+		'''
+		t = test.Test()
+		c = t.controller('master')
+		url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/endpoint'
+		c.rest.get(url)
+		data = c.rest.content()
+		subnetIp = self.openstack_show_subnet_ip(subnetName)
+		for i in range(0,len(data)):
+			if str(data[i]["ip-address"]) == str(subnetIp) and str(data[i]["state"]) == "Active":
+				helpers.log("Pass: Router interface creaetd as endpoint in controller")
+				return True
+		helpers.test_failure("Fail:router interface not present in controller endpoint table")
+		return False

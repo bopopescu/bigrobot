@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 '''
-Wrapper Script to spwan cotroller VMs on KVM Machine
-Usage:
-
+wrapper script for spawning 2 vms and 1 mininet for jenkins smoke integration
+need to export BIGROBOT_PARAMS_INPUT_PRE and expot BUILD_NUMBER to run on a shell
+export BIGROBOT_SUITE=t5_singleleaf_dualrack_ping_test_suite
+export BUILD_NUMBER=999
 '''
 import os
 import sys
@@ -159,7 +160,7 @@ def main(*args):
                                       netmask=args.netmask,
                                       vm_name=vm_mininet_name,
                                       vm_host_name=vm_host_name,
-                                      build_number = '63')
+                                      build_number = '66')
         helpers.log("Created Mininet VM :\n%s" % mininet_vm)
         if mininet_vm['status_code'] == False:
             helpers.summary_log("VM setup failure on standby vm!!\n%s"
@@ -184,6 +185,16 @@ def main(*args):
     topo.write(config)
     topo.close()
     helpers.log("Success in creating topo file %s" % topo_file)
+    
+    jenkins_build_number = helpers.get_env("BUILD_NUMBER")
+    vm_file = "/tmp/vm_temp_%s" % str(jenkins_build_number)
+    vm_file_handle = open(vm_file, "w")
+    vm_domain_names = "%s\n%s\n%s\n" % (active_vm['vm_name'],
+                                      standby_vm['vm_name'],
+                                      mininet_vm['vm_name'])
+    vm_file_handle.write(vm_domain_names)
+    vm_file_handle.close()
+    helpers.log("Success in creating VM Domain Name file: %s" % vm_file)
 
 
 if __name__ == '__main__':

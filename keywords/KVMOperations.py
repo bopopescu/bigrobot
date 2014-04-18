@@ -45,17 +45,19 @@ class KVMOperations(object):
         vm_name = kwargs.get("vm_name", None)
         ram = kwargs.get("ram", "1024")
         vcpus = kwargs.get("cpus", "1")
-        virt_install_cmd = "sudo virt-install \
-                            --connect qemu:///system \
-                            -r %s \
-                            -n %s \
-                            --vcpus=%s \
-                            --disk path=%s,device=disk,format=qcow2 \
-                            --import     --noautoconsole \
-                            --network=bridge:br0,model=virtio \
-                            --graphics vnc" % (ram, vm_name, vcpus, disk_path)
-        helpers.log("Creating VM on KVM Host with virt-install cmd: \n%s..." % virt_install_cmd)
-        if "Domain creation completed." in kvm_handle.bash(virt_install_cmd)['content']:
+        virt_install_cmd = ("sudo virt-install"
+                            " --connect qemu:///system"
+                            " -r %s"
+                            " -n %s"
+                            " --vcpus=%s"
+                            " --disk path=%s,device=disk,format=qcow2"
+                            " --import --noautoconsole"
+                            " --network=bridge:br0,model=virtio"
+                            " --graphics vnc"
+                            % (ram, vm_name, vcpus, disk_path))
+        helpers.log("Creating VM on KVM host:\n%s" % virt_install_cmd)
+        content = kvm_handle.bash(virt_install_cmd)['content']
+        if "Domain creation completed." in content:
             return True
         else:
             return False
@@ -118,6 +120,7 @@ class KVMOperations(object):
         kvm_handle = kwargs.get("kvm_handle", None)
         qcow_path = kwargs.get("qcow_path", None)
         vm_name = kwargs.get("vm_name", None)
+        qcow_path = qcow_path.replace(" ", "\ ")
         kvm_handle.bash("sudo cp %s /var/lib/libvirt/images/%s.qcow2" % (qcow_path, vm_name))
         kvm_qcow_path = "/var/lib/libvirt/images/%s.qcow2" % vm_name
         helpers.log("Success copying image !!")

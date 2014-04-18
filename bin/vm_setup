@@ -108,7 +108,8 @@ def main(*args):
                                  vm_host_name=vm_host_name)
 
     if not active_vm['status_code']:
-        helpers.error_exit("Error in VM setup\n%s" % active_vm['status_descr'])
+        helpers.error_exit("Issue seen during VM setup\n%s"
+                           % active_vm['status_descr'])
 
     # temporarily setting ACTIVE_VM env for jenkins vm_setup
     if args.vm_type == 'mininet':
