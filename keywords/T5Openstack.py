@@ -533,9 +533,13 @@ S
 		os1 = t.openstack_server('os1')
 		routerId = self.openstack_show_router(routerName)
 		subnetId = self.openstack_show_subnet(subnetName)
-		os1.bash("neutron router-interface-add %s %s" % (routerId, subnetId))   
-		data = os1.bash_content()
-		return data
+		try:
+			os1.bash("neutron router-interface-add %s %s" % (routerId, subnetId))   
+		except:
+			output = helpers.exception_info_value()	
+			helpers.log("Output: %s" % output) 
+			return False
+		return True
 		
 	def openstack_delete_subnet_to_router(self, routerName, subnetName):
 		'''detach subnet from tenant router
@@ -552,9 +556,13 @@ S
 		os1 = t.openstack_server('os1')
 		routerId = self.openstack_show_router(routerName)
 		subnetId = self.openstack_show_subnet(subnetName)
-		os1.bash("neutron  router-interface-delete %s %s" % (routerId, subnetId))
-		data = os1.bash_content()
-		return data
+		try:
+			os1.bash("neutron  router-interface-delete %s %s" % (routerId, subnetId))
+		except:
+			output = helpers.exception_info_value()	
+			helpers.log("Output: %s" % output) 
+			return False
+		return True
 
 	def openstack_add_secgroup_permit_all(self, osUserName, osTenantName, osPassWord, osAuthUrl, secgroupName):
 		'''set tenant secgroup policy to allow all traffic

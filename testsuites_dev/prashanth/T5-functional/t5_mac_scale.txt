@@ -252,7 +252,7 @@ Add 96k dynamic mac into the system and check forwarding and make sure aging als
     start traffic  ${stream}
     start traffic  ${stream1}
     start traffic  ${stream2}
-    sleep  180
+    sleep  200
     rest verify endpoint in system  96000
     ${result}=  bash execute command  leaf0-a  ofad-ctl ft L2 | wc -l 
     ${count}=	Convert to integer  ${result}   
@@ -391,7 +391,7 @@ Mac move at scale 48k between rack
     start traffic  ${stream1}
     start traffic  ${stream2}
     start traffic  ${stream3}
-    sleep  100  
+    sleep  150  
     rest verify endpoint in system  48002
     rest verify forwarding layer2 table untag  leaf0-a  ${leaf0a_ixia_intf}  00:01:01:00:00:01
     rest verify forwarding layer2 table untag  leaf0-b  ${leaf0b_ixia_intf}  00:03:03:00:00:01
