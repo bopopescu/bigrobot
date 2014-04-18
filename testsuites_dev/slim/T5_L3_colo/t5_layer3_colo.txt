@@ -21,7 +21,7 @@ Resource		testsuites_dev/slim/T5_L3_colo/t5_layer3_colo_resources.txt
 * Test Cases
 Intra tenant L3 untagged traffic with dynamic endpoints same rack
 	L3 intra tenant same rack untagged with dynamic endpoints
-	[Tags]							skipped			smoke				sanity			
+#	[Tags]							skipped			smoke				sanity			
 
 Intra tenant L3 untagged traffic with dynamic endpoints across rack
 	L3 intra tenant across rack untagged with dynamic endpoints
@@ -129,48 +129,48 @@ Configure overlapping router IP
 	
 Trigger controller HA failover via CLI
 	Controller HA failover via CLI	
-#	[Tags]							skipped			feature			
+	[Tags]							skipped			feature			
 	
 Trigger controller HA failover via reboot
 	Controller HA failover via reboot
-#	[Tags]							skipped			feature			
+	[Tags]							skipped			feature			
 
 Spine reboot
 	Reboot spine0 via CLI
-#	[Tags]							skipped			feature			
+	[Tags]							skipped			feature			
 
 Leaf reboot
 	Reboot Leaf0 via CLI
-#	[Tags]							skipped			feature			
+	[Tags]							skipped			feature			
 
 Spine connect and disconnect to controller
 	Connect and Disconnect spine to controller
-#	[Tags]							skipped			feature			
+	[Tags]							skipped			feature			
 	
 Leaf connect and disconnect to controller	
 	Connect and disconnect one leaf in dual tor to controller
-#	[Tags]							skipped			feature			
+	[Tags]							skipped			feature			
 
 Spine to leaf link flap
 	Flap link between leaf and spine
-#	[Tags]							skipped			feature			
+	[Tags]							skipped			feature			
 
 Leaf to host link flap
 	Flap bond interface towards host
-#	[Tags]							skipped			feature			
+	[Tags]							skipped			feature			
 	
 Restart ofad process on spine
 	restart ofad on spine
-#	[Tags]							skipped			feature			
+	[Tags]							skipped			feature			
 	
 Restart ofad process on leaf	
 	restart ofad on leaf
-#	[Tags]							skipped			feature			
+	[Tags]							skipped			feature			
 	
 L3 traffic behavior in headless mode
 	L3 intra tenant traffic behavior in headless mode 
 	Log								manual untested
-#	[Tags]							manual			untested			feature			
+	[Tags]							skipped			manual			untested			feature			
 		
 	
 * Keywords
@@ -189,7 +189,7 @@ L3 intra tenant same rack untagged with dynamic endpoints
 	BASH add route								h1								10.251.2.0/24			10.251.1.1
 	BASH add route								h2								10.251.1.0/24			10.251.2.1
 	sleep										10	
-	BASH ping									H1								10.251.1.1				count=10
+	BASH ping									h1								10.251.1.1				count=10
 	BASH ping									h2								10.251.2.1				count=10
 	${value} = 									BASH verify arp					h1						10.251.1.1
 	Should Be True								${value} 		
@@ -210,8 +210,8 @@ L3 intra tenant same rack untagged with dynamic endpoints
 #   sleep  10
 #   stop traffic								${stream1}
 #   verify results 								transmitted_frames  			received_frames  		${stream1}  			stream1
-	BASH delete route							h5								10.251.2.0/24			10.251.1.1
-	BASH delete route							h6								10.251.1.0/24			10.251.2.1
+	BASH delete route							h1								10.251.2.0/24			10.251.1.1
+	BASH delete route							h2								10.251.1.0/24			10.251.2.1
 	
 	
 
@@ -285,24 +285,21 @@ setup topology
 	REST add interface to portgroup					leaf0-b						${leaf0_pc1_intf2}					${leaf0_pc1}
 	REST add interface to portgroup					leaf0-a						${leaf0_pc2_intf1}					${leaf0_pc2}
 	REST add interface to portgroup					leaf0-b						${leaf0_pc2_intf2}					${leaf0_pc2}
-	REST add interface to portgroup					leaf1-a						${leaf1_pc1_intf1}					${leaf1_pc1}
-	REST add interface to portgroup					leaf1-b						${leaf1_pc1_intf2}					${leaf1_pc1}
-	REST add interface to portgroup					leaf1-a						${leaf1_pc2_intf1}					${leaf1_pc2}
-	REST add interface to portgroup					leaf1-b						${leaf1_pc2_intf2}					${leaf1_pc2}
-	REST add interface to portgroup					leaf2-a						${leaf2_pc1_intf1}					${leaf2_pc1}
-	REST add interface to portgroup					leaf2-b						${leaf2_pc1_intf2}					${leaf2_pc1}
-	REST add interface to portgroup					leaf2-a						${leaf2_pc2_intf1}					${leaf2_pc2}
-	REST add interface to portgroup					leaf2-b						${leaf2_pc2_intf2}					${leaf2_pc2}	
+	REST add interface to portgroup					leaf0-a						${leaf0_pc3_intf1}					${leaf0_pc3}
+	REST add interface to portgroup					leaf0-b						${leaf0_pc3_intf2}					${leaf0_pc3}
+	REST add interface to portgroup					leaf0-a						${leaf0_pc4_intf1}					${leaf0_pc4}
+	REST add interface to portgroup					leaf0-b						${leaf0_pc4_intf2}					${leaf0_pc4}
+  	REST add interface to portgroup					leaf0-a						${leaf0_pc5_intf1}					${leaf0_pc5}
+	REST add interface to portgroup					leaf0-b						${leaf0_pc5_intf2}					${leaf0_pc5}
+  	
   	REST add portgroup lacp							${leaf0_pc1}
   	REST add portgroup lacp							${leaf0_pc2}
-  	REST add portgroup lacp							${leaf1_pc1}
-  	REST add portgroup lacp							${leaf1_pc2}
-  	REST add portgroup lacp							${leaf2_pc1}
-  	REST add portgroup lacp							${leaf2_pc2}
- 
+  	REST add portgroup lacp							${leaf0_pc3}
+  	REST add portgroup lacp							${leaf0_pc4}
+  	REST add portgroup lacp							${leaf0_pc5}
+  	
  
 teardown topology
-	delete traffic
 	REST delete vns ip  							X							X1				10.251.1.1				24	
 	REST delete vns ip  							X							X2				10.251.2.1				24	
 	REST delete vns ip  							X							X3				10.251.3.1				24	
@@ -350,27 +347,24 @@ T5 base suite setup
 	Should Be True									${result}
 	REST add portgroup								${leaf0_pc1}
 	REST add portgroup								${leaf0_pc2}
-	REST add portgroup								${leaf1_pc1}
-	REST add portgroup								${leaf1_pc2}
-	REST add portgroup								${leaf2_pc1}
-	REST add portgroup								${leaf2_pc2}
+	REST add portgroup								${leaf0_pc3}
+	REST add portgroup								${leaf0_pc4}
+	REST add portgroup								${leaf0_pc5}
 		
   
 T5 base suite teardown
 	delete fabric switch  
   	REST delete portgroup lacp							${leaf0_pc1}
   	REST delete portgroup lacp							${leaf0_pc2}
-  	REST delete portgroup lacp							${leaf1_pc1}
-  	REST delete portgroup lacp							${leaf1_pc2}
-  	REST delete portgroup lacp							${leaf2_pc1}
-  	REST delete portgroup lacp							${leaf2_pc2}	
-	REST delete portgroup								${leaf0_pc1}
+  	REST delete portgroup lacp							${leaf0_pc3}
+  	REST delete portgroup lacp							${leaf0_pc4}
+  	REST delete portgroup lacp							${leaf0_pc5}
+  	REST delete portgroup								${leaf0_pc1}
 	REST delete portgroup								${leaf0_pc2}
-	REST delete portgroup								${leaf1_pc1}
-	REST delete portgroup								${leaf1_pc2}
-	REST delete portgroup								${leaf2_pc1}
-	REST delete portgroup								${leaf2_pc2}
-
+	REST delete portgroup								${leaf0_pc3}
+	REST delete portgroup								${leaf0_pc4}
+	REST delete portgroup								${leaf0_pc5}
+	
 
 verify results   [Arguments]  ${transmitted_frames}  ${received_frames}  ${stream}  ${stream_name}
     Sleep  5

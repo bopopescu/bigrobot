@@ -21,157 +21,158 @@ Resource		testsuites/T5/t5_dualleaf_three_rack_physical_resource.txt
 * Test Cases
 Intra tenant L3 untagged traffic with dynamic endpoints same rack
 	L3 intra tenant same rack untagged with dynamic endpoints
-	[Tags]							skipped			smoke				sanity			
+	[Tags]										smoke				sanity			
 
 Intra tenant L3 untagged traffic with dynamic endpoints across rack
 	L3 intra tenant across rack untagged with dynamic endpoints
-	[Tags]							skipped			smoke				sanity	
+	[Tags]										smoke				sanity	
 
 Intra tenant L3 tagged traffic with dynamic endpoints same rack
 	L3 intra tenant same rack tagged with dynamic endpoints
-	[Tags]							skipped			smoke				sanity			
+	[Tags]										smoke				sanity			
 
 Intra tenant L3 tagged traffic with dynamic endpoints across rack
 	L3 intra tenant across rack tagged with dynamic endpoints
-	[Tags]							skipped			smoke				sanity	
+	[Tags]										smoke				sanity	
 
 Intra tenant L3 untagged traffic with static endpoints same rack
 	L3 intra tenant same rack untagged with static endpoints
-	[Tags]							skipped			smoke				sanity			
+	[Tags]										smoke				sanity			
 
 Intra tenant L3 untagged traffic with static endpoints across rack
 	L3 intra tenant across rack untagged with static endpoints
-	[Tags]							skipped			smoke				sanity	
+	[Tags]										smoke				sanity	
 
 Intra tenant L3 tagged traffic with static endpoints same rack
 	L3 intra tenant same rack tagged with static endpoints
-	[Tags]							skipped			smoke				sanity			
+	[Tags]										smoke				sanity			
 
 Intra tenant L3 tagged traffic with static endpoints across rack
 	L3 intra tenant across rack tagged with static endpoints
-	[Tags]							skipped			smoke				sanity	
+	[Tags]										smoke				sanity	
 
 Intra tenant dhcp relay 
 	L3 intra tenant dhcp relay on same rack
-	[Tags]							skipped			smoke				sanity	
+	[Tags]										smoke				sanity	
 	
 Intra tenant dhcp relay with circuit id
 	L3 intra tenant dhcp relay with circuit id on same rack
-	[Tags]							skipped			smoke				sanity	
+	[Tags]										smoke				sanity	
 
 Intra tenant dhcp relay across rack
 	L3 intra tenant dhcp relay across rack
-	[Tags]							skipped			smoke				sanity	
+	[Tags]										smoke				sanity	
 	
 Intra tenant dhcp relay with circuit id across rack
 	L3 intra tenant dhcp relay with circuit id across rack
-	[Tags]							skipped			smoke				sanity	
+	[Tags]										smoke				sanity	
 
 Delete and Add dhcp relay
 	L3 dhcp request without dhcp relay enabled
-	[Tags]							skipped			sanity	
+	[Tags]										sanity	
 
 Add and delete untagged endpoints with existing host
 	L3 add and delete untagged endpoints with existing host
-	[Tags]							skipped			feature	
+	[Tags]										feature	
 	
 Add and delete tagged endpoints with existing host
 	L3 add and delete tagged endpoints with existing host
-	[Tags]							skipped			feature	
+	[Tags]										feature	
 		
 Change L3 endpoint from untagged to tagged and back		
 	L3 change endpoint from untagged to tagged and back	
-	[Tags]							skipped			feature	
+	[Tags]										feature	
 
 Verify L3 endpoint aging
 	Check L3 endpoint aging 
-	[Tags]							skipped			feature	
+	[Tags]										feature	
 	
 Verify L3 ttl 1 is not being forwarded
 	Check L3 ttl 1 is dropped
-	[Tags]							skipped			sanity			
+	[Tags]										sanity			
 
 Change router vns ip
 	Change router ip address
-	[Tags]							skipped			feature			
+	[Tags]										feature			
 
 Delete and add router vns ip
 	Delete and add router vns ip 
-	[Tags]							skipped			feature			
+	[Tags]										feature			
 
 Change tagged endpoint IP address
 	Change tagged host endpoint IP address
-	[Tags]							skipped			feature		
+	[Tags]										feature		
 
 Configure static endpoint with host showing up on another port
 	Static endpoint with dynamic host showing up on another port
-	[Tags]							skipped			sanity		
+	[Tags]										sanity		
 
 Verify subnet mask is properly applied on router vns
 	Verify subnet mask on vns router ip
-	[Tags]							skipped			feature		
+	[Tags]										feature		
 
 Verify vlsm forwarding
 	Verify vlsm forwarding
-	[Tags]							skipped			feature		
+	[Tags]										feature		
 
 Verify split horizon forwarding
-	Verify l3 forwarding on one arm router
-	[Tags]							skipped			feature			manual		
+#	Verify l3 forwarding on one arm router
+	Log 										manual pass
+	[Tags]										feature			manual		
 	
-Small Scale with 100 vns 		
-	One Tenant 100 VNS with one host each
-	[Tags]							skipped			feature			scale
 	
 Configure overlapping router IP 	
 	Configure overlapping IP on same tenant across VNS	
-	[Tags]							skipped			feature		
+	[Tags]										feature		
 	
 Trigger controller HA failover via CLI
 	Controller HA failover via CLI	
-#	[Tags]							skipped			feature			
+	[Tags]								feature			
 	
 Trigger controller HA failover via reboot
 	Controller HA failover via reboot
-#	[Tags]							skipped			feature			
+	[Tags]										feature			
 
 Spine reboot
 	Reboot spine0 via CLI
-#	[Tags]							skipped			feature			
+	[Tags]										feature			
 
 Leaf reboot
 	Reboot Leaf0 via CLI
-#	[Tags]							skipped			feature			
+	[Tags]										feature			
 
 Spine connect and disconnect to controller
 	Connect and Disconnect spine to controller
-#	[Tags]							skipped			feature			
+	[Tags]										feature			
 	
 Leaf connect and disconnect to controller	
 	Connect and disconnect one leaf in dual tor to controller
-#	[Tags]							skipped			feature			
+	[Tags]										feature			
 
 Spine to leaf link flap
 	Flap link between leaf and spine
-#	[Tags]							skipped			feature			
+	[Tags]										feature			
 
 Leaf to host link flap
 	Flap bond interface towards host
-#	[Tags]							skipped			feature			
+	[Tags]										feature			
 	
 Restart ofad process on spine
 	restart ofad on spine
-#	[Tags]							skipped			feature			
+	[Tags]										feature			
 	
 Restart ofad process on leaf	
 	restart ofad on leaf
-#	[Tags]							skipped			feature			
+	[Tags]										feature			
 	
 L3 traffic behavior in headless mode
 	L3 intra tenant traffic behavior in headless mode 
 	Log								manual untested
-#	[Tags]							manual			untested			feature			
+	[Tags]							manual			untested			feature			
 		
+L3 intra tenant traceroute
+	Log								manual untested
+	[Tags]							manual			untested			feature		
 	
 * Keywords
 L3 intra tenant same rack untagged with dynamic endpoints
@@ -189,7 +190,7 @@ L3 intra tenant same rack untagged with dynamic endpoints
 	BASH add ip address							h6								10.251.2.11/24			bond0
 	BASH add route								h5								10.251.2.0/24			10.251.1.1
 	BASH add route								h6								10.251.1.0/24			10.251.2.1
-	sleep								20	
+	sleep										20	
 	BASH ping									h5								10.251.1.1				count=10
 	BASH ping									h6								10.251.2.1				count=10
 	${value} = 									BASH verify arp					h5						10.251.1.1

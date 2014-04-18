@@ -125,43 +125,43 @@ Configure overlapping router IP
 	
 Trigger controller HA failover via CLI
 	Controller HA failover via CLI	
-#	[Tags]							feature			
+	[Tags]							feature			
 	
 Trigger controller HA failover via reboot
 	Controller HA failover via reboot
-#	[Tags]							feature			
+	[Tags]							feature			
 
 Spine reboot
 	Reboot spine0 via CLI
-#	[Tags]							feature			
+	[Tags]							feature			
 
 Leaf reboot
 	Reboot Leaf0 via CLI
-#	[Tags]							feature			
+	[Tags]							feature			
 
 Spine connect and disconnect to controller
 	Connect and Disconnect spine to controller
-#	[Tags]							feature			
+	[Tags]							feature			
 	
 Leaf connect and disconnect to controller	
 	Connect and disconnect one leaf in dual tor to controller
-#	[Tags]							feature			
+	[Tags]							feature			
 
 Spine to leaf link flap
 	Flap link between leaf and spine
-#	[Tags]							feature			
+	[Tags]							feature			
 
 Leaf to host link flap
 	Flap bond interface towards host
-#	[Tags]							feature			
+	[Tags]							feature			
 	
 Restart ofad process on spine
 	restart ofad on spine
-#	[Tags]							feature			
+	[Tags]							feature			
 	
 Restart ofad process on leaf	
 	restart ofad on leaf
-#	[Tags]							feature			
+	[Tags]							feature			
 	
 L3 traffic behavior in headless mode
 	L3 intra tenant traffic behavior in headless mode 
