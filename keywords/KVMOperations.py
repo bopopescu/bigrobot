@@ -234,7 +234,7 @@ class KVMOperations(object):
                                  netmask='18', vm_host_name=None):
         # Using Mingtao's First Boot Function to configure spawned VM in KVM
         helpers.log("SLeeping 60 sec ..for VM to Boot UP....This time should bring down soon..")
-        time.sleep(240)
+        time.sleep(70)
         helpers.log("Success setting up gobot Env!")
 
         t5_platform = T5Platform()
