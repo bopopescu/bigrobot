@@ -194,6 +194,184 @@ Add 48k dynamic mac into the system and check forwarding and make sure aging als
     ${count}=	Convert to integer  ${result}   
     Should be True  ${count} < 8
 	    
+spine link failover with 48k mac address in the system
+	[Tags]  scaling
+	${stream}=             L3 add  no_arp=True  flow=a<->c  src_mac=00:00:01:00:00:01  dst_mac=00:00:02:00:00:01  src_cnt=8000  dst_cnt=8000    frame_rate=1000  frame_size=128  name=a_c_flow
+    ${stream1}=             L3 add  no_arp=True  flow=b<->f  src_mac=00:00:03:00:00:01  dst_mac=00:00:04:00:00:01  src_cnt=8000  dst_cnt=8000    frame_rate=1000  frame_size=128  name=b_f_flow
+    ${stream2}=             L3 add  no_arp=True  flow=d<->e  src_mac=00:00:05:00:00:01  dst_mac=00:00:06:00:00:01  src_cnt=8000  dst_cnt=8000    frame_rate=1000  frame_size=128  name=b_f_flow
+    start traffic  ${stream}
+    start traffic  ${stream1}
+    start traffic  ${stream2}
+    sleep  90
+    rest verify endpoint in system  48000
+    ${result}=  bash execute command  leaf0-a  ofad-ctl ft L2 | wc -l 
+    ${count}=	Convert to integer  ${result}   
+    Should be True  ${count} > 48000
+    ${result}=  bash execute command  leaf2-a  ofad-ctl ft L2 | wc -l
+    ${count}=	Convert to integer  ${result}   
+    Should be True  ${count} > 48000
+    ${result}=  bash execute command  spine0  ofad-ctl ft L2 | wc -l
+    ${count}=	Convert to integer  ${result}   
+    Should be True  ${count} > 48000
+    verify traffic rate  tx_rate  rx_rate  a  c
+    verify traffic rate  tx_rate  rx_rate  c  a
+    verify traffic rate  tx_rate  rx_rate  b  f
+    verify traffic rate  tx_rate  rx_rate  f  b
+    verify traffic rate  tx_rate  rx_rate  d  e
+    verify traffic rate  tx_rate  rx_rate  e  d
+    rest disable fabric interface  leaf0-a  ${leaf0a_spine0_intf0}
+    sleep  5
+    verify traffic rate  tx_rate  rx_rate  a  c
+    verify traffic rate  tx_rate  rx_rate  c  a
+    verify traffic rate  tx_rate  rx_rate  b  f
+    verify traffic rate  tx_rate  rx_rate  f  b
+    verify traffic rate  tx_rate  rx_rate  d  e
+    verify traffic rate  tx_rate  rx_rate  e  d
+    rest verify endpoint in system  48000
+    rest enable fabric interface  leaf0-a  ${leaf0a_spine0_intf0}
+    sleep  5
+    verify traffic rate  tx_rate  rx_rate  a  c
+    verify traffic rate  tx_rate  rx_rate  c  a
+    verify traffic rate  tx_rate  rx_rate  b  f
+    verify traffic rate  tx_rate  rx_rate  f  b
+    verify traffic rate  tx_rate  rx_rate  d  e
+    verify traffic rate  tx_rate  rx_rate  e  d
+    rest verify endpoint in system  48000  
+    stop traffic  ${stream}
+    stop traffic  ${stream1}
+    stop traffic  ${stream2}
+    
+spine switch shutdown with 48k mac address in the system
+	[Tags]  scaling
+	${stream}=             L3 add  no_arp=True  flow=a<->c  src_mac=00:00:01:00:00:01  dst_mac=00:00:02:00:00:01  src_cnt=8000  dst_cnt=8000    frame_rate=1000  frame_size=128  name=a_c_flow
+    ${stream1}=             L3 add  no_arp=True  flow=b<->f  src_mac=00:00:03:00:00:01  dst_mac=00:00:04:00:00:01  src_cnt=8000  dst_cnt=8000    frame_rate=1000  frame_size=128  name=b_f_flow
+    ${stream2}=             L3 add  no_arp=True  flow=d<->e  src_mac=00:00:05:00:00:01  dst_mac=00:00:06:00:00:01  src_cnt=8000  dst_cnt=8000    frame_rate=1000  frame_size=128  name=b_f_flow
+    start traffic  ${stream}
+    start traffic  ${stream1}
+    start traffic  ${stream2}
+    sleep  90
+    rest verify endpoint in system  48000
+    ${result}=  bash execute command  leaf0-a  ofad-ctl ft L2 | wc -l 
+    ${count}=	Convert to integer  ${result}   
+    Should be True  ${count} > 48000
+    ${result}=  bash execute command  leaf2-a  ofad-ctl ft L2 | wc -l
+    ${count}=	Convert to integer  ${result}   
+    Should be True  ${count} > 48000
+    ${result}=  bash execute command  spine0  ofad-ctl ft L2 | wc -l
+    ${count}=	Convert to integer  ${result}   
+    Should be True  ${count} > 48000
+    verify traffic rate  tx_rate  rx_rate  a  c
+    verify traffic rate  tx_rate  rx_rate  c  a
+    verify traffic rate  tx_rate  rx_rate  b  f
+    verify traffic rate  tx_rate  rx_rate  f  b
+    verify traffic rate  tx_rate  rx_rate  d  e
+    verify traffic rate  tx_rate  rx_rate  e  d
+    rest add shutdown fabric switch  spine0
+    sleep  5
+    verify traffic rate  tx_rate  rx_rate  a  c
+    verify traffic rate  tx_rate  rx_rate  c  a
+    verify traffic rate  tx_rate  rx_rate  b  f
+    verify traffic rate  tx_rate  rx_rate  f  b
+    verify traffic rate  tx_rate  rx_rate  d  e
+    verify traffic rate  tx_rate  rx_rate  e  d
+    rest verify endpoint in system  48000
+    ${result}=  bash execute command  leaf0-a  ofad-ctl ft L2 | wc -l 
+    ${count}=	Convert to integer  ${result}   
+    Should be True  ${count} > 48000
+    ${result}=  bash execute command  leaf2-a  ofad-ctl ft L2 | wc -l
+    ${count}=	Convert to integer  ${result}   
+    Should be True  ${count} > 48000
+    ${result}=  bash execute command  spine0  ofad-ctl ft L2 | wc -l
+    ${count}=	Convert to integer  ${result}
+    Should be True  ${count} > 48000 
+    rest delete shutdown fabric switch  spine0
+    sleep  5
+    verify traffic rate  tx_rate  rx_rate  a  c
+    verify traffic rate  tx_rate  rx_rate  c  a
+    verify traffic rate  tx_rate  rx_rate  b  f
+    verify traffic rate  tx_rate  rx_rate  f  b
+    verify traffic rate  tx_rate  rx_rate  d  e
+    verify traffic rate  tx_rate  rx_rate  e  d
+    rest verify endpoint in system  48000 
+    ${result}=  bash execute command  leaf0-a  ofad-ctl ft L2 | wc -l 
+    ${count}=	Convert to integer  ${result}   
+    Should be True  ${count} > 48000
+    ${result}=  bash execute command  leaf2-a  ofad-ctl ft L2 | wc -l
+    ${count}=	Convert to integer  ${result}   
+    Should be True  ${count} > 48000
+    sleep  10
+    ${result}=  bash execute command  spine0  ofad-ctl ft L2 | wc -l
+    ${count}=	Convert to integer  ${result}
+    Should be True  ${count} > 48000 
+    stop traffic  ${stream}
+    stop traffic  ${stream1}
+    stop traffic  ${stream2}
+    
+spine switch reboot with 48k mac address in the system
+	[Tags]  scaling
+	${stream}=             L3 add  no_arp=True  flow=a<->c  src_mac=00:00:01:00:00:01  dst_mac=00:00:02:00:00:01  src_cnt=8000  dst_cnt=8000    frame_rate=1000  frame_size=128  name=a_c_flow
+    ${stream1}=             L3 add  no_arp=True  flow=b<->f  src_mac=00:00:03:00:00:01  dst_mac=00:00:04:00:00:01  src_cnt=8000  dst_cnt=8000    frame_rate=1000  frame_size=128  name=b_f_flow
+    ${stream2}=             L3 add  no_arp=True  flow=d<->e  src_mac=00:00:05:00:00:01  dst_mac=00:00:06:00:00:01  src_cnt=8000  dst_cnt=8000    frame_rate=1000  frame_size=128  name=b_f_flow
+    start traffic  ${stream}
+    start traffic  ${stream1}
+    start traffic  ${stream2}
+    sleep  90
+    rest verify endpoint in system  48000
+    ${result}=  bash execute command  leaf0-a  ofad-ctl ft L2 | wc -l 
+    ${count}=	Convert to integer  ${result}   
+    Should be True  ${count} > 48000
+    ${result}=  bash execute command  leaf2-a  ofad-ctl ft L2 | wc -l
+    ${count}=	Convert to integer  ${result}   
+    Should be True  ${count} > 48000
+    ${result}=  bash execute command  spine0  ofad-ctl ft L2 | wc -l
+    ${count}=	Convert to integer  ${result}   
+    Should be True  ${count} > 48000
+    verify traffic rate  tx_rate  rx_rate  a  c
+    verify traffic rate  tx_rate  rx_rate  c  a
+    verify traffic rate  tx_rate  rx_rate  b  f
+    verify traffic rate  tx_rate  rx_rate  f  b
+    verify traffic rate  tx_rate  rx_rate  d  e
+    verify traffic rate  tx_rate  rx_rate  e  d
+    cli restart switch  spine0
+    sleep  5
+    verify traffic rate  tx_rate  rx_rate  a  c
+    verify traffic rate  tx_rate  rx_rate  c  a
+    verify traffic rate  tx_rate  rx_rate  b  f
+    verify traffic rate  tx_rate  rx_rate  f  b
+    verify traffic rate  tx_rate  rx_rate  d  e
+    verify traffic rate  tx_rate  rx_rate  e  d
+    rest verify endpoint in system  48000
+    ${result}=  bash execute command  leaf0-a  ofad-ctl ft L2 | wc -l 
+    ${count}=	Convert to integer  ${result}   
+    Should be True  ${count} > 48000
+    ${result}=  bash execute command  leaf2-a  ofad-ctl ft L2 | wc -l
+    ${count}=	Convert to integer  ${result}   
+    Should be True  ${count} > 48000
+    sleep  90
+    ${result}=  bash execute command  spine0  ofad-ctl ft L2 | wc -l
+    ${count}=	Convert to integer  ${result}
+    cli restart switch  spine1
+    sleep  5
+    verify traffic rate  tx_rate  rx_rate  a  c
+    verify traffic rate  tx_rate  rx_rate  c  a
+    verify traffic rate  tx_rate  rx_rate  b  f
+    verify traffic rate  tx_rate  rx_rate  f  b
+    verify traffic rate  tx_rate  rx_rate  d  e
+    verify traffic rate  tx_rate  rx_rate  e  d
+    rest verify endpoint in system  48000
+    ${result}=  bash execute command  leaf0-a  ofad-ctl ft L2 | wc -l 
+    ${count}=	Convert to integer  ${result}   
+    Should be True  ${count} > 48000
+    ${result}=  bash execute command  leaf2-a  ofad-ctl ft L2 | wc -l
+    ${count}=	Convert to integer  ${result}   
+    Should be True  ${count} > 48000
+    sleep  90
+    ${result}=  bash execute command  spine0  ofad-ctl ft L2 | wc -l
+    ${count}=	Convert to integer  ${result}
+    stop traffic  ${stream}
+    stop traffic  ${stream1}
+    stop traffic  ${stream2}
+    
 Master controller node reboot with 48k mac entries
 	[Tags]  scaling   
 	
