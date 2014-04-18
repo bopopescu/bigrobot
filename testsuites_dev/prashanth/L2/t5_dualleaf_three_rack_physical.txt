@@ -188,25 +188,13 @@ delete portgroup from vns  [Arguments]  ${tenant}  ${vns}  ${pg}  ${vlan}
 
 Tear down the config 
    delete a tenant  A 
-   delete interface from portgroup  leaf0-a  ${h1_intf0}  p1
-   delete interface from portgroup  leaf0-b  ${h1_intf1}  p1
-   delete interface from portgroup  leaf0-a  ${h2_intf0}  p2
-   delete interface from portgroup  leaf0-b  ${h2_intf1}  p2
-   delete interface from portgroup  leaf1-a  ${h3_intf0}  p3 
-   delete interface from portgroup  leaf1-b  ${h3_intf1}  p3 
-   delete interface from portgroup  leaf1-a  ${h4_intf0}  p4
-   delete interface from portgroup  leaf1-b  ${h4_intf1}  p4
-   delete interface from portgroup  leaf2-a  ${h5_intf0}  p5
-   delete interface from portgroup  leaf2-b  ${h5_intf1}  p5
-   delete interface from portgroup  leaf2-a  ${h6_intf0}  p6 
-   delete interface from portgroup  leaf2-b  ${h6_intf1}  p6 
+   delete fabric switch
    delete a portgroup  p1
    delete a portgroup  p2
    delete a portgroup  p3
    delete a portgroup  p4
    delete a portgroup  p5
    delete a portgroup  p6
-   delete fabric switch
    base suite teardown
    
 T5 base suite setup

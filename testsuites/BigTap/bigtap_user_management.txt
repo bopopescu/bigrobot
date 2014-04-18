@@ -10,7 +10,7 @@ Library  keywords/AppController.py
 Library  keywords/BigTap.py
 
 * Variables
-${version}  Big Network Controller 3.0.1
+${version}  Big Tap Controller 3.1.0
 
 *Test Case
 Verify username userChkPassword can have all lower-case alphabet password

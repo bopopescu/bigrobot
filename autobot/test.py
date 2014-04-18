@@ -99,13 +99,13 @@ class Test(object):
                             helpers.debug("'%s' IP address is '%s' (bigtest node '%s')"
                                           % (m, ip, key))
 
-                elif self._testbed_type.lower() == "libvirt":
-                    # TODO: We need to add the code to process libvirt nodes...
-                    helpers.test_error("Libvirt testbed is not yet supported.")
+                elif (self._testbed_type.lower() == "static" or
+                      self._testbed_type.lower() == "libvirt"):
 
-                elif self._testbed_type.lower() == "static":
+                    # Static nodes and libvirt nodes are similarly defined.
                     static_nodes = helpers.bigrobot_params_input()
-                    helpers.info("Static node info: %s" % static_nodes)
+                    helpers.info("Static (or libvirt) node info: %s"
+                                 % static_nodes)
 
                     # Expecting a YAML config.
                     if static_nodes:
@@ -169,7 +169,7 @@ class Test(object):
                                                     % n)
                     for key in self._params[n]:
                         if key not in self._topology_params[n]:
-                            helpers.warn("Node '%s' does not have attribute"
+                            helpers.info("Node '%s' does not have attribute"
                                          " '%s' defined. Populating it from"
                                          " params file."
                                          % (n, key))
@@ -906,6 +906,7 @@ class Test(object):
                                  % (c.ip(), openflow_port))
                     else:
                         n.config("controller %s" % c.ip())
+            n.config("copy running-config startup-config")
 
     def teardown_switch(self, name):
         """
@@ -997,7 +998,7 @@ class Test(object):
         c = t.controller(name)
 
         helpers.log("Attempting to delete all tenants")
-        url_get_tenant = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/tenants'
+        url_get_tenant = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/tenant'
         try:
             c.rest.get(url_get_tenant)
             content = c.rest.content()
@@ -1006,7 +1007,7 @@ class Test(object):
         else:
             if (content):
                 for i in range (0, len(content)):
-                    url_tenant_delete = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]' % content[i]['tenant-name']
+                    url_tenant_delete = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]' % content[i]['name']
                     c.rest.delete(url_tenant_delete, {})
 
         helpers.log("Attempting to delete all switches")
@@ -1132,5 +1133,11 @@ class Test(object):
 
         helpers.log("Attempting to disable remote logging")
         url_disable_remotelog = '/api/v1/data/controller/os/config/global/logging-config/logging-enabled'
-        c.rest.delete(url_disable_remotelog, {})
+        try:
+            c.rest.delete(url_disable_remotelog, {})
+        except:
+            pass
+        else:
+            helpers.log("Remote logging successfully deleted")
+
         return True

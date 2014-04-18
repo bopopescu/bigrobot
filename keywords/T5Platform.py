@@ -226,6 +226,7 @@ class T5Platform(object):
 
         if(singleNode):
             if(masterID == newMasterID):
+                obj.restart_floodlight_monitor("master")
                 helpers.log("Pass: After the reboot cluster is stable - Master is still : %s " % (newMasterID))
                 return True
             else:
@@ -244,6 +245,7 @@ class T5Platform(object):
                 else:
                     helpers.log("Fail: Reboot Failed. Cluster is not stable. Before the master reboot Master is: %s / Slave is : %s \n \
                             After the reboot Master is: %s / Slave is : %s " %(masterID, slaveID, newMasterID, newSlaveID))
+                    obj.stop_floodlight_monitor()
                     return False
             else:
                 if(masterID == newMasterID and slaveID == newSlaveID):
@@ -252,6 +254,7 @@ class T5Platform(object):
                 else:
                     helpers.log("Fail: Reboot Failed. Cluster is not stable. Before the slave reboot Master is: %s / Slave is : %s \n \
                             After the reboot Master is: %s / Slave is : %s " %(masterID, slaveID, newMasterID, newSlaveID))
+                    obj.stop_floodlight_monitor()
                     return False
 
 
@@ -1172,7 +1175,8 @@ class T5Platform(object):
         for line in output:
             if re.match(r'[0-9].*|< \!|---|> \!|< \Z|> \Z|\Z', line):
                 helpers.log("OK: %s" % line)
-                continue
+            elif re.match(r'[<>]   hostname|[<>]     ip', line) and node=='slave':
+                helpers.log("OK: %s" % line)
             else:
                 helpers.log("files different at line:\n%s" % line)
                 return False
@@ -1659,7 +1663,7 @@ class T5Platform(object):
     
     
     
-    def cli_take_snapshot(self,node='master', run_config=None,fabric_switch=None,filepath=None):
+    def cli_take_snapshot(self,node='master', run_config=None, local_node=None, fabric_switch=None,filepath=None):
         ''' 
           take snapshot of the system, can only take snapshot one by one  
           Author: Mingtao
@@ -1688,6 +1692,8 @@ class T5Platform(object):
             content = '\n'.join(config)
             helpers.log("********config :************\n%s" % content)  
             new_content = re.sub(r'\s+hashed-password.*$','\n  remove-passwd',content,flags=re.M)  
+            if local_node is None:
+                new_content = re.sub(r'local node.*! user','\n  remove-local-node',new_content,flags=re.DOTALL)               
             helpers.log("********config after remove passwd :************\n%s" % new_content)                          
             return  new_content
         if fabric_switch: 
@@ -1826,34 +1832,6 @@ class T5Platform(object):
         else:
             helpers.test_failure(c.rest.error())      
  
-
-    def cli_get_num_nodes(self):
-        '''  
-          return the number of nodes in the system  
-          Author: Mingtao
-          input:                                        
-          usage:   
-          output:   1  or 2 
-        '''
-        t = test.Test()
-        c = t.controller('master')
-        helpers.log('INFO: Entering ==> rest_get_node_role ')
-        
-        c.cli('show cluster' )
-        content = c.cli_content()
-        temp = helpers.strip_cli_output(content)
-        temp = helpers.str_to_list(temp)
-        num = 0
-        for line in temp:          
-            helpers.log("INFO: line is - %s" % line)
-            match= re.match(r'.*(active|stand-by).*', line)
-            if match:
-                helpers.log("INFO: role is: %s" % match.group(1))  
-                num = num+1                                      
-            else:
-                helpers.log("INFO: not for controller  %s" % line)  
-        helpers.log("INFO: there are %d of controllers in the cluster" % num)   
-        return num    
 
     def cli_whoami(self):
         '''  
@@ -3313,3 +3291,88 @@ class T5Platform(object):
                 self.cli_walk_exec(string, file_name, padding)
 
 
+
+    def rest_configure_testpath(self, **kwargs):
+        
+        t = test.Test()
+        c = t.controller('master')
+        
+        url = '/api/v1/data/controller/applications/bvs/test/path/setup-result'
+        
+        if(kwargs.get('test-name')):
+            url = url + '[test-name="%s"]' % (kwargs.get('test-name'))
+        if(kwargs.get('timeout')):
+            url = url + '[timeout="%s"]' % (kwargs.get('timeout'))
+        if(kwargs.get('dst-vns')):
+            url = url + '[dst-vns="%s"]' % (kwargs.get('dst-vns'))
+        if(kwargs.get('dst-tenant')):
+            url = url + '[dst-tenant="%s"]' % (kwargs.get('dst-tenant'))
+        if(kwargs.get('ip-protocol')):
+            url = url + '[ip-protocol="%s"]' % (kwargs.get('ip-protocol'))
+        if(kwargs.get('src-ip')):
+            url = url + '[src-ip="%s"]' % (kwargs.get('src-ip'))
+        if(kwargs.get('src-vns')):
+            url = url + '[src-vns="%s"]' % (kwargs.get('src-vns'))
+        if(kwargs.get('dst-ip')):
+            url = url + '[dst-ip="%s"]' % (kwargs.get('dst-ip'))
+        if(kwargs.get('src-tenant')):
+            url = url + '[src-tenant="%s"]' % (kwargs.get('src-tenant'))
+            
+        
+        c.rest.get(url)
+        
+    def rest_verify_testpath(self, pathName):
+        
+        t = test.Test()
+        c = t.controller("master")
+        
+        url = '/api/v1/data/controller/applications/bvs/test/path/all-test'
+        
+        try:
+            result = c.rest.get(url)['content']
+            for testpath in result:
+                if testpath['test-name'] == pathName:
+                    helpers.log("Found path: %s in the test-path config" % pathName)
+                    return True
+        except:
+            helpers.test_failure(c.rest.error())           
+            return False
+        else:
+            helpers.log("Didn't find path: %s in the test-path config" % pathName)
+            return False
+        
+    def rest_verify_testpath_timeout(self,pathName):
+        
+        t = test.Test()
+        c = t.controller("master")
+        
+        url = '/api/v1/data/controller/applications/bvs/test/path/all-test'
+        
+        try:
+            result = c.rest.get(url)['content']
+            for testpath in result:
+                if testpath['test-name'] == pathName:
+                    if testpath['test-state'] == "TIMEDOUT":
+                        helpers.log("Test Path: %s in TIMEDOUT state" % pathName)
+                        return True
+                    else:
+                        helpers.log("Test Path: %s not in TIMEDOUT state" % pathName)
+                        return False
+                        
+        except:
+            helpers.test_failure(c.rest.error())           
+            return False
+        else:
+            helpers.log("Didn't find path: %s in the test-path config" % pathName)
+            return False
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        

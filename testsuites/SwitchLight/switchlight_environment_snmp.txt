@@ -1,7 +1,7 @@
 *Settings
-Documentation  BigTap Rewrite Vlan Test Suite
-Suite Setup  base suite setup
-Suite Teardown   base suite teardown
+Documentation  BigTap Environment Test Suite
+Suite Setup  environment suite setup
+Suite Teardown   environment suite teardown
 Test Setup   base test setup
 Test Teardown  base test teardown 
 Force Tags   platform Sanity
@@ -11,6 +11,11 @@ Library  Collections.py
 
 * Variable
 ${switchlight_version}  SwitchLight 2.0.2
+${snmp_contact}  nw_admin@super_awesome_switch.com
+${snmp_location_1}  CS_RACK11_6003
+${snmp_location_2}  CS_RACK11_6012 
+${snmp_location_3}  CS_RACK11_6034    
+
 
 * Test Case
 
@@ -19,50 +24,182 @@ Verify System Fan Status on LB9
     Verify Fan Status  s1  System  Fan  2   public   .1.3.6.1.4.1.2021.13.16.3.1.3.5
     Verify Fan Status  s1  System  Fan  3   public   .1.3.6.1.4.1.2021.13.16.3.1.3.9
     Verify Fan Status  s1  System  Fan  4   public   .1.3.6.1.4.1.2021.13.16.3.1.3.13
+    [Tags]  lb9  platform  fan 
 
 Verify System Temperature Status on LB9
-    Verify Temperature Status  s1  System  Temp  1  public   .1.3.6.1.4.1.2021.13.16.2.1.3.1
-    Verify Temperature Status  s1  System  Temp  2  public   .1.3.6.1.4.1.2021.13.16.2.1.3.5
-    Verify Temperature Status  s1  System  Temp  3  public   .1.3.6.1.4.1.2021.13.16.2.1.3.9
-    Verify Temperature Status  s1  System  Temp  4  public   .1.3.6.1.4.1.2021.13.16.2.1.3.13
-    Verify Temperature Status  s1  System  Temp  5  public   .1.3.6.1.4.1.2021.13.16.2.1.3.17                        
-
+    Verify environment element status  s1  System  Temp  1  public   .1.3.6.1.4.1.2021.13.16.2.1.3.1
+    Verify environment element status  s1  System  Temp  2  public   .1.3.6.1.4.1.2021.13.16.2.1.3.5
+    Verify environment element status  s1  System  Temp  3  public   .1.3.6.1.4.1.2021.13.16.2.1.3.9
+    Verify environment element status  s1  System  Temp  4  public   .1.3.6.1.4.1.2021.13.16.2.1.3.13
+    Verify environment element status  s1  System  Temp  5  public   .1.3.6.1.4.1.2021.13.16.2.1.3.17                        
+    [Tags]  lb9  platform  temp
+    
 Verify PSU1 Fan Status on LB9
     Verify Fan Status  s1  PSU1  Fan  1   public   .1.3.6.1.4.1.2021.13.16.3.1.3.33
-
+    [Tags]  lb9  platform  fan 
+    
 Verify PSU1 Temperature Status on LB9
-    Verify Temperature Status  s1  PSU1  Temp  1   public   .1.3.6.1.4.1.2021.13.16.2.1.3.81
-    Verify Temperature Status  s1  PSU1  Temp  2   public   .1.3.6.1.4.1.2021.13.16.2.1.3.84
-    Verify Temperature Status  s1  PSU1  Temp  3   public   .1.3.6.1.4.1.2021.13.16.2.1.3.86
+    Verify environment element status  s1  PSU1  Temp  1   public   .1.3.6.1.4.1.2021.13.16.2.1.3.81
+    Verify environment element status  s1  PSU1  Temp  2   public   .1.3.6.1.4.1.2021.13.16.2.1.3.84
+    Verify environment element status  s1  PSU1  Temp  3   public   .1.3.6.1.4.1.2021.13.16.2.1.3.86
+    [Tags]  lb9  platform  temp 
+    
+Verify PSU1 Voltage-In Status on LB9
+    Verify environment element status  s1  PSU1  Vin  1   public   .1.3.6.1.4.1.2021.13.16.5.1.3.1
+    [Tags]  lb9  platform  voltage 
 
+Verify PSU1 Voltage-Out Status on LB9
+    Verify voltage status  s1  PSU1  Vout  1   public   .1.3.6.1.4.1.2021.13.16.5.1.3.4
+    [Tags]  lb9  platform  voltage
+    
+Verify PSU2 Voltage-In Status on LB9
+    Verify environment element status  s1  PSU2  Vin  2   public   .1.3.6.1.4.1.2021.13.16.5.1.3.21
+    [Tags]  lb9  platform  voltage 
+
+Verify PSU2 Voltage-Out Status on LB9
+    Verify voltage status  s1  PSU2  Vout  2   public   .1.3.6.1.4.1.2021.13.16.5.1.3.25
+    [Tags]  lb9  platform  voltage
+
+Verify PSU1 Power-In Status on LB9
+    Verify environment element status  s1  PSU1  Pin  1   public   .1.3.6.1.4.1.2021.13.16.5.1.3.7
+    [Tags]  lb9  platform  power  jira-pan-774  
+
+Verify PSU1 Power-Out Status on LB9
+    Verify environment element status  s1  PSU1  Pout  1   public   .1.3.6.1.4.1.2021.13.16.5.1.3.10
+    [Tags]  lb9  platform  power  jira-pan-774 
+
+Verify PSU2 Power-In Status on LB9
+    Verify environment element status  s1  PSU2  Pin  1   public   .1.3.6.1.4.1.2021.13.16.5.1.3.28
+    [Tags]  lb9  platform  power  jira-pan-774 
+
+Verify PSU2 Power-Out Status on LB9
+    Verify environment element status  s1  PSU2  Pout  1   public   .1.3.6.1.4.1.2021.13.16.5.1.3.31
+    [Tags]  lb9  platform  power  jira-pan-774
+                    
 Verify System Fan Status on LY2
     Verify Fan Status  s2  System  Fan  1   public   .1.3.6.1.4.1.2021.13.16.3.1.3.1
     Verify Fan Status  s2  System  Fan  2   public   .1.3.6.1.4.1.2021.13.16.3.1.3.2
     Verify Fan Status  s2  System  Fan  3   public   .1.3.6.1.4.1.2021.13.16.3.1.3.3
     Verify Fan Status  s2  System  Fan  4   public   .1.3.6.1.4.1.2021.13.16.3.1.3.4
-
+    [Tags]  ly2  platform  fan
+     
 Verify System Temperature Status on LY2
-    Verify Temperature Status  s2  System  Temp  1   public   .1.3.6.1.4.1.2021.13.16.2.1.3.1
-    Verify Temperature Status  s2  System  Temp  2   public   .1.3.6.1.4.1.2021.13.16.2.1.3.2
-    Verify Temperature Status  s2  System  Temp  3   public   .1.3.6.1.4.1.2021.13.16.2.1.3.3
-    Verify Temperature Status  s2  System  Temp  4   public   .1.3.6.1.4.1.2021.13.16.2.1.3.4
-    Verify Temperature Status  s2  System  Temp  5   public   .1.3.6.1.4.1.2021.13.16.2.1.3.5  
-
+    Verify environment element status  s2  System  Temp  1   public   .1.3.6.1.4.1.2021.13.16.2.1.3.1
+    Verify environment element status  s2  System  Temp  2   public   .1.3.6.1.4.1.2021.13.16.2.1.3.2
+    Verify environment element status  s2  System  Temp  3   public   .1.3.6.1.4.1.2021.13.16.2.1.3.3
+    Verify environment element status  s2  System  Temp  4   public   .1.3.6.1.4.1.2021.13.16.2.1.3.4
+    Verify environment element status  s2  System  Temp  5   public   .1.3.6.1.4.1.2021.13.16.2.1.3.5  
+    [Tags]  ly2  platform  temp
+    
 Verify PSU1 Fan Status on LY2
     Verify Fan Status  s2  PSU1  Fan  1   public   .1.3.6.1.4.1.2021.13.16.3.1.3.5
-
+    [Tags]  ly2  platform  fan
+    
 Verify PSU1 Temperature Status on LY2
-    Verify Temperature Status  s2  PSU1  Temp  1   public   .1.3.6.1.4.1.2021.13.16.2.1.3.6
-    Verify Temperature Status  s2  PSU1  Temp  2   public   .1.3.6.1.4.1.2021.13.16.2.1.3.9
-    Verify Temperature Status  s2  PSU1  Temp  3   public   .1.3.6.1.4.1.2021.13.16.2.1.3.11            
-
+    Verify environment element status  s2  PSU1  Temp  1   public   .1.3.6.1.4.1.2021.13.16.2.1.3.6
+    Verify environment element status  s2  PSU1  Temp  2   public   .1.3.6.1.4.1.2021.13.16.2.1.3.9
+    Verify environment element status  s2  PSU1  Temp  3   public   .1.3.6.1.4.1.2021.13.16.2.1.3.11            
+    [Tags]  ly2  platform  temp
+    
 Verify PSU2 Fan Status on LY2
     Verify Fan Status  s2  PSU2  Fan  1   public   .1.3.6.1.4.1.2021.13.16.3.1.3.6
-
+    [Tags]  ly2  platform  fan
+    
 Verify PSU2 Temperature Status on LY2
-    Verify Temperature Status  s2  PSU2  Temp  1   public   .1.3.6.1.4.1.2021.13.16.2.1.3.14
-    Verify Temperature Status  s2  PSU2  Temp  2   public   .1.3.6.1.4.1.2021.13.16.2.1.3.19
+    Verify environment element status  s2  PSU2  Temp  1   public   .1.3.6.1.4.1.2021.13.16.2.1.3.14
+    Verify environment element status  s2  PSU2  Temp  2   public   .1.3.6.1.4.1.2021.13.16.2.1.3.19
+    [Tags]  ly2  platform  temp
+    
+Verify PSU1 Voltage-In Status on LY2
+    Verify environment element status  s2  PSU1  Vin  1   public   .1.3.6.1.4.1.2021.13.16.5.1.3.1
+    [Tags]  ly2  platform  voltage 
 
+Verify PSU1 Voltage-Out Status on LY2
+    Verify voltage status  s2  PSU1  Vout  1   public   .1.3.6.1.4.1.2021.13.16.5.1.3.6
+    [Tags]  ly2  platform  voltage
+    
+Verify PSU2 Voltage-In Status on LY2
+    Verify environment element status  s2  PSU2  Vin  2   public   .1.3.6.1.4.1.2021.13.16.5.1.3.21
+    [Tags]  ly2  platform  voltage 
+
+Verify PSU2 Voltage-Out Status on LY2
+    Verify voltage status  s2  PSU2  Vout  2   public   .1.3.6.1.4.1.2021.13.16.5.1.3.25
+    [Tags]  ly2  platform  voltage
+
+
+Verify PSU1 Power-In Status on LY2
+    Verify environment element status  s2  PSU1  Pin  1   public   .1.3.6.1.4.1.2021.13.16.5.1.3.10
+    [Tags]  lb9  platform  power  run 
+
+Verify PSU1 Power-Out Status on LY2
+    Verify environment element status  s2  PSU1  Pout  1   public   .1.3.6.1.4.1.2021.13.16.5.1.3.13
+    [Tags]  lb9  platform  power  run
+
+Verify PSU2 Power-In Status on LY2
+    Verify environment element status  s2  PSU2  Pin  1   public   .1.3.6.1.4.1.2021.13.16.5.1.3.33
+    [Tags]  lb9  platform  power  jira-pan-774  run 
+
+Verify PSU2 Power-Out Status on LY2
+    Verify environment element status  s2  PSU2  Pout  1   public   .1.3.6.1.4.1.2021.13.16.5.1.3.36
+    [Tags]  lb9  platform  power  jira-pan-774  run
+
+Verify System Temperature Status on Accton AS4600-54T
+    Verify environment element status  s3  System  Temp  1   public   .1.3.6.1.4.1.2021.13.16.3.1.3.5
+    Verify environment element status  s3  System  Temp  2   public   .1.3.6.1.4.1.2021.13.16.3.1.3.5
+    Verify environment element status  s3  System  Temp  3   public   .1.3.6.1.4.1.2021.13.16.3.1.3.5
+    Verify environment element status  s3  System  Temp  4   public   .1.3.6.1.4.1.2021.13.16.3.1.3.5            
+    [Tags]  AS4600  platform  temp 
+
+Verify PSU1 Fan Status on Accton AS4600-54T
+    Verify Fan Status  s3  PSU1  Fan  1   public   .1.3.6.1.4.1.2021.13.16.3.1.3.5
+    [Tags]  AS4600  platform  fan
+
+Verify PSU2 Fan Status on Accton AS4600-54T
+    Verify Fan Status  s3  PSU2  Fan  1   public   .1.3.6.1.4.1.2021.13.16.3.1.3.5
+    [Tags]  AS4600  platform  fan
+
+Verify PSU1 Voltage-In Status on Accton AS4600-54T
+    Verify environment element status  s3  PSU1  Vin  1   public   .1.3.6.1.4.1.2021.13.16.3.1.3.5
+    [Tags]  AS4600  platform  voltage
+
+Verify PSU1 Voltage-Out Status on Accton AS4600-54T
+    Verify environment element status  s3  PSU1  Vout  1   public   .1.3.6.1.4.1.2021.13.16.3.1.3.5
+    [Tags]  AS4600  platform  voltage
+
+Verify PSU2 Voltage-In Status on Accton AS4600-54T
+    Verify environment element status  s3  PSU2  Vin  1   public   .1.3.6.1.4.1.2021.13.16.3.1.3.5
+    [Tags]  AS4600  platform  voltage
+
+Verify PSU2 Voltage-Out Status on Accton AS4600-54T
+    Verify environment element status  s3  PSU2  Vout  1   public   .1.3.6.1.4.1.2021.13.16.3.1.3.5
+    [Tags]  AS4600  platform  voltage    
+
+Verify System Temperature Status on Accton AS5610-52X
+    Verify environment element status  s4  System  Temp  1   public   .1.3.6.1.4.1.2021.13.16.3.1.3.5
+    Verify environment element status  s4  System  Temp  2   public   .1.3.6.1.4.1.2021.13.16.3.1.3.5
+    Verify environment element status  s4  System  Temp  3   public   .1.3.6.1.4.1.2021.13.16.3.1.3.5
+    Verify environment element status  s4  System  Temp  4   public   .1.3.6.1.4.1.2021.13.16.3.1.3.5
+    Verify environment element status  s4  System  Temp  5   public   .1.3.6.1.4.1.2021.13.16.3.1.3.5
+    Verify environment element status  s4  System  Temp  6   public   .1.3.6.1.4.1.2021.13.16.3.1.3.5
+    Verify environment element status  s4  System  Temp  7   public   .1.3.6.1.4.1.2021.13.16.3.1.3.5
+    Verify environment element status  s4  System  Temp  8   public   .1.3.6.1.4.1.2021.13.16.3.1.3.5                
+    [Tags]  AS5610  platform  temp 
+
+Verify PSU1 Voltage-In Status on Accton AS5610-52X
+    Verify environment element status  s4  PSU1  Vin  1   public   .1.3.6.1.4.1.2021.13.16.3.1.3.5
+    [Tags]  AS5610  platform  voltage
+
+Verify PSU1 Voltage-Out Status on Accton AS5610-52X
+    Verify environment element status  s4  PSU1  Vout  1   public   .1.3.6.1.4.1.2021.13.16.3.1.3.5
+    [Tags]  AS5610  platform  voltage
+
+Verify PSU2 Voltage-In Status on Accton AS5610-52X
+    Verify environment element status  s4  PSU2  Vin  1   public   .1.3.6.1.4.1.2021.13.16.3.1.3.5
+    [Tags]  AS5610  platform  voltage
+
+Verify PSU2 Voltage-Out Status on Accton AS5610-52X
+    Verify environment element status  s4  PSU2  Vout  1   public   .1.3.6.1.4.1.2021.13.16.3.1.3.5
+    [Tags]  AS5610  platform  voltage
 
 *Keywords
 
@@ -72,10 +209,99 @@ Verify Fan Status  [Arguments]  ${node}  ${element}  ${hardware_element}  ${hard
     ${compare_value_1}=  return snmp value  ${snmp_value1}
     Should Be Equal As Integers  ${compare_value_1}  ${fan1_value}
 
-Verify Temperature Status  [Arguments]  ${node}  ${element}  ${hardware_element}  ${hardware_element_number}  ${snmp_community}   ${snmp_oid}
-    ${snmp_value1} =     snmp cmd   ${node}   snmpget    ${snmp_community}   ${snmp_oid}
+Verify environment element status  [Arguments]  ${node}  ${element}  ${hardware_element}  ${hardware_element_number}  ${snmp_community}   ${snmp_oid}
     ${temp1}=  cli show environment  ${node}  element=${element}  hardware_element=${hardware_element}  hardware_element_number=${hardware_element_number}
+    ${snmp_value1} =     snmp cmd   ${node}   snmpget    ${snmp_community}   ${snmp_oid}
     ${compare_value_1}=  return snmp value  ${snmp_value1}
-    ${TEMP1_VALUE}=   EVALUATE    ${compare_value_1} / 1000
-    ${my_value}=    Convert to Integer  ${temp1}
-    Should be equal as integers  ${TEMP1_VALUE}   ${my_value} 
+    ${TEMP1_VALUE}=   EVALUATE    ${compare_value_1} / 1000.0
+    ${snmp_value}=    Convert to Number  ${TEMP1_VALUE}  2    
+    ${cli_value}=    Convert to Number  ${temp1}  2
+    Should be equal as Numbers  ${snmp_value}   ${cli_value}
+
+Verify voltage status  [Arguments]  ${node}  ${element}  ${hardware_element}  ${hardware_element_number}  ${snmp_community}   ${snmp_oid}
+    ${temp1}=  cli show environment  ${node}  element=${element}  hardware_element=${hardware_element}  hardware_element_number=${hardware_element_number}
+    ${snmp_value1} =     snmp cmd   ${node}   snmpget    ${snmp_community}   ${snmp_oid}
+    ${compare_value_1}=  return snmp value  ${snmp_value1}
+    ${TEMP1_VALUE}=   EVALUATE    (2.0* ${compare_value_1})/1000000.0
+    ${snmp_value}=    Convert to Number  ${TEMP1_VALUE}  2    
+    ${cli_value}=    Convert to Number  ${temp1}  2
+    Should be equal as Numbers  ${snmp_value}   ${cli_value}
+
+Verify current status  [Arguments]  ${node}  ${element}  ${hardware_element}  ${hardware_element_number}  ${snmp_community}   ${snmp_oid}
+    ${temp1}=  cli show environment  ${node}  element=${element}  hardware_element=${hardware_element}  hardware_element_number=${hardware_element_number}
+    ${snmp_value1} =     snmp cmd   ${node}   snmpget    ${snmp_community}   ${snmp_oid}
+    ${compare_value_1}=  return snmp value  ${snmp_value1}
+    ${TEMP1_VALUE}=   EVALUATE    (2.0* ${compare_value_1})/1000.0
+    ${snmp_value}=    Convert to Number  ${TEMP1_VALUE}  2    
+    ${cli_value}=    Convert to Number  ${temp1}  2
+    Should be equal as Numbers  ${snmp_value}   ${cli_value}
+
+environment suite setup
+    base suite setup        
+    cli add snmp keyword   s1   community   ro public       
+    cli add snmp keyword   s1   location   ${snmp_location_1}       
+    cli add snmp keyword   s1   contact   ${snmp_contact}       
+    cli add snmp host   s1   10.192.66.230   traps   public   162   
+    cli add snmp host   s1   10.192.66.230   informs   public   162
+    cli add snmp host   s1   10.192.3.22   traps   public   162   
+    cli add snmp host   s1   10.192.3.22   informs   public   162    
+    cli enable snmp   s1
+    cli add snmp keyword   s2   community   ro public       
+    cli add snmp keyword   s2   location   ${snmp_location_2}       
+    cli add snmp keyword   s2   contact   ${snmp_contact}       
+    cli add snmp host   s2   10.192.66.230   traps   public   162   
+    cli add snmp host   s2   10.192.66.230   informs   public   162
+    cli add snmp host   s2   10.192.3.22   traps   public   162   
+    cli add snmp host   s2   10.192.3.22   informs   public   162      
+    cli enable snmp   s2
+    cli add snmp keyword   s3   community   ro public       
+    cli add snmp keyword   s3   location   ${snmp_location_3}       
+    cli add snmp keyword   s3   contact   ${snmp_contact}       
+    cli add snmp host   s3   10.192.66.230   traps   public   162   
+    cli add snmp host   s3   10.192.66.230   informs   public   162
+    cli add snmp host   s3   10.192.3.22   traps   public   162   
+    cli add snmp host   s3   10.192.3.22   informs   public   162      
+    cli enable snmp   s3
+    cli add snmp keyword   s4   community   ro public       
+    cli add snmp keyword   s4   location   ${snmp_location_3}       
+    cli add snmp keyword   s4   contact   ${snmp_contact}       
+    cli add snmp host   s4   10.192.66.230   traps   public   162   
+    cli add snmp host   s4   10.192.66.230   informs   public   162
+    cli add snmp host   s4   10.192.3.22   traps   public   162   
+    cli add snmp host   s4   10.192.3.22   informs   public   162      
+    cli enable snmp   s4    
+
+environment suite teardown
+    cli disable switch snmp   s1            
+    cli delete snmp keyword   s1   community   ro public       
+    cli delete snmp keyword   s1   location   ${snmp_location_1}  
+    cli delete snmp keyword   s1   contact   ${snmp_contact}       
+    cli delete snmp host   s1   10.192.66.230   traps   public   162   
+    cli delete snmp host   s1   10.192.66.230   informs   public   162
+    cli delete snmp host   s1   10.192.3.22   traps   public   162   
+    cli delete snmp host   s1   10.192.3.22   informs   public   162           
+    cli disable switch snmp   s2         
+    cli delete snmp keyword   s2   community   ro public       
+    cli delete snmp keyword   s2   location   ${snmp_location_2}       
+    cli delete snmp keyword   s2   contact   ${snmp_contact}       
+    cli delete snmp host   s2   10.192.66.230   traps   public   162   
+    cli delete snmp host   s2   10.192.66.230   informs   public   162
+    cli delete snmp host   s2   10.192.3.22   traps   public   162   
+    cli delete snmp host   s2   10.192.3.22   informs   public   162           
+    cli disable switch snmp   s3         
+    cli delete snmp keyword   s3   community   ro public       
+    cli delete snmp keyword   s3   location   ${snmp_location_2}       
+    cli delete snmp keyword   s3   contact   ${snmp_contact}       
+    cli delete snmp host   s3   10.192.66.230   traps   public   162   
+    cli delete snmp host   s3   10.192.66.230   informs   public   162
+    cli delete snmp host   s3   10.192.3.22   traps   public   162   
+    cli delete snmp host   s3   10.192.3.22   informs   public   162           
+    cli disable switch snmp   s4         
+    cli delete snmp keyword   s4   community   ro public       
+    cli delete snmp keyword   s4   location   ${snmp_location_2}       
+    cli delete snmp keyword   s4   contact   ${snmp_contact}       
+    cli delete snmp host   s4   10.192.66.230   traps   public   162   
+    cli delete snmp host   s4   10.192.66.230   informs   public   162    
+    cli delete snmp host   s4   10.192.3.22   traps   public   162   
+    cli delete snmp host   s4   10.192.3.22   informs   public   162           
+    base suite teardown        

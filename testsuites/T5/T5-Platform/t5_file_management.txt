@@ -38,16 +38,19 @@ T1.1 Copy running config to file
 	Cli Copy  running-config  ${file}
 	Compare RC with File Line By Line  ${file}
 	Compare  running-config  ${file}
+	[Tags]  Smoke
 
 T1.2 Copy running config to config://
 	Cli Copy  running-config  ${config}
 	Compare RC with Config Line By Line  ${config}
 	Compare  running-config  ${config}
+	[Tags]  Smoke
 
 T1.3 Copy running config to scp://
 	Cli Copy  running-config  ${scp}
 	Compare  running-config  ${scp}
-	[Tags]  SCP
+	Compare Slave  running-config  ${scp}
+	[Tags]  SCP  Smoke  HA
 
 
 T2.1 Copy running config to file, change RC, verify configs different
@@ -55,23 +58,27 @@ T2.1 Copy running config to file, change RC, verify configs different
 	Modify Running Config
 	Compare RC with File Line By Line Negative  ${file}
 	Compare Negative  running-config  ${file}
+	[Tags]  Smoke
 
 T2.2 Copy running config to config://, change RC, verify configs different
 	Cli Copy  running-config  ${config}
 	Modify Running Config
 	Compare RC with Config Line By Line Negative  ${config}
 	Compare Negative  running-config  ${config}
+	[Tags]  Smoke
 
 T2.3 Copy running config to scp://, change RC, verify configs different
 	Cli Copy  running-config  ${scp}
 	Modify Running Config
 	Compare Negative  running-config  ${scp}
-	[Tags]  SCP
+	Compare Negative Slave  running-config  ${scp}
+	[Tags]  SCP  Smoke  HA
 
 
 T3.1 Verify deletion of file
 	Cli Copy  running-config  ${file}
 	Cli Delete  ${file}
+	[Tags]  Smoke
 
 T3.2 Verify deletion of inexistent file
 	Run Keyword and Expect Error  *Error: Invalid Use: File "*" not found*  Cli Delete  inexistent
@@ -79,6 +86,7 @@ T3.2 Verify deletion of inexistent file
 T3.3 Verify deletion of config://file
 	Cli Copy  running-config  ${config}
 	Cli Delete  ${config}
+	[Tags]  Smoke
 
 T3.4 Verify deletion of inexistent config://file
 	Run Keyword and Expect Error  *Error: Invalid Use: * does not exist*  Cli Delete  config://inexistent
@@ -95,6 +103,7 @@ T4.1.1 Copy running config to file, add elements to RC, restore, verify (new ele
 	${status} =  Cli Compare Running Config with File Line By Line  backup
 	Should Be True  ${status}
 	Compare  running-config  backup
+	[Tags]  Smoke
 T4.1.2 Copy running config to file, delete elements from RC, restore, verify (deleted elements are restored)
 	Cli Copy  running-config  ${file}
 	Cli Copy  config://startup-config  running-config
@@ -103,6 +112,7 @@ T4.1.2 Copy running config to file, delete elements from RC, restore, verify (de
 	${status} =  Cli Compare Running Config with File Line By Line  backup
 	Should Not Be True  ${status}
 	Compare Negative  running-config  backup
+	[Tags]  Smoke
 
 T4.2 Copy running config to config://, change RC, restore, verify old RC restored
 	Cli Copy  running-config  ${config}
@@ -112,6 +122,7 @@ T4.2 Copy running config to config://, change RC, restore, verify old RC restore
 	${status} =  Cli Compare Running Config with Config Line By Line  ${config name}
 	Should Be True  ${status}
 	Compare  running-config  ${config}
+	[Tags]  Smoke
 
 T4.3 Copy running config to scp://, change RC, restore, verify no change in RC
 	Cli Copy  running-config  ${scp}
@@ -122,13 +133,13 @@ T4.3 Copy running config to scp://, change RC, restore, verify no change in RC
 	Should Be True  ${status}
 	Compare Negative  running-config  ${scp}
 	Compare  running-config  backup
-	[Tags]  SCP
+	[Tags]  SCP  Smoke
 
 T4.4 Copy from scp:// and compare with previous running-config
 	Cli Copy  running-config  backup
 	Cli Copy  ${scp switch}  running-config
 	Compare Negative  backup  running-config
-	[Tags]  SCP
+	[Tags]  SCP  Smoke
 
 
 T5.1 Copy running config to file, copy RC from file to other file, verify
@@ -144,10 +155,9 @@ T5.1 Copy running config to file, copy RC from file to other file, verify
 T5.2 Copy running config to file, copy RC from file to scp://, verify
 	Cli Copy  running-config  ${file}
 	Cli Copy  ${file}  ${scp}
-	${status} =  Cli Compare  running-config  ${scp}
-	Should Be True  ${status}
-	${status} =  Cli Compare  ${scp}  running-config
-	Should Be True  ${status}
+	Compare  running-config  ${scp}
+	Compare Slave  running-config  ${scp}
+	[Tags]  SCP  HA
 
 T5.3 Copy running config to config://, copy RC from config:// to file, verify
 	Cli Copy  running-config  ${file}
@@ -158,7 +168,8 @@ T5.4 Copy running config to config://, copy RC from config:// to scp://, verify
 	Cli Copy  ${config}  ${scp}
 	Compare  ${config}  ${scp}
 	Compare  running-config  ${scp}
-	[Tags]  BSC-4955  SCP
+	Compare Slave  running-config  ${scp}
+	[Tags]  BSC-4955  SCP  HA
 
 T5.5 Copy running config to scp://, copy RC from scp:// to file, verify
 	Cli Copy  running-config  ${scp}
@@ -190,19 +201,22 @@ T5.7 Copy running config to config://, copy config:// to scp://, copy from scp:/
 T5.8.1 Verify: compare running-config scp://<running-config>
 	Cli Copy  running-config  ${scp RC}
 	Compare  running-config  ${scp RC}
-	[Tags]  SCP
+	Compare Slave  running-config  ${scp RC}
+	[Tags]  SCP  HA
 
 T5.8.2 Verify: compare running-config scp://<file>
 	Cli Copy  running-config  ${file}
 	Cli Copy  ${file}  ${scp file}
 	Compare  running-config  ${scp file}
-	[Tags]  SCP
+	Compare Slave  running-config  ${scp file}
+	[Tags]  SCP  HA
 
 T5.8.3 Verify: compare running-config scp://<config://>
 	Cli Copy  running-config  ${config}
 	Cli Copy  ${config}  ${scp config}
 	Compare  running-config  ${scp config}
-	[Tags]  SCP
+	Compare Slave  running-config  ${scp config}
+	[Tags]  SCP  HA
 
 T5.8.4 Verify: compare <file> scp://<running-config>
 	Cli Copy  running-config  ${file}
@@ -399,9 +413,11 @@ T7.2 Verify comparison function between running-config and config://
 T7.3 Verify comparison function between running-config and scp://
 	Cli Copy  running-config  ${scp}
 	Compare  running-config  ${scp}
+	Compare Slave  running-config  ${scp}
 	Modify Running Config
 	Compare Negative  running-config  ${scp}
-	[Tags]  SCP
+	Compare Negative Slave  running-config  ${scp}
+	[Tags]  SCP  HA
 
 T7.4 Verify comparison function between file and config://
 	Cli Copy  running-config  ${file}
@@ -609,6 +625,8 @@ T10.3 Verify validation function of scp:// to image:// - corrupted image
 T10.4 Verify validation function of scp:// to image:// - proper image
 	Cli Copy  ${scp image}  image://
 	Cli Delete  image://master
+T10.5 Verify suggestions for deleting multiple images
+	Manual Passed
 
 
 *** Keywords ***
@@ -649,12 +667,24 @@ Compare
 	Should Be True  ${status}
 	${status} =  Cli Compare  ${second}  ${first}
 	Should Be True  ${status}
+Compare Slave
+	[Arguments]  ${first}  ${second}
+	${status} =  Cli Compare  ${first}  ${second}  node=slave
+	Should Be True  ${status}
+	${status} =  Cli Compare  ${second}  ${first}  node=slave
+	Should Be True  ${status}
 
 Compare Negative
 	[Arguments]  ${first}  ${second}
 	${status} =  Cli Compare  ${first}  ${second}
 	Should Not Be True  ${status}
 	${status} =  Cli Compare  ${second}  ${first}
+	Should Not Be True  ${status}
+Compare Negative Slave
+	[Arguments]  ${first}  ${second}
+	${status} =  Cli Compare  ${first}  ${second}  node=slave
+	Should Not Be True  ${status}
+	${status} =  Cli Compare  ${second}  ${first}  node=slave
 	Should Not Be True  ${status}
 
 Compare RC with File Line By Line

@@ -98,6 +98,7 @@ Clean Config
     auto delete fabric switch  ${spineList}  ${leafList}  2
     auto delete fabric portgroups
 
+
 ########################################################################################################################################
 
 * Keywords      

@@ -515,7 +515,8 @@ class HostNode(Node):
                                    user=user,
                                    password=password,
                                    port=port,
-                                   protocol=protocol)
+                                   protocol=protocol,
+                                   debug=self.dev_debug_level)
 
     def devconf(self):
         return self.dev
