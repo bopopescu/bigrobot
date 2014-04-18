@@ -38,7 +38,7 @@ basic cli show commands test case
 add Fabric setup Dual Rack Dual Leaf 
    [Tags]  smoke  sanity
    sleep  5
-   add fabric switch
+#   add fabric switch
    sleep  5
    rest verify fabric switch all
    rest verify fabric link 
