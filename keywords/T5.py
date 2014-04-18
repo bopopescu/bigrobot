@@ -1387,37 +1387,26 @@ class T5(object):
             return False
 
 
-    def rest_verify_fabric_switch(self, dpid):
-        # Function verify fabric switch status for default as well after fabric role configuration
+    def rest_verify_fabric_switch(self, switch):
+        # Function verify fabric switch status with role configured
         t = test.Test()
         c = t.controller('master')
-        url = '/api/v1/data/controller/core/switch[dpid="%s"]' % (dpid)
+        url = '/api/v1/data/controller/core/switch[name="%s"]' % (switch)
         c.rest.get(url)
         data = c.rest.content()
-        if data[0]["dpid"] == dpid:
-            if data[0]["connected"]:
-                if data[0]["fabric-role"] != "virtual":
-                    if data[0]["fabric-role"] == "spine" and data[0]["suspended"] == False:
+        if data[0]["name"] == switch and data[0]["fabric-role"] != '':
+            if data[0]["fabric-role"] == "spine" and data[0]["connected"] == True:
                         helpers.log("Pass: Fabric switch connection status for spine is correct")
                         return True
-                    elif data[0]["fabric-role"] == "leaf" and data[0]["suspended"] == False and data[0]["leaf-group"] != '':
-                        if data[0]["dpid"] == dpid and data[0]["lacp-interface-offset"] == 0:
-                            helpers.log("Pass: Fabric switch connection status for %s dual leaf is correct" % str(data[0]["name"]))
-                            return True
-                        elif data[0]["dpid"] == dpid and data[0]["lacp-interface-offset"] == 100:
-                            helpers.log("Pass: Fabric switch connection status for %s dual leaf is correct" % str(data[0]["name"]))
-                            return True
-                elif data[0]["suspended"] == True:
-                        helpers.log("Default fabric role is virtual for not added fabric switches")
+            elif data[0]["fabric-role"] == "leaf" and data[0]["connected"] == True:
+                        helpers.log("Pass: Fabric switch connection status for leaf is correct")
                         return True
-                else:
-                        helpers.test_failure("Fabric role is virual but suspended = False ")
-                        return False
-            elif data[0]["suspended"] == False or data[0]["suspended"] == True:
-                helpers.test_failure("Fail: Switch is not connected , Fabric switch status still exists")
+            else:
+                helpers.test_failure("Fail:Switch status is not correct:%s=%s" % (switch, data[0]["connected"]))
                 return False
-        else :
-            return False
+        else:
+            helpers.log("fabric role is not configured")
+            return True
 
     def rest_verify_fabric_link(self):
         t = test.Test()
@@ -1542,15 +1531,18 @@ class T5(object):
     def rest_verify_fabric_interface_lacp(self, switch, intf):
         t = test.Test()
         c = t.controller('master')
-        url = '/api/v1/data/controller/core/switch[name="%s"]/interface[name="%s"]' % (switch, intf)
+        url1 = '/api/v1/data/controller/core/switch[name="%s"]' % (switch)
+        c.rest.get(url1)
+        data1 = c.rest.content()
+        dpid = data1[0]["dpid"]
+        url = '/api/v1/data/controller/core/switch[interface/name="%s"][dpid="%s"]?select=interface[name="%s"]' % (intf, dpid, intf)
         c.rest.get(url)
         data = c.rest.content()
         try:
-                if data[0]["lacp-active"] == True:
-                    if data[0]["lacp-partner-info"]["system-mac"] != None:
+                if data[0]["interface"][0]["lacp-state"] == "active" and data[0]["interface"][0]["state"] == "up":
                         helpers.log("LACP Neibhour Is Up and active")
                         return True
-                    else:
+                else:
                         helpers.test_failure("LACP is enabled , LACP Partner is not seen , check the floodlight logs")
                         return False
         except KeyError:
@@ -2121,7 +2113,7 @@ class T5(object):
         '''
         t = test.Test()
         c = t.controller('master')
-        url = '/api/v1/data/controller/core/switch-config[name="%s"]' % switch
+        url = '/api/v1/data/controller/core/switch-config[name="%s"]' % (switch)
         try:
             c.rest.patch(url, {"shutdown": True})
         except:
@@ -2137,9 +2129,9 @@ class T5(object):
         '''
         t = test.Test()
         c = t.controller('master')
-        url = '/api/v1/data/controller/core/switch-config[name="%s"]' % switch
+        url = '/api/v1/data/controller/core/switch-config[name="%s"]/shutdown' % (switch)
         try:
-            c.rest.delete(url, {"shutdown": None})
+            c.rest.delete(url, {})
         except:
             return False
         else:
