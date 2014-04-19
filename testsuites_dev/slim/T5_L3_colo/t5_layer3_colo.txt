@@ -356,24 +356,68 @@ L3 dhcp request with and without dhcp relay enabled
 
 
 initialize host
+	BASH delete tag										h3								bond0.1003				soft_error=${true}
+	BASH delete tag										h4								bond0.1004				soft_error=${true}
+	BASH delete tag										h5								bond0.1005				soft_error=${true}
+	BASH delete tag										h6								bond0.1006				soft_error=${true}
+	BASH delete tag										h7								bond0.1007				soft_error=${true}	
+	BASH delete route									h1								10.251.2.0/24			10.251.1.1
+	BASH delete route									h1								10.251.3.0/24			10.251.1.1
+	BASH delete route									h1								10.252.0.0/16			10.251.1.1
+	BASH delete route									h1								10.253.0.0/16			10.251.1.1
+	BASH delete route									h2								10.251.1.0/24			10.251.2.1
+  	BASH delete route									h2								10.251.3.0/24			10.251.2.1
+	BASH delete route									h2								10.252.0.0/16			10.251.2.1
+  	BASH delete route									h2								10.253.0.0/16			10.251.2.1
+  	BASH delete route									h3								10.251.1.0/24			10.251.3.1
+  	BASH delete route									h3								10.251.2.0/24			10.251.3.1
+  	BASH delete route									h3								10.252.0.0/16			10.251.3.1
+  	BASH delete route									h3								10.253.0.0/16			10.251.3.1
+  	BASH delete route									h4								10.252.2.0/24			10.252.1.1
+  	BASH delete route									h4								10.252.3/0/24			10.252.1.1
+  	BASH delete route									h4								10.251.0.0/16			10.252.1.1
+  	BASH delete route									h4								10.253.0.0/16			10.252.1.1
+  	BASH delete route									h5								10.252.1.0/24			10.252.2.1
+  	BASH delete route									h5								10.252.3.0/24			10.252.2.1
+	BASH delete route									h5								10.251.0.0/16			10.252.2.1
+  	BASH delete route									h5								10.253.0.0/16			10.252.2.1
+  	BASH delete route									h6								10.252.1.0/24			10.252.3.1
+  	BASH delete route									h6								10.252.2.0/24			10.252.3.1
+  	BASH delete route									h6								10.251.0.0/16			10.252.3.1
+  	BASH delete route									h6								10.253.0.0/16			10.252.3.1
+ 	BASH delete route									h7								10.253.2.0/24			10.253.1.1
+  	BASH delete route									h7								10.253.3/0/24			10.253.1.1
+  	BASH delete route									h7								10.251.0.0/16			10.253.1.1
+  	BASH delete route									h7								10.252.0.0/16			10.253.1.1
+  	BASH delete route									h8								10.253.1.0/24			10.253.2.1
+  	BASH delete route									h8								10.253.3.0/24			10.253.2.1
+	BASH delete route									h8								10.251.0.0/16			10.253.2.1
+  	BASH delete route									h8								10.252.0.0/16			10.253.2.1	
+
 	BASH init intf								h1								bond0
 	BASH init intf								h2								bond0
 	BASH init intf								h3								bond0
 	BASH init intf								h4								bond0
 	BASH init intf								h5								bond0
 	BASH init intf								h6								bond0
+	BASH init intf								h7								bond0
+	BASH init intf								h8								bond0
 	BASH ifdown intf							h1 								bond0
 	BASH ifdown intf							h2								bond0
 	BASH ifdown intf							h3								bond0
 	BASH ifdown intf							h4								bond0
 	BASH ifdown intf							h5								bond0
 	BASH ifdown intf							h6								bond0
+	BASH ifdown intf							h7								bond0
+	BASH ifdown intf							h8								bond0
 	BASH release dhcpv4 address					h1								bond0
 	BASH release dhcpv4 address					h2								bond0
 	BASH release dhcpv4 address					h3								bond0
 	BASH release dhcpv4 address					h4								bond0
 	BASH release dhcpv4 address					h5								bond0
 	BASH release dhcpv4 address					h6								bond0
+	BASH release dhcpv4 address					h7								bond0
+	BASH release dhcpv4 address					h8								bond0
 	BASH ifup intf								h1								eth2
 	BASH ifup intf								h1								eth3
 	BASH ifup intf								h2								eth2
@@ -448,24 +492,24 @@ setup topology
 	REST add portgroup to vns						Z								Z1						${leaf0_pc7}			1007
 	REST add portgroup to vns						Z								Z2						${leaf0_pc8}			-1
 #	REST add portgroup to vns						Z								Z3						${leaf0_pc9}			-1
-	BASH ifup intf								h1 								bond0
-	BASH ifup intf								h2								bond0
-	BASH ifup intf								h3								bond0
-	BASH ifup intf								h4								bond0	
-	BASH ifup intf								h5								bond0	
-	BASH ifup intf								h6								bond0	
-	BASH ifup intf								h7								bond0	
-	BASH ifup intf								h8								bond0	
-	BASH add tag								h3								bond0					1003
-	BASH add tag								h4								bond0					1004
-	BASH add tag								h5								bond0					1005
-	BASH add tag								h6								bond0					1006
-	BASH add tag								h7								bond0					1007
-	BASH ifup intf								h3								bond0.1003
-	BASH ifup intf								h4								bond0.1004
-	BASH ifup intf								h5								bond0.1005
-	BASH ifup intf								h6								bond0.1006
-	BASH ifup intf								h7								bond0.1007
+	BASH ifup intf									h1 								bond0
+	BASH ifup intf									h2								bond0
+	BASH ifup intf									h3								bond0
+	BASH ifup intf									h4								bond0	
+	BASH ifup intf									h5								bond0	
+	BASH ifup intf									h6								bond0	
+	BASH ifup intf									h7								bond0	
+	BASH ifup intf									h8								bond0	
+	BASH add tag									h3								bond0					1003
+	BASH add tag									h4								bond0					1004
+	BASH add tag									h5								bond0					1005
+	BASH add tag									h6								bond0					1006
+	BASH add tag									h7								bond0					1007
+	BASH ifup intf									h3								bond0.1003
+	BASH ifup intf									h4								bond0.1004
+	BASH ifup intf									h5								bond0.1005
+	BASH ifup intf									h6								bond0.1006
+	BASH ifup intf									h7								bond0.1007
 	BASH add ip address								h1								10.251.1.11/24			bond0	
 	BASH add ip address								h2								10.251.2.11/24			bond0
 	BASH add ip address								h3								10.251.3.11/24			bond0.1003
