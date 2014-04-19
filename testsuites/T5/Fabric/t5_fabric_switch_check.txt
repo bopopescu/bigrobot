@@ -11,7 +11,6 @@ Test Teardown   T5 base test teardown
 Force Tags      T5
 Library         keywords/BsnCommon.py
 Library         keywords/T5.py
-Library         keywords/T5Fabric.py
 Library         keywords/Mininet.py
 Library			keywords/Ixia.py
 Library			keywords/SwitchLight.py
