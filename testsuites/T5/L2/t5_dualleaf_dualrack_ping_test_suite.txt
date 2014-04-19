@@ -48,6 +48,7 @@ ping bm0 to bm1 dual leaf single rack dynamic endpoints
    add portgroup to vns  A  A  p1  -1 
    add portgroup to vns  A  A  p2  -1
    sleep  10 
+   mininet ping  bm0  ${bm1_ip}
    ${loss}=  mininet ping  bm0  ${bm1_ip}
    Should Be True  ${loss} == 0						 
 	 
