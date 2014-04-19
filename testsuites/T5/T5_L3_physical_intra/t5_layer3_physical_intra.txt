@@ -13,7 +13,8 @@ Library         keywords/T5Platform.py
 Library         keywords_dev/animesh/BsnCommonShow.py
 Library	        Collections.py
 Library         keywords/Ixia.py
-Resource		testsuites/T5_L3_physical_intra/t5_layer3_physical_intra_variables.txt
+Library			keywords/SwitchLight.py
+Resource		testsuites/T5/T5_L3_physical_intra/t5_layer3_physical_intra_variables.txt
 Resource		testsuites/T5/t5_dualleaf_three_rack_physical_resource.txt
 
 

@@ -50,3 +50,17 @@ h5:
   user: root
   password: bsn
     
+h6:
+  ip: 10.210.64.23
+  user: root
+  password: bsn
+
+h7:
+  ip: 10.210.64.22
+  user: root
+  password: bsn
+
+h8:
+  ip: 10.210.64.21
+  user: root
+  password: bsn  

@@ -81,7 +81,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
             return True
         
    
-    def rest_add_tenant_routers_to_system(self, tenant):        
+    def rest_add_tenant_routers_intf_to_system(self, tenant):        
         '''Attach tenant router to system tenant"
         
             Input:
@@ -108,7 +108,7 @@ REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[
             helpers.test_log("Output: %s" % c.rest.result_json())
             return c.rest.content() 
         
-    def rest_delete_tenant_routers_to_system(self, tenant):        
+    def rest_delete_tenant_routers_intf_to_system(self, tenant):        
         '''detach tenant router to system tenant"
         
             Input:
@@ -134,7 +134,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
             return c.rest.content() 
         
         
-    def rest_add_system_to_tenant_routers(self, tenant):        
+    def rest_add_system_intf_to_tenant_routers(self, tenant):        
         '''Attach system router to tenant router"
         
             Input:
@@ -159,7 +159,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
             return c.rest.content()         
 
 
-    def rest_delete_system_to_tenant_routers(self, tenant):        
+    def rest_delete_system_intf_to_tenant_routers(self, tenant):        
         '''detach system router from tenant router"
         
             Input:

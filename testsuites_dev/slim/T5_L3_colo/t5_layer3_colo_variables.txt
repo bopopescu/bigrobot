@@ -47,6 +47,10 @@ ${leaf0_pc3}		leaf0-pc3
 ${leaf0_pc4}		leaf0-pc4
 ${leaf0_pc5}		leaf0-pc5
 ${leaf0_pc6}		leaf0-pc6
+${leaf0_pc7}		leaf0-pc7
+${leaf0_pc8}		leaf0-pc8
+${leaf0_pc9}		leaf0-pc9
+
 ${leaf1_pc1}		leaf1-pc1
 ${leaf1_pc2}		leaf1-pc2
 ${leaf1_pc3}		leaf1-pc3
@@ -76,12 +80,11 @@ ${leaf0_pc4_intf1}	ethernet4
 ${leaf0_pc4_intf2}	ethernet4
 ${leaf0_pc5_intf1}	ethernet5
 ${leaf0_pc5_intf2}	ethernet5
-
-${leaf1_pc1_intf1}	ethernet1
-${leaf1_pc1_intf2}	ethernet1
-${leaf1_pc2_intf1}	ethernet2
-${leaf1_pc2_intf2}	ethernet2
-${leaf2_pc1_intf1}	ethernet47
-${leaf2_pc1_intf2}	ethernet47
-${leaf2_pc2_intf1}	ethernet48
-${leaf2_pc2_intf2}	ethernet48
+${leaf0_pc6_intf1}	ethernet6
+${leaf0_pc6_intf2}	ethernet6
+${leaf0_pc7_intf1}	ethernet7
+${leaf0_pc7_intf2}	ethernet7
+${leaf0_pc8_intf1}	ethernet8
+${leaf0_pc8_intf2}	ethernet8
+${leaf0_pc9_intf1}	ethernet9
+${leaf0_pc9_intf2}	ethernet9
