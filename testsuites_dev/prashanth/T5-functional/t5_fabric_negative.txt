@@ -3,9 +3,9 @@
 *Settings
 Documentation    Fabric negative and bugs test suite
 Suite Setup      base suite setup
-#Suite Teardown   base suite teardown
+Suite Teardown   base suite teardown
 Test Setup       T5 test setup
-#Test Teardown    T5 test teardown
+Test Teardown    T5 test teardown
 Force Tags       T5 
 Library          keywords/BsnCommon.py
 Library          keywords/T5.py
@@ -103,7 +103,7 @@ reboot both the controllers to make sure all the switches indeed connected
 	cli verify cluster master reboot
 	sleep  3
 	rest verify fabric link common
-	sleep  10
+	sleep  15
 	cli verify cluster master reboot
 	sleep  3
 	rest verify fabric link common
@@ -239,7 +239,7 @@ check forwarding vlan table consistency after switch mgmt remove/add
 	[Tags]  bugs 
 	rest add tenant  t1
 	rest add vns  t1  v1
-	${result}=  bash execute command  leaf2-a  ofad-ctl ft vlan | grep 49 | wc -l
+	${result}=  bash execute command  leaf2-a  ofad-ctl ft VLAN | grep 49 | wc -l
     ${count}=	Convert to integer  ${result}   
     Should be True  ${count} = 2
 	cli delete controller  leaf2-a  c1
@@ -249,15 +249,15 @@ check forwarding vlan table consistency after switch mgmt remove/add
 	cli add controller  leaf2-a  c1
 	cli add controller  leaf2-a  c2
 	sleep  5
-	${result}=  bash execute command  leaf2-a  ofad-ctl ft vlan | grep 49 | wc -l
+	${result}=  bash execute command  leaf2-a  ofad-ctl ft VLAN | grep 49 | wc -l
     ${count}=	Convert to integer  ${result}   
     Should be True  ${count} = 3
-    ${result}=  bash execute command  leaf2-b  ofad-ctl ft vlan | grep 49 | wc -l
+    ${result}=  bash execute command  leaf2-b  ofad-ctl ft VLAN | grep 49 | wc -l
     ${count}=	Convert to integer  ${result}   
     Should be True  ${count} = 3
-    ${result}=  bash execute command  spine0  ofad-ctl ft vlan | grep 31 | wc -l
+    ${result}=  bash execute command  spine0  ofad-ctl ft VLAN | grep 31 | wc -l
     ${count}=	Convert to integer  ${result}   
-    Should be True  ${count} = 3   
+    Should be True  ${count} = 2   
 
 verifying flow reconsilation when new switch is connected to the fabric
 	[Tags]  bugs
@@ -282,7 +282,7 @@ verifying flow reconsilation when new switch is connected to the fabric
 	cli delete controller  leaf2-b  c1
 	cli delete controller  leaf2-b  c2
 	sleep  10
-	${result}=  bash execute command  leaf2-a  ofad-ctl ft vlan | grep 49 | wc -l
+	${result}=  bash execute command  leaf2-a  ofad-ctl ft VLAN | grep 49 | wc -l
     ${count}=	Convert to integer  ${result}   
     Should be True  ${count} = 2
     clean configuration
@@ -296,7 +296,7 @@ verifying flow reconsilation when new switch is connected to the fabric
     cli add controller  leaf2-a  c2
     sleep  2
     rest verify fabric switch  leaf2-a
-	${result}=  bash execute command  leaf2-a  ofad-ctl ft vlan | grep 49 | wc -l
+	${result}=  bash execute command  leaf2-a  ofad-ctl ft VLAN | grep 49 | wc -l
     ${count}=	Convert to integer  ${result}   
     Should be True  ${count} = 0
 	
