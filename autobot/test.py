@@ -1037,110 +1037,110 @@ class Test(object):
                     url_portgrp_delete = '/api/v1/data/controller/applications/bvs/port-group[name="%s"]' % content[i]['name']
                     c.rest.delete(url_portgrp_delete, {})
 
-        helpers.log("Attempting to delete NTP configurations")
-        url_get_ntpservers = '/api/v1/data/controller/os/config/global/time-config?config=true'
-        try:
-            c.rest.get(url_get_ntpservers)
-            content = c.rest.content()
-        except:
-            pass
-        else:
-            try:
-                if (content[0]['ntp-server']):
-                    ntp_list = content[0]['ntp-server']
-                    for i in range (0, len(ntp_list)):
-                        ntp_list.pop(0)
-                        url_ntp_delete = '/api/v1/data/controller/os/config/global/time-config/ntp-server'
-                        try:
-                            c.rest.put(url_ntp_delete, ntp_list)
-                        except:
-                            pass
-                        else:
-                            helpers.log("NTP configuration successfully deleted")
-            except:
-                pass
-
-        helpers.log("Attempting to delete SNMP Configurations")
-        # Delete SNMP location
-        url_delete_snmp_location = '/api/v1/data/controller/os/config/global/snmp-config/location'
-        try:
-            c.rest.delete(url_delete_snmp_location, {})
-        except:
-            pass
-        else:
-            helpers.log("SNMP Location configuration successfully deleted")
-        # Delete SNMP Contact
-        url_delete_snmp_contact = '/api/v1/data/controller/os/config/global/snmp-config/contact'
-        try:
-            c.rest.delete(url_delete_snmp_contact, {})
-        except:
-            pass
-        else:
-            helpers.log("SNMP Contact configuration successfully deleted")
-        # Disable SNMP Trap
-        url_delete_snmp_trap = '/api/v1/data/controller/os/config/global/snmp-config/trap-enabled'
-        try:
-            c.rest.delete(url_delete_snmp_trap, {})
-        except:
-            pass
-        else:
-            helpers.log("SNMP Trap configuration successfully deleted")
-        # Delete SNMP community
-        url_delete_snmp_community = '/api/v1/data/controller/os/config/global/snmp-config/community'
-        try:
-            c.rest.delete(url_delete_snmp_community, {})
-        except:
-            pass
-        else:
-            helpers.log("SNMP Community configuration successfully deleted")
-        # Delete SNMP Trap Hosts
-        url_get_snmphost = '/api/v1/data/controller/os/config/global/snmp-config?config=true'
-        try:
-            c.rest.get(url_get_snmphost)
-        except:
-            pass
-        else:
-            helpers.log("SNMP GET configuration successful")
-            content = c.rest.content()
-            if(content):
-                if ('trap-host' in content[0]):
-                    for i in range (0, len(content[0]['trap-host'])):
-                        url_delete_trap = '/api/v1/data/controller/os/config/global/snmp-config/trap-host[ipaddr="%s"]/udp-port' % str(content[0]['trap-host'][i]['ipaddr'])
-                        try:
-                            c.rest.delete(url_delete_trap, {})
-                        except:
-                            pass
-                        else:
-                            url_delete_trap = '/api/v1/data/controller/os/config/global/snmp-config/trap-host[ipaddr="%s"]' % str(content[0]['trap-host'][i]['ipaddr'])
-                            try:
-                                c.rest.delete(url_delete_trap, {})
-                            except:
-                                pass
-                            else:
-                                helpers.log("SNMP Trap configuration successfully deleted")
-
-        helpers.log("Attempting to delete logging server configurations")
-        url_get_logging = '/api/v1/data/controller/os/config/global/logging-config?config=true'
-        c.rest.get(url_get_logging)
-        content = c.rest.content()
-        if(content):
-            if ('logging-server' in content[0]):
-                for i in range (0, len(content[0]['logging-server'])):
-                    url_delete_logserver = '/api/v1/data/controller/os/config/global/logging-config/logging-server[server="%s"]' % str(content[0]['logging-server'][i]['server'])
-                    try:
-                        c.rest.delete(url_delete_logserver, {})
-                    except:
-                        pass
-                    else:
-                        helpers.log("Logging server configuration successfully deleted")
-
-        helpers.log("Attempting to disable remote logging")
-        url_disable_remotelog = '/api/v1/data/controller/os/config/global/logging-config/logging-enabled'
-        try:
-            c.rest.delete(url_disable_remotelog, {})
-        except:
-            pass
-        else:
-            helpers.log("Remote logging successfully deleted")
+#         helpers.log("Attempting to delete NTP configurations")
+#         url_get_ntpservers = '/api/v1/data/controller/os/config/global/time-config?config=true'
+#         try:
+#             c.rest.get(url_get_ntpservers)
+#             content = c.rest.content()
+#         except:
+#             pass
+#         else:
+#             try:
+#                 if (content[0]['ntp-server']):
+#                     ntp_list = content[0]['ntp-server']
+#                     for i in range (0, len(ntp_list)):
+#                         ntp_list.pop(0)
+#                         url_ntp_delete = '/api/v1/data/controller/os/config/global/time-config/ntp-server'
+#                         try:
+#                             c.rest.put(url_ntp_delete, ntp_list)
+#                         except:
+#                             pass
+#                         else:
+#                             helpers.log("NTP configuration successfully deleted")
+#             except:
+#                 pass
+# 
+#         helpers.log("Attempting to delete SNMP Configurations")
+#         # Delete SNMP location
+#         url_delete_snmp_location = '/api/v1/data/controller/os/config/global/snmp-config/location'
+#         try:
+#             c.rest.delete(url_delete_snmp_location, {})
+#         except:
+#             pass
+#         else:
+#             helpers.log("SNMP Location configuration successfully deleted")
+#         # Delete SNMP Contact
+#         url_delete_snmp_contact = '/api/v1/data/controller/os/config/global/snmp-config/contact'
+#         try:
+#             c.rest.delete(url_delete_snmp_contact, {})
+#         except:
+#             pass
+#         else:
+#             helpers.log("SNMP Contact configuration successfully deleted")
+#         # Disable SNMP Trap
+#         url_delete_snmp_trap = '/api/v1/data/controller/os/config/global/snmp-config/trap-enabled'
+#         try:
+#             c.rest.delete(url_delete_snmp_trap, {})
+#         except:
+#             pass
+#         else:
+#             helpers.log("SNMP Trap configuration successfully deleted")
+#         # Delete SNMP community
+#         url_delete_snmp_community = '/api/v1/data/controller/os/config/global/snmp-config/community'
+#         try:
+#             c.rest.delete(url_delete_snmp_community, {})
+#         except:
+#             pass
+#         else:
+#             helpers.log("SNMP Community configuration successfully deleted")
+#         # Delete SNMP Trap Hosts
+#         url_get_snmphost = '/api/v1/data/controller/os/config/global/snmp-config?config=true'
+#         try:
+#             c.rest.get(url_get_snmphost)
+#         except:
+#             pass
+#         else:
+#             helpers.log("SNMP GET configuration successful")
+#             content = c.rest.content()
+#             if(content):
+#                 if ('trap-host' in content[0]):
+#                     for i in range (0, len(content[0]['trap-host'])):
+#                         url_delete_trap = '/api/v1/data/controller/os/config/global/snmp-config/trap-host[ipaddr="%s"]/udp-port' % str(content[0]['trap-host'][i]['ipaddr'])
+#                         try:
+#                             c.rest.delete(url_delete_trap, {})
+#                         except:
+#                             pass
+#                         else:
+#                             url_delete_trap = '/api/v1/data/controller/os/config/global/snmp-config/trap-host[ipaddr="%s"]' % str(content[0]['trap-host'][i]['ipaddr'])
+#                             try:
+#                                 c.rest.delete(url_delete_trap, {})
+#                             except:
+#                                 pass
+#                             else:
+#                                 helpers.log("SNMP Trap configuration successfully deleted")
+# 
+#         helpers.log("Attempting to delete logging server configurations")
+#         url_get_logging = '/api/v1/data/controller/os/config/global/logging-config?config=true'
+#         c.rest.get(url_get_logging)
+#         content = c.rest.content()
+#         if(content):
+#             if ('logging-server' in content[0]):
+#                 for i in range (0, len(content[0]['logging-server'])):
+#                     url_delete_logserver = '/api/v1/data/controller/os/config/global/logging-config/logging-server[server="%s"]' % str(content[0]['logging-server'][i]['server'])
+#                     try:
+#                         c.rest.delete(url_delete_logserver, {})
+#                     except:
+#                         pass
+#                     else:
+#                         helpers.log("Logging server configuration successfully deleted")
+# 
+#         helpers.log("Attempting to disable remote logging")
+#         url_disable_remotelog = '/api/v1/data/controller/os/config/global/logging-config/logging-enabled'
+#         try:
+#             c.rest.delete(url_disable_remotelog, {})
+#         except:
+#             pass
+#         else:
+#             helpers.log("Remote logging successfully deleted")
 
         return True
