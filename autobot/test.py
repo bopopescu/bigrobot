@@ -1045,17 +1045,20 @@ class Test(object):
         except:
             pass
         else:
-            if (content[0]['ntp-server']):
-                ntp_list = content[0]['ntp-server']
-                for i in range (0, len(ntp_list)):
-                    ntp_list.pop(0)
-                    url_ntp_delete = '/api/v1/data/controller/os/config/global/time-config/ntp-server'
-                    try:
-                        c.rest.put(url_ntp_delete, ntp_list)
-                    except:
-                        pass
-                    else:
-                        helpers.log("NTP configuration successfully deleted")
+            try:
+                if (content[0]['ntp-server']):
+                    ntp_list = content[0]['ntp-server']
+                    for i in range (0, len(ntp_list)):
+                        ntp_list.pop(0)
+                        url_ntp_delete = '/api/v1/data/controller/os/config/global/time-config/ntp-server'
+                        try:
+                            c.rest.put(url_ntp_delete, ntp_list)
+                        except:
+                            pass
+                        else:
+                            helpers.log("NTP configuration successfully deleted")
+            except:
+                pass
 
         helpers.log("Attempting to delete SNMP Configurations")
         # Delete SNMP location
