@@ -180,15 +180,15 @@ class T5(object):
         url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/vns[tenant="%s"]' % (tenant)
         c.rest.get(url)
         data = c.rest.content()
-        list_vlan_id = []
-        for i in range(0, len(data)):
-            if data[i]["internal-vlan"] not in list_vlan_id:
-                list_vlan_id.append(data[i]["internal-vlan"])
-        list_vlan_id = sorted(list_vlan_id)
+#        list_vlan_id = []
+#       for i in range(0, len(data)):
+#            if data[i]["internal-vlan"] not in list_vlan_id:
+#                list_vlan_id.append(data[i]["internal-vlan"])
+#        list_vlan_id = sorted(list_vlan_id)
         for j in range(0, len(data)):
-            if data[j]["internal-vlan"] in list_vlan_id:
+#            if data[j]["internal-vlan"] in list_vlan_id:
                 url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/switch-port-membership-rule[switch="%s"][interface="%s"]' % (tenant, data[j]["name"], switch, intf)
-                c.rest.put(url, {"switch": switch, "interface": intf, "vlan": data[j]["internal-vlan"]})
+                c.rest.put(url, {"switch": switch, "interface": intf, "vlan": j+1})
         return True
 
     def rest_delete_vns(self, tenant, vns=None):
