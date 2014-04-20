@@ -55,7 +55,7 @@ def main(*args):
                 print "VM TearDown Success!!"
             else:
                 print "VM TearDown Failure!!\n%s" % result['status_descr']
-            time.sleep(1) #sleep for jenkins run Teardowns
+            time.sleep(2) #sleep for jenkins run Teardowns
     else:
         result = kvm_op.vm_teardown(kvm_host=kvm_host,
                                     vm_name=vm_name,
