@@ -7,7 +7,9 @@
 #exit 0
 
 testsuites="\
-testsuites/T5/L2/t5_dualleaf_three_rack_physical 
+testsuites/T5/L2/t5_dualleaf_three_rack_physical \
+testsuites/T5/L2/t5_mac_move_age \
+testsuites/T5/L2/t5_multiple_vns_forwarding   
 "
 
 mesg() {
@@ -31,7 +33,7 @@ if [ ! -x "./gobot" ]; then
 fi
 
 for suite in `echo $testsuites`; do
-    ./bigrobot_smoke_wrapper.py "$suite"
+    ./bigrobot_sanity_wrapper.py "$suite"
 done
 
 # Generate BigRobot log/report.
