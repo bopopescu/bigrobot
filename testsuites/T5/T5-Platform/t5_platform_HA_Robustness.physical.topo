@@ -30,8 +30,14 @@ s3:
   password: adminadmin
   
 s4:
-  ip: 10.210.144.121
+  ip: 10.210.144.110
   alias: spine0
+  user: admin
+  password: adminadmin
+
+s5:
+  ip: 10.210.144.111
+  alias: spine1
   user: admin
   password: adminadmin
 
