@@ -8,7 +8,7 @@
 
 testsuites="\
 testsuites/T5/T5-Platform/t5_virtual_ip_address \
-testsuites/T5/T5-Platform/t5_upgrade_single_node 
+testsuites/T5/T5-Platform/t5_platform_visibility
 "
 
 mesg() {
