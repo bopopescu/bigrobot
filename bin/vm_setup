@@ -96,7 +96,8 @@ def main(*args):
     helpers.set_env("TERM", "xterm")
     helpers.log("New TERM Value: %s" % term)
     if args.jenkins_qcow_path is None:
-	args.jenkins_qcow_path = vmdk_name
+        args.jenkins_qcow_path = vmdk_name
+    
     active_vm = kvm_ops.vm_setup(kvm_host=kvm_host,
                                  kvm_user=kvm_user,
                                  kvm_password=kvm_pwd,
