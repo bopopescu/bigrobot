@@ -9,7 +9,12 @@
 testsuites="\
 testsuites/T5/L2/t5_dualleaf_three_rack_physical \
 testsuites/T5/L2/t5_mac_move_age \
-testsuites/T5/L2/t5_multiple_vns_forwarding   
+testsuites/T5/L2/t5_multiple_vns_forwarding \
+testsuites/T5/L2/t5_app_cli.txt \
+testsuites/T5/L2/t5_mac_scale \
+testsuites/T5/L2/t5_singleleaf_dualrack_ping_test_suite_physical \
+testsuites/T5/L2/t5_vns_scale \
+testsuites/T5/L2/t5_vns_stats 
 "
 
 mesg() {
