@@ -160,7 +160,7 @@ def main(*args):
                                       netmask=args.netmask,
                                       vm_name=vm_mininet_name,
                                       vm_host_name=vm_host_name,
-                                      build_number = '66')
+                                      build_number = args.mininet_build_number)
         helpers.log("Created Mininet VM :\n%s" % mininet_vm)
         if mininet_vm['status_code'] == False:
             helpers.summary_log("VM setup failure on standby vm!!\n%s"
@@ -224,6 +224,8 @@ if __name__ == '__main__':
                         help="This will be used as mininet vm ip")
     parser.add_argument("--build_number",
                         help="This build will be picked from jenkins")
+    parser.add_argument("--mininet_build_number",
+                        help="This build will be picked from jenkins from mininet project")
     main()
     print "Success!!!"
     sys.exit(0)

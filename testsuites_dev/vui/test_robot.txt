@@ -18,6 +18,7 @@ ${NAME}         "Vui Le"
 ${COUNTER}      100
 #@{MYLIST}       [ a, b, c, d, e ]
 @{MYLIST}       [ 1, 2, 3, 4, 5, 6, 7, "abc", xyz ]
+${POLICY_BM0_IP}   None
 
 * Test Cases
 Test var assignment
@@ -53,15 +54,15 @@ Test dynamic string
     json_to_pydict    {a:true, b:${123}, name:${NAME}}
     
 Test expression
-    #[Tags]           skipped
-    [Tags]            smoke
+    [Tags]           skipped
+    #[Tags]            smoke
     ${result1}=       expr  1 + 1 + ${COUNTER}
     ${result2}=       expr  10 / 2
     ${result3}=       expr  ${result1} + ${result2}
     log               Expression evaluated to result1=${result1}, result2=${result2}, result3=${result3}
 
 Test evaluation
-    #[Tags]           skipped
+    [Tags]           skipped
     [Tags]            smoke
     ${result1}=       evaluate  1 + 1 + ${COUNTER}
     ${result2}=       evaluate  10 / 2
@@ -145,6 +146,13 @@ Test pause execution (SHELL)
     [Tags]           skipped
     pause            Freeze!!!
 
+Test Control-C
+    [Tags]           skipped
+    :for              ${count}    in    1    2    1   2   1
+    \                 log         Sleep ${count}
+    \                 sleep       ${count}
+    log               Done with loop
+
 Test return false
     [Tags]           skipped
     return false
@@ -169,6 +177,14 @@ Test get a dict
     Log               Result = ${result['def']}
     Log               Result = ${result['def'][0]}
     Log               Result = ${result['def'][0]['second']}
+
+Initialize policy vars
+    #[Tags]           skipped
+    ${temp}=                 create dictionary  cidr  10.10.11.11/32
+    Set global variable      ${POLICY_BM0_IP}  ${temp}
+
+Display policy vars
+    log               ${POLICY_BM0_IP}
 
 
 * Keywords

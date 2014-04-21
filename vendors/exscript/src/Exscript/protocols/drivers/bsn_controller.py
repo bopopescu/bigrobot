@@ -39,6 +39,12 @@ _tacacs_re = re.compile(r'[\r\n]s\/key[\S ]+\r?%s' % _password_re[0].pattern)
 _prompt_re = [re.compile(r'[\r\n\x07](\w+(-?\w+)?\s?@?)?[\-\w+\.:/]+(?:\([^\)]+\))?(:~)?[>#$] ?$')]
 
 
+# [BsnCommon.cli:1448] cli content on 'c1':
+# show version
+#
+# Error: running command "show version"
+# controller>
+
 _error_re = [re.compile(r'%Error'),
              re.compile(r'Error: running command'),
              re.compile(r'invalid input', re.I),
