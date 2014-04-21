@@ -157,7 +157,7 @@ print("\n============== BigRobot smoke: Start test  ==============")
 #status = run_cmd(get_env('BIGROBOT_BIN') +
 #                  "/gobot test --include=smoke %s" % ' '.join(ARGS))
 status = run_cmd_spaces(get_env('BIGROBOT_BIN') +
-                 "/gobot", "test", " %s" % ' '.join(ARGS))
+                 "/gobot", "test")
 
 print "Status: %s" % status
 
