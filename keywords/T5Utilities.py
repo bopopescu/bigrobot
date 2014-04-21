@@ -24,7 +24,22 @@ endpoints_b4 = []
 endpoints_after = []
 fabricLags_b4 = []
 fabricLags_after = []
+
+fwdARPTable_b4 = []
+fwdARPTable_after = []
+fwdEPTable_b4 = []
+fwdEPTable_after = []
+fwdL3CIDRTable_b4 = []
+fwdL3CIDRTable_after = []
+fwdL3HostTable_b4 = []
+fwdL3HostTable_after = []
+fwdMyStationTable_b4 = []
+fwdMyStationTable_after = []
+fwdRouterIPTable_b4 = []
+fwdRouterIPTable_after = []
+
 warningCount = 0
+
 
 floodlightMonitorFlag = False
 
@@ -65,6 +80,21 @@ class T5Utilities(object):
         global endpoints_after
         global fabricLags_b4
         global fabricLags_after
+        
+        global fwdARPTable_b4
+        global fwdEPTable_b4
+        global fwdL3CIDRTable_b4
+        global fwdL3HostTable_b4
+        global fwdMyStationTable_b4
+        global fwdRouterIPTable_b4
+        
+        global fwdARPTable_after
+        global fwdEPTable_after
+        global fwdL3CIDRTable_after
+        global fwdL3HostTable_after
+        global fwdMyStationTable_after
+        global fwdRouterIPTable_after
+        
         global warningCount
         
 
@@ -74,6 +104,14 @@ class T5Utilities(object):
             fabricLinks_b4 = self._gather_fabric_links()
             endpoints_b4 = self._gather_endpoints()
             fabricLags_b4 = self._gather_fabric_lags()
+            
+            fwdARPTable_b4 = self._gather_forwarding('arp-table')
+            fwdEPTable_b4 = self._gather_forwarding('ep-table')
+            fwdL3CIDRTable_b4 = self._gather_forwarding('l3-cidr-table')
+            fwdL3HostTable_b4 = self._gather_forwarding('l3-host-table')
+            fwdMyStationTable_b4 = self._gather_forwarding('my-station-table')
+            fwdRouterIPTable_b4 = self._gather_forwarding('router-ip-table')
+            
 
         else:
             switchDict_after = self._gather_switch_connectivity()
@@ -84,6 +122,19 @@ class T5Utilities(object):
             warningCount = self._compare_fabric_elements(endpoints_b4, endpoints_after, "FabricEndpoints")
             fabricLags_after = self._gather_fabric_lags()
             warningCount = self._compare_fabric_elements(fabricLags_b4, fabricLags_after, "FabricLags")
+            
+            fwdARPTable_after = self._gather_forwarding('arp-table')
+            warningCount = self._compare_fabric_elements(fwdARPTable_b4, fwdARPTable_after, "fwdARPTable")
+            fwdEPTable_after = self._gather_forwarding('ep-table')
+            warningCount = self._compare_fabric_elements(fwdEPTable_b4, fwdEPTable_after, "fwdEPTable")
+            fwdL3CIDRTable_after = self._gather_forwarding('l3-cidr-table')
+            warningCount = self._compare_fabric_elements(fwdL3CIDRTable_b4, fwdL3CIDRTable_after, "fwdL3CIDRTable")
+            fwdL3HostTable_after = self._gather_forwarding('l3-host-table')
+            warningCount = self._compare_fabric_elements(fwdL3HostTable_b4, fwdL3HostTable_after, "fwdL3HostTable")
+            fwdMyStationTable_after = self._gather_forwarding('my-station-table')
+            warningCount = self._compare_fabric_elements(fwdMyStationTable_b4, fwdMyStationTable_after, "fwdMyStationTable")
+            fwdRouterIPTable_after = self._gather_forwarding('router-ip-table')
+            warningCount = self._compare_fabric_elements(fwdRouterIPTable_b4, fwdRouterIPTable_after, "fwdRouterIPTable")
 
         if(warningCount == 0): 
             if(state == "after"):
@@ -254,6 +305,73 @@ class T5Utilities(object):
     
         return fabricLags
     
+    def _gather_forwarding(self, fwdTableName):
+        
+        t = test.Test()
+        c = t.controller("master")
+        url = "/api/v1/data/controller/applications/bvs/info/forwarding/network?select=%s" % fwdTableName
+        result = c.rest.get(url)['content']
+        fwdTableList = []
+        
+        try:
+            fwdTable = result[0][fwdTableName]
+            for i in range(0, len(fwdTable)):
+                
+                if(fwdTableName == 'arp-table'):    
+                    ip = fwdTable[i]['ip']
+                    mac = fwdTable[i]['mac']
+                    vlanID = fwdTable[i]['vlan-id']
+                    key = "%s-%s-%s" % (ip,mac,vlanID)
+                    fwdTableList.append(key)
+                    
+                if(fwdTableName == 'ep-table'):
+                    mac = fwdTable[i]['mac']
+                    pgLagID = fwdTable[i]['port-group-lag-id']
+                    rackID = fwdTable[i]['rack-id']
+                    rackLagID = fwdTable[i]['rack-lag-id']
+                    vlanID = fwdTable[i]['vlan-id']
+                    key = "%s-%s-%s-%s-%s" % (mac, pgLagID, rackID, rackLagID, vlanID)
+                    fwdTableList.append(key)
+                
+                if(fwdTableName == 'l3-cidr-table'):
+                    ip = fwdTable[i]['ip']
+                    mask = fwdTable[i]['ip-mask']
+                    pgLagID = fwdTable[i]['port-group-lag-id']
+                    rackLagID = fwdTable[i]['rack-lag-id']
+                    vlanID = fwdTable[i]['vlan-id']
+                    vrf = fwdTable[i]['vlan-id']
+                    classID = fwdTable[i]['class-id']
+                    key = "%s-%s-%s-%s-%s-%s-%s" % (ip, mask, pgLagID, rackLagID, vlanID, vrf, classID)
+                    fwdTableList.append(key)
+                    
+                if(fwdTableName == 'l3-host-table'):
+                    ip = fwdTable[i]['ip']
+                    mac = fwdTable[i]['mac']
+                    pgLagID = fwdTable[i]['port-group-lag-id']
+                    rackLagID = fwdTable[i]['rack-lag-id']
+                    vlanID = fwdTable[i]['vlan-id']
+                    vrf = fwdTable[i]['vrf']
+                    key = "%s-%s-%s-%s-%s-%s" % (ip, mac, pgLagID, rackLagID, vlanID, vrf)
+                    fwdTableList.append(key)
+                    
+                if(fwdTableName == 'my-station-table'):
+                    vRouterMac = fwdTable[i]['mac']
+                    macMask = fwdTable[i]['mac-mask']
+                    key = "%s-%s" % (vRouterMac, macMask)
+                    fwdTableList.append(key)
+                    
+                if(fwdTableName == 'router-ip-table'):
+                    routerIP = fwdTable[i]['ip']
+                    routerMac = fwdTable[i]['mac']
+                    vlanID = fwdTable[i]['vlan-id']
+                    key = "%s-%s-%s" % (routerIP, routerMac, vlanID)
+                    fwdTableList.append(key)
+                    
+        except(KeyError):
+            pass
+        
+        return fwdTableList
+        
     
     def _compare_fabric_elements(self, list_b4, list_after, fabricElement):
         ''' 
@@ -279,6 +397,20 @@ class T5Utilities(object):
                 helpers.log("Endpoints are intact between states")
             if (fabricElement == "FabricLags"):
                 helpers.log("Fabric Lags are intact between states")
+                
+            if (fabricElement == "fwdARPTable"):
+                helpers.log("Controller ARP Table Forwarding entries are intact between states")
+            if (fabricElement == "fwdEPTable"):
+                helpers.log("Controller EndPoint Table Forwarding entries are intact between states")
+            if (fabricElement == "fwdL3CIDRTable"):
+                helpers.log("Controller L3 CIDR Table Forwarding entries are intact between states")
+            if (fabricElement == "fwdL3HostTable"):
+                helpers.log("Controller L3 Host Table Forwarding entries are intact between states")
+            if (fabricElement == "fwdMyStationTable"):
+                helpers.log("Controller My Station Table Forwarding entries are intact between states")
+            if (fabricElement == "fwdRouterIPTable"):
+                helpers.log("Controller Router IP Table Forwarding entries are intact between states")
+                
             return warningCount
         
         else:
@@ -291,6 +423,20 @@ class T5Utilities(object):
                 helpers.warn("-----------    Fabric Endpoints Discrepancies    -----------")
             if (fabricElement == "FabricLags"):
                 helpers.warn("-----------    Fabric Lags Discrepancies    -----------")
+                
+            if (fabricElement == "fwdARPTable"):
+                helpers.warn("-----------    FWD: ARP Table Discrepancies    -----------")
+            if (fabricElement == "fwdEPTable"):
+                helpers.warn("-----------    FWD: EndPoint Table Discrepancies    -----------")
+            if (fabricElement == "fwdL3CIDRTable"):
+                helpers.warn("-----------    FWD: L3 CIDR Table Discrepancies    -----------")
+            if (fabricElement == "fwdL3HostTable"):
+                helpers.warn("-----------    FWD: L3 Host Table Discrepancies    -----------")
+            if (fabricElement == "fwdMyStationTable"):
+                helpers.warn("-----------    FWD: My Station Table Discrepancies    -----------")
+            if (fabricElement == "fwdRouterIPTable"):
+                helpers.warn("-----------    FWD: Router IP Table Discrepancies    -----------")
+                
             if (len(list_b4) > len(list_after)):
                 for item in list_b4:
                     if item not in list_after:
@@ -300,6 +446,19 @@ class T5Utilities(object):
                             helpers.warn("Endpoint: %s is not present after the state change" % item)
                         if (fabricElement == "FabricLags"):
                             helpers.warn("Fabric Lag: %s is not present after the state change" % item)
+                            
+                        if (fabricElement == "fwdARPTable"):
+                            helpers.warn("FWD:ARP Table Entry: %s is not present after the state change" % item)
+                        if (fabricElement == "fwdEPTable"):
+                            helpers.warn("FWD:EndPoint Table Entry: %s is not present after the state change" % item)
+                        if (fabricElement == "fwdL3CIDRTable"):
+                            helpers.warn("FWD:L3 CIDR Table Entry: %s is not present after the state change" % item)
+                        if (fabricElement == "fwdL3HostTable"):
+                            helpers.warn("FWD:L3 Host Table Entry: %s is not present after the state change" % item)
+                        if (fabricElement == "fwdMyStationTable"):
+                            helpers.warn("FWD:My Station Table Entry: %s is not present after the state change" % item)
+                        if (fabricElement == "fwdRouterIPTable"):
+                            helpers.warn("FWD:Router IP Table Entry: %s is not present after the state change" % item)
                             
                         warningCount += 1
             else:
@@ -311,6 +470,20 @@ class T5Utilities(object):
                             helpers.warn("New endpoint: %s present after the state change" % item)
                         if (fabricElement == "FabricLags"):
                             helpers.warn("New fabric lag: %s is present after the state change" % item)
+                            
+                        if (fabricElement == "fwdARPTable"):
+                            helpers.warn("New FWD:ARP Table Entry: %s is present after the state change" % item)
+                        if (fabricElement == "fwdEPTable"):
+                            helpers.warn("New FWD:EndPoint Table Entry: %s is present after the state change" % item)
+                        if (fabricElement == "fwdL3CIDRTable"):
+                            helpers.warn("New FWD:L3 CIDR Table Entry: %s is present after the state change" % item)
+                        if (fabricElement == "fwdL3HostTable"):
+                            helpers.warn("New FWD:L3 Host Table Entry: %s is present after the state change" % item)
+                        if (fabricElement == "fwdMyStationTable"):
+                            helpers.warn("New FWD:My Station Table Entry: %s is present after the state change" % item)
+                        if (fabricElement == "fwdRouterIPTable"):
+                            helpers.warn("New FWD:Router IP Table Entry: %s is present after the state change" % item)
+                        
                         warningCount += 1
                         
         return warningCount 
@@ -353,10 +526,10 @@ class T5Utilities(object):
             c1_pidList = self.get_floodlight_monitor_pid('c1')
             c2_pidList = self.get_floodlight_monitor_pid('c2')
             for c1_pid in c1_pidList:
-                if (re.match("^d", c1_pid)):
+                #if (re.match("^d", c1_pid)):
                     c1.sudo('kill -9 %s' % (c1_pid))
             for c2_pid in c2_pidList:
-                if (re.match("^d", c2_pid)):
+                #if (re.match("^d", c2_pid)):
                     c2.sudo('kill -9 %s' % (c2_pid))
             
             # Add rm of the file if file already exist in case of a new test
