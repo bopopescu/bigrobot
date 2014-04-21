@@ -46,8 +46,8 @@ h1:
   user: root
   password: bsn
 
-#h2:
-  #ip: 10.210.144.52
+h2:
+  ip: 10.210.144.52
   user: root
   password: bsn
   
@@ -55,14 +55,17 @@ h3:
   ip: 10.210.144.53
   user: root
   password: bsn
+  
 h4:
   ip: 10.210.144.54
   user: root
   password: bsn
+  
 h5:
   ip: 10.210.144.55
   user: root
   password: bsn
+  
 h6:
   ip: 10.210.144.56
   user: root
