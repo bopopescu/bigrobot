@@ -9,7 +9,6 @@ Test Teardown    T5 base test teardown
 Force Tags       T5 
 Library          keywords/BsnCommon.py
 Library          keywords/T5.py
-Library	         keywords/T5Fabric.py
 Library	    	 keywords/Host.py
 Resource		 testsuites/T5/t5_dualleaf_three_rack_physical_resource.txt
 Resource		 testsuites/T5/t5_physical_variables.txt
@@ -17,6 +16,7 @@ Resource		 testsuites/T5/t5_physical_variables.txt
 * Test Case 
 
 bring up host bond0 interface
+	[Tags]  smoke  sanity  run
 	bring up h1 bond0
 	sleep  2
 	bring up h2 bond0
@@ -31,12 +31,12 @@ bring up host bond0 interface
 	sleep  2
 	
 add Fabric setup Three Rack Dual Leaf 
-   [Tags]  smoke  sanity
+   [Tags]  smoke  sanity  run
    rest verify fabric switch all
    rest verify fabric link 
    
 ping h5 to h6 dual leaf single rack dynamic endpoints
-   [Tags]  smoke   sanity       
+   [Tags]  smoke   sanity  run       
    add portgroup to vns  A  A  p5  -1 
    add portgroup to vns  A  A  p6  -1
    sleep  5
@@ -140,52 +140,9 @@ T5 base test setup
    base test setup
    add a tenant  A 
    add a vns  A  A
-   add a portgroup  p1 
-   add interface to portgroup  leaf0-a  ${h1_intf0}  p1
-   add interface to portgroup  leaf0-b  ${h1_intf1}  p1
-   rest add portgroup lacp  p1
-   add a portgroup  p2 
-   add interface to portgroup  leaf0-a  ${h2_intf0}  p2
-   add interface to portgroup  leaf0-b  ${h2_intf1}  p2
-   rest add portgroup lacp  p2
-   add a portgroup  p3 
-   add interface to portgroup  leaf1-a  ${h3_intf0}  p3
-   add interface to portgroup  leaf1-b  ${h3_intf1}  p3
-   rest add portgroup lacp  p3
-   add a portgroup  p4 
-   add interface to portgroup  leaf1-a  ${h4_intf0}  p4
-   add interface to portgroup  leaf1-b  ${h4_intf1}  p4
-   rest add portgroup lacp  p4
-   add a portgroup  p5 
-   add interface to portgroup  leaf2-a  ${h5_intf0}  p5
-   add interface to portgroup  leaf2-b  ${h5_intf1}  p5
-   rest add portgroup lacp  p5
-   add a portgroup  p6 
-   add interface to portgroup  leaf2-a  ${h6_intf0}  p6
-   add interface to portgroup  leaf2-b  ${h6_intf1}  p6
-   rest add portgroup lacp  p6
-   sleep  10
-      
+         
 T5 base test teardown
    delete a tenant  A
-   delete interface from portgroup  leaf0-a  ${h1_intf0}  p1
-   delete interface from portgroup  leaf0-b  ${h1_intf1}  p1
-   delete interface from portgroup  leaf0-a  ${h2_intf0}  p2
-   delete interface from portgroup  leaf0-b  ${h2_intf1}  p2
-   delete interface from portgroup  leaf1-a  ${h3_intf0}  p3 
-   delete interface from portgroup  leaf1-b  ${h3_intf1}  p3
-   delete interface from portgroup  leaf1-a  ${h4_intf0}  p4
-   delete interface from portgroup  leaf1-b  ${h4_intf1}  p4
-   delete interface from portgroup  leaf2-a  ${h5_intf0}  p5
-   delete interface from portgroup  leaf2-b  ${h5_intf1}  p5
-   delete interface from portgroup  leaf2-a  ${h6_intf0}  p6 
-   delete interface from portgroup  leaf2-b  ${h6_intf1}  p6  
-   delete a portgroup  p1
-   delete a portgroup  p2
-   delete a portgroup  p3
-   delete a portgroup  p4
-   delete a portgroup  p5
-   delete a portgroup  p6
    base test teardown
    sleep  5
          
@@ -231,30 +188,42 @@ delete portgroup from vns  [Arguments]  ${tenant}  ${vns}  ${pg}  ${vlan}
 
 Tear down the config 
    delete a tenant  A 
-   delete interface from portgroup  leaf0-a  ${h1_intf0}  p1
-   delete interface from portgroup  leaf0-b  ${h1_intf1}  p1
-   delete interface from portgroup  leaf0-a  ${h2_intf0}  p2
-   delete interface from portgroup  leaf0-b  ${h2_intf1}  p2
-   delete interface from portgroup  leaf1-a  ${h3_intf0}  p3 
-   delete interface from portgroup  leaf1-b  ${h3_intf1}  p3 
-   delete interface from portgroup  leaf1-a  ${h4_intf0}  p4
-   delete interface from portgroup  leaf1-b  ${h4_intf1}  p4
-   delete interface from portgroup  leaf2-a  ${h5_intf0}  p5
-   delete interface from portgroup  leaf2-b  ${h5_intf1}  p5
-   delete interface from portgroup  leaf2-a  ${h6_intf0}  p6 
-   delete interface from portgroup  leaf2-b  ${h6_intf1}  p6 
+   delete fabric switch
    delete a portgroup  p1
    delete a portgroup  p2
    delete a portgroup  p3
    delete a portgroup  p4
    delete a portgroup  p5
    delete a portgroup  p6
-   delete fabric switch
    base suite teardown
    
 T5 base suite setup
 	base suite setup
 	add fabric switch
+	add a portgroup  p1 
+    add interface to portgroup  leaf0-a  ${h1_intf0}  p1
+    add interface to portgroup  leaf0-b  ${h1_intf1}  p1
+    rest add portgroup lacp  p1
+    add a portgroup  p2 
+    add interface to portgroup  leaf0-a  ${h2_intf0}  p2
+    add interface to portgroup  leaf0-b  ${h2_intf1}  p2
+    rest add portgroup lacp  p2
+    add a portgroup  p3 
+    add interface to portgroup  leaf1-a  ${h3_intf0}  p3
+    add interface to portgroup  leaf1-b  ${h3_intf1}  p3
+    rest add portgroup lacp  p3
+    add a portgroup  p4 
+    add interface to portgroup  leaf1-a  ${h4_intf0}  p4
+    add interface to portgroup  leaf1-b  ${h4_intf1}  p4
+    rest add portgroup lacp  p4
+    add a portgroup  p5 
+    add interface to portgroup  leaf2-a  ${h5_intf0}  p5
+    add interface to portgroup  leaf2-b  ${h5_intf1}  p5
+    rest add portgroup lacp  p5
+    add a portgroup  p6 
+    add interface to portgroup  leaf2-a  ${h6_intf0}  p6
+    add interface to portgroup  leaf2-b  ${h6_intf1}  p6
+    rest add portgroup lacp  p6
 	sleep  5
 	
 bring up h1 bond0
