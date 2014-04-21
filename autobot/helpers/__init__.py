@@ -1158,13 +1158,16 @@ def ping(host, count=5, timeout=5, quiet=False):
 
     Return: (Int) loss percentage
     """
-    if count < 3:
-        count = 3  # minimum count
-    loss = _ping(host, count=1, timeout=1, quiet=quiet)
+    if count < 4:
+        count = 4  # minimum count
+
+    # Need to ping with minimum of 2 counts since 1 packet may get lost due
+    # to multiple hops (if destination host is not in the same network).
+    loss = _ping(host, count=2, timeout=1, quiet=quiet)
     if loss > 0:
-        loss = _ping(host, count=1, timeout=1, quiet=quiet)
+        loss = _ping(host, count=2, timeout=1, quiet=quiet)
     if loss > 0:
-        count -= 2
+        count -= 4
         loss = _ping(host, count=count, timeout=timeout, quiet=quiet)
     return loss
 
