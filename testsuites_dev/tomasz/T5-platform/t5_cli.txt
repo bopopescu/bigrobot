@@ -7,13 +7,14 @@ Test Teardown  		Teardown
 Force Tags   		Platform
 Library  			keywords/BsnCommon.py
 Library  			keywords/T5Platform.py
+Library  			keywords/T5Utilities.py
 Library  			keywords/T5.py
 Library        		String
 
 *** Variables ***
 
 *** Test Cases ***
-T1 Test
+T1 Show running-config
 	Cli Run  show running-config
 
 T2.1 No Show This in config mode
@@ -66,7 +67,7 @@ T5 Monitor session
 T6 Monitor session
 	Cli Run  monitor session 1
 	Run Keyword and Expect Error
-	...  *Error: Invalid argument: syntax: expected [a-zA-Z][-.0-9a-zA-Z_]*$ for: 3*
+	...  *Invalid argument: Invalid Alphabetic character, followed by alphanumerics: 3*
 	...  Cli Run  destination switch test interface 3
 	[TAGS]  monitor session  BSC-5017
 
@@ -361,7 +362,7 @@ T19 'show this' in -vns and -endpoint submodes
 	...  flag=False
 	[Tags]  BSC-5085
 
-T20 AAA Accounting round-robin support
+T20.1 AAA Accounting round-robin support
 	Cli Run  tacacs server host 1.2.3.4 timeout 5 key secret
 	Cli Run  tacacs server host 10.192.64.1 timeout 5 key secret
 	Cli Run  tacacs server host 10.192.3.1 timeout 5 key secret
@@ -375,6 +376,16 @@ T20 AAA Accounting round-robin support
 	Cli Run  tenant test1
 	Cli Run  no aaa accounting exec default start-stop group tacacs+  cmd_timeout=30
 	[Tags]  BSC-5019  AAA  TACACS
+T20.2 TACACS Default timeout
+	Cli Run  tacacs server timeout 10
+	Cli Run  tacacs server host 5.5.5.5 timeout 5 key secret
+	Cli Run  tacacs server host 1.2.3.4
+	Cli Run  aaa accounting exec default start-stop group tacacs+  cmd_timeout=31
+	Cli Run  no aaa accounting exec default start-stop group tacacs+  cmd_timeout=46
+	Cli Run  no tacacs server timeout 10
+	Cli Run  aaa accounting exec default start-stop group tacacs+  cmd_timeout=71
+	Cli Run  no aaa accounting exec default start-stop group tacacs+  cmd_timeout=141
+	[Tags]  BSC-5088  AAA  TACACS
 
 T21 Escaping special characters in quoted strings
 	Cli Run  snmp-server community ro "tests\\n \\r \\n '''"
@@ -406,7 +417,11 @@ T23 show this in config-session submode
         Cli Run  show this
 	[Tags]  BSC-5115  session
 
-T24 image build number after downloading second image
+T24 Chinese characters in commands
+	Cli Run  banner \\0xe4\\0xbd\\0xa0\\0xe5\\0xa5\\0xbd
+	Cli Run and Verify Output
+	...  show banner
+	...  \\0xe4\\0xbd\\0xa0\\0xe5\\0xa5\\0xbd
 	Manual Passed
 	[Tags]  BSC-5102
 
@@ -415,6 +430,40 @@ T25 Polish characters in commands
 	Cli Run and Verify Output
 	...  show running-config snmp
 	...  snmp-server location 'Ko\\0xc5\\0x9bciuszki 34, \\0xc5\\0x81\\0xc3\\0xb3d\\0xc5\\0xba'
+
+T26 Switch commands in switch-if submode
+	Cli Run  switch test123
+	Cli Run  interface eth1
+	Run Keyword and Expect Error
+	...  *Error: Unknown command: mac*
+	...  Cli Run  mac aa:bb:cc:dd:ee:ff
+	Run Keyword and Expect Error
+	...  *Error: Unknown command: fabric-role*
+	...  Cli Run  fabric-role leaf
+	Run Keyword and Expect Error
+	...  *Error: Unknown command: leaf-group*
+	...  Cli Run  leaf-group test
+
+T27 Interaction between snmp and banner commands
+	Cli Run  snmp-server location Loc1
+	Cli Run and Verify Output
+	...  show running-config snmp
+	...  snmp-server location Loc1
+	Cli Run  banner Welcome
+	Cli Run and Verify Output
+	...  show running-config snmp
+	...  snmp-server location Loc1
+	Cli Run and Verify Output
+	...  show running-config banner
+	...  banner Welcome
+	[Tags]  BSC-5141
+
+T28 NTP sync command
+	Cli Run  ntp sync  cmd_timeout=15
+	Cli Run  ntp sync 0.bigswitch.pool.ntp.org  cmd_timeout=15
+	[Tags]  NTP BSC-5169
+
+T29 Deletion of ntp server
 
 *** Keywords ***
 Generate Random Name
@@ -435,5 +484,8 @@ Setup
         Cli Run  config
 
 Teardown
+	Cli Run  exit
+	Cli Run  config
+	Cli  master  no aaa accounting exec default start-stop group tacacs+  timeout=200
 	Cli Copy  config://startup-config  running-config
 	Base Test Teardown
