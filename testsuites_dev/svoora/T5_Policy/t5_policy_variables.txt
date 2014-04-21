@@ -105,19 +105,34 @@ ${bm10_bondif}		bm10-bond0
 ${bm11_bondif}		bm11-bond0
 ${tenant1_polname}	tenant1-policy-list
 ${tenant2_polname}	tenant2-policy-list
-${policy_ip1}		{"cidr": "10.10.30.2/32"}	
-${policy_ip2}		{"cidr": "10.10.30.2/32"}
-${policy_ip3}		{"cidr": "10.10.30.2/32"}
-${policy_ip4}		{"cidr": "10.10.30.2/32"}
-${policy_ip5}		{"cidr": "10.10.30.2/32"}
-${policy_tenant1}	{"tenant-name": "Tenant2"}
-${policy_tenant2}	{"tenant-name": "Tenant2"}
-${policy_vns1}		{"vns-name": "Tenant2"}
-${policy_vns2}		{"vns-name": "Tenant2"}
-${policy_vns3}		{"vns-name": "Tenant2"}
-${policy_vns4}		{"vns-name": "Tenant2"}
-${policy_vns5}		{"vns-name": "Tenant2"}
-${policy_vns6}		{"vns-name": "Tenant2"}
+${policy_bm0_ip}	{"cidr": "10.10.11.11/32"}	
+${policy_bm1_ip}	{"cidr": "10.10.12.11/32"}	
+${policy_bm2_ip}	{"cidr": "10.10.23.11/32"}	
+${policy_bm3_ip}	{"cidr": "10.10.22.11/32"}	
+${policy_bm4_ip}	{"cidr": "10.10.11.12/32"}	
+${policy_bm5_ip}	{"cidr": "10.10.12.12/32"}	
+${policy_bm6_ip}	{"cidr": "10.10.21.12/32"}	
+${policy_bm7_ip}	{"cidr": "10.10.22.12/32"}	
+${policy_bm8_ip}	{"cidr": "10.10.21.13/32"}	
+${policy_bm9_ip}	{"cidr": "10.10.22.13/32"}	
+${policy_bm10_ip}	{"cidr": "10.10.23.13/32"}	
+${policy_bm11_ip}	{"cidr": "10.10.23.23/32"}	
+${policy_vns1_ip1}	{"cidr": "10.10.11.1/24"}	
+${policy_vns1_ip2}	{"cidr": "10.10.12.1/24"}	
+${policy_vns1_ip3}	{"cidr": "10.10.13.1/24"}	
+${policy_vns2_ip1}	{"cidr": "10.10.21.1/24"}	
+${policy_vns2_ip1}	{"cidr": "10.10.22.1/24"}	
+${policy_vns2_ip1}	{"cidr": "10.10.23.1/24"}	
+
+
+${policy_tenant1}	{"tenant-name": "A"}
+${policy_tenant2}	{"tenant-name": "B"}
+${policy_vns1}		{"vns-name": "A1"}
+${policy_vns2}		{"vns-name": "A2"}
+${policy_vns3}		{"vns-name": "A3"}
+${policy_vns4}		{"vns-name": "B1"}
+${policy_vns5}		{"vns-name": "B2"}
+${policy_vns6}		{"vns-name": "B3"}
 ${ping_count}		10
 ${bm0_mac}			00:00:00:00:00:01
 ${bm1_mac}			00:00:00:00:00:02
