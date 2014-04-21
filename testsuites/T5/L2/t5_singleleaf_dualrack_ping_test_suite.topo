@@ -6,10 +6,12 @@
 # mn  : Mininet server
 
 c1:
-  ip: dummy
+  ip: 10.192.109.201
+  #ip: 10.192.5.56
 
 mn:
-  ip: dummy
+  ip: 10.192.109.202
+  #ip: 10.192.7.213
 
   type: 't6'  # required: 't6' or 'basic'
 

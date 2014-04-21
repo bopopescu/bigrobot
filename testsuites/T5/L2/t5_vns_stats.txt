@@ -185,7 +185,7 @@ Verify single vns rx/tx rates same rack
     rest verify vns rx stats  t1  v1  0
     rest verify vns tx stats  t1  v1  0
     start traffic  ${stream}
-    sleep  120
+    sleep  180
     rest verify vns rx rates  t1  v1  2000
     rest verify vns tx rates  t1  v1  2000
     stop traffic  ${stream}
@@ -214,7 +214,7 @@ verify single vns rx/tx rates different rack
     rest verify vns rx stats  t1  v1  0
     rest verify vns tx stats  t1  v1  0
     start traffic  ${stream}
-    sleep  120
+    sleep  180
     rest verify vns rx rates  t1  v1  1000
     rest verify vns tx rates  t1  v1  1000
     stop traffic  ${stream}   

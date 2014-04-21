@@ -7,6 +7,9 @@
 
 c1:
   ip: 10.192.99.105
+  
+c2:
+  ip: 10.192.99.106
 
 s1:
   ip: 10.195.0.33
@@ -38,7 +41,6 @@ s6:
   alias: leaf2-b
   user: admin
   password: adminadmin
-
 s7:
   ip: 10.195.0.21
   alias: spine0
