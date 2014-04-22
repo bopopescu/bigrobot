@@ -5,9 +5,11 @@
 # h<n>: Hosts (including bare metal)
 # mn  : Mininet server
   
+
 c1:
   ip: dummy
+ 
 c2:
   ip: dummy
  
- 
+  

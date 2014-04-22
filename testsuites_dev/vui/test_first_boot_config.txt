@@ -10,7 +10,6 @@ Library         keywords/Controller.py
 Test first boot
     [Documentation]   Performing the first boot configuration steps from the console
     #[Tags]           skipped
-    cli add first boot  c1  ip_address=10.192.5.191  netmask=255.255.252.0  gateway=10.192.4.1  dns_server=192.168.15.2  dns_search=bigswitch.com  ntp_server=0.bigswitch.pool.ntp.org
-
+	first boot of controller      c1   10.192.105.20  255.255.252.0  10.192.64.1   10.192.3.1   bigswitch.com  0.bigswitch.pool.ntp.org 
 
 
