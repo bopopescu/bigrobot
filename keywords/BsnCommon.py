@@ -15,8 +15,6 @@
 
 import autobot.helpers as helpers
 import autobot.test as test
-import Controller
-import T5
 import subprocess
 import math
 import sys
@@ -24,9 +22,11 @@ import re
 import socket
 import paramiko
 from paramiko.client import SSHClient
-from paramiko.ssh_exception import BadHostKeyException, AuthenticationException, SSHException
+from paramiko.ssh_exception import BadHostKeyException, \
+                                   AuthenticationException, \
+                                   SSHException
 from Exscript.protocols import SSH2
-from Exscript import Account, Host
+from Exscript import Account
 
 class BsnCommon(object):
 

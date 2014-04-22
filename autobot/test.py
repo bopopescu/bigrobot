@@ -704,15 +704,15 @@ class Test(object):
         """
 
         # This check ensures we  don't try to initialize multiple times.
-        if self._init_completed:
+        if self._init_completed:  # pylint: disable=E0203
             # helpers.log("Test object initialization skipped.")
             return
 
         helpers.debug("Test object initialization begins.")
-        if self._init_in_progress:
+        if self._init_in_progress:  # pylint: disable=E0203
             return
 
-        self._init_in_progress = True
+        self._init_in_progress = True  # pylint: disable=W0201
 
         params = self.topology_params()
 
@@ -721,13 +721,13 @@ class Test(object):
             controller_ip = None
         else:
             controller_ip = params['c1']['ip']  # Mininet needs this bit of info
-            self._has_a_controller = True
+            self._has_a_controller = True  # pylint: disable=W0201
             # helpers.log("Controller IP address is %s" % controller_ip)
 
         if 'c2' not in params:
             helpers.debug("A controller (c2) is not defined")
             controller_ip2 = None
-            self._has_a_single_controller = True
+            self._has_a_single_controller = True  # pylint: disable=W0201
         else:
             controller_ip2 = params['c2']['ip']  # Mininet needs this bit of info
 
@@ -747,7 +747,7 @@ class Test(object):
                               controller_ip2=controller_ip2)
 
         helpers.prettify_log("self._topology: ", self._topology)
-        self._init_completed = True
+        self._init_completed = True  # pylint: disable=W0201
         helpers.debug("Test object initialization ends.%s"
                       % br_utils.end_of_output_marker())
 
@@ -939,15 +939,15 @@ class Test(object):
 
     def setup(self):
         # This check ensures we  don't try to setup multiple times.
-        if self._setup_completed:
+        if self._setup_completed:  # pylint: disable=E0203
             # helpers.log("Test object setup skipped.")
             return
 
-        if self._setup_in_progress:
+        if self._setup_in_progress:  # pylint: disable=E0203
             return
 
         helpers.debug("Test object setup begins.")
-        self._setup_in_progress = True
+        self._setup_in_progress = True  # pylint: disable=W0201
 
         params = self.topology_params()
         helpers.debug("Topology info:\n%s" % helpers.prettify(params))
@@ -975,7 +975,7 @@ class Test(object):
         else:
             helpers.debug("Env BIGROBOT_TEST_SETUP is False. Skip device setup.")
 
-        self._setup_completed = True
+        self._setup_completed = True  # pylint: disable=W0201
         helpers.debug("Test object setup ends.%s"
                       % br_utils.end_of_output_marker())
 
@@ -1059,7 +1059,7 @@ class Test(object):
 #                             helpers.log("NTP configuration successfully deleted")
 #             except:
 #                 pass
-# 
+#
 #         helpers.log("Attempting to delete SNMP Configurations")
 #         # Delete SNMP location
 #         url_delete_snmp_location = '/api/v1/data/controller/os/config/global/snmp-config/location'
@@ -1118,7 +1118,7 @@ class Test(object):
 #                                 pass
 #                             else:
 #                                 helpers.log("SNMP Trap configuration successfully deleted")
-# 
+#
 #         helpers.log("Attempting to delete logging server configurations")
 #         url_get_logging = '/api/v1/data/controller/os/config/global/logging-config?config=true'
 #         c.rest.get(url_get_logging)
@@ -1133,7 +1133,7 @@ class Test(object):
 #                         pass
 #                     else:
 #                         helpers.log("Logging server configuration successfully deleted")
-# 
+#
 #         helpers.log("Attempting to disable remote logging")
 #         url_disable_remotelog = '/api/v1/data/controller/os/config/global/logging-config/logging-enabled'
 #         try:
