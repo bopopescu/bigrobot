@@ -18,9 +18,32 @@ Library         OperatingSystem
 Library         Collections
 Library         Dialogs
 
+## Test Tpology: https://docs.google.com/a/bigswitch.com/document/d/1xxI_9UhNAFUwAIZ_lDHNO-P0r4Xaomxfwv2UDsLuRJo/edit
+## FS/DS doc: https://bigswitch.atlassian.net/wiki/pages/viewpage.action?pageId=35848431#T5/T6IntegrationTestProgress-T5PolicyIntegration
+##Notes:
+##All Hosts are assumed to be Ixia ports, Scale tests will be performed in scale topology. Unidimensional scale tests will be executed. 3k tenant policy routes + 3k system routes (?). Focus is on following areas:
+##1.) IP + Port + netmask ACL
+##2.) Next hop
+##3.) ecmp
+
+##Controller CLI options:
+##Under router tenant cli stanza
+
+##1.) svooraC2(config-tenant-router-policy)# 10 from  ⇒ 10 is seq number
+##<src-ip-cidr>   Enter the source IP subnet
+##any             The source is wildcarded
+##tenant          Qualify the source by a tenant
+##vns             Qualify the source by a VNS
+
+##+ port number as well
+
+##2.) Above same options exist for the destination side as well.
+
+
+
 
 * Test Cases
-
+##***********
 T1 Interface tenant permit policy src-ip to dest-ip 
 	[Tags]  smoke
 	${src_dict}=  Create Dictionary  cidr  ${policy_bm1_ip}
@@ -659,7 +682,6 @@ T101 Interface vns ecmp-group policy src-ip to dest-ip
 T102 Interface vns ecmp-group policy src-vns to dest-tenant
 T103 Interface vns ecmp-group policy src-vns to ip
 
-
 T104 Remove Add permit policy at tenant interface
 T105 Remove Add permit policy at vns interface
 T106 Remove Add next-hop policy at tenant interface
@@ -670,8 +692,8 @@ T109 Remove Add ecmp-group at vns interface
 T110 shut no shut switch interface
 T111 Remove Add tenant interface
 T112 Remove Add vns interface
-
 T113 Remove Add switch
+
 T114 HA failover
 T115 Reboot standby
 T116 Reboot master
@@ -679,17 +701,17 @@ T117 poweroff switch
 T118 poweron switch
 T119 poweroff master controller
 T120 poweroff slave controller
+T121 Configure 3k policies under tenant interface
+T122 Configure 3k policies under vns interface
+T123 mix T121 + T122
 
-
+T124 Shut Mgmt port in switch and connect back
+T125 Verify syslogs for any scale errors
+T126 
 
 
 	
 * Keywords
-	
-
-
-
-
 setup topology
 	add fabric switch
 	sleep 										1
