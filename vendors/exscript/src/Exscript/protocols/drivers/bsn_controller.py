@@ -39,14 +39,28 @@ _tacacs_re = re.compile(r'[\r\n]s\/key[\S ]+\r?%s' % _password_re[0].pattern)
 _prompt_re = [re.compile(r'[\r\n\x07](\w+(-?\w+)?\s?@?)?[\-\w+\.:/]+(?:\([^\)]+\))?(:~)?[>#$] ?$')]
 
 
-# [BsnCommon.cli:1448] cli content on 'c1':
-# show version
+# Controller> show version
 #
 # Error: running command "show version"
 # controller>
+#
+# MY-T5-C10> config
+# Error: Unknown command: config
+#
+# MY-T5-C10> debug cli detail
+# [/usr/share/floodlight/cli/command.py:2028] Backtrace Unexpected additional arguments at "detail"
+# Traceback (most recent call last):
+#   File "/usr/share/floodlight/cli/command.py", line 2023, in handle_command    for item in result:
+#   File "/usr/share/floodlight/cli/command.py", line 2146, in handle_command_results
+#     raise error.CommandSyntaxError(error_message)
+# CommandSyntaxError: Unexpected additional arguments at "detail"
+# Error: Unexpected additional arguments at "detail"
+#
 
 _error_re = [re.compile(r'%Error'),
              re.compile(r'Error: running command'),
+             re.compile(r'Error: unknown command'),
+             re.compile(r'Error: Unexpected additional arguments'),
              re.compile(r'invalid input', re.I),
              re.compile(r'(?:incomplete|ambiguous) command', re.I),
              re.compile(r'connection timed out', re.I),
