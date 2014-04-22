@@ -39,7 +39,7 @@ Verify strict priority control packets between switch to a controller during ARP
  
 Verify BPDU Guard functionality in the fabric
 	Manual untested
-	[Tags] 	sanity    Manual   untested
+	[Tags] 	sanity    Manual   untested  BPDU
  
  
   
