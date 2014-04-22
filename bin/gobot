@@ -126,8 +126,19 @@ else:
     helpers.bigrobot_log_path_exec_instance(helpers.bigrobot_log_path())
 
 if helpers.bigrobot_suite():
-    helpers.bigrobot_topology(default=''.join((helpers.bigrobot_suite(),
-                                               '.topo')))
+    _topo_p = helpers.bigrobot_suite() + ".physical.topo"
+    _topo_v = helpers.bigrobot_suite() + ".virtual.topo"
+    _topo_u = helpers.bigrobot_suite() + ".topo"  # p or v unspecified
+
+    if helpers.file_exists(_topo_p):
+        topo_file = _topo_p
+    elif helpers.file_exists(_topo_v):
+        topo_file = _topo_v
+    else:
+        topo_file = _topo_u
+
+    helpers.bigrobot_topology(default=topo_file)
+
 helpers.bigrobot_params(default='None')
 helpers.bigrobot_continuous_integration(default='False')
 helpers.bigrobot_suite_format(default='txt')

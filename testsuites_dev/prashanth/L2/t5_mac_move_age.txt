@@ -20,7 +20,7 @@ Resource		 testsuites/T5/t5_physical_variables.txt
 * Test Case 
 
 add Dual Leaf Three Rack setup
-   [Tags]  feature  run   
+   [Tags]  L2  run   
    base suite setup
    add fabric switch
    sleep  5
@@ -28,7 +28,7 @@ add Dual Leaf Three Rack setup
    rest verify fabric link
    
 tagged/untagged packet Mac move within the rack0
-	[Tags]  feature    
+	[Tags]  L2    
 	rest add tenant  t1
 	rest add vns  t1  v1
 	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
@@ -36,7 +36,6 @@ tagged/untagged packet Mac move within the rack0
 	rest add interface to vns  t1  v1  leaf1-a  ${leaf1a_ixia_intf}  -1
     ${stream}=             L3 add  no_arp=True  flow=a->c  src_mac=00:02:01:00:00:24  dst_mac=00:02:03:00:00:24  frame_rate=1000  frame_size=128  name=a_c_flow
     ${stream1}=             L3 add  no_arp=True  flow=c->a  src_mac=00:02:03:00:00:24  dst_mac=00:02:01:00:00:24  frame_rate=1000  frame_size=128  name=c_a_flow
-    sleep  2
     start traffic  ${stream}
     start traffic  ${stream1}
     sleep  5
@@ -45,7 +44,7 @@ tagged/untagged packet Mac move within the rack0
     verify traffic rate  tx_rate  rx_rate  c  a
     stop traffic  ${stream} 
     stop traffic  ${stream1}   
-    sleep  5
+    sleep  8
     ${stream2}=             L3 add   no_arp=True   flow=b->c  src_mac=00:02:01:00:00:24  dst_mac=00:02:03:00:00:24  vlan_id=100  ethertype=8100  frame_rate=1000  frame_size=128  name=b_c_flow
     start traffic  ${stream2}
     start traffic  ${stream1}
@@ -60,7 +59,7 @@ tagged/untagged packet Mac move within the rack0
     
     
 tagged/untagged packet move between rack
-	[Tags]  feature
+	[Tags]  L2
     rest add tenant  t1
 	rest add vns  t1  v1
 	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
@@ -80,7 +79,7 @@ tagged/untagged packet move between rack
     ${stream2}=             L3 add   no_arp=True   flow=f->c  src_mac=00:02:01:00:00:24  dst_mac=00:02:03:00:00:24  ethertype=8100  vlan_id=100   frame_rate=1000  frame_size=128  name=b_f_flow
     start traffic  ${stream2}
     start traffic  ${stream1}
-    sleep  5
+    sleep  8
     rest verify forwarding layer2 table tag  leaf2-b  ${leaf2b_ixia_intf}  00:02:01:00:00:24
     verify traffic rate  tx_rate  rx_rate  c  f
     verify traffic rate negative  tx_rate  rx_rate  c  a
@@ -90,7 +89,7 @@ tagged/untagged packet move between rack
   
 
 Mac move between the vns same tenant
-	[Tags]  feature
+	[Tags]  L2
 	rest add tenant  t1
 	rest add vns  t1  v1
 	rest add vns  t1  v2
@@ -113,7 +112,7 @@ Mac move between the vns same tenant
    
    
 Mac move between different tenants
-	[Tags]  feature
+	[Tags]  L2
 	rest add tenant  t1
 	rest add tenant  t2
 	rest add vns  t1  v1
@@ -138,7 +137,7 @@ Mac move between different tenants
     
          
 Mac age test
-	[Tags]  feature
+	[Tags]  L2
 	rest add tenant  t1
 	rest add vns  t1  v1
 	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
@@ -157,7 +156,7 @@ Mac age test
     rest delete tenant  t1
     
 MAC move test after master controller node reboot
-	[Tags]  feature  
+	[Tags]  L2  
 	rest add tenant  t1
 	rest add vns  t1  v1
 	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
@@ -179,7 +178,7 @@ MAC move test after master controller node reboot
     ${stream2}=             L3 add   no_arp=True   flow=f->c  src_mac=00:02:01:00:00:24  dst_mac=00:02:03:00:00:24  ethertype=8100  vlan_id=100   frame_rate=1000  frame_size=128  name=b_f_flow
     start traffic  ${stream2}
     start traffic  ${stream1}
-    sleep  5
+    sleep  10
     rest verify forwarding layer2 table tag  leaf2-b  ${leaf2b_ixia_intf}  00:02:01:00:00:24
     verify traffic rate  tx_rate  rx_rate  c  f
     verify traffic rate negative  tx_rate  rx_rate  c  a
@@ -188,7 +187,7 @@ MAC move test after master controller node reboot
     rest delete tenant  t1        
 
 Test mac age after master node controller reboot
-	[Tags]  feature  
+	[Tags]  L2  
 	rest add tenant  t1
 	rest add vns  t1  v1
 	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
@@ -204,16 +203,12 @@ Test mac age after master node controller reboot
     sleep  2
     stop traffic  ${stream}    
     sleep  600
-    ${result}=  rest verify forwarding layer2 table untag  leaf0-a  ${leaf0a_ixia_intf}  00:02:01:00:00:24
-    Should Not be True  ${result}   
-    ${result}=  rest verify forwarding layer2 table tag  leaf0-b  ${leaf0a_leaf0b_intf0}  00:02:01:00:00:24
-    Should Not be True  ${result}
     ${result}=  rest verify endpoint  v1  -1  00:02:01:00:00:24  leaf0-a  ${leaf0a_ixia_intf}
     Should Not be True  ${result}
     rest delete tenant  t1
 
 Tear down the config
-   [Tags]  feature run     
+   [Tags]  L2 run     
    delete fabric switch
    rest delete tenant  t1
    rest delete tenant  t2
