@@ -98,7 +98,7 @@ shut/no shut the switch with traffic forward
     rest delete tenant  t1 
 
 reboot both the controllers to make sure all the switches indeed connected
-	[Tags]  bugs  skipped  
+	[Tags]  bugs   
 	rest verify fabric link common
 	cli verify cluster master reboot
 	sleep  3
@@ -135,7 +135,7 @@ Test Data center falls below 50% link verify forwarding table for the switch rem
     rest verify fabric link common
 
 Test VFT push to when system has not connected switches
-	[Tags]  bugs  
+	[Tags]  bugs  run  
 	cli delete controller  spine0  c1
 	cli delete controller  spine0  c2
 	cli delete controller  spine1  c1
