@@ -152,6 +152,14 @@ Verify route next hop IP must be in the same tenant
 
 Verify ECMP next hop IP must be in the same tenant
 
+L3 inter tenant shutdown and bringup a leaf switch in a dual tor setup
+
+L3 inter tenant shutdown and bringup a spine switch in a dual tor setup
+
+L3 inter tenant destroy active controller VM from KVM
+
+L3 inter tenant destroy standby controller VM from KVM
+
 * Keywords
 L3 inter tenant same rack untagged with dynamic endpoints
 	BASH ifup intf								h1 								bond0
