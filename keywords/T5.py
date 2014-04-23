@@ -1543,10 +1543,10 @@ class T5(object):
         c.rest.get(url)
         data = c.rest.content()
         try:
-                if data[0]["interface"][0]["lacp-state"] == "active" and data[0]["interface"][0]["state"] == "up":
+            if data[0]["interface"][0]["lacp-state"] == "active" and data[0]["interface"][0]["state"] == "up":
                         helpers.log("LACP Neibhour Is Up and active")
                         return True
-                else:
+            else:
                         helpers.test_failure("LACP is enabled , LACP Partner is not seen , check the floodlight logs")
                         return False
         except KeyError:

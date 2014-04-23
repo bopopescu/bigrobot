@@ -23,7 +23,7 @@ ${mac2}		00:00:06:00:00:00
 * Test Case 
 
 add Dual Leaf Three Rack setup
-   [Tags]  feature  run
+   [Tags]  L2   run
   	base suite setup
   	add fabric switch
   	bring up 1 gig interface
@@ -654,7 +654,7 @@ Mac move at scale 48k between rack
     stop traffic  ${stream5}
         
 Tear down the config
-   [Tags]  feature  run    
+   [Tags]  L2   run    
    delete fabric switch
    rest delete tenant  t1
    base suite teardown
