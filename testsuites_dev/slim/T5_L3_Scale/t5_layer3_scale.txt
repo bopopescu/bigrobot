@@ -31,7 +31,7 @@ Delete and add 2k VNS with traffic
 	[Tags]							skipped			scale				
 
 L3 endpoint host move with traffic
-	Move 2k host endpoint to another tagged port
+	Move 24k host endpoint to another tagged port
 	[Tags]							skipped			scale				
 
 48k L3 endpoint across one tenant two vns
@@ -42,7 +42,7 @@ Combined scaling one tenant 4k vns with 48k host
 	Combined scaling with one tenant 4k vns with 48k host
 	[Tags]							skipped			scale				
 		
-Delete and add scale config multiple times
+Delete and add scale 4k vns config multiple times
 	Delete and add scale config multiple times
 	[Tags]							skipped			scale				
 
@@ -50,6 +50,17 @@ DHCP request from 48k host across 4k vns
 	Generate dhcp request from 48k host across 4k vns
 	[Tags]							skipped			scale				
 						
+1k tenant with 4 vns each
+
+Add and delete config with 1k tenant with 4 vns each
+
+Inject 16k cidr routes
+
+Add and delete 16k cidr routes
+
+
+
+
 
 * Keywords		
 One Tenant 4k VNS with one host each

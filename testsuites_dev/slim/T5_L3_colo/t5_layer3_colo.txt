@@ -1,0 +1,757 @@
+* Setting
+Documentation   T5 Basic L3 two spine three leaf rack with dual-tor Test Suite
+Suite Setup     T5 base suite setup
+#Suite Teardown  T5 base suite teardown
+Test Setup      setup topology
+#Test Teardown   teardown topology
+Force Tags      T5 Sanity
+Library         keywords/BsnCommon.py
+Library         keywords_dev/slim/Host.py
+Library         keywords/T5.py
+Library         keywords/T5L3.py
+Library         keywords/T5Platform.py
+Library         keywords_dev/animesh/BsnCommonShow.py
+Library         keywords_dev/slim/SwitchLight.py
+Library	        Collections.py
+Library         keywords/Ixia.py
+Resource		testsuites_dev/slim/T5_L3_colo/t5_layer3_colo_variables.txt
+Resource		testsuites_dev/slim/T5_L3_colo/t5_layer3_colo_resources.txt
+
+
+* Test Cases
+Intra tenant L3 untagged traffic with dynamic endpoints same rack
+	L3 intra tenant same rack untagged with dynamic endpoints
+	[Tags]							skipped			smoke				sanity			
+
+Intra tenant L3 untagged traffic with dynamic endpoints across rack
+	L3 intra tenant across rack untagged with dynamic endpoints
+	[Tags]							skipped			smoke				sanity	
+
+Intra tenant L3 tagged traffic with dynamic endpoints same rack
+	L3 intra tenant same rack tagged with dynamic endpoints
+	[Tags]							skipped			smoke				sanity			
+
+Intra tenant L3 tagged traffic with dynamic endpoints across rack
+	L3 intra tenant across rack tagged with dynamic endpoints
+	[Tags]							skipped			smoke				sanity	
+
+Intra tenant L3 untagged traffic with static endpoints same rack
+	L3 intra tenant same rack untagged with static endpoints
+	[Tags]							skipped			smoke				sanity			
+
+Intra tenant L3 untagged traffic with static endpoints across rack
+	L3 intra tenant across rack untagged with static endpoints
+	[Tags]							skipped			smoke				sanity	
+
+Intra tenant L3 tagged traffic with static endpoints same rack
+	L3 intra tenant same rack tagged with static endpoints
+	[Tags]							skipped			smoke				sanity			
+
+Intra tenant L3 tagged traffic with static endpoints across rack
+	L3 intra tenant across rack tagged with static endpoints
+	[Tags]							skipped			smoke				sanity	
+
+Intra tenant dhcp relay 
+	L3 intra tenant dhcp relay on same rack with valid circuitid
+	[Tags]							skipped			smoke				sanity	
+	
+Intra tenant dhcp relay with invalid circuit id
+	L3 intra tenant dhcp relay on same rack with invalid circuitid
+	[Tags]							skipped			smoke				sanity	
+
+Intra tenant dhcp relay enabled and disabled
+	L3 dhcp request with and without dhcp relay enabled
+	[Tags]							skipped			smoke				sanity	
+
+
+Intra tenant dhcp relay across rack
+	L3 intra tenant dhcp relay across rack
+	[Tags]							skipped			smoke				sanity	
+	
+Intra tenant dhcp relay with circuit id across rack
+	L3 intra tenant dhcp relay with circuit id across rack
+	[Tags]							skipped			smoke				sanity	
+
+Delete and Add dhcp relay
+	L3 dhcp request without dhcp relay enabled
+	[Tags]							skipped			sanity	
+
+Add and delete untagged endpoints with existing host
+	L3 add and delete untagged endpoints with existing host
+	[Tags]							skipped			feature	
+	
+Add and delete tagged endpoints with existing host
+	L3 add and delete tagged endpoints with existing host
+	[Tags]							skipped			feature	
+		
+Change L3 endpoint from untagged to tagged and back		
+	L3 change endpoint from untagged to tagged and back	
+	[Tags]							skipped			feature	
+
+Verify L3 endpoint aging
+	Check L3 endpoint aging 
+	[Tags]							skipped			feature	
+	
+Verify L3 ttl 1 is not being forwarded
+	Check L3 ttl 1 is dropped
+	[Tags]							skipped			sanity			
+
+Change router vns ip
+	Change router ip address
+	[Tags]							skipped			feature			
+
+Delete and add router vns ip
+	Delete and add router vns ip 
+	[Tags]							skipped			feature			
+
+Change tagged endpoint IP address
+	Change tagged host endpoint IP address
+	[Tags]							skipped			feature		
+
+Configure static endpoint with host showing up on another port
+	Static endpoint with dynamic host showing up on another port
+	[Tags]							skipped			sanity		
+
+Verify subnet mask is properly applied on router vns
+	Verify subnet mask on vns router ip
+	[Tags]							skipped			feature		
+
+Verify vlsm forwarding
+	Verify vlsm forwarding
+	[Tags]							skipped			feature		
+
+Verify split horizon forwarding
+	Verify l3 forwarding on one arm router
+	[Tags]							skipped			feature			manual		
+	
+Small Scale with 100 vns 		
+	One Tenant 100 VNS with one host each
+	[Tags]							skipped			feature			scale
+	
+Configure overlapping router IP 	
+	Configure overlapping IP on same tenant across VNS	
+	[Tags]							skipped			feature		
+	
+Trigger controller HA failover via CLI
+	Controller HA failover via CLI	
+	[Tags]							skipped			feature			
+	
+Trigger controller HA failover via reboot
+	Controller HA failover via reboot
+	[Tags]							skipped			feature			
+
+Spine reboot
+	Reboot spine0 via CLI
+	[Tags]							skipped			feature			
+
+Leaf reboot
+	Reboot Leaf0 via CLI
+	[Tags]							skipped			feature			
+
+Spine connect and disconnect to controller
+	Connect and Disconnect spine to controller
+	[Tags]							skipped			feature			
+	
+Leaf connect and disconnect to controller	
+	Connect and disconnect one leaf in dual tor to controller
+	[Tags]							skipped			feature			
+
+Spine to leaf link flap
+	Flap link between leaf and spine
+	[Tags]							skipped			feature			
+
+Leaf to host link flap
+	Flap bond interface towards host
+	[Tags]							skipped			feature			
+	
+Restart ofad process on spine
+	restart ofad on spine
+	[Tags]							skipped			feature			
+	
+Restart ofad process on leaf	
+	restart ofad on leaf
+	[Tags]							skipped			feature			
+	
+L3 traffic behavior in headless mode
+	L3 intra tenant traffic behavior in headless mode 
+	Log								manual untested
+	[Tags]							skipped			manual			untested			feature			
+
+Inter tenant L3 traffic same rack	
+	L3 inter tenant traffic in the same rack
+#	[Tags]							skipped			sanity				
+	
+* Keywords
+L3 intra tenant same rack untagged with dynamic endpoints
+	BASH ping									h1								10.251.1.1				count=10
+	BASH ping									h2								10.251.2.1				count=10
+	${value} = 									BASH verify arp					h1						10.251.1.1
+	Should Be True								${value} 		
+	${value} =									BASH verify arp					h2						10.251.2.1
+	Should Be True								${value} 
+	${mac1} = 									BASH get intf mac				h1						bond0
+	${result} =									REST show endpoints mac			${mac1}
+	${attachpoint} = 							Set Variable					${result[0]['attachment-point']['port-group']}	
+	Should Contain								${attachpoint}					${leaf0_pc1}	
+	${mac2} = 									BASH get intf mac				h2						bond0
+	${result} =									REST show endpoints mac			${mac2}
+	${attachpoint} = 							Set Variable					${result[0]['attachment-point']['port-group']}	
+	Should Contain								${attachpoint}					${leaf0_pc2}	
+	${loss} = 									BASH ping						h1						10.251.2.11 			count=10
+	Should Be True  							${loss} == 0	
+#	${stream1}=  								L3 add  						name=stream1		  	flow=a<->c 				frame_rate=100000  			frame_size=9216  			frame_cnt=10000000
+#	...     									src_ip=10.251.1.101				src_gw=10.251.1.1		dst_ip=10.251.2.201		dst_gw=10.251.2.1			 			
+#   start traffic  								${stream1}
+#   sleep  10
+#   stop traffic								${stream1}
+#   verify results 								transmitted_frames  			received_frames  		${stream1}  			stream1
+
+L3 intra tenant same rack tagged with dynamic endpoints
+	BASH ping									h4								10.252.2.11				count=10
+	${value} = 									BASH verify arp					h4						10.252.1.1
+	Should Be True								${value} 		
+	${value} =									BASH verify arp					h5						10.252.2.1
+	Should Be True								${value} 
+	${mac4} = 									BASH get intf mac				h4						bond0
+	${result} =									REST show endpoints mac			${mac4}
+	${attachpoint} = 							Set Variable					${result[0]['attachment-point']['port-group']}	
+	Should Contain								${attachpoint}					${leaf0_pc4}
+	${mac5} = 									BASH get intf mac				h5						bond0
+	${result} =									REST show endpoints mac			${mac5}
+	${attachpoint} = 							Set Variable					${result[0]['attachment-point']['port-group']}	
+	Should Contain								${attachpoint}					${leaf0_pc5}
+	${loss} = 									BASH ping						h4						10.252.2.11 			count=10
+	Should Be True  							${loss} == 0	
+#	${stream1}=  								L3 add  						name=stream1		  	flow=a<->c 				frame_rate=100000  			frame_size=9216  			frame_cnt=10000000
+#	...     									src_ip=10.251.1.101				src_gw=10.251.1.1		dst_ip=10.251.2.201		dst_gw=10.251.2.1			 			
+#   start traffic  								${stream1}
+#   sleep  10
+#   stop traffic								${stream1}
+#   verify results 								transmitted_frames  			received_frames  		${stream1}  			stream1
+	
+L3 intra tenant dhcp relay on same rack with valid circuitid
+	BASH init intf								h2								bond0
+	BASH delete route							h2								10.251.1.0/24			10.251.2.1
+  	BASH delete route							h2								10.251.3.0/24			10.251.2.1
+	BASH delete route							h2								10.252.0.0/16			10.251.2.1
+  	BASH delete route							h2								10.253.0.0/16			10.251.2.1
+	BASH start service							h1								isc-dhcp-server
+	sleep										1
+	${value} = 									BASH check service status		h1						isc-dhcp-server
+	Should Contain								${value}						is started
+	sleep										1
+	REST add dhcp relay							X								X2						10.251.1.11
+	REST add dhcprelay circuitid				X								X2						private vns X2
+	REST enable dhcp relay						X								X2	
+	BASH ping									h1								10.251.1.1				count=5
+	sleep										10
+	${value} = 									BASH release dhcpv4 address		h2						bond0
+	Should Be True								${value}
+	sleep										1
+	${ipAddr} = 								BASH renew dhcpv4 address		h2						bond0
+	Should Not Be Empty							${ipAddr}
+	sleep										5
+	BASH ping									h1								${ipAddr}				count=10
+	${value} = 									BASH verify arp					h1						10.251.1.1
+	Should Be True								${value} 		
+	${value} =									BASH verify arp					h2						10.251.2.1
+	Should Be True								${value} 	
+	${mac1} = 									BASH get intf mac				h1						bond0
+	${result} =									REST show endpoints mac			${mac1}
+	${attachpoint} = 							Set Variable					${result[0]['attachment-point']['port-group']}	
+	Should Contain								${attachpoint}					${leaf0_pc1}
+	${mac2} = 									BASH get intf mac				h2						bond0
+	${result} =									REST show endpoints mac			${mac2}
+	${attachpoint} = 							Set Variable					${result[0]['attachment-point']['port-group']}	
+	Should Contain								${attachpoint}					${leaf0_pc2}
+	${loss} = 									BASH ping						h1						${ipAddr} 			count=10
+	Should Be True  							${loss} == 0	
+
+L3 intra tenant dhcp relay on same rack with invalid circuitid
+	BASH init intf								h2								bond0
+	BASH delete route							h2								10.251.1.0/24			10.251.2.1
+  	BASH delete route							h2								10.251.3.0/24			10.251.2.1
+	BASH delete route							h2								10.252.0.0/16			10.251.2.1
+  	BASH delete route							h2								10.253.0.0/16			10.251.2.1
+	BASH start service							h1								isc-dhcp-server
+	sleep										1
+	${value} = 									BASH check service status		h1						isc-dhcp-server
+	Should Contain								${value}						is started
+	sleep										1
+	REST add dhcp relay							X								X2						10.251.1.11
+	REST add dhcprelay circuitid				X								X2						private vns AA2
+	REST enable dhcp relay						X								X2	
+	sleep										10
+	${value} = 									BASH release dhcpv4 address		h2						bond0
+	Should Be True								${value}
+	sleep										1
+	${ipAddr} = 								BASH renew dhcpv4 address		h2						bond0
+	Should Be Empty								${ipAddr}
+	sleep										5
+	${mac1} = 									BASH get intf mac				h1						bond0
+	${result} =									REST show endpoints mac			${mac1}
+	${attachpoint} = 							Set Variable					${result[0]['attachment-point']['port-group']}	
+	Should Contain								${attachpoint}					${leaf0_pc1}
+	${mac2} = 									BASH get intf mac				h2						bond0
+	${result} =									REST show endpoints mac			${mac2}
+	${attachpoint} = 							Set Variable					${result[0]['attachment-point']['port-group']}	
+	Should Contain								${attachpoint}					${leaf0_pc2}
+
+
+L3 dhcp request with and without dhcp relay enabled
+	BASH init intf								h2								bond0
+	BASH delete route							h2								10.251.1.0/24			10.251.2.1
+  	BASH delete route							h2								10.251.3.0/24			10.251.2.1
+	BASH delete route							h2								10.252.0.0/16			10.251.2.1
+  	BASH delete route							h2								10.253.0.0/16			10.251.2.1
+	BASH start service							h1								isc-dhcp-server
+	sleep										1
+	${value} = 									BASH check service status		h1						isc-dhcp-server
+	Should Contain								${value}						is started
+	sleep										1
+	REST add dhcp relay							X								X2						10.251.1.11
+	REST add dhcprelay circuitid				X								X2						private vns X2
+	REST enable dhcp relay						X								X2	
+	BASH ping									h1								10.251.1.1 				count=5
+	sleep										10
+	${value} = 									BASH release dhcpv4 address		h2						bond0
+	Should Be True								${value}
+	sleep										1
+	${ipAddr} = 								BASH renew dhcpv4 address		h2						bond0
+	Should Not Be Empty							${ipAddr}
+	sleep										5
+	BASH ping									h1								${ipAddr}				count=10
+	${value} = 									BASH verify arp					h1						10.251.1.1
+	Should Be True								${value} 		
+	${value} =									BASH verify arp					h2						10.251.2.1
+	Should Be True								${value} 	
+	${mac1} = 									BASH get intf mac				h1						bond0
+	${result} =									REST show endpoints mac			${mac1}
+	${attachpoint} = 							Set Variable					${result[0]['attachment-point']['port-group']}	
+	Should Contain								${attachpoint}					${leaf0_pc1}
+	${mac2} = 									BASH get intf mac				h2						bond0
+	${result} =									REST show endpoints mac			${mac2}
+	${attachpoint} = 							Set Variable					${result[0]['attachment-point']['port-group']}	
+	Should Contain								${attachpoint}					${leaf0_pc2}
+	${loss} = 									BASH ping						h1						${ipAddr} 			count=10
+	Should Be True  							${loss} == 0	
+	${value} = 									BASH release dhcpv4 address		h2						bond0
+	Should Be True								${value}
+	REST disable dhcp relay						X								X2	
+	sleep										1
+	${ipAddr1} = 								BASH renew dhcpv4 address		h2						bond0
+	Should Be Empty								${ipAddr1}
+	sleep										5
+	${result} =									REST show endpoints mac			${mac2}
+	${attachpoint} = 							Set Variable					${result[0]['attachment-point']['port-group']}	
+	Should Contain								${attachpoint}					${leaf0_pc2}
+	${loss} = 									BASH ping						h1						${ipAddr} 			count=10
+	Should Be True  							${loss} == 100		
+	REST enable dhcp relay						X								X2	
+	sleep										1
+	${ipAddr1} = 								BASH renew dhcpv4 address		h2						bond0
+	Should Not Be Empty							${ipAddr1}
+	BASH ping									h1								${ipAddr1} 				count=5
+	${loss} = 									BASH ping						h1						${ipAddr1} 			count=10
+	Should Be True  							${loss} == 0		
+
+
+
+
+L3 inter tenant traffic in the same rack
+	BASH ping									h1								10.252.1.11				count=5
+	${value} = 									BASH verify arp					h1						10.251.1.1
+	Should Be True								${value} 		
+	${value} =									BASH verify arp					h4						10.252.1.1
+	Should Be True								${value} 
+	${mac1} = 									BASH get intf mac				h1						bond0
+	${result} =									REST show endpoints mac			${mac1}
+	${attachpoint} = 							Set Variable					${result[0]['attachment-point']['port-group']}	
+	Should Contain								${attachpoint}					${leaf0_pc1}	
+	${mac4} = 									BASH get intf mac				h4						bond0
+	${result} =									REST show endpoints mac			${mac4}
+	${attachpoint} = 							Set Variable					${result[0]['attachment-point']['port-group']}	
+	Should Contain								${attachpoint}					${leaf0_pc4}	
+	${loss} = 									BASH ping						h1						10.252.1.11 			count=10
+	Should Be True  							${loss} == 0	
+
+
+
+initialize host
+	BASH delete tag										h3								bond0.1003				soft_error=${true}
+	BASH delete tag										h4								bond0.1004				soft_error=${true}
+	BASH delete tag										h5								bond0.1005				soft_error=${true}
+	BASH delete tag										h6								bond0.1006				soft_error=${true}
+	BASH delete tag										h7								bond0.1007				soft_error=${true}	
+	BASH delete route									h1								10.251.2.0/24			10.251.1.1
+	BASH delete route									h1								10.251.3.0/24			10.251.1.1
+	BASH delete route									h1								10.252.0.0/16			10.251.1.1
+	BASH delete route									h1								10.253.0.0/16			10.251.1.1
+	BASH delete route									h2								10.251.1.0/24			10.251.2.1
+  	BASH delete route									h2								10.251.3.0/24			10.251.2.1
+	BASH delete route									h2								10.252.0.0/16			10.251.2.1
+  	BASH delete route									h2								10.253.0.0/16			10.251.2.1
+  	BASH delete route									h3								10.251.1.0/24			10.251.3.1
+  	BASH delete route									h3								10.251.2.0/24			10.251.3.1
+  	BASH delete route									h3								10.252.0.0/16			10.251.3.1
+  	BASH delete route									h3								10.253.0.0/16			10.251.3.1
+  	BASH delete route									h4								10.252.2.0/24			10.252.1.1
+  	BASH delete route									h4								10.252.3/0/24			10.252.1.1
+  	BASH delete route									h4								10.251.0.0/16			10.252.1.1
+  	BASH delete route									h4								10.253.0.0/16			10.252.1.1
+  	BASH delete route									h5								10.252.1.0/24			10.252.2.1
+  	BASH delete route									h5								10.252.3.0/24			10.252.2.1
+	BASH delete route									h5								10.251.0.0/16			10.252.2.1
+  	BASH delete route									h5								10.253.0.0/16			10.252.2.1
+  	BASH delete route									h6								10.252.1.0/24			10.252.3.1
+  	BASH delete route									h6								10.252.2.0/24			10.252.3.1
+  	BASH delete route									h6								10.251.0.0/16			10.252.3.1
+  	BASH delete route									h6								10.253.0.0/16			10.252.3.1
+ 	BASH delete route									h7								10.253.2.0/24			10.253.1.1
+  	BASH delete route									h7								10.253.3/0/24			10.253.1.1
+  	BASH delete route									h7								10.251.0.0/16			10.253.1.1
+  	BASH delete route									h7								10.252.0.0/16			10.253.1.1
+  	BASH delete route									h8								10.253.1.0/24			10.253.2.1
+  	BASH delete route									h8								10.253.3.0/24			10.253.2.1
+	BASH delete route									h8								10.251.0.0/16			10.253.2.1
+  	BASH delete route									h8								10.252.0.0/16			10.253.2.1	
+
+	BASH init intf								h1								bond0
+	BASH init intf								h2								bond0
+	BASH init intf								h3								bond0
+	BASH init intf								h4								bond0
+	BASH init intf								h5								bond0
+	BASH init intf								h6								bond0
+	BASH init intf								h7								bond0
+	BASH init intf								h8								bond0
+	BASH ifdown intf							h1 								bond0
+	BASH ifdown intf							h2								bond0
+	BASH ifdown intf							h3								bond0
+	BASH ifdown intf							h4								bond0
+	BASH ifdown intf							h5								bond0
+	BASH ifdown intf							h6								bond0
+	BASH ifdown intf							h7								bond0
+	BASH ifdown intf							h8								bond0
+	BASH release dhcpv4 address					h1								bond0
+	BASH release dhcpv4 address					h2								bond0
+	BASH release dhcpv4 address					h3								bond0
+	BASH release dhcpv4 address					h4								bond0
+	BASH release dhcpv4 address					h5								bond0
+	BASH release dhcpv4 address					h6								bond0
+	BASH release dhcpv4 address					h7								bond0
+	BASH release dhcpv4 address					h8								bond0
+	BASH ifup intf								h1								eth2
+	BASH ifup intf								h1								eth3
+	BASH ifup intf								h2								eth2
+	BASH ifup intf								h2								eth3
+	BASH ifup intf								h3								eth2
+	BASH ifup intf								h3								eth3
+	BASH ifup intf								h4								eth2
+	BASH ifup intf								h4								eth3
+	BASH ifup intf								h5								eth2
+	BASH ifup intf								h5								eth3
+	BASH ifup intf								h6								eth2
+	BASH ifup intf								h6								eth3
+
+setup topology
+	initialize host
+	add fabric switch
+	sleep 											1
+	REST add tenant									system
+	REST add tenant 								X
+	REST add tenant									Y
+	REST add tenant									Z
+	REST add vns									X							X1
+	REST add vns									X							X2
+	REST add vns									X							X3
+	REST add vns									Y							Y1
+	REST add vns									Y							Y2
+	REST add vns									Y							Y3
+	REST add vns									Z							Z1
+	REST add vns									Z							Z2
+	REST add vns									Z							Z3
+	REST add router intf							X							X1
+	REST add router intf							X							X2
+	REST add router intf							X							X3
+	REST add router intf							Y							Y1
+	REST add router intf							Y							Y2
+	REST add router intf							Y							Y3
+	REST add router intf							Z							Z1
+	REST add router intf							Z							Z2
+	REST add router intf							Z							Z3
+	REST add vns ip  								X							X1				10.251.1.1				24	
+	REST add vns ip  								X							X2				10.251.2.1				24	
+	REST add vns ip  								X							X3				10.251.3.1				24	
+	REST add vns ip  								Y							Y1				10.252.1.1				24	
+	REST add vns ip  								Y							Y2				10.252.2.1				24	
+	REST add vns ip  								Y							Y3				10.252.3.1				24	
+	REST add vns ip  								Z							Z1				10.253.1.1				24	
+	REST add vns ip  								Z							Z2				10.253.2.1				24	
+	REST add vns ip  								Z							Z3				10.253.3.1				24	
+	REST add interface to portgroup					leaf0-a						${leaf0_pc1_intf1}					${leaf0_pc1}
+	REST add interface to portgroup					leaf0-b						${leaf0_pc1_intf2}					${leaf0_pc1}
+	REST add interface to portgroup					leaf0-a						${leaf0_pc2_intf1}					${leaf0_pc2}
+	REST add interface to portgroup					leaf0-b						${leaf0_pc2_intf2}					${leaf0_pc2}
+	REST add interface to portgroup					leaf0-a						${leaf0_pc3_intf1}					${leaf0_pc3}
+	REST add interface to portgroup					leaf0-b						${leaf0_pc3_intf2}					${leaf0_pc3}
+	REST add interface to portgroup					leaf0-a						${leaf0_pc4_intf1}					${leaf0_pc4}
+	REST add interface to portgroup					leaf0-b						${leaf0_pc4_intf2}					${leaf0_pc4}
+  	REST add interface to portgroup					leaf0-a						${leaf0_pc5_intf1}					${leaf0_pc5}
+	REST add interface to portgroup					leaf0-b						${leaf0_pc5_intf2}					${leaf0_pc5}
+  	REST add interface to portgroup					leaf0-a						${leaf0_pc6_intf1}					${leaf0_pc6}
+	REST add interface to portgroup					leaf0-b						${leaf0_pc6_intf2}					${leaf0_pc6}  	
+  	REST add interface to portgroup					leaf0-a						${leaf0_pc7_intf1}					${leaf0_pc7}
+	REST add interface to portgroup					leaf0-b						${leaf0_pc7_intf2}					${leaf0_pc7}
+  	REST add interface to portgroup					leaf0-a						${leaf0_pc8_intf1}					${leaf0_pc8}
+	REST add interface to portgroup					leaf0-b						${leaf0_pc8_intf2}					${leaf0_pc8}  	
+  	REST add portgroup lacp							${leaf0_pc1}
+  	REST add portgroup lacp							${leaf0_pc2}
+  	REST add portgroup lacp							${leaf0_pc3}
+  	REST add portgroup lacp							${leaf0_pc4}
+  	REST add portgroup lacp							${leaf0_pc5}
+  	REST add portgroup lacp							${leaf0_pc6}  	
+    REST add portgroup lacp							${leaf0_pc7}
+  	REST add portgroup lacp							${leaf0_pc8}  		
+  	REST add portgroup to vns						X								X1						${leaf0_pc1}			-1
+	REST add portgroup to vns						X								X2						${leaf0_pc2}			-1
+	REST add portgroup to vns						X								X3						${leaf0_pc3}			1003
+	REST add portgroup to vns						Y								Y1						${leaf0_pc4}			1004
+	REST add portgroup to vns						Y								Y2						${leaf0_pc5}			1005
+	REST add portgroup to vns						Y								Y3						${leaf0_pc6}			1006
+	REST add portgroup to vns						Z								Z1						${leaf0_pc7}			1007
+	REST add portgroup to vns						Z								Z2						${leaf0_pc8}			-1
+#	REST add portgroup to vns						Z								Z3						${leaf0_pc9}			-1
+	BASH ifup intf									h1 								bond0
+	BASH ifup intf									h2								bond0
+	BASH ifup intf									h3								bond0
+	BASH ifup intf									h4								bond0	
+	BASH ifup intf									h5								bond0	
+	BASH ifup intf									h6								bond0	
+	BASH ifup intf									h7								bond0	
+	BASH ifup intf									h8								bond0	
+	BASH add tag									h3								bond0					1003
+	BASH add tag									h4								bond0					1004
+	BASH add tag									h5								bond0					1005
+	BASH add tag									h6								bond0					1006
+	BASH add tag									h7								bond0					1007
+	BASH ifup intf									h3								bond0.1003
+	BASH ifup intf									h4								bond0.1004
+	BASH ifup intf									h5								bond0.1005
+	BASH ifup intf									h6								bond0.1006
+	BASH ifup intf									h7								bond0.1007
+	BASH add ip address								h1								10.251.1.11/24			bond0	
+	BASH add ip address								h2								10.251.2.11/24			bond0
+	BASH add ip address								h3								10.251.3.11/24			bond0.1003
+	BASH add ip address								h4								10.252.1.11/24			bond0.1004
+	BASH add ip address								h5								10.252.2.11/24			bond0.1005
+	BASH add ip address								h6								10.252.3.11/24			bond0.1006
+	BASH add ip address								h7								10.253.1.11/24			bond0.1007
+	BASH add ip address								h8								10.253.2.11/24			bond0
+	BASH add route									h1								10.251.2.0/24			10.251.1.1
+	BASH add route									h1								10.251.3.0/24			10.251.1.1
+	BASH add route									h1								10.252.0.0/16			10.251.1.1
+	BASH add route									h1								10.253.0.0/16			10.251.1.1
+	BASH add route									h2								10.251.1.0/24			10.251.2.1
+  	BASH add route									h2								10.251.3.0/24			10.251.2.1
+	BASH add route									h2								10.252.0.0/16			10.251.2.1
+  	BASH add route									h2								10.253.0.0/16			10.251.2.1
+  	BASH add route									h3								10.251.1.0/24			10.251.3.1
+  	BASH add route									h3								10.251.2.0/24			10.251.3.1
+  	BASH add route									h3								10.252.0.0/16			10.251.3.1
+  	BASH add route									h3								10.253.0.0/16			10.251.3.1
+  	BASH add route									h4								10.252.2.0/24			10.252.1.1
+  	BASH add route									h4								10.252.3/0/24			10.252.1.1
+  	BASH add route									h4								10.251.0.0/16			10.252.1.1
+  	BASH add route									h4								10.253.0.0/16			10.252.1.1
+  	BASH add route									h5								10.252.1.0/24			10.252.2.1
+  	BASH add route									h5								10.252.3.0/24			10.252.2.1
+	BASH add route									h5								10.251.0.0/16			10.252.2.1
+  	BASH add route									h5								10.253.0.0/16			10.252.2.1
+  	BASH add route									h6								10.252.1.0/24			10.252.3.1
+  	BASH add route									h6								10.252.2.0/24			10.252.3.1
+  	BASH add route									h6								10.251.0.0/16			10.252.3.1
+  	BASH add route									h6								10.253.0.0/16			10.252.3.1
+ 	BASH add route									h7								10.253.2.0/24			10.253.1.1
+  	BASH add route									h7								10.253.3/0/24			10.253.1.1
+  	BASH add route									h7								10.251.0.0/16			10.253.1.1
+  	BASH add route									h7								10.252.0.0/16			10.253.1.1
+  	BASH add route									h8								10.253.1.0/24			10.253.2.1
+  	BASH add route									h8								10.253.3.0/24			10.253.2.1
+	BASH add route									h8								10.251.0.0/16			10.253.2.1
+  	BASH add route									h8								10.252.0.0/16			10.253.2.1
+	REST add tenant routers intf to system			X
+	REST add tenant routers intf to system			Y
+	REST add tenant routers intf to system			Z
+	REST add system intf to tenant routers 			X
+	REST add system intf to tenant routers 			Y
+	REST add system intf to tenant routers 			Z
+
+	REST add static routes							X							0.0.0.0/0		 {"tenant-name": "system"}
+	REST add static routes							Y							0.0.0.0/0		 {"tenant-name": "system"}  	
+  	REST add static routes							Z							0.0.0.0/0		 {"tenant-name": "system"}  
+  	
+teardown topology
+	REST delete vns ip  							X							X1				10.251.1.1				24	
+	REST delete vns ip  							X							X2				10.251.2.1				24	
+	REST delete vns ip  							X							X3				10.251.3.1				24	
+	REST delete vns ip  							Y							Y1				10.252.1.1				24	
+	REST delete vns ip  							Y							Y2				10.252.2.1				24	
+	REST delete vns ip  							Y							Y3				10.252.3.1				24	
+	REST delete vns ip  							Z							Z1				10.253.1.1				24	
+	REST delete vns ip  							Z							Z2				10.253.2.1				24	
+	REST delete vns ip  							Z							Z3				10.253.3.1				24	
+	REST delete vns									X							X1
+	REST delete vns									X							X2
+	REST delete vns									X							X3
+	REST delete vns									Y							Y1
+	REST delete vns									Y							Y2
+	REST delete vns									Y							Y3
+	REST delete vns									Z							Z1
+	REST delete vns									Z							Z2
+	REST delete vns									Z							Z3
+	REST delete tenant								X
+	REST delete tenant								Y
+	REST delete tenant								Z
+	delete fabric switch
+	initialize host
+	BASH delete route									h1								10.251.2.0/24			10.251.1.1
+	BASH delete route									h1								10.251.3.0/24			10.251.1.1
+	BASH delete route									h1								10.252.0.0/16			10.251.1.1
+	BASH delete route									h1								10.253.0.0/16			10.251.1.1
+	BASH delete route									h2								10.251.1.0/24			10.251.2.1
+  	BASH delete route									h2								10.251.3.0/24			10.251.2.1
+	BASH delete route									h2								10.252.0.0/16			10.251.2.1
+  	BASH delete route									h2								10.253.0.0/16			10.251.2.1
+  	BASH delete route									h3								10.251.1.0/24			10.251.3.1
+  	BASH delete route									h3								10.251.2.0/24			10.251.3.1
+  	BASH delete route									h3								10.252.0.0/16			10.251.3.1
+  	BASH delete route									h3								10.253.0.0/16			10.251.3.1
+  	BASH delete route									h4								10.252.2.0/24			10.252.1.1
+  	BASH delete route									h4								10.252.3/0/24			10.252.1.1
+  	BASH delete route									h4								10.251.0.0/16			10.252.1.1
+  	BASH delete route									h4								10.253.0.0/16			10.252.1.1
+  	BASH delete route									h5								10.252.1.0/24			10.252.2.1
+  	BASH delete route									h5								10.252.3.0/24			10.252.2.1
+	BASH delete route									h5								10.251.0.0/16			10.252.2.1
+  	BASH delete route									h5								10.253.0.0/16			10.252.2.1
+  	BASH delete route									h6								10.252.1.0/24			10.252.3.1
+  	BASH delete route									h6								10.252.2.0/24			10.252.3.1
+  	BASH delete route									h6								10.251.0.0/16			10.252.3.1
+  	BASH delete route									h6								10.253.0.0/16			10.252.3.1
+ 	BASH delete route									h7								10.253.2.0/24			10.253.1.1
+  	BASH delete route									h7								10.253.3/0/24			10.253.1.1
+  	BASH delete route									h7								10.251.0.0/16			10.253.1.1
+  	BASH delete route									h7								10.252.0.0/16			10.253.1.1
+  	BASH delete route									h8								10.253.1.0/24			10.253.2.1
+  	BASH delete route									h8								10.253.3.0/24			10.253.2.1
+	BASH delete route									h8								10.251.0.0/16			10.253.2.1
+  	BASH delete route									h8								10.252.0.0/16			10.253.2.1
+	BASH delete tag										h3								bond0.1003				soft_error=${true}
+	BASH delete tag										h4								bond0.1004				soft_error=${true}
+	BASH delete tag										h5								bond0.1005				soft_error=${true}
+	BASH delete tag										h6								bond0.1006				soft_error=${true}
+	BASH delete tag										h7								bond0.1007				soft_error=${true}
+	BASH init intf										h1 								bond0
+	BASH init intf										h2								bond0
+	BASH init intf										h3								bond0
+	BASH init intf										h4								bond0	
+	BASH init intf										h5								bond0	
+	BASH init intf										h6								bond0	
+	BASH init intf										h7								bond0	
+	BASH init intf										h8								bond0	
+	REST delete tenant									X
+	REST delete tenant									Y
+	REST delete tenant									Z
+	REST delete tenant routers intf to system			X
+	REST delete tenant routers intf to system			Y
+	REST delete tenant routers intf to system			Z									
+	REST delete system intf to tenant routers			X
+	REST delete system intf to tenant routers			Y
+	REST delete system intf to tenant routers			Z
+	
+
+T5 base suite setup
+	base suite setup
+	add fabric switch
+	sleep 											5
+	${result} = 									CLI verify controller		s1							c1		
+	Should Be True									${result}
+	${result} = 									CLI verify controller   	s1							c2
+	Should Be True									${result}
+	${result} = 									CLI verify controller       s2							c1
+	Should Be True									${result}
+	${result} = 									CLI verify controller       s2							c2
+	Should Be True									${result}
+	${result} = 									CLI verify controller       s3							c1
+	Should Be True									${result}
+	${result} = 									CLI verify controller       s3							c2
+	Should Be True									${result}
+	${result} = 									CLI verify controller       s4							c1
+	Should Be True									${result}
+	${result} = 									CLI verify controller       s4							c2
+	Should Be True									${result}
+	REST add portgroup								${leaf0_pc1}
+	REST add portgroup								${leaf0_pc2}
+	REST add portgroup								${leaf0_pc3}
+	REST add portgroup								${leaf0_pc4}
+	REST add portgroup								${leaf0_pc5}
+	REST add portgroup								${leaf0_pc6}
+	REST add portgroup								${leaf0_pc7}			
+	REST add portgroup								${leaf0_pc8}	
+  
+T5 base suite teardown
+	delete fabric switch  
+  	REST delete portgroup lacp							${leaf0_pc1}
+  	REST delete portgroup lacp							${leaf0_pc2}
+  	REST delete portgroup lacp							${leaf0_pc3}
+  	REST delete portgroup lacp							${leaf0_pc4}
+  	REST delete portgroup lacp							${leaf0_pc5}
+  	REST delete portgroup lacp							${leaf0_pc6}
+  	REST delete portgroup lacp							${leaf0_pc7}
+  	REST delete portgroup lacp							${leaf0_pc8}
+  	REST delete portgroup								${leaf0_pc1}
+	REST delete portgroup								${leaf0_pc2}
+	REST delete portgroup								${leaf0_pc3}
+	REST delete portgroup								${leaf0_pc4}
+	REST delete portgroup								${leaf0_pc5}
+	REST delete portgroup								${leaf0_pc6}	
+	REST delete portgroup								${leaf0_pc7}
+	REST delete portgroup								${leaf0_pc8}	
+
+
+verify results   [Arguments]  ${transmitted_frames}  ${received_frames}  ${stream}  ${stream_name}
+    Sleep  5
+    ${report}=  fetch port stats  stream=${stream}  
+    ${tx_value}=  verify dict key  ${report}  ${stream_name}  ${transmitted_frames}
+    ${rx_value}=  verify dict key  ${report}  ${stream_name}  ${received_frames}
+    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}
+ 	Log 		${in_range}
+   Should be true  ${in_range}	
+  	
+calculate loss	 [Arguments]  ${transmitted_frames}  ${received_frames}  ${stream}  ${stream_name}
+    Sleep  5
+    ${report} =  	fetch port stats  	stream=${stream}  
+    ${tx_value} =  	verify dict key  	${report}  ${stream_name}  ${transmitted_frames}
+    ${rx_value} =  	verify dict key  	${report}  ${stream_name}  ${received_frames}
+	${loss} = 		evaluate 			${tx_value} - ${rx_value}
+	Log 			${loss}
+	
+verify traffic rate   [Arguments]  ${tx_rate}  ${rx_rate}  ${tx_intf}  ${rx_intf}
+    Sleep  5
+    ${report}=  fetch port stats
+    Log  	${report}
+    ${tx_value}=  verify dict key  ${report}  ${tx_intf}  transmitted_frame_rate
+    ${rx_value}=  verify dict key  ${report}  ${rx_intf}  received_valid_frame_rate
+    ixia verify traffic rate  ${tx_value}  ${rx_value}
+    
+verify traffic packet  [Arguments]  ${tx_cnt}  ${rx_cnt}  ${tx_intf}  ${rx_intf}
+	Sleep  5
+    ${report} =  	fetch port stats
+    ${tx_value} =  	verify dict key  	${report}  ${tx_intf}  transmitted_frames
+    ${rx_value} =  	verify dict key  	${report}  ${rx_intf}  received_valid_frames
+    ${result} =  	evaluate  			${tx_value} - ${rx_value}
+    Log 	${result}
+#   Should Be True   -100000 < ${result} < 100000
+
+
+    
