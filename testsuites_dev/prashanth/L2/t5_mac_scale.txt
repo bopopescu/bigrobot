@@ -196,7 +196,7 @@ Add 48k dynamic mac into the system and check forwarding and make sure aging als
     Should be True  ${count} < 8
 	    
 spine link failover with 48k mac address in the system
-	[Tags]  scaling  run
+	[Tags]  scaling  
 	${stream}=             L3 add  no_arp=True  flow=a<->c  src_mac=00:00:01:00:00:01  dst_mac=00:00:02:00:00:01  src_cnt=8000  dst_cnt=8000    frame_rate=1000  frame_size=128  name=a_c_flow
     ${stream1}=             L3 add  no_arp=True  flow=b<->f  src_mac=00:00:03:00:00:01  dst_mac=00:00:04:00:00:01  src_cnt=8000  dst_cnt=8000    frame_rate=1000  frame_size=128  name=b_f_flow
     ${stream2}=             L3 add  no_arp=True  flow=d<->e  src_mac=00:00:05:00:00:01  dst_mac=00:00:06:00:00:01  src_cnt=8000  dst_cnt=8000    frame_rate=1000  frame_size=128  name=b_f_flow
@@ -261,7 +261,7 @@ spine link failover with 48k mac address in the system
     stop traffic  ${stream2}
     
 spine switch shutdown with 48k mac address in the system
-	[Tags]  scaling  run
+	[Tags]  scaling  
 	${stream}=             L3 add  no_arp=True  flow=a<->c  src_mac=00:00:01:00:00:01  dst_mac=00:00:02:00:00:01  src_cnt=8000  dst_cnt=8000    frame_rate=1000  frame_size=128  name=a_c_flow
     ${stream1}=             L3 add  no_arp=True  flow=b<->f  src_mac=00:00:03:00:00:01  dst_mac=00:00:04:00:00:01  src_cnt=8000  dst_cnt=8000    frame_rate=1000  frame_size=128  name=b_f_flow
     ${stream2}=             L3 add  no_arp=True  flow=d<->e  src_mac=00:00:05:00:00:01  dst_mac=00:00:06:00:00:01  src_cnt=8000  dst_cnt=8000    frame_rate=1000  frame_size=128  name=b_f_flow
@@ -429,7 +429,7 @@ spine switch reboot with 48k mac address in the system
     stop traffic  ${stream2}
     
 Master controller node reboot with 48k mac entries
-	[Tags]  scaling     
+	[Tags]  scaling  run     
 	
 	${stream}=             L3 add  no_arp=True  flow=a<->c  src_mac=00:00:01:00:00:01  dst_mac=00:00:02:00:00:01  src_cnt=8000  dst_cnt=8000    frame_rate=1000  frame_size=128  name=a_c_flow
     ${stream1}=             L3 add  no_arp=True  flow=b<->f  src_mac=00:00:03:00:00:01  dst_mac=00:00:04:00:00:01  src_cnt=8000  dst_cnt=8000    frame_rate=1000  frame_size=68  name=b_f_flow
