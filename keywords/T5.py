@@ -159,6 +159,11 @@ class T5(object):
             return True
 
     def rest_add_vns_scale(self, tenant, count):
+        '''
+        Functiont to add vns in scale 
+        Input: tenant , no of vns to be created
+        Output: system will created speicified no of vns
+        '''
         t = test.Test()
         c = t.controller('master')
         count = int(count)
@@ -175,18 +180,17 @@ class T5(object):
         return True
 
     def rest_add_interface_to_all_vns(self, tenant, switch, intf):
+        '''
+        Function to add interface to all created vns
+        Input: tennat , switch , interface
+        output : will add specified interfaces into all vns in a tenant as tagged starting with 1
+        '''
         t = test.Test()
         c = t.controller('master')
         url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/vns[tenant="%s"]' % (tenant)
         c.rest.get(url)
         data = c.rest.content()
-#        list_vlan_id = []
-#       for i in range(0, len(data)):
-#            if data[i]["internal-vlan"] not in list_vlan_id:
-#                list_vlan_id.append(data[i]["internal-vlan"])
-#        list_vlan_id = sorted(list_vlan_id)
         for j in range(0, len(data)):
-#            if data[j]["internal-vlan"] in list_vlan_id:
                 url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/switch-port-membership-rule[switch="%s"][interface="%s"]' % (tenant, data[j]["name"], switch, intf)
                 c.rest.put(url, {"switch": switch, "interface": intf, "vlan": j+1})
         return True
@@ -1539,7 +1543,7 @@ class T5(object):
         c.rest.get(url)
         data = c.rest.content()
         try:
-                if data[0]["interface"][0]["lacp-state"] == "active" and data[0]["interface"][0]["state"] == "up":
+                if str(data[0]["interface"][0]["lacp-state"]) == "active" and str(data[0]["interface"][0]["state"]) == "up":
                         helpers.log("LACP Neibhour Is Up and active")
                         return True
                 else:

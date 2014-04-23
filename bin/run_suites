@@ -8,7 +8,9 @@
 
 testsuites="\
 testsuites/T5/T5-Platform/t5_virtual_ip_address \
-testsuites/T5/T5-Platform/t5_password_management
+testsuites/T5/T5-Platform/t5_password_management \
+testsuites/T5/T5-Platform/t5_tacacs_user_management \
+testsuites/T5/T5-Platform/t5_platform_HA_stress
 "
 
 mesg() {

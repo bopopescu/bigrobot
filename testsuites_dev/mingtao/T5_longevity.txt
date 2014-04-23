@@ -10,9 +10,11 @@ Library			 keywords/Mininet.py
 Library		     keywords/Host.py
 Library		     keywords/Ixia.py
 Library		     keywords_dev/mingtao/T5_longevity.py
-Library		     keywords/BigTap.py 
+Library		     keywords/T5.py 
 
 * Variable
+
+
 
 
  
@@ -20,12 +22,33 @@ Library		     keywords/BigTap.py
 #####  testbed and traffic setup   
 
 T1 Setup the testbed
-	log  config syslog server snmp
-	log  config Tenants 
-	log  config VNS
+	log  step 1 setup snmp and verify
+	setup snmp	
+	verify snmp config	
+	
+	log  step 2 config syslog server
+	
+	log  step 3 config Tenants and vns 
+	 
+	rest_add_tenant_vns_scale	 2    2
+	
 	log  config member interface
+	
 	log  config end point	
-    Manual untested
+  	REST add endpoint  T1  v1  E1
+  	REST add endpoint  T1  v1  E2  	
+    add portgroup to endpoint  T1  v1  E1  p4  -1
+    REST add ip endpoint  T1  v1  E1   100.100.100.1
+    REST add mac endpoint  T1  v1  E1   01:01:01:01:01:01
+    REST add ip endpoint  T1  v1  E2    100.100.100.2
+    REST add mac endpoint  T1  v1  E2  01:01:01:01:01:02
+
+  	REST add portgroup  P1  
+ 	REST add interface to portgroup  Leaf0a  ethernet11  P1 
+ 	REST add interface to portgroup  Leaf0b  ethernet11  P1  
+
+  
+     
 	[Tags] 	sanity    Manual   untested
 
 
@@ -33,14 +56,31 @@ T1 Setup the testbed
 T2 setup traffic make sure all traffic can be forwarded without loss
 	log  learn and send L2 traffic  
 	log  arp and send L3 traffic
-    Manual untested
+  
 	[Tags] 	sanity    Manual   untested
-
-
 	
 T3 take snapshot of state of the controller and switches in the system (once the system is stable)
+	${topinfo}=  bash_top     c1	
 	log  controller - get memory 
-	log  controller - get cpu
+	${memoryused}=   Set Variable   ${topinfo['mem']['used']}	
+	log  controller memory used is ${memoryused}
+	
+	log  controller - get cpu 
+	${cpuidle}=   Set Variable   ${topinfo['cpu']['id']}
+	log  cpu idle is ${cpuidle}
+	
+	log  controller - check disk space consumption
+	${result}=  get_disk_used_percentage   c1    /
+	log  overall disk used ${result} 
+	${result}=  get_disk_used_percentage   c1    /var/log
+	log  log directory disk used ${result} 
+	
+	log  get tenant info
+	${info}=  rest_show_tenant
+	log  ===tenant info is ${info}
+	
+
+			
 	log  controller - get forwarding tables	  	
 	log  switch - get port table
 	log  switch - get vlan table	
@@ -48,7 +88,7 @@ T3 take snapshot of state of the controller and switches in the system (once the
 	log  switch - get L3 host table		
 	log  switch - get L3 route table				
 	log  switch - get cpu usage 	  
-    Manual untested
+   
 	[Tags] 	sanity    Manual   untested
 
 ######### back ground event and monitor
@@ -58,25 +98,25 @@ T11 background monitor (every 1 minute )
 	log  controller - check disk space consumption
 	log  controller - check log Error or exception: check no floodlight restart
 	log  switch check log Error or exception, check no ofad restart
-    Manual untested
+   
 	[Tags] 	sanity    Manual   untested
 
 T12 SNMP(every 10 sec)
 	log  constant SNMP walk  
-    Manual untested
+   
 	[Tags] 	sanity    Manual   untested
 
 T13 user login/logout (every 1 hour)
 	log  user login/logout 
 	log  multiple user log in and not logout
-    Manual untested
+    
 	[Tags] 	sanity    Manual   untested
 
 T14 background show command (every 1 hour )
 	log  show command ? Check GUI show ver, show stats
 	log  show techsupport  
 	log  check ntp time
-    Manual untested
+   
 	[Tags] 	sanity    Manual   untested
 
 ##### longevity test case
@@ -89,7 +129,7 @@ T21 node down/up event
     log  reload master
     log  reload slave
     log  reload both controller
-    Manual untested
+   
 	[Tags] 	sanity    Manual   untested
 
 	  
@@ -100,13 +140,13 @@ T22 node power on/off event (check automation ???)
 	log  power off/up 1 pair of leaves
 	log  power off/up management switch
 	log  power off/up both management switch	 
-    Manual untested
+  
 	[Tags] 	sanity    Manual   untested
 
 T23 controller event
     log  ha failover through cli 
     log  ha failover through rest API
-    Manual untested
+    
 	[Tags] 	sanity    Manual   untested
  
 T24 data Link down/up event (repeat with shutdown from both end)
@@ -115,7 +155,7 @@ T24 data Link down/up event (repeat with shutdown from both end)
 	log  disable/enable link from leaf to host
 	log  disable/enable link between leaves	 
  	log  disable/enable all links from one leaf to all spines  
-    Manual untested
+   
 	[Tags] 	sanity    Manual   untested
 
 T25 management link event
@@ -128,7 +168,7 @@ T25 management link event
 	log  remove/add master controller from all switches
 	log  reload 1 management switch
   	log  reload both management switch
-    Manual untested
+    
 	[Tags] 	sanity    Manual   untested
 
 T26 big configuration changes (around 500 tenants or vns change)
@@ -136,7 +176,7 @@ T26 big configuration changes (around 500 tenants or vns change)
 	log  big scale configuration tenant delete
 	log  big scale configuration vns load/merge
 	log  big scale configuration vns delete
-    Manual untested
+   
 	[Tags] 	sanity    Manual   untested
 
 T27 quick configuration changes (non stop, less than 10 tenants or vns each change)
@@ -145,7 +185,7 @@ T27 quick configuration changes (non stop, less than 10 tenants or vns each chan
 	log   configuration tenant delete
 	log   configuration vns add
 	log   configuration vns delete 
-    Manual untested
+    
 	[Tags] 	sanity    Manual   untested
 
 T29 VM event
@@ -153,17 +193,17 @@ T29 VM event
 	log  VM move - mac move between different racks
 	log  VM add - start a set of new traffic
 	log  VM delete - stop the traffic and age ou
-    Manual untested
+   
 	[Tags] 	sanity    Manual   untested
  
 T30 table flush
 	log  placeholder for table flush  
-    Manual untested
+    
 	[Tags] 	sanity    Manual   untested
 
 T51 continues Event
    	log  randomize all the event test cases from T23 to T30
-    Manual untested
+   
 	[Tags] 	sanity    Manual   untested
 
 

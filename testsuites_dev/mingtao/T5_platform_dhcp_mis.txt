@@ -137,7 +137,9 @@ T4.5 Verification of tech-support and related commands
 #########  
  
 Verify first boot of controller on bare metal server
-    Manual untested
+	log  same as appliance
+    Manual untested 
+    
 	[Tags] 	sanity    Manual   untested    firstboot   infra
 
 
@@ -145,11 +147,7 @@ Change IP Tables/ Firewalls
     Manual untested
 	[Tags] 	sanity    Manual   untested  infra
 
- 
-First boot process in a appliance
-    Manual untested
-	[Tags] 	sanity    Manual   untested   firstboot  infra
- 
+  
  
  
 	
