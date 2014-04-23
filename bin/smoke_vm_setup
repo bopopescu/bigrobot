@@ -2,7 +2,7 @@
 '''
 wrapper script for spawning 2 vms and 1 mininet for jenkins smoke integration
 need to export BIGROBOT_PARAMS_INPUT_PRE and expot BUILD_NUMBER to run on a shell
-export BIGROBOT_SUITE=t5_singleleaf_dualrack_ping_test_suite
+export BIGROBOT_PARAMS_INPUT_PRE=t5_singleleaf_dualrack_ping_test_suite
 export BUILD_NUMBER=999
 '''
 import os
@@ -179,9 +179,20 @@ def main(*args):
         libvirt_vm_name: %s\n\
         user: %s\n\
         password: %s\n\
+ c2:\n\
+      ip: %s\n\
+      #set_init_ping: false            # default: true\n\
+      #set_session_ssh: false          # default: true\n\
+      console: \n\
+        ip: %s\n\
+        libvirt_vm_name: %s\n\
+        user: %s\n\
+        password: %s\n\
  mn1:\n\
        ip: %s\n\
-       \n" % (active_vm['vm_ip'], kvm_host, active_vm['vm_name'], kvm_user, kvm_pwd, mininet_vm['vm_ip'])
+       \n" % (active_vm['vm_ip'], kvm_host, active_vm['vm_name'], kvm_user, kvm_pwd,
+              standby_vm['vm_ip'], kvm_host, standby_vm['vm_name'], kvm_user, kvm_pwd,
+              mininet_vm['vm_ip'])
     topo.write(config)
     topo.close()
     helpers.log("Success in creating topo file %s" % topo_file)

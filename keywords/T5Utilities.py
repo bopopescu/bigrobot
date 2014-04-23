@@ -24,6 +24,8 @@ endpoints_b4 = []
 endpoints_after = []
 fabricLags_b4 = []
 fabricLags_after = []
+portgroups_b4 = []
+portgroups_after = []
 
 fwdARPTable_b4 = []
 fwdARPTable_after = []
@@ -80,6 +82,8 @@ class T5Utilities(object):
         global endpoints_after
         global fabricLags_b4
         global fabricLags_after
+        global portgroups_b4
+        global portgroups_after
         
         global fwdARPTable_b4
         global fwdEPTable_b4
@@ -104,6 +108,7 @@ class T5Utilities(object):
             fabricLinks_b4 = self._gather_fabric_links()
             endpoints_b4 = self._gather_endpoints()
             fabricLags_b4 = self._gather_fabric_lags()
+            portgroups_b4 = self._gather_port_groups()
             
             fwdARPTable_b4 = self._gather_forwarding('arp-table')
             fwdEPTable_b4 = self._gather_forwarding('ep-table')
@@ -122,6 +127,8 @@ class T5Utilities(object):
             warningCount = self._compare_fabric_elements(endpoints_b4, endpoints_after, "FabricEndpoints")
             fabricLags_after = self._gather_fabric_lags()
             warningCount = self._compare_fabric_elements(fabricLags_b4, fabricLags_after, "FabricLags")
+            portgroups_after = self._gather_port_groups()
+            warningCount = self._compare_fabric_elements(portgroups_b4, portgroups_after, "PortGroups")
             
             fwdARPTable_after = self._gather_forwarding('arp-table')
             warningCount = self._compare_fabric_elements(fwdARPTable_b4, fwdARPTable_after, "fwdARPTable")
@@ -274,7 +281,6 @@ class T5Utilities(object):
         fabricLags = []
 
         for i in range(0, len(result)):
-            switchName = ""
             name = ""
             lagType = ""
             srcInt = ""
@@ -284,7 +290,6 @@ class T5Utilities(object):
             try:
                 for j in range(0, len(result[i]["fabric-lag"])):
                     try:
-                        switchName = result[i]["fabric-lag"][j]["switch-name"]
                         name = result[i]["fabric-lag"][j]["name"]
                         lagType = result[i]["fabric-lag"][j]["lag-type"]
                     except(KeyError):
@@ -294,16 +299,51 @@ class T5Utilities(object):
                             srcInt = result[i]["fabric-lag"][j]["member"][k]["src-interface"]
                             dstSwitch = result[i]["fabric-lag"][j]["member"][k]["dst-switch"]
                             dstInt = result[i]["fabric-lag"][j]["member"][k]["dst-interface"]
-                            key = "%s-%s-%s-%s-%s-%s" % (switchName, name, lagType, srcInt, dstSwitch, dstInt)
+                            key = "%s-%s-%s-%s-%s" % (name, lagType, srcInt, dstSwitch, dstInt)
                             fabricLags.append(key)
                         except(KeyError):
-                            key = "%s-%s-%s-%s-%s-%s" % (switchName, name, lagType, srcInt, dstSwitch, dstInt)
+                            key = "%s-%s-%s-%s-%s" % (name, lagType, srcInt, dstSwitch, dstInt)
                             fabricLags.append(key)
 
             except(KeyError):
                 pass
     
         return fabricLags
+    
+    def _gather_port_groups(self):
+        '''
+        -    This is a helper function. This function is used by "fabric_integrity_checker"
+        
+        Description:
+        -    Using the "show fabric lags" command verify fabric lags in the fabric
+        
+        '''
+        
+        t = test.Test()
+        c = t.controller("master")
+        url = "/api/v1/data/controller/applications/bvs/info/fabric/port-group"
+        result = c.rest.get(url)['content']
+        portgroups = []
+        
+        try:
+            for i in range(0, len(result)):
+                name = mode = switchName = interface = leafGroup = state = ""
+                name = result[i]['name']
+                mode = result[i]['mode']
+                
+                for k in range(0, len(result[i]['interface'])) :
+                    switchName = result[i]['interface'][k]['switch-name']
+                    interface = result[i]['interface'][k]['interface-name']
+                    leafGroup = result[i]['interface'][k]['leaf-group']
+                    state = result[i]['interface'][k]['state']
+                    key = "%s-%s-%s-%s-%s-%s" % (name, mode, switchName, interface, leafGroup, state)
+                    portgroups.append(key)
+                
+        except(KeyError):
+            pass
+            
+        helpers.log("portgroup list is: %s " % portgroups)
+        return portgroups
     
     def _gather_forwarding(self, fwdTableName):
         
@@ -383,6 +423,8 @@ class T5Utilities(object):
                 1) Fabric Links
                 2) Fabric Endpoints
                 3) Fabric Lags
+                4) Port Groups
+                5) Show Forwarding Table 
         '''
         global warningCount
         helpers.log("Before State Change Total # of Fabric Elements: %s " % len(list_b4))
@@ -397,6 +439,8 @@ class T5Utilities(object):
                 helpers.log("Endpoints are intact between states")
             if (fabricElement == "FabricLags"):
                 helpers.log("Fabric Lags are intact between states")
+            if (fabricElement == "PortGroups"):
+                helpers.log("Port Groups are intact between states")
                 
             if (fabricElement == "fwdARPTable"):
                 helpers.log("Controller ARP Table Forwarding entries are intact between states")
@@ -423,6 +467,9 @@ class T5Utilities(object):
                 helpers.warn("-----------    Fabric Endpoints Discrepancies    -----------")
             if (fabricElement == "FabricLags"):
                 helpers.warn("-----------    Fabric Lags Discrepancies    -----------")
+            if (fabricElement == "PortGroups"):
+                helpers.warn("-----------    Port Group Discrepancies    -----------")
+
                 
             if (fabricElement == "fwdARPTable"):
                 helpers.warn("-----------    FWD: ARP Table Discrepancies    -----------")
@@ -446,6 +493,8 @@ class T5Utilities(object):
                             helpers.warn("Endpoint: %s is not present after the state change" % item)
                         if (fabricElement == "FabricLags"):
                             helpers.warn("Fabric Lag: %s is not present after the state change" % item)
+                        if (fabricElement == "PortGroups"):
+                            helpers.warn("Port Group: %s is not present after the state change" % item)
                             
                         if (fabricElement == "fwdARPTable"):
                             helpers.warn("FWD:ARP Table Entry: %s is not present after the state change" % item)
@@ -470,6 +519,8 @@ class T5Utilities(object):
                             helpers.warn("New endpoint: %s present after the state change" % item)
                         if (fabricElement == "FabricLags"):
                             helpers.warn("New fabric lag: %s is present after the state change" % item)
+                        if (fabricElement == "PortGroups"):
+                            helpers.warn("New portgroup: %s is present after the state change" % item)
                             
                         if (fabricElement == "fwdARPTable"):
                             helpers.warn("New FWD:ARP Table Entry: %s is present after the state change" % item)
