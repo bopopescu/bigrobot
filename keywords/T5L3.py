@@ -19,6 +19,7 @@ class T5L3(object):
                 `netmask`       vns subnet mask
                 `private`        true or false 
             POST http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant%5Bname%3D%22X%22%5D/virtual-router/vns-interfaces%5Bvns-name%3D%22X1%22%5D/ip-subnet {"ip-cidr": "10.10.0.1/24", "private": false}
+REST-POST: POST http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant%5Bname%3D%22X%22%5D/virtual-router/vns-interfaces%5Bvns-name%3D%22X2%22%5D/ip-subnet {"ip-cidr": "10.10.111.1/24", "private": false}
 
             Return: true if configuration is successful, false otherwise
         '''
@@ -52,6 +53,12 @@ class T5L3(object):
                 `vnsname`       vns interface name which must be similar to VNS
                 `ipaddr`        interface ip address
                 `netmask`       vns subnet mask
+REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant%5Bname%3D%22X%22%5D/virtual-router/vns-interfaces%5Bvns-name%3D%22X1%22%5D/ip-subnet/ip-cidr {}
+REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant%5Bname%3D%22X%22%5D/virtual-router/vns-interfaces%5Bvns-name%3D%22X1%22%5D/ip-subnet/ip-cidr done 0:00:00.002873
+REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant%5Bname%3D%22X%22%5D/virtual-router/vns-interfaces%5Bvns-name%3D%22X1%22%5D/ip-subnet/private {}
+REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant%5Bname%3D%22X%22%5D/virtual-router/vns-interfaces%5Bvns-name%3D%22X1%22%5D/ip-subnet/private done 0:00:00.002920
+                
+                
 REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[name="B"]/virtual-router/vns-interfaces[vns-name="B1"]/ip-cidr {}            
             Return: true if configuration is successful, false otherwise
         '''
@@ -61,7 +68,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
         
         helpers.test_log("Input arguments: tenant = %s vns = %s ipaddr = %s netmask = %s " % (tenant, vnsname, ipaddr, netmask ))
         
-        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/virtual-router/vns-interfaces[vns-name="%s"]/ip-cidr' % (tenant, vnsname)
+        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/virtual-router/vns-interfaces[vns-name="%s"]/ip-subnet/ip-cidr' % (tenant, vnsname)
         ip_addr = ipaddr + "/" + netmask
         try:
             c.rest.delete(url, {})
@@ -74,7 +81,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
             return True
         
    
-    def rest_add_tenant_routers_to_system(self, tenant):        
+    def rest_add_tenant_routers_intf_to_system(self, tenant):        
         '''Attach tenant router to system tenant"
         
             Input:
@@ -101,7 +108,7 @@ REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[
             helpers.test_log("Output: %s" % c.rest.result_json())
             return c.rest.content() 
         
-    def rest_delete_tenant_routers_to_system(self, tenant):        
+    def rest_delete_tenant_routers_intf_to_system(self, tenant):        
         '''detach tenant router to system tenant"
         
             Input:
@@ -127,7 +134,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
             return c.rest.content() 
         
         
-    def rest_add_system_to_tenant_routers(self, tenant):        
+    def rest_add_system_intf_to_tenant_routers(self, tenant):        
         '''Attach system router to tenant router"
         
             Input:
@@ -152,7 +159,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
             return c.rest.content()         
 
 
-    def rest_delete_system_to_tenant_routers(self, tenant):        
+    def rest_delete_system_intf_to_tenant_routers(self, tenant):        
         '''detach system router from tenant router"
         
             Input:
@@ -442,6 +449,10 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
                 `vlan`            vlan id or -1 for untagged
             Return: true if configuration is successful, false otherwise
             curl -gX PATCH -H 'Cookie: session_cookie=RKIUFOl07Dqiz10nXJcbquvUcWVJ3xYM' -d '{"port-group-name": "leaf4", "vlan": -1}' 'localhost:8080/api/v1/data/controller/applications/bvs/tenant[name="B"]/vns[name="B1"]/endpoints[name="B1-H1"]/attachment-point'
+            
+            REST-POST: PATCH http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant%5Bname%3D%22X%22%5D/vns%5Bname%3D%22X1%22%5D/endpoint%5Bname%3D%22H1%22%5D/attachment-point {"vlan": 200, "port-group": "leaf0-pc1"}
+            REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant%5Bname%3D%22X%22%5D/vns%5Bname%3D%22X1%22%5D/endpoint%5Bname%3D%22H1%22%5D/attachment-point done 0:00:00.005086
+
         '''
         
         t = test.Test()
@@ -451,12 +462,47 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
         
         url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/endpoint[name="%s"]/attachment-point' % (tenant, vnsname, endpointname)
         try:
-            c.rest.post(url, {"port-group-name": portgroupname, "vlan": vlan})
+            c.rest.post(url, {"vlan": vlan, "port-group": portgroupname})
         except:
             helpers.test_failure(c.rest.error())
         else: 
             helpers.test_log("Output: %s" % c.rest.result_json())
             return c.rest.content()            
+
+
+
+
+    def rest_delete_endpoint_portgroup_attachment(self, tenant, vnsname, endpointname, portgroupname, vlan):
+        '''Add nexthop to ecmp groups aks gateway pool in tenant"
+        
+            Input:
+                `tenant`          tenant name
+                `vnsname`         vns name
+                `endpointname`    endpoint name
+                `portgroupname`   port-group name
+                `vlan`            vlan id or -1 for untagged
+            Return: true if configuration is successful, false otherwise
+            
+REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant%5Bname%3D%22X%22%5D/vns%5Bname%3D%22X1%22%5D/endpoint%5Bname%3D%22H1%22%5D/attachment-point {"vlan": 200, "port-group": "leaf0-pc1"}
+REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant%5Bname%3D%22X%22%5D/vns%5Bname%3D%22X1%22%5D/endpoint%5Bname%3D%22H1%22%5D/attachment-point done 0:00:00.004887
+REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant%5Bname%3D%22X%22%5D/vns%5Bname%3D%22X1%22%5D/endpoint%5Bname%3D%22H1%22%5D/attachment-point {"vlan": 200, "port-group": "leaf0-pc1"}
+REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant%5Bname%3D%22X%22%5D/vns%5Bname%3D%22X1%22%5D/endpoint%5Bname%3D%22H1%22%5D/attachment-point done 0:00:00.002376
+      '''
+        
+        t = test.Test()
+        c = t.controller('master')
+        
+        helpers.test_log("Input arguments: tenant = %s vnsname = %s endpointname = %s portgroup = %s vlan = %s" % (tenant, vnsname, endpointname, portgroupname, vlan))
+        
+        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/endpoint[name="%s"]/attachment-point' % (tenant, vnsname, endpointname)
+        try:
+            c.rest.delete(url, {"vlan": vlan, "port-group": portgroupname})
+        except:
+            helpers.test_failure(c.rest.error())
+        else: 
+            helpers.test_log("Output: %s" % c.rest.result_json())
+            return c.rest.content()            
+
 
 
     def rest_add_endpoint_switch_attachment(self, tenant, vnsname, endpointname, switchname, switchinterface, vlan):
@@ -470,9 +516,9 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
                 `switchinterface`    switch port
                 `vlan`            vlan id or -1 for untagged
             Return: true if configuration is successful, false otherwise
-            
-            curl -gX PATCH -H 'Cookie: session_cookie=RKIUFOl07Dqiz10nXJcbquvUcWVJ3xYM' -d '{"switch-name": "leaf1", "interface-name": "leaf1-eth2", "vlan": -1}' 'localhost:8080/api/v1/data/controller/applications/bvs/tenant[name="B"]/vns[name="B1"]/endpoints[name="B1-H1"]/attachment-point'
-        '''        
+     REST-POST: PATCH http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant%5Bname%3D%22X%22%5D/vns%5Bname%3D%22X1%22%5D/endpoint%5Bname%3D%22H1%22%5D/attachment-point {"interface": "ethernet22", "switch": "leaf0-a", "vlan": 10}
+    REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant%5Bname%3D%22X%22%5D/vns%5Bname%3D%22X1%22%5D/endpoint%5Bname%3D%22H1%22%5D/attachment-point done 0:00:00.004528
+       '''        
         t = test.Test()
         c = t.controller('master')
         
@@ -480,12 +526,45 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
         
         url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/endpoint[name="%s"]/attachment-point' % (tenant, vnsname, endpointname)
         try:
-            c.rest.post(url, {"switch-name": switchname, "interface-name": switchinterface, "vlan": vlan})
+            c.rest.post(url, {"interface": switchinterface, "switch": switchname, "vlan": vlan})
         except:
             helpers.test_failure(c.rest.error())
         else: 
             helpers.test_log("Output: %s" % c.rest.result_json())
             return c.rest.content()            
+
+    def rest_delete_endpoint_switch_attachment(self, tenant, vnsname, endpointname, switchname, switchinterface, vlan):
+        '''Add nexthop to ecmp groups aks gateway pool in tenant"
+        
+            Input:
+                `tenant`          tenant name
+                `vnsname`         vns name
+                `endpointname`    endpoint name
+                `switchname`       name of switch
+                `switchinterface`    switch port
+                `vlan`            vlan id or -1 for untagged
+            Return: true if configuration is successful, false otherwise
+REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant%5Bname%3D%22X%22%5D/vns%5Bname%3D%22X1%22%5D/endpoint%5Bname%3D%22H1%22%5D/attachment-point {"interface": "ethernet22", "switch": "leaf0-a", "vlan": 10}
+REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant%5Bname%3D%22X%22%5D/vns%5Bname%3D%22X1%22%5D/endpoint%5Bname%3D%22H1%22%5D/attachment-point done 0:00:00.010011
+REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant%5Bname%3D%22X%22%5D/vns%5Bname%3D%22X1%22%5D/endpoint%5Bname%3D%22H1%22%5D/attachment-point {"interface": "ethernet22", "switch": "leaf0-a", "vlan": 10}
+REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant%5Bname%3D%22X%22%5D/vns%5Bname%3D%22X1%22%5D/endpoint%5Bname%3D%22H1%22%5D/attachment-point done 0:00:00.003425
+REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant%5Bname%3D%22X%22%5D/vns%5Bname%3D%22X1%22%5D/endpoint%5Bname%3D%22H1%22%5D/attachment-point {"interface": "ethernet22", "switch": "leaf0-a", "vlan": 10}
+
+       '''        
+        t = test.Test()
+        c = t.controller('master')
+        
+        helpers.test_log("Input arguments: tenant = %s vnsname = %s endpointname = %s switchname = %s switch interface = %s vlan = %s" % (tenant, vnsname, endpointname, switchname, switchinterface, vlan))
+        
+        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/endpoint[name="%s"]/attachment-point' % (tenant, vnsname, endpointname)
+        try:
+            c.rest.delete(url, {"interface": switchinterface, "switch": switchname, "vlan": vlan})
+        except:
+            helpers.test_failure(c.rest.error())
+        else: 
+            helpers.test_log("Output: %s" % c.rest.result_json())
+            return c.rest.content()     
+          
 
     def rest_add_dhcp_relay(self, tenant, vnsname, dhcpserverip):
         '''Create dhcp server on tenant VNS"

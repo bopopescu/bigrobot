@@ -13,7 +13,8 @@ Library         keywords/T5Platform.py
 Library         keywords_dev/animesh/BsnCommonShow.py
 Library	        Collections.py
 Library         keywords/Ixia.py
-Resource		testsuites/T5/L3_physical_intra/t5_layer3_physical_intra_variables.txt
+Library			keywords/SwitchLight.py
+Resource		testsuites/T5/T5_L3_physical_intra/t5_layer3_physical_intra_variables.txt
 Resource		testsuites/T5/t5_dualleaf_three_rack_physical_resource.txt
 
 
@@ -117,10 +118,7 @@ Verify vlsm forwarding
 Verify split horizon forwarding
 	Verify l3 forwarding on one arm router
 	[Tags]							feature			manual		
-	
-Small Scale with 100 vns 		
-	One Tenant 100 VNS with one host each
-	[Tags]							feature			scale
+
 	
 Configure overlapping router IP 	
 	Configure overlapping IP on same tenant across VNS	
@@ -128,46 +126,50 @@ Configure overlapping router IP
 	
 Trigger controller HA failover via CLI
 	Controller HA failover via CLI	
-#	[Tags]							feature			
+	[Tags]							feature			
 	
 Trigger controller HA failover via reboot
 	Controller HA failover via reboot
-#	[Tags]							feature			
+	[Tags]							feature			
 
 Spine reboot
 	Reboot spine0 via CLI
-#	[Tags]							feature			
+	[Tags]							feature			
 
 Leaf reboot
 	Reboot Leaf0 via CLI
-#	[Tags]							feature			
+	[Tags]							feature			
 
 Spine connect and disconnect to controller
 	Connect and Disconnect spine to controller
-#	[Tags]							feature			
+	[Tags]							feature			
 	
 Leaf connect and disconnect to controller	
 	Connect and disconnect one leaf in dual tor to controller
-#	[Tags]							feature			
+	[Tags]							feature			
 
 Spine to leaf link flap
 	Flap link between leaf and spine
-#	[Tags]							feature			
+	[Tags]							feature			
 
 Leaf to host link flap
 	Flap bond interface towards host
-#	[Tags]							feature			
+	[Tags]							feature			
 	
 Restart ofad process on spine
 	restart ofad on spine
-#	[Tags]							feature			
+	[Tags]							feature			
 	
 Restart ofad process on leaf	
 	restart ofad on leaf
-#	[Tags]							feature			
+	[Tags]							feature			
 	
 L3 traffic behavior in headless mode
 	L3 intra tenant traffic behavior in headless mode 
+	Log								manual untested
+#	[Tags]							manual			untested			feature			
+
+L3 intra tenant traceroute
 	Log								manual untested
 #	[Tags]							manual			untested			feature			
 		
