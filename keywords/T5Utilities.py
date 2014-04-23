@@ -311,6 +311,13 @@ class T5Utilities(object):
         return fabricLags
     
     def _gather_port_groups(self):
+        '''
+        -    This is a helper function. This function is used by "fabric_integrity_checker"
+        
+        Description:
+        -    Using the "show fabric lags" command verify fabric lags in the fabric
+        
+        '''
         
         t = test.Test()
         c = t.controller("master")
