@@ -76,7 +76,7 @@ shut/no shut the switch with traffic forward
     rest add portgroup lacp  p5
     rest add portgroup to vns  t1  v1  p4  -1
     rest add portgroup to vns  t1  v1  p5  -1
-    sleep  3
+    sleep  15
     rest verify fabric link common
     rest verify fabric interface lacp  leaf1-a  ${h4_intf0}
     rest verify fabric interface lacp  leaf2-a  ${h5_intf0}  
@@ -172,16 +172,17 @@ Test VFT push to when system has not connected switches
 	rest add portgroup  p5 
     rest add interface to portgroup  leaf2-a  ${h5_intf0}  p5
     rest add interface to portgroup  leaf2-b  ${h5_intf1}  p5
-    rest add portgroup lacp  p5  
+    rest add portgroup lacp  p5 
+    sleep  6 
     rest add portgroup  p6 
     rest add interface to portgroup  leaf2-a  ${h6_intf0}  p6
     rest add interface to portgroup  leaf2-b  ${h6_intf1}  p6
     rest add portgroup lacp  p6
     rest add portgroup to vns  t1  v1  p5  -1
     rest add portgroup to vns  t1  v1  p6  -1
-    sleep  8
+    sleep  20
     rest verify fabric interface lacp  leaf2-a  ${h5_intf0}
-    rest verify fabric interface lacp  leaf2-b  ${h6_intf0}
+    rest verify fabric interface lacp  leaf2-b  ${h6_intf1}
     ${result}=  bash execute command  leaf2-a  ofad-ctl ft PORT | grep ENABLED | grep 49 | wc -l
     ${count}=	Convert to integer  ${result}   
     Should be True  ${count} == 0
@@ -190,7 +191,8 @@ Test VFT push to when system has not connected switches
     Should be True  ${count} == 0
     ${result}=  bash execute command  leaf2-a  ofad-ctl ft PORT | grep ENABLED | grep 39 | wc -l
     ${count}=	Convert to integer  ${result}   
-    Should be True  ${count} = 0
+    Should be True  ${count} == 0
+    sleep  15
     ${loss}=  bash ping  h5  ${h6_ip}  source_if=bond0
     Should Be True  ${loss} < 50
     rest delete tenant  t1
@@ -298,7 +300,7 @@ verifying flow reconsilation when new switch is connected to the fabric
     Should be True  ${count} == 0
 	
 Tear down config and Topology
-	[Tags]  bugs  run      
+	[Tags]  bugs          
 	clean configuration
     base suite teardown
  
