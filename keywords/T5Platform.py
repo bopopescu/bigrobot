@@ -3189,109 +3189,9 @@ class T5Platform(object):
         '''
         dfinfo = self.bash_df(node)
         return dfinfo[directory]['usedpercent']
+
     
-    def cli_walk_exec(self, string='', file_name=None, padding=''):
-        ''' cli_exec_walk
-           walk through exec/login mode CLI hierarchy
-           output:   file cli_exec_walk
-        '''
-        t = test.Test()
-        c = t.controller('master')
-        c.cli('')
-        helpers.log("********* Entering cli_exec_walk ----> string: %s, file name: %s" % (string, file_name))
-        if string == '':
-            cli_string = '?'
-        else:
-            cli_string = string + ' ?'
-        c.send(cli_string, no_cr=True)
-        c.expect(r'[\r\n\x07][\w-]+[#>] ')
-        content = c.cli_content()
-        temp = helpers.strip_cli_output(content)
-        temp = helpers.str_to_list(temp)
-        helpers.log("********new_content:************\n%s" % helpers.prettify(temp))
-        c.send(helpers.ctrl('u'))
-        c.expect()
-        c.cli('')
-
-        string_c = string
-        helpers.log("string for this level is: %s" % string_c)
-        helpers.log("The length of string: %d" % len(temp))
-
-        if file_name:
-            helpers.log("opening file: %s" % file_name)
-            fo = open(file_name, 'a')
-            lines = []
-            lines.append((padding + string))
-            lines.append((padding + '----------'))
-            for line in temp:
-                lines.append((padding + line))
-            lines.append((padding + '=================='))
-            content = '\n'.join(lines)
-            fo.write(str(content))
-            fo.write("\n")
-
-            fo.close()
-
-        num = len(temp)
-        padding = "   " + padding
-        # Loop through commands and sub-commands
-        for line in temp:
-            string = string_c
-            helpers.log(" line is - %s" % line)
-            line = line.lstrip()
-            keys = line.split(' ')
-            key = keys.pop(0)
-            helpers.log("*** key is - %s" % key)
-            helpers.log("*** string is - %s" % string)
-            helpers.log("*** stringc is - %s" % string_c)
-            # Ignoring lines which do not contain actual commands
-            if re.match(r'For', line) or line == "Commands:":
-                helpers.log("Ignoring line - %s" % line)
-                num = num - 1
-                continue
-            # Ignoring commands which are either disruptive or are only one level commands
-            # These commands would have already been displayed with corresponding help in a previous top-level hierarchy
-            if key == "reauth" or key == "echo" or key == "help" or key == "history" or key == "logout" or key == "ping" or key == "watch":
-                helpers.log("Ignore line %s" % line)
-                num = num - 1
-                continue
-            # Ignoring sub-commands under 'clear debug'
-            if key == "ApplicationManager" or key == "Controller" or key == "EndpointManager" or key == "FabricManager" or key == "ForwardingDebugCounters" or key == "ISyncService" or key == "org.projectfloodlight.core" or key == "StatsCollector":
-                helpers.log("Ignore line %s" % line)
-                num = num - 1
-                continue
-            # Ignoring sub-commands under 'debug'
-            if key == "bash" or key == "cassandra-cli" or key == "cli" or key == "cli-backtrace" or key == "cli-batch" or key == "description" or key == "netconfig" or key == "python" or key == "rest":
-                helpers.log("Ignore line %s" % line)
-                num = num - 1
-                continue
-            # Ignoring sub-commands that need user input such as "<filename>"
-            helpers.log("CLIFF is HERE -- line is %s" % line)
-            if re.match(r'^<.+', line) and not re.match(r'^<cr>', line):
-                helpers.log("Ignoring line - %s" % line)
-                num = num - 1
-                continue
-
-            if key == '<cr>':
-                helpers.log("CLIFF is HERE <cr>1")
-                helpers.log(" complete CLI show command: ******%s******" % string)
-                c.cli(string)
-                
-                helpers.log("CLIFF is HERE <cr>2")
-                if num == 1:
-                    helpers.log("AT END: ******%s******" % string)
-                    return string
-            # If command has sub-commands, call the function again to walk through sub-command options
-            else:
-                string = string + ' ' + key
-                helpers.log("key - %s" % (key))
-                helpers.log("string - %s" % (string))
-                
-                helpers.log("***** Call the cli walk again with  --- %s" % string)
-                self.cli_walk_exec(string, file_name, padding)
-
-
-
+                    
     def rest_configure_testpath(self, **kwargs):
         
         t = test.Test()
@@ -3367,6 +3267,154 @@ class T5Platform(object):
             return False
         
         
+    def cli_walk_exec(self, string='', file_name=None, padding=''):
+        ''' cli_exec_walk
+           walk through exec/login mode CLI hierarchy
+           output:   file cli_exec_walk
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        c.cli('')
+        helpers.log("********* Entering cli_exec_walk ----> string: %s, file name: %s" % (string, file_name))
+        if string == '':
+            cli_string = '?'
+        else:
+            cli_string = string + ' ?'
+        c.send(cli_string, no_cr=True)
+        c.expect(r'[\r\n\x07][\w-]+[#>] ')
+        content = c.cli_content()
+        temp = helpers.strip_cli_output(content)
+        temp = helpers.str_to_list(temp)
+        helpers.log("********new_content:************\n%s" % helpers.prettify(temp))
+        c.send(helpers.ctrl('u'))
+        c.expect()
+        c.cli('')
+
+        string_c = string
+
+        if file_name:
+            helpers.log("opening file: %s" % file_name)
+            fo = open(file_name, 'a')
+            lines = []
+            lines.append((padding + string))
+            lines.append((padding + '----------'))
+            for line in temp:
+                lines.append((padding + line))
+            lines.append((padding + '=================='))
+            content = '\n'.join(lines)
+            fo.write(str(content))
+            fo.write("\n")
+
+            fo.close()
+
+        num = len(temp)
+        padding = "   " + padding
+        
+        # Loop through commands and sub-commands
+        for line in temp:
+            string = string_c
+            helpers.log(" line is - %s" % line)
+            line = line.lstrip()
+            keys = line.split(' ')
+            key = keys.pop(0)
+            helpers.log("*** key is - %s" % key)
+            helpers.log("*** string is - %s" % string)
+            helpers.log("*** stringc is - %s" % string_c)
+        
+            # Ignoring lines which do not contain actual commands
+            if re.match(r'For', line) or line == "Commands:":
+                helpers.log("Ignoring line - %s" % line)
+                num = num - 1
+                continue
+            
+            # Ignoring commands which are either disruptive or are only one level commands
+            # These commands would have already been displayed with corresponding help in a previous top-level hierarchy
+            if key == "reauth" or key == "echo" or key == "help" or key == "logout" or key == "ping" or key == "watch":
+                helpers.log("Ignore line %s" % line)
+                num = num - 1
+                continue
+            
+            # Ignoring sub-commands under 'clear debug' and 'show debug'
+            if key == "ApplicationManager" or key == "Controller" or key == "EndpointManager" or key == "FabricManager" or key == "com.bigswitch.floodlight.bvs.application" or key == "ForwardingDebugCounters" or key == "ISyncService" or key =="StatsCollector" or key == "VirtualRoutingManager" or key == "org.projectfloodlight.core" or key == "StatsCollector":
+                helpers.log("Ignore line %s" % line)
+                num = num - 1
+                continue
+            
+            # Ignoring sub-commands under 'debug'
+            if key == "bash" or key == "cassandra-cli" or key == "cli" or key == "cli-backtrace" or key == "cli-batch" or key == "description" or key == "netconfig" or key == "python" or key == "rest":
+                helpers.log("Ignore line %s" % line)
+                num = num - 1
+                continue
+            
+            # Ignoring options that require user input or comments in <>
+            if re.match(r'^<.+', line) and not re.match(r'^<cr>', line):
+                helpers.log("Ignoring line - %s" % line)
+                num = num - 1
+                continue
+            
+            # Ignoring some sub-commands that may impact test run
+            if ((key =='<cr>' and (re.match(r' set length term', string))) or re.match(r' show debug counters', string) or re.match(r' show debug events details', string)):
+                helpers.log("Ignoring line - %s" % string)
+                num = num - 1
+                continue
+            
+            # skip 'show session' (PR BSC-5233)    
+            if (re.match(r' show session', string)):
+                helpers.log("Ignoring line - %s" % string)
+                num = num - 1
+                continue
+            
+            # for interface related commands, only iterate through "all" and one specific interface
+            if (re.match(r' show(.*)interface(.*)', string)):
+                if key != 'leaf0a-eth1' and key != 'all':
+                    helpers.log("Ignoring line - %s" % string)
+                    num = num - 1
+                    continue
+            
+            # for switch related commands, only iterate through "all" and one specific switch    
+            if (re.match(r' show(.*)switch(.*)', string)):
+                if key != 'leaf0a' and key != 'all':
+                    helpers.log("Ignoring line - %s" % string)
+                    num = num - 1
+                    continue
+                
+            # for tenant related commands, only iterate through "all" and one specific tenant
+            if (re.match(r' show(.*)tenant(.*)', string)):
+                if key != 'A' and key != 'all':
+                    helpers.log("Ignoring line - %s" % string)
+                    num = num - 1
+                    continue
+            
+            # for vns related commands, only iterate through "all" and one specific vns
+            if (re.match(r' show(.*)vns(.*)', string)):
+                if key != 'A1' and key != 'all':
+                    helpers.log("Ignoring line - %s" % string)
+                    num = num - 1
+                    continue
+            
+            # skip 'show logging', 'show lacp interface', 'show stats interface-history interface', 'show stats interface-history switch' and 'show running-config' - no need to iterate through options   
+            if (re.match(r' show lacp interface', string)) or (re.match(r' show logging', string)) or (re.match(r' show running-config', string)) or (re.match(r' show stats interface-history interface', string)) or (re.match(r' show stats interface-history switch', string)):
+                helpers.log("Ignoring line - %s" % string)
+                num = num - 1
+                continue
+
+            # issue the <cr> to test that the command actually works
+            if key == '<cr>':
+                helpers.log(" complete CLI show command: ******%s******" % string)
+                c.cli(string)
+                
+                if num == 1:
+                    helpers.log("AT END: ******%s******" % string)
+                    return string
+            
+            # If command has sub-commands, call the function again to walk through sub-command options
+            else:
+                string = string + ' ' + key
+                helpers.log("key - %s" % (key))
+                helpers.log("string - %s" % (string))
+                
+                helpers.log("***** Call the cli walk again with  --- %s" % string)
+                self.cli_walk_exec(string, file_name, padding)  
         
         
         
