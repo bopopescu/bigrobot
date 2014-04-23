@@ -734,8 +734,8 @@ class T5(object):
         c.rest.get(url1)
         data1 = c.rest.content()
         for i in range(0, len(data1[0]["vlan-xlate-table"])):
-            if data1["vlan-xlate-table"][i]["port-num"] == lag_id[0]:
-                if str(data1["vlan-xlate-table"][i]["vlan-id"]) == str(vlan):
+            if data1[0]["vlan-xlate-table"][i]["port-num"] == lag_id[0]:
+                if str(data1[0]["vlan-xlate-table"][i]["vlan-id"]) == str(vlan):
                     helpers.log("Vlan Translation table is creaetd properly for the given interface")
                     return True
             else:
