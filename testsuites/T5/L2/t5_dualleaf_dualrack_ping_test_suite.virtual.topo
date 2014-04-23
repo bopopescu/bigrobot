@@ -7,7 +7,8 @@
 
 c1:
   ip: dummy
-
+c2:
+  ip: dummy
 mn:
   ip: dummy
 
