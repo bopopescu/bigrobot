@@ -174,10 +174,10 @@ class Test(object):
                                          " params file."
                                          % (n, key))
                         elif key in self._topology_params[n] and self._topology_params[n][key].lower() != 'dummy':
-                            helpers.warn("Node '%s' has attribute '%s' defined"
-                                         " with value '%s'. Overriding it with"
-                                         " value from params file."
-                                         % (n, key, self._topology_params[n][key]))
+                            helpers.trace("Node '%s' has attribute '%s' defined"
+                                          " with value '%s'. Overriding it with"
+                                          " value from params file."
+                                          % (n, key, self._topology_params[n][key]))
                         helpers.info("Node '%s' attribute '%s' gets value '%s'"
                                      % (n, key, self._params[n][key]))
                         self._topology_params[n][key] = self._params[n][key]
