@@ -3416,6 +3416,168 @@ class T5Platform(object):
                 helpers.log("***** Call the cli walk again with  --- %s" % string)
                 self.cli_walk_exec(string, file_name, padding)  
         
+    def cli_walk_enable(self, string='', file_name=None, padding=''):
+        t = test.Test()
+        c = t.controller('master')
+        c.enable('')
+        helpers.log("********* Entering CLI show  walk with ----> string: %s, file name: %s" % (string, file_name))
+        if string == '':
+            cli_string = '?'
+        else:
+            cli_string = string + ' ?'
+        c.send(cli_string, no_cr=True)
+        c.expect(r'[\r\n\x07][\w-]+[#>] ')
+        content = c.cli_content()
+        temp = helpers.strip_cli_output(content)
+        temp = helpers.str_to_list(temp)
+        helpers.log("******new_content:\n%s" % helpers.prettify(temp))
+        c.send(helpers.ctrl('u'))
+        c.expect()
+
+        string_c = string
+        helpers.log("string for this level is: %s" % string_c)
+        helpers.log("The length of string: %d" % len(temp))
+
+        if file_name:
+            helpers.log("opening file: %s" % file_name)
+            fo = open(file_name, 'a')
+            lines = []
+            lines.append((padding + string))
+            lines.append((padding + '----------'))
+            for line in temp:
+                lines.append((padding + line))
+            lines.append((padding + '=================='))
+            content = '\n'.join(lines)
+            fo.write(str(content))
+            fo.write("\n")
+
+            fo.close()
+
+        num = len(temp)
+        padding = "   " + padding
+        for line in temp:
+            string = string_c
+            helpers.log(" line is - %s" % line)
+            line = line.lstrip()
+            keys = line.split(' ')
+            key = keys.pop(0)
+            helpers.log("*** string is - %s" % string)
+            helpers.log("*** key is - %s" % key)
+            if re.match(r'All', line):
+                helpers.log("Don't need to loop through exec commands- %s" % line)
+                break
+            
+            if re.match(r'For', line) or line == "Commands:":
+                helpers.log("Ignoring line - %s" % line)
+                num = num - 1
+                continue
+            
+            if re.match(r'^<.+', line) and not re.match(r'^<cr>', line):
+                helpers.log("Ignoring line - %s" % line)
+                num = num - 1
+                continue
+            
+            # Ignoring sub-commands under 'clear debug' and 'show debug'
+            if key == "ApplicationManager" or key == "Controller" or key == "EndpointManager" or key == "FabricManager" or key == "com.bigswitch.floodlight.bvs.application" or key == "ForwardingDebugCounters" or key == "ISyncService" or key =="StatsCollector" or key == "VirtualRoutingManager" or key == "org.projectfloodlight.core" or key == "StatsCollector":
+                helpers.log("Ignore line %s" % line)
+                num = num - 1
+                continue
+            
+            # for interface related commands, only iterate through "all" and one specific interface
+            if (re.match(r' show(.*)interface(.*)', string)) or (re.match(r' clear(.*)interface-counter(.*)interface', string)):
+                if key != 'leaf0a-eth1' and key != 'all':
+                    helpers.log("Ignoring line - %s" % string)
+                    num = num - 1
+                    continue
+            
+            # for switch related commands, only iterate through "all" and one specific switch    
+            if (re.match(r' show(.*)switch(.*)', string)) or (re.match(r' clear(.*)interface-counter(.*)switch', string)):
+                if key != 'leaf0a' and key != 'all':
+                    helpers.log("Ignoring line - %s" % string)
+                    num = num - 1
+                    continue
+                
+            # for tenant related commands, only iterate through "all" and one specific tenant
+            if (re.match(r' show(.*)tenant(.*)', string)) or (re.match(r' clear(.*)vns-counter(.*)tenant(.*)', string)):
+                if key != 'A' and key != 'all':
+                    helpers.log("Ignoring line - %s" % string)
+                    num = num - 1
+                    continue
+            
+            # for vns related commands, only iterate through "all" and one specific vns
+            if (re.match(r' show(.*)vns(.*)', string)) or (re.match(r' clear(.*)vns-counter(.*)vns(.*)', string)):
+                if key != 'A1' and key != 'all':
+                    helpers.log("Ignoring line - %s" % string)
+                    num = num - 1
+                    continue
+                
+            # Ignoring some sub-commands that may impact test run or require user input
+            if ((key =='<cr>' and (re.match(r' set length term', string))) or re.match(r' test path', string) or re.match(r' show debug counters', string) or re.match(r' show debug events details', string)):
+                helpers.log("Ignoring line - %s" % string)
+                num = num - 1
+                continue
+            
+            # for vns related commands, only iterate through "all" and one specific vns
+            if (re.match(r' system reboot', string)) or (re.match(r' system shutdown', string)):
+                helpers.log("Ignoring line - %s" % string)
+                num = num - 1
+                continue            
+            
+            # skip 'show session' (PR BSC-5233)    
+            if (re.match(r' show session', string)):
+                helpers.log("Ignoring line - %s" % string)
+                num = num - 1
+                continue
+            
+            # for interface related commands, only iterate through "all" and one specific interface
+            if (re.match(r' show(.*)interface(.*)', string)):
+                if key != 'leaf0a-eth1' and key != 'all':
+                    helpers.log("Ignoring line - %s" % string)
+                    num = num - 1
+                    continue
+            
+            # for switch related commands, only iterate through "all" and one specific switch    
+            if (re.match(r' show(.*)switch(.*)', string)):
+                if key != 'leaf0a' and key != 'all':
+                    helpers.log("Ignoring line - %s" % string)
+                    num = num - 1
+                    continue
+                
+            # for tenant related commands, only iterate through "all" and one specific tenant
+            if (re.match(r' show(.*)tenant(.*)', string)):
+                if key != 'A' and key != 'all':
+                    helpers.log("Ignoring line - %s" % string)
+                    num = num - 1
+                    continue
+            
+            # for vns related commands, only iterate through "all" and one specific vns
+            if (re.match(r' show(.*)vns(.*)', string)):
+                if key != 'A1' and key != 'all':
+                    helpers.log("Ignoring line - %s" % string)
+                    num = num - 1
+                    continue
+            
+            # skip 'show logging', 'show lacp interface', 'show stats interface-history interface', 'show stats interface-history switch' and 'show running-config' - no need to iterate through options   
+            if (re.match(r' show lacp interface', string)) or (re.match(r' show logging', string)) or (re.match(r' show running-config', string)) or (re.match(r' show stats interface-history interface', string)) or (re.match(r' show stats interface-history switch', string)):
+                helpers.log("Ignoring line - %s" % string)
+                num = num - 1
+                continue                                          
+
+            if key == '<cr>':
+                helpers.log(" complete CLI show command: ******%s******" % string)
+                if re.match(r'boot', string):
+                    helpers.log("Ignoring line - %s" % line)
+                continue
+
+                c.enable(string)
+                if num == 1:
+                    return string
+            else:
+                string = string + ' ' + key
+                helpers.log("key - %s" % (key))
+                helpers.log("***** Call the cli walk again with  --- %s" % string)
+                self.cli_walk_enable(string, file_name, padding)
+
         
         
         
