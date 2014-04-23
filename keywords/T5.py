@@ -158,18 +158,18 @@ class T5(object):
         else:
             return True
 
-    def rest_add_vns_scale(self, tenant, count):
+    def rest_add_vns_scale(self, tenant, count, name='v'):
         '''
         Functiont to add vns in scale 
-        Input: tenant , no of vns to be created
-        Output: system will created speicified no of vns
+        Input: tenant , no of vns to be created,  the start leter of the name
+        Output: system will created specified no of vns
         '''
         t = test.Test()
         c = t.controller('master')
         count = int(count)
         i = 1
         while (i <= count):
-            vns = "v"
+            vns = name
             vns += str(i)
             url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]' % (tenant, vns)
             try:
@@ -178,8 +178,9 @@ class T5(object):
                 return False
             i = i + 1
         return True
+   
 
-    def rest_add_interface_to_all_vns(self, tenant, switch, intf):
+    def rest_add_interface_to_all_vns(self, tenant, switch, intf, vlan='1'):
         '''
         Function to add interface to all created vns
         Input: tennat , switch , interface
@@ -191,8 +192,9 @@ class T5(object):
         c.rest.get(url)
         data = c.rest.content()
         for j in range(0, len(data)):
+                vlan = int(vlan) + j
                 url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/switch-port-membership-rule[switch="%s"][interface="%s"]' % (tenant, data[j]["name"], switch, intf)
-                c.rest.put(url, {"switch": switch, "interface": intf, "vlan": j+1})
+                c.rest.put(url, {"switch": switch, "interface": intf, "vlan": vlan})
         return True
 
     def rest_delete_vns(self, tenant, vns=None):
@@ -734,8 +736,8 @@ class T5(object):
         c.rest.get(url1)
         data1 = c.rest.content()
         for i in range(0, len(data1[0]["vlan-xlate-table"])):
-            if data1["vlan-xlate-table"][i]["port-num"] == lag_id[0]:
-                if str(data1["vlan-xlate-table"][i]["vlan-id"]) == str(vlan):
+            if data1[0]["vlan-xlate-table"][i]["port-num"] == lag_id[0]:
+                if str(data1[0]["vlan-xlate-table"][i]["vlan-id"]) == str(vlan):
                     helpers.log("Vlan Translation table is creaetd properly for the given interface")
                     return True
             else:

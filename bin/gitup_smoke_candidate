@@ -1,0 +1,81 @@
+#!/bin/bash
+#
+# Description: The bigrobot master branch is updated frequently and isn't
+# a good candidate for use by Jenkins pre-merge smoke test. We've created
+# 3 branches to support the smoke test.
+#    smoke_candidate - The candidate branch which will undergo some
+#        regression testing before it's promoted to smoke_stable.
+#    smoke_stable - The stable branch. This is what Jenkins uses.
+#    smoke_stable_previous - The previous stable branch. We save this
+#        before refreshing the stable branch. If for some reason,
+#        smoke_stable is unstable, we can revert to the previous.
+#
+# Usage:
+#    $ gitup_smoke_stable_previous
+#    Merging changes from 'smoke_stable' to 'smoke_stable_previous'. Continue [y,n]?
+#    ...
+#
+#    $ gitup_smoke_stable
+#    Merging changes from 'smoke_candidate' to 'smoke_stable'. Continue [y,n]?
+#    ...
+#
+#    $ gitup_smoke_candidate
+#    Merging changes from 'master' to 'smoke_candidate'. Continue [y,n]?
+#    ...
+#
+# As a workflow to deploy new smoke test updates, do:
+#    $ gitup_smoke_stable_previous
+#    $ gitup_smoke_stable
+#    $ gitup_smoke_candidate
+#
+
+name=$(basename $0)
+timestamp=$(date "+%Y-%m-%d,%H%M%S")
+
+if [ "$name" = "gitup_smoke_candidate" ]; then
+    source=master
+    target=smoke_candidate
+elif [ "$name" = "gitup_smoke_stable" ]; then
+    source=smoke_candidate
+    target=smoke_stable
+elif [ "$name" = "gitup_smoke_stable_previous" ]; then
+    source=smoke_stable
+    target=smoke_stable_previous
+else
+    echo "Error: Unknown branch"
+    exit 1
+fi
+
+echo -n "Merging changes from '$source' to '$target'. Continue [y,n]?  "
+read answer
+if [ "$answer" != "y" -a "$answer" != "Y" ]; then
+    echo "Aborting..."
+    exit 1
+fi
+
+if [ -e bigrobot ]; then
+    echo "Moving 'bigrobot' to 'bigrobot.$timestamp'"
+    mv bigrobot bigrobot.$timestamp
+fi
+
+git clone https://github.com/bigswitch/bigrobot.git
+cd bigrobot
+git checkout --track origin/smoke_candidate
+git checkout --track origin/smoke_stable
+git checkout --track origin/smoke_stable_previous
+
+# Attention: The standard convention is to merge updates from branch into master
+# (i.e., branch contains new changes). We're doing just the opposite. We assume
+# master contains the latest changes which we will trickle down into the smoke
+# branches. E.g.,
+#
+#   master ==> smoke_candidate ==> smoke_stable ==> smoke_stable_previous
+#
+git checkout $target
+git merge $source
+git push origin $target
+
+echo "Done!"
+
+exit 0
+
