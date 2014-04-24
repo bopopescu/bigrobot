@@ -88,3 +88,7 @@ ${leaf0_pc8_intf1}	ethernet8
 ${leaf0_pc8_intf2}	ethernet8
 ${leaf0_pc9_intf1}	ethernet9
 ${leaf0_pc9_intf2}	ethernet9
+${leaf0_pc10_intf1}	ethernet10
+${leaf0_pc10_intf2}	ethernet10
+${leaf0_pc11_intf1}	ethernet11
+${leaf0_pc11_intf2}	ethernet11
