@@ -160,7 +160,7 @@ Add 48k dynamic mac into the system and check forwarding and make sure aging als
     ${stream1}=             L3 add  no_arp=True  flow=b<->f  src_mac=00:00:03:00:00:01  dst_mac=00:00:04:00:00:01  src_cnt=8000  dst_cnt=8000    frame_rate=1000  frame_size=128  name=b_f_flow
     ${stream2}=             L3 add  no_arp=True  flow=d<->e  src_mac=00:00:05:00:00:01  dst_mac=00:00:06:00:00:01  src_cnt=8000  dst_cnt=8000    frame_rate=1000  frame_size=128  name=d_e_flow
     start traffic  
-    sleep  90
+    sleep  120
     rest verify endpoint in system  48000
     ${result}=  bash execute command  leaf0-a  ofad-ctl ft L2 | wc -l 
     ${count}=	Convert to integer  ${result}   
@@ -197,7 +197,7 @@ spine link failover with 48k mac address in the system
     ${stream1}=             L3 add  no_arp=True  flow=b<->f  src_mac=00:00:03:00:00:01  dst_mac=00:00:04:00:00:01  src_cnt=8000  dst_cnt=8000    frame_rate=1000  frame_size=128  name=b_f_flow
     ${stream2}=             L3 add  no_arp=True  flow=d<->e  src_mac=00:00:05:00:00:01  dst_mac=00:00:06:00:00:01  src_cnt=8000  dst_cnt=8000    frame_rate=1000  frame_size=128  name=d_e_flow
     start traffic  
-    sleep  100
+    sleep  120
     rest verify endpoint in system  48000
     ${result}=  bash execute command  leaf0-a  ofad-ctl ft L2 | wc -l 
     ${count}=	Convert to integer  ${result}   
@@ -258,7 +258,7 @@ spine switch shutdown with 48k mac address in the system
     ${stream1}=             L3 add  no_arp=True  flow=b<->f  src_mac=00:00:03:00:00:01  dst_mac=00:00:04:00:00:01  src_cnt=8000  dst_cnt=8000    frame_rate=1000  frame_size=128  name=b_f_flow
     ${stream2}=             L3 add  no_arp=True  flow=d<->e  src_mac=00:00:05:00:00:01  dst_mac=00:00:06:00:00:01  src_cnt=8000  dst_cnt=8000    frame_rate=1000  frame_size=128  name=d_e_flow
     start traffic  
-    sleep  100
+    sleep  120
     rest verify endpoint in system  48000
     ${result}=  bash execute command  leaf0-a  ofad-ctl ft L2 | wc -l 
     ${count}=	Convert to integer  ${result}   
@@ -357,7 +357,7 @@ spine switch reboot with 48k mac address in the system
     ${stream1}=             L3 add  no_arp=True  flow=b<->f  src_mac=00:00:03:00:00:01  dst_mac=00:00:04:00:00:01  src_cnt=8000  dst_cnt=8000    frame_rate=1000  frame_size=128  name=b_f_flow
     ${stream2}=             L3 add  no_arp=True  flow=d<->e  src_mac=00:00:05:00:00:01  dst_mac=00:00:06:00:00:01  src_cnt=8000  dst_cnt=8000    frame_rate=1000  frame_size=128  name=d_e_flow
     start traffic  
-    sleep  100
+    sleep  120
     rest verify endpoint in system  48000
     ${result}=  bash execute command  leaf0-a  ofad-ctl ft L2 | wc -l 
     ${count}=	Convert to integer  ${result}   
@@ -419,7 +419,7 @@ Master controller node reboot with 48k mac entries
     ${stream1}=             L3 add  no_arp=True  flow=b<->f  src_mac=00:00:03:00:00:01  dst_mac=00:00:04:00:00:01  src_cnt=8000  dst_cnt=8000    frame_rate=1000  frame_size=68  name=b_f_flow
     ${stream2}=             L3 add  no_arp=True  flow=d<->e  src_mac=00:00:05:00:00:01  dst_mac=00:00:06:00:00:01  src_cnt=8000  dst_cnt=8000    frame_rate=1000  frame_size=68  name=d_e_flow
     start traffic  
-    sleep  90
+    sleep  120
     rest verify endpoint in system  48000
     ${result}=  bash execute command  leaf0-a  ofad-ctl ft L2 | wc -l 
     ${count}=	Convert to integer  ${result}   
@@ -463,7 +463,9 @@ Add 96k dynamic mac into the system and check forwarding and make sure aging als
 	${stream}=             L3 add  no_arp=True  flow=a<->c  src_mac=00:00:01:00:00:01  dst_mac=00:00:02:00:00:01  src_cnt=16000  dst_cnt=16000    frame_rate=1000  frame_size=128  name=a_c_flow
     ${stream1}=             L3 add  no_arp=True  flow=b<->f  src_mac=00:00:03:00:00:01  dst_mac=00:00:04:00:00:01  src_cnt=16000  dst_cnt=16000    frame_rate=1000  frame_size=128  name=b_f_flow
     ${stream2}=             L3 add  no_arp=True  flow=d<->e  src_mac=00:00:05:00:00:01  dst_mac=00:00:06:00:00:01  src_cnt=16000  dst_cnt=16000    frame_rate=1000  frame_size=128  name=d_e_flow
-    start traffic  
+    start traffic  ${stream}
+    start traffic  ${stream1}
+    start traffic  ${stream2}  
     sleep  200
     rest verify endpoint in system  96000
     ${result}=  bash execute command  leaf0-a  ofad-ctl ft L2 | wc -l 
@@ -611,7 +613,7 @@ Mac move at scale 48k between rack
     start traffic  ${stream5}
     start traffic  ${stream1}
     start traffic  ${stream3}
-    sleep  100
+    sleep  120
     rest verify forwarding layer2 table untag  leaf2-a  ${leaf2a_ixia_intf}  00:01:01:00:00:01
     rest verify forwarding layer2 table untag  leaf2-b  ${leaf2b_ixia_intf}  00:03:03:00:00:01
     verify traffic rate  tx_rate  rx_rate  c  e
