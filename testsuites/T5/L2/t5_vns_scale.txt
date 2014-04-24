@@ -25,7 +25,7 @@ ${mac1}		00:02:00:00:00:00
 * Test Case 
 
 add Dual Leaf Three Rack setup
-   [Tags]  L2  scaling  run       
+   [Tags]  L2  scaling         
    base suite setup
    add fabric switch
    sleep  5
@@ -33,7 +33,7 @@ add Dual Leaf Three Rack setup
    rest verify fabric link
 
 create 100 vns and verify the table and forwarding
-	[Tags]  scaling      
+	[Tags]  scaling        
 	rest add tenant  t1
 	rest add vns scale  t1  100
 	rest add interface to all vns  t1  leaf0-a  ${leaf0a_ixia_intf}
@@ -70,7 +70,7 @@ create 1k vns and verify the table and forwarding
     Should not be True  ${result}
     
 create 4093 vns and verify the table and forwarding
-	[Tags]  scaling  run    
+	[Tags]  scaling      
   	rest add tenant  t1
 	rest add vns scale  t1  4093
 	summary log  system create a 4k vns
@@ -92,7 +92,7 @@ create 4093 vns and verify the table and forwarding
     Should not be True  ${result}
 
 Master controller node reboot with 4k vns
-	[Tags]  scaling  run    
+	[Tags]  scaling      
   	rest add tenant  t1
 	rest add vns scale  t1  4090
 	summary log  system create a 4k vns
@@ -107,8 +107,7 @@ Master controller node reboot with 4k vns
     rest verify endpoint in system  8180
     verify traffic rate  tx_rate  rx_rate  a  c
     verify traffic rate  tx_rate  rx_rate  c  a
-    cli verify cluster master reboot
-    sleep  2
+    cluster node reboot
     rest verify endpoint in system  8180
     verify traffic rate  tx_rate  rx_rate  a  c
     verify traffic rate  tx_rate  rx_rate  c  a
@@ -119,7 +118,7 @@ Master controller node reboot with 4k vns
     Should not be True  ${result}
 
 Tear down the config
-   [Tags]  L2  scaling       
+   [Tags]  L2  scaling         
    delete fabric switch
    rest delete tenant  t1
    base suite teardown

@@ -298,7 +298,20 @@ verifying flow reconsilation when new switch is connected to the fabric
 	${result}=  bash execute command  leaf2-a  ofad-ctl ft VLAN | grep 49 | wc -l
     ${count}=	Convert to integer  ${result}   
     Should be True  ${count} == 0
-	
+
+verify no of ping loss when there is non connected switches
+	[Tags]  bugs
+    cli add controller  spine0  c1
+	cli add controller  spine0  c2
+	cli add controller  spine1  c1
+	cli add controller  spine1  c2
+	cli add controller  leaf2-a  c1
+	cli add controller  leaf2-a  c2
+	cli add controller  leaf2-b  c1
+	cli add controller  leaf2-b  c2
+	sleep  2
+		
+
 Tear down config and Topology
 	[Tags]  bugs          
 	clean configuration
