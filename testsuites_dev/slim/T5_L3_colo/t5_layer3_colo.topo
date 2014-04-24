@@ -1,0 +1,66 @@
+# Topology description is in YAML format - see http://en.wikipedia.org/wiki/YAML
+#
+# c<n>: Controllers
+# s<n>: Switches
+# h<n>: Hosts (including bare metal)
+# mn  : Mininet server
+
+c1:
+  ip: 10.210.65.43
+
+c2:
+  ip: 10.210.65.37
+  
+
+s1:
+  ip: 10.210.71.42
+   
+s2:
+  ip: 10.210.72.41
+  
+s3:
+  ip: 10.210.71.44
+
+s4:
+  ip: 10.210.71.43
+
+
+h1:
+   ip: 10.210.64.28
+   user: root
+   password: bsn
+     
+h2:
+  ip: 10.210.64.27
+  user: root
+  password: bsn
+  
+h3:
+  ip: 10.210.64.26
+  user: root
+  password: bsn
+   
+h4:
+  ip: 10.210.64.25
+  user: root
+  password: bsn
+     
+h5:
+  ip: 10.210.64.24
+  user: root
+  password: bsn
+    
+h6:
+  ip: 10.210.64.23
+  user: root
+  password: bsn
+
+h7:
+  ip: 10.210.64.22
+  user: root
+  password: bsn
+
+h8:
+  ip: 10.210.64.21
+  user: root
+  password: bsn  

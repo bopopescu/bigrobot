@@ -169,10 +169,11 @@ add portgroup lacp to 2 different rack
 	rest add interface to portgroup  leaf0-a  ${h1_intf0}  p1
 	${result}=  rest add interface to portgroup  leaf0-b  ${h1_intf1}  p1
 	Should not be True  ${result}
-	sleep  2
+	sleep  15
 	rest verify fabric interface lacp  leaf0-a  ${h1_intf0}
 	rest add portgroup  p2
 	rest add portgroup lacp  p2
+	sleep  15
 	rest add interface to portgroup  leaf0-b  ${h1_intf1}  p2
 	${result}=  rest verify fabric interface lacp  leaf0-b  ${h1_intf1}
 	Should not be True  ${result}
