@@ -35,7 +35,7 @@ check the forwarding vlan translation table for all the switches
 	[Tags]  L2        
     rest verify forwarding vlan xlate  leaf0-b  150  ${leaf0b_ixia_intf}	    
     rest verify forwarding vlan xlate  leaf2-b  300  ${leaf2b_ixia_intf}  
-    rest verify forwarding vlan xlate  leaf2-b  200  ${leaf0b_ixia_intf}
+    rest verify forwarding vlan xlate  leaf2-b  200  ${leaf2b_ixia_intf}
     rest verify forwarding vlan xlate  leaf1-a  100  ${leaf1a_ixia_intf}
 
 check fabric ports members in the vlan-table with link up/down

@@ -27,7 +27,7 @@ add Three Rack Dual Leaf Topology
     bring up h4 bond0
     bring up h5 bond0
     bring up h6 bond0
-    sleep  5
+    sleep  10
     rest verify fabric switch all
    
 Verify Fabric Lag formation from leaf node 
@@ -119,6 +119,7 @@ rack lag detection from rack0 leaf switch using three rack setup (add/delete spi
 
 Verify broadcast traffic forwarding on the lag
 	[Tags]  Fabric
+	sleep  5
 	rest verify fabric link common  
 	rest add tenant  t1
 	rest add vns  t1  v1
