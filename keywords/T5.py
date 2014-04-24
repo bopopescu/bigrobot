@@ -522,7 +522,9 @@ class T5(object):
         data = c.rest.content()
         for i in range(0, len(data)):
                 if len(data) != 0:
-                    if data[i]["name"] == re.search('^t.*', 'data[i]["name"]'):
+                    tenant = re.search('^t.*', 'data[i]["name"]')
+                    helpers.log("tenant=%s" % tenant)
+                    if str(data[i]["name"]) == tenant:
                         helpers.log("Expected tenant are present in the config")
                         return True
                     else:
