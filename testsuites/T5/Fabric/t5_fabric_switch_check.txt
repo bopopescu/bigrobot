@@ -26,29 +26,29 @@ Add Fabric Switch Spine and Verify the Status
   REST show fabric switch     
   # Check the fabric switch connection status once the physical switch is connected
   sleep  5
-  verify fabric switch  ${spine0_dpid}  
+  verify fabric switch  spine0  
   # status should show as virtual   
   add switch  spine0 
   add dpid  spine0  ${spine0_dpid} 
   add fabric role  spine0  spine
   sleep  5
-  verify fabric switch  ${spine0_dpid}
+  rest verify fabric switch  spine0
   
 Add Fabric Switch Leaf Group and Verify the status
   [Tags]  Fabric   
-  verify fabric switch  ${leaf0a_dpid}    
+  verify fabric switch  leaf0-a    
   add switch  leaf0-a
   add dpid  leaf0-a  ${leaf0a_dpid} 
   add fabric role  leaf0-a  leaf
   add leaf group  leaf0-a  rack0
   sleep  5
-  verify fabric switch  ${leaf0a_dpid}
+  verify fabric switch  leaf0-a
   add switch  leaf0-b
   add dpid  leaf0-b  ${leaf0b_dpid} 
   add fabric role  leaf0-b  leaf
   add leaf group  leaf0-b  rack0
   sleep  5
-  verify fabric switch  ${leaf0b_dpid} 
+  verify fabric switch  leaf0-b 
  
 Add leaf group from 2 different rack and verify the status and check the fabric error
 	[Tags]	Fabric  
@@ -119,18 +119,18 @@ Delete Fabric switch and verify the status
   	add fabric role  leaf0-a  leaf
   	add leaf group  leaf0-a  rack0
   	sleep  5
-  	verify fabric switch  ${leaf0a_dpid}
+  	verify fabric switch  leaf0-a
     REST delete fabric switch  leaf0-a
   	sleep  5
-  	verify fabric switch  ${leaf0a_dpid}
+  	verify fabric switch  leaf0-a
   	add switch  spine0
   	add dpid  spine0  ${spine0_dpid} 
   	add fabric role  spine0  spine
   	sleep  5
-  	verify fabric switch  ${spine0_dpid}
+  	verify fabric switch  spine0
   	REST delete fabric switch  spine0
   	sleep  5
-  	verify fabric switch  ${spine0_dpid}
+  	verify fabric switch  spine0
  
 
 * Keywords      
@@ -142,8 +142,8 @@ T5 base test teardown
    base test teardown
    sleep  5   
 
-verify fabric switch  [Arguments]  ${dpid} 
-  REST verify fabric switch  ${dpid} 
+verify fabric switch  [Arguments]  ${switch} 
+  REST verify fabric switch  ${switch} 
 
 add switch  [Arguments]  ${switch}
   REST add switch  ${switch}
