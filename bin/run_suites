@@ -6,12 +6,7 @@
 #echo "Disable BVS smoke test for the interim."
 #exit 0
 
-testsuites="\
-testsuites/T5/T5-Platform/t5_virtual_ip_address \
-testsuites/T5/T5-Platform/t5_password_management \
-testsuites/T5/T5-Platform/t5_tacacs_user_management \
-testsuites/T5/T5-Platform/t5_platform_HA_stress
-"
+testsuites=$1
 
 mesg() {
     ts=$(date "+%Y-%m-%d %H:%M:%S")

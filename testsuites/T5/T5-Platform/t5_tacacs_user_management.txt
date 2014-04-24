@@ -15,7 +15,7 @@ Library  Collections.py
 
 * Variable
 ${projectname}  Big Virtual Switch Appliance
-${version}      2.0.5-SNAPSHOT  
+${version}      SNAPSHOT  
     
 * Test Case
 Verify Running-Configuration
