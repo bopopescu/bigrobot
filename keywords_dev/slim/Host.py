@@ -123,7 +123,7 @@ class Host(object):
         n.bash("route")
         return True
 
-    def bash_get_intf_ipv4(self, node, intf):
+    def bash_get_interface_ipv4(self, node, intf):
         t = test.Test()
         n = t.node(node)
         output = n.sudo("ifconfig %s | grep --color=never -i 'inet addr'" % intf)['content']
