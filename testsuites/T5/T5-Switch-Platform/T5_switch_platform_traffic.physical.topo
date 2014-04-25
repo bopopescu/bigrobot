@@ -7,38 +7,47 @@
 # tg1 : Tester like Ixia
 
 c1:
-    ip:  10.192.107.5
-    
+    ip:  dummy    
 c2:
-    ip:  10.192.107.6
-
+    ip:  dummy
+    
 s1:
-    ip:  10.192.107.11
-    console_ip: cs-rack10
-    console_port: 6015   
-   
-s2:
-    ip:  10.192.107.12
+    ip:  10.195.0.33
+    alias:  leaf0-a
+    user:  admin
+    password:  adminadmin
     console_ip: cs-rack10
     console_port: 6016   
  
-s3:
-    ip:  10.192.107.15
+s2:
+    ip:  10.195.0.34
+    alias:  leaf0-b
+    user:  admin
+    password:  adminadmin
     console_ip: cs-rack10
     console_port: 6017   
-    
+
+s7:
+    ip:  10.195.0.21
+    alias: spine0
+    user:  admin
+    password:  adminadmin
+    console_ip: cs-rack10
+    console_port: 6015   
+  
 tg1:
   platform: 'ixia'
   chassis_ip: 10.192.85.151
-  tcl_server_ip: 10.194.64.184
-  
+  tcl_server_ip: dummy
   tcl_server_port: 8009
   ix_version: '7.10'
   set_init_ping: false
   ports:
     a:
-      name: 4/25
+      name: 2/1
     b:
-      name: 4/26
+      name: 2/2
+      
+      
 
       

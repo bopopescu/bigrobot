@@ -20,11 +20,10 @@ Library         keywords/BsnCommon.py
 Library         keywords/AppController.py
 Library         keywords/SwitchLight.py
 Library         keywords/Ixia.py 
-Library         keywords/T5.py
-Library         keywords/T5Fabric.py      
+Library         keywords/T5.py      
 Library         keywords_dev/kranti/ironhorse/snaketraffictest.py
 Library         String
-Resource        keywords_dev/kranti/ironhorse/snake_traffic_test_variables.txt
+#Resource        keywords_dev/kranti/ironhorse/snake_traffic_test_variables.txt
 
 *Variables
 ${j}    1
