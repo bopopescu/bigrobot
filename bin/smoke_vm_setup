@@ -145,7 +145,7 @@ def main(*args):
             sys.exit(1)
     mininet_vm = None
     args.vm_type = "mininet"
-    if args.mininet_vm is not None:
+    if args.mininet_vm is not None and args.regress is not "physical":
         test.Test._instance = None
         vm_mininet_name = (current_user + '_' + args.mininet_vm + '_'
                           + datetime.datetime.now().strftime("%m%d%H%M"))
@@ -298,8 +298,7 @@ def main(*args):
        password: %s\n\
     mn1:\n\
       ip: %s\n" % (active_vm['vm_ip'], kvm_host, active_vm['vm_name'], kvm_user, kvm_pwd,
-                  standby_vm['vm_ip'], kvm_host, standby_vm['vm_name'], kvm_user, kvm_pwd,
-                  mininet_vm['vm_ip'])
+                  standby_vm['vm_ip'], kvm_host, standby_vm['vm_name'], kvm_user, kvm_pwd)
     topo.write(config)
     topo.close()
     helpers.log("Success in creating topo file %s" % topo_file)
