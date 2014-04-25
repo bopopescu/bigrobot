@@ -51,6 +51,14 @@ Intra tenant L3 tagged traffic with static endpoints across rack
 	L3 intra tenant across rack tagged with static endpoints
 	[Tags]							skipped			smoke				sanity	
 
+Dhcp discover on the same vns as server with dhcp-relay enabled
+	DHCP discovery on the same vns as server with dhcp-relay enabled
+	[Tags]							skipped			smoke				sanity	
+
+Dhcp discover on the same vns as server without dhcp-relay enabled
+	DHCP discovery on the same vns as server without dhcp-relay enabled
+	[Tags]							skipped			smoke				sanity	
+
 Intra tenant dhcp relay 
 	L3 intra tenant dhcp relay on same rack with valid circuitid
 	[Tags]							skipped			smoke				sanity	
@@ -62,7 +70,6 @@ Intra tenant dhcp relay with invalid circuit id
 Intra tenant dhcp relay enabled and disabled
 	L3 dhcp request with and without dhcp relay enabled
 	[Tags]							skipped			smoke				sanity	
-
 
 Intra tenant dhcp relay across rack
 	L3 intra tenant dhcp relay across rack
@@ -180,6 +187,15 @@ L3 traffic behavior in headless mode
 Inter tenant L3 traffic same rack	
 	L3 inter tenant traffic in the same rack
 	[Tags]							skipped			sanity				
+
+Inter tenant L3 dhcp relay
+	Inter tenant L3 dhcp relay
+	[Tags]							skipped			sanity				
+	
+Inter tenant dhcp relay with two dhcp servers on both vns
+	L3 inter tenant dhcp relay with two dhcp servers on both vns
+	[Tags]							skipped			sanity				
+	
 	
 * Keywords
 L3 intra tenant same rack untagged with dynamic endpoints
