@@ -52,6 +52,8 @@ ${leaf0_pc8}		leaf0-pc8
 ${leaf0_pc9}		leaf0-pc9
 ${leaf0_pc10}		leaf0-pc10
 ${leaf0_pc11}		leaf0-pc11
+${leaf0_arista1}	leaf0-arista30
+${leaf0_arista2}	leaf0-arista29
 
 ${leaf1_pc1}		leaf1-pc1
 ${leaf1_pc2}		leaf1-pc2
@@ -94,3 +96,9 @@ ${leaf0_pc10_intf1}	ethernet10
 ${leaf0_pc10_intf2}	ethernet10
 ${leaf0_pc11_intf1}	ethernet11
 ${leaf0_pc11_intf2}	ethernet11
+
+${leaf0_arista1_intf1}	ethernet33
+${leaf0_arista1_intf2}	ethernet33
+${leaf0_arista2_intf1}	ethernet34
+${leaf0_arista2_intf2}	ethernet34
+

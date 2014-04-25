@@ -186,7 +186,7 @@ L3 intra tenant same rack untagged with dynamic endpoints
 	
 	${ipAddr4} = 								BASH get interface ipv4 		h4						bond0
 	Should Not Be Empty							${ipAddr4}
-	${ipAddr4} = 								BASH get interface ipv4 		h5						bond0
+	${ipAddr5} = 								BASH get interface ipv4 		h5						bond0
 	Should Not Be Empty							${ipAddr5}
 	BASH ping									h4								10.251.1.1				count=10
 	BASH ping									h5								10.251.2.1				count=10
@@ -202,7 +202,7 @@ L3 intra tenant same rack untagged with dynamic endpoints
 	${result} =									REST show endpoints mac			${mac2}
 	${attachpoint} = 							Set Variable					${result[0]['attachment-point']['port-group']}	
 	Should Contain								${attachpoint}					${leaf0_pc5}	
-	${loss} = 									BASH ping						h1						10.251.2.11 			count=10
+	${loss} = 									BASH ping						h4						10.251.2.11 			count=10
 	Should Be True  							${loss} == 0	
 #	${stream1}=  								L3 add  						name=stream1		  	flow=a<->c 				frame_rate=100000  			frame_size=9216  			frame_cnt=10000000
 #	...     									src_ip=10.251.1.101				src_gw=10.251.1.1		dst_ip=10.251.2.201		dst_gw=10.251.2.1			 			
@@ -217,12 +217,12 @@ L3 intra tenant same rack tagged with dynamic endpoints
 	Should Be True								${value} 		
 	${value} =									BASH verify arp					h8						10.252.2.1
 	Should Be True								${value} 
-	${mac4} = 									BASH get intf mac				h8						bond0
-	${result} =									REST show endpoints mac			${mac4}
+	${mac7} = 									BASH get intf mac				h7						bond0
+	${result} =									REST show endpoints mac			${mac7}
 	${attachpoint} = 							Set Variable					${result[0]['attachment-point']['port-group']}	
 	Should Contain								${attachpoint}					${leaf0_pc7}
-	${mac5} = 									BASH get intf mac				h8						bond0
-	${result} =									REST show endpoints mac			${mac5}
+	${mac8} = 									BASH get intf mac				h8						bond0
+	${result} =									REST show endpoints mac			${mac8}
 	${attachpoint} = 							Set Variable					${result[0]['attachment-point']['port-group']}	
 	Should Contain								${attachpoint}					${leaf0_pc8}
 	${loss} = 									BASH ping						h4						10.252.2.11 			count=10
@@ -248,6 +248,7 @@ L3 intra tenant dhcp relay on same rack with valid circuitid
 	REST add dhcp relay							X								X2						10.251.1.11
 	REST add dhcprelay circuitid				X								X2						private vns X2
 	REST enable dhcp relay						X								X2	
+### temporary workaround to enable dhcp relay to silent host	
 	BASH ping									h4								10.251.1.1				count=5
 	sleep										10
 	${value} = 									BASH release dhcpv4 address		h5						bond0
@@ -325,7 +326,7 @@ L3 dhcp request with and without dhcp relay enabled
 	${ipAddr} = 								BASH renew dhcpv4 address		h5						bond0
 	Should Not Be Empty							${ipAddr}
 	sleep										5
-	BASH ping									h1								${ipAddr}				count=10
+	BASH ping									h4								${ipAddr}				count=10
 	${value} = 									BASH verify arp					h4						10.251.1.1
 	Should Be True								${value} 		
 	${value} =									BASH verify arp					h5						10.251.2.1
@@ -344,7 +345,7 @@ L3 dhcp request with and without dhcp relay enabled
 	Should Be True								${value}
 	REST disable dhcp relay						X								X2	
 	sleep										1
-	${ipAddr1} = 								BASH renew dhcpv4 address		h4						bond0
+	${ipAddr1} = 								BASH renew dhcpv4 address		h5						bond0
 	Should Be Empty								${ipAddr1}
 	sleep										5
 	${result} =									REST show endpoints mac			${mac5}
@@ -354,9 +355,9 @@ L3 dhcp request with and without dhcp relay enabled
 	Should Be True  							${loss} == 100		
 	REST enable dhcp relay						X								X2	
 	sleep										1
-	${ipAddr1} = 								BASH renew dhcpv4 address		h4						bond0
+	${ipAddr1} = 								BASH renew dhcpv4 address		h5						bond0
 	Should Not Be Empty							${ipAddr1}
-	BASH ping									h1								${ipAddr1} 				count=5
+	BASH ping									h5								${ipAddr1} 				count=5
 	${loss} = 									BASH ping						h4						${ipAddr1} 			count=10
 	Should Be True  							${loss} == 0		
 
@@ -369,7 +370,7 @@ L3 inter tenant traffic in the same rack
 	Should Be True								${value} 		
 	${value} =									BASH verify arp					h7						10.252.1.1
 	Should Be True								${value} 
-	${mac4} = 									BASH get intf mac				h7						bond0
+	${mac4} = 									BASH get intf mac				h4						bond0
 	${result} =									REST show endpoints mac			${mac4}
 	${attachpoint} = 							Set Variable					${result[0]['attachment-point']['port-group']}	
 	Should Contain								${attachpoint}					${leaf0_pc4}	
@@ -383,11 +384,11 @@ L3 inter tenant traffic in the same rack
 
 
 initialize host
-	BASH delete tag										h6								bond0.1003				soft_error=${true}
-	BASH delete tag										h7								bond0.1004				soft_error=${true}
-	BASH delete tag										h8								bond0.1005				soft_error=${true}
-	BASH delete tag										h9								bond0.1006				soft_error=${true}
-	BASH delete tag										h10								bond0.1007				soft_error=${true}	
+	BASH delete tag										h6								bond0.1006				soft_error=${true}
+	BASH delete tag										h7								bond0.1007				soft_error=${true}
+	BASH delete tag										h8								bond0.1008				soft_error=${true}
+	BASH delete tag										h9								bond0.1009				soft_error=${true}
+	BASH delete tag										h10								bond0.1010				soft_error=${true}	
 	BASH delete route									h4								10.251.2.0/24			10.251.1.1
 	BASH delete route									h4								10.251.3.0/24			10.251.1.1
 	BASH delete route									h4								10.252.0.0/16			10.251.1.1
@@ -475,6 +476,9 @@ setup topology
 	REST add vns									Z							Z1
 	REST add vns									Z							Z2
 	REST add vns									Z							Z3
+	REST add vns									Z							Arista30
+	REST add vns									Z							Arista29
+	
 	REST add router intf							X							X1
 	REST add router intf							X							X2
 	REST add router intf							X							X3
@@ -484,6 +488,8 @@ setup topology
 	REST add router intf							Z							Z1
 	REST add router intf							Z							Z2
 	REST add router intf							Z							Z3
+	REST add router intf 							Z							Arista30
+	REST add router intf 							Z							Arista29
 	REST add vns ip  								X							X1				10.251.1.1				24	
 	REST add vns ip  								X							X2				10.251.2.1				24	
 	REST add vns ip  								X							X3				10.251.3.1				24	
@@ -493,6 +499,18 @@ setup topology
 	REST add vns ip  								Z							Z1				10.253.1.1				24	
 	REST add vns ip  								Z							Z2				10.253.2.1				24	
 	REST add vns ip  								Z							Z3				10.253.3.1				24	
+	REST add vns ip									Z							Arista30		10.99.0.2				24
+	REST add vns ip									Z							Arista29		10.98.0.2				24
+	REST add ecmp group								Z							ecmp-Arista
+	REST add gw pool nexthop						Z							ecmp-Arista		10.99.0.1
+	REST add gw pool nexthop						Z							ecmp-Arista		10.98.0.1
+	REST add static routes							Z							192.168.0.0/24						{"ecmp-group-name": "ecmp-Arista"}
+	REST add interface to portgroup					leaf0-a						${leaf0_pc1_intf1}					${leaf0_pc1}
+	REST add interface to portgroup					leaf0-b						${leaf0_pc1_intf2}					${leaf0_pc1}
+	REST add interface to portgroup					leaf0-a						${leaf0_pc2_intf1}					${leaf0_pc2}
+	REST add interface to portgroup					leaf0-b						${leaf0_pc2_intf2}					${leaf0_pc2}
+	REST add interface to portgroup					leaf0-a						${leaf0_pc3_intf1}					${leaf0_pc3}
+	REST add interface to portgroup					leaf0-b						${leaf0_pc3_intf2}					${leaf0_pc3}	
 	REST add interface to portgroup					leaf0-a						${leaf0_pc4_intf1}					${leaf0_pc4}
 	REST add interface to portgroup					leaf0-b						${leaf0_pc4_intf2}					${leaf0_pc4}
 	REST add interface to portgroup					leaf0-a						${leaf0_pc5_intf1}					${leaf0_pc5}
@@ -508,7 +526,15 @@ setup topology
   	REST add interface to portgroup					leaf0-a						${leaf0_pc10_intf1}					${leaf0_pc10}
 	REST add interface to portgroup					leaf0-b						${leaf0_pc10_intf2}					${leaf0_pc10}
   	REST add interface to portgroup					leaf0-a						${leaf0_pc11_intf1}					${leaf0_pc11}
-	REST add interface to portgroup					leaf0-b						${leaf0_pc11_intf2}					${leaf0_pc11}  	
+	REST add interface to portgroup					leaf0-b						${leaf0_pc11_intf2}					${leaf0_pc11}
+	REST add interface to portgroup					leaf0-a						${leaf0_arista1_intf1}				${leaf0_arista1}
+  	REST add interface to portgroup					leaf0-b						${leaf0_arista1_intf2}				${leaf0_arista1}
+	REST add interface to portgroup					leaf0-a						${leaf0_arista2_intf1}				${leaf0_arista2}
+  	REST add interface to portgroup					leaf0-b						${leaf0_arista2_intf2}				${leaf0_arista2}  	
+  	
+	REST add portgroup lacp							${leaf0_pc1}
+  	REST add portgroup lacp							${leaf0_pc2}
+  	REST add portgroup lacp							${leaf0_pc3}
   	REST add portgroup lacp							${leaf0_pc4}
   	REST add portgroup lacp							${leaf0_pc5}
   	REST add portgroup lacp							${leaf0_pc6}
@@ -516,16 +542,23 @@ setup topology
   	REST add portgroup lacp							${leaf0_pc8}
   	REST add portgroup lacp							${leaf0_pc9}  	
     REST add portgroup lacp							${leaf0_pc10}
-  	REST add portgroup lacp							${leaf0_pc11}  		
+  	REST add portgroup lacp							${leaf0_pc11}  	
+  	REST add portgroup lacp							${leaf0_arista1}
+  	REST add portgroup lacp							${leaf0_arista2}
+  		
   	REST add portgroup to vns						X								X1						${leaf0_pc4}			-1
 	REST add portgroup to vns						X								X2						${leaf0_pc5}			-1
-	REST add portgroup to vns						X								X3						${leaf0_pc6}			1003
-	REST add portgroup to vns						Y								Y1						${leaf0_pc7}			1004
-	REST add portgroup to vns						Y								Y2						${leaf0_pc8}			1005
-	REST add portgroup to vns						Y								Y3						${leaf0_pc9}			1006
-	REST add portgroup to vns						Z								Z1						${leaf0_pc10}			1007
+	REST add portgroup to vns						X								X3						${leaf0_pc6}			1006
+	REST add portgroup to vns						Y								Y1						${leaf0_pc7}			1007
+	REST add portgroup to vns						Y								Y2						${leaf0_pc8}			1008
+	REST add portgroup to vns						Y								Y3						${leaf0_pc9}			1009
+	REST add portgroup to vns						Z								Z1						${leaf0_pc10}			1010
 	REST add portgroup to vns						Z								Z2						${leaf0_pc11}			-1
 #	REST add portgroup to vns						Z								Z3						${leaf0_pc12}			-1
+	REST add portgroup to vns						Z								Arista30				${leaf0_arista1} 		-1
+	REST add portgroup to vns						Z								Arista29				${leaf0_arista2} 		-1
+	
+
 	BASH ifup intf									h4 								bond0
 	BASH ifup intf									h5								bond0
 	BASH ifup intf									h6								bond0
@@ -534,25 +567,25 @@ setup topology
 	BASH ifup intf									h9								bond0	
 	BASH ifup intf									h10								bond0	
 	BASH ifup intf									h11								bond0	
-	BASH add tag									h6								bond0					1003
-	BASH add tag									h7								bond0					1004
-	BASH add tag									h8								bond0					1005
-	BASH add tag									h9								bond0					1006
-	BASH add tag									h10								bond0					1007
-	BASH ifup intf									h6								bond0.1003
-	BASH ifup intf									h7								bond0.1004
-	BASH ifup intf									h8								bond0.1005
-	BASH ifup intf									h9								bond0.1006
-	BASH ifup intf									h10								bond0.1007
+	BASH add tag									h6								bond0					1006
+	BASH add tag									h7								bond0					1007
+	BASH add tag									h8								bond0					1008
+	BASH add tag									h9								bond0					1009
+	BASH add tag									h10								bond0					1010
+	BASH ifup intf									h6								bond0.1006
+	BASH ifup intf									h7								bond0.1007
+	BASH ifup intf									h8								bond0.1008
+	BASH ifup intf									h9								bond0.1009
+	BASH ifup intf									h10								bond0.1010
 	BASH add ip address								h4								10.251.1.11/24			bond0	
 	BASH add ip address								h5								10.251.2.11/24			bond0
-	BASH add ip address								h6								10.251.3.11/24			bond0.1003
-	BASH add ip address								h7								10.252.1.11/24			bond0.1004
-	BASH add ip address								h8								10.252.2.11/24			bond0.1005
-	BASH add ip address								h9								10.252.3.11/24			bond0.1006
-	BASH add ip address								h10								10.253.1.11/24			bond0.1007
+	BASH add ip address								h6								10.251.3.11/24			bond0.1006
+	BASH add ip address								h7								10.252.1.11/24			bond0.1007
+	BASH add ip address								h8								10.252.2.11/24			bond0.1008
+	BASH add ip address								h9								10.252.3.11/24			bond0.1009
+	BASH add ip address								h10								10.253.1.11/24			bond0.1010
 	BASH add ip address								h11								10.253.2.11/24			bond0
-	BASH add route									h4								10.251.2.0/24			10.251.1.1
+	BASH add route									h4								10.251..0/24			10.251.1.1
 	BASH add route									h4								10.251.3.0/24			10.251.1.1
 	BASH add route									h4								10.252.0.0/16			10.251.1.1
 	BASH add route									h4								10.253.0.0/16			10.251.1.1
@@ -651,11 +684,11 @@ teardown topology
   	BASH delete route									h11								10.253.3.0/24			10.253.2.1
 	BASH delete route									h11								10.251.0.0/16			10.253.2.1
   	BASH delete route									h11								10.252.0.0/16			10.253.2.1
-	BASH delete tag										h6								bond0.1003				soft_error=${true}
-	BASH delete tag										h7								bond0.1004				soft_error=${true}
-	BASH delete tag										h8								bond0.1005				soft_error=${true}
-	BASH delete tag										h9								bond0.1006				soft_error=${true}
-	BASH delete tag										h10								bond0.1007				soft_error=${true}
+	BASH delete tag										h6								bond0.1006				soft_error=${true}
+	BASH delete tag										h7								bond0.1007				soft_error=${true}
+	BASH delete tag										h8								bond0.1008				soft_error=${true}
+	BASH delete tag										h9								bond0.1009				soft_error=${true}
+	BASH delete tag										h10								bond0.1010				soft_error=${true}
 	BASH init intf										h4 								bond0
 	BASH init intf										h5								bond0
 	BASH init intf										h6								bond0
@@ -705,8 +738,10 @@ T5 base suite setup
 	REST add portgroup								${leaf0_pc8}	
 	REST add portgroup								${leaf0_pc9}
 	REST add portgroup								${leaf0_pc10}			
-	REST add portgroup								${leaf0_pc11}		
-  
+	REST add portgroup								${leaf0_pc11}	
+	REST add portgroup								${leaf0_arista1}
+	REST add portgroup								${leaf0_arista2}
+	
 T5 base suite teardown
 	delete fabric switch  
   	REST delete portgroup lacp							${leaf0_pc1}
@@ -731,6 +766,9 @@ T5 base suite teardown
 	REST delete portgroup								${leaf0_pc9}	
 	REST delete portgroup								${leaf0_pc10}
 	REST delete portgroup								${leaf0_pc11}
+	REST delete portgroup								${leaf0_arista1}
+	REST delete portgroup								${leaf0_arista2}
+
 
 verify results   [Arguments]  ${transmitted_frames}  ${received_frames}  ${stream}  ${stream_name}
     Sleep  5
