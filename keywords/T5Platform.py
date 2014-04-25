@@ -336,7 +336,6 @@ class T5Platform(object):
         return utilities.fabric_integrity_checker(obj,"after")
 
 
-
     def verify_HA_with_disruption(self, disruptMode="switchReboot", disruptTime="during", failoverMode="failover", **kwargs ):
         '''
             This function will carry out different disruptions during failovers & verify fabric 
@@ -364,9 +363,9 @@ class T5Platform(object):
 
         if (disruptMode == "switchReboot"):
             switchList = kwargs.get('switch').split(' ')
-            for i,switch in enumerate(switchList):
+            for i,switchName in enumerate(switchList):
                 threadList.append("thread" + '%s' % threadCounter)
-                threadList[i] = T5PlatformThreads(threadCounter, "switchReboot", switch)
+                threadList[i] = T5PlatformThreads(threadCounter, "switchReboot",  switch=switchName)
                 threadCounter += 1
             
         disruptThreadCounter = threadCounter
@@ -376,7 +375,7 @@ class T5Platform(object):
         
         if(failoverMode == "failover"):
             threadList.append("thread" + '%s' % threadCounter)
-            threadList[len(threadList)-1] = T5PlatformThreads(threadCounter, "failover", "")
+            threadList[len(threadList)-1] = T5PlatformThreads(threadCounter, "failover")
             threadCounter += 1
         elif(failoverMode == "activeReboot"):
             threadList.append("thread" + '%s' % threadCounter)
@@ -409,7 +408,10 @@ class T5Platform(object):
         # Create new threads
         #thread1 = Thread(target= self._verify_HA_duringReboot(kwargs.get("switch")))
         #thread2 = Thread(target= self.cli_cluster_take_leader())
-        
+ 
+
+
+
 
     def rest_add_user(self, numUsers=1):
         numWarn = 0
@@ -1099,26 +1101,51 @@ class T5Platform(object):
             return False
 
 
-    def platform_tcp_dump(self, host, interface, searchString):
-        
-        ''' Platform specific tcpdump verification.
-        Input: host -> hostname from the topo file
-                interface -> interfaces of the host that tcpdump would get excuted
-                searchString -> String to search in the tcpdump output
-        '''
-        t = test.Test()
-        n = t.node(host)
 
-        output = n.bash("timeout 5 tcpdump -i %s" % interface )
-        helpers.log("tcpdump output is: %s" % output['content'])
-            
-        match = re.search(r"%s" % searchString, output['content'], re.S | re.I)
+    def verify_ping_with_tcpdump(self, host, ipAddr, verifyHost, verifyInt, *args):
+        
+        ''' This function will issue a ping request and verify it through the TCP dump.
+        
+        Input:  host -> hostname from the topo file
+                ipAddr -> Destination IP address of that ping request should go
+                verifyHost -> Host where tcpdump is being executed
+                verifyInt -> interfaces of the host that tcpdump would get excuted
+                verifyString -> String to search in the tcpdump output
+        '''
+        
+        t = test.Test()
+        n = t.node(verifyHost)
+        
+        verifyString = ""
+        for arg in args:
+            verifyString += '.*' + arg
+        verifyString += '.*'
+        # Issue a tcpdump & make sure there's no traffic already matching "verifyString" is receiving
+        output = n.bash("timeout 5 tcpdump -i %s" % verifyInt )
+        match = re.search(r"%s" % verifyString, output['content'], re.S | re.I)
         
         if match:
-            return True
-        else:
-            helpers.log("TCPDump match not found")
+            helpers.log("verifyString is: %s" % verifyString)
+            helpers.log("Found it on the tcpdump output before issueing a ping: %s" % output['content'])
             return False
+        
+        else:
+            # Schedule a different thread to execute the ping. Ping will be executed for 10 packets
+            pingThread = T5PlatformThreads(1, "hostPing",  host=host, IP=ipAddr)
+            helpers.log("Starting ping thread to ping from %s to destIP: %s" % (host, ipAddr))
+            pingThread.start()
+            
+    
+            output = n.bash("timeout 5 tcpdump -i %s" % verifyInt )
+            verifyStringFound = re.search(r"%s" % verifyString, output['content'], re.S | re.I)
+            
+            pingThread.join()
+            
+            if verifyStringFound:
+                return True
+            else:
+                helpers.log("TCPDump match not found for string: %s" % verifyString)
+                return False
 
 
     def cli_compare(self, src, dst, node='master', scp_passwd='adminadmin'):

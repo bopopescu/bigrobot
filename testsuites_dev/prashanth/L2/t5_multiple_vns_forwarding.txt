@@ -35,7 +35,7 @@ check the forwarding vlan translation table for all the switches
 	[Tags]  L2        
     rest verify forwarding vlan xlate  leaf0-b  150  ${leaf0b_ixia_intf}	    
     rest verify forwarding vlan xlate  leaf2-b  300  ${leaf2b_ixia_intf}  
-    rest verify forwarding vlan xlate  leaf2-b  200  ${leaf0b_ixia_intf}
+    rest verify forwarding vlan xlate  leaf2-b  200  ${leaf2b_ixia_intf}
     rest verify forwarding vlan xlate  leaf1-a  100  ${leaf1a_ixia_intf}
 
 check fabric ports members in the vlan-table with link up/down
@@ -198,7 +198,7 @@ Testing flooding to within a VNS when the peer-lag down..
     sleep  5
 
 add/delete vns with traffic forwarding
-	[Tags]  L2  run   
+	[Tags]  L2     
 	
 	${stream}=             L3 add  no_arp=True  flow=a<->e  src_mac=00:02:01:00:00:24  dst_mac=00:02:05:00:00:24  vlan_id=500  ethertype=8100  frame_rate=1000  frame_size=68  name=a_e_flow
 	sleep  3
@@ -228,7 +228,7 @@ add/delete vns with traffic forwarding
 	sleep  5
 
 add/delete tenant with traffic forwarding
-	[Tags]  L2  run     
+	[Tags]  L2       
 	
 	${stream}=             L3 add  no_arp=True  flow=a<->e  src_mac=00:02:01:00:00:24  dst_mac=00:02:05:00:00:24  vlan_id=500  ethertype=8100  frame_rate=1000  frame_size=68  name=a_e_flow
 	sleep  3

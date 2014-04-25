@@ -23,7 +23,7 @@ ${mac2}		00:00:06:00:00:00
 * Test Case 
 
 add Dual Leaf Three Rack setup
-   [Tags]  L2   run
+   [Tags]  L2   
   	base suite setup
   	add fabric switch
   	bring up 1 gig interface
@@ -32,7 +32,7 @@ add Dual Leaf Three Rack setup
   	rest verify fabric link common
    
 Add 1000 dynamic mac into the system and check forwarding and make sure aging also works for 1000 mac
-	[Tags]  scaling    
+	[Tags]  L2  scaling    
 	${stream}=             L3 add  no_arp=True  flow=a<->c  src_mac=00:00:01:00:00:01  dst_mac=00:00:02:00:00:01  src_cnt=500  dst_cnt=500   frame_rate=1000  frame_size=128  name=a_c_flow
     start traffic  ${stream}
     rest verify endpoint in system  1000
@@ -62,7 +62,7 @@ Add 1000 dynamic mac into the system and check forwarding and make sure aging al
     Should be True  ${count} < 8
 	    
 Add 4000 dynamic mac into the system and check forwarding and make sure aging also works for 4000 mac
-	[Tags]  scaling     
+	[Tags]  L2  scaling     
 	${stream}=             L3 add  no_arp=True  flow=a<->c  src_mac=00:00:01:00:00:01  dst_mac=00:00:02:00:00:01  src_cnt=2000  dst_cnt=2000   frame_rate=1000  frame_size=128  name=a_c_flow
     start traffic  ${stream}
     rest verify endpoint in system  4000
@@ -93,7 +93,7 @@ Add 4000 dynamic mac into the system and check forwarding and make sure aging al
 
 
 Add 10000 dynamic mac into the system and check forwarding and make sure aging also works for 10000 mac
-	[Tags]  scaling  
+	[Tags]  L2  scaling  
 	${stream}=             L3 add  no_arp=True  flow=a<->c  src_mac=00:00:01:00:00:01  dst_mac=00:00:02:00:00:01  src_cnt=5000  dst_cnt=5000   frame_rate=1000  frame_size=128  name=a_c_flow
     start traffic  ${stream}
     sleep  20
@@ -124,7 +124,7 @@ Add 10000 dynamic mac into the system and check forwarding and make sure aging a
     Should be True  ${count} < 8
 
 Add 16000 dynamic mac into the system and check forwarding and make sure aging also works for 16000 mac
-	[Tags]  scaling  
+	[Tags]  L2  scaling    
 	${stream}=             L3 add  no_arp=True  flow=a<->c  src_mac=00:00:01:00:00:01  dst_mac=00:00:02:00:00:01  src_cnt=8000  dst_cnt=8000  frame_rate=1000  frame_size=128  name=a_c_flow
     start traffic  ${stream}
 	sleep  40   
@@ -155,10 +155,10 @@ Add 16000 dynamic mac into the system and check forwarding and make sure aging a
     Should be True  ${count} < 8
     
 Add 48k dynamic mac into the system and check forwarding and make sure aging also works for 48k mac
-	[Tags]  scaling  run 
-	${stream}=             L3 add  no_arp=True  flow=a<->c  src_mac=00:00:01:00:00:01  dst_mac=00:00:02:00:00:01  src_cnt=8000  dst_cnt=8000    frame_rate=1000  frame_size=128  name=a_c_flow
-    ${stream1}=             L3 add  no_arp=True  flow=b<->f  src_mac=00:00:03:00:00:01  dst_mac=00:00:04:00:00:01  src_cnt=8000  dst_cnt=8000    frame_rate=1000  frame_size=128  name=b_f_flow
-    ${stream2}=             L3 add  no_arp=True  flow=d<->e  src_mac=00:00:05:00:00:01  dst_mac=00:00:06:00:00:01  src_cnt=8000  dst_cnt=8000    frame_rate=1000  frame_size=128  name=d_e_flow
+	[Tags]  L2  scaling  
+	${stream}=             L3 add  no_arp=True  flow=a<->c  src_mac=00:00:01:00:00:01  dst_mac=00:00:02:00:00:01  src_cnt=8000  dst_cnt=8000  src_ip=20.0.0.1  dst_ip=20.0.0.2  frame_rate=1000  frame_size=128  name=a_c_flow
+    ${stream1}=             L3 add  no_arp=True  flow=b<->f  src_mac=00:00:03:00:00:01  dst_mac=00:00:04:00:00:01  src_cnt=8000  dst_cnt=8000  src_ip=30.0.0.1  dst_ip=30.0.0.2  frame_rate=1000  frame_size=128  name=b_f_flow
+    ${stream2}=             L3 add  no_arp=True  flow=d<->e  src_mac=00:00:05:00:00:01  dst_mac=00:00:06:00:00:01  src_cnt=8000  dst_cnt=8000  src_ip=40.0.0.1  dst_ip=40.0.0.2  frame_rate=1000  frame_size=128  name=d_e_flow
     start traffic  ${stream}
     start traffic  ${stream1}
     start traffic  ${stream2} 
@@ -194,10 +194,10 @@ Add 48k dynamic mac into the system and check forwarding and make sure aging als
     Should be True  ${count} < 8
 	    
 spine link failover with 48k mac address in the system
-	[Tags]  scaling  
-	${stream}=             L3 add  no_arp=True  flow=a<->c  src_mac=00:00:01:00:00:01  dst_mac=00:00:02:00:00:01  src_cnt=8000  dst_cnt=8000    frame_rate=1000  frame_size=128  name=a_c_flow
-    ${stream1}=             L3 add  no_arp=True  flow=b<->f  src_mac=00:00:03:00:00:01  dst_mac=00:00:04:00:00:01  src_cnt=8000  dst_cnt=8000    frame_rate=1000  frame_size=128  name=b_f_flow
-    ${stream2}=             L3 add  no_arp=True  flow=d<->e  src_mac=00:00:05:00:00:01  dst_mac=00:00:06:00:00:01  src_cnt=8000  dst_cnt=8000    frame_rate=1000  frame_size=128  name=d_e_flow
+	[Tags]  L2  scaling   
+	${stream}=             L3 add  no_arp=True  flow=a<->c  src_mac=00:00:01:00:00:01  dst_mac=00:00:02:00:00:01  src_cnt=8000  dst_cnt=8000  src_ip=20.0.0.1  dst_ip=20.0.0.2  frame_rate=1000  frame_size=128  name=a_c_flow
+    ${stream1}=             L3 add  no_arp=True  flow=b<->f  src_mac=00:00:03:00:00:01  dst_mac=00:00:04:00:00:01  src_cnt=8000  dst_cnt=8000  src_ip=30.0.0.1  dst_ip=30.0.0.2  frame_rate=1000  frame_size=128  name=b_f_flow
+    ${stream2}=             L3 add  no_arp=True  flow=d<->e  src_mac=00:00:05:00:00:01  dst_mac=00:00:06:00:00:01  src_cnt=8000  dst_cnt=8000  src_ip=40.0.0.1  dst_ip=40.0.0.2  frame_rate=1000  frame_size=128  name=d_e_flow
     start traffic  ${stream}
     start traffic  ${stream1}
     start traffic  ${stream2}  
@@ -228,6 +228,15 @@ spine link failover with 48k mac address in the system
     verify traffic rate  tx_rate  rx_rate  e  d
     rest verify endpoint in system  48000
     rest enable fabric interface  leaf0-a  ${leaf0a_spine0_intf0}
+    sleep  10
+    verify traffic rate  tx_rate  rx_rate  a  c
+    verify traffic rate  tx_rate  rx_rate  c  a
+    verify traffic rate  tx_rate  rx_rate  b  f
+    verify traffic rate  tx_rate  rx_rate  f  b
+    verify traffic rate  tx_rate  rx_rate  d  e
+    verify traffic rate  tx_rate  rx_rate  e  d
+    rest verify endpoint in system  48000
+    rest disable fabric interface  leaf0-a  ${leaf0a_spine1_intf0}
     sleep  5
     verify traffic rate  tx_rate  rx_rate  a  c
     verify traffic rate  tx_rate  rx_rate  c  a
@@ -236,17 +245,8 @@ spine link failover with 48k mac address in the system
     verify traffic rate  tx_rate  rx_rate  d  e
     verify traffic rate  tx_rate  rx_rate  e  d
     rest verify endpoint in system  48000
-    rest disable fabric interface  leaf0-a  ${leaf0a_spine0_intf1}
-    sleep  5
-    verify traffic rate  tx_rate  rx_rate  a  c
-    verify traffic rate  tx_rate  rx_rate  c  a
-    verify traffic rate  tx_rate  rx_rate  b  f
-    verify traffic rate  tx_rate  rx_rate  f  b
-    verify traffic rate  tx_rate  rx_rate  d  e
-    verify traffic rate  tx_rate  rx_rate  e  d
-    rest verify endpoint in system  48000
-    rest enable fabric interface  leaf0-a  ${leaf0a_spine0_intf1}
-    sleep  5
+    rest enable fabric interface  leaf0-a  ${leaf0a_spine1_intf0}
+    sleep  10
     verify traffic rate  tx_rate  rx_rate  a  c
     verify traffic rate  tx_rate  rx_rate  c  a
     verify traffic rate  tx_rate  rx_rate  b  f
@@ -257,10 +257,10 @@ spine link failover with 48k mac address in the system
     stop traffic  
     
 spine switch shutdown with 48k mac address in the system
-	[Tags]  scaling  
-	${stream}=             L3 add  no_arp=True  flow=a<->c  src_mac=00:00:01:00:00:01  dst_mac=00:00:02:00:00:01  src_cnt=8000  dst_cnt=8000    frame_rate=1000  frame_size=128  name=a_c_flow
-    ${stream1}=             L3 add  no_arp=True  flow=b<->f  src_mac=00:00:03:00:00:01  dst_mac=00:00:04:00:00:01  src_cnt=8000  dst_cnt=8000    frame_rate=1000  frame_size=128  name=b_f_flow
-    ${stream2}=             L3 add  no_arp=True  flow=d<->e  src_mac=00:00:05:00:00:01  dst_mac=00:00:06:00:00:01  src_cnt=8000  dst_cnt=8000    frame_rate=1000  frame_size=128  name=d_e_flow
+	[Tags]  L2  scaling   
+	${stream}=             L3 add  no_arp=True  flow=a<->c  src_mac=00:00:01:00:00:01  dst_mac=00:00:02:00:00:01  src_cnt=8000  dst_cnt=8000  src_ip=20.0.0.1  dst_ip=20.0.0.2  frame_rate=1000  frame_size=128  name=a_c_flow
+    ${stream1}=             L3 add  no_arp=True  flow=b<->f  src_mac=00:00:03:00:00:01  dst_mac=00:00:04:00:00:01  src_cnt=8000  dst_cnt=8000  src_ip=30.0.0.1  dst_ip=30.0.0.2  frame_rate=1000  frame_size=128  name=b_f_flow
+    ${stream2}=             L3 add  no_arp=True  flow=d<->e  src_mac=00:00:05:00:00:01  dst_mac=00:00:06:00:00:01  src_cnt=8000  dst_cnt=8000  src_ip=40.0.0.1  dst_ip=40.0.0.2  frame_rate=1000  frame_size=128  name=d_e_flow
     start traffic  ${stream}
     start traffic  ${stream1}
     start traffic  ${stream2}
@@ -358,10 +358,10 @@ spine switch shutdown with 48k mac address in the system
     stop traffic  
     
 spine switch reboot with 48k mac address in the system
-	[Tags]  scaling  
-	${stream}=             L3 add  no_arp=True  flow=a<->c  src_mac=00:00:01:00:00:01  dst_mac=00:00:02:00:00:01  src_cnt=8000  dst_cnt=8000    frame_rate=1000  frame_size=128  name=a_c_flow
-    ${stream1}=             L3 add  no_arp=True  flow=b<->f  src_mac=00:00:03:00:00:01  dst_mac=00:00:04:00:00:01  src_cnt=8000  dst_cnt=8000    frame_rate=1000  frame_size=128  name=b_f_flow
-    ${stream2}=             L3 add  no_arp=True  flow=d<->e  src_mac=00:00:05:00:00:01  dst_mac=00:00:06:00:00:01  src_cnt=8000  dst_cnt=8000    frame_rate=1000  frame_size=128  name=d_e_flow
+	[Tags]  L2  scaling    
+	${stream}=             L3 add  no_arp=True  flow=a<->c  src_mac=00:00:01:00:00:01  dst_mac=00:00:02:00:00:01  src_cnt=8000  dst_cnt=8000  src_ip=20.0.0.1  dst_ip=20.0.0.2  frame_rate=1000  frame_size=128  name=a_c_flow
+    ${stream1}=             L3 add  no_arp=True  flow=b<->f  src_mac=00:00:03:00:00:01  dst_mac=00:00:04:00:00:01  src_cnt=8000  dst_cnt=8000  src_ip=30.0.0.1  dst_ip=30.0.0.2  frame_rate=1000  frame_size=128  name=b_f_flow
+    ${stream2}=             L3 add  no_arp=True  flow=d<->e  src_mac=00:00:05:00:00:01  dst_mac=00:00:06:00:00:01  src_cnt=8000  dst_cnt=8000  src_ip=40.0.0.1  dst_ip=40.0.0.2  frame_rate=1000  frame_size=128  name=d_e_flow
     start traffic  ${stream}
     start traffic  ${stream1}
     start traffic  ${stream2}  
@@ -421,11 +421,10 @@ spine switch reboot with 48k mac address in the system
     stop traffic  
     
 Master controller node reboot with 48k mac entries
-	[Tags]  scaling       
-	
-	${stream}=             L3 add  no_arp=True  flow=a<->c  src_mac=00:00:01:00:00:01  dst_mac=00:00:02:00:00:01  src_cnt=8000  dst_cnt=8000    frame_rate=1000  frame_size=128  name=a_c_flow
-    ${stream1}=             L3 add  no_arp=True  flow=b<->f  src_mac=00:00:03:00:00:01  dst_mac=00:00:04:00:00:01  src_cnt=8000  dst_cnt=8000    frame_rate=1000  frame_size=68  name=b_f_flow
-    ${stream2}=             L3 add  no_arp=True  flow=d<->e  src_mac=00:00:05:00:00:01  dst_mac=00:00:06:00:00:01  src_cnt=8000  dst_cnt=8000    frame_rate=1000  frame_size=68  name=d_e_flow
+	[Tags]  L2  scaling         
+	${stream}=             L3 add  no_arp=True  flow=a<->c  src_mac=00:00:01:00:00:01  dst_mac=00:00:02:00:00:01  src_cnt=8000  dst_cnt=8000  src_ip=20.0.0.1  dst_ip=20.0.0.2  frame_rate=1000  frame_size=128  name=a_c_flow
+    ${stream1}=             L3 add  no_arp=True  flow=b<->f  src_mac=00:00:03:00:00:01  dst_mac=00:00:04:00:00:01  src_cnt=8000  dst_cnt=8000  src_ip=30.0.0.1  dst_ip=30.0.0.2  frame_rate=1000  frame_size=128  name=b_f_flow
+    ${stream2}=             L3 add  no_arp=True  flow=d<->e  src_mac=00:00:05:00:00:01  dst_mac=00:00:06:00:00:01  src_cnt=8000  dst_cnt=8000  src_ip=40.0.0.1  dst_ip=40.0.0.2  frame_rate=1000  frame_size=128  name=d_e_flow
     start traffic  ${stream}
     start traffic  ${stream1}
     start traffic  ${stream2}  
@@ -446,8 +445,8 @@ Master controller node reboot with 48k mac entries
     verify traffic rate  tx_rate  rx_rate  f  b
     verify traffic rate  tx_rate  rx_rate  d  e
     verify traffic rate  tx_rate  rx_rate  e  d
-    cli verify cluster master reboot
-    sleep  3
+    cluster node reboot
+    rest verify endpoint in system  48000
     verify traffic rate  tx_rate  rx_rate  a  c
     verify traffic rate  tx_rate  rx_rate  c  a
     verify traffic rate  tx_rate  rx_rate  b  f
@@ -469,10 +468,10 @@ Master controller node reboot with 48k mac entries
     Should be True  ${count} < 8
 	
 Add 96k dynamic mac into the system and check forwarding and make sure aging also works for 96k mac
-	[Tags]  scaling  
-	${stream}=             L3 add  no_arp=True  flow=a<->c  src_mac=00:00:01:00:00:01  dst_mac=00:00:02:00:00:01  src_cnt=16000  dst_cnt=16000    frame_rate=1000  frame_size=128  name=a_c_flow
-    ${stream1}=             L3 add  no_arp=True  flow=b<->f  src_mac=00:00:03:00:00:01  dst_mac=00:00:04:00:00:01  src_cnt=16000  dst_cnt=16000    frame_rate=1000  frame_size=128  name=b_f_flow
-    ${stream2}=             L3 add  no_arp=True  flow=d<->e  src_mac=00:00:05:00:00:01  dst_mac=00:00:06:00:00:01  src_cnt=16000  dst_cnt=16000    frame_rate=1000  frame_size=128  name=d_e_flow
+	[Tags]  L2  scaling    
+	${stream}=             L3 add  no_arp=True  flow=a<->c  src_mac=00:00:01:00:00:01  dst_mac=00:00:02:00:00:01  src_cnt=16000  dst_cnt=16000  src_ip=20.0.0.1  dst_ip=20.0.0.2  frame_rate=1000  frame_size=128  name=a_c_flow
+    ${stream1}=             L3 add  no_arp=True  flow=b<->f  src_mac=00:00:03:00:00:01  dst_mac=00:00:04:00:00:01  src_cnt=16000  dst_cnt=16000  src_ip=30.0.0.1  dst_ip=30.0.0.2  frame_rate=1000  frame_size=128  name=b_f_flow
+    ${stream2}=             L3 add  no_arp=True  flow=d<->e  src_mac=00:00:05:00:00:01  dst_mac=00:00:06:00:00:01  src_cnt=16000  dst_cnt=16000  src_ip=40.0.0.1  dst_ip=40.0.0.2  frame_rate=1000  frame_size=128  name=d_e_flow
     start traffic  ${stream}
     start traffic  ${stream1}
     start traffic  ${stream2}  
@@ -508,7 +507,7 @@ Add 96k dynamic mac into the system and check forwarding and make sure aging als
     Should be True  ${count} < 8
 
 Add 1k static endpoints and check the forwarding
-	[Tags]  scaling  
+	[Tags]  L2  scaling  
 	rest add endpoint scale  t1  v1  ${mac1}  a  leaf0-a  ${leaf0a_ixia_intf}  -1  500
   	rest add endpoint scale  t1  v1  ${mac2}  c  leaf1-a  ${leaf1a_ixia_intf}  -1  500
 	sleep  2
@@ -520,7 +519,7 @@ Add 1k static endpoints and check the forwarding
     stop traffic  ${stream}
     
 Add 4k static endpoints and check the forwarding
-	[Tags]  scaling  
+	[Tags]  L2  scaling  
 	rest add endpoint scale  t1  v1  ${mac1}  a  leaf0-a  ${leaf0a_ixia_intf}  -1  2000
   	rest add endpoint scale  t1  v1  ${mac2}  c  leaf1-a  ${leaf1a_ixia_intf}  -1  2000
 	sleep  2
@@ -532,7 +531,7 @@ Add 4k static endpoints and check the forwarding
     stop traffic  ${stream}
 	    
 Add 8k static endpoints and check the forwarding
-	[Tags]  scaling  
+	[Tags]  L2  scaling  
 	rest add endpoint scale  t1  v1  ${mac1}  a  leaf0-a  ${leaf0a_ixia_intf}  -1  4000
   	rest add endpoint scale  t1  v1  ${mac2}  c  leaf1-a  ${leaf1a_ixia_intf}  -1  4000
 	sleep  2
@@ -545,7 +544,7 @@ Add 8k static endpoints and check the forwarding
     stop traffic  ${stream}
 
 Add 16k static endpoints and check the forwarding also check with master reboot
-	[Tags]  scaling
+	[Tags]  L2  scaling
   	rest add endpoint scale  t1  v1  ${mac1}  a  leaf0-a  ${leaf0a_ixia_intf}  -1  8000
   	rest add endpoint scale  t1  v1  ${mac2}  c  leaf1-a  ${leaf1a_ixia_intf}  -1  8000
 	sleep  2
@@ -562,7 +561,7 @@ Add 16k static endpoints and check the forwarding also check with master reboot
     stop traffic  ${stream}
     
 Mac move at scale 1k mac between rack
-	[Tags]  scaling    
+	[Tags]  L2  scaling    
 	${stream}=            L3 add  no_arp=True  flow=a->c  src_mac=00:00:01:00:00:01  dst_mac=00:00:02:00:00:01  src_cnt=1000    frame_rate=1000  frame_size=68  name=a_c_flow
 	${stream1}=             L3 add  no_arp=True  flow=c->a  src_mac=00:00:02:00:00:01  dst_mac=00:00:01:00:00:01  dst_cnt=1000    frame_rate=1000  frame_size=68  name=c_a_flow
     start traffic  ${stream}
@@ -582,7 +581,7 @@ Mac move at scale 1k mac between rack
     stop traffic  ${stream1}
 
 Mac move at scale 16k between rack
-	[Tags]  scaling   
+	[Tags]  L2  scaling   
 	${stream}=             L3 add  no_arp=True  flow=a->c  src_mac=00:01:01:00:00:01  dst_mac=00:02:02:00:00:01  src_cnt=16000    frame_rate=1000  frame_size=68  name=a_c_flow
 	${stream1}=             L3 add  no_arp=True  flow=c->a  src_mac=00:02:02:00:00:01  dst_mac=00:01:01:00:00:01  dst_cnt=16000    frame_rate=1000  frame_size=68  name=c_a_flow
     start traffic  ${stream}
@@ -604,7 +603,7 @@ Mac move at scale 16k between rack
     stop traffic  ${stream1}
 
 Mac move at scale 48k between rack
-	[Tags]  scaling     
+	[Tags]  L2  scaling     
 	${stream}=             L3 add  no_arp=True  flow=a->c  src_mac=00:01:01:00:00:01  dst_mac=00:02:02:00:00:01  src_cnt=24000    frame_rate=1000  frame_size=68  name=a_c_flow
 	${stream1}=             L3 add  no_arp=True  flow=c->a  src_mac=00:02:02:00:00:01  dst_mac=00:01:01:00:00:01  dst_cnt=24000    frame_rate=1000  frame_size=68  name=c_a_flow
 	${stream2}=             L3 add  no_arp=True  flow=b->d  src_mac=00:03:03:00:00:01  dst_mac=00:04:04:00:00:01  src_cnt=24000    frame_rate=1000  frame_size=68  name=b_d_flow
@@ -613,7 +612,7 @@ Mac move at scale 48k between rack
     start traffic  ${stream1}
     start traffic  ${stream2}
     start traffic  ${stream3}  
-    sleep  120  
+    sleep  150  
     rest verify endpoint in system  48002
     rest verify forwarding layer2 table untag  leaf0-a  ${leaf0a_ixia_intf}  00:01:01:00:00:01
     rest verify forwarding layer2 table untag  leaf0-b  ${leaf0b_ixia_intf}  00:03:03:00:00:01
@@ -626,7 +625,7 @@ Mac move at scale 48k between rack
     start traffic  ${stream5}
     start traffic  ${stream1}
     start traffic  ${stream3}
-    sleep  120
+    sleep  150
     rest verify forwarding layer2 table untag  leaf2-a  ${leaf2a_ixia_intf}  00:01:01:00:00:01
     rest verify forwarding layer2 table untag  leaf2-b  ${leaf2b_ixia_intf}  00:03:03:00:00:01
     verify traffic rate  tx_rate  rx_rate  c  e
@@ -639,7 +638,7 @@ Mac move at scale 48k between rack
     stop traffic  ${stream5}
         
 Tear down the config
-   [Tags]  L2   run    
+   [Tags]  L2       
    delete fabric switch
    rest delete tenant  t1
    base suite teardown

@@ -28,22 +28,23 @@ ${bm2_intf1}  leaf1b-eth8
 
 * Test Case 
 basic cli show commands test case
-   [Tags]  smoke  sanity
+   [Tags]  L2  smoke  sanity
    cli  c1  show version
+   cli  c1  show version detail
    cli  c1  show running-config
    cli  c1  show cluster
    cli  c1  show switch
    config  c1  show switch
    enable  c1  show switch
 add Fabric setup Dual Rack Dual Leaf 
-   [Tags]  smoke  sanity
+   [Tags]  L2  smoke  sanity
    sleep  5
 #   add fabric switch
    rest verify fabric switch all
    rest verify fabric link 
 
 ping bm0 to bm1 dual leaf single rack dynamic endpoints
-   [Tags]  smoke  sanity
+   [Tags]  L2  smoke  sanity
    add portgroup to vns  A  A  p1  -1 
    add portgroup to vns  A  A  p2  -1
    sleep  10 
@@ -51,7 +52,7 @@ ping bm0 to bm1 dual leaf single rack dynamic endpoints
    Should Be True  ${loss} == 0						 
 	 
 ping bm0 to bm1 dual leaf single rack static endpoints
-   [Tags]  sanity
+   [Tags]  L2  sanity
    add a endpoint  A  A  e1 
    add a endpoint  A  A  e2 
    add portgroup to endpoint  A   A  e2  p2  -1
@@ -67,7 +68,7 @@ ping bm0 to bm1 dual leaf single rack static endpoints
    Should Be True  ${loss} == 0 
 
 ping bm0 to bm2 dual rack dual leaf dynamic endpoints
-   [Tags]  sanity
+   [Tags]  L2  sanity
    add portgroup to vns  A  A  p3  -1 
    add portgroup to vns  A  A  p1  -1
    sleep  10 
@@ -75,7 +76,7 @@ ping bm0 to bm2 dual rack dual leaf dynamic endpoints
    Should Be True  ${loss} == 0					 
 		
 ping bm0 to bm2 dual rack dual leaf static endpoints
-   [Tags]  sanity     
+   [Tags]  L2  sanity     
    add a endpoint  A  A  e1 
    add a endpoint  A  A  e2 
    add portgroup to endpoint  A   A  e2  p3  -1
@@ -91,7 +92,7 @@ ping bm0 to bm2 dual rack dual leaf static endpoints
    Should Be True  ${loss} == 0  
    
 ping bm0 to bm1 dual leaf single rack dynamic endpoints tag
-   [Tags]  sanity
+   [Tags]  L2  sanity
    add portgroup to vns  A  A  p1  10 
    add portgroup to vns  A  A  p2  10 
    mininet link tag  bm0  bm0-bond0  10  ${bm0_ip}
@@ -101,7 +102,7 @@ ping bm0 to bm1 dual leaf single rack dynamic endpoints tag
    Should Be True  ${loss} == 0 					
 		
 ping bm0 to bm1 dual leaf single rack static endpoints tag
-   [Tags]  sanity
+   [Tags]  L2  sanity
    add a endpoint  A  A  e1 
    add portgroup to endpoint  A  A  e1  p1  10
    add a endpoint  A  A  e2 
@@ -117,7 +118,7 @@ ping bm0 to bm1 dual leaf single rack static endpoints tag
    Should Be True  ${loss} == 0
 
 ping bm0 to bm2 dual rack dual leaf dynamic endpoints tag     
-   [Tags]  sanity
+   [Tags]  L2  sanity
    add portgroup to vns  A  A  p1  10 
    add portgroup to vns  A  A  p3  10 
    mininet link tag  bm2  bm2-bond0  10  ${bm2_ip}
@@ -126,7 +127,7 @@ ping bm0 to bm2 dual rack dual leaf dynamic endpoints tag
    Should Be True  ${loss} == 0   
    
 ping bm0 to bm2 dual rack dual leaf static endpoints tag 
-   [Tags]  sanity
+   [Tags]  L2  sanity
    add a endpoint  A  A  e1  
    add portgroup to endpoint  A  A  e1  p1  10
    add a endpoint  A  A  e2 
