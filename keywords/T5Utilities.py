@@ -764,24 +764,29 @@ class T5Utilities(object):
 '''
 
 from threading import Thread
+import keywords.Host as Host
 
 class T5PlatformThreads(Thread):
     
-    def __init__(self, threadID, name, arg):
+    def __init__(self, threadID, name, **kwargs):
             Thread.__init__(self)
             self.threadID = threadID
             self.name = name
-            self.arg = arg
+            self.kwargs = kwargs
+            
             
     def run(self):
         if(self.name == "switchReboot"):
-            self.switch_reboot(self.arg)
+            self.switch_reboot(self.kwargs.get("switch"))
         if(self.name == "failover"):
             self.controller_failover()
         if(self.name == "activeReboot"):
             self.controller_reboot('master')
         if(self.name == "standbyReboot"):
             self.controller_reboot('slave')
+        if(self.name == "hostPing"):
+            self.host_ping(self.kwargs.get("host"), self.kwargs.get("IP"))
+            
     
         
     def switch_reboot(self, switchName):
@@ -826,3 +831,15 @@ class T5PlatformThreads(Thread):
         print ("Exiting Thread %s After Controller Reboot for Node: " % (self.threadID), node)
         return returnVal
     
+    def host_ping(self, host, IP):
+        
+        myhost = Host.Host()
+        loss = myhost.bash_ping(host, IP, count=10)
+        
+            
+            
+            
+            
+            
+            
+            
