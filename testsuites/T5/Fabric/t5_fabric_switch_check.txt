@@ -22,7 +22,7 @@ Resource	    testsuites/T5/t5_physical_variables.txt
 * Test Case   
 
 Add Fabric Switch Spine and Verify the Status 
-  [Tags]  Fabric   	
+  [Tags]  Fabric  feature   	
   REST show fabric switch     
   # Check the fabric switch connection status once the physical switch is connected
   add switch  spine0 
@@ -32,7 +32,7 @@ Add Fabric Switch Spine and Verify the Status
   rest verify fabric switch  spine0
   
 Add Fabric Switch Leaf Group and Verify the status
-  [Tags]  Fabric   
+  [Tags]  Fabric  feature   
   add switch  leaf0-a
   add dpid  leaf0-a  ${leaf0a_dpid} 
   add fabric role  leaf0-a  leaf
@@ -47,7 +47,7 @@ Add Fabric Switch Leaf Group and Verify the status
   verify fabric switch  leaf0-b 
  
 Add leaf group from 2 different rack and verify the status and check the fabric error
-	[Tags]	Fabric  
+	[Tags]	Fabric  feature  
 	add switch  leaf0-a
 	add dpid  leaf0-a  ${leaf0a_dpid}
 	add fabric role  leaf0-a  leaf
@@ -61,7 +61,7 @@ Add leaf group from 2 different rack and verify the status and check the fabric 
 	rest verify fabric error dual tor peer link  rack0
 	
 add 2 different leaf groups with peer link added
-    [Tags]	Fabric   
+    [Tags]	Fabric  feature   
 	add switch  leaf0-a
 	add dpid  leaf0-a  ${leaf0a_dpid}
 	add fabric role  leaf0-a  leaf
@@ -75,7 +75,7 @@ add 2 different leaf groups with peer link added
    	rest verify forwarding port table  leaf0-a  
 
 source mac check verification on spine and leaf switches
-	[Tags]  Fabric    
+	[Tags]  Fabric  feature    
 	add switch  spine0  
 	add dpid  spine0  ${spine0_dpid}
 	add fabric role  spine0  spine
@@ -94,13 +94,13 @@ source mac check verification on spine and leaf switches
 	rest verify forwarding port source mac check  spine0  
 	   
 add leaf group before leaf role to check the config error
-	[Tags]	Fabric   
+	[Tags]	Fabric  feature   
 	add switch  leaf0-a
 	add dpid  leaf0-a  ${leaf0a_dpid}
 	add leaf group before role
 	
 add host port into spine switch and check the fabric error
-	[Tags]  Fabric  
+	[Tags]  Fabric  feature  
 	add switch  leaf2-a
 	add dpid  leaf2-a  ${leaf2a_dpid} 
 	add fabric role  leaf2-a  spine
@@ -109,7 +109,7 @@ add host port into spine switch and check the fabric error
 	Should not be True  ${result}  
 
 Delete Fabric switch and verify the status
-	[Tags]  Fabric   
+	[Tags]  Fabric  feature   
 	add switch  leaf0-a
   	add dpid  leaf0-a  ${leaf0a_dpid} 
   	add fabric role  leaf0-a  leaf

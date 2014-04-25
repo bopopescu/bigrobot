@@ -1,7 +1,7 @@
-== T5 Functional L2 Test Suite ==
+== T5 Functional L2  feature Test Suite ==
 
 * Setting
-Documentation    T5 BVS APP Functional L2 VNS forwarding Test Suite
+Documentation    T5 BVS APP Functional L2  feature VNS forwarding Test Suite
 Suite Setup      T5 Functional Suite Setup
 Suite Teardown   T5 Functional Suite Teardown
 Test Setup       T5 test setup
@@ -21,25 +21,25 @@ Resource		 testsuites/T5/t5_physical_variables.txt
 * Test Case 
 
 add Dual Leaf Three Rack setup
-   [Tags]  L2        
+   [Tags]  L2  feature          
    rest verify fabric switch all
    rest verify fabric link
      
 check forwarding table for vlan 
-   [Tags]   L2     
+   [Tags]   L2  feature       
    rest verify forwarding vlan table  leaf0-b
    rest verify forwarding vlan table  leaf2-b
    rest verify forwarding vlan table  leaf1-a
    
 check the forwarding vlan translation table for all the switches
-	[Tags]  L2        
+	[Tags]  L2  feature
     rest verify forwarding vlan xlate  leaf0-b  150  ${leaf0b_ixia_intf}	    
     rest verify forwarding vlan xlate  leaf2-b  300  ${leaf2b_ixia_intf}  
     rest verify forwarding vlan xlate  leaf2-b  200  ${leaf2b_ixia_intf}
     rest verify forwarding vlan xlate  leaf1-a  100  ${leaf1a_ixia_intf}
 
 check fabric ports members in the vlan-table with link up/down
-	[Tags]  L2        
+	[Tags]  L2  feature        
 	rest verify forwarding vlan fabric tag members  leaf0-a
 	rest verify forwarding vlan fabric tag members  leaf1-a
 	rest verify forwarding vlan fabric tag members  leaf2-a 
@@ -59,7 +59,7 @@ check fabric ports members in the vlan-table with link up/down
 	rest enable fabric interface  leaf0-a  ${leaf0a_spine0_intf0}         
 
 check edge port members in the vlan-table with linkup/down 
-	[Tags]  L2      
+	[Tags]  L2  feature      
 	rest verify forwarding vlan edge untag members  leaf0-b  ${leaf0b_ixia_intf}  
 	rest verify forwarding vlan edge untag members  leaf1-b  ${leaf1b_ixia_intf}
 	rest disable fabric interface  leaf0-b  ${leaf0b_ixia_intf}
@@ -75,7 +75,7 @@ check edge port members in the vlan-table with linkup/down
 	rest verify forwarding vlan edge tag members  leaf0-a  ${leaf0a_ixia_intf}
 	
 Traffic forwarding between multiple tag on the same interface
-	[Tags]  L2      
+	[Tags]  L2  feature      
 	
     ${stream}=             L3 add  no_arp=True  flow=b->d  src_mac=00:02:02:00:00:24  dst_mac=00:02:04:00:00:24  frame_rate=1000  frame_size=68  name=b_d_flow
     start traffic  ${stream}
@@ -103,7 +103,7 @@ Traffic forwarding between multiple tag on the same interface
     sleep  5
     
 Traffic forward ingress wrong vlan id
-	[Tags]  L2      
+	[Tags]  L2  feature      
     
     ${stream}=             L3 add  no_arp=True  flow=b->d  src_mac=00:02:0a:00:00:24  dst_mac=00:02:04:00:00:24  vlan_id=350  ethertype=8100  frame_rate=1000    frame_size=68  name=b_d_flow
     start traffic  ${stream}
@@ -117,7 +117,7 @@ Traffic forward ingress wrong vlan id
     sleep  5
 
 Check broadcast source mac learning on the controller
-	[Tags]  L2
+	[Tags]  L2  feature
 	 ${stream}=             L3 add  no_arp=True  flow=b->d  src_mac=ff:ff:ff:ff:ff:ff  dst_mac=00:02:04:00:00:24  vlan_id=150  ethertype=8100  frame_rate=1000    frame_size=68  name=b_d_flow
     start traffic  ${stream}
     sleep  10
@@ -127,7 +127,7 @@ Check broadcast source mac learning on the controller
     stop traffic  ${stream}
 
 Check multicast source mac learning on the controller
-	[Tags]  L2
+	[Tags]  L2  feature
 	 ${stream}=             L3 add  no_arp=True  flow=b->d  src_mac=01:00:5e:00:00:01  dst_mac=00:02:04:00:00:24  vlan_id=150  ethertype=8100  frame_rate=1000    frame_size=68  name=b_d_flow
     start traffic  ${stream}
     sleep  10
@@ -137,7 +137,7 @@ Check multicast source mac learning on the controller
     stop traffic  ${stream}       
 
 Untag Traffic ingress on tag ports
-	[Tags]  L2     
+	[Tags]  L2  feature     
 	
     ${stream}=             L3 add  no_arp=True  flow=a->c  src_mac=00:02:01:00:00:24  dst_mac=00:02:03:00:00:24   frame_rate=1000  frame_size=68  name=a_c_flow
     start traffic  ${stream}
@@ -149,7 +149,7 @@ Untag Traffic ingress on tag ports
     sleep  5 
    
 Traffic forwarding with edge port flap
-	[Tags]  L2        
+	[Tags]  L2  feature        
 	
     ${stream}=             L3 add  no_arp=True  flow=b->f  src_mac=00:02:02:00:00:24  dst_mac=00:02:06:00:00:24  vlan_id=150  ethertype=8100  frame_rate=1000  frame_size=68  name=b_f_flow
     ${stream1}=             L3 add  no_arp=True  flow=f->b  src_mac=00:02:06:00:00:24  dst_mac=00:02:02:00:00:24  vlan_id=200  ethertype=8100  frame_rate=1000  frame_size=68  name=f_b_flow
@@ -180,7 +180,7 @@ Traffic forwarding with edge port flap
     sleep  5  
          
 Testing flooding to within a VNS when the peer-lag down..
-	[Tags]  L2         
+	[Tags]  L2  feature         
 	
 	${stream}=             L3 add  no_arp=True  flow=e<->f  src_mac=00:02:05:00:00:24  dst_mac=00:02:06:00:00:24  vlan_id=500  ethertype=8100  frame_rate=1000  frame_size=68  name=e_f_flow
 	sleep  3
@@ -198,7 +198,7 @@ Testing flooding to within a VNS when the peer-lag down..
     sleep  5
 
 add/delete vns with traffic forwarding
-	[Tags]  L2     
+	[Tags]  L2  feature     
 	
 	${stream}=             L3 add  no_arp=True  flow=a<->e  src_mac=00:02:01:00:00:24  dst_mac=00:02:05:00:00:24  vlan_id=500  ethertype=8100  frame_rate=1000  frame_size=68  name=a_e_flow
 	sleep  3
@@ -228,7 +228,7 @@ add/delete vns with traffic forwarding
 	sleep  5
 
 add/delete tenant with traffic forwarding
-	[Tags]  L2       
+	[Tags]  L2  feature       
 	
 	${stream}=             L3 add  no_arp=True  flow=a<->e  src_mac=00:02:01:00:00:24  dst_mac=00:02:05:00:00:24  vlan_id=500  ethertype=8100  frame_rate=1000  frame_size=68  name=a_e_flow
 	sleep  3
@@ -259,7 +259,7 @@ add/delete tenant with traffic forwarding
 	sleep  5
 
 Spine0 reboot with multiple VNS forwarding and verify the traffic
-	[Tags]  L2    
+	[Tags]  L2  feature    
 	
 	${stream}=             L3 add  no_arp=True  flow=a<->e  src_mac=00:02:01:00:00:24  dst_mac=00:02:05:00:00:24  vlan_id=500  ethertype=8100  frame_rate=1000  frame_size=68  name=a_e_flow
 	${stream1}=             L3 add  no_arp=True  flow=b->f  src_mac=00:02:02:00:00:24  dst_mac=00:02:06:00:00:24  frame_rate=1000  frame_size=68  name=b_f_flow
@@ -302,7 +302,7 @@ Spine0 reboot with multiple VNS forwarding and verify the traffic
 	sleep  5
 
 Spine1 reboot with multiple VNS forwarding and verify the traffic
-	[Tags]  L2   
+	[Tags]  L2  feature   
 	${stream}=             L3 add  no_arp=True  flow=a<->e  src_mac=00:02:01:00:00:24  dst_mac=00:02:05:00:00:24  vlan_id=500  ethertype=8100  frame_rate=1000  frame_size=68  name=a_e_flow
 	${stream1}=             L3 add  no_arp=True  flow=b->f  src_mac=00:02:02:00:00:24  dst_mac=00:02:06:00:00:24  frame_rate=1000  frame_size=68  name=b_f_flow
 	${stream2}=             L3 add  no_arp=True  flow=f->b  src_mac=00:02:06:00:00:24  dst_mac=00:02:02:00:00:24  vlan_id=300  ethertype=8100  frame_rate=1000  frame_size=68  name=f_b_flow
@@ -344,7 +344,7 @@ Spine1 reboot with multiple VNS forwarding and verify the traffic
 	sleep  5
 
 Master controller node reboot with multiple vns forwarding 
-	[Tags]  L2   
+	[Tags]  L2  feature   
 	${stream}=             L3 add  no_arp=True  flow=a<->e  src_mac=00:02:01:00:00:24  dst_mac=00:02:05:00:00:24  vlan_id=500  ethertype=8100  frame_rate=1000  frame_size=68  name=a_e_flow
 	${stream1}=             L3 add  no_arp=True  flow=b->f  src_mac=00:02:02:00:00:24  dst_mac=00:02:06:00:00:24  frame_rate=1000  frame_size=68  name=b_f_flow
 	${stream2}=             L3 add  no_arp=True  flow=f->b  src_mac=00:02:06:00:00:24  dst_mac=00:02:02:00:00:24  vlan_id=300  ethertype=8100  frame_rate=1000  frame_size=68  name=f_b_flow
@@ -376,7 +376,7 @@ Master controller node reboot with multiple vns forwarding
 	stop traffic  ${stream2}
 	
 Verify forwarding vlan table with deleting tenants and vns
-	[Tags]  L2          
+	[Tags]  L2  feature          
 	rest delete tenant  t3
 	rest verify forwarding vlan table  leaf2-a
 	rest verify forwarding vlan table  leaf2-b
