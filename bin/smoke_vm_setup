@@ -274,8 +274,7 @@ def main(*args):
           name: 2/5\n\
         f:\n\
           name: 2/6\n" % (active_vm['vm_ip'], kvm_host, active_vm['vm_name'], kvm_user, kvm_pwd,
-                  standby_vm['vm_ip'], kvm_host, standby_vm['vm_name'], kvm_user, kvm_pwd,
-                  mininet_vm['vm_ip'])
+                  standby_vm['vm_ip'], kvm_host, standby_vm['vm_name'], kvm_user, kvm_pwd)
     else:
         config = "\
     c1:\n\
@@ -298,7 +297,8 @@ def main(*args):
        password: %s\n\
     mn1:\n\
       ip: %s\n" % (active_vm['vm_ip'], kvm_host, active_vm['vm_name'], kvm_user, kvm_pwd,
-                  standby_vm['vm_ip'], kvm_host, standby_vm['vm_name'], kvm_user, kvm_pwd)
+                  standby_vm['vm_ip'], kvm_host, standby_vm['vm_name'], kvm_user, kvm_pwd,
+                  mininet_vm['vm_ip'])
     topo.write(config)
     topo.close()
     helpers.log("Success in creating topo file %s" % topo_file)
