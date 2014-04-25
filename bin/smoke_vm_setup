@@ -145,7 +145,7 @@ def main(*args):
             sys.exit(1)
     mininet_vm = None
     args.vm_type = "mininet"
-    if args.mininet_vm is not None and args.regress is not "physical":
+    if args.mininet_vm is not None and args.regress != "physical":
         test.Test._instance = None
         vm_mininet_name = (current_user + '_' + args.mininet_vm + '_'
                           + datetime.datetime.now().strftime("%m%d%H%M"))
