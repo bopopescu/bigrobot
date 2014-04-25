@@ -25,42 +25,42 @@ s4:
   ip: 10.210.71.43
 
 
-h1:
+h4:
    ip: 10.210.64.28
    user: root
    password: bsn
      
-h2:
+h5:
   ip: 10.210.64.27
   user: root
   password: bsn
   
-h3:
+h6:
   ip: 10.210.64.26
   user: root
   password: bsn
    
-h4:
+h7:
   ip: 10.210.64.25
   user: root
   password: bsn
      
-h5:
+h8:
   ip: 10.210.64.24
   user: root
   password: bsn
     
-h6:
+h9:
   ip: 10.210.64.23
   user: root
   password: bsn
 
-h7:
+h10:
   ip: 10.210.64.22
   user: root
   password: bsn
 
-h8:
+h11:
   ip: 10.210.64.21
   user: root
   password: bsn  

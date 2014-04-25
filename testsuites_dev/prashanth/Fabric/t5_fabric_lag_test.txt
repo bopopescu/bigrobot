@@ -18,7 +18,7 @@ Resource         testsuites/T5/t5_physical_variables.txt
 
 *Test Case
 add Three Rack Dual Leaf Topology
-	[Tags]  Fabric  run        
+	[Tags]  Fabric          
 	base suite setup  
     add fabric switch
     bring up h1 bond0
@@ -27,7 +27,7 @@ add Three Rack Dual Leaf Topology
     bring up h4 bond0
     bring up h5 bond0
     bring up h6 bond0
-    sleep  5
+    sleep  10
     rest verify fabric switch all
    
 Verify Fabric Lag formation from leaf node 
@@ -69,7 +69,7 @@ delete the peer leaf0b switch and check the peer-lag from leaf0-a switch
 	rest verify forwarding lag  ${leaf0a_dpid}  leaf0-a     
 
 port group setting for static lag
-	[Tags]  Fabric  run  
+	[Tags]  Fabric    
 	rest add portgroup  p1
 	rest add interface to portgroup  leaf2-a  ${h6_intf0}  p1
 	rest add interface to portgroup  leaf2-b  ${h6_intf1}  p1
@@ -119,6 +119,7 @@ rack lag detection from rack0 leaf switch using three rack setup (add/delete spi
 
 Verify broadcast traffic forwarding on the lag
 	[Tags]  Fabric
+	sleep  5
 	rest verify fabric link common  
 	rest add tenant  t1
 	rest add vns  t1  v1
@@ -425,7 +426,7 @@ Master node reboot failover with broadcast traffic forwarding
 	
 
 Tear down config and topology
-	[Tags]  Fabric  run        
+	[Tags]  Fabric          
     delete fabric switch  
     rest delete portgroup  p1
     rest delete portgroup  p2

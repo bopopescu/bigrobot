@@ -10,6 +10,7 @@ Force Tags       T5
 Library          keywords/BsnCommon.py
 Library          keywords/T5.py
 Library			 keywords/Host.py
+Library          keywords/SwitchLight.py
 Resource	     testsuites/T5/t5_singleleaf_three_rack_physical_resource.txt
 Resource		 testsuites/T5/t5_physical_variables.txt
 
@@ -17,12 +18,12 @@ Resource		 testsuites/T5/t5_physical_variables.txt
 * Test Case 
 
 Verify fabric switch and Link
-   [Tags]  smoke  sanity   
+   [Tags]  L2  smoke  sanity   
    rest verify fabric switch all
    rest verify fabric link
 
 ping h3 to h4 single leaf single rack dynamic endpoints
-   [Tags]  smoke  sanity  run     
+   [Tags]  L2  smoke  sanity      
    rest add interface to vns  A  A  leaf1-a  ${h3_intf0_single}  -1 
    rest add interface to vns  A  A  leaf1-a  ${h4_intf0_single}  -1 
    sleep  5
@@ -30,7 +31,7 @@ ping h3 to h4 single leaf single rack dynamic endpoints
    Should Be True  ${loss} < 50  
  
 ping h3 to h4 single leaf single rack static endpoints
-   [Tags]  sanity       
+   [Tags]  L2  sanity       
    add a endpoint  A  A  e1 
    add a endpoint  A  A  e2 
    rest add interface to endpoint  A   A  e2  leaf1-a  ${h4_intf0_single}  -1
@@ -46,7 +47,7 @@ ping h3 to h4 single leaf single rack static endpoints
    Should Be True  ${loss} < 50
    
 ping h2 to h3 dual rack single leaf dynamic endpoints
-   [Tags]  smoke  sanity     
+   [Tags]  L2  smoke  sanity     
    rest add interface to vns  A  A  leaf1-a  ${h3_intf0_single}  -1 
    rest add interface to vns  A  A  leaf0-a  ${h2_intf0_single}  -1 
    sleep  5 
@@ -54,7 +55,7 @@ ping h2 to h3 dual rack single leaf dynamic endpoints
    Should Be True  ${loss} < 50 					 
 		
 ping h2 to h3 dual rack single leaf static endpoints 
-   [Tags]  sanity        
+   [Tags]  L2  sanity        
    add a endpoint  A  A  e1 
    add a endpoint  A  A  e2 
    rest add interface to endpoint  A   A  e2  leaf0-a  ${h2_intf0_single}  -1
@@ -70,7 +71,7 @@ ping h2 to h3 dual rack single leaf static endpoints
    Should Be True  ${loss} < 50   
    
 ping h3 to h4 single leaf single rack dynamic endpoints tag
-   [Tags]  smoke  sanity     
+   [Tags]  L2  smoke  sanity      
    rest add interface to vns  A  A  leaf1-a  ${h3_intf0_single}  20 
    rest add interface to vns  A  A  leaf1-a  ${h4_intf0_single}  20
    bash add tag  h3  eth1  20 
@@ -89,7 +90,7 @@ ping h3 to h4 single leaf single rack dynamic endpoints tag
    Should Be True  ${loss} < 50  					
 		
 ping h3 to h4 single leaf single rack static endpoints tag
-   [Tags]  sanity    
+   [Tags]  L2  sanity    
    add a endpoint  A  A  e1 
    add a endpoint  A  A  e2 
    rest add interface to endpoint  A   A  e2  leaf1-a  ${h4_intf0_single}  20
@@ -105,7 +106,7 @@ ping h3 to h4 single leaf single rack static endpoints tag
    Should Be True  ${loss} < 50
 
 ping h2 to h3 dual rack single leaf dynamic endpoints tag     
-   [Tags]  smoke  sanity      
+   [Tags]  L2  smoke  sanity      
    rest add interface to vns  A  A  leaf1-a  ${h3_intf0_single}  20 
    rest add interface to vns  A  A  leaf0-a  ${h2_intf0_single}  20
    sleep  5
@@ -113,7 +114,7 @@ ping h2 to h3 dual rack single leaf dynamic endpoints tag
    Should Be True  ${loss} < 50    
    
 ping h2 to h3 dual rack single leaf static endpoints tag 
-   [Tags]  sanity   
+   [Tags]  L2  sanity   
    add a endpoint  A  A  e1 
    add a endpoint  A  A  e2 
    rest add interface to endpoint  A   A  e2  leaf0-a  ${h2_intf0_single}  20

@@ -17,7 +17,8 @@ Resource		 testsuites/T5/t5_physical_variables.txt
 *Test Case
 
 Setup Three Rack Dual Leaf Topology
-	base suite setup  
+	[Tags]  Fabric
+	base suite setup    
     add fabric switch
     sleep  5
     rest verify fabric switch all
@@ -85,6 +86,7 @@ delete/add one of the spine Fabric Role and verify the link
 	REST verify fabric link   
 	
 delete one of the leaf in Dual Leaf setup and verify the link
+    [Tags]  Fabric
     rest delete fabric role  leaf
     rest delete leaf group  leaf0-a
     sleep  5
@@ -169,15 +171,16 @@ add portgroup lacp to 2 different rack
 	rest add interface to portgroup  leaf0-a  ${h1_intf0}  p1
 	${result}=  rest add interface to portgroup  leaf0-b  ${h1_intf1}  p1
 	Should not be True  ${result}
-	sleep  2
+	sleep  15
 	rest verify fabric interface lacp  leaf0-a  ${h1_intf0}
 	rest add portgroup  p2
 	rest add portgroup lacp  p2
 	rest add interface to portgroup  leaf0-b  ${h1_intf1}  p2
-	${result}=  rest verify fabric interface lacp  leaf0-b  ${h1_intf1}
-	Should not be True  ${result}
+	sleep  15
+	rest verify fabric interface lacp  leaf0-b  ${h1_intf1}
 	
 Tear down config and Topology
+	[Tags]  Fabric
     delete fabric switch  
     rest delete portgroup  p1
     rest delete portgroup  p2

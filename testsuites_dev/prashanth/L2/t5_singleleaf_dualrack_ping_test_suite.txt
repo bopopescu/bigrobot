@@ -25,12 +25,12 @@ ${bm2_intf0}  leaf1-eth5
 
 * Test Case
 Verify fabric switch and link status
-	[Tags]  smoke  sanity
+	[Tags]  L2  smoke  sanity
 	rest verify fabric switch all 
 	rest verify fabric link 
 
 ping bm0 to bm1 single leaf single rack dynamic endpoints
-   [Tags]  smoke  sanity
+   [Tags]  L2  smoke  sanity
    rest add interface to vns  A  A  leaf0  ${bm0_intf0}  -1 
    rest add interface to vns  A  A  leaf0  ${bm1_intf0}  -1 
    sleep  10
@@ -38,7 +38,7 @@ ping bm0 to bm1 single leaf single rack dynamic endpoints
    Should Be True  ${loss} == 0  
  
 ping bm0 to bm1 single leaf single rack static endpoints
-   [Tags]  sanity
+   [Tags]  L2  sanity
    add a endpoint  A  A  e1 
    add a endpoint  A  A  e2 
    rest add interface to endpoint  A   A  e2  leaf0  ${bm1_intf0}  -1
@@ -54,7 +54,7 @@ ping bm0 to bm1 single leaf single rack static endpoints
    Should Be True  ${loss} == 0
    
 ping bm0 to bm2 dual rack single leaf dynamic endpoints
-   [Tags]  sanity
+   [Tags]  L2  sanity
    rest add interface to vns  A  A  leaf0  ${bm0_intf0}  -1 
    rest add interface to vns  A  A  leaf1  ${bm2_intf0}  -1 
    sleep  10 
@@ -62,7 +62,7 @@ ping bm0 to bm2 dual rack single leaf dynamic endpoints
    Should Be True  ${loss} == 0 					 
 		
 ping bm0 to bm2 dual rack single leaf static endpoints 
-   [Tags]  sanity    
+   [Tags]  L2  sanity    
    add a endpoint  A  A  e1 
    add a endpoint  A  A  e2 
    rest add interface to endpoint  A   A  e2  leaf1  ${bm2_intf0}  -1
@@ -78,7 +78,7 @@ ping bm0 to bm2 dual rack single leaf static endpoints
    Should Be True  ${loss} == 0   
    
 ping bm0 to bm1 single leaf single rack dynamic endpoints tag
-   [Tags]  sanity
+   [Tags]  L2  sanity
    rest add interface to vns  A  A  leaf0  ${bm0_intf0}  10 
    rest add interface to vns  A  A  leaf0  ${bm1_intf0}  10 
    mininet link tag  bm0  bm0-bond0  10  ${bm0_ip}
@@ -88,7 +88,7 @@ ping bm0 to bm1 single leaf single rack dynamic endpoints tag
    Should Be True  ${loss} == 0  					
 		
 ping bm0 to bm1 single leaf single rack static endpoints tag
-   [Tags]  sanity
+   [Tags]  L2  sanity
    add a endpoint  A  A  e1 
    add a endpoint  A  A  e2 
    rest add interface to endpoint  A   A  e2  leaf0  ${bm1_intf0}  10
@@ -104,7 +104,7 @@ ping bm0 to bm1 single leaf single rack static endpoints tag
    Should Be True  ${loss} == 0
 
 ping bm0 to bm2 dual rack single leaf dynamic endpoints tag     
-   [Tags]  sanity
+   [Tags]  L2  sanity
    rest add interface to vns  A  A  leaf0  ${bm0_intf0}  10 
    rest add interface to vns  A  A  leaf1  ${bm2_intf0}  10
    mininet link tag  bm2  bm2-bond0  10  ${bm2_ip}
@@ -113,7 +113,7 @@ ping bm0 to bm2 dual rack single leaf dynamic endpoints tag
    Should Be True  ${loss} == 0    
    
 ping bm0 to bm2 dual rack single leaf static endpoints tag 
-   [Tags]  sanity
+   [Tags]  L2  sanity
    add a endpoint  A  A  e1 
    add a endpoint  A  A  e2 
    rest add interface to endpoint  A   A  e2  leaf1  ${bm2_intf0}  10
