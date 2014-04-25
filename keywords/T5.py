@@ -192,9 +192,10 @@ class T5(object):
         c.rest.get(url)
         data = c.rest.content()
         for j in range(0, len(data)):
-                vlan = int(vlan) + j
+                i = int(vlan) + j
+                helpers.log("vlan=%d, %d" % (i, j))
                 url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/switch-port-membership-rule[switch="%s"][interface="%s"]' % (tenant, data[j]["name"], switch, intf)
-                c.rest.put(url, {"switch": switch, "interface": intf, "vlan": vlan})
+                c.rest.put(url, {"switch": switch, "interface": intf, "vlan": i})
         return True
 
     def rest_delete_vns(self, tenant, vns=None):
@@ -522,7 +523,7 @@ class T5(object):
         data = c.rest.content()
         for i in range(0, len(data)):
                 if len(data) != 0:
-                    tenant = re.search('^t.*', 'data[i]["name"]')
+                    tenant = re.search('^t.*', data[i]["name"])
                     helpers.log("tenant=%s" % tenant)
                     if str(data[i]["name"]) == tenant:
                         helpers.log("Expected tenant are present in the config")

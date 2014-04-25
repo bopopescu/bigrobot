@@ -10,6 +10,7 @@ Force Tags       T5
 Library          keywords/BsnCommon.py
 Library          keywords/T5.py
 Library			 keywords/Host.py
+Library          keywords/SwitchLight.py
 Resource	     testsuites/T5/t5_singleleaf_three_rack_physical_resource.txt
 Resource		 testsuites/T5/t5_physical_variables.txt
 
@@ -22,7 +23,7 @@ Verify fabric switch and Link
    rest verify fabric link
 
 ping h3 to h4 single leaf single rack dynamic endpoints
-   [Tags]  smoke  sanity  run     
+   [Tags]  smoke  sanity      
    rest add interface to vns  A  A  leaf1-a  ${h3_intf0_single}  -1 
    rest add interface to vns  A  A  leaf1-a  ${h4_intf0_single}  -1 
    sleep  5
@@ -70,7 +71,7 @@ ping h2 to h3 dual rack single leaf static endpoints
    Should Be True  ${loss} < 50   
    
 ping h3 to h4 single leaf single rack dynamic endpoints tag
-   [Tags]  smoke  sanity     
+   [Tags]  smoke  sanity  run     
    rest add interface to vns  A  A  leaf1-a  ${h3_intf0_single}  20 
    rest add interface to vns  A  A  leaf1-a  ${h4_intf0_single}  20
    bash add tag  h3  eth1  20 
