@@ -343,6 +343,8 @@ if __name__ == '__main__':
                         help="This build will be picked from jenkins")
     parser.add_argument("--mininet_build_number",
                         help="This build will be picked from jenkins from mininet project")
+    parser.add_argument("--regress",
+                        help="This is temporarily used in CI Jenkins")
     main()
     print "Success!!!"
     sys.exit(0)
