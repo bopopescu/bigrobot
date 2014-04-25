@@ -791,8 +791,7 @@ class T5PlatformThreads(Thread):
         
     def switch_reboot(self, switchName):
         try:
-            #helpers.log("Starting Thread %s For Rebooting Switch: %s" % (self.threadID, self.arg))
-            print ("Starting Thread %s For Rebooting Switch: %s" % (self.threadID, self.arg))
+            print ("Starting Thread %s For Rebooting Switch: %s" % (self.threadID, switchName))
             t = test.Test()
             switch = t.switch(switchName)
             cli_input = 'reload now'
@@ -801,10 +800,10 @@ class T5PlatformThreads(Thread):
             helpers.sleep(60)
             common = bsnCommon()
             if(common.verify_ssh_connection(switchName)):
-                print ("Exiting Thread %s After Rebooting Switch: %s" % (self.threadID, self.arg))
+                print ("Exiting Thread %s After Rebooting Switch: %s" % (self.threadID, switchName))
                 return True
             else:
-                print ("Connection Failure in Thread %s After Rebooting Switch: %s" % (self.threadID, self.arg))
+                print ("Connection Failure in Thread %s After Rebooting Switch: %s" % (self.threadID, switchName))
                 return False
         except:
             helpers.test_failure("Failure during switch:%s reboot" % (switchName))
@@ -814,7 +813,6 @@ class T5PlatformThreads(Thread):
     def controller_failover(self):  
         from T5Platform import T5Platform
         platform = T5Platform()
-        #helpers.log("Exiting Thread %s After Rebooting Switch: %s" % (self.threadID, self.arg))
         print ("Starting Thread %s For Controller Failover" % (self.threadID))    
         returnVal =  platform._cluster_election(True)
         print ("Exiting Thread %s After Controller Failover" % (self.threadID))
