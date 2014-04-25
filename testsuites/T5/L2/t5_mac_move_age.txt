@@ -20,7 +20,7 @@ Resource		 testsuites/T5/t5_physical_variables.txt
 * Test Case 
 
 add Dual Leaf Three Rack setup
-   [Tags]  L2  run   
+   [Tags]  L2     
    base suite setup
    add fabric switch
    sleep  5
@@ -208,7 +208,7 @@ Test mac age after master node controller reboot
     rest delete tenant  t1
 
 Tear down the config
-   [Tags]  L2 run     
+   [Tags]  L2      
    delete fabric switch
    rest delete tenant  t1
    rest delete tenant  t2

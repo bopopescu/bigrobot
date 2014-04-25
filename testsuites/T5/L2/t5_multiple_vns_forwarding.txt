@@ -198,7 +198,7 @@ Testing flooding to within a VNS when the peer-lag down..
     sleep  5
 
 add/delete vns with traffic forwarding
-	[Tags]  L2  run   
+	[Tags]  L2     
 	
 	${stream}=             L3 add  no_arp=True  flow=a<->e  src_mac=00:02:01:00:00:24  dst_mac=00:02:05:00:00:24  vlan_id=500  ethertype=8100  frame_rate=1000  frame_size=68  name=a_e_flow
 	sleep  3
@@ -228,7 +228,7 @@ add/delete vns with traffic forwarding
 	sleep  5
 
 add/delete tenant with traffic forwarding
-	[Tags]  L2  run     
+	[Tags]  L2       
 	
 	${stream}=             L3 add  no_arp=True  flow=a<->e  src_mac=00:02:01:00:00:24  dst_mac=00:02:05:00:00:24  vlan_id=500  ethertype=8100  frame_rate=1000  frame_size=68  name=a_e_flow
 	sleep  3
