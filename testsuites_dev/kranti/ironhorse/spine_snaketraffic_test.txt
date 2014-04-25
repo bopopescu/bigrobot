@@ -5,8 +5,7 @@ Documentation   Switch Platform Snake Traffic Test - Iron Horse T5
 Test Setup       base test setup
 Test Teardown    atest teardown
 Force Tags       T5  traffic  snake
-...             export BIGROBOT_SUITE=snake_traffic_test 
-...
+...             
 ...             Section A: Traffic Verification Test 
 ...                Uni-Directional L2 Traffic flow a->b with framerate 10000 pktsize 64,256,512,1024,1518
 ...                Uni-Directional L2 Traffic flow a->b with linerate 10%,25%,50%,75%,100% pktsize 64,256,512,1024,1518           
@@ -20,11 +19,10 @@ Library         keywords/BsnCommon.py
 Library         keywords/AppController.py
 Library         keywords/SwitchLight.py
 Library         keywords/Ixia.py 
-Library         keywords/T5.py
-Library         keywords/T5Fabric.py      
+Library         keywords/T5.py     
 Library         keywords_dev/kranti/ironhorse/snaketraffictest.py
 Library         String
-Resource        keywords_dev/kranti/ironhorse/snake_traffic_test_variables.txt
+#Resource        keywords_dev/kranti/ironhorse/snake_traffic_test_variables.txt
 
 *Variables
 ${j}    1

@@ -267,12 +267,6 @@ L3 intra tenant same rack tagged with dynamic endpoints
 	BASH add route								h1								10.251.2.0/24			10.251.1.1
 	BASH add route								h2								10.251.1.0/24			10.251.2.1
 	sleep										20	
-	BASH ping									h1								10.251.1.1				count=10
-	BASH ping									h2								10.251.2.1				count=10
-	${value} = 									BASH verify arp					h1						10.251.1.1
-	Should Not Be True							${value} 		
-	${value} =									BASH verify arp					h2						10.251.2.1
-	Should Not Be True							${value} 	
 	BASH ping									h1								10.251.2.11				count=10
 	${value} = 									BASH verify arp					h1						10.251.1.1
 	Should Be True								${value} 		
@@ -549,7 +543,7 @@ L3 intra tenant dhcp relay on same rack
 	REST add dhcp relay							Y								Y3						10.252.1.9
 	REST enable dhcp relay						Y								Y3	
 	sleep								20
-	${h1_ip} = 									BASH get intf ipv4				h1						bond0				
+	${h1_ip} = 									BASH get interface ipv4				h1						bond0				
 	Should Be Equal As Strings					${h1_ip}						10.252.1.9	
 	${h1_mac} =									BASH get intf mac				h1						bond0
 	###### another hac to overcome jira PAN 726
@@ -660,7 +654,7 @@ L3 intra tenant dhcp relay across rack
 	REST add dhcp relay							Y								Y3						10.252.1.9
 	REST enable dhcp relay						Y								Y3	
 	sleep										20
-	${h1_ip} = 									BASH get intf ipv4				h1						bond0				
+	${h1_ip} = 									BASH get interface ipv4				h1						bond0				
 	Should Be Equal As Strings					${h1_ip}						10.252.1.9	
 	${h1_mac} =									BASH get intf mac				h1						bond0
 	###### another hac to overcome jira PAN 726
@@ -771,7 +765,7 @@ L3 dhcp request without dhcp relay enabled
 	REST add dhcp relay							Y								Y3						10.252.1.9
 	REST enable dhcp relay						Y								Y3	
 	sleep										20
-	${h1_ip} = 									BASH get intf ipv4				h1						bond0				
+	${h1_ip} = 									BASH get interface ipv4				h1						bond0				
 	Should Be Equal As Strings					${h1_ip}						10.252.1.9	
 	${h1_mac} =									BASH get intf mac				h1						bond0
 	###### another hac to overcome jira PAN 726
@@ -1488,25 +1482,33 @@ Configure overlapping IP on same tenant across VNS
 	REST add vns									A							X1
 	REST add vns									A							X2
 	REST add vns									A							X3
-	REST add vns ip  								A							X1				10.101.0.1				24	
+	REST add vns ip  								A							X1				10.101.0.1				24
+	sleep											2	
 	${result} = 									REST add vns ip  			A				X2						10.101.0.1				25
 	Should Not Be True								${result}
+	sleep											2
 	${result} = 									REST add vns ip  			A				X2						10.101.0.2				25
 	Should Not Be True								${result}
+	sleep											2
 	${result} = 									REST add vns ip  			A				X2						10.101.0.254			17				
 	Should Not Be True								${result}
+	sleep											2
 	${result} = 									REST add vns ip  			A				X2						10.101.0.255			24
 	Should Not Be True								${result}
 	REST delete vns ip								A							X1				10.101.0.1				24
+	sleep											2
 	${result} = 									REST add vns ip  			A				X2						10.101.0.1				25
 	Should Be True									${result}
 	REST delete vns ip								A							X2				10.101.0.1				25
+	sleep											2
 	${result} = 									REST add vns ip  			A				X2						10.101.0.2				25
 	Should Be True									${result}
 	REST delete vns ip								A							X2				10.101.0.2				25
+	sleep											2
 	${result} = 									REST add vns ip  			A				X2						10.101.0.254			17				
 	Should Be True									${result}
 	REST delete vns ip  							A							X2				10.101.0.254			17		
+	sleep											2
 	${result} = 									REST add vns ip  			A				X2						10.101.0.255			24
 	Should Be True									${result}	
 

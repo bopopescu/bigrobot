@@ -6,41 +6,35 @@
 # mn  : Mininet server
 # tg1 : Tester like Ixia
 
-c1:
-    ip: 10.192.107.5
-
-s1:
-    ip:  10.192.107.11
-    
-s2:
-    ip:  10.192.107.12
- 
-s3:
-    ip:  10.192.107.15
-    
 
 tg1:
-  platform: 'ixia'
-  chassis_ip: 10.192.85.151
-  tcl_server_ip: 10.194.64.184
+ platform: 'bigtap-ixia'
+ chassis_ip: 10.192.85.151
+ tcl_server_ip: 10.194.84.164
+ bigtap_controller:
+  ip: 10.192.107.9
+  set_bigtap_config: false  
+ switches:
+  s1:
+   ip: 10.192.107.12
+   dipid: 00:00:5c:16:c7:1d:6a:68
+ ports:
+  a:
+   name: 4/25
+   bigtap: 1/1
+   type: tx, rx
+  b:
+   name: 4/29
+   bigtap: 1/45
+   type: tx, rx
   
-  tcl_server_port: 8009
-  ix_version: '7.10'
-  set_init_ping: false
-  ports:
-    a:
-      name: 4/25
-    b:
-      name: 4/29
-    c:
-      name: 4/26
-    d:
-      name: 4/30
-    e:
-      name: 4/27
-    f:
-      name: 4/31
-    g:
-      name: 4/28
-    h:
-      name: 4/32      
+ bigtap_ports:
+  c:
+   name: 1/49
+  d:
+   name: 1/52
+ 
+    
+
+
+      
