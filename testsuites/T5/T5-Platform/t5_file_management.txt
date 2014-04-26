@@ -614,17 +614,17 @@ T10.1 Verify validation function of scp:// to image:// - textfile
 	Run Keyword and Expect Error
 	...  *Validating Image Contents: check for expected contents*
 	...  Cli Copy  ${scp}  image://
-T10.2 Verify validation function of scp:// to image:// - bigtap upgrade package
-	Run Keyword and Expect Error
-	...  *Error: Invalid Use: integrity validation failed: missing file in bundle: supported-matrix*
-	...  Cli Copy  ${scp image bigtap}  image://
-T10.3 Verify validation function of scp:// to image:// - corrupted image
-	Run Keyword and Expect Error
-	...  *Error: Invalid Use: integrity validation failed: not an image bundle*
-	...  Cli Copy  ${scp image corrupted}  image://
-T10.4 Verify validation function of scp:// to image:// - proper image
-	Cli Copy  ${scp image}  image://
-	Cli Delete  image://master
+#T10.2 Verify validation function of scp:// to image:// - bigtap upgrade package
+#	Run Keyword and Expect Error
+#	...  *Error: Invalid Use: integrity validation failed: missing file in bundle: supported-matrix*
+#	...  Cli Copy  ${scp image bigtap}  image://
+#T10.3 Verify validation function of scp:// to image:// - corrupted image
+#	Run Keyword and Expect Error
+#	...  *Error: Invalid Use: integrity validation failed: not an image bundle*
+#	...  Cli Copy  ${scp image corrupted}  image://
+#T10.4 Verify validation function of scp:// to image:// - proper image
+#	Cli Copy  ${scp image}  image://
+#	Cli Delete  image://master
 T10.5 Verify suggestions for deleting multiple images
 	Manual Passed
 
