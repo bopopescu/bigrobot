@@ -306,7 +306,11 @@ mn1:\n\
     jenkins_build_number = helpers.get_env("BUILD_NUMBER")
     vm_file = "/tmp/vm_temp_%s" % str(jenkins_build_number)
     vm_file_handle = open(vm_file, "w")
-    vm_domain_names = "%s\n%s\n%s\n" % (active_vm['vm_name'],
+    if args.regress == 'physical':
+        vm_domain_names = "%s\n%s\n" % (active_vm['vm_name'],
+                                          standby_vm['vm_name'])
+    else:
+        vm_domain_names = "%s\n%s\n%s\n" % (active_vm['vm_name'],
                                       standby_vm['vm_name'],
                                       mininet_vm['vm_name'])
     vm_file_handle.write(vm_domain_names)
