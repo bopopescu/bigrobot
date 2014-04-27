@@ -2175,6 +2175,31 @@ class T5(object):
                     c.rest.delete(url, {"shutdown": None})
                     helpers.sleep(5)
                     return True
-
+                
+    def rest_verify_forwarding_rack_lag(self, switch, rack, intf):
+        '''Verify rack lag and interfaces part of the rack lag three rack setup
+        Input: switch , leaf group name, fabric interfaces
+        Output : True or false based on the entry present in the forwarding lag.
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        url = '/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch-name="%s"]?select=lag-table' % (switch)
+        c.rest.get(url)
+        data = c.rest.content()
+        interface = int(re.sub("\D", "", intf))
+        rack_name = "rack-" + rack
+        helpers.log("%s,%s" % (rack_name, interface))
+        for i in range(0, len(data[0]["lag-table"])):
+            if str(data[0]["lag-table"][i]["lag-name"]) == str(rack_name):
+                try:
+                    value = data[0]["lag-table"][i]["port"]
+                except KeyError:
+                    return False
+                if interface in data[0]["lag-table"][i]["port"]:
+                        helpers.log("interface present in rack lag")
+                        return True
+                else:
+                        helpers.test_log("given interface not present in rack lag rack=%s,interface=%s" % (rack, intf))
+                        return False
 
     
