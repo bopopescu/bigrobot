@@ -21,18 +21,18 @@ Resource		 testsuites/T5/t5_physical_variables.txt
 * Test Case 
 
 add Dual Leaf Three Rack setup
-   [Tags]  L2  feature          
+   [Tags]  L2  feature            
    rest verify fabric switch all
    rest verify fabric link
      
 check forwarding table for vlan 
-   [Tags]   L2  feature       
+   [Tags]   L2  feature        
    rest verify forwarding vlan table  leaf0-b
    rest verify forwarding vlan table  leaf2-b
    rest verify forwarding vlan table  leaf1-a
    
 check the forwarding vlan translation table for all the switches
-	[Tags]  L2  feature
+	[Tags]  L2  feature  
     rest verify forwarding vlan xlate  leaf0-b  150  ${leaf0b_ixia_intf}	    
     rest verify forwarding vlan xlate  leaf2-b  300  ${leaf2b_ixia_intf}  
     rest verify forwarding vlan xlate  leaf2-b  200  ${leaf2b_ixia_intf}
@@ -429,7 +429,7 @@ T5 Functional Suite Setup
    rest add portgroup to vns  t3  v3  p5  -1     
    
 T5 Functional Suite Teardown
-   delete fabric switch 
+   delete fabric switch  
    rest delete portgroup  p5
    rest delete tenant  t1
    rest delete tenant  t2
@@ -511,31 +511,33 @@ verify switch interface stats  [Arguments]  ${switch}  ${intf}
 T5 test setup
 	base test setup
 	bring up 1 gig interface
+	sleep  5
 	rest add tenant  t1
-  	rest add tenant  t2
-  	rest add vns  t1  v1
-  	rest add vns  t1  v2
-  	rest add vns  t2  v1
-  	rest add tenant  t3
-  	rest add vns  t3  v3
-  	rest add interface to vns  t1  v1  leaf0-b  ${leaf0b_ixia_intf}  -1
-  	rest add interface to vns  t1  v1  leaf1-b  ${leaf1b_ixia_intf}  -1
-  	rest add interface to vns  t1  v1  leaf2-b  ${leaf2b_ixia_intf}  300
-  	rest add interface to vns  t1  v2  leaf0-b  ${leaf0b_ixia_intf}  150
-  	rest add interface to vns  t1  v2  leaf1-a  ${leaf1a_ixia_intf}  100
-  	rest add interface to vns  t1  v2  leaf2-a  ${leaf2a_ixia_intf}  -1
-  	rest add interface to vns  t1  v2  leaf2-b  ${leaf2b_ixia_intf}  200
-  	rest add interface to vns  t2  v1  leaf0-a  ${leaf0a_ixia_intf}  500
-  	rest add interface to vns  t2  v1  leaf2-a  ${leaf2a_ixia_intf}  500
-  	rest add interface to vns  t2  v1  leaf2-b  ${leaf2b_ixia_intf}  500
-  	rest add portgroup  p5
-  	rest add interface to portgroup  leaf2-a  ${h5_intf0}  p5
-  	rest add interface to portgroup  leaf2-b  ${h5_intf1}  p5
-  	rest add portgroup lacp  p5
-  	rest add portgroup to vns  t3  v3  p5  -1    
+    rest add tenant  t2
+    rest add vns  t1  v1
+    rest add vns  t1  v2
+    rest add vns  t2  v1
+    rest add tenant  t3
+    rest add vns  t3  v3
+    rest add interface to vns  t1  v1  leaf0-b  ${leaf0b_ixia_intf}  -1
+    rest add interface to vns  t1  v1  leaf1-b  ${leaf1b_ixia_intf}  -1
+    rest add interface to vns  t1  v1  leaf2-b  ${leaf2b_ixia_intf}  300
+    rest add interface to vns  t1  v2  leaf0-b  ${leaf0b_ixia_intf}  150
+    rest add interface to vns  t1  v2  leaf1-a  ${leaf1a_ixia_intf}  100
+    rest add interface to vns  t1  v2  leaf2-a  ${leaf2a_ixia_intf}  -1
+    rest add interface to vns  t1  v2  leaf2-b  ${leaf2b_ixia_intf}  200
+    rest add interface to vns  t2  v1  leaf0-a  ${leaf0a_ixia_intf}  500
+    rest add interface to vns  t2  v1  leaf2-a  ${leaf2a_ixia_intf}  500
+    rest add interface to vns  t2  v1  leaf2-b  ${leaf2b_ixia_intf}  500
+    rest add portgroup  p5
+    rest add interface to portgroup  leaf2-a  ${h5_intf0}  p5
+    rest add interface to portgroup  leaf2-b  ${h5_intf1}  p5
+    rest add portgroup lacp  p5
+    rest add portgroup to vns  t3  v3  p5  -1  
 	
 T5 test teardown
 	delete traffic
+	rest clean switch interface
 	base test teardown 
 
 bring up h1 bond0
