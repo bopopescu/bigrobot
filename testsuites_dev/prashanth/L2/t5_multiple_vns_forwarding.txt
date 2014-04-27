@@ -21,7 +21,7 @@ Resource		 testsuites/T5/t5_physical_variables.txt
 * Test Case 
 
 add Dual Leaf Three Rack setup
-   [Tags]  L2  feature          
+   [Tags]  L2  feature           
    rest verify fabric switch all
    rest verify fabric link
      
@@ -32,7 +32,7 @@ check forwarding table for vlan
    rest verify forwarding vlan table  leaf1-a
    
 check the forwarding vlan translation table for all the switches
-	[Tags]  L2  feature
+	[Tags]  L2  feature  
     rest verify forwarding vlan xlate  leaf0-b  150  ${leaf0b_ixia_intf}	    
     rest verify forwarding vlan xlate  leaf2-b  300  ${leaf2b_ixia_intf}  
     rest verify forwarding vlan xlate  leaf2-b  200  ${leaf2b_ixia_intf}
@@ -117,7 +117,7 @@ Traffic forward ingress wrong vlan id
     sleep  5
 
 Check broadcast source mac learning on the controller
-	[Tags]  L2  feature
+	[Tags]  L2  feature  
 	 ${stream}=             L3 add  no_arp=True  flow=b->d  src_mac=ff:ff:ff:ff:ff:ff  dst_mac=00:02:04:00:00:24  vlan_id=150  ethertype=8100  frame_rate=1000    frame_size=68  name=b_d_flow
     start traffic  ${stream}
     sleep  10
