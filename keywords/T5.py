@@ -530,7 +530,7 @@ class T5(object):
                         helpers.log("Expected tenant are present in the config")
                         return True
                     else:
-                        helpers.test_failure("Expected tenant are not present in the config")
+                        helpers.test_log("Expected tenant are not present in the config")
                         return False
                 else:
                         helpers.log("No tenant are added")
@@ -1553,7 +1553,7 @@ class T5(object):
                         helpers.log("LACP Neibhour Is Up and active")
                         return True
             else:
-                        helpers.test_failure("LACP is enabled , LACP Partner is not seen , check the floodlight logs")
+                        helpers.test_log("LACP is enabled , LACP Partner is not seen , check the floodlight logs")
                         return False
         except KeyError:
             return False

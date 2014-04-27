@@ -21,18 +21,18 @@ Resource		 testsuites/T5/t5_physical_variables.txt
 * Test Case 
 
 add Dual Leaf Three Rack setup
-   [Tags]  L2  feature           
+   [Tags]  L2  feature             
    rest verify fabric switch all
    rest verify fabric link
      
 check forwarding table for vlan 
-   [Tags]   L2  feature       
+   [Tags]   L2  feature         
    rest verify forwarding vlan table  leaf0-b
    rest verify forwarding vlan table  leaf2-b
    rest verify forwarding vlan table  leaf1-a
    
 check the forwarding vlan translation table for all the switches
-	[Tags]  L2  feature  
+	[Tags]  L2  feature    
     rest verify forwarding vlan xlate  leaf0-b  150  ${leaf0b_ixia_intf}	    
     rest verify forwarding vlan xlate  leaf2-b  300  ${leaf2b_ixia_intf}  
     rest verify forwarding vlan xlate  leaf2-b  200  ${leaf2b_ixia_intf}
