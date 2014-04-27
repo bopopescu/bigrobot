@@ -523,13 +523,14 @@ class T5(object):
         data = c.rest.content()
         for i in range(0, len(data)):
                 if len(data) != 0:
-                    tenant = re.search('^t.*', data[i]["name"])
+                    match = re.search('^t.*', data[i]["name"])
+                    tenant = match.group(0)
                     helpers.log("tenant=%s" % tenant)
                     if str(data[i]["name"]) == tenant:
                         helpers.log("Expected tenant are present in the config")
                         return True
                     else:
-                        helpers.test_failure("Expected tenant are not present in the config")
+                        helpers.test_log("Expected tenant are not present in the config")
                         return False
                 else:
                         helpers.log("No tenant are added")
@@ -1552,7 +1553,7 @@ class T5(object):
                         helpers.log("LACP Neibhour Is Up and active")
                         return True
             else:
-                        helpers.test_failure("LACP is enabled , LACP Partner is not seen , check the floodlight logs")
+                        helpers.test_log("LACP is enabled , LACP Partner is not seen , check the floodlight logs")
                         return False
         except KeyError:
             return False
@@ -2174,6 +2175,31 @@ class T5(object):
                     c.rest.delete(url, {"shutdown": None})
                     helpers.sleep(5)
                     return True
-
+                
+    def rest_verify_forwarding_rack_lag(self, switch, rack, intf):
+        '''Verify rack lag and interfaces part of the rack lag three rack setup
+        Input: switch , leaf group name, fabric interfaces
+        Output : True or false based on the entry present in the forwarding lag.
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        url = '/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch-name="%s"]?select=lag-table' % (switch)
+        c.rest.get(url)
+        data = c.rest.content()
+        interface = int(re.sub("\D", "", intf))
+        rack_name = "rack-" + rack
+        helpers.log("%s,%s" % (rack_name, interface))
+        for i in range(0, len(data[0]["lag-table"])):
+            if str(data[0]["lag-table"][i]["lag-name"]) == str(rack_name):
+                try:
+                    value = data[0]["lag-table"][i]["port"]
+                except KeyError:
+                    return False
+                if interface in data[0]["lag-table"][i]["port"]:
+                        helpers.log("interface present in rack lag")
+                        return True
+                else:
+                        helpers.test_log("given interface not present in rack lag rack=%s,interface=%s" % (rack, intf))
+                        return False
 
     
