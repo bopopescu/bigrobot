@@ -511,6 +511,7 @@ verify switch interface stats  [Arguments]  ${switch}  ${intf}
 T5 test setup
 	base test setup
 	bring up 1 gig interface
+	sleep  5
 	rest add tenant  t1
   	rest add tenant  t2
   	rest add vns  t1  v1
