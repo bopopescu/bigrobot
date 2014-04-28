@@ -692,10 +692,10 @@ class T5(object):
         data1 = c.rest.content()
         no_of_vns = len(data1)
         if (int(no_of_vns) == int(no_of_user_vlan)):
-                helpers.log("Vlan Entries are present in forwarding table Actual:%d = Expected:%d" % (int(no_of_vns), int(no_of_vlans)))
+                helpers.log("Vlan Entries are present in forwarding table Actual:%d = Expected:%d" % (int(no_of_vns), int(no_of_user_vlan)))
                 return True
         else:
-                helpers.test_failure("Vlan Entries are inconsistent in forwarding table %d = %d" % (int(no_of_vns), int(no_of_vlans)))
+                helpers.test_log("Vlan Entries are inconsistent in forwarding table %d = %d" % (int(no_of_vns), int(no_of_user_vlan)))
                 return False
 
     def rest_verify_forwarding_port(self, switch):
