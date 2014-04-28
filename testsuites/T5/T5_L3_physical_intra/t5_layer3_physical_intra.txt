@@ -10,7 +10,6 @@ Library         keywords/Host.py
 Library         keywords/T5.py
 Library         keywords/T5L3.py
 Library         keywords/T5Platform.py
-#Library         keywords_dev/animesh/BsnCommonShow.py
 Library	        Collections.py
 Library         keywords/Ixia.py
 Library			keywords/SwitchLight.py
@@ -21,7 +20,7 @@ Resource		testsuites/T5/t5_dualleaf_three_rack_physical_resource.txt
 * Test Cases
 Intra tenant L3 untagged traffic with dynamic endpoints same rack
 	L3 intra tenant same rack untagged with dynamic endpoints
-	[Tags]							smoke				sanity			
+	[Tags]						smoke				sanity			
 
 Intra tenant L3 untagged traffic with dynamic endpoints across rack
 	L3 intra tenant across rack untagged with dynamic endpoints
@@ -49,6 +48,14 @@ Intra tenant L3 tagged traffic with static endpoints same rack
 
 Intra tenant L3 tagged traffic with static endpoints across rack
 	L3 intra tenant across rack tagged with static endpoints
+	[Tags]						smoke				sanity	
+
+Dhcp discover on the same vns as server with dhcp relay enabled
+	L3 intra tenant dhcp relay on same vns as dhcp server with relay enabled
+	[Tags]						smoke				sanity	
+
+Dhcp discover on the same vns as server without dhcp relay enabled
+	L3 intra tenant dhcp relay on same vns as dhcp server without relay enabled
 	[Tags]						smoke				sanity	
 
 Intra tenant dhcp relay 
@@ -519,6 +526,112 @@ L3 intra tenant across rack tagged with static endpoints
 	Should Be True  							${loss} == 0		
 	BASH delete route							h1								10.251.3.0/24			10.251.1.1
 	BASH delete route							h3								10.251.1.0/24			10.251.3.1
+
+
+L3 intra tenant dhcp relay on same vns as dhcp server with relay enabled
+	BASH ifdown intf							h1 								bond0
+	BASH ifdown intf							h2								bond0
+	BASH ifdown intf							h3								bond0
+	BASH ifdown intf							h4								bond0	
+	BASH ifup intf								h5								bond0
+	BASH ifup intf								h6								bond0		
+	BASH init intf								h1								bond0
+	BASH init intf								h2								bond0
+	BASH ifup intf								h1								bond0
+	BASH add ip address							h1								10.252.1.9/24			bond0					
+	BASH start service							h1								isc-dhcp-server
+	sleep										1
+	${value} = 									BASH check service status		h1						isc-dhcp-server
+	Should Contain								${value}						is started
+	sleep										1
+	REST add portgroup to vns					Y								Y1						${leaf0_pc1}			-1
+	REST add portgroup to vns					Y								Y1						${leaf2_pc1}			-1
+	REST add dhcp relay							Y								Y1						10.252.1.9
+	REST enable dhcp relay						Y								Y1	
+	sleep										10
+	${h1_ip} = 									BASH get interface ipv4			h1						bond0				
+	Should Contain								${h1_ip}						10.252.1.9	
+	${h1_mac} =									BASH get intf mac				h1						bond0
+	###### hack to force host to resolve gateway, by right, vrf should attempt to resolve dhcp-server mac address and discover its endpoint but that is not happening
+	BASH ping									h1 								10.252.1.1				count=5
+	${result} = 								REST show endpoints mac			${h1_mac}
+	Should Not Be Empty							${result}
+	sleep										1
+	${value} = 									BASH verify arp					h1						10.252.1.1
+	Should Be True								${value} 		
+	sleep										1
+	${value} = 									BASH release dhcpv4 address		h5						bond0
+	Should Be True								${value}
+	sleep										1
+	${ipAddr} = 								BASH renew dhcpv4 address		h5						bond0
+	Should Not Be Empty							${ipAddr}
+	sleep										1
+	BASH ping									h1								${ipAddr}				count=10
+	${value} = 									BASH verify arp					h1						${ipAddr}
+	Should Be True								${value} 		
+	${value} =									BASH verify arp					h5						10.252.1.9
+	Should Be True								${value} 	
+	${mac1} = 									BASH get intf mac				h1						bond0
+	${result} =									REST show endpoints mac			${mac1}
+	Should Be True								${result}						
+	${mac2} = 									BASH get intf mac				h5						bond0
+	${result} =									REST show endpoints mac			${mac2}
+	Should Be True								${result}						
+	REST show endpoints	
+	${loss} = 									BASH ping						h1						${ipAddr} 			count=10
+	Should Be True  							${loss} == 0	
+
+
+L3 intra tenant dhcp relay on same vns as dhcp server without relay enabled
+	BASH ifdown intf							h1 								bond0
+	BASH ifdown intf							h2								bond0
+	BASH ifdown intf							h3								bond0
+	BASH ifdown intf							h4								bond0	
+	BASH ifup intf								h5								bond0
+	BASH ifup intf								h6								bond0		
+	BASH init intf								h1								bond0
+	BASH init intf								h2								bond0
+	BASH ifup intf								h1								bond0
+	BASH add ip address							h1								10.252.1.9/24			bond0					
+	BASH start service							h1								isc-dhcp-server
+	sleep										1
+	${value} = 									BASH check service status		h1						isc-dhcp-server
+	Should Contain								${value}						is started
+	sleep										1
+	REST add portgroup to vns					Y								Y1						${leaf0_pc1}			-1
+	REST add portgroup to vns					Y								Y1						${leaf2_pc1}			-1
+	sleep										5
+	${h1_ip} = 									BASH get interface ipv4			h1						bond0				
+	Should Contain								${h1_ip}						10.252.1.9	
+	${h1_mac} =									BASH get intf mac				h1						bond0
+	###### hack to force host to resolve gateway, by right, vrf should attempt to resolve dhcp-server mac address and discover its endpoint but that is not happening
+	BASH ping									h1 								10.252.1.1				count=5
+	${result} = 								REST show endpoints mac			${h1_mac}
+	Should Not Be Empty							${result}
+	sleep										1
+	${value} = 									BASH verify arp					h1						10.252.1.1
+	Should Be True								${value} 		
+	sleep										1
+	${value} = 									BASH release dhcpv4 address		h5						bond0
+	Should Be True								${value}
+	sleep										1
+	${ipAddr} = 								BASH renew dhcpv4 address		h5						bond0
+	Should Not Be Empty							${ipAddr}
+	sleep										1
+	BASH ping									h1								${ipAddr}				count=10
+	${value} = 									BASH verify arp					h1						${ipAddr}
+	Should Be True								${value} 		
+	${value} =									BASH verify arp					h5						10.252.1.9
+	Should Be True								${value} 	
+	${mac1} = 									BASH get intf mac				h1						bond0
+	${result} =									REST show endpoints mac			${mac1}
+	Should Be True								${result}						
+	${mac2} = 									BASH get intf mac				h5						bond0
+	${result} =									REST show endpoints mac			${mac2}
+	Should Be True								${result}						
+	REST show endpoints	
+	${loss} = 									BASH ping						h1						${ipAddr} 			count=10
+	Should Be True  							${loss} == 0	
 
 
 L3 intra tenant dhcp relay on same rack
