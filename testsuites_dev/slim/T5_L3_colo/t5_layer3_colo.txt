@@ -1,9 +1,9 @@
 * Setting
 Documentation   T5 Basic L3 two spine three leaf rack with dual-tor Test Suite
 Suite Setup     T5 base suite setup
-#Suite Teardown  T5 base suite teardown
+Suite Teardown  T5 base suite teardown
 Test Setup      setup topology
-#Test Teardown   teardown topology
+Test Teardown   teardown topology
 Force Tags      T5 Sanity
 Library         keywords/BsnCommon.py
 Library         keywords_dev/slim/Host.py
@@ -21,7 +21,7 @@ Resource		testsuites_dev/slim/T5_L3_colo/t5_layer3_colo_resources.txt
 * Test Cases
 Intra tenant L3 untagged traffic with dynamic endpoints same rack
 	L3 intra tenant same rack untagged with dynamic endpoints
-#	[Tags]							skipped			smoke				sanity			
+	[Tags]							skipped			smoke				sanity			
 
 Intra tenant L3 untagged traffic with dynamic endpoints across rack
 	L3 intra tenant across rack untagged with dynamic endpoints
@@ -53,11 +53,11 @@ Intra tenant L3 tagged traffic with static endpoints across rack
 
 Dhcp discover on the same vns as server with dhcp-relay enabled
 	DHCP discovery on the same vns as server with dhcp-relay enabled
-	[Tags]							skipped			smoke				sanity	
+#	[Tags]							skipped			smoke				sanity	
 
 Dhcp discover on the same vns as server without dhcp-relay enabled
 	DHCP discovery on the same vns as server without dhcp-relay enabled
-	[Tags]							skipped			smoke				sanity	
+#	[Tags]							skipped			smoke				sanity	
 
 Intra tenant dhcp relay 
 	L3 intra tenant dhcp relay on same rack with valid circuitid
@@ -249,6 +249,75 @@ L3 intra tenant same rack tagged with dynamic endpoints
 #   sleep  10
 #   stop traffic								${stream1}
 #   verify results 								transmitted_frames  			received_frames  		${stream1}  			stream1
+
+
+DHCP discovery on the same vns as server with dhcp-relay enabled
+	REST delete portgroup from vns				Z								Z2						${leaf0_pc11}			-1
+	BASH init intf								h11								bond0
+	BASH start service							h4								isc-dhcp-server
+	sleep										1
+	${value} = 									BASH check service status		h4						isc-dhcp-server
+	Should Contain								${value}						is started
+	sleep										1
+	REST add dhcp relay							X								X1						10.251.1.11
+	REST enable dhcp relay						X								X1	
+	REST add portgroup to vns					X								X1						${leaf0_pc11}			-1
+	sleep										1
+	${value} = 									BASH release dhcpv4 address		h11						bond0
+	Should Be True								${value}
+	sleep										1
+	${ipAddr} = 								BASH renew dhcpv4 address		h11						bond0
+	Should Not Be Empty							${ipAddr}
+	sleep										5
+	BASH ping									h4								${ipAddr}				count=10
+	${value} = 									BASH verify arp					h4						${ipAddr}
+	Should Be True								${value} 		
+	${value} =									BASH verify arp					h11						10.251.1.11
+	Should Be True								${value} 	
+	${mac1} = 									BASH get intf mac				h4						bond0
+	${result} =									REST show endpoints mac			${mac1}
+	${attachpoint} = 							Set Variable					${result[0]['attachment-point']['port-group']}	
+	Should Contain								${attachpoint}					${leaf0_pc4}
+	${mac11} = 									BASH get intf mac				h11						bond0
+	${result} =									REST show endpoints mac			${mac11}
+	${attachpoint} = 							Set Variable					${result[0]['attachment-point']['port-group']}	
+	Should Contain								${attachpoint}					${leaf0_pc11}
+	${loss} = 									BASH ping						h4						${ipAddr} 			count=10
+	Should Be True  							${loss} == 0		
+	REST delete portgroup from vns				X								X1						${leaf0_pc11}			-1
+	
+DHCP discovery on the same vns as server without dhcp-relay enabled
+	REST delete portgroup from vns				Z								Z2						${leaf0_pc11}			-1
+	BASH init intf								h11								bond0
+	BASH start service							h4								isc-dhcp-server
+	sleep										1
+	${value} = 									BASH check service status		h4						isc-dhcp-server
+	Should Contain								${value}						is started
+	sleep										1
+	REST add portgroup to vns					X								X1						${leaf0_pc11}			-1
+	sleep										1
+	${value} = 									BASH release dhcpv4 address		h11						bond0
+	Should Be True								${value}
+	sleep										1
+	${ipAddr} = 								BASH renew dhcpv4 address		h11						bond0
+	Should Not Be Empty							${ipAddr}
+	sleep										5
+	BASH ping									h4								${ipAddr}				count=10
+	${value} = 									BASH verify arp					h4						${ipAddr}
+	Should Be True								${value} 		
+	${value} =									BASH verify arp					h11						10.251.1.11
+	Should Be True								${value} 	
+	${mac1} = 									BASH get intf mac				h4						bond0
+	${result} =									REST show endpoints mac			${mac1}
+	${attachpoint} = 							Set Variable					${result[0]['attachment-point']['port-group']}	
+	Should Contain								${attachpoint}					${leaf0_pc4}
+	${mac11} = 									BASH get intf mac				h11						bond0
+	${result} =									REST show endpoints mac			${mac11}
+	${attachpoint} = 							Set Variable					${result[0]['attachment-point']['port-group']}	
+	Should Contain								${attachpoint}					${leaf0_pc11}
+	${loss} = 									BASH ping						h4						${ipAddr} 			count=10
+	Should Be True  							${loss} == 0		
+	REST delete portgroup from vns				X								X1						${leaf0_pc11}			-1		
 	
 L3 intra tenant dhcp relay on same rack with valid circuitid
 	BASH init intf								h5								bond0
@@ -265,8 +334,8 @@ L3 intra tenant dhcp relay on same rack with valid circuitid
 	REST add dhcprelay circuitid				X								X2						private vns X2
 	REST enable dhcp relay						X								X2	
 ### temporary workaround to enable dhcp relay to silent host	
-	BASH ping									h4								10.251.1.1				count=5
-	sleep										10
+#	BASH ping									h4								10.251.1.1				count=5
+#	sleep										10
 	${value} = 									BASH release dhcpv4 address		h5						bond0
 	Should Be True								${value}
 	sleep										1
@@ -334,8 +403,8 @@ L3 dhcp request with and without dhcp relay enabled
 	REST add dhcp relay							X								X2						10.251.1.11
 	REST add dhcprelay circuitid				X								X2						private vns X2
 	REST enable dhcp relay						X								X2	
-	BASH ping									h4								10.251.1.1 				count=5
-	sleep										10
+#	BASH ping									h4								10.251.1.1 				count=5
+#	sleep										10
 	${value} = 									BASH release dhcpv4 address		h5						bond0
 	Should Be True								${value}
 	sleep										1
@@ -397,6 +466,36 @@ L3 inter tenant traffic in the same rack
 	${loss} = 									BASH ping						h4						10.252.1.11 			count=10
 	Should Be True  							${loss} == 0	
 
+Inter tenant L3 dhcp relay
+	BASH init intf								h8								bond0
+	${value} = 									BASH check service status		h4						isc-dhcp-server
+	Should Contain								${value}						is started
+	sleep										1
+	REST add dhcp relay							Y								Y2						10.251.1.11
+	REST add dhcprelay circuitid				Y								Y2						private vns Y2
+	REST enable dhcp relay						Y								Y2	
+#	BASH ping									h4								10.252.1.11				count=5
+#	${value} = 									BASH verify arp					h4						10.251.1.1
+#	Should Be True								${value} 		
+#	${value} =									BASH verify arp					h8						10.252.1.1
+#	Should Be True								${value} 
+	${value} = 									BASH release dhcpv4 address		h8						bond0.1008
+	Should Be True								${value}
+	sleep										1
+	${ipAddr} = 								BASH renew dhcpv4 address		h8						bond0.1008
+	Should Not Be Empty							${ipAddr}
+	sleep										5
+	BASH ping									h4								${ipAddr}				count=5
+	${mac4} = 									BASH get intf mac				h4						bond0
+	${result} =									REST show endpoints mac			${mac4}
+	${attachpoint} = 							Set Variable					${result[0]['attachment-point']['port-group']}	
+	Should Contain								${attachpoint}					${leaf0_pc4}	
+	${mac8} = 									BASH get intf mac				h7						bond0.1008
+	${result} =									REST show endpoints mac			${mac8}
+	${attachpoint} = 							Set Variable					${result[0]['attachment-point']['port-group']}	
+	Should Contain								${attachpoint}					${leaf0_pc8}	
+	${loss} = 									BASH ping						h4						${ipAddr}			count=10
+	Should Be True  							${loss} == 0	
 
 
 initialize host
@@ -477,8 +576,6 @@ initialize host
 
 setup topology
 	initialize host
-	add fabric switch
-	sleep 											1
 	REST add tenant									system
 	REST add tenant 								X
 	REST add tenant									Y
@@ -601,7 +698,7 @@ setup topology
 	BASH add ip address								h9								10.252.3.11/24			bond0.1009
 	BASH add ip address								h10								10.253.1.11/24			bond0.1010
 	BASH add ip address								h11								10.253.2.11/24			bond0
-	BASH add route									h4								10.251..0/24			10.251.1.1
+	BASH add route									h4								10.251.2.0/24			10.251.1.1
 	BASH add route									h4								10.251.3.0/24			10.251.1.1
 	BASH add route									h4								10.252.0.0/16			10.251.1.1
 	BASH add route									h4								10.253.0.0/16			10.251.1.1
@@ -666,7 +763,6 @@ teardown topology
 	REST delete tenant								X
 	REST delete tenant								Y
 	REST delete tenant								Z
-	delete fabric switch
 	initialize host
 	BASH delete route									h4								10.251.2.0/24			10.251.1.1
 	BASH delete route									h4								10.251.3.0/24			10.251.1.1
@@ -713,15 +809,15 @@ teardown topology
 	BASH init intf										h9								bond0	
 	BASH init intf										h10								bond0	
 	BASH init intf										h11								bond0	
-	REST delete tenant									X
-	REST delete tenant									Y
-	REST delete tenant									Z
 	REST delete tenant routers intf to system			X
 	REST delete tenant routers intf to system			Y
 	REST delete tenant routers intf to system			Z									
 	REST delete system intf to tenant routers			X
 	REST delete system intf to tenant routers			Y
 	REST delete system intf to tenant routers			Z
+	REST delete tenant									X
+	REST delete tenant									Y
+	REST delete tenant									Z
 	
 
 T5 base suite setup
@@ -759,7 +855,6 @@ T5 base suite setup
 	REST add portgroup								${leaf0_arista2}
 	
 T5 base suite teardown
-	delete fabric switch  
   	REST delete portgroup lacp							${leaf0_pc1}
   	REST delete portgroup lacp							${leaf0_pc2}
   	REST delete portgroup lacp							${leaf0_pc3}
@@ -784,6 +879,7 @@ T5 base suite teardown
 	REST delete portgroup								${leaf0_pc11}
 	REST delete portgroup								${leaf0_arista1}
 	REST delete portgroup								${leaf0_arista2}
+	delete fabric switch  
 
 
 verify results   [Arguments]  ${transmitted_frames}  ${received_frames}  ${stream}  ${stream_name}
