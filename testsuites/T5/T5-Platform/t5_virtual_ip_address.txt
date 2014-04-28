@@ -9,8 +9,8 @@ Library  			keywords/T5Platform.py
 
 
 *** Variables ***
-${vip}  			10.192.103.111
-${vip bis} 			10.192.103.222
+${vip}  			10.192.103.181
+${vip bis} 			10.192.103.182
 ${vip invalid}  	10.192.103.333
 ${vip string}	  	test-ip-address
 ${vip zeros}		0.0.0.0
@@ -63,12 +63,11 @@ T1.4 REST Verify validation for incorrect virtual IP address
 	[Tags]  T5  Virtual IP  REST  Platform
 
 T1.5 REST Verify it is impossible to have virtual equal to physical IP address
-        Manual Failed
 	${state} =  Rest Configure Virtual IP  ${c1_ip}
 	Should Not Be True  ${state}
 	${state} =  Rest Configure Virtual IP  ${c2_ip}
 	Should Not Be True  ${state}
-	[Tags]  T5  Virtual IP  REST  Platform
+	[Tags]  Skipped  Manual  T5  Virtual IP  REST  Platform
 
 T1.6 REST Verify it is impossible to have 0.0.0.0 or 255.255.255.255 virtual IP address
 	${state} =  Rest Configure Virtual IP  ${vip zeros}
@@ -145,12 +144,11 @@ T2.4 CLI Verify validation for incorrect virtual IP address
 	[Tags]  T5  Virtual IP  CLI  Platform
 
 T2.5 CLI Verify it is impossible to have virtual equal to physical IP address
-        Manual Failed
 	${state} =  Cli Configure Virtual IP  ${c1_ip}
 	Should Not Be True  ${state}
 	${state} =  Cli Configure Virtual IP  ${c2_ip}
 	Should Not Be True  ${state}
-	[Tags]  T5  Virtual IP  CLI  Platform
+	[Tags]  Skipped  Manual  T5  Virtual IP  CLI  Platform
 
 T2.6 CLI Verify it is impossible to have 0.0.0.0 or 255.255.255.255 virtual IP address
 	${state} =  Cli Configure Virtual IP  ${vip zeros}
