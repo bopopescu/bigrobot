@@ -134,6 +134,29 @@ class T5(object):
         else:
             return True
 
+    def rest_delete_tenant_all(self):
+        ''' delete all tenant in the system
+        '''
+        t = test.Test()
+        c = t.controller('master')
+
+        helpers.log("Entering ===> to delete all tenants")
+        url_get_tenant = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/tenant'
+        try:
+            c.rest.get(url_get_tenant)
+            content = c.rest.content()
+        except:
+            pass
+        else:
+            if (content):
+                for i in range (0, len(content)):
+                    url_tenant_delete = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]' % content[i]['name']
+                    c.rest.delete(url_tenant_delete, {})
+
+        helpers.log("Exiting ===>   delete all tenants")         
+        return True 
+
+
     def test_args(self, arg1, arg2, arg3):
         try:
             helpers.log("Input arguments: arg1 = %s" % arg1)

@@ -20,7 +20,7 @@ ${scp double}		scp://scp://recovery@10.197.128.37:config-scp
 ${scp location}		recovery@10.197.128.37:config-scp
 ${scp inexistent}   scp://recovery@10.197.128.37:inexistent
 ${scp switch}		scp://recovery@10.197.128.37:scp-switch
-${scp image}		scp://recovery@10.197.128.37:controller-upgrade-bvs-2.0.7-SNAPSHOT.pkg
+${scp image}		scp://recovery@10.197.128.37:controller-upgrade-bvs-2.0.8-SNAPSHOT.pkg
 ${scp image corrupted}		scp://recovery@10.197.128.37:controller-upgrade-bvs-2.0.7-SNAPSHOT-corrupted.pkg
 ${scp image bigtap}		scp://recovery@10.197.128.37:bigtap-3.0.0-upgrade-2014.03.22.0200.pkg
 ${file}				config-file
@@ -130,9 +130,9 @@ T4.3 Copy running config to scp://, change RC, restore, verify no change in RC
 	Cli Copy  running-config  backup
 	Cli Copy  ${scp}  running-config
 	${status} =  Cli Compare Running Config with File Line By Line  backup
-	Should Be True  ${status}
+	Should Not Be True  ${status}
 	Compare Negative  running-config  ${scp}
-	Compare  running-config  backup
+	Compare Negative  running-config  backup
 	[Tags]  SCP  Smoke
 
 T4.4 Copy from scp:// and compare with previous running-config
@@ -307,11 +307,11 @@ T5.9.7 Verify: copy scp://<config://> running-config
 	Compare  ${scp config}  running-config
 	[Tags]  SCP
 
-T5.9.8 Verify: copy scp://<config://> file
+T5.9.8 Verify: copy scp://<config://> file - negative, this is not supported
 	Cli Copy  running-config  ${config}
 	Cli Copy  ${config}  ${scp config}
 	Cli Copy  ${scp config}  ${file}
-	Compare  ${scp config}  ${file}
+	Compare Negative  ${scp config}  ${file}
 	[Tags]  SCP
 
 T5.9.9 Verify: copy scp://<config://> config

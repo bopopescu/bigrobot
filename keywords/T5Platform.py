@@ -1332,7 +1332,7 @@ class T5Platform(object):
             helpers.log("length is %s" % len(rc))
             helpers.log("length is %s" % len(config_file))
             #Cropping headers of the outputs
-            rc = rc[5:]
+            rc = rc[4:]
             config_file = config_file[8:]
 
             if not len(rc) == len(config_file):
@@ -3151,7 +3151,7 @@ class T5Platform(object):
         c = t.controller(node)
     
         c.enable('')
-        c.enable("show local-config")
+        c.enable("show running-config local")
         content = c.cli_content()
         helpers.log("*****Output is :\n%s" % content)
         temp = helpers.strip_cli_output(content)
