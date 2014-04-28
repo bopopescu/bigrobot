@@ -11,7 +11,7 @@ Library		     keywords/Host.py
 Library		     keywords/Ixia.py
 Library		     keywords_dev/mingtao/T5_longevity.py
 Library	         keywords/T5Platform.py
-Resource	     testsuites_dev/mingtao/t5_platform_infra_resource.txt 
+Resource	     testsuites/T5/T5-Platform/t5_platform_infra_resource.txt 
 
 * Variable
 ${imageonserver}    bsn@qa-kvm-32:/home/mingtao/controller-upgrade-bvs-2.0.8-SNAPSHOT.pkg

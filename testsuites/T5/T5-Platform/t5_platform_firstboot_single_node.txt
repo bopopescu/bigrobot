@@ -15,7 +15,7 @@ Library	         keywords/T5.py
 Library	         keywords/T5Platform.py
 Library	         keywords/Controller.py
  
-Resource	     testsuites_dev/mingtao/t5_platform_infra_resource.txt 
+Resource	     testsuites/T5/T5-Platform/t5_platform_infra_resource.txt 
 
 * Variable
  

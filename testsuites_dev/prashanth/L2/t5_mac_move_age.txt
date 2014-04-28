@@ -1,4 +1,4 @@
-== T5 Functional L2 Test Suite ==
+== T5 Functional L2  feature Test Suite ==
 
 * Setting
 Documentation    T5 BVS APP Functional VNS Mac age/move Test Suite
@@ -20,7 +20,7 @@ Resource		 testsuites/T5/t5_physical_variables.txt
 * Test Case 
 
 add Dual Leaf Three Rack setup
-   [Tags]  L2     
+   [Tags]  L2  feature     
    base suite setup
    add fabric switch
    sleep  5
@@ -28,7 +28,7 @@ add Dual Leaf Three Rack setup
    rest verify fabric link
    
 tagged/untagged packet Mac move within the rack0
-	[Tags]  L2    
+	[Tags]  L2  feature    
 	rest add tenant  t1
 	rest add vns  t1  v1
 	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
@@ -59,7 +59,7 @@ tagged/untagged packet Mac move within the rack0
     
     
 tagged/untagged packet move between rack
-	[Tags]  L2
+	[Tags]  L2  feature
     rest add tenant  t1
 	rest add vns  t1  v1
 	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
@@ -89,7 +89,7 @@ tagged/untagged packet move between rack
   
 
 Mac move between the vns same tenant
-	[Tags]  L2
+	[Tags]  L2  feature
 	rest add tenant  t1
 	rest add vns  t1  v1
 	rest add vns  t1  v2
@@ -112,7 +112,7 @@ Mac move between the vns same tenant
    
    
 Mac move between different tenants
-	[Tags]  L2
+	[Tags]  L2  feature
 	rest add tenant  t1
 	rest add tenant  t2
 	rest add vns  t1  v1
@@ -137,7 +137,7 @@ Mac move between different tenants
     
          
 Mac age test
-	[Tags]  L2
+	[Tags]  L2  feature
 	rest add tenant  t1
 	rest add vns  t1  v1
 	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
@@ -156,7 +156,7 @@ Mac age test
     rest delete tenant  t1
     
 MAC move test after master controller node reboot
-	[Tags]  L2  
+	[Tags]  L2  feature  
 	rest add tenant  t1
 	rest add vns  t1  v1
 	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
@@ -187,7 +187,7 @@ MAC move test after master controller node reboot
     rest delete tenant  t1        
 
 Test mac age after master node controller reboot
-	[Tags]  L2  
+	[Tags]  L2  feature  
 	rest add tenant  t1
 	rest add vns  t1  v1
 	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
@@ -208,7 +208,7 @@ Test mac age after master node controller reboot
     rest delete tenant  t1
 
 Tear down the config
-   [Tags]  L2      
+   [Tags]  L2  feature      
    delete fabric switch
    rest delete tenant  t1
    rest delete tenant  t2

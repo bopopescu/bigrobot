@@ -118,7 +118,7 @@ Master controller node reboot with 4k vns
     Should not be True  ${result}
 
 Tear down the config
-   [Tags]  L2           
+   [Tags]  L2  scaling           
    delete fabric switch
    rest delete tenant  t1
    base suite teardown
