@@ -330,7 +330,8 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
         
         url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/virtual-router/ecmp-groups[name="%s"]/ip-addresses' % (tenant, ecmpgroup)
         try:
-            c.rest.put(url, {"ip-address": nexthop})
+#            c.rest.put(url, {"ip-address": nexthop})
+            c.rest.post(url, {"ip-address": nexthop})
         except:
             helpers.test_failure(c.rest.error())
         else: 

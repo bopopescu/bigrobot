@@ -3151,7 +3151,7 @@ class T5Platform(object):
         c = t.controller(node)
     
         c.enable('')
-        c.enable("show local-config")
+        c.enable("show running-config local")
         content = c.cli_content()
         helpers.log("*****Output is :\n%s" % content)
         temp = helpers.strip_cli_output(content)

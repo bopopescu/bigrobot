@@ -134,6 +134,29 @@ class T5(object):
         else:
             return True
 
+    def rest_delete_tenant_all(self):
+        ''' delete all tenant in the system
+        '''
+        t = test.Test()
+        c = t.controller('master')
+
+        helpers.log("Entering ===> to delete all tenants")
+        url_get_tenant = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/tenant'
+        try:
+            c.rest.get(url_get_tenant)
+            content = c.rest.content()
+        except:
+            pass
+        else:
+            if (content):
+                for i in range (0, len(content)):
+                    url_tenant_delete = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]' % content[i]['name']
+                    c.rest.delete(url_tenant_delete, {})
+
+        helpers.log("Exiting ===>   delete all tenants")         
+        return True 
+
+
     def test_args(self, arg1, arg2, arg3):
         try:
             helpers.log("Input arguments: arg1 = %s" % arg1)
@@ -530,7 +553,7 @@ class T5(object):
                         helpers.log("Expected tenant are present in the config")
                         return True
                     else:
-                        helpers.test_failure("Expected tenant are not present in the config")
+                        helpers.test_log("Expected tenant are not present in the config")
                         return False
                 else:
                         helpers.log("No tenant are added")
@@ -692,10 +715,10 @@ class T5(object):
         data1 = c.rest.content()
         no_of_vns = len(data1)
         if (int(no_of_vns) == int(no_of_user_vlan)):
-                helpers.log("Vlan Entries are present in forwarding table Actual:%d = Expected:%d" % (int(no_of_vns), int(no_of_vlans)))
+                helpers.log("Vlan Entries are present in forwarding table Actual:%d = Expected:%d" % (int(no_of_vns), int(no_of_user_vlan)))
                 return True
         else:
-                helpers.test_failure("Vlan Entries are inconsistent in forwarding table %d = %d" % (int(no_of_vns), int(no_of_vlans)))
+                helpers.test_log("Vlan Entries are inconsistent in forwarding table %d = %d" % (int(no_of_vns), int(no_of_user_vlan)))
                 return False
 
     def rest_verify_forwarding_port(self, switch):
@@ -1553,7 +1576,7 @@ class T5(object):
                         helpers.log("LACP Neibhour Is Up and active")
                         return True
             else:
-                        helpers.test_failure("LACP is enabled , LACP Partner is not seen , check the floodlight logs")
+                        helpers.test_log("LACP is enabled , LACP Partner is not seen , check the floodlight logs")
                         return False
         except KeyError:
             return False
@@ -2175,6 +2198,31 @@ class T5(object):
                     c.rest.delete(url, {"shutdown": None})
                     helpers.sleep(5)
                     return True
-
+                
+    def rest_verify_forwarding_rack_lag(self, switch, rack, intf):
+        '''Verify rack lag and interfaces part of the rack lag three rack setup
+        Input: switch , leaf group name, fabric interfaces
+        Output : True or false based on the entry present in the forwarding lag.
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        url = '/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch-name="%s"]?select=lag-table' % (switch)
+        c.rest.get(url)
+        data = c.rest.content()
+        interface = int(re.sub("\D", "", intf))
+        rack_name = "rack-" + rack
+        helpers.log("%s,%s" % (rack_name, interface))
+        for i in range(0, len(data[0]["lag-table"])):
+            if str(data[0]["lag-table"][i]["lag-name"]) == str(rack_name):
+                try:
+                    value = data[0]["lag-table"][i]["port"]
+                except KeyError:
+                    return False
+                if interface in data[0]["lag-table"][i]["port"]:
+                        helpers.log("interface present in rack lag")
+                        return True
+                else:
+                        helpers.test_log("given interface not present in rack lag rack=%s,interface=%s" % (rack, intf))
+                        return False
 
     
