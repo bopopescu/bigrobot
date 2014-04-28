@@ -1332,7 +1332,7 @@ class T5Platform(object):
             helpers.log("length is %s" % len(rc))
             helpers.log("length is %s" % len(config_file))
             #Cropping headers of the outputs
-            rc = rc[5:]
+            rc = rc[4:]
             config_file = config_file[8:]
 
             if not len(rc) == len(config_file):
