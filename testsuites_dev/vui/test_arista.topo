@@ -5,7 +5,17 @@
 
 s1:
   ip: 10.210.67.30  # Mingtao's Arista
-  #user: admin
-  #password: adminadmin
+
+  # Note: It is highly recommended that you use 'root' account to log in
+  # to help identify the device properly.
+
   user: root
   password: bsn
+
+  # Note: 'admin' account will put you directly in the CLI, but DevConf
+  # may not be able to identify the device as an Arista... Unless the
+  # prompt contains the string "arista" in it. E.g.,
+  #   qa-Arista-30>
+
+  #user: admin
+  #password: adminadmin
