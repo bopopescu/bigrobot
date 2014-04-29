@@ -28,11 +28,14 @@ ${s1VerifyHost}  h3
 ${s1VerifyInt}	eth1
 
 ${s2SrcSwitch}  leaf0-a
-${s2SrcInt}		ethernet19
+${s2SrcInt}		ethernet17
 ${s2DstSwitch}	leaf0-a
-${s2DstInt}		ethernet34
-${s2VerifyHost}  h2
-${s2VerifyInt}	eth2
+${s2DstInt}		ethernet35
+${s2PingIP}		20.20.20.56
+${s2VerifyHost}  h3
+${s2VerifyInt}	eth1
+${s2ShutSwitch}  leaf0-b
+${s2ShutInt}  ethernet17
 
 ${s3SrcSwitch}  leaf0-a
 ${s3SrcInt}		ethernet21
@@ -49,6 +52,8 @@ ${s4VerifyHost}  h4
 ${s4VerifyInt}	eth2
 
 
+
+
 * Test Case 
 
 T0 Setup
@@ -59,7 +64,7 @@ T0 Setup
 
 
 T1 Configure SPAN session for Single interface - Direction Both
-    [Tags]  feature
+    [Tags]  feature   skipped
     ${returnVal} =  rest add monitor session	1	${s1SrcSwitch}	${s1SrcInt}	${s1DstSwitch}	${s1DstInt}  direction=both
     Should be true  ${returnVal}
 	${returnVal} =  rest verify monitor session		1  ${s1SrcSwitch}	${s1SrcInt}	${s1DstSwitch}	${s1DstInt}  direction=both
@@ -196,7 +201,82 @@ T9 Activate-Deactivate-Activate-Delete SPAN session for Single interface - Direc
 	Should not be true  ${returnVal}
 
 
+T10 Configure SPAN session for Port-Group interface - Direction Both
+    [Tags]  feature
+    ${returnVal} =  rest add monitor session	2	${s2SrcSwitch}	${s2SrcInt}	${s2DstSwitch}	${s2DstInt}  direction=both
+    Should be true  ${returnVal}
+	${returnVal} =  rest verify monitor session		2  ${s2SrcSwitch}	${s2SrcInt}	${s2DstSwitch}	${s2DstInt}  direction=both
+	Should be true  ${returnVal}
+	rest activate monitor session	2
+	${returnVal} =  verify ping with tcpdump  h1  ${s2PingIP}  ${s2VerifyHost}	${s2VerifyInt}	ICMP echo
+	Should be true  ${returnVal}
+	rest switch int shut   ${s2ShutSwitch}  ${s2ShutInt}
+	${returnVal} =  verify ping with tcpdump  h1  ${s2PingIP}  ${s2VerifyHost}	${s2VerifyInt}	ICMP echo request  ICMP echo reply
+	Should be true  ${returnVal}
+	rest switch int noshut   ${s2ShutSwitch}  ${s2ShutInt}
 
+
+T11 Delete SPAN session for Port-Group interface - Direction Both
+	[Tags]  feature
+	${returnVal} =  rest delete monitor session  2
+    Should be true  ${returnVal}
+    ${returnVal} =  rest verify monitor session		2  ${s2SrcSwitch}	${s2SrcInt}	${s2DstSwitch}	${s2DstInt}  direction=both
+	Should not be true  ${returnVal}
+	${returnVal} =  verify ping with tcpdump  h1  ${s2PingIP}  ${s2VerifyHost}	${s2VerifyInt}	ICMP
+	Should not be true  ${returnVal}
+
+
+T12 Configure SPAN session for Port-Group interface - Direction Ingress
+    [Tags]  feature
+    ${returnVal} =  rest add monitor session	2	${s2SrcSwitch}	${s2SrcInt}	${s2DstSwitch}	${s2DstInt}  direction=ingress
+    Should be true  ${returnVal}
+	${returnVal} =  rest verify monitor session		2  ${s2SrcSwitch}	${s2SrcInt}	${s2DstSwitch}	${s2DstInt}  direction=ingress
+	Should be true  ${returnVal}
+	rest activate monitor session	2
+	rest switch int shut   ${s2ShutSwitch}  ${s2ShutInt}
+	${returnVal} =  verify ping with tcpdump  h1  ${s2PingIP}  ${s2VerifyHost}	${s2VerifyInt}	ICMP echo request
+	Should be true  ${returnVal}
+	rest switch int noshut   ${s2ShutSwitch}  ${s2ShutInt}
+	
+	
+T13 Delete SPAN session for Port-Group interface - Direction Ingress
+	[Tags]  feature
+	${returnVal} =  rest delete monitor session  2
+    Should be true  ${returnVal}
+    ${returnVal} =  rest verify monitor session		2  ${s2SrcSwitch}	${s2SrcInt}	${s2DstSwitch}	${s2DstInt}  direction=ingress
+	Should not be true  ${returnVal}
+	rest switch int shut   ${s2ShutSwitch}  ${s2ShutInt}
+	${returnVal} =  verify ping with tcpdump  h1  ${s2PingIP}  ${s2VerifyHost}	${s2VerifyInt}	ICMP echo request
+	Should not be true  ${returnVal}
+	rest switch int noshut   ${s2ShutSwitch}  ${s2ShutInt}
+
+
+T14 Configure SPAN session for Port-Group interface - Direction Egress
+    [Tags]  feature
+    ${returnVal} =  rest add monitor session	2	${s2SrcSwitch}	${s2SrcInt}	${s2DstSwitch}	${s2DstInt}  direction=egress
+    Should be true  ${returnVal}
+	${returnVal} =  rest verify monitor session		2  ${s2SrcSwitch}	${s2SrcInt}	${s2DstSwitch}	${s2DstInt}  direction=egress
+	Should be true  ${returnVal}
+	rest activate monitor session	2
+	rest switch int shut   ${s2ShutSwitch}  ${s2ShutInt}
+	${returnVal} =  verify ping with tcpdump  h1  ${s2PingIP}  ${s2VerifyHost}	${s2VerifyInt}	ICMP echo reply
+	Should be true  ${returnVal}
+	rest switch int noshut   ${s2ShutSwitch}  ${s2ShutInt}
+	
+	
+T15 Delete SPAN session for Port-Group interface - Direction Egress
+	[Tags]  feature
+	${returnVal} =  rest delete monitor session  2
+    Should be true  ${returnVal}
+    ${returnVal} =  rest verify monitor session		2  ${s2SrcSwitch}	${s2SrcInt}	${s2DstSwitch}	${s2DstInt}  direction=egress
+	Should not be true  ${returnVal}
+	rest switch int shut   ${s2ShutSwitch}  ${s2ShutInt}
+	${returnVal} =  verify ping with tcpdump  h1  ${s2PingIP}  ${s2VerifyHost}	${s2VerifyInt}	ICMP echo reply
+	Should not be true  ${returnVal}
+	rest switch int noshut   ${s2ShutSwitch}  ${s2ShutInt}
+	
+	
+	
 Configure SPAN for a particular source MAC/Port/IP-CIDR
 	[Tags] manual-untested
     manual untested
