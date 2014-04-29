@@ -102,9 +102,9 @@ T2.1 CLI Configure and verify virtual IP address
 	Verify VIP only on Master Bash  ${vip}
 	${configured} =  Cli Show Virtual IP
 	Should Be Equal As Strings  ${configured}  ${vip}
-	${eth0-vip} =  Cli Get Eth0 IP Using Virtual IP  ${vip}
-	${eth0-master} =  Cli Get Eth0 IP Using Virtual IP  master
-	Should Be Equal as Strings  ${eth0-vip}  ${eth0-master}
+	${mac1} =  Rest Get MAC Using Virtual IP   ${vip}
+	${mac2} =  Rest Get MAC Using Virtual IP   master
+	Should Be Equal as Strings  ${mac1}  ${mac2}
 	${state} =  Bash Verify Virtual IP  ${vip}
 	Should Be True  ${state}
 	[Tags]  T5  Virtual IP  CLI  Platform  Smoke
@@ -116,7 +116,7 @@ T2.2 CLI Delete and verify virtual IP address
 	Sleep  5 sec
 	${configured} =  Cli Show Virtual IP
 	Should Be Equal As Strings  ${configured}  None
-	Run Keyword and Expect Error  *Node * is unreachable*  Cli Get Eth0 IP Using Virtual IP  ${vip}
+	Run Keyword and Expect Error  *Node * is unreachable*  Rest Get MAC Using Virtual IP  ${vip}
 	Verify VIP neither on Master nor Slave Bash  ${vip}
 	[Tags]  T5  Virtual IP  CLI  Platform  Smoke
 
@@ -125,13 +125,13 @@ T2.3 CLI Virtual IP after failover in cluster
 	Cli Configure Virtual IP  ${vip}
 	Sleep  5 sec
 	Verify VIP only on Master Bash  ${vip}
-	${eth0-vip1} =  Cli Get Eth0 IP Using Virtual IP  ${vip}
+	${mac1} =  Rest Get MAC Using Virtual IP  ${vip}
 	${failover} =  Cli Cluster Take Leader
-	Should Be True  ${failover}
 	Sleep  ${sleep}
+	Should Be True  ${failover}
 	Verify VIP only on Master Bash  ${vip}
-	${eth0-vip2} =  Cli Get Eth0 IP Using Virtual IP  ${vip}
-	Should Not Be Equal as Strings  ${eth0-vip1}  ${eth0-vip2}
+	${mac2} =  Rest Get MAC Using Virtual IP  ${vip}
+	Should Not Be Equal as Strings  ${mac1}  ${mac2}
 	[Tags]  T5  Virtual IP  CLI  Platform
 
 T2.4 CLI Verify validation for incorrect virtual IP address
@@ -164,15 +164,15 @@ T2.7 CLI Change Virtual IP address
 	Sleep  10 sec
 	${configured} =  Cli Show Virtual IP
 	Should Be Equal As Strings  ${configured}  ${vip}
-	${eth0-vip} =  Cli Get Eth0 IP Using Virtual IP  ${vip}
+	${mac1} =  Rest Get MAC Using Virtual IP   ${vip}
 	Cli Configure Virtual IP  ${vip bis}
 	Sleep  15 sec
 	Verify VIP neither on Master nor Slave Bash  ${vip}
 	Verify VIP only on Master Bash  ${vip bis}
 	${configured} =  Cli Show Virtual IP
-	Should Be Equal As Strings  ${configured}  ${vip bis}
-	${eth0-vip-bis} =  Cli Get Eth0 IP Using Virtual IP  ${vip bis}
-	Should Be Equal as Strings  ${eth0-vip}  ${eth0-vip-bis}
+	Should Be Equal as Strings  ${configured}  ${vip bis}
+	${mac2} =  Rest Get MAC Using Virtual IP   ${vip bis}
+	Should Be Equal as Strings  ${mac1}  ${mac2}
 	[Tags]  T5  Virtual IP  CLI  Platform  Smoke
 
 
