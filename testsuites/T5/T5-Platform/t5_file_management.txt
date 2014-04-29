@@ -12,17 +12,17 @@ Library        		String
 
 
 *** Variables ***
-${scp}				scp://recovery@10.197.128.37:scp
-${scp RC}			scp://recovery@10.197.128.37:config-RC
-${scp file}			scp://recovery@10.197.128.37:config-file
-${scp config}		scp://recovery@10.197.128.37:config-config-scp
-${scp double}		scp://scp://recovery@10.197.128.37:config-scp
-${scp location}		recovery@10.197.128.37:config-scp
-${scp inexistent}   scp://recovery@10.197.128.37:inexistent
-${scp switch}		scp://recovery@10.197.128.37:scp-switch
-${scp image}		scp://recovery@10.197.128.37:controller-upgrade-bvs-2.0.8-SNAPSHOT.pkg
-${scp image corrupted}		scp://recovery@10.197.128.37:controller-upgrade-bvs-2.0.7-SNAPSHOT-corrupted.pkg
-${scp image bigtap}		scp://recovery@10.197.128.37:bigtap-3.0.0-upgrade-2014.03.22.0200.pkg
+${scp}				scp://bsn@regress:scp
+${scp RC}			scp://bsn@regress:config-RC
+${scp file}			scp://bsn@regress:config-file
+${scp config}		scp://bsn@regress:config-config-scp
+${scp double}		scp://scp://bsn@regress:config-scp
+${scp location}		bsn@regress:config-scp
+${scp inexistent}   scp://bsn@regress:inexistent
+${scp switch}		scp://bsn@regress:scp-config-large
+${scp image}		scp://bsn@regress:controller-upgrade-bvs-2.0.8-SNAPSHOT.pkg
+${scp image corrupted}		scp://bsn@regress:controller-upgrade-bvs-2.0.8-SNAPSHOT-corrupted.pkg
+${scp image bigtap}		scp://bsn@regress:bigtap-3.1.0-upgrade-2014.04.28.2234.pkg
 ${file}				config-file
 ${config}			config://config-config
 ${config double}	config://config://config-config
@@ -136,9 +136,11 @@ T4.3 Copy running config to scp://, change RC, restore, verify no change in RC
 	[Tags]  SCP  Smoke
 
 T4.4 Copy from scp:// and compare with previous running-config
+	Rest Delete Tenant  TenantTest12345
 	Cli Copy  running-config  backup
 	Cli Copy  ${scp switch}  running-config
 	Compare Negative  backup  running-config
+	Compare  ${scp switch}  running-config
 	[Tags]  SCP  Smoke
 
 
@@ -349,9 +351,9 @@ T6.2.4 Verify config:// name containing _
 	[Tags]  Filename
 
 T6.3 Verify correct processing of special characters in scp:// name (?)
-	Cli Copy  running-config  scp://recovery@10.197.128.37:test#test
-	Compare  running-config  scp://recovery@10.197.128.37:test#test
-	Cli Copy  scp://recovery@10.197.128.37:test#test   running-config
+	Cli Copy  running-config  scp://bsn@regress:test#test
+	Compare  running-config  scp://bsn@regress:test#test
+	Cli Copy  scp://bsn@regress:test#test   running-config
 	[Tags]  Filename  SCP
 
 T6.4 Verify empty file name is not allowed
@@ -441,9 +443,9 @@ T7.6 Verify comparison function between file and scp://
 	Compare  ${file}  ${scp}
 	Modify Running Config
 	Cli Copy  running-config  file-new
-	Cli Copy  running-config  scp://recovery@10.197.128.37:config-scp-new
+	Cli Copy  running-config  scp://bsn@regress:config-scp-new
 	Compare Negative  file-new  ${scp}
-	Compare Negative  ${file}  scp://recovery@10.197.128.37:config-scp-new
+	Compare Negative  ${file}  scp://bsn@regress:config-scp-new
 	[Tags]  SCP
 
 T7.7 Verify comparison function between file and file
@@ -461,8 +463,8 @@ T7.8 Verify comparison function between scp:// and config://
 	Compare  ${config}  ${scp}
 	Modify Running Config
 	Cli Copy  running-config  config://config-new
-	Cli Copy  running-config  scp://recovery@10.197.128.37:config-scp-new
-	Compare  config://config-new  scp://recovery@10.197.128.37:config-scp-new
+	Cli Copy  running-config  scp://bsn@regress:config-scp-new
+	Compare  config://config-new  scp://bsn@regress:config-scp-new
 	Compare Negative  config://config-new  ${scp}
 	Compare Negative  config://config-new  ${config}
 	[Tags]  SCP

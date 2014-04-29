@@ -1148,7 +1148,7 @@ class T5Platform(object):
                 return False
 
 
-    def cli_compare(self, src, dst, node='master', scp_passwd='adminadmin'):
+    def cli_compare(self, src, dst, node='master', scp_passwd='bsn'):
         ''' Generic function to compare via CLI, using SCP
         Input:
         Src, Dst - source and destination of compare command
@@ -1214,7 +1214,7 @@ class T5Platform(object):
         return True
 
 
-    def cli_copy(self, src, dst, node='master', scp_passwd='adminadmin'):
+    def cli_copy(self, src, dst, node='master', scp_passwd='bsn'):
         ''' Generic function to copy via CLI, using SCP
         Input:
         Src, Dst - source and destination of copy command
