@@ -96,7 +96,7 @@ class AristaSwitchDriver(Driver):
         if self._is_in_shell_mode:
             # print "In Arista shell. Starting up CLI."
             conn.execute('Cli')
-        # conn.execute('term len 0')
+        conn.execute('term len 0')
 
     # def auto_authorize(self, conn, account, flush, bailout):
     #    conn.send('enable\r')
