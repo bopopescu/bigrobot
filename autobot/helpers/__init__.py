@@ -10,6 +10,7 @@ import paramiko
 import inspect
 import subprocess
 import signal
+import traceback
 import re
 import ipcalc
 import platform
@@ -113,7 +114,8 @@ def exception_info_value():
 
 
 def exception_info_traceback():
-    return sys.exc_info()[2]
+    # return sys.exc_info()[2]
+    return traceback.format_exc()
 
 
 def exception_info():
@@ -337,6 +339,8 @@ def bigrobot_log_path(new_val=None, default=None):
 def bigrobot_log_path_exec_instance(new_val=None, default=None):
     """
     Category: Get/set environment variables for BigRobot.
+    This is the actual log path (i.e., outputdir) for an instance of
+    test suite execution.
     """
     return _env_get_and_set('BIGROBOT_LOG_PATH_EXEC_INSTANCE',
                             new_val,
@@ -348,6 +352,16 @@ def bigrobot_excript_debug_log_path(new_val=None, default=None):
     Category: Get/set environment variables for BigRobot.
     """
     return _env_get_and_set('BIGROBOT_EXSCRIPT_DEBUG_LOG_PATH',
+                            new_val,
+                            default)
+
+
+def bigrobot_devcmd_log(new_val=None, default=None):
+    """
+    Category: Get/set environment variables for BigRobot.
+    This log file captures all the device CLI/REST commands.
+    """
+    return _env_get_and_set('BIGROBOT_DEVICE_COMMAND_LOG',
                             new_val,
                             default)
 
@@ -486,6 +500,14 @@ def bigrobot_pandoc_support(new_val=None, default=None):
     Category: Get/set environment variables for BigRobot.
     """
     return _env_get_and_set('BIGROBOT_PANDOC_SUPPORT', new_val, default)
+
+
+def bigrobot_devcmd_write(s):
+    """
+    Write the device command (CLI or REST command) into a log file.
+    """
+    if is_gobot():
+        file_write_append_once(bigrobot_devcmd_log(), ts_logger() + ' ' + s)
 
 
 def sleep(s):
@@ -759,6 +781,15 @@ def ts_long_local():
     """
     local_datetime = datetime.datetime.now(_TZ)
     return local_datetime.strftime("%Y-%m-%dT%H:%M:%Sz")
+
+def ts_logger():
+    """
+    Return the current timestamp in local time (string format which is
+    compatible with the logger timestamp)
+    e.g., 20140429 15:01:51.039
+    """
+    local_datetime = datetime.datetime.now(_TZ)
+    return local_datetime.strftime("%Y%m%d %H:%M:%S.%f")[:-3]
 
 
 def time_now():
