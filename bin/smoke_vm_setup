@@ -15,7 +15,7 @@ import robot  # import to force append local robot libraries than python install
 
 
 
-vmdk_name = "/var/lib/jenkins/jobs/bvs\ master/lastSuccessful/archive/target/appliance/images/bvs/controller-bvs-2.0.8-SNAPSHOT.qcow2"
+vmdk_name = "/var/lib/jenkins/jobs/bvs\ master/lastSuccessful/archive/target/appliance/images/bvs/controller-bvs-*-SNAPSHOT.qcow2"
 mininet_vmdk = "/var/lib/jenkins/jobs/t6-mininet-vm/builds/lastSuccessfulBuild/archive/t6-mininet-vm/ubuntu-kvm/t6-mininet.qcow2"
 vmdk_path = "/var/lib/jenkins/jobs/bvs\ master/lastSuccessful/archive/target/appliance/images/bvs/"
 kvm_host = "10.192.104.13"
@@ -87,7 +87,7 @@ def main(*args):
                + datetime.datetime.now().strftime("%m%d%H%M"))
     vm_host_name = current_user + "-bvs-1"
     helpers.summary_log("Creating VM with Name: %s " % vm_name)
-    
+
     if args.kvm_host is not None:
         kvm_host = args.kvm_host
 
@@ -108,8 +108,8 @@ def main(*args):
                                  netmask=args.netmask,
                                  vm_name=vm_name,
                                  vm_host_name=vm_host_name,
-                                 build_number = args.build_number)
-    
+                                 build_number=args.build_number)
+
     if active_vm['status_code'] == False:
         helpers.summary_log("VM setup failure on active vm!!\n%s"
                             % active_vm['status_descr'])
@@ -137,7 +137,7 @@ def main(*args):
                                       vm_name=vm_backup_name,
                                       cluster_ip=args.active_ip,
                                       vm_host_name=vm_host_name,
-                                      build_number = args.build_number)
+                                      build_number=args.build_number)
         helpers.log("Created Backup VM :\n%s" % standby_vm)
         if standby_vm['status_code'] == False:
             helpers.summary_log("VM setup failure on standby vm!!\n%s"
@@ -160,13 +160,13 @@ def main(*args):
                                       netmask=args.netmask,
                                       vm_name=vm_mininet_name,
                                       vm_host_name=vm_host_name,
-                                      build_number = args.mininet_build_number)
+                                      build_number=args.mininet_build_number)
         helpers.log("Created Mininet VM :\n%s" % mininet_vm)
         if mininet_vm['status_code'] == False:
             helpers.summary_log("VM setup failure on standby vm!!\n%s"
                                 % mininet_vm['status_descr'])
             sys.exit(1)
-    #Creating a temp topo file for using first boot keywords
+    # Creating a temp topo file for using first boot keywords
     topo_file = helpers.get_env("BIGROBOT_PARAMS_INPUT_PRE")
     helpers.summary_log("USING TOPO FILE : %s" % topo_file)
     topo = open(topo_file, "w")
@@ -280,7 +280,7 @@ def main(*args):
     topo.write(config)
     topo.close()
     helpers.log("Success in creating topo file %s" % topo_file)
-    
+
     jenkins_build_number = helpers.get_env("BUILD_NUMBER")
     vm_file = "/tmp/vm_temp_%s" % str(jenkins_build_number)
     vm_file_handle = open(vm_file, "w")
