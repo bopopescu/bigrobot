@@ -881,7 +881,7 @@ class Test(object):
 
         if helpers.is_switchlight(n.platform()):
             helpers.log("Setting up switches (SwitchLight) - before clean config")
-            # For now it's just a placeholder...
+            self.teardown_switch(name)
 
     def setup_switch_post_clean_config(self, name):
         """
@@ -907,35 +907,6 @@ class Test(object):
                     else:
                         n.config("controller %s" % c.ip())
             n.config("copy running-config startup-config")
-
-    def teardown_switch(self, name):
-        """
-        Perform teardown on SwitchLight
-        - delete the controller IP address
-        """
-        n = self.topology(name)
-
-        if not n.devconf():
-            helpers.log("DevConf session is not available for node '%s'"
-                        % name)
-            return
-
-        if helpers.is_switchlight(n.platform()):
-            helpers.log("Tearing down switches (SwitchLight)")
-            content = n.config("show running-config")['content']
-            lines = content.splitlines()
-
-            # Find lines with the following config statements:
-            #   controller 10.192.5.51
-            #   controller 10.192.104.1 port 6633
-            lines = filter(lambda x: 'controller' in x, lines)
-
-            for line in lines:
-                # Form commands:
-                #   no controller 10.192.5.51
-                #   no controller 10.192.104.1 port 6633
-                cmd = 'no ' + line
-                n.config(cmd)
 
     def setup(self):
         # This check ensures we  don't try to setup multiple times.
@@ -978,6 +949,35 @@ class Test(object):
         self._setup_completed = True  # pylint: disable=W0201
         helpers.debug("Test object setup ends.%s"
                       % br_utils.end_of_output_marker())
+
+    def teardown_switch(self, name):
+        """
+        Perform teardown on SwitchLight
+        - delete the controller IP address
+        """
+        n = self.topology(name)
+
+        if not n.devconf():
+            helpers.log("DevConf session is not available for node '%s'"
+                        % name)
+            return
+
+        if helpers.is_switchlight(n.platform()):
+            helpers.log("Tearing down config for SwitchLight")
+            content = n.config("show running-config")['content']
+            lines = content.splitlines()
+
+            # Find lines with the following config statements:
+            #   controller 10.192.5.51
+            #   controller 10.192.104.1 port 6633
+            lines = filter(lambda x: 'controller' in x, lines)
+
+            for line in lines:
+                # Form commands:
+                #   no controller 10.192.5.51
+                #   no controller 10.192.104.1 port 6633
+                cmd = 'no ' + line
+                n.config(cmd)
 
     def teardown(self):
         helpers.debug("Test object teardown begins.")

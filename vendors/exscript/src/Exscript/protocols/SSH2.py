@@ -48,12 +48,12 @@ class SSH2(Protocol):
     """
     The secure shell protocol version 2 adapter, based on Paramiko.
     """
-    KEEPALIVE_INTERVAL = 2.5 * 60    # Two and a half minutes
+    KEEPALIVE_INTERVAL = 2.5 * 60  # Two and a half minutes
 
     def __init__(self, **kwargs):
         Protocol.__init__(self, **kwargs)
         self.client = None
-        self.shell  = None
+        self.shell = None
         self.cancel = False
 
         # Since each protocol may be created in it's own thread, we must
@@ -69,8 +69,8 @@ class SSH2(Protocol):
             pass
 
         # Paramiko client stuff.
-        self._system_host_keys   = paramiko.HostKeys()
-        self._host_keys          = paramiko.HostKeys()
+        self._system_host_keys = paramiko.HostKeys()
+        self._host_keys = paramiko.HostKeys()
         self._host_keys_filename = None
 
         if self.verify_fingerprint:
@@ -80,14 +80,14 @@ class SSH2(Protocol):
 
     def _reject_host_key(self, key):
         name = key.get_name()
-        fp   = hexlify(key.get_fingerprint())
-        msg  = 'Rejecting %s host key for %s: %s' % (name, self.host, fp)
+        fp = hexlify(key.get_fingerprint())
+        msg = 'Rejecting %s host key for %s: %s' % (name, self.host, fp)
         self._dbg(1, msg)
 
     def _add_host_key(self, key):
         name = key.get_name()
-        fp   = hexlify(key.get_fingerprint())
-        msg  = 'Adding %s host key for %s: %s' % (name, self.host, fp)
+        fp = hexlify(key.get_fingerprint())
+        msg = 'Adding %s host key for %s: %s' % (name, self.host, fp)
         self._dbg(1, msg)
         self._host_keys.add(self.host, name, key)
         if self._host_keys_filename is not None:
@@ -101,7 +101,7 @@ class SSH2(Protocol):
                     line = ' '.join((hostname, keytype, key.get_base64()))
                     file.write(line + '\n')
 
-    def _load_system_host_keys(self, filename = None):
+    def _load_system_host_keys(self, filename=None):
         """
         Load host keys from a system (read-only) file.  Host keys read with
         this method will not be saved back by L{save_host_keys}.
@@ -169,13 +169,13 @@ class SSH2(Protocol):
         t.set_keepalive(self.KEEPALIVE_INTERVAL)
         return t
 
-    def _paramiko_auth_none(self, username, password = None):
+    def _paramiko_auth_none(self, username, password=None):
         self.client.auth_none(username)
 
     def _paramiko_auth_password(self, username, password):
         self.client.auth_password(username, password or '')
 
-    def _paramiko_auth_agent(self, username, password = None):
+    def _paramiko_auth_agent(self, username, password=None):
         keys = paramiko.Agent().get_keys()
         if not keys:
             raise AuthenticationException('auth agent found no keys')
@@ -203,7 +203,7 @@ class SSH2(Protocol):
         for pkey_class, filename in keys:
             try:
                 key = pkey_class.from_private_key_file(filename, password)
-                fp  = hexlify(key.get_fingerprint())
+                fp = hexlify(key.get_fingerprint())
                 self._dbg(1, 'Trying key %s in %s' % (fp, filename))
                 self.client.auth_publickey(username, key)
                 return
@@ -215,10 +215,10 @@ class SSH2(Protocol):
 
     def _paramiko_auth_autokey(self, username, password):
         keyfiles = []
-        for cls, file in ((paramiko.RSAKey, '~/.ssh/id_rsa'), # Unix
-                          (paramiko.DSSKey, '~/.ssh/id_dsa'), # Unix
+        for cls, file in ((paramiko.RSAKey, '~/.ssh/id_rsa'),  # Unix
+                          (paramiko.DSSKey, '~/.ssh/id_dsa'),  # Unix
                           (paramiko.RSAKey, '~/ssh/id_rsa'),  # Windows
-                          (paramiko.DSSKey, '~/ssh/id_dsa')): # Windows
+                          (paramiko.DSSKey, '~/ssh/id_dsa')):  # Windows
             file = os.path.expanduser(file)
             if os.path.isfile(file):
                 keyfiles.append((cls, file))
@@ -256,8 +256,8 @@ class SSH2(Protocol):
             raise LoginFailure('Failed to open shell: ' + str(e))
 
     def _connect_hook(self, hostname, port):
-        self.host   = hostname
-        self.port   = port or 22
+        self.host = hostname
+        self.port = port or 22
         self.client = self._paramiko_connect()
         self._load_system_host_keys()
         return True
@@ -299,6 +299,12 @@ class SSH2(Protocol):
     def _fill_buffer(self):
         # Wait for a response of the device.
         if not self._wait_for_data():
+            # **** VUI/BSN modification to dump expect buffer (useful for
+            #      debugging.
+            print("====== Expect output buffer (begin) ======\n"
+                  "%s\n"
+                  "====== Expect output buffer (end) ======"
+                  % self.buffer)
             error = 'Timeout while waiting for response from device'
             raise TimeoutException(error)
 
@@ -316,21 +322,21 @@ class SSH2(Protocol):
         search_window_size = 150
         while not self.cancel:
             # Check whether what's buffered matches the prompt.
-            driver        = self.get_driver()
+            driver = self.get_driver()
             search_window = self.buffer.tail(search_window_size)
-            #print("**** VUI search_window: %s <<<<<" % search_window)
+            # print("**** VUI search_window: %s <<<<<" % search_window)
             search_window, incomplete_tail = driver.clean_response_for_re_match(search_window)
-            match         = None
+            match = None
             for n, regex in enumerate(prompt):
-                #self._dbg(3, "**** VUI n:%s regex:%s <<<<<" % (n, regex))
+                # self._dbg(3, "**** VUI n:%s regex:%s <<<<<" % (n, regex))
 
                 match = regex.search(search_window)
                 if match is not None:
-                    #self._dbg(3, "\n**** VUI Found a match! (matched: ^^^^^^%s^^^^^^)" % search_window)
+                    # self._dbg(3, "\n**** VUI Found a match! (matched: ^^^^^^%s^^^^^^)" % search_window)
                     break
 
             if not match:
-                #self._dbg(3, "\n**** VUI No match! (buffer: ^^^^^^%s^^^^^^)" % self.buffer.__str__())
+                # self._dbg(3, "\n**** VUI No match! (buffer: ^^^^^^%s^^^^^^)" % self.buffer.__str__())
                 if not self._fill_buffer():
                     error = 'EOF while waiting for response from device'
                     raise ProtocolException(error)
@@ -339,7 +345,7 @@ class SSH2(Protocol):
             end = self.buffer.size() - len(search_window) + match.end()
             if flush:
                 self.response = self.buffer.pop(end)
-                #self._dbg(3, "\n**** VUI self.response (flush): %s" % self.response)
+                # self._dbg(3, "\n**** VUI self.response (flush): %s" % self.response)
             else:
                 self.response = self.buffer.head(end)
                 self._dbg(3, "\n**** VUI self.response: %s" % self.response)
@@ -358,10 +364,10 @@ class SSH2(Protocol):
     def _set_terminal_size(self, rows, cols):
         self.shell.resize_pty(cols, rows)
 
-    def interact(self, key_handlers = None, handle_window_size = True):
+    def interact(self, key_handlers=None, handle_window_size=True):
         return self._open_shell(self.shell, key_handlers, handle_window_size)
 
-    def close(self, force = False):
+    def close(self, force=False):
         if self.shell is None:
             return
         if not force:

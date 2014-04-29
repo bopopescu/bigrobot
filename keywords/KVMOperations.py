@@ -194,12 +194,12 @@ class KVMOperations(object):
         helpers.log("Latest Build Number on KVM Host: %s" % latest_kvm_build_number)
         helpers.log("Latest Build Number on Jenkins: %s" % latest_build_number)
 
-
         if int(latest_kvm_build_number) == int(latest_build_number):
             helpers.log("Skipping SCP as the latest build on jenkins server did not change from the latest on KVM Host")
 
         else:
             scp_cmd = "scp -o \"UserKnownHostsFile=/dev/null\" -o StrictHostKeyChecking=no \"bsn@jenkins:%s\" %s" % (remote_qcow_path, file_name)
+            helpers.log("SCP command arguments:\n%s" % scp_cmd)
             scp_cmd_out = kvm_handle.bash(scp_cmd, prompt=[r'.*password:', r'.*#', r'.*$ '])['content']
             if "password" in scp_cmd_out:
                 helpers.log("sending bsn passoword..")
@@ -285,7 +285,8 @@ class KVMOperations(object):
             self.log_path = LOG_BASE_PATH + '/' + vm_name
             os.makedirs(self.log_path)
 
-            remote_qcow_bvs_path = kwargs.get("remote_qcow_bvs_path", "/var/lib/jenkins/jobs/bvs\ master/lastSuccessful/archive/target/appliance/images/bvs/controller-bvs-2.0.8-SNAPSHOT.qcow2")
+            # remote_qcow_bvs_path = kwargs.get("remote_qcow_bvs_path", "/var/lib/jenkins/jobs/bvs\ master/lastSuccessful/archive/target/appliance/images/bvs/controller-bvs-2.0.8-SNAPSHOT.qcow2")
+            remote_qcow_bvs_path = kwargs.get("remote_qcow_bvs_path", "/var/lib/jenkins/jobs/bvs\ master/lastSuccessful/archive/target/appliance/images/bvs/controller-bvs-*-SNAPSHOT.qcow2")
             remote_qcow_mininet_path = kwargs.get("remote_qcow_mininet_path", "/var/lib/jenkins/jobs/t6-mininet-vm/builds/lastSuccessfulBuild/archive/t6-mininet-vm/ubuntu-kvm/t6-mininet.qcow2")
 
             topo_file = self._create_temp_topo(kvm_host=kvm_host, vm_name=vm_name)
