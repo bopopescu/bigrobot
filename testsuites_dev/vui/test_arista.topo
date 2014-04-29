@@ -1,4 +1,11 @@
+#s1:
+#  ip: 10.192.81.115  # Animesh's Arista
+#  user: admin
+#  password: arastra
+
 s1:
-  ip: 10.192.81.115
-  user: admin
-  password: arastra
+  ip: 10.210.67.30  # Mingtao's Arista
+  #user: admin
+  #password: adminadmin
+  user: root
+  password: bsn
