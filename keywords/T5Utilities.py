@@ -757,6 +757,36 @@ class T5Utilities(object):
         return None
 
 
+
+    def rest_switch_int_shut(self, switch, interface):
+        ''' This function will shut down the switch interface
+        '''
+        t = test.Test()
+        c = t.controller("master")
+        url = '/api/v1/data/controller/core/switch-config[name="%s"]/interface[name="%s"]' % (switch, interface)
+        result = c.rest.patch(url,{"shutdown": 'true'})
+        
+        if c.rest.status_code_ok():
+            return True
+        else:
+            return False
+    
+    def rest_switch_int_noshut(self, switch, interface):
+        ''' This function will no-shut the switch interface
+        '''
+        t = test.Test()
+        c = t.controller("master")
+        url = '/api/v1/data/controller/core/switch-config[name="%s"]/interface[name="%s"]/shutdown' % (switch, interface)
+        result = c.rest.delete(url,{})
+        
+        if c.rest.status_code_ok():
+            return True
+        else:
+            return False
+
+
+
+
 ''' Following class will perform T5 platform related multithreading activities
     Instantiating this class is done by functions reside in T5Platform. 
     
