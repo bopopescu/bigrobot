@@ -135,6 +135,7 @@ class RestClient(object):
         if data:
             helpers.log("Data = %s" % helpers.to_json(data), level=5)
 
+        helpers.bigrobot_devcmd_write("REST %s: %s %s\n" % (verb, url, data))
         resp, content = self.http.request(url,
                                           verb,
                                           body=helpers.to_json(data),

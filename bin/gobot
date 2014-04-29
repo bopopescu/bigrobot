@@ -154,12 +154,18 @@ helpers.bigrobot_debug(default=1)
 #
 #     Note: This env should only be set after bigrobot_log_path_exec_instance()
 #           is set.
-helpers.bigrobot_excript_debug_log_path(default=helpers.bigrobot_log_path_exec_instance())
+helpers.bigrobot_excript_debug_log_path(
+      default=helpers.bigrobot_log_path_exec_instance())
 
 # !!! FIXME: We're doing away with Pandoc support (required by .mw format)
 #     since .txt format is much more flexible. Can get rid of all things
 #     relating to pandoc at some point.
 helpers.bigrobot_pandoc_support(default='0')
+
+helpers.bigrobot_devcmd_log(
+      default=''.join((helpers.bigrobot_log_path_exec_instance(),
+                       '/dev_commands.log')))
+
 helpers.bigrobot_path()
 helpers.bigtest_path()
 helpers.python_path()
