@@ -77,6 +77,11 @@ Intra tenant dhcp relay with circuit id across rack
 Delete and Add dhcp relay
 	L3 dhcp request without dhcp relay enabled
 	[Tags]						sanity	
+	
+Move host from one vns to another vns in the same tenant and verify dhcp request is working
+	Host moved between vns in the same tenant with dhcp request
+	Log								manual untested
+	[Tags]						manual			untested			feature			
 
 Add and delete untagged endpoints with existing host
 	L3 add and delete untagged endpoints with existing host
@@ -173,11 +178,11 @@ Restart ofad process on leaf
 	
 L3 traffic behavior in headless mode
 	L3 intra tenant traffic behavior in headless mode 
-	Log								manual untested
+	Log							manual untested
 	[Tags]						manual			untested			feature			
 
 L3 intra tenant traceroute
-	Log								manual untested
+	Log							manual untested
 	[Tags]						manual			untested			feature			
 		
 	
