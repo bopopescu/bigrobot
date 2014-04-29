@@ -286,8 +286,8 @@ class DevConf(object):
         if not quiet:
             helpers.log("Execute command: '%s'" % cmd, level=level)
 
+        helpers.bigrobot_devcmd_write("%s CLI: %s\n" % (self.name(), cmd))
         self.conn.execute(cmd)
-
         self.last_result = { 'content': self.conn.response }
 
         if not quiet:
