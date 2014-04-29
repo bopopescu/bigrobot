@@ -5,6 +5,7 @@
 
 s1:
   ip: 10.210.67.30  # Mingtao's Arista
+  #ip: dummy
 
   # Note: It is highly recommended that you use 'root' account to log in
   # to help identify the device properly.
