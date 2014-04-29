@@ -16,6 +16,6 @@ Test Arista switch
     #switch show version  s1
     cli         s1   show version
     enable      s1   show running-config
-    #bash        s1   ls -la
-    enable         s1   show version
+    #bash       s1   ls -la
+    #enable     s1   show version
 
