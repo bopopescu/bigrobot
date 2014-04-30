@@ -6,6 +6,7 @@ from time import sleep
 import re
 import keywords.Mininet as mininet
 import keywords.T5 as T5
+import keywords.T5L3 as T5L3
 import keywords.Host as Host
 
 mininetPingFails = 0
@@ -488,7 +489,143 @@ class T5Platform(object):
             else:
                 return True
 
-
+    
+    def auto_configure_tenants(self, numTenants, numVnsPerTenant, vnsIntIPList,  *args):
+        
+        ''' Add tenant & vns  to the running-config. 
+            Usage: 
+                * Variables
+                @{vnsIntIPDict}  v1  10.10.10.100  v2  20.20.20.100  v3  30.30.30.100
+                @{v1MemberPGList}   v1  PG   p1  10  p3  10  
+                @{v1MemberIntList}  v1  INT  leaf0-a  ethernet33  -1  leaf1-a  ethernet33  -1
+                @{v2MemberPGList}   v2  PG   p2  20  p4  20
+                @{v2MemberIntList}  v2  INT  leaf0-a  ethernet34  -1  leaf1-a  ethernet34  -1
+                
+                Test T5Setup
+                    [Tags]  Setup
+                    auto configure tenants     1  2  ${vnsIntIPDict}  ${v1MemberPGList}  ${v1MemberIntList}  ${v2MemberPGList}  ${v2MemberIntList}
+        '''
+        
+        
+        helpers.log("vnsIntIPList is: %s" % vnsIntIPList)
+        vnsIPDict = {}
+        
+        try:
+            vnsIPDict = dict(vnsIntIPList[i:i+2] for i in range(0, len(vnsIntIPList), 2))
+        except:
+            helpers.test_failure("Error during converting vnsIntIPList to a Dictionary. Check the input parameters for vnsIntIPList")
+            return False
+        
+        vnsMemberPGDict = {}
+        vnsMemberIntDict = {}
+        
+        try:
+            
+            for arg in args:
+                #helpers.log("arg is: %s" % arg)
+                currentVNS = arg[0]
+                helpers.log("CurrentVNS is : %s" % currentVNS)
+                
+                if (arg[1] == "PG"):
+                    vnsMemberPGDict[currentVNS] = arg[2:]
+                    helpers.log("Adding %s PG Dict: %s" % (currentVNS,vnsMemberPGDict[currentVNS]))
+                elif (arg[1] == "INT"):
+                    vnsMemberIntDict[currentVNS] = arg[2:]
+                    helpers.log("Adding %s Int Dict: %s" % (currentVNS,vnsMemberIntDict[currentVNS]))
+                    
+            i=0        
+            while(i< int(numTenants) * int(numVnsPerTenant)):
+                    i += 1
+                    vnsName = 'v'+ str(i)
+                    #helpers.log("VNS Name is: %s / PG List is: %s" % (vnsName, vnsMemberPGDict[vnsName]))
+                    #helpers.log("VNS Name is: %s / Int list is: %s" % (vnsName, vnsMemberIntDict[vnsName]))
+            
+            
+        except:
+            helpers.test_failure("Error during converting vns member Lists. Check the input parameters for vnsMemberPGList & vnsMemberIntList")
+            return False
+        
+        
+        autoTenantList = []
+        autoVNSList = []
+        i=0
+        while (i< int(numTenants)):
+            i += 1
+            autoTenantList.append('autoT'+ str(i))
+        
+        helpers.log("Tenant List is: %s" % autoTenantList)
+        
+        Fabric = T5.T5()
+        FabricL3 = T5L3.T5L3()
+        
+        # ==> Add System Router
+        Fabric.rest_add_tenant("system")
+        
+        i = 0
+        for tenant in autoTenantList:
+            # ==> Add a Tenant
+            Fabric.rest_add_tenant(tenant)
+            
+            j = 0
+            while (j < int(numVnsPerTenant)):
+                i += 1
+                j += 1
+                vnsName = 'v' + str(i)
+                autoVNSList.append(vnsName)
+                # ==> Add VNS with vnsName
+                Fabric.rest_add_vns(tenant, vnsName)
+                try:
+                    k = 0 
+                    helpers.log("VNSName is: %s" % vnsName)
+                    while (k < len(vnsMemberPGDict[vnsName])):
+                        currentPG = vnsMemberPGDict[vnsName][k]
+                        currentVLAN = vnsMemberPGDict[vnsName][k+1]
+                        k += 2
+                        #helpers.log("currentPG is: %s" % currentPG)
+                        #helpers.log("currentVLAN is: %s" % currentVLAN)
+                        
+                        # ==> Add member port-group (currentPG, curentVLAN, vnsName)
+                        Fabric.rest_add_portgroup_to_vns(tenant, vnsName, currentPG, currentVLAN)
+                        
+                except(KeyError):
+                    pass
+                
+                try:
+                    k = 0 
+                    while (k < len(vnsMemberIntDict[vnsName])):
+                        currentSwitch = vnsMemberIntDict[vnsName][k]
+                        currentInt = vnsMemberIntDict[vnsName][k+1]
+                        currentVLAN = vnsMemberIntDict[vnsName][k+2]
+                        k += 3
+                        #helpers.log("currentSwitch is: %s" % currentSwitch)
+                        #helpers.log("currentInt is: %s" % currentInt)
+                        #helpers.log("currentVLAN is: %s" % currentVLAN)
+                        
+                        # ==> Add member interface to vns
+                        Fabric.rest_add_interface_to_vns(tenant, vnsName, currentSwitch, currentInt, currentVLAN)
+            
+                except(KeyError):
+                    pass
+            
+            # ==> Add the router interface IPs
+            for vns in autoVNSList: 
+                FabricL3.rest_add_router_intf(tenant, vns)
+                FabricL3.rest_add_vns_ip(tenant, vns, vnsIPDict[vns], '24' )
+            
+            # ==> Add tenant router interface to system
+            FabricL3.rest_add_tenant_routers_intf_to_system(tenant)  
+            
+            # ==> Add static routes pointing to system
+            FabricL3.rest_add_static_routes(tenant, '0.0.0.0/0', "{\"tenant-name\": \"system\"}")
+            
+                
+            
+            
+            
+        
+            
+        helpers.log("vnsIPDict is: %s" % vnsIPDict)
+        pass
 
     def auto_configure_fabric_switch(self, spineList, leafList, leafPerRack):
         ''' Add leaf & spine switches to the running-config. 
