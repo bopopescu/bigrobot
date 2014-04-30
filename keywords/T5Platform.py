@@ -618,14 +618,8 @@ class T5Platform(object):
             # ==> Add static routes pointing to system
             FabricL3.rest_add_static_routes(tenant, '0.0.0.0/0', "{\"tenant-name\": \"system\"}")
             
-                
-            
-            
-            
-        
-            
-        helpers.log("vnsIPDict is: %s" % vnsIPDict)
-        pass
+        return True
+    
 
     def auto_configure_fabric_switch(self, spineList, leafList, leafPerRack):
         ''' Add leaf & spine switches to the running-config. 
