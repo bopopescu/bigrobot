@@ -141,7 +141,6 @@ if helpers.bigrobot_suite():
 
 helpers.bigrobot_params(default='None')
 helpers.bigrobot_continuous_integration(default='False')
-helpers.bigrobot_suite_format(default='txt')
 helpers.bigrobot_exec_hint_format()
 helpers.bigrobot_debug(default=1)
 
@@ -156,11 +155,6 @@ helpers.bigrobot_debug(default=1)
 #           is set.
 helpers.bigrobot_excript_debug_log_path(
       default=helpers.bigrobot_log_path_exec_instance())
-
-# !!! FIXME: We're doing away with Pandoc support (required by .mw format)
-#     since .txt format is much more flexible. Can get rid of all things
-#     relating to pandoc at some point.
-helpers.bigrobot_pandoc_support(default='0')
 
 helpers.bigrobot_devcmd_log(
       default=''.join((helpers.bigrobot_log_path_exec_instance(),
@@ -194,10 +188,7 @@ def usage():
     print("\nUsage: gobot [command] [options]\n")
 
     # Print a list of all the test suites in the current directory.
-    # Files extension should match the suite extension (e.g., either
-    # 'mw', 'txt', etc).
-
-    ext = ''.join(('.', helpers.bigrobot_suite_format()))
+    # Files extension should match the suite extension (e.g., 'txt').
 
     file_list = []
     for (_, _, filenames) in os.walk('.'):
@@ -205,7 +196,7 @@ def usage():
         break
 
     # List of test suites, with file extension removed
-    suite_list = [os.path.splitext(f)[0] for f in file_list if f.endswith(ext)]
+    suite_list = [os.path.splitext(f)[0] for f in file_list if f.endswith('txt')]
 
     print("  Point environment variable BIGROBOT_SUITE to a test suite."
           " Select one below:")
@@ -270,9 +261,7 @@ def exit_if_suite_not_defined():
     if not is_suite_defined():
         helpers.error_exit("BIGROBOT_SUITE environment variable required."
                            " See 'gobot help' for more information.")
-    f = ''.join((helpers.bigrobot_suite(),
-                 '.',
-                 helpers.bigrobot_suite_format()))
+    f = ''.join((helpers.bigrobot_suite(), '.txt'))
     if not os.path.exists(f):
         helpers.error_exit("Test suite file '%s' does not exist." % f)
 
@@ -287,33 +276,14 @@ def run(cmd, cwd=None, shell=True, quiet=False):
     return status
 
 
-def format_convert(f, quiet=False):
+def copy_suite(f, p, quiet=False):
     """
-    Convert the test suite file (special case for 'mw' only at this point) to:
-      rst format - ReStructuredText format which is human reable
-      html format - HTML file can be fed to Robot Framework for processing
+    Copy suite-related files to the log directory.
     """
-    if helpers.bigrobot_pandoc_support() != '1':
-        return
-    if helpers.bigrobot_suite_format() != 'mw':
-        return
-
-    run('pandoc %s.mw --from=mediawiki --to=rst --output=%s.rst' % (f, f),
-        quiet=quiet)
-    run('pandoc %s.mw --from=mediawiki --to=html --output=%s.html' % (f, f),
-        quiet=quiet)
-
-
-def format_convert_and_copy(f, p, quiet=False):
-    """
-    Convert the test suite source format (.mw) into .rst/.html formats. Then
-    copy all files to the log directory.
-    """
-    format_convert(f, quiet)
     if not os.path.exists(p):
         os.makedirs(p)
 
-    for ext in ('mw', 'txt', 'rst', 'html'):
+    for ext in ('txt', 'topo'):
         filename = ''.join((f, '.', ext))
         if os.path.exists(filename):
             shutil.copy(filename, p)
@@ -323,9 +293,9 @@ def touch_log_files():
     log_files = ['debug.log', 'syslog.txt', 'log.html', 'report.html',
                  'output.xml']
     for f in log_files:
-        file = '/'.join((helpers.bigrobot_log_path_exec_instance(), f))
-        # print("Touching file %s" % file)
-        helpers.file_touch(file)
+        filename = '/'.join((helpers.bigrobot_log_path_exec_instance(), f))
+        # print("Touching file %s" % filename)
+        helpers.file_touch(filename)
 
 
 def create_links_to_logs():
@@ -376,16 +346,6 @@ def version_hidden_command(*args):
     pversion = sys.version_info
     print("Python version          %s.%s.%s"
           % (pversion.major, pversion.minor, pversion.micro))
-
-def suite_command(*args):
-    """
-    Show the text output of the test suite.
-    """
-    _ = args  # unused, silent Pylint
-    exit_if_suite_not_defined()
-    format_convert(helpers.bigrobot_suite(), quiet=True)
-    run('cat %s.rst' % helpers.bigrobot_suite(), quiet=True)
-
 
 def test_command(*args):
     """
@@ -458,13 +418,10 @@ def test_command(*args):
 
     exit_if_suite_not_defined()
     warn_if_topology_not_defined()
-    format_convert_and_copy(helpers.bigrobot_suite(),
-                            helpers.bigrobot_log_path_exec_instance())
+    copy_suite(helpers.bigrobot_suite(),
+               helpers.bigrobot_log_path_exec_instance())
 
     ext = 'txt'
-    if helpers.bigrobot_suite_format() == 'mw':
-        ext = 'html'
-
     test_suite = ''.join((helpers.bigrobot_suite(), '.', ext))
 
     touch_log_files()

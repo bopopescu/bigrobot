@@ -1,6 +1,6 @@
 from autobot.restclient import RestClient
 import re
-import helpers
+import autobot.helpers as helpers
 
 
 class BsnRestClient(RestClient):
@@ -8,11 +8,13 @@ class BsnRestClient(RestClient):
     REST Client for Big Switch devices.
     """
     def __init__(self, base_url=None, user=None, password=None,
-                 content_type='application/json', host=None, platform=None):
+                 content_type='application/json', host=None, platform=None,
+                 name=None):
         super(BsnRestClient, self).__init__(base_url=base_url,
                                             user=user,
                                             password=password,
-                                            content_type=content_type)
+                                            content_type=content_type,
+                                            name=name)
         self.host = host
         self.platform = platform
 

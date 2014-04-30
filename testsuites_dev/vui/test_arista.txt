@@ -14,8 +14,8 @@ Library         keywords_dev/vui/MyTest.py
 Test Arista switch
     #[Tags]  skipped
     #switch show version  s1
-    cli         s1   show version
-    enable      s1   show running-config
+    cli         arista-1   show version
+    enable      arista-1   show running-config
     #bash       s1   ls -la
     #enable     s1   show version
 

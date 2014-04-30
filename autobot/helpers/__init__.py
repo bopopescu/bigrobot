@@ -376,17 +376,6 @@ def bigrobot_suite(new_val=None, default=None):
     return _env_get_and_set('BIGROBOT_SUITE', new_val, default)
 
 
-def bigrobot_suite_format(new_val=None, default=None):
-    """
-    Category: Get/set environment variables for BigRobot.
-
-    Specify the test suite file format. The possible values include:
-    mw  - MediaWiki format (obsolete)
-    txt - Robot Framework plain text format
-    """
-    return _env_get_and_set('BIGROBOT_SUITE_FORMAT', new_val, default)
-
-
 def bigrobot_exec_hint_format(new_val=None, default='export'):
     """
     Category: Get/set environment variables for BigRobot.
@@ -497,13 +486,6 @@ def bigrobot_debug(new_val=None, default=None):
         robot_syslog_level(default='DEBUG')
 
     return _debug
-
-
-def bigrobot_pandoc_support(new_val=None, default=None):
-    """
-    Category: Get/set environment variables for BigRobot.
-    """
-    return _env_get_and_set('BIGROBOT_PANDOC_SUPPORT', new_val, default)
 
 
 def bigrobot_devcmd_write(s):
@@ -687,11 +669,14 @@ def from_json(json_str):
     return json.loads(json_str)
 
 
-def to_json(python_data):
+def to_json(python_data, is_raw=False):
     """
     Return JSON (pretty) formatted string from Python datatype (dict or array).
     """
-    return json.dumps(python_data, indent=4, sort_keys=True)
+    if is_raw:
+        return json.dumps(python_data, sort_keys=True)
+    else:
+        return json.dumps(python_data, indent=4, sort_keys=True)
 
 
 def load_config(yaml_file):
@@ -1109,6 +1094,9 @@ def _ping(host, count=5, timeout=5, quiet=False, source_if=None,
 
     cmd = "%s %s" % (cmd, host)
 
+    prefix_str = 'bigrobot'
+    bigrobot_devcmd_write("%-9s: %s\n" % (prefix_str, cmd))
+
     if not node_handle:
         if not quiet:
             log("Ping command: %s" % cmd, level=4)
@@ -1184,12 +1172,13 @@ def _ping(host, count=5, timeout=5, quiet=False, source_if=None,
     test_error("Unknown ping error. Please check the output log.")
 
 
-def ping(host, count=5, timeout=5, quiet=False):
+def ping(host, count=5, timeout=5, loss=0, quiet=False):
     """
     Unix ping.
     :param host: (Str) ping hist host
     :param count: (Int) number of packets to send
     :param timeout: (Int) time in seconds to wait for a reply
+    :param loss: (Int) allowable loss percentage
 
     Return: (Int) loss percentage
     """
@@ -1198,13 +1187,13 @@ def ping(host, count=5, timeout=5, quiet=False):
 
     # Need to ping with minimum of 2 counts since 1 packet may get lost due
     # to multiple hops (if destination host is not in the same network).
-    loss = _ping(host, count=2, timeout=1, quiet=quiet)
-    if loss > 0:
-        loss = _ping(host, count=2, timeout=1, quiet=quiet)
-    if loss > 0:
-        count -= 4
-        loss = _ping(host, count=count, timeout=timeout, quiet=quiet)
-    return loss
+    actual_loss = _ping(host, count=2, timeout=1, quiet=quiet)
+    if actual_loss > loss:
+        actual_loss = _ping(host, count=2, timeout=1, quiet=quiet)
+        if actual_loss > loss:
+            count -= 4
+            actual_loss = _ping(host, count=count, timeout=timeout, quiet=quiet)
+    return actual_loss
 
 
 def params_val(k, params_dict):
