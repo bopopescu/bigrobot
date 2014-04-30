@@ -169,10 +169,16 @@ class Host(object):
             result = re.search('inet addr:(.*)\sBcast', output)
             return result.group(1)
 
-    def bash_add_route(self, node, cidr, gw):
+    def bash_add_route(self, node, cidr, gw, dev=None):
+        """
+        See manpage route(8) for more details.
+        """
         t = test.Test()
         n = t.node(node)
-        n.sudo("route add -net %s gw %s" % (cidr, gw))
+        cmd = "route add -net %s gw %s" % (cidr, gw)
+        if dev:
+            cmd = cmd + " dev %s" % dev
+        n.sudo(cmd)
         return True
 
     def bash_delete_route(self, node, cidr, gw):
@@ -266,14 +272,14 @@ class Host(object):
         n = t.node(node)
         n.sudo("service %s start" % processname)
         return True
-    
+
     def bash_stop_service(self, node, processname):
         t = test.Test()
         n = t.node(node)
         n.sudo("service %s stop" % processname)
-        return True       
-        
-        
+        return True
+
+
     def bash_ls(self, node, path):
         """
         Execute 'ls -l --time-style=+%Y-%m-%d <path>' on a device.
