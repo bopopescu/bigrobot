@@ -1432,6 +1432,7 @@ class BsnCommon(object):
         t = test.Test()
         c = t.controller(node)
         try:
+            helpers.log("Restarting %s on '%s'" % (process_name, node))
             c.sudo("service %s restart" % process_name)
         except:
             helpers.test_failure("Unable to restart process '%s'"

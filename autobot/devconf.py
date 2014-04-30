@@ -420,25 +420,26 @@ class BsnDevConf(DevConf):
                 super(BsnDevConf, self).cmd('configure', quiet=True,
                                             level=level)
         elif mode == 'bash':
-            if self.is_cli():
-                self.mode_before_bash = 'cli'
-                helpers.log("Switching from cli to %s mode" % mode,
-                            level=level)
-            elif self.is_enable():
-                self.mode_before_bash = 'enable'
-                helpers.log("Switching from enable to %s mode" % mode,
-                            level=level)
-            elif self.is_config():
-                self.mode_before_bash = 'config'
-                helpers.log("Switching from config to %s mode" % mode,
-                            level=level)
+            if self.is_cli() or self.is_enable() or self.is_config():
+                if self.is_cli():
+                    self.mode_before_bash = 'cli'
+                    helpers.log("Switching from cli to %s mode" % mode,
+                                level=level)
+                elif self.is_enable():
+                    self.mode_before_bash = 'enable'
+                    helpers.log("Switching from enable to %s mode" % mode,
+                                level=level)
+                elif self.is_config():
+                    self.mode_before_bash = 'config'
+                    helpers.log("Switching from config to %s mode" % mode,
+                                level=level)
 
-            if helpers.is_arista(self.platform()):
-                bash_cmd = "bash"
-            else:
-                # Supports BSN controllers, BSN SwitchLight
-                bash_cmd = "debug bash"
-            super(BsnDevConf, self).cmd(bash_cmd, quiet=True, level=level)
+                if helpers.is_arista(self.platform()):
+                    bash_cmd = "bash"
+                else:
+                    # Supports BSN controllers, BSN SwitchLight
+                    bash_cmd = "debug bash"
+                super(BsnDevConf, self).cmd(bash_cmd, quiet=True, level=level)
 
         self.mode = mode
         # helpers.log("Current mode is %s" % self.mode, level=level)
@@ -532,7 +533,6 @@ class SwitchDevConf(BsnDevConf):
         if helpers.is_switchlight(self.platform()):
             # For SwitchLight, you need to enter Enable mode to execute
             # 'debug bash'.
-            helpers.log("****** Switching to switchlight bash mode")
             self.enable('')
         super(SwitchDevConf, self).bash(*args, **kwargs)
         return self.result()
