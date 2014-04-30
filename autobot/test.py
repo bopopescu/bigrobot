@@ -141,14 +141,13 @@ class Test(object):
             if self._topology_params:
                 self._has_a_topo_file = True
 
+            self.merge_params_attributes()
             self.init_alias_lookup_table()
 
             if 'mn' in self._topology_params:
                 helpers.debug("Changing node name 'mn' to 'mn1'")
                 self._topology_params['mn1'] = self._topology_params['mn']
                 del self._topology_params['mn']
-
-            self.merge_params_attributes()
 
             self._topology = {}
 

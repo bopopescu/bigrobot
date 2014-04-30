@@ -114,6 +114,9 @@ def exception_info_value():
 
 
 def exception_info_traceback():
+    """
+    Returns a string containing the stack trace.
+    """
     # return sys.exc_info()[2]
     return traceback.format_exc()
 
@@ -433,6 +436,7 @@ def bigrobot_params(new_val=None, default=None):
 def bigrobot_test_setup(new_val=None, default='True'):
     """
     Category: Get/set environment variables for BigRobot.
+    Set to 'False' to bypass Test setup.
     """
     return _env_get_and_set('BIGROBOT_TEST_SETUP', new_val, default)
 

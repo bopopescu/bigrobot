@@ -369,19 +369,34 @@ class SwitchLight(object):
                     if "Fan" in hardware_element and ("System" in element) :
                         element_id = str(hardware_element) + " " + str(hardware_element_number)
                     elif "Fan" in hardware_element and ("PSU" in element) :
-                        element_id = "Fan:"
+                        element_id = "RPM:"
                     elif "Temp" in hardware_element:
-                        element_id = "Thermal " + str(hardware_element_number)
+                        element_id = "Temperature:"
+                    elif "Vout" in hardware_element:
+                        element_id = "Vout:"
+                    elif "Iout" in hardware_element:
+                        element_id = "Iout:"
+                    elif "Pout" in hardware_element:
+                        element_id = "Pout:"
                     else:
                         element_id = str(hardware_element)
 
                     flag_element_found = False
                     if ("System" in element):
-                        element_name = "System"
+                        if "Temp" in hardware_element:
+                            element_name = "Chassis Thermal Sensor " + str(hardware_element_number)
+                        else:
+                            element_name = "System"
                     elif ("PSU1" in element):
-                        element_name = "PSU 1"
+                        if "Temp" in hardware_element:
+                            element_name = "PSU-1 Thermal Sensor " + str(hardware_element_number)
+                        else:
+                            element_name = "PSU-1"
                     elif ("PSU2" in element):
-                        element_name = "PSU 2"
+                        if "Temp" in hardware_element:
+                            element_name = "PSU-2 Thermal Sensor " + str(hardware_element_number)
+                        else:
+                            element_name = "PSU-2"
                     else:
                         helpers.log("Element does not exist")
                         return False
@@ -392,11 +407,13 @@ class SwitchLight(object):
                         elif ((element_name in content[x]) and  ('Unplugged or Failed.' in content[x])):
                             helpers.log("This PSU does not exist or is not powered up")
                             return False
+                    helpers.log("element_name is %s " % element_name)
                     for x in range(0, len(content)):
-                        exist_value = content[x].find(element_name)
-                        if (int(content[x].find(element_name)) == 0):
+                        stripped_value = content[x].lstrip()
+                        if (int(stripped_value.find(element_name)) == 0):
                             element_index = x
                             break
+                    helpers.log("element_index is %s " % element_index)
                     for x in range(0, element_index):
                         content.pop(0)
                     for i in range(0, len(content)):
@@ -405,23 +422,25 @@ class SwitchLight(object):
                             flag_element_found = True
                             temp_element_string = ' '.join(content[i].split())
                             element_array = temp_element_string.split()
+                            helpers.log("Element Array is %s" % element_array)
                             if "Temp" in hardware_element:
-                                helpers.log("Temperature is %s" % element_array[3])
-                                return element_array[3]
+                                return element_array[1]
                             elif "Fan" in hardware_element:
-                                return_value = element_array[3]
+                                return_value = element_array[1]
                                 return_value = return_value[:-1]
-                                helpers.log("Temperature is %s" % return_value)
                                 return return_value
                             elif "Vin" in hardware_element:
                                 return_value = element_array[3]
                                 return_value = return_value[:-1]
-                                helpers.log("Vin is %s" % return_value)
                                 return return_value
                             elif "Vout" in hardware_element:
-                                return_value = element_array[5]
-                                return_value = return_value[:-1]
-                                helpers.log("Vout is %s" % return_value)
+                                return_value = element_array[1]
+                                return return_value
+                            elif "Iout" in hardware_element:
+                                return_value = element_array[1]
+                                return return_value
+                            elif "Pout" in hardware_element:
+                                return_value = element_array[1]
                                 return return_value
 
             elif ('Description: Accton AS5610-52X' in switch_output):
@@ -435,14 +454,13 @@ class SwitchLight(object):
                 else:
                     content = string.split(switch.cli_content(), '\n')
                     if "Fan" in hardware_element and ("System" in element) :
-                        element_id = str(hardware_element) + " " + str(hardware_element_number)
+                        element_id = str(element) + " " + str(hardware_element) + " " + str(hardware_element_number)
                     elif "Fan" in hardware_element and ("PSU" in element) :
                         element_id = "Fan:"
                     elif "Temp" in hardware_element:
                         element_id = "Thermal " + str(hardware_element_number)
                     else:
-                        element_id = str(hardware_element)
-
+                        element_id = str(hardware_element) + ":"
                     flag_element_found = False
                     if ("System" in element):
                         element_name = "System"
@@ -477,19 +495,14 @@ class SwitchLight(object):
                                 helpers.log("Temperature is %s" % element_array[3])
                                 return element_array[3]
                             elif "Fan" in hardware_element:
-                                return_value = element_array[3]
+                                helpers.log("Value is %s" % element_array)
+                                return_value = element_array[5]
                                 return_value = return_value[:-1]
                                 helpers.log("Temperature is %s" % return_value)
                                 return return_value
-                            elif "Vin" in hardware_element:
-                                return_value = element_array[3]
-                                return_value = return_value[:-1]
+                            elif(("Vin" in hardware_element) or  ("Vout" in hardware_element) or  ("Iin" in hardware_element) or  ("Iout" in hardware_element) or  ("Pin" in hardware_element) or  ("Pout" in hardware_element)):
+                                return_value = element_array[1]
                                 helpers.log("Vin is %s" % return_value)
-                                return return_value
-                            elif "Vout" in hardware_element:
-                                return_value = element_array[5]
-                                return_value = return_value[:-1]
-                                helpers.log("Vout is %s" % return_value)
                                 return return_value
 
     def ping_from_local(self, node):
