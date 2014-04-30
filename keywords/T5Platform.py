@@ -3636,7 +3636,7 @@ class T5Platform(object):
                 continue
             
             # Ignoring sub-commands under 'clear debug' and 'show debug'
-            if key == "ApplicationManager" or key == "Controller" or key == "EndpointManager" or key == "FabricManager" or key == "com.bigswitch.floodlight.bvs.application" or key == "ForwardingDebugCounters" or key == "ISyncService" or key =="StatsCollector" or key == "VirtualRoutingManager" or key == "org.projectfloodlight.core" or key == "StatsCollector":
+            if key == "ApplicationManager" or key == "ControllerCounters" or key == "EndpointManager" or key == "FabricManager" or key == "com.bigswitch.floodlight.bvs.application" or key == "ForwardingDebugCounters" or key == "ISyncService" or key == "OFSwitchManager" or key == "RoleManager" or key =="StatsCollector" or key == "VirtualRoutingManager" or key == "org.projectfloodlight.core" or key == "StatsCollector":
                 helpers.log("Ignore line %s" % line)
                 num = num - 1
                 continue
