@@ -15,11 +15,33 @@ add fabric switch
   rest add dpid  leaf0-b  00:00:88:00:00:00:02:02
   rest add fabric role  leaf0-b  leaf
   rest add leaf group  leaf0-b  rack0
-
+  rest add dpid  leaf1-a  00:00:88:00:00:00:02:03
+  rest add fabric role  leaf1-a  leaf
+  rest add leaf group  leaf1-a  rack1
+  rest add dpid  leaf1-b  00:00:88:00:00:00:02:04
+  rest add fabric role  leaf1-b  leaf
+  rest add leaf group  leaf1-b  rack1
+  rest add dpid  leaf2-a  00:00:88:00:00:00:02:05
+  rest add fabric role  leaf2-a  leaf
+  rest add leaf group  leaf2-a  rack2
+  rest add dpid  leaf2-b  00:00:88:00:00:00:02:06
+  rest add fabric role  leaf2-b  leaf
+  rest add leaf group  leaf2-b  rack2
+  rest add dpid  leaf3-a  00:00:88:00:00:00:02:07
+  rest add fabric role  leaf3-a  leaf
+  rest add leaf group  leaf3-a  rack3
+  rest add dpid  leaf3-b  00:00:88:00:00:00:02:08
+  rest add fabric role  leaf3-b  leaf
+  rest add leaf group  leaf3-b  rack3    
   
 delete fabric switch  
   rest delete fabric switch  spine0 
   rest delete fabric switch  spine1 
   rest delete fabric switch  leaf0-a 
   rest delete fabric switch  leaf0-b 
- 
+  rest delete fabric switch  leaf1-a 
+  rest delete fabric switch  leaf1-b 
+  rest delete fabric switch  leaf2-a 
+  rest delete fabric switch  leaf2-b  
+  rest delete fabric switch  leaf3-a 
+  rest delete fabric switch  leaf3-b 
