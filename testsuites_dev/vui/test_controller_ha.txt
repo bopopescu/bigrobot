@@ -22,4 +22,5 @@ Test enable mode
 Restart process SNMP on Slave controller and verify snmpget
     #[Tags]  skipped
     restart process on controller  snmpd  slave
-
+    sleep    3
+    restart process on controller  snmpd  slave
