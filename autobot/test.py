@@ -124,6 +124,9 @@ class Test(object):
                 else:
                     helpers.test_error("Supported testbed type is 'bigtest', 'libvirt', or 'static'.")
 
+                if 'mn' in params_dict:
+                    params_dict['mn1'] = params_dict['mn']
+                    del params_dict['mn']
                 yaml_str = helpers.to_yaml(params_dict)
 
                 # This file contain a list of nodes:
@@ -131,9 +134,9 @@ class Test(object):
                 #   c2: {ip: 10.192.5.222}
                 #   mn1: {ip: 10.192.7.175}
                 #   ...and so on...
-                self._params_file = helpers.bigrobot_log_path_exec_instance() + '/params.topo'
+                self._params_file = helpers.bigrobot_log_path_exec_instance() \
+                                    + '/reference_params.topo'
 
-                helpers.info("Writing params to file '%s'" % self._params_file)
                 helpers.file_write_once(self._params_file, yaml_str)
                 helpers.bigrobot_params(new_val=self._params_file)
 
@@ -141,13 +144,13 @@ class Test(object):
             if self._topology_params:
                 self._has_a_topo_file = True
 
-            self.merge_params_attributes()
-            self.init_alias_lookup_table()
-
             if 'mn' in self._topology_params:
                 helpers.debug("Changing node name 'mn' to 'mn1'")
                 self._topology_params['mn1'] = self._topology_params['mn']
                 del self._topology_params['mn']
+
+            self.merge_params_attributes()
+            self.init_alias_lookup_table()
 
             self._topology = {}
 
@@ -156,39 +159,44 @@ class Test(object):
             Reading from params file and merge attributes with topo file
             """
             params_file = helpers.bigrobot_params()
-            if params_file.lower() != 'none':
-                if helpers.file_not_exists(params_file):
-                    helpers.environment_failure("Params file '%s' does not exist"
-                                                % params_file)
-                self._params = helpers.load_config(params_file)
-                for n in self._topology_params:
-                    if n not in self._params:
-                        helpers.environment_failure("Node '%s' is not"
-                                                    " specified in params file"
-                                                    % n)
-                    for key in self._params[n]:
-                        if key not in self._topology_params[n]:
-                            helpers.info("Node '%s' does not have attribute"
-                                         " '%s' defined. Populating it from"
-                                         " params file."
-                                         % (n, key))
-                        elif key in self._topology_params[n] and self._topology_params[n][key].lower() != 'dummy':
-                            helpers.trace("Node '%s' has attribute '%s' defined"
-                                          " with value '%s'. Overriding it with"
-                                          " value from params file."
-                                          % (n, key, self._topology_params[n][key]))
-                        helpers.info("Node '%s' attribute '%s' gets value '%s'"
-                                     % (n, key, self._params[n][key]))
-                        self._topology_params[n][key] = self._params[n][key]
+            if params_file.lower() == 'none':
+                return True
 
-        def load_topology(self):
-            topo = helpers.bigrobot_topology()
-            if helpers.file_not_exists(topo):
-                helpers.warn("Topology file not specified (%s)" % topo)
+            if helpers.file_not_exists(params_file):
+                helpers.environment_failure("Params file '%s' does not exist"
+                                            % params_file)
+            self._params = self.load_topology(topo_file=params_file)
+            for n in self._topology_params:
+                if n not in self._params:
+                    helpers.environment_failure("Node '%s' is not"
+                                                " specified in params file"
+                                                % n)
+                for key in self._params[n]:
+                    if key not in self._topology_params[n]:
+                        helpers.info("Node '%s' does not have attribute"
+                                     " '%s' defined. Populating it from"
+                                     " params file."
+                                     % (n, key))
+                    elif key in self._topology_params[n] and self._topology_params[n][key].lower() != 'dummy':
+                        helpers.trace("Node '%s' has attribute '%s' defined"
+                                      " with value '%s'. Overriding it with"
+                                      " value from params file."
+                                      % (n, key, self._topology_params[n][key]))
+                    helpers.info("Node '%s' attribute '%s' gets value '%s'"
+                                 % (n, key, self._params[n][key]))
+                    self._topology_params[n][key] = self._params[n][key]
+            return True
+
+        def load_topology(self, topo_file=None):
+            if not topo_file:
+                topo_file = helpers.bigrobot_topology()
+            if helpers.file_not_exists(topo_file):
+                helpers.warn("Topology file not specified (%s)" % topo_file)
                 topo = {}
             else:
-                helpers.log("Loading topology file %s" % topo)
-                topo = helpers.load_config(topo)
+                topo = helpers.load_config(topo_file)
+                helpers.debug("Loaded topology file %s\n%s"
+                              % (topo_file, helpers.prettify(topo)))
             return topo
 
         def init_alias_lookup_table(self):
@@ -202,7 +210,8 @@ class Test(object):
                     #   spine0, spine1, etc.
                     #   leaf1-a, leaf1-b, leaf2-a, leaf2-b, etc.
                     #   s021, etc.
-                    if not re.match(r'^(leaf\d+-[ab]|spine\d+|s\d+)', alias):
+                    #   arista-1 - for Arista switches
+                    if not re.match(r'^(leaf\d+-[ab]|spine\d+|s\d+|arista-\d+)', alias):
                         helpers.warn("Supported aliases are leaf{n}-{a|b}, spine{n}, s{nnn}")
                         helpers.environment_failure("'%s' has alias '%s' which does not match the allowable alias names"
                                                     % (node, alias))
@@ -745,7 +754,6 @@ class Test(object):
                               controller_ip=controller_ip,
                               controller_ip2=controller_ip2)
 
-        helpers.prettify_log("self._topology: ", self._topology)
         self._init_completed = True  # pylint: disable=W0201
         helpers.debug("Test object initialization ends.%s"
                       % br_utils.end_of_output_marker())
