@@ -307,7 +307,7 @@ T5.9.7 Verify: copy scp://<config://> running-config
 	Cli Copy  ${config}  ${scp config}
 	Cli Copy  ${scp config}  running-config
 	Compare  ${scp config}  running-config
-	[Tags]  SCP
+	[Tags]  SCP  BSC-5283
 
 T5.9.8 Verify: copy scp://<config://> file - negative, this is not supported
 	Cli Copy  running-config  ${config}
