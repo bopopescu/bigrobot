@@ -491,9 +491,9 @@ T7.11 Verify comparison function between running-config and inexistent config://
 	...  Cli Compare  config://inexistent  running-config
 
 T7.12 Verify comparison function between running-config and inexistent scp://file
-	Run Keyword and Expect Error  *scp: inexistent: No such file or directory*
+	Run Keyword and Expect Error  *scp: file-management-testsuite/inexistent: No such file or directory*
 	...  Cli Compare  running-config  ${scp inexistent}
-	Run Keyword and Expect Error  *scp: inexistent: No such file or directory*
+	Run Keyword and Expect Error  *scp: file-management-testsuite/inexistent: No such file or directory*
 	...  Cli Compare  ${scp inexistent}  running-config
 	[Tags]  SCP
 
@@ -506,9 +506,9 @@ T7.13 Verify comparison function between file and inexistent config://file
 
 T7.14 Verify comparison function between file and inexistent scp://
 	Cli Copy  running-config  ${file}
-	Run Keyword and Expect Error  *scp: inexistent: No such file or directory*
+	Run Keyword and Expect Error  *scp: file-management-testsuite/inexistent: No such file or directory*
 	...  Cli Compare  ${file}  ${scp inexistent}
-	Run Keyword and Expect Error  *scp: inexistent: No such file or directory*
+	Run Keyword and Expect Error  *scp: file-management-testsuite/inexistent: No such file or directory*
 	...  Cli Compare  ${scp inexistent}  ${file}
 	[Tags]  SCP
 
@@ -532,9 +532,9 @@ T7.17 Verify comparison function between config://file and inexistent file
 
 T7.18 Verify comparison function between config://file and inexistent scp://
 	Cli Copy  running-config  ${config}
-	Run Keyword and Expect Error  *scp: inexistent: No such file or directory*
+	Run Keyword and Expect Error  *scp: file-management-testsuite/inexistent: No such file or directory*
 	...  Cli Compare  ${config}  ${scp inexistent}
-	Run Keyword and Expect Error  *scp: inexistent: No such file or directory*
+	Run Keyword and Expect Error  *scp: file-management-testsuite/inexistent: No such file or directory*
 	...  Cli Compare  ${scp inexistent}  ${config}
 	[Tags]  SCP
 
@@ -609,7 +609,7 @@ T9.3 Verify impossible to compare with invalid SCP
 	[Tags]  SCP
 
 T9.4 Verify impossible to copy from inexistent SCP
-	Run Keyword and Expect Error  *Error: Invalid Use: inexistent: No such file or directory*  Cli Copy  ${scp inexistent}  running-config
+	Run Keyword and Expect Error  *Error: Invalid Use: file-management-testsuite/inexistent: No such file or directory*  Cli Copy  ${scp inexistent}  running-config
 	[Tags]  SCP
 
 T10.1 Verify validation function of scp:// to image:// - textfile
@@ -652,10 +652,10 @@ Modify Running Config
 	${tenant}  Generate Random Name  Tenant  5
 	Rest Add Tenant  ${tenant}
 	Rest Delete Tenant  TenantTest12345
-    auto configure fabric switch   ${spineList}   ${leafList}   2
-    Config  master  group test
-    Config  master  port-group test
-    Config  master  user test
+	auto configure fabric switch   ${spineList}   ${leafList}   2
+	Config  master  group test
+	Config  master  port-group test
+	Config  master  user test
 
 Teardown
 	Bash Clear Known Hosts
