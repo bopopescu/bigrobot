@@ -1,0 +1,11 @@
+c1:
+  ip: dummy
+
+c2:
+  ip: dummy
+
+mn:
+  ip: dummy
+  type: 't6'  # required: 't6' or 'basic'
+  topology: --num-spine 0 --num-rack 1 --num-bare-metal 2 --num-hypervisor 0
+  #start_mininet: false

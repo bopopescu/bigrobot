@@ -91,9 +91,9 @@ class Node(object):
                                         " have an IP address defined"
                                         % self.name())
         helpers.log("Ping %s ('%s')" % (self.ip(), self.name()))
-        loss = helpers.ping(self.ip(), count=6, timeout=10)
-        if  loss > 20:
-            # We can tolerate 20% loss.
+        loss = helpers.ping(self.ip(), count=6, timeout=10, loss=50)
+        if  loss > 50:
+            # We can tolerate 50% loss.
             # Consider init to be completed, so as not to be invoked again.
             helpers.environment_failure("Ping failure - Node '%s' with IP"
                                         " address %s is unreachable."
@@ -225,11 +225,12 @@ class ControllerNode(Node):
         else:
             self.base_url = 'http://%s:%s' % (ip, self.http_port)
 
-        self.rest = BsnRestClient(base_url=self.base_url,
+        self.rest = BsnRestClient(name=name,
+                                  base_url=self.base_url,
                                   platform=self.platform(),
-                                  host=self.ip(),
-                                  user=self._user,
-                                  password=self._password)
+                                  host=ip,
+                                  user=user,
+                                  password=password)
         self.t = t
 
         # CLI Shortcuts
