@@ -187,7 +187,9 @@ class RestClient(object):
         # http://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml
 
         result['success'] = False
-        if int(code) in [200, 201, 202]:
+
+        # As per https://github.com/bigswitch/floodlight/commit/a432f1b501640474b8bf6cb87a07dcbf28df8691
+        if int(code) in range(200, 300):
             result['success'] = True
         elif int(code) == 409 and re.match(r'.*exists', result['status_descr']):
             # On POST when "List element already exists"
