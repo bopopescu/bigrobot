@@ -8,9 +8,8 @@
 c1:
   ip: 10.193.0.41
 
-#c2:
-#  ip: 10.193.0.42
-  
+c2:
+  ip: 10.193.0.42
 
 s1:
   ip: 10.195.0.21
@@ -71,7 +70,7 @@ h6:
 tg1:
   platform: 'ixia'
   chassis_ip: 10.192.85.151
-  tcl_server_ip: 10.192.99.10
+  tcl_server_ip: 10.193.0.10
   ports:
     a:
       name: 2/1

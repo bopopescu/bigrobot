@@ -603,14 +603,14 @@ class T5Platform(object):
                         
                         # ==> Add member interface to vns
                         Fabric.rest_add_interface_to_vns(tenant, vnsName, currentSwitch, currentInt, currentVLAN)
-            
+                
+                        
                 except(KeyError):
                     pass
-            
-            # ==> Add the router interface IPs
-            for vns in autoVNSList: 
-                FabricL3.rest_add_router_intf(tenant, vns)
-                FabricL3.rest_add_vns_ip(tenant, vns, vnsIPDict[vns], '24' )
+                
+                # ==> Add the router interface IPs
+                FabricL3.rest_add_router_intf(tenant, vnsName)
+                FabricL3.rest_add_vns_ip(tenant, vnsName, vnsIPDict[vnsName], '24' )
             
             # ==> Add tenant router interface to system
             FabricL3.rest_add_tenant_routers_intf_to_system(tenant)  
@@ -3636,7 +3636,7 @@ class T5Platform(object):
                 continue
             
             # Ignoring sub-commands under 'clear debug' and 'show debug'
-            if key == "ApplicationManager" or key == "Controller" or key == "EndpointManager" or key == "FabricManager" or key == "com.bigswitch.floodlight.bvs.application" or key == "ForwardingDebugCounters" or key == "ISyncService" or key =="StatsCollector" or key == "VirtualRoutingManager" or key == "org.projectfloodlight.core" or key == "StatsCollector":
+            if key == "ApplicationManager" or key == "ControllerCounters" or key == "EndpointManager" or key == "FabricManager" or key == "com.bigswitch.floodlight.bvs.application" or key == "ForwardingDebugCounters" or key == "ISyncService" or key == "OFSwitchManager" or key == "RoleManager" or key =="StatsCollector" or key == "VirtualRoutingManager" or key == "org.projectfloodlight.core" or key == "StatsCollector":
                 helpers.log("Ignore line %s" % line)
                 num = num - 1
                 continue
