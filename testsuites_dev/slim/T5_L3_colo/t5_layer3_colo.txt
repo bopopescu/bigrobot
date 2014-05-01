@@ -894,6 +894,30 @@ T5 base suite setup
 	Should Be True									${result}
 	${result} = 									CLI verify controller       s4							c2
 	Should Be True									${result}
+	${result} = 									CLI verify controller       s5							c1
+	Should Be True									${result}
+	${result} = 									CLI verify controller       s5							c2
+	Should Be True									${result}
+	${result} = 									CLI verify controller       s6							c1
+	Should Be True									${result}
+	${result} = 									CLI verify controller       s6							c2
+	Should Be True									${result}
+	${result} = 									CLI verify controller       s7							c1
+	Should Be True									${result}
+	${result} = 									CLI verify controller       s7							c2
+	Should Be True									${result}
+	${result} = 									CLI verify controller       s8							c1
+	Should Be True									${result}
+	${result} = 									CLI verify controller       s8							c2
+	Should Be True									${result}
+	${result} = 									CLI verify controller       s9							c1
+	Should Be True									${result}
+	${result} = 									CLI verify controller       s9							c2
+	Should Be True									${result}
+	${result} = 									CLI verify controller       s10							c1
+	Should Be True									${result}
+	${result} = 									CLI verify controller       s10							c2
+	Should Be True									${result}						
 	REST add portgroup								${leaf0_pc1}
 	REST add portgroup								${leaf0_pc2}
 	REST add portgroup								${leaf0_pc3}
