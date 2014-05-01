@@ -21,6 +21,9 @@ Library	         keywords/T5Utilities.py
 @{spineList}  00:00:00:00:00:01:00:01  00:00:00:00:00:01:00:02
 @{leafList}  00:00:00:00:00:02:00:01  00:00:00:00:00:02:00:02  00:00:00:00:00:02:00:03  00:00:00:00:00:02:00:04  00:00:00:00:00:02:00:05  00:00:00:00:00:02:00:06
 
+                
+
+                
 
 * Test Case 
 
@@ -56,7 +59,7 @@ Verify Cluster Slave Reboot
  
 
 Two Tenants With Multiple VNS HA Test
-	[Tags]	feature  run
+	[Tags]	feature
 	mininet stop
 	clean configuration
 	sleep  30
