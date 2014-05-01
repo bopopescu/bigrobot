@@ -342,6 +342,8 @@ class KVMOperations(object):
                 return result
 
             # For controller, attempt First Boot
+            helpers.log("SLeep another 60 sec for controller to boot up..")
+            time.sleep(30)
             result['vm_ip'] = self._configure_vm_first_boot(cluster_ip=cluster_ip,
                                                             ip_address=ip,
                                                             netmask=netmask,
