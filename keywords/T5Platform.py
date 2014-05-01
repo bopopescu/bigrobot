@@ -3551,7 +3551,7 @@ class T5Platform(object):
                     continue
             
             # skip 'show logging', 'show lacp interface', 'show stats interface-history interface', 'show stats interface-history switch' and 'show running-config' - no need to iterate through options   
-            if (re.match(r' show lacp interface', string)) or (re.match(r' show logging', string)) or (re.match(r' show running-config', string)) or (re.match(r' show stats interface-history interface', string)) or (re.match(r' show stats interface-history switch', string)):
+            if (re.match(r' show lacp interface', string)) or (re.match(r' show logging', string)) or (re.match(r' show stats interface-history interface', string)) or (re.match(r' show stats interface-history switch', string)):
                 helpers.log("Ignoring line - %s" % string)
                 num = num - 1
                 continue
@@ -3715,8 +3715,8 @@ class T5Platform(object):
                     num = num - 1
                     continue
             
-            # skip 'show logging', 'show lacp interface', 'show stats interface-history interface', 'show stats interface-history switch' and 'show running-config' - no need to iterate through options   
-            if (re.match(r' show lacp interface', string)) or (re.match(r' show logging', string)) or (re.match(r' show running-config', string)) or (re.match(r' show stats interface-history interface', string)) or (re.match(r' show stats interface-history switch', string)):
+            # skip 'show logging', 'show lacp interface', 'show stats interface-history interface', 'show stats interface-history switch' - no need to iterate through options   
+            if (re.match(r' show lacp interface', string)) or (re.match(r' show logging', string)) or (re.match(r' show stats interface-history interface', string)) or (re.match(r' show stats interface-history switch', string)):
                 helpers.log("Ignoring line - %s" % string)
                 num = num - 1
                 continue                                          
