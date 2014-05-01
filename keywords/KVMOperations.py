@@ -315,7 +315,7 @@ class KVMOperations(object):
                                                               remote_qcow_path=remote_qcow_mininet_path, vm_type='mininet',
                                                               vm_name=vm_name, build_number=build_number)
                 else:
-                    helpers.log("Scp'ing Latest BVS qcow file from jenkins to kvm Host..")
+                    helpers.log("Scp'ing Latest BVS qcow file %s from jenkins to kvm Host.." % remote_qcow_bvs_path)
                     qcow_vm_path = self._scp_file_to_kvm_host(kvm_handle=kvm_handle,
                                                               remote_qcow_path=remote_qcow_bvs_path,
                                                               vm_name=vm_name, build_number=build_number)
