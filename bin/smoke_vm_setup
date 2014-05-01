@@ -310,7 +310,7 @@ mn:\n\
         vm_domain_names = "%s\n%s\n" % (active_vm['vm_name'],
                                           standby_vm['vm_name'])
     else:
-        vm_domain_names = "%s\n%s\n%s\n" % (active_vm['vm_name'],
+        vm_domain_names = "%s\n%s\n%s\n\n" % (active_vm['vm_name'],
                                       standby_vm['vm_name'],
                                       mininet_vm['vm_name'])
     vm_file_handle.write(vm_domain_names)
