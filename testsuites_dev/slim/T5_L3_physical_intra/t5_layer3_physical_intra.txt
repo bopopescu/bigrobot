@@ -2,8 +2,8 @@
 Documentation   T5 Basic L3 two spine three leaf rack with dual-tor Test Suite
 Suite Setup     T5 base suite setup
 Suite Teardown  T5 base suite teardown
-Test Setup      setup topology
-Test Teardown   teardown topology
+Test Setup      test setup topology
+Test Teardown   test teardown topology
 Force Tags      T5 Sanity
 Library         keywords/BsnCommon.py
 Library         keywords/Host.py
@@ -24,15 +24,15 @@ Intra tenant L3 untagged traffic with dynamic endpoints same rack
 
 Intra tenant L3 untagged traffic with dynamic endpoints across rack
 	L3 intra tenant across rack untagged with dynamic endpoints
-	[Tags]						smoke				sanity	
+	[Tags]					smoke				sanity	
 
 Intra tenant L3 tagged traffic with dynamic endpoints same rack
 	L3 intra tenant same rack tagged with dynamic endpoints
-	[Tags]						smoke				sanity			
+	[Tags]				smoke				sanity			
 
 Intra tenant L3 tagged traffic with dynamic endpoints across rack
 	L3 intra tenant across rack tagged with dynamic endpoints
-	[Tags]						smoke				sanity	
+	[Tags]					smoke				sanity	
 
 Intra tenant L3 untagged traffic with static endpoints same rack
 	L3 intra tenant same rack untagged with static endpoints
@@ -79,25 +79,34 @@ Delete and Add dhcp relay
 	[Tags]						sanity	
 	
 Move host from one vns to another vns in the same tenant and verify dhcp request is working
-	Host moved between vns in the same tenant with dhcp request
+#	Host moved between vns in the same tenant with dhcp request
 	Log								manual untested
-	[Tags]						manual			untested			feature			
+	[Tags]				manual			untested			feature			
+
+Verify dhcp host is not aged out
+	Verify dhcp host is not being aged out
+	[Tags]					feature			
+
+Dhcp relay with dhcp server configured as static endpoint
+	Dhcp relay with static dhcp server endpoint
+	[Tags]					feature			
+	
 
 Add and delete untagged endpoints with existing host
 	L3 add and delete untagged endpoints with existing host
-	[Tags]						feature	
+	[Tags]					feature	
 	
 Add and delete tagged endpoints with existing host
 	L3 add and delete tagged endpoints with existing host
-	[Tags]						feature	
+	[Tags]					feature	
 		
 Change L3 endpoint from untagged to tagged and back		
 	L3 change endpoint from untagged to tagged and back	
-	[Tags]						feature	
+	[Tags]					feature	
 
 Verify L3 endpoint aging
 	Check L3 endpoint aging 
-	[Tags]						feature	
+	[Tags]					feature	
 	
 Verify L3 ttl 1 is not being forwarded
 	Check L3 ttl 1 is dropped
@@ -105,11 +114,11 @@ Verify L3 ttl 1 is not being forwarded
 
 Change router vns ip
 	Change router ip address
-	[Tags]						feature			
+	[Tags]					feature			
 
 Delete and add router vns ip
 	Delete and add router vns ip 
-	[Tags]						feature			
+	[Tags]					feature			
 
 Change tagged endpoint IP address
 	Change tagged host endpoint IP address
@@ -121,77 +130,79 @@ Configure static endpoint with host showing up on another port
 
 Verify subnet mask is properly applied on router vns
 	Verify subnet mask on vns router ip
-	[Tags]						feature		
+	[Tags]					feature		
 
 Verify vlsm forwarding
 	Verify vlsm forwarding
-	[Tags]						feature		
+	[Tags]					feature		
 
 Verify split horizon forwarding
 	Verify l3 forwarding on one arm router
-	[Tags]						feature			manual		
+	[Tags]					feature			manual		
+
 	
 Configure overlapping router IP 	
 	Configure overlapping IP on same tenant across VNS	
-	[Tags]						feature		
+	[Tags]					feature		
 
 L3 intra tenant traffic between private and public subnet with overlapping IP
-	L3 intra tenant traffic between private and public subnet with overlapping IP
+#	L3 intra tenant traffic between private and public subnet with overlapping IP
+	Log								manual untested
 	[Tags]						feature			manual		
 	
 Verify host with different IP on vns router is not getting L3 service
-	Verify host with different IP on vns router is not getting L3 service
+#	Verify host with different IP on vns router is not getting L3 service
+	Log								manual untested
 	[Tags]						feature			manual		
-	
 	
 Trigger controller HA failover via CLI
 	Controller HA failover via CLI	
-	[Tags]						feature			
+	[Tags]					feature			
 	
 Trigger controller HA failover via reboot
 	Controller HA failover via reboot
-	[Tags]						feature			
+	[Tags]					feature			
 
 Spine reboot
 	Reboot spine0 via CLI
-	[Tags]						feature			
+	[Tags]					feature			
 
 Leaf reboot
 	Reboot Leaf0 via CLI
-	[Tags]						feature			
+	[Tags]					feature			
 
 Spine connect and disconnect to controller
 	Connect and Disconnect spine to controller
-	[Tags]						feature			
+	[Tags]					feature			
 	
 Leaf connect and disconnect to controller	
 	Connect and disconnect one leaf in dual tor to controller
-	[Tags]						feature			
+	[Tags]					feature			
 
 Spine to leaf link flap
 	Flap link between leaf and spine
-	[Tags]						feature			
+	[Tags]					feature			
 
 Leaf to host link flap
 	Flap bond interface towards host
-	[Tags]						feature			
+	[Tags]					feature			
 	
 Restart ofad process on spine
 	restart ofad on spine
-	[Tags]						feature			
+	[Tags]					feature			
 	
 Restart ofad process on leaf	
 	restart ofad on leaf
-	[Tags]						feature			
+	[Tags]					feature			
 	
 L3 traffic behavior in headless mode
 	L3 intra tenant traffic behavior in headless mode 
 	Log							manual untested
-	[Tags]						manual			untested			feature			
+	[Tags]			skipped		manual			untested			feature			
 
 L3 intra tenant traceroute
 	Log							manual untested
-	[Tags]						manual			untested			feature			
+	[Tags]		skipped			manual			untested			feature			
 		
 	
 * Keywords
@@ -210,7 +221,7 @@ L3 intra tenant same rack untagged with dynamic endpoints
 	BASH add ip address							h6								10.251.2.11/24			bond0
 	BASH add route								h5								10.251.2.0/24			10.251.1.1
 	BASH add route								h6								10.251.1.0/24			10.251.2.1
-	sleep								20	
+	sleep										20	
 	BASH ping									h5								10.251.1.1				count=10
 	BASH ping									h6								10.251.2.1				count=10
 	${value} = 									BASH verify arp					h5						10.251.1.1
@@ -671,7 +682,7 @@ L3 intra tenant dhcp relay on same rack
 	sleep								20
 	${h1_ip} = 									BASH get interface ipv4			h1						bond0				
 #	Should Be Equal As Strings					${h1_ip}						10.252.1.9	
-	Should Contain								${h1_ip}						${10.252.1.9}	
+	Should Contain								${h1_ip}						10.252.1.9	
 	${h1_mac} =									BASH get intf mac				h1						bond0
 	###### another hac to overcome jira PAN 726
 	BASH delete arp								h1								10.252.1.1
@@ -944,6 +955,118 @@ L3 dhcp request without dhcp relay enabled
 	Should Be True  							${loss} == 0	
 	BASH delete route							h1								10.252.3.0/24			10.252.1.1
 
+
+Verify dhcp host is not being aged out
+	BASH ifdown intf							h1 								bond0
+	BASH ifdown intf							h2								bond0
+	BASH ifdown intf							h3								bond0
+	BASH ifdown intf							h4								bond0	
+	BASH init intf								h1								bond0
+	BASH init intf								h2								bond0
+	BASH ifup intf								h1								bond0
+	BASH add ip address							h1								10.252.1.9/24			bond0					
+	BASH start service							h1								isc-dhcp-server
+	sleep										1
+	${value} = 									BASH check service status		h1						isc-dhcp-server
+	Should Contain								${value}						is started
+	sleep										1
+	REST add portgroup to vns					Y								Y1						${leaf0_pc1}			-1
+	REST add portgroup to vns					Y								Y2						${leaf1_pc1}			-1
+	BASH add route								h1								10.252.2.0/24			10.252.1.1
+	REST add dhcp relay							Y								Y2						10.252.1.9
+	REST add dhcprelay circuitid				Y								Y2						&#!ten Y vns Y2
+	REST enable dhcp relay						Y								Y2	
+	sleep										20
+	###### hack to force host to resolve gateway, by right, vrf should attempt to resolve dhcp-server mac address and discover its endpoint but that is not happening
+	BASH ping									h1 								10.252.1.1				count=5
+	sleep										1
+	${value} = 									BASH verify arp					h1						10.252.1.1
+	Should Be True								${value} 		
+	sleep										1
+	${value} = 									BASH release dhcpv4 address		h3						bond0
+	Should Be True								${value}
+	sleep										1
+	${ipAddr} = 								BASH renew dhcpv4 address		h3						bond0
+	Should Not Be Empty							${ipAddr}
+	sleep										5
+	BASH ping									h1								${ipAddr}				count=10
+	${value} = 									BASH verify arp					h1						10.252.1.1
+	Should Be True								${value} 		
+	${value} =									BASH verify arp					h3						10.252.2.1
+	Should Be True								${value} 	
+	${mac1} = 									BASH get intf mac				h1						bond0
+	${result} =									REST show endpoints mac			${mac1}
+	Should Be True								${result}						
+	${mac2} = 									BASH get intf mac				h3						bond0
+	${result} =									REST show endpoints mac			${mac2}
+	Should Be True								${result}						
+	REST show endpoints	
+	${loss} = 									BASH ping						h1						${ipAddr} 			count=10
+	Should Be True  							${loss} == 0	
+	sleep 										600
+	${result} =									REST show endpoints mac			${mac2}
+	Should Be True								${result}	
+	${attachpoint} = 							Set Variable					${result[0]['attachment-point']['port-group']}	
+	Should Contain								${attachpoint}					${leaf1_pc1}	
+	${ipAddr1} = 								Set Variable					${result[0]['ip-address']}	
+#	Should Contain								${ipAddr1}						${ipAddr}
+	Should Be Equal As Strings					${ipAddr1}						${ipAddr}
+
+	BASH delete route							h1								10.252.3.0/24			10.252.1.1
+
+Dhcp relay with static dhcp server endpoint
+	BASH ifdown intf							h1 								bond0
+	BASH ifdown intf							h2								bond0
+	BASH ifdown intf							h3								bond0
+	BASH ifdown intf							h4								bond0	
+	BASH ifup intf								h5								bond0
+	BASH ifup intf								h6								bond0		
+	BASH init intf								h1								bond0
+	BASH init intf								h2								bond0
+	BASH ifup intf								h1								bond0
+	BASH add ip address							h1								10.252.1.9/24			bond0					
+	BASH start service							h1								isc-dhcp-server
+	sleep										1
+	${value} = 									BASH check service status		h1						isc-dhcp-server
+	Should Contain								${value}						is started
+	sleep										1
+	REST add portgroup to vns					Y								Y1						${leaf0_pc1}			-1
+	REST add portgroup to vns					Y								Y3						${leaf0_pc2}			-1
+	BASH add route								h1								10.252.3.0/24			10.252.1.1
+	REST add dhcp relay							Y								Y3						10.252.1.9
+	REST enable dhcp relay						Y								Y3	
+	sleep										20
+	${h1_ip} = 									BASH get interface ipv4			h1						bond0				
+	Should Contain								${h1_ip}						10.252.1.9	
+	${h1_mac} =									BASH get intf mac				h1						bond0
+	REST add endpoint							Y								Y1						Y1_dhcp_server
+	REST add endpoint ip						Y								Y1						Y1_dhcp_server			10.252.1.9
+	${mac1} = 									BASH get intf mac				h1						bond0
+	REST add endpoint mac						Y								Y1						Y1_dhcp_server			${mac1}
+	REST add endpoint portgroup attachment		Y								Y1						Y1_dhcp_server			${leaf0_pc1}				-1	
+	sleep										1
+	${value} = 									BASH release dhcpv4 address		h2						bond0
+	Should Be True								${value}
+	sleep										1
+	${ipAddr} = 								BASH renew dhcpv4 address		h2						bond0
+	Should Not Be Empty							${ipAddr}
+	sleep										1
+	BASH ping									h1								${ipAddr}				count=10
+	${value} = 									BASH verify arp					h1						10.252.1.1
+	Should Be True								${value} 		
+	${value} =									BASH verify arp					h2						10.252.3.1
+	Should Be True								${value} 	
+	${mac1} = 									BASH get intf mac				h1						bond0
+	${result} =									REST show endpoints mac			${mac1}
+	Should Be True								${result}						
+	${mac2} = 									BASH get intf mac				h2						bond0
+	${result} =									REST show endpoints mac			${mac2}
+	Should Be True								${result}						
+	REST show endpoints	
+	${loss} = 									BASH ping						h1						${ipAddr} 			count=10
+	Should Be True  							${loss} == 0	
+	BASH delete route							h1								10.252.3.0/24			10.252.1.1	
+			
 
 L3 add and delete untagged endpoints with existing host
 	BASH init intf								h1 								bond0
@@ -2256,9 +2379,8 @@ initialize host
 	
 
 
-setup topology
+test setup topology
 	initialize host
-	add fabric switch
 	sleep 											1
 	REST add tenant 								X
 	REST add tenant									Y
@@ -2290,39 +2412,9 @@ setup topology
 	REST add vns ip  								Z							Z1				10.253.1.1				24	
 	REST add vns ip  								Z							Z2				10.253.2.1				24	
 	REST add vns ip  								Z							Z3				10.253.3.1				24	
-	REST add interface to portgroup					leaf0-a						${leaf0_pc1_intf1}					${leaf0_pc1}
-	REST add interface to portgroup					leaf0-b						${leaf0_pc1_intf2}					${leaf0_pc1}
-	REST add interface to portgroup					leaf0-a						${leaf0_pc2_intf1}					${leaf0_pc2}
-	REST add interface to portgroup					leaf0-b						${leaf0_pc2_intf2}					${leaf0_pc2}
-#	REST add interface to portgroup					leaf0-a						${leaf0_pc3_intf1}					${leaf0_pc3}
-#	REST add interface to portgroup					leaf0-b						${leaf0_pc3_intf2}					${leaf0_pc3}
-#	REST add interface to portgroup					leaf0-a						${leaf0_pc4_intf1}					${leaf0_pc4}
-#	REST add interface to portgroup					leaf0-b						${leaf0_pc4_intf2}					${leaf0_pc4}
-#	REST add interface to portgroup					leaf0-a						${leaf0_pc5_intf1}					${leaf0_pc5}
-#	REST add interface to portgroup					leaf0-a						${leaf0_pc5_intf2}					${leaf0_pc5}
-#	REST add interface to portgroup					leaf0-a						${leaf0_pc6_intf1}					${leaf0_pc6}
-#	REST add interface to portgroup					leaf0-a						${leaf0_pc6_intf2}					${leaf0_pc6}
-	REST add interface to portgroup					leaf1-a						${leaf1_pc1_intf1}					${leaf1_pc1}
-	REST add interface to portgroup					leaf1-b						${leaf1_pc1_intf2}					${leaf1_pc1}
-	REST add interface to portgroup					leaf1-a						${leaf1_pc2_intf1}					${leaf1_pc2}
-	REST add interface to portgroup					leaf1-b						${leaf1_pc2_intf2}					${leaf1_pc2}
-#	REST add interface to portgroup					leaf1-a						${leaf1_pc3_intf1}					${leaf1_pc3}
-#	REST add interface to portgroup					leaf1-b						${leaf1_pc3_intf2}					${leaf1_pc3}
-#	REST add interface to portgroup					leaf1-a						${leaf1_pc4_intf1}					${leaf1_pc4}
-#	REST add interface to portgroup					leaf1-b						${leaf1_pc4_intf2}					${leaf1_pc4}
-	REST add interface to portgroup					leaf2-a						${leaf2_pc1_intf1}					${leaf2_pc1}
-	REST add interface to portgroup					leaf2-b						${leaf2_pc1_intf2}					${leaf2_pc1}
-	REST add interface to portgroup					leaf2-a						${leaf2_pc2_intf1}					${leaf2_pc2}
-	REST add interface to portgroup					leaf2-b						${leaf2_pc2_intf2}					${leaf2_pc2}	
-  	REST add portgroup lacp							${leaf0_pc1}
-  	REST add portgroup lacp							${leaf0_pc2}
-  	REST add portgroup lacp							${leaf1_pc1}
-  	REST add portgroup lacp							${leaf1_pc2}
-  	REST add portgroup lacp							${leaf2_pc1}
-  	REST add portgroup lacp							${leaf2_pc2}
+
  
- 
-teardown topology
+test teardown topology
 	delete traffic
 	REST delete vns ip  							X							X1				10.251.1.1				24	
 	REST delete vns ip  							X							X2				10.251.2.1				24	
@@ -2345,13 +2437,6 @@ teardown topology
 	REST delete tenant								X
 	REST delete tenant								Y
 	REST delete tenant								Z
-  	REST delete portgroup 							${leaf0_pc1}
-  	REST delete portgroup 							${leaf0_pc2}
-  	REST delete portgroup 							${leaf1_pc1}
-  	REST delete portgroup 							${leaf1_pc2}
-  	REST delete portgroup 							${leaf2_pc1}
-  	REST delete portgroup 							${leaf2_pc2}
-	delete fabric switch
 	initialize host
 	
 
@@ -2383,59 +2468,31 @@ T5 base suite setup
 	Should Be True									${result}
 	${result} = 									CLI verify controller       s6							c2
 	Should Be True									${result}		
-  	# REST add switch  								spine0
-  	# REST add dpid  									spine0  					${spine0_dpid}
-  	# REST add fabric role  							spine0  					spine
-  	# REST add switch  								spine1	
-  	# REST add dpid  									spine1  					${spine1_dpid}
-  	# REST add fabric role						  	spine1  					spine
-  	# REST add switch  								leaf0a
-  	# REST add dpid  									leaf0a  					${leaf0a_dpid}
-  	# REST add fabric role  							leaf0a  					leaf
-  	# REST add switch  								leaf0b
-  	# REST add dpid  									leaf0b  					${leaf0b_dpid}
-  	# REST add fabric role  							leaf0b  					leaf
-  	# REST add switch  								leaf1a
-  	# REST add dpid  									leaf1a  					${leaf1a_dpid}
-  	# REST add fabric role  							leaf1a  					leaf
- 	# REST add switch  								leaf1b
-  	# REST add dpid  									leaf1b  					${leaf1b_dpid}
-  	# REST add fabric role  							leaf1b  					leaf
-  	# REST add switch  								leaf2a
-  	# REST add dpid  									leaf2a  					${leaf2a_dpid}
-  	# REST add fabric role  							leaf2a  					leaf
- 	# REST add switch  								leaf2b
-  	# REST add dpid  									leaf2b  					${leaf2b_dpid}
-  	# REST add fabric role  							leaf2b  					leaf  	
-	# REST add portgroup								${leaf0_pc1}
-	# REST add portgroup								${leaf0_pc2}
-	# REST add portgroup								${leaf0_pc3}
-	# REST add portgroup								${leaf0_pc4}
-	# REST add portgroup								${leaf0_pc5}
-	# REST add portgroup								${leaf0_pc6}	
-	# REST add portgroup								${leaf1_pc1}
-	# REST add portgroup								${leaf1_pc2}
-	# REST add portgroup								${leaf1_pc3}
-	# REST add portgroup								${leaf1_pc4}
-	# REST add portgroup								${leaf2_pc1}
-	# REST add portgroup								${leaf2_pc2}
 	REST add portgroup								${leaf0_pc1}
 	REST add portgroup								${leaf0_pc2}
 	REST add portgroup								${leaf1_pc1}
 	REST add portgroup								${leaf1_pc2}
 	REST add portgroup								${leaf2_pc1}
 	REST add portgroup								${leaf2_pc2}
-		
-	
-
-#	REST add leaf group								leaf0a						leaf0
-#	REST add leaf group								leaf0b						leaf0
-#	REST add leaf group								leaf1a						leaf1
-#	REST add leaf group								leaf1b						leaf1
-#	REST add leaf group								leaf2a						leaf2
-#	REST add leaf group								leaf2b						leaf2
-		
-
+	REST add interface to portgroup					leaf0-a						${leaf0_pc1_intf1}					${leaf0_pc1}
+	REST add interface to portgroup					leaf0-b						${leaf0_pc1_intf2}					${leaf0_pc1}
+	REST add interface to portgroup					leaf0-a						${leaf0_pc2_intf1}					${leaf0_pc2}
+	REST add interface to portgroup					leaf0-b						${leaf0_pc2_intf2}					${leaf0_pc2}
+	REST add interface to portgroup					leaf1-a						${leaf1_pc1_intf1}					${leaf1_pc1}
+	REST add interface to portgroup					leaf1-b						${leaf1_pc1_intf2}					${leaf1_pc1}
+	REST add interface to portgroup					leaf1-a						${leaf1_pc2_intf1}					${leaf1_pc2}
+	REST add interface to portgroup					leaf1-b						${leaf1_pc2_intf2}					${leaf1_pc2}
+	REST add interface to portgroup					leaf2-a						${leaf2_pc1_intf1}					${leaf2_pc1}
+	REST add interface to portgroup					leaf2-b						${leaf2_pc1_intf2}					${leaf2_pc1}
+	REST add interface to portgroup					leaf2-a						${leaf2_pc2_intf1}					${leaf2_pc2}
+	REST add interface to portgroup					leaf2-b						${leaf2_pc2_intf2}					${leaf2_pc2}	
+  	REST add portgroup lacp							${leaf0_pc1}
+  	REST add portgroup lacp							${leaf0_pc2}
+  	REST add portgroup lacp							${leaf1_pc1}
+  	REST add portgroup lacp							${leaf1_pc2}
+  	REST add portgroup lacp							${leaf2_pc1}
+  	REST add portgroup lacp							${leaf2_pc2}
+ 
   
 T5 base suite teardown
 	delete fabric switch  

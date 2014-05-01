@@ -79,12 +79,16 @@ Delete and Add dhcp relay
 	[Tags]						sanity	
 	
 Move host from one vns to another vns in the same tenant and verify dhcp request is working
-	Host moved between vns in the same tenant with dhcp request
+#	Host moved between vns in the same tenant with dhcp request
 	Log								manual untested
 	[Tags]				manual			untested			feature			
 
 Verify dhcp host is not aged out
 	Verify dhcp host is not being aged out
+	[Tags]					feature			
+
+Dhcp relay with dhcp server configured as static endpoint
+	Dhcp relay with static dhcp server endpoint
 	[Tags]					feature			
 	
 
@@ -140,6 +144,16 @@ Verify split horizon forwarding
 Configure overlapping router IP 	
 	Configure overlapping IP on same tenant across VNS	
 	[Tags]					feature		
+
+L3 intra tenant traffic between private and public subnet with overlapping IP
+#	L3 intra tenant traffic between private and public subnet with overlapping IP
+	Log								manual untested
+	[Tags]						feature			manual		
+	
+Verify host with different IP on vns router is not getting L3 service
+#	Verify host with different IP on vns router is not getting L3 service
+	Log								manual untested
+	[Tags]						feature			manual		
 	
 Trigger controller HA failover via CLI
 	Controller HA failover via CLI	
@@ -997,7 +1011,60 @@ Verify dhcp host is not being aged out
 	${ipAddr1} = 								Set Variable					${result[0]['ip-address']}	
 	Should Contain								${ipAddr1}						${ipAddr}
 	BASH delete route							h1								10.252.3.0/24			10.252.1.1
-		
+
+Dhcp relay with static dhcp server endpoint
+	BASH ifdown intf							h1 								bond0
+	BASH ifdown intf							h2								bond0
+	BASH ifdown intf							h3								bond0
+	BASH ifdown intf							h4								bond0	
+	BASH ifup intf								h5								bond0
+	BASH ifup intf								h6								bond0		
+	BASH init intf								h1								bond0
+	BASH init intf								h2								bond0
+	BASH ifup intf								h1								bond0
+	BASH add ip address							h1								10.252.1.9/24			bond0					
+	BASH start service							h1								isc-dhcp-server
+	sleep										1
+	${value} = 									BASH check service status		h1						isc-dhcp-server
+	Should Contain								${value}						is started
+	sleep										1
+	REST add portgroup to vns					Y								Y1						${leaf0_pc1}			-1
+	REST add portgroup to vns					Y								Y3						${leaf0_pc2}			-1
+	BASH add route								h1								10.252.3.0/24			10.252.1.1
+	REST add dhcp relay							Y								Y3						10.252.1.9
+	REST enable dhcp relay						Y								Y3	
+	sleep										20
+	${h1_ip} = 									BASH get interface ipv4			h1						bond0				
+	Should Contain								${h1_ip}						10.252.1.9	
+	${h1_mac} =									BASH get intf mac				h1						bond0
+	REST add endpoint							Y								Y1						Y1_dhcp_server
+	REST add endpoint ip						Y								Y1						Y1_dhcp_server			10.252.1.9
+	${mac1} = 									BASH get intf mac				h1						bond0
+	REST add endpoint mac						Y								Y1						Y1_dhcp_server			${mac1}
+	REST add endpoint portgroup attachment		Y								Y1						Y1_dhcp_server			${leaf0_pc1}				-1	
+	sleep										1
+	${value} = 									BASH release dhcpv4 address		h2						bond0
+	Should Be True								${value}
+	sleep										1
+	${ipAddr} = 								BASH renew dhcpv4 address		h2						bond0
+	Should Not Be Empty							${ipAddr}
+	sleep										1
+	BASH ping									h1								${ipAddr}				count=10
+	${value} = 									BASH verify arp					h1						10.252.1.1
+	Should Be True								${value} 		
+	${value} =									BASH verify arp					h2						10.252.3.1
+	Should Be True								${value} 	
+	${mac1} = 									BASH get intf mac				h1						bond0
+	${result} =									REST show endpoints mac			${mac1}
+	Should Be True								${result}						
+	${mac2} = 									BASH get intf mac				h2						bond0
+	${result} =									REST show endpoints mac			${mac2}
+	Should Be True								${result}						
+	REST show endpoints	
+	${loss} = 									BASH ping						h1						${ipAddr} 			count=10
+	Should Be True  							${loss} == 0	
+	BASH delete route							h1								10.252.3.0/24			10.252.1.1	
+			
 
 L3 add and delete untagged endpoints with existing host
 	BASH init intf								h1 								bond0

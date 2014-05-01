@@ -269,6 +269,7 @@ class Test(object):
         :param ignore_error: (Bool) If true, don't trigger exception when
                              name is not found.
         """
+        name = name.lower()
         if not name in self._node_static_aliases:
             if ignore_error:
                 return name
@@ -507,16 +508,17 @@ class Test(object):
         Returns the handle for a node.
         """
         if len(args) >= 1:
-            node = self.alias(args[0])
+            name = self.alias(args[0])
         elif 'name' in kwargs:
-            node = self.alias(kwargs['name'])
+            name = self.alias(kwargs['name'])
         else:
             helpers.environment_failure("Impossible state.")
+        name = self.alias(name)
 
-        if node == 'mn':
-            node = 'mn1'
+        if name == 'mn':
+            name = 'mn1'
 
-        if re.match(r'^(master|slave)$', node):
+        if re.match(r'^(master|slave)$', name):
             return self.controller(*args, **kwargs)
         else:
             return self.topology(*args, **kwargs)

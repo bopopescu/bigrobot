@@ -167,7 +167,7 @@ class Host(object):
             return ''
         else:
             result = re.search('inet addr:(.*)\sBcast', output)
-            return result.group(1)
+            return result.group(1).strip()
 
     def bash_add_route(self, node, cidr, gw, dev=None):
         """
