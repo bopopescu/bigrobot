@@ -21,7 +21,7 @@ Resource		testsuites_dev/slim/T5_L3_colo/t5_layer3_colo_resources.txt
 * Test Cases
 Intra tenant L3 untagged traffic with dynamic endpoints same rack
 	L3 intra tenant same rack untagged with dynamic endpoints
-	[Tags]							skipped			smoke				sanity			
+#	[Tags]							skipped			smoke				sanity			
 
 Intra tenant L3 untagged traffic with dynamic endpoints across rack
 	L3 intra tenant across rack untagged with dynamic endpoints
@@ -29,7 +29,7 @@ Intra tenant L3 untagged traffic with dynamic endpoints across rack
 
 Intra tenant L3 tagged traffic with dynamic endpoints same rack
 	L3 intra tenant same rack tagged with dynamic endpoints
-	[Tags]							skipped			smoke				sanity			
+#	[Tags]							skipped			smoke				sanity			
 
 Intra tenant L3 tagged traffic with dynamic endpoints across rack
 	L3 intra tenant across rack tagged with dynamic endpoints
@@ -61,15 +61,15 @@ Dhcp discover on the same vns as server without dhcp-relay enabled
 
 Intra tenant dhcp relay 
 	L3 intra tenant dhcp relay on same rack with valid circuitid
-	[Tags]							skipped			smoke				sanity	
+#	[Tags]							skipped			smoke				sanity	
 	
 Intra tenant dhcp relay with invalid circuit id
 	L3 intra tenant dhcp relay on same rack with invalid circuitid
-	[Tags]							skipped			smoke				sanity	
+#	[Tags]							skipped			smoke				sanity	
 
 Intra tenant dhcp relay enabled and disabled
 	L3 dhcp request with and without dhcp relay enabled
-	[Tags]							skipped			smoke				sanity	
+#	[Tags]							skipped			smoke				sanity	
 
 Intra tenant dhcp relay across rack
 	L3 intra tenant dhcp relay across rack
@@ -80,8 +80,8 @@ Intra tenant dhcp relay with circuit id across rack
 	[Tags]							skipped			smoke				sanity	
 
 Delete and Add dhcp relay
-	L3 dhcp request without dhcp relay enabled
-	[Tags]							skipped			sanity	
+	Delete and Add L3 dhcp request 
+#	[Tags]							skipped			sanity	
 
 Add and delete untagged endpoints with existing host
 	L3 add and delete untagged endpoints with existing host
@@ -186,11 +186,11 @@ L3 traffic behavior in headless mode
 
 Inter tenant L3 traffic same rack	
 	L3 inter tenant traffic in the same rack
-	[Tags]							skipped			sanity				
+#	[Tags]							skipped			sanity				
 
 Inter tenant L3 dhcp relay
 	Inter tenant L3 dhcp relay
-	[Tags]							skipped			sanity				
+#	[Tags]							skipped			sanity				
 	
 Inter tenant dhcp relay with two dhcp servers on both vns
 	L3 inter tenant dhcp relay with two dhcp servers on both vns
@@ -241,7 +241,7 @@ L3 intra tenant same rack tagged with dynamic endpoints
 	${result} =									REST show endpoints mac			${mac8}
 	${attachpoint} = 							Set Variable					${result[0]['attachment-point']['port-group']}	
 	Should Contain								${attachpoint}					${leaf0_pc8}
-	${loss} = 									BASH ping						h4						10.252.2.11 			count=10
+	${loss} = 									BASH ping						h7						10.252.2.11 			count=10
 	Should Be True  							${loss} == 0	
 #	${stream1}=  								L3 add  						name=stream1		  	flow=a<->c 				frame_rate=100000  			frame_size=9216  			frame_cnt=10000000
 #	...     									src_ip=10.251.1.101				src_gw=10.251.1.1		dst_ip=10.251.2.201		dst_gw=10.251.2.1			 			
@@ -334,8 +334,8 @@ L3 intra tenant dhcp relay on same rack with valid circuitid
 	REST add dhcprelay circuitid				X								X2						private vns X2
 	REST enable dhcp relay						X								X2	
 ### temporary workaround to enable dhcp relay to silent host	
-#	BASH ping									h4								10.251.1.1				count=5
-#	sleep										10
+	BASH ping									h4								10.251.1.1				count=5
+	sleep										1
 	${value} = 									BASH release dhcpv4 address		h5						bond0
 	Should Be True								${value}
 	sleep										1
@@ -372,7 +372,9 @@ L3 intra tenant dhcp relay on same rack with invalid circuitid
 	REST add dhcp relay							X								X2						10.251.1.11
 	REST add dhcprelay circuitid				X								X2						private vns AA2
 	REST enable dhcp relay						X								X2	
-	sleep										10
+### temp fix
+	BASH ping									h4								10.251.1.1 				count=5
+	sleep										1
 	${value} = 									BASH release dhcpv4 address		h5						bond0
 	Should Be True								${value}
 	sleep										1
@@ -403,8 +405,8 @@ L3 dhcp request with and without dhcp relay enabled
 	REST add dhcp relay							X								X2						10.251.1.11
 	REST add dhcprelay circuitid				X								X2						private vns X2
 	REST enable dhcp relay						X								X2	
-#	BASH ping									h4								10.251.1.1 				count=5
-#	sleep										10
+	BASH ping									h4								10.251.1.1 				count=5
+	sleep										1
 	${value} = 									BASH release dhcpv4 address		h5						bond0
 	Should Be True								${value}
 	sleep										1
@@ -421,7 +423,7 @@ L3 dhcp request with and without dhcp relay enabled
 	${attachpoint} = 							Set Variable					${result[0]['attachment-point']['port-group']}	
 	Should Contain								${attachpoint}					${leaf0_pc4}
 	${mac5} = 									BASH get intf mac				h5						bond0
-	${result} =									REST show endpoints mac			${mac2}
+	${result} =									REST show endpoints mac			${mac5}
 	${attachpoint} = 							Set Variable					${result[0]['attachment-point']['port-group']}	
 	Should Contain								${attachpoint}					${leaf0_pc5}
 	${loss} = 									BASH ping						h4						${ipAddr} 			count=10
@@ -446,8 +448,60 @@ L3 dhcp request with and without dhcp relay enabled
 	${loss} = 									BASH ping						h4						${ipAddr1} 			count=10
 	Should Be True  							${loss} == 0		
 
-
-
+Delete and Add L3 dhcp request
+	BASH init intf								h5								bond0
+	BASH delete route							h5								10.251.1.0/24			10.251.2.1
+  	BASH delete route							h5								10.251.3.0/24			10.251.2.1
+	BASH delete route							h5								10.252.0.0/16			10.251.2.1
+  	BASH delete route							h5								10.253.0.0/16			10.251.2.1
+	BASH start service							h4								isc-dhcp-server
+	sleep										1
+	${value} = 									BASH check service status		h4						isc-dhcp-server
+	Should Contain								${value}						is started
+	sleep										1
+	REST add dhcp relay							X								X2						10.251.1.11
+	REST add dhcprelay circuitid				X								X2						private vns X2
+	REST enable dhcp relay						X								X2	
+### temporary workaround to enable dhcp relay to silent host	
+	BASH ping									h4								10.251.1.1				count=5
+	sleep										1
+	${value} = 									BASH release dhcpv4 address		h5						bond0
+	Should Be True								${value}
+	sleep										1
+	${ipAddr} = 								BASH renew dhcpv4 address		h5						bond0
+	Should Not Be Empty							${ipAddr}
+	sleep										5
+	BASH ping									h4								${ipAddr}				count=10
+	${value} = 									BASH verify arp					h4						10.251.1.1
+	Should Be True								${value} 		
+	${value} =									BASH verify arp					h5						10.251.2.1
+	Should Be True								${value} 	
+	${mac1} = 									BASH get intf mac				h4						bond0
+	${result} =									REST show endpoints mac			${mac1}
+	${attachpoint} = 							Set Variable					${result[0]['attachment-point']['port-group']}	
+	Should Contain								${attachpoint}					${leaf0_pc4}
+	${mac2} = 									BASH get intf mac				h5						bond0
+	${result} =									REST show endpoints mac			${mac2}
+	${attachpoint} = 							Set Variable					${result[0]['attachment-point']['port-group']}	
+	Should Contain								${attachpoint}					${leaf0_pc5}
+	${loss} = 									BASH ping						h4						${ipAddr} 			count=10
+	Should Be True  							${loss} == 0	
+	REST delete dhcp relay						X								X2						10.251.1.11
+	sleep										1
+	${value} = 									BASH release dhcpv4 address		h5						bond0
+	Should Be True								${value}
+	sleep										1
+	${ipAddr} = 								BASH renew dhcpv4 address		h5						bond0
+	Should Be Empty								${ipAddr}
+	sleep										5
+	REST add dhcp relay							X								X2						10.251.1.11
+	REST add dhcprelay circuitid				X								X2						private vns X2
+	REST enable dhcp relay						X								X2	
+	sleep										1
+	${ipAddr} = 								BASH renew dhcpv4 address		h5						bond0
+	Should Not Be Empty							${ipAddr}	
+	${loss} = 									BASH ping						h4						${ipAddr} 			count=10
+	Should Be True  							${loss} == 0	
 
 L3 inter tenant traffic in the same rack
 	BASH ping									h4								10.252.1.11				count=5
@@ -459,7 +513,7 @@ L3 inter tenant traffic in the same rack
 	${result} =									REST show endpoints mac			${mac4}
 	${attachpoint} = 							Set Variable					${result[0]['attachment-point']['port-group']}	
 	Should Contain								${attachpoint}					${leaf0_pc4}	
-	${mac7} = 									BASH get intf mac				h7						bond0
+	${mac7} = 									BASH get intf mac				h7						bond0.1007
 	${result} =									REST show endpoints mac			${mac7}
 	${attachpoint} = 							Set Variable					${result[0]['attachment-point']['port-group']}	
 	Should Contain								${attachpoint}					${leaf0_pc7}	
@@ -474,9 +528,9 @@ Inter tenant L3 dhcp relay
 	REST add dhcp relay							Y								Y2						10.251.1.11
 	REST add dhcprelay circuitid				Y								Y2						private vns Y2
 	REST enable dhcp relay						Y								Y2	
-#	BASH ping									h4								10.252.1.11				count=5
-#	${value} = 									BASH verify arp					h4						10.251.1.1
-#	Should Be True								${value} 		
+	BASH ping									h4								10.252.1.11				count=5
+	${value} = 									BASH verify arp					h4						10.251.1.1
+	Should Be True								${value} 		
 #	${value} =									BASH verify arp					h8						10.252.1.1
 #	Should Be True								${value} 
 	${value} = 									BASH release dhcpv4 address		h8						bond0.1008
@@ -490,7 +544,7 @@ Inter tenant L3 dhcp relay
 	${result} =									REST show endpoints mac			${mac4}
 	${attachpoint} = 							Set Variable					${result[0]['attachment-point']['port-group']}	
 	Should Contain								${attachpoint}					${leaf0_pc4}	
-	${mac8} = 									BASH get intf mac				h7						bond0.1008
+	${mac8} = 									BASH get intf mac				h8						bond0.1008
 	${result} =									REST show endpoints mac			${mac8}
 	${attachpoint} = 							Set Variable					${result[0]['attachment-point']['port-group']}	
 	Should Contain								${attachpoint}					${leaf0_pc8}	
