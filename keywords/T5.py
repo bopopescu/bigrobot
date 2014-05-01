@@ -2225,4 +2225,87 @@ class T5(object):
                         helpers.test_log("given interface not present in rack lag rack=%s,interface=%s" % (rack, intf))
                         return False
 
-    
+    def rest_get_fabric_interface_info(self, switch, intf):
+        '''
+        Function to get the specific fabric interface status
+        Input:  Rest Output from the function (show_fabric_interface())
+        Output: validation of the fabric interface status
+        '''
+        helpers.test_log("Entering ==> rest_get_fabric_interface_info  for switch: %s  interface: %s"  % (switch,  intf))     
+        t = test.Test()
+        c = t.controller('master')
+  
+        url1 = '/api/v1/data/controller/core/switch?select=name'
+        c.rest.get(url1)
+        data1 = c.rest.content()
+        helpers.test_log("data1 is:  %s, %d"  % (data1, len(data1)) )         
+        
+        for i in range (0, len(data1)):
+            if 'name' in data1[i].keys() and data1[i]['name'] == switch:
+                dpid = data1[i]["dpid"]
+                helpers.test_log("get the dpid for switch:  %s"  % switch)  
+                break
+                   
+        url = '/api/v1/data/controller/core/switch[interface/name="%s"][dpid="%s"]?select=interface[name="%s"]' % (intf, dpid, intf)
+        c.rest.get(url)
+        intfinfo={}
+        data = c.rest.content()
+        if len(data) != 0:
+            intfinfo['state'] = data[0]["interface"][0]["state"]
+            intfinfo['name']= data[0]["interface"][0]["name"]
+            intfinfo['type']= data[0]["interface"][0]["type"]
+            intfinfo['lacp']= data[0]["interface"][0]["lacp-state"]  
+            try:  
+                intfinfo['downreason']= data[0]["interface"][0]["interface-down-reason"]   
+            except:
+                helpers.test_log("interface-down-reason does not exist for:  %s"  % intf)  
+            helpers.test_log("interface info is: %s"  % intfinfo)                          
+            return intfinfo
+        else:
+            helpers.test_failure("Given fabric interface is not valid")
+            return False
+           
+
+    def verify_fabric_interface_BPDU_Down(self, switch, intf):
+        """ check the interface is down by BPDU Guard
+        """
+        
+        info = self.rest_get_fabric_interface_info(switch,intf)
+        if info['state']=="down" and info['downreason']=="BPDU Guard":
+            return True
+        else:
+            return False
+      
+     
+    def rest_delete_fabric_interface(self, switch, intf):
+        t = test.Test()
+        c = t.controller('master')
+        url = '/api/v1/data/controller/core/switch-config[name="%s"]/interface[name="%s"]' % (switch, intf)
+        c.rest.delete(url, {})
+        helpers.sleep(2)
+        
+        url1 = '/api/v1/data/controller/core/switch-config[name="%s"]?config=true' % switch 
+        c.rest.get(url1)        
+        data = c.rest.content()[0] 
+        if 'interface' in data.keys():
+            helpers.test_log("interface exist for:  %s" % data['interface'] )               
+            for i in range (0,len(data['interface'])):
+                if data['interface'][i]["name"]==intf:
+                    helpers.test_failure("Interface did not deleted: %s" % intf )
+                    return False
+        return True
+      
+    def cli_show_running_tenant(self, tenant=None):
+        ''' Function to show switch using controller CLI
+        Input: switch name , if not given it will be none
+        Output: Execute show switch from CLI and verify the output is not empty
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        if tenant:
+            c.cli("show running-config tenant %s" % tenant)
+        else:
+            c.cli("show running-config tenant" )
+         
+        return True
+               
