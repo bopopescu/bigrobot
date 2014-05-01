@@ -14,6 +14,7 @@ import traceback
 import re
 import ipcalc
 import platform
+import unicodedata
 import curses.ascii as ascii
 from scp import SCPClient
 from pytz import timezone
@@ -677,6 +678,13 @@ def to_json(python_data, is_raw=False):
         return json.dumps(python_data, sort_keys=True)
     else:
         return json.dumps(python_data, indent=4, sort_keys=True)
+
+
+def unicode_to_ascii(u):
+    """
+    COnvert a Unicode string to an ASCII string.
+    """
+    return unicodedata.normalize('NFKD', u).encode('ascii', 'ignore')
 
 
 def load_config(yaml_file):
