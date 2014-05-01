@@ -73,7 +73,7 @@ class RestClient(object):
 
     def status_code_ok(self, result=None):
         code = self.status_code(result)
-        if code == 200:
+        if code in range(200, 300):
             return True
         else:
             return False
