@@ -513,7 +513,7 @@ L3 inter tenant traffic in the same rack
 	${result} =									REST show endpoints mac			${mac4}
 	${attachpoint} = 							Set Variable					${result[0]['attachment-point']['port-group']}	
 	Should Contain								${attachpoint}					${leaf0_pc4}	
-	${mac7} = 									BASH get intf mac				h7						bond0
+	${mac7} = 									BASH get intf mac				h7						bond0.1007
 	${result} =									REST show endpoints mac			${mac7}
 	${attachpoint} = 							Set Variable					${result[0]['attachment-point']['port-group']}	
 	Should Contain								${attachpoint}					${leaf0_pc7}	
@@ -544,7 +544,7 @@ Inter tenant L3 dhcp relay
 	${result} =									REST show endpoints mac			${mac4}
 	${attachpoint} = 							Set Variable					${result[0]['attachment-point']['port-group']}	
 	Should Contain								${attachpoint}					${leaf0_pc4}	
-	${mac8} = 									BASH get intf mac				h7						bond0.1008
+	${mac8} = 									BASH get intf mac				h8						bond0.1008
 	${result} =									REST show endpoints mac			${mac8}
 	${attachpoint} = 							Set Variable					${result[0]['attachment-point']['port-group']}	
 	Should Contain								${attachpoint}					${leaf0_pc8}	
