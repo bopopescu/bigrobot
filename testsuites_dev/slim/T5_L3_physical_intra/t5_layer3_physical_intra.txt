@@ -1009,7 +1009,9 @@ Verify dhcp host is not being aged out
 	${attachpoint} = 							Set Variable					${result[0]['attachment-point']['port-group']}	
 	Should Contain								${attachpoint}					${leaf1_pc1}	
 	${ipAddr1} = 								Set Variable					${result[0]['ip-address']}	
-	Should Contain								${ipAddr1}						${ipAddr}
+#	Should Contain								${ipAddr1}						${ipAddr}
+	Should Be Equal As Strings					${ipAddr1}						${ipAddr}
+
 	BASH delete route							h1								10.252.3.0/24			10.252.1.1
 
 Dhcp relay with static dhcp server endpoint
