@@ -40,7 +40,7 @@ T1.1 BPDU guard rstp untagged
 	verify switch interface is up    ${sw}   ${intf}
  	config   s100	  spanning-tree vlan 100    	
  	sleep  ${short}
-	verify_fabric_interface_BPDU_Down	${sw}   ${intf}
+	verify switch interface is BPDU down	${sw}   ${intf}
 	port recover from bpdu down state		${sw}   ${intf}		
 	[Tags] 	sanity   bpdu_guard     
 
@@ -170,14 +170,14 @@ BPDU Guard suite setup
  
 BPDU Guard test setup
  	config   s100	   no spanning-tree vlan 100
- 	${result}=  verify_fabric_interface_BPDU_Down   ${sw}   ${intf} 
+ 	${result}=  rest_verify_fabric_interface_BPDU_Down   ${sw}   ${intf} 
  	log  result is ${result}
  	Run Keyword if    ${result}    Flap interface   ${sw}   ${intf}   	  
 	base test setup	
 	
 BPDU Guard test teardown  
  	config   s100	   no spanning-tree vlan 100
- 	${result}=  verify_fabric_interface_BPDU_Down   ${sw}   ${intf} 
+ 	${result}=  rest_verify_fabric_interface_BPDU_Down   ${sw}   ${intf} 
  	log  result is ${result}
  	Run Keyword if    ${result}    Flap interface   ${sw}   ${intf} 	  
 
@@ -239,7 +239,7 @@ verify switch interface is up	[Arguments]  ${switch}   ${intf}
 	Should Be Equal as Strings 		up      ${info['state']}
 
 verify switch interface is BPDU down	[Arguments]  ${switch}   ${intf}  
-	${result}=  verify_fabric_interface_BPDU_Down     ${switch}   ${intf} 
+	${result}=  rest_verify_fabric_interface_BPDU_Down     ${switch}   ${intf} 
 	Should be True     ${result}    
 	 	
 port recover from bpdu down state 	[Arguments]  ${switch}   ${intf}  

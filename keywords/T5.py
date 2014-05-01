@@ -2228,8 +2228,9 @@ class T5(object):
     def rest_get_fabric_interface_info(self, switch, intf):
         '''
         Function to get the specific fabric interface status
-        Input:  Rest Output from the function (show_fabric_interface())
-        Output: validation of the fabric interface status
+        Input:   switch   -  leaf1-a .. 
+                 interface  - ethernet33 
+        Output: interface info in dict format
         '''
         helpers.test_log("Entering ==> rest_get_fabric_interface_info  for switch: %s  interface: %s"  % (switch,  intf))     
         t = test.Test()
@@ -2266,7 +2267,7 @@ class T5(object):
             return False
            
 
-    def verify_fabric_interface_BPDU_Down(self, switch, intf):
+    def rest_verify_fabric_interface_BPDU_Down(self, switch, intf):
         """ check the interface is down by BPDU Guard
         """
         
