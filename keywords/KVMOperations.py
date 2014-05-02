@@ -235,7 +235,7 @@ class KVMOperations(object):
     def _configure_vm_first_boot(self, cluster_ip=None, ip_address=None,
                                  netmask='18', vm_host_name=None):
         # Using Mingtao's First Boot Function to configure spawned VM in KVM
-        helpers.log("SLeeping 60 sec ..for VM to Boot UP....This time should bring down soon..")
+        helpers.log("Sleeping 60 sec while waiting for VM to boot up")
         time.sleep(120)
         helpers.log("Success setting up gobot Env!")
 
@@ -351,8 +351,9 @@ class KVMOperations(object):
 
             helpers.summary_log("Done! Logs are written to %s" % self.log_path)
             return result
-        except Exception as inst:
-            helpers.log("Exception Details %s" % inst)
+        except:
+            inst = helpers.exception_info_traceback()
+            helpers.log("Exception Details:\n%s" % inst)
             result['status_code'] = False
             result['status_descr'] = inst
             return result
@@ -387,8 +388,9 @@ class KVMOperations(object):
                 return result
             self._delete_vm_storage_file(kvm_handle=kvm_handle, vm_name=vm_name)
             return result
-        except Exception as inst:
-            helpers.log("Exception Details %s" % inst)
+        except:
+            inst = helpers.exception_info_traceback()
+            helpers.log("Exception Details:\n%s" % inst)
             result['status_code'] = False
             result['status_descr'] = inst
             return result

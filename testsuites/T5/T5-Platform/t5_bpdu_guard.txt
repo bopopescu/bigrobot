@@ -1,0 +1,253 @@
+* Settings
+Documentation    T5 Test Suite
+Suite Setup      BPDU Guard suite setup
+Suite Teardown   base suite teardown
+Test Setup       BPDU Guard test setup 
+Test Teardown    BPDU Guard test teardown 
+Force Tags       T5 
+Library          keywords/BsnCommon.py
+Library          keywords/Controller.py
+Library			 keywords/Mininet.py
+Library		     keywords/Host.py
+Library		     keywords/Ixia.py
+Library		     keywords_dev/mingtao/T5_longevity.py
+Library	         keywords/T5.py
+Library          keywords/T5L3.py
+Library	         keywords/T5Platform.py
+Library	         keywords/Controller.py
+Library	         keywords/SwitchLight.py
+
+
+* Variable
+ 
+${short}  1
+${medium}  5
+${long}   30
+${verylong}    120 
+${arista_sw}    s100
+${arista_intf}    ethernet33
+${sw}             leaf1-a
+${intf}           ethernet33
+
+${sw1dpid}   00:00:88:00:00:00:01:01
+${sw5dpid}   00:00:5c:16:c7:10:20:9e
+
+
+
+* Test Case
+
+T1.1 BPDU guard rstp untagged	 
+	verify switch interface is up    ${sw}   ${intf}
+ 	config   s100	  spanning-tree vlan 100    	
+ 	sleep  ${short}
+	verify switch interface is BPDU down	${sw}   ${intf}
+	port recover from bpdu down state		${sw}   ${intf}		
+	[Tags] 	sanity   bpdu_guard     
+
+T1.2 BPDU guard recovery: config interface shut no shut in in controller	 
+ 	log   covered in T1.1
+	[Tags] 	sanity   bpdu_guard     
+
+T1.3 BPDU guard recovery: config interface shut no shut in switch	 
+ 	 
+ 	verify switch interface is up   ${sw}   ${intf}
+ 	config   s100	  spanning-tree vlan 100    	
+ 	sleep  ${short}
+	verify switch interface is BPDU down	${sw}   ${intf}
+	config   s100	  no spanning-tree vlan 100 
+
+	cli_disable_interface   s1     		${intf}
+	cli_enable_interface    s1     		${intf}
+	sleep  ${short}
+	verify switch interface is up    ${sw}   ${intf} 		
+ 	 
+	[Tags] 	feature   bpdu_guard  JIRA-PAN-809	 
+
+
+T1.4 BPDU guard recovery: deleting interface in controller	 
+	
+	verify switch interface is up     ${sw}   ${intf}
+ 	config   s100	  spanning-tree vlan 100    	
+ 	sleep  ${short}
+	verify switch interface is BPDU down	 ${sw}   ${intf}
+ 	config   s100	  no spanning-tree vlan 100 	
+	rest_disable_fabric_interface	         ${sw}   ${intf}
+	rest_delete_fabric_interface        ${sw}   ${intf} 
+	sleep  ${short}
+	verify switch interface is up     ${sw}   ${intf}	
+   	
+	[Tags] 	feature   bpdu_guard    
+	
+
+T2.1 BPDU guard rstp tagged
+	arista setup trunk vlan 100	
+	verify switch interface is up    ${sw}   ${intf}
+ 	config   s100	  spanning-tree vlan 100    	
+ 	sleep  ${short}
+	verify switch interface is BPDU down	${sw}   ${intf}
+	port recover from bpdu down state		${sw}   ${intf}		
+	[Tags] 	sanity   bpdu_guard     
+	 
+
+T2.2 BPDU guard mstp
+	arista setup mstp	
+ 	verify switch interface is up    ${sw}   ${intf}
+ 	config   s100	  spanning-tree vlan 100    	
+ 	sleep  ${short}
+	verify switch interface is BPDU down	${sw}   ${intf}
+	port recover from bpdu down state		${sw}   ${intf}		
+	[Tags] 	sanity   bpdu_guard     
+	 
+T2.3 BPDU guard rapid-pvst
+	arista setup rapid-pvst	
+ 	verify switch interface is up    ${sw}   ${intf}
+ 	config   s100	  spanning-tree vlan 100    	
+ 	sleep  ${short}
+	verify switch interface is BPDU down	${sw}   ${intf}
+	port recover from bpdu down state		${sw}   ${intf}		
+	[Tags] 	sanity   bpdu_guard    JIRA-BVS-1459    
+
+T3.1 BPDU guard with interface configure in vns mismatch vlan
+	rest_add_tenant  BPDU
+ 	rest_add_vns     BPDU  V10  
+ 	rest_add_interface_to_vns     BPDU     V10     ${sw}   ${intf}   10
+	sleep  ${short}
+	cli_show_running_tenant	   
+ 		
+	arista setup mstp	
+ 	verify switch interface is up    ${sw}   ${intf}
+ 	config   s100	  spanning-tree vlan 100    	
+ 	sleep  ${short}
+	verify switch interface is BPDU down	${sw}   ${intf}
+	
+	port recover from bpdu down state		${sw}   ${intf}
+	
+	[Tags] 	feature   bpdu_guard    
+	 
+T3.2 BPDU guard with interface configure in vns match vlan
+	rest_add_tenant  BPDU
+ 	rest_add_vns     BPDU  V10  
+ 	rest_add_interface_to_vns     BPDU     V10     ${sw}   ${intf}   100
+	sleep  ${short}
+	cli_show_running_tenant	   
+ 		
+	arista setup mstp	
+ 	verify switch interface is up    ${sw}   ${intf}
+ 	config   s100	  spanning-tree vlan 100    	
+ 	sleep  ${short}
+	verify switch interface is BPDU down	${sw}   ${intf}
+	port recover from bpdu down state		${sw}   ${intf}	
+	[Tags] 	feature   bpdu_guard    
+	 
+T3.3 BPDU guard with interface configure in vns port group
+	rest_add_tenant  BPDU
+ 	rest_add_vns     BPDU  V10  
+	rest_add_portgroup 	p-BPDU
+	rest_add_interface_to_portgroup	  ${sw}    ${intf}     	p-BPDU 
+	rest_add_portgroup_to_vns 	      BPDU  V10   p-BPDU   100
+ 	sleep  ${short}
+	cli_show_running_tenant	    		
+	arista setup mstp	
+ 	verify switch interface is up     ${sw}   ${intf}
+ 	config   s100	  spanning-tree vlan 100    	
+ 	sleep  ${short}
+	verify switch interface is BPDU down	${sw}   ${intf}
+	port recover from bpdu down state		${sw}   ${intf}		
+	[Tags] 	feature   bpdu_guard    
+	 
+    
+
+* Keywords
+
+
+# bpdu guard 
+
+BPDU Guard suite setup
+ 	base suite setup 
+	arista setup access vlan 100	
+	fabric switch setup	
+	sleep  5
+ 
+BPDU Guard test setup
+ 	config   s100	   no spanning-tree vlan 100
+ 	${result}=  rest_verify_fabric_interface_BPDU_Down   ${sw}   ${intf} 
+ 	log  result is ${result}
+ 	Run Keyword if    ${result}    Flap interface   ${sw}   ${intf}   	  
+	base test setup	
+	
+BPDU Guard test teardown  
+ 	config   s100	   no spanning-tree vlan 100
+ 	${result}=  rest_verify_fabric_interface_BPDU_Down   ${sw}   ${intf} 
+ 	log  result is ${result}
+ 	Run Keyword if    ${result}    Flap interface   ${sw}   ${intf} 	  
+
+	base test teardown 
+	
+fabric switch setup
+  rest add switch               spine0
+  rest add dpid                 spine0         ${sw1dpid}
+  rest add fabric role          spine0         spine
+     
+  rest add switch               leaf1-a
+  rest add dpid                 leaf1-a        ${sw5dpid}
+  rest add fabric role          leaf1-a        leaf
+  rest_add_leaf_group           leaf1-a        rack1   
+    
+arista setup trunk vlan 100		
+ 	config   ${arista_sw}	   no spanning-tree vlan 100       
+  	config   ${arista_sw}	   interface ${arista_intf} 
+  	config   ${arista_sw}	   no switchport mode access   	 
+ 	config   ${arista_sw}	   no switchport access vlan 100
+ 	config   ${arista_sw}      switchport mode trunk
+ 	config   ${arista_sw}      switchport trunk allowed vlan 100
+ 	config   ${arista_sw}	   exit  	
+
+arista setup access vlan 100		
+	log  config vlan
+    config   ${arista_sw}      vlan 100
+  	config   ${arista_sw}	   name BPDU    
+	config   ${arista_sw}      spanning-tree mode none 	  	
+ 	config   ${arista_sw}	   no spanning-tree vlan 100  
+	config   ${arista_sw}      spanning-tree mode rstp 	 	
+  	config   ${arista_sw}	   interface ${arista_intf} 
+  	config   ${arista_sw}	   no switchport trunk allowed vlan 100
+    config   ${arista_sw}	   no switchport mode trunk
+  	config   ${arista_sw}	   switchport mode access   	 
+ 	config   ${arista_sw}	   switchport access vlan 100
+ 	config   ${arista_sw}	   exit  	
+
+arista setup rstp			 
+    config   ${arista_sw}      spanning-tree mode rstp
+
+arista setup mstp			 
+    config   ${arista_sw}      spanning-tree mode mstp
+
+arista setup rapid-pvst			 
+    config   ${arista_sw}      spanning-tree mode rapid-pvst
+
+arista setup none stp			 
+    config   ${arista_sw}      spanning-tree mode none
+  	    
+
+Flap interface  	[Arguments]   ${switch}   ${intf}  
+	rest_disable_fabric_interface	    ${switch}   ${intf} 
+	rest_enable_fabric_interface        ${switch}   ${intf} 
+
+
+verify switch interface is up	[Arguments]  ${switch}   ${intf}  
+	${info}=  rest_get_fabric_interface_info   ${switch}  ${intf}
+	Should Be Equal as Strings 		up      ${info['state']}
+
+verify switch interface is BPDU down	[Arguments]  ${switch}   ${intf}  
+	${result}=  rest_verify_fabric_interface_BPDU_Down     ${switch}   ${intf} 
+	Should be True     ${result}    
+	 	
+port recover from bpdu down state 	[Arguments]  ${switch}   ${intf}  
+ 	config   s100	  no spanning-tree vlan 100 	
+	rest_disable_fabric_interface		${switch}   ${intf}  
+	rest_enable_fabric_interface       ${switch}   ${intf} 
+	sleep  ${short}
+	verify switch interface is up    ${switch}   ${intf} 	
+	
+	 
+ 
