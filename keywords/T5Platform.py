@@ -3442,7 +3442,7 @@ class T5Platform(object):
         else:
             cli_string = string + ' ?'
         c.send(cli_string, no_cr=True)
-        c.expect(r'[\r\n\x07][\w-]+[#>] ')
+        c.expect(r'[\r\n\x07]?[\w\x07-]+\(([\w\x07-]+)\)(\x07)?[#>] ')
         content = c.cli_content()
         temp = helpers.strip_cli_output(content)
         temp = helpers.str_to_list(temp)
@@ -3580,14 +3580,15 @@ class T5Platform(object):
     def cli_walk_enable(self, string='', file_name=None, padding=''):
         t = test.Test()
         c = t.controller('master')
-        c.enable('')
+        
+        c.enable(r'[\r\n\x07]?[\w\x07-]+\(([\w\x07-]+)\)(\x07)?[#>] ')
         helpers.log("********* Entering CLI show  walk with ----> string: %s, file name: %s" % (string, file_name))
         if string == '':
             cli_string = '?'
         else:
             cli_string = string + ' ?'
         c.send(cli_string, no_cr=True)
-        c.expect(r'[\r\n\x07][\w-]+[#>] ')
+        c.expect()
         content = c.cli_content()
         temp = helpers.strip_cli_output(content)
         temp = helpers.str_to_list(temp)
