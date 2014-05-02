@@ -12,17 +12,17 @@ Library        		String
 
 
 *** Variables ***
-${scp}				scp://bsn@regress:scp
-${scp RC}			scp://bsn@regress:config-RC
-${scp file}			scp://bsn@regress:config-file
-${scp config}		scp://bsn@regress:config-config-scp
-${scp double}		scp://scp://bsn@regress:config-scp
-${scp location}		bsn@regress:config-scp
-${scp inexistent}   scp://bsn@regress:inexistent
-${scp switch}		scp://bsn@regress:scp-config-large
-${scp image}		scp://bsn@regress:controller-upgrade-bvs-2.0.8-SNAPSHOT.pkg
-${scp image corrupted}		scp://bsn@regress:controller-upgrade-bvs-2.0.8-SNAPSHOT-corrupted.pkg
-${scp image bigtap}		scp://bsn@regress:bigtap-3.1.0-upgrade-2014.04.28.2234.pkg
+${scp}				scp://bsn@regress:file-management-testsuite/scp
+${scp RC}			scp://bsn@regress:file-management-testsuite/config-RC
+${scp file}			scp://bsn@regress:file-management-testsuite/config-file
+${scp config}		scp://bsn@regress:file-management-testsuite/config-config-scp
+${scp double}		scp://scp://bsn@regress:file-management-testsuite/config-scp
+${scp location}		bsn@regress:file-management-testsuite/config-scp
+${scp inexistent}   	scp://bsn@regress:file-management-testsuite/inexistent
+${scp switch}		scp://bsn@regress:file-management-testsuite/scp-config-large
+${scp image}		scp://bsn@regress:file-management-testsuite/controller-upgrade-bvs-2.0.8-SNAPSHOT.pkg
+${scp image corrupted}		scp://bsn@regress:file-management-testsuite/controller-upgrade-bvs-2.0.8-SNAPSHOT-corrupted.pkg
+${scp image bigtap}		scp://bsn@regress:file-management-testsuite/bigtap-3.1.0-upgrade-2014.04.28.2234.pkg
 ${file}				config-file
 ${config}			config://config-config
 ${config double}	config://config://config-config
@@ -307,7 +307,7 @@ T5.9.7 Verify: copy scp://<config://> running-config
 	Cli Copy  ${config}  ${scp config}
 	Cli Copy  ${scp config}  running-config
 	Compare  ${scp config}  running-config
-	[Tags]  SCP
+	[Tags]  SCP  BSC-5283
 
 T5.9.8 Verify: copy scp://<config://> file - negative, this is not supported
 	Cli Copy  running-config  ${config}
@@ -351,9 +351,9 @@ T6.2.4 Verify config:// name containing _
 	[Tags]  Filename
 
 T6.3 Verify correct processing of special characters in scp:// name (?)
-	Cli Copy  running-config  scp://bsn@regress:test#test
-	Compare  running-config  scp://bsn@regress:test#test
-	Cli Copy  scp://bsn@regress:test#test   running-config
+	Cli Copy  running-config  scp://bsn@regress:file-management-testsuite/test#test
+	Compare  running-config  scp://bsn@regress:file-management-testsuite/test#test
+	Cli Copy  scp://bsn@regress:file-management-testsuite/test#test   running-config
 	[Tags]  Filename  SCP
 
 T6.4 Verify empty file name is not allowed
@@ -443,9 +443,9 @@ T7.6 Verify comparison function between file and scp://
 	Compare  ${file}  ${scp}
 	Modify Running Config
 	Cli Copy  running-config  file-new
-	Cli Copy  running-config  scp://bsn@regress:config-scp-new
+	Cli Copy  running-config  scp://bsn@regress:file-management-testsuite/config-scp-new
 	Compare Negative  file-new  ${scp}
-	Compare Negative  ${file}  scp://bsn@regress:config-scp-new
+	Compare Negative  ${file}  scp://bsn@regress:file-management-testsuite/config-scp-new
 	[Tags]  SCP
 
 T7.7 Verify comparison function between file and file
@@ -463,8 +463,8 @@ T7.8 Verify comparison function between scp:// and config://
 	Compare  ${config}  ${scp}
 	Modify Running Config
 	Cli Copy  running-config  config://config-new
-	Cli Copy  running-config  scp://bsn@regress:config-scp-new
-	Compare  config://config-new  scp://bsn@regress:config-scp-new
+	Cli Copy  running-config  scp://bsn@regress:file-management-testsuite/config-scp-new
+	Compare  config://config-new  scp://bsn@regress:file-management-testsuite/config-scp-new
 	Compare Negative  config://config-new  ${scp}
 	Compare Negative  config://config-new  ${config}
 	[Tags]  SCP
@@ -491,9 +491,9 @@ T7.11 Verify comparison function between running-config and inexistent config://
 	...  Cli Compare  config://inexistent  running-config
 
 T7.12 Verify comparison function between running-config and inexistent scp://file
-	Run Keyword and Expect Error  *scp: inexistent: No such file or directory*
+	Run Keyword and Expect Error  *scp: file-management-testsuite/inexistent: No such file or directory*
 	...  Cli Compare  running-config  ${scp inexistent}
-	Run Keyword and Expect Error  *scp: inexistent: No such file or directory*
+	Run Keyword and Expect Error  *scp: file-management-testsuite/inexistent: No such file or directory*
 	...  Cli Compare  ${scp inexistent}  running-config
 	[Tags]  SCP
 
@@ -506,9 +506,9 @@ T7.13 Verify comparison function between file and inexistent config://file
 
 T7.14 Verify comparison function between file and inexistent scp://
 	Cli Copy  running-config  ${file}
-	Run Keyword and Expect Error  *scp: inexistent: No such file or directory*
+	Run Keyword and Expect Error  *scp: file-management-testsuite/inexistent: No such file or directory*
 	...  Cli Compare  ${file}  ${scp inexistent}
-	Run Keyword and Expect Error  *scp: inexistent: No such file or directory*
+	Run Keyword and Expect Error  *scp: file-management-testsuite/inexistent: No such file or directory*
 	...  Cli Compare  ${scp inexistent}  ${file}
 	[Tags]  SCP
 
@@ -532,9 +532,9 @@ T7.17 Verify comparison function between config://file and inexistent file
 
 T7.18 Verify comparison function between config://file and inexistent scp://
 	Cli Copy  running-config  ${config}
-	Run Keyword and Expect Error  *scp: inexistent: No such file or directory*
+	Run Keyword and Expect Error  *scp: file-management-testsuite/inexistent: No such file or directory*
 	...  Cli Compare  ${config}  ${scp inexistent}
-	Run Keyword and Expect Error  *scp: inexistent: No such file or directory*
+	Run Keyword and Expect Error  *scp: file-management-testsuite/inexistent: No such file or directory*
 	...  Cli Compare  ${scp inexistent}  ${config}
 	[Tags]  SCP
 
@@ -609,7 +609,7 @@ T9.3 Verify impossible to compare with invalid SCP
 	[Tags]  SCP
 
 T9.4 Verify impossible to copy from inexistent SCP
-	Run Keyword and Expect Error  *Error: Invalid Use: inexistent: No such file or directory*  Cli Copy  ${scp inexistent}  running-config
+	Run Keyword and Expect Error  *Error: Invalid Use: file-management-testsuite/inexistent: No such file or directory*  Cli Copy  ${scp inexistent}  running-config
 	[Tags]  SCP
 
 T10.1 Verify validation function of scp:// to image:// - textfile
@@ -652,10 +652,10 @@ Modify Running Config
 	${tenant}  Generate Random Name  Tenant  5
 	Rest Add Tenant  ${tenant}
 	Rest Delete Tenant  TenantTest12345
-    auto configure fabric switch   ${spineList}   ${leafList}   2
-    Config  master  group test
-    Config  master  port-group test
-    Config  master  user test
+	auto configure fabric switch   ${spineList}   ${leafList}   2
+	Config  master  group test
+	Config  master  port-group test
+	Config  master  user test
 
 Teardown
 	Bash Clear Known Hosts

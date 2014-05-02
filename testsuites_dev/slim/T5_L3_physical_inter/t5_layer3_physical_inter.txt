@@ -2,8 +2,8 @@
 Documentation   T5 Basic L3 two spine three leaf rack with dual-tor Test Suite
 Suite Setup     T5 base suite setup
 Suite Teardown  T5 base suite teardown
-Test Setup      setup topology
-Test Teardown   teardown topology
+Test Setup      test setup topology
+Test Teardown   test teardown topology
 Force Tags      T5 Sanity
 Library         keywords/BsnCommon.py
 Library         keywords_dev/slim/Host.py
@@ -46,217 +46,262 @@ Add and delete static route on tenant
 
 Add and delete more specific route on tenant over existing static route
 	Add and delete more specific route on tenant router over existing static route
-#	[Tags]							skipped			sanity	
+	[Tags]							skipped			sanity	
 
 
 Add and delete tenant vns router interface
 	Add and delete tenant vns router interface towards system router
-	[Tags]							skipped			sanity	
+#	[Tags]							skipped			sanity	
 
 L3 inter tenant forwarding with end host moved to another port
 	L3 inter tenant host moved 
-	[Tags]							skipped			feature	
+#	[Tags]							skipped			feature	
 
 L3 inter tenant forwarding split horizon on the same port 
 	Log 										manual pass
 	[Tags]										feature			manual		
+
+L3 inter tenant forwarding between endpoints on the same rack but different switch
+	Log 										manual pass
+	[Tags]										feature			manual		
+
 	
 Add and delete system router interface to tenant router
 	Add and delete system router interface on tenant router
-	[Tags]							skipped			feature	
+#	[Tags]							skipped			feature	
 
 L3 ttl one forwarding
 	Verify inter tenant L3 traffic with ttl value of one two and three
-	[Tags]							skipped			feature	
+#	[Tags]							skipped			feature	
 	
 Inter tenant DHCP relay
 	L3 dhcp relay across tenant
 	Log								manual untested
-	[Tags]						manual			untested			feature			
+	[Tags]			skipped		manual			untested			feature			
 
 Dhcp request from other host in other tenants with dhcp enabled but no inter tenant route
 	L3 inter tenant dhcp discover without routes
 	Log								manual untested
-	[Tags]						manual			untested			feature			
+	[Tags]			skipped		manual			untested			feature			
 
 dhcp request from other host in other tenants without dhcp relay enabled but with inter tenant route
 	L3 inter tenant dhcp request without dhcp enabled but routes are present
 	Log								manual untested
-	[Tags]						manual			untested			feature			
+	[Tags]			skipped		manual			untested			feature			
 
 Inter tenant dhcp relay with multiple dhcp servers
 	Inter tenant dhcp relay with multiple dhcp servers
 	Log								manual untested
-	[Tags]						manual			untested			feature			
+	[Tags]			skipped		manual			untested			feature			
 
 Host moved to another vns on another tenant and renew dhcp 
 	Verify host is able to request new dhcp address after moved to another vns in another tenant
 	Log								manual untested
-	[Tags]						manual			untested			feature			
+	[Tags]			skipped		manual			untested			feature			
 
+DHCP request to external dhcp servers
+	DHCP request to external dhcp server
+	Log								manual untested
+	[Tags]			skipped		manual			untested			feature			
+
+	
 
 Overlapping IP subnet with and without private keyword
 	overlapping IP subnet with and without private keyword
 	Log								manual untested
-	[Tags]						manual			untested			feature			
+	[Tags]			skipped		manual			untested			feature			
 	
 Overlapping IP with vlsm with and without private keyword
 	overlapping private ip subnet with vlsm with and without private keyword
 	Log								manual untested
-	[Tags]						manual			untested			feature			
+	[Tags]			skipped		manual			untested			feature			
 
 One public IP and multiple private IP
 	L3 inter tenant traffic from public to private IP on multiple tenant
 	Log								manual untested
-	[Tags]						manual			untested			feature			
+	[Tags]			skipped		manual			untested			feature			
 
 Verify private IP is able to communicate with other vns in the same tenant
 	L3 intra tenant traffic from private IP subnet
 	Log								manual untested
-	[Tags]						manual			untested			feature			
+	[Tags]			skipped		manual			untested			feature			
 
 Controller HA failover via CLI
 	Controller HA failover via CLI and verify L3 inter tenant traffic after HA
 	Log								manual untested
-	[Tags]						manual			untested			feature			
+	[Tags]			skipped		manual			untested			feature			
 
 Controller HA failover via reboot of master
 	Controller HA failover via master reboot and verify L3 inter tenant traffic
 	Log								manual untested
-	[Tags]						manual			untested			feature			
+	[Tags]			skipped		manual			untested			feature			
 	
 Spine reboot
 	Reboot of spine and verify L3 inter tenant traffic 
 	Log								manual untested
-	[Tags]						manual			untested			feature			
+	[Tags]			skipped		manual			untested			feature			
 
 Leaf reboot
 	Reboot of a single leaf in a dual-tor setup and verify L3 inter tenant traffic
 	Log								manual untested
-	[Tags]						manual			untested			feature			
+	[Tags]			skipped		manual			untested			feature			
 
 Traffic load balance across ECMP group
 	Verify traffic is load balanced across ecmp group
 	Log								manual untested
-	[Tags]						manual			untested			feature		
+	[Tags]			skipped		manual			untested			feature		
 
 Add and delete one ECMP members with active traffic in ecmp group
 	Verify L3 traffic is forwarding with add and delete of ecmp members
 	Log								manual untested
-	[Tags]						manual			untested			feature			
+	[Tags]			skipped		manual			untested			feature			
 
 Add and delete all ECMP members in ecmp group  
 	Delete all members in ecmp group and verify traffic behavior
 	Log								manual untested
-	[Tags]						manual			untested			feature			
+	[Tags]			skipped		manual			untested			feature			
 
 Delete existing one ECMP members and add new ECMP member
 	Delete and add new ecmp member
 	Log								manual untested
-	[Tags]						manual			untested			feature			
+	[Tags]			skipped		manual			untested			feature			
+
+L3 traffic forwarding over ecmp groups with more specific route
+	L3 traffic forwarding with two ecmp groups with more specific routes
+	[Tags]			skipped		manual			untested			feature			
+
+Verify L3 traffic honor more specific routes with ecmp group
+	Verify L3 traffic honor more specific routes with ecmp group
+	[Tags]			skipped		manual			untested			feature		
+
+Move ecmp endpoint to another attachment point and verify L3 forwarding
+	Move ecmp endpoint to another attachment point and verify L3 forwarding
+	[Tags]			skipped		manual			untested			feature		
+		
+
+Verify L3 traffic switch over to different path when the same route is applied with different nexthop or tenant
+	Verify L3 traffic switch over to different path when the same route is applied with different nexthop or tenant
+	[Tags]			skipped		manual			untested			feature			
+				
 
 Add and delete tenant system interface on tenant router
 	Add and delete tenant system interface on tenant router
 	Log								manual untested
-	[Tags]						manual			untested			feature			
+	[Tags]			skipped		manual			untested			feature			
 
 Add and delete router interface on tenant system
 	Add and delete router interface on tenant system
 	Log								manual untested
-	[Tags]						manual			untested			feature			
+	[Tags]			skipped		manual			untested			feature			
+
+Add and delete default route on tenant system
+	Add and delete default route on tenant system
+	Log								manual untested
+	[Tags]			skipped		manual			untested			feature			
+
+Add and delete static route on tenant system
+	Add and delete static route on tenant system
+	Log								manual untested
+	[Tags]			skipped		manual			untested			feature			
+
+Add and delete more specific route on tenant system
+	Add and delete more specific route on tenant system
+	Log								manual untested
+	[Tags]			skipped		manual			untested			feature			
+
 
 L3 inter tenant traffic behavior in headless mode
 	Verify L3 inter tenant traffic forwarding in headless mode
 	Log								manual untested
-	[Tags]						manual			untested			feature			
+	[Tags]			skipped		manual			untested			feature			
 
 Link flap between leaf and spine
 	Verify L3 inter tenant traffic forwarding with link flapping between spine and leaf
 	Log								manual untested
-	[Tags]						manual			untested			feature			
+	[Tags]			skipped		manual			untested			feature			
 
 L3 inter tenant forwarding to external router
 	Verify L3 inter tenant forwarding to external router
 	Log								manual untested
-	[Tags]						manual			untested			feature			
+	[Tags]			skipped		manual			untested			feature			
 
 L3 inter tenant forwarding to VRRP routers
 	Verify L3 inter tenant forwarding to vrrp vip 
 	Log								manual untested
-	[Tags]						manual			untested			feature			
+	[Tags]			skipped		manual			untested			feature			
 
 
 L3 inter tenant traceroute
 	Inter tenant traceroute across fabric
 	Log								manual untested
-	[Tags]						manual			untested			feature			
+	[Tags]			skipped		manual			untested			feature			
 
 Add and delete endpoints with L3 inter tenant traffic
 	Add and delete endpoints with L3 inter tenant traffic
 	Log							manual untested
-	[Tags]						manual			untested			feature			
+	[Tags]			skipped		manual			untested			feature			
 
 Tenant router with full 32 bit mask
 	configure tenant router with full 32 bit mask
 	Log							manual untested
-	[Tags]						manual			untested			feature			
+	[Tags]			skipped		manual			untested			feature			
 
 Verify private subnet cannot be routed via system router
 	Verify private subnet cannot be routed among tenants
 	Log							manual untested
-	[Tags]						manual			untested			feature			
+	[Tags]			skipped		manual			untested			feature			
 
 L3 inter tenant traffic with jumbo frame
 	Verify jumbo frame forwarding between tenant
 	Log							manual untested
-	[Tags]						manual			untested			feature			
+	[Tags]			skipped		manual			untested			feature			
 
 L3 inter tenant with CRC errors
 	Verify packets with CRC errors is dropped 
 	Log							manual untested
-	[Tags]						manual			untested			feature			
+	[Tags]			skipped		manual			untested			feature			
 
 Verify route next hop IP must be in the same tenant
 	Verify traffic forwarding takes place only in the same tenant with next hop IP
 	Log							manual untested
-	[Tags]						manual			untested			feature			
+	[Tags]			skipped		manual			untested			feature			
 
 Verify ECMP next hop IP must be in the same tenant
 	Verify traffic forwarding across ecmp members must be in the same tenant
 	Log							manual untested
-	[Tags]						manual			untested			feature			
+	[Tags]			skipped		manual			untested			feature			
 
 L3 inter tenant shutdown and bringup a leaf switch in a dual tor setup
 	Shutdown and bringup a leaf switch in dual tor and verify L3 inter tenant forwarding
 	Log							manual untested
-	[Tags]						manual			untested			feature			
+	[Tags]			skipped		manual			untested			feature			
 
 L3 inter tenant shutdown and bringup a spine switch 
 	Shutdown and bringup a spine switch and verify L3 inter tenant forwarding
 	Log							manual untested
-	[Tags]						manual			untested			feature			
+	[Tags]			skipped		manual			untested			feature			
 
 
 L3 inter tenant destroy active controller VM from KVM
 	HA failover by destroying active controller VM from KVM
 	Log							manual untested
-	[Tags]						manual			untested			feature			
+	[Tags]			skipped		manual			untested			feature			
 
 
 L3 inter tenant destroy standby controller VM from KVM
 	Verify L3 inter tenant traffic behavior when standby controller VM is destroy
 	Log							manual untested
-	[Tags]						manual			untested			feature			
+	[Tags]			skipped		manual			untested			feature			
 
 Restart ofad on leaf switch
 	restart ofad on leaf switch in dual tor setup and verify L3 inter tenant traffic forwarding
 	Log							manual untested
-	[Tags]						manual			untested			feature			
+	[Tags]			skipped		manual			untested			feature			
 
 Restart ofad on spine switch
 	restart ofad on spine switch and verify L3 inter tenant forwarding
 	Log							manual untested
-	[Tags]						manual			untested			feature			
+	[Tags]			skipped		manual			untested			feature			
 
 		
 	
@@ -838,7 +883,6 @@ initialize host
 	BASH delete tag								h4								bond0.1004				soft_error=${true}
 	BASH delete tag								h5								bond0.1005				soft_error=${true}
 	BASH delete tag								h6								bond0.1006				soft_error=${true}
-	
 	BASH init intf								h1								bond0
 	BASH init intf								h2								bond0
 	BASH init intf								h3								bond0
@@ -859,9 +903,8 @@ initialize host
 	BASH release dhcpv4 address					h6								bond0
 
 
-setup topology
+test setup topology
 	initialize host
-	add fabric switch
 	sleep 											1
 	REST add tenant 								X
 	REST add tenant									Y
@@ -898,22 +941,10 @@ setup topology
 	REST add interface to portgroup					leaf0-b						${leaf0_pc1_intf2}					${leaf0_pc1}
 	REST add interface to portgroup					leaf0-a						${leaf0_pc2_intf1}					${leaf0_pc2}
 	REST add interface to portgroup					leaf0-b						${leaf0_pc2_intf2}					${leaf0_pc2}
-#	REST add interface to portgroup					leaf0-a						${leaf0_pc3_intf1}					${leaf0_pc3}
-#	REST add interface to portgroup					leaf0-b						${leaf0_pc3_intf2}					${leaf0_pc3}
-#	REST add interface to portgroup					leaf0-a						${leaf0_pc4_intf1}					${leaf0_pc4}
-#	REST add interface to portgroup					leaf0-b						${leaf0_pc4_intf2}					${leaf0_pc4}
-#	REST add interface to portgroup					leaf0-a						${leaf0_pc5_intf1}					${leaf0_pc5}
-#	REST add interface to portgroup					leaf0-a						${leaf0_pc5_intf2}					${leaf0_pc5}
-#	REST add interface to portgroup					leaf0-a						${leaf0_pc6_intf1}					${leaf0_pc6}
-#	REST add interface to portgroup					leaf0-a						${leaf0_pc6_intf2}					${leaf0_pc6}
 	REST add interface to portgroup					leaf1-a						${leaf1_pc1_intf1}					${leaf1_pc1}
 	REST add interface to portgroup					leaf1-b						${leaf1_pc1_intf2}					${leaf1_pc1}
 	REST add interface to portgroup					leaf1-a						${leaf1_pc2_intf1}					${leaf1_pc2}
 	REST add interface to portgroup					leaf1-b						${leaf1_pc2_intf2}					${leaf1_pc2}
-#	REST add interface to portgroup					leaf1-a						${leaf1_pc3_intf1}					${leaf1_pc3}
-#	REST add interface to portgroup					leaf1-b						${leaf1_pc3_intf2}					${leaf1_pc3}
-#	REST add interface to portgroup					leaf1-a						${leaf1_pc4_intf1}					${leaf1_pc4}
-#	REST add interface to portgroup					leaf1-b						${leaf1_pc4_intf2}					${leaf1_pc4}
 	REST add interface to portgroup					leaf2-a						${leaf2_pc1_intf1}					${leaf2_pc1}
 	REST add interface to portgroup					leaf2-b						${leaf2_pc1_intf2}					${leaf2_pc1}
 	REST add interface to portgroup					leaf2-a						${leaf2_pc2_intf1}					${leaf2_pc2}
@@ -935,7 +966,7 @@ setup topology
 		
 	
 
-teardown topology
+test teardown topology
 	REST delete vns ip  							X							X1				10.251.1.1				24	
 	REST delete vns ip  							X							X2				10.251.2.1				24	
 	REST delete vns ip  							X							X3				10.251.3.1				24	
@@ -960,7 +991,6 @@ teardown topology
 	REST delete tenant routers intf to system		X
 	REST delete tenant routers intf to system		Y
 	REST delete tenant routers intf to system		Z
-#	delete fabric switch
 	initialize host
 	
 
@@ -992,42 +1022,6 @@ T5 base suite setup
 	Should Be True									${result}
 	${result} = 									CLI verify controller       s6							c2
 	Should Be True									${result}		
-  	# REST add switch  								spine0
-  	# REST add dpid  									spine0  					${spine0_dpid}
-  	# REST add fabric role  							spine0  					spine
-  	# REST add switch  								spine1	
-  	# REST add dpid  									spine1  					${spine1_dpid}
-  	# REST add fabric role						  	spine1  					spine
-  	# REST add switch  								leaf0a
-  	# REST add dpid  									leaf0a  					${leaf0a_dpid}
-  	# REST add fabric role  							leaf0a  					leaf
-  	# REST add switch  								leaf0b
-  	# REST add dpid  									leaf0b  					${leaf0b_dpid}
-  	# REST add fabric role  							leaf0b  					leaf
-  	# REST add switch  								leaf1a
-  	# REST add dpid  									leaf1a  					${leaf1a_dpid}
-  	# REST add fabric role  							leaf1a  					leaf
- 	# REST add switch  								leaf1b
-  	# REST add dpid  									leaf1b  					${leaf1b_dpid}
-  	# REST add fabric role  							leaf1b  					leaf
-  	# REST add switch  								leaf2a
-  	# REST add dpid  									leaf2a  					${leaf2a_dpid}
-  	# REST add fabric role  							leaf2a  					leaf
- 	# REST add switch  								leaf2b
-  	# REST add dpid  									leaf2b  					${leaf2b_dpid}
-  	# REST add fabric role  							leaf2b  					leaf  	
-	# REST add portgroup								${leaf0_pc1}
-	# REST add portgroup								${leaf0_pc2}
-	# REST add portgroup								${leaf0_pc3}
-	# REST add portgroup								${leaf0_pc4}
-	# REST add portgroup								${leaf0_pc5}
-	# REST add portgroup								${leaf0_pc6}	
-	# REST add portgroup								${leaf1_pc1}
-	# REST add portgroup								${leaf1_pc2}
-	# REST add portgroup								${leaf1_pc3}
-	# REST add portgroup								${leaf1_pc4}
-	# REST add portgroup								${leaf2_pc1}
-	# REST add portgroup								${leaf2_pc2}
 	REST add portgroup								${leaf0_pc1}
 	REST add portgroup								${leaf0_pc2}
 	REST add portgroup								${leaf1_pc1}
@@ -1035,24 +1029,22 @@ T5 base suite setup
 	REST add portgroup								${leaf2_pc1}
 	REST add portgroup								${leaf2_pc2}
 	
-
-#	REST add leaf group								leaf0a						leaf0
-#	REST add leaf group								leaf0b						leaf0
-#	REST add leaf group								leaf1a						leaf1
-#	REST add leaf group								leaf1b						leaf1
-#	REST add leaf group								leaf2a						leaf2
-#	REST add leaf group								leaf2b						leaf2
-		
+	REST add portgroup lacp							${leaf0_pc1}
+	REST add portgroup lacp							${leaf0_pc2}
+	REST add portgroup lacp							${leaf1_pc1}
+	REST add portgroup lacp							${leaf1_pc2}
+	REST add portgroup lacp							${leaf2_pc1}
+	REST add portgroup lacp							${leaf2_pc2}
 
   
 T5 base suite teardown
-	delete fabric switch  
 	REST delete portgroup								${leaf0_pc1}
 	REST delete portgroup								${leaf0_pc2}
 	REST delete portgroup								${leaf1_pc1}
 	REST delete portgroup								${leaf1_pc2}
 	REST delete portgroup								${leaf2_pc1}
 	REST delete portgroup								${leaf2_pc2}
+	delete fabric switch  
 
 
 verify results   [Arguments]  ${transmitted_frames}  ${received_frames}  ${stream}  ${stream_name}

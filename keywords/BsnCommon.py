@@ -104,10 +104,10 @@ class BsnCommon(object):
         rx = math.ceil(float(rx_value))
         vrange = int(rangev)
         if (rx >= (tx - vrange)) and (rx <= (tx + vrange)):
-            helpers.log("Pass:Traffic forwarded between 2 endpoints tx:%d, rx:%d" % (tx, rx))
+            helpers.log("Pass: Value1:%d, Value2:%d" % (tx, rx))
             return True
         else:
-            helpers.test_failure("Fail:Traffic forward between 2 endpoints tx:%d, rx:%d" % (tx, rx))
+            helpers.test_failure("Fail: Value1:%d, Value2:%d" % (tx, rx))
             return False
 
     def verify_switch_pkt_stats(self, count1, count2, range1=95, range2=5):
@@ -1407,7 +1407,7 @@ class BsnCommon(object):
         else:
             return True
 
-    def  return_snmptrap_output(self, server, message):
+    def return_snmptrap_output(self, server, message):
         try:
             conn = SSH2()
             conn.connect(server)
@@ -1420,7 +1420,7 @@ class BsnCommon(object):
         else:
             return output
 
-    def restart_process_on_controller(self, process_name, controller_role):
+    def restart_process_on_controller(self, process_name, node, soft_error=False):
         '''Restart a process on controller
 
             Input:
@@ -1429,15 +1429,14 @@ class BsnCommon(object):
 
            Return Value:  True if the configuration is successful, false otherwise
         '''
+        t = test.Test()
+        c = t.controller(node)
         try:
-            t = test.Test()
-            if (controller_role == 'Master'):
-                c = t.controller('master')
-            else:
-                c = t.controller('slave')
-            c.bash('sudo service ' + str(process_name) + ' restart')
+            helpers.log("Restarting %s on '%s'" % (process_name, node))
+            c.sudo("service %s restart" % process_name)
         except:
-            helpers.test_failure(c.rest.error())
+            helpers.test_failure("Unable to restart process '%s'"
+                                 % process_name, soft_error)
             return False
         else:
             return True

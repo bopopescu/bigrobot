@@ -36,7 +36,7 @@ _tacacs_re = re.compile(r'[\r\n]s\/key[\S ]+\r?%s' % _password_re[0].pattern)
 #               ^GMY-T5-C11(config-local-user)#           <== catch bell char
 #   Debug Bash: admin@controller:~$
 #
-_prompt_re = [re.compile(r'[\r\n\x07](\w+(-?\w+)?\s?@?)?[\-\w+\.:/]+(?:\([^\)]+\))?(:~)?[>#$] ?$')]
+_prompt_re = [re.compile(r'[\r\n\x07]+(\w+(-?\w+)?\s?@?)?[\-\w+\.:/]+(?:\([^\)]+\))?(:~)?[>#$] ?$')]
 
 
 # Controller> show version

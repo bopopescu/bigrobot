@@ -21,9 +21,10 @@ class RestClient(object):
     }
 
     def __init__(self, base_url=None, user=None, password=None,
-                 content_type='application/json'):
+                 content_type='application/json', name=None):
         self.http = httplib2.Http(timeout=RestClient.default_timeout)
 
+        self._name = name
         self.base_url = base_url
 
         # Be sure to keep all header keys as lower case.
@@ -36,6 +37,9 @@ class RestClient(object):
         self.last_result = None
         self.user = user
         self.password = password
+
+    def name(self):
+        return self._name
 
     def authen_encoding(self, user=None, password=None):
         if not user:
@@ -69,7 +73,7 @@ class RestClient(object):
 
     def status_code_ok(self, result=None):
         code = self.status_code(result)
-        if code == 200:
+        if code in range(200, 300):
             return True
         else:
             return False
@@ -135,6 +139,15 @@ class RestClient(object):
         if data:
             helpers.log("Data = %s" % helpers.to_json(data), level=5)
 
+        prefix_str = '%s %s' % (self.name(), verb.lower())
+        data_str = ''
+        if data:
+            data_str = ' %s' % helpers.to_json(data, is_raw=True)
+            if len(data_str) > 50:
+                # If data is more than 50 chars long, then prettify JSON
+                data_str = ' %s' % helpers.to_json(data)
+        helpers.bigrobot_devcmd_write("%-9s: %s%s\n"
+                                      % (prefix_str, url, data_str))
         resp, content = self.http.request(url,
                                           verb,
                                           body=helpers.to_json(data),
@@ -174,7 +187,9 @@ class RestClient(object):
         # http://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml
 
         result['success'] = False
-        if int(code) in [200, 201, 202]:
+
+        # As per https://github.com/bigswitch/floodlight/commit/a432f1b501640474b8bf6cb87a07dcbf28df8691
+        if int(code) in range(200, 300):
             result['success'] = True
         elif int(code) == 409 and re.match(r'.*exists', result['status_descr']):
             # On POST when "List element already exists"

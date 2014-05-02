@@ -358,9 +358,10 @@ class Ixia(object):
             self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:1/' + 'frameRate', '-rate', frameRate,
                                            '-enforceMinimumInterPacketGap', 0)
         
-        helpers.log('Adding Frame Rate !!!!')
-        self._handle.setAttribute(trafficStream1 + '/highLevelStream:1/' + 'frameRate', '-type', frameMode)
-        self._handle.setAttribute(trafficStream1 + '/highLevelStream:1/' + 'frameRate', '-rate', frameRate)
+        if line_rate is None:
+            helpers.log('Adding Frame Rate !!!!')
+            self._handle.setAttribute(trafficStream1 + '/highLevelStream:1/' + 'frameRate', '-type', frameMode)
+            self._handle.setAttribute(trafficStream1 + '/highLevelStream:1/' + 'frameRate', '-rate', frameRate)
             
         if frameCount is not None:
             self._handle.setAttribute(trafficStream1 + '/highLevelStream:1/' + 'transmissionControl', '-type',
@@ -475,10 +476,10 @@ class Ixia(object):
                                      '-interBurstGap', burst_gap, '-enableInterBurstGap', True)
                 self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:2/' + 'frameRate', '-rate', frameRate,
                                                '-enforceMinimumInterPacketGap', 0)
-            
-            helpers.log('Adding Frame Rate !!!!')
-            self._handle.setAttribute(trafficStream1 + '/highLevelStream:2/' + 'frameRate', '-type', frameMode)
-            self._handle.setAttribute(trafficStream1 + '/highLevelStream:2/' + 'frameRate', '-rate', frameRate)
+            if line_rate is None:
+                helpers.log('Adding Frame Rate !!!!')
+                self._handle.setAttribute(trafficStream1 + '/highLevelStream:2/' + 'frameRate', '-type', frameMode)
+                self._handle.setAttribute(trafficStream1 + '/highLevelStream:2/' + 'frameRate', '-rate', frameRate)
             
             if frameCount is not None:
                 self._handle.setAttribute(trafficStream1 + '/highLevelStream:2/' + 'transmissionControl', '-type',

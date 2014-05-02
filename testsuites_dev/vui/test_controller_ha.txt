@@ -12,9 +12,15 @@ Library         keywords_dev/vui/MyTest.py
 
 * Test Case
 Test controller
-    cli show user
     [Tags]  skipped
+    cli show user
 
 Test enable mode
+    [Tags]  skipped
     ${a}=  enable help
 
+Restart process SNMP on Slave controller and verify snmpget
+    #[Tags]  skipped
+    restart process on controller  snmpd  slave
+    sleep    3
+    restart process on controller  snmpd  slave

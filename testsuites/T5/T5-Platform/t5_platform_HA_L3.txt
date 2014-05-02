@@ -21,6 +21,9 @@ Library	         keywords/T5Utilities.py
 @{spineList}  00:00:00:00:00:01:00:01  00:00:00:00:00:01:00:02
 @{leafList}  00:00:00:00:00:02:00:01  00:00:00:00:00:02:00:02  00:00:00:00:00:02:00:03  00:00:00:00:00:02:00:04  00:00:00:00:00:02:00:05  00:00:00:00:00:02:00:06
 
+                
+
+                
 
 * Test Case 
 
@@ -58,6 +61,7 @@ Verify Cluster Slave Reboot
 Two Tenants With Multiple VNS HA Test
 	[Tags]	feature
 	mininet stop
+	clean configuration
 	sleep  30
 	mininet start    node=mn1    new_topology=--num-spine 2 --num-rack 3 --num-bare-metal 4 --num-hypervisor 0 --dual-tor
 	Configure 3-Rack/Dual-Leaf/2-Spine/4-Host Setup For Mininet 
@@ -87,7 +91,7 @@ Cluster Election Re-run & Verify Connectivity
    #		are finalized
    Re-run the election and verify connectivity
 
-Delete Switches
+Delete Config
    [Tags]	clean
    rest delete tenant  autoT1
    rest delete tenant  autoT2
@@ -400,7 +404,7 @@ Configure 2 Tenants with Multiple VNSs & Gateway Interfaces
    rest add portgroup to vns  autoT1  v2  p5  200
    rest add router intf  autoT1  v2
    rest add vns ip  autoT1  v2  ${vns2ip}  ${subMask}
-
+   
    rest add tenant  autoT2
    rest add vns  autoT2  v3
    rest add portgroup to vns  autoT2  v3  p6  -1
@@ -415,7 +419,8 @@ Configure 2 Tenants with Multiple VNSs & Gateway Interfaces
    rest add portgroup to vns  autoT2  v4  p11  200
    rest add router intf  autoT2  v4
    rest add vns ip  autoT2  v4  ${vns4ip}  ${subMask}
-
+   
+   
    rest add tenant  system
    rest add tenant routers intf to system	autoT1
    rest add tenant routers intf to system	autoT2
