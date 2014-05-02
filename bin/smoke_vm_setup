@@ -316,6 +316,9 @@ mn:\n\
     vm_file_handle.write(vm_domain_names)
     vm_file_handle.close()
     helpers.log("Success in creating VM Domain Name file: %s" % vm_file)
+    helpers.summary_log("Sleep for 1 mins for getting VM 's Ready for Regressions..")
+    time.sleep(60)
+    helpers.summary_log("Sucess with smoke_vm_setup !!!!")
 
 
 if __name__ == '__main__':
