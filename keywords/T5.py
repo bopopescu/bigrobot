@@ -1323,7 +1323,7 @@ class T5(object):
     def rest_verify_fabric_switch_role(self, dpid, role):
         t = test.Test()
         c = t.controller('master')
-        url = '/api/v1/data/controller/core/switch' % ()
+        url = '/api/v1/data/controller/core/switch'
         c.rest.get(url)
         data = c.rest.content()
         status = False
@@ -2309,4 +2309,49 @@ class T5(object):
             c.cli("show running-config tenant" )
          
         return True
-               
+ 
+    def rest_verify_forwarding_cidr_route_spine(self, switch, no_of_ip_subnet):
+        '''
+        Function to verify the forwarding cidr table entry in all the switches
+        Input: switch name , and no of ip subnet expected in the switch
+        Output: True or false based on the no of routes to be present and system VRF table no (1023 Fixed)
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        url = '/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch-name="%s"]?select=l3-cidr-route-table' % (switch)
+        c.rest.get(url)
+        data = c.rest.content()
+        if data[0]["switch-name"] == switch:
+                if len(data[0]["l3-cidr-route-table"]) == no_of_ip_subnet:
+                    for i in range(0,len(data[0]["l3-cidr-route-table"])):
+                        if data[0]["l3-cidr-route-table"][i]["vrf"] == 1023:
+                            helpers.test_log("All CIDR routes are present in spine swicthes and VRF Id is 1023")
+                            return True
+                        else:
+                            helpers.log("All CIDR routes VRF id is not 1023 at spine switches")
+                            return False
+                else:
+                    helpers.log("All CIDR routes are not present at spine switches")
+                    return False       
+        else:
+            helpers.log("Given switch name is not valid")
+    
+    def rest_verify_forwarding_cidr_route_leaf(self, switch, no_of_ip_subnet):
+        '''
+        Function to verify the forwarding cidr table entry in all the switches
+        Input: switch name , and no of ip subnet expected in the switch
+        Output: True or false based on the no of routes to be present and system VRF table no (1023 Fixed)
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        url = '/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch-name="%s"]?select=l3-cidr-route-table' % (switch)
+        c.rest.get(url)
+        data = c.rest.content()
+        if data[0]["switch-name"] == switch:
+                if len(data[0]["l3-cidr-route-table"]) == no_of_ip_subnet:
+                    helpers.log("All CIDR routes are present at leaf switches")
+                else:
+                    helpers.log("All CIDR routes are not present at spine switches")
+                    return False       
+        else:
+            helpers.log("Given switch name is not valid")             
