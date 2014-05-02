@@ -3735,12 +3735,5 @@ class T5Platform(object):
                 helpers.log("key - %s" % (key))
                 helpers.log("***** Call the cli walk again with  --- %s" % string)
                 self.cli_walk_enable(string, file_name, padding)
-
-        
-        
-        
-        
-        
-        
-        
-        
+                
+    
