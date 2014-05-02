@@ -109,7 +109,7 @@ Verify DHCP address configuration, IP address allocation and PING
     
 Reboot box and Verify the IP address through DHCP server and Ping 
     Log    Step 1 - Verify after reboot IP address allocation thru DHCP 
-    Log    Step 1 - Verify the PING connectivity 
+    Log    Step 2 - Verify the PING connectivity 
     [Tags]  T5  switch  install 
     [Tags]  Manual-untested
     Manual untested 
