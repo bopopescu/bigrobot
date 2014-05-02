@@ -1,0 +1,32 @@
+# Topology description is in YAML format - see http://en.wikipedia.org/wiki/YAML
+#
+# c<n>: Controllers
+# s<n>: Switches
+# h<n>: Hosts (including bare metal)
+# mn  : Mininet server
+  
+c1:
+  ip: dummy
+ 
+
+s1:
+  ip: 10.210.96.201
+  alias: spine0
+  user: admin
+  password: adminadmin
+ 
+s5:
+  ip: 10.210.96.205
+  alias: leaf1-a
+  user: admin
+  password: adminadmin
+  
+ 
+s100:
+  ip: 10.210.67.30  #  Arista
+  alias: arista-1
+  user: root
+  password: bsn
+ 
+
+ 

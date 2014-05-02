@@ -94,23 +94,17 @@ class DevConf(object):
                          " for device %s (user:%s, password:%s). Also try"
                          " to log in manually to see what the error is."
                          % (self._host, self._user, self._password))
-            helpers.environment_failure("LoginFailure")
-            helpers.log("Exception in %s" % sys.exc_info()[0])
+            self.expect_exception(None, "Login failure", soft_error=True)
             raise
         except TimeoutException:
             helpers.warn("Login failure: Timed out during SSH connnect"
                          " to device %s. Try to log in manually to see"
                          " what the error is." % self._host)
-            helpers.environment_failure("TimeoutException")
-            # helpers.log("Exception in %s" % sys.exc_info()[0])
-            # raise
+            self.expect_exception(None, "Login timed out")
         except:
             if hasattr(self.conn, 'buffer'):
-                helpers.warn("Unexpected SSH login exception in %s\n"
-                             "Expect buffer:\n%s%s"
-                             % (sys.exc_info()[0],
-                                self.conn.buffer.__str__(),
-                                br_utils.end_of_output_marker()))
+                self.expect_exception(None, "Unexpected SSH login exception",
+                                      soft_error=True)
             else:
                 helpers.warn("Unexpected SSH login exception in %s"
                              % (sys.exc_info()[0]))
@@ -171,6 +165,17 @@ class DevConf(object):
                 prompt_str_list.append(p)
         return prompt_str_list
 
+    def expect_exception(self, prompt=None, descr="No description",
+                         soft_error=False):
+        msg = ("==== Expect error (Start) ====\n"
+               "Error descr  : %s\n"
+               "Expect prompt: %s\n"
+               "Expect buffer:\n"
+               "%s\n"
+               "==== Expect error (End) ===="
+               % (descr, self.prompt_str(prompt), self.conn.buffer.__str__()))
+        helpers.test_error(msg, soft_error)
+
     def expect(self, prompt=None, timeout=None, quiet=False, level=4):
         """
         Invoking low-level send/expect commands to the device. This is a
@@ -182,11 +187,8 @@ class DevConf(object):
         See http://knipknap.github.io/exscript/api/Exscript.protocols.Protocol-class.html#expect
         """
         if prompt is None:
-            # User might have changed the prompt. So be sure to set it back
-            # to default prompt first.
+            helpers.debug("Reset prompt to default")
             self.conn.set_prompt()
-
-            # Now get default prompt.
             prompt = self.conn.get_prompt()
         else:
             prompt = helpers.list_flatten(prompt)
@@ -205,20 +207,11 @@ class DevConf(object):
                             % (self.content(), br_utils.end_of_output_marker()),
                             level=level)
         except TimeoutException:
-            helpers.environment_failure("Expect failure: Timed out during expect prompt: %s\n"
-                                        "Expect buffer:\n%s%s"
-                                        % (self.prompt_str(prompt),
-                                           self.conn.buffer.__str__(),
-                                           br_utils.end_of_output_marker()))
-            # raise
-            # helpers.log("Exception in %s" % sys.exc_info()[0])
-            # raise
+            self.expect_exception(prompt,
+                                  "Timed out while expecting the prompt")
         except:
-            helpers.log("Unexpected expect exception in %s\n"
-                        "Expect buffer:\n%s%s"
-                        % (sys.exc_info()[0],
-                           self.conn.buffer.__str__(),
-                           br_utils.end_of_output_marker()))
+            self.expect_exception(prompt, "Unexpected except exception",
+                                  soft_error=True)
             raise
         if timeout: self.timeout()
 
@@ -258,15 +251,12 @@ class DevConf(object):
                             % (self.content(), br_utils.end_of_output_marker()),
                             level=level)
         except TimeoutException:
-            helpers.log("Waitfor failure: Timed out during waitfor prompt: %s"
-                        % self.prompt_str(prompt))
-            helpers.log("Waitfor buffer <%s>" % self.conn.buffer.__str__())
+            self.expect_exception(prompt, "Timed out during waitfor",
+                                  soft_error=True)
             raise
-            # helpers.log("Exception in %s" % sys.exc_info()[0])
-            # raise
         except:
-            helpers.log("Unexpected waitfor exception in %s"
-                        % sys.exc_info()[0])
+            self.expect_exception(prompt, "Unexpected waitfor exception",
+                                  soft_error=True)
             raise
         if timeout: self.timeout()
 
