@@ -301,10 +301,10 @@ class SSH2(Protocol):
         if not self._wait_for_data():
             # **** VUI/BSN modification to dump expect buffer (useful for
             #      debugging.
-            print("====== Expect output buffer (begin) ======\n"
-                  "%s\n"
-                  "====== Expect output buffer (end) ======"
-                  % self.buffer)
+            # print("====== Expect output buffer (begin) ======\n"
+            #      "%s\n"
+            #      "====== Expect output buffer (end) ======"
+            #      % self.buffer)
             error = 'Timeout while waiting for response from device'
             raise TimeoutException(error)
 
