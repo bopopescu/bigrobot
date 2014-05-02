@@ -558,8 +558,8 @@ Verify Speed/Duplex in ports
 
 Verify interface state is reported correctly when cable is unplugged. 
     Log    Step 1 - Verify interface state is reported correctly when cable is unplugged. 
-    [Tags]  Manual  interface
-    
+    [Tags]  Manual-untested  interface
+    Manual untested
 
 Verify that the options are maintained on the interface after the system reboot. 
     Log    Step 1 - Verify that the options are maintained on the interface after the system reboot.
