@@ -221,7 +221,7 @@ L3 intra tenant same rack untagged with dynamic endpoints
 	BASH add ip address							h6								10.251.2.11/24			bond0
 	BASH add route								h5								10.251.2.0/24			10.251.1.1
 	BASH add route								h6								10.251.1.0/24			10.251.2.1
-	sleep										20	
+	sleep										5	
 	BASH ping									h5								10.251.1.1				count=10
 	BASH ping									h6								10.251.2.1				count=10
 	${value} = 									BASH verify arp					h5						10.251.1.1
@@ -260,7 +260,7 @@ L3 intra tenant across rack untagged with dynamic endpoints
 	BASH add ip address							h4								10.251.3.11/24			bond0
 	BASH add route								h5								10.251.3.0/24			10.251.1.1
 	BASH add route								h4								10.251.1.0/24			10.251.3.1
-	sleep										20	
+	sleep										5	
 	BASH ping									h5								10.251.1.1				count=10
 	BASH ping									h4								10.251.3.1				count=10
 	${value} = 									BASH verify arp					h5						10.251.1.1
@@ -297,7 +297,7 @@ L3 intra tenant same rack tagged with dynamic endpoints
 	BASH add ip address							h2								10.251.2.11/24			bond0.1002
 	BASH add route								h1								10.251.2.0/24			10.251.1.1
 	BASH add route								h2								10.251.1.0/24			10.251.2.1
-	sleep										20	
+	sleep										5	
 	BASH ping									h1								10.251.2.11				count=10
 	${value} = 									BASH verify arp					h1						10.251.1.1
 	Should Be True								${value} 		
@@ -333,7 +333,7 @@ L3 intra tenant across rack tagged with dynamic endpoints
 	BASH add ip address							h3								10.251.3.11/24			bond0.1003
 	BASH add route								h1								10.251.3.0/24			10.251.1.1
 	BASH add route								h3								10.251.1.0/24			10.251.3.1
-	sleep										20	
+	sleep										5	
 #	BASH ping									h1								10.251.1.1				count=10
 #	BASH ping									h3								10.251.3.1				count=10
 	${value} = 									BASH verify arp					h1						10.251.1.1
@@ -381,7 +381,7 @@ L3 intra tenant same rack untagged with static endpoints
 	BASH add ip address							h6								10.251.2.11/24			bond0
 	BASH add route								h5								10.251.2.0/24			10.251.1.1
 	BASH add route								h6								10.251.1.0/24			10.251.2.1
-	sleep										20	
+	sleep										5	
 	BASH ping									h5								10.251.1.1				count=10
 	BASH ping									h6								10.251.2.1				count=10
 	${value} = 									BASH verify arp					h5						10.251.1.1
@@ -426,7 +426,7 @@ L3 intra tenant across rack untagged with static endpoints
 	BASH add ip address							h5								10.251.3.11/24			bond0
 	BASH add route								h4								10.251.3.0/24			10.251.1.1
 	BASH add route								h5								10.251.1.0/24			10.251.3.1
-	sleep										20	
+	sleep										5	
 	BASH ping									h4								10.251.1.1				count=10
 	BASH ping									h5								10.251.3.1				count=10
 	${value} = 									BASH verify arp					h4						10.251.1.1
@@ -1089,7 +1089,7 @@ L3 add and delete untagged endpoints with existing host
 	BASH add ip address							h6								10.251.2.11/24			bond0
 	BASH add route								h5								10.251.2.0/24			10.251.1.1
 	BASH add route								h6								10.251.1.0/24			10.251.2.1
-	sleep										20	
+	sleep										5	
 	BASH ping									h5								10.251.1.1				count=10
 	BASH ping									h6								10.251.2.1				count=10
 	${value} = 									BASH verify arp					h5						10.251.1.1
@@ -1141,7 +1141,7 @@ L3 add and delete tagged endpoints with existing host
 	BASH add ip address							h3								10.251.3.11/24			bond0.1003
 	BASH add route								h1								10.251.3.0/24			10.251.1.1
 	BASH add route								h3								10.251.1.0/24			10.251.3.1
-	sleep										20	
+	sleep										5	
 #	BASH ping									h3								10.251.1.1				count=10
 #	BASH ping									h2								10.251.3.1				count=10
 	${value} = 									BASH verify arp					h1						10.251.1.1
@@ -1201,7 +1201,7 @@ L3 change endpoint from untagged to tagged and back
 	BASH add ip address							h6								10.251.2.11/24			bond0
 	BASH add route								h5								10.251.2.0/24			10.251.1.1
 	BASH add route								h6								10.251.1.0/24			10.251.2.1
-	sleep										20	
+	sleep										5	
 	BASH ping									h5								10.251.1.1				count=10
 	BASH ping									h6								10.251.2.1				count=10
 	${value} = 									BASH verify arp					h5						10.251.1.1
@@ -1271,7 +1271,7 @@ Check L3 endpoint aging
 	BASH add ip address							h4								10.251.2.11/24			bond0
 	BASH add route								h3								10.251.2.0/24			10.251.1.1
 	BASH add route								h4								10.251.1.0/24			10.251.2.1
-	sleep										20	
+	sleep										5	
 	BASH ping									h3								10.251.1.1				count=10
 	BASH ping									h4								10.251.2.1				count=10
 	${value} = 									BASH verify arp					h3						10.251.1.1
@@ -1508,7 +1508,7 @@ Change tagged host endpoint IP address
 	BASH add ip address							h3								10.251.3.11/24			bond0.1003
 	BASH add route								h1								10.251.3.0/24			10.251.1.1
 	BASH add route								h3								10.251.1.0/24			10.251.3.1
-	sleep										20	
+	sleep										5	
 	${value} = 									BASH verify arp					h1						10.251.1.1
 	Should Not Be True							${value} 		
 	${value} =									BASH verify arp					h3						10.251.3.1
@@ -1556,7 +1556,7 @@ Static endpoint with dynamic host showing up on another port
 	BASH add ip address							h3								10.251.3.11/24			bond0.1003
 	BASH add route								h1								10.251.3.0/24			10.251.1.1
 	BASH add route								h3								10.251.1.0/24			10.251.3.1
-	sleep										20	
+	sleep										5	
 	${value} = 									BASH verify arp					h1						10.251.1.1
 	Should Not Be True							${value} 		
 	${value} =									BASH verify arp					h3						10.251.3.1
@@ -1686,7 +1686,7 @@ Verify vlsm forwarding
 	BASH add ip address							h5								10.252.0.211/25			bond0	
 	BASH add route								h4								10.252.0.0/25			10.251.0.1
 	BASH add route								h5								10.251.0.0/17			10.252.0.1
-	sleep										20	
+	sleep										5	
 	BASH ping									h5								10.252.0.211			count=10
 	${value} = 									BASH verify arp					h5						10.252.0.1
 	Should Not Be True							${value} 		
@@ -1786,7 +1786,7 @@ Controller HA failover via CLI
 	BASH add route								h3								10.251.1.0/24			10.251.3.1
 	REST add interface to vns					X								X1						${leaf0-a}				${ixia1}				-1
 	REST add interface to vns					X								X3						${leaf1-a}				${ixia3}				-1	
-	sleep										20	
+	sleep										5	
 	${value} = 									BASH verify arp					h1						10.251.1.1
 	Should Not Be True							${value} 		
 	${value} =									BASH verify arp					h3						10.251.3.1
@@ -1845,7 +1845,7 @@ Controller HA failover via reboot
 	REST add interface to vns					X								X3						${leaf1-a}				${ixia3}				-1		
 	BASH add route								h1								10.251.3.0/24			10.251.1.1
 	BASH add route								h3								10.251.1.0/24			10.251.3.1
-	sleep										20	
+	sleep										5	
 	${value} = 									BASH verify arp					h1						10.251.1.1
 	Should Not Be True							${value} 		
 	${value} =									BASH verify arp					h3						10.251.3.1
@@ -1900,7 +1900,7 @@ Reboot spine0 via CLI
 	BASH add ip address							h6								10.251.2.11/24			bond0
 	BASH add route								h5								10.251.2.0/24			10.251.1.1
 	BASH add route								h6								10.251.1.0/24			10.251.2.1
-	sleep										20	
+	sleep										5	
 	BASH ping									h5								10.251.1.1				count=10
 	BASH ping									h6								10.251.2.1				count=10
 	${value} = 									BASH verify arp					h5						10.251.1.1
@@ -1946,7 +1946,7 @@ Reboot Leaf0 via CLI
 	BASH add ip address							h6								10.251.2.11/24			bond0
 	BASH add route								h5								10.251.2.0/24			10.251.1.1
 	BASH add route								h6								10.251.1.0/24			10.251.2.1
-	sleep										20	
+	sleep										5	
 	BASH ping									h5								10.251.1.1				count=10
 	BASH ping									h6								10.251.2.1				count=10
 	${value} = 									BASH verify arp					h5						10.251.1.1
@@ -1994,7 +1994,7 @@ Connect and Disconnect spine to controller
 	BASH add ip address							h3								10.251.3.11/24			bond0.1003
 	BASH add route								h1								10.251.3.0/24			10.251.1.1
 	BASH add route								h3								10.251.1.0/24			10.251.3.1
-	sleep										20	
+	sleep										5	
 	${value} = 									BASH verify arp					h1						10.251.1.1
 	Should Not Be True							${value} 		
 	${value} =									BASH verify arp					h3						10.251.3.1
@@ -2052,7 +2052,7 @@ Connect and disconnect one leaf in dual tor to controller
 	BASH add ip address							h3								10.251.3.11/24			bond0.1003
 	BASH add route								h1								10.251.3.0/24			10.251.1.1
 	BASH add route								h3								10.251.1.0/24			10.251.3.1
-	sleep										20	
+	sleep										5	
 	${value} = 									BASH verify arp					h1						10.251.1.1
 #	Should Not Be True							${value} 		
 	${value} =									BASH verify arp					h3						10.251.3.1
@@ -2109,7 +2109,7 @@ Flap link between leaf and spine
 	BASH add ip address							h3								10.251.3.11/24			bond0.1003
 	BASH add route								h1								10.251.3.0/24			10.251.1.1
 	BASH add route								h3								10.251.1.0/24			10.251.3.1
-	sleep										20	
+	sleep										5	
 	${value} = 									BASH verify arp					h1						10.251.1.1
 	Should Not Be True							${value} 		
 	${value} =									BASH verify arp					h3						10.251.3.1
@@ -2161,7 +2161,7 @@ Flap bond interface towards host
 	BASH add ip address							h3								10.251.3.11/24			bond0.1003
 	BASH add route								h1								10.251.3.0/24			10.251.1.1
 	BASH add route								h3								10.251.1.0/24			10.251.3.1
-	sleep										20	
+	sleep										5	
 	${value} = 									BASH verify arp					h1						10.251.1.1
 	Should Not Be True							${value} 		
 	${value} =									BASH verify arp					h3						10.251.3.1
@@ -2234,7 +2234,7 @@ restart ofad on spine
 	BASH add ip address							h3								10.251.3.11/24			bond0.1003
 	BASH add route								h1								10.251.3.0/24			10.251.1.1
 	BASH add route								h3								10.251.1.0/24			10.251.3.1
-	sleep										20	
+	sleep										5	
 	${value} = 									BASH verify arp					h1						10.251.1.1
 	Should Not Be True							${value} 		
 	${value} =									BASH verify arp					h3						10.251.3.1
@@ -2293,7 +2293,7 @@ restart ofad on leaf
 	BASH add ip address							h3								10.251.3.11/24			bond0.1003
 	BASH add route								h1								10.251.3.0/24			10.251.1.1
 	BASH add route								h3								10.251.1.0/24			10.251.3.1
-	sleep										20	
+	sleep										5	
 	${value} = 									BASH verify arp					h1						10.251.1.1
 	Should Not Be True							${value} 		
 	${value} =									BASH verify arp					h3						10.251.3.1
