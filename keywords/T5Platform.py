@@ -611,7 +611,10 @@ class T5Platform(object):
                 # ==> Add the router interface IPs
                 FabricL3.rest_add_router_intf(tenant, vnsName)
                 FabricL3.rest_add_vns_ip(tenant, vnsName, vnsIPDict[vnsName], '24' )
-            
+                
+                # ==> Add system interface to tenant
+                FabricL3.rest_add_system_intf_to_tenant_routers(tenant)        
+                    
             # ==> Add tenant router interface to system
             FabricL3.rest_add_tenant_routers_intf_to_system(tenant)  
             

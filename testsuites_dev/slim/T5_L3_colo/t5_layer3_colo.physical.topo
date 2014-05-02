@@ -42,12 +42,6 @@ s9:
 s10:
   ip: 10.210.73.44
   
-  
-h1:
-   ip: 10.210.64.31
-   user: root
-   password: bsn
-
 h2:
    ip: 10.210.64.30
    user: root
