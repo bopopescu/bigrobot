@@ -1,0 +1,137 @@
+== T5 Functional VNS Test Suite ==
+
+* Setting
+Documentation    T5 BVS APP Functional VNS scaling Test Suite
+Suite Setup      base suite setup
+Suite Teardown   base suite teardown
+Test Setup       base test setup
+Test Teardown    T5 test teardown
+Force Tags       T5 
+Library          keywords/BsnCommon.py
+Library          keywords/T5.py
+Library          keywords/T5Platform.py
+Library	         keywords/SwitchLight.py
+Library          keywords/Mininet.py
+Library	         keywords/Host.py
+Library		     keywords/Ixia.py
+Resource	     testsuites/T5/t5_dualleaf_three_rack_physical_resource.txt
+Resource		 testsuites/T5/t5_physical_variables.txt
+
+*Variable
+${mac}		00:01:00:00:00:00
+${mac1}		00:02:00:00:00:00
+
+
+* Test Case 
+
+add Dual Leaf Three Rack setup
+   [Tags]  L2  scaling         
+   base suite setup
+   rest add switch  leaf0-a
+   rest add dpid  
+   rest add fabric role  leaf
+   sleep  5
+   rest verify fabric switch all
+    
+create 4093 vns and verify the table and forwarding
+	[Tags]  L2  scaling      
+  	rest add tenant  t1
+	rest add vns scale  t1  4093
+	summary log  system create a 4k vns
+	rest add interface to all vns  t1  leaf0-a  ethernet31
+	rest add interface to all vns  t1  leaf0-a  ethernet32
+	rest add interface to all vns  t1  leaf0-a  ethernet47
+	rest add interface to all vns  t1  leaf0-a  ethernet48
+	summary log  system add 4 ports to each vns
+	rest verify vns scale  4093
+	rest verify membership port count  2
+	${stream}=             L3 add  no_arp=True  flow=a<->c  src_mac=00:00:0a:00:00:01  dst_mac=00:00:0c:00:00:01   ethertype=8100  vlan_id=1  vlan_cnt=4093  frame_rate=1000  frame_size=68  name=a_c_flow
+	${stream1}=             L3 add  no_arp=True  flow=b<->d  src_mac=00:00:0b:00:00:01  dst_mac=00:00:0d:00:00:01   ethertype=8100  vlan_id=1  vlan_cnt=4093  frame_rate=1000  frame_size=68  name=a_c_flow
+    start traffic  ${stream}
+    start traffic  ${stream1}
+    sleep  20
+    rest verify endpoint in system  8186
+    verify traffic rate  tx_rate  rx_rate  a  c
+    verify traffic rate  tx_rate  rx_rate  c  a
+    verify traffic rate  tx_rate  rx_rate  b  d
+    verify traffic rate  tx_rate  rx_rate  d  b
+    stop traffic  
+	rest delete tenant  t1
+	sleep  5
+    ${result}=  rest verify tenant
+    Should not be True  ${result}
+
+
+* Keywords      
+   
+add a tenant  [Arguments]  ${tenant} 
+  REST add tenant  ${tenant}    
+
+delete a tenant  [Arguments]  ${tenant} 
+  	REST delete tenant  ${tenant}    
+
+add a vns  [Arguments]  ${tenant}  ${vns}  
+	REST add vns  ${tenant}  ${vns}   
+
+delete a vns  [Arguments]  ${tenant}  ${vns} 
+  	REST delete vns  ${tenant}  ${vns}   
+
+add a portgroup  [Arguments]  ${pg}
+  	REST add portgroup  ${pg}    
+
+delete a portgroup  [Arguments]  ${pg}
+  	REST delete portgroup  ${pg}    
+
+add a endpoint  [Arguments]  ${tenant}  ${vns}  ${endpoint} 
+  	REST add endpoint  ${tenant}  ${vns}  ${endpoint}  
+
+delete a endpoint  [Arguments]  ${tenant}  ${vns}  ${endpoint}
+  	REST delete endpoint  ${tenant}  ${vns}  ${endpoint}  
+
+add interface to portgroup  [Arguments]  ${switch}  ${intf}  ${pg} 
+  	REST add interface to portgroup  ${switch}  ${intf}  ${pg}  
+
+delete interface from portgroup  [Arguments]  ${switch}  ${intf}  ${pg} 
+  	REST delete interface from portgroup  ${switch}  ${intf}  ${pg}  
+
+add portgroup to vns  [Arguments]  ${tenant}  ${vns}  ${pg}  ${vlan}
+  	REST add portgroup to vns  ${tenant}  ${vns}  ${pg}  ${vlan} 
+
+add portgroup to endpoint  [Arguments]  ${tenant}  ${vns}  ${endpoint}  ${pg}  ${vlan} 
+    REST add portgroup to endpoint  ${tenant}  ${vns}  ${endpoint}  ${pg}  ${vlan} 
+
+delete portgroup from vns  [Arguments]  ${tenant}  ${vns}  ${pg}  ${vlan} 
+    REST delete portgroup from vns  ${tenant}  ${vns}  ${pg}  ${vlan}
+
+verify traffic rate   [Arguments]  ${tx_rate}  ${rx_rate}  ${tx_intf}  ${rx_intf}
+    Sleep  5
+    ${report}=  fetch port stats
+    Log  ${report}
+    ${tx_value}=  verify dict key  ${report}  ${tx_intf}  transmitted_frame_rate
+    ${rx_value}=  verify dict key  ${report}  ${rx_intf}  received_frame_rate
+    ixia verify traffic rate  ${tx_value}  ${rx_value}
+    
+verify traffic rate negative   [Arguments]  ${tx_rate}  ${rx_rate}  ${tx_intf}  ${rx_intf}
+    Sleep  5
+    ${report}=  fetch port stats
+    ${tx_value}=  verify dict key  ${report}  ${tx_intf}  transmitted_frame_rate
+    ${rx_value}=  verify dict key  ${report}  ${rx_intf}  received_frame_rate
+    Should Not be equal  ${tx_value}  ${rx_value}
+ 
+verify traffic
+	${stream}=             L3 add  no_arp=True  flow=a->e  src_mac=00:00:01:00:00:01  dst_mac=00:00:02:00:00:01  ethertype=8100  vlan_id=1  frame_rate=100  frame_size=68  name=a_e_flow
+    ${stream1}=             L3 add  no_arp=True  flow=e->a  src_mac=00:00:02:00:00:01  dst_mac=00:00:01:00:00:01  frame_rate=100  ethertype=8100  vlan_id=1  frame_size=68  name=e_a_flow
+    sleep  2
+    start traffic  ${stream}
+    sleep  5
+    rest verify forwarding layer2 table tag  leaf0-a  ${leaf0a_ixia_intf}  00:00:01:00:00:01
+    rest verify forwarding layer2 table tag  leaf2-a  ${leaf2a_ixia_intf}  00:00:02:00:00:01  
+    verify traffic rate  tx_rate  rx_rate  a  e
+    verify traffic rate  tx_rate  rx_rate  e  a
+    stop traffic  ${stream}
+    
+T5 test teardown
+	delete traffic
+	rest delete tenant  t1
+	sleep  5
+  
