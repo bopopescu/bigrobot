@@ -50,7 +50,7 @@ create 4093 vns and verify the table and forwarding
     start traffic  ${stream}
     start traffic  ${stream1}
     sleep  20
-    rest verify endpoint in system  8186
+    rest verify endpoint in system  16372
     verify traffic rate  tx_rate  rx_rate  a  c
     verify traffic rate  tx_rate  rx_rate  c  a
     verify traffic rate  tx_rate  rx_rate  b  d
