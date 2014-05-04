@@ -1,9 +1,13 @@
 * Setting
 Documentation   T5 Policy two spine three rack with dual-tor Test Suite
-Suite Setup     base suite setup
-Suite Teardown  base suite teardown
-Test Setup      setup topology
-Test Teardown   teardown topology
+Suite Setup     setup topology
+Suite Teardown  teardown topology
+#Suite Setup     base suite setup
+#Suite Teardown  base suite teardown
+Test Setup       base test setup
+Test Teardown	 base test teardown
+#Test Setup      setup topology
+#Test Teardown   teardown topology
 #Suite Setup		setup topology
 #Suite Teardown	teardown topology
 Force Tags      T5 Sanity
@@ -36,14 +40,123 @@ Library         Dialogs
 ##vns             Qualify the source by a VNS
 
 ##+ port number as well
-
 ##2.) Above same options exist for the destination side as well.
+
+##Sample configuration:
+#! tenant
+#tenant A
+#  router
+#    route 0.0.0.0/0 next-hop tenant system
+#    interface tenant system               
+#      apply policy-list tenantA-policy-deny in
+#    interface vns A1                          
+#      ip address 10.10.11.1/24                
+#    interface vns A2                          
+#      ip address 10.10.12.1/24                
+#    policy-list tenantA-policy-deny           
+#      10 from 10.10.21.1/24 to 10.10.11.1/24 deny
+#  vns A1                                         
+#    member port-group leaf0-bm0 vlan untagged    
+#    member port-group leaf1-bm4 vlan untagged    
+#  vns A2                                         
+#    member port-group leaf0-bm1 vlan untagged    
+#    member port-group leaf1-bm5 vlan untagged    
+#    member port-group leaf1-bm7 vlan untagged    
+ 
+ ## TESTPLAN divided into below sections
+ #1.) CLI
+ #2.) Funcitonality/HW verifications
+ #3.) Interactions with other Network infra elements (HA, add other items)
+ #4.) Few negitive cases (process restarts)
+ #5.) Few Scale cases               
+                           
+##GLobal Verifications
+## Any Exceptions in Conttoller
+## ofad crfashes, if any
+
+##Whereever mask testcases are present, test will be performed from bitmask from 8th bit to all the way to 32.
+
 
 
 
 
 * Test Cases
 ##***********
+##CLI Related test cases
+CLI::T1 config policy-list under tenant
+	[Tags]
+	Verify policy-list name all string validations starts with number? max string length? invalid chars?
+	Verify show commands after configure
+	Verify running-config commands after configure
+	Verify global policy-list commands after configure
+	Verify help strings 
+
+CLI::T2 Remove policy-list under tenant
+	[Tags]
+	Delete policy-list from tenant
+	Verify running-config deletes it from tenant
+	Verify show commands
+	Verify global policy-list commands
+
+CLI::T3 Config policy-list and attach to interface
+	[Tags]
+	Configure a policy-list and attach to interface
+	Verify at running-config policy-list showed at interface
+	Verify other show commands
+	Verify global show commands
+	Verify HW entry for that policy-list
+	
+CLI::T4 Remove policy-list from config
+	[Tags]
+	policy-list should not get deleted, since it is attached to an interface?
+	Verify all CLI related commands
+
+CLI::T5 Remove policy list from config and from an interface
+	[Tags]
+	Verify policy-list gets deleted from config and also removes from an interface
+	Verify HW table to see entry gets wiped out
+
+CLI::T6 Modify the existing policy-list
+	[Tags]
+	Verify running-config gets updated
+	Verify global show commands
+	Verify HW gets updated entry (dlete and add in HW?)
+	
+CLI::T7 Add another entry in existing policy-list
+	[Tags]
+	Add another seq# before to the existing policy-list
+	Verify running-config
+	Verify global show commands
+	Verify HW
+	Add another see# after to the existing policy-list
+	Verify running-config
+	Verify global show commands
+	Verify HW
+	
+CLI::T8 Counters
+	[Tags]
+	Verify policy-list counters if any?
+	
+CLI::T9 Max number of entries in a policy-list
+	[Tags]
+	configure 3k entries in one policy-list
+	Verify running-config and global show commands
+	Verify HW programming
+
+CLI::T10 Max number of policy-lists
+	[Tags]
+	Configure 3k policy-lists under one tenant
+	Verify running-config and global show commands
+	Verify HW programming
+
+CLI::T11 Remove Max number of entries in a policy list and Max number of policies
+	[Tags]
+	Remove T9
+	Remove T10
+	
+#FUNCTIONALITY:
+#below cases are divided into 3 sets, one set policy specified at interface tenant system, 
+#second set specified at interface vns, and third set specified at default tenant system
 T1 Interface tenant permit policy src-ip to dest-ip 
 	[Tags]  smoke
 	${src_dict}=  Create Dictionary  cidr  ${policy_bm1_ip}
@@ -66,8 +179,8 @@ T3 Interface tenant permit policy src-mask to dest-ip
 	[Tags]  smoke
 	${src_dict}=  Create Dictionary  cidr  ${policy_vns2_ip1}
 	${dst_dict}=  Create Dictionary  cidr  ${policy_bm0_ip}
-	Policy tenant interface  10  permit  ${src_dict}  ${policy_bm0_ip}
-	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	Policy tenant interface  10  permit  ${src_dict}  ${dst_dict}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
 	sleep										1
 	Should Be True  							${loss} == 0
 	
@@ -76,7 +189,7 @@ T4 Interface tenant deny policy src-mask to dest-ip
 	${src_dict}=  Create Dictionary  cidr  ${policy_vns2_ip1}
 	${dst_dict}=  Create Dictionary  cidr  ${policy_bm0_ip}
 	Policy tenant interface  10  deny  ${src_dict}  ${dst_dict}
-	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
 	sleep										1
 	Should Be True  							${loss} == 100
 	
@@ -85,7 +198,7 @@ T5 Interface tenant deny policy src-ip to dest-mask
 	${src_dict}=  Create Dictionary  cidr  ${policy_bm6_ip}
 	${dst_dict}=  Create Dictionary  cidr  ${policy_vns1_ip1}
 	Policy tenant interface  10  deny  ${src_dict}  ${dst_dict}
-	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
 	sleep										1
 	Should Be True  							${loss} == 100
 	
@@ -94,7 +207,7 @@ T6 Interface tenant permit policy src-mask to dest-mask
 	${src_dict}=  Create Dictionary  cidr  ${policy_vns2_ip1}
 	${dst_dict}=  Create Dictionary  cidr  ${policy_vns1_ip1}
 	Policy tenant interface  10  permit  ${src_dict}  ${dst_dict}
-	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
 	sleep										1
 	Should Be True  							${loss} == 0
 	
@@ -103,7 +216,7 @@ T7 Interface tenant permit policy src-ip to dest-vns
 	${src_dict}=  Create Dictionary  cidr  ${policy_bm6_ip}
 	${dst_dict}=  Create Dictionary  vns-name  ${policy_vns1}
 	Policy tenant interface  10  permit  ${src_dict}  ${dst_dict}
-	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
 	sleep										1
 	Should Be True  							${loss} == 0
 	
@@ -112,7 +225,7 @@ T8 Interface tenant deny policy src-ip to dest-vns
 	${src_dict}=  Create Dictionary  cidr  ${policy_bm6_ip}
 	${dst_dict}=  Create Dictionary  vns-name  ${policy_vns1}
 	Policy tenant interface  10  deny  ${src_dict}  ${dst_dict}
-	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
 	sleep										1
 	Should Be True  							${loss} == 100
 	
@@ -121,7 +234,7 @@ T9 Interface tenant permit src-ip to dest-tenant
 	${src_dict}=  Create Dictionary  cidr  ${policy_bm6_ip}
 	${dst_dict}=  Create Dictionary  tenant-name  ${policy_tenant1}
 	Policy tenant interface  10  permit  ${src_dict}  ${dst_dict}
-	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
 	sleep										1
 	Should Be True  							${loss} == 0
 	
@@ -130,7 +243,7 @@ T10 Interface tenant deny src-ip to dest-tenant
 	${src_dict}=  Create Dictionary  cidr  ${policy_bm6_ip}
 	${dst_dict}=  Create Dictionary  tenant-name  ${policy_tenant1}
 	Policy tenant interface  10  deny  ${src_dict}  ${dst_dict}
-	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
 	sleep										1
 	Should Be True  							${loss} == 100
 	
@@ -138,7 +251,7 @@ T10 Interface tenant deny src-ip to dest-tenant
 T11 Interface tenant permit policy src-ip to any
 	[Tags]
 	Policy tenant interface  10  deny  ${policy_bm6_ip}  ${policy_bm0_ip}
-	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	${loss}=									mininet l3 ping		${bm6_name}				${name}		3
 	sleep										1
 	Should Be True  							${loss} == 100
 	
@@ -155,7 +268,7 @@ T13 Interface tenant permit policy src-tenant to dest-ip
 	${src_dict}=  Create Dictionary  tenant-name  ${policy_tenant2}
 	${dst_dict}=  Create Dictionary  cidr  ${policy_bm0_ip}
 	Policy tenant interface  10  permit  ${src_dict}  ${dst_dict}
-	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
 	sleep										1
 	Should Be True  							${loss} == 0
 	
@@ -164,7 +277,7 @@ T14 Interface tenant deny policy src-tenant to dest-ip
 	${src_dict}=  Create Dictionary  tenant-name  ${policy_tenant2}
 	${dst_dict}=  Create Dictionary  cidr  ${policy_bm0_ip}
 	Policy tenant interface  10  deny  ${src_dict}  ${dst_dict}
-	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
 	sleep										1
 	Should Be True  							${loss} == 100
 	
@@ -173,7 +286,7 @@ T15 Interface tenant permit policy src-tenant to dest-tenant
 	${src_dict}=  Create Dictionary  tenant-name  ${policy_tenant2}
 	${dst_dict}=  Create Dictionary  tenant-name  ${policy_tenant1}
 	Policy tenant interface  10  permit  ${src_dict}  ${dst_dict}
-	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
 	sleep										1
 	Should Be True  							${loss} == 0
 	
@@ -182,7 +295,7 @@ T16 Interface tenant deny policy src-tenant to dest-tenant
 	${src_dict}=  Create Dictionary  tenant-name  ${policy_tenant2}
 	${dst_dict}=  Create Dictionary  tenant-name  ${policy_tenant1}
 	Policy tenant interface  10  deny  ${src_dict}  ${dst_dict}
-	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
 	sleep										1
 	Should Be True  							${loss} == 100
 	
@@ -191,7 +304,7 @@ T17 Interface tenant permit policy src-tenant to dest-vns
 	${src_dict}=  Create Dictionary  tenant-name  ${policy_tenant2}
 	${dst_dict}=  Create Dictionary  vns-name  ${policy_vns1}
 	Policy tenant interface  10  permit  ${src_dict}  ${dst_dict}
-	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
 	sleep										1
 	Should Be True  							${loss} == 0
 	
@@ -200,7 +313,7 @@ T18 Interface tenant deny policy src-tenant to dest-vns
 	${src_dict}=  Create Dictionary  tenant-name  ${policy_tenant2}
 	${dst_dict}=  Create Dictionary  vns-name  ${policy_vns1}
 	Policy tenant interface  10  deny  ${src_dict}  ${dst_dict}
-	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
 	sleep										1
 	Should Be True  							${loss} == 100
 
@@ -208,7 +321,7 @@ T18 Interface tenant deny policy src-tenant to dest-vns
 T19 Interface tenant permit policy src-tenant to any
 	[Tags]
 	Policy tenant interface  10  permit  ${policy_tenant2}  ${policy_tenant1}
-	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	${loss}=									mininet l3 ping		${bm6_name}				${name}		3
 	sleep										1
 	Should Be True  							${loss} == 100
 
@@ -225,7 +338,7 @@ T21 Interface tenant permit policy src-vns to dest-ip
 	${src_dict}=  Create Dictionary  vns-name  ${policy_vns4}
 	${dst_dict}=  Create Dictionary  cidr  ${policy_bm0_ip}
 	Policy tenant interface  10  permit  ${src_dict}  ${dst_dict}
-	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
 	sleep										1
 	Should Be True  							${loss} == 0
 	
@@ -234,7 +347,7 @@ T22 Interface tenant deny policy src-vns to dest-ip
 	${src_dict}=  Create Dictionary  vns-name  ${policy_vns4}
 	${dst_dict}=  Create Dictionary  tenant-name  ${policy_bm0_ip}
 	Policy tenant interface  10  deny  ${src_dict}  ${dst_dict}
-	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
 	sleep										1
 	Should Be True  							${loss} == 100
 	
@@ -243,7 +356,7 @@ T23 Interface tenant permit policy src-vns to dest-tenant
 	${src_dict}=  Create Dictionary  vns-name  ${policy_vns4}
 	${dst_dict}=  Create Dictionary  tenant-name  ${policy_tenant1}
 	Policy tenant interface  10  permit  ${src_dict}  ${dst_dict}
-	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
 	sleep										1
 	Should Be True  							${loss} == 0
 	
@@ -252,7 +365,7 @@ T24 Interface tenant deny policy src-vns to dest-tenant
 	${src_dict}=  Create Dictionary  vns-name  ${policy_vns4}
 	${dst_dict}=  Create Dictionary  tenant-name  ${policy_tenant1}
 	Policy tenant interface  10  deny  ${src_dict}  ${dst_dict}
-	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
 	sleep										1
 	Should Be True  							${loss} == 100
 	
@@ -261,7 +374,7 @@ T25 Interface tenant permit policy src-vns to dest-vns
 	${src_dict}=  Create Dictionary  vns-name  ${policy_vns4}
 	${dst_dict}=  Create Dictionary  vns-name  ${policy_vns1}
 	Policy tenant interface  10  permit  ${src_dict}  ${dst_dict}
-	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
 	sleep										1
 	Should Be True  							${loss} == 0
 	
@@ -270,7 +383,7 @@ T26 Interface tenant deny policy src-vns to dest-vns
 	${src_dict}=  Create Dictionary  vns-name  ${policy_vns4}
 	${dst_dict}=  Create Dictionary  vns-name  ${policy_vns1}
 	Policy tenant interface  10  deny  ${src_dict}  ${dst_dict}
-	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
 	sleep										1
 	Should Be True  							${loss} == 100
 
@@ -354,365 +467,1063 @@ T36 Interface tenant deny policy any to any
 	sleep										1
 	Should Be True  							${loss} == 100
 
+##Below are for ip and port combination specified at tenant system interface
+##-------------------------------------##
 
-T37 Interface vns permit policy src-ip to dest-ip 
+T37 Interface tenant permit policy src-ip-port to dest-ip-port 
 	[Tags]  smoke
-	${src_dict}=  Create Dictionary  cidr  ${policy_bm6_ip}
+	${src_dict}=  Create Dictionary  cidr  ${policy_bm1_ip}
 	${dst_dict}=  Create Dictionary  cidr  ${policy_bm0_ip}
-	Policy vns interface  10  permit  ${src_dict}  ${dst_dict}
-	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	Policy tenant interface  10  permit  ${src_dict}  ${dst_dict}
+	${loss}=									mininet l3 ping		${bm1_name}				${bm0_name}		3
+	sleep										1
+	Should Be True  							${loss} == 0 
+
+T38 Interface tenant deny policy src-ip-port to dest-ip-port
+	[Tags]  smoke
+	${src_dict}=  Create Dictionary  cidr  ${policy_bm1_ip}
+	${dst_dict}=  Create Dictionary  cidr  ${policy_bm0_ip}
+	Policy tenant interface  10  deny  ${src_dict}  ${dst_dict}
+	${loss}=									mininet l3 ping		${bm1_name}				${bm0_name}		3
+	sleep										1
+	Should Be True  							${loss} == 100
+	 
+T39 Interface tenant permit policy src-mask to dest-ip-port
+	[Tags]  smoke
+	${src_dict}=  Create Dictionary  cidr  ${policy_vns2_ip1}
+	${dst_dict}=  Create Dictionary  cidr  ${policy_bm0_ip}
+	Policy tenant interface  10  permit  ${src_dict}  ${dst_dict}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
 	sleep										1
 	Should Be True  							${loss} == 0
-
-T38 Interface vns deny policy src-ip to dest-ip
+	
+T40 Interface tenant deny policy src-mask to dest-ip-port
+	[Tags]  smoke
+	${src_dict}=  Create Dictionary  cidr  ${policy_vns2_ip1}
+	${dst_dict}=  Create Dictionary  cidr  ${policy_bm0_ip}
+	Policy tenant interface  10  deny  ${src_dict}  ${dst_dict}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
+	sleep										1
+	Should Be True  							${loss} == 100
+	
+T41 Interface tenant deny policy src-ip to dest-mask-port
 	[Tags]  smoke
 	${src_dict}=  Create Dictionary  cidr  ${policy_bm6_ip}
-	${dst_dict}=  Create Dictionary  cidr  ${policy_bm0_ip}
-	Policy vns interface  10  deny  ${src_dict}  ${dst_dict}
-	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	${dst_dict}=  Create Dictionary  cidr  ${policy_vns1_ip1}
+	Policy tenant interface  10  deny  ${src_dict}  ${dst_dict}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
 	sleep										1
 	Should Be True  							${loss} == 100
 
-T39 Interface vns permit policy src-ip to dest-vns
+T42 Interface tenant permit policy src-ip-port to dest-vns-port
 	[Tags]  smoke
 	${src_dict}=  Create Dictionary  cidr  ${policy_bm6_ip}
 	${dst_dict}=  Create Dictionary  vns-name  ${policy_vns1}
-	Policy vns interface  10  permit  ${src_dict}  ${dst_dict}
-	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	Policy tenant interface  10  permit  ${src_dict}  ${dst_dict}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
 	sleep										1
 	Should Be True  							${loss} == 0
-
-T40 Interface vns deny policy src-ip to dest-vns
+	
+T43 Interface tenant deny policy src-ip-port to dest-vns
 	[Tags]  smoke
 	${src_dict}=  Create Dictionary  cidr  ${policy_bm6_ip}
 	${dst_dict}=  Create Dictionary  vns-name  ${policy_vns1}
-	Policy vns interface  10  deny  ${src_dict}  ${dst_dict}
+	Policy tenant interface  10  deny  ${src_dict}  ${dst_dict}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
+	sleep										1
+	Should Be True  							${loss} == 100
+	
+T44 Interface tenant permit src-ip-port to dest-tenant
+	[Tags]  smoke
+	${src_dict}=  Create Dictionary  cidr  ${policy_bm6_ip}
+	${dst_dict}=  Create Dictionary  tenant-name  ${policy_tenant1}
+	Policy tenant interface  10  permit  ${src_dict}  ${dst_dict}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
+	sleep										1
+	Should Be True  							${loss} == 0
+	
+T45 Interface tenant deny src-ip-port to dest-tenant
+	[Tags]  smoke
+	${src_dict}=  Create Dictionary  cidr  ${policy_bm6_ip}
+	${dst_dict}=  Create Dictionary  tenant-name  ${policy_tenant1}
+	Policy tenant interface  10  deny  ${src_dict}  ${dst_dict}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
+	sleep										1
+	Should Be True  							${loss} == 100
+	
+######  **  ANY need more investigation  **  ########
+T46 Interface tenant permit policy src-ip-port to any
+	[Tags]
+	Policy tenant interface  10  deny  ${policy_bm6_ip}  ${policy_bm0_ip}
+	${loss}=									mininet l3 ping		${bm6_name}				${name}		3
+	sleep										1
+	Should Be True  							${loss} == 100
+	
+######  **  ANY need more investigation  **  ########
+T47 Interface tenant deny policy src-ip-port to any
+	[Tags]
+	Policy tenant interface  10  deny  ${policy_vns2_ip}  ${policy_bm0_ip}
 	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
 	sleep										1
 	Should Be True  							${loss} == 100
-
-T41 Interface vns permit src-ip to dest-tenant
+	
+T48 Interface tenant permit policy src-tenant to dest-ip-port
 	[Tags]  smoke
-	${src_dict}=  Create Dictionary  cidr  ${policy_bm6_ip}
-	${dst_dict}=  Create Dictionary  tenant-name  ${policy_tenant1}
-	Policy vns interface  10  permit  ${src_dict}  ${dst_dict}
-	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	${src_dict}=  Create Dictionary  tenant-name  ${policy_tenant2}
+	${dst_dict}=  Create Dictionary  cidr  ${policy_bm0_ip}
+	Policy tenant interface  10  permit  ${src_dict}  ${dst_dict}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
 	sleep										1
 	Should Be True  							${loss} == 0
-
-T42 Interface vns deny src-ip to dest-tenant
+	
+T49 Interface tenant deny policy src-tenant to dest-ip-port
 	[Tags]  smoke
-	${src_dict}=  Create Dictionary  cidr  ${policy_bm6_ip}
-	${dst_dict}=  Create Dictionary  tenant-name  ${policy_tenant1}
-	Policy vns interface  10  deny  ${src_dict}  ${dst_dict}
-	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	${src_dict}=  Create Dictionary  tenant-name  ${policy_tenant2}
+	${dst_dict}=  Create Dictionary  cidr  ${policy_bm0_ip}
+	Policy tenant interface  10  deny  ${src_dict}  ${dst_dict}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
+	sleep										1
+	Should Be True  							${loss} == 100
+	
+T50 Interface tenant permit policy src-vns to dest-ip-port
+	[Tags]  smoke
+	${src_dict}=  Create Dictionary  vns-name  ${policy_vns4}
+	${dst_dict}=  Create Dictionary  cidr  ${policy_bm0_ip}
+	Policy tenant interface  10  permit  ${src_dict}  ${dst_dict}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
+	sleep										1
+	Should Be True  							${loss} == 0
+	
+T51 Interface tenant deny policy src-vns to dest-ip-port
+	[Tags]  smoke
+	${src_dict}=  Create Dictionary  vns-name  ${policy_vns4}
+	${dst_dict}=  Create Dictionary  tenant-name  ${policy_bm0_ip}
+	Policy tenant interface  10  deny  ${src_dict}  ${dst_dict}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
 	sleep										1
 	Should Be True  							${loss} == 100
 
 ######  **  ANY need more investigation  **  ########	
-T43 Interface vns permit policy src-ip to any
+T52 Interface tenant permit policy any to dest-ip-port
+	[Tags]
+	Policy tenant interface  10  deny  ${policy_tenant2}  ${policy_tenant1}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	sleep										1
+	Should Be True  							${loss} == 100
+	
+######  **  ANY need more investigation  **  ########	
+T53 Interface tenant deny policy any to dest-ip-port
+	[Tags]
+	Policy tenant interface  10  deny  ${policy_tenant2}  ${policy_tenant1}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	sleep										1
+	Should Be True  							${loss} == 100
+###################
+
+
+##Below are specified at vns interface
+##-----------------------------------##
+
+T54 Interface vns permit policy src-ip to dest-ip 
+	[Tags]  smoke  vns
+	${src_dict}=  Create Dictionary  cidr  ${policy_bm6_ip}
+	${dst_dict}=  Create Dictionary  cidr  ${policy_bm0_ip}
+	Policy vns interface  10  permit  ${src_dict}  ${dst_dict}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
+	sleep										1
+	Should Be True  							${loss} == 0
+
+T55 Interface vns deny policy src-ip to dest-ip
+	[Tags]  smoke  vns
+	${src_dict}=  Create Dictionary  cidr  ${policy_bm6_ip}
+	${dst_dict}=  Create Dictionary  cidr  ${policy_bm0_ip}
+	Policy vns interface  10  deny  ${src_dict}  ${dst_dict}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
+	sleep										1
+	Should Be True  							${loss} == 100
+
+T56 Interface vns permit policy src-ip to dest-vns
+	[Tags]  smoke  vns
+	${src_dict}=  Create Dictionary  cidr  ${policy_bm6_ip}
+	${dst_dict}=  Create Dictionary  vns-name  ${policy_vns1}
+	Policy vns interface  10  permit  ${src_dict}  ${dst_dict}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
+	sleep										1
+	Should Be True  							${loss} == 0
+
+T57 Interface vns deny policy src-ip to dest-vns
+	[Tags]  smoke  vns
+	${src_dict}=  Create Dictionary  cidr  ${policy_bm6_ip}
+	${dst_dict}=  Create Dictionary  vns-name  ${policy_vns1}
+	Policy vns interface  10  deny  ${src_dict}  ${dst_dict}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
+	sleep										1
+	Should Be True  							${loss} == 100
+
+T58 Interface vns permit src-ip to dest-tenant
+	[Tags]  smoke  vns
+	${src_dict}=  Create Dictionary  cidr  ${policy_bm6_ip}
+	${dst_dict}=  Create Dictionary  tenant-name  ${policy_tenant1}
+	Policy vns interface  10  permit  ${src_dict}  ${dst_dict}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
+	sleep										1
+	Should Be True  							${loss} == 0
+
+T59 Interface vns deny src-ip to dest-tenant
+	[Tags]  smoke  vns
+	${src_dict}=  Create Dictionary  cidr  ${policy_bm6_ip}
+	${dst_dict}=  Create Dictionary  tenant-name  ${policy_tenant1}
+	Policy vns interface  10  deny  ${src_dict}  ${dst_dict}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
+	sleep										1
+	Should Be True  							${loss} == 100
+
+######  **  ANY need more investigation  **  ########	
+T60 Interface vns permit policy src-ip to any
 	[Tags]
 	Policy vns interface  10  permit  ${policy_bm6_ip}  ${policy_bm0_ip}
-	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
 	sleep										1
 	Should Be True  							${loss} == 0
 
 ######  **  ANY need more investigation  **  ########	
-T44 Interface vns deny policy src-ip to any
+T61 Interface vns deny policy src-ip to any
 	[Tags]
 	Policy vns interface  10  permit  ${policy_bm6_ip}  ${policy_bm0_ip}
-	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
 	sleep										1
 	Should Be True  							${loss} == 0
 
-T45 Interface vns permit policy src-tenant to dest-ip
-	[Tags]  smoke
+T62 Interface vns permit policy src-tenant to dest-ip
+	[Tags]  smoke  vns
 	${src_dict}=  Create Dictionary  tenant-name  ${policy_tenant2}
 	${dst_dict}=  Create Dictionary  cidr  ${policy_bm0_ip}
 	Policy vns interface  10  permit  ${src_dict}  ${dst_dict}
-	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
 	sleep										1
 	Should Be True  							${loss} == 0
 
-T46 Interface vns deny policy src-tenant to dest-ip
-	[Tags]  smoke
+T63 Interface vns deny policy src-tenant to dest-ip
+	[Tags]  smoke  vns
 	${src_dict}=  Create Dictionary  tenant-name  ${policy_tenant2}
 	${dst_dict}=  Create Dictionary  cidr  ${policy_bm0_ip}
 	Policy vns interface  10  deny  ${src_dict}  ${dst_dict}
-	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
 	sleep										1
 	Should Be True  							${loss} == 100
 
-T47 Interface vns permit policy src-tenant to dest-tenant
-	[Tags]  smoke
+T64 Interface vns permit policy src-tenant to dest-tenant
+	[Tags]  smoke  vns
 	${src_dict}=  Create Dictionary  tenant-name  ${policy_tenant2}
 	${dst_dict}=  Create Dictionary  tenant-name  ${policy_tenant1}
 	Policy vns interface  10  permit  ${src_dict}  ${dst_dict}
-	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
 	sleep										1
 	Should Be True  							${loss} == 0
 
-T48 Interface vns deny policy src-tenant to dest-tenant
-	[Tags]  smoke
+T65 Interface vns deny policy src-tenant to dest-tenant
+	[Tags]  smoke  vns
 	${src_dict}=  Create Dictionary  tenant-name  ${policy_tenant2}
 	${dst_dict}=  Create Dictionary  tenant-name  ${policy_tenant1}
 	Policy vns interface  10  deny  ${src_dict}  ${dst_dict}
-	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
 	sleep										1
 	Should Be True  							${loss} == 100
 
-T49 Interface vns permit policy src-tenant to dest-vns
-	[Tags]  smoke
+T66 Interface vns permit policy src-tenant to dest-vns
+	[Tags]  smoke  vns
 	${src_dict}=  Create Dictionary  tenant-name  ${policy_tenant2}
 	${dst_dict}=  Create Dictionary  vns-name  ${policy_vns1}
 	Policy vns interface  10  permit  ${src_dict}  ${dst_dict}
-	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
 	sleep										1
 	Should Be True  							${loss} == 0
 
-T50 Interface vns deny policy src-tenant to dest-vns
-	[Tags]  smoke
+T67 Interface vns deny policy src-tenant to dest-vns
+	[Tags]  smoke  vns
 	${src_dict}=  Create Dictionary  tenant-name  ${policy_tenant2}
 	${dst_dict}=  Create Dictionary  vns-name  ${policy_vns1}
 	Policy vns interface  10  deny  ${src_dict}  ${dst_dict}
-	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
 	sleep										1
 	Should Be True  							${loss} == 100
 
 ######  **  ANY need more investigation  **  ########	
-T51 Interface vns permit policy src-tenant to any
+T68 Interface vns permit policy src-tenant to any
 	[Tags]
 	${src_dict}=  Create Dictionary  cidr  ${policy_bm6_ip}
 	${dst_dict}=  Create Dictionary  cidr  ${policy_bm0_ip}
 	Policy vns interface  10  permit  ${src_dict}  ${dst_dict}
 	Policy vns interface  10  permit  ${policy_tenant2}  ${policy_bm0_ip}
-	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
 	sleep										1
 	Should Be True  							${loss} == 0
 
 ######  **  ANY need more investigation  **  ########	
-T52 Interface vns deny policy src-tenant to any
+T69 Interface vns deny policy src-tenant to any
 	[Tags]
 	Policy vns interface  10  permit  ${policy_bm6_ip}  ${policy_bm0_ip}
-	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
 	sleep										1
 	Should Be True  							${loss} == 0
 
 
-T53 Interface vns permit policy src-vns to dest-ip
-	[Tags]  smoke
+T70 Interface vns permit policy src-vns to dest-ip
+	[Tags]  smoke  vns
 	${src_dict}=  Create Dictionary  vns-name  ${policy_vns4}
 	${dst_dict}=  Create Dictionary  cidr  ${policy_bm0_ip}
 	Policy vns interface  10  permit  ${src_dict}  ${dst_dict}
-	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
 	sleep										1
 	Should Be True  							${loss} == 0
 
-T54 Interface vns deny policy src-vns to dest-ip
-	[Tags]  smoke
+T71 Interface vns deny policy src-vns to dest-ip
+	[Tags]  smoke  vns
 	${src_dict}=  Create Dictionary  vns-name  ${policy_vns4}
 	${dst_dict}=  Create Dictionary  cidr  ${policy_bm0_ip}
 	Policy vns interface  10  deny  ${src_dict}  ${dst_dict}
-	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
 	sleep										1
 	Should Be True  							${loss} == 100
 
-T55 Interface vns permit policy src-vns to dest-tenant
-	[Tags]  smoke
+T72 Interface vns permit policy src-vns to dest-tenant
+	[Tags]  smoke  vns
 	${src_dict}=  Create Dictionary  vns-name  ${policy_vns4}
 	${dst_dict}=  Create Dictionary  tenant-name  ${policy_tenant1}
 	Policy vns interface  10  permit  ${src_dict}  ${dst_dict}
-	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
 	sleep										1
 	Should Be True  							${loss} == 0
 
-T56 Interface vns deny policy src-vns to dest-tenant
-	[Tags]  smoke
+T73 Interface vns deny policy src-vns to dest-tenant
+	[Tags]  smoke  vns
 	${src_dict}=  Create Dictionary  vns-name  ${policy_vns4}
 	${dst_dict}=  Create Dictionary  tenant-name  ${policy_tenant1}
 	Policy vns interface  10  deny  ${src_dict}  ${dst_dict}
-	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
 	sleep										1
 	Should Be True  							${loss} == 100
 
-T57 Interface vns permit policy src-vns to dest-vns
-	[Tags]  smoke
+T74 Interface vns permit policy src-vns to dest-vns
+	[Tags]  smoke  vns
 	${src_dict}=  Create Dictionary  vns-name  ${policy_vns4}
 	${dst_dict}=  Create Dictionary  vns-name  ${policy_vns1}
 	Policy vns interface  10  permit  ${src_dict}  ${dst_dict}
-	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
 	sleep										1
 	Should Be True  							${loss} == 0
 
-T58 Interface vns deny policy src-vns to dest-vns
-	[Tags]  smoke
+T75 Interface vns deny policy src-vns to dest-vns
+	[Tags]  smoke  vns
 	${src_dict}=  Create Dictionary  vns-name  ${policy_vns4}
 	${dst_dict}=  Create Dictionary  vns-name  ${policy_vns1}
 	Policy vns interface  10  permit  ${src_dict}  ${dst_dict}
-	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
 	sleep										1
 	Should Be True  							${loss} == 100
 
 ######  **  ANY need more investigation  **  ########	
-T59 Interface vns permit policy src-vns to any
+T76 Interface vns permit policy src-vns to any
 	[Tags]
 	Policy vns interface  10  permit  ${policy_bm6_ip}  ${policy_bm0_ip}
-	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
 	sleep										1
 	Should Be True  							${loss} == 0
 
 ######  **  ANY need more investigation  **  ########	
-T60 Interface vns deny policy src-vns to any
+T77 Interface vns deny policy src-vns to any
 	[Tags]
 	Policy vns interface  10  permit  ${policy_bm6_ip}  ${policy_bm0_ip}
-	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
 	sleep										1
 	Should Be True  							${loss} == 0
 
 ######  **  ANY need more investigation  **  ########	
-T61 Interface vns permit policy any to dest-ip
+T78 Interface vns permit policy any to dest-ip
 	[Tags]
 	Policy vns interface  10  permit  ${policy_bm6_ip}  ${policy_bm0_ip}
-	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
 	sleep										1
 	Should Be True  							${loss} == 0
 
 ######  **  ANY need more investigation  **  ########	
-T62 Interface vns deny policy any to dest-ip
+T79 Interface vns deny policy any to dest-ip
 	[Tags]
 	Policy vns interface  10  permit  ${policy_bm6_ip}  ${policy_bm0_ip}
-	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
 	sleep										1
 	Should Be True  							${loss} == 0
 
 ######  **  ANY need more investigation  **  ########	
-T63 Interface vns permit policy any to dest-tenant
+T80 Interface vns permit policy any to dest-tenant
 	[Tags]
 	Policy vns interface  10  permit  ${policy_bm6_ip}  ${policy_bm0_ip}
-	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
 	sleep										1
 	Should Be True  							${loss} == 0
 
 ######  **  ANY need more investigation  **  ########	
-T64 Interface vns deny policy any to dest-tenant
+T81 Interface vns deny policy any to dest-tenant
 	[Tags]
 	Policy vns interface  10  permit  ${policy_bm6_ip}  ${policy_bm0_ip}
-	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
 	sleep										1
 	Should Be True  							${loss} == 0
 
 ######  **  ANY need more investigation  **  ########	
-T65 Interface vns permit policy any to dest-vns
+T82 Interface vns permit policy any to dest-vns
 	[Tags]
 	Policy vns interface  10  permit  ${policy_bm6_ip}  ${policy_bm0_ip}
-	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
 	sleep										1
 	Should Be True  							${loss} == 0
 
 ######  **  ANY need more investigation  **  ########	
-T66 Interface vns deny policy any to dest-vns
+T83 Interface vns deny policy any to dest-vns
 	[Tags]
 	Policy vns interface  10  permit  ${policy_bm6_ip}  ${policy_bm0_ip}
-	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
 	sleep										1
 	Should Be True  							${loss} == 0
 
 ######  **  ANY need more investigation  **  ########	
-T67 Interface vns permit policy any to any
+T84 Interface vns permit policy any to any
 	[Tags]
 	Policy vns interface  10  permit  ${policy_bm6_ip}  ${policy_bm0_ip}
-	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
 	sleep										1
 	Should Be True  							${loss} == 0
 
 ######  **  ANY need more investigation  **  ########	
-T68 Interface vns deny policy any to any
+T85 Interface vns deny policy any to any
 	[Tags]
 	Policy vns interface  10  permit  ${policy_bm6_ip}  ${policy_bm0_ip}
-	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
+	sleep										1
+	Should Be True  							${loss} == 0
+
+##Below are for ip and port combination specified at vns interface
+##-------------------------------------##
+
+T86 Interface vns permit policy src-ip-port to dest-ip-port
+	[Tags]  smoke  vns
+	${src_dict}=  Create Dictionary  cidr  ${policy_bm6_ip}
+	${dst_dict}=  Create Dictionary  cidr  ${policy_bm0_ip}
+	Policy vns interface  10  permit  ${src_dict}  ${dst_dict}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
+	sleep										1
+	Should Be True  							${loss} == 0
+
+T87 Interface vns deny policy src-ip-port to dest-ip-port
+	[Tags]  smoke  vns
+	${src_dict}=  Create Dictionary  cidr  ${policy_bm6_ip}
+	${dst_dict}=  Create Dictionary  cidr  ${policy_bm0_ip}
+	Policy vns interface  10  deny  ${src_dict}  ${dst_dict}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
+	sleep										1
+	Should Be True  							${loss} == 100
+
+T88 Interface vns permit policy src-ip-port to dest-vns
+	[Tags]  smoke  vns
+	${src_dict}=  Create Dictionary  cidr  ${policy_bm6_ip}
+	${dst_dict}=  Create Dictionary  vns-name  ${policy_vns1}
+	Policy vns interface  10  permit  ${src_dict}  ${dst_dict}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
+	sleep										1
+	Should Be True  							${loss} == 0
+
+T89 Interface vns deny policy src-ip-port to dest-vns
+	[Tags]  smoke  vns
+	${src_dict}=  Create Dictionary  cidr  ${policy_bm6_ip}
+	${dst_dict}=  Create Dictionary  vns-name  ${policy_vns1}
+	Policy vns interface  10  deny  ${src_dict}  ${dst_dict}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
+	sleep										1
+	Should Be True  							${loss} == 100
+
+T90 Interface vns permit src-ip-port to dest-tenant
+	[Tags]  smoke  vns
+	${src_dict}=  Create Dictionary  cidr  ${policy_bm6_ip}
+	${dst_dict}=  Create Dictionary  tenant-name  ${policy_tenant1}
+	Policy vns interface  10  permit  ${src_dict}  ${dst_dict}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
+	sleep										1
+	Should Be True  							${loss} == 0
+
+T91 Interface vns deny src-ip-port to dest-tenant
+	[Tags]  smoke  vns
+	${src_dict}=  Create Dictionary  cidr  ${policy_bm6_ip}
+	${dst_dict}=  Create Dictionary  tenant-name  ${policy_tenant1}
+	Policy vns interface  10  deny  ${src_dict}  ${dst_dict}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
+	sleep										1
+	Should Be True  							${loss} == 100
+
+######  **  ANY need more investigation  **  ########	
+T92 Interface vns permit policy src-ip-port to any
+	[Tags]
+	Policy vns interface  10  permit  ${policy_bm6_ip}  ${policy_bm0_ip}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
+	sleep										1
+	Should Be True  							${loss} == 0
+
+######  **  ANY need more investigation  **  ########	
+T93 Interface vns deny policy src-ip-port to any
+	[Tags]
+	Policy vns interface  10  permit  ${policy_bm6_ip}  ${policy_bm0_ip}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
+	sleep										1
+	Should Be True  							${loss} == 0
+
+T94 Interface vns permit policy src-tenant to dest-ip-port
+	[Tags]  smoke  vns
+	${src_dict}=  Create Dictionary  tenant-name  ${policy_tenant2}
+	${dst_dict}=  Create Dictionary  cidr  ${policy_bm0_ip}
+	Policy vns interface  10  permit  ${src_dict}  ${dst_dict}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
+	sleep										1
+	Should Be True  							${loss} == 0
+
+T95 Interface vns deny policy src-tenant to dest-ip-port
+	[Tags]  smoke  vns
+	${src_dict}=  Create Dictionary  tenant-name  ${policy_tenant2}
+	${dst_dict}=  Create Dictionary  cidr  ${policy_bm0_ip}
+	Policy vns interface  10  deny  ${src_dict}  ${dst_dict}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
+	sleep										1
+	Should Be True  							${loss} == 100
+
+
+T96 Interface vns permit policy src-vns to dest-ip-port
+	[Tags]  smoke  vns
+	${src_dict}=  Create Dictionary  vns-name  ${policy_vns4}
+	${dst_dict}=  Create Dictionary  cidr  ${policy_bm0_ip}
+	Policy vns interface  10  permit  ${src_dict}  ${dst_dict}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
+	sleep										1
+	Should Be True  							${loss} == 0
+
+T97 Interface vns deny policy src-vns to dest-ip-port
+	[Tags]  smoke  vns
+	${src_dict}=  Create Dictionary  vns-name  ${policy_vns4}
+	${dst_dict}=  Create Dictionary  cidr  ${policy_bm0_ip}
+	Policy vns interface  10  deny  ${src_dict}  ${dst_dict}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
+	sleep										1
+	Should Be True  							${loss} == 100
+
+######  **  ANY need more investigation  **  ########	
+T98 Interface vns permit policy any to dest-ip-port
+	[Tags]
+	Policy vns interface  10  permit  ${policy_bm6_ip}  ${policy_bm0_ip}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
+	sleep										1
+	Should Be True  							${loss} == 0
+
+######  **  ANY need more investigation  **  ########	
+T99 Interface vns deny policy any to dest-ip-port
+	[Tags]
+	Policy vns interface  10  permit  ${policy_bm6_ip}  ${policy_bm0_ip}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
+	sleep										1
+	Should Be True  							${loss} == 0
+
+##---------------------------------##
+
+##Below are specified at default tenant system
+##-------------------------------------------##
+
+T100 default tenant system permit policy src-ip to dest-ip 
+	[Tags]  smoke  vns
+	${src_dict}=  Create Dictionary  cidr  ${policy_bm6_ip}
+	${dst_dict}=  Create Dictionary  cidr  ${policy_bm0_ip}
+	Policy vns interface  10  permit  ${src_dict}  ${dst_dict}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
+	sleep										1
+	Should Be True  							${loss} == 0
+
+T101 default tenant system deny policy src-ip to dest-ip
+	[Tags]  smoke  vns
+	${src_dict}=  Create Dictionary  cidr  ${policy_bm6_ip}
+	${dst_dict}=  Create Dictionary  cidr  ${policy_bm0_ip}
+	Policy vns interface  10  deny  ${src_dict}  ${dst_dict}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
+	sleep										1
+	Should Be True  							${loss} == 100
+
+T102 default tenant system permit policy src-ip to dest-vns
+	[Tags]  smoke  vns
+	${src_dict}=  Create Dictionary  cidr  ${policy_bm6_ip}
+	${dst_dict}=  Create Dictionary  vns-name  ${policy_vns1}
+	Policy vns interface  10  permit  ${src_dict}  ${dst_dict}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
+	sleep										1
+	Should Be True  							${loss} == 0
+
+T103 default tenant system deny policy src-ip to dest-vns
+	[Tags]  smoke  vns
+	${src_dict}=  Create Dictionary  cidr  ${policy_bm6_ip}
+	${dst_dict}=  Create Dictionary  vns-name  ${policy_vns1}
+	Policy vns interface  10  deny  ${src_dict}  ${dst_dict}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
+	sleep										1
+	Should Be True  							${loss} == 100
+
+T104 default tenant system permit src-ip to dest-tenant
+	[Tags]  smoke  vns
+	${src_dict}=  Create Dictionary  cidr  ${policy_bm6_ip}
+	${dst_dict}=  Create Dictionary  tenant-name  ${policy_tenant1}
+	Policy vns interface  10  permit  ${src_dict}  ${dst_dict}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
+	sleep										1
+	Should Be True  							${loss} == 0
+
+T105 default tenant system deny src-ip to dest-tenant
+	[Tags]  smoke  vns
+	${src_dict}=  Create Dictionary  cidr  ${policy_bm6_ip}
+	${dst_dict}=  Create Dictionary  tenant-name  ${policy_tenant1}
+	Policy vns interface  10  deny  ${src_dict}  ${dst_dict}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
+	sleep										1
+	Should Be True  							${loss} == 100
+
+######  **  ANY need more investigation  **  ########	
+T106 default tenant system permit policy src-ip to any
+	[Tags]
+	Policy vns interface  10  permit  ${policy_bm6_ip}  ${policy_bm0_ip}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
+	sleep										1
+	Should Be True  							${loss} == 0
+
+######  **  ANY need more investigation  **  ########	
+T107 default tenant system deny policy src-ip to any
+	[Tags]
+	Policy vns interface  10  permit  ${policy_bm6_ip}  ${policy_bm0_ip}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
+	sleep										1
+	Should Be True  							${loss} == 0
+
+T108 default tenant system permit policy src-tenant to dest-ip
+	[Tags]  smoke  vns
+	${src_dict}=  Create Dictionary  tenant-name  ${policy_tenant2}
+	${dst_dict}=  Create Dictionary  cidr  ${policy_bm0_ip}
+	Policy vns interface  10  permit  ${src_dict}  ${dst_dict}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
+	sleep										1
+	Should Be True  							${loss} == 0
+
+T109 default tenant system deny policy src-tenant to dest-ip
+	[Tags]  smoke  vns
+	${src_dict}=  Create Dictionary  tenant-name  ${policy_tenant2}
+	${dst_dict}=  Create Dictionary  cidr  ${policy_bm0_ip}
+	Policy vns interface  10  deny  ${src_dict}  ${dst_dict}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
+	sleep										1
+	Should Be True  							${loss} == 100
+
+T110 default tenant system permit policy src-tenant to dest-tenant
+	[Tags]  smoke  vns
+	${src_dict}=  Create Dictionary  tenant-name  ${policy_tenant2}
+	${dst_dict}=  Create Dictionary  tenant-name  ${policy_tenant1}
+	Policy vns interface  10  permit  ${src_dict}  ${dst_dict}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
+	sleep										1
+	Should Be True  							${loss} == 0
+
+T111 default tenant system deny policy src-tenant to dest-tenant
+	[Tags]  smoke  vns
+	${src_dict}=  Create Dictionary  tenant-name  ${policy_tenant2}
+	${dst_dict}=  Create Dictionary  tenant-name  ${policy_tenant1}
+	Policy vns interface  10  deny  ${src_dict}  ${dst_dict}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
+	sleep										1
+	Should Be True  							${loss} == 100
+
+T112 default tenant system permit policy src-tenant to dest-vns
+	[Tags]  smoke  vns
+	${src_dict}=  Create Dictionary  tenant-name  ${policy_tenant2}
+	${dst_dict}=  Create Dictionary  vns-name  ${policy_vns1}
+	Policy vns interface  10  permit  ${src_dict}  ${dst_dict}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
+	sleep										1
+	Should Be True  							${loss} == 0
+
+T113 default tenant system deny policy src-tenant to dest-vns
+	[Tags]  smoke  vns
+	${src_dict}=  Create Dictionary  tenant-name  ${policy_tenant2}
+	${dst_dict}=  Create Dictionary  vns-name  ${policy_vns1}
+	Policy vns interface  10  deny  ${src_dict}  ${dst_dict}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
+	sleep										1
+	Should Be True  							${loss} == 100
+
+######  **  ANY need more investigation  **  ########	
+T114 default tenant system permit policy src-tenant to any
+	[Tags]
+	${src_dict}=  Create Dictionary  cidr  ${policy_bm6_ip}
+	${dst_dict}=  Create Dictionary  cidr  ${policy_bm0_ip}
+	Policy vns interface  10  permit  ${src_dict}  ${dst_dict}
+	Policy vns interface  10  permit  ${policy_tenant2}  ${policy_bm0_ip}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
+	sleep										1
+	Should Be True  							${loss} == 0
+
+######  **  ANY need more investigation  **  ########	
+T115 default tenant system deny policy src-tenant to any
+	[Tags]
+	Policy vns interface  10  permit  ${policy_bm6_ip}  ${policy_bm0_ip}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
 	sleep										1
 	Should Be True  							${loss} == 0
 
 
+T116 default tenant system permit policy src-vns to dest-ip
+	[Tags]  smoke  vns
+	${src_dict}=  Create Dictionary  vns-name  ${policy_vns4}
+	${dst_dict}=  Create Dictionary  cidr  ${policy_bm0_ip}
+	Policy vns interface  10  permit  ${src_dict}  ${dst_dict}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
+	sleep										1
+	Should Be True  							${loss} == 0
 
-T69 Interface tenant and vns permit policy src-ip to dest-ip
-T70 Interface tenant permit vns deny policy src-ip to dest-ip
-T71 Interface tenant deny vsn permit policy src-ip to dest-ip
-T72 Interface tenant and vns deny policy src-ip to dest-ip
+T117 default tenant system deny policy src-vns to dest-ip
+	[Tags]  smoke  vns
+	${src_dict}=  Create Dictionary  vns-name  ${policy_vns4}
+	${dst_dict}=  Create Dictionary  cidr  ${policy_bm0_ip}
+	Policy vns interface  10  deny  ${src_dict}  ${dst_dict}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
+	sleep										1
+	Should Be True  							${loss} == 100
 
-T73 Interface tenant and vns permit policy src-vns to dest-vns
-T74 Interface tenant permit vns deny policy src-vns to dest-vns
-T75 Interface tenant deny vsn permit policy src-vns to dest-vns
-T76 Interface tenant and vns deny policy src-vns to dest-vns
+T118 default tenant system permit policy src-vns to dest-tenant
+	[Tags]  smoke  vns
+	${src_dict}=  Create Dictionary  vns-name  ${policy_vns4}
+	${dst_dict}=  Create Dictionary  tenant-name  ${policy_tenant1}
+	Policy vns interface  10  permit  ${src_dict}  ${dst_dict}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
+	sleep										1
+	Should Be True  							${loss} == 0
 
-T77 Interface tenant and vns permit policy src-tenant to dest-tenant
-T78 Interface tenant permit vns deny policy src-tenant to dest-tenant
-T78 Interface tenant deny vsn permit policy src-tenant to dest-tenant
-T79 Interface tenant and vns deny policy src-tenant to dest-tenant
+T119 default tenant system deny policy src-vns to dest-tenant
+	[Tags]  smoke  vns
+	${src_dict}=  Create Dictionary  vns-name  ${policy_vns4}
+	${dst_dict}=  Create Dictionary  tenant-name  ${policy_tenant1}
+	Policy vns interface  10  deny  ${src_dict}  ${dst_dict}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
+	sleep										1
+	Should Be True  							${loss} == 100
+
+T120 default tenant system permit policy src-vns to dest-vns
+	[Tags]  smoke  vns
+	${src_dict}=  Create Dictionary  vns-name  ${policy_vns4}
+	${dst_dict}=  Create Dictionary  vns-name  ${policy_vns1}
+	Policy vns interface  10  permit  ${src_dict}  ${dst_dict}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
+	sleep										1
+	Should Be True  							${loss} == 0
+
+T121 default tenant system deny policy src-vns to dest-vns
+	[Tags]  smoke  vns
+	${src_dict}=  Create Dictionary  vns-name  ${policy_vns4}
+	${dst_dict}=  Create Dictionary  vns-name  ${policy_vns1}
+	Policy vns interface  10  permit  ${src_dict}  ${dst_dict}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
+	sleep										1
+	Should Be True  							${loss} == 100
+
+######  **  ANY need more investigation  **  ########	
+T122 default tenant system permit policy src-vns to any
+	[Tags]
+	Policy vns interface  10  permit  ${policy_bm6_ip}  ${policy_bm0_ip}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
+	sleep										1
+	Should Be True  							${loss} == 0
+
+######  **  ANY need more investigation  **  ########	
+T123 default tenant system deny policy src-vns to any
+	[Tags]
+	Policy vns interface  10  permit  ${policy_bm6_ip}  ${policy_bm0_ip}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
+	sleep										1
+	Should Be True  							${loss} == 0
+
+######  **  ANY need more investigation  **  ########	
+T124 default tenant system permit policy any to dest-ip
+	[Tags]
+	Policy vns interface  10  permit  ${policy_bm6_ip}  ${policy_bm0_ip}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
+	sleep										1
+	Should Be True  							${loss} == 0
+
+######  **  ANY need more investigation  **  ########	
+T125 default tenant system deny policy any to dest-ip
+	[Tags]
+	Policy vns interface  10  permit  ${policy_bm6_ip}  ${policy_bm0_ip}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
+	sleep										1
+	Should Be True  							${loss} == 0
+
+######  **  ANY need more investigation  **  ########	
+T126 default tenant system permit policy any to dest-tenant
+	[Tags]
+	Policy vns interface  10  permit  ${policy_bm6_ip}  ${policy_bm0_ip}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
+	sleep										1
+	Should Be True  							${loss} == 0
+
+######  **  ANY need more investigation  **  ########	
+T127 default tenant system deny policy any to dest-tenant
+	[Tags]
+	Policy vns interface  10  permit  ${policy_bm6_ip}  ${policy_bm0_ip}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
+	sleep										1
+	Should Be True  							${loss} == 0
+
+######  **  ANY need more investigation  **  ########	
+T128 default tenant system permit policy any to dest-vns
+	[Tags]
+	Policy vns interface  10  permit  ${policy_bm6_ip}  ${policy_bm0_ip}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
+	sleep										1
+	Should Be True  							${loss} == 0
+
+######  **  ANY need more investigation  **  ########	
+T129 default tenant system deny policy any to dest-vns
+	[Tags]
+	Policy vns interface  10  permit  ${policy_bm6_ip}  ${policy_bm0_ip}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
+	sleep										1
+	Should Be True  							${loss} == 0
+
+######  **  ANY need more investigation  **  ########	
+T130 default tenant system permit policy any to any
+	[Tags]
+	Policy vns interface  10  permit  ${policy_bm6_ip}  ${policy_bm0_ip}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
+	sleep										1
+	Should Be True  							${loss} == 0
+
+######  **  ANY need more investigation  **  ########	
+T131 default tenant system deny policy any to any
+	[Tags]
+	Policy vns interface  10  permit  ${policy_bm6_ip}  ${policy_bm0_ip}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
+	sleep										1
+	Should Be True  							${loss} == 0
+
+##Below are for ip and port combination specified at vns interface
+##-------------------------------------##
+
+T132 default tenant system permit policy src-ip-port to dest-ip-port
+	[Tags]  smoke  vns
+	${src_dict}=  Create Dictionary  cidr  ${policy_bm6_ip}
+	${dst_dict}=  Create Dictionary  cidr  ${policy_bm0_ip}
+	Policy vns interface  10  permit  ${src_dict}  ${dst_dict}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
+	sleep										1
+	Should Be True  							${loss} == 0
+
+T133 default tenant system deny policy src-ip-port to dest-ip-port
+	[Tags]  smoke  vns
+	${src_dict}=  Create Dictionary  cidr  ${policy_bm6_ip}
+	${dst_dict}=  Create Dictionary  cidr  ${policy_bm0_ip}
+	Policy vns interface  10  deny  ${src_dict}  ${dst_dict}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
+	sleep										1
+	Should Be True  							${loss} == 100
+
+T134 default tenant system permit policy src-ip-port to dest-vns
+	[Tags]  smoke  vns
+	${src_dict}=  Create Dictionary  cidr  ${policy_bm6_ip}
+	${dst_dict}=  Create Dictionary  vns-name  ${policy_vns1}
+	Policy vns interface  10  permit  ${src_dict}  ${dst_dict}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
+	sleep										1
+	Should Be True  							${loss} == 0
+
+T135 default tenant system deny policy src-ip-port to dest-vns
+	[Tags]  smoke  vns
+	${src_dict}=  Create Dictionary  cidr  ${policy_bm6_ip}
+	${dst_dict}=  Create Dictionary  vns-name  ${policy_vns1}
+	Policy vns interface  10  deny  ${src_dict}  ${dst_dict}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
+	sleep										1
+	Should Be True  							${loss} == 100
+
+T136 default tenant system permit src-ip-port to dest-tenant
+	[Tags]  smoke  vns
+	${src_dict}=  Create Dictionary  cidr  ${policy_bm6_ip}
+	${dst_dict}=  Create Dictionary  tenant-name  ${policy_tenant1}
+	Policy vns interface  10  permit  ${src_dict}  ${dst_dict}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
+	sleep										1
+	Should Be True  							${loss} == 0
+
+T137 default tenant system deny src-ip-port to dest-tenant
+	[Tags]  smoke  vns
+	${src_dict}=  Create Dictionary  cidr  ${policy_bm6_ip}
+	${dst_dict}=  Create Dictionary  tenant-name  ${policy_tenant1}
+	Policy vns interface  10  deny  ${src_dict}  ${dst_dict}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
+	sleep										1
+	Should Be True  							${loss} == 100
+
+######  **  ANY need more investigation  **  ########	
+T138 default tenant system permit policy src-ip-port to any
+	[Tags]
+	Policy vns interface  10  permit  ${policy_bm6_ip}  ${policy_bm0_ip}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
+	sleep										1
+	Should Be True  							${loss} == 0
+
+######  **  ANY need more investigation  **  ########	
+T139 default tenant system deny policy src-ip-port to any
+	[Tags]
+	Policy vns interface  10  permit  ${policy_bm6_ip}  ${policy_bm0_ip}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
+	sleep										1
+	Should Be True  							${loss} == 0
+
+T140 default tenant system permit policy src-tenant to dest-ip-port
+	[Tags]  smoke  vns
+	${src_dict}=  Create Dictionary  tenant-name  ${policy_tenant2}
+	${dst_dict}=  Create Dictionary  cidr  ${policy_bm0_ip}
+	Policy vns interface  10  permit  ${src_dict}  ${dst_dict}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
+	sleep										1
+	Should Be True  							${loss} == 0
+
+T141 default tenant system deny policy src-tenant to dest-ip-port
+	[Tags]  smoke  vns
+	${src_dict}=  Create Dictionary  tenant-name  ${policy_tenant2}
+	${dst_dict}=  Create Dictionary  cidr  ${policy_bm0_ip}
+	Policy vns interface  10  deny  ${src_dict}  ${dst_dict}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
+	sleep										1
+	Should Be True  							${loss} == 100
+
+
+T142 default tenant system permit policy src-vns to dest-ip-port
+	[Tags]  smoke  vns
+	${src_dict}=  Create Dictionary  vns-name  ${policy_vns4}
+	${dst_dict}=  Create Dictionary  cidr  ${policy_bm0_ip}
+	Policy vns interface  10  permit  ${src_dict}  ${dst_dict}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
+	sleep										1
+	Should Be True  							${loss} == 0
+
+T143 default tenant system deny policy src-vns to dest-ip-port
+	[Tags]  smoke  vns
+	${src_dict}=  Create Dictionary  vns-name  ${policy_vns4}
+	${dst_dict}=  Create Dictionary  cidr  ${policy_bm0_ip}
+	Policy vns interface  10  deny  ${src_dict}  ${dst_dict}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
+	sleep										1
+	Should Be True  							${loss} == 100
+
+######  **  ANY need more investigation  **  ########	
+T144 default tenant system permit policy any to dest-ip-port
+	[Tags]
+	Policy vns interface  10  permit  ${policy_bm6_ip}  ${policy_bm0_ip}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
+	sleep										1
+	Should Be True  							${loss} == 0
+
+######  **  ANY need more investigation  **  ########	
+T145 default tenant system deny policy any to dest-ip-port
+	[Tags]
+	Policy vns interface  10  permit  ${policy_bm6_ip}  ${policy_bm0_ip}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
+	sleep										1
+	Should Be True  							${loss} == 0
+
+##---------------------------------##
+
+
+T146 Interface tenant and vns permit policy src-ip to dest-ip
+T147 Interface tenant permit vns deny policy src-ip to dest-ip
+T148 Interface tenant deny vsn permit policy src-ip to dest-ip
+T149 Interface tenant and vns deny policy src-ip to dest-ip
+
+T150 Interface tenant and vns permit policy src-vns to dest-vns
+T151 Interface tenant permit vns deny policy src-vns to dest-vns
+T152 Interface tenant deny vsn permit policy src-vns to dest-vns
+T153 Interface tenant and vns deny policy src-vns to dest-vns
+
+T154 Interface tenant and vns permit policy src-tenant to dest-tenant
+T55 Interface tenant permit vns deny policy src-tenant to dest-tenant
+T56 Interface tenant deny vsn permit policy src-tenant to dest-tenant
+T57 Interface tenant and vns deny policy src-tenant to dest-tenant
 
 #NEXT-HOP
-T80 Interface tenant next-hop policy src-tenant to dest-tenant
-T81 Interface tenant next-hop policy src-tenant to ip
-T82 Interface tenant next-hop policy src-ip to dest-tenant
-T83 Interface tenant next-hop policy src-ip to dest-ip
-T84 Interface tenant next-hop policy src-vns to dest-tenant
-T85 Interface tenant next-hop policy src-vns to ip
+T158 Interface tenant next-hop policy src-tenant to dest-tenant
+T159 Interface tenant next-hop policy src-tenant to ip
+T160 Interface tenant next-hop policy src-ip to dest-tenant
+T161 Interface tenant next-hop policy src-ip to dest-ip
+T162 Interface tenant next-hop policy src-vns to dest-tenant
+T163 Interface tenant next-hop policy src-vns to ip
 
-T86 Interface vns next-hop policy src-tenant to dest-tenant
-T87 Interface vns next-hop policy src-tenant to ip
-T88 Interface vns next-hop policy src-ip to dest-tenant
-T89 Interface vns next-hop policy src-ip to dest-ip
-T90 Interface vns next-hop policy src-vns to dest-tenant
-T91 Interface vns next-hop policy src-vns to ip
+T164 Interface vns next-hop policy src-tenant to dest-tenant
+T165 Interface vns next-hop policy src-tenant to ip
+T166 Interface vns next-hop policy src-ip to dest-tenant
+T167 Interface vns next-hop policy src-ip to dest-ip
+T168 Interface vns next-hop policy src-vns to dest-tenant
+T169 Interface vns next-hop policy src-vns to ip
 
 
 #ECMP-GROUP
 
-T92 Interface tenant ecmp-group policy src-tenant to dest-tenant
-T93 Interface tenant ecmp-group policy src-tenant to ip
-T94 Interface tenant ecmp-group policy src-ip to dest-tenant
-T95 Interface tenant ecmp-group policy src-ip to dest-ip
-T96 Interface tenant ecmp-group policy src-vns to dest-tenant
-T97 Interface tenant ecmp-group policy src-vns to ip
+T170 Interface tenant ecmp-group policy src-tenant to dest-tenant
+T171 Interface tenant ecmp-group policy src-tenant to ip
+T172 Interface tenant ecmp-group policy src-ip to dest-tenant
+T173 Interface tenant ecmp-group policy src-ip to dest-ip
+T174 Interface tenant ecmp-group policy src-vns to dest-tenant
+T175 Interface tenant ecmp-group policy src-vns to ip
 
-T98 Interface vns ecmp-group policy src-tenant to dest-tenant
-T99 Interface vns ecmp-group policy src-tenant to ip
-T100 Interface vns ecmp-group policy src-ip to dest-tenant
-T101 Interface vns ecmp-group policy src-ip to dest-ip
-T102 Interface vns ecmp-group policy src-vns to dest-tenant
-T103 Interface vns ecmp-group policy src-vns to ip
+T176 Interface vns ecmp-group policy src-tenant to dest-tenant
+T177 Interface vns ecmp-group policy src-tenant to ip
+T178 Interface vns ecmp-group policy src-ip to dest-tenant
+T179 Interface vns ecmp-group policy src-ip to dest-ip
+T180 Interface vns ecmp-group policy src-vns to dest-tenant
+T181 Interface vns ecmp-group policy src-vns to ip
 
-T104 Remove Add permit policy at tenant interface
-T105 Remove Add permit policy at vns interface
-T106 Remove Add next-hop policy at tenant interface
-T107 Remove Add next-hop policy at vns interface
-T108 Remove Add ecmp-group at tenant interface
-T109 Remove Add ecmp-group at vns interface
+T182 Remove Add permit policy at tenant interface
+T183 Remove Add permit policy at vns interface
+T184 Remove Add next-hop policy at tenant interface
+T185 Remove Add next-hop policy at vns interface
+T186 Remove Add ecmp-group at tenant interface
+T187 Remove Add ecmp-group at vns interface
 
-T110 shut no shut switch interface
-T111 Remove Add tenant interface
-T112 Remove Add vns interface
-T113 Remove Add switch
+T188 shut no shut switch interface
+T189 Remove Add tenant interface
+T190 Remove Add vns interface
+T191 Remove Add switch
 
-T114 HA failover
-T115 Reboot standby
-T116 Reboot master
-T117 poweroff switch
-T118 poweron switch
-T119 poweroff master controller
-T120 poweroff slave controller
-T121 Configure 3k policies under tenant interface
-T122 Configure 3k policies under vns interface
-T123 mix T121 + T122
+T192 HA failover
+T193 Reboot standby
+T194 Reboot master
+T195 poweroff switch
+T196 poweron switch
+T197 poweroff master controller
+T198 poweroff slave controller
+T199 Configure 3k policies under tenant interface
+T200 Configure 3k policies under vns interface
+T201 mix T121 + T122
 
-T124 Shut Mgmt port in switch and connect back
-T125 Verify syslogs for any scale errors
-T126 
+T202 Shut Mgmt port in switch and connect back
+T203 Verify syslogs for any scale errors
 
+T204 Configure Multiple entries in the policy
+T205 Remove and add entires before and after existing entires and verify traffic disruptions
+T206 Add a new switch, which was part of another DC with exsiting deny policy to the new DC verify all policies should wipeout
+
+T207 restart ofad
+T208 restart floodlight
 
 	
 * Keywords
 setup topology
+	base suite setup
 	add fabric switch
 	sleep 										1
 	REST add portgroup							${portgroup0}
@@ -765,12 +1576,12 @@ setup topology
 	REST add vns								${tenant2_name}		${vns2_1}
 	REST add vns								${tenant2_name}		${vns2_2}
 	REST add vns								${tenant2_name}		${vns2_3}
-	REST add router intf						${tenant1_name}		${vns1_1}
-	REST add router intf						${tenant1_name}		${vns1_2}
-	REST add router intf						${tenant1_name}		${vns1_3}
-	REST add router intf						${tenant2_name}		${vns2_1}
-	REST add router intf						${tenant2_name}		${vns2_2}
-	REST add router intf						${tenant2_name}		${vns2_3}
+	#REST add router intf						${tenant1_name}		${vns1_1}
+	#REST add router intf						${tenant1_name}		${vns1_2}
+	#REST add router intf						${tenant1_name}		${vns1_3}
+	#REST add router intf						${tenant2_name}		${vns2_1}
+	#REST add router intf						${tenant2_name}		${vns2_2}
+	#REST add router intf						${tenant2_name}		${vns2_3}
 	REST add vns ip  							${tenant1_name}  	${vns1_1}  		${vns1_ip1}	  		${vns1_subnet1} 	
 	REST add vns ip  							${tenant1_name}  	${vns1_2}  		${vns1_ip2}	  		${vns1_subnet2} 	
 	REST add vns ip  							${tenant1_name}  	${vns1_3}  		${vns1_ip3}	  		${vns1_subnet3}
@@ -790,6 +1601,9 @@ setup topology
 	REST add portgroup to vns					${tenant2_name}  	${vns2_3} 		${portgroup10} 		${untaggedvlan}	
 	REST add static routes						${tenant1_name}		0.0.0.0/0		 {"tenant-name": "system"}
 	REST add static routes						${tenant2_name}		0.0.0.0/0		 {"tenant-name": "system"}	
+	add inter tenant routing
+	mininet host config
+	
 	
 teardown topology
 	delete fabric switch
@@ -857,6 +1671,8 @@ teardown topology
 	REST delete portgroup						${portgroup10}
 	REST delete portgroup						${portgroup11}
 	sleep										10
+	delete inter tenant routing
+	base suite teardown
 	
 
 mininet host config
@@ -879,6 +1695,7 @@ mininet host config
 	mininet host ipcfg   						${bm3_name}			${bm3_bondif}	${bm3_ip}			${vns2_subnet2}
 	mininet host ipcfg							${bm4_name}			${bm4_bondif}	${bm4_ip}			${vns1_subnet1}
 	mininet host ipcfg   						${bm5_name}			${bm5_bondif}	${bm5_ip}			${vns1_subnet2}
+	mininet host ipcfg							${bm6_name}			${bm6_bondif}	${bm6_ip}			${vns2_subnet1}
 	mininet host ipcfg							${bm8_name}			${bm8_bondif}	${bm8_ip}			${vns2_subnet1}
 	mininet host ipcfg							${bm9_name}			${bm9_bondif}	${bm9_ip}			${vns2_subnet2}
 	mininet host ipcfg   						${bm10_name}		${bm10_bondif}	${bm10_ip}			${vns1_subnet1}	
@@ -888,6 +1705,7 @@ mininet host config
 	mininet host gw								${bm3_name}			${vns2_ip2}		${bm3_bondif}
 	mininet host gw								${bm4_name}			${vns1_ip1}		${bm4_bondif}
 	mininet host gw								${bm5_name}			${vns1_ip2}		${bm5_bondif}
+	mininet host gw								${bm6_name}			${vns2_ip1}		${bm6_bondif}
 	mininet host gw								${bm8_name}			${vns2_ip1}		${bm8_bondif}
 	mininet host gw								${bm9_name}			${vns2_ip2}		${bm9_bondif}
 	mininet host gw								${bm10_name}		${vns2_ip3}		${bm10_bondif}
@@ -907,8 +1725,8 @@ delete inter tenant routing
 	REST delete tenant							${tenant_system}
 	
 Policy tenant interface  [Arguments]  ${seq}  ${action}  ${src}  ${dst} 
-	add inter tenant routing
-	mininet host config
+	#add inter tenant routing
+	#mininet host config
 	REST add policy								${tenant1_name}		${tenant1_polname}		
 	#REST add policy								${tenant2_name}		${tenant2_polname}
 	REST add policy item						${tenant1_name}		${tenant1_polname}		${seq}		${action}		${src}		${dst}
@@ -916,12 +1734,12 @@ Policy tenant interface  [Arguments]  ${seq}  ${action}  ${src}  ${dst}
 	common dumps
 
 Policy vns interface  [Arguments]  ${seq}  ${action}  ${src}  ${dst} 
-	add inter tenant routing
-	mininet host config
-	REST add policy								${tenant1_name}		${tenant1_polname}		
+	#add inter tenant routing
+	#mininet host config
+	#REST add policy								${tenant1_name}		${tenant1_polname}		
 	REST add policy								${tenant2_name}		${tenant2_polname}
-	REST add policy item						${tenant1_name}		${tenant1_polname}		${seq}		${action}		${src}		${dst}
-	REST apply policy on vns					${tenant1_name}		${tenant1_polname}
+	REST add policy item						${tenant2_name}		${tenant2_polname}		${seq}		${action}		${src}		${dst}
+	REST apply policy on vns					${tenant2_name}		${vns2_1}				${tenant2_polname}
 	common dumps
 	
 
