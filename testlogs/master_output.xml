@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generated="20140504 16:40:16.292" generator="Robot 2.8.4 (Python 2.7.3 on linux2)">
+<suite source="/home/amallina/workspace/bigrobot/testsuites_dev/arun/test_gobot.txt" id="s1" name="Test Gobot">
+<test id="s1-t1" name="No Test Case have Run due to build failures.">
+<kw type="kw" name="BuiltIn.Should Be True">
+<doc>Fails if the given condition is not true.</doc>
+<arguments>
+<arg>${false}</arg>
+</arguments>
+<msg timestamp="20140504 16:40:16.330" level="TRACE">Arguments: [ False ]</msg>
+<msg timestamp="20140504 16:40:16.356" level="FAIL">'False' should be true</msg>
+<msg timestamp="20140504 16:40:16.356" level="DEBUG">Traceback (most recent call last):
+  File "/usr/local/lib/python2.7/dist-packages/robot/libraries/BuiltIn.py", line 497, in should_be_true
+    asserts.fail_unless(self._is_true(condition), msg)
+  File "/usr/local/lib/python2.7/dist-packages/robot/utils/asserts.py", line 119, in fail_unless
+    if not expr: _report_failure(msg)
+  File "/usr/local/lib/python2.7/dist-packages/robot/utils/asserts.py", line 230, in _report_failure
+    raise AssertionError(msg)</msg>
+<status status="FAIL" endtime="20140504 16:40:16.356" starttime="20140504 16:40:16.329"></status>
+</kw>
+<doc></doc>
+<tags>
+</tags>
+<status status="FAIL" endtime="20140504 16:40:16.357" critical="yes" starttime="20140504 16:40:16.329">'False' should be true</status>
+</test>
+<doc>This suite is my sandbox for experimentation.</doc>
+<metadata>
+</metadata>
+<status status="FAIL" endtime="20140504 16:40:16.358" starttime="20140504 16:40:16.293"></status>
+</suite>
+<statistics>
+<total>
+<stat fail="1" pass="0">Critical Tests</stat>
+<stat fail="1" pass="0">All Tests</stat>
+</total>
+<tag>
+</tag>
+<suite>
+<stat fail="1" pass="0" id="s1" name="Test Gobot">Test Gobot</stat>
+</suite>
+</statistics>
+<errors>
+<msg timestamp="20140504 16:40:16.288" level="WARN">Topology file (test_gobot.topo) is not defined.
+
+</msg>
+<msg timestamp="20140504 16:40:16.293" level="ERROR">Error in file '/home/amallina/workspace/bigrobot/testsuites_dev/arun/test_gobot.txt': Setting variable '$flase' failed: Invalid variable name '$flase'.</msg>
+</errors>
+</robot>
