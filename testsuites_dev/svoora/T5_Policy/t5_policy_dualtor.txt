@@ -139,7 +139,7 @@ CLI::T8 Counters
 	
 CLI::T9 Max number of entries in a policy-list
 	[Tags]
-	configure 5k entries in one policy-list
+	configure 3k entries in one policy-list
 	Verify running-config and global show commands
 	Verify HW programming
 
@@ -155,7 +155,8 @@ CLI::T11 Remove Max number of entries in a policy list and Max number of policie
 	Remove T10
 	
 #FUNCTIONALITY:
-#below cases are divided into 3 sets, one set policy specified at interface tenant system, second set specified at interface vns, and third set specified at default tenant system
+#below cases are divided into 3 sets, one set policy specified at interface tenant system, 
+#second set specified at interface vns, and third set specified at default tenant system
 T1 Interface tenant permit policy src-ip to dest-ip 
 	[Tags]  smoke
 	${src_dict}=  Create Dictionary  cidr  ${policy_bm1_ip}
