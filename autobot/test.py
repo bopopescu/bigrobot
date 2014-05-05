@@ -387,7 +387,7 @@ class Test(object):
             # We don't want REST object to save the result from the REST
             # command to detect mastership.
             result = n.rest.get("/rest/v1/system/ha/role",
-                                save_last_result=False)
+                                save_last_result=False, log_level='trace')
             content = result['content']
             if content['role'] == "MASTER":
                 return True
@@ -395,7 +395,7 @@ class Test(object):
                 return False
         elif helpers.is_bvs(platform):
             result = n.rest.get("/api/v1/data/controller/cluster",
-                                save_last_result=False)
+                                save_last_result=False, log_level='trace')
             content = result['content']
 
             if 'domain-leader' not in content[0]['status']:
