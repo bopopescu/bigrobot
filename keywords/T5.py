@@ -572,16 +572,16 @@ class T5(object):
         url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/endpoint' % ()
         c.rest.get(url)
         data = c.rest.content()
+        attach_point = switch + "|" + intf
         if len(data) != 0:
                 for i in range(0, len(data)):
                     if str(data[i]["vns"]) == vns:
-                        if str(data[i]["attachment-point"]["vlan"]) == str(vlan):
+                        if str(data[i]["vlan"]) == str(vlan):
                             if (data[i]["mac"] == str(mac)) :
-                                if (data[i]["attachment-point"]["switch"] == switch) :
-                                    if (data[i]["attachment-point"]["interface"] == str(intf)) :
+                                if (data[i]["attachment-point"] == attach_point) :
                                         helpers.log("Expected endpoint are added data matches is %s" % data[i]["mac"])
                                         return True
-                                    else:
+                                else:
                                         helpers.test_failure("Expected endpoint %s are not added" % (str(mac)))
                                         return False
         else:
@@ -2328,10 +2328,10 @@ class T5(object):
                             helpers.test_log("All CIDR routes are present in spine swicthes and VRF Id is 1023")
                             return True
                         else:
-                            helpers.log("All CIDR routes VRF id is not 1023 at spine switches")
+                            helpers.test_failure("All CIDR routes VRF id is not 1023 at spine switches")
                             return False
                 else:
-                    helpers.log("All CIDR routes are not present at spine switches")
+                    helpers.test_failure("All CIDR routes are not present at spine switches")
                     return False       
         else:
             helpers.log("Given switch name is not valid")
@@ -2351,7 +2351,7 @@ class T5(object):
                 if len(data[0]["l3-cidr-route-table"]) == no_of_ip_subnet:
                     helpers.log("All CIDR routes are present at leaf switches")
                 else:
-                    helpers.log("All CIDR routes are not present at spine switches")
+                    helpers.test_failure("All CIDR routes are not present at spine switches")
                     return False       
         else:
             helpers.log("Given switch name is not valid")             
