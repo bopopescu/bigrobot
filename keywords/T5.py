@@ -2321,37 +2321,39 @@ class T5(object):
         url = '/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch-name="%s"]?select=l3-cidr-route-table' % (switch)
         c.rest.get(url)
         data = c.rest.content()
-        if data[0]["switch-name"] == switch:
-                if len(data[0]["l3-cidr-route-table"]) == no_of_ip_subnet:
+        url1 = '/api/v1/data/controller/core/switch[name="%s"]' % (switch)
+        c.rest.get(url1)
+        data1 = c.rest.content()
+        if data[0]["switch-name"] == switch and data1[0]["fabric-role"] == "spine":
+                if len(data[0]["l3-cidr-route-table"]) == int(no_of_ip_subnet):
                     for i in range(0,len(data[0]["l3-cidr-route-table"])):
-                        if data[0]["l3-cidr-route-table"][i]["vrf"] == 1023:
-                            helpers.test_log("All CIDR routes are present in spine swicthes and VRF Id is 1023")
-                            return True
-                        else:
-                            helpers.test_failure("All CIDR routes VRF id is not 1023 at spine switches")
-                            return False
+                        if str(data[0]["l3-cidr-route-table"][i]["vrf"]) != str(1023):
+                            helpers.test_failure("All CIDR routes not created with vrf 1023")
                 else:
                     helpers.test_failure("All CIDR routes are not present at spine switches")
                     return False       
         else:
-            helpers.log("Given switch name is not valid")
+            helpers.log("Given switch name and role is not valid")
     
     def rest_verify_forwarding_cidr_route_leaf(self, switch, no_of_ip_subnet):
         '''
         Function to verify the forwarding cidr table entry in all the switches
         Input: switch name , and no of ip subnet expected in the switch
-        Output: True or false based on the no of routes to be present and system VRF table no (1023 Fixed)
+        Output: True or false based on the no of routes to be present
         '''
         t = test.Test()
         c = t.controller('master')
         url = '/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch-name="%s"]?select=l3-cidr-route-table' % (switch)
         c.rest.get(url)
         data = c.rest.content()
-        if data[0]["switch-name"] == switch:
-                if len(data[0]["l3-cidr-route-table"]) == no_of_ip_subnet:
+        url1 = '/api/v1/data/controller/core/switch[name="%s"]' % (switch)
+        c.rest.get(url1)
+        data1 = c.rest.content()
+        if data[0]["switch-name"] == switch and data1[0]["fabric-role"] == "leaf":
+                if len(data[0]["l3-cidr-route-table"]) == int(no_of_ip_subnet):
                     helpers.log("All CIDR routes are present at leaf switches")
                 else:
-                    helpers.test_failure("All CIDR routes are not present at spine switches")
+                    helpers.test_failure("All CIDR routes are not present at leaf switches")
                     return False       
         else:
-            helpers.log("Given switch name is not valid")             
+            helpers.log("Given switch name and role is not valid")             
