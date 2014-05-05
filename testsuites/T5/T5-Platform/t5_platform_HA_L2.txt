@@ -23,7 +23,7 @@ Library	         keywords/T5Utilities.py
 * Test Case 
 
 Configure Multiple L2 Tenants With Single VNS & Failover
-	[Tags]	smoke  sanity  feature
+	[Tags]	sanity  feature
 	Configure 3-Rack/Dual-Leaf/2-Spine/4-Host Setup For Mininet 
 	Configure 3 Tenants with Different VLAN properties
 	Verify Connectivity in 3-Rack/Dual-Leaf/2-Spine/4-Host Setup
@@ -31,11 +31,11 @@ Configure Multiple L2 Tenants With Single VNS & Failover
 	Verify Connectivity in 3-Rack/Dual-Leaf/2-Spine/4-Host Setup
 
 Verify HA Cluster Formation
-   [Tags]  sanity  feature
+   [Tags]  smoke  sanity  feature
    Verify the cluster formation 
    
 Verify Cluster Election Take-Leader
-	[Tags]  sanity  feature 
+	[Tags]  smoke  sanity  feature 
 	Verify cluster election take leader
 	
 Verify Cluster Election Re-run
@@ -43,7 +43,7 @@ Verify Cluster Election Re-run
 	Verify cluster election rerun 
 	
 Verify Cluster Master Reboot
-	[Tags]  sanity  feature
+	[Tags]  smoke  sanity  feature
 	Reboot the master node & verify fabric integrity
 	
 Verify Cluster Slave Reboot
