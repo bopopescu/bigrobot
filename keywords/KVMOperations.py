@@ -315,7 +315,7 @@ class KVMOperations(object):
                                                               remote_qcow_path=remote_qcow_mininet_path, vm_type='mininet',
                                                               vm_name=vm_name, build_number=build_number)
                 else:
-                    helpers.log("Scp'ing Latest BVS qcow file from jenkins to kvm Host..")
+                    helpers.log("Scp'ing Latest BVS qcow file %s from jenkins to kvm Host.." % remote_qcow_bvs_path)
                     qcow_vm_path = self._scp_file_to_kvm_host(kvm_handle=kvm_handle,
                                                               remote_qcow_path=remote_qcow_bvs_path,
                                                               vm_name=vm_name, build_number=build_number)
@@ -342,6 +342,8 @@ class KVMOperations(object):
                 return result
 
             # For controller, attempt First Boot
+            helpers.log("SLeep another 60 sec for controller to boot up..")
+            time.sleep(30)
             result['vm_ip'] = self._configure_vm_first_boot(cluster_ip=cluster_ip,
                                                             ip_address=ip,
                                                             netmask=netmask,

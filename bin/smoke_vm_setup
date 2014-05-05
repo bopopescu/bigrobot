@@ -295,7 +295,7 @@ c2:\n\
    libvirt_vm_name: %s\n\
    user: %s\n\
    password: %s\n\
-mn1:\n\
+mn:\n\
   ip: %s\n" % (active_vm['vm_ip'], kvm_host, active_vm['vm_name'], kvm_user, kvm_pwd,
                   standby_vm['vm_ip'], kvm_host, standby_vm['vm_name'], kvm_user, kvm_pwd,
                   mininet_vm['vm_ip'])
@@ -310,12 +310,15 @@ mn1:\n\
         vm_domain_names = "%s\n%s\n" % (active_vm['vm_name'],
                                           standby_vm['vm_name'])
     else:
-        vm_domain_names = "%s\n%s\n%s\n" % (active_vm['vm_name'],
+        vm_domain_names = "%s\n%s\n%s\n\n" % (active_vm['vm_name'],
                                       standby_vm['vm_name'],
                                       mininet_vm['vm_name'])
     vm_file_handle.write(vm_domain_names)
     vm_file_handle.close()
     helpers.log("Success in creating VM Domain Name file: %s" % vm_file)
+    helpers.summary_log("Sleep for 1 mins for getting VM 's Ready for Regressions..")
+    time.sleep(60)
+    helpers.summary_log("Sucess with smoke_vm_setup !!!!")
 
 
 if __name__ == '__main__':
