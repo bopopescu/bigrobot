@@ -65,6 +65,7 @@ ${ixia3}			ethernet24
 ${ixia4}			ethernet24
 ${ixia5}			ethernet24
 ${ixia6}			ethernet24
+${leaf0-a_spine0}	ethernet49
 
 ${leaf0_pc1_intf1}	ethernet48
 ${leaf0_pc1_intf2}	ethernet48
