@@ -16,15 +16,15 @@ leafSwitchList = []
 class T5Platform(object):
 
     def __init__(self):
-        pass    
-    
+        pass
+
     def rest_verify_show_cluster(self, **kwargs):
-        
+
         '''Using the 'show cluster' command verify the cluster formation across both nodes
 	       Also check for the formation integrity
 	       Additional inputs: IP Addresses of the Controllers can be specified as: 'c1=a.b.c.d  c2=a.b.e.f'
 	    '''
-         
+
         try:
             t = test.Test()
             if 'c1' in kwargs:
@@ -35,15 +35,15 @@ class T5Platform(object):
                 c2 = t.node_spawn(ip=kwargs.get('c2'))
             else:
                 c2 = t.controller("c2")
-            
+
             url = '/api/v1/data/controller/cluster'
-            
+
             result = c1.rest.get(url)['content']
             reported_active_by_c1 = result[0]['status']['domain-leader']['leader-id']
-            
+
             result = c2.rest.get(url)['content']
             reported_active_by_c2 = result[0]['status']['domain-leader']['leader-id']
-            
+
             if(reported_active_by_c1 != reported_active_by_c2):
                 helpers.log("Both controllers %s & %s are declaring themselves as active" \
                         % (reported_active_by_c1, reported_active_by_c2))
@@ -53,7 +53,7 @@ class T5Platform(object):
                 helpers.log("Active controller id is: %s " % reported_active_by_c1)
                 helpers.log("Pass: Consistent active/standby cluster formation verified")
                 return True
-            
+
         except Exception, err:
             helpers.test_failure("Exception in: rest_verify_ha_cluster %s : %s " % (Exception, err))
             return False
@@ -68,7 +68,7 @@ class T5Platform(object):
         slave = t.controller("slave")
         master = t.controller("master")
 
-        masterID,slaveID = self.getNodeID()
+        masterID, slaveID = self.getNodeID()
         if(masterID == -1 and slaveID == -1):
             return False
 
@@ -80,7 +80,7 @@ class T5Platform(object):
             slave.rest.post(url, {"rigged": True})
         else:
             slave.rest.post(url, {"rigged": False})
-        
+
         sleep(30)
 
         newMasterID = self.getNodeID(False)
@@ -101,29 +101,29 @@ class T5Platform(object):
 
     def rest_verify_cluster_election_take_leader(self):
         ''' Invoke "cluster election take-leader" command and verify the controller state
-            This function will invoke the take_leader functionality and verify the fabric integrity between 
+            This function will invoke the take_leader functionality and verify the fabric integrity between
             before and after states
         '''
         obj = utilities()
-        utilities.fabric_integrity_checker(obj,"before")
+        utilities.fabric_integrity_checker(obj, "before")
         returnVal = self._cluster_election(True)
         if(not returnVal):
             return False
         sleep(30)
         return utilities.fabric_integrity_checker(obj, "after")
-    
-    
+
+
     def cli_cluster_take_leader(self):
-        ''' Function to trigger failover to slave controller via CLI. This function will verify the 
+        ''' Function to trigger failover to slave controller via CLI. This function will verify the
             fabric integrity between states
-            
+
             Input: None
             Output: True if successful, False otherwise
         '''
         t = test.Test()
         c = t.controller('slave')
         obj = utilities()
-        utilities.fabric_integrity_checker(obj,"before")
+        utilities.fabric_integrity_checker(obj, "before")
 
         helpers.log("Failover")
         try:
@@ -152,7 +152,7 @@ class T5Platform(object):
             return False
         sleep(30)
         return utilities.fabric_integrity_checker(obj, "before")
-        
+
 
     def cluster_node_reboot(self, masterNode=True):
 
@@ -162,25 +162,25 @@ class T5Platform(object):
         t = test.Test()
         master = t.controller("master")
         obj = utilities()
-        
+
         if (utilities.cli_get_num_nodes(obj) == 1):
             singleNode = True
         else:
             singleNode = False
-            
+
 
         if(singleNode):
             masterID = self.getNodeID(False)
         else:
-            masterID,slaveID = self.getNodeID()
-        
+            masterID, slaveID = self.getNodeID()
+
         if(singleNode):
             if (masterID == -1):
                 return False
         else:
             if(masterID == -1 and slaveID == -1):
                 return False
-        
+
         try:
             if(masterNode):
                 ipAddr = master.ip()
@@ -203,7 +203,7 @@ class T5Platform(object):
                 loss = helpers.ping(ipAddr)
                 helpers.log("loss is: %s" % loss)
                 if(loss != 0):
-                    if (count > 5): 
+                    if (count > 5):
                         helpers.warn("Cannot connect to the IP Address: %s - Tried for 5 Minutes" % ipAddr)
                         return False
                     sleep(60)
@@ -211,12 +211,12 @@ class T5Platform(object):
                     helpers.log("Trying to connect to the IP Address: %s - Try %s" % (ipAddr, count))
                 else:
                     break
-       
+
         if(singleNode):
             newMasterID = self.getNodeID(False)
         else:
             newMasterID, newSlaveID = self.getNodeID()
-            
+
         if(singleNode):
             if (newMasterID == -1):
                 return False
@@ -232,20 +232,20 @@ class T5Platform(object):
                 return True
             else:
                 helpers.log("Fail: Reboot Failed. Cluster is not stable.  Before the reboot Master is: %s  \n \
-                    After the reboot Master is: %s " %(masterID, newMasterID))
+                    After the reboot Master is: %s " % (masterID, newMasterID))
         else:
             if(masterNode):
                 obj.restart_floodlight_monitor("slave")
             else:
                 obj.restart_floodlight_monitor("master")
-            
-            if(masterNode):      
+
+            if(masterNode):
                 if(masterID == newSlaveID and slaveID == newMasterID):
                     helpers.log("Pass: After the reboot cluster is stable - Master is : %s / Slave is: %s" % (newMasterID, newSlaveID))
                     return True
                 else:
                     helpers.log("Fail: Reboot Failed. Cluster is not stable. Before the master reboot Master is: %s / Slave is : %s \n \
-                            After the reboot Master is: %s / Slave is : %s " %(masterID, slaveID, newMasterID, newSlaveID))
+                            After the reboot Master is: %s / Slave is : %s " % (masterID, slaveID, newMasterID, newSlaveID))
                     obj.stop_floodlight_monitor()
                     return False
             else:
@@ -254,7 +254,7 @@ class T5Platform(object):
                     return True
                 else:
                     helpers.log("Fail: Reboot Failed. Cluster is not stable. Before the slave reboot Master is: %s / Slave is : %s \n \
-                            After the reboot Master is: %s / Slave is : %s " %(masterID, slaveID, newMasterID, newSlaveID))
+                            After the reboot Master is: %s / Slave is : %s " % (masterID, slaveID, newMasterID, newSlaveID))
                     obj.stop_floodlight_monitor()
                     return False
 
@@ -266,7 +266,7 @@ class T5Platform(object):
         master = t.controller("master")
         obj = utilities()
 
-        masterID,slaveID = self.getNodeID()
+        masterID, slaveID = self.getNodeID()
         if(masterID == -1 and slaveID == -1):
             return False
 
@@ -292,7 +292,7 @@ class T5Platform(object):
                 return True
             else:
                 helpers.log("Fail: Shutdown Failed. Cluster is not stable. Before the master node shutdown Master is: %s / Slave is : %s \n \
-                        After the shutdown Master is: %s " %(masterID, slaveID, newMasterID))
+                        After the shutdown Master is: %s " % (masterID, slaveID, newMasterID))
                 return False
         else:
             if(masterID == newMasterID):
@@ -300,91 +300,91 @@ class T5Platform(object):
                 return True
             else:
                 helpers.log("Fail: Shutdown failed. Cluster is not stable. Before the slave shutdown Master is: %s / Slave is : %s \n \
-                        After the shutdown Master is: %s " %(masterID, slaveID, newMasterID))
+                        After the shutdown Master is: %s " % (masterID, slaveID, newMasterID))
                 return False
 
 
     def cli_verify_cluster_master_reboot(self):
         obj = utilities()
-        utilities.fabric_integrity_checker(obj,"before")
+        utilities.fabric_integrity_checker(obj, "before")
         returnVal = self.cluster_node_reboot()
         if(not returnVal):
             return False
-        return utilities.fabric_integrity_checker(obj,"after")
+        return utilities.fabric_integrity_checker(obj, "after")
 
     def cli_verify_cluster_slave_reboot(self):
         obj = utilities()
-        utilities.fabric_integrity_checker(obj,"before")
+        utilities.fabric_integrity_checker(obj, "before")
         returnVal = self.cluster_node_reboot(False)
         if(not returnVal):
             return False
-        return utilities.fabric_integrity_checker(obj,"after")
+        return utilities.fabric_integrity_checker(obj, "after")
 
     def cli_verify_cluster_master_shutdown(self):
         obj = utilities()
-        utilities.fabric_integrity_checker(obj,"before")
+        utilities.fabric_integrity_checker(obj, "before")
         returnVal = self._cluster_node_shutdown()
         if(not returnVal):
             return False
-        return utilities.fabric_integrity_checker(obj,"after")
+        return utilities.fabric_integrity_checker(obj, "after")
 
     def cli_verify_cluster_slave_shutdown(self):
         obj = utilities()
-        utilities.fabric_integrity_checker(obj,"before")
+        utilities.fabric_integrity_checker(obj, "before")
         returnVal = self._cluster_node_shutdown(False)
         if(not returnVal):
             return False
-        return utilities.fabric_integrity_checker(obj,"after")
+        return utilities.fabric_integrity_checker(obj, "after")
 
 
-    def verify_HA_with_disruption(self, disruptMode="switchReboot", disruptTime="during", failoverMode="failover", **kwargs ):
+    def verify_HA_with_disruption(self, disruptMode="switchReboot", disruptTime="during", failoverMode="failover", **kwargs):
         '''
-            This function will carry out different disruptions during failovers & verify fabric 
+            This function will carry out different disruptions during failovers & verify fabric
             integrity. Disruptions will carry out in distributed manner. For eg. if disruptMode is "switchReboot", this
-            functions will schedule a dedicated thread to each switch reboot while carrying out failover function as defined by 
+            functions will schedule a dedicated thread to each switch reboot while carrying out failover function as defined by
             'disruptTime' argument.
-            
+
             Inputs:
                 disruptMode  : "switchReboot"    - Reboot leaf or spine switch eg: "switch=spine0"  / "switch=spine0 leaf0-a"
-                
+
                 disruptTime : Disruptions happens 'during' or 'before" the HA event
-                
+
                 failoverMode : "failover"     - Failover by issuing failover command (default)
-                               "masterReboot" - Failover by rebooting active controller  
-                               
-                kwargs: "switch=spien0 leaf0-a"                
-                                
+                               "masterReboot" - Failover by rebooting active controller
+
+                kwargs: "switch=spien0 leaf0-a"
+
         '''
-        
+
         obj = utilities()
-        utilities.fabric_integrity_checker(obj,"before")
-        
+        utilities.fabric_integrity_checker(obj, "before")
+
         threadCounter = 0
         threadList = []
 
         if (disruptMode == "switchReboot"):
             switchList = kwargs.get('switch').split(' ')
-            for i,switchName in enumerate(switchList):
+            for i, switchName in enumerate(switchList):
                 threadList.append("thread" + '%s' % threadCounter)
-                threadList[i] = T5PlatformThreads(threadCounter, "switchReboot",  switch=switchName)
+                threadList[i] = T5PlatformThreads(threadCounter, "switchReboot", switch=switchName)
                 threadCounter += 1
-            
+
         disruptThreadCounter = threadCounter
-        if(len(threadList)== 0):
+        if(len(threadList) == 0):
             helpers.warn("No disruptMode arguments were detected. Exiting")
             return False
-        
+
         if(failoverMode == "failover"):
             threadList.append("thread" + '%s' % threadCounter)
-            threadList[len(threadList)-1] = T5PlatformThreads(threadCounter, "failover")
+            threadList[len(threadList) - 1] = T5PlatformThreads(threadCounter, "failover")
             threadCounter += 1
         elif(failoverMode == "activeReboot"):
             threadList.append("thread" + '%s' % threadCounter)
-            threadList[len(threadList)-1] = T5PlatformThreads(threadCounter, "activeReboot", "")
+            threadList[len(threadList) - 1] = T5PlatformThreads(threadCounter, "activeReboot", "")
             threadCounter += 1
         elif(failoverMode == "standbyReboot"):
             threadList.append("thread" + '%s' % threadCounter)
-            threadList[len(threadList)-1] = T5PlatformThreads(threadCounter, "standbyReboot", "")
+            threadList[len(threadList) - 1] = T5PlatformThreads(threadCounter, "standbyReboot", "")
             threadCounter += 1
 
 
@@ -392,24 +392,24 @@ class T5Platform(object):
             for thread in threadList:
                 helpers.log("Starting thread: %s" % thread)
                 thread.start()
-        elif(disruptTime == "before"):    
-            for i,thread in enumerate(threadList):
+        elif(disruptTime == "before"):
+            for i, thread in enumerate(threadList):
                 helpers.log("Starting thread: %s" % thread)
                 thread.start()
-                if (i == disruptThreadCounter-1):
+                if (i == disruptThreadCounter - 1):
                     sleep(45)
 
         for thread in threadList:
             helpers.log("Joining thread: %s" % thread)
             thread.join()
-            
+
         sleep(30)
-        return utilities.fabric_integrity_checker(obj,"after")
-        
+        return utilities.fabric_integrity_checker(obj, "after")
+
         # Create new threads
-        #thread1 = Thread(target= self._verify_HA_duringReboot(kwargs.get("switch")))
-        #thread2 = Thread(target= self.cli_cluster_take_leader())
- 
+        # thread1 = Thread(target= self._verify_HA_duringReboot(kwargs.get("switch")))
+        # thread2 = Thread(target= self.cli_cluster_take_leader())
+
 
 
 
@@ -422,11 +422,11 @@ class T5Platform(object):
         usersString = []
         numErrors = 0
         for i in range (0, int(numUsers)):
-            user = "user" + str(i+1)
+            user = "user" + str(i + 1)
             usersString.append(user)
             master.rest.post(url, {"user-name": user})
             sleep(1)
-            
+
             if not master.rest.status_code_ok():
                 helpers.test_failure(master.rest.error())
                 numErrors += 1
@@ -459,12 +459,12 @@ class T5Platform(object):
         numErrors = 0
         for i in range (0, int(numUsers)):
             url = "/api/v1/data/controller/core/aaa/local-user[user-name=\""
-            user = "user" + str(i+1)
+            user = "user" + str(i + 1)
             usersString.append(user)
             url = url + user + "\"]"
             master.rest.delete(url, {})
             sleep(1)
-            
+
             if not master.rest.status_code_ok():
                 helpers.test_failure(master.rest.error())
                 numErrors += 1
@@ -489,83 +489,83 @@ class T5Platform(object):
             else:
                 return True
 
-    
-    def auto_configure_tenants(self, numTenants, numVnsPerTenant, vnsIntIPList,  *args):
-        
-        ''' Add tenant & vns  to the running-config. 
-            Usage: 
+
+    def auto_configure_tenants(self, numTenants, numVnsPerTenant, vnsIntIPList, *args):
+
+        ''' Add tenant & vns  to the running-config.
+            Usage:
                 * Variables
                 @{vnsIntIPDict}  v1  10.10.10.100  v2  20.20.20.100  v3  30.30.30.100
-                @{v1MemberPGList}   v1  PG   p1  10  p3  10  
+                @{v1MemberPGList}   v1  PG   p1  10  p3  10
                 @{v1MemberIntList}  v1  INT  leaf0-a  ethernet33  -1  leaf1-a  ethernet33  -1
                 @{v2MemberPGList}   v2  PG   p2  20  p4  20
                 @{v2MemberIntList}  v2  INT  leaf0-a  ethernet34  -1  leaf1-a  ethernet34  -1
-                
+
                 Test T5Setup
                     [Tags]  Setup
                     auto configure tenants     1  2  ${vnsIntIPDict}  ${v1MemberPGList}  ${v1MemberIntList}  ${v2MemberPGList}  ${v2MemberIntList}
         '''
-        
-        
+
+
         helpers.log("vnsIntIPList is: %s" % vnsIntIPList)
         vnsIPDict = {}
-        
+
         try:
-            vnsIPDict = dict(vnsIntIPList[i:i+2] for i in range(0, len(vnsIntIPList), 2))
+            vnsIPDict = dict(vnsIntIPList[i:i + 2] for i in range(0, len(vnsIntIPList), 2))
         except:
             helpers.test_failure("Error during converting vnsIntIPList to a Dictionary. Check the input parameters for vnsIntIPList")
             return False
-        
+
         vnsMemberPGDict = {}
         vnsMemberIntDict = {}
-        
+
         try:
-            
+
             for arg in args:
-                #helpers.log("arg is: %s" % arg)
+                # helpers.log("arg is: %s" % arg)
                 currentVNS = arg[0]
                 helpers.log("CurrentVNS is : %s" % currentVNS)
-                
+
                 if (arg[1] == "PG"):
                     vnsMemberPGDict[currentVNS] = arg[2:]
-                    helpers.log("Adding %s PG Dict: %s" % (currentVNS,vnsMemberPGDict[currentVNS]))
+                    helpers.log("Adding %s PG Dict: %s" % (currentVNS, vnsMemberPGDict[currentVNS]))
                 elif (arg[1] == "INT"):
                     vnsMemberIntDict[currentVNS] = arg[2:]
-                    helpers.log("Adding %s Int Dict: %s" % (currentVNS,vnsMemberIntDict[currentVNS]))
-                    
-            i=0        
-            while(i< int(numTenants) * int(numVnsPerTenant)):
+                    helpers.log("Adding %s Int Dict: %s" % (currentVNS, vnsMemberIntDict[currentVNS]))
+
+            i = 0
+            while(i < int(numTenants) * int(numVnsPerTenant)):
                     i += 1
-                    vnsName = 'v'+ str(i)
-                    #helpers.log("VNS Name is: %s / PG List is: %s" % (vnsName, vnsMemberPGDict[vnsName]))
-                    #helpers.log("VNS Name is: %s / Int list is: %s" % (vnsName, vnsMemberIntDict[vnsName]))
-            
-            
+                    vnsName = 'v' + str(i)
+                    # helpers.log("VNS Name is: %s / PG List is: %s" % (vnsName, vnsMemberPGDict[vnsName]))
+                    # helpers.log("VNS Name is: %s / Int list is: %s" % (vnsName, vnsMemberIntDict[vnsName]))
+
+
         except:
             helpers.test_failure("Error during converting vns member Lists. Check the input parameters for vnsMemberPGList & vnsMemberIntList")
             return False
-        
-        
+
+
         autoTenantList = []
         autoVNSList = []
-        i=0
-        while (i< int(numTenants)):
+        i = 0
+        while (i < int(numTenants)):
             i += 1
-            autoTenantList.append('autoT'+ str(i))
-        
+            autoTenantList.append('autoT' + str(i))
+
         helpers.log("Tenant List is: %s" % autoTenantList)
-        
+
         Fabric = T5.T5()
         FabricL3 = T5L3.T5L3()
-        
+
         # ==> Add System Router
         Fabric.rest_add_tenant("system")
-        
+
         i = 0
         for tenant in autoTenantList:
             # ==> Add a Tenant
             Fabric.rest_add_tenant(tenant)
-            
+
             j = 0
             while (j < int(numVnsPerTenant)):
                 i += 1
@@ -575,81 +575,81 @@ class T5Platform(object):
                 # ==> Add VNS with vnsName
                 Fabric.rest_add_vns(tenant, vnsName)
                 try:
-                    k = 0 
+                    k = 0
                     helpers.log("VNSName is: %s" % vnsName)
                     while (k < len(vnsMemberPGDict[vnsName])):
                         currentPG = vnsMemberPGDict[vnsName][k]
-                        currentVLAN = vnsMemberPGDict[vnsName][k+1]
+                        currentVLAN = vnsMemberPGDict[vnsName][k + 1]
                         k += 2
-                        #helpers.log("currentPG is: %s" % currentPG)
-                        #helpers.log("currentVLAN is: %s" % currentVLAN)
-                        
+                        # helpers.log("currentPG is: %s" % currentPG)
+                        # helpers.log("currentVLAN is: %s" % currentVLAN)
+
                         # ==> Add member port-group (currentPG, curentVLAN, vnsName)
                         Fabric.rest_add_portgroup_to_vns(tenant, vnsName, currentPG, currentVLAN)
-                        
+
                 except(KeyError):
                     pass
-                
+
                 try:
-                    k = 0 
+                    k = 0
                     while (k < len(vnsMemberIntDict[vnsName])):
                         currentSwitch = vnsMemberIntDict[vnsName][k]
-                        currentInt = vnsMemberIntDict[vnsName][k+1]
-                        currentVLAN = vnsMemberIntDict[vnsName][k+2]
+                        currentInt = vnsMemberIntDict[vnsName][k + 1]
+                        currentVLAN = vnsMemberIntDict[vnsName][k + 2]
                         k += 3
-                        #helpers.log("currentSwitch is: %s" % currentSwitch)
-                        #helpers.log("currentInt is: %s" % currentInt)
-                        #helpers.log("currentVLAN is: %s" % currentVLAN)
-                        
+                        # helpers.log("currentSwitch is: %s" % currentSwitch)
+                        # helpers.log("currentInt is: %s" % currentInt)
+                        # helpers.log("currentVLAN is: %s" % currentVLAN)
+
                         # ==> Add member interface to vns
                         Fabric.rest_add_interface_to_vns(tenant, vnsName, currentSwitch, currentInt, currentVLAN)
-                
-                        
+
+
                 except(KeyError):
                     pass
-                
+
                 # ==> Add the router interface IPs
                 FabricL3.rest_add_router_intf(tenant, vnsName)
-                FabricL3.rest_add_vns_ip(tenant, vnsName, vnsIPDict[vnsName], '24' )
-                
+                FabricL3.rest_add_vns_ip(tenant, vnsName, vnsIPDict[vnsName], '24')
+
                 # ==> Add system interface to tenant
-                FabricL3.rest_add_system_intf_to_tenant_routers(tenant)        
-                    
+                FabricL3.rest_add_system_intf_to_tenant_routers(tenant)
+
             # ==> Add tenant router interface to system
-            FabricL3.rest_add_tenant_routers_intf_to_system(tenant)  
-            
+            FabricL3.rest_add_tenant_routers_intf_to_system(tenant)
+
             # ==> Add static routes pointing to system
             FabricL3.rest_add_static_routes(tenant, '0.0.0.0/0', "{\"tenant-name\": \"system\"}")
-            
+
         return True
-    
+
 
     def auto_configure_fabric_switch(self, spineList, leafList, leafPerRack):
-        ''' Add leaf & spine switches to the running-config. 
-            Usage: 
+        ''' Add leaf & spine switches to the running-config.
+            Usage:
                 * Variables
                 @{spineList}  00:00:00:00:00:01:00:01  00:00:00:00:00:01:00:02
                 @{leafList}  00:00:00:00:00:02:00:01  00:00:00:00:00:02:00:02  00:00:00:00:00:02:00:03  00:00:00:00:00:02:00:04
-                
+
                 Test T5Setup
                     [Tags]  Setup
                     auto configure fabric switch  ${spineList}  ${leafList}  2
         '''
-        
+
         global leafSwitchList
-        
+
         Fabric = T5.T5()
-        for i,dpid in enumerate(spineList):
-            spineName = "spine"+ str(i)
+        for i, dpid in enumerate(spineList):
+            spineName = "spine" + str(i)
             Fabric.rest_add_switch(spineName)
             Fabric.rest_add_dpid(spineName, dpid)
             Fabric.rest_add_fabric_role(spineName, 'spine')
 
         if (int(leafPerRack) == 1):
-            for i,dpid in enumerate(leafList):
-                leafName = "leaf"+str(i)+'-a'
+            for i, dpid in enumerate(leafList):
+                leafName = "leaf" + str(i) + '-a'
                 leafSwitchList.append(leafName)
-                rackName = "rack"+str(i)
+                rackName = "rack" + str(i)
                 Fabric.rest_add_switch(leafName)
                 Fabric.rest_add_dpid(leafName, dpid)
                 Fabric.rest_add_fabric_role(leafName, 'leaf')
@@ -658,133 +658,133 @@ class T5Platform(object):
             if (int(leafPerRack) == 2):
                 if (len(leafList) % 2 == 0):
                     numRacks = len(leafList) / 2
-                    for i in range(0,numRacks):
-                        leafName = "leaf"+str(i)+'-a'
+                    for i in range(0, numRacks):
+                        leafName = "leaf" + str(i) + '-a'
                         leafSwitchList.append(leafName)
-                        rackName = "rack"+str(i)
-                        dpid = leafList[i*2]
+                        rackName = "rack" + str(i)
+                        dpid = leafList[i * 2]
                         Fabric.rest_add_switch(leafName)
                         Fabric.rest_add_dpid(leafName, dpid)
                         Fabric.rest_add_fabric_role(leafName, 'leaf')
                         Fabric.rest_add_leaf_group(leafName, rackName)
-                        leafName = "leaf"+str(i)+'-b'
+                        leafName = "leaf" + str(i) + '-b'
                         leafSwitchList.append(leafName)
-                        rackName = "rack"+str(i)
-                        dpid = leafList[i*2 + 1]
+                        rackName = "rack" + str(i)
+                        dpid = leafList[i * 2 + 1]
                         Fabric.rest_add_switch(leafName)
                         Fabric.rest_add_dpid(leafName, dpid)
                         Fabric.rest_add_fabric_role(leafName, 'leaf')
                         Fabric.rest_add_leaf_group(leafName, rackName)
                 else:
                     numRacks = (len(leafList) / 2) + 1
-                    for i in range(0,numRacks):
-                        leafName = "leaf"+str(i)+'-a'
+                    for i in range(0, numRacks):
+                        leafName = "leaf" + str(i) + '-a'
                         leafSwitchList.append(leafName)
-                        rackName = "rack"+str(i)
-                        dpid = leafList[i*2]
+                        rackName = "rack" + str(i)
+                        dpid = leafList[i * 2]
                         try:
-                            testdpid = leafList[i*2 + 1]
+                            testdpid = leafList[i * 2 + 1]
                             Fabric.rest_add_switch(leafName)
                             Fabric.rest_add_dpid(leafName, dpid)
                             Fabric.rest_add_fabric_role(leafName, 'leaf')
                             Fabric.rest_add_leaf_group(leafName, rackName)
-                            
-                            leafName = "leaf"+str(i)+'-b'
+
+                            leafName = "leaf" + str(i) + '-b'
                             leafSwitchList.append(leafName)
-                            rackName = "rack"+str(i)
-                            dpid = leafList[i*2 + 1]
+                            rackName = "rack" + str(i)
+                            dpid = leafList[i * 2 + 1]
                             Fabric.rest_add_switch(leafName)
                             Fabric.rest_add_dpid(leafName, dpid)
                             Fabric.rest_add_fabric_role(leafName, 'leaf')
                             Fabric.rest_add_leaf_group(leafName, rackName)
-                            
+
                         except:
                             Fabric.rest_add_switch(leafName)
                             Fabric.rest_add_dpid(leafName, dpid)
                             Fabric.rest_add_fabric_role(leafName, 'leaf')
                             Fabric.rest_add_leaf_group(leafName, rackName)
-    
 
-     
+
+
     def auto_delete_fabric_switch(self, spineList, leafList, leafPerRack):
         ''' Delete all the switches in the running-config. Use as running config cleanup function. (teardown)
-            Usage: 
+            Usage:
                 * Variables
                 @{spineList}  00:00:00:00:00:01:00:01  00:00:00:00:00:01:00:02
                 @{leafList}  00:00:00:00:00:02:00:01  00:00:00:00:00:02:00:02  00:00:00:00:00:02:00:03  00:00:00:00:00:02:00:04
-                
+
                 Test T5TearDown
                     [Tags]  Teardown
                     auto delete fabric switch  ${spineList}  ${leafList}  2
         '''
-        
+
         numSpines = len(spineList)
         numLeaves = len(leafList)
-        
+
         Fabric = T5.T5()
-        for i in range(0,numSpines):
+        for i in range(0, numSpines):
             spineName = 'spine' + str(i)
-            Fabric.rest_delete_fabric_switch(spineName) 
-            
+            Fabric.rest_delete_fabric_switch(spineName)
+
         if (int(leafPerRack) == 1):
             for i in range(0, int(numLeaves)):
-                leafName = "leaf"+str(i)+'-a'
+                leafName = "leaf" + str(i) + '-a'
                 Fabric.rest_delete_fabric_switch(leafName)
-                     
+
         else:
             if (int(leafPerRack) == 2):
                 if (numLeaves % 2 == 0):
                     numRacks = numLeaves / 2
-                    for i in range(0,numRacks):
-                        leafName = "leaf"+str(i)+'-a'
+                    for i in range(0, numRacks):
+                        leafName = "leaf" + str(i) + '-a'
                         Fabric.rest_delete_fabric_switch(leafName)
-                        leafName = "leaf"+str(i)+'-b'
+                        leafName = "leaf" + str(i) + '-b'
                         Fabric.rest_delete_fabric_switch(leafName)
                 else:
                     numRacks = (numLeaves / 2) + 1
-                    for i in range(0,numRacks):
-                        leafName = "leaf"+str(i)+'-a'
+                    for i in range(0, numRacks):
+                        leafName = "leaf" + str(i) + '-a'
                         Fabric.rest_delete_fabric_switch(leafName)
                         try:
-                            leafName = "leaf"+str(i)+'-b'
+                            leafName = "leaf" + str(i) + '-b'
                             Fabric.rest_delete_fabric_switch(leafName)
                         except:
                             pass
-                             
-    
+
+
     def auto_delete_fabric_portgroups(self):
         ''' Delete all the port groups in the running-config. Use as running config cleanup function. (teardown)
         '''
-        
+
         url = "/api/v1/data/controller/applications/bvs/port-group?config=true"
         t = test.Test()
         master = t.controller("master")
-        
+
         result = master.rest.get(url)['content']
 
         for pg in result:
-            url = '/api/v1/data/controller/applications/bvs/port-group[name="%s"]' %  pg['name']
+            url = '/api/v1/data/controller/applications/bvs/port-group[name="%s"]' % pg['name']
             master.rest.delete(url, {})
 
-             
-                             
-    def platform_ping(self, src, dst ):
+
+
+    def platform_ping(self, src, dst):
         '''
             Extended mininet_ping function to handle ping failures gracefully for platform HA test cases
             Retry ping 5 times and report failures / Issue Bug reports / Sleeps accordingly
         '''
         global mininetPingFails
-        mynet = mininet.Mininet()     
+        mynet = mininet.Mininet()
         loss = mynet.mininet_ping(src, dst)
         if (loss != '0'):
-            #sleep(5)
+            # sleep(5)
             loss = mynet.mininet_ping(src, dst)
             if (loss != '0'):
                 if(mininetPingFails == 5):
                     helpers.warn("5 Consecutive Ping Failures: Issuing Mininet-BugReport")
-                    #mynet.mininet_bugreport()
+                    # mynet.mininet_bugreport()
                     return False
-                helpers.warn("Ping failed between: %s & %s" % (src,dst))
+                helpers.warn("Ping failed between: %s & %s" % (src, dst))
                 mininetPingFails += 1
                 return True
             else:
@@ -793,7 +793,7 @@ class T5Platform(object):
         else:
             mininetPingFails = 0
         return True
-    
+
     def platform_bash_ping(self, src, dst):
         '''
             Extended bash_ping function to handle ping failures gracefully for platform HA test cases
@@ -808,9 +808,9 @@ class T5Platform(object):
             if (loss == '100'):
                 if(hostPingFails == 5):
                     helpers.warn("5 Consecutive Ping Failures: Please collect logs from the physical host")
-                    #mynet.mininet_bugreport()
+                    # mynet.mininet_bugreport()
                     return False
-                helpers.warn("Ping failed between: %s & %s" % (src,dst))
+                helpers.warn("Ping failed between: %s & %s" % (src, dst))
                 hostPingFails += 1
                 return True
             else:
@@ -819,9 +819,9 @@ class T5Platform(object):
         else:
             hostPingFails = 0
         return True
-        
-    
-    
+
+
+
     def do_show_run_vns_verify(self, vnsName, numMembers):
         t = test.Test()
         master = t.controller("master")
@@ -831,9 +831,9 @@ class T5Platform(object):
         vnsList = result["content"][0]['vns'][0]['port-group-membership-rules']
         if (len(vnsList) != int(numMembers)):
             helpers.warn("Show run output is not correct for VNS members. Collecting support logs from the mininet")
-            mynet = mininet.Mininet()  
+            mynet = mininet.Mininet()
             out = mynet.mininet_bugreport()
-            helpers.log("Bug Report Location is: %s " %  out)
+            helpers.log("Bug Report Location is: %s " % out)
             for i in range(0, 2):
                 helpers.warn("Show run output is not correct for VNS members. Please collect switch support logs")
                 sleep(30)
@@ -844,36 +844,36 @@ class T5Platform(object):
 
 
     def getNodeID(self, slaveNode=True):
-        
-        '''         
+
+        '''
         Description:
-        -    This function will handout the NodeID's for master & slave nodes 
-        
+        -    This function will handout the NodeID's for master & slave nodes
+
         Objective:
         -    This is designed to be resilient to node failures in HA environments. Eg: If the node is not
             reachable or it's powered down this function will handle the logic
-            
+
         Inputs:
         |    boolean: slaveNode  |  Whether secondary node is available in the system. Default is True
-        
+
         Outputs:
         |    If slaveNode: return (masterID, slaveID)
         |    else:    return (masterID)
 
-        
-        ''' 
+
+        '''
         numTries = 0
         t = test.Test()
         master = t.controller("master")
-    
-         
+
+
         while(True):
             try:
                 showUrl = '/api/v1/data/controller/cluster'
                 helpers.log("Master is : %s " % master.name)
                 result = master.rest.get(showUrl)['content']
                 masterID = result[0]['status']['local-node-id']
-                break 
+                break
             except(KeyError):
                 if(numTries < 5):
                     helpers.log("Warning: KeyError detected during master ID retrieval. Sleeping for 10 seconds")
@@ -893,7 +893,7 @@ class T5Platform(object):
                     showUrl = '/api/v1/data/controller/cluster'
                     result = slave.rest.get(showUrl)['content']
                     slaveID = result[0]['status']['local-node-id']
-                    break 
+                    break
                 except(KeyError):
                     if(numTries < 5):
                         helpers.log("Warning: KeyError detected during slave ID retrieval. Sleeping for 10 seconds")
@@ -901,16 +901,16 @@ class T5Platform(object):
                         numTries += 1
                     else:
                         helpers.log("Error: KeyError detected during slave ID retrieval")
-                        return (-1,-1)
+                        return (-1, -1)
 
 
         if(slaveNode):
             return (masterID, slaveID)
         else:
             return masterID
-        
-        
-        
+
+
+
     def rest_configure_virtual_ip(self, vip):
         ''' Function to configure Virtual IP of the cluster via REST
         Input: VIP address
@@ -945,9 +945,9 @@ class T5Platform(object):
             return False
         else:
             return True
- 
-        
-        
+
+
+
     def cli_configure_virtual_ip(self, vip):
         ''' Function to show Virtual IP of a controller via CLI
         Input: None
@@ -1056,8 +1056,8 @@ class T5Platform(object):
             return False
         else:
             return True
-        
-        
+
+
     def rest_get_mac_using_virtual_ip(self, vip):
         ''' Function to verify that Virtual IP address
         points to some controller via REST
@@ -1108,8 +1108,8 @@ class T5Platform(object):
                 return content[0]['ipv4-address']
             else:
                 return None
-        
-        
+
+
     def rest_add_monitor_session(self, sessionID, srcSwitch, srcInt, dstSwitch, dstInt, **kwargs):
         '''
             Add a monitor session (SPAN) to the switch
@@ -1123,69 +1123,69 @@ class T5Platform(object):
 
         t = test.Test()
         master = t.controller("master")
-        
+
         url = '/api/v1/data/controller/applications/bvs/monitor-session[id=%s]' % (sessionID)
-        
+
         master.rest.put(url, {"id": sessionID})
-                
+
         url = '/api/v1/data/controller/applications/bvs/monitor-session[id=%s]/source[switch-name="%s"][interface-name="%s"]' % (sessionID, srcSwitch, srcInt)
         result = master.rest.put(url, {"direction": kwargs.get("direction"), "switch-name": srcSwitch , "interface-name": srcInt})
 
         url = '/api/v1/data/controller/applications/bvs/monitor-session[id=%s]/destination[switch-name="%s"][interface-name="%s"]' % (sessionID, dstSwitch, dstInt)
         result = master.rest.put(url, {"switch-name": srcSwitch , "interface-name": dstInt})
-        
+
         if master.rest.status_code_ok():
             return True
         else:
             return False
-        
-    
+
+
     def rest_activate_monitor_session(self, sessionID):
-        
+
         t = test.Test()
         master = t.controller("master")
         url = '/api/v1/data/controller/applications/bvs/monitor-session[id=%s]' % (sessionID)
-        
+
         master.rest.patch(url, {"active": 'true'})
-        
+
         if master.rest.status_code_ok():
                 return True
         else:
                 return False
-            
-    
+
+
     def rest_deactivate_monitor_session(self, sessionID):
         t = test.Test()
         master = t.controller("master")
-        
+
         url = '/api/v1/data/controller/applications/bvs/monitor-session[id=%s]/active' % (sessionID)
-        
+
         master.rest.delete(url)
-        
+
         if master.rest.status_code_ok():
                 return True
         else:
                 return False
-            
-    
+
+
     def rest_delete_monitor_session(self, sessionID):
-        
+
         t = test.Test()
-        master = t.controller("master") 
+        master = t.controller("master")
         url = '/api/v1/data/controller/applications/bvs/monitor-session[id=%s]' % (sessionID)
-        
+
         master.rest.delete(url, {"id": sessionID})
-        
+
         if master.rest.status_code_ok():
             return True
         else:
             return False
-        
-        
+
+
     def rest_verify_monitor_session(self, sessionID, srcSwitch, srcInt, dstSwitch, dstInt, **kwargs):
         '''
             Verify a monitor session (SPAN) in the switch. This uses "show run monitor-session" command
-            for the verification 
+            for the verification
             Inputs: sessionID - Session ID for the monitor session
                     srcSwitch/Int - Source switch & interface
                     dstSwitch/Int - Destination switch & interface
@@ -1193,14 +1193,14 @@ class T5Platform(object):
                 True - If the session exits
                 False - If the session doesn't exists
         '''
-        
+
         t = test.Test()
         master = t.controller("master")
-        
+
         foundSession = False
         url = "/api/v1/data/controller/applications/bvs/monitor-session?config=true"
         result = master.rest.get(url)['content']
-        
+
         try:
             for session in result:
                 if (str(session['id']) == sessionID):
@@ -1220,9 +1220,9 @@ class T5Platform(object):
                     if(session['destination'][0]['interface-name'] != dstInt):
                         helpers.log("Wrong destination interface in the monitor session %s : %s" % (sessionID, dstInt))
                         return False
-                    
+
                     pass
-                    
+
         except(KeyError):
             helpers.warn("KeyError detected: One of the fields are missing from the monitor session")
             helpers.log(session)
@@ -1237,44 +1237,44 @@ class T5Platform(object):
 
 
     def verify_ping_with_tcpdump(self, host, ipAddr, verifyHost, verifyInt, *args):
-        
+
         ''' This function will issue a ping request and verify it through the TCP dump.
-        
+
         Input:  host -> hostname from the topo file
                 ipAddr -> Destination IP address of that ping request should go
                 verifyHost -> Host where tcpdump is being executed
                 verifyInt -> interfaces of the host that tcpdump would get excuted
                 verifyString -> String to search in the tcpdump output
         '''
-        
+
         t = test.Test()
         n = t.node(verifyHost)
-        
+
         verifyString = ""
         for arg in args:
             verifyString += '.*' + arg
         verifyString += '.*'
         # Issue a tcpdump & make sure there's no traffic already matching "verifyString" is receiving
-        output = n.bash("timeout 5 tcpdump -i %s" % verifyInt )
+        output = n.bash("timeout 5 tcpdump -i %s" % verifyInt)
         match = re.search(r"%s" % verifyString, output['content'], re.S | re.I)
-        
+
         if match:
             helpers.log("verifyString is: %s" % verifyString)
             helpers.log("Found it on the tcpdump output before issueing a ping: %s" % output['content'])
             return False
-        
+
         else:
             # Schedule a different thread to execute the ping. Ping will be executed for 10 packets
-            pingThread = T5PlatformThreads(1, "hostPing",  host=host, IP=ipAddr)
+            pingThread = T5PlatformThreads(1, "hostPing", host=host, IP=ipAddr)
             helpers.log("Starting ping thread to ping from %s to destIP: %s" % (host, ipAddr))
             pingThread.start()
-            
-    
-            output = n.bash("timeout 5 tcpdump -i %s" % verifyInt )
+
+
+            output = n.bash("timeout 5 tcpdump -i %s" % verifyInt)
             verifyStringFound = re.search(r"%s" % verifyString, output['content'], re.S | re.I)
-            
+
             pingThread.join()
-            
+
             if verifyStringFound:
                 return True
             else:
@@ -1303,10 +1303,10 @@ class T5Platform(object):
                 helpers.test_failure(content)
                 return False
             elif options[0] == 0 :
-                helpers.log("INFO:  need to provide passwd " )
+                helpers.log("INFO:  need to provide passwd ")
                 output = c.config(scp_passwd)['content']
             elif options[0] == 1:
-                helpers.log("INFO:  need to send yes, then provide passwd " )
+                helpers.log("INFO:  need to send yes, then provide passwd ")
                 c.send('yes')
                 c.expect(r'[Pp]assword:')
                 output = c.config(scp_passwd)['content']
@@ -1325,7 +1325,7 @@ class T5Platform(object):
         if options[0] < 2:
             for index, line in enumerate(output):
                 if '100%' in line:
-                    output = output[(index+1):]
+                    output = output[(index + 1):]
                     break
 
         helpers.log("Cropped output *** %s " % output)
@@ -1336,7 +1336,7 @@ class T5Platform(object):
         for line in output:
             if re.match(r'[0-9].*|< \!|---|> \!|< \Z|> \Z|\Z', line):
                 helpers.log("OK: %s" % line)
-            elif re.match(r'[<>]   hostname|[<>]     ip', line) and node=='slave':
+            elif re.match(r'[<>]   hostname|[<>]     ip', line) and node == 'slave':
                 helpers.log("OK: %s" % line)
             else:
                 helpers.log("files different at line:\n%s" % line)
@@ -1370,10 +1370,10 @@ class T5Platform(object):
 
         if options[0] < 2:
             if options[0] == 0 :
-                helpers.log("INFO:  need to provide passwd " )
+                helpers.log("INFO:  need to provide passwd ")
                 c.send(scp_passwd)
             elif options[0] == 1:
-                helpers.log("INFO:  need to send yes, then provide passwd " )
+                helpers.log("INFO:  need to send yes, then provide passwd ")
                 c.send('yes')
                 c.expect(r'[Pp]assword:')
                 c.send(scp_passwd)
@@ -1425,7 +1425,7 @@ class T5Platform(object):
             if not len(rc) == len(config_file):
                 helpers.log("Length of RC is different than lenght of RC in file")
                 return False
-            for index,line in enumerate(rc):
+            for index, line in enumerate(rc):
                 helpers.log("Comparing '%s' and '%s'" % (line, config_file[index]))
                 if 'Current Time' in line:
                     assert 'Current Time' in config_file[index]
@@ -1465,14 +1465,14 @@ class T5Platform(object):
 
             helpers.log("length is %s" % len(rc))
             helpers.log("length is %s" % len(config_file))
-            #Cropping headers of the outputs
+            # Cropping headers of the outputs
             rc = rc[4:]
             config_file = config_file[8:]
 
             if not len(rc) == len(config_file):
                 helpers.log("Length of RC is different than lenght of RC in config")
                 return False
-            for index,line in enumerate(rc):
+            for index, line in enumerate(rc):
                 helpers.log("Comparing '%s' and '%s'" % (line, config_file[index]))
                 if not line == config_file[index]:
                     helpers.log("difference")
@@ -1540,43 +1540,43 @@ class T5Platform(object):
         else:
             return True
 
-    def copy_pkg_from_jenkins(self,node='master', check=True):
-        ''' 
+    def copy_pkg_from_jenkins(self, node='master', check=True):
+        '''
           copy the latest upgrade package from Jenkin
           Author: Mingtao
-          input:  node  - controller to copy the image, 
+          input:  node  - controller to copy the image,
                           master, slave, c1 c2
-          usage:  
+          usage:
               check: True, if there is a image, will not copy
           output: image build
-                     
+
         '''
         t = test.Test()
         c = t.controller(node)
         if check is True:
-            (num,image) = self.cli_check_image(node)
-            helpers.log('INFO: *******system image is: %s ' % image)            
+            (num, image) = self.cli_check_image(node)
+            helpers.log('INFO: *******system image is: %s ' % image)
         else:
             num = -1
-       
+
         if str(num) == '-1':
             helpers.log("INFO: system NOT have image, or ignore check,   will copy image")
             c.config('')
             string = 'copy "scp://bsn@jenkins:/var/lib/jenkins/jobs/bvs master/lastSuccessful/archive/target/appliance/images/bvs/controller-upgrade-bvs-*-SNAPSHOT.pkg"'
             c.send(string + ' image://')
-#            c.expect(r'[\r\n].+password: ') 
+#            c.expect(r'[\r\n].+password: ')
             c.expect(r'[\r\n].+password: |[\r\n].+(yes/no)?')
             content = c.cli_content()
             helpers.log("*****Output is :\n%s" % content)
             if re.match(r'.*password:.*', content):
-                helpers.log("INFO:  need to provide passwd " )
+                helpers.log("INFO:  need to provide passwd ")
                 c.send('bsn')
             elif re.match(r'.+(yes/no)?', content):
-                helpers.log("INFO:  need to send yes, then provide passwd " )
+                helpers.log("INFO:  need to send yes, then provide passwd ")
                 c.send('yes')
                 c.expect(r'[\r\n].+password: ')
                 c.send('bsn')
-            
+
             try:
                 c.expect(timeout=300)
             except:
@@ -1584,85 +1584,85 @@ class T5Platform(object):
                 return False
             else:
                 helpers.log('scp completed successfully')
-                (num,image) = self.cli_check_image(node)    
+                (num, image) = self.cli_check_image(node)
                 if num == -1:
-                    helpers.log('there is still no image') 
-                    return False                               
+                    helpers.log('there is still no image')
+                    return False
 
         else:
             helpers.log("INFO: system has image: %s, will not copy image again" % image)
 
         return image
-    
-    def copy_pkg_from_server(self,src,node='master',passwd='bsn',soft_error=False):
-        ''' 
+
+    def copy_pkg_from_server(self, src, node='master', passwd='bsn', soft_error=False):
+        '''
           copy the a upgrade package from server
           Author: Mingtao
-          input:  node  - controller to copy the image, 
+          input:  node  - controller to copy the image,
                           master, slave, c1 c2
-          usage: 
-              copy_pkg_from_server  bsn@qa-kvm-32:/home/mingtao/bigtap-3.0.0-upgrade-2014.02.27.1852.pkg 
+          usage:
+              copy_pkg_from_server  bsn@qa-kvm-32:/home/mingtao/bigtap-3.0.0-upgrade-2014.02.27.1852.pkg
               soft_error:  True, handle negative case
           output: image build
-                     
+
         '''
         t = test.Test()
         c = t.controller(node)
-      
+
         c.config('')
         string = 'copy scp://' + src
         c.send(string + ' image://')
- 
+
         c.expect(r'[\r\n].+password: |[\r\n].+(yes/no)?')
         content = c.cli_content()
         helpers.log("*****Output is :\n%s" % content)
         if re.match(r'.*password:.* ', content):
-            helpers.log("INFO:  need to provide passwd " )
+            helpers.log("INFO:  need to provide passwd ")
             c.send(passwd)
         elif re.match(r'.+(yes/no)?', content):
-            helpers.log("INFO:  need to send yes, then provide passwd " )
+            helpers.log("INFO:  need to send yes, then provide passwd ")
             c.send('yes')
             c.expect(r'[\r\n].+password: ')
             c.send(passwd)
-        
+
         try:
-            c.expect(timeout=180)                    
+            c.expect(timeout=180)
         except:
             helpers.log('scp failed')
             return False
         else:
             helpers.log('scp completed successfully')
-            content = c.cli_content()            
+            content = c.cli_content()
             temp = helpers.strip_cli_output(content)
             temp = helpers.str_to_list(temp)
             helpers.log("*****Output list   is :\n%s" % temp)
             line = temp[-1]
-            if re.match(r'Error:.*', line) and not re.match(r'.*already exists.*', line):   
-                helpers.log("Error: %s" % line)    
-                if soft_error:           
+            if re.match(r'Error:.*', line) and not re.match(r'.*already exists.*', line):
+                helpers.log("Error: %s" % line)
+                if soft_error:
                     return False
                 else:
-                    helpers.test_failure("Error: %s" % line)   
+                    helpers.test_failure("Error: %s" % line)
             else:
                 image = self.cli_check_image(node)
 
         return image
- 
 
-    def cli_check_image(self,node='master',soft_error=False):
-        ''' 
+
+    def cli_check_image(self, node='master', soft_error=False):
+        '''
           check image available in the system "show image"
           Author: Mingtao
-          input:  node  - controller  
+          input:  node  - controller
                           master, slave, c1 c2
           usage:  ${num}  ${image}=      cli_check_image
           output: ${num - the number of images
                 ${image}   - the image build in a list
         '''
-        
+
         t = test.Test()
         c = t.controller(node)
-        helpers.log('INFO: Entering ==> check_image with soft_error: %s' %str(soft_error))        
+        helpers.log('INFO: Entering ==> check_image with soft_error: %s' % str(soft_error))
         c.enable('')
         c.enable("show image")
         content = c.cli_content()
@@ -1670,106 +1670,106 @@ class T5Platform(object):
         temp = helpers.strip_cli_output(content)
         temp = helpers.str_to_list(temp)
         helpers.log("*****Output list   is :\n%s" % temp)
-        if re.match(r'Error:.*', temp[0]):   
-            helpers.log("Error: %s" % temp[0])            
-            if soft_error:           
+        if re.match(r'Error:.*', temp[0]):
+            helpers.log("Error: %s" % temp[0])
+            if soft_error:
                 return False
             else:
-                helpers.test_failure("Error: %s" %temp)   
-        
+                helpers.test_failure("Error: %s" % temp)
+
         if len(temp) == 1 and 'None.' in temp:
             helpers.log("INFO:  ***image is not in controller******")
             num = -1
-            images =[]
-          
+            images = []
+
         else:
             temp.pop(0);temp.pop(0)
             helpers.log("INFO:  ***image is available: %s" % temp)
-        
-            num = len(temp) 
-            images =[]
+
+            num = len(temp)
+            images = []
             for line in temp:
                 line = line.split()
                 image = line[3]
                 helpers.log("INFO: ***image is available: %s" % image)
                 images.append(image)
             helpers.log("INFO:  ***image is available: %s" % images)
-  
+
         return num, images
 
 
-    def cli_delete_image(self,node='master',image=None):
-        ''' 
-          delete image  in system             
+    def cli_delete_image(self, node='master', image=None):
+        '''
+          delete image  in system
           Author: Mingtao
-          input:  node  - controller  
+          input:  node  - controller
                           master, slave, c1 c2
                   image - build number to be deleted
                           None - delete all the images
-          usage:   
+          usage:
           output: ${num - the number of images
                   ${image}   - the image build in a list
-        '''       
-        
+        '''
+
         t = test.Test()
         c = t.controller(node)
-        helpers.log('INFO: Entering ==> cli_delete_image  '  )    
-        (_,images) = self.cli_check_image(node)        
+        helpers.log('INFO: Entering ==> cli_delete_image  ')
+        (_, images) = self.cli_check_image(node)
         if image is None:
             for image in images:
                 c.config('')
-                c.send('delete image %s' %image) 
-                c.expect(r".*: " )
-                c.send('yes') 
+                c.send('delete image %s' % image)
+                c.expect(r".*: ")
+                c.send('yes')
                 c.expect()
-            (newnum,newimages) = self.cli_check_image(node)  
+            (newnum, newimages) = self.cli_check_image(node)
             if newnum != -1:
-                helpers.log('Error:  not all the images are deleted  '  )     
-                return False                   
+                helpers.log('Error:  not all the images are deleted  ')
+                return False
         else:
             if image in images:
                 c.config('')
-                c.send('delete image %s' %image) 
-                c.expect(r".*: " )
-                c.send('yes') 
-                c.expect()                
-                (_,newimages) = self.cli_check_image(node)  
+                c.send('delete image %s' % image)
+                c.expect(r".*: ")
+                c.send('yes')
+                c.expect()
+                (_, newimages) = self.cli_check_image(node)
                 if image in newimages:
-                    helpers.log('Error: images: %s is NOT  deleted' %image )     
-                    return False                                       
+                    helpers.log('Error: images: %s is NOT  deleted' % image)
+                    return False
             else:
-                helpers.log("INFO: image: %s not in controller" % image)          
-                
+                helpers.log("INFO: image: %s not in controller" % image)
+
         return True
 
 
     def cli_upgrade_stage(self, node='master', image=None):
-        ''' 
-          upgrade stage  -  1 step of upgrade         
+        '''
+          upgrade stage  -  1 step of upgrade
           Author: Mingtao
-          input:  node  - controller 
+          input:  node  - controller
                           master, slave, c1 c2
                   image - build number to be staged
-                          None - pick the biggest build number  
-          usage:   
+                          None - pick the biggest build number
+          usage:
           output: True  - upgrade staged successfully
                   False  -upgrade staged Not successfully
-        '''              
+        '''
         t = test.Test()
         c = t.controller(node)
-        helpers.log('INFO: Entering ==> cli_upgrade_stage'   )
-        
+        helpers.log('INFO: Entering ==> cli_upgrade_stage')
+
         c.config('')
         if image is None:
-            (num,images) = self.cli_check_image(node)
+            (num, images) = self.cli_check_image(node)
             if num == 1:
                 c.send('upgrade stage')
             else:
                 image = max(images)
-                c.send('upgrade stage ' + image) 
+                c.send('upgrade stage ' + image)
         else:
             c.send('upgrade stage ' + image)
-        c.expect(r'[\r\n].*to continue.*')      
+        c.expect(r'[\r\n].*to continue.*')
         c.send("yes")
         try:
             c.expect(timeout=900)
@@ -1790,18 +1790,18 @@ class T5Platform(object):
 
 
 
-    def cli_upgrade_launch(self,node='master'):
-        ''' 
-          upgrade launch  -  2 step of upgrade         
+    def cli_upgrade_launch(self, node='master'):
+        '''
+          upgrade launch  -  2 step of upgrade
           Author: Mingtao
-          input:  node  - controller  
+          input:  node  - controller
                           master, slave, c1 c2
-                  
-          usage:   
+
+          usage:
           output: True  - upgrade launched successfully
                   False  -upgrade launched Not successfully
-        '''              
-                
+        '''
+
         t = test.Test()
         c = t.controller(node)
         helpers.log('INFO: Entering ==> cli_upgrade_launch ')
@@ -1811,7 +1811,7 @@ class T5Platform(object):
         content = c.cli_content()
         helpers.log("*****Output is :\n%s" % content)
         c.send("yes")
-         
+
         try:
             c.expect(r'[\r\n].+Rebooting.*')
         except:
@@ -1821,80 +1821,80 @@ class T5Platform(object):
             helpers.log('INFO: upgrade launch  successfully')
             return True
         return False
-    
-    
-    
-    def cli_take_snapshot(self,node='master', run_config=None, local_node=None, fabric_switch=None,filepath=None):
-        ''' 
-          take snapshot of the system, can only take snapshot one by one  
+
+
+
+    def cli_take_snapshot(self, node='master', run_config=None, local_node=None, fabric_switch=None, filepath=None):
+        '''
+          take snapshot of the system, can only take snapshot one by one
           Author: Mingtao
-          input:  node  - controller  
+          input:  node  - controller
                           master, slave, c1 c2
                   run_config   - runnning config
                   fabric_switch  -  show fabric switch
                   filepath -  file infos in the filepath
-          usage:   
+          usage:
           output: "show running-config" or "show fabric_switch" or "ls "
-                   
-        '''              
+
+        '''
         t = test.Test()
         c = t.controller(node)
         helpers.log('INFO: Entering ==> cli_take_sanpshot')
-        host = Host.Host()    
-        
-        if run_config: 
-            c.enable('show running-config')     
-            content = c.cli_content()       
-            helpers.log("********content in string:************\n%s" % content)       
+        host = Host.Host()
+
+        if run_config:
+            c.enable('show running-config')
+            content = c.cli_content()
+            helpers.log("********content in string:************\n%s" % content)
             temp = helpers.strip_cli_output(content)
             temp = helpers.str_to_list(temp)
             helpers.log("********content is list************\n%s" % helpers.prettify(temp))
             config = temp[6:]
             content = '\n'.join(config)
-            helpers.log("********config :************\n%s" % content)  
-            new_content = re.sub(r'\s+hashed-password.*$','\n  remove-passwd',content,flags=re.M)  
+            helpers.log("********config :************\n%s" % content)
+            new_content = re.sub(r'\s+hashed-password.*$', '\n  remove-passwd', content, flags=re.M)
             if local_node is None:
-                new_content = re.sub(r'local node.*! user','\n  remove-local-node',new_content,flags=re.DOTALL)               
-            helpers.log("********config after remove passwd :************\n%s" % new_content)                          
+                new_content = re.sub(r'local node.*! user', '\n  remove-local-node', new_content, flags=re.DOTALL)
+            helpers.log("********config after remove passwd :************\n%s" % new_content)
             return  new_content
-        if fabric_switch: 
-            c.enable('show fabric switch')     
-            content = c.cli_content()       
-            helpers.log("********content in string:************\n%s" % content)       
+        if fabric_switch:
+            c.enable('show fabric switch')
+            content = c.cli_content()
+            helpers.log("********content in string:************\n%s" % content)
             temp = helpers.strip_cli_output(content)
-            helpers.log("********string :************\n%s" % temp)                   
+            helpers.log("********string :************\n%s" % temp)
             return  temp
         if filepath:
             fileinfo = host.bash_ls(node, filepath)
-            helpers.log("********file info is************\n%s" % fileinfo)    
-            return fileinfo         
-        return False    
+            helpers.log("********file info is************\n%s" % fileinfo)
+            return fileinfo
+        return False
 
- 
 
-    def rest_get_node_role(self,node='c1'):
-        '''  
+
+    def rest_get_node_role(self, node='c1'):
+        '''
            return the local node role:
           Author: Mingtao
-          input:  node  - controller  
-                           c1 c2                
-          usage:   
+          input:  node  - controller
+                           c1 c2
+          usage:
           output: active or stand-by
           fails if there is no domain-leader for the cluster
         '''
         t = test.Test()
         c = t.controller(node)
         helpers.log('INFO: Entering ==> rest_get_node_role ')
- 
-        
-        url = '/api/v1/data/controller/cluster'  
+
+
+        url = '/api/v1/data/controller/cluster'
         c.rest.get(url)
         if not c.rest.status_code_ok():
             helpers.test_failure(c.rest.error())
 
         if(c.rest.content()):
             local_id = c.rest.content()[0]['status']['local-node-id']
-            helpers.log("INFO: local node ID: %s" %  local_id)
+            helpers.log("INFO: local node ID: %s" % local_id)
             if c.rest.content()[0]['status']['domain-leader']:
                 leader_id = c.rest.content()[0]['status']['domain-leader']['leader-id']
                 helpers.log("INFO: domain-leader: %s" % c.rest.content()[0]['status']['domain-leader']['leader-id'])
@@ -1902,169 +1902,169 @@ class T5Platform(object):
                     return 'active'
                 else:
                     return 'stand-by'
-                
+
             else:
-                helpers.log("ERROR: there is no domain-leader" ) 
+                helpers.log("ERROR: there is no domain-leader")
                 helpers.test_failure('ERROR: There is no domain-leader')
-        return False     
+        return False
 
 
-    def cli_get_node_role(self,node='c1'):
-        '''  
+    def cli_get_node_role(self, node='c1'):
+        '''
            return the local node role:
           Author: Mingtao
-          input:  node  - controller  
-                           c1 c2                
-          usage:   
+          input:  node  - controller
+                           c1 c2
+          usage:
           output: active or stand-by
           fails if there is no domain-leader for the cluster
-        ''' 
+        '''
         t = test.Test()
         c = t.controller(node)
-        helpers.log('INFO: Entering ==> cli_get_node_role ')       
-        c.cli('show cluster' )
+        helpers.log('INFO: Entering ==> cli_get_node_role ')
+        c.cli('show cluster')
         content = c.cli_content()
         temp = helpers.strip_cli_output(content)
         temp = helpers.str_to_list(temp)
-        for line in temp:          
+        for line in temp:
             helpers.log("INFO: line is - %s" % line)
-            match= re.match(r'.*(active|stand-by).* Current', line)
+            match = re.match(r'.*(active|stand-by).* Current', line)
             if match:
-                helpers.log("INFO: role is: %s" % match.group(1))                          
+                helpers.log("INFO: role is: %s" % match.group(1))
                 return  match.group(1)
             else:
-                helpers.log("INFO: not current node  %s" % line)   
-        return False     
+                helpers.log("INFO: not current node  %s" % line)
+        return False
 
 
 
-    def rest_get_ver(self,node='c1'):
-        '''  
-          return the local node version 
+    def rest_get_ver(self, node='c1'):
+        '''
+          return the local node version
           Author: Mingtao
-          input:  node  - controller  
-                           c1 c2                
-          usage:   
-          output:  build 
-          
+          input:  node  - controller
+                           c1 c2
+          usage:
+          output:  build
+
         '''
         t = test.Test()
         c = t.controller(node)
         helpers.log('INFO: Entering ==> rest_get_node_role ')
-         
-        url = '/api/v1/data/controller/core/version/appliance'  
+
+        url = '/api/v1/data/controller/core/version/appliance'
         c.rest.get(url)
         if not c.rest.status_code_ok():
             helpers.test_failure(c.rest.error())
 
-        if(c.rest.content()):             
+        if(c.rest.content()):
             return c.rest.content()[0]['build-id']
-        return False     
-      
- 
+        return False
+
+
 
     def rest_get_num_nodes(self):
-        ''' 
-          return the number of nodes in the system  
+        '''
+          return the number of nodes in the system
           Author: Mingtao
-          input:                                        
-          usage:   
-          output:   1  or 2 
+          input:
+          usage:
+          output:   1  or 2
         '''
         t = test.Test()
         c = t.controller('master')
         helpers.log('INFO: Entering ==> rest_get_node_role ')
-   
-        
-        url = '/api/v1/data/controller/cluster'  
+
+
+        url = '/api/v1/data/controller/cluster'
         c.rest.get(url)
         if not c.rest.status_code_ok():
             helpers.test_failure(c.rest.error())
 
         if(c.rest.content()):
             num = len(c.rest.content()[0]['status']['nodes'])
-            helpers.log("INFO: There are %d of controller in cluster" %  num)
-            for index in range(0,num):
-                
+            helpers.log("INFO: There are %d of controller in cluster" % num)
+            for index in range(0, num):
+
                 hostname = c.rest.content()[0]['status']['nodes'][index]['hostname']
-                helpers.log("INFO: hostname is: %s" % hostname )
-                  
+                helpers.log("INFO: hostname is: %s" % hostname)
+
             return num
         else:
-            helpers.test_failure(c.rest.error())      
- 
+            helpers.test_failure(c.rest.error())
+
 
     def cli_whoami(self):
-        '''  
-          run cli whoami  
+        '''
+          run cli whoami
           Author: Mingtao
-          input:                                        
-          usage:   
-          output:   username and group        
+          input:
+          usage:
+          output:   username and group
         '''
         t = test.Test()
         c = t.controller('master')
         helpers.log('INFO: Entering ==> cli_whoami ')
-                
-        c.cli('whoami' )
+
+        c.cli('whoami')
         content = c.cli_content()
         temp = helpers.strip_cli_output(content)
         temp = helpers.str_to_list(temp)
-        helpers.log("INFO: temp is - %s" % temp) 
-    
+        helpers.log("INFO: temp is - %s" % temp)
+
         for line in temp:
-            line = line.lstrip()          
+            line = line.lstrip()
             helpers.log("INFO: line is - %s,  " % line)
-            match= re.match(r'.*Id\s+:\s*(.*)', line)      
+            match = re.match(r'.*Id\s+:\s*(.*)', line)
             if match:
-                name=match.group(1)
-                helpers.log("INFO: ID: %s" % match.group(1))        
-            match= re.match(r'.*Groups\s+:\s*(.*)', line)      
+                name = match.group(1)
+                helpers.log("INFO: ID: %s" % match.group(1))
+            match = re.match(r'.*Groups\s+:\s*(.*)', line)
             if match:
-                group=match.group(1)
-                helpers.log("INFO: Group: %s" % match.group(1))        
-           
-        return [name,group]   
-    
-  
-    def cli_reauth(self,user='admin',passwd='adminadmin'):
-        '''  
-          run cli reauth, and run cli_whoami verify 
+                group = match.group(1)
+                helpers.log("INFO: Group: %s" % match.group(1))
+
+        return [name, group]
+
+
+    def cli_reauth(self, user='admin', passwd='adminadmin'):
+        '''
+          run cli reauth, and run cli_whoami verify
           Author: Mingtao
-          input:                                        
-          usage:  cli_reauth  user 
-          output:   True  or False      
-                       
+          input:
+          usage:  cli_reauth  user
+          output:   True  or False
+
         '''
         t = test.Test()
         c = t.controller('master')
         helpers.log('INFO: Entering ==> cli_reauth ')
-        
+
         c.enable('end')
-        c.send('reauth '+user)
-        c.expect("Password: " )
-        c.send(passwd) 
-        c.expect()  
+        c.send('reauth ' + user)
+        c.expect("Password: ")
+        c.send(passwd)
+        c.expect()
         userinfo = self.cli_whoami()[0]
         if user == userinfo:
-            helpers.log('INFO: current session with user:  %s ' %  user)
+            helpers.log('INFO: current session with user:  %s ' % user)
             return True
         else:
-            helpers.log('INFO: current session with user:  %s ' % user) 
+            helpers.log('INFO: current session with user:  %s ' % user)
             return False
 
- 
- 
- 
+
+
+
     def bash_top(self, node):
         """
         Execute 'top - n 1' on a device.
         Author:    Mingtao
         Inputs:
         | node | reference to switch/controller/host as defined in .topo file |
-        
+
         Example:    bash_top   c1
-       
+
         Return Value:
         - Dictionary
             {'Swap': {'cached': '904268k',
@@ -2096,234 +2096,234 @@ class T5Platform(object):
                          'free': '499892k',
                          'total': '2051616k',
                          'used': '1551724k'}
-         }           
+         }
         """
         t = test.Test()
         n = t.node(node)
         content = n.bash('top -n 1')['content']
         lines = helpers.strip_cli_output(content, to_list=True)
-        helpers.log("lines: %s" %  lines )
-        topinfo = {}      
+        helpers.log("lines: %s" % lines)
+        topinfo = {}
         linenum = 0
         for line in lines:
             line = line.lstrip()
-            helpers.log(" line is - %s" % line)    
-            linenum = linenum+1     
+            helpers.log(" line is - %s" % line)
+            linenum = linenum + 1
             if (re.match(r'.*load average: (.*)', line)):
-                
+
                 match = re.match(r'.*load average: (.*)', line)
                 topinfo['load'] = match.group(1)
-                helpers.log("INFO: *** get the load info *** topinfo is \n  %s" % topinfo)     
-          
-            elif (re.match(r'Cpu.* (.*)%us,.*', line)):    
-                topinfo['cpu'] = {} 
+                helpers.log("INFO: *** get the load info *** topinfo is \n  %s" % topinfo)
+
+            elif (re.match(r'Cpu.* (.*)%us,.*', line)):
+                topinfo['cpu'] = {}
                 match = re.match(r'Cpu.* (.*)%us,\s+(.*)%sy,\s+(.*)%ni,\s+(.*)%id,\s+(.*)%wa,\s+(.*)%hi,\s+(.*)%si,\s+(.*)%st.*', line)
                 topinfo['cpu']['us'] = match.group(1)
                 topinfo['cpu']['sy'] = match.group(2)
-                topinfo['cpu']['ni'] = match.group(3)   
+                topinfo['cpu']['ni'] = match.group(3)
                 topinfo['cpu']['id'] = match.group(4)
                 topinfo['cpu']['wa'] = match.group(5)
-                topinfo['cpu']['hi'] = match.group(6)   
+                topinfo['cpu']['hi'] = match.group(6)
                 topinfo['cpu']['si'] = match.group(7)
-                topinfo['cpu']['st'] = match.group(8)                                               
-                helpers.log("INFO: *** get the cpu info **** topinfo is \n  %s" % topinfo)     
-            elif (re.match(r'Mem:.*', line)):    
-                topinfo['mem'] = {} 
+                topinfo['cpu']['st'] = match.group(8)
+                helpers.log("INFO: *** get the cpu info **** topinfo is \n  %s" % topinfo)
+            elif (re.match(r'Mem:.*', line)):
+                topinfo['mem'] = {}
                 match = re.match(r'Mem:.* (.*) total,\s+(.*) used,\s+(.*) free,\s+(.*) buffers.*', line)
                 topinfo['mem']['total'] = match.group(1)
-                topinfo['mem']['used'] = match.group(2)      
+                topinfo['mem']['used'] = match.group(2)
                 topinfo['mem']['free'] = match.group(3)
-                topinfo['mem']['buffers'] = match.group(4)      
-                                                        
-                helpers.log("INFO: *** get the Mem info **** topinfo is \n  %s" % topinfo)     
-                            
-            elif (re.match(r'Swap:\s+(.*) total,\s+(.*) used,\s+(.*) free,\s+(.*) cached.*', line)):    
-                topinfo['Swap'] = {} 
+                topinfo['mem']['buffers'] = match.group(4)
+
+                helpers.log("INFO: *** get the Mem info **** topinfo is \n  %s" % topinfo)
+
+            elif (re.match(r'Swap:\s+(.*) total,\s+(.*) used,\s+(.*) free,\s+(.*) cached.*', line)):
+                topinfo['Swap'] = {}
                 match = re.match(r'Swap:\s+(.*) total,\s+(.*) used,\s+(.*) free,\s+(.*) cached.*', line)
                 topinfo['Swap']['total'] = match.group(1)
-                topinfo['Swap']['used'] = match.group(2)      
+                topinfo['Swap']['used'] = match.group(2)
                 topinfo['Swap']['free'] = match.group(3)
-                topinfo['Swap']['cached'] = match.group(4)      
-                                                        
-                helpers.log("INFO: *** get the Swap info **** topinfo is \n  %s" % topinfo)     
-            elif (re.match(r'PID USER.*', line)):  
-                helpers.log("INFO: *** below are stats for process ****   \n ")          
+                topinfo['Swap']['cached'] = match.group(4)
+
+                helpers.log("INFO: *** get the Swap info **** topinfo is \n  %s" % topinfo)
+            elif (re.match(r'PID USER.*', line)):
+                helpers.log("INFO: *** below are stats for process ****   \n ")
                 break
-            
-        helpers.log("INFO: *** line number is  ****  %d   " % linenum)        
+
+        helpers.log("INFO: *** line number is  ****  %d   " % linenum)
         process = lines[linenum:]
-        helpers.log("INFO: *** remain lines are  ****   \n  %s" % process)   
+        helpers.log("INFO: *** remain lines are  ****   \n  %s" % process)
         for line in process:
-            fields = line.split()  
-            helpers.log("INFO: fields   \n  %s" % fields)               
-            pname= fields[11]
+            fields = line.split()
+            helpers.log("INFO: fields   \n  %s" % fields)
+            pname = fields[11]
             if pname == 'init' or  pname == 'java':
                 topinfo[pname] = {}
                 topinfo[pname]['pid'] = fields[0]
                 topinfo[pname]['virt'] = fields[4]
-                topinfo[pname]['res'] = fields[5]  
-                topinfo[pname]['shr'] = fields[6] 
-                topinfo[pname]['cpu'] = fields[8] 
-                topinfo[pname]['mem'] = fields[9]    
+                topinfo[pname]['res'] = fields[5]
+                topinfo[pname]['shr'] = fields[6]
+                topinfo[pname]['cpu'] = fields[8]
+                topinfo[pname]['mem'] = fields[9]
             else:
                 continue
-        helpers.log("INFO:  topinfo is \n  %s" % helpers.prettify(topinfo))                                          
-        return topinfo 
- 
-    def cli_add_user(self,user='user1',passwd='adminadmin'):
+        helpers.log("INFO:  topinfo is \n  %s" % helpers.prettify(topinfo))
+        return topinfo
+
+    def cli_add_user(self, user='user1', passwd='adminadmin'):
         '''
           cli add user to the system, can only run at master
           Author: Mingtao
-          input:   user = username,  passwd  = password                                       
-          usage:   
-          output:   True                            
+          input:   user = username,  passwd  = password
+          usage:
+          output:   True
         '''
-  
+
         t = test.Test()
         c = t.controller('master')
         helpers.log('INFO: Entering ==> cli_add_user ')
-        t = test.Test()   
-        c.config('user '+user) 
-        c.send('password' )
-        c.expect('Password: ')        
+        t = test.Test()
+        c.config('user ' + user)
+        c.send('password')
+        c.expect('Password: ')
         c.send(passwd)
         c.expect('Re-enter:')
-        c.send(passwd)                
-        c.expect()        
-        return True     
+        c.send(passwd)
+        c.expect()
+        return True
 
 
 
-    def cli_group_add_users(self,group=None,user=None):
-        '''  
+    def cli_group_add_users(self, group=None, user=None):
+        '''
           cli add user to group, can only run at master
           Author: Mingtao
           input:   group  - if group not give, will user admin
-                  user    - if user not given, will add all uers                             
-          usage:   
-          output:   True                            
-        '''  
+                  user    - if user not given, will add all uers
+          usage:
+          output:   True
+        '''
         t = test.Test()
         c = t.controller('master')
-        helpers.log('INFO: Entering ==> cli_add_user ')    
+        helpers.log('INFO: Entering ==> cli_add_user ')
         if group is None:
-            group = 'admin'         
-        c.config('group '+ group) 
+            group = 'admin'
+        c.config('group ' + group)
         if user:
-            c.config('associate user '+user)
-        else: 
-            c.config('show running-config user | grep user')   
+            c.config('associate user ' + user)
+        else:
+            c.config('show running-config user | grep user')
             content = c.cli_content()
             temp = helpers.strip_cli_output(content)
             temp = helpers.str_to_list(temp)
             helpers.log("********new_content:************\n%s" % helpers.prettify(temp))
             temp.pop(0)
-            helpers.log("********new_content:************\n%s" % helpers.prettify(temp))            
+            helpers.log("********new_content:************\n%s" % helpers.prettify(temp))
             for line in temp:
                 line = line.lstrip()
                 user = line.split(' ')[1]
-                helpers.log('INFO: user is: %s ' % user)  
+                helpers.log('INFO: user is: %s ' % user)
                 if user == 'admin':
-                    continue   
-                else:                        
-                    c.config('associate user '+user)
-            
-            return True    
+                    continue
+                else:
+                    c.config('associate user ' + user)
+
+            return True
 
 
-    def rest_get_user_group(self,user):
-        '''  
+    def rest_get_user_group(self, user):
+        '''
           get the group for a user, can only run at master
           Author: Mingtao
-          input:   
-                  user    - if user not given, will add all uers                             
-          usage:   
-          output:   group                          
+          input:
+                  user    - if user not given, will add all uers
+          usage:
+          output:   group
         '''
         t = test.Test()
         c = t.controller('master')
         helpers.log('INFO: Entering ==> rest_get_user_group ')
-   
-        
-        url = '/api/v1/data/controller/core/aaa/group[user="%s"]'  % user
+
+
+        url = '/api/v1/data/controller/core/aaa/group[user="%s"]' % user
         c.rest.get(url)
         if not c.rest.status_code_ok():
             helpers.test_failure(c.rest.error())
 
         if(c.rest.content()):
-            helpers.log('INFO: content is: %s ' %c.rest.content())        
+            helpers.log('INFO: content is: %s ' % c.rest.content())
 
-            if user in c.rest.content()[0]['user']:    
-                helpers.log('INFO: inside  ')        
-                return  c.rest.content()[0]['name']          
+            if user in c.rest.content()[0]['user']:
+                helpers.log('INFO: inside  ')
+                return  c.rest.content()[0]['name']
         else:
-            helpers.test_failure(c.rest.error())      
+            helpers.test_failure(c.rest.error())
 
 
-    def cli_delete_user(self,user):
-        '''  
+    def cli_delete_user(self, user):
+        '''
           delete users can only run at master
           Author: Mingtao
-          input:  user                        
-          usage:   
-          output:   True                            
-           
+          input:  user
+          usage:
+          output:   True
+
         '''
-  
+
         t = test.Test()
         c = t.controller('master')
         helpers.log('INFO: Entering ==> cli_delete_user ')
-        c.config('no user '+ user)    
+        c.config('no user ' + user)
         return True
-  
 
-    def T5_cli_clean_all_users(self,user=None ):
-        ''' 
+
+    def T5_cli_clean_all_users(self, user=None):
+        '''
         delete all users except admin
           Author: Mingtao
-          input:  user                        
-          usage:   
-          output:   True                                                
+          input:  user
+          usage:
+          output:   True
         '''
-  
+
         t = test.Test()
         c = t.controller('master')
         helpers.log('INFO: Entering ==> cli_delete_user ')
-      
-        if user: 
-            c.config('no user '+ user)     
+
+        if user:
+            c.config('no user ' + user)
             return True
         else:
-            c.config('show running-config user | grep user')   
+            c.config('show running-config user | grep user')
             content = c.cli_content()
             temp = helpers.strip_cli_output(content)
             temp = helpers.str_to_list(temp)
             helpers.log("********new_content:************\n%s" % helpers.prettify(temp))
             temp.pop(0)
-            helpers.log("********new_content:************\n%s" % helpers.prettify(temp))            
+            helpers.log("********new_content:************\n%s" % helpers.prettify(temp))
             for line in temp:
                 line = line.lstrip()
                 user = line.split(' ')[1]
-                helpers.log('INFO: user is: %s ' % user)  
+                helpers.log('INFO: user is: %s ' % user)
                 if user == 'admin':
-                    continue   
-                else:                        
-                    c.config('no user '+ user)
-                            
-            return True    
+                    continue
+                else:
+                    c.config('no user ' + user)
+
+            return True
 
 
 
     def first_boot_controller(self, node,
-                           join_cluster = 'no',
+                           join_cluster='no',
                            dhcp='no',
                            ip_address=None,
                            netmask='18',
                            gateway='10.192.64.1',
                            dns_server='10.92.3.1',
-                           dns_search='bigswitch.com',                          
-                           hostname='MY-T5-C',                           
-                           cluster_ip ='',
+                           dns_search='bigswitch.com',
+                           hostname='MY-T5-C',
+                           cluster_ip='',
                            cluster_passwd='adminadmin',
                            cluster_name='T5cluster',
                            cluster_descr='T5cluster',
@@ -2331,20 +2331,20 @@ class T5Platform(object):
                            platform='bvs',
                            ntp_server='',
                         ):
-        
+
         """
-        First boot setup: connect to the console  and complete the first boot.  
+        First boot setup: connect to the console  and complete the first boot.
         input: dhcp = no   - static ip assign
                dhcp = yes,  dhcp
-               join_cluster = no  - start a new cluster 
+               join_cluster = no  - start a new cluster
                join_cluster = yes  - jion existing cluster
 
-        Author: Mingtao       
+        Author: Mingtao
 
-        """ 
+        """
         helpers.log("Entering ====>  first_boot_controller node:'%s' " % node)
-        self.first_boot_controller_initial_node_setup(node,dhcp,ip_address,netmask,gateway,dns_server,dns_search,hostname)
-        self.first_boot_controller_initial_cluster_setup(node,join_cluster,cluster_ip )        
+        self.first_boot_controller_initial_node_setup(node, dhcp, ip_address, netmask, gateway, dns_server, dns_search, hostname)
+        self.first_boot_controller_initial_cluster_setup(node, join_cluster, cluster_ip)
         new_ip_address = self.first_boot_controller_menu_apply(node)
         helpers.sleep(3)  # Sleep for a few seconds just in case...
         helpers.log("new_ip_address = '%s'" % new_ip_address)
@@ -2359,10 +2359,10 @@ class T5Platform(object):
 
     def console_boot_factory_default(self, node, timeout=360):
         """
-        Runs boot factory-default from console, the can be used when controller is setup using dhcp      
-        Author: Mingtao        
+        Runs boot factory-default from console, the can be used when controller is setup using dhcp
+        Author: Mingtao
         """
-        
+
         t = test.Test()
         n = t.node(node)
         helpers.log("Entering ===> console_boot_factory_default: '%s'" % node)
@@ -2372,16 +2372,16 @@ class T5Platform(object):
         n_console.send(helpers.ctrl('c'))
         helpers.sleep(2)
         n_console.send('')
-        helpers.sleep(2)        
-        n_console.send('')       
-        options = n_console.expect([r'Big Virtual Switch Appliance.*[\r\n]', r'.*> '])   
-        if options[0] =='0':
+        helpers.sleep(2)
+        n_console.send('')
+        options = n_console.expect([r'Big Virtual Switch Appliance.*[\r\n]', r'.*> '])
+        if options[0] == '0':
             n_console.expect(r'.*login: ')
             n_console.send('admin')
             n_console.expect(r'[Pp]assword: ')
             n_console.send('adminadmin')
             n_console.expect(r'[#>] ')
-        
+
         n_console.send('enable')
         n_console.expect('#')
         n_console.send('boot factory-default')
@@ -2393,27 +2393,27 @@ class T5Platform(object):
         n_console.expect(r'ready for reboot', timeout=timeout)
         n_console.expect(r'"yes" or "y" to continue\): ', timeout=timeout)
         n_console.send('y')
-        
+
         helpers.summary_log("'%s' has been rebooted." % node)
         helpers.log("Boot factory-default completed on '%s'. System should be rebooting." % node)
         return True
-  
-  
+
+
     def first_boot_controller_initial_node_setup(self,
                            node,
-                           dhcp = 'no',
+                           dhcp='no',
                            ip_address=None,
                            netmask='18',
                            gateway='10.192.64.1',
                            dns_server='10.192.3.1',
-                           dns_search='bigswitch.com',                          
-                           hostname='MY-T5-C',                           
+                           dns_search='bigswitch.com',
+                           hostname='MY-T5-C',
                             ):
         """
-        First boot setup I: connect to the console to complete the first-boot node setup part 
+        First boot setup I: connect to the console to complete the first-boot node setup part
         input: dhcp = no   - static ip assign
                dhcp = yes,  dhcp
-        Author: Mingtao       
+        Author: Mingtao
         """
         t = test.Test()
         n = t.node(node)
@@ -2425,26 +2425,26 @@ class T5Platform(object):
         helpers.log("Getting the console session for '%s'" % node)
         n_console = n.console()
 
-        options = n_console.expect([r'Escape character.*[\r\n]', r'login:',r'Local Node Configuration'])
-    
+        options = n_console.expect([r'Escape character.*[\r\n]', r'login:', r'Local Node Configuration'])
+
         content = n_console.content()
         helpers.log("*****Output is :*******\n%s" % content)
-        if options[0]<2:
+        if options[0] < 2:
             if options[0] == 0 :
-                helpers.log("USER INFO:  need to Enter " )
-                n_console.send('')   
+                helpers.log("USER INFO:  need to Enter ")
+                n_console.send('')
                 n_console.send(helpers.ctrl('c'))
                 helpers.sleep(2)
                 n_console.send('')
                 n_console.expect(r'Big Virtual Switch Appliance.*[\r\n]')
-                n_console.expect(r'login:')            
+                n_console.expect(r'login:')
             elif options[0] == 1:
-                helpers.log("INFO:  need to login as  admin" )        
+                helpers.log("INFO:  need to login as  admin")
             n_console.send('admin')
             n_console.expect(r'Do you accept the EULA.* > ')
             n_console.send('Yes')
             n_console.expect(r'Local Node Configuration')
-        
+
         n_console.expect(r'Password for emergency recovery user > ')
         n_console.send('bsn')
         n_console.expect(r'Retype Password for emergency recovery user > ')
@@ -2455,12 +2455,12 @@ class T5Platform(object):
             n_console.send('1')  # Manual
             n_console.expect(r'IP address .* > ')
             n_console.send(ip_address)
-    
+
             if not re.match(r'.*/\d+', ip_address):
                 # Send netmask if IP address doesn't contain prefix length
                 n_console.expect(r'CIDR prefix length .* > ')
                 n_console.send(netmask)
-    
+
             n_console.expect(r'Default gateway address .* > ')
             n_console.send(gateway)
             n_console.expect(r'DNS server address .* > ')
@@ -2470,15 +2470,15 @@ class T5Platform(object):
             n_console.expect(r'Hostname > ')
             n_console.send(hostname)
         else:
-            # dhcp 
-            n_console.send('2')  #DHCP
-        helpers.sleep(3)  # Sleep for a few seconds just in case...        
+            # dhcp
+            n_console.send('2')  # DHCP
+        helpers.sleep(3)  # Sleep for a few seconds just in case...
         return True
-    
+
     def first_boot_controller_initial_cluster_setup(self,
                            node,
-                           join_cluster = 'no',
-                           cluster_ip ='',
+                           join_cluster='no',
+                           cluster_ip='',
                            cluster_passwd='adminadmin',
                            cluster_name='T5cluster',
                            cluster_descr='T5cluster',
@@ -2486,31 +2486,31 @@ class T5Platform(object):
                            ntp_server='',
                            ):
         """
-        First boot setup II: connect to the console to complete the first-boot cluster setup part 
-        input: join_cluster = no  - start a new cluster 
+        First boot setup II: connect to the console to complete the first-boot cluster setup part
+        input: join_cluster = no  - start a new cluster
                join_cluster = yes  - jion existing cluster
-        Author: Mingtao       
+        Author: Mingtao
         """
-  
+
         t = test.Test()
         n = t.node(node)
         helpers.log("Entering ===> first_boot_controller_initial_cluster_setup: '%s', %s, %s, %s, %s, %s, %s" \
-                    % (node, join_cluster, cluster_ip, cluster_passwd, cluster_descr, admin_password, ntp_server)) 
+                    % (node, join_cluster, cluster_ip, cluster_passwd, cluster_descr, admin_password, ntp_server))
         helpers.log("Getting the console session for '%s'" % node)
-        n_console = n.console()        
+        n_console = n.console()
 #        n_console.expect(r'Controller Clustering')
         n_console.expect(r'Please choose a cluster option:.*')
         n_console.expect(r'> ')
-        
+
         if join_cluster == 'yes':
-            n_console.send('2')  # join existing cluster     
+            n_console.send('2')  # join existing cluster
             n_console.expect(r'Existing node IP.*> ')
-            n_console.send(cluster_ip)     
+            n_console.send(cluster_ip)
             n_console.expect(r'Administrator password for cluster.*> ')
-            n_console.send(cluster_passwd)     
+            n_console.send(cluster_passwd)
             n_console.expect(r'Retype Administrator password for cluster.*> ')
-            n_console.send(cluster_passwd)     
-        else:      
+            n_console.send(cluster_passwd)
+        else:
             n_console.send('1')  # Start a new cluster
             n_console.expect(r'Cluster name > ')
             n_console.send(cluster_name)
@@ -2519,310 +2519,310 @@ class T5Platform(object):
             n_console.expect(r'Administrator password for cluster > ')
             n_console.send(admin_password)
             n_console.expect(r'Retype .* > ')
-            n_console.send(admin_password)    
+            n_console.send(admin_password)
             n_console.expect(r'System Time')
             n_console.expect(r'Enter NTP server .* > ')
             n_console.send(ntp_server)
-            
+
         helpers.sleep(3)  # Sleep for a few seconds just in case...
-        helpers.log("USER INFO:  Please choose an option"  )
-                
+        helpers.log("USER INFO:  Please choose an option")
+
         return True
 
-    def first_boot_controller_menu_apply(self,node):
+    def first_boot_controller_menu_apply(self, node):
         """
         First boot setup III: connect to the console to apply the setting.
         First boot setup Menu :  Apply settings
-        Author: Mingtao       
+        Author: Mingtao
         """
         t = test.Test()
         n = t.node(node)
         helpers.log("Entering ====>  first_boot_controller_menu_1 for node: '%s'" % node)
         helpers.log("Getting the console session for '%s'" % node)
-        n_console = n.console() 
+        n_console = n.console()
         n_console.expect(r'\[1\] > ')
-        helpers.log("[1] Apply settings " )      
+        helpers.log("[1] Apply settings ")
         content = n_console.content()
-        helpers.log("USER INFO: the content is '%s'" % content) 
+        helpers.log("USER INFO: the content is '%s'" % content)
         match = re.search(r'\[\s*(\d+)\] Apply settings.*[\r\n$]', content)
         if match:
             option = match.group(1)
-            helpers.log("USER INFO: the option is %s" % option) 
+            helpers.log("USER INFO: the option is %s" % option)
         else:
-            helpers.log("USER ERROR: there is no match" )             
-            return False                 
-                  
+            helpers.log("USER ERROR: there is no match")
+            return False
+
         n_console.send(option)  # Apply settings
         n_console.expect(r'Initializing system.*[\r\n]')
         n_console.expect(r'Configuring controller.*[\r\n]')
-          
+
         n_console.expect(r'IP address on eth0 is (.*)[\r\n]')
         content = n_console.content()
-     
-        helpers.log("content is:  %s" % content)              
+
+        helpers.log("content is:  %s" % content)
         match = re.search(r'IP address on eth0 is (\d+\.\d+\.\d+\.\d+).*[\r\n]', content)
         new_ip_address = match.group(1)
-        helpers.log("new_ip_address: '%s'" % new_ip_address)  
-                     
+        helpers.log("new_ip_address: '%s'" % new_ip_address)
+
         n_console.expect(r'Configuring cluster.*[\r\n]')
         n_console.expect(r'First-time setup is complete.*[\r\n]')
         n_console.expect(r'Press enter to continue > ')
         n_console.send('')
-        #helpers.log("Closing console connection for '%s'" % node)
-        #n.console_close()
+        # helpers.log("Closing console connection for '%s'" % node)
+        # n.console_close()
 
         helpers.sleep(3)  # Sleep for a few seconds just in case...
         return new_ip_address
 
-       
-        
-    def first_boot_controller_menu_recovery(self,node,passwd='bsn'):
-        """  
+
+
+    def first_boot_controller_menu_recovery(self, node, passwd='bsn'):
+        """
         First boot setup Menu :  Update Emergency Recovery Password
-        Author: Mingtao       
+        Author: Mingtao
         """
         t = test.Test()
         n = t.node(node)
         helpers.log("Entering ====>  Update Emergency Recovery Password for node: '%s'" % node)
         helpers.log("Getting the console session for '%s'" % node)
         n_console = n.console()
-        n_console.expect(r'\[1\] > ')            
+        n_console.expect(r'\[1\] > ')
         content = n_console.content()
-        helpers.log("USER INFO: the content is '%s'" % content) 
+        helpers.log("USER INFO: the content is '%s'" % content)
         match = re.search(r'\[\s*(\d+)\] Update Emergency Recovery Password.*[\r\n$]', content)
         if match:
             option = match.group(1)
-            helpers.log("USER INFO: the optin is %s" % option) 
+            helpers.log("USER INFO: the optin is %s" % option)
         else:
-            helpers.log("USER ERROR: there is no match" )             
-            return False       
+            helpers.log("USER ERROR: there is no match")
+            return False
         if option != '3':
-            helpers.summary_log("choice %s not 2" % option)                        
-        n_console.send(option)  # Apply settings            
+            helpers.summary_log("choice %s not 2" % option)
+        n_console.send(option)  # Apply settings
         n_console.expect(r'Password for emergency recovery user > ')
         n_console.send(passwd)
         n_console.expect(r'Retype Password for emergency recovery user > ')
         n_console.send(passwd)
- #       n_console.expect(r'Please choose an option:.*[\r\n$]')   
-       
+ #       n_console.expect(r'Please choose an option:.*[\r\n$]')
+
         helpers.sleep(3)  # Sleep for a few seconds just in case...
         return True
-    
-    def first_boot_controller_menu_IP(self,node,ip_addr,netmask='24',invalid_input=False):
+
+    def first_boot_controller_menu_IP(self, node, ip_addr, netmask='24', invalid_input=False):
         """
        First boot setup Menu :  Update Local IP Address
-        Author: Mingtao       
+        Author: Mingtao
         """
         t = test.Test()
         n = t.node(node)
         helpers.log("Entering ====> Update Local IP Address for node: '%s'" % node)
         helpers.log("Getting the console session for '%s'" % node)
         n_console = n.console()
-        options = n_console.expect([r'\[1\] > ', r'IP address .* >'])                                     
+        options = n_console.expect([r'\[1\] > ', r'IP address .* >'])
         content = n_console.content()
-        helpers.log("USER INFO: the content is '%s'" % content) 
-        if options[0] == 0:   
+        helpers.log("USER INFO: the content is '%s'" % content)
+        if options[0] == 0:
             match = re.search(r'\[\s*(\d+)\] Update Local IP Address.*[\r\n$]', content)
             if match:
                 option = match.group(1)
-                helpers.log("USER INFO: the optin is %s" % option) 
+                helpers.log("USER INFO: the optin is %s" % option)
             else:
-                helpers.log("USER ERROR: there is no match" )             
-                return False                 
+                helpers.log("USER ERROR: there is no match")
+                return False
             if option != '5':
-                helpers.summary_log("choice %s not 5" % option)      
-            n_console.send(option)  # Apply settings            
+                helpers.summary_log("choice %s not 5" % option)
+            n_console.send(option)  # Apply settings
             n_console.expect(r'IP address .* > ')
         n_console.send(ip_addr)
         if invalid_input:
-            helpers.log("USER INFO: in invalid input,  this is negative case" ) 
-            n_console.expect(r'Error:.*')  
-            return True                                  
+            helpers.log("USER INFO: in invalid input,  this is negative case")
+            n_console.expect(r'Error:.*')
+            return True
 #        else:
-#            n_console.expect(r'Please choose an option:.*[\r\n$]')   
-       
+#            n_console.expect(r'Please choose an option:.*[\r\n$]')
+
         if not re.match(r'.*/\d+', ip_addr):
             # to make sure the next table has CIDR entry
-            n_console.expect(r'\[1\] > ') 
+            n_console.expect(r'\[1\] > ')
             content = n_console.content()
-            helpers.log("USER INFO: the content is '%s'" % content) 
+            helpers.log("USER INFO: the content is '%s'" % content)
             match = re.search(r'\[\s*(\d+)\] Update CIDR Prefix Length.*[\r\n$]', content)
             if match:
                 option = match.group(1)
                 helpers.log("USER INFO: the option is %s" % option)
             else:
-                helpers.log("USER ERROR: there is no match" )             
-                return False                 
-            n_console.send(option)  # Apply settings            
+                helpers.log("USER ERROR: there is no match")
+                return False
+            n_console.send(option)  # Apply settings
             n_console.expect(r'CIDR prefix length \[24\].* > ')
             n_console.send(netmask)
-        helpers.sleep(3)  # Sleep for a few seconds just in case...          
+        helpers.sleep(3)  # Sleep for a few seconds just in case...
         return True
 
 
-    def first_boot_controller_menu_prefix(self,node,netmask,invalid_input=False):
+    def first_boot_controller_menu_prefix(self, node, netmask, invalid_input=False):
         """
        First boot setup Menu :  Update CIDR Prefix Length
-        Author: Mingtao              
+        Author: Mingtao
         """
         t = test.Test()
         n = t.node(node)
         helpers.log("Entering ====> Update CIDR Prefix Length for node: '%s'" % node)
         helpers.log("Getting the console session for '%s'" % node)
         n_console = n.console()
-         
-        options = n_console.expect([r'\[1\] > ', r'CIDR prefix length.* >'])    
-        content = n_console.content()      
-        helpers.log("USER INFO: the content:  %s" % content)        
-        if options[0] == 0:   
+
+        options = n_console.expect([r'\[1\] > ', r'CIDR prefix length.* >'])
+        content = n_console.content()
+        helpers.log("USER INFO: the content:  %s" % content)
+        if options[0] == 0:
             match = re.search(r'\[\s*(\d+)\] Update CIDR Prefix Length.*[\r\n$]', content)
             if match:
                 option = match.group(1)
-                helpers.log("USER INFO: the option is %s" % option) 
+                helpers.log("USER INFO: the option is %s" % option)
             else:
-                helpers.log("USER ERROR: there is no match" )             
-                return False                 
-            n_console.send(option)  # Apply settings            
+                helpers.log("USER ERROR: there is no match")
+                return False
+            n_console.send(option)  # Apply settings
             n_console.expect(r'CIDR prefix length \[24\].* > ')
         n_console.send(netmask)
         if invalid_input:
-            helpers.log("USER INFO: in invalid input,  this is negative case" ) 
-            n_console.expect(r'Error:.*')                                    
+            helpers.log("USER INFO: in invalid input,  this is negative case")
+            n_console.expect(r'Error:.*')
 #        else:
-#            n_console.expect(r'Please choose an option:.*[\r\n$]')   
-                
-        helpers.sleep(3)  # Sleep for a few seconds just in case...          
+#            n_console.expect(r'Please choose an option:.*[\r\n$]')
+
+        helpers.sleep(3)  # Sleep for a few seconds just in case...
         return True
 
 
 
 
-    def first_boot_controller_menu_gateway(self,node,gateway):
+    def first_boot_controller_menu_gateway(self, node, gateway):
         """
        First boot setup Menu :  Update Gateway
-        Author: Mingtao       
-       
+        Author: Mingtao
+
         """
         t = test.Test()
         n = t.node(node)
         helpers.log("Entering ====> Update Gateway for node: '%s'" % node)
         helpers.log("Getting the console session for '%s'" % node)
         n_console = n.console()
-        n_console.expect(r'\[1\] > ')                
+        n_console.expect(r'\[1\] > ')
         content = n_console.content()
-        helpers.log("USER INFO: the content is '%s'" % content) 
+        helpers.log("USER INFO: the content is '%s'" % content)
         match = re.search(r'\[\s*(\d+)\] Update Gateway.*[\r\n$]', content)
         if match:
             option = match.group(1)
-            helpers.log("USER INFO: the option is %s" % option) 
+            helpers.log("USER INFO: the option is %s" % option)
         else:
-            helpers.log("USER ERROR: there is no match" )             
-            return False                 
-        n_console.send(option)  # Apply settings     
-        n_console.expect(r'Gateway.*')               
+            helpers.log("USER ERROR: there is no match")
+            return False
+        n_console.send(option)  # Apply settings
+        n_console.expect(r'Gateway.*')
         n_console.expect(r'Default gateway address.*> ')
         n_console.send(gateway)
-#        n_console.expect(r'Please choose an option:.*[\r\n$]')    
-          
+#        n_console.expect(r'Please choose an option:.*[\r\n$]')
+
         helpers.sleep(3)  # Sleep for a few seconds just in case...
         return True
-    
-    def first_boot_controller_menu_dnsserver(self,node,dnsserver,invalid_input=False):
+
+    def first_boot_controller_menu_dnsserver(self, node, dnsserver, invalid_input=False):
         """
        First boot setup Menu :  Update DNS Server
-        Author: Mingtao              
+        Author: Mingtao
         """
         t = test.Test()
         n = t.node(node)
         helpers.log("Entering ====> Update DNS Server for node: '%s'" % node)
         helpers.log("Getting the console session for '%s'" % node)
         n_console = n.console()
-        
-        options = n_console.expect([r'\[1\] > ', r'DNS server address.* >'])    
-        content = n_console.content()      
-        helpers.log("USER INFO: the content:  %s" % content)        
-        if options[0] == 0:   
+
+        options = n_console.expect([r'\[1\] > ', r'DNS server address.* >'])
+        content = n_console.content()
+        helpers.log("USER INFO: the content:  %s" % content)
+        if options[0] == 0:
             match = re.search(r'\[\s*(\d+)\] Update DNS Server.*[\r\n$]', content)
             if match:
                 option = match.group(1)
-                helpers.log("USER INFO: the option is %s" % option) 
+                helpers.log("USER INFO: the option is %s" % option)
             else:
-                helpers.log("USER ERROR: there is no match" )             
-                return False                 
-            n_console.send(option)  # Apply settings    
-            n_console.expect(r'DNS Server.*')                
+                helpers.log("USER ERROR: there is no match")
+                return False
+            n_console.send(option)  # Apply settings
+            n_console.expect(r'DNS Server.*')
             n_console.expect(r'DNS server address.* > ')
-            
+
         n_console.send(dnsserver)
         if invalid_input:
-            helpers.log("USER INFO: in invalid input,  this is negative case" ) 
-            n_console.expect(r'Error: Invalid.*')                                    
+            helpers.log("USER INFO: in invalid input,  this is negative case")
+            n_console.expect(r'Error: Invalid.*')
 #        else:
-#            n_console.expect(r'Please choose an option:.*[\r\n$]')   
-          
+#            n_console.expect(r'Please choose an option:.*[\r\n$]')
+
         helpers.sleep(3)  # Sleep for a few seconds just in case...
         return True
 
-    def first_boot_controller_menu_domain(self,node,domain):
+    def first_boot_controller_menu_domain(self, node, domain):
         """
        First boot setup Menu :  Update DNS Search Domain
-        Author: Mingtao       
+        Author: Mingtao
         """
         t = test.Test()
         n = t.node(node)
         helpers.log("Entering ====> Update DNS Search Domain for node: '%s'" % node)
         helpers.log("Getting the console session for '%s'" % node)
         n_console = n.console()
-        n_console.expect(r'\[1\] > ')                
+        n_console.expect(r'\[1\] > ')
         content = n_console.content()
-        helpers.log("USER INFO: the content is '%s'" % content) 
+        helpers.log("USER INFO: the content is '%s'" % content)
         match = re.search(r'\[\s*(\d+)\] Update DNS Search Domain.*[\r\n$]', content)
         if match:
             option = match.group(1)
-            helpers.log("USER INFO: the optin is %s" % option) 
+            helpers.log("USER INFO: the optin is %s" % option)
         else:
-            helpers.log("USER ERROR: there is no match" )             
-            return False                 
-        n_console.send(option)  # Apply settings    
-        n_console.expect(r'DNS Search Domain.*')                
+            helpers.log("USER ERROR: there is no match")
+            return False
+        n_console.send(option)  # Apply settings
+        n_console.expect(r'DNS Search Domain.*')
         n_console.expect(r'DNS search domain.* > ')
         n_console.send(domain)
-#        n_console.expect(r'Please choose an option:.*[\r\n$]')   
-          
+#        n_console.expect(r'Please choose an option:.*[\r\n$]')
+
         helpers.sleep(3)  # Sleep for a few seconds just in case...
         return True
-     
-    def first_boot_controller_menu_name(self,node,name):
+
+    def first_boot_controller_menu_name(self, node, name):
         """
        First boot setup Menu :  Update Hostname
-        Author: Mingtao       
+        Author: Mingtao
         """
         t = test.Test()
         n = t.node(node)
         helpers.log("Entering ====> Update Hostname for node: '%s'" % node)
         helpers.log("Getting the console session for '%s'" % node)
         n_console = n.console()
-        n_console.expect(r'\[1\] > ')                
+        n_console.expect(r'\[1\] > ')
         content = n_console.content()
-        helpers.log("USER INFO: the content is '%s'" % content) 
+        helpers.log("USER INFO: the content is '%s'" % content)
         match = re.search(r'\[\s*(\d+)\] Update Hostname.*[\r\n$]', content)
         if match:
             option = match.group(1)
-            helpers.log("USER INFO: the optin is %s" % option) 
+            helpers.log("USER INFO: the optin is %s" % option)
         else:
-            helpers.log("USER ERROR: there is no match" )             
-            return False                 
-      
-        n_console.send(option)  # Apply settings    
-        n_console.expect(r'Hostname.*')                
+            helpers.log("USER ERROR: there is no match")
+            return False
+
+        n_console.send(option)  # Apply settings
+        n_console.expect(r'Hostname.*')
         n_console.expect(r'Hostname.* > ')
         n_console.send(name)
-#        n_console.expect(r'Please choose an option:.*[\r\n$]')   
-          
+#        n_console.expect(r'Please choose an option:.*[\r\n$]')
+
         helpers.sleep(3)  # Sleep for a few seconds just in case...
         return True
-            
-    def first_boot_controller_menu_cluster_name(self,node,name='MY-T5-C',invalid_input=False):
+
+    def first_boot_controller_menu_cluster_name(self, node, name='MY-T5-C', invalid_input=False):
         """
        First boot setup Menu :   Update Cluster Name
         """
@@ -2831,33 +2831,33 @@ class T5Platform(object):
         helpers.log("Entering ====> Update Cluster Name for node: '%s'" % node)
         helpers.log("Getting the console session for '%s'" % node)
         n_console = n.console()
-          
-        options = n_console.expect([r'\[1\] > ',r'Cluster name.* > '])             
+
+        options = n_console.expect([r'\[1\] > ', r'Cluster name.* > '])
         content = n_console.content()
-        helpers.log("USER INFO: the content is '%s'" % content) 
-        if options[0] == 0:   
+        helpers.log("USER INFO: the content is '%s'" % content)
+        if options[0] == 0:
             match = re.search(r'\[\s*(\d+)\] Update Cluster Name.*[\r\n$]', content)
             if match:
                 option = match.group(1)
-                helpers.log("USER INFO: the option is %s" % option) 
+                helpers.log("USER INFO: the option is %s" % option)
             else:
-                helpers.log("USER ERROR: there is no match" )             
-                return False                 
-            n_console.send(option)  # Apply settings                
-            n_console.expect(r'Cluster Name.*')                
+                helpers.log("USER ERROR: there is no match")
+                return False
+            n_console.send(option)  # Apply settings
+            n_console.expect(r'Cluster Name.*')
             n_console.expect(r'Cluster name.* > ')
-            
+
         n_console.send(name)
         if invalid_input:
-            helpers.log("USER INFO: in invalid input,  this is negative case" ) 
-            n_console.expect(r'Error: Invalid.*')                                    
+            helpers.log("USER INFO: in invalid input,  this is negative case")
+            n_console.expect(r'Error: Invalid.*')
 #        else:
-#            n_console.expect(r'Please choose an option:.*[\r\n$]')   
-           
+#            n_console.expect(r'Please choose an option:.*[\r\n$]')
+
         helpers.sleep(3)  # Sleep for a few seconds just in case...
         return True
- 
-    def first_boot_controller_menu_cluster_desr(self,node,descr='MY-T5-C'):
+
+    def first_boot_controller_menu_cluster_desr(self, node, descr='MY-T5-C'):
         """
        First boot setup Menu :   Update Cluster Description
         """
@@ -2866,26 +2866,26 @@ class T5Platform(object):
         helpers.log("Entering ====> Update Cluster Description for node: '%s'" % node)
         helpers.log("Getting the console session for '%s'" % node)
         n_console = n.console()
-        n_console.expect(r'\[1\] > ')                
+        n_console.expect(r'\[1\] > ')
         content = n_console.content()
-        helpers.log("USER INFO: the content is '%s'" % content) 
+        helpers.log("USER INFO: the content is '%s'" % content)
         match = re.search(r'\[\s*(\d+)\] Update Cluster Description.*[\r\n$]', content)
         if match:
             option = match.group(1)
-            helpers.log("USER INFO: the optin is %s" % option) 
+            helpers.log("USER INFO: the optin is %s" % option)
         else:
-            helpers.log("USER ERROR: there is no match" )             
-            return False                 
-        n_console.send(option)  # Apply settings    
-        n_console.expect(r'Cluster Description.*')                
+            helpers.log("USER ERROR: there is no match")
+            return False
+        n_console.send(option)  # Apply settings
+        n_console.expect(r'Cluster Description.*')
         n_console.expect(r'Cluster description.* > ')
         n_console.send(descr)
-#        n_console.expect(r'Please choose an option:.*[\r\n$]')   
-          
+#        n_console.expect(r'Please choose an option:.*[\r\n$]')
+
         helpers.sleep(3)  # Sleep for a few seconds just in case...
         return True
-    
-    def first_boot_controller_menu_cluster_passwd(self,node,passwd='adminadmin'):
+
+    def first_boot_controller_menu_cluster_passwd(self, node, passwd='adminadmin'):
         """
        First boot setup Menu :   Update Cluster Admin Password
         """
@@ -2894,27 +2894,27 @@ class T5Platform(object):
         helpers.log("Entering ====> Update Cluster Admin Password  for node: '%s'" % node)
         helpers.log("Getting the console session for '%s'" % node)
         n_console = n.console()
-        n_console.expect(r'\[1\] > ')                
+        n_console.expect(r'\[1\] > ')
         content = n_console.content()
-        helpers.log("USER INFO: the content is '%s'" % content) 
+        helpers.log("USER INFO: the content is '%s'" % content)
         match = re.search(r'\[\s*(\d+)\] Update Cluster Admin Password.*[\r\n$]', content)
         if match:
             option = match.group(1)
-            helpers.log("USER INFO: the optin is %s" % option) 
+            helpers.log("USER INFO: the optin is %s" % option)
         else:
-            helpers.log("USER ERROR: there is no match" )             
-            return False                 
-        n_console.send(option)  # Apply settings    
-        n_console.expect(r'Cluster Admin Password.*')                
+            helpers.log("USER ERROR: there is no match")
+            return False
+        n_console.send(option)  # Apply settings
+        n_console.expect(r'Cluster Admin Password.*')
         n_console.expect(r'Administrator password for cluster.* > ')
         n_console.send(passwd)
         n_console.expect(r'Retype Administrator password for cluster.* > ')
         n_console.send(passwd)
-#        n_console.expect(r'Please choose an option:.*[\r\n$]')   
+#        n_console.expect(r'Please choose an option:.*[\r\n$]')
         helpers.sleep(3)  # Sleep for a few seconds just in case...
         return True
-    
-    def first_boot_controller_ctl_c(self,node):
+
+    def first_boot_controller_ctl_c(self, node):
         """
        First boot:   send ctl_c,  then resume
         Author: Mingtao
@@ -2924,46 +2924,46 @@ class T5Platform(object):
         helpers.log("Entering ====> first_boot_controller_ctl_c  for node: '%s'" % node)
         helpers.log("Getting the console session for '%s'" % node)
         n_console = n.console()
-        
+
         n_console.send(helpers.ctrl('c'))
-        helpers.summary_log('CTRL  C is hited' )
-         
-        n_console.expect(r'Option Menu.*')  
-        n_console.expect(r'\[1\] > ')                               
+        helpers.summary_log('CTRL  C is hited')
+
+        n_console.expect(r'Option Menu.*')
+        n_console.expect(r'\[1\] > ')
         content = n_console.content()
-        helpers.log("USER INFO: the content is '%s'" % content) 
+        helpers.log("USER INFO: the content is '%s'" % content)
         match = re.search(r'\[\s*(\d+)\] Resume setup.*[\r\n$]', content)
         if match:
             option = match.group(1)
-            helpers.log("USER INFO: the option is %s" % option) 
+            helpers.log("USER INFO: the option is %s" % option)
         else:
-            helpers.log("USER ERROR: there is no match for resume setup" )             
-            return False                 
-        n_console.send(option)  # Apply settings    
-        n_console.expect(r'Resuming setup.*')   
+            helpers.log("USER ERROR: there is no match for resume setup")
+            return False
+        n_console.send(option)  # Apply settings
+        n_console.expect(r'Resuming setup.*')
         return True
-      
-    def rest_controller_add_ip(self, node, ipaddr,netmask,spawn=None):
+
+    def rest_controller_add_ip(self, node, ipaddr, netmask, spawn=None):
         """
           config a new local ip address and make sure it is reachable.
           Author: Mingtao
-          input:  node  - controller  
-                           c1 c2    
+          input:  node  - controller
+                           c1 c2
                    spawn: if node= 1.1.1.1,  and the address is not in topology, set it to True
-          usage:   
-          output:   
-        """        
-        t = test.Test()        
+          usage:
+          output:
+        """
+        t = test.Test()
         if spawn:
             #  this is a ip address not in topology,  need to spawn, node is an ip address
             c = t.node_spawn(ip=node)
         else:
-            c = t.controller(node)        
-        url = '/api/v1/data/controller/os/config/local-node/network-config/network-interface[type="ethernet"][number=0]/ipv4/address[ip-address="%s"]' %ipaddr  
-        try:     
-            c.rest.put(url,{"prefix":netmask,"ip-address":ipaddr})
+            c = t.controller(node)
+        url = '/api/v1/data/controller/os/config/local-node/network-config/network-interface[type="ethernet"][number=0]/ipv4/address[ip-address="%s"]' % ipaddr
+        try:
+            c.rest.put(url, {"prefix":netmask, "ip-address":ipaddr})
         except:
-            helpers.test_failure(c.rest.error())           
+            helpers.test_failure(c.rest.error())
             return False
         else:
             helpers.sleep(5)  # Sleep for a few seconds just in case...
@@ -2978,81 +2978,81 @@ class T5Platform(object):
         """
           config a ntp time zone.
           Author: Mingtao
-          input:  node  - controller  
-                           c1 c2    
+          input:  node  - controller
+                           c1 c2
                  timezone:    America/Los_Angeles     America/New_York
-          usage:   
-          output:   
-        """        
-        
+          usage:
+          output:
+        """
+
         t = test.Test()
-        c = t.controller(node)                
-        helpers.log('INFO: Entering ==> rest_controller_add_ntp')        
-        url = '/api/v1/data/controller/os/config/global/time-config' 
-    
-        try:      
-            c.rest.put(url,{"time-zone":timezone})
+        c = t.controller(node)
+        helpers.log('INFO: Entering ==> rest_controller_add_ntp')
+        url = '/api/v1/data/controller/os/config/global/time-config'
+
+        try:
+            c.rest.put(url, {"time-zone":timezone})
         except:
-            helpers.test_failure(c.rest.error())           
+            helpers.test_failure(c.rest.error())
             return False
         else:
             return True
 
     def cli_controller_show_clock(self, node):
         """
-          cli show clock  
+          cli show clock
           Author: Mingtao
-          input:  node  - controller  
-                           c1 c2                  
-          usage:   
+          input:  node  - controller
+                           c1 c2
+          usage:
           output:   {'time':......,'timezone':PDT}
-        """        
+        """
         t = test.Test()
-        c = t.controller(node)                
-        helpers.log('INFO: Entering ==> cli_controller_show_clock')          
+        c = t.controller(node)
+        helpers.log('INFO: Entering ==> cli_controller_show_clock')
         c.cli("show clock")
         content = c.cli_content()
- 
+
         temp = helpers.strip_cli_output(content)
-        helpers.log("*****Output is :\n%s" % temp)        
-        match = re.match(r'System time :\s+(.*) ([A-Z]{3})[\r\n\$]',temp)
+        helpers.log("*****Output is :\n%s" % temp)
+        match = re.match(r'System time :\s+(.*) ([A-Z]{3})[\r\n\$]', temp)
         if match:
             time = {}
-            helpers.log("INFO: time is: %s" % match.group(1)) 
+            helpers.log("INFO: time is: %s" % match.group(1))
             time['time'] = match.group(1)
             helpers.log("INFO: time zone is: %s" % match.group(2))
             time['timezone'] = match.group(2)
-            return time   
+            return time
         else:
-            helpers.log("ERROR: did not match the time: %s" % temp)       
+            helpers.log("ERROR: did not match the time: %s" % temp)
             return False
-    
+
     def controller_verify_timezone(self, node, timezone):
         """
          verify the timezone configuration
           Author: Mingtao
-          input:  node  - controller  
-                           c1 c2   
-                timezone:    America/Los_Angeles     America/New_York                        
-          usage:   
+          input:  node  - controller
+                           c1 c2
+                timezone:    America/Los_Angeles     America/New_York
+          usage:
           output:   True:   if expect and show clock matches
-                    False:  if expect and show clock Not matche 
-        
+                    False:  if expect and show clock Not matche
+
         """
-        helpers.log('INFO: Entering ==> controller_verify_timezone ') 
-        temp=self.cli_controller_show_clock(node)   
-        helpers.log("INFO: timezone is: %s" % temp['timezone'])   
+        helpers.log('INFO: Entering ==> controller_verify_timezone ')
+        temp = self.cli_controller_show_clock(node)
+        helpers.log("INFO: timezone is: %s" % temp['timezone'])
         ctimezone = temp['timezone']
-        if timezone ==  'America/Los_Angeles' and ctimezone == 'PDT':           
-            return True          
-        elif timezone ==  'America/New_York' and ctimezone == 'EDT':  
-            return True 
+        if timezone == 'America/Los_Angeles' and ctimezone == 'PDT':
+            return True
+        elif timezone == 'America/New_York' and ctimezone == 'EDT':
+            return True
         return False
-            
- 
-    def first_boot_controller_menu_cluster_option_apply(self,node,
-                           join_cluster = 'no',
-                           cluster_ip ='',
+
+
+    def first_boot_controller_menu_cluster_option_apply(self, node,
+                           join_cluster='no',
+                           cluster_ip='',
                            cluster_passwd='adminadmin',
                            cluster_name='T5cluster',
                            cluster_descr='T5cluster',
@@ -3065,28 +3065,28 @@ class T5Platform(object):
         t = test.Test()
         n = t.node(node)
         helpers.log("Entering ====> Update Cluster Option for node: '%s'" % node)
-       
+
         helpers.log("Getting the console session for '%s'" % node)
         n_console = n.console()
-        n_console.expect(r'\[1\] > ')                
+        n_console.expect(r'\[1\] > ')
         content = n_console.content()
-        helpers.log("USER INFO: the content is '%s'" % content) 
+        helpers.log("USER INFO: the content is '%s'" % content)
         match = re.search(r'\[\s*(\d+)\] Update Cluster Option.*[\r\n$]', content)
         if match:
             option = match.group(1)
-            helpers.log("USER INFO: the option is %s" % option) 
+            helpers.log("USER INFO: the option is %s" % option)
         else:
-            helpers.log("USER ERROR: there is no match" )             
-            return False                 
-        n_console.send(option)  # Apply settings         
+            helpers.log("USER ERROR: there is no match")
+            return False
+        n_console.send(option)  # Apply settings
         n_console.expect(r'Please choose a cluster option:.*')
         n_console.expect(r'> ')
-        
+
         if join_cluster == 'yes':
-            n_console.send('2')  # join existing cluster     
+            n_console.send('2')  # join existing cluster
             n_console.expect(r'Existing node IP.*> ')
-            n_console.send(cluster_ip)     
-        else:      
+            n_console.send(cluster_ip)
+        else:
             n_console.send('1')  # Start a new cluster
             n_console.expect(r'Cluster name > ')
             n_console.send(cluster_name)
@@ -3096,194 +3096,194 @@ class T5Platform(object):
         try:
             options = n_console.expect([r'\[1\] > ', r'[^\]]> '])
         except:
-            content = n_console.content()    
-            helpers.log("*****Output is :*******\n%s" % content)           
-            helpers.log("USER ERROR: there is no match") 
+            content = n_console.content()
+            helpers.log("*****Output is :*******\n%s" % content)
+            helpers.log("USER ERROR: there is no match")
             helpers.test_failure('There is no match')
-             
-        else:    
-            content = n_console.content()    
-            helpers.log("*****Output is :*******\n%s" % content)  
-       
-            if options[0] == 0 :                 
-                helpers.log("*****Matched   [1] > can apply setting now*******  "  )       
+
+        else:
+            content = n_console.content()
+            helpers.log("*****Output is :*******\n%s" % content)
+
+            if options[0] == 0 :
+                helpers.log("*****Matched   [1] > can apply setting now*******  ")
             elif options[0] == 1:
-                helpers.log("*****Matched >  can NOT apply setting now*******  "  ) 
-            
+                helpers.log("*****Matched >  can NOT apply setting now*******  ")
+
                 match = re.search(r'\[\s*(\d+)\].*<NOT SET, UPDATE REQUIRED>.*[\r\n$]', content)
                 if match:
-                    helpers.log("USER INFO:  need to configure ntp"  )                       
+                    helpers.log("USER INFO:  need to configure ntp")
                     option = match.group(1)
-                    helpers.log("USER INFO: the option is %s" % option)                      
+                    helpers.log("USER INFO: the option is %s" % option)
                     n_console.send(option)
                     n_console.expect(r'Enter NTP server.* > ')
-                    n_console.send('')    
-                    n_console.expect(r'\[1\] > ')             
-                                    
+                    n_console.send('')
+                    n_console.expect(r'\[1\] > ')
+
             n_console.send('')  # Apply settings
             n_console.expect(r'Initializing system.*[\r\n]')
             n_console.expect(r'Configuring controller.*[\r\n]')
-              
+
             n_console.expect(r'IP address on eth0 is (.*)[\r\n]')
             content = n_console.content()
-         
-            helpers.log("content is:  %s" % content)              
+
+            helpers.log("content is:  %s" % content)
             match = re.search(r'IP address on eth0 is (\d+\.\d+\.\d+\.\d+).*[\r\n]', content)
             new_ip_address = match.group(1)
-            helpers.log("new_ip_address: '%s'" % new_ip_address)  
-                         
+            helpers.log("new_ip_address: '%s'" % new_ip_address)
+
             n_console.expect(r'Configuring cluster.*[\r\n]')
             n_console.expect(r'First-time setup is complete.*[\r\n]')
             n_console.expect(r'Press enter to continue > ')
             n_console.send('')
             helpers.sleep(3)  # Sleep for a few seconds just in case...
             return new_ip_address
-               
-             
-    def first_boot_controller_menu_reset(self,node):
+
+
+    def first_boot_controller_menu_reset(self, node):
         """
-       First boot setup Menu :   reset 
+       First boot setup Menu :   reset
         """
         t = test.Test()
         n = t.node(node)
         helpers.log("Entering ====> Reset and start over for node: '%s'" % node)
         helpers.log("Getting the console session for '%s'" % node)
         n_console = n.console()
-        n_console.expect(r'\[1\] > ')                
+        n_console.expect(r'\[1\] > ')
         content = n_console.content()
-        helpers.log("USER INFO: the content is '%s'" % content) 
+        helpers.log("USER INFO: the content is '%s'" % content)
         match = re.search(r'\[\s*(\d+)\] Reset and start over.*[\r\n$]', content)
         if match:
             option = match.group(1)
-            helpers.log("USER INFO: the option is %s" % option) 
+            helpers.log("USER INFO: the option is %s" % option)
         else:
-            helpers.log("USER ERROR: there is no match" )             
-            return False                 
-        n_console.send(option) 
-  
+            helpers.log("USER ERROR: there is no match")
+            return False
+        n_console.send(option)
+
         return True
-    
-    
-    
-    def first_boot_controller_menu_apply_negative(self,node, **kwargs):
+
+
+
+    def first_boot_controller_menu_apply_negative(self, node, **kwargs):
         """
-        First boot setup III: connect to the console to apply the setting. 
+        First boot setup III: connect to the console to apply the setting.
             this is negative, if wrong gw is given. then NTP and DNS can not be reached
         First boot setup Menu :  Apply settings
-    
-        Author: Mingtao       
+
+        Author: Mingtao
         """
         t = test.Test()
         n = t.node(node)
         helpers.log("Entering ====>  first_boot_controller_menu_1 for node: '%s'" % node)
         helpers.log("Getting the console session for '%s'" % node)
-        n_console = n.console() 
+        n_console = n.console()
         n_console.expect(r'\[1\] > ')
-        helpers.log("[1] Apply settings " )      
+        helpers.log("[1] Apply settings ")
         content = n_console.content()
-        helpers.log("USER INFO: the content is '%s'" % content) 
+        helpers.log("USER INFO: the content is '%s'" % content)
         match = re.search(r'\[\s*(\d+)\] Apply settings.*[\r\n$]', content)
         if match:
             option = match.group(1)
-            helpers.log("USER INFO: the option is %s" % option) 
+            helpers.log("USER INFO: the option is %s" % option)
         else:
-            helpers.log("USER ERROR: there is no match" )             
-            return False                 
-                  
+            helpers.log("USER ERROR: there is no match")
+            return False
+
         n_console.send(option)  # Apply settings
         n_console.expect(r'Initializing system.*[\r\n]')
         n_console.expect(r'Configuring controller.*[\r\n]')
-        n_console.expect(r'Waiting for network configuration.*[\r\n]')        
-        options=n_console.expect([r'Unable to resolve domains with DNS.*[\r\n]',r'No route to host.*[\r\n]'],timeout=300)
+        n_console.expect(r'Waiting for network configuration.*[\r\n]')
+        options = n_console.expect([r'Unable to resolve domains with DNS.*[\r\n]', r'No route to host.*[\r\n]'], timeout=300)
         if options[0] == 0:
-            n_console.expect(r'Retrieving time from NTP server.*[\r\n]',timeout=120)
-            n_console.expect(r'unreachable now.*[\r\n]',timeout=120)        
-            n_console.expect(r'Configuring cluster.*[\r\n]',timeout=120) 
-        if options[0] == 1 : 
-            helpers.log("USER INFO: need to correct cluster ip") 
+            n_console.expect(r'Retrieving time from NTP server.*[\r\n]', timeout=120)
+            n_console.expect(r'unreachable now.*[\r\n]', timeout=120)
+            n_console.expect(r'Configuring cluster.*[\r\n]', timeout=120)
+        if options[0] == 1 :
+            helpers.log("USER INFO: need to correct cluster ip")
         try:
-            options = n_console.expect([r'\[1\] >', r'First-time setup is complete.*[\r\n]'], timeout =120)    
+            options = n_console.expect([r'\[1\] >', r'First-time setup is complete.*[\r\n]'], timeout=120)
         except:
-            content = n_console.content()    
-            helpers.log("*****Output is :*******\n%s" % content)           
-            helpers.log("USER ERROR: there is no match") 
+            content = n_console.content()
+            helpers.log("*****Output is :*******\n%s" % content)
+            helpers.log("USER ERROR: there is no match")
             helpers.test_failure('There is no match')
         else:
-            content = n_console.content()    
-            helpers.log("*****Output is :*******\n%s" % content)  
-       
-            if options[0] == 0 :                 
-                helpers.summary_log("*****Need to correct parameter *******  "  )       
+            content = n_console.content()
+            helpers.log("*****Output is :*******\n%s" % content)
+
+            if options[0] == 0 :
+                helpers.summary_log("*****Need to correct parameter *******  ")
                 if 'gateway' in kwargs:
-                    gateway=kwargs.get('gateway')
+                    gateway = kwargs.get('gateway')
                     match = re.search(r'\[\s*(\d+)\] Update Gateway.*[\r\n$]', content)
                     if match:
                         option = match.group(1)
-                        helpers.log("USER INFO: the option is %s" % option) 
+                        helpers.log("USER INFO: the option is %s" % option)
                     else:
-                        helpers.log("USER ERROR: there is no match" )             
-                        return False                 
-                    n_console.send(option)  # Apply settings     
-                    n_console.expect(r'Gateway.*')               
+                        helpers.log("USER ERROR: there is no match")
+                        return False
+                    n_console.send(option)  # Apply settings
+                    n_console.expect(r'Gateway.*')
                     n_console.expect(r'Default gateway address.*> ')
                     n_console.send(gateway)
                     n_console.expect(r'\[1\] >')
-                    content = n_console.content()  
+                    content = n_console.content()
                 if 'dns' in kwargs:
-                    dns=kwargs.get('dns')
+                    dns = kwargs.get('dns')
                     match = re.search(r'\[\s*(\d+)\] Update DNS Server.*[\r\n$]', content)
                     if match:
                         option = match.group(1)
-                        helpers.log("USER INFO: the option is %s" % option) 
+                        helpers.log("USER INFO: the option is %s" % option)
                     else:
-                        helpers.log("USER ERROR: there is no match" )             
-                        return False                 
-                    n_console.send(option)  # Apply settings     
-                    n_console.expect(r'DNS Server.*')               
+                        helpers.log("USER ERROR: there is no match")
+                        return False
+                    n_console.send(option)  # Apply settings
+                    n_console.expect(r'DNS Server.*')
                     n_console.expect(r'DNS server address.* > ')
                     n_console.send(dns)
                     n_console.expect(r'\[1\] >')
                 if 'cluster_ip' in kwargs:
-                    clusterip=kwargs.get('cluster_ip')
+                    clusterip = kwargs.get('cluster_ip')
                     match = re.search(r'\[\s*(\d+)\] Update Existing Node IP Address.*[\r\n$]', content)
                     if match:
                         option = match.group(1)
-                        helpers.log("USER INFO: the option is %s" % option) 
+                        helpers.log("USER INFO: the option is %s" % option)
                     else:
-                        helpers.log("USER ERROR: there is no match" )             
-                        return False                 
-                    n_console.send(option)  # Apply settings     
-                    n_console.expect(r'Existing Node IP Address.*')               
+                        helpers.log("USER ERROR: there is no match")
+                        return False
+                    n_console.send(option)  # Apply settings
+                    n_console.expect(r'Existing Node IP Address.*')
                     n_console.expect(r'Existing node IP.* > ')
                     n_console.send(clusterip)
                     n_console.expect(r'\[1\] >')
-                                            
+
                 n_console.send('')  # Apply settings
-                n_console.expect(r'Initializing system.*[\r\n]',timeout=120)
-                n_console.expect(r'Configuring controller.*[\r\n]',timeout=120)                              
-                n_console.expect(r'Configuring cluster.*[\r\n]',timeout=120)
-                n_console.expect(r'First-time setup is complete.*[\r\n]',timeout=120)
+                n_console.expect(r'Initializing system.*[\r\n]', timeout=120)
+                n_console.expect(r'Configuring controller.*[\r\n]', timeout=120)
+                n_console.expect(r'Configuring cluster.*[\r\n]', timeout=120)
+                n_console.expect(r'First-time setup is complete.*[\r\n]', timeout=120)
                 n_console.expect(r'Press enter to continue > ')
                 n_console.send('')
                 helpers.sleep(3)  # Sleep for a few seconds just in case...
-                return True             
-               
-            if options[0] == 1 :                 
-                helpers.log("*****first boot complete *******  "  )   
+                return True
+
+            if options[0] == 1 :
+                helpers.log("*****first boot complete *******  ")
                 n_console.expect(r'Press enter to continue > ')
-                n_console.send('')    
-                helpers.summary_log('First boot complete even the NTP/DNS not reachable' )
+                n_console.send('')
+                helpers.summary_log('First boot complete even the NTP/DNS not reachable')
         helpers.sleep(3)  # Sleep for a few seconds just in case...
         return True
 
-    def cli_show_local_config(self,node):
+    def cli_show_local_config(self, node):
         '''
         show the local node config
         '''
-      
+
         t = test.Test()
         c = t.controller(node)
-    
+
         c.enable('')
         c.enable("show running-config local")
         content = c.cli_content()
@@ -3291,34 +3291,34 @@ class T5Platform(object):
         temp = helpers.strip_cli_output(content)
         temp = helpers.str_to_list(temp)
         helpers.log("*****Output list   is :\n%s" % temp)
-             
-        localinfo = {}    
-        for line in temp:          
+
+        localinfo = {}
+        for line in temp:
             line = line.lstrip()
-            helpers.log(" line is - %s" % line)            
-            if (re.match(r'.*hostname .*', line)): 
-                match = re.match(r'.*hostname (.*)', line)        
+            helpers.log(" line is - %s" % line)
+            if (re.match(r'.*hostname .*', line)):
+                match = re.match(r'.*hostname (.*)', line)
                 localinfo['hostname'] = match.group(1)
-            
-            elif (re.match(r'.*dns search.*', line)): 
-                match = re.match(r'.*dns search (.*)', line)        
+
+            elif (re.match(r'.*dns search.*', line)):
+                match = re.match(r'.*dns search (.*)', line)
                 localinfo['domain'] = match.group(1)
-             
-            elif (re.match(r'.*dns server.*', line)): 
-                match = re.match(r'.*dns server (.*)', line)        
+
+            elif (re.match(r'.*dns server.*', line)):
+                match = re.match(r'.*dns server (.*)', line)
                 localinfo['dns'] = match.group(1)
-            
-            elif (re.match(r'.*ip.* gateway.*', line)): 
-                match = re.match(r'.*ip (\d+\.\d+\.\d+\.\d+)/(\d+) gateway (\d+\.\d+\.\d+\.\d+)', line)        
+
+            elif (re.match(r'.*ip.* gateway.*', line)):
+                match = re.match(r'.*ip (\d+\.\d+\.\d+\.\d+)/(\d+) gateway (\d+\.\d+\.\d+\.\d+)', line)
                 localinfo['ip'] = match.group(1)
                 localinfo['mask'] = match.group(2)
                 localinfo['gateway'] = match.group(3)
-            elif (re.match(r'.*Error: running command.*', line)):  
-                helpers.test_failure("Error:  there is a show command error \n %s " % line)                
-                   
-            helpers.log("INFO: *** local node info *** \n  %s" % localinfo)      
-        return localinfo      
-        
+            elif (re.match(r'.*Error: running command.*', line)):
+                helpers.test_failure("Error:  there is a show command error \n %s " % line)
+
+            helpers.log("INFO: *** local node info *** \n  %s" % localinfo)
+        return localinfo
+
     def bash_df(self, node):
         ''' do df in debug bash
         ouput: index:  directory  with all the field
@@ -3328,38 +3328,38 @@ class T5Platform(object):
         content = n.bash('df')['content']
         lines = helpers.strip_cli_output(content, to_list=True)
         lines = lines[1:]
-        helpers.log("lines: %s" %  lines )
-        dfinfo = {}      
-    
+        helpers.log("lines: %s" % lines)
+        dfinfo = {}
+
         for line in lines:
             line = line.lstrip()
             fields = line.split()
-            helpers.log("fields: %s" % fields)   
-            dfinfo[fields[5]]={}         
-            dfinfo[fields[5]]['filesystem']=fields[0]
-            dfinfo[fields[5]]['1k-blocks']=fields[1]            
-            dfinfo[fields[5]]['used']=fields[2]    
-            dfinfo[fields[5]]['available']=fields[3]               
-            dfinfo[fields[5]]['usedpercent']=fields[4]               
+            helpers.log("fields: %s" % fields)
+            dfinfo[fields[5]] = {}
+            dfinfo[fields[5]]['filesystem'] = fields[0]
+            dfinfo[fields[5]]['1k-blocks'] = fields[1]
+            dfinfo[fields[5]]['used'] = fields[2]
+            dfinfo[fields[5]]['available'] = fields[3]
+            dfinfo[fields[5]]['usedpercent'] = fields[4]
         helpers.log("USER INFO: dfinfo is :\n%s" % dfinfo)
         return dfinfo
 
-    def get_disk_used_percentage(self, node, directory):        
+    def get_disk_used_percentage(self, node, directory):
         '''
         get the used percentage for given directory
         '''
         dfinfo = self.bash_df(node)
         return dfinfo[directory]['usedpercent']
 
-    
-                    
+
+
     def rest_configure_testpath(self, **kwargs):
-        
+
         t = test.Test()
         c = t.controller('master')
-        
+
         url = '/api/v1/data/controller/applications/bvs/test/path/setup-result'
-        
+
         if(kwargs.get('test-name')):
             url = url + '[test-name="%s"]' % (kwargs.get('test-name'))
         if(kwargs.get('timeout')):
@@ -3378,17 +3378,17 @@ class T5Platform(object):
             url = url + '[dst-ip="%s"]' % (kwargs.get('dst-ip'))
         if(kwargs.get('src-tenant')):
             url = url + '[src-tenant="%s"]' % (kwargs.get('src-tenant'))
-            
-        
+
+
         c.rest.get(url)
-        
+
     def rest_verify_testpath(self, pathName):
-        
+
         t = test.Test()
         c = t.controller("master")
-        
+
         url = '/api/v1/data/controller/applications/bvs/test/path/all-test'
-        
+
         try:
             result = c.rest.get(url)['content']
             for testpath in result:
@@ -3396,19 +3396,19 @@ class T5Platform(object):
                     helpers.log("Found path: %s in the test-path config" % pathName)
                     return True
         except:
-            helpers.test_failure(c.rest.error())           
+            helpers.test_failure(c.rest.error())
             return False
         else:
             helpers.log("Didn't find path: %s in the test-path config" % pathName)
             return False
-        
-    def rest_verify_testpath_timeout(self,pathName):
-        
+
+    def rest_verify_testpath_timeout(self, pathName):
+
         t = test.Test()
         c = t.controller("master")
-        
+
         url = '/api/v1/data/controller/applications/bvs/test/path/all-test'
-        
+
         try:
             result = c.rest.get(url)['content']
             for testpath in result:
@@ -3419,15 +3419,15 @@ class T5Platform(object):
                     else:
                         helpers.log("Test Path: %s not in TIMEDOUT state" % pathName)
                         return False
-                        
+
         except:
-            helpers.test_failure(c.rest.error())           
+            helpers.test_failure(c.rest.error())
             return False
         else:
             helpers.log("Didn't find path: %s in the test-path config" % pathName)
             return False
-        
-        
+
+
     def cli_walk_exec(self, string='', file_name=None, padding=''):
         ''' cli_exec_walk
            walk through exec/login mode CLI hierarchy
@@ -3470,7 +3470,7 @@ class T5Platform(object):
 
         num = len(temp)
         padding = "   " + padding
-        
+
         # Loop through commands and sub-commands
         for line in temp:
             string = string_c
@@ -3481,79 +3481,79 @@ class T5Platform(object):
             helpers.log("*** key is - %s" % key)
             helpers.log("*** string is - %s" % string)
             helpers.log("*** stringc is - %s" % string_c)
-        
+
             # Ignoring lines which do not contain actual commands
             if re.match(r'For', line) or line == "Commands:":
                 helpers.log("Ignoring line - %s" % line)
                 num = num - 1
                 continue
-            
+
             # Ignoring commands which are either disruptive or are only one level commands
             # These commands would have already been displayed with corresponding help in a previous top-level hierarchy
             if key == "reauth" or key == "echo" or key == "help" or key == "logout" or key == "ping" or key == "watch":
                 helpers.log("Ignore line %s" % line)
                 num = num - 1
                 continue
-            
+
             # Ignoring sub-commands under 'clear debug' and 'show debug'
-            if key == "ApplicationManager" or key == "Controller" or key == "EndpointManager" or key == "FabricManager" or key == "com.bigswitch.floodlight.bvs.application" or key == "ForwardingDebugCounters" or key == "ISyncService" or key =="StatsCollector" or key == "VirtualRoutingManager" or key == "org.projectfloodlight.core" or key == "StatsCollector":
+            if key == "ApplicationManager" or key == "OFSwitchManager" or key == "Controller" or key == "EndpointManager" or key == "FabricManager" or key == "com.bigswitch.floodlight.bvs.application" or key == "ForwardingDebugCounters" or key == "ISyncService" or key == "StatsCollector" or key == "VirtualRoutingManager" or key == "org.projectfloodlight.core" or key == "StatsCollector":
                 helpers.log("Ignore line %s" % line)
                 num = num - 1
                 continue
-            
+
             # Ignoring sub-commands under 'debug'
             if key == "bash" or key == "cassandra-cli" or key == "cli" or key == "cli-backtrace" or key == "cli-batch" or key == "description" or key == "netconfig" or key == "python" or key == "rest":
                 helpers.log("Ignore line %s" % line)
                 num = num - 1
                 continue
-            
+
             # Ignoring options that require user input or comments in <>
             if re.match(r'^<.+', line) and not re.match(r'^<cr>', line):
                 helpers.log("Ignoring line - %s" % line)
                 num = num - 1
                 continue
-            
+
             # Ignoring some sub-commands that may impact test run
-            if ((key =='<cr>' and (re.match(r' set length term', string))) or re.match(r' show debug counters', string) or re.match(r' show debug events details', string)):
+            if ((key == '<cr>' and (re.match(r' set length term', string))) or re.match(r' show debug counters', string) or re.match(r' show debug events details', string)):
                 helpers.log("Ignoring line - %s" % string)
                 num = num - 1
                 continue
-            
-            # skip 'show session' (PR BSC-5233)    
+
+            # skip 'show session' (PR BSC-5233)
             if (re.match(r' show session', string)):
                 helpers.log("Ignoring line - %s" % string)
                 num = num - 1
                 continue
-            
+
             # for interface related commands, only iterate through "all" and one specific interface
             if (re.match(r' show(.*)interface(.*)', string)):
                 if key != 'leaf0a-eth1' and key != 'all':
                     helpers.log("Ignoring line - %s" % string)
                     num = num - 1
                     continue
-            
-            # for switch related commands, only iterate through "all" and one specific switch    
+
+            # for switch related commands, only iterate through "all" and one specific switch
             if (re.match(r' show(.*)switch(.*)', string)):
                 if key != 'leaf0a' and key != 'all':
                     helpers.log("Ignoring line - %s" % string)
                     num = num - 1
                     continue
-                
+
             # for tenant related commands, only iterate through "all" and one specific tenant
             if (re.match(r' show(.*)tenant(.*)', string)):
                 if key != 'A' and key != 'all':
                     helpers.log("Ignoring line - %s" % string)
                     num = num - 1
                     continue
-            
+
             # for vns related commands, only iterate through "all" and one specific vns
             if (re.match(r' show(.*)vns(.*)', string)):
                 if key != 'A1' and key != 'all':
                     helpers.log("Ignoring line - %s" % string)
                     num = num - 1
                     continue
-            
-            # skip 'show logging', 'show lacp interface', 'show stats interface-history interface', 'show stats interface-history switch' and 'show running-config' - no need to iterate through options   
+
+            # skip 'show logging', 'show lacp interface', 'show stats interface-history interface', 'show stats interface-history switch' and 'show running-config' - no need to iterate through options
             if (re.match(r' show lacp interface', string)) or (re.match(r' show logging', string)) or (re.match(r' show stats interface-history interface', string)) or (re.match(r' show stats interface-history switch', string)):
                 helpers.log("Ignoring line - %s" % string)
                 num = num - 1
@@ -3563,20 +3563,20 @@ class T5Platform(object):
             if key == '<cr>':
                 helpers.log(" complete CLI show command: ******%s******" % string)
                 c.cli(string)
-                
+
                 if num == 1:
                     helpers.log("AT END: ******%s******" % string)
                     return string
-            
+
             # If command has sub-commands, call the function again to walk through sub-command options
             else:
                 string = string + ' ' + key
                 helpers.log("key - %s" % (key))
                 helpers.log("string - %s" % (string))
-                
+
                 helpers.log("***** Call the cli walk again with  --- %s" % string)
-                self.cli_walk_exec(string, file_name, padding)  
-        
+                self.cli_walk_exec(string, file_name, padding)
+
     def cli_walk_enable(self, string='', file_name=None, padding=''):
         t = test.Test()
         c = t.controller('master')
@@ -3627,102 +3627,102 @@ class T5Platform(object):
             if re.match(r'All', line):
                 helpers.log("Don't need to loop through exec commands- %s" % line)
                 break
-            
+
             if re.match(r'For', line) or line == "Commands:":
                 helpers.log("Ignoring line - %s" % line)
                 num = num - 1
                 continue
-            
+
             if re.match(r'^<.+', line) and not re.match(r'^<cr>', line):
                 helpers.log("Ignoring line - %s" % line)
                 num = num - 1
                 continue
-            
+
             # Ignoring sub-commands under 'clear debug' and 'show debug'
-            if key == "ApplicationManager" or key == "ControllerCounters" or key == "EndpointManager" or key == "FabricManager" or key == "com.bigswitch.floodlight.bvs.application" or key == "ForwardingDebugCounters" or key == "ISyncService" or key == "OFSwitchManager" or key == "RoleManager" or key =="StatsCollector" or key == "VirtualRoutingManager" or key == "org.projectfloodlight.core" or key == "StatsCollector":
+            if key == "ApplicationManager" or key == "ControllerCounters" or key == "EndpointManager" or key == "FabricManager" or key == "com.bigswitch.floodlight.bvs.application" or key == "ForwardingDebugCounters" or key == "ISyncService" or key == "OFSwitchManager" or key == "RoleManager" or key == "StatsCollector" or key == "VirtualRoutingManager" or key == "org.projectfloodlight.core" or key == "StatsCollector":
                 helpers.log("Ignore line %s" % line)
                 num = num - 1
                 continue
-            
+
             # for interface related commands, only iterate through "all" and one specific interface
             if (re.match(r' show(.*)interface(.*)', string)) or (re.match(r' clear(.*)interface-counter(.*)interface', string)):
                 if key != 'leaf0a-eth1' and key != 'all':
                     helpers.log("Ignoring line - %s" % string)
                     num = num - 1
                     continue
-            
-            # for switch related commands, only iterate through "all" and one specific switch    
+
+            # for switch related commands, only iterate through "all" and one specific switch
             if (re.match(r' show(.*)switch(.*)', string)) or (re.match(r' clear(.*)interface-counter(.*)switch', string)):
                 if key != 'leaf0a' and key != 'all':
                     helpers.log("Ignoring line - %s" % string)
                     num = num - 1
                     continue
-                
+
             # for tenant related commands, only iterate through "all" and one specific tenant
             if (re.match(r' show(.*)tenant(.*)', string)) or (re.match(r' clear(.*)vns-counter(.*)tenant(.*)', string)):
                 if key != 'A' and key != 'all':
                     helpers.log("Ignoring line - %s" % string)
                     num = num - 1
                     continue
-            
+
             # for vns related commands, only iterate through "all" and one specific vns
             if (re.match(r' show(.*)vns(.*)', string)) or (re.match(r' clear(.*)vns-counter(.*)vns(.*)', string)):
                 if key != 'A1' and key != 'all':
                     helpers.log("Ignoring line - %s" % string)
                     num = num - 1
                     continue
-                
+
             # Ignoring some sub-commands that may impact test run or require user input
-            if ((key =='<cr>' and (re.match(r' set length term', string))) or re.match(r' test path', string) or re.match(r' show debug counters', string) or re.match(r' show debug events details', string)):
+            if ((key == '<cr>' and (re.match(r' set length term', string))) or re.match(r' test path', string) or re.match(r' show debug counters', string) or re.match(r' show debug events details', string)):
                 helpers.log("Ignoring line - %s" % string)
                 num = num - 1
                 continue
-            
+
             # for vns related commands, only iterate through "all" and one specific vns
             if (re.match(r' system reboot', string)) or (re.match(r' system shutdown', string)):
                 helpers.log("Ignoring line - %s" % string)
                 num = num - 1
-                continue            
-            
-            # skip 'show session' (PR BSC-5233)    
+                continue
+
+            # skip 'show session' (PR BSC-5233)
             if (re.match(r' show session', string)):
                 helpers.log("Ignoring line - %s" % string)
                 num = num - 1
                 continue
-            
+
             # for interface related commands, only iterate through "all" and one specific interface
             if (re.match(r' show(.*)interface(.*)', string)):
                 if key != 'leaf0a-eth1' and key != 'all':
                     helpers.log("Ignoring line - %s" % string)
                     num = num - 1
                     continue
-            
-            # for switch related commands, only iterate through "all" and one specific switch    
+
+            # for switch related commands, only iterate through "all" and one specific switch
             if (re.match(r' show(.*)switch(.*)', string)):
                 if key != 'leaf0a' and key != 'all':
                     helpers.log("Ignoring line - %s" % string)
                     num = num - 1
                     continue
-                
+
             # for tenant related commands, only iterate through "all" and one specific tenant
             if (re.match(r' show(.*)tenant(.*)', string)):
                 if key != 'A' and key != 'all':
                     helpers.log("Ignoring line - %s" % string)
                     num = num - 1
                     continue
-            
+
             # for vns related commands, only iterate through "all" and one specific vns
             if (re.match(r' show(.*)vns(.*)', string)):
                 if key != 'A1' and key != 'all':
                     helpers.log("Ignoring line - %s" % string)
                     num = num - 1
                     continue
-            
-            # skip 'show logging', 'show lacp interface', 'show stats interface-history interface', 'show stats interface-history switch' - no need to iterate through options   
+
+            # skip 'show logging', 'show lacp interface', 'show stats interface-history interface', 'show stats interface-history switch' - no need to iterate through options
             if (re.match(r' show lacp interface', string)) or (re.match(r' show logging', string)) or (re.match(r' show stats interface-history interface', string)) or (re.match(r' show stats interface-history switch', string)):
                 helpers.log("Ignoring line - %s" % string)
                 num = num - 1
-                continue                                          
+                continue
 
             if key == '<cr>':
                 helpers.log(" complete CLI show command: ******%s******" % string)
@@ -3738,7 +3738,7 @@ class T5Platform(object):
                 helpers.log("key - %s" % (key))
                 helpers.log("***** Call the cli walk again with  --- %s" % string)
                 self.cli_walk_enable(string, file_name, padding)
-                
+
     def cli_walk_config(self, string='', file_name=None, padding=''):
         t = test.Test()
         c = t.controller('master')
@@ -3830,36 +3830,36 @@ class T5Platform(object):
             if re.match(r'.*core-switch.*', string) and key == "<cr>" :
                 helpers.log("Ignore line due to bug BSC-4903 - %s" % string)
                 continue
-            
-            
+
+
             # for interface related commands, only iterate through "all" and one specific interface
             if (re.match(r' (.*)interface(.*)', string)):
                 if key != 'leaf0a-eth1' and key != 'all' and key != '<cr>':
                     helpers.log("Ignoring line - %s" % string)
                     num = num - 1
                     continue
-            
-            # for switch related commands, only iterate through "all" and one specific switch    
+
+            # for switch related commands, only iterate through "all" and one specific switch
             if (re.match(r' (.*)switch(.*)', string)):
                 if key != 'leaf0a' and key != 'all' and key != '<cr>':
                     helpers.log("Ignoring line - %s" % string)
                     num = num - 1
                     continue
-                
+
             # for tenant related commands, only iterate through "all" and one specific tenant
             if (re.match(r' (.*)tenant(.*)', string)):
                 if key != 'A' and key != 'all' and key != '<cr>':
                     helpers.log("Ignoring line - %s" % string)
                     num = num - 1
                     continue
-            
+
             # for vns related commands, only iterate through "all" and one specific vns
             if (re.match(r' (.*)vns(.*)', string)):
                 if key != 'A1' and key != 'all' and key != '<cr>':
                     helpers.log("Ignoring line - %s" % string)
                     num = num - 1
-                    continue            
-            
+                    continue
+
             if re.match(r'.*shutdown.*', string) and re.match(r'.*controller.*', key):
                 helpers.log("Ignore line  - %s %s" % (string, key))
                 continue
@@ -3897,7 +3897,7 @@ class T5Platform(object):
                 helpers.log("Prompt2: '%s'" % prompt_str2)
 
 
-                #Compare prompts.  If different, it means that we entered a new config submode.
+                # Compare prompts.  If different, it means that we entered a new config submode.
                 if prompt1 != prompt2:
                     newstring = ''
                     helpers.log("***** Call the cli walk again with  --- %s" % string)
@@ -3914,4 +3914,4 @@ class T5Platform(object):
                 string = string + ' ' + key
                 helpers.log("***** Call the cli walk again with  --- %s" % string)
                 self.cli_walk_config(string, file_name, padding)
-    
+
