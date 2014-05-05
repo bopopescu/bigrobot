@@ -1,0 +1,41 @@
+# Topology description is in YAML format - see http://en.wikipedia.org/wiki/YAML
+#
+# c<n>: Controllers
+# s<n>: Switches
+# h<n>: Hosts (including bare metal)
+# mn  : Mininet server
+# tg1 : Tester like Ixia
+
+c1:
+    ip:  dummy    
+c2:
+    ip:  dummy
+    
+s1:
+    ip:  10.195.0.33
+    alias:  leaf0-a
+    user:  admin
+    password:  adminadmin
+    console_ip: cs-rack10
+    console_port: 6016   
+ 
+s2:
+    ip:  10.195.0.34
+    alias:  leaf0-b
+    user:  admin
+    password:  adminadmin
+    console_ip: cs-rack10
+    console_port: 6017   
+
+s7:
+    ip:  10.195.0.21
+    alias: spine0
+    user:  admin
+    password:  adminadmin
+    console_ip: cs-rack10
+    console_port: 6015
+       
+   
+    
+
+            

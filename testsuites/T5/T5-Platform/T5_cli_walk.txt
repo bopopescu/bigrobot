@@ -73,6 +73,9 @@ T3 enable mode cli walk
    cli walk enable  file_name=cli_walk_enable
    [Tags]  sanity  CLI  
    
- 
+T4 config mode cli walk
+   cli walk config  file_name=cli_walk_config
+   [Tags]  sanity  CLI   
+     
  
 	
