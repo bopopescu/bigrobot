@@ -86,7 +86,6 @@ class HaControllerNode(object):
         self._name = name
         self.rest = HaBsnRestClient(name, t)
 
-    # REST Shortcuts
     def post(self, *args, **kwargs):
         return self.rest.post(*args, **kwargs)
 
@@ -140,6 +139,10 @@ class HaControllerNode(object):
     def platform(self, *args, **kwargs):
         n = self.t.controller(self.logical_name(), resolve_mastership=True)
         return n.platform(*args, **kwargs)
+
+    def devconf(self, *args, **kwargs):
+        n = self.t.controller(self.logical_name(), resolve_mastership=True)
+        return n.devconf(*args, **kwargs)
 
     def cli(self, *args, **kwargs):
         n = self.t.controller(self.logical_name(), resolve_mastership=True)

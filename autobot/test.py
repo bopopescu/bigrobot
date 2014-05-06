@@ -953,7 +953,7 @@ class Test(object):
                 elif helpers.is_switch(key):
                     self.setup_switch_post_clean_config(key)
         else:
-            helpers.debug("Env BIGROBOT_TEST_SETUP is False. Skip device setup.")
+            helpers.debug("Env BIGROBOT_TEST_SETUP is False. Skipping device setup.")
 
         self._setup_completed = True  # pylint: disable=W0201
         helpers.debug("Test object setup ends.%s"

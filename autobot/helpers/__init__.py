@@ -437,6 +437,14 @@ def bigrobot_test_setup(new_val=None, default='True'):
     return _env_get_and_set('BIGROBOT_TEST_SETUP', new_val, default)
 
 
+def bigrobot_test_postmortem(new_val=None, default='True'):
+    """
+    Category: Get/set environment variables for BigRobot.
+    Set to 'False' to bypass Test case postmortem.
+    """
+    return _env_get_and_set('BIGROBOT_TEST_POSTMORTEM', new_val, default)
+
+
 def bigtest_path(new_val=None, default=None):
     """
     Category: Get/set environment variables for BigTest.

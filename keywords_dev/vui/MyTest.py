@@ -569,3 +569,6 @@ vui@Vuis-MacBook-Pro$
         n_console.send('')
         n_console.expect(r'login:')
         n.console_close()
+
+    def test_run_cmd(self):
+        helpers.run_cmd('cd /tmp; echo "This is a test" > outfile', '/tmp', shell=True)

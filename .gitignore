@@ -7,3 +7,7 @@ report.html
 syslog.txt
 report.html
 output.xml
+bigrobot_listener.log
+dev_commands.log
+*.ipynb
+.ipynb_checkpoints
