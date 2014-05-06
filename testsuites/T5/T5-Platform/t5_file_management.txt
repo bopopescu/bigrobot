@@ -7,6 +7,7 @@ Test Teardown  		Teardown
 Force Tags   		Platform  Sanity  File Management
 Library  			keywords/BsnCommon.py
 Library  			keywords/T5Platform.py
+Library  			keywords/T5Utilities.py
 Library  			keywords/T5.py
 Library        		String
 
@@ -58,21 +59,21 @@ T2.1 Copy running config to file, change RC, verify configs different
 	Modify Running Config
 	Compare RC with File Line By Line Negative  ${file}
 	Compare Negative  running-config  ${file}
-	[Tags]  Smoke
+	[Tags]
 
 T2.2 Copy running config to config://, change RC, verify configs different
 	Cli Copy  running-config  ${config}
 	Modify Running Config
 	Compare RC with Config Line By Line Negative  ${config}
 	Compare Negative  running-config  ${config}
-	[Tags]  Smoke
+	[Tags]
 
 T2.3 Copy running config to scp://, change RC, verify configs different
 	Cli Copy  running-config  ${scp}
 	Modify Running Config
 	Compare Negative  running-config  ${scp}
 	Compare Negative Slave  running-config  ${scp}
-	[Tags]  SCP  Smoke  HA
+	[Tags]  SCP  HA
 
 
 T3.1 Verify deletion of file
@@ -122,7 +123,7 @@ T4.2 Copy running config to config://, change RC, restore, verify old RC restore
 	${status} =  Cli Compare Running Config with Config Line By Line  ${config name}
 	Should Be True  ${status}
 	Compare  running-config  ${config}
-	[Tags]  Smoke
+	[Tags]
 
 T4.3 Copy running config to scp://, change RC, restore, verify no change in RC
 	Cli Copy  running-config  ${scp}
@@ -141,7 +142,7 @@ T4.4 Copy from scp:// and compare with previous running-config
 	Cli Copy  ${scp switch}  running-config
 	Compare Negative  backup  running-config
 	Compare  ${scp switch}  running-config
-	[Tags]  SCP  Smoke
+	[Tags]  SCP
 
 
 T5.1 Copy running config to file, copy RC from file to other file, verify
@@ -643,6 +644,17 @@ File Suite Setup
 	Bash  master  curl -g -H "Cookie: session_cookie\=$FL_SESSION_COOKIE" localhost:8080/api/v1/data/controller/core/aaa/accounting -X DELETE -d '{"name": "local"}'
 	Cli Copy  running-config  config://startup-config
 	Cli Copy  running-config  config://startup-config  node=slave
+	Cli Run  enable
+	Cli Run  config
+	Cli Run  logging remote 1.2.3.4
+	Cli Run  snmp-server community ro test
+	Cli Run  snmp-server contact tmk
+	Cli Run  snmp-server enable traps
+	Cli Run  snmp-server host 1.2.3.4
+	Cli Run  snmp-server location test
+	Cli Run  tacacs server host 1.2.3.4
+	Cli Run  tacacs server timeout 10
+	Cli Run  tacacs server key test
 
 Setup
 	Base Test Setup

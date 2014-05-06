@@ -39,7 +39,7 @@ T1.2 REST Delete and verify virtual IP address
 	Should Be Equal as Strings  ${configured}  None
 	Run Keyword and Expect Error  *Node * is unreachable*  Rest Get MAC Using Virtual IP  ${vip}
 	Verify VIP neither on Master nor Slave Bash  ${vip}
-	[Tags]  T5  Virtual IP  REST  Platform  Smoke
+	[Tags]  T5  Virtual IP  REST  Platform
 
 T1.3 REST Virtual IP after failover in cluster
 ### add validation for ssh keys when implemented
@@ -93,7 +93,7 @@ T1.7 REST Change Virtual IP address
 	Should Be Equal as Strings  ${configured}  ${vip bis}
 	${mac2} =  Rest Get MAC Using Virtual IP   ${vip bis}
 	Should Be Equal as Strings  ${mac1}  ${mac2}
-	[Tags]  T5  Virtual IP  REST  Platform  Smoke
+	[Tags]  T5  Virtual IP  REST  Platform
 
 
 ### CLI FUNCTIONS
@@ -119,7 +119,7 @@ T2.2 CLI Delete and verify virtual IP address
 	Should Be Equal As Strings  ${configured}  None
 	Run Keyword and Expect Error  *Node * is unreachable*  Rest Get MAC Using Virtual IP  ${vip}
 	Verify VIP neither on Master nor Slave Bash  ${vip}
-	[Tags]  T5  Virtual IP  CLI  Platform  Smoke
+	[Tags]  T5  Virtual IP  CLI  Platform
 
 T2.3 CLI Virtual IP after failover in cluster
 ### add validation for ssh keys when implemented
@@ -175,7 +175,7 @@ T2.7 CLI Change Virtual IP address
 	Should Be Equal as Strings  ${configured}  ${vip bis}
 	${mac2} =  Rest Get MAC Using Virtual IP   ${vip bis}
 	Should Be Equal as Strings  ${mac1}  ${mac2}
-	[Tags]  T5  Virtual IP  CLI  Platform  Smoke
+	[Tags]  T5  Virtual IP  CLI  Platform
 
 
 #(BSC-4925) Virtual IP not functional after chaning the time-zone(?) right after first boot

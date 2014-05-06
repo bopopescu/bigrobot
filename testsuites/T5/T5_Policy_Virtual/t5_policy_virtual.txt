@@ -1,0 +1,475 @@
+* Setting
+Documentation   T5 Policy two spine three rack with dual-tor Test Suite
+Suite Setup     setup topology
+Suite Teardown  teardown topology
+#Suite Setup     base suite setup
+#Suite Teardown  base suite teardown
+Test Setup       base test setup
+Test Teardown	 base test teardown
+#Test Setup      setup topology
+#Test Teardown   teardown topology
+#Suite Setup		setup topology
+#Suite Teardown	teardown topology
+Force Tags      T5 Sanity
+Library         keywords/BsnCommon.py
+Library         keywords/Mininet.py
+Library         keywords/T5.py
+Library         keywords/T5L3.py
+Library         keywords_dev/animesh/BsnCommonShow.py
+Resource		testsuites/T5/T5_Policy_Virtual/t5_policy_fabric_cfg_virtual.txt
+Resource		testsuites/T5/T5_Policy_Virtual/t5_policy_variables_virtual.txt
+Library         OperatingSystem
+Library         Collections
+Library         Dialogs
+
+
+
+
+* Test Cases
+##***********
+	
+#FUNCTIONALITY:
+T1 Interface tenant permit policy src-ip to dest-ip 
+	[Tags]  smoke
+	${src_dict}=  Create Dictionary  cidr  ${policy_bm6_ip}
+	${dst_dict}=  Create Dictionary  cidr  ${policy_bm0_ip}
+	Policy tenant interface  10  permit  ${src_dict}  ${dst_dict}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	sleep										1
+	Should Be True  							${loss} > 0 
+
+T2 Interface tenant deny policy src-ip to dest-ip
+	[Tags]  smoke
+	${src_dict}=  Create Dictionary  cidr  ${policy_bm6_ip}
+	${dst_dict}=  Create Dictionary  cidr  ${policy_bm0_ip}
+	Policy tenant interface  10  deny  ${src_dict}  ${dst_dict}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	sleep										1
+	Should Be True  							${loss} == 100
+
+T3 Remove interface tenant deny policy src-ip to dest-ip
+	[Tags]  smoke
+	${src_dict}=  Create Dictionary  cidr  ${policy_bm6_ip}
+	${dst_dict}=  Create Dictionary  cidr  ${policy_bm0_ip}
+	Remove policy tenant interface  10  deny  ${src_dict}  ${dst_dict}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	sleep										1
+	Should Be True  							${loss} == 0
+	 
+T4 Interface tenant permit policy src-mask to dest-ip
+	[Tags]
+	${src_dict}=  Create Dictionary  cidr  ${policy_vns2_ip1}
+	${dst_dict}=  Create Dictionary  cidr  ${policy_bm0_ip}
+	Policy tenant interface  10  permit  ${src_dict}  ${dst_dict}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
+	sleep										1
+	Should Be True  							${loss} == 0
+	
+T5 Interface tenant deny policy src-mask to dest-ip
+	[Tags]
+	${src_dict}=  Create Dictionary  cidr  ${policy_vns2_ip1}
+	${dst_dict}=  Create Dictionary  cidr  ${policy_bm0_ip}
+	Policy tenant interface  10  deny  ${src_dict}  ${dst_dict}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
+	sleep										1
+	Should Be True  							${loss} == 100
+	
+T6 Interface tenant permit policy src-ip to dest-vns
+	[Tags]
+	${src_dict}=  Create Dictionary  cidr  ${policy_bm6_ip}
+	${dst_dict}=  Create Dictionary  vns-name  ${policy_vns1}
+	Policy tenant interface  10  permit  ${src_dict}  ${dst_dict}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
+	sleep										1
+	Should Be True  							${loss} == 0
+	
+T7 Interface tenant deny policy src-ip to dest-vns
+	[Tags]
+	${src_dict}=  Create Dictionary  cidr  ${policy_bm6_ip}
+	${dst_dict}=  Create Dictionary  vns-name  ${policy_vns1}
+	Policy tenant interface  10  deny  ${src_dict}  ${dst_dict}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
+	sleep										1
+	Should Be True  							${loss} == 100
+	
+T8 Remove interface tenant deny policy src-ip to dest-vns
+	[Tags]
+	${src_dict}=  Create Dictionary  cidr  ${policy_bm6_ip}
+	${dst_dict}=  Create Dictionary  vns-name  ${policy_vns1}
+	Remove policy tenant interface  10  deny  ${src_dict}  ${dst_dict}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
+	sleep										1
+	Should Be True  							${loss} == 100
+
+
+
+T9 Interface tenant permit src-ip to dest-tenant
+	[Tags]
+	${src_dict}=  Create Dictionary  cidr  ${policy_bm6_ip}
+	${dst_dict}=  Create Dictionary  tenant-name  ${policy_tenant1}
+	Policy tenant interface  10  permit  ${src_dict}  ${dst_dict}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
+	sleep										1
+	Should Be True  							${loss} == 0
+	
+T10 Interface tenant deny src-ip to dest-tenant
+	[Tags]
+	${src_dict}=  Create Dictionary  cidr  ${policy_bm6_ip}
+	${dst_dict}=  Create Dictionary  tenant-name  ${policy_tenant1}
+	Policy tenant interface  10  deny  ${src_dict}  ${dst_dict}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
+	sleep										1
+	Should Be True  							${loss} == 100
+	
+T11 Interface vns permit policy src-ip to dest-ip 
+	[Tags]  smoke
+	${src_dict}=  Create Dictionary  cidr  ${policy_bm1_ip}
+	${dst_dict}=  Create Dictionary  cidr  ${policy_bm0_ip}
+	Policy vns interface  10  permit  ${src_dict}  ${dst_dict}
+	${loss}=									mininet l3 ping		${bm1_name}				${bm0_ip}		3
+	sleep										1
+	Should Be True  							${loss} == 0
+
+T12 Interface vns deny policy src-ip to dest-ip
+	[Tags]  smoke
+	${src_dict}=  Create Dictionary  cidr  ${policy_bm1_ip}
+	${dst_dict}=  Create Dictionary  cidr  ${policy_bm0_ip}
+	Policy vns interface  10  deny  ${src_dict}  ${dst_dict}
+	${loss}=									mininet l3 ping		${bm1_name}				${bm0_ip}		3
+	sleep										1
+	Should Be True  							${loss} == 100
+
+T13 Remove interface vns deny policy src-ip to dest-ip
+	[Tags]  smoke
+	${src_dict}=  Create Dictionary  cidr  ${policy_bm1_ip}
+	${dst_dict}=  Create Dictionary  cidr  ${policy_bm0_ip}
+	Remove policy vns interface  10  deny  ${src_dict}  ${dst_dict}
+	${loss}=									mininet l3 ping		${bm1_name}				${bm0_ip}		3
+	sleep										1
+	Should Be True  							${loss} == 0
+
+
+T14 Interface vns permit policy src-ip to dest-vns
+	[Tags]
+	${src_dict}=  Create Dictionary  cidr  ${policy_bm6_ip}
+	${dst_dict}=  Create Dictionary  vns-name  ${policy_vns1}
+	Policy vns interface  10  permit  ${src_dict}  ${dst_dict}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
+	sleep										1
+	Should Be True  							${loss} == 0
+
+T15 Interface vns deny policy src-ip to dest-vns
+	[Tags]
+	${src_dict}=  Create Dictionary  cidr  ${policy_bm6_ip}
+	${dst_dict}=  Create Dictionary  vns-name  ${policy_vns1}
+	Policy vns interface  10  deny  ${src_dict}  ${dst_dict}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
+	sleep										1
+	Should Be True  							${loss} == 100
+
+T16 Remove interface vns deny policy src-ip to dest-vns
+	[Tags]
+	${src_dict}=  Create Dictionary  cidr  ${policy_bm6_ip}
+	${dst_dict}=  Create Dictionary  vns-name  ${policy_vns1}
+	Remove policy vns interface  10  deny  ${src_dict}  ${dst_dict}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_ip}		3
+	sleep										1
+	Should Be True  							${loss} == 100
+
+
+T17 Remove Add tenant interface and verify tenant permit policy src-ip to dest-ip 
+	[Tags]
+	${src_dict}=  Create Dictionary  cidr  ${policy_bm6_ip}
+	${dst_dict}=  Create Dictionary  cidr  ${policy_bm0_ip}
+	Policy tenant interface  10  permit  ${src_dict}  ${dst_dict}
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	sleep										1
+	Should Be True  							${loss} == 0 
+	Remove tenant interface 
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	sleep										1
+	Should Be True  							${loss} == 0 
+	Add tenant interface
+	${loss}=									mininet l3 ping		${bm6_name}				${bm0_name}		3
+	sleep										1
+	Should Be True  							${loss} == 0 
+	Remove policy tenant interface  10  permit  ${src_dict}  ${dst_dict}
+	
+
+T18 Remove Add vns interface and verify vns permit policy src-ip to dest-ip 
+	[Tags]
+	${src_dict}=  Create Dictionary  cidr  ${policy_bm1_ip}
+	${dst_dict}=  Create Dictionary  cidr  ${policy_bm0_ip}
+	Policy vns interface  10  permit  ${src_dict}  ${dst_dict}
+	${loss}=									mininet l3 ping		${bm1_name}				${bm0_name}		3
+	sleep										1
+	Should Be True  							${loss} == 0 
+	Remove vns interface 
+	${loss}=									mininet l3 ping		${bm1_name}				${bm0_name}		3
+	sleep										1
+	Should Be True  							${loss} == 0 
+	Add vns interface
+	${loss}=									mininet l3 ping		${bm1_name}				${bm0_name}		3
+	sleep										1
+	Should Be True  							${loss} == 0 
+	Remove vns tenant interface  10  permit  ${src_dict}  ${dst_dict}
+	
+* Keywords
+setup topology
+	base suite setup
+	add fabric switch
+	sleep 										1
+	REST add portgroup							${portgroup0}
+	REST add portgroup							${portgroup1}
+	REST add portgroup							${portgroup2}
+	REST add portgroup							${portgroup3}
+	REST add portgroup							${portgroup4}
+	REST add portgroup							${portgroup5}
+	REST add portgroup							${portgroup6}
+	REST add portgroup							${portgroup7}
+	REST add portgroup							${portgroup8}
+	REST add portgroup							${portgroup9}
+	REST add portgroup							${portgroup10}
+	REST add portgroup							${portgroup11}
+	REST add leaf group							${leaf0a_name}		${leafgroup0}
+	REST add leaf group							${leaf0b_name}		${leafgroup0}
+	REST add leaf group							${leaf1a_name}		${leafgroup1}
+	REST add leaf group							${leaf1b_name}		${leafgroup1}
+	REST add leaf group							${leaf2a_name}		${leafgroup2}
+	REST add leaf group							${leaf2b_name}		${leafgroup2}
+	REST add interface to portgroup				${leaf0a_name}		${leaf0a_intf1}		${portgroup0} 
+	REST add interface to portgroup				${leaf0b_name}		${leaf0b_intf1}		${portgroup0} 
+	REST add interface to portgroup				${leaf0a_name}		${leaf0a_intf2}		${portgroup1} 
+	REST add interface to portgroup				${leaf0b_name}		${leaf0b_intf2}		${portgroup1} 
+	REST add interface to portgroup				${leaf0a_name}		${leaf0a_intf3}		${portgroup2} 
+	REST add interface to portgroup				${leaf0b_name}		${leaf0b_intf3}		${portgroup2} 
+	REST add interface to portgroup				${leaf0a_name}		${leaf0a_intf4}		${portgroup3} 
+	REST add interface to portgroup				${leaf0b_name}		${leaf0b_intf4}		${portgroup3} 	
+	REST add interface to portgroup				${leaf1a_name}		${leaf1a_intf1}		${portgroup4} 
+	REST add interface to portgroup				${leaf1b_name}		${leaf1b_intf1}		${portgroup4} 
+	REST add interface to portgroup				${leaf1a_name}		${leaf1a_intf2}		${portgroup5} 
+	REST add interface to portgroup				${leaf1b_name}		${leaf1b_intf2}		${portgroup5} 
+	REST add interface to portgroup				${leaf1a_name}		${leaf1a_intf3}		${portgroup6} 
+	REST add interface to portgroup				${leaf1b_name}		${leaf1b_intf3}		${portgroup6} 
+	REST add interface to portgroup				${leaf1a_name}		${leaf1a_intf4}		${portgroup7} 
+	REST add interface to portgroup				${leaf1b_name}		${leaf1b_intf4}		${portgroup7} 
+	REST add interface to portgroup				${leaf2a_name}		${leaf2a_intf1}		${portgroup8} 
+	REST add interface to portgroup				${leaf2b_name}		${leaf2b_intf1}		${portgroup8} 
+	REST add interface to portgroup				${leaf2a_name}		${leaf2a_intf2}		${portgroup9} 
+	REST add interface to portgroup				${leaf2b_name}		${leaf2b_intf2}		${portgroup9} 
+	REST add interface to portgroup				${leaf2a_name}		${leaf2a_intf3}		${portgroup10} 
+	REST add interface to portgroup				${leaf2b_name}		${leaf2b_intf3}		${portgroup10} 
+	REST add interface to portgroup				${leaf2a_name}		${leaf2a_intf4}		${portgroup11} 
+	REST add interface to portgroup				${leaf2b_name}		${leaf2b_intf4}		${portgroup11} 	
+	REST add tenant 							${tenant1_name}
+	REST add tenant								${tenant2_name}
+	REST add vns								${tenant1_name}		${vns1_1}
+	REST add vns								${tenant1_name}		${vns1_2}
+	REST add vns								${tenant1_name}		${vns1_3}
+	REST add vns								${tenant2_name}		${vns2_1}
+	REST add vns								${tenant2_name}		${vns2_2}
+	REST add vns								${tenant2_name}		${vns2_3}
+	REST add router intf						${tenant1_name}		${vns1_1}
+	REST add router intf						${tenant1_name}		${vns1_2}
+	REST add router intf						${tenant1_name}		${vns1_3}
+	REST add router intf						${tenant2_name}		${vns2_1}
+	REST add router intf						${tenant2_name}		${vns2_2}
+	REST add router intf						${tenant2_name}		${vns2_3}
+	REST add vns ip  							${tenant1_name}  	${vns1_1}  		${vns1_ip1}	  		${vns1_subnet1} 	
+	REST add vns ip  							${tenant1_name}  	${vns1_2}  		${vns1_ip2}	  		${vns1_subnet2} 	
+	REST add vns ip  							${tenant1_name}  	${vns1_3}  		${vns1_ip3}	  		${vns1_subnet3}
+	REST add vns ip  							${tenant2_name}  	${vns2_1}  		${vns2_ip1}	  		${vns2_subnet1} 	
+	REST add vns ip  							${tenant2_name}  	${vns2_2}  		${vns2_ip2}	  		${vns2_subnet2} 	
+	REST add vns ip  							${tenant2_name}  	${vns2_3}  		${vns2_ip3}	  		${vns2_subnet3}
+	REST add portgroup to vns					${tenant1_name}  	${vns1_1} 		${portgroup0} 		${untaggedvlan}	
+	REST add portgroup to vns					${tenant1_name}  	${vns1_2} 		${portgroup1} 		${untaggedvlan}	
+	REST add portgroup to vns					${tenant2_name}  	${vns2_3} 		${portgroup2} 		${untaggedvlan}
+	REST add portgroup to vns					${tenant2_name}  	${vns2_2} 		${portgroup3} 		${untaggedvlan}
+	REST add portgroup to vns					${tenant1_name}  	${vns1_1} 		${portgroup4} 		${untaggedvlan}
+	REST add portgroup to vns					${tenant1_name}  	${vns1_2} 		${portgroup5} 		${untaggedvlan}
+	REST add portgroup to vns					${tenant2_name}  	${vns2_1} 		${portgroup6} 		${untaggedvlan}
+	REST add portgroup to vns					${tenant1_name}  	${vns1_2} 		${portgroup7} 		${untaggedvlan}
+	REST add portgroup to vns					${tenant2_name}  	${vns2_1} 		${portgroup8} 		${untaggedvlan}
+	REST add portgroup to vns					${tenant2_name}  	${vns2_2} 		${portgroup9} 		${untaggedvlan}
+	REST add portgroup to vns					${tenant2_name}  	${vns2_3} 		${portgroup10} 		${untaggedvlan}	
+	REST add static routes						${tenant1_name}		0.0.0.0/0		 {"tenant-name": "system"}
+	REST add static routes						${tenant2_name}		0.0.0.0/0		 {"tenant-name": "system"}	
+	add inter tenant routing
+	mininet host config
+	
+	
+teardown topology
+	delete fabric switch
+	sleep										1
+	REST delete portgroup from vns				${tenant2_name}  	${vns2_3} 		${portgroup10} 		${untaggedvlan}	
+	REST delete portgroup from vns				${tenant1_name}  	${vns1_1} 		${portgroup0} 		${untaggedvlan}	
+	REST delete portgroup from vns				${tenant1_name}  	${vns1_2} 		${portgroup1} 		${untaggedvlan}	
+	REST delete portgroup from vns				${tenant2_name}  	${vns2_3} 		${portgroup2} 		${untaggedvlan}
+	REST delete portgroup from vns				${tenant2_name}  	${vns2_2} 		${portgroup3} 		${untaggedvlan}
+	REST delete portgroup from vns				${tenant1_name}  	${vns1_1} 		${portgroup4} 		${untaggedvlan}
+	REST delete portgroup from vns				${tenant1_name}  	${vns1_2} 		${portgroup5} 		${untaggedvlan}
+	REST delete portgroup from vns				${tenant2_name}  	${vns2_1} 		${portgroup6} 		${untaggedvlan}
+	REST delete portgroup from vns				${tenant1_name}  	${vns1_2} 		${portgroup7} 		${untaggedvlan}
+	REST delete portgroup from vns				${tenant2_name}  	${vns2_1} 		${portgroup8} 		${untaggedvlan}
+	REST delete portgroup from vns				${tenant2_name}  	${vns2_2} 		${portgroup9} 		${untaggedvlan}
+	REST delete vns ip  						${tenant1_name}  	${vns1_1}  		${vns1_ip1}	  		${vns1_subnet1} 	
+	REST delete vns ip  						${tenant1_name}  	${vns1_2}  		${vns1_ip2}	  		${vns1_subnet2} 	
+	REST delete vns ip  						${tenant1_name}  	${vns1_3}  		${vns1_ip3}	  		${vns1_subnet3}
+	REST delete vns ip  						${tenant2_name}  	${vns2_1}  		${vns2_ip1}	  		${vns2_subnet1} 	
+	REST delete vns ip  						${tenant2_name}  	${vns2_2}  		${vns2_ip2}	  		${vns2_subnet2} 	
+	REST delete vns ip  						${tenant2_name}  	${vns2_3}  		${vns2_ip3}	  		${vns2_subnet3}
+	REST delete vns								${tenant1_name}		${vns1_1}
+	REST delete vns								${tenant1_name}		${vns1_2}
+	REST delete vns								${tenant1_name}		${vns1_3}
+	REST delete vns								${tenant2_name}		${vns2_1}
+	REST delete vns								${tenant2_name}		${vns2_2}
+	REST delete vns								${tenant2_name}		${vns2_3}	
+	REST delete tenant							${tenant_system}
+	REST delete tenant							${tenant1_name}
+	REST delete tenant							${tenant2_name}
+	REST delete interface from portgroup			${leaf0a_name}		${leaf0a_intf1}		${portgroup0} 
+	REST delete interface from portgroup			${leaf0b_name}		${leaf0b_intf1}		${portgroup0} 
+	REST delete interface from portgroup			${leaf0a_name}		${leaf0a_intf2}		${portgroup1} 
+	REST delete interface from portgroup			${leaf0b_name}		${leaf0b_intf2}		${portgroup1} 
+	REST delete interface from portgroup			${leaf0a_name}		${leaf0a_intf3}		${portgroup2} 
+	REST delete interface from portgroup			${leaf0b_name}		${leaf0b_intf3}		${portgroup2} 
+	REST delete interface from portgroup			${leaf0a_name}		${leaf0a_intf4}		${portgroup3} 
+	REST delete interface from portgroup			${leaf0b_name}		${leaf0b_intf4}		${portgroup3} 	
+	REST delete interface from portgroup			${leaf1a_name}		${leaf1a_intf1}		${portgroup4} 
+	REST delete interface from portgroup			${leaf1b_name}		${leaf1b_intf1}		${portgroup4} 
+	REST delete interface from portgroup			${leaf1a_name}		${leaf1a_intf2}		${portgroup5} 
+	REST delete interface from portgroup			${leaf1b_name}		${leaf1b_intf2}		${portgroup5} 
+	REST delete interface from portgroup			${leaf1a_name}		${leaf1a_intf3}		${portgroup6} 
+	REST delete interface from portgroup			${leaf1b_name}		${leaf1b_intf3}		${portgroup6} 
+	REST delete interface from portgroup			${leaf1a_name}		${leaf1a_intf4}		${portgroup7} 
+	REST delete interface from portgroup			${leaf1b_name}		${leaf1b_intf4}		${portgroup7} 
+	REST delete interface from portgroup			${leaf2a_name}		${leaf2a_intf1}		${portgroup8} 
+	REST delete interface from portgroup			${leaf2b_name}		${leaf2b_intf1}		${portgroup8} 
+	REST delete interface from portgroup			${leaf2a_name}		${leaf2a_intf2}		${portgroup9} 
+	REST delete interface from portgroup			${leaf2b_name}		${leaf2b_intf2}		${portgroup9} 
+	REST delete interface from portgroup			${leaf2a_name}		${leaf2a_intf3}		${portgroup10} 
+	REST delete interface from portgroup			${leaf2b_name}		${leaf2b_intf3}		${portgroup10} 
+	REST delete interface from portgroup			${leaf2a_name}		${leaf2a_intf4}		${portgroup11} 
+	REST delete interface from portgroup			${leaf2b_name}		${leaf2b_intf4}		${portgroup11} 	
+	REST delete portgroup						${portgroup0}
+	REST delete portgroup						${portgroup1}
+	REST delete portgroup						${portgroup2}
+	REST delete portgroup						${portgroup3}
+	REST delete portgroup						${portgroup4}
+	REST delete portgroup						${portgroup5}
+	REST delete portgroup						${portgroup6}
+	REST delete portgroup						${portgroup7}
+	REST delete portgroup						${portgroup8}
+	REST delete portgroup						${portgroup9}
+	REST delete portgroup						${portgroup10}
+	REST delete portgroup						${portgroup11}
+	sleep										10
+	delete inter tenant routing
+	base suite teardown
+	
+
+mininet host config
+	mininet host ipcfg							${bm0_name}			${bm0_bondif}	0.0.0.0				0
+	mininet host ipcfg							${bm1_name}			${bm1_bondif}	0.0.0.0				0
+	mininet host ipcfg							${bm2_name}			${bm2_bondif}	0.0.0.0				0
+	mininet host ipcfg							${bm3_name}			${bm3_bondif}	0.0.0.0				0
+	mininet host ipcfg							${bm4_name}			${bm4_bondif}	0.0.0.0				0
+	mininet host ipcfg							${bm5_name}			${bm5_bondif}	0.0.0.0				0
+	mininet host ipcfg							${bm6_name}			${bm6_bondif}	0.0.0.0				0
+	mininet host ipcfg							${bm7_name}			${bm7_bondif}	0.0.0.0				0
+	mininet host ipcfg							${bm8_name}			${bm8_bondif}	0.0.0.0				0
+	mininet host ipcfg							${bm9_name}			${bm9_bondif}	0.0.0.0				0
+	mininet host ipcfg							${bm10_name}		${bm10_bondif}	0.0.0.0				0
+	mininet host ipcfg							${bm11_name}		${bm11_bondif}	0.0.0.0				0
+	sleep										1	
+	mininet host ipcfg   						${bm0_name}			${bm0_bondif}	${bm0_ip}			${vns1_subnet1}
+	mininet host ipcfg   						${bm1_name}			${bm1_bondif}	${bm1_ip}			${vns1_subnet2}
+	mininet host ipcfg							${bm2_name}			${bm2_bondif}	${bm2_ip} 			${vns2_subnet3}
+	mininet host ipcfg   						${bm3_name}			${bm3_bondif}	${bm3_ip}			${vns2_subnet2}
+	mininet host ipcfg							${bm4_name}			${bm4_bondif}	${bm4_ip}			${vns1_subnet1}
+	mininet host ipcfg   						${bm5_name}			${bm5_bondif}	${bm5_ip}			${vns1_subnet2}
+	mininet host ipcfg							${bm6_name}			${bm6_bondif}	${bm6_ip}			${vns2_subnet1}
+	mininet host ipcfg							${bm8_name}			${bm8_bondif}	${bm8_ip}			${vns2_subnet1}
+	mininet host ipcfg							${bm9_name}			${bm9_bondif}	${bm9_ip}			${vns2_subnet2}
+	mininet host ipcfg   						${bm10_name}		${bm10_bondif}	${bm10_ip}			${vns1_subnet1}	
+	mininet host gw								${bm0_name}			${vns1_ip1}		${bm0_bondif}
+	mininet host gw								${bm1_name}			${vns1_ip2}		${bm1_bondif}
+	mininet host gw								${bm2_name}			${vns2_ip3}		${bm2_bondif}
+	mininet host gw								${bm3_name}			${vns2_ip2}		${bm3_bondif}
+	mininet host gw								${bm4_name}			${vns1_ip1}		${bm4_bondif}
+	mininet host gw								${bm5_name}			${vns1_ip2}		${bm5_bondif}
+	mininet host gw								${bm6_name}			${vns2_ip1}		${bm6_bondif}
+	mininet host gw								${bm8_name}			${vns2_ip1}		${bm8_bondif}
+	mininet host gw								${bm9_name}			${vns2_ip2}		${bm9_bondif}
+	mininet host gw								${bm10_name}		${vns2_ip3}		${bm10_bondif}
+
+add inter tenant routing
+	REST add tenant								${tenant_system}
+	REST add system intf to tenant routers		${tenant1_name} 
+	#REST add system to tenant routers 			${tenant1_name} 
+   	#REST add system to tenant routers 			${tenant2_name}
+   	REST add system intf to tenant routers		${tenant2_name} 
+   	REST add tenant routers intf to system		${tenant1_name}
+   	REST add tenant routers intf to system		${tenant2_name}
+   	#REST add tenant routers to system			${tenant1_name} 
+   	#REST add tenant routers to system			${tenant2_name} 
+
+delete inter tenant routing
+	REST delete tenant routers intf to system		${tenant1_name}
+	REST delete tenant routers intf to system		${tenant2_name}
+	REST delete system intf to tenant routers		${tenant1_name}
+	REST delete system intf to tenant routers		${tenant2_name}
+	REST delete tenant							${tenant_system}
+	
+Policy tenant interface  [Arguments]  ${seq}  ${action}  ${src}  ${dst} 
+	#add inter tenant routing
+	#mininet host config
+	REST add policy								${tenant1_name}		${tenant1_polname}		
+	#REST add policy								${tenant2_name}		${tenant2_polname}
+	REST add policy item						${tenant1_name}		${tenant1_polname}		${seq}		${action}		${src}		${dst}
+	REST apply policy on tenant					${tenant1_name}		${tenant1_polname}
+	common dumps
+
+Remove policy tenant interface  [Arguments]  ${seq}  ${action}  ${src}  ${dst} 
+	REST remove policy on tenant					${tenant1_name}		${tenant1_polname}
+	REST delete policy								${tenant1_name}		${tenant1_polname}		
+	common dumps
+
+
+Policy vns interface  [Arguments]  ${seq}  ${action}  ${src}  ${dst} 
+	#add inter tenant routing
+	#mininet host config
+	#REST add policy								${tenant1_name}		${tenant1_polname}		
+	REST add policy								${tenant1_name}		${tenant1_polname}
+	REST add policy item						${tenant1_name}		${tenant1_polname}		${seq}		${action}		${src}		${dst}
+	REST apply policy on vns					${tenant1_name}		${vns1_2}				${tenant1_polname}
+	common dumps
+	
+Remove policy vns interface  [Arguments]  ${seq}  ${action}  ${src}  ${dst} 
+	REST remove policy on vns					${tenant1_name}		${vns1_2}				${tenant1_polname}
+	REST delete policy								${tenant1_name}		${tenant1_polname}
+	common dumps
+
+
+common dumps	
+	mininet dump switch							${leaf0a_name}
+	mininet dump switch							${leaf0b_name}
+	mininet dump switch							${leaf1a_name}
+	mininet dump switch							${leaf1b_name}
+	mininet dump switch							${leaf2a_name}
+	mininet dump switch							${leaf2b_name}
+	REST show forwarding switch l3 host route	${leaf0a_name}
+	REST show forwarding switch l3 host route	${leaf0b_name}
+	REST show forwarding switch l3 host route	${leaf1a_name}
+	REST show forwarding switch l3 host route	${leaf1b_name}
+	REST show forwarding switch l3 host route	${leaf2a_name}
+	REST show forwarding switch l3 host route	${leaf2b_name}	
+	REST show forwarding switch l3 cidr route	${leaf0a_name}
+	REST show forwarding switch l3 cidr route	${leaf0b_name}
+	REST show forwarding switch l3 cidr route	${leaf1a_name}
+	REST show forwarding switch l3 cidr route	${leaf1b_name}
+	REST show forwarding switch l3 cidr route	${leaf2a_name}
+	REST show forwarding switch l3 cidr route	${leaf2b_name}	
+	REST show running config
+	sleep										1
+	

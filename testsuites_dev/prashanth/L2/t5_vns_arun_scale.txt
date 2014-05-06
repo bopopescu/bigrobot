@@ -25,16 +25,17 @@ ${mac1}		00:02:00:00:00:00
 * Test Case 
 
 add Dual Leaf Three Rack setup
-   [Tags]  L2  scaling         
+   [Tags]  L2  scaling  run         
    base suite setup
    rest add switch  leaf0-a
-   rest add dpid  
-   rest add fabric role  leaf
+   rest add dpid  leaf0-a  00:00:5c:16:c7:16:46:75 
+   rest add fabric role  leaf0-a  leaf
    sleep  5
    rest verify fabric switch all
-    
+
+   
 create 4093 vns and verify the table and forwarding
-	[Tags]  L2  scaling      
+	[Tags]  L2  scaling  run      
   	rest add tenant  t1
 	rest add vns scale  t1  4093
 	summary log  system create a 4k vns
@@ -44,7 +45,7 @@ create 4093 vns and verify the table and forwarding
 	rest add interface to all vns  t1  leaf0-a  ethernet48
 	summary log  system add 4 ports to each vns
 	rest verify vns scale  4093
-	rest verify membership port count  2
+	rest verify membership port count  4
 	${stream}=             L3 add  no_arp=True  flow=a<->c  src_mac=00:00:0a:00:00:01  dst_mac=00:00:0c:00:00:01   ethertype=8100  vlan_id=1  vlan_cnt=4093  frame_rate=1000  frame_size=68  name=a_c_flow
 	${stream1}=             L3 add  no_arp=True  flow=b<->d  src_mac=00:00:0b:00:00:01  dst_mac=00:00:0d:00:00:01   ethertype=8100  vlan_id=1  vlan_cnt=4093  frame_rate=1000  frame_size=68  name=a_c_flow
     start traffic  ${stream}
@@ -61,7 +62,12 @@ create 4093 vns and verify the table and forwarding
     ${result}=  rest verify tenant
     Should not be True  ${result}
 
-
+Tear down the config
+   [Tags]  L2  scaling           
+   rest delete fabric switch  leaf0-a
+   rest delete tenant  t1
+   base suite teardown
+   
 * Keywords      
    
 add a tenant  [Arguments]  ${tenant} 

@@ -1,27 +1,2 @@
 c1:
-  #ip: 10.193.0.43      # Song's BVS
-  #ip: 10.192.104.2      # vui-bvs (libvirt vm)
-
-  #ip: dummy
-  ip: 10.192.92.75      # BVS (T5)
-
-  #ip: 10.193.0.41      # Song's
-  #ip: 10.193.0.43      # Testing StrictHostKeyChecking issue
-  #ip: 10.192.97.1    # Animesh's bigtap
-  #ip: 10.192.106.10    # Don's T5 (for fabric testing)
-  #ip: 10.192.103.31    # Tomasz's BigTap controller (MASTER-BLOCKED upgrade test)
-  #ip: 10.192.5.121    # T5 (Prashanth's)
-  #set_devconf_debug_level: 5
-  #console:
-  #  ip: qa-kvm-32
-  #  libvirt_vm_name: vui-bvs
-  #  user: root
-  #  password: bsn
-
-#c2:
-#  ip: 10.192.97.2    # Animesh's bigtap
-
-#s1:
-#  ip: 10.195.0.34
-#  user: admin
-#  password: bsn
+  ip: dummy
