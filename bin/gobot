@@ -382,6 +382,12 @@ def test_command(*args):
                         default=helpers.bigrobot_log_path_exec_instance(),
                         help="Output directory")
 
+    # Note on --exitonfailure: It will not run subsequent test cases and will
+    # simply flag them as failed with the error:
+    # "Critical failure occurred and exit-on-failure mode is in use."
+    parser.add_argument('--exitonfailure', action='store_true', default=False,
+                        help="Stop test execution immediately if any critical test fails")
+
     args = parser.parse_args(*args)
 
     include_tags = args.include
@@ -404,7 +410,8 @@ def test_command(*args):
                'loglevel': args.loglevel + ':info',
                'debugfile': args.debugfile,
                'outputdir': args.outputdir,
-               'listener': 'autobot.listener.Listener'
+               'listener': 'autobot.listener.Listener',
+               'exitonfailure': args.exitonfailure,
                }
     if include_tags:
         options['include'] = include_tags
