@@ -17,7 +17,7 @@ Library         keywords/T5.py
 Library         keywords/T5L3.py
 Library         keywords_dev/animesh/BsnCommonShow.py
 Resource		testsuites/T5/T5_Policy_Virtual/t5_policy_fabric_cfg_virtual.txt
-Resource		testsuites/T5/T5_Policy_Virtual/t5_policy_variables_virtual.txt
+Resource		testsuites/T5/T5_Policy_Virtual/t5_policy_variables_virutal.txt
 Library         OperatingSystem
 Library         Collections
 Library         Dialogs

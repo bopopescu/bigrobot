@@ -21,7 +21,7 @@ Resource		testsuites_dev/slim/T5_L3_colo/t5_layer3_colo_resources.txt
 * Test Cases
 Intra tenant L3 untagged traffic with dynamic endpoints same rack
 	L3 intra tenant same rack untagged with dynamic endpoints
-#	[Tags]							skipped			smoke				sanity			
+	[Tags]							skipped			smoke				sanity			
 
 Intra tenant L3 untagged traffic with dynamic endpoints across rack
 	L3 intra tenant across rack untagged with dynamic endpoints
@@ -29,7 +29,7 @@ Intra tenant L3 untagged traffic with dynamic endpoints across rack
 
 Intra tenant L3 tagged traffic with dynamic endpoints same rack
 	L3 intra tenant same rack tagged with dynamic endpoints
-#	[Tags]							skipped			smoke				sanity			
+	[Tags]							skipped			smoke				sanity			
 
 Intra tenant L3 tagged traffic with dynamic endpoints across rack
 	L3 intra tenant across rack tagged with dynamic endpoints
@@ -53,23 +53,23 @@ Intra tenant L3 tagged traffic with static endpoints across rack
 
 Dhcp discover on the same vns as server with dhcp-relay enabled
 	DHCP discovery on the same vns as server with dhcp-relay enabled
-#	[Tags]							skipped			smoke				sanity	
+	[Tags]							skipped			smoke				sanity	
 
 Dhcp discover on the same vns as server without dhcp-relay enabled
 	DHCP discovery on the same vns as server without dhcp-relay enabled
-#	[Tags]							skipped			smoke				sanity	
+	[Tags]							skipped			smoke				sanity	
 
 Intra tenant dhcp relay 
 	L3 intra tenant dhcp relay on same rack with valid circuitid
-#	[Tags]							skipped			smoke				sanity	
+	[Tags]							skipped			smoke				sanity	
 	
 Intra tenant dhcp relay with invalid circuit id
 	L3 intra tenant dhcp relay on same rack with invalid circuitid
-#	[Tags]							skipped			smoke				sanity	
+	[Tags]							skipped			smoke				sanity	
 
 Intra tenant dhcp relay enabled and disabled
 	L3 dhcp request with and without dhcp relay enabled
-#	[Tags]							skipped			smoke				sanity	
+	[Tags]							skipped			smoke				sanity	
 
 Intra tenant dhcp relay across rack
 	L3 intra tenant dhcp relay across rack
@@ -81,7 +81,7 @@ Intra tenant dhcp relay with circuit id across rack
 
 Delete and Add dhcp relay
 	Delete and Add L3 dhcp request 
-#	[Tags]							skipped			sanity	
+	[Tags]							skipped			sanity	
 
 Add and delete untagged endpoints with existing host
 	L3 add and delete untagged endpoints with existing host
@@ -184,22 +184,26 @@ L3 traffic behavior in headless mode
 	Log								manual untested
 	[Tags]							skipped			manual			untested			feature			
 
+L3 intra tenant traffic between private and public subnet
+	L3 intra tenant traffic between private and public subnet
+#	[Tags]							skipped			sanity				
+
 Configure overlapping IP on same tenant across VNS
 	Configure overlapping IP on same tenant across VNS
-#	[Tags]							skipped			sanity				
+	[Tags]							skipped			sanity				
 
 Configure overlapping IP with private keyword on the same tenant
 	Configure overlapping IP with private keyword on the same tenant
-#	[Tags]							skipped			sanity				
+	[Tags]							skipped			sanity				
 
 	
 Inter tenant L3 traffic same rack	
 	L3 inter tenant traffic in the same rack
-#	[Tags]							skipped			sanity				
+	[Tags]							skipped			sanity				
 
 Inter tenant L3 dhcp relay
 	Inter tenant L3 dhcp relay
-#	[Tags]							skipped			sanity				
+	[Tags]							skipped			sanity				
 	
 Inter tenant dhcp relay with two dhcp servers on both vns
 	L3 inter tenant dhcp relay with two dhcp servers on both vns
@@ -515,6 +519,35 @@ Delete and Add L3 dhcp request
 	Should Be True  							${loss} == 0	
 
 
+
+L3 intra tenant traffic between private and public subnet
+	REST add vns ip  							X								X1						10.251.1.1				24			private=true
+	REST add vns ip  							Y								Y1						10.251.1.1				24	
+	BASH init intf								h7								bond0.1007
+	BASH add ip address							h7								10.251.1.11/24			bond0.1007 	
+	BASH ping									h4								10.251.1.1				count=5
+	BASH ping									h7								10.251.1.1				count=5
+	BASH ping									h6								10.251.3.1				count=5
+	${value} = 									BASH verify arp					h4						10.251.1.1
+	Should Be True								${value} 		
+	${value} = 									BASH verify arp					h7						10.251.1.1
+	Should Be True								${value} 		
+	${value} =									BASH verify arp					h6						10.251.3.1
+	Should Be True								${value} 	
+	${mac4} = 									BASH get intf mac				h4						bond0
+	${result} =									REST show endpoints mac			${mac4}
+	Should Be True								${result}						
+	${mac7} = 									BASH get intf mac				h7						bond0.1007
+	${result} =									REST show endpoints mac			${mac7}
+	Should Be True								${result}						
+	${mac6} = 									BASH get intf mac				h6						bond0.1006
+	${result} =									REST show endpoints mac			${mac6}
+	Should Be True								${result}						
+	REST show endpoints		
+	${loss} = 									BASH ping						h6						10.251.1.11 			count=10
+	Should Be True  							${loss} == 0		
+
+
 Configure overlapping IP on same tenant across VNS
 	REST add tenant									A
 	REST add vns									A							X1
@@ -593,6 +626,42 @@ Configure overlapping IP with private keyword on the same tenant
 	Should Be True									${result}	
 	
 
+Controller HA failover via CLI
+	${ipAddr4} = 								BASH get interface ipv4 		h4						bond0
+	Should Not Be Empty							${ipAddr4}
+	${ipAddr5} = 								BASH get interface ipv4 		h5						bond0
+	Should Not Be Empty							${ipAddr5}
+	BASH ping									h4								10.251.1.1				count=10
+	BASH ping									h5								10.251.2.1				count=10
+	${value} = 									BASH verify arp					h4						10.251.1.1
+	Should Be True								${value} 		
+	${value} =									BASH verify arp					h5						10.251.2.1
+	Should Be True								${value} 
+	${mac4} = 									BASH get intf mac				h4						bond0
+	${result} =									REST show endpoints mac			${mac4}
+	${attachpoint} = 							Set Variable					${result[0]['attachment-point']['port-group']}	
+	Should Contain								${attachpoint}					${leaf0_pc4}	
+	${mac5} = 									BASH get intf mac				h5						bond0
+	${result} =									REST show endpoints mac			${mac5}
+	${attachpoint} = 							Set Variable					${result[0]['attachment-point']['port-group']}	
+	Should Contain								${attachpoint}					${leaf0_pc5}	
+	${loss} = 									BASH ping						h4						10.251.2.11 			count=10
+	Should Be True  							${loss} == 0					
+	REST add interface to vns					X								X1						${leaf0-a}				${ixia1}				-1
+	REST add interface to vns					X								X2						${leaf0-b}				${ixia2}				-1		
+	${stream1}=  								L3 add  						name=stream1		  	flow=a<->b 				frame_rate=100000  			frame_size=9216  			frame_cnt=40000000
+	...     									src_ip=10.251.1.101				src_gw=10.251.1.1		dst_ip=10.251.2.201		dst_gw=10.251.2.1			 			
+	start traffic  								${stream1}
+	sleep  10
+	stop traffic								${stream1}
+	verify results 								transmitted_frames  			received_frames  		${stream1}  			stream1
+	start traffic								${stream1}
+	sleep	5
+	${value} = 									REST verify cluster election take leader
+	Should Be True								${value}
+	sleep										20
+	
+
 L3 inter tenant traffic in the same rack
 	BASH ping									h4								10.252.1.11				count=5
 	${value} = 									BASH verify arp					h4						10.251.1.1
@@ -609,6 +678,7 @@ L3 inter tenant traffic in the same rack
 	Should Contain								${attachpoint}					${leaf0_pc7}	
 	${loss} = 									BASH ping						h4						10.252.1.11 			count=10
 	Should Be True  							${loss} == 0	
+
 
 Inter tenant L3 dhcp relay
 	BASH init intf								h8								bond0
@@ -886,7 +956,7 @@ setup topology
   	REST add static routes							Z							0.0.0.0/0		 {"tenant-name": "system"}  
   	
 teardown topology
-	delete traffic
+#	delete traffic
 	REST delete vns ip  							X							X1				10.251.1.1				24	
 	REST delete vns ip  							X							X2				10.251.2.1				24	
 	REST delete vns ip  							X							X3				10.251.3.1				24	
