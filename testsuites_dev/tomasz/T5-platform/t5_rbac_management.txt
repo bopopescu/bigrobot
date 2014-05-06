@@ -1,0 +1,333 @@
+*** Settings ***
+Documentation  		Testing RBAC and User configuration
+Suite Setup  		Suite Setup
+Suite Teardown   	Suite Teardown
+Test Setup   		Test Setup
+Test Teardown  		Test Teardown
+Library  			keywords/BsnCommon.py
+Library  			keywords/T5Platform.py
+Library  			keywords/T5Utilities.py
+
+
+*** Variables ***
+${non-admin-group}			local-group
+${non-admin-user-local}		local-user
+${non-admin-remote-user}	remote-user
+${remote-admin}				remote-admin
+
+*** Test Cases ***
+T1. Verify that admin account can be created and deleted locally
+	Cli Run  user admin
+	Cli Run  password adminadmin
+	Run Keyword and Expect Error  *  Cli Run  no user admin
+	[Tags]  Skipped
+
+T2. Verify that admin account can be associated and disassociated from admin group
+	Cli Run  user admin
+	Cli Run  group admin
+	Cli Run  associate user admin
+	Cli Run and Verify Output
+	...  show group admin
+	...  admin \ \ \ \ \ admin
+	Run Keyword and Expect Error  *  Cli Run  no associate user admin
+	Run Keyword and Expect Error  *  Cli Run and Verify Output
+	...  show group admin
+	...  admin \ \ \ \ \ admin
+	...  flag=False
+	[Tags]  Skipped
+
+T3. Verify that admin account can be associated and disassociated from non-admin group
+	Cli Run  user admin
+	Cli Run  group non-admin
+	Cli Run  associate user admin
+	Cli Run and Verify Output
+	...  show group non-admin
+	...  non-admin \ admin
+	Cli Run  no associate user admin
+	Cli Run and Verify Output
+	...  show group non-admin
+	...  non-admin \ admin
+	...  flag=False
+
+T4. Verify that remote-admin account can be created and deleted locally
+	Cli Run  user remote-admin
+	Cli Run  password adminadmin
+	Cli Run  no user remote-admin
+
+T5. Verify that remote-admin account can be associated and disassociated from admin group
+	Cli Run  user remote-admin
+	Cli Run  group admin
+	Cli Run  associate user remote-admin
+	Cli Run and Verify Output
+	...  show group admin
+	...  admin \ \ \ \ \ admin, remote-admin
+	Cli Run  no associate user remote-admin
+	Cli Run and Verify Output
+	...  show group admin
+	...  admin \ \ \ \ \ admin, remote-admin
+	...  flag=False
+
+T6. Verify that remote-admin account can be associated and disassociated from non-admin group
+	Cli Run  user remote-admin
+	Cli Run  group non-admin
+	Cli Run  associate user remote-admin
+	Cli Run and Verify Output
+	...  show group non-admin
+	...  non-admin \ remote-admin
+	Cli Run  no associate user remote-admin
+	Cli Run and Verify Output
+	...  show group non-admin
+	...  non-admin \ remote-admin
+	...  flag=False
+
+T7. Verify that local-user account can be created and deleted locally
+	Cli Run  user local-user
+	Cli Run  password adminadmin
+	Cli Run  no user local-user
+
+T8. Verify that local-user account can be associated and disassociated from admin group
+	Cli Run  user local-user
+	Cli Run  group admin
+	Cli Run  associate user local-user
+	Cli Run and Verify Output
+	...  show group admin
+	...  admin \ \ \ \ \ admin, local-user
+	Cli Run  no associate user local-user
+	Cli Run and Verify Output
+	...  show group admin
+	...  admin \ \ \ \ \ admin, local-user
+	...  flag=False
+
+T9. Verify that local-user account can be associated and disassociated from non-admin group
+	Cli Run  user local-user
+	Cli Run  group non-admin
+	Cli Run  associate user local-user
+	Cli Run and Verify Output
+	...  show group non-admin
+	...  non-admin \ local-user
+	Cli Run  no associate user local-user
+	Cli Run and Verify Output
+	...  show group non-admin
+	...  non-admin \ local-user
+	...  flag=False
+
+T10. Verify that remote-user account can be created and deleted locally
+	Cli Run  user remote-user
+	Cli Run  password adminadmin
+	Cli Run  no user remote-user
+
+T11. Verify that remote-user account can be associated and disassociated from admin group
+	Cli Run  user remote-user
+	Cli Run  group admin
+	Cli Run  associate user remote-user
+	Cli Run and Verify Output
+	...  show group admin
+	...  admin \ \ \ \ \ admin, remote-user
+	Cli Run  no associate user remote-user
+	Cli Run and Verify Output
+	...  show group admin
+	...  admin \ \ \ \ \ admin, remote-user
+	...  flag=False
+
+T12. Verify that remote-user account can be associated and disassociated from non-admin group
+	Cli Run  user remote-user
+	Cli Run  group non-admin
+	Cli Run  associate user remote-user
+	Cli Run and Verify Output
+	...  show group non-admin
+	...  non-admin \ remote-user
+	Cli Run  no associate user remote-user
+	Cli Run and Verify Output
+	...  show group non-admin
+	...  non-admin \ remote-user
+	...  flag=False
+
+T13. Verify that admin configured locally and associated with admin group can do actions
+	Cli Run  user admin
+	Cli Run  password adminadmin
+	Cli Run  group admin
+	Cli Run  associate user admin
+	Cli Run  enable  username=admin
+	Cli Run  enable  username=admin  node_ha=slave
+	Cli Run  show running-config  username=admin
+	Cli Run  enable; config; no user test1234  username=admin
+	Cli Run  show cluster  username=admin
+	Cli Run  show file  username=admin
+	Cli Run  enable; config; copy running-config test-file  username=admin
+	Cli Run  enable; config; delete file test-file  username=admin
+
+T14. Verify that admin configured locally and associated with non-admin group can do actions
+	Cli Run  user admin
+	Cli Run  password adminadmin
+	Cli Run  group non-admin
+	Cli Run  associate user admin
+	Cli Run  enable  username=admin
+	Cli Run  enable  username=admin  node_ha=slave
+	Cli Run  show running-config  username=admin
+	Cli Run  enable; config; no user test1234  username=admin
+	Cli Run  show cluster  username=admin
+	Cli Run  show file  username=admin
+	Cli Run  enable; config; copy running-config test-file  username=admin
+	Cli Run  enable; config; delete file test-file  username=admin
+
+T15. Verify that remote admin, associated with admin group can do actions
+	Cli Run  group admin
+	Cli Run  associate user remote-admin
+	Cli Run  enable  username=remote-admin
+	Cli Run  enable  username=remote-admin  node_ha=slave
+	Cli Run  show running-config  username=remote-admin
+	Cli Run  enable; config; no user test1234  username=remote-admin
+	Cli Run  show cluster  username=remote-admin
+	Cli Run  show file  username=remote-admin
+	Cli Run  enable; config; copy running-config test-file  username=remote-admin
+	Cli Run  enable; config; delete file test-file  username=remote-admin
+	[Tags]  Skipped
+
+T16. Verify that remote admin, associated with non-admin group can do actions
+	Cli Run  group non-admin
+	Cli Run  associate user remote-admin
+	Cli Run  enable  username=remote-admin
+	Cli Run  enable  username=remote-admin  node_ha=slave
+	Cli Run  show running-config  username=remote-admin
+	Cli Run  enable; config; no user test1234  username=remote-admin
+	Cli Run  show cluster  username=remote-admin
+	Cli Run  show file  username=remote-admin
+	Cli Run  enable; config; copy running-config test-file  username=remote-admin
+	Cli Run  enable; config; delete file test-file  username=remote-admin
+	[Tags]  Skipped
+
+T17. Verify that remote admin provisioned locally, associated with admin group can do actions
+	Cli Run  user remote-admin
+	Cli Run  group admin
+	Cli Run  associate user remote-admin
+	Cli Run  enable  username=remote-admin
+	Cli Run  enable  username=remote-admin  node_ha=slave
+	Cli Run  show running-config  username=remote-admin
+	Cli Run  enable; config; no user test1234  username=remote-admin
+	Cli Run  show cluster  username=remote-admin
+	Cli Run  show file  username=remote-admin
+	Cli Run  enable; config; delete file test-file  username=remote-admin
+	Cli Run  enable; config; copy running-config test-file  username=remote-admin
+
+T18. Verify that remote admin provisioned locally, associated with non-admin group can do actions
+	Cli Run  user remote-admin
+	Cli Run  group non-admin
+	Cli Run  associate user remote-admin
+	Cli Run  enable  username=remote-admin
+	Cli Run  enable  username=remote-admin  node_ha=slave
+	Cli Run  show running-config  username=remote-admin
+	Cli Run  enable; config; no user test1234  username=remote-admin
+	Cli Run  show cluster  username=remote-admin
+	Cli Run  show file  username=remote-admin
+	Cli Run  enable; config; copy running-config test-file  username=remote-admin
+	Cli Run  enable; config; delete file test-file  username=remote-admin
+
+T19. Verify that user configured locally and associated with admin group can do actions
+	Cli Run  user user
+	Cli Run  password adminadmin
+	Cli Run  group admin
+	Cli Run  associate user user
+	Cli Run  enable  username=user
+	Cli Run  enable  username=user  node_ha=slave
+	Cli Run  show running-config  username=user
+	Cli Run  enable; config; no user test1234  username=user
+	Cli Run  show cluster  username=user
+	Cli Run  show file  username=user
+	Cli Run  enable; config; copy running-config test-file  username=user
+	Cli Run  enable; config; delete file test-file  username=user
+
+T20. Verify that user configured locally and associated with non-admin group can do actions
+	Cli Run  user user
+	Cli Run  password adminadmin
+	Cli Run  group non-admin
+	Cli Run  associate user user
+	Run Keyword and Expect Error  *  Cli Run  enable;logout  username=user
+	[Tags]  Skipped
+
+T21. Verify that user remote, associated with admin group can do actions
+	Cli Run  group admin
+	Cli Run  associate user remote-user
+	Cli Run  enable  username=remote-user
+	Cli Run  enable  username=remote-user  node_ha=slave
+	Cli Run  show running-config  username=remote-user
+	Cli Run  enable; config; no user test1234  username=remote-user
+	Cli Run  show cluster  username=remote-user
+	Cli Run  show file  username=remote-user
+	Cli Run  enable; config; copy running-config test-file  username=remote-user
+	Cli Run  enable; config; delete file test-file  username=remote-user
+	[Tags]  Skipped
+
+T22. Verify that user remote, associated with non-admin group can do actions
+	Cli Run  group non-admin
+	Cli Run  associate user user
+	Cli Run  enable  username=user
+	Cli Run  enable  username=user  node_ha=slave
+	Cli Run  show running-config  username=user
+	Cli Run  enable; config; no user test1234  username=user
+	Cli Run  show cluster  username=user
+	Cli Run  show file  username=user
+	Cli Run  enable; config; copy running-config test-file  username=user
+	Cli Run  enable; config; delete file test-file  username=user
+	[Tags]  Skipped
+
+T23. Verify that user provisioned locally, associated with admin group can do actions
+	Cli Run  user remote-user
+	Cli Run  group admin
+	Cli Run  associate user remote-user
+	Cli Run  enable  username=remote-user
+	Cli Run  enable  username=remote-user  node_ha=slave
+	Cli Run  show running-config  username=remote-user
+	Cli Run  enable; config; no user test1234  username=remote-user
+	Cli Run  show cluster  username=remote-user
+	Cli Run  show file  username=remote-user
+	Cli Run  enable; config; copy running-config test-file  username=remote-user
+	Cli Run  enable; config; delete file test-file  username=user
+	[Tags]  Skipped
+
+T24. Verify that user provisioned locally, associated with non-admin group can do actions
+	Cli Run  user remote-user
+	Cli Run  group non-admin
+	Cli Run  associate user remote-user
+	Cli Run  enable  username=remote-user
+	Cli Run  enable  username=remote-user  node_ha=slave
+	Cli Run  show running-config  username=remote-user
+	Cli Run  enable; config; no user test1234  username=remote-user
+	Cli Run  show cluster  username=remote-user
+	Cli Run  show file  username=remote-user
+	Cli Run  enable; config; copy running-config test-file  username=remote-user
+	Cli Run  enable; config; delete file test-file  username=remote-user
+	[Tags]  Skipped
+
+
+*** Keywords ***
+Suite Setup
+	Base Suite Setup
+	Cli Copy  running-config  config://startup-config
+	Cli Copy  running-config  config://startup-config  node=slave
+	Cli Run  enable
+	Cli Run  config
+	Cli Run  tacacs server host 10.192.4.91 key secret
+	Cli Run  aaa authentication login default group tacacs+ local 
+
+Suite Teardown
+	Cli Run  enable
+	Cli Run  config
+	Cli Run  no aaa authentication login default group tacacs+ local 
+	Cli Run  no tacacs server host 10.192.4.91
+	Cli Copy  config://startup-config  running-config
+	Base Suite Teardown
+
+Test Setup
+	Base Test Setup
+	Cli Run  enable
+	Cli Run  config
+	Cli Copy  running-config  config://test-config
+	Cli Run  enable
+	Cli Run  config
+
+Test Teardown
+	Cli Run  enable  username=admin  node_ha=slave
+	Cli Run  enable  username=admin  node_ha=master
+	Cli Copy  config://test-config  running-config
+	Base Test Teardown
+
