@@ -1006,7 +1006,7 @@ Verify dhcp host is not being aged out
 	sleep 										600
 	${result} =									REST show endpoints mac			${mac2}
 	Should Be True								${result}	
-	${attachpoint} = 							Set Variable					${result[0]['attachment-point']['port-group']}	
+	${attachpoint} = 							Set Variable					${result[0]['attachment-point']}	
 	Should Contain								${attachpoint}					${leaf1_pc1}	
 	${ipAddr1} = 								Set Variable					${result[0]['ip-address']}	
 #	Should Contain								${ipAddr1}						${ipAddr}
@@ -1601,8 +1601,8 @@ Static endpoint with dynamic host showing up on another port
 	${result} =									REST show endpoints mac			${mac3}
 	Log                                         result[0] = ${result[0]}
 	Log                                         result[0][attachment-point] = ${result[0]['attachment-point']}
-	Log                                         result[0][attachment-point][port-group] = ${result[0]['attachment-point']['port-group']}
-	${attachpoint} = 							Set Variable					${result[0]['attachment-point']['port-group']}	
+	Log                                         result[0][attachment-point][port-group] = ${result[0]['attachment-point']}
+	${attachpoint} = 							Set Variable					${result[0]['attachment-point']}	
 	Log											attachpoint = ${attachpoint}				
 	Should Contain								${attachpoint}					${leaf2_pc2}
 	${loss} = 									BASH ping						h2						10.251.1.11				count=10
@@ -1765,6 +1765,94 @@ Configure overlapping IP on same tenant across VNS
 	sleep											2
 	${result} = 									REST add vns ip  			A				X2						10.101.0.255			23
 	Should Be True									${result}	
+
+
+L3 intra tenant traffic between private and public subnet
+	BASH ifup intf								h1 								bond0
+	BASH ifup intf								h2								bond0
+	BASH ifup intf								h3								bond0
+	BASH ifup intf								h4								bond0
+	BASH ifup intf								h5								bond0
+	BASH ifup intf								h6								bond0	
+	REST add portgroup to vns					X								X1						${leaf0_pc1}			1001
+	REST add portgroup to vns					X								X3						${leaf1_pc1}			1003
+	REST add vns ip  							X								X1						10.251.1.1				24		private=true	
+	REST add vns ip								Y								Y1						10.251.1.1				24
+	REST add portgroup to vns					Y								Y1						${leaf0_pc2}			1002
+	BASH add tag								h1								bond0					1001
+	BASH add tag								h3								bond0					1003
+	BASH add tag								h2								bond0					1002
+	BASH ifup intf								h1								bond0.1001
+	BASH ifup intf								h2								bond0.1002
+	BASH ifup intf								h3								bond0.1003
+	BASH add ip address							h1								10.251.1.11/24			bond0.1001
+	BASH add ip address							h2								10.251.1.11/24			bond0.1002
+	BASH add ip address							h3								10.251.3.11/24			bond0.1003
+	BASH add route								h1								10.251.3.0/24			10.251.1.1
+	BASH add route								h3								10.251.1.0/24			10.251.3.1
+	sleep										5	
+	BASH ping									h1								10.251.1.1				count=5
+	BASH ping									h2								10.251.1.1				count=5
+	BASH ping									h3								10.251.3.1				count=5
+	${value} = 									BASH verify arp					h1						10.251.1.1
+	Should Be True								${value} 		
+	${value} = 									BASH verify arp					h2						10.251.1.1
+	Should Be True								${value} 		
+	${value} =									BASH verify arp					h3						10.251.3.1
+	Should Be True								${value} 	
+	${mac1} = 									BASH get intf mac				h1						bond0.1001
+	${result} =									REST show endpoints mac			${mac1}
+	Should Be True								${result}						
+	${mac2} = 									BASH get intf mac				h2						bond0.1002
+	${result} =									REST show endpoints mac			${mac2}
+	Should Be True								${result}						
+	${mac3} = 									BASH get intf mac				h3						bond0.1003
+	${result} =									REST show endpoints mac			${mac3}
+	Should Be True								${result}						
+	REST show endpoints		
+	${loss} = 									BASH ping						h3						10.251.1.11 			count=10
+	Should Be True  							${loss} == 0		
+	BASH delete route							h1								10.251.3.0/24			10.251.1.1
+	BASH delete route							h3								10.251.1.0/24			10.251.3.1
+
+Configure overlapping IP with private keyword on the same tenant
+	REST add tenant									A
+	REST add vns									A							X1
+	REST add vns									A							X2
+	REST add vns									A							X3
+	REST add router intf							A							X1
+	REST add router intf							A							X2
+	REST add router intf							A							X3	
+	REST add vns ip  								A							X1				10.101.0.1				24					private=true
+	sleep											2	
+	${result} = 									REST add vns ip  			A				X2						10.101.0.1				25
+	Should Not Be True								${result}
+	sleep											2
+	${result} = 									REST add vns ip  			A				X2						10.101.0.2				25
+	Should Not Be True								${result}
+	sleep											2
+	${result} = 									REST add vns ip  			A				X2						10.101.0.254			17				
+	Should Not Be True								${result}
+	sleep											2
+	${result} = 									REST add vns ip  			A				X2						10.101.0.255			24
+	Should Not Be True								${result}
+	REST delete vns ip								A							X1				10.101.0.1				24
+	sleep											2
+	${result} = 									REST add vns ip  			A				X2						10.101.0.1				25
+	Should Be True									${result}
+	REST delete vns ip								A							X2				10.101.0.1				25
+	sleep											2
+	${result} = 									REST add vns ip  			A				X2						10.101.0.2				25
+	Should Be True									${result}
+	REST delete vns ip								A							X2				10.101.0.2				25
+	sleep											2
+	${result} = 									REST add vns ip  			A				X2						10.101.0.254			17				
+	Should Be True									${result}
+	REST delete vns ip  							A							X2				10.101.0.254			17		
+	sleep											2
+	${result} = 									REST add vns ip  			A				X2						10.101.0.255			23
+	Should Be True									${result}	
+
 
 
 Controller HA failover via CLI
@@ -2174,9 +2262,9 @@ Flap bond interface towards host
 	${mac1} = 									BASH get intf mac				h1						bond0.1001
 	${result} =									REST show endpoints mac			${mac1}
 	Should Be True								${result}
-	${attachpoint} = 							Set Variable					${result[0]['attachment-point']['port-group']}	
+	${attachpoint} = 							Set Variable					${result[0]['attachment-point']}	
 	Should Contain								${attachpoint}					${leaf0_pc1}
-	${vlanid} = 								Set Variable					${result[0]['attachment-point']['vlan']}	
+	${vlanid} = 								Set Variable					${result[0]['vlan']}	
 	Should Be Equal								${vlanid}						${1001}		
 	${mac2} = 									BASH get intf mac				h3						bond0.1003
 	${result} =									REST show endpoints mac			${mac2}
@@ -2189,9 +2277,9 @@ Flap bond interface towards host
 	Should Be True  							${loss} == 0		
 	${result} =									REST show endpoints mac			${mac1}
 	Should Be True								${result}
-	${attachpoint} = 							Set Variable					${result[0]['attachment-point']['port-group']}	
+	${attachpoint} = 							Set Variable					${result[0]['attachment-point']}	
 	Should Contain								${attachpoint}					${leaf0_pc1}
-	${vlanid} = 								Set Variable					${result[0]['attachment-point']['vlan']}	
+	${vlanid} = 								Set Variable					${result[0]['vlan']}	
 	Should Be Equal								${vlanid}						${1001}		
 	sleep 										5
 	REST disable fabric interface				s4								${leaf0_pc1_intf1}
@@ -2207,9 +2295,9 @@ Flap bond interface towards host
 	Should Be True  							${loss} == 0		
 	${result} =									REST show endpoints mac			${mac1}
 	Should Be True								${result}
-	${attachpoint} = 							Set Variable					${result[0]['attachment-point']['port-group']}	
+	${attachpoint} = 							Set Variable					${result[0]['attachment-point']}	
 	Should Contain								${attachpoint}					${leaf0_pc1}
-	${vlanid} = 								Set Variable					${result[0]['attachment-point']['vlan']}	
+	${vlanid} = 								Set Variable					${result[0]['vlan']}	
 	Should Be Equal								${vlanid}						${1001}		
 	BASH delete route							h1								10.251.3.0/24			10.251.1.1
 	BASH delete route							h3								10.251.1.0/24			10.251.3.1
