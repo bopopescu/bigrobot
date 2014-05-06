@@ -27,6 +27,8 @@ from paramiko.ssh_exception import BadHostKeyException, \
                                    SSHException
 from Exscript.protocols import SSH2
 from Exscript import Account
+from robot.libraries.BuiltIn import BuiltIn
+
 
 class BsnCommon(object):
 
@@ -48,9 +50,14 @@ class BsnCommon(object):
 
     def base_test_setup(self):
         test.Test()
+        # helpers.log("Test case status: %s"
+        #            % helpers.bigrobot_test_case_status())
 
     def base_test_teardown(self):
         pass
+        # helpers.log("Test case status: %s (%s)"
+        #            % (helpers.bigrobot_test_case_status(),
+        #               BuiltIn().get_variable_value("${TEST_STATUS}")))
 
     def mock_untested(self):
         print("MOCK UNTESTED")
@@ -1580,7 +1587,7 @@ class BsnCommon(object):
         Usage:
           | macAddr = self.get_next_mac(base,incr) |
         """
-        helpers.get_next_mac(*args, **kwargs)
+        return helpers.get_next_mac(*args, **kwargs)
 
     def get_next_address(self, *args, **kwargs):
         """
@@ -1598,7 +1605,7 @@ class BsnCommon(object):
                   ipAddr = self.get_next_address(
                               ipv6,'f001:100:0:0:0:0:0:0','0:0:0:0:0:0:0:1:0')
         """
-        helpers.get_next_address(*args, **kwargs)
+        return helpers.get_next_address(*args, **kwargs)
 
     def verify_ssh_connection(self, node, sleep=10, iterations=5,
                               user='dummy', password='dummy'):
