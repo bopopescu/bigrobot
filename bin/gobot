@@ -166,6 +166,8 @@ helpers.bigrobot_devcmd_log(
 helpers.bigrobot_path()
 helpers.bigtest_path()
 helpers.python_path()
+helpers.bigrobot_test_setup(default=True)
+helpers.bigrobot_test_postmortem(default=True)
 
 
 def get_command_dict():
@@ -349,6 +351,7 @@ def version_hidden_command(*args):
     pversion = sys.version_info
     print("Python version          %s.%s.%s"
           % (pversion.major, pversion.minor, pversion.micro))
+
 
 def test_command(*args):
     """

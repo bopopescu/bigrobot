@@ -182,9 +182,14 @@ Initialize policy vars
     #[Tags]           skipped
     ${temp}=                 create dictionary  cidr  10.10.11.11/32
     Set global variable      ${POLICY_BM0_IP}  ${temp}
+    Should be true    ${false}
 
 Display policy vars
+    #[Tags]           skipped
     log               ${POLICY_BM0_IP}
+
+Test run commands
+    test run cmd
 
 
 * Keywords
@@ -198,4 +203,5 @@ variable assignment
     Should be true  ${input} == 123
     ${temp}=        Set Variable  123${input}
     Should be true  ${temp} == 123123
+
 

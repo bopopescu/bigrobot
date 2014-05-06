@@ -45,7 +45,7 @@ class BsnCommon(object):
             n = t.node(node)
             if helpers.is_controller(node) or helpers.is_mininet(node):
                 helpers.log("Closing device connection for node '%s'" % node)
-                n.dev.close()
+                n.devconf().close()
         t.teardown()
 
     def base_test_setup(self):
@@ -54,10 +54,14 @@ class BsnCommon(object):
         #            % helpers.bigrobot_test_case_status())
 
     def base_test_teardown(self):
-        pass
-        # helpers.log("Test case status: %s (%s)"
-        #            % (helpers.bigrobot_test_case_status(),
-        #               BuiltIn().get_variable_value("${TEST_STATUS}")))
+        test_status = BuiltIn().get_variable_value("${TEST_STATUS}")
+        test_descr = BuiltIn().get_variable_value("${TEST_NAME}")
+        if test_status == 'FAIL':
+            if helpers.bigrobot_test_postmortem().lower() == 'false':
+                helpers.log("Env BIGROBOT_TEST_POSTMORTEM is False."
+                            " Skipping test postmortem.")
+            else:
+                self.base_test_postmortem(test_descr=test_descr)
 
     def mock_untested(self):
         print("MOCK UNTESTED")
@@ -88,6 +92,25 @@ class BsnCommon(object):
         result = eval(s)
         helpers.log("Express '%s' evaluated to '%s'" % (s, result))
         return result
+
+    def base_test_postmortem(self, test_descr=None):
+        t = test.Test()
+
+        helpers.log("Test case '%s' failed. Performing postmortem."
+                    % test_descr)
+        for node in t.topology():
+            # Do postmortem thingy here...
+            # - Save output file(s) to bigrobot log directory. The log path is:
+            #     bigrobot_path = helpers.bigrobot_log_path_exec_instance()
+            # - Look at https://github.com/bigswitch/t6-misc/blob/master/t6-support/run_show_cmds.py
+            # - Execute the command using helpers.run_cmd(), e.g.,
+            #     cmd = 'cd <bigrobot_log>; <path>/ run_show_cmds.py'
+            #     status, msg = helpers.run_cmd(cmd, shell=True)
+            # - Name tarbar using the test_descr (be sure to convert
+            #   whitespace to underscore).
+            helpers.log("Collecting information for node '%s' (%s)"
+                        % (node, self.get_node_ip(node)))
+
 
     def pause(self, msg=None):
         """
