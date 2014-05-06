@@ -1,7 +1,7 @@
 *** Settings ***
 Documentation  		Various CLI commands
 Suite Setup  		File Suite Setup
-Suite Teardown   	Base Suite Teardown
+Suite Teardown		Base Suite Teardown
 Test Setup   		Setup
 Test Teardown  		Teardown
 Force Tags   		Platform
@@ -51,20 +51,20 @@ T3 "no snmp-server community ro <foo>" in config-switch submode
 	...  flag=False
 	[TAGS]  BSC-5039  show  snmp
 
-T4 Monitor session
+T4 Monitor session string as identifier
 	Run Keyword and Expect Error
 	...  *Error: Invalid argument: range: not an integer:*r*
 	...  Cli Run  monitor session r
 	[TAGS]  monitor session  BSC-5012
 
-T5 Monitor session
+T5 Monitor session source tcp string
 	Cli Run  monitor session 1
 	Run Keyword and Expect Error
 	...  *Error: Invalid argument: range: not an integer:*tcp*
 	...  Cli Run  source switch test interface eth1 ip-proto tcp
 	[TAGS]  monitor session  BSC-5017
 
-T6 Monitor session
+T6 Monitor session destination interface numerical only
 	Cli Run  monitor session 1
 	Run Keyword and Expect Error
 	...  *Invalid argument: Invalid Alphabetic character, followed by alphanumerics: 3*
@@ -166,7 +166,7 @@ T11 User \n via REST
 	Run Keyword and Expect Error
         ...  TestError: REST call failed with status code 400
 	...  My Rest Add User  \n\r
-	[Tags]  BSC-5051  REST
+	[Tags]  BSC-5051  REST  Skipped
 
 T12.1 show this in config-cluster submode
 	Cli Run  cluster
@@ -384,7 +384,7 @@ T19 'show this' in -vns and -endpoint submodes
 	...  show this
 	...  vns A2
 	...  flag=False
-	[Tags]  BSC-5085
+	[Tags]  BSC-5085  Skipped
 
 T20.1 AAA Accounting round-robin support
 	Cli Run  tacacs server host 1.2.3.4 timeout 5 key secret
@@ -491,6 +491,7 @@ T29 Deletion of ntp server
 	Cli Run and Verify Output
 	...  show running-config nto
 	...  ntp server 0.bigswitch.pool.ntp.org
+	[Tags]  Skipped  BSC-5095
 
 *** Keywords ***
 Generate Random Name
