@@ -177,7 +177,7 @@ T12.2 show this in config-switch-if submode
 	Cli Run  mac 11:22:33:44:55:66
 	Cli Run  interface eth1 
 	Cli Run  show this 
-	[Tags]  BSC-5135
+	[Tags]  BSC-5135  BVS-1463
 
 T13 Characters \n and \r in identifiers
 	Run Keyword and Expect Error
