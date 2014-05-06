@@ -9,6 +9,8 @@
 testsuites="\
 testsuites/T5/L2/t5_singleleaf_dualrack_ping_test_suite \
 testsuites/T5/L2/t5_dualleaf_dualrack_ping_test_suite \
+testsuites/T5/T5-Platform/t5_virtual_ip_address \
+testsuites/T5/t5_file_management \
 "
 
 mesg() {
