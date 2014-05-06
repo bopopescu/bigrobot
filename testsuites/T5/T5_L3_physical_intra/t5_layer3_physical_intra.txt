@@ -20,196 +20,189 @@ Resource		testsuites/T5/t5_dualleaf_three_rack_physical_resource.txt
 * Test Cases
 Intra tenant L3 untagged traffic with dynamic endpoints same rack
 	L3 intra tenant same rack untagged with dynamic endpoints
-	[Tags]						smoke				sanity			
+	[Tags]					smoke				sanity			
 
 Intra tenant L3 untagged traffic with dynamic endpoints across rack
 	L3 intra tenant across rack untagged with dynamic endpoints
-	[Tags]						smoke				sanity	
+	[Tags]			  		smoke				sanity	
 
 Intra tenant L3 tagged traffic with dynamic endpoints same rack
 	L3 intra tenant same rack tagged with dynamic endpoints
-	[Tags]						smoke				sanity			
+	[Tags]				smoke				sanity			
 
 Intra tenant L3 tagged traffic with dynamic endpoints across rack
 	L3 intra tenant across rack tagged with dynamic endpoints
-	[Tags]						smoke				sanity	
+	[Tags]					smoke				sanity	
 
 Intra tenant L3 untagged traffic with static endpoints same rack
 	L3 intra tenant same rack untagged with static endpoints
-	[Tags]							smoke				sanity			
+	[Tags]						smoke				sanity			
 
 Intra tenant L3 untagged traffic with static endpoints across rack
 	L3 intra tenant across rack untagged with static endpoints
-	[Tags]							smoke				sanity	
+	[Tags]						smoke				sanity	
 
 Intra tenant L3 tagged traffic with static endpoints same rack
 	L3 intra tenant same rack tagged with static endpoints
-	[Tags]							smoke				sanity			
+	[Tags]						smoke				sanity			
 
 Intra tenant L3 tagged traffic with static endpoints across rack
 	L3 intra tenant across rack tagged with static endpoints
-	[Tags]							smoke				sanity	
+	[Tags]						smoke				sanity	
 
 Dhcp discover on the same vns as server with dhcp relay enabled
 	L3 intra tenant dhcp relay on same vns as dhcp server with relay enabled
-	[Tags]							smoke				sanity	
+	[Tags]					 	smoke				sanity	
 
 Dhcp discover on the same vns as server without dhcp relay enabled
 	L3 intra tenant dhcp relay on same vns as dhcp server without relay enabled
-	[Tags]							smoke				sanity	
+	[Tags]					 	smoke				sanity	
 
 Intra tenant dhcp relay 
 	L3 intra tenant dhcp relay on same rack
-	[Tags]							smoke				sanity	
+	[Tags]					 	smoke				sanity	
 	
 Intra tenant dhcp relay with circuit id
 	L3 intra tenant dhcp relay with circuit id on same rack
-	[Tags]							smoke				sanity	
+	[Tags]					 	smoke				sanity	
 
 Intra tenant dhcp relay across rack
 	L3 intra tenant dhcp relay across rack
-	[Tags]							smoke				sanity	
+	[Tags]					 	smoke				sanity	
 	
 Intra tenant dhcp relay with circuit id across rack
 	L3 intra tenant dhcp relay with circuit id across rack
-	[Tags]							smoke				sanity	
+	[Tags]					 	smoke				sanity	
 
 Delete and Add dhcp relay
 	L3 dhcp request without dhcp relay enabled
-	[Tags]							sanity	
+	[Tags]					 	sanity	
 	
 Move host from one vns to another vns in the same tenant and verify dhcp request is working
 #	Host moved between vns in the same tenant with dhcp request
 	Log								manual untested
-	[Tags]			skipped	manual			untested			feature			
+	[Tags]				manual			untested			feature			
 
 Verify dhcp host is not aged out
 	Verify dhcp host is not being aged out
-	[Tags]					feature			
+#	[Tags]		 		feature			
 
 Dhcp relay with dhcp server configured as static endpoint
 	Dhcp relay with static dhcp server endpoint
-	[Tags]					feature			
+	[Tags]		 		feature			
 	
 
 Add and delete untagged endpoints with existing host
 	L3 add and delete untagged endpoints with existing host
-	[Tags]					feature	
+	[Tags]		 		feature	
 	
 Add and delete tagged endpoints with existing host
 	L3 add and delete tagged endpoints with existing host
-	[Tags]					feature	
+	[Tags]		 		feature	
 		
 Change L3 endpoint from untagged to tagged and back		
 	L3 change endpoint from untagged to tagged and back	
-	[Tags]					feature	
+	[Tags]		 		feature	
 
 Verify L3 endpoint aging
 	Check L3 endpoint aging 
-	[Tags]					feature	
+	[Tags]		 		feature	
 	
 Verify L3 ttl 1 is not being forwarded
 	Check L3 ttl 1 is dropped
-	[Tags]							sanity			
+	[Tags]					sanity			
 
 Change router vns ip
 	Change router ip address
-	[Tags]					feature			
+	[Tags]		feature 	
 
 Delete and add router vns ip
 	Delete and add router vns ip 
-	[Tags]					feature			
+	[Tags] 		feature			
 
 Change tagged endpoint IP address
 	Change tagged host endpoint IP address
-	[Tags]							feature		
+	[Tags]					feature		
 
 Configure static endpoint with host showing up on another port
 	Static endpoint with dynamic host showing up on another port
-	[Tags]					skipped	sanity		
+	[Tags]				skipped	sanity		
 
 Verify subnet mask is properly applied on router vns
 	Verify subnet mask on vns router ip
-	[Tags]					feature		
+	[Tags]				feature		
 
 Verify vlsm forwarding
 	Verify vlsm forwarding
-	[Tags]					feature		
+	[Tags]				feature		
 
 Verify split horizon forwarding
-#	Verify l3 forwarding on one arm router
-	Log						manual pass
-	[Tags]					feature			manual		
+	Verify l3 forwarding on one arm router
+	[Tags]				feature			manual		
 
 	
 Configure overlapping router IP 	
 	Configure overlapping IP on same tenant across VNS	
-	[Tags]					feature		
+	[Tags]				feature		
 
-
-L3 intra tenant traffic between private and public subnet 
-	L3 intra tenant traffic between private and public subnet
-	[Tags]							feature					
-
-
-Configure overlapping IP with private keyword on the same tenant
-	Configure overlapping IP with private keyword on the same tenant
-	[Tags]							feature					
-	
+L3 intra tenant traffic between private and public subnet with overlapping IP
+#	L3 intra tenant traffic between private and public subnet with overlapping IP
+	Log								manual untested
+	[Tags]						feature			manual		
 	
 Verify host with different IP on vns router is not getting L3 service
 #	Verify host with different IP on vns router is not getting L3 service
 	Log								manual untested
-	[Tags]							feature			manual		
+	[Tags]						feature			manual		
 	
 Trigger controller HA failover via CLI
 	Controller HA failover via CLI	
-	[Tags]					feature			
+	[Tags]				feature			
 	
 Trigger controller HA failover via reboot
 	Controller HA failover via reboot
-	[Tags]					feature			
+	[Tags]				feature			
 
 Spine reboot
 	Reboot spine0 via CLI
-	[Tags]					feature			
+	[Tags]				feature			
 
 Leaf reboot
 	Reboot Leaf0 via CLI
-	[Tags]					feature			
+	[Tags]				feature			
 
 Spine connect and disconnect to controller
 	Connect and Disconnect spine to controller
-	[Tags]					feature			
+	[Tags]				feature			
 	
 Leaf connect and disconnect to controller	
 	Connect and disconnect one leaf in dual tor to controller
-	[Tags]					feature			
+	[Tags]				feature			
 
 Spine to leaf link flap
 	Flap link between leaf and spine
-	[Tags]					feature			
+	[Tags]				feature			
 
 Leaf to host link flap
 	Flap bond interface towards host
-	[Tags]					feature			
+	[Tags]				feature			
 	
 Restart ofad process on spine
 	restart ofad on spine
-	[Tags]					feature			
+	[Tags]				feature			
 	
 Restart ofad process on leaf	
 	restart ofad on leaf
-	[Tags]					feature			
+	[Tags]				feature			
 	
 L3 traffic behavior in headless mode
 	L3 intra tenant traffic behavior in headless mode 
 	Log							manual untested
-	[Tags]			skipped		manual			untested			feature			
+	[Tags]					manual			untested			feature			
 
 L3 intra tenant traceroute
 	Log							manual untested
-	[Tags]		skipped			manual			untested			feature			
+	[Tags]					manual			untested			feature			
 		
 	
 * Keywords
@@ -222,8 +215,8 @@ L3 intra tenant same rack untagged with dynamic endpoints
 	BASH ifup intf								h6								bond0			
 	REST add portgroup to vns					X								X1						${leaf2_pc1}			-1
 	REST add portgroup to vns					X								X2						${leaf2_pc2}			-1
-	REST add interface to vns					X								X1						${leaf0-a}				${ixia1}				-1
-	REST add interface to vns					X								X2						${leaf1-a}				${ixia3}				-1
+	REST add interface to vns					X								X1						${leaf0_a}				${ixia1}				-1
+	REST add interface to vns					X								X2						${leaf1_a}				${ixia3}				-1
 	BASH add ip address							h5								10.251.1.11/24			bond0	
 	BASH add ip address							h6								10.251.2.11/24			bond0
 	BASH add route								h5								10.251.2.0/24			10.251.1.1
@@ -1012,10 +1005,13 @@ Verify dhcp host is not being aged out
 	Should Be True  							${loss} == 0	
 	sleep 										600
 	${result} =									REST show endpoints mac			${mac2}
-	${attachpoint} = 							Set Variable					${result[0]['attachment-point']['port-group']}	
+	Should Be True								${result}	
+	${attachpoint} = 							Set Variable					${result[0]['attachment-point']}	
 	Should Contain								${attachpoint}					${leaf1_pc1}	
 	${ipAddr1} = 								Set Variable					${result[0]['ip-address']}	
+#	Should Contain								${ipAddr1}						${ipAddr}
 	Should Be Equal As Strings					${ipAddr1}						${ipAddr}
+
 	BASH delete route							h1								10.252.3.0/24			10.252.1.1
 
 Dhcp relay with static dhcp server endpoint
@@ -1533,7 +1529,7 @@ Change tagged host endpoint IP address
 	Should Be True  							${loss} == 0		
 	BASH add ip address							h3								10.251.3.212/24			bond0.1003
 	BASH ping									h1								10.251.3.212			count=10
-	sleep										1
+	sleep										5
 	${result} =									REST show endpoints mac			${mac2}
 	${ipAddr} = 								Get From Dictionary				${result[0]}				ip-address
 	Should Contain								${ipAddr}						10.251.3.212
@@ -1605,8 +1601,8 @@ Static endpoint with dynamic host showing up on another port
 	${result} =									REST show endpoints mac			${mac3}
 	Log                                         result[0] = ${result[0]}
 	Log                                         result[0][attachment-point] = ${result[0]['attachment-point']}
-	Log                                         result[0][attachment-point][port-group] = ${result[0]['attachment-point']['port-group']}
-	${attachpoint} = 							Set Variable					${result[0]['attachment-point']['port-group']}	
+	Log                                         result[0][attachment-point][port-group] = ${result[0]['attachment-point']}
+	${attachpoint} = 							Set Variable					${result[0]['attachment-point']}	
 	Log											attachpoint = ${attachpoint}				
 	Should Contain								${attachpoint}					${leaf2_pc2}
 	${loss} = 									BASH ping						h2						10.251.1.11				count=10
@@ -1780,7 +1776,7 @@ L3 intra tenant traffic between private and public subnet
 	BASH ifup intf								h6								bond0	
 	REST add portgroup to vns					X								X1						${leaf0_pc1}			1001
 	REST add portgroup to vns					X								X3						${leaf1_pc1}			1003
-	REST add vns ip  							X								X1						10.251.1.1				24		private=True	
+	REST add vns ip  							X								X1						10.251.1.1				24		private=true	
 	REST add vns ip								Y								Y1						10.251.1.1				24
 	REST add portgroup to vns					Y								Y1						${leaf0_pc2}			1002
 	BASH add tag								h1								bond0					1001
@@ -1827,7 +1823,7 @@ Configure overlapping IP with private keyword on the same tenant
 	REST add router intf							A							X1
 	REST add router intf							A							X2
 	REST add router intf							A							X3	
-	REST add vns ip  								A							X1				10.101.0.1				24					private=True
+	REST add vns ip  								A							X1				10.101.0.1				24					private=true
 	sleep											2	
 	${result} = 									REST add vns ip  			A				X2						10.101.0.1				25
 	Should Not Be True								${result}
@@ -1858,6 +1854,7 @@ Configure overlapping IP with private keyword on the same tenant
 	Should Be True									${result}	
 
 
+
 Controller HA failover via CLI
 	BASH ifup intf								h1 								bond0
 	BASH ifup intf								h2								bond0
@@ -1875,8 +1872,8 @@ Controller HA failover via CLI
 	BASH add ip address							h3								10.251.3.11/24			bond0.1003
 	BASH add route								h1								10.251.3.0/24			10.251.1.1
 	BASH add route								h3								10.251.1.0/24			10.251.3.1
-	REST add interface to vns					X								X1						${leaf0-a}				${ixia1}				-1
-	REST add interface to vns					X								X3						${leaf1-a}				${ixia3}				-1	
+	REST add interface to vns					X								X1						${leaf0_a}				${ixia1}				-1
+	REST add interface to vns					X								X3						${leaf1_a}				${ixia3}				-1	
 	sleep										5	
 	${value} = 									BASH verify arp					h1						10.251.1.1
 	Should Not Be True							${value} 		
@@ -1932,8 +1929,8 @@ Controller HA failover via reboot
 	BASH ifup intf								h3								bond0.1003
 	BASH add ip address							h1								10.251.1.11/24			bond0.1001
 	BASH add ip address							h3								10.251.3.11/24			bond0.1003
-	REST add interface to vns					X								X1						${leaf0-a}				${ixia1}				-1
-	REST add interface to vns					X								X3						${leaf1-a}				${ixia3}				-1		
+	REST add interface to vns					X								X1						${leaf0_a}				${ixia1}				-1
+	REST add interface to vns					X								X3						${leaf1_a}				${ixia3}				-1		
 	BASH add route								h1								10.251.3.0/24			10.251.1.1
 	BASH add route								h3								10.251.1.0/24			10.251.3.1
 	sleep										5	
@@ -1985,8 +1982,8 @@ Reboot spine0 via CLI
 	BASH ifup intf								h6								bond0			
 	REST add portgroup to vns					X								X1						${leaf2_pc1}			-1
 	REST add portgroup to vns					X								X2						${leaf2_pc2}			-1
-	REST add interface to vns					X								X1						${leaf0-a}				${ixia1}				-1
-	REST add interface to vns					X								X2						${leaf1-a}				${ixia3}				-1
+	REST add interface to vns					X								X1						${leaf0_a}				${ixia1}				-1
+	REST add interface to vns					X								X2						${leaf1_a}				${ixia3}				-1
 	BASH add ip address							h5								10.251.1.11/24			bond0	
 	BASH add ip address							h6								10.251.2.11/24			bond0
 	BASH add route								h5								10.251.2.0/24			10.251.1.1
@@ -2031,8 +2028,8 @@ Reboot Leaf0 via CLI
 	BASH ifup intf								h6								bond0			
 	REST add portgroup to vns					X								X1						${leaf2_pc1}			-1
 	REST add portgroup to vns					X								X2						${leaf2_pc2}			-1
-	REST add interface to vns					X								X1						${leaf0-a}				${ixia1}				-1
-	REST add interface to vns					X								X2						${leaf1-a}				${ixia3}				-1
+	REST add interface to vns					X								X1						${leaf0_a}				${ixia1}				-1
+	REST add interface to vns					X								X2						${leaf1_a}				${ixia3}				-1
 	BASH add ip address							h5								10.251.1.11/24			bond0	
 	BASH add ip address							h6								10.251.2.11/24			bond0
 	BASH add route								h5								10.251.2.0/24			10.251.1.1
@@ -2075,8 +2072,8 @@ Connect and Disconnect spine to controller
 	BASH ifup intf								h6								bond0	
 	REST add portgroup to vns					X								X1						${leaf0_pc1}			1001
 	REST add portgroup to vns					X								X3						${leaf1_pc1}			1003
-	REST add interface to vns					X								X1						${leaf0-a}				${ixia1}				-1
-	REST add interface to vns					X								X3						${leaf1-a}				${ixia3}				-1
+	REST add interface to vns					X								X1						${leaf0_a}				${ixia1}				-1
+	REST add interface to vns					X								X3						${leaf1_a}				${ixia3}				-1
 	BASH add tag								h1								bond0					1001
 	BASH add tag								h3								bond0					1003
 	BASH ifup intf								h1								bond0.1001
@@ -2133,8 +2130,8 @@ Connect and disconnect one leaf in dual tor to controller
 	BASH ifup intf								h6								bond0	
 	REST add portgroup to vns					X								X1						${leaf0_pc1}			1001
 	REST add portgroup to vns					X								X3						${leaf1_pc1}			1003
-	REST add interface to vns					X								X1						${leaf0-a}				${ixia1}				-1
-	REST add interface to vns					X								X3						${leaf1-a}				${ixia3}				-1
+	REST add interface to vns					X								X1						${leaf0_a}				${ixia1}				-1
+	REST add interface to vns					X								X3						${leaf1_a}				${ixia3}				-1
 	BASH add tag								h1								bond0					1001
 	BASH add tag								h3								bond0					1003
 	BASH ifup intf								h1								bond0.1001
@@ -2190,8 +2187,8 @@ Flap link between leaf and spine
 	BASH ifup intf								h6								bond0	
 	REST add portgroup to vns					X								X1						${leaf0_pc1}			1001
 	REST add portgroup to vns					X								X3						${leaf1_pc1}			1003
-	REST add interface to vns					X								X1						${leaf0-a}				${ixia1}				-1
-	REST add interface to vns					X								X3						${leaf1-a}				${ixia3}				-1
+	REST add interface to vns					X								X1						${leaf0_a}				${ixia1}				-1
+	REST add interface to vns					X								X3						${leaf1_a}				${ixia3}				-1
 	BASH add tag								h1								bond0					1001
 	BASH add tag								h3								bond0					1003
 	BASH ifup intf								h1								bond0.1001
@@ -2224,10 +2221,10 @@ Flap link between leaf and spine
 	...											dst_ip=10.251.3.101				dst_cnt=10				dst_ip_step=0.0.0.1		dst_gw=10.251.3.1			 			
     start traffic  								${stream1}
     sleep  										5
-   	CLI disable interface						s3								${leaf0-a_spine0}	
+   	CLI disable interface						s3								${leaf0a_spine0}	
    	sleep										5	
     log traffic rate  							tx_rate  						rx_rate  				a  						c
-	CLI enable interface						s3								${leaf0-a_spine0}	
+	CLI enable interface						s3								${leaf0a_spine0}	
   	sleep										10
 	stop traffic								${stream1}
 	calculate loss 								transmitted_frames  			received_valid_frames  		${stream1}  			stream1
@@ -2264,10 +2261,10 @@ Flap bond interface towards host
 #	Should Be True								${value} 		
 	${mac1} = 									BASH get intf mac				h1						bond0.1001
 	${result} =									REST show endpoints mac			${mac1}
-#	Should Be True								${result}
-	${attachpoint} = 							Set Variable					${result[0]['attachment-point']['port-group']}	
+	Should Be True								${result}
+	${attachpoint} = 							Set Variable					${result[0]['attachment-point']}	
 	Should Contain								${attachpoint}					${leaf0_pc1}
-	${vlanid} = 								Set Variable					${result[0]['attachment-point']['vlan']}	
+	${vlanid} = 								Set Variable					${result[0]['vlan']}	
 	Should Be Equal								${vlanid}						${1001}		
 	${mac2} = 									BASH get intf mac				h3						bond0.1003
 	${result} =									REST show endpoints mac			${mac2}
@@ -2280,9 +2277,9 @@ Flap bond interface towards host
 	Should Be True  							${loss} == 0		
 	${result} =									REST show endpoints mac			${mac1}
 	Should Be True								${result}
-	${attachpoint} = 							Set Variable					${result[0]['attachment-point']['port-group']}	
+	${attachpoint} = 							Set Variable					${result[0]['attachment-point']}	
 	Should Contain								${attachpoint}					${leaf0_pc1}
-	${vlanid} = 								Set Variable					${result[0]['attachment-point']['vlan']}	
+	${vlanid} = 								Set Variable					${result[0]['vlan']}	
 	Should Be Equal								${vlanid}						${1001}		
 	sleep 										5
 	REST disable fabric interface				s4								${leaf0_pc1_intf1}
@@ -2298,9 +2295,9 @@ Flap bond interface towards host
 	Should Be True  							${loss} == 0		
 	${result} =									REST show endpoints mac			${mac1}
 	Should Be True								${result}
-	${attachpoint} = 							Set Variable					${result[0]['attachment-point']['port-group']}	
+	${attachpoint} = 							Set Variable					${result[0]['attachment-point']}	
 	Should Contain								${attachpoint}					${leaf0_pc1}
-	${vlanid} = 								Set Variable					${result[0]['attachment-point']['vlan']}	
+	${vlanid} = 								Set Variable					${result[0]['vlan']}	
 	Should Be Equal								${vlanid}						${1001}		
 	BASH delete route							h1								10.251.3.0/24			10.251.1.1
 	BASH delete route							h3								10.251.1.0/24			10.251.3.1
@@ -2315,8 +2312,8 @@ restart ofad on spine
 	BASH ifup intf								h6								bond0	
 	REST add portgroup to vns					X								X1						${leaf0_pc1}			1001
 	REST add portgroup to vns					X								X3						${leaf1_pc1}			1003
-	REST add interface to vns					X								X1						${leaf0-a}				${ixia1}				-1
-	REST add interface to vns					X								X3						${leaf1-a}				${ixia3}				-1
+	REST add interface to vns					X								X1						${leaf0_a}				${ixia1}				-1
+	REST add interface to vns					X								X3						${leaf1_a}				${ixia3}				-1
 	BASH add tag								h1								bond0					1001
 	BASH add tag								h3								bond0					1003
 	BASH ifup intf								h1								bond0.1001
@@ -2374,8 +2371,8 @@ restart ofad on leaf
 	BASH ifup intf								h6								bond0	
 	REST add portgroup to vns					X								X1						${leaf0_pc1}			1001
 	REST add portgroup to vns					X								X3						${leaf1_pc1}			1003
-	REST add interface to vns					X								X1						${leaf0-a}				${ixia1}				-1
-	REST add interface to vns					X								X3						${leaf1-a}				${ixia3}				-1
+	REST add interface to vns					X								X1						${leaf0_a}				${ixia1}				-1
+	REST add interface to vns					X								X3						${leaf1_a}				${ixia3}				-1
 	BASH add tag								h1								bond0					1001
 	BASH add tag								h3								bond0					1003
 	BASH ifup intf								h1								bond0.1001
