@@ -365,9 +365,15 @@ def bigrobot_devcmd_log(new_val=None, default=None):
     Category: Get/set environment variables for BigRobot.
     This log file captures all the device CLI/REST commands.
     """
-    return _env_get_and_set('BIGROBOT_DEVICE_COMMAND_LOG',
-                            new_val,
-                            default)
+    return _env_get_and_set('BIGROBOT_DEVICE_COMMAND_LOG', new_val, default)
+
+
+def bigrobot_listener_log(new_val=None, default=None):
+    """
+    Category: Get/set environment variables for BigRobot.
+    This log file captures all the device CLI/REST commands.
+    """
+    return _env_get_and_set('BIGROBOT_LISTENER_LOG', new_val, default)
 
 
 def bigrobot_suite(new_val=None, default=None):
@@ -489,12 +495,16 @@ def bigrobot_debug(new_val=None, default=None):
     return _debug
 
 
-def bigrobot_devcmd_write(s):
+def bigrobot_devcmd_write(s, no_timestamp=False):
     """
     Write the device command (CLI or REST command) into a log file.
     """
     if is_gobot():
-        file_write_append_once(bigrobot_devcmd_log(), ts_logger() + ' ' + s)
+        if no_timestamp:
+            file_write_append_once(bigrobot_devcmd_log(), s)
+        else:
+            file_write_append_once(bigrobot_devcmd_log(),
+                                   ts_logger() + ' ' + s)
 
 
 def sleep(s):

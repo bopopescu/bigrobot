@@ -20,7 +20,12 @@ Test enable mode
     ${a}=  enable help
 
 Restart process SNMP on Slave controller and verify snmpget
-    #[Tags]  skipped
+    [Tags]  skipped
     restart process on controller  snmpd  slave
     sleep    3
     restart process on controller  snmpd  slave
+
+What's my node name?
+    #[Tags]  skipped
+    ${name}=    get node name    master
+    log         name is '${name}'

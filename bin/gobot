@@ -156,6 +156,9 @@ helpers.bigrobot_debug(default=1)
 helpers.bigrobot_excript_debug_log_path(
       default=helpers.bigrobot_log_path_exec_instance())
 
+helpers.bigrobot_listener_log(
+      default=''.join((helpers.bigrobot_log_path_exec_instance(),
+                       '/bigrobot_listener.log')))
 helpers.bigrobot_devcmd_log(
       default=''.join((helpers.bigrobot_log_path_exec_instance(),
                        '/dev_commands.log')))
@@ -291,7 +294,7 @@ def copy_suite(f, p, quiet=False):
 
 def touch_log_files():
     log_files = ['debug.log', 'syslog.txt', 'log.html', 'report.html',
-                 'output.xml']
+                 'output.xml', 'bigrobot_listener.log', 'dev_commands.log']
     for f in log_files:
         filename = '/'.join((helpers.bigrobot_log_path_exec_instance(), f))
         # print("Touching file %s" % filename)
@@ -311,7 +314,7 @@ def create_links_to_logs():
         return
 
     log_files = ['debug.log', 'syslog.txt', 'log.html', 'report.html',
-                 'output.xml']
+                 'output.xml', 'bigrobot_listener.log', 'dev_commands.log']
 
     for f in log_files:
         f2 = '/'.join((log_path, f))
@@ -401,6 +404,7 @@ def test_command(*args):
                'loglevel': args.loglevel + ':info',
                'debugfile': args.debugfile,
                'outputdir': args.outputdir,
+               'listener': 'autobot.listener.Listener'
                }
     if include_tags:
         options['include'] = include_tags

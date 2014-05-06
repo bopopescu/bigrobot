@@ -2,9 +2,9 @@
 Documentation   This suite is my sandbox for experimentation.
 Force Tags      Vui
 Suite Setup     my base suite setup
-#Suite Teardown  base suite teardown
-#Test Setup      base test setup
-#Test Teardown   base test teardown
+Suite Teardown  base suite teardown
+Test Setup      base test setup
+Test Teardown   base test teardown
 #Library         Reserve
 Library         keywords/BsnCommon.py
 Library         keywords_dev/vui/MyTest.py
