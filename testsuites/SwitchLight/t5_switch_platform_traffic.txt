@@ -1,7 +1,7 @@
 * Settings
 Documentation     T5  Switch Platform Traffic Test suite- Iron Horse
 Suite Setup       T5 switch platform test setup
-#Suite Teardown    T5 switch platform test teardown
+Suite Teardown    T5 switch platform test teardown
 Test Setup        base test setup
 Test Teardown     atest teardown
 Force Tags        T5  switch  Platform  traffic
@@ -14,7 +14,6 @@ Library         keywords/AppController.py
 Library         keywords/Ixia.py 
 Library         keywords/T5.py     
 Library         String
-Resource        keywords_dev/kranti/ironhorse/snake_traffic_test_variables.txt
 
 *Variables
 
@@ -26,13 +25,11 @@ ${tenant}=        testTenant
 ${vns}=           v1
 ${vlan}=          -1
 ${intf_1}=        ethernet24
-#${intf_1}=        ethernet1
 ${intf_2}=        ethernet2
 ${intf_3}=        ethernet3
 ${intf_4}=        ethernet4
 
 ${intf_6}=        ethernet24
-#${intf_6}=        ethernet45
 ${intf_7}=        ethernet46
 ${intf_8}=        ethernet47
 ${intf_9}=        ethernet48
@@ -43,7 +40,7 @@ ${tolerance}=         5
 ${sleepAfter}=    10
 ${sleepBefore}=   5
 
- 
+
 
 *Test Case
 
@@ -67,7 +64,7 @@ Uni-Directional L2 Traffic flow=a->b traffic framerate 10000 pktsize 64
     #sleep          10
     #${report}=     fetch port stats
     #verify results traffic  transmitted_frames  received_valid_frames  ${tolerance}        
-    [Tags]  T5  switch  traffic  feature   
+    [Tags]  T5  switch  traffic  feature  run   
 
 Uni-Directional L2 Traffic flow=a->b traffic linerate 10% pktsize 64
     ${stream}=     L2 add  flow=a->b  src_mac=00:11:01:00:00:03  dst_mac=00:11:01:00:00:04  line_rate=10  frame_size=64  ethertype=8000  name=a_b_flow
@@ -329,7 +326,7 @@ Verify - Jumbo frame disabled - Sending L2 traffic with Jumbo frame size 9150 by
     Manual untested
 
 Test the Oversubscription of 40Gig Links between Leaf and Spines
-    Log   Step 1 - Test the  Oversubscription of 40Gig Links between Leaf and Spines
+    Log   Step 1 - Test the Oversubscription of 40Gig Links between Leaf and Spines
     [Tags]  Manual-untested  interface  counters
     Manual untested
     
