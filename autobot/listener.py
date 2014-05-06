@@ -53,8 +53,8 @@ class Listener:
                         no_timestamp=True)
         self.log("%-12s name: '%s', attrs: '%s'" % ('end_test', name, helpers.prettify(attrs)))
         self.log('--------')
-        status = 'PASSED' if attrs['status'] == 'PASS' else 'FAILED'
-        helpers.bigrobot_test_case_status(status)
+        # status = 'PASSED' if attrs['status'] == 'PASS' else 'FAILED'
+        # helpers.bigrobot_test_case_status(status)
         # self.log("%12s: status=%s, message='%s'" % ('end_test', attrs['status'], attrs['message']))
 
     def start_keyword(self, name, attrs):
