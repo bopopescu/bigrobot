@@ -98,11 +98,11 @@ class RestClient(object):
     def result_json(self, result=None):
         return helpers.to_json(self.result(result))
 
-    def log_result(self, result=None, level=4):
+    def log_result(self, result=None, level=4, log_level="info"):
         helpers.log("REST result:\n%s%s"
                     % (self.result_json(result),
                        br_utils.end_of_output_marker()),
-                       level=level)
+                       level=level, log_level=log_level)
 
     def content(self, result=None):
         return self.result(result)['content']
@@ -117,7 +117,7 @@ class RestClient(object):
                        level=level)
 
     def _http_request(self, url, verb='GET', data=None, session=None,
-                     quiet=False, save_last_result=True):
+                     quiet=False, save_last_result=True, log_level='info'):
         """
         Generic HTTP request for POST, GET, PUT, DELETE, etc.
         data is a Python dictionary.
@@ -134,10 +134,13 @@ class RestClient(object):
         elif self.session_cookie:
             headers['Cookie'] = 'session_cookie=%s' % self.session_cookie
 
-        helpers.log("RestClient: %s %s" % (verb, url), level=5)
-        helpers.log("Headers = %s" % helpers.to_json(headers), level=5)
+        helpers.log("RestClient: %s %s" % (verb, url),
+                    level=5, log_level=log_level)
+        helpers.log("Headers = %s" % helpers.to_json(headers),
+                    level=5, log_level=log_level)
         if data:
-            helpers.log("Data = %s" % helpers.to_json(data), level=5)
+            helpers.log("Data = %s" % helpers.to_json(data),
+                        level=5, log_level=log_level)
 
         prefix_str = '%s %s' % (self.name(), verb.lower())
         data_str = ''
@@ -173,7 +176,7 @@ class RestClient(object):
             self.last_result = result
 
         if not quiet:
-            self.log_result(result=result, level=6)
+            self.log_result(result=result, level=6, log_level=log_level)
 
         # ATTENTION: RESTclient will generate an exception when the
         # HTTP status code is anything other than:

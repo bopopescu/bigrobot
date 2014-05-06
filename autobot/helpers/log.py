@@ -60,12 +60,11 @@ class Log(object):
         f.write(msg)
         f.close()
 
-    def log(self, s, level=1, to_stderr=False):
+    def log(self, s, level=1, to_stderr=False, log_level='info'):
         """
-        Write to INFO log.
+        Write to INFO log by default.
         """
         msg = self._format_log(s, level)
-
         if not gobot.is_gobot():
             # This is the log to use outside of gobot environment, such as for
             # standalone applications.
@@ -75,7 +74,16 @@ class Log(object):
         else:
             if to_stderr:
                 sys.stderr.write('\n' + msg)
-            logger.info(msg)
+
+            log_level = log_level.lower()
+            if log_level == 'info':
+                logger.info(msg)
+            elif log_level == 'warn':
+                logger.warn(msg)
+            elif log_level == 'debug':
+                logger.debug(msg)
+            else:
+                logger.trace(msg)  # last resort
 
     # Alias
     info = log

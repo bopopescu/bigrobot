@@ -194,6 +194,22 @@ Add and delete router interface on tenant system
 	Log								manual untested
 	[Tags]			skipped		manual			untested			feature			
 
+Add and delete default route on tenant system
+	Add and delete default route on tenant system
+	Log								manual untested
+	[Tags]			skipped		manual			untested			feature			
+
+Add and delete static route on tenant system
+	Add and delete static route on tenant system
+	Log								manual untested
+	[Tags]			skipped		manual			untested			feature			
+
+Add and delete more specific route on tenant system
+	Add and delete more specific route on tenant system
+	Log								manual untested
+	[Tags]			skipped		manual			untested			feature			
+
+
 L3 inter tenant traffic behavior in headless mode
 	Verify L3 inter tenant traffic forwarding in headless mode
 	Log								manual untested

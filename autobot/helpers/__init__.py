@@ -72,11 +72,11 @@ def trace(s, level=2):
     Log().trace(s, level)
 
 
-def info(s, level=2):
+def info(s, level=2, log_level="info"):
     """
     Info log.
     """
-    Log().info(s, level)
+    Log().info(s, level, log_level=log_level)
 
 
 # Alias

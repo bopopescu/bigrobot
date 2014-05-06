@@ -228,7 +228,7 @@ class Host(object):
         result = n.sudo("arp -n %s" % ip)
         output = result["content"]
         helpers.log("output: %s" % output)
-        match = re.search(r'no entry|incomplete', output, re.S | re.I)
+        match = re.search(r'no entry|incomplete', output, re.S | re.I | re.M)
         if match:
             return False
         else:
@@ -257,13 +257,13 @@ class Host(object):
         n = t.node(node)
         output = n.sudo("service %s status" % processname)['content']
         helpers.log("output: %s" % output)
-        match = re.search(r'unrecognized service', output, re.S | re.I)
+        match = re.search(r'unrecognized service', output, re.S | re.I | re.M)
         if match:
             return 'unrecognized service'
-        match = re.search(r'is not running', output, re.S | re.I)
+        match = re.search(r'is not running', output, re.S | re.I | re.M)
         if match:
             return 'is not running'
-        match = re.search(r'start\/running', output, re.S | re.I)
+        match = re.search(r'start\/running', output, re.S | re.I | re.M)
         if match:
             return 'is started'
 

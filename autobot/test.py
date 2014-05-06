@@ -177,11 +177,11 @@ class Test(object):
                                      " '%s' defined. Populating it from"
                                      " params file."
                                      % (n, key))
-                    elif key in self._topology_params[n] and self._topology_params[n][key].lower() != 'dummy':
-                        helpers.trace("Node '%s' has attribute '%s' defined"
-                                      " with value '%s'. Overriding it with"
-                                      " value from params file."
-                                      % (n, key, self._topology_params[n][key]))
+                    # elif key in self._topology_params[n] and self._topology_params[n][key].lower() != 'dummy':
+                    #    helpers.trace("Node '%s' has attribute '%s' defined"
+                    #                  " with value '%s'. Overriding it with"
+                    #                  " value from params file."
+                    #                  % (n, key, self._topology_params[n][key]))
                     helpers.info("Node '%s' attribute '%s' gets value '%s'"
                                  % (n, key, self._params[n][key]))
                     self._topology_params[n][key] = self._params[n][key]
@@ -387,7 +387,7 @@ class Test(object):
             # We don't want REST object to save the result from the REST
             # command to detect mastership.
             result = n.rest.get("/rest/v1/system/ha/role",
-                                save_last_result=False)
+                                save_last_result=False, log_level='trace')
             content = result['content']
             if content['role'] == "MASTER":
                 return True
@@ -395,7 +395,7 @@ class Test(object):
                 return False
         elif helpers.is_bvs(platform):
             result = n.rest.get("/api/v1/data/controller/cluster",
-                                save_last_result=False)
+                                save_last_result=False, log_level='trace')
             content = result['content']
 
             if 'domain-leader' not in content[0]['status']:

@@ -92,3 +92,30 @@ h11:
   ip: 10.210.64.21
   user: root
   password: bsn  
+ 
+  
+tg1:
+  platform: 'ixia'
+  chassis_ip: 10.210.192.2
+  tcl_server_ip: 10.193.0.10
+  ports:
+    a:
+      name: 12/11
+    b:
+      name: 12/12
+    c:
+      name: 12/13
+    d:
+      name: 12/14
+    e:
+      name: 12/15
+    f:
+      name: 12/16
+    g:
+      name: 12/17
+    h:
+      name: 12/18
+    j:
+      name: 12/19
+    k:
+      name: 12/20
