@@ -648,17 +648,17 @@ File Suite Setup
 	Bash  master  curl -g -H "Cookie: session_cookie\=$FL_SESSION_COOKIE" localhost:8080/api/v1/data/controller/core/aaa/accounting -X DELETE -d '{"name": "local"}'
 	Cli Copy  running-config  config://startup-config
 	Cli Copy  running-config  config://startup-config  node=slave
-	Cli Run  enable
-	Cli Run  config
-	Cli Run  logging remote 1.2.3.4
-	Cli Run  snmp-server community ro test
-	Cli Run  snmp-server contact tmk
-	Cli Run  snmp-server enable traps
-	Cli Run  snmp-server host 1.2.3.4
-	Cli Run  snmp-server location test
-	Cli Run  tacacs server host 1.2.3.4
-	Cli Run  tacacs server timeout 10
-	Cli Run  tacacs server key test
+	Cli Run  master  enable
+	Cli Run  master  config
+	Cli Run  master  logging remote 1.2.3.4
+	Cli Run  master  snmp-server community ro test
+	Cli Run  master  snmp-server contact tmk
+	Cli Run  master  snmp-server enable traps
+	Cli Run  master  snmp-server host 1.2.3.4
+	Cli Run  master  snmp-server location test
+	Cli Run  master  tacacs server host 1.2.3.4
+	Cli Run  master  tacacs server timeout 10
+	Cli Run  master  tacacs server key test
 	Cli Copy  running-config  config://test-config
 
 Setup
