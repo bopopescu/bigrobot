@@ -18,6 +18,7 @@ import autobot.test as test
 import subprocess
 import math
 import sys
+import os
 import re
 import socket
 import paramiko
@@ -62,6 +63,10 @@ class BsnCommon(object):
                             " Skipping test postmortem.")
             else:
                 self.base_test_postmortem(test_descr=test_descr)
+
+            if helpers.bigrobot_test_pause_on_fail().lower() == 'true':
+                helpers.log("Env BIGROBOT_TEST_PAUSE_ON_FAIL is True.")
+                self.pause_on_fail(keyword=test_descr)
 
     def mock_untested(self):
         print("MOCK UNTESTED")
@@ -111,8 +116,7 @@ class BsnCommon(object):
             helpers.log("Collecting information for node '%s' (%s)"
                         % (node, self.get_node_ip(node)))
 
-
-    def pause(self, msg=None):
+    def pause_on_fail(self, keyword=None, msg=None):
         """
         Pause execution. Press Control-D to continue.
 
@@ -122,8 +126,36 @@ class BsnCommon(object):
         Return Value:
         - True
         """
+        descr = ("Pausing due to test failure...\n'%s' failed." % keyword)
+        if helpers.bigrobot_continuous_integration().lower() == 'false':
+            return self.pause(descr + "\nPress Ctrl-D to continue...")
+
+        lock = os.path.join(helpers.bigrobot_log_path_exec_instance(),
+                            'pause_on_fail_test.lock')
+        helpers.file_touch(lock)
         if not msg:
-            msg = "Pausing... Press Ctrl-D to continue."
+            msg = ("%s\nTo unpause, remove lock '%s'." % (descr, lock))
+        helpers.warn(msg)
+        while True:
+            if helpers.file_exists(lock):
+                helpers.sleep(1)
+            else:
+                helpers.warn("Lock is removed ('%s'). Unpausing..." % lock)
+                break
+        return True
+
+    def pause(self, msg=None):
+        """
+        Pause execution. Press Control-D to continue.
+
+        Inputs:
+        | msg | Message to display when paused. Else print "Pausing... Press Ctrl-D to continue..." |
+
+        Return Value:
+        - True
+        """
+        if not msg:
+            msg = "Pausing... Press Ctrl-D to continue..."
         helpers.warn(msg)
         for _ in sys.stdin:
             pass

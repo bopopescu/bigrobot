@@ -408,7 +408,7 @@ def bigrobot_topology(new_val=None, default=None):
     return _env_get_and_set('BIGROBOT_TOPOLOGY', new_val, default)
 
 
-def bigrobot_continuous_integration(new_val=None, default=None):
+def bigrobot_continuous_integration(new_val=None, default='False'):
     """
     Category: Get/set environment variables for BigRobot.
     """
@@ -443,6 +443,14 @@ def bigrobot_test_postmortem(new_val=None, default='True'):
     Set to 'False' to bypass Test case postmortem.
     """
     return _env_get_and_set('BIGROBOT_TEST_POSTMORTEM', new_val, default)
+
+
+def bigrobot_test_pause_on_fail(new_val=None, default='False'):
+    """
+    Category: Get/set environment variables for BigRobot.
+    Set to 'True' to pause test case after it had failed.
+    """
+    return _env_get_and_set('BIGROBOT_TEST_PAUSE_ON_FAIL', new_val, default)
 
 
 def bigtest_path(new_val=None, default=None):
@@ -884,6 +892,7 @@ def file_touch(fname, times=None):
     Like Unix 'touch' command.
     Borrowed from
     http://stackoverflow.com/questions/1158076/implement-touch-using-python
+    times=None will set access and modified times to the current time
     """
     with file(fname, 'a'):
         os.utime(fname, times)
