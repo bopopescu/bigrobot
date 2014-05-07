@@ -1379,7 +1379,7 @@ class T5Platform(object):
                 c.send(scp_passwd)
             try:
                 c.expect(c.get_prompt(), timeout=180)
-                if not (helpers.any_match(c.cli_content(), r'100%') or helpers.any_match(c.cli_content(), r'applied \d. updates') or helpers.any_match(c.cli_content(), r'Lines Applied')):
+                if not (helpers.any_match(c.cli_content(), r'100%') or helpers.any_match(c.cli_content(), r'applied \d+ updates') or helpers.any_match(c.cli_content(), r'Lines Applied')):
                     helpers.test_failure(c.cli_content())
                     return False
             except:
