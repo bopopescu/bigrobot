@@ -233,7 +233,7 @@ class KVMOperations(object):
         return topo_file
 
     def _configure_vm_first_boot(self, cluster_ip=None, ip_address=None,
-                                 netmask='18', vm_host_name=None):
+                                 netmask='18', vm_host_name=None, gateway='10.192.64.1'):
         # Using Mingtao's First Boot Function to configure spawned VM in KVM
         helpers.log("Sleeping 60 sec while waiting for VM to boot up")
         time.sleep(120)
@@ -242,9 +242,11 @@ class KVMOperations(object):
         t5_platform = T5Platform()
         # configure firstboot till IP address
         if ip_address is not None:
-            helpers.summary_log("Static IP is given using ip: %s for VM" % ip_address)
+            helpers.summary_log("Static IP is given using ip: %s netmask: %s, gateway: %s for VM" %
+                                (ip_address, netmask, gateway))
             t5_platform.first_boot_controller_initial_node_setup("c1", ip_address=ip_address,
-                                                                 netmask=netmask, hostname=vm_host_name)
+                                                                 netmask=netmask, hostname=vm_host_name,
+                                                                 gateway=gateway)
         else:
             t5_platform.first_boot_controller_initial_node_setup("c1", dhcp="yes", hostname=vm_host_name)
         # Apply setting and add cluster Ip if provided
@@ -281,6 +283,7 @@ class KVMOperations(object):
                 ip = None
             cluster_ip = kwargs.get("cluster_ip", None)
             netmask = kwargs.get("netmask", "18")
+            gateway = kwargs.get("gateway", "10.192.64.1")
 
             self.log_path = LOG_BASE_PATH + '/' + vm_name
             os.makedirs(self.log_path)
@@ -347,7 +350,8 @@ class KVMOperations(object):
             result['vm_ip'] = self._configure_vm_first_boot(cluster_ip=cluster_ip,
                                                             ip_address=ip,
                                                             netmask=netmask,
-                                                            vm_host_name=vm_host_name)
+                                                            vm_host_name=vm_host_name,
+                                                            gateway=gateway)
 
             helpers.summary_log("Done! Logs are written to %s" % self.log_path)
             return result
