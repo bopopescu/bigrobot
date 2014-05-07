@@ -2,6 +2,7 @@ import autobot.helpers as helpers
 import autobot.test as test
 from T5Utilities import T5Utilities as utilities
 from T5Utilities import T5PlatformThreads
+from BsnCommon import BsnCommon as bsnCommon
 from time import sleep
 import re
 import keywords.Mininet as mininet
@@ -2053,9 +2054,29 @@ class T5Platform(object):
             helpers.log('INFO: current session with user:  %s ' % user) 
             return False
 
+    def cli_kill_ssh_sessions(self,node='c1',user='admin',passwd='adminadmin'):
+        '''
+          run sshd kill in Bash mode
+          Author: Tomasz
+          input: node, username, password
+          usage:  Cli Kill SSH Sessions  c1
+          output:   True  or False
+        '''
+        t = test.Test()
+        bsn_common = bsnCommon()
+        ip_addr = bsn_common.get_node_ip(node)
+        c = t.node_spawn(ip=ip_addr)
+        helpers.log('INFO: Entering bash mode to kill all sshd processes')
+        c.cli("debug bash")
+        try:
+            c.send("sudo pkill -TERM sshd")
+            helpers.log("Kill command sent")
+            return True
+        except:
+            helpers.test_failure('ERROR: failure killing ssh sessions')
+            return False
  
- 
- 
+
     def bash_top(self, node):
         """
         Execute 'top - n 1' on a device.

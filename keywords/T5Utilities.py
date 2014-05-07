@@ -664,7 +664,7 @@ class T5Utilities(object):
         return pidList
 
 
-    def cli_run(self, command, node='master', cmd_timeout=5, soft_error=False):
+    def cli_run(self, command, node_ha='master', cmd_timeout=5, username='admin', passwd='adminadmin', soft_error=False):
 	''' Function that runs specified CLI command on given node
 	    with given timeout. It searches for error messages
 	    in command's return value
@@ -672,9 +672,14 @@ class T5Utilities(object):
 	    node - node on which command will be run
 	    cmd_timeout - time for prompt to come back
         '''
-        helpers.test_log("Running command: %s on node %s" % (command, node))
+        helpers.test_log("Running command: %s on node %s" % (command, node_ha))
         t = test.Test()
-        c = t.controller(node)
+        if username == 'admin':
+            c = t.controller(node_ha)
+        else:
+            bsn_common = bsnCommon()
+            ip_addr = bsn_common.get_node_ip(node_ha)
+            c = t.node_spawn(ip=ip_addr, user=username, password=passwd)
         try:
             c.cli(command, timeout=cmd_timeout)
             if "Error" in c.cli_content():
@@ -688,7 +693,7 @@ class T5Utilities(object):
 
 
 
-    def cli_run_and_verify_output(self, command, expected, flag='True', node_type='controller', node='master', cmd_timeout=5, soft_error=False):
+    def cli_run_and_verify_output(self, command, expected, flag='True', node_type='controller', node_ha='master', username='admin', passwd='adminadmin', cmd_timeout=5, soft_error=False):
 	''' Function that runs specified CLI command on given node
 	    with given timeout. It checks if expected string shows up
 	    in command's return value
@@ -699,12 +704,17 @@ class T5Utilities(object):
 	    node - node on which command will be run
 	    cmd_timeout - time for prompt to come back
         '''
-        helpers.test_log("Running command: %s on node %s" % (command, node))
+        helpers.test_log("Running command: %s on node %s" % (command, node_ha))
         t = test.Test()
         if node_type == 'controller':
-            c = t.controller(node)
+            if username == 'admin':
+                c = t.controller(node_ha)
+            else:
+                bsn_common = bsnCommon()
+                ip_addr = bsn_common.get_node_ip(node_ha)
+                c = t.node_spawn(ip=ip_addr, user=username, password=passwd)
         if node_type == 'switch':
-            c = t.switch(node)
+            c = t.switch(node_ha)
         try:
             c.send(command)
             c.expect([c.get_prompt()], timeout=cmd_timeout)
