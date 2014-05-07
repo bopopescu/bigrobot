@@ -2054,13 +2054,15 @@ class T5Platform(object):
             helpers.log('INFO: current session with user:  %s ' % user) 
             return False
 
-    def cli_kill_ssh_sessions(self,node='c1',user='admin',passwd='adminadmin'):
+    def cli_kill_ssh_sessions(self,node):
         '''
-          run sshd kill in Bash mode
-          Author: Tomasz
-          input: node, username, password
-          usage:  Cli Kill SSH Sessions  c1
-          output:   True  or False
+        Kill SSH sessions by running 'pkill -TERM sshd' from bash mode.
+
+        Inputs:
+        | node | reference to controller as defined in .topo file |
+
+        Return Value:
+        - True if killing sessions successful, False otherwise
         '''
         t = test.Test()
         bsn_common = bsnCommon()

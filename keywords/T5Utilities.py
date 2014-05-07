@@ -664,22 +664,30 @@ class T5Utilities(object):
         return pidList
 
 
-    def cli_run(self, command, node_ha='master', cmd_timeout=5, username='admin', passwd='adminadmin', soft_error=False):
-	''' Function that runs specified CLI command on given node
-	    with given timeout. It searches for error messages
-	    in command's return value
-	    command - CLI command to run
-	    node - node on which command will be run
-	    cmd_timeout - time for prompt to come back
-        '''
-        helpers.test_log("Running command: %s on node %s" % (command, node_ha))
+    def cli_run(self, node, command, cmd_timeout=5, user='admin', password='adminadmin', soft_error=False):
+        """
+        Run given CLI command
+
+        Inputs:
+        | node | Reference to switch/controller as defined in .topo file |
+        | command | CLI command to run |
+        | cmd_timeout | Timeout for given command to be executed and controller prompt to be returned |
+        | user | Username to use when logging into the node |
+        | password | Password for the user |
+        | soft_error | Soft Error flag |
+
+        Return Value:
+        - True if command executed with no errors, False otherwise
+        """
+
+        helpers.test_log("Running command: %s on node %s" % (command, node))
         t = test.Test()
-        if username == 'admin':
-            c = t.controller(node_ha)
+        if user == 'admin':
+            c = t.controller(node)
         else:
             bsn_common = bsnCommon()
-            ip_addr = bsn_common.get_node_ip(node_ha)
-            c = t.node_spawn(ip=ip_addr, user=username, password=passwd)
+            ip_addr = bsn_common.get_node_ip(node)
+            c = t.node_spawn(ip=ip_addr, user=user, password=password)
         try:
             c.cli(command, timeout=cmd_timeout)
             if "Error" in c.cli_content():
@@ -693,28 +701,35 @@ class T5Utilities(object):
 
 
 
-    def cli_run_and_verify_output(self, command, expected, flag='True', node_type='controller', node_ha='master', username='admin', passwd='adminadmin', cmd_timeout=5, soft_error=False):
-	''' Function that runs specified CLI command on given node
-	    with given timeout. It checks if expected string shows up
-	    in command's return value
-	    command - CLI command to run
-	    expected - the expected string
-	    flag - flag to specify whether expected value is desired (true) or no (false)
-	    node_type - controller or switch
-	    node - node on which command will be run
-	    cmd_timeout - time for prompt to come back
-        '''
-        helpers.test_log("Running command: %s on node %s" % (command, node_ha))
+    def cli_run_and_verify_output(self, node, command, expected, flag='True', cmd_timeout=5, user='admin', password='adminadmin', node_type='controller', soft_error=False):
+        """
+        Run given CLI command and verify that expected content is in the command output
+
+        Inputs:
+        | node | Reference to switch/controller as defined in .topo file |
+        | command | CLI command to run |
+        | expected | String expected in the output of the command |
+        | flag | Toggle to switch whether expected string should be in the output (default) or should not be there |
+        | cmd_timeout | Timeout for given command to be executed and controller prompt to be returned |
+        | user | Username to use when logging into the node |
+        | password | Password for the user |
+        | node_type | Type of the node - controller/switch |
+        | soft_error | Soft Error flag |
+
+        Return Value:
+        - True if command executed with no errors, False otherwise
+        """
+        helpers.test_log("Running command: %s on node %s" % (command, node))
         t = test.Test()
         if node_type == 'controller':
-            if username == 'admin':
-                c = t.controller(node_ha)
+            if user == 'admin':
+                c = t.controller(node)
             else:
                 bsn_common = bsnCommon()
-                ip_addr = bsn_common.get_node_ip(node_ha)
-                c = t.node_spawn(ip=ip_addr, user=username, password=passwd)
+                ip_addr = bsn_common.get_node_ip(node)
+                c = t.node_spawn(ip=ip_addr, user=user, password=password)
         if node_type == 'switch':
-            c = t.switch(node_ha)
+            c = t.switch(node)
         try:
             c.send(command)
             c.expect([c.get_prompt()], timeout=cmd_timeout)
