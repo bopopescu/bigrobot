@@ -1526,7 +1526,7 @@ Change tagged host endpoint IP address
 	Should Be True								${result}						
 	REST show endpoints		
 	${loss} = 									BASH ping						h1						10.251.3.11 			count=10
-	Should Be True  							${loss} == 0		
+	Should Be True  							${loss} < 20		
 	BASH add ip address							h3								10.251.3.212/24			bond0.1003
 	BASH ping									h1								10.251.3.212			count=10
 	sleep										5
@@ -1534,7 +1534,7 @@ Change tagged host endpoint IP address
 	${ipAddr} = 								Get From Dictionary				${result[0]}				ip-address
 	Should Contain								${ipAddr}						10.251.3.212
 	${loss} = 									BASH ping						h1						10.251.3.212			count=10
-	Should Be True  							${loss} == 0	 						
+	Should Be True  							${loss} < 20	 						
 	BASH delete route							h1								10.251.3.0/24			10.251.1.1
 	BASH delete route							h3								10.251.1.0/24			10.251.3.1	
 
