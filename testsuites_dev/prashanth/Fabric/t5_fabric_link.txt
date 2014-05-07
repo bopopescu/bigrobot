@@ -17,7 +17,7 @@ Resource		 testsuites/T5/t5_physical_variables.txt
 *Test Case
 
 Setup Three Rack Dual Leaf Topology
-	[Tags]  Fabric  feature
+	[Tags]  Fabric  feature  run
 	base suite setup    
     add fabric switch
     sleep  5
@@ -154,7 +154,7 @@ Delete and Readd the Rack2
 	rest verify fabric link
 
 add portgroup lacp to 2 different rack
-	[Tags]  Fabric  feature  
+	[Tags]  Fabric  feature  run  
 	rest delete fabric switch  leaf0-a
 	rest delete fabric switch  leaf0-b
 	rest add switch  leaf0-a
@@ -181,7 +181,7 @@ add portgroup lacp to 2 different rack
 	Should not be True  ${result}
 	
 Tear down config and Topology
-	[Tags]  Fabric  feature
+	[Tags]  Fabric  feature  run
     delete fabric switch  
     rest delete portgroup  p1
     rest delete portgroup  p2

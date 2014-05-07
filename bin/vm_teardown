@@ -62,7 +62,7 @@ def main(*args):
         else:
             print "VM TearDown Failure!!\n%s" % result['status_descr']
             
-        time.sleep(4)  # sleep for jenkins to run Teardowns
+        time.sleep(10)  # sleep for jenkins to run Teardowns
 
 
 if __name__ == '__main__':

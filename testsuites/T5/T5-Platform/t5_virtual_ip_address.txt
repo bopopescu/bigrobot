@@ -9,19 +9,19 @@ Library  			keywords/T5Platform.py
 
 
 *** Variables ***
-${vip}  			10.192.103.111
-${vip bis} 			10.192.103.222
+${vip}  		10.192.103.181
+${vip bis} 		10.192.103.182
 ${vip invalid}  	10.192.103.333
 ${vip string}	  	test-ip-address
 ${vip zeros}		0.0.0.0
 ${vip broadcast}	255.255.255.255
-${sleep}			45 sec
+${sleep}		30 sec
 
 *** Test Cases ***
 ### REST FUNCTIONS
 T1.1 REST Configure and verify virtual IP address
 	Rest Configure Virtual IP  ${vip}
-	Sleep  5 sec
+	Sleep  ${sleep}
 	Verify VIP only on Master Bash  ${vip}
 	${configured} =  Rest Show Virtual IP
 	Should Be Equal as Strings  ${configured}  ${vip}
@@ -32,19 +32,19 @@ T1.1 REST Configure and verify virtual IP address
 
 T1.2 REST Delete and verify virtual IP address
 	Rest Configure Virtual IP  ${vip}
-	Sleep  5 sec
+	Sleep  ${sleep}
 	Rest Delete Virtual IP
-	Sleep  5 sec
+	Sleep  ${sleep}
 	${configured} =  Rest Show Virtual IP
 	Should Be Equal as Strings  ${configured}  None
 	Run Keyword and Expect Error  *Node * is unreachable*  Rest Get MAC Using Virtual IP  ${vip}
 	Verify VIP neither on Master nor Slave Bash  ${vip}
-	[Tags]  T5  Virtual IP  REST  Platform  Smoke
+	[Tags]  T5  Virtual IP  REST  Platform
 
 T1.3 REST Virtual IP after failover in cluster
 ### add validation for ssh keys when implemented
 	Rest Configure Virtual IP  ${vip}
-	Sleep  5 sec
+	Sleep  ${sleep}
 	Verify VIP only on Master Bash  ${vip}
 	${mac1} =  Rest Get MAC Using Virtual IP  ${vip}
 	Rest Verify Cluster Election Take Leader
@@ -63,12 +63,11 @@ T1.4 REST Verify validation for incorrect virtual IP address
 	[Tags]  T5  Virtual IP  REST  Platform
 
 T1.5 REST Verify it is impossible to have virtual equal to physical IP address
-        Manual Failed
 	${state} =  Rest Configure Virtual IP  ${c1_ip}
 	Should Not Be True  ${state}
 	${state} =  Rest Configure Virtual IP  ${c2_ip}
 	Should Not Be True  ${state}
-	[Tags]  T5  Virtual IP  REST  Platform
+	[Tags]  Skipped  Manual  T5  Virtual IP  REST  Platform
 
 T1.6 REST Verify it is impossible to have 0.0.0.0 or 255.255.255.255 virtual IP address
 	${state} =  Rest Configure Virtual IP  ${vip zeros}
@@ -81,58 +80,59 @@ T1.6 REST Verify it is impossible to have 0.0.0.0 or 255.255.255.255 virtual IP 
 
 T1.7 REST Change Virtual IP address
 	Rest Configure Virtual IP  ${vip}
-	Sleep  5 sec
+	Sleep  ${sleep}
 	${configured} =  Rest Show Virtual IP
 	Should Be Equal as Strings  ${configured}  ${vip}
 	${mac1} =  Rest Get MAC Using Virtual IP   ${vip}
 	Rest Configure Virtual IP  ${vip bis}
-	Sleep  5 sec
+	Sleep  ${sleep}
+	Sleep  ${sleep}
 	Verify VIP neither on Master nor Slave Bash  ${vip}
 	Verify VIP only on Master Bash  ${vip bis}
 	${configured} =  Rest Show Virtual IP
 	Should Be Equal as Strings  ${configured}  ${vip bis}
 	${mac2} =  Rest Get MAC Using Virtual IP   ${vip bis}
 	Should Be Equal as Strings  ${mac1}  ${mac2}
-	[Tags]  T5  Virtual IP  REST  Platform  Smoke
+	[Tags]  T5  Virtual IP  REST  Platform
 
 
 ### CLI FUNCTIONS
 T2.1 CLI Configure and verify virtual IP address
 	Cli Configure Virtual IP  ${vip}
-	Sleep  5 sec
+	Sleep  ${sleep}
 	Verify VIP only on Master Bash  ${vip}
 	${configured} =  Cli Show Virtual IP
 	Should Be Equal As Strings  ${configured}  ${vip}
-	${eth0-vip} =  Cli Get Eth0 IP Using Virtual IP  ${vip}
-	${eth0-master} =  Cli Get Eth0 IP Using Virtual IP  master
-	Should Be Equal as Strings  ${eth0-vip}  ${eth0-master}
+	${mac1} =  Rest Get MAC Using Virtual IP   ${vip}
+	${mac2} =  Rest Get MAC Using Virtual IP   master
+	Should Be Equal as Strings  ${mac1}  ${mac2}
 	${state} =  Bash Verify Virtual IP  ${vip}
 	Should Be True  ${state}
 	[Tags]  T5  Virtual IP  CLI  Platform  Smoke
 
 T2.2 CLI Delete and verify virtual IP address
 	Cli Configure Virtual IP  ${vip}
-	Sleep  5 sec
+	Sleep  ${sleep}
 	Cli Delete Virtual IP
-	Sleep  5 sec
+	Sleep  ${sleep}
 	${configured} =  Cli Show Virtual IP
 	Should Be Equal As Strings  ${configured}  None
-	Run Keyword and Expect Error  *Node * is unreachable*  Cli Get Eth0 IP Using Virtual IP  ${vip}
+	Run Keyword and Expect Error  *Node * is unreachable*  Rest Get MAC Using Virtual IP  ${vip}
 	Verify VIP neither on Master nor Slave Bash  ${vip}
-	[Tags]  T5  Virtual IP  CLI  Platform  Smoke
+	[Tags]  T5  Virtual IP  CLI  Platform
 
 T2.3 CLI Virtual IP after failover in cluster
 ### add validation for ssh keys when implemented
 	Cli Configure Virtual IP  ${vip}
-	Sleep  5 sec
-	Verify VIP only on Master Bash  ${vip}
-	${eth0-vip1} =  Cli Get Eth0 IP Using Virtual IP  ${vip}
-	${failover} =  Cli Cluster Take Leader
-	Should Be True  ${failover}
 	Sleep  ${sleep}
 	Verify VIP only on Master Bash  ${vip}
-	${eth0-vip2} =  Cli Get Eth0 IP Using Virtual IP  ${vip}
-	Should Not Be Equal as Strings  ${eth0-vip1}  ${eth0-vip2}
+	${mac1} =  Rest Get MAC Using Virtual IP  ${vip}
+	${failover} =  Cli Cluster Take Leader
+	Sleep  ${sleep}
+	Should Be True  ${failover}
+	Verify VIP only on Master Bash  ${vip}
+	${mac2} =  Rest Get MAC Using Virtual IP  ${vip}
+	Should Not Be Equal as Strings  ${mac1}  ${mac2}
 	[Tags]  T5  Virtual IP  CLI  Platform
 
 T2.4 CLI Verify validation for incorrect virtual IP address
@@ -145,12 +145,11 @@ T2.4 CLI Verify validation for incorrect virtual IP address
 	[Tags]  T5  Virtual IP  CLI  Platform
 
 T2.5 CLI Verify it is impossible to have virtual equal to physical IP address
-        Manual Failed
 	${state} =  Cli Configure Virtual IP  ${c1_ip}
 	Should Not Be True  ${state}
 	${state} =  Cli Configure Virtual IP  ${c2_ip}
 	Should Not Be True  ${state}
-	[Tags]  T5  Virtual IP  CLI  Platform
+	[Tags]  Skipped  Manual  T5  Virtual IP  CLI  Platform
 
 T2.6 CLI Verify it is impossible to have 0.0.0.0 or 255.255.255.255 virtual IP address
 	${state} =  Cli Configure Virtual IP  ${vip zeros}
@@ -163,19 +162,20 @@ T2.6 CLI Verify it is impossible to have 0.0.0.0 or 255.255.255.255 virtual IP a
 
 T2.7 CLI Change Virtual IP address
 	Cli Configure Virtual IP  ${vip}
-	Sleep  10 sec
+	Sleep  ${sleep}
 	${configured} =  Cli Show Virtual IP
 	Should Be Equal As Strings  ${configured}  ${vip}
-	${eth0-vip} =  Cli Get Eth0 IP Using Virtual IP  ${vip}
+	${mac1} =  Rest Get MAC Using Virtual IP   ${vip}
 	Cli Configure Virtual IP  ${vip bis}
-	Sleep  15 sec
+	Sleep  ${sleep}
+	Sleep  ${sleep}
 	Verify VIP neither on Master nor Slave Bash  ${vip}
 	Verify VIP only on Master Bash  ${vip bis}
 	${configured} =  Cli Show Virtual IP
-	Should Be Equal As Strings  ${configured}  ${vip bis}
-	${eth0-vip-bis} =  Cli Get Eth0 IP Using Virtual IP  ${vip bis}
-	Should Be Equal as Strings  ${eth0-vip}  ${eth0-vip-bis}
-	[Tags]  T5  Virtual IP  CLI  Platform  Smoke
+	Should Be Equal as Strings  ${configured}  ${vip bis}
+	${mac2} =  Rest Get MAC Using Virtual IP   ${vip bis}
+	Should Be Equal as Strings  ${mac1}  ${mac2}
+	[Tags]  T5  Virtual IP  CLI  Platform
 
 
 #(BSC-4925) Virtual IP not functional after chaning the time-zone(?) right after first boot

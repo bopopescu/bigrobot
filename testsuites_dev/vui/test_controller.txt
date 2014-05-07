@@ -144,6 +144,13 @@ Get controller handles
     cli show user  c1
 
 Trigger InvalidCommandException
-    #[Tags]  skipped
+    [Tags]  skipped
     bash  c1  echo 'command is not found'
+
+Test config mode
+    #[Tags]  skipped
+    config   c1   show user
+    config   c1   bvssetting
+    #config   c1   exit
+    cli      c1   show version
 

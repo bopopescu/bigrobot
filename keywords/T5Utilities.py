@@ -664,7 +664,7 @@ class T5Utilities(object):
         return pidList
 
 
-    def cli_run(self, command, node='master', cmd_timeout=5):
+    def cli_run(self, command, node='master', cmd_timeout=5, soft_error=False):
 	''' Function that runs specified CLI command on given node
 	    with given timeout. It searches for error messages
 	    in command's return value
@@ -678,17 +678,17 @@ class T5Utilities(object):
         try:
             c.cli(command, timeout=cmd_timeout)
             if "Error" in c.cli_content():
-                helpers.test_failure(c.cli_content())
+                helpers.test_failure(c.cli_content(), soft_error)
                 return False
         except:
-            helpers.test_failure(c.cli_content())
+            helpers.test_failure(c.cli_content(), soft_error)
             return False
         else:
             return True
 
 
 
-    def cli_run_and_verify_output(self, command, expected, flag='True', node_type='controller', node='master', cmd_timeout=5):
+    def cli_run_and_verify_output(self, command, expected, flag='True', node_type='controller', node='master', cmd_timeout=5, soft_error=False):
 	''' Function that runs specified CLI command on given node
 	    with given timeout. It checks if expected string shows up
 	    in command's return value
@@ -709,7 +709,7 @@ class T5Utilities(object):
             c.send(command)
             c.expect([c.get_prompt()], timeout=cmd_timeout)
             if "Error" in c.cli_content():
-                helpers.test_failure(c.cli_content())
+                helpers.test_failure(c.cli_content(), soft_error)
                 return False
             content = c.cli_content()
             content = helpers.strip_cli_output(content)
@@ -717,7 +717,7 @@ class T5Utilities(object):
             if not content:
                 if flag=='True':
                     helpers.log("Failure: expecting \n%s but the output is empty" % (expected, content))
-                    helpers.test_failure(content, expected)
+                    helpers.test_failure(c.cli_content(), soft_error)
                     return False
                 else:
                     helpers.log("Not expecting \n%s and the output is empty" % expected)
@@ -733,10 +733,10 @@ class T5Utilities(object):
                 return True
             else:
                 helpers.log("Failure: expecting %s in \n%s \nto be %s" % (expected, content, flag))
-                helpers.test_failure(content, expected)
+                helpers.test_failure(c.cli_content(), soft_error)
                 return False
         except:
-            helpers.test_failure(c.cli_content())
+            helpers.test_failure(c.cli_content(), soft_error)
             return False
         else:
             return True
@@ -755,6 +755,36 @@ class T5Utilities(object):
                 helpers.test_log("Session hash is %s" % line[2])
                 return line[2]
         return None
+
+
+
+    def rest_switch_int_shut(self, switch, interface):
+        ''' This function will shut down the switch interface
+        '''
+        t = test.Test()
+        c = t.controller("master")
+        url = '/api/v1/data/controller/core/switch-config[name="%s"]/interface[name="%s"]' % (switch, interface)
+        result = c.rest.patch(url,{"shutdown": 'true'})
+        
+        if c.rest.status_code_ok():
+            return True
+        else:
+            return False
+    
+    def rest_switch_int_noshut(self, switch, interface):
+        ''' This function will no-shut the switch interface
+        '''
+        t = test.Test()
+        c = t.controller("master")
+        url = '/api/v1/data/controller/core/switch-config[name="%s"]/interface[name="%s"]/shutdown' % (switch, interface)
+        result = c.rest.delete(url,{})
+        
+        if c.rest.status_code_ok():
+            return True
+        else:
+            return False
+
+
 
 
 ''' Following class will perform T5 platform related multithreading activities

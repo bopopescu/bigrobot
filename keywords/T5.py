@@ -134,6 +134,29 @@ class T5(object):
         else:
             return True
 
+    def rest_delete_tenant_all(self):
+        ''' delete all tenant in the system
+        '''
+        t = test.Test()
+        c = t.controller('master')
+
+        helpers.log("Entering ===> to delete all tenants")
+        url_get_tenant = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/tenant'
+        try:
+            c.rest.get(url_get_tenant)
+            content = c.rest.content()
+        except:
+            pass
+        else:
+            if (content):
+                for i in range (0, len(content)):
+                    url_tenant_delete = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]' % content[i]['name']
+                    c.rest.delete(url_tenant_delete, {})
+
+        helpers.log("Exiting ===>   delete all tenants")
+        return True
+
+
     def test_args(self, arg1, arg2, arg3):
         try:
             helpers.log("Input arguments: arg1 = %s" % arg1)
@@ -160,7 +183,7 @@ class T5(object):
 
     def rest_add_vns_scale(self, tenant, count, name='v'):
         '''
-        Functiont to add vns in scale 
+        Functiont to add vns in scale
         Input: tenant , no of vns to be created,  the start leter of the name
         Output: system will created specified no of vns
         '''
@@ -178,7 +201,7 @@ class T5(object):
                 return False
             i = i + 1
         return True
-   
+
 
     def rest_add_interface_to_all_vns(self, tenant, switch, intf, vlan='1'):
         '''
@@ -530,7 +553,7 @@ class T5(object):
                         helpers.log("Expected tenant are present in the config")
                         return True
                     else:
-                        helpers.test_failure("Expected tenant are not present in the config")
+                        helpers.test_log("Expected tenant are not present in the config")
                         return False
                 else:
                         helpers.log("No tenant are added")
@@ -549,16 +572,16 @@ class T5(object):
         url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/endpoint' % ()
         c.rest.get(url)
         data = c.rest.content()
+        attach_point = switch + "|" + intf
         if len(data) != 0:
                 for i in range(0, len(data)):
                     if str(data[i]["vns"]) == vns:
-                        if str(data[i]["attachment-point"]["vlan"]) == str(vlan):
+                        if str(data[i]["vlan"]) == str(vlan):
                             if (data[i]["mac"] == str(mac)) :
-                                if (data[i]["attachment-point"]["switch"] == switch) :
-                                    if (data[i]["attachment-point"]["interface"] == str(intf)) :
+                                if (data[i]["attachment-point"] == attach_point) :
                                         helpers.log("Expected endpoint are added data matches is %s" % data[i]["mac"])
                                         return True
-                                    else:
+                                else:
                                         helpers.test_failure("Expected endpoint %s are not added" % (str(mac)))
                                         return False
         else:
@@ -692,10 +715,10 @@ class T5(object):
         data1 = c.rest.content()
         no_of_vns = len(data1)
         if (int(no_of_vns) == int(no_of_user_vlan)):
-                helpers.log("Vlan Entries are present in forwarding table Actual:%d = Expected:%d" % (int(no_of_vns), int(no_of_vlans)))
+                helpers.log("Vlan Entries are present in forwarding table Actual:%d = Expected:%d" % (int(no_of_vns), int(no_of_user_vlan)))
                 return True
         else:
-                helpers.test_failure("Vlan Entries are inconsistent in forwarding table %d = %d" % (int(no_of_vns), int(no_of_vlans)))
+                helpers.test_log("Vlan Entries are inconsistent in forwarding table %d = %d" % (int(no_of_vns), int(no_of_user_vlan)))
                 return False
 
     def rest_verify_forwarding_port(self, switch):
@@ -1146,7 +1169,7 @@ class T5(object):
         '''
         t = test.Test()
         c = t.controller('master')
-        url = '/api/v1/data/controller/core/switch' % ()
+        url = '/api/v1/data/controller/applications/bvs/info/fabric/switch' % ()
         c.rest.get(url)
 
         return True
@@ -1309,7 +1332,7 @@ class T5(object):
     def rest_verify_fabric_switch_role(self, dpid, role):
         t = test.Test()
         c = t.controller('master')
-        url = '/api/v1/data/controller/core/switch' % ()
+        url = '/api/v1/data/controller/applications/bvs/info/fabric/switch'
         c.rest.get(url)
         data = c.rest.content()
         status = False
@@ -1347,7 +1370,7 @@ class T5(object):
         url = '/api/v1/data/controller/core/switch[name="%s"]/interface' % (switch)
         c.rest.get(url)
         data = c.rest.content()
-        url1 = '/api/v1/data/controller/core/switch[name="%s"]' % (switch)
+        url1 = '/api/v1/data/controller/applications/bvs/info/fabric/switch[name="%s"]' % (switch)
         c.rest.get(url1)
         data1 = c.rest.content()
         dpid = data1[0]["dpid"]
@@ -1410,7 +1433,7 @@ class T5(object):
         # Function verify fabric switch status with role configured
         t = test.Test()
         c = t.controller('master')
-        url = '/api/v1/data/controller/core/switch[name="%s"]' % (switch)
+        url = '/api/v1/data/controller/applications/bvs/info/fabric/switch[name="%s"]' % (switch)
         c.rest.get(url)
         data = c.rest.content()
         if data[0]["name"] == switch and data[0]["fabric-role"] != '':
@@ -1457,7 +1480,7 @@ class T5(object):
     def rest_verify_no_of_rack(self):
         t = test.Test()
         c = t.controller('master')
-        url = '/api/v1/data/controller/core/switch' % ()
+        url = '/api/v1/data/controller/applications/bvs/info/fabric/switch' % ()
         c.rest.get(url)
         data = c.rest.content()
         rack = []
@@ -1476,7 +1499,7 @@ class T5(object):
     def rest_verify_no_of_spine(self):
         t = test.Test()
         c = t.controller('master')
-        url = '/api/v1/data/controller/core/switch' % ()
+        url = '/api/v1/data/controller/applications/bvs/info/fabric/switch' % ()
         c.rest.get(url)
         data = c.rest.content()
         list_spine = []
@@ -1550,7 +1573,7 @@ class T5(object):
     def rest_verify_fabric_interface_lacp(self, switch, intf):
         t = test.Test()
         c = t.controller('master')
-        url1 = '/api/v1/data/controller/core/switch[name="%s"]' % (switch)
+        url1 = '/api/v1/data/controller/applications/bvs/info/fabric/switch[name="%s"]' % (switch)
         c.rest.get(url1)
         data1 = c.rest.content()
         dpid = data1[0]["dpid"]
@@ -1562,7 +1585,7 @@ class T5(object):
                         helpers.log("LACP Neibhour Is Up and active")
                         return True
             else:
-                        helpers.test_failure("LACP is enabled , LACP Partner is not seen , check the floodlight logs")
+                        helpers.test_log("LACP is enabled , LACP Partner is not seen , check the floodlight logs")
                         return False
         except KeyError:
             return False
@@ -1613,7 +1636,7 @@ class T5(object):
         '''
         t = test.Test()
         c = t.controller('master')
-        url1 = '/api/v1/data/controller/core/switch[name="%s"]' % (switch)
+        url1 = '/api/v1/data/controller/applications/bvs/info/fabric/switch[name="%s"]' % (switch)
         c.rest.get(url1)
         data1 = c.rest.content()
         dpid = data1[0]["dpid"]
@@ -1723,7 +1746,7 @@ class T5(object):
         url = '/api/v1/data/controller/core/switch-config[name="%s"]/interface[name="%s"]' % (switch, intf)
         c.rest.patch(url, {"shutdown": True})
         helpers.sleep(2)
-        url1 = '/api/v1/data/controller/core/switch[name="%s"]' % (switch)
+        url1 = '/api/v1/data/controller/applications/bvs/info/fabric/switch[name="%s"]' % (switch)
         c.rest.get(url1)
         data1 = c.rest.content()
         dpid = data1[0]["dpid"]
@@ -1744,7 +1767,7 @@ class T5(object):
         url = '/api/v1/data/controller/core/switch-config[name="%s"]/interface[name="%s"]' % (switch, intf)
         c.rest.delete(url, {"shutdown": None})
         helpers.sleep(5)
-        url1 = '/api/v1/data/controller/core/switch[name="%s"]' % (switch)
+        url1 = '/api/v1/data/controller/applications/bvs/info/fabric/switch[name="%s"]' % (switch)
         c.rest.get(url1)
         data1 = c.rest.content()
         dpid = data1[0]["dpid"]
@@ -2162,7 +2185,7 @@ class T5(object):
         '''
         t = test.Test()
         return t.t5_clean_configuration(node)
-    
+
     def rest_clean_switch_interface(self):
         '''
         Function to remove shutdown command from the interface for all switches
@@ -2185,5 +2208,161 @@ class T5(object):
                     helpers.sleep(5)
                     return True
 
+    def rest_verify_forwarding_rack_lag(self, switch, rack, intf):
+        '''Verify rack lag and interfaces part of the rack lag three rack setup
+        Input: switch , leaf group name, fabric interfaces
+        Output : True or false based on the entry present in the forwarding lag.
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        url = '/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch-name="%s"]?select=lag-table' % (switch)
+        c.rest.get(url)
+        data = c.rest.content()
+        interface = int(re.sub("\D", "", intf))
+        rack_name = "rack-" + rack
+        helpers.log("%s,%s" % (rack_name, interface))
+        for i in range(0, len(data[0]["lag-table"])):
+            if str(data[0]["lag-table"][i]["lag-name"]) == str(rack_name):
+                try:
+                    value = data[0]["lag-table"][i]["port"]
+                except KeyError:
+                    return False
+                if interface in data[0]["lag-table"][i]["port"]:
+                        helpers.log("interface present in rack lag")
+                        return True
+                else:
+                        helpers.test_log("given interface not present in rack lag rack=%s,interface=%s" % (rack, intf))
+                        return False
 
-    
+    def rest_get_fabric_interface_info(self, switch, intf):
+        '''
+        Function to get the specific fabric interface status
+        Input:   switch   -  leaf1-a ..
+                 interface  - ethernet33
+        Output: interface info in dict format
+        '''
+        helpers.test_log("Entering ==> rest_get_fabric_interface_info  for switch: %s  interface: %s" % (switch, intf))
+        t = test.Test()
+        c = t.controller('master')
+
+        url1 = '/api/v1/data/controller/core/switch?select=name'
+        c.rest.get(url1)
+        data1 = c.rest.content()
+        helpers.test_log("data1 is:  %s, %d" % (data1, len(data1)))
+
+        for i in range (0, len(data1)):
+            if 'name' in data1[i].keys() and data1[i]['name'] == switch:
+                dpid = data1[i]["dpid"]
+                helpers.test_log("get the dpid for switch:  %s" % switch)
+                break
+
+        url = '/api/v1/data/controller/core/switch[interface/name="%s"][dpid="%s"]?select=interface[name="%s"]' % (intf, dpid, intf)
+        c.rest.get(url)
+        intfinfo = {}
+        data = c.rest.content()
+        if len(data) != 0:
+            intfinfo['state'] = data[0]["interface"][0]["state"]
+            intfinfo['name'] = data[0]["interface"][0]["name"]
+            intfinfo['type'] = data[0]["interface"][0]["type"]
+            intfinfo['lacp'] = data[0]["interface"][0]["lacp-state"]
+            try:
+                intfinfo['downreason'] = data[0]["interface"][0]["interface-down-reason"]
+            except:
+                helpers.test_log("interface-down-reason does not exist for:  %s" % intf)
+            helpers.test_log("interface info is: %s" % intfinfo)
+            return intfinfo
+        else:
+            helpers.test_failure("Given fabric interface is not valid")
+            return False
+
+
+    def rest_verify_fabric_interface_BPDU_Down(self, switch, intf):
+        """ check the interface is down by BPDU Guard
+        """
+
+        info = self.rest_get_fabric_interface_info(switch, intf)
+        if info['state'] == "down" and info['downreason'] == "BPDU Guard":
+            return True
+        else:
+            return False
+
+
+    def rest_delete_fabric_interface(self, switch, intf):
+        t = test.Test()
+        c = t.controller('master')
+        url = '/api/v1/data/controller/core/switch-config[name="%s"]/interface[name="%s"]' % (switch, intf)
+        c.rest.delete(url, {})
+        helpers.sleep(2)
+
+        url1 = '/api/v1/data/controller/core/switch-config[name="%s"]?config=true' % switch
+        c.rest.get(url1)
+        data = c.rest.content()[0]
+        if 'interface' in data.keys():
+            helpers.test_log("interface exist for:  %s" % data['interface'])
+            for i in range (0, len(data['interface'])):
+                if data['interface'][i]["name"] == intf:
+                    helpers.test_failure("Interface did not deleted: %s" % intf)
+                    return False
+        return True
+
+    def cli_show_running_tenant(self, tenant=None):
+        ''' Function to show switch using controller CLI
+        Input: switch name , if not given it will be none
+        Output: Execute show switch from CLI and verify the output is not empty
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        if tenant:
+            c.cli("show running-config tenant %s" % tenant)
+        else:
+            c.cli("show running-config tenant")
+
+        return True
+
+    def rest_verify_forwarding_cidr_route_spine(self, switch, no_of_ip_subnet):
+        '''
+        Function to verify the forwarding cidr table entry in all the switches
+        Input: switch name , and no of ip subnet expected in the switch
+        Output: True or false based on the no of routes to be present and system VRF table no (1023 Fixed)
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        url = '/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch-name="%s"]?select=l3-cidr-route-table' % (switch)
+        c.rest.get(url)
+        data = c.rest.content()
+        url1 = '/api/v1/data/controller/applications/bvs/info/fabric/switch[name="%s"]' % (switch)
+        c.rest.get(url1)
+        data1 = c.rest.content()
+        if data[0]["switch-name"] == switch and data1[0]["fabric-role"] == "spine":
+                if len(data[0]["l3-cidr-route-table"]) == int(no_of_ip_subnet):
+                    for i in range(0, len(data[0]["l3-cidr-route-table"])):
+                        if str(data[0]["l3-cidr-route-table"][i]["vrf"]) != str(1023):
+                            helpers.test_failure("All CIDR routes not created with vrf 1023")
+                else:
+                    helpers.test_failure("All CIDR routes are not present at spine switches")
+                    return False
+        else:
+            helpers.log("Given switch name and role is not valid")
+
+    def rest_verify_forwarding_cidr_route_leaf(self, switch, no_of_ip_subnet):
+        '''
+        Function to verify the forwarding cidr table entry in all the switches
+        Input: switch name , and no of ip subnet expected in the switch
+        Output: True or false based on the no of routes to be present
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        url = '/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch-name="%s"]?select=l3-cidr-route-table' % (switch)
+        c.rest.get(url)
+        data = c.rest.content()
+        url1 = '/api/v1/data/controller/applications/bvs/info/fabric/switch[name="%s"]' % (switch)
+        c.rest.get(url1)
+        data1 = c.rest.content()
+        if data[0]["switch-name"] == switch and data1[0]["fabric-role"] == "leaf":
+                if len(data[0]["l3-cidr-route-table"]) == int(no_of_ip_subnet):
+                    helpers.log("All CIDR routes are present at leaf switches")
+                else:
+                    helpers.test_failure("All CIDR routes are not present at leaf switches")
+                    return False
+        else:
+            helpers.log("Given switch name and role is not valid")

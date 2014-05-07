@@ -30,13 +30,6 @@ _tacacs_re = re.compile(r'[\r\n]s\/key[\S ]+\r?%s' % _password_re[0].pattern)
 #
 # _prompt_re = [re.compile(r'[\r\n](\w+(-?\w+)?\s?@?)?[\-\w+\.:/]+(?:\([^\)]+\))?(:~)?[>#$] ?$')]
 
-#
-# Support Arista -
-#  CLI:      arista5>
-#  Enable:   arista5#
-#  Config:   arista5(config)#
-#  Bash:     [admin@arista5 ~]$
-#
 # Special case:
 #  Bash:      root@kk-spine01:~#
 #            ^ note the extra space
@@ -70,9 +63,6 @@ class BsnSwitchDriver(Driver):
         # print("string: %s" % string)
         if 'SwitchLight' in string:
             self._platform = 'switchlight'
-            return 90
-        if 'arista' in string:
-            self._platform = 'arista'
             return 90
         if _tacacs_re.search(string):
             return 50

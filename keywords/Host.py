@@ -167,12 +167,18 @@ class Host(object):
             return ''
         else:
             result = re.search('inet addr:(.*)\sBcast', output)
-            return result.group(1)
+            return result.group(1).strip()
 
-    def bash_add_route(self, node, cidr, gw):
+    def bash_add_route(self, node, cidr, gw, dev=None):
+        """
+        See manpage route(8) for more details.
+        """
         t = test.Test()
         n = t.node(node)
-        n.sudo("route add -net %s gw %s" % (cidr, gw))
+        cmd = "route add -net %s gw %s" % (cidr, gw)
+        if dev:
+            cmd = cmd + " dev %s" % dev
+        n.sudo(cmd)
         return True
 
     def bash_delete_route(self, node, cidr, gw):
@@ -222,7 +228,7 @@ class Host(object):
         result = n.sudo("arp -n %s" % ip)
         output = result["content"]
         helpers.log("output: %s" % output)
-        match = re.search(r'no entry|incomplete', output, re.S | re.I)
+        match = re.search(r'no entry|incomplete', output, re.S | re.I | re.M)
         if match:
             return False
         else:
@@ -251,13 +257,16 @@ class Host(object):
         n = t.node(node)
         output = n.sudo("service %s status" % processname)['content']
         helpers.log("output: %s" % output)
-        match = re.search(r'unrecognized service', output, re.S | re.I)
+        match = re.search(r'unrecognized service', output, re.S | re.I | re.M)
         if match:
             return 'unrecognized service'
-        match = re.search(r'is not running', output, re.S | re.I)
+        match = re.search(r'is not running', output, re.S | re.I | re.M)
         if match:
             return 'is not running'
-        match = re.search(r'start\/running', output, re.S | re.I)
+        match = re.search(r'is running', output, re.S | re.I | re.M)
+        if match:
+            return 'is started'
+        match = re.search(r'start\/running', output, re.S | re.I | re.M)
         if match:
             return 'is started'
 
@@ -266,14 +275,14 @@ class Host(object):
         n = t.node(node)
         n.sudo("service %s start" % processname)
         return True
-    
+
     def bash_stop_service(self, node, processname):
         t = test.Test()
         n = t.node(node)
         n.sudo("service %s stop" % processname)
-        return True       
-        
-        
+        return True
+
+
     def bash_ls(self, node, path):
         """
         Execute 'ls -l --time-style=+%Y-%m-%d <path>' on a device.

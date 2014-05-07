@@ -9,6 +9,7 @@ Test Teardown    T5 test teardown
 Force Tags       T5 
 Library          keywords/BsnCommon.py
 Library          keywords/T5.py
+Library			 keywords/T5L3.py
 Library          keywords/T5Platform.py
 Library			 keywords/SwitchLight.py
 Library			 keywords/Ixia.py
@@ -31,6 +32,43 @@ Setup Three Rack Dual Leaf Topology
     sleep  10
     rest verify fabric switch all
 	rest verify fabric link common 	
+
+Test to check all the cidr routes are created in spine and leaf switches
+	[Tags]  bugs  run  
+	rest add tenant  internal
+	rest add vns  internal  v1
+	rest add interface to vns  internal  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
+	rest add vns  internal  v2
+	rest add interface to vns  internal  v2  leaf1-a  ${leaf1a_ixia_intf}  -1
+	rest add tenant  external
+	rest add vns  external  external
+	rest add interface to vns  external  external  leaf2-a  ${leaf2a_ixia_intf}  -1
+	rest add tenant  system
+	rest add router intf  internal  v1
+	rest add router intf  internal  v2
+	rest add vns ip  internal  v1  10.192.18.1  24
+	rest add vns ip  internal  v2  10.192.19.1  24
+	rest add router intf  external  external
+	rest add vns ip  external  external  10.192.16.2  24
+	rest add tenant routers intf to system  external
+	rest_add_tenant_routers_intf_to_system  internal
+	rest_add_system_intf_to_tenant_routers  internal
+	rest_add_system_intf_to_tenant_routers  external
+	rest_add_static_routes  internal  0.0.0.0/0  {"tenant-name": "system"}
+	rest_add_static_routes  system  0.0.0.0/0  {"tenant-name": "external"}
+	rest_add_static_routes  external  0.0.0.0/0  {"ip-address": "10.192.16.1"}
+	sleep  5
+	rest verify forwarding cidr route spine  spine0  4  
+	rest verify forwarding cidr route spine  spine1  4
+	rest verify forwarding cidr route leaf  leaf0-a  5
+	rest verify forwarding cidr route leaf  leaf0-b  5
+	rest verify forwarding cidr route leaf  leaf1-a  5
+	rest verify forwarding cidr route leaf  leaf1-b  5
+	rest verify forwarding cidr route leaf  leaf2-a  5
+	rest verify forwarding cidr route leaf  leaf2-b  5
+	rest delete tenant  internal
+	rest delete tenant  external
+	rest delete tenant  system
 
 With 2k mac entries , Remove the Leaf switch and Readd the leaf switch
     [Tags]  L2  feature     
@@ -335,7 +373,6 @@ T5 test teardown
 T5 test setup
 	base test setup
 	add fabric switch
-	bring up 1 gig interface
 	sleep  10
 	
 bring up 1 gig interface

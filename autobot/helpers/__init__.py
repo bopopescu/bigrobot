@@ -10,9 +10,11 @@ import paramiko
 import inspect
 import subprocess
 import signal
+import traceback
 import re
 import ipcalc
 import platform
+import unicodedata
 import curses.ascii as ascii
 from scp import SCPClient
 from pytz import timezone
@@ -70,11 +72,11 @@ def trace(s, level=2):
     Log().trace(s, level)
 
 
-def info(s, level=2):
+def info(s, level=2, log_level="info"):
     """
     Info log.
     """
-    Log().info(s, level)
+    Log().info(s, level, log_level=log_level)
 
 
 # Alias
@@ -113,7 +115,11 @@ def exception_info_value():
 
 
 def exception_info_traceback():
-    return sys.exc_info()[2]
+    """
+    Returns a string containing the stack trace.
+    """
+    # return sys.exc_info()[2]
+    return traceback.format_exc()
 
 
 def exception_info():
@@ -337,6 +343,8 @@ def bigrobot_log_path(new_val=None, default=None):
 def bigrobot_log_path_exec_instance(new_val=None, default=None):
     """
     Category: Get/set environment variables for BigRobot.
+    This is the actual log path (i.e., outputdir) for an instance of
+    test suite execution.
     """
     return _env_get_and_set('BIGROBOT_LOG_PATH_EXEC_INSTANCE',
                             new_val,
@@ -352,22 +360,27 @@ def bigrobot_excript_debug_log_path(new_val=None, default=None):
                             default)
 
 
+def bigrobot_devcmd_log(new_val=None, default=None):
+    """
+    Category: Get/set environment variables for BigRobot.
+    This log file captures all the device CLI/REST commands.
+    """
+    return _env_get_and_set('BIGROBOT_DEVICE_COMMAND_LOG', new_val, default)
+
+
+def bigrobot_listener_log(new_val=None, default=None):
+    """
+    Category: Get/set environment variables for BigRobot.
+    This log file captures all the device CLI/REST commands.
+    """
+    return _env_get_and_set('BIGROBOT_LISTENER_LOG', new_val, default)
+
+
 def bigrobot_suite(new_val=None, default=None):
     """
     Category: Get/set environment variables for BigRobot.
     """
     return _env_get_and_set('BIGROBOT_SUITE', new_val, default)
-
-
-def bigrobot_suite_format(new_val=None, default=None):
-    """
-    Category: Get/set environment variables for BigRobot.
-
-    Specify the test suite file format. The possible values include:
-    mw  - MediaWiki format (obsolete)
-    txt - Robot Framework plain text format
-    """
-    return _env_get_and_set('BIGROBOT_SUITE_FORMAT', new_val, default)
 
 
 def bigrobot_exec_hint_format(new_val=None, default='export'):
@@ -395,7 +408,7 @@ def bigrobot_topology(new_val=None, default=None):
     return _env_get_and_set('BIGROBOT_TOPOLOGY', new_val, default)
 
 
-def bigrobot_continuous_integration(new_val=None, default=None):
+def bigrobot_continuous_integration(new_val=None, default='False'):
     """
     Category: Get/set environment variables for BigRobot.
     """
@@ -419,8 +432,25 @@ def bigrobot_params(new_val=None, default=None):
 def bigrobot_test_setup(new_val=None, default='True'):
     """
     Category: Get/set environment variables for BigRobot.
+    Set to 'False' to bypass Test setup.
     """
     return _env_get_and_set('BIGROBOT_TEST_SETUP', new_val, default)
+
+
+def bigrobot_test_postmortem(new_val=None, default='True'):
+    """
+    Category: Get/set environment variables for BigRobot.
+    Set to 'False' to bypass Test case postmortem.
+    """
+    return _env_get_and_set('BIGROBOT_TEST_POSTMORTEM', new_val, default)
+
+
+def bigrobot_test_pause_on_fail(new_val=None, default='False'):
+    """
+    Category: Get/set environment variables for BigRobot.
+    Set to 'True' to pause test case after it had failed.
+    """
+    return _env_get_and_set('BIGROBOT_TEST_PAUSE_ON_FAIL', new_val, default)
 
 
 def bigtest_path(new_val=None, default=None):
@@ -481,11 +511,16 @@ def bigrobot_debug(new_val=None, default=None):
     return _debug
 
 
-def bigrobot_pandoc_support(new_val=None, default=None):
+def bigrobot_devcmd_write(s, no_timestamp=False):
     """
-    Category: Get/set environment variables for BigRobot.
+    Write the device command (CLI or REST command) into a log file.
     """
-    return _env_get_and_set('BIGROBOT_PANDOC_SUPPORT', new_val, default)
+    if is_gobot():
+        if no_timestamp:
+            file_write_append_once(bigrobot_devcmd_log(), s)
+        else:
+            file_write_append_once(bigrobot_devcmd_log(),
+                                   ts_logger() + ' ' + s)
 
 
 def sleep(s):
@@ -661,11 +696,21 @@ def from_json(json_str):
     return json.loads(json_str)
 
 
-def to_json(python_data):
+def to_json(python_data, is_raw=False):
     """
     Return JSON (pretty) formatted string from Python datatype (dict or array).
     """
-    return json.dumps(python_data, indent=4, sort_keys=True)
+    if is_raw:
+        return json.dumps(python_data, sort_keys=True)
+    else:
+        return json.dumps(python_data, indent=4, sort_keys=True)
+
+
+def unicode_to_ascii(u):
+    """
+    COnvert a Unicode string to an ASCII string.
+    """
+    return unicodedata.normalize('NFKD', u).encode('ascii', 'ignore')
 
 
 def load_config(yaml_file):
@@ -760,6 +805,15 @@ def ts_long_local():
     local_datetime = datetime.datetime.now(_TZ)
     return local_datetime.strftime("%Y-%m-%dT%H:%M:%Sz")
 
+def ts_logger():
+    """
+    Return the current timestamp in local time (string format which is
+    compatible with the logger timestamp)
+    e.g., 20140429 15:01:51.039
+    """
+    local_datetime = datetime.datetime.now(_TZ)
+    return local_datetime.strftime("%Y%m%d %H:%M:%S.%f")[:-3]
+
 
 def time_now():
     """
@@ -838,6 +892,7 @@ def file_touch(fname, times=None):
     Like Unix 'touch' command.
     Borrowed from
     http://stackoverflow.com/questions/1158076/implement-touch-using-python
+    times=None will set access and modified times to the current time
     """
     with file(fname, 'a'):
         os.utime(fname, times)
@@ -1074,6 +1129,9 @@ def _ping(host, count=5, timeout=5, quiet=False, source_if=None,
 
     cmd = "%s %s" % (cmd, host)
 
+    prefix_str = 'bigrobot'
+    bigrobot_devcmd_write("%-9s: %s\n" % (prefix_str, cmd))
+
     if not node_handle:
         if not quiet:
             log("Ping command: %s" % cmd, level=4)
@@ -1149,12 +1207,13 @@ def _ping(host, count=5, timeout=5, quiet=False, source_if=None,
     test_error("Unknown ping error. Please check the output log.")
 
 
-def ping(host, count=5, timeout=5, quiet=False):
+def ping(host, count=5, timeout=5, loss=0, quiet=False):
     """
     Unix ping.
     :param host: (Str) ping hist host
     :param count: (Int) number of packets to send
     :param timeout: (Int) time in seconds to wait for a reply
+    :param loss: (Int) allowable loss percentage
 
     Return: (Int) loss percentage
     """
@@ -1163,13 +1222,13 @@ def ping(host, count=5, timeout=5, quiet=False):
 
     # Need to ping with minimum of 2 counts since 1 packet may get lost due
     # to multiple hops (if destination host is not in the same network).
-    loss = _ping(host, count=2, timeout=1, quiet=quiet)
-    if loss > 0:
-        loss = _ping(host, count=2, timeout=1, quiet=quiet)
-    if loss > 0:
-        count -= 4
-        loss = _ping(host, count=count, timeout=timeout, quiet=quiet)
-    return loss
+    actual_loss = _ping(host, count=2, timeout=1, quiet=quiet)
+    if actual_loss > loss:
+        actual_loss = _ping(host, count=2, timeout=1, quiet=quiet)
+        if actual_loss > loss:
+            count -= 4
+            actual_loss = _ping(host, count=count, timeout=timeout, quiet=quiet)
+    return actual_loss
 
 
 def params_val(k, params_dict):

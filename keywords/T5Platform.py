@@ -6,6 +6,7 @@ from time import sleep
 import re
 import keywords.Mininet as mininet
 import keywords.T5 as T5
+import keywords.T5L3 as T5L3
 import keywords.Host as Host
 
 mininetPingFails = 0
@@ -488,7 +489,140 @@ class T5Platform(object):
             else:
                 return True
 
-
+    
+    def auto_configure_tenants(self, numTenants, numVnsPerTenant, vnsIntIPList,  *args):
+        
+        ''' Add tenant & vns  to the running-config. 
+            Usage: 
+                * Variables
+                @{vnsIntIPDict}  v1  10.10.10.100  v2  20.20.20.100  v3  30.30.30.100
+                @{v1MemberPGList}   v1  PG   p1  10  p3  10  
+                @{v1MemberIntList}  v1  INT  leaf0-a  ethernet33  -1  leaf1-a  ethernet33  -1
+                @{v2MemberPGList}   v2  PG   p2  20  p4  20
+                @{v2MemberIntList}  v2  INT  leaf0-a  ethernet34  -1  leaf1-a  ethernet34  -1
+                
+                Test T5Setup
+                    [Tags]  Setup
+                    auto configure tenants     1  2  ${vnsIntIPDict}  ${v1MemberPGList}  ${v1MemberIntList}  ${v2MemberPGList}  ${v2MemberIntList}
+        '''
+        
+        
+        helpers.log("vnsIntIPList is: %s" % vnsIntIPList)
+        vnsIPDict = {}
+        
+        try:
+            vnsIPDict = dict(vnsIntIPList[i:i+2] for i in range(0, len(vnsIntIPList), 2))
+        except:
+            helpers.test_failure("Error during converting vnsIntIPList to a Dictionary. Check the input parameters for vnsIntIPList")
+            return False
+        
+        vnsMemberPGDict = {}
+        vnsMemberIntDict = {}
+        
+        try:
+            
+            for arg in args:
+                #helpers.log("arg is: %s" % arg)
+                currentVNS = arg[0]
+                helpers.log("CurrentVNS is : %s" % currentVNS)
+                
+                if (arg[1] == "PG"):
+                    vnsMemberPGDict[currentVNS] = arg[2:]
+                    helpers.log("Adding %s PG Dict: %s" % (currentVNS,vnsMemberPGDict[currentVNS]))
+                elif (arg[1] == "INT"):
+                    vnsMemberIntDict[currentVNS] = arg[2:]
+                    helpers.log("Adding %s Int Dict: %s" % (currentVNS,vnsMemberIntDict[currentVNS]))
+                    
+            i=0        
+            while(i< int(numTenants) * int(numVnsPerTenant)):
+                    i += 1
+                    vnsName = 'v'+ str(i)
+                    #helpers.log("VNS Name is: %s / PG List is: %s" % (vnsName, vnsMemberPGDict[vnsName]))
+                    #helpers.log("VNS Name is: %s / Int list is: %s" % (vnsName, vnsMemberIntDict[vnsName]))
+            
+            
+        except:
+            helpers.test_failure("Error during converting vns member Lists. Check the input parameters for vnsMemberPGList & vnsMemberIntList")
+            return False
+        
+        
+        autoTenantList = []
+        autoVNSList = []
+        i=0
+        while (i< int(numTenants)):
+            i += 1
+            autoTenantList.append('autoT'+ str(i))
+        
+        helpers.log("Tenant List is: %s" % autoTenantList)
+        
+        Fabric = T5.T5()
+        FabricL3 = T5L3.T5L3()
+        
+        # ==> Add System Router
+        Fabric.rest_add_tenant("system")
+        
+        i = 0
+        for tenant in autoTenantList:
+            # ==> Add a Tenant
+            Fabric.rest_add_tenant(tenant)
+            
+            j = 0
+            while (j < int(numVnsPerTenant)):
+                i += 1
+                j += 1
+                vnsName = 'v' + str(i)
+                autoVNSList.append(vnsName)
+                # ==> Add VNS with vnsName
+                Fabric.rest_add_vns(tenant, vnsName)
+                try:
+                    k = 0 
+                    helpers.log("VNSName is: %s" % vnsName)
+                    while (k < len(vnsMemberPGDict[vnsName])):
+                        currentPG = vnsMemberPGDict[vnsName][k]
+                        currentVLAN = vnsMemberPGDict[vnsName][k+1]
+                        k += 2
+                        #helpers.log("currentPG is: %s" % currentPG)
+                        #helpers.log("currentVLAN is: %s" % currentVLAN)
+                        
+                        # ==> Add member port-group (currentPG, curentVLAN, vnsName)
+                        Fabric.rest_add_portgroup_to_vns(tenant, vnsName, currentPG, currentVLAN)
+                        
+                except(KeyError):
+                    pass
+                
+                try:
+                    k = 0 
+                    while (k < len(vnsMemberIntDict[vnsName])):
+                        currentSwitch = vnsMemberIntDict[vnsName][k]
+                        currentInt = vnsMemberIntDict[vnsName][k+1]
+                        currentVLAN = vnsMemberIntDict[vnsName][k+2]
+                        k += 3
+                        #helpers.log("currentSwitch is: %s" % currentSwitch)
+                        #helpers.log("currentInt is: %s" % currentInt)
+                        #helpers.log("currentVLAN is: %s" % currentVLAN)
+                        
+                        # ==> Add member interface to vns
+                        Fabric.rest_add_interface_to_vns(tenant, vnsName, currentSwitch, currentInt, currentVLAN)
+                
+                        
+                except(KeyError):
+                    pass
+                
+                # ==> Add the router interface IPs
+                FabricL3.rest_add_router_intf(tenant, vnsName)
+                FabricL3.rest_add_vns_ip(tenant, vnsName, vnsIPDict[vnsName], '24' )
+                
+                # ==> Add system interface to tenant
+                FabricL3.rest_add_system_intf_to_tenant_routers(tenant)        
+                    
+            # ==> Add tenant router interface to system
+            FabricL3.rest_add_tenant_routers_intf_to_system(tenant)  
+            
+            # ==> Add static routes pointing to system
+            FabricL3.rest_add_static_routes(tenant, '0.0.0.0/0', "{\"tenant-name\": \"system\"}")
+            
+        return True
+    
 
     def auto_configure_fabric_switch(self, spineList, leafList, leafPerRack):
         ''' Add leaf & spine switches to the running-config. 
@@ -1146,9 +1280,39 @@ class T5Platform(object):
             else:
                 helpers.log("TCPDump match not found for string: %s" % verifyString)
                 return False
+            
+            
+    def verify_traffic_with_tcpdump(self, verifyHost, verifyInt, verifyOptions, *args):
+        
+        ''' This function will verify the traffic through TCP dump.
+        
+        Input:  
+                verifyHost -> Host where tcpdump is being executed
+                verifyInt -> interfaces of the host that tcpdump would get excuted
+                verifyOptions -> Other TCP Dump options (eg: src port 8000 and tcp)
+                verifyString -> String to search in the tcpdump output
+        '''
+        
+        t = test.Test()
+        n = t.node(verifyHost)
+        
+        verifyString = ""
+        for arg in args:
+            verifyString += '.*' + arg
+        verifyString += '.*'
+        # Issue tcpdump & look for the intended traffic that matches verifyString
+        output = n.bash("timeout 5 tcpdump -i %s %s" % (verifyInt, verifyOptions) )
+        match = re.search(r"%s" % verifyString, output['content'], re.S | re.I)
+        
+        if match:
+            return True
+        
+        else:
+            helpers.log("TCPDump match not found for string: %s" % verifyString)
+            return False
 
 
-    def cli_compare(self, src, dst, node='master', scp_passwd='adminadmin'):
+    def cli_compare(self, src, dst, node='master', scp_passwd='bsn'):
         ''' Generic function to compare via CLI, using SCP
         Input:
         Src, Dst - source and destination of compare command
@@ -1214,7 +1378,7 @@ class T5Platform(object):
         return True
 
 
-    def cli_copy(self, src, dst, node='master', scp_passwd='adminadmin'):
+    def cli_copy(self, src, dst, node='master', scp_passwd='bsn'):
         ''' Generic function to copy via CLI, using SCP
         Input:
         Src, Dst - source and destination of copy command
@@ -1245,7 +1409,7 @@ class T5Platform(object):
                 c.send(scp_passwd)
             try:
                 c.expect(c.get_prompt(), timeout=180)
-                if not (helpers.any_match(c.cli_content(), r'100%') or helpers.any_match(c.cli_content(), r'applied \d. updates') or helpers.any_match(c.cli_content(), r'Lines Applied')):
+                if not (helpers.any_match(c.cli_content(), r'100%') or helpers.any_match(c.cli_content(), r'applied \d+ updates') or helpers.any_match(c.cli_content(), r'Lines Applied')):
                     helpers.test_failure(c.cli_content())
                     return False
             except:
@@ -1332,7 +1496,7 @@ class T5Platform(object):
             helpers.log("length is %s" % len(rc))
             helpers.log("length is %s" % len(config_file))
             #Cropping headers of the outputs
-            rc = rc[5:]
+            rc = rc[4:]
             config_file = config_file[8:]
 
             if not len(rc) == len(config_file):
@@ -3151,7 +3315,7 @@ class T5Platform(object):
         c = t.controller(node)
     
         c.enable('')
-        c.enable("show local-config")
+        c.enable("show running-config local")
         content = c.cli_content()
         helpers.log("*****Output is :\n%s" % content)
         temp = helpers.strip_cli_output(content)
@@ -3420,7 +3584,7 @@ class T5Platform(object):
                     continue
             
             # skip 'show logging', 'show lacp interface', 'show stats interface-history interface', 'show stats interface-history switch' and 'show running-config' - no need to iterate through options   
-            if (re.match(r' show lacp interface', string)) or (re.match(r' show logging', string)) or (re.match(r' show running-config', string)) or (re.match(r' show stats interface-history interface', string)) or (re.match(r' show stats interface-history switch', string)):
+            if (re.match(r' show lacp interface', string)) or (re.match(r' show logging', string)) or (re.match(r' show stats interface-history interface', string)) or (re.match(r' show stats interface-history switch', string)):
                 helpers.log("Ignoring line - %s" % string)
                 num = num - 1
                 continue
@@ -3505,7 +3669,7 @@ class T5Platform(object):
                 continue
             
             # Ignoring sub-commands under 'clear debug' and 'show debug'
-            if key == "ApplicationManager" or key == "Controller" or key == "EndpointManager" or key == "FabricManager" or key == "com.bigswitch.floodlight.bvs.application" or key == "ForwardingDebugCounters" or key == "ISyncService" or key =="StatsCollector" or key == "VirtualRoutingManager" or key == "org.projectfloodlight.core" or key == "StatsCollector":
+            if key == "ApplicationManager" or key == "ControllerCounters" or key == "EndpointManager" or key == "FabricManager" or key == "com.bigswitch.floodlight.bvs.application" or key == "ForwardingDebugCounters" or key == "ISyncService" or key == "OFSwitchManager" or key == "RoleManager" or key =="StatsCollector" or key == "VirtualRoutingManager" or key == "org.projectfloodlight.core" or key == "StatsCollector":
                 helpers.log("Ignore line %s" % line)
                 num = num - 1
                 continue
@@ -3584,8 +3748,8 @@ class T5Platform(object):
                     num = num - 1
                     continue
             
-            # skip 'show logging', 'show lacp interface', 'show stats interface-history interface', 'show stats interface-history switch' and 'show running-config' - no need to iterate through options   
-            if (re.match(r' show lacp interface', string)) or (re.match(r' show logging', string)) or (re.match(r' show running-config', string)) or (re.match(r' show stats interface-history interface', string)) or (re.match(r' show stats interface-history switch', string)):
+            # skip 'show logging', 'show lacp interface', 'show stats interface-history interface', 'show stats interface-history switch' - no need to iterate through options   
+            if (re.match(r' show lacp interface', string)) or (re.match(r' show logging', string)) or (re.match(r' show stats interface-history interface', string)) or (re.match(r' show stats interface-history switch', string)):
                 helpers.log("Ignoring line - %s" % string)
                 num = num - 1
                 continue                                          
@@ -3604,12 +3768,180 @@ class T5Platform(object):
                 helpers.log("key - %s" % (key))
                 helpers.log("***** Call the cli walk again with  --- %s" % string)
                 self.cli_walk_enable(string, file_name, padding)
+                
+    def cli_walk_config(self, string='', file_name=None, padding=''):
+        t = test.Test()
+        c = t.controller('master')
+        c.config('')
+        helpers.log("********* Entering CLI show  walk with ----> string: %s, file name: %s" % (string, file_name))
+        if string == '':
+            cli_string = '?'
+        else:
+            cli_string = string + ' ?'
+        c.send(cli_string, no_cr=True)
 
-        
-        
-        
-        
-        
-        
-        
-        
+        prompt_re = r'[\r\n\x07]?[\w\x07-]+\(([\w\x07-]+)\)(\x07)?[#>] '
+        c.expect(prompt_re)
+        content = c.cli_content()
+        helpers.log("********** CONTENT ************\n%s" % content)
+
+        # Content is a multiline string. Convert it to a list of strings. Then
+        # get the last entry which should be the prompt.
+        prompt_str1 = helpers.str_to_list(content)[-1]
+
+        # helpers.log("Prompt1: '%s'" % prompt_str1)
+
+        match = re.match(prompt_re, prompt_str1)
+        if match:
+            prompt1 = match.group(1)
+        else:
+            helpers.log("No match")
+
+        temp = helpers.strip_cli_output(content)
+        temp = helpers.str_to_list(temp)
+        helpers.log("******new_content:\n%s" % helpers.prettify(temp))
+        c.send(helpers.ctrl('u'))
+        c.expect()
+        c.config('')
+        string_c = string
+        helpers.log("string for this level is: %s" % string_c)
+        helpers.log("The length of string: %d" % len(temp))
+
+        if file_name:
+            helpers.log("opening file: %s" % file_name)
+            fo = open(file_name, 'a')
+            lines = []
+            lines.append((padding + string))
+            lines.append((padding + '----------'))
+            for line in temp:
+                lines.append((padding + line))
+            lines.append((padding + '=================='))
+            content = '\n'.join(lines)
+            fo.write(str(content))
+            fo.write("\n")
+
+            fo.close()
+
+        num = len(temp)
+        padding = "   " + padding
+        for line in temp:
+            string = string_c
+            helpers.log(" line is - %s" % line)
+            line = line.lstrip()
+            helpers.log(" line: %s" % line)
+            keys = line.split(' ')
+            key = keys.pop(0)
+            helpers.log("*** string is - %s" % string)
+            helpers.log("*** key is - %s" % key)
+
+            if re.match(r'For', line) or line == "Commands:":
+                helpers.log("Ignoring line - %s" % line)
+                num = num - 1
+                continue
+            if re.match(r'^<.+', line) and not re.match(r'^<cr>', line):
+                helpers.log("Ignoring line - %s" % line)
+                num = num - 1
+                continue
+            if key == "debug" or key == "reauth" or key == "echo" or key == "help" or key == "history" or key == "logout" or key == "ping" or key == "show" or key == "watch":
+                helpers.log("Ignore line %s" % line)
+                num = num - 1
+                continue
+            if re.match(r'.*session.*', string) and key == "session" :
+                helpers.log("Ignore line - %s" % string)
+                num = num - 1
+                continue
+            if re.match(r'.*session.*', string) and key != "<cr>" :
+                helpers.log("Ignore line - string %s, key %s" % (string, key))
+                num = num - 1
+                continue
+            if re.match(r'.*password.*', string) and key == "<cr>" :
+                helpers.log("Ignore line - %s" % string)
+                continue
+            if re.match(r'.*core-switch.*', string) and key == "<cr>" :
+                helpers.log("Ignore line due to bug BSC-4903 - %s" % string)
+                continue
+            
+            
+            # for interface related commands, only iterate through "all" and one specific interface
+            if (re.match(r' (.*)interface(.*)', string)):
+                if key != 'leaf0a-eth1' and key != 'all' and key != '<cr>':
+                    helpers.log("Ignoring line - %s" % string)
+                    num = num - 1
+                    continue
+            
+            # for switch related commands, only iterate through "all" and one specific switch    
+            if (re.match(r' (.*)switch(.*)', string)):
+                if key != 'leaf0a' and key != 'all' and key != '<cr>':
+                    helpers.log("Ignoring line - %s" % string)
+                    num = num - 1
+                    continue
+                
+            # for tenant related commands, only iterate through "all" and one specific tenant
+            if (re.match(r' (.*)tenant(.*)', string)):
+                if key != 'A' and key != 'all' and key != '<cr>':
+                    helpers.log("Ignoring line - %s" % string)
+                    num = num - 1
+                    continue
+            
+            # for vns related commands, only iterate through "all" and one specific vns
+            if (re.match(r' (.*)vns(.*)', string)):
+                if key != 'A1' and key != 'all' and key != '<cr>':
+                    helpers.log("Ignoring line - %s" % string)
+                    num = num - 1
+                    continue            
+            
+            if re.match(r'.*shutdown.*', string) and re.match(r'.*controller.*', key):
+                helpers.log("Ignore line  - %s %s" % (string, key))
+                continue
+
+
+            if re.match(r'.*internal.*', key):
+                helpers.log("Ignore line  - %s" % string)
+                continue
+
+            if re.match(r'All', line):
+                helpers.log("Don't need to loop through exec commands- %s" % line)
+                break
+
+
+            if key == '<cr>':
+                helpers.log(" complete CLI show command: ******%s******" % string)
+                c.config(string)
+
+                prompt_re = r'[\r\n\x07]?[\w-]+\(([\w-]+)\)[#>] '
+                content = c.cli_content()
+
+                helpers.log("********** CONTENT ************\n%s" % content)
+
+                # Content is a multiline string. Convert it to a list of strings. Then
+                # get the last entry which should be the prompt.
+                prompt_str2 = helpers.str_to_list(content)[-1]
+
+                match = re.match(prompt_re, prompt_str2)
+                if match:
+                    prompt2 = match.group(1)
+                else:
+                    helpers.log("No match")
+
+                helpers.log("Prompt1: '%s'" % prompt_str1)
+                helpers.log("Prompt2: '%s'" % prompt_str2)
+
+
+                #Compare prompts.  If different, it means that we entered a new config submode.
+                if prompt1 != prompt2:
+                    newstring = ''
+                    helpers.log("***** Call the cli walk again with  --- %s" % string)
+                    if prompt_str2 != "d64(config-tenant-router)# ":
+                        self.cli_walk_config(newstring, file_name, padding)
+
+                if "profile" in string:
+                    helpers.log("Exiting out because of bug BSC-4898 - %s" % string)
+                    c.config("exit")
+
+                if num == 1:
+                    return string
+            else:
+                string = string + ' ' + key
+                helpers.log("***** Call the cli walk again with  --- %s" % string)
+                self.cli_walk_config(string, file_name, padding)
+    

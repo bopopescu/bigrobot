@@ -14,7 +14,7 @@ import robot  # import to force append local robot libraries than python install
 
 
 
-vmdk_name = "/var/lib/jenkins/jobs/bvs\ master/lastSuccessful/archive/target/appliance/images/bvs/controller-bvs-2.0.8-SNAPSHOT.qcow2"
+vmdk_name = "/var/lib/jenkins/jobs/bvs\ master/lastSuccessful/archive/target/appliance/images/bvs/controller-bvs-*-SNAPSHOT.qcow2"
 mininet_vmdk = "/var/lib/jenkins/jobs/t6-mininet-vm/builds/lastSuccessfulBuild/archive/t6-mininet-vm/ubuntu-kvm/t6-mininet.qcow2"
 vmdk_path = "/var/lib/jenkins/jobs/bvs\ master/lastSuccessful/archive/target/appliance/images/bvs/"
 kvm_host = "10.192.104.13"
@@ -89,6 +89,8 @@ def main(*args):
 
     if args.netmask is None:
         args.netmask = "18"
+    if args.gateway is None:
+        args.gateway = "10.192.64.1"
 
     # Setting below enviornment Variables for Jenkins CI
     term = helpers.get_env("TERM")
@@ -97,7 +99,7 @@ def main(*args):
     helpers.log("New TERM Value: %s" % term)
     if args.jenkins_qcow_path is None:
         args.jenkins_qcow_path = vmdk_name
-    
+
     active_vm = kvm_ops.vm_setup(kvm_host=kvm_host,
                                  kvm_user=kvm_user,
                                  kvm_password=kvm_pwd,
@@ -106,9 +108,10 @@ def main(*args):
                                  remote_qcow_bvs_path=args.jenkins_qcow_path,
                                  ip=args.active_ip,
                                  netmask=args.netmask,
+                                 gateway=args.gateway,
                                  vm_name=vm_name,
                                  vm_host_name=vm_host_name,
-                                 build_number = args.build_number,
+                                 build_number=args.build_number,
                                  cluster_ip=args.cluster_ip)
 
     if not active_vm['status_code']:
@@ -146,10 +149,11 @@ def main(*args):
                                       qcow_path=args.qcow_path,
                                       ip=args.standby_ip,
                                       netmask=args.netmask,
+                                      gateway=args.gateway,
                                       vm_name=vm_backup_name,
                                       cluster_ip=args.active_ip,
                                       vm_host_name=vm_host_name,
-                                      build_number = args.build_number)
+                                      build_number=args.build_number)
         helpers.log("Created Backup VM :\n%s" % standby_vm)
         # temporarily setting STANDBY_VM env for jenkins vm_setup
         helpers.set_env("STANDBY_VM", standby_vm['vm_name'])
@@ -184,6 +188,8 @@ if __name__ == '__main__':
                         help="Please provide type as bvs/mininet")
     parser.add_argument("--build_number",
                         help="This build will be picked from jenkins")
+    parser.add_argument("--gateway",
+                        help="This used for gateway for VMs")
     main()
     print "Success!!!"
     sys.exit(0)

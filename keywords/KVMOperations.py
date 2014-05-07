@@ -194,12 +194,12 @@ class KVMOperations(object):
         helpers.log("Latest Build Number on KVM Host: %s" % latest_kvm_build_number)
         helpers.log("Latest Build Number on Jenkins: %s" % latest_build_number)
 
-
         if int(latest_kvm_build_number) == int(latest_build_number):
             helpers.log("Skipping SCP as the latest build on jenkins server did not change from the latest on KVM Host")
 
         else:
             scp_cmd = "scp -o \"UserKnownHostsFile=/dev/null\" -o StrictHostKeyChecking=no \"bsn@jenkins:%s\" %s" % (remote_qcow_path, file_name)
+            helpers.log("SCP command arguments:\n%s" % scp_cmd)
             scp_cmd_out = kvm_handle.bash(scp_cmd, prompt=[r'.*password:', r'.*#', r'.*$ '])['content']
             if "password" in scp_cmd_out:
                 helpers.log("sending bsn passoword..")
@@ -233,18 +233,20 @@ class KVMOperations(object):
         return topo_file
 
     def _configure_vm_first_boot(self, cluster_ip=None, ip_address=None,
-                                 netmask='18', vm_host_name=None):
+                                 netmask='18', vm_host_name=None, gateway='10.192.64.1'):
         # Using Mingtao's First Boot Function to configure spawned VM in KVM
-        helpers.log("SLeeping 60 sec ..for VM to Boot UP....This time should bring down soon..")
+        helpers.log("Sleeping 60 sec while waiting for VM to boot up")
         time.sleep(120)
         helpers.log("Success setting up gobot Env!")
 
         t5_platform = T5Platform()
         # configure firstboot till IP address
         if ip_address is not None:
-            helpers.summary_log("Static IP is given using ip: %s for VM" % ip_address)
+            helpers.summary_log("Static IP is given using ip: %s netmask: %s, gateway: %s for VM" %
+                                (ip_address, netmask, gateway))
             t5_platform.first_boot_controller_initial_node_setup("c1", ip_address=ip_address,
-                                                                 netmask=netmask, hostname=vm_host_name)
+                                                                 netmask=netmask, hostname=vm_host_name,
+                                                                 gateway=gateway)
         else:
             t5_platform.first_boot_controller_initial_node_setup("c1", dhcp="yes", hostname=vm_host_name)
         # Apply setting and add cluster Ip if provided
@@ -281,11 +283,13 @@ class KVMOperations(object):
                 ip = None
             cluster_ip = kwargs.get("cluster_ip", None)
             netmask = kwargs.get("netmask", "18")
+            gateway = kwargs.get("gateway", "10.192.64.1")
 
             self.log_path = LOG_BASE_PATH + '/' + vm_name
             os.makedirs(self.log_path)
 
-            remote_qcow_bvs_path = kwargs.get("remote_qcow_bvs_path", "/var/lib/jenkins/jobs/bvs\ master/lastSuccessful/archive/target/appliance/images/bvs/controller-bvs-2.0.8-SNAPSHOT.qcow2")
+            # remote_qcow_bvs_path = kwargs.get("remote_qcow_bvs_path", "/var/lib/jenkins/jobs/bvs\ master/lastSuccessful/archive/target/appliance/images/bvs/controller-bvs-2.0.8-SNAPSHOT.qcow2")
+            remote_qcow_bvs_path = kwargs.get("remote_qcow_bvs_path", "/var/lib/jenkins/jobs/bvs\ master/lastSuccessful/archive/target/appliance/images/bvs/controller-bvs-*-SNAPSHOT.qcow2")
             remote_qcow_mininet_path = kwargs.get("remote_qcow_mininet_path", "/var/lib/jenkins/jobs/t6-mininet-vm/builds/lastSuccessfulBuild/archive/t6-mininet-vm/ubuntu-kvm/t6-mininet.qcow2")
 
             topo_file = self._create_temp_topo(kvm_host=kvm_host, vm_name=vm_name)
@@ -314,7 +318,7 @@ class KVMOperations(object):
                                                               remote_qcow_path=remote_qcow_mininet_path, vm_type='mininet',
                                                               vm_name=vm_name, build_number=build_number)
                 else:
-                    helpers.log("Scp'ing Latest BVS qcow file from jenkins to kvm Host..")
+                    helpers.log("Scp'ing Latest BVS qcow file %s from jenkins to kvm Host.." % remote_qcow_bvs_path)
                     qcow_vm_path = self._scp_file_to_kvm_host(kvm_handle=kvm_handle,
                                                               remote_qcow_path=remote_qcow_bvs_path,
                                                               vm_name=vm_name, build_number=build_number)
@@ -341,15 +345,19 @@ class KVMOperations(object):
                 return result
 
             # For controller, attempt First Boot
+            helpers.log("SLeep another 60 sec for controller to boot up..")
+            time.sleep(30)
             result['vm_ip'] = self._configure_vm_first_boot(cluster_ip=cluster_ip,
                                                             ip_address=ip,
                                                             netmask=netmask,
-                                                            vm_host_name=vm_host_name)
+                                                            vm_host_name=vm_host_name,
+                                                            gateway=gateway)
 
             helpers.summary_log("Done! Logs are written to %s" % self.log_path)
             return result
-        except Exception as inst:
-            helpers.log("Exception Details %s" % inst)
+        except:
+            inst = helpers.exception_info_traceback()
+            helpers.log("Exception Details:\n%s" % inst)
             result['status_code'] = False
             result['status_descr'] = inst
             return result
@@ -384,8 +392,9 @@ class KVMOperations(object):
                 return result
             self._delete_vm_storage_file(kvm_handle=kvm_handle, vm_name=vm_name)
             return result
-        except Exception as inst:
-            helpers.log("Exception Details %s" % inst)
+        except:
+            inst = helpers.exception_info_traceback()
+            helpers.log("Exception Details:\n%s" % inst)
             result['status_code'] = False
             result['status_descr'] = inst
             return result

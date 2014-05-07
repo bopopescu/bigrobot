@@ -84,12 +84,13 @@ class MyTest(object):
         helpers.log("node: %s" % s)
         s.cli("show version")
         s.cli("show uptime")
-        # s.cli("show ")
-        s.enable("show snmp")
-        s.enable("bash")
-        s.enable("ls -la")
-        s.enable("exit")
-        s.enable("show arp")
+        s.enable("show running-config")
+        # # s.cli("show ")
+        # s.enable("show snmp")
+        # s.enable("bash")
+        # s.enable("ls -la")
+        # s.enable("exit")
+        # s.enable("show arp")
 
     def switch_show_environment(self, node):
         t = test.Test()
@@ -568,3 +569,6 @@ vui@Vuis-MacBook-Pro$
         n_console.send('')
         n_console.expect(r'login:')
         n.console_close()
+
+    def test_run_cmd(self):
+        helpers.run_cmd('cd /tmp; echo "This is a test" > outfile', '/tmp', shell=True)

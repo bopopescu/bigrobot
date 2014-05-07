@@ -1,9 +1,9 @@
 * Setting
 Documentation   T5 Basic L3 two spine three leaf rack with dual-tor Test Suite
 Suite Setup     base suite setup
-Suite Teardown  base suite teardown
+#Suite Teardown  base suite teardown
 Test Setup      setup topology
-Test Teardown   teardown topology
+#Test Teardown   teardown topology
 Force Tags      T5 Sanity
 Library         keywords/BsnCommon.py
 Library         keywords/Mininet.py
@@ -53,19 +53,19 @@ Inter tenant L3 untagged traffic with static endpoints across rack
 		
 Inter tenant L3 tagged traffic with static endpoints across rack
 	L3 inter tenant across rack tagged with static endpoints
-# 	[Tags]							skipped			sanity 				smoke	
+#	[Tags]							skipped			sanity 				smoke	
 
 Inter tenant L3 untagged traffic with static endpoints same rack
 	L3 inter tenant same rack untagged with static endpoints
-#  	[Tags]							skipped			sanity 				smoke					
+#	[Tags]							skipped			sanity 				smoke					
 		
 Inter tenant L3 tagged traffic with static endpoints same rack
 	L3 inter tenant same rack tagged with static endpoints
-#  	[Tags]							skipped			sanity 				smoke	
+#	[Tags]							skipped			sanity 				smoke	
 	
 Inter tenant L3 untagged to tagged traffic with static endpoints same rack
 	L3 inter tenant same rack untagged to tagged with static endpoints
-#  	[Tags]							skipped			sanity 				smoke	
+#	[Tags]							skipped			sanity 				smoke	
 
 Delete and add vns with L3 intra tenant traffic with static endpoints
 	Delete and add router vns with L3 intra tenant traffic with static endpoints
@@ -77,7 +77,7 @@ Verify L3 traffic for static endpoints
 
 Intra tenant L3 untagged traffic with dynamic endpoints across rack
 	L3 intra tenant across rack untagged with dynamic endpoints
-#  	[Tags]							skipped			sanity 				smoke	
+#	[Tags]							skipped			sanity 				smoke	
 
 Intra tenant L3 untagged traffic with dynamic endpoints same rack
 	L3 intra tenant same rack untagged with dynamic endpoints
@@ -1061,6 +1061,7 @@ Change vns ip address with L3 intra tenant traffic with dynamic endpoints
 #	Should Be True  							${endpoints_cnt} == 8
 	REST show running config
 	REST add vns ip  							${tenant1_name}  	${vns1_2}  		10.10.99.1	  		${vns1_subnet2} 	
+	sleep										1
 	${loss}=  									mininet l3 ping		${bm4_name}		${bm1_ip} 	
 	Should Be True  							${loss} == 100
 	mininet host ipcfg   						${bm1_name}			${bm1_bondif}	10.10.99.11			${vns1_subnet2}
@@ -1074,6 +1075,7 @@ Change vns ip address with L3 intra tenant traffic with dynamic endpoints
 	Should Be True  							${loss} == 100
 	mininet host ipcfg   						${bm1_name}			${bm1_bondif}	${bm1_ip}			${vns1_subnet2}
 	mininet host gw								${bm1_name}			${vns1_ip2}		${bm1_bondif}
+	sleep										1
 	${loss}=  									mininet l3 ping		${bm4_name}		10.10.99.11	
 	Should Be True  							${loss} == 100
 	mininet l3 ping								${bm4_name}			${bm1_ip} 	
@@ -1340,8 +1342,8 @@ setup topology
 	REST add portgroup to vns					${tenant2_name}  	${vns2_1} 		${portgroup8} 		${vns2_vlan1}
 	REST add portgroup to vns					${tenant2_name}  	${vns2_2} 		${portgroup9} 		${vns2_vlan2}
 	REST add portgroup to vns					${tenant2_name}  	${vns2_3} 		${portgroup10} 		${untaggedvlan}	
-	REST add static routes						${tenant1_name}		0.0.0.0/0		 {"tenant-name": "system"}
-	REST add static routes						${tenant2_name}		0.0.0.0/0		 {"tenant-name": "system"}	
+#	REST add static routes						${tenant1_name}		0.0.0.0/0		 {"tenant-name": "system"}
+#	REST add static routes						${tenant2_name}		0.0.0.0/0		 {"tenant-name": "system"}	
 	
 teardown topology
 	delete fabric switch
@@ -1503,17 +1505,22 @@ mininet host config
 	mininet host gw								${bm10_name}		${vns2_ip3}		${bm10_bondif}
 
 add inter tenant routing
-	REST add tenant								${tenant_system}
-	REST add system to tenant routers 			${tenant1_name} 
-   	REST add system to tenant routers 			${tenant2_name} 
-   	REST add tenant routers to system			${tenant1_name} 
-   	REST add tenant routers to system			${tenant2_name} 
-
+	REST add tenant									${tenant_system}
+	REST add system intf to tenant routers 			${tenant1_name} 
+   	REST add system intf to tenant routers 			${tenant2_name} 
+   	REST add tenant routers intf to system			${tenant1_name} 
+   	REST add tenant routers intf to system			${tenant2_name} 
+	REST add static routes							${tenant1_name} 						0.0.0.0/0		 {"tenant-name": "system"}
+	REST add static routes							${tenant2_name} 						0.0.0.0/0		 {"tenant-name": "system"} 
+ 
+ 
 delete inter tenant routing
-	REST delete tenant routers to system		${tenant1_name}
-	REST delete tenant routers to system		${tenant2_name}
-	REST delete system to tenant routers		${tenant1_name}
-	REST delete system to tenant routers		${tenant2_name}
-#	REST delete tenant							${tenant_system}
+	REST delete tenant routers intf to system		${tenant1_name}
+	REST delete tenant routers intf to system		${tenant2_name}
+	REST delete system intf to tenant routers		${tenant1_name}
+	REST delete system intf to tenant routers		${tenant2_name}
+#	REST delete tenant								${tenant_system}
+	REST delete static routes						${tenant1_name} 						0.0.0.0/0	
+	REST delete static routes						${tenant2_name} 						0.0.0.0/0	
 	
 	

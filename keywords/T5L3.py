@@ -330,7 +330,8 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
         
         url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/virtual-router/ecmp-groups[name="%s"]/ip-addresses' % (tenant, ecmpgroup)
         try:
-            c.rest.put(url, {"ip-address": nexthop})
+#            c.rest.put(url, {"ip-address": nexthop})
+            c.rest.post(url, {"ip-address": nexthop})
         except:
             helpers.test_failure(c.rest.error())
         else: 
@@ -674,6 +675,11 @@ REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[
                 `vnsname`         name of vns interface
                 `dhcpserverip`       DHCP server IP, can be anything since it will delete everything under the vns
             Return: true if configuration is successful, false otherwise
+REST-POST: PATCH http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant%5Bname%3D%22Z%22%5D/virtual-router/vns-interfaces%5Bvns-name%3D%22Z1%22%5D/dhcp-relay {"dhcp-relay-enable": false}
+REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant%5Bname%3D%22Z%22%5D/virtual-router/vns-interfaces%5Bvns-name%3D%22Z1%22%5D/dhcp-relay done 0:00:00.008562
+REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant%5Bname%3D%22Z%22%5D/virtual-router/vns-interfaces%5Bvns-name%3D%22Z1%22%5D/dhcp-relay/dhcp-server-ip {}
+REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant%5Bname%3D%22Z%22%5D/virtual-router/vns-interfaces%5Bvns-name%3D%22Z1%22%5D/dhcp-relay/dhcp-server-ip done 0:00:00.008065
+REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant%5Bname%3D%22Z%22%5D/virtual-router/vns-interfaces%5Bvns-name%3D%22Z1%22%5D/dhcp-relay/dhcp-relay-enable {}
 
 REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[name="B"]/virtual-router/vns-interfaces[vns-name="B1"]/dhcp-server-ip {}
      
@@ -685,6 +691,8 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
         
         url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/virtual-router/vns-interfaces[vns-name="%s"]/dhcp-relay/dhcp-server-ip' % (tenant, vnsname)
         try:
+            
+            self.rest_disable_dhcp_relay(tenant, vnsname)
             c.rest.delete(url, {})
         except:
             helpers.test_failure(c.rest.error())

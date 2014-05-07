@@ -12,7 +12,7 @@ c2:
   ip: 10.192.106.11
 
 mn1:
-  ip: 192.168.250.145
+  ip: 192.168.250.148
   type: 't6'
   topology: --num-spine 2 --num-rack 3 --num-bare-metal 4 --num-hypervisor 0  --dual-tor
   start_mininet: false

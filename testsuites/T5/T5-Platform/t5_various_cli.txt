@@ -1,7 +1,7 @@
 *** Settings ***
 Documentation  		Various CLI commands
 Suite Setup  		File Suite Setup
-Suite Teardown   	Base Suite Teardown
+Suite Teardown		Base Suite Teardown
 Test Setup   		Setup
 Test Teardown  		Teardown
 Force Tags   		Platform
@@ -51,20 +51,20 @@ T3 "no snmp-server community ro <foo>" in config-switch submode
 	...  flag=False
 	[TAGS]  BSC-5039  show  snmp
 
-T4 Monitor session
+T4 Monitor session string as identifier
 	Run Keyword and Expect Error
 	...  *Error: Invalid argument: range: not an integer:*r*
 	...  Cli Run  monitor session r
 	[TAGS]  monitor session  BSC-5012
 
-T5 Monitor session
+T5 Monitor session source tcp string
 	Cli Run  monitor session 1
 	Run Keyword and Expect Error
 	...  *Error: Invalid argument: range: not an integer:*tcp*
 	...  Cli Run  source switch test interface eth1 ip-proto tcp
 	[TAGS]  monitor session  BSC-5017
 
-T6 Monitor session
+T6 Monitor session destination interface numerical only
 	Cli Run  monitor session 1
 	Run Keyword and Expect Error
 	...  *Invalid argument: Invalid Alphabetic character, followed by alphanumerics: 3*
@@ -166,7 +166,7 @@ T11 User \n via REST
 	Run Keyword and Expect Error
         ...  TestError: REST call failed with status code 400
 	...  My Rest Add User  \n\r
-	[Tags]  BSC-5051  REST
+	[Tags]  BSC-5051  REST  Skipped
 
 T12.1 show this in config-cluster submode
 	Cli Run  cluster
@@ -174,9 +174,10 @@ T12.1 show this in config-cluster submode
 	[Tags]  BSC-5061
 T12.2 show this in config-switch-if submode
 	Cli Run  switch test
+	Cli Run  mac 11:22:33:44:55:66
 	Cli Run  interface eth1 
 	Cli Run  show this 
-	[Tags]  BSC-5135
+	[Tags]  BSC-5135  BVS-1463
 
 T13 Characters \n and \r in identifiers
 	Run Keyword and Expect Error
@@ -189,7 +190,7 @@ T13 Characters \n and \r in identifiers
 	...  *Error: Unbalanced Quote*
 	...  Cli Run  switch 'a\\n\\n'b'
 	Run Keyword and Expect Error
-	...  *Error: Invalid argument: Invalid Alphabetic * Invalid characters in identifier*
+	...  *Error: Invalid argument: syntax: expected [0-9a-zA-Z][-.0-9a-zA-Z_]*
 	...  Cli Run  tenant 'a\\n\\r\\n \\r\\n'
 	[Tags]  BSC-5051  BSC-5011
 
@@ -206,21 +207,44 @@ T15 'from mode ...' in login mode
 	Cli Run  enable
 	Cli Run  exit
 	Cli Run and Verify Output
-	...  ? enable
+	...  ? echo
 	...  from mode
 	...  flag=False
+	Cli Run  enable
+	Cli Run  exit
 	Cli Run and Verify Output
-	...  ? enable
+	...  ? echo
 	...  show
+	Cli Run  enable
 	[Tags]  BSC-5020
 
 T16 Switch commands in config-switch-if submode
+	Cli Run and Verify Output
+	...  show running-config switch
+	...  switch test
+	...  flag=False
 	Cli Run  switch test
 	Cli Run  interface eth1
-	Run Keyword and Expect Error  *Unknown command*  Cli Run  fabric-role spine
-	Run Keyword and Expect Error  *Unknown command*  Cli Run  fabric-role leaf
-	Run Keyword and Expect Error  *Unknown command*  Cli Run  mac 11:11:11:11:11:11
-	Run Keyword and Expect Error  *Unknown command*  Cli Run  leaf-group test
+	Cli Run  fabric-role spine
+	Cli Run and Verify Output
+	...  show running-config switch test
+	...  fabric-role spine
+	Cli Run  fabric-role leaf
+	Cli Run and Verify Output
+	...  show running-config switch test
+	...  fabric-role leaf
+	Cli Run and Verify Output
+	...  show running-config switch test
+	...  fabric-role spine
+	...  flag=False
+	Cli Run  mac 11:11:11:11:11:11
+	Cli Run and Verify Output
+	...  show running-config switch test
+	...  mac 11:11:11:11:11:11
+	Cli Run  leaf-group test
+	Cli Run and Verify Output
+	...  show running-config switch test
+	...  leaf-group test
 	[Tags]  BSC-5067
 
 T17 DNS configuration
@@ -231,20 +255,14 @@ T17 DNS configuration
 	...  *Error: Invalid argument: Invalid IP address (dotted quad): 8.8.8.88888; invalid string pattern*
 	...  Cli Run  dns server 8.8.8.88888
 	Cli Run  dns server 8.8.8.8
-	Sleep  2 sec
+	Sleep  5 sec
 	Log  Checking changes in local-config
 	Cli Run and Verify Output
-	...  show local-config
+	...  show running-config local
 	...  8.8.8.8
 	Cli Run and Verify Output
-	...  show local-config
+	...  show running-config local
 	...  google.com
-	Cli Run and Verify Output
-	...  show local-config
-	...  10.192.3.1
-	Cli Run and Verify Output
-	...  show local-config
-	...  bigswitch.com
 	Log  Checking changes in bash NetworkManager
 	Cli Run  debug bash
 	Cli Run and Verify Output
@@ -253,21 +271,15 @@ T17 DNS configuration
 	Cli Run and Verify Output
 	...  sudo cat /etc/NetworkManager/system-connections/eth0
 	...  google.com
-	Cli Run and Verify Output
-	...  sudo cat /etc/NetworkManager/system-connections/eth0
-	...  10.192.3.1
-	Cli Run and Verify Output
-	...  sudo cat /etc/NetworkManager/system-connections/eth0
-	...  bigswitch.com
 	Cli Run  exit
 	Log  Checking there are no changes on Slave
 	Cli Run and Verify Output
-	...  show local-config
+	...  show running-config local
 	...  8.8.8.8
 	...  flag=False
 	...  node=slave
 	Cli Run and Verify Output
-	...  show local-config
+	...  show running-config local
 	...  google.com
 	...  flag=False
 	...  node=slave
@@ -285,22 +297,16 @@ T17 DNS configuration
 
 	Cli Run  no dns search google.com
 	Cli Run  no dns server 8.8.8.8
-	Sleep  2 sec
+	Sleep  5 sec
 	Log  Checking changes in local-config
 	Cli Run and Verify Output
-	...  show local-config
+	...  show running-config local
 	...  8.8.8.8
 	...  flag=False
 	Cli Run and Verify Output
-	...  show local-config
+	...  show running-config local
 	...  google.com
 	...  flag=False
-	Cli Run and Verify Output
-	...  show local-config
-	...  10.192.3.1
-	Cli Run and Verify Output
-	...  show local-config
-	...  bigswitch.com
 	Log  Checking changes in bash NetworkManager
 	Cli Run  debug bash
 	Cli Run and Verify Output
@@ -311,12 +317,6 @@ T17 DNS configuration
 	...  sudo cat /etc/NetworkManager/system-connections/eth0
 	...  google.com
 	...  flag=False
-	Cli Run and Verify Output
-	...  sudo cat /etc/NetworkManager/system-connections/eth0
-	...  10.192.3.1
-	Cli Run and Verify Output
-	...  sudo cat /etc/NetworkManager/system-connections/eth0
-	...  bigswitch.com
 	Cli Run  exit
 	[Tags]  DNS  BSC-5060
 
@@ -360,7 +360,7 @@ T19 'show this' in -vns and -endpoint submodes
 	...  show this
 	...  vns A2
 	...  flag=False
-	[Tags]  BSC-5085
+	[Tags]  BSC-5085  Skipped
 
 T20.1 AAA Accounting round-robin support
 	Cli Run  tacacs server host 1.2.3.4 timeout 5 key secret
@@ -375,7 +375,7 @@ T20.1 AAA Accounting round-robin support
 	Cli Run  config
 	Cli Run  tenant test1
 	Cli Run  no aaa accounting exec default start-stop group tacacs+  cmd_timeout=30
-	[Tags]  BSC-5019  AAA  TACACS
+	[Tags]  BSC-5019  AAA  TACACS  skipped
 T20.2 TACACS Default timeout
 	Cli Run  tacacs server timeout 10
 	Cli Run  tacacs server host 5.5.5.5 timeout 5 key secret
@@ -385,7 +385,7 @@ T20.2 TACACS Default timeout
 	Cli Run  no tacacs server timeout 10
 	Cli Run  aaa accounting exec default start-stop group tacacs+  cmd_timeout=71
 	Cli Run  no aaa accounting exec default start-stop group tacacs+  cmd_timeout=141
-	[Tags]  BSC-5088  AAA  TACACS
+	[Tags]  BSC-5088  AAA  TACACS  skipped
 
 T21 Escaping special characters in quoted strings
 	Cli Run  snmp-server community ro "tests\\n \\r \\n '''"
@@ -431,18 +431,15 @@ T25 Polish characters in commands
 	...  show running-config snmp
 	...  snmp-server location 'Ko\\0xc5\\0x9bciuszki 34, \\0xc5\\0x81\\0xc3\\0xb3d\\0xc5\\0xba'
 
-T26 Switch commands in switch-if submode
-	Cli Run  switch test123
-	Cli Run  interface eth1
-	Run Keyword and Expect Error
-	...  *Error: Unknown command: mac*
-	...  Cli Run  mac aa:bb:cc:dd:ee:ff
-	Run Keyword and Expect Error
-	...  *Error: Unknown command: fabric-role*
-	...  Cli Run  fabric-role leaf
-	Run Keyword and Expect Error
-	...  *Error: Unknown command: leaf-group*
-	...  Cli Run  leaf-group test
+T26 Route and Router help texts
+	Cli Run  tenant test
+	Cli Run  router
+	Cli Run and Verify Output
+	...  route?r
+	...  route Add an IP subnet route on the router
+	Cli Run and Verify Output
+	...  route?r
+	...  router Enter the router configuration submode
 
 T27 Interaction between snmp and banner commands
 	Cli Run  snmp-server location Loc1
@@ -464,6 +461,30 @@ T28 NTP sync command
 	[Tags]  NTP BSC-5169
 
 T29 Deletion of ntp server
+	Run Keyword and Expect Error
+	...  *Error*
+	...  Cli Run  no ntp server 0.bigswitch.pool.ntp.org
+	Cli Run and Verify Output
+	...  show running-config nto
+	...  ntp server 0.bigswitch.pool.ntp.org
+	[Tags]  Skipped  BSC-5095
+
+T30 No fabric role
+	Cli Run  switch test
+	Run Keyword and Expect Error
+	...  *Error: Missing argument: "spine", "leaf"*
+	...  Cli Run  no fabric-role
+	Cli Run  no fabric-role spine
+	Cli Run  no fabric-role leaf
+	[Tags]  BVS-1482
+
+T31 Validation of "monitor session" configuration
+	Cli Run  monitor session 1
+	Cli Run  source switch test interface ethernet1
+	Run Keyword and Expect Error
+	...  *Error: Validation failed: [Validate Session 1]: Destination test/ethernet1 is already configured as a source in session [1]*
+	...  Cli Run  destination switch test interface ethernet1
+	[Tags]  BVS-1219
 
 *** Keywords ***
 Generate Random Name
@@ -485,6 +506,7 @@ Setup
 
 Teardown
 	Cli Run  exit
+	Cli Run  enable
 	Cli Run  config
 	Cli  master  no aaa accounting exec default start-stop group tacacs+  timeout=200
 	Cli Copy  config://startup-config  running-config

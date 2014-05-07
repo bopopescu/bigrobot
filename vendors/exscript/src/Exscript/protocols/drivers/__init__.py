@@ -17,6 +17,7 @@ from Exscript.protocols.drivers.vrp import VRPDriver
 from Exscript.protocols.drivers.sros import SROSDriver
 from Exscript.protocols.drivers.bsn_controller import BsnControllerDriver
 from Exscript.protocols.drivers.bsn_switch import BsnSwitchDriver
+from Exscript.protocols.drivers.arista_switch import AristaSwitchDriver
 from Exscript.protocols.drivers.mininet import MininetDriver
 from Exscript.protocols.drivers.shell_unix import UnixShellDriver
 

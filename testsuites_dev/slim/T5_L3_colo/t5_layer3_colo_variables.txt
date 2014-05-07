@@ -1,6 +1,6 @@
 * Variable
-${bsn_ctrl1}			10.210.65.43
-${bsn_ctrl2}			10.210.65.37
+${bsn_ctrl1}			10.210.67.143
+${bsn_ctrl2}			10.210.67.137
 ${tenantX}			X
 ${tenantY}			Y
 ${tenantZ}			Z
@@ -67,12 +67,17 @@ ${leaf1-a}			leaf1-a
 ${leaf1-b}			leaf1-b
 ${leaf2-a}			leaf2-a
 ${leaf2-b}			leaf2-b
-${ixia1}			ethernet24
-${ixia2}			ethernet24
-${ixia3}			ethernet24
-${ixia4}			ethernet24
-${ixia5}			ethernet24
-${ixia6}			ethernet24
+${ixia1}			ethernet40
+${ixia2}			ethernet40
+${ixia3}			ethernet40
+${ixia4}			ethernet40
+${ixia5}			ethernet40
+${ixia6}			ethernet40
+${ixia7}			ethernet40
+${ixia8}			ethernet40
+${ixia9}			ethernet40
+${ixia10}			ethernet40
+${leaf0a_spine0}	ethernet53
 
 ${leaf0_pc1_intf1}	ethernet1
 ${leaf0_pc1_intf2}	ethernet1

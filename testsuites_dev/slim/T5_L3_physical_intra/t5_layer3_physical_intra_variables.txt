@@ -53,18 +53,19 @@ ${leaf1_pc3}		leaf1-pc3
 ${leaf1_pc4}		leaf1-pc4
 ${leaf2_pc1}		leaf2-pc1
 ${leaf2_pc2}		leaf2-pc2
-${leaf0-a}			leaf0-a
-${leaf0-b}			leaf0-b
-${leaf1-a}			leaf1-a
-${leaf1-b}			leaf1-b
-${leaf2-a}			leaf2-a
-${leaf2-b}			leaf2-b
+${leaf0_a}			leaf0-a
+${leaf0_b}			leaf0-b
+${leaf1_a}			leaf1-a
+${leaf1_b}			leaf1-b
+${leaf2_a}			leaf2-a
+${leaf2_b}			leaf2-b
 ${ixia1}			ethernet24
 ${ixia2}			ethernet24
 ${ixia3}			ethernet24
 ${ixia4}			ethernet24
 ${ixia5}			ethernet24
 ${ixia6}			ethernet24
+${leaf0a_spine0}	ethernet49
 
 ${leaf0_pc1_intf1}	ethernet48
 ${leaf0_pc1_intf2}	ethernet48

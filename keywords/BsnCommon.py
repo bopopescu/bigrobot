@@ -18,6 +18,7 @@ import autobot.test as test
 import subprocess
 import math
 import sys
+import os
 import re
 import socket
 import paramiko
@@ -27,6 +28,8 @@ from paramiko.ssh_exception import BadHostKeyException, \
                                    SSHException
 from Exscript.protocols import SSH2
 from Exscript import Account
+from robot.libraries.BuiltIn import BuiltIn
+
 
 class BsnCommon(object):
 
@@ -43,14 +46,27 @@ class BsnCommon(object):
             n = t.node(node)
             if helpers.is_controller(node) or helpers.is_mininet(node):
                 helpers.log("Closing device connection for node '%s'" % node)
-                n.dev.close()
+                n.devconf().close()
         t.teardown()
 
     def base_test_setup(self):
         test.Test()
+        # helpers.log("Test case status: %s"
+        #            % helpers.bigrobot_test_case_status())
 
     def base_test_teardown(self):
-        pass
+        test_status = BuiltIn().get_variable_value("${TEST_STATUS}")
+        test_descr = BuiltIn().get_variable_value("${TEST_NAME}")
+        if test_status == 'FAIL':
+            if helpers.bigrobot_test_postmortem().lower() == 'false':
+                helpers.log("Env BIGROBOT_TEST_POSTMORTEM is False."
+                            " Skipping test postmortem.")
+            else:
+                self.base_test_postmortem(test_descr=test_descr)
+
+            if helpers.bigrobot_test_pause_on_fail().lower() == 'true':
+                helpers.log("Env BIGROBOT_TEST_PAUSE_ON_FAIL is True.")
+                self.pause_on_fail(keyword=test_descr)
 
     def mock_untested(self):
         print("MOCK UNTESTED")
@@ -82,7 +98,25 @@ class BsnCommon(object):
         helpers.log("Express '%s' evaluated to '%s'" % (s, result))
         return result
 
-    def pause(self, msg=None):
+    def base_test_postmortem(self, test_descr=None):
+        t = test.Test()
+
+        helpers.log("Test case '%s' failed. Performing postmortem."
+                    % test_descr)
+        for node in t.topology():
+            # Do postmortem thingy here...
+            # - Save output file(s) to bigrobot log directory. The log path is:
+            #     bigrobot_path = helpers.bigrobot_log_path_exec_instance()
+            # - Look at https://github.com/bigswitch/t6-misc/blob/master/t6-support/run_show_cmds.py
+            # - Execute the command using helpers.run_cmd(), e.g.,
+            #     cmd = 'cd <bigrobot_log>; <path>/ run_show_cmds.py'
+            #     status, msg = helpers.run_cmd(cmd, shell=True)
+            # - Name tarbar using the test_descr (be sure to convert
+            #   whitespace to underscore).
+            helpers.log("Collecting information for node '%s' (%s)"
+                        % (node, self.get_node_ip(node)))
+
+    def pause_on_fail(self, keyword=None, msg=None):
         """
         Pause execution. Press Control-D to continue.
 
@@ -92,8 +126,36 @@ class BsnCommon(object):
         Return Value:
         - True
         """
+        descr = ("Pausing due to test failure...\n'%s' failed." % keyword)
+        if helpers.bigrobot_continuous_integration().lower() == 'false':
+            return self.pause(descr + "\nPress Ctrl-D to continue...")
+
+        lock = os.path.join(helpers.bigrobot_log_path_exec_instance(),
+                            'pause_on_fail_test.lock')
+        helpers.file_touch(lock)
         if not msg:
-            msg = "Pausing... Press Ctrl-D to continue."
+            msg = ("%s\nTo unpause, remove lock '%s'." % (descr, lock))
+        helpers.warn(msg)
+        while True:
+            if helpers.file_exists(lock):
+                helpers.sleep(1)
+            else:
+                helpers.warn("Lock is removed ('%s'). Unpausing..." % lock)
+                break
+        return True
+
+    def pause(self, msg=None):
+        """
+        Pause execution. Press Control-D to continue.
+
+        Inputs:
+        | msg | Message to display when paused. Else print "Pausing... Press Ctrl-D to continue..." |
+
+        Return Value:
+        - True
+        """
+        if not msg:
+            msg = "Pausing... Press Ctrl-D to continue..."
         helpers.warn(msg)
         for _ in sys.stdin:
             pass
@@ -104,10 +166,10 @@ class BsnCommon(object):
         rx = math.ceil(float(rx_value))
         vrange = int(rangev)
         if (rx >= (tx - vrange)) and (rx <= (tx + vrange)):
-            helpers.log("Pass:Traffic forwarded between 2 endpoints tx:%d, rx:%d" % (tx, rx))
+            helpers.log("Pass: Value1:%d, Value2:%d" % (tx, rx))
             return True
         else:
-            helpers.test_failure("Fail:Traffic forward between 2 endpoints tx:%d, rx:%d" % (tx, rx))
+            helpers.test_failure("Fail: Value1:%d, Value2:%d" % (tx, rx))
             return False
 
     def verify_switch_pkt_stats(self, count1, count2, range1=95, range2=5):
@@ -1407,7 +1469,7 @@ class BsnCommon(object):
         else:
             return True
 
-    def  return_snmptrap_output(self, server, message):
+    def return_snmptrap_output(self, server, message):
         try:
             conn = SSH2()
             conn.connect(server)
@@ -1420,7 +1482,7 @@ class BsnCommon(object):
         else:
             return output
 
-    def restart_process_on_controller(self, process_name, controller_role):
+    def restart_process_on_controller(self, process_name, node, soft_error=False):
         '''Restart a process on controller
 
             Input:
@@ -1429,15 +1491,14 @@ class BsnCommon(object):
 
            Return Value:  True if the configuration is successful, false otherwise
         '''
+        t = test.Test()
+        c = t.controller(node)
         try:
-            t = test.Test()
-            if (controller_role == 'Master'):
-                c = t.controller('master')
-            else:
-                c = t.controller('slave')
-            c.bash('sudo service ' + str(process_name) + ' restart')
+            helpers.log("Restarting %s on '%s'" % (process_name, node))
+            c.sudo("service %s restart" % process_name)
         except:
-            helpers.test_failure(c.rest.error())
+            helpers.test_failure("Unable to restart process '%s'"
+                                 % process_name, soft_error)
             return False
         else:
             return True
@@ -1581,7 +1642,7 @@ class BsnCommon(object):
         Usage:
           | macAddr = self.get_next_mac(base,incr) |
         """
-        helpers.get_next_mac(*args, **kwargs)
+        return helpers.get_next_mac(*args, **kwargs)
 
     def get_next_address(self, *args, **kwargs):
         """
@@ -1599,7 +1660,7 @@ class BsnCommon(object):
                   ipAddr = self.get_next_address(
                               ipv6,'f001:100:0:0:0:0:0:0','0:0:0:0:0:0:0:1:0')
         """
-        helpers.get_next_address(*args, **kwargs)
+        return helpers.get_next_address(*args, **kwargs)
 
     def verify_ssh_connection(self, node, sleep=10, iterations=5,
                               user='dummy', password='dummy'):
