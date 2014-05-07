@@ -212,7 +212,6 @@ Inter tenant dhcp relay with two dhcp servers on both vns
 	
 * Keywords
 L3 intra tenant same rack untagged with dynamic endpoints
-	
 	${ipAddr4} = 								BASH get interface ipv4 		h4						bond0
 	Should Not Be Empty							${ipAddr4}
 	${ipAddr5} = 								BASH get interface ipv4 		h5						bond0
@@ -661,6 +660,46 @@ Controller HA failover via CLI
 	Should Be True								${value}
 	sleep										20
 	
+
+L3 intra tenant flap link towards spine0
+	${ipAddr4} = 								BASH get interface ipv4 		h4						bond0
+	Should Not Be Empty							${ipAddr4}
+	${ipAddr5} = 								BASH get interface ipv4 		h5						bond0
+	Should Not Be Empty							${ipAddr5}
+	BASH ping									h4								10.251.1.1				count=10
+	BASH ping									h5								10.251.2.1				count=10
+	${value} = 									BASH verify arp					h4						10.251.1.1
+	Should Be True								${value} 		
+	${value} =									BASH verify arp					h5						10.251.2.1
+	Should Be True								${value} 
+	${mac1} = 									BASH get intf mac				h4						bond0
+	${result} =									REST show endpoints mac			${mac1}
+	${attachpoint} = 							Set Variable					${result[0]['attachment-point']['port-group']}	
+	Should Contain								${attachpoint}					${leaf0_pc4}	
+	${mac2} = 									BASH get intf mac				h5						bond0
+	${result} =									REST show endpoints mac			${mac2}
+	${attachpoint} = 							Set Variable					${result[0]['attachment-point']['port-group']}	
+	Should Contain								${attachpoint}					${leaf0_pc5}	
+	${loss} = 									BASH ping						h4						10.251.2.11 			count=10
+	Should Be True  							${loss} == 0					
+	REST add interface to vns					X								X1						${leaf0-a}				${ixia1}				-1
+	REST add interface to vns					X								X2						${leaf0-b}				${ixia2}				-1		
+	${stream1}=  								L3 add  						name=stream1		  	flow=a<->b 				frame_rate=100000  			frame_size=9216  			frame_cnt=20000000
+	...     									src_ip=10.251.1.101				src_gw=10.251.1.1		dst_ip=10.251.2.201		dst_gw=10.251.2.1			 			
+	start traffic  								${stream1}
+	sleep  10
+	stop traffic								${stream1}
+	verify results 								transmitted_frames  			received_frames  		${stream1}  			stream1
+	start traffic  								${stream1}
+	sleep	5
+   	CLI disable interface						s3								${leaf0a_spine0}	
+	sleep	5
+    log traffic rate  							tx_rate  						rx_rate  				a  						c
+	CLI enable interface						s3								${leaf0a_spine0}	
+  	sleep										10
+	stop traffic								${stream1}
+	calculate loss 								transmitted_frames  			received_valid_frames  		${stream1}  			stream1
+
 
 L3 inter tenant traffic in the same rack
 	BASH ping									h4								10.252.1.11				count=5

@@ -1,6 +1,6 @@
 * Variable
-${bsn_ctrl1}			10.210.65.43
-${bsn_ctrl2}			10.210.65.37
+${bsn_ctrl1}			10.210.67.143
+${bsn_ctrl2}			10.210.67.137
 ${tenantX}			X
 ${tenantY}			Y
 ${tenantZ}			Z
@@ -77,6 +77,7 @@ ${ixia7}			ethernet40
 ${ixia8}			ethernet40
 ${ixia9}			ethernet40
 ${ixia10}			ethernet40
+${leaf0a_spine0}	ethernet53
 
 ${leaf0_pc1_intf1}	ethernet1
 ${leaf0_pc1_intf2}	ethernet1
