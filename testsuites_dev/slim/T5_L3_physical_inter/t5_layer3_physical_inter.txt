@@ -166,10 +166,6 @@ Delete existing one ECMP members and add new ECMP member
 	Log								manual untested
 	[Tags]			skipped		manual			untested			feature			
 
-L3 traffic forwarding over ecmp groups with more specific route
-	L3 traffic forwarding with two ecmp groups with more specific routes
-	[Tags]			skipped		manual			untested			feature			
-
 Verify L3 traffic honor more specific routes with ecmp group
 	Verify L3 traffic honor more specific routes with ecmp group
 	[Tags]			skipped		manual			untested			feature		
@@ -268,6 +264,11 @@ Verify route next hop IP must be in the same tenant
 
 Verify ECMP next hop IP must be in the same tenant
 	Verify traffic forwarding across ecmp members must be in the same tenant
+	Log							manual untested
+	[Tags]			skipped		manual			untested			feature			
+
+L3 inter tenant forwarding with ecmp destination
+	L3 inter tenant forwarding with ecmp destination
 	Log							manual untested
 	[Tags]			skipped		manual			untested			feature			
 
