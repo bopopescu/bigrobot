@@ -1280,6 +1280,36 @@ class T5Platform(object):
             else:
                 helpers.log("TCPDump match not found for string: %s" % verifyString)
                 return False
+            
+            
+    def verify_traffic_with_tcpdump(self, verifyHost, verifyInt, verifyOptions, *args):
+        
+        ''' This function will verify the traffic through TCP dump.
+        
+        Input:  
+                verifyHost -> Host where tcpdump is being executed
+                verifyInt -> interfaces of the host that tcpdump would get excuted
+                verifyOptions -> Other TCP Dump options (eg: src port 8000 and tcp)
+                verifyString -> String to search in the tcpdump output
+        '''
+        
+        t = test.Test()
+        n = t.node(verifyHost)
+        
+        verifyString = ""
+        for arg in args:
+            verifyString += '.*' + arg
+        verifyString += '.*'
+        # Issue tcpdump & look for the intended traffic that matches verifyString
+        output = n.bash("timeout 5 tcpdump -i %s %s" % (verifyInt, verifyOptions) )
+        match = re.search(r"%s" % verifyString, output['content'], re.S | re.I)
+        
+        if match:
+            return True
+        
+        else:
+            helpers.log("TCPDump match not found for string: %s" % verifyString)
+            return False
 
 
     def cli_compare(self, src, dst, node='master', scp_passwd='bsn'):
