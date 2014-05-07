@@ -1169,7 +1169,7 @@ class T5(object):
         '''
         t = test.Test()
         c = t.controller('master')
-        url = '/api/v1/data/controller/core/switch' % ()
+        url = '/api/v1/data/controller/applications/bvs/info/fabric/switch' % ()
         c.rest.get(url)
 
         return True
@@ -1332,7 +1332,7 @@ class T5(object):
     def rest_verify_fabric_switch_role(self, dpid, role):
         t = test.Test()
         c = t.controller('master')
-        url = '/api/v1/data/controller/core/switch'
+        url = '/api/v1/data/controller/applications/bvs/info/fabric/switch'
         c.rest.get(url)
         data = c.rest.content()
         status = False
@@ -1370,7 +1370,7 @@ class T5(object):
         url = '/api/v1/data/controller/core/switch[name="%s"]/interface' % (switch)
         c.rest.get(url)
         data = c.rest.content()
-        url1 = '/api/v1/data/controller/core/switch[name="%s"]' % (switch)
+        url1 = '/api/v1/data/controller/applications/bvs/info/fabric/switch[name="%s"]' % (switch)
         c.rest.get(url1)
         data1 = c.rest.content()
         dpid = data1[0]["dpid"]
@@ -1433,7 +1433,7 @@ class T5(object):
         # Function verify fabric switch status with role configured
         t = test.Test()
         c = t.controller('master')
-        url = '/api/v1/data/controller/core/switch[name="%s"]' % (switch)
+        url = '/api/v1/data/controller/applications/bvs/info/fabric/switch[name="%s"]' % (switch)
         c.rest.get(url)
         data = c.rest.content()
         if data[0]["name"] == switch and data[0]["fabric-role"] != '':
@@ -1480,7 +1480,7 @@ class T5(object):
     def rest_verify_no_of_rack(self):
         t = test.Test()
         c = t.controller('master')
-        url = '/api/v1/data/controller/core/switch' % ()
+        url = '/api/v1/data/controller/applications/bvs/info/fabric/switch' % ()
         c.rest.get(url)
         data = c.rest.content()
         rack = []
@@ -1499,7 +1499,7 @@ class T5(object):
     def rest_verify_no_of_spine(self):
         t = test.Test()
         c = t.controller('master')
-        url = '/api/v1/data/controller/core/switch' % ()
+        url = '/api/v1/data/controller/applications/bvs/info/fabric/switch' % ()
         c.rest.get(url)
         data = c.rest.content()
         list_spine = []
@@ -1573,7 +1573,7 @@ class T5(object):
     def rest_verify_fabric_interface_lacp(self, switch, intf):
         t = test.Test()
         c = t.controller('master')
-        url1 = '/api/v1/data/controller/core/switch[name="%s"]' % (switch)
+        url1 = '/api/v1/data/controller/applications/bvs/info/fabric/switch[name="%s"]' % (switch)
         c.rest.get(url1)
         data1 = c.rest.content()
         dpid = data1[0]["dpid"]
@@ -1636,7 +1636,7 @@ class T5(object):
         '''
         t = test.Test()
         c = t.controller('master')
-        url1 = '/api/v1/data/controller/core/switch[name="%s"]' % (switch)
+        url1 = '/api/v1/data/controller/applications/bvs/info/fabric/switch[name="%s"]' % (switch)
         c.rest.get(url1)
         data1 = c.rest.content()
         dpid = data1[0]["dpid"]
@@ -1746,7 +1746,7 @@ class T5(object):
         url = '/api/v1/data/controller/core/switch-config[name="%s"]/interface[name="%s"]' % (switch, intf)
         c.rest.patch(url, {"shutdown": True})
         helpers.sleep(2)
-        url1 = '/api/v1/data/controller/core/switch[name="%s"]' % (switch)
+        url1 = '/api/v1/data/controller/applications/bvs/info/fabric/switch[name="%s"]' % (switch)
         c.rest.get(url1)
         data1 = c.rest.content()
         dpid = data1[0]["dpid"]
@@ -1767,7 +1767,7 @@ class T5(object):
         url = '/api/v1/data/controller/core/switch-config[name="%s"]/interface[name="%s"]' % (switch, intf)
         c.rest.delete(url, {"shutdown": None})
         helpers.sleep(5)
-        url1 = '/api/v1/data/controller/core/switch[name="%s"]' % (switch)
+        url1 = '/api/v1/data/controller/applications/bvs/info/fabric/switch[name="%s"]' % (switch)
         c.rest.get(url1)
         data1 = c.rest.content()
         dpid = data1[0]["dpid"]
@@ -2330,7 +2330,7 @@ class T5(object):
         url = '/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch-name="%s"]?select=l3-cidr-route-table' % (switch)
         c.rest.get(url)
         data = c.rest.content()
-        url1 = '/api/v1/data/controller/core/switch[name="%s"]' % (switch)
+        url1 = '/api/v1/data/controller/applications/bvs/info/fabric/switch[name="%s"]' % (switch)
         c.rest.get(url1)
         data1 = c.rest.content()
         if data[0]["switch-name"] == switch and data1[0]["fabric-role"] == "spine":
@@ -2355,7 +2355,7 @@ class T5(object):
         url = '/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch-name="%s"]?select=l3-cidr-route-table' % (switch)
         c.rest.get(url)
         data = c.rest.content()
-        url1 = '/api/v1/data/controller/core/switch[name="%s"]' % (switch)
+        url1 = '/api/v1/data/controller/applications/bvs/info/fabric/switch[name="%s"]' % (switch)
         c.rest.get(url1)
         data1 = c.rest.content()
         if data[0]["switch-name"] == switch and data1[0]["fabric-role"] == "leaf":
