@@ -469,6 +469,23 @@ T29 Deletion of ntp server
 	...  ntp server 0.bigswitch.pool.ntp.org
 	[Tags]  Skipped  BSC-5095
 
+T30 No fabric role
+	Cli Run  switch test
+	Run Keyword and Expect Error
+	...  *Error: Missing argument: "spine", "leaf"*
+	...  Cli Run  no fabric-role
+	Cli Run  no fabric-role spine
+	Cli Run  no fabric-role leaf
+	[Tags]  BVS-1482
+
+T31 Validation of "monitor session" configuration
+	Cli Run  monitor session 1
+	Cli Run  source switch test interface ethernet1
+	Run Keyword and Expect Error
+	...  *Error: Validation failed: [Validate Session 1]: Destination test/ethernet1 is already configured as a source in session [1]*
+	...  Cli Run  destination switch test interface ethernet1
+	[Tags]  BVS-1219
+
 *** Keywords ***
 Generate Random Name
 	[Arguments]  ${prefix}  ${suffix_len}
