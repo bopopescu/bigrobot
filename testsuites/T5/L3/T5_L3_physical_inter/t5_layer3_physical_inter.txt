@@ -6,12 +6,12 @@ Test Setup      test setup topology
 Test Teardown   test teardown topology
 Force Tags      T5 Sanity
 Library         keywords/BsnCommon.py
-Library         keywords_dev/slim/Host.py
+Library         keywords/Host.py
 Library         keywords/T5.py
 Library         keywords/T5L3.py
 Library         keywords/T5Platform.py
-Library         keywords_dev/animesh/BsnCommonShow.py
-Library         keywords_dev/slim/SwitchLight.py
+Library         keywords/BsnCommonShow.py
+#Library         keywords_dev/slim/SwitchLight.py
 Library	        Collections.py
 Library         keywords/Ixia.py
 Resource		testsuites_dev/slim/T5_L3_physical_inter/t5_layer3_physical_inter_variables.txt
@@ -21,47 +21,47 @@ Resource		testsuites/T5/t5_dualleaf_three_rack_physical_resource.txt
 * Test Cases
 Inter tenant L3 untagged traffic with dynamic endpoints same rack
 	L3 inter tenant same rack untagged with dynamic endpoints
-#	[Tags]							skipped			smoke				sanity			
+	[Tags]										smoke				sanity			
 
 Inter tenant L3 untagged traffic with dynamic endpoints across rack
 	L3 inter tenant across rack untagged with dynamic endpoints
-#	[Tags]							skipped			smoke				sanity	
+	[Tags]										smoke				sanity	
 
 inter tenant L3 tagged traffic with dynamic endpoints same rack
 	L3 inter tenant same rack tagged with dynamic endpoints
-#	[Tags]							skipped			smoke				sanity			
+	[Tags]										smoke				sanity			
 
 inter tenant L3 tagged traffic with dynamic endpoints across rack
 	L3 inter tenant across rack tagged with dynamic endpoints
-#	[Tags]							skipped			smoke				sanity	
+	[Tags]										smoke				sanity	
 
 Add and delete default route on tenant
 	Add and delete default route on tenant router
-#	[Tags]							skipped			sanity	
+	[Tags]										sanity	
 
 Add and delete static route on tenant
 	Add and delete static route on tenant router
-#	[Tags]							skipped			sanity	
+	[Tags]										sanity	
 
 Add and delete more specific route on tenant over existing static route
 	Add and delete more specific route on tenant router over existing static route
-	[Tags]							skipped			sanity	
+	[Tags]										sanity	
 
 Add and delete tenant system interface on tenant router
 	Add and delete tenant system interface on tenant router
-#	[Tags]							skipped			sanity	
+	[Tags]										sanity	
 
 Add and delete tenant router interface on system tenant
 	Add and delete tenant router interface on system tenant
-#	[Tags]							skipped			feature	
+	[Tags]										feature	
 
 L3 ttl one forwarding
 	Verify inter tenant L3 traffic with ttl value of one two and three
-#	[Tags]							skipped			feature	
+	[Tags]										feature	
 
 L3 inter tenant forwarding with end host moved to another port
 	L3 inter tenant host moved 
-#	[Tags]							skipped			feature	
+	[Tags]										feature	
 
 L3 inter tenant forwarding split horizon on the same port 
 	Log 										manual pass

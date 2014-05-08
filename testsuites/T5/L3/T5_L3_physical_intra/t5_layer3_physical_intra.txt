@@ -109,7 +109,7 @@ Change L3 endpoint from untagged to tagged and back
 
 Verify L3 endpoint aging
 	Check L3 endpoint aging 
-	[Tags]		 		feature	
+	[Tags]		 			feature	
 	
 Verify L3 ttl 1 is not being forwarded
 	Check L3 ttl 1 is dropped
@@ -117,45 +117,49 @@ Verify L3 ttl 1 is not being forwarded
 
 Change router vns ip
 	Change router ip address
-	[Tags]		feature 	
+	[Tags]					feature 	
 
 Delete and add router vns ip
 	Delete and add router vns ip 
-	[Tags] 		feature			
+	[Tags] 					feature			
 
+Set 32bit full mask on vns router ip
+	Set 32bit full mask on vns router ip
+	[Tags]					feature		
+	
 Change tagged endpoint IP address
 	Change tagged host endpoint IP address
 	[Tags]					feature		
 
 Configure static endpoint with host showing up on another port
 	Static endpoint with dynamic host showing up on another port
-	[Tags]				skipped	sanity		
+	[Tags]					skipped	sanity		
 
 Verify subnet mask is properly applied on router vns
 	Verify subnet mask on vns router ip
-	[Tags]				feature		
+	[Tags]					feature		
 
 Verify vlsm forwarding
 	Verify vlsm forwarding
-	[Tags]				feature		
+	[Tags]					feature		
 
 Verify split horizon forwarding
 	Verify l3 forwarding on one arm router
-	[Tags]				feature			manual		
+	[Tags]					feature			manual		
 
 	
 Configure overlapping router IP 	
 	Configure overlapping IP on same tenant across VNS	
-	[Tags]				feature		
+	[Tags]					feature		
 
 L3 intra tenant traffic between private and public subnet with overlapping IP
 #	L3 intra tenant traffic between private and public subnet with overlapping IP
-	Log								manual untested
+	Log							manual untested
 	[Tags]						feature			manual		
 	
 Verify host with different IP on vns router is not getting L3 service
 #	Verify host with different IP on vns router is not getting L3 service
-	Log								manual untested
+	Log							manual untested
 	[Tags]						feature			manual		
 	
 Trigger controller HA failover via CLI
