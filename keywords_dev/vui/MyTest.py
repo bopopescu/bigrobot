@@ -521,13 +521,15 @@ vui@Vuis-MacBook-Pro$
         os1.sudo('cat /etc/shadow')
 
     def test_console(self, node):
+        """
+        Telnet to a BSN controller or switch console. Try to put the device in
+        CLI mode, or die trying...
+        """
         t = test.Test()
-        n = t.node(node)
-        n_console = n.console()
-        n_console.expect(r'Escape character.*[\r\n]')
-        n_console.send('')
-        n_console.expect(r'Big Virtual Switch Appliance.*[\r\n]')
-        n_console.expect(r'login:')
+        con = t.dev_console(node)
+        con.bash("w")
+        con.sudo("cat /etc/shadow")
+        con.enable("show running-config")
 
     def test_console2(self, node):
         t = test.Test()

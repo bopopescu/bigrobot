@@ -6,4 +6,4 @@ h1:
   #user: root
   #password: bsn
   #set_devconf_debug_level: 5
-  #protocol: ssh  # telnet
+  protocol: telnet
