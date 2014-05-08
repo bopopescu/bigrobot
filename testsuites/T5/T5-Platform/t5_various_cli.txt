@@ -483,6 +483,17 @@ T31 Validation of "monitor session" configuration
 	...  Cli Run  master  destination switch test interface ethernet1
 	[Tags]  BVS-1219
 
+T32 Show running config when cookie session expired
+	${session_id} =  Cli Get Session Hash
+	${name}=    BsnCommon.get node name    master
+	Cli Run  ${name}  enable
+	Cli Run  ${name}  config
+	Run Keyword and Ignore Error  Cli Run  ${name}  no session ${session_id}
+	Run Keyword and Expect Error
+	...  *Error: Please reauth: Authorization failed: No session found for cookie*
+	...  Cli Run  ${name}  show running-config
+	[Tags]  BSC-5343  session
+
 *** Keywords ***
 Generate Random Name
 	[Arguments]  ${prefix}  ${suffix_len}
@@ -507,6 +518,7 @@ Teardown
 	Cli Run  master  exit
 	Cli Run  master  enable
 	Cli Run  master  config
+	Cli Run  master  reauth admin adminadmin
 	Cli  master  no aaa accounting exec default start-stop group tacacs+  timeout=200
 	Cli Copy  config://startup-config  running-config
 	Base Test Teardown
