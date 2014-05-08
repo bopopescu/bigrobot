@@ -6,10 +6,10 @@
 # mn  : Mininet server
 
 c1:
-  ip: 192.168.190.25
+  ip: 10.192.86.36
   
 mn:
-  ip: 192.168.250.148
+  ip: 10.192.87.23
   type: 't6'
   
   topology: --num-spine 2 --num-rack 2 --num-bare-metal 2 --num-hypervisor 0  --dual-tor

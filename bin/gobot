@@ -140,7 +140,7 @@ if helpers.bigrobot_suite():
     helpers.bigrobot_topology(default=topo_file)
 
 helpers.bigrobot_params(default='None')
-helpers.bigrobot_continuous_integration(default='False')
+helpers.bigrobot_continuous_integration()
 helpers.bigrobot_exec_hint_format()
 helpers.bigrobot_debug(default=1)
 
@@ -166,8 +166,9 @@ helpers.bigrobot_devcmd_log(
 helpers.bigrobot_path()
 helpers.bigtest_path()
 helpers.python_path()
-helpers.bigrobot_test_setup(default=True)
-helpers.bigrobot_test_postmortem(default=True)
+helpers.bigrobot_test_setup()  # (default=True)
+helpers.bigrobot_test_postmortem()  # (default=True)
+helpers.bigrobot_test_pause_on_fail()  # (default=False)
 
 
 def get_command_dict():
@@ -399,7 +400,9 @@ def test_command(*args):
         exclude_tags.append('skipped')
     else:
         exclude_tags = ['skipped']
-    print("test_case_names: %s" % args.test)
+
+    if args.test:
+        print("test_case_names: %s" % args.test)
 
     # Comparable to command options:
     #   pybot --loglevel=debug \

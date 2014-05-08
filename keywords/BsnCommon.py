@@ -18,6 +18,7 @@ import autobot.test as test
 import subprocess
 import math
 import sys
+import os
 import re
 import socket
 import paramiko
@@ -64,6 +65,10 @@ class BsnCommon(object):
                             " Skipping test postmortem.")
             else:
                 self.base_test_postmortem(test_descr=test_descr)
+
+            if helpers.bigrobot_test_pause_on_fail().lower() == 'true':
+                helpers.log("Env BIGROBOT_TEST_PAUSE_ON_FAIL is True.")
+                self.pause_on_fail(keyword=test_descr)
 
     def mock_untested(self):
         print("MOCK UNTESTED")
@@ -172,7 +177,7 @@ class BsnCommon(object):
                 subprocess.Popen(['tar', '-pczf', tar_file, output_dir])
                 helpers.log('Tech support present in tar file %s' % tar_file)
 
-    def pause(self, msg=None):
+    def pause_on_fail(self, keyword=None, msg=None):
         """
         Pause execution. Press Control-D to continue.
 
@@ -182,8 +187,36 @@ class BsnCommon(object):
         Return Value:
         - True
         """
+        descr = ("Pausing due to test failure...\n'%s' failed." % keyword)
+        if helpers.bigrobot_continuous_integration().lower() == 'false':
+            return self.pause(descr + "\nPress Ctrl-D to continue...")
+
+        lock = os.path.join(helpers.bigrobot_log_path_exec_instance(),
+                            'pause_on_fail_test.lock')
+        helpers.file_touch(lock)
         if not msg:
-            msg = "Pausing... Press Ctrl-D to continue."
+            msg = ("%s\nTo unpause, remove lock '%s'." % (descr, lock))
+        helpers.warn(msg)
+        while True:
+            if helpers.file_exists(lock):
+                helpers.sleep(1)
+            else:
+                helpers.warn("Lock is removed ('%s'). Unpausing..." % lock)
+                break
+        return True
+
+    def pause(self, msg=None):
+        """
+        Pause execution. Press Control-D to continue.
+
+        Inputs:
+        | msg | Message to display when paused. Else print "Pausing... Press Ctrl-D to continue..." |
+
+        Return Value:
+        - True
+        """
+        if not msg:
+            msg = "Pausing... Press Ctrl-D to continue..."
         helpers.warn(msg)
         for _ in sys.stdin:
             pass
@@ -1556,6 +1589,11 @@ class BsnCommon(object):
         n = t.node(node)
         return n.sudo(*args, **kwargs)
 
+    def console(self, node, *args, **kwargs):
+        t = test.Test()
+        n = t.node(node)
+        return n.console(*args, **kwargs)
+
     def cli_content(self, node, *args, **kwargs):
         t = test.Test()
         n = t.node(node)
@@ -1656,6 +1694,50 @@ class BsnCommon(object):
         t = test.Test()
         n = t.node(node)
         return n.ip()
+
+    def get_all_nodes(self):
+        """
+        Get the names of all nodes used in the test suite.
+
+        Return Value:  List of node names, e.g., ['c1', 'c2', 's1', etc.]
+        """
+        t = test.Test()
+        nodes = t.topology().keys()
+        helpers.debug("Nodes used in test suite: %s" % nodes)
+        return nodes
+
+    def get_all_controller_nodes(self):
+        """
+        Get the names of all controller nodes used in the test suite.
+
+        Return Value:  List of controller node names, e.g., ['c1', 'c2', etc.]
+        """
+        t = test.Test()
+        nodes = [n for n in t.topology().keys() if helpers.is_controller(n)]
+        helpers.debug("Controller nodes used in test suite: %s" % nodes)
+        return nodes
+
+    def get_all_switch_nodes(self):
+        """
+        Get the names of all switch nodes used in the test suite.
+
+        Return Value:  List of switch node names, e.g., ['s1', 's2', etc.]
+        """
+        t = test.Test()
+        nodes = [n for n in t.topology().keys() if helpers.is_switch(n)]
+        helpers.debug("Switch nodes used in test suite: %s" % nodes)
+        return nodes
+
+    def get_all_host_nodes(self):
+        """
+        Get the names of all host nodes used in the test suite.
+
+        Return Value:  List of host node names, e.g., ['h1', 'h2', etc.]
+        """
+        t = test.Test()
+        nodes = [n for n in t.topology().keys() if helpers.is_host(n)]
+        helpers.debug("Host nodes used in test suite: %s" % nodes)
+        return nodes
 
     def get_next_mac(self, *args, **kwargs):
         """
