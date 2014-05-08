@@ -11,8 +11,14 @@ Library         keywords_dev/vui/MyTest.py
 
 * Test Case
 Test dummy
-    #[Tags]     skipped
+    [Tags]     skipped
     [Tags]     smoke  sanity  T5
     cli         c1   show user
 
+Test get all nodes
+    ${all_nodes}=      get all nodes
+    ${controllers}=    get all controller nodes
+    ${switches}=       get all switch nodes
+    ${hosts}=          get all host nodes
+    log                all=${all_nodes}, controllers=${controllers}, switches=${switches}, hosts=${hosts}
 
