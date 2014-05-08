@@ -52,8 +52,8 @@ ${core_d4810_11}  ethernet23  #10GBASE-SR    AVAGO             AFBR-703SDDZ
 ${core_d4810_12}  ethernet24  #10GBASE-LR    FINISAR CORP.     FTLX1471D3BCL
 ${core_d4810_13}  ethernet25  #1GBASE-T      HotLava Systems   HLTA1G2A
 ${core_d4810_14}  ethernet26  #1GBASE-T      Arista Networks   SFP-1G-T
-${core_d4810_15}  ethernet27  #1GBASE-T      Arista Networks   SFP-1G-T
-${core_d4810_16}  ethernet28  #1GBASE-T      Arista Networks   SFP-1G-T
+${core_d4810_15}  ethernet27  #1GBASE-LX     FINISAR CORP.     FTRJ1319P1BTL-MD
+${core_d4810_16}  ethernet28  #1GBASE-SX     FINISAR CORP.     FTLF8519P2BNL
 ${core_d4810_17}  ethernet52  #40GBASE-CR4   Amphenol          624410003
 ${core_d4810_18}  ethernet49  #40GBASE-CR4   Amphenol          624410003  (This is the link to APP-RLY2-5)
 
