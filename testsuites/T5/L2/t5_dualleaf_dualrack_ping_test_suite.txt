@@ -33,7 +33,7 @@ basic cli show commands test case
    cli  c1  show version detail
    cli  c1  show running-config
    cli  c1  show cluster
-   cli  c1  show link detail
+   cli  c1  show switch
    config  c1  show switch
    enable  c1  show switch
 add Fabric setup Dual Rack Dual Leaf 
@@ -42,7 +42,6 @@ add Fabric setup Dual Rack Dual Leaf
 #   add fabric switch
    rest verify fabric switch all
    rest verify fabric link 
-   cli  c1  show link detail
 
 ping bm0 to bm1 dual leaf single rack dynamic endpoints
    [Tags]  L2  smoke  sanity
