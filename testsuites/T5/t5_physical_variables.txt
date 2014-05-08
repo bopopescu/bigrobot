@@ -70,6 +70,7 @@ ${leaf0b_spine1_intf0}	ethernet52
 ${h3_single_ip}  192.168.1.10
 ${h4_single_ip}  192.168.1.11
 ${h2_single_ip}  192.168.1.21
+${h1_single_ip}  192.168.1.20
 ${h3_single_mac}  d4:ae:52:c6:bc:cb
 ${h4_single_mac}  d4:ae:52:c6:bb:ab
 ${h2_single_mac}  d4:ae:52:c9:c5:35
