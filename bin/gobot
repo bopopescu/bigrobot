@@ -46,6 +46,7 @@ def test_and_install_package():
                 'pycrypto': 'Crypto',
                 'paramiko': 'paramiko',
                 'scp': 'scp',
+                'pexpect': 'pexpect',
                 'robotframework': 'robot',
                 # 'robotframework-ride': 'robotide',
                 # 'pep8': '???',  # not possible to test import pep8 package
