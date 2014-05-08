@@ -1,0 +1,32 @@
+# Topology description is in YAML format - see http://en.wikipedia.org/wiki/YAML
+#
+# c<n>: Controllers
+# s<n>: Switches
+# h<n>: Hosts (including bare metal)
+# mn  : Mininet server
+
+c1:
+    ip: 10.192.97.1
+c2:
+    ip: 10.192.97.2
+        
+# Dell S4810
+s1:
+    ip: 10.192.88.90
+
+# Quanta LY2
+s2:
+    ip: 10.192.88.85
+
+tg1:
+  platform: 'ixia'
+  chassis_ip: 10.192.85.151
+  tcl_server_ip: 10.194.64.172
+  tcl_server_port: 8009
+  ix_version: '7.10'
+  set_init_ping: false
+  ports:
+    a:
+      name: 4/3
+    b:
+      name: 4/20   
