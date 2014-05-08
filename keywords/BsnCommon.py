@@ -1528,6 +1528,11 @@ class BsnCommon(object):
         n = t.node(node)
         return n.sudo(*args, **kwargs)
 
+    def console(self, node, *args, **kwargs):
+        t = test.Test()
+        n = t.node(node)
+        return n.console(*args, **kwargs)
+
     def cli_content(self, node, *args, **kwargs):
         t = test.Test()
         n = t.node(node)

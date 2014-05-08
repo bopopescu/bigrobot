@@ -400,7 +400,9 @@ def test_command(*args):
         exclude_tags.append('skipped')
     else:
         exclude_tags = ['skipped']
-    print("test_case_names: %s" % args.test)
+
+    if args.test:
+        print("test_case_names: %s" % args.test)
 
     # Comparable to command options:
     #   pybot --loglevel=debug \

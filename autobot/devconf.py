@@ -97,14 +97,14 @@ class DevConf(object):
             self.expect_exception(None, "Login failure", soft_error=True)
             raise
         except TimeoutException:
-            helpers.warn("Login failure: Timed out during SSH connnect"
+            helpers.warn("Login failure: Timed out during '%s' connect"
                          " to device %s. Try to log in manually to see"
-                         " what the error is." % self._host)
+                         " what the error is." % (self._protocol, self._host))
             self.expect_exception(None, "Login timed out")
         except:
             if hasattr(self.conn, 'buffer'):
-                self.expect_exception(None, "Unexpected SSH login exception",
-                                      soft_error=True)
+                self.expect_exception(None, "Unexpected '%s' login exception"
+                                      % self._protocol, soft_error=True)
             else:
                 helpers.warn("Unexpected SSH login exception in %s"
                              % (sys.exc_info()[0]))
@@ -167,14 +167,17 @@ class DevConf(object):
 
     def expect_exception(self, prompt=None, descr="No description",
                          soft_error=False):
+        _buffer = None
+        if self.conn:
+            _buffer = '\n' + self.conn.buffer.__str__()
         msg = ("==== Expect error (Start) ====\n"
                "Error descr  : %s\n"
                "Expect prompt: %s\n"
-               "Expect buffer:\n"
-               "%s\n"
+               "Expect buffer: %s\n"
                "==== Expect error (End) ===="
-               % (descr, self.prompt_str(prompt), self.conn.buffer.__str__()))
-        helpers.test_error(msg, soft_error)
+               % (descr, self.prompt_str(prompt), _buffer))
+        helpers.log(msg)
+        helpers.test_error("Devconf expect exception", soft_error)
 
     def expect(self, prompt=None, timeout=None, quiet=False, level=4):
         """
@@ -200,7 +203,6 @@ class DevConf(object):
 
         try:
             ret_val = self.conn.expect(prompt)
-
             self.last_result = {'content': self.conn.response}
             if not quiet:
                 helpers.log("Expect content:\n%s%s"
@@ -215,6 +217,8 @@ class DevConf(object):
             raise
         if timeout: self.timeout()
 
+        helpers.log("Expect prompt matched (%s, '%s')"
+                    % (ret_val[0], helpers.re_match_str(ret_val[1])))
         return ret_val
 
     def waitfor(self, prompt, timeout=None, quiet=False, level=4):
@@ -243,7 +247,7 @@ class DevConf(object):
                         % self.prompt_str(prompt), level=level)
 
         try:
-            self.conn.waitfor(prompt)
+            ret_val = self.conn.waitfor(prompt)
 
             self.last_result = { 'content': self.conn.response }
             if not quiet:
@@ -259,6 +263,11 @@ class DevConf(object):
                                   soft_error=True)
             raise
         if timeout: self.timeout()
+
+        helpers.log("Expect prompt matched (%s, '%s')"
+                    % (ret_val[0], helpers.re_match_str(ret_val[1])))
+        return ret_val
+
 
     def cmd(self, cmd, quiet=False, mode=None, prompt=None,
             timeout=None, level=5):
@@ -541,7 +550,7 @@ class MininetDevConf(DevConf):
     :param topology: str, in the form 'tree,4,2'
     """
     def __init__(self, name=None, host=None, user=None, password=None,
-                 controller=None, controller2=None, topology=None,
+                 controller=None, controller2=None, port=None, topology=None,
                  openflow_port=None, timeout=None, protocol='ssh',
                  debug=0, is_start_mininet=True):
 
@@ -557,6 +566,7 @@ class MininetDevConf(DevConf):
         self.state = 'stopped'  # or 'started'
         super(MininetDevConf, self).__init__(host, user, password, name=name,
                                              timeout=timeout,
+                                             port=port,
                                              protocol=protocol,
                                              debug=debug)
         if not is_start_mininet:
