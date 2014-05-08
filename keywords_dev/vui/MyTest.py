@@ -33,6 +33,15 @@ class MyTest(object):
         c = t.controller()
         helpers.scp_put(c.ip(), '/etc/hosts', '/tmp/12345/1234')
 
+    def test_scp_get_bulk(self):
+        t = test.Test()
+        c = t.controller()
+        helpers.scp_get(c.ip(),
+                        remote_file='/var/log',
+                        local_path='/tmp',
+                        user='recovery',
+                        password='bsn')
+
     def passing_kwargs_additions(self, arg_kw1=None, arg_kw2=None):
         helpers.log("arg_kw1: %s" % arg_kw1)
         helpers.log("arg_kw2: %s" % arg_kw2)

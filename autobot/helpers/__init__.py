@@ -1100,25 +1100,42 @@ def _createSSHClient(server, user, password, port=22):
 
 
 def scp_put(server, local_file, remote_path,
-            user='admin', password='adminadmin'):
+            user='admin', password='adminadmin', recursive=True):
+    """
+    Example:
+        helpers.scp_put(c.ip(),
+                        local_file='/etc/hosts',
+                        remote_path='/tmp/12345/1234')
+    Limitations: Does not support wildcards.
+    """
     ssh = _createSSHClient(server, user, password)
     s = SCPClient(ssh.get_transport())
 
     # !!! FIXME: Catch conditions where file/path are not found
     # log("scp put local_file=%s remote_path=%s" % (local_file, remote_path))
     log("SSH copy source (%s) to destination (%s) " % (local_file, remote_path))
-    s.put(local_file, remote_path, recursive=True)
+    s.put(local_file, remote_path, recursive=recursive)
 
 
 def scp_get(server, remote_file, local_path,
             user='admin', password='adminadmin', recursive=True):
+    """
+    Example:
+        helpers.scp_get(c.ip(),
+                        remote_file='/var/log',
+                        local_path='/tmp',
+                        user='recovery',
+                        password='bsn')
+
+    Limitations: Does not support wildcards.
+    """
     ssh = _createSSHClient(server, user, password)
     s = SCPClient(ssh.get_transport())
 
     # !!! FIXME: Catch conditions where file/path are not found
     # log("scp put remote_file=%s local_path=%s" % (remote_file, local_path))
     log("SSH copy source (%s) to destination (%s) " % (remote_file, local_path))
-    s.get(remote_file, local_path)
+    s.get(remote_file, local_path, recursive=recursive)
 
 
 def run_cmd(cmd, cwd=None, ignore_stderr=False, shell=True, quiet=False):

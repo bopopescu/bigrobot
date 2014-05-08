@@ -26,7 +26,7 @@ Test host ping
 
 Test scp command
     [Tags]  skipped
-    test scp
+    test scp get bulk
 
 Test bash delete tag
     [Tags]  skipped
