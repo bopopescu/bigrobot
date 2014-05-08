@@ -21,6 +21,8 @@ import sys
 import re
 import socket
 import paramiko
+import os
+import pexpect
 from paramiko.client import SSHClient
 from paramiko.ssh_exception import BadHostKeyException, \
                                    AuthenticationException, \
@@ -108,9 +110,67 @@ class BsnCommon(object):
             #     status, msg = helpers.run_cmd(cmd, shell=True)
             # - Name tarbar using the test_descr (be sure to convert
             #   whitespace to underscore).
-            helpers.log("Collecting information for node '%s' (%s)"
-                        % (node, self.get_node_ip(node)))
-
+            if re.match(r'c\d+', node):
+                helpers.log("Collecting information for Controller node '%s' (%s)"
+                            % (node, self.get_node_ip(node)))
+                output_dir = helpers.bigrobot_log_path_exec_instance()
+                helpers.log("Outpput dir for var logs : %s" % output_dir)
+                # sys.exit(1)
+                temp_dir = test_descr.replace(' ', '_')
+                show_cmd_out_file = output_dir + '/' + temp_dir + '_' + node + '/shw_cmd_out.txt'
+                d = os.path.dirname(show_cmd_out_file)
+                if not os.path.exists(d):
+                    os.makedirs(d)
+                out_file = open(show_cmd_out_file, 'w')
+                cmdlist = [
+                           'show running-config details',
+                           'show debug counters',
+                           'show bvssetting',
+                           'show cluster details',
+                           'show switch all details',
+                           'show switch all interface',
+                           'show switch all interface properties',
+                           'show lacp',
+                           'show lag',
+                           'show link',
+                           'show port-group',
+                           'show fabric warn',
+                           'show fabric error',
+                           'show tenant',
+                           'show vns',
+                           'show endpoint',
+                           'show attachment-points',
+                           'show router',
+                           'show segment-interface',
+                           'show tenant-interface',
+                           'show forwarding',
+                           'show forwarding internal',
+                           'show vft',
+                           'show debug events',
+                           ]
+                for cmd in cmdlist:
+                        helpers.log("running cmd : %s" % cmd)
+                        content = self.config(node, cmd)
+                        out_file.write(content['content'])
+                        out_file.write('\n')
+                helpers.log("Success running all debug Show cmds!!!!")
+                out_file.close()
+                scpChild = pexpect.spawn('scp -o "UserKnownHostsFile /dev/null" -o "StrictHostKeyChecking no" -r recovery@%s:/var/log/* %s/.'
+                                         % (self.get_node_ip(node), d))
+                # Fetch the floodlight logs and dump them in techsupport
+                opt = scpChild.expect (['password:', 'yes/no'])
+                if opt == 1:
+                    scpChild.sendline('yes')
+                    scpChild.expect('password')
+                password = 'bsn'
+                scpChild.sendline (password)
+                scpChild.wait()
+                helpers.log("Success SCPing all the var logs contents from Controller %s!!" % self.get_node_ip(node))
+                # Generate a tar file of the output
+                tar_file = temp_dir + '_' + node + ".tar.gz"
+                output_dir = d
+                subprocess.Popen(['tar', '-pczf', tar_file, output_dir])
+                helpers.log('Tech support present in tar file %s' % tar_file)
 
     def pause(self, msg=None):
         """
