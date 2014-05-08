@@ -34,7 +34,7 @@ class DevConf(object):
         self._platform = None
         self.conn = None
         self.last_result = None
-        self.mode = 'cli'
+        self._mode = 'cli'
         self.is_prompt_changed = False
 
         self._timeout = timeout if timeout else 30
@@ -54,6 +54,11 @@ class DevConf(object):
         # Aliases
         self.set_prompt = self.conn.set_prompt
         self.get_prompt = self.conn.get_prompt
+
+    def mode(self, new_mode=None):
+        if new_mode:
+            self._mode = new_mode
+        return self._mode
 
     def connect(self):
         try:
@@ -111,7 +116,7 @@ class DevConf(object):
             raise
 
         # Reset mode to 'cli' as default
-        self.mode = 'cli'
+        self._mode = 'cli'
         self.conn = conn
 
 
@@ -347,25 +352,25 @@ class BsnDevConf(DevConf):
                                          timeout=timeout,
                                          protocol=protocol,
                                          debug=debug)
-        self.mode_before_bash = None
+        self._mode_before_bash = None
 
     def is_cli(self):
-        return self.mode == 'cli'
+        return self.mode() == 'cli'
 
     def is_enable(self):
-        return self.mode == 'enable'
+        return self.mode() == 'enable'
 
     def is_config(self):
-        return self.mode == 'config'
+        return self.mode() == 'config'
 
     def is_bash(self):
-        return self.mode == 'bash'
+        return self.mode() == 'bash'
 
     def exit_bash_mode(self, new_mode):
-        self.mode = self.mode_before_bash
+        self.mode(self._mode_before_bash)
         helpers.log("Switching from bash to %s mode" % new_mode, level=5)
         super(BsnDevConf, self).cmd('exit', mode='bash', quiet=True)
-        helpers.log("Current mode is %s" % self.mode)
+        helpers.log("Current mode is %s" % self.mode())
 
     def _cmd(self, cmd, quiet=False, mode='cmd', prompt=None,
              timeout=None, level=5):
@@ -427,15 +432,15 @@ class BsnDevConf(DevConf):
         elif mode == 'bash':
             if self.is_cli() or self.is_enable() or self.is_config():
                 if self.is_cli():
-                    self.mode_before_bash = 'cli'
+                    self._mode_before_bash = 'cli'
                     helpers.log("Switching from cli to %s mode" % mode,
                                 level=level)
                 elif self.is_enable():
-                    self.mode_before_bash = 'enable'
+                    self._mode_before_bash = 'enable'
                     helpers.log("Switching from enable to %s mode" % mode,
                                 level=level)
                 elif self.is_config():
-                    self.mode_before_bash = 'config'
+                    self._mode_before_bash = 'config'
                     helpers.log("Switching from config to %s mode" % mode,
                                 level=level)
 
@@ -445,11 +450,11 @@ class BsnDevConf(DevConf):
                     # Supports BSN controllers, BSN SwitchLight
                     bash_cmd = "debug bash"
                 super(BsnDevConf, self).cmd(bash_cmd,
-                                            mode=self.mode_before_bash,
+                                            mode=self._mode_before_bash,
                                             quiet=True, level=level)
 
-        self.mode = mode
-        # helpers.log("Current mode is %s" % self.mode, level=level)
+        self.mode(mode)
+        # helpers.log("Current mode is %s" % self.mode(), level=level)
 
         if not quiet:
             helpers.log("Execute command on '%s': '%s'" % (self.name(), cmd),

@@ -709,8 +709,9 @@ class Test(object):
 
     def dev_console(self, node):
         """
-        Telnet to a BSN controller or switch console. Try to put the device in
-        CLI mode, or die trying...
+        Telnet to a BSN controller or switch console. First step is to exit
+        out of whichever mode the console is currently in, then try to put
+        the device in CLI mode, or die trying...
 
         Returns a DevConf object since console is essentially an "Expect"
         session and not a full blown node.
@@ -750,6 +751,8 @@ class Test(object):
             match = n_console.expect(prompt=[prompt_login])
             login()
 
+        # Set the device mode to CLI
+        n_console.mode('cli')
         n_console.cli('show version')
         return n_console
 
