@@ -707,6 +707,55 @@ class Test(object):
         c.rest.request_session_cookie()
         return self.node(node)
 
+    def dev_console(self, node):
+        """
+        Telnet to a BSN controller or switch console. First step is to exit
+        out of whichever mode the console is currently in, then try to put
+        the device in CLI mode, or die trying...
+
+        Returns a DevConf object since console is essentially an "Expect"
+        session and not a full blown node.
+        """
+        t = self
+        n = t.node(node)
+        n_console = n.console()
+
+        prompt_login = r'.*login:.*$'
+        prompt_password = r'[Pp]assword:.*'
+
+        user = n.user()
+        password = n.password()
+        helpers.log("Console user:%s password:%s" % (user, password))
+
+        # This regex should match prompts from BSN controllers and switches.
+        prompt_device_cli = r'[\r\n\x07]+(\w+(-?\w+)?\s?@?)?[\-\w+\.:/]+(?:\([^\)]+\))?(:~)?[>#$] ?$'
+
+        def login():
+            helpers.log("Found the login prompt. Sending user name.")
+            n_console.send(user)
+            match = n_console.expect(prompt=prompt_password)
+            if match[0] == 0:
+                helpers.log("Found the password prompt. Sending password.")
+                n_console.send(password)
+                match = n_console.expect(prompt=prompt_device_cli)
+
+        n_console.send('')
+
+        # Match login or CLI prompt.
+        match = n_console.expect(prompt=[prompt_login, prompt_device_cli])
+        if match[0] == 0:
+            login()  # Found login prompt. Attempt to authenticate.
+        elif match[0] == 1:
+            helpers.log("Found the device prompt. Exiting system.")
+            n_console.send('logout')
+            match = n_console.expect(prompt=[prompt_login])
+            login()
+
+        # Set the device mode to CLI
+        n_console.mode('cli')
+        n_console.cli('show version')
+        return n_console
+
     def initialize(self):
         """
         Initializes the test topology. This should be called prior to test case

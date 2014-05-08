@@ -916,6 +916,11 @@ class Ixia(object):
 
         # Create Traffic item with flows:
         traffic_stream1 = []
+        for topo in self._topology:
+            self.ix_stop_hosts(topo)
+            helpers.log('Successfuly Stopped Hosts on Topology : %s ' % topo)
+        helpers.log('Sleeps 3 sec for Hosts to be Stopped')
+        time.sleep(3)
         if no_arp == 'True':
             helpers.log('Adding Stream with Ethernet devices as no_arp is True!!!')
             self._arp_check = False

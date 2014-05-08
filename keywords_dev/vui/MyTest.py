@@ -33,6 +33,15 @@ class MyTest(object):
         c = t.controller()
         helpers.scp_put(c.ip(), '/etc/hosts', '/tmp/12345/1234')
 
+    def test_scp_get_bulk(self):
+        t = test.Test()
+        c = t.controller()
+        helpers.scp_get(c.ip(),
+                        remote_file='/var/log',
+                        local_path='/tmp',
+                        user='recovery',
+                        password='bsn')
+
     def passing_kwargs_additions(self, arg_kw1=None, arg_kw2=None):
         helpers.log("arg_kw1: %s" % arg_kw1)
         helpers.log("arg_kw2: %s" % arg_kw2)
@@ -521,13 +530,15 @@ vui@Vuis-MacBook-Pro$
         os1.sudo('cat /etc/shadow')
 
     def test_console(self, node):
+        """
+        Telnet to a BSN controller or switch console. Try to put the device in
+        CLI mode, or die trying...
+        """
         t = test.Test()
-        n = t.node(node)
-        n_console = n.console()
-        n_console.expect(r'Escape character.*[\r\n]')
-        n_console.send('')
-        n_console.expect(r'Big Virtual Switch Appliance.*[\r\n]')
-        n_console.expect(r'login:')
+        con = t.dev_console(node)
+        con.bash("w")
+        con.sudo("cat /etc/shadow")
+        con.enable("show running-config")
 
     def test_console2(self, node):
         t = test.Test()
