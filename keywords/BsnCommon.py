@@ -115,7 +115,7 @@ class BsnCommon(object):
             #     status, msg = helpers.run_cmd(cmd, shell=True)
             # - Name tarbar using the test_descr (be sure to convert
             #   whitespace to underscore).
-            if re.match(r'c\d+', node):
+            if helpers.is_controller(node):
                 helpers.log("Collecting information for Controller node '%s' (%s)"
                             % (node, self.get_node_ip(node)))
                 output_dir = helpers.bigrobot_log_path_exec_instance()
@@ -154,11 +154,10 @@ class BsnCommon(object):
                            'show debug events',
                            ]
                 for cmd in cmdlist:
-                        helpers.log("running cmd : %s" % cmd)
                         content = self.config(node, cmd)
                         out_file.write(content['content'])
                         out_file.write('\n')
-                helpers.log("Success running all debug Show cmds!!!!")
+                helpers.log("Successfully run all debug Show cmds!!!!")
                 out_file.close()
                 scpChild = pexpect.spawn('scp -o "UserKnownHostsFile /dev/null" -o "StrictHostKeyChecking no" -r recovery@%s:/var/log/* %s/.'
                                          % (self.get_node_ip(node), d))
@@ -170,7 +169,7 @@ class BsnCommon(object):
                 password = 'bsn'
                 scpChild.sendline (password)
                 scpChild.wait()
-                helpers.log("Success SCPing all the var logs contents from Controller %s!!" % self.get_node_ip(node))
+                helpers.log("Successfully copied the debug logs on %s!!" % self.get_node_ip(node))
                 # Generate a tar file of the output
                 tar_file = temp_dir + '_' + node + ".tar.gz"
                 output_dir = d
