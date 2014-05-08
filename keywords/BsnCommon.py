@@ -1634,6 +1634,50 @@ class BsnCommon(object):
         n = t.node(node)
         return n.ip()
 
+    def get_all_nodes(self):
+        """
+        Get the names of all nodes used in the test suite.
+
+        Return Value:  List of node names, e.g., ['c1', 'c2', 's1', etc.]
+        """
+        t = test.Test()
+        nodes = t.topology().keys()
+        helpers.debug("Nodes used in test suite: %s" % nodes)
+        return nodes
+
+    def get_all_controller_nodes(self):
+        """
+        Get the names of all controller nodes used in the test suite.
+
+        Return Value:  List of controller node names, e.g., ['c1', 'c2', etc.]
+        """
+        t = test.Test()
+        nodes = [n for n in t.topology().keys() if helpers.is_controller(n)]
+        helpers.debug("Controller nodes used in test suite: %s" % nodes)
+        return nodes
+
+    def get_all_switch_nodes(self):
+        """
+        Get the names of all switch nodes used in the test suite.
+
+        Return Value:  List of switch node names, e.g., ['s1', 's2', etc.]
+        """
+        t = test.Test()
+        nodes = [n for n in t.topology().keys() if helpers.is_switch(n)]
+        helpers.debug("Switch nodes used in test suite: %s" % nodes)
+        return nodes
+
+    def get_all_host_nodes(self):
+        """
+        Get the names of all host nodes used in the test suite.
+
+        Return Value:  List of host node names, e.g., ['h1', 'h2', etc.]
+        """
+        t = test.Test()
+        nodes = [n for n in t.topology().keys() if helpers.is_host(n)]
+        helpers.debug("Host nodes used in test suite: %s" % nodes)
+        return nodes
+
     def get_next_mac(self, *args, **kwargs):
         """
         Contributor: Mingtao Yang
