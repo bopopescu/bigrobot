@@ -1,7 +1,7 @@
 s1:
   console:
     ip: cs-rack10
-    protocol: telnet
+    #protocol: telnet
     port: 6010
   set_session_ssh: false
   set_init_ping: false
