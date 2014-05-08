@@ -397,13 +397,13 @@ T21 Escaping special characters in quoted strings
 
 T22 no debug rest in config-session submode
 	${session_id} =  Cli Get Session Hash
-        Cli Run  master  enable
-        Cli Run  master  config
-        Cli Run  master  session ${session_id}
-        Cli Run and Verify Output  master
-        ...  no debug rest
-        ...  Warning: submode exited due to deleted object
-        ...  flag=False
+	Cli Run  master  enable
+	Cli Run  master  config
+	Cli Run  master  session ${session_id}
+	Cli Run and Verify Output  master
+	...  no debug rest
+	...  Warning: submode exited due to deleted object
+	...  flag=False
 	[Tags]  BSC-5116  session
 
 T23 show this in config-session submode
