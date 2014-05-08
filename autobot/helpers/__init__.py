@@ -677,6 +677,22 @@ def is_str(data):
     return isinstance(data, str)
 
 
+def is_re_pattern(data):
+    """Verify if the input is a valid Python regular expression pattern.
+       Matches <type '_sre.SRE_Pattern'>
+    """
+    SRE_PATTERN_TYPE = type(re.compile(''))
+    return type(data) is SRE_PATTERN_TYPE
+
+
+def is_re_match(data):
+    """Verify if the input is a valid Python regular expression match.
+       Matches <type '_sre.SRE_Match'>
+    """
+    SRE_MATCH_TYPE = type(re.match('', ''))
+    return type(data) is SRE_MATCH_TYPE
+
+
 def is_json(data):
     """
     Verify if the input is a valid JSON string.
@@ -727,11 +743,38 @@ def from_yaml(yaml_str):
     """
     return yaml.load(yaml_str)
 
+
 def to_yaml(data):
     """
     Convert a Python dict to YAML-formatted string.
     """
     return yaml.dump(data)
+
+
+def re_pattern_str(data):
+    """
+    Convert a regular expression pattern to readable value (string).
+    Matches <type '_sre.SRE_Pattern'>
+    """
+    if is_re_pattern(data):
+        return data.pattern
+    else:
+        environment_failure("'%s' is not a regex pattern" % data)
+
+
+def re_match_str(data):
+    """
+    Convert a regular expression match to readable value (string).
+    Matches <type '_sre.SRE_Match'>
+    """
+    if is_re_match(data):
+        s = data.group()
+        s = s.replace('\n', "\\n")
+        s = s.replace('\r', "\\r")
+        return s
+    else:
+        environment_failure("'%s' is not a regex match" % data)
+
 
 def get_path(filename):
     """
@@ -1057,25 +1100,42 @@ def _createSSHClient(server, user, password, port=22):
 
 
 def scp_put(server, local_file, remote_path,
-            user='admin', password='adminadmin'):
+            user='admin', password='adminadmin', recursive=True):
+    """
+    Example:
+        helpers.scp_put(c.ip(),
+                        local_file='/etc/hosts',
+                        remote_path='/tmp/12345/1234')
+    Limitations: Does not support wildcards.
+    """
     ssh = _createSSHClient(server, user, password)
     s = SCPClient(ssh.get_transport())
 
     # !!! FIXME: Catch conditions where file/path are not found
     # log("scp put local_file=%s remote_path=%s" % (local_file, remote_path))
     log("SSH copy source (%s) to destination (%s) " % (local_file, remote_path))
-    s.put(local_file, remote_path, recursive=True)
+    s.put(local_file, remote_path, recursive=recursive)
 
 
 def scp_get(server, remote_file, local_path,
             user='admin', password='adminadmin', recursive=True):
+    """
+    Example:
+        helpers.scp_get(c.ip(),
+                        remote_file='/var/log',
+                        local_path='/tmp',
+                        user='recovery',
+                        password='bsn')
+
+    Limitations: Does not support wildcards.
+    """
     ssh = _createSSHClient(server, user, password)
     s = SCPClient(ssh.get_transport())
 
     # !!! FIXME: Catch conditions where file/path are not found
     # log("scp put remote_file=%s local_path=%s" % (remote_file, local_path))
     log("SSH copy source (%s) to destination (%s) " % (remote_file, local_path))
-    s.get(remote_file, local_path)
+    s.get(remote_file, local_path, recursive=recursive)
 
 
 def run_cmd(cmd, cwd=None, ignore_stderr=False, shell=True, quiet=False):
