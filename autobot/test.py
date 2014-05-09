@@ -714,18 +714,41 @@ class Test(object):
         c.rest.request_session_cookie()
         return self.node(node)
 
-    def dev_console(self, node):
+    def dev_console(self, node, modeless=False):
         """
-        Telnet to a BSN controller or switch console. First step is to exit
-        out of whichever mode the console is currently in, then try to put
-        the device in CLI mode, or die trying...
+        Telnet to the console of a BSN controller or switch.
+
+        To use this feature, you need to define the console for a node in the
+        topo file. E.g.,
+
+            s1:
+              console:
+                ip: cs-rack10
+                port: 6010
+
+        Then:
+            t = test.Test()
+            con = t.dev_console(node)
+            con.bash("w")
+            con.sudo("cat /etc/shadow")
+            con.enable("show running-config")
+
+        How it works:
+        - It attempts to exit out of whichever mode the console is currently
+           in, then try to put the device into CLI mode, or die trying...
+        - If modeless=True, just return the console handle as is and not
+          atttempt to log in. The user can decide how to control the console
+          session (i.e.,  the user is on his own).
 
         Returns a DevConf object since console is essentially an "Expect"
-        session and not a full blown node.
+        session and not a full blown node object.
         """
         t = self
         n = t.node(node)
         n_console = n.console()
+
+        if modeless:
+            return n_console
 
         prompt_login = r'.*login:.*$'
         prompt_password = r'[Pp]assword:.*'
