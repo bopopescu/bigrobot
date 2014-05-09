@@ -42,30 +42,30 @@ s5:
   password: adminadmin
 
 h1:
-  ip: 10.210.144.21
+  ip: 10.210.144.51
   user: root
   password: bsn
 h2:
-  ip: 10.210.144.22
+  ip: 10.210.144.52
   user: root
   password: bsn
 
 h3:
-  ip: 10.210.144.23
+  ip: 10.210.144.53
   user: root
   password: bsn
 
 h4:
-  ip: 10.210.144.24
+  ip: 10.210.144.54
   user: root
   password: bsn
 
 h5:
-  ip: 10.210.144.25
+  ip: 10.210.144.55
   user: root
   password: bsn
 
 h6:
-  ip: 10.210.144.26
+  ip: 10.210.144.56
   user: root
   password: bsn
