@@ -350,7 +350,7 @@ Verify SFP Type:1GBASE-T Vendor:HotLava Systems Model:HLTA1G2A
 Verify SFP Type:1GBASE-T Vendor:Arista Networks Model:SFP-1G-T
     #Enable specific link
     cli enable interface  s1  ${core_d4810_14}
-    Sleep  45
+    Sleep  90
     #Verify inteface has indeed come up
     verify interface state  s1  ${core_d4810_14}  up
     #Verify BigTap Policy is installed
@@ -364,7 +364,7 @@ Verify SFP Type:1GBASE-T Vendor:Arista Networks Model:SFP-1G-T
     verify results  a  b  transmitted_frame_rate  received_valid_frame_rate    
     stop traffic  ${stream}
     cli disable interface  s1  ${core_d4810_14}
-    Sleep  30
+    Sleep  90
     #Verify inteface has indeed gone down
     verify interface state  s1  ${core_d4810_14}  down        
     [Tags]  l2  1GBASE-T  arista 
