@@ -542,9 +542,16 @@ class Test(object):
             if not password:
                 password = self.switch_password()
             n = a_node.SwitchNode(node, ip, user, password, t)
+        elif device_type == 'host':
+            helpers.log("Initializing host '%s'" % node)
+            if not user:
+                user = self.host_user()
+            if not password:
+                password = self.host_password()
+            n = a_node.HostNode(node, ip, user, password, t)
         else:
             helpers.environment_failure("You can only spawn nodes for device"
-                                        " types: 'controller', 'switch'")
+                                        " types: 'controller', 'switch', 'host'")
         return n
 
     def node_connect(self, node, user=None, password=None,

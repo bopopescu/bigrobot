@@ -119,12 +119,16 @@ os.environ['IS_GOBOT'] = 'True'
 
 helpers.bigrobot_log_path(default='.')
 if helpers.bigrobot_suite():
-    helpers.bigrobot_log_path_exec_instance(default="%s/%s_%s"
-                                            % (helpers.bigrobot_log_path(),
-                                               helpers.bigrobot_suite(),
-                                               helpers.ts_local()))
+    helpers.bigrobot_log_path_exec_instance_relative(
+                default="%s_%s"
+                % (helpers.bigrobot_suite(), helpers.ts_local()))
 else:
-    helpers.bigrobot_log_path_exec_instance(helpers.bigrobot_log_path())
+    helpers.bigrobot_log_path_exec_instance_relative(
+                default="<bigrobot_suite>")
+helpers.bigrobot_log_path_exec_instance(
+            default="%s/%s"
+            % (helpers.bigrobot_log_path(),
+               helpers.bigrobot_log_path_exec_instance_relative()))
 
 if helpers.bigrobot_suite():
     _topo_p = helpers.bigrobot_suite() + ".physical.topo"

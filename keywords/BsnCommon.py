@@ -22,8 +22,6 @@ import os
 import re
 import socket
 import paramiko
-import os
-import pexpect
 from paramiko.client import SSHClient
 from paramiko.ssh_exception import BadHostKeyException, \
                                    AuthenticationException, \
@@ -31,6 +29,8 @@ from paramiko.ssh_exception import BadHostKeyException, \
 from Exscript.protocols import SSH2
 from Exscript import Account
 from robot.libraries.BuiltIn import BuiltIn
+import autobot.utils as br_utils
+from keywords.Host import Host
 
 
 class BsnCommon(object):
@@ -93,88 +93,111 @@ class BsnCommon(object):
 
     def show_test_topology_params(self):
         t = test.Test()
-        helpers.log("Test topology params: %s" % helpers.prettify(t.topology_params()))
+        helpers.log("Test topology params: %s"
+                    % helpers.prettify(t.topology_params()))
 
     def expr(self, s):
         result = eval(s)
         helpers.log("Express '%s' evaluated to '%s'" % (s, result))
         return result
 
+    def controller_postmortem(self, node, server, user, password, dest_path,
+                              test_descr=None):
+        t = test.Test()
+
+        if not test_descr:
+            test_descr = "no_test_case_descr"
+        temp_dir = test_descr.replace(' ', '_')
+        dest_path += '/' + temp_dir
+
+        h = t.node_spawn(ip=server, user=user, password=password,
+                         device_type='host')
+        h.sudo('mkdir -p %s' % dest_path)
+
+        helpers.log("Collecting information for '%s' controller" % node)
+        output_dir = helpers.bigrobot_log_path_exec_instance()
+        show_cmd_file = (output_dir + '/' + temp_dir + '_' + node +
+                         '/show_cmd_out.txt')
+        d = os.path.dirname(show_cmd_file)
+        if not os.path.exists(d):
+            os.makedirs(d)
+        fh = open(show_cmd_file, 'w')
+        cmdlist = [
+                   'show running-config details',
+                   'show debug counters',
+                   'show bvssetting',
+                   'show cluster details',
+                   'show switch all details',
+                   'show switch all interface',
+                   'show switch all interface properties',
+                   'show lacp',
+                   'show lag',
+                   'show link',
+                   'show port-group',
+                   'show fabric warn',
+                   'show fabric error',
+                   'show tenant',
+                   'show vns',
+                   'show endpoint',
+                   'show attachment-points',
+                   'show router',
+                   'show segment-interface',
+                   'show tenant-interface',
+                   'show forwarding',
+                   'show forwarding internal',
+                   'show vft',
+                   'show debug events',
+                   ]
+        for cmd in cmdlist:
+            content = self.config(node, cmd)
+            fh.write(content['content'])
+            fh.write('\n')
+        helpers.log("Successfully run all debug commands. Saved to %s."
+                    % show_cmd_file)
+        fh.close()
+
+        helpers.scp_put(server, show_cmd_file, dest_path, user, password)
+
+        Host().bash_scp(node,
+                        source='/var/log/floodlight/*',
+                        dest='%s@%s:%s' % (user, server, dest_path),
+                        password=password, timeout=60)
+        helpers.log("Successfully copied all debug logs on %s to %s:%s"
+                    % (node, server, dest_path))
+
+        # Make sure that all log files are readable.
+        h.sudo('chmod -R +r %s' % dest_path)
+
     def base_test_postmortem(self, test_descr=None):
         t = test.Test()
 
+        server = 'jenkins-w9.bigswitch.com'
+        tester = helpers.get_env('USER')  # individual who executed the script
+        user = 'root'
+        password = 'bsn'
+        dest_path_rel = ("%s/%s" %
+                         (tester,
+                          helpers.bigrobot_log_path_exec_instance_relative()))
+        dest_path = '/var/www/regression_logs/%s' % dest_path_rel
+        dest_url = 'http://%s/regression_logs/%s' % (server, dest_path_rel)
+
         helpers.log("Test case '%s' failed. Performing postmortem."
                     % test_descr)
+
+        helpers.log("Creating directory on log archiver %s:%s"
+                    % (server, dest_path))
         for node in t.topology():
-            # Do postmortem thingy here...
-            # - Save output file(s) to bigrobot log directory. The log path is:
-            #     bigrobot_path = helpers.bigrobot_log_path_exec_instance()
-            # - Look at https://github.com/bigswitch/t6-misc/blob/master/t6-support/run_show_cmds.py
-            # - Execute the command using helpers.run_cmd(), e.g.,
-            #     cmd = 'cd <bigrobot_log>; <path>/ run_show_cmds.py'
-            #     status, msg = helpers.run_cmd(cmd, shell=True)
-            # - Name tarbar using the test_descr (be sure to convert
-            #   whitespace to underscore).
             if helpers.is_controller(node):
-                helpers.log("Collecting information for Controller node '%s' (%s)"
-                            % (node, self.get_node_ip(node)))
-                output_dir = helpers.bigrobot_log_path_exec_instance()
-                helpers.log("Outpput dir for var logs : %s" % output_dir)
-                # sys.exit(1)
-                temp_dir = test_descr.replace(' ', '_')
-                show_cmd_out_file = output_dir + '/' + temp_dir + '_' + node + '/shw_cmd_out.txt'
-                d = os.path.dirname(show_cmd_out_file)
-                if not os.path.exists(d):
-                    os.makedirs(d)
-                out_file = open(show_cmd_out_file, 'w')
-                cmdlist = [
-                           'show running-config details',
-                           'show debug counters',
-                           'show bvssetting',
-                           'show cluster details',
-                           'show switch all details',
-                           'show switch all interface',
-                           'show switch all interface properties',
-                           'show lacp',
-                           'show lag',
-                           'show link',
-                           'show port-group',
-                           'show fabric warn',
-                           'show fabric error',
-                           'show tenant',
-                           'show vns',
-                           'show endpoint',
-                           'show attachment-points',
-                           'show router',
-                           'show segment-interface',
-                           'show tenant-interface',
-                           'show forwarding',
-                           'show forwarding internal',
-                           'show vft',
-                           'show debug events',
-                           ]
-                for cmd in cmdlist:
-                        content = self.config(node, cmd)
-                        out_file.write(content['content'])
-                        out_file.write('\n')
-                helpers.log("Successfully run all debug Show cmds!!!!")
-                out_file.close()
-                scpChild = pexpect.spawn('scp -o "UserKnownHostsFile /dev/null" -o "StrictHostKeyChecking no" -r recovery@%s:/var/log/* %s/.'
-                                         % (self.get_node_ip(node), d))
-                # Fetch the floodlight logs and dump them in techsupport
-                opt = scpChild.expect (['password:', 'yes/no'])
-                if opt == 1:
-                    scpChild.sendline('yes')
-                    scpChild.expect('password')
-                password = 'bsn'
-                scpChild.sendline (password)
-                scpChild.wait()
-                helpers.log("Successfully copied the debug logs on %s!!" % self.get_node_ip(node))
-                # Generate a tar file of the output
-                tar_file = temp_dir + '_' + node + ".tar.gz"
-                output_dir = d
-                subprocess.Popen(['tar', '-pczf', tar_file, output_dir])
-                helpers.log('Tech support present in tar file %s' % tar_file)
+                self.controller_postmortem(node,
+                                           server=server,
+                                           user=user, password=password,
+                                           dest_path=dest_path,
+                                           test_descr=test_descr)
+        helpers.log("Debug logs are available at:\n%s\nor %s:%s\n\n"
+                    "Note: Files are removed after 30 days unless you touch"
+                    " the file 'KEEP_FOREVER' in the directory.%s"
+                    % (dest_url, server, dest_path,
+                       br_utils.end_of_output_marker()))
 
     def pause_on_fail(self, keyword=None, msg=None):
         """
