@@ -8,23 +8,33 @@
 c1:
     ip: 10.192.97.1
 c2:
-    ip: 10.192.97.2
+    ip: 10.192.97.2    
 
+# Quanta LB9 1G Switch
 s1:
-    ip: 10.192.75.196
+    ip: 10.192.88.80
 
+# Quanta LY2 10G Switch
 s2:
+    ip: 10.192.88.85  
+
+# Accton AS4600-54T 1G Switch
+s3:
     ip: 10.192.75.192
 
-s3:
-    ip: 10.192.75.193
-
+# Accton AS5610-52X 10G Switch
 s4:
     ip: 10.192.75.194
 
+# Accton AS5710-52X 10G Switch
 s5:
-    ip: 10.192.75.195
+    ip: 10.192.75.199
 
+# Dell S4810
+s6:
+    ip: 10.192.88.90
+
+    
 tg1:
   platform: 'ixia'
   chassis_ip: 10.192.85.151
@@ -34,56 +44,26 @@ tg1:
   set_init_ping: false
   ports:
     a:
-      name: 3/11
+      name: 1/3
     b:
+      name: 1/4
+    c:
+      name: 4/3
+    d:
+      name: 4/4
+    e:
       name: 2/11
-
-
-
-#s1:
-#    ip: 10.192.88.80
-#    console_ip: cs-rack11
-#    console_port: 6003    
-
-#s2:
-#    ip: 10.192.88.81
-#    console_ip: cs-rack11
-#    console_port: 6004
-
-#s3:
-#    ip: 10.192.88.82
-#    console_ip: cs-rack11
-#    console_port: 6002
-
-#s4:
-#    ip: 10.192.88.83
-#    console_ip: cs-rack11
-#    console_port: 6011
-
-#s5:
-#    ip: 10.192.88.84
-#    console_ip: cs-rack11
-#    console_port: 6013
-
-#s6:
-#    ip: 10.192.88.85
-#    console_ip: cs-rack11
-#    console_port: 6012
-
-#s7:
-#    ip: 10.192.88.86
-#    console_ip: cs-rack11
-#    console_port: 6005
-
-#tg1:
-#  platform: 'ixia'
-#  chassis_ip: 10.192.85.151
-#  tcl_server_ip: 10.194.64.172
-#  tcl_server_port: 8009
-#  ix_version: '7.10'
-#  set_init_ping: false
-#  ports:
-#    a:
-#      name: 1/3
-#    b:
-#      name: 1/16
+    f:
+      name: 2/12
+    g:
+      name: 4/23
+    h:
+      name: 4/24
+    i:
+      name: 4/21
+    j:
+      name: 4/22
+    k:
+      name: 4/19
+    l:
+      name: 4/20                              
