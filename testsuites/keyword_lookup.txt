@@ -1,5 +1,6 @@
 *** Setting ***
 Documentation     This suite loads all available keyword libraries which comes with Robot Framework and also BSN production. It is intended for loading into RIDE (GUI) for keyword lookup.
+# Robot keyword libraries
 Library           Collections.py
 Library           Dialogs.py
 Library           OperatingSystem.py
@@ -9,16 +10,22 @@ Library           Screenshot.py
 Library           String.py
 Library           Telnet.py
 Library           XML.py
-Library           keywords/BsnCommon.py
-Library           keywords/Host.py
+# BSN keyword libraries
 Library           keywords/AppController.py
-Library           keywords/Controller.py
 Library           keywords/BigTap.py
 Library           keywords/BigWire.py
+Library           keywords/BsnCommon.py
+Library           keywords/Controller.py
+Library           keywords/Host.py
 Library           keywords/Ixia.py
+Library           keywords/IxiaBigtap.py
+Library           keywords/KVMOperations.py
 Library           keywords/Mininet.py
 Library           keywords/SwitchLight.py
 Library           keywords/T5.py
+Library           keywords/T5L3.py
+Library           keywords/T5Openstack.py
+Library           keywords/T5Utilities.py
 Library           keywords/ThirdParty.py
 
 *** Test Case ***

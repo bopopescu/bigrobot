@@ -124,6 +124,10 @@ class HaControllerNode(object):
         n = self.t.controller(self.logical_name(), resolve_mastership=True)
         return n.ip()
 
+    def alias(self):
+        n = self.t.controller(self.logical_name(), resolve_mastership=True)
+        return n.alias()
+
     def node_id(self):
         n = self.t.controller(self.logical_name(), resolve_mastership=True)
         return n.node_id()

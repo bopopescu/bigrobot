@@ -1724,6 +1724,24 @@ class BsnCommon(object):
         n = t.node(node)
         return n.ip()
 
+    def get_node_alias(self, node):
+        """
+        Get the alias of a node
+
+        Input: logical node name, e.g., 's1', 's2', etc.
+
+        Return Value:  node alias (e.g., 'spine0', 'leaf1-a'). See
+        https://bigswitch.atlassian.net/wiki/display/QA/Topology+Descriptions+in+BigRobot
+        for the list of supported aliases.
+        """
+        t = test.Test()
+        n = t.node(node)
+        val = n.alias()
+        if helpers.is_list(val):
+            return val[0]
+        else:
+            return val
+
     def get_all_nodes(self):
         """
         Get the names of all nodes used in the test suite.
