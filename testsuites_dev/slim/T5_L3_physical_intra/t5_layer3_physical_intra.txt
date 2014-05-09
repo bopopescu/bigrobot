@@ -13,197 +13,239 @@ Library         keywords/T5Platform.py
 Library	        Collections.py
 Library         keywords/Ixia.py
 Library			keywords/SwitchLight.py
-Resource		testsuites/T5/T5_L3_physical_intra/t5_layer3_physical_intra_variables.txt
+Resource		testsuites/T5/L3/T5_L3_physical_intra/t5_layer3_physical_intra_variables.txt
 Resource		testsuites/T5/t5_dualleaf_three_rack_physical_resource.txt
 
 
 * Test Cases
 Intra tenant L3 untagged traffic with dynamic endpoints same rack
 	L3 intra tenant same rack untagged with dynamic endpoints
-	[Tags]					skipped	smoke				sanity			
+	[Tags]								sanity			
 
 Intra tenant L3 untagged traffic with dynamic endpoints across rack
 	L3 intra tenant across rack untagged with dynamic endpoints
-	[Tags]			skipped		smoke				sanity	
+	[Tags]			  					sanity	
 
 Intra tenant L3 tagged traffic with dynamic endpoints same rack
 	L3 intra tenant same rack tagged with dynamic endpoints
-	[Tags]			skipped	smoke				sanity			
+	[Tags]								sanity			
 
 Intra tenant L3 tagged traffic with dynamic endpoints across rack
 	L3 intra tenant across rack tagged with dynamic endpoints
-	[Tags]			skipped		smoke				sanity	
+	[Tags]								sanity	
+
+Active and deactivate router interface
+	Active and deactivate router interface
+	[Tags]								sanity	
 
 Intra tenant L3 untagged traffic with static endpoints same rack
 	L3 intra tenant same rack untagged with static endpoints
-	[Tags]					skipped	smoke				sanity			
+	[Tags]								sanity			
 
 Intra tenant L3 untagged traffic with static endpoints across rack
 	L3 intra tenant across rack untagged with static endpoints
-	[Tags]					skipped	smoke				sanity	
+	[Tags]								sanity	
 
 Intra tenant L3 tagged traffic with static endpoints same rack
 	L3 intra tenant same rack tagged with static endpoints
-	[Tags]					skipped	smoke				sanity			
+	[Tags]								sanity			
 
 Intra tenant L3 tagged traffic with static endpoints across rack
 	L3 intra tenant across rack tagged with static endpoints
-	[Tags]					skipped	smoke				sanity	
+	[Tags]								sanity	
 
 Dhcp discover on the same vns as server with dhcp relay enabled
 	L3 intra tenant dhcp relay on same vns as dhcp server with relay enabled
-	[Tags]					skipped	smoke				sanity	
+	[Tags]					 			sanity					dhcp-relay
 
 Dhcp discover on the same vns as server without dhcp relay enabled
 	L3 intra tenant dhcp relay on same vns as dhcp server without relay enabled
-	[Tags]					skipped	smoke				sanity	
+	[Tags]					 			sanity					dhcp-relay	
 
 Intra tenant dhcp relay 
 	L3 intra tenant dhcp relay on same rack
-	[Tags]					skipped	smoke				sanity	
+	[Tags]					 			sanity					dhcp-relay	
 	
 Intra tenant dhcp relay with circuit id
 	L3 intra tenant dhcp relay with circuit id on same rack
-	[Tags]					skipped	smoke				sanity	
+	[Tags]					 			sanity					dhcp-relay	
 
 Intra tenant dhcp relay across rack
 	L3 intra tenant dhcp relay across rack
-	[Tags]					skipped	smoke				sanity	
+	[Tags]					 			sanity					dhcp-relay	
 	
 Intra tenant dhcp relay with circuit id across rack
 	L3 intra tenant dhcp relay with circuit id across rack
-	[Tags]					skipped	smoke				sanity	
+	[Tags]					 			sanity					dhcp-relay	
 
 Delete and Add dhcp relay
 	L3 dhcp request without dhcp relay enabled
-	[Tags]					skipped	sanity	
+	[Tags]					 			sanity					dhcp-relay	
 	
 Move host from one vns to another vns in the same tenant and verify dhcp request is working
-#	Host moved between vns in the same tenant with dhcp request
-	Log								manual untested
-	[Tags]			skipped	manual			untested			feature			
+	manual untested
+	[Tags]				manual-untested			feature					dhcp-relay			
 
 Verify dhcp host is not aged out
 	Verify dhcp host is not being aged out
-#	[Tags]		skipped		feature			
+	[Tags]		 		feature					dhcp-relay			
 
 Dhcp relay with dhcp server configured as static endpoint
 	Dhcp relay with static dhcp server endpoint
-	[Tags]		skipped		feature			
+	[Tags]		 		feature					dhcp-relay			
 	
-
 Add and delete untagged endpoints with existing host
 	L3 add and delete untagged endpoints with existing host
-	[Tags]		skipped		feature	
+	[Tags]		 		feature	
 	
 Add and delete tagged endpoints with existing host
 	L3 add and delete tagged endpoints with existing host
-	[Tags]		skipped		feature	
+	[Tags]		 		feature	
 		
 Change L3 endpoint from untagged to tagged and back		
 	L3 change endpoint from untagged to tagged and back	
-	[Tags]		skipped		feature	
+	[Tags]		 		feature	
 
 Verify L3 endpoint aging
 	Check L3 endpoint aging 
-	[Tags]		skipped		feature	
+	[Tags]		 			feature	
 	
 Verify L3 ttl 1 is not being forwarded
 	Check L3 ttl 1 is dropped
-	[Tags]					skipped	sanity			
+	[Tags]					sanity			
 
 Change router vns ip
 	Change router ip address
-	[Tags]		skipped		feature			
+	[Tags]					feature 	
 
 Delete and add router vns ip
 	Delete and add router vns ip 
-	[Tags]		skipped		feature			
+	[Tags] 					feature			
 
+Set 32bit full mask on vns router ip
+	Set 32bit full mask on vns router ip
+	[Tags]					feature		
+	
 Change tagged endpoint IP address
 	Change tagged host endpoint IP address
-#	[Tags]					skipped	feature		
+	[Tags]					feature		
 
 Configure static endpoint with host showing up on another port
 	Static endpoint with dynamic host showing up on another port
-	[Tags]		skipped		skipped	sanity		
+	[Tags]					skipped	sanity		
 
 Verify subnet mask is properly applied on router vns
 	Verify subnet mask on vns router ip
-	[Tags]		skipped		feature		
+	[Tags]					feature		
 
 Verify vlsm forwarding
 	Verify vlsm forwarding
-	[Tags]		skipped		feature		
+	[Tags]					feature		
 
 Verify split horizon forwarding
 	Verify l3 forwarding on one arm router
-	[Tags]		skipped		feature			manual		
+	[Tags]					feature			manual		
 
 	
 Configure overlapping router IP 	
 	Configure overlapping IP on same tenant across VNS	
-	[Tags]		skipped		feature		
+	[Tags]					feature		
 
 L3 intra tenant traffic between private and public subnet with overlapping IP
-#	L3 intra tenant traffic between private and public subnet with overlapping IP
-	Log								manual untested
-	[Tags]					skipped	feature			manual		
+	manual untested
+	[Tags]						feature			manual-untested		
 	
 Verify host with different IP on vns router is not getting L3 service
-#	Verify host with different IP on vns router is not getting L3 service
-	Log								manual untested
-	[Tags]					skipped	feature			manual		
+	manual passed
+	[Tags]						feature			manual		
 	
 Trigger controller HA failover via CLI
 	Controller HA failover via CLI	
-	[Tags]		skipped		feature			
+	[Tags]				feature			
 	
 Trigger controller HA failover via reboot
 	Controller HA failover via reboot
-	[Tags]		skipped		feature			
+	[Tags]				feature			
 
 Spine reboot
 	Reboot spine0 via CLI
-	[Tags]		skipped		feature			
+	[Tags]				feature			
 
 Leaf reboot
 	Reboot Leaf0 via CLI
-	[Tags]		skipped		feature			
+	[Tags]				feature			
 
 Spine connect and disconnect to controller
 	Connect and Disconnect spine to controller
-#	[Tags]		skipped		feature			
+	[Tags]				feature			
 	
 Leaf connect and disconnect to controller	
 	Connect and disconnect one leaf in dual tor to controller
-#	[Tags]		skipped		feature			
+	[Tags]				feature			
 
 Spine to leaf link flap
 	Flap link between leaf and spine
-#	[Tags]		skipped		feature			
+	[Tags]				feature			
 
 Leaf to host link flap
 	Flap bond interface towards host
-#	[Tags]		skipped		feature			
+	[Tags]				feature			
 	
 Restart ofad process on spine
 	restart ofad on spine
-#	[Tags]	skipped			feature			
+	[Tags]				feature			
 	
 Restart ofad process on leaf	
 	restart ofad on leaf
-#	[Tags]		skipped		feature			
+	[Tags]				feature			
 	
 L3 traffic behavior in headless mode
 	L3 intra tenant traffic behavior in headless mode 
-	Log							manual untested
-	[Tags]			skipped		manual			untested			feature			
+	manual untested
+	[Tags]					manual-untested			feature			
 
 L3 intra tenant traceroute
-	Log							manual untested
-	[Tags]		skipped			manual			untested			feature			
+	manual passed
+	[Tags]					manual				feature			
 		
+Trigger controller HA failover via CLI and verify dhcp-relay is working
+	manual failed
+	[Tags]					manual				feature					dhcp-relay			
+
+Trigger controller HA failover via reboot and verify dhcp-relay is working
+	manual failed
+	[Tags]					manual					feature					dhcp-relay			
+
+Trigger controller HA failover via CLI and verify ecmp is working
+	manual failed
+	[Tags]					manual					feature					ecmp		
+
+Trigger controller HA failover via reboot and verify ecmp is working
+	manual untested
+	[Tags]					manual-untested			feature					ecmp			
+
+Verify dhcp-relay functionality in headless mode
+	manual untested
+	[Tags]					manual-untested			feature					dhcp-relay			
+
+Verify ecmp forwarding in headless mode
+	manual untested
+	[Tags]					manual-untested			feature					ecmp	
+			
+Verify L3 intra tenant forwarding after controller upgrade
+	manual untested
+	[Tags]					manual-untested			feature					
+
+Verify ecmp forwarding after controller upgrade
+	manual untested
+	[Tags]					manual-untested			feature					
+
+Verify dhcp-relay functionality after controller upgrade
+	manual untested
+	[Tags]					manual-untested			feature					
+
+
+	
 	
 * Keywords
 L3 intra tenant same rack untagged with dynamic endpoints
@@ -356,6 +398,57 @@ L3 intra tenant across rack tagged with dynamic endpoints
 	Should Be True  							${loss} == 0		
 	BASH delete route							h1								10.251.3.0/24			10.251.1.1
 	BASH delete route							h3								10.251.1.0/24			10.251.3.1
+
+
+Active and deactivate router interface
+	BASH ifup intf								h1 								bond0
+	BASH ifup intf								h2								bond0
+	BASH ifup intf								h3								bond0
+	BASH ifup intf								h4								bond0
+	BASH ifup intf								h5								bond0
+	BASH ifup intf								h6								bond0	
+	REST add portgroup to vns					X								X1						${leaf0_pc1}			1001
+	REST add portgroup to vns					X								X3						${leaf1_pc1}			1003
+	BASH add tag								h1								bond0					1001
+	BASH add tag								h3								bond0					1003
+	BASH ifup intf								h1								bond0.1001
+	BASH ifup intf								h3								bond0.1003
+	BASH add ip address							h1								10.251.1.11/24			bond0.1001
+	BASH add ip address							h3								10.251.3.11/24			bond0.1003
+	BASH add route								h1								10.251.3.0/24			10.251.1.1
+	BASH add route								h3								10.251.1.0/24			10.251.3.1
+	sleep										5	
+	${loss} = 									BASH ping						h1								10.251.1.1				count=10
+	Should Be True								${loss} < 20
+	${loss} = 									BASH ping						h3								10.251.3.1				count=10
+	Should Be True								${loss} < 20
+	${value} = 									BASH verify arp					h1						10.251.1.1
+	Should Not Be True							${value} 		
+	${value} =									BASH verify arp					h3						10.251.3.1
+	Should Not Be True							${value} 	
+	BASH ping									h1								10.251.3.11				count=10
+	${value} = 									BASH verify arp					h1						10.251.1.1
+	Should Be True								${value} 		
+	${value} =									BASH verify arp					h3						10.251.3.1
+	Should Be True								${value} 		
+	${mac1} = 									BASH get intf mac				h1						bond0.1001
+	${result} =									REST show endpoints mac			${mac1}
+	Should Be True								${result}						
+	${mac2} = 									BASH get intf mac				h3						bond0.1003
+	${result} =									REST show endpoints mac			${mac2}
+	Should Be True								${result}						
+	REST show endpoints		
+	${loss} = 									BASH ping						h1						10.251.3.11 			count=10
+	Should Be True  							${loss} == 0		
+	REST disable router intf					X								X1
+	${loss} = 									BASH ping						h1						10.251.3.11 			count=10
+	Should Be True  							${loss} == 100
+	REST enable	router intf						X								X1
+	${loss} = 									BASH ping						h1						10.251.3.11 			count=10
+	Should Be True  							${loss} < 20
+	BASH delete route							h1								10.251.3.0/24			10.251.1.1
+	BASH delete route							h3								10.251.1.0/24			10.251.3.1
+
 
 
 L3 intra tenant same rack untagged with static endpoints
