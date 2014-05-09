@@ -11,7 +11,6 @@ Library         keywords/T5.py
 Library         keywords/T5L3.py
 Library         keywords/T5Platform.py
 Library         keywords/BsnCommonShow.py
-#Library         keywords_dev/slim/SwitchLight.py
 Library	        Collections.py
 Library         keywords/Ixia.py
 Resource		testsuites_dev/slim/T5_L3_physical_inter/t5_layer3_physical_inter_variables.txt
