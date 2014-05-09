@@ -80,6 +80,61 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
             #return c.rest.content()
             return True
         
+        
+    def rest_enable_router_intf(self, tenant, vnsname):
+        '''Create vns router interface via command "virtual-router vns interface"
+        
+            Input:
+                `tenant`        tenant name
+                `vnsname`       vns interface name which must be similar to VNS
+                `ipaddr`        interface ip address
+                `netmask`       vns subnet mask
+             PATCH http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant%5Bname%3D%22X%22%5D/virtual-router/vns-interfaces%5Bvns-name%3D%22X1%22%5D {"active": true}           
+                Return: true if configuration is successful, false otherwise
+        '''    
+        t = test.Test()
+        c = t.controller('master')
+        
+        helpers.test_log("Input arguments: tenant = %s vnsname = %s  " % (tenant, vnsname))
+        
+        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/virtual-router/vns-interfaces[vns-name="%s"]' % (tenant, vnsname)
+        try:
+            c.rest.patch(url, {"active": True})
+        except:
+            return False
+            #helpers.test_failure(c.rest.error())
+        else: 
+            #helpers.test_log("Output: %s" % c.rest.result_json())
+            #return c.rest.content()
+            return True
+ 
+    def rest_disable_router_intf(self, tenant, vnsname):
+        '''Create vns router interface via command "virtual-router vns interface"
+        
+            Input:
+                `tenant`        tenant name
+                `vnsname`       vns interface name which must be similar to VNS
+                `ipaddr`        interface ip address
+                `netmask`       vns subnet mask
+             PATCH http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant%5Bname%3D%22X%22%5D/virtual-router/vns-interfaces%5Bvns-name%3D%22X1%22%5D {"active": false}           
+                Return: true if configuration is successful, false otherwise
+        '''    
+        t = test.Test()
+        c = t.controller('master')
+        
+        helpers.test_log("Input arguments: tenant = %s vnsname = %s  " % (tenant, vnsname))
+        
+        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/virtual-router/vns-interfaces[vns-name="%s"]' % (tenant, vnsname)
+        try:
+            c.rest.patch(url, {"active": False})
+        except:
+            return False
+            #helpers.test_failure(c.rest.error())
+        else: 
+            #helpers.test_log("Output: %s" % c.rest.result_json())
+            #return c.rest.content()
+            return True    
+        
    
     def rest_add_tenant_routers_intf_to_system(self, tenant):        
         '''Attach tenant router to system tenant"
