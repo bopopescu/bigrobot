@@ -103,6 +103,12 @@ class BsnCommon(object):
 
     def controller_postmortem(self, node, server, user, password, dest_path,
                               test_descr=None):
+        """
+        Executes the equivalence of
+        https://github.com/bigswitch/t6-misc/blob/master/t6-support/run_show_cmds.py
+        Save the show commands and logs (e.g., /var/log/floodlight/*) to the
+        archiver.
+        """
         t = test.Test()
 
         if not test_descr:
@@ -171,6 +177,7 @@ class BsnCommon(object):
     def base_test_postmortem(self, test_descr=None):
         t = test.Test()
 
+        helpers.log("Postmortem begins for test case '%s'" % test_descr)
         server = 'jenkins-w9.bigswitch.com'
         tester = helpers.get_env('USER')  # individual who executed the script
         user = 'root'
