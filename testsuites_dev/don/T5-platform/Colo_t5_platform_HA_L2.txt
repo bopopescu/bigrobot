@@ -14,23 +14,17 @@ Library          keywords/T5.py
 Library	         keywords/T5L3.py
 Library	         keywords/T5Platform.py
 Library	         keywords/T5Utilities.py
+Library	         keywords/SwitchLight.py
+Library		     keywords/Ixia.py
 
 * Variables
 @{spineList}  00:00:04:00:01:00:00:01  00:00:04:00:01:00:00:02
-@{leafList}  00:00:04:00:02:00:00:01  00:00:04:00:02:00:00:02  00:00:04:00:02:00:00:03
+@{leafList}  00:00:04:00:02:00:00:01  00:00:04:00:02:00:00:02  00:00:04:00:02:00:00:03  00:00:04:00:02:00:00:04  00:00:04:00:02:00:00:05  00:00:04:00:02:00:00:06
 
 
 * Test Case 
 
-Test
-	[Tags]	temp2
-	gather forwarding	arp-table
-	gather forwarding	ep-table
-	gather forwarding	l3-cidr-table
-	gather forwarding	l3-host-table
-	gather forwarding	my-station-table
-	gather forwarding	router-ip-table
-	
+
 Test
 	[Tags] 	temp
 	rest configure testpath	test-name=myTest1	timeout=600		src-tenant=autoT1	src-vns=v1	src-ip=10.10.10.51	dst-tenant=autoT1	dst-vns=v1	dst-ip=10.10.10.53	ip-protocol=icmp
@@ -42,11 +36,35 @@ Test
 	#${returnVal}=	rest verify testpath timeout  myTest2
 	#Should be true 	${returnVal}
 					
+Temp
+	[Tags]  setup
+	Configure 3-Rack/Dual-Leaf/2-Spine/2-Host Setup For Physical Topology 
+	bash execute command  leaf0-a  ofad-ctl autoneg 33
+	bash execute command  leaf0-a  ofad-ctl autoneg 34
+	bash execute command  leaf1-a  ofad-ctl autoneg 33
+	bash execute command  leaf1-a  ofad-ctl autoneg 34
+	bash execute command  leaf2-a  ofad-ctl autoneg 33
+	bash execute command  leaf2-a  ofad-ctl autoneg 34
+	
+	bring up h1 bond0
+	sleep  2
+	bring up h2 bond0
+	sleep  2
+	bring up h3 bond0
+	sleep  2
+	bring up h4 bond0
+	sleep  2
+	bring up h5 bond0
+	sleep  2
+	bring up h6 bond0
+	sleep  2
+	Configure 2 Tenants with Different VLAN properties
+	Verify Connectivity in 3-Rack/Dual-Leaf/2-Spine/2-Host Physical Topology 
 
 Configure Multiple L2 Tenants With Single VNS & Failover
 	[Tags]	sanity  feature
-	Configure 3-Rack/Dual-Leaf/2-Spine/2-Host Setup For Physical Topology 
-	Configure 2 Tenants with Different VLAN properties
+	#Configure 3-Rack/Dual-Leaf/2-Spine/2-Host Setup For Physical Topology 
+	#Configure 2 Tenants with Different VLAN properties
 	Verify Connectivity in 3-Rack/Dual-Leaf/2-Spine/2-Host Physical Topology 
 	Reboot the master node & verify fabric integrity
 	Verify Connectivity in 3-Rack/Dual-Leaf/2-Spine/2-Host Physical Topology 
@@ -190,15 +208,20 @@ Configure 3-Rack/Dual-Leaf/2-Spine/2-Host Setup For Physical Topology
    Set Test Variable  ${h1_intf1}  ethernet17
    Set Test Variable  ${h2_intf0}  ethernet19
    Set Test Variable  ${h2_intf1}  ethernet19
-   Set Test Variable  ${h3_intf0}  ethernet21
-   Set Test Variable  ${h3_intf1}  ethernet21
-   Set Test Variable  ${h4_intf0}  ethernet17
-   Set Test Variable  ${h4_intf1}  ethernet18
-   Set Test Variable  ${h5_intf0}  ethernet19
-   Set Test Variable  ${h5_intf1}  ethernet20
-   Set Test Variable  ${h6_intf0}  ethernet21
-   Set Test Variable  ${h6_intf1}  ethernet22
-   
+   Set Test Variable  ${h3_intf0}  ethernet17
+   Set Test Variable  ${h3_intf1}  ethernet17
+   Set Test Variable  ${h4_intf0}  ethernet19
+   Set Test Variable  ${h4_intf1}  ethernet19
+   Set Test Variable  ${h5_intf0}  ethernet17
+   Set Test Variable  ${h5_intf1}  ethernet17
+   Set Test Variable  ${h6_intf0}  ethernet19
+   Set Test Variable  ${h6_intf1}  ethernet19
+   Set Test Variable  ${esx1_intf0}  ethernet21
+   Set Test Variable  ${esx1_intf1}  ethernet21
+   Set Test Variable  ${esx2_intf0}  ethernet23
+   Set Test Variable  ${esx2_intf1}  ethernet23
+   Set Test Variable  ${esx4_intf0}  ethernet21
+   Set Test Variable  ${esx4_intf1}  ethernet21
    
    rest add portgroup  p1
    rest add interface to portgroup  leaf0-a  ${h1_intf0}  p1
@@ -209,21 +232,31 @@ Configure 3-Rack/Dual-Leaf/2-Spine/2-Host Setup For Physical Topology
    rest add interface to portgroup  leaf0-b  ${h2_intf1}  p2
    rest add portgroup lacp  p2
    rest add portgroup  p3
-   rest add interface to portgroup  leaf0-a  ${h3_intf0}  p3
-   rest add interface to portgroup  leaf0-b  ${h3_intf1}  p3
+   rest add interface to portgroup  leaf1-a  ${h3_intf0}  p3
+   rest add interface to portgroup  leaf1-b  ${h3_intf1}  p3
    rest add portgroup lacp  p3
    rest add portgroup  p4
    rest add interface to portgroup  leaf1-a  ${h4_intf0}  p4
-   rest add interface to portgroup  leaf1-a  ${h4_intf1}  p4
+   rest add interface to portgroup  leaf1-b  ${h4_intf1}  p4
    rest add portgroup lacp  p4
    rest add portgroup  p5
-   rest add interface to portgroup  leaf1-a  ${h5_intf0}  p5
-   rest add interface to portgroup  leaf1-a  ${h5_intf1}  p5
+   rest add interface to portgroup  leaf2-a  ${h5_intf0}  p5
+   rest add interface to portgroup  leaf2-b  ${h5_intf1}  p5
    rest add portgroup lacp  p5
    rest add portgroup  p6
-   rest add interface to portgroup  leaf1-a  ${h6_intf0}  p6
-   rest add interface to portgroup  leaf1-a  ${h6_intf1}  p6
+   rest add interface to portgroup  leaf2-a  ${h6_intf0}  p6
+   rest add interface to portgroup  leaf2-b  ${h6_intf1}  p6
    rest add portgroup lacp  p6
+   rest add portgroup  p7
+   rest add interface to portgroup  leaf0-a  ${esx1_intf0}  p7
+   rest add interface to portgroup  leaf0-b  ${esx1_intf1}  p7
+   rest add portgroup lacp  p7
+   rest add portgroup  p8
+   rest add interface to portgroup  leaf0-a  ${esx2_intf0}  p8
+   rest add interface to portgroup  leaf0-b  ${esx2_intf1}  p8
+   rest add portgroup lacp  p8
+   
+   
    sleep  10
 
 
@@ -348,3 +381,39 @@ T5 Platform Test Teardown
 	stop floodlight monitor
    
    
+bring up h1 bond0
+	bash network restart  h1
+	bash add tag  h1  bond0  10 
+	bash add ip address  h1  10.10.10.51/24  bond0.10
+	bash ifup intf  h1  bond0.10
+	bash add route  h1  20.20.20.0/24  10.10.10.100  bond0.10
+bring up h2 bond0
+	bash network restart  h2
+	bash add tag  h2  bond0  10 
+	bash add ip address  h2  10.10.10.52/24  bond0.10
+	bash ifup intf  h2  bond0.10
+	bash add route  h2  20.20.20.0/24  10.10.10.100  bond0.10
+bring up h3 bond0
+	bash network restart  h3
+	bash add tag  h3  bond0  10 
+	bash add ip address  h3  10.10.10.53/24  bond0.10
+	bash ifup intf  h3  bond0.10
+	bash add route  h3  20.20.20.0/24  10.10.10.100  bond0.10
+bring up h4 bond0
+	bash network restart  h4
+	bash add tag  h4  bond0  20 
+	bash add ip address  h4  20.20.20.54/24  bond0.20
+	bash ifup intf  h4  bond0.20
+	bash add route  h4  10.10.10.0/24  20.20.20.100  bond0.20
+bring up h5 bond0
+	bash network restart  h5
+	bash add tag  h5  bond0  20 
+	bash add ip address  h5  20.20.20.55/24  bond0.20
+	bash ifup intf  h5  bond0.20
+	bash add route  h5  10.10.10.0/24  20.20.20.100  bond0.20
+bring up h6 bond0
+	bash network restart  h6
+	bash add tag  h6  bond0  20 
+	bash add ip address  h6  20.20.20.56/24  bond0.20
+	bash ifup intf  h6  bond0.20
+	bash add route  h6  10.10.10.0/24  20.20.20.100  bond0.20

@@ -3679,7 +3679,7 @@ class T5Platform(object):
             helpers.log("*** key is - %s" % key)
             if re.match(r'All', line):
                 helpers.log("Don't need to loop through exec commands- %s" % line)
-                break
+                continue
             
             if re.match(r'For', line) or line == "Commands:":
                 helpers.log("Ignoring line - %s" % line)
@@ -3696,7 +3696,20 @@ class T5Platform(object):
                 helpers.log("Ignore line %s" % line)
                 num = num - 1
                 continue
+           
+            # Ignoring sub-commands under 'debug'
+            if key == "bash" or key == "cassandra-cli" or key == "cli" or key == "cli-backtrace" or key == "cli-batch" or key == "description" or key == "netconfig" or key == "python" or key == "rest":
+                helpers.log("Ignore line %s" % line)
+                num = num - 1
+                continue            
             
+            # Ignoring commands which are either disruptive or are only one level commands
+            # These commands would have already been displayed with corresponding help in a previous top-level hierarchy
+            if key == "reauth" or key == "echo" or key == "help" or key == "logout" or key == "ping" or key == "watch":
+                helpers.log("Ignore line %s" % line)
+                num = num - 1
+                continue
+                        
             # for interface related commands, only iterate through "all" and one specific interface
             if (re.match(r' show(.*)interface(.*)', string)) or (re.match(r' clear(.*)interface-counter(.*)interface', string)):
                 if key != 'leaf0a-eth1' and key != 'all':
@@ -3865,7 +3878,7 @@ class T5Platform(object):
                 helpers.log("Ignoring line - %s" % line)
                 num = num - 1
                 continue
-            if key == "debug" or key == "reauth" or key == "echo" or key == "help" or key == "history" or key == "logout" or key == "ping" or key == "show" or key == "watch":
+            if key == "debug" or key == "reauth" or key == "echo" or key == "help" or key == "history" or key == "logout" or key == "ping" or key == "watch":
                 helpers.log("Ignore line %s" % line)
                 num = num - 1
                 continue
@@ -3924,11 +3937,15 @@ class T5Platform(object):
 
             if re.match(r'All', line):
                 helpers.log("Don't need to loop through exec commands- %s" % line)
-                break
+                continue
 
 
             if key == '<cr>':
                 helpers.log(" complete CLI show command: ******%s******" % string)
+                if re.match(r'boot', string):
+                    helpers.log("Ignoring line - %s" % line)
+                continue
+                            
                 c.config(string)
 
                 prompt_re = r'[\r\n\x07]?[\w-]+\(([\w-]+)\)[#>] '
