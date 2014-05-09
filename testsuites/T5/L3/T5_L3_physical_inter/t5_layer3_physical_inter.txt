@@ -229,23 +229,23 @@ Restart ofad on spine switch
 
 Controller HA failover with ecmp group
 	manual failed
-	[Tags]			skipped		manual-untested			feature			ecmp	
+	[Tags]			skipped		manual			feature			ecmp	
 		
 Controller HA failover with dhcp-relay
 	manual failed
-	[Tags]			skipped		manual-untested			feature			dhcp-relay			
+	[Tags]			skipped		manual			feature			dhcp-relay			
 
 Active Controller reboot with ecmp group
 	manual failed
-	[Tags]			skipped		manual-untested			feature			ecmp	
+	[Tags]			skipped		manual			feature			ecmp	
 	
 Active Controller reboot with dhcp-relay
 	manual failed
-	[Tags]			skipped		manual-untested			feature			dhcp-relay	
+	[Tags]			skipped		manual			feature			dhcp-relay	
 
 Verify inter tenant L3 traffic is getting drop with null next hop
 	manual untested
-	[Tags]			skipped		manual			feature				
+	[Tags]			skipped		manual-untested			feature				
 
 Restart ofad on leaf switch with ecmp group
 	manual untested
@@ -253,23 +253,23 @@ Restart ofad on leaf switch with ecmp group
 
 Restart ofad on spine with ecmp group
 	manual untested
-	[Tags]			skipped		manual			untested			feature			ecmp	
+	[Tags]			skipped		manual-untested			feature			ecmp	
 
 Restart ofad on leaf with dhcp-relay
 	manual untested
-	[Tags]			skipped		manual			untested			feature			dhcp-relay	
+	[Tags]			skipped		manual-untested			feature			dhcp-relay	
 
 Restart ofad on spine with dhcp-relay
 	manual untested
-	[Tags]			skipped		manual			untested			feature			dhcp-relay	
+	[Tags]			skipped		manual-untested			feature			dhcp-relay	
 	
 Flap member link in a port-group in ecmp group
 	manual untested
-	[Tags]			skipped		manual			untested			solution			ecmp	
+	[Tags]			skipped		manual-untested			solution			ecmp	
 	
 Flap port group in ecmp group
 	manual untested
-	[Tags]			skipped		manual			solution			ecmp
+	[Tags]			skipped		manual-untested			solution			ecmp
 
 inter tenant ecmp forwarding in headless mode
 	manual untested
