@@ -4,8 +4,8 @@
 Documentation    T5 Controller Platform Robustness Test Suite - Physical Testbed
 Suite Setup      T5 base suite setup
 #Suite Teardown   T5 base suite teardown
-#Test Setup       base test setup
-#Test Teardown    base test teardown
+Test Setup       T5 Platform test setup
+Test Teardown    T5 Platform test teardown
 Force Tags       T5Platform  HA  L2
 Library          keywords/BsnCommon.py
 Library          keywords/Mininet.py
@@ -14,7 +14,6 @@ Library          keywords/T5.py
 Library	         keywords/T5L3.py
 Library	         keywords/T5Platform.py
 Library	         keywords/T5Utilities.py
-Library			 keywords_dev/svoora/T5_Scale.py
 
 
 * Variables
@@ -22,30 +21,103 @@ Library			 keywords_dev/svoora/T5_Scale.py
 @{leafList}  00:00:04:00:02:00:00:01  00:00:04:00:02:00:00:02  00:00:04:00:02:00:00:03
 
 
+@{vnsIntIPDict}  v1  10.10.10.100  v2  20.20.20.100  v3  30.30.30.100  v4  40.40.40.100  v5 50.50.50.100  v6 60.60.60.100
+@{v1MemberPGList}   v1  PG   p1  10
+@{v1MemberIntList}  v1  INT  leaf0-a  ethernet33  -1  leaf1-a  ethernet33  -1
+@{v2MemberPGList}   v2  PG   p2  20  p4  20
+@{v2MemberIntList}  v2  INT  leaf0-a  ethernet34  -1  leaf1-a  ethernet34  -1
+@{v3MemberPGList}   v3  PG   p5  30  p6  40
+@{v3MemberIntList}  v3  INT  leaf0-b  ethernet35  -1
+
 * Test Case 
+
+Configure 6/1 Setup - 6 Tenants with 1 VNS Each
+   [Tags]  setup
+   Configure 3-Rack/Dual-Leaf/2-Spine/2-Host Setup For Physical Topology
+   ${vnsIntIPs}=  Create List  v1  10.10.10.100  v2  20.20.20.100  v3  30.30.30.100  v4  40.40.40.100  v5  50.50.50.100  v6  60.60.60.100
+   ${v1MemPGs}=  Create List  v1  PG  p1  10
+   ${v2MemPGs}=  Create List  v2  PG  p2  20
+   ${v3MemPGs}=  Create List  v3  PG  p3  30
+   ${v4MemPGs}=  Create List  v4  PG  p4  40
+   ${v5MemPGs}=  Create List  v5  PG  p5  50
+   ${v6MemPGs}=  Create List  v6  PG  p6  60
+   auto configure tenants	 6  1   ${vnsIntIPs}  ${v1MemPGs}  ${v2MemPGs}  ${v3MemPGs}  ${v4MemPGs}  ${v5MemPGs}  ${v6MemPGs}  
+   
+   
+Configure Hosts for 6/1 Setup
+	[Tags]  setup
+	bash network restart  h1
+	bash add tag  h1  bond0  10 
+	bash add ip address  h1  10.10.10.51/24  bond0.10
+	bash ifup intf  h1  bond0.10
+	bash add route  h1  20.20.20.0/24  10.10.10.100  bond0.10
+	bash add route  h1  30.30.30.0/24  10.10.10.100  bond0.10
+	bash add route  h1  40.40.40.0/24  10.10.10.100  bond0.10
+	bash add route  h1  50.50.50.0/24  10.10.10.100  bond0.10
+
+	bash network restart  h2
+	bash add tag  h2  bond0  20 
+	bash add ip address  h2  20.20.20.52/24  bond0.20
+	bash ifup intf  h2  bond0.20
+	bash add route  h2  10.10.10.0/24  20.20.20.100  bond0.20
+	bash add route  h2  30.30.30.0/24  20.20.20.100  bond0.20
+	bash add route  h2  40.40.40.0/24  20.20.20.100  bond0.20
+	bash add route  h2  50.50.50.0/24  20.20.20.100  bond0.20
+
+	bash network restart  h3
+	bash add tag  h3  bond0  30 
+	bash add ip address  h3  30.30.30.53/24  bond0.30
+	bash ifup intf  h3  bond0.30
+	bash add route  h3  10.10.10.0/24  30.30.30.100  bond0.30
+	bash add route  h3  20.20.20.0/24  30.30.30.100  bond0.30
+	bash add route  h3  40.40.40.0/24  30.30.30.100  bond0.30
+	bash add route  h3  50.50.50.0/24  30.30.30.100  bond0.30
+
+	bash network restart  h4
+	bash add tag  h4  bond0  40 
+	bash add ip address  h4  40.40.40.54/24  bond0.40
+	bash ifup intf  h4  bond0.40
+	bash add route  h4  10.10.10.0/24  40.40.40.100  bond0.40
+	bash add route  h4  20.20.20.0/24  40.40.40.100  bond0.40
+	bash add route  h4  30.30.30.0/24  40.40.40.100  bond0.40
+	bash add route  h4  50.50.50.0/24  40.40.40.100  bond0.40
+	
+	bash network restart  h5
+	bash add tag  h5  bond0  50 
+	bash add ip address  h5  50.50.50.55/24  bond0.50
+	bash ifup intf  h5  bond0.50
+	bash add route  h5  10.10.10.0/24  50.50.50.100  bond0.50
+	bash add route  h5  20.20.20.0/24  50.50.50.100  bond0.50
+	bash add route  h5  30.30.30.0/24  50.50.50.100  bond0.50
+	bash add route  h5  40.40.40.0/24  50.50.50.100  bond0.50
+	
+
+	#vconfig add bond0 10
+	#ifconfig bond0.10 10.10.10.52 netmask 255.255.255.0 up
+	#route add -net 20.20.20.0/24 gw 10.10.10.100 dev bond0.10
+
+Configure Multiple L2 Tenants With Single VNS
+	[Tags]	sanity  feature
+	Configure 3-Rack/Dual-Leaf/2-Spine/2-Host Setup For Physical Topology
+	Configure 2 Tenants with Different VLAN properties
+	Verify Connectivity in 3-Rack/Dual-Leaf/2-Spine/2-Host Physical Topology 
+	
 
 T1 Fabric Robustness During All Switch Reboot & HA Failover
 	[Tags]  robustness
-	${returnVal}=	verify HA with disruption	switchReboot	during	failover  		switch=spine0 leaf0-a leaf0-b leaf1-a
+	${returnVal}=	verify HA with disruption	switchReboot	during	failover  		switch=spine0 spine1 leaf0-a leaf0-b leaf1-a
 	Should be true  ${returnVal}
 
 
 T2 Fabric Robustness During All Switch Reboot & Active Controller Reboot
 	[Tags]  robustness
-	verify HA with disruption	switchReboot	during	activeReboot	switch=spine0 leaf0-a leaf0-b leaf1-a
-
+	${returnVal}=	verify HA with disruption	switchReboot	during	activeReboot	switch=spine0 leaf0-a leaf0-b leaf1-a
+	Should be true  ${returnVal}
+	
 T3 Fabric Robustness During All Switch Reboot & Standby Controller Reboot
 	[Tags]  robustness
-	verify HA with disruption	switchReboot	before	standbyReboot	switch=spine0 leaf0-a leaf0-b leaf1-a
-	
-
-Configure Multiple L2 Tenants With Single VNS & Failover
-	[Tags]	sanity  feature
-	Configure 3-Rack/Dual-Leaf/2-Spine/2-Host Setup For Physical Regression Topology 
-	Configure 2 Tenants with Different VLAN properties
-	Verify Connectivity in 3-Rack/Dual-Leaf/2-Spine/2-Host Physical Regression Topology 
-	Reboot the master node & verify fabric integrity
-	Verify Connectivity in 3-Rack/Dual-Leaf/2-Spine/2-Host Physical Regression Topology 
+	${returnVal}=	verify HA with disruption	switchReboot	during	standbyReboot	switch=spine0 leaf0-a leaf0-b leaf1-a
+	Should be true  ${returnVal}
 
 Verify HA Cluster Formation
    [Tags]  sanity  feature
@@ -88,7 +160,7 @@ Reboot Peer Leaf Switch During Failover & Verify Connectivity
 	Reboot the master node & verify fabric integrity
 
 Stress Configure & Delete Multiple L3 Tenants With Single VNS & Failover
-	[Tags]	stress
+	[Tags]	stress 
 	: FOR    ${Iteration}    IN RANGE    1    26
 	\	Log To Console   \n================ Configure & Delete L3 Tenants & Failover - Iteration ${Iteration} ===============\n
 	\	rest delete tenant  autoT1
@@ -173,16 +245,17 @@ Re-run the election and verify connectivity
    \	Verify Connectivity in 3-Rack/Dual-Leaf/2-Spine/2-Host Physical Regression Topology 
    
 
-Configure 3-Rack/Dual-Leaf/2-Spine/2-Host Setup For Physical Regression Topology 
+
+Configure 3-Rack/Dual-Leaf/2-Spine/2-Host Setup For Physical Topology 
 
    auto configure fabric switch  ${spineList}  ${leafList}  2
    sleep  30
    Set Test Variable  ${h1_intf0}  ethernet17
    Set Test Variable  ${h1_intf1}  ethernet17
-   Set Test Variable  ${h2_intf0}  ethernet18
-   Set Test Variable  ${h2_intf1}  ethernet18
-   Set Test Variable  ${h3_intf0}  ethernet19
-   Set Test Variable  ${h3_intf1}  ethernet19
+   Set Test Variable  ${h2_intf0}  ethernet19
+   Set Test Variable  ${h2_intf1}  ethernet19
+   Set Test Variable  ${h3_intf0}  ethernet21
+   Set Test Variable  ${h3_intf1}  ethernet21
    Set Test Variable  ${h4_intf0}  ethernet17
    Set Test Variable  ${h4_intf1}  ethernet18
    Set Test Variable  ${h5_intf0}  ethernet19
@@ -221,69 +294,62 @@ Configure 3-Rack/Dual-Leaf/2-Spine/2-Host Setup For Physical Regression Topology
 Configure 2 Tenants with Different VLAN properties
    
    Set Test Variable  ${subMask}  24
-   Set Test Variable  ${h1bond10ip}  10.10.10.21
-   Set Test Variable  ${h2bond10ip}	 10.10.10.22
-   Set Test Variable  ${h3bond10ip}	 10.10.10.23
    Set Test Variable  ${vns1ip}  10.10.10.100
-   
-   Set Test Variable  ${h4bond0ip} 	20.20.20.24
-   Set Test Variable  ${h5bond0ip}	20.20.20.25
-   Set Test Variable  ${h6bond0ip}	20.20.20.26
    Set Test Variable  ${vns2ip}  20.20.20.100
-   
-   Set Test Variable  ${h1ip}	192.168.1.20
-   Set Test Variable  ${h2ip}	192.168.1.21
-   Set Test Variable  ${h3ip}	192.168.1.10
-   Set Test Variable  ${h4ip}	192.168.1.11
 
    rest add tenant  autoT1
    rest add vns  autoT1  v1
    rest add portgroup to vns  autoT1  v1  p1  10
    rest add portgroup to vns  autoT1  v1  p2  10
    rest add portgroup to vns  autoT1  v1  p3  10
+   rest add router intf  autoT1  v1
    rest add vns ip  autoT1  v1  ${vns1ip}  ${subMask}
    
    rest add vns  autoT1  v2
    rest add portgroup to vns  autoT1  v2  p4  20
    rest add portgroup to vns  autoT1  v2  p5  20
    rest add portgroup to vns  autoT1  v2  p6  20
+   rest add router intf  autoT1  v2
    rest add vns ip  autoT1  v2  ${vns2ip}  ${subMask}
    
-   #rest add tenant  autoT2
-   #rest add vns  autoT2  v3
-   #rest add interface to vns  autoT2  v3  leaf0-a  ethernet25  -1
-   #rest add interface to vns  autoT2  v3  leaf0-a  ethernet25  -1
-   #rest add interface to vns  autoT2  v3  leaf1-a  ethernet25  -1
-   #rest add interface to vns  autoT2  v3  leaf1-a  ethernet26  -1
+   rest add tenant  autoT2
+   rest add vns  autoT2  v3
+   rest add interface to vns  autoT2  v3  leaf0-a  ethernet33  -1
+   rest add interface to vns  autoT2  v3  leaf0-a  ethernet34  -1
+   rest add interface to vns  autoT2  v3  leaf0-a  ethernet35  -1
+   rest add interface to vns  autoT2  v3  leaf1-a  ethernet33  -1
+   rest add interface to vns  autoT2  v3  leaf1-a  ethernet34  -1
+   rest add interface to vns  autoT2  v3  leaf1-a  ethernet35  -1
 
    sleep  30
-   
+      
 
-Verify Connectivity in 3-Rack/Dual-Leaf/2-Spine/2-Host Physical Regression Topology 
+Verify Connectivity in 3-Rack/Dual-Leaf/2-Spine/2-Host Physical Topology 
 
    Set Test Variable  ${subMask}  24
-   Set Test Variable  ${h1bond10ip}  10.10.10.21
-   Set Test Variable  ${h2bond10ip}	 10.10.10.22
-   Set Test Variable  ${h3bond10ip}	 10.10.10.23
-   Set Test Variable  ${vns1ip}  	 10.10.10.100
+   Set Test Variable  ${h1bond10ip}  10.10.10.51
+   Set Test Variable  ${h2bond10ip}	 10.10.10.52
+   Set Test Variable  ${h3bond10ip}	 10.10.10.53
+   Set Test Variable  ${vns1ip}  10.10.10.100
    
-   Set Test Variable  ${h4bond20ip} 	20.20.20.24
-   Set Test Variable  ${h5bond20ip}		20.20.20.25
-   Set Test Variable  ${h6bond20ip}		20.20.20.26
-   Set Test Variable  ${vns2ip}  		20.20.20.100
+   Set Test Variable  ${h4bond20ip} 	20.20.20.54
+   Set Test Variable  ${h5bond20ip}	20.20.20.55
+   Set Test Variable  ${h6bond20ip}	20.20.20.56
+   Set Test Variable  ${vns2ip}  20.20.20.100
    
    Set Test Variable  ${h1ip}	192.168.1.20
    Set Test Variable  ${h2ip}	192.168.1.21
    Set Test Variable  ${h3ip}	192.168.1.10
    Set Test Variable  ${h4ip}	192.168.1.11
    
+   
    ###	Verify L2 ping between autoT1-v1   
    ${returnVal}=  platform bash ping  h1  ${h2bond10ip}
    Should Be True  ${returnVal}  
    ${returnVal}=  platform bash ping  h1  ${h3bond10ip}
    Should Be True  ${returnVal}  
-   ${returnVal}=  platform bash ping  h2  ${h3bond10ip}
-   Should Be True  ${returnVal}  
+   #${returnVal}=  platform bash ping  h2  ${h3bond10ip}
+   #Should Be True  ${returnVal}  
    
 
    ###	Verify L2 ping between autoT1-v2
@@ -295,19 +361,19 @@ Verify Connectivity in 3-Rack/Dual-Leaf/2-Spine/2-Host Physical Regression Topol
    Should Be True  ${returnVal}   
    
    ###	Verify L3 ping between autoT1-v1 & autoT1-v2
-   ${returnVal}=  platform bash ping  h1  ${h4bond20ip}
-   Should Be True  ${returnVal}
-   ${returnVal}=  platform bash ping  h1  ${h5bond20ip}
-   Should Be True  ${returnVal}
-   ${returnVal}=  platform bash ping  h1  ${h6bond20ip}
-   Should Be True  ${returnVal}
+   #${returnVal}=  platform bash ping  h1  ${h4bond20ip}
+   #Should Be True  ${returnVal}
+   #${returnVal}=  platform bash ping  h1  ${h5bond20ip}
+   #Should Be True  ${returnVal}
+   #${returnVal}=  platform bash ping  h1  ${h6bond20ip}
+   #Should Be True  ${returnVal}
   
-   ${returnVal}=  platform bash ping  h4  ${h2bond10ip}
-   Should Be True  ${returnVal}
-   ${returnVal}=  platform bash ping  h5  ${h2bond10ip}
-   Should Be True  ${returnVal}
-   ${returnVal}=  platform bash ping  h6  ${h2bond10ip}
-   Should Be True  ${returnVal}
+   #${returnVal}=  platform bash ping  h4  ${h2bond10ip}
+   #Should Be True  ${returnVal}
+   #${returnVal}=  platform bash ping  h5  ${h2bond10ip}
+   #Should Be True  ${returnVal}
+   #${returnVal}=  platform bash ping  h6  ${h2bond10ip}
+   #Should Be True  ${returnVal}
    
    
    
@@ -326,13 +392,16 @@ Verify Connectivity in 3-Rack/Dual-Leaf/2-Spine/2-Host Physical Regression Topol
    #Should Be True  ${returnVal}  
    
 
+T5 Platform test setup
+	start floodlight monitor
+
+T5 Platform test teardown 
+	stop floodlight monitor
+	
 T5 base suite setup
-
 	base suite setup
-
-
+	
 T5 base suite teardown   
-
    rest delete tenant  autoT1
    rest delete tenant  autoT2
    auto delete fabric switch  ${spineList}  ${leafList}  2

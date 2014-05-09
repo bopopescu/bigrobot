@@ -20,6 +20,46 @@ import re
 
 class Host(object):
 
+    def bash_scp(self, node, source, dest='.', password='bsn', timeout=180):
+        """
+        Objective:
+        On node, run secure copy a file as defined in source to dest.
+
+        Inputs:
+        | node | controller name as defined in .topo file |
+        | source | the complete file path, in format user@host:/path/file' |
+        | dest | the destination (default is '.') |
+        | password | password used to authenticate (default is 'bsn') |
+        | timeout | how log to wait before timeout (default is 180 seconds) |
+
+        Example:
+        | bash scp | node=c1 | source=bsn@jenkins:/var/lib/jenkins/jobs/bvs\\ master/lastSuccessful/archive/target/appliance/images/bvs/controller-upgrade-bvs-2.0.5-SNAPSHOT.pkg | dest=. |
+        | bash_scp | node=h1 | source=/var/log/floodlight/* | dest=jenkins-w9.bigswitch.com:/var/www/regression_logs/vui/test_mininet_20140509_060230 | password='bsn' | timeout=60 |
+        Return Value:
+        - True if scp succeeds
+        - False if scp fails
+        """
+        t = test.Test()
+        n = t.node(node)
+
+        helpers.log("'%s' - Copying '%s' to '%s'"
+                    % (node, source, dest))
+        n.bash('')
+        n.send('sudo scp -rp'
+               ' -o UserKnownHostsFile=/dev/null'
+               ' -o StrictHostKeyChecking=no %s %s'
+               % (source, dest))
+        n.expect(r'[\r\n].+password: ')
+        n.send(password)
+        try:
+            n.expect(timeout=timeout)
+        except:
+            helpers.log('scp failed')
+            return False
+        else:
+            helpers.log('scp completed successfully')
+            return True
+
     def bash_ping(self, node, dest_ip=None, dest_node=None, *args, **kwargs):
         """
         Perform a ping from the shell. Returns the loss percentage

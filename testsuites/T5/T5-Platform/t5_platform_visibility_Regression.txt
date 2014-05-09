@@ -1,4 +1,4 @@
-== T5 Platform Visibility Test Suite - Physical Colo Test Bed ==
+== T5 Platform Visibility Test Suite - Regression Test Bed ==
 
 * Setting
 Documentation    T5 Controller Platform Test Suite - SPAN Verification
@@ -14,28 +14,41 @@ Library          keywords/T5.py
 Library	         keywords/T5L3.py
 Library	         keywords/T5Platform.py
 Library	         keywords/T5Utilities.py
+Library	         keywords/SwitchLight.py
+Library		     keywords/Ixia.py
+Resource		 testsuites/T5/t5_physical_variables.txt
+
 
 * Variables
-@{spineList}  00:00:04:00:01:00:00:01  00:00:04:00:01:00:00:02
-@{leafList}  00:00:04:00:02:00:00:01  00:00:04:00:02:00:00:02  00:00:04:00:02:00:00:03
+@{spineList}  00:00:00:00:01:00:00:01  00:00:00:00:01:00:00:02
+@{leafList}  00:00:00:00:02:00:00:01  00:00:00:00:02:00:00:02  00:00:00:00:02:00:00:03  00:00:00:00:02:00:00:04  00:00:00:00:02:00:00:05  00:00:00:00:02:00:00:06
+
 
 ${s1SrcSwitch}  leaf0-a
-${s1SrcInt}		ethernet33
+${s1SrcInt}		ethernet25
 ${s1DstSwitch}	leaf0-a
-${s1DstInt}		ethernet35
-${s1PingIP}		192.168.1.54
-${s1VerifyHost}  h3
+${s1DstInt}		ethernet26
+${s1PingIP}		192.168.1.10
+${s1VerifyHost}  h2
 ${s1VerifyInt}	eth1
 
 ${s2SrcSwitch}  leaf0-a
-${s2SrcInt}		ethernet17
+${s2SrcInt}		ethernet48
 ${s2DstSwitch}	leaf0-a
-${s2DstInt}		ethernet35
-${s2PingIP}		20.20.20.56
-${s2VerifyHost}  h3
+${s2DstInt}		ethernet26
+${s2PingIP}		192.168.4.10
+${s2VerifyHost}  h2
 ${s2VerifyInt}	eth1
 ${s2ShutSwitch}  leaf0-b
-${s2ShutInt}  ethernet17
+${s2ShutInt}  ethernet48
+
+${s1IxiaSrcSwitch}  leaf0-a
+${s1IxiaSrcInt}		ethernet24
+${s1IxiaDstSwitch}	leaf0-a
+${s1IxiaDstInt}		ethernet26
+${s1IxiaVerifyHost}  h2
+${s1IxiaVerifyInt}	eth1
+
 
 ${s3SrcSwitch}  leaf0-a
 ${s3SrcInt}		ethernet21
@@ -51,53 +64,45 @@ ${s4DstInt}		ethernet30
 ${s4VerifyHost}  h4
 ${s4VerifyInt}	eth2
 
-
+${stream_name}  a_b_flow
 
 
 * Test Case 
 
 T0 Setup
-	[Tags]  feature
-	bash network restart  h1
-	bash add tag  h1  bond0  10 
-	bash add ip address  h1  10.10.10.51/24  bond0.10
-	bash ifup intf  h1  bond0.10
-	bash add route  h1  20.20.20.0/24  10.10.10.100  bond0.10
-	
-	bash network restart  h2
-	bash add tag  h2  bond0  10 
-	bash add ip address  h2  10.10.10.52/24  bond0.10
-	bash ifup intf  h2  bond0.10
-	bash add route  h2  20.20.20.0/24  10.10.10.100  bond0.10
-	
-	bash network restart  h3
-	bash add tag  h3  bond0  10 
-	bash add ip address  h3  10.10.10.53/24  bond0.10
-	bash ifup intf  h3  bond0.10
-	bash add route  h3  20.20.20.0/24  10.10.10.100  bond0.10
-	
-	
-	bash network restart  h4
-	bash add tag  h4  bond0  20 
-	bash add ip address  h4  20.20.20.54/24  bond0.20
-	bash ifup intf  h4  bond0.20
-	bash add route  h4  10.10.10.0/24  20.20.20.100  bond0.20
-	
-	bash network restart  h5
-	bash add tag  h5  bond0  20 
-	bash add ip address  h5  20.20.20.55/24  bond0.20
-	bash ifup intf  h5  bond0.20
-	bash add route  h5  10.10.10.0/24  20.20.20.100  bond0.20
-	
-	
+	[Tags]  setup
     Configure 3-Rack/Dual-Leaf/2-Spine/2-Host Setup For Physical Topology 
 	Configure 2 VNS with Different VLAN properties
+	bash execute command  leaf0-a  ofad-ctl autoneg 25
+	bash execute command  leaf0-a  ofad-ctl autoneg 26
+	bash execute command  leaf1-a  ofad-ctl autoneg 25
+	bash execute command  leaf1-a  ofad-ctl autoneg 26
+	
+	bring up h1 bond0
+	sleep  2
+	bring up h2 bond0
+	sleep  2
+	bring up h3 bond0
+	sleep  2
+	bring up h4 bond0
+	sleep  2
+	bring up h5 bond0
+	sleep  2
+	bring up h6 bond0
+	sleep  2
+	bring up h1 eth1
+	sleep  2
+	bring up h2 eth1
+	sleep  2
+	bring up h3 eth1
+	sleep  2
+	bring up h4 eth1
+	sleep  2
 	Verify Connectivity in 3-Rack/Dual-Leaf/2-Spine/2-Host Physical Topology 
-
 	
 
 T1 Configure SPAN session for Single interface - Direction Both
-    [Tags]  feature   run2
+    [Tags]  feature
     ${returnVal} =  rest add monitor session	1	${s1SrcSwitch}	${s1SrcInt}	${s1DstSwitch}	${s1DstInt}  direction=both
     Should be true  ${returnVal}
 	${returnVal} =  rest verify monitor session		1  ${s1SrcSwitch}	${s1SrcInt}	${s1DstSwitch}	${s1DstInt}  direction=both
@@ -160,7 +165,7 @@ T6 Delete SPAN session for Single interface - Direction Egress
 
 
 T7 Activate-Deactivate-Activate-Delete SPAN session for Single interface - Direction Both
-    [Tags]  feature  run
+    [Tags]  feature
     ${returnVal} =  rest add monitor session	1	${s1SrcSwitch}	${s1SrcInt}	${s1DstSwitch}	${s1DstInt}  direction=both
     Should be true  ${returnVal}
 	${returnVal} =  rest verify monitor session		1  ${s1SrcSwitch}	${s1SrcInt}	${s1DstSwitch}	${s1DstInt}  direction=both
@@ -185,7 +190,7 @@ T7 Activate-Deactivate-Activate-Delete SPAN session for Single interface - Direc
     
     
 T8 Activate-Deactivate-Activate-Delete SPAN session for Single interface - Direction Ingress
-    [Tags]  feature  run
+    [Tags]  feature 
     ${returnVal} =  rest add monitor session	1	${s1SrcSwitch}	${s1SrcInt}	${s1DstSwitch}	${s1DstInt}  direction=ingress
     Should be true  ${returnVal}
 	${returnVal} =  rest verify monitor session		1  ${s1SrcSwitch}	${s1SrcInt}	${s1DstSwitch}	${s1DstInt}  direction=ingress
@@ -210,7 +215,7 @@ T8 Activate-Deactivate-Activate-Delete SPAN session for Single interface - Direc
 	
 	
 T9 Activate-Deactivate-Activate-Delete SPAN session for Single interface - Direction Egress
-    [Tags]  feature  run
+    [Tags]  feature
     ${returnVal} =  rest add monitor session	1	${s1SrcSwitch}	${s1SrcInt}	${s1DstSwitch}	${s1DstInt}  direction=egress
     Should be true  ${returnVal}
 	${returnVal} =  rest verify monitor session		1  ${s1SrcSwitch}	${s1SrcInt}	${s1DstSwitch}	${s1DstInt}  direction=egress
@@ -260,7 +265,7 @@ T11 Delete SPAN session for Port-Group interface - Direction Both
 
 
 T12 Configure SPAN session for Port-Group interface - Direction Ingress
-    [Tags]  feature
+    [Tags]  feature 
     ${returnVal} =  rest add monitor session	2	${s2SrcSwitch}	${s2SrcInt}	${s2DstSwitch}	${s2DstInt}  direction=ingress
     Should be true  ${returnVal}
 	${returnVal} =  rest verify monitor session		2  ${s2SrcSwitch}	${s2SrcInt}	${s2DstSwitch}	${s2DstInt}  direction=ingress
@@ -298,7 +303,7 @@ T14 Configure SPAN session for Port-Group interface - Direction Egress
 	
 	
 T15 Delete SPAN session for Port-Group interface - Direction Egress
-	[Tags]  feature
+	[Tags]  feature 
 	${returnVal} =  rest delete monitor session  2
     Should be true  ${returnVal}
     ${returnVal} =  rest verify monitor session		2  ${s2SrcSwitch}	${s2SrcInt}	${s2DstSwitch}	${s2DstInt}  direction=egress
@@ -309,79 +314,178 @@ T15 Delete SPAN session for Port-Group interface - Direction Egress
 	rest switch int noshut   ${s2ShutSwitch}  ${s2ShutInt}
 	
 	
+T16 Configure SPAN session for TCP - Direction Both
+	[Tags]  feature 
+
+	${returnVal} =  rest add monitor session  1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	 ${s1IxiaDstSwitch}	 ${s1IxiaDstInt}  direction=both
+    Should be true  ${returnVal}
+	${returnVal} =  rest verify monitor session	 1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	${s1IxiaDstSwitch}	${s1IxiaDstInt}  direction=both
+	Should be true  ${returnVal}
+	rest activate monitor session	1
+	
+	${stream}=  L3 add  flow=a<->b  frame_rate=1000  frame_size=64  name=a_b_flow
+	...			src_mac=00:02:01:00:00:24  dst_mac=00:02:02:00:00:24
+	...			src_ip=100.1.1.1  src_gw=100.1.1.100  dst_ip=100.2.2.2  dst_gw=100.2.2.100	
+	...			protocol=TCP  src_port=8000  dst_port=8500 
+	
+	sleep  3
+	start traffic  ${stream}
+	
+	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	src port 8000 and tcp  IP
+	Should be true  ${returnVal}
+	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	src port 8500 and tcp  IP
+	Should be true  ${returnVal}
+	
+	stop traffic  ${stream}
+	
+
+T17 Configure SPAN session for TCP - Direction Ingress
+	[Tags]  feature
+	${returnVal} =  rest add monitor session  1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	 ${s1IxiaDstSwitch}	 ${s1IxiaDstInt}  direction=ingress
+    Should be true  ${returnVal}
+	${returnVal} =  rest verify monitor session	 1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	${s1IxiaDstSwitch}	${s1IxiaDstInt}  direction=ingress
+	Should be true  ${returnVal}
+	rest activate monitor session	1
+	
+	${stream}=  L3 add  flow=a<->b  frame_rate=1000  frame_size=64  name=a_b_flow
+	...			src_mac=00:02:01:00:00:24  dst_mac=00:02:02:00:00:24
+	...			src_ip=100.1.1.1  src_gw=100.1.1.100  dst_ip=100.2.2.2  dst_gw=100.2.2.100	
+	...			protocol=TCP  src_port=8000  dst_port=8500 
+	
+	sleep  3
+	start traffic  ${stream}
+	
+	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	src port 8000 and tcp  IP
+	Should be true  ${returnVal}
+	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	src port 8500 and tcp  IP
+	Should not be true  ${returnVal}
+	
+	stop traffic  ${stream}
+
+
+T17 Configure SPAN session for TCP - Direction Egress
+	[Tags]  feature 
+	${returnVal} =  rest add monitor session  1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	 ${s1IxiaDstSwitch}	 ${s1IxiaDstInt}  direction=egress
+    Should be true  ${returnVal}
+	${returnVal} =  rest verify monitor session	 1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	${s1IxiaDstSwitch}	${s1IxiaDstInt}  direction=egress
+	Should be true  ${returnVal}
+	rest activate monitor session	1
+	
+	${stream}=  L3 add  flow=a<->b  frame_rate=1000  frame_size=64  name=a_b_flow
+	...			src_mac=00:02:01:00:00:24  dst_mac=00:02:02:00:00:24
+	...			src_ip=100.1.1.1  src_gw=100.1.1.100  dst_ip=100.2.2.2  dst_gw=100.2.2.100	
+	...			protocol=TCP  src_port=8000  dst_port=8500 
+	
+	sleep  3
+	start traffic  ${stream}
+	
+	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	src port 8000 and tcp  IP
+	Should not be true  ${returnVal}
+	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	src port 8500 and tcp  IP
+	Should be true  ${returnVal}
+	
+	stop traffic  ${stream}
+
+	
+T18 Configure SPAN session for TCP - Direction Both
+	[Tags]  skipped
+	${returnVal} =  rest add monitor session  1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	 ${s1IxiaDstSwitch}	 ${s1IxiaDstInt}  direction=both
+    Should be true  ${returnVal}
+	${returnVal} =  rest verify monitor session	 1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	${s1IxiaDstSwitch}	${s1IxiaDstInt}  direction=both
+	Should be true  ${returnVal}
+	rest activate monitor session	1
+	
+	${stream}=  L3 add  flow=a<->b  frame_rate=1000  frame_size=64  name=a_b_flow
+	...			src_mac=00:02:01:00:00:24  dst_mac=00:02:02:00:00:24
+	...			src_ip=100.1.1.1  src_gw=100.1.1.100  dst_ip=100.2.2.2  dst_gw=100.2.2.100	
+	...			protocol=TCP  src_port=8000  dst_port=8500 
+	
+	sleep  3
+	start traffic  ${stream}
+	
+	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	src port 8000 and tcp  IP
+	Should be true  ${returnVal}
+	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	src port 8500 and tcp  IP
+	Should be true  ${returnVal}
+	
+	stop traffic  ${stream}	
 	
 Configure SPAN for a particular source MAC/Port/IP-CIDR
-	[Tags] manual-untested
+	[Tags]  skipped
     manual untested
 
 Configure SPAN for a particular destination MAC/Port/IP-CIDR
-	[Tags] Span manual-untested
+	[Tags]  skipped
     manual untested
 
 Configure SPAN for a particular ether-type/ip protocol/ip-dscp/ip-ecn
-	[Tags] Span manual-untested
+	[Tags]  skipped
     manual untested
 
 Configure SPAN for a particular tenant
-	[Tags] Span manual-untested
+	[Tags]  skipped
     manual untested
     
+Configure SPAN for a particular VNS
+	[Tags]  skipped
+    manual untested
+
 ####### Test Path
     
 Verify test packet path with L2 traffic within a single leaf switch between 2 members from the same tenant
-	[Tags] manual-untested
+	[Tags]  skipped
     manual untested
     
 Verify test packet path with L2 traffic within peer leaf switches between 2 member from the same tenant
-	[Tags] manual-untested
+	[Tags]  skipped
     manual untested
     
 Verify test packet path with L2 traffic between different racks amongst 2 members from the same tenant  
-	[Tags] manual-untested
+	[Tags]  skipped
     manual untested
     
 Verify test packet path with L2 traffic to an unknown destination originating from a tenant which spans across multiple racks
-	[Tags] manual-untested
+	[Tags]  skipped
     manual untested
 
 Verify the updated paths in test packet path with L2 traffic within a single tenant while introducing path failures
-	[Tags] manual-untested
+	[Tags]  skipped
     manual untested
     
 Verify test packet path with L3 traffic within a single leaf switch between 2 members from different tenants
-	[Tags] manual-untested
+	[Tags]  skipped
     manual untested
 
 Verify test packet path with L3 traffic within peer leaf switches between 2 member from different tenants
-	[Tags] manual-untested
+	[Tags]  skipped
     manual untested
 
 Verify test packet path with L3 traffic between different racks amongst 2 members from the different tenants
-	[Tags] manual-untested
+	[Tags]  skipped
     manual untested
     
 Verify test packet path with L3 traffic to an unknown destination originating from a tenant which spans across multiple racks
-	[Tags] manual-untested
+	[Tags]  skipped
     manual untested
     
 Verify the updated paths in test packet path with L3 traffic between multiple tenants while introducing path failures
-	[Tags] manual-untested
+	[Tags]   skipped
     manual untested
 
 Verify all the CLI options for the test packet path command
-	[Tags] manual-untested
+	[Tags]   skipped
     manual untested
     
 Flow Trace on ARP, Ping, UDP & TCP
-	[Tags] manual-untested
+	[Tags]  skipped
     manual untested
     
 Flow Trace on MAC, VLAN, IP, L4-Port
-	[Tags] manual-untested
+	[Tags]  skipped
     manual untested
     
 Flow Trace on src-endpoint, dest-endpoint, src-l4-port, dst-l4-port
-	[Tags] manual-untested
+	[Tags]  skipped
     manual untested
     
     
@@ -403,20 +507,6 @@ Configure 3-Rack/Dual-Leaf/2-Spine/2-Host Setup For Physical Topology
 
    auto configure fabric switch  ${spineList}  ${leafList}  2
    sleep  30
-   Set Test Variable  ${h1_intf0}  ethernet17
-   Set Test Variable  ${h1_intf1}  ethernet17
-   Set Test Variable  ${h2_intf0}  ethernet19
-   Set Test Variable  ${h2_intf1}  ethernet19
-   Set Test Variable  ${h3_intf0}  ethernet21
-   Set Test Variable  ${h3_intf1}  ethernet21
-   Set Test Variable  ${h4_intf0}  ethernet17
-   Set Test Variable  ${h4_intf1}  ethernet18
-   Set Test Variable  ${h5_intf0}  ethernet19
-   Set Test Variable  ${h5_intf1}  ethernet20
-   Set Test Variable  ${h6_intf0}  ethernet21
-   Set Test Variable  ${h6_intf1}  ethernet22
-   
-   
    rest add portgroup  p1
    rest add interface to portgroup  leaf0-a  ${h1_intf0}  p1
    rest add interface to portgroup  leaf0-b  ${h1_intf1}  p1
@@ -426,20 +516,20 @@ Configure 3-Rack/Dual-Leaf/2-Spine/2-Host Setup For Physical Topology
    rest add interface to portgroup  leaf0-b  ${h2_intf1}  p2
    rest add portgroup lacp  p2
    rest add portgroup  p3
-   rest add interface to portgroup  leaf0-a  ${h3_intf0}  p3
-   rest add interface to portgroup  leaf0-b  ${h3_intf1}  p3
+   rest add interface to portgroup  leaf1-a  ${h3_intf0}  p3
+   rest add interface to portgroup  leaf1-b  ${h3_intf1}  p3
    rest add portgroup lacp  p3
    rest add portgroup  p4
    rest add interface to portgroup  leaf1-a  ${h4_intf0}  p4
-   rest add interface to portgroup  leaf1-a  ${h4_intf1}  p4
+   rest add interface to portgroup  leaf1-b  ${h4_intf1}  p4
    rest add portgroup lacp  p4
    rest add portgroup  p5
-   rest add interface to portgroup  leaf1-a  ${h5_intf0}  p5
-   rest add interface to portgroup  leaf1-a  ${h5_intf1}  p5
+   rest add interface to portgroup  leaf2-a  ${h5_intf0}  p5
+   rest add interface to portgroup  leaf2-b  ${h5_intf1}  p5
    rest add portgroup lacp  p5
    rest add portgroup  p6
-   rest add interface to portgroup  leaf1-a  ${h6_intf0}  p6
-   rest add interface to portgroup  leaf1-a  ${h6_intf1}  p6
+   rest add interface to portgroup  leaf2-a  ${h6_intf0}  p6
+   rest add interface to portgroup  leaf2-b  ${h6_intf1}  p6
    rest add portgroup lacp  p6
    sleep  10
 
@@ -447,8 +537,8 @@ Configure 3-Rack/Dual-Leaf/2-Spine/2-Host Setup For Physical Topology
 Configure 2 VNS with Different VLAN properties
    
    Set Test Variable  ${subMask}  24
-   Set Test Variable  ${vns1ip}  10.10.10.100
-   Set Test Variable  ${vns2ip}  20.20.20.100
+   Set Test Variable  ${vns1ip}  192.168.4.100
+   Set Test Variable  ${vns2ip}  192.168.1.100
 
    rest add tenant  autoT1
    rest add vns  autoT1  v1
@@ -459,71 +549,114 @@ Configure 2 VNS with Different VLAN properties
    rest add vns ip  autoT1  v1  ${vns1ip}  ${subMask}
    
    rest add vns  autoT1  v2
-   rest add portgroup to vns  autoT1  v2  p4  20
-   rest add portgroup to vns  autoT1  v2  p5  20
-   rest add portgroup to vns  autoT1  v2  p6  20
+   rest add portgroup to vns  autoT1  v2  p4  -1
+   rest add portgroup to vns  autoT1  v2  p5  -1
+   rest add portgroup to vns  autoT1  v2  p6  -1
    rest add router intf  autoT1  v2
    rest add vns ip  autoT1  v2  ${vns2ip}  ${subMask}
    
    rest add tenant  autoT2
    rest add vns  autoT2  v3
-   rest add interface to vns  autoT2  v3  leaf0-a  ethernet33  -1
-   rest add interface to vns  autoT2  v3  leaf0-a  ethernet34  -1
-   rest add interface to vns  autoT2  v3  leaf1-a  ethernet33  -1
-   rest add interface to vns  autoT2  v3  leaf1-a  ethernet34  -1
+   rest add interface to vns  autoT2  v3  leaf0-a  ethernet25  -1
+   rest add interface to vns  autoT2  v3  leaf1-a  ethernet25  -1
+   rest add interface to vns  autoT2  v3  leaf1-a  ethernet26  -1
+
+	
+   Set Test Variable  ${subMask}  24
+   Set Test Variable  ${vns1ip}  100.1.1.100
+   Set Test Variable  ${vns2ip}  100.2.2.100	
+
+   rest add tenant  autoIxia1
+   rest add vns  autoIxia1  v1
+   rest add interface to vns  autoIxia1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
+   rest add router intf  autoIxia1  v1
+   rest add vns ip  autoIxia1  v1  ${vns1ip}  ${subMask}
+	
+   rest add tenant  autoIxia2
+   rest add vns  autoIxia2  v2
+   rest add interface to vns  autoIxia2  v2  leaf0-b  ${leaf0b_ixia_intf}  -1
+   rest add router intf  autoIxia2  v2
+   rest add vns ip  autoIxia2  v2  ${vns2ip}  ${subMask}
+	
+   rest add tenant  system
+   rest add tenant routers intf to system	autoIxia1
+   rest add tenant routers intf to system	autoIxia2
+   rest add system intf to tenant routers	autoIxia1
+   rest add system intf to tenant routers	autoIxia2
+   rest add static routes	autoIxia1	0.0.0.0/0	{"tenant-name": "system"}
+   rest add static routes	autoIxia2	0.0.0.0/0	{"tenant-name": "system"}
    
    sleep  30
 
 
 Verify Connectivity in 3-Rack/Dual-Leaf/2-Spine/2-Host Physical Topology 
-
-   Set Test Variable  ${subMask}  24
-   Set Test Variable  ${h1bond10ip}  10.10.10.51
-   Set Test Variable  ${h2bond10ip}	 10.10.10.52
-   Set Test Variable  ${h3bond10ip}	 10.10.10.53
-   Set Test Variable  ${vns1ip}  10.10.10.100
-   
-   Set Test Variable  ${h4bond20ip} 	20.20.20.54
-   Set Test Variable  ${h5bond20ip}	20.20.20.55
-   Set Test Variable  ${h6bond20ip}	20.20.20.56
-   Set Test Variable  ${vns2ip}  20.20.20.100
-   
-   Set Test Variable  ${h1ip}	192.168.1.51
-   Set Test Variable  ${h2ip}	192.168.1.52
-   Set Test Variable  ${h3ip}	192.168.1.53
-   Set Test Variable  ${h4ip}	192.168.1.54
-   Set Test Variable  ${h5ip}	192.168.1.55
-   Set Test Variable  ${h6ip}	192.168.1.56
-   
    
    ###	Verify L2 ping between autoT1-v1   
-   ${returnVal}=  platform bash ping  h1  ${h2bond10ip}
+   ${returnVal}=  platform bash ping  h1  ${h2_tag_ip}
    Should Be True  ${returnVal}  
-   ${returnVal}=  platform bash ping  h1  ${h3bond10ip}
+   ${returnVal}=  platform bash ping  h1  ${h3_tag_ip}
    Should Be True  ${returnVal}  
-   #${returnVal}=  platform bash ping  h2  ${h3bond10ip}
+   ${returnVal}=  platform bash ping  h2  ${h3_tag_ip}
    #Should Be True  ${returnVal}  
    
 
    ###	Verify L2 ping between autoT1-v2
-   ${returnVal}=  platform bash ping  h4  ${h5bond20ip}
+   ${returnVal}=  platform bash ping  h4  ${h5_ip}
    Should Be True  ${returnVal}  
-   ${returnVal}=  platform bash ping  h4  ${h6bond20ip}
+   ${returnVal}=  platform bash ping  h4  ${h6_ip}
    Should Be True  ${returnVal}  
-   ${returnVal}=  platform bash ping  h5  ${h6bond20ip}
+   ${returnVal}=  platform bash ping  h5  ${h6_ip}
    Should Be True  ${returnVal}   
    
+   
    ###	Verify ping between autoT2
-   ${returnVal}=  platform bash ping  h1  ${h2ip}
-   Should Be True  ${returnVal}   
-   ${returnVal}=  platform bash ping  h1  ${h4ip}
-   Should Be True  ${returnVal}  
-   ${returnVal}=  platform bash ping  h1  ${h5ip}
-   Should Be True  ${returnVal}  
-   ${returnVal}=  platform bash ping  h2  ${h4ip}
-   Should Be True  ${returnVal}  
-   ${returnVal}=  platform bash ping  h2  ${h5ip}
-   Should Be True  ${returnVal}  
+   ${returnVal}=  platform bash ping  h1  ${h3_single_ip}
+   ${returnVal}=  platform bash ping  h1  ${h4_single_ip}
+   ${returnVal}=  platform bash ping  h2  ${h3_single_ip}
+   Should Be True  ${returnVal}
+
+
+bring up h1 bond0
+	bash init intf  h1  bond0.10
+    bash add ip address  h1  ${h1_tag_ip}/24  bond0.10
+    bash ifup intf  h1  bond0 
+bring up h2 bond0
+	bash init intf  h2  bond0.10
+    bash add ip address  h2  ${h2_tag_ip}/24  bond0.10
+    bash ifup intf  h2  bond0
+bring up h3 bond0
+	bash init intf  h3  bond0.10
+    bash add ip address  h3  ${h3_tag_ip}/24  bond0.10
+    bash ifup intf  h3  bond0 
+bring up h4 bond0
+	bash init intf  h4  bond0
+    bash add ip address  h4  ${h4_ip}/24  bond0
+    bash ifup intf  h4  bond0
+bring up h5 bond0
+	bash init intf  h5  bond0
+    bash add ip address  h5  ${h5_ip}/24  bond0
+    bash ifup intf  h5  bond0
+bring up h6 bond0
+	bash init intf  h6  bond0
+    bash add ip address  h6  ${h6_ip}/24  bond0
+    bash ifup intf  h6  bond0
+
+bring up h1 eth1
+	bash init intf  h1  eth1
+    bash add ip address  h1  ${h1_single_ip}/24  eth1
+    bash ifup intf  h1  eth1
+bring up h2 eth1
+	bash init intf  h2  eth1
+    bash add ip address  h2  ${h2_single_ip}/24  eth1
+    bash ifup intf  h2  eth1
+bring up h3 eth1
+	bash init intf  h3  eth1
+    bash add ip address  h3  ${h3_single_ip}/24  eth1
+    bash ifup intf  h3  eth1
+bring up h4 eth1
+	bash init intf  h4  eth1
+    bash add ip address  h4  ${h4_single_ip}/24  eth1
+    bash ifup intf  h4  eth1
 
 
 T5 Platform Test Setup

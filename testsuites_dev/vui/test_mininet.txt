@@ -21,4 +21,4 @@ Test get all nodes
     ${switches}=       get all switch nodes
     ${hosts}=          get all host nodes
     log                all=${all_nodes}, controllers=${controllers}, switches=${switches}, hosts=${hosts}
-
+    should be true     ${false}

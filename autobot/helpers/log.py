@@ -55,7 +55,6 @@ class Log(object):
         if Log.log_file is None:
             # Probably impossible to reach here...
             raise RuntimeError("You must specify an Autobot log file")
-
         f = open(Log.log_file, "a")
         f.write(msg)
         f.close()
@@ -73,7 +72,8 @@ class Log(object):
             self._write_to_file('INFO ' + msg)
         else:
             if to_stderr:
-                sys.stderr.write('\n' + msg)
+                # sys.stderr.write('\n' + msg)
+                logger.info(msg, also_console=True)
 
             log_level = log_level.lower()
             if log_level == 'info':
