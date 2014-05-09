@@ -230,7 +230,21 @@ Verify dhcp-relay functionality in headless mode
 
 Verify ecmp forwarding in headless mode
 	manual untested
-	[Tags]					manual-untested			feature					ecmp			
+	[Tags]					manual-untested			feature					ecmp	
+			
+Verify L3 intra tenant forwarding after controller upgrade
+	manual untested
+	[Tags]					manual-untested			feature					
+
+Verify ecmp forwarding after controller upgrade
+	manual untested
+	[Tags]					manual-untested			feature					
+
+Verify dhcp-relay functionality after controller upgrade
+	manual untested
+	[Tags]					manual-untested			feature					
+
+
 	
 	
 * Keywords

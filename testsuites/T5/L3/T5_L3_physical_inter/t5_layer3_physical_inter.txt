@@ -278,7 +278,19 @@ inter tenant ecmp forwarding in headless mode
 inter tenant dhcp relay in headless mode
 	manual untested
 	[Tags]			skipped		manual-untested			solution			dhcp-relay	
-		
+
+Verify L3 inter tenant forwarding after controller upgrade
+	manual untested
+	[Tags]					manual-untested			feature					
+
+Verify inter tenant ecmp forwarding after controller upgrade
+	manual untested
+	[Tags]					manual-untested			feature					
+
+Verify inter tenant dhcp-relay functionality after controller upgrade
+	manual untested
+	[Tags]					manual-untested			feature					
+
 
 
 
