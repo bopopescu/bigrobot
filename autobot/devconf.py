@@ -175,7 +175,8 @@ class DevConf(object):
         _buffer = None
         if self.conn:
             _buffer = '\n' + self.conn.buffer.__str__()
-        msg = ("==== Expect error (Start) ====\n"
+        msg = ("\n"
+               "==== Expect error (Start) ====\n"
                "Error descr  : %s\n"
                "Expect prompt: %s\n"
                "Expect buffer: %s\n"
