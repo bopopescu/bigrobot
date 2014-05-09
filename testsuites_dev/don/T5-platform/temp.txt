@@ -25,14 +25,6 @@ Library	         keywords/T5Platform.py
 
 * Test Case 
 
-
-Temp
-	[Tags]  temp
-	${returnVal}=	start floodlight monitor
-	Should be true	${returnVal}
-	sleep  30
-	${returnVal}=	stop floodlight monitor
-	Should be true	${returnVal}
 	
 Configure A Tenant
 	[Tags]  span  one
