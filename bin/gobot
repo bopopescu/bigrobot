@@ -483,7 +483,8 @@ def clean_command(*args):
     Remove output files created from Robot runs.
     """
     _ = args  # unused, silent Pylint
-    run('rm -f log.html report.html output.xml debug.log syslog.txt',
+    run('rm -f log.html report.html output.xml debug.log syslog.txt'
+        ' dev_commands.log bigrobot_listener.log',
         shell=True)
 
 
