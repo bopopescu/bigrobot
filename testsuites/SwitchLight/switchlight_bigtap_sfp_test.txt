@@ -496,7 +496,7 @@ verify results   [Arguments]  ${send_port}  ${recv_port}  ${transmitted_frames} 
     ${report}=  fetch port stats
     ${tx_value}=  verify dict key  ${report}  ${send_port}  ${transmitted_frames}
     ${rx_value}=  verify dict key  ${report}  ${recv_port}  ${received_valid_frames}
-    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}  100
+    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}  500
     Should be true  ${in_range}
     
 traffic teardown 
