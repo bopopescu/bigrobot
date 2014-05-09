@@ -68,6 +68,9 @@ class Node(object):
     def ip(self):
         return self._ip
 
+    def alias(self):
+        return self.node_params.get('alias', None)
+
     def node_id(self):
         """
         Node-id is mainly supported for BVS platform but that may change over
