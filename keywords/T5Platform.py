@@ -3791,12 +3791,18 @@ class T5Platform(object):
                 continue                                          
 
             if key == '<cr>':
-                helpers.log(" complete CLI show command: ******%s******" % string)
-                if re.match(r'boot', string):
-                    helpers.log("Ignoring line - %s" % line)
-                continue
 
+                if re.match(r'.*boot.*', string) or re.match(r'.*compare.*', string) or re.match(r'.*configure.*', string) or re.match(r'.*copy.*', string) or re.match(r'.*delete.*', string) or re.match(r'.*enable.*', string) or re.match(r'.*end.*', string) or re.match(r'.*exit.*', string) or re.match(r'.*failover.*', string) or re.match(r'.*logout.*', string):
+                    num = num - 1
+                    continue
+                                
+                if re.match(r'.* show router .*', string) or re.match(r'.* no .*', string) or re.match(r'.*ping.*', string) or re.match(r'.*reauth.*', string) or re.match(r'.*set .*', string) or re.match(r'.*show logging.*', string) or re.match(r'.*system.*', string) or re.match(r'.*test.*', string) or re.match(r'.*upgrade.*', string) or re.match(r'.*watch.*', string):
+                    num = num - 1
+                    continue
+                
+                helpers.log(" complete CLI show command: ******%s******" % string)
                 c.enable(string)
+                
                 if num == 1:
                     return string
             else:
@@ -3805,7 +3811,7 @@ class T5Platform(object):
                 helpers.log("***** Call the cli walk again with  --- %s" % string)
                 self.cli_walk_enable(string, file_name, padding)
                 
-    def cli_walk_config(self, string='', file_name=None, padding=''):
+    def cli_walk_config(self, string='', file_name=None, padding='', config_submode = False, exec_mode_done = False):
         t = test.Test()
         c = t.controller('master')
         c.config('')
@@ -3862,6 +3868,7 @@ class T5Platform(object):
         padding = "   " + padding
         for line in temp:
             string = string_c
+            helpers.log(" NUM IS - %s" % num)
             helpers.log(" line is - %s" % line)
             line = line.lstrip()
             helpers.log(" line: %s" % line)
@@ -3870,118 +3877,148 @@ class T5Platform(object):
             helpers.log("*** string is - %s" % string)
             helpers.log("*** key is - %s" % key)
 
-            if re.match(r'For', line) or line == "Commands:":
-                helpers.log("Ignoring line - %s" % line)
-                num = num - 1
-                continue
-            if re.match(r'^<.+', line) and not re.match(r'^<cr>', line):
-                helpers.log("Ignoring line - %s" % line)
-                num = num - 1
-                continue
-            if key == "debug" or key == "reauth" or key == "echo" or key == "help" or key == "history" or key == "logout" or key == "ping" or key == "watch":
-                helpers.log("Ignore line %s" % line)
-                num = num - 1
-                continue
-            if re.match(r'.*session.*', string) and key == "session" :
-                helpers.log("Ignore line - %s" % string)
-                num = num - 1
-                continue
-            if re.match(r'.*session.*', string) and key != "<cr>" :
-                helpers.log("Ignore line - string %s, key %s" % (string, key))
-                num = num - 1
-                continue
-            if re.match(r'.*password.*', string) and key == "<cr>" :
-                helpers.log("Ignore line - %s" % string)
-                continue
-            if re.match(r'.*core-switch.*', string) and key == "<cr>" :
-                helpers.log("Ignore line due to bug BSC-4903 - %s" % string)
-                continue
-            
-            
-            # for interface related commands, only iterate through "all" and one specific interface
-            if (re.match(r' (.*)interface(.*)', string)):
-                if key != 'leaf0a-eth1' and key != 'all' and key != '<cr>':
-                    helpers.log("Ignoring line - %s" % string)
-                    num = num - 1
-                    continue
-            
-            # for switch related commands, only iterate through "all" and one specific switch    
-            if (re.match(r' (.*)switch(.*)', string)):
-                if key != 'leaf0a' and key != 'all' and key != '<cr>':
-                    helpers.log("Ignoring line - %s" % string)
+            # If done iterating over enable commands, set exec_mode_done = True
+            if re.match(r'.*Commands:.*', line):
+                    helpers.log("Done with enable mode commands")
+                    exec_mode_done = True
                     num = num - 1
                     continue
                 
-            # for tenant related commands, only iterate through "all" and one specific tenant
-            if (re.match(r' (.*)tenant(.*)', string)):
-                if key != 'A' and key != 'all' and key != '<cr>':
-                    helpers.log("Ignoring line - %s" % string)
+            # Don't iterate over enable commands again if looping through this via a subconfig mode
+            if config_submode and not exec_mode_done:
+                helpers.log("Ignoring EXEC MODE command - %s" % line)
+                continue
+            else:
+                
+                if re.match(r'For', line):
+                    helpers.log("Ignoring line - %s" % line)
                     num = num - 1
                     continue
-            
-            # for vns related commands, only iterate through "all" and one specific vns
-            if (re.match(r' (.*)vns(.*)', string)):
-                if key != 'A1' and key != 'all' and key != '<cr>':
-                    helpers.log("Ignoring line - %s" % string)
-                    num = num - 1
-                    continue            
-            
-            if re.match(r'.*shutdown.*', string) and re.match(r'.*controller.*', key):
-                helpers.log("Ignore line  - %s %s" % (string, key))
-                continue
-
-
-            if re.match(r'.*internal.*', key):
-                helpers.log("Ignore line  - %s" % string)
-                continue
-
-            if re.match(r'All', line):
-                helpers.log("Don't need to loop through exec commands- %s" % line)
-                continue
-
-
-            if key == '<cr>':
-                helpers.log(" complete CLI show command: ******%s******" % string)
-                if re.match(r'boot', string):
-                    helpers.log("Ignoring line - %s" % line)
-                continue
                             
-                c.config(string)
+                if re.match(r'^<.+', line) and not re.match(r'^<cr>', line):
+                    helpers.log("Ignoring line - %s" % line)
+                    num = num - 1
+                    continue
+                if key == "debug" or key == "reauth" or key == "echo" or key == "help" or key == "history" or key == "logout" or key == "ping" or key == "watch":
+                    helpers.log("Ignore line %s" % line)
+                    num = num - 1
+                    continue
+                if re.match(r'.*session.*', string) and key == "session" :
+                    helpers.log("Ignore line - %s" % string)
+                    num = num - 1
+                    continue
+                if re.match(r'.*session.*', string) and key != "<cr>" :
+                    helpers.log("Ignore line - string %s, key %s" % (string, key))
+                    num = num - 1
+                    continue
+                if re.match(r'.*password.*', string) and key == "<cr>" :
+                    helpers.log("Ignore line - %s" % string)
+                    num = num - 1
+                    continue
+                if re.match(r'.*core-switch.*', string) and key == "<cr>" :
+                    helpers.log("Ignore line due to bug BSC-4903 - %s" % string)
+                    num = num - 1
+                    continue
+                
+                
+                # for interface related commands, only iterate through "all" and one specific interface
+                if (re.match(r' (.*)interface(.*)', string)):
+                    if key != 'leaf0a-eth1' and key != 'all' and key != '<cr>':
+                        helpers.log("Ignoring line - %s" % string)
+                        num = num - 1
+                        continue
+                
+                # for switch related commands, only iterate through "all" and one specific switch    
+                if (re.match(r' (.*)switch(.*)', string)):
+                    if key != 'leaf0a' and key != 'all' and key != '<cr>':
+                        helpers.log("Ignoring line - %s" % string)
+                        num = num - 1
+                        continue
+                    
+                # for tenant related commands, only iterate through "all" and one specific tenant
+                if (re.match(r' (.*)tenant(.*)', string)):
+                    if key != 'A' and key != 'all' and key != '<cr>':
+                        helpers.log("Ignoring line - %s" % string)
+                        num = num - 1
+                        continue
+                
+                # for vns related commands, only iterate through "all" and one specific vns
+                if (re.match(r' (.*)vns(.*)', string)):
+                    if key != 'A1' and key != 'all' and key != '<cr>':
+                        helpers.log("Ignoring line - %s" % string)
+                        num = num - 1
+                        continue  
+                    
+                # for lag related commands, only iterate through "any_leaf"
+                if (re.match(r' (.*)lag(.*)', string)):
+                    if key != 'any_leaf' and key != '<cr>':
+                        helpers.log("Ignoring line - %s" % string)
+                        num = num - 1
+                        continue                            
+                
+                if re.match(r'.*shutdown.*', string) and re.match(r'.*controller.*', key):
+                    helpers.log("Ignore line  - %s %s" % (string, key))
+                    num = num - 1
+                    continue
+    
+    
+                if re.match(r'.*internal.*', key):
+                    helpers.log("Ignore line  - %s" % string)
+                    num = num - 1
+                    continue
+    
+                if re.match(r'All', line):
+                    helpers.log("Don't need to loop through exec commands- %s" % line)
+                    num = num - 1
+                    continue
+    
+                if key == '<cr>':
+                    
+                    if re.match(r'.*boot.*', string) or re.match(r'.*compare.*', string) or re.match(r'.*copy.*', string) or re.match(r'.*delete.*', string) or re.match(r'.*enable.*', string) or re.match(r'.*end.*', string) or re.match(r'.*exit.*', string) or re.match(r'.*failover.*', string) or re.match(r'.*logout.*', string):
+                        helpers.log("CLIFF IS HERE Ignoring line - %s" % line)
+                        num = num - 1
+                        continue
+                                
+                    if re.match(r'.* show router .*', string) or re.match(r'.* no .*', string) or re.match(r'.*ping.*', string) or re.match(r'.*reauth.*', string) or re.match(r'.*set .*', string) or re.match(r'.*show logging.*', string) or re.match(r'.*system.*', string) or re.match(r'.*test.*', string) or re.match(r'.*upgrade.*', string) or re.match(r'.*watch.*', string):
+                        helpers.log("CLIFF IS HERE Ignoring line - %s" % line)
+                        num = num - 1
+                        continue
+                                    
+                    helpers.log(" complete CLI show command: ******%s******" % string)
+                    c.config(string)
+    
+                    prompt_re = r'[\r\n\x07]?[\w-]+\(([\w-]+)\)[#>] '
+                    content = c.cli_content()
+    
+                    helpers.log("********** CONTENT ************\n%s" % content)
+    
+                    # Content is a multiline string. Convert it to a list of strings. Then
+                    # get the last entry which should be the prompt.
+                    prompt_str2 = helpers.str_to_list(content)[-1]
+    
+                    match = re.match(prompt_re, prompt_str2)
+                    if match:
+                        prompt2 = match.group(1)
+                    else:
+                        helpers.log("No match")
+    
+                    helpers.log("Prompt1: '%s'" % prompt_str1)
+                    helpers.log("Prompt2: '%s'" % prompt_str2)
+    
+    
+                    #Compare prompts.  
+                    if prompt1 != prompt2:
+                        newstring = ''
+                        helpers.log("***** Call the cli walk again with  --- %s" % string)
+                        
+                        #If different, it means that we entered a new config submode.  Call the function again but set config_submode flag to True
+                        if prompt_str2 != "d64(config-tenant-router)# ":
+                            self.cli_walk_config(newstring, file_name, padding, config_submode = True, exec_mode_done = False)
 
-                prompt_re = r'[\r\n\x07]?[\w-]+\(([\w-]+)\)[#>] '
-                content = c.cli_content()
-
-                helpers.log("********** CONTENT ************\n%s" % content)
-
-                # Content is a multiline string. Convert it to a list of strings. Then
-                # get the last entry which should be the prompt.
-                prompt_str2 = helpers.str_to_list(content)[-1]
-
-                match = re.match(prompt_re, prompt_str2)
-                if match:
-                    prompt2 = match.group(1)
+                    if num == 1:
+                        return string
                 else:
-                    helpers.log("No match")
-
-                helpers.log("Prompt1: '%s'" % prompt_str1)
-                helpers.log("Prompt2: '%s'" % prompt_str2)
-
-
-                #Compare prompts.  If different, it means that we entered a new config submode.
-                if prompt1 != prompt2:
-                    newstring = ''
+                    string = string + ' ' + key
                     helpers.log("***** Call the cli walk again with  --- %s" % string)
-                    if prompt_str2 != "d64(config-tenant-router)# ":
-                        self.cli_walk_config(newstring, file_name, padding)
-
-                if "profile" in string:
-                    helpers.log("Exiting out because of bug BSC-4898 - %s" % string)
-                    c.config("exit")
-
-                if num == 1:
-                    return string
-            else:
-                string = string + ' ' + key
-                helpers.log("***** Call the cli walk again with  --- %s" % string)
-                self.cli_walk_config(string, file_name, padding)
+                    self.cli_walk_config(string, file_name, padding)
     
