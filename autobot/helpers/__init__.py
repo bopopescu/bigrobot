@@ -351,6 +351,17 @@ def bigrobot_log_path_exec_instance(new_val=None, default=None):
                             default)
 
 
+def bigrobot_log_path_exec_instance_relative(new_val=None, default=None):
+    """
+    Category: Get/set environment variables for BigRobot.
+    This is the relative log path (i.e., outputdir) for an instance of
+    test suite execution.
+    """
+    return _env_get_and_set('BIGROBOT_LOG_PATH_EXEC_INSTANCE_REL',
+                            new_val,
+                            default)
+
+
 def bigrobot_excript_debug_log_path(new_val=None, default=None):
     """
     Category: Get/set environment variables for BigRobot.
