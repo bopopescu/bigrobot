@@ -20,19 +20,19 @@ Resource		testsuites/T5/t5_dualleaf_three_rack_physical_resource.txt
 * Test Cases
 Inter tenant L3 untagged traffic with dynamic endpoints same rack
 	L3 inter tenant same rack untagged with dynamic endpoints
-	[Tags]										smoke				sanity			
+	[Tags]										sanity			
 
 Inter tenant L3 untagged traffic with dynamic endpoints across rack
 	L3 inter tenant across rack untagged with dynamic endpoints
-	[Tags]										smoke				sanity	
+	[Tags]										sanity	
 
 inter tenant L3 tagged traffic with dynamic endpoints same rack
 	L3 inter tenant same rack tagged with dynamic endpoints
-	[Tags]										smoke				sanity			
+	[Tags]										sanity			
 
 inter tenant L3 tagged traffic with dynamic endpoints across rack
 	L3 inter tenant across rack tagged with dynamic endpoints
-	[Tags]										smoke				sanity	
+	[Tags]										sanity	
 
 Add and delete default route on tenant
 	Add and delete default route on tenant router
@@ -72,27 +72,27 @@ L3 inter tenant forwarding between endpoints on the same rack but different swit
 	
 Inter tenant DHCP relay
 	Log								manual pass
-	[Tags]			skipped		manual			untested			feature			
+	[Tags]			skipped		manual			untested			feature			dhcp-relay
 
 Dhcp request from other host in other tenants with dhcp enabled but no inter tenant route
 	Log								manual pass
-	[Tags]			skipped		manual			untested			feature			
+	[Tags]			skipped		manual			untested			feature			dhcp-relay
 
 dhcp request from other host in other tenants without dhcp relay enabled but with inter tenant route
 	Log								manual pass
-	[Tags]			skipped		manual			untested			feature			
+	[Tags]			skipped		manual			untested			feature			dhcp-relay
 
 Inter tenant dhcp relay with multiple dhcp servers
 	Log								manual untested
-	[Tags]			skipped		manual			untested			feature			
+	[Tags]			skipped		manual			untested			feature			dhcp-relay
 
 Host moved to another vns on another tenant and renew dhcp 
 	Log								manual pass
-	[Tags]			skipped		manual			untested			feature			
+	[Tags]			skipped		manual			untested			feature			dhcp-relay
 
 DHCP request to external dhcp servers
 	Log								manual pass
-	[Tags]			skipped		manual			untested			feature			
+	[Tags]			skipped		manual			untested			feature			dhcp-relay		
 
 Overlapping IP subnet with and without private keyword
 	Log								manual pass
@@ -128,27 +128,27 @@ Leaf reboot
 
 Traffic load balance across ECMP group
 	Log								manual pass
-	[Tags]			skipped		manual			untested			feature		
+	[Tags]			skipped		manual			untested			feature			ecmp		
 
 Add and delete one ECMP members with active traffic in ecmp group
 	Log								manual untested
-	[Tags]			skipped		manual			untested			feature			
+	[Tags]			skipped		manual			untested			feature			ecmp			
 
 Add and delete all ECMP members in ecmp group  
 	Log								manual untested
-	[Tags]			skipped		manual			untested			feature			
+	[Tags]			skipped		manual			untested			feature			ecmp			
 
 Delete existing one ECMP members and add new ECMP member
 	Log								manual untested
-	[Tags]			skipped		manual			untested			feature			
+	[Tags]			skipped		manual			untested			feature			ecmp			
 
 Verify L3 traffic honor more specific routes with ecmp group
 	Log								manual untested
-	[Tags]			skipped		manual			untested			feature		
+	[Tags]			skipped		manual			untested			feature			ecmp		
 
 Move ecmp endpoint to another attachment point and verify L3 forwarding
 	Log								manual untested
-	[Tags]			skipped		manual			untested			feature		
+	[Tags]			skipped		manual			untested			feature			ecmp		
 
 Verify L3 traffic switch over to different path when the same route is applied with different nexthop or tenant
 	Log								manual untested
@@ -198,11 +198,11 @@ Verify route next hop IP must be in the same tenant
 
 Verify ECMP next hop IP must be in the same tenant
 	Log							manual pass
-	[Tags]			skipped		manual			untested			feature			
+	[Tags]			skipped		manual			untested			feature			ecmp			
 
 L3 inter tenant forwarding with ecmp destination
 	Log							manual untested
-	[Tags]			skipped		manual			untested			feature			
+	[Tags]			skipped		manual			untested			feature			ecmp			
 
 L3 inter tenant shutdown and bringup a leaf switch in a dual tor setup
 	Log							manual untested
@@ -230,19 +230,19 @@ Restart ofad on spine switch
 
 Controller HA failover with ecmp group
 	Log							manual failed
-	[Tags]			skipped		manual			untested			feature	
+	[Tags]			skipped		manual			untested			feature			ecmp	
 		
 Controller HA failover with dhcp-relay
 	Log							manual failed
-	[Tags]			skipped		manual			untested			feature			
+	[Tags]			skipped		manual			untested			feature			dhcp-relay			
 
 Active Controller reboot with ecmp group
 	Log							manual failed
-	[Tags]			skipped		manual			untested			feature	
+	[Tags]			skipped		manual			untested			feature			ecmp	
 	
 Active Controller reboot with dhcp-relay
 	Log							manual failed
-	[Tags]			skipped		manual			untested			feature	
+	[Tags]			skipped		manual			untested			feature			dhcp-relay	
 
 Verify inter tenant L3 traffic is getting drop with null next hop
 	Log							manual pass
@@ -250,27 +250,36 @@ Verify inter tenant L3 traffic is getting drop with null next hop
 
 Restart ofad on leaf switch with ecmp group
 	Log							manual untested
-	[Tags]			skipped		manual			untested			feature	
+	[Tags]			skipped		manual			untested			feature			ecmp	
 
 Restart ofad on spine with ecmp group
 	Log							manual untested
-	[Tags]			skipped		manual			untested			feature	
+	[Tags]			skipped		manual			untested			feature			ecmp	
 
 Restart ofad on leaf with dhcp-relay
 	Log							manual untested
-	[Tags]			skipped		manual			untested			feature	
+	[Tags]			skipped		manual			untested			feature			dhcp-relay	
 
 Restart ofad on spine with dhcp-relay
 	Log							manual untested
-	[Tags]			skipped		manual			untested			feature	
+	[Tags]			skipped		manual			untested			feature			dhcp-relay	
 	
 Flap member link in a port-group in ecmp group
 	Log							manual untested
-	[Tags]			skipped		manual			untested			solution	
+	[Tags]			skipped		manual			untested			solution			ecmp	
 	
 Flap port group in ecmp group
 	Log							manual untested
-	[Tags]			skipped		manual			untested			solution	
+	[Tags]			skipped		manual			untested			solution			ecmp
+
+inter tenant ecmp forwarding in headless mode
+	Log							manual untested
+	[Tags]			skipped		manual			untested			solution			ecmp
+
+inter tenant dhcp relay in headless mode
+	Log							manual untested
+	[Tags]			skipped		manual			untested			solution			dhcp-relay	
+		
 
 
 
