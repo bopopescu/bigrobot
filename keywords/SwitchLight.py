@@ -2115,7 +2115,7 @@ class SwitchLight(object):
 
             Examples:
 
-                | unconfigure portchannel | 10.192.75.7  |  1  |
+                | cli delete portchannel | 10.192.75.7  |  1  |
         '''
         try:
             t = test.Test()
