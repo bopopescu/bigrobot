@@ -10,7 +10,7 @@ Library         keywords/Host.py
 Library         keywords/T5.py
 Library         keywords/T5L3.py
 Library         keywords/T5Platform.py
-Library         keywords/BsnCommonShow.py
+Library         keywords_dev/animesh/BsnCommonShow.py
 Library	        Collections.py
 Library         keywords/Ixia.py
 Resource		testsuites/T5/L3//T5_L3_physical_inter/t5_layer3_physical_inter_variables.txt
@@ -875,7 +875,7 @@ L3 inter tenant host moved
 	BASH delete route							h1								10.252.0.0/16			10.251.1.1
 	BASH delete route							h2								10.251.0.0/16			10.252.1.1	
 
-Inter tenant DHCP relay	
+Inter tenant z relay	
 	BASH ifup intf								h1 								bond0
 	BASH ifup intf								h2								bond0
 	BASH ifup intf								h3								bond0
