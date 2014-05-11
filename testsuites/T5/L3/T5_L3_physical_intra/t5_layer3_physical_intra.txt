@@ -143,9 +143,8 @@ Verify vlsm forwarding
 	[Tags]					feature		
 
 Verify split horizon forwarding
-	Verify l3 forwarding on one arm router
+	manual passed
 	[Tags]					feature			manual		
-
 	
 Configure overlapping router IP 	
 	Configure overlapping IP on same tenant across VNS	
@@ -199,8 +198,7 @@ Restart ofad process on leaf
 	restart ofad on leaf
 	[Tags]				feature			
 	
-L3 traffic behavior in headless mode
-	L3 intra tenant traffic behavior in headless mode 
+L3 intra tenant traffic behavior in headless mode 
 	manual untested
 	[Tags]					manual-untested			feature			
 
@@ -241,6 +239,10 @@ Verify ecmp forwarding after controller upgrade
 	[Tags]					manual-untested			feature					
 
 Verify dhcp-relay functionality after controller upgrade
+	manual untested
+	[Tags]					manual-untested			feature					
+
+Verify ecmp traffic forwarding prefers local forwarding over remote forwarding
 	manual untested
 	[Tags]					manual-untested			feature					
 
