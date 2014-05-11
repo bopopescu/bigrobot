@@ -13,36 +13,157 @@ Library        		String
 *** Variables ***
 
 *** Test Cases ***
-T1 Verify autocompletion for mac addresses
+
+mission mode
+stand-by
+unsupported/wrong config//old SL - suspended
+
+
+### General
+T1.1. Connect switch to controller, verify visibility
+T1.2. Verify switch light version is validated
+T1.3. Verify fabric-role is validated against model
+
+### Shutting down interfaces
+T2.1. Shut down interface on mission mode switch - should work
+	Cli Run  show running-config
+	Cli Run  switch bb-3
+	Cli Run  fabric-role leaf
+	Cli Run  mac 5c:16:c7:13:46:b4
+	Cli Run  interface ethernet1
+	Cli Run  shutdown
+	Sleep  5 sec
+	Cli Run and Verify Output
+	...  show interface ethernet1 detail
+	...  ethernet1 is admin down
+	...  flag=True
+	...  node_type=switch
+	...  node=s3
+
+T2.2. Shut down interface on mission mode switch, delete fabric role, unshut, restore fabric role - interface should be up
+
+T2.3. Shut down interface on stand-by switch - should not work
+	Cli Run  show running-config
+	Cli Run  switch bb-3
+	Cli Run  fabric-role leaf
+	Cli Run  mac 5c:16:c7:13:46:b4
+	Cli Run  interface ethernet1
+	Cli Run  shutdown
+	Sleep  5 sec
+	Cli Run and Verify Output
+	...  show interface ethernet1 detail
+	...  ethernet1 is admin down
+	...  flag=False
+	...  node_type=switch
+	...  node=s3
+T2.4. Shut down interface on stand-by switch, define fabric role, unshut, delete fabric role - interface should be up
+
+T2.5. Shut down interface on suspended switch - should not work
+
+T2.6. Shut down mission mode switch - verify all interfaces are down
+T2.7. Shut down interface on mission mode switch, shut down mission mode switch, unshut the interface, unshut the switch - interface should be up
+T2.8. Shut down mission mode switch, shut down single interface, unshut the switch - interface should still be down
+T2.9. Shut down mission mode switch, delete fabric role, unshut switch, restore fabric role - all interfaces back again
+T2.10. Shut down mission mode switch, reboot - verify all interfaces still down
+T2.11. Shut down interface on mission mode switch, reboot - verify interface still down
+T2.12. Shut down stand-by switch, reboot - verify all interfaces still up
+T2.13. Shut down interface on stand-by switch, reboot - verify interface still up
+T2.14. Shut down suspended switch - reboot and unsuspend it (mission mode) - verify all interfaces down
+T2.15. Shut down interface on suspended switch - reboot and unsuspend it (mission mode) - verify interface down
+T2.16. Shut down suspended switch - reboot and unsuspend it (stand-by) - verify all interfaces still up
+T2.17. Shut down interface on suspended switch - reboot and unsuspend it (stand-by) - verify interface still up
+
+T3.1. Reboot mission mode switch - while rebooting shut down switch - verify all interfaces down after reboot
+T3.2. Reboot mission mode switch - while rebooting shut down interface - verify interface down after reboot
+T3.3. Reboot mission mode switch - while rebooting change to stand-by and shut down switch - verify all interfaces still up
+T3.4. Reboot mission mode switch - while rebooting change to stand-by and shut down interface - verify interface still up
+T3.5. Reboot stand-by switch - while rebooting shut down switch - verify all interfaces up after reboot
+T3.6. Reboot stand-by switch - while rebooting shut down interface - verify interface up after reboot
+T3.7. Reboot stand-by switch - while rebooting change to mission mode and shut down switch - verify all interfaces down
+T3.8. Reboot stand-by switch - while rebooting change to mission mode and shut down interface - verify interface down
+
+T4.1. Disconnect mission mode switch - shut down switch and reconnect - verify all interfaces down
+T4.2. Disconnect mission mode switch - shut down interface and reconnect - verify interface down
+T4.3. Disconnect mission mode switch - change to stand-by and shut down switch and reconnect - verify all interfaces still up
+T4.4. Disconnect mission mode switch - change to stand-by and shut down interface and reconnect - verify interface still up
+T4.5. Disconnect stand-by switch - shut down switch and reconnect - verify all interfaces up
+T4.6. Disconnect stand-by switch - shut down interface and reconnect - verify interface up
+T4.7. Disconnect stand-by switch - change to mission mode and shut down switch and reconnect - verify all interfaces down
+T4.8. Disconnect stand-by switch - change to mission mode and shut down interface and reconnect - verify interface down
+
+T5.1. Power down mission mode switch - shut down switch, do failover and power up - verify all interfaces down
+T5.2. Power down mission mode switch - shut down interface, do failover and power up - verify interface down
+T5.3. Power down mission mode switch - change to stand-by and shut down switch, do failover and power up - verify all interfaces still up
+T5.4. Power down mission mode switch - change to stand-by and shut down interface, do failover and power up - verify interface still up
+T5.5. Power down stand-by switch - shut down switch, do failover and power up - verify all interfaces up
+T5.6. Power down stand-by switch - shut down interface, do failover and power up - verify interface up
+T5.7. Power down stand-by switch - change to mission mode and shut down switch, do failover and power up - verify all interfaces down
+T5.8. Power down stand-by switch - change to mission mode and shut down interface, do failover and power up - verify interface down
+
+T6.1. Disconnect mission mode switch - shut down switch, do failover and reconnect - verify all interfaces down
+T6.2. Disconnect mission mode switch - shut down interface, do failover and reconnect - verify interface down
+T6.3. Disconnect mission mode switch - change to stand-by and shut down switch, do failover and reconnect - verify all interfaces still up
+T6.4. Disconnect mission mode switch - change to stand-by and shut down interface, do failover and reconnect - verify interface still up
+T6.5. Disconnect stand-by switch - shut down switch, do failover and reconnect - verify all interfaces up
+T6.6. Disconnect stand-by switch - shut down interface, do failover and reconnect - verify interface up
+T6.7. Disconnect stand-by switch - change to mission mode and shut down switch, do failover and reconnect - verify all interfaces down
+T6.8. Disconnect stand-by switch - change to mission mode and shut down interface, do failover and reconnect - verify interface down
+
+
+### CLI
+TX.1. Verify autocompletions for mac addresses in CLI
 	Cli Run  switch bb-3
 	Cli Run and Verify Output
 	...  mac ? 5c:16:c7:13:46:b4
 	...  5c:16:c7:13:46:b4 Unassigned switch
 	[Tags]  BSC-5065
 
+
+### Miscellaneous
 T2 Shutdown interface, verify, bring it up, verify
 	Cli Run  show running-config
-        Cli Run  switch bb-3
-        Cli Run  fabric-role leaf
-        Cli Run  mac 5c:16:c7:13:46:b4
-        Cli Run  interface ethernet1
-        Cli Run  shutdown
-        Sleep  5 sec
-        Cli Run and Verify Output
-        ...  show interface ethernet1 detail
-        ...  ethernet1 is admin down
-        ...  flag=True
-        ...  node_type=switch
-        ...  node=s3
-        Cli Run  no shutdown
-        Sleep  5 sec
-        Cli Run and Verify Output
-        ...  show interface ethernet1 detail
-        ...  ethernet1 is up
-        ...  flag=True
-        ...  node_type=switch
-        ...  node=s3
-        [Tags]  BSC-5070
+	Cli Run  switch bb-3
+	Cli Run  fabric-role leaf
+	Cli Run  mac 5c:16:c7:13:46:b4
+	Cli Run  interface ethernet1
+	Cli Run  shutdown
+	Sleep  5 sec
+	Cli Run and Verify Output
+	...  show interface ethernet1 detail
+	...  ethernet1 is admin down
+	...  flag=True
+	...  node_type=switch
+	...  node=s3
+	Cli Run  no shutdown
+	Sleep  5 sec
+	Cli Run and Verify Output
+	...  show interface ethernet1 detail
+	...  ethernet1 is up
+	...  flag=True
+	...  node_type=switch
+	...  node=s3
+	[Tags]  BSC-5070
+
+Failovers in the meantime
+
+Shutdown switch when it is disconnected, no shut, reconnect - no change
+
+Shutdown switch when disconnected, failover, reconnect - should go down
+
+
+Similar for single node controller
+
+Shutdown interface when it is physically down, connect cable to the port, verify it is admin down
+
+And monitor sessions
+
+Leaf groups?
+
+Fabric roles?
+
+NTP
+SNMP
+Logging
 
 *** Keywords ***
 My Suite Setup
