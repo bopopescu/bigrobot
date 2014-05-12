@@ -15,9 +15,9 @@ s1:
   user: admin
   password: adminadmin
  
-s5:
-  ip: 10.210.96.205
-  alias: leaf1-a
+s6:
+  ip: 10.210.96.206
+  alias: leaf1-b
   user: admin
   password: adminadmin
   
