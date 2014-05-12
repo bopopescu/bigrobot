@@ -203,6 +203,7 @@ T14 a\n in banner
 	Cli Run and Verify Output  master
 	...  show banner
 	...  Banner : a\r
+	[Tags]  banner  BSC-5366
 
 T15 'from mode ...' in login mode
 	Cli Run  master  enable
@@ -419,14 +420,14 @@ T24 Chinese characters in commands
 	Cli Run and Verify Output  master
 	...  show banner
 	...  \\0xe4\\0xbd\\0xa0\\0xe5\\0xa5\\0xbd
-	Manual Passed
-	[Tags]  BSC-5102
+	[Tags]  banner  BSC-5366  BSC-5102
 
 T25 Polish characters in commands
 	Cli Run  master  snmp-server location 'Ko\\0xc5\\0x9bciuszki 34, \\0xc5\\0x81\\0xc3\\0xb3d\\0xc5\\0xba'
 	Cli Run and Verify Output  master
 	...  show running-config snmp
 	...  snmp-server location 'Ko\\0xc5\\0x9bciuszki 34, \\0xc5\\0x81\\0xc3\\0xb3d\\0xc5\\0xba'
+	[Tags]  snmp  special characters
 
 T26 Route and Router help texts
 	Cli Run  master  tenant test
@@ -450,7 +451,7 @@ T27 Interaction between snmp and banner commands
 	Cli Run and Verify Output  master
 	...  show running-config banner
 	...  banner Welcome
-	[Tags]  BSC-5141
+	[Tags]  banner  snmp  BSC-5141
 
 T28 NTP sync command
 	Cli Run  master  ntp sync  cmd_timeout=15
@@ -493,6 +494,16 @@ T32 Show running config when cookie session expired
 	...  *Error: Please reauth: Authorization failed: No session found for cookie*
 	...  Cli Run  ${name}  show running-config
 	[Tags]  BSC-5343  session
+
+T33 Show banner simple test
+	Cli Run  master  banner 'This is test banner'
+	Cli Run and Verify Output  master
+	...  show running-config banner
+	...  banner 'This is test banner'
+	Cli Run and Verify Output  master
+	...  show banner
+	...  This is test banner
+	[Tags]  banner  BSC-5366
 
 *** Keywords ***
 Generate Random Name
