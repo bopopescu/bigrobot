@@ -2533,6 +2533,9 @@ Trigger controller HA failover via CLI and verify dhcp-relay is working
 	${result} = 								REST show endpoints mac			${h1_mac}
 	Should Not Be Empty							${result}
 	sleep										1
+	## temporary fix
+	BASH ping									h1								10.252.1.1 				count=5
+	sleep										1
 	${value} = 									BASH verify arp					h1						10.252.1.1
 	Should Be True								${value} 		
 	sleep										1
@@ -2676,7 +2679,7 @@ Verify arp agent functionality after controller HA failover via CLI
 	sleep										1
 	${value} = 									REST verify cluster election take leader
 	Should Be True								${value}
-	sleep										10
+	sleep										20
 	BASH ping									h1								10.251.3.11				count=5
 	${value} = 									BASH verify arp					h1						10.251.1.1
 	Should Be True								${value} 		
@@ -2729,7 +2732,7 @@ Verify arp agent functionality after controller HA failover via reboot
 	sleep										1
 	${value} = 									CLI verify cluster master reboot
 	Should Be True								${value}
-	sleep										10
+	sleep										20
 	BASH ping									h1								10.251.3.11				count=5
 	${value} = 									BASH verify arp					h1						10.251.1.1
 	Should Be True								${value} 		
