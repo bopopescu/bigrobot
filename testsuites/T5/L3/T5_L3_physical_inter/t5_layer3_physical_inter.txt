@@ -901,6 +901,7 @@ Inter tenant dhcp relay
 	${value} = 									BASH check service status		h1						isc-dhcp-server
 	Should Contain								${value}						is started
 	sleep										1
+	BASH add route								h1								10.252.0.0/16			10.251.1.1
 	REST add dhcp relay							Y								Y1						10.251.1.11
 	REST enable dhcp relay						Y								Y1	
 	sleep										5
