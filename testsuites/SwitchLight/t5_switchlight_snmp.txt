@@ -47,7 +47,7 @@ Verify SNMP OID ifType of ma1
     
 Verify SNMP OID ifAdminStatus of ma1  
     verify snmp attribute  s1  ifAdminStatus.2  up
-    [Tags]  snmp  common    
+    [Tags]  snmp  common  run   
     
 Verify SNMP OID ifOperStatus of ma1  
     verify snmp attribute  s1  ifOperStatus.2  up

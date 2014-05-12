@@ -15,7 +15,7 @@ Test dummy
     [Tags]     smoke  sanity  T5
     cli         c1   show user
 
-Test get all nodes
+Test get all [$nodes]
     ${all_nodes}=      get all nodes
     ${controllers}=    get all controller nodes
     ${switches}=       get all switch nodes
