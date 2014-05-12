@@ -10,7 +10,7 @@ Library         keywords/Host.py
 Library         keywords/T5.py
 Library         keywords/T5L3.py
 Library         keywords/T5Platform.py
-Library			keywords/SwitchLight.pyz
+Library			keywords/SwitchLight.py
 Library         keywords/BsnCommon.py
 Library	        Collections.py
 Library         keywords/Ixia.py
@@ -57,11 +57,11 @@ Add and delete tenant router interface on system tenant
 
 L3 ttl one forwarding
 	Verify inter tenant L3 traffic with ttl value of one two and three
-	[Tags]										feature					run
+	[Tags]										feature					
 
 L3 inter tenant forwarding with end host moved to another port
 	L3 inter tenant host moved 
-	[Tags]										feature					run
+	[Tags]										feature					
 
 L3 inter tenant forwarding split horizon on the same port 
 	manual pass
@@ -717,57 +717,6 @@ Add and delete tenant router interface on system tenant
 	BASH delete route							h3								10.251.0.0/16			10.252.1.1
 
 
-L3 inter tenant host moved old
-	BASH ifup intf								h1 								bond0
-	BASH ifup intf								h2								bond0
-	BASH ifup intf								h3								bond0
-	BASH ifup intf								h4								bond0
-	BASH ifup intf								h5								bond0
-	BASH ifup intf								h6								bond0	
-	REST add portgroup to vns					X								X1						${leaf0_pc1}			1001
-	REST add portgroup to vns					Y								Y1						${leaf1_pc1}			1003
-	REST add portgroup to vns					Y								Y1						${leaf2_pc1}			-1
-	REST add interface to vns					X								X1						${leaf0-a}				${ixia1}				101
-	REST add interface to vns					Y								Y1						${leaf1-a}				${ixia3}				201	
-	BASH add tag								h1								bond0					1001
-	BASH add tag								h3								bond0					1003
-	BASH ifup intf								h1								bond0.1001
-	BASH ifup intf								h3								bond0.1003
-	BASH add ip address							h1								10.251.1.11/24			bond0.1001
-	BASH add ip address							h3								10.252.1.11/24			bond0.1003
-	BASH add route								h1								10.252.0.0/16			10.251.1.1
-	BASH add route								h3								10.251.0.0/16			10.252.1.1
-	sleep										10	
-	${value} = 									BASH verify arp					h1						10.251.1.1
-	Should Not Be True							${value} 		
-	${value} =									BASH verify arp					h3						10.252.1.1
-	Should Not Be True							${value} 	
-	BASH ping									h1								10.252.1.11				count=10
-	${value} = 									BASH verify arp					h1						10.251.1.1
-	Should Be True								${value} 		
-	${value} =									BASH verify arp					h3						10.252.1.1
-	Should Be True								${value} 		
-	${mac1} = 									BASH get intf mac				h1						bond0.1001
-	${result} =									REST show endpoints mac			${mac1}
-	Should Be True								${result}						
-	${mac2} = 									BASH get intf mac				h3						bond0.1003
-	${result} =									REST show endpoints mac			${mac2}
-	Should Be True								${result}						
-	REST show endpoints		
-	${loss} = 									BASH ping						h1						10.252.1.11 			count=10
-	Should Be True  							${loss} == 0		
-	BASH ifdown intf							h3								bond0
-	BASH set mac address						h5								bond0					${mac2}
-	BASH add ip address							h5								10.252.1.11/24			bond0
-	BASH add route								h5								10.251.0.0/16			10.252.1.1
-	sleep										1
-	BASH ping									h1								10.252.1.11				count=5
-	${loss} = 									BASH ping						h1						10.252.1.11 			count=10
-	Should Be True  							${loss} == 0		
-	BASH delete route							h1								10.252.0.0/16			10.251.1.1
-	BASH delete route							h3								10.251.0.0/16			10.252.1.1
-	BASH delete route							h5								10.251.0.0/16			10.252.1.1
-	
 Verify inter tenant L3 traffic with ttl value of one two and three
 	BASH ifup intf								h1 								bond0
 	BASH ifup intf								h2								bond0
@@ -931,17 +880,17 @@ Inter tenant dhcp relay
 	Should Contain								${attachpoint}					${leaf2_pc1}
 	Should Contain								${ipAddr}						${ipAddr5}
 	sleep										1
-	${loss}										BASH ping 						h1						${ipAddr2}				count=10
-	Should Be True								${loss}	< 20
-	${loss}										BASH ping 						h1						${ipAddr5}				count=10
-	Should Be True								${loss}	< 20
+	${loss} =									BASH ping 						h1						${ipAddr2}				count=10
+	Should Be True  							${loss} < 20	
+	${loss} =									BASH ping 						h1						${ipAddr5}				count=10
+	Should Be True  							${loss} < 20	
 	${value} = 									BASH release dhcpv4 address		h2						bond0.1002
 	Should Be True								${value}
 	${value} = 									BASH release dhcpv4 address		h5						bond0
 	Should Be True								${value}
-	${loss}										BASH ping 						h1						${ipAddr2}				count=10
+	${loss} =									BASH ping 						h1						${ipAddr2}				count=10
 	Should Be True								${loss}	= 100
-	${loss}										BASH ping 						h1						${ipAddr5}				count=10
+	${loss} =									BASH ping 						h1						${ipAddr5}				count=10
 	Should Be True								${loss}	= 100
 	BASH delete route							h1								10.252.0.0/16			10.251.1.1
 	BASH delete route							h2								10.251.0.0/16			10.252.1.1	
