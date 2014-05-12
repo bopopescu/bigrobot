@@ -113,7 +113,8 @@ class BsnCommon(object):
 
         if not test_descr:
             test_descr = "no_test_case_descr"
-        temp_dir = test_descr.replace(' ', '_')
+        # convert non-alpha and white spaces to underscores
+        temp_dir = re.sub(r'[\W\s]', '_', test_descr)
         dest_path += '/' + temp_dir
 
         h = t.node_spawn(ip=server, user=user, password=password,
