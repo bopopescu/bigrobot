@@ -216,11 +216,11 @@ Trigger controller HA failover via reboot and verify dhcp-relay is working
 
 Trigger controller HA failover via CLI and verify ecmp is working
 	manual failed
-	[Tags]					manual					feature					ecmp		
+	[Tags]					manual					feature					ecmp			run		
 
 Trigger controller HA failover via reboot and verify ecmp is working
 	manual untested
-	[Tags]					manual-untested			feature					ecmp			
+	[Tags]					manual-untested			feature					ecmp			run
 
 Verify dhcp-relay functionality in headless mode
 	manual untested
@@ -246,7 +246,13 @@ Verify ecmp traffic forwarding prefers local forwarding over remote forwarding
 	manual untested
 	[Tags]					manual-untested			feature					
 
+Verify arp agent functionality after controller HA failover via CLI
+	Verify arp agent functionality after controller HA failover via CLI
+	[Tags]					feature												run	
 
+Verify arp agent functionality after controller HA failover via reboot
+	Verify arp agent functionality after controller HA failover via reboot
+	[Tags]					feature												run
 	
 	
 * Keywords
@@ -2629,8 +2635,112 @@ Trigger controller HA failover via reboot and verify dhcp-relay is working
 	Should Be True  							${loss} == 0	
 	BASH delete route							h1								10.252.3.0/24			10.252.1.1
 
-
-
+Verify arp agent functionality after controller HA failover via CLI
+	BASH ifup intf								h1 								bond0
+	BASH ifup intf								h2								bond0
+	BASH ifup intf								h3								bond0
+	BASH ifup intf								h4								bond0
+	BASH ifup intf								h5								bond0
+	BASH ifup intf								h6								bond0	
+	REST add portgroup to vns					X								X1						${leaf0_pc1}			1001
+	REST add portgroup to vns					X								X3						${leaf1_pc1}			1003
+	BASH add tag								h1								bond0					1001
+	BASH add tag								h3								bond0					1003
+	BASH ifup intf								h1								bond0.1001
+	BASH ifup intf								h3								bond0.1003
+	BASH add ip address							h1								10.251.1.11/24			bond0.1001
+	BASH add ip address							h3								10.251.3.11/24			bond0.1003
+	BASH add route								h1								10.251.3.0/24			10.251.1.1
+	BASH add route								h3								10.251.1.0/24			10.251.3.1
+	sleep										5	
+	${value} = 									BASH verify arp					h1						10.251.1.1
+	Should Not Be True							${value} 		
+	${value} =									BASH verify arp					h3						10.251.3.1
+	Should Not Be True							${value} 	
+	BASH ping									h1								10.251.3.11				count=10
+	${value} = 									BASH verify arp					h1						10.251.1.1
+	Should Be True								${value} 		
+	${value} =									BASH verify arp					h3						10.251.3.1
+	Should Be True								${value} 		
+	${mac1} = 									BASH get intf mac				h1						bond0.1001
+	${result} =									REST show endpoints mac			${mac1}
+	Should Be True								${result}						
+	${mac2} = 									BASH get intf mac				h3						bond0.1003
+	${result} =									REST show endpoints mac			${mac2}
+	Should Be True								${result}						
+	REST show endpoints		
+	${loss} = 									BASH ping						h1						10.251.3.11 			count=10
+	Should Be True  							${loss} == 0		
+	BASH delete arp								h1								10.251.1.1
+	BASH delete arp								h3								10.251.3.1
+	sleep										1
+	${value} = 									REST verify cluster election take leader
+	Should Be True								${value}
+	sleep										10
+	BASH ping									h1								10.251.3.11				count=5
+	${value} = 									BASH verify arp					h1						10.251.1.1
+	Should Be True								${value} 		
+	${value} = 									BASH verify arp					h3						10.251.3.1
+	Should Be True								${value} 		
+	${loss} = 									BASH ping						h1						10.251.3.11 			count=10
+	Should Be True  							${loss} < 20		
+	BASH delete route							h1								10.251.3.0/24			10.251.1.1
+	BASH delete route							h3								10.251.1.0/24			10.251.3.1
+	
+	
+Verify arp agent functionality after controller HA failover via reboot
+	BASH ifup intf								h1 								bond0
+	BASH ifup intf								h2								bond0
+	BASH ifup intf								h3								bond0
+	BASH ifup intf								h4								bond0
+	BASH ifup intf								h5								bond0
+	BASH ifup intf								h6								bond0	
+	REST add portgroup to vns					X								X1						${leaf0_pc1}			1001
+	REST add portgroup to vns					X								X3						${leaf1_pc1}			1003
+	BASH add tag								h1								bond0					1001
+	BASH add tag								h3								bond0					1003
+	BASH ifup intf								h1								bond0.1001
+	BASH ifup intf								h3								bond0.1003
+	BASH add ip address							h1								10.251.1.11/24			bond0.1001
+	BASH add ip address							h3								10.251.3.11/24			bond0.1003
+	BASH add route								h1								10.251.3.0/24			10.251.1.1
+	BASH add route								h3								10.251.1.0/24			10.251.3.1
+	sleep										5	
+	${value} = 									BASH verify arp					h1						10.251.1.1
+	Should Not Be True							${value} 		
+	${value} =									BASH verify arp					h3						10.251.3.1
+	Should Not Be True							${value} 	
+	BASH ping									h1								10.251.3.11				count=10
+	${value} = 									BASH verify arp					h1						10.251.1.1
+	Should Be True								${value} 		
+	${value} =									BASH verify arp					h3						10.251.3.1
+	Should Be True								${value} 		
+	${mac1} = 									BASH get intf mac				h1						bond0.1001
+	${result} =									REST show endpoints mac			${mac1}
+	Should Be True								${result}						
+	${mac2} = 									BASH get intf mac				h3						bond0.1003
+	${result} =									REST show endpoints mac			${mac2}
+	Should Be True								${result}						
+	REST show endpoints		
+	${loss} = 									BASH ping						h1						10.251.3.11 			count=10
+	Should Be True  							${loss} == 0		
+	BASH delete arp								h1								10.251.1.1
+	BASH delete arp								h3								10.251.3.1
+	sleep										1
+	${value} = 									CLI verify cluster master reboot
+	Should Be True								${value}
+	sleep										10
+	BASH ping									h1								10.251.3.11				count=5
+	${value} = 									BASH verify arp					h1						10.251.1.1
+	Should Be True								${value} 		
+	${value} = 									BASH verify arp					h3						10.251.3.1
+	Should Be True								${value} 		
+	${loss} = 									BASH ping						h1						10.251.3.11 			count=10
+	Should Be True  							${loss} < 20		
+	BASH delete route							h1								10.251.3.0/24			10.251.1.1
+	BASH delete route							h3								10.251.1.0/24			10.251.3.1
+	
+	
 initialize host
 	BASH delete tag								h1								bond0.1001				soft_error=${true}
 	BASH delete tag								h2								bond0.1002				soft_error=${true}
