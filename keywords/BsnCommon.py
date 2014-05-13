@@ -1888,8 +1888,8 @@ class BsnCommon(object):
         return temp
 
     def enable_command(self,node,command):
-        ''' cli command for any string
-            usage:  cli_command    show tenant
+        ''' enable command for any string
+            usage:  enable_command    show tenant
             note:    no process of the output contenet
         '''
         t = test.Test()
@@ -1899,8 +1899,8 @@ class BsnCommon(object):
         return temp
 
     def config_command(self,node,command):
-        ''' cli command for any string
-            usage:  cli_command    show tenant
+        ''' config command for any string
+            usage:  config_command    
             note:    no process of the output contenet
         '''
         t = test.Test()
