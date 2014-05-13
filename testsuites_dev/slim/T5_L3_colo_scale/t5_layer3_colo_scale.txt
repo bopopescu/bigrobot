@@ -20,44 +20,52 @@ Resource		testsuites_dev/slim/T5_L3_colo/t5_layer3_colo_resources.txt
 * Test Cases
 Intra tenant one Tenant 4k VNS 
 	One Tenant 4k VNS with one host each
-#	[Tags]							skipped			scale							
+	[Tags]									scale							run							
 
 Delete and add tagged ports to one tenant 4k VNS
 	Delete and add tagged ports to one tenant 4k VNS with one host each
-	[Tags]							skipped			scale							
+	[Tags]									scale							
 
 Delete and add 2k VNS with traffic
 	Delete and add 2k VNS with traffic running with one host each
-	[Tags]							skipped			scale				
+	[Tags]									scale				
 
 L3 endpoint host move with traffic
 	Move 24k host endpoint to another tagged port
-	[Tags]							skipped			scale				
+	[Tags]									scale				
 
 48k L3 endpoint across one tenant two vns
 	Generate 48k L3 endpoint across one tenant two vns
-	[Tags]							skipped			scale				
+	[Tags]									scale				
 		
 Combined scaling one tenant 4k vns with 48k host
 	Combined scaling with one tenant 4k vns with 48k host
-	[Tags]							skipped			scale				
+	[Tags]									scale				
 		
 Delete and add scale 4k vns config multiple times
 	Delete and add scale config multiple times
-	[Tags]							skipped			scale				
+	[Tags]									scale				
 
 DHCP request from 48k host across 4k vns
 	Generate dhcp request from 48k host across 4k vns
-	[Tags]							skipped			scale				
+	[Tags]									scale				
 						
-1k tenant with 4 vns each
-
+Create OneK tenant with four vns each
+	Create OneK tenant with four vns each
+	[Tags]									scale				
+	
 Add and delete config with 1k tenant with 4 vns each
+	Add and delete config with 1k tenant with 4 vns each
+	[Tags]									scale				
 
 Inject 16k cidr routes
-
-Add and delete 16k cidr routes
-
+	Inject 16k cidr routes
+	[Tags]									scale				
+	
+Delete 16k cidr routes
+	Delete 16k cidr routes
+	[Tags]									scale				
+	
 
 
 
