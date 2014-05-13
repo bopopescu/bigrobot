@@ -53,12 +53,12 @@ ${leaf1_pc3}		leaf1-pc3
 ${leaf1_pc4}		leaf1-pc4
 ${leaf2_pc1}		leaf2-pc1
 ${leaf2_pc2}		leaf2-pc2
-${leaf0-a}			leaf0-a
-${leaf0-b}			leaf0-b
-${leaf1-a}			leaf1-a
-${leaf1-b}			leaf1-b
-${leaf2-a}			leaf2-a
-${leaf2-b}			leaf2-b
+${leaf0_a}			leaf0-a
+${leaf0_b}			leaf0-b
+${leaf1_a}			leaf1-a
+${leaf1_b}			leaf1-b
+${leaf2_a}			leaf2-a
+${leaf2_b}			leaf2-b
 ${ixia1}			ethernet24
 ${ixia2}			ethernet24
 ${ixia3}			ethernet24
@@ -79,17 +79,17 @@ ${leaf2_pc1_intf2}	ethernet47
 ${leaf2_pc2_intf1}	ethernet48
 ${leaf2_pc2_intf2}	ethernet48
 
-${leaf0-a_spine0}	ethernet49
-${leaf0-b_spine0}	ethernet49
-${leaf1-a_spine0}	ethernet49
-${leaf1-b_spine0}	ethernet49
-${leaf2-a_spine0}	ethernet49
-${leaf2-b_spine0}	ethernet49
-${leaf0-a_spine1}	ethernet52
-${leaf0-b_spine1}	ethernet52
-${leaf1-a_spine1}	ethernet52
-${leaf1-b_spine1}	ethernet52
-${leaf2-a_spine1}	ethernet52
-${leaf2-b_spine1}	ethernet52
+${leaf0_a_spine0}	ethernet49
+${leaf0_b_spine0}	ethernet49
+${leaf1_a_spine0}	ethernet49
+${leaf1_b_spine0}	ethernet49
+${leaf2_a_spine0}	ethernet49
+${leaf2_b_spine0}	ethernet49
+${leaf0_a_spine1}	ethernet52
+${leaf0_b_spine1}	ethernet52
+${leaf1_a_spine1}	ethernet52
+${leaf1_b_spine1}	ethernet52
+${leaf2_a_spine1}	ethernet52
+${leaf2_b_spine1}	ethernet52
 
 

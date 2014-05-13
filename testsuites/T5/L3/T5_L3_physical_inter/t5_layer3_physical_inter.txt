@@ -305,8 +305,8 @@ L3 inter tenant same rack untagged with dynamic endpoints
 	BASH ifup intf								h6								bond0			
 	REST add portgroup to vns					X								X1						${leaf2_pc1}			-1
 	REST add portgroup to vns					Y								Y1						${leaf2_pc2}			-1
-	REST add interface to vns					X								X1						${leaf0-a}				${ixia1}				-1
-	REST add interface to vns					Y								Y1						${leaf0-b}				${ixia2}				-1
+	REST add interface to vns					X								X1						${leaf0_a}				${ixia1}				-1
+	REST add interface to vns					Y								Y1						${leaf0_b}				${ixia2}				-1
 	BASH add ip address							h5								10.251.1.11/24			bond0	
 	BASH add ip address							h6								10.252.1.11/24			bond0
 	BASH add route								h5								10.252.1.0/24			10.251.1.1
@@ -346,8 +346,8 @@ L3 inter tenant across rack untagged with dynamic endpoints
 	BASH ifup intf								h6								bond0			
 	REST add portgroup to vns					X								X1						${leaf2_pc1}			-1
 	REST add portgroup to vns					Y								Y1						${leaf1_pc2}			-1
-	REST add interface to vns					X								X1						${leaf0-a}				${ixia1}				-1
-	REST add interface to vns					Y								Y1						${leaf1-a}				${ixia3}				-1	
+	REST add interface to vns					X								X1						${leaf0_a}				${ixia1}				-1
+	REST add interface to vns					Y								Y1						${leaf1_a}				${ixia3}				-1	
 	BASH add ip address							h5								10.251.1.11/24			bond0	
 	BASH add ip address							h4								10.252.1.11/24			bond0
 	BASH add route								h5								10.252.0.0/16			10.251.1.1
@@ -387,8 +387,8 @@ L3 inter tenant same rack tagged with dynamic endpoints
 	BASH ifup intf								h6								bond0				
 	REST add portgroup to vns					X								X1						${leaf0_pc1}			1001
 	REST add portgroup to vns					Y								Y1						${leaf0_pc2}			1002
-	REST add interface to vns					X								X1						${leaf0-a}				${ixia1}				101
-	REST add interface to vns					Y								Y1						${leaf0-b}				${ixia2}				201
+	REST add interface to vns					X								X1						${leaf0_a}				${ixia1}				101
+	REST add interface to vns					Y								Y1						${leaf0_b}				${ixia2}				201
 	BASH add tag								h1								bond0					1001
 	BASH add tag								h2								bond0					1002
 	BASH ifup intf								h1								bond0.1001
@@ -429,8 +429,8 @@ L3 inter tenant across rack tagged with dynamic endpoints
 	BASH ifup intf								h6								bond0	
 	REST add portgroup to vns					X								X1						${leaf0_pc1}			1001
 	REST add portgroup to vns					Y								Y1						${leaf1_pc1}			1003
-	REST add interface to vns					X								X1						${leaf0-a}				${ixia1}				101
-	REST add interface to vns					Y								Y1						${leaf1-a}				${ixia3}				201	
+	REST add interface to vns					X								X1						${leaf0_a}				${ixia1}				101
+	REST add interface to vns					Y								Y1						${leaf1_a}				${ixia3}				201	
 	BASH add tag								h1								bond0					1001
 	BASH add tag								h3								bond0					1003
 	BASH ifup intf								h1								bond0.1001
@@ -473,8 +473,8 @@ Add and delete default route on tenant router
 	BASH ifup intf								h6								bond0	
 	REST add portgroup to vns					X								X1						${leaf0_pc1}			1001
 	REST add portgroup to vns					Y								Y1						${leaf1_pc1}			1003
-	REST add interface to vns					X								X1						${leaf0-a}				${ixia1}				101
-	REST add interface to vns					Y								Y1						${leaf1-a}				${ixia3}				201	
+	REST add interface to vns					X								X1						${leaf0_a}				${ixia1}				101
+	REST add interface to vns					Y								Y1						${leaf1_a}				${ixia3}				201	
 	BASH add tag								h1								bond0					1001
 	BASH add tag								h3								bond0					1003
 	BASH ifup intf								h1								bond0.1001
@@ -526,8 +526,8 @@ Add and delete static route on tenant router
 	BASH ifup intf								h6								bond0	
 	REST add portgroup to vns					X								X1						${leaf0_pc1}			1001
 	REST add portgroup to vns					Y								Y1						${leaf1_pc1}			1003
-	REST add interface to vns					X								X1						${leaf0-a}				${ixia1}				101
-	REST add interface to vns					Y								Y1						${leaf1-a}				${ixia3}				201	
+	REST add interface to vns					X								X1						${leaf0_a}				${ixia1}				101
+	REST add interface to vns					Y								Y1						${leaf1_a}				${ixia3}				201	
 	BASH add tag								h1								bond0					1001
 	BASH add tag								h3								bond0					1003
 	BASH ifup intf								h1								bond0.1001
@@ -574,8 +574,8 @@ Add and delete more specific route on tenant router over existing static route
 	BASH ifup intf								h6								bond0	
 	REST add portgroup to vns					X								X1						${leaf0_pc1}			1001
 	REST add portgroup to vns					Y								Y1						${leaf1_pc1}			1003
-	REST add interface to vns					X								X1						${leaf0-a}				${ixia1}				101
-	REST add interface to vns					Y								Y1						${leaf1-a}				${ixia3}				201	
+	REST add interface to vns					X								X1						${leaf0_a}				${ixia1}				101
+	REST add interface to vns					Y								Y1						${leaf1_a}				${ixia3}				201	
 	BASH add tag								h1								bond0					1001
 	BASH add tag								h3								bond0					1003
 	BASH ifup intf								h1								bond0.1001
@@ -625,8 +625,8 @@ Add and delete tenant system interface on tenant router
 	BASH ifup intf								h6								bond0	
 	REST add portgroup to vns					X								X1						${leaf0_pc1}			1001
 	REST add portgroup to vns					Y								Y1						${leaf1_pc1}			1003
-	REST add interface to vns					X								X1						${leaf0-a}				${ixia1}				101
-	REST add interface to vns					Y								Y1						${leaf1-a}				${ixia3}				201	
+	REST add interface to vns					X								X1						${leaf0_a}				${ixia1}				101
+	REST add interface to vns					Y								Y1						${leaf1_a}				${ixia3}				201	
 	BASH add tag								h1								bond0					1001
 	BASH add tag								h3								bond0					1003
 	BASH ifup intf								h1								bond0.1001
@@ -675,8 +675,8 @@ Add and delete tenant router interface on system tenant
 	BASH ifup intf								h6								bond0	
 	REST add portgroup to vns					X								X1						${leaf0_pc1}			1001
 	REST add portgroup to vns					Y								Y1						${leaf1_pc1}			1003
-	REST add interface to vns					X								X1						${leaf0-a}				${ixia1}				101
-	REST add interface to vns					Y								Y1						${leaf1-a}				${ixia3}				201	
+	REST add interface to vns					X								X1						${leaf0_a}				${ixia1}				101
+	REST add interface to vns					Y								Y1						${leaf1_a}				${ixia3}				201	
 	BASH add tag								h1								bond0					1001
 	BASH add tag								h3								bond0					1003
 	BASH ifup intf								h1								bond0.1001
@@ -725,8 +725,8 @@ Verify inter tenant L3 traffic with ttl value of one two and three
 	BASH ifup intf								h6								bond0	
 	REST add portgroup to vns					X								X1						${leaf0_pc1}			1001
 	REST add portgroup to vns					Y								Y1						${leaf1_pc1}			1003
-	REST add interface to vns					X								X1						${leaf0-a}				${ixia1}				101
-	REST add interface to vns					Y								Y1						${leaf1-a}				${ixia3}				201	
+	REST add interface to vns					X								X1						${leaf0_a}				${ixia1}				101
+	REST add interface to vns					Y								Y1						${leaf1_a}				${ixia3}				201	
 	BASH add tag								h1								bond0					1001
 	BASH add tag								h3								bond0					1003
 	BASH ifup intf								h1								bond0.1001
@@ -782,8 +782,8 @@ L3 inter tenant host moved
 	REST add portgroup to vns					X								X1						${leaf0_pc1}			1001
 	REST add portgroup to vns					Y								Y1						${leaf0_pc2}			1002
 	REST add portgroup to vns					Y								Y1						${leaf1_pc1}			1002
-	REST add interface to vns					X								X1						${leaf0-a}				${ixia1}				101
-	REST add interface to vns					Y								Y1						${leaf0-b}				${ixia2}				201
+	REST add interface to vns					X								X1						${leaf0_a}				${ixia1}				101
+	REST add interface to vns					Y								Y1						${leaf0_b}				${ixia2}				201
 	BASH add tag								h1								bond0					1001
 	BASH add tag								h2								bond0					1002
 	BASH ifup intf								h1								bond0.1001
@@ -904,7 +904,7 @@ L3 inter tenant forwarding between endpoints on the same rack but different swit
 	BASH ifup intf								h2								eth2
 	BASH init intf								h1								eth3
 	BASH init intf								h2								eth2
-	REST add interface to vns					X								X1						${leaf0_a}				ethernet48				-1
+	REST add interface to vns					X								X1						${leaf0_a}				ethernet48			-1
 	REST add interface to vns					X								X2						${leaf0_b}				ethernet47			-1
 	BASH add ip address							h1								10.251.1.11/24			eth3	
 	BASH add ip address							h2								10.252.1.11/24			eth2
