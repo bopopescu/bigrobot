@@ -8,6 +8,7 @@ from __future__ import print_function
 import os
 import sys
 import platform
+import re
 import shutil
 import argparse
 import subprocess
@@ -119,9 +120,19 @@ os.environ['IS_GOBOT'] = 'True'
 
 helpers.bigrobot_log_path(default='.')
 if helpers.bigrobot_suite():
+    _suite = helpers.bigrobot_suite()
+
+    # If user specified full path, trim it down to just suite name. E.g.,
+    # Change:
+    #  /Users/vui/Documents/ws/myforks/bigrobot/testsuites_dev/vui/test_mininet
+    # To:
+    #  vui_test_mininet_20140513_095428
+    _match = re.search(r'.+testsuites(_dev)?/(.+)$', _suite)
+    if _match:
+        _suite = re.sub(r'[\W\s]', '_', _match.group(2))
     helpers.bigrobot_log_path_exec_instance_relative(
                 default="%s_%s"
-                % (helpers.bigrobot_suite(), helpers.ts_local()))
+                % (_suite, helpers.ts_local()))
 else:
     helpers.bigrobot_log_path_exec_instance_relative(
                 default="<bigrobot_suite>")
