@@ -3978,12 +3978,10 @@ class T5Platform(object):
                 if key == '<cr>':
                     
                     if re.match(r'.*boot.*', string) or re.match(r'.*compare.*', string) or re.match(r'.*copy.*', string) or re.match(r'.*delete.*', string) or re.match(r'.*enable.*', string) or re.match(r'.*end.*', string) or re.match(r'.*exit.*', string) or re.match(r'.*failover.*', string) or re.match(r'.*logout.*', string):
-                        helpers.log("CLIFF IS HERE Ignoring line - %s" % line)
                         num = num - 1
                         continue
                                 
                     if re.match(r'.* show router .*', string) or re.match(r'.* no .*', string) or re.match(r'.*ping.*', string) or re.match(r'.*reauth.*', string) or re.match(r'.*set .*', string) or re.match(r'.*show logging.*', string) or re.match(r'.*system.*', string) or re.match(r'.*test.*', string) or re.match(r'.*upgrade.*', string) or re.match(r'.*watch.*', string):
-                        helpers.log("CLIFF IS HERE Ignoring line - %s" % line)
                         num = num - 1
                         continue
                                     
