@@ -1593,7 +1593,9 @@ class T5Platform(object):
         if str(num) == '-1':
             helpers.log("INFO: system NOT have image, or ignore check,   will copy image")
             c.config('')
-            string = 'copy "scp://bsn@jenkins:/var/lib/jenkins/jobs/bvs master/lastSuccessful/archive/target/appliance/images/bvs/controller-upgrade-bvs-*-SNAPSHOT.pkg"'
+#            string = 'copy "scp://bsn@jenkins:/var/lib/jenkins/jobs/bvs master/lastSuccessful/archive/target/appliance/images/bvs/controller-upgrade-bvs-*-SNAPSHOT.pkg"'
+            string = 'copy "scp://bsn@jenkins:/var/lib/jenkins/jobs/bvs master/lastSuccessful/archive/controller-upgrade-bvs-*-SNAPSHOT.pkg"'
+
             c.send(string + ' image://')
 #            c.expect(r'[\r\n].+password: ') 
             c.expect(r'[\r\n].+password: |[\r\n].+(yes/no)?')
@@ -3371,6 +3373,7 @@ class T5Platform(object):
                    
             helpers.log("INFO: *** local node info *** \n  %s" % localinfo)      
         return localinfo      
+
         
     def bash_df(self, node):
         ''' do df in debug bash
