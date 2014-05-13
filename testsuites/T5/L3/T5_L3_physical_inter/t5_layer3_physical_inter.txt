@@ -68,8 +68,8 @@ L3 inter tenant forwarding split horizon on the same port
 	[Tags]										feature			manual		
 
 L3 inter tenant forwarding between endpoints on the same rack but different switch
-	manual pass
-	[Tags]										feature			manual		
+	L3 inter tenant forwarding between endpoints on the same rack but different switch
+	[Tags]										feature					
 	
 Inter tenant DHCP relay
 	Inter tenant DHCP relay
@@ -895,18 +895,102 @@ Inter tenant dhcp relay
 	BASH delete route							h2								10.251.0.0/16			10.252.1.1	
 	
 
+L3 inter tenant forwarding between endpoints on the same rack but different switch
+	BASH ifdown intf							h1 								bond0
+	BASH ifdown intf							h2								bond0
+	BASH ifdown intf							h1 								eth2
+	BASH ifdown intf							h2								eth3
+	BASH ifup intf								h1								eth3
+	BASH ifup intf								h2								eth2
+	BASH init intf								h1								eth3
+	BASH init intf								h2								eth2
+	REST add interface to vns					X								X1						${leaf0_a}				ethernet48				-1
+	REST add interface to vns					X								X2						${leaf0_b}				ethernet47			-1
+	BASH add ip address							h1								10.251.1.11/24			eth3	
+	BASH add ip address							h2								10.252.1.11/24			eth2
+	BASH add route								h1								10.252.0.0/16			10.251.1.1
+	BASH add route								h2								10.251.0.0/16			10.252.1.1
+	sleep										5	
+	BASH ping									h1								10.252.1.11				count=10
+	${value} = 									BASH verify arp					h1						10.251.1.1
+	Should Be True								${value} 		
+	${value} =									BASH verify arp					h2						10.252.1.1
+	Should Be True								${value} 	
+	${mac1} = 									BASH get intf mac				h1						eth3
+	${result} =									REST show endpoints mac			${mac1}
+	Should Be True								${result}	
+	${attachpoint} = 							Set Variable					${result[0]['attachment-point']}	
+	Should Contain								${attachpoint}					'leaf0-a|ethernet48'
+	${mac2} = 									BASH get intf mac				h2						eth2
+	${result} =									REST show endpoints mac			${mac2}
+	Should Be True								${result}	
+	${attachpoint} = 							Set Variable					${result[0]['attachment-point']}	
+	Should Contain								${attachpoint}					'leaf0-b|ethernet47'
+	${loss} =									BASH ping						h1						10.252.1.11 			count=10
+	Should Be True								${loss} < 20
+	BASH delete route							h1								10.252.0.0/16			10.251.1.1
+	BASH delete route							h2								10.251.0.0/16			10.252.1.1	
+	BASH init intf								h1								eth3
+	BASH init intf								h2								eth2
+	
 
-
-
-
-
-
-
-
-
-
-
-
+Dhcp request from other host in other tenants with dhcp enabled but no inter tenant route
+	BASH ifup intf								h1 								bond0
+	BASH ifup intf								h2								bond0
+	BASH ifup intf								h3								bond0
+	BASH ifup intf								h4								bond0
+	BASH ifup intf								h5								bond0
+	BASH ifup intf								h6								bond0				
+	REST add portgroup to vns					X								X1						${leaf0_pc1}			-1
+	REST add portgroup to vns					Y								Y1						${leaf0_pc2}			1002
+	REST add portgroup to vns					Y								Y1						${leaf2_pc1}			-1
+	BASH delete tag								h1								bond0.1001				soft_error=${true}		
+	BASH add tag								h2								bond0					1002
+	BASH ifup intf								h1								bond0
+	BASH ifup intf								h2								bond0.1002
+	BASH add ip address							h1								10.251.1.11/24			bond0
+	BASH start service							h1								isc-dhcp-server
+	sleep										1
+	${value} = 									BASH check service status		h1						isc-dhcp-server
+	Should Contain								${value}						is started
+	sleep										1
+	BASH add route								h1								10.252.0.0/16			10.251.1.1
+	REST add dhcp relay							Y								Y1						10.251.1.11
+	REST enable dhcp relay						Y								Y1	
+	sleep										5
+	${ipAddr2} = 								BASH renew dhcpv4 address		h2						bond0.1002
+	Should Not Be Empty							${ipAddr2}
+	${mac1} =									BASH get intf mac				h1						bond0
+	${result} = 								REST show endpoints mac			${mac1}
+	Should Not Be Empty							${result}
+	${attachpoint} = 							Set Variable					${result[0]['attachment-point']}	
+	Should Contain								${attachpoint}					${leaf0_pc1}
+	BASH ping									h1								${ipAddr2}				count=10
+	${mac2} =									BASH get intf mac				h2						bond0
+	${result} = 								REST show endpoints mac			${mac2}
+	Should Not Be Empty							${result}
+	${attachpoint} = 							Set Variable					${result[0]['attachment-point']}	
+	${ipAddr} = 								Set Variable					${result[0]['ip-address']}
+	Should Contain								${attachpoint}					${leaf0_pc2}
+	Should Contain								${ipAddr}						${ipAddr2}
+	sleep										1
+	${loss} =									BASH ping 						h1						${ipAddr2}				count=10
+	Should Be True  							${loss} < 20	
+	REST delete static routes					Y								10.251.0.0/16		
+	${value} = 									BASH release dhcpv4 address		h2						bond0.1002
+	Should Be True								${value}
+	${ipAddr2} = 								BASH renew dhcpv4 address		h2						bond0.1002
+	Should Be Empty								${ipAddr2}
+	${loss} =									BASH ping						h1						${ipAddr2}
+	Should Be True								${loss} = 100
+	REST add static routes						Y								10.251.0.0/16			 {"tenant-name": "system"}
+	sleep										1
+	${ipAddr2} = 								BASH renew dhcpv4 address		h2						bond0.1002
+	Should Not Be Empty							${ipAddr2}
+	${loss} =									BASH ping						h1						${ipAddr2}
+	Should Be True								${loss} < 20
+	BASH delete route							h1								10.252.0.0/16			10.251.1.1
+	BASH delete route							h2								10.251.0.0/16			10.252.1.1	
 
 
 
