@@ -482,10 +482,11 @@ class BsnDevConf(DevConf):
                 self.connect()
                 result = self._cmd(*args, **kwargs)
             else:
-                helpers.log("Unexpected socket error: %s" % sys.exc_info()[0])
+                self.expect_exception(None, "Unexpected socket error",
+                                      soft_error=True)
                 raise
         except:
-            helpers.log("Unexpected error: %s" % sys.exc_info()[0])
+            self.expect_exception(None, "Unexpected error", soft_error=True)
             raise
         return result
 
@@ -606,10 +607,11 @@ class MininetDevConf(DevConf):
                 self.connect()
                 result = self._cmd(*args, **kwargs)
             else:
-                helpers.log("Unexpected socket error: %s" % sys.exc_info()[0])
+                self.expect_exception(None, "Unexpected socket error",
+                                      soft_error=True)
                 raise
         except:
-            helpers.log("Unexpected error: %s" % sys.exc_info()[0])
+            self.expect_exception(None, "Unexpected error", soft_error=True)
             raise
         return result
 
@@ -715,10 +717,11 @@ class HostDevConf(DevConf):
                 self.connect()
                 result = self._cmd(*args, **kwargs)
             else:
-                helpers.log("Unexpected socket error: %s" % sys.exc_info()[0])
+                self.expect_exception(None, "Unexpected socket error",
+                                      soft_error=True)
                 raise
         except:
-            helpers.log("Unexpected error: %s" % sys.exc_info()[0])
+            self.expect_exception(None, "Unexpected error", soft_error=True)
             raise
         return result
 
