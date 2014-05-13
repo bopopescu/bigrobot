@@ -1865,4 +1865,50 @@ class BsnCommon(object):
 
         return status
 
+    def cli_command(self,node,command):
+        ''' cli command for any string
+            usage:  cli_command    show tenant
+            note:    no process of the output contenet
+        '''
+        t = test.Test()
+        n = t.node(node)
+        content = n.cli(command)['content']   
+        temp = helpers.strip_cli_output(content)                
+        return temp
+
+    def bash_command(self,node,command):
+        ''' bash command for any string
+            usage:   bash_command    c1   df
+            note:    no process of the output contenet
+        '''
+        t = test.Test()
+        n = t.node(node)
+        content = n.bash(command)['content']  
+        temp = helpers.strip_cli_output(content)               
+        return temp
+
+    def enable_command(self,node,command):
+        ''' cli command for any string
+            usage:  cli_command    show tenant
+            note:    no process of the output contenet
+        '''
+        t = test.Test()
+        n = t.node(node)
+        content = n.enable(command)['content']   
+        temp = helpers.strip_cli_output(content)                
+        return temp
+
+    def config_command(self,node,command):
+        ''' cli command for any string
+            usage:  cli_command    show tenant
+            note:    no process of the output contenet
+        '''
+        t = test.Test()
+        n = t.node(node)
+        content = n.config(command)['content']   
+        temp = helpers.strip_cli_output(content)                
+        return temp
+ 
+
+
 

@@ -1593,7 +1593,9 @@ class T5Platform(object):
         if str(num) == '-1':
             helpers.log("INFO: system NOT have image, or ignore check,   will copy image")
             c.config('')
-            string = 'copy "scp://bsn@jenkins:/var/lib/jenkins/jobs/bvs master/lastSuccessful/archive/target/appliance/images/bvs/controller-upgrade-bvs-*-SNAPSHOT.pkg"'
+#            string = 'copy "scp://bsn@jenkins:/var/lib/jenkins/jobs/bvs master/lastSuccessful/archive/target/appliance/images/bvs/controller-upgrade-bvs-*-SNAPSHOT.pkg"'
+            string = 'copy "scp://bsn@jenkins:/var/lib/jenkins/jobs/bvs master/lastSuccessful/archive/controller-upgrade-bvs-*-SNAPSHOT.pkg"'
+
             c.send(string + ' image://')
 #            c.expect(r'[\r\n].+password: ') 
             c.expect(r'[\r\n].+password: |[\r\n].+(yes/no)?')
@@ -3371,28 +3373,6 @@ class T5Platform(object):
                    
             helpers.log("INFO: *** local node info *** \n  %s" % localinfo)      
         return localinfo      
-
-    def cli_controller_command_usrdefine(self,cli):
-        ''' cli command for any string
-            usage:  cli_controller_command_usrdefine    show tenant
-            note:    no process of the output contenet
-        '''
-        t = test.Test()
-        c = t.controller('master')
-        content = c.cli(cli)['content']   
-        temp = helpers.strip_cli_output(content)                
-        return temp
-
-    def bash_usrdefine(self,node,command):
-        ''' bash command for any string
-            usage:   bash_usrdefine    c1   df
-            note:    no process of the output contenet
-        '''
-        t = test.Test()
-        n = t.node(node)
-        content = n.bash(command)['content']  
-        temp = helpers.strip_cli_output(content)               
-        return temp
 
         
     def bash_df(self, node):
