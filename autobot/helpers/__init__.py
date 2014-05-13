@@ -490,18 +490,18 @@ def python_path(new_val=None, default=None):
     return _env_get_and_set('PYTHONPATH', new_val, default)
 
 
-def robot_syslog_file(new_val=None, default=None):
+def bigrobot_syslog_file(new_val=None, default=None):
     """
     Category: Get/set environment variables for BigRobot.
     """
-    return _env_get_and_set('ROBOT_SYSLOG_FILE', new_val, default)
+    return _env_get_and_set('BIGROBOT_SYSLOG_FILE', new_val, default)
 
 
-def robot_syslog_level(new_val=None, default=None):
+def bigrobot_syslog_level(new_val=None, default=None):
     """
     Category: Get/set environment variables for BigRobot.
     """
-    return _env_get_and_set('ROBOT_SYSLOG_LEVEL', new_val, default)
+    return _env_get_and_set('BIGROBOT_SYSLOG_LEVEL', new_val, default)
 
 
 def bigrobot_debug(new_val=None, default=None):
@@ -515,9 +515,9 @@ def bigrobot_debug(new_val=None, default=None):
     """
     _debug = _env_get_and_set('BIGROBOT_DEBUG', new_val, default)
     if int(_debug) == 1:
-        robot_syslog_file(default=''.join((bigrobot_log_path_exec_instance(),
-                                           '/syslog.txt')))
-        robot_syslog_level(default='DEBUG')
+        bigrobot_syslog_file(default=''.join((bigrobot_log_path_exec_instance(),
+                                              '/syslog.txt')))
+        bigrobot_syslog_level(default='DEBUG')
 
     return _debug
 

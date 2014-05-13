@@ -110,20 +110,14 @@ class BsnCommon(object):
         archiver.
         """
         t = test.Test()
-
-        if not test_descr:
-            test_descr = "no_test_case_descr"
-        # convert non-alpha and white spaces to underscores
-        temp_dir = re.sub(r'[\W\s]', '_', test_descr)
-        dest_path += '/' + temp_dir
-
+        dest_path += '/' + test_descr
         h = t.node_spawn(ip=server, user=user, password=password,
                          device_type='host')
         h.sudo('mkdir -p %s' % dest_path)
 
         helpers.log("Collecting information for '%s' controller" % node)
         output_dir = helpers.bigrobot_log_path_exec_instance()
-        show_cmd_file = (output_dir + '/' + temp_dir + '_' + node +
+        show_cmd_file = (output_dir + '/' + test_descr + '_' + node +
                          '/show_cmd_out.txt')
         d = os.path.dirname(show_cmd_file)
         if not os.path.exists(d):
@@ -191,6 +185,10 @@ class BsnCommon(object):
 
         helpers.log("Test case '%s' failed. Performing postmortem."
                     % test_descr)
+        if not test_descr:
+            test_descr = "no_test_case_descr"
+        # convert non-alpha and white spaces to underscores
+        test_descr = re.sub(r'[\W\s]', '_', test_descr)
 
         helpers.log("Creating directory on log archiver %s:%s"
                     % (server, dest_path))
@@ -201,10 +199,11 @@ class BsnCommon(object):
                                            user=user, password=password,
                                            dest_path=dest_path,
                                            test_descr=test_descr)
-        helpers.log("Debug logs are available at:\n%s\nor %s:%s\n\n"
-                    "Note: Files are removed after 30 days unless you touch"
-                    " the file 'KEEP_FOREVER' in the directory.%s"
-                    % (dest_url, server, dest_path,
+        helpers.warn("Debug logs available at %s\n" % dest_url)
+        helpers.log("Debug logs are also available at\n%s:%s\n"
+                    "Note: Files are removed after 30 days unless"
+                    " KEEP_FOREVER.txt is found in the directory.%s"
+                    % (server, dest_path,
                        br_utils.end_of_output_marker()))
 
     def pause_on_fail(self, keyword=None, msg=None):
