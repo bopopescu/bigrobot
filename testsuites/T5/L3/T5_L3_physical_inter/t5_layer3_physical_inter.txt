@@ -505,13 +505,13 @@ Add and delete default route on tenant router
 	REST show endpoints		
 	${loss} = 									BASH ping						h1						10.252.1.11 			count=10
 	Should Be True  							${loss} == 0		
-	REST delete static routes					X								10.252.0.0/16		 	{"tenant-name": "system"}	
+	REST delete static routes					X								10.252.0.0/16		 		
 	${loss} = 									BASH ping						h1						10.252.1.11 			count=10
 	Should Be True  							${loss} == 100		
 	REST add static routes						X								0.0.0.0/0				{"tenant-name": "system"}
 	${loss} = 									BASH ping						h1						10.252.1.11 			count=10
 	Should Be True  							${loss} == 0		
-	REST delete static routes					X								0.0.0.0/0				{"tenant-name": "system"}
+	REST delete static routes					X								0.0.0.0/0				
 	${loss} = 									BASH ping						h1						10.252.1.11 			count=10
 	Should Be True  							${loss} == 100		
 	BASH delete route							h1								10.252.0.0/16			10.251.1.1
@@ -556,7 +556,7 @@ Add and delete static route on tenant router
 	REST show endpoints		
 	${loss} = 									BASH ping						h1						10.252.1.11 			count=10
 	Should Be True  							${loss} == 0		
-	REST delete static routes					X								10.252.0.0/16		 	{"tenant-name": "system"}	
+	REST delete static routes					X								10.252.0.0/16		 	
 	${loss} = 									BASH ping						h1						10.252.1.11 			count=10
 	Should Be True  							${loss} == 100		
 	REST add static routes						X								10.252.0.0/16		 	{"tenant-name": "system"}	
@@ -607,7 +607,7 @@ Add and delete more specific route on tenant router over existing static route
 	REST add static routes						X								10.252.1.0/24		 	{"tenant-name": "system"}	
 	${loss} = 									BASH ping						h1						10.252.1.11 			count=10
 	Should Be True  							${loss} == 0		
-	REST delete static routes					X								10.252.0.0/16		 	{"tenant-name": "system"}	
+	REST delete static routes					X								10.252.0.0/16		 		
 	${loss} = 									BASH ping						h1						10.252.1.11 			count=10
 	Should Be True  							${loss} == 0		
 	REST add static routes						X								10.252.0.0/16		 	{"tenant-name": "system"}	
