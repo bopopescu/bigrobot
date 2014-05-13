@@ -275,6 +275,31 @@ class T5(object):
             return False
         else:
             return True
+        
+    def rest_delete_portgroup_all(self):
+        ''' delete all port group config in the system
+        '''
+        t = test.Test()
+        c = t.controller('master')
+
+        helpers.log("Entering ===> to delete all port group")
+         
+        url = '/api/v1/data/controller/applications/bvs/info/fabric/port-group'
+        try:
+            c.rest.get(url)
+            content = c.rest.content()
+        except:
+            pass
+        else:
+            if (content):
+                for i in range (0, len(content)):
+                    url_delete = '/api/v1/data/controller/applications/bvs/port-group[name="%s"]' % content[i]['name']
+                    c.rest.delete(url_delete, {})
+
+        helpers.log("Exiting ===>   delete all port group")
+        return True
+        
+        
 
     def rest_add_endpoint(self, tenant, vns, endpoint):
         '''Add nexthop to ecmp groups aks gateway pool in tenant"
@@ -1051,7 +1076,7 @@ class T5(object):
         else:
             return True
 
-    def rest_clear_vns_stats(self, vns):
+    def rest_clear_vns_stats(self, vns=None):
         ''' Function to clear the VNS stats
         Input: vns name
         Output: given vns counters will be cleared
