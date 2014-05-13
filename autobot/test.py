@@ -40,7 +40,7 @@ class Test(object):
             # since the alias will change when mastership changes. You can also
             # define static aliases such as:
             #    s1:
-            #        alias: leaf1
+            #        alias: leaf1-a
             #    s2:
             #        alias: spine1
             # Test class maintains a lookup table with self._node_static_aliases.
@@ -211,10 +211,17 @@ class Test(object):
                     #   leaf1-a, leaf1-b, leaf2-a, leaf2-b, etc.
                     #   s021, etc.
                     #   arista-1 - for Arista switches
-                    if not re.match(r'^(leaf\d+-[ab]|spine\d+|s\d+|arista-\d+)', alias):
-                        helpers.warn("Supported aliases are leaf{n}-{a|b}, spine{n}, s{nnn}")
-                        helpers.environment_failure("'%s' has alias '%s' which does not match the allowable alias names"
-                                                    % (node, alias))
+                    #   h1-rack1 - for hosts
+                    #   h1-vm1-rack1 - for virtual hosts
+                    r = r'^(leaf\d+-[ab]|spine\d+|s\d+|arista-\d+|h\d+(-vm\d+)?-rack\d+)'
+                    if not re.match(r, alias):
+                        helpers.warn("Supported aliases are leaf{n}-{a|b},"
+                                     " spine{n}, s{nnn}, arista-{n},"
+                                     " h{n}-rack{m}, h{n}-vm{m}-rack{o}")
+                        helpers.environment_failure(
+                                    "'%s' has alias '%s' which does not match"
+                                    " the allowable alias names"
+                                    % (node, alias))
             self._node_static_aliases['master'] = 'master'
             self._node_static_aliases['slave'] = 'slave'
             self._node_static_aliases['mn'] = 'mn1'
