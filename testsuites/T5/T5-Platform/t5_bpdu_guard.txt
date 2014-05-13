@@ -20,17 +20,18 @@ Library	         keywords/SwitchLight.py
 
 * Variable
  
-${short}  1
+${short}  3
 ${medium}  5
 ${long}   30
 ${verylong}    120 
 ${arista_sw}    s100
 ${arista_intf}    ethernet33
-${sw}             leaf1-a
+${sw}             leaf1-b
+${swname}         s6
 ${intf}           ethernet33
 
 ${sw1dpid}   00:00:88:00:00:00:01:01
-${sw5dpid}   00:00:5c:16:c7:10:20:9e
+${sw6dpid}   00:00:5c:16:c7:10:20:9e
 
 
 
@@ -42,7 +43,7 @@ T1.1 BPDU guard rstp untagged
  	sleep  ${short}
 	verify switch interface is BPDU down	${sw}   ${intf}
 	port recover from bpdu down state		${sw}   ${intf}		
-	[Tags] 	sanity   bpdu_guard     
+	[Tags] 	sanity   bpdu_guard      
 
 T1.2 BPDU guard recovery: config interface shut no shut in in controller	 
  	log   covered in T1.1
@@ -56,8 +57,8 @@ T1.3 BPDU guard recovery: config interface shut no shut in switch
 	verify switch interface is BPDU down	${sw}   ${intf}
 	config   s100	  no spanning-tree vlan 100 
 
-	cli_disable_interface   s1     		${intf}
-	cli_enable_interface    s1     		${intf}
+	cli_disable_interface   ${sw}      		${intf}
+	cli_enable_interface    ${sw}      		${intf}
 	sleep  ${short}
 	verify switch interface is up    ${sw}   ${intf} 		
  	 
@@ -188,10 +189,10 @@ fabric switch setup
   rest add dpid                 spine0         ${sw1dpid}
   rest add fabric role          spine0         spine
      
-  rest add switch               leaf1-a
-  rest add dpid                 leaf1-a        ${sw5dpid}
-  rest add fabric role          leaf1-a        leaf
-  rest_add_leaf_group           leaf1-a        rack1   
+  rest add switch               ${sw}
+  rest add dpid                 ${sw}        ${sw6dpid}
+  rest add fabric role          ${sw}        leaf
+  rest_add_leaf_group           ${sw}        rack1   
     
 arista setup trunk vlan 100		
  	config   ${arista_sw}	   no spanning-tree vlan 100       
