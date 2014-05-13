@@ -34,8 +34,8 @@ Intra tenant L3 tagged traffic with dynamic endpoints across rack
 	L3 intra tenant across rack tagged with dynamic endpoints
 	[Tags]								sanity	
 
-Active and deactivate router interface
-	Active and deactivate router interface
+Activate and deactivate router interface
+	Activate and deactivate router interface
 	[Tags]								sanity	
 
 Intra tenant L3 untagged traffic with static endpoints same rack
@@ -408,7 +408,7 @@ L3 intra tenant across rack tagged with dynamic endpoints
 	BASH delete route							h3								10.251.1.0/24			10.251.3.1
 
 
-Active and deactivate router interface
+Activative and deactivate router interface
 	BASH ifup intf								h1 								bond0
 	BASH ifup intf								h2								bond0
 	BASH ifup intf								h3								bond0
@@ -451,12 +451,11 @@ Active and deactivate router interface
 	REST disable router intf					X								X1
 	${loss} = 									BASH ping						h1						10.251.3.11 			count=10
 	Should Be True  							${loss} == 100
-	REST enable	router intf						X								X1
+	REST enable router intf						X								X1
 	${loss} = 									BASH ping						h1						10.251.3.11 			count=10
 	Should Be True  							${loss} < 20
 	BASH delete route							h1								10.251.3.0/24			10.251.1.1
 	BASH delete route							h3								10.251.1.0/24			10.251.3.1
-
 
 
 L3 intra tenant same rack untagged with static endpoints
