@@ -368,6 +368,9 @@ T5 test teardown
 	rest delete portgroup  p4
 	rest delete tenant  t1
 	rest delete tenant  t2
+	rest delete tenant  internal
+	rest delete tenant  external
+	rest delete tenant  system
 	base test teardown
 
 T5 test setup

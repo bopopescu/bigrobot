@@ -8,6 +8,7 @@ from __future__ import print_function
 import os
 import sys
 import platform
+import re
 import shutil
 import argparse
 import subprocess
@@ -46,6 +47,7 @@ def test_and_install_package():
                 'pycrypto': 'Crypto',
                 'paramiko': 'paramiko',
                 'scp': 'scp',
+                'pexpect': 'pexpect',
                 'robotframework': 'robot',
                 # 'robotframework-ride': 'robotide',
                 # 'pep8': '???',  # not possible to test import pep8 package
@@ -118,12 +120,26 @@ os.environ['IS_GOBOT'] = 'True'
 
 helpers.bigrobot_log_path(default='.')
 if helpers.bigrobot_suite():
-    helpers.bigrobot_log_path_exec_instance(default="%s/%s_%s"
-                                            % (helpers.bigrobot_log_path(),
-                                               helpers.bigrobot_suite(),
-                                               helpers.ts_local()))
+    _suite = helpers.bigrobot_suite()
+
+    # If user specified full path, trim it down to just suite name. E.g.,
+    # Change:
+    #  /Users/vui/Documents/ws/myforks/bigrobot/testsuites_dev/vui/test_mininet
+    # To:
+    #  vui_test_mininet_20140513_095428
+    _match = re.search(r'.+testsuites(_dev)?/(.+)$', _suite)
+    if _match:
+        _suite = re.sub(r'[\W\s]', '_', _match.group(2))
+    helpers.bigrobot_log_path_exec_instance_relative(
+                default="%s_%s"
+                % (_suite, helpers.ts_local()))
 else:
-    helpers.bigrobot_log_path_exec_instance(helpers.bigrobot_log_path())
+    helpers.bigrobot_log_path_exec_instance_relative(
+                default="<bigrobot_suite>")
+helpers.bigrobot_log_path_exec_instance(
+            default="%s/%s"
+            % (helpers.bigrobot_log_path(),
+               helpers.bigrobot_log_path_exec_instance_relative()))
 
 if helpers.bigrobot_suite():
     _topo_p = helpers.bigrobot_suite() + ".physical.topo"
@@ -385,6 +401,8 @@ def test_command(*args):
     parser.add_argument('--outputdir',
                         default=helpers.bigrobot_log_path_exec_instance(),
                         help="Output directory")
+    parser.add_argument('--dryrun', action='store_true', default=False,
+                        help="Run the tests without executing the keywords")
 
     # Note on --exitonfailure: It will not run subsequent test cases and will
     # simply flag them as failed with the error:
@@ -400,7 +418,9 @@ def test_command(*args):
         exclude_tags.append('skipped')
     else:
         exclude_tags = ['skipped']
-    print("test_case_names: %s" % args.test)
+
+    if args.test:
+        print("test_case_names: %s" % args.test)
 
     # Comparable to command options:
     #   pybot --loglevel=debug \
@@ -415,6 +435,7 @@ def test_command(*args):
                'debugfile': args.debugfile,
                'outputdir': args.outputdir,
                'listener': 'autobot.listener.Listener',
+               'dryrun': args.dryrun,
                'exitonfailure': args.exitonfailure,
                }
     if include_tags:
@@ -440,7 +461,7 @@ def test_command(*args):
     test_suite = ''.join((helpers.bigrobot_suite(), '.', ext))
 
     touch_log_files()
-    if helpers.bigrobot_continuous_integration() == 'True':
+    if helpers.bigrobot_continuous_integration().lower() == 'true':
         # Don't create links to log files under CI environment
         pass
     else:
@@ -450,7 +471,7 @@ def test_command(*args):
     helpers.log("Robot Framework return code is %s" % rc)
     print("Robot Framework return code is %s" % rc)
 
-    # if helpers.bigrobot_continuous_integration() == 'True':
+    # if helpers.bigrobot_continuous_integration().lower() == 'True':
     #    print("Inside continuous integration environment. Return code"
     #          " set to 0.")
     #    sys.exit(0)
@@ -480,7 +501,8 @@ def clean_command(*args):
     Remove output files created from Robot runs.
     """
     _ = args  # unused, silent Pylint
-    run('rm -f log.html report.html output.xml debug.log syslog.txt',
+    run('rm -f log.html report.html output.xml debug.log syslog.txt'
+        ' dev_commands.log bigrobot_listener.log',
         shell=True)
 
 

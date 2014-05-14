@@ -40,7 +40,7 @@ class Test(object):
             # since the alias will change when mastership changes. You can also
             # define static aliases such as:
             #    s1:
-            #        alias: leaf1
+            #        alias: leaf1-a
             #    s2:
             #        alias: spine1
             # Test class maintains a lookup table with self._node_static_aliases.
@@ -211,10 +211,17 @@ class Test(object):
                     #   leaf1-a, leaf1-b, leaf2-a, leaf2-b, etc.
                     #   s021, etc.
                     #   arista-1 - for Arista switches
-                    if not re.match(r'^(leaf\d+-[ab]|spine\d+|s\d+|arista-\d+)', alias):
-                        helpers.warn("Supported aliases are leaf{n}-{a|b}, spine{n}, s{nnn}")
-                        helpers.environment_failure("'%s' has alias '%s' which does not match the allowable alias names"
-                                                    % (node, alias))
+                    #   h1-rack1 - for hosts
+                    #   h1-vm1-rack1 - for virtual hosts
+                    r = r'^(leaf\d+-[ab]|spine\d+|s\d+|arista-\d+|h\d+(-vm\d+)?-rack\d+)'
+                    if not re.match(r, alias):
+                        helpers.warn("Supported aliases are leaf{n}-{a|b},"
+                                     " spine{n}, s{nnn}, arista-{n},"
+                                     " h{n}-rack{m}, h{n}-vm{m}-rack{o}")
+                        helpers.environment_failure(
+                                    "'%s' has alias '%s' which does not match"
+                                    " the allowable alias names"
+                                    % (node, alias))
             self._node_static_aliases['master'] = 'master'
             self._node_static_aliases['slave'] = 'slave'
             self._node_static_aliases['mn'] = 'mn1'
@@ -542,9 +549,16 @@ class Test(object):
             if not password:
                 password = self.switch_password()
             n = a_node.SwitchNode(node, ip, user, password, t)
+        elif device_type == 'host':
+            helpers.log("Initializing host '%s'" % node)
+            if not user:
+                user = self.host_user()
+            if not password:
+                password = self.host_password()
+            n = a_node.HostNode(node, ip, user, password, t)
         else:
             helpers.environment_failure("You can only spawn nodes for device"
-                                        " types: 'controller', 'switch'")
+                                        " types: 'controller', 'switch', 'host'")
         return n
 
     def node_connect(self, node, user=None, password=None,
@@ -706,6 +720,78 @@ class Test(object):
         c = self.node_connect(node_name, **kwargs)
         c.rest.request_session_cookie()
         return self.node(node)
+
+    def dev_console(self, node, modeless=False):
+        """
+        Telnet to the console of a BSN controller or switch.
+
+        To use this feature, you need to define the console for a node in the
+        topo file. E.g.,
+
+            s1:
+              console:
+                ip: cs-rack10
+                port: 6010
+
+        Then:
+            t = test.Test()
+            con = t.dev_console(node)
+            con.bash("w")
+            con.sudo("cat /etc/shadow")
+            con.enable("show running-config")
+
+        How it works:
+        - It attempts to exit out of whichever mode the console is currently
+           in, then try to put the device into CLI mode, or die trying...
+        - If modeless=True, just return the console handle as is and not
+          atttempt to log in. The user can decide how to control the console
+          session (i.e.,  the user is on his own).
+
+        Returns a DevConf object since console is essentially an "Expect"
+        session and not a full blown node object.
+        """
+        t = self
+        n = t.node(node)
+        n_console = n.console()
+
+        if modeless:
+            return n_console
+
+        prompt_login = r'.*login:.*$'
+        prompt_password = r'[Pp]assword:.*'
+
+        user = n.user()
+        password = n.password()
+        helpers.log("Console user:%s password:%s" % (user, password))
+
+        # This regex should match prompts from BSN controllers and switches.
+        prompt_device_cli = r'[\r\n\x07]+(\w+(-?\w+)?\s?@?)?[\-\w+\.:/]+(?:\([^\)]+\))?(:~)?[>#$] ?$'
+
+        def login():
+            helpers.log("Found the login prompt. Sending user name.")
+            n_console.send(user)
+            match = n_console.expect(prompt=prompt_password)
+            if match[0] == 0:
+                helpers.log("Found the password prompt. Sending password.")
+                n_console.send(password)
+                match = n_console.expect(prompt=prompt_device_cli)
+
+        n_console.send('')
+
+        # Match login or CLI prompt.
+        match = n_console.expect(prompt=[prompt_login, prompt_device_cli])
+        if match[0] == 0:
+            login()  # Found login prompt. Attempt to authenticate.
+        elif match[0] == 1:
+            helpers.log("Found the device prompt. Exiting system.")
+            n_console.send('logout')
+            match = n_console.expect(prompt=[prompt_login])
+            login()
+
+        # Set the device mode to CLI
+        n_console.mode('cli')
+        n_console.cli('show version')
+        return n_console
 
     def initialize(self):
         """

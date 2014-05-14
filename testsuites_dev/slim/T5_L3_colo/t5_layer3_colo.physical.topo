@@ -41,56 +41,76 @@ s9:
 s10:
   ip: 10.210.66.44
   
-h2:
+r1-h2:
    ip: 10.210.64.30
    user: root
    password: bsn
 
-h3:
+r1-h3:
    ip: 10.210.64.29
    user: root
    password: bsn
 
-
-h4:
+r1-h4:
    ip: 10.210.64.28
    user: root
    password: bsn
      
-h5:
+r1-h5:
   ip: 10.210.64.27
   user: root
   password: bsn
   
-h6:
+r1-h6:
   ip: 10.210.64.26
   user: root
   password: bsn
    
-h7:
+r1-h7:
   ip: 10.210.64.25
   user: root
   password: bsn
      
-h8:
+r1-h8:
   ip: 10.210.64.24
   user: root
   password: bsn
     
-h9:
+r1-h9:
   ip: 10.210.64.23
   user: root
   password: bsn
 
-h10:
+r1-h10:
   ip: 10.210.64.22
   user: root
   password: bsn
 
-h11:
+r1-h11:
   ip: 10.210.64.21
   user: root
   password: bsn  
+
+r2-h1:
+  ip: 10.210.65.31
+  user: root
+  password: bsn   
+ 
+r2-h2:
+  ip: 10.210.65.30
+  user: root
+  password: bsn   
+ 
+r2-h3:
+  ip: 10.210.65.29
+  user: root
+  password: bsn   
+ 
+r2-h4:
+  ip: 10.210.65.28
+  user: root
+  password: bsn   
+ 
  
   
 tg1:

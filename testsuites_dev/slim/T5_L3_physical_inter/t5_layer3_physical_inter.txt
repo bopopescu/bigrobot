@@ -6,306 +6,295 @@ Test Setup      test setup topology
 Test Teardown   test teardown topology
 Force Tags      T5 Sanity
 Library         keywords/BsnCommon.py
-Library         keywords_dev/slim/Host.py
+Library         keywords/Host.py
 Library         keywords/T5.py
 Library         keywords/T5L3.py
 Library         keywords/T5Platform.py
-Library         keywords_dev/animesh/BsnCommonShow.py
-Library         keywords_dev/slim/SwitchLight.py
+Library			keywords/SwitchLight.py
+Library         keywords/BsnCommon.py
 Library	        Collections.py
 Library         keywords/Ixia.py
-#Library			autobot/helpers/__init__.py
-Resource		testsuites_dev/slim/T5_L3_physical_inter/t5_layer3_physical_inter_variables.txt
+Resource		testsuites/T5/L3//T5_L3_physical_inter/t5_layer3_physical_inter_variables.txt
 Resource		testsuites/T5/t5_dualleaf_three_rack_physical_resource.txt
 
 
 * Test Cases
 Inter tenant L3 untagged traffic with dynamic endpoints same rack
 	L3 inter tenant same rack untagged with dynamic endpoints
-#	[Tags]							skipped			smoke				sanity			
+	[Tags]										sanity			
 
 Inter tenant L3 untagged traffic with dynamic endpoints across rack
 	L3 inter tenant across rack untagged with dynamic endpoints
-#	[Tags]							skipped			smoke				sanity	
+	[Tags]										sanity	
 
 inter tenant L3 tagged traffic with dynamic endpoints same rack
 	L3 inter tenant same rack tagged with dynamic endpoints
-#	[Tags]							skipped			smoke				sanity			
+	[Tags]										sanity			
 
 inter tenant L3 tagged traffic with dynamic endpoints across rack
 	L3 inter tenant across rack tagged with dynamic endpoints
-#	[Tags]							skipped			smoke				sanity	
+	[Tags]										sanity	
 
 Add and delete default route on tenant
 	Add and delete default route on tenant router
-#	[Tags]							skipped			sanity	
+	[Tags]										sanity	
 
 Add and delete static route on tenant
 	Add and delete static route on tenant router
-#	[Tags]							skipped			sanity	
+	[Tags]										sanity	
 
 Add and delete more specific route on tenant over existing static route
 	Add and delete more specific route on tenant router over existing static route
-	[Tags]							skipped			sanity	
-
-
-Add and delete tenant vns router interface
-	Add and delete tenant vns router interface towards system router
-#	[Tags]							skipped			sanity	
-
-L3 inter tenant forwarding with end host moved to another port
-	L3 inter tenant host moved 
-#	[Tags]							skipped			feature	
-
-L3 inter tenant forwarding split horizon on the same port 
-	Log 										manual pass
-	[Tags]										feature			manual		
-
-L3 inter tenant forwarding between endpoints on the same rack but different switch
-	Log 										manual pass
-	[Tags]										feature			manual		
-
-	
-Add and delete system router interface to tenant router
-	Add and delete system router interface on tenant router
-#	[Tags]							skipped			feature	
-
-L3 ttl one forwarding
-	Verify inter tenant L3 traffic with ttl value of one two and three
-#	[Tags]							skipped			feature	
-	
-Inter tenant DHCP relay
-	L3 dhcp relay across tenant
-	Log								manual untested
-	[Tags]			skipped		manual			untested			feature			
-
-Dhcp request from other host in other tenants with dhcp enabled but no inter tenant route
-	L3 inter tenant dhcp discover without routes
-	Log								manual untested
-	[Tags]			skipped		manual			untested			feature			
-
-dhcp request from other host in other tenants without dhcp relay enabled but with inter tenant route
-	L3 inter tenant dhcp request without dhcp enabled but routes are present
-	Log								manual untested
-	[Tags]			skipped		manual			untested			feature			
-
-Inter tenant dhcp relay with multiple dhcp servers
-	Inter tenant dhcp relay with multiple dhcp servers
-	Log								manual untested
-	[Tags]			skipped		manual			untested			feature			
-
-Host moved to another vns on another tenant and renew dhcp 
-	Verify host is able to request new dhcp address after moved to another vns in another tenant
-	Log								manual untested
-	[Tags]			skipped		manual			untested			feature			
-
-DHCP request to external dhcp servers
-	DHCP request to external dhcp server
-	Log								manual untested
-	[Tags]			skipped		manual			untested			feature			
-
-	
-
-Overlapping IP subnet with and without private keyword
-	overlapping IP subnet with and without private keyword
-	Log								manual untested
-	[Tags]			skipped		manual			untested			feature			
-	
-Overlapping IP with vlsm with and without private keyword
-	overlapping private ip subnet with vlsm with and without private keyword
-	Log								manual untested
-	[Tags]			skipped		manual			untested			feature			
-
-One public IP and multiple private IP
-	L3 inter tenant traffic from public to private IP on multiple tenant
-	Log								manual untested
-	[Tags]			skipped		manual			untested			feature			
-
-Verify private IP is able to communicate with other vns in the same tenant
-	L3 intra tenant traffic from private IP subnet
-	Log								manual untested
-	[Tags]			skipped		manual			untested			feature			
-
-Controller HA failover via CLI
-	Controller HA failover via CLI and verify L3 inter tenant traffic after HA
-	Log								manual untested
-	[Tags]			skipped		manual			untested			feature			
-
-Controller HA failover via reboot of master
-	Controller HA failover via master reboot and verify L3 inter tenant traffic
-	Log								manual untested
-	[Tags]			skipped		manual			untested			feature			
-	
-Spine reboot
-	Reboot of spine and verify L3 inter tenant traffic 
-	Log								manual untested
-	[Tags]			skipped		manual			untested			feature			
-
-Leaf reboot
-	Reboot of a single leaf in a dual-tor setup and verify L3 inter tenant traffic
-	Log								manual untested
-	[Tags]			skipped		manual			untested			feature			
-
-Traffic load balance across ECMP group
-	Verify traffic is load balanced across ecmp group
-	Log								manual untested
-	[Tags]			skipped		manual			untested			feature		
-
-Add and delete one ECMP members with active traffic in ecmp group
-	Verify L3 traffic is forwarding with add and delete of ecmp members
-	Log								manual untested
-	[Tags]			skipped		manual			untested			feature			
-
-Add and delete all ECMP members in ecmp group  
-	Delete all members in ecmp group and verify traffic behavior
-	Log								manual untested
-	[Tags]			skipped		manual			untested			feature			
-
-Delete existing one ECMP members and add new ECMP member
-	Delete and add new ecmp member
-	Log								manual untested
-	[Tags]			skipped		manual			untested			feature			
-
-Verify L3 traffic honor more specific routes with ecmp group
-	Verify L3 traffic honor more specific routes with ecmp group
-	[Tags]			skipped		manual			untested			feature		
-
-Move ecmp endpoint to another attachment point and verify L3 forwarding
-	Move ecmp endpoint to another attachment point and verify L3 forwarding
-	[Tags]			skipped		manual			untested			feature		
-		
-
-Verify L3 traffic switch over to different path when the same route is applied with different nexthop or tenant
-	Verify L3 traffic switch over to different path when the same route is applied with different nexthop or tenant
-	[Tags]			skipped		manual			untested			feature			
-				
+	[Tags]										sanity	
 
 Add and delete tenant system interface on tenant router
 	Add and delete tenant system interface on tenant router
-	Log								manual untested
-	[Tags]			skipped		manual			untested			feature			
+	[Tags]										sanity	
 
-Add and delete router interface on tenant system
-	Add and delete router interface on tenant system
-	Log								manual untested
-	[Tags]			skipped		manual			untested			feature			
+Add and delete tenant router interface on system tenant
+	Add and delete tenant router interface on system tenant
+	[Tags]										feature	
 
-Add and delete default route on tenant system
-	Add and delete default route on tenant system
-	Log								manual untested
-	[Tags]			skipped		manual			untested			feature			
+L3 ttl one forwarding
+	Verify inter tenant L3 traffic with ttl value of one two and three
+	[Tags]										feature					run
 
-Add and delete static route on tenant system
-	Add and delete static route on tenant system
-	Log								manual untested
-	[Tags]			skipped		manual			untested			feature			
+L3 inter tenant forwarding with end host moved to another port
+	L3 inter tenant host moved 
+	[Tags]										feature					run
 
-Add and delete more specific route on tenant system
-	Add and delete more specific route on tenant system
-	Log								manual untested
-	[Tags]			skipped		manual			untested			feature			
+L3 inter tenant forwarding split horizon on the same port 
+	manual pass
+	[Tags]										feature			manual		
 
+L3 inter tenant forwarding between endpoints on the same rack but different switch
+	manual pass
+	[Tags]										feature			manual		
+	
+Inter tenant DHCP relay
+#	manual passed
+	Inter tenant DHCP relay
+	[Tags]			manual			feature			dhcp-relay			run
+
+Dhcp request from other host in other tenants with dhcp enabled but no inter tenant route
+	manual passed
+	[Tags]			manual			feature			dhcp-relay
+
+dhcp request from other host in other tenants without dhcp relay enabled but with inter tenant route
+	manual passed
+	[Tags]			manual			feature			dhcp-relay
+
+Inter tenant dhcp relay with multiple dhcp servers
+	manual passed
+	[Tags]			manual			feature			dhcp-relay
+
+Host moved to another vns on another tenant and renew dhcp 
+	manual untested
+	[Tags]			manual			feature			dhcp-relay
+
+DHCP request to external dhcp servers
+	manual passed
+	[Tags]			manual			feature			dhcp-relay		
+
+Overlapping IP subnet with and without private keyword
+	manual passed
+	[Tags]			manual			feature			
+	
+Overlapping IP with vlsm with and without private keyword
+	manual untested
+	[Tags]			manual-untested		feature			
+
+One public IP and multiple private IP
+	manual untested
+	[Tags]			manual-untested			feature			
+
+Verify private IP is able to communicate with other vns in the same tenant
+	manual untested
+	[Tags]			manual-untested			feature			
+
+Controller HA failover via CLI
+	manual untested
+	[Tags]			manual-untested			feature			
+
+Controller HA failover via reboot of master
+	manual untested
+	[Tags]			manual-untested			feature			
+	
+Spine reboot
+	manual untested
+	[Tags]			manual-untested			feature			
+
+Leaf reboot
+	manual untested
+	[Tags]			manual-untested			feature			
+
+Traffic load balance across ECMP group
+	manual passed
+	[Tags]			manual			feature			ecmp		
+
+Add and delete one ECMP members with active traffic in ecmp group
+	manual passed
+	[Tags]			manual			feature			ecmp			
+
+Add and delete all ECMP members in ecmp group  
+	manual untested
+	[Tags]			manual-untested			feature			ecmp			
+
+Delete existing one ECMP members and add new ECMP member
+	manual untested
+	[Tags]			manual-untested			feature			ecmp			
+
+Verify L3 traffic honor more specific routes with ecmp group
+	manual passed
+	[Tags]			manual			feature			ecmp		
+
+Move ecmp endpoint to another attachment point and verify L3 forwarding
+	manual untested
+	[Tags]			manual-untested			feature			ecmp		
+
+Verify L3 traffic switch over to different path when the same route is applied with different nexthop or tenant
+	manual untested
+	[Tags]			manual			feature			
 
 L3 inter tenant traffic behavior in headless mode
-	Verify L3 inter tenant traffic forwarding in headless mode
-	Log								manual untested
-	[Tags]			skipped		manual			untested			feature			
+	manual untested
+	[Tags]			manual-untested			feature			
 
 Link flap between leaf and spine
-	Verify L3 inter tenant traffic forwarding with link flapping between spine and leaf
-	Log								manual untested
-	[Tags]			skipped		manual			untested			feature			
+	manual untested
+	[Tags]			manual-untested			feature			
 
 L3 inter tenant forwarding to external router
 	Verify L3 inter tenant forwarding to external router
-	Log								manual untested
-	[Tags]			skipped		manual			untested			feature			
+	manual untested
+	[Tags]			manual					feature			
 
 L3 inter tenant forwarding to VRRP routers
-	Verify L3 inter tenant forwarding to vrrp vip 
-	Log								manual untested
-	[Tags]			skipped		manual			untested			feature			
-
+	manual untested
+	[Tags]			manual-untested			feature			
 
 L3 inter tenant traceroute
-	Inter tenant traceroute across fabric
-	Log								manual untested
-	[Tags]			skipped		manual			untested			feature			
+	manual passed
+	[Tags]			manual					feature			
 
 Add and delete endpoints with L3 inter tenant traffic
-	Add and delete endpoints with L3 inter tenant traffic
-	Log							manual untested
-	[Tags]			skipped		manual			untested			feature			
-
-Tenant router with full 32 bit mask
-	configure tenant router with full 32 bit mask
-	Log							manual untested
-	[Tags]			skipped		manual			untested			feature			
+	manual untested
+	[Tags]			manual-untested			feature			
 
 Verify private subnet cannot be routed via system router
-	Verify private subnet cannot be routed among tenants
-	Log							manual untested
-	[Tags]			skipped		manual			untested			feature			
+	manual untested
+	[Tags]			manual-untested			feature			
 
 L3 inter tenant traffic with jumbo frame
-	Verify jumbo frame forwarding between tenant
-	Log							manual untested
-	[Tags]			skipped		manual			untested			feature			
+	manual untested
+	[Tags]			manual-untested			feature			
 
 L3 inter tenant with CRC errors
-	Verify packets with CRC errors is dropped 
-	Log							manual untested
-	[Tags]			skipped		manual			untested			feature			
+	manual untested
+	[Tags]			manual-untested			feature			
 
 Verify route next hop IP must be in the same tenant
-	Verify traffic forwarding takes place only in the same tenant with next hop IP
-	Log							manual untested
-	[Tags]			skipped		manual			untested			feature			
+	manual untested
+	[Tags]			manual-untested			feature			
 
 Verify ECMP next hop IP must be in the same tenant
-	Verify traffic forwarding across ecmp members must be in the same tenant
-	Log							manual untested
-	[Tags]			skipped		manual			untested			feature			
+	manual untested
+	[Tags]			manual					feature			ecmp			
 
 L3 inter tenant forwarding with ecmp destination
-	L3 inter tenant forwarding with ecmp destination
-	Log							manual untested
-	[Tags]			skipped		manual			untested			feature			
+	manual untested
+	[Tags]			manual					feature			ecmp			
 
 L3 inter tenant shutdown and bringup a leaf switch in a dual tor setup
-	Shutdown and bringup a leaf switch in dual tor and verify L3 inter tenant forwarding
-	Log							manual untested
-	[Tags]			skipped		manual			untested			feature			
+	manual untested
+	[Tags]			manual-untested			feature			
 
 L3 inter tenant shutdown and bringup a spine switch 
-	Shutdown and bringup a spine switch and verify L3 inter tenant forwarding
-	Log							manual untested
-	[Tags]			skipped		manual			untested			feature			
-
+	manual untested
+	[Tags]			manual-untested			feature			
 
 L3 inter tenant destroy active controller VM from KVM
-	HA failover by destroying active controller VM from KVM
-	Log							manual untested
-	[Tags]			skipped		manual			untested			feature			
-
+	manual untested
+	[Tags]			manual-untested			feature			
 
 L3 inter tenant destroy standby controller VM from KVM
-	Verify L3 inter tenant traffic behavior when standby controller VM is destroy
-	Log							manual untested
-	[Tags]			skipped		manual			untested			feature			
+	manual untested
+	[Tags]			manual-untested			feature			
 
 Restart ofad on leaf switch
-	restart ofad on leaf switch in dual tor setup and verify L3 inter tenant traffic forwarding
-	Log							manual untested
-	[Tags]			skipped		manual			untested			feature			
+	manual untested
+	[Tags]			manual-untested			feature			
 
 Restart ofad on spine switch
-	restart ofad on spine switch and verify L3 inter tenant forwarding
-	Log							manual untested
-	[Tags]			skipped		manual			untested			feature			
+	manual untested
+	[Tags]			manual-untested			feature			
 
+Controller HA failover with ecmp group
+	manual failed
+	[Tags]			manual			feature			ecmp	
 		
+Controller HA failover with dhcp-relay
+	manual failed
+	[Tags]			manual			feature			dhcp-relay			
+
+Active Controller reboot with ecmp group
+	manual failed
+	[Tags]			manual			feature			ecmp	
 	
+Active Controller reboot with dhcp-relay
+	manual failed
+	[Tags]			manual			feature			dhcp-relay	
+
+Verify inter tenant L3 traffic is getting drop with null next hop
+	manual untested
+	[Tags]			manual-untested			feature				
+
+Restart ofad on leaf switch with ecmp group
+	manual untested
+	[Tags]			manual-untested			feature			ecmp	
+
+Restart ofad on spine with ecmp group
+	manual untested
+	[Tags]			manual-untested			feature			ecmp	
+
+Restart ofad on leaf with dhcp-relay
+	manual untested
+	[Tags]			manual-untested			feature			dhcp-relay	
+
+Restart ofad on spine with dhcp-relay
+	manual untested
+	[Tags]			manual-untested			feature			dhcp-relay	
+	
+Flap member link in a port-group in ecmp group
+	manual untested
+	[Tags]			manual-untested			solution			ecmp	
+	
+Flap port group in ecmp group
+	manual untested
+	[Tags]			manual-untested			solution			ecmp
+
+inter tenant ecmp forwarding in headless mode
+	manual untested
+	[Tags]			manual-untested			solution			ecmp
+
+inter tenant dhcp relay in headless mode
+	manual untested
+	[Tags]			manual-untested			solution			dhcp-relay	
+
+Verify L3 inter tenant forwarding after controller upgrade
+	manual untested
+	[Tags]					manual-untested			feature					
+
+Verify inter tenant ecmp forwarding after controller upgrade
+	manual untested
+	[Tags]					manual-untested			feature					
+
+Verify inter tenant dhcp-relay functionality after controller upgrade
+	manual untested
+	[Tags]					manual-untested			feature					
+
+
+
 
 * Keywords
 L3 inter tenant same rack untagged with dynamic endpoints
@@ -430,7 +419,6 @@ L3 inter tenant same rack tagged with dynamic endpoints
 	Should Be True  							${loss} == 0	
 	BASH delete route							h1								10.252.0.0/16			10.251.1.1
 	BASH delete route							h2								10.251.0.0/16			10.252.1.1	
-	
 	
 	
 L3 inter tenant across rack tagged with dynamic endpoints	
@@ -629,7 +617,7 @@ Add and delete more specific route on tenant router over existing static route
 	BASH delete route							h3								10.251.0.0/16			10.252.1.1
 
 
-Add and delete tenant vns router interface towards system router
+Add and delete tenant system interface on tenant router
 	BASH ifup intf								h1 								bond0
 	BASH ifup intf								h2								bond0
 	BASH ifup intf								h3								bond0
@@ -677,8 +665,59 @@ Add and delete tenant vns router interface towards system router
 	Should Be True  							${loss} == 0		
 	BASH delete route							h1								10.252.0.0/16			10.251.1.1
 	BASH delete route							h3								10.251.0.0/16			10.252.1.1
+	
 
-L3 inter tenant host moved 
+Add and delete tenant router interface on system tenant
+	BASH ifup intf								h1 								bond0
+	BASH ifup intf								h2								bond0
+	BASH ifup intf								h3								bond0
+	BASH ifup intf								h4								bond0
+	BASH ifup intf								h5								bond0
+	BASH ifup intf								h6								bond0	
+	REST add portgroup to vns					X								X1						${leaf0_pc1}			1001
+	REST add portgroup to vns					Y								Y1						${leaf1_pc1}			1003
+	REST add interface to vns					X								X1						${leaf0-a}				${ixia1}				101
+	REST add interface to vns					Y								Y1						${leaf1-a}				${ixia3}				201	
+	BASH add tag								h1								bond0					1001
+	BASH add tag								h3								bond0					1003
+	BASH ifup intf								h1								bond0.1001
+	BASH ifup intf								h3								bond0.1003
+	BASH add ip address							h1								10.251.1.11/24			bond0.1001
+	BASH add ip address							h3								10.252.1.11/24			bond0.1003
+	BASH add route								h1								10.252.0.0/16			10.251.1.1
+	BASH add route								h3								10.251.0.0/16			10.252.1.1
+	sleep										10	
+	${value} = 									BASH verify arp					h1						10.251.1.1
+	Should Not Be True							${value} 		
+	${value} =									BASH verify arp					h3						10.252.1.1
+	Should Not Be True							${value} 	
+	BASH ping									h1								10.252.1.11				count=10
+	${value} = 									BASH verify arp					h1						10.251.1.1
+	Should Be True								${value} 		
+	${value} =									BASH verify arp					h3						10.252.1.1
+	Should Be True								${value} 		
+	${mac1} = 									BASH get intf mac				h1						bond0.1001
+	${result} =									REST show endpoints mac			${mac1}
+	Should Be True								${result}						
+	${mac2} = 									BASH get intf mac				h3						bond0.1003
+	${result} =									REST show endpoints mac			${mac2}
+	Should Be True								${result}						
+	REST show endpoints		
+	${loss} = 									BASH ping						h1						10.252.1.11 			count=10
+	Should Be True  							${loss} == 0		
+	REST delete tenant routers intf to system	Y
+	sleep										1
+	${loss} = 									BASH ping						h1						10.252.1.11 			count=10
+	Should Be True  							${loss} == 100		
+	REST add tenant routers intf to system		Y
+	sleep										1
+	${loss} = 									BASH ping						h1						10.252.1.11 			count=10
+	Should Be True  							${loss} == 0		
+	BASH delete route							h1								10.252.0.0/16			10.251.1.1
+	BASH delete route							h3								10.251.0.0/16			10.252.1.1
+
+
+L3 inter tenant host moved old
 	BASH ifup intf								h1 								bond0
 	BASH ifup intf								h2								bond0
 	BASH ifup intf								h3								bond0
@@ -728,57 +767,7 @@ L3 inter tenant host moved
 	BASH delete route							h1								10.252.0.0/16			10.251.1.1
 	BASH delete route							h3								10.251.0.0/16			10.252.1.1
 	BASH delete route							h5								10.251.0.0/16			10.252.1.1
-		
-
-Add and delete system router interface on tenant router
-	BASH ifup intf								h1 								bond0
-	BASH ifup intf								h2								bond0
-	BASH ifup intf								h3								bond0
-	BASH ifup intf								h4								bond0
-	BASH ifup intf								h5								bond0
-	BASH ifup intf								h6								bond0	
-	REST add portgroup to vns					X								X1						${leaf0_pc1}			1001
-	REST add portgroup to vns					Y								Y1						${leaf1_pc1}			1003
-	REST add interface to vns					X								X1						${leaf0-a}				${ixia1}				101
-	REST add interface to vns					Y								Y1						${leaf1-a}				${ixia3}				201	
-	BASH add tag								h1								bond0					1001
-	BASH add tag								h3								bond0					1003
-	BASH ifup intf								h1								bond0.1001
-	BASH ifup intf								h3								bond0.1003
-	BASH add ip address							h1								10.251.1.11/24			bond0.1001
-	BASH add ip address							h3								10.252.1.11/24			bond0.1003
-	BASH add route								h1								10.252.0.0/16			10.251.1.1
-	BASH add route								h3								10.251.0.0/16			10.252.1.1
-	sleep										10	
-	${value} = 									BASH verify arp					h1						10.251.1.1
-	Should Not Be True							${value} 		
-	${value} =									BASH verify arp					h3						10.252.1.1
-	Should Not Be True							${value} 	
-	BASH ping									h1								10.252.1.11				count=10
-	${value} = 									BASH verify arp					h1						10.251.1.1
-	Should Be True								${value} 		
-	${value} =									BASH verify arp					h3						10.252.1.1
-	Should Be True								${value} 		
-	${mac1} = 									BASH get intf mac				h1						bond0.1001
-	${result} =									REST show endpoints mac			${mac1}
-	Should Be True								${result}						
-	${mac2} = 									BASH get intf mac				h3						bond0.1003
-	${result} =									REST show endpoints mac			${mac2}
-	Should Be True								${result}						
-	REST show endpoints		
-	${loss} = 									BASH ping						h1						10.252.1.11 			count=10
-	Should Be True  							${loss} == 0		
-	REST delete tenant routers intf to system	Y
-	sleep										1
-	${loss} = 									BASH ping						h1						10.252.1.11 			count=10
-	Should Be True  							${loss} == 100		
-	REST add tenant routers intf to system		Y
-	sleep										1
-	${loss} = 									BASH ping						h1						10.252.1.11 			count=10
-	Should Be True  							${loss} == 0		
-	BASH delete route							h1								10.252.0.0/16			10.251.1.1
-	BASH delete route							h3								10.251.0.0/16			10.252.1.1
-
+	
 Verify inter tenant L3 traffic with ttl value of one two and three
 	BASH ifup intf								h1 								bond0
 	BASH ifup intf								h2								bond0
@@ -826,13 +815,137 @@ Verify inter tenant L3 traffic with ttl value of one two and three
 	Should Be True  							${loss} == 100		
 	${result} =       							BASH content 					h1
     log              							result from bash ping is ${result}
-   	Should Contain X Times						${result}						Time to live exceeded	10
 	${loss} = 									BASH ping						h1						10.252.1.11 			count=10			ttl=3
+	Should Be True  							${loss} == 100
+	${loss} = 									BASH ping						h1						10.252.1.11 			count=10			ttl=4
 	Should Be True  							${loss} == 0
 	BASH delete route							h1								10.252.0.0/16			10.251.1.1
 	BASH delete route							h3								10.251.0.0/16			10.252.1.1
 	
 
+L3 inter tenant host moved 
+	BASH ifup intf								h1 								bond0
+	BASH ifup intf								h2								bond0
+	BASH ifup intf								h3								bond0
+	BASH ifup intf								h4								bond0
+	BASH ifup intf								h5								bond0
+	BASH ifup intf								h6								bond0
+	BASH delete tag								h3								bond0.1002				soft_error=${true}				
+	REST add portgroup to vns					X								X1						${leaf0_pc1}			1001
+	REST add portgroup to vns					Y								Y1						${leaf0_pc2}			1002
+	REST add portgroup to vns					Y								Y1						${leaf1_pc1}			1002
+	REST add interface to vns					X								X1						${leaf0-a}				${ixia1}				101
+	REST add interface to vns					Y								Y1						${leaf0-b}				${ixia2}				201
+	BASH add tag								h1								bond0					1001
+	BASH add tag								h2								bond0					1002
+	BASH ifup intf								h1								bond0.1001
+	BASH ifup intf								h2								bond0.1002
+	BASH add ip address							h1								10.251.1.11/24			bond0.1001	
+	BASH add ip address							h2								10.252.1.11/24			bond0.1002
+	BASH add route								h1								10.252.0.0/16			10.251.1.1
+	BASH add route								h2								10.251.0.0/16			10.252.1.1
+	sleep										5	
+	BASH ping									h1								10.252.1.11				count=10
+	${value} = 									BASH verify arp					h1						10.251.1.1
+	Should Be True								${value} 		
+	${value} =									BASH verify arp					h2						10.252.1.1
+	Should Be True								${value} 	
+	${mac1} = 									BASH get intf mac				h1						bond0.1001
+	${result} =									REST show endpoints mac			${mac1}
+	Should Be True								${result}						
+	${mac2} = 									BASH get intf mac				h2						bond0.1002
+	${result} =									REST show endpoints mac			${mac2}
+	Should Be True								${result}	
+	${attachpoint} = 							Set Variable					${result[0]['attachment-point']}	
+	Should Contain								${attachpoint}					${leaf0_pc2}	
+	${loss} = 									BASH ping						h1						10.252.1.11 			count=10
+	Should Be True  							${loss} < 20	
+	sleep										5
+	BASH init intf								h2								bond0.1002
+	BASH ifdown intf							h2								bond0
+	BASH add tag								h3								bond0					1002
+	BASH set mac address						h3								bond0.1002				${mac2}
+	BASH ifup intf								h3								bond0.1002
+	BASH add ip address							h3								10.252.1.11/24			bond0.1002
+	BASH add route								h3								10.251.0.0/16			10.252.1.1
+	${mac3} = 									BASH get intf mac				h3						bond0.1002
+	Should Be Equal								${mac3}							${mac2}
+	BASH ping									h3								10.252.1.1				count=5
+	${loss} = 									BASH ping						h1						10.252.1.11 			count=10
+	Should Be True  							${loss} < 20	
+	${result} =									REST show endpoints mac			${mac2}
+	Should Be True								${result}	
+	${attachpoint} = 							Set Variable					${result[0]['attachment-point']}	
+	Should Contain								${attachpoint}					${leaf1_pc1}
+	BASH delete tag								h3								bond0.1002				soft_error=${true}
+	BASH delete route							h1								10.252.0.0/16			10.251.1.1
+	BASH delete route							h2								10.251.0.0/16			10.252.1.1	
+
+Inter tenant dhcp relay	
+	BASH ifup intf								h1 								bond0
+	BASH ifup intf								h2								bond0
+	BASH ifup intf								h3								bond0
+	BASH ifup intf								h4								bond0
+	BASH ifup intf								h5								bond0
+	BASH ifup intf								h6								bond0				
+	REST add portgroup to vns					X								X1						${leaf0_pc1}			-1
+	REST add portgroup to vns					Y								Y1						${leaf0_pc2}			1002
+	REST add portgroup to vns					Y								Y1						${leaf2_pc1}			-1
+	BASH delete tag								h1								bond0.1001				soft_error=${true}		
+	BASH add tag								h2								bond0					1002
+	BASH ifup intf								h1								bond0
+	BASH ifup intf								h2								bond0.1002
+	BASH add ip address							h1								10.251.1.11/24			bond0
+	BASH start service							h1								isc-dhcp-server
+	sleep										1
+	${value} = 									BASH check service status		h1						isc-dhcp-server
+	Should Contain								${value}						is started
+	sleep										1
+	BASH add route								h1								10.252.0.0/16			10.251.1.1
+	REST add dhcp relay							Y								Y1						10.251.1.11
+	REST enable dhcp relay						Y								Y1	
+	sleep										5
+	${ipAddr2} = 								BASH renew dhcpv4 address		h2						bond0.1002
+	Should Not Be Empty							${ipAddr2}
+	${ipAddr5} = 								BASH renew dhcpv4 address		h5						bond0
+	Should Not Be Empty							${ipAddr5}
+	${mac1} =									BASH get intf mac				h1						bond0
+	${result} = 								REST show endpoints mac			${mac1}
+	Should Not Be Empty							${result}
+	${attachpoint} = 							Set Variable					${result[0]['attachment-point']}	
+	Should Contain								${attachpoint}					${leaf0_pc1}
+	BASH ping									h1								${ipAddr2}				count=10
+	BASH ping									h1								${ipAddr5}				count=10
+	${mac2} =									BASH get intf mac				h2						bond0
+	${result} = 								REST show endpoints mac			${mac2}
+	Should Not Be Empty							${result}
+	${attachpoint} = 							Set Variable					${result[0]['attachment-point']}	
+	${ipAddr} = 								Set Variable					${result[0]['ip-address']}
+	Should Contain								${attachpoint}					${leaf0_pc2}
+	Should Contain								${ipAddr}						${ipAddr2}
+	${mac5} =									BASH get intf mac				h5						bond0
+	${result} = 								REST show endpoints mac			${mac5}
+	Should Not Be Empty							${result}
+	${attachpoint} = 							Set Variable					${result[0]['attachment-point']}
+	${ipAddr} = 								Set Variable					${result[0]['ip-address']}	
+	Should Contain								${attachpoint}					${leaf2_pc1}
+	Should Contain								${ipAddr}						${ipAddr5}
+	sleep										1
+	${loss} =									BASH ping 						h1						${ipAddr2}				count=10
+	Should Be True								${loss}	< 20
+	${loss} =									BASH ping 						h1						${ipAddr5}				count=10
+	Should Be True								${loss}	< 20
+	${value} = 									BASH release dhcpv4 address		h2						bond0.1002
+	Should Be True								${value}
+	${value} = 									BASH release dhcpv4 address		h5						bond0
+	Should Be True								${value}
+	${loss} =									BASH ping 						h1						${ipAddr2}				count=10
+	Should Be True								${loss}	= 100
+	${loss} =									BASH ping 						h1						${ipAddr5}				count=10
+	Should Be True								${loss}	= 100
+	BASH delete route							h1								10.252.0.0/16			10.251.1.1
+	BASH delete route							h2								10.251.0.0/16			10.252.1.1	
+	
 
 
 

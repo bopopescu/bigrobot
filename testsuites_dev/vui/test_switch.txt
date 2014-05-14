@@ -36,5 +36,8 @@ Test sanitize CLI output
     sanitize cli output  s1
 
 Test debug bash
-    #[Tags]  skipped
+    [Tags]  skipped
     bash     s1   ls -la
+
+Test get node alias
+   ${alias}=   get node alias   s1

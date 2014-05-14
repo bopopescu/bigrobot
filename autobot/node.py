@@ -37,6 +37,9 @@ class Node(object):
         else:
             self.node_params = {}
 
+        self._port = self.node_params.get('port', None)
+        self._protocol = self.node_params.get('protocol', 'ssh')
+
         if not ip:
             if helpers.params_is_false('set_session_ssh', self.node_params):
                 # set_session_ssh is False, so IP address doesn't have to be
@@ -64,6 +67,9 @@ class Node(object):
 
     def ip(self):
         return self._ip
+
+    def alias(self):
+        return self.node_params.get('alias', None)
 
     def node_id(self):
         """
@@ -133,9 +139,9 @@ class Node(object):
                                         " VM name (for libvirt)")
 
         if 'user' not in self._console_info:
-            self._console_info['user'] = self._user
+            self._console_info['user'] = self.user()
         if 'password' not in self._console_info:
-            self._console_info['password'] = self._password
+            self._console_info['password'] = self.password()
 
         if driver:
             self._console_info['driver'] = driver
@@ -259,12 +265,16 @@ class ControllerNode(Node):
         self.rest_content_json = self.rest.content_json
         self.rest_result_json = self.rest.result_json
 
-    def connect(self, user, password, port=None, protocol='ssh', host=None,
+    def connect(self, user, password, port=None, protocol=None, host=None,
                 name=None):
         if not host:
             host = self.ip()
         if not name:
             name = self.name()
+        if not port:
+            port = self._port
+        if not protocol:
+            protocol = self._protocol
         return devconf.ControllerDevConf(name=name,
                                          host=host,
                                          user=user,
@@ -333,29 +343,35 @@ class ControllerNode(Node):
         if self._console_info['type'] == 'telnet':
             # For telnet console, requirements are an IP address and a port
             # number.
-            self.dev_console = devconf.ControllerDevConf(name=self.name(),
-                                                         host=self._console_info['ip'],
-                                                         port=self._console_info['port'],
-                                                         user=self._console_info['user'],
-                                                         password=self._console_info['password'],
-                                                         protocol=self._console_info['protocol'],
-                                                         console_info=self._console_info,
-                                                         debug=self.dev_debug_level)
+            self.dev_console = devconf.ControllerDevConf(
+                                    name=self.name(),
+                                    host=self._console_info['ip'],
+                                    port=self._console_info['port'],
+                                    user=self._console_info['user'],
+                                    password=self._console_info['password'],
+                                    protocol=self._console_info['protocol'],
+                                    console_info=self._console_info,
+                                    debug=self.dev_debug_level)
         elif self._console_info['type'] == 'libvirt':
             # For libvirt console, requirements are an IP address (of the
             # KVM server) and the libvirt VM name (libvirt_vm_name). We will
             # first SSH to the KVM server, then execute 'virsh console <name>'.
-            self.dev_console = devconf.HostDevConf(name=self.name(),
-                                                   host=self._console_info['ip'],
-                                                   port=self._console_info['port'],
-                                                   user=self._console_info['user'],
-                                                   password=self._console_info['password'],
-                                                   protocol=self._console_info['protocol'],
-                                                   console_info=self._console_info,
-                                                   debug=self.dev_debug_level)
+            self.dev_console = devconf.HostDevConf(
+                                    name=self.name(),
+                                    host=self._console_info['ip'],
+                                    port=self._console_info['port'],
+                                    user=self._console_info['user'],
+                                    password=self._console_info['password'],
+                                    protocol=self._console_info['protocol'],
+                                    console_info=self._console_info,
+                                    debug=self.dev_debug_level)
+        else:
+            helpers.test_error("Unsupported console type '%s'"
+                               % self._console_info['type'])
 
         if self._console_info['type'] == 'libvirt':
-            self.dev_console.send("virsh console %s" % self._console_info['libvirt_vm_name'])
+            self.dev_console.send("virsh console %s" %
+                                  self._console_info['libvirt_vm_name'])
 
         # FIXME!!! The code below is not working. Figure out why...
 
@@ -370,7 +386,8 @@ class ControllerNode(Node):
         # Delay for 1 second to allow the output to settle.
         helpers.sleep(1)
         if self._console_info['type'] == 'libvirt':
-            self.dev_console.send("virsh console %s" % self._console_info['libvirt_vm_name'])
+            self.dev_console.send("virsh console %s"
+                                  % self._console_info['libvirt_vm_name'])
             return self.dev_console
 
 
@@ -438,12 +455,16 @@ class MininetNode(Node):
         self.send = self.dev.send
         self.expect = self.dev.expect
 
-    def connect(self, user, password, port=None, protocol='ssh', host=None,
+    def connect(self, user, password, port=None, protocol=None, host=None,
                 name=None):
         if not host:
             host = self.ip()
         if not name:
             name = self.name()
+        if not port:
+            port = self._port
+        if not protocol:
+            protocol = self._protocol
 
         if self.mn_type == 't6':
             return devconf.T6MininetDevConf(name=name,
@@ -455,7 +476,9 @@ class MininetNode(Node):
                                             topology=self.topology,
                                             openflow_port=self.openflow_port,
                                             debug=self.dev_debug_level,
-                                            is_start_mininet=self._start_mininet)
+                                            is_start_mininet=self._start_mininet,
+                                            port=port,
+                                            protocol=protocol)
         elif self.mn_type == 'basic':
             return devconf.MininetDevConf(name=name,
                                           host=host,
@@ -466,12 +489,14 @@ class MininetNode(Node):
                                           topology=self.topology,
                                           openflow_port=self.openflow_port,
                                           debug=self.dev_debug_level,
-                                          is_start_mininet=self._start_mininet)
+                                          is_start_mininet=self._start_mininet,
+                                          port=port,
+                                          protocol=protocol)
 
     def devconf(self):
         return self.dev
 
-    def console(self, driver=None):
+    def console(self, driver=None, force_reconnect=False):
         helpers.environment_failure("Console is currently not supported for Mininet node.")
 
 
@@ -505,12 +530,16 @@ class HostNode(Node):
         self.send = self.dev.send
         self.expect = self.dev.expect
 
-    def connect(self, user, password, port=None, protocol='ssh', host=None,
+    def connect(self, user, password, port=None, protocol=None, host=None,
                 name=None):
         if not host:
             host = self.ip()
         if not name:
             name = self.name()
+        if not port:
+            port = self._port
+        if not protocol:
+            protocol = self._protocol
         return devconf.HostDevConf(name=name,
                                    host=host,
                                    user=user,
@@ -522,8 +551,51 @@ class HostNode(Node):
     def devconf(self):
         return self.dev
 
-    def console(self, driver=None):
-        helpers.environment_failure("Console is currently not supported for Host node.")
+    def console(self, driver=None, force_reconnect=False):
+        if self.dev_console and not force_reconnect:
+            return self.dev_console
+        else:
+            helpers.log("Reconnecting to console for node '%s'" % self.name())
+
+        super(HostNode, self).console(driver)
+
+        if self._console_info['type'] in ['telnet', 'libvirt']:
+            # For telnet console, requirements are an IP address and a port
+            # number.
+            #
+            # For libvirt console, requirements are an IP address (of the
+            # KVM server) and the libvirt VM name (libvirt_vm_name). We will
+            # first SSH to the KVM server, then execute 'virsh console <name>'.
+            self.dev_console = devconf.HostDevConf(name=self.name(),
+                                                   host=self._console_info['ip'],
+                                                   port=self._console_info['port'],
+                                                   user=self._console_info['user'],
+                                                   password=self._console_info['password'],
+                                                   protocol=self._console_info['protocol'],
+                                                   console_info=self._console_info,
+                                                   debug=self.dev_debug_level)
+        else:
+            helpers.test_error("Unsupported console type '%s'"
+                               % self._console_info['type'])
+
+        if self._console_info['type'] == 'libvirt':
+            self.dev_console.send("virsh console %s" % self._console_info['libvirt_vm_name'])
+
+        # FIXME!!! The code below is not working. Figure out why...
+
+        # if self._console_info['driver']:
+        #    helpers.log("Setting devconf driver for console to '%s'"
+        #                % self._console_info['driver'])
+        #    self.dev_console.conn.set_driver(self._console_info['driver'])
+
+        return self.dev_console
+
+    def console_reconnect(self, driver=None):
+        # Delay for 1 second to allow the output to settle.
+        helpers.sleep(1)
+        if self._console_info['type'] == 'libvirt':
+            self.dev_console.send("virsh console %s" % self._console_info['libvirt_vm_name'])
+            return self.dev_console
 
 
 class OpenStackNode(HostNode):
@@ -565,12 +637,16 @@ class SwitchNode(Node):
         self.expect = self.dev.expect
         self.info = self.dev.info
 
-    def connect(self, user, password, port=None, protocol='ssh', host=None,
+    def connect(self, user, password, port=None, protocol=None, host=None,
                 name=None):
         if not host:
             host = self.ip()
         if not name:
             name = self.name()
+        if not port:
+            port = self._port
+        if not protocol:
+            protocol = self._protocol
         return devconf.SwitchDevConf(name=name,
                                      host=host,
                                      user=user,
@@ -582,8 +658,38 @@ class SwitchNode(Node):
     def devconf(self):
         return self.dev
 
-    def console(self, driver=None):
-        helpers.environment_failure("Console is currently not supported for Switch node.")
+    def console(self, driver=None, force_reconnect=False):
+        if self.dev_console and not force_reconnect:
+            return self.dev_console
+        else:
+            helpers.log("Reconnecting to console for node '%s'" % self.name())
+
+        super(SwitchNode, self).console(driver)
+
+        if self._console_info['type'] == 'telnet':
+            # For telnet console, requirements are an IP address and a port
+            # number.
+            self.dev_console = devconf.SwitchDevConf(
+                                    name=self.name(),
+                                    host=self._console_info['ip'],
+                                    port=self._console_info['port'],
+                                    user=self._console_info['user'],
+                                    password=self._console_info['password'],
+                                    protocol=self._console_info['protocol'],
+                                    console_info=self._console_info,
+                                    debug=self.dev_debug_level)
+        else:
+            helpers.test_error("Unsupported console type '%s'"
+                               % self._console_info['type'])
+
+        # FIXME!!! The code below is not working. Figure out why...
+
+        # if self._console_info['driver']:
+        #    helpers.log("Setting devconf driver for console to '%s'"
+        #                % self._console_info['driver'])
+        #    self.dev_console.conn.set_driver(self._console_info['driver'])
+
+        return self.dev_console
 
 
 class IxiaNode(Node):

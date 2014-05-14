@@ -2,10 +2,9 @@
 #  ip: 10.192.104.1
 #
 h1:
-  #ip: 10.192.4.11    # dev1
-  #ip: 10.193.0.120  # Song's UNIX system
-  ip: 10.195.0.103   # Prashanth's compute node
-  #ip: 10.193.0.21   # Song's compute node
+  ip: dummy
+  alias: h1-vm1-rack1
   #user: root
   #password: bsn
-  set_devconf_debug_level: 5
+  #set_devconf_debug_level: 5
+  #protocol: ssh  # telnet

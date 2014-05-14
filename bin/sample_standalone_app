@@ -21,11 +21,12 @@ sys.path.insert(1, exscript_path)
 import autobot.helpers as helpers
 import autobot.devconf as devconf
 
-helpers.set_env('IS_GOBOT', 'True')
+helpers.set_env('IS_GOBOT', 'False')
 helpers.set_env('AUTOBOT_LOG', '/tmp/myrobot.log')
 
 
-helpers.log("Testing Log")
+# Summary log will also write to console.
+helpers.summary_log("Log file is %s. Messages will append to log file." % helpers.get_env('AUTOBOT_LOG'))
 helpers.info("Testing Info")
 helpers.warn("Testing Warning")
 helpers.debug("Testing Debug")

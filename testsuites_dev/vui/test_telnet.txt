@@ -1,0 +1,40 @@
+* Setting
+Documentation   This suite is my sandbox for experimentation.
+Suite Setup     base suite setup
+Suite Teardown  base suite teardown
+Test Setup      base test setup
+Test Teardown   base test teardown
+Force Tags      Vui
+Library         keywords/BsnCommon.py
+Library         keywords/Host.py
+Library         keywords_dev/vui/MyTest.py
+
+
+* Test Case
+Test host
+    [Tags]  skipped
+    host commands
+
+Test host ping
+    [Tags]  skipped
+    #${status}       bash ping  node=h1  dest_ip=10.192.7.210
+    ${status}=       bash ping  node=h1  dest_ip=10.195.0.31  source_if=eth0  count=6  ttl=3
+    ${result}=       bash content  node=h1
+    log              result from bash ping is ${result}
+    #${status}       bash ping  node=h1  dest_node=c1
+    Should be true  ${status} == 0
+
+Test scp command
+    [Tags]  skipped
+    test scp
+
+Test bash delete tag
+    [Tags]  skipped
+    bash delete tag  h1  eth1.99  soft_error=${true}
+
+Test directory listing
+    #[Tags]  skipped
+    bash             h1   ls -la
+    sudo             h1   cat /etc/shadow
+    bash             h1   find /tmp
+

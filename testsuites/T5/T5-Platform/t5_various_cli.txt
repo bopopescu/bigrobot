@@ -1,7 +1,7 @@
 *** Settings ***
 Documentation  		Various CLI commands
-Suite Setup  		File Suite Setup
-Suite Teardown		Base Suite Teardown
+Suite Setup  		Various Suite Setup
+Suite Teardown		Various Suite Teardown
 Test Setup   		Setup
 Test Teardown  		Teardown
 Force Tags   		Platform
@@ -15,37 +15,37 @@ Library        		String
 
 *** Test Cases ***
 T1 Show running-config
-	Cli Run  show running-config
+	Cli Run  master  show running-config
 
 T2.1 No Show This in config mode
 	Run Keyword and Expect Error
 	...  *Error: no matching commands*
-	...  Cli Run  no show this
+	...  Cli Run  master  no show this
 	[TAGS]  show
 T2.2 No Show This in config-switch submode
-	Cli Run  switch test
+	Cli Run  master  switch test
 	Run Keyword and Expect Error
 	...  *Error: no matching commands*
-	...  Cli Run  no show this
+	...  Cli Run  master  no show this
 	[TAGS]  BSC-5042  show
 T2.3 No Show This in config-tenant submode
-	Cli Run  tenant test
+	Cli Run  master  tenant test
 	Run Keyword and Expect Error
 	...  *Error: no matching commands*
-	...  Cli Run  no show this
+	...  Cli Run  master  no show this
 	[TAGS]  BSC-5042  show
 T2.4 No Show This in config-cluster submode
-	Cli Run  cluster
+	Cli Run  master  cluster
 	Run Keyword and Expect Error
 	...  *Error: no matching commands*
-	...  Cli Run  no show this
+	...  Cli Run  master  no show this
 	[TAGS]  BSC-5042  show
 
 T3 "no snmp-server community ro <foo>" in config-switch submode
-	Cli Run  snmp-server community ro test
-	Cli Run  switch test
-	Cli Run  no snmp-server community ro test
-	Cli Run and Verify Output
+	Cli Run  master  snmp-server community ro test
+	Cli Run  master  switch test
+	Cli Run  master  no snmp-server community ro test
+	Cli Run and Verify Output  master
 	...  show run snmp
 	...  snmp-server community ro test
 	...  flag=False
@@ -54,70 +54,70 @@ T3 "no snmp-server community ro <foo>" in config-switch submode
 T4 Monitor session string as identifier
 	Run Keyword and Expect Error
 	...  *Error: Invalid argument: range: not an integer:*r*
-	...  Cli Run  monitor session r
+	...  Cli Run  master  monitor session r
 	[TAGS]  monitor session  BSC-5012
 
 T5 Monitor session source tcp string
-	Cli Run  monitor session 1
+	Cli Run  master  monitor session 1
 	Run Keyword and Expect Error
 	...  *Error: Invalid argument: range: not an integer:*tcp*
-	...  Cli Run  source switch test interface eth1 ip-proto tcp
+	...  Cli Run  master  source switch test interface eth1 ip-proto tcp
 	[TAGS]  monitor session  BSC-5017
 
 T6 Monitor session destination interface numerical only
-	Cli Run  monitor session 1
+	Cli Run  master  monitor session 1
 	Run Keyword and Expect Error
 	...  *Invalid argument: Invalid Alphabetic character, followed by alphanumerics: 3*
-	...  Cli Run  destination switch test interface 3
+	...  Cli Run  master  destination switch test interface 3
 	[TAGS]  monitor session  BSC-5017
 
 T7 Autocompletions for user full name
-	Cli Run  user test
-	Cli Run and Verify Output
+	Cli Run  master  user test
+	Cli Run and Verify Output  master
 	...  full-name ? 'test user'
 	...  <full-name>
-	Cli Run and Verify Output
+	Cli Run and Verify Output  master
 	...  full-name ? 'test user'
 	...  r'Default admin'
 	...  flag=False
 	[TAGS]  BSC-5015  user management
 
 T8 Escaping quote and double quote strings - user full-name
-	Cli Run  user test
-	Cli Run  full-name "test test"
-	Cli Run and Verify Output
+	Cli Run  master  user test
+	Cli Run  master  full-name "test test"
+	Cli Run and Verify Output  master
 	...  show running-config user
 	...  full-name 'test test'
-	Cli Run  full-name 'test test'
-	Cli Run and Verify Output
+	Cli Run  master  full-name 'test test'
+	Cli Run and Verify Output  master
 	...  show running-config user
 	...  full-name 'test test'
-	Cli Run  full-name test
-	Cli Run and Verify Output
+	Cli Run  master  full-name test
+	Cli Run and Verify Output  master
 	...  show running-config user
 	...  full-name test
-	Cli Run  full-name 'test\\n'
-	Cli Run and Verify Output
+	Cli Run  master  full-name 'test\\n'
+	Cli Run and Verify Output  master
 	...  show running-config user
 	...  full-name 'test\\n'\r
-	Cli Run  full-name \"test\\r\\n\'\'\'\"
-	Cli Run and Verify Output
+	Cli Run  master  full-name \"test\\r\\n\'\'\'\"
+	Cli Run and Verify Output  master
 	...  show running-config user
 	...  full-name \"test\\r\\n\'\'\'\"
-	Cli Run  full-name "'''"
-	Cli Run and Verify Output
+	Cli Run  master  full-name "'''"
+	Cli Run and Verify Output  master
 	...  show running-config user
 	...  full-name "'''"
-	Cli Run  full-name '"""'
-	Cli Run and Verify Output
+	Cli Run  master  full-name '"""'
+	Cli Run and Verify Output  master
 	...  show running-config user
 	...  full-name '"""'
-	Cli Run  full-name "''''"
-	Cli Run and Verify Output
+	Cli Run  master  full-name "''''"
+	Cli Run and Verify Output  master
 	...  show running-config user
 	...  full-name "''''"
-	Cli Run  full-name '""""'
-	Cli Run and Verify Output
+	Cli Run  master  full-name '""""'
+	Cli Run and Verify Output  master
 	...  show running-config user
 	...  full-name '""""'
 	[Tags]  BSC-5010  BSC-5011
@@ -125,27 +125,27 @@ T8 Escaping quote and double quote strings - user full-name
 T9 Escaping quote and double quote strings - switch name
 	Run Keyword and Expect Error
 	...  *Error: Unbalanced Quote*
-	...  Cli Run  switch test"test
+	...  Cli Run  master  switch test"test
 	Run Keyword and Expect Error
 	...  *Error: Invalid argument: Invalid Alphabetic character, followed by alphanumerics: 'test"test'; Invalid characters in identifier*
-	...  Cli Run  switch 'test"test'
+	...  Cli Run  master  switch 'test"test'
 	Run Keyword and Expect Error
 	...  *Error: Unbalanced Quote*
-	...  Cli Run  switch test'test
+	...  Cli Run  master  switch test'test
 
 T10 Escaping quote and double quote strings - user name
 	Run Keyword and Expect Error
 	...  *Error: Unbalanced Quote*
-	...  Cli Run  user test"test
+	...  Cli Run  master  user test"test
 	Run Keyword and Expect Error
 	...  *Error: Unbalanced Quote*
-	...  Cli Run  user test'test
+	...  Cli Run  master  user test'test
 	Run Keyword and Expect Error
 	...  *Error: Invalid argument: Invalid Alphabetic character, followed by alphanumerics: 'test"test'; Invalid characters in identifier*
-	...  Cli Run  user 'test"test'
+	...  Cli Run  master  user 'test"test'
 	Run Keyword and Expect Error
 	...  *Error: Invalid argument: Invalid Alphabetic character, followed by alphanumerics: "test''test"; Invalid characters in identifier*
-	...  Cli Run  user "test''test"
+	...  Cli Run  master  user "test''test"
 
 T11 User \n via REST
         Run Keyword and Expect Error
@@ -169,322 +169,341 @@ T11 User \n via REST
 	[Tags]  BSC-5051  REST  Skipped
 
 T12.1 show this in config-cluster submode
-	Cli Run  cluster
-	Cli Run  show this
+	Cli Run  master  cluster
+	Cli Run  master  show this
 	[Tags]  BSC-5061
 T12.2 show this in config-switch-if submode
-	Cli Run  switch test
-	Cli Run  mac 11:22:33:44:55:66
-	Cli Run  interface eth1 
-	Cli Run  show this 
+	Cli Run  master  switch test
+	Cli Run  master  mac 11:22:33:44:55:66
+	Cli Run  master  interface eth1
+	Cli Run  master  show this
 	[Tags]  BSC-5135  BVS-1463
 
 T13 Characters \n and \r in identifiers
 	Run Keyword and Expect Error
 	...  *Error: Invalid argument: Invalid Alphabetic * Invalid characters in identifier*
-	...  Cli Run  user 'a\\n'
+	...  Cli Run  master  user 'a\\n'
 	Run Keyword and Expect Error
 	...  *Error: Invalid argument: Invalid Alphabetic * Invalid characters in identifier*
-	...  Cli Run  user 'a\\r'
+	...  Cli Run  master  user 'a\\r'
 	Run Keyword and Expect Error
 	...  *Error: Unbalanced Quote*
-	...  Cli Run  switch 'a\\n\\n'b'
+	...  Cli Run  master  switch 'a\\n\\n'b'
 	Run Keyword and Expect Error
 	...  *Error: Invalid argument: syntax: expected [0-9a-zA-Z][-.0-9a-zA-Z_]*
-	...  Cli Run  tenant 'a\\n\\r\\n \\r\\n'
+	...  Cli Run  master  tenant 'a\\n\\r\\n \\r\\n'
 	[Tags]  BSC-5051  BSC-5011
 
 
 T14 a\n in banner
-	Cli Run  banner 'a\\n'
-	Cli Run and Verify Output
+	Cli Run  master  banner 'a\\n'
+	Cli Run and Verify Output  master
 	...  show running-config banner
 	...  banner 'a\\n'
-	Cli Run and Verify Output
+	Cli Run and Verify Output  master
 	...  show banner
 	...  Banner : a\r
+	[Tags]  banner  BSC-5366
+
 T15 'from mode ...' in login mode
-	Cli Run  enable
-	Cli Run  exit
-	Cli Run and Verify Output
-	...  ? echo
+	Cli Run  master  enable
+	Cli Run  master  exit
+	Cli Run and Verify Output  master
+	...  ? enable
 	...  from mode
 	...  flag=False
-	Cli Run  enable
-	Cli Run  exit
-	Cli Run and Verify Output
-	...  ? echo
+	Cli Run  master  enable
+	Cli Run  master  exit
+	Cli Run and Verify Output  master
+	...  ? enable
 	...  show
-	Cli Run  enable
+	Cli Run  master  enable
 	[Tags]  BSC-5020
 
 T16 Switch commands in config-switch-if submode
-	Cli Run and Verify Output
+	Cli Run and Verify Output  master
 	...  show running-config switch
 	...  switch test
 	...  flag=False
-	Cli Run  switch test
-	Cli Run  interface eth1
-	Cli Run  fabric-role spine
-	Cli Run and Verify Output
+	Cli Run  master  switch test
+	Cli Run  master  interface eth1
+	Cli Run  master  fabric-role spine
+	Cli Run and Verify Output  master
 	...  show running-config switch test
 	...  fabric-role spine
-	Cli Run  fabric-role leaf
-	Cli Run and Verify Output
+	Cli Run  master  fabric-role leaf
+	Cli Run and Verify Output  master
 	...  show running-config switch test
 	...  fabric-role leaf
-	Cli Run and Verify Output
+	Cli Run and Verify Output  master
 	...  show running-config switch test
 	...  fabric-role spine
 	...  flag=False
-	Cli Run  mac 11:11:11:11:11:11
-	Cli Run and Verify Output
+	Cli Run  master  mac 11:11:11:11:11:11
+	Cli Run and Verify Output  master
 	...  show running-config switch test
 	...  mac 11:11:11:11:11:11
-	Cli Run  leaf-group test
-	Cli Run and Verify Output
+	Cli Run  master  leaf-group test
+	Cli Run and Verify Output  master
 	...  show running-config switch test
 	...  leaf-group test
 	[Tags]  BSC-5067
 
 T17 DNS configuration
-	Cli Run  local node
-	Cli Run  interface ethernet0
-	Cli Run  dns search google.com
+	Cli Run  master  local node
+	Cli Run  master  interface ethernet0
+	Cli Run  master  dns search google.com
 	Run Keyword and Expect Error
 	...  *Error: Invalid argument: Invalid IP address (dotted quad): 8.8.8.88888; invalid string pattern*
-	...  Cli Run  dns server 8.8.8.88888
-	Cli Run  dns server 8.8.8.8
+	...  Cli Run  master  dns server 8.8.8.88888
+	Cli Run  master  dns server 8.8.8.8
 	Sleep  5 sec
 	Log  Checking changes in local-config
-	Cli Run and Verify Output
+	Cli Run and Verify Output  master
 	...  show running-config local
 	...  8.8.8.8
-	Cli Run and Verify Output
+	Cli Run and Verify Output  master
 	...  show running-config local
 	...  google.com
 	Log  Checking changes in bash NetworkManager
-	Cli Run  debug bash
-	Cli Run and Verify Output
+	Cli Run  master  debug bash
+	Cli Run and Verify Output  master
 	...  sudo cat /etc/NetworkManager/system-connections/eth0
 	...  8.8.8.8
-	Cli Run and Verify Output
+	Cli Run and Verify Output  master
 	...  sudo cat /etc/NetworkManager/system-connections/eth0
 	...  google.com
-	Cli Run  exit
+	Cli Run  master  exit
 	Log  Checking there are no changes on Slave
-	Cli Run and Verify Output
+	Cli Run and Verify Output  slave
 	...  show running-config local
 	...  8.8.8.8
 	...  flag=False
-	...  node=slave
-	Cli Run and Verify Output
+	Cli Run and Verify Output  slave
 	...  show running-config local
 	...  google.com
 	...  flag=False
-	...  node=slave
-	Cli Run  debug bash  node=slave
-	Cli Run and Verify Output
+	Cli Run  slave  debug bash
+	Cli Run and Verify Output  slave
 	...  sudo cat /etc/NetworkManager/system-connections/eth0
 	...  8.8.8.8
 	...  flag=False
-	...  node=slave
-	Cli Run and Verify Output
+	Cli Run and Verify Output  slave
 	...  sudo cat /etc/NetworkManager/system-connections/eth0
 	...  google.com
 	...  flag=False
-	...  node=slave
 
-	Cli Run  no dns search google.com
-	Cli Run  no dns server 8.8.8.8
+	Cli Run  master  no dns search google.com
+	Cli Run  master  no dns server 8.8.8.8
 	Sleep  5 sec
 	Log  Checking changes in local-config
-	Cli Run and Verify Output
+	Cli Run and Verify Output  master
 	...  show running-config local
 	...  8.8.8.8
 	...  flag=False
-	Cli Run and Verify Output
+	Cli Run and Verify Output  master
 	...  show running-config local
 	...  google.com
 	...  flag=False
 	Log  Checking changes in bash NetworkManager
-	Cli Run  debug bash
-	Cli Run and Verify Output
+	Cli Run  master  debug bash
+	Cli Run and Verify Output  master
 	...  sudo cat /etc/NetworkManager/system-connections/eth0
 	...  8.8.8.8
 	...  flag=False
-	Cli Run and Verify Output
+	Cli Run and Verify Output  master
 	...  sudo cat /etc/NetworkManager/system-connections/eth0
 	...  google.com
 	...  flag=False
-	Cli Run  exit
+	Cli Run  master  exit
 	[Tags]  DNS  BSC-5060
 
 T18 'no stats' command
-	Cli Run  tenant test
+	Cli Run  master  tenant test
 	Run Keyword and Expect Error
 	...  *Error: no matching commands*
-	...  Cli Run  no stats vns interval 15
-	Cli Run and Verify Output
+	...  Cli Run  master  no stats vns interval 15
+	Cli Run and Verify Output  master
 	...  show run tenant
 	...  tenant test
-	Cli Run  monitor session 1
+	Cli Run  master  monitor session 1
 	Run Keyword and Expect Error
 	...  *Error: no matching commands*
-	...  Cli Run  no stats interface interval 15
-	Cli Run and Verify Output
+	...  Cli Run  master  no stats interface interval 15
+	Cli Run and Verify Output  master
 	...  show run monitor
 	...  monitor session 1
 	[Tags]  BSC-5043
 
 T19 'show this' in -vns and -endpoint submodes
-	Cli Run  tenant A
-	Cli Run  router
-	Cli Run  vns A1
-	Cli Run  member-port-group rack0pg1 vlan untagged
-	Cli Run  member-port-group rack1pg1 vlan untagged
-	Cli Run  endpoint host1
-	Cli Run  ip 10.0.0.1
-	Cli Run  vns A2
-	Cli Run  member-port-group rack0pg2 vlan untagged
-	Cli Run  member-port-group rack1pg2 vlan untagged
-	Cli Run  config
-	Cli Run  tenant A
-	Cli Run  vns A1
-	Cli Run and Verify Output
+	Cli Run  master  tenant A
+	Cli Run  master  router
+	Cli Run  master  vns A1
+	Cli Run  master  member-port-group rack0pg1 vlan untagged
+	Cli Run  master  member-port-group rack1pg1 vlan untagged
+	Cli Run  master  endpoint host1
+	Cli Run  master  ip 10.0.0.1
+	Cli Run  master  vns A2
+	Cli Run  master  member-port-group rack0pg2 vlan untagged
+	Cli Run  master  member-port-group rack1pg2 vlan untagged
+	Cli Run  master  config
+	Cli Run  master  tenant A
+	Cli Run  master  vns A1
+	Cli Run and Verify Output  master
 	...  show this
 	...  vns A2
 	...  flag=False
-	Cli Run  endpoint host1
-	Cli Run and Verify Output
+	Cli Run  master  endpoint host1
+	Cli Run and Verify Output  master
 	...  show this
 	...  vns A2
 	...  flag=False
 	[Tags]  BSC-5085  Skipped
 
 T20.1 AAA Accounting round-robin support
-	Cli Run  tacacs server host 1.2.3.4 timeout 5 key secret
-	Cli Run  tacacs server host 10.192.64.1 timeout 5 key secret
-	Cli Run  tacacs server host 10.192.3.1 timeout 5 key secret
-	Cli Run  tacacs server host 10.192.4.91 timeout 5 key secret
-	Cli Run  aaa accounting exec default start-stop group tacacs+  cmd_timeout=60
-	Cli Run  config
-	Cli Run  tenant test
-	Cli Run  tacacs server host 10.197.128.32 timeout 5 key secret
-	Cli Run  no tacacs server host 10.192.4.91 timeout 5 key secret  cmd_timeout=30
-	Cli Run  config
-	Cli Run  tenant test1
-	Cli Run  no aaa accounting exec default start-stop group tacacs+  cmd_timeout=30
+	Cli Run  master  tacacs server host 1.2.3.4 timeout 5 key secret
+	Cli Run  master  tacacs server host 10.192.64.1 timeout 5 key secret
+	Cli Run  master  tacacs server host 10.192.3.1 timeout 5 key secret
+	Cli Run  master  tacacs server host 10.192.4.91 timeout 5 key secret
+	Cli Run  master  aaa accounting exec default start-stop group tacacs+  cmd_timeout=60
+	Cli Run  master  config
+	Cli Run  master  tenant test
+	Cli Run  master  tacacs server host 10.197.128.32 timeout 5 key secret
+	Cli Run  master  no tacacs server host 10.192.4.91 timeout 5 key secret  cmd_timeout=30
+	Cli Run  master  config
+	Cli Run  master  tenant test1
+	Cli Run  master  no aaa accounting exec default start-stop group tacacs+  cmd_timeout=30
 	[Tags]  BSC-5019  AAA  TACACS  skipped
 T20.2 TACACS Default timeout
-	Cli Run  tacacs server timeout 10
-	Cli Run  tacacs server host 5.5.5.5 timeout 5 key secret
-	Cli Run  tacacs server host 1.2.3.4
-	Cli Run  aaa accounting exec default start-stop group tacacs+  cmd_timeout=31
-	Cli Run  no aaa accounting exec default start-stop group tacacs+  cmd_timeout=46
-	Cli Run  no tacacs server timeout 10
-	Cli Run  aaa accounting exec default start-stop group tacacs+  cmd_timeout=71
-	Cli Run  no aaa accounting exec default start-stop group tacacs+  cmd_timeout=141
+	Cli Run  master  tacacs server timeout 10
+	Cli Run  master  tacacs server host 5.5.5.5 timeout 5 key secret
+	Cli Run  master  tacacs server host 1.2.3.4
+	Cli Run  master  aaa accounting exec default start-stop group tacacs+  cmd_timeout=31
+	Cli Run  master  no aaa accounting exec default start-stop group tacacs+  cmd_timeout=46
+	Cli Run  master  no tacacs server timeout 10
+	Cli Run  master  aaa accounting exec default start-stop group tacacs+  cmd_timeout=71
+	Cli Run  master  no aaa accounting exec default start-stop group tacacs+  cmd_timeout=141
 	[Tags]  BSC-5088  AAA  TACACS  skipped
 
 T21 Escaping special characters in quoted strings
-	Cli Run  snmp-server community ro "tests\\n \\r \\n '''"
-	Cli Run and Verify Output
+	Cli Run  master  snmp-server community ro "tests\\n \\r \\n '''"
+	Cli Run and Verify Output  master
 	...  show run snmp
 	...  snmp-server community ro "tests\\n \\r \\n '''"
-	Cli Run  snmp-server location 'Location \\n \\r \\n """"'
-	Cli Run and Verify Output
+	Cli Run  master  snmp-server location 'Location \\n \\r \\n """"'
+	Cli Run and Verify Output  master
 	...  show run snmp
 	...  snmp-server location 'Location \\n \\r \\n """"'
 	[Tags]  BSC-5011
 
 T22 no debug rest in config-session submode
 	${session_id} =  Cli Get Session Hash
-        Cli Run  enable
-        Cli Run  config
-        Cli Run  session ${session_id}
-        Cli Run and Verify Output
-        ...  no debug rest
-        ...  Warning: submode exited due to deleted object
+	Cli Run  master  enable
+	Cli Run  master  config
+	Cli Run  master  session ${session_id}
+	Cli Run and Verify Output  master
+	...  no debug rest
+	...  Warning: submode exited due to deleted object
 	...  flag=False
 	[Tags]  BSC-5116  session
 
 T23 show this in config-session submode
 	${session_id} =  Cli Get Session Hash
-        Cli Run  enable
-        Cli Run  config
-	Cli Run  session ${session_id}
-        Cli Run  show this
+	Cli Run  master  enable
+	Cli Run  master  config
+	Cli Run  master  session ${session_id}
+	Cli Run  master  show this
 	[Tags]  BSC-5115  session
 
 T24 Chinese characters in commands
-	Cli Run  banner \\0xe4\\0xbd\\0xa0\\0xe5\\0xa5\\0xbd
-	Cli Run and Verify Output
+	Cli Run  master  banner \\0xe4\\0xbd\\0xa0\\0xe5\\0xa5\\0xbd
+	Cli Run and Verify Output  master
 	...  show banner
 	...  \\0xe4\\0xbd\\0xa0\\0xe5\\0xa5\\0xbd
-	Manual Passed
-	[Tags]  BSC-5102
+	[Tags]  banner  BSC-5366  BSC-5102
 
 T25 Polish characters in commands
-	Cli Run  snmp-server location 'Ko\\0xc5\\0x9bciuszki 34, \\0xc5\\0x81\\0xc3\\0xb3d\\0xc5\\0xba'
-	Cli Run and Verify Output
+	Cli Run  master  snmp-server location 'Ko\\0xc5\\0x9bciuszki 34, \\0xc5\\0x81\\0xc3\\0xb3d\\0xc5\\0xba'
+	Cli Run and Verify Output  master
 	...  show running-config snmp
 	...  snmp-server location 'Ko\\0xc5\\0x9bciuszki 34, \\0xc5\\0x81\\0xc3\\0xb3d\\0xc5\\0xba'
+	[Tags]  snmp  special characters
 
 T26 Route and Router help texts
-	Cli Run  tenant test
-	Cli Run  router
-	Cli Run and Verify Output
+	Cli Run  master  tenant test
+	Cli Run  master  router
+	Cli Run and Verify Output  master
 	...  route?r
 	...  route Add an IP subnet route on the router
-	Cli Run and Verify Output
+	Cli Run and Verify Output  master
 	...  route?r
 	...  router Enter the router configuration submode
 
 T27 Interaction between snmp and banner commands
-	Cli Run  snmp-server location Loc1
-	Cli Run and Verify Output
+	Cli Run  master  snmp-server location Loc1
+	Cli Run and Verify Output  master
 	...  show running-config snmp
 	...  snmp-server location Loc1
-	Cli Run  banner Welcome
-	Cli Run and Verify Output
+	Cli Run  master  banner Welcome
+	Cli Run and Verify Output  master
 	...  show running-config snmp
 	...  snmp-server location Loc1
-	Cli Run and Verify Output
+	Cli Run and Verify Output  master
 	...  show running-config banner
 	...  banner Welcome
-	[Tags]  BSC-5141
+	[Tags]  banner  snmp  BSC-5141
 
 T28 NTP sync command
-	Cli Run  ntp sync  cmd_timeout=15
-	Cli Run  ntp sync 0.bigswitch.pool.ntp.org  cmd_timeout=15
+	Cli Run  master  ntp sync  cmd_timeout=15
+	Cli Run  master  ntp sync 0.bigswitch.pool.ntp.org  cmd_timeout=15
 	[Tags]  NTP BSC-5169
 
 T29 Deletion of ntp server
 	Run Keyword and Expect Error
 	...  *Error*
-	...  Cli Run  no ntp server 0.bigswitch.pool.ntp.org
-	Cli Run and Verify Output
+	...  Cli Run  master  no ntp server 0.bigswitch.pool.ntp.org
+	Cli Run and Verify Output  master
 	...  show running-config nto
 	...  ntp server 0.bigswitch.pool.ntp.org
 	[Tags]  Skipped  BSC-5095
 
 T30 No fabric role
-	Cli Run  switch test
+	Cli Run  master  switch test
 	Run Keyword and Expect Error
 	...  *Error: Missing argument: "spine", "leaf"*
-	...  Cli Run  no fabric-role
-	Cli Run  no fabric-role spine
-	Cli Run  no fabric-role leaf
+	...  Cli Run  master  no fabric-role
+	Cli Run  master  no fabric-role spine
+	Cli Run  master  no fabric-role leaf
 	[Tags]  BVS-1482
 
 T31 Validation of "monitor session" configuration
-	Cli Run  monitor session 1
-	Cli Run  source switch test interface ethernet1
+	Cli Run  master  monitor session 1
+	Cli Run  master  source switch test interface ethernet1
 	Run Keyword and Expect Error
 	...  *Error: Validation failed: [Validate Session 1]: Destination test/ethernet1 is already configured as a source in session [1]*
-	...  Cli Run  destination switch test interface ethernet1
+	...  Cli Run  master  destination switch test interface ethernet1
 	[Tags]  BVS-1219
+
+T32 Show running config when cookie session expired
+	${session_id} =  Cli Get Session Hash
+	${name}=    BsnCommon.get node name    master
+	Cli Run  ${name}  enable
+	Cli Run  ${name}  config
+	Run Keyword and Ignore Error  Cli Run  ${name}  no session ${session_id}
+	Run Keyword and Expect Error
+	...  *Error: Please reauth: Authorization failed: No session found for cookie*
+	...  Cli Run  ${name}  show running-config
+	[Tags]  BSC-5343  session
+
+T33 Show banner simple test
+	Cli Run  master  banner 'This is test banner'
+	Cli Run and Verify Output  master
+	...  show running-config banner
+	...  banner 'This is test banner'
+	Cli Run and Verify Output  master
+	...  show banner
+	...  This is test banner
+	[Tags]  banner  BSC-5366
 
 *** Keywords ***
 Generate Random Name
@@ -493,21 +512,24 @@ Generate Random Name
     ${name}  Catenate  SEPARATOR=  ${prefix}  ${regex}
     [Return]  ${name}
 
-File Suite Setup
+Various Suite Setup
 	Base Suite Setup
-	Bash  master  curl -g -H "Cookie: session_cookie\=$FL_SESSION_COOKIE" localhost:8080/api/v1/data/controller/core/aaa/accounting -X DELETE -d '{"name": "local"}'
 	Cli Copy  running-config  config://startup-config
 	Cli Copy  running-config  config://startup-config  node=slave
 
+Various Suite Teardown
+	Base Suite Teardown
+
 Setup
 	Base Test Setup
-        Cli Run  enable
-        Cli Run  config
+    Cli Run  master  enable
+    Cli Run  master  config
 
 Teardown
-	Cli Run  exit
-	Cli Run  enable
-	Cli Run  config
+	Cli Run  master  exit
+	Cli Run  master  enable
+	Cli Run  master  config
+	Cli Run  master  reauth admin adminadmin
 	Cli  master  no aaa accounting exec default start-stop group tacacs+  timeout=200
 	Cli Copy  config://startup-config  running-config
 	Base Test Teardown

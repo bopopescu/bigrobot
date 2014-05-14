@@ -174,8 +174,5 @@ With multiple NTP servers, restart process ntp on Slave and verify Master is una
 ntp suite setup
     base suite setup
     add ntp server  c1  time-c.nist.gov
-
     Sleep  5
     
-
-     

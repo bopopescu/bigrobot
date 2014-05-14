@@ -26,7 +26,7 @@ Test host ping
 
 Test scp command
     [Tags]  skipped
-    test scp
+    test scp get bulk
 
 Test bash delete tag
     [Tags]  skipped
@@ -34,4 +34,7 @@ Test bash delete tag
 
 Test directory listing
     #[Tags]  skipped
-    bash             h1   ls -la
+    bash             h1-vm1-rack1   ls -la
+    #bash             h1   ls -la
+    #sudo             h1   cat /etc/shadow
+    #bash             h1   find /tmp

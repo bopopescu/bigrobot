@@ -29,6 +29,8 @@ from paramiko.ssh_exception import BadHostKeyException, \
 from Exscript.protocols import SSH2
 from Exscript import Account
 from robot.libraries.BuiltIn import BuiltIn
+import autobot.utils as br_utils
+from keywords.Host import Host
 
 
 class BsnCommon(object):
@@ -91,30 +93,126 @@ class BsnCommon(object):
 
     def show_test_topology_params(self):
         t = test.Test()
-        helpers.log("Test topology params: %s" % helpers.prettify(t.topology_params()))
+        helpers.log("Test topology params: %s"
+                    % helpers.prettify(t.topology_params()))
 
     def expr(self, s):
         result = eval(s)
         helpers.log("Express '%s' evaluated to '%s'" % (s, result))
         return result
 
+    def controller_postmortem(self, node, server, server_devconf,
+                              user, password, dest_path, test_descr=None):
+        """
+        Executes the equivalence of
+        https://github.com/bigswitch/t6-misc/blob/master/t6-support/run_show_cmds.py
+        Save the show commands and logs (e.g., /var/log/floodlight/*) to the
+        archiver.
+        """
+        dest_path += '/' + test_descr
+        server_devconf.sudo('mkdir -p %s' % dest_path)
+
+        helpers.log("Collecting information for '%s' controller" % node)
+        output_dir = helpers.bigrobot_log_path_exec_instance()
+        show_cmd_file = (output_dir + '/' + test_descr + '_' + node +
+                         '/show_cmd_out.txt')
+        d = os.path.dirname(show_cmd_file)
+        if not os.path.exists(d):
+            os.makedirs(d)
+        fh = open(show_cmd_file, 'w')
+        cmdlist = [
+                   'show running-config details',
+                   'show debug counters',
+                   'show bvssetting',
+                   'show cluster details',
+                   'show switch all details',
+                   'show switch all interface',
+                   'show switch all interface properties',
+                   'show lacp',
+                   'show lag',
+                   'show link',
+                   'show port-group',
+                   'show fabric warn',
+                   'show fabric error',
+                   'show tenant',
+                   'show vns',
+                   'show endpoint',
+                   'show attachment-points',
+                   'show router',
+                   'show segment-interface',
+                   'show tenant-interface',
+                   'show forwarding',
+                   'show forwarding internal',
+                   'show vft',
+                   'show debug events',
+                   ]
+        for cmd in cmdlist:
+            content = self.config(node, cmd)
+            fh.write(content['content'])
+            fh.write('\n')
+        helpers.log("Successfully run all debug commands. Saved to %s."
+                    % show_cmd_file)
+        fh.close()
+
+        helpers.scp_put(server, show_cmd_file, dest_path, user, password)
+
+        Host().bash_scp(node,
+                        source='/var/log/floodlight/*',
+                        dest='%s@%s:%s' % (user, server, dest_path),
+                        password=password, timeout=60)
+        helpers.log("Successfully copied all debug logs on %s to %s:%s"
+                    % (node, server, dest_path))
+
+        # Make sure that all log files are readable.
+        server_devconf.sudo('chmod -R +r %s' % dest_path)
+
     def base_test_postmortem(self, test_descr=None):
         t = test.Test()
 
+        helpers.log("Postmortem begins for test case '%s'" % test_descr)
+        server = 'jenkins-w9.bigswitch.com'
+        tester = helpers.get_env('USER')  # individual who executed the script
+        user = 'root'
+        password = 'bsn'
+        dest_path_rel = ("%s/%s" %
+                         (tester,
+                          helpers.bigrobot_log_path_exec_instance_relative()))
+        dest_path = '/var/www/regression_logs/%s' % dest_path_rel
+        dest_url = 'http://%s/regression_logs/%s' % (server, dest_path_rel)
+
         helpers.log("Test case '%s' failed. Performing postmortem."
                     % test_descr)
+        if not test_descr:
+            test_descr = "no_test_case_descr"
+        # convert non-alpha and white spaces to underscores
+        test_descr = re.sub(r'[\W\s]', '_', test_descr)
+
+        helpers.log("Creating directory on log archiver %s:%s"
+                    % (server, dest_path))
+
+        h = t.node_spawn(ip=server, user=user, password=password,
+                         device_type='host')
         for node in t.topology():
-            # Do postmortem thingy here...
-            # - Save output file(s) to bigrobot log directory. The log path is:
-            #     bigrobot_path = helpers.bigrobot_log_path_exec_instance()
-            # - Look at https://github.com/bigswitch/t6-misc/blob/master/t6-support/run_show_cmds.py
-            # - Execute the command using helpers.run_cmd(), e.g.,
-            #     cmd = 'cd <bigrobot_log>; <path>/ run_show_cmds.py'
-            #     status, msg = helpers.run_cmd(cmd, shell=True)
-            # - Name tarbar using the test_descr (be sure to convert
-            #   whitespace to underscore).
-            helpers.log("Collecting information for node '%s' (%s)"
-                        % (node, self.get_node_ip(node)))
+            if helpers.is_controller(node):
+                self.controller_postmortem(node,
+                                           server=server,
+                                           server_devconf=h,
+                                           user=user, password=password,
+                                           dest_path=dest_path,
+                                           test_descr=test_descr)
+
+        helpers.warn("Debug logs available at %s\n" % dest_url)
+        helpers.log("Debug logs are also available at\n%s:%s\n"
+                    "Note: Files are removed after 30 days unless"
+                    " KEEP_FOREVER.txt is found in the directory.%s"
+                    % (server, dest_path,
+                       br_utils.end_of_output_marker()))
+        # In smoketest/regression environment, assume we want to keep the
+        # logs forever
+        if helpers.bigrobot_continuous_integration().lower() == 'true':
+            filename = dest_path + "/KEEP_FOREVER.txt"
+            helpers.trace("In regression environment; touch %s" % filename)
+            h.sudo("touch %s" % filename)
 
     def pause_on_fail(self, keyword=None, msg=None):
         """
@@ -1528,6 +1626,11 @@ class BsnCommon(object):
         n = t.node(node)
         return n.sudo(*args, **kwargs)
 
+    def console(self, node, *args, **kwargs):
+        t = test.Test()
+        n = t.node(node)
+        return n.console(*args, **kwargs)
+
     def cli_content(self, node, *args, **kwargs):
         t = test.Test()
         n = t.node(node)
@@ -1628,6 +1731,68 @@ class BsnCommon(object):
         t = test.Test()
         n = t.node(node)
         return n.ip()
+
+    def get_node_alias(self, node):
+        """
+        Get the alias of a node
+
+        Input: logical node name, e.g., 's1', 's2', etc.
+
+        Return Value:  node alias (e.g., 'spine0', 'leaf1-a'). See
+        https://bigswitch.atlassian.net/wiki/display/QA/Topology+Descriptions+in+BigRobot
+        for the list of supported aliases.
+        """
+        t = test.Test()
+        n = t.node(node)
+        val = n.alias()
+        if helpers.is_list(val):
+            return val[0]
+        else:
+            return val
+
+    def get_all_nodes(self):
+        """
+        Get the names of all nodes used in the test suite.
+
+        Return Value:  List of node names, e.g., ['c1', 'c2', 's1', etc.]
+        """
+        t = test.Test()
+        nodes = t.topology().keys()
+        helpers.debug("Nodes used in test suite: %s" % nodes)
+        return nodes
+
+    def get_all_controller_nodes(self):
+        """
+        Get the names of all controller nodes used in the test suite.
+
+        Return Value:  List of controller node names, e.g., ['c1', 'c2', etc.]
+        """
+        t = test.Test()
+        nodes = [n for n in t.topology().keys() if helpers.is_controller(n)]
+        helpers.debug("Controller nodes used in test suite: %s" % nodes)
+        return nodes
+
+    def get_all_switch_nodes(self):
+        """
+        Get the names of all switch nodes used in the test suite.
+
+        Return Value:  List of switch node names, e.g., ['s1', 's2', etc.]
+        """
+        t = test.Test()
+        nodes = [n for n in t.topology().keys() if helpers.is_switch(n)]
+        helpers.debug("Switch nodes used in test suite: %s" % nodes)
+        return nodes
+
+    def get_all_host_nodes(self):
+        """
+        Get the names of all host nodes used in the test suite.
+
+        Return Value:  List of host node names, e.g., ['h1', 'h2', etc.]
+        """
+        t = test.Test()
+        nodes = [n for n in t.topology().keys() if helpers.is_host(n)]
+        helpers.debug("Host nodes used in test suite: %s" % nodes)
+        return nodes
 
     def get_next_mac(self, *args, **kwargs):
         """

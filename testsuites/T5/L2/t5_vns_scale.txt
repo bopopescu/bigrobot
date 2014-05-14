@@ -69,20 +69,20 @@ create 1k vns and verify the table and forwarding
     ${result}=  rest verify tenant
     Should not be True  ${result}
     
-create 4093 vns and verify the table and forwarding
+create 4000 vns and verify the table and forwarding
 	[Tags]  L2  scaling      
   	rest add tenant  t1
-	rest add vns scale  t1  4093
+	rest add vns scale  t1  4000
 	summary log  system create a 4k vns
 	rest add interface to all vns  t1  leaf0-a  ${leaf0a_ixia_intf}
 	rest add interface to all vns  t1  leaf1-a  ${leaf1a_ixia_intf}
 	summary log  system add 2 ports to each vns
-	rest verify vns scale  4093
+	rest verify vns scale  4000
 	rest verify membership port count  2
-	${stream}=             L3 add  no_arp=True  flow=a<->c  src_mac=00:00:01:00:00:01  dst_mac=00:00:02:00:00:01   ethertype=8100  vlan_id=1  vlan_cnt=4093  frame_rate=1000  frame_size=68  name=a_c_flow
+	${stream}=             L3 add  no_arp=True  flow=a<->c  src_mac=00:00:01:00:00:01  dst_mac=00:00:02:00:00:01   ethertype=8100  vlan_id=1  vlan_cnt=4000  frame_rate=1000  frame_size=68  name=a_c_flow
     start traffic  ${stream}
     sleep  20
-    rest verify endpoint in system  8186
+    rest verify endpoint in system  8000
     verify traffic rate  tx_rate  rx_rate  a  c
     verify traffic rate  tx_rate  rx_rate  c  a
     stop traffic  ${stream}
@@ -94,21 +94,21 @@ create 4093 vns and verify the table and forwarding
 Master controller node reboot with 4k vns
 	[Tags]  L2  scaling      
   	rest add tenant  t1
-	rest add vns scale  t1  4090
+	rest add vns scale  t1  4000
 	summary log  system create a 4k vns
 	rest add interface to all vns  t1  leaf0-a  ${leaf0a_ixia_intf}
 	rest add interface to all vns  t1  leaf1-a  ${leaf1a_ixia_intf}
 	summary log  system add 2 ports to each vns
-	rest verify vns scale  4090
+	rest verify vns scale  4000
 	rest verify membership port count  2
-	${stream}=             L3 add  no_arp=True  flow=a<->c  src_mac=00:00:01:00:00:01  dst_mac=00:00:02:00:00:01  ethertype=8100  vlan_id=1  vlan_cnt=4090  frame_rate=1000  frame_size=68  name=a_c_flow
+	${stream}=             L3 add  no_arp=True  flow=a<->c  src_mac=00:00:01:00:00:01  dst_mac=00:00:02:00:00:01  ethertype=8100  vlan_id=1  vlan_cnt=4000  frame_rate=1000  frame_size=68  name=a_c_flow
     start traffic  ${stream}
     sleep  20
-    rest verify endpoint in system  8180
+    rest verify endpoint in system  8000
     verify traffic rate  tx_rate  rx_rate  a  c
     verify traffic rate  tx_rate  rx_rate  c  a
     cluster node reboot
-    rest verify endpoint in system  8180
+    rest verify endpoint in system  8000
     verify traffic rate  tx_rate  rx_rate  a  c
     verify traffic rate  tx_rate  rx_rate  c  a
     stop traffic  ${stream}

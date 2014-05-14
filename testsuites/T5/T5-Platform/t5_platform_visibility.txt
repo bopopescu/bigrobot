@@ -58,13 +58,46 @@ ${s4VerifyInt}	eth2
 
 T0 Setup
 	[Tags]  feature
+	bash network restart  h1
+	bash add tag  h1  bond0  10 
+	bash add ip address  h1  10.10.10.51/24  bond0.10
+	bash ifup intf  h1  bond0.10
+	bash add route  h1  20.20.20.0/24  10.10.10.100  bond0.10
+	
+	bash network restart  h2
+	bash add tag  h2  bond0  10 
+	bash add ip address  h2  10.10.10.52/24  bond0.10
+	bash ifup intf  h2  bond0.10
+	bash add route  h2  20.20.20.0/24  10.10.10.100  bond0.10
+	
+	bash network restart  h3
+	bash add tag  h3  bond0  10 
+	bash add ip address  h3  10.10.10.53/24  bond0.10
+	bash ifup intf  h3  bond0.10
+	bash add route  h3  20.20.20.0/24  10.10.10.100  bond0.10
+	
+	
+	bash network restart  h4
+	bash add tag  h4  bond0  20 
+	bash add ip address  h4  20.20.20.54/24  bond0.20
+	bash ifup intf  h4  bond0.20
+	bash add route  h4  10.10.10.0/24  20.20.20.100  bond0.20
+	
+	bash network restart  h5
+	bash add tag  h5  bond0  20 
+	bash add ip address  h5  20.20.20.55/24  bond0.20
+	bash ifup intf  h5  bond0.20
+	bash add route  h5  10.10.10.0/24  20.20.20.100  bond0.20
+	
+	
     Configure 3-Rack/Dual-Leaf/2-Spine/2-Host Setup For Physical Topology 
 	Configure 2 VNS with Different VLAN properties
 	Verify Connectivity in 3-Rack/Dual-Leaf/2-Spine/2-Host Physical Topology 
 
+	
 
 T1 Configure SPAN session for Single interface - Direction Both
-    [Tags]  feature   skipped
+    [Tags]  feature   run2
     ${returnVal} =  rest add monitor session	1	${s1SrcSwitch}	${s1SrcInt}	${s1DstSwitch}	${s1DstInt}  direction=both
     Should be true  ${returnVal}
 	${returnVal} =  rest verify monitor session		1  ${s1SrcSwitch}	${s1SrcInt}	${s1DstSwitch}	${s1DstInt}  direction=both

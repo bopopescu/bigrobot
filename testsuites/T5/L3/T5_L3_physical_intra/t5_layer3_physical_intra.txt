@@ -1,5 +1,5 @@
 * Setting
-Documentation   T5 Basic L3 two spine three leaf rack with dual-tor Test Suite
+Documentation   T5 intra tenant L3 Test Suite
 Suite Setup     T5 base suite setup
 Suite Teardown  T5 base suite teardown
 Test Setup      test setup topology
@@ -10,88 +10,91 @@ Library         keywords/Host.py
 Library         keywords/T5.py
 Library         keywords/T5L3.py
 Library         keywords/T5Platform.py
+Library 		keywords/T5Utilities.py
 Library	        Collections.py
 Library         keywords/Ixia.py
 Library			keywords/SwitchLight.py
-Resource		testsuites/T5/T5_L3_physical_intra/t5_layer3_physical_intra_variables.txt
+Resource		testsuites/T5/L3/T5_L3_physical_intra/t5_layer3_physical_intra_variables.txt
 Resource		testsuites/T5/t5_dualleaf_three_rack_physical_resource.txt
 
 
 * Test Cases
 Intra tenant L3 untagged traffic with dynamic endpoints same rack
 	L3 intra tenant same rack untagged with dynamic endpoints
-	[Tags]					smoke				sanity			
+	[Tags]								sanity			
 
 Intra tenant L3 untagged traffic with dynamic endpoints across rack
 	L3 intra tenant across rack untagged with dynamic endpoints
-	[Tags]			  		smoke				sanity	
+	[Tags]			  					sanity	
 
 Intra tenant L3 tagged traffic with dynamic endpoints same rack
 	L3 intra tenant same rack tagged with dynamic endpoints
-	[Tags]				smoke				sanity			
+	[Tags]								sanity			
 
 Intra tenant L3 tagged traffic with dynamic endpoints across rack
 	L3 intra tenant across rack tagged with dynamic endpoints
-	[Tags]					smoke				sanity	
+	[Tags]								sanity	
+
+Activate and deactivate router interface
+	Activate and deactivate router interface
+	[Tags]								sanity	
 
 Intra tenant L3 untagged traffic with static endpoints same rack
 	L3 intra tenant same rack untagged with static endpoints
-	[Tags]						smoke				sanity			
+	[Tags]								sanity			
 
 Intra tenant L3 untagged traffic with static endpoints across rack
 	L3 intra tenant across rack untagged with static endpoints
-	[Tags]						smoke				sanity	
+	[Tags]								sanity	
 
 Intra tenant L3 tagged traffic with static endpoints same rack
 	L3 intra tenant same rack tagged with static endpoints
-	[Tags]						smoke				sanity			
+	[Tags]								sanity			
 
 Intra tenant L3 tagged traffic with static endpoints across rack
 	L3 intra tenant across rack tagged with static endpoints
-	[Tags]						smoke				sanity	
+	[Tags]								sanity	
 
 Dhcp discover on the same vns as server with dhcp relay enabled
 	L3 intra tenant dhcp relay on same vns as dhcp server with relay enabled
-	[Tags]					 	smoke				sanity	
+	[Tags]					 			sanity					dhcp-relay
 
 Dhcp discover on the same vns as server without dhcp relay enabled
 	L3 intra tenant dhcp relay on same vns as dhcp server without relay enabled
-	[Tags]					 	smoke				sanity	
+	[Tags]					 			sanity					dhcp-relay	
 
 Intra tenant dhcp relay 
 	L3 intra tenant dhcp relay on same rack
-	[Tags]					 	smoke				sanity	
+	[Tags]					 			sanity					dhcp-relay	
 	
 Intra tenant dhcp relay with circuit id
 	L3 intra tenant dhcp relay with circuit id on same rack
-	[Tags]					 	smoke				sanity	
+	[Tags]					 			sanity					dhcp-relay	
 
 Intra tenant dhcp relay across rack
 	L3 intra tenant dhcp relay across rack
-	[Tags]					 	smoke				sanity	
+	[Tags]					 			sanity					dhcp-relay	
 	
 Intra tenant dhcp relay with circuit id across rack
 	L3 intra tenant dhcp relay with circuit id across rack
-	[Tags]					 	smoke				sanity	
+	[Tags]					 			sanity					dhcp-relay	
 
 Delete and Add dhcp relay
 	L3 dhcp request without dhcp relay enabled
-	[Tags]					 	sanity	
+	[Tags]					 			sanity					dhcp-relay	
 	
 Move host from one vns to another vns in the same tenant and verify dhcp request is working
-#	Host moved between vns in the same tenant with dhcp request
-	Log								manual untested
-	[Tags]				manual			untested			feature			
+	manual untested
+	[Tags]				manual-untested			feature					dhcp-relay			
 
 Verify dhcp host is not aged out
 	Verify dhcp host is not being aged out
-#	[Tags]		 		feature			
+	[Tags]		 		feature					dhcp-relay			
 
 Dhcp relay with dhcp server configured as static endpoint
 	Dhcp relay with static dhcp server endpoint
-	[Tags]		 		feature			
+	[Tags]		 		feature					dhcp-relay			
 	
-
 Add and delete untagged endpoints with existing host
 	L3 add and delete untagged endpoints with existing host
 	[Tags]		 		feature	
@@ -106,7 +109,7 @@ Change L3 endpoint from untagged to tagged and back
 
 Verify L3 endpoint aging
 	Check L3 endpoint aging 
-	[Tags]		 		feature	
+	[Tags]		 			feature	
 	
 Verify L3 ttl 1 is not being forwarded
 	Check L3 ttl 1 is dropped
@@ -114,45 +117,46 @@ Verify L3 ttl 1 is not being forwarded
 
 Change router vns ip
 	Change router ip address
-	[Tags]		feature 	
+	[Tags]					feature 	
 
 Delete and add router vns ip
 	Delete and add router vns ip 
-	[Tags] 		feature			
+	[Tags] 					feature			
 
+Set 32bit full mask on vns router ip
+	Set 32bit full mask on vns router ip
+	[Tags]					feature		
+	
 Change tagged endpoint IP address
 	Change tagged host endpoint IP address
 	[Tags]					feature		
 
 Configure static endpoint with host showing up on another port
 	Static endpoint with dynamic host showing up on another port
-	[Tags]				skipped	sanity		
+	[Tags]					skipped	sanity		
 
 Verify subnet mask is properly applied on router vns
 	Verify subnet mask on vns router ip
-	[Tags]				feature		
+	[Tags]					feature		
 
 Verify vlsm forwarding
 	Verify vlsm forwarding
-	[Tags]				feature		
+	[Tags]					feature		
 
 Verify split horizon forwarding
-	Verify l3 forwarding on one arm router
-	[Tags]				feature			manual		
-
+	manual passed
+	[Tags]					feature			manual		
 	
 Configure overlapping router IP 	
 	Configure overlapping IP on same tenant across VNS	
-	[Tags]				feature		
+	[Tags]					feature		
 
 L3 intra tenant traffic between private and public subnet with overlapping IP
-#	L3 intra tenant traffic between private and public subnet with overlapping IP
-	Log								manual untested
-	[Tags]						feature			manual		
+	manual untested
+	[Tags]						feature			manual-untested		
 	
 Verify host with different IP on vns router is not getting L3 service
-#	Verify host with different IP on vns router is not getting L3 service
-	Log								manual untested
+	manual passed
 	[Tags]						feature			manual		
 	
 Trigger controller HA failover via CLI
@@ -195,15 +199,62 @@ Restart ofad process on leaf
 	restart ofad on leaf
 	[Tags]				feature			
 	
-L3 traffic behavior in headless mode
-	L3 intra tenant traffic behavior in headless mode 
-	Log							manual untested
-	[Tags]					manual			untested			feature			
+L3 intra tenant traffic behavior in headless mode 
+	manual untested
+	[Tags]					manual-untested			feature			
 
 L3 intra tenant traceroute
-	Log							manual untested
-	[Tags]					manual			untested			feature			
+	manual passed
+	[Tags]					manual				feature			
 		
+Trigger controller HA failover via CLI and verify dhcp-relay is working
+	Trigger controller HA failover via CLI and verify dhcp-relay is working
+	[Tags]					manual				feature					dhcp-relay			run
+
+Trigger controller HA failover via reboot and verify dhcp-relay is working
+	Trigger controller HA failover via reboot and verify dhcp-relay is working
+	[Tags]					manual					feature					dhcp-relay		run	
+
+Trigger controller HA failover via CLI and verify ecmp is working
+	manual failed
+	[Tags]					manual					feature					ecmp			run		
+
+Trigger controller HA failover via reboot and verify ecmp is working
+	manual untested
+	[Tags]					manual-untested			feature					ecmp			run
+
+Verify dhcp-relay functionality in headless mode
+	manual untested
+	[Tags]					manual-untested			feature					dhcp-relay			
+
+Verify ecmp forwarding in headless mode
+	manual untested
+	[Tags]					manual-untested			feature					ecmp	
+			
+Verify L3 intra tenant forwarding after controller upgrade
+	manual untested
+	[Tags]					manual-untested			feature					
+
+Verify ecmp forwarding after controller upgrade
+	manual untested
+	[Tags]					manual-untested			feature					
+
+Verify dhcp-relay functionality after controller upgrade
+	manual untested
+	[Tags]					manual-untested			feature					
+
+Verify ecmp traffic forwarding prefers local forwarding over remote forwarding
+	manual untested
+	[Tags]					manual-untested			feature					
+
+Verify arp agent functionality after controller HA failover via CLI
+	Verify arp agent functionality after controller HA failover via CLI
+	[Tags]					feature												run	
+
+Verify arp agent functionality after controller HA failover via reboot
+	Verify arp agent functionality after controller HA failover via reboot
+	[Tags]					feature												run
+	
 	
 * Keywords
 L3 intra tenant same rack untagged with dynamic endpoints
@@ -354,6 +405,56 @@ L3 intra tenant across rack tagged with dynamic endpoints
 	REST show endpoints		
 	${loss} = 									BASH ping						h1						10.251.3.11 			count=10
 	Should Be True  							${loss} == 0		
+	BASH delete route							h1								10.251.3.0/24			10.251.1.1
+	BASH delete route							h3								10.251.1.0/24			10.251.3.1
+
+
+Activative and deactivate router interface
+	BASH ifup intf								h1 								bond0
+	BASH ifup intf								h2								bond0
+	BASH ifup intf								h3								bond0
+	BASH ifup intf								h4								bond0
+	BASH ifup intf								h5								bond0
+	BASH ifup intf								h6								bond0	
+	REST add portgroup to vns					X								X1						${leaf0_pc1}			1001
+	REST add portgroup to vns					X								X3						${leaf1_pc1}			1003
+	BASH add tag								h1								bond0					1001
+	BASH add tag								h3								bond0					1003
+	BASH ifup intf								h1								bond0.1001
+	BASH ifup intf								h3								bond0.1003
+	BASH add ip address							h1								10.251.1.11/24			bond0.1001
+	BASH add ip address							h3								10.251.3.11/24			bond0.1003
+	BASH add route								h1								10.251.3.0/24			10.251.1.1
+	BASH add route								h3								10.251.1.0/24			10.251.3.1
+	sleep										5	
+	${loss} = 									BASH ping						h1								10.251.1.1				count=10
+	Should Be True								${loss} < 20
+	${loss} = 									BASH ping						h3								10.251.3.1				count=10
+	Should Be True								${loss} < 20
+	${value} = 									BASH verify arp					h1						10.251.1.1
+	Should Not Be True							${value} 		
+	${value} =									BASH verify arp					h3						10.251.3.1
+	Should Not Be True							${value} 	
+	BASH ping									h1								10.251.3.11				count=10
+	${value} = 									BASH verify arp					h1						10.251.1.1
+	Should Be True								${value} 		
+	${value} =									BASH verify arp					h3						10.251.3.1
+	Should Be True								${value} 		
+	${mac1} = 									BASH get intf mac				h1						bond0.1001
+	${result} =									REST show endpoints mac			${mac1}
+	Should Be True								${result}						
+	${mac2} = 									BASH get intf mac				h3						bond0.1003
+	${result} =									REST show endpoints mac			${mac2}
+	Should Be True								${result}						
+	REST show endpoints		
+	${loss} = 									BASH ping						h1						10.251.3.11 			count=10
+	Should Be True  							${loss} == 0		
+	REST disable router intf					X								X1
+	${loss} = 									BASH ping						h1						10.251.3.11 			count=10
+	Should Be True  							${loss} == 100
+	REST enable router intf						X								X1
+	${loss} = 									BASH ping						h1						10.251.3.11 			count=10
+	Should Be True  							${loss} < 20
 	BASH delete route							h1								10.251.3.0/24			10.251.1.1
 	BASH delete route							h3								10.251.1.0/24			10.251.3.1
 
@@ -1707,26 +1808,6 @@ Verify vlsm forwarding
 Verify l3 forwarding on one arm router
 	return True		
 
-One Tenant 100 VNS with one host each
-	REST delete tenant							X
-	REST delete tenant							Y
-	REST delete tenant							Z
-	REST add tenant								A
-	REST add tenant								B
-	${ipAddr} =  								Set Variable					20.0.0.1
-	: FOR 										${i}							IN RANGE 				1					100
-	\	REST add vns							A								A-${i}
-	\	REST add vns ip							A								A-${i}					${ipAddr}			24
-	\	${ipAddr} =								get next address				ipv4					${ipAddr}			0.0.1.0
-	\	REST add interface to vns				A								A-${i}					leaf0-a				${ixia1}		${i}			
-				
-	${ipAddr} =  								Set Variable					30.0.0.1
-	: FOR 										${i}							IN RANGE 				101					200
-	\	REST add vns							B								B-${i}
-	\	REST add vns ip							B								B-${i}					${ipAddr}			24
-	\	${ipAddr} =								get next address				ipv4					${ipAddr}			0.0.1.0
-	\	REST add interface to vns				B								B-${i}					leaf1-a				${ixia3}		${i}			
-				
 
 Configure overlapping IP on same tenant across VNS
 	REST add tenant									A
@@ -2116,7 +2197,7 @@ Connect and Disconnect spine to controller
 	\	log traffic rate  						tx_rate  						rx_rate  				a  						c
   	\	sleep									5
 	stop traffic								${stream1}
-	calculate loss								tx_cnt							rx_cnt					a						c
+	calculate loss								transmitted_frames  			received_valid_frames  		${stream1}  			stream1
 	BASH delete route							h1								10.251.3.0/24			10.251.1.1
 	BASH delete route							h3								10.251.1.0/24			10.251.3.1
 	
@@ -2173,7 +2254,7 @@ Connect and disconnect one leaf in dual tor to controller
     \	log traffic rate  						tx_rate  						rx_rate  				a  						c
   	\	sleep									5
 	stop traffic								${stream1}
-	calculate loss								tx_cnt							rx_cnt					a						c
+	calculate loss								transmitted_frames  			received_valid_frames  		${stream1}  			stream1
 	BASH delete route							h1								10.251.3.0/24			10.251.1.1
 	BASH delete route							h3								10.251.1.0/24			10.251.3.1
 		
@@ -2424,8 +2505,245 @@ restart ofad on leaf
 L3 intra tenant traffic behavior in headless mode 
  	Manual failed
 
+Trigger controller HA failover via CLI and verify dhcp-relay is working
+	BASH ifdown intf							h1 								bond0
+	BASH ifdown intf							h2								bond0
+	BASH ifdown intf							h3								bond0
+	BASH ifdown intf							h4								bond0	
+	BASH ifup intf								h5								bond0
+	BASH ifup intf								h6								bond0		
+	BASH init intf								h1								bond0
+	BASH init intf								h2								bond0
+	BASH ifup intf								h1								bond0
+	BASH add ip address							h1								10.252.1.9/24			bond0					
+	BASH start service							h1								isc-dhcp-server
+	sleep										1
+	${value} = 									BASH check service status		h1						isc-dhcp-server
+	Should Contain								${value}						is started
+	sleep										1
+	REST add portgroup to vns					Y								Y1						${leaf0_pc1}			-1
+	REST add portgroup to vns					Y								Y3						${leaf2_pc1}			-1
+	BASH add route								h1								10.252.3.0/24			10.252.1.1
+	REST add dhcp relay							Y								Y3						10.252.1.9
+	REST enable dhcp relay						Y								Y3	
+	sleep										20
+	${h1_ip} = 									BASH get interface ipv4			h1						bond0				
+	Should Contain								${h1_ip}						10.252.1.9	
+	${h1_mac} =									BASH get intf mac				h1						bond0
+	${result} = 								REST show endpoints mac			${h1_mac}
+	Should Not Be Empty							${result}
+	sleep										1
+	## temporary fix
+	BASH ping									h1								10.252.1.1 				count=5
+	sleep										1
+	${value} = 									BASH verify arp					h1						10.252.1.1
+	Should Be True								${value} 		
+	sleep										1
+	${value} = 									BASH release dhcpv4 address		h5						bond0
+	Should Be True								${value}
+	sleep										1
+	${ipAddr} = 								BASH renew dhcpv4 address		h5						bond0
+	Should Not Be Empty							${ipAddr}
+	sleep										10
+	BASH ping									h1								${ipAddr}				count=10
+	${value} = 									BASH verify arp					h1						10.252.1.1
+	Should Be True								${value} 		
+	${value} =									BASH verify arp					h5						10.252.3.1
+	Should Be True								${value} 	
+	${mac1} = 									BASH get intf mac				h1						bond0
+	${result} =									REST show endpoints mac			${mac1}
+	Should Be True								${result}						
+	${mac2} = 									BASH get intf mac				h5						bond0
+	${result} =									REST show endpoints mac			${mac2}
+	Should Be True								${result}						
+	REST show endpoints	
+	${loss} = 									BASH ping						h1						${ipAddr} 			count=10
+	Should Be True  							${loss} == 0	
+	${value} = 									REST verify cluster election take leader
+	Should Be True								${value}
+	sleep										20
+	${value} = 									BASH release dhcpv4 address		h5						bond0
+	Should Be True								${value}
+	sleep										1
+	${ipAddr} = 								BASH renew dhcpv4 address		h5						bond0
+	Should Not Be Empty							${ipAddr}
+	sleep										10
+	BASH ping									h1								${ipAddr}				count=10
+	${loss} = 									BASH ping						h1						${ipAddr} 			count=10
+	Should Be True  							${loss} == 0	
+	BASH delete route							h1								10.252.3.0/24			10.252.1.1
+	
+Trigger controller HA failover via reboot and verify dhcp-relay is working
+	BASH ifdown intf							h1 								bond0
+	BASH ifdown intf							h2								bond0
+	BASH ifdown intf							h3								bond0
+	BASH ifdown intf							h4								bond0	
+	BASH ifup intf								h5								bond0
+	BASH ifup intf								h6								bond0		
+	BASH init intf								h1								bond0
+	BASH init intf								h2								bond0
+	BASH ifup intf								h1								bond0
+	BASH add ip address							h1								10.252.1.9/24			bond0					
+	BASH start service							h1								isc-dhcp-server
+	sleep										1
+	${value} = 									BASH check service status		h1						isc-dhcp-server
+	Should Contain								${value}						is started
+	sleep										1
+	REST add portgroup to vns					Y								Y1						${leaf0_pc1}			-1
+	REST add portgroup to vns					Y								Y3						${leaf2_pc1}			-1
+	BASH add route								h1								10.252.3.0/24			10.252.1.1
+	REST add dhcp relay							Y								Y3						10.252.1.9
+	REST enable dhcp relay						Y								Y3	
+	sleep										20
+	${h1_ip} = 									BASH get interface ipv4			h1						bond0				
+	Should Contain								${h1_ip}						10.252.1.9	
+	${h1_mac} =									BASH get intf mac				h1						bond0
+	${result} = 								REST show endpoints mac			${h1_mac}
+	Should Not Be Empty							${result}
+	sleep										1
+	${value} = 									BASH verify arp					h1						10.252.1.1
+	Should Be True								${value} 		
+	sleep										1
+	${value} = 									BASH release dhcpv4 address		h5						bond0
+	Should Be True								${value}
+	sleep										1
+	${ipAddr} = 								BASH renew dhcpv4 address		h5						bond0
+	Should Not Be Empty							${ipAddr}
+	sleep										10
+	BASH ping									h1								${ipAddr}				count=10
+	${value} = 									BASH verify arp					h1						10.252.1.1
+	Should Be True								${value} 		
+	${value} =									BASH verify arp					h5						10.252.3.1
+	Should Be True								${value} 	
+	${mac1} = 									BASH get intf mac				h1						bond0
+	${result} =									REST show endpoints mac			${mac1}
+	Should Be True								${result}						
+	${mac2} = 									BASH get intf mac				h5						bond0
+	${result} =									REST show endpoints mac			${mac2}
+	Should Be True								${result}						
+	REST show endpoints	
+	${loss} = 									BASH ping						h1						${ipAddr} 			count=10
+	Should Be True  							${loss} == 0	
+	${value} = 									CLI verify cluster master reboot
+	Should Be True								${value}
+	sleep										20
+	${value} = 									BASH release dhcpv4 address		h5						bond0
+	Should Be True								${value}
+	sleep										1
+	${ipAddr} = 								BASH renew dhcpv4 address		h5						bond0
+	Should Not Be Empty							${ipAddr}
+	sleep										10
+	BASH ping									h1								${ipAddr}				count=10
+	${loss} = 									BASH ping						h1						${ipAddr} 			count=10
+	Should Be True  							${loss} == 0	
+	BASH delete route							h1								10.252.3.0/24			10.252.1.1
 
-
+Verify arp agent functionality after controller HA failover via CLI
+	BASH ifup intf								h1 								bond0
+	BASH ifup intf								h2								bond0
+	BASH ifup intf								h3								bond0
+	BASH ifup intf								h4								bond0
+	BASH ifup intf								h5								bond0
+	BASH ifup intf								h6								bond0	
+	REST add portgroup to vns					X								X1						${leaf0_pc1}			1001
+	REST add portgroup to vns					X								X3						${leaf1_pc1}			1003
+	BASH add tag								h1								bond0					1001
+	BASH add tag								h3								bond0					1003
+	BASH ifup intf								h1								bond0.1001
+	BASH ifup intf								h3								bond0.1003
+	BASH add ip address							h1								10.251.1.11/24			bond0.1001
+	BASH add ip address							h3								10.251.3.11/24			bond0.1003
+	BASH add route								h1								10.251.3.0/24			10.251.1.1
+	BASH add route								h3								10.251.1.0/24			10.251.3.1
+	sleep										5	
+	${value} = 									BASH verify arp					h1						10.251.1.1
+	Should Not Be True							${value} 		
+	${value} =									BASH verify arp					h3						10.251.3.1
+	Should Not Be True							${value} 	
+	BASH ping									h1								10.251.3.11				count=10
+	${value} = 									BASH verify arp					h1						10.251.1.1
+	Should Be True								${value} 		
+	${value} =									BASH verify arp					h3						10.251.3.1
+	Should Be True								${value} 		
+	${mac1} = 									BASH get intf mac				h1						bond0.1001
+	${result} =									REST show endpoints mac			${mac1}
+	Should Be True								${result}						
+	${mac2} = 									BASH get intf mac				h3						bond0.1003
+	${result} =									REST show endpoints mac			${mac2}
+	Should Be True								${result}						
+	REST show endpoints		
+	${loss} = 									BASH ping						h1						10.251.3.11 			count=10
+	Should Be True  							${loss} == 0		
+	BASH delete arp								h1								10.251.1.1
+	BASH delete arp								h3								10.251.3.1
+	sleep										1
+	${value} = 									REST verify cluster election take leader
+	Should Be True								${value}
+	sleep										20
+	BASH ping									h1								10.251.3.11				count=5
+	${value} = 									BASH verify arp					h1						10.251.1.1
+	Should Be True								${value} 		
+	${value} = 									BASH verify arp					h3						10.251.3.1
+	Should Be True								${value} 		
+	${loss} = 									BASH ping						h1						10.251.3.11 			count=10
+	Should Be True  							${loss} < 20		
+	BASH delete route							h1								10.251.3.0/24			10.251.1.1
+	BASH delete route							h3								10.251.1.0/24			10.251.3.1
+	
+	
+Verify arp agent functionality after controller HA failover via reboot
+	BASH ifup intf								h1 								bond0
+	BASH ifup intf								h2								bond0
+	BASH ifup intf								h3								bond0
+	BASH ifup intf								h4								bond0
+	BASH ifup intf								h5								bond0
+	BASH ifup intf								h6								bond0	
+	REST add portgroup to vns					X								X1						${leaf0_pc1}			1001
+	REST add portgroup to vns					X								X3						${leaf1_pc1}			1003
+	BASH add tag								h1								bond0					1001
+	BASH add tag								h3								bond0					1003
+	BASH ifup intf								h1								bond0.1001
+	BASH ifup intf								h3								bond0.1003
+	BASH add ip address							h1								10.251.1.11/24			bond0.1001
+	BASH add ip address							h3								10.251.3.11/24			bond0.1003
+	BASH add route								h1								10.251.3.0/24			10.251.1.1
+	BASH add route								h3								10.251.1.0/24			10.251.3.1
+	sleep										5	
+	${value} = 									BASH verify arp					h1						10.251.1.1
+	Should Not Be True							${value} 		
+	${value} =									BASH verify arp					h3						10.251.3.1
+	Should Not Be True							${value} 	
+	BASH ping									h1								10.251.3.11				count=10
+	${value} = 									BASH verify arp					h1						10.251.1.1
+	Should Be True								${value} 		
+	${value} =									BASH verify arp					h3						10.251.3.1
+	Should Be True								${value} 		
+	${mac1} = 									BASH get intf mac				h1						bond0.1001
+	${result} =									REST show endpoints mac			${mac1}
+	Should Be True								${result}						
+	${mac2} = 									BASH get intf mac				h3						bond0.1003
+	${result} =									REST show endpoints mac			${mac2}
+	Should Be True								${result}						
+	REST show endpoints		
+	${loss} = 									BASH ping						h1						10.251.3.11 			count=10
+	Should Be True  							${loss} == 0		
+	BASH delete arp								h1								10.251.1.1
+	BASH delete arp								h3								10.251.3.1
+	sleep										1
+	${value} = 									CLI verify cluster master reboot
+	Should Be True								${value}
+	sleep										20
+	BASH ping									h1								10.251.3.11				count=5
+	${value} = 									BASH verify arp					h1						10.251.1.1
+	Should Be True								${value} 		
+	${value} = 									BASH verify arp					h3						10.251.3.1
+	Should Be True								${value} 		
+	${loss} = 									BASH ping						h1						10.251.3.11 			count=10
+	Should Be True  							${loss} < 20		
+	BASH delete route							h1								10.251.3.0/24			10.251.1.1
+	BASH delete route							h3								10.251.1.0/24			10.251.3.1
+	
+	
 initialize host
 	BASH delete tag								h1								bond0.1001				soft_error=${true}
 	BASH delete tag								h2								bond0.1002				soft_error=${true}
@@ -2469,6 +2787,7 @@ initialize host
 test setup topology
 	initialize host
 	sleep 											1
+	Start Floodlight Monitor 
 	REST add tenant 								X
 	REST add tenant									Y
 	REST add tenant									Z
@@ -2524,6 +2843,7 @@ test teardown topology
 	REST delete tenant								X
 	REST delete tenant								Y
 	REST delete tenant								Z
+	Stop Floodlight Monitor 
 	initialize host
 	
 
