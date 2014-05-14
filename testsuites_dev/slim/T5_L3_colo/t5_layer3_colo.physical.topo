@@ -138,7 +138,7 @@ h15:
 tg1:
   platform: 'ixia'
   chassis_ip: 10.210.192.2
-  tcl_server_ip: 10.210.65.44
+  tcl_server_ip: 10.210.67.27
   ports:
     a:
       name: 12/11
