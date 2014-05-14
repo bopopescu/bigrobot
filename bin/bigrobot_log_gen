@@ -1,4 +1,4 @@
-#!/bin/sh -x
+#!/bin/bash -x
 # Call Robot Framework's rebot to generate the consolidated log.
 # rebot unfortunately returns with a non-zero exit code which causes
 # the Jenkins build to fail (rebot returns the same error code as
@@ -9,6 +9,15 @@
 #   /home/bsn/workspace/VuiTest/bigtest/testlogs/
 # 
 
-rebot --name T5 --output master_output.xml --splitlog `find . -name output.xml`
+suite_doc=''
+if [ "$BUILD_URL"x != x ]; then
+    # Found Jenkins build URL. Put it in top-level test suite documentation
+    suite_doc="Jenkins job: $BUILD_URL"
+    rebot --name T5 --doc "${suite_doc}" --output master_output.xml --splitlog `find . -name output.xml`
+else
+    rebot --name T5 --output master_output.xml --splitlog `find . -name output.xml`
+fi
+
+
 exit 0
 
