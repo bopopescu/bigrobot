@@ -1016,11 +1016,11 @@ class T5(object):
         url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/segment[name="%s"]' % (vns)
         c.rest.get(url)
         data = c.rest.content()
-        if data[0]["active-endpoint-count"] == int(count):
-            helpers.log("Pass:Expected:%s, Actual:%s" % (int(count), data[0]["active-endpoint-count"]))
+        if data[0]["endpoint-count"] == int(count):
+            helpers.log("Pass:Expected:%s, Actual:%s" % (int(count), data[0]["endpoint-count"]))
             return True
         else:
-            helpers.test_failure("Fail: Expected:%s is not equal to Actual:%s" % (int(count), data[0]["active-endpoint-count"]))
+            helpers.test_failure("Fail: Expected:%s is not equal to Actual:%s" % (int(count), data[0]["endpoint-count"]))
             return False
 
     def rest_verify_endpoint_in_system(self, count):

@@ -627,10 +627,6 @@ class SwitchLight(object):
             helpers.log("Show Controllers O/P: \n %s" % (cli_input_2))
 
             pass_count = 0
-            if (c.is_master()):
-                controller_role = "MASTER"
-            else:
-                controller_role = "SLAVE"
 
             if str(c.ip()) in run_config:
                 pass_count = pass_count + 1
@@ -639,8 +635,12 @@ class SwitchLight(object):
                 pass_count = pass_count + 1
             if "CONNECTED" in show_output:
                 pass_count = pass_count + 1
-            if controller_role in show_output:
-                pass_count = pass_count + 1
+            if (c.is_master()):
+                if "MASTER" in show_output:
+                    pass_count = pass_count + 1
+            else:
+                if (("SLAVE" in show_output) or ("EQUAL" in show_output)):
+                    pass_count = pass_count + 1
             if pass_count == 4:
                 return True
             else:
