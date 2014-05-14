@@ -68,7 +68,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
         
         helpers.test_log("Input arguments: tenant = %s vns = %s ipaddr = %s netmask = %s " % (tenant, vnsname, ipaddr, netmask ))
         
-        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/logical-router/segment-interface[segmente="%s"]/ip-subnet/ip-cidr' % (tenant, vnsname)
+        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/logical-router/segment-interface[segment="%s"]/ip-subnet/ip-cidr' % (tenant, vnsname)
         ip_addr = ipaddr + "/" + netmask
         try:
             c.rest.delete(url, {})
