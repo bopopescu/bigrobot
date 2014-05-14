@@ -368,6 +368,7 @@ T6.15. Verify that switch uses cached image after reboot and does not download i
 T6.16. Verify that switch uses cached config after reboot and does not download it again (if no config change)
 T6.17. Verify that discovery process succeeds when no NTP servers are available in the network
 T6.18. Verify that discovery process succeeds when no DNS servers are available in the network
+T6.19. Verify that manifest for given switch is deleted just after switch is deleted from fabric
 
 # Negative
 ### Verify that discovery process continues indefinitely when:
@@ -444,3 +445,16 @@ T9.3. Verify that switch configured state can be viewed on the controller
 T9.4. Verify that switch operational state can be viewed on the controller
 T9.5. Verify that all switch-related 'show' commands are accessible from the controller
 T9.6. Verify that there is appropriate command to show ztn status of each switch
+T9.7. Verift that admin can view version of SL running on each switch
+T9.8. ? Verify that admin can view all images stored on flash at given switch
+
+### Questions to ask
+# Separate ZTN log
+# Configuring MAC on two clusters (first-come first-serve?)
+# Split brain will behave as configuring MAC on two clusters?
+# Will changing fabric roles be supported / validated against switch model
+# Will it be required to "shutdown" switch before introducing fabric-related changes? Deleting, changing fabric roles, MAC?
+# Will we see what SL images are in upgrade package?
+# Will we see at which stage of provisioning is given switch? e.g. downloading SL image, booting, ... ?
+# Limit on switches that can be handled by ZTN?
+# Validation of MAC addresses in CLI before making any changes? Invalid, broadcast, special MAC?
