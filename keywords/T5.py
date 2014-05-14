@@ -1083,7 +1083,7 @@ class T5(object):
         '''
         t = test.Test()
         c = t.controller('master')
-        url = '/api/v1/data/controller/applications/bvs/info/stats/reset-stats/clear-vns-counter'
+        url = '/api/v1/data/controller/applications/bvs/info/stats/reset-stats/clear-segment-counter'
         c.rest.get(url)
 
     def rest_verify_vns_rx_stats(self, tenant, vns, frame_cnt, vrange=5):
