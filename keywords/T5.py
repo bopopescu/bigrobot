@@ -1313,7 +1313,7 @@ class T5(object):
             c.rest.get(url1)
             data = c.rest.content()
             for i in range (0, len(data)):
-                if (data[i]["suspended"] is True) and (data[i]["fabric-role"] == "leaf" or data[i]["fabric-role"] == "spine"):
+                if (data[i]["fabric-connection-state"] == "suspended") and (data[i]["fabric-role"] == "leaf" or data[i]["fabric-role"] == "spine"):
                     helpers.test_failure("Fabric manager status is incorrect")
             helpers.log("Fabric manager status is correct")
             return True
