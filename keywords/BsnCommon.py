@@ -109,10 +109,11 @@ class BsnCommon(object):
         Save the show commands and logs (e.g., /var/log/floodlight/*) to the
         archiver.
         """
-        dest_path += '/' + test_descr
+        dest_path += '/' + test_descr + '/' + node
         server_devconf.sudo('mkdir -p %s' % dest_path)
 
-        helpers.log("Collecting information for '%s' controller" % node)
+        helpers.log("Collecting postmortem information for controller '%s'"
+                    % node)
         output_dir = helpers.bigrobot_log_path_exec_instance()
         show_cmd_file = (output_dir + '/' + test_descr + '_' + node +
                          '/show_cmd_out.txt')
@@ -160,11 +161,15 @@ class BsnCommon(object):
                         source='/var/log/floodlight/*',
                         dest='%s@%s:%s' % (user, server, dest_path),
                         password=password, timeout=60)
-        helpers.log("Successfully copied all debug logs on %s to %s:%s"
+        helpers.log("Successfully copied all debug logs on '%s' to '%s:%s'"
                     % (node, server, dest_path))
 
-        # Make sure that all log files are readable.
+        # Make sure that all log files are readable. Also compress them to
+        # save space.
         server_devconf.sudo('chmod -R +r %s' % dest_path)
+        server_devconf.bash('cd %s' % dest_path)
+        server_devconf.sudo('gzip -9 --quiet --force'
+                            ' *.log *.log.[0-9] *.log.[0-9][0-9]')
 
     def base_test_postmortem(self, test_descr=None):
         t = test.Test()
@@ -201,8 +206,12 @@ class BsnCommon(object):
                                            dest_path=dest_path,
                                            test_descr=test_descr)
 
-        helpers.warn("Debug logs available at %s\n" % dest_url)
-        helpers.log("Debug logs are also available at\n%s:%s\n"
+        # Only print the postmortem URL once.
+        if t.settings('postmortem_url_is_printed') == None:
+            helpers.warn("Postmortem logs are available at %s\n" % dest_url)
+            t.settings('postmortem_url_is_printed', True)
+
+        helpers.log("Postmortem logs are also available at\n%s:%s\n"
                     "Note: Files are removed after 30 days unless"
                     " KEEP_FOREVER.txt is found in the directory.%s"
                     % (server, dest_path,
