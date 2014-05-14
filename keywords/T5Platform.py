@@ -3416,10 +3416,10 @@ class T5Platform(object):
             
             kwargs Examples:
                 src-tenant=T1    
-                src-vns=v1    
+                src-segment=v1    
                 src-ip=10.10.10.51    
                 dst-tenant=T1  
-                dst-vns=v1    
+                dst-segment=v1    
                 dst-ip=10.10.10.52    
                 ip-protocol=icmp
         '''
@@ -3427,16 +3427,16 @@ class T5Platform(object):
         c = t.controller('master')
         url =  '/api/v1/data/controller/applications/bvs/test/path/controller-view'
         
-        if(kwargs.get('dst-vns')):
-            url = url + '[dst-vns="%s"]' % (kwargs.get('dst-vns'))
+        if(kwargs.get('dst-segment')):
+            url = url + '[dst-segment="%s"]' % (kwargs.get('dst-segment'))
         if(kwargs.get('dst-tenant')):
             url = url + '[dst-tenant="%s"]' % (kwargs.get('dst-tenant'))
         if(kwargs.get('ip-protocol')):
             url = url + '[ip-protocol="%s"]' % (kwargs.get('ip-protocol'))
         if(kwargs.get('src-ip')):
             url = url + '[src-ip="%s"]' % (kwargs.get('src-ip'))
-        if(kwargs.get('src-vns')):
-            url = url + '[src-vns="%s"]' % (kwargs.get('src-vns'))
+        if(kwargs.get('src-segment')):
+            url = url + '[src-segment="%s"]' % (kwargs.get('src-segment'))
         if(kwargs.get('dst-ip')):
             url = url + '[dst-ip="%s"]' % (kwargs.get('dst-ip'))
         if(kwargs.get('src-tenant')):
@@ -3471,10 +3471,10 @@ class T5Platform(object):
             kwargs Examples:
                 test-name=Test1
                 src-tenant=T1    
-                src-vns=v1    
+                src-segment=v1    
                 src-ip=10.10.10.51    
                 dst-tenant=T1  
-                dst-vns=v1    
+                dst-segment=v1    
                 dst-ip=10.10.10.52    
                 ip-protocol=tcp
                 src-l4-port=8000
@@ -3489,16 +3489,16 @@ class T5Platform(object):
             url = url + '[test-name="%s"]' % (kwargs.get('test-name'))
         if(kwargs.get('timeout')):
             url = url + '[timeout="%s"]' % (kwargs.get('timeout'))
-        if(kwargs.get('dst-vns')):
-            url = url + '[dst-vns="%s"]' % (kwargs.get('dst-vns'))
+        if(kwargs.get('dst-segment')):
+            url = url + '[dst-segment="%s"]' % (kwargs.get('dst-segment'))
         if(kwargs.get('dst-tenant')):
             url = url + '[dst-tenant="%s"]' % (kwargs.get('dst-tenant'))
         if(kwargs.get('ip-protocol')):
             url = url + '[ip-protocol="%s"]' % (kwargs.get('ip-protocol'))
         if(kwargs.get('src-ip')):
             url = url + '[src-ip="%s"]' % (kwargs.get('src-ip'))
-        if(kwargs.get('src-vns')):
-            url = url + '[src-vns="%s"]' % (kwargs.get('src-vns'))
+        if(kwargs.get('src-segment')):
+            url = url + '[src-segment="%s"]' % (kwargs.get('src-segment'))
         if(kwargs.get('dst-ip')):
             url = url + '[dst-ip="%s"]' % (kwargs.get('dst-ip'))
         if(kwargs.get('src-tenant')):
@@ -3559,12 +3559,16 @@ class T5Platform(object):
         
         url = '/api/v1/data/controller/applications/bvs/test/path/fabric-view[test-name="%s"]' % testName
         result = c.rest.get(url)['content']
-        currentHops = []
-        currentFlowCount = {}
-        
+
         count = 0
         while(True):
+            if(count == 3):
+                helpers.log("Test Path Error During Validating Hops List")
+                return  False
             count += 1
+            currentHops = []
+            currentFlowCount = {}
+            currentPktInCount = {}
             try:
                 for index,hop in enumerate(result[0]['physical-hop']):
                     try:
@@ -3574,6 +3578,7 @@ class T5Platform(object):
                         else: 
                             currentHops.append(hop["hop-name"])
                             currentFlowCount[hop["hop-name"]] = hop["flow-counter"].strip('[]')
+                            currentPktInCount[hop["hop-name"]] = hop["pktin-counter"].strip('[]')
                             
                     except Exception as e:
                         helpers.log("Test Path Error During Validating Hops List: %s" % str(e))
@@ -3581,31 +3586,39 @@ class T5Platform(object):
                 
                 if(len(args) != len(currentHops)):
                     helpers.log("Test Path Error: Expected # Hops : %s / Actual # Hops: %s" % (len(args), len(currentHops)))
+                    helpers.log("Expected: %s" % args)
+                    helpers.log("Actual: %s" % currentHops)
                     return False
                 
-                sleep(3)
-                url = '/api/v1/data/controller/applications/bvs/test/path/fabric-view[test-name="%s"]' % testName
-                result = c.rest.get(url)['content']
-                for hop in result[0]['physical-hop']:
-                    try:
-                        newFlowCount = int(hop["flow-counter"].strip('[]'))
-                        
-                        if(newFlowCount > int(currentFlowCount[hop["hop-name"]])):
-                            pass
-                        else:
-                            helpers.log("Test Path Error During Flow Path Counting For Hop \"%s\": Previous Count- %s / New Count- %s" % (hop["hop-name"], currentFlowCount[hop["hop-name"]], newFlowCount))
-                            return False
-                        
-                    except Exception as e:
-                        helpers.log("Test Path Error During Validating Hops List: %s" % str(e))
-                        return  False
+                break
+            
+            except Exception as e:
+                helpers.log("Exception occured: %s" % str(e))
+                helpers.log("Test Path: No Hops Detected. Retrying ...")
+
+                
+        sleep(3)
+        url = '/api/v1/data/controller/applications/bvs/test/path/fabric-view[test-name="%s"]' % testName
+        result = c.rest.get(url)['content']
+        for hop in result[0]['physical-hop']:
+            try:
+                newFlowCount = int(hop["flow-counter"].strip('[]'))
+                newPktInCount = int(hop["pktin-counter"].strip('[]'))
+                
+                if(newFlowCount > int(currentFlowCount[hop["hop-name"]])):
+                    helpers.log("Hop: %s passing @ newFlowCount" % hop["hop-name"])
+                    pass 
+                elif(newPktInCount > int(currentPktInCount[hop["hop-name"]])):
+                    helpers.log("Hop: %s passing @ newPktInCount" % hop["hop-name"])
+                    pass
+                else:
+                    helpers.log("Test Path Error During Flow Path Counting For Hop \"%s\": Previous Count- %s / New Count- %s" % (hop["hop-name"], currentFlowCount[hop["hop-name"]], newFlowCount))
+                    return False
                 
             except Exception as e:
-                if(count == 4):
-                    helpers.log("Test Path Error During Validating Hops List: %s" % str(e))
-                    return  False
-                else:
-                    pass
+                helpers.log("Test Path Error During Validating Hops List: %s" % str(e))
+                return  False
+                  
         
         if(trafficMode=='Ixia'):
             ixia.stop_traffic(kwargs.get('stream'))
