@@ -11,14 +11,16 @@ Library          keywords/AppController.py
 Library          keywords/SwitchLight.py
 Library          keywords/Ixia.py
 Library          keywords/T5.py
-Library          keywords/T5Fabric.py
 
 *Variables
-${switch1_name}      T5HA
+${switch1_name}      T5HA-LEAF-1
+${switch2_name}      T5HA-LEAF-2
+${switch3_name}      T5HA-SPINE-1
+${switch4_name}      T5HA-SPINE-2
 ${tenant_1}         T5HATenant
 ${vns_1}            T5HAVNS
-${interface_1}      ethernet1
-${interface_2}      ethernet48
+${interface_1}      ethernet24
+${interface_2}      ethernet24
 
 
 *Test Case
@@ -27,8 +29,8 @@ ${interface_2}      ethernet48
 Switch HA: Restart Process snmpd on switch
     verify snmp attribute  s1  sysLocation.0  mountainview
     ${stream}=  L3 add  flow=a<->b  frame_rate=10000  frame_size=64
-    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07
-    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  name=a_c_flow
+    ...     src_mac=00:01:02:03:04:05  dst_mac=00:02:03:04:05:06
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  name=a_b_flow
     ...     src_gw=100.1.1.2  dst_gw=100.1.1.1   
     clear stats  
     start traffic  ${stream}
@@ -354,10 +356,26 @@ t5 suite setup
     ${switch1_dpid}=  rest return switch dpid from ip  s1
     rest add dpid  ${switch1_name}  ${switch1_dpid}
     rest add fabric role  ${switch1_name}  leaf      
+
+    rest add switch  ${switch2_name}
+    ${switch2_dpid}=  rest return switch dpid from ip  s2
+    rest add dpid  ${switch2_name}  ${switch2_dpid}
+    rest add fabric role  ${switch2_name}  leaf      
+
+    rest add switch  ${switch3_name}
+    ${switch3_dpid}=  rest return switch dpid from ip  s3
+    rest add dpid  ${switch3_name}  ${switch3_dpid}
+    rest add fabric role  ${switch3_name}  spine
+
+    rest add switch  ${switch4_name}
+    ${switch4_dpid}=  rest return switch dpid from ip  s4
+    rest add dpid  ${switch4_name}  ${switch4_dpid}
+    rest add fabric role  ${switch4_name}  spine    
+
     rest add tenant  ${tenant_1}   
     rest add vns  ${tenant_1}  ${vns_1} 
     rest add interface to vns  ${tenant_1}   ${vns_1}   ${switch1_name}  ${interface_1}   -1
-    rest add interface to vns  ${tenant_1}   ${vns_1}   ${switch1_name}  ${interface_2}   -1    
+    rest add interface to vns  ${tenant_1}   ${vns_1}   ${switch2_name}  ${interface_2}   -1    
     sleep  10
 
 verify results   [Arguments]  ${transmitted_frames}  ${received_frames}
@@ -377,5 +395,8 @@ ha test teardown
     
 t5 suite teardown
     rest delete tenant  ${tenant_1}
-    rest delete fabric switch  ${switch1_name}  
+    rest delete fabric switch  ${switch1_name}
+    rest delete fabric switch  ${switch2_name}      
+    rest delete fabric switch  ${switch3_name}      
+    rest delete fabric switch  ${switch4_name}      
     base suite teardown

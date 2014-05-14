@@ -1,64 +1,72 @@
 * Setting
-Documentation   T5 L3 two spine three leaf rack with dual-tor Test Scaling Suite
+Documentation   T5 L3 regression Test Scaling Suite
 Suite Setup     T5 base suite setup
 Suite Teardown  T5 base suite teardown
 Test Setup      setup topology
 Test Teardown   teardown topology
 Force Tags      T5 Sanity
-Library         keywords/BsnCommon.py
-Library         keywords_dev/slim/Host.py
+Library         keywords/Host.py
 Library         keywords/T5.py
 Library         keywords/T5L3.py
-Library         keywords_dev/animesh/BsnCommonShow.py
-Library         keywords_dev/slim/SwitchLight.py
+Library         keywords/BsnCommon.py
+Library         keywords/SwitchLight.py
 Library	        Collections.py
-Library			autobot/helpers/__init__.py
-Resource		testsuites_dev/slim/T5_L3_colo_scale/t5_layer3_colo_scale_variables.txt
-Resource		testsuites_dev/slim/T5_L3_colo/t5_layer3_colo_resources.txt
+Resource		testsuites/T5/L3/T5_L3_scale/t5_layer3_scale_variables.txt
+Resource		testsuites/T5/L3/T5_L3_scale/t5_layer3_resources.txt
 
 
 * Test Cases
 Intra tenant one Tenant 4k VNS 
-	One Tenant 4k VNS with one host each
-#	[Tags]							skipped			scale							
+	manual untested
+	[Tags]				manual-untested			scale	
+
+OneK tenant with one vns each
+	manual untested
+	[Tags]				manual-untested			scale	
+
+OneK tenant with four vns each
+	manual untested
+	[Tags]				manual-untested			scale	
 
 Delete and add tagged ports to one tenant 4k VNS
-	Delete and add tagged ports to one tenant 4k VNS with one host each
-	[Tags]							skipped			scale							
+	manual untested	
+	[Tags]				manual-untested			scale							
 
 Delete and add 2k VNS with traffic
-	Delete and add 2k VNS with traffic running with one host each
-	[Tags]							skipped			scale				
+	manual untested
+	[Tags]				manual-untested			scale				
 
-L3 endpoint host move with traffic
-	Move 24k host endpoint to another tagged port
-	[Tags]							skipped			scale				
+24k L3 endpoint host move with traffic to another tagged port
+	manual untested
+	[Tags]				manual-untested			scale				
 
-48k L3 endpoint across one tenant two vns
-	Generate 48k L3 endpoint across one tenant two vns
-	[Tags]							skipped			scale				
+Generate 48k L3 endpoint across one tenant two vns
+	manual untested
+	[Tags]				manual-untested			scale				
 		
 Combined scaling one tenant 4k vns with 48k host
-	Combined scaling with one tenant 4k vns with 48k host
-	[Tags]							skipped			scale				
-		
+	manual untested
+	[Tags]				manual-untested			scale			
+	
 Delete and add scale 4k vns config multiple times
-	Delete and add scale config multiple times
-	[Tags]							skipped			scale				
+	manual untested
+	[Tags]				manual-untested			scale					
 
 DHCP request from 48k host across 4k vns
-	Generate dhcp request from 48k host across 4k vns
-	[Tags]							skipped			scale				
-						
-1k tenant with 4 vns each
+	manual untested
+	[Tags]				manual-untested			scale			
 
-Add and delete config with 1k tenant with 4 vns each
+Delete config with 1k tenant with 4 vns each
+	manual untested
+	[Tags]				manual-untested			scale			
 
 Inject 16k cidr routes
-
-Add and delete 16k cidr routes
-
-
+	manual untested
+	[Tags]				manual-untested			scale			
+	
+Delete 16k cidr routes
+	manual untested
+	[Tags]				manual-untested			scale			
 
 
 
@@ -69,20 +77,18 @@ One Tenant 4k VNS with one host each
 	REST delete tenant							Z
 	REST add tenant								A
 	${ipAddr} =  								Set Variable					20.0.0.1
-	: FOR 										${i}							IN RANGE 				1					2047
+	: FOR 										${i}							IN RANGE 				1					2000
 	\	REST add vns							A								A-${i}
 	\	REST add vns ip							A								A-${i}					${ipAddr}			24
 	\	${ipAddr} =								get next address				ipv4					${ipAddr}			0.0.1.0
 	\	REST add interface to vns				A								A-${i}					leaf0-a				ethernet40		${i}			
 				
 	${ipAddr} =  								Set Variable					40.0.0.1
-	: FOR 										${i}							IN RANGE 				2048				4096
+	: FOR 										${i}							IN RANGE 				2001				4000
 	\	REST add vns							A								B-${i}
 	\	REST add vns ip							A								B-${i}					${ipAddr}			24
 	\	${ipAddr} =								get next address				ipv4					${ipAddr}			0.0.1.0
 	\	REST add interface to vns				A								B-${i}					leaf1-a				ethernet40		${i}			
-				
-
 
 #  ${stream}=             L3 add  name=${stream_name}  flow=a<->b  src_mac=${src_mac}  dst_mac=${dst_mac}
 #    ...						src_cnt=${src_cnt}  dst_cnt=${dst_cnt}  src_ip=20.0.0.1  dst_ip=20.0.0.2

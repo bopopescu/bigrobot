@@ -6,12 +6,21 @@
 # mn  : Mininet server
 
 c1:
-    ip: 10.192.97.80
+    ip: 10.192.109.228
 c2:
-    ip: 10.192.97.81
+    ip: 10.192.109.229
 
 s1:
-    ip: 10.192.107.12
+    ip: 10.195.0.33
+    
+s2:
+    ip: 10.195.0.34
+    
+s3:
+    ip: 10.195.0.21
+
+s4:
+    ip: 10.195.0.22            
     
 tg1:
   platform: 'ixia'
@@ -22,6 +31,6 @@ tg1:
   set_init_ping: false
   ports:
     a:
-      name: 4/21
+      name: 2/1
     b:
-      name: 4/22
+      name: 2/2

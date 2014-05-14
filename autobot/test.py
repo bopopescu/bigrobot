@@ -32,6 +32,7 @@ class Test(object):
             self._bigtest_node_info = {}
             self._current_controller_master = None
             self._current_controller_slave = None
+            self._settings = {}
 
             # A node in BigRobot may have a alias associated with it. One way
             # you can refer to a node using it's defined name, e.g., 'c1',
@@ -40,7 +41,7 @@ class Test(object):
             # since the alias will change when mastership changes. You can also
             # define static aliases such as:
             #    s1:
-            #        alias: leaf1
+            #        alias: leaf1-a
             #    s2:
             #        alias: spine1
             # Test class maintains a lookup table with self._node_static_aliases.
@@ -211,10 +212,17 @@ class Test(object):
                     #   leaf1-a, leaf1-b, leaf2-a, leaf2-b, etc.
                     #   s021, etc.
                     #   arista-1 - for Arista switches
-                    if not re.match(r'^(leaf\d+-[ab]|spine\d+|s\d+|arista-\d+)', alias):
-                        helpers.warn("Supported aliases are leaf{n}-{a|b}, spine{n}, s{nnn}")
-                        helpers.environment_failure("'%s' has alias '%s' which does not match the allowable alias names"
-                                                    % (node, alias))
+                    #   h1-rack1 - for hosts
+                    #   h1-vm1-rack1 - for virtual hosts
+                    r = r'^(leaf\d+-[ab]|spine\d+|s\d+|arista-\d+|h\d+(-vm\d+)?-rack\d+)'
+                    if not re.match(r, alias):
+                        helpers.warn("Supported aliases are leaf{n}-{a|b},"
+                                     " spine{n}, s{nnn}, arista-{n},"
+                                     " h{n}-rack{m}, h{n}-vm{m}-rack{o}")
+                        helpers.environment_failure(
+                                    "'%s' has alias '%s' which does not match"
+                                    " the allowable alias names"
+                                    % (node, alias))
             self._node_static_aliases['master'] = 'master'
             self._node_static_aliases['slave'] = 'slave'
             self._node_static_aliases['mn'] = 'mn1'
@@ -275,6 +283,17 @@ class Test(object):
                 return name
             helpers.environment_failure("Alias '%s' is not defined" % name)
         return self._node_static_aliases[name]
+
+    def settings(self, name=None, value=None):
+        """
+        Test settings is a way to store state info during test execution.
+        The state info is essentially a bunch of global variables.
+        """
+        if value:
+            self._settings[name] = value
+        if name:
+            return self._settings.get(name, None)
+        return self._settings  # return entire settings dictionary
 
     def topology_params(self, node=None, key=None, default=None):
         """

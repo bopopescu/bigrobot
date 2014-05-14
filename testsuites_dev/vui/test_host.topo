@@ -3,6 +3,7 @@
 #
 h1:
   ip: dummy
+  alias: h1-vm1-rack1
   #user: root
   #password: bsn
   #set_devconf_debug_level: 5

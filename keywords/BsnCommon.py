@@ -101,28 +101,21 @@ class BsnCommon(object):
         helpers.log("Express '%s' evaluated to '%s'" % (s, result))
         return result
 
-    def controller_postmortem(self, node, server, user, password, dest_path,
-                              test_descr=None):
+    def controller_postmortem(self, node, server, server_devconf,
+                              user, password, dest_path, test_descr=None):
         """
         Executes the equivalence of
         https://github.com/bigswitch/t6-misc/blob/master/t6-support/run_show_cmds.py
         Save the show commands and logs (e.g., /var/log/floodlight/*) to the
         archiver.
         """
-        t = test.Test()
+        dest_path += '/' + test_descr + '/' + node
+        server_devconf.sudo('mkdir -p %s' % dest_path)
 
-        if not test_descr:
-            test_descr = "no_test_case_descr"
-        temp_dir = test_descr.replace(' ', '_')
-        dest_path += '/' + temp_dir
-
-        h = t.node_spawn(ip=server, user=user, password=password,
-                         device_type='host')
-        h.sudo('mkdir -p %s' % dest_path)
-
-        helpers.log("Collecting information for '%s' controller" % node)
+        helpers.log("Collecting postmortem information for controller '%s'"
+                    % node)
         output_dir = helpers.bigrobot_log_path_exec_instance()
-        show_cmd_file = (output_dir + '/' + temp_dir + '_' + node +
+        show_cmd_file = (output_dir + '/' + test_descr + '_' + node +
                          '/show_cmd_out.txt')
         d = os.path.dirname(show_cmd_file)
         if not os.path.exists(d):
@@ -168,11 +161,15 @@ class BsnCommon(object):
                         source='/var/log/floodlight/*',
                         dest='%s@%s:%s' % (user, server, dest_path),
                         password=password, timeout=60)
-        helpers.log("Successfully copied all debug logs on %s to %s:%s"
+        helpers.log("Successfully copied all debug logs on '%s' to '%s:%s'"
                     % (node, server, dest_path))
 
-        # Make sure that all log files are readable.
-        h.sudo('chmod -R +r %s' % dest_path)
+        # Make sure that all log files are readable. Also compress them to
+        # save space.
+        server_devconf.sudo('chmod -R +r %s' % dest_path)
+        server_devconf.bash('cd %s' % dest_path)
+        server_devconf.sudo('gzip -9 --quiet --force'
+                            ' *.log *.log.[0-9] *.log.[0-9][0-9]')
 
     def base_test_postmortem(self, test_descr=None):
         t = test.Test()
@@ -190,21 +187,41 @@ class BsnCommon(object):
 
         helpers.log("Test case '%s' failed. Performing postmortem."
                     % test_descr)
+        if not test_descr:
+            test_descr = "no_test_case_descr"
+        # convert non-alpha and white spaces to underscores
+        test_descr = re.sub(r'[\W\s]', '_', test_descr)
 
         helpers.log("Creating directory on log archiver %s:%s"
                     % (server, dest_path))
+
+        h = t.node_spawn(ip=server, user=user, password=password,
+                         device_type='host')
         for node in t.topology():
             if helpers.is_controller(node):
                 self.controller_postmortem(node,
                                            server=server,
+                                           server_devconf=h,
                                            user=user, password=password,
                                            dest_path=dest_path,
                                            test_descr=test_descr)
-        helpers.log("Debug logs are available at:\n%s\nor %s:%s\n\n"
-                    "Note: Files are removed after 30 days unless you touch"
-                    " the file 'KEEP_FOREVER' in the directory.%s"
-                    % (dest_url, server, dest_path,
+
+        # Only print the postmortem URL once.
+        if t.settings('postmortem_url_is_printed') == None:
+            helpers.warn("Postmortem logs are available at %s\n" % dest_url)
+            t.settings('postmortem_url_is_printed', True)
+
+        helpers.log("Postmortem logs are also available at\n%s:%s\n"
+                    "Note: Files are removed after 30 days unless"
+                    " KEEP_FOREVER.txt is found in the directory.%s"
+                    % (server, dest_path,
                        br_utils.end_of_output_marker()))
+        # In smoketest/regression environment, assume we want to keep the
+        # logs forever
+        if helpers.bigrobot_continuous_integration().lower() == 'true':
+            filename = dest_path + "/KEEP_FOREVER.txt"
+            helpers.trace("In regression environment; touch %s" % filename)
+            h.sudo("touch %s" % filename)
 
     def pause_on_fail(self, keyword=None, msg=None):
         """

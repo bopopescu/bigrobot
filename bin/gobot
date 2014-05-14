@@ -8,6 +8,7 @@ from __future__ import print_function
 import os
 import sys
 import platform
+import re
 import shutil
 import argparse
 import subprocess
@@ -119,9 +120,19 @@ os.environ['IS_GOBOT'] = 'True'
 
 helpers.bigrobot_log_path(default='.')
 if helpers.bigrobot_suite():
+    _suite = helpers.bigrobot_suite()
+
+    # If user specified full path, trim it down to just suite name. E.g.,
+    # Change:
+    #  /Users/vui/Documents/ws/myforks/bigrobot/testsuites_dev/vui/test_mininet
+    # To:
+    #  vui_test_mininet_20140513_095428
+    _match = re.search(r'.+testsuites(_dev)?/(.+)$', _suite)
+    if _match:
+        _suite = re.sub(r'[\W\s]', '_', _match.group(2))
     helpers.bigrobot_log_path_exec_instance_relative(
                 default="%s_%s"
-                % (helpers.bigrobot_suite(), helpers.ts_local()))
+                % (_suite, helpers.ts_local()))
 else:
     helpers.bigrobot_log_path_exec_instance_relative(
                 default="<bigrobot_suite>")
@@ -390,6 +401,8 @@ def test_command(*args):
     parser.add_argument('--outputdir',
                         default=helpers.bigrobot_log_path_exec_instance(),
                         help="Output directory")
+    parser.add_argument('--dryrun', action='store_true', default=False,
+                        help="Run the tests without executing the keywords")
 
     # Note on --exitonfailure: It will not run subsequent test cases and will
     # simply flag them as failed with the error:
@@ -422,6 +435,7 @@ def test_command(*args):
                'debugfile': args.debugfile,
                'outputdir': args.outputdir,
                'listener': 'autobot.listener.Listener',
+               'dryrun': args.dryrun,
                'exitonfailure': args.exitonfailure,
                }
     if include_tags:
@@ -447,7 +461,7 @@ def test_command(*args):
     test_suite = ''.join((helpers.bigrobot_suite(), '.', ext))
 
     touch_log_files()
-    if helpers.bigrobot_continuous_integration() == 'True':
+    if helpers.bigrobot_continuous_integration().lower() == 'true':
         # Don't create links to log files under CI environment
         pass
     else:
@@ -457,7 +471,7 @@ def test_command(*args):
     helpers.log("Robot Framework return code is %s" % rc)
     print("Robot Framework return code is %s" % rc)
 
-    # if helpers.bigrobot_continuous_integration() == 'True':
+    # if helpers.bigrobot_continuous_integration().lower() == 'True':
     #    print("Inside continuous integration environment. Return code"
     #          " set to 0.")
     #    sys.exit(0)
