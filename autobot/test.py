@@ -32,6 +32,7 @@ class Test(object):
             self._bigtest_node_info = {}
             self._current_controller_master = None
             self._current_controller_slave = None
+            self._settings = {}
 
             # A node in BigRobot may have a alias associated with it. One way
             # you can refer to a node using it's defined name, e.g., 'c1',
@@ -282,6 +283,17 @@ class Test(object):
                 return name
             helpers.environment_failure("Alias '%s' is not defined" % name)
         return self._node_static_aliases[name]
+
+    def settings(self, name=None, value=None):
+        """
+        Test settings is a way to store state info during test execution.
+        The state info is essentially a bunch of global variables.
+        """
+        if value:
+            self._settings[name] = value
+        if name:
+            return self._settings.get(name, None)
+        return self._settings  # return entire settings dictionary
 
     def topology_params(self, node=None, key=None, default=None):
         """
