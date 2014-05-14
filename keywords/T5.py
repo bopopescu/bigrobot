@@ -1016,7 +1016,7 @@ class T5(object):
         url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/segment[name="%s"]' % (vns)
         c.rest.get(url)
         data = c.rest.content()
-        if data[0]["active-endpoint-count"] == int(count):
+        if data[0]["endpoint-count"] == int(count):
             helpers.log("Pass:Expected:%s, Actual:%s" % (int(count), data[0]["active-endpoint-count"]))
             return True
         else:
