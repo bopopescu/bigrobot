@@ -622,25 +622,39 @@ class SwitchLight(object):
 
             cli_input_2 = "show controller"
             s1.enable(cli_input_2)
-            cli_output_2 = s1.cli_content()
-            show_output = cli_output_2
-            helpers.log("Show Controllers O/P: \n %s" % (cli_input_2))
+            show_output = s1.cli_content()
+            helpers.log("Show Controllers O/P: \n %s" % (show_output))
 
             pass_count = 0
 
             if str(c.ip()) in run_config:
+                helpers.log("Switch correctly shows the controller IP in running-config \n")
                 pass_count = pass_count + 1
+            else:
+                helpers.log("Switch does not correctly show the controller IP in running-config \n")
+
             input3 = str(c.ip()) + ":6653"
             if input3 in show_output:
+                helpers.log("Switch correctly shows the controller IP and OF port \n")
                 pass_count = pass_count + 1
+            else:
+                helpers.log("Switch does not correctly show the controller IP and OF port\n")
+
             if "CONNECTED" in show_output:
+                helpers.log("Switch is connected to the controller \n")
                 pass_count = pass_count + 1
+            else:
+                helpers.log("Switch is not connected to the controller \n")
+
             if (c.is_master()):
+                helpers.log("This is the active controller")
                 if "MASTER" in show_output:
                     pass_count = pass_count + 1
             else:
+                helpers.log("This is the backup controller")
                 if (("SLAVE" in show_output) or ("EQUAL" in show_output)):
                     pass_count = pass_count + 1
+
             if pass_count == 4:
                 return True
             else:
