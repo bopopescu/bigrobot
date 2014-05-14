@@ -461,7 +461,7 @@ def test_command(*args):
     test_suite = ''.join((helpers.bigrobot_suite(), '.', ext))
 
     touch_log_files()
-    if helpers.bigrobot_continuous_integration() == 'True':
+    if helpers.bigrobot_continuous_integration().lower() == 'true':
         # Don't create links to log files under CI environment
         pass
     else:
@@ -471,7 +471,7 @@ def test_command(*args):
     helpers.log("Robot Framework return code is %s" % rc)
     print("Robot Framework return code is %s" % rc)
 
-    # if helpers.bigrobot_continuous_integration() == 'True':
+    # if helpers.bigrobot_continuous_integration().lower() == 'True':
     #    print("Inside continuous integration environment. Return code"
     #          " set to 0.")
     #    sys.exit(0)

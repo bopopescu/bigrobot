@@ -422,6 +422,7 @@ def bigrobot_topology(new_val=None, default=None):
 def bigrobot_continuous_integration(new_val=None, default='False'):
     """
     Category: Get/set environment variables for BigRobot.
+    Set to 'True' if test is run under smoketest/regression environment.
     """
     return _env_get_and_set('BIGROBOT_CI', new_val, default)
 
