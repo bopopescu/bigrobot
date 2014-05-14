@@ -756,7 +756,7 @@ initialize host
 	BASH delete tag										h7-rack0								bond0.1007				soft_error=${true}
 	BASH delete tag										h8-rack0								bond0.1008				soft_error=${true}
 	BASH delete tag										h9-rack0								bond0.1009				soft_error=${true}
-	BASH delete tag										h1-rack0								bond0.1010				soft_error=${true}	
+	BASH delete tag										h10-rack0								bond0.1010				soft_error=${true}	
 	BASH delete route									h4-rack0								10.251.2.0/24			10.251.1.1
 	BASH delete route									h4-rack0								10.251.3.0/24			10.251.1.1
 	BASH delete route									h4-rack0								10.252.0.0/16			10.251.1.1
@@ -781,13 +781,13 @@ initialize host
   	BASH delete route									h9-rack0								10.252.2.0/24			10.252.3.1
   	BASH delete route									h9-rack0								10.251.0.0/16			10.252.3.1
   	BASH delete route									h9-rack0								10.253.0.0/16			10.252.3.1
- 	BASH delete route									h1-rack0								10.253.2.0/24			10.253.1.1
-  	BASH delete route									h1-rack0								10.253.3/0/24			10.253.1.1
-  	BASH delete route									h1-rack0								10.251.0.0/16			10.253.1.1
-  	BASH delete route									h1-rack0								10.252.0.0/16			10.253.1.1
+ 	BASH delete route									h10-rack0								10.253.2.0/24			10.253.1.1
+  	BASH delete route									h10-rack0								10.253.3/0/24			10.253.1.1
+  	BASH delete route									h10-rack0								10.251.0.0/16			10.253.1.1
+  	BASH delete route									h10-rack0								10.252.0.0/16			10.253.1.1
   	BASH delete route									h1-rack1								10.253.1.0/24			10.253.2.1
   	BASH delete route									h1-rack1								10.253.3.0/24			10.253.2.1
-	BASH delete route									h1-rack1 							10.251.0.0/16			10.253.2.1
+	BASH delete route									h1-rack1 								10.251.0.0/16			10.253.2.1
   	BASH delete route									h1-rack1								10.252.0.0/16			10.253.2.1	
 
 	BASH init intf								h4-rack0								bond0
@@ -796,7 +796,7 @@ initialize host
 	BASH init intf								h7-rack0								bond0
 	BASH init intf								h8-rack0								bond0
 	BASH init intf								h9-rack0								bond0
-	BASH init intf								h1-rack0								bond0
+	BASH init intf								h10-rack0								bond0
 	BASH init intf								h1-rack1								bond0
 	BASH ifdown intf							h4-rack0 								bond0
 	BASH ifdown intf							h5-rack0								bond0
@@ -804,7 +804,7 @@ initialize host
 	BASH ifdown intf							h7-rack0								bond0
 	BASH ifdown intf							h8-rack0								bond0
 	BASH ifdown intf							h9-rack0								bond0
-	BASH ifdown intf							h1-rack0								bond0
+	BASH ifdown intf							h10-rack0								bond0
 	BASH ifdown intf							h1-rack1								bond0
 	BASH release dhcpv4 address					h4-rack0								bond0
 	BASH release dhcpv4 address					h5-rack0								bond0
@@ -812,7 +812,7 @@ initialize host
 	BASH release dhcpv4 address					h7-rack0								bond0
 	BASH release dhcpv4 address					h8-rack0								bond0
 	BASH release dhcpv4 address					h9-rack0								bond0
-	BASH release dhcpv4 address					h1-rack0								bond0
+	BASH release dhcpv4 address					h10-rack0								bond0
 	BASH release dhcpv4 address					h1-rack1								bond0
 	BASH ifup intf								h4-rack0								eth2
 	BASH ifup intf								h4-rack0								eth3
@@ -955,25 +955,25 @@ setup topology
 	BASH ifup intf									h7-rack0								bond0	
 	BASH ifup intf									h8-rack0								bond0	
 	BASH ifup intf									h9-rack0								bond0	
-	BASH ifup intf									h1-rack0								bond0	
+	BASH ifup intf									h10-rack0								bond0	
 	BASH ifup intf									h1-rack1								bond0	
 	BASH add tag									h6-rack0								bond0					1006
 	BASH add tag									h7-rack0								bond0					1007
 	BASH add tag									h8-rack0								bond0					1008
 	BASH add tag									h9-rack0								bond0					1009
-	BASH add tag									h1-rack0								bond0					1010
+	BASH add tag									h10-rack0								bond0					1010
 	BASH ifup intf									h6-rack0								bond0.1006
 	BASH ifup intf									h7-rack0								bond0.1007
 	BASH ifup intf									h8-rack0								bond0.1008
 	BASH ifup intf									h9-rack0								bond0.1009
-	BASH ifup intf									h1-rack0								bond0.1010
+	BASH ifup intf									h10-rack0								bond0.1010
 	BASH add ip address								h4-rack0								10.251.1.11/24			bond0	
 	BASH add ip address								h5-rack0								10.251.2.11/24			bond0
 	BASH add ip address								h6-rack0								10.251.3.11/24			bond0.1006
 	BASH add ip address								h7-rack0								10.252.1.11/24			bond0.1007
 	BASH add ip address								h8-rack0								10.252.2.11/24			bond0.1008
 	BASH add ip address								h9-rack0								10.252.3.11/24			bond0.1009
-	BASH add ip address								h1-rack0								10.253.1.11/24			bond0.1010
+	BASH add ip address								h10-rack0								10.253.1.11/24			bond0.1010
 	BASH add ip address								h1-rack1								10.253.2.11/24			bond0
 	BASH add route									h4-rack0								10.251.2.0/24			10.251.1.1
 	BASH add route									h4-rack0								10.251.3.0/24			10.251.1.1
@@ -999,10 +999,10 @@ setup topology
   	BASH add route									h9-rack0								10.252.2.0/24			10.252.3.1
   	BASH add route									h9-rack0								10.251.0.0/16			10.252.3.1
   	BASH add route									h9-rack0								10.253.0.0/16			10.252.3.1
- 	BASH add route									h1-rack0								10.253.2.0/24			10.253.1.1
-  	BASH add route									h1-rack0								10.253.3/0/24			10.253.1.1
-  	BASH add route									h1-rack0								10.251.0.0/16			10.253.1.1
-  	BASH add route									h1-rack0								10.252.0.0/16			10.253.1.1
+ 	BASH add route									h10-rack0								10.253.2.0/24			10.253.1.1
+  	BASH add route									h10-rack0								10.253.3/0/24			10.253.1.1
+  	BASH add route									h10-rack0								10.251.0.0/16			10.253.1.1
+  	BASH add route									h10-rack0								10.252.0.0/16			10.253.1.1
   	BASH add route									h1-rack1								10.253.1.0/24			10.253.2.1
   	BASH add route									h1-rack1								10.253.3.0/24			10.253.2.1
 	BASH add route									h1-rack1								10.251.0.0/16			10.253.2.1
@@ -1066,10 +1066,10 @@ teardown topology
   	BASH delete route									h9-rack0								10.252.2.0/24			10.252.3.1
   	BASH delete route									h9-rack0								10.251.0.0/16			10.252.3.1
   	BASH delete route									h9-rack0								10.253.0.0/16			10.252.3.1
- 	BASH delete route									h1-rack0								10.253.2.0/24			10.253.1.1
-  	BASH delete route									h1-rack0								10.253.3/0/24			10.253.1.1
-  	BASH delete route									h1-rack0								10.251.0.0/16			10.253.1.1
-  	BASH delete route									h1-rack0								10.252.0.0/16			10.253.1.1
+ 	BASH delete route									h10-rack0								10.253.2.0/24			10.253.1.1
+  	BASH delete route									h10-rack0								10.253.3/0/24			10.253.1.1
+  	BASH delete route									h10-rack0								10.251.0.0/16			10.253.1.1
+  	BASH delete route									h10-rack0								10.252.0.0/16			10.253.1.1
   	BASH delete route									h1-rack1								10.253.1.0/24			10.253.2.1
   	BASH delete route									h1-rack1								10.253.3.0/24			10.253.2.1
 	BASH delete route									h1-rack1								10.251.0.0/16			10.253.2.1
@@ -1078,14 +1078,14 @@ teardown topology
 	BASH delete tag										h7-rack0								bond0.1007				soft_error=${true}
 	BASH delete tag										h8-rack0								bond0.1008				soft_error=${true}
 	BASH delete tag										h9-rack0								bond0.1009				soft_error=${true}
-	BASH delete tag										h1-rack0								bond0.1010				soft_error=${true}
+	BASH delete tag										h10-rack0								bond0.1010				soft_error=${true}
 	BASH init intf										h4-rack0 								bond0
 	BASH init intf										h5-rack0								bond0
 	BASH init intf										h6-rack0								bond0
 	BASH init intf										h7-rack0								bond0	
 	BASH init intf										h8-rack0								bond0	
 	BASH init intf										h9-rack0								bond0	
-	BASH init intf										h1-rack0								bond0	
+	BASH init intf										h10-rack0								bond0	
 	BASH init intf										h1-rack1								bond0	
 	REST delete tenant routers intf to system			X
 	REST delete tenant routers intf to system			Y
