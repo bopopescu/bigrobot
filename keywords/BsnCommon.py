@@ -206,8 +206,12 @@ class BsnCommon(object):
                                            dest_path=dest_path,
                                            test_descr=test_descr)
 
-        helpers.warn("Debug logs available at %s\n" % dest_url)
-        helpers.log("Debug logs are also available at\n%s:%s\n"
+        # Only print the postmortem URL once.
+        if t.settings('postmortem_url_is_printed') == None:
+            helpers.warn("Postmortem logs are available at %s\n" % dest_url)
+            t.settings('postmortem_url_is_printed', True)
+
+        helpers.log("Postmortem logs are also available at\n%s:%s\n"
                     "Note: Files are removed after 30 days unless"
                     " KEEP_FOREVER.txt is found in the directory.%s"
                     % (server, dest_path,
