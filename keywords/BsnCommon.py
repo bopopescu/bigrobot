@@ -101,19 +101,16 @@ class BsnCommon(object):
         helpers.log("Express '%s' evaluated to '%s'" % (s, result))
         return result
 
-    def controller_postmortem(self, node, server, user, password, dest_path,
-                              test_descr=None):
+    def controller_postmortem(self, node, server, server_devconf,
+                              user, password, dest_path, test_descr=None):
         """
         Executes the equivalence of
         https://github.com/bigswitch/t6-misc/blob/master/t6-support/run_show_cmds.py
         Save the show commands and logs (e.g., /var/log/floodlight/*) to the
         archiver.
         """
-        t = test.Test()
         dest_path += '/' + test_descr
-        h = t.node_spawn(ip=server, user=user, password=password,
-                         device_type='host')
-        h.sudo('mkdir -p %s' % dest_path)
+        server_devconf.sudo('mkdir -p %s' % dest_path)
 
         helpers.log("Collecting information for '%s' controller" % node)
         output_dir = helpers.bigrobot_log_path_exec_instance()
@@ -167,7 +164,7 @@ class BsnCommon(object):
                     % (node, server, dest_path))
 
         # Make sure that all log files are readable.
-        h.sudo('chmod -R +r %s' % dest_path)
+        server_devconf.sudo('chmod -R +r %s' % dest_path)
 
     def base_test_postmortem(self, test_descr=None):
         t = test.Test()
@@ -192,19 +189,30 @@ class BsnCommon(object):
 
         helpers.log("Creating directory on log archiver %s:%s"
                     % (server, dest_path))
+
+        h = t.node_spawn(ip=server, user=user, password=password,
+                         device_type='host')
         for node in t.topology():
             if helpers.is_controller(node):
                 self.controller_postmortem(node,
                                            server=server,
+                                           server_devconf=h,
                                            user=user, password=password,
                                            dest_path=dest_path,
                                            test_descr=test_descr)
+
         helpers.warn("Debug logs available at %s\n" % dest_url)
         helpers.log("Debug logs are also available at\n%s:%s\n"
                     "Note: Files are removed after 30 days unless"
                     " KEEP_FOREVER.txt is found in the directory.%s"
                     % (server, dest_path,
                        br_utils.end_of_output_marker()))
+        # In smoketest/regression environment, assume we want to keep the
+        # logs forever
+        if helpers.bigrobot_continuous_integration().lower() == 'true':
+            filename = dest_path + "/KEEP_FOREVER.txt"
+            helpers.trace("In regression environment; touch %s" % filename)
+            h.sudo("touch %s" % filename)
 
     def pause_on_fail(self, keyword=None, msg=None):
         """
