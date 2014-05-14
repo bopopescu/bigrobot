@@ -12,15 +12,17 @@ Library          keywords/SwitchLight.py
 Library          keywords/Ixia.py
 Library          keywords/T5.py
 Library          keywords/T5L3.py
-Library          keywords/T5Fabric.py
 
 *Variables
-${switch1_name}      T5HA
+${switch1_name}      T5HA-LEAF-1
+${switch2_name}      T5HA-LEAF-2
+${switch3_name}      T5HA-SPINE-1
+${switch4_name}      T5HA-SPINE-2
 ${tenant_1}         T5HATenant
 ${vns_1}            T5HAVNS-1
 ${vns_2}            T5HAVNS-2
-${interface_1}      ethernet1
-${interface_2}      ethernet48
+${interface_1}      ethernet24
+${interface_2}      ethernet24
 ${src_ip}	    10.100.1.10
 ${src_gw}	    10.100.1.1
 ${dst_ip}	    10.100.2.10
@@ -358,17 +360,45 @@ t5 suite setup
     cli enable snmp   s1           
     add ntp server  s1  time-c.nist.gov
     verify ntp  s1  time-c.nist.gov
+    
     rest add switch  ${switch1_name}
     ${switch1_dpid}=  rest return switch dpid from ip  s1
     rest add dpid  ${switch1_name}  ${switch1_dpid}
     rest add fabric role  ${switch1_name}  leaf      
-    rest add tenant  ${tenant_1}   
-    rest add vns  ${tenant_1}  ${vns_1} 
-    rest add vns  ${tenant_1}  ${vns_2} 
-    rest add interface to vns  ${tenant_1}   ${vns_1}   ${switch1_name}  ${interface_1}   -1
-    rest add interface to vns  ${tenant_1}   ${vns_2}   ${switch1_name}  ${interface_2}   -1    
-    rest add vns ip  ${tenant_1}   ${vns_1}  ${src_gw}  ${netmask}
-    rest add vns ip  ${tenant_1}   ${vns_2}  ${dst_gw}  ${netmask}
+
+    rest add switch  ${switch2_name}
+    ${switch2_dpid}=  rest return switch dpid from ip  s2
+    rest add dpid  ${switch2_name}  ${switch2_dpid}
+    rest add fabric role  ${switch2_name}  leaf      
+
+    rest add switch  ${switch3_name}
+    ${switch3_dpid}=  rest return switch dpid from ip  s3
+    rest add dpid  ${switch3_name}  ${switch3_dpid}
+    rest add fabric role  ${switch3_name}  spine
+
+    rest add switch  ${switch4_name}
+    ${switch4_dpid}=  rest return switch dpid from ip  s4
+    rest add dpid  ${switch4_name}  ${switch4_dpid}
+    rest add fabric role  ${switch4_name}  spine 
+          
+    ${return_value_1}=  rest add tenant  ${tenant_1}
+    Should be true  ${return_value_1}       
+    ${return_value_2}=  rest add vns  ${tenant_1}  ${vns_1}
+    Should be true  ${return_value_2} 
+    ${return_value_3}=  rest add vns  ${tenant_1}  ${vns_2}
+    Should be true  ${return_value_3} 
+    ${return_value_4}=  rest add interface to vns  ${tenant_1}   ${vns_1}   ${switch1_name}  ${interface_1}   -1
+    Should be true  ${return_value_4}
+    ${return_value_5}=  rest add interface to vns  ${tenant_1}   ${vns_2}   ${switch2_name}  ${interface_2}   -1
+    Should be true  ${return_value_5}
+    ${return_value_6}=  rest add router intf  ${tenant_1}   ${vns_1}
+    Should be true  ${return_value_6}  
+    ${return_value_7}=  rest add router intf  ${tenant_1}   ${vns_2}
+    Should be true  ${return_value_7}    
+    ${return_value_8}=  rest add vns ip  ${tenant_1}   ${vns_1}  ${src_gw}  ${netmask}
+    Should be true  ${return_value_8}
+    ${return_value_9}=  rest add vns ip  ${tenant_1}   ${vns_2}  ${dst_gw}  ${netmask}
+    Should be true  ${return_value_9}
     sleep  10
 
 verify results   [Arguments]  ${transmitted_frames}  ${received_frames}
@@ -388,5 +418,8 @@ ha test teardown
     
 t5 suite teardown
     rest delete tenant  ${tenant_1}
-    rest delete fabric switch  ${switch1_name}  
+    rest delete fabric switch  ${switch1_name}
+    rest delete fabric switch  ${switch2_name}
+    rest delete fabric switch  ${switch3_name}
+    rest delete fabric switch  ${switch4_name}  
     base suite teardown
