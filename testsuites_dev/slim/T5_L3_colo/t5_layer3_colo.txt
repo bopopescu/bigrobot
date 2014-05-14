@@ -224,11 +224,11 @@ L3 intra tenant same rack untagged with dynamic endpoints
 	Should Be True								${value} 
 	${mac1} = 									BASH get intf mac				h4-rack0						bond0
 	${result} =									REST show endpoints mac			${mac1}
-	${attachpoint} = 							Set Variable					${result[0]['attachment-point']['port-group']}	
+	${attachpoint} = 							Set Variable					${result[0]['attachment-point']}	
 	Should Contain								${attachpoint}					${leaf0_pc4}	
 	${mac2} = 									BASH get intf mac				h5-rack0						bond0
 	${result} =									REST show endpoints mac			${mac2}
-	${attachpoint} = 							Set Variable					${result[0]['attachment-point']['port-group']}	
+	${attachpoint} = 							Set Variable					${result[0]['attachment-point']}	
 	Should Contain								${attachpoint}					${leaf0_pc5}	
 	${loss} = 									BASH ping						h4-rack0						10.251.2.11 			count=10
 	Should Be True  							${loss} == 0					
@@ -249,11 +249,11 @@ L3 intra tenant same rack tagged with dynamic endpoints
 	Should Be True								${value} 
 	${mac7} = 									BASH get intf mac				h7-rack0						bond0
 	${result} =									REST show endpoints mac			${mac7}
-	${attachpoint} = 							Set Variable					${result[0]['attachment-point']['port-group']}	
+	${attachpoint} = 							Set Variable					${result[0]['attachment-point']}	
 	Should Contain								${attachpoint}					${leaf0_pc7}
 	${mac8} = 									BASH get intf mac				h8-rack0						bond0
 	${result} =									REST show endpoints mac			${mac8}
-	${attachpoint} = 							Set Variable					${result[0]['attachment-point']['port-group']}	
+	${attachpoint} = 							Set Variable					${result[0]['attachment-point']}	
 	Should Contain								${attachpoint}					${leaf0_pc8}
 	${loss} = 									BASH ping						h7-rack0						10.252.2.11 			count=10
 	Should Be True  							${loss} == 0	
@@ -290,11 +290,11 @@ DHCP discovery on the same vns as server with dhcp-relay enabled
 	Should Be True								${value} 	
 	${mac1} = 									BASH get intf mac				h4-rack0						bond0
 	${result} =									REST show endpoints mac			${mac1}
-	${attachpoint} = 							Set Variable					${result[0]['attachment-point']['port-group']}	
+	${attachpoint} = 							Set Variable					${result[0]['attachment-point']}	
 	Should Contain								${attachpoint}					${leaf0_pc4}
 	${mac11} = 									BASH get intf mac				h1-rack1						bond0
 	${result} =									REST show endpoints mac			${mac11}
-	${attachpoint} = 							Set Variable					${result[0]['attachment-point']['port-group']}	
+	${attachpoint} = 							Set Variable					${result[0]['attachment-point']}	
 	Should Contain								${attachpoint}					${leaf0_pc11}
 	${loss} = 									BASH ping						h4-rack0						${ipAddr} 			count=10
 	Should Be True  							${loss} == 0		
@@ -323,11 +323,11 @@ DHCP discovery on the same vns as server without dhcp-relay enabled
 	Should Be True								${value} 	
 	${mac1} = 									BASH get intf mac				h4-rack0						bond0
 	${result} =									REST show endpoints mac			${mac1}
-	${attachpoint} = 							Set Variable					${result[0]['attachment-point']['port-group']}	
+	${attachpoint} = 							Set Variable					${result[0]['attachment-point']}	
 	Should Contain								${attachpoint}					${leaf0_pc4}
 	${mac11} = 									BASH get intf mac				h1-rack1						bond0
 	${result} =									REST show endpoints mac			${mac11}
-	${attachpoint} = 							Set Variable					${result[0]['attachment-point']['port-group']}	
+	${attachpoint} = 							Set Variable					${result[0]['attachment-point']}	
 	Should Contain								${attachpoint}					${leaf0_pc11}
 	${loss} = 									BASH ping						h4-rack0						${ipAddr} 			count=10
 	Should Be True  							${loss} == 0		
@@ -363,11 +363,11 @@ L3 intra tenant dhcp relay on same rack with valid circuitid
 	Should Be True								${value} 	
 	${mac1} = 									BASH get intf mac				h4-rack0						bond0
 	${result} =									REST show endpoints mac			${mac1}
-	${attachpoint} = 							Set Variable					${result[0]['attachment-point']['port-group']}	
+	${attachpoint} = 							Set Variable					${result[0]['attachment-point']}	
 	Should Contain								${attachpoint}					${leaf0_pc4}
 	${mac2} = 									BASH get intf mac				h5-rack0						bond0
 	${result} =									REST show endpoints mac			${mac2}
-	${attachpoint} = 							Set Variable					${result[0]['attachment-point']['port-group']}	
+	${attachpoint} = 							Set Variable					${result[0]['attachment-point']}	
 	Should Contain								${attachpoint}					${leaf0_pc5}
 	${loss} = 									BASH ping						h4-rack0						${ipAddr} 			count=10
 	Should Be True  							${loss} == 0	
@@ -397,11 +397,11 @@ L3 intra tenant dhcp relay on same rack with invalid circuitid
 	sleep										5
 	${mac1} = 									BASH get intf mac				h4-rack0						bond0
 	${result} =									REST show endpoints mac			${mac1}
-	${attachpoint} = 							Set Variable					${result[0]['attachment-point']['port-group']}	
+	${attachpoint} = 							Set Variable					${result[0]['attachment-point']}	
 	Should Contain								${attachpoint}					${leaf0_pc4}
 	${mac2} = 									BASH get intf mac				h5-rack0						bond0
 	${result} =									REST show endpoints mac			${mac2}
-	${attachpoint} = 							Set Variable					${result[0]['attachment-point']['port-group']}	
+	${attachpoint} = 							Set Variable					${result[0]['attachment-point']}	
 	Should Contain								${attachpoint}					${leaf0_pc5}
 
 
@@ -434,11 +434,11 @@ L3 dhcp request with and without dhcp relay enabled
 	Should Be True								${value} 	
 	${mac4} = 									BASH get intf mac				h4-rack0						bond0
 	${result} =									REST show endpoints mac			${mac4}
-	${attachpoint} = 							Set Variable					${result[0]['attachment-point']['port-group']}	
+	${attachpoint} = 							Set Variable					${result[0]['attachment-point']}	
 	Should Contain								${attachpoint}					${leaf0_pc4}
 	${mac5} = 									BASH get intf mac				h5-rack0						bond0
 	${result} =									REST show endpoints mac			${mac5}
-	${attachpoint} = 							Set Variable					${result[0]['attachment-point']['port-group']}	
+	${attachpoint} = 							Set Variable					${result[0]['attachment-point']}	
 	Should Contain								${attachpoint}					${leaf0_pc5}
 	${loss} = 									BASH ping						h4-rack0						${ipAddr} 			count=10
 	Should Be True  							${loss} == 0	
@@ -450,7 +450,7 @@ L3 dhcp request with and without dhcp relay enabled
 	Should Be Empty								${ipAddr1}
 	sleep										5
 	${result} =									REST show endpoints mac			${mac5}
-	${attachpoint} = 							Set Variable					${result[0]['attachment-point']['port-group']}	
+	${attachpoint} = 							Set Variable					${result[0]['attachment-point']}	
 	Should Contain								${attachpoint}					${leaf0_pc5}
 	${loss} = 									BASH ping						h4-rack0						${ipAddr} 			count=10
 	Should Be True  							${loss} == 100		
@@ -492,11 +492,11 @@ Delete and Add L3 dhcp request
 	Should Be True								${value} 	
 	${mac1} = 									BASH get intf mac				h4-rack0						bond0
 	${result} =									REST show endpoints mac			${mac1}
-	${attachpoint} = 							Set Variable					${result[0]['attachment-point']['port-group']}	
+	${attachpoint} = 							Set Variable					${result[0]['attachment-point']}	
 	Should Contain								${attachpoint}					${leaf0_pc4}
 	${mac2} = 									BASH get intf mac				h5-rack0						bond0
 	${result} =									REST show endpoints mac			${mac2}
-	${attachpoint} = 							Set Variable					${result[0]['attachment-point']['port-group']}	
+	${attachpoint} = 							Set Variable					${result[0]['attachment-point']}	
 	Should Contain								${attachpoint}					${leaf0_pc5}
 	${loss} = 									BASH ping						h4-rack0						${ipAddr} 			count=10
 	Should Be True  							${loss} == 0	
@@ -638,11 +638,11 @@ Controller HA failover via CLI
 	Should Be True								${value} 
 	${mac4} = 									BASH get intf mac				h4-rack0						bond0
 	${result} =									REST show endpoints mac			${mac4}
-	${attachpoint} = 							Set Variable					${result[0]['attachment-point']['port-group']}	
+	${attachpoint} = 							Set Variable					${result[0]['attachment-point']}	
 	Should Contain								${attachpoint}					${leaf0_pc4}	
 	${mac5} = 									BASH get intf mac				h5-rack0						bond0
 	${result} =									REST show endpoints mac			${mac5}
-	${attachpoint} = 							Set Variable					${result[0]['attachment-point']['port-group']}	
+	${attachpoint} = 							Set Variable					${result[0]['attachment-point']}	
 	Should Contain								${attachpoint}					${leaf0_pc5}	
 	${loss} = 									BASH ping						h4-rack0						10.251.2.11 			count=10
 	Should Be True  							${loss} == 0					
@@ -674,11 +674,11 @@ L3 intra tenant flap link towards spine0
 	Should Be True								${value} 
 	${mac1} = 									BASH get intf mac				h4-rack0						bond0
 	${result} =									REST show endpoints mac			${mac1}
-	${attachpoint} = 							Set Variable					${result[0]['attachment-point']['port-group']}	
+	${attachpoint} = 							Set Variable					${result[0]['attachment-point']}	
 	Should Contain								${attachpoint}					${leaf0_pc4}	
 	${mac2} = 									BASH get intf mac				h5-rack0						bond0
 	${result} =									REST show endpoints mac			${mac2}
-	${attachpoint} = 							Set Variable					${result[0]['attachment-point']['port-group']}	
+	${attachpoint} = 							Set Variable					${result[0]['attachment-point']}	
 	Should Contain								${attachpoint}					${leaf0_pc5}	
 	${loss} = 									BASH ping						h4-rack0						10.251.2.11 			count=10
 	Should Be True  							${loss} == 0					
@@ -709,11 +709,11 @@ L3 inter tenant traffic in the same rack
 	Should Be True								${value} 
 	${mac4} = 									BASH get intf mac				h4-rack0						bond0
 	${result} =									REST show endpoints mac			${mac4}
-	${attachpoint} = 							Set Variable					${result[0]['attachment-point']['port-group']}	
+	${attachpoint} = 							Set Variable					${result[0]['attachment-point']}	
 	Should Contain								${attachpoint}					${leaf0_pc4}	
 	${mac7} = 									BASH get intf mac				h7-rack0						bond0.1007
 	${result} =									REST show endpoints mac			${mac7}
-	${attachpoint} = 							Set Variable					${result[0]['attachment-point']['port-group']}	
+	${attachpoint} = 							Set Variable					${result[0]['attachment-point']}	
 	Should Contain								${attachpoint}					${leaf0_pc7}	
 	${loss} = 									BASH ping						h4-rack0						10.252.1.11 			count=10
 	Should Be True  							${loss} == 0	
@@ -741,11 +741,11 @@ Inter tenant L3 dhcp relay
 	BASH ping									h4-rack0								${ipAddr}				count=5
 	${mac4} = 									BASH get intf mac				h4-rack0						bond0
 	${result} =									REST show endpoints mac			${mac4}
-	${attachpoint} = 							Set Variable					${result[0]['attachment-point']['port-group']}	
+	${attachpoint} = 							Set Variable					${result[0]['attachment-point']}	
 	Should Contain								${attachpoint}					${leaf0_pc4}	
 	${mac8} = 									BASH get intf mac				h8-rack0						bond0.1008
 	${result} =									REST show endpoints mac			${mac8}
-	${attachpoint} = 							Set Variable					${result[0]['attachment-point']['port-group']}	
+	${attachpoint} = 							Set Variable					${result[0]['attachment-point']}	
 	Should Contain								${attachpoint}					${leaf0_pc8}	
 	${loss} = 									BASH ping						h4-rack0						${ipAddr}			count=10
 	Should Be True  							${loss} == 0	
