@@ -1019,7 +1019,7 @@ setup topology
   	REST add static routes							Z							0.0.0.0/0		 {"tenant-name": "system"}  
   	
 teardown topology
-#	delete traffic
+	delete traffic
 	REST delete vns ip  							X							X1				10.251.1.1				24	
 	REST delete vns ip  							X							X2				10.251.2.1				24	
 	REST delete vns ip  							X							X3				10.251.3.1				24	
