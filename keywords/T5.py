@@ -2080,7 +2080,7 @@ class T5(object):
         url = '/api/v1/data/controller/applications/bvs/config-stats'
         c.rest.patch(url, {"interface-stats-interval": intf_value})
         url1 = '/api/v1/data/controller/applications/bvs/config-stats'
-        c.rest.patch(url1, {"vns-stats-interval": vns_value})
+        c.rest.patch(url1, {"segment-stats-interval": vns_value})
         c.rest.get(url)
         data = c.rest.content()
         if int(data[0]["interface-stats-interval"]) == intf_value and int(data[0]["segment-stats-interval"]) == vns_value:
