@@ -18,8 +18,8 @@ class T5L3(object):
                 `ipaddr`        interface ip address
                 `netmask`       vns subnet mask
                 `private`        true or false 
-            POST http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant%5Bname%3D%22X%22%5D/logical-router/vns-interfaces%5Bvns-name%3D%22X1%22%5D/ip-subnet {"ip-cidr": "10.10.0.1/24", "private": false}
-REST-POST: POST http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant%5Bname%3D%22X%22%5D/logical-router/vns-interfaces%5Bvns-name%3D%22X2%22%5D/ip-subnet {"ip-cidr": "10.10.111.1/24", "private": false}
+            POST http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant%5Bname%3D%22X%22%5D/logical-router/segment-interfaces%5Bvns-name%3D%22X1%22%5D/ip-subnet {"ip-cidr": "10.10.0.1/24", "private": false}
+REST-POST: POST http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant%5Bname%3D%22X%22%5D/logical-router/segment-interfaces%5Bvns-name%3D%22X2%22%5D/ip-subnet {"ip-cidr": "10.10.111.1/24", "private": false}
 
             Return: true if configuration is successful, false otherwise
         '''
@@ -29,8 +29,8 @@ REST-POST: POST http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/te
         
         helpers.test_log("Input arguments: tenant = %s vns = %s ipaddr = %s netmask = %s private = %s " % (tenant, vns, ipaddr, netmask, private))
         
-        #url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/logical-router/vns-interfaces' % (tenant)
-        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/logical-router/vns-interfaces[vns-name="%s"]/ip-subnet' % (tenant, vns)
+        #url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/logical-router/segment-interfaces' % (tenant)
+        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/logical-router/segment-interfaces[vns-name="%s"]/ip-subnet' % (tenant, vns)
         ip_addr = ipaddr + "/" + netmask
         try:
             #c.rest.patch(url, {"ip-cidr": str(ip_addr)})
@@ -53,13 +53,13 @@ REST-POST: POST http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/te
                 `vnsname`       vns interface name which must be similar to VNS
                 `ipaddr`        interface ip address
                 `netmask`       vns subnet mask
-REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant%5Bname%3D%22X%22%5D/logical-router/vns-interfaces%5Bvns-name%3D%22X1%22%5D/ip-subnet/ip-cidr {}
-REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant%5Bname%3D%22X%22%5D/logical-router/vns-interfaces%5Bvns-name%3D%22X1%22%5D/ip-subnet/ip-cidr done 0:00:00.002873
-REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant%5Bname%3D%22X%22%5D/logical-router/vns-interfaces%5Bvns-name%3D%22X1%22%5D/ip-subnet/private {}
-REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant%5Bname%3D%22X%22%5D/logical-router/vns-interfaces%5Bvns-name%3D%22X1%22%5D/ip-subnet/private done 0:00:00.002920
+REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant%5Bname%3D%22X%22%5D/logical-router/segment-interfaces%5Bvns-name%3D%22X1%22%5D/ip-subnet/ip-cidr {}
+REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant%5Bname%3D%22X%22%5D/logical-router/segment-interfaces%5Bvns-name%3D%22X1%22%5D/ip-subnet/ip-cidr done 0:00:00.002873
+REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant%5Bname%3D%22X%22%5D/logical-router/segment-interfaces%5Bvns-name%3D%22X1%22%5D/ip-subnet/private {}
+REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant%5Bname%3D%22X%22%5D/logical-router/segment-interfaces%5Bvns-name%3D%22X1%22%5D/ip-subnet/private done 0:00:00.002920
                 
                 
-REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[name="B"]/logical-router/vns-interfaces[vns-name="B1"]/ip-cidr {}            
+REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[name="B"]/logical-router/segment-interfaces[vns-name="B1"]/ip-cidr {}            
             Return: true if configuration is successful, false otherwise
         '''
         
@@ -68,7 +68,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
         
         helpers.test_log("Input arguments: tenant = %s vns = %s ipaddr = %s netmask = %s " % (tenant, vnsname, ipaddr, netmask ))
         
-        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/logical-router/vns-interfaces[vns-name="%s"]/ip-subnet/ip-cidr' % (tenant, vnsname)
+        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/logical-router/segment-interfaces[vns-name="%s"]/ip-subnet/ip-cidr' % (tenant, vnsname)
         ip_addr = ipaddr + "/" + netmask
         try:
             c.rest.delete(url, {})
@@ -89,7 +89,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
                 `vnsname`       vns interface name which must be similar to VNS
                 `ipaddr`        interface ip address
                 `netmask`       vns subnet mask
-             PATCH http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant%5Bname%3D%22X%22%5D/logical-router/vns-interfaces%5Bvns-name%3D%22X1%22%5D {"active": true}           
+             PATCH http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant%5Bname%3D%22X%22%5D/logical-router/segment-interfaces%5Bvns-name%3D%22X1%22%5D {"active": true}           
                 Return: true if configuration is successful, false otherwise
         '''    
         t = test.Test()
@@ -97,7 +97,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
         
         helpers.test_log("Input arguments: tenant = %s vnsname = %s  " % (tenant, vnsname))
         
-        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/logical-router/vns-interfaces[vns-name="%s"]' % (tenant, vnsname)
+        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/logical-router/segment-interfaces[vns-name="%s"]' % (tenant, vnsname)
         try:
             c.rest.patch(url, {"active": True})
         except:
@@ -116,7 +116,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
                 `vnsname`       vns interface name which must be similar to VNS
                 `ipaddr`        interface ip address
                 `netmask`       vns subnet mask
-             PATCH http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant%5Bname%3D%22X%22%5D/logical-router/vns-interfaces%5Bvns-name%3D%22X1%22%5D {"active": false}           
+             PATCH http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant%5Bname%3D%22X%22%5D/logical-router/segment-interfaces%5Bvns-name%3D%22X1%22%5D {"active": false}           
                 Return: true if configuration is successful, false otherwise
         '''    
         t = test.Test()
@@ -124,7 +124,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
         
         helpers.test_log("Input arguments: tenant = %s vnsname = %s  " % (tenant, vnsname))
         
-        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/logical-router/vns-interfaces[vns-name="%s"]' % (tenant, vnsname)
+        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/logical-router/segment-interfaces[vns-name="%s"]' % (tenant, vnsname)
         try:
             c.rest.patch(url, {"active": False})
         except:
@@ -404,7 +404,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
                 `endpointname`    endpoint name
                 `ipaddr`          host IP address
             Return: true if configuration is successful, false otherwise
-            http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[name="A"]/vns[name="A1"]/endpoint[name="H1"] {"name": "H1"}
+            http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[name="A"]/segment[name="A1"]/endpoint[name="H1"] {"name": "H1"}
 
         '''
         
@@ -413,7 +413,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
         
         helpers.test_log("Input arguments: tenant = %s vnsname = %s endpointname = %s ipaddress = %s" % (tenant, vnsname, endpointname, ipaddr))
         
-        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/endpoint[name="%s"]' % (tenant, vnsname, endpointname)
+        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/segment[name="%s"]/endpoint[name="%s"]' % (tenant, vnsname, endpointname)
         try:
             c.rest.patch(url, {"ip-address": ipaddr})
         except:
@@ -428,7 +428,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
         
         helpers.test_log("Input arguments: tenant = %s vnsname = %s endpointname = %s ip address = %s" % (tenant, vnsname, endpointname, ipaddr))
         
-        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/endpoint[name="%s"]/ip-address' % (tenant, vnsname, endpointname)
+        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/segment[name="%s"]/endpoint[name="%s"]/ip-address' % (tenant, vnsname, endpointname)
         try:
             c.rest.delete(url, {})
         except:
@@ -447,7 +447,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
                 `endpointname`    endpoint name
                 `mac`          host mac address
             Return: true if configuration is successful, false otherwise
-            http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[name="A"]/vns[name="A1"]/endpoint[name="H1"] {"name": "H1"}
+            http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[name="A"]/segment[name="A1"]/endpoint[name="H1"] {"name": "H1"}
 
         '''
         
@@ -456,7 +456,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
         
         helpers.test_log("Input arguments: tenant = %s vnsname = %s endpointname = %s mac address = %s" % (tenant, vnsname, endpointname, mac))
         
-        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/endpoint[name="%s"]' % (tenant, vnsname, endpointname)
+        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/segment[name="%s"]/endpoint[name="%s"]' % (tenant, vnsname, endpointname)
         try:
             c.rest.patch(url, {"mac": mac})
         except:
@@ -475,8 +475,8 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
                 `endpointname`    endpoint name
                 `mac`          host mac address
             Return: true if configuration is successful, false otherwise
-            http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[name="A"]/vns[name="A1"]/endpoint[name="H1"] {"name": "H1"}
-            DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[name="A"]/vns[name="A1"]/endpoint[name="bm0"]/mac {}
+            http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[name="A"]/segment[name="A1"]/endpoint[name="H1"] {"name": "H1"}
+            DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[name="A"]/segment[name="A1"]/endpoint[name="bm0"]/mac {}
 
         '''
         
@@ -485,7 +485,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
         
         helpers.test_log("Input arguments: tenant = %s vnsname = %s endpointname = %s mac address = %s" % (tenant, vnsname, endpointname, mac))
         
-        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/endpoint[name="%s"]/mac' % (tenant, vnsname, endpointname)
+        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/segment[name="%s"]/endpoint[name="%s"]/mac' % (tenant, vnsname, endpointname)
         try:
             c.rest.delete(url, {})
         except:
@@ -504,10 +504,10 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
                 `portgroupname`   port-group name
                 `vlan`            vlan id or -1 for untagged
             Return: true if configuration is successful, false otherwise
-            curl -gX PATCH -H 'Cookie: session_cookie=RKIUFOl07Dqiz10nXJcbquvUcWVJ3xYM' -d '{"port-group-name": "leaf4", "vlan": -1}' 'localhost:8080/api/v1/data/controller/applications/bvs/tenant[name="B"]/vns[name="B1"]/endpoints[name="B1-H1"]/attachment-point'
+            curl -gX PATCH -H 'Cookie: session_cookie=RKIUFOl07Dqiz10nXJcbquvUcWVJ3xYM' -d '{"port-group-name": "leaf4", "vlan": -1}' 'localhost:8080/api/v1/data/controller/applications/bvs/tenant[name="B"]/segment[name="B1"]/endpoints[name="B1-H1"]/attachment-point'
             
-            REST-POST: PATCH http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant%5Bname%3D%22X%22%5D/vns%5Bname%3D%22X1%22%5D/endpoint%5Bname%3D%22H1%22%5D/attachment-point {"vlan": 200, "port-group": "leaf0-pc1"}
-            REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant%5Bname%3D%22X%22%5D/vns%5Bname%3D%22X1%22%5D/endpoint%5Bname%3D%22H1%22%5D/attachment-point done 0:00:00.005086
+            REST-POST: PATCH http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant%5Bname%3D%22X%22%5D/segment%5Bname%3D%22X1%22%5D/endpoint%5Bname%3D%22H1%22%5D/attachment-point {"vlan": 200, "port-group": "leaf0-pc1"}
+            REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant%5Bname%3D%22X%22%5D/segment%5Bname%3D%22X1%22%5D/endpoint%5Bname%3D%22H1%22%5D/attachment-point done 0:00:00.005086
 
         '''
         
@@ -516,7 +516,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
         
         helpers.test_log("Input arguments: tenant = %s vnsname = %s endpointname = %s portgroup = %s vlan = %s" % (tenant, vnsname, endpointname, portgroupname, vlan))
         
-        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/endpoint[name="%s"]/attachment-point' % (tenant, vnsname, endpointname)
+        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/segment[name="%s"]/endpoint[name="%s"]/attachment-point' % (tenant, vnsname, endpointname)
         try:
             c.rest.post(url, {"vlan": vlan, "port-group": portgroupname})
         except:
@@ -539,10 +539,10 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
                 `vlan`            vlan id or -1 for untagged
             Return: true if configuration is successful, false otherwise
             
-REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant%5Bname%3D%22X%22%5D/vns%5Bname%3D%22X1%22%5D/endpoint%5Bname%3D%22H1%22%5D/attachment-point {"vlan": 200, "port-group": "leaf0-pc1"}
-REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant%5Bname%3D%22X%22%5D/vns%5Bname%3D%22X1%22%5D/endpoint%5Bname%3D%22H1%22%5D/attachment-point done 0:00:00.004887
-REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant%5Bname%3D%22X%22%5D/vns%5Bname%3D%22X1%22%5D/endpoint%5Bname%3D%22H1%22%5D/attachment-point {"vlan": 200, "port-group": "leaf0-pc1"}
-REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant%5Bname%3D%22X%22%5D/vns%5Bname%3D%22X1%22%5D/endpoint%5Bname%3D%22H1%22%5D/attachment-point done 0:00:00.002376
+REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant%5Bname%3D%22X%22%5D/segment%5Bname%3D%22X1%22%5D/endpoint%5Bname%3D%22H1%22%5D/attachment-point {"vlan": 200, "port-group": "leaf0-pc1"}
+REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant%5Bname%3D%22X%22%5D/segment%5Bname%3D%22X1%22%5D/endpoint%5Bname%3D%22H1%22%5D/attachment-point done 0:00:00.004887
+REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant%5Bname%3D%22X%22%5D/segment%5Bname%3D%22X1%22%5D/endpoint%5Bname%3D%22H1%22%5D/attachment-point {"vlan": 200, "port-group": "leaf0-pc1"}
+REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant%5Bname%3D%22X%22%5D/segment%5Bname%3D%22X1%22%5D/endpoint%5Bname%3D%22H1%22%5D/attachment-point done 0:00:00.002376
       '''
         
         t = test.Test()
@@ -550,7 +550,7 @@ REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant%
         
         helpers.test_log("Input arguments: tenant = %s vnsname = %s endpointname = %s portgroup = %s vlan = %s" % (tenant, vnsname, endpointname, portgroupname, vlan))
         
-        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/endpoint[name="%s"]/attachment-point' % (tenant, vnsname, endpointname)
+        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/segment[name="%s"]/endpoint[name="%s"]/attachment-point' % (tenant, vnsname, endpointname)
         try:
             c.rest.delete(url, {"vlan": vlan, "port-group": portgroupname})
         except:
@@ -572,15 +572,15 @@ REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant%
                 `switchinterface`    switch port
                 `vlan`            vlan id or -1 for untagged
             Return: true if configuration is successful, false otherwise
-     REST-POST: PATCH http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant%5Bname%3D%22X%22%5D/vns%5Bname%3D%22X1%22%5D/endpoint%5Bname%3D%22H1%22%5D/attachment-point {"interface": "ethernet22", "switch": "leaf0-a", "vlan": 10}
-    REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant%5Bname%3D%22X%22%5D/vns%5Bname%3D%22X1%22%5D/endpoint%5Bname%3D%22H1%22%5D/attachment-point done 0:00:00.004528
+     REST-POST: PATCH http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant%5Bname%3D%22X%22%5D/segment%5Bname%3D%22X1%22%5D/endpoint%5Bname%3D%22H1%22%5D/attachment-point {"interface": "ethernet22", "switch": "leaf0-a", "vlan": 10}
+    REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant%5Bname%3D%22X%22%5D/segment%5Bname%3D%22X1%22%5D/endpoint%5Bname%3D%22H1%22%5D/attachment-point done 0:00:00.004528
        '''        
         t = test.Test()
         c = t.controller('master')
         
         helpers.test_log("Input arguments: tenant = %s vnsname = %s endpointname = %s switchname = %s switch interface = %s vlan = %s" % (tenant, vnsname, endpointname, switchname, switchinterface, vlan))
         
-        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/endpoint[name="%s"]/attachment-point' % (tenant, vnsname, endpointname)
+        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/segment[name="%s"]/endpoint[name="%s"]/attachment-point' % (tenant, vnsname, endpointname)
         try:
             c.rest.post(url, {"interface": switchinterface, "switch": switchname, "vlan": vlan})
         except:
@@ -600,11 +600,11 @@ REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant%
                 `switchinterface`    switch port
                 `vlan`            vlan id or -1 for untagged
             Return: true if configuration is successful, false otherwise
-REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant%5Bname%3D%22X%22%5D/vns%5Bname%3D%22X1%22%5D/endpoint%5Bname%3D%22H1%22%5D/attachment-point {"interface": "ethernet22", "switch": "leaf0-a", "vlan": 10}
-REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant%5Bname%3D%22X%22%5D/vns%5Bname%3D%22X1%22%5D/endpoint%5Bname%3D%22H1%22%5D/attachment-point done 0:00:00.010011
-REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant%5Bname%3D%22X%22%5D/vns%5Bname%3D%22X1%22%5D/endpoint%5Bname%3D%22H1%22%5D/attachment-point {"interface": "ethernet22", "switch": "leaf0-a", "vlan": 10}
-REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant%5Bname%3D%22X%22%5D/vns%5Bname%3D%22X1%22%5D/endpoint%5Bname%3D%22H1%22%5D/attachment-point done 0:00:00.003425
-REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant%5Bname%3D%22X%22%5D/vns%5Bname%3D%22X1%22%5D/endpoint%5Bname%3D%22H1%22%5D/attachment-point {"interface": "ethernet22", "switch": "leaf0-a", "vlan": 10}
+REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant%5Bname%3D%22X%22%5D/segment%5Bname%3D%22X1%22%5D/endpoint%5Bname%3D%22H1%22%5D/attachment-point {"interface": "ethernet22", "switch": "leaf0-a", "vlan": 10}
+REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant%5Bname%3D%22X%22%5D/segment%5Bname%3D%22X1%22%5D/endpoint%5Bname%3D%22H1%22%5D/attachment-point done 0:00:00.010011
+REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant%5Bname%3D%22X%22%5D/segment%5Bname%3D%22X1%22%5D/endpoint%5Bname%3D%22H1%22%5D/attachment-point {"interface": "ethernet22", "switch": "leaf0-a", "vlan": 10}
+REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant%5Bname%3D%22X%22%5D/segment%5Bname%3D%22X1%22%5D/endpoint%5Bname%3D%22H1%22%5D/attachment-point done 0:00:00.003425
+REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant%5Bname%3D%22X%22%5D/segment%5Bname%3D%22X1%22%5D/endpoint%5Bname%3D%22H1%22%5D/attachment-point {"interface": "ethernet22", "switch": "leaf0-a", "vlan": 10}
 
        '''        
         t = test.Test()
@@ -612,7 +612,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
         
         helpers.test_log("Input arguments: tenant = %s vnsname = %s endpointname = %s switchname = %s switch interface = %s vlan = %s" % (tenant, vnsname, endpointname, switchname, switchinterface, vlan))
         
-        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/vns[name="%s"]/endpoint[name="%s"]/attachment-point' % (tenant, vnsname, endpointname)
+        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/segment[name="%s"]/endpoint[name="%s"]/attachment-point' % (tenant, vnsname, endpointname)
         try:
             c.rest.delete(url, {"interface": switchinterface, "switch": switchname, "vlan": vlan})
         except:
@@ -630,15 +630,15 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
                 `vnsname`         name of vns interface
                 `dhcpserverip`    IP address of dhcp server
             Return: true if configuration is successful, false otherwise
-REST-POST: PATCH http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[name="C"]/logical-router/vns-interfaces[vns-name="C1"] {"dhcp-server-ip": "10.2.1.1"}
-REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[name="C"]/logical-router/vns-interfaces[vns-name="C1"] reply:             
+REST-POST: PATCH http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[name="C"]/logical-router/segment-interfaces[vns-name="C1"] {"dhcp-server-ip": "10.2.1.1"}
+REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[name="C"]/logical-router/segment-interfaces[vns-name="C1"] reply:             
         '''        
         t = test.Test()
         c = t.controller('master')
         
         helpers.test_log("Input arguments: tenant = %s vns name = %s relay-ip = %s" % (tenant, vnsname, dhcpserverip))
         
-        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/logical-router/vns-interfaces[vns-name="%s"]/dhcp-relay' % (tenant, vnsname)
+        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/logical-router/segment-interfaces[vns-name="%s"]/dhcp-relay' % (tenant, vnsname)
         try:
             c.rest.patch(url, {"dhcp-server-ip": dhcpserverip})
         except:
@@ -654,15 +654,15 @@ REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[
                 `tenant`          tenant name
                 `vnsname`         name of vns interface
             Return: true if configuration is successful, false otherwise
-REST-POST: PATCH http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[name="C"]/logical-router/vns-interfaces[vns-name="C1"]/dhcp-relay {"dhcp-relay-enable": true}
-REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[name="C"]/logical-router/vns-interfaces[vns-name="C1"] reply: ""           
+REST-POST: PATCH http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[name="C"]/logical-router/segment-interfaces[vns-name="C1"]/dhcp-relay {"dhcp-relay-enable": true}
+REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[name="C"]/logical-router/segment-interfaces[vns-name="C1"] reply: ""           
         '''        
         t = test.Test()
         c = t.controller('master')
         
         helpers.test_log("Input arguments: tenant = %s vns name = %s " % (tenant, vnsname))
         
-        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/logical-router/vns-interfaces[vns-name="%s"]/dhcp-relay' % (tenant, vnsname)
+        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/logical-router/segment-interfaces[vns-name="%s"]/dhcp-relay' % (tenant, vnsname)
         try:
             c.rest.patch(url, {"dhcp-relay-enable": True})
         except:
@@ -679,15 +679,15 @@ REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[
                 `tenant`          tenant name
                 `vnsname`         name of vns interface
             Return: true if configuration is successful, false otherwise
-REST-POST: PATCH http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[name="C"]/logical-router/vns-interfaces[vns-name="C1"] {"dhcp-relay-enable": true}
-REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[name="C"]/logical-router/vns-interfaces[vns-name="C1"] reply: ""           
+REST-POST: PATCH http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[name="C"]/logical-router/segment-interfaces[vns-name="C1"] {"dhcp-relay-enable": true}
+REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[name="C"]/logical-router/segment-interfaces[vns-name="C1"] reply: ""           
         '''        
         t = test.Test()
         c = t.controller('master')
         
         helpers.test_log("Input arguments: tenant = %s vns name = %s " % (tenant, vnsname))
         
-        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/logical-router/vns-interfaces[vns-name="%s"]/dhcp-relay' % (tenant, vnsname)
+        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/logical-router/segment-interfaces[vns-name="%s"]/dhcp-relay' % (tenant, vnsname)
         try:
             c.rest.patch(url, {"dhcp-relay-enable": False})
         except:
@@ -704,15 +704,15 @@ REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[
                 `vnsname`         name of vns interface
                 `circuitid`      Circuit id, can be a string upto 15 characters
             Return: true if configuration is successful, false otherwise
-REST-POST: PATCH http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[name="C"]/logical-router/vns-interfaces[vns-name="C1"] {"dhcp-circuit-id": "this is a test"}
-REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[name="C"]/logical-router/vns-interfaces[vns-name="C1"] reply: ""          
+REST-POST: PATCH http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[name="C"]/logical-router/segment-interfaces[vns-name="C1"] {"dhcp-circuit-id": "this is a test"}
+REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[name="C"]/logical-router/segment-interfaces[vns-name="C1"] reply: ""          
         '''        
         t = test.Test()
         c = t.controller('master')
         
         helpers.test_log("Input arguments: tenant = %s vns name = %s circuit id = %s" % (tenant, vnsname, circuitid))
         
-        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/logical-router/vns-interfaces[vns-name="%s"]/dhcp-relay' % (tenant, vnsname)
+        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/logical-router/segment-interfaces[vns-name="%s"]/dhcp-relay' % (tenant, vnsname)
         try:
             c.rest.patch(url, {"dhcp-circuit-id": circuitid})
         except:
@@ -730,13 +730,13 @@ REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[
                 `vnsname`         name of vns interface
                 `dhcpserverip`       DHCP server IP, can be anything since it will delete everything under the vns
             Return: true if configuration is successful, false otherwise
-REST-POST: PATCH http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant%5Bname%3D%22Z%22%5D/logical-router/vns-interfaces%5Bvns-name%3D%22Z1%22%5D/dhcp-relay {"dhcp-relay-enable": false}
-REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant%5Bname%3D%22Z%22%5D/logical-router/vns-interfaces%5Bvns-name%3D%22Z1%22%5D/dhcp-relay done 0:00:00.008562
-REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant%5Bname%3D%22Z%22%5D/logical-router/vns-interfaces%5Bvns-name%3D%22Z1%22%5D/dhcp-relay/dhcp-server-ip {}
-REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant%5Bname%3D%22Z%22%5D/logical-router/vns-interfaces%5Bvns-name%3D%22Z1%22%5D/dhcp-relay/dhcp-server-ip done 0:00:00.008065
-REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant%5Bname%3D%22Z%22%5D/logical-router/vns-interfaces%5Bvns-name%3D%22Z1%22%5D/dhcp-relay/dhcp-relay-enable {}
+REST-POST: PATCH http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant%5Bname%3D%22Z%22%5D/logical-router/segment-interfaces%5Bvns-name%3D%22Z1%22%5D/dhcp-relay {"dhcp-relay-enable": false}
+REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant%5Bname%3D%22Z%22%5D/logical-router/segment-interfaces%5Bvns-name%3D%22Z1%22%5D/dhcp-relay done 0:00:00.008562
+REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant%5Bname%3D%22Z%22%5D/logical-router/segment-interfaces%5Bvns-name%3D%22Z1%22%5D/dhcp-relay/dhcp-server-ip {}
+REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant%5Bname%3D%22Z%22%5D/logical-router/segment-interfaces%5Bvns-name%3D%22Z1%22%5D/dhcp-relay/dhcp-server-ip done 0:00:00.008065
+REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant%5Bname%3D%22Z%22%5D/logical-router/segment-interfaces%5Bvns-name%3D%22Z1%22%5D/dhcp-relay/dhcp-relay-enable {}
 
-REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[name="B"]/logical-router/vns-interfaces[vns-name="B1"]/dhcp-server-ip {}
+REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[name="B"]/logical-router/segment-interfaces[vns-name="B1"]/dhcp-server-ip {}
      
         '''        
         t = test.Test()
@@ -744,7 +744,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
         
         helpers.test_log("Input arguments: tenant = %s vns name = %s dhcp server ip = %s" % (tenant, vnsname, dhcpserverip))
         
-        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/logical-router/vns-interfaces[vns-name="%s"]/dhcp-relay/dhcp-server-ip' % (tenant, vnsname)
+        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/logical-router/segment-interfaces[vns-name="%s"]/dhcp-relay/dhcp-server-ip' % (tenant, vnsname)
         try:
             
             self.rest_disable_dhcp_relay(tenant, vnsname)
@@ -836,7 +836,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
         
         helpers.test_log("Input arguments: tenant = %s policy name = %s  " % (tenant, polname ))
         
-        #url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/logical-router/vns-interfaces' % (tenant)
+        #url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/logical-router/segment-interfaces' % (tenant)
         url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/logical-router/policy-lists[name="%s"]' % (tenant, polname)
         try:
             c.rest.post(url, {"name": polname})
@@ -861,7 +861,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
         
         helpers.test_log("To be deleted: Input arguments: tenant = %s policy name = %s  " % (tenant, polname ))
         
-        #url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/logical-router/vns-interfaces' % (tenant)
+        #url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/logical-router/segment-interfaces' % (tenant)
         #url_delete = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/logical-router/policy-lists[name="%s"] {}'
         url_delete_polname = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/logical-router/policy-lists[name="%s"]' % (tenant, polname)
         try:
@@ -891,8 +891,8 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
         
         helpers.test_log("Input arguments: tenant = %s vns name = %s policy name = %s  " % (tenant, vnsname, polname ))
         
-        #url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/logical-router/vns-interfaces' % (tenant)
-        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/logical-router/vns-interfaces[vns-name="%s"]' % (tenant, vnsname)
+        #url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/logical-router/segment-interfaces' % (tenant)
+        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/logical-router/segment-interfaces[vns-name="%s"]' % (tenant, vnsname)
         try:
             c.rest.patch(url, {"inbound-policy-name": polname})
         except:
@@ -919,8 +919,8 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
         
         helpers.test_log("Input arguments: tenant = %s vns name = %s policy name = %s  " % (tenant, vnsname, polname ))
         
-        #url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/logical-router/vns-interfaces' % (tenant)
-        url_remove_policy = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/logical-router/vns-interfaces[vns-name="%s"]/inbound-policy-name' % (tenant, vnsname)
+        #url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/logical-router/segment-interfaces' % (tenant)
+        url_remove_policy = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/logical-router/segment-interfaces[vns-name="%s"]/inbound-policy-name' % (tenant, vnsname)
         try:
             c.rest.delete(url_remove_policy, {})
         except:
@@ -948,7 +948,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
         
         helpers.test_log("Input arguments: tenant = %s interface = %s policy name = %s  " % (tenant, intf, polname ))
         
-        #url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/logical-router/vns-interfaces' % (tenant)
+        #url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/logical-router/segment-interfaces' % (tenant)
         url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/logical-router/tenant-interfaces[tenant-name="%s"]' % (tenant, intf)
         try:
             c.rest.patch(url, {"inbound-policy-name": polname})
@@ -976,7 +976,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
         
         helpers.test_log("Input arguments: tenant = %s interface = %s policy name = %s  " % (tenant, intf, polname ))
         
-        #url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/logical-router/vns-interfaces' % (tenant)
+        #url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/logical-router/segment-interfaces' % (tenant)
         url_remove_policy = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/logical-router/tenant-interfaces[tenant-name="%s"]/inbound-policy-name' % (tenant, intf)
         try:
             c.rest.delete(url_remove_policy, {})
@@ -1025,7 +1025,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
             Input:
                 `tenant`        tenant name
                 `vns`           vns interface name which must be similar to VNS
-            PUT http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant%5Bname%3D%22X%22%5D/logical-router/vns-interfaces%5Bvns-name%3D%22X1%22%5D {"vns-name": "X1"}
+            PUT http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant%5Bname%3D%22X%22%5D/logical-router/segment-interfaces%5Bvns-name%3D%22X1%22%5D {"vns-name": "X1"}
             Return: true if configuration is successful, false otherwise
         '''
         
@@ -1034,7 +1034,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
         
         helpers.test_log("Input arguments: tenant = %s vns = %s " % (tenant, vns))
         
-        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/logical-router/vns-interfaces[vns-name="%s"]' % (tenant, vns)
+        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/logical-router/segment-interfaces[vns-name="%s"]' % (tenant, vns)
         try:
             c.rest.put(url, {"vns-name": vns})
         except:
@@ -1051,7 +1051,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
             Input:
                 `tenant`        tenant name
                 `vns`           vns interface name which must be similar to VNS
-             DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant%5Bname%3D%22X%22%5D/logical-router/vns-interfaces%5Bvns-name%3D%22X1%22%5D {}
+             DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant%5Bname%3D%22X%22%5D/logical-router/segment-interfaces%5Bvns-name%3D%22X1%22%5D {}
             Return: true if configuration is successful, false otherwise
         '''
         
@@ -1060,7 +1060,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
         
         helpers.test_log("Input arguments: tenant = %s vns = %s " % (tenant, vns))
         
-        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/logical-router/vns-interfaces[vns-name="%s"]' % (tenant, vns)
+        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/logical-router/segment-interfaces[vns-name="%s"]' % (tenant, vns)
         try:
             c.rest.delete(url, {})
         except:

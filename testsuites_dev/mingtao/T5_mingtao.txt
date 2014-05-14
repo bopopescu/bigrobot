@@ -2,8 +2,8 @@
 Documentation    T5 Test Suite
 Suite Setup      base suite setup
 Suite Teardown   base suite teardown
-Test Setup       base test setup
-Test Teardown    base test teardown
+Test Setup       base test setup 
+Test Teardown    base test teardown 
 Force Tags       T5 
 Library          keywords/BsnCommon.py
 Library          keywords/Controller.py
@@ -12,75 +12,396 @@ Library		     keywords/Host.py
 Library		     keywords/Ixia.py
 Library		     keywords_dev/mingtao/T5_longevity.py
 Library	         keywords/T5.py
+Library          keywords/T5L3.py
 Library	         keywords/T5Platform.py
 Library	         keywords/Controller.py
+Library	         keywords/SwitchLight.py
+Library          OperatingSystem
 Resource	     testsuites_dev/mingtao/t5_platform_infra_resource.txt 
 
 * Variable
 ${short}  1
-${medium}  10
+${medium}  3
 ${long}   30
 ${verylong}     120 
-${gw}           10.192.64.1
-${dns}          10.192.3.1
-${domain}        bigswitch.com 
-${mask}	         18
-${VIP1}         10.192.105.150
-${VIP2}         10.192.105.151
-${namec1}       MY-T5-C30
-${namec2}       MY-T5-C10
-${ipcno}        10.192.105.255
-${colo}         210
+
+${intravnscnt}    1
+${intervnscnt}    6
+${intertenantcnt}  6
+${intertenantvnscnt}  1
+
+
+${1srcmac}  00:11:00:00:00:00  
+${2srcmac}  00:22:00:00:00:00 
+${3srcmac}  00:33:00:00:00:00  
+${4srcmac}  00:44:00:00:00:00 
+${5srcmac}  00:55:00:00:00:00  
+${6srcmac}  00:66:00:00:00:00 
+${7srcmac}  00:77:00:00:00:00  
+${8srcmac}  00:88:00:00:00:00 
+${9srcmac}  00:99:00:00:00:00  
+${10srcmac}  00:aa:00:00:00:00 
+
+${src_mac_step}  00:00:00:00:01:00
+${src_cnt}  4
+${dst_mac}  00:00:00:00:01:00
+${dst_cnt}  4
+${dst_mac_step}  00:00:00:01:00:00
+${frame_rate}  1000
+${frame_cnt}  50000
+${frame_size}  160
+${sleep_time}  5
+${line_rate}  100 
+${burst_count}  1000
+${burst_gap}  1000
+
+${src_ip}  20.0.0.10
+${dst_ip}  20.0.0.20
+${spinecount}   2
+${leafcount}    6
+
+ 
 
 * Test Case
-Set variable
-	${ipc1}=   get node ip   c1
-	Set Suite Variable    ${ipc1}
-	${ipc2}=   get node ip   c2
-	Set Suite Variable    ${ipc2}
-# 	${time}= 	Get Time     year,month,day
-# 	${file}=  Set Variable  config${time[0]}${time[1]}${time[2]}
-#	Set Suite Variable    ${file} 	
-#	${ip}=   ip_to_list    ${ipc1}
-#	log   ip address is ${ip}
-#	Run Keyword if   ${ip[1]}==${colo}	 set colo variable  		
-#  	log   new variables are: ${gw} ${mask} ${VIP1} ${namec1} ${ipcno}
 
-	[Tags] 	sanity  
+	
+T0 Set fabric switches  
 
-T1 Setup the testbed
+	rest_delete_portgroup_all
+ 	${switches}=  get_all_switch_nodes  
+	log   switches are ${switches}
+ 	: FOR    ${sw}   IN   @{switches}   
+	\   ${alias}=   get_node_alias   ${sw} 	
+	\   ${dpid}=   	cli_show_switch_dpid    ${sw}             
+  	\   Run Keyword if   'spine' in '${alias}' 	   add fabric switch spine    ${alias}     ${dpid}
+    \   Run Keyword if   'leaf' in '${alias}' 	   add fabric switch leaf     ${alias}     ${dpid}   rack${alias[4]}
+	  
+	  
+	[Tags] 	sanity      run
+	
+		 
+ 
+T1 Setup the testbed 
 	log  step 1 setup snmp and verify
-#	setup snmp	
-#	verify snmp config	
+	#	setup snmp	
+	#	verify snmp config	
 	
-	log  step 2 config syslog server
+	rest_delete_tenant_all
+	sleep  5
 	
+	log  step 2 config syslog server	
 	log  step 3 config Tenants and vns 
-	 
-	rest_add_tenant_vns_scale	 5    5
-    rest add interface to vns  T1   v1   Leaf0a  ethernet1  10
-    rest add interface to vns  T1   v1   Leaf0a  ethernet2  11 
-	sleep  5       
+   
+	config intra vns        ${intravnscnt}    
+
+	log  config intervns	
+    ${vlan}=  Set Variable   50	
+    ${ip}=   Set Variable    11.${vlan}.0.250	
+   : FOR    ${i}    IN RANGE    0    3
+   \	config inter vns        ${intervnscnt} 	 ${vlan}   V${i}N  ${ip}	 
+   \	${vlan}=  expr   ${vlan} + 1 
+   \    ${ip}=    get_next_address  ipv4    ${ip}     0.1.0.0  
+
+
+	log  config inter tenant
+	REST add tenant				system
+    ${vlan}=  Set Variable   150	
+    ${ip}=   Set Variable    101.${vlan}.0.250	
+   : FOR    ${i}    IN RANGE    0    1
+   \	config inter tenant   ${intertenantcnt}   -1    T${i}N    ${ip}	 
+   \	${vlan}=  expr   ${vlan} + 1 
+   \    ${ip}=    get_next_address  ipv4    ${ip}     0.1.0.0 
+   \    config l3 tenant tofrom tenant system     tenantcount=6    tname=T${i}N   
     	
-	log  config member interface
-	
-	log  config end point	
-  	REST add endpoint  T1  v1  E1
-  	REST add endpoint  T1  v1  E2  	
-    
-    REST add ip endpoint  T1  v1  E1   100.100.100.1
-    REST add mac endpoint  T1  v1  E1   00:01:01:01:01:01
-    REST add ip endpoint  T1  v1  E2    100.100.100.2
-    REST add mac endpoint  T1  v1  E2  00:01:01:01:01:02
-
-  	REST add portgroup  P1  
- 	REST add interface to portgroup  Leaf0a  ethernet11  P1 
- 	REST add interface to portgroup  Leaf0b  ethernet11  P1  
-  	REST add portgroup to endpoint  T1  V1  E1  P1  100 
-
-  
+	log  config port group for H1 and H2
+	config port group      H1   leaf0   ethernet17   A0    L2V1     20
+	config port group      H2   leaf1   ethernet31   A0    L2V1     20
+ 	 	
+	sleep  ${medium}
      
-	[Tags] 	sanity    
+	[Tags] 	sanity      
 
+T2 setup traffic make sure all traffic can be forwarded without loss after learning
+	log  check host to host traffic  	
+	BASH ping		h1			20.20.20.25 	count=1	
+	sleep  ${medium}
+	${loss} = 			BASH ping		h1			20.20.20.25 	count=10
+	Should Be True  	${loss} == 0	
+		
+	log  setup L2 traffic
+#    ${L2_1}=    L2 add  name=L2S1   flow=p1<->p4  vlan_id=10  frame_size=128  
+#    ...    src_mac=00:11:11:11:00:00  dst_mac=00:44:44:44:00:00   frame_rate=10000    
+#    ...    dst_cnt=50  src_cnt=50  dst_mac_step=00:00:00:00:00:01  src_mac_step=00:00:00:00:00:01
+   
+      
+#    ${L2_2}=    L2 add  name=L2S2   flow=p7<->p8  vlan_id=20  frame_size=128  
+#    ...    src_mac=00:77:77:77:00:00  dst_mac=00:88:88:88:00:00   frame_rate=10000    
+#    ...    dst_cnt=50  src_cnt=50  dst_mac_step=00:00:00:00:00:01  src_mac_step=00:00:00:00:00:01
+
+
+    ########  inter vns #########
+    ###  p1 to p4, swap all vlan 1:1 map  	 
+#    ${iVNS1}=    L3 add  name=L3S1   flow=p1<->p4   frame_size=128    frame_rate=10000  frame_cnt=10000
+#    ...    vlan_id=50   vlan_cnt=3
+#    ...    src_mac=00:1c:1c:1c:00:01  src_mac_step=00:00:00:00:00:01  
+#    ...    dst_mac=00:4c:4c:4c:00:01  dst_mac_step=00:00:00:00:00:01  
+#    ...    src_ip=11.50.0.1  src_ip_step=0.1.0.0  src_cnt=3   src_gw=11.50.0.250  src_gw_step=0.1.0.0
+#    ...    dst_ip=12.50.0.1  dst_ip_step=0.1.0.0  dst_cnt=3   dst_gw=12.50.0.250  dst_gw_step=0.1.0.0
+  
+    ####### p1 to p4, many host in 1 vlan
+#   ${iVNS2}=    L3 add  name=L3S2   flow=p1<->p4   frame_size=128    frame_rate=10000   frame_cnt=10000
+#    ...    vlan_id=50   vlan_cnt=1
+#    ...    src_mac=00:1c:1c:1c:01:01  src_mac_step=00:00:00:00:00:01 
+#    ...    dst_mac=00:4c:4c:4c:01:01  dst_mac_step=00:00:00:00:00:01  
+#    ...    src_ip=11.50.0.50  src_ip_step=0.0.0.1  src_cnt=3   src_gw=11.50.0.250  src_gw_step=0.0.0.0
+#    ...    dst_ip=12.50.0.50  dst_ip_step=0.0.0.1  dst_cnt=3   dst_gw=12.50.0.250  dst_gw_step=0.0.0.0
+
+    ####### p1 to p7, 1 vlan to all vlam in port7     
+#    ${iVNS3}=    L3 add  name=L3S3   flow=p1<->p7   frame_size=128    frame_rate=10000   frame_cnt=10000
+#    ...    vlan_id=50   vlan_cnt=1
+#    ...    src_mac=00:1c:1c:1c:02:01  src_mac_step=00:00:00:00:00:01 
+#    ...    dst_mac=00:7c:7c:7c:02:00  dst_mac_step=00:00:00:00:00:01  
+#    ...    src_ip=11.50.0.100  src_cnt=1   src_gw=11.50.0.250  src_gw_step=0.0.0.0
+#    ...    dst_ip=13.50.0.100  dst_ip_step=0.1.0.0  dst_cnt=3   dst_gw=13.50.0.250  dst_gw_step=0.1.0.0
+     
+    
+    ############ inter tenant ##########
+    #### p1 to p7 swap all vlan  
+#     ${iTS1}=    L3 add  name=iT3S1   flow=p1<->p7   frame_size=128    frame_rate=10000   frame_cnt=10000
+#    ...    vlan_id=150  vlan_cnt=3
+#    ...    src_mac=00:1d:1d:1d:00:00  src_mac_step=00:00:00:00:00:01 
+#    ...    dst_mac=00:7d:7d:7d:00:00  dst_mac_step=00:00:00:00:00:01  
+#    ...    src_ip=101.150.0.1   src_cnt=1   src_gw=101.150.0.250  src_gw_step=0.1.0.0
+#    ...    dst_ip=103.150.0.1   dst_ip_step=0.1.0.0  dst_cnt=3   dst_gw=103.150.0.250  dst_gw_step=0.1.0.0
+    
+    #### p1 to p7 many host in 1 vlan  
+     ${iTS2}=    L3 add  name=iT3S2   flow=p1<->p7   frame_size=128    frame_rate=10000   frame_cnt=10000
+    ...    src_mac=00:1d:1d:1d:00:00  src_mac_step=00:00:00:00:00:01 
+    ...    dst_mac=00:7d:7d:7d:00:00  dst_mac_step=00:00:00:00:00:01  
+    ...    src_ip=101.150.0.1   src_ip_step=0.0.0.1  src_cnt=50   src_gw=101.150.0.250  src_gw_step=0.0.0.0
+    ...    dst_ip=103.150.0.1   dst_ip_step=0.0.0.1  dst_cnt=50   dst_gw=103.150.0.250  dst_gw_step=0.0.0.0
+    
+
+	log  finishing creating the traffic
+	    
+    @{Thandle}=  Create List     ${iTS1}    ${iTS2}  
+    @{Tname}=    Create List      iT3S1      iT3S2
+
+	Set Suite Variable     ${Thandle}
+	Set Suite Variable     ${Tname}
+	
  
+	traffic endpoint learning	      1
+	
+ 	log  verify forwarding table
+# 	verify endpoint in group  	  1c:1c:1c		  50
+	verify endpoint in group  	  7d:7d:7d		  50
+	verify endpoint in group  	  1d:1d:1d		  50	
+
+	test ixia traffic      ${Thandle}   ${Tname}     5     
+     
+	[Tags] 	sanity   
  
+T3 take snapshot of state of the controller and switches in the system (once the system is stable)
+	${info}=  bash      c1	  top -n 1
+	Log to file    T5_log   "topinfo"   ${info}       	
+	
+	${topinfo}=  bash_top     c1		
+	log  controller - get memory 
+	${memoryused}=   Set Variable   ${topinfo['mem']['used']}	
+	log  controller memory used is ${memoryused}		
+	log  controller - get cpu 
+	${cpuidle}=   Set Variable   ${topinfo['cpu']['id']}
+	log  cpu idle is ${cpuidle}
+
+	${info}=  bash      c1	  df
+	Log to file    T5_log   "df"   ${info}       	
+	
+	log  controller - check disk space consumption
+	${result}=  get_disk_used_percentage   c1    / 		
+	log  overall disk used ${result} 	
+	${result}=  get_disk_used_percentage   c1    /var/log
+	log  log directory disk used ${result} 	
+	log  get tenant and vns info
+	${tenantinfo}=  cli  master   show tenant
+	${vnsinfo}=     cli  master   show vns 
+	 	
+	Log to file    T5_log   "tenant"   ${tenantinfo}
+	Log to file    T5_log   "vns"   ${vnsinfo}
+	       					
+	log  controller - get forwarding tables	  
+	${forwording}=  cli  master   show forwarding
+ 	Log to file    T5_log   "show forwarding"   ${forwording}
+
+    @{switches}=  Create List   spine0  spine1  leaf0-a   
+	take snapshot of the switch entries    ${switches}
+      
+	[Tags] 	sanity    
+ 
+
+T21 node down/up event
+	log  reload 1 spine switch
+	cli_restart_switch   spine0    yes
+	sleep   5
+	test ixia traffic      ${Thandle}   ${Tname}     5     
+		
+	log  reload all spine switches   
+	cli_restart_switch   spine0    yes	 
+	cli_restart_switch   spine1    yes
+	sleep   5 	
+	test ixia traffic      ${Thandle}   ${Tname}     5     
+	
+	log  reload 1 leaf switch 
+	cli_restart_switch   leaf0-a    yes	 
+	sleep   5
+	traffic endpoint learning    1
+	test ixia traffic      ${Thandle}   ${Tname}     5     
+ 	
+	log  reload a pair of leafs 
+	cli_restart_switch   leaf0-a    yes	 
+	cli_restart_switch   leaf0-b    yes
+	sleep   5
+	traffic endpoint learning    1
+	test ixia traffic      ${Thandle}   ${Tname}     5     
+		
+    log  reload master
+    cluster_node_reboot
+	traffic endpoint learning    1
+	test ixia traffic      ${Thandle}   ${Tname}     5         
+    
+    log  reload slave
+    log  reload both controller
+   
+	[Tags] 	sanity      
+
+
+T24 data Link down/up event (repeat with shutdown from both end)
+	log  disable/enable link from leaf to spine
+	log  disable/enable links from same pair Tor leaves to the same spine
+	log  disable/enable link from leaf to host
+	log  disable/enable link between leaves	 
+ 	log  disable/enable all links from one leaf to all spines  
+   
+	[Tags] 	sanity   
+
+	 
+
+* Keywords
+   
+add fabric switch spine   [Arguments]   ${node}   ${dpid}  
+  rest add switch               ${node}
+  rest add dpid                 ${node}          ${dpid}  
+  rest add fabric role          ${node}          spine
+
+add fabric switch leaf   [Arguments]   ${node}   ${dpid}   ${leafg}     
+  rest add switch               ${node}
+  rest add dpid                 ${node}         ${dpid} 
+  rest add fabric role          ${node}         leaf
+  rest_add_leaf_group           ${node}         ${leafg} 
+  
+verify results   [Arguments]  ${transmitted_frames}  ${received_frames}  ${stream}  ${stream_name}
+    Sleep  5
+    ${report}=  fetch port stats  stream=${stream}  
+    ${tx_value}=  verify dict key  ${report}  ${stream_name}  ${transmitted_frames}
+    ${rx_value}=  verify dict key  ${report}  ${stream_name}   received_valid_frames
+    ixia verify traffic rate  ${tx_value}  ${rx_value}    10
+ 
+
+verify traffic forwarding status   [Arguments]   ${Thandle}     ${Tname}
+	${i}=  Set Variable   0	
+ 	: FOR    ${var}   IN   @{Thandle}   
+ 	\   ${stream}=   Set Variable   ${var}
+ 	\   ${name}=     Set Variable   ${Tname[${i}]}  
+    \   ${report}=   fetch port stats  stream=${stream}    
+    \   verify results    transmitted_frames  received_frames    ${stream}   ${name}
+	\   ${i}=  expr   ${i} + 1 
+
+test ixia traffic   [Arguments]    ${Thandle}     ${Tname}    ${during}   
+	clear stats in controller switch	 
+    clear stats
+    start traffic   
+    sleep           ${during}     
+    stop traffic    
+    sleep           3
+	verify traffic forwarding status    ${Thandle}    ${Tname} 
+         
+config intra vns	   [Arguments]   ${intravnscnt}  
+	rest_add_tenant_vns_scale	tenantcount=1   tname=A   vnscount=${intravnscnt}   vname=L2V  
+	rest_add_interface_to_vns     A0     L2V1     leaf0-a     ethernet1  vlan=10 
+	rest_add_interface_to_vns     A0     L2V1     leaf0-b     ethernet1  vlan=10 
+	rest_add_interface_to_vns     A0     L2V1     leaf1-a     ethernet1  vlan=20
+	rest_add_interface_to_vns     A0     L2V1     leaf1-b     ethernet1  vlan=20
+	rest_add_interface_to_vns     A0     L2V1     leaf2-a     ethernet1  vlan=20
+	rest_add_interface_to_vns     A0     L2V1     leaf3-a     ethernet1  vlan=20
+
+
+config inter vns       [Arguments]   ${intervnscnt}   ${vlan}    ${vnsname}  	${baseip}				 
+	rest_add_tenant_vns_scale   tenantcount=1   tname=B    vnscount=${intervnscnt}   vname=${vnsname}	   vns_ip=Yes  base=${baseip}   step=1.0.0.0
+	rest_add_interface_to_vns     B0     ${vnsname}1     leaf0-a     ethernet1    ${vlan}
+	rest_add_interface_to_vns     B0     ${vnsname}2     leaf0-b     ethernet1    ${vlan}
+	rest_add_interface_to_vns     B0     ${vnsname}3     leaf1-a     ethernet1    ${vlan}
+	rest_add_interface_to_vns     B0     ${vnsname}4     leaf1-b     ethernet1    ${vlan}	
+	rest_add_interface_to_vns     B0     ${vnsname}5     leaf2-a     ethernet1    ${vlan}
+	rest_add_interface_to_vns     B0     ${vnsname}6     leaf3-a     ethernet1    ${vlan}
+	
+  
+config inter tenant 	  [Arguments]  ${intertenantcnt}   ${vlan}     ${tname}  ${baseip}					 
+	rest_add_tenant_vns_scale   tenantcount=${intertenantcnt}   tname=${tname}   vnscount=1   vname=V  vns_ip=Yes  base=${baseip}     step=1.0.0.0	 
+	rest_add_interface_to_vns    ${tname}0   V1   leaf0-a    ethernet1   vlan=${vlan}	 			 
+	rest_add_interface_to_vns    ${tname}1   V1   leaf0-b    ethernet1   vlan=${vlan}	
+	rest_add_interface_to_vns    ${tname}2   V1   leaf1-a    ethernet1   vlan=${vlan}
+	rest_add_interface_to_vns    ${tname}3   V1   leaf1-b    ethernet1   vlan=${vlan}	 			 
+	rest_add_interface_to_vns    ${tname}4   V1   leaf2-a    ethernet1   vlan=${vlan}	
+	rest_add_interface_to_vns    ${tname}5   V1   leaf3-a    ethernet1   vlan=${vlan}
+
+
+
+
+config port group   	 [Arguments]   ${pg}    ${rack}  ${intf}   ${tenant}   ${vns}    ${vlan}
+	rest_add_portgroup 	              ${pg}
+	rest_add_portgroup_lacp           ${pg}
+	rest_add_interface_to_portgroup	  ${rack}-a    ${intf}     	${pg}
+	rest_add_interface_to_portgroup	  ${rack}-b    ${intf}     	${pg}	
+	rest_add_portgroup_to_vns 	      ${tenant}   ${vns}        ${pg}   ${vlan}
+		
+clear stats in controller switch
+	cli_clear_interface_statistics   s3	
+	cli_clear_interface_statistics   s4
+	cli_clear_interface_statistics   s5	
+	rest_clear_vns_stats
+	rest_clear_fabric_interface_stats
+		
+verify endpoint in group  	 [Arguments]   ${pattern}   ${num}
+  	${macs}=  cli_show_endpoint_pattern    ${pattern}	 
+     Should Be Equal As Integers   ${macs}   ${num}
+ 
+
+Log to file    [Arguments]    ${File}     ${title}    ${content}
+	Append To File    ${File}    ******************* START **************************\n
+    ${time}=	Get Time    
+    Append To File    ${File}     ${time}\n	
+	Append To File    ${File}     ${title}\n  
+	Append To File    ${File}	  ${content} \n
+ 	Append To File    ${File}    ******************** END *****************************\n	
+	
+take snapshot of the switch entries   [Arguments]    ${switches}
+ 	: FOR    ${sw}   IN   @{switches}   
+	\   ${info}=  bash    ${sw}	top -n 1
+	\   Log to file   script_log   "------topinfo for switch ${sw}------"   ${info}     
+ 	\   ${cli}=  Catenate  show forwarding switch  ${sw}   vlan-member-table
+ 	\   ${info}=  cli    master   ${cli}
+	\    Log to file    script_log   "--------show forwarding switch ${sw}--------"   ${info}
+ 	
+config l3 tenant tofrom tenant system  [Arguments]  ${tenantcount}   ${tname}  
+	: FOR    ${i}    IN RANGE   	0		${tenantcount}
+	\  rest_add_tenant_routers_intf_to_system			${tname}${i} 	
+ 	\  rest_add_system_intf_to_tenant_routers 			${tname}${i}  
+ 	\  REST add static routes		${tname}${i}	 0.0.0.0/0		 {"tenant-name": "system"}
+ 	
+traffic endpoint learning   [Arguments]    ${during}   
+  	start traffic   
+    sleep          ${during} 
+    stop traffic    
+    sleep         3
+   
+		  

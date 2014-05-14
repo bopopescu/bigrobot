@@ -101,29 +101,20 @@ class BsnCommon(object):
         helpers.log("Express '%s' evaluated to '%s'" % (s, result))
         return result
 
-    def controller_postmortem(self, node, server, user, password, dest_path,
-                              test_descr=None):
+    def controller_postmortem(self, node, server, server_devconf,
+                              user, password, dest_path, test_descr=None):
         """
         Executes the equivalence of
         https://github.com/bigswitch/t6-misc/blob/master/t6-support/run_show_cmds.py
         Save the show commands and logs (e.g., /var/log/floodlight/*) to the
         archiver.
         """
-        t = test.Test()
-
-        if not test_descr:
-            test_descr = "no_test_case_descr"
-        # convert non-alpha and white spaces to underscores
-        temp_dir = re.sub(r'[\W\s]', '_', test_descr)
-        dest_path += '/' + temp_dir
-
-        h = t.node_spawn(ip=server, user=user, password=password,
-                         device_type='host')
-        h.sudo('mkdir -p %s' % dest_path)
+        dest_path += '/' + test_descr
+        server_devconf.sudo('mkdir -p %s' % dest_path)
 
         helpers.log("Collecting information for '%s' controller" % node)
         output_dir = helpers.bigrobot_log_path_exec_instance()
-        show_cmd_file = (output_dir + '/' + temp_dir + '_' + node +
+        show_cmd_file = (output_dir + '/' + test_descr + '_' + node +
                          '/show_cmd_out.txt')
         d = os.path.dirname(show_cmd_file)
         if not os.path.exists(d):
@@ -173,7 +164,7 @@ class BsnCommon(object):
                     % (node, server, dest_path))
 
         # Make sure that all log files are readable.
-        h.sudo('chmod -R +r %s' % dest_path)
+        server_devconf.sudo('chmod -R +r %s' % dest_path)
 
     def base_test_postmortem(self, test_descr=None):
         t = test.Test()
@@ -191,21 +182,37 @@ class BsnCommon(object):
 
         helpers.log("Test case '%s' failed. Performing postmortem."
                     % test_descr)
+        if not test_descr:
+            test_descr = "no_test_case_descr"
+        # convert non-alpha and white spaces to underscores
+        test_descr = re.sub(r'[\W\s]', '_', test_descr)
 
         helpers.log("Creating directory on log archiver %s:%s"
                     % (server, dest_path))
+
+        h = t.node_spawn(ip=server, user=user, password=password,
+                         device_type='host')
         for node in t.topology():
             if helpers.is_controller(node):
                 self.controller_postmortem(node,
                                            server=server,
+                                           server_devconf=h,
                                            user=user, password=password,
                                            dest_path=dest_path,
                                            test_descr=test_descr)
-        helpers.log("Debug logs are available at:\n%s\nor %s:%s\n\n"
-                    "Note: Files are removed after 30 days unless you touch"
-                    " the file 'KEEP_FOREVER' in the directory.%s"
-                    % (dest_url, server, dest_path,
+
+        helpers.warn("Debug logs available at %s\n" % dest_url)
+        helpers.log("Debug logs are also available at\n%s:%s\n"
+                    "Note: Files are removed after 30 days unless"
+                    " KEEP_FOREVER.txt is found in the directory.%s"
+                    % (server, dest_path,
                        br_utils.end_of_output_marker()))
+        # In smoketest/regression environment, assume we want to keep the
+        # logs forever
+        if helpers.bigrobot_continuous_integration().lower() == 'true':
+            filename = dest_path + "/KEEP_FOREVER.txt"
+            helpers.trace("In regression environment; touch %s" % filename)
+            h.sudo("touch %s" % filename)
 
     def pause_on_fail(self, keyword=None, msg=None):
         """
@@ -1864,51 +1871,5 @@ class BsnCommon(object):
                 helpers.sleep(sleep)
 
         return status
-
-    def cli_command(self,node,command):
-        ''' cli command for any string
-            usage:  cli_command    show tenant
-            note:    no process of the output contenet
-        '''
-        t = test.Test()
-        n = t.node(node)
-        content = n.cli(command)['content']   
-        temp = helpers.strip_cli_output(content)                
-        return temp
-
-    def bash_command(self,node,command):
-        ''' bash command for any string
-            usage:   bash_command    c1   df
-            note:    no process of the output contenet
-        '''
-        t = test.Test()
-        n = t.node(node)
-        content = n.bash(command)['content']  
-        temp = helpers.strip_cli_output(content)               
-        return temp
-
-    def enable_command(self,node,command):
-        ''' enable command for any string
-            usage:  enable_command    show tenant
-            note:    no process of the output contenet
-        '''
-        t = test.Test()
-        n = t.node(node)
-        content = n.enable(command)['content']   
-        temp = helpers.strip_cli_output(content)                
-        return temp
-
-    def config_command(self,node,command):
-        ''' config command for any string
-            usage:  config_command    
-            note:    no process of the output contenet
-        '''
-        t = test.Test()
-        n = t.node(node)
-        content = n.config(command)['content']   
-        temp = helpers.strip_cli_output(content)                
-        return temp
- 
-
 
 
