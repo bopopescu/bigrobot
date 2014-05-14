@@ -1313,43 +1313,48 @@ class T5Platform(object):
             return False
 
 
-    def cli_compare(self, src, dst, node='master', scp_passwd='bsn'):
-        ''' Generic function to compare via CLI, using SCP
-        Input:
-        Src, Dst - source and destination of compare command
-        Scp_Password - password for scp connection
-        Node - pointing to Master or Slave controller
-        Output: True if successful, False otherwise
-         '''
-        helpers.test_log("Running command:\ncompare %s %s" % (src, dst))
+    def cli_compare(self, left, right, node='master',
+                    scp_passwd='bsn', soft_error=False):
+        """
+        Generic function to compare via CLI, also using using SCP
+
+        Inputs:
+        | left | Left object for comparison
+        | right | Right object for comparison
+        | node | Reference to switch/controller as defined in .topo file |
+        | scp_passwd | Password for scp connection |
+        | soft_error | Soft Error flag |
+
+        Return Value:
+        - List of lines, in which <left> and <right> are different
+        """
+        helpers.test_log("Running command:\ncompare %s %s" % (left, right))
         t = test.Test()
         c = t.controller(node)
         c.config("config")
-        c.send("compare %s %s" % (src, dst))
+        c.send("compare %s %s" % (left, right))
         options = c.expect([r'[Pp]assword: ', r'\(yes/no\)\?', c.get_prompt()])
         content = c.cli_content()
         helpers.log("*****Output is :\n%s" % content)
         try:
-            if  ('Could not resolve' in content) or ('Error' in content) or ('No such file or directory' in content):
-                helpers.test_failure(content)
-                return False
+            if (('Could not resolve' in content) or ('Error' in content)
+                or ('No such file or directory' in content)):
+                return helpers.test_failure(content, soft_error)
             elif options[0] == 0 :
-                helpers.log("INFO:  need to provide passwd " )
+                helpers.log("need to provide passwd")
                 output = c.config(scp_passwd)['content']
             elif options[0] == 1:
-                helpers.log("INFO:  need to send yes, then provide passwd " )
+                helpers.log("need to send yes, then provide passwd")
                 c.send('yes')
                 c.expect(r'[Pp]assword:')
                 output = c.config(scp_passwd)['content']
         except:
-            helpers.test_failure(c.cli_content())
-            return False
+            return helpers.test_failure(c.cli_content(), soft_error)
 
         output = c.cli_content()
         helpers.log("Output *** %s " % output)
         if ("Error" in output) or ('No such file or directory' in output):
-            helpers.test_failure(c.cli_content())
-            return False
+            return helpers.test_failure(c.cli_content(), soft_error)
 
         output = helpers.strip_cli_output(output)
         output = helpers.str_to_list(output)
@@ -1360,23 +1365,26 @@ class T5Platform(object):
                     break
 
         helpers.log("Cropped output *** %s " % output)
+
+        differences = []
         if len(output) == 0:
             helpers.log("Files are identical")
-            return True
+            return differences
 
         for line in output:
             if re.match(r'[0-9].*|< \!|---|> \!|< \Z|> \Z|\Z', line):
                 helpers.log("OK: %s" % line)
-            elif re.match(r'[<>]   hostname|[<>]     ip', line) and node=='slave':
+            elif (re.match(r'[<>]   hostname|[<>]     ip', line)
+                  and node=='slave'):
                 helpers.log("OK: %s" % line)
             else:
                 helpers.log("files different at line:\n%s" % line)
-                return False
+                differences.append(line)
 
         if helpers.any_match(c.cli_content(), r'Error'):
-            helpers.test_failure(c.cli_content())
-            return False
-        return True
+            return helpers.test_failure(c.cli_content(), soft_error)
+
+        return differences
 
 
     def cli_copy(self, src, dst, node='master', scp_passwd='bsn'):
