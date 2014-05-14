@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/sh -x
 # Call Robot Framework's rebot to generate the consolidated log.
 # rebot unfortunately returns with a non-zero exit code which causes
 # the Jenkins build to fail (rebot returns the same error code as
