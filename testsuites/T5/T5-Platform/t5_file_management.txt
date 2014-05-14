@@ -138,6 +138,7 @@ T4.3 Copy running config to scp://, change RC, restore, verify no change in RC
 
 T4.4 Copy from scp:// and compare with previous running-config
 	Rest Delete Tenant  TenantTest12345
+	Cli Copy  config://startup-config  running-config
 	Cli Copy  running-config  backup
 	Cli Copy  ${scp switch}  running-config
 	Compare Negative  backup  running-config
@@ -150,10 +151,7 @@ T5.1 Copy running config to file, copy RC from file to other file, verify
 	Cli Copy  ${file}  file-new
 	${status} =  Cli Compare Running Config with File Line By Line  file-new
 	Should Be True  ${status}
-	${status} =  Cli Compare  running-config  file-new
-	Should Be True  ${status}
-	${status} =  Cli Compare  file-new  running-config
-	Should Be True  ${status}
+	Compare  running-config  file-new
 
 T5.2 Copy running config to file, copy RC from file to scp://, verify
 	Cli Copy  running-config  ${file}
@@ -617,23 +615,28 @@ T10.1 Verify validation function of scp:// to image:// - textfile
 	Run Keyword and Expect Error
 	...  *Validating Image Contents: check for expected contents*
 	...  Cli Copy  ${scp}  image://
+	[Tags]  SCP  image
 
 T10.2 Verify validation function of scp:// to image:// - bigtap upgrade package
 	Run Keyword and Expect Error
 	...  *Error: Invalid Use: integrity validation failed: missing file in bundle: supported-matrix*
 	...  Cli Copy  ${scp image bigtap}  image://
+	[Tags]  SCP  image
 
 T10.3 Verify validation function of scp:// to image:// - corrupted image
 	Run Keyword and Expect Error
 	...  *Error: Invalid Use: integrity validation failed: not an image bundle*
 	...  Cli Copy  ${scp image corrupted}  image://
+	[Tags]  SCP  image
 
 T10.4 Verify validation function of scp:// to image:// - proper image
 	Cli Copy  ${scp image}  image://
 	Cli Delete  image://master
+	[Tags]  SCP  image
 
 T10.5 Verify suggestions for deleting multiple images
 	Manual Passed
+	[Tags]  SCP  image
 
 
 *** Keywords ***
@@ -648,17 +651,18 @@ File Suite Setup
 	Bash  master  curl -g -H "Cookie: session_cookie\=$FL_SESSION_COOKIE" localhost:8080/api/v1/data/controller/core/aaa/accounting -X DELETE -d '{"name": "local"}'
 	Cli Copy  running-config  config://startup-config
 	Cli Copy  running-config  config://startup-config  node=slave
-	Cli Run  master  enable
-	Cli Run  master  config
-	Cli Run  master  logging remote 1.2.3.4
-	Cli Run  master  snmp-server community ro test
-	Cli Run  master  snmp-server contact tmk
-	Cli Run  master  snmp-server enable traps
-	Cli Run  master  snmp-server host 1.2.3.4
-	Cli Run  master  snmp-server location test
-	Cli Run  master  tacacs server host 1.2.3.4
-	Cli Run  master  tacacs server timeout 10
-	Cli Run  master  tacacs server key test
+	Cli Copy  scp://bsn@regress:file-management-testsuite/extensive-config  config://extensive-config
+	Cli Copy  scp://bsn@regress:file-management-testsuite/extensive-file  extensive-file
+	#Compare  extensive-file  config://extensive-config
+	#Cli Copy  scp://bsn@regress:file-management-testsuite/extensive-config  running-config
+	#Compare  scp://bsn@regress:file-management-testsuite/extensive-config  running-config
+	#Compare  config://extensive-config  running-config
+	#Compare  extensive-file  running-config
+	Cli Copy  config://startup-config  running-config
+	Cli Copy  scp://bsn@regress:file-management-testsuite/extensive-file  running-config
+	#Compare  scp://bsn@regress:file-management-testsuite/extensive-file  running-config
+	Compare  config://extensive-config  running-config
+	Compare  extensive-file  running-config
 	Cli Copy  running-config  config://test-config
 
 Setup
@@ -670,13 +674,12 @@ Modify Running Config
 	Rest Add Tenant  ${tenant}
 	Rest Delete Tenant  TenantTest12345
 	auto configure fabric switch   ${spineList}   ${leafList}   2
-	Config  master  group test
-	Config  master  port-group test
-	Config  master  user test
 
 Teardown
 	Bash Clear Known Hosts
 	Cli Copy  config://test-config  running-config
+	Compare  config://extensive-config  running-config
+	Compare  extensive-file  running-config
 	Base Test Teardown
 
 File Suite Teardown
@@ -687,28 +690,36 @@ File Suite Teardown
 Compare
 	[Arguments]  ${first}  ${second}
 	${status} =  Cli Compare  ${first}  ${second}
-	Should Be True  ${status}
+	${length} =  Get Length  ${status}
+	Should Be Equal as Numbers  ${length}  0
 	${status} =  Cli Compare  ${second}  ${first}
-	Should Be True  ${status}
+	${length} =  Get Length  ${status}
+	Should Be Equal as Numbers  ${length}  0
 Compare Slave
 	[Arguments]  ${first}  ${second}
 	${status} =  Cli Compare  ${first}  ${second}  node=slave
-	Should Be True  ${status}
+	${length} =  Get Length  ${status}
+	Should Be Equal as Numbers  ${length}  0
 	${status} =  Cli Compare  ${second}  ${first}  node=slave
-	Should Be True  ${status}
+	${length} =  Get Length  ${status}
+	Should Be Equal as Numbers  ${length}  0
 
 Compare Negative
 	[Arguments]  ${first}  ${second}
 	${status} =  Cli Compare  ${first}  ${second}
-	Should Not Be True  ${status}
+	${length} =  Get Length  ${status}
+	Should Not Be Equal as Numbers  ${length}  0
 	${status} =  Cli Compare  ${second}  ${first}
-	Should Not Be True  ${status}
+	${length} =  Get Length  ${status}
+	Should Not Be Equal as Numbers  ${length}  0
 Compare Negative Slave
 	[Arguments]  ${first}  ${second}
 	${status} =  Cli Compare  ${first}  ${second}  node=slave
-	Should Not Be True  ${status}
+	${length} =  Get Length  ${status}
+	Should Not Be Equal as Numbers  ${length}  0
 	${status} =  Cli Compare  ${second}  ${first}  node=slave
-	Should Not Be True  ${status}
+	${length} =  Get Length  ${status}
+	Should Not Be Equal as Numbers  ${length}  0
 
 Compare RC with File Line By Line
 	[Arguments]  ${file}
