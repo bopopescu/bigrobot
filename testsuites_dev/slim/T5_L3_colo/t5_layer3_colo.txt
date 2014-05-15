@@ -241,6 +241,29 @@ L3 intra tenant same rack untagged with dynamic endpoints
 	stop traffic								${stream1}
 	verify results 								transmitted_frames  			received_frames  		${stream1}  			stream1
 
+L3 intra tenant across rack untagged with dynamic endpoints
+	${ipAddr4} = 								BASH get interface ipv4 		h4-rack0						bond0
+	Should Not Be Empty							${ipAddr4}
+	${ipAddr5} = 								BASH get interface ipv4 		h1-rack1						bond0
+	Should Not Be Empty							${ipAddr5}
+	BASH ping									h4-rack0						${ipAddr5}						count=10
+	${value} = 									BASH verify arp					h4-rack0						10.251.1.1
+	Should Be True								${value} 		
+	${value} =									BASH verify arp					h5-rack0						10.251.2.1
+	Should Be True								${value} 
+	${mac1} = 									BASH get intf mac				h4-rack0						bond0
+	${result} =									REST show endpoints mac			${mac1}
+	${attachpoint} = 							Set Variable					${result[0]['attachment-point']}	
+	Should Contain								${attachpoint}					${leaf0_pc4}	
+	${mac2} = 									BASH get intf mac				h1-rack1						bond0
+	${result} =									REST show endpoints mac			${mac2}
+	${attachpoint} = 							Set Variable					${result[0]['attachment-point']}	
+	Should Contain								${attachpoint}					${leaf1_pc1}	
+	${loss} = 									BASH ping						h4-rack0						${ipAddr5}					count=10
+	Should Be True  							${loss} == 0					
+
+
+
 L3 intra tenant same rack tagged with dynamic endpoints
 	BASH ping									h7-rack0								10.252.2.11				count=10
 	${value} = 									BASH verify arp					h7-rack0						10.252.1.1
@@ -948,6 +971,10 @@ setup topology
 #	REST add portgroup to vns						Z								Z3						${leaf0_pc12}			-1
 	REST add portgroup to vns						Z								Arista30				${leaf0_arista1} 		-1
 	REST add portgroup to vns						Z								Arista29				${leaf0_arista2} 		-1
+	REST add portgroup to vns						X								X1						${leaf1_pc1}	 		-1
+	REST add portgroup to vns						Y								Y1						${leaf1_pc2}	 		-1
+	REST add portgroup to vns						X								X2						${leaf1_pc3}	 		2003
+	REST add portgroup to vns						Y								Y2						${leaf1_pc4}	 		2004
 
 	BASH ifup intf									h4-rack0 								bond0
 	BASH ifup intf									h5-rack0								bond0
@@ -957,16 +984,23 @@ setup topology
 	BASH ifup intf									h9-rack0								bond0	
 	BASH ifup intf									h10-rack0								bond0	
 	BASH ifup intf									h1-rack1								bond0	
+	BASH ifup intf									h2-rack1								bond0	
+	BASH ifup intf									h3-rack1								bond0	
+	BASH ifup intf									h4-rack1								bond0	
 	BASH add tag									h6-rack0								bond0					1006
 	BASH add tag									h7-rack0								bond0					1007
 	BASH add tag									h8-rack0								bond0					1008
 	BASH add tag									h9-rack0								bond0					1009
 	BASH add tag									h10-rack0								bond0					1010
+	BASH add tag									h3-rack1								bond0					2003
+	BASH add tag									h4-rack1								bond0					2004
 	BASH ifup intf									h6-rack0								bond0.1006
 	BASH ifup intf									h7-rack0								bond0.1007
 	BASH ifup intf									h8-rack0								bond0.1008
 	BASH ifup intf									h9-rack0								bond0.1009
 	BASH ifup intf									h10-rack0								bond0.1010
+	BASH ifup intf									h3-rack1								bond0.2003
+	BASH ifup intf									h4-rack1								bond0.2004
 	BASH add ip address								h4-rack0								10.251.1.11/24			bond0	
 	BASH add ip address								h5-rack0								10.251.2.11/24			bond0
 	BASH add ip address								h6-rack0								10.251.3.11/24			bond0.1006
@@ -974,7 +1008,7 @@ setup topology
 	BASH add ip address								h8-rack0								10.252.2.11/24			bond0.1008
 	BASH add ip address								h9-rack0								10.252.3.11/24			bond0.1009
 	BASH add ip address								h10-rack0								10.253.1.11/24			bond0.1010
-	BASH add ip address								h1-rack1								10.253.2.11/24			bond0
+	BASH add ip address								h3-rack1								10.251.2.23/24			bond0.2003
 	BASH add route									h4-rack0								10.251.2.0/24			10.251.1.1
 	BASH add route									h4-rack0								10.251.3.0/24			10.251.1.1
 	BASH add route									h4-rack0								10.252.0.0/16			10.251.1.1
@@ -1007,6 +1041,8 @@ setup topology
   	BASH add route									h1-rack1								10.253.3.0/24			10.253.2.1
 	BASH add route									h1-rack1								10.251.0.0/16			10.253.2.1
   	BASH add route									h1-rack1								10.252.0.0/16			10.253.2.1
+	BASH add route									h3-rack1								10.252.0.0/16			10.251.2.1
+  	BASH add route									h3-rack1								10.253.0.0/16			10.251.2.1	
 	REST add tenant routers intf to system			X
 	REST add tenant routers intf to system			Y
 	REST add tenant routers intf to system			Z
@@ -1074,11 +1110,15 @@ teardown topology
   	BASH delete route									h1-rack1								10.253.3.0/24			10.253.2.1
 	BASH delete route									h1-rack1								10.251.0.0/16			10.253.2.1
   	BASH delete route									h1-rack1								10.252.0.0/16			10.253.2.1
+  	BASH delete route									h3-rack1								10.252.0.0/16			10.251.2.1
+  	BASH delete route									h3-rack1								10.253.0.0/16			10.251.2.1
 	BASH delete tag										h6-rack0								bond0.1006				soft_error=${true}
 	BASH delete tag										h7-rack0								bond0.1007				soft_error=${true}
 	BASH delete tag										h8-rack0								bond0.1008				soft_error=${true}
 	BASH delete tag										h9-rack0								bond0.1009				soft_error=${true}
 	BASH delete tag										h10-rack0								bond0.1010				soft_error=${true}
+	BASH delete tag										h3-rack1								bond0.2003				soft_error=${true}
+
 	BASH init intf										h4-rack0 								bond0
 	BASH init intf										h5-rack0								bond0
 	BASH init intf										h6-rack0								bond0
@@ -1087,6 +1127,8 @@ teardown topology
 	BASH init intf										h9-rack0								bond0	
 	BASH init intf										h10-rack0								bond0	
 	BASH init intf										h1-rack1								bond0	
+	BASH init intf										h3-rack1								bond0	
+	
 	REST delete tenant routers intf to system			X
 	REST delete tenant routers intf to system			Y
 	REST delete tenant routers intf to system			Z									
