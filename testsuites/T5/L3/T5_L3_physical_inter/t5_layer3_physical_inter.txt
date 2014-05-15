@@ -172,7 +172,11 @@ L3 inter tenant forwarding to VRRP routers
 	manual untested
 	[Tags]			manual-untested			feature			
 
-L3 inter tenant traceroute
+L3 inter tenant traceroute with icmp probe
+	manual passed
+	[Tags]			manual					feature			
+
+L3 inter tenant traceroute with udp probe
 	manual passed
 	[Tags]			manual					feature			
 
