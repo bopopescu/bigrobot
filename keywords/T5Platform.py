@@ -1329,9 +1329,9 @@ class T5Platform(object):
         | soft_error | Soft Error flag |
 
         Examples:
-            Cli Compare  test-file  scp://bsn@regress:path-to-file/file
-            Cli Compare  test-file  config://test-config
-            Cli Compare  running-config  test-file
+        | Cli Compare | slave | test-file | scp://bsn@regress:path-to-file/file
+        | Cli Compare | master | test-file | config://test-config
+        | Cli Compare | master | running-config |  test-file
 
         Return Value:
         - List of lines, in which <left> and <right> are different
