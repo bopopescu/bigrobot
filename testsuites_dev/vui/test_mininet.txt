@@ -18,6 +18,7 @@ Test dummy
 Test get all [$nodes]
     test get all
     base test postmortem
+    #bash       c1    echo $COLUMNS
 
 Test get all [$nodes] #2
     [Tags]     skipped

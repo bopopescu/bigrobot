@@ -196,6 +196,7 @@ class BsnCommon(object):
 
         h = t.node_spawn(ip=server, user=user, password=password,
                          device_type='host')
+        h.bash("echo $COLUMNS")
 
         for node in t.topology():
             test_dest_path = dest_path + '/' + test_descr + '/' + node
@@ -1883,5 +1884,3 @@ class BsnCommon(object):
                 helpers.sleep(sleep)
 
         return status
-
-
