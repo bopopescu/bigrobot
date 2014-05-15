@@ -15,9 +15,9 @@ ${switchlight_version}  SwitchLight
 ${snmp_contact}  nw_admin@super_awesome_switch.com
 ${snmp_location_1}  CS_RACK11_6004
 ${snmp_location_2}  CS_RACK11_6013    
-${oneGlb9_name}  ethernet6
-${tenGly2_name}  ethernet45
-${fortyGly2_name}  ethernet51
+${oneGlb9_name}  ethernet24
+${tenGly2_name}  ethernet39
+${fortyGly2_name}  ethernet52
 
 
 *Test Case
@@ -62,90 +62,92 @@ Verify SNMP OID ifMtu of ma1
     [Tags]  snmp  common
 
 Verify SNMP OID ifDescr of 1Gig Data Port
-    verify snmp attribute  s1  ifDescr.1006  ${oneGlb9_name}
+    verify snmp attribute  s1  ifDescr.1024  ${oneGlb9_name}
     [Tags]  snmp  1G    
     
 Verify SNMP OID ifType of 1Gig Data Port
-    verify snmp attribute  s1  ifType.1006  ethernetCsmacd
+    verify snmp attribute  s1  ifType.1024  ethernetCsmacd
     [Tags]  snmp  1G
         
 Verify SNMP OID ifAdminStatus of 1Gig Data Port
-    verify snmp attribute  s1  ifAdminStatus.1006  up
+    verify snmp attribute  s1  ifAdminStatus.1024  up
     [Tags]  snmp  1G
         
 Verify SNMP OID ifOperStatus of 1Gig Data Port
-    verify snmp attribute  s1  ifOperStatus.1006  up
+    verify snmp attribute  s1  ifOperStatus.1024  up
     [Tags]  snmp  1G
         
 Verify SNMP OID ifSpeed of 1Gig Data Port
-    verify snmp attribute  s1  ifSpeed.1006  1000000000
+    verify snmp attribute  s1  ifSpeed.1024  1000000000
     [Tags]  snmp  1G
         
 Verify SNMP OID ifHighSpeed of 1Gig Data Port
-    verify snmp attribute  s1  ifHighSpeed.1006  1000
+    verify snmp attribute  s1  ifHighSpeed.1024  1000
     [Tags]  snmp  1G
         
 Verify SNMP OID ifPhysAddress of 1Gig Data Port 
     ${mac_address1}=  cli show interface macaddress  s1  ${oneGlb9_name} 
-    verify snmp attribute  s1  ifPhysAddress.1006  ${mac_address1}
+    verify snmp attribute  s1  ifPhysAddress.1024  ${mac_address1}
     [Tags]  snmp  1G
         
-Verify SNMP OID ifDescr of 10Gig Data Port  
-    verify snmp attribute  s1  ifDescr.1045  ${tenGly2_name}
+Verify SNMP OID ifDescr of 10Gig Data Port
+    cli enable interface  s1  ethernet39
+    sleep  30    
+    verify snmp attribute  s1  ifDescr.1039  ${tenGly2_name}
     [Tags]  snmp  10G
         
 Verify SNMP OID ifType of 10Gig Data Port  
-    verify snmp attribute  s1  ifType.1045  ethernetCsmacd
+    verify snmp attribute  s1  ifType.1039  ethernetCsmacd
     [Tags]  snmp  10G
         
-Verify SNMP OID ifAdminStatus of 10Gig Data Port  
-    verify snmp attribute  s1  ifAdminStatus.1045  up
+Verify SNMP OID ifAdminStatus of 10Gig Data Port    
+    verify snmp attribute  s1  ifAdminStatus.1039  up
     [Tags]  snmp  10G
         
 Verify SNMP OID ifOperStatus of 10Gig Data Port  
-    verify snmp attribute  s1  ifOperStatus.1045  up
+    verify snmp attribute  s1  ifOperStatus.1039  up
     [Tags]  snmp  10G
         
 Verify SNMP OID ifSpeed of 10Gig Data Port  
-    verify snmp attribute  s1  ifSpeed.1045  4294967295
+    verify snmp attribute  s1  ifSpeed.1039  4294967295
     [Tags]  snmp  10G
         
 Verify SNMP OID ifHighSpeed of 10Gig Data Port  
-    verify snmp attribute  s1  ifHighSpeed.1045  10000
+    verify snmp attribute  s1  ifHighSpeed.1039  10000
     [Tags]  snmp  10G
     
 Verify SNMP OID ifPhysAddress of 10Gig Data Port  
     ${mac_address1}=  cli show interface macaddress  s1  ${tenGly2_name} 
-    verify snmp attribute  s1  ifPhysAddress.1045  ${mac_address1}
+    verify snmp attribute  s1  ifPhysAddress.1039  ${mac_address1}
     [Tags]  snmp  10G
     
 Verify SNMP OID ifDescr of 40Gig Data Port  
-    verify snmp attribute  s1  ifDescr.1051  ${fortyGly2_name}
+    verify snmp attribute  s1  ifDescr.1052  ${fortyGly2_name}
     [Tags]  snmp  40G
         
 Verify SNMP OID ifType of 40Gig Data Port  
-    verify snmp attribute  s1  ifType.1051  ethernetCsmacd  
+    verify snmp attribute  s1  ifType.1052  ethernetCsmacd  
     [Tags]  snmp  40G
         
 Verify SNMP OID ifAdminStatus of 40Gig Data Port  
-    verify snmp attribute  s1  ifAdminStatus.1051  up
+    verify snmp attribute  s1  ifAdminStatus.1052  up
     [Tags]  snmp  40G
         
 Verify SNMP OID ifOperStatus 40Gig Data Port  
-    verify snmp attribute  s1  ifOperStatus.1051  up
+    verify snmp attribute  s1  ifOperStatus.1052  up
     [Tags]  snmp  40G
         
 Verify SNMP OID ifSpeed of 40Gig Data Port  
-    verify snmp attribute  s1  ifSpeed.1051  4294967295
+    verify snmp attribute  s1  ifSpeed.1052  4294967295
     [Tags]  snmp  40G
         
 Verify SNMP OID ifHighSpeed of 40Gig Data Port  
-    verify snmp attribute  s1  ifHighSpeed.1051  40000
+    verify snmp attribute  s1  ifHighSpeed.1052  40000
     [Tags]  snmp  40G
         
 Verify SNMP OID ifPhysAddress of 40Gig Data Port  
     ${mac_address1}=  cli show interface macaddress  s1  ${fortyGly2_name} 
-    verify snmp attribute  s1  ifPhysAddress.1051  ${mac_address1}
+    verify snmp attribute  s1  ifPhysAddress.1052  ${mac_address1}
     [Tags]  snmp  40G
     
 Verify snmpgetnext works as expected 
@@ -163,16 +165,16 @@ Verify snmpbulkwalk works as expected
 Verify snmptrap is generated on dataport linkflap
     clear snmpttlog  10.192.66.230
     sleep  10
-    cli disable interface  s1  ethernet45
+    cli disable interface  s1  ethernet39
     sleep  60
-    ${output}=  return snmptrap output  10.192.66.230  "Link down on interface 1045"
+    ${output}=  return snmptrap output  10.192.66.230  "Link down on interface 1039"
     Should contain  ${output}  Operational state: 2  
     sleep  10
     clear snmpttlog  10.192.66.230
     sleep  10    
-    cli enable interface  s1  ethernet45
+    cli enable interface  s1  ethernet39
     sleep  60
-    ${output}=  return snmptrap output  10.192.66.230  "Link up on interface 1045"
+    ${output}=  return snmptrap output  10.192.66.230  "Link up on interface 1039"
     Should contain  ${output}  Operational state: 1     
     [Tags]  snmp  jira-pan-741 
          
@@ -198,6 +200,7 @@ snmp suite setup
     cli add snmp keyword   s1   contact   ${snmp_contact}       
     cli add snmp host   s1   10.192.66.230   traps   public   162   
     cli add snmp host   s1   10.192.66.230   informs   public   162
+    cli enable trap keyword  s1  snmp-server trap linkUpDown interval 1
     cli enable snmp   s1                       
     Sleep   30             
 
@@ -262,5 +265,6 @@ snmp suite teardown
     cli delete snmp keyword   s1   location   ${snmp_location_1}  
     cli delete snmp keyword   s1   contact   ${snmp_contact}       
     cli delete snmp host   s1   10.192.66.230   traps   public   162   
-    cli delete snmp host   s1   10.192.66.230   informs   public   162       
+    cli delete snmp host   s1   10.192.66.230   informs   public   162
+    cli delete trap keyword  s1  snmp-server trap linkUpDown interval 1       
     base suite teardown      
