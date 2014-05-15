@@ -1930,6 +1930,28 @@ class SwitchLight(object):
             helpers.test_failure("Could not execute command. Please check log for errors")
             return False
 
+    def cli_delete_trap_keyword(self, node, keyword):
+        '''
+            Objective:
+            - Enable linkupdown trap
+
+            Input:
+            | node | Reference to switch (as defined in .topo file) |
+
+            Return Value:
+            - True on configuration success
+            - False on configuration failure
+        '''
+        try:
+            t = test.Test()
+            s1 = t.switch(node)
+            delete_key = "no " + str(keyword)
+            s1.config(delete_key)
+            return True
+        except:
+            helpers.test_failure("Could not execute command. Please check log for errors")
+            return False
+
 ############# PORT-CHANNEL SHOW COMMANDS##############################
 
     def cli_verify_portchannel(self, node, pcNumber):
