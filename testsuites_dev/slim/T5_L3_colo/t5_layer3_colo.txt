@@ -25,63 +25,63 @@ Intra tenant L3 untagged traffic with dynamic endpoints same rack
 
 Intra tenant L3 untagged traffic with dynamic endpoints across rack
 	L3 intra tenant across rack untagged with dynamic endpoints
-	[Tags]									smoke				sanity	
+	[Tags]									smoke				sanity				run	
 
 Intra tenant L3 tagged traffic with dynamic endpoints same rack
 	L3 intra tenant same rack tagged with dynamic endpoints
-	[Tags]									smoke				sanity			
+	[Tags]									smoke				sanity				run				
 
 Intra tenant L3 tagged traffic with dynamic endpoints across rack
 	L3 intra tenant across rack tagged with dynamic endpoints
-	[Tags]									smoke				sanity	
+	[Tags]									smoke				sanity				run		
 
 Intra tenant L3 untagged traffic with static endpoints same rack
 	L3 intra tenant same rack untagged with static endpoints
-	[Tags]									smoke				sanity			
+	[Tags]									smoke				sanity				run				
 
 Intra tenant L3 untagged traffic with static endpoints across rack
 	L3 intra tenant across rack untagged with static endpoints
-	[Tags]									smoke				sanity	
+	[Tags]									smoke				sanity				run		
 
 Intra tenant L3 tagged traffic with static endpoints same rack
 	L3 intra tenant same rack tagged with static endpoints
-	[Tags]									smoke				sanity			
+	[Tags]									smoke				sanity				run				
 
 Intra tenant L3 tagged traffic with static endpoints across rack
 	L3 intra tenant across rack tagged with static endpoints
-	[Tags]									smoke				sanity	
+	[Tags]									smoke				sanity				run		
 
 Dhcp discover on the same vns as server with dhcp-relay enabled
 	DHCP discovery on the same vns as server with dhcp-relay enabled
-	[Tags]									smoke				sanity	
+	[Tags]									smoke				sanity				run		
 
 Dhcp discover on the same vns as server without dhcp-relay enabled
 	DHCP discovery on the same vns as server without dhcp-relay enabled
-	[Tags]									smoke				sanity	
+	[Tags]									smoke				sanity				run		
 
 Intra tenant dhcp relay 
 	L3 intra tenant dhcp relay on same rack with valid circuitid
-	[Tags]									smoke				sanity	
+	[Tags]									smoke				sanity				run		
 	
 Intra tenant dhcp relay with invalid circuit id
 	L3 intra tenant dhcp relay on same rack with invalid circuitid
-	[Tags]									smoke				sanity	
+	[Tags]									smoke				sanity				run		
 
 Intra tenant dhcp relay enabled and disabled
 	L3 dhcp request with and without dhcp relay enabled
-	[Tags]									smoke				sanity	
+	[Tags]									smoke				sanity				run		
 
 Intra tenant dhcp relay across rack
 	L3 intra tenant dhcp relay across rack
-	[Tags]									smoke				sanity	
+	[Tags]									smoke				sanity				run		
 	
 Intra tenant dhcp relay with circuit id across rack
 	L3 intra tenant dhcp relay with circuit id across rack
-	[Tags]									smoke				sanity	
+	[Tags]									smoke				sanity				run		
 
 Delete and Add dhcp relay
 	Delete and Add L3 dhcp request 
-	[Tags]									sanity	
+	[Tags]									sanity					run	
 
 Add and delete untagged endpoints with existing host
 	L3 add and delete untagged endpoints with existing host
