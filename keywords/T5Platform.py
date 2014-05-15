@@ -1313,10 +1313,12 @@ class T5Platform(object):
             return False
 
 
-    def cli_compare(self, left, right, node='master',
+    def cli_compare(self, node, left=None, right=None,
                     scp_passwd='bsn', soft_error=False):
         """
         Generic function to compare via CLI, also using using SCP
+        Input <left> and <right> arguments exactly the same way as you
+        would do it in CLI's 'compare' command.
 
         Inputs:
         | left | Left object for comparison
@@ -1325,9 +1327,17 @@ class T5Platform(object):
         | scp_passwd | Password for scp connection |
         | soft_error | Soft Error flag |
 
+        Examples:
+            Cli Compare  test-file  scp://bsn@regress:path-to-file/file
+            Cli Compare  test-file  config://test-config
+            Cli Compare  running-config  test-file
+
         Return Value:
         - List of lines, in which <left> and <right> are different
         """
+        if not right or not left:
+            return helpers.test_error("You need to specify values for 'right'"
+                                      " and 'left' arguments.")
         helpers.test_log("Running command:\ncompare %s %s" % (left, right))
         t = test.Test()
         c = t.controller(node)
