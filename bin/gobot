@@ -158,6 +158,7 @@ if helpers.bigrobot_suite():
 helpers.bigrobot_params(default='None')
 helpers.bigrobot_continuous_integration()
 helpers.bigrobot_exec_hint_format()
+helpers.bigrobot_log_archiver()
 helpers.bigrobot_debug(default=1)
 
 # !!! FIXME: 2014-04-10 Exscript's Protocol.py sys.stderr is closed for some
