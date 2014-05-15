@@ -236,7 +236,8 @@ class ControllerNode(Node):
                                   platform=self.platform(),
                                   host=ip,
                                   user=user,
-                                  password=password)
+                                  password=password,
+                                  http_port=self.http_port)
         self.t = t
 
         # CLI Shortcuts

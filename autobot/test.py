@@ -281,7 +281,8 @@ class Test(object):
         if not name in self._node_static_aliases:
             if ignore_error:
                 return name
-            helpers.environment_failure("Alias '%s' is not defined" % name)
+            helpers.environment_failure("Device alias '%s' is not defined"
+                                        % name)
         return self._node_static_aliases[name]
 
     def settings(self, name=None, value=None):
