@@ -13,13 +13,11 @@ Library				keywords/T5ZTN.py
 # Test topology: pair of controllers, one spine switch, two leaf switches (Accton).
 # For tests which check correct installation of flows on the switches, simple forwarding configuration
 # and small traffic rate will be used.
-# Measure time to bring up out-of-the-box switch
-# Measure time to reboot a switch with no significant config changes
-# Measure time for new node to start serving ZTN after failover
+# Larger testbeds will be tested inherently in other testsuites.
 
 # In this Test Suite the following terms will be used:
 # - stand-by switch - switch configured on the controller (with MAC address) with no fabric-role specified
-# - mission mode switch - switch configured on the controller (with MAC address) with fabric role, forwarding traffic
+# - provisioned switch - switch configured on the controller (with MAC address) with fabric role, forwarding traffic
 # - suspended switch - switch connected to fabric but not configured on the controller,
 #   or running wrong version of Swith Light, or with incorrect running-config
 # - ztn-discovery mode - switch in the phase of booting/searching for ZTN servers with relevant manifest file
@@ -30,14 +28,12 @@ Library				keywords/T5ZTN.py
 #   * per-switch interface configuration (as assigned by DHCP server when switch booted)
 
 
-
 *** Variables ***
 @{supported_installer_platforms}  powerpc-quanta-lb9-r0  powerpc-quanta-ly2-r0
 	...  powerpc-dni-7448-r0  powerpc-as6700-32x-r0  powerpc-as5710-54x-r0a
 	...  powerpc-as6700-32x-r0b  powerpc-as5710-54x-r0b
 @{supported_swi_platforms}  powerpc-quanta-lb9-r0  powerpc-quanta-ly2-r0
 	...  powerpc-as6700-32x-r0  powerpc-as5710-54x-r0a  powerpc-dni-7448-r0
-
 
 
 *** Test Cases ***
@@ -66,110 +62,50 @@ T1.3. Check supported platforms of SWI and installer
 	Should Contain  ${swi_platforms}  @{supported_swi_platforms}[3]
 	Should Contain  ${swi_platforms}  @{supported_swi_platforms}[4]
 
-
-### ZTN Server discovery
-T2.1. Verify that switch successfully discovers ZTN server
-T2.2. Verify that discovery process succeeds when no NTP servers are available in the network
-T2.3. Verify that discovery process succeeds when no DNS servers are available in the network
-
-# Single node cluster
-T2.S.1. Verify that switch successfully discovers ZTN server in different L2 network (L3 connectivity)
-(single server-address in vendor extensions field available)
-
-
-### Verify that discovery process continues indefinitely when:
-T3.1. no DHCP servers are available in the network - before Switch Light Install
-T3.2. no DHCP servers are available in the network - after Switch Light Install
-T3.3. no ZTN servers are available - before Switch Light Install
-T3.4. no ZTN servers are available - after Switch Light Install
-T3.5. management port of the switch is down - before Switch Light Install
-T3.6. management port of the switch is down - after Switch Light Install
-T3.7. switch's MAC address is not configured on the controller - before Switch Light Install
-T3.8. switch's MAC address is not configured on the controller - after Switch Light Install
-T3.9. switch finds manifest for its MAC address, but platform type of the switch is not supported
-T3.10. Verify that discovery process is restarted and continues indefinitely when all controllers go down during Switch Light Installer image download
-T3.11. Verify that discovery process is restarted and continues indefinitely when all controllers go down during SWI image download
-
-
-### Basic manifest, config and image download
-T4.1. Verify that switch successfully downloads manifest file, installer, SWI image and startup config
-T4.2. Verify that switch caches last known good ZTN manifest from the active ZTN server
-T4.3. Verify that switch uses cached image after reboot and does not download it again (if no image change)
-T4.4. Verify that switch uses cached config after reboot and does not download it again (if no config change)
-T4.5. Verify that discovery process is restarted when downloaded Switch Light Installer image is corrupted
-T4.6. Verify that discovery process is restarted when downloaded SWI image is corrupted
-T4.7. Verify that discovery process is restarted when switch reboots during Switch Light Installer image download
-T4.8. Verify that discovery process is restarted when switch reboots during SWI image download
-T4.9. Verify that discovery process is restarted when downloaded manifest file is corrupted (wrong checksum)
-T4.10. Verify that discovery process is restarted when specified image path is invalid
-T4.11. Verify following behaviors when switch's MAC gets deleted during switch boot up
-T4.11.1 - while Installer download - no SWI download
-T4.11.2 - while SWI download - switch undefined (suspended)
-T4.11.3 - while image startup - switch undefined (suspended)
-T4.12. Verify following behaviors when switch's name is changed during switch boot up
-T4.12.1 - while Installer download - correct SWI download and fabric join
-T4.12.2 - while SWI download - switch undefined (suspended)
-T4.12.3 - while image startup - switch undefined (suspended)
-T4.13. Verify following behaviors when ZTN config is changed during switch boot up
-T4.13.1 - while Installer download - correct SWI download and fabric join
-T4.13.2 - while SWI download - switch undefined (suspended)
-T4.13.3 - while image startup - switch undefined (suspended)
-T4.14. Verify following behaviors when switch mode (stand-by <-> mission) is changed during switch boot up
-T4.14.1 - while Installer download - correct SWI download and fabric join
-T4.14.2 - while SWI download - switch undefined (suspended)
-T4.14.3 - while image startup - switch undefined (suspended)
-T4.15. Check what happens when switch's flash is full and it is supposed to download new SL image
-
-# Single node cluster
-T4.S.1. Verify that executing "failover" command while a switch is downloading an image does not interrupt the download process
-T4.S.2. Verify that rebooting controller while a switch is downloading Installer image is restarted after controller is up again
-T4.S.3. Verify that rebooting controller while a switch is downloading SWI image is restarted after controller is up again
-
-# Two-nodes cluster
-T4.C.1. Verify that discovery process is restarted when controller failover (graceful) happens during Installer image download
-T4.C.2. Verify that discovery process is restarted when controller failover (graceful) happens during SWI image download
-T4.C.3. Verify that discovery process is restarted when controller failover (reboot) happens during Installer image download
-T4.C.4. Verify that discovery process is restarted when controller failover (reboot) happens during SWI image download
-T4.C.5. Verify that decommissioning a standby node from the cluster does not interrupt ZTN server activity (switch downloading an image finishes the process successfully)
-T4.C.6. Verify that decommissioning the active node from the cluster does not interrupt ZTN server activity in other way than failing over (switch downloading an image restarts the process and downloads from new active controller)
-
-
 ### Switch bring-up
 # Bring up out-of-the-box switch
-T5.1.1. Verify that switch successfully installs startup config template when no fabric role for the switch is specified (stand-by switch)
-T5.1.2. Verify that switch successfully installs startup config template when no fabric role for the switch is specified (stand-by switch) when switch config says "shutdown"
-T5.1.3. Verify that switch successfully installs startup config template and flows for given spine switch 
-T5.1.4. Verify that switch successfully installs startup config template and no flows for given spine switch when switch config says "shutdown"
-T5.1.5. Verify that switch successfully installs startup config template and flows for given leaf switch 
-T5.1.6. Verify that switch successfully installs startup config template and no flows for given leaf switch when switch config says "shutdown"
+T2.1.1. Verify that switch is successfully provisioned when no fabric role for the switch is specified (stand-by switch)
+T2.1.2. Verify that switch is successfully provisioned when no fabric role for the switch is specified (stand-by switch) when switch config says "shutdown"
+T2.1.3. Verify that switch is successfully provisioned and flows installed for given spine switch
+T2.1.4. Verify that switch is successfully provisioned and no flows for given spine switch when switch config says "shutdown"
+T2.1.5. Verify that switch is successfully provisioned and flows installed for given leaf switch
+T2.1.6. Verify that switch is successfully provisioned and no flows for given leaf switch when switch config says "shutdown"
 
 # Reboot active switch
-T5.2.1. Verify that switch successfully installs startup config template when no fabric role for the switch is specified (stand-by switch)
-T5.2.2. Verify that switch successfully installs startup config template when no fabric role for the switch is specified (stand-by switch) when switch config says "shutdown"
-T5.2.3. Verify that switch successfully installs startup config template and flows for given spine switch 
-T5.2.4. Verify that switch successfully installs startup config template and no flows for given spine switch when switch config says "shutdown"
-T5.2.5. Verify that switch successfully installs startup config template and flows for given leaf switch 
-T5.2.6. Verify that switch successfully installs startup config template and no flows for given leaf switch when switch config says "shutdown"
-
+T2.2.1. Verify that switch is successfully provisioned when no fabric role for the switch is specified (stand-by switch)
+T2.2.2. Verify that switch is successfully provisioned when no fabric role for the switch is specified (stand-by switch) when switch config says "shutdown"
+T2.2.3. Verify that switch is successfully provisioned and flows installed for given spine switch
+T2.2.4. Verify that switch is successfully provisioned and no flows for given spine switch when switch config says "shutdown"
+T2.2.5. Verify that switch is successfully provisioned and flows installed for given leaf switch
+T2.2.6. Verify that switch is successfully provisioned and no flows for given leaf switch when switch config says "shutdown"
 
 ### Regular operations
-T6.1. Verify that after ZTN configuration change, new startup-config is available in manifest / ZTN url for each switch
-T6.2. Verify that after ZTN configuration change, admin is notified to trigger reload of configuration on the switch, and that after reload configuration on switch gets updated 
-T6.3. Change ZTN configuration, do not reload the switch, restore old config (check if reload command on UI is still requested), reload switch - verify that config on switch is correct
-T6.4. Change ZTN configuration, reload half of switches, restore old config - verify that all switches need to be reloaded
-T6.5. Change startup-config on switch manually, verify that startup-config on switch is synced to the one at the controller after reload
-T6.6. Manually change running-config on the switch while switch is connected. Verify that controller is able to notice change and ask the switch to update its configuration and switch is disallowed from the network until config gets updated
-T6.7. Manually change running-config on the switch while switch is disconnected. Verify that after reconnecting switch, controller is able to recognize change and ask the switch to update its configuration and switch is disallowed from the network until config gets updated
-T6.8. Disconnect all switches from the fabric (ma1 down) then do significant changes in fabric configuration (startup-config template, switch roles) - error should be presented, reconnect the switch - incorrect running config should be noticed by the controller and admin should be notified to take action (reload config on switch)
-T6.9. Delete all switches from the controller, reboot all switches (they should keep looking for ZTN server). Copy RC from external source (config://, scp://, file) to running config, watch the fabric come up.
+T3.1. Verify that after ZTN configuration change, new startup-config is available in manifest / ZTN url for each switch
+T3.2. Verify that after ZTN configuration change, admin is notified to trigger reload of configuration on the switch, and that after reload configuration on switch gets updated
+T3.3. Change ZTN configuration, do not reload the switch, restore old config (check if reload command on UI is still requested), reload switch - verify that config on switch is correct
+T3.4. Change ZTN configuration, do not reload the switch, change config again (check if reload command on UI is still requested), reload switch - verify that config on switch is correct
+T3.5. Change ZTN configuration, reload half of switches, restore old config - verify that all switches need to be reloaded
+T3.6. Change ZTN configuration, reload half of switches, change config again - verify that all switches need to be reloaded
+T3.7. Disconnect all switches from the fabric (ma1 down) then do significant changes in fabric configuration (startup-config template, switch roles) - error should be presented, reconnect the switch - incorrect running config should be noticed by the controller and admin should be notified to take action (reload config on switch)
+T3.8. Delete all switches from the controller, reboot all switches (they should keep looking for ZTN server). Copy RC from external source (config://, scp://, file) to running config, watch the fabric come up.
+
+# MAC Replacement
+T4.1. Replace provisioned switch's MAC with MAC of powered-down switch, verify correct boot of new switch
+T4.2. Replace provisioned switch's MAC with MAC of up but disconnected switch, reconnect, verify correct commissioning
+T4.3. Replace provisioned switch's MAC with MAC of suspended switch, verify correct commissioned
+T4.4. Replace stand-by switch's MAC with MAC of powered-down switch, verify correct boot of new switch
+T4.5. Replace stand-by switch's MAC with MAC of up but disconnected switch, reconnect, verify correct commissioning
+T4.6. Replace stand-by switch's MAC with MAC of suspended switch, verify correct commissioned
+T4.7. Swap MAC addresses of two stand-by switches
+T4.8. Swap MAC addresses of two provisioned switches
 
 
 ### ZTN handling config changes
 ## *after config change controller should should present error message that switch is not connected
 
-# Switch in mission mode
-T7.1.1. Power down, change config
-	Verify Switch Mode  ${switch}  mission
+# Switch in provisioned mode
+T5.1.1. Power down, change config
+	Verify Switch Mode  ${switch}  provisioned
 	Switch Power Down  ${switch}
 	Perform ZTN Config Change
 	Change Switch Name  ${switch}  ${new-name}
@@ -178,15 +114,15 @@ T7.1.1. Power down, change config
 	Verify Switch Mode  ${switch}  stand-by
 	Verify Switch Config  ${switch}
 
-T7.1.2. Power down, decommission
-	Verify Switch Mode  ${switch}  mission
+T5.1.2. Power down, delete
+	Verify Switch Mode  ${switch}  provisioned
 	Switch Power Down  ${switch}
-	Decommission Switch  ${switch}
+	Delete Switch  ${switch}
 	Switch Power Up  ${switch}
 	Verify Switch Mode  ${switch}  ztn-discovery
 
-T7.1.3. Power down, change config, failover
-	Verify Switch Mode  ${switch}  mission
+T5.1.3. Power down, change config, failover
+	Verify Switch Mode  ${switch}  provisioned
 	Switch Power Down  ${switch}
 	Perform ZTN Config Change
 	Change Switch Name  ${switch}  ${new-name}
@@ -196,55 +132,55 @@ T7.1.3. Power down, change config, failover
 	Verify Switch Mode  ${switch}  stand-by
 	Verify Switch Config  ${switch}
 
-T7.1.4. Power down, decommission, failover
-	Verify Switch Mode  ${switch}  mission
+T5.1.4. Power down, delete, failover
+	Verify Switch Mode  ${switch}  provisioned
 	Switch Power Down  ${switch}
-	Decommission Switch  ${switch}
+	Delete Switch  ${switch}
 	Failover
 	Switch Power Up  ${switch}
 	Verify Switch Mode  ${switch}  ztn-discovery
 
 # Switch in stand-by mode
-T7.2.1. Power down, change config
+T5.2.1. Power down, change config
 	Verify Switch Mode  ${switch}  stand-by
 	Switch Power Down  ${switch}
 	Perform ZTN Config Change
 	Change Switch Name  ${switch}  ${new-name}
-	Set Switch Mode  ${switch}  mission
+	Set Switch Mode  ${switch}  provisioned
 	Switch Power Up  ${switch}
-	Verify Switch Mode  ${switch}  mission
+	Verify Switch Mode  ${switch}  provisioned
 	Verify Switch Config  ${switch}
 
-T7.2.2. Power down, decommission
+T5.2.2. Power down, delete
 	Verify Switch Mode  ${switch}  stand-by
-	Verify Switch Mode  ${switch}  mission
+	Verify Switch Mode  ${switch}  provisioned
 	Switch Power Down  ${switch}
-	Decommission Switch  ${switch}
+	Delete Switch  ${switch}
 	Switch Power Up  ${switch}
 	Verify Switch Mode  ${switch}  ztn-discovery
 
-T7.2.3. Power down, change config, failover
+T5.2.3. Power down, change config, failover
 	Verify Switch Mode  ${switch}  stand-by
 	Switch Power Down  ${switch}
 	Perform ZTN Config Change
 	Change Switch Name  ${switch}  ${new-name}
-	Set Switch Mode  ${switch}  mission
+	Set Switch Mode  ${switch}  provisioned
 	Failover
 	Switch Power Up  ${switch}
-	Verify Switch Mode  ${switch}  mission
+	Verify Switch Mode  ${switch}  provisioned
 	Verify Switch Config  ${switch}
 
-T7.2.4. Power down, decommission, failover
+T5.2.4. Power down, delete, failover
 	Verify Switch Mode  ${switch}  stand-by
 	Switch Power Down  ${switch}
-	Decommission Switch  ${switch}
+	Delete Switch  ${switch}
 	Failover
 	Switch Power Up  ${switch}
 	Verify Switch Mode  ${switch}  ztn-discovery
 
-# Switch in mission mode
-T7.3.1. Disconnect, change config, reconnect, reload
-	Verify Switch Mode  ${switch}  mission
+# Switch in provisioned mode
+T5.3.1. Disconnect, change config, reconnect, reload
+	Verify Switch Mode  ${switch}  provisioned
 	Switch Disconnect  ${switch}
 	Perform ZTN Config Change
 	Change Switch Name  ${switch}  ${new-name}
@@ -255,18 +191,18 @@ T7.3.1. Disconnect, change config, reconnect, reload
 	Verify Switch Mode  ${switch}  stand-by
 	Verify Switch Config  ${switch}
 
-T7.3.2. Disconnect, decommission, reconnect, reload (reboot?)
-	Verify Switch Mode  ${switch}  mission
+T5.3.2. Disconnect, delete, reconnect, reload (reboot?)
+	Verify Switch Mode  ${switch}  provisioned
 	Switch Disconnect  ${switch}
-	Decommission Switch  ${switch}
+	Delete Switch  ${switch}
 	Switch Reconnect  ${switch}
 	Verify Switch Needs to be Reloaded  ${switch}
 	Trigger Switch Config Reload  ${switch}
 	Verify Switch Mode  ${switch}  suspended
 #?? what if config changed on the way??, would it be updated?
 
-T7.3.3. Disconnect, change config, reboot
-	Verify Switch Mode  ${switch}  mission
+T5.3.3. Disconnect, change config, reboot
+	Verify Switch Mode  ${switch}  provisioned
 	Switch Disconnect  ${switch}
 	Perform ZTN Config Change
 	Change Switch Name  ${switch}  ${new-name}
@@ -275,15 +211,15 @@ T7.3.3. Disconnect, change config, reboot
 	Verify Switch Mode  ${switch}  stand-by
 	Verify Switch Config  ${switch}
 
-T7.3.4. Disconnect, decommission, reboot
-	Verify Switch Mode  ${switch}  mission
+T5.3.4. Disconnect, delete, reboot
+	Verify Switch Mode  ${switch}  provisioned
 	Switch Disconnect  ${switch}
-	Decommission Switch  ${switch}
+	Delete Switch  ${switch}
 	Switch Reboot  ${switch}
 	Verify Switch Mode  ${switch}  ztn-discovery
 
-T7.3.5. Disconnect, change config, failover, reconnect, reload
-	Verify Switch Mode  ${switch}  mission
+T5.3.5. Disconnect, change config, failover, reconnect, reload
+	Verify Switch Mode  ${switch}  provisioned
 	Switch Disconnect  ${switch}
 	Perform ZTN Config Change
 	Change Switch Name  ${switch}  ${new-name}
@@ -295,18 +231,18 @@ T7.3.5. Disconnect, change config, failover, reconnect, reload
 	Verify Switch Mode  ${switch}  stand-by
 	Verify Switch Config  ${switch}
 
-T7.3.6. Disconnect, decommission, failover, reconnect, reload (reboot?)
-	Verify Switch Mode  ${switch}  mission
+T5.3.6. Disconnect, delete, failover, reconnect, reload (reboot?)
+	Verify Switch Mode  ${switch}  provisioned
 	Switch Disconnect  ${switch}
-	Decommission Switch  ${switch}
+	Delete Switch  ${switch}
 	Failover
 	Switch Reconnect  ${switch}
 	Verify Switch Needs to be Reloaded  ${switch}
 	Trigger Switch Config Reload  ${switch}
 	Verify Switch Mode  ${switch}  suspended
 
-T7.3.7. Disconnect, change config, failover, reboot
-	Verify Switch Mode  ${switch}  mission
+T5.3.7. Disconnect, change config, failover, reboot
+	Verify Switch Mode  ${switch}  provisioned
 	Switch Disconnect  ${switch}
 	Perform ZTN Config Change
 	Change Switch Name  ${switch}  ${new-name}
@@ -316,16 +252,16 @@ T7.3.7. Disconnect, change config, failover, reboot
 	Verify Switch Mode  ${switch}  stand-by
 	Verify Switch Config  ${switch}
 
-T7.3.8. Disconnect, decommission, failover, reboot
-	Verify Switch Mode  ${switch}  mission
+T5.3.8. Disconnect, delete, failover, reboot
+	Verify Switch Mode  ${switch}  provisioned
 	Switch Disconnect  ${switch}
-	Decommission Switch  ${switch}
+	Delete Switch  ${switch}
 	Failover
 	Switch Reboot  ${switch}
 	Verify Switch Mode  ${switch}  ztn-discovery
 
-T7.3.9. Disconnect, change config, double failover, reconnect, reload
-	Verify Switch Mode  ${switch}  mission
+T5.3.9. Disconnect, change config, double failover, reconnect, reload
+	Verify Switch Mode  ${switch}  provisioned
 	Switch Disconnect  ${switch}
 	Perform ZTN Config Change
 	Change Switch Name  ${switch}  ${new-name}
@@ -338,10 +274,10 @@ T7.3.9. Disconnect, change config, double failover, reconnect, reload
 	Verify Switch Mode  ${switch}  stand-by
 	Verify Switch Config  ${switch}
 
-T7.3.10. Disconnect, decommission, double failover, reconnect, reload (reboot?)
-	Verify Switch Mode  ${switch}  mission
+T5.3.10. Disconnect, delete, double failover, reconnect, reload (reboot?)
+	Verify Switch Mode  ${switch}  provisioned
 	Switch Disconnect  ${switch}
-	Decommission Switch  ${switch}
+	Delete Switch  ${switch}
 	Failover
 	Failover
 	Switch Reconnect  ${switch}
@@ -349,8 +285,8 @@ T7.3.10. Disconnect, decommission, double failover, reconnect, reload (reboot?)
 	Trigger Switch Config Reload  ${switch}
 	Verify Switch Mode  ${switch}  suspended
 
-T7.3.11. Disconnect, change config, double failover, reboot
-	Verify Switch Mode  ${switch}  mission
+T5.3.11. Disconnect, change config, double failover, reboot
+	Verify Switch Mode  ${switch}  provisioned
 	Switch Disconnect  ${switch}
 	Perform ZTN Config Change
 	Change Switch Name  ${switch}  ${new-name}
@@ -361,90 +297,164 @@ T7.3.11. Disconnect, change config, double failover, reboot
 	Verify Switch Mode  ${switch}  stand-by
 	Verify Switch Config  ${switch}
 
-T7.3.12. Disconnect, decommission, double failover, reboot
-	Verify Switch Mode  ${switch}  mission
+T5.3.12. Disconnect, delete, double failover, reboot
+	Verify Switch Mode  ${switch}  provisioned
 	Switch Disconnect  ${switch}
-	Decommission Switch  ${switch}
+	Delete Switch  ${switch}
 	Failover
 	Failover
 	Switch Reboot  ${switch}
 	Verify Switch Mode  ${switch}  ztn-discovery
 
+# Switch in stand-by mode
+T5.4.1. Disconnect, change config, reconnect, reload
+T5.4.2. Disconnect, delete, reconnect, reload (reboot?)
+T5.4.3. Disconnect, change config, reboot
+T5.4.4. Disconnect, delete, reboot
+T5.4.5. Disconnect, change config, failover, reconnect, reload
+T5.4.6. Disconnect, delete, failover, reconnect, reload (reboot?)
+T5.4.7. Disconnect, change config, failover, reboot
+T5.4.8. Disconnect, delete, failover, reboot
+T5.4.9. Disconnect, change config, double failover, reconnect, reload
+T5.4.10. Disconnect, delete, double failover, reconnect, reload (reboot?)
+T5.4.11. Disconnect, change config, double failover, reboot
+T5.4.12. Disconnect, delete, double failover, reboot
+
+# Switch in provisioned mode
+T5.5.1. Connected, change config, flap interface, reload
+T5.5.2. Connected, delete, flap interface, reload (reboot?)
+T5.5.3. Connected, change config, reboot
+T5.5.4. Connected, delete, reboot
+T5.5.5. Connected, change config, failover, reconnect, reload
+T5.5.6. Connected, delete, failover, reconnect, reload (reboot?)
+T5.5.7. Connected, change config, failover, reboot
+T5.5.8. Connected, delete, failover, reboot
+T5.5.9. Connected, change config, double failover, reconnect, reload
+T5.5.10. Connected, delete, double failover, reconnect, reload (reboot?)
+T5.5.11. Connected, change config, double failover, reboot
+T5.5.12. Connected, delete, double failover, reboot
 
 # Switch in stand-by mode
-T7.4.1. Disconnect, change config, reconnect, reload
-T7.4.2. Disconnect, decommission, reconnect, reload (reboot?)
-T7.4.3. Disconnect, change config, reboot
-T7.4.4. Disconnect, decommission, reboot
-T7.4.5. Disconnect, change config, failover, reconnect, reload
-T7.4.6. Disconnect, decommission, failover, reconnect, reload (reboot?)
-T7.4.7. Disconnect, change config, failover, reboot
-T7.4.8. Disconnect, decommission, failover, reboot
-T7.4.9. Disconnect, change config, double failover, reconnect, reload
-T7.4.10. Disconnect, decommission, double failover, reconnect, reload (reboot?)
-T7.4.11. Disconnect, change config, double failover, reboot
-T7.4.12. Disconnect, decommission, double failover, reboot
+T5.6.1. Connected, change config, flap interface, reload
+T5.6.2. Connected, delete, flap interface, reload (reboot?)
+T5.6.3. Connected, change config, reboot
+T5.6.4. Connected, delete, reboot
+T5.6.5. Connected, change config, failover, reconnect, reload
+T5.6.6. Connected, delete, failover, reconnect, reload (reboot?)
+T5.6.7. Connected, change config, failover, reboot
+T5.6.8. Connected, delete, failover, reboot
+T5.6.9. Connected, change config, double failover, reconnect, reload
+T5.6.10. Connected, delete, double failover, reconnect, reload (reboot?)
+T5.6.11. Connected, change config, double failover, reboot
+T5.6.12. Connected, delete, double failover, reboot
 
-# Switch in mission mode
-T7.5.1. Connected, change config, flap interface, reload
-T7.5.2. Connected, decommission, flap interface, reload (reboot?)
-T7.5.3. Connected, change config, reboot
-T7.5.4. Connected, decommission, reboot
-T7.5.5. Connected, change config, failover, reconnect, reload
-T7.5.6. Connected, decommission, failover, reconnect, reload (reboot?)
-T7.5.7. Connected, change config, failover, reboot
-T7.5.8. Connected, decommission, failover, reboot
-T7.5.9. Connected, change config, double failover, reconnect, reload
-T7.5.10. Connected, decommission, double failover, reconnect, reload (reboot?)
-T7.5.11. Connected, change config, double failover, reboot
-T7.5.12. Connected, decommission, double failover, reboot
 
-# Switch in stand-by mode
-T7.6.1. Connected, change config, flap interface, reload
-T7.6.2. Connected, decommission, flap interface, reload (reboot?)
-T7.6.3. Connected, change config, reboot
-T7.6.4. Connected, decommission, reboot
-T7.6.5. Connected, change config, failover, reconnect, reload
-T7.6.6. Connected, decommission, failover, reconnect, reload (reboot?)
-T7.6.7. Connected, change config, failover, reboot
-T7.6.8. Connected, decommission, failover, reboot
-T7.6.9. Connected, change config, double failover, reconnect, reload
-T7.6.10. Connected, decommission, double failover, reconnect, reload (reboot?)
-T7.6.11. Connected, change config, double failover, reboot
-T7.6.12. Connected, decommission, double failover, reboot
+### Miscellaneous
+T6.1. Change startup-config on switch manually, verify that startup-config on switch is synced to the one at the controller after reload
+T6.2. Manually change running-config on the switch while switch is connected. Verify that controller is able to notice change and ask the switch to update its configuration and switch is disallowed from the network until config gets updated
+T6.3. Manually change running-config on the switch while switch is disconnected. Verify that after reconnecting switch, controller is able to recognize change and ask the switch to update its configuration and switch is disallowed from the network until config gets updated
+T6.4. Verify that switch stays in stand-by mode when all controllers go down (until rebooted)
+T6.5. Verify that switch stays in provisioned mode when all controllers go down (until rebooted)
+T6.6. Verify that controller does platform check for switches, after configuring their MAC address, to see whether they are on the supported platform list
+T6.7. Switch running wrong version of switch light, issue reboot, verify new image installed, and switch ok.
+T6.8. Issue reboot command for a switch that is not connected - error should be presented
+T6.9. Issue reload command for a switch that is not connected - error should be presented
+T6.10. Verify that controller caches information about switch from its manifest, and it is available after failover
+T6.11. Verify that controller can get list of images stored at switch's flash, and it is available after failover
+T6.12. Verify what happens when switch config changes while fabric is operating in headless mode
+T6.13. Verify that there is no way to introduce *any* switch config changes from the stand-by controller
+T6.14. Verify that switch caches last known good ZTN manifest from the active ZTN server
+T6.15. Verify that switch uses cached image after reboot and does not download it again (if no image change)
+T6.16. Verify that switch uses cached config after reboot and does not download it again (if no config change)
+T6.17. Verify that discovery process succeeds when no NTP servers are available in the network
+T6.18. Verify that discovery process succeeds when no DNS servers are available in the network
+T6.19. Verify that manifest for given switch is deleted just after switch is deleted from fabric
 
-# MAC Replacement
-T7.7.1. Replace mission mode switch's MAC with MAC of powered-down switch, verify correct boot of new switch
-T7.7.2. Replace mission mode switch's MAC with MAC of up but disconnected switch, reconnect, verify correct commissioning
-T7.7.3. Replace mission mode switch's MAC with MAC of suspended switch, verify correct commissioning
-T7.7.4. Replace stand-by switch's MAC with MAC of powered-down switch, verify correct boot of new switch
-T7.7.5. Replace stand-by switch's MAC with MAC of up but disconnected switch, reconnect, verify correct commissioning
-T7.7.6. Replace stand-by switch's MAC with MAC of suspended switch, verify correct commissioning
-T7.7.7. Swap MAC addresses of two initially stand-by switches
-T7.7.8. Swap MAC addresses of two initially mission mode switches
+# Negative
+### Verify that discovery process continues indefinitely when:
+T7.1. no DHCP servers are available in the network - before Switch Light Install
+T7.2. no DHCP servers are available in the network - after Switch Light Install
+T7.3. no ZTN servers are available - before Switch Light Install
+T7.4. no ZTN servers are available - after Switch Light Install
+T7.5. management port of the switch is down - before Switch Light Install
+T7.6. management port of the switch is down - after Switch Light Install
+T7.7. switch's MAC address is not configured on the controller - before Switch Light Install
+T7.8. switch's MAC address is not configured on the controller - after Switch Light Install
+T7.9. switch finds manifest for its MAC address, but platform type of the switch is not supported
+T7.10. Verify that Switch Light Image download is resumed after connectivity flap
+T7.11. Verify that SWI image download is resumed after connectivity flap
+T7.12. Verify that ZTN manifest search is resumed after connectivity flap
+T7.13. Verify that discovery process times out and restarts when all controllers go down during Switch Light Installer image download
+T7.14. Verify that discovery process times out and restarts when all controllers go down during SWI image download
+T7.15. Verify that discovery process times out and restarts when all controllers go down during ZTN manifest search
+T7.16. Verify that discovery process times out and restarts when connectivity goes down while Switch Light Installer download
+T7.17. Verify that discovery process times out and restarts when connectivity goes down while SWI Image download
+T7.18. Verify that discovery process times out and restarts when connectivity goes down while searching for ZTN manifests
+T7.19. Verify that discovery process restarts when downloaded Switch Light Installer image is corrupted
+T7.20. Verify that discovery process restarts when downloaded SWI image is corrupted
+T7.21. Verify that discovery process restarts when downloaded manifest file is corrupted
+T7.22. Verify that discovery process restarts when switch reboots during Switch Light Installer image download
+T7.23. Verify that discovery process restarts when switch reboots during SWI image download
+T7.24. Verify that discovery process restarts when switch reboots while searching for ZTN manifests
+T7.25. Verify that discovery process restarts when specified image path is invalid
+#7.26. Verify following behaviors when switch's MAC gets deleted during switch boot up
+T7.27.1 - while Installer download - no SWI download
+T7.27.2 - while SWI download - switch undefined (suspended)
+T7.27.3 - while image startup - switch undefined (suspended)
+#7.28. Verify following behaviors when switch's name is changed during switch boot up
+T7.28.1 - while Installer download - correct SWI download and fabric join
+T7.28.2 - while SWI download - switch undefined (suspended)
+T7.28.3 - while image startup - switch undefined (suspended)
+#7.29. Verify following behaviors when ZTN config is changed during switch boot up
+T7.29.1 - while Installer download - correct SWI download and fabric join
+T7.29.2 - while SWI download - switch undefined (suspended)
+T7.29.3 - while image startup - switch undefined (suspended)
+#7.30. Verify following behaviors when switch mode (stand-by <-> provisioned) is changed during switch boot up
+T7.30.1 - while Installer download - correct SWI download and fabric join
+T7.30.2 - while SWI download - switch undefined (suspended)
+T7.30.3 - while image startup - switch undefined (suspended)
+T7.31. Check what happens when switch's flash is full and it is supposed to download new SL image
 
-# Upgrade - only a few general test cases, probably we will have separate upgrade Test Suite
+# Single node cluster
+T7.32.1. Verify that executing "failover" command while a switch is downloading an image does not interrupt the download process
+T7.32.2. Verify that rebooting controller while a switch is downloading Installer image is restarted after controller is up again
+T7.32.3. Verify that rebooting controller while a switch is downloading SWI image is restarted after controller is up again
+T7.32.3. Verify that rebooting controller while a switch is searching for manifest is restarted after controller is up again
+
+# Two-nodes cluster
+T7.33.1. Verify that discovery process is restarted when controller failover (graceful) happens during Installer image download
+T7.33.2. Verify that discovery process is restarted when controller failover (graceful) happens during SWI image download
+T7.33.3. Verify that discovery process is restarted when controller failover (reboot) happens during Installer image download
+T7.33.4. Verify that discovery process is restarted when controller failover (reboot) happens during SWI image download
+T7.33.5. Verify that decommissioning a standby node from the cluster does not interrupt ZTN server activity (switch downloading an image finishes the process successfully)
+T7.33.6. Verify that decommissioning the active node from the cluster does not interrupt ZTN server activity in other way than failing over (switch downloading an image restarts the process and downloads from new active controller)
+
+### Upgrade - only a few general test cases
+# There is a separate test plan for upgrade process
 T8.1. Pre-staging - verify that works
 T8.2. Pre-staging - check behavior when downloading image for pre-staging fails
 T8.3. Pre-staging - verify that pre-staging result (success/fail) is visible from controller
-T8.4. Upgrade Switch Light Installer
-T8.5. Check if upgrade is possible when not all switches are in mission mode
-
-### Miscellaneous
-T9.1. Verify that switch stays in stand-by mode when all controllers go down (until rebooted)
-T9.2. Verify that switch stays in mission mode when all controllers go down (until rebooted)
-T9.3. Verify that controller does platform check for switches, after configuring their MAC address, to see whether they are on the supported platform list
-T9.4. Switch running wrong version of switch light, issue reboot, verify new image installed, and switch ok.
-T9.5. Issue reboot command for a switch that is not connected - error should be presented
-T9.6. Issue reload command for a switch that is not connected - error should be presented
-T9.7. Verify that controller caches information about switch from its manifest, and it is available after failover
-T9.8. Verify that controller can get list of images stored at switch's flash, and it is available after failover
-T9.9. Verify what happens when switch config changes while fabric is operating in headless mode
-T9.10. Verify that there is no way to introduce *any* switch config changes from the stand-by controller
+T8.4. Pre-staging - verify that pre-staging works if switches connected to controller A, and there was a failover to controller B
+T8.5. Upgrade Switch Light Installer
+T8.6. Check if upgrade is possible when not all switches are in provisioned mode
 
 ### Show
-T10.1. Verify that switch configured state can be viewed on the switch
-T10.2. Verify that switch operational state can be viewed on the switch
-T10.3. Verify that switch configured state can be viewed on the controller
-T10.4. Verify that switch operational state can be viewed on the controller
-T10.5. Verify that all switch-related 'show' commands are accessible from the controller
+T9.1. Verify that switch configured state can be viewed on the switch
+T9.2. Verify that switch operational state can be viewed on the switch
+T9.3. Verify that switch configured state can be viewed on the controller
+T9.4. Verify that switch operational state can be viewed on the controller
+T9.5. Verify that all switch-related 'show' commands are accessible from the controller
+T9.6. Verify that there is appropriate command to show ztn status of each switch
+T9.7. Verift that admin can view version of SL running on each switch
+T9.8. ? Verify that admin can view all images stored on flash at given switch
+
+### Questions to ask
+# Separate ZTN log
+# Configuring MAC on two clusters (first-come first-serve?)
+# Split brain will behave as configuring MAC on two clusters?
+# Will changing fabric roles be supported / validated against switch model
+# Will it be required to "shutdown" switch before introducing fabric-related changes? Deleting, changing fabric roles, MAC?
+# Will we see what SL images are in upgrade package?
+# Will we see at which stage of provisioning is given switch? e.g. downloading SL image, booting, ... ?
+# Limit on switches that can be handled by ZTN?
+# Validation of MAC addresses in CLI before making any changes? Invalid, broadcast, special MAC?

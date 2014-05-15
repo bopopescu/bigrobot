@@ -14,8 +14,9 @@ class RestClient(object):
     default_timeout = 45
 
     http_codes = {
-        '200': 'OK',
+        '200': 'OK',  # 200 through 300 are success (BSN-specific)
         '401': 'Unauthorized',
+        '409': 'List element already exists',  # (BSN-specific)
         '500': 'Internal Server Error',
         'unknown': 'Unknown error (unexpected HTTP status code)'
     }
@@ -165,12 +166,8 @@ class RestClient(object):
 
         result = {'content': python_content}
         result['http_verb'] = verb
-        result['status_code'] = code
+        result['status_code'] = int(code)
         result['request_url'] = url
-        if code in RestClient.http_codes:
-            result['status_descr'] = RestClient.http_codes[code]
-        else:
-            result['status_descr'] = RestClient.http_codes['unknown']
 
         if save_last_result:
             self.last_result = result
@@ -180,27 +177,34 @@ class RestClient(object):
 
         # ATTENTION: RESTclient will generate an exception when the
         # HTTP status code is anything other than:
-        #   - 200 (OK)
-        #   - 201 (Created)
-        #   - 202 (Accepted)
-        #   - 409 (Conflict, if description matches 'exists', else consider it
-        #          unknown)
+        #   - 200-300
+        #     - 200 (OK)
+        #     - 201 (Created)
+        #     - 202 (Accepted)
+        #   - 401 (Authen/session cookie issue)
+        #   - 409 (List element already exists)
         #
         # Reference:
         # http://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml
+        if code in RestClient.http_codes:
+            result['status_descr'] = RestClient.http_codes[code]
+        elif int(code) in range(200, 300):  # Success (BSN-specific)
+            result['status_descr'] = RestClient.http_codes['200']
+        else:
+            result['status_descr'] = RestClient.http_codes['unknown']
 
         result['success'] = False
 
         # As per https://github.com/bigswitch/floodlight/commit/a432f1b501640474b8bf6cb87a07dcbf28df8691
         if int(code) in range(200, 300):
             result['success'] = True
-        elif int(code) == 409 and re.match(r'.*exists', result['status_descr']):
-            # On POST when "List element already exists"
-            result['success'] = True
-        elif int(code) == 401 and result['status_descr'] == 'Unauthorized':
+        elif int(code) == 401:
             # Session cookie has expired. This requires exception handling
             # by BigRobot
             pass
+        elif int(code) == 409:
+            # On POST when "List element already exists"
+            result['success'] = True
         else:
             helpers.test_error("REST call failed with status code %s" % code)
 
@@ -212,7 +216,7 @@ class RestClient(object):
         # !!! FIXME: Handle case where session cookie is expired for
         # Big Switch controllers. It really shouldn't be in the generic
         # module. Should really reside in bsn_restclient.py.
-        if int(result['status_code']) == 401 and result['status_descr'] == 'Unauthorized':
+        if int(result['status_code']) == 401:
             if self.session_cookie_loop > 5:
                 helpers.test_error("Detected session cookie loop.")
             else:
