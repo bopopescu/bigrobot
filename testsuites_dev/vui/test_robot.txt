@@ -179,17 +179,21 @@ Test get a dict
     Log               Result = ${result['def'][0]['second']}
 
 Initialize policy vars
-    #[Tags]           skipped
+    [Tags]           skipped
+    [Documentation]   T1.1
     ${temp}=                 create dictionary  cidr  10.10.11.11/32
     Set global variable      ${POLICY_BM0_IP}  ${temp}
-    Should be true    ${false}
+    Should be true    ${true}
 
 Display policy vars
-    #[Tags]           skipped
+    [Tags]           skipped
+    [Documentation]   T1.2
     log               ${POLICY_BM0_IP}
 
 Test run commands
     test run cmd
+    [setup]           log  I am in my custom test case setup
+    [teardown]        log  I am in my custom test case teardown
 
 
 * Keywords

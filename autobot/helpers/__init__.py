@@ -457,6 +457,14 @@ def bigrobot_test_postmortem(new_val=None, default='True'):
     return _env_get_and_set('BIGROBOT_TEST_POSTMORTEM', new_val, default)
 
 
+def bigrobot_log_archiver(new_val=None, default='jenkins-w9.bigswitch.com'):
+    """
+    Category: Get/set environment variables for BigRobot.
+    This is used to archive the postmortem logs.
+    """
+    return _env_get_and_set('BIGROBOT_LOG_ARCHIVER', new_val, default)
+
+
 def bigrobot_test_pause_on_fail(new_val=None, default='False'):
     """
     Category: Get/set environment variables for BigRobot.
