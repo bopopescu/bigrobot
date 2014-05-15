@@ -109,41 +109,41 @@ T6.6. Disconnect stand-by switch - shut down interface, do failover and reconnec
 T6.7. Disconnect stand-by switch - change to mission mode and shut down switch, do failover and reconnect - verify all interfaces down
 T6.8. Disconnect stand-by switch - change to mission mode and shut down interface, do failover and reconnect - verify interface down
 
-### Port Group
-T7.1. Configure port-group on mission mode switch - should work
-T7.2. Configure port-group on mission mode switch, shut down switch - port group should be deleted
-T7.3. Configure port-group on mission mode switch, shut down one of member interfaces - port group should be updated
-T7.4. Configure port-group on mission mode switch, delete fabric-role - port group should be deleted
-T7.5. Configure port-group on shutdown mission mode switch, unshut - port group should be created
-T7.6. Configure port-group on shutdown interface of mission mode switch, unshut interface - port group should be updated
-T7.7. Configure port-group on stand-by switch - should not work
-T7.8. Configure port-group on stand-by switch, assign fabric-role - port group should be created
-T7.9. Configure port-group on shutdown stand-by switch, assign fabric-role and unshut - port group should finally be created
-T7.10. Configure port-group on shutdown interface of stand-by switch, assign fabric-role and unshut interface - port group should finally be created
-
-T8.1. Power down, configure port-group on mission mode switch, power up - should work
-T8.2. Disconnect, configure port-group on mission mode switch, reconnect - should work
-T8.3. Power down, configure port-group on mission mode switch, failover and power up - should work
-T8.4. Disconnect, configure port-group on mission mode switch, failover, reconnect - should work
-
-
-### Monitor session
-T9.1. Configure monitor-session on mission mode switch - should work
-T9.2. Configure monitor-session on mission mode switch, shut down switch - monitor-session should be deleted
-T9.3. Configure monitor-session on mission mode switch, shut down one of member interfaces - monitor-session should be updated
-T9.4. Configure monitor-session on mission mode switch, delete fabric-role - monitor-session should be deleted
-T9.5. Configure monitor-session on shutdown mission mode switch, unshut - monitor-session should be created
-T9.6. Configure monitor-session on shutdown interface of mission mode switch, unshut interface - monitor-session should be updated
-T9.7. Configure monitor-session on stand-by switch - should not work
-T9.8. Configure monitor-session on stand-by switch, assign fabric-role - monitor-session should be created
-T9.9. Configure monitor-session on shutdown stand-by switch, assign fabric-role and unshut - monitor-session should finally be created
-T9.10. Configure monitor-session on shutdown interface of stand-by switch, assign fabric-role and unshut interface - monitor-session should finally be created
-
-T10.1. Power down, configure monitor-session on mission mode switch, power up - should work
-T10.2. Disconnect, configure monitor-session on mission mode switch, reconnect - should work
-T10.3. Power down, configure monitor-session on mission mode switch, failover and power up - should work
-T10.4. Disconnect, configure monitor-session on mission mode switch, failover, reconnect - should work
-
+#### Port Group
+#T7.1. Configure port-group on mission mode switch - should work
+#T7.2. Configure port-group on mission mode switch, shut down switch - port group should be deleted
+#T7.3. Configure port-group on mission mode switch, shut down one of member interfaces - port group should be updated
+#T7.4. Configure port-group on mission mode switch, delete fabric-role - port group should be deleted
+#T7.5. Configure port-group on shutdown mission mode switch, unshut - port group should be created
+#T7.6. Configure port-group on shutdown interface of mission mode switch, unshut interface - port group should be updated
+#T7.7. Configure port-group on stand-by switch - should not work
+#T7.8. Configure port-group on stand-by switch, assign fabric-role - port group should be created
+#T7.9. Configure port-group on shutdown stand-by switch, assign fabric-role and unshut - port group should finally be created
+#T7.10. Configure port-group on shutdown interface of stand-by switch, assign fabric-role and unshut interface - port group should finally be created
+#
+#T8.1. Power down, configure port-group on mission mode switch, power up - should work
+#T8.2. Disconnect, configure port-group on mission mode switch, reconnect - should work
+#T8.3. Power down, configure port-group on mission mode switch, failover and power up - should work
+#T8.4. Disconnect, configure port-group on mission mode switch, failover, reconnect - should work
+#
+#
+#### Monitor session
+#T9.1. Configure monitor-session on mission mode switch - should work
+#T9.2. Configure monitor-session on mission mode switch, shut down switch - monitor-session should be deleted
+#T9.3. Configure monitor-session on mission mode switch, shut down one of member interfaces - monitor-session should be updated
+#T9.4. Configure monitor-session on mission mode switch, delete fabric-role - monitor-session should be deleted
+#T9.5. Configure monitor-session on shutdown mission mode switch, unshut - monitor-session should be created
+#T9.6. Configure monitor-session on shutdown interface of mission mode switch, unshut interface - monitor-session should be updated
+#T9.7. Configure monitor-session on stand-by switch - should not work
+#T9.8. Configure monitor-session on stand-by switch, assign fabric-role - monitor-session should be created
+#T9.9. Configure monitor-session on shutdown stand-by switch, assign fabric-role and unshut - monitor-session should finally be created
+#T9.10. Configure monitor-session on shutdown interface of stand-by switch, assign fabric-role and unshut interface - monitor-session should finally be created
+#
+#T10.1. Power down, configure monitor-session on mission mode switch, power up - should work
+#T10.2. Disconnect, configure monitor-session on mission mode switch, reconnect - should work
+#T10.3. Power down, configure monitor-session on mission mode switch, failover and power up - should work
+#T10.4. Disconnect, configure monitor-session on mission mode switch, failover, reconnect - should work
+#
 
 ### Miscellaneous
 TX.1. Verify autocompletions for mac addresses in CLI
@@ -152,11 +152,11 @@ TX.1. Verify autocompletions for mac addresses in CLI
 	...  mac ? 5c:16:c7:13:46:b4
 	...  5c:16:c7:13:46:b4 Unassigned switch
 	[Tags]  BSC-5065
-TX.2. Shutdown interface when it is physically down, connect cable to the port, verify it is admin down
-TX.3. Validate NTP configuration
-TX.4. Validate SNMP configuration
-TX.5. Validate Logging configuration
-TX.6. Check validations for Port Group vs. Monitor session using the same interfaces
+#TX.2. Shutdown interface when it is physically down, connect cable to the port, verify it is admin down
+#TX.3. Validate NTP configuration
+#TX.4. Validate SNMP configuration
+#TX.5. Validate Logging configuration
+#TX.6. Check validations for Port Group vs. Monitor session using the same interfaces
 
 *** Keywords ***
 My Suite Setup
