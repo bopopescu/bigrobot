@@ -126,9 +126,11 @@ class Host(object):
         n.sudo("ip addr del %s dev %s" % (ipaddr, intf))
         return True
 
-    def bash_delete_tag(self, node, intf, soft_error=False):
+    def bash_delete_tag(self, node, intf, soft_error=True):
         """
         Function to remove the vlan tag from the host eth interfaces.
+        Note: soft_error=True because in the common use case, we
+        just want to log the error but not trigger failure. 
         """
         t = test.Test()
         n = t.node(node)
