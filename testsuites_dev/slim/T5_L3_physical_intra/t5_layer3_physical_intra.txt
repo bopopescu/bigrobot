@@ -212,7 +212,7 @@ L3 intra tenant traceroute with udp probe
 
 Verify L3 intra tenant traffic with ip options
 	Verify L3 intra tenant traffic with ip options	
-	[Tags]					manual				feature			
+	[Tags]									feature								run
 		
 Trigger controller HA failover via CLI and verify dhcp-relay is working
 	Trigger controller HA failover via CLI and verify dhcp-relay is working
