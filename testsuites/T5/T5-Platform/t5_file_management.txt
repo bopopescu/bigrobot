@@ -261,7 +261,7 @@ T5.8.10 Verify: compare scp:// image://
 	Cli Copy  running-config  ${scp file}
 	Run Keyword and Expect Error
 	...  *Error: Invalid Use: unsupported compare scp://* for scp*
-	...  Cli Compare  ${scp file}  image://
+	...  Cli Compare  master  ${scp file}  image://
 	[Tags]  SCP  Image
 
 T5.9.1 Verify: copy scp://<running-config> running-config
@@ -380,8 +380,8 @@ T6.7 Verify scp://scp:// not correct in copy function
 	[Tags]  BSC-4904  SCP  Filename
 
 T6.8 Verify scp://scp:// not correct in compare function
-	Run Keyword and Expect Error  *ssh: Could not resolve hostname scp: Name or service not known*  Cli Compare  running-config  ${scp double}
-	Run Keyword and Expect Error  *ssh: Could not resolve hostname scp: Name or service not known*  Cli Compare  ${scp double}  running-config
+	Run Keyword and Expect Error  *ssh: Could not resolve hostname scp: Name or service not known*  Cli Compare  master  running-config  ${scp double}
+	Run Keyword and Expect Error  *ssh: Could not resolve hostname scp: Name or service not known*  Cli Compare  master  ${scp double}  running-config
 	[Tags]  SCP  Filename
 
 T6.9 Verify config://config:// not correct in copy function
@@ -390,8 +390,8 @@ T6.9 Verify config://config:// not correct in copy function
 	[Tags]  Filename
 
 T6.10 Verify config://config:// not correct in compare function
-	Run Keyword and Expect Error  *Error: Invalid Use: config://config://* must not include / *  Cli Compare  running-config  ${config double}
-	Run Keyword and Expect Error  *Error: Invalid Use: config://config://* must not include / *  Cli Compare  ${config double}  running-config
+	Run Keyword and Expect Error  *Error: Invalid Use: config://config://* must not include / *  Cli Compare  master  running-config  ${config double}
+	Run Keyword and Expect Error  *Error: Invalid Use: config://config://* must not include / *  Cli Compare  master  ${config double}  running-config
 	[Tags]  Filename
 
 T6.11 Verify image-double not correct in copy and compare
@@ -479,95 +479,95 @@ T7.9 Verify comparison function between config:// and config://
 
 T7.10 Verify comparison function between running-config and inexistent file
 	Run Keyword and Expect Error  *Error: Invalid Use: inexistent does not exist*
-	...  Cli Compare  running-config  inexistent
+	...  Cli Compare  master  running-config  inexistent
 	Run Keyword and Expect Error  *Error: Invalid Use: inexistent does not exist*
-	...  Cli Compare  inexistent  running-config
+	...  Cli Compare  master  inexistent  running-config
 
 T7.11 Verify comparison function between running-config and inexistent config://file
 	Run Keyword and Expect Error  *Error: Invalid Use: config://inexistent does not exist*
-	...  Cli Compare  running-config  config://inexistent
+	...  Cli Compare  master  running-config  config://inexistent
 	Run Keyword and Expect Error  *Error: Invalid Use: config://inexistent does not exist*
-	...  Cli Compare  config://inexistent  running-config
+	...  Cli Compare  master  config://inexistent  running-config
 
 T7.12 Verify comparison function between running-config and inexistent scp://file
 	Run Keyword and Expect Error  *scp: file-management-testsuite/inexistent: No such file or directory*
-	...  Cli Compare  running-config  ${scp inexistent}
+	...  Cli Compare  master  running-config  ${scp inexistent}
 	Run Keyword and Expect Error  *scp: file-management-testsuite/inexistent: No such file or directory*
-	...  Cli Compare  ${scp inexistent}  running-config
+	...  Cli Compare  master  ${scp inexistent}  running-config
 	[Tags]  SCP
 
 T7.13 Verify comparison function between file and inexistent config://file
 	Cli Copy  running-config  ${file}
 	Run Keyword and Expect Error  *Error: Invalid Use: config://inexistent does not exist*
-	...  Cli Compare  ${file}  config://inexistent
+	...  Cli Compare  master  ${file}  config://inexistent
 	Run Keyword and Expect Error  *Error: Invalid Use: config://inexistent does not exist*
-	...  Cli Compare  config://inexistent  ${file}
+	...  Cli Compare  master  config://inexistent  ${file}
 
 T7.14 Verify comparison function between file and inexistent scp://
 	Cli Copy  running-config  ${file}
 	Run Keyword and Expect Error  *scp: file-management-testsuite/inexistent: No such file or directory*
-	...  Cli Compare  ${file}  ${scp inexistent}
+	...  Cli Compare  master  ${file}  ${scp inexistent}
 	Run Keyword and Expect Error  *scp: file-management-testsuite/inexistent: No such file or directory*
-	...  Cli Compare  ${scp inexistent}  ${file}
+	...  Cli Compare  master  ${scp inexistent}  ${file}
 	[Tags]  SCP
 
 T7.15 Verify comparison function between file and inexistent file
 	Cli Copy  running-config  ${file}
 	Run Keyword and Expect Error  *Error: Invalid Use: inexistent does not exist*
-	...  Cli Compare  ${file}  inexistent
+	...  Cli Compare  master  ${file}  inexistent
 	Run Keyword and Expect Error  *Error: Invalid Use: inexistent does not exist*
-	...  Cli Compare  inexistent  ${file}
+	...  Cli Compare  master  inexistent  ${file}
 
 T7.16 Verify comparison function between inexistent file and inexistent file
 	Run Keyword and Expect Error  *Error: Invalid Use: inexistent1 does not exist*
-	...  Cli Compare  inexistent1  inexistent2
+	...  Cli Compare  master  inexistent1  inexistent2
 
 T7.17 Verify comparison function between config://file and inexistent file
 	Cli Copy  running-config  ${config}
 	Run Keyword and Expect Error  *Error: Invalid Use: inexistent does not exist*
-	...  Cli Compare  ${config}  inexistent
+	...  Cli Compare  master  ${config}  inexistent
 	Run Keyword and Expect Error  *Error: Invalid Use: inexistent does not exist*
-	...  Cli Compare  inexistent  ${config}
+	...  Cli Compare  master  inexistent  ${config}
 
 T7.18 Verify comparison function between config://file and inexistent scp://
 	Cli Copy  running-config  ${config}
 	Run Keyword and Expect Error  *scp: file-management-testsuite/inexistent: No such file or directory*
-	...  Cli Compare  ${config}  ${scp inexistent}
+	...  Cli Compare  master  ${config}  ${scp inexistent}
 	Run Keyword and Expect Error  *scp: file-management-testsuite/inexistent: No such file or directory*
-	...  Cli Compare  ${scp inexistent}  ${config}
+	...  Cli Compare  master  ${scp inexistent}  ${config}
 	[Tags]  SCP
 
 T7.19 Verify comparison function between config://file and inexistent config://
 	Cli Copy  running-config  ${config}
 	Run Keyword and Expect Error  *Error: Invalid Use: config://inexistent does not exist*
-	...  Cli Compare  ${config}  config://inexistent
+	...  Cli Compare  master  ${config}  config://inexistent
 	Run Keyword and Expect Error  *Error: Invalid Use: config://inexistent does not exist*
-	...  Cli Compare  config://inexistent  ${config}
+	...  Cli Compare  master  config://inexistent  ${config}
 
 T7.20 Verify comparison function between inexistent config://file and inexistent config://
 	Run Keyword and Expect Error  *Error: Invalid Use: config://inexistent1 does not exist*
-	...  Cli Compare  config://inexistent1  config://inexistent2
+	...  Cli Compare  master  config://inexistent1  config://inexistent2
 
 T7.21 Verify comparison function between scp:// and inexistent file
 	Cli Copy  running-config  ${scp}
 	Run Keyword and Expect Error  *Error: Invalid Use: inexistent does not exist*
-	...  Cli Compare  ${scp}  inexistent
+	...  Cli Compare  master  ${scp}  inexistent
 	Run Keyword and Expect Error  *Error: Invalid Use: inexistent does not exist*
-	...  Cli Compare  inexistent  ${scp}
+	...  Cli Compare  master  inexistent  ${scp}
 	[Tags]  SCP
 
 T7.22 Verify comparison function between scp:// and inexistent config://file
 	Cli Copy  running-config  ${scp}
 	Run Keyword and Expect Error  *Error: Invalid Use: config://inexistent does not exist*
-	...  Cli Compare  ${scp}  config://inexistent
+	...  Cli Compare  master  ${scp}  config://inexistent
 	Run Keyword and Expect Error  *Error: Invalid Use: config://inexistent does not exist*
-	...  Cli Compare  config://inexistent  ${scp}
+	...  Cli Compare  master  config://inexistent  ${scp}
 	[Tags]  SCP
 
 T7.23 Verify comparison function between scp:// and image:// - negative
 	Cli Copy  running-config  ${scp}
 	Run Keyword and Expect Error  *Error: Invalid Use: unsupported compare scp://* for scp*
-	...  Cli Compare  ${scp}  image://
+	...  Cli Compare  master  ${scp}  image://
 	[Tags]  SCP
 
 
@@ -689,35 +689,35 @@ File Suite Teardown
 
 Compare
 	[Arguments]  ${first}  ${second}
-	${status} =  Cli Compare  ${first}  ${second}
+	${status} =  Cli Compare  master  ${first}  ${second}
 	${length} =  Get Length  ${status}
 	Should Be Equal as Numbers  ${length}  0
-	${status} =  Cli Compare  ${second}  ${first}
+	${status} =  Cli Compare  master  ${second}  ${first}
 	${length} =  Get Length  ${status}
 	Should Be Equal as Numbers  ${length}  0
 Compare Slave
 	[Arguments]  ${first}  ${second}
-	${status} =  Cli Compare  ${first}  ${second}  node=slave
+	${status} =  Cli Compare  slave  ${first}  ${second}
 	${length} =  Get Length  ${status}
 	Should Be Equal as Numbers  ${length}  0
-	${status} =  Cli Compare  ${second}  ${first}  node=slave
+	${status} =  Cli Compare  slave  ${second}  ${first}
 	${length} =  Get Length  ${status}
 	Should Be Equal as Numbers  ${length}  0
 
 Compare Negative
 	[Arguments]  ${first}  ${second}
-	${status} =  Cli Compare  ${first}  ${second}
+	${status} =  Cli Compare  master  ${first}  ${second}
 	${length} =  Get Length  ${status}
 	Should Not Be Equal as Numbers  ${length}  0
-	${status} =  Cli Compare  ${second}  ${first}
+	${status} =  Cli Compare  master  ${second}  ${first}
 	${length} =  Get Length  ${status}
 	Should Not Be Equal as Numbers  ${length}  0
 Compare Negative Slave
 	[Arguments]  ${first}  ${second}
-	${status} =  Cli Compare  ${first}  ${second}  node=slave
+	${status} =  Cli Compare  slave  ${first}  ${second}
 	${length} =  Get Length  ${status}
 	Should Not Be Equal as Numbers  ${length}  0
-	${status} =  Cli Compare  ${second}  ${first}  node=slave
+	${status} =  Cli Compare  slave  ${second}  ${first}
 	${length} =  Get Length  ${status}
 	Should Not Be Equal as Numbers  ${length}  0
 
