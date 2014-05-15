@@ -265,5 +265,6 @@ snmp suite teardown
     cli delete snmp keyword   s1   location   ${snmp_location_1}  
     cli delete snmp keyword   s1   contact   ${snmp_contact}       
     cli delete snmp host   s1   10.192.66.230   traps   public   162   
-    cli delete snmp host   s1   10.192.66.230   informs   public   162       
+    cli delete snmp host   s1   10.192.66.230   informs   public   162
+    cli delete trap keyword  s1  snmp-server trap linkUpDown interval 1       
     base suite teardown      
