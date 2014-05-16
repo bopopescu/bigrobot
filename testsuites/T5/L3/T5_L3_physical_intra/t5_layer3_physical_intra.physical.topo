@@ -6,10 +6,11 @@
 # mn  : Mininet server
 
 c1:
-  ip: 10.193.0.41
+  ip: 10.210.67.138
 
 c2:
-  ip: 10.193.0.42
+  ip: 10.210.67.139  
+
 
 s1:
   ip: 10.195.0.21
@@ -70,7 +71,7 @@ h6:
 tg1:
   platform: 'ixia'
   chassis_ip: 10.192.85.151
-  tcl_server_ip: 10.193.0.10
+  tcl_server_ip: 10.210.67.27
   ports:
     a:
       name: 2/1

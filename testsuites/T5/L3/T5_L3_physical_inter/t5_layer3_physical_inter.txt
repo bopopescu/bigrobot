@@ -76,20 +76,20 @@ Inter tenant DHCP relay
 	[Tags]			manual			feature			dhcp-relay			run
 
 Dhcp request from other host in other tenants with dhcp enabled but no inter tenant route
-	manual passed
-	[Tags]			manual			feature			dhcp-relay
+	Dhcp request from other host in other tenants with dhcp enabled but no inter tenant route
+	[Tags]			manual			feature			dhcp-relay			run
 
-dhcp request from other host in other tenants without dhcp relay enabled but with inter tenant route
-	manual passed
-	[Tags]			manual			feature			dhcp-relay
+Dhcp request from other host in other tenants without dhcp relay enabled but with inter tenant route
+	Dhcp request from other host in other tenants without dhcp relay enabled but with inter tenant route
+	[Tags]			manual			feature			dhcp-relay			run
 
 Inter tenant dhcp relay with multiple dhcp servers
 	manual passed
 	[Tags]			manual			feature			dhcp-relay
 
 Host moved to another vns on another tenant and renew dhcp 
-	manual untested
-	[Tags]			manual			feature			dhcp-relay
+	Host moved to another vns on another tenant and renew dhcp 
+	[Tags]			manual			feature			dhcp-relay			run
 
 DHCP request to external dhcp servers
 	manual passed
@@ -112,16 +112,16 @@ Verify private IP is able to communicate with other vns in the same tenant
 	[Tags]			manual-untested			feature			
 
 Controller HA failover via CLI
-	manual untested
-	[Tags]			manual-untested			feature			
+	Controller HA failover via CLI
+	[Tags]					feature			
 
 Controller HA failover via reboot of master
-	manual untested
-	[Tags]			manual-untested			feature			
+	Controller HA failover via reboot of master
+	[Tags]					feature			
 	
 Spine reboot
-	manual untested
-	[Tags]			manual-untested			feature			
+	Spine reboot
+	[Tags]				feature			
 
 Leaf reboot
 	manual untested
@@ -172,7 +172,11 @@ L3 inter tenant forwarding to VRRP routers
 	manual untested
 	[Tags]			manual-untested			feature			
 
-L3 inter tenant traceroute
+L3 inter tenant traceroute with icmp probe
+	manual passed
+	[Tags]			manual					feature			
+
+L3 inter tenant traceroute with udp probe
 	manual passed
 	[Tags]			manual					feature			
 
@@ -862,6 +866,8 @@ Inter tenant dhcp relay
 	Should Not Be Empty							${result}
 	${attachpoint} = 							Set Variable					${result[0]['attachment-point']}	
 	Should Contain								${attachpoint}					${leaf0_pc1}
+	BASH add route								h2								10.251.0.0/16			10.252.1.1
+	BASH add route								h5								10.251.0.0/16			10.252.1.1
 	BASH ping									h1								${ipAddr2}				count=10
 	BASH ping									h1								${ipAddr5}				count=10
 	${mac2} =									BASH get intf mac				h2						bond0
@@ -893,6 +899,7 @@ Inter tenant dhcp relay
 	Should Be True								${loss}	= 100
 	BASH delete route							h1								10.252.0.0/16			10.251.1.1
 	BASH delete route							h2								10.251.0.0/16			10.252.1.1	
+	BASH delete route							h5								10.251.0.0/16			10.252.1.1
 	
 
 L3 inter tenant forwarding between endpoints on the same rack but different switch
@@ -932,7 +939,6 @@ L3 inter tenant forwarding between endpoints on the same rack but different swit
 	BASH delete route							h2								10.251.0.0/16			10.252.1.1	
 	BASH init intf								h1								eth3
 	BASH init intf								h2								eth2
-	
 
 Dhcp request from other host in other tenants with dhcp enabled but no inter tenant route
 	BASH ifup intf								h1 								bond0
@@ -965,6 +971,8 @@ Dhcp request from other host in other tenants with dhcp enabled but no inter ten
 	Should Not Be Empty							${result}
 	${attachpoint} = 							Set Variable					${result[0]['attachment-point']}	
 	Should Contain								${attachpoint}					${leaf0_pc1}
+	BASH add route								h2								10.251.0.0/16			10.252.1.1
+	BASH add route								h5								10.251.0.0/16			10.252.1.1
 	BASH ping									h1								${ipAddr2}				count=10
 	${mac2} =									BASH get intf mac				h2						bond0
 	${result} = 								REST show endpoints mac			${mac2}
@@ -987,34 +995,342 @@ Dhcp request from other host in other tenants with dhcp enabled but no inter ten
 	sleep										1
 	${ipAddr2} = 								BASH renew dhcpv4 address		h2						bond0.1002
 	Should Not Be Empty							${ipAddr2}
+	BASH add route								h2								10.251.0.0/16			10.252.1.1
 	${loss} =									BASH ping						h1						${ipAddr2}
 	Should Be True								${loss} < 20
 	BASH delete route							h1								10.252.0.0/16			10.251.1.1
 	BASH delete route							h2								10.251.0.0/16			10.252.1.1	
+	BASH delete route							h5								10.251.0.0/16			10.252.1.1
+
+Dhcp request from other host in other tenants without dhcp relay enabled but with inter tenant route
+	BASH ifup intf								h1 								bond0
+	BASH ifup intf								h2								bond0
+	BASH ifup intf								h3								bond0
+	BASH ifup intf								h4								bond0
+	BASH ifup intf								h5								bond0
+	BASH ifup intf								h6								bond0				
+	REST add portgroup to vns					X								X1						${leaf0_pc1}			-1
+	REST add portgroup to vns					Y								Y1						${leaf0_pc2}			1002
+	REST add portgroup to vns					Y								Y1						${leaf2_pc1}			-1
+	BASH delete tag								h1								bond0.1001				soft_error=${true}		
+	BASH add tag								h2								bond0					1002
+	BASH ifup intf								h1								bond0
+	BASH ifup intf								h2								bond0.1002
+	BASH add ip address							h1								10.251.1.11/24			bond0
+	BASH start service							h1								isc-dhcp-server
+	sleep										1
+	${value} = 									BASH check service status		h1						isc-dhcp-server
+	Should Contain								${value}						is started
+	sleep										1
+	BASH add route								h1								10.252.0.0/16			10.251.1.1
+	${ipAddr2} = 								BASH renew dhcpv4 address		h2						bond0.1002
+	Should Be Empty								${ipAddr2}
+	${ipAddr5} = 								BASH renew dhcpv4 address		h5						bond0
+	Should Be Empty								${ipAddr5}	
+	${mac2} =									BASH get intf mac				h2						bond0
+	${result} = 								REST show endpoints mac			${mac2}
+	Should Not Be Empty							${result}
+	${attachpoint} = 							Set Variable					${result[0]['attachment-point']}	
+	${state2} = 								Set Variable					${result[0]['state']}	
+	Should Contain								${attachpoint}					${leaf0_pc2}
+	Should Contain								${state2}						L2 Only
+	${mac5} =									BASH get intf mac				h5						bond0
+	${result} = 								REST show endpoints mac			${mac5}
+	Should Not Be Empty							${result}
+	${attachpoint} = 							Set Variable					${result[0]['attachment-point']}
+	${state5} = 								Set Variable					${result[0]['state']}	
+	Should Contain								${attachpoint}					${leaf2_pc1}
+	Should Contain								${state5}						L2 Only
+	sleep										5
+	REST add dhcp relay							Y								Y1						10.251.1.11
+	REST enable dhcp relay						Y								Y1	
+	sleep										5
+	${ipAddr2} = 								BASH renew dhcpv4 address		h2						bond0.1002
+	Should Not Be Empty							${ipAddr2}
+	${ipAddr5} = 								BASH renew dhcpv4 address		h5						bond0
+	Should Not Be Empty							${ipAddr5}
+	${mac1} =									BASH get intf mac				h1						bond0
+	${result} = 								REST show endpoints mac			${mac1}
+	Should Not Be Empty							${result}
+	${attachpoint} = 							Set Variable					${result[0]['attachment-point']}	
+	Should Contain								${attachpoint}					${leaf0_pc1}
+	BASH add route								h2								10.251.0.0/16			10.252.1.1
+	BASH add route								h5								10.251.0.0/16			10.252.1.1
+	BASH ping									h1								${ipAddr2}				count=10
+	BASH ping									h1								${ipAddr5}				count=10
+	${mac2} =									BASH get intf mac				h2						bond0
+	${result} = 								REST show endpoints mac			${mac2}
+	Should Not Be Empty							${result}
+	${attachpoint} = 							Set Variable					${result[0]['attachment-point']}	
+	${ipAddr} = 								Set Variable					${result[0]['ip-address']}
+	Should Contain								${attachpoint}					${leaf0_pc2}
+	Should Contain								${ipAddr}						${ipAddr2}
+	${mac5} =									BASH get intf mac				h5						bond0
+	${result} = 								REST show endpoints mac			${mac5}
+	Should Not Be Empty							${result}
+	${attachpoint} = 							Set Variable					${result[0]['attachment-point']}
+	${ipAddr} = 								Set Variable					${result[0]['ip-address']}	
+	Should Contain								${attachpoint}					${leaf2_pc1}
+	Should Contain								${ipAddr}						${ipAddr5}
+	sleep										1
+	${loss} =									BASH ping 						h1						${ipAddr2}				count=10
+	Should Be True  							${loss} < 20	
+	${loss} =									BASH ping 						h1						${ipAddr5}				count=10
+	Should Be True  							${loss} < 20	
+	${value} = 									BASH release dhcpv4 address		h2						bond0.1002
+	Should Be True								${value}
+	${value} = 									BASH release dhcpv4 address		h5						bond0
+	Should Be True								${value}
+	${loss} =									BASH ping 						h1						${ipAddr2}				count=10
+	Should Be True								${loss}	= 100
+	${loss} =									BASH ping 						h1						${ipAddr5}				count=10
+	Should Be True								${loss}	= 100
+	BASH delete route							h1								10.252.0.0/16			10.251.1.1
+	BASH delete route							h2								10.251.0.0/16			10.252.1.1	
+	BASH delete route							h5								10.251.0.0/16			10.252.1.1
+	
+
+Host moved to another vns on another tenant and renew dhcp 
+	BASH ifup intf								h1 								bond0
+	BASH ifup intf								h2								bond0
+	BASH ifup intf								h3								bond0
+	BASH ifup intf								h4								bond0
+	BASH ifup intf								h5								bond0
+	BASH ifup intf								h6								bond0				
+	REST add portgroup to vns					X								X1						${leaf0_pc1}			-1
+	REST add portgroup to vns					Y								Y1						${leaf0_pc2}			1002
+	REST add portgroup to vns					Y								Y1						${leaf2_pc1}			-1
+	BASH delete tag								h1								bond0.1001				soft_error=${true}		
+	BASH add tag								h2								bond0					1002
+	BASH ifup intf								h1								bond0
+	BASH ifup intf								h2								bond0.1002
+	BASH add ip address							h1								10.251.1.11/24			bond0
+	BASH start service							h1								isc-dhcp-server
+	sleep										1
+	${value} = 									BASH check service status		h1						isc-dhcp-server
+	Should Contain								${value}						is started
+	sleep										1
+	BASH add route								h1								10.252.0.0/16			10.251.1.1
+	REST add dhcp relay							Y								Y1						10.251.1.11
+	REST enable dhcp relay						Y								Y1	
+	sleep										5
+	${ipAddr2} = 								BASH renew dhcpv4 address		h2						bond0.1002
+	Should Not Be Empty							${ipAddr2}
+	${ipAddr5} = 								BASH renew dhcpv4 address		h5						bond0
+	Should Not Be Empty							${ipAddr5}
+	${mac1} =									BASH get intf mac				h1						bond0
+	${result} = 								REST show endpoints mac			${mac1}
+	Should Not Be Empty							${result}
+	${attachpoint} = 							Set Variable					${result[0]['attachment-point']}	
+	Should Contain								${attachpoint}					${leaf0_pc1}
+	BASH add route								h2								10.251.0.0/16			10.252.1.1
+	BASH add route								h5								10.251.0.0/16			10.252.1.1
+	BASH ping									h1								${ipAddr2}				count=10
+	BASH ping									h1								${ipAddr5}				count=10
+	${mac2} =									BASH get intf mac				h2						bond0
+	${result} = 								REST show endpoints mac			${mac2}
+	Should Not Be Empty							${result}
+	${attachpoint} = 							Set Variable					${result[0]['attachment-point']}	
+	${ipAddr} = 								Set Variable					${result[0]['ip-address']}
+	Should Contain								${attachpoint}					${leaf0_pc2}
+	Should Contain								${ipAddr}						${ipAddr2}
+	${mac5} =									BASH get intf mac				h5						bond0
+	${result} = 								REST show endpoints mac			${mac5}
+	Should Not Be Empty							${result}
+	${attachpoint} = 							Set Variable					${result[0]['attachment-point']}
+	${ipAddr} = 								Set Variable					${result[0]['ip-address']}	
+	Should Contain								${attachpoint}					${leaf2_pc1}
+	Should Contain								${ipAddr}						${ipAddr5}
+	sleep										1
+	${loss} =									BASH ping 						h1						${ipAddr2}				count=10
+	Should Be True  							${loss} < 20	
+	${loss} =									BASH ping 						h1						${ipAddr5}				count=10
+	Should Be True  							${loss} < 20	
+	REST delete portgroup from vns				Y								Y1						${leaf2_pc1}			-1
+	REST add portgroup to vns					Z								Z3						${leaf2_pc1}			-1
+	${ipAddr5} =								BASH renew dhcpv4 address		h5						bond0
+	Should Be True								${ipAddr5}
+	${result} = 								REST show endpoints mac			${mac5}
+	Should Not Be Empty							${result}
+	${attachpoint} = 							Set Variable					${result[0]['attachment-point']}
+	${ipAddr} = 								Set Variable					${result[0]['ip-address']}	
+	${segment} =								Set Variable					${result[0]['segment']}
+	Should Contain								${attachpoint}					${leaf2_pc1}
+	Should Contain								${ipAddr}						${ipAddr5}
+	Should Contain								${segment}						Z3
+	BASH add route								h5								10.251.0.0/16			10.253.3.1
+	sleep										1	
+	${loss} =									BASH ping 						h1						${ipAddr5}				count=10
+	Should Be True								${loss} < 20
+	${value} = 									BASH release dhcpv4 address		h2						bond0.1002
+	Should Be True								${value}
+	${value} = 									BASH release dhcpv4 address		h5						bond0
+	Should Be True								${value}
+	${loss} =									BASH ping 						h1						${ipAddr2}				count=10
+	Should Be True								${loss}	= 100
+	${loss} =									BASH ping 						h1						${ipAddr5}				count=10
+	Should Be True								${loss}	= 100
+	BASH delete route							h1								10.252.0.0/16			10.251.1.1
+	BASH delete route							h2								10.251.0.0/16			10.252.1.1	
+	BASH delete route							h5								10.251.0.0/16			10.252.1.1
 
 
+Controller HA failover via CLI
+	BASH ifup intf								h1 								bond0
+	BASH ifup intf								h2								bond0
+	BASH ifup intf								h3								bond0
+	BASH ifup intf								h4								bond0		
+	BASH ifup intf								h5								bond0
+	BASH ifup intf								h6								bond0			
+	REST add portgroup to vns					X								X1						${leaf2_pc1}			-1
+	REST add portgroup to vns					Y								Y1						${leaf1_pc2}			-1
+	REST add interface to vns					X								X1						${leaf0_a}				${ixia1}				-1
+	REST add interface to vns					Y								Y1						${leaf1_a}				${ixia3}				-1	
+	BASH add ip address							h5								10.251.1.11/24			bond0	
+	BASH add ip address							h4								10.252.1.11/24			bond0
+	BASH add route								h5								10.252.0.0/16			10.251.1.1
+	BASH add route								h4								10.251.0.0/16			10.252.1.1
+	sleep										20	
+	BASH ping									h5								10.251.1.1				count=10
+	BASH ping									h4								10.252.1.1				count=10
+	${value} = 									BASH verify arp					h5						10.251.1.1
+	Should Be True								${value} 		
+	${value} =									BASH verify arp					h4						10.252.1.1
+	Should Be True								${value} 	
+	${mac1} = 									BASH get intf mac				h5						bond0
+	${result} =									REST show endpoints mac			${mac1}
+	Should Be True								${result}						
+	${mac2} = 									BASH get intf mac				h4						bond0
+	${result} =									REST show endpoints mac			${mac2}
+	Should Be True								${result}						
+	REST show endpoints	
+	${loss} = 									BASH ping						h5						10.252.1.11 			count=10
+	Should Be True  							${loss} == 0	
+	${stream1}=  								L3 add  						name=stream1		  	flow=a<->c 				frame_rate=10000  			frame_size=9216  			frame_cnt=100000
+	...     									src_ip=10.251.1.101				src_gw=10.251.1.1		dst_ip=10.252.1.101		dst_gw=10.252.1.1			 			
+ 	start traffic  								${stream1}
+    sleep  10
+    stop traffic								${stream1}
+    verify results 								transmitted_frames  			received_valid_frames  		${stream1}  			stream1
+ 	start traffic  								${stream1}
+    sleep  10
+ 	verify traffic rate  						tx_rate  						rx_rate  				a  						c
+ 	${value} = 									REST verify cluster election take leader
+	Should Be True								${value}
+	sleep										5
+	verify traffic rate  						tx_rate  						rx_rate  				a  						c
+	sleep										5	
+	stop traffic								${stream1}
+   	verify results 								transmitted_frames  			received_valid_frames  		${stream1}  			stream1
+	${loss} = 									BASH ping						h5						10.252.1.11 			count=10
+	Should Be True  							${loss} == 0		
+ 	BASH delete route							h5								10.252.0.0/16			10.251.1.1
+	BASH delete route							h4								10.251.0.0/16			10.252.1.1
+	
+	
+Controller HA failover via reboot of master
+	BASH ifup intf								h1 								bond0
+	BASH ifup intf								h2								bond0
+	BASH ifup intf								h3								bond0
+	BASH ifup intf								h4								bond0		
+	BASH ifup intf								h5								bond0
+	BASH ifup intf								h6								bond0			
+	REST add portgroup to vns					X								X1						${leaf2_pc1}			-1
+	REST add portgroup to vns					Y								Y1						${leaf1_pc2}			-1
+	REST add interface to vns					X								X1						${leaf0_a}				${ixia1}				-1
+	REST add interface to vns					Y								Y1						${leaf1_a}				${ixia3}				-1	
+	BASH add ip address							h5								10.251.1.11/24			bond0	
+	BASH add ip address							h4								10.252.1.11/24			bond0
+	BASH add route								h5								10.252.0.0/16			10.251.1.1
+	BASH add route								h4								10.251.0.0/16			10.252.1.1
+	sleep										20	
+	BASH ping									h5								10.251.1.1				count=10
+	BASH ping									h4								10.252.1.1				count=10
+	${value} = 									BASH verify arp					h5						10.251.1.1
+	Should Be True								${value} 		
+	${value} =									BASH verify arp					h4						10.252.1.1
+	Should Be True								${value} 	
+	${mac1} = 									BASH get intf mac				h5						bond0
+	${result} =									REST show endpoints mac			${mac1}
+	Should Be True								${result}						
+	${mac2} = 									BASH get intf mac				h4						bond0
+	${result} =									REST show endpoints mac			${mac2}
+	Should Be True								${result}						
+	REST show endpoints	
+	${loss} = 									BASH ping						h5						10.252.1.11 			count=10
+	Should Be True  							${loss} == 0	
+	${stream1}=  								L3 add  						name=stream1		  	flow=a<->c 				frame_rate=10000  			frame_size=9216  			frame_cnt=100000
+	...     									src_ip=10.251.1.101				src_gw=10.251.1.1		dst_ip=10.252.1.101		dst_gw=10.252.1.1			 			
+ 	start traffic  								${stream1}
+    sleep  10
+    stop traffic								${stream1}
+    verify results 								transmitted_frames  			received_valid_frames  		${stream1}  			stream1
+ 	start traffic  								${stream1}
+    sleep  10
+ 	verify traffic rate  						tx_rate  						rx_rate  				a  						c
+ 	${value} = 									CLI verify cluster master reboot
+	Should Be True								${value}
+	sleep										5
+	verify traffic rate  						tx_rate  						rx_rate  				a  						c
+	sleep										5	
+	stop traffic								${stream1}
+   	verify results 								transmitted_frames  			received_valid_frames  		${stream1}  			stream1
+	${loss} = 									BASH ping						h5						10.252.1.11 			count=10
+	Should Be True  							${loss} == 0		
+ 	BASH delete route							h5								10.252.0.0/16			10.251.1.1
+	BASH delete route							h4								10.251.0.0/16			10.252.1.1
+	
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+Spine reboot
+	BASH ifup intf								h1 								bond0
+	BASH ifup intf								h2								bond0
+	BASH ifup intf								h3								bond0
+	BASH ifup intf								h4								bond0		
+	BASH ifup intf								h5								bond0
+	BASH ifup intf								h6								bond0			
+	REST add portgroup to vns					X								X1						${leaf2_pc1}			-1
+	REST add portgroup to vns					Y								Y1						${leaf1_pc2}			-1
+	REST add interface to vns					X								X1						${leaf0_a}				${ixia1}				-1
+	REST add interface to vns					Y								Y1						${leaf1_a}				${ixia3}				-1	
+	BASH add ip address							h5								10.251.1.11/24			bond0	
+	BASH add ip address							h4								10.252.1.11/24			bond0
+	BASH add route								h5								10.252.0.0/16			10.251.1.1
+	BASH add route								h4								10.251.0.0/16			10.252.1.1
+	sleep										20	
+	BASH ping									h5								10.251.1.1				count=10
+	BASH ping									h4								10.252.1.1				count=10
+	${value} = 									BASH verify arp					h5						10.251.1.1
+	Should Be True								${value} 		
+	${value} =									BASH verify arp					h4						10.252.1.1
+	Should Be True								${value} 	
+	${mac1} = 									BASH get intf mac				h5						bond0
+	${result} =									REST show endpoints mac			${mac1}
+	Should Be True								${result}						
+	${mac2} = 									BASH get intf mac				h4						bond0
+	${result} =									REST show endpoints mac			${mac2}
+	Should Be True								${result}						
+	REST show endpoints	
+	${loss} = 									BASH ping						h5						10.252.1.11 			count=10
+	Should Be True  							${loss} == 0	
+	${stream1}=  								L3 add  						name=stream1		  	flow=a<->c 				frame_rate=1000  			frame_size=9216  			frame_cnt=10000
+	...     									src_ip=10.251.1.101				src_gw=10.251.1.1		dst_ip=10.252.1.101		dst_gw=10.252.1.1			 			
+ 	start traffic  								${stream1}
+    sleep  10
+    stop traffic								${stream1}
+    verify results 								transmitted_frames  			received_valid_frames  		${stream1}  			stream1
+    start traffic								${stream1}
+    sleep										5
+    verify traffic rate							tx_rate  						rx_rate  				a  						c
+    sleep										5
+    CLI restart switch							s1
+	sleep										10
+	verify traffic rate							tx_rate  						rx_rate  				a  						c
+	sleep										5
+ 	stop traffic								${stream1}
+    calculate loss 								transmitted_frames  			received_valid_frames  		${stream1}  			stream1   
+ 	BASH delete route							h5								10.252.0.0/16			10.251.1.1
+	BASH delete route							h4								10.251.0.0/16			10.252.1.1
+	
 
 
 
