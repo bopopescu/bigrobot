@@ -4031,7 +4031,7 @@ class T5Platform(object):
             cli_string = string + ' ?'
         c.send(cli_string, no_cr=True)
 
-        prompt_re = r'[\r\n\x07]?[\w\x07-]+\(([\w\x07-]+)\)(\x07)?[#>] '
+        prompt_re = r'[\r\n\x07]?[\w\x07-]+\(([\w\x07-]+)\)(\x07)?[#>]'
         c.expect(prompt_re)
         content = c.cli_content()
         helpers.log("********** CONTENT ************\n%s" % content)
@@ -4194,7 +4194,7 @@ class T5Platform(object):
                     helpers.log(" complete CLI show command: ******%s******" % string)
                     c.config(string)
     
-                    prompt_re = r'[\r\n\x07]?[\w-]+\(([\w-]+)\)[#>] '
+                    prompt_re = r'[\r\n\x07]?[\w-]+\(([\w-]+)\)[#>]'
                     content = c.cli_content()
     
                     helpers.log("********** CONTENT ************\n%s" % content)
