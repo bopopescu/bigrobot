@@ -789,7 +789,7 @@ class T5Utilities(object):
         t = test.Test()
         c = t.controller("master")
         url = '/api/v1/data/controller/core/switch-config[name="%s"]/interface[name="%s"]' % (switch, interface)
-        result = c.rest.patch(url,{"shutdown": 'true'})
+        result = c.rest.patch(url,{"shutdown": True})
         
         if c.rest.status_code_ok():
             return True

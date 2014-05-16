@@ -3604,8 +3604,6 @@ class T5Platform(object):
                 
                 if(len(args) != len(currentHops)):
                     helpers.log("Test Path Error: Expected # Hops : %s / Actual # Hops: %s" % (len(args), len(currentHops)))
-                    helpers.log("Expected: %s" % args)
-                    helpers.log("Actual: %s" % currentHops)
                     return False
                 
                 break
