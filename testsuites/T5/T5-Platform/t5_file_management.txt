@@ -42,16 +42,16 @@ T0 Extensive config
 	...  extensive-file
 	#Compare  extensive-file  config://extensive-config
 	#Cli Copy  scp://bsn@regress:file-management-testsuite/extensive-config
-	...  running-config
+	#...  running-config
 	#Compare  scp://bsn@regress:file-management-testsuite/extensive-config
-	...  running-config
+	#...  running-config
 	#Compare  config://extensive-config  running-config
 	#Compare  extensive-file  running-config
 	Cli Copy  config://startup-config  running-config
 	Cli Copy  scp://bsn@regress:file-management-testsuite/extensive-file
 	...  running-config
 	#Compare  scp://bsn@regress:file-management-testsuite/extensive-file
-	...  running-config
+	#...  running-config
 	Compare  config://extensive-config  running-config
 	Compare  extensive-file  running-config
 	Cli Copy  running-config  config://test-config
