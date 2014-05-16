@@ -10,6 +10,7 @@ Force Tags       T5
 Library          keywords/BsnCommon.py
 Library          keywords/T5.py
 Library          keywords/Mininet.py
+Library	         keywords/T5Platform.py
 Resource		 testsuites/T5/t5_dualleaf_resource.txt
 
 * Variables
@@ -49,7 +50,11 @@ ping bm0 to bm1 dual leaf single rack dynamic endpoints
    add portgroup to vns  A  A  p2  -1
    sleep  10 
    ${loss}=  mininet ping  bm0  ${bm1_ip}
-   Should Be True  ${loss} == 0						 
+   Should Be True  ${loss} == 0
+   Reboot the master node & verify fabric integrity
+   ${loss}=  mininet ping  bm0  ${bm1_ip}
+   Should Be True  ${loss} == 0
+   
 	 
 ping bm0 to bm1 dual leaf single rack static endpoints
    [Tags]  L2  sanity
@@ -194,7 +199,11 @@ T5 base test teardown
    delete a portgroup  p3
    base test teardown
    sleep  5
-         
+
+Reboot the master node & verify fabric integrity
+	${returnVal}=  cli verify cluster master reboot
+	Should Be True  ${returnVal}
+	        
 add a tenant  [Arguments]  ${tenant} 
   REST add tenant  ${tenant}    
 
