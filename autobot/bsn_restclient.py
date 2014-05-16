@@ -9,7 +9,7 @@ class BsnRestClient(RestClient):
     """
     def __init__(self, base_url=None, user=None, password=None,
                  content_type='application/json', host=None, platform=None,
-                 name=None):
+                 name=None, http_port=None):
         super(BsnRestClient, self).__init__(base_url=base_url,
                                             user=user,
                                             password=password,
@@ -17,6 +17,7 @@ class BsnRestClient(RestClient):
                                             name=name)
         self.host = host
         self.platform = platform
+        self.http_port = http_port
 
     def format_url(self, url):
         """
@@ -40,7 +41,7 @@ class BsnRestClient(RestClient):
 
         if helpers.is_bvs(self.platform):
             if re.match(r'^/api/v1/', url):
-                http_port = 8080
+                http_port = 8080 if self.http_port == None else self.http_port
                 return "http://%s:%s%s" % (self.host, http_port, url)
             else:
                 helpers.environment_failure("Platform=%s, unmatched URL=%s"
@@ -51,7 +52,7 @@ class BsnRestClient(RestClient):
                 http_port = 8082
                 return "http://%s:%s%s" % (self.host, http_port, url)
             elif re.match(r'^/rest/v1/', url):
-                http_port = 8000
+                http_port = 8000 if self.http_port == None else self.http_port
                 return "http://%s:%s%s" % (self.host, http_port, url)
             else:
                 helpers.environment_failure("Platform=%s, unmatched URL=%s"

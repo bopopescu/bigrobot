@@ -109,12 +109,11 @@ class BsnCommon(object):
         Save the show commands and logs (e.g., /var/log/floodlight/*) to the
         archiver.
         """
-        dest_path += '/' + test_descr + '/' + node
-        server_devconf.sudo('mkdir -p %s' % dest_path)
-
         helpers.log("Collecting postmortem information for controller '%s'"
                     % node)
         output_dir = helpers.bigrobot_log_path_exec_instance()
+        # show_cmd_file is the log file on the BigRobot terminal (where
+        # test suite is running)
         show_cmd_file = (output_dir + '/' + test_descr + '_' + node +
                          '/show_cmd_out.txt')
         d = os.path.dirname(show_cmd_file)
@@ -175,7 +174,7 @@ class BsnCommon(object):
         t = test.Test()
 
         helpers.log("Postmortem begins for test case '%s'" % test_descr)
-        server = 'jenkins-w9.bigswitch.com'
+        server = helpers.bigrobot_log_archiver()
         tester = helpers.get_env('USER')  # individual who executed the script
         user = 'root'
         password = 'bsn'
@@ -197,13 +196,18 @@ class BsnCommon(object):
 
         h = t.node_spawn(ip=server, user=user, password=password,
                          device_type='host')
+        h.bash("echo $COLUMNS")
+
         for node in t.topology():
+            test_dest_path = dest_path + '/' + test_descr + '/' + node
+            h.sudo('mkdir -p %s' % test_dest_path)
+
             if helpers.is_controller(node):
                 self.controller_postmortem(node,
                                            server=server,
                                            server_devconf=h,
                                            user=user, password=password,
-                                           dest_path=dest_path,
+                                           dest_path=test_dest_path,
                                            test_descr=test_descr)
 
         # Only print the postmortem URL once.
@@ -1880,5 +1884,3 @@ class BsnCommon(object):
                 helpers.sleep(sleep)
 
         return status
-
-

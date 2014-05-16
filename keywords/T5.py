@@ -1781,7 +1781,7 @@ class T5(object):
 
         url = '/api/v1/data/controller/core/switch-config[name="%s"]/interface[name="%s"]' % (switch, intf)
         c.rest.delete(url, {"shutdown": None})
-        helpers.sleep(5)
+        helpers.sleep(10)
         url1 = '/api/v1/data/controller/applications/bvs/info/fabric/switch[name="%s"]' % (switch)
         c.rest.get(url1)
         data1 = c.rest.content()

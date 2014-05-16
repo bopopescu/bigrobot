@@ -17,8 +17,11 @@ Test dummy
 
 Test get all [$nodes]
     test get all
+    base test postmortem
+    #bash       c1    echo $COLUMNS
 
 Test get all [$nodes] #2
+    [Tags]     skipped
     test get all
 
 * Keywords
@@ -28,5 +31,5 @@ test get all
     ${switches}=       get all switch nodes
     ${hosts}=          get all host nodes
     log                all=${all_nodes}, controllers=${controllers}, switches=${switches}, hosts=${hosts}
-    should be true     ${false}
+    should be true     ${true}
 
