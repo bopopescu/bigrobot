@@ -112,16 +112,16 @@ Verify private IP is able to communicate with other vns in the same tenant
 	[Tags]			manual-untested			feature			
 
 Controller HA failover via CLI
-	manual untested
-	[Tags]			manual-untested			feature			
+	Controller HA failover via CLI
+	[Tags]					feature			
 
 Controller HA failover via reboot of master
-	manual untested
-	[Tags]			manual-untested			feature			
+	Controller HA failover via reboot of master
+	[Tags]					feature			
 	
 Spine reboot
-	manual untested
-	[Tags]			manual-untested			feature			
+	Spine reboot
+	[Tags]				feature			
 
 Leaf reboot
 	manual untested
@@ -1175,19 +1175,162 @@ Host moved to another vns on another tenant and renew dhcp
 	BASH delete route							h5								10.251.0.0/16			10.252.1.1
 
 
+Controller HA failover via CLI
+	BASH ifup intf								h1 								bond0
+	BASH ifup intf								h2								bond0
+	BASH ifup intf								h3								bond0
+	BASH ifup intf								h4								bond0		
+	BASH ifup intf								h5								bond0
+	BASH ifup intf								h6								bond0			
+	REST add portgroup to vns					X								X1						${leaf2_pc1}			-1
+	REST add portgroup to vns					Y								Y1						${leaf1_pc2}			-1
+	REST add interface to vns					X								X1						${leaf0_a}				${ixia1}				-1
+	REST add interface to vns					Y								Y1						${leaf1_a}				${ixia3}				-1	
+	BASH add ip address							h5								10.251.1.11/24			bond0	
+	BASH add ip address							h4								10.252.1.11/24			bond0
+	BASH add route								h5								10.252.0.0/16			10.251.1.1
+	BASH add route								h4								10.251.0.0/16			10.252.1.1
+	sleep										20	
+	BASH ping									h5								10.251.1.1				count=10
+	BASH ping									h4								10.252.1.1				count=10
+	${value} = 									BASH verify arp					h5						10.251.1.1
+	Should Be True								${value} 		
+	${value} =									BASH verify arp					h4						10.252.1.1
+	Should Be True								${value} 	
+	${mac1} = 									BASH get intf mac				h5						bond0
+	${result} =									REST show endpoints mac			${mac1}
+	Should Be True								${result}						
+	${mac2} = 									BASH get intf mac				h4						bond0
+	${result} =									REST show endpoints mac			${mac2}
+	Should Be True								${result}						
+	REST show endpoints	
+	${loss} = 									BASH ping						h5						10.252.1.11 			count=10
+	Should Be True  							${loss} == 0	
+	${stream1}=  								L3 add  						name=stream1		  	flow=a<->c 				frame_rate=10000  			frame_size=9216  			frame_cnt=100000
+	...     									src_ip=10.251.1.101				src_gw=10.251.1.1		dst_ip=10.252.1.101		dst_gw=10.252.1.1			 			
+ 	start traffic  								${stream1}
+    sleep  10
+    stop traffic								${stream1}
+    verify results 								transmitted_frames  			received_valid_frames  		${stream1}  			stream1
+ 	start traffic  								${stream1}
+    sleep  10
+ 	verify traffic rate  						tx_rate  						rx_rate  				a  						c
+ 	${value} = 									REST verify cluster election take leader
+	Should Be True								${value}
+	sleep										5
+	verify traffic rate  						tx_rate  						rx_rate  				a  						c
+	sleep										5	
+	stop traffic								${stream1}
+   	verify results 								transmitted_frames  			received_valid_frames  		${stream1}  			stream1
+	${loss} = 									BASH ping						h5						10.252.1.11 			count=10
+	Should Be True  							${loss} == 0		
+ 	BASH delete route							h5								10.252.0.0/16			10.251.1.1
+	BASH delete route							h4								10.251.0.0/16			10.252.1.1
+	
+	
+Controller HA failover via reboot of master
+	BASH ifup intf								h1 								bond0
+	BASH ifup intf								h2								bond0
+	BASH ifup intf								h3								bond0
+	BASH ifup intf								h4								bond0		
+	BASH ifup intf								h5								bond0
+	BASH ifup intf								h6								bond0			
+	REST add portgroup to vns					X								X1						${leaf2_pc1}			-1
+	REST add portgroup to vns					Y								Y1						${leaf1_pc2}			-1
+	REST add interface to vns					X								X1						${leaf0_a}				${ixia1}				-1
+	REST add interface to vns					Y								Y1						${leaf1_a}				${ixia3}				-1	
+	BASH add ip address							h5								10.251.1.11/24			bond0	
+	BASH add ip address							h4								10.252.1.11/24			bond0
+	BASH add route								h5								10.252.0.0/16			10.251.1.1
+	BASH add route								h4								10.251.0.0/16			10.252.1.1
+	sleep										20	
+	BASH ping									h5								10.251.1.1				count=10
+	BASH ping									h4								10.252.1.1				count=10
+	${value} = 									BASH verify arp					h5						10.251.1.1
+	Should Be True								${value} 		
+	${value} =									BASH verify arp					h4						10.252.1.1
+	Should Be True								${value} 	
+	${mac1} = 									BASH get intf mac				h5						bond0
+	${result} =									REST show endpoints mac			${mac1}
+	Should Be True								${result}						
+	${mac2} = 									BASH get intf mac				h4						bond0
+	${result} =									REST show endpoints mac			${mac2}
+	Should Be True								${result}						
+	REST show endpoints	
+	${loss} = 									BASH ping						h5						10.252.1.11 			count=10
+	Should Be True  							${loss} == 0	
+	${stream1}=  								L3 add  						name=stream1		  	flow=a<->c 				frame_rate=10000  			frame_size=9216  			frame_cnt=100000
+	...     									src_ip=10.251.1.101				src_gw=10.251.1.1		dst_ip=10.252.1.101		dst_gw=10.252.1.1			 			
+ 	start traffic  								${stream1}
+    sleep  10
+    stop traffic								${stream1}
+    verify results 								transmitted_frames  			received_valid_frames  		${stream1}  			stream1
+ 	start traffic  								${stream1}
+    sleep  10
+ 	verify traffic rate  						tx_rate  						rx_rate  				a  						c
+ 	${value} = 									CLI verify cluster master reboot
+	Should Be True								${value}
+	sleep										5
+	verify traffic rate  						tx_rate  						rx_rate  				a  						c
+	sleep										5	
+	stop traffic								${stream1}
+   	verify results 								transmitted_frames  			received_valid_frames  		${stream1}  			stream1
+	${loss} = 									BASH ping						h5						10.252.1.11 			count=10
+	Should Be True  							${loss} == 0		
+ 	BASH delete route							h5								10.252.0.0/16			10.251.1.1
+	BASH delete route							h4								10.251.0.0/16			10.252.1.1
+	
 
-
-
-
-
-
-
-
-
-
-
-
-
+Spine reboot
+	BASH ifup intf								h1 								bond0
+	BASH ifup intf								h2								bond0
+	BASH ifup intf								h3								bond0
+	BASH ifup intf								h4								bond0		
+	BASH ifup intf								h5								bond0
+	BASH ifup intf								h6								bond0			
+	REST add portgroup to vns					X								X1						${leaf2_pc1}			-1
+	REST add portgroup to vns					Y								Y1						${leaf1_pc2}			-1
+	REST add interface to vns					X								X1						${leaf0_a}				${ixia1}				-1
+	REST add interface to vns					Y								Y1						${leaf1_a}				${ixia3}				-1	
+	BASH add ip address							h5								10.251.1.11/24			bond0	
+	BASH add ip address							h4								10.252.1.11/24			bond0
+	BASH add route								h5								10.252.0.0/16			10.251.1.1
+	BASH add route								h4								10.251.0.0/16			10.252.1.1
+	sleep										20	
+	BASH ping									h5								10.251.1.1				count=10
+	BASH ping									h4								10.252.1.1				count=10
+	${value} = 									BASH verify arp					h5						10.251.1.1
+	Should Be True								${value} 		
+	${value} =									BASH verify arp					h4						10.252.1.1
+	Should Be True								${value} 	
+	${mac1} = 									BASH get intf mac				h5						bond0
+	${result} =									REST show endpoints mac			${mac1}
+	Should Be True								${result}						
+	${mac2} = 									BASH get intf mac				h4						bond0
+	${result} =									REST show endpoints mac			${mac2}
+	Should Be True								${result}						
+	REST show endpoints	
+	${loss} = 									BASH ping						h5						10.252.1.11 			count=10
+	Should Be True  							${loss} == 0	
+	${stream1}=  								L3 add  						name=stream1		  	flow=a<->c 				frame_rate=1000  			frame_size=9216  			frame_cnt=10000
+	...     									src_ip=10.251.1.101				src_gw=10.251.1.1		dst_ip=10.252.1.101		dst_gw=10.252.1.1			 			
+ 	start traffic  								${stream1}
+    sleep  10
+    stop traffic								${stream1}
+    verify results 								transmitted_frames  			received_valid_frames  		${stream1}  			stream1
+    start traffic								${stream1}
+    sleep										5
+    verify traffic rate							tx_rate  						rx_rate  				a  						c
+    sleep										5
+    CLI restart switch							s1
+	sleep										10
+	verify traffic rate							tx_rate  						rx_rate  				a  						c
+	sleep										5
+ 	stop traffic								${stream1}
+    calculate loss 								transmitted_frames  			received_valid_frames  		${stream1}  			stream1   
+ 	BASH delete route							h5								10.252.0.0/16			10.251.1.1
+	BASH delete route							h4								10.251.0.0/16			10.252.1.1
+	
 
 
 
