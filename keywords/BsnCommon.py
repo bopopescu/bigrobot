@@ -174,7 +174,7 @@ class BsnCommon(object):
         t = test.Test()
 
         helpers.log("Postmortem begins for test case '%s'" % test_descr)
-        server = 'jenkins-w9.bigswitch.com'
+        server = helpers.bigrobot_log_archiver()
         tester = helpers.get_env('USER')  # individual who executed the script
         user = 'root'
         password = 'bsn'
@@ -196,6 +196,7 @@ class BsnCommon(object):
 
         h = t.node_spawn(ip=server, user=user, password=password,
                          device_type='host')
+        h.bash("echo $COLUMNS")
 
         for node in t.topology():
             test_dest_path = dest_path + '/' + test_descr + '/' + node
@@ -1883,5 +1884,3 @@ class BsnCommon(object):
                 helpers.sleep(sleep)
 
         return status
-
-

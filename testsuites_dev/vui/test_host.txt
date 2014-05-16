@@ -38,3 +38,4 @@ Test directory listing
     #bash             h1   ls -la
     #sudo             h1   cat /etc/shadow
     #bash             h1   find /tmp
+    bash             h1    echo $COLUMNS
