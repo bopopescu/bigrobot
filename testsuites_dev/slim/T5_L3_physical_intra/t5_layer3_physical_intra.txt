@@ -202,9 +202,17 @@ L3 intra tenant traffic behavior in headless mode
 	manual untested
 	[Tags]					manual-untested			feature			
 
-L3 intra tenant traceroute
+L3 intra tenant traceroute with icmp probe
 	manual passed
 	[Tags]					manual				feature			
+
+L3 intra tenant traceroute with udp probe
+	manual passed
+	[Tags]					manual				feature			
+
+Verify L3 intra tenant traffic with ip options
+	Verify L3 intra tenant traffic with ip options	
+	[Tags]									feature								run
 		
 Trigger controller HA failover via CLI and verify dhcp-relay is working
 	Trigger controller HA failover via CLI and verify dhcp-relay is working
@@ -1929,6 +1937,43 @@ Configure overlapping IP with private keyword on the same tenant
 	Should Be True									${result}	
 
 
+Verify L3 intra tenant traffic with ip options
+	BASH ifup intf								h1 								bond0
+	BASH ifup intf								h2								bond0
+	BASH ifup intf								h3								bond0
+	BASH ifup intf								h4								bond0	
+	BASH ifup intf								h5								bond0	
+	BASH ifup intf								h6								bond0			
+	REST add portgroup to vns					X								X1						${leaf2_pc1}			-1
+	REST add portgroup to vns					X								X2						${leaf2_pc2}			-1
+	REST add interface to vns					X								X1						${leaf0_a}				${ixia1}				-1
+	REST add interface to vns					X								X2						${leaf1_a}				${ixia3}				-1
+	BASH add ip address							h5								10.251.1.11/24			bond0	
+	BASH add ip address							h6								10.251.2.11/24			bond0
+	BASH add route								h5								10.251.2.0/24			10.251.1.1
+	BASH add route								h6								10.251.1.0/24			10.251.2.1
+	sleep										5	
+	${loss} = 									BASH ping									h5								10.251.1.1				count=10 				
+	Should Be True								${loss} < 20
+	${loss} = 									BASH ping									h6								10.251.2.1				count=10
+	Should Be True								${loss} < 20
+	${value} = 									BASH verify arp					h5						10.251.1.1
+	Should Be True								${value} 		
+	${value} =									BASH verify arp					h6						10.251.2.1
+	Should Be True								${value} 
+	${mac1} = 									BASH get intf mac				h5						bond0
+	${result} =									REST show endpoints mac			${mac1}
+	Should Be True								${result}						
+	${mac2} = 									BASH get intf mac				h6						bond0
+	${result} =									REST show endpoints mac			${mac2}
+	Should Be True								${result}						
+	REST show endpoints	
+	${loss} = 									BASH ping						h5						10.251.1.1 			count=5						-R
+	Should Be True  							${loss} == 100	
+	BASH delete route							h5								10.251.2.0/24			10.251.1.1
+	BASH delete route							h6								10.251.1.0/24			10.251.2.1
+	
+	
 
 Controller HA failover via CLI
 	BASH ifup intf								h1 								bond0
