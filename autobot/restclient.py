@@ -21,6 +21,11 @@ class RestClient(object):
         'unknown': 'Unknown error (unexpected HTTP status code)'
     }
 
+    # FIXME!!! base_url has become sort of useless since the base URL is
+    # derived from IP and http_port (if specified). Consider removing base_url
+    # at some point... Will also touch the following files: node.py and
+    # bsn_restclient.py. Also check user's topo file for base_url (legacy
+    # feature).
     def __init__(self, base_url=None, user=None, password=None,
                  content_type='application/json', name=None):
         self.http = httplib2.Http(timeout=RestClient.default_timeout)
