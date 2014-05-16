@@ -263,12 +263,12 @@ t5 suite setup
     rest add fabric role  ${switch2_name}  leaf      
 
     rest add switch  ${switch3_name}
-    ${switch3_dpid}=  rest return switch dpid from ip  s3
+    ${switch3_dpid}=  rest return switch dpid from ip  s7
     rest add dpid  ${switch3_name}  ${switch3_dpid}
     rest add fabric role  ${switch3_name}  spine
 
     rest add switch  ${switch4_name}
-    ${switch4_dpid}=  rest return switch dpid from ip  s4
+    ${switch4_dpid}=  rest return switch dpid from ip  s8
     rest add dpid  ${switch4_name}  ${switch4_dpid}
     rest add fabric role  ${switch4_name}  spine             
     
