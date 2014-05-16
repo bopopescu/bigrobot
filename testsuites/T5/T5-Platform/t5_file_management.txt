@@ -35,6 +35,27 @@ ${image double}		image://image://image-file
 
 
 *** Test Cases ***
+T0 Extensive config
+	Cli Copy  scp://bsn@regress:file-management-testsuite/extensive-config
+	...  config://extensive-config
+	Cli Copy  scp://bsn@regress:file-management-testsuite/extensive-file
+	...  extensive-file
+	#Compare  extensive-file  config://extensive-config
+	#Cli Copy  scp://bsn@regress:file-management-testsuite/extensive-config
+	...  running-config
+	#Compare  scp://bsn@regress:file-management-testsuite/extensive-config
+	...  running-config
+	#Compare  config://extensive-config  running-config
+	#Compare  extensive-file  running-config
+	Cli Copy  config://startup-config  running-config
+	Cli Copy  scp://bsn@regress:file-management-testsuite/extensive-file
+	...  running-config
+	#Compare  scp://bsn@regress:file-management-testsuite/extensive-file
+	...  running-config
+	Compare  config://extensive-config  running-config
+	Compare  extensive-file  running-config
+	Cli Copy  running-config  config://test-config
+
 T1.1 Copy running config to file
 	Cli Copy  running-config  ${file}
 	Compare RC with File Line By Line  ${file}
@@ -648,22 +669,11 @@ Generate Random Name
 
 File Suite Setup
 	Base Suite Setup
-	Bash  master  curl -g -H "Cookie: session_cookie\=$FL_SESSION_COOKIE" localhost:8080/api/v1/data/controller/core/aaa/accounting -X DELETE -d '{"name": "local"}'
+	#Bash  master  curl -g -H "Cookie: session_cookie\=$FL_SESSION_COOKIE" localhost:8080/api/v1/data/controller/core/aaa/accounting -X DELETE -d '{"name": "local"}'
+	Config  master  no aaa accounting exec default start-stop local group tacacs+
+	Config  master  no aaa authentication login default group tacacs+ local
 	Cli Copy  running-config  config://startup-config
 	Cli Copy  running-config  config://startup-config  node=slave
-	Cli Copy  scp://bsn@regress:file-management-testsuite/extensive-config  config://extensive-config
-	Cli Copy  scp://bsn@regress:file-management-testsuite/extensive-file  extensive-file
-	#Compare  extensive-file  config://extensive-config
-	#Cli Copy  scp://bsn@regress:file-management-testsuite/extensive-config  running-config
-	#Compare  scp://bsn@regress:file-management-testsuite/extensive-config  running-config
-	#Compare  config://extensive-config  running-config
-	#Compare  extensive-file  running-config
-	Cli Copy  config://startup-config  running-config
-	Cli Copy  scp://bsn@regress:file-management-testsuite/extensive-file  running-config
-	#Compare  scp://bsn@regress:file-management-testsuite/extensive-file  running-config
-	Compare  config://extensive-config  running-config
-	Compare  extensive-file  running-config
-	Cli Copy  running-config  config://test-config
 
 Setup
 	Base Test Setup
@@ -677,9 +687,8 @@ Modify Running Config
 
 Teardown
 	Bash Clear Known Hosts
-	Cli Copy  config://test-config  running-config
-	Compare  config://extensive-config  running-config
-	Compare  extensive-file  running-config
+	Cli Copy  config://startup-config  running-config
+	Compare  config://startup-config  running-config
 	Base Test Teardown
 
 File Suite Teardown
