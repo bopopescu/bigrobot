@@ -1330,11 +1330,6 @@ Spine reboot
 	
 
 
-
-
-
-
-
 initialize host
 	BASH delete tag								h1								bond0.1001				soft_error=${true}
 	BASH delete tag								h2								bond0.1002				soft_error=${true}
@@ -1342,6 +1337,18 @@ initialize host
 	BASH delete tag								h4								bond0.1004				soft_error=${true}
 	BASH delete tag								h5								bond0.1005				soft_error=${true}
 	BASH delete tag								h6								bond0.1006				soft_error=${true}
+	BASH init intf								h1								eth2
+	BASH init intf								h1								eth3
+	BASH init intf								h2								eth2
+	BASH init intf								h2								eth3
+	BASH init intf								h3								eth2
+	BASH init intf								h3								eth3
+	BASH init intf								h4								eth2
+	BASH init intf								h4								eth3
+	BASH init intf								h5								eth2
+	BASH init intf								h5								eth3
+	BASH init intf								h6								eth2
+	BASH init intf								h6								eth3
 	BASH init intf								h1								bond0
 	BASH init intf								h2								bond0
 	BASH init intf								h3								bond0
@@ -1365,6 +1372,7 @@ initialize host
 test setup topology
 	initialize host
 	sleep 											1
+	Start Floodlight Monitor 
 	REST add tenant 								X
 	REST add tenant									Y
 	REST add tenant									Z
@@ -1451,7 +1459,7 @@ test teardown topology
 	REST delete tenant routers intf to system		Y
 	REST delete tenant routers intf to system		Z
 	initialize host
-	
+	Stop Floodlight Monitor 	
 
 T5 base suite setup
 	base suite setup
@@ -1506,11 +1514,40 @@ T5 base suite teardown
 	delete fabric switch  
 
 
-verify results   [Arguments]  ${transmitted_frames}  ${received_frames}  ${stream}  ${stream_name}
+
+verify results   [Arguments]  ${transmitted_frames}  ${received_valid_frames}  ${stream}  ${stream_name}
     Sleep  5
     ${report}=  fetch port stats  stream=${stream}  
     ${tx_value}=  verify dict key  ${report}  ${stream_name}  ${transmitted_frames}
-    ${rx_value}=  verify dict key  ${report}  ${stream_name}  ${received_frames}
-    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}
-    Should be true  ${in_range}	
+    ${rx_value}=  verify dict key  ${report}  ${stream_name}  ${received_valid_frames}
+    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value} 
+ 	Log 		${in_range}
+   Should be true  ${in_range}	
   	
+calculate loss	 [Arguments]  ${transmitted_frames}  ${received_valid_frames}  ${stream}  ${stream_name}
+    Sleep  5
+    ${report} =  	fetch port stats  	stream=${stream}  
+    ${tx_value} =  	verify dict key  	${report}  ${stream_name}  ${transmitted_frames}
+    ${rx_value} =  	verify dict key  	${report}  ${stream_name}  ${received_valid_frames}
+	${loss} = 		evaluate 			${tx_value} - ${rx_value}
+	Log 			${loss}
+	
+verify traffic rate   [Arguments]  ${tx_rate}  ${rx_rate}  ${tx_intf}  ${rx_intf}
+    Sleep  5
+    ${report}=  fetch port stats
+    Log  	${report}
+    ${tx_value}=  verify dict key  ${report}  ${tx_intf}  transmitted_frame_rate
+    ${rx_value}=  verify dict key  ${report}  ${rx_intf}  received_valid_frame_rate
+    ixia verify traffic rate  ${tx_value}  ${rx_value} 
+
+log traffic rate   [Arguments]  ${tx_rate}  ${rx_rate}  ${tx_intf}  ${rx_intf}
+    Sleep  5
+    ${report}=  fetch port stats
+    Log  	${report}
+    ${tx_value}=  verify dict key  ${report}  ${tx_intf}  transmitted_frame_rate
+    ${rx_value}=  verify dict key  ${report}  ${rx_intf}  received_valid_frame_rate
+	Log		${tx_value}
+	Log		${rx_value} 
+ 
+
+      	
