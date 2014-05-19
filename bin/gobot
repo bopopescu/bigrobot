@@ -417,8 +417,9 @@ def test_command(*args):
     exclude_tags = args.exclude
     if exclude_tags:
         exclude_tags.append('skipped')
+        exclude_tags.append('manual-untested')
     else:
-        exclude_tags = ['skipped']
+        exclude_tags = ['skipped', 'manual-untested']
 
     if args.test:
         print("test_case_names: %s" % args.test)
