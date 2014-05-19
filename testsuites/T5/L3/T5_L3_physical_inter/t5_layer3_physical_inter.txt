@@ -27,13 +27,13 @@ Inter tenant L3 untagged traffic with dynamic endpoints across rack
 	L3 inter tenant across rack untagged with dynamic endpoints
 	[Tags]										sanity	
 
-inter tenant L3 tagged traffic with dynamic endpoints same rack
+Inter tenant L3 tagged traffic with dynamic endpoints same rack
 	L3 inter tenant same rack tagged with dynamic endpoints
-	[Tags]										sanity			
+	[Tags]										sanity				run
 
 inter tenant L3 tagged traffic with dynamic endpoints across rack
 	L3 inter tenant across rack tagged with dynamic endpoints
-	[Tags]										sanity	
+	[Tags]										sanity				run
 
 Add and delete default route on tenant
 	Add and delete default route on tenant router
@@ -73,15 +73,15 @@ L3 inter tenant forwarding between endpoints on the same rack but different swit
 	
 Inter tenant DHCP relay
 	Inter tenant DHCP relay
-	[Tags]			manual			feature			dhcp-relay			run
+	[Tags]			manual			feature			dhcp-relay			
 
 Dhcp request from other host in other tenants with dhcp enabled but no inter tenant route
 	Dhcp request from other host in other tenants with dhcp enabled but no inter tenant route
-	[Tags]			manual			feature			dhcp-relay			run
+	[Tags]			manual			feature			dhcp-relay			
 
 Dhcp request from other host in other tenants without dhcp relay enabled but with inter tenant route
 	Dhcp request from other host in other tenants without dhcp relay enabled but with inter tenant route
-	[Tags]			manual			feature			dhcp-relay			run
+	[Tags]			manual			feature			dhcp-relay			
 
 Inter tenant dhcp relay with multiple dhcp servers
 	manual passed
@@ -89,7 +89,7 @@ Inter tenant dhcp relay with multiple dhcp servers
 
 Host moved to another vns on another tenant and renew dhcp 
 	Host moved to another vns on another tenant and renew dhcp 
-	[Tags]			manual			feature			dhcp-relay			run
+	[Tags]			manual			feature			dhcp-relay			
 
 DHCP request to external dhcp servers
 	manual passed
@@ -295,9 +295,6 @@ Verify inter tenant ecmp forwarding after controller upgrade
 Verify inter tenant dhcp-relay functionality after controller upgrade
 	manual untested
 	[Tags]					manual-untested			feature					
-
-
-
 
 * Keywords
 L3 inter tenant same rack untagged with dynamic endpoints
