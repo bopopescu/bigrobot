@@ -1,5 +1,41 @@
 * Settings
 Documentation   This suite is my sandbox for experimentation.
+...              The purpose of this test suite is to check managing switches with ZTN. Small testbed will be used.
+...
+...              *Test topology*: pair of controllers, one spine switch, two leaf switches (Accton).
+...
+...              For tests which check correct installation of flows on the switches, simple forwarding configuration
+...              and small traffic rate will be used.
+...              Larger testbeds will be tested inherently in other testsuites.
+...
+...              In this Test Suite the following terms will be used:
+...
+...              * stand-by switch - switch configured on the controller (with MAC address) with no fabric-role specified
+...
+...              * provisioned switch - switch configured on the controller (with MAC address) with fabric role, forwarding traffic
+...
+...              * suspended switch - switch connected to fabric but not configured on the controller,
+...                or running wrong version of Swith Light, or with incorrect running-config
+...
+...              * ztn-discovery mode - switch in the phase of booting/searching for ZTN servers with relevant manifest file
+...
+...              * ZTN configuration, which includes:
+...
+...                - configuration mirrored from controller's configuration to switches (NTP, Logging, SNMP)
+...
+...                - controllers' IP addresses
+...
+...                - per-switch hostname (as switch name on the controller)
+...
+...                - per-switch interface configuration (as assigned by DHCP server when switch booted)
+...
+...              * ZTN configuration change:
+...
+...                - any controller Cli change that affects the switch startup-config
+...
+...              * Switch mode change:
+...
+...                - any controller Cli change that affects the switch provisioning (fabric role, MAC)
 Force Tags      Vui
 Suite Setup     my base suite setup
 Suite Teardown  base suite teardown
@@ -186,11 +222,13 @@ Initialize policy vars
     Should be true    ${true}
 
 Display policy vars
-    [Tags]           skipped
+    #[Tags]           skipped
+    [Tags]            sanity  feature
     [Documentation]   T1.2
     log               ${POLICY_BM0_IP}
 
 Test run commands
+    [Tags]            smoke  sanity
     test run cmd
     [setup]           log  I am in my custom test case setup
     [teardown]        log  I am in my custom test case teardown

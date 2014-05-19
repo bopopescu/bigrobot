@@ -34,8 +34,9 @@ Test bash delete tag
 
 Test directory listing
     #[Tags]  skipped
-    bash             h1-vm1-rack1   ls -la
+    bash             h1    echo $COLUMNS
+    #bash             h1-vm1-rack1   ls -la
     #bash             h1   ls -la
     #sudo             h1   cat /etc/shadow
-    #bash             h1   find /tmp
+    bash             h1   find /tmp
     bash             h1    echo $COLUMNS
