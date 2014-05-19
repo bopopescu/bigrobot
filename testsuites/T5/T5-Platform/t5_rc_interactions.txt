@@ -1,0 +1,290 @@
+*** Settings ***
+Documentation  		Deleting lines from running-config and validating
+Suite Setup  		Suite Setup
+Suite Teardown   	Suite Teardown
+Test Setup   		Test Setup
+Test Teardown  		Test Teardown
+Force Tags   		Platform  Sanity  running-config
+Library  			keywords/BsnCommon.py
+Library  			keywords/T5Platform.py
+Library  			keywords/T5Utilities.py
+Library  			keywords/T5.py
+Library        		String
+Library				Collections
+
+
+*** Variables ***
+
+
+*** Test Cases ***
+T1 Deleting lines
+	${command}=  Set Variable  ntp time-zone America/Los_Angeles
+	${diff}=  Create List  ntp time-zone America/Los_Angeles
+	Delete single running config line and verify
+	...  ${command}
+	...  ${diff}
+
+T2 Deleting lines
+	${command}=  Set Variable  banner
+	${diff}=  Create List
+	...  banner 'Hello To BVS\\nI will be your guide\\nTest 1.2.3 $$'
+	Delete single running config line and verify
+	...  ${command}
+	...  ${diff}
+
+T3 Deleting lines
+	${command}=  Set Variable  logging enable remote
+	${diff}=  Create List  logging enable remote
+	Delete single running config line and verify
+	...  ${command}
+	...  ${diff}
+
+T4 Deleting lines
+	${command}=  Set Variable  logging remote 1.2.3.4 44
+	${diff}=  Create List  logging remote 1.2.3.4 44
+	Delete single running config line and verify
+	...  ${command}
+	...  ${diff}
+
+T5 Deleting lines
+	${command}=  Set Variable  snmp-server community ro
+	${diff}=  Create List  snmp-server community ro \'Test\\ntest\'
+	Delete single running config line and verify
+	...  ${command}
+	...  ${diff}
+
+T6 Deleting lines
+	${command}=  Set Variable  snmp-server contact
+	${diff}=  Create List
+	...  snmp-server contact Tomasz@\\0xc5\\0x82\\0xc3\\0xb3d\\0xc5\\0xba.pl
+	Delete single running config line and verify
+	...  ${command}
+	...  ${diff}
+
+T7 Deleting lines
+	${command}=  Set Variable  snmp-server enable traps
+	${diff}=  Create List  snmp-server enable traps
+	Delete single running config line and verify
+	...  ${command}
+	...  ${diff}
+
+T8 Deleting lines
+	${command}=  Set Variable  snmp-server host 4.3.2.1
+	${diff}=  Create List  snmp-server host 4.3.2.1
+	Delete single running config line and verify
+	...  ${command}
+	...  ${diff}
+
+T9 Deleting lines
+	${command}=  Set Variable  snmp-server location
+	${diff}=  Create List  snmp-server location \'44 DD\'
+	Delete single running config line and verify
+	...  ${command}
+	...  ${diff}
+
+T10 Deleting lines
+	${command}=  Set Variable  tacacs server host 1.1.1.1
+	${diff}=  Create List  tacacs server host 1.1.1.1
+	Delete single running config line and verify
+	...  ${command}
+	...  ${diff}
+
+T11 Deleting lines
+	${command}=  Set Variable  tacacs server host 1.2.3.4
+	${diff}=  Create List  tacacs server host 1.2.3.4
+	Delete single running config line and verify
+	...  ${command}
+	...  ${diff}
+
+T12 Deleting lines
+	${command}=  Set Variable  tacacs server host 2.2.2.2
+	${diff}=  Create List  tacacs server host 2.2.2.2
+	Delete single running config line and verify
+	...  ${command}
+	...  ${diff}
+
+T13 Deleting lines
+	${command}=  Set Variable  tacacs server host 4.3.2.1
+	${diff}=  Create List  tacacs server host 4.3.2.1
+	Delete single running config line and verify
+	...  ${command}
+	...  ${diff}
+
+T14 Deleting lines
+	${command}=  Set Variable  tacacs server key 7 4244565147511f
+	${diff}=  Create List  tacacs server key 7 4244565147511f
+	Delete single running config line and verify
+	...  ${command}
+	...  ${diff}
+
+T15 Deleting lines
+	${command}=  Set Variable  tacacs server timeout 10
+	${diff}=  Create List  tacacs server timeout 10
+	Delete single running config line and verify
+	...  ${command}
+	...  ${diff}
+
+T16 Deleting lines
+	${command}=  Set Variable  tacacs server timeout 10
+	${diff}=  Create List  tacacs server timeout 10
+	Delete single running config line and verify
+	...  ${command}
+	...  ${diff}
+
+T17 Deleting lines
+	${command}=  Set Variable  user test-user123
+	${diff}=  Create List
+	...  user test-user123
+	...  hashed-password
+	...  associate user test-user123
+	Delete single running config line and verify
+	...  ${command}
+	...  ${diff}
+
+T18 Deleting lines
+	${command}=  Set Variable  group test-group123
+	${diff}=  Create List
+	...  group test-group123
+	...  associate user remote1
+	...  associate user test-user123
+	Delete single running config line and verify
+	...  ${command}
+	...  ${diff}
+
+T19 Deleting lines
+	${command}=  Set Variable  virtual-ip
+	${diff}=  Create List  virtual-ip 1.2.3.4
+	Delete single running config line and verify
+	...  ${command}
+	...  ${diff}
+	...  cluster
+
+T20 Deleting lines
+	${command}=  Set Variable  switch test
+	${diff}=  Create List
+	...  switch test
+	...  fabric-role spine
+	...  mac 11:22:33:44:55:66
+	...  interface ethernet1
+	...  shutdown
+	Delete single running config line and verify
+	...  ${command}
+	...  ${diff}
+
+T21 Deleting lines
+	${command}=  Set Variable  fabric-role spine
+	${diff}=  Create List
+	...  fabric-role spine
+	Delete single running config line and verify
+	...  ${command}
+	...  ${diff}
+	...  switch test
+
+T22 Deleting lines
+	${command}=  Set Variable  mac 11:22:33:44:55:66
+	${diff}=  Create List
+	...  mac 11:22:33:44:55:66
+	Delete single running config line and verify
+	...  ${command}
+	...  ${diff}
+	...  switch test
+
+T23 Deleting lines
+	${command}=  Set Variable  interface ethernet1
+	${diff}=  Create List
+	...  interface ethernet1
+	...  shutdown
+	Delete single running config line and verify
+	...  ${command}
+	...  ${diff}
+	...  switch test
+
+T24 Deleting lines
+	${command}=  Set Variable  shutdown
+	${diff}=  Create List
+	...  shutdown
+	Delete single running config line and verify
+	...  ${command}
+	...  ${diff}
+	...  switch test; interface ethernet1
+
+
+*** Keywords ***
+Generate Random Name
+	[Arguments]  ${prefix}  ${suffix_len}
+    ${regex}  Generate Random String  ${suffix_len}  [NUMBERS]
+    ${name}  Catenate  SEPARATOR=  ${prefix}  ${regex}
+    [Return]  ${name}
+
+Suite Setup
+	Base Suite Setup
+	Config  master  no aaa accounting exec default start-stop local group tacacs+
+	Config  master  no aaa authentication login default group tacacs+ local
+	Cli Copy  running-config  config://startup-config
+	Cli Copy  running-config  config://startup-config  node=slave
+	Cli Copy  scp://bsn@regress:file-management-testsuite/extensive-config  config://extensive-config
+	Cli Copy  scp://bsn@regress:file-management-testsuite/extensive-file  extensive-file
+	Compare  extensive-file  config://extensive-config
+	#Cli Copy  scp://bsn@regress:file-management-testsuite/extensive-config  running-config
+	#Compare  config://extensive-config  running-config
+	#Compare  extensive-file  running-config
+	Cli Copy  config://startup-config  running-config
+	Cli Copy  scp://bsn@regress:file-management-testsuite/extensive-file  running-config
+	Compare  config://extensive-config  running-config
+	Compare  extensive-file  running-config
+	Cli Copy  running-config  config://test-config
+
+Test Setup
+	Base Test Setup
+
+
+Test Teardown
+	Bash Clear Known Hosts
+	Cli Copy  config://test-config  running-config
+	Compare  config://extensive-config  running-config
+	Compare  extensive-file  running-config
+	Base Test Teardown
+
+Suite Teardown
+	Cli Copy  config://startup-config  running-config
+	Bash  master  curl -g -H "Cookie: session_cookie\=$FL_SESSION_COOKIE" localhost:8080/api/v1/data/controller/core/aaa/accounting -X DELETE -d '{"name": "local"}'
+	Base Suite Teardown
+
+Compare
+	[Arguments]  ${first}  ${second}
+	${status} =  Cli Compare  master  ${first}  ${second}
+	${length} =  Get Length  ${status}
+	Should Be Equal as Numbers  ${length}  0
+	${status} =  Cli Compare  master  ${second}  ${first}
+	${length} =  Get Length  ${status}
+	Should Be Equal as Numbers  ${length}  0
+
+Compare Negative
+	[Arguments]  ${first}  ${second}
+	${status} =  Cli Compare  master  ${first}  ${second}
+	${length} =  Get Length  ${status}
+	Should Not Be Equal as Numbers  ${length}  0
+	${status} =  Cli Compare  master  ${second}  ${first}
+	${length} =  Get Length  ${status}
+	Should Not Be Equal as Numbers  ${length}  0
+
+Compare and Expect Diff
+	[Arguments]  ${first}  ${second}  ${diff}
+	${status} =  Cli Compare  master  ${first}  ${second}
+	${length} =  Get Length  ${status}
+	${length_diff} =  Get Length  ${diff}
+	Should Be Equal as Numbers  ${length}  ${length_diff}
+	:For  ${idx}  In Range  ${length}
+	\  ${str1}=  Get From List  ${status}  ${idx}
+	\  ${str2}=  Get From List  ${diff}  ${idx}
+	\  Should Contain  ${str1}  ${str2}
+
+Delete single running config line and verify
+	[Arguments]  ${command}  ${diff}  ${submode}=config
+	Cli Copy  running-config  backup
+	Cli Run  master  enable
+	Cli Run  master  config
+	Cli Run  master  ${submode}
+	Cli Run  master  no ${command}
+	Compare and Expect Diff  running-config  backup
+	...  ${diff}
