@@ -1458,7 +1458,7 @@ class BsnCommon(object):
 #   Objective: Execute snmpgetnext from local machine for a particular SNMP OID
 #   Input: SNMP Community and OID
 #   Return Value:  return the SNMP Walk O/P
-    def snmp_cmd(self, node, snmp_cmd, snmpCommunity, snmpOID):
+    def snmp_cmd(self, node, snmp_cmd, snmpCommunity, snmpOID=None):
         '''
             Objective:
             - Execute snmp command which do not require options from local machine for a particular SNMP OID
@@ -1480,10 +1480,12 @@ class BsnCommon(object):
                 node = t.controller("slave")
             else:
                 node = t.switch(node)
-            url = "/usr/bin/%s -v2c -c %s %s %s" % (str(snmp_cmd), str(snmpCommunity), node.ip(), str(snmpOID))
+            if snmpOID is not None :
+                url = "/usr/bin/%s -v2c -c %s %s %s" % (str(snmp_cmd), str(snmpCommunity), node.ip(), str(snmpOID))
+            else:
+                url = "/usr/bin/%s -v2c -c %s %s " % (str(snmp_cmd), str(snmpCommunity), node.ip())
             returnVal = subprocess.Popen([url], stdout=subprocess.PIPE, shell=True)
             (out, _) = returnVal.communicate()
-            helpers.log("URL: %s Output: %s" % (url, out))
             return out
         except:
             helpers.test_failure("Could not execute command. Please check log for errors")
