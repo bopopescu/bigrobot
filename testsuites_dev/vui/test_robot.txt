@@ -228,7 +228,7 @@ Display policy vars
     log               ${POLICY_BM0_IP}
 
 Test run commands
-    [Tags]            smoke  sanity
+    [Tags]            smoke  sanity  manual-untested
     test run cmd
     [setup]           log  I am in my custom test case setup
     [teardown]        log  I am in my custom test case teardown
