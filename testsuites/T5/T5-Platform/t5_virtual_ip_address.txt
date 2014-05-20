@@ -4,6 +4,7 @@ Suite Setup  		Setup
 Suite Teardown   	Base Suite Teardown
 Test Setup   		Base Test Setup
 Test Teardown  		Teardown
+Force Tags   		Full  Feature  Virtual IP  Platform  T5  IronHorse
 Library  			keywords/BsnCommon.py
 Library  			keywords/T5Platform.py
 
@@ -28,7 +29,7 @@ T1.1 REST Configure and verify virtual IP address
 	${mac1} =  Rest Get MAC Using Virtual IP   ${vip}
 	${mac2} =  Rest Get MAC Using Virtual IP   master
 	Should Be Equal as Strings  ${mac1}  ${mac2}
-	[Tags]  T5  Virtual IP  REST  Platform  Smoke
+	[Tags]  REST  Smoke
 
 T1.2 REST Delete and verify virtual IP address
 	Rest Configure Virtual IP  ${vip}
@@ -39,7 +40,7 @@ T1.2 REST Delete and verify virtual IP address
 	Should Be Equal as Strings  ${configured}  None
 	Run Keyword and Expect Error  *Node * is unreachable*  Rest Get MAC Using Virtual IP  ${vip}
 	Verify VIP neither on Master nor Slave Bash  ${vip}
-	[Tags]  T5  Virtual IP  REST  Platform
+	[Tags]  REST
 
 T1.3 REST Virtual IP after failover in cluster
 ### add validation for ssh keys when implemented
@@ -51,7 +52,7 @@ T1.3 REST Virtual IP after failover in cluster
 	Verify VIP only on Master Bash  ${vip}
 	${mac2} =  Rest Get MAC Using Virtual IP  ${vip}
 	Should Not Be Equal as Strings  ${mac1}  ${mac2}
-	[Tags]  T5  Virtual IP  REST  Platform
+	[Tags]  REST
 
 T1.4 REST Verify validation for incorrect virtual IP address
 	${state} =  Rest Configure Virtual IP  ${vip invalid}
@@ -60,14 +61,14 @@ T1.4 REST Verify validation for incorrect virtual IP address
 	${state} =  Rest Configure Virtual IP  ${vip string}
 	Should Not Be True  ${state}
 	Verify VIP neither on Master nor Slave Bash  ${vip string}
-	[Tags]  T5  Virtual IP  REST  Platform
+	[Tags]  REST
 
 T1.5 REST Verify it is impossible to have virtual equal to physical IP address
 	${state} =  Rest Configure Virtual IP  ${c1_ip}
 	Should Not Be True  ${state}
 	${state} =  Rest Configure Virtual IP  ${c2_ip}
 	Should Not Be True  ${state}
-	[Tags]  Skipped  Manual  T5  Virtual IP  REST  Platform
+	[Tags]  Skipped  Manual  REST
 
 T1.6 REST Verify it is impossible to have 0.0.0.0 or 255.255.255.255 virtual IP address
 	${state} =  Rest Configure Virtual IP  ${vip zeros}
@@ -76,7 +77,7 @@ T1.6 REST Verify it is impossible to have 0.0.0.0 or 255.255.255.255 virtual IP 
 	${state} =  Rest Configure Virtual IP  ${vip broadcast}
 	Should Not Be True  ${state}
 	Verify VIP neither on Master nor Slave Bash  ${vip broadcast}
-	[Tags]  T5  Virtual IP  REST  Platform
+	[Tags]  REST
 
 T1.7 REST Change Virtual IP address
 	Rest Configure Virtual IP  ${vip}
@@ -93,7 +94,7 @@ T1.7 REST Change Virtual IP address
 	Should Be Equal as Strings  ${configured}  ${vip bis}
 	${mac2} =  Rest Get MAC Using Virtual IP   ${vip bis}
 	Should Be Equal as Strings  ${mac1}  ${mac2}
-	[Tags]  T5  Virtual IP  REST  Platform
+	[Tags]  REST
 
 
 ### CLI FUNCTIONS
@@ -108,7 +109,7 @@ T2.1 CLI Configure and verify virtual IP address
 	Should Be Equal as Strings  ${mac1}  ${mac2}
 	${state} =  Bash Verify Virtual IP  ${vip}
 	Should Be True  ${state}
-	[Tags]  T5  Virtual IP  CLI  Platform  Smoke
+	[Tags]  CLI  Smoke
 
 T2.2 CLI Delete and verify virtual IP address
 	Cli Configure Virtual IP  ${vip}
@@ -119,7 +120,7 @@ T2.2 CLI Delete and verify virtual IP address
 	Should Be Equal As Strings  ${configured}  None
 	Run Keyword and Expect Error  *Node * is unreachable*  Rest Get MAC Using Virtual IP  ${vip}
 	Verify VIP neither on Master nor Slave Bash  ${vip}
-	[Tags]  T5  Virtual IP  CLI  Platform
+	[Tags]  CLI
 
 T2.3 CLI Virtual IP after failover in cluster
 ### add validation for ssh keys when implemented
@@ -133,7 +134,7 @@ T2.3 CLI Virtual IP after failover in cluster
 	Verify VIP only on Master Bash  ${vip}
 	${mac2} =  Rest Get MAC Using Virtual IP  ${vip}
 	Should Not Be Equal as Strings  ${mac1}  ${mac2}
-	[Tags]  T5  Virtual IP  CLI  Platform
+	[Tags]  CLI
 
 T2.4 CLI Verify validation for incorrect virtual IP address
 	${state} =  Cli Configure Virtual IP  ${vip invalid}
@@ -142,14 +143,14 @@ T2.4 CLI Verify validation for incorrect virtual IP address
 	${state} =  Cli Configure Virtual IP  ${vip string}
 	Should Not Be True  ${state}
 	Verify VIP neither on Master nor Slave Bash  ${vip string}
-	[Tags]  T5  Virtual IP  CLI  Platform
+	[Tags]  CLI
 
 T2.5 CLI Verify it is impossible to have virtual equal to physical IP address
 	${state} =  Cli Configure Virtual IP  ${c1_ip}
 	Should Not Be True  ${state}
 	${state} =  Cli Configure Virtual IP  ${c2_ip}
 	Should Not Be True  ${state}
-	[Tags]  Skipped  Manual  T5  Virtual IP  CLI  Platform
+	[Tags]  Skipped  Manual  CLI
 
 T2.6 CLI Verify it is impossible to have 0.0.0.0 or 255.255.255.255 virtual IP address
 	${state} =  Cli Configure Virtual IP  ${vip zeros}
@@ -158,7 +159,7 @@ T2.6 CLI Verify it is impossible to have 0.0.0.0 or 255.255.255.255 virtual IP a
 	${state} =  Cli Configure Virtual IP  ${vip broadcast}
 	Should Not Be True  ${state}
 	Verify VIP neither on Master nor Slave Bash  ${vip broadcast}
-	[Tags]  T5  Virtual IP  CLI  Platform
+	[Tags]  CLI
 
 T2.7 CLI Change Virtual IP address
 	Cli Configure Virtual IP  ${vip}
@@ -175,7 +176,7 @@ T2.7 CLI Change Virtual IP address
 	Should Be Equal as Strings  ${configured}  ${vip bis}
 	${mac2} =  Rest Get MAC Using Virtual IP   ${vip bis}
 	Should Be Equal as Strings  ${mac1}  ${mac2}
-	[Tags]  T5  Virtual IP  CLI  Platform
+	[Tags]  CLI
 
 
 #(BSC-4925) Virtual IP not functional after chaning the time-zone(?) right after first boot

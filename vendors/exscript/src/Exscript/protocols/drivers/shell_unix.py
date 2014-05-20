@@ -44,6 +44,11 @@ class UnixShellDriver(Driver):
             return 20
         return 0
 
+    def init_terminal(self, conn):
+        #if self.platform == 'ubuntu':
+        #    conn.execute('export COLUMNS=200')
+        pass
+
     # BSN tweaks - all methods below
     def platform(self):
         return self._platform
