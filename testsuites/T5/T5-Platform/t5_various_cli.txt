@@ -4,7 +4,7 @@ Suite Setup  		Various Suite Setup
 Suite Teardown		Various Suite Teardown
 Test Setup   		Setup
 Test Teardown  		Teardown
-Force Tags   		Platform
+Force Tags   		Sanity  Platform  T5  IronHorse
 Library  			keywords/BsnCommon.py
 Library  			keywords/T5Platform.py
 Library  			keywords/T5Utilities.py
