@@ -51,7 +51,7 @@ class Listener:
         self.log_devcmd("# Test Case end: %s (#%d) - %s"
                         % (attrs['longname'], self.testcase_counter, attrs['status']),
                         no_timestamp=True)
-        self.log("%-12s name: '%s', attrs: '%s'" % ('end_test', name, helpers.prettify(attrs)))
+        self.log("%-12s name: '%s', attrs: '%s'" % ('end_test', helpers.utf8(name), helpers.prettify(attrs)))
         self.log('--------')
         # status = 'PASSED' if attrs['status'] == 'PASS' else 'FAILED'
         # helpers.bigrobot_test_case_status(status)
@@ -59,7 +59,7 @@ class Listener:
 
     def start_keyword(self, name, attrs):
         # self.log_devcmd("# Keyword: %s" % name, no_timestamp=True)
-        self.log("%-12s name: '%s', attrs: '%s'" % ('start_keyword', name, helpers.prettify(attrs)))
+        self.log("%-12s name: '%s', attrs: '%s'" % ('start_keyword', helpers.utf8(name), helpers.prettify(attrs)))
         self.log('--------')
         # tags = ' '.join(attrs['tags'])
         # self.log("%0.12s: %s '%s' [ %s ]" % ('start_keyword', name, attrs['doc'], tags))
