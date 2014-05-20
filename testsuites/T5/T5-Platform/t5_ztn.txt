@@ -85,76 +85,107 @@ T1.3. Check supported platforms of SWI and installer
 ### Switch bring-up
 # Bring up out-of-the-box switch
 T2.1.1. Verify that switch is successfully provisioned when no fabric role for the switch is specified (stand-by switch)
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T2.1.2. Verify that switch is successfully provisioned when no fabric role for the switch is specified (stand-by switch) when switch config says "shutdown"
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T2.1.3. Verify that switch is successfully provisioned and flows installed for given spine switch
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T2.1.4. Verify that switch is successfully provisioned and no flows for given spine switch when switch config says "shutdown"
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T2.1.5. Verify that switch is successfully provisioned and flows installed for given leaf switch
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T2.1.6. Verify that switch is successfully provisioned and no flows for given leaf switch when switch config says "shutdown"
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T2.1.7. Verify that unconfigured switch does not receive image
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 
 # Reboot active switch
 T2.2.1. Verify that switch is successfully provisioned when no fabric role for the switch is specified (stand-by switch)
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T2.2.2. Verify that switch is successfully provisioned when no fabric role for the switch is specified (stand-by switch) when switch config says "shutdown"
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T2.2.3. Verify that switch is successfully provisioned and flows installed for given spine switch
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T2.2.4. Verify that switch is successfully provisioned and no flows for given spine switch when switch config says "shutdown"
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T2.2.5. Verify that switch is successfully provisioned and flows installed for given leaf switch
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T2.2.6. Verify that switch is successfully provisioned and no flows for given leaf switch when switch config says "shutdown"
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T2.2.7. Verify that after deleting and rebooting, unconfigured switch does not receive image
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 
 ### Regular operations
 T3.1. Verify that after ZTN configuration change (CLI, GUI, REST), new startup-config is available in manifest / ZTN url for each switch
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T3.2. Verify that after ZTN configuration change (CLI, GUI, REST), admin is notified to trigger reload of configuration on the switch, and that after reload configuration on switch gets updated
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 #we eventually expect to do this automatically, but this does not happen currently
 T3.3. Change ZTN configuration, do not reload the switch, restore old config (check if reload command on UI is still requested), reload switch - verify that config on switch is correct
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T3.4. Change ZTN configuration, do not reload the switch, change config again (check if reload command on UI is still requested), reload switch - verify that config on switch is correct
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T3.5. Change ZTN configuration, reload half of switches, restore old config - verify that all switches need to be reloaded
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T3.6. Change ZTN configuration, reload half of switches, change config again - verify that all switches need to be reloaded
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 # reload notification in GUI/Cli not (yet) supported
 T3.7. Disconnect all switches from the fabric (ma1 down) then do significant changes in fabric configuration (startup-config template, switch roles) - error should be presented, reconnect the switch - incorrect running config should be noticed by the controller and admin should be notified to take action (reload config on switch)
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T3.8. Delete all switches from the controller, reboot all switches (they should keep looking for ZTN server). Copy RC from external source (config://, scp://, file) to running config, watch the fabric come up.
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 
 # MAC Replacement
 T4.1. Replace provisioned switch's MAC with MAC of powered-down switch, verify correct boot of new switch
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T4.2. Replace provisioned switch's MAC with MAC of switch when connectivity with switch is down, reconnect, verify correct commissioning
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T4.3. Replace provisioned switch's MAC with MAC of suspended switch, verify correct commissioned
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T4.4. Replace stand-by switch's MAC with MAC of powered-down switch, verify correct boot of new switch
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T4.5. Replace stand-by switch's MAC with MAC of switch when connectivity with switch is down, reconnect, verify correct commissioning
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T4.6. Replace stand-by switch's MAC with MAC of suspended switch, verify correct commissioned
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T4.7. Swap MAC addresses of two stand-by switches
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T4.8. Swap MAC addresses of two provisioned switches
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 # potential race conditions
 T4.9 Provision two switches, power them both off, swap MACs, power them both on
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 
 
 ### ZTN handling config changes
@@ -387,302 +418,440 @@ T5.3.12. Disconnect, delete, double failover, reboot
 
 # Switch in stand-by mode
 T5.4.1. Disconnect, change config, reconnect, reload
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T5.4.2. Disconnect, delete, reconnect, reload (reboot?)
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T5.4.3. Disconnect, change config, reboot
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T5.4.4. Disconnect, delete, reboot
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T5.4.5. Disconnect, change config, failover, reconnect, reload
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T5.4.6. Disconnect, delete, failover, reconnect, reload (reboot?)
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T5.4.7. Disconnect, change config, failover, reboot
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T5.4.8. Disconnect, delete, failover, reboot
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T5.4.9. Disconnect, change config, double failover, reconnect, reload
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T5.4.10. Disconnect, delete, double failover, reconnect, reload (reboot?)
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T5.4.11. Disconnect, change config, double failover, reboot
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T5.4.12. Disconnect, delete, double failover, reboot
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 
 # Switch in provisioned mode
 T5.5.1. Connected, change config, flap interface, reload
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T5.5.2. Connected, delete, flap interface, reload (reboot?)
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T5.5.3. Connected, change config, reboot
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T5.5.4. Connected, delete, reboot
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T5.5.5. Connected, change config, failover, reconnect, reload
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T5.5.6. Connected, delete, failover, reconnect, reload (reboot?)
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T5.5.7. Connected, change config, failover, reboot
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T5.5.8. Connected, delete, failover, reboot
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T5.5.9. Connected, change config, double failover, reconnect, reload
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T5.5.10. Connected, delete, double failover, reconnect, reload (reboot?)
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T5.5.11. Connected, change config, double failover, reboot
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T5.5.12. Connected, delete, double failover, reboot
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 
 # Switch in stand-by mode
 T5.6.1. Connected, change config, flap interface, reload
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T5.6.2. Connected, delete, flap interface, reload (reboot?)
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T5.6.3. Connected, change config, reboot
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T5.6.4. Connected, delete, reboot
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T5.6.5. Connected, change config, failover, reconnect, reload
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T5.6.6. Connected, delete, failover, reconnect, reload (reboot?)
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T5.6.7. Connected, change config, failover, reboot
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T5.6.8. Connected, delete, failover, reboot
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T5.6.9. Connected, change config, double failover, reconnect, reload
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T5.6.10. Connected, delete, double failover, reconnect, reload (reboot?)
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T5.6.11. Connected, change config, double failover, reboot
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T5.6.12. Connected, delete, double failover, reboot
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 
 
 ### Miscellaneous
 T6.1. Change startup-config on switch manually, verify that startup-config on switch is synced to the one at the controller after reload
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T6.2. Manually change running-config on the switch while switch is connected. Verify that controller is able to notice change and ask the switch to update its configuration and switch is disallowed from the network until config gets updated
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T6.3. Manually change running-config on the switch while switch is disconnected. Verify that after reconnecting switch, controller is able to recognize change and ask the switch to update its configuration and switch is disallowed from the network until config gets updated
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 #T6.4. Verify that switch stays in stand-by mode when all controllers go down (until rebooted)
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 #T6.5. Verify that switch stays in provisioned mode when all controllers go down (until rebooted)
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T6.6. Verify that controller does platform check for switches, after configuring their MAC address, to see whether they are on the supported platform list
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T6.7. Switch running wrong version of switch light, issue reboot, verify new image installed, and switch ok.
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T6.8. Issue reboot command for a switch that is not connected - error should be presented
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T6.9. Issue reload command for a switch that is not connected - error should be presented
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T6.10. Verify that controller caches information about switch from its manifest, and it is available after failover
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T6.11. Verify that controller can get list of images stored at switch's flash, and after a failover the (new) master can gather the information using cached switch IP addresses
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T6.12. Verify what happens when switch's running-config changes while fabric is operating in headless mode
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T6.13. Verify that there is no way to introduce *any* switch config changes from the stand-by controller
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T6.14. Verify that switch caches last known good ZTN manifest from the active ZTN server
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T6.15. Verify that switch uses cached image after reboot and does not download it again (if no image change)
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T6.16. Verify that switch uses cached config after reboot and does not download it again (if no config change)
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T6.17. Verify that discovery process succeeds when no NTP servers are available in the network
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T6.18. Verify that discovery process succeeds when no DNS servers are available in the network
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T6.19. Verify that manifest for given switch is no more accessible just after switch is deleted from fabric
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T6.20. Upgrade network/SL images on controller while switch is disconnected. Check behavior
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T6.21. Downgrade process
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T6.22. Verify behaviors when CLI-triggered failvoer is/is not graceful (two flavors of failover command will be eventually implemented)
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T6.23. Check behavior with bandwidt-limited pipe (many switches downloading images?)
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T6.24. Check that switch and controllers can configure and use separate remote syslog servers
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T6.25. Check if ZTN logs are implemented on switch/controller
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T6.26. Check behavior when controller keeps more than one set of SL images
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T6.27. Verify that there are no limits on the number of pre-provisioned switches in controller's CLI
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T6.28. Check what happens when switch boots when controllers in split-brain mode
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T6.29. Verify that servers (SNMP, NTP, Logging) can be specified as hostnames, not IP addresses
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T6.30. Have DNS servers configured differently on two controllers in cluster - check what happens after failover...
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T6.31. Check REST API call to get inventory of images at switch
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T6.32. Confirm that switch in stand-by mode sends NO packet-ins to the controller (before t5_pipeline_mode message is sent)
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T6.33. Verify pre-staging of both SL installer and SWI before upgrade
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T6.34. Check what happens when Switch is assigned new IP address (new DHCP lease) while being connected to controller
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T6.35. Check what happens when Switch is assigned new IP address (new DHCP lease) while being disconnected from controller
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 
 # Negative
 ### Verify that discovery process continues indefinitely when:
 T7.1. no DHCP servers are available in the network - before Switch Light Install
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T7.2. no DHCP servers are available in the network - after Switch Light Install
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 #we don't guarantee switch behavior if DHCP is down. It may be the case that the switch gives up after a while.
 T7.3. no ZTN servers are available - before Switch Light Install
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T7.4. no ZTN servers are available - after Switch Light Install
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T7.5. management port of the switch is down - before Switch Light Install
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T7.6. management port of the switch is down - after Switch Light Install
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T7.7. switch's MAC address is not configured on the controller - before Switch Light Install
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T7.8. switch's MAC address is not configured on the controller - after Switch Light Install
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T7.9. switch finds manifest for its MAC address, but platform type of the switch is not supported
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T7.10. Verify that Switch Light Image download is resumed after connectivity flap
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T7.11. Verify that SWI image download is resumed after connectivity flap
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T7.12. Verify that ZTN manifest search is resumed after connectivity flap
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T7.13. Verify that discovery process times out and restarts when all controllers go down during Switch Light Installer image download
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T7.14. Verify that discovery process times out and restarts when all controllers go down during SWI image download
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T7.15. Verify that discovery process times out and restarts when all controllers go down during ZTN manifest search
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T7.16. Verify that discovery process times out and restarts when connectivity goes down while Switch Light Installer download
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T7.17. Verify that discovery process times out and restarts when connectivity goes down while SWI Image download
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T7.18. Verify that discovery process times out and restarts when connectivity goes down while searching for ZTN manifests
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T7.19. Verify that discovery process restarts when downloaded Switch Light Installer image is corrupted
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T7.20. Verify that discovery process restarts when downloaded SWI image is corrupted
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T7.21. Verify that discovery process restarts when downloaded manifest file is corrupted
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T7.22. Verify that discovery process restarts when switch reboots during Switch Light Installer image download
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T7.23. Verify that discovery process restarts when switch reboots during SWI image download
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T7.24. Verify that discovery process restarts when switch reboots while searching for ZTN manifests
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T7.25. Verify that discovery process restarts when specified image path is invalid
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 #7.26. Verify following behaviors when switch's MAC gets deleted during switch boot up
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T7.27.1 - while Installer download - no SWI download
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T7.27.2 - while SWI download - switch undefined (suspended)
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T7.27.3 - while image startup - switch undefined (suspended)
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 #7.28. Verify following behaviors when switch's name is changed during switch boot up
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T7.28.1 - while Installer download - correct SWI download and fabric join
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T7.28.2 - while SWI download - switch undefined (suspended)
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T7.28.3 - while image startup - switch undefined (suspended)
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 #7.29. Verify following behaviors when ZTN config is changed during switch boot up
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T7.29.1 - while Installer download - correct SWI download and fabric join
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T7.29.2 - while SWI download - switch undefined (suspended)
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T7.29.3 - while image startup - switch undefined (suspended)
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 # 7.26-28: behavior is undefined, it is timing dependent; in all cases the switch should be visible from the controller Cli and should be rebootable to stabilize the fabric
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 #7.30. Verify following behaviors when switch mode (stand-by <-> provisioned) is changed during switch boot up
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T7.30.1 - while Installer download - correct SWI download and fabric join
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T7.30.2 - while SWI download - switch undefined (suspended)
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T7.30.3 - while image startup - switch undefined (suspended)
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T7.31. Check what happens when switch's flash is full and it is supposed to download new SL image
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 
 # Single node cluster
 T7.32.1. Verify that executing "failover" command while a switch is downloading an image does not interrupt the download process
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T7.32.2. Verify that rebooting controller while a switch is downloading Installer image is restarted after controller is up again
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T7.32.3. Verify that rebooting controller while a switch is downloading SWI image is restarted after controller is up again
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T7.32.3. Verify that rebooting controller while a switch is searching for manifest is restarted after controller is up again
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 
 # Two-nodes cluster
 T7.33.1. Verify that download process continues when controller failover (graceful) happens during Installer image download
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T7.33.2. Verify that download process continues when controller failover (graceful) happens during SWI image download
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T7.33.3. Verify that discovery process is restarted when controller failover (reboot) happens during Installer image download
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T7.33.4. Verify that discovery process is restarted when controller failover (reboot) happens during SWI image download
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 # Switch bootup may or may not succeed, since switch boot downloads two pieces (they need to both come from the same controller)
 T7.33.5. Verify that decommissioning a standby node from the cluster does not interrupt ZTN server activity (switch downloading an image finishes the process successfully)
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T7.33.6. Verify that decommissioning the active node from the cluster does not interrupt ZTN server activity in other way than failing over (switch downloading an image restarts the process and downloads from new active controller)
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 
 ### Upgrade - only a few general test cases
 # There is a separate test plan for upgrade process
 T8.1. Pre-staging - verify that works
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T8.2. Pre-staging - check behavior when downloading image for pre-staging fails
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T8.3. Pre-staging - verify that pre-staging result (success/fail) is visible from controller
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T8.4. Pre-staging - verify that pre-staging works if switches connected to controller A, and there was a failover to controller B
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T8.5. Upgrade Switch Light Installer
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T8.6. Check if upgrade is possible when not all switches are in provisioned mode
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 
 ### Show
 T9.1. Verify that switch configured state can be viewed on the switch
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T9.2. Verify that switch operational state can be viewed on the switch
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T9.3. Verify that switch configured state can be viewed on the controller
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T9.4. Verify that switch operational state can be viewed on the controller
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T9.5. Verify that all switch-related 'show' commands are accessible from the controller
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T9.6. Verify that there is appropriate command to show ztn status of each switch
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T9.7. Verify that admin can view version of SL running on each switch
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 T9.8. ? Verify that admin can view all images stored on flash at given switch
-	Mock Untested
+	Manual Untested
+	[Tags]  manual-untested
 
 ### Questions to ask
 # Separate ZTN log
