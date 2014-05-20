@@ -11,6 +11,7 @@ Library         keywords/T5.py
 Library         keywords/T5L3.py
 Library         keywords/T5Platform.py
 Library			keywords/SwitchLight.py
+Library 		keywords/T5Utilities.py
 Library         keywords/BsnCommon.py
 Library	        Collections.py
 Library         keywords/Ixia.py
@@ -29,23 +30,23 @@ Inter tenant L3 untagged traffic with dynamic endpoints across rack
 
 Inter tenant L3 tagged traffic with dynamic endpoints same rack
 	L3 inter tenant same rack tagged with dynamic endpoints
-	[Tags]										sanity				run
+	[Tags]										sanity				
 
 inter tenant L3 tagged traffic with dynamic endpoints across rack
 	L3 inter tenant across rack tagged with dynamic endpoints
-	[Tags]										sanity				run
+	[Tags]										sanity				
 
 Add and delete default route on tenant
 	Add and delete default route on tenant router
 	[Tags]										sanity	
 
 Add and delete static route on tenant
-	Add and delete static route on tenant router
-	[Tags]										sanity	
+	manual untested
+	[Tags]			manual-untested							sanity	
 
 Add and delete more specific route on tenant over existing static route
-	Add and delete more specific route on tenant router over existing static route
-	[Tags]										sanity	
+	manual untested
+	[Tags]			manual-untested							sanity	
 
 Add and delete tenant system interface on tenant router
 	Add and delete tenant system interface on tenant router
@@ -64,24 +65,24 @@ L3 inter tenant forwarding with end host moved to another port
 	[Tags]										feature					
 
 L3 inter tenant forwarding split horizon on the same port 
-	manual pass
+	manual passed
 	[Tags]										feature			manual		
 
 L3 inter tenant forwarding between endpoints on the same rack but different switch
-	L3 inter tenant forwarding between endpoints on the same rack but different switch
-	[Tags]										feature					
+	manual untested
+	[Tags]			manual-untested							feature				
 	
 Inter tenant DHCP relay
 	Inter tenant DHCP relay
-	[Tags]			manual			feature			dhcp-relay			
+	[Tags]			feature			dhcp-relay			
 
 Dhcp request from other host in other tenants with dhcp enabled but no inter tenant route
 	Dhcp request from other host in other tenants with dhcp enabled but no inter tenant route
-	[Tags]			manual			feature			dhcp-relay			
+	[Tags]			feature			dhcp-relay			
 
 Dhcp request from other host in other tenants without dhcp relay enabled but with inter tenant route
 	Dhcp request from other host in other tenants without dhcp relay enabled but with inter tenant route
-	[Tags]			manual			feature			dhcp-relay			
+	[Tags]			feature			dhcp-relay			
 
 Inter tenant dhcp relay with multiple dhcp servers
 	manual passed
@@ -89,7 +90,7 @@ Inter tenant dhcp relay with multiple dhcp servers
 
 Host moved to another vns on another tenant and renew dhcp 
 	Host moved to another vns on another tenant and renew dhcp 
-	[Tags]			manual			feature			dhcp-relay			
+	[Tags]			feature			dhcp-relay			
 
 DHCP request to external dhcp servers
 	manual passed
@@ -113,19 +114,19 @@ Verify private IP is able to communicate with other vns in the same tenant
 
 Controller HA failover via CLI
 	Controller HA failover via CLI
-	[Tags]					feature			
+	[Tags]					feature			HA	
 
 Controller HA failover via reboot of master
 	Controller HA failover via reboot of master
-	[Tags]					feature			
+	[Tags]					feature			HA
 	
 Spine reboot
 	Spine reboot
-	[Tags]				feature			
+	[Tags]				feature				HA
 
 Leaf reboot
 	manual untested
-	[Tags]			manual-untested			feature			
+	[Tags]			manual-untested			feature			HA
 
 Traffic load balance across ECMP group
 	manual passed
@@ -181,8 +182,8 @@ L3 inter tenant traceroute with udp probe
 	[Tags]			manual					feature			
 
 Add and delete endpoints with L3 inter tenant traffic
-	manual untested
-	[Tags]			manual-untested			feature			
+	Add and delete endpoints with L3 inter tenant traffic
+	[Tags]			feature			
 
 Verify private subnet cannot be routed via system router
 	manual untested
@@ -312,7 +313,7 @@ L3 inter tenant same rack untagged with dynamic endpoints
 	BASH add ip address							h6								10.252.1.11/24			bond0
 	BASH add route								h5								10.252.1.0/24			10.251.1.1
 	BASH add route								h6								10.251.1.0/24			10.252.1.1
-	sleep										20	
+	sleep										5	
 	BASH ping									h5								10.251.1.1				count=10
 	BASH ping									h6								10.252.1.1				count=10
 	${value} = 									BASH verify arp					h5						10.251.1.1
@@ -353,7 +354,7 @@ L3 inter tenant across rack untagged with dynamic endpoints
 	BASH add ip address							h4								10.252.1.11/24			bond0
 	BASH add route								h5								10.252.0.0/16			10.251.1.1
 	BASH add route								h4								10.251.0.0/16			10.252.1.1
-	sleep										20	
+	sleep										5	
 	BASH ping									h5								10.251.1.1				count=10
 	BASH ping									h4								10.252.1.1				count=10
 	${value} = 									BASH verify arp					h5						10.251.1.1
@@ -398,11 +399,11 @@ L3 inter tenant same rack tagged with dynamic endpoints
 	BASH add ip address							h2								10.252.1.11/24			bond0.1002
 	BASH add route								h1								10.252.0.0/16			10.251.1.1
 	BASH add route								h2								10.251.0.0/16			10.252.1.1
-	sleep										20	
-	${value} = 									BASH verify arp					h1						10.251.1.1
-	Should Not Be True							${value} 		
-	${value} =									BASH verify arp					h2						10.252.1.1
-	Should Not Be True							${value} 	
+	sleep										5	
+#	${value} = 									BASH verify arp					h1						10.251.1.1
+#	Should Not Be True							${value} 		
+#	${value} =									BASH verify arp					h2						10.252.1.1
+#	Should Not Be True							${value} 	
 	BASH ping									h1								10.252.1.11				count=10
 	${value} = 									BASH verify arp					h1						10.251.1.1
 	Should Be True								${value} 		
@@ -440,13 +441,13 @@ L3 inter tenant across rack tagged with dynamic endpoints
 	BASH add ip address							h3								10.252.1.11/24			bond0.1003
 	BASH add route								h1								10.252.0.0/16			10.251.1.1
 	BASH add route								h3								10.251.0.0/16			10.252.1.1
-	sleep										20	
+	sleep										5	
 #	BASH ping									h1								10.251.1.1				count=10
 #	BASH ping									h3								10.252.1.1				count=10
-	${value} = 									BASH verify arp					h1						10.251.1.1
-	Should Not Be True							${value} 		
-	${value} =									BASH verify arp					h3						10.252.1.1
-	Should Not Be True							${value} 	
+#	${value} = 									BASH verify arp					h1						10.251.1.1
+#	Should Not Be True							${value} 		
+#	${value} =									BASH verify arp					h3						10.252.1.1
+#	Should Not Be True							${value} 	
 	BASH ping									h1								10.252.1.11				count=10
 	${value} = 									BASH verify arp					h1						10.251.1.1
 	Should Be True								${value} 		
@@ -484,7 +485,7 @@ Add and delete default route on tenant router
 	BASH add ip address							h3								10.252.1.11/24			bond0.1003
 	BASH add route								h1								10.252.0.0/16			10.251.1.1
 	BASH add route								h3								10.251.0.0/16			10.252.1.1
-	sleep										20	
+	sleep										5	
 #	BASH ping									h1								10.251.1.1				count=10
 #	BASH ping									h3								10.252.1.1				count=10
 	${value} = 									BASH verify arp					h1						10.251.1.1
@@ -517,104 +518,6 @@ Add and delete default route on tenant router
 	BASH delete route							h1								10.252.0.0/16			10.251.1.1
 	BASH delete route							h3								10.251.0.0/16			10.252.1.1
 	
-		
-Add and delete static route on tenant router
-	BASH ifup intf								h1 								bond0
-	BASH ifup intf								h2								bond0
-	BASH ifup intf								h3								bond0
-	BASH ifup intf								h4								bond0
-	BASH ifup intf								h5								bond0
-	BASH ifup intf								h6								bond0	
-	REST add portgroup to vns					X								X1						${leaf0_pc1}			1001
-	REST add portgroup to vns					Y								Y1						${leaf1_pc1}			1003
-	REST add interface to vns					X								X1						${leaf0_a}				${ixia1}				101
-	REST add interface to vns					Y								Y1						${leaf1_a}				${ixia3}				201	
-	BASH add tag								h1								bond0					1001
-	BASH add tag								h3								bond0					1003
-	BASH ifup intf								h1								bond0.1001
-	BASH ifup intf								h3								bond0.1003
-	BASH add ip address							h1								10.251.1.11/24			bond0.1001
-	BASH add ip address							h3								10.252.1.11/24			bond0.1003
-	BASH add route								h1								10.252.0.0/16			10.251.1.1
-	BASH add route								h3								10.251.0.0/16			10.252.1.1
-	sleep										20	
-	${value} = 									BASH verify arp					h1						10.251.1.1
-	Should Not Be True							${value} 		
-	${value} =									BASH verify arp					h3						10.252.1.1
-	Should Not Be True							${value} 	
-	BASH ping									h1								10.252.1.11				count=10
-	${value} = 									BASH verify arp					h1						10.251.1.1
-	Should Be True								${value} 		
-	${value} =									BASH verify arp					h3						10.252.1.1
-	Should Be True								${value} 		
-	${mac1} = 									BASH get intf mac				h1						bond0.1001
-	${result} =									REST show endpoints mac			${mac1}
-	Should Be True								${result}						
-	${mac2} = 									BASH get intf mac				h3						bond0.1003
-	${result} =									REST show endpoints mac			${mac2}
-	Should Be True								${result}						
-	REST show endpoints		
-	${loss} = 									BASH ping						h1						10.252.1.11 			count=10
-	Should Be True  							${loss} == 0		
-	REST delete static routes					X								10.252.0.0/16		 	
-	${loss} = 									BASH ping						h1						10.252.1.11 			count=10
-	Should Be True  							${loss} == 100		
-	REST add static routes						X								10.252.0.0/16		 	{"tenant-name": "system"}	
-	${loss} = 									BASH ping						h1						10.252.1.11 			count=10
-	Should Be True  							${loss} == 0		
-	BASH delete route							h1								10.252.0.0/16			10.251.1.1
-	BASH delete route							h3								10.251.0.0/16			10.252.1.1
-
-
-Add and delete more specific route on tenant router over existing static route
-	BASH ifup intf								h1 								bond0
-	BASH ifup intf								h2								bond0
-	BASH ifup intf								h3								bond0
-	BASH ifup intf								h4								bond0
-	BASH ifup intf								h5								bond0
-	BASH ifup intf								h6								bond0	
-	REST add portgroup to vns					X								X1						${leaf0_pc1}			1001
-	REST add portgroup to vns					Y								Y1						${leaf1_pc1}			1003
-	REST add interface to vns					X								X1						${leaf0_a}				${ixia1}				101
-	REST add interface to vns					Y								Y1						${leaf1_a}				${ixia3}				201	
-	BASH add tag								h1								bond0					1001
-	BASH add tag								h3								bond0					1003
-	BASH ifup intf								h1								bond0.1001
-	BASH ifup intf								h3								bond0.1003
-	BASH add ip address							h1								10.251.1.11/24			bond0.1001
-	BASH add ip address							h3								10.252.1.11/24			bond0.1003
-	BASH add route								h1								10.252.0.0/16			10.251.1.1
-	BASH add route								h3								10.251.0.0/16			10.252.1.1
-	sleep										20	
-	${value} = 									BASH verify arp					h1						10.251.1.1
-	Should Not Be True							${value} 		
-	${value} =									BASH verify arp					h3						10.252.1.1
-	Should Not Be True							${value} 	
-	BASH ping									h1								10.252.1.11				count=10
-	${value} = 									BASH verify arp					h1						10.251.1.1
-	Should Be True								${value} 		
-	${value} =									BASH verify arp					h3						10.252.1.1
-	Should Be True								${value} 		
-	${mac1} = 									BASH get intf mac				h1						bond0.1001
-	${result} =									REST show endpoints mac			${mac1}
-	Should Be True								${result}						
-	${mac2} = 									BASH get intf mac				h3						bond0.1003
-	${result} =									REST show endpoints mac			${mac2}
-	Should Be True								${result}						
-	REST show endpoints		
-	${loss} = 									BASH ping						h1						10.252.1.11 			count=10
-	Should Be True  							${loss} == 0		
-	REST add static routes						X								10.252.1.0/24		 	{"tenant-name": "system"}	
-	${loss} = 									BASH ping						h1						10.252.1.11 			count=10
-	Should Be True  							${loss} == 0		
-	REST delete static routes					X								10.252.0.0/16		 		
-	${loss} = 									BASH ping						h1						10.252.1.11 			count=10
-	Should Be True  							${loss} == 0		
-	REST add static routes						X								10.252.0.0/16		 	{"tenant-name": "system"}	
-	${loss} = 									BASH ping						h1						10.252.1.11 			count=10
-	Should Be True  							${loss} == 0		
-	BASH delete route							h1								10.252.0.0/16			10.251.1.1
-	BASH delete route							h3								10.251.0.0/16			10.252.1.1
 
 
 Add and delete tenant system interface on tenant router
@@ -736,7 +639,7 @@ Verify inter tenant L3 traffic with ttl value of one two and three
 	BASH add ip address							h3								10.252.1.11/24			bond0.1003
 	BASH add route								h1								10.252.0.0/16			10.251.1.1
 	BASH add route								h3								10.251.0.0/16			10.252.1.1
-	sleep										20	
+	sleep										5	
 	${value} = 									BASH verify arp					h1						10.251.1.1
 	Should Not Be True							${value} 		
 	${value} =									BASH verify arp					h3						10.252.1.1
@@ -908,8 +811,11 @@ L3 inter tenant forwarding between endpoints on the same rack but different swit
 	BASH ifup intf								h2								eth2
 	BASH init intf								h1								eth3
 	BASH init intf								h2								eth2
-	REST add interface to vns					X								X1						${leaf0_a}				ethernet48			-1
-	REST add interface to vns					X								X2						${leaf0_b}				ethernet47			-1
+	REST delete portgroup						${leaf0_pc1}
+	REST delete portgroup						${leaf0_pc2}
+	sleep										1
+	REST add interface to vns					X								X1						${leaf0_a}				${leaf0_pc1_intf1}			-1
+	REST add interface to vns					X								X2						${leaf0_b}				${leaf0_pc2_intf2}			-1
 	BASH add ip address							h1								10.251.1.11/24			eth3	
 	BASH add ip address							h2								10.252.1.11/24			eth2
 	BASH add route								h1								10.252.0.0/16			10.251.1.1
@@ -936,6 +842,15 @@ L3 inter tenant forwarding between endpoints on the same rack but different swit
 	BASH delete route							h2								10.251.0.0/16			10.252.1.1	
 	BASH init intf								h1								eth3
 	BASH init intf								h2								eth2
+	REST add portgroup								${leaf0_pc1}
+	REST add portgroup								${leaf0_pc2}
+	REST add portgroup lacp							${leaf0_pc1}
+	REST add portgroup lacp							${leaf0_pc2}
+	REST add interface to portgroup					${leaf0_a}					${leaf0_pc1_intf1}					${leaf0_pc1}
+	REST add interface to portgroup					${leaf0_b}					${leaf0_pc1_intf2}					${leaf0_pc1}
+	REST add interface to portgroup					${leaf0_a}					${leaf0_pc2_intf1}					${leaf0_pc2}
+	REST add interface to portgroup					${leaf0_b}					${leaf0_pc2_intf2}					${leaf0_pc2}
+					
 
 Dhcp request from other host in other tenants with dhcp enabled but no inter tenant route
 	BASH ifup intf								h1 								bond0
@@ -1187,7 +1102,7 @@ Controller HA failover via CLI
 	BASH add ip address							h4								10.252.1.11/24			bond0
 	BASH add route								h5								10.252.0.0/16			10.251.1.1
 	BASH add route								h4								10.251.0.0/16			10.252.1.1
-	sleep										20	
+	sleep										5	
 	BASH ping									h5								10.251.1.1				count=10
 	BASH ping									h4								10.252.1.1				count=10
 	${value} = 									BASH verify arp					h5						10.251.1.1
@@ -1240,7 +1155,7 @@ Controller HA failover via reboot of master
 	BASH add ip address							h4								10.252.1.11/24			bond0
 	BASH add route								h5								10.252.0.0/16			10.251.1.1
 	BASH add route								h4								10.251.0.0/16			10.252.1.1
-	sleep										20	
+	sleep										5	
 	BASH ping									h5								10.251.1.1				count=10
 	BASH ping									h4								10.252.1.1				count=10
 	${value} = 									BASH verify arp					h5						10.251.1.1
@@ -1293,7 +1208,7 @@ Spine reboot
 	BASH add ip address							h4								10.252.1.11/24			bond0
 	BASH add route								h5								10.252.0.0/16			10.251.1.1
 	BASH add route								h4								10.251.0.0/16			10.252.1.1
-	sleep										20	
+	sleep										5	
 	BASH ping									h5								10.251.1.1				count=10
 	BASH ping									h4								10.252.1.1				count=10
 	${value} = 									BASH verify arp					h5						10.251.1.1
@@ -1328,7 +1243,57 @@ Spine reboot
  	BASH delete route							h5								10.252.0.0/16			10.251.1.1
 	BASH delete route							h4								10.251.0.0/16			10.252.1.1
 	
-
+	
+Add and delete endpoints with L3 inter tenant traffic	
+	BASH ifup intf								h1 								bond0
+	BASH ifup intf								h2								bond0
+	BASH ifup intf								h3								bond0
+	BASH ifup intf								h4								bond0		
+	BASH ifup intf								h5								bond0
+	BASH ifup intf								h6								bond0			
+	REST add portgroup to vns					X								X1						${leaf2_pc1}			-1
+	REST add portgroup to vns					Y								Y1						${leaf1_pc2}			-1
+	REST add interface to vns					X								X1						${leaf0_a}				${ixia1}				-1
+	REST add interface to vns					Y								Y1						${leaf1_a}				${ixia3}				-1	
+	BASH add ip address							h5								10.251.1.11/24			bond0	
+	BASH add ip address							h4								10.252.1.11/24			bond0
+	BASH add route								h5								10.252.0.0/16			10.251.1.1
+	BASH add route								h4								10.251.0.0/16			10.252.1.1
+	sleep										5	
+	BASH ping									h5								10.251.1.1				count=10
+	BASH ping									h4								10.252.1.1				count=10
+	${value} = 									BASH verify arp					h5						10.251.1.1
+	Should Be True								${value} 		
+	${value} =									BASH verify arp					h4						10.252.1.1
+	Should Be True								${value} 	
+	${mac1} = 									BASH get intf mac				h5						bond0
+	${result} =									REST show endpoints mac			${mac1}
+	Should Be True								${result}						
+	${mac2} = 									BASH get intf mac				h4						bond0
+	${result} =									REST show endpoints mac			${mac2}
+	Should Be True								${result}						
+	REST show endpoints	
+	${loss} = 									BASH ping						h5						10.252.1.11 			count=10
+	Should Be True  							${loss} == 0	
+	REST delete portgroup from vns				X								X1						${leaf2_pc1}			-1
+	sleep										1
+	${loss} = 									BASH ping						h5						10.252.1.11 			count=10
+	Should Be True  							${loss} == 100	
+	sleep										1
+	REST add portgroup to vns					X								X1						${leaf2_pc1}			-1
+	sleep										1
+	${loss} = 									BASH ping						h5						10.252.1.11 			count=10
+	Should Be True  							${loss} < 20	
+#	${stream1}=  								L3 add  						name=stream1		  	flow=a<->c 				frame_rate=1000  			frame_size=9216  			frame_cnt=10000
+#	...     									src_ip=10.251.1.101				src_gw=10.251.1.1		dst_ip=10.252.1.101		dst_gw=10.252.1.1			 			
+#   start traffic  								${stream1}
+#   sleep  10
+#   stop traffic								${stream1}
+#   verify results 								transmitted_frames  			received_valid_frames  		${stream1}  			stream1
+ 	BASH delete route							h5								10.252.0.0/16			10.251.1.1
+	BASH delete route							h4								10.251.0.0/16			10.252.1.1
+	
+	
 
 initialize host
 	BASH delete tag								h1								bond0.1001				soft_error=${true}
@@ -1404,18 +1369,18 @@ test setup topology
 	REST add vns ip  								Z							Z1				10.253.1.1				24	
 	REST add vns ip  								Z							Z2				10.253.2.1				24	
 	REST add vns ip  								Z							Z3				10.253.3.1				24	
-	REST add interface to portgroup					leaf0-a						${leaf0_pc1_intf1}					${leaf0_pc1}
-	REST add interface to portgroup					leaf0-b						${leaf0_pc1_intf2}					${leaf0_pc1}
-	REST add interface to portgroup					leaf0-a						${leaf0_pc2_intf1}					${leaf0_pc2}
-	REST add interface to portgroup					leaf0-b						${leaf0_pc2_intf2}					${leaf0_pc2}
-	REST add interface to portgroup					leaf1-a						${leaf1_pc1_intf1}					${leaf1_pc1}
-	REST add interface to portgroup					leaf1-b						${leaf1_pc1_intf2}					${leaf1_pc1}
-	REST add interface to portgroup					leaf1-a						${leaf1_pc2_intf1}					${leaf1_pc2}
-	REST add interface to portgroup					leaf1-b						${leaf1_pc2_intf2}					${leaf1_pc2}
-	REST add interface to portgroup					leaf2-a						${leaf2_pc1_intf1}					${leaf2_pc1}
-	REST add interface to portgroup					leaf2-b						${leaf2_pc1_intf2}					${leaf2_pc1}
-	REST add interface to portgroup					leaf2-a						${leaf2_pc2_intf1}					${leaf2_pc2}
-	REST add interface to portgroup					leaf2-b						${leaf2_pc2_intf2}					${leaf2_pc2}	
+	REST add interface to portgroup					${leaf0_a}					${leaf0_pc1_intf1}					${leaf0_pc1}
+	REST add interface to portgroup					${leaf0_b}					${leaf0_pc1_intf2}					${leaf0_pc1}
+	REST add interface to portgroup					${leaf0_a}					${leaf0_pc2_intf1}					${leaf0_pc2}
+	REST add interface to portgroup					${leaf0_b}					${leaf0_pc2_intf2}					${leaf0_pc2}
+	REST add interface to portgroup					${leaf1_a}					${leaf1_pc1_intf1}					${leaf1_pc1}
+	REST add interface to portgroup					${leaf1_b}					${leaf1_pc1_intf2}					${leaf1_pc1}
+	REST add interface to portgroup					${leaf1_a}					${leaf1_pc2_intf1}					${leaf1_pc2}
+	REST add interface to portgroup					${leaf1_b}					${leaf1_pc2_intf2}					${leaf1_pc2}
+	REST add interface to portgroup					${leaf2_a}					${leaf2_pc1_intf1}					${leaf2_pc1}
+	REST add interface to portgroup					${leaf2_b}					${leaf2_pc1_intf2}					${leaf2_pc1}
+	REST add interface to portgroup					${leaf2_a}					${leaf2_pc2_intf1}					${leaf2_pc2}
+	REST add interface to portgroup					${leaf2_b}					${leaf2_pc2_intf2}					${leaf2_pc2}	
 	REST add tenant routers intf to system			X
 	REST add tenant routers intf to system			Y
 	REST add tenant routers intf to system			Z
