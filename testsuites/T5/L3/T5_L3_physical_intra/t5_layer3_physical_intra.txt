@@ -35,6 +35,10 @@ Intra tenant L3 tagged traffic with dynamic endpoints across rack
 	L3 intra tenant across rack tagged with dynamic endpoints
 	[Tags]								sanity	
 
+Intrva tenant L3 traffic same rack different leaf switch
+    Intra tenant L3 traffic same rack different leaf switch
+    [Tags]                              sanity  
+
 Activate and deactivate router interface
 	Activate and deactivate router interface
 	[Tags]								sanity					
@@ -423,6 +427,41 @@ L3 intra tenant across rack tagged with dynamic endpoints
 	BASH delete route							h1								10.251.3.0/24			10.251.1.1
 	BASH delete route							h3								10.251.1.0/24			10.251.3.1
 
+Intra tenant L3 traffic same rack different leaf switch
+    BASH init intf                              h5                              bond0
+    BASH init intf                              h6                              bond0
+    BASH ifup intf                              h5                              eth1
+    BASH ifup intf                              h6                              em2
+    BASH init intf                              h5                              eth1
+    BASH init intf                              h6                              em2
+    BASH add ip address                         h5                              10.251.1.31/24          eth1
+    BASH add ip address                         h6                              10.251.2.31/24          em2
+    BASH add route                              h5                              10.251.2.0/24           10.251.1.1
+    BASH add route                              h6                              10.251.1.0/24           10.251.2.1
+    REST add interface to vns                   X                               X1                      ${leaf2_a}          ${leaf2a_host5}            -1
+    REST add portgroup to vns                   X                               X2                      ${leaf2_b}          ${leaf2b_host6}            -1
+    sleep                                       1
+    BASH ping                                   h5                              10.251.2.31             count=5
+    ${value} =                                  BASH verify arp                 h5                      10.251.1.1
+    Should Be True                              ${value}        
+    ${value} =                                  BASH verify arp                 h6                      10.251.2.1
+    Should Be True                              ${value}    
+    ${mac1} =                                   BASH get intf mac               h5                      eth1
+    ${result} =                                 REST show endpoints mac         ${mac1}
+    Should Be True                              ${result}   
+    ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
+    Should Contain                              ${attachpoint}                  ${leaf2a_host5}
+    ${mac2} =                                   BASH get intf mac               h6                      em2
+    ${result} =                                 REST show endpoints mac         ${mac2}
+    Should Be True                              ${result}                       
+    ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
+    Should Contain                              ${attachpoint}                  ${leaf2b_host6}
+    REST show endpoints     
+    ${loss} =                                   BASH ping                       h1                      10.251.2.31             count=10
+    Should Be True                              ${loss} < 20        
+    BASH init intf                              h5                              eth1
+    BASH init intf                              h6                              em2
+    
 
 Activate and deactivate router interface
 	BASH ifup intf								h1 								bond0

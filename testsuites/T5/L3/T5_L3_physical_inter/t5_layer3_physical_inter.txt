@@ -69,8 +69,8 @@ L3 inter tenant forwarding split horizon on the same port
 	[Tags]										feature			manual		
 
 L3 inter tenant forwarding between endpoints on the same rack but different switch
-	manual untested
-	[Tags]			manual-untested							feature				
+	L3 inter tenant forwarding between endpoints on the same rack but different switch
+	[Tags]			feature				
 	
 Inter tenant DHCP relay
 	Inter tenant DHCP relay
@@ -241,7 +241,7 @@ Controller HA failover with dhcp-relay
 	[Tags]			feature			dhcp-relay			HA
 
 Active Controller reboot with ecmp group
-	manual failed
+	manual passed
 	[Tags]			manual			feature			ecmp	
 	
 Active Controller reboot with dhcp-relay
@@ -281,19 +281,19 @@ inter tenant ecmp forwarding in headless mode
 	[Tags]			manual-untested			solution			ecmp
 
 inter tenant dhcp relay in headless mode
-	manual untested
-	[Tags]			manual-untested			solution			dhcp-relay	
+	manual passed
+	[Tags]			      manual			solution			dhcp-relay	
 
 Verify L3 inter tenant forwarding after controller upgrade
-	manual untested
+	manual failed
 	[Tags]					manual-untested			feature					
 
 Verify inter tenant ecmp forwarding after controller upgrade
-	manual untested
+	manual failed
 	[Tags]					manual-untested			feature					
 
 Verify inter tenant dhcp-relay functionality after controller upgrade
-	manual untested
+	manual failed
 	[Tags]					manual-untested			feature					
 
 * Keywords
@@ -732,6 +732,43 @@ L3 inter tenant host moved
 	BASH delete route							h1								10.252.0.0/16			10.251.1.1
 	BASH delete route							h2								10.251.0.0/16			10.252.1.1	
 
+
+L3 inter tenant forwarding between endpoints on the same rack but different switch
+    BASH init intf                              h5                              bond0
+    BASH init intf                              h6                              bond0
+    BASH ifup intf                              h5                              eth1
+    BASH ifup intf                              h6                              em2
+    BASH init intf                              h5                              eth1
+    BASH init intf                              h6                              em2
+    BASH add ip address                         h5                              10.251.1.31/24          eth1
+    BASH add ip address                         h6                              10.252.1.31/24          em2
+    BASH add route                              h5                              10.252.1.0/24           10.251.1.1
+    BASH add route                              h6                              10.251.1.0/24           10.252.1.1
+    REST add interface to vns                   X                               X1                      ${leaf2_a}          ${leaf2a_host5}            -1
+    REST add portgroup to vns                   Y                               Y1                      ${leaf2_b}          ${leaf2b_host6}            -1
+    sleep                                       1
+    BASH ping                                   h5                              10.252.1.31             count=5
+    ${value} =                                  BASH verify arp                 h5                      10.251.1.1
+    Should Be True                              ${value}        
+    ${value} =                                  BASH verify arp                 h6                      10.252.1.1
+    Should Be True                              ${value}    
+    ${mac1} =                                   BASH get intf mac               h5                      eth1
+    ${result} =                                 REST show endpoints mac         ${mac1}
+    Should Be True                              ${result}   
+    ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
+    Should Contain                              ${attachpoint}                  ${leaf2a_host5}
+    ${mac2} =                                   BASH get intf mac               h6                      em2
+    ${result} =                                 REST show endpoints mac         ${mac2}
+    Should Be True                              ${result}                       
+    ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
+    Should Contain                              ${attachpoint}                  ${leaf2b_host6}
+    REST show endpoints     
+    ${loss} =                                   BASH ping                       h1                      10.252.1.31             count=10
+    Should Be True                              ${loss} < 20        
+    BASH init intf                              h5                              eth1
+    BASH init intf                              h6                              em2
+    
+    
 Inter tenant dhcp relay	
 	BASH ifup intf								h1 								bond0
 	BASH ifup intf								h2								bond0
@@ -800,56 +837,6 @@ Inter tenant dhcp relay
 	BASH delete route							h2								10.251.0.0/16			10.252.1.1	
 	BASH delete route							h5								10.251.0.0/16			10.252.1.1
 	
-
-L3 inter tenant forwarding between endpoints on the same rack but different switch
-	BASH ifdown intf							h1 								bond0
-	BASH ifdown intf							h2								bond0
-	BASH ifdown intf							h1 								eth2
-	BASH ifdown intf							h2								eth3
-	BASH ifup intf								h1								eth3
-	BASH ifup intf								h2								eth2
-	BASH init intf								h1								eth3
-	BASH init intf								h2								eth2
-	REST delete portgroup						${leaf0_pc1}
-	REST delete portgroup						${leaf0_pc2}
-	sleep										1
-	REST add interface to vns					X								X1						${leaf0_a}				${leaf0_pc1_intf1}			-1
-	REST add interface to vns					X								X2						${leaf0_b}				${leaf0_pc2_intf2}			-1
-	BASH add ip address							h1								10.251.1.11/24			eth3	
-	BASH add ip address							h2								10.252.1.11/24			eth2
-	BASH add route								h1								10.252.0.0/16			10.251.1.1
-	BASH add route								h2								10.251.0.0/16			10.252.1.1
-	sleep										5	
-	BASH ping									h1								10.252.1.11				count=10
-	${value} = 									BASH verify arp					h1						10.251.1.1
-	Should Be True								${value} 		
-	${value} =									BASH verify arp					h2						10.252.1.1
-	Should Be True								${value} 	
-	${mac1} = 									BASH get intf mac				h1						eth3
-	${result} =									REST show endpoints mac			${mac1}
-	Should Be True								${result}	
-	${attachpoint} = 							Set Variable					${result[0]['attachment-point']}	
-	Should Contain								${attachpoint}					'leaf0-a|ethernet48'
-	${mac2} = 									BASH get intf mac				h2						eth2
-	${result} =									REST show endpoints mac			${mac2}
-	Should Be True								${result}	
-	${attachpoint} = 							Set Variable					${result[0]['attachment-point']}	
-	Should Contain								${attachpoint}					'leaf0-b|ethernet47'
-	${loss} =									BASH ping						h1						10.252.1.11 			count=10
-	Should Be True								${loss} < 20
-	BASH delete route							h1								10.252.0.0/16			10.251.1.1
-	BASH delete route							h2								10.251.0.0/16			10.252.1.1	
-	BASH init intf								h1								eth3
-	BASH init intf								h2								eth2
-	REST add portgroup								${leaf0_pc1}
-	REST add portgroup								${leaf0_pc2}
-	REST add portgroup lacp							${leaf0_pc1}
-	REST add portgroup lacp							${leaf0_pc2}
-	REST add interface to portgroup					${leaf0_a}					${leaf0_pc1_intf1}					${leaf0_pc1}
-	REST add interface to portgroup					${leaf0_b}					${leaf0_pc1_intf2}					${leaf0_pc1}
-	REST add interface to portgroup					${leaf0_a}					${leaf0_pc2_intf1}					${leaf0_pc2}
-	REST add interface to portgroup					${leaf0_b}					${leaf0_pc2_intf2}					${leaf0_pc2}
-					
 
 Dhcp request from other host in other tenants with dhcp enabled but no inter tenant route
 	BASH ifup intf								h1 								bond0
