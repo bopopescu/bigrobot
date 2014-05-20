@@ -1298,7 +1298,7 @@ class T5(object):
             return True
 
     def rest_verify_fabric_switch_all(self):
-	t = test.Test()
+        t = test.Test()
         c = t.controller('master')
         url1 = '/api/v1/data/controller/applications/bvs/info/fabric/switch' % ()
         c.rest.get(url1)
