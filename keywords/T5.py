@@ -1298,9 +1298,8 @@ class T5(object):
             return True
 
     def rest_verify_fabric_switch_all(self):
-	t = test.Test()
+        t = test.Test()
         c = t.controller('master')
-<<<<<<< HEAD
         url1 = '/api/v1/data/controller/applications/bvs/info/fabric/switch' % ()
         c.rest.get(url1)
         data = c.rest.content()
@@ -1308,25 +1307,6 @@ class T5(object):
             if (data[i]["fabric-connection-state"] == "suspended") and (data[i]["fabric-role"] == "leaf" or data[i]["fabric-role"] == "spine"):
                 helpers.test_failure("Fabric manager status is incorrect")
         helpers.log("Fabric manager status is correct")
-=======
-        try:
-            url = '/api/v1/data/controller/core/switch' % ()
-            c.rest.get(url)
-            data = c.rest.content()
-            for i in range (0, len(data)):
-                if (data[i]["suspended"] is True) and (data[i]["fabric-role"] == "leaf" or data[i]["fabric-role"] == "spine"):
-                    helpers.test_failure("Fabric manager status is incorrect")
-            helpers.log("Fabric manager status is correct")
-        except KeyError, e:
-            url1 = '/api/v1/data/controller/applications/bvs/info/fabric/switch' % ()
-            c.rest.get(url1)
-            data = c.rest.content()
-            for i in range (0, len(data)):
-                if (data[i]["fabric-connection-state"] == "suspended") and (data[i]["fabric-role"] == "leaf" or data[i]["fabric-role"] == "spine"):
-                    helpers.test_failure("Fabric manager status is incorrect")
-            helpers.log("Fabric manager status is correct")
-            return True
->>>>>>> upstream/smoke_stable
         return True
        
     def rest_verify_fabric_link_after_switch_removal(self, switch):
