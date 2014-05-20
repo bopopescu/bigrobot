@@ -2180,3 +2180,85 @@ class SwitchLight(object):
         except:
             helpers.test_failure("Could not execute command. Please check log for errors")
             return False
+
+
+############# CLI WALK : AUTHOR: CLIFF D
+    def switch_cli_exec_walk(self, node, string='', file_name=None, padding=''):
+        t = test.Test()
+        s = t.switch(node)
+        s.cli('')
+        # helpers.log("********* Entering cli_exec_walk ----> string: %s, file name: %s" % (string, file_name))
+        if string == '':
+            cli_string = '?'
+        else:
+            cli_string = string + ' ?'
+        s.send(cli_string, no_cr=True)
+        # s.expect(r'[\r\n\x07]?[\w-]+[#>] [\w-]*')
+        s.expect(r'[\r\n\x07][\w-]+[#>] ')
+        # s.expect(r'.*>')
+        content = s.cli_content()
+        temp = helpers.strip_cli_output(content)
+        temp = helpers.str_to_list(temp)
+        # helpers.log("********new_content:************\n%s" % helpers.prettify(temp))
+        s.send(helpers.ctrl('u'))
+        s.expect()
+        s.cli('')
+
+        string_c = string
+        # helpers.log("string for this level is: %s" % string_c)
+        # helpers.log("The length of string: %d" % len(temp))
+
+        if file_name:
+            helpers.log("opening file: %s" % file_name)
+            fo = open(file_name, 'a')
+            lines = []
+            lines.append((padding + string))
+            lines.append((padding + '----------'))
+            for line in temp:
+                lines.append((padding + line))
+            lines.append((padding + '=================='))
+            content = '\n'.join(lines)
+            fo.write(str(content))
+            fo.write("\n")
+
+            fo.close()
+
+        for index in range(len(temp)):
+            string = string_c
+            helpers.log(" line is - %s" % temp)
+            newline = temp[index].lstrip()
+            if 'All Available commands:' in newline:
+                break
+            keys = newline.split(' ')
+            key = keys.pop(0)
+            helpers.log("*** key is - %s" % key)
+            if re.match(r'For', newline) or "Commands:" in newline:
+                helpers.log("Ignoring line - %s" % newline)
+                continue
+            elif "exit" in key  or "echo" in key or "help" in key or "history" in key or "logout" in key or "ping" in key or "watch" in key:
+                helpers.log("Ignore line %s" % newline)
+                continue
+            elif re.match(r'^<.+', newline) and not re.match(r'^<cr>', newline):
+                helpers.log("Ignoring line - %s" % newline)
+                continue
+            elif '<cr>' in key:
+                # helpers.log(" I AM HERE complete CLI show command: ******%s******" % string)
+                s.cli(string)
+                if index == len(temp):
+                    helpers.log("AT END: ******%s******" % string)
+                    return string
+                else:
+                    continue
+            # elif "All" in key:
+            #    break
+            else:
+                # index = index + 1
+                key = key.lstrip()
+                if key == '' :
+                    continue
+                else:
+                    helpers.log("CLI show command: ******%s******" % string)
+                    string = string + ' ' + key
+                    helpers.log("key - %s" % (key))
+                    helpers.log("***** Call the cli walk again with  --- %s" % string)
+                    self.switch_cli_exec_walk(node, string, file_name, padding)
