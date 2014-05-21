@@ -788,26 +788,48 @@ class T5Utilities(object):
         '''
         t = test.Test()
         c = t.controller("master")
-        url = '/api/v1/data/controller/core/switch-config[name="%s"]/interface[name="%s"]' % (switch, interface)
-        result = c.rest.patch(url,{"shutdown": True})
+        #url = '/api/v1/data/controller/core/switch-config[name="%s"]/interface[name="%s"]' % (switch, interface)
+        #result = c.rest.patch(url,{"shutdown": True})
         
-        if c.rest.status_code_ok():
-            return True
-        else:
+        #if c.rest.status_code_ok():
+        #    return True
+        #else:
+        #    return False
+        try:
+            c.config("switch %s" % switch)
+            c.config("interface %s" % interface)
+            c.config("shutdown")
+            assert "Error" not in c.cli_content()
+        except:
+            helpers.test_log(c.cli_content())
             return False
+        else:
+            return True
+
+
     
     def rest_switch_int_noshut(self, switch, interface):
         ''' This function will no-shut the switch interface
         '''
         t = test.Test()
         c = t.controller("master")
-        url = '/api/v1/data/controller/core/switch-config[name="%s"]/interface[name="%s"]/shutdown' % (switch, interface)
-        result = c.rest.delete(url,{})
+        #url = '/api/v1/data/controller/core/switch-config[name="%s"]/interface[name="%s"]/shutdown' % (switch, interface)
+        #result = c.rest.delete(url,{})
         
-        if c.rest.status_code_ok():
-            return True
-        else:
+        #if c.rest.status_code_ok():
+        #    return True
+        #else:
+        #    return False
+        try:
+            c.config("switch %s" % switch)
+            c.config("interface %s" % interface)
+            c.config("no shutdown")
+            assert "Error" not in c.cli_content()
+        except:
+            helpers.test_log(c.cli_content())
             return False
+        else:
+            return True
 
 
 
