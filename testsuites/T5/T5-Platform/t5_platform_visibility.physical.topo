@@ -28,14 +28,32 @@ s3:
   alias: leaf1-a
   user: admin
   password: adminadmin
-  
+
 s4:
+  ip: 10.210.144.104
+  alias: leaf1-b
+  user: admin
+  password: adminadmin
+
+s5:
+  ip: 10.210.144.105
+  alias: leaf2-a
+  user: admin
+  password: adminadmin
+
+s6:
+  ip: 10.210.144.106
+  alias: leaf2-b
+  user: admin
+  password: adminadmin
+  
+s7:
   ip: 10.210.144.110
   alias: spine0
   user: admin
   password: adminadmin
 
-s5:
+s8:
   ip: 10.210.144.111
   alias: spine1
   user: admin
@@ -70,3 +88,24 @@ h6:
   ip: 10.210.144.56
   user: root
   password: bsn
+
+tg1:
+  platform: 'ixia'
+  chassis_ip: 10.210.192.2
+  tcl_server_ip: 10.194.64.182
+  #tcl_server_port: 8009
+  #ix_version: '7.10'
+  #set_init_ping: false
+  ports:
+    a:
+      name: 1/21
+    b:
+      name: 1/22
+    c:
+      name: 1/19
+    d:
+      name: 1/20
+    e:
+      name: 1/23
+    f:
+      name: 1/24

@@ -3,10 +3,10 @@
 * Setting
 Documentation    T5 Controller Platform Test Suite - SPAN Verification
 Suite Setup      base suite setup
-#Suite Teardown   base suite teardown
+Suite Teardown   base suite teardown
 Test Setup       T5 Platform Test Setup
 Test Teardown    T5 Platform Test Teardown
-Force Tags       T5Platform  SPAN
+Force Tags       T5Platform  Visibility
 Library          keywords/BsnCommon.py
 Library          keywords/Mininet.py
 Library	    	 keywords/Host.py
@@ -22,6 +22,10 @@ Resource		 testsuites/T5/t5_physical_variables.txt
 * Variables
 @{spineList}  00:00:00:00:01:00:00:01  00:00:00:00:01:00:00:02
 @{leafList}  00:00:00:00:02:00:00:01  00:00:00:00:02:00:00:02  00:00:00:00:02:00:00:03  00:00:00:00:02:00:00:04  00:00:00:00:02:00:00:05  00:00:00:00:02:00:00:06
+
+
+${gateway1IP}	192.168.4.100
+${gateway2IP}	192.168.0.100
 
 
 ${s1SrcSwitch}  leaf0-a
@@ -50,29 +54,12 @@ ${s1IxiaVerifyHost}  h2
 ${s1IxiaVerifyInt}	eth1
 
 
-${s3SrcSwitch}  leaf0-a
-${s3SrcInt}		ethernet21
-${s3DstSwitch}	leaf0-a
-${s3DstInt}		ethernet35
-${s3VerifyHost}  h3
-${s3VerifyInt}	eth2
-
-${s4SrcSwitch}  spine0
-${s4SrcInt}		ethernet1
-${s4DstSwitch}	spine0
-${s4DstInt}		ethernet30
-${s4VerifyHost}  h4
-${s4VerifyInt}	eth2
-
-${stream_name}  a_b_flow
-
-
 * Test Case 
 
 T0 Setup
 	[Tags]  setup
     Configure 3-Rack/Dual-Leaf/2-Spine/2-Host Setup For Physical Topology 
-	Configure 2 VNS with Different VLAN properties
+	Configure Tenants For SPAN & Test Path
 	bash execute command  leaf0-a  ofad-ctl autoneg 25
 	bash execute command  leaf0-a  ofad-ctl autoneg 26
 	bash execute command  leaf1-a  ofad-ctl autoneg 25
@@ -100,6 +87,38 @@ T0 Setup
 	sleep  2
 	Verify Connectivity in 3-Rack/Dual-Leaf/2-Spine/2-Host Physical Topology 
 	
+	
+	${stream-ab1}=  L3 add  flow=a<->b  frame_rate=100  frame_size=64  name=ab1_flow
+	...			src_mac=aa:bb:01:00:00:01  dst_mac=aa:bb:02:00:00:01
+	...			src_ip=100.1.1.1  src_gw=100.1.1.100  dst_ip=100.1.2.1  dst_gw=100.1.2.100	
+	...			protocol=TCP  src_port=1000  dst_port=2000 
+	
+	${stream-ab2}=  L3 add  flow=a<->b  frame_rate=100  frame_size=64  name=ab2_flow
+	...			src_mac=aa:bb:01:00:00:02  dst_mac=aa:bb:02:00:00:02
+	...			src_ip=100.1.1.2  src_gw=100.1.1.100  dst_ip=100.1.2.2  dst_gw=100.1.2.100	
+	...			protocol=TCP  src_port=1100  dst_port=2100
+	
+	${stream-ab3}=	L3 add  flow=a<->b  frame_rate=100  frame_size=64  name=ab3_flow
+	...			src_mac=aa:bb:01:00:00:03  dst_mac=aa:bb:02:00:00:03
+	...			src_ip=100.1.1.3  src_gw=100.1.1.100  dst_ip=100.1.2.3  dst_gw=100.1.2.100	
+	...			protocol=UDP  src_port=1000  dst_port=2000
+		
+	${stream-cd1}=  L3 add  flow=c<->d  frame_rate=100  frame_size=64  name=cd1_flow
+	...			src_mac=aa:bb:03:00:00:01  dst_mac=aa:bb:04:00:00:01
+	...			src_ip=100.3.1.1  src_gw=100.3.1.100  dst_ip=100.4.1.1  dst_gw=100.4.1.100	
+	...			protocol=TCP  src_port=3000  dst_port=4000 
+	
+	${stream-ac1}=  L3 add  flow=a<->c  frame_rate=100  frame_size=64  name=ac1_flow
+	...			src_mac=aa:bb:01:00:00:04  dst_mac=aa:bb:03:00:00:02
+	...			src_ip=100.1.1.4  src_gw=100.1.1.100  dst_ip=100.3.1.2  dst_gw=100.3.1.100	
+	...			protocol=TCP  src_port=1000  dst_port=3000 
+	
+	start traffic  ${stream-ab1}
+	start traffic  ${stream-ab2}
+	start traffic  ${stream-ab3}
+	start traffic  ${stream-cd1}
+	start traffic  ${stream-ac1}
+
 
 T1 Configure SPAN session for Single interface - Direction Both
     [Tags]  feature
@@ -249,6 +268,7 @@ T10 Configure SPAN session for Port-Group interface - Direction Both
 	${returnVal} =  verify ping with tcpdump  h1  ${s2PingIP}  ${s2VerifyHost}	${s2VerifyInt}	ICMP echo
 	Should be true  ${returnVal}
 	rest switch int shut   ${s2ShutSwitch}  ${s2ShutInt}
+
 	${returnVal} =  verify ping with tcpdump  h1  ${s2PingIP}  ${s2VerifyHost}	${s2VerifyInt}	ICMP echo request  ICMP echo reply
 	Should be true  ${returnVal}
 	rest switch int noshut   ${s2ShutSwitch}  ${s2ShutInt}
@@ -314,188 +334,458 @@ T15 Delete SPAN session for Port-Group interface - Direction Egress
 	rest switch int noshut   ${s2ShutSwitch}  ${s2ShutInt}
 	
 	
-T16 Configure SPAN session for TCP - Direction Both
-	[Tags]  feature 
+####################
 
-	${returnVal} =  rest add monitor session  1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	 ${s1IxiaDstSwitch}	 ${s1IxiaDstInt}  direction=both
+
+T16 Configure SPAN session - Direction Both
+	[Tags]  span  feature  
+	${returnVal} =  rest add monitor session  1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	 ${s1IxiaDstSwitch}	 ${s1IxiaDstInt}  direction=both  
     Should be true  ${returnVal}
 	${returnVal} =  rest verify monitor session	 1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	${s1IxiaDstSwitch}	${s1IxiaDstInt}  direction=both
 	Should be true  ${returnVal}
 	rest activate monitor session	1
 	
-	${stream}=  L3 add  flow=a<->b  frame_rate=1000  frame_size=64  name=a_b_flow
-	...			src_mac=00:02:01:00:00:24  dst_mac=00:02:02:00:00:24
-	...			src_ip=100.1.1.1  src_gw=100.1.1.100  dst_ip=100.2.2.2  dst_gw=100.2.2.100	
-	...			protocol=TCP  src_port=8000  dst_port=8500 
-	
 	sleep  3
-	start traffic  ${stream}
 	
-	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	src port 8000 and tcp  IP
+	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	src 100.1.1.1 and tcp  IP
 	Should be true  ${returnVal}
-	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	src port 8500 and tcp  IP
+	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	src 100.1.1.2 and tcp  IP
 	Should be true  ${returnVal}
-	
-	stop traffic  ${stream}
+	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	src 100.1.1.3 and udp  IP
+	Should be true  ${returnVal}
+	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	src 100.1.2.1 and tcp  IP
+	Should be true  ${returnVal}
+	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	src 100.1.2.2 and tcp  IP
+	Should be true  ${returnVal}
+	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	src 100.1.2.3 and udp  IP
+	Should be true  ${returnVal}
 	
 
-T17 Configure SPAN session for TCP - Direction Ingress
-	[Tags]  feature
+T17 Configure SPAN Session - Direction Ingress
+	[Tags]  span  feature  
 	${returnVal} =  rest add monitor session  1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	 ${s1IxiaDstSwitch}	 ${s1IxiaDstInt}  direction=ingress
     Should be true  ${returnVal}
 	${returnVal} =  rest verify monitor session	 1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	${s1IxiaDstSwitch}	${s1IxiaDstInt}  direction=ingress
 	Should be true  ${returnVal}
 	rest activate monitor session	1
 	
-	${stream}=  L3 add  flow=a<->b  frame_rate=1000  frame_size=64  name=a_b_flow
-	...			src_mac=00:02:01:00:00:24  dst_mac=00:02:02:00:00:24
-	...			src_ip=100.1.1.1  src_gw=100.1.1.100  dst_ip=100.2.2.2  dst_gw=100.2.2.100	
-	...			protocol=TCP  src_port=8000  dst_port=8500 
-	
 	sleep  3
-	start traffic  ${stream}
-	
-	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	src port 8000 and tcp  IP
+
+	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	src 100.1.1.1  IP
 	Should be true  ${returnVal}
-	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	src port 8500 and tcp  IP
+	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	src 100.1.1.3  IP
+	Should be true  ${returnVal}
+	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	src 100.1.2.1  IP
 	Should not be true  ${returnVal}
 	
-	stop traffic  ${stream}
-
-
-T17 Configure SPAN session for TCP - Direction Egress
-	[Tags]  feature 
+	
+T18 Configure SPAN Session - Direction Egress
+	[Tags]  feature
 	${returnVal} =  rest add monitor session  1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	 ${s1IxiaDstSwitch}	 ${s1IxiaDstInt}  direction=egress
     Should be true  ${returnVal}
 	${returnVal} =  rest verify monitor session	 1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	${s1IxiaDstSwitch}	${s1IxiaDstInt}  direction=egress
 	Should be true  ${returnVal}
 	rest activate monitor session	1
 	
-	${stream}=  L3 add  flow=a<->b  frame_rate=1000  frame_size=64  name=a_b_flow
-	...			src_mac=00:02:01:00:00:24  dst_mac=00:02:02:00:00:24
-	...			src_ip=100.1.1.1  src_gw=100.1.1.100  dst_ip=100.2.2.2  dst_gw=100.2.2.100	
-	...			protocol=TCP  src_port=8000  dst_port=8500 
-	
 	sleep  3
-	start traffic  ${stream}
-	
-	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	src port 8000 and tcp  IP
-	Should not be true  ${returnVal}
-	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	src port 8500 and tcp  IP
-	Should be true  ${returnVal}
-	
-	stop traffic  ${stream}
 
-	
-T18 Configure SPAN session for TCP - Direction Both
-	[Tags]  skipped
-	${returnVal} =  rest add monitor session  1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	 ${s1IxiaDstSwitch}	 ${s1IxiaDstInt}  direction=both
+	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	src 100.1.2.1  IP
+	Should be true  ${returnVal}
+	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	src 100.1.2.3  IP
+	Should be true  ${returnVal}
+	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	src 100.1.1.1  IP
+	Should not be true  ${returnVal}
+
+
+T19 Configure SPAN session for SRC-IP-CIDR - Direction Ingress
+	[Tags]  span  feature 
+	${returnVal} =  rest add monitor session  1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	 ${s1IxiaDstSwitch}	 ${s1IxiaDstInt}  direction=ingress  src-ip-cidr=100.1.1.1/32
     Should be true  ${returnVal}
-	${returnVal} =  rest verify monitor session	 1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	${s1IxiaDstSwitch}	${s1IxiaDstInt}  direction=both
+	${returnVal} =  rest verify monitor session	 1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	${s1IxiaDstSwitch}	${s1IxiaDstInt}  direction=ingress  src-ip-cidr=100.1.1.1/32
+	Should be true  ${returnVal}
+	rest activate monitor session	1
+
+	sleep  3
+	
+	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	src 100.1.1.1  IP 
+	Should be true  ${returnVal}
+	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	src 100.1.2.1  IP
+	Should not be true  ${returnVal}
+	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	src 100.1.1.2  IP
+	Should not be true  ${returnVal}
+	
+	${returnVal} =  rest add monitor session  1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	 ${s1IxiaDstSwitch}	 ${s1IxiaDstInt}  direction=ingress  src-ip-cidr=100.1.1.0/24
+    Should be true  ${returnVal}
+	${returnVal} =  rest verify monitor session	 1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	${s1IxiaDstSwitch}	${s1IxiaDstInt}  direction=ingress  src-ip-cidr=100.1.1.0/24
 	Should be true  ${returnVal}
 	rest activate monitor session	1
 	
-	${stream}=  L3 add  flow=a<->b  frame_rate=1000  frame_size=64  name=a_b_flow
-	...			src_mac=00:02:01:00:00:24  dst_mac=00:02:02:00:00:24
-	...			src_ip=100.1.1.1  src_gw=100.1.1.100  dst_ip=100.2.2.2  dst_gw=100.2.2.100	
-	...			protocol=TCP  src_port=8000  dst_port=8500 
+	sleep  3
+	
+	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	src 100.1.1.1  IP 
+	Should be true  ${returnVal}
+	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	src 100.1.1.2  IP
+	Should be true  ${returnVal}
+	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	src 100.1.2.1  IP
+	Should not be true  ${returnVal}
+
+
+T20 Configure SPAN session for SRC-PORT - Direction Ingress
+	[Tags]  span  feature
+	${returnVal} =  rest add monitor session  1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	 ${s1IxiaDstSwitch}	 ${s1IxiaDstInt}  direction=ingress  src-tp-port=1000
+    Should be true  ${returnVal}
+	${returnVal} =  rest verify monitor session	 1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	${s1IxiaDstSwitch}	${s1IxiaDstInt}  direction=ingress  src-tp-port=1000
+	Should be true  ${returnVal}
+	rest activate monitor session	1
+
+	sleep  3
+	
+	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	src port 1000 and tcp  IP
+	Should be true  ${returnVal}
+	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	src port 1000 and udp  IP
+	Should be true  ${returnVal}
+	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	src port 1100 and udp  IP
+	Should not be true  ${returnVal}
+	
+
+T21 Configure SPAN session for DST-IP-CIDR - Direction Ingress
+	[Tags]  span  feature
+	${returnVal} =  rest add monitor session  1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	 ${s1IxiaDstSwitch}	 ${s1IxiaDstInt}  direction=ingress  dst-ip-cidr=100.1.2.1/32
+    Should be true  ${returnVal}
+	${returnVal} =  rest verify monitor session	 1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	${s1IxiaDstSwitch}	${s1IxiaDstInt}  direction=ingress  dst-ip-cidr=100.1.2.1/32
+	Should be true  ${returnVal}
+	rest activate monitor session	1
+
+	sleep  3
+
+	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	dst 100.1.2.1  IP 
+	Should be true  ${returnVal}
+	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	dst 100.1.2.2  IP
+	Should not be true  ${returnVal}
+	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	dst 100.1.1.2  IP
+	Should not be true  ${returnVal}
+
+	${returnVal} =  rest add monitor session  1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	 ${s1IxiaDstSwitch}	 ${s1IxiaDstInt}  direction=ingress  dst-ip-cidr=100.1.2.0/24
+    Should be true  ${returnVal}
+	${returnVal} =  rest verify monitor session	 1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	${s1IxiaDstSwitch}	${s1IxiaDstInt}  direction=ingress  dst-ip-cidr=100.1.2.0/24
+	Should be true  ${returnVal}
+	rest activate monitor session	1
 	
 	sleep  3
-	start traffic  ${stream}
+	
+	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	dst 100.1.2.1  IP 
+	Should be true  ${returnVal}
+	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	dst 100.1.2.2  IP
+	Should be true  ${returnVal}
+	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	dst 100.1.1.2  IP
+	Should not be true  ${returnVal}
+	
+	
+T22 Configure SPAN session for DST-PORT - Direction Ingress
+	[Tags]  span  feature
+	${returnVal} =  rest add monitor session  1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	 ${s1IxiaDstSwitch}	 ${s1IxiaDstInt}  direction=ingress  dst-tp-port=2000
+    Should be true  ${returnVal}
+	${returnVal} =  rest verify monitor session	 1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	${s1IxiaDstSwitch}	${s1IxiaDstInt}  direction=ingress  dst-tp-port=2000
+	Should be true  ${returnVal}
+	rest activate monitor session	1
+
+	sleep  3
+	
+	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	dst port 2000 and tcp  IP
+	Should be true  ${returnVal}
+	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	dst port 2000 and udp  IP
+	Should be true  ${returnVal}
+	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	dst port 2100 and tcp  IP
+	Should not be true  ${returnVal}
+	
+	
+T23 Configure SPAN session for SRC-MAC - Direction Ingress
+	[Tags]  span  feature
+	${returnVal} =  rest add monitor session  1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	 ${s1IxiaDstSwitch}	 ${s1IxiaDstInt}  direction=ingress  src-mac=aa:bb:01:00:00:01
+    Should be true  ${returnVal}
+	${returnVal} =  rest verify monitor session	 1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	${s1IxiaDstSwitch}	${s1IxiaDstInt}  direction=ingress  src-mac=aa:bb:01:00:00:01
+	Should be true  ${returnVal}
+	rest activate monitor session	1
+
+	sleep  3
+	
+	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	src 100.1.1.1  IP 
+	Should be true  ${returnVal}
+	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	src 100.1.1.2  IP
+	Should not be true  ${returnVal}
+	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	src 100.1.1.3  IP
+	Should not be true  ${returnVal}
+	
+	
+T24 Configure SPAN session for DST-MAC - Direction Ingress
+	[Tags]  feature  run2
+	${returnVal} =  rest add monitor session  1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	 ${s1IxiaDstSwitch}	 ${s1IxiaDstInt}  direction=ingress  dst-mac=aa:bb:02:00:00:02
+    Should be true  ${returnVal}
+	${returnVal} =  rest verify monitor session	 1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	${s1IxiaDstSwitch}	${s1IxiaDstInt}  direction=ingress  dst-mac=aa:bb:02:00:00:02
+	Should be true  ${returnVal}
+	rest activate monitor session	1
+
+	sleep  3
+	
+	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	dst 100.1.1.2  IP 
+	Should be true  ${returnVal}
+	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	dst 100.1.1.1  IP
+	Should not be true  ${returnVal}
+	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	dst 100.1.1.3  IP
+	Should not be true  ${returnVal}
+
+
+T25 Configure SPAN session for IP-Proto - Direction Ingress
+	[Tags]  span  feature
+	${returnVal} =  rest add monitor session  1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	 ${s1IxiaDstSwitch}	 ${s1IxiaDstInt}  direction=ingress  ip-proto=6
+    Should be true  ${returnVal}
+	${returnVal} =  rest verify monitor session	 1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	${s1IxiaDstSwitch}	${s1IxiaDstInt}  direction=ingress  ip-proto=6
+	Should be true  ${returnVal}
+	rest activate monitor session	1
+	
+	sleep  3
+	
+	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	src port 1000 and tcp  IP
+	Should be true  ${returnVal}
+	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	src port 1100 and tcp  IP
+	Should be true  ${returnVal}
+	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	udp  IP
+	Should not be true  ${returnVal}
+	
+	
+T26 Configure SPAN session for IP-DSCP - Direction Ingress
+	[Tags]  span  feature
+	${returnVal} =  rest add monitor session  1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	 ${s1IxiaDstSwitch}	 ${s1IxiaDstInt}  direction=ingress  ip-dscp=6
+    Should be true  ${returnVal}
+	${returnVal} =  rest verify monitor session	 1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	${s1IxiaDstSwitch}	${s1IxiaDstInt}  direction=ingress  ip-dscp=6
+	Should be true  ${returnVal}
+	rest activate monitor session	1
+
+	sleep  3
 	
 	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	src port 8000 and tcp  IP
 	Should be true  ${returnVal}
-	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	src port 8500 and tcp  IP
+	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	src port 7000 and tcp  IP
+	Should not be true  ${returnVal}
+	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	src port 9000 and tcp  IP
+	Should not be true  ${returnVal}
+
+
+T27 Configure SPAN session for IP-ECN - Direction Ingress
+	[Tags]  span  feature
+	${returnVal} =  rest add monitor session  1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	 ${s1IxiaDstSwitch}	 ${s1IxiaDstInt}  direction=ingress  ip-ecn=6
+    Should be true  ${returnVal}
+	${returnVal} =  rest verify monitor session	 1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	${s1IxiaDstSwitch}	${s1IxiaDstInt}  direction=ingress  ip-ecn=6
 	Should be true  ${returnVal}
+	rest activate monitor session	1
+
+	sleep  3
 	
-	stop traffic  ${stream}	
+	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	src port 8000 and tcp  IP
+	Should be true  ${returnVal}
+	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	src port 7000 and tcp  IP
+	Should not be true  ${returnVal}
+	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	src port 9000 and tcp  IP
+	Should not be true  ${returnVal}
 	
-Configure SPAN for a particular source MAC/Port/IP-CIDR
-	[Tags]  skipped
-    manual untested
 
-Configure SPAN for a particular destination MAC/Port/IP-CIDR
-	[Tags]  skipped
-    manual untested
+T28 Configure SPAN session for Ethertype - Direction Ingress
+	[Tags]  span  feature
+	${returnVal} =  rest add monitor session  1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	 ${s1IxiaDstSwitch}	 ${s1IxiaDstInt}  direction=ingress  ip-proto=6
+    Should be true  ${returnVal}
+	${returnVal} =  rest verify monitor session	 1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	${s1IxiaDstSwitch}	${s1IxiaDstInt}  direction=ingress  ip-proto=6
+	Should be true  ${returnVal}
+	rest activate monitor session	1
+	
+	sleep  3
+	
+	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	src port 1000 and tcp  IP
+	Should be true  ${returnVal}
+	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	src port 1100 and tcp  IP
+	Should be true  ${returnVal}
+	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	udp  IP
+	Should not be true  ${returnVal}
+	
 
-Configure SPAN for a particular ether-type/ip protocol/ip-dscp/ip-ecn
-	[Tags]  skipped
-    manual untested
+T29 Configure SPAN session for Tenant/VNS - Direction Ingress
+	[Tags]  span  feature
+	${returnVal} =  rest add monitor session  1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	 ${s1IxiaDstSwitch}	 ${s1IxiaDstInt}  direction=ingress  ip-proto=6
+    Should be true  ${returnVal}
+	${returnVal} =  rest verify monitor session	 1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	${s1IxiaDstSwitch}	${s1IxiaDstInt}  direction=ingress  ip-proto=6
+	Should be true  ${returnVal}
+	rest activate monitor session	1
+	
+	sleep  3
+	
+	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	src port 1000 and tcp  IP
+	Should be true  ${returnVal}
+	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	src port 1100 and tcp  IP
+	Should be true  ${returnVal}
+	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	udp  IP
+	Should not be true  ${returnVal}
+	
+	
+T30 Configure SPAN session with multiple options - Direction Ingress
+	[Tags]  span  feature  manual  untested
+	# src-ip-cidr & dst-ip-cidr
+	# etc. etc.
 
-Configure SPAN for a particular tenant
-	[Tags]  skipped
-    manual untested
-    
-Configure SPAN for a particular VNS
-	[Tags]  skipped
-    manual untested
 
-####### Test Path
-    
-Verify test packet path with L2 traffic within a single leaf switch between 2 members from the same tenant
-	[Tags]  skipped
-    manual untested
-    
-Verify test packet path with L2 traffic within peer leaf switches between 2 member from the same tenant
-	[Tags]  skipped
-    manual untested
-    
-Verify test packet path with L2 traffic between different racks amongst 2 members from the same tenant  
-	[Tags]  skipped
-    manual untested
-    
-Verify test packet path with L2 traffic to an unknown destination originating from a tenant which spans across multiple racks
-	[Tags]  skipped
-    manual untested
+T31 Configure SPAN session with Different VLANs
+	[Tags]  span  feature  manual  untested
 
-Verify the updated paths in test packet path with L2 traffic within a single tenant while introducing path failures
-	[Tags]  skipped
-    manual untested
-    
-Verify test packet path with L3 traffic within a single leaf switch between 2 members from different tenants
-	[Tags]  skipped
-    manual untested
 
-Verify test packet path with L3 traffic within peer leaf switches between 2 member from different tenants
-	[Tags]  skipped
-    manual untested
+T32 Configure SPAN session with Spine switches 
+	[Tags]  span  feature  manual  untested
+	
+	
+T33 Configure SPAN session with multiple source interfaces
+	[Tags]  span  feature  manual  untested
+	
+	
+T34 Configure SPAN session with multiple destination interfaces
+	[Tags]  span  feature manual  untested
 
-Verify test packet path with L3 traffic between different racks amongst 2 members from the different tenants
-	[Tags]  skipped
-    manual untested
-    
-Verify test packet path with L3 traffic to an unknown destination originating from a tenant which spans across multiple racks
-	[Tags]  skipped
-    manual untested
-    
-Verify the updated paths in test packet path with L3 traffic between multiple tenants while introducing path failures
-	[Tags]   skipped
-    manual untested
 
-Verify all the CLI options for the test packet path command
-	[Tags]   skipped
-    manual untested
-    
-Flow Trace on ARP, Ping, UDP & TCP
-	[Tags]  skipped
-    manual untested
-    
-Flow Trace on MAC, VLAN, IP, L4-Port
-	[Tags]  skipped
-    manual untested
-    
-Flow Trace on src-endpoint, dest-endpoint, src-l4-port, dst-l4-port
-	[Tags]  skipped
-    manual untested
-    
-    
-###### Visibility
+T35 Configure multiple SPAN sessions in multiple switches
+	[Tags]  span  feature  manual  untested
+	Configure Span
+	Activate / Deactivate 
 
-Verify LED support:  “beacon switch”
 
-OF packet capture details
 
-Wireshark capabilities from the controller
+#################################################################	 	Test Path		#################################################################
+
+	
+T1 Intra Segment: SRC & DST Are In Same Rack - Same Switch
+	[Tags]  testpath  feature 
+	${returnVal}=  rest configure testpath controller view	 src-tenant=autoT1	src-segment=v1	src-ip=${h1_tag_ip}  dst-tenant=autoT1	dst-segment=v1	dst-ip=${h2_tag_ip}  ip-protocol=icmp
+	Should Be True  ${returnVal}
+	${returnVal}=  rest configure testpath fabric_view  test-name=Test1	 src-tenant=autoT1	src-segment=v1	src-ip=${h1_tag_ip}	 dst-tenant=autoT1	dst-segment=v1	dst-ip=${h2_tag_ip}  ip-protocol=icmp 
+	Should Be True  ${returnVal}
+	${returnVal}=  rest verify testpath fabric view  Test1  HostPing  leaf  host=h1  ip=${h2_tag_ip}
+
+
+T2 Intra Segment: SRC & DST Are In Same Rack - Different Switch
+	[Tags]  testpath  feature 
+	sleep  30
+	rest switch int shut   leaf0-a  ${h2_intf0}
+	sleep  5
+	${returnVal}=  rest configure testpath controller view	 src-tenant=autoT1	src-segment=v1	src-ip=${h1_tag_ip}  dst-tenant=autoT1	dst-segment=v1	dst-ip=${h2_tag_ip}  ip-protocol=icmp
+	Run Keyword If  '${returnVal}' == 'False'  rest switch int noshut   leaf0-b  ${h2_intf1}
+	Should Be True  ${returnVal}
+	${returnVal}=  rest configure testpath fabric_view  test-name=Test1	 src-tenant=autoT1	src-segment=v1	src-ip=${h1_tag_ip}	 dst-tenant=autoT1	dst-segment=v1	dst-ip=${h2_tag_ip}  ip-protocol=icmp
+	Should Be True  ${returnVal}
+	sleep  3
+	${returnVal}=  rest verify testpath fabric view  Test1  HostPing  leaf  leaf  host=h1  ip=${h2_tag_ip}
+	rest switch int noshut   leaf0-b  ${h2_intf1}
+	Should Be True  ${returnVal}
+	
+	
+T3 Intra Segment: SRC & DST Are In Different Racks
+	[Tags]  testpath  feature 
+	${returnVal}=  rest configure testpath controller view	 src-tenant=autoT1	src-segment=v1	src-ip=${h1_tag_ip}  dst-tenant=autoT1	dst-segment=v1	dst-ip=${h3_tag_ip}  ip-protocol=icmp
+	Should Be True  ${returnVal}
+	${returnVal}=  rest configure testpath fabric_view  test-name=Test3	 src-tenant=autoT1	src-segment=v1	src-ip=${h1_tag_ip}	 dst-tenant=autoT1	dst-segment=v1	dst-ip=${h3_tag_ip}  ip-protocol=icmp 
+	Should Be True  ${returnVal}
+	${returnVal}=  rest verify testpath fabric view  Test3  HostPing  leaf  spine  leaf  host=h1  ip=${h3_tag_ip}
+	Should Be True  ${returnVal}
+
+
+T4 Intra Segment: DST Is Subnet Gateway
+	[Tags]  testpath  feature 
+	${returnVal}=  rest configure testpath controller view	 src-tenant=autoT1	src-segment=v1	src-ip=${h1_tag_ip}  dst-tenant=autoT1	dst-segment=v1	dst-ip=${gateway1IP}  ip-protocol=icmp
+	Should Be True  ${returnVal}
+	${returnVal}=  rest configure testpath fabric_view  test-name=Test4	 src-tenant=autoT1	src-segment=v1	src-ip=${h1_tag_ip}	 dst-tenant=autoT1	dst-segment=v1	dst-ip=${gateway1IP}  ip-protocol=icmp 
+	Should Be True  ${returnVal}
+	${returnVal}=  rest verify testpath fabric view  Test4  HostPing  leaf  host=h1  ip=${gateway1IP}
+	Should Be True  ${returnVal}
+
+
+T5 Intra Tenant/ Different Segments - SRC & DST Are In Same Rack - Same Switch
+	[Tags]  testpath  feature  run
+	${returnVal}=  rest configure testpath controller view	 src-tenant=autoT1	src-segment=v1	src-ip=${h3_tag_ip}  dst-tenant=autoT1	dst-segment=v2	dst-ip=${h4_tag_ip}  ip-protocol=icmp
+	Should Be True  ${returnVal}
+	${returnVal}=  rest configure testpath fabric_view  test-name=Test5	 src-tenant=autoT1	src-segment=v1	src-ip=${h3_tag_ip}  dst-tenant=autoT1	dst-segment=v2	dst-ip=${h4_tag_ip}  ip-protocol=icmp
+	Should Be True  ${returnVal}
+	${returnVal}=  rest verify testpath fabric view  Test5  HostPing  leaf  host=h3  ip=${h4_tag_ip}
+	Should Be True  ${returnVal}
+	
+	
+T6 Intra Tenant/ Different Segments: SRC & DST Are In Same Rack - Different Switch
+	[Tags]  testpath  feature  run
+	sleep  35
+	rest switch int shut   leaf1-a  ${h4_intf0}
+	sleep  5
+	${returnVal}=  rest configure testpath controller view	 src-tenant=autoT1	src-segment=v1	src-ip=${h3_tag_ip}  dst-tenant=autoT1	dst-segment=v2	dst-ip=${h4_tag_ip}  ip-protocol=icmp
+	Run Keyword If  '${returnVal}' == 'False'  rest switch int noshut   leaf1-a  ${h4_intf0}
+	Should Be True  ${returnVal}
+	${returnVal}=  rest configure testpath fabric_view  test-name=Test5	 src-tenant=autoT1	src-segment=v1	src-ip=${h3_tag_ip}  dst-tenant=autoT1	dst-segment=v2	dst-ip=${h4_tag_ip}  ip-protocol=icmp
+	Should Be True  ${returnVal}
+	${returnVal}=  rest verify testpath fabric view  Test5  HostPing  leaf  leaf  host=h3  ip=${h4_tag_ip}
+	rest switch int noshut   leaf1-a  ${h4_intf0}
+	Should Be True  ${returnVal}
+
+
+T7 Intra Tenant/ Different Segments: SRC & DST Are In Different Racks
+	[Tags]  testpath  feature  run
+	${returnVal}=  rest configure testpath controller view	 src-tenant=autoT1	src-segment=v1	src-ip=${h1_tag_ip}  dst-tenant=autoT1	dst-segment=v2	dst-ip=${h6_tag_ip}  ip-protocol=icmp
+	Should Be True  ${returnVal}
+	${returnVal}=  rest configure testpath fabric_view  test-name=Test7	 src-tenant=autoT1	src-segment=v1	src-ip=${h1_tag_ip}  dst-tenant=autoT1	dst-segment=v2	dst-ip=${h6_tag_ip}  ip-protocol=icmp
+	Should Be True  ${returnVal}
+	${returnVal}=  rest verify testpath fabric view  Test7  HostPing  leaf  spine  leaf  host=h1  ip=${h6_tag_ip}
+	Should Be True  ${returnVal}
+
+
+T8 Intra Tenant/ Different Segments: DST Is Other Segment Gateway
+	[Tags]  testpath  feature  run
+	${returnVal}=  rest configure testpath controller view	 src-tenant=autoT1	src-segment=v1	src-ip=${h1_tag_ip}  dst-tenant=autoT1	dst-segment=v2	dst-ip=${gateway2IP}  ip-protocol=icmp
+	Should Be True  ${returnVal}
+	${returnVal}=  rest configure testpath fabric_view  test-name=Test8	 src-tenant=autoT1	src-segment=v1	src-ip=${h1_tag_ip}	 dst-tenant=autoT1	dst-segment=v2	dst-ip=${gateway2IP}  ip-protocol=icmp 
+	Should Be True  ${returnVal}
+	${returnVal}=  rest verify testpath fabric view  Test8  HostPing  leaf  host=h1  ip=${gateway2IP}
+	Should Be True  ${returnVal}
+
+
+T9 Inter Tenant: SRC & DST Are In Same Rack - Same Switch
+	[Tags]  testpath  feature  run
+	${returnVal}=  rest configure testpath controller view	 src-tenant=autoT2	src-segment=v1	src-ip=${h1_single_ip}  dst-tenant=Ixia1	dst-segment=v1	dst-ip=100.1.1.1  ip-protocol=icmp
+	Should Be True  ${returnVal}
+	${returnVal}=  rest configure testpath fabric_view  test-name=Test9	 src-tenant=autoT2	src-segment=v1	src-ip=${h1_single_ip}  dst-tenant=Ixia1	dst-segment=v1	dst-ip=100.1.1.1  ip-protocol=icmp
+	Should Be True  ${returnVal}
+	bash add route  h1  100.1.1.0/24  192.168.1.100  eth1
+	sleep  5
+	${returnVal}=  rest verify testpath fabric view  Test9  HostPing  leaf  spine  leaf  leaf  host=h1  ip=100.1.1.1
+	Should Be True  ${returnVal}
+
+
+T10 Inter Tenant: SRC & DST Are In Same Rack - Different Switch
+	[Tags]  testpath  feature  run
+	${returnVal}=  rest configure testpath controller view	 src-tenant=Ixia3	src-segment=v1	src-ip=100.3.1.1  
+	...	dst-tenant=Ixia4  dst-segment=v1	dst-ip=100.4.1.1  ip-protocol=tcp  src-l4-port=3000  dst-l4-port=4000  timeout=60
+	Should Be True  ${returnVal}
+	${returnVal}=  rest configure testpath fabric_view  test-name=Test10  src-tenant=Ixia3	src-segment=v1	src-ip=100.3.1.1  
+	...	dst-tenant=Ixia4  dst-segment=v1	dst-ip=100.4.1.1  ip-protocol=tcp  src-l4-port=3000  dst-l4-port=4000  timeout=60
+	Should Be True  ${returnVal}
+	sleep  3
+	${returnVal}=  rest verify testpath fabric view  Test10  Ixia  leaf	 spine  leaf	#stream=${stream-cd1}
+	Should Be True  ${returnVal}
+	
+
+T11 Inter Tenant: SRC & DST Are In Different Racks
+	[Tags]  testpath  feature  run
+	${returnVal}=  rest configure testpath controller view	 src-tenant=Ixia1	src-segment=v1	src-ip=100.1.1.4
+	...	dst-tenant=Ixia3  dst-segment=v1	dst-ip=100.3.1.2  ip-protocol=tcp  src-l4-port=1000  dst-l4-port=3000  timeout=60
+	Should Be True  ${returnVal}
+	${returnVal}=  rest configure testpath fabric_view  test-name=Test11  src-tenant=Ixia1	src-segment=v1	src-ip=100.1.1.4
+	...	dst-tenant=Ixia3  dst-segment=v1	dst-ip=100.3.1.2  ip-protocol=tcp  src-l4-port=1000  dst-l4-port=3000  timeout=60
+	Should Be True  ${returnVal}
+	sleep  3
+	${returnVal}=  rest verify testpath fabric view  Test11  Ixia  leaf  spine	leaf
+	Should Be True  ${returnVal}
+
+
+
 
 
 
@@ -534,11 +824,18 @@ Configure 3-Rack/Dual-Leaf/2-Spine/2-Host Setup For Physical Topology
    sleep  10
 
 
-Configure 2 VNS with Different VLAN properties
+Configure Tenants For SPAN & Test Path
    
    Set Test Variable  ${subMask}  24
-   Set Test Variable  ${vns1ip}  192.168.4.100
-   Set Test Variable  ${vns2ip}  192.168.1.100
+   Set Test Variable  ${seg1ip}  192.168.4.100
+   Set Test Variable  ${seg2ip}  192.168.0.100
+   Set Test Variable  ${seg3ip}  192.168.1.100
+   Set Test Variable  ${Ixia1v1IP}  100.1.1.100
+   Set Test Variable  ${Ixia1v2IP}  100.1.2.100
+   Set Test Variable  ${Ixia3v1IP}  100.3.1.100
+   Set Test Variable  ${Ixia4v1IP}  100.4.1.100
+   Set Test Variable  ${Ixia5v1IP}  100.5.1.100
+   Set Test Variable  ${Ixia6v1IP}  100.5.1.100
 
    rest add tenant  autoT1
    rest add vns  autoT1  v1
@@ -546,47 +843,84 @@ Configure 2 VNS with Different VLAN properties
    rest add portgroup to vns  autoT1  v1  p2  10
    rest add portgroup to vns  autoT1  v1  p3  10
    rest add router intf  autoT1  v1
-   rest add vns ip  autoT1  v1  ${vns1ip}  ${subMask}
+   rest add vns ip  autoT1  v1  ${seg1ip}  ${subMask}
    
    rest add vns  autoT1  v2
-   rest add portgroup to vns  autoT1  v2  p4  -1
-   rest add portgroup to vns  autoT1  v2  p5  -1
-   rest add portgroup to vns  autoT1  v2  p6  -1
+   rest add portgroup to vns  autoT1  v2  p4  20
+   rest add portgroup to vns  autoT1  v2  p5  20
+   rest add portgroup to vns  autoT1  v2  p6  20
    rest add router intf  autoT1  v2
-   rest add vns ip  autoT1  v2  ${vns2ip}  ${subMask}
+   rest add vns ip  autoT1  v2  ${seg2ip}  ${subMask}
    
    rest add tenant  autoT2
-   rest add vns  autoT2  v3
-   rest add interface to vns  autoT2  v3  leaf0-a  ethernet25  -1
-   rest add interface to vns  autoT2  v3  leaf1-a  ethernet25  -1
-   rest add interface to vns  autoT2  v3  leaf1-a  ethernet26  -1
-
-	
-   Set Test Variable  ${subMask}  24
-   Set Test Variable  ${vns1ip}  100.1.1.100
-   Set Test Variable  ${vns2ip}  100.2.2.100	
-
-   rest add tenant  autoIxia1
-   rest add vns  autoIxia1  v1
-   rest add interface to vns  autoIxia1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
-   rest add router intf  autoIxia1  v1
-   rest add vns ip  autoIxia1  v1  ${vns1ip}  ${subMask}
-	
-   rest add tenant  autoIxia2
-   rest add vns  autoIxia2  v2
-   rest add interface to vns  autoIxia2  v2  leaf0-b  ${leaf0b_ixia_intf}  -1
-   rest add router intf  autoIxia2  v2
-   rest add vns ip  autoIxia2  v2  ${vns2ip}  ${subMask}
-	
-   rest add tenant  system
-   rest add tenant routers intf to system	autoIxia1
-   rest add tenant routers intf to system	autoIxia2
-   rest add system intf to tenant routers	autoIxia1
-   rest add system intf to tenant routers	autoIxia2
-   rest add static routes	autoIxia1	0.0.0.0/0	{"tenant-name": "system"}
-   rest add static routes	autoIxia2	0.0.0.0/0	{"tenant-name": "system"}
+   rest add vns  autoT2  v1
+   rest add interface to vns  autoT2  v1  leaf0-a  ${h1_intf0_single}  -1
+   rest add interface to vns  autoT2  v1  leaf1-a  ${h3_intf0_single}  -1
+   rest add router intf  autoT2  v1
+   rest add vns ip  autoT2  v1  ${seg3ip}  ${subMask}
    
-   sleep  30
+   rest add tenant  Ixia1
+   rest add vns  Ixia1  v1
+   rest add interface to vns  Ixia1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
+   rest add vns  Ixia1  v2
+   rest add interface to vns  Ixia1  v2  leaf0-b  ${leaf0b_ixia_intf}  -1
+   rest add router intf  Ixia1  v1
+   rest add router intf  Ixia1  v2
+   rest add vns ip  Ixia1  v1  ${Ixia1v1IP}  ${subMask}
+   rest add vns ip  Ixia1  v2  ${Ixia1v2IP}  ${subMask}
+   
+   rest add tenant  Ixia3
+   rest add vns  Ixia3  v1
+   rest add interface to vns  Ixia3  v1  leaf1-a  ${leaf1a_ixia_intf}  -1
+   rest add router intf  Ixia3  v1
+   rest add vns ip  Ixia3  v1  ${Ixia3v1IP}  ${subMask}
+
+   rest add tenant  Ixia4
+   rest add vns  Ixia4  v1
+   rest add interface to vns  Ixia4  v1  leaf1-b  ${leaf1b_ixia_intf}  -1
+   rest add router intf  Ixia4  v1
+   rest add vns ip  Ixia4  v1  ${Ixia4v1IP}  ${subMask}
+   
+   rest add tenant  Ixia5
+   rest add vns  Ixia5  v1
+   rest add interface to vns  Ixia5  v1  leaf2-a  ${leaf2a_ixia_intf}  -1
+   rest add router intf  Ixia5  v1
+   rest add vns ip  Ixia5  v1  ${Ixia5v1IP}  ${subMask}
+   
+   rest add tenant  Ixia6
+   rest add vns  Ixia6  v1
+   rest add interface to vns  Ixia6  v1  leaf2-b  ${leaf2b_ixia_intf}  -1
+   rest add router intf  Ixia6  v1
+   rest add vns ip  Ixia6  v1  ${Ixia6v1IP}  ${subMask}
+
+   
+   rest add tenant  system
+   rest add tenant routers intf to system	autoT1
+   rest add tenant routers intf to system	autoT2
+   rest add tenant routers intf to system	Ixia1
+   rest add tenant routers intf to system	Ixia3
+   rest add tenant routers intf to system	Ixia4
+   rest add tenant routers intf to system	Ixia5
+   rest add tenant routers intf to system	Ixia6
+   
+   rest add system intf to tenant routers	autoT1
+   rest add system intf to tenant routers	autoT2
+   rest add system intf to tenant routers	Ixia1
+   rest add system intf to tenant routers	Ixia3
+   rest add system intf to tenant routers	Ixia4
+   rest add system intf to tenant routers	Ixia5
+   rest add system intf to tenant routers	Ixia6
+   
+   
+   rest add static routes	autoT1	0.0.0.0/0	{"tenant-name": "system"}
+   rest add static routes	autoT2	0.0.0.0/0	{"tenant-name": "system"}
+   rest add static routes	Ixia1	0.0.0.0/0	{"tenant-name": "system"}
+   rest add static routes	Ixia3	0.0.0.0/0	{"tenant-name": "system"}
+   rest add static routes	Ixia4	0.0.0.0/0	{"tenant-name": "system"}
+   rest add static routes	Ixia5	0.0.0.0/0	{"tenant-name": "system"}
+   rest add static routes	Ixia6	0.0.0.0/0	{"tenant-name": "system"}
+      
+   sleep  10
 
 
 Verify Connectivity in 3-Rack/Dual-Leaf/2-Spine/2-Host Physical Topology 
@@ -601,19 +935,16 @@ Verify Connectivity in 3-Rack/Dual-Leaf/2-Spine/2-Host Physical Topology
    
 
    ###	Verify L2 ping between autoT1-v2
-   ${returnVal}=  platform bash ping  h4  ${h5_ip}
+   ${returnVal}=  platform bash ping  h4  ${h5_tag_ip}
    Should Be True  ${returnVal}  
-   ${returnVal}=  platform bash ping  h4  ${h6_ip}
+   ${returnVal}=  platform bash ping  h4  ${h6_tag_ip}
    Should Be True  ${returnVal}  
-   ${returnVal}=  platform bash ping  h5  ${h6_ip}
+   ${returnVal}=  platform bash ping  h5  ${h6_tag_ip}
    Should Be True  ${returnVal}   
    
-   
-   ###	Verify ping between autoT2
+   ###	Verify ping between autoT2 			
    ${returnVal}=  platform bash ping  h1  ${h3_single_ip}
-   ${returnVal}=  platform bash ping  h1  ${h4_single_ip}
-   ${returnVal}=  platform bash ping  h2  ${h3_single_ip}
-   Should Be True  ${returnVal}
+   Should Be True  ${returnVal}   
 
 
 bring up h1 bond0
