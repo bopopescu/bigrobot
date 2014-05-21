@@ -401,7 +401,7 @@ verify interface LLDP/control packet count different rack
 	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
 	rest add interface to vns  t1  v1  leaf1-a  ${leaf1a_ixia_intf}  100     
 	rest clear vns stats  v1
-    ${stream}=             L2  feature add  no_arp=True  flow=a->c  src_mac=00:02:01:00:00:24  dst_mac=01:80:c2:00:00:0e  frame_rate=1000  frame_cnt=10000  frame_size=68  name=a_c_flow
+    ${stream}=             L3 add  no_arp=True  flow=a->c  src_mac=00:02:01:00:00:24  dst_mac=01:80:c2:00:00:0e  frame_rate=1000  frame_cnt=10000  frame_size=68  name=a_c_flow
     start traffic
     sleep  7  
     stop traffic 
