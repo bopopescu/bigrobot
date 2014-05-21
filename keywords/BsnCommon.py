@@ -147,8 +147,8 @@ class BsnCommon(object):
                    'show debug events',
                    ]
         for cmd in cmdlist:
-            content = self.config(node, cmd)
-            fh.write(content['content'])
+            content = self.config(node, cmd)['content']
+            fh.write(content)
             fh.write('\n')
         helpers.log("Successfully run all debug commands. Saved to %s."
                     % show_cmd_file)
@@ -169,6 +169,43 @@ class BsnCommon(object):
         server_devconf.bash('cd %s' % dest_path)
         server_devconf.sudo('gzip -9 --quiet --force'
                             ' *.log *.log.[0-9] *.log.[0-9][0-9]')
+
+    def mininet_postmortem(self, node, server, server_devconf,
+                           user, password, dest_path, test_descr=None):
+        """
+        Executes the Mininet postmortem command.
+        Save the command output to the archiver.
+        """
+        helpers.log("Collecting postmortem information for mininet '%s'"
+                    % node)
+        output_dir = helpers.bigrobot_log_path_exec_instance()
+        show_cmd_file = (output_dir + '/' + test_descr + '_' + node +
+                         '/show_cmd_out.txt')
+        d = os.path.dirname(show_cmd_file)
+        if not os.path.exists(d):
+            os.makedirs(d)
+        fh = open(show_cmd_file, 'w')
+
+        content = self.cli(node, 'bugreport')['content']
+        match = re.search(r'^Tarball left at (.+)$', content, re.M)
+        fh.write(content)
+        fh.write('\n')
+        helpers.log("Successfully run all debug commands. Saved to %s."
+                    % show_cmd_file)
+        fh.close()
+
+        helpers.scp_put(server, show_cmd_file, dest_path, user, password)
+
+        if match:
+            mininet_log = match.group(1).strip()
+            Host().bash_scp(node,
+                            source=mininet_log,
+                            dest='%s@%s:%s' % (user, server, dest_path),
+                            password=password, timeout=60)
+            helpers.log("Successfully copied Mininet log on '%s' to '%s:%s'"
+                        % (node, server, dest_path))
+        else:
+            helpers.log("Mininet log not found.")
 
     def base_test_postmortem(self, test_descr=None):
         t = test.Test()
@@ -208,6 +245,13 @@ class BsnCommon(object):
                                            user=user, password=password,
                                            dest_path=test_dest_path,
                                            test_descr=test_descr)
+            if helpers.is_mininet(node):
+                self.mininet_postmortem(node,
+                                        server=server,
+                                        server_devconf=h,
+                                        user=user, password=password,
+                                        dest_path=test_dest_path,
+                                        test_descr=test_descr)
 
         # Only print the postmortem URL once.
         if t.settings('postmortem_url_is_printed') == None:
