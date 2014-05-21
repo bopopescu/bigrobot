@@ -121,7 +121,7 @@ T0 Setup
 
 
 T1 Configure SPAN session for Single interface - Direction Both
-    [Tags]  feature
+    [Tags]  span  feature
     ${returnVal} =  rest add monitor session	1	${s1SrcSwitch}	${s1SrcInt}	${s1DstSwitch}	${s1DstInt}  direction=both
     Should be true  ${returnVal}
 	${returnVal} =  rest verify monitor session		1  ${s1SrcSwitch}	${s1SrcInt}	${s1DstSwitch}	${s1DstInt}  direction=both
@@ -132,7 +132,7 @@ T1 Configure SPAN session for Single interface - Direction Both
 	
 	
 T2 Delete SPAN session for Single interface - Direction Both
-	[Tags]  feature
+	[Tags]  span  feature
 	${returnVal} =  rest delete monitor session  1
     Should be true  ${returnVal}
     ${returnVal} =  rest verify monitor session		1  ${s1SrcSwitch}	${s1SrcInt}	${s1DstSwitch}	${s1DstInt}  direction=both
@@ -142,7 +142,7 @@ T2 Delete SPAN session for Single interface - Direction Both
 
 
 T3 Configure SPAN session for Single interface - Direction Ingress
-    [Tags]  feature
+    [Tags]  span  feature
     ${returnVal} =  rest add monitor session	1	${s1SrcSwitch}	${s1SrcInt}	${s1DstSwitch}	${s1DstInt}	 direction=ingress
     Should be true  ${returnVal}
 	${returnVal} =  rest verify monitor session		1  ${s1SrcSwitch}	${s1SrcInt}	${s1DstSwitch}	${s1DstInt}  direction=ingress
@@ -153,7 +153,7 @@ T3 Configure SPAN session for Single interface - Direction Ingress
 	
 	
 T4 Delete SPAN session for Single interface - Direction Ingress
-	[Tags]  feature
+	[Tags]  span  feature
 	${returnVal} =  rest delete monitor session  1
     Should be true  ${returnVal}
     ${returnVal} =  rest verify monitor session		1  ${s1SrcSwitch}	${s1SrcInt}	${s1DstSwitch}	${s1DstInt}  direction=ingress
@@ -163,7 +163,7 @@ T4 Delete SPAN session for Single interface - Direction Ingress
 
 
 T5 Configure SPAN session for Single interface - Direction Egress
-    [Tags]  feature
+    [Tags]  span  feature
     ${returnVal} =  rest add monitor session	1	${s1SrcSwitch}	${s1SrcInt}	${s1DstSwitch}	${s1DstInt}	 direction=egress
     Should be true  ${returnVal}
 	${returnVal} =  rest verify monitor session		1  ${s1SrcSwitch}	${s1SrcInt}	${s1DstSwitch}	${s1DstInt}  direction=egress
@@ -174,7 +174,7 @@ T5 Configure SPAN session for Single interface - Direction Egress
 	
 	
 T6 Delete SPAN session for Single interface - Direction Egress
-	[Tags]  feature
+	[Tags]  span  feature
 	${returnVal} =  rest delete monitor session  1
     Should be true  ${returnVal}
     ${returnVal} =  rest verify monitor session		1  ${s1SrcSwitch}	${s1SrcInt}	${s1DstSwitch}	${s1DstInt}  direction=egress
@@ -184,7 +184,7 @@ T6 Delete SPAN session for Single interface - Direction Egress
 
 
 T7 Activate-Deactivate-Activate-Delete SPAN session for Single interface - Direction Both
-    [Tags]  feature
+    [Tags]  span  feature
     ${returnVal} =  rest add monitor session	1	${s1SrcSwitch}	${s1SrcInt}	${s1DstSwitch}	${s1DstInt}  direction=both
     Should be true  ${returnVal}
 	${returnVal} =  rest verify monitor session		1  ${s1SrcSwitch}	${s1SrcInt}	${s1DstSwitch}	${s1DstInt}  direction=both
@@ -209,7 +209,7 @@ T7 Activate-Deactivate-Activate-Delete SPAN session for Single interface - Direc
     
     
 T8 Activate-Deactivate-Activate-Delete SPAN session for Single interface - Direction Ingress
-    [Tags]  feature 
+    [Tags]  span  feature
     ${returnVal} =  rest add monitor session	1	${s1SrcSwitch}	${s1SrcInt}	${s1DstSwitch}	${s1DstInt}  direction=ingress
     Should be true  ${returnVal}
 	${returnVal} =  rest verify monitor session		1  ${s1SrcSwitch}	${s1SrcInt}	${s1DstSwitch}	${s1DstInt}  direction=ingress
@@ -234,7 +234,7 @@ T8 Activate-Deactivate-Activate-Delete SPAN session for Single interface - Direc
 	
 	
 T9 Activate-Deactivate-Activate-Delete SPAN session for Single interface - Direction Egress
-    [Tags]  feature
+    [Tags]  span  feature
     ${returnVal} =  rest add monitor session	1	${s1SrcSwitch}	${s1SrcInt}	${s1DstSwitch}	${s1DstInt}  direction=egress
     Should be true  ${returnVal}
 	${returnVal} =  rest verify monitor session		1  ${s1SrcSwitch}	${s1SrcInt}	${s1DstSwitch}	${s1DstInt}  direction=egress
@@ -259,7 +259,7 @@ T9 Activate-Deactivate-Activate-Delete SPAN session for Single interface - Direc
 
 
 T10 Configure SPAN session for Port-Group interface - Direction Both
-    [Tags]  feature
+    [Tags]  span  feature
     ${returnVal} =  rest add monitor session	2	${s2SrcSwitch}	${s2SrcInt}	${s2DstSwitch}	${s2DstInt}  direction=both
     Should be true  ${returnVal}
 	${returnVal} =  rest verify monitor session		2  ${s2SrcSwitch}	${s2SrcInt}	${s2DstSwitch}	${s2DstInt}  direction=both
@@ -267,15 +267,14 @@ T10 Configure SPAN session for Port-Group interface - Direction Both
 	rest activate monitor session	2
 	${returnVal} =  verify ping with tcpdump  h1  ${s2PingIP}  ${s2VerifyHost}	${s2VerifyInt}	ICMP echo
 	Should be true  ${returnVal}
+	
 	rest switch int shut   ${s2ShutSwitch}  ${s2ShutInt}
-
 	${returnVal} =  verify ping with tcpdump  h1  ${s2PingIP}  ${s2VerifyHost}	${s2VerifyInt}	ICMP echo request  ICMP echo reply
-	Should be true  ${returnVal}
 	rest switch int noshut   ${s2ShutSwitch}  ${s2ShutInt}
-
+	Should be true  ${returnVal}
 
 T11 Delete SPAN session for Port-Group interface - Direction Both
-	[Tags]  feature
+	[Tags]  span  feature
 	${returnVal} =  rest delete monitor session  2
     Should be true  ${returnVal}
     ${returnVal} =  rest verify monitor session		2  ${s2SrcSwitch}	${s2SrcInt}	${s2DstSwitch}	${s2DstInt}  direction=both
@@ -285,7 +284,7 @@ T11 Delete SPAN session for Port-Group interface - Direction Both
 
 
 T12 Configure SPAN session for Port-Group interface - Direction Ingress
-    [Tags]  feature 
+    [Tags]  span  feature
     ${returnVal} =  rest add monitor session	2	${s2SrcSwitch}	${s2SrcInt}	${s2DstSwitch}	${s2DstInt}  direction=ingress
     Should be true  ${returnVal}
 	${returnVal} =  rest verify monitor session		2  ${s2SrcSwitch}	${s2SrcInt}	${s2DstSwitch}	${s2DstInt}  direction=ingress
@@ -293,24 +292,26 @@ T12 Configure SPAN session for Port-Group interface - Direction Ingress
 	rest activate monitor session	2
 	rest switch int shut   ${s2ShutSwitch}  ${s2ShutInt}
 	${returnVal} =  verify ping with tcpdump  h1  ${s2PingIP}  ${s2VerifyHost}	${s2VerifyInt}	ICMP echo request
-	Should be true  ${returnVal}
 	rest switch int noshut   ${s2ShutSwitch}  ${s2ShutInt}
+	Should be true  ${returnVal}
+	
 	
 	
 T13 Delete SPAN session for Port-Group interface - Direction Ingress
-	[Tags]  feature
+	[Tags]  span  feature
 	${returnVal} =  rest delete monitor session  2
     Should be true  ${returnVal}
     ${returnVal} =  rest verify monitor session		2  ${s2SrcSwitch}	${s2SrcInt}	${s2DstSwitch}	${s2DstInt}  direction=ingress
 	Should not be true  ${returnVal}
 	rest switch int shut   ${s2ShutSwitch}  ${s2ShutInt}
 	${returnVal} =  verify ping with tcpdump  h1  ${s2PingIP}  ${s2VerifyHost}	${s2VerifyInt}	ICMP echo request
-	Should not be true  ${returnVal}
 	rest switch int noshut   ${s2ShutSwitch}  ${s2ShutInt}
+	Should not be true  ${returnVal}
+	
 
 
 T14 Configure SPAN session for Port-Group interface - Direction Egress
-    [Tags]  feature
+    [Tags]  span  feature
     ${returnVal} =  rest add monitor session	2	${s2SrcSwitch}	${s2SrcInt}	${s2DstSwitch}	${s2DstInt}  direction=egress
     Should be true  ${returnVal}
 	${returnVal} =  rest verify monitor session		2  ${s2SrcSwitch}	${s2SrcInt}	${s2DstSwitch}	${s2DstInt}  direction=egress
@@ -318,20 +319,22 @@ T14 Configure SPAN session for Port-Group interface - Direction Egress
 	rest activate monitor session	2
 	rest switch int shut   ${s2ShutSwitch}  ${s2ShutInt}
 	${returnVal} =  verify ping with tcpdump  h1  ${s2PingIP}  ${s2VerifyHost}	${s2VerifyInt}	ICMP echo reply
-	Should be true  ${returnVal}
 	rest switch int noshut   ${s2ShutSwitch}  ${s2ShutInt}
+	Should be true  ${returnVal}
+	
 	
 	
 T15 Delete SPAN session for Port-Group interface - Direction Egress
-	[Tags]  feature 
+	[Tags]  span  feature
 	${returnVal} =  rest delete monitor session  2
     Should be true  ${returnVal}
     ${returnVal} =  rest verify monitor session		2  ${s2SrcSwitch}	${s2SrcInt}	${s2DstSwitch}	${s2DstInt}  direction=egress
 	Should not be true  ${returnVal}
 	rest switch int shut   ${s2ShutSwitch}  ${s2ShutInt}
 	${returnVal} =  verify ping with tcpdump  h1  ${s2PingIP}  ${s2VerifyHost}	${s2VerifyInt}	ICMP echo reply
-	Should not be true  ${returnVal}
 	rest switch int noshut   ${s2ShutSwitch}  ${s2ShutInt}
+	Should not be true  ${returnVal}
+	
 	
 	
 ####################
@@ -518,7 +521,7 @@ T23 Configure SPAN session for SRC-MAC - Direction Ingress
 	
 	
 T24 Configure SPAN session for DST-MAC - Direction Ingress
-	[Tags]  feature  run2
+	[Tags]  span  feature
 	${returnVal} =  rest add monitor session  1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	 ${s1IxiaDstSwitch}	 ${s1IxiaDstInt}  direction=ingress  dst-mac=aa:bb:02:00:00:02
     Should be true  ${returnVal}
 	${returnVal} =  rest verify monitor session	 1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	${s1IxiaDstSwitch}	${s1IxiaDstInt}  direction=ingress  dst-mac=aa:bb:02:00:00:02
@@ -703,7 +706,7 @@ T4 Intra Segment: DST Is Subnet Gateway
 
 
 T5 Intra Tenant/ Different Segments - SRC & DST Are In Same Rack - Same Switch
-	[Tags]  testpath  feature  run
+	[Tags]  testpath  feature
 	${returnVal}=  rest configure testpath controller view	 src-tenant=autoT1	src-segment=v1	src-ip=${h3_tag_ip}  dst-tenant=autoT1	dst-segment=v2	dst-ip=${h4_tag_ip}  ip-protocol=icmp
 	Should Be True  ${returnVal}
 	${returnVal}=  rest configure testpath fabric_view  test-name=Test5	 src-tenant=autoT1	src-segment=v1	src-ip=${h3_tag_ip}  dst-tenant=autoT1	dst-segment=v2	dst-ip=${h4_tag_ip}  ip-protocol=icmp
@@ -713,7 +716,7 @@ T5 Intra Tenant/ Different Segments - SRC & DST Are In Same Rack - Same Switch
 	
 	
 T6 Intra Tenant/ Different Segments: SRC & DST Are In Same Rack - Different Switch
-	[Tags]  testpath  feature  run
+	[Tags]  testpath  feature
 	sleep  35
 	rest switch int shut   leaf1-a  ${h4_intf0}
 	sleep  5
@@ -728,7 +731,7 @@ T6 Intra Tenant/ Different Segments: SRC & DST Are In Same Rack - Different Swit
 
 
 T7 Intra Tenant/ Different Segments: SRC & DST Are In Different Racks
-	[Tags]  testpath  feature  run
+	[Tags]  testpath  feature
 	${returnVal}=  rest configure testpath controller view	 src-tenant=autoT1	src-segment=v1	src-ip=${h1_tag_ip}  dst-tenant=autoT1	dst-segment=v2	dst-ip=${h6_tag_ip}  ip-protocol=icmp
 	Should Be True  ${returnVal}
 	${returnVal}=  rest configure testpath fabric_view  test-name=Test7	 src-tenant=autoT1	src-segment=v1	src-ip=${h1_tag_ip}  dst-tenant=autoT1	dst-segment=v2	dst-ip=${h6_tag_ip}  ip-protocol=icmp
@@ -738,7 +741,7 @@ T7 Intra Tenant/ Different Segments: SRC & DST Are In Different Racks
 
 
 T8 Intra Tenant/ Different Segments: DST Is Other Segment Gateway
-	[Tags]  testpath  feature  run
+	[Tags]  testpath  feature
 	${returnVal}=  rest configure testpath controller view	 src-tenant=autoT1	src-segment=v1	src-ip=${h1_tag_ip}  dst-tenant=autoT1	dst-segment=v2	dst-ip=${gateway2IP}  ip-protocol=icmp
 	Should Be True  ${returnVal}
 	${returnVal}=  rest configure testpath fabric_view  test-name=Test8	 src-tenant=autoT1	src-segment=v1	src-ip=${h1_tag_ip}	 dst-tenant=autoT1	dst-segment=v2	dst-ip=${gateway2IP}  ip-protocol=icmp 
@@ -748,7 +751,7 @@ T8 Intra Tenant/ Different Segments: DST Is Other Segment Gateway
 
 
 T9 Inter Tenant: SRC & DST Are In Same Rack - Same Switch
-	[Tags]  testpath  feature  run
+	[Tags]  testpath  feature
 	${returnVal}=  rest configure testpath controller view	 src-tenant=autoT2	src-segment=v1	src-ip=${h1_single_ip}  dst-tenant=Ixia1	dst-segment=v1	dst-ip=100.1.1.1  ip-protocol=icmp
 	Should Be True  ${returnVal}
 	${returnVal}=  rest configure testpath fabric_view  test-name=Test9	 src-tenant=autoT2	src-segment=v1	src-ip=${h1_single_ip}  dst-tenant=Ixia1	dst-segment=v1	dst-ip=100.1.1.1  ip-protocol=icmp
@@ -760,7 +763,7 @@ T9 Inter Tenant: SRC & DST Are In Same Rack - Same Switch
 
 
 T10 Inter Tenant: SRC & DST Are In Same Rack - Different Switch
-	[Tags]  testpath  feature  run
+	[Tags]  testpath  feature
 	${returnVal}=  rest configure testpath controller view	 src-tenant=Ixia3	src-segment=v1	src-ip=100.3.1.1  
 	...	dst-tenant=Ixia4  dst-segment=v1	dst-ip=100.4.1.1  ip-protocol=tcp  src-l4-port=3000  dst-l4-port=4000  timeout=60
 	Should Be True  ${returnVal}
@@ -773,7 +776,7 @@ T10 Inter Tenant: SRC & DST Are In Same Rack - Different Switch
 	
 
 T11 Inter Tenant: SRC & DST Are In Different Racks
-	[Tags]  testpath  feature  run
+	[Tags]  testpath  feature
 	${returnVal}=  rest configure testpath controller view	 src-tenant=Ixia1	src-segment=v1	src-ip=100.1.1.4
 	...	dst-tenant=Ixia3  dst-segment=v1	dst-ip=100.3.1.2  ip-protocol=tcp  src-l4-port=1000  dst-l4-port=3000  timeout=60
 	Should Be True  ${returnVal}
