@@ -1859,6 +1859,8 @@ Static endpoint with dynamic host showing up on another port
 	REST add endpoint ip						X								X3						X3_host1				10.251.3.22
 	REST add endpoint mac						X								X3						X3_host1				${mac3}
 	REST add endpoint portgroup attachment		X								X3						X3_host1				${leaf2_pc2}				-1
+	BASH set mac address                        h6                              bond0                   ${mac3}
+	BASH add route                              h6                              10.251.1.0/24           10.251.1.1
 	sleep										1
 	${result} =									REST show endpoints mac			${mac3}
 	Log                                         result[0] = ${result[0]}
@@ -1877,8 +1879,10 @@ Static endpoint with dynamic host showing up on another port
 	Should Be True								${loss} == 100
 	${loss} = 									BASH ping						h2						10.251.3.25				count=10
 	Should Be True								${loss} == 100
-	${returnVal} =                              verify ping with tcpdump        h4                      10.251.3.22            h6      bond0       ICMP echo request   
+	${returnVal} =                              verify ping with tcpdump        h1                      10.251.3.22            h6      bond0       ICMP echo request   
 	Should Be True                              ${returnVal}
+	${returnVal} =                              verify ping with tcpdump        h2                      10.251.1.11            h6      bond0       ICMP echo reply   
+    Should Be True                              ${returnVal}
 	REST delete endpoint						X								X3						X3_host1
 	sleep										1
 	${loss} = 									BASH ping						h2						10.251.3.24				count=10
@@ -1892,6 +1896,7 @@ Static endpoint with dynamic host showing up on another port
 	BASH delete route							h2								10.251.1.0/24			10.251.3.1
 	BASH delete route							h4								10.251.1.0/24			10.251.3.1
 	BASH delete route							h5								10.251.1.0/24			10.251.3.1
+	BASH network restart                        h6
 	
 Verify subnet mask on vns router ip
 	BASH ifup intf								h1 								bond0
