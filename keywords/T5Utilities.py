@@ -548,8 +548,6 @@ class T5Utilities(object):
                             helpers.warn("FWD:My Station Table Entry: %s is not present after the state change" % item)
                         if (fabricElement == "fwdRouterIPTable"):
                             helpers.warn("FWD:Router IP Table Entry: %s is not present after the state change" % item)
-                        if (fabricElement == "fwdRouterIPTable"):
-                            helpers.warn("FWD:Router IP Table Entry: %s is not present after the state change" % item)
                         if (fabricElement == "fwdEcmpTable"):
                             helpers.warn("FWD:ECMP Table Entry: %s is not present after the state change" % item)
                         if (fabricElement == "fwdDhcpTable"):
