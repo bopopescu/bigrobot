@@ -615,7 +615,7 @@ class T5(object):
     def rest_verify_endpoint_state(self, mac, vlan, state):
         '''Verify Dynamic Endpoint entry
 
-            Input: IP , vlan , states (Valid states are: learned , unknown)
+            Input: mac, vlan , states (Valid states are: learned , unknown)
 
             Return: true if it matches Value specified
         '''
@@ -626,13 +626,13 @@ class T5(object):
         data = c.rest.content()
         if data[0]["mac"] == mac and data[0]["vlan"] == vlan:
             if str(data[0]["attach-point-state"]) == "learned" and data[0]["ip-state"] == "learned":
-                helpers.log("Expected endpoint states = learned")
+                helpers.log("Expected endpoint states are showing learned")
                 return True
             elif str(data[0]["attach-point-state"]) == "unknown" and data[0]["ip-state"] == "unknown":
                 helpers.log("Expected endpoint states are unknown")
                 return True
             else:
-                helpers.test_failure("Expected endpoint state are not known to the system")
+                helpers.test_failure("Expected endpoint state is not known to the system")
                 return False
         else:
             helpers.log("Given mac address not known to the system MAC=%s" % mac)
