@@ -611,7 +611,33 @@ class T5(object):
                                         return False
         else:
             return False
+   
+    def rest_verify_endpoint_state(self, mac, vlan, state):
+        '''Verify Dynamic Endpoint entry
 
+            Input: mac, vlan , states (Valid states are: learned , unknown)
+
+            Return: true if it matches Value specified
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/endpoint[ip-address="%s"]' % (mac)
+        c.rest.get(url)
+        data = c.rest.content()
+        if data[0]["mac"] == mac and data[0]["vlan"] == vlan:
+            if str(data[0]["attach-point-state"]) == "learned" and data[0]["ip-state"] == "learned":
+                helpers.log("Expected endpoint states are showing learned")
+                return True
+            elif str(data[0]["attach-point-state"]) == "unknown" and data[0]["ip-state"] == "unknown":
+                helpers.log("Expected endpoint states are unknown")
+                return True
+            else:
+                helpers.test_failure("Expected endpoint state is not known to the system")
+                return False
+        else:
+            helpers.log("Given mac address not known to the system MAC=%s" % mac)
+            return False
+    
     def rest_verify_endpoint_static(self, vns, vlan, mac, switch, intf):
         '''Verify Static Endpoint entry
 
