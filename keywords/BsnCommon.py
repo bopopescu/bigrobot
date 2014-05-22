@@ -279,7 +279,7 @@ class BsnCommon(object):
             helpers.log("Pass: Value1:%d, Value2:%d" % (tx, rx))
             return True
         else:
-            helpers.test_failure("Fail: Value1:%d, Value2:%d" % (tx, rx))
+            helpers.log("Fail: Value1:%d, Value2:%d" % (tx, rx))
             return False
 
     def verify_switch_pkt_stats(self, count1, count2, range1=95, range2=5):
