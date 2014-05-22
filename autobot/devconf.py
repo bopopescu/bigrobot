@@ -566,6 +566,7 @@ class MininetDevConf(DevConf):
         if topology is None:
             helpers.environment_failure("Must specify a topology for Mininet.")
 
+        self._mode_before_bash = None
         self.topology = topology
         self.controller = controller
         self.controller2 = controller2
@@ -582,12 +583,43 @@ class MininetDevConf(DevConf):
         else:
             self.start_mininet()
 
-    def _cmd(self, cmd, quiet=False, prompt=False, timeout=None, level=4):
+    def is_cli(self):
+        return self.mode() == 'cli'
+
+    def is_bash(self):
+        return self.mode() == 'bash'
+
+    def exit_bash_mode(self, new_mode):
+        self.mode(self._mode_before_bash)
+        helpers.log("Switching from bash to %s mode" % new_mode, level=5)
+        super(MininetDevConf, self).cmd('exit', mode='bash', quiet=True)
+        helpers.log("Current mode is %s" % self.mode())
+
+    def _cmd(self, cmd, quiet=False, mode='cli', prompt=False, timeout=None,
+             level=4):
+
+        if mode == 'cli':
+            if self.is_bash():
+                self.exit_bash_mode(mode)
+        elif mode == 'bash':
+            if self.is_cli():
+                self._mode_before_bash = 'cli'
+                helpers.log("Switching from cli to %s mode" % mode,
+                            level=level)
+                super(MininetDevConf, self).cmd("sh bash",
+                                                mode=self._mode_before_bash,
+                                                quiet=True, level=level)
+        else:
+            helpers.environment_failure("Mode '%s' is not supported for Mininet"
+                                        % mode)
+
+        self.mode(mode)
+
         if not quiet:
             helpers.log("Execute command on '%s': %s"
                         % (self.name(), cmd), level=level)
 
-        super(MininetDevConf, self).cmd(cmd, prompt=prompt, mode='cli',
+        super(MininetDevConf, self).cmd(cmd, prompt=prompt, mode=mode,
                                         timeout=timeout, quiet=True)
         if not quiet:
             helpers.log("Content on '%s':\n%s%s"
@@ -615,8 +647,13 @@ class MininetDevConf(DevConf):
             raise
         return result
 
-    # Alias
-    cli = cmd
+    def cli(self, cmd, quiet=False, prompt=False, timeout=None, level=5):
+        return self.cmd(cmd, quiet=quiet, mode='cli', prompt=prompt,
+                        timeout=timeout, level=level)
+
+    def bash(self, cmd, quiet=False, prompt=False, timeout=None, level=5):
+        return self.cmd(cmd, quiet=quiet, mode='bash', prompt=prompt,
+                        timeout=timeout, level=level)
 
     def mininet_cmd(self):
         return ("sudo /usr/local/bin/mn --controller=remote --ip=%s --topo=%s --mac"

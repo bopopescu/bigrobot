@@ -1129,18 +1129,48 @@ class T5Platform(object):
         url = '/api/v1/data/controller/applications/bvs/monitor-session[id=%s]' % (sessionID)
         
         master.rest.put(url, {"id": sessionID})
-                
+        
+        matchSpec = {}
+        if ("src-mac" in kwargs):
+            matchSpec["src-mac"] = kwargs.get('src-mac')
+        if("src-ip-cidr" in kwargs):
+            matchSpec['src-ip-cidr'] =  kwargs.get('src-ip-cidr')
+        if("src-tp-port" in kwargs):
+            matchSpec["src-tp-port"] = kwargs.get('src-tp-port')
+        if("dst-mac" in kwargs):
+            matchSpec["dst-mac"] = kwargs.get('dst-mac')
+        if("dst-ip-cidr" in kwargs):
+            matchSpec['dst-ip-cidr'] = kwargs.get('dst-ip-cidr')
+        if("dst-tp-port" in kwargs):
+            matchSpec["dst-tp-port"] = kwargs.get('dst-tp-port')
+        if("ip-dscp" in kwargs):
+            matchSpec["ip-dscp"] = kwargs.get('ip-dscp')
+        if("ip-ecn" in kwargs):
+            matchSpec["ip-ecn"] = kwargs.get('ip-ecn')
+        if("ip-proto" in kwargs):
+            matchSpec["ip-proto"] = kwargs.get('ip-proto')
+        if("ether-type" in kwargs):
+            matchSpec["ether-type"] = kwargs.get('ether-type')
+        
+        helpers.log("matchSpec is: %s" % matchSpec)
+        
         url = '/api/v1/data/controller/applications/bvs/monitor-session[id=%s]/source[switch-name="%s"][interface-name="%s"]' % (sessionID, srcSwitch, srcInt)
-        result = master.rest.put(url, {"direction": kwargs.get("direction"), "switch-name": srcSwitch , "interface-name": srcInt})
 
+        if (matchSpec):
+            result = master.rest.put(url, {"match-specification": matchSpec, "direction": "ingress", "switch-name": "leaf0-a", "interface-name": "ethernet15"})
+        else:
+            result = master.rest.put(url, {"direction": kwargs.get("direction"), "switch-name": srcSwitch , "interface-name": srcInt})
+            
+        
         url = '/api/v1/data/controller/applications/bvs/monitor-session[id=%s]/destination[switch-name="%s"][interface-name="%s"]' % (sessionID, dstSwitch, dstInt)
         result = master.rest.put(url, {"switch-name": srcSwitch , "interface-name": dstInt})
+
         
         if master.rest.status_code_ok():
             return True
         else:
             return False
-        
+
     
     def rest_activate_monitor_session(self, sessionID):
         
@@ -1222,7 +1252,46 @@ class T5Platform(object):
                     if(session['destination'][0]['interface-name'] != dstInt):
                         helpers.log("Wrong destination interface in the monitor session %s : %s" % (sessionID, dstInt))
                         return False
-                    
+                    if ('src-mac') in kwargs:
+                        if((session['source'][0]['match-specification'])['src-mac'] != kwargs.get('src-mac')):
+                            helpers.log("Wrong src-mac in the monitor session %s : %s: %s" % (sessionID, srcInt, kwargs.get('src-mac')))
+                            return False
+                    if ('src-ip-cidr') in kwargs:
+                        if((session['source'][0]['match-specification'])['src-ip-cidr'] != kwargs.get('src-ip-cidr')):
+                            helpers.log("Wrong src-ip-cidr in the monitor session %s : %s: %s" % (sessionID, srcInt, kwargs.get('src-ip-cidr')))
+                            return False
+                    if ('src-tp-port') in kwargs:
+                        if(str((session['source'][0]['match-specification'])['src-tp-port']) != kwargs.get('src-tp-port')):
+                            helpers.log("Wrong src-tp-port in the monitor session %s : %s: %s" % (sessionID, srcInt, kwargs.get('src-tp-port')))
+                            return False
+                    if ('dst-mac') in kwargs:
+                        if((session['source'][0]['match-specification'])['dst-mac'] != kwargs.get('dst-mac')):
+                            helpers.log("Wrong dst-mac in the monitor session %s : %s: %s" % (sessionID, srcInt, kwargs.get('dst-mac')))
+                            return False
+                    if ('dst-ip-cidr') in kwargs:
+                        if((session['source'][0]['match-specification'])['dst-ip-cidr'] != kwargs.get('dst-ip-cidr')):
+                            helpers.log("Wrong dst-ip-cidr in the monitor session %s : %s: %s" % (sessionID, srcInt, kwargs.get('dst-ip-cidr')))
+                            return False
+                    if ('dst-tp-port') in kwargs:
+                        if(str((session['source'][0]['match-specification'])['dst-tp-port']) != kwargs.get('dst-tp-port')):
+                            helpers.log("Wrong dst-tp-port in the monitor session %s : %s: %s" % (sessionID, srcInt, kwargs.get('dst-tp-port')))
+                            return False
+                    if ('ip-dscp') in kwargs:
+                        if((session['source'][0]['match-specification'])['ip-dscp'] != kwargs.get('ip-dscp')):
+                            helpers.log("Wrong ip-dscp in the monitor session %s : %s: %s" % (sessionID, srcInt, kwargs.get('ip-dscp')))
+                            return False
+                    if ('ip-ecn') in kwargs:
+                        if((session['source'][0]['match-specification'])['ip-ecn'] != kwargs.get('ip-ecn')):
+                            helpers.log("Wrong ip-ecn in the monitor session %s : %s: %s" % (sessionID, srcInt, kwargs.get('ip-ecn')))
+                            return False
+                    if ('ip-proto') in kwargs:
+                        if((session['source'][0]['match-specification'])['ip-proto'] != kwargs.get('ip-proto')):
+                            helpers.log("Wrong ip-proto in the monitor session %s : %s: %s" % (sessionID, srcInt, kwargs.get('ip-proto')))
+                            return False
+                    if ('ether-type') in kwargs:
+                        if((session['source'][0]['match-specification'])['ether-type'] != kwargs.get('ether-type')):
+                            helpers.log("Wrong ether-type in the monitor session %s : %s: %s" % (sessionID, srcInt, kwargs.get('ether-type')))
+                            return False      
                     pass
                     
         except(KeyError):
@@ -3557,7 +3626,8 @@ class T5Platform(object):
                 Expected traffic path through the Leaf or Spine switches
                 eg: "leaf  spine  leaf"
             kwargs:
-                stream:StreamName (Ixia streamName)
+                If trafficMode==Ixia:  stream:StreamName (Ixia streamName) [Optional, only if the user wants
+                us to start the ixia stream]
                 host:hostName (Hostname of the host which the ping should originate from)
                 ip:pingIP (The IP address to ping)
         '''
@@ -3565,9 +3635,11 @@ class T5Platform(object):
         c = t.controller("master")
         
         if(trafficMode=='Ixia'):
-            ixia = Ixia.Ixia()
-            ixia.start_traffic(kwargs.get('stream'))
-            sleep(10)
+            if 'stream' in kwargs:
+                helpers.log("Test Path: Starting Ixia Stream: %s" % kwargs.get('stream'))
+                ixia = Ixia.Ixia()
+                ixia.start_traffic(kwargs.get('stream'))
+                sleep(10)
             
         elif(trafficMode == 'HostPing'):
             pingThread = T5PlatformThreads(1, "hostPing",  host=kwargs.get('host'), IP=kwargs.get('ip'))
@@ -3590,11 +3662,15 @@ class T5Platform(object):
             try:
                 for index,hop in enumerate(result[0]['physical-hop']):
                     try:
+                        if (index > len(args)-1):
+                            helpers.log("Test Path Error: Expected # of Hops: %s / Actual # of Hops: %s" %((len(args), len(result[0]['physical-hop']))))
+                            return False
+                        
                         if args[index] not in hop["hop-name"]:
                             helpers.log("Test Path Error: Expected - %s / Actual - %s" % (args[index], hop["hop-name"]))
                             return False
                         else: 
-                            currentHops.append(hop["hop-name"])
+                            currentHops.append(hop['hop-name'])
                             currentFlowCount[hop["hop-name"]] = hop["flow-counter"].strip('[]')
                             currentPktInCount[hop["hop-name"]] = hop["pktin-counter"].strip('[]')
                             
@@ -3637,7 +3713,8 @@ class T5Platform(object):
                   
         
         if(trafficMode=='Ixia'):
-            ixia.stop_traffic(kwargs.get('stream'))
+            if 'stream' in kwargs:
+                ixia.stop_traffic(kwargs.get('stream'))
         if(trafficMode=='HostPing'):
             pingThread.join()
         

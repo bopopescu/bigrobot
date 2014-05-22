@@ -1083,9 +1083,9 @@ class T5(object):
         '''
         t = test.Test()
         c = t.controller('master')
-        url = '/api/v1/data/controller/applications/bvs/info/stats/reset-stats/clear-segment-counter'
-        c.rest.get(url)
-
+        url = '/api/v1/data/controller/applications/bvs/info/stats/segment/stats[name=%s]' % vns
+        c.rest.delete(url, {})
+        
     def rest_verify_vns_rx_stats(self, tenant, vns, frame_cnt, vrange=5):
         ''' Function to verify the VNS stats
         Input: vns name
@@ -1095,15 +1095,15 @@ class T5(object):
         c = t.controller('master')
         frame_cnt = int(frame_cnt)
         vrange = int(vrange)
-        url = '/api/v1/data/controller/applications/bvs/info/stats/segment-stats/segment[segment="%s"][tenant-name="%s"]?select=counter' % (vns, tenant)
+        url = '/api/v1/data/controller/applications/bvs/info/stats/segment/stats[name="%s"][tenant-name="%s"]' % (vns, tenant)
         c.rest.get(url)
         data = c.rest.content()
-        if data[0]["tenant-name"] == tenant and data[0]["segment"] == vns:
-                    if (int(data[0]["counter"]["rx-packet"]) >= (frame_cnt - vrange)) and (int(data[0]["counter"]["rx-packet"]) <= (frame_cnt + vrange)):
-                        helpers.log("Pass: Counters value Expected:%d, Actual:%d" % (frame_cnt, int(data[0]["counter"]["rx-packet"])))
+        if data[0]["tenant-name"] == tenant and data[0]["name"] == vns:
+                    if (int(data[0]["rx-packet"]) >= (frame_cnt - vrange)) and (int(data[0]["rx-packet"]) <= (frame_cnt + vrange)):
+                        helpers.log("Pass: Counters value Expected:%d, Actual:%d" % (frame_cnt, int(data[0]["rx-packet"])))
                         return True
                     else:
-                        helpers.test_failure("Vns counter value does not match,Expected:%d,Actual:%d" % (frame_cnt, int(data[0]["counter"]["rx-packet"])))
+                        helpers.test_failure("Vns counter value does not match,Expected:%d,Actual:%d" % (frame_cnt, int(data[0]["rx-packet"])))
                         return False
         else:
             helpers.log("Given tenant name and VNS name does not match the config")
@@ -1115,7 +1115,7 @@ class T5(object):
         '''
         t = test.Test()
         c = t.controller('master')
-        url = '/api/v1/data/controller/applications/bvs/info/stats/segment-stats/segment[segment="%s"][tenant-name="%s"]?select=rate' % (vns, tenant)
+        url = '/api/v1/data/controller/applications/bvs/info/stats/segment/stats[name="%s"][tenant-name="%s"]' % (vns, tenant)
         frame_rate = int(frame_rate)
         vrange = int(vrange)
         try:
@@ -1123,12 +1123,12 @@ class T5(object):
         except:
             return False
         data = c.rest.content()
-        if data[0]["tenant-name"] == tenant and data[0]["segment"] == vns:
-            if (int(data[0]["rate"]["rx-packet-rate"]) >= (frame_rate - vrange)) and (int(data[0]["rate"]["rx-packet-rate"]) <= (frame_rate + vrange)):
-                helpers.log("Pass: Rate value Expected:%d, Actual:%d" % (frame_rate, int(data[0]["rate"]["rx-packet-rate"])))
+        if data[0]["tenant-name"] == tenant and data[0]["name"] == vns:
+            if (int(data[0]["rx-packet-rate"]) >= (frame_rate - vrange)) and (int(data[0]["rx-packet-rate"]) <= (frame_rate + vrange)):
+                helpers.log("Pass: Rate value Expected:%d, Actual:%d" % (frame_rate, int(data[0]["rx-packet-rate"])))
                 return True
             else:
-                helpers.test_failure("Vns rate value does not match,Expected:%d,Actual:%d" % (frame_rate, int(data[0]["rate"]["rx-packet-rate"])))
+                helpers.test_failure("Vns rate value does not match,Expected:%d,Actual:%d" % (frame_rate, int(data[0]["rx-packet-rate"])))
                 return False
         else:
             helpers.log("Given tenant name and vns name does not match in the config")
@@ -1142,15 +1142,15 @@ class T5(object):
         c = t.controller('master')
         frame_cnt = int(frame_cnt)
         vrange = int(vrange)
-        url = '/api/v1/data/controller/applications/bvs/info/stats/segment-stats/segment[segment="%s"][tenant-name="%s"]?select=counter' % (vns, tenant)
+        url = '/api/v1/data/controller/applications/bvs/info/stats/segment/stats[name="%s"][tenant-name="%s"]' % (vns, tenant)
         c.rest.get(url)
         data = c.rest.content()
-        if data[0]["tenant-name"] == tenant and data[0]["segment"] == vns:
-                    if (int(data[0]["counter"]["tx-packet"]) >= (frame_cnt - vrange)) and (int(data[0]["counter"]["tx-packet"]) <= (frame_cnt + vrange)):
-                        helpers.log("Pass: Counters value Expected:%d, Actual:%d" % (frame_cnt, int(data[0]["counter"]["tx-packet"])))
+        if data[0]["tenant-name"] == tenant and data[0]["name"] == vns:
+                    if (int(data[0]["tx-packet"]) >= (frame_cnt - vrange)) and (int(data[0]["tx-packet"]) <= (frame_cnt + vrange)):
+                        helpers.log("Pass: Counters value Expected:%d, Actual:%d" % (frame_cnt, int(data[0]["tx-packet"])))
                         return True
                     else:
-                        helpers.test_failure("vns counters does not match, Expected:%d,Actual:%d" % (frame_cnt, int(data[0]["counter"]["tx-packet"])))
+                        helpers.test_failure("vns counters does not match, Expected:%d,Actual:%d" % (frame_cnt, int(data[0]["tx-packet"])))
                         return False
         else:
             helpers.log("Given tenant name and VNS name does not match the config")
@@ -1162,17 +1162,17 @@ class T5(object):
         '''
         t = test.Test()
         c = t.controller('master')
-        url = '/api/v1/data/controller/applications/bvs/info/stats/segment-stats/segment[segment="%s"][tenant-name="%s"]?select=rate' % (vns, tenant)
+        url = '/api/v1/data/controller/applications/bvs/info/stats/segment/stats[name="%s"][tenant-name="%s"]' % (vns, tenant)
         frame_rate = int(frame_rate)
         vrange = int(vrange)
         c.rest.get(url)
         data = c.rest.content()
-        if data[0]["tenant-name"] == tenant and data[0]["segment"] == vns:
-            if (int(data[0]["rate"]["tx-packet-rate"]) >= (frame_rate - vrange)) and (int(data[0]["rate"]["tx-packet-rate"]) <= (frame_rate + vrange)):
-                helpers.log("Pass: Rate value Expected:%d, Actual:%d" % (frame_rate, int(data[0]["rate"]["tx-packet-rate"])))
+        if data[0]["tenant-name"] == tenant and data[0]["name"] == vns:
+            if (int(data[0]["tx-packet-rate"]) >= (frame_rate - vrange)) and (int(data[0]["tx-packet-rate"]) <= (frame_rate + vrange)):
+                helpers.log("Pass: Rate value Expected:%d, Actual:%d" % (frame_rate, int(data[0]["tx-packet-rate"])))
                 return True
             else:
-                helpers.test_failure("vns rates does not match, Expected:%d,Actual:%d" % (frame_rate, int(data[0]["rate"]["tx-packet-rate"])))
+                helpers.test_failure("vns rates does not match, Expected:%d,Actual:%d" % (frame_rate, int(data[0]["tx-packet-rate"])))
                 return False
         else:
             helpers.log("Given tenant name and vns name does not match in the config")
@@ -1184,8 +1184,8 @@ class T5(object):
         '''
         t = test.Test()
         c = t.controller('master')
-        url = '/api/v1/data/controller/applications/bvs/info/stats/reset-stats/clear-interface-counter'
-        c.rest.get(url)
+        url = '/api/v1/data/controller/applications/bvs/info/stats/interface/stats'
+        c.rest.delete(url, {})
 
     def rest_show_fabric_switch(self):
         '''Return the list of connected switches
@@ -1605,23 +1605,42 @@ class T5(object):
         except KeyError:
             return False
 
-    def rest_verify_fabric_error_dual_tor_peer_link(self, rack):
+    def rest_verify_fabric_error_invalid_link(self, rack1, rack2):
         t = test.Test()
         c = t.controller('master')
-        url = '/api/v1/data/controller/applications/bvs/info/fabric/errors/dual-tor/peer-link-absent' % ()
+        url = '/api/v1/data/controller/applications/bvs/info/errors/fabric/invalid-link' % ()
         c.rest.get(url)
         data = c.rest.content()
+        match_string = "Link between Leaf Groups [%s, %s ]" % (rack1, rack2)
         if not((data and True) or False):
             if len(data) != 0:
-                if data["name"] == rack:
-                    helpers.log("Fabric error reported for %s" % data["name"])
+                if data["reason"] == str(match_string):
+                    helpers.log("Fabric error reported for invalid links")
                     return True
                 else:
-                    helpers.test_failure("No Fabric error Reported for dual tor no peer link for rack %s" % data["name"])
+                    helpers.test_failure("No Fabric error Reported for invalid links")
                     return False
             else:
                 helpers.log("Fabric error will be none")
 
+    def rest_verify_fabric_error_missing_link(self, switcha, switchb, rack1):
+        t = test.Test()
+        c = t.controller('master')
+        url = '/api/v1/data/controller/applications/bvs/info/errors/fabric/missing-link' % ()
+        c.rest.get(url)
+        data = c.rest.content()
+        match_string = "Link between leaf switches missing in %s" % (rack1)
+        if not((data and True) or False):
+            if data[0]["dst-switch-name"] == switcha or data[0]["src-switch-name"] == switcha:
+                if data["description"] == str(match_string):
+                    helpers.log("Pass:Fabric error reported for missing links")
+                    return True
+                else:
+                    helpers.test_failure("No Fabric error Reported for missing links")
+                    return False
+            else:
+                helpers.log("No Fabric error with switch name reported")
+    
     def rest_verify_forwarding_port_table(self, switch):
         t = test.Test()
         c = t.controller('master')
@@ -1803,23 +1822,23 @@ class T5(object):
         '''
         t = test.Test()
         c = t.controller('master')
-        url = '/api/v1/data/controller/applications/bvs/info/stats/interface-stats/interface[switch-name="%s"][interface-name="%s"]?select=rx-counter' % (switch, intf)
+        url = '/api/v1/data/controller/applications/bvs/info/stats/interface/stats[switch-name="%s"]/interface[name="%s"]' % (switch, intf)
         frame_cnt = int(frame_cnt)
         vrange = int(vrange)
         c.rest.get(url)
         data = c.rest.content()
-        if data[0]["interface-name"] == intf and data[0]["switch-name"] == switch:
-            if (data[0]["rx-counter"]["unicast-packet"] >= (frame_cnt - vrange)) and (data[0]["rx-counter"]["unicast-packet"] <= (frame_cnt + vrange)):
-                helpers.log("Pass: Rate value Expected:%d, Actual:%d" % (frame_cnt, data[0]["rx-counter"]["unicast-packet"]))
+        if data[0]["name"] == intf:
+            if (data[0]["rx-unicast-packet"] >= (frame_cnt - vrange)) and (data[0]["rx-unicast-packet"] <= (frame_cnt + vrange)):
+                helpers.log("Pass: Rate value Expected:%d, Actual:%d" % (frame_cnt, data[0]["rx-unicast-packet"]))
                 return True
-            elif (data[0]["rx-counter"]["broadcast-packet"] >= (frame_cnt - vrange)) and (data[0]["rx-counter"]["broadcast-packet"] <= (frame_cnt + vrange)):
-                helpers.log("Pass: Rate value Expected:%d, Actual:%d" % (frame_cnt, data[0]["rx-counter"]["broadcast-packet"]))
+            elif (data[0]["rx-broadcast-packet"] >= (frame_cnt - vrange)) and (data[0]["rx-broadcast-packet"] <= (frame_cnt + vrange)):
+                helpers.log("Pass: Rate value Expected:%d, Actual:%d" % (frame_cnt, data[0]["rx-broadcast-packet"]))
                 return True
-            elif (data[0]["rx-counter"]["multicast-packet"] >= (frame_cnt - vrange)) and (data[0]["rx-counter"]["multicast-packet"] <= (frame_cnt + vrange)):
-                helpers.log("Pass: Rate value Expected:%d, Actual:%d" % (frame_cnt, data[0]["rx-counter"]["multicast-packet"]))
+            elif (data[0]["rx-multicast-packet"] >= (frame_cnt - vrange)) and (data[0]["rx-multicast-packet"] <= (frame_cnt + vrange)):
+                helpers.log("Pass: Rate value Expected:%d, Actual:%d" % (frame_cnt, data[0]["rx-multicast-packet"]))
                 return True
             else:
-                helpers.test_failure("Interface counters does not match Expected:%d,Actual:%d,%d,%d" % (frame_cnt, data[0]["rx-counter"]["unicast-packet"], data[0]["rx-counter"]["broadcast-packet"], data[0]["rx-counter"]["multicast-packet"]))
+                helpers.test_failure("Interface counters does not match Expected:%d,Actual:%d,%d,%d" % (frame_cnt, data[0]["rx-unicast-packet"], data[0]["rx-broadcast-packet"], data[0]["rx-multicast-packet"]))
                 return False
         else:
             helpers.log("Given switch name and interface name are not present in the controller")
@@ -1831,23 +1850,23 @@ class T5(object):
         '''
         t = test.Test()
         c = t.controller('master')
-        url = '/api/v1/data/controller/applications/bvs/info/stats/interface-stats/interface[switch-name="%s"][interface-name="%s"]?select=tx-counter' % (switch, intf)
+        url = '/api/v1/data/controller/applications/bvs/info/stats/interface/stats[switch-name="%s"]/interface[name="%s"]' % (switch, intf)
         frame_cnt = int(frame_cnt)
         vrange = int(vrange)
         c.rest.get(url)
         data = c.rest.content()
-        if data[0]["interface-name"] == intf and data[0]["switch-name"] == switch:
-            if (data[0]["tx-counter"]["unicast-packet"] >= (frame_cnt - vrange)) and (data[0]["tx-counter"]["unicast-packet"] <= (frame_cnt + vrange)):
-                helpers.log("Pass: Rate value Expected:%d, Actual:%d" % (frame_cnt, data[0]["tx-counter"]["unicast-packet"]))
+        if data[0]["name"] == intf:
+            if (data[0]["tx-unicast-packet"] >= (frame_cnt - vrange)) and (data[0]["tx-unicast-packet"] <= (frame_cnt + vrange)):
+                helpers.log("Pass: Rate value Expected:%d, Actual:%d" % (frame_cnt, data[0]["tx-unicast-packet"]))
                 return True
-            elif (data[0]["tx-counter"]["broadcast-packet"] >= (frame_cnt - vrange)) and (data[0]["tx-counter"]["broadcast-packet"] <= (frame_cnt + vrange)):
-                helpers.log("Pass: Rate value Expected:%d, Actual:%d" % (frame_cnt, data[0]["tx-counter"]["broadcast-packet"]))
+            elif (data[0]["tx-broadcast-packet"] >= (frame_cnt - vrange)) and (data[0]["tx-broadcast-packet"] <= (frame_cnt + vrange)):
+                helpers.log("Pass: Rate value Expected:%d, Actual:%d" % (frame_cnt, data[0]["tx-broadcast-packet"]))
                 return True
-            elif (data[0]["tx-counter"]["multicast-packet"] >= (frame_cnt - vrange)) and (data[0]["tx-counter"]["multicast-packet"] <= (frame_cnt + vrange)):
-                helpers.log("Pass: Rate value Expected:%d, Actual:%d" % (frame_cnt, data[0]["tx-counter"]["multicast-packet"]))
+            elif (data[0]["tx-multicast-packet"] >= (frame_cnt - vrange)) and (data[0]["tx-multicast-packet"] <= (frame_cnt + vrange)):
+                helpers.log("Pass: Rate value Expected:%d, Actual:%d" % (frame_cnt, data[0]["tx-multicast-packet"]))
                 return True
             else:
-                helpers.test_failure("Interface counters does not match Expected:%d,Actual:%d,%d,%d" % (frame_cnt, data[0]["tx-counter"]["unicast-packet"], data[0]["tx-counter"]["broadcast-packet"], data[0]["tx-counter"]["multicast-packet"]))
+                helpers.test_failure("Interface counters does not match Expected:%d,Actual:%d,%d,%d" % (frame_cnt, data[0]["tx-unicast-packet"], data[0]["tx-broadcast-packet"], data[0]["tx-multicast-packet"]))
                 return False
         else:
             helpers.log("Given switch name and interface name are not present in the controller")
@@ -1859,17 +1878,17 @@ class T5(object):
         '''
         t = test.Test()
         c = t.controller('master')
-        url = '/api/v1/data/controller/applications/bvs/info/stats/interface-stats/interface[switch-name="%s"][interface-name="%s"]?select=rx-rate' % (switch, intf)
+        url = '/api/v1/data/controller/applications/bvs/info/stats/interface/stats[switch-name="%s"]/interface[name="%s"]' % (switch, intf)
         frame_rate = int(frame_rate)
         vrange = int(vrange)
         c.rest.get(url)
         data = c.rest.content()
-        if data[0]["interface-name"] == intf and data[0]["switch-name"] == switch:
-            if (data[0]["rx-rate"]["unicast-packet-rate"] >= (frame_rate - vrange)) and (data[0]["rx-rate"]["unicast-packet-rate"] <= (frame_rate + vrange)):
-                helpers.log("Pass: Rate value Expected:%d, Actual:%d" % (frame_rate, data[0]["rx-rate"]["unicast-packet-rate"]))
+        if data[0]["name"] == intf:
+            if (data[0]["rx-unicast-packet-rate"] >= (frame_rate - vrange)) and (data[0]["rx-unicast-packet-rate"] <= (frame_rate + vrange)):
+                helpers.log("Pass: Rate value Expected:%d, Actual:%d" % (frame_rate, data[0]["rx-unicast-packet-rate"]))
                 return True
             else:
-                helpers.test_failure("Interface Rx rates does not match, Expected:%d, Actual:%d" % (frame_rate, data[0]["rx-rate"]["unicast-packet-rate"]))
+                helpers.test_failure("Interface Rx rates does not match, Expected:%d, Actual:%d" % (frame_rate, data[0]["rx-unicast-packet-rate"]))
                 return False
         else:
             helpers.log("Given switch name and interface name are not present in the controller")
@@ -1881,17 +1900,17 @@ class T5(object):
         '''
         t = test.Test()
         c = t.controller('master')
-        url = '/api/v1/data/controller/applications/bvs/info/stats/interface-stats/interface[switch-name="%s"][interface-name="%s"]?select=tx-rate' % (switch, intf)
+        url = '/api/v1/data/controller/applications/bvs/info/stats/interface/stats[switch-name="%s"]/interface[name="%s"]' % (switch, intf)
         frame_rate = int(frame_rate)
         vrange = int(vrange)
         c.rest.get(url)
         data = c.rest.content()
-        if data[0]["interface-name"] == intf and data[0]["switch-name"] == switch:
-            if (data[0]["tx-rate"]["unicast-packet-rate"] >= (frame_rate - vrange)) and (data[0]["tx-rate"]["unicast-packet-rate"] <= (frame_rate + vrange)):
-                helpers.log("Pass: Rate value Expected:%d, Actual:%d" % (frame_rate, data[0]["tx-rate"]["unicast-packet-rate"]))
+        if data[0]["name"] == intf:
+            if (data[0]["tx-unicast-packet-rate"] >= (frame_rate - vrange)) and (data[0]["tx-unicast-packet-rate"] <= (frame_rate + vrange)):
+                helpers.log("Pass: Rate value Expected:%d, Actual:%d" % (frame_rate, data[0]["tx-unicast-packet-rate"]))
                 return True
             else:
-                helpers.test_failure("Interface Rx rates does not match, Expected:%d, Actual:%d" % (frame_rate, data[0]["tx-rate"]["unicast-packet-rate"]))
+                helpers.test_failure("Interface Rx rates does not match, Expected:%d, Actual:%d" % (frame_rate, data[0]["tx-unicast-packet-rate"]))
                 return False
         else:
             helpers.log("Given switch name and interface name are not present in the controller")
@@ -1905,15 +1924,15 @@ class T5(object):
         c = t.controller('master')
         frame_cnt = int(frame_cnt)
         vrange = int(vrange)
-        url = '/api/v1/data/controller/applications/bvs/info/stats/tenant-stats/tenant[tenant-name="%s"]?select=counter' % (tenant)
+        url = '/api/v1/data/controller/applications/bvs/info/stats/tenant/stats[name="%s"]' % (tenant)
         c.rest.get(url)
         data = c.rest.content()
-        if data[0]["tenant-name"] == tenant:
-                    if (int(data[0]["counter"]["rx-packet"]) >= (frame_cnt - vrange)) and (int(data[0]["counter"]["rx-packet"]) <= (frame_cnt + vrange)):
-                        helpers.log("Pass: Tenant Counters value Expected:%d, Actual:%d" % (frame_cnt, int(data[0]["counter"]["rx-packet"])))
+        if data[0]["name"] == tenant:
+                    if (int(data[0]["rx-packet"]) >= (frame_cnt - vrange)) and (int(data[0]["rx-packet"]) <= (frame_cnt + vrange)):
+                        helpers.log("Pass: Tenant Counters value Expected:%d, Actual:%d" % (frame_cnt, int(data[0]["rx-packet"])))
                         return True
                     else:
-                        helpers.test_failure("Tenant counter value does not match,Expected:%d,Actual:%d" % (frame_cnt, int(data[0]["counter"]["rx-packet"])))
+                        helpers.test_failure("Tenant counter value does not match,Expected:%d,Actual:%d" % (frame_cnt, int(data[0]["rx-packet"])))
                         return False
         else:
             helpers.log("Given tenant name does not match the config")
@@ -1927,15 +1946,15 @@ class T5(object):
         c = t.controller('master')
         frame_cnt = int(frame_cnt)
         vrange = int(vrange)
-        url = '/api/v1/data/controller/applications/bvs/info/stats/tenant-stats/tenant[tenant-name="%s"]?select=counter' % (tenant)
+        url = '/api/v1/data/controller/applications/bvs/info/stats/tenant/stats[name="%s"]' % (tenant)
         c.rest.get(url)
         data = c.rest.content()
-        if data[0]["tenant-name"] == tenant:
-                    if (int(data[0]["counter"]["tx-packet"]) >= (frame_cnt - vrange)) and (int(data[0]["counter"]["tx-packet"]) <= (frame_cnt + vrange)):
-                        helpers.log("Pass: Tenant Counters value Expected:%d, Actual:%d" % (frame_cnt, int(data[0]["counter"]["tx-packet"])))
+        if data[0]["name"] == tenant:
+                    if (int(data[0]["tx-packet"]) >= (frame_cnt - vrange)) and (int(data[0]["tx-packet"]) <= (frame_cnt + vrange)):
+                        helpers.log("Pass: Tenant Counters value Expected:%d, Actual:%d" % (frame_cnt, int(data[0]["tx-packet"])))
                         return True
                     else:
-                        helpers.test_failure("Tenant counter value does not match,Expected:%d,Actual:%d" % (frame_cnt, int(data[0]["counter"]["tx-packet"])))
+                        helpers.test_failure("Tenant counter value does not match,Expected:%d,Actual:%d" % (frame_cnt, int(data[0]["tx-packet"])))
                         return False
         else:
             helpers.log("Given tenant name does not match the config")
@@ -1949,15 +1968,15 @@ class T5(object):
         c = t.controller('master')
         frame_rate = int(frame_rate)
         vrange = int(vrange)
-        url = '/api/v1/data/controller/applications/bvs/info/stats/tenant-stats/tenant[tenant-name="%s"]?select=rate' % (tenant)
+        url = '/api/v1/data/controller/applications/bvs/info/stats/tenant/stats[name="%s"]' % (tenant)
         c.rest.get(url)
         data = c.rest.content()
-        if data[0]["tenant-name"] == tenant:
-                    if (int(data[0]["rate"]["rx-packet-rate"]) >= (frame_rate - vrange)) and (int(data[0]["rate"]["rx-packet-rate"]) <= (frame_rate + vrange)):
-                        helpers.log("Pass: Tenant Counters value Expected:%d, Actual:%d" % (frame_rate, int(data[0]["rate"]["rx-packet-rate"])))
+        if data[0]["name"] == tenant:
+                    if (int(data[0]["rx-packet-rate"]) >= (frame_rate - vrange)) and (int(data[0]["rx-packet-rate"]) <= (frame_rate + vrange)):
+                        helpers.log("Pass: Tenant Counters value Expected:%d, Actual:%d" % (frame_rate, int(data[0]["rx-packet-rate"])))
                         return True
                     else:
-                        helpers.test_failure("Tenant counter value does not match,Expected:%d,Actual:%d" % (frame_rate, int(data[0]["rate"]["rx-packet-rate"])))
+                        helpers.test_failure("Tenant counter value does not match,Expected:%d,Actual:%d" % (frame_rate, int(data[0]["rx-packet-rate"])))
                         return False
         else:
             helpers.log("Given tenant name does not match the config")
@@ -1971,15 +1990,15 @@ class T5(object):
         c = t.controller('master')
         frame_rate = int(frame_rate)
         vrange = int(vrange)
-        url = '/api/v1/data/controller/applications/bvs/info/stats/tenant-stats/tenant[tenant-name="%s"]?select=rate' % (tenant)
+        url = '/api/v1/data/controller/applications/bvs/info/stats/tenant/stats[name="%s"]' % (tenant)
         c.rest.get(url)
         data = c.rest.content()
-        if data[0]["tenant-name"] == tenant:
-                    if (int(data[0]["rate"]["tx-packet-rate"]) >= (frame_rate - vrange)) and (int(data[0]["rate"]["tx-packet-rate"]) <= (frame_rate + vrange)):
-                        helpers.log("Pass: Tenant Counters value Expected:%d, Actual:%d" % (frame_rate, int(data[0]["rate"]["tx-packet-rate"])))
+        if data[0]["name"] == tenant:
+                    if (int(data[0]["tx-packet-rate"]) >= (frame_rate - vrange)) and (int(data[0]["tx-packet-rate"]) <= (frame_rate + vrange)):
+                        helpers.log("Pass: Tenant Counters value Expected:%d, Actual:%d" % (frame_rate, int(data[0]["tx-packet-rate"])))
                         return True
                     else:
-                        helpers.test_failure("Tenant counter value does not match,Expected:%d,Actual:%d" % (frame_rate, int(data[0]["rate"]["tx-packet-rate"])))
+                        helpers.test_failure("Tenant counter value does not match,Expected:%d,Actual:%d" % (frame_rate, int(data[0]["tx-packet-rate"])))
                         return False
         else:
             helpers.log("Given tenant name does not match the config")

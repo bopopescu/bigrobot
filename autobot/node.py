@@ -446,8 +446,11 @@ class MininetNode(Node):
 
         # Shortcuts
         self.cli = self.dev.cli
+        self.bash = self.dev.bash  # Bash mode
         self.cli_content = self.dev.content
         self.cli_result = self.dev.result
+        self.bash_content = self.dev.content
+        self.bash_result = self.dev.result
         self.start_mininet = self.dev.start_mininet
         self.restart_mininet = self.dev.restart_mininet
         self.stop_mininet = self.dev.stop_mininet
