@@ -39,6 +39,10 @@ fwdMyStationTable_b4 = []
 fwdMyStationTable_after = []
 fwdRouterIPTable_b4 = []
 fwdRouterIPTable_after = []
+fwdEcmpTable_b4 = []
+fwdEcmpTable_after = []
+fwdDhcpTable_b4 = []
+fwdDhcpTable_after = []
 
 warningCount = 0
 
@@ -91,6 +95,8 @@ class T5Utilities(object):
         global fwdL3HostTable_b4
         global fwdMyStationTable_b4
         global fwdRouterIPTable_b4
+        global fwdEcmpTable_b4
+        global fwdDhcpTable_b4
         
         global fwdARPTable_after
         global fwdEPTable_after
@@ -98,6 +104,8 @@ class T5Utilities(object):
         global fwdL3HostTable_after
         global fwdMyStationTable_after
         global fwdRouterIPTable_after
+        global fwdEcmpTable_after
+        global fwdDhcpTable_after
         
         global warningCount
         
@@ -116,6 +124,8 @@ class T5Utilities(object):
             fwdL3HostTable_b4 = self._gather_forwarding('l3-host-table')
             fwdMyStationTable_b4 = self._gather_forwarding('my-station-table')
             fwdRouterIPTable_b4 = self._gather_forwarding('router-ip-table')
+            fwdEcmpTable_b4 = self._gather_forwarding('ecmp-table')
+            fwdDhcpTable_b4 = self._gather_forwarding('dhcp-table')
             
 
         else:
@@ -142,6 +152,10 @@ class T5Utilities(object):
             warningCount = self._compare_fabric_elements(fwdMyStationTable_b4, fwdMyStationTable_after, "fwdMyStationTable")
             fwdRouterIPTable_after = self._gather_forwarding('router-ip-table')
             warningCount = self._compare_fabric_elements(fwdRouterIPTable_b4, fwdRouterIPTable_after, "fwdRouterIPTable")
+            fwdEcmpTable_after = self._gather_forwarding('ecmp-table')
+            warningCount = self._compare_fabric_elements(fwdEcmpTable_b4, fwdEcmpTable_after, "fwdEcmpTable")
+            fwdDhcpTable_after = self._gather_forwarding('dhcp-table')
+            warningCount = self._compare_fabric_elements(fwdDhcpTable_b4, fwdDhcpTable_after, "fwdDhcpTable")
 
         if(warningCount == 0): 
             if(state == "after"):
@@ -250,12 +264,12 @@ class T5Utilities(object):
             for i in range(0, len(result)):
                 mac = result[i]['mac']
                 tenant = result[i]['tenant']
-                vns = result[i]['vns']
+                segment = result[i]['segment']
                 try:
                     ip = result[i]['ip-address']
-                    key = "%s-%s-%s-%s" % (mac,ip,tenant,vns)
+                    key = "%s-%s-%s-%s" % (mac,ip,tenant,segment)
                 except(KeyError):
-                    key = "%s-%s-%s" % (mac,tenant,vns)
+                    key = "%s-%s-%s" % (mac,tenant,segment)
                 
                 endpoints.append(key)
                 
@@ -407,6 +421,24 @@ class T5Utilities(object):
                     key = "%s-%s-%s" % (routerIP, routerMac, vlanID)
                     fwdTableList.append(key)
                     
+                if(fwdTableName == 'ecmp-table'):
+                    ecmpGroupID = fwdTable[i]['ecmp-group-id']
+                    vrf = fwdTable[i]['vrf']
+                    vlanID = fwdTable[i]['vlan-id']
+                    mac =  fwdTable[i]['mac']
+                    rackLagID =  fwdTable[i]['rack-lag-id']
+                    portGroupLagID =  fwdTable[i]['port-group-lag-id']
+                    key = "%s-%s-%s-%s-%s-%s" % (ecmpGroupID, vrf, vlanID, mac, rackLagID, portGroupLagID)
+                    fwdTableList.append(key)
+                    
+                if(fwdTableName == 'dhcp-table'):
+                    dhcpIp = fwdTable[i]['dhcp-ip']
+                    routerIp = fwdTable[i]['router-ip']
+                    routerMac = fwdTable[i]['router-mac']
+                    vlanID = fwdTable[i]['vlan-id']
+                    key = "%s-%s-%s-%s" % (dhcpIp, routerIp, routerMac, vlanID)
+                    fwdTableList.append(key)
+                    
         except(KeyError):
             pass
         
@@ -454,6 +486,10 @@ class T5Utilities(object):
                 helpers.log("Controller My Station Table Forwarding entries are intact between states")
             if (fabricElement == "fwdRouterIPTable"):
                 helpers.log("Controller Router IP Table Forwarding entries are intact between states")
+            if (fabricElement == "fwdEcmpTable"):
+                helpers.log("Controller ECMP Table Forwarding entries are intact between states")
+            if (fabricElement == "fwdDhcpTable"):
+                helpers.log("Controller DHCP Table Forwarding entries are intact between states")
                 
             return warningCount
         
@@ -483,6 +519,10 @@ class T5Utilities(object):
                 helpers.warn("-----------    FWD: My Station Table Discrepancies    -----------")
             if (fabricElement == "fwdRouterIPTable"):
                 helpers.warn("-----------    FWD: Router IP Table Discrepancies    -----------")
+            if (fabricElement == "fwdEcmpTable"):
+                helpers.warn("-----------    FWD: ECMP Table Discrepancies    -----------")
+            if (fabricElement == "fwdDhcpTable"):
+                helpers.warn("-----------    FWD: DHCP Table Discrepancies    -----------")
                 
             if (len(list_b4) > len(list_after)):
                 for item in list_b4:
@@ -508,6 +548,12 @@ class T5Utilities(object):
                             helpers.warn("FWD:My Station Table Entry: %s is not present after the state change" % item)
                         if (fabricElement == "fwdRouterIPTable"):
                             helpers.warn("FWD:Router IP Table Entry: %s is not present after the state change" % item)
+                        if (fabricElement == "fwdRouterIPTable"):
+                            helpers.warn("FWD:Router IP Table Entry: %s is not present after the state change" % item)
+                        if (fabricElement == "fwdEcmpTable"):
+                            helpers.warn("FWD:ECMP Table Entry: %s is not present after the state change" % item)
+                        if (fabricElement == "fwdDhcpTable"):
+                            helpers.warn("FWD:DHCP Table Entry: %s is not present after the state change" % item)
                             
                         warningCount += 1
             else:
@@ -534,7 +580,10 @@ class T5Utilities(object):
                             helpers.warn("New FWD:My Station Table Entry: %s is present after the state change" % item)
                         if (fabricElement == "fwdRouterIPTable"):
                             helpers.warn("New FWD:Router IP Table Entry: %s is present after the state change" % item)
-                        
+                        if (fabricElement == "fwdEcmpTable"):
+                            helpers.warn("New FWD:Ecmp Table Entry: %s is present after the state change" % item)
+                        if (fabricElement == "fwdDhcpTable"):
+                            helpers.warn("New FWD:Dchp Table Entry: %s is present after the state change" % item)
                         warningCount += 1
                         
         return warningCount 
