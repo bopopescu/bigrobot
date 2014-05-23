@@ -176,8 +176,8 @@ Verify L3 Traffic: VLAN Tagged Traffic
     clear stats  
     start traffic  ${stream}
     sleep  5
-    verify results  transmitted_frame_rate  a  received_valid_frame_rate  b
-    verify results  transmitted_frame_rate  b  received_valid_frame_rate  a 
+    verify results  transmitted_frame_rate  a  received_frame_rate  b
+    verify results  transmitted_frame_rate  b  received_frame_rate  a 
     sleep  5    
     stop traffic   ${stream}     
     rest delete tenant  ${tenant_1}
@@ -192,8 +192,8 @@ Verify L3 traffic: frame size 2048 bytes
     clear stats  
     start traffic  ${stream}
     sleep  5
-    verify results  transmitted_frame_rate  a  received_valid_frame_rate  b
-    verify results  transmitted_frame_rate  b  received_valid_frame_rate  a 
+    verify results  transmitted_frame_rate  a  received_frame_rate  b
+    verify results  transmitted_frame_rate  b  received_frame_rate  a 
     sleep  5    
     stop traffic   ${stream} 
     [Tags]  traffic  L3
@@ -206,8 +206,8 @@ Verify L3 traffic: frame size 4096 bytes
     clear stats  
     start traffic  ${stream}
     sleep  5
-    verify results  transmitted_frame_rate  a  received_valid_frame_rate  b
-    verify results  transmitted_frame_rate  b  received_valid_frame_rate  a 
+    verify results  transmitted_frame_rate  a  received_frame_rate  b
+    verify results  transmitted_frame_rate  b  received_frame_rate  a 
     sleep  5    
     stop traffic   ${stream} 
     [Tags]  traffic  L3
@@ -220,8 +220,8 @@ Verify L3 traffic: frame size 9216 bytes
     clear stats  
     start traffic  ${stream}
     sleep  5
-    verify results  transmitted_frame_rate  a  received_valid_frame_rate  b
-    verify results  transmitted_frame_rate  b  received_valid_frame_rate  a 
+    verify results  transmitted_frame_rate  a  received_frame_rate  b
+    verify results  transmitted_frame_rate  b  received_frame_rate  a 
     sleep  5    
     stop traffic   ${stream}     
     [Tags]  traffic  L3

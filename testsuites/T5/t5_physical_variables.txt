@@ -77,6 +77,7 @@ ${h2_single_mac}  d4:ae:52:c9:c5:35
 ${h3_intf0_single}  ethernet25
 ${h4_intf0_single}  ethernet26
 ${h2_intf0_single}  ethernet26
+${h1_intf0_single}  ethernet25
 ${h3_eth1_ip}	192.168.2.10/24
 ${h4_eth1_ip}	192.168.2.11/24
 ${h2_eth1_ip}	192.168.2.21/24
