@@ -296,7 +296,7 @@ T16 Interface vns deny policy src-tenant to any
 	${src_dict}=  Create Dictionary  tenant-name  ${tenantX} 
 	#${dst_dict}=  Create Dictionary  tenant-name  ${tenantX}
 	rest add policy								X		${tenant1_polname}		
-	rest add policy item example  tenant=${tenantX}  polname=${tenant1_polname}  seqnum=10  action=deny  srcdata=${src_dict}  dstdata=${dst_dict} 
+	rest add policy item example  tenant=${tenantX}  polname=${tenant1_polname}  seqnum=10  action=deny  srcdata=${src_dict}
 	rest apply policy on vns					X		${vnsX1}				${tenant1_polname}
 	${stream}=             L3 add  name=ix1-to-ix2  flow=a->b  src_ip=10.251.1.2  src_gw=10.251.1.1
     ...						dst_ip=10.251.3.2  dst_gw=10.251.3.1  src_mac=${ixia1_mac}  dst_mac=${ixia2_mac}
@@ -409,7 +409,7 @@ T22 Interface vns deny policy src-vns to dest-vns
     stop traffic   ${stream}
     #sleep                  
     ${report}=             fetch port stats  stream=${stream}
-    verify stats deny  transmitted_frames  received_frames  ${stream}  ix1-to-ix2
+    verify stats false  transmitted_frames  received_frames  ${stream}  ix1-to-ix2
 
 ######  **  ANY need more investigation  **  ########	
 T23 Interface vns permit policy src-vns to any
@@ -434,7 +434,7 @@ T24 Interface vns deny policy src-vns to any
 	${src_dict}=  Create Dictionary  segment  ${vnsX1}  tenant-name  ${tenantX} 
 	#${dst_dict}=  Create Dictionary  tenant-name  ${tenantX}
 	rest add policy								X		${tenant1_polname}		
-	rest add policy item example  tenant=${tenantX}  polname=${tenant1_polname}  seqnum=10  action=deny  srcdata=${src_dict}  dstdata=${dst_dict} 
+	rest add policy item example  tenant=${tenantX}  polname=${tenant1_polname}  seqnum=10  action=deny  srcdata=${src_dict}
 	rest apply policy on vns					X		${vnsX1}				${tenant1_polname}
 	${stream}=             L3 add  name=ix1-to-ix2  flow=a->b  src_ip=10.251.1.2  src_gw=10.251.1.1
     ...						dst_ip=10.251.3.2  dst_gw=10.251.3.1  src_mac=${ixia1_mac}  dst_mac=${ixia2_mac}
@@ -795,7 +795,7 @@ T96 Interface vns permit policy src-vns to dest-ip-port
 	${dst_dict}=  Create Dictionary  cidr  ${ixia2_ip}  l4-port  ${tcp_port}
 	rest add policy								X		${tenant1_polname}		
 	rest add policy item example  tenant=${tenantX}  polname=${tenant1_polname}  seqnum=10  action=permit  
-	...								srcdata=${src_dict}  proto=6
+	...								srcdata=${src_dict}  dstdata=${dst_dict}  proto=6
 	rest apply policy on vns					X		${vnsX1}				${tenant1_polname}
 	${stream}=             L3 add  name=ix1-to-ix2  flow=a->b  src_ip=10.251.1.2  src_gw=10.251.1.1
     ...						dst_ip=10.251.3.2  dst_gw=10.251.3.1  src_mac=${ixia1_mac}  dst_mac=${ixia2_mac}
@@ -814,7 +814,7 @@ T97 Interface vns deny policy src-vns to dest-ip-port
 	${dst_dict}=  Create Dictionary  cidr  ${ixia2_ip}  l4-port  ${tcp_port}
 	rest add policy								X		${tenant1_polname}		
 	rest add policy item example  tenant=${tenantX}  polname=${tenant1_polname}  seqnum=10  action=deny  
-	...								srcdata=${src_dict}  proto=6
+	...								srcdata=${src_dict}  dstdata=${dst_dict}  proto=6
 	rest apply policy on vns					X		${vnsX1}				${tenant1_polname}
 	${stream}=             L3 add  name=ix1-to-ix2  flow=a->b  src_ip=10.251.1.2  src_gw=10.251.1.1
     ...						dst_ip=10.251.3.2  dst_gw=10.251.3.1  src_mac=${ixia1_mac}  dst_mac=${ixia2_mac}
@@ -834,7 +834,7 @@ T98 Interface vns permit policy any to dest-ip-port
 	${dst_dict}=  Create Dictionary  cidr  ${ixia2_ip}  l4-port  ${tcp_port}
 	rest add policy								X		${tenant1_polname}		
 	rest add policy item example  tenant=${tenantX}  polname=${tenant1_polname}  seqnum=10  action=permit  
-	...								srcdata=${src_dict}  proto=6
+	...								dstdata=${dst_dict}  proto=6
 	rest apply policy on vns					X		${vnsX1}				${tenant1_polname}
 	${stream}=             L3 add  name=ix1-to-ix2  flow=a->b  src_ip=10.251.1.2  src_gw=10.251.1.1
     ...						dst_ip=10.251.3.2  dst_gw=10.251.3.1  src_mac=${ixia1_mac}  dst_mac=${ixia2_mac}
@@ -854,7 +854,7 @@ T99 Interface vns deny policy any to dest-ip-port
 	${dst_dict}=  Create Dictionary  cidr  ${ixia2_ip}  l4-port  ${tcp_port}
 	rest add policy								X		${tenant1_polname}		
 	rest add policy item example  tenant=${tenantX}  polname=${tenant1_polname}  seqnum=10  action=deny  
-	...								srcdata=${src_dict}  proto=6
+	...								dstdata=${dst_dict}  proto=6
 	rest apply policy on vns					X		${vnsX1}				${tenant1_polname}
 	${stream}=             L3 add  name=ix1-to-ix2  flow=a->b  src_ip=10.251.1.2  src_gw=10.251.1.1
     ...						dst_ip=10.251.3.2  dst_gw=10.251.3.1  src_mac=${ixia1_mac}  dst_mac=${ixia2_mac}
