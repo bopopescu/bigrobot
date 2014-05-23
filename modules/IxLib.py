@@ -975,7 +975,7 @@ class Ixia(object):
             self._traffi_apply = True
         time.sleep(2)
         # portStatistics = self._handle.getFilteredList(self._handle.getRoot()+'statistics', 'view', '-caption', 'Port Statistics')[0]
-        #time.sleep(5)
+        # time.sleep(5)
         if trafficHandle is None:
             if learn:
                 helpers.log('Starting traffic for 5 secs and stop it for learning')
@@ -1021,16 +1021,17 @@ class Ixia(object):
                         if len(device1) == 0:
                             helpers.log(' no devices created for this Port , skipping Arp resolution')
                             break
+                        time.sleep(1)
                         mac_device1 = self._handle.getList(device1[0], 'ethernet')
                         ip_device1 = self._handle.getList(mac_device1[0], ip_type)
                         resolved_mac = self._handle.getAttribute(ip_device1[0], '-resolvedGatewayMac')
                         helpers.log ('Sleeping 5 sec ..for Arps to get resolved !')
-                        time.sleep(5)  # Sleep for the gw arp to get Resolved
+                        time.sleep(1)  # Sleep for the gw arp to get Resolved
                         helpers.log('Successfully Started L3 Hosts on Ixia Port : %s' % str(topo))
                         helpers.log(' Resolved MAC for Gw : %s' % str(resolved_mac))
                         match = re.match(r'.*Unresolved*.', resolved_mac[0])
                         if match:
-                            if i < 3:
+                            if i < 10:
                                 continue
                             else:
                                 raise IxNetwork.IxNetError('Arp for GW not Resolved on port : %s so cannot send L3 Traffic!!' % port)
