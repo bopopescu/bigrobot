@@ -406,12 +406,14 @@ t5 suite setup
     rest add switch  ${switch1_name}
     ${switch1_dpid}=  rest return switch dpid from ip  s1
     rest add dpid  ${switch1_name}  ${switch1_dpid}
-    rest add fabric role  ${switch1_name}  leaf      
+    rest add fabric role  ${switch1_name}  leaf 
+    rest add leaf group  ${switch1_name}  rack0     
 
     rest add switch  ${switch2_name}
     ${switch2_dpid}=  rest return switch dpid from ip  s2
     rest add dpid  ${switch2_name}  ${switch2_dpid}
-    rest add fabric role  ${switch2_name}  leaf      
+    rest add fabric role  ${switch2_name}  leaf 
+    rest add leaf group  ${switch2_name}  rack1     
 
     rest add switch  ${switch3_name}
     ${switch3_dpid}=  rest return switch dpid from ip  s7
@@ -443,6 +445,7 @@ verify snmp attribute  [Arguments]  ${switch}  ${attribute}  ${expected_value}
  
 ha test teardown
     delete traffic
+    base test teardown
     
 t5 suite teardown
     rest delete tenant  ${tenant_1}
