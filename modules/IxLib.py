@@ -6,7 +6,6 @@ import autobot.helpers as helpers
 import time, re
 from vendors.Ixia import IxNetwork
 import modules.IxBigtapLib as IxBigtapLib
-import autobot.test as test
 
 class Ixia(object):
     def __init__(self, tcl_server_ip, tcl_server_port=8009, ix_version='7.10', chassis_ip=None,
