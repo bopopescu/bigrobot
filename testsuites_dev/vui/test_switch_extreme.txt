@@ -33,8 +33,12 @@ Test bash delete tag
     bash delete tag  h1  eth1.99  soft_error=${true}
 
 Test directory listing
-    #[Tags]  skipped
+    [Tags]  skipped
     bash             h1   ls -la
     sudo             h1   cat /etc/shadow
     bash             h1   find /tmp
 
+Test switch
+    #[Tags]  skipped
+    #cli              s1   show version
+    config            s1   show version

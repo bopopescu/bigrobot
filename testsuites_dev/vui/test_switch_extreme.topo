@@ -1,0 +1,17 @@
+#c1:
+#  ip: 10.192.104.1
+#
+#h1:
+#  ip: 10.192.104.13
+  #user: root
+  #password: bsn
+  #set_devconf_debug_level: 5
+#  protocol: telnet
+
+
+s1:
+  ip: 10.192.88.88
+  user: admin
+  password: adminadmin
+  protocol: telnet
+  set_devconf_debug_level: 5

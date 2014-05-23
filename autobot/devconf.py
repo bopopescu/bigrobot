@@ -376,8 +376,11 @@ class BsnDevConf(DevConf):
     def _cmd(self, cmd, quiet=False, mode='cmd', prompt=None,
              timeout=None, level=5):
 
+        if helpers.is_extreme(self.platform()):
+            if mode != 'config':
+                helpers.test_error("For Extreme Networks switch, only config mode is supported")
         # Check to make sure we're in the right mode prior to executing command
-        if mode == 'cli':
+        elif mode == 'cli':
             if self.is_bash():
                 self.exit_bash_mode(mode)
 
