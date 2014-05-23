@@ -35,7 +35,7 @@ Intra tenant L3 tagged traffic with dynamic endpoints across rack
 	L3 intra tenant across rack tagged with dynamic endpoints
 	[Tags]								sanity	
 
-Intrva tenant L3 traffic same rack different leaf switch
+Intra tenant L3 traffic same rack different leaf switch
     Intra tenant L3 traffic same rack different leaf switch
     [Tags]                              sanity  
 
@@ -444,7 +444,7 @@ Intra tenant L3 traffic same rack different leaf switch
     BASH add route                              h5                              10.251.2.0/24           10.251.1.1
     BASH add route                              h6                              10.251.1.0/24           10.251.2.1
     REST add interface to vns                   X                               X1                      ${leaf2_a}          ${leaf2a_host5}            -1
-    REST add portgroup to vns                   X                               X2                      ${leaf2_b}          ${leaf2b_host6}            -1
+    REST add interface to vns                   X                               X2                      ${leaf2_b}          ${leaf2b_host6}            -1
     sleep                                       1
     BASH ping                                   h5                              10.251.2.31             count=5
     ${value} =                                  BASH verify arp                 h5                      10.251.1.1
