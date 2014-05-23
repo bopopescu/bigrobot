@@ -6,6 +6,7 @@ import autobot.helpers as helpers
 import time, re
 from vendors.Ixia import IxNetwork
 import modules.IxBigtapLib as IxBigtapLib
+import autobot.test as test
 
 class Ixia(object):
     def __init__(self, tcl_server_ip, tcl_server_port=8009, ix_version='7.10', chassis_ip=None,
@@ -1184,41 +1185,46 @@ class Ixia(object):
         '''
             Method to delete all configured Traffic Items
         '''
-        handle = self._handle
-        ixia_traffic_state = handle.getAttribute(handle.getRoot() + 'traffic', '-state')
-        if str(ixia_traffic_state) == 'started':
-            helpers.log("Traffic is Still Running , Stopping the Traffic before deleting traffic item..")
-            self.ix_stop_traffic()
-        else:
-            helpers.log("Traffic Already Stopped in Testcase No need to Stop the Traffic !!")
-        root = handle.getRoot()
-        traffic_item = handle.getList(root, 'traffic')
-        traffic_streams = handle.getList(traffic_item[0], 'trafficItem')
-        if len(traffic_streams) == 0:
-            helpers.log("No Traffic Streams Configure we are goot no need to Delete streams !")
-        else:
-            for stream in traffic_streams:
-                handle.remove(stream)
+        try:
+            handle = self._handle
+            ixia_traffic_state = handle.getAttribute(handle.getRoot() + 'traffic', '-state')
+            if str(ixia_traffic_state) == 'started':
+                helpers.log("Traffic is Still Running , Stopping the Traffic before deleting traffic item..")
+                self.ix_stop_traffic()
+            else:
+                helpers.log("Traffic Already Stopped in Testcase No need to Stop the Traffic !!")
+            root = handle.getRoot()
+            traffic_item = handle.getList(root, 'traffic')
+            traffic_streams = handle.getList(traffic_item[0], 'trafficItem')
+            if len(traffic_streams) == 0:
+                helpers.log("No Traffic Streams Configure we are goot no need to Delete streams !")
+            else:
+                for stream in traffic_streams:
+                    handle.remove(stream)
+                handle.commit()
+                helpers.log("Success Removing configured traffic flow !!!")
+            helpers.log("Succes deleting Traffic Strems!!")
+            handle.remove(handle.getRoot() + 'traffic' + '/trafficItem')
             handle.commit()
-            helpers.log("Success Removing configured traffic flow !!!")
-        helpers.log("Succes deleting Traffic Strems!!")
-        handle.remove(handle.getRoot() + 'traffic' + '/trafficItem')
-        handle.commit()
-        helpers.log('succes removing traffic Items Configured!!!')
-        # if self._started_hosts:
-        for topo in self._topology:
-            self.ix_stop_hosts(topo)
-            helpers.log('Successfuly Stopped Hosts on Topology : %s ' % topo)
-        helpers.log('Sleeps 3 sec for Hosts to be Stopped')
-        time.sleep(3)
-        for topo in self._topology.values():
-            handle.remove(topo)
-            handle.commit()
-            helpers.log('Successfully Removed Topology : %s ' % str(topo))
-        self._topology = {}
-        helpers.log('Succes Removing Topologies Created !!!')
-        time.sleep(3)
-        return True
+            helpers.log('succes removing traffic Items Configured!!!')
+            # if self._started_hosts:
 
+            for topo in self._topology:
+                self.ix_stop_hosts(topo)
+                helpers.log('Successfuly Stopped Hosts on Topology : %s ' % topo)
+            helpers.log('Sleeps 3 sec for Hosts to be Stopped')
+            time.sleep(3)
+            for topo in self._topology.values():
+                handle.remove(topo)
+                handle.commit()
+                helpers.log('Successfully Removed Topology : %s ' % str(topo))
+            self._topology = {}
+            helpers.log('Succes Removing Topologies Created !!!')
+            time.sleep(3)
+            return True
+        except:
+            helpers.log("Re-Initialization Ixia as Encountered IxNet Error during Ixia teardown to continue with tests.")
+            self.ix_connect()
+            return True
 
 
