@@ -1017,12 +1017,12 @@ class Ixia(object):
                     i = 0
                     while True:
                         i = i + 1
-                        helpers.log ('Sleeping 10 sec ..for Arps to get resolved !')
-                        time.sleep(10)  # Sleep for the gw arp to get Resolved
                         device1 = self._handle.getList(self._topology[port], 'deviceGroup')
                         if len(device1) == 0:
                             helpers.log(' no devices created for this Port , skipping Arp resolution')
                             break
+                        helpers.log ('Sleeping 10 sec ..for Arps to get resolved !')
+                        time.sleep(5)  # Sleep for the gw arp to get Resolved
                         mac_device1 = self._handle.getList(device1[0], 'ethernet')
                         ip_device1 = self._handle.getList(mac_device1[0], ip_type)
                         resolved_mac = self._handle.getAttribute(ip_device1[0], '-resolvedGatewayMac')
