@@ -975,7 +975,7 @@ class Ixia(object):
             self._traffi_apply = True
         time.sleep(2)
         # portStatistics = self._handle.getFilteredList(self._handle.getRoot()+'statistics', 'view', '-caption', 'Port Statistics')[0]
-        time.sleep(5)
+        #time.sleep(5)
         if trafficHandle is None:
             if learn:
                 helpers.log('Starting traffic for 5 secs and stop it for learning')
@@ -1021,11 +1021,11 @@ class Ixia(object):
                         if len(device1) == 0:
                             helpers.log(' no devices created for this Port , skipping Arp resolution')
                             break
-                        helpers.log ('Sleeping 10 sec ..for Arps to get resolved !')
-                        time.sleep(10)  # Sleep for the gw arp to get Resolved
                         mac_device1 = self._handle.getList(device1[0], 'ethernet')
                         ip_device1 = self._handle.getList(mac_device1[0], ip_type)
                         resolved_mac = self._handle.getAttribute(ip_device1[0], '-resolvedGatewayMac')
+                        helpers.log ('Sleeping 5 sec ..for Arps to get resolved !')
+                        time.sleep(5)  # Sleep for the gw arp to get Resolved
                         helpers.log('Successfully Started L3 Hosts on Ixia Port : %s' % str(topo))
                         helpers.log(' Resolved MAC for Gw : %s' % str(resolved_mac))
                         match = re.match(r'.*Unresolved*.', resolved_mac[0])
@@ -1174,8 +1174,8 @@ class Ixia(object):
             helpers.log('Clearing Stats Globally on all ports initialized')
             handle.execute('clearPortsAndTrafficStats')
             helpers.log('Stats Cleared Succesffuly ..')
-        helpers.log('Sleep 5 secs for the stats to get cleared in IXIA...')
-        time.sleep(5)
+        helpers.log('Sleep 3 secs for the stats to get cleared in IXIA...')
+        time.sleep(3)
         result = self.ix_fetch_port_stats()
         helpers.log('result:\n%s' % helpers.prettify(result))
         return True
@@ -1184,46 +1184,41 @@ class Ixia(object):
         '''
             Method to delete all configured Traffic Items
         '''
-        try:
-            handle = self._handle
-            ixia_traffic_state = handle.getAttribute(handle.getRoot() + 'traffic', '-state')
-            if str(ixia_traffic_state) == 'started':
-                helpers.log("Traffic is Still Running , Stopping the Traffic before deleting traffic item..")
-                self.ix_stop_traffic()
-            else:
-                helpers.log("Traffic Already Stopped in Testcase No need to Stop the Traffic !!")
-            root = handle.getRoot()
-            traffic_item = handle.getList(root, 'traffic')
-            traffic_streams = handle.getList(traffic_item[0], 'trafficItem')
-            if len(traffic_streams) == 0:
-                helpers.log("No Traffic Streams Configure we are goot no need to Delete streams !")
-            else:
-                for stream in traffic_streams:
-                    handle.remove(stream)
-                handle.commit()
-                helpers.log("Success Removing configured traffic flow !!!")
-            helpers.log("Succes deleting Traffic Strems!!")
-            handle.remove(handle.getRoot() + 'traffic' + '/trafficItem')
+        handle = self._handle
+        ixia_traffic_state = handle.getAttribute(handle.getRoot() + 'traffic', '-state')
+        if str(ixia_traffic_state) == 'started':
+            helpers.log("Traffic is Still Running , Stopping the Traffic before deleting traffic item..")
+            self.ix_stop_traffic()
+        else:
+            helpers.log("Traffic Already Stopped in Testcase No need to Stop the Traffic !!")
+        root = handle.getRoot()
+        traffic_item = handle.getList(root, 'traffic')
+        traffic_streams = handle.getList(traffic_item[0], 'trafficItem')
+        if len(traffic_streams) == 0:
+            helpers.log("No Traffic Streams Configure we are goot no need to Delete streams !")
+        else:
+            for stream in traffic_streams:
+                handle.remove(stream)
             handle.commit()
-            helpers.log('succes removing traffic Items Configured!!!')
-            # if self._started_hosts:
+            helpers.log("Success Removing configured traffic flow !!!")
+        helpers.log("Succes deleting Traffic Strems!!")
+        handle.remove(handle.getRoot() + 'traffic' + '/trafficItem')
+        handle.commit()
+        helpers.log('succes removing traffic Items Configured!!!')
+        # if self._started_hosts:
+        for topo in self._topology:
+            self.ix_stop_hosts(topo)
+            helpers.log('Successfuly Stopped Hosts on Topology : %s ' % topo)
+        helpers.log('Sleeps 3 sec for Hosts to be Stopped')
+        time.sleep(3)
+        for topo in self._topology.values():
+            handle.remove(topo)
+            handle.commit()
+            helpers.log('Successfully Removed Topology : %s ' % str(topo))
+        self._topology = {}
+        helpers.log('Succes Removing Topologies Created !!!')
+        time.sleep(3)
+        return True
 
-            for topo in self._topology:
-                self.ix_stop_hosts(topo)
-                helpers.log('Successfuly Stopped Hosts on Topology : %s ' % topo)
-            helpers.log('Sleeps 3 sec for Hosts to be Stopped')
-            time.sleep(3)
-            for topo in self._topology.values():
-                handle.remove(topo)
-                handle.commit()
-                helpers.log('Successfully Removed Topology : %s ' % str(topo))
-            self._topology = {}
-            helpers.log('Succes Removing Topologies Created !!!')
-            time.sleep(3)
-            return True
-        except:
-            helpers.log("Re-Initialization Ixia as Encountered IxNet Error during Ixia teardown to continue with tests.")
-            self.ix_connect()
-            return True
 
 
