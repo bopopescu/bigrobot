@@ -159,14 +159,14 @@ Configure DNS server and DNS Domain on Leaf. Verify you can ping www.bigswitch.c
     configure dns domain  s1  ${dns_server}  ${dns_domain}
     Sleep  30
     cli ping from switch  s1  bigswitch.com
-    [Tags]  t5  platform  InitialConfig  feature  dns1      
+    [Tags]  t5  platform  InitialConfig  feature      
 
 Configure DNS server and DNS Domain on Spine. Verify you can ping www.bigswitch.com
     delete dns  s7  ${dns_server}  ${dns_domain}
     configure dns domain  s7  ${dns_server}  ${dns_domain}
     Sleep  30
     cli ping from switch  s7  bigswitch.com
-    [Tags]  t5  platform  InitialConfig  feature  dns1
+    [Tags]  t5  platform  InitialConfig  feature
 
 Verify ntp on spine
     configure ntp server  s7  time-c.nist.gov
