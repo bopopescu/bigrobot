@@ -166,9 +166,9 @@ Bi-Directional L2 Traffic flow=a<->b traffic framerate 10000 pktsize 1024
     [Tags]  T5  switch  traffic  feature
 
 Bi-Directional L2 Traffic flow=a<->b traffic framerate 10000 pktsize 1518
-    start traffic  ${stream}
-    sleep          5
     ${stream}=     L2 add  flow=a<->b  src_mac=00:11:01:00:04:01  dst_mac=00:11:01:00:04:02  frame_rate=10000  frame_size=1518  ethertype=8000  name=a_b_bidir_flow
+    start traffic  ${stream}
+    sleep          5    
     stop traffic   ${stream}
     sleep          5
     clear stats
@@ -234,6 +234,12 @@ Bi-Directional L2 Traffic jumbo flow=a<->b traffic linerate 10% pktsize 9150
     verify results traffic  transmitted_frame_rate  received_frame_rate  ${ratetolerance}  
     stop traffic   ${stream}
     [Tags]  T5  switch  traffic  jumbo  feature  
+
+
+Verify the Rx counter on switch interface from controller 
+     [Tags]  T5  switch  counters  run
+     verify rx counter on controller  s1  ethernet1  10000  100
+      
 
 Verify all interfaces show up after sw installation 
     Log    Step 1 - Verify all interfaces show up after sw installation
@@ -330,11 +336,16 @@ Test the Oversubscription of 40Gig Links between Leaf and Spines
     [Tags]  Manual-untested  interface  counters
     Manual untested
     
-Test the hashing algorithm between the leaf and spine with multiple links
+Test the hashing algorithm between the leaf and spine with multiple links L2 Traffic 
     Log    Step 1 - Test the hashing algorithm between the leaf and spine with multiple links
     [Tags]  Manual-untested  interface  counters
     Manual untested
 
+Test the hashing algorithm between the leaf and spine with multiple links L3 Traffic 
+    Log    Step 1 - Test the hashing algorithm between the leaf and spine with multiple links
+    [Tags]  Manual-untested  interface  counters
+    Manual untested
+    
 
 * Keywords
       
@@ -398,6 +409,10 @@ verify results totalframes   [Arguments]  ${transmitted_frames}  ${received_vali
     ${rx_value}=  verify dict key  ${report}  b  ${received_valid_frames}
     ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}
     Should be true  ${in_range} 
+
+verify rx counter on controller  [Arguments]  $switch  $interface  $framecnt  $vrange
+    ${in_range}=  rest verify intf rxcounter from controller  $switch  $interface  $framecnt      
+    Should be true  ${in_range}     
 
 add interface to vns snake config   [Arguments]  ${tenant}  ${count}
     ${range}=  Evaluate  ${count} + 1
