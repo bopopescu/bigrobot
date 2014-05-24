@@ -31,6 +31,7 @@ ${switch7_name}=  spine0
 ${tenant}=        testTenant 
 ${vns}=           v1
 ${vlan}=          -1
+${intf_leaf1_h2}=  ethernet47
 ${intf_1}=        ethernet1
 ${intf_2}=        ethernet2
 ${intf_3}=        ethernet3
@@ -154,16 +155,18 @@ Verify Controller IP address is pingable from Spine
     [Tags]  t5  platform  InitialConfig  feature
 
 Configure DNS server and DNS Domain on Leaf. Verify you can ping www.bigswitch.com
+    delete dns  s1  ${dns_server}  ${dns_domain}  
     configure dns domain  s1  ${dns_server}  ${dns_domain}
     Sleep  30
     cli ping from switch  s1  bigswitch.com
-    [Tags]  t5  platform  InitialConfig  feature      
+    [Tags]  t5  platform  InitialConfig  feature  dns1      
 
 Configure DNS server and DNS Domain on Spine. Verify you can ping www.bigswitch.com
+    delete dns  s7  ${dns_server}  ${dns_domain}
     configure dns domain  s7  ${dns_server}  ${dns_domain}
     Sleep  30
     cli ping from switch  s7  bigswitch.com
-    [Tags]  t5  platform  InitialConfig  feature
+    [Tags]  t5  platform  InitialConfig  feature  dns1
 
 Verify ntp on spine
     configure ntp server  s7  time-c.nist.gov
@@ -249,18 +252,7 @@ Verify after Master Controller comes back Connection reestablished
 
     
 ### Section C : Admin/User Authentication 
-### Allowed/Required From Controller Only ??
-
-    
-    
-### Section D: System Admin Operation
-### What is allowed from Controller and What is allowed from Switch??
-###
-### Section F:Switch Platform Environment Variables - Manual 
-###
-###
-### Section H: CLI Configuration and Show commands 
-### Confirm the CLI from Controller only 
+###  
 ###
 
 Verify all interfaces show up on Leaf (in show o/p from CLI)
@@ -272,12 +264,12 @@ Verify all interfaces show up on Spine (in show o/p from CLI)
     [Tags]  t5  platform  Interface  feature
 
 Shutdown an interface on switch and verify interface state is down
-    shut interface  s1  ethernet1
+    shut interface  s1  ${intf_leaf1_h2}
     Sleep  5
-    verify interface state  s1  ethernet1  down
-    unshut interface  s1  ethernet1
+    verify interface state  s1  ${intf_leaf1_h2}  down
+    unshut interface  s1  ${intf_leaf1_h2}
     Sleep  15
-    verify interface state  s1  ethernet1  up
+    verify interface state  s1  ${intf_leaf1_h2}  up
     [Tags]  t5  platform  Interface  feature      
 
 Verify Show version
