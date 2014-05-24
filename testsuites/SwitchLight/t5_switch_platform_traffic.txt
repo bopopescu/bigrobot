@@ -404,10 +404,6 @@ verify results totalframes   [Arguments]  ${transmitted_frames}  ${received_vali
     ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}
     Should be true  ${in_range} 
 
-verify rx counter on controller  [Arguments]  $switch  $interface  $framecnt  $vrange
-    ${in_range}=  rest verify intf rxcounter from controller  $switch  $interface  $framecnt      
-    Should be true  ${in_range}     
-
 add interface to vns snake config   [Arguments]  ${tenant}  ${count}
     ${range}=  Evaluate  ${count} + 1
     : FOR  ${i}  IN RANGE  1  ${range}
