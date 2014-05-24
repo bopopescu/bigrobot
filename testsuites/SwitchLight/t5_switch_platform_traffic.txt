@@ -235,12 +235,6 @@ Bi-Directional L2 Traffic jumbo flow=a<->b traffic linerate 10% pktsize 9150
     stop traffic   ${stream}
     [Tags]  T5  switch  traffic  jumbo  feature  
 
-
-Verify the Rx counter on switch interface from controller 
-     [Tags]  T5  switch  counters  run
-     verify rx counter on controller  s1  ethernet1  10000  100
-      
-
 Verify all interfaces show up after sw installation 
     Log    Step 1 - Verify all interfaces show up after sw installation
     [Tags]  Manual-untested
