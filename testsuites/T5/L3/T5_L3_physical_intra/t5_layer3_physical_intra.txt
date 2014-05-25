@@ -3025,7 +3025,7 @@ initialize host
     BASH init intf                              h5                              eth1
     BASH init intf                              h5                              eth2
     BASH init intf                              h5                              eth3
-    BASH init intf                              h6                              em1
+    BASH init intf                              h6                              em2
     BASH init intf                              h6                              p1p1
     BASH init intf                              h6                              p1p2
     BASH init intf                              h1                              bond0
