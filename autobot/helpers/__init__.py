@@ -680,6 +680,16 @@ def is_arista(name):
     return name == 'arista'
 
 
+def is_extreme(name):
+    """
+    Inspect the platform type for the node. Usage:
+
+    if helpers.is_extreme(n.platform()):
+        ...this is an Extreme switch...
+    """
+    return name == 'extreme_switch'
+
+
 def is_ixia(name):
     """
     Inspect the platform type for the node. Usage:
