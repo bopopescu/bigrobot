@@ -39,6 +39,10 @@ Intra tenant L3 traffic same rack different leaf switch
     Intra tenant L3 traffic same rack different leaf switch
     [Tags]                              sanity  
 
+Verify static endpoint state
+    Verify static endpoint state
+    [Tags]                              sanity  
+
 Activate and deactivate router interface
 	Activate and deactivate router interface
 	[Tags]								sanity					
@@ -508,6 +512,75 @@ Activate and deactivate router interface
 	Should Be True  							${loss} < 20
 	BASH delete route							h1								10.251.3.0/24			10.251.1.1
 	BASH delete route							h3								10.251.1.0/24			10.251.3.1
+
+Verify static endpoint state
+    BASH ifup intf                              h1                              bond0
+    BASH ifup intf                              h2                              bond0
+    BASH ifup intf                              h3                              bond0
+    BASH ifup intf                              h4                              bond0   
+    BASH ifup intf                              h5                              bond0
+    BASH ifup intf                              h6                              bond0           
+    REST add portgroup to vns                   X                               X2                      ${leaf2_pc2}            -1
+    REST add endpoint                           X                               X1                      X1_pc1
+    ${mac1} =                                   BASH get intf mac               h5                      bond0
+    REST add endpoint mac                       X                               X1                      X1_pc1                  ${mac1}
+    ${result} =                                 REST show endpoints mac         ${mac1}
+    Should Be True                              ${result}       
+    ${apState1} =                               Set Variable                    ${result[0]['attachment-point-state']}    
+    Should Contain                              ${apState1}                     unknown
+    ${state1} =                                 Set Variable                    ${result[0]['state']}
+    Should Contain                              ${state1}                       Attach Point Unknown
+    ${ipState1} =                               Set Variable                    ${result[0]['ip-state']}
+    Should Contain                              ${ipState1}                     unknown 
+    REST add endpoint portgroup attachment      X                               X1                      X1_pc1                  ${leaf2_pc1}                -1  
+    ${result} =                                 REST show endpoints mac         ${mac1}
+    ${state1} =                                 Set Variable                    ${result[0]['state']}
+    Should Contain                              ${state1}                       Member Rule Error
+    REST add endpoint ip                        X                               X1                      X1_pc1                  10.251.1.11
+    ${result} =                                 REST show endpoints mac         ${mac1}
+    ${ipState1} =                               Set Variable                    ${result[0]['ip-state']}
+    Should Contain                              ${ipState1}                     static 
+    ${ipAddr1} =                                Set Variable                    ${result[0]['ip-address']}
+    Should Contain                              ${ipAddr1}                      10.251.1.11
+    REST add portgroup to vns                   X                               X1                      ${leaf2_pc1}            -1
+    ${result} =                                 REST show endpoints mac         ${mac1}
+    ${state1} =                                 Set Variable                    ${result[0]['state']}
+    Should Contain                              ${state1}                       active 
+    ${mac2} =                                   BASH get intf mac               h6                      bond0
+    REST add endpoint mac                       X                               X2                      X2_pc2                  ${mac2}
+    REST add endpoint portgroup attachment      X                               X2                      X2_pc2                  ${leaf2_pc2}                -1  
+    REST add endpoint ip                        X                               X2                      X2_pc2                  10.251.2.11
+    BASH add ip address                         h5                              10.251.1.11/24          bond0   
+    BASH add ip address                         h6                              10.251.2.11/24          bond0
+    BASH add route                              h5                              10.251.2.0/24           10.251.1.1
+    BASH add route                              h6                              10.251.1.0/24           10.251.2.1
+    sleep                                       5   
+    BASH ping                                   h5                              10.251.1.1              count=10
+    BASH ping                                   h6                              10.251.2.1              count=10
+    ${value} =                                  BASH verify arp                 h5                      10.251.1.1
+    Should Be True                              ${value}        
+    ${value} =                                  BASH verify arp                 h6                      10.251.2.1
+    Should Be True                              ${value} 
+    ${mac1} =                                   BASH get intf mac               h5                      bond0
+    ${result} =                                 REST show endpoints mac         ${mac1}
+    Should Be True                              ${result}       
+    ${apState} =                                Set Variable                    ${result[0]['attachment-point-state']}    
+    ${ipState} =                                Set Variable                    ${result[0]['ip-state']}
+    Should Contain                              ${apState}                      static                              
+    Should Contain                              ${ipState}                      static                              
+    ${mac2} =                                   BASH get intf mac               h6                      bond0
+    ${result} =                                 REST show endpoints mac         ${mac2}
+    Should Be True                              ${result}                       
+    ${apState} =                                Set Variable                    ${result[0]['attachment-point-state']}    
+    ${ipState} =                                Set Variable                    ${result[0]['ip-state']}
+    Should Contain                              ${apState}                      static                              
+    Should Contain                              ${ipState}                      static  
+    REST show endpoints 
+    ${loss} =                                   BASH ping                       h5                      10.251.2.11             count=10
+    Should Be True                              ${loss} == 0    
+    BASH delete route                           h5                              10.251.2.0/24           10.251.1.1
+    BASH delete route                           h6                              10.251.1.0/24           10.251.2.1
+        
 
 
 L3 intra tenant same rack untagged with static endpoints

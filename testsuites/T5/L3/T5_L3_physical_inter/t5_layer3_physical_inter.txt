@@ -769,7 +769,7 @@ L3 inter tenant forwarding between endpoints on the same rack but different swit
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
     Should Contain                              ${attachpoint}                  ${leaf2b_host6}
     REST show endpoints     
-    ${loss} =                                   BASH ping                       h1                      10.252.1.31             count=10
+    ${loss} =                                   BASH ping                       h5                      10.252.1.31             count=10
     Should Be True                              ${loss} < 20        
     BASH init intf                              h5                              eth1
     BASH init intf                              h6                              em2
