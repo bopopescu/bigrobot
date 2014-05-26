@@ -1929,3 +1929,14 @@ class BsnCommon(object):
                 helpers.sleep(sleep)
 
         return status
+
+    def extreme_save_config(self, node):
+        """
+        Save the configuration on Extreme switch.
+        """
+        t = test.Test()
+        n = t.node(node)
+        n.send("save configuration")
+        n.expect(r'Do you want to save configuration .+ and overwrite it\? \(y/N\) ')
+        n.send("y")
+        n.expect()

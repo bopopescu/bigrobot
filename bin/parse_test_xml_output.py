@@ -49,6 +49,9 @@ class TestCase(object):
 
 class TestSuite(object):
     def __init__(self, filename):
+        """
+        filename: output.xml file (with path)
+        """
         self._suite = {}
         self._tests = []
         self._total_tests = 0
@@ -92,6 +95,9 @@ class TestSuite(object):
     def suite(self):
         return self._suite
 
+    def suite_name(self):
+        return self._suite['name']
+
     def tests(self):
         return self._tests
 
@@ -132,14 +138,23 @@ class TestCatalog(object):
     def total_suites(self):
         return len(self.suites())
 
+    def total_tests(self):
+        tests = 0
+        i = 0
+        for suite in self.suites():
+            i += 1
+            tests += suite.total_tests()
+            print "Suite %02d: %s (%s tests)" % (i,
+                                                 suite.suite_name(),
+                                                 suite.total_tests())
+        return tests
 
 if __name__ == '__main__':
-    t = TestCatalog()
     input_file = sys.argv[1]
     input_files = helpers.file_read_once(input_file, to_list=True)
-    # for i in input_files:
-    #    i = i.strip()
-    #    print "Loading %s..." % i
+
+    t = TestCatalog()
     t.load_suites(input_files)
     print "Total suites: %s" % t.total_suites()
+    print "Total tests: %s" % t.total_tests()
 

@@ -40,5 +40,8 @@ Test directory listing
 
 Test switch
     #[Tags]  skipped
-    #cli              s1   show version
-    config            s1   show version
+    #cli                   s1   show version
+    #config                s1   show version
+    config                 s1   create vlan tunnel7
+    extreme save config    s1
+    config                 s1   show configuration
