@@ -938,11 +938,11 @@ Verify Connectivity in 3-Rack/Dual-Leaf/2-Spine/2-Host Physical Topology
    
 
    ###	Verify L2 ping between autoT1-v2
-   ${returnVal}=  platform bash ping  h4  ${h5_tag_ip}
+   ${returnVal}=  platform bash ping  h4  ${h5_ip}
    Should Be True  ${returnVal}  
-   ${returnVal}=  platform bash ping  h4  ${h6_tag_ip}
+   ${returnVal}=  platform bash ping  h4  ${h6_ip}
    Should Be True  ${returnVal}  
-   ${returnVal}=  platform bash ping  h5  ${h6_tag_ip}
+   ${returnVal}=  platform bash ping  h5  ${h6_ip}
    Should Be True  ${returnVal}   
    
    ###	Verify ping between autoT2 			
