@@ -130,7 +130,7 @@ class AppController(object):
             except:
                 return False
 
-    def rest_return_switch_dpid_from_ip(self, node):
+    def rest_return_switch_dpid_from_ip(self, node, soft_error=False):
         '''
         Objective: Returns switch DPID, given a switch alias
         
@@ -148,24 +148,22 @@ class AppController(object):
         '''
         try:
             t = test.Test()
+            c = t.controller('master')
+            url_to_get = '/api/v1/data/controller/core/switch'
+            c.rest.get(url_to_get)
+            switch = t.switch(node)
         except:
+            helpers.test_error("URL Get Failed", soft_error)
             return False
         else:
-            c = t.controller('master')
-            switch = t.switch(node)
-            try:
-                url = '/api/v1/data/controller/core/switch'
-                c.rest.get(url)
-                content = c.rest.content()
-                for x in range(0, len(content)):
-                    if content[x].has_key('inet-address'):
-                        if str(content[x]['inet-address']['ip']) == switch.ip():
-                            return content[x]['dpid']
-                    else:
-                        helpers.log("Looks like %s is a disconnected switch" % (content[x]['dpid']))
-                return False
-            except:
-                return False
+            content = c.rest.content()
+            for x in range(0, len(content)):
+                if content[x].has_key('inet-address'):
+                    if str(content[x]['inet-address']['ip']) == switch.ip():
+                        return content[x]['dpid']
+                else:
+                    helpers.log("Looks like %s is a disconnected switch" % (content[x]['dpid']))
+            return False
 
     def rest_show_switch(self):
         '''Return dictionary containing DPID,IP Addresses for every switch connected to current controller

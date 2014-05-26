@@ -694,6 +694,7 @@ class BigTap(object):
             c = t.controller('master')
             switch = t.switch(node)
             AppCommon = AppController.AppController()
+
             try:
                 if (switch_alias is None and sw_dpid is not None):
                     switch_dpid = sw_dpid
@@ -716,8 +717,11 @@ class BigTap(object):
                         intfNick = str(switch.ip()).replace(".", "-") + "-S" + intfName[-2:]
                 else:
                     intfNick = intf_nickname
+
                 url = '/api/v1/data/controller/applications/bigtap/interface-config[interface="%s"][switch="%s"]' % (str(intf_name), str(switch_dpid))
+                helpers.log("URL is %s" % url)
                 if int(rewrite_vlan) > 4096:
+                    helpers.log("Input Values are interface %s : switch %s : role %s : name %s " % (str(intf_name), str(switch_dpid), str(intf_type), str(intfNick)))
                     c.rest.put(url, {"interface": str(intf_name), "switch": str(switch_dpid), 'role':str(intf_type), 'name':str(intfNick)})
                 else:
                     c.rest.put(url, {"interface": str(intf_name), "switch": str(switch_dpid), 'role':str(intf_type), 'name':str(intfNick), "rewrite-vlan": int(rewrite_vlan)})
@@ -1968,7 +1972,310 @@ class BigTap(object):
 
         return temp
 
+############################################
+############ CORSAIR: TUNNELLING ### START #
+############################################
 
+    def rest_add_tunnel_interface(self, node, tunnel_name, switch_alias=None, sw_dpid=None, pinterface=None, tdirection=None, sip=None, mask=None, dip=None, gip=None, user="admin", password="adminadmin", soft_error=False):
+        t = test.Test()
+        try:
+            c = t.controller('master')
+            AppCommon = AppController.AppController()
+        except:
+            return False
+        else:
+            try:
+                if (switch_alias is None and sw_dpid is not None):
+                    switch_dpid = sw_dpid
+                elif (switch_alias is None and sw_dpid is None):
+                    switch_dpid = AppCommon.rest_return_switch_dpid_from_ip(node)
+                elif (switch_alias is not None and sw_dpid is None):
+                    switch_dpid = AppCommon.rest_return_switch_dpid_from_alias(switch_alias)
+                else:
+                    switch_dpid = sw_dpid
+            except:
+                return False
+            else:
+                url = '/api/v1/data/controller/core/switch[dpid="%s"]/interface[name="%s"]' % (str(switch_dpid), str(tunnel_name))
+                if "admin" not in user:
+                    helpers.test_error("Non-Admin users cannot create tunnel interfaces", soft_error)
+                    return False
+                else:
+                    c.rest.put(url, {"name": str(tunnel_name)})
+
+                if pinterface is not None:
+                    if "admin" not in user:
+                        helpers.test_error("Non-Admin users cannot create tunnel interfaces", soft_error)
+                        return False
+                    else:
+                        if "ethernet" not in pinterface:
+                            helpers.test_error("Parent interface name needs to contain prefix ethernet", soft_error)
+                            return False
+                        else:
+                            c.rest.patch(url, {"parent-interface": str(pinterface)})
+                            if not c.rest.status_code_ok():
+                                helpers.test_log(c.rest.error())
+                                return False
+
+                if tdirection is not None:
+                    if (tdirection == 'bidir') or (tdirection == 'bidirectional'):
+                        direction = 'bidirectional'
+                    elif (tdirection == 'tx') or (tdirection == 'transmit-only'):
+                        direction = 'transmit-only'
+                    elif (tdirection == 'rx') or (tdirection == 'receive-only'):
+                        direction = 'receive-only'
+                    else:
+                        helpers.test_error("Incorrect tunnel-direction value was passed. Please check your txt file", soft_error)
+                        return False
+                    if "admin" not in user:
+                        helpers.test_error("Non-Admin users cannot create tunnel interfaces", soft_error)
+                        return False
+                    else:
+                        c.rest.patch(url, {"direction": str(direction)})
+                        if not c.rest.status_code_ok():
+                            helpers.test_log(c.rest.error())
+                            return False
+
+                ip_url = '/api/v1/data/controller/core/switch[dpid="%s"]/interface[name="%s"]/ip-config' % (str(switch_dpid), str(tunnel_name))
+                if (sip is not None) and (gip is not None) and (mask is not None):
+                    c.rest.put(ip_url, {"source-ip": str(sip), "ip-mask": str(mask), "gateway-ip": str(gip)})
+                    if not c.rest.status_code_ok():
+                        helpers.test_log(c.rest.error())
+                        return False
+
+                if (dip is not None):
+                    c.rest.put(ip_url, {"destination-ip": str(dip)})
+                    if not c.rest.status_code_ok():
+                        helpers.test_log(c.rest.error())
+                        return False
+
+                if "admin" not in user:
+                    helpers.test_error("Non-Admin users cannot create tunnel interfaces", soft_error)
+                    return False
+                else:
+                    c.rest.patch(url, {"type": "tunnel", "encap-type": "gre"})
+                return True
+
+    def rest_verify_tunnel_status(self, node, tunnel_name, switch_alias=None, sw_dpid=None, tunnel_number=None, runtime_state=None, parent_interface=None, tunnel_direction=None, sip=None, mask=None, dip=None, gip=None, user="admin", password="adminadmin", soft_error=False):
+        t = test.Test()
+        try:
+            c = t.controller('master')
+            AppCommon = AppController.AppController()
+        except:
+            return False
+        else:
+            try:
+                if (switch_alias is None and sw_dpid is not None):
+                    switch_dpid = sw_dpid
+                elif (switch_alias is None and sw_dpid is None):
+                    switch_dpid = AppCommon.rest_return_switch_dpid_from_ip(node)
+                elif (switch_alias is not None and sw_dpid is None):
+                    switch_dpid = AppCommon.rest_return_switch_dpid_from_alias(switch_alias)
+                else:
+                    switch_dpid = sw_dpid
+            except:
+                return False
+            else:
+                url = '/api/v1/data/controller/core/switch[dpid="%s"][interface/name="%s"][dpid="%s"]?select=interface[name="%s"]' % (str(switch_dpid), str(tunnel_name), str(switch_dpid), str(tunnel_name))
+                c.rest.get(url)
+                content = c.rest.content()
+                if content[0]['interface'][0]['name'] == str(tunnel_name):
+                    helpers.test_log("Tunnel Name is correctly reported as : %s" % content[0]['interface'][0]['name'])
+                else:
+                    helpers.test_error("Tunnel Name is not correctly reported as  : %s" % content[0]['interface'][0]['name'], soft_error)
+                    return False
+
+                if content[0]['dpid'] == str(switch_dpid):
+                    helpers.test_log("Switch DPID is corretcly reported as : %s" % content[0]['dpid'])
+                else:
+                    helpers.test_error("Switch DPID is not corretcly reported as  : %s" % content[0]['dpid'], soft_error)
+                    return False
+
+                if tunnel_number is not None:
+                    if int(content[0]['interface'][0]['number']) == int(tunnel_number):
+                        helpers.test_log("Tunnel Number is corretcly reported as : %s" % content[0]['interface'][0]['number'])
+                    else:
+                        helpers.test_error("Tunnel Number is not corretcly reported as  : %s" % content[0]['interface'][0]['number'], soft_error)
+                        return False
+
+                if runtime_state is not None:
+                    if content[0]['interface'][0]['runtime-state'] == str(runtime_state):
+                        helpers.test_log("Runtime State is corretcly reported as : %s" % content[0]['interface'][0]['runtime-state'])
+                    else:
+                        helpers.test_error("Runtime State is not corretcly reported as  : %s" % content[0]['interface'][0]['runtime-state'], soft_error)
+                        return False
+
+                if parent_interface is not None:
+                    if content[0]['interface'][0]['parent-interface'] == str(parent_interface):
+                        helpers.test_log("Parent Interface is corretcly reported as : %s" % content[0]['interface'][0]['parent-interface'])
+                    else:
+                        helpers.test_error("Parent Interface is not corretcly reported as  : %s" % content[0]['interface'][0]['parent-interface'], soft_error)
+                        return False
+
+                if tunnel_direction is not None:
+                    if (tunnel_direction == 'bidir') or (tunnel_direction == 'bidirectional'):
+                        direction = 'bidirectional'
+                    elif (tunnel_direction == 'tx') or (tunnel_direction == 'transmit-only'):
+                        direction = 'transmit-only'
+                    elif (tunnel_direction == 'rx') or (tunnel_direction == 'receive-only'):
+                        direction = 'receive-only'
+                    else:
+                        helpers.log("Incorrect tunnel-direction value was passed. Please check your txt file")
+                        return False
+                    if content[0]['interface'][0]['direction'] == str(direction):
+                        helpers.test_log("Tunnel direction is  corretcly reported as : %s" % content[0]['interface'][0]['direction'])
+                    else:
+                        helpers.test_error("Tunnel direction is not corretcly reported as  : %s" % content[0]['interface'][0]['direction'], soft_error)
+                        return False
+
+                if sip is not None:
+                    if content[0]['interface'][0]['ip-config']['source-ip'] == str(sip):
+                        helpers.test_log("Source IP is corretcly reported as : %s" % content[0]['interface'][0]['ip-config']['source-ip'])
+                    else:
+                        helpers.test_error("Source IP is not corretcly reported as  : %s" % content[0]['interface'][0]['ip-config']['source-ip'], soft_error)
+                        return False
+
+                if dip is not None:
+                    if content[0]['interface'][0]['ip-config']['destination-ip'] == str(dip):
+                        helpers.test_log("Destinantion IP is corretcly reported as : %s" % content[0]['interface'][0]['ip-config']['destination-ip'])
+                    else:
+                        helpers.test_error("Destinantion IP is not corretcly reported as  : %s" % content[0]['interface'][0]['ip-config']['destination-ip'], soft_error)
+                        return False
+
+                if gip is not None:
+                    if content[0]['interface'][0]['ip-config']['gateway-ip'] == str(gip):
+                        helpers.test_log("Gateway IP is corretcly reported as : %s" % content[0]['interface'][0]['ip-config']['gateway-ip'])
+                    else:
+                        helpers.test_error("Gateway IP is not corretcly reported as  : %s" % content[0]['interface'][0]['ip-config']['gateway-ip'], soft_error)
+                        return False
+
+                if mask is not None:
+                    if content[0]['interface'][0]['ip-config']['ip-mask'] == str(mask):
+                        helpers.test_log("IP Mask is corretcly reported as : %s" % content[0]['interface'][0]['ip-config']['ip-mask'])
+                    else:
+                        helpers.test_error("IP Mask is not corretcly reported as  : %s" % content[0]['interface'][0]['ip-config']['ip-mask'], soft_error)
+                        return False
+
+                return True
+
+    def rest_delete_tunnel_interface(self, node, tunnel_name, switch_alias=None, sw_dpid=None, user="admin", password="adminadmin", soft_error=False):
+        t = test.Test()
+        try:
+            c = t.controller('master')
+            AppCommon = AppController.AppController()
+        except:
+            return False
+        else:
+            try:
+                if (switch_alias is None and sw_dpid is not None):
+                    switch_dpid = sw_dpid
+                elif (switch_alias is None and sw_dpid is None):
+                    switch_dpid = AppCommon.rest_return_switch_dpid_from_ip(node)
+                elif (switch_alias is not None and sw_dpid is None):
+                    switch_dpid = AppCommon.rest_return_switch_dpid_from_alias(switch_alias)
+                else:
+                    switch_dpid = sw_dpid
+            except:
+                return False
+            else:
+                url = '/api/v1/data/controller/core/switch[dpid="%s"]/interface[name="%s"]' % (str(switch_dpid), str(tunnel_name))
+                if "admin" not in user:
+                    helpers.test_error("Non-Admin users cannot delete tunnel interfaces", soft_error)
+                    return False
+                else:
+                    c.rest.delete(url, {})
+                    if not c.rest.status_code_ok():
+                        helpers.test_log(c.rest.error())
+                        return False
+                    else:
+                        return True
+
+    def rest_delete_tunnel_items(self, node, tunnel_name, switch_alias=None, sw_dpid=None, item=None, user="admin", password="adminadmin", soft_error=False):
+        t = test.Test()
+        try:
+            c = t.controller('master')
+            AppCommon = AppController.AppController()
+        except:
+            return False
+        else:
+            try:
+                if (switch_alias is None and sw_dpid is not None):
+                    switch_dpid = sw_dpid
+                elif (switch_alias is None and sw_dpid is None):
+                    switch_dpid = AppCommon.rest_return_switch_dpid_from_ip(node)
+                elif (switch_alias is not None and sw_dpid is None):
+                    switch_dpid = AppCommon.rest_return_switch_dpid_from_alias(switch_alias)
+                else:
+                    switch_dpid = sw_dpid
+            except:
+                return False
+            else:
+                if item is None:
+                    helpers.test_error("User needs to pass a value to 'item' to delete", soft_error)
+                    return False
+                if 'tunnel-source' in item:
+                    url1 = '/api/v1/data/controller/core/switch[dpid="%s"]/interface[name="%s"]/ip-config/source-ip' % (str(switch_dpid), str(tunnel_name))
+                    if "admin" not in user:
+                        helpers.test_error("Non-Admin users cannot delete tunnel sub-items", soft_error)
+                        return False
+                    else:
+                        c.rest.delete(url1, {})
+                        if not c.rest.status_code_ok():
+                            helpers.test_log(c.rest.error())
+                            return False
+                        else:
+                            return True
+                    url2 = '/api/v1/data/controller/core/switch[dpid="%s"]/interface[name="%s"]/ip-config/ip-mask' % (str(switch_dpid), str(tunnel_name))
+                    if "admin" not in user:
+                        helpers.test_error("Non-Admin users cannot delete tunnel sub-items", soft_error)
+                        return False
+                    else:
+                        c.rest.delete(url2, {})
+                        if not c.rest.status_code_ok():
+                            helpers.test_log(c.rest.error())
+                            return False
+                        else:
+                            return True
+                    url3 = '/api/v1/data/controller/core/switch[dpid="%s"]/interface[name="%s"]/ip-config/gateway-ip' % (str(switch_dpid), str(tunnel_name))
+                    if "admin" not in user:
+                        helpers.test_error("Non-Admin users cannot delete tunnel sub-items", soft_error)
+                        return False
+                    else:
+                        c.rest.delete(url3, {})
+                        if not c.rest.status_code_ok():
+                            helpers.test_log(c.rest.error())
+                            return False
+                        else:
+                            return True
+                else:
+                    if 'tunnel-interface' in item:
+                        url = '/api/v1/data/controller/core/switch[dpid="%s"]/interface[name="%s"][parent-interface="None"][name="%s"]/parent-interface' % (str(switch_dpid), str(tunnel_name), str(tunnel_name))
+                    elif 'tunnel-encap-type' in item:
+                        url = '/api/v1/data/controller/core/switch[dpid="%s"]/interface[name="%s"][encap-type="None"][name="%s"]/encap-type' % (str(switch_dpid), str(tunnel_name), str(tunnel_name))
+                    elif 'tunnel-direction' in item:
+                        url = '/api/v1/data/controller/core/switch[dpid="%s"]/interface[name="%s"][direction="None"][name="%s"]/direction' % (str(switch_dpid), str(tunnel_name), str(tunnel_name))
+                    elif 'tunnel-destination' in item:
+                        url = '/api/v1/data/controller/core/switch[dpid="%s"]/interface[name="%s"]/ip-config/destination-ip' % (str(switch_dpid), str(tunnel_name))
+                    elif 'tunnel-type' in item:
+                        url = '/api/v1/data/controller/core/switch[dpid="%s"]/interface[name="%s"][type="None"][name="%s"]/type' % (str(switch_dpid), str(tunnel_name), str(tunnel_name))
+                    else:
+                        helpers.test_error("Invalid field passed to keyword. Please check your .txt file", soft_error)
+                        return False
+
+                    if "admin" not in user:
+                        helpers.test_error("Non-Admin users cannot delete tunnel sub-items", soft_error)
+                        return False
+                    else:
+                        c.rest.delete(url, {})
+                        if not c.rest.status_code_ok():
+                            helpers.test_log(c.rest.error())
+                            return False
+                        else:
+                            return True
+
+############################################
+############ CORSAIR: TUNNELLING ### END ###
+############################################
 ###################################################
 # BigTap User Management
 ###################################################
