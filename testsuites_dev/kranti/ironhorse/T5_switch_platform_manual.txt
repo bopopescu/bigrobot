@@ -1,0 +1,1017 @@
+* Settings
+Documentation     T5  Switch Platform Test suite- Iron Horse
+#Suite Setup       T5 switch platform test setup
+#Suite Teardown    T5 switch platform test teardown
+Test Setup        base test setup
+Force Tags        T5  switch  Platform 
+...             
+...            
+...                        
+Library         keywords/BsnCommon.py
+Library         keywords/SwitchLight.py
+Library         keywords/AppController.py
+Library         keywords/Ixia.py 
+Library         keywords/T5.py   
+Library         keywords_dev/kranti/ironhorse/T5SwitchPlatform.py  
+Library         String
+#Resource        keywords_dev/kranti/ironhorse/snake_traffic_test_variables.txt
+
+
+*Variables
+${switchlight_version}  SwitchLight
+${netmask}  18
+${gateway}  10.192.64.1
+${dns_server}  10.192.3.1
+${dns_domain}  bigswitch.com
+${j}    1
+${switch1_name}=  spine01
+${switch2_name}=  leaf01
+${switch3_name}=  leaf02
+${tenant}=        testTenant 
+${vns}=           v1
+${vlan}=          -1
+${intf_1}=        ethernet1
+${intf_2}=        ethernet2
+${intf_3}=        ethernet3
+${intf_4}=        ethernet4
+
+${intf_6}=        ethernet45
+${intf_7}=        ethernet46
+${intf_8}=        ethernet47
+${intf_9}=        ethernet48
+
+${count}=         1 
+${ratetolerance}=     10
+${tolerance}=         5
+${sleepAfter}=    10
+${sleepBefore}=   5
+
+
+### Section A: ONIE, OFAUX Channel  
+
+*Test Case
+
+## Add test case for upgrading installer 
+## Verify that switchight can be installed first time 
+## Interrupt install and verify recovery 
+## Interrupt switchight install and reverify that swlight installs
+## URL check one for SPINE and one for Leaf
+     
+Verify ONIE installed switch gets switchLite installer
+    Log     Step 1 - Verify ONIE gets switchLite installer image
+    Log     Step 2 - Verify that after the installer you get loader prompt    
+    [Tags]  T5  switch  install  
+    [Tags]  Manual
+    Manual passed
+
+Verify that installer can be upgraded on leaf and spine
+    Log   Step 1 - Verify that installer can be upgraded on switch
+    [Tags]  T5  switch  install  
+    [Tags]  Manual
+    Manual passed    
+
+Verify that switchLight image can be installed first time 
+    Log   Step 1 - Verify that switchLight image can be installed first time
+    [Tags]  T5  switch  install  
+    [Tags]  Manual
+    Manual passed
+
+Interrupt the switchLight installer and verify that it can be reinstalled 
+    Log   Step 1 - Interrupt the switchLight install and verify that it can be re-installed. 
+    [Tags]  T5  switch  install  
+    [Tags]  Manual-untested
+    Manual-untested    
+
+Interrupt switchLight image upgrade and verify that it can be upgraded 
+    Log   Step 1 - Interrupt the switchLight install and verify that it can be re-installed. 
+    [Tags]  T5  switch  install  
+    [Tags]  Manual-untested
+    Manual-untested
+   
+Verify the Installer URL check for leaf and spine
+    Log   Step 1 - Verify the Url settings for leaf and spine. 
+    [Tags]  T5  switch  install  
+    [Tags]  Manual-untested
+    Manual-untested   
+
+Verify switchLight Installer can upgrade another switchLite image
+    Log     Step 1 - Verify switchLight Installer can upgrade to another swithcLigh image
+    [Tags]  T5  switch  install 
+    [Tags]  Manual
+    Manual passed
+    
+Verify console connectivity of the switch
+    Log    Step 1 - Verify access the console through telnet
+    [Tags]  T5  switch  install
+    [Tags]  Manual
+    Manual passed
+
+## Check Uboot version  ( minimum required version )
+Verify Uboot version  
+    Log    Step 1 - Verify the minimum Uboot version 
+    [Tags]  T5  switch  install 
+    [Tags]  Manual-untested
+    Manual untested
+
+Verify uboot configuration Static ip address, gateway, netmask, server ip
+    Log    Step 1 - Verify the configuration of static Ip address, gateway, netmask and server ip
+    Log    Step 2 - Verify that this can be saved and after reboot it is persisted   
+    [Tags]  T5  switch  install 
+    [Tags]  Manual
+    Manual passed
+
+## Switch flash card verification 4GB/ 8GB 
+Verify the switch flash card memory 
+    Log    Step 1 - Verify the switch flash card memory 4GB or 8GB minimum
+    [Tags]  T5  switch  install 
+    [Tags]  Manual-untested
+    Manual untested      
+
+Reboot Switch and verify the loader parameters like IP, gateway, server ip etc
+    Log    Step 1 - Verify after reboot configuration of static Ip address
+    Log    Step 2 - Verify after reboot configuration of Gateway 
+    Log    Step 3 - Verify after reboot the configuration of server ip    
+    [Tags]  T5  switch  install 
+    [Tags]  Manual
+    Manual passed
+
+Verify after loader env configuration Ping to Switch 
+    Log    Step 1 - Verify after loader env config , Ping to Switch works   
+    [Tags]  T5  switch  install 
+    [Tags]  Manual
+    Manual passed
+
+Verify DHCP address configuration, IP address allocation and PING
+    Log    Step 1 - Verify DHCP server configuration at loader
+    Log    Step 2 - Verify the IP address allocation 
+    Log    Step 3 - Verify the PING 
+    [Tags]  T5  switch  install 
+    [Tags]  Manual-untested
+    Manual untested 
+    
+Reboot box and Verify the IP address through DHCP server and Ping 
+    Log    Step 1 - Verify after reboot IP address allocation thru DHCP 
+    Log    Step 1 - Verify the PING connectivity 
+    [Tags]  T5  switch  install 
+    [Tags]  Manual-untested
+    Manual untested 
+   
+Verify environmental variables for CPU, RAM, PCI, Ethernet at loader 
+    Log    Step 1 - Verify the environmental variables for CPU, RAM etc. 
+    [Tags]  T5  switch  install 
+    [Tags]  Manual-untested
+    Manual untested
+
+## Installer did not install
+## SwlIght image install fails 
+## Password recovery 
+## Mark Skip - if USB image installation not supported    
+     
+Verify image installation using USB 
+    Log    Step 1 - Verify that the USB image installation is supported 
+    [Tags]  T5  switch  install 
+    [Tags]  Manual-untested
+    Manual untested 
+    
+Verify the recovery procedure of Switch when SwLight installer fails  
+    Log    Step 1 - verify that the Switch can be recovered by the defined procedure 
+    [Tags]  T5  switch  install 
+    [Tags]  Manual-untested
+    Manual untested 
+
+Verify the procedure of switch upgrade when the switchLight image upgrade fails
+    Log    Step 1 - verify that the Switch can be recovered by the defined procedure
+    [Tags]  T5  switch  install 
+    [Tags]  Manual-untested
+    Manual untested
+     
+Verify the procedure to get the recovery password for the switch 
+    Log    Step 1 - verify the procedure to get the recovery password 
+    [Tags]  T5  switch  install 
+    [Tags]  Manual-untested
+    Manual untested
+
+## Add for the verification of factory default settings 
+###  Initial Configuration and ZTN
+## Confirm that it is covered in ZTN 
+Verify Customer Deployment method of ZTN 
+    Log    Step 1 - Verify the package/installation procedure for Switch
+    [Tags]  T5  platform  install 
+    [Tags]  Manual-untested
+    Manual untested
+        
+Verify the Switch configuration after ZTN 
+    Log    Step 1 - Verify the Switch Configuration after ZTN
+    [Tags]  T5  switch  ZTN
+    [Tags]  Manual-untested
+    Manual untested 
+    
+Verify Switch connectivity after ZTN 
+    Log    Step 1 - Verify Switch is pingable
+    [Tags]  T5  switch  ZTN  
+    [Tags]  Manual-untested
+    Manual untested 
+    
+Verify Switch Configuration - Allowed or Not Allowed Configuration in ZTN
+    Log    Step 1 - Verify the What Switch Configuration are allowed Not Allowed
+    [Tags]  T5  switch  ZTN  
+    [Tags]  Manual-untested
+    Manual untested 
+    
+Verify Switch DHCP address - Is it Configurable in ZTN
+    [Tags]  T5  switch  ZTN  
+    [Tags]  Manual-untested
+    Manual untested 
+
+### Managment port 
+##  Default gateway configuration , if mgmt port
+## Add console port baud rate test and verification 
+### Test cases for mgmt port ip config 
+## Static IP  Config - valid / invalid Subnet mask 
+## Add remove replace  for all of these 
+### Configure SSH , Verify connectivity  
+## Configure telnet , verify connectivity 
+## Show command for interface ma1 
+      
+Verify management port ma1 static IP configuration 
+    Log    Step 1 - Verify the Management Port ma1 ip address can be configured
+    [Tags]  T5  switch  InitialConfig
+    [Tags]  Manual
+    Manual Passed
+       
+Verify default gateway configuration on switch 
+    Log    Step 1 - Verify default gateway can be configured on switch 
+    [Tags]  T5  switch  InitialConfig
+    [Tags]  Manual
+    Manual Passed
+
+Verify that invalid static IP configuration for ma1 can be deleted and corrected
+    Log    Step 1 - Verify the Management Port ma1 ip address after misconfiguration can be deleted and corrected
+    [Tags]  T5  switch  InitialConfig
+    [Tags]  Manual
+    Manual Passed
+
+Verify management port comes up after removing and reinserting cable 
+    Log    Step 1 - Verify the Management Port config after cable remove and re-insertion
+    [Tags]  T5  switch  InitialConfig
+    [Tags]  Manual
+    Manual Passed
+
+Verify show command for management interface ma1 
+    Log    Step 1 - Verify the show command for managmenet interface ma1 , ip address, subnet mask
+    [Tags]  T5  switch  InitialConfig
+    [Tags]  Manual
+    Manual Passed
+
+Enable SSH configuration and verify connectivity 
+    Log    Step 1 - Enable SSH configuration and verify connectivity 
+    [Tags]  T5  switch  InitialConfig
+    [Tags]  Manual
+    Manual Passed
+
+Enable telnet configuration and verify connectivity 
+    Log    Step 1 - Enable telnet configuration and verify connectivity 
+    [Tags]  T5  switch  InitialConfig
+    [Tags]  Manual
+    Manual Passed
+
+Verify multiple SSH connections to Management Port 
+    Log    Step 1 - Verify multiple SSH connections to Management Port
+    [Tags]  T5  switch  InitialConfig
+    [Tags]  Manual 
+    Manual Passed
+    
+Verify multiple telnet connections to Management Port 
+    Log    Step 1 - Verify multiple telnet connections to Management Port
+    [Tags]  T5  switch  InitialConfig
+    [Tags]  Manual
+    Manual Passed
+    
+## Test cases for controller configuration 
+## Add , remove , replace one controller / two controller 
+## Invalid controller config  
+## Show command for controller 
+##  Save running-config , reboot and verify 
+
+Verify one controller can be configured on switch 
+    Log    Step 1 - Verify one controller can be configured on switch
+    [Tags]  T5  switch  InitialConfig
+    [Tags]  Manual
+    Manual Passed
+
+Verify two controllers can be configured on switch 
+    Log    Step 1 - Verify two controllers can be configured on switch
+    [Tags]  T5  switch  InitialConfig
+    [Tags]  Manual
+    Manual Passed
+
+Verify that controller configuration can be removed and different controller can be added
+    Log    Step 1 - Verify that controller configuration can be deleted and added again
+    [Tags]  T5  switch  InitialConfig
+    [Tags]  Manual
+    Manual Passed
+
+Verify that invalid ip can not be configured for controller 
+    Log    Step 1 - Verify that invalid ip can not be configured for controller
+    [Tags]  T5  switch  InitialConfig
+    [Tags]  Manual-untested
+    Manual untested 
+
+Verify the show controller command on switch 
+    Log    Step 1 - Verify the show controller command on switch 
+    [Tags]  T5  switch  InitialConfig
+    [Tags]  Manual
+    Manual Passed
+
+Verify after failure of Master Controller switch connection with backup is re established
+    Log    Step 1 - Both Controller connection is present 
+    Log    Step 2 - Master Controller fails and connection is removed 
+    Log    Step 3 - Connection to Back up controller is established
+    [Tags]  T5  switch  HA 
+    [Tags]  Manual
+    Manual Passed
+    
+Verify after Master Controller comes back Connection reestablished 
+    Log    Step 1 - Verify connection re-establishes after Master Controller connection comes back 
+    Log    Step 2 - Verify the correct information for Master/Backup Controller
+    [Tags]  T5  switch  HA 
+    [Tags]  Manual
+    Manual Passed
+
+  
+### Section: Admin/User Authentication 
+
+Verify user admin can be configured with password adminadmin on the box 
+    Log    Step 1 - Verify user admin can be configured with password adminadmin on the box
+    [Tags]  T5  switch  UserConfig
+    [Tags]  Manual
+    Manual Passed
+    
+Verify password for user admin can be changed  
+    Log    Step 1 - Verify password for user admin can be changed
+    [Tags]  T5  switch  UserConfig 
+    [Tags]  Manual
+    Manual Passed
+
+Verify password for user admin cannot be of zero length   
+    Log    Step 1 - Verify password for user admin cannot be of zero length
+    [Tags]  T5  switch  UserConfig  
+    [Tags]  Manual-untested
+    Manual untested
+        
+Verify Passwords are case sensitive   
+    Log    Step 1 - Verify Passwords are case-sensitive
+    [Tags]  T5  switch  UserConfig
+    [Tags]  Manual
+    Manual Passed
+
+Verify max length for passwords    
+    Log    Step 1 - Verify max-length for passwords
+    [Tags]  T5  switch  UserConfig   
+    [Tags]  Manual-untested
+    Manual untested
+
+Verify special characters are allowed in passwords 
+    Log    Step 1 - Verify special characters are allowed in passwords
+    [Tags]  T5  switch  UserConfig   
+    [Tags]  Manual
+    Manual Passed
+    
+Verify user recovery can be configured and user can login using the username password combination
+    Log    Step 1 - Verify user recovery can be configured and user can login using the username/password combination
+    [Tags]  T5  switch  UserConfig   
+    [Tags]  Manual
+    Manual Passed
+
+Verify other users except admin or recovery not allowed   
+    Log    Step 1 - Verify other users except admin or recovery not allowed
+    Log    Step 2 - Verify proper error message is displayed
+    [Tags]  T5  switch  UserConfig  
+    [Tags]  Manual
+    Manual Passed
+
+Restart process ofad and verify users admin and recovery can re login
+    Log    Step 1 - Restart process ofad and verify users admin and recovery can re-login
+    [Tags]  T5  switch  UserConfig   
+    [Tags]  Manual
+    Manual Passed
+       
+### Section: System Admin Operation
+## Add remove replace NTP config , Invalid NTP, time zone settings, multiple NTP
+## NTP sync 
+## Verification in syslog - after changing timeZone 
+
+Verify that NTP server can be configured 
+    Log    Step 1 - Verify that NTP server can be configired on switch 
+    [Tags]  T5  switch  ntp  InitialConfig
+    [Tags]  Manual
+    Manual Passed
+
+Verify that NTP server configuration can be added and deleted 
+    Log    Step 1 - Verify that NTP server configuration can be added and deleted 
+    [Tags]  T5  switch  ntp  InitialConfig
+    [Tags]  Manual
+    Manual Passed
+
+Verify that inaccessible NTP server can be configured 
+    Log    Step 1 - Verify that inaccessible NTP server can be configured 
+    [Tags]  T5  switch  ntp  InitialConfig
+    [Tags]  Manual
+    Manual Passed
+
+Verify the valid NTP time zone settings 
+    Log    Step 1 - Verify the valid NTP time zone settings
+    [Tags]  T5  switch  ntp  InitialConfig
+    [Tags]  Manual
+    Manual Passed
+
+Verify that NTP sync can be executed on switch 
+    Log    Step 1 - Verify that NTP sync can be executed on switch 
+    [Tags]  T5  switch  ntp  InitialConfig
+    [Tags]  Manual
+    Manual Passed  
+    
+Verify the show command for the NTP Server 
+    Log    Step 1 - Verify the show command for NTP server  
+    [Tags]  T5  switch  ntp  InitialConfig
+    [Tags]  Manual
+    Manual Passed  
+
+Verify the time zone change and update in syslog  
+    Log    Step 1 - Verify that after NTP sync the logs have teh correct time zone information  
+    [Tags]  T5  switch  ntp  InitialConfig
+    [Tags]  Manual
+    Manual Passed
+
+Verify time and date information is NOT lost after reboot
+    Log    Step 1 - Verify time and date information is NOT lost after reboot
+    [Tags]  T5  switch  ntp
+    [Tags]  Manual  jira-pan-667
+    Manual Failed
+
+## DNS settings 
+## Same set of tests 
+## Hostname settings 
+## Add, remove , replace tests
+## Same as password character tests 
+### Show of-aux channel output 
+### Command output for of-aux connections  
+
+verify the DNS server and domain name configuration 
+    Log    Step 1 - Verify  dns server and dns domain name configuration 
+    [Tags]  T5  switch  dns  InitialConfig
+    [Tags]  Manual-untested
+    Manual untested
+
+verify the invalid DNS server and domain name configuration can be added and deleted 
+    Log    Step 1 - Verify  invalid dns server and dns domain name can be configured and deleted
+    [Tags]  T5  switch  dns  InitialConfig
+    [Tags]  Manual-untested
+    Manual untested
+
+verify the hostname configuration on the switch  
+    Log    Step 1 - Verify  hostname configuration on the switch 
+    [Tags]  T5  switch  hostname  InitialConfig
+    [Tags]  Manual-untested
+    Manual untested
+
+verify the hostname configuration can be deleted and added again   
+    Log    Step 1 - Verify  verify the hostname configuration can be deleted and added again 
+    [Tags]  T5  switch  hostname  InitialConfig
+    [Tags]  Manual-untested
+    Manual untested
+
+verify the hostname configuration for the valid and supported character   
+    Log    Step 1 - Verify  verify hostname configuration for the valid and supported character  
+    [Tags]  T5  switch  hostname  InitialConfig
+    [Tags]  Manual-untested
+    Manual untested
+
+## Mark Skip if admin save/reload not supported
+Config admin save reload operation 
+    Log    Step 1 - Config admin save/reload operation
+    [Tags]  T5  switch  SysAdminOperation   
+    [Tags]  Manual-untested
+    Manual untested
+    
+Config upload ftp reload operation 
+    Log    Step 1 - Config upload/ ftp / reload operation
+    [Tags]  T5  switch  SysAdminOperation 
+    [Tags]  Manual-untested
+    Manual untested
+    
+Config upload scp reload operation 
+    Log    Step 1 - Config upload/ scp / reload operation
+    [Tags]  T5  switch  SysAdminOperation 
+    [Tags]  Manual-untested
+    Manual untested
+
+
+## Audit show commands - Remove which is no longer valid on switch
+## Save the running-config to start up config, reboot and verify     
+### Logging section : 
+
+Verify Syslog Server config - logs creation/ rollover / after reboot verification
+    Log    Step 1 - Verify Syslog Server config - logs creation/ rollover / after reboot verification
+    [Tags]  T5  switch  SysAdminOperation
+    [Tags]  Manual-untested
+    Manual untested
+
+
+### Section:Switch Platform Environment Variables 
+###
+
+Verify the environment information is displayed
+    Log    Step 1 - Verify the environment information is displayed
+    [Tags]  T5  switch  Environment
+    [Tags]  Manual  jira-pan-667
+    Manual Failed
+
+Verify Power Supply Status
+    Log    Step 1 - Verify Power Supply Status
+    [Tags]  T5  switch  Environment
+    [Tags]  Manual  jira-pan-667
+    Manual Failed
+
+Verify Temperatures are shown in environmental command
+    Log    Step 1 - Verify Temperatures are shown in environmental command
+    [Tags]  T5  switch  Environment
+    [Tags]  Manual  jira-pan-667
+    Manual Failed
+
+Verify Fans speeds are reported in environmental command 
+    Log    Step 1 - Verify Fans Fans speeds are reported in environmental command
+    [Tags]  T5  switch  Environment
+    [Tags]  Manual  jira-pan-667
+    Manual Failed
+
+Verify fans are running at higher speeds when temperature increases
+    Log    Step 1 - Verify fans are running at higher speeds when temperature increases
+    [Tags]  T5  switch  Environment
+    [Tags]  Manual  jira-pan-667
+    Manual Failed
+
+Verify events are reported in syslog in case of fan failure
+    Log    Step 1 - Verify events are reported in syslog in case of fan failure
+    [Tags]  T5  switch  Environment 
+    [Tags]  Manual  jira-pan-667
+    Manual Failed
+
+Verify Periodic polling of Temp sensor fans
+    Log    Step 1 - Verify Periodic polling of Temp sensor fans
+    [Tags]  T5  switch  Environment
+    [Tags]  Manual  jira-pan-667
+    Manual Failed
+
+Verify if fan speed/status is updated in output of show sensors
+    Log    Step 1 - Verify if fan speed/status is updated in output of show sensors
+    [Tags]  T5  switch  Environment
+    [Tags]  Manual  jira-pan-667
+    Manual Failed
+
+Verify if temperature values and sensor status are updated in output of show sensors
+    Log    Step 1 - Verify if temperature values and sensor status are updated in output of show sensors
+    [Tags]  T5  switch  Environment
+    [Tags]  Manual  jira-pan-667
+    Manual Failed
+
+PSU failure test - Bring up , Failure back up PSU AC ,alarm , messages
+    Log    Step 1 - PSU failure test - Bring up , Failure back up PSU ,alarm , messages
+    [Tags]  T5  switch  Environment
+    [Tags]  Manual  jira-pan-667
+    Manual Failed
+    
+Verify power output when DUT use one AC power supply
+    Log    Step 1 - Verify power output when DUT use one power supply
+    [Tags]  T5  switch  Environment
+    [Tags]  Manual  jira-pan-667
+    Manual Failed    
+
+Verify power output when DUT use two AC power supplies
+    Log    Step 1 - Verify power output when DUT use two power supplies
+    [Tags]  T5  switch  Environment
+    [Tags]  Manual  jira-pan-667
+    Manual Failed    
+
+With both AC power supplies and system up and running, remove one power supply and verify
+    Log    Step 1 - With both power supplies and system up and running, remove one power supply and verify
+    [Tags]  T5  switch  Environment
+    [Tags]  Manual  jira-pan-667
+    Manual Failed    
+
+
+Repeat previous testcase with the other AC power supply
+    Log    Step 1 - Repeat previous testcase with the other power supply
+    [Tags]  T5  switch  Environment
+    [Tags]  Manual  jira-pan-667
+    Manual Failed    
+
+With one AC power supply and system up and running, add second power supply and verify
+    Log    Step 1 - With one power supply and system up and running, add second power supply and verify
+    [Tags]  T5  switch  Environment
+    [Tags]  Manual  jira-pan-667
+    Manual Failed    
+
+VErify with PSU2 with the other AC power supply
+    Log    Step 1 - Repeat previous testcase with the other power supply
+    [Tags]  T5  switch  Environment
+    [Tags]  Manual  jira-pan-667
+    Manual Failed    
+
+Verify power output when DUT use one DC power supply
+    Log    Step 1 - Verify power output when DUT use one power supply
+    [Tags]  T5  switch  Environment
+    [Tags]  Manual  jira-pan-667
+    Manual Failed    
+
+Verify power output when DUT use two DC power supplies
+    Log    Step 1 - Verify power output when DUT use two power supplies
+    [Tags]  T5  switch  Environment
+    [Tags]  Manual  jira-pan-667
+    Manual Failed    
+
+With both DC power supplies and system up and running, remove one power supply and verify
+    Log    Step 1 - With both power supplies and system up and running, remove one power supply and verify
+    [Tags]  T5  switch  Environment
+    [Tags]  Manual  jira-pan-667
+    Manual Failed    
+
+Repeat previous testcase with the other DC power supply
+    Log    Step 1 - Repeat previous testcase with the other power supply
+    [Tags]  T5  switch  Environment
+    [Tags]  Manual  jira-pan-667
+    Manual Failed    
+
+With one DC power supply and system up and running, add second power supply and verify
+    Log    Step 1 - With one power supply and system up and running, add second power supply and verify
+    [Tags]  T5  switch  Environment
+    [Tags]  Manual  jira-pan-667
+    Manual Failed    
+
+Verify with PSU2 with the other DC power supply
+    Log    Step 1 - Repeat previous testcase with the other power supply
+    [Tags]  T5  switch  Environment
+    [Tags]  Manual  jira-pan-667
+    Manual Failed
+
+#### 
+### Section: LED Test 
+####
+Verify LED behavior during and after boot up 
+    Log    Step 1 - Verify the LED behavior during and after boot up 
+    [Tags]  T5  switch  LED  
+    [Tags]  Manual  jira-pan-675
+    Manual Failed    
+
+Verify LED behavior when link is up down disable 
+    Log    Step 1 - Verify the LED behavior when link is up 
+    Log    Step 1 - Verify the LED behavior when link is down
+    Log    Step 1 - Verify the LED behavior when link is admin disable 
+    [Tags]  T5  switch  LED  
+    [Tags]  Manual  jira-pan-675
+    Manual Failed
+
+Verify Activity LED and Status LED for a MGMT Port and data ports when no cable is connected
+    Log    Step 1 - Verify Activity LED and Status LED for a MGMT Port and data ports when no cable is connected
+    [Tags]  T5  switch  LED
+    [Tags]  Manual  jira-pan-675
+    Manual Failed   
+
+Verify Activity LED and Status LED for a MGMT Port and data ports when port is connected to TG
+    Log    Step 1 - Verify Activity LED and Status LED for a MGMT Port and data ports when port is connected to TG
+    [Tags]  T5  switch  LED
+    [Tags]  Manual  jira-pan-675
+    Manual Failed    
+
+Verify Activity LED and Status LED for a MGMT Port and data ports when cable is disconnected from the other end
+    Log    Step 1 - Verify Activity LED and Status LED for a MGMT Port and data ports when cable is disconnected from the other end
+    [Tags]  T5  switch  LED
+    [Tags]  Manual  jira-pan-675
+    Manual Failed    
+
+Verify that all the all network LEDs goes off when systems is halted
+    Log    Step 1 - Verify that all the all network LEDs goes off when systems is halted
+    [Tags]  T5  switch  LED
+    [Tags]  Manual  jira-pan-675
+    Manual Failed    
+
+###
+### Section H: CLI Configuration and Show commands 
+####
+
+Verify Show version
+    Log    Step 1 - Verify Switch Show version
+    [Tags]  T5  switch  CLI
+    [Tags]  Manual
+     Manual Passed
+
+Verify Show running-config
+    Log    Step 1 - Verify Switch Show running-config
+    [Tags]  T5  switch  CLI  Manual  
+     Manual Passed
+     
+## MArk Skip if N/A    
+Verify Admin save partial save config allowed config load reload merge override
+    Log    Step 1 - Verify Admin save partial save config allowed config load reload merge override
+    [Tags]  Manual-untested
+    Manual untested
+## MArk Skip if N/A   
+Verify Config commit error flag invalid config missing config part check 
+    Log    Step 1 - Verify Config commit error flag invalid config missing config part check 
+    [Tags]  Manual-untested
+    Manual untested
+    ## MArk Skip if N/A   
+Verify CLI reload command option - Config persistent after save
+    Log    Step 1 - Verify CLI reload command option - Config persistent after save
+    [Tags]  T5  switch  CLI  Manual
+    Manual Passed
+    
+#### Different Switch Platforms 
+## Provide HCL for all supported SKUs 
+## Verify optics for data port    
+### provide HCL for optics and cable
+### Section: Interface , Optics , LED 
+        
+Verify all interfaces show up after sw installation 
+    Log    Step 1 - Verify all interfaces show up after sw installation
+    [Tags]  Manual  interface
+    Manual Passed
+
+Verify that the various transceivers are detected in the uplink module and they are up and running 
+    Log    Step 1 - Verify that the various transceivers are detected in the uplink module and they are up and running
+    [Tags]  Manual-untested  interface  optics
+    Manual untested
+ 
+
+Verify interface op is consistent and as per spec in show interfaces op 
+    Log    Step 1 - Verify interface op is consistent and as per spec in show interfaces op
+    [Tags]  T5  switch  interface
+    Manual Passed
+
+## Verify 10G and 1 G for copper and fiber interface config  
+##  Test for octopus split cable 40G to 10G cable - Mark as unsupported 
+
+Verify auto-negotiation configurations work as expected 
+    Log    Step 1 - Verify auto-negotiation configurations work as expected
+    [Tags]  Manual-untested  interface
+    Manual untested
+
+Verify Auto- negotiation enabled on both ends of interface
+    Log    Step 1 - Verify Auto- negotiation enabled on both ends of interface
+    [Tags]  Manual-untested  interface
+    Manual untested
+
+Verify Speed Duplex in ports 
+    Log    Step 1 - Verify Speed/Duplex in ports
+    [Tags]  Manual-untested  interface
+    Manual untested
+
+Verify interface state is reported correctly when cable is unplugged. 
+    Log    Step 1 - Verify interface state is reported correctly when cable is unplugged. 
+    [Tags]  Manual  interface
+    Manual untested
+ 
+Verify the SNMP server configuration enable and disable from the switch  
+    Log    Step 1 - Verify the SNMP server configuration enable and disable from the switch
+    [Tags]  Manual-untested  SNMP
+    Manual untested   
+    
+## Add SNMP sections 
+## SNMP MIB section
+## SNMP snmpget, snmpnext , snmpwalk for supported MIBs  
+## Interface MIB , Environment, System parameters
+## SNMP Traps section 
+## Add all the supported traps CPU_Load, Fan_sensors, Temp_sensors, PSU etc.          
+## Add , remove and change the threshod values 
+## Add into the running-config and verification in snmp/conf.d file 
+## Adding trap for PSU - not present 
+## Informs configuration , remove and addition  
+##  PSU present and get the values 
+## Remove PSU's and check SNMPwalk 
+## Matrix for all environment variables in the environment 
+## AC/DC PSU different SNMP sensors 
+## Mutiple query within interval 
+## OID value - run in repeatition 
+## Complete SNMPwalk - in repeat short intervals 
+## Interface MIB - Speed, name, counters , mac 
+## Verify for Leaf and Spine 
+## After reboot - persistence of IF Index 
+
+
+
+Verify the SNMPwalk for all the supported Interface MIB 
+    Log    Step 1 - Verify the SNMPwalk of the supported Interface MIB
+    [Tags]  Manual-untested  SNMP
+    Manual untested
+
+Verify the SNMPwalk for all the supported environment MIB 
+    Log    Step 1 - Verify the SNMPwalk of the supported environment MIB
+    [Tags]  Manual-untested  SNMP
+    Manual untested
+
+Verify the SNMPwalk for all the supported system MIB 
+    Log    Step 1 - Verify the SNMPwalk of the supported system MIB
+    [Tags]  Manual-untested  SNMP
+    Manual untested
+
+Verify the SNMPget for all the supported Interface, system, environment MIB 
+    Log    Step 1 - Verify the SNMPget of the supported MIB
+    [Tags]  Manual-untested  SNMP
+    Manual untested
+
+Verify the SNMPnext for all the supported Interface, system, environment MIB 
+    Log    Step 1 - Verify the SNMPnext of the supported MIB
+    [Tags]  Manual-untested  SNMP
+    Manual untested
+    
+Verify the SNMP traps configured and generated for link up down of switch interface 
+    Log    Step 1 - Verify the SNMP traps generated for link up down of switch interface 
+    [Tags]  Manual-untested  SNMP
+    Manual untested
+      
+Verify the SNMP traps generated for the PSU sensor failure 
+    Log    Step 1 - Verify the SNMP traps generated for the PSU sensor failure
+    [Tags]  Manual-untested  SNMP
+    Manual untested
+
+Verify the SNMP traps generated for the chassis Fan failure 
+    Log    Step 1 - Verify the SNMP traps generated for the chassis Fan failure
+    [Tags]  Manual-untested  SNMP
+    Manual untested
+
+Verify the SNMP traps generated for the temp sensors threshold value crossed 
+    Log    Step 1 - Verify the SNMP traps generated for the temp sensors threshold value crossed
+    [Tags]  Manual-untested  SNMP
+    Manual untested
+
+Verify the SNMP traps generated for the CPU load threshold value crossed 
+    Log    Step 1 - Verify the SNMP traps generated for the CPU load threshold value crossed
+    [Tags]  Manual-untested  SNMP
+    Manual untested
+
+Verify the PSU1 and PSU2 SNMPwalk and after removal of the PSU1 
+    Log    Step 1 - Verify the SNMPwalk for the PSU1 and PSU2 
+    Log    Step 2 - remove PSU1 and verify the snmpwalk again
+    [Tags]  Manual-untested  SNMP
+    Manual untested
+
+Verify the AC PSU temp sensors SNMPwalk
+    Log    Step 1 - Verify the SNMPwalk for the AC PSU temp sensors 
+    [Tags]  Manual-untested  SNMP
+    Manual untested
+
+Verify the DC PSU temp sensors SNMPwalk
+    Log    Step 1 - Verify .the SNMPwalk for the DC PSU temp sensors 
+    [Tags]  Manual-untested  SNMP
+    Manual untested
+
+Verify the repeatitive snmpwalk of the interface MIB and confirm the consistent value
+    Log    Step 1 - Verify repeatitive snmpwalk of the interface MIB and confirm the consistent value 
+    [Tags]  Manual-untested  SNMP
+    Manual untested 
+
+Verify after reboot the snmpwalk for the consistent IfIndex value 
+    Log    Step 1 - Verify after reboot the consistent value of IfIndex  
+    [Tags]  Manual-untested  SNMP
+    Manual untested
+
+## Move all test cases to logging section
+## Verify syslog config 
+## add remove , replace 
+## Verify logging levels 
+## Logging options 
+## rollover 
+## Verify max size of log file , before rollover## Verify the config changes and operational changes  are logged. 
+
+
+Verify the logging of openflow events in the Switch 
+    Log    Step 1 - Verify the openflow events are being Logged in switch syslog 
+    [Tags]  Manual-untested  Logging
+    Manual untested
+
+Verify the syslog server configuration can be added and deleted 
+    Log    Step 1 - Verify the syslog server configuration in the switch 
+    Log    Step 2 - Verify the syslog server configuration can de deleted and readded 
+    [Tags]  Manual-untested  Logging
+    Manual untested
+
+Verify the syslog server misconfiguration that can be removed and the correct syslog server can be configured  
+    Log    Step 1 - Verify the inaccessible syslog server configuration and then corrected syslog server configuration   
+    [Tags]  Manual-untested  Logging
+    Manual untested
+
+Verify the logging options and level configuration on the switch 
+    Log    Step 1 - Verify the logging level and options configuration can be added    
+    [Tags]  Manual-untested  Logging
+    Manual untested
+
+Verify the max size of the syslog and rollover of the syslog file 
+    Log    Step 1 - Verify the max size of the syslog and rollover of the syslog    
+    [Tags]  Manual-untested  Logging
+    Manual untested
+
+Verify the logging of interface events up down disable in the Switch 
+    Log    Step 1 - Verify the interface events are being Logged in switch syslog 
+    [Tags]  Manual-untested  Logging
+    Manual untested
+
+Verify the logging of process events restart in the Switch 
+    Log    Step 1 - Verify the process events are being Logged in switch syslog 
+    [Tags]  Manual-untested  Logging
+    Manual untested
+
+Verify the logging of PSU insertion and removal events in the Switch 
+    Log    Step 1 - Verify the PSU insertion and removal events are being Logged in switch syslog 
+    [Tags]  Manual-untested  Logging
+    Manual untested
+
+Verify the logging of Error events management failure in the Switch 
+    Log    Step 1 - Verify the Error events management failure are being Logged in switch syslog 
+    [Tags]  Manual-untested  Logging
+    Manual untested
+
+Verify the logging of fan failure heat sensors high temp in the Switch 
+    Log    Step 1 - Verify the fan failure heat sensors high temp are being Logged in switch syslog 
+    [Tags]  Manual-untested  Logging
+    Manual untested
+
+## Move to Debugging sections 
+Verify the debugging of environmental failures -PSU/fan/tempsensors in the Switch 
+    Log    Step 1 - Verify the environmental fan failure heat sensors high temp are being shown in switch 
+    [Tags]  Manual-untested  Debug
+    Manual untested
+
+Verify the debugging of openFlow connection estabish disconnection in the Switch 
+    Log    Step 1 - Verify the openFlow connection estabish disconnection are being Logged and show in switch 
+    [Tags]  Manual-untested  Debug
+    Manual untested
+
+Verify the debugging of interface stats counters status in the Switch 
+    Log    Step 1 - Verify the interface stats counters status can be shown in switch
+    [Tags]  Manual-untested  Debug
+    Manual untested
+
+Verify the debugging of port group lag in the Switch 
+    Log    Step 1 - Verify the port group lag can be shown in switch
+    [Tags]  Manual-untested  Debug
+    Manual untested
+
+Verify the debugging of vlan in the Switch 
+    Log    Step 1 - Verify the vlan can be shown in switch
+    [Tags]  Manual-untested  Debug
+    Manual untested
+    
+Verify the debugging of forwarding programming in the Switch 
+    Log    Step 1 - Verify the forwarding programming can be shown in switch
+    [Tags]  Manual-untested  Debug
+    Manual untested
+    
+* Keywords
+
+T5 switch platform test setup
+   base suite setup
+   rest add switch  ${switch1_name}
+   ${swDpid1}=  rest return switch dpid from ip  s1
+   rest add dpid  ${switch1_name}   ${swDpid1}
+   rest add fabric role  ${switch1_name}  leaf
+      
+   rest add switch  ${switch2_name}
+   ${swDpid2}=  rest return switch dpid from ip  s2
+   rest add dpid  ${switch2_name}   ${swDpid2}
+   rest add fabric role  ${switch2_name}  leaf
+   
+   rest add switch  ${switch7_name}
+   ${swDpid7}=  rest return switch dpid from ip  s7
+   rest add dpid  ${switch7_name}   ${swDpid7}
+   rest add fabric role  ${switch7_name}  spine
+                
+                   
+#T5 switch platform test setup
+#   base test setup
+#   rest add switch  ${switch1_name}
+#   ${swDpid1}=  rest return switch dpid from ip  s1
+#   rest add dpid  ${switch1_name}   ${swDpid1}
+#   rest add fabric role  ${switch1_name}  spine
+#     
+#   rest add switch  ${switch2_name}
+#   ${swDpid2}=  rest return switch dpid from ip  s2
+#   rest add dpid  ${switch2_name}   ${swDpid2}
+#   rest add fabric role  ${switch2_name}  leaf
+#   
+#   rest add switch  ${switch3_name}
+#   ${swDpid3}=  rest return switch dpid from ip  s3
+#   rest add dpid  ${switch3_name}   ${swDpid3}
+#   rest add fabric role  ${switch3_name}  leaf
+                
+#T5 switch platform test teardown
+#   rest delete tenant  ${tenant}  
+#   rest delete fabric switch  ${switch1_name} 
+#   rest delete fabric switch  ${switch2_name}
+#   rest delete fabric switch  ${switch3_name}
+#   base test teardown
+#   sleep  5   
+
+## Process stop and restart 
+## Ofad, snmpd, syslogd , 
+## 
+## 
