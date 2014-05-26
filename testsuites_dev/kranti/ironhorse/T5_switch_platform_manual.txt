@@ -715,12 +715,16 @@ Verify Admin save partial save config allowed config load reload merge override
     Log    Step 1 - Verify Admin save partial save config allowed config load reload merge override
     [Tags]  Manual-untested
     Manual untested
-## MArk Skip if N/A   
+    
+## MArk Skip if N/A 
+  
 Verify Config commit error flag invalid config missing config part check 
     Log    Step 1 - Verify Config commit error flag invalid config missing config part check 
     [Tags]  Manual-untested
     Manual untested
-    ## MArk Skip if N/A   
+    
+## MArk Skip if N/A  
+ 
 Verify CLI reload command option - Config persistent after save
     Log    Step 1 - Verify CLI reload command option - Config persistent after save
     [Tags]  T5  switch  CLI  Manual
@@ -796,8 +800,6 @@ Verify the SNMP server configuration enable and disable from the switch
 ## Interface MIB - Speed, name, counters , mac 
 ## Verify for Leaf and Spine 
 ## After reboot - persistence of IF Index 
-
-
 
 Verify the SNMPwalk for all the supported Interface MIB 
     Log    Step 1 - Verify the SNMPwalk of the supported Interface MIB
@@ -881,7 +883,8 @@ Verify after reboot the snmpwalk for the consistent IfIndex value
 ## Verify logging levels 
 ## Logging options 
 ## rollover 
-## Verify max size of log file , before rollover## Verify the config changes and operational changes  are logged. 
+## Verify max size of log file , before rollover
+## Verify the config changes and operational changes  are logged. 
 
 
 Verify the logging of openflow events in the Switch 
@@ -966,7 +969,7 @@ Verify the debugging of forwarding programming in the Switch
     [Tags]  Manual-untested  Debug
     Manual untested
     
-* Keywords
+*Keywords
 
 T5 switch platform test setup
    base suite setup
