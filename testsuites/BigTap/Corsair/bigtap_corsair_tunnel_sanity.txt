@@ -1,0 +1,73 @@
+*Settings
+Documentation  Corsair Tunnelling Test Suite
+Suite Setup  corsair suite setup
+Suite Teardown   corsair suite teardown
+Test Setup   base test setup
+Test Teardown  base test teardown 
+Force Tags   bigtap  sanity
+Library  keywords/BsnCommon.py
+Library  keywords/AppController.py
+Library  keywords/BigTap.py
+Library  keywords/SwitchLight.py
+Library  keywords/Ixia.py
+
+* Variable
+${switch1_alias}            scale-ac5710-1  #Alias for switch 1
+${switch1_filter_intf}      ethernet1       #filter interface on switch 1
+${switch1_filter_alias}     ixia-4-21       #Alias for filter interface on switch 1
+${tunnel_sw1_name}          tunnel1         #Tunnel Name
+${tunnel_sw1_parent_intf}   ethernet18      #Tunnel Parent Interface
+${tunnel_sw1_sip}           192.168.29.1    #Tunnel Source IP
+${tunnel_sw1_dip}           192.168.22.1    #Tunnel Destination IP
+${tunnel_sw1_gip}           192.168.29.2    #Tunnel Gateway IP
+${tunnel_sw1_mask}          255.255.255.0   #Tunnel Subnet Mask
+
+${switch2_alias}            scale-ac5710-2  #Alias for switch 2
+${switch2_delivery_intf}    ethernet2       #Delivery interface on switch 2
+${switch2_delivery_alias}   ixia-4-18       #Alias for delivery interface on switch 2
+${tunnel_sw2_name}          tunnel1         #Tunnel Name
+${tunnel_sw2_parent_intf}   ethernet20      #Tunnel Parent Interface
+${tunnel_sw2_sip}           192.168.22.1    #Tunnel Source IP
+${tunnel_sw2_dip}           192.168.29.1    #Tunnel Destination IP
+${tunnel_sw2_gip}           192.168.22.2    #Tunnel Gateway IP
+${tunnel_sw2_mask}          255.255.255.0   #Tunnel Subnet Mask
+
+${policy_name}              policy_tunnel   #Policy Name that will use the tunnel interface  
+
+*Test Case
+Configure tunnel as a core interface
+   ${verify_add_tun_sw1}=  rest add tunnel interface  s1  ${tunnel_sw1_name}  pinterface=${tunnel_sw1_parent_intf}  tdirection=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}
+   Should be true  ${verify_add_tun_sw1}        
+   ${verify_add_tun_sw2}=  rest add tunnel interface  s2  ${tunnel_sw2_name}  pinterface=${tunnel_sw2_parent_intf}  tdirection=bidir  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}   
+   Should be true  ${verify_add_tun_sw2}  
+   sleep  10
+   ${verify_tun_sw1}=  rest verify tunnel status  s1  ${tunnel_sw1_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw1_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw1_sip}  dip=${tunnel_sw1_dip}  mask=${tunnel_sw1_mask}  gip=${tunnel_sw1_gip}      
+   Should be true  ${verify_tun_sw1}  
+   ${verify_tun_sw2}=  rest verify tunnel status  s2  ${tunnel_sw2_name}  tunnel_number=200  runtime_state=up  parent_interface=${tunnel_sw2_parent_intf}  tunnel_direction=bidir  sip=${tunnel_sw2_sip}  dip=${tunnel_sw2_dip}  mask=${tunnel_sw2_mask}  gip=${tunnel_sw2_gip}      
+   Should be true  ${verify_tun_sw2}  
+   sleep  10
+   ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+   Should be true  ${verify_policy1}
+
+* Keyword
+
+corsair suite setup
+    base suite setup
+    rest add switch alias  s1  ${switch1_alias}
+    rest add switch alias  s2  ${switch2_alias}
+    sleep  5
+    rest add interface role  s1  ${switch1_filter_intf}    filter    intf_nickname=${switch1_filter_alias}
+    rest add interface role  s2  ${switch2_delivery_intf}  delivery  intf_nickname=${switch2_delivery_alias}          
+    Sleep  2
+    rest add policy  admin-view  ${policy_name}  forward
+    rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
+    rest add policy interface  admin-view  ${policy_name}  ${switch1_filter_alias}  filter
+    rest add policy interface  admin-view  ${policy_name}  ${switch2_delivery_alias}  delivery 
+    Sleep  10
+
+corsair suite teardown
+    ${verify_del_tun_sw1}=  rest delete tunnel interface  node=s1  tunnel_name=${tunnel_sw1_name}  
+    Should be true  ${verify_del_tun_sw1}    
+    ${verify_del_tun_sw2}=  rest delete tunnel interface  node=s2  tunnel_name=${tunnel_sw2_name}  
+    Should be true  ${verify_del_tun_sw2}    
+    Sleep  2
