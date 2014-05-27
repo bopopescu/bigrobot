@@ -6,7 +6,6 @@ Test Setup      setup topology
 Test Teardown   teardown topology
 Force Tags      T5 Sanity
 Library         keywords/BsnCommon.py
-Library         keywords_dev/slim/Host.py
 Library         keywords/T5.py
 Library         keywords/T5L3.py
 Library         keywords/T5Platform.py
@@ -14,6 +13,7 @@ Library         keywords/BsnCommon.py
 Library         keywords/SwitchLight.py
 Library	        Collections.py
 Library         keywords/Ixia.py
+Library         keywords/Host.py
 Resource		testsuites_dev/slim/T5_L3_colo/t5_layer3_colo_variables.txt
 Resource		testsuites_dev/slim/T5_L3_colo/t5_layer3_colo_resources.txt
 
@@ -323,18 +323,25 @@ L3 intra tenant across rack tagged with dynamic endpoints
 
 
 L3 intra tenant traceroute
-    ${result} =                                 BASH                            h4-rack0                      traceroute -n -m 5 10.251.1.1 
-    Should Contain                              ${result}                       "1  10.251.1.1 (10.251.1.1)"
-    ${result} =                                 BASH                            h4-rack0                      traceroute -n -m 5 -I 10.251.1.1 
-    Should Contain                              ${result}                       "1  10.251.1.1  "
-    ${result} =                                 BASH                            h4-rack0                      traceroute -n -m 5 10.251.2.1 
-    Should Contain                              ${result}                       "1  10.251.2.1 (10.251.2.1)"
-    ${result} =                                 BASH                            h4-rack0                      traceroute -n -m 5 -I 10.251.2.1 
-    Should Contain                              ${result}                       "1  10.251.2.1  "
-    ${result} =                                 BASH                            h4-rack0                      traceroute -n -m 5 10.251.3.1 
-    Should Contain                              ${result}                       "1  10.251.3.1 (10.251.3.1)"
-    ${result} =                                 BASH                            h4-rack0                      traceroute -n -m 5 -I 10.251.3.1 
-    Should Contain                              ${result}                       "1  10.251.3.1  "
+    ${string} =                                 BASH run command                h4-rack0                      traceroute -n -m 5 10.251.1.1
+    ${result} =                                 Set Variable                    ${string[1]} 
+    Should Contain                              ${result}                       \ 1\ \ 10.251.1.1 
+    ${string} =                                 BASH run command                h4-rack0                      traceroute -n -m 5 -I 10.251.1.1 
+    ${result} =                                 Set Variable                    ${string[1]} 
+    Should Contain                              ${result}                       \ 1\ \ 10.251.1.1 
+    ${string} =                                 BASH run command                h4-rack0                      traceroute -n -m 5 10.251.2.1 
+    ${result} =                                 Set Variable                    ${string[1]} 
+    Should Contain                              ${result}                       \ 1\ \ 10.251.2.1 
+    ${string} =                                 BASH run command                h4-rack0                      traceroute -n -m 5 -I 10.251.2.1 
+    ${result} =                                 Set Variable                    ${string[1]} 
+    Should Contain                              ${result}                       \ 1\ \ 10.251.2.1 
+    ${string} =                                 BASH run command                h4-rack0                      traceroute -n -m 5 10.251.3.1 
+    ${result} =                                 Set Variable                    ${string[1]} 
+    Should Contain                              ${result}                       \ 1\ \ 10.251.3.1 
+    ${string} =                                 BASH run command                h4-rack0                      traceroute -n -m 5 -I 10.251.3.1 
+    ${result} =                                 Set Variable                    ${string[1]} 
+    Should Contain                              ${result}                       \ 1\ \ 10.251.3.1  
+    
 
 
 DHCP discovery on the same vns as server with dhcp-relay enabled

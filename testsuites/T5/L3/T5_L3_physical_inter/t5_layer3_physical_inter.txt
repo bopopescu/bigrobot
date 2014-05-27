@@ -118,7 +118,7 @@ Controller HA failover via reboot of master
 	
 Spine reboot
 	Spine reboot
-	[Tags]			feature				HA
+	[Tags]			feature			HA
 
 Leaf reboot
 	Leaf reboot
@@ -162,19 +162,15 @@ Link flap between leaf and spine
 
 L3 inter tenant forwarding to external router
 	manual passed
-	[Tags]			manual					feature			
+	[Tags]			manual			feature			
 
 L3 inter tenant forwarding to VRRP routers
 	manual failed
-	[Tags]			manual        			feature			BVS-1701
+	[Tags]			manual        	feature			BVS-1701
 
-L3 inter tenant traceroute with icmp probe
-	manual passed
-	[Tags]			manual					feature			
-
-L3 inter tenant traceroute with udp probe
-	manual passed
-	[Tags]			manual					feature			
+L3 inter tenant traceroute with icmp and udp probe
+	L3 inter tenant traceroute with icmp and udp probe
+	[Tags]			feature			
 
 Add and delete endpoints with L3 inter tenant traffic
 	Add and delete endpoints with L3 inter tenant traffic
@@ -882,6 +878,42 @@ Overlapping IP subnet with and without private keyword
     ${result} =                                     REST add vns ip             B               B1                      10.101.0.127            25      private=true
     Should Be True                                  ${result}
     sleep                                           2
+
+
+L3 inter tenant traceroute with icmp and udp probe
+    BASH ifup intf                              h1                              bond0
+    BASH ifup intf                              h2                              bond0
+    BASH ifup intf                              h3                              bond0
+    BASH ifup intf                              h4                              bond0   
+    BASH ifup intf                              h5                              bond0   
+    BASH ifup intf                              h6                              bond0           
+    REST add portgroup to vns                   X                               X1                      ${leaf2_pc1}            -1
+    REST add portgroup to vns                   Y                               Y1                      ${leaf2_pc2}            -1
+    BASH add ip address                         h5                              10.251.1.11/24          bond0   
+    BASH add ip address                         h6                              10.252.1.11/24          bond0
+    BASH add route                              h5                              10.252.1.0/24           10.251.1.1
+    BASH add route                              h6                              10.251.1.0/24           10.252.1.1
+    sleep                                       5   
+    ${string} =                                 BASH run command                h5                      traceroute -n -m 5 10.252.1.11
+    ${result} =                                 Set Variable                    ${string[1]} 
+    Should Contain                              ${result}                       \ 1\ \ 10.251.1.1 
+    ${result} =                                 Set Variable                    ${string[2]} 
+    Should Contain                              ${result}                       \ 2\ \ * * * 
+    ${result} =                                 Set Variable                    ${string[3]} 
+    Should Contain                              ${result}                       \ 3\ \ * * * 
+    ${result} =                                 Set Variable                    ${string[4]} 
+    Should Contain                              ${result}                       \ 4\ \ 10.252.1.11 
+    ${string} =                                 BASH run command                h5                      traceroute -n -m 5 -I 10.252.1.11
+    ${result} =                                 Set Variable                    ${string[1]} 
+    Should Contain                              ${result}                       \ 1\ \ 10.251.1.1 
+    ${result} =                                 Set Variable                    ${string[2]} 
+    Should Contain                              ${result}                       \ 2\ \ * * * 
+    ${result} =                                 Set Variable                    ${string[3]} 
+    Should Contain                              ${result}                       \ 3\ \ * * * 
+    ${result} =                                 Set Variable                    ${string[4]} 
+    Should Contain                              ${result}                       \ 4\ \ 10.252.1.11 
+    BASH delete route                           h5                              10.252.1.0/24           10.251.1.1
+    BASH delete route                           h6                              10.251.1.0/24           10.252.1.1
 
     
 Inter tenant dhcp relay	
