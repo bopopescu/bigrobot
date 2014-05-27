@@ -6,7 +6,7 @@ Suite Setup      base suite setup
 Suite Teardown   base suite teardown
 Test Setup       T5 Platform Test Setup
 Test Teardown    T5 Platform Test Teardown
-Force Tags       T5Platform  Visibility
+Force Tags       IronHorse  Platform  Visibility
 Library          keywords/BsnCommon.py
 Library          keywords/Mininet.py
 Library	    	 keywords/Host.py

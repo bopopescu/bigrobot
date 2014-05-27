@@ -6,7 +6,7 @@ Suite Setup      T5 base suite setup
 Suite Teardown   T5 base suite teardown
 Test Setup       T5 Platform test setup
 Test Teardown    T5 Platform test teardown
-Force Tags       T5Platform  HA  L2
+Force Tags       IronHorse	Platform  HA  L2
 Library          keywords/BsnCommon.py
 Library          keywords/Mininet.py
 Library	    	 keywords/Host.py
@@ -65,11 +65,11 @@ Delete Cluster VIP
 	Should Be False  ${returnVal}
 
 Verify Cluster Master Shutdown
-	[Tags]  feature  skipped
+	[Tags]  feature  manual	skipped
 	Shutdown the master node & verify fabric integrity
 	
 Verify Cluster Slave Shutdown
-	[Tags]  feature  skipped
+	[Tags]  feature  manual	skipped
 	Shutdown the slave node & verify fabric integrity
 
 
