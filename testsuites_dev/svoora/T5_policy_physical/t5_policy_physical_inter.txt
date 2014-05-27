@@ -1209,7 +1209,7 @@ T19 Interface tenant permit policy src-vns to dest-tenant
     stop traffic   ${stream}
     #sleep                  
     ${report}=             fetch port stats  stream=${stream}
-    verify stats true  transmitted_frames  received_frames  ${stream}  ix1-to-ix2
+    verify stats true  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
 
 T20 Interface tenant deny policy src-vns to dest-tenant
 	[Tags]  smoke  feature
@@ -1226,7 +1226,7 @@ T20 Interface tenant deny policy src-vns to dest-tenant
     stop traffic   ${stream}
     #sleep                  
     ${report}=             fetch port stats  stream=${stream}
-    verify stats false  transmitted_frames  received_frames  ${stream}  ix1-to-ix2
+    verify stats false  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
 
 T21 Interface tenant permit policy src-vns to dest-vns
 	[Tags]  smoke  feature
@@ -1243,7 +1243,7 @@ T21 Interface tenant permit policy src-vns to dest-vns
     stop traffic   ${stream}
     #sleep                  
     ${report}=             fetch port stats  stream=${stream}
-    verify stats true  transmitted_frames  received_frames  ${stream}  ix1-to-ix2
+    verify stats true  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
 
 T22 Interface tenant deny policy src-vns to dest-vns
 	[Tags]  smoke  feature
@@ -1260,7 +1260,7 @@ T22 Interface tenant deny policy src-vns to dest-vns
     stop traffic   ${stream}
     #sleep                  
     ${report}=             fetch port stats  stream=${stream}
-    verify stats false  transmitted_frames  received_frames  ${stream}  ix1-to-ix2
+    verify stats false  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
 
 ######  **  ANY need more investigation  **  ########	
 T23 Interface tenant permit policy src-vns to any
@@ -1278,7 +1278,7 @@ T23 Interface tenant permit policy src-vns to any
     stop traffic   ${stream}
     #sleep                  
     ${report}=             fetch port stats  stream=${stream}
-    verify stats true  transmitted_frames  received_frames  ${stream}  ix1-to-ix2
+    verify stats true  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
 
 T24 Interface tenant deny policy src-vns to any
 	[Tags]  feature
@@ -1295,7 +1295,7 @@ T24 Interface tenant deny policy src-vns to any
     stop traffic   ${stream}
     #sleep                  
     ${report}=             fetch port stats  stream=${stream}
-    verify stats false  transmitted_frames  received_frames  ${stream}  ix1-to-ix2
+    verify stats false  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
 
 ######  **  ANY need more investigation  **  ########	
 T25 Interface tenant permit policy any to dest-ip
@@ -1313,7 +1313,7 @@ T25 Interface tenant permit policy any to dest-ip
     stop traffic   ${stream}
     #sleep                  
     ${report}=             fetch port stats  stream=${stream}
-    verify stats true  transmitted_frames  received_frames  ${stream}  ix1-to-ix2
+    verify stats true  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
 
 ######  **  ANY need more investigation  **  ########	
 T26 Interface tenant deny policy any to dest-ip
@@ -1331,7 +1331,7 @@ T26 Interface tenant deny policy any to dest-ip
     stop traffic   ${stream}
     #sleep                  
     ${report}=             fetch port stats  stream=${stream}
-    verify stats false  transmitted_frames  received_frames  ${stream}  ix1-to-ix2
+    verify stats false  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
 
 
 ######  **  ANY need more investigation  **  ########	
@@ -1350,7 +1350,7 @@ T27 Interface tenant permit policy any to dest-tenant
     stop traffic   ${stream}
     #sleep                  
     ${report}=             fetch port stats  stream=${stream}
-    verify stats true  transmitted_frames  received_frames  ${stream}  ix1-to-ix2
+    verify stats true  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
 
 ######  **  ANY need more investigation  **  ########	
 T28 Interface tenant deny policy any to dest-tenant
@@ -1368,7 +1368,7 @@ T28 Interface tenant deny policy any to dest-tenant
     stop traffic   ${stream}
     #sleep                  
     ${report}=             fetch port stats  stream=${stream}
-    verify stats false  transmitted_frames  received_frames  ${stream}  ix1-to-ix2
+    verify stats false  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
 
 ######  **  ANY need more investigation  **  ########	
 T29 Interface tenant permit policy any to dest-vns
@@ -1386,7 +1386,7 @@ T29 Interface tenant permit policy any to dest-vns
     stop traffic   ${stream}
     #sleep                  
     ${report}=             fetch port stats  stream=${stream}
-    verify stats true  transmitted_frames  received_frames  ${stream}  ix1-to-ix2
+    verify stats true  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
 
 ######  **  ANY need more investigation  **  ########	
 T30 Interface tenant deny policy any to dest-vns
@@ -1404,7 +1404,7 @@ T30 Interface tenant deny policy any to dest-vns
     stop traffic   ${stream}
     #sleep                  
     ${report}=             fetch port stats  stream=${stream}
-    verify stats false  transmitted_frames  received_frames  ${stream}  ix1-to-ix2
+    verify stats false  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
 
 ######  **  ANY need more investigation  **  ########	
 T31 Interface tenant permit policy any to any
@@ -1422,7 +1422,7 @@ T31 Interface tenant permit policy any to any
     stop traffic   ${stream}
     #sleep                  
     ${report}=             fetch port stats  stream=${stream}
-    verify stats true  transmitted_frames  received_frames  ${stream}  ix1-to-ix2
+    verify stats true  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
 
 
 
@@ -1442,7 +1442,7 @@ T32 Interface tenant deny policy any to any
     stop traffic   ${stream}
     #sleep                  
     ${report}=             fetch port stats  stream=${stream}
-    verify stats false  transmitted_frames  received_frames  ${stream}  ix1-to-ix2
+    verify stats false  transmitted_frames  received_frames  ${stream}  ix4-to-ix1
 
 ##Below are for ip and port combination specified at tenant interface
 ##-------------------------------------##
