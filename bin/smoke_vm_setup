@@ -257,7 +257,7 @@ h6:\n\
 tg1:\n\
   platform: 'ixia'\n\
   chassis_ip: 10.192.85.151\n\
-  tcl_server_ip: 10.192.109.203\n\
+  tcl_server_ip: 10.194.64.183\n\
   #tcl_server_port: 8009\n\
   #ix_version: '7.10'\n\
   #set_init_ping: false\n\
