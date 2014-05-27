@@ -224,8 +224,8 @@ L3 intra tenant traffic behavior in headless mode
 	[Tags]					manual				feature			
 
 L3 intra tenant traceroute
-	manual passed
-	[Tags]					manual				feature		
+	L3 intra tenant traceroute
+	[Tags]					feature		
 
 Verify L3 intra tenant traffic with ip options
 	Verify L3 intra tenant traffic with ip options	
@@ -818,6 +818,38 @@ L3 intra tenant across rack tagged with static endpoints
 	Should Be True  							${loss} == 0		
 	BASH delete route							h1								10.251.3.0/24			10.251.1.1
 	BASH delete route							h3								10.251.1.0/24			10.251.3.1
+
+
+L3 intra tenant traceroute
+    BASH ifup intf                              h1                              bond0
+    BASH ifup intf                              h2                              bond0
+    BASH ifup intf                              h3                              bond0
+    BASH ifup intf                              h4                              bond0   
+    BASH ifup intf                              h5                              bond0   
+    BASH ifup intf                              h6                              bond0           
+    REST add portgroup to vns                   X                               X1                      ${leaf2_pc1}            -1
+    REST add portgroup to vns                   X                               X2                      ${leaf2_pc2}            -1
+    REST add interface to vns                   X                               X1                      ${leaf0_a}              ${ixia1}                -1
+    REST add interface to vns                   X                               X2                      ${leaf1_a}              ${ixia3}                -1
+    BASH add ip address                         h5                              10.251.1.11/24          bond0   
+    BASH add ip address                         h6                              10.251.2.11/24          bond0
+    BASH add route                              h5                              10.251.2.0/24           10.251.1.1
+    BASH add route                              h6                              10.251.1.0/24           10.251.2.1
+    sleep                                       5   
+    ${result} =                                 BASH                            h5                      traceroute -n -m 5 10.251.1.1 
+    Should Contain                              ${result}                       "1  10.251.1.1 (10.251.1.1)"
+    ${result} =                                 BASH                            h5                      traceroute -n -m 5 -I 10.251.1.1 
+    Should Contain                              ${result}                       "1  10.251.1.1  "
+    ${result} =                                 BASH                            h5                      traceroute -n -m 5 10.251.2.1 
+    Should Contain                              ${result}                       "1  10.251.2.1 (10.251.2.1)"
+    ${result} =                                 BASH                            h5                      traceroute -n -m 5 -I 10.251.2.1 
+    Should Contain                              ${result}                       "1  10.251.2.1  "
+    ${result} =                                 BASH                            h5                      traceroute -n -m 5 10.251.3.1 
+    Should Contain                              ${result}                       "1  10.251.3.1 (10.251.3.1)"
+    ${result} =                                 BASH                            h5                      traceroute -n -m 5 -I 10.251.3.1 
+    Should Contain                              ${result}                       "1  10.251.3.1  "
+    BASH delete route                           h5                              10.251.2.0/24           10.251.1.1
+    BASH delete route                           h6                              10.251.1.0/24           10.251.2.1
 
 
 L3 intra tenant dhcp relay on same vns as dhcp server with relay enabled
