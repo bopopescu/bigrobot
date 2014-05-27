@@ -4,7 +4,7 @@ Suite Setup      t5 suite setup
 Suite Teardown   t5 suite teardown
 Test Setup       base test setup
 Test Teardown    ha test teardown
-Force Tags       T5 
+Force Tags       IronHorse  T5 
 Library          keywords/BsnCommon.py
 Library          keywords/SwitchLight.py
 Library          keywords/AppController.py
