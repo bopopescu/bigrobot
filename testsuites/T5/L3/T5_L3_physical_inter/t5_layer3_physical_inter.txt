@@ -4,7 +4,7 @@ Suite Setup     T5 base suite setup
 Suite Teardown  T5 base suite teardown
 Test Setup      test setup topology
 Test Teardown   test teardown topology
-Force Tags      T5 Sanity
+Force Tags      T5 Sanity       IronHorse
 Library         keywords/BsnCommon.py
 Library         keywords/Host.py
 Library         keywords/T5.py
@@ -18,8 +18,6 @@ Library         keywords/Ixia.py
 Library         keywords/KVMOperations.py
 Resource		testsuites/T5/L3//T5_L3_physical_inter/t5_layer3_physical_inter_variables.txt
 Resource		testsuites/T5/t5_dualleaf_three_rack_physical_resource.txt
-Force Tags      IronHorse
-
 
 * Test Cases
 Inter tenant L3 untagged traffic with dynamic endpoints same rack
