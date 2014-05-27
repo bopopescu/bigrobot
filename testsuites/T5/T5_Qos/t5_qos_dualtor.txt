@@ -10,7 +10,7 @@ Test Teardown	 base test teardown
 #Test Teardown   teardown topology
 #Suite Setup		setup topology
 #Suite Teardown	teardown topology
-Force Tags      T5 Sanity
+Force Tags      IronHorse
 Library         keywords/BsnCommon.py
 Library         keywords/Mininet.py
 Library         keywords/T5.py
