@@ -16,6 +16,7 @@ Library         keywords/Ixia.py
 Library			keywords/SwitchLight.py
 Resource		testsuites/T5/L3/T5_L3_physical_intra/t5_layer3_physical_intra_variables.txt
 Resource		testsuites/T5/t5_dualleaf_three_rack_physical_resource.txt
+Force Tags      IronHorse
 
 
 * Test Cases
@@ -43,6 +44,10 @@ Verify static endpoint state
     Verify static endpoint state
     [Tags]                              sanity  
 
+Verify host with same IP as vrf is having L2 service only
+    Verify host with same IP as vrf is having L2 service only
+    [Tags]                              sanity              
+    
 Activate and deactivate router interface
 	Activate and deactivate router interface
 	[Tags]								sanity					
@@ -169,7 +174,7 @@ Configure overlapping IP with private keyword on the same tenant
 
 L3 intra tenant traffic between private and public subnet with overlapping IP
 	L3 intra tenant traffic between private and public subnet with overlapping IP
-	[Tags]						feature			manual	
+	[Tags]						feature				
 	
 Verify host with different IP on vns router is not getting L3 service
 	Verify host with different IP on vns router is not getting L3 service
@@ -228,7 +233,7 @@ Verify L3 intra tenant traffic with ip options
 	[Tags]									feature				
 	
 Verify host on private segment is able to get dhcp address from tenant dhcp server
-    manual passed
+    Verify host on private segment is able to get dhcp address from tenant dhcp server
     [Tags]                                  feature           dhcp-relay 
     							
 		
@@ -582,6 +587,37 @@ Verify static endpoint state
     BASH delete route                           h6                              10.251.1.0/24           10.251.2.1
         
 
+Verify host with same IP as vrf is having L2 service only
+    BASH ifup intf                              h1                              bond0
+    BASH ifup intf                              h2                              bond0
+    BASH ifup intf                              h3                              bond0
+    BASH ifup intf                              h4                              bond0       
+    BASH ifup intf                              h5                              bond0
+    BASH ifup intf                              h6                              bond0
+    REST delete vns ip
+    REST delete vns ip                          X                               X1                      10.251.1.1              24
+    sleep                                       1  
+    REST add portgroup to vns                   X                               X1                      ${leaf2_pc1}            -1
+    BASH add ip address                         h5                              10.251.1.1/24           bond0   
+    BASH ping                                   h5                              10.251.1.2              count=5
+    ${mac5} =                                   BASH get intf mac               h5                      bond0
+    ${result} =                                 REST show endpoints mac         ${mac5}
+    Should Be True                              ${result}                           
+    ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
+    Should Contain                              ${attachpoint}                  ${leaf2_pc1}
+    ${state} =                                  Set Variable                    ${result[0]['state']}   
+    Should Contain                              ${state}                        L2 Only    
+    REST add vns ip                             X                               X1                      10.251.1.1              24
+    sleep                                       1
+    BASH ping                                   h5                              10.251.1.2              count=5
+    ${mac5} =                                   BASH get intf mac               h5                      bond0
+    ${result} =                                 REST show endpoints mac         ${mac5}
+    Should Be True                              ${result}                           
+    ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
+    Should Contain                              ${attachpoint}                  ${leaf2_pc1}
+    ${state} =                                  Set Variable                    ${result[0]['state']}   
+    Should Contain                              ${state}                        L2 Only    
+    BASH init intf                              h5                              bond0
 
 L3 intra tenant same rack untagged with static endpoints
 	BASH ifup intf								h1 								bond0
@@ -1311,7 +1347,6 @@ Verify dhcp host is not being aged out
 	${ipAddr1} = 								Set Variable					${result[0]['ip-address']}	
 #	Should Contain								${ipAddr1}						${ipAddr}
 	Should Be Equal As Strings					${ipAddr1}						${ipAddr}
-
 	BASH delete route							h1								10.252.3.0/24			10.252.1.1
 
 Dhcp relay with static dhcp server endpoint
@@ -2284,6 +2319,61 @@ Controller HA failover via CLI
 	Should Be True  							${loss} == 0		
 	BASH delete route							h1								10.251.3.0/24			10.251.1.1
 	BASH delete route							h3								10.251.1.0/24			10.251.3.1
+
+
+Verify host on private segment is able to get dhcp address from tenant dhcp server
+    BASH ifdown intf                            h1                              bond0
+    BASH ifdown intf                            h2                              bond0
+    BASH ifdown intf                            h3                              bond0
+    BASH ifdown intf                            h4                              bond0   
+    BASH ifup intf                              h5                              bond0
+    BASH ifup intf                              h6                              bond0       
+    BASH init intf                              h1                              bond0
+    BASH init intf                              h2                              bond0
+    BASH ifup intf                              h1                              bond0
+    BASH add ip address                         h1                              10.252.1.9/24           bond0                   
+    BASH start service                          h1                              isc-dhcp-server
+    sleep                                       1
+    ${value} =                                  BASH check service status       h1                      isc-dhcp-server
+    Should Contain                              ${value}                        is started
+    sleep                                       1
+    REST add portgroup to vns                   Y                               Y1                      ${leaf0_pc1}            -1
+    REST add portgroup to vns                   Y                               Y3                      ${leaf0_pc2}            -1
+    BASH add route                              h1                              10.252.3.0/24           10.252.1.1
+    REST add vns ip                             Y                               Y3                      10.252.3.1              24      private=true 
+    REST add dhcp relay                         Y                               Y3                      10.252.1.9
+    REST enable dhcp relay                      Y                               Y3  
+    sleep                                       5
+    ${h1_ip} =                                  BASH get interface ipv4         h1                      bond0               
+    Should Contain                              ${h1_ip}                        10.252.1.9  
+    ${h1_mac} =                                 BASH get intf mac               h1                      bond0
+    ${result} =                                 REST show endpoints mac         ${h1_mac}
+    Should Not Be Empty                         ${result}
+    sleep                                       1
+    ${value} =                                  BASH verify arp                 h1                      10.252.1.1
+    Should Be True                              ${value}        
+    sleep                                       1
+    ${value} =                                  BASH release dhcpv4 address     h2                      bond0
+    Should Be True                              ${value}
+    sleep                                       1
+    ${ipAddr} =                                 BASH renew dhcpv4 address       h2                      bond0
+    Should Not Be Empty                         ${ipAddr}
+    sleep                                       5
+    BASH ping                                   h1                              ${ipAddr}               count=10
+    ${value} =                                  BASH verify arp                 h1                      10.252.1.1
+    Should Be True                              ${value}        
+    ${value} =                                  BASH verify arp                 h2                      10.252.3.1
+    Should Be True                              ${value}    
+    ${mac1} =                                   BASH get intf mac               h1                      bond0
+    ${result} =                                 REST show endpoints mac         ${mac1}
+    Should Be True                              ${result}                       
+    ${mac2} =                                   BASH get intf mac               h2                      bond0
+    ${result} =                                 REST show endpoints mac         ${mac2}
+    Should Be True                              ${result}                       
+    REST show endpoints 
+    ${loss} =                                   BASH ping                       h1                      ${ipAddr}           count=10
+    Should Be True                              ${loss} == 0    
+    BASH delete route                           h1                              10.252.3.0/24           10.252.1.1
 
 
 Controller HA failover via reboot
