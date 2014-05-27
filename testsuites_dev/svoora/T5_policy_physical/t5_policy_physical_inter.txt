@@ -9,7 +9,6 @@ Library         keywords/BsnCommon.py
 Library         keywords/Host.py
 Library         keywords/T5.py
 Library         keywords/T5L3.py
-Library         keywords/example_policy.py
 Library         keywords/T5Platform.py
 Library			keywords/SwitchLight.py
 Library 		keywords/T5Utilities.py
