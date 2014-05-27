@@ -22,7 +22,7 @@ Resource	    testsuites/T5/t5_physical_variables.txt
 * Test Case   
 
 Add Fabric Switch Spine and Verify the Status 
-  [Tags]  Fabric  feature   	
+  [Tags]  Fabric  feature  IronHorse   	
   REST show fabric switch     
   # Check the fabric switch connection status once the physical switch is connected
   add switch  spine0 
@@ -32,7 +32,7 @@ Add Fabric Switch Spine and Verify the Status
   rest verify fabric switch  spine0
   
 Add Fabric Switch Leaf Group and Verify the status
-  [Tags]  Fabric  feature   
+  [Tags]  Fabric  feature  IronHorse   
   add switch  leaf0-a
   add dpid  leaf0-a  ${leaf0a_dpid} 
   add fabric role  leaf0-a  leaf
@@ -58,7 +58,7 @@ Add leaf group from 2 different rack and verify the status and check the fabric 
 	add leaf group  leaf1-a  rack0
 	rest verify fabric link
 	sleep  5
-	rest verify fabric error dual tor peer link  rack0
+	rest verify fabric error missing link  leaf0-a  leaf1-a  rack0
 	
 add 2 different leaf groups with peer link added
     [Tags]	Fabric  feature   
@@ -75,7 +75,7 @@ add 2 different leaf groups with peer link added
    	rest verify forwarding port table  leaf0-a  
 
 source mac check verification on spine and leaf switches
-	[Tags]  Fabric  feature    
+	[Tags]  Fabric  feature  IronHorse    
 	add switch  spine0  
 	add dpid  spine0  ${spine0_dpid}
 	add fabric role  spine0  spine
@@ -94,13 +94,13 @@ source mac check verification on spine and leaf switches
 	rest verify forwarding port source mac check  spine0  
 	   
 add leaf group before leaf role to check the config error
-	[Tags]	Fabric  feature   
+	[Tags]	Fabric  feature  IronHorse   
 	add switch  leaf0-a
 	add dpid  leaf0-a  ${leaf0a_dpid}
 	add leaf group before role
 	
 add host port into spine switch and check the fabric error
-	[Tags]  Fabric  feature  
+	[Tags]  Fabric  feature  IronHorse  
 	add switch  leaf2-a
 	add dpid  leaf2-a  ${leaf2a_dpid} 
 	add fabric role  leaf2-a  spine
@@ -109,7 +109,7 @@ add host port into spine switch and check the fabric error
 	Should not be True  ${result}  
 
 Delete Fabric switch and verify the status
-	[Tags]  Fabric  feature   
+	[Tags]  Fabric  feature  IronHorse   
 	add switch  leaf0-a
   	add dpid  leaf0-a  ${leaf0a_dpid} 
   	add fabric role  leaf0-a  leaf
@@ -124,6 +124,20 @@ Delete Fabric switch and verify the status
   	sleep  5
   	verify fabric switch  spine0
   	REST delete fabric switch  spine0
+  	
+Test invalid link status in fabric error
+	[Tags]  Fabric  feature  IronHorse
+	add switch  leaf0-a
+  	add dpid  leaf0-a  ${leaf0a_dpid} 
+  	add fabric role  leaf0-a  leaf
+  	add leaf group  leaf0-a  rack0
+  	sleep  5
+  	verify fabric switch  leaf0-a
+  	add switch  leaf0-b
+	add dpid  leaf0-b  ${leaf0b_dpid}
+	add fabric role  leaf0-b  leaf
+	add leaf group  leaf0-b  rack1
+	rest verify fabric error invalid link  rack0  rack1
 
 
 * Keywords      

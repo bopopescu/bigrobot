@@ -20,18 +20,18 @@ Resource		 testsuites/T5/t5_physical_variables.txt
 * Test Case 
 
 add Single Leaf Three Rack setup
-   [Tags]  L2  feature          
+   [Tags]  L2  feature  IronHorse          
    rest verify fabric switch all
    rest verify fabric link
       
 Verify stats interval setting
-	[Tags]  L2  feature 
+	[Tags]  L2  feature  IronHorse 
 	rest verify stats interval  
 	rest verify stats interval  70  610
 	rest verify stats interval  60  60
 	
 verify show vns and tenant counters CLI output
-	[Tags]  L2  feature   
+	[Tags]  L2  feature  IronHorse   
 	rest add tenant  t1
 	rest add vns  t1  v1	
 	${result}=  cli  c1  show vns v1 counter 
@@ -43,7 +43,7 @@ verify show vns and tenant counters CLI output
 	rest delete tenant  t1
 
 verify show vns and tenant rate CLI output
-	[Tags]  L2  feature   
+	[Tags]  L2  feature  IronHorse   
 	rest add tenant  t1
 	rest add vns  t1  v1	
 	${result}=  cli  c1  show vns v1 rate 
@@ -55,7 +55,7 @@ verify show vns and tenant rate CLI output
 	rest delete tenant  t1
 	
 verify CLI interface rx and tx counter output for all possible options
-	[Tags]  L2  feature   
+	[Tags]  L2  feature  IronHorse   
 	rest add tenant  t1
 	rest add vns  t1  v1	
 	${result}=  cli  c1  show interface ${leaf0a_ixia_intf} rx-counter  
@@ -67,7 +67,7 @@ verify CLI interface rx and tx counter output for all possible options
 	rest delete tenant  t1
 
 verify CLI interface rx and tx rate output for all possible options
-	[Tags]  L2  feature   
+	[Tags]  L2  feature  IronHorse   
 	rest add tenant  t1
 	rest add vns  t1  v1	
 	${result}=  cli  c1  show interface ${leaf0a_ixia_intf} rx-rate  
@@ -77,7 +77,7 @@ verify CLI interface rx and tx rate output for all possible options
 	rest delete tenant  t1
 	
 verify CLI switch interface rx and tx counter output for all possible options
-	[Tags]  L2  feature   
+	[Tags]  L2  feature  IronHorse   
 	rest add tenant  t1
 	rest add vns  t1  v1	
 	${result}=  cli  c1  show switch leaf0-a interface ${leaf0a_ixia_intf} rx-counter  
@@ -89,7 +89,7 @@ verify CLI switch interface rx and tx counter output for all possible options
 	rest delete tenant  t1
 	
 verify CLI switch interface rx and tx rate output for all possible options
-	[Tags]  L2  feature   
+	[Tags]  L2  feature  IronHorse   
 	rest add tenant  t1
 	rest add vns  t1  v1	
 	${result}=  cli  c1  show switch leaf0-a interface ${leaf0a_ixia_intf} rx-rate  
@@ -99,7 +99,7 @@ verify CLI switch interface rx and tx rate output for all possible options
 	rest delete tenant  t1
 	
 Verify single VNS rx/tx stats between rack
-	[Tags]  L2  feature          
+	[Tags]  L2  feature  IronHorse          
 	rest verify stats interval  10  10
 	rest add tenant  t1
 	rest add vns  t1  v1
@@ -126,7 +126,7 @@ Verify single VNS rx/tx stats between rack
     rest delete tenant  t1
    
 Verify single VNS rx/tx stats within same rack
-	[Tags]  L2  feature            
+	[Tags]  L2  feature  IronHorse            
 	rest verify stats interval  10  10
 	rest add switch  leaf0-b
 	rest add dpid  leaf0-b  ${leaf0b_dpid}
@@ -159,7 +159,7 @@ Verify single VNS rx/tx stats within same rack
     rest delete tenant  t1
     
 Verify single vns rx/tx rates same rack
-	[Tags]  L2  feature       
+	[Tags]  L2  feature  IronHorse       
 	rest verify stats interval  10  10        
     rest add switch  leaf0-b
 	rest add dpid  leaf0-b  ${leaf0b_dpid}
@@ -186,14 +186,14 @@ Verify single vns rx/tx rates same rack
     rest verify vns tx stats  t1  v1  0
     start traffic  ${stream}
     sleep  60
-    rest verify vns rx rates  t1  v1  2000  100
-    rest verify vns tx rates  t1  v1  2000  100
+    rest verify vns rx rates  t1  v1  2000  10
+    rest verify vns tx rates  t1  v1  2000  10
     stop traffic  ${stream}
     rest delete fabric switch  leaf0-b
     rest delete tenant  t1
 
 verify single vns rx/tx rates different rack
-	[Tags]  L2  feature      
+	[Tags]  L2  feature  IronHorse      
 	rest verify stats interval  10  10       
 	rest add tenant  t1
 	rest add vns  t1  v1
@@ -215,13 +215,13 @@ verify single vns rx/tx rates different rack
     rest verify vns tx stats  t1  v1  0
     start traffic  ${stream}
     sleep  60
-    rest verify vns rx rates  t1  v1  1000  100
-    rest verify vns tx rates  t1  v1  1000  100
+    rest verify vns rx rates  t1  v1  1000  10
+    rest verify vns tx rates  t1  v1  1000  10
     stop traffic  ${stream}   
     rest delete tenant  t1
    
 verify interface rx/tx stats different rack
-	[Tags]  L2  feature   
+	[Tags]  L2  feature  IronHorse   
 	rest verify stats interval  10  10          
 	rest add tenant  t1
 	rest add vns  t1  v1
@@ -248,7 +248,7 @@ verify interface rx/tx stats different rack
     rest delete tenant  t1
    
 verify interface rx/tx stats same rack
-	[Tags]  L2  feature   
+	[Tags]  L2  feature  IronHorse   
 	rest verify stats interval  10  10          
 	rest add switch  leaf0-b
 	rest add dpid  leaf0-b  ${leaf0b_dpid}
@@ -281,7 +281,7 @@ verify interface rx/tx stats same rack
     rest delete tenant  t1
 	
 verify interface rx/tx rates different rack
-	[Tags]  L2  feature     
+	[Tags]  L2  feature  IronHorse     
 	rest verify stats interval  10  10          
 	rest add tenant  t1
 	rest add vns  t1  v1
@@ -299,17 +299,17 @@ verify interface rx/tx rates different rack
     rest clear fabric interface stats
     start traffic  ${stream}
     sleep  60
-    rest verify fabric interface rx rates  leaf0-a  ${leaf0a_ixia_intf}  1000  100
-    rest verify fabric interface tx rates  leaf0-a  ${leaf0a_spine1_intf0}  1000  100
-    rest verify fabric interface rx rates  spine1  ${spine1_leaf0a_intf0}  1000  100
-    rest verify fabric interface tx rates  spine1  ${spine1_leaf1a_intf0}  1000  100
-    rest verify fabric interface tx rates  leaf1-a  ${leaf1a_ixia_intf}  1000  100
-    rest verify fabric interface rx rates  leaf1-a  ${leaf1a_spine1_intf0}  1000  100
+    rest verify fabric interface rx rates  leaf0-a  ${leaf0a_ixia_intf}  1000  10
+    rest verify fabric interface tx rates  leaf0-a  ${leaf0a_spine1_intf0}  1000  10
+    rest verify fabric interface rx rates  spine1  ${spine1_leaf0a_intf0}  1000  10
+    rest verify fabric interface tx rates  spine1  ${spine1_leaf1a_intf0}  1000  10
+    rest verify fabric interface tx rates  leaf1-a  ${leaf1a_ixia_intf}  1000  10
+    rest verify fabric interface rx rates  leaf1-a  ${leaf1a_spine1_intf0}  1000  10
     stop traffic  ${stream}
     rest delete tenant  t1
    
 verify interface rx/tx rates same rack
-	[Tags]  L2  feature     
+	[Tags]  L2  feature  IronHorse     
 	rest verify stats interval  10  10          
 	rest add switch  leaf0-b
 	rest add dpid  leaf0-b  ${leaf0b_dpid}
@@ -333,14 +333,14 @@ verify interface rx/tx rates same rack
     rest clear fabric interface stats
     start traffic  ${stream}
     sleep  60
-    rest verify fabric interface rx rates  leaf0-a  ${leaf0a_ixia_intf}  1000  100
-    rest verify fabric interface tx rates  leaf0-b  ${leaf0b_ixia_intf}  1000  100
+    rest verify fabric interface rx rates  leaf0-a  ${leaf0a_ixia_intf}  1000  10
+    rest verify fabric interface tx rates  leaf0-b  ${leaf0b_ixia_intf}  1000  10
     stop traffic  ${stream}
     rest delete fabric switch  leaf0-b
     rest delete tenant  t1
 
 verify interface rx/tx broadcast packet stats different rack
-	[Tags]  L2  feature   
+	[Tags]  L2  feature  IronHorse   
 	rest verify stats interval  10  10  
 	rest add tenant  t1
 	rest add vns  t1  v1
@@ -367,7 +367,7 @@ verify interface rx/tx broadcast packet stats different rack
     rest delete tenant  t1
 	
 verify interface rx/tx multicast packets stats
-	[Tags]  L2  feature     
+	[Tags]  L2  feature  IronHorse     
 	rest verify stats interval  10  10
 	rest add tenant  t1
 	rest add vns  t1  v1
@@ -394,14 +394,14 @@ verify interface rx/tx multicast packets stats
     rest delete tenant  t1
 
 verify interface LLDP/control packet count different rack
-	[Tags]  L2  feature     
+	[Tags]  L2  feature  IronHorse     
 	rest verify stats interval  10  10
 	rest add tenant  t1
 	rest add vns  t1  v1
 	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
 	rest add interface to vns  t1  v1  leaf1-a  ${leaf1a_ixia_intf}  100     
 	rest clear vns stats  v1
-    ${stream}=             L2  feature add  no_arp=True  flow=a->c  src_mac=00:02:01:00:00:24  dst_mac=01:80:c2:00:00:0e  frame_rate=1000  frame_cnt=10000  frame_size=68  name=a_c_flow
+    ${stream}=             L3 add  no_arp=True  flow=a->c  src_mac=00:02:01:00:00:24  dst_mac=01:80:c2:00:00:0e  frame_rate=1000  frame_cnt=10000  frame_size=68  name=a_c_flow
     start traffic
     sleep  7  
     stop traffic 
@@ -420,7 +420,7 @@ verify interface LLDP/control packet count different rack
     rest delete tenant  t1
 
 verify multiple vns counters different rack
-	[Tags]  L2  feature    
+	[Tags]  L2  feature  IronHorse    
 	rest verify stats interval  10  10
 	rest add tenant  t1
 	rest add vns  t1  v1
@@ -457,7 +457,7 @@ verify multiple vns counters different rack
     rest delete tenant  t1
 
 verify multiple vns counters on 2 different tenant 
-	[Tags]  L2  feature       
+	[Tags]  L2  feature  IronHorse       
 	rest verify stats interval  10  10
 	rest add tenant  t1
 	rest add vns  t1  v1
@@ -496,7 +496,7 @@ verify multiple vns counters on 2 different tenant
     rest delete tenant  t2
     
 verify the single tenant stats 
-	[Tags]  L2  feature   
+	[Tags]  L2  feature  IronHorse   
 	rest verify stats interval  10  10
 	rest add tenant  t1
 	rest add vns  t1  v1
@@ -523,7 +523,7 @@ verify the single tenant stats
     rest delete tenant  t1
 	
 verify single tenant stats using multiple VNS 
-	[Tags]  L2  feature   
+	[Tags]  L2  feature  IronHorse   
 	rest verify stats interval  10  10
 	rest add tenant  t1
 	rest add vns  t1  v1
@@ -558,7 +558,7 @@ verify single tenant stats using multiple VNS
     rest delete tenant  t1 
 
 verify multiple tenant stats 
-	[Tags]  L2  feature   
+	[Tags]  L2  feature  IronHorse   
 	rest verify stats interval  10  10
 	rest add tenant  t1
 	rest add vns  t1  v1
@@ -597,7 +597,7 @@ verify multiple tenant stats
     rest delete tenant  t2
     
 verify multiple tenant rates 
- 	[Tags]  L2  feature     
+ 	[Tags]  L2  feature  IronHorse     
  	rest verify stats interval  10  10
  	rest add tenant  t1
 	rest add vns  t1  v1
@@ -626,15 +626,15 @@ verify multiple tenant rates
     sleep  5
     start traffic  ${stream3}
     sleep  30
-    rest verify tenant rx rates  t1   1000  100
-    rest verify tenant tx rates  t1   1000  100
-    rest verify tenant rx rates  t2   1000  100
-    rest verify tenant tx rates  t2   1000  100
+    rest verify tenant rx rates  t1   1000  10
+    rest verify tenant tx rates  t1   1000  10
+    rest verify tenant rx rates  t2   1000  10
+    rest verify tenant tx rates  t2   1000  10
     rest delete tenant  t1
     rest delete tenant  t2
        
 Master node controller reboot with multiple vns/interface stats
-	[Tags]  L2  feature  
+	[Tags]  L2  feature  IronHorse  
 	rest verify stats interval  10  10
 	rest add tenant  t1
 	rest add vns  t1  v1
@@ -676,7 +676,7 @@ Master node controller reboot with multiple vns/interface stats
     rest delete tenant  t1 
 	
 Verify interface stats using stats-brief (Both RX and TX stats)
-	[Tags]  L2  feature     
+	[Tags]  L2  feature  IronHorse     
 	rest verify stats interval  10  10
 	rest add tenant  t1
 	rest add vns  t1  v1

@@ -16,7 +16,7 @@ Resource		 testsuites/T5/t5_physical_variables.txt
 * Test Case 
 
 bring up host bond0 interface
-	[Tags]  L2  feature  smoke  sanity 
+	[Tags]  L2  feature  smoke  sanity  IronHorse 
 	bring up h1 bond0
 	sleep  2
 	bring up h2 bond0
@@ -31,12 +31,12 @@ bring up host bond0 interface
 	sleep  2
 	
 add Fabric setup Three Rack Dual Leaf 
-   [Tags]  L2  feature  smoke  sanity  
+   [Tags]  L2  feature  smoke  sanity  IronHorse  
    rest verify fabric switch all
    rest verify fabric link 
    
 ping h5 to h6 dual leaf single rack dynamic endpoints
-   [Tags]  L2  feature  smoke   sanity        
+   [Tags]  L2  feature  smoke   sanity  IronHorse        
    add portgroup to vns  A  A  p5  -1 
    add portgroup to vns  A  A  p6  -1
    sleep  5
@@ -44,7 +44,7 @@ ping h5 to h6 dual leaf single rack dynamic endpoints
    Should Be True  ${loss} < 50						 
 	 
 ping h5 to h6 dual leaf single rack static endpoints
-   [Tags]  L2  feature  sanity        
+   [Tags]  L2  feature  sanity  IronHorse        
    add a endpoint  A  A  e1 
    add a endpoint  A  A  e2 
    add portgroup to endpoint  A   A  e2  p6  -1
@@ -60,7 +60,7 @@ ping h5 to h6 dual leaf single rack static endpoints
    Should Be True  ${loss} < 50 
 
 ping h4 to h5 dual rack dual leaf dynamic endpoints
-   [Tags]  L2  feature  sanity     
+   [Tags]  L2  feature  sanity  IronHorse     
    add portgroup to vns  A  A  p5  -1 
    add portgroup to vns  A  A  p4  -1
    sleep  5
@@ -68,7 +68,7 @@ ping h4 to h5 dual rack dual leaf dynamic endpoints
    Should Be True  ${loss} < 50					 
 		
 ping h4 to h5 dual rack dual leaf static endpoints
-   [Tags]  L2  feature  sanity            
+   [Tags]  L2  feature  sanity  IronHorse            
    add a endpoint  A  A  e1 
    add a endpoint  A  A  e2 
    add portgroup to endpoint  A   A  e2  p5  -1
@@ -84,7 +84,7 @@ ping h4 to h5 dual rack dual leaf static endpoints
    Should Be True  ${loss} < 50  
    
 ping h1 to h2 dual leaf single rack dynamic endpoints tag
-   [Tags]  L2  feature  sanity   
+   [Tags]  L2  feature  sanity  IronHorse   
    add portgroup to vns  A  A  p1  10 
    add portgroup to vns  A  A  p2  10 
    sleep  5
@@ -92,7 +92,7 @@ ping h1 to h2 dual leaf single rack dynamic endpoints tag
    Should Be True  ${loss} < 50 					
 		
 ping h1 to h2 dual leaf single rack static endpoints tag
-   [Tags]  L2  feature  sanity    
+   [Tags]  L2  feature  sanity  IronHorse    
    add a endpoint  A  A  e1 
    add portgroup to endpoint  A  A  e1  p1  10
    add a endpoint  A  A  e2 
@@ -108,7 +108,7 @@ ping h1 to h2 dual leaf single rack static endpoints tag
    Should Be True  ${loss} < 50
 
 ping h1 to h3 dual rack dual leaf dynamic endpoints tag     
-   [Tags]  L2  feature  sanity    
+   [Tags]  L2  feature  sanity  IronHorse    
    add portgroup to vns  A  A  p1  10 
    add portgroup to vns  A  A  p3  10 
    sleep  5
@@ -116,7 +116,7 @@ ping h1 to h3 dual rack dual leaf dynamic endpoints tag
    Should Be True  ${loss} < 50   
    
 ping h1 to h3 dual rack dual leaf static endpoints tag 
-   [Tags]  L2  feature  sanity    
+   [Tags]  L2  feature  sanity  IronHorse    
    add a endpoint  A  A  e1  
    add portgroup to endpoint  A  A  e1  p1  10
    add a endpoint  A  A  e2 

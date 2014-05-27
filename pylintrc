@@ -3,7 +3,8 @@
 # F0401 - Unable to import 'module'
 # W0142 - Used * or ** magic (This doesn't improve readability and should be used with care.)
 # R0913 - Too many arguments
-disable=C0103,F0401,W0142,R0913
+# W0702 - No exception type
+disable=C0103,F0401,W0142,R0913,W0702
 
 [REPORTS]
 # set the output format. Available formats are text, parseable, colorized and

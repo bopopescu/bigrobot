@@ -1,0 +1,62 @@
+* Variables
+${leaf0a_ixia_intf}		ethernet15
+${leaf0b_ixia_intf}		ethernet15
+${leaf1a_ixia_intf}		ethernet15
+${leaf1b_ixia_intf}		ethernet15
+${leaf2a_ixia_intf}		ethernet15
+${leaf2b_ixia_intf}		ethernet15
+
+${h1_intf0}  ethernet17
+${h1_intf1}  ethernet17
+${h2_intf0}  ethernet19
+${h2_intf1}  ethernet19
+${h3_intf0}  ethernet17
+${h3_intf1}  ethernet17
+${h4_intf0}  ethernet19
+${h4_intf1}  ethernet19
+${h5_intf0}  ethernet17
+${h5_intf1}  ethernet17
+${h6_intf0}  ethernet19
+${h6_intf1}  ethernet19
+
+${h1_intf0_single}  ethernet33
+${h2_intf0_single}  ethernet34
+${h3_intf0_single}  ethernet33
+${h4_intf0_single}  ethernet34
+${h5_intf0_single}  ethernet33
+${h6_intf0_single}  ethernet34
+
+${esx1_intf0}  ethernet21
+${esx1_intf1}  ethernet21
+${esx2_intf0}  ethernet23
+${esx2_intf1}  ethernet23
+${esx3_intf0}  ethernet21
+${esx3_intf1}  ethernet21
+${esx4_intf0}  ethernet23
+${esx4_intf1}  ethernet23
+${esx4_intf2}  ethernet25
+${esx4_intf3}  ethernet25
+${esx5_intf0}  ethernet21
+${esx5_intf1}  ethernet21
+${esx6_intf0}  ethernet23
+${esx6_intf1}  ethernet23
+${esx6_intf2}  ethernet25
+${esx6_intf3}  ethernet25
+
+${h1_tag_ip}	  10.10.10.51
+${h2_tag_ip}	  10.10.10.52
+${h3_tag_ip}	  10.10.10.53
+
+${h4_tag_ip}	  20.20.20.54
+${h5_tag_ip}	  20.20.20.55
+${h6_tag_ip}	  20.20.20.56
+
+${h1_single_ip}  192.168.1.51
+${h2_single_ip}  192.168.1.52
+${h3_single_ip}  192.168.1.53
+${h4_single_ip}  192.168.1.54
+${h5_single_ip}  192.168.1.55
+${h6_single_ip}  192.168.1.56
+
+@{spineList}  00:00:04:00:01:00:00:01  00:00:04:00:01:00:00:02
+@{leafList}  00:00:04:00:02:00:00:01  00:00:04:00:02:00:00:02  00:00:04:00:02:00:00:03  00:00:04:00:02:00:00:04  00:00:04:00:02:00:00:05  00:00:04:00:02:00:00:06

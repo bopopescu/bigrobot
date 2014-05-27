@@ -79,3 +79,5 @@ ${leaf2_pc1_intf1}	ethernet47
 ${leaf2_pc1_intf2}	ethernet47
 ${leaf2_pc2_intf1}	ethernet48
 ${leaf2_pc2_intf2}	ethernet48
+${leaf2a_host5}     ethernet25
+${leaf2b_host6}     ethernet25

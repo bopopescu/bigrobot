@@ -1,0 +1,179 @@
+*Settings
+Documentation    T5 Test Suite
+Suite Setup      fabric infra suite setup
+Suite Teardown   base suite teardown
+Test Setup       base test setup
+Test Teardown    base test teardown
+Force Tags       IronHorse
+Library          keywords/BsnCommon.py
+Library          keywords/Controller.py
+Library			 keywords/Mininet.py
+Library		     keywords/Host.py
+Library		     keywords/Ixia.py
+Library		     keywords_dev/mingtao/T5_longevity.py
+Library	         keywords/T5.py
+Library          keywords/T5L3.py
+Library	         keywords/T5Platform.py
+Library	         keywords/Controller.py
+Library	         keywords/SwitchLight.py
+
+
+* Variable
+${short}  1
+${medium}  3
+${long}   30
+${verylong}     120 
+
+${sw}       leaf0-a
+${intf}     ethernet2
+
+* Test Case
+
+
+Verify default qos weight for CPU queue in all switches 
+ 	${switches}=  get_all_switch_nodes  
+ 	@{expect}=    Create List   50  20  15  15  5  5  5  1
+	log   switches are ${switches}
+ 	: FOR    ${switch}   IN   @{switches}   
+	\   Verify to cpu queue weight    ${switch}   ${expect}
+ 		 
+	[Tags] 	sanity  feature  fabric_QOS
+
+Verify qos weight for CPU queue in all switches when qos enabled
+	config   master   fabric-setting
+    config   master   qos
+    cli      master   show running-config fabric-setting 
+ 	${switches}=  get_all_switch_nodes  
+ 	@{expect}=    Create List   50  20  15  15  5  5  5  1
+	log   switches are ${switches}
+ 	: FOR    ${switch}   IN   @{switches}   
+	\   Verify to cpu queue weight    ${switch}   ${expect}
+	config   master   fabric-setting
+    config   master   no qos
+
+ 		 
+	[Tags] 	sanity  feature  fabric_QOS
+
+
+Config all controller plane traffic
+	log   lldp
+	log   lacp
+	log   arp
+	log   dhcp
+	log   l2srcmiss
+ 	[Tags] 	full  feature  Manual  fabric_QOS
+ 
+
+Verify LLDP packet are going to port 0 queue 1 and get the rate
+	log  packet size 64,  send 100s lacp traffic with 1320pps, did not see drop
+	log  the rate is around 1100pps
+	 Manual passed
+	[Tags] 	full  feature  Manual   fabric_QOS
+
+Verify LACP packet are going to port 0 queue 1 and get the rate
+	log   send 10s lacp traffic with 4315pps, did not see drop packet size 128
+	log   send 100s lacp traffic with 1320pps, did not see drop
+	log   the rate is around 1100pps
+	 Manual passed
+	[Tags] 	full  feature   Manual   fabric_QOS
+ 
+Verify ARP packet are going to port 0 queue 2 and get the rate
+	log  packet size 64,  send 100s arp traffic with 1320pps, did not see drop
+	log   the rate is around 1100pps	
+	log   both ARP and IFP are hit
+	Manual passed
+	[Tags] 	full  feature   Manual   fabric_QOS
+ 
+Verify L2srcmiss mac move(from different port then static endpoint) are going to port 0 queue 3
+	log  packet size 64,  send 100s arp traffic with 1320pps, did not see drop
+	log   the rate is around 1100pps	
+	log   send traffic
+	 Manual passed
+	[Tags] 	full  feature  Manual   fabric_QOS
+
+Verify L2srcMiss new mac packet are going to port 0 queue 3
+	log   send traffic
+	 Manual passed
+	[Tags] 	full  feature   Manual   fabric_QOS
+
+Verify L3tocpu packet(intervns packet to unknown host) are going to port 0 queue 5
+	log  9k packet size, around 1kpps
+	log   send traffic
+	 Manual passed
+	[Tags] 	full  feature   Manual   fabric_QOS
+
+Verify L3 miss packet are going to port 0 queue 6
+	log   send traffic
+	 Manual passed
+	[Tags] 	full  feature   Manual   fabric_QOS
+
+ 
+Verify qos weight for different queue and same port (same rate)
+	log   tested with arp and lacp
+	 Manual passed
+	[Tags] 	full  feature   Manual   fabric_QOS
+
+Verify qos weight for different queue and different port (same rate)
+	log   tested with arp and lacp
+	 Manual failed
+	[Tags] 	full  feature   Manual   JIRA_BVS_1685 fabric_QOS
+
+
+Verify qos weight for different queue (different rate)
+	log    tested with arp and lacp
+	 Manual failed
+	[Tags] 	full  feature   Manual   JIRA-BVS_1683   fabric_QOS
+ 
+
+
+  
+
+* Keywords
+fabric infra suite setup
+ 	base suite setup 
+# 	rest_delete_tenant_all
+	set fabric switches 
+	tenant setup   
+ 	 
+  
+set fabric switches  
+	rest_delete_portgroup_all
+ 	${switches}=  get_all_switch_nodes  
+	log   switches are ${switches}
+ 	: FOR    ${sw}   IN   @{switches}   
+	\   ${alias}=   get_node_alias   ${sw} 	
+	\   ${dpid}=   	cli_show_switch_dpid    ${sw}             
+  	\   Run Keyword if   'spine' in '${alias}' 	   add fabric switch spine    ${alias}     ${dpid}
+  	\   sleep    1
+  	\ 	Run Keyword if   'spine' in '${alias}'     rest_verify_fabric_switch_role    ${dpid}   spine
+    \   Run Keyword if   'leaf' in '${alias}' 	   add fabric switch leaf     ${alias}     ${dpid}   rack${alias[4]}
+    \   sleep    1 
+    \   Run Keyword if   'leaf' in '${alias}' 	   rest_verify_fabric_switch_role    ${dpid}   leaf
+
+tenant setup   
+	rest_add_tenant  QOS
+ 	rest_add_vns     QOS    V10  
+ 	rest_add_interface_to_vns     QOS     V10     ${sw}   ${intf}   10
+	sleep  ${short}
+	cli_show_running_tenant	   
+ 	
+add fabric switch spine   [Arguments]   ${node}   ${dpid}  
+  rest add switch               ${node}
+  rest add dpid                 ${node}          ${dpid}  
+  rest add fabric role          ${node}          spine
+
+add fabric switch leaf   [Arguments]   ${node}   ${dpid}   ${leafg}     
+  rest add switch               ${node}
+  rest add dpid                 ${node}         ${dpid} 
+  rest add fabric role          ${node}         leaf
+  rest_add_leaf_group           ${node}         ${leafg} 
+   
+
+Verify to cpu queue weight  [Arguments]   ${node}   ${export} 
+  ${info}=  cli_get_qos_weight	  ${node}    0	
+  log   qos weight is ${info}
+  log   expected qos weight is ${export}
+  : FOR    ${i}    IN RANGE    0    8
+	\   Should Be Equal As Integers    ${info[${i}]}  ${export[${i}]}   	
+
+  

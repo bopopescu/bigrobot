@@ -91,5 +91,7 @@ ${leaf1_a_spine1}	ethernet52
 ${leaf1_b_spine1}	ethernet52
 ${leaf2_a_spine1}	ethernet52
 ${leaf2_b_spine1}	ethernet52
+${leaf2a_host5}     ethernet25
+${leaf2b_host6}     ethernet25
 
 

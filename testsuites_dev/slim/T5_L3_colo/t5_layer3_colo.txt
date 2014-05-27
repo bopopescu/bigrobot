@@ -51,6 +51,11 @@ Intra tenant L3 tagged traffic with static endpoints across rack
 	L3 intra tenant across rack tagged with static endpoints
 	[Tags]									smoke				sanity						
 
+L3 intra tenant traceroute
+    L3 intra tenant traceroute
+    [Tags]                                  smoke               sanity              run1
+    
+
 Dhcp discover on the same vns as server with dhcp-relay enabled
 	DHCP discovery on the same vns as server with dhcp-relay enabled
 	[Tags]									smoke				sanity				run		
@@ -216,8 +221,8 @@ L3 intra tenant same rack untagged with dynamic endpoints
 	Should Not Be Empty							${ipAddr4}
 	${ipAddr5} = 								BASH get interface ipv4 		h5-rack0						bond0
 	Should Not Be Empty							${ipAddr5}
-	BASH ping									h4-rack0								10.251.1.1				count=10
-	BASH ping									h5-rack0								10.251.2.1				count=10
+	BASH ping									h4-rack0						10.251.1.1						count=10
+	BASH ping									h5-rack0						10.251.2.1						count=10
 	${value} = 									BASH verify arp					h4-rack0						10.251.1.1
 	Should Be True								${value} 		
 	${value} =									BASH verify arp					h5-rack0						10.251.2.1
@@ -241,26 +246,36 @@ L3 intra tenant same rack untagged with dynamic endpoints
 	stop traffic								${stream1}
 	verify results 								transmitted_frames  			received_frames  		${stream1}  			stream1
 
+
 L3 intra tenant across rack untagged with dynamic endpoints
-	${ipAddr4} = 								BASH get interface ipv4 		h4-rack0						bond0
+	${ipAddr4} = 								BASH get interface ipv4 		h5-rack0						bond0
 	Should Not Be Empty							${ipAddr4}
 	${ipAddr5} = 								BASH get interface ipv4 		h1-rack1						bond0
 	Should Not Be Empty							${ipAddr5}
-	BASH ping									h4-rack0						${ipAddr5}						count=10
-	${value} = 									BASH verify arp					h4-rack0						10.251.1.1
+	BASH ping									h5-rack0						${ipAddr5}						count=10
+	${value} = 									BASH verify arp					h1-rack1						10.251.1.1
 	Should Be True								${value} 		
 	${value} =									BASH verify arp					h5-rack0						10.251.2.1
 	Should Be True								${value} 
-	${mac1} = 									BASH get intf mac				h4-rack0						bond0
+	${mac1} = 									BASH get intf mac				h5-rack0						bond0
 	${result} =									REST show endpoints mac			${mac1}
 	${attachpoint} = 							Set Variable					${result[0]['attachment-point']}	
-	Should Contain								${attachpoint}					${leaf0_pc4}	
+	Should Contain								${attachpoint}					${leaf0_pc5}	
 	${mac2} = 									BASH get intf mac				h1-rack1						bond0
 	${result} =									REST show endpoints mac			${mac2}
 	${attachpoint} = 							Set Variable					${result[0]['attachment-point']}	
 	Should Contain								${attachpoint}					${leaf1_pc1}	
-	${loss} = 									BASH ping						h4-rack0						${ipAddr5}					count=10
+	${loss} = 									BASH ping						h5-rack0						${ipAddr5}					count=10
 	Should Be True  							${loss} == 0					
+	REST add interface to vns					X								X1						${leaf0-a}				${ixia1}				-1
+	REST add interface to vns					X								X2						${leaf1-b}				${ixia4}				-1		
+	${stream1}=  								L3 add  						name=stream1		  	flow=a<->d 				frame_rate=100000  			frame_size=9216  			frame_cnt=10000000
+	...     									src_ip=10.251.1.101				src_gw=10.251.1.1		dst_ip=10.251.2.201		dst_gw=10.251.2.1			 			
+	start traffic  								${stream1}
+	sleep  10
+	stop traffic								${stream1}
+	verify results 								transmitted_frames  			received_frames  		${stream1}  			stream1
+
 
 L3 intra tenant same rack tagged with dynamic endpoints
 	BASH ping									h7-rack0								10.252.2.11				count=10
@@ -286,37 +301,53 @@ L3 intra tenant same rack tagged with dynamic endpoints
 #   verify results 								transmitted_frames  			received_frames  		${stream1}  			stream1
 
 L3 intra tenant across rack tagged with dynamic endpoints
-	${ipAddr4} = 								BASH get interface ipv4 		h4-rack0						bond0
+	${ipAddr4} = 								BASH get interface ipv4 		h6-rack0						bond0.1006
 	Should Not Be Empty							${ipAddr4}
 	${ipAddr5} = 								BASH get interface ipv4 		h3-rack1						bond0.2003
 	Should Not Be Empty							${ipAddr5}
-	BASH ping									h4-rack0						${ipAddr5}						count=10
-	${value} = 									BASH verify arp					h4-rack0						10.251.1.1
+	BASH ping									h6-rack0						${ipAddr5}						count=10
+	${value} = 									BASH verify arp					h6-rack0						10.251.3.1
 	Should Be True								${value} 		
 	${value} =									BASH verify arp					h3-rack1						10.251.2.1
 	Should Be True								${value} 
-	${mac1} = 									BASH get intf mac				h4-rack0						bond0
+	${mac1} = 									BASH get intf mac				h6-rack0						bond0.1006
 	${result} =									REST show endpoints mac			${mac1}
 	${attachpoint} = 							Set Variable					${result[0]['attachment-point']}	
-	Should Contain								${attachpoint}					${leaf0_pc4}	
+	Should Contain								${attachpoint}					${leaf0_pc6}	
 	${mac2} = 									BASH get intf mac				h3-rack1						bond0.2003
 	${result} =									REST show endpoints mac			${mac2}
 	${attachpoint} = 							Set Variable					${result[0]['attachment-point']}	
 	Should Contain								${attachpoint}					${leaf1_pc3}	
-	${loss} = 									BASH ping						h4-rack0						${ipAddr5}					count=10
+	${loss} = 									BASH ping						h6-rack0						${ipAddr5}					count=10
 	Should Be True  							${loss} == 0					
 
+
+L3 intra tenant traceroute
+    ${result} =                                 BASH                            h4-rack0                      traceroute -n -m 5 10.251.1.1 
+    Should Contain                              ${result}                       "1  10.251.1.1 (10.251.1.1)"
+    ${result} =                                 BASH                            h4-rack0                      traceroute -n -m 5 -I 10.251.1.1 
+    Should Contain                              ${result}                       "1  10.251.1.1  "
+    ${result} =                                 BASH                            h4-rack0                      traceroute -n -m 5 10.251.2.1 
+    Should Contain                              ${result}                       "1  10.251.2.1 (10.251.2.1)"
+    ${result} =                                 BASH                            h4-rack0                      traceroute -n -m 5 -I 10.251.2.1 
+    Should Contain                              ${result}                       "1  10.251.2.1  "
+    ${result} =                                 BASH                            h4-rack0                      traceroute -n -m 5 10.251.3.1 
+    Should Contain                              ${result}                       "1  10.251.3.1 (10.251.3.1)"
+    ${result} =                                 BASH                            h4-rack0                      traceroute -n -m 5 -I 10.251.3.1 
+    Should Contain                              ${result}                       "1  10.251.3.1  "
+
+
 DHCP discovery on the same vns as server with dhcp-relay enabled
-	REST delete portgroup from vns				Z								Z2						${leaf0_pc11}			-1
-	BASH init intf								h1-rack1								bond0
-	BASH start service							h4-rack0								isc-dhcp-server
+	REST delete portgroup from vns				Z								Z2								${leaf0_pc11}			-1
+	BASH init intf								h1-rack1						bond0
+	BASH start service							h4-rack0						isc-dhcp-server
 	sleep										1
 	${value} = 									BASH check service status		h4-rack0						isc-dhcp-server
 	Should Contain								${value}						is started
 	sleep										1
-	REST add dhcp relay							X								X1						10.251.1.11
+	REST add dhcp relay							X								X1								10.251.1.11
 	REST enable dhcp relay						X								X1	
-	REST add portgroup to vns					X								X1						${leaf0_pc11}			-1
+	REST add portgroup to vns					X								X1								${leaf0_pc11}			-1
 	sleep										1
 	${value} = 									BASH release dhcpv4 address		h1-rack1						bond0
 	Should Be True								${value}
@@ -324,7 +355,7 @@ DHCP discovery on the same vns as server with dhcp-relay enabled
 	${ipAddr} = 								BASH renew dhcpv4 address		h1-rack1						bond0
 	Should Not Be Empty							${ipAddr}
 	sleep										5
-	BASH ping									h4-rack0								${ipAddr}				count=10
+	BASH ping									h4-rack0						${ipAddr}						count=10
 	${value} = 									BASH verify arp					h4-rack0						${ipAddr}
 	Should Be True								${value} 		
 	${value} =									BASH verify arp					h1-rack1						10.251.1.11
@@ -339,17 +370,17 @@ DHCP discovery on the same vns as server with dhcp-relay enabled
 	Should Contain								${attachpoint}					${leaf1_pc1}
 	${loss} = 									BASH ping						h4-rack0						${ipAddr} 			count=10
 	Should Be True  							${loss} == 0		
-	REST delete portgroup from vns				X								X1						${leaf0_pc11}			-1
+	REST delete portgroup from vns				X								X1								${leaf0_pc11}			-1
 	
 DHCP discovery on the same vns as server without dhcp-relay enabled
-	REST delete portgroup from vns				Z								Z2						${leaf0_pc11}			-1
-	BASH init intf								h1-rack1								bond0
-	BASH start service							h4-rack0								isc-dhcp-server
+	REST delete portgroup from vns				Z								Z2								${leaf0_pc11}			-1
+	BASH init intf								h1-rack1						bond0
+	BASH start service							h4-rack0						isc-dhcp-server
 	sleep										1
 	${value} = 									BASH check service status		h4-rack0						isc-dhcp-server
 	Should Contain								${value}						is started
 	sleep										1
-	REST add portgroup to vns					X								X1						${leaf0_pc11}			-1
+	REST add portgroup to vns					X								X1								${leaf0_pc11}			-1
 	sleep										1
 	${value} = 									BASH release dhcpv4 address		h1-rack1						bond0
 	Should Be True								${value}
@@ -357,7 +388,7 @@ DHCP discovery on the same vns as server without dhcp-relay enabled
 	${ipAddr} = 								BASH renew dhcpv4 address		h1-rack1						bond0
 	Should Not Be Empty							${ipAddr}
 	sleep										5
-	BASH ping									h4-rack0								${ipAddr}				count=10
+	BASH ping									h4-rack0						${ipAddr}						count=10
 	${value} = 									BASH verify arp					h4-rack0						${ipAddr}
 	Should Be True								${value} 		
 	${value} =									BASH verify arp					h1-rack1						10.251.1.11
@@ -372,7 +403,7 @@ DHCP discovery on the same vns as server without dhcp-relay enabled
 	Should Contain								${attachpoint}					${leaf1_pc1}
 	${loss} = 									BASH ping						h4-rack0						${ipAddr} 			count=10
 	Should Be True  							${loss} == 0		
-	REST delete portgroup from vns				X								X1						${leaf0_pc11}			-1		
+	REST delete portgroup from vns				X								X1								${leaf0_pc11}			-1		
 	
 L3 intra tenant dhcp relay on same rack with valid circuitid
 	BASH init intf								h5-rack0								bond0
@@ -385,12 +416,13 @@ L3 intra tenant dhcp relay on same rack with valid circuitid
 	${value} = 									BASH check service status		h4-rack0						isc-dhcp-server
 	Should Contain								${value}						is started
 	sleep										1
-	REST add dhcp relay							X								X2						10.251.1.11
-	REST add dhcprelay circuitid				X								X2						private vns X2
+	REST add dhcp relay							X								X2								10.251.1.11
+	REST add dhcprelay circuitid				X								X2								private vns X2
 	REST enable dhcp relay						X								X2	
-### temporary workaround to enable dhcp relay to silent host	
-	BASH ping									h4-rack0								10.251.1.1				count=5
-	sleep										1
+	sleep										10
+	${mac1} = 									BASH get intf mac				h4-rack0						bond0
+	${result} =									REST show endpoints mac			${mac1}
+	Should Be True								${result}	
 	${value} = 									BASH release dhcpv4 address		h5-rack0						bond0
 	Should Be True								${value}
 	sleep										1
@@ -427,9 +459,11 @@ L3 intra tenant dhcp relay on same rack with invalid circuitid
 	REST add dhcp relay							X								X2						10.251.1.11
 	REST add dhcprelay circuitid				X								X2						private vns AA2
 	REST enable dhcp relay						X								X2	
-### temp fix
-	BASH ping									h4-rack0								10.251.1.1 				count=5
-	sleep										1
+	sleep										10
+	${mac1} = 									BASH get intf mac				h4-rack0						bond0
+	${result} =									REST show endpoints mac			${mac1}
+	${ipAddr} = 								Set Variable					${result[0]['ip-addres']}	
+	Should Contain								${ipAddr}						10.251.1.11
 	${value} = 									BASH release dhcpv4 address		h5-rack0						bond0
 	Should Be True								${value}
 	sleep										1
@@ -501,7 +535,7 @@ L3 dhcp request with and without dhcp relay enabled
 	Should Not Be Empty							${ipAddr1}
 	BASH ping									h5-rack0								${ipAddr1} 				count=5
 	${loss} = 									BASH ping						h4-rack0						${ipAddr1} 			count=10
-	Should Be True  							${loss} == 0		
+	Should Be True  							${loss} < 20		
 
 Delete and Add L3 dhcp request
 	BASH init intf								h5-rack0								bond0
@@ -561,13 +595,13 @@ Delete and Add L3 dhcp request
 
 
 L3 intra tenant traffic between private and public subnet
-	REST add vns ip  							X								X1						10.251.1.1				24			private=true
-	REST add vns ip  							Y								Y1						10.251.1.1				24	
-	BASH init intf								h7-rack0								bond0.1007
-	BASH add ip address							h7-rack0								10.251.1.11/24			bond0.1007 	
-	BASH ping									h4-rack0								10.251.1.1				count=5
-	BASH ping									h7-rack0								10.251.1.1				count=5
-	BASH ping									h6-rack0								10.251.3.1				count=5
+	REST add vns ip  							X								X1								10.251.1.1				24			private=true
+	REST add vns ip  							Y								Y1								10.251.1.1				24			
+	BASH init intf								h7-rack0						bond0.1007
+	BASH add ip address							h7-rack0						10.251.1.11/24					bond0.1007 	
+	BASH ping									h4-rack0						10.251.1.1						count=5
+	BASH ping									h7-rack0						10.251.1.1						count=5
+	BASH ping									h6-rack0						10.251.3.1						count=5
 	${value} = 									BASH verify arp					h4-rack0						10.251.1.1
 	Should Be True								${value} 		
 	${value} = 									BASH verify arp					h7-rack0						10.251.1.1
@@ -586,7 +620,10 @@ L3 intra tenant traffic between private and public subnet
 	REST show endpoints		
 	${loss} = 									BASH ping						h6-rack0						10.251.1.11 			count=10
 	Should Be True  							${loss} == 0		
-
+	BASH add route								h7-rack0						10.251.3.0/24					10.251.1.1
+		  	
+	  	
+	  	
 
 Configure overlapping IP on same tenant across VNS
 	REST add tenant									A
@@ -1069,6 +1106,7 @@ setup topology
 	BASH add ip address								h8-rack0								10.252.2.11/24			bond0.1008
 	BASH add ip address								h9-rack0								10.252.3.11/24			bond0.1009
 	BASH add ip address								h10-rack0								10.253.1.11/24			bond0.1010
+	BASH add ip address								h1-rack1								10.251.1.21/24			bond0
 	BASH add ip address								h3-rack1								10.251.2.23/24			bond0.2003
 	BASH add route									h4-rack0								10.251.2.0/24			10.251.1.1
 	BASH add route									h4-rack0								10.251.3.0/24			10.251.1.1
@@ -1098,10 +1136,10 @@ setup topology
   	BASH add route									h10-rack0								10.253.3/0/24			10.253.1.1
   	BASH add route									h10-rack0								10.251.0.0/16			10.253.1.1
   	BASH add route									h10-rack0								10.252.0.0/16			10.253.1.1
-  	BASH add route									h1-rack1								10.253.1.0/24			10.253.2.1
-  	BASH add route									h1-rack1								10.253.3.0/24			10.253.2.1
-	BASH add route									h1-rack1								10.251.0.0/16			10.253.2.1
-  	BASH add route									h1-rack1								10.252.0.0/16			10.253.2.1
+  	BASH add route									h1-rack1								10.253.1.0/24			10.251.1.1
+  	BASH add route									h1-rack1								10.253.2.0/24			10.251.1.1
+	BASH add route									h1-rack1								10.253.3.0/24			10.251.1.1
+  	BASH add route									h1-rack1								10.252.0.0/16			10.251.1.1
 	BASH add route									h3-rack1								10.252.0.0/16			10.251.2.1
   	BASH add route									h3-rack1								10.253.0.0/16			10.251.2.1	
 	REST add tenant routers intf to system			X

@@ -15,7 +15,9 @@ import re
 import ipcalc
 import platform
 import unicodedata
+import tempfile
 import curses.ascii as ascii
+import xml.dom.minidom
 from scp import SCPClient
 from pytz import timezone
 from autobot.version import get_version
@@ -97,9 +99,25 @@ def analyze(s, level=3):
 
 def prettify(data):
     """
-    Return the Python object as a pretty-print formatted string.
+    Return the Python object as a prettified string (formatted).
     """
     return pprint.pformat(data)
+
+
+def prettify_xml(xml_str):
+    """
+    Given an XML string, return a prettified XML string (formatted).
+    """
+    with tempfile.NamedTemporaryFile() as f:
+        filename = f.name
+        print "**** filename: %s" % filename
+        f.write(xml_str)
+        f.flush()
+        x = xml.dom.minidom.parse(filename)
+
+    text = x.toprettyxml()
+    text = os.linesep.join([s for s in text.splitlines() if not re.match(r'^\s*$', s)])
+    return text
 
 
 def prettify_log(s, data, level=3):
@@ -457,7 +475,7 @@ def bigrobot_test_postmortem(new_val=None, default='True'):
     return _env_get_and_set('BIGROBOT_TEST_POSTMORTEM', new_val, default)
 
 
-def bigrobot_log_archiver(new_val=None, default='jenkins-w9.bigswitch.com'):
+def bigrobot_log_archiver(new_val=None, default='jenkins-w4.bigswitch.com'):
     """
     Category: Get/set environment variables for BigRobot.
     This is used to archive the postmortem logs.
@@ -660,6 +678,16 @@ def is_arista(name):
         ...this is an Arista switch...
     """
     return name == 'arista'
+
+
+def is_extreme(name):
+    """
+    Inspect the platform type for the node. Usage:
+
+    if helpers.is_extreme(n.platform()):
+        ...this is an Extreme switch...
+    """
+    return name == 'extreme_switch'
 
 
 def is_ixia(name):
@@ -903,6 +931,13 @@ def file_not_exists(f):
     return False
 
 
+def file_not_empty(f):
+    if os.path.isfile(f) and os.path.getsize(f) > 0:
+        return True
+    else:
+        return False
+
+
 def file_remove(filename):
     """
     Remove/delete a file.
@@ -920,7 +955,7 @@ def file_cat(filename):
     print(s)
 
 
-def file_read_once(filename):
+def file_read_once(filename, to_list=False):
     """
     Read file in a single shot. Immediately close file.
     Returns a string.
@@ -928,8 +963,11 @@ def file_read_once(filename):
     f = open(filename, 'r')
     lines = f.readlines()
     f.close()
-    s = ''.join(lines)
-    return s
+    if to_list:
+        return lines
+    else:
+        s = ''.join(lines)
+        return s
 
 
 def file_write_once(filename, s):
@@ -1109,6 +1147,20 @@ def str_to_int(val):
     if isinstance(val, basestring):
         val = int(val)
     return val
+
+
+def utf8(unicode_val):
+    """
+    Input can be a single or a list of Unicode strings. Return the converted
+    values.
+    """
+    if is_list(unicode_val):
+        new_list = []
+        for x in unicode_val:
+            new_list.append(x.encode('utf-8'))
+        return new_list
+    else:
+        return unicode_val.encode('utf-8')
 
 
 def _createSSHClient(server, user, password, port=22):

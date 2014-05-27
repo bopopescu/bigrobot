@@ -13,7 +13,6 @@ Library	    	 keywords/Host.py
 Library          keywords/T5.py
 Library	         keywords/T5Platform.py
 Library	         keywords/T5Utilities.py
-#Resource	 	 keywords_dev/don/t5_platform_sanity_resource.txt
 
 * Variables
 @{spineList}  00:00:00:00:00:01:00:01  00:00:00:00:00:01:00:02
