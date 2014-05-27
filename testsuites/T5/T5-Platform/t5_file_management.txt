@@ -35,26 +35,86 @@ ${image double}		image://image://image-file
 
 
 *** Test Cases ***
-T0 Extensive config
+T0.1 Extensive config and file compare locally
 	Cli Copy  scp://bsn@regress:file-management-testsuite/extensive-config
 	...  config://extensive-config
 	Cli Copy  scp://bsn@regress:file-management-testsuite/extensive-file
 	...  extensive-file
-	#Compare  extensive-file  config://extensive-config
-	#Cli Copy  scp://bsn@regress:file-management-testsuite/extensive-config
-	#...  running-config
-	#Compare  scp://bsn@regress:file-management-testsuite/extensive-config
-	#...  running-config
-	#Compare  config://extensive-config  running-config
-	#Compare  extensive-file  running-config
-	Cli Copy  config://startup-config  running-config
+	Compare  extensive-file  config://extensive-config
+
+T0.2 Extensive config remote copy
+	Cli Copy  scp://bsn@regress:file-management-testsuite/extensive-config
+	...  running-config
+	Compare  scp://bsn@regress:file-management-testsuite/extensive-config
+	...  running-config
+	Cli Copy  scp://bsn@regress:file-management-testsuite/extensive-config
+	...  config://extensive-config
+	Compare  config://extensive-config  running-config
+
+T0.3 Extensive file remote copy
+	Rest Delete Tenant  TenantTest12345
 	Cli Copy  scp://bsn@regress:file-management-testsuite/extensive-file
 	...  running-config
-	#Compare  scp://bsn@regress:file-management-testsuite/extensive-file
-	#...  running-config
+	Compare  scp://bsn@regress:file-management-testsuite/extensive-file
+	...  running-config
 	Compare  config://extensive-config  running-config
+	Cli Copy  scp://bsn@regress:file-management-testsuite/extensive-file
+	...  extensive-file
 	Compare  extensive-file  running-config
-	Cli Copy  running-config  config://test-config
+
+T0.4 Extensive config remote replace
+	Cli Copy  scp://bsn@regress:file-management-testsuite/extensive-config-start
+	...  running-config
+	Compare  scp://bsn@regress:file-management-testsuite/extensive-config-start
+	...  running-config
+	Cli Copy  scp://bsn@regress:file-management-testsuite/extensive-config-start
+	...  config://extensive-config-start
+	Compare  config://extensive-config-start  running-config
+
+	Cli Copy  scp://bsn@regress:file-management-testsuite/extensive-config
+	...  running-config
+	Compare  scp://bsn@regress:file-management-testsuite/extensive-config
+	...  running-config
+	Cli Copy  scp://bsn@regress:file-management-testsuite/extensive-config
+	...  config://extensive-config
+	Compare  config://extensive-config  running-config
+
+T0.5 Extensive config local copy
+	Cli Copy  scp://bsn@regress:file-management-testsuite/extensive-config
+	...  config://extensive-config
+	Cli Copy  config://extensive-config  running-config
+	Sleep  5
+	Compare  scp://bsn@regress:file-management-testsuite/extensive-config
+	...  running-config
+	Compare  config://extensive-config  running-config
+
+T0.6 Extensive file local copy
+	Rest Delete Tenant  TenantTest12345
+	Cli Copy  scp://bsn@regress:file-management-testsuite/extensive-file
+	...  extensive-file
+	Cli Copy  extensive-file  running-config
+	Compare  scp://bsn@regress:file-management-testsuite/extensive-file
+	...  running-config
+	Compare  extensive-file  running-config
+
+T0.7 Extensive config local replace
+	Cli Copy  scp://bsn@regress:file-management-testsuite/extensive-config-start
+	...  config://extensive-config-start
+	Cli Copy  config://extensive-config-start  running-config
+	Cli Run  master  show running-config
+	Sleep  5
+	Compare  scp://bsn@regress:file-management-testsuite/extensive-config-start
+	...  running-config
+	Compare  config://extensive-config-start  running-config
+
+	Cli Copy  scp://bsn@regress:file-management-testsuite/extensive-config
+	...  config://extensive-config
+	Cli Copy  config://extensive-config  running-config
+	Cli Run  master  show running-config
+	Sleep  5
+	Compare  scp://bsn@regress:file-management-testsuite/extensive-config
+	...  running-config
+	Compare  config://extensive-config  running-config
 
 T1.1 Copy running config to file
 	Cli Copy  running-config  ${file}
