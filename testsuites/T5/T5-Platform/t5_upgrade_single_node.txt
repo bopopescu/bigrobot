@@ -4,7 +4,7 @@ Suite Setup      base suite setup
 Suite Teardown   base suite teardown
 Test Setup       base test setup
 Test Teardown    base test teardown
-Force Tags       T5 
+Force Tags       IronHorse 
 Library          keywords/BsnCommon.py
 Library			 keywords/Mininet.py
 Library		     keywords/Host.py
@@ -25,50 +25,50 @@ T1.1 Test image copy and delete
 	${result}=   cli_delete_image	 
  	 Should be True     ${result} 	
  
-	[Tags] 	sanity  upgrade    
+	[Tags] 	sanity  upgrade  feature  singlenode
 
 T1.2 Show command verification for package contents 
 	copy_pkg_from_jenkins  
 	${num}  ${image}=	   cli_check_image		   
      log   there are ${num} images as ${image} in controller
-	[Tags] 	sanity   upgrade
+	[Tags] 		sanity  upgrade  feature  singlenode
 
 	 
 T1.3 test single node upgrade
 	log     single node upgrade
 	upgrade    master   active   active 
  
-	[Tags] 	smoke  	 upgrade  JIRA-BSC-5170
+	[Tags] 	smoke  upgrade  feature  singlenode  JIRA-BSC-5170
 
 T1.4 After the upgrade verify the config integrity 
 	log   covered in 'test single node upgrade'    
     
-	[Tags] 	sanity   upgrade  
+	[Tags] 		sanity  upgrade  feature  singlenode 
 
 
 T1.5 Verify whether the saved configs are retained after the upgrade
 	log   covered in 'test single node upgrade'  
    
-	[Tags] 	sanity   upgrade 
+	[Tags] 		sanity  upgrade  feature  singlenode
 
 
 T1.6 Check only the T5 image packages are accepted and eligible for staging
 	log     only the T5 image packages are accepted
     ${result}=   copy_pkg_from_server  ${bigtapimage}    soft_error=True
  	Should not be True     ${result}     
-	[Tags] 	feature   upgrade
+	[Tags] 	full  upgrade  feature  singlenode
  	
 
 T1.7 Integrity checks on the image: SCP half of the image etc 
 	log   SCP half of the image etc  
     Manual passed
-	[Tags] 	feature    Manual   upgrade
+	[Tags] 	full  upgrade  feature    Manual    singlenode
 
   
 T1.8 Only SCP support or : + wget support too?
 	log   copy for cli is the only way
     Manual passed
-	[Tags] 	feature   Manual   upgrade
+	[Tags] 	full  upgrade  feature   Manual   singlenode
 
 
 T1.9 Verify user can pick & choose images for upgrade staging
@@ -79,8 +79,7 @@ T1.9 Verify user can pick & choose images for upgrade staging
  	log   there are ${num} images as ${image} in controller
 	cli_upgrade_stage   master  ${image[0]}
  	cli_upgrade_stage   master   ${image[1]}  
-	[Tags] 	feature   upgrade
-
+	[Tags] 	full  upgrade  feature  singlenode
  
 T1.10 Test downgrade 
 	log     downgrade
@@ -91,7 +90,7 @@ T1.10 Test downgrade
     Should be True     ${result} 
 	cli_upgrade_stage   master  ${image[0]}
 		    
-	[Tags] 	feature    upgrade
+	[Tags] 	full  upgrade  feature  singlenode
 
 
 T1.11 Check only the admin group can execute controller image upgrade
@@ -100,7 +99,7 @@ T1.11 Check only the admin group can execute controller image upgrade
 	${result}=  cli_check_image   soft_error=True
  	Should not be True     ${result}  
   		 
-	[Tags] 	feature   upgrade
+	[Tags] 	full  upgrade  feature  singlenode
   
  
 	
