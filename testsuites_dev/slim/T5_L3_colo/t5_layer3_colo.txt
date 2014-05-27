@@ -51,6 +51,11 @@ Intra tenant L3 tagged traffic with static endpoints across rack
 	L3 intra tenant across rack tagged with static endpoints
 	[Tags]									smoke				sanity						
 
+L3 intra tenant traceroute
+    L3 intra tenant traceroute
+    [Tags]                                  smoke               sanity              run1
+    
+
 Dhcp discover on the same vns as server with dhcp-relay enabled
 	DHCP discovery on the same vns as server with dhcp-relay enabled
 	[Tags]									smoke				sanity				run		
@@ -315,6 +320,22 @@ L3 intra tenant across rack tagged with dynamic endpoints
 	Should Contain								${attachpoint}					${leaf1_pc3}	
 	${loss} = 									BASH ping						h6-rack0						${ipAddr5}					count=10
 	Should Be True  							${loss} == 0					
+
+
+L3 intra tenant traceroute
+    ${result} =                                 BASH                            h4-rack0                      traceroute -n -m 5 10.251.1.1 
+    Should Contain                              ${result}                       "1  10.251.1.1 (10.251.1.1)"
+    ${result} =                                 BASH                            h4-rack0                      traceroute -n -m 5 -I 10.251.1.1 
+    Should Contain                              ${result}                       "1  10.251.1.1  "
+    ${result} =                                 BASH                            h4-rack0                      traceroute -n -m 5 10.251.2.1 
+    Should Contain                              ${result}                       "1  10.251.2.1 (10.251.2.1)"
+    ${result} =                                 BASH                            h4-rack0                      traceroute -n -m 5 -I 10.251.2.1 
+    Should Contain                              ${result}                       "1  10.251.2.1  "
+    ${result} =                                 BASH                            h4-rack0                      traceroute -n -m 5 10.251.3.1 
+    Should Contain                              ${result}                       "1  10.251.3.1 (10.251.3.1)"
+    ${result} =                                 BASH                            h4-rack0                      traceroute -n -m 5 -I 10.251.3.1 
+    Should Contain                              ${result}                       "1  10.251.3.1  "
+
 
 DHCP discovery on the same vns as server with dhcp-relay enabled
 	REST delete portgroup from vns				Z								Z2								${leaf0_pc11}			-1

@@ -37,10 +37,11 @@ Documentation       Testing ZTN
 ...
 ...                - any controller Cli change that affects the switch provisioning (fabric role, MAC)
 
-Suite Setup		Base Suite Setup
-Suite Teardown		Base Suite Teardown
+Suite Setup		Suite Setup
+Suite Teardown		Suite Teardown
 Test Setup		Base Test Setup
 Test Teardown		Base Test Teardown
+Force Tags		T5  ZTN  Feature  IronHorse
 Library  		keywords/BsnCommon.py
 Library		keywords/T5Platform.py
 Library		keywords/T5Utilities.py
@@ -54,6 +55,8 @@ Library		keywords/T5ZTN.py
 	...  powerpc-as6700-32x-r0b  powerpc-as5710-54x-r0b
 @{supported_swi_platforms}  powerpc-quanta-lb9-r0  powerpc-quanta-ly2-r0
 	...  powerpc-as6700-32x-r0  powerpc-as5710-54x-r0a  powerpc-dni-7448-r0
+@{spineList}		00:00:70:72:cf:ae:b6:37
+@{leafList}			00:00:70:72:cf:b5:f4:5c  00:00:70:72:cf:b5:f4:a6
 
 
 *** Test Cases ***
@@ -863,3 +866,14 @@ T9.8. ? Verify that admin can view all images stored on flash at given switch
 # Will we see at which stage of provisioning is given switch? e.g. downloading SL image, booting, ... ?
 # Limit on switches that can be handled by ZTN?
 # Validation of MAC addresses in CLI before making any changes? Invalid, broadcast, special MAC?
+
+
+*** Keywords ***
+Suite Setup
+	Base Suite Setup
+	Cli Copy  running-config  config://startup-config
+	auto configure fabric switch   ${spineList}   ${leafList}   2
+
+Suite Teardown
+	Cli Copy  config://startup-config  running-config
+	Base Suite Teardown

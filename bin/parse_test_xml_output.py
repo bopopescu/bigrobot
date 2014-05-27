@@ -5,6 +5,7 @@
 import os
 import sys
 import re
+import datetime
 import xmltodict
 import robot
 
@@ -26,6 +27,23 @@ helpers.set_env('AUTOBOT_LOG', '/tmp/myrobot.log')
 authors = {
     'https://github.com/bigswitch/bigrobot/blob/master/testsuites_dev/vui/test_robot.txt': 'vui'
 }
+
+
+
+def format_robot_timestamp(ts):
+    """
+    Robot Framework uses the following timestamp format:
+        20140523 16:49:38.051
+    Concert it to UTC ISO time format:
+        2014-05-23T23:49:38.051Z
+    """
+    match = re.match(r'(\d{4})(\d{2})(\d{2})\s+(\d+):(\d+):(\d+)\.(\d+)$', ts)
+    if not match:
+        helpers.environment_failure("Incorrect time format: '%s'" % ts)
+    (year, month, date, hour, minute, sec, msec) = match.groups()
+    hour = int(hour) + 7  # change PST to UTC
+    s = '%s-%s-%sT%s:%s:%s.%sZ' % (year, month, date, hour, minute, sec, msec)
+    return s
 
 
 class TestCase(object):
@@ -60,12 +78,16 @@ class TestSuite(object):
         # Remove first line: <?xml version="1.0" encoding="UTF-8"?>
         self.xml_str = ''.join(helpers.file_read_once(self.filename,
                                                       to_list=True)[1:])
+
         self.data = xmltodict.parse(self.xml_str)
         self.extract_attributes()
 
     def extract_attributes(self):
         suite = self.data['robot']['suite']
+        timestamp = format_robot_timestamp(self.data['robot']['@generated'])
         self._suite['source'] = helpers.utf8(suite['@source'])
+        self._suite['timestamp'] = helpers.utf8(timestamp)
+        self._suite['tests'] = []
         match = re.match(r'.+bigrobot/(.+)$', self._suite['source'])
         if match:
             self._suite['source_github'] = (
@@ -87,9 +109,10 @@ class TestSuite(object):
                 tags = helpers.utf8(a_test['tags']['tag'])
             else:
                 tags = []
-            self._tests.append(TestCase(test_id=test_id,
-                                        name=name,
-                                        tags=tags))
+            test = TestCase(test_id=test_id, name=name, tags=tags)
+            self._suite['tests'].append(test.dump())
+            self._tests.append(test)
+
         self.total_tests()
 
     def suite(self):
@@ -105,8 +128,11 @@ class TestSuite(object):
         self._suite['total_tests'] = len(self.tests())
         return self._suite['total_tests']
 
-    def dump_suite(self):
-        print(helpers.prettify(self.suite()))
+    def dump_suite(self, to_json=False):
+        if to_json:
+            print(helpers.to_json(self.suite()))
+        else:
+            print(helpers.prettify(self.suite()))
 
     def dump_tests(self):
         for test in self.tests():
@@ -126,11 +152,13 @@ class TestCatalog(object):
     def load_suites(self, filenames):
         for filename in filenames:
             filename = filename.strip()
-            suite = TestSuite(filename)
-            suite.dump_suite()
-            suite.dump_tests()
-            print "-----------------------"
-            self._suites.append(suite)
+
+            if helpers.file_not_empty(filename):
+                suite = TestSuite(filename)
+                suite.dump_suite(to_json=True)
+                # suite.dump_tests()
+                # print "-----------------------"
+                self._suites.append(suite)
 
     def suites(self):
         return self._suites

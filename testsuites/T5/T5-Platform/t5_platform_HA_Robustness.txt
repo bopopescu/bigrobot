@@ -6,7 +6,7 @@ Suite Setup      T5 base suite setup
 #Suite Teardown   T5 base suite teardown
 Test Setup       T5 Platform test setup
 Test Teardown    T5 Platform test teardown
-Force Tags       T5Platform  HA  L2
+Force Tags       IronHorse  Platform  HA  Robustness
 Library          keywords/BsnCommon.py
 Library          keywords/Mininet.py
 Library	    	 keywords/Host.py
@@ -14,6 +14,7 @@ Library          keywords/T5.py
 Library	         keywords/T5L3.py
 Library	         keywords/T5Platform.py
 Library	         keywords/T5Utilities.py
+Resource		 testsuites_dev/don/physical_variables.txt
 
 
 * Variables
@@ -160,7 +161,7 @@ Reboot Peer Leaf Switch During Failover & Verify Connectivity
 	Reboot the master node & verify fabric integrity
 
 Stress Configure & Delete Multiple L3 Tenants With Single VNS & Failover
-	[Tags]	stress 
+	[Tags]  stress
 	: FOR    ${Iteration}    IN RANGE    1    26
 	\	Log To Console   \n================ Configure & Delete L3 Tenants & Failover - Iteration ${Iteration} ===============\n
 	\	rest delete tenant  autoT1
@@ -180,6 +181,206 @@ Clean Config
     rest delete tenant  autoT2
     auto delete fabric switch  ${spineList}  ${leafList}  2
     auto delete fabric portgroups
+
+
+Master Reboot Stress Test For 1000 Times
+   [Tags]  stress
+   Stress Failover/Failback by rebooting the master and verify connectivity
+   Verify Connectivity in 3-Rack/Dual-Leaf/2-Spine/2-Host Physical Topology 
+   
+Master System Failover Stress Test For 1000 Times
+   [Tags]  stress 
+   #Stress Failover/Failback by rebooting the master and verify connectivity
+   Stress Failover/Failback by failing over the master and verify connectivity
+   Verify Connectivity in 3-Rack/Dual-Leaf/2-Spine/2-Host Physical Topology 
+   
+Slave Failover/Failback Stress Test For 25 Times
+   [Tags]  stress
+   Stress Failover/Failback by rebooting the slave and verify connectivity
+   Verify Connectivity in 3-Rack/Dual-Leaf/2-Spine/2-Host Physical Topology 
+
+Cluster Election Take-Leader Stress Test For 25 Times
+   [Tags]  stress  
+   # To be: This test case only checks the take-leader in slave.
+   # 			Need to implement this in the master
+   Failover/Failback by issuing take-leader in master & verify connectivity
+
+Cluster Election Re-run Stress Test For 25 Times
+   [Tags]  stress  
+   # To be: Make sure to do it on both master & slave when the commands
+   #		are finalized
+   Re-run the election and verify connectivity
+   
+
+###########################################################################################
+# Stub test cases for the Robustnesss Test Suite
+###########################################################################################
+
+Consecutive connect/disconnect of switches
+	[Tags]  manual-untested
+	manual untested
+	
+Consecutive Power off controller
+	[Tags]  manual-untested
+	manual untested
+	
+Changing leaf groups 
+	[Tags]  skipped
+	
+Headless mode verifications:
+	[Tags]  manual-untested
+	manual untested
+
+Disconnect peer leaf switch lag links. 
+	[Tags]  manual-untested
+	manual untested
+	
+Reboot peer leaf switches.
+	[Tags]  manual-untested
+	manual untested
+	
+Add links / New traffic paths. 
+	[Tags]  manual-untested
+	manual untested
+	
+Remove links 
+	[Tags]  manual-untested
+	manual untested
+	
+Bring back the controller. Verify the fabric integrity
+	[Tags]  manual
+	manual passed
+
+Packet of death: Consecutive pacekt of death
+	[Tags]  manual-untested
+	manual untested
+
+Split Brian Scenarios
+	[Tags]  manual-untested
+	manual untested
+	
+Changing VIP/IP /Cluster properties of the Controller cluster
+	[Tags]  manual-untested
+	manual untested
+	
+Traffic prioritization on the switch cpu to-controller traffic 
+	[Tags]  manual-untested
+	manual untested
+	
+Remove stdby controller & add another stdby controller with the same IP as earlier one
+	[Tags]  manual-untested
+	manual untested
+	
+Large VFT push during switch reboots 
+	[Tags]  manual-untested
+	manual untested
+	
+Enable log levels to Debug along with all the switch logs punting to the controller and controller push it to an external splunk server 
+	[Tags]  manual-untested
+	manual untested
+	
+Controller tries to program and switch disconnects and connects again
+	[Tags]  manual-untested
+	manual untested
+	
+Penetration test
+	[Tags]  manual-untested
+	manual untested
+
+Reboot Management switch
+	[Tags]  manual-untested
+	manual untested
+	
+Interface Disable/Enable - Perhaps in a loop
+	[Tags]  manual-untested
+	manual untested
+	
+Bond/LAG configuration/ De-configuration
+	[Tags]  manual-untested
+	manual untested
+
+Platform Switch: Add/Remove rack lag links
+	[Tags]  manual-untested
+	manual untested
+	
+Interface shutdowns / bringup
+	[Tags]  manual-untested
+	manual untested
+	
+Power down/up switch
+	[Tags]  manual-untested
+	manual untested
+	
+Performance during VFT push from the controller
+	[Tags]  manual-untested
+	manual untested
+
+Add/Remove peer lags
+	[Tags]  manual-untested
+	manual untested
+	
+Consecutive reboot of peer leaf (dual-tor context)
+	[Tags]  manual-untested
+	manual untested
+
+Consecutive reboots of spines
+	[Tags]  manual-untested
+	manual untested
+	
+Consecutive reboots of leaves
+	[Tags]  manual-untested
+	manual untested
+
+Traffic convergence during island forming
+	[Tags]  manual-untested
+	manual untested
+
+Configuration in SPINE
+	[Tags]  manual-untested
+	manual untested
+	
+Table Size Spine / Leaf - What happens when tables are full
+	[Tags]  manual-untested
+	manual untested
+
+Switch go Full in Loggins
+	[Tags]  manual-untested
+	manual untested
+	
+Optics Pull/ Cable
+	[Tags]  manual-untested
+	manual untested
+
+Switch - Open Ports - Penetration test
+	[Tags]  manual-untested
+	manual untested
+	
+Controller- Bundle Image
+	[Tags]  manual-untested
+	manual untested
+	
+Power supplies - DC /AC Mix match
+	[Tags]  manual-untested
+	manual untested
+	
+Order of Bring up- All links - Peer LAg and then management
+	[Tags]  manual-untested
+	manual untested
+	
+OFAD Packets - Malformed Packet
+	[Tags]  manual-untested
+	manual untested
+	
+OSPF/ BGP / PAcket-IN to controller
+	[Tags]  manual-untested
+	manual untested
+	
+IP header malformation
+	[Tags]  manual-untested
+	manual untested
+
+
+
 
 ########################################################################################################################################
 
@@ -244,6 +445,36 @@ Re-run the election and verify connectivity
    \	Should Be True  ${returnVal}
    \	Verify Connectivity in 3-Rack/Dual-Leaf/2-Spine/2-Host Physical Regression Topology 
    
+
+* Keywords      
+
+Stress Failover/Failback by rebooting the master and verify connectivity
+   : FOR    ${Iteration}    IN RANGE    1    1000
+   \	Log To Console   \n================ Rebooting Master - Iteration ${Iteration} ===============\n
+   \	cli verify cluster master reboot
+
+Stress Failover/Failback by failing over the master and verify connectivity
+   : FOR    ${Iteration}    IN RANGE    1    1000
+   \	Log To Console   \n================ Failing Over Master - Iteration ${Iteration} ===============\n
+   \	cli cluster take leader
+
+Stress Failover/Failback by rebooting the slave and verify connectivity
+   : FOR    ${Iteration}    IN RANGE    1    26
+   \	Log To Console   \n================ Rebooting Slave - Iteration ${Iteration} ===============\n
+   \	cli verify cluster slave reboot
+
+
+Stress Failover/Failback by issuing take-leader in master & verify connectivity
+   : FOR    ${Iteration}    IN RANGE    1    26
+   \	Log To Console   \n================ Election-Take-Leader - Iteration ${Iteration} ===============\n
+   \	rest verify cluster election take leader
+   \	platform ping all
+
+Stress Re-run the election and verify connectivity
+   : FOR    ${Iteration}    IN RANGE    1    26
+   \	Log To Console   \n================ Election-Rerun - Iteration ${Iteration} ===============\n
+   \	rest verify cluster election rerun
+   \	platform ping all
 
 
 Configure 3-Rack/Dual-Leaf/2-Spine/2-Host Setup For Physical Topology 
@@ -325,72 +556,30 @@ Configure 2 Tenants with Different VLAN properties
       
 
 Verify Connectivity in 3-Rack/Dual-Leaf/2-Spine/2-Host Physical Topology 
-
-   Set Test Variable  ${subMask}  24
-   Set Test Variable  ${h1bond10ip}  10.10.10.51
-   Set Test Variable  ${h2bond10ip}	 10.10.10.52
-   Set Test Variable  ${h3bond10ip}	 10.10.10.53
-   Set Test Variable  ${vns1ip}  10.10.10.100
    
-   Set Test Variable  ${h4bond20ip} 	20.20.20.54
-   Set Test Variable  ${h5bond20ip}	20.20.20.55
-   Set Test Variable  ${h6bond20ip}	20.20.20.56
-   Set Test Variable  ${vns2ip}  20.20.20.100
-   
-   Set Test Variable  ${h1ip}	192.168.1.20
-   Set Test Variable  ${h2ip}	192.168.1.21
-   Set Test Variable  ${h3ip}	192.168.1.10
-   Set Test Variable  ${h4ip}	192.168.1.11
-   
-   
-   ###	Verify L2 ping between autoT1-v1   
-   ${returnVal}=  platform bash ping  h1  ${h2bond10ip}
+   ${returnVal}=  platform bash ping  h1  ${h2_tag_ip}
    Should Be True  ${returnVal}  
-   ${returnVal}=  platform bash ping  h1  ${h3bond10ip}
+   ${returnVal}=  platform bash ping  h1  ${h3_tag_ip}
    Should Be True  ${returnVal}  
-   #${returnVal}=  platform bash ping  h2  ${h3bond10ip}
-   #Should Be True  ${returnVal}  
-   
+   ${returnVal}=  platform bash ping  h2  ${h3_tag_ip}
+   Should Be True  ${returnVal}  
 
    ###	Verify L2 ping between autoT1-v2
-   ${returnVal}=  platform bash ping  h4  ${h5bond20ip}
+   ${returnVal}=  platform bash ping  h4  ${h5_tag_ip}
    Should Be True  ${returnVal}  
-   ${returnVal}=  platform bash ping  h4  ${h6bond20ip}
+   ${returnVal}=  platform bash ping  h4  ${h6_tag_ip}
    Should Be True  ${returnVal}  
-   ${returnVal}=  platform bash ping  h5  ${h6bond20ip}
+   ${returnVal}=  platform bash ping  h5  ${h6_tag_ip}
    Should Be True  ${returnVal}   
    
-   ###	Verify L3 ping between autoT1-v1 & autoT1-v2
-   #${returnVal}=  platform bash ping  h1  ${h4bond20ip}
-   #Should Be True  ${returnVal}
-   #${returnVal}=  platform bash ping  h1  ${h5bond20ip}
-   #Should Be True  ${returnVal}
-   #${returnVal}=  platform bash ping  h1  ${h6bond20ip}
-   #Should Be True  ${returnVal}
-  
-   #${returnVal}=  platform bash ping  h4  ${h2bond10ip}
-   #Should Be True  ${returnVal}
-   #${returnVal}=  platform bash ping  h5  ${h2bond10ip}
-   #Should Be True  ${returnVal}
-   #${returnVal}=  platform bash ping  h6  ${h2bond10ip}
-   #Should Be True  ${returnVal}
-   
-   
-   
-   ###	Verify ping between autoT2
-   #${returnVal}=  platform bash ping  h1  ${h2ip}
-   #Should Be True  ${returnVal}  
-   #${returnVal}=  platform bash ping  h1  ${h3ip}
-   #Should Be True  ${returnVal}  
-   #${returnVal}=  platform bash ping  h1  ${h4ip}
-   #Should Be True  ${returnVal}  
-   #${returnVal}=  platform bash ping  h2  ${h3ip}
-   #Should Be True  ${returnVal}  
-   #${returnVal}=  platform bash ping  h2  ${h4ip}
-   #Should Be True  ${returnVal}  
-   #${returnVal}=  platform bash ping  h3  ${h4ip}
-   #Should Be True  ${returnVal}  
-   
+   ###	Verify ping between autoT2 			
+   ${returnVal}=  platform bash ping  h1  ${h3_single_ip}
+   Should Be True  ${returnVal}   
+   ${returnVal}=  platform bash ping  h1  ${h5_single_ip}
+   Should Be True  ${returnVal}  
+   ${returnVal}=  platform bash ping  h3  ${h5_single_ip}
+
+
 
 T5 Platform test setup
 	start floodlight monitor
