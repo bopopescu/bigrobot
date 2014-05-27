@@ -39,9 +39,10 @@ _tacacs_re = re.compile(r'[\r\n]s\/key[\S ]+\r?%s' % _password_re[0].pattern)
 # 2014-05-23 This prompt can use some cleanup. It was inherited from Cisco => BSN switch => Extreme
 # Extreme config pronmpt:
 #             (Beta) X460-24t.1 #
-
-
-_prompt_re = [re.compile(r'[\r\n]\s?(\(\w+\)\s)?\[?(\w+(-?\w+)?\s?@?)?[\-\w+\.:/]+(?:\([^\)]+\))?(:~)?( ~\])?\s?[>#$] ?$')]
+#             (Private) X460-24t.1 #
+#             * (Private) X460-24t.1 #   <=== '* ' when there's config change
+#
+_prompt_re = [re.compile(r'[\r\n]\s?(\*\s)?(\(\w+\)\s)?\[?(\w+(-?\w+)?\s?@?)?[\-\w+\.:/]+(?:\([^\)]+\))?(:~)?( ~\])?\s?[>#$] ?$')]
 
 
 # Extreme switch errors:
