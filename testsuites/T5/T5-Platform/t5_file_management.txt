@@ -50,6 +50,7 @@ T0.2 Extensive config remote copy
 	Cli Copy  scp://bsn@regress:file-management-testsuite/extensive-config
 	...  config://extensive-config
 	Compare  config://extensive-config  running-config
+	[Tags]  BSC-5370
 
 T0.3 Extensive file remote copy
 	Rest Delete Tenant  TenantTest12345
@@ -78,6 +79,7 @@ T0.4 Extensive config remote replace
 	Cli Copy  scp://bsn@regress:file-management-testsuite/extensive-config
 	...  config://extensive-config
 	Compare  config://extensive-config  running-config
+	[Tags]  BSC-5370  BSC-5488
 
 T0.5 Extensive config local copy
 	Cli Copy  scp://bsn@regress:file-management-testsuite/extensive-config
@@ -87,6 +89,7 @@ T0.5 Extensive config local copy
 	Compare  scp://bsn@regress:file-management-testsuite/extensive-config
 	...  running-config
 	Compare  config://extensive-config  running-config
+	[Tags]  BSC-5488
 
 T0.6 Extensive file local copy
 	Rest Delete Tenant  TenantTest12345
@@ -115,6 +118,7 @@ T0.7 Extensive config local replace
 	Compare  scp://bsn@regress:file-management-testsuite/extensive-config
 	...  running-config
 	Compare  config://extensive-config  running-config
+	[Tags]  BSC-5488
 
 T1.1 Copy running config to file
 	Cli Copy  running-config  ${file}
