@@ -2444,3 +2444,82 @@ class T5(object):
                     return False
         else:
             helpers.log("Given switch name and role is not valid")
+            
+    def cli_get_qos_weight(self,node,port):
+        t = test.Test()
+        s = t.switch(node)    
+        string = 'debug ofad "qos_weight ' + port + '"'
+        content= s.enable(string)['content']        
+        info=[]
+        temp = helpers.strip_cli_output(content,to_list=True)    
+        helpers.log("***temp is: %s  \n"  % temp)                   
+    
+        for line in temp:     
+            helpers.log("***line is: %s  \n"  % line)                   
+            line = line.lstrip()
+            match= re.match(r'queue=(\d+) ->.* weight=(\d+)', line)
+            if match:
+                helpers.log("INFO: queue is: %s,  weight is: %s" % (match.group(1), match.group(2)))                          
+                info.append(match.group(2))
+         
+        helpers.log("***Exiting with info: %s  \n"  % info)
+
+        return info
+
+    def cli_get_qos_port_stat(self,node,port):
+        t = test.Test()
+        s = t.switch(node)    
+        string = 'debug ofad "qos_port_stat ' + port + '"'
+        content= s.enable(string)['content']        
+        info=[]
+        temp = helpers.strip_cli_output(content,to_list=True)    
+        helpers.log("***temp is: %s  \n"  % temp)                   
+    
+        for line in temp:     
+            helpers.log("***line is: %s  \n"  % line)                   
+            line = line.lstrip()
+            match= re.match(r'.*queue=(\d+).* out_pkt.*=(\d+)', line)
+            if match:
+                helpers.log("INFO: queue is: %s,  weight is: %s" % (match.group(1), match.group(2)))                          
+                info.append(match.group(2))
+         
+        helpers.log("***Exiting with info: %s  \n"  % info)
+
+        return info
+
+    def cli_qos_clear_stat(self,node,port):
+        t = test.Test()
+        s = t.switch(node)    
+        string = 'debug ofad "qos_clear_stat ' + port + '"'
+        s.enable(string)     
+ 
+        return True
+
+
+    def cli_get_links_nodes_list(self,node1, node2):
+        '''
+        '''
+        helpers.test_log("Entering ==> cli_get_links_nodes_list: %s  - %s"  %( node1, node2) )           
+        t = test.Test()
+        c = t.controller('master')         
+        cli= 'show link | grep ' + node1 + ' | grep ' + node2  
+        content = c.cli(cli)['content']   
+        temp = helpers.strip_cli_output(content, to_list=True)  
+        helpers.log("INFO: *** output  *** \n  %s" %temp)                    
+        list=[]           
+        for line in temp:          
+            line = line.lstrip()
+            fields = line.split()
+            helpers.log("fields: %s" % fields)
+            if fields[1]==node1 :
+                list.append(fields[2])
+            elif fields[3]==node1 :
+                list.append(fields[4])   
+            
+                  
+        helpers.log("INFO: *** link info *** \n for %s: %s \n " % (node1,list))              
+        return list   
+
+            
+       
+            
