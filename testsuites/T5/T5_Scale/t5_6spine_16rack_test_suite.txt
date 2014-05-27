@@ -6,7 +6,7 @@ Suite Setup      base suite setup
 Suite Teardown   base suite teardown
 #Test Setup       T5 base test setup
 #Test Teardown    T5 base test teardown
-Force Tags       T5 
+Force Tags      IronHorse
 Library          keywords/BsnCommon.py
 Library          keywords/T5.py
 #Library	         keywords_dev/svoora/T5Fabric.py
