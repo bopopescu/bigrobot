@@ -931,6 +931,13 @@ def file_not_exists(f):
     return False
 
 
+def file_not_empty(f):
+    if os.path.isfile(f) and os.path.getsize(f) > 0:
+        return True
+    else:
+        return False
+
+
 def file_remove(filename):
     """
     Remove/delete a file.
