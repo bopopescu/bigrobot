@@ -1073,3 +1073,256 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
         
         
         
+
+    def rest_add_policy_item_example(self, **kwargs):
+        '''add a policy item
+        
+            Input:
+                `tenant`        tenant name
+                `polname`       name of policy
+                `seqnum`        sequence number
+                `src-data`      Source policy data
+                `dst-data`      Destination policy data
+            http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[name="A"]/logical-router/policy-lists[name="p2"]/rules[seq=10] {"src": {"segment": "A1", "tenant-name": "A"}, "seq": 10, "dst": {"cidr": "10.1.1.1/24"}, "ip-proto": 6, "action": "next-hop", "next-hop": {"ip-address": "10.1.1.1"}}
+            Return: true if configuration is successful, false otherwise
+        '''
+        
+        t = test.Test()
+        c = t.controller('master')
+        #src_mac = kwargs.get('src_mac', '00:11:23:00:00:01')
+        seqnum = kwargs.get('seqnum')
+        action = kwargs.get('action')
+        srcdata = kwargs.get('srcdata',None)
+        dstdata = kwargs.get('dstdata',None)
+        ip_proto = kwargs.get('proto',None)
+        next_hop = kwargs.get('next-hop',None)
+        tenant = kwargs.get('tenant',None)
+        polname = kwargs.get('polname',None)
+        
+        if (tenant is None or polname is None or seqnum is None):
+            helpers.test_failure("Tenant and Polname are Null")
+        
+        
+        
+        helpers.test_log("Input arguments: tenant = %s" \
+                         " policy name = %s" \
+                         " sequence number = %s " \
+                         " src-data = %s " \
+                         " dst-data = %s " \
+                         " action = %s " \
+                         " ip-proto = %s " \
+                         " next-hop = %s " % (tenant, polname, str(seqnum), str(srcdata), str(dstdata), action, ip_proto, next_hop))
+        
+        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/logical-router/policy-lists[name="%s"]/rules[seq=%s]' % (tenant, polname, seqnum)
+        if (next_hop is None and ip_proto is None):
+            if (srcdata is not None and dstdata is not None):
+                data = {"src":srcdata, "seq": str(seqnum), "dst":dstdata, "action": str(action)}
+                try:
+                    helpers.log("**** url: %s" % url)
+                    c.rest.put(url, data)
+                except:
+                    helpers.log("Error happend Output: %s " % c.rest.result_json())
+                    return False
+                else: 
+                    helpers.test_log("Output: %s" % c.rest.result_json())
+                    return c.rest.content()
+                    return True
+            
+            if (srcdata is None):
+                data = {"seq": str(seqnum), "dst":dstdata, "action": str(action)}
+                try:
+                    c.rest.put(url, data)
+          
+                except:
+                    #helpers.test_failure(c.rest.error())
+                    return False
+                else: 
+                    #helpers.test_log("Output: %s" % c.rest.result_json())
+                    #return c.rest.content()
+                    return True
+            
+            if (dstdata is None):
+                data = {"src":srcdata, "seq": str(seqnum), "action": str(action)}
+                try:
+                    c.rest.put(url, data)
+          
+                except:
+                    #helpers.test_failure(c.rest.error())
+                    return False
+                else: 
+                    #helpers.test_log("Output: %s" % c.rest.result_json())
+                    #return c.rest.content()
+                    return True
+            
+            if (dstdata is None and srcdata is None):
+                data = { "seq": str(seqnum), "action": str(action)}
+                try:
+                    c.rest.put(url, )
+          
+                except:
+                    #helpers.test_failure(c.rest.error())
+                    return False
+                else: 
+                    #helpers.test_log("Output: %s" % c.rest.result_json())
+                    #return c.rest.content()
+                    return True
+        
+        if (next_hop is None and ip_proto is not None):
+            if (srcdata is not None and dstdata is not None):
+                data = {"src":srcdata, "seq": str(seqnum), "dst":dstdata, "action": str(action), "ip-proto":ip_proto}
+                try:
+                    c.rest.put(url, data)
+                
+                except:
+                        #helpers.test_failure(c.rest.error())
+                        return False
+                else: 
+                    #helpers.test_log("Output: %s" % c.rest.result_json())
+                    #return c.rest.content()
+                    return True
+            
+            if (srcdata is None):
+                data = {"seq": str(seqnum), "dst":dstdata, "action": str(action), "ip-proto":ip_proto}
+                try:
+                    c.rest.put(url, data)
+          
+                except:
+                    #helpers.test_failure(c.rest.error())
+                    return False
+                else: 
+                    #helpers.test_log("Output: %s" % c.rest.result_json())
+                    #return c.rest.content()
+                    return True
+            
+            if (dstdata is None):
+                data = {"src":srcdata, "seq": str(seqnum), "action": str(action), "ip-proto":ip_proto}
+                try:
+                    c.rest.put(url, data)
+          
+                except:
+                    #helpers.test_failure(c.rest.error())
+                    return False
+                else: 
+                    #helpers.test_log("Output: %s" % c.rest.result_json())
+                    #return c.rest.content()
+                    return True
+            
+            if (dstdata is None and srcdata is None):
+                data = { "seq": str(seqnum), "action": str(action), "ip-proto":ip_proto}
+                try:
+                    c.rest.put(url, data)
+          
+                except:
+                    #helpers.test_failure(c.rest.error())
+                    return False
+                else: 
+                    #helpers.test_log("Output: %s" % c.rest.result_json())
+                    #return c.rest.content()
+                    return True
+
+        if (next_hop is not None and ip_proto is not None):
+            if (srcdata is not None and dstdata is not None):
+                data = {"src":srcdata, "seq": str(seqnum), "dst":dstdata, "action": str(action), "ip-proto":ip_proto, "next-hop":next_hop}
+                try:
+                    c.rest.put(url, data)
+                
+                except:
+                    #helpers.test_failure(c.rest.error())
+                    return False
+                else: 
+                    #helpers.test_log("Output: %s" % c.rest.result_json())
+                    #return c.rest.content()
+                    return True
+            
+            if (srcdata is None):
+                data = {"seq": str(seqnum), "dst":dstdata, "action": str(action), "ip-proto":ip_proto, "next-hop":next_hop}
+                try:
+                    c.rest.put(url, data)
+          
+                except:
+                    #helpers.test_failure(c.rest.error())
+                    return False
+                else: 
+                    #helpers.test_log("Output: %s" % c.rest.result_json())
+                    #return c.rest.content()
+                    return True
+            
+            if (dstdata is None):
+                data = {"src":srcdata, "seq": str(seqnum), "action": str(action), "ip-proto":ip_proto, "next-hop":next_hop}
+                try:
+                    c.rest.put(url, data)
+          
+                except:
+                    #helpers.test_failure(c.rest.error())
+                    return False
+                else: 
+                    #helpers.test_log("Output: %s" % c.rest.result_json())
+                    #return c.rest.content()
+                    return True
+            
+            if (dstdata is None and srcdata is None):
+                data = { "seq": str(seqnum), "action": str(action), "ip-proto":ip_proto, "next-hop":next_hop}
+                try:
+                    c.rest.put(url, )
+          
+                except:
+                    #helpers.test_failure(c.rest.error())
+                    return False
+                else: 
+                    #helpers.test_log("Output: %s" % c.rest.result_json())
+                    #return c.rest.content()
+                    return True
+
+        if (next_hop is not None and ip_proto is None):
+            if (srcdata is not None and dstdata is not None):
+                data = {"src":srcdata, "seq": str(seqnum), "dst":dstdata, "action": str(action), "next-hop":next_hop}
+                try:
+                    c.rest.put(url, data)
+                
+                except:
+                    #helpers.test_failure(c.rest.error())
+                    return False
+                else: 
+                    #helpers.test_log("Output: %s" % c.rest.result_json())
+                    #return c.rest.content()
+                    return True
+            
+            if (srcdata is None):
+                data = {"seq": str(seqnum), "dst":dstdata, "action": str(action), "next-hop":next_hop}
+                try:
+                    c.rest.put(url, data)
+          
+                except:
+                    #helpers.test_failure(c.rest.error())
+                    return False
+                else: 
+                    #helpers.test_log("Output: %s" % c.rest.result_json())
+                    #return c.rest.content()
+                    return True
+            
+            if (dstdata is None):
+                data = {"src":srcdata, "seq": str(seqnum), "action": str(action), "next-hop":next_hop}
+                try:
+                    c.rest.put(url, data)
+          
+                except:
+                    #helpers.test_failure(c.rest.error())
+                    return False
+                else: 
+                    #helpers.test_log("Output: %s" % c.rest.result_json())
+                    #return c.rest.content()
+                    return True
+            
+            if (dstdata is None and srcdata is None):
+                data = { "seq": str(seqnum), "action": str(action), "next-hop":next_hop}
+                try:
+                    c.rest.put(url, data)
+          
+                except:
+                    #helpers.test_failure(c.rest.error())
+                    return False
+                else: 
+                    #helpers.test_log("Output: %s" % c.rest.result_json())
+                    #return c.rest.content()
+                    return True
+

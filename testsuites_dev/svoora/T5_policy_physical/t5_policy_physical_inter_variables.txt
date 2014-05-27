@@ -72,4 +72,5 @@ ${ixia7_mac}		00:77:01:00:00:00
 ${ixia6_mac}		00:66:01:00:00:00
 
 ${tenant1_polname}	x1-to-x3
+${tenant2_polname}	x4-to-x1
 
