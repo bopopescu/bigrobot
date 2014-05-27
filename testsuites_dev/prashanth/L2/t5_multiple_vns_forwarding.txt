@@ -75,7 +75,7 @@ check edge port members in the vlan-table with linkup/down
 	rest verify forwarding vlan edge tag members  leaf0-a  ${leaf0a_ixia_intf}
 	
 Traffic forwarding between multiple tag on the same interface
-	[Tags]  L2  feature      
+	[Tags]  L2  feature  run      
 	
     ${stream}=             L3 add  no_arp=True  flow=b->d  src_mac=00:02:02:00:00:24  dst_mac=00:02:04:00:00:24  frame_rate=1000  frame_size=68  name=b_d_flow
     start traffic  ${stream}

@@ -221,6 +221,24 @@ class T5(object):
                 c.rest.put(url, {"switch": switch, "interface": intf, "vlan": i})
         return True
 
+    def rest_add_interface_any_to_all_vns(self, tenant, vlan='1'):
+        '''
+        Function to add interface any switch any to all created vns
+        Input: tennat , 
+        output : will add all interface to all created vns
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/segment[tenant="%s"]' % (tenant)
+        c.rest.get(url)
+        data = c.rest.content()
+        for j in range(0, len(data)):
+                i = int(vlan) + j
+                helpers.log("vlan=%d, %d" % (i, j))
+                url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/segment[name="%s"]/switch-port-membership-rule[switch="any"][interface="any"]' % (tenant, data[j]["name"])
+                c.rest.put(url, {"interface": "any", "switch": "any", "vlan": i})
+        return True
+    
     def rest_delete_vns(self, tenant, vns=None):
         t = test.Test()
         c = t.controller('master')
