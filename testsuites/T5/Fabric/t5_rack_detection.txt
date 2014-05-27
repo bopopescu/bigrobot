@@ -22,7 +22,7 @@ ${rack2_name}  rack2
 
 *Test Case
 add Three Rack Dual Leaf Topology
-	[Tags]  Fabric  feature              
+	[Tags]  Fabric  feature  IronHorse              
 	base suite setup  
     add fabric switch
     sleep  5
@@ -30,49 +30,49 @@ add Three Rack Dual Leaf Topology
     rest verify fabric link common
    
 Verify rack1 connectivity from rack0 
-	[Tags]	 Fabric  feature      
+	[Tags]	 Fabric  feature  IronHorse      
 	rest verify forwarding rack lag  leaf0-a  ${rack1_name}  ${leaf0a_spine0_intf0}  
 	rest verify forwarding rack lag  leaf0-a  ${rack1_name}  ${leaf0a_spine1_intf0}  
 	rest verify forwarding rack lag  leaf0-b  ${rack1_name}  ${leaf0b_spine0_intf0}  
 	rest verify forwarding rack lag  leaf0-b  ${rack1_name}  ${leaf0b_spine1_intf0}  
 	
 verify rack2 connectivity from rack0
-	[Tags]	 Fabric  feature    
+	[Tags]	 Fabric  feature  IronHorse    
     rest verify forwarding rack lag  leaf0-a  ${rack2_name}  ${leaf0a_spine0_intf0}  
 	rest verify forwarding rack lag  leaf0-a  ${rack2_name}  ${leaf0a_spine1_intf0}  
 	rest verify forwarding rack lag  leaf0-b  ${rack2_name}  ${leaf0b_spine0_intf0}  
 	rest verify forwarding rack lag  leaf0-b  ${rack2_name}  ${leaf0b_spine1_intf0}  
 	
 Verify rack1 connectivity from rack2 
-	[Tags]	 Fabric  feature    
+	[Tags]	 Fabric  feature  IronHorse    
 	rest verify forwarding rack lag  leaf2-a  ${rack1_name}  ${leaf2a_spine0_intf0}  
 	rest verify forwarding rack lag  leaf2-a  ${rack1_name}  ${leaf2a_spine1_intf0}  
 	rest verify forwarding rack lag  leaf2-b  ${rack1_name}  ${leaf2b_spine0_intf0}  
 	rest verify forwarding rack lag  leaf2-b  ${rack1_name}  ${leaf2b_spine1_intf0}  
 	
 verify rack0 connectivity from rack2
-	[Tags]	 Fabric  feature    
+	[Tags]	 Fabric  feature  IronHorse    
     rest verify forwarding rack lag  leaf2-a  ${rack0_name}  ${leaf2a_spine0_intf0}  
 	rest verify forwarding rack lag  leaf2-a  ${rack0_name}  ${leaf2a_spine1_intf0}  
 	rest verify forwarding rack lag  leaf2-b  ${rack0_name}  ${leaf2b_spine0_intf0}  
 	rest verify forwarding rack lag  leaf2-b  ${rack0_name}  ${leaf2b_spine1_intf0}
 
 Verify rack0 connectivity from rack1 
-	[Tags]	 Fabric  feature    
+	[Tags]	 Fabric  feature  IronHorse    
 	rest verify forwarding rack lag  leaf1-a  ${rack0_name}  ${leaf1a_spine0_intf0}  
 	rest verify forwarding rack lag  leaf1-a  ${rack0_name}  ${leaf1a_spine1_intf0}  
 	rest verify forwarding rack lag  leaf1-b  ${rack0_name}  ${leaf1b_spine0_intf0}  
 	rest verify forwarding rack lag  leaf1-b  ${rack0_name}  ${leaf1b_spine1_intf0}  
 	
 verify rack2 connectivity from rack1
-	[Tags]	 Fabric  feature    
+	[Tags]	 Fabric  feature  IronHorse    
     rest verify forwarding rack lag  leaf1-a  ${rack2_name}  ${leaf1a_spine0_intf0}  
 	rest verify forwarding rack lag  leaf1-a  ${rack2_name}  ${leaf1a_spine1_intf0}  
 	rest verify forwarding rack lag  leaf1-b  ${rack2_name}  ${leaf1b_spine0_intf0}  
 	rest verify forwarding rack lag  leaf1-b  ${rack2_name}  ${leaf1b_spine1_intf0}	
 	
 verify all rack connectivity from spine0 
-	[Tags]	 Fabric  feature    
+	[Tags]	 Fabric  feature  IronHorse    
 	rest verify forwarding rack lag  spine0  ${rack0_name}  ${spine0_leaf0a_intf0}  
 	rest verify forwarding rack lag  spine0  ${rack0_name}  ${spine0_leaf0b_intf0}  
 	rest verify forwarding rack lag  spine0  ${rack1_name}  ${spine0_leaf1a_intf0}  
@@ -81,7 +81,7 @@ verify all rack connectivity from spine0
 	rest verify forwarding rack lag  spine0  ${rack2_name}  ${spine0_leaf2b_intf0}  
 
 verify all rack connectivity from spine1
-	[Tags]	 Fabric  feature    
+	[Tags]	 Fabric  feature  IronHorse    
 	rest verify forwarding rack lag  spine1  ${rack0_name}  ${spine1_leaf0a_intf0}  
 	rest verify forwarding rack lag  spine1  ${rack0_name}  ${spine1_leaf0b_intf0}  
 	rest verify forwarding rack lag  spine1  ${rack1_name}  ${spine1_leaf1a_intf0}  
@@ -90,7 +90,7 @@ verify all rack connectivity from spine1
 	rest verify forwarding rack lag  spine1  ${rack2_name}  ${spine1_leaf2b_intf0}
 	
 verify rack1 connectivity ,when link down from leaf1b-spine1 
-	[Tags]	 Fabric  feature  
+	[Tags]	 Fabric  feature  IronHorse  
 	rest disable fabric interface  leaf1-b  ${leaf1b_spine1_intf0}
 	sleep  2     
  	rest verify forwarding rack lag  leaf0-a  ${rack1_name}  ${leaf0a_spine0_intf0}  
@@ -150,7 +150,7 @@ verify rack1 connectivity ,when link down from leaf1b-spine1
 	rest verify forwarding rack lag  spine1  ${rack2_name}  ${spine1_leaf2b_intf0} 
 
 verify rack1 connectivity, when link down leaf1b-spine1 and leaf1a-spine1
-	[Tags]  Fabric  feature    
+	[Tags]  Fabric  feature  IronHorse    
 	rest disable fabric interface  leaf1-a  ${leaf1a_spine1_intf0}
 	sleep  2
 	rest disable fabric interface  leaf1-b  ${leaf1b_spine1_intf0}
@@ -231,7 +231,7 @@ verify rack1 connectivity, when link down leaf1b-spine1 and leaf1a-spine1
 	rest verify forwarding rack lag  spine1  ${rack2_name}  ${spine1_leaf2b_intf0}	  	
 
 verify lag entry when rack0 leaf0b switch lost connectivity to rack1 completely.
-	[Tags]  Fabric  feature   
+	[Tags]  Fabric  feature  IronHorse   
 	rest disable fabric interface  leaf1-b  ${leaf1b_spine1_intf0}
 	sleep  2
 	rest disable fabric interface  leaf0-b  ${leaf0b_spine0_intf0}
@@ -318,7 +318,7 @@ verify lag entry when rack0 leaf0b switch lost connectivity to rack1 completely.
 	rest verify forwarding rack lag  spine1  ${rack2_name}  ${spine1_leaf2b_intf0}	  	
 	
 Tear down config and topology
-	[Tags]  Fabric  feature           
+	[Tags]  Fabric  feature  IronHorse           
     delete fabric switch  
     rest delete tenant  t1
     base suite teardown

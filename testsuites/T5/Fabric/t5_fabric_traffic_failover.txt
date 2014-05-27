@@ -19,7 +19,7 @@ Resource         testsuites/T5/t5_physical_variables.txt
 *Test Case
 
 Setup Three Rack Dual Leaf Topology
-	[Tags]  Fabric  feature  
+	[Tags]  Fabric  feature  IronHorse  
 	base suite setup     
     add fabric switch
     bring up h1 bond0
@@ -33,7 +33,7 @@ Setup Three Rack Dual Leaf Topology
 	rest verify fabric link 	
 
 Spine Link Failover/back Test from leaf0-a untagged packet(Using IXIA)
-    [Tags]  Fabric  feature  
+    [Tags]  Fabric  feature  IronHorse  
     rest add tenant  t1
     rest add vns  t1  v1
     rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
@@ -60,7 +60,7 @@ Spine Link Failover/back Test from leaf0-a untagged packet(Using IXIA)
     rest delete tenant  t1               
        
 Spine Link Failover/back test from leaf0-b tagged packet 
-	[Tags]  Fabric  feature   
+	[Tags]  Fabric  feature  IronHorse   
 	rest add tenant  t2
     rest add vns  t2  v2
     rest add interface to vns  t2  v2  leaf0-b  ${leaf0b_ixia_intf}  100
@@ -87,7 +87,7 @@ Spine Link Failover/back test from leaf0-b tagged packet
     rest delete tenant  t2    
 
 Peer link failover between leaf1a to leaf1b
-	[Tags]  Fabric  feature    
+	[Tags]  Fabric  feature  IronHorse    
 	rest add tenant  t2
     rest add vns  t2  v2
     rest add interface to vns  t2  v2  leaf1-a  ${leaf1a_ixia_intf}  -1
@@ -114,7 +114,7 @@ Peer link failover between leaf1a to leaf1b
     rest delete tenant  t2 
 
 Traffic Test between the 2 leaf with single peer link
-	[Tags]  Fabric  feature      
+	[Tags]  Fabric  feature  IronHorse      
 	rest add tenant  t1
     rest add vns  t1  v2
     rest add interface to vns  t1  v2  leaf0-a  ${leaf0a_ixia_intf}  200
@@ -135,7 +135,7 @@ Traffic Test between the 2 leaf with single peer link
     rest delete tenant  t1 
 
 Reboot leaf switch with dual Host connected through lacp (Host5 to Host4)
-	[Tags]  Fabric  feature  
+	[Tags]  Fabric  feature  IronHorse  
 	rest add tenant  t1
 	rest add vns  t1  v1
 	rest add portgroup  p4 
@@ -173,7 +173,7 @@ Reboot leaf switch with dual Host connected through lacp (Host5 to Host4)
    bash execute command  leaf2-b  ofad-ctl autoneg 24
   
 Host Link Failover test with Host6 in Rack2 to Host 4 in Rack1
-	[Tags]  Fabric  feature      
+	[Tags]  Fabric  feature  IronHorse      
 	rest add tenant  t1
 	rest add vns  t1  v1
 	rest add portgroup  p4 
@@ -214,7 +214,7 @@ Host Link Failover test with Host6 in Rack2 to Host 4 in Rack1
     rest delete portgroup  p4  
 
 change portgroup from lacp to static and verify the forwarding
-	[Tags]  Fabric  feature  
+	[Tags]  Fabric  feature  IronHorse  
 	rest add tenant  t1
 	rest add vns  t1  v1
 	rest add portgroup  p4 
@@ -239,7 +239,7 @@ change portgroup from lacp to static and verify the forwarding
     rest delete tenant  t1 
      
 HA failover with lacp host
-	[Tags]  Fabric  feature
+	[Tags]  Fabric  feature  IronHorse
 	rest add tenant  t1
 	rest add vns  t1  v1
 	rest add portgroup  p4 
@@ -264,7 +264,7 @@ HA failover with lacp host
     rest delete tenant  t1 
 
 HA failover with tag traffic forwarding from ixia
-	[Tags]  Fabric  feature
+	[Tags]  Fabric  feature  IronHorse
 	bash execute command  leaf2-a  ofad-ctl autoneg 24
     bash execute command  leaf2-b  ofad-ctl autoneg 24
 	rest add tenant  t2
@@ -284,7 +284,7 @@ HA failover with tag traffic forwarding from ixia
     rest delete tenant  t2    
 
 Tear down config and Topology
-	[Tags]  Fabric  feature  
+	[Tags]  Fabric  feature  IronHorse  
     delete fabric switch  
     rest delete portgroup  p4
     rest delete portgroup  p6
