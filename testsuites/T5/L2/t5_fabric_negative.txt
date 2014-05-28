@@ -379,16 +379,10 @@ T5 test setup
 	sleep  10
 	
 bring up 1 gig interface
-	bash execute command  leaf0-a  ofad-ctl autoneg 24
 	bash execute command  leaf0-a  ofad-ctl autoneg 25
 	bash execute command  leaf0-a  ofad-ctl autoneg 26
-	bash execute command  leaf0-b  ofad-ctl autoneg 24
-	bash execute command  leaf1-a  ofad-ctl autoneg 24
 	bash execute command  leaf1-a  ofad-ctl autoneg 25
 	bash execute command  leaf1-a  ofad-ctl autoneg 26
-	bash execute command  leaf1-b  ofad-ctl autoneg 24
-	bash execute command  leaf2-a  ofad-ctl autoneg 24
-	bash execute command  leaf2-b  ofad-ctl autoneg 24
 
 bring up h1 bond0
 	bash init intf  h1  bond0.10
