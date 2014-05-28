@@ -4,7 +4,7 @@ Suite Setup      base suite setup
 Suite Teardown   base suite teardown
 Test Setup       base test setup
 Test Teardown    base test teardown
-Force Tags       T5 
+Force Tags       IronHorse
 Library          keywords/BsnCommon.py
 Library          keywords/Controller.py
 Library			 keywords/Mininet.py
@@ -58,7 +58,7 @@ T2.1 first boot of controller in standalone via static IP after boot factory def
   	
 	Verification local node config      c1   ${namec1}   ${ipc1}   ${mask}   ${gw}   ${dns}   ${domain} 	
   	
-	[Tags] 	sanity  firstboot    
+	[Tags] 	sanity  feature  firstboot   singlenode
 
 T2.2 Test first boot of controller menu node for standalone
 	cli_boot_factory_default	c1
@@ -73,7 +73,7 @@ T2.2 Test first boot of controller menu node for standalone
 	first_boot_controller_menu_name                 c1  ${namec1}
 	first_boot_controller_menu_apply                c1
  
-	[Tags] 	sanity  firstboot
+	[Tags] 	sanity  feature  firstboot   singlenode
 
  
 T2.3 Verify with invalid DNS server IP address
@@ -91,7 +91,7 @@ T2.3 Verify with invalid DNS server IP address
 	first_boot_controller_menu_dnsserver            c1   ${dns}   
 	first_boot_controller_menu_apply                c1	
     
-	[Tags] 	feature     firstboot   JIRA-BSC-5031   
+	[Tags] 	full  feature  firstboot   singlenode   JIRA-BSC-5031   
  
  
 T2.4 Verify with invalid mask
@@ -107,7 +107,7 @@ T2.4 Verify with invalid mask
 	first_boot_controller_menu_prefix               c1   ${mask}    
  	first_boot_controller_menu_apply                c1	
     
-	[Tags] 	feature   firstboot     JIRA-BSC-5032    
+	[Tags] 	full  feature  firstboot   singlenode     JIRA-BSC-5032    
  
   
 T2.5 Verify with invalid IP
@@ -125,7 +125,7 @@ T2.5 Verify with invalid IP
 	first_boot_controller_menu_IP                   c1   ${ipc1}/${mask}  			 
 	first_boot_controller_menu_apply                c1	
     
-	[Tags] 	feature   firstboot  JIRA-BSC-5031    
+	[Tags] 	full  feature  firstboot   singlenode  JIRA-BSC-5031    
 
 T2.6 Test first boot of controller menu cluster for standalone
 	cli_boot_factory_default	c1
@@ -137,7 +137,7 @@ T2.6 Test first boot of controller menu cluster for standalone
 	first_boot_controller_menu_cluster_passwd   	c1  adminadmin
  	first_boot_controller_menu_apply                c1
  
-	[Tags] 	feature  firstboot   
+	[Tags] 	full  feature  firstboot   singlenode   
 
 
 T2.7 Test first boot of controller menu update cluster  
@@ -147,13 +147,12 @@ T2.7 Test first boot of controller menu update cluster
 	first_boot_controller_initial_cluster_setup 	c1  no   
 	first_boot_controller_menu_cluster_option_apply         c1    	 
  
-	[Tags] 	sanity     firstboot   
+	[Tags] 	full  feature  firstboot   singlenode  
 		
 T2.8 Test first boot of controller join cluster with same ip and itself
  	log   "10.192.105.30, SAME AS Local IP Address"
  	
-	[Tags] 	sanity  Maunal    firstboot 	 
-	
+	[Tags]  full  feature  firstboot   singlenode  Maunal   
 	
 
 T2.9 Test first boot of controller menu invalid cluster name
@@ -169,7 +168,7 @@ T2.9 Test first boot of controller menu invalid cluster name
 	first_boot_controller_menu_cluster_name         c1     name=MY.T5
 	first_boot_controller_menu_apply                c1
 		 			
-	[Tags] 	sanity     firstboot 	 
+	[Tags] 	full   feature  firstboot   singlenode	 
  
 
 T2.10 Test first boot of controller menu reset and start over for standalone
@@ -183,7 +182,7 @@ T2.10 Test first boot of controller menu reset and start over for standalone
  
 	first_boot_controller_menu_apply                c1
  
-	[Tags] 	sanity     firstboot 	 
+	[Tags] 	full  feature  firstboot   singlenode	 
 
  
 T2.11 Verify the behavior if user hits Ctrl+C during various stages of the first boot process
@@ -196,6 +195,6 @@ T2.11 Verify the behavior if user hits Ctrl+C during various stages of the first
  	first_boot_controller_menu_apply                c1   	
  	log  need to care the ctl_c after the apply
  	    
-	[Tags] 	feature   firstboot    JIRA-BSC_5064
+	[Tags] 	full  feature  firstboot   singlenode    JIRA-BSC_5064
 
   
