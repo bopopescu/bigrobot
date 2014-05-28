@@ -955,7 +955,7 @@ class Test(object):
                         % name)
             return
 
-        helpers.log("Setting up controllers - before clean config")
+        helpers.log("Setting up controllers - before clean-config")
 
         self.controller_cli_show_version(name)
         self.setup_controller_firewall_allow_rest_access(name)
@@ -972,7 +972,7 @@ class Test(object):
             #            % name)
             return
 
-        helpers.log("Setting up controllers - after clean config")
+        helpers.log("Setting up controllers - after clean-config")
         # For now it's just a placeholder...
 
     def setup_switch_pre_clean_config(self, name):
@@ -988,7 +988,7 @@ class Test(object):
             return
 
         if helpers.is_switchlight(n.platform()):
-            helpers.log("Setting up switches (SwitchLight) - before clean config")
+            helpers.log("Setting up switches (SwitchLight) - before clean-config")
             self.teardown_switch(name)
 
     def setup_switch_post_clean_config(self, name):
@@ -1004,7 +1004,7 @@ class Test(object):
             return
 
         if helpers.is_switchlight(n.platform()):
-            helpers.log("Setting up switches (SwitchLight) - after clean config")
+            helpers.log("Setting up switches (SwitchLight) - after clean-config")
             for controller in ('c1', 'c2'):
                 c = self.topology(controller, ignore_error=True)
                 if c:
@@ -1039,12 +1039,7 @@ class Test(object):
                     self.setup_switch_pre_clean_config(key)
 
             for key in params:
-                n = self.node(key)
-                if (helpers.is_controller(key) and helpers.is_t5(n.platform())
-                    and self.is_master_controller(key)):
-                    helpers.log("Running clean config on T5 controller '%s'"
-                                " (establishing baseline config setup)" % key)
-                    self.t5_clean_configuration(key)
+                self.clean_config(key)
 
             for key in params:
                 if helpers.is_controller(key):
@@ -1097,6 +1092,22 @@ class Test(object):
                 self.teardown_switch(key)
         helpers.debug("Test object teardown ends.%s"
                       % br_utils.end_of_output_marker())
+
+    def clean_config(self, name):
+        n = self.node(name)
+        if helpers.bigrobot_test_clean_config().lower() == 'false':
+            helpers.log("Env BIGROBOT_TEST_CLEAN_CONFIG is False - bypassing"
+                        " clean-config")
+            return True
+
+        helpers.log("Running clean-config on devices in topology")
+        if (helpers.is_controller(name) and helpers.is_t5(n.platform())
+            and self.is_master_controller(name)):
+
+            helpers.log("Running clean-config on T5 controller '%s'"
+                        " (establishing baseline config setup)" % name)
+            self.t5_clean_configuration(name)
+        return True
 
     def t5_clean_configuration(self, name):
         '''
