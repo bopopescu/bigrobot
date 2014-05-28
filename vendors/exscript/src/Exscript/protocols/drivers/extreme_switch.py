@@ -14,6 +14,9 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 """
 A driver for Extreme Networks switch. This was borrowed from bsn_switch.py.
+Issues:
+- What is ExtremeXOS' equivalence to 'term len 0'? Right now pagination is
+  not handled correctly which may cause script to hang.
 """
 import re
 from Exscript.protocols.drivers.driver import Driver
