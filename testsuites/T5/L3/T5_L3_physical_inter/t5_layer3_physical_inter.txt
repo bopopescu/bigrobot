@@ -41,8 +41,8 @@ Add and delete default route on tenant
 	[Tags]										sanity	
 
 Add and delete static route on tenant
-	Add and delete static route on tenant
-	[Tags]			feature						sanity	
+	manual passed
+	[Tags]			manual        feature						sanity	
 
 Add and delete more specific route on tenant over existing static route
 	Add and delete more specific route on tenant over existing static route
@@ -205,12 +205,12 @@ L3 inter tenant shutdown and bringup both leaf switch in a dual tor setup
 	[Tags]			feature			
 
 L3 inter tenant shutdown and bringup both spine switch 
-	L3 inter tenant shutdown and bringup a spine switch
+	L3 inter tenant shutdown and bringup both spine switch
 	[Tags]			feature			
 
 L3 inter tenant destroy active controller VM from KVM
-	L3 inter tenant destroy active controller VM from KVM
-	[Tags]			feature		BVS-1695	
+	manual
+	[Tags]			manual            feature		BVS-1695	
 
 L3 inter tenant destroy standby controller VM from KVM
 	manual passed
