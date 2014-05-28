@@ -434,8 +434,8 @@ Test IXIA
     [Tags]  traffic  bigtap
 
 31_Basic L3 Add Hosts and Stop Hosts with chk Arp Resolution for Gateways
-	${H1}=  L3 add host  src_ip=${src_ip}  gw_ip=100.1.1.1  port_name=a
-	${H2}=  L3 add host  src_ip=${dst_ip}  gw_ip=100.1.1.2  port_name=b
+	${H1}=  L3 add host  src_ip=${src_ip}  gw_ip=${dst_ip}  port_name=a
+	${H2}=  L3 add host  src_ip=${dst_ip}  gw_ip=${src_ip}  port_name=b
 	L3 start hosts  port_name=a
 	L3 start hosts  port_name=b
 	${result}=  L3 chk gw arp
