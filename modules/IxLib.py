@@ -741,19 +741,29 @@ class Ixia(object):
         '''
         ix_handle = self._handle
         ix_ports = [port for port in self._port_map_list.values()]
-        s_mac = kwargs.get('src_mac', '00:11:23:00:00:01')
-        d_mac = kwargs.get('dst_mac', '00:11:23:00:00:02')
+        src_mac = kwargs.get('src_mac', '00:11:23:00:00:01')
+        dst_mac = kwargs.get('dst_mac', '00:11:23:00:00:02')
+        dst_mac_step = kwargs.get('dst_mac_step', '00:00:00:00:00:01')
+        src_mac_step = kwargs.get('src_mac_step', '00:00:00:00:00:01')
         d_cnt = kwargs.get('d_cnt', 1)
         s_cnt = kwargs.get('s_cnt', 1)
-        d_step = kwargs.get('d_step', '00:00:00:00:00:01')
-        s_step = kwargs.get('s_step', '00:00:00:00:00:01')
-        s_ip = kwargs.get('src_ip', '20.0.0.1')
-        d_ip = kwargs.get('dst_ip', '20.0.0.2')
-        gw = kwargs.get('gw_ip', None)
-        port_name = kwargs.get('ixia_port', None)
+        ip_type = 'ipv4'
+
+        src_ip = kwargs.get('src_ip', '20.0.0.1')
+        src_ip_step = kwargs.get('src_ip_step', '0.0.0.1')
+        src_gw_ip = kwargs.get('gw_ip', '20.0.0.2')
+        src_gw_step = kwargs.get('src_gw_step', '0.0.1.0')
+
+        dst_ip = kwargs.get('dst_ip', '20.0.0.2')
+        dst_gw_ip = kwargs.get('dst_gw', '20.0.0.1')
+        dst_gw_step = kwargs.get('src_gw_step', '0.0.1.0')
+        dst_ip_step = kwargs.get('dst_ip_step', '0.0.0.1')
+
+
+        port_name = kwargs.get('port_name', None)
         ix_tcl_server = self._tcl_server_ip
 
-        if ix_tcl_server is None or ix_ports is None or s_mac is None or d_mac is None:
+        if ix_tcl_server is None or ix_ports is None:
             helpers.warn('Please Provide Required Args for IXIA_L2_ADD helper method !!')
             raise IxNetwork.IxNetError('Please provide Required Args for IXIA_L2_ADD helper method !!')
         get_version = ix_handle.getVersion()
@@ -785,7 +795,11 @@ class Ixia(object):
             raise IxNetwork.IxNetError('Please Provide Ixia Port on which to create IP Host !!')
         else:
             # Create Ether Device with IpDevices:
-            (ip_devices, mac_devices) = self.ix_create_device_ethernet_ip([self._topology[port_name]], s_mac, s_ip, gw)
+            create_topo = [self._topology[port_name]]
+
+            (ip_devices, mac_devices) = self.ix_create_device_ethernet_ip(create_topo, s_cnt, d_cnt, src_mac, dst_mac, src_mac_step,
+                                                                      dst_mac_step, src_ip, dst_ip, src_gw_ip, dst_gw_ip, src_ip_step,
+                                                                      dst_ip_step, src_gw_step, dst_gw_step, ip_type=ip_type)
             helpers.log('Created Mac Devices with corrsponding Topos ...')
             helpers.log ("Success Creating Ip Devices !!!")
             return ip_devices
@@ -1048,6 +1062,36 @@ class Ixia(object):
         else:
             self._handle.execute('start', self._topology[port_name])
             helpers.log('Successfully Started L3 Hosts on Ixia Port : %s' % str(self._port_map_list[port_name]))
+        return True
+
+    def ix_chk_arp(self, ip_type="ipv4"):
+        for port, topo in self._topology.iteritems():
+            i = 0
+            while True:
+                i = i + 1
+                device1 = self._handle.getList(self._topology[port], 'deviceGroup')
+                if len(device1) == 0:
+                    helpers.log(' no devices created for this Port , skipping Arp resolution')
+                    break
+                time.sleep(1)
+                mac_device1 = self._handle.getList(device1[0], 'ethernet')
+                ip_device1 = self._handle.getList(mac_device1[0], ip_type)
+                resolved_mac = self._handle.getAttribute(ip_device1[0], '-resolvedGatewayMac')
+                helpers.log ('Sleeping 5 sec ..for Arps to get resolved !')
+                time.sleep(1)  # Sleep for the gw arp to get Resolved
+                helpers.log('Successfully Started L3 Hosts on Ixia Port : %s' % str(topo))
+                helpers.log(' Resolved MAC for Gw : %s' % str(resolved_mac))
+                match = re.match(r'.*Unresolved*.', resolved_mac[0])
+                if match:
+                    if i < 10:
+                        continue
+                    else:
+                        raise IxNetwork.IxNetError('Arp for GW not Resolved on port : %s after 10 trys so cannot send L3 Traffic!!' % port)
+                        return False
+                else:
+                    helpers.log('Arp Successfully resolved for gw on port %s !!' % port)
+                    break
+                helpers.log (' Resolved MAC for Gw : %s' % str(resolved_mac))
         return True
 
     def ix_stop_hosts(self, port_name):
