@@ -4311,6 +4311,40 @@ class T5Platform(object):
     def cli_walk_command(self, command, cmd_argument_count, cmd_argument=None, soft_error=False):
         '''
             Execute CLI walk on controller
+            Arguments:
+            | command | Command to be executed |
+            | cmd_argument_count | Number of lines in command help |
+            | cmd_argument | Specific arguments that you want the function to look for in the command help|
+            
+            Description:
+            This function checks for couple of things:
+            | 1 | Number of lines in help output is what user has specified |
+            | 2 | The CLI command does not have '<cr> <cr>' in its help output|
+            | 3 | The CLI command is not missing a help string for some sub command |
+            | 4 | if user has specified one or more arguments, those arguments are present in the help string| 
+            
+            Example:
+            |cli walk command |  show switch all | 6 | |
+            |cli walk command |  show tenant | 14 | tenant1 tenant2 tenant3|
+            |cli walk command |  show switch | 9 | leaf0-a leaf0-b spine0|
+            
+            example output of command:
+            kk-mcntrlr-c1> show switch <====== Here number of lines are 13, but ideally you should see only 9. (this would be an error)
+                Keyword Choices:
+                 <cr>                            Show fabric information for selected switch
+                 all                             Show fabric information for selected switch
+                Switch Name:Enter a switch name:Name of the switch.
+                The field here primarily is a weak reference to that configured
+                under core/switch-config/name.
+                 leaf0-a                         Switch Name selection of
+                 leaf0-b                         Switch Name selection of
+                 spine0                          Switch Name selection of
+                core/proxy/controller/dpid:MAC Address
+                core/proxy/environment/dpid:MAC Address
+                core/proxy/inventory/dpid:MAC Address
+                switch-name:Switch Name Selection:Switch Name selection
+            kk-mcntrlr-c1>
+            
         '''
         try:
             t = test.Test()
