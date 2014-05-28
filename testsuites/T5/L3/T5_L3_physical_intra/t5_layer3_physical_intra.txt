@@ -829,25 +829,34 @@ L3 intra tenant traceroute
     BASH ifup intf                              h6                              bond0           
     REST add portgroup to vns                   X                               X1                      ${leaf2_pc1}            -1
     REST add portgroup to vns                   X                               X2                      ${leaf2_pc2}            -1
-    REST add interface to vns                   X                               X1                      ${leaf0_a}              ${ixia1}                -1
-    REST add interface to vns                   X                               X2                      ${leaf1_a}              ${ixia3}                -1
     BASH add ip address                         h5                              10.251.1.11/24          bond0   
     BASH add ip address                         h6                              10.251.2.11/24          bond0
     BASH add route                              h5                              10.251.2.0/24           10.251.1.1
     BASH add route                              h6                              10.251.1.0/24           10.251.2.1
     sleep                                       5   
-    ${result} =                                 BASH                            h5                      traceroute -n -m 5 10.251.1.1 
-    Should Contain                              ${result}                       "1  10.251.1.1 (10.251.1.1)"
-    ${result} =                                 BASH                            h5                      traceroute -n -m 5 -I 10.251.1.1 
-    Should Contain                              ${result}                       "1  10.251.1.1  "
-    ${result} =                                 BASH                            h5                      traceroute -n -m 5 10.251.2.1 
-    Should Contain                              ${result}                       "1  10.251.2.1 (10.251.2.1)"
-    ${result} =                                 BASH                            h5                      traceroute -n -m 5 -I 10.251.2.1 
-    Should Contain                              ${result}                       "1  10.251.2.1  "
-    ${result} =                                 BASH                            h5                      traceroute -n -m 5 10.251.3.1 
-    Should Contain                              ${result}                       "1  10.251.3.1 (10.251.3.1)"
-    ${result} =                                 BASH                            h5                      traceroute -n -m 5 -I 10.251.3.1 
-    Should Contain                              ${result}                       "1  10.251.3.1  "
+    ${string} =                                 BASH run command                h5                      traceroute -n -m 5 10.251.1.1
+    ${result} =                                 Set Variable                    ${string[1]} 
+    Should Contain                              ${result}                       \ 1\ \ 10.251.1.1 
+    ${string} =                                 BASH run command                h5                      traceroute -n -m 5 -I 10.251.1.1 
+    ${result} =                                 Set Variable                    ${string[1]} 
+    Should Contain                              ${result}                       \ 1\ \ 10.251.1.1 
+    ${string} =                                 BASH run command                h5                      traceroute -n -m 5 10.251.2.1 
+    ${result} =                                 Set Variable                    ${string[1]} 
+    Should Contain                              ${result}                       \ 1\ \ 10.251.2.1 
+    ${string} =                                 BASH run command                h5                      traceroute -n -m 5 -I 10.251.2.1 
+    ${result} =                                 Set Variable                    ${string[1]} 
+    Should Contain                              ${result}                       \ 1\ \ 10.251.2.1 
+    ${string} =                                 BASH run command                h5                      traceroute -n -m 5 10.251.3.1 
+    ${result} =                                 Set Variable                    ${string[1]} 
+    Should Contain                              ${result}                       \ 1\ \ 10.251.3.1 
+    ${string} =                                 BASH run command                h5                      traceroute -n -m 5 -I 10.251.3.1 
+    ${result} =                                 Set Variable                    ${string[1]} 
+    Should Contain                              ${result}                       \ 1\ \ 10.251.3.1  
+    ${string} =                                 BASH run command                h5                      traceroute -n -m 5 -I 10.251.2.11 
+    ${result} =                                 Set Variable                    ${string[1]} 
+    Should Contain                              ${result}                       \ 1\ \ 10.251.1.1  
+    ${result} =                                 Set Variable                    ${string[2]} 
+    Should Contain                              ${result}                       \ 2\ \ 10.251.2.11  
     BASH delete route                           h5                              10.251.2.0/24           10.251.1.1
     BASH delete route                           h6                              10.251.1.0/24           10.251.2.1
 
@@ -872,24 +881,21 @@ L3 intra tenant dhcp relay on same vns as dhcp server with relay enabled
 	REST add portgroup to vns					Y								Y1						${leaf2_pc1}			-1
 	REST add dhcp relay							Y								Y1						10.252.1.9
 	REST enable dhcp relay						Y								Y1	
-	sleep										10
+	sleep										5
 	${h1_ip} = 									BASH get interface ipv4			h1						bond0				
 	Should Contain								${h1_ip}						10.252.1.9	
 	${h1_mac} =									BASH get intf mac				h1						bond0
-	###### hack to force host to resolve gateway, by right, vrf should attempt to resolve dhcp-server mac address and discover its endpoint but that is not happening
-	BASH ping									h1 								10.252.1.1				count=5
-	${result} = 								REST show endpoints mac			${h1_mac}
-	Should Not Be Empty							${result}
-	sleep										1
-	${value} = 									BASH verify arp					h1						10.252.1.1
-	Should Be True								${value} 		
-	sleep										1
 	${value} = 									BASH release dhcpv4 address		h5						bond0
 	Should Be True								${value}
 	sleep										1
 	${ipAddr} = 								BASH renew dhcpv4 address		h5						bond0
 	Should Not Be Empty							${ipAddr}
-	sleep										1
+    ${result} =                                 REST show endpoints mac         ${h1_mac}
+    Should Not Be Empty                         ${result}
+    sleep                                       1
+    ${value} =                                  BASH verify arp                 h1                      10.252.1.1
+    Should Be True                              ${value}        
+    sleep                                       1
 	BASH ping									h1								${ipAddr}				count=10
 	${value} = 									BASH verify arp					h1						${ipAddr}
 	Should Be True								${value} 		
@@ -928,14 +934,6 @@ L3 intra tenant dhcp relay on same vns as dhcp server without relay enabled
 	${h1_ip} = 									BASH get interface ipv4			h1						bond0				
 	Should Contain								${h1_ip}						10.252.1.9	
 	${h1_mac} =									BASH get intf mac				h1						bond0
-	###### hack to force host to resolve gateway, by right, vrf should attempt to resolve dhcp-server mac address and discover its endpoint but that is not happening
-	BASH ping									h1 								10.252.1.1				count=5
-	${result} = 								REST show endpoints mac			${h1_mac}
-	Should Not Be Empty							${result}
-	sleep										1
-	${value} = 									BASH verify arp					h1						10.252.1.1
-	Should Be True								${value} 		
-	sleep										1
 	${value} = 									BASH release dhcpv4 address		h5						bond0
 	Should Be True								${value}
 	sleep										1
@@ -970,38 +968,28 @@ L3 intra tenant dhcp relay on same rack
 	BASH ifup intf								h1								bond0
 	BASH add ip address							h1								10.252.1.9/24			bond0					
 	BASH start service							h1								isc-dhcp-server
-	sleep								1
+	sleep								        1
 	${value} = 									BASH check service status		h1						isc-dhcp-server
 	Should Contain								${value}						is started
-	sleep								1
+	sleep								        1
 	REST add portgroup to vns					Y								Y1						${leaf0_pc1}			-1
 	REST add portgroup to vns					Y								Y3						${leaf0_pc2}			-1
 	BASH add route								h1								10.252.3.0/24			10.252.1.1
 	REST add dhcp relay							Y								Y3						10.252.1.9
 	REST enable dhcp relay						Y								Y3	
-	sleep								5
+	sleep								        5
 	${h1_ip} = 									BASH get interface ipv4			h1						bond0				
-#	Should Be Equal As Strings					${h1_ip}						10.252.1.9	
 	Should Contain								${h1_ip}						10.252.1.9	
 	${h1_mac} =									BASH get intf mac				h1						bond0
-	###### another hac to overcome jira PAN 726
-	BASH delete arp								h1								10.252.1.1
-	${value} = 									BASH verify arp					h1						10.252.1.1
-	Should Not Be True							${value} 		
-	###### hack to force host to resolve gateway, by right, vrf should attempt to resolve dhcp-server mac address and discover its endpoint but that is not happening
-	BASH ping									h1 								10.252.1.1				count=5
-	${result} = 								REST show endpoints mac			${h1_mac}
-	Should Not Be Empty							${result}
-	sleep								1
-	${value} = 									BASH verify arp					h1						10.252.1.1
-	Should Be True								${value} 		
-	sleep								1
 	${value} = 									BASH release dhcpv4 address		h2						bond0
 	Should Be True								${value}
-	sleep								1
+	sleep								        1
 	${ipAddr} = 								BASH renew dhcpv4 address		h2						bond0
 	Should Not Be Empty							${ipAddr}
-	sleep								5
+	sleep								        5
+    ${value} =                                  BASH verify arp                 h1                      10.252.1.1
+    Should Be True                              ${value}        
+    sleep                                       1
 	BASH ping									h1								${ipAddr}				count=10
 	${value} = 									BASH verify arp					h1						10.252.1.1
 	Should Be True								${value} 		
@@ -1029,10 +1017,10 @@ L3 intra tenant dhcp relay with circuit id on same rack
 	BASH ifup intf								h1								bond0
 	BASH add ip address							h1								10.252.1.9/24			bond0					
 	BASH start service							h1								isc-dhcp-server
-	sleep								1
+	sleep								        1
 	${value} = 									BASH check service status		h1						isc-dhcp-server
 	Should Contain								${value}						is started
-	sleep								1
+	sleep								        1
 	REST add portgroup to vns					Y								Y1						${leaf0_pc1}			-1
 	REST add portgroup to vns					Y								Y2						${leaf0_pc2}			-1
 	BASH add route								h1								10.252.2.0/24			10.252.1.1
@@ -1040,19 +1028,12 @@ L3 intra tenant dhcp relay with circuit id on same rack
 	REST add dhcprelay circuitid				Y								Y2						&#!ten Y vns Y2
 	REST enable dhcp relay						Y								Y2	
 	sleep										5
-	###### hack to force host to resolve gateway, by right, vrf should attempt to resolve dhcp-server mac address and discover its endpoint but that is not happening
-	BASH ping									h1 								10.252.1.1				count=5
-	sleep								1
-	${value} = 									BASH verify arp					h1						10.252.1.1
-	Should Be True								${value} 		
-	sleep								1
 	${value} = 									BASH release dhcpv4 address		h2						bond0
 	Should Be True								${value}
-	sleep								1
+	sleep								        1
 	${ipAddr} = 								BASH renew dhcpv4 address		h2						bond0
-#	Should Not Be True							'${ipAddr}' == '' 
 	Should Not Be Empty							${ipAddr}
-	sleep								5
+	sleep								        5
 	BASH ping									h1								${ipAddr}				count=10
 	${value} = 									BASH verify arp					h1						10.252.1.1
 	Should Be True								${value} 		
@@ -3240,7 +3221,18 @@ initialize host
     BASH release dhcpv4 address                 h4                              bond0
     BASH release dhcpv4 address                 h5                              bond0
     BASH release dhcpv4 address                 h6                              bond0
-
+    ${result} =                                 BASH run command                h1                     ifconfig
+    log                                         host1 ifconfig is ${result}
+    ${result} =                                 BASH run command                h2                     ifconfig
+    log                                         host2 ifconfig is ${result}
+    ${result} =                                 BASH run command                h3                     ifconfig
+    log                                         host3 ifconfig is ${result}
+    ${result} =                                 BASH run command                h4                     ifconfig
+    log                                         host4 ifconfig is ${result}
+    ${result} =                                 BASH run command                h5                     ifconfig
+    log                                         host5 ifconfig is ${result}
+    ${result} =                                 BASH run command                h6                     ifconfig
+    log                                         host6 ifconfig is ${result}
 	
 
 
