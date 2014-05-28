@@ -960,7 +960,7 @@ class T5Platform(object):
 
         helpers.test_log("Input arguments: virtual IP = %s" % vip)
         try:
-            c.config("cluster")
+            c.config("controller")
             c.config("virtual-ip %s" % vip)
             assert "Error" not in c.cli_content()
         except:
@@ -1008,7 +1008,7 @@ class T5Platform(object):
         t = test.Test()
         c = t.controller('master')
         try:
-            content = c.cli('show virtual-ip')['content']
+            content = c.cli('show controller virtual-ip')['content']
             output = helpers.strip_cli_output(content)
             lines = helpers.str_to_list(output)
             assert(len(lines) == 3)
@@ -1051,7 +1051,7 @@ class T5Platform(object):
 
         helpers.test_log("Deleting virtual IP address")
         try:
-            c.config("cluster")
+            c.config("controller")
             c.config("no virtual-ip")
         except:
             helpers.test_log(c.cli_content())
