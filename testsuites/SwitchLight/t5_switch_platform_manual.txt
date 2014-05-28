@@ -12,7 +12,7 @@ Library         keywords/SwitchLight.py
 Library         keywords/AppController.py
 Library         keywords/Ixia.py 
 Library         keywords/T5.py   
-Library         keywords_dev/kranti/ironhorse/T5SwitchPlatform.py  
+#Library         keywords_dev/kranti/ironhorse/T5SwitchPlatform.py  
 Library         String
 #Resource        keywords_dev/kranti/ironhorse/snake_traffic_test_variables.txt
 
