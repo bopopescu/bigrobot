@@ -1281,7 +1281,7 @@ T23 Interface tenant permit policy src-vns to any
 
 T24 Interface tenant deny policy src-vns to any
 	[Tags]  feature
-	${src_dict}=  Create Dictionary  segment  ${vnsY1}  tenant-name  ${tenantX} 
+	${src_dict}=  Create Dictionary  segment  ${vnsY1}  tenant-name  ${tenantY} 
 	#${dst_dict}=  Create Dictionary  tenant-name  ${tenantX}
 	rest add policy								X		${tenant1_polname}		
 	rest add policy item example  tenant=${tenantX}  polname=${tenant1_polname}  seqnum=10  action=permit  srcdata=${src_dict}  
@@ -1373,7 +1373,7 @@ T28 Interface tenant deny policy any to dest-tenant
 T29 Interface tenant permit policy any to dest-vns
 	[Tags]  feature
 	#${src_dict}=  Create Dictionary  segment  ${vnsX1}  tenant-name  ${tenantX} 
-	${dst_dict}=  Create Dictionary  segment  ${vnsX1}  
+	${dst_dict}=  Create Dictionary  segment  ${vnsX1}  tenant-name  ${tenantX}
 	rest add policy								X		${tenant1_polname}		
 	rest add policy item example  tenant=${tenantX}  polname=${tenant1_polname}  seqnum=10  action=permit  dstdata=${dst_dict} 
 	rest apply policy on tenant					X			${tenant1_polname}
@@ -1391,7 +1391,7 @@ T29 Interface tenant permit policy any to dest-vns
 T30 Interface tenant deny policy any to dest-vns
 	[Tags]  feature
 	#${src_dict}=  Create Dictionary  segment  ${vnsX1}  tenant-name  ${tenantX} 
-	${dst_dict}=  Create Dictionary  segment  ${vnsX1}  
+	${dst_dict}=  Create Dictionary  segment  ${vnsX1}  tenant-name  ${tenantX}
 	rest add policy								X		${tenant1_polname}		
 	rest add policy item example  tenant=${tenantX}  polname=${tenant1_polname}  seqnum=10  action=deny  dstdata=${dst_dict} 
 	rest apply policy on tenant					X			${tenant1_polname}
@@ -1487,7 +1487,7 @@ T87 Interface tenant deny policy src-ip-port to dest-ip-port
 T88 Interface tenant permit policy src-ip-port to dest-vns
 	[Tags]  smoke  feature
 	${src_dict}=  Create Dictionary  cidr  ${ixia4_ip}  l4-port  ${tcp_port}
-	${dst_dict}=  Create Dictionary  segment  ${vnsX1}
+	${dst_dict}=  Create Dictionary  segment  ${vnsX1}  tenant-name  ${tenantX}
 	rest add policy								X		${tenant1_polname}		
 	rest add policy item example  tenant=${tenantX}  polname=${tenant1_polname}  seqnum=10  action=permit  
 	...								srcdata=${src_dict}  dstdata=${dst_dict}  proto=6
@@ -1603,7 +1603,7 @@ T93 Interface tenant deny policy src-ip-port to any
 T94 Interface tenant permit policy src-tenant to dest-ip-port
 	[Tags]  smoke  feature
 	${src_dict}=  Create Dictionary  tenant-name  ${tenantY}
-	${dst_dict}=  Create Dictionary  cidr  ${ixia4_ip}  l4-port  ${tcp_port}
+	${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}  l4-port  ${tcp_port}
 	rest add policy								X		${tenant1_polname}		
 	rest add policy item example  tenant=${tenantX}  polname=${tenant1_polname}  seqnum=10  action=permit  
 	...								srcdata=${src_dict}  proto=6
@@ -1622,7 +1622,7 @@ T94 Interface tenant permit policy src-tenant to dest-ip-port
 T95 Interface tenant deny policy src-tenant to dest-ip-port
 	[Tags]  smoke  feature
 	${src_dict}=  Create Dictionary  tenant-name  ${tenantY}
-	${dst_dict}=  Create Dictionary  cidr  ${ixia4_ip}  l4-port  ${tcp_port}
+	${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}  l4-port  ${tcp_port}
 	rest add policy								X		${tenant1_polname}		
 	rest add policy item example  tenant=${tenantX}  polname=${tenant1_polname}  seqnum=10  action=deny  
 	...								srcdata=${src_dict}  proto=6
@@ -1641,8 +1641,8 @@ T95 Interface tenant deny policy src-tenant to dest-ip-port
 
 T96 Interface tenant permit policy src-vns to dest-ip-port
 	[Tags]  smoke  feature  T96
-	${src_dict}=  Create Dictionary  segment  ${vnsY1}
-	${dst_dict}=  Create Dictionary  cidr  ${ixia4_ip}  l4-port  ${tcp_port}
+	${src_dict}=  Create Dictionary  segment  ${vnsY1}  tenant-name  ${tenantY}
+	${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}  l4-port  ${tcp_port}
 	rest add policy								X		${tenant1_polname}		
 	rest add policy item example  tenant=${tenantX}  polname=${tenant1_polname}  seqnum=10  action=permit  
 	...								srcdata=${src_dict}  dstdata=${dst_dict}  proto=6
@@ -1660,8 +1660,8 @@ T96 Interface tenant permit policy src-vns to dest-ip-port
 
 T97 Interface tenant deny policy src-vns to dest-ip-port
 	[Tags]  smoke  feature
-	${src_dict}=  Create Dictionary  segment  ${vnsY1}
-	${dst_dict}=  Create Dictionary  cidr  ${ixia4_ip}  l4-port  ${tcp_port}
+	${src_dict}=  Create Dictionary  segment  ${vnsY1}  tenant-name  ${tenantY}
+	${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}  l4-port  ${tcp_port}
 	rest add policy								X		${tenant1_polname}		
 	rest add policy item example  tenant=${tenantX}  polname=${tenant1_polname}  seqnum=10  action=deny  
 	...								srcdata=${src_dict}  dstdata=${dst_dict}  proto=6
@@ -1681,7 +1681,7 @@ T97 Interface tenant deny policy src-vns to dest-ip-port
 T98 Interface tenant permit policy any to dest-ip-port
 	[Tags]  feature
 	#${src_dict}=  Create Dictionary  segment  ${vnsX3}
-	${dst_dict}=  Create Dictionary  cidr  ${ixia4_ip}  l4-port  ${tcp_port}
+	${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}  l4-port  ${tcp_port}
 	rest add policy								X		${tenant1_polname}		
 	rest add policy item example  tenant=${tenantX}  polname=${tenant1_polname}  seqnum=10  action=permit  
 	...								dstdata=${dst_dict}  proto=6
@@ -2040,7 +2040,7 @@ T17 Interface system tenant permit policy src-vns to dest-ip
 T18 Interface system tenant deny policy src-vns to dest-ip
 	[Tags]  feature  systemt
 	${src_dict}=  Create Dictionary  segment  ${vnsY1}  tenant-name  ${tenantY}
-	${dst_dict}=  Create Dictionary  cidr  ${ixia4_ip}
+	${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}
 	rest add policy							${tenant_system}		${tenant2_polname}		
 	rest add policy item example  tenant=${tenant_system}  polname=${tenant2_polname}  seqnum=10  action=deny  srcdata=${src_dict}  dstdata=${dst_dict} 
 	rest apply policy on tenant				${tenant_system}		${tenant2_polname}  ${tenantY}
@@ -2142,7 +2142,7 @@ T23 Interface system tenant permit policy src-vns to any
 
 T24 Interface system tenant deny policy src-vns to any
 	[Tags]  feature  systemt
-	${src_dict}=  Create Dictionary  segment  ${vnsY1}  tenant-name  ${tenantX} 
+	${src_dict}=  Create Dictionary  segment  ${vnsY1}  tenant-name  ${tenantY} 
 	#${dst_dict}=  Create Dictionary  tenant-name  ${tenantX}
 	rest add policy							${tenant_system}		${tenant2_polname}		
 	rest add policy item example  tenant=${tenant_system}  polname=${tenant2_polname}  seqnum=10  action=deny  srcdata=${src_dict}
@@ -2348,7 +2348,7 @@ T87 Interface system tenant deny policy src-ip-port to dest-ip-port
 T88 Interface system tenant permit policy src-ip-port to dest-vns
 	[Tags]  smoke  feature  systemT88
 	${src_dict}=  Create Dictionary  cidr  ${ixia4_ip}  l4-port  ${tcp_port}
-	${dst_dict}=  Create Dictionary  segment  ${vnsX1}
+	${dst_dict}=  Create Dictionary  segment  ${vnsX1}..tenant-name  ${tenantX}
 	rest add policy							${tenant_system}		${tenant2_polname}		
 	rest add policy item example  tenant=${tenant_system}  polname=${tenant2_polname}  seqnum=10  action=permit  
 	...								srcdata=${src_dict}  dstdata=${dst_dict}  proto=6 
@@ -2367,7 +2367,7 @@ T88 Interface system tenant permit policy src-ip-port to dest-vns
 T89 Interface system tenant deny policy src-ip-port to dest-vns
 	[Tags]  smoke  feature  systemt
 	${src_dict}=  Create Dictionary  cidr  ${ixia4_ip}  l4-port  ${tcp_port}
-	${dst_dict}=  Create Dictionary  segment  ${vnsX1}
+	${dst_dict}=  Create Dictionary  segment  ${vnsX1}..tenant-name  ${tenantX}
 	rest add policy							${tenant_system}		${tenant2_polname}		
 	rest add policy item example  tenant=${tenant_system}  polname=${tenant2_polname}  seqnum=10  action=deny  
 	...								srcdata=${src_dict}  dstdata=${dst_dict}  proto=6 
@@ -2483,7 +2483,7 @@ T94 Interface system tenant permit policy src-tenant to dest-ip-port
 T95 Interface system tenant deny policy src-tenant to dest-ip-port
 	[Tags]  smoke  feature  systemt
 	${src_dict}=  Create Dictionary  tenant-name  ${tenantY}
-	${dst_dict}=  Create Dictionary  cidr  ${ixia4_ip}  l4-port  ${tcp_port}
+	${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}  l4-port  ${tcp_port}
 	rest add policy							${tenant_system}		${tenant2_polname}		
 	rest add policy item example  tenant=${tenant_system}  polname=${tenant2_polname}  seqnum=10  action=deny  
 	...								srcdata=${src_dict}  dstdata=${dst_dict}  proto=6 
@@ -2502,7 +2502,7 @@ T95 Interface system tenant deny policy src-tenant to dest-ip-port
 
 T96 Interface system tenant permit policy src-vns to dest-ip-port
 	[Tags]  smoke  feature  T96  systemT96
-	${src_dict}=  Create Dictionary  segment  ${vnsY1}
+	${src_dict}=  Create Dictionary  segment  ${vnsY1}  tenant-name  ${tenantY}
 	${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}  l4-port  ${tcp_port}
 	rest add policy							${tenant_system}		${tenant2_polname}		
 	rest add policy item example  tenant=${tenant_system}  polname=${tenant2_polname}  seqnum=10  action=permit  
@@ -2521,8 +2521,8 @@ T96 Interface system tenant permit policy src-vns to dest-ip-port
 
 T97 Interface system tenant deny policy src-vns to dest-ip-port
 	[Tags]  smoke  feature  systemt
-	${src_dict}=  Create Dictionary  segment  ${vnsY1}
-	${dst_dict}=  Create Dictionary  cidr  ${ixia4_ip}  l4-port  ${tcp_port}
+	${src_dict}=  Create Dictionary  segment  ${vnsY1}  tenant-name  ${tenantY}
+	${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}  l4-port  ${tcp_port}
 	rest add policy							${tenant_system}		${tenant2_polname}		
 	rest add policy item example  tenant=${tenant_system}  polname=${tenant2_polname}  seqnum=10  action=deny  
 	...								srcdata=${src_dict}  dstdata=${dst_dict}  proto=6 
@@ -2542,7 +2542,7 @@ T97 Interface system tenant deny policy src-vns to dest-ip-port
 T98 Interface system tenant permit policy any to dest-ip-port
 	[Tags]  feature  systemt
 	#${src_dict}=  Create Dictionary  segment  ${vnsX3}
-	${dst_dict}=  Create Dictionary  cidr  ${ixia4_ip}  l4-port  ${tcp_port}
+	${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}  l4-port  ${tcp_port}
 	rest add policy							${tenant_system}		${tenant2_polname}		
 	rest add policy item example  tenant=${tenant_system}  polname=${tenant2_polname}  seqnum=10  action=permit  
 	...								dstdata=${dst_dict}  proto=6 
@@ -2562,7 +2562,7 @@ T98 Interface system tenant permit policy any to dest-ip-port
 T99 Interface system tenant deny policy any to dest-ip-port
 	[Tags]  feature  systemt
 	#${src_dict}=  Create Dictionary  segment  ${vnsX3}
-	${dst_dict}=  Create Dictionary  cidr  ${ixia4_ip}  l4-port  ${tcp_port}
+	${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}  l4-port  ${tcp_port}
 	rest add policy							${tenant_system}		${tenant2_polname}		
 	rest add policy item example  tenant=${tenant_system}  polname=${tenant2_polname}  seqnum=10  action=deny  
 	...								dstdata=${dst_dict}  proto=6 
