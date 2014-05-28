@@ -2348,7 +2348,7 @@ T87 Interface system tenant deny policy src-ip-port to dest-ip-port
 T88 Interface system tenant permit policy src-ip-port to dest-vns
 	[Tags]  smoke  feature  systemT88
 	${src_dict}=  Create Dictionary  cidr  ${ixia4_ip}  l4-port  ${tcp_port}
-	${dst_dict}=  Create Dictionary  segment  ${vnsX1}..tenant-name  ${tenantX}
+	${dst_dict}=  Create Dictionary  segment  ${vnsX1}  tenant-name  ${tenantX}
 	rest add policy							${tenant_system}		${tenant2_polname}		
 	rest add policy item example  tenant=${tenant_system}  polname=${tenant2_polname}  seqnum=10  action=permit  
 	...								srcdata=${src_dict}  dstdata=${dst_dict}  proto=6 
@@ -2367,7 +2367,7 @@ T88 Interface system tenant permit policy src-ip-port to dest-vns
 T89 Interface system tenant deny policy src-ip-port to dest-vns
 	[Tags]  smoke  feature  systemt
 	${src_dict}=  Create Dictionary  cidr  ${ixia4_ip}  l4-port  ${tcp_port}
-	${dst_dict}=  Create Dictionary  segment  ${vnsX1}..tenant-name  ${tenantX}
+	${dst_dict}=  Create Dictionary  segment  ${vnsX1}  tenant-name  ${tenantX}
 	rest add policy							${tenant_system}		${tenant2_polname}		
 	rest add policy item example  tenant=${tenant_system}  polname=${tenant2_polname}  seqnum=10  action=deny  
 	...								srcdata=${src_dict}  dstdata=${dst_dict}  proto=6 

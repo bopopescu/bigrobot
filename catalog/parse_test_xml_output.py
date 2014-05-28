@@ -133,11 +133,22 @@ class TestSuite(object):
         self._suite['total_tests'] = len(self.tests())
         return self._suite['total_tests']
 
-    def dump_suite(self, to_json=False):
+    def dump_suite(self, to_file=None, to_json=False):
         if to_json:
-            print(helpers.to_json(self.suite()))
+            if to_file:
+                helpers.file_write_append_once(to_file,
+                                               helpers.to_json(self.suite()))
+            else:
+                print(helpers.to_json(self.suite()))
         else:
-            print(helpers.prettify(self.suite()))
+            if to_file:
+                helpers.file_write_append_once(to_file,
+                                               helpers.prettify(self.suite()))
+            else:
+                print(helpers.prettify(self.suite()))
+
+    def dump_suite_to_file(self, filename, to_json=False):
+        self.dump_suite(filename, to_json)
 
     def dump_tests(self):
         for test in self.tests():
@@ -159,8 +170,11 @@ class TestCatalog(object):
             filename = filename.strip()
 
             if helpers.file_not_empty(filename):
+                print("Reading %s" % filename)
                 suite = TestSuite(filename)
-                suite.dump_suite(to_json=True)
+                suite.dump_suite_to_file(
+                                         "test_suites.json",
+                                         to_json=True)
                 # suite.dump_tests()
                 # print "-----------------------"
                 self._suites.append(suite)
