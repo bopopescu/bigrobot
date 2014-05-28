@@ -4335,6 +4335,12 @@ class T5Platform(object):
                 helpers.test_error("Correct number of arguments not returned", soft_error)
                 return False
 
+            if "<cr> <cr>" in content:
+                helpers.test_error("CLI command has an incorrect help string '<cr> <cr>'", soft_error)
+
+            if "<help missing>" in content:
+                helpers.test_error("CLI command has an mnissing help", soft_error)
+
             if (cmd_argument is not None) :
                 if (' ' in cmd_argument):
                     new_string = cmd_argument.split()
