@@ -185,6 +185,7 @@ helpers.bigtest_path()
 helpers.python_path()
 helpers.bigrobot_test_setup()  # (default=True)
 helpers.bigrobot_test_postmortem()  # (default=True)
+helpers.bigrobot_test_clean_config()  # (default=True)
 helpers.bigrobot_test_pause_on_fail()  # (default=False)
 
 
@@ -404,9 +405,12 @@ def test_command(*args):
                         help="Output directory")
     parser.add_argument('--dryrun', action='store_true', default=False,
                         help="Run the tests without executing the keywords")
-    parser.add_argument('--include_manual_untested',
+    parser.add_argument('--include-manual-untested',
                         action='store_true', default=False,
                         help="Include the tests tagged as 'manual-untested'")
+    parser.add_argument('--disable-clean-config',
+                        action='store_true', default=False,
+                        help="Bypass clean-config during Test initialization")
 
     # Note on --exitonfailure: It will not run subsequent test cases and will
     # simply flag them as failed with the error:
@@ -428,6 +432,9 @@ def test_command(*args):
 
     if args.test:
         print("test_case_names: %s" % args.test)
+
+    if args.disable_clean_config:
+        helpers.bigrobot_test_clean_config('False')
 
     # Comparable to command options:
     #   pybot --loglevel=debug \

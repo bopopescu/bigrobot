@@ -382,3 +382,12 @@ class Host(object):
         n = t.node(node)
         n.sudo("arp -d %s " % ipaddr)
         return True
+
+
+    def bash_run_command(self, node, cmd):
+        t = test.Test()
+        n = t.node(node)
+        content = n.bash("%s " % cmd)['content']
+        str_list = helpers.strip_cli_output(content, to_list=True)
+        return  str_list
+    

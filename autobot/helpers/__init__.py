@@ -475,6 +475,15 @@ def bigrobot_test_postmortem(new_val=None, default='True'):
     return _env_get_and_set('BIGROBOT_TEST_POSTMORTEM', new_val, default)
 
 
+def bigrobot_test_clean_config(new_val=None, default='True'):
+    """
+    Category: Get/set environment variables for BigRobot.
+    Set to 'False' to bypass Test clean configuration. Clean_config is run
+    during Test initialization.
+    """
+    return _env_get_and_set('BIGROBOT_TEST_CLEAN_CONFIG', new_val, default)
+
+
 def bigrobot_log_archiver(new_val=None, default='jenkins-w4.bigswitch.com'):
     """
     Category: Get/set environment variables for BigRobot.
