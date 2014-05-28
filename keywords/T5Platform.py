@@ -382,11 +382,13 @@ class T5Platform(object):
             threadCounter += 1
         elif(failoverMode == "activeReboot"):
             threadList.append("thread" + '%s' % threadCounter)
-            threadList[len(threadList)-1] = T5PlatformThreads(threadCounter, "activeReboot", "")
+            #threadList[len(threadList)-1] = T5PlatformThreads(threadCounter, "activeReboot", "")
+            threadList[len(threadList)-1] = T5PlatformThreads(threadCounter, "activeReboot")
             threadCounter += 1
         elif(failoverMode == "standbyReboot"):
             threadList.append("thread" + '%s' % threadCounter)
-            threadList[len(threadList)-1] = T5PlatformThreads(threadCounter, "standbyReboot", "")
+            #threadList[len(threadList)-1] = T5PlatformThreads(threadCounter, "standbyReboot", "")
+            threadList[len(threadList)-1] = T5PlatformThreads(threadCounter, "standbyReboot")
             threadCounter += 1
 
 
