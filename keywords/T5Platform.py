@@ -4329,22 +4329,29 @@ class T5Platform(object):
             |cli walk command |  show switch | 9 | leaf0-a leaf0-b spine0|
             
             example output of command:
-            kk-mcntrlr-c1> show switch <====== Here number of lines are 13, but ideally you should see only 9. (this would be an error)
-                Keyword Choices:
-                 <cr>                            Show fabric information for selected switch
-                 all                             Show fabric information for selected switch
-                Switch Name:Enter a switch name:Name of the switch.
-                The field here primarily is a weak reference to that configured
-                under core/switch-config/name.
-                 leaf0-a                         Switch Name selection of
-                 leaf0-b                         Switch Name selection of
-                 spine0                          Switch Name selection of
-                core/proxy/controller/dpid:MAC Address
-                core/proxy/environment/dpid:MAC Address
-                core/proxy/inventory/dpid:MAC Address
-                switch-name:Switch Name Selection:Switch Name selection
+            kk-mcntrlr-c1> show switch <====== Here number of lines are 13, but ideally you should see only 9. (this would be an error). THIS WOULD BE CAUGHT
+            Keyword Choices:
+                <cr>                            Show fabric information for selected switch
+                all                             Show fabric information for selected switch
+            Switch Name:Enter a switch name:Name of the switch.
+            The field here primarily is a weak reference to that configured
+            under core/switch-config/name.
+                leaf0-a                         Switch Name selection of
+                leaf0-b                         Switch Name selection of
+                spine0                          Switch Name selection of
+            core/proxy/controller/dpid:MAC Address
+            core/proxy/environment/dpid:MAC Address
+            core/proxy/inventory/dpid:MAC Address
+            switch-name:Switch Name Selection:Switch Name selection
             kk-mcntrlr-c1>
             
+            alpha-cont1> show switch all
+            <cr> <cr><================================ THIS WOULD BE CAUGHT
+            <cr>            Show fabric information for selected switch
+            agent-counters  Show counters for various agents on the Switch
+            connections     Show fabric information for selected switch
+            details         Show fabric information for selected switch
+            interface       <help missing> SHOW_INTERFACE_STATS_COMMAND_DESCRIPTION <====THIS WOULD BE CAUGHT           
         '''
         try:
             t = test.Test()
