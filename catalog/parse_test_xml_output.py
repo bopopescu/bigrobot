@@ -30,7 +30,7 @@ authors = {
 
 
 
-def format_robot_timestamp(ts):
+def format_robot_timestamp(ts, is_datestamp=False):
     """
     Robot Framework uses the following timestamp format:
         20140523 16:49:38.051
@@ -42,27 +42,15 @@ def format_robot_timestamp(ts):
         helpers.environment_failure("Incorrect time format: '%s'" % ts)
     (year, month, date, hour, minute, sec, msec) = match.groups()
     hour = int(hour) + 7  # change PST to UTC
-    s = '%s-%s-%sT%s:%s:%s.%sZ' % (year, month, date, hour, minute, sec, msec)
+    if is_datestamp:
+        s = '%s-%s-%s' % (year, month, date)
+    else:
+        s = '%s-%s-%sT%s:%s:%s.%sZ' % (year, month, date, hour, minute, sec, msec)
     return s
 
 
-class TestCase(object):
-    def __init__(self, test_id, name, tags):
-        self._test_id = test_id
-        self._name = name
-        self._tags = tags
-
-    def test_id(self): return self._test_id
-
-    def name(self): return self._name
-
-    def tags(self): return self._tags
-
-    def dump(self):
-        return {'test_id': self.test_id(),
-                'name': self.name(),
-                'tags': self.tags()
-                }
+def format_robot_datestamp(ts):
+    return format_robot_timestamp(ts, is_datestamp=True)
 
 
 class TestSuite(object):
@@ -85,14 +73,18 @@ class TestSuite(object):
     def extract_attributes(self):
         suite = self.data['robot']['suite']
         timestamp = format_robot_timestamp(self.data['robot']['@generated'])
+        datestamp = format_robot_datestamp(self.data['robot']['@generated'])
         self._suite['source'] = helpers.utf8(suite['@source'])
         self._suite['timestamp'] = helpers.utf8(timestamp)
+        self._suite['datestamp'] = helpers.utf8(datestamp)
+        self._suite['build_info'] = None
         self._suite['tests'] = []
-        match = re.match(r'.+bigrobot/(.+)$', self._suite['source'])
+        match = re.match(r'.+bigrobot/(\w+/([\w-]+)/.+)$', self._suite['source'])
         if match:
             self._suite['source_github'] = (
                     'https://github.com/bigswitch/bigrobot/blob/master/'
                      + match.group(1))
+            self._suite['product'] = match.group(2)
         self._suite['name'] = helpers.utf8(suite['@name'])
         if self._suite['source_github'] in authors:
             self._suite['author'] = authors[self._suite['source_github']]
@@ -109,9 +101,22 @@ class TestSuite(object):
                 tags = helpers.utf8(a_test['tags']['tag'])
             else:
                 tags = []
-            test = TestCase(test_id=test_id, name=name, tags=tags)
-            self._suite['tests'].append(test.dump())
-            self._tests.append(test)
+
+            # This should contain the complete list of attributes. Some may
+            # be populated by the Script Catalog while others may be populated
+            # later by Regression execution.
+            test = {'test_id': test_id,
+                    'name': name,
+                    'tags': tags,
+                    'executed': False,
+                    'status': None,
+                    'starttime': None,
+                    'endtime': None,
+                    'duration': None,
+                    'origin_script_catalog': True,
+                    'origin_regression_catalog': False,
+                    }
+            self._suite['tests'].append(test)
 
         self.total_tests()
 
@@ -122,7 +127,7 @@ class TestSuite(object):
         return self._suite['name']
 
     def tests(self):
-        return self._tests
+        return self._suite['tests']
 
     def total_tests(self):
         self._suite['total_tests'] = len(self.tests())
