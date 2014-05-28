@@ -892,7 +892,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
         helpers.test_log("Input arguments: tenant = %s vns name = %s policy name = %s  " % (tenant, vnsname, polname ))
         
         #url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/logical-router/segment-interface' % (tenant)
-        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/logical-router/segment-interface[segment="%s"]' % (tenant, vnsname)
+        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/logical-router' % (tenant)
         try:
             c.rest.patch(url, {"inbound-policy-name": polname})
         except:
@@ -920,7 +920,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
         helpers.test_log("Input arguments: tenant = %s vns name = %s policy name = %s  " % (tenant, vnsname, polname ))
         
         #url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/logical-router/segment-interface' % (tenant)
-        url_remove_policy = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/logical-router/segment-interface[segment="%s"]/inbound-policy-name' % (tenant, vnsname)
+        url_remove_policy = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/logical-router/inbound-policy-name' % (tenant)
         try:
             c.rest.delete(url_remove_policy, {})
         except:
@@ -949,7 +949,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
         helpers.test_log("Input arguments: tenant = %s interface = %s policy name = %s  " % (tenant, intf, polname ))
         
         #url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/logical-router/segment-interface' % (tenant)
-        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/logical-router/tenant-interfaces[tenant-name="%s"]' % (tenant, intf)
+        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/logical-router' % (tenant)
         try:
             c.rest.patch(url, {"inbound-policy-name": polname})
         except:
@@ -977,7 +977,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
         helpers.test_log("Input arguments: tenant = %s interface = %s policy name = %s  " % (tenant, intf, polname ))
         
         #url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/logical-router/segment-interface' % (tenant)
-        url_remove_policy = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/logical-router/tenant-interfaces[tenant-name="%s"]/inbound-policy-name' % (tenant, intf)
+        url_remove_policy = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/logical-router/inbound-policy-name' % (tenant)
         try:
             c.rest.delete(url_remove_policy, {})
         except:
