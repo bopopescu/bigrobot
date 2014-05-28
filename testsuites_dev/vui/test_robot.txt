@@ -222,13 +222,14 @@ Initialize policy vars
     Should be true    ${true}
 
 Display policy vars
-    #[Tags]           skipped
+    [Tags]           skipped
     [Tags]            sanity  feature
     [Documentation]   T1.2
     log               ${POLICY_BM0_IP}
 
 Test run commands
     [Tags]            smoke  Sanity  FEATURE
+    [Tags]           skipped
     #manual-untested
     test run cmd
     [setup]           log  I am in my custom test case setup
