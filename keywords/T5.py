@@ -1127,8 +1127,12 @@ class T5(object):
         '''
         t = test.Test()
         c = t.controller('master')
-        url = '/api/v1/data/controller/applications/bvs/info/stats/segment/stats[name=%s]' % vns
+        if vns is None or vns is "all":
+            url = '/api/v1/data/controller/applications/bvs/info/stats/segment/stats'
+        else:
+            url = '/api/v1/data/controller/applications/bvs/info/stats/segment/stats[name=%s]' % vns
         c.rest.delete(url, {})
+        return True
         
     def rest_verify_vns_rx_stats(self, tenant, vns, frame_cnt, vrange=5):
         ''' Function to verify the VNS stats
@@ -2130,17 +2134,17 @@ class T5(object):
         c = t.controller('master')
         intf_value = int(intf_value)
         vns_value = int(vns_value)
-        url = '/api/v1/data/controller/applications/bvs/config-stats'
-        c.rest.patch(url, {"interface-stats-interval": intf_value})
-        url1 = '/api/v1/data/controller/applications/bvs/config-stats'
-        c.rest.patch(url1, {"segment-stats-interval": vns_value})
+        url = '/api/v1/data/controller/applications/bvs/stats-config'
+        c.rest.patch(url, {"interface-stat-interval": intf_value})
+        url1 = '/api/v1/data/controller/applications/bvs/stats-config'
+        c.rest.patch(url1, {"segment-stat-interval": vns_value})
         c.rest.get(url)
         data = c.rest.content()
-        if int(data[0]["interface-stats-interval"]) == intf_value and int(data[0]["segment-stats-interval"]) == vns_value:
+        if int(data[0]["interface-stat-interval"]) == intf_value and int(data[0]["segment-stat-interval"]) == vns_value:
             helpers.log("Interval value provided is correct")
             return True
         else:
-            helpers.test_failure("Interval value does not match Actual:%d , Expected:%d" % intf_value, int(data["interface-stats-interval"]))
+            helpers.test_failure("Interval value does not match Actual:%d , Expected:%d" % intf_value, int(data["interface-stat-interval"]))
             return False
 
     def rest_verify_host_lag(self, switcha, intf0, switchb, intf1):
