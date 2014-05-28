@@ -229,7 +229,7 @@ Display policy vars
 
 Test run commands
     [Tags]            smoke  Sanity  FEATURE
-    [Tags]           skipped
+    #[Tags]           skipped
     #manual-untested
     test run cmd
     [setup]           log  I am in my custom test case setup

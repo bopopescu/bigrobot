@@ -404,6 +404,9 @@ def test_command(*args):
                         help="Output directory")
     parser.add_argument('--dryrun', action='store_true', default=False,
                         help="Run the tests without executing the keywords")
+    parser.add_argument('--include_manual_untested',
+                        action='store_true', default=False,
+                        help="Include the tests tagged as 'manual-untested'")
 
     # Note on --exitonfailure: It will not run subsequent test cases and will
     # simply flag them as failed with the error:
@@ -415,11 +418,13 @@ def test_command(*args):
 
     include_tags = args.include
     exclude_tags = args.exclude
-    if exclude_tags:
-        exclude_tags.append('skipped')
+
+    if not exclude_tags:
+        exclude_tags = []
+    exclude_tags.append('skipped')
+
+    if not args.include_manual_untested:
         exclude_tags.append('manual-untested')
-    else:
-        exclude_tags = ['skipped', 'manual-untested']
 
     if args.test:
         print("test_case_names: %s" % args.test)
