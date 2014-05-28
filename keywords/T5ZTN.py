@@ -28,13 +28,19 @@ class T5ZTN(object):
         if len(output) != 3:
             return helpers.test_failure("Too many files in images"
                                         " directory - %s" % str(len(output)))
+
+        if (re.match(r'.*internal.*', output[1])
+            or re.match(r'.*internal.*', output[2])):
+            return helpers.test_failure("SL internal image in the bundle!")
+
         helpers.log("Trying to check if SL installer is in %s" % output[2])
-        if not re.match(r'.*switchlight-.*.installer', output[2]):
+        if not re.match(r'.*switchlight-.*release.ztn.*installer', output[2]):
             return helpers.test_failure("SL installer not found")
         helpers.log("Trying to check if SL SWI image is in %s" % output[1])
-        if not re.match(r'.*switchlight-.*.swi', output[1]):
+        if not re.match(r'.*switchlight-.*release-t5.*swi', output[1]):
             return helpers.test_failure("SL SWI image not found")
         helpers.log("Switch Light installer and SWI image are present")
+
         return True
 
     def bash_verify_sl_manifests(self, node='master'):
@@ -406,6 +412,12 @@ class T5ZTN(object):
         startup_config_temp = []
         for startup_config_line in startup_config:
             if not re.match(r'!|^\s*$', startup_config_line):
+                if "ntp sync" in startup_config_line:
+                    helpers.log("Skipping line: %s" % startup_config_line)
+                    continue
+                if "ntp enable" in startup_config_line:
+                    helpers.log("Skipping line: %s" % startup_config_line)
+                    continue
                 startup_config_temp.append(startup_config_line)
                 helpers.log("Keeping line in startup-config: %s"
                             % startup_config_line)
