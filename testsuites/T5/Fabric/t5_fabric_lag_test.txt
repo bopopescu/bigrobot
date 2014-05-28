@@ -18,7 +18,7 @@ Resource         testsuites/T5/t5_physical_variables.txt
 
 *Test Case
 add Three Rack Dual Leaf Topology
-	[Tags]  Fabric  feature          
+	[Tags]  Fabric  feature  IronHorse          
 	base suite setup  
     add fabric switch
     bring up h1 bond0
@@ -31,31 +31,31 @@ add Three Rack Dual Leaf Topology
     rest verify fabric switch all
    
 Verify Fabric Lag formation from leaf node 
-	[Tags]	 Fabric  feature    
+	[Tags]	 Fabric  feature  IronHorse    
 	verify fabric lag   leaf0-a
 	
 verify fabric lag formation from spine node
-	[Tags]	 Fabric  feature    
+	[Tags]	 Fabric  feature  IronHorse    
     verify fabric lag   spine0
 	
 delete the Fabric Role spine and verify the lag from leaf switch 
-	[Tags]	 Fabric  feature    
+	[Tags]	 Fabric  feature  IronHorse    
 	REST delete fabric role  spine0  spine       
     sleep  5 
 	verify fabric lag   leaf0-a
 
 Add the Fabric Role spine back and verify the lag from leaf switch
-	[Tags]	 Fabric  feature    
+	[Tags]	 Fabric  feature  IronHorse    
 	REST add fabric role   spine0   spine      
     sleep  5 
 	verify fabric lag   leaf0-a
 	
 Verify Fabric Lag from spine after adding back spine node 
-	[Tags]	 Fabric  feature     
+	[Tags]	 Fabric  feature  IronHorse     
 	verify fabric lag   spine0
 	
 delete the peer leaf0b switch and check the peer-lag from leaf0-a switch
-	[Tags]  Fabric  feature  	
+	[Tags]  Fabric  feature  IronHorse  	
 	rest verify forwarding lag  ${leaf0a_dpid}  leaf0-a
 	sleep  3
 	rest delete fabric switch  leaf0-b
@@ -69,7 +69,7 @@ delete the peer leaf0b switch and check the peer-lag from leaf0-a switch
 	rest verify forwarding lag  ${leaf0a_dpid}  leaf0-a     
 
 port group setting for static lag
-	[Tags]  Fabric  feature    
+	[Tags]  Fabric  feature  IronHorse    
 	rest add portgroup  p1
 	rest add interface to portgroup  leaf2-a  ${h6_intf0}  p1
 	rest add interface to portgroup  leaf2-b  ${h6_intf1}  p1
@@ -80,7 +80,7 @@ port group setting for static lag
 	# should have the same Group ID on both leaf switches of rack2
 	  
 port group setting test for lacp mode
-	[Tags]  Fabric  feature  
+	[Tags]  Fabric  feature  IronHorse  
 	rest add portgroup  p2
 	rest add interface to portgroup  leaf2-a  ${h5_intf0}  p2
 	rest add interface to portgroup  leaf2-b  ${h5_intf1}  p2
@@ -91,7 +91,7 @@ port group setting test for lacp mode
 	rest verify forwarding port edge  leaf2-a  ${h5_intf0}  leaf2-b  ${h5_intf1}
 
 rack lag detection from rack0 leaf switch using three rack setup (delete/add spine role)
-	[Tags]  Fabric  feature
+	[Tags]  Fabric  feature  IronHorse
 	rest verify no of spine
 	rest verify rack lag from leaf  leaf0-a  spine1
 	rest delete fabric role  spine0  spine
@@ -103,7 +103,7 @@ rack lag detection from rack0 leaf switch using three rack setup (delete/add spi
 	rest verify rack lag from leaf  leaf0-a  spine1
 
 rack lag detection from rack0 leaf switch using three rack setup (add/delete spine switch)
-	[Tags]  Fabric  feature
+	[Tags]  Fabric  feature  IronHorse
 	rest verify no of spine
 	rest verify rack lag from leaf  leaf0-a  spine1
 	rest delete fabric switch  spine0  
@@ -118,7 +118,7 @@ rack lag detection from rack0 leaf switch using three rack setup (add/delete spi
 	rest verify rack lag from leaf  leaf0-a  spine1
 
 Verify broadcast traffic forwarding on the lag
-	[Tags]  Fabric  feature
+	[Tags]  Fabric  feature  IronHorse
 	sleep  5
 	rest verify fabric link common  
 	rest add tenant  t1
@@ -139,7 +139,7 @@ Verify broadcast traffic forwarding on the lag
     rest delete tenant  t1
     
 Verify broadcast forwarding with spine link failover
-	[Tags]  Fabric  feature  
+	[Tags]  Fabric  feature  IronHorse  
 	rest add tenant  t1
 	rest add vns  t1  v1
 	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
@@ -181,7 +181,7 @@ Verify broadcast forwarding with spine link failover
     rest delete tenant  t1
 
 Verify broadcast forwarding with edge port link enable/disable
-	[Tags]  Fabric  feature  
+	[Tags]  Fabric  feature  IronHorse  
 	rest add tenant  t1
 	rest add vns  t1  v1
 	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
@@ -209,7 +209,7 @@ Verify broadcast forwarding with edge port link enable/disable
     rest delete tenant  t1
 
 Verify broadcast traffic forwarding with single peer-link enable/disable
-	[Tags]  Fabric  feature  
+	[Tags]  Fabric  feature  IronHorse  
 	rest add tenant  t1
 	rest add vns  t1  v1
 	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
@@ -232,7 +232,7 @@ Verify broadcast traffic forwarding with single peer-link enable/disable
     rest delete tenant  t1
 
 Verify Multicast forwarding on the lag
-	[Tags]  Fabric  feature  
+	[Tags]  Fabric  feature  IronHorse  
 	rest add tenant  t1
 	rest add vns  t1  v1
 	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
@@ -252,7 +252,7 @@ Verify Multicast forwarding on the lag
     rest delete tenant  t1
 
 verify unknown unicast forwarding on the lag with spine link failover
-	[Tags]  Fabric  feature    
+	[Tags]  Fabric  feature  IronHorse    
 	rest add tenant  t1
 	rest add vns  t1  v1
 	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
@@ -297,7 +297,7 @@ verify unknown unicast forwarding on the lag with spine link failover
     sleep  5
 
 Verifying Duplicate packets for ARP broadcast over the fabric
-	[Tags]  Fabric  feature       
+	[Tags]  Fabric  feature  IronHorse       
 	rest add tenant  t1
 	rest add vns  t1  v1
 	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  100
@@ -316,7 +316,7 @@ Verifying Duplicate packets for ARP broadcast over the fabric
     sleep  5    
 
 Verifying Duplicate packets for VRRP Multicast packets over the fabric
-	[Tags]  Fabric  feature        
+	[Tags]  Fabric  feature  IronHorse        
 	rest add tenant  t1
 	rest add vns  t1  v1
 	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  100
@@ -335,7 +335,7 @@ Verifying Duplicate packets for VRRP Multicast packets over the fabric
     sleep  5   
 
 Verifying Duplicate packets for Non IP multicast packets over the fabric
-	[Tags]  Fabric  feature      
+	[Tags]  Fabric  feature  IronHorse      
 	rest add tenant  t1
 	rest add vns  t1  v1
 	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  100
@@ -354,7 +354,7 @@ Verifying Duplicate packets for Non IP multicast packets over the fabric
     sleep  5    
 
 Verify Duplicate ARP broadcast on Edge Port groups
-	[Tags]  Fabric  feature      
+	[Tags]  Fabric  feature  IronHorse      
 	rest add tenant  t1
 	rest add vns  t1  v1
 	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
@@ -378,7 +378,7 @@ Verify Duplicate ARP broadcast on Edge Port groups
     sleep  5    
 
 Verify Duplicate Multicast packets on edge port groups  
-	[Tags]  Fabric  feature      
+	[Tags]  Fabric  feature  IronHorse      
 	rest add tenant  t1
 	rest add vns  t1  v1
 	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
@@ -402,7 +402,7 @@ Verify Duplicate Multicast packets on edge port groups
     sleep  5    
 
 Master node reboot failover with broadcast traffic forwarding
-	[Tags]  Fabric  feature  
+	[Tags]  Fabric  feature  IronHorse  
 	rest add tenant  t1
 	rest add vns  t1  v1
 	rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
@@ -426,7 +426,7 @@ Master node reboot failover with broadcast traffic forwarding
 	
 
 Tear down config and topology
-	[Tags]  Fabric  feature          
+	[Tags]  Fabric  feature  IronHorse          
     delete fabric switch  
     rest delete portgroup  p1
     rest delete portgroup  p2
@@ -520,13 +520,7 @@ bring up h6 bond0
     bash ifup intf  h6  bond0  
 
 bring up 1 gig interface
-	bash execute command  leaf0-a  ofad-ctl autoneg 24
 	bash execute command  leaf0-a  ofad-ctl autoneg 25
 	bash execute command  leaf0-a  ofad-ctl autoneg 26
-	bash execute command  leaf0-b  ofad-ctl autoneg 24
-	bash execute command  leaf1-a  ofad-ctl autoneg 24
 	bash execute command  leaf1-a  ofad-ctl autoneg 25
 	bash execute command  leaf1-a  ofad-ctl autoneg 26
-	bash execute command  leaf1-b  ofad-ctl autoneg 24
-	bash execute command  leaf2-a  ofad-ctl autoneg 24
-	bash execute command  leaf2-b  ofad-ctl autoneg 24

@@ -20,7 +20,7 @@ Resource         testsuites/T5/t5_physical_variables.txt
 *Test Case
 
 Setup Three Rack Dual Leaf Topology
-	[Tags]  L2  feature   
+	[Tags]  L2  feature  IronHorse   
 	base suite setup   
     add fabric switch
     bring up h1 bond0
@@ -34,7 +34,7 @@ Setup Three Rack Dual Leaf Topology
 	rest verify fabric link common 	
 
 Test to check all the cidr routes are created in spine and leaf switches
-	[Tags]  bugs  run  
+	[Tags]  bugs  IronHorse   
 	rest add tenant  internal
 	rest add vns  internal  v1
 	rest add interface to vns  internal  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
@@ -71,7 +71,7 @@ Test to check all the cidr routes are created in spine and leaf switches
 	rest delete tenant  system
 
 With 2k mac entries , Remove the Leaf switch and Readd the leaf switch
-    [Tags]  L2  feature     
+    [Tags]  L2  feature  IronHorse     
     rest add tenant  t1
     rest add vns  t1  v1
     rest add interface to vns  t1  v1  leaf0-a  ${leaf0a_ixia_intf}  -1
@@ -101,7 +101,7 @@ With 2k mac entries , Remove the Leaf switch and Readd the leaf switch
     rest delete tenant  t1               
      
 shut/no shut the switch with traffic forward
-	[Tags]  L2  feature     
+	[Tags]  L2  feature  IronHorse     
 	rest add tenant  t1
 	rest add vns  t1  v1
 	rest add portgroup  p4 
@@ -136,7 +136,7 @@ shut/no shut the switch with traffic forward
     rest delete tenant  t1 
 
 reboot both the controllers to make sure all the switches indeed connected
-	[Tags]  L2  feature   
+	[Tags]  L2  feature  IronHorse   
 	rest verify fabric link common
 	cluster node reboot
 	sleep  3
@@ -147,7 +147,7 @@ reboot both the controllers to make sure all the switches indeed connected
 	rest verify fabric link common
 
 Test Data center falls below 50% link verify forwarding table for the switch removal update
-	[Tags]  L2  feature  
+	[Tags]  L2  feature  IronHorse  
 	rest verify fabric link common
 	rest delete fabric switch  spine1
 	sleep  2
@@ -173,7 +173,7 @@ Test Data center falls below 50% link verify forwarding table for the switch rem
     rest verify fabric link common
 
 Test VFT push to when system has not connected switches
-	[Tags]  L2  feature      
+	[Tags]  L2  feature  IronHorse      
 	cli delete controller  spine0  c1
 	cli delete controller  spine0  c2
 	cli delete controller  spine1  c1
@@ -237,7 +237,7 @@ Test VFT push to when system has not connected switches
     rest delete tenant  t1
 	
 check forwarding port/lag table consisteny after switch mgmt remove/add
-	[Tags]  L2  feature   
+	[Tags]  L2  feature  IronHorse   
 	cli delete controller  spine0  c1
 	cli delete controller  spine0  c2
 	cli delete controller  spine1  c1
@@ -287,7 +287,7 @@ check forwarding port/lag table consisteny after switch mgmt remove/add
     Should be True  ${count} == 1
     
 check forwarding vlan table consistency after switch mgmt remove/add
-	[Tags]  L2  feature    
+	[Tags]  L2  feature  IronHorse    
 	rest add tenant  t1
 	rest add vns  t1  v1
 	${result}=  bash execute command  leaf2-a  ofad-ctl ft VLAN | grep 49 | wc -l
@@ -310,7 +310,7 @@ check forwarding vlan table consistency after switch mgmt remove/add
     Should be True  ${count} == 3   
 
 verifying flow reconsilation when new switch is connected to the fabric
-	[Tags]  L2  feature  
+	[Tags]  L2  feature  IronHorse  
 	rest add tenant  t1
 	rest add vns  t1  v1
     rest add interface to vns  t1  v1  leaf2-a  ${leaf2a_ixia_intf}  -1 
@@ -339,7 +339,7 @@ verifying flow reconsilation when new switch is connected to the fabric
     Should be True  ${count} == 0
 
 Tear down config and Topology
-	[Tags]  L2  feature          
+	[Tags]  L2  feature  IronHorse          
 	clean configuration
     base suite teardown
  
@@ -379,16 +379,10 @@ T5 test setup
 	sleep  10
 	
 bring up 1 gig interface
-	bash execute command  leaf0-a  ofad-ctl autoneg 24
 	bash execute command  leaf0-a  ofad-ctl autoneg 25
 	bash execute command  leaf0-a  ofad-ctl autoneg 26
-	bash execute command  leaf0-b  ofad-ctl autoneg 24
-	bash execute command  leaf1-a  ofad-ctl autoneg 24
 	bash execute command  leaf1-a  ofad-ctl autoneg 25
 	bash execute command  leaf1-a  ofad-ctl autoneg 26
-	bash execute command  leaf1-b  ofad-ctl autoneg 24
-	bash execute command  leaf2-a  ofad-ctl autoneg 24
-	bash execute command  leaf2-b  ofad-ctl autoneg 24
 
 bring up h1 bond0
 	bash init intf  h1  bond0.10

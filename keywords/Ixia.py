@@ -50,15 +50,45 @@ class Ixia(object):
         tg_handle = t.traffic_generator(node).handle()
         return tg_handle.ix_l3_add(**kwargs)
 
-#     def start_l3_traffic(self, stream=None, **kwargs):
-#         t = test.Test()
-#         if 'node' not in kwargs:
-#             node = 'tg1'
-#         else:
-#             node = kwargs['node']
-#             del kwargs['node']
-#         tg_handle = t.traffic_generator(node).handle()
-#         return tg_handle._ixia.ix_start_traffic_ethernet(stream)
+    def l3_add_host(self, **kwargs):
+        t = test.Test()
+        if 'node' not in kwargs:
+            node = 'tg1'
+        else:
+            node = kwargs['node']
+            del kwargs['node']
+        tg_handle = t.traffic_generator(node).handle()
+        return tg_handle.ix_l3_add_hosts(**kwargs)
+
+    def l3_start_hosts(self, **kwargs):
+        t = test.Test()
+        if 'node' not in kwargs:
+            node = 'tg1'
+        else:
+            node = kwargs['node']
+            del kwargs['node']
+        tg_handle = t.traffic_generator(node).handle()
+        return tg_handle.ix_start_hosts(**kwargs)
+
+    def l3_stop_hosts(self, **kwargs):
+        t = test.Test()
+        if 'node' not in kwargs:
+            node = 'tg1'
+        else:
+            node = kwargs['node']
+            del kwargs['node']
+        tg_handle = t.traffic_generator(node).handle()
+        return tg_handle.ix_stop_hosts(**kwargs)
+
+    def l3_chk_gw_arp(self, **kwargs):
+        t = test.Test()
+        if 'node' not in kwargs:
+            node = 'tg1'
+        else:
+            node = kwargs['node']
+            del kwargs['node']
+        tg_handle = t.traffic_generator(node).handle()
+        return tg_handle.ix_chk_arp(**kwargs)
 
     def start_traffic(self, stream=None, **kwargs):
         t = test.Test()

@@ -33,10 +33,13 @@ Test bash delete tag
     bash delete tag  h1  eth1.99  soft_error=${true}
 
 Test directory listing
-    #[Tags]  skipped
+    [Tags]  skipped
     bash             h1    echo $COLUMNS
     #bash             h1-vm1-rack1   ls -la
     #bash             h1   ls -la
     #sudo             h1   cat /etc/shadow
     bash             h1   find /tmp
     bash             h1    echo $COLUMNS
+
+Test traceroute
+    bash             h1    traceroute dev1

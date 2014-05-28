@@ -221,6 +221,24 @@ class T5(object):
                 c.rest.put(url, {"switch": switch, "interface": intf, "vlan": i})
         return True
 
+    def rest_add_interface_any_to_all_vns(self, tenant, vlan='1'):
+        '''
+        Function to add interface any switch any to all created vns
+        Input: tennat , 
+        output : will add all interface to all created vns
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/segment[tenant="%s"]' % (tenant)
+        c.rest.get(url)
+        data = c.rest.content()
+        for j in range(0, len(data)):
+                i = int(vlan) + j
+                helpers.log("vlan=%d, %d" % (i, j))
+                url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/segment[name="%s"]/switch-port-membership-rule[switch="any"][interface="any"]' % (tenant, data[j]["name"])
+                c.rest.put(url, {"interface": "any", "switch": "any", "vlan": i})
+        return True
+    
     def rest_delete_vns(self, tenant, vns=None):
         t = test.Test()
         c = t.controller('master')
@@ -2426,3 +2444,82 @@ class T5(object):
                     return False
         else:
             helpers.log("Given switch name and role is not valid")
+            
+    def cli_get_qos_weight(self,node,port):
+        t = test.Test()
+        s = t.switch(node)    
+        string = 'debug ofad "qos_weight ' + port + '"'
+        content= s.enable(string)['content']        
+        info=[]
+        temp = helpers.strip_cli_output(content,to_list=True)    
+        helpers.log("***temp is: %s  \n"  % temp)                   
+    
+        for line in temp:     
+            helpers.log("***line is: %s  \n"  % line)                   
+            line = line.lstrip()
+            match= re.match(r'queue=(\d+) ->.* weight=(\d+)', line)
+            if match:
+                helpers.log("INFO: queue is: %s,  weight is: %s" % (match.group(1), match.group(2)))                          
+                info.append(match.group(2))
+         
+        helpers.log("***Exiting with info: %s  \n"  % info)
+
+        return info
+
+    def cli_get_qos_port_stat(self,node,port):
+        t = test.Test()
+        s = t.switch(node)    
+        string = 'debug ofad "qos_port_stat ' + port + '"'
+        content= s.enable(string)['content']        
+        info=[]
+        temp = helpers.strip_cli_output(content,to_list=True)    
+        helpers.log("***temp is: %s  \n"  % temp)                   
+    
+        for line in temp:     
+            helpers.log("***line is: %s  \n"  % line)                   
+            line = line.lstrip()
+            match= re.match(r'.*queue=(\d+).* out_pkt.*=(\d+)', line)
+            if match:
+                helpers.log("INFO: queue is: %s,  weight is: %s" % (match.group(1), match.group(2)))                          
+                info.append(match.group(2))
+         
+        helpers.log("***Exiting with info: %s  \n"  % info)
+
+        return info
+
+    def cli_qos_clear_stat(self,node,port):
+        t = test.Test()
+        s = t.switch(node)    
+        string = 'debug ofad "qos_clear_stat ' + port + '"'
+        s.enable(string)     
+ 
+        return True
+
+
+    def cli_get_links_nodes_list(self,node1, node2):
+        '''
+        '''
+        helpers.test_log("Entering ==> cli_get_links_nodes_list: %s  - %s"  %( node1, node2) )           
+        t = test.Test()
+        c = t.controller('master')         
+        cli= 'show link | grep ' + node1 + ' | grep ' + node2  
+        content = c.cli(cli)['content']   
+        temp = helpers.strip_cli_output(content, to_list=True)  
+        helpers.log("INFO: *** output  *** \n  %s" %temp)                    
+        list=[]           
+        for line in temp:          
+            line = line.lstrip()
+            fields = line.split()
+            helpers.log("fields: %s" % fields)
+            if fields[1]==node1 :
+                list.append(fields[2])
+            elif fields[3]==node1 :
+                list.append(fields[4])   
+            
+                  
+        helpers.log("INFO: *** link info *** \n for %s: %s \n " % (node1,list))              
+        return list   
+
+            
+       
+            

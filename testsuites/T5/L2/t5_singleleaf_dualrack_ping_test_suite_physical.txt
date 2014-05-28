@@ -18,12 +18,12 @@ Resource		 testsuites/T5/t5_physical_variables.txt
 * Test Case 
 
 Verify fabric switch and Link
-   [Tags]  L2  feature  smoke  sanity   
+   [Tags]  L2  feature  smoke  sanity  IronHorse   
    rest verify fabric switch all
    rest verify fabric link
 
 ping h3 to h4 single leaf single rack dynamic endpoints
-   [Tags]  L2  feature  smoke  sanity      
+   [Tags]  L2  feature  smoke  sanity  IronHorse      
    rest add interface to vns  A  A  leaf1-a  ${h3_intf0_single}  -1 
    rest add interface to vns  A  A  leaf1-a  ${h4_intf0_single}  -1 
    sleep  5
@@ -31,7 +31,7 @@ ping h3 to h4 single leaf single rack dynamic endpoints
    Should Be True  ${loss} < 50  
  
 ping h3 to h4 single leaf single rack static endpoints
-   [Tags]  L2  feature  sanity       
+   [Tags]  L2  feature  sanity  IronHorse       
    add a endpoint  A  A  e1 
    add a endpoint  A  A  e2 
    rest add interface to endpoint  A   A  e2  leaf1-a  ${h4_intf0_single}  -1
@@ -47,7 +47,7 @@ ping h3 to h4 single leaf single rack static endpoints
    Should Be True  ${loss} < 50
    
 ping h2 to h3 dual rack single leaf dynamic endpoints
-   [Tags]  L2  feature  smoke  sanity     
+   [Tags]  L2  feature  smoke  sanity  IronHorse     
    rest add interface to vns  A  A  leaf1-a  ${h3_intf0_single}  -1 
    rest add interface to vns  A  A  leaf0-a  ${h2_intf0_single}  -1 
    sleep  5 
@@ -55,7 +55,7 @@ ping h2 to h3 dual rack single leaf dynamic endpoints
    Should Be True  ${loss} < 50 					 
 		
 ping h2 to h3 dual rack single leaf static endpoints 
-   [Tags]  L2  feature  sanity        
+   [Tags]  L2  feature  sanity  IronHorse        
    add a endpoint  A  A  e1 
    add a endpoint  A  A  e2 
    rest add interface to endpoint  A   A  e2  leaf0-a  ${h2_intf0_single}  -1
@@ -71,7 +71,7 @@ ping h2 to h3 dual rack single leaf static endpoints
    Should Be True  ${loss} < 50   
    
 ping h3 to h4 single leaf single rack dynamic endpoints tag
-   [Tags]  L2  feature  smoke  sanity      
+   [Tags]  L2  feature  smoke  sanity  IronHorse      
    rest add interface to vns  A  A  leaf1-a  ${h3_intf0_single}  20 
    rest add interface to vns  A  A  leaf1-a  ${h4_intf0_single}  20
    bash add tag  h3  eth1  20 
@@ -90,7 +90,7 @@ ping h3 to h4 single leaf single rack dynamic endpoints tag
    Should Be True  ${loss} < 50  					
 		
 ping h3 to h4 single leaf single rack static endpoints tag
-   [Tags]  L2  feature  sanity    
+   [Tags]  L2  feature  sanity  IronHorse    
    add a endpoint  A  A  e1 
    add a endpoint  A  A  e2 
    rest add interface to endpoint  A   A  e2  leaf1-a  ${h4_intf0_single}  20
@@ -106,7 +106,7 @@ ping h3 to h4 single leaf single rack static endpoints tag
    Should Be True  ${loss} < 50
 
 ping h2 to h3 dual rack single leaf dynamic endpoints tag     
-   [Tags]  L2  feature  smoke  sanity      
+   [Tags]  L2  feature  smoke  sanity  IronHorse      
    rest add interface to vns  A  A  leaf1-a  ${h3_intf0_single}  20 
    rest add interface to vns  A  A  leaf0-a  ${h2_intf0_single}  20
    sleep  5
@@ -114,7 +114,7 @@ ping h2 to h3 dual rack single leaf dynamic endpoints tag
    Should Be True  ${loss} < 50    
    
 ping h2 to h3 dual rack single leaf static endpoints tag 
-   [Tags]  L2  feature  sanity   
+   [Tags]  L2  feature  sanity  IronHorse   
    add a endpoint  A  A  e1 
    add a endpoint  A  A  e2 
    rest add interface to endpoint  A   A  e2  leaf0-a  ${h2_intf0_single}  20
@@ -211,16 +211,10 @@ bring up eth1 h2
     bash add ip address  h2  ${h2_single_ip}/24  eth1
     bash ifup intf  h2  eth1
 bring up 1 gig interface
-	bash execute command  leaf0-a  ofad-ctl autoneg 24
 	bash execute command  leaf0-a  ofad-ctl autoneg 25
 	bash execute command  leaf0-a  ofad-ctl autoneg 26
-	bash execute command  leaf0-b  ofad-ctl autoneg 24
-	bash execute command  leaf1-a  ofad-ctl autoneg 24
 	bash execute command  leaf1-a  ofad-ctl autoneg 25
-	bash execute command  leaf1-a  ofad-ctl autoneg 26
-	bash execute command  leaf1-b  ofad-ctl autoneg 24
-	bash execute command  leaf2-a  ofad-ctl autoneg 24
-	bash execute command  leaf2-b  ofad-ctl autoneg 24 
+	bash execute command  leaf1-a  ofad-ctl autoneg 26 
 
   
 

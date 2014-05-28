@@ -17,28 +17,28 @@ Resource		 testsuites/T5/t5_physical_variables.txt
 *Test Case
 
 Setup Three Rack Dual Leaf Topology
-	[Tags]  Fabric  feature
+	[Tags]  Fabric  feature  IronHorse
 	base suite setup    
     add fabric switch
     sleep  5
     rest verify fabric switch all
    
 verify interface cli 
-	[Tags]  Fabric  feature
+	[Tags]  Fabric  feature  IronHorse
 	${result}=  cli  c1   show interface  
 	Should Not be Empty  ${result}
 	${result}=  cli  c1  show interface ${leaf0a_spine0_intf0}
 	Should Not be Empty  ${result}
 		
 verify lag cli
-	[Tags]  Fabric  feature
+	[Tags]  Fabric  feature  IronHorse
 	${result}=  cli  c1  show lag  
 	Should Not be Empty  ${result}
     ${result}=  cli  c1   show lag switch leaf0-a  
 	Should Not be Empty  ${result}	
 
 verify switch cli
-	[Tags]  Fabric  feature
+	[Tags]  Fabric  feature  IronHorse
 	${result}=  cli  c1  show switch  
 	Should Not be Empty  ${result}
 	${result}=  cli  c1  show switch leaf0-a
@@ -47,7 +47,7 @@ verify switch cli
 	Should Not be Empty  ${result}
 	
 verify lacp cli
-	[Tags]  Fabric  feature
+	[Tags]  Fabric  feature  IronHorse
 	rest add tenant  t1
 	rest add vns  t1  v1
 	rest add portgroup  p4 
@@ -63,17 +63,17 @@ verify lacp cli
 	Should Not be Empty  ${result}
 	
 verify link cli
-	[Tags]  Fabric  feature
+	[Tags]  Fabric  feature  IronHorse
 	${result}=  cli  c1  show link  
 	Should Not be Empty  ${result}
 
 verify lag any_leaf cli
-	[Tags]  Fabric  feature
+	[Tags]  Fabric  feature  IronHorse
 	${result}=  cli  c1  show lag switch spine0 any_leaf 
 	Should Not be Empty  ${result}
 
 Verify fabric feature link formation
-	[Tags]  Fabric  feature  
+	[Tags]  Fabric  feature  IronHorse  
 	REST verify fabric link 	
 
 delete/add one of the spine Fabric Role and verify the link
@@ -86,7 +86,7 @@ delete/add one of the spine Fabric Role and verify the link
 	REST verify fabric link   
 	
 delete one of the leaf in Dual Leaf setup and verify the link
-    [Tags]  Fabric  feature
+    [Tags]  Fabric  feature  IronHorse
     rest delete fabric role  leaf
     rest delete leaf group  leaf0-a
     sleep  5
@@ -98,7 +98,7 @@ delete one of the leaf in Dual Leaf setup and verify the link
     rest verify fabric link
     
 Reboot spine switch spine1 and verify the fabric link
-	[Tags]  Fabric  feature
+	[Tags]  Fabric  feature  IronHorse
 	rest verify fabric link
 	cli restart switch  spine1
 	sleep  3
@@ -106,19 +106,18 @@ Reboot spine switch spine1 and verify the fabric link
 	sleep  10
 	rest verify fabric link
 Reboot leaf switch and verify fabric link
-	[Tags]  Fabric  feature
+	[Tags]  Fabric  feature  IronHorse
 	rest verify fabric link
 	cli restart switch  leaf0-a
 	sleep  3
 	rest verify fabric link
 	sleep  10
 	rest verify fabric link
-	bash execute command  leaf0-a  ofad-ctl autoneg 24
 	bash execute command  leaf0-a  ofad-ctl autoneg 25
 	bash execute command  leaf0-a  ofad-ctl autoneg 26
 	
 Add/delete a new link between spine0 and leaf0a
-	[Tags]  Fabric  feature
+	[Tags]  Fabric  feature  IronHorse
 	rest verify fabric link
 	rest disable fabric interface  leaf0-a  ${leaf0a_spine0_intf0}
 	rest verify fabric link
@@ -127,7 +126,7 @@ Add/delete a new link between spine0 and leaf0a
 	rest verify fabric link
 
 add and delete peer group link and verify the database
-	[Tags]  Fabric  feature
+	[Tags]  Fabric  feature  IronHorse
 	rest verify fabric link
 	rest disable fabric interface  leaf1-a  ${leaf1a_leaf1b_intf0}
 	rest verify fabric link
@@ -135,7 +134,7 @@ add and delete peer group link and verify the database
 	rest verify fabric link
 
 Delete and Readd the Rack2
-	[Tags]  Fabric  feature
+	[Tags]  Fabric  feature  IronHorse
 	rest delete fabric switch  leaf2-a
 	rest delete fabric switch  leaf2-b
 	sleep  2
@@ -154,7 +153,7 @@ Delete and Readd the Rack2
 	rest verify fabric link
 
 add portgroup lacp to 2 different rack
-	[Tags]  Fabric  feature  
+	[Tags]  Fabric  feature  IronHorse  
 	rest delete fabric switch  leaf0-a
 	rest delete fabric switch  leaf0-b
 	rest add switch  leaf0-a
@@ -181,12 +180,11 @@ add portgroup lacp to 2 different rack
 	Should not be True  ${result}
 	
 Tear down config and Topology
-	[Tags]  Fabric  feature
+	[Tags]  Fabric  feature  IronHorse
     delete fabric switch  
     rest delete portgroup  p1
     rest delete portgroup  p2
     base suite teardown
-    bash execute command  leaf0-a  ofad-ctl autoneg 24
 	bash execute command  leaf0-a  ofad-ctl autoneg 25
 	bash execute command  leaf0-a  ofad-ctl autoneg 26
  

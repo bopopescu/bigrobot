@@ -257,23 +257,23 @@ h6:\n\
 tg1:\n\
   platform: 'ixia'\n\
   chassis_ip: 10.192.85.151\n\
-  tcl_server_ip: 10.192.109.203\n\
+  tcl_server_ip: 10.194.64.183\n\
   #tcl_server_port: 8009\n\
   #ix_version: '7.10'\n\
   #set_init_ping: false\n\
   ports:\n\
     a:\n\
-      name: 2/1\n\
+      name: 4/25\n\
     b:\n\
-      name: 2/2\n\
+      name: 4/26\n\
     c:\n\
-      name: 2/3\n\
+      name: 4/27\n\
     d:\n\
-      name: 2/4\n\
+      name: 4/28\n\
     e:\n\
-      name: 2/5\n\
+      name: 4/29\n\
     f:\n\
-      name: 2/6\n" % (active_vm['vm_ip'], kvm_host, active_vm['vm_name'], kvm_user, kvm_pwd,
+      name: 4/30\n" % (active_vm['vm_ip'], kvm_host, active_vm['vm_name'], kvm_user, kvm_pwd,
               standby_vm['vm_ip'], kvm_host, standby_vm['vm_name'], kvm_user, kvm_pwd)
     else:
         config = "\

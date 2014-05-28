@@ -37,10 +37,11 @@ Documentation       Testing ZTN
 ...
 ...                - any controller Cli change that affects the switch provisioning (fabric role, MAC)
 
-Suite Setup		Base Suite Setup
-Suite Teardown		Base Suite Teardown
+Suite Setup		Suite Setup
+Suite Teardown		Suite Teardown
 Test Setup		Base Test Setup
 Test Teardown		Base Test Teardown
+Force Tags		T5  ZTN  Feature  IronHorse
 Library  		keywords/BsnCommon.py
 Library		keywords/T5Platform.py
 Library		keywords/T5Utilities.py
@@ -54,11 +55,13 @@ Library		keywords/T5ZTN.py
 	...  powerpc-as6700-32x-r0b  powerpc-as5710-54x-r0b
 @{supported_swi_platforms}  powerpc-quanta-lb9-r0  powerpc-quanta-ly2-r0
 	...  powerpc-as6700-32x-r0  powerpc-as5710-54x-r0a  powerpc-dni-7448-r0
+@{spineList}		00:00:70:72:cf:ae:b6:37
+@{leafList}			00:00:70:72:cf:b5:f4:5c  00:00:70:72:cf:b5:f4:a6
 
 
 *** Test Cases ***
 ### Basic image check
-T1.1. Verify that images are present on all controllers
+T1.1. Verify that release images are present on all controllers
 	Bash Verify SL Images  node=master
 	Bash Verify SL Images  node=slave
 
@@ -81,6 +84,40 @@ T1.3. Check supported platforms of SWI and installer
 	Should Contain  ${swi_platforms}  @{supported_swi_platforms}[2]
 	Should Contain  ${swi_platforms}  @{supported_swi_platforms}[3]
 	Should Contain  ${swi_platforms}  @{supported_swi_platforms}[4]
+
+T1.4 Check Running config for a switch
+	${mac}=  Set Variable  70:72:cf:ae:b6:37
+    ${name}=  Set Variable  s1
+	Verify Switch Running Config  ${mac}  ${name}
+
+T1.5 Check Startup config for a switch
+	${mac}=  Set Variable  70:72:cf:ae:b6:37
+    ${name}=  Set Variable  s1
+	Verify Switch Startup Config  ${mac}  ${name}
+
+T1.6 Test switch reboot
+    Cli Run  master  show run
+    Reboot Switch  s1
+    Reboot Switch  s2
+    Reboot Switch  s3
+
+T0.1 BSC-5430
+	${mac1}=  Set Variable  11:22:33:44:55:66
+	${mac2}=  Set Variable  66:55:44:33:22:11
+    ${name}=  Set Variable  test1
+	Cli Run  master  enable; config
+	Cli Run  master  switch ${name}
+	Cli Run  master  mac ${mac1}
+	Verify Switch Startup Config  ${mac1}  ${name}
+	Cli Run  master  enable; config
+	Cli Run  master  switch ${name}
+	Cli Run  master  mac ${mac2}
+	Verify Switch Startup Config  ${mac2}  ${name}
+	Cli Run  master  enable; config
+	Cli Run  master  switch ${name}
+	Cli Run  master  mac ${mac1}
+	Verify Switch Startup Config  ${mac1}  ${name}
+	[Tags]  BSC-5430
 
 ### Switch bring-up
 # Bring up out-of-the-box switch
@@ -863,3 +900,14 @@ T9.8. ? Verify that admin can view all images stored on flash at given switch
 # Will we see at which stage of provisioning is given switch? e.g. downloading SL image, booting, ... ?
 # Limit on switches that can be handled by ZTN?
 # Validation of MAC addresses in CLI before making any changes? Invalid, broadcast, special MAC?
+
+
+*** Keywords ***
+Suite Setup
+	Base Suite Setup
+	Cli Copy  running-config  config://startup-config
+	auto configure fabric switch   ${spineList}   ${leafList}   2
+
+Suite Teardown
+	Cli Copy  config://startup-config  running-config
+	Base Suite Teardown

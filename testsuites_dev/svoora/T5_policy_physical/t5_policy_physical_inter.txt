@@ -4,7 +4,7 @@ Suite Setup     test setup topology
 Suite Teardown  test teardown topology
 Test Setup      base test setup
 Test Teardown   test teardown
-Force Tags      T5 Policy Sanity
+Force Tags      IronHorse
 Library         keywords/BsnCommon.py
 Library         keywords/Host.py
 Library         keywords/T5.py
@@ -1162,7 +1162,7 @@ T16 Interface tenant deny policy src-tenant to any
 T17 Interface tenant permit policy src-vns to dest-ip
 	[Tags]  feature
 	${src_dict}=  Create Dictionary  segment  ${vnsY1}  tenant-name  ${tenantY}
-	${dst_dict}=  Create Dictionary  cidr  ${ixia4_ip}
+	${dst_dict}=  Create Dictionary  cidr  ${ixia1_ip}
 	rest add policy								X		${tenant1_polname}		
 	rest add policy item example  tenant=${tenantX}  polname=${tenant1_polname}  seqnum=10  action=permit  srcdata=${src_dict}  dstdata=${dst_dict}
 	rest apply policy on tenant					X			${tenant1_polname}
@@ -1264,7 +1264,7 @@ T22 Interface tenant deny policy src-vns to dest-vns
 ######  **  ANY need more investigation  **  ########	
 T23 Interface tenant permit policy src-vns to any
 	[Tags]  feature
-	${src_dict}=  Create Dictionary  segment  ${vnsY1}  tenant-name  ${tenantX} 
+	${src_dict}=  Create Dictionary  segment  ${vnsY1}  tenant-name  ${tenantY} 
 	#${dst_dict}=  Create Dictionary  tenant-name  ${tenantX}
 	rest add policy								X		${tenant1_polname}		
 	rest add policy item example  tenant=${tenantX}  polname=${tenant1_polname}  seqnum=10  action=permit  srcdata=${src_dict}  

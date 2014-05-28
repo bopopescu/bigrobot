@@ -33,9 +33,32 @@ add Dual Leaf Three Rack setup
    sleep  5
    rest verify fabric switch all
 
-   
-create 4093 vns and verify the table and forwarding
+create 2000 vns and verify the table and forwarding
 	[Tags]  L2  scaling  run      
+  	rest add tenant  t1
+	rest add vns scale  t1  3000
+	summary log  system create a 4k vns
+	rest add interface to all vns  t1  leaf0-a  any
+	rest verify vns scale  3000
+#	rest verify membership port count  4
+	${stream}=             L3 add  no_arp=True  flow=a<->c  src_mac=00:00:0a:00:00:01  dst_mac=00:00:0c:00:00:01   ethertype=8100  vlan_id=1  vlan_cnt=4000  frame_rate=1000  frame_size=68  name=a_c_flow
+	${stream1}=             L3 add  no_arp=True  flow=b<->d  src_mac=00:00:0b:00:00:01  dst_mac=00:00:0d:00:00:01   ethertype=8100  vlan_id=1  vlan_cnt=4000  frame_rate=1000  frame_size=68  name=a_c_flow
+    start traffic  ${stream}
+    start traffic  ${stream1}
+    sleep  40
+    rest verify endpoint in system  16000
+    verify traffic rate  tx_rate  rx_rate  a  c
+    verify traffic rate  tx_rate  rx_rate  c  a
+    verify traffic rate  tx_rate  rx_rate  b  d
+    verify traffic rate  tx_rate  rx_rate  d  b
+    stop traffic  
+	rest delete tenant  t1
+	sleep  5
+    ${result}=  rest verify tenant
+    Should not be True  ${result}   
+
+create 4093 vns and verify the table and forwarding
+	[Tags]  L2  scaling       
   	rest add tenant  t1
 	rest add vns scale  t1  4093
 	summary log  system create a 4k vns
@@ -50,7 +73,7 @@ create 4093 vns and verify the table and forwarding
 	${stream1}=             L3 add  no_arp=True  flow=b<->d  src_mac=00:00:0b:00:00:01  dst_mac=00:00:0d:00:00:01   ethertype=8100  vlan_id=1  vlan_cnt=4093  frame_rate=1000  frame_size=68  name=a_c_flow
     start traffic  ${stream}
     start traffic  ${stream1}
-    sleep  20
+    sleep  40
     rest verify endpoint in system  16372
     verify traffic rate  tx_rate  rx_rate  a  c
     verify traffic rate  tx_rate  rx_rate  c  a

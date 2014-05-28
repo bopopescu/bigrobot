@@ -25,7 +25,7 @@ ${mac1}		00:02:00:00:00:00
 * Test Case 
 
 add Dual Leaf Three Rack setup
-   [Tags]  L2  scaling         
+   [Tags]  L2  scaling  IronHorse           
    base suite setup
    add fabric switch
    sleep  5
@@ -33,7 +33,7 @@ add Dual Leaf Three Rack setup
    rest verify fabric link
 
 create 100 vns and verify the table and forwarding
-	[Tags]  L2  scaling        
+	[Tags]  L2  scaling  IronHorse        
 	rest add tenant  t1
 	rest add vns scale  t1  100
 	rest add interface to all vns  t1  leaf0-a  ${leaf0a_ixia_intf}
@@ -50,7 +50,7 @@ create 100 vns and verify the table and forwarding
 	rest delete tenant  t1
    
 create 1k vns and verify the table and forwarding
-	[Tags]  L2  scaling     
+	[Tags]  L2  scaling  IronHorse     
   	rest add tenant  t1
 	rest add vns scale  t1  1000
 	rest add interface to all vns  t1  leaf0-a  ${leaf0a_ixia_intf}
@@ -70,55 +70,75 @@ create 1k vns and verify the table and forwarding
     Should not be True  ${result}
     
 create 4000 vns and verify the table and forwarding
-	[Tags]  L2  scaling      
+	[Tags]  L2  scaling  IronHorse      
   	rest add tenant  t1
-	rest add vns scale  t1  4000
+	rest add vns scale  t1  3999
 	summary log  system create a 4k vns
 	rest add interface to all vns  t1  leaf0-a  ${leaf0a_ixia_intf}
 	rest add interface to all vns  t1  leaf1-a  ${leaf1a_ixia_intf}
 	summary log  system add 2 ports to each vns
-	rest verify vns scale  4000
+	rest verify vns scale  3999
 	rest verify membership port count  2
-	${stream}=             L3 add  no_arp=True  flow=a<->c  src_mac=00:00:01:00:00:01  dst_mac=00:00:02:00:00:01   ethertype=8100  vlan_id=1  vlan_cnt=4000  frame_rate=1000  frame_size=68  name=a_c_flow
+	${stream}=             L3 add  no_arp=True  flow=a<->c  src_mac=00:00:01:00:00:01  dst_mac=00:00:02:00:00:01   ethertype=8100  vlan_id=1  vlan_cnt=3999  frame_rate=1000  frame_size=68  name=a_c_flow
     start traffic  ${stream}
     sleep  20
-    rest verify endpoint in system  8000
+    rest verify endpoint in system  7998
     verify traffic rate  tx_rate  rx_rate  a  c
     verify traffic rate  tx_rate  rx_rate  c  a
     stop traffic  ${stream}
 	rest delete tenant  t1
-	sleep  5
+	sleep  10
     ${result}=  rest verify tenant
     Should not be True  ${result}
 
 Master controller node reboot with 4k vns
-	[Tags]  L2  scaling      
+	[Tags]  L2  scaling  IronHorse      
   	rest add tenant  t1
-	rest add vns scale  t1  4000
+	rest add vns scale  t1  3999
 	summary log  system create a 4k vns
 	rest add interface to all vns  t1  leaf0-a  ${leaf0a_ixia_intf}
 	rest add interface to all vns  t1  leaf1-a  ${leaf1a_ixia_intf}
 	summary log  system add 2 ports to each vns
-	rest verify vns scale  4000
+	rest verify vns scale  3999
 	rest verify membership port count  2
-	${stream}=             L3 add  no_arp=True  flow=a<->c  src_mac=00:00:01:00:00:01  dst_mac=00:00:02:00:00:01  ethertype=8100  vlan_id=1  vlan_cnt=4000  frame_rate=1000  frame_size=68  name=a_c_flow
+	${stream}=             L3 add  no_arp=True  flow=a<->c  src_mac=00:00:01:00:00:01  dst_mac=00:00:02:00:00:01  ethertype=8100  vlan_id=1  vlan_cnt=3999  frame_rate=1000  frame_size=68  name=a_c_flow
     start traffic  ${stream}
     sleep  20
-    rest verify endpoint in system  8000
+    rest verify endpoint in system  7998
     verify traffic rate  tx_rate  rx_rate  a  c
     verify traffic rate  tx_rate  rx_rate  c  a
     cluster node reboot
-    rest verify endpoint in system  8000
+    rest verify endpoint in system  7998
     verify traffic rate  tx_rate  rx_rate  a  c
     verify traffic rate  tx_rate  rx_rate  c  a
     stop traffic  ${stream}
 	rest delete tenant  t1
-	sleep  5
+	sleep  10
+    ${result}=  rest verify tenant
+    Should not be True  ${result}
+
+create 4000 vns and all interface ,verify the table and forwarding
+	[Tags]  L2  scaling  IronHorse       
+  	rest add tenant  t1
+	rest add vns scale  t1  3999
+	summary log  system create a 4k vns
+	rest add interface any to all vns  t1  
+	summary log  system add all interface to all segment
+	rest verify vns scale  3999
+	${stream}=             L3 add  no_arp=True  flow=a<->c  src_mac=00:00:01:00:00:01  dst_mac=00:00:02:00:00:01   ethertype=8100  vlan_id=1  vlan_cnt=3998  frame_rate=1000  frame_size=68  name=a_c_flow
+    start traffic  ${stream}
+    sleep  20
+    rest verify endpoint in system  7998
+    verify traffic rate  tx_rate  rx_rate  a  c
+    verify traffic rate  tx_rate  rx_rate  c  a
+    stop traffic  ${stream}
+	rest delete tenant  t1
+	sleep  10
     ${result}=  rest verify tenant
     Should not be True  ${result}
 
 Tear down the config
-   [Tags]  L2  scaling           
+   [Tags]  L2  scaling  IronHorse           
    delete fabric switch
    rest delete tenant  t1
    base suite teardown

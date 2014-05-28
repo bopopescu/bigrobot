@@ -4,7 +4,7 @@ Suite Setup      base suite setup
 Suite Teardown   base suite teardown
 Test Setup       base test setup
 Test Teardown    base test teardown
-Force Tags       T5 
+Force Tags       IronHorse 
 Library          keywords/BsnCommon.py
 Library          keywords/Controller.py
 Library			 keywords/Mininet.py
@@ -15,7 +15,7 @@ Library	         keywords/T5.py
 Library	         keywords/T5Platform.py
 Library	         keywords/Controller.py
  
-Resource	     testsuites_dev/mingtao/T5_mingtao_resource.txt 
+Resource	     t5_platform_infra_resource.txt 
 
 * Variable
  
@@ -44,7 +44,7 @@ Set variable
  	${file}=  Set Variable  config${time[0]}${time[1]}${time[2]}
 	Set Suite Variable       ${file} 		
   
-	[Tags] 	sanity   feature   
+	[Tags] 	full  feature   firstboot
 
  
 	  
@@ -57,7 +57,7 @@ T3.1 Verify first boot of controller in standalone mode via dhcp
   	sleep    ${long}
  	${result}=  rest_controller_add_ip    ${ip}    ${ipc1}   ${mask}    yes 
  	Should be True     ${result}   	  	    
-	[Tags] 	sanity   firstboot   dhcp	 standalone   rerun
+	[Tags]  full  feature   firstboot  dhcp	 standalone   
  	
 
 T3.2 Verify first boot of controller in HA mode via dhcp
@@ -79,11 +79,11 @@ T3.2 Verify first boot of controller in HA mode via dhcp
  	${B}=   cli_take_snapshot   master   run_config=yes			
  	Should Be Equal    ${A}    ${B}	 
   	    
-	[Tags] 	sanity    JIRA-BSC-5041    firstboot   dhcp   HA   rerun
+	[Tags] 	full  feature   firstboot   JIRA-BSC-5041    dhcp   HA   
 
 T3.3 Verify controller IP change after the first boot
     log   convered in T2.1 and T2.2
-	[Tags] 	sanity   firstboot    rerun
+	[Tags] 	full  feature   firstboot
 
 
 
@@ -99,13 +99,13 @@ T4.1 Verify first boot of controller when external DNS/NTP server is unreachable
 	first_boot_controller_menu_dnsserver            c1  8.8.8.8  	      
 	first_boot_controller_menu_apply_negative       c1   gateway=${gw}   dns=${dns}
  	   
-	[Tags] 	feature  firstboot  
+	[Tags] 	full  feature   firstboot 
 
  
 
 T4.2 Verification of configs in local node mode 
 	log   covered in T2.1   
-	[Tags] 	sanity  firstboot  cli
+	[Tags] 	full  feature   firstboot   cli
 
  
 
@@ -115,7 +115,7 @@ T4.3 Controller installation with minimum/maximum supported cpu/memory configura
 	log  warning message -Warning: Minimum recommendation is 2.00 GB of memory 		 
 	log  only warning message is given	 
     
-	[Tags] 	sanity   Manual  firstboot
+	[Tags]	full  feature   firstboot  Manual   
 
 T4.4 Shutdown the controller  
 	log  manual verified with #1381 
@@ -124,13 +124,13 @@ T4.4 Shutdown the controller
 	log  "virsh start MY-T5-C10"	 
 	log  able to ssh admin@10.192.105.10
   
-	[Tags] 	sanity   Manual  infra
+	[Tags] 	full  feature   Manual  infra
 
 
 T4.5 Verification of tech-support and related commands  
 	log  no command: show tech-support
     Manual Failed
-	[Tags] 	sanity  Manual  cli  infra
+	[Tags] 	full  feature   Manual  cli  infra
 
  
 
@@ -140,7 +140,7 @@ T5 Verify first boot of controller on bare metal server
 	log  same as appliance
     Manual passed 
     
-	[Tags] 	sanity    Manual   firstboot   infra
+	[Tags] 	full  feature   firstboot   Manual   infra
  
   
  
