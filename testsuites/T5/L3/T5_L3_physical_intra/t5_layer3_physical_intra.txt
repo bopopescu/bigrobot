@@ -3221,7 +3221,18 @@ initialize host
     BASH release dhcpv4 address                 h4                              bond0
     BASH release dhcpv4 address                 h5                              bond0
     BASH release dhcpv4 address                 h6                              bond0
-
+    ${result} =                                 BASH run command                h1                     ifconfig
+    log                                         host1 ifconfig is ${result}
+    ${result} =                                 BASH run command                h2                     ifconfig
+    log                                         host2 ifconfig is ${result}
+    ${result} =                                 BASH run command                h3                     ifconfig
+    log                                         host3 ifconfig is ${result}
+    ${result} =                                 BASH run command                h4                     ifconfig
+    log                                         host4 ifconfig is ${result}
+    ${result} =                                 BASH run command                h5                     ifconfig
+    log                                         host5 ifconfig is ${result}
+    ${result} =                                 BASH run command                h6                     ifconfig
+    log                                         host6 ifconfig is ${result}
 	
 
 
