@@ -16,7 +16,7 @@ Library		     keywords/Ixia.py
 Library          keywords_dev/prashanth/T5Openstack.py
 Library			 Collections.py
 Resource		 testsuites/T5/t5_physical_variables.txt
-Resource         testsuites_dev/prashanth/t5-openstack/t5_openstack_variables.txt
+Resource         testsuites/T5/t5_openstack_variables.txt
 
 * Test Case 
 
