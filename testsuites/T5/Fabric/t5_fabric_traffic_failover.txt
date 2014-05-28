@@ -169,8 +169,6 @@ Reboot leaf switch with dual Host connected through lacp (Host5 to Host4)
    rest delete portgroup  p4
    rest delete portgroup  p5
    rest delete tenant  t1 
-   bash execute command  leaf2-a  ofad-ctl autoneg 24
-   bash execute command  leaf2-b  ofad-ctl autoneg 24
   
 Host Link Failover test with Host6 in Rack2 to Host 4 in Rack1
 	[Tags]  Fabric  feature  IronHorse      
@@ -265,8 +263,6 @@ HA failover with lacp host
 
 HA failover with tag traffic forwarding from ixia
 	[Tags]  Fabric  feature  IronHorse
-	bash execute command  leaf2-a  ofad-ctl autoneg 24
-    bash execute command  leaf2-b  ofad-ctl autoneg 24
 	rest add tenant  t2
     rest add vns  t2  v2
     rest add interface to vns  t2  v2  leaf0-b  ${leaf0b_ixia_intf}  100
@@ -353,13 +349,7 @@ bring up h6 bond0
     bash add ip address  h6  ${h6_ip}/24  bond0
     bash ifup intf  h6  bond0 
 bring up 1 gig interface
-	bash execute command  leaf0-a  ofad-ctl autoneg 24
 	bash execute command  leaf0-a  ofad-ctl autoneg 25
 	bash execute command  leaf0-a  ofad-ctl autoneg 26
-	bash execute command  leaf0-b  ofad-ctl autoneg 24
-	bash execute command  leaf1-a  ofad-ctl autoneg 24
 	bash execute command  leaf1-a  ofad-ctl autoneg 25
-	bash execute command  leaf1-a  ofad-ctl autoneg 26
-	bash execute command  leaf1-b  ofad-ctl autoneg 24
-	bash execute command  leaf2-a  ofad-ctl autoneg 24
-	bash execute command  leaf2-b  ofad-ctl autoneg 24 
+	bash execute command  leaf1-a  ofad-ctl autoneg 26 
