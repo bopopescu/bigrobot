@@ -1,0 +1,9 @@
+#!/bin/sh
+
+git_auth() {
+    file=$1
+    git log --reverse $file | grep Author | head -1 | sed -e 's/^Author: //' -e 's/ <.*//'
+}
+
+git_auth $1
+
