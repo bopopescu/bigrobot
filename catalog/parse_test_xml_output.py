@@ -5,8 +5,8 @@
 import os
 import sys
 import re
-import datetime
 import xmltodict
+import argparse
 import robot
 
 
@@ -24,11 +24,21 @@ import autobot.helpers as helpers
 helpers.set_env('IS_GOBOT', 'False')
 helpers.set_env('AUTOBOT_LOG', '/tmp/myrobot.log')
 
-authors = {
-    'https://github.com/bigswitch/bigrobot/blob/master/testsuites_dev/vui/test_robot.txt': 'vui'
-}
-
-
+# Normalize the Git authors. Map them to their LDAP names.
+AUTHORS = {
+           "SureshVoora": "suresh",
+           "prashanth": "padubiry",
+           "amallina": "arunamallina",
+           "Vui Le": "vui",
+           "Animesh Patcha": "animesh",
+           "songbeng": "slim",
+           "tomaszklimczyk": "tomasz",
+           "Tomasz Klimczyk": "tomasz",
+           "Mingtao Yang": "mingtao",
+           "Don Jayakody": "don",
+           "Cliff DeGuzman": "cliff",
+           "kranti": "kranti",
+           }
 
 def format_robot_timestamp(ts, is_datestamp=False):
     """
@@ -61,39 +71,69 @@ class TestSuite(object):
         self._suite = {}
         self._tests = []
         self._total_tests = 0
-        self.filename = filename
+        self._filename = filename
 
         # Remove first line: <?xml version="1.0" encoding="UTF-8"?>
-        self.xml_str = ''.join(helpers.file_read_once(self.filename,
+        self.xml_str = ''.join(helpers.file_read_once(self._filename,
                                                       to_list=True)[1:])
 
-        self.data = xmltodict.parse(self.xml_str)
-        self.extract_attributes()
+        self._data = xmltodict.parse(self.xml_str)
 
-    def extract_attributes(self):
-        suite = self.data['robot']['suite']
-        timestamp = format_robot_timestamp(self.data['robot']['@generated'])
-        datestamp = format_robot_datestamp(self.data['robot']['@generated'])
-        self._suite['source'] = helpers.utf8(suite['@source'])
-        self._suite['timestamp'] = helpers.utf8(timestamp)
-        self._suite['datestamp'] = helpers.utf8(datestamp)
-        self._suite['build_info'] = None
-        self._suite['tests'] = []
-        match = re.match(r'.+bigrobot/(\w+/([\w-]+)/.+)$', self._suite['source'])
-        if match:
-            self._suite['source_github'] = (
-                    'https://github.com/bigswitch/bigrobot/blob/master/'
-                     + match.group(1))
-            self._suite['product'] = match.group(2)
-        self._suite['name'] = helpers.utf8(suite['@name'])
-        if self._suite['source_github'] in authors:
-            self._suite['author'] = authors[self._suite['source_github']]
+    def data(self):
+        """
+        Handle to the XML data from input file (output.xml).
+        """
+        if 'robot' not in self._data:
+            helpers.environment_failure("Fatal error: expecting data['robot']")
+        if 'suite' not in self._data['robot']:
+            helpers.environment_failure("Fatal error: expecting data['robot']['suite']")
+        if 'test' not in self._data['robot']['suite']:
+            helpers.environment_failure("Fatal error: expecting data['robot']['suite']['test']")
+        return self._data
+
+    def git_auth(self, filename):
+        (status, output) = helpers.run_cmd("./git-auth " + filename, shell=False)
+        output = output.strip()
+        if output in AUTHORS:
+            return AUTHORS[output]
         else:
-            self._suite['author'] = None
+            helpers.environment_failure("AUTHORS dictionary does not contain '%s'"
+                                        % output)
 
-        # Test cases
-        tests = suite['test']
+    def extract_suite_attributes(self):
+        suite = self.data()['robot']['suite']
+        timestamp = format_robot_timestamp(self.data()['robot']['@generated'])
+        datestamp = format_robot_datestamp(self.data()['robot']['@generated'])
+        source = helpers.utf8(suite['@source'])
+        match = re.match(r'.+bigrobot/(\w+/([\w-]+)/.+)$', source)
+        if match:
+            github_link = ('https://github.com/bigswitch/bigrobot/blob/master/'
+                           + match.group(1))
+            product = match.group(2)
+        else:
+            helpers.environment_failure(
+                "Fatal error: Source file has invalid format ('%s')" % source)
+        name_actual = os.path.splitext(os.path.basename(source))[0]
+        author = self.git_auth(source)
+
+        self._suite = {
+                    'source': source,
+                    'timestamp': helpers.utf8(timestamp),
+                    'datestamp': helpers.utf8(datestamp),
+                    'github_link': github_link,
+                    'name_actual': name_actual,
+                    'name': helpers.utf8(suite['@name']),
+                    'product': product,
+                    'product_suite': product + "_" + name_actual,
+                    'author': author,
+                    'total_tests': None,
+                    }
+
+    def extract_test_attributes(self):
+        tests = self.data()['robot']['suite']['test']
         for a_test in tests:
+            # print "['@id']: " + '@id'
+            # print "a_test['@id']: " + a_test['@id']
             test_id = helpers.utf8(a_test['@id'])
             name = helpers.utf8(a_test['@name'])
             if (('tags' in a_test and a_test['tags'] != None)
@@ -108,6 +148,7 @@ class TestSuite(object):
             test = {'test_id': test_id,
                     'name': name,
                     'tags': tags,
+                    'job_name_id': None,
                     'executed': False,
                     'status': None,
                     'starttime': None,
@@ -115,19 +156,23 @@ class TestSuite(object):
                     'duration': None,
                     'origin_script_catalog': True,
                     'origin_regression_catalog': False,
+                    'product_suite': self._suite['product_suite'],
                     }
-            self._suite['tests'].append(test)
+            self._tests.append(test)
+
+            # Add test cases to test suite
+            # self._suite['tests'] = self._tests
 
         self.total_tests()
-
-    def suite(self):
-        return self._suite
 
     def suite_name(self):
         return self._suite['name']
 
+    def suite(self):
+        return self._suite
+
     def tests(self):
-        return self._suite['tests']
+        return self._tests
 
     def total_tests(self):
         self._suite['total_tests'] = len(self.tests())
@@ -137,46 +182,65 @@ class TestSuite(object):
         if to_json:
             if to_file:
                 helpers.file_write_append_once(to_file,
-                                               helpers.to_json(self.suite()))
+                                               helpers.to_json(self.suite())
+                                               + '\n')
             else:
                 print(helpers.to_json(self.suite()))
         else:
             if to_file:
                 helpers.file_write_append_once(to_file,
-                                               helpers.prettify(self.suite()))
+                                               helpers.prettify(self.suite())
+                                               + '\n')
             else:
                 print(helpers.prettify(self.suite()))
 
     def dump_suite_to_file(self, filename, to_json=False):
         self.dump_suite(filename, to_json)
 
-    def dump_tests(self):
-        for test in self.tests():
-            print(test.dump())
+    def dump_tests(self, to_file=None, to_json=False):
+        if to_json:
+            if to_file:
+                helpers.file_write_append_once(to_file,
+                                               helpers.to_json(self.tests())
+                                               + '\n')
+            else:
+                print(helpers.to_json(self.tests()))
+        else:
+            if to_file:
+                helpers.file_write_append_once(to_file,
+                                               helpers.prettify(self.tests())
+                                               + '\n')
+            else:
+                print(helpers.prettify(self.tests()))
+
+    def dump_tests_to_file(self, filename, to_json=False):
+        self.dump_tests(filename, to_json)
 
     def dump_raw(self):
-        print(helpers.prettify(self.data))
+        print(helpers.prettify(self.data()))
 
     def dump_xml(self):
         print("%s" % helpers.prettify_xml(self.xml_str))
 
 
 class TestCatalog(object):
-    def __init__(self):
+    def __init__(self, in_files, out_suites, out_testcases):
         self._suites = []
+        self._input_files = in_files
+        self._output_suites = out_suites
+        self._output_testcases = out_testcases
 
-    def load_suites(self, filenames):
-        for filename in filenames:
+    def load_suites(self):
+        for filename in self._input_files:
             filename = filename.strip()
 
             if helpers.file_not_empty(filename):
                 print("Reading %s" % filename)
                 suite = TestSuite(filename)
-                suite.dump_suite_to_file(
-                                         "test_suites.json",
-                                         to_json=True)
-                # suite.dump_tests()
-                # print "-----------------------"
+                suite.extract_suite_attributes()
+                suite.extract_test_attributes()
+                suite.dump_suite_to_file(self._output_suites, to_json=True)
+                suite.dump_tests_to_file(self._output_testcases, to_json=True)
                 self._suites.append(suite)
 
     def suites(self):
@@ -197,11 +261,24 @@ class TestCatalog(object):
         return tests
 
 if __name__ == '__main__':
-    input_file = sys.argv[1]
-    input_files = helpers.file_read_once(input_file, to_list=True)
 
-    t = TestCatalog()
-    t.load_suites(input_files)
+    descr = """\
+Parse the Robot output.xml files to generate the collections for the
+Test Catalog (MongoDB) database.
+"""
+    parser = argparse.ArgumentParser(prog='parse_test_xml_output',
+                                     description=descr)
+    parser.add_argument('--input', required=True,
+                        help=("Contains a list of Robot output.xml files"
+                              "  with complete pathnames"))
+    parser.add_argument('--output-suites', required=True,
+                        help=("JSON output file containing test suites"))
+    parser.add_argument('--output-testcases', required=True,
+                        help=("JSON output file containing test cases"))
+    args = parser.parse_args()
+
+    input_files = helpers.file_read_once(args.input, to_list=True)
+    t = TestCatalog(input_files, args.output_suites, args.output_testcases)
+    t.load_suites()
     print "Total suites: %s" % t.total_suites()
     print "Total tests: %s" % t.total_tests()
-
