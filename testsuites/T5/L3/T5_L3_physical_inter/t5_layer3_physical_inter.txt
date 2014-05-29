@@ -209,7 +209,7 @@ L3 inter tenant shutdown and bringup both spine switch
 	[Tags]			feature			
 
 L3 inter tenant destroy active controller VM from KVM
-	manual
+	manual passed
 	[Tags]			manual            feature		BVS-1695	
 
 L3 inter tenant destroy standby controller VM from KVM
@@ -728,7 +728,7 @@ Add and delete more specific route on tenant over existing static route
     REST add static routes                      X                               10.252.0.0/16           {"tenant-name": "system"}
     REST delete static routes                   Y                               0.0.0.0/0   
     REST add static routes                      Y                               10.251.0.0/16           {"tenant-name": "system"}
-    ${loss} =                                   BASH ping                       h1                      10.252.1.11             count=5
+    ${loss} =                                   BASH ping                       h1                      10.252.1.11             count=10
     Should Be True                              ${loss} < 20
     ${value} =                                  BASH verify arp                 h1                      10.251.1.1
     Should Be True                              ${value}        
@@ -743,7 +743,7 @@ Add and delete more specific route on tenant over existing static route
     ${loss} =                                   BASH ping                       h1                      10.252.1.11             count=5
     Should Be True                              ${loss} == 100
     REST delete static routes                   X                               10.252.1.0/24
-    ${loss} =                                   BASH ping                       h1                      10.252.1.11             count=5
+    ${loss} =                                   BASH ping                       h1                      10.252.1.11             count=10
     Should Be True                              ${loss} < 20
     BASH delete route                           h1                              10.252.0.0/16           10.251.1.1
     BASH delete route                           h3                              10.251.0.0/16           10.252.1.1
@@ -924,7 +924,7 @@ Overlapping IP subnet with and without private keyword
     ${result} =                                     REST add vns ip             B               B1                      10.101.0.254            25
     Should Not Be True                              ${result}
     sleep                                           2
-    ${result} =                                     REST add vns ip             B               B1                      10.101.0.127            25
+    ${result} =                                     REST add vns ip             B               B1                      10.101.0.126            25
     Should Not Be True                              ${result}
     sleep                                           2
     REST add vns ip                                 A                           A1              10.101.0.1              24                      private=true
@@ -938,7 +938,7 @@ Overlapping IP subnet with and without private keyword
     ${result} =                                     REST add vns ip             B               B1                      10.101.0.254            25
     Should Be True                                  ${result}
     sleep                                           2
-    ${result} =                                     REST add vns ip             B               B1                      10.101.0.127            25
+    ${result} =                                     REST add vns ip             B               B1                      10.101.0.126            25
     Should Be True                                  ${result}
     sleep                                           2
     REST add vns ip                                 A                           A1              10.101.0.1              24                      
@@ -952,7 +952,7 @@ Overlapping IP subnet with and without private keyword
     ${result} =                                     REST add vns ip             B               B1                      10.101.0.254            25      private=true
     Should Be True                                  ${result}
     sleep                                           2
-    ${result} =                                     REST add vns ip             B               B1                      10.101.0.127            25      private=true
+    ${result} =                                     REST add vns ip             B               B1                      10.101.0.126            25      private=true
     Should Be True                                  ${result}
     sleep                                           2
 
@@ -2587,6 +2587,7 @@ initialize host
 	BASH release dhcpv4 address					h4								bond0
 	BASH release dhcpv4 address					h5								bond0
 	BASH release dhcpv4 address					h6								bond0
+	BASH stop service                           h1                              isc-dhcp-server
 	${result} =                                 BASH run command                h1                     ifconfig
     log                                         host1 ifconfig is ${result}
     ${result} =                                 BASH run command                h2                     ifconfig
@@ -2603,6 +2604,7 @@ initialize host
 
 test setup topology
 	initialize host
+	
 	sleep 											1
 	Start Floodlight Monitor 
 	REST add tenant 								X
@@ -2666,6 +2668,7 @@ test setup topology
 	
 
 test teardown topology
+    delete traffic
 	REST delete vns ip  							X							X1				10.251.1.1				24	
 	REST delete vns ip  							X							X2				10.251.2.1				24	
 	REST delete vns ip  							X							X3				10.251.3.1				24	
