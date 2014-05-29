@@ -598,14 +598,13 @@ class T5Utilities(object):
         t = test.Test()
         c = t.controller('master')
         
-        c.cli('show cluster' )
+        c.cli('show controller' )
         content = c.cli_content()
         temp = helpers.strip_cli_output(content)
         temp = helpers.str_to_list(temp)
         num = 0
         for line in temp:          
-            #match= re.match(r'.*(active|stand-by).*', line)
-            match= re.match(r'.*(leader|follower).*', line)
+            match= re.match(r'.*(active|stand-by).*', line)
             if match:
                 num = num+1                                      
             else:
