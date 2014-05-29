@@ -8,6 +8,7 @@ import re
 import xmltodict
 import argparse
 import robot
+from pymongo import MongoClient
 
 
 # Determine BigRobot path(s) based on this executable (which resides in
@@ -23,6 +24,9 @@ import autobot.helpers as helpers
 
 helpers.set_env('IS_GOBOT', 'False')
 helpers.set_env('AUTOBOT_LOG', '/tmp/myrobot.log')
+
+DB_SERVER = 'qadashboard-mongo.bigswitch.com'
+DB_PORT = 27017
 
 # Normalize the Git authors. Map them to their LDAP names.
 AUTHORS = {
@@ -72,13 +76,49 @@ class TestSuite(object):
         self._tests = []
         self._total_tests = 0
         self._filename = filename
+        self._db = None
+
         self._is_regression = is_regression
+        if (self._is_regression):
+            client = MongoClient(DB_SERVER, DB_PORT)
+            self._db = client.test_catalog
 
         # Remove first line: <?xml version="1.0" encoding="UTF-8"?>
         self.xml_str = ''.join(helpers.file_read_once(self._filename,
                                                       to_list=True)[1:])
 
         self._data = xmltodict.parse(self.xml_str)
+
+    def db(self):
+        return self._db
+
+    def db_find_and_modify_testcase(self, rec):
+        testcases = self.db().test_cases
+
+        tc = testcases.find_and_modify(
+                query={ "name": rec['name'],
+                        "product_suite" : rec['product_suite'],
+                        "starttime_datestamp" : rec['starttime_datestamp'] },
+                update={ "$set": {"status": rec['status'],
+                                  "startdate": rec['startdate'],
+                                  "enddate": rec['enddate'],
+                                  "enddate_datestamp": rec['enddate_datestamp'],
+                                  "duration": rec['duration'],
+                                  "executed": rec['executed'],
+                                  "origin_regression_catalog": rec['origin_regression_catalog'],
+                                  "origin_script_catalog": rec['origin_script_catalog'],
+                                  } },
+                new=True,
+                upsert=True
+                )
+        if tc:
+            print("*** Successfully updated record (name:'%s', product_suite:'%s', date:'%s', status:'%s')"
+                  % (rec['name'], rec['product_suite'],
+                     rec['starttime_datestamp'], rec['status']))
+        else:
+            print("Did not find record (name:'%s', product_suite:'%s', date:'%s')"
+                  % (rec['name'], rec['product_suite'],
+                     rec['starttime_datestamp']))
 
     def data(self):
         """
@@ -93,8 +133,8 @@ class TestSuite(object):
         return self._data
 
     def git_auth(self, filename):
-	filename = re.sub(r'.+bigrobot/', '../', filename)
-        (status, output) = helpers.run_cmd("./git-auth " + filename, shell=False)
+        filename = re.sub(r'.+bigrobot/', '../', filename)
+        (_, output) = helpers.run_cmd("./git-auth " + filename, shell=False)
         output = output.strip()
         if output in AUTHORS:
             return AUTHORS[output]
@@ -134,21 +174,36 @@ class TestSuite(object):
     def extract_test_attributes(self):
         tests = self.data()['robot']['suite']['test']
 
-	print "*** tests: %s" % tests
-	print "*** type: %s" % type(tests)
+        if not helpers.is_list(tests):
+            # In a suite with only a single test case, convert into list
+            tests = [tests]
+
         for a_test in tests:
             # print "['@id']: " + '@id'
             # print "a_test['@id']: " + a_test['@id']
-            print "*** a_test: %s" % a_test
+            # print "*** a_test: %s" % a_test
             test_id = helpers.utf8(a_test['@id'])
             name = helpers.utf8(a_test['@name'])
-            status = helpers.utf8(a_test['status'])
-            print "******** status: %s" % status
             if (('tags' in a_test and a_test['tags'] != None)
                 and 'tag' in a_test['tags']):
                 tags = helpers.utf8(a_test['tags']['tag'])
             else:
                 tags = []
+
+            if self._is_regression:
+                # Analyzing regression results which should have PASS/FAIL
+                # status.
+                status = helpers.utf8(a_test['status']['@status'])
+                starttime = format_robot_timestamp(helpers.utf8(a_test['status']['@starttime']))
+                starttime_datestamp = format_robot_datestamp(helpers.utf8(a_test['status']['@starttime']))
+                endtime = format_robot_timestamp(helpers.utf8(a_test['status']['@endtime']))
+                endtime_datestamp = format_robot_datestamp(helpers.utf8(a_test['status']['@endtime']))
+                executed = True
+            else:
+                status = starttime = endtime = endtime_datestamp = None
+                executed = False
+                starttime_datestamp = self._suite['datestamp']
+                # starttime_datestamp = '2014-05-28'
 
             # This should contain the complete list of attributes. Some may
             # be populated by the Script Catalog while others may be populated
@@ -157,16 +212,20 @@ class TestSuite(object):
                     'name': name,
                     'tags': tags,
                     'job_name_id': None,
-                    'executed': False,
-                    'status': None,
-                    'starttime': None,
-                    'endtime': None,
+                    'executed': executed,
+                    'status': status,
+                    'starttime': starttime,
+                    'starttime_datestamp': starttime_datestamp,
+                    'endtime': endtime,
+                    'endtime_datestamp': endtime_datestamp,
                     'duration': None,
                     'origin_script_catalog': not self._is_regression,
                     'origin_regression_catalog': self._is_regression,
                     'product_suite': self._suite['product_suite'],
                     }
             self._tests.append(test)
+
+            self.db_find_and_modify_testcase(test)
 
             # Add test cases to test suite
             # self._suite['tests'] = self._tests
@@ -286,7 +345,7 @@ Test Catalog (MongoDB) database.
     parser.add_argument('--output-testcases', required=True,
                         help=("JSON output file containing test cases"))
     parser.add_argument('--is-regression',
-                        action='store_true',default=False,
+                        action='store_true', default=False,
                         help=("Specify this option if analyzing regression results"))
     args = parser.parse_args()
 
