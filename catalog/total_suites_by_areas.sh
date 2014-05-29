@@ -1,6 +1,6 @@
 #!/bin/sh
 p=/Users/vui/Documents/ws/myforks/bigrobot/testsuites
-d=suites.data
+d=products.data
 
 rm -f total_suites_by_areas.sh.*
 
