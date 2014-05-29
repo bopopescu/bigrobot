@@ -4,22 +4,32 @@ phase1=1
 phase2=1
 phase3=1
 
+subject() {
+    s=$1
+    echo ""
+    echo "***"
+    echo "*** $s"
+    echo "***"
+}
+
+subject2() {
+    s=$1
+    echo ""
+    echo "--- $s"
+}
+
 echo "Start time: `date`"
-rm -f test_suites.json
 
 
 if [ $phase1 -eq 1 ]; then
-    echo "***"
-    echo "*** Finding all the test suites"
-    echo "***"
+    subject "Finding all the test suites"
     time ./total_suites_by_areas.sh
 fi
 
 if [ $phase2 -eq 1 ]; then
-    echo ""
-    echo "***"
-    echo "*** Running all the test suites in dry-run mode"
-    echo "***"
+    rm -f test_suites.json
+
+    subject "Running all the test suites in dry-run mode"
 
     #for x in `echo total_suites_by_areas.sh.*.suite_files`; do
     #for x in `echo total_suites_by_areas.sh.SwitchLight.suite_files`; do
@@ -28,24 +38,26 @@ if [ $phase2 -eq 1 ]; then
         dryrun_out=dryrun.$x
         xml_logs=dryrun.$x.output_xml.log
 
-        echo ""
-        echo "*** Dry run for $x. Dump output to $dryrun_out ..."
+        subject2 "Dry run for $x. Dump output to $dryrun_out ..."
         time ./run_suites.sh $x > $dryrun_out
 
 
-        echo ""
-        echo "*** Generating JSON for test results in $xml_logs ..."
+        subject2 "Generating JSON for test results in $xml_logs ..."
         time ./parse_test_xml_output.py $xml_logs
 
     done
 fi
 
 if [ $phase3 -eq 1 ]; then
-    echo ""
-    echo "***"
-    echo "*** Total IronHorse test cases"
-    echo "***"
+    subject2 "Total IronHorse test cases"
     grep -i ironhorse test_suites.json | wc -l
+
+    subject2 "Total manual test cases"
+    grep -i manual test_suites.json | wc -l
+
+    subject2 "Total manual-untested test cases"
+    grep -i manual-untested test_suites.json | wc -l
 fi
 
 echo "End time: `date`"
+
