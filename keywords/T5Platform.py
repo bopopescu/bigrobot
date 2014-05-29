@@ -1279,19 +1279,19 @@ class T5Platform(object):
                             helpers.log("Wrong dst-tp-port in the monitor session %s : %s: %s" % (sessionID, srcInt, kwargs.get('dst-tp-port')))
                             return False
                     if ('ip-dscp') in kwargs:
-                        if((session['source'][0]['match-specification'])['ip-dscp'] != kwargs.get('ip-dscp')):
+                        if((session['source'][0]['match-specification'])['ip-dscp'] != int(kwargs.get('ip-dscp'))):
                             helpers.log("Wrong ip-dscp in the monitor session %s : %s: %s" % (sessionID, srcInt, kwargs.get('ip-dscp')))
                             return False
                     if ('ip-ecn') in kwargs:
-                        if((session['source'][0]['match-specification'])['ip-ecn'] != kwargs.get('ip-ecn')):
+                        if((session['source'][0]['match-specification'])['ip-ecn'] != int(kwargs.get('ip-ecn'))):
                             helpers.log("Wrong ip-ecn in the monitor session %s : %s: %s" % (sessionID, srcInt, kwargs.get('ip-ecn')))
                             return False
                     if ('ip-proto') in kwargs:
-                        if((session['source'][0]['match-specification'])['ip-proto'] != kwargs.get('ip-proto')):
+                        if((session['source'][0]['match-specification'])['ip-proto'] != int(kwargs.get('ip-proto'))):
                             helpers.log("Wrong ip-proto in the monitor session %s : %s: %s" % (sessionID, srcInt, kwargs.get('ip-proto')))
                             return False
                     if ('ether-type') in kwargs:
-                        if((session['source'][0]['match-specification'])['ether-type'] != kwargs.get('ether-type')):
+                        if((session['source'][0]['match-specification'])['ether-type'] != int(kwargs.get('ether-type'))):
                             helpers.log("Wrong ether-type in the monitor session %s : %s: %s" % (sessionID, srcInt, kwargs.get('ether-type')))
                             return False
                     pass
