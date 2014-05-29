@@ -1,10 +1,10 @@
 #!/bin/sh
 p=/Users/vui/Documents/ws/myforks/bigrobot/testsuites
+d=suites.data
 
 rm -f total_suites_by_areas.sh.*
 
-for x in BigChain BigTap BigWire SwitchLight T5; do
-#for x in T5 ; do
+for x in `cat $d | grep -v '^#'`; do
 
     echo "Total text files for $x:"
 
