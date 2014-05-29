@@ -1159,7 +1159,7 @@ class T5Platform(object):
         url = '/api/v1/data/controller/applications/bvs/monitor-session[id=%s]/source[switch-name="%s"][interface-name="%s"]' % (sessionID, srcSwitch, srcInt)
 
         if (matchSpec):
-            result = master.rest.put(url, {"match-specification": matchSpec, "direction": "ingress", "switch-name": "leaf0-a", "interface-name": "ethernet15"})
+            result = master.rest.put(url, {"match-specification": matchSpec, "direction": "ingress", "switch-name": srcSwitch, "interface-name": srcInt})
         else:
             result = master.rest.put(url, {"direction": kwargs.get("direction"), "switch-name": srcSwitch , "interface-name": srcInt})
 
