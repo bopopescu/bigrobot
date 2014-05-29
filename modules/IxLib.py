@@ -334,7 +334,7 @@ class Ixia(object):
                                       burst_count=None, burst_gap=None,
                                       line_rate=None, crc=None, src_ip=None, dst_ip=None, no_arp=False,
                                       protocol=None, src_port=None, dst_port=None,
-                                      icmp_type=None, icmp_code=None, ip_type='ipv4'):
+                                      icmp_type=None, icmp_code=None, ip_type='ipv4', payload=None, src_vport=None, dst_vport=None):
         '''
             Returns traffic stream with 2 flows with provided mac sources
             Ex Usage:
@@ -347,16 +347,36 @@ class Ixia(object):
                                         name, '-allowSelfDestined', False, '-trafficItemType',
                                         'l2L3', '-enabled', True, '-transmitMode', 'interleaved',
                                         '-biDirectional', False, '-trafficType', 'ethernetVlan', '-hostsPerNetwork', '1')
+            endpointSet1 = self._handle.add(trafficStream1, 'endpointSet', '-name', 'l2u', '-sources', mac1,
+                                  '-destinations', mac2)
+        elif payload:
+            helpers.log("Adding Raw Type Stream with given Payload and L2 , L3 information..")
+            trafficStream1 = self._handle.add(self._handle.getRoot() + 'traffic', 'trafficItem', '-name',
+                                        name, '-trafficItemType', 'quick', '-enabled', True, '-trafficType', 'raw')
         else:
             helpers.log('Adding %s type Stream for sending with Arp Resolution' % ip_type)
             trafficStream1 = handle.add(handle.getRoot() + '/traffic', 'trafficItem', '-name', name, '-allowSelfDestined', False,
                        '-trafficItemType', 'l2L3', '-mergeDestinations', False, '-egressEnabled', False, '-srcDestMesh', 'oneToOne',
                        '-enabled', True, '-routeMesh', 'oneToOne', '-transmitMode', 'interleaved', '-biDirectional', False,
                        '-trafficType', ip_type, '-hostsPerNetwork', 1)
-        self._handle.commit()
-        endpointSet1 = self._handle.add(trafficStream1, 'endpointSet', '-name', 'l2u', '-sources', mac1,
+            endpointSet1 = self._handle.add(trafficStream1, 'endpointSet', '-name', 'l2u', '-sources', mac1,
                                   '-destinations', mac2)
+        self._handle.commit()
+        trafficStream1 = self._handle.remapIds(trafficStream1)[0]
+
+        if payload:
+            helpers.log("src_vport: %s dst_vport: %s" % (src_vport, dst_port))
+            endpointSet1 = self._handle.add(trafficStream1, 'endpointSet', '-sources', src_vport + '/protocols',
+                                            '-destinations', dst_vport + '/protocols')
+            self._handle.commit()
+            endpointSet1 = self._handle.remapIds(endpointSet1)[0]
+            helpers.log("Setting src and dst vports for Raw Streams ...%s  %s " % (src_vport, dst_vport))
+            self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:1', '-name', name,
+                                               '-txPortId', src_vport)
+
+
         self._handle.setAttribute(trafficStream1, '-enabled', True)
+        self._handle.commit()
         self._handle.setAttribute(trafficStream1 + '/highLevelStream:1/' + 'frameSize', '-type', frameType)
         self._handle.setAttribute(trafficStream1 + '/highLevelStream:1/' + 'frameSize', '-fixedSize', frameSize)
 
@@ -467,12 +487,30 @@ class Ixia(object):
                 self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:1/stack:"icmpv2-3"/field:"icmpv2.message.codeValue-2"',
                                               '-countValue', 1, '-singleValue', icmp_code,
                                              '-optionalEnabled', 'true', '-auto', 'false')
+            if payload:
+                helpers.log('Setting Payload information provided to Raw Traffic Stream...')
+                self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:1/framePayload',
+                                              '-type', 'custom', '-customPattern', payload,
+                                             '-customRepeat', False, '-auto', 'false')
+
 
 
         if flow == 'bi-directional':
             helpers.log('Adding Another  ixia end point set for Bi Directional Traffic..')
-            endpointSet2 = self._handle.add(trafficStream1, 'endpointSet', '-name', 'l2u', '-sources', mac2,
-                                      '-destinations', mac1)
+
+            if payload:
+                helpers.log("Setting src and dst vports for Raw Streams BiDirectional ...")
+                helpers.log("src_vport: %s dst_vport: %s" % (dst_vport, src_port))
+                endpointSet2 = self._handle.add(trafficStream1, 'endpointSet', '-sources', dst_vport + '/protocols',
+                                                '-destinations', src_vport + '/protocols')
+                self._handle.commit()
+                endpointSet2 = self._handle.remapIds(endpointSet2)[0]
+                helpers.log("Setting src and dst vports for Raw Streams ...%s  %s " % (src_vport, dst_vport))
+                self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:2', '-name', name,
+                                                   '-txPortId', dst_vport)
+            else:
+                endpointSet2 = self._handle.add(trafficStream1, 'endpointSet', '-name', 'l2u', '-sources', mac2,
+                                          '-destinations', mac1)
             if crc is not None:
                 self._handle.setAttribute(trafficStream1 + '/highLevelStream:2', '-crc', 'badCrc')
 
@@ -585,6 +623,11 @@ class Ixia(object):
                     self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:2/stack:"icmpv2-3"/field:"icmpv2.message.codeValue-2"',
                                                   '-countValue', 1, '-singleValue', icmp_code,
                                                  '-optionalEnabled', 'true', '-auto', 'false')
+                if payload:
+                    helpers.log('Setting Payload information provided to Raw Traffic Stream...')
+                    self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:2/framePayload',
+                                                  '-type', 'custom', '-customPattern', payload,
+                                                 '-customRepeat', False, '-auto', 'false')
         self._handle.setAttribute(self._handle.getList(trafficStream1, 'tracking')[0], '-trackBy', 'trackingenabled0')
 
         self._handle.commit()
@@ -817,6 +860,7 @@ class Ixia(object):
         frame_cnt = kwargs.get('frame_cnt', None)
         frame_type = kwargs.get('frame_type', 'fixed')
         frame_mode = kwargs.get('frame_mode', 'framesPerSecond')
+        self._frame_size = kwargs.get('frame_size', 128)
         name = kwargs.get('name', 'gobot_default')
         ethertype = kwargs.get('ethertype', '0800')
         vlan_id = kwargs.get('vlan_id', None)
@@ -826,6 +870,7 @@ class Ixia(object):
         protocol = kwargs.get('protocol', None)
         burst_count = kwargs.get('burst_count', None)
         burst_gap = kwargs.get('burst_gap', None)
+        payload = kwargs.get('payload', None)
 
         crc = kwargs.get('crc', None)
         ip_type = 'ipv4'
@@ -890,7 +935,6 @@ class Ixia(object):
         if len(self._vports) == 0:
             vports = self.ix_create_vports()
             helpers.log('### vports Created : %s' % vports)
-            # Map to Chassis Physhical Ports:
             if self.ix_map_vports_pyhsical_ports():
                 helpers.log('### Successfully mapped vport to physical ixia ports..')
             else:
@@ -899,78 +943,123 @@ class Ixia(object):
         else:
             helpers.log('### vports already Created : %s' % self._vports)
 
-        if len(self._topology) == 0:
-            # Create Topo:
-            self.ix_create_topo()
-            helpers.log('### Topology Created: %s' % self._topology)
+        if payload:
+            helpers.log("Skipping Creating Topologies ...")
+            match_uni1 = re.match(r'(\w+)->(\w+)', flow)
+            match_uni2 = re.match(r'(\w+)<-(\w+)', flow)
+            match_bi = re.match(r'(\w+)<->(\w+)', flow)
+
+            stream_flow = ''
+            src_ix_port = ''
+            dst_ix_port = ''
+
+            if match_uni1:
+                stream_flow = 'uni-directional'
+                src_ix_port = match_uni1.group(1).lower()
+                dst_ix_port = match_uni1.group(2).lower()
+            elif match_uni2:
+                stream_flow = 'uni-directional'
+                src_ix_port = match_uni1.group(2).lower()
+                dst_ix_port = match_uni1.group(1).lower()
+            elif match_bi:
+                stream_flow = 'bi-directional'
+                src_ix_port = match_bi.group(1).lower()
+                dst_ix_port = match_bi.group(2).lower()
         else:
-            helpers.log('###Topology already created: %s' % self._topology)
-        create_topo = []
-        match_uni1 = re.match(r'(\w+)->(\w+)', flow)
-        match_uni2 = re.match(r'(\w+)<-(\w+)', flow)
-        match_bi = re.match(r'(\w+)<->(\w+)', flow)
-        stream_flow = ''
-        if match_uni1:
-            create_topo.append(self._topology[match_uni1.group(1).lower()])
-            create_topo.append(self._topology[match_uni1.group(2).lower()])
-            stream_flow = 'uni-directional'
-        elif match_uni2:
-            create_topo.append(self._topology[match_uni2.group(2).lower()])
-            create_topo.append(self._topology[match_uni2.group(1).lower()])
-            stream_flow = 'uni-directional'
-        elif match_bi:
-            create_topo.append(self._topology[match_bi.group(1).lower()])
-            create_topo.append(self._topology[match_bi.group(2).lower()])
-            stream_flow = 'bi-directional'
+            if len(self._topology) == 0:
+                # Create Topo:
+                self.ix_create_topo()
+                helpers.log('### Topology Created: %s' % self._topology)
+            else:
+                helpers.log('###Topology already created: %s' % self._topology)
+            create_topo = []
+            match_uni1 = re.match(r'(\w+)->(\w+)', flow)
+            match_uni2 = re.match(r'(\w+)<-(\w+)', flow)
+            match_bi = re.match(r'(\w+)<->(\w+)', flow)
+
+            stream_flow = ''
+            src_ix_port = ''
+            dst_ix_port = ''
+
+            if match_uni1:
+                create_topo.append(self._topology[match_uni1.group(1).lower()])
+                create_topo.append(self._topology[match_uni1.group(2).lower()])
+                stream_flow = 'uni-directional'
+                src_ix_port = match_uni1.group(1).lower()
+                dst_ix_port = match_uni1.group(2).lower()
+            elif match_uni2:
+                create_topo.append(self._topology[match_uni2.group(2).lower()])
+                create_topo.append(self._topology[match_uni2.group(1).lower()])
+                stream_flow = 'uni-directional'
+                src_ix_port = match_uni2.group(2).lower()
+                dst_ix_port = match_uni2.group(1).lower()
+            elif match_bi:
+                create_topo.append(self._topology[match_bi.group(1).lower()])
+                create_topo.append(self._topology[match_bi.group(2).lower()])
+                stream_flow = 'bi-directional'
+                src_ix_port = match_bi.group(1).lower()
+                dst_ix_port = match_bi.group(2).lower()
+
         # Create Ether Device with IpDevices:
-
-        helpers.log('### Created Mac Devices with corrsponding Topos ...')
-        helpers.log ("Success Creating Ip Devices !!!")
         # Start the Hosts to resolve Arps of GW
-
         # Create Traffic item with flows:
+        self._traffi_apply = False
         traffic_stream1 = []
-        for topo in self._topology:
-            self.ix_stop_hosts(topo)
-            helpers.log('Successfuly Stopped Hosts on Topology : %s ' % topo)
-        helpers.log('Sleeps 3 sec for Hosts to be Stopped')
-        time.sleep(3)
-        if no_arp == 'True':
-            helpers.log('Adding Stream with Ethernet devices as no_arp is True!!!')
-            self._arp_check = False
-            (ip_devices, mac_devices) = self.ix_create_device_ethernet_ip(create_topo, s_cnt, d_cnt, src_mac, dst_mac, src_mac_step,
-                                                                      dst_mac_step, src_ip, dst_ip, src_gw_ip, dst_gw_ip, src_ip_step,
-                                                                      dst_ip_step, src_gw_step, dst_gw_step, dst_mac, src_mac, ip_type=ip_type)
-            helpers.log('Created Mac Devices : %s ' % mac_devices)
+        if payload is None:
+            for topo in self._topology:
+                self.ix_stop_hosts(topo)
+                helpers.log('Successfuly Stopped Hosts on Topology : %s ' % topo)
+            helpers.log('Sleeps 3 sec for Hosts to be Stopped')
+            time.sleep(3)
+            if no_arp == 'True':
+                helpers.log('Adding Stream with Ethernet devices as no_arp is True!!!')
+                self._arp_check = False
+                (ip_devices, mac_devices) = self.ix_create_device_ethernet_ip(create_topo, s_cnt, d_cnt, src_mac, dst_mac, src_mac_step,
+                                                                          dst_mac_step, src_ip, dst_ip, src_gw_ip, dst_gw_ip, src_ip_step,
+                                                                          dst_ip_step, src_gw_step, dst_gw_step, dst_mac, src_mac, ip_type=ip_type)
+                helpers.log('Created Mac Devices : %s ' % mac_devices)
 
-            traffic_stream = self.ix_setup_traffic_streams_ethernet(mac_devices[0], mac_devices[1],
-                                                       frame_type, self._frame_size, frame_rate, frame_mode,
-                                                       frame_cnt, stream_flow, name, vlan_id=vlan_id, crc=crc, src_ip=src_ip, dst_ip=dst_ip,
-                                                       protocol=protocol, icmp_type=icmp_type, icmp_code=icmp_code, vlan_cnt=vlan_cnt, vlan_step=vlan_step,
-                                                       burst_count=burst_count, burst_gap=burst_gap,
-                                                       src_port=src_port, dst_port=dst_port, no_arp=no_arp, ethertype=ethertype, line_rate=line_rate)
+                traffic_stream = self.ix_setup_traffic_streams_ethernet(mac_devices[0], mac_devices[1],
+                                                           frame_type, self._frame_size, frame_rate, frame_mode,
+                                                           frame_cnt, stream_flow, name, vlan_id=vlan_id, crc=crc, src_ip=src_ip, dst_ip=dst_ip,
+                                                           protocol=protocol, icmp_type=icmp_type, icmp_code=icmp_code, vlan_cnt=vlan_cnt, vlan_step=vlan_step,
+                                                           burst_count=burst_count, burst_gap=burst_gap,
+                                                           src_port=src_port, dst_port=dst_port, no_arp=no_arp, ethertype=ethertype, line_rate=line_rate)
 
-            traffic_stream1.append(traffic_stream)
+                traffic_stream1.append(traffic_stream)
+            else:
+                helpers.log('Adding L3 Stream with ARP resolution for configured Gateway')
+                self._arp_check = True
+                (ip_devices, mac_devices) = self.ix_create_device_ethernet_ip(create_topo, s_cnt, d_cnt, src_mac, dst_mac, src_mac_step,
+                                                                          dst_mac_step, src_ip, dst_ip, src_gw_ip, dst_gw_ip, src_ip_step,
+                                                                          dst_ip_step, src_gw_step, dst_gw_step, ip_type=ip_type)
+                self.ix_start_hosts(ip_type=ip_type)
+                self._started_hosts = True
+                traffic_item = self.ix_setup_traffic_streams_ethernet(ip_devices[0], ip_devices[1], frame_type, self._frame_size, frame_rate, frame_mode,
+                                                             frame_cnt, stream_flow, name, vlan_id=vlan_id, crc=crc, vlan_cnt=vlan_cnt, vlan_step=vlan_step,
+                                                             burst_count=burst_count, burst_gap=burst_gap,
+                                                             protocol=protocol, icmp_type=icmp_type, icmp_code=icmp_code,
+                                                             src_port=src_port, dst_port=dst_port, ethertype=ethertype, ip_type=ip_type, line_rate=line_rate)
+                traffic_stream1.append(traffic_item)
+
+            helpers.log('### Created Traffic Stream with Ip Devices ...')
+            helpers.log ("Success Creating Ip Traffic Stream!!!")
+            self._handle.execute('apply', self._handle.getRoot() + 'traffic')
+            helpers.log('Succesfully Applied traffic Config ..')
+            self._traffi_apply = True  # Setting it True to Not Apply Changes while starting traffic
         else:
-            helpers.log('Adding L3 Stream with ARP resolution for configured Gateway')
-            self._arp_check = True
-            (ip_devices, mac_devices) = self.ix_create_device_ethernet_ip(create_topo, s_cnt, d_cnt, src_mac, dst_mac, src_mac_step,
-                                                                      dst_mac_step, src_ip, dst_ip, src_gw_ip, dst_gw_ip, src_ip_step,
-                                                                      dst_ip_step, src_gw_step, dst_gw_step, ip_type=ip_type)
-            self.ix_start_hosts(ip_type=ip_type)
-            self._started_hosts = True
-            traffic_item = self.ix_setup_traffic_streams_ethernet(ip_devices[0], ip_devices[1], frame_type, self._frame_size, frame_rate, frame_mode,
-                                                         frame_cnt, stream_flow, name, vlan_id=vlan_id, crc=crc, vlan_cnt=vlan_cnt, vlan_step=vlan_step,
-                                                         burst_count=burst_count, burst_gap=burst_gap,
-                                                         protocol=protocol, icmp_type=icmp_type, icmp_code=icmp_code,
-                                                         src_port=src_port, dst_port=dst_port, ethertype=ethertype, ip_type=ip_type, line_rate=line_rate)
+            helpers.log("Payload is provided Need to create Ixia Quick Flows similar to Raw Streams..")
+            helpers.log("No Hosts are created and No gw arps are resolved, Hence correct dst_mac should be provided for L3 traffic to work..")
+            helpers.log("src ixia port used :%s dst ixia port used :%s" % (src_ix_port, dst_ix_port))
+            src_vport = self._handle.getFilteredList(self._handle.getRoot(), 'vport', '-name', src_ix_port)[0]
+            dst_vport = self._handle.getFilteredList(self._handle.getRoot(), 'vport', '-name', dst_ix_port)[0]
+            traffic_item = self.ix_setup_traffic_streams_ethernet(None, None, frame_type, self._frame_size, frame_rate, frame_mode,
+                                                             frame_cnt, stream_flow, name, vlan_id=vlan_id, crc=crc, vlan_cnt=vlan_cnt, vlan_step=vlan_step,
+                                                             burst_count=burst_count, burst_gap=burst_gap,
+                                                             protocol=protocol, icmp_type=icmp_type, icmp_code=icmp_code,
+                                                             src_port=src_port, dst_port=dst_port, ethertype=ethertype, ip_type=ip_type, line_rate=line_rate,
+                                                             payload=payload, src_vport=src_vport, dst_vport=dst_vport)
             traffic_stream1.append(traffic_item)
-
-        helpers.log('### Created Traffic Stream with Ip Devices ...')
-        helpers.log ("Success Creating Ip Traffic Stream!!!")
-        self._handle.execute('apply', self._handle.getRoot() + 'traffic')
-        helpers.log('Succesfully Applied traffic Config ..')
-        self._traffi_apply = True  # Setting it True to Not Apply Changes while starting traffic
         return traffic_stream1[0]
 
     def ix_start_traffic_ethernet(self, trafficHandle=None, **kwargs):
