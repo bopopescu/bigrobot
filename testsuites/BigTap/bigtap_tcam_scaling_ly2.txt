@@ -53,7 +53,7 @@ T4.2 default config tcam size ipv6 only
     Log to file    Tcam_size   "default config tcam size ipv6 only"    ${sw1}            	 
 	[Tags]  scaling   BigTap      rerun
 
-T4.3 default config tcam size mixed   
+T4.3 default config tcam size ipv6 only tcam size mixed    
     ${result}=  cli_show_l3_l4
     Should not be true  ${result}
     Verify l3-l4 mode controler and tcam    False   ${sw1}
@@ -74,7 +74,7 @@ T4.3 default config tcam size mixed
 	[Tags]  scaling   BigTap     
 
 
-T4.4 l3-l4 mode tcam size ipv4 only  
+T4.4 l3-l4 mode default config tcam size mixed  
     ${result}=   rest_enable_feature      l3-l4-mode 
     Sleep	                               ${medium} 
     Should be True                         ${result}     

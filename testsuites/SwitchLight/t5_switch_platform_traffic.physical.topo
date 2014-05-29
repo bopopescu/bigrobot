@@ -44,9 +44,9 @@ tg1:
   set_init_ping: false
   ports:
     a:
-      name: 2/1
+      name: 4/25
     b:
-      name: 2/2
+      name: 4/26
       
       
 
