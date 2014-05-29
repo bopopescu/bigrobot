@@ -64,7 +64,7 @@ def format_robot_datestamp(ts):
 
 
 class TestSuite(object):
-    def __init__(self, filename):
+    def __init__(self, filename, is_regression=False):
         """
         filename: output.xml file (with path)
         """
@@ -72,6 +72,7 @@ class TestSuite(object):
         self._tests = []
         self._total_tests = 0
         self._filename = filename
+        self._is_regression = is_regression
 
         # Remove first line: <?xml version="1.0" encoding="UTF-8"?>
         self.xml_str = ''.join(helpers.file_read_once(self._filename,
@@ -92,6 +93,7 @@ class TestSuite(object):
         return self._data
 
     def git_auth(self, filename):
+	filename = re.sub(r'.+bigrobot/', '../', filename)
         (status, output) = helpers.run_cmd("./git-auth " + filename, shell=False)
         output = output.strip()
         if output in AUTHORS:
@@ -131,11 +133,17 @@ class TestSuite(object):
 
     def extract_test_attributes(self):
         tests = self.data()['robot']['suite']['test']
+
+	print "*** tests: %s" % tests
+	print "*** type: %s" % type(tests)
         for a_test in tests:
             # print "['@id']: " + '@id'
             # print "a_test['@id']: " + a_test['@id']
+            print "*** a_test: %s" % a_test
             test_id = helpers.utf8(a_test['@id'])
             name = helpers.utf8(a_test['@name'])
+            status = helpers.utf8(a_test['status'])
+            print "******** status: %s" % status
             if (('tags' in a_test and a_test['tags'] != None)
                 and 'tag' in a_test['tags']):
                 tags = helpers.utf8(a_test['tags']['tag'])
@@ -154,8 +162,8 @@ class TestSuite(object):
                     'starttime': None,
                     'endtime': None,
                     'duration': None,
-                    'origin_script_catalog': True,
-                    'origin_regression_catalog': False,
+                    'origin_script_catalog': not self._is_regression,
+                    'origin_regression_catalog': self._is_regression,
                     'product_suite': self._suite['product_suite'],
                     }
             self._tests.append(test)
@@ -224,11 +232,13 @@ class TestSuite(object):
 
 
 class TestCatalog(object):
-    def __init__(self, in_files, out_suites, out_testcases):
+    def __init__(self, in_files, out_suites, out_testcases,
+                 is_regression=False):
         self._suites = []
         self._input_files = in_files
         self._output_suites = out_suites
         self._output_testcases = out_testcases
+        self._is_regression = is_regression
 
     def load_suites(self):
         for filename in self._input_files:
@@ -236,7 +246,7 @@ class TestCatalog(object):
 
             if helpers.file_not_empty(filename):
                 print("Reading %s" % filename)
-                suite = TestSuite(filename)
+                suite = TestSuite(filename, is_regression=self._is_regression)
                 suite.extract_suite_attributes()
                 suite.extract_test_attributes()
                 suite.dump_suite_to_file(self._output_suites, to_json=True)
@@ -275,10 +285,16 @@ Test Catalog (MongoDB) database.
                         help=("JSON output file containing test suites"))
     parser.add_argument('--output-testcases', required=True,
                         help=("JSON output file containing test cases"))
+    parser.add_argument('--is-regression',
+                        action='store_true',default=False,
+                        help=("Specify this option if analyzing regression results"))
     args = parser.parse_args()
 
     input_files = helpers.file_read_once(args.input, to_list=True)
-    t = TestCatalog(input_files, args.output_suites, args.output_testcases)
+    t = TestCatalog(in_files=input_files,
+                    out_suites=args.output_suites,
+                    out_testcases=args.output_testcases,
+                    is_regression=args.is_regression)
     t.load_suites()
     print "Total suites: %s" % t.total_suites()
     print "Total tests: %s" % t.total_tests()
