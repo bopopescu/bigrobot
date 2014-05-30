@@ -2064,7 +2064,7 @@ class T5(object):
         data = c.rest.content()
         for i in range(0, len(data)):
             if int(data[i]["port-count"]) != count:
-                helpers.log("Expected membership ports %d are not present in the each VNS=%s" % count, data[i]["name"])
+                helpers.log("Expected membership ports=%d are not present in the each VNS=%s" % (count, data[i]["name"]))
                 return False
             
     def cli_show_interface(self, switch=None, intf=None):
