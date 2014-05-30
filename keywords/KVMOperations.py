@@ -472,7 +472,7 @@ class KVMOperations(object):
                                                 vm_name=vm_name)
         else:
             vm_creation = self._virt_install_vm(kvm_handle=kvm_handle, disk_path=kvm_vmdk_path,
-                                                vm_name=vm_name, ram="2048", cpus="2")
+                                                vm_name=vm_name, ram="4096", cpus="4")
 
         if vm_creation:
             helpers.summary_log("2. Success Creating VM with Name: %s on KVM_Host: %s" % (vm_name, kvm_host))
