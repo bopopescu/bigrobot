@@ -1585,7 +1585,8 @@ def text_processing_str_remove_to_end(input_str, line_marker):
 
 
 def regex_bvs():
-    return r'Big Virtual Switch Appliance.*[\r\n]'
+    # return r'Big Virtual Switch Appliance.*[\r\n]'
+    return r'Big Cloud Fabric Appliance.*[\r\n]'
 
 
 #
