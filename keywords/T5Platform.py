@@ -103,7 +103,7 @@ class T5Platform(object):
 
     def rest_verify_cluster_election_take_leader(self):
         ''' Invoke "cluster election take-leader" command and verify the controller state
-            This function will invoke the take_leader functionality and verify the fabric integrity between 
+            This function will invoke the take_leader functionality and verify the fabric integrity between
             before and after states
         '''
         obj = utilities()
@@ -116,9 +116,9 @@ class T5Platform(object):
 
 
     def cli_cluster_take_leader(self):
-        ''' Function to trigger failover to slave controller via CLI. This function will verify the 
+        ''' Function to trigger failover to slave controller via CLI. This function will verify the
             fabric integrity between states
-            
+
             Input: None
             Output: True if successful, False otherwise
         '''
@@ -341,21 +341,21 @@ class T5Platform(object):
 
     def verify_HA_with_disruption(self, disruptMode="switchReboot", disruptTime="during", failoverMode="failover", **kwargs):
         '''
-            This function will carry out different disruptions during failovers & verify fabric 
+            This function will carry out different disruptions during failovers & verify fabric
             integrity. Disruptions will carry out in distributed manner. For eg. if disruptMode is "switchReboot", this
-            functions will schedule a dedicated thread to each switch reboot while carrying out failover function as defined by 
+            functions will schedule a dedicated thread to each switch reboot while carrying out failover function as defined by
             'disruptTime' argument.
-            
+
             Inputs:
                 disruptMode  : "switchReboot"    - Reboot leaf or spine switch eg: "switch=spine0"  / "switch=spine0 leaf0-a"
-                
+
                 disruptTime : Disruptions happens 'during' or 'before" the HA event
-                
+
                 failoverMode : "failover"     - Failover by issuing failover command (default)
-                               "masterReboot" - Failover by rebooting active controller  
-                               
-                kwargs: "switch=spien0 leaf0-a"                
-                                
+                               "masterReboot" - Failover by rebooting active controller
+
+                kwargs: "switch=spien0 leaf0-a"
+
         '''
 
         obj = utilities()
@@ -496,15 +496,15 @@ class T5Platform(object):
 
     def auto_configure_tenants(self, numTenants, numVnsPerTenant, vnsIntIPList, *args):
 
-        ''' Add tenant & vns  to the running-config. 
-            Usage: 
+        ''' Add tenant & vns  to the running-config.
+            Usage:
                 * Variables
                 @{vnsIntIPDict}  v1  10.10.10.100  v2  20.20.20.100  v3  30.30.30.100
-                @{v1MemberPGList}   v1  PG   p1  10  p3  10  
+                @{v1MemberPGList}   v1  PG   p1  10  p3  10
                 @{v1MemberIntList}  v1  INT  leaf0-a  ethernet33  -1  leaf1-a  ethernet33  -1
                 @{v2MemberPGList}   v2  PG   p2  20  p4  20
                 @{v2MemberIntList}  v2  INT  leaf0-a  ethernet34  -1  leaf1-a  ethernet34  -1
-                
+
                 Test T5Setup
                     [Tags]  Setup
                     auto configure tenants     1  2  ${vnsIntIPDict}  ${v1MemberPGList}  ${v1MemberIntList}  ${v2MemberPGList}  ${v2MemberIntList}
@@ -629,12 +629,12 @@ class T5Platform(object):
 
 
     def auto_configure_fabric_switch(self, spineList, leafList, leafPerRack):
-        ''' Add leaf & spine switches to the running-config. 
-            Usage: 
+        ''' Add leaf & spine switches to the running-config.
+            Usage:
                 * Variables
                 @{spineList}  00:00:00:00:00:01:00:01  00:00:00:00:00:01:00:02
                 @{leafList}  00:00:00:00:00:02:00:01  00:00:00:00:00:02:00:02  00:00:00:00:00:02:00:03  00:00:00:00:00:02:00:04
-                
+
                 Test T5Setup
                     [Tags]  Setup
                     auto configure fabric switch  ${spineList}  ${leafList}  2
@@ -712,11 +712,11 @@ class T5Platform(object):
 
     def auto_delete_fabric_switch(self, spineList, leafList, leafPerRack):
         ''' Delete all the switches in the running-config. Use as running config cleanup function. (teardown)
-            Usage: 
+            Usage:
                 * Variables
                 @{spineList}  00:00:00:00:00:01:00:01  00:00:00:00:00:01:00:02
                 @{leafList}  00:00:00:00:00:02:00:01  00:00:00:00:00:02:00:02  00:00:00:00:00:02:00:03  00:00:00:00:00:02:00:04
-                
+
                 Test T5TearDown
                     [Tags]  Teardown
                     auto delete fabric switch  ${spineList}  ${leafList}  2
@@ -849,22 +849,22 @@ class T5Platform(object):
 
     def getNodeID(self, slaveNode=True):
 
-        '''         
+        '''
         Description:
-        -    This function will handout the NodeID's for master & slave nodes 
-        
+        -    This function will handout the NodeID's for master & slave nodes
+
         Objective:
         -    This is designed to be resilient to node failures in HA environments. Eg: If the node is not
             reachable or it's powered down this function will handle the logic
-            
+
         Inputs:
         |    boolean: slaveNode  |  Whether secondary node is available in the system. Default is True
-        
+
         Outputs:
         |    If slaveNode: return (masterID, slaveID)
         |    else:    return (masterID)
 
-        
+
         '''
         numTries = 0
         t = test.Test()
@@ -1159,7 +1159,7 @@ class T5Platform(object):
         url = '/api/v1/data/controller/applications/bvs/monitor-session[id=%s]/source[switch-name="%s"][interface-name="%s"]' % (sessionID, srcSwitch, srcInt)
 
         if (matchSpec):
-            result = master.rest.put(url, {"match-specification": matchSpec, "direction": "ingress", "switch-name": "leaf0-a", "interface-name": "ethernet15"})
+            result = master.rest.put(url, {"match-specification": matchSpec, "direction": "ingress", "switch-name": srcSwitch, "interface-name": srcInt})
         else:
             result = master.rest.put(url, {"direction": kwargs.get("direction"), "switch-name": srcSwitch , "interface-name": srcInt})
 
@@ -1219,7 +1219,7 @@ class T5Platform(object):
     def rest_verify_monitor_session(self, sessionID, srcSwitch, srcInt, dstSwitch, dstInt, **kwargs):
         '''
             Verify a monitor session (SPAN) in the switch. This uses "show run monitor-session" command
-            for the verification 
+            for the verification
             Inputs: sessionID - Session ID for the monitor session
                     srcSwitch/Int - Source switch & interface
                     dstSwitch/Int - Destination switch & interface
@@ -1279,19 +1279,19 @@ class T5Platform(object):
                             helpers.log("Wrong dst-tp-port in the monitor session %s : %s: %s" % (sessionID, srcInt, kwargs.get('dst-tp-port')))
                             return False
                     if ('ip-dscp') in kwargs:
-                        if((session['source'][0]['match-specification'])['ip-dscp'] != kwargs.get('ip-dscp')):
+                        if((session['source'][0]['match-specification'])['ip-dscp'] != int(kwargs.get('ip-dscp'))):
                             helpers.log("Wrong ip-dscp in the monitor session %s : %s: %s" % (sessionID, srcInt, kwargs.get('ip-dscp')))
                             return False
                     if ('ip-ecn') in kwargs:
-                        if((session['source'][0]['match-specification'])['ip-ecn'] != kwargs.get('ip-ecn')):
+                        if((session['source'][0]['match-specification'])['ip-ecn'] != int(kwargs.get('ip-ecn'))):
                             helpers.log("Wrong ip-ecn in the monitor session %s : %s: %s" % (sessionID, srcInt, kwargs.get('ip-ecn')))
                             return False
                     if ('ip-proto') in kwargs:
-                        if((session['source'][0]['match-specification'])['ip-proto'] != kwargs.get('ip-proto')):
+                        if((session['source'][0]['match-specification'])['ip-proto'] != int(kwargs.get('ip-proto'))):
                             helpers.log("Wrong ip-proto in the monitor session %s : %s: %s" % (sessionID, srcInt, kwargs.get('ip-proto')))
                             return False
                     if ('ether-type') in kwargs:
-                        if((session['source'][0]['match-specification'])['ether-type'] != kwargs.get('ether-type')):
+                        if((session['source'][0]['match-specification'])['ether-type'] != int(kwargs.get('ether-type'))):
                             helpers.log("Wrong ether-type in the monitor session %s : %s: %s" % (sessionID, srcInt, kwargs.get('ether-type')))
                             return False
                     pass
@@ -1312,7 +1312,7 @@ class T5Platform(object):
     def verify_ping_with_tcpdump(self, host, ipAddr, verifyHost, verifyInt, *args):
 
         ''' This function will issue a ping request and verify it through the TCP dump.
-        
+
         Input:  host -> hostname from the topo file
                 ipAddr -> Destination IP address of that ping request should go
                 verifyHost -> Host where tcpdump is being executed
@@ -1358,8 +1358,8 @@ class T5Platform(object):
     def verify_traffic_with_tcpdump(self, verifyHost, verifyInt, verifyOptions, *args):
 
         ''' This function will verify the traffic through TCP dump.
-        
-        Input:  
+
+        Input:
                 verifyHost -> Host where tcpdump is being executed
                 verifyInt -> interfaces of the host that tcpdump would get excuted
                 verifyOptions -> Other TCP Dump options (eg: src port 8000 and tcp)
@@ -1662,15 +1662,15 @@ class T5Platform(object):
             return True
 
     def copy_pkg_from_jenkins(self, node='master', check=True):
-        ''' 
+        '''
           copy the latest upgrade package from Jenkin
           Author: Mingtao
-          input:  node  - controller to copy the image, 
+          input:  node  - controller to copy the image,
                           master, slave, c1 c2
-          usage:  
+          usage:
               check: True, if there is a image, will not copy
           output: image build
-                     
+
         '''
         t = test.Test()
         c = t.controller(node)
@@ -1718,16 +1718,16 @@ class T5Platform(object):
         return image
 
     def copy_pkg_from_server(self, src, node='master', passwd='bsn', soft_error=False):
-        ''' 
+        '''
           copy the a upgrade package from server
           Author: Mingtao
-          input:  node  - controller to copy the image, 
+          input:  node  - controller to copy the image,
                           master, slave, c1 c2
-          usage: 
-              copy_pkg_from_server  bsn@qa-kvm-32:/home/mingtao/bigtap-3.0.0-upgrade-2014.02.27.1852.pkg 
+          usage:
+              copy_pkg_from_server  bsn@qa-kvm-32:/home/mingtao/bigtap-3.0.0-upgrade-2014.02.27.1852.pkg
               soft_error:  True, handle negative case
           output: image build
-                     
+
         '''
         t = test.Test()
         c = t.controller(node)
@@ -1773,10 +1773,10 @@ class T5Platform(object):
 
 
     def cli_check_image(self, node='master', soft_error=False):
-        ''' 
+        '''
           check image available in the system "show image"
           Author: Mingtao
-          input:  node  - controller  
+          input:  node  - controller
                           master, slave, c1 c2
           usage:  ${num}  ${image}=      cli_check_image
           output: ${num - the number of images
@@ -1822,14 +1822,14 @@ class T5Platform(object):
 
 
     def cli_delete_image(self, node='master', image=None):
-        ''' 
-          delete image  in system             
+        '''
+          delete image  in system
           Author: Mingtao
-          input:  node  - controller  
+          input:  node  - controller
                           master, slave, c1 c2
                   image - build number to be deleted
                           None - delete all the images
-          usage:   
+          usage:
           output: ${num - the number of images
                   ${image}   - the image build in a list
         '''
@@ -1867,14 +1867,14 @@ class T5Platform(object):
 
 
     def cli_upgrade_stage(self, node='master', image=None):
-        ''' 
-          upgrade stage  -  1 step of upgrade         
+        '''
+          upgrade stage  -  1 step of upgrade
           Author: Mingtao
-          input:  node  - controller 
+          input:  node  - controller
                           master, slave, c1 c2
                   image - build number to be staged
-                          None - pick the biggest build number  
-          usage:   
+                          None - pick the biggest build number
+          usage:
           output: True  - upgrade staged successfully
                   False  -upgrade staged Not successfully
         '''
@@ -1914,13 +1914,13 @@ class T5Platform(object):
 
 
     def cli_upgrade_launch(self, node='master'):
-        ''' 
-          upgrade launch  -  2 step of upgrade         
+        '''
+          upgrade launch  -  2 step of upgrade
           Author: Mingtao
-          input:  node  - controller  
+          input:  node  - controller
                           master, slave, c1 c2
-                  
-          usage:   
+
+          usage:
           output: True  - upgrade launched successfully
                   False  -upgrade launched Not successfully
         '''
@@ -1948,17 +1948,17 @@ class T5Platform(object):
 
 
     def cli_take_snapshot(self, node='master', run_config=None, local_node=None, fabric_switch=None, filepath=None):
-        ''' 
-          take snapshot of the system, can only take snapshot one by one  
+        '''
+          take snapshot of the system, can only take snapshot one by one
           Author: Mingtao
-          input:  node  - controller  
+          input:  node  - controller
                           master, slave, c1 c2
                   run_config   - runnning config
                   fabric_switch  -  show fabric switch
                   filepath -  file infos in the filepath
-          usage:   
+          usage:
           output: "show running-config" or "show fabric_switch" or "ls "
-                   
+
         '''
         t = test.Test()
         c = t.controller(node)
@@ -1996,12 +1996,12 @@ class T5Platform(object):
 
 
     def rest_get_node_role(self, node='c1'):
-        '''  
+        '''
            return the local node role:
           Author: Mingtao
-          input:  node  - controller  
-                           c1 c2                
-          usage:   
+          input:  node  - controller
+                           c1 c2
+          usage:
           output: active or stand-by
           fails if there is no domain-leader for the cluster
         '''
@@ -2033,12 +2033,12 @@ class T5Platform(object):
 
 
     def cli_get_node_role(self, node='c1'):
-        '''  
+        '''
            return the local node role:
           Author: Mingtao
-          input:  node  - controller  
-                           c1 c2                
-          usage:   
+          input:  node  - controller
+                           c1 c2
+          usage:
           output: active or stand-by
           fails if there is no domain-leader for the cluster
         '''
@@ -2062,14 +2062,14 @@ class T5Platform(object):
 
 
     def rest_get_ver(self, node='c1'):
-        '''  
-          return the local node version 
+        '''
+          return the local node version
           Author: Mingtao
-          input:  node  - controller  
-                           c1 c2                
-          usage:   
-          output:  build 
-          
+          input:  node  - controller
+                           c1 c2
+          usage:
+          output:  build
+
         '''
         t = test.Test()
         c = t.controller(node)
@@ -2087,12 +2087,12 @@ class T5Platform(object):
 
 
     def rest_get_num_nodes(self):
-        ''' 
-          return the number of nodes in the system  
+        '''
+          return the number of nodes in the system
           Author: Mingtao
-          input:                                        
-          usage:   
-          output:   1  or 2 
+          input:
+          usage:
+          output:   1  or 2
         '''
         t = test.Test()
         c = t.controller('master')
@@ -2118,12 +2118,12 @@ class T5Platform(object):
 
 
     def cli_whoami(self):
-        '''  
-          run cli whoami  
+        '''
+          run cli whoami
           Author: Mingtao
-          input:                                        
-          usage:   
-          output:   username and group        
+          input:
+          usage:
+          output:   username and group
         '''
         t = test.Test()
         c = t.controller('master')
@@ -2151,13 +2151,13 @@ class T5Platform(object):
 
 
     def cli_reauth(self, user='admin', passwd='adminadmin'):
-        '''  
-          run cli reauth, and run cli_whoami verify 
+        '''
+          run cli reauth, and run cli_whoami verify
           Author: Mingtao
-          input:                                        
-          usage:  cli_reauth  user 
-          output:   True  or False      
-                       
+          input:
+          usage:  cli_reauth  user
+          output:   True  or False
+
         '''
         t = test.Test()
         c = t.controller('master')
@@ -2207,9 +2207,9 @@ class T5Platform(object):
         Author:    Mingtao
         Inputs:
         | node | reference to switch/controller/host as defined in .topo file |
-        
+
         Example:    bash_top   c1
-       
+
         Return Value:
         - Dictionary
             {'Swap': {'cached': '904268k',
@@ -2241,7 +2241,7 @@ class T5Platform(object):
                          'free': '499892k',
                          'total': '2051616k',
                          'used': '1551724k'}
-         }           
+         }
         """
         t = test.Test()
         n = t.node(node)
@@ -2319,9 +2319,9 @@ class T5Platform(object):
         '''
           cli add user to the system, can only run at master
           Author: Mingtao
-          input:   user = username,  passwd  = password                                       
-          usage:   
-          output:   True                            
+          input:   user = username,  passwd  = password
+          usage:
+          output:   True
         '''
 
         t = test.Test()
@@ -2340,13 +2340,13 @@ class T5Platform(object):
 
 
     def cli_group_add_users(self, group=None, user=None):
-        '''  
+        '''
           cli add user to group, can only run at master
           Author: Mingtao
           input:   group  - if group not give, will user admin
-                  user    - if user not given, will add all uers                             
-          usage:   
-          output:   True                            
+                  user    - if user not given, will add all uers
+          usage:
+          output:   True
         '''
         t = test.Test()
         c = t.controller('master')
@@ -2377,13 +2377,13 @@ class T5Platform(object):
 
 
     def rest_get_user_group(self, user):
-        '''  
+        '''
           get the group for a user, can only run at master
           Author: Mingtao
-          input:   
-                  user    - if user not given, will add all uers                             
-          usage:   
-          output:   group                          
+          input:
+                  user    - if user not given, will add all uers
+          usage:
+          output:   group
         '''
         t = test.Test()
         c = t.controller('master')
@@ -2406,13 +2406,13 @@ class T5Platform(object):
 
 
     def cli_delete_user(self, user):
-        '''  
+        '''
           delete users can only run at master
           Author: Mingtao
-          input:  user                        
-          usage:   
-          output:   True                            
-           
+          input:  user
+          usage:
+          output:   True
+
         '''
 
         t = test.Test()
@@ -2423,12 +2423,12 @@ class T5Platform(object):
 
 
     def T5_cli_clean_all_users(self, user=None):
-        ''' 
+        '''
         delete all users except admin
           Author: Mingtao
-          input:  user                        
-          usage:   
-          output:   True                                                
+          input:  user
+          usage:
+          output:   True
         '''
 
         t = test.Test()
@@ -2478,13 +2478,13 @@ class T5Platform(object):
                         ):
 
         """
-        First boot setup: connect to the console  and complete the first boot.  
+        First boot setup: connect to the console  and complete the first boot.
         input: dhcp = no   - static ip assign
                dhcp = yes,  dhcp
-               join_cluster = no  - start a new cluster 
+               join_cluster = no  - start a new cluster
                join_cluster = yes  - jion existing cluster
 
-        Author: Mingtao       
+        Author: Mingtao
 
         """
         helpers.log("Entering ====>  first_boot_controller node:'%s' " % node)
@@ -2504,8 +2504,8 @@ class T5Platform(object):
 
     def console_boot_factory_default(self, node, timeout=360):
         """
-        Runs boot factory-default from console, the can be used when controller is setup using dhcp      
-        Author: Mingtao        
+        Runs boot factory-default from console, the can be used when controller is setup using dhcp
+        Author: Mingtao
         """
 
         t = test.Test()
@@ -2519,7 +2519,7 @@ class T5Platform(object):
         n_console.send('')
         helpers.sleep(2)
         n_console.send('')
-        options = n_console.expect([r'Big Virtual Switch Appliance.*[\r\n]', r'.*> '])
+        options = n_console.expect([helpers.regex_bvs(), r'.*> '])
         if options[0] == '0':
             n_console.expect(r'.*login: ')
             n_console.send('admin')
@@ -2555,10 +2555,10 @@ class T5Platform(object):
                            hostname='MY-T5-C',
                             ):
         """
-        First boot setup I: connect to the console to complete the first-boot node setup part 
+        First boot setup I: connect to the console to complete the first-boot node setup part
         input: dhcp = no   - static ip assign
                dhcp = yes,  dhcp
-        Author: Mingtao       
+        Author: Mingtao
         """
         t = test.Test()
         n = t.node(node)
@@ -2581,7 +2581,7 @@ class T5Platform(object):
                 n_console.send(helpers.ctrl('c'))
                 helpers.sleep(2)
                 n_console.send('')
-                n_console.expect(r'Big Virtual Switch Appliance.*[\r\n]')
+                n_console.expect(helpers.regex_bvs())
                 n_console.expect(r'login:')
             elif options[0] == 1:
                 helpers.log("INFO:  need to login as  admin")
@@ -2631,10 +2631,10 @@ class T5Platform(object):
                            ntp_server='',
                            ):
         """
-        First boot setup II: connect to the console to complete the first-boot cluster setup part 
-        input: join_cluster = no  - start a new cluster 
+        First boot setup II: connect to the console to complete the first-boot cluster setup part
+        input: join_cluster = no  - start a new cluster
                join_cluster = yes  - jion existing cluster
-        Author: Mingtao       
+        Author: Mingtao
         """
 
         t = test.Test()
@@ -2678,7 +2678,7 @@ class T5Platform(object):
         """
         First boot setup III: connect to the console to apply the setting.
         First boot setup Menu :  Apply settings
-        Author: Mingtao       
+        Author: Mingtao
         """
         t = test.Test()
         n = t.node(node)
@@ -2722,9 +2722,9 @@ class T5Platform(object):
 
 
     def first_boot_controller_menu_recovery(self, node, passwd='bsn'):
-        """  
+        """
         First boot setup Menu :  Update Emergency Recovery Password
-        Author: Mingtao       
+        Author: Mingtao
         """
         t = test.Test()
         n = t.node(node)
@@ -2756,7 +2756,7 @@ class T5Platform(object):
     def first_boot_controller_menu_IP(self, node, ip_addr, netmask='24', invalid_input=False):
         """
        First boot setup Menu :  Update Local IP Address
-        Author: Mingtao       
+        Author: Mingtao
         """
         t = test.Test()
         n = t.node(node)
@@ -2808,7 +2808,7 @@ class T5Platform(object):
     def first_boot_controller_menu_prefix(self, node, netmask, invalid_input=False):
         """
        First boot setup Menu :  Update CIDR Prefix Length
-        Author: Mingtao              
+        Author: Mingtao
         """
         t = test.Test()
         n = t.node(node)
@@ -2845,8 +2845,8 @@ class T5Platform(object):
     def first_boot_controller_menu_gateway(self, node, gateway):
         """
        First boot setup Menu :  Update Gateway
-        Author: Mingtao       
-       
+        Author: Mingtao
+
         """
         t = test.Test()
         n = t.node(node)
@@ -2875,7 +2875,7 @@ class T5Platform(object):
     def first_boot_controller_menu_dnsserver(self, node, dnsserver, invalid_input=False):
         """
        First boot setup Menu :  Update DNS Server
-        Author: Mingtao              
+        Author: Mingtao
         """
         t = test.Test()
         n = t.node(node)
@@ -2911,7 +2911,7 @@ class T5Platform(object):
     def first_boot_controller_menu_domain(self, node, domain):
         """
        First boot setup Menu :  Update DNS Search Domain
-        Author: Mingtao       
+        Author: Mingtao
         """
         t = test.Test()
         n = t.node(node)
@@ -2940,7 +2940,7 @@ class T5Platform(object):
     def first_boot_controller_menu_name(self, node, name):
         """
        First boot setup Menu :  Update Hostname
-        Author: Mingtao       
+        Author: Mingtao
         """
         t = test.Test()
         n = t.node(node)
@@ -3092,11 +3092,11 @@ class T5Platform(object):
         """
           config a new local ip address and make sure it is reachable.
           Author: Mingtao
-          input:  node  - controller  
-                           c1 c2    
+          input:  node  - controller
+                           c1 c2
                    spawn: if node= 1.1.1.1,  and the address is not in topology, set it to True
-          usage:   
-          output:   
+          usage:
+          output:
         """
         t = test.Test()
         if spawn:
@@ -3123,11 +3123,11 @@ class T5Platform(object):
         """
           config a ntp time zone.
           Author: Mingtao
-          input:  node  - controller  
-                           c1 c2    
+          input:  node  - controller
+                           c1 c2
                  timezone:    America/Los_Angeles     America/New_York
-          usage:   
-          output:   
+          usage:
+          output:
         """
 
         t = test.Test()
@@ -3145,11 +3145,11 @@ class T5Platform(object):
 
     def cli_controller_show_clock(self, node):
         """
-          cli show clock  
+          cli show clock
           Author: Mingtao
-          input:  node  - controller  
-                           c1 c2                  
-          usage:   
+          input:  node  - controller
+                           c1 c2
+          usage:
           output:   {'time':......,'timezone':PDT}
         """
         t = test.Test()
@@ -3176,13 +3176,13 @@ class T5Platform(object):
         """
          verify the timezone configuration
           Author: Mingtao
-          input:  node  - controller  
-                           c1 c2   
-                timezone:    America/Los_Angeles     America/New_York                        
-          usage:   
+          input:  node  - controller
+                           c1 c2
+                timezone:    America/Los_Angeles     America/New_York
+          usage:
           output:   True:   if expect and show clock matches
-                    False:  if expect and show clock Not matche 
-        
+                    False:  if expect and show clock Not matche
+
         """
         helpers.log('INFO: Entering ==> controller_verify_timezone ')
         temp = self.cli_controller_show_clock(node)
@@ -3287,7 +3287,7 @@ class T5Platform(object):
 
     def first_boot_controller_menu_reset(self, node):
         """
-       First boot setup Menu :   reset 
+       First boot setup Menu :   reset
         """
         t = test.Test()
         n = t.node(node)
@@ -3312,11 +3312,11 @@ class T5Platform(object):
 
     def first_boot_controller_menu_apply_negative(self, node, **kwargs):
         """
-        First boot setup III: connect to the console to apply the setting. 
+        First boot setup III: connect to the console to apply the setting.
             this is negative, if wrong gw is given. then NTP and DNS can not be reached
         First boot setup Menu :  Apply settings
-    
-        Author: Mingtao       
+
+        Author: Mingtao
         """
         t = test.Test()
         n = t.node(node)
@@ -3502,14 +3502,14 @@ class T5Platform(object):
         '''
             This function will query the controller for the test packet path controller view
             Returns True if controller view returns without an error message.
-            
+
             kwargs Examples:
-                src-tenant=T1    
-                src-segment=v1    
-                src-ip=10.10.10.51    
-                dst-tenant=T1  
-                dst-segment=v1    
-                dst-ip=10.10.10.52    
+                src-tenant=T1
+                src-segment=v1
+                src-ip=10.10.10.51
+                dst-tenant=T1
+                dst-segment=v1
+                dst-ip=10.10.10.52
                 ip-protocol=icmp
         '''
         t = test.Test()
@@ -3556,15 +3556,15 @@ class T5Platform(object):
         '''
             This function will set up the fabric view for the controller.
             Returns True if the fabric view returns without an error message after the setup.
-            
+
             kwargs Examples:
                 test-name=Test1
-                src-tenant=T1    
-                src-segment=v1    
-                src-ip=10.10.10.51    
-                dst-tenant=T1  
-                dst-segment=v1    
-                dst-ip=10.10.10.52    
+                src-tenant=T1
+                src-segment=v1
+                src-ip=10.10.10.51
+                dst-tenant=T1
+                dst-segment=v1
+                dst-ip=10.10.10.52
                 ip-protocol=tcp
                 src-l4-port=8000
                 dst-l4-port=8500
@@ -3621,7 +3621,7 @@ class T5Platform(object):
 
         '''
             This function will verify the fabric view test path with the active traffic stream
-            
+
             testName => testName from the rest_configure_testpath_fabric_view
             trafficMode => Ixia / HostPing
             args:
@@ -4315,19 +4315,19 @@ class T5Platform(object):
             | command | Command to be executed |
             | cmd_argument_count | Number of lines in command help |
             | cmd_argument | Specific arguments that you want the function to look for in the command help|
-            
+
             Description:
             This function checks for couple of things:
             | 1 | Number of lines in help output is what user has specified |
             | 2 | The CLI command does not have '<cr> <cr>' in its help output|
             | 3 | The CLI command is not missing a help string for some sub command |
-            | 4 | if user has specified one or more arguments, those arguments are present in the help string| 
-            
+            | 4 | if user has specified one or more arguments, those arguments are present in the help string|
+
             Example:
             |cli walk command |  show switch all | 6 | |
             |cli walk command |  show tenant | 14 | tenant1 tenant2 tenant3|
             |cli walk command |  show switch | 9 | leaf0-a leaf0-b spine0|
-            
+
             example output of command:
             kk-mcntrlr-c1> show switch <====== Here number of lines are 13, but ideally you should see only 9. (this would be an error). THIS WOULD BE CAUGHT
             Keyword Choices:
@@ -4344,14 +4344,14 @@ class T5Platform(object):
             core/proxy/inventory/dpid:MAC Address
             switch-name:Switch Name Selection:Switch Name selection
             kk-mcntrlr-c1>
-            
+
             alpha-cont1> show switch all
             <cr> <cr><================================ THIS WOULD BE CAUGHT
             <cr>            Show fabric information for selected switch
             agent-counters  Show counters for various agents on the Switch
             connections     Show fabric information for selected switch
             details         Show fabric information for selected switch
-            interface       <help missing> SHOW_INTERFACE_STATS_COMMAND_DESCRIPTION <====THIS WOULD BE CAUGHT           
+            interface       <help missing> SHOW_INTERFACE_STATS_COMMAND_DESCRIPTION <====THIS WOULD BE CAUGHT
         '''
         try:
             t = test.Test()

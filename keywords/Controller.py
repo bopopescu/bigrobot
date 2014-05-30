@@ -336,7 +336,7 @@ class Controller(object):
         helpers.sleep(2)
         n_console.send('')
 
-        n_console.expect(r'Big Virtual Switch Appliance.*[\r\n]')
+        n_console.expect(helpers.regex_bvs())
         n_console.expect(r'login:')
         n_console.send('admin')
         n_console.expect(r'Do you accept the EULA.* > ')

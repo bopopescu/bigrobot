@@ -31,6 +31,7 @@ Setup Three Rack Dual Leaf Topology
     bring up h6 bond0
     sleep  10
     rest verify fabric switch all
+    sleep  10
 	rest verify fabric link common 	
 
 Test to check all the cidr routes are created in spine and leaf switches
@@ -91,6 +92,7 @@ With 2k mac entries , Remove the Leaf switch and Readd the leaf switch
     rest add leaf group  leaf0-a  rack0
     sleep  10
     rest verify fabric switch  leaf0-a
+    sleep  10
     rest verify fabric link common
     rest verify forwarding vlan fabric tag members  leaf0-a
     sleep  10
@@ -169,7 +171,7 @@ Test Data center falls below 50% link verify forwarding table for the switch rem
     rest add dpid  leaf2-b  ${leaf2b_dpid}
     rest add fabric role  leaf2-b  leaf 
     rest add leaf group  leaf2-b  rack2
-    sleep  10
+    sleep  20
     rest verify fabric link common
 
 Test VFT push to when system has not connected switches
