@@ -1130,7 +1130,7 @@ class T5(object):
         if vns is None or vns is "all":
             url = '/api/v1/data/controller/applications/bvs/info/stats/segment/stats'
         else:
-            url = '/api/v1/data/controller/applications/bvs/info/stats/segment/stats[name=%s]' % vns
+            url = '/api/v1/data/controller/applications/bvs/info/stats/segment/stats[name="%s"]' % vns
         c.rest.delete(url, {})
         return True
         

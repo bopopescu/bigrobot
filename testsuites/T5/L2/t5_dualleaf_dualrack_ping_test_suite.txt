@@ -34,6 +34,9 @@ basic cli show commands test case
    cli  c1  show running-config
 #   cli  c1  show cluster
    cli  c1  show switch
+   cli  c1  show controller
+   config  c1  show controller
+   enable  c1  show controller
    config  c1  show switch
    enable  c1  show switch
 add Fabric setup Dual Rack Dual Leaf 

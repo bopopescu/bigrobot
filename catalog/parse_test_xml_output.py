@@ -100,9 +100,9 @@ class TestSuite(object):
                         "product_suite" : rec['product_suite'],
                         "starttime_datestamp" : rec['starttime_datestamp'] },
                 update={ "$set": {"status": rec['status'],
-                                  "startdate": rec['startdate'],
-                                  "enddate": rec['enddate'],
-                                  "enddate_datestamp": rec['enddate_datestamp'],
+                                  "starttime": rec['starttime'],
+                                  "endtime": rec['endtime'],
+                                  "endtime_datestamp": rec['endtime_datestamp'],
                                   "duration": rec['duration'],
                                   "executed": rec['executed'],
                                   "origin_regression_catalog": rec['origin_regression_catalog'],
@@ -187,6 +187,9 @@ class TestSuite(object):
             if (('tags' in a_test and a_test['tags'] != None)
                 and 'tag' in a_test['tags']):
                 tags = helpers.utf8(a_test['tags']['tag'])
+
+                # Normalize data - convert tags to lowercase
+                tags = [x.lower() for x in tags]
             else:
                 tags = []
 
@@ -225,7 +228,8 @@ class TestSuite(object):
                     }
             self._tests.append(test)
 
-            self.db_find_and_modify_testcase(test)
+            if self._is_regression:
+                self.db_find_and_modify_testcase(test)
 
             # Add test cases to test suite
             # self._suite['tests'] = self._tests
