@@ -1584,6 +1584,10 @@ def text_processing_str_remove_to_end(input_str, line_marker):
     return '\n'.join(lines[:i])
 
 
+def regex_bvs():
+    return r'Big Virtual Switch Appliance.*[\r\n]'
+
+
 #
 # Network-related helpers
 #
