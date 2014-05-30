@@ -1718,7 +1718,24 @@ T99 Interface tenant deny policy any to dest-ip-port
     verify stats false  transmitted_frames  received_frames  ${stream}  ix1-to-ix2
 
 
-
+T100 Interface tenant remove deny policy any to dest-ip-port
+	[Tags]  feature
+	#${src_dict}=  Create Dictionary  segment  ${vnsX3}
+	${dst_dict}=  Create Dictionary  cidr  ${ixia4_ip}  l4-port  ${tcp_port}
+	rest add policy								X		${tenant1_polname}		
+	rest add policy item example  tenant=${tenantX}  polname=${tenant1_polname}  seqnum=10  action=deny  
+	...								dstdata=${dst_dict}  proto=6
+	rest remove policy on tenant					X			${tenant1_polname}
+	${stream}=             L3 add  name=ix1-to-ix2  flow=d->a  src_ip=10.252.1.2  src_gw=10.252.1.1
+    ...						dst_ip=10.251.1.2  dst_gw=10.251.1.1  src_mac=${ixia4_mac}  dst_mac=${ixia1_mac}
+    ...						protocol=TCP  src_port=${tcp_port}  dst_port=${tcp_port}
+    clear stats
+    start traffic  ${stream}
+    sleep                  5
+    stop traffic   ${stream}
+    #sleep                  
+    ${report}=             fetch port stats  stream=${stream}
+    verify stats true  transmitted_frames  received_frames  ${stream}  ix1-to-ix2
 
 
 
