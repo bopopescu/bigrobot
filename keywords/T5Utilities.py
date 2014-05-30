@@ -604,7 +604,7 @@ class T5Utilities(object):
         temp = helpers.str_to_list(temp)
         num = 0
         for line in temp:          
-            match= re.match(r'.*(active|stand-by).*', line)
+            match= re.match(r'.*(active|standby).*', line)
             if match:
                 num = num+1                                      
             else:

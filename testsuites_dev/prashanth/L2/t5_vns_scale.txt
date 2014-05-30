@@ -50,7 +50,7 @@ create 100 vns and verify the table and forwarding
 	rest delete tenant  t1
    
 create 1k vns and verify the table and forwarding
-	[Tags]  L2  scaling     
+	[Tags]  L2  scaling  run     
   	rest add tenant  t1
 	rest add vns scale  t1  1000
 	rest add interface to all vns  t1  leaf0-a  ${leaf0a_ixia_intf}
@@ -72,7 +72,7 @@ create 1k vns and verify the table and forwarding
 create 4000 vns and verify the table and forwarding
 	[Tags]  L2  scaling  run     
   	rest add tenant  t1
-	rest add vns scale  t1  4000
+	rest add vns scale  t1  3999
 	summary log  system create a 4k vns
 	rest add interface to all vns  t1  leaf0-a  ${leaf0a_ixia_intf}
 	rest add interface to all vns  t1  leaf1-a  ${leaf1a_ixia_intf}
@@ -92,7 +92,7 @@ create 4000 vns and verify the table and forwarding
     Should not be True  ${result}
 
 Master controller node reboot with 4k vns
-	[Tags]  L2  scaling      
+	[Tags]  L2  scaling  run      
   	rest add tenant  t1
 	rest add vns scale  t1  4000
 	summary log  system create a 4k vns

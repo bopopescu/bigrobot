@@ -74,16 +74,17 @@ tg1:
   tcl_server_ip: 10.210.67.27
   ports:
     a:
-      name: 2/1
+      name: 4/25
     b:
-      name: 2/2
+      name: 4/26
     c:
-      name: 2/3
+      name: 4/27
     d:
-      name: 2/4
+      name: 4/28
     e:
-      name: 2/5
+      name: 4/29
     f:
-      name: 2/6
+      name: 4/30
         
+ 
  
