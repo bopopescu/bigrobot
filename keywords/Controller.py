@@ -339,6 +339,13 @@ class Controller(object):
         n_console.expect(helpers.regex_bvs())
         n_console.expect(r'login:')
         n_console.send('admin')
+
+        # Need to enable developer mode to use DHCP option. Magic string
+        # to enable it is 'dhcp'.
+        n_console.expect(r'Do you accept the EULA.* > ')
+        n_console.send('dhcp')
+        n_console.expect(r'Developer.* mode enabled.*')
+        # The "real" EULA
         n_console.expect(r'Do you accept the EULA.* > ')
         n_console.send('Yes')
 

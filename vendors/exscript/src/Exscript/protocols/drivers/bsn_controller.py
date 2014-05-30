@@ -86,7 +86,8 @@ class BsnControllerDriver(Driver):
         if 'Big Wire Controller' in string:
             self._platform = 'bigwire'
             return 60
-        if 'Big Virtual Switch' in string:
+        if (('Big Cloud Fabric Appliance' in string)
+            or ('Big Virtual Switch' in string)):
             self._platform = 'bvs'
             return 90
         if _tacacs_re.search(string):

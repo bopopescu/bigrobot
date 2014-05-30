@@ -2586,8 +2586,17 @@ class T5Platform(object):
             elif options[0] == 1:
                 helpers.log("INFO:  need to login as  admin")
             n_console.send('admin')
+
+            # Need to enable developer mode to use DHCP option. Magic string
+            # to enable it is 'dhcp'.
+            n_console.expect(r'Do you accept the EULA.* > ')
+            n_console.send('dhcp')
+            n_console.expect(r'Developer.* mode enabled.*')
+
+            # The "real" EULA
             n_console.expect(r'Do you accept the EULA.* > ')
             n_console.send('Yes')
+
             n_console.expect(r'Local Node Configuration')
 
         n_console.expect(r'Password for emergency recovery user > ')
