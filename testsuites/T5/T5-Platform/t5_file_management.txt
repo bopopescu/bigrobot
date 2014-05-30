@@ -133,9 +133,10 @@ T1.2 Copy running config to config://
 	[Tags]  Smoke
 
 T1.3 Copy running config to scp://
-	Cli Copy  running-config  ${scp}
-	Compare  running-config  ${scp}
-	Compare Slave  running-config  ${scp}
+	${scp_random}  Generate Random Name  ${scp}  5
+	Cli Copy  running-config  ${scp_random}
+	Compare  running-config  ${scp_random}
+	Compare Slave  running-config  ${scp_random}
 	[Tags]  SCP  Smoke  HA
 
 
