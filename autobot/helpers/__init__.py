@@ -1248,11 +1248,23 @@ def run_cmd(cmd, cwd=None, ignore_stderr=False, shell=True, quiet=False):
 
 
 def _ping(host, count=5, timeout=5, quiet=False, source_if=None,
-          node_handle=None, mode=None, ttl=None):
+          record_route=None, node_handle=None, mode=None, ttl=None):
+    """
+    Ping options:
+      - count : -c <counter>
+      - source_inf : -I <interface>
+      - record_route : -R
+      - ttl : -t <ttl> (on Linux), -T <ttl> (on Mac OS X)
+      - timeout : -W <timeout> (on Linux), -t <timeout> (on Mac OS X)
+
+    See also Host.bash_ping() to see how to use ping as a BigRobot keyword.
+    """
 
     cmd = "ping -c %s" % count
     if source_if:
         cmd = "%s -I %s" % (cmd, source_if)
+    if record_route:
+        cmd = "%s -R" % (cmd)
 
     # Ping initiated from the staging machine (likely is your MacBook)
     if not node_handle and platform.system() == 'Darwin':
