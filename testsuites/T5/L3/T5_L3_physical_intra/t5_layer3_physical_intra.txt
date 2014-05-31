@@ -37,15 +37,15 @@ Intra tenant L3 tagged traffic with dynamic endpoints across rack
 
 Intra tenant L3 traffic same rack different leaf switch
     Intra tenant L3 traffic same rack different leaf switch
-    [Tags]                              sanity  
+    [Tags]                              sanity                  run5
 
 Verify static endpoint state
     Verify static endpoint state
-    [Tags]                              sanity  
+    [Tags]                              sanity                  run5            
 
 Verify host with same IP as vrf is having L2 service only
     Verify host with same IP as vrf is having L2 service only
-    [Tags]                              sanity              
+    [Tags]                              sanity                  run5        BVS-1725
     
 Activate and deactivate router interface
 	Activate and deactivate router interface
@@ -149,7 +149,7 @@ Change tagged endpoint IP address
 
 Configure static endpoint with host showing up on another port
 	Static endpoint with dynamic host showing up on another port
-	[Tags]					sanity              run2		
+	[Tags]					sanity              run5	
 
 Verify subnet mask is properly applied on router vns
 	Verify subnet mask on vns router ip
@@ -177,15 +177,15 @@ L3 intra tenant traffic between private and public subnet with overlapping IP
 	
 Verify host with different IP on vns router is not getting L3 service
 	Verify host with different IP on vns router is not getting L3 service
-	[Tags]						feature					
+	[Tags]						feature					   run5
 	
 Trigger controller HA failover via CLI
 	Controller HA failover via CLI	
-	[Tags]				feature			
-	
+	[Tags]				feature			                   run5
+	   
 Trigger controller HA failover via reboot
 	Controller HA failover via reboot
-	[Tags]				feature			
+	[Tags]				feature			                   run5
 
 Spine reboot
 	Reboot spine0 via CLI
@@ -233,7 +233,7 @@ Verify L3 intra tenant traffic with ip options
 	
 Verify host on private segment is able to get dhcp address from tenant dhcp server
     Verify host on private segment is able to get dhcp address from tenant dhcp server
-    [Tags]                                  feature           dhcp-relay 
+    [Tags]                                  feature           dhcp-relay            run5
     							
 		
 Trigger controller HA failover via CLI and verify dhcp-relay is working
@@ -470,7 +470,7 @@ Intra tenant L3 traffic same rack different leaf switch
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
     Should Contain                              ${attachpoint}                  ${leaf2b_host6}
     REST show endpoints     
-    ${loss} =                                   BASH ping                       h1                      10.251.2.31             count=10
+    ${loss} =                                   BASH ping                       h5                      10.251.2.31             count=10
     Should Be True                              ${loss} < 20        
     BASH init intf                              h5                              eth1
     BASH init intf                              h6                              em2
@@ -549,7 +549,7 @@ Verify static endpoint state
     REST add portgroup to vns                   X                               X1                      ${leaf2_pc1}            -1
     ${result} =                                 REST show endpoints mac         ${mac1}
     ${state1} =                                 Set Variable                    ${result[0]['state']}
-    Should Contain                              ${state1}                       active 
+    Should Contain                              ${state1}                       Active 
     ${mac2} =                                   BASH get intf mac               h6                      bond0
     REST add endpoint mac                       X                               X2                      X2_pc2                  ${mac2}
     REST add endpoint portgroup attachment      X                               X2                      X2_pc2                  ${leaf2_pc2}                -1  
@@ -1697,7 +1697,7 @@ Verify icmpa is sending destination unreachable for L3 destination miss
 	BASH add route								h3								10.251.2.0/24			10.251.1.1
 	BASH add route								h4								10.251.1.0/24			10.251.2.1
 	BASH add route								h4								10.99.99.0/24			10.251.2.1
-	sleep										10	
+	sleep										5	
 	BASH ping									h3								10.251.1.1				count=5
 	BASH ping									h4								10.251.2.1				count=5
 	${value} = 									BASH verify arp					h3						10.251.1.1
@@ -1711,9 +1711,9 @@ Verify icmpa is sending destination unreachable for L3 destination miss
 	${result} =									REST show endpoints mac			${mac2}
 	Should Be True								${result}						
 	REST show endpoints	
-	${loss} = 									BASH ping						h3						10.99.99.11 			count=10			
+	${loss} = 									BASH ping						h4						10.99.99.11 			count=10			
 	Should Be True  							${loss} == 100			
-	${result} =       							BASH content 					h3
+	${result} =       							BASH content 					h4
     log              							result from bash ping is ${result}
    	Should Contain X Times						${result}						Destination Host Unreachable		10
  	BASH delete route							h3								10.251.2.0/24			10.251.1.1
@@ -2005,8 +2005,9 @@ Static endpoint with dynamic host showing up on another port
 	Should Be True								${loss} == 100
 	${returnVal} =                              verify ping with tcpdump        h1                      10.251.3.22            h6      bond0       ICMP echo request   
 	Should Be True                              ${returnVal}
-	${returnVal} =                              verify ping with tcpdump        h2                      10.251.1.11            h6      bond0       ICMP echo reply   
-    Should Be True                              ${returnVal}
+### Traffic from h2 will be src miss and dropped
+	#${returnVal} =                              verify ping with tcpdump        h2                      10.251.1.11            h6      bond0       ICMP echo reply   
+    #Should Be True                              ${returnVal}
 	REST delete endpoint						X								X3						X3_host1
 	sleep										1
 	${loss} = 									BASH ping						h2						10.251.3.24				count=10
@@ -2239,7 +2240,7 @@ Verify host with different IP on vns router is not getting L3 service
 	BASH add ip address							h5								10.251.1.11/24			bond0	
 	BASH add ip address							h4								10.251.3.11/24			bond0
 	BASH add ip address							h6								10.251.4.11/16			bond0
-	BASH add route								h5								10.251.3.0/24			10.251.1.1
+	BASH add route								h5								10.251.2.0/24			10.251.1.1
 	BASH add route								h4								10.251.1.0/24			10.251.3.1
 	BASH add route								h6								10.251.0.0/16			10.251.2.1
 	sleep										5	
@@ -2269,7 +2270,7 @@ Verify host with different IP on vns router is not getting L3 service
 	BASH add route								h6								10.251.1.0/24			10.251.2.1
 	${loss} = 									BASH ping						h6						10.251.1.11 			count=10
 	Should Be True  							${loss} < 20
-	BASH delete route							h5								10.251.3.0/24			10.251.1.1
+	BASH delete route							h5								10.251.2.0/24			10.251.1.1
 	BASH delete route							h4								10.251.1.0/24			10.251.3.1
 	BASH delete route							h6								10.251.1.0/24			10.251.2.1
 
@@ -2361,6 +2362,7 @@ Verify host on private segment is able to get dhcp address from tenant dhcp serv
     ${result} =                                 REST show endpoints mac         ${h1_mac}
     Should Not Be Empty                         ${result}
     sleep                                       1
+    BASH ping                                   h1                              10.252.1.1              count=3
     ${value} =                                  BASH verify arp                 h1                      10.252.1.1
     Should Be True                              ${value}        
     sleep                                       1
@@ -2898,9 +2900,6 @@ restart ofad on leaf
 	BASH delete route							h3								10.251.1.0/24			10.251.3.1
 
 
-L3 intra tenant traffic behavior in headless mode 
- 	Manual failed
-
 Verify L3 intra tenant traffic with ip options
 	BASH ifup intf								h1 								bond0
 	BASH ifup intf								h2								bond0
@@ -3034,6 +3033,7 @@ Trigger controller HA failover via reboot and verify dhcp-relay is working
 	${result} = 								REST show endpoints mac			${h1_mac}
 	Should Not Be Empty							${result}
 	sleep										1
+	BASH ping                                   h1                              10.252.1.1              count=5                      
 	${value} = 									BASH verify arp					h1						10.252.1.1
 	Should Be True								${value} 		
 	sleep										1
@@ -3238,7 +3238,7 @@ initialize host
 test setup topology
 	initialize host
 	sleep 											1
-	Start Floodlight Monitor 
+#	Start Floodlight Monitor 
 	REST add tenant 								X
 	REST add tenant									Y
 	REST add tenant									Z
@@ -3294,7 +3294,7 @@ test teardown topology
 	REST delete tenant								X
 	REST delete tenant								Y
 	REST delete tenant								Z
-	Stop Floodlight Monitor 
+#	Stop Floodlight Monitor 
 	initialize host
 	
 
