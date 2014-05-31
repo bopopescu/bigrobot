@@ -363,12 +363,14 @@ class T5Utilities(object):
         
         t = test.Test()
         c = t.controller("master")
-        url = "/api/v1/data/controller/applications/bvs/info/forwarding/network?select=%s" % fwdTableName
+        #url = "/api/v1/data/controller/applications/bvs/info/forwarding/network?select=%s" % fwdTableName
+        url = "/api/v1/data/controller/applications/bvs/info/forwarding/network/global/%s" % fwdTableName
         result = c.rest.get(url)['content']
         fwdTableList = []
         
         try:
-            fwdTable = result[0][fwdTableName]
+            #fwdTable = result[0][fwdTableName]
+            fwdTable = result
             for i in range(0, len(fwdTable)):
                 
                 if(fwdTableName == 'arp-table'):    
@@ -393,9 +395,9 @@ class T5Utilities(object):
                     pgLagID = fwdTable[i]['port-group-lag-id']
                     rackLagID = fwdTable[i]['rack-lag-id']
                     vlanID = fwdTable[i]['vlan-id']
-                    vrf = fwdTable[i]['vlan-id']
-                    classID = fwdTable[i]['class-id']
-                    key = "%s-%s-%s-%s-%s-%s-%s" % (ip, mask, pgLagID, rackLagID, vlanID, vrf, classID)
+                    vrf = fwdTable[i]['vrf']
+                    dstVrf = fwdTable[i]['dst-vrf']
+                    key = "%s-%s-%s-%s-%s-%s-%s" % (ip, mask, pgLagID, rackLagID, vlanID, vrf, dstVrf)
                     fwdTableList.append(key)
                     
                 if(fwdTableName == 'l3-host-table'):
@@ -439,7 +441,7 @@ class T5Utilities(object):
                     key = "%s-%s-%s-%s" % (dhcpIp, routerIp, routerMac, vlanID)
                     fwdTableList.append(key)
                     
-        except(KeyError):
+        except(KeyError, IndexError):
             pass
         
         return fwdTableList
