@@ -37,12 +37,12 @@ Verify SNMP OID sysLocation on Slave
     
 Verify SNMP OID sysDescr on Master  
     ${snmp_key}=  snmp get  master  public  sysDescr.0
-    Should Contain  ${snmp_key}  Big Virtual Switch Appliance    
+    Should Contain  ${snmp_key}  Big Cloud Fabric Appliance    
     [Tags]  snmp  sysDescr  master
     
 Verify SNMP OID sysDescr on Slave  
     ${snmp_key}=  snmp get  slave  public  sysDescr.0
-    Should Contain  ${snmp_key}  Big Virtual Switch Appliance    
+    Should Contain  ${snmp_key}  Big Cloud Fabric Appliance    
     [Tags]  snmp  sysDescr  slave  
       
 Verify SNMP OID ifDescr on Master  
@@ -119,20 +119,20 @@ Restart process SNMP on Master controller and verify snmpget
     restart process on controller  snmpd  master
     Sleep  10    
     ${snmp_key}=  snmp get  master  public  sysDescr.0
-    Should Contain  ${snmp_key}  Big Virtual Switch Appliance  
+    Should Contain  ${snmp_key}  Big Cloud Fabric Appliance  
     [Tags]  snmp  process-restart  master  
  
 Restart process SNMP on Slave controller and verify snmpget
     restart process on controller  snmpd  slave
     Sleep  10    
     ${snmp_key}=  snmp get  slave  public  sysDescr.0
-    Should Contain  ${snmp_key}  Big Virtual Switch Appliance  
+    Should Contain  ${snmp_key}  Big Cloud Fabric Appliance  
     [Tags]  snmp  process-restart  slave 
     
 Change community from public to bigswitch and verify snmp walk
     rest add snmp keyword  community  bigswitch
     ${snmp_key}=  snmp get  master  bigswitch  sysDescr.0
-    Should Contain  ${snmp_key}  Big Virtual Switch Appliance   
+    Should Contain  ${snmp_key}  Big Cloud Fabric Appliance   
     [Tags]  snmp  
 
        
