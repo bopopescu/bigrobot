@@ -214,11 +214,15 @@ class T5(object):
         url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/segment[tenant="%s"]' % (tenant)
         c.rest.get(url)
         data = c.rest.content()
-        for j in range(0, len(data)):
-                i = int(vlan) + j
-                helpers.log("vlan=%d, %d" % (i, j))
-                url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/segment[name="%s"]/switch-port-membership-rule[switch="%s"][interface="%s"]' % (tenant, data[j]["name"], switch, intf)
-                c.rest.put(url, {"switch": switch, "interface": intf, "vlan": i})
+        i = 0
+        vlan = int(vlan)
+        while (i < len(data)):
+#        for j in range(0, len(data)):
+                j = vlan + i
+#                helpers.log("vlan=%d, %d" % (i, j))
+                url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/segment[name="%s"]/switch-port-membership-rule[switch="%s"][interface="%s"]' % (tenant, data[i]["name"], switch, intf)
+                c.rest.put(url, {"switch": switch, "interface": intf, "vlan": j})
+                i = i + 1
         return True
 
     def rest_add_interface_any_to_all_vns(self, tenant, vlan='1'):
@@ -2051,7 +2055,7 @@ class T5(object):
         else:
             helpers.log("Given tenant name does not match the config")
 
-    def rest_verify_membership_port_count(self, count):
+    def rest_verify_membership_port_count(self, tenant, count):
         ''' Function to verify the membership port count for each vns
         Input:  provide how many port counts user is expecting in each VNS
         Output: Function will go through each VNS and match the provided count (e.g , 1000 vns , 2 ports each)
@@ -2059,7 +2063,7 @@ class T5(object):
         t = test.Test()
         c = t.controller('master')
         count = int(count)
-        url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/segment'
+        url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/segment[tenant="%s"]' % tenant
         c.rest.get(url)
         data = c.rest.content()
         for i in range(0, len(data)):
