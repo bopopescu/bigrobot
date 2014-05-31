@@ -73,6 +73,7 @@ class Host(object):
         - source_if: Source interface
         - count:     Number of ping packets to send
         - ttl:       IP Time-to-live
+        - record_route:  Include RECORD ROUTE option
 
         Example:
         | ${lossA} = | Bash Ping | h1          | 10.192.104.1 | source_if=eth1 |
@@ -81,7 +82,9 @@ class Host(object):
         - ${lossA} = 0
         - ${lossB} = 100
 
-        See also Controller.cli ping.
+        Miscellaneous:
+        - See also Controller.cli ping
+        - See also autobot.helpers.__init__.py to see what Unix ping command option is used for each input parameter.
         """
         t = test.Test()
         n = t.node(node)
@@ -130,7 +133,7 @@ class Host(object):
         """
         Function to remove the vlan tag from the host eth interfaces.
         Note: soft_error=True because in the common use case, we
-        just want to log the error but not trigger failure. 
+        just want to log the error but not trigger failure.
         """
         t = test.Test()
         n = t.node(node)
@@ -390,4 +393,3 @@ class Host(object):
         content = n.bash("%s " % cmd)['content']
         str_list = helpers.strip_cli_output(content, to_list=True)
         return  str_list
-    

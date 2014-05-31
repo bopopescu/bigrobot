@@ -153,11 +153,11 @@ T18 Deleting lines
 
 T19 Deleting lines
 	${command}=  Set Variable  virtual-ip
-	${diff}=  Create List  virtual-ip 1.2.3.4
+	${diff}=  Create List  controller  virtual-ip 4.4.4.4
 	Delete single running config line and verify
 	...  ${command}
 	...  ${diff}
-	...  cluster
+	...  controller
 
 T20 Deleting lines
 	${command}=  Set Variable  switch test

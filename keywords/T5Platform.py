@@ -2586,8 +2586,17 @@ class T5Platform(object):
             elif options[0] == 1:
                 helpers.log("INFO:  need to login as  admin")
             n_console.send('admin')
+
+            # Need to enable developer mode to use DHCP option. Magic string
+            # to enable it is 'dhcp'.
+            n_console.expect(r'Do you accept the EULA.* > ')
+            n_console.send('dhcp')
+            n_console.expect(r'Developer.* mode enabled.*')
+
+            # The "real" EULA
             n_console.expect(r'Do you accept the EULA.* > ')
             n_console.send('Yes')
+
             n_console.expect(r'Local Node Configuration')
 
         n_console.expect(r'Password for emergency recovery user > ')
@@ -3902,6 +3911,17 @@ class T5Platform(object):
 
             # issue the <cr> to test that the command actually works
             if key == '<cr>':
+                
+                if re.match(r'boot.*', string) or re.match(r'.*compare.*', string) or re.match(r'.*configure.*', string) or re.match(r'.*copy.*', string) or re.match(r'.*delete.*', string) or re.match(r'.*enable.*', string) or re.match(r'.*end.*', string) or re.match(r'.*exit.*', string) or re.match(r'.*failover.*', string) or re.match(r'.*logout.*', string):
+                    helpers.log("Ignoring line - %s" % string)
+                    num = num - 1
+                    continue
+
+                if re.match(r'.*show controller.*', string) or re.match(r'.*no.*', string) or re.match(r'.*ping.*', string) or re.match(r'.*reauth.*', string) or re.match(r'.*set .*', string) or re.match(r'.*show logging.*', string) or re.match(r'.*system.*', string) or re.match(r'.*test.*', string) or re.match(r'.*upgrade.*', string) or re.match(r'.*watch.*', string):
+                    helpers.log("Ignoring line - %s" % string)
+                    num = num - 1
+                    continue
+                
                 helpers.log(" complete CLI show command: ******%s******" % string)
                 c.cli(string)
 
@@ -4081,13 +4101,20 @@ class T5Platform(object):
             if key == '<cr>':
 
                 if re.match(r'.*boot.*', string) or re.match(r'.*compare.*', string) or re.match(r'.*configure.*', string) or re.match(r'.*copy.*', string) or re.match(r'.*delete.*', string) or re.match(r'.*enable.*', string) or re.match(r'.*end.*', string) or re.match(r'.*exit.*', string) or re.match(r'.*failover.*', string) or re.match(r'.*logout.*', string):
+                    helpers.log("Ignoring line - %s" % string)                    
                     num = num - 1
                     continue
 
-                if re.match(r'.* show router .*', string) or re.match(r'.* no .*', string) or re.match(r'.*ping.*', string) or re.match(r'.*reauth.*', string) or re.match(r'.*set .*', string) or re.match(r'.*show logging.*', string) or re.match(r'.*system.*', string) or re.match(r'.*test.*', string) or re.match(r'.*upgrade.*', string) or re.match(r'.*watch.*', string):
+                if re.match(r'.*show controller.*', string) or re.match(r'.*no.*', string) or re.match(r'.*ping.*', string) or re.match(r'.*reauth.*', string) or re.match(r'.*set .*', string) or re.match(r'.*show logging.*', string) or re.match(r'.*system.*', string) or re.match(r'.*test.*', string) or re.match(r'.*upgrade.*', string) or re.match(r'.*watch.*', string):
+                    helpers.log("Ignoring line - %s" % string)                    
                     num = num - 1
                     continue
-
+                
+                if re.match(r'.*clear interface-stats.*', string):                
+                    helpers.log("Ignoring line due to PR BVS-1753 - %s" % string)                    
+                    num = num - 1
+                    continue
+                
                 helpers.log(" complete CLI show command: ******%s******" % string)
                 c.enable(string)
 
@@ -4249,6 +4276,10 @@ class T5Platform(object):
                     num = num - 1
                     continue
 
+                if re.match(r'.*member port-group.*vlan.*', string):                
+                    helpers.log("Ignoring line due to PR BVS-1623 - %s" % string)                    
+                    num = num - 1
+                    continue
 
                 if re.match(r'.*internal.*', key):
                     helpers.log("Ignore line  - %s" % string)
@@ -4266,9 +4297,21 @@ class T5Platform(object):
                         num = num - 1
                         continue
 
-                    if re.match(r'.* show router .*', string) or re.match(r'.* no .*', string) or re.match(r'.*ping.*', string) or re.match(r'.*reauth.*', string) or re.match(r'.*set .*', string) or re.match(r'.*show logging.*', string) or re.match(r'.*system.*', string) or re.match(r'.*test.*', string) or re.match(r'.*upgrade.*', string) or re.match(r'.*watch.*', string):
+                    if re.match(r'.*support.*', string) or re.match(r'.*show controller.*', string) or re.match(r'.*no .*', string) or re.match(r'.*ping.*', string) or re.match(r'.*reauth.*', string) or re.match(r'.*set .*', string) or re.match(r'.*show logging.*', string) or re.match(r'.*system.*', string) or re.match(r'.*test.*', string) or re.match(r'.*upgrade.*', string) or re.match(r'.*watch.*', string):
                         num = num - 1
                         continue
+
+                    if re.match(r'.*member port-group.*vlan.*', string):                
+                        helpers.log("Ignoring line due to PR BVS-1623 - %s" % string)                    
+                        num = num - 1
+                        continue
+                                        
+                    if re.match(r'.*clear interface-stats.*', string):                
+                        helpers.log("Ignoring line due to PR BVS-1753 - %s" % string)                    
+                        num = num - 1
+                        continue
+                    
+                    
 
                     helpers.log(" complete CLI show command: ******%s******" % string)
                     c.config(string)
@@ -4298,8 +4341,8 @@ class T5Platform(object):
                         helpers.log("***** Call the cli walk again with  --- %s" % string)
 
                         # If different, it means that we entered a new config submode.  Call the function again but set config_submode flag to True
-                        if prompt_str2 != "d64(config-tenant-router)# ":
-                            self.cli_walk_config(newstring, file_name, padding, config_submode=True, exec_mode_done=False)
+                        #c.config('show this')
+                        self.cli_walk_config(newstring, file_name, padding, config_submode=True, exec_mode_done=False)
 
                     if num == 1:
                         return string
