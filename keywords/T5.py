@@ -203,7 +203,7 @@ class T5(object):
         return True
 
 
-    def rest_add_interface_to_all_vns(self, tenant, switch, intf, vlan='1'):
+    def rest_add_interface_to_all_vns(self, tenant, switch, intf, vlan=1):
         '''
         Function to add interface to all created vns
         Input: tennat , switch , interface
@@ -215,14 +215,11 @@ class T5(object):
         c.rest.get(url)
         data = c.rest.content()
         i = 0
-        vlan = int(vlan)
         while (i < len(data)):
-#        for j in range(0, len(data)):
-                j = vlan + i
-#                helpers.log("vlan=%d, %d" % (i, j))
-                url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/segment[name="%s"]/switch-port-membership-rule[switch="%s"][interface="%s"]' % (tenant, data[i]["name"], switch, intf)
-                c.rest.put(url, {"switch": switch, "interface": intf, "vlan": j})
-                i = i + 1
+            j = vlan  + i
+            url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/segment[name="%s"]/switch-port-membership-rule[switch="%s"][interface="%s"]' % (tenant, data[i]["name"], switch, intf)
+            c.rest.put(url, {"switch": switch, "interface": intf, "vlan": j})
+            i = i + 1                                
         return True
 
     def rest_add_interface_any_to_all_vns(self, tenant, vlan='1'):
@@ -2056,20 +2053,22 @@ class T5(object):
             helpers.log("Given tenant name does not match the config")
 
     def rest_verify_membership_port_count(self, tenant, count):
-        ''' Function to verify the membership port count for each vns
-        Input:  provide how many port counts user is expecting in each VNS
-        Output: Function will go through each VNS and match the provided count (e.g , 1000 vns , 2 ports each)
+        ''' Function to verify the membership port count for tenant
+        Input:  provide how many port counts user expect in a tenant (specifically useful for scale)
+        Output: Function will go through the specific tenant and match the provided count (e.g , 1000 vns , 2 ports each , will be 2000 count)
         '''
         t = test.Test()
         c = t.controller('master')
         count = int(count)
-        url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/segment[tenant="%s"]' % tenant
+        url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/tenant[name="%s"]' % tenant
         c.rest.get(url)
         data = c.rest.content()
-        for i in range(0, len(data)):
-            if int(data[i]["port-count"]) != count:
-                helpers.log("Expected membership ports=%d are not present in the each VNS=%s" % (count, data[i]["name"]))
-                return False
+        if int(data[0]["port-count"]) == count:
+            helpers.log("Expected membership port count for the tenant is correct")
+            return True
+        else:
+            helpers.test_failure("Expected membership port count for tenant is not correct: Expected:%d,Actual:%d" % (count, data[0]["port-count"]))
+            return False
             
     def cli_show_interface(self, switch=None, intf=None):
         ''' Function to show interface using controller CLI
