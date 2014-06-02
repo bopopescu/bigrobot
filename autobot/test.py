@@ -1126,8 +1126,11 @@ class Test(object):
         else:
             if (content):
                 for i in range (0, len(content)):
-                    url_tenant_delete = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]' % content[i]['name']
-                    c.rest.delete(url_tenant_delete, {})
+                    url_delete_tenant = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]' % content[i]['name']
+                    try:
+                        c.rest.delete(url_delete_tenant, {})
+                    except:
+                        pass
 
         helpers.log("Attempting to delete all switches")
         url_get_switches = '/api/v1/data/controller/core/switch'
@@ -1140,8 +1143,11 @@ class Test(object):
             if (content):
                 for i in range (0, len(content)):
                     if 'name' in content[i]:
-                        url_switch_delete = '/api/v1/data/controller/core/switch-config[name="%s"]' % content[i]['name']
-                        c.rest.delete(url_switch_delete, {})
+                        url_delete_switch = '/api/v1/data/controller/core/switch-config[name="%s"]' % content[i]['name']
+                        try:
+                            c.rest.delete(url_delete_switch, {})
+                        except:
+                            pass
 
         helpers.log("Attempting to delete all port-groups")
         url_get_portgrp = '/api/v1/data/controller/applications/bvs/port-group?config=true'
@@ -1153,8 +1159,27 @@ class Test(object):
         else:
             if (content):
                 for i in range (0, len(content)):
-                    url_portgrp_delete = '/api/v1/data/controller/applications/bvs/port-group[name="%s"]' % content[i]['name']
-                    c.rest.delete(url_portgrp_delete, {})
+                    url_delete_portgrp = '/api/v1/data/controller/applications/bvs/port-group[name="%s"]' % content[i]['name']
+                    try:
+                        c.rest.delete(url_delete_portgrp, {})
+                    except:
+                        pass
+
+        helpers.log("Attempting to delete QoS")
+        url_get_qos = '/api/v1/data/controller/applications/bvs/global-setting/qos?config=true'
+        try:
+            c.rest.get(url_get_qos)
+            content = c.rest.content()
+        except:
+            pass
+        else:
+            if (content):
+                url_delete_qos = '/api/v1/data/controller/applications/bvs/global-setting/qos'
+                try:
+                    print "url_delete_qos: %s" % url_delete_qos
+                    c.rest.delete(url_delete_qos, {})
+                except:
+                    pass
 
 #         helpers.log("Attempting to delete NTP configurations")
 #         url_get_ntpservers = '/api/v1/data/controller/os/config/global/time-config?config=true'
