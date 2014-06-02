@@ -38,9 +38,9 @@ create 100 vns and verify the table and forwarding
 	rest add vns scale  t1  100
 	rest add interface to all vns  t1  leaf0-a  ${leaf0a_ixia_intf}
 	rest add interface to all vns  t1  leaf1-a  ${leaf1a_ixia_intf}
-	sleep  2
-	rest verify vns scale  100
-	rest verify membership port count  t1  2
+	sleep  5
+	rest verify vns scale  t1  100
+	rest verify membership port count  t1  200
 	${stream}=             L3 add  no_arp=True  flow=a<->c  src_mac=00:00:01:00:00:01  dst_mac=00:00:02:00:00:01   ethertype=8100  vlan_id=1  vlan_cnt=100  frame_rate=100  frame_size=68  name=a_c_flow
     start traffic  ${stream}
     rest verify endpoint in system  200
@@ -55,9 +55,9 @@ create 1k vns and verify the table and forwarding
 	rest add vns scale  t1  1000
 	rest add interface to all vns  t1  leaf0-a  ${leaf0a_ixia_intf}
 	rest add interface to all vns  t1  leaf1-a  ${leaf1a_ixia_intf}
-	sleep  2
-	rest verify vns scale  1000
-	rest verify membership port count  t1  2
+	sleep  5
+	rest verify vns scale  t1  1000
+	rest verify membership port count  t1  2000
 	${stream}=             L3 add  no_arp=True  flow=a<->c  src_mac=00:00:01:00:00:01  dst_mac=00:00:02:00:00:01  ethertype=8100  vlan_id=1  vlan_cnt=1000  frame_rate=1000  frame_size=68  name=a_c_flow
     start traffic  ${stream}
     rest verify endpoint in system  2000
@@ -77,8 +77,9 @@ create 4000 vns and verify the table and forwarding
 	rest add interface to all vns  t1  leaf0-a  ${leaf0a_ixia_intf}
 	rest add interface to all vns  t1  leaf1-a  ${leaf1a_ixia_intf}
 	summary log  system add 2 ports to each vns
-	rest verify vns scale  3998
-	rest verify membership port count  t1  2
+	sleep  5
+	rest verify vns scale  t1  3998
+	rest verify membership port count  t1  7996
 	${stream}=             L3 add  no_arp=True  flow=a<->c  src_mac=00:00:01:00:00:01  dst_mac=00:00:02:00:00:01   ethertype=8100  vlan_id=1  vlan_cnt=3998  frame_rate=1000  frame_size=68  name=a_c_flow
     start traffic  ${stream}
     sleep  20
@@ -99,8 +100,9 @@ Master controller node reboot with 4k vns
 	rest add interface to all vns  t1  leaf0-a  ${leaf0a_ixia_intf}
 	rest add interface to all vns  t1  leaf1-a  ${leaf1a_ixia_intf}
 	summary log  system add 2 ports to each vns
-	rest verify vns scale  3998
-	rest verify membership port count  t1  2
+	sleep  5
+	rest verify vns scale  t1  3998
+	rest verify membership port count  t1  7996
 	${stream}=             L3 add  no_arp=True  flow=a<->c  src_mac=00:00:01:00:00:01  dst_mac=00:00:02:00:00:01  ethertype=8100  vlan_id=1  vlan_cnt=3998  frame_rate=1000  frame_size=68  name=a_c_flow
     start traffic  ${stream}
     sleep  10
@@ -124,7 +126,8 @@ create 4000 vns and all interface ,verify the table and forwarding
 	summary log  system create a 4k vns
 	rest add interface any to all vns  t1  
 	summary log  system add all interface to all segment
-	rest verify vns scale  3998
+	sleep  5
+	rest verify vns scale  t1  3998
 	${stream}=             L3 add  no_arp=True  flow=a<->c  src_mac=00:00:01:00:00:01  dst_mac=00:00:02:00:00:01   ethertype=8100  vlan_id=1  vlan_cnt=3998  frame_rate=1000  frame_size=68  name=a_c_flow
     start traffic  ${stream}
     sleep  10

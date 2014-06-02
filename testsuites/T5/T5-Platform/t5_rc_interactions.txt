@@ -153,7 +153,7 @@ T18 Deleting lines
 
 T19 Deleting lines
 	${command}=  Set Variable  virtual-ip
-	${diff}=  Create List  controller  virtual-ip 4.4.4.4
+	${diff}=  Create List  virtual-ip 4.4.4.4
 	Delete single running config line and verify
 	...  ${command}
 	...  ${diff}

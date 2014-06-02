@@ -334,7 +334,8 @@ class Ixia(object):
                                       burst_count=None, burst_gap=None,
                                       line_rate=None, crc=None, src_ip=None, dst_ip=None, no_arp=False,
                                       protocol=None, src_port=None, dst_port=None,
-                                      icmp_type=None, icmp_code=None, ip_type='ipv4', payload=None, src_vport=None, dst_vport=None):
+                                      icmp_type=None, icmp_code=None, ip_type='ipv4', payload=None, src_vport=None, dst_vport=None,
+                                      hex_src_mac=None, hex_dst_mac=None):
         '''
             Returns traffic stream with 2 flows with provided mac sources
             Ex Usage:
@@ -374,11 +375,19 @@ class Ixia(object):
             self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:1', '-name', name,
                                                '-txPortId', src_vport)
 
-
         self._handle.setAttribute(trafficStream1, '-enabled', True)
         self._handle.commit()
         self._handle.setAttribute(trafficStream1 + '/highLevelStream:1/' + 'frameSize', '-type', frameType)
         self._handle.setAttribute(trafficStream1 + '/highLevelStream:1/' + 'frameSize', '-fixedSize', frameSize)
+
+        if hex_src_mac:
+            helpers.log("Adding HEX Src and Dst MAC's for Raw Stream ..")
+            self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:1/stack:"ethernet-1"/field:"ethernet.header.destinationAddress-1"',
+                                      '-auto', False, '-fieldValue', hex_dst_mac, '-singleValue', hex_dst_mac,
+                                      '-optionalEnabled', True, '-countValue', '1')
+            self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:1/stack:"ethernet-1"/field:"ethernet.header.sourceAddress-2"',
+                                      '-auto', False, '-fieldValue', hex_src_mac, '-singleValue', hex_src_mac,
+                                      '-optionalEnabled', True, '-countValue', '1')
 
         if line_rate is not None:
             helpers.log('Adding Line Rate Value !')
@@ -628,7 +637,11 @@ class Ixia(object):
                     self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:2/framePayload',
                                                   '-type', 'custom', '-customPattern', payload,
                                                  '-customRepeat', False, '-auto', 'false')
-        self._handle.setAttribute(self._handle.getList(trafficStream1, 'tracking')[0], '-trackBy', 'trackingenabled0')
+        if payload:
+            helpers.log('Skiping to enable Flow Tracking....')
+        else:
+            helpers.log('Setting Flow Tracking ....')
+            self._handle.setAttribute(self._handle.getList(trafficStream1, 'tracking')[0], '-trackBy', 'trackingenabled0')
 
         self._handle.commit()
         return trafficStream1
@@ -1056,9 +1069,10 @@ class Ixia(object):
             traffic_item = self.ix_setup_traffic_streams_ethernet(None, None, frame_type, self._frame_size, frame_rate, frame_mode,
                                                              frame_cnt, stream_flow, name, vlan_id=vlan_id, crc=crc, vlan_cnt=vlan_cnt, vlan_step=vlan_step,
                                                              burst_count=burst_count, burst_gap=burst_gap,
-                                                             protocol=protocol, icmp_type=icmp_type, icmp_code=icmp_code,
+                                                             protocol=protocol, src_ip=src_ip, dst_ip=dst_ip, icmp_type=icmp_type, icmp_code=icmp_code,
                                                              src_port=src_port, dst_port=dst_port, ethertype=ethertype, ip_type=ip_type, line_rate=line_rate,
-                                                             payload=payload, src_vport=src_vport, dst_vport=dst_vport)
+                                                             payload=payload, src_vport=src_vport, dst_vport=dst_vport,
+                                                             hex_src_mac=src_mac, hex_dst_mac=dst_mac)
             traffic_stream1.append(traffic_item)
         return traffic_stream1[0]
 

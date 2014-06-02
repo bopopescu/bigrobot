@@ -203,7 +203,7 @@ class T5(object):
         return True
 
 
-    def rest_add_interface_to_all_vns(self, tenant, switch, intf, vlan='1'):
+    def rest_add_interface_to_all_vns(self, tenant, switch, intf, vlan=1):
         '''
         Function to add interface to all created vns
         Input: tennat , switch , interface
@@ -215,14 +215,11 @@ class T5(object):
         c.rest.get(url)
         data = c.rest.content()
         i = 0
-        vlan = int(vlan)
         while (i < len(data)):
-#        for j in range(0, len(data)):
-                j = vlan + i
-#                helpers.log("vlan=%d, %d" % (i, j))
-                url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/segment[name="%s"]/switch-port-membership-rule[switch="%s"][interface="%s"]' % (tenant, data[i]["name"], switch, intf)
-                c.rest.put(url, {"switch": switch, "interface": intf, "vlan": j})
-                i = i + 1
+            j = int(vlan)  + i
+            url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/segment[name="%s"]/switch-port-membership-rule[switch="%s"][interface="%s"]' % (tenant, data[i]["name"], switch, intf)
+            c.rest.put(url, {"switch": switch, "interface": intf, "vlan": j})
+            i = i + 1                                
         return True
 
     def rest_add_interface_any_to_all_vns(self, tenant, vlan='1'):
@@ -551,7 +548,7 @@ class T5(object):
                         helpers.log("No VNS are present")
                         return True
 
-    def rest_verify_vns_scale(self, count):
+    def rest_verify_vns_scale(self, tenant, count):
         '''Verify VNS information for scale
 
             Input:  No of vns expected to be created
@@ -560,24 +557,18 @@ class T5(object):
         '''
         t = test.Test()
         c = t.controller('master')
-        url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/segment' % ()
+        url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/segment[tenant="%s"]' % tenant
         c.rest.get(url)
         data = c.rest.content()
         if len(data) == int(count):
             for i in range(0, len(data)):
-                if len(data) != 0:
-                        if (int(data[i]["internal-vlan"]) != 0):
-                            helpers.log("Expected VNS's are present in the config")
-                            return True
-                        else:
-                            helpers.test_failure("Expected VNS's are not present in the config")
-                            return False
-                else:
-                        helpers.log("No VNS are added")
-                        return False
+                if (int(data[i]["internal-vlan"]) == 0):
+                    helpers.test_failure("Expected VNS's are not present in the config")
+                    return False
         else:
                 helpers.test_failure("Fail: expected:%s, Actual:%s" % (int(count), len(data)))
                 return False
+        return True
 
     def rest_verify_tenant(self):
         '''Verify CLI tenant information
@@ -2056,20 +2047,22 @@ class T5(object):
             helpers.log("Given tenant name does not match the config")
 
     def rest_verify_membership_port_count(self, tenant, count):
-        ''' Function to verify the membership port count for each vns
-        Input:  provide how many port counts user is expecting in each VNS
-        Output: Function will go through each VNS and match the provided count (e.g , 1000 vns , 2 ports each)
+        ''' Function to verify the membership port count for tenant
+        Input:  provide how many port counts user expect in a tenant (specifically useful for scale)
+        Output: Function will go through the specific tenant and match the provided count (e.g , 1000 vns , 2 ports each , will be 2000 count)
         '''
         t = test.Test()
         c = t.controller('master')
         count = int(count)
-        url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/segment[tenant="%s"]' % tenant
+        url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/tenant[name="%s"]' % tenant
         c.rest.get(url)
         data = c.rest.content()
-        for i in range(0, len(data)):
-            if int(data[i]["port-count"]) != count:
-                helpers.log("Expected membership ports=%d are not present in the each VNS=%s" % (count, data[i]["name"]))
-                return False
+        if int(data[0]["port-count"]) == count:
+            helpers.log("Expected membership port count for the tenant is correct")
+            return True
+        else:
+            helpers.test_failure("Expected membership port count for tenant is not correct: Expected:%d,Actual:%d" % (count, data[0]["port-count"]))
+            return False
             
     def cli_show_interface(self, switch=None, intf=None):
         ''' Function to show interface using controller CLI
@@ -2525,6 +2518,27 @@ class T5(object):
         helpers.log("INFO: *** link info *** \n for %s: %s \n " % (node1,list))              
         return list   
 
-            
+    def rest_clear_blocked_endpoint(self,tenant,segment,mac):
+        ''' Function to clear blocked endpoint 
+        Input: tenant, segment, mac address to be cleared
+        Output: return true
+        http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/info/endpoint-manager/clear[mac="90:e2:ba:6f:00:20"][segment="X1"][tenant="X"]
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        helpers.test_log("Input arguments: tenant = %s segment name = %s mac address = %s " % (tenant, segment, mac))
+        
+        url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/clear[mac="%s"][segment="%s"][tenant="%s"]' % (mac, segment, tenant)
+        try:
+            c.rest.get(url)
+        except:
+            helpers.test_failure(c.rest.error())
+        else: 
+            helpers.test_log("Output: %s" % c.rest.result_json())
+            return c.rest.content()            
+
+
+
+
        
             
