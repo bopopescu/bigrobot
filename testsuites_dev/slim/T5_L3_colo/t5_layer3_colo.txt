@@ -884,18 +884,16 @@ Inter tenant L3 dhcp relay
 	Should Be True  							${loss} == 0	
 
 Verify same mac address showing up on two ports in the same segment is blocked
+    REST delete portgroup from vns              X                                       X3                      ${leaf0_pc6}            1006
+    REST delete portgroup from vns              Y                                       Y1                      ${leaf0_pc7}            1007
     REST add portgroup to vns                   X                                       X1                      ${leaf0_pc6}            1006
     REST add portgroup to vns                   X                                       X1                      ${leaf0_pc7}            1007
     BASH ifup intf                              h6-rack0                                bond0.1006
     BASH ifup intf                              h7-rack0                                bond0.1007
     BASH init intf                              h6-rack0                                bond0.1006
     BASH init intf                              h7-rack0                                bond0.1007    
-    ${mac1} =                                   BASH get intf mac                       h6-rack0                bond0.1006
-    BASH set mac address                        h7-rack0                                bond0.1006              ${mac1}
-    BASH add ip address                         h6-rack0                                10.251.1.11/24          bond0.1006
-    BASH add ip address                         h7-rack0                                10.251.1.11/24          bond0.1007
+    BASH add ip address                         h6-rack0                                10.251.1.15/24          bond0.1006
     BASH add route                              h6-rack0                                10.251.0.0/16           10.251.1.1
-    BASH add route                              h7-rack0                                10.251.0.0/16           10.251.1.1
     sleep                                       2
     BASH ping                                   h6-rack0                                10.251.1.1              count=5
     ${value} =                                  BASH verify arp                         h6-rack0                10.251.1.1
@@ -903,6 +901,10 @@ Verify same mac address showing up on two ports in the same segment is blocked
     ${result} =                                 REST show endpoints mac                 ${mac1}
     ${attachpoint} =                            Set Variable                            ${result[0]['attachment-point']}    
     Should Contain                              ${attachpoint}                          ${leaf0_pc6}
+    ${mac1} =                                   BASH get intf mac                       h6-rack0                bond0.1006
+    BASH set mac address                        h7-rack0                                bond0.1007              ${mac1}
+    BASH add ip address                         h7-rack0                                10.251.1.15/24          bond0.1007
+    BASH add route                              h7-rack0                                10.251.0.0/16           10.251.1.1
     BASH ping                                   h7-rack0                                10.251.1.1              count=5
     ${value} =                                  BASH verify arp                         h7-rack0                      10.251.1.1
     Should Be True                              ${value}
@@ -911,11 +913,13 @@ Verify same mac address showing up on two ports in the same segment is blocked
     Should Contain                              ${attachpoint}                          ${leaf0_pc7}
     BASH run command                            h6-rack0                                ping 10.251.1.1 > /tmp/echo1.txt &
     sleep                                       1
-    ${pid1}                                     BASH run command                        h6-rack0                      echo $!
+    ${string} =                                 BASH run command                        h6-rack0                      echo $!
+    ${pid1} =                                   Set Variable                            ${string[0]} 
     sleep                                       1
     BASH run command                            h7-rack0                                ping 10.251.1.1 > /tmp/echo1.txt &
     sleep                                       1
-    ${pid2}                                     BASH run command                        h7-rack0                      echo $!
+    ${string} =                                 BASH run command                        h7-rack0                      echo $!
+    ${pid2} =                                   Set Variable                            ${string[0]} 
     sleep                                       1
     ${result} =                                 REST show endpoints mac                 ${mac1}
     ${state} =                                  Set Variable                            ${result[0]['state']}    
@@ -932,21 +936,20 @@ Verify same mac address showing up on two ports in the same segment is blocked
     Should Contain                              ${attachpoint}                          ${leaf0_pc6}
     BASH delete route                           h6-rack0                                10.251.0.0/16           10.251.1.1
     BASH delete route                           h7-rack0                                10.251.0.0/16           10.251.1.1
-
+    REST add portgroup to vns                   X                                       X3                      ${leaf0_pc6}            1006
+    REST add portgroup to vns                   Y                                       Y1                      ${leaf0_pc7}            1007
 
 Verify clear blocked endpoint works
+    REST delete portgroup from vns              X                                       X3                      ${leaf0_pc6}            1006
+    REST delete portgroup from vns              Y                                       Y1                      ${leaf0_pc7}            1007
     REST add portgroup to vns                   X                                       X1                      ${leaf0_pc6}            1006
     REST add portgroup to vns                   X                                       X1                      ${leaf0_pc7}            1007
     BASH ifup intf                              h6-rack0                                bond0.1006
     BASH ifup intf                              h7-rack0                                bond0.1007
     BASH init intf                              h6-rack0                                bond0.1006
     BASH init intf                              h7-rack0                                bond0.1007
-    ${mac1} =                                   BASH get intf mac                       h6-rack0                bond0.1006
-    BASH set mac address                        h7-rack0                                bond0.1006              ${mac1}
-    BASH add ip address                         h6-rack0                                10.251.1.11/24          bond0.1006
-    BASH add ip address                         h7-rack0                                10.251.1.11/24          bond0.1007
+    BASH add ip address                         h6-rack0                                10.251.1.15/24          bond0.1006
     BASH add route                              h6-rack0                                10.251.0.0/16           10.251.1.1
-    BASH add route                              h7-rack0                                10.251.0.0/16           10.251.1.1
     sleep                                       2
     BASH ping                                   h6-rack0                                10.251.1.1              count=5
     ${value} =                                  BASH verify arp                         h6-rack0                10.251.1.1
@@ -954,6 +957,11 @@ Verify clear blocked endpoint works
     ${result} =                                 REST show endpoints mac                 ${mac1}
     ${attachpoint} =                            Set Variable                            ${result[0]['attachment-point']}    
     Should Contain                              ${attachpoint}                          ${leaf0_pc6}
+    ${mac1} =                                   BASH get intf mac                       h6-rack0                bond0.1006
+    BASH set mac address                        h7-rack0                                bond0.1007              ${mac1}
+    BASH add ip address                         h7-rack0                                10.251.1.15/24          bond0.1007
+    BASH add route                              h7-rack0                                10.251.0.0/16           10.251.1.1
+    BASH ping                                   h7-rack0                                10.251.1.1              count=5
     BASH ping                                   h7-rack0                                10.251.1.1              count=5
     ${value} =                                  BASH verify arp                         h7-rack0                      10.251.1.1
     Should Be True                              ${value}
@@ -962,11 +970,13 @@ Verify clear blocked endpoint works
     Should Contain                              ${attachpoint}                          ${leaf0_pc7}
     BASH run command                            h6-rack0                                ping 10.251.1.1 > /tmp/echo1.txt &
     sleep                                       1
-    ${pid1}                                     BASH run command                        h6-rack0                      echo $!
+    ${string} =                                 BASH run command                        h6-rack0                      echo $!
+    ${pid1} =                                   Set Variable                            ${string[0]} 
     sleep                                       1
     BASH run command                            h7-rack0                                ping 10.251.1.1 > /tmp/echo1.txt &
     sleep                                       1
-    ${pid2}                                     BASH run command                        h7-rack0                      echo $!
+    ${string} =                                 BASH run command                        h7-rack0                      echo $!
+    ${pid2} =                                   Set Variable                            ${string[0]} 
     sleep                                       1
     ${result} =                                 REST show endpoints mac                 ${mac1}
     ${state} =                                  Set Variable                            ${result[0]['state']}    
@@ -985,6 +995,8 @@ Verify clear blocked endpoint works
     Should Contain                              ${attachpoint}                          ${leaf0_pc6}
     BASH delete route                           h6-rack0                                10.251.0.0/16           10.251.1.1
     BASH delete route                           h7-rack0                                10.251.0.0/16           10.251.1.1    
+    REST add portgroup to vns                   X                                       X3                      ${leaf0_pc6}            1006
+    REST add portgroup to vns                   Y                                       Y1                      ${leaf0_pc7}            1007    
     
     
 initialize host

@@ -3203,12 +3203,8 @@ Verify same mac address showing up on two ports in the same segment is blocked
     BASH ifup intf                              h3                              bond0.1003
     BASH init intf                              h1                              bond0.1001
     BASH init intf                              h3                              bond0.1003
-    ${mac1} =                                   BASH get intf mac               h1                      bond0.1001
-    BASH set mac address                        h3                              bond0.1003              ${mac1}
     BASH add ip address                         h1                              10.251.1.11/24          bond0.1001
-    BASH add ip address                         h3                              10.251.1.11/24          bond0.1003
     BASH add route                              h1                              10.251.0.0/16           10.251.1.1
-    BASH add route                              h3                              10.251.0.0/16           10.251.1.1
     sleep                                       2
     BASH ping                                   h1                              10.251.1.1              count=5
     ${value} =                                  BASH verify arp                 h1                      10.251.1.1
@@ -3216,6 +3212,11 @@ Verify same mac address showing up on two ports in the same segment is blocked
     ${result} =                                 REST show endpoints mac         ${mac1}
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
     Should Contain                              ${attachpoint}                  ${leaf0_pc1}
+    ${mac1} =                                   BASH get intf mac               h1                      bond0.1001
+    BASH set mac address                        h3                              bond0.1003              ${mac1}
+    BASH add ip address                         h3                              10.251.1.11/24          bond0.1003
+    BASH add route                              h3                              10.251.0.0/16           10.251.1.1
+    sleep                                       1
     BASH ping                                   h3                              10.251.1.1              count=5
     ${value} =                                  BASH verify arp                 h3                      10.251.1.1
     Should Be True                              ${value}
@@ -3224,19 +3225,19 @@ Verify same mac address showing up on two ports in the same segment is blocked
     Should Contain                              ${attachpoint}                  ${leaf1_pc1}
     BASH run command                            h1                              ping 10.251.1.1 > /tmp/echo1.txt &
     sleep                                       1
-    ${pid1}                                     BASH run command                h1                      echo $!
+    ${string} =                                 BASH run command                h1                      echo $!
+    ${pid1} =                                   Set Variable                    ${string[0]} 
     sleep                                       1
     BASH run command                            h3                              ping 10.251.1.1 > /tmp/echo1.txt &
     sleep                                       1
-    ${pid2}                                     BASH run command                h3                      echo $!
+    ${string} =                                 BASH run command                h3                      echo $!
+    ${pid2} =                                   Set Variable                    ${string[0]} 
     sleep                                       1
     ${result} =                                 REST show endpoints mac         ${mac1}
     ${state} =                                  Set Variable                    ${result[0]['state']}    
     Should Contain                              ${state}                        Blocked
     sleep                                       1
     BASH run command                            h3                              kill -9 ${pid2}
-    sleep                                       1
-    BASH network restart                        h3
     sleep                                       300
     ${result} =                                 REST show endpoints mac         ${mac1}
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
@@ -3261,12 +3262,8 @@ Verify clear blocked endpoint works
     BASH ifup intf                              h3                              bond0.1003
     BASH init intf                              h1                              bond0.1001
     BASH init intf                              h3                              bond0.1003
-    ${mac1} =                                   BASH get intf mac               h1                      bond0.1001
-    BASH set mac address                        h3                              bond0.1003              ${mac1}
     BASH add ip address                         h1                              10.251.1.11/24          bond0.1001
-    BASH add ip address                         h3                              10.251.1.11/24          bond0.1003
     BASH add route                              h1                              10.251.0.0/16           10.251.1.1
-    BASH add route                              h3                              10.251.0.0/16           10.251.1.1
     sleep                                       2
     BASH ping                                   h1                              10.251.1.1              count=5
     ${value} =                                  BASH verify arp                 h1                      10.251.1.1
@@ -3274,6 +3271,11 @@ Verify clear blocked endpoint works
     ${result} =                                 REST show endpoints mac         ${mac1}
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
     Should Contain                              ${attachpoint}                  ${leaf0_pc1}
+    ${mac1} =                                   BASH get intf mac               h1                      bond0.1001
+    BASH set mac address                        h3                              bond0.1003              ${mac1}
+    BASH add ip address                         h3                              10.251.1.11/24          bond0.1003
+    BASH add route                              h3                              10.251.0.0/16           10.251.1.1
+    sleep                                       1
     BASH ping                                   h3                              10.251.1.1              count=5
     ${value} =                                  BASH verify arp                 h3                      10.251.1.1
     Should Be True                              ${value}
@@ -3282,11 +3284,12 @@ Verify clear blocked endpoint works
     Should Contain                              ${attachpoint}                  ${leaf1_pc1}
     BASH run command                            h1                              ping 10.251.1.1 > /tmp/echo1.txt &
     sleep                                       1
-    ${pid1}                                     BASH run command                h1                      echo $!
-    sleep                                       1
+    ${string} =                                 BASH run command                h1                      echo $!
+    ${pid1} =                                   Set Variable                    ${string[0]} 
     BASH run command                            h3                              ping 10.251.1.1 > /tmp/echo1.txt &
     sleep                                       1
-    ${pid2}                                     BASH run command                h3                      echo $!
+    ${string} =                                 BASH run command                h3                      echo $!
+    ${pid2} =                                   Set Variable                    ${string[0]} 
     sleep                                       1
     ${result} =                                 REST show endpoints mac         ${mac1}
     ${state} =                                  Set Variable                    ${result[0]['state']}    
