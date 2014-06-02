@@ -884,6 +884,8 @@ Inter tenant L3 dhcp relay
 	Should Be True  							${loss} == 0	
 
 Verify same mac address showing up on two ports in the same segment is blocked
+    REST delete portgroup from vns              X                                       X3                      ${leaf0_pc6}            1006
+    REST delete portgroup from vns              Y                                       Y1                      ${leaf0_pc7}            1007
     REST add portgroup to vns                   X                                       X1                      ${leaf0_pc6}            1006
     REST add portgroup to vns                   X                                       X1                      ${leaf0_pc7}            1007
     BASH ifup intf                              h6-rack0                                bond0.1006
@@ -932,9 +934,12 @@ Verify same mac address showing up on two ports in the same segment is blocked
     Should Contain                              ${attachpoint}                          ${leaf0_pc6}
     BASH delete route                           h6-rack0                                10.251.0.0/16           10.251.1.1
     BASH delete route                           h7-rack0                                10.251.0.0/16           10.251.1.1
-
+    REST add portgroup to vns                   X                                       X3                      ${leaf0_pc6}            1006
+    REST add portgroup to vns                   Y                                       Y1                      ${leaf0_pc7}            1007
 
 Verify clear blocked endpoint works
+    REST delete portgroup from vns              X                                       X3                      ${leaf0_pc6}            1006
+    REST delete portgroup from vns              Y                                       Y1                      ${leaf0_pc7}            1007
     REST add portgroup to vns                   X                                       X1                      ${leaf0_pc6}            1006
     REST add portgroup to vns                   X                                       X1                      ${leaf0_pc7}            1007
     BASH ifup intf                              h6-rack0                                bond0.1006
@@ -986,6 +991,8 @@ Verify clear blocked endpoint works
     Should Contain                              ${attachpoint}                          ${leaf0_pc6}
     BASH delete route                           h6-rack0                                10.251.0.0/16           10.251.1.1
     BASH delete route                           h7-rack0                                10.251.0.0/16           10.251.1.1    
+    REST add portgroup to vns                   X                                       X3                      ${leaf0_pc6}            1006
+    REST add portgroup to vns                   Y                                       Y1                      ${leaf0_pc7}            1007    
     
     
 initialize host
