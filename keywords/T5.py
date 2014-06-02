@@ -216,7 +216,7 @@ class T5(object):
         data = c.rest.content()
         i = 0
         while (i < len(data)):
-            j = vlan  + i
+            j = int(vlan)  + i
             url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/segment[name="%s"]/switch-port-membership-rule[switch="%s"][interface="%s"]' % (tenant, data[i]["name"], switch, intf)
             c.rest.put(url, {"switch": switch, "interface": intf, "vlan": j})
             i = i + 1                                
