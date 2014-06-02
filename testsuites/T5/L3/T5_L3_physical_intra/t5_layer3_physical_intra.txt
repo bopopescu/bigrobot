@@ -3201,6 +3201,8 @@ Verify same mac address showing up on two ports in the same segment is blocked
     BASH add tag                                h3                              bond0                   1003
     BASH ifup intf                              h1                              bond0.1001
     BASH ifup intf                              h3                              bond0.1003
+    BASH init intf                              h1                              bond0.1001
+    BASH init intf                              h3                              bond0.1003
     ${mac1} =                                   BASH get intf mac               h1                      bond0.1001
     BASH set mac address                        h3                              bond0.1003              ${mac1}
     BASH add ip address                         h1                              10.251.1.11/24          bond0.1001
@@ -3208,13 +3210,13 @@ Verify same mac address showing up on two ports in the same segment is blocked
     BASH add route                              h1                              10.251.0.0/16           10.251.1.1
     BASH add route                              h3                              10.251.0.0/16           10.251.1.1
     sleep                                       2
-    BASH  ping                                  h1                              10.251.1.1              count=5
+    BASH ping                                   h1                              10.251.1.1              count=5
     ${value} =                                  BASH verify arp                 h1                      10.251.1.1
     Should Be True                              ${value}        
     ${result} =                                 REST show endpoints mac         ${mac1}
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
     Should Contain                              ${attachpoint}                  ${leaf0_pc1}
-    BASH  ping                                  h3                              10.251.1.1              count=5
+    BASH ping                                   h3                              10.251.1.1              count=5
     ${value} =                                  BASH verify arp                 h3                      10.251.1.1
     Should Be True                              ${value}
     ${result} =                                 REST show endpoints mac         ${mac1}
@@ -3257,6 +3259,8 @@ Verify clear blocked endpoint works
     BASH add tag                                h3                              bond0                   1003
     BASH ifup intf                              h1                              bond0.1001
     BASH ifup intf                              h3                              bond0.1003
+    BASH init intf                              h1                              bond0.1001
+    BASH init intf                              h3                              bond0.1003
     ${mac1} =                                   BASH get intf mac               h1                      bond0.1001
     BASH set mac address                        h3                              bond0.1003              ${mac1}
     BASH add ip address                         h1                              10.251.1.11/24          bond0.1001
@@ -3264,13 +3268,13 @@ Verify clear blocked endpoint works
     BASH add route                              h1                              10.251.0.0/16           10.251.1.1
     BASH add route                              h3                              10.251.0.0/16           10.251.1.1
     sleep                                       2
-    BASH  ping                                  h1                              10.251.1.1              count=5
+    BASH ping                                   h1                              10.251.1.1              count=5
     ${value} =                                  BASH verify arp                 h1                      10.251.1.1
     Should Be True                              ${value}        
     ${result} =                                 REST show endpoints mac         ${mac1}
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
     Should Contain                              ${attachpoint}                  ${leaf0_pc1}
-    BASH  ping                                  h3                              10.251.1.1              count=5
+    BASH ping                                   h3                              10.251.1.1              count=5
     ${value} =                                  BASH verify arp                 h3                      10.251.1.1
     Should Be True                              ${value}
     ${result} =                                 REST show endpoints mac         ${mac1}
