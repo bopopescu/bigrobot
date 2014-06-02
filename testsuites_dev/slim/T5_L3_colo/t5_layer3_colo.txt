@@ -53,7 +53,7 @@ Intra tenant L3 tagged traffic with static endpoints across rack
 
 L3 intra tenant traceroute
     L3 intra tenant traceroute
-    [Tags]                                  smoke               sanity              run1
+    [Tags]                                  smoke               sanity              run
     
 
 Dhcp discover on the same vns as server with dhcp-relay enabled
@@ -214,7 +214,15 @@ Inter tenant dhcp relay with two dhcp servers on both vns
 	L3 inter tenant dhcp relay with two dhcp servers on both vns
 	[Tags]									sanity				
 	
-	
+Verify same mac address showing up on two ports in the same segment is blocked	
+	Verify same mac address showing up on two ports in the same segment is blocked
+	[Tags]                                 sanity                      run1         
+    
+Verify clear blocked endpoint works	
+	Verify clear blocked endpoint works
+	[Tags]                                 sanity                      run1         
+    
+    
 * Keywords
 L3 intra tenant same rack untagged with dynamic endpoints
 	${ipAddr4} = 								BASH get interface ipv4 		h4-rack0						bond0
@@ -875,7 +883,110 @@ Inter tenant L3 dhcp relay
 	${loss} = 									BASH ping						h4-rack0						${ipAddr}			count=10
 	Should Be True  							${loss} == 0	
 
+Verify same mac address showing up on two ports in the same segment is blocked
+    REST add portgroup to vns                   X                                       X1                      ${leaf0_pc6}            1006
+    REST add portgroup to vns                   X                                       X1                      ${leaf0_pc7}            1007
+    BASH add tag                                h6-rack0                                bond0                   1006
+    BASH add tag                                h7-rack0                                bond0                   1007
+    BASH ifup intf                              h6-rack0                                bond0.1006
+    BASH ifup intf                              h7-rack0                                bond0.1007
+    ${mac1} =                                   BASH get intf mac                       h6-rack0                bond0.1006
+    BASH set mac address                        h7-rack0                                bond0.1006              ${mac1}
+    BASH add ip address                         h6-rack0                                10.251.1.11/24          bond0.1006
+    BASH add ip address                         h7-rack0                                10.251.1.11/24          bond0.1007
+    BASH add route                              h6-rack0                                10.251.0.0/16           10.251.1.1
+    BASH add route                              h7-rack0                                10.251.0.0/16           10.251.1.1
+    sleep                                       2
+    BASH  ping                                  h6-rack0                                10.251.1.1              count=5
+    ${value} =                                  BASH verify arp                         h6-rack0                10.251.1.1
+    Should Be True                              ${value}        
+    ${result} =                                 REST show endpoints mac                 ${mac1}
+    ${attachpoint} =                            Set Variable                            ${result[0]['attachment-point']}    
+    Should Contain                              ${attachpoint}                          ${leaf0_pc6}
+    BASH  ping                                  h7-rack0                                10.251.1.1              count=5
+    ${value} =                                  BASH verify arp                         h7-rack0                      10.251.1.1
+    Should Be True                              ${value}
+    ${result} =                                 REST show endpoints mac                 ${mac1}
+    ${attachpoint} =                            Set Variable                            ${result[0]['attachment-point']}    
+    Should Contain                              ${attachpoint}                          ${leaf0_pc7}
+    BASH run command                            h6-rack0                                ping 10.251.1.1 > /tmp/echo1.txt &
+    sleep                                       1
+    ${pid1}                                     BASH run command                        h6-rack0                      echo $!
+    sleep                                       1
+    BASH run command                            h7-rack0                                ping 10.251.1.1 > /tmp/echo1.txt &
+    sleep                                       1
+    ${pid2}                                     BASH run command                        h7-rack0                      echo $!
+    sleep                                       1
+    ${result} =                                 REST show endpoints mac                 ${mac1}
+    ${state} =                                  Set Variable                            ${result[0]['state']}    
+    Should Contain                              ${state}                                Blocked
+    sleep                                       1
+    BASH run command                            h7-rack0                                kill -9 ${pid2}
+    sleep                                       1
+    BASH network restart                        h7-rack0
+    sleep                                       300
+    ${result} =                                 REST show endpoints mac                 ${mac1}
+    ${attachpoint} =                            Set Variable                            ${result[0]['attachment-point']}    
+    ${state} =                                  Set Variable                            ${result[0]['state']}    
+    Should Contain                              ${state}                                Active
+    Should Contain                              ${attachpoint}                          ${leaf0_pc6}
+    BASH delete route                           h6-rack0                                10.251.0.0/16           10.251.1.1
+    BASH delete route                           h7-rack0                                10.251.0.0/16           10.251.1.1
 
+
+Verify clear blocked endpoint works
+    REST add portgroup to vns                   X                                       X1                      ${leaf0_pc6}            1006
+    REST add portgroup to vns                   X                                       X1                      ${leaf0_pc7}            1007
+    BASH add tag                                h6-rack0                                bond0                   1006
+    BASH add tag                                h7-rack0                                bond0                   1007
+    BASH ifup intf                              h6-rack0                                bond0.1006
+    BASH ifup intf                              h7-rack0                                bond0.1007
+    ${mac1} =                                   BASH get intf mac                       h6-rack0                bond0.1006
+    BASH set mac address                        h7-rack0                                bond0.1006              ${mac1}
+    BASH add ip address                         h6-rack0                                10.251.1.11/24          bond0.1006
+    BASH add ip address                         h7-rack0                                10.251.1.11/24          bond0.1007
+    BASH add route                              h6-rack0                                10.251.0.0/16           10.251.1.1
+    BASH add route                              h7-rack0                                10.251.0.0/16           10.251.1.1
+    sleep                                       2
+    BASH  ping                                  h6-rack0                                10.251.1.1              count=5
+    ${value} =                                  BASH verify arp                         h6-rack0                10.251.1.1
+    Should Be True                              ${value}        
+    ${result} =                                 REST show endpoints mac                 ${mac1}
+    ${attachpoint} =                            Set Variable                            ${result[0]['attachment-point']}    
+    Should Contain                              ${attachpoint}                          ${leaf0_pc6}
+    BASH  ping                                  h7-rack0                                10.251.1.1              count=5
+    ${value} =                                  BASH verify arp                         h7-rack0                      10.251.1.1
+    Should Be True                              ${value}
+    ${result} =                                 REST show endpoints mac                 ${mac1}
+    ${attachpoint} =                            Set Variable                            ${result[0]['attachment-point']}    
+    Should Contain                              ${attachpoint}                          ${leaf0_pc7}
+    BASH run command                            h6-rack0                                ping 10.251.1.1 > /tmp/echo1.txt &
+    sleep                                       1
+    ${pid1}                                     BASH run command                        h6-rack0                      echo $!
+    sleep                                       1
+    BASH run command                            h7-rack0                                ping 10.251.1.1 > /tmp/echo1.txt &
+    sleep                                       1
+    ${pid2}                                     BASH run command                        h7-rack0                      echo $!
+    sleep                                       1
+    ${result} =                                 REST show endpoints mac                 ${mac1}
+    ${state} =                                  Set Variable                            ${result[0]['state']}    
+    Should Contain                              ${state}                                Blocked
+    sleep                                       1
+    BASH run command                            h7-rack0                                kill -9 ${pid2}
+    sleep                                       1
+    BASH network restart                        h7-rack0
+    sleep                                       5
+    BASH network restart                        h3
+    sleep                                       10
+    ${result} =                                 REST show endpoints mac                 ${mac1}
+    ${attachpoint} =                            Set Variable                            ${result[0]['attachment-point']}    
+    ${state} =                                  Set Variable                            ${result[0]['state']}    
+    Should Contain                              ${state}                                Active
+    Should Contain                              ${attachpoint}                          ${leaf0_pc6}
+    BASH delete route                           h6-rack0                                10.251.0.0/16           10.251.1.1
+    BASH delete route                           h7-rack0                                10.251.0.0/16           10.251.1.1    
+    
+    
 initialize host
 	BASH delete tag										h6-rack0								bond0.1006				soft_error=${true}
 	BASH delete tag										h7-rack0								bond0.1007				soft_error=${true}
@@ -1155,7 +1266,6 @@ setup topology
 	REST add system intf to tenant routers 			X
 	REST add system intf to tenant routers 			Y
 	REST add system intf to tenant routers 			Z
-
 	REST add static routes							X							0.0.0.0/0		 {"tenant-name": "system"}
 	REST add static routes							Y							0.0.0.0/0		 {"tenant-name": "system"}  	
   	REST add static routes							Z							0.0.0.0/0		 {"tenant-name": "system"}  
