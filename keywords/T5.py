@@ -2518,6 +2518,27 @@ class T5(object):
         helpers.log("INFO: *** link info *** \n for %s: %s \n " % (node1,list))              
         return list   
 
-            
+    def rest_clear_blocked_endpoint(self,tenant,segment,mac):
+        ''' Function to clear blocked endpoint 
+        Input: tenant, segment, mac address to be cleared
+        Output: return true
+        http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/info/endpoint-manager/clear[mac="90:e2:ba:6f:00:20"][segment="X1"][tenant="X"]
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        helpers.test_log("Input arguments: tenant = %s segment name = %s mac address = %s " % (tenant, segment, mac))
+        
+        url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/clear[mac="%s"][segment="%s"][tenant="%s"]' % (mac, segment, tenant)
+        try:
+            c.rest.get(url)
+        except:
+            helpers.test_failure(c.rest.error())
+        else: 
+            helpers.test_log("Output: %s" % c.rest.result_json())
+            return c.rest.content()            
+
+
+
+
        
             
