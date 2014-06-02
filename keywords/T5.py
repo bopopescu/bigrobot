@@ -568,6 +568,7 @@ class T5(object):
         else:
                 helpers.test_failure("Fail: expected:%s, Actual:%s" % (int(count), len(data)))
                 return False
+        return True
 
     def rest_verify_tenant(self):
         '''Verify CLI tenant information
