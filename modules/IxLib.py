@@ -637,7 +637,11 @@ class Ixia(object):
                     self._handle.setMultiAttribute(trafficStream1 + '/highLevelStream:2/framePayload',
                                                   '-type', 'custom', '-customPattern', payload,
                                                  '-customRepeat', False, '-auto', 'false')
-        self._handle.setAttribute(self._handle.getList(trafficStream1, 'tracking')[0], '-trackBy', 'trackingenabled0')
+        if payload:
+            helpers.log('Skiping to enable Flow Tracking....')
+        else:
+            helpers.log('Setting Flow Tracking ....')
+            self._handle.setAttribute(self._handle.getList(trafficStream1, 'tracking')[0], '-trackBy', 'trackingenabled0')
 
         self._handle.commit()
         return trafficStream1
