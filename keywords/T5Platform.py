@@ -3524,7 +3524,7 @@ class T5Platform(object):
         t = test.Test()
         c = t.controller('master')
         url = '/api/v1/data/controller/applications/bvs/test/path/controller-view'
-
+              
         if(kwargs.get('dst-segment')):
             url = url + '[dst-segment="%s"]' % (kwargs.get('dst-segment'))
         if(kwargs.get('dst-tenant')):
@@ -3539,26 +3539,20 @@ class T5Platform(object):
             url = url + '[dst-ip="%s"]' % (kwargs.get('dst-ip'))
         if(kwargs.get('src-tenant')):
             url = url + '[src-tenant="%s"]' % (kwargs.get('src-tenant'))
-
-
+        
         result = c.rest.get(url)['content']
-        hopCount = 0
-        for item in result[0]["logical-hop"]:
+        try:
+            logicalError = result[0]['summary'][0]['logical-error']
+            helpers.log("Test Path Error In Controller View: LogicalError: %s" % (logicalError))
+            return False
+        except (KeyError):
             try:
-                errorCode = item["error"]
-                helpers.log("Test Path Error In Controller View:  %s" % errorCode)
+                physicalError = result[0]['summary'][0]['physical-error']
+                helpers.log("Test Path Error In Controller View: PhysicalError: %s" % (physicalError))
                 return False
             except (KeyError):
-                hopCount += 1
-                try:
-                    if item["policy-action"]:
-                        helpers.log("Policy Action- %s ===== At Hop- %s" % (item["policy-action"], item["hop-name"]))
-                except(KeyError):
-                    pass
-                pass
-
-        helpers.log("Test Path Sucees In Controller View. Number Of Logical Hops Detected: %s" % hopCount)
-        return True
+                helpers.log("Test Path Sucees In Controller View. No Errors Were Detected")
+                return True
 
 
     def rest_configure_testpath_fabric_view(self, **kwargs):
@@ -3607,25 +3601,15 @@ class T5Platform(object):
             url = url + '[dst-l4-port=%s]' % (kwargs.get('dst-l4-port'))
 
         result = c.rest.get(url)['content']
-        hopCount = 0
-        for item in result[0]["logical-hop"]:
-            try:
-                errorCode = item["error"]
-                helpers.log("Test Path Error In Fabric View:  %s" % errorCode)
-                helpers.log("%s" % result[0]["message"][0]["setup-message"])
-                return False
-            except (KeyError):
-                hopCount += 1
-                try:
-                    if item["policy-action"]:
-                        helpers.log("Policy Action- \"%s\" ===== At Hop- \"%s\"" % (item["policy-action"], item["hop-name"]))
-                except(KeyError):
-                    pass
-                pass
-
-        helpers.log("Test Path Sucees In Fabric View. Number Of Logical Hops Detected: %s" % hopCount)
-        return True
-
+        try:
+            logicalError = result[0]['summary'][0]['logical-error']
+            helpers.log("Test Path Error In Fabric View:  %s" % logicalError)
+            return False
+        except:
+            helpers.log("Test Path Sucees In Setting Up Fabric View")
+            return True
+        
+        
     def rest_verify_testpath_fabric_view(self, testName, trafficMode, *args, **kwargs):
 
         '''
@@ -3671,10 +3655,10 @@ class T5Platform(object):
             currentFlowCount = {}
             currentPktInCount = {}
             try:
-                for index, hop in enumerate(result[0]['physical-hop']):
+                for index, hop in enumerate(result[0]['physical-path']):
                     try:
                         if (index > len(args) - 1):
-                            helpers.log("Test Path Error: Expected # of Hops: %s / Actual # of Hops: %s" % ((len(args), len(result[0]['physical-hop']))))
+                            helpers.log("Test Path Error: Expected # of Hops: %s / Actual # of Hops: %s" % ((len(args), len(result[0]['physical-path']))))
                             return False
 
                         if args[index] not in hop["hop-name"]:
@@ -3703,7 +3687,7 @@ class T5Platform(object):
         sleep(3)
         url = '/api/v1/data/controller/applications/bvs/test/path/fabric-view[test-name="%s"]' % testName
         result = c.rest.get(url)['content']
-        for hop in result[0]['physical-hop']:
+        for hop in result[0]['physical-path']:
             try:
                 newFlowCount = int(hop["flow-counter"].strip('[]'))
                 newPktInCount = int(hop["pktin-counter"].strip('[]'))
@@ -3733,7 +3717,9 @@ class T5Platform(object):
 
 
     def rest_verify_testpath(self, pathName):
-
+        ''' Verify whether the testpath is configured or not
+            Returns: True if found
+        '''
         t = test.Test()
         c = t.controller("master")
 
@@ -3753,7 +3739,9 @@ class T5Platform(object):
             return False
 
     def rest_verify_testpath_timeout(self, pathName):
-
+        ''' Verify whether the testpath is timedout or not
+            Returns : True if timedout 
+        '''
         t = test.Test()
         c = t.controller("master")
 
