@@ -548,7 +548,7 @@ class T5(object):
                         helpers.log("No VNS are present")
                         return True
 
-    def rest_verify_vns_scale(self, count):
+    def rest_verify_vns_scale(self, tenant, count):
         '''Verify VNS information for scale
 
             Input:  No of vns expected to be created
@@ -557,24 +557,18 @@ class T5(object):
         '''
         t = test.Test()
         c = t.controller('master')
-        url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/segment' % ()
+        url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/segment[tenant="%s"]' % tenant
         c.rest.get(url)
         data = c.rest.content()
         if len(data) == int(count):
             for i in range(0, len(data)):
-                if len(data) != 0:
-                        if (int(data[i]["internal-vlan"]) != 0):
-                            helpers.log("Expected VNS's are present in the config")
-                            return True
-                        else:
-                            helpers.test_failure("Expected VNS's are not present in the config")
-                            return False
-                else:
-                        helpers.log("No VNS are added")
-                        return False
+                if (int(data[i]["internal-vlan"]) == 0):
+                    helpers.test_failure("Expected VNS's are not present in the config")
+                    return False
         else:
                 helpers.test_failure("Fail: expected:%s, Actual:%s" % (int(count), len(data)))
                 return False
+        return True
 
     def rest_verify_tenant(self):
         '''Verify CLI tenant information
