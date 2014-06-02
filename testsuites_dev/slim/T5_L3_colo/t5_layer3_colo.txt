@@ -886,10 +886,10 @@ Inter tenant L3 dhcp relay
 Verify same mac address showing up on two ports in the same segment is blocked
     REST add portgroup to vns                   X                                       X1                      ${leaf0_pc6}            1006
     REST add portgroup to vns                   X                                       X1                      ${leaf0_pc7}            1007
-    BASH add tag                                h6-rack0                                bond0                   1006
-    BASH add tag                                h7-rack0                                bond0                   1007
     BASH ifup intf                              h6-rack0                                bond0.1006
     BASH ifup intf                              h7-rack0                                bond0.1007
+    BASH init intf                              h6-rack0                                bond0.1006
+    BASH init intf                              h7-rack0                                bond0.1007    
     ${mac1} =                                   BASH get intf mac                       h6-rack0                bond0.1006
     BASH set mac address                        h7-rack0                                bond0.1006              ${mac1}
     BASH add ip address                         h6-rack0                                10.251.1.11/24          bond0.1006
@@ -897,13 +897,13 @@ Verify same mac address showing up on two ports in the same segment is blocked
     BASH add route                              h6-rack0                                10.251.0.0/16           10.251.1.1
     BASH add route                              h7-rack0                                10.251.0.0/16           10.251.1.1
     sleep                                       2
-    BASH  ping                                  h6-rack0                                10.251.1.1              count=5
+    BASH ping                                   h6-rack0                                10.251.1.1              count=5
     ${value} =                                  BASH verify arp                         h6-rack0                10.251.1.1
     Should Be True                              ${value}        
     ${result} =                                 REST show endpoints mac                 ${mac1}
     ${attachpoint} =                            Set Variable                            ${result[0]['attachment-point']}    
     Should Contain                              ${attachpoint}                          ${leaf0_pc6}
-    BASH  ping                                  h7-rack0                                10.251.1.1              count=5
+    BASH ping                                   h7-rack0                                10.251.1.1              count=5
     ${value} =                                  BASH verify arp                         h7-rack0                      10.251.1.1
     Should Be True                              ${value}
     ${result} =                                 REST show endpoints mac                 ${mac1}
@@ -937,10 +937,10 @@ Verify same mac address showing up on two ports in the same segment is blocked
 Verify clear blocked endpoint works
     REST add portgroup to vns                   X                                       X1                      ${leaf0_pc6}            1006
     REST add portgroup to vns                   X                                       X1                      ${leaf0_pc7}            1007
-    BASH add tag                                h6-rack0                                bond0                   1006
-    BASH add tag                                h7-rack0                                bond0                   1007
     BASH ifup intf                              h6-rack0                                bond0.1006
     BASH ifup intf                              h7-rack0                                bond0.1007
+    BASH init intf                              h6-rack0                                bond0.1006
+    BASH init intf                              h7-rack0                                bond0.1007
     ${mac1} =                                   BASH get intf mac                       h6-rack0                bond0.1006
     BASH set mac address                        h7-rack0                                bond0.1006              ${mac1}
     BASH add ip address                         h6-rack0                                10.251.1.11/24          bond0.1006
@@ -948,13 +948,13 @@ Verify clear blocked endpoint works
     BASH add route                              h6-rack0                                10.251.0.0/16           10.251.1.1
     BASH add route                              h7-rack0                                10.251.0.0/16           10.251.1.1
     sleep                                       2
-    BASH  ping                                  h6-rack0                                10.251.1.1              count=5
+    BASH ping                                   h6-rack0                                10.251.1.1              count=5
     ${value} =                                  BASH verify arp                         h6-rack0                10.251.1.1
     Should Be True                              ${value}        
     ${result} =                                 REST show endpoints mac                 ${mac1}
     ${attachpoint} =                            Set Variable                            ${result[0]['attachment-point']}    
     Should Contain                              ${attachpoint}                          ${leaf0_pc6}
-    BASH  ping                                  h7-rack0                                10.251.1.1              count=5
+    BASH ping                                   h7-rack0                                10.251.1.1              count=5
     ${value} =                                  BASH verify arp                         h7-rack0                      10.251.1.1
     Should Be True                              ${value}
     ${result} =                                 REST show endpoints mac                 ${mac1}
