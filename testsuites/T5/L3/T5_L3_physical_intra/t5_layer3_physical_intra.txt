@@ -3291,7 +3291,9 @@ Verify clear blocked endpoint works
     BASH run command                            h3                              kill -9 ${pid2}
     sleep                                       1
     BASH network restart                        h3
-    sleep                                       300
+    sleep                                       10
+    REST clear blocked endpoints                X                               X1                      ${mac1}
+    sleep                                       5
     ${result} =                                 REST show endpoints mac         ${mac1}
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
     ${state} =                                  Set Variable                    ${result[0]['state']}    
