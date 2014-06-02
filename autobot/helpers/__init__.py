@@ -18,6 +18,8 @@ import unicodedata
 import tempfile
 import curses.ascii as ascii
 import xml.dom.minidom
+import smtplib
+from email.mime.text import MIMEText
 from scp import SCPClient
 from pytz import timezone
 from autobot.version import get_version
@@ -36,6 +38,8 @@ from Exscript.util.match import any_match, first_match
 
 _TZ = timezone("America/Los_Angeles")
 _BIGROBOT_ENV_LIST = []
+SMTP_SERVER = 'smtp.bigswitch.com'
+DEFAULT_EMAIL = 'email_service@bigswitch.com'
 
 
 def ctrl(char):
@@ -1424,6 +1428,23 @@ def snake_case_key(in_dict):
             v = snake_case_key(v)
         out_dict[new_key] = v
     return out_dict
+
+
+def send_mail(m, debug=None):
+    """
+    Set debug=1 to get debug log.
+    """
+    _from = m['from']
+    _to = m['to']
+    s = s = smtplib.SMTP(SMTP_SERVER)
+    s.set_debuglevel(debug)
+
+    msg = MIMEText(m['message_body'])
+    msg['Subject'] = m['subject']
+    msg['From'] = _from
+    msg['To'] = _to
+    s.sendmail(_from, [_to], msg.as_string())
+    s.quit()
 
 
 #
