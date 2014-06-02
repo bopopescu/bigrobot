@@ -890,12 +890,8 @@ Verify same mac address showing up on two ports in the same segment is blocked
     BASH ifup intf                              h7-rack0                                bond0.1007
     BASH init intf                              h6-rack0                                bond0.1006
     BASH init intf                              h7-rack0                                bond0.1007    
-    ${mac1} =                                   BASH get intf mac                       h6-rack0                bond0.1006
-    BASH set mac address                        h7-rack0                                bond0.1006              ${mac1}
-    BASH add ip address                         h6-rack0                                10.251.1.11/24          bond0.1006
-    BASH add ip address                         h7-rack0                                10.251.1.11/24          bond0.1007
+    BASH add ip address                         h6-rack0                                10.251.1.15/24          bond0.1006
     BASH add route                              h6-rack0                                10.251.0.0/16           10.251.1.1
-    BASH add route                              h7-rack0                                10.251.0.0/16           10.251.1.1
     sleep                                       2
     BASH ping                                   h6-rack0                                10.251.1.1              count=5
     ${value} =                                  BASH verify arp                         h6-rack0                10.251.1.1
@@ -903,6 +899,10 @@ Verify same mac address showing up on two ports in the same segment is blocked
     ${result} =                                 REST show endpoints mac                 ${mac1}
     ${attachpoint} =                            Set Variable                            ${result[0]['attachment-point']}    
     Should Contain                              ${attachpoint}                          ${leaf0_pc6}
+    ${mac1} =                                   BASH get intf mac                       h6-rack0                bond0.1006
+    BASH set mac address                        h7-rack0                                bond0.1007              ${mac1}
+    BASH add ip address                         h7-rack0                                10.251.1.15/24          bond0.1007
+    BASH add route                              h7-rack0                                10.251.0.0/16           10.251.1.1
     BASH ping                                   h7-rack0                                10.251.1.1              count=5
     ${value} =                                  BASH verify arp                         h7-rack0                      10.251.1.1
     Should Be True                              ${value}
@@ -941,12 +941,8 @@ Verify clear blocked endpoint works
     BASH ifup intf                              h7-rack0                                bond0.1007
     BASH init intf                              h6-rack0                                bond0.1006
     BASH init intf                              h7-rack0                                bond0.1007
-    ${mac1} =                                   BASH get intf mac                       h6-rack0                bond0.1006
-    BASH set mac address                        h7-rack0                                bond0.1006              ${mac1}
-    BASH add ip address                         h6-rack0                                10.251.1.11/24          bond0.1006
-    BASH add ip address                         h7-rack0                                10.251.1.11/24          bond0.1007
+    BASH add ip address                         h6-rack0                                10.251.1.15/24          bond0.1006
     BASH add route                              h6-rack0                                10.251.0.0/16           10.251.1.1
-    BASH add route                              h7-rack0                                10.251.0.0/16           10.251.1.1
     sleep                                       2
     BASH ping                                   h6-rack0                                10.251.1.1              count=5
     ${value} =                                  BASH verify arp                         h6-rack0                10.251.1.1
@@ -954,6 +950,11 @@ Verify clear blocked endpoint works
     ${result} =                                 REST show endpoints mac                 ${mac1}
     ${attachpoint} =                            Set Variable                            ${result[0]['attachment-point']}    
     Should Contain                              ${attachpoint}                          ${leaf0_pc6}
+    ${mac1} =                                   BASH get intf mac                       h6-rack0                bond0.1006
+    BASH set mac address                        h7-rack0                                bond0.1007              ${mac1}
+    BASH add ip address                         h7-rack0                                10.251.1.15/24          bond0.1007
+    BASH add route                              h7-rack0                                10.251.0.0/16           10.251.1.1
+    BASH ping                                   h7-rack0                                10.251.1.1              count=5
     BASH ping                                   h7-rack0                                10.251.1.1              count=5
     ${value} =                                  BASH verify arp                         h7-rack0                      10.251.1.1
     Should Be True                              ${value}
