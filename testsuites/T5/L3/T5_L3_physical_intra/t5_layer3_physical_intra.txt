@@ -3225,11 +3225,13 @@ Verify same mac address showing up on two ports in the same segment is blocked
     Should Contain                              ${attachpoint}                  ${leaf1_pc1}
     BASH run command                            h1                              ping 10.251.1.1 > /tmp/echo1.txt &
     sleep                                       1
-    ${pid1}                                     BASH run command                h1                      echo $!
+    ${string} =                                 BASH run command                h1                      echo $!
+    ${pid1} =                                   Set Variable                    ${string[0]} 
     sleep                                       1
     BASH run command                            h3                              ping 10.251.1.1 > /tmp/echo1.txt &
     sleep                                       1
-    ${pid2}                                     BASH run command                h3                      echo $!
+    ${string} =                                 BASH run command                h3                      echo $!
+    ${pid2} =                                   Set Variable                    ${string[0]} 
     sleep                                       1
     ${result} =                                 REST show endpoints mac         ${mac1}
     ${state} =                                  Set Variable                    ${result[0]['state']}    
@@ -3282,11 +3284,12 @@ Verify clear blocked endpoint works
     Should Contain                              ${attachpoint}                  ${leaf1_pc1}
     BASH run command                            h1                              ping 10.251.1.1 > /tmp/echo1.txt &
     sleep                                       1
-    ${pid1}                                     BASH run command                h1                      echo $!
-    sleep                                       1
+    ${string} =                                 BASH run command                h1                      echo $!
+    ${pid1} =                                   Set Variable                    ${string[0]} 
     BASH run command                            h3                              ping 10.251.1.1 > /tmp/echo1.txt &
     sleep                                       1
-    ${pid2}                                     BASH run command                h3                      echo $!
+    ${string} =                                 BASH run command                h3                      echo $!
+    ${pid2} =                                   Set Variable                    ${string[0]} 
     sleep                                       1
     ${result} =                                 REST show endpoints mac         ${mac1}
     ${state} =                                  Set Variable                    ${result[0]['state']}    

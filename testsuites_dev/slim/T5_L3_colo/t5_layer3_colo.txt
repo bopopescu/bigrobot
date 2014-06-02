@@ -913,11 +913,13 @@ Verify same mac address showing up on two ports in the same segment is blocked
     Should Contain                              ${attachpoint}                          ${leaf0_pc7}
     BASH run command                            h6-rack0                                ping 10.251.1.1 > /tmp/echo1.txt &
     sleep                                       1
-    ${pid1}                                     BASH run command                        h6-rack0                      echo $!
+    ${string} =                                 BASH run command                        h6-rack0                      echo $!
+    ${pid1} =                                   Set Variable                            ${string[0]} 
     sleep                                       1
     BASH run command                            h7-rack0                                ping 10.251.1.1 > /tmp/echo1.txt &
     sleep                                       1
-    ${pid2}                                     BASH run command                        h7-rack0                      echo $!
+    ${string} =                                 BASH run command                        h7-rack0                      echo $!
+    ${pid2} =                                   Set Variable                            ${string[0]} 
     sleep                                       1
     ${result} =                                 REST show endpoints mac                 ${mac1}
     ${state} =                                  Set Variable                            ${result[0]['state']}    
@@ -968,11 +970,13 @@ Verify clear blocked endpoint works
     Should Contain                              ${attachpoint}                          ${leaf0_pc7}
     BASH run command                            h6-rack0                                ping 10.251.1.1 > /tmp/echo1.txt &
     sleep                                       1
-    ${pid1}                                     BASH run command                        h6-rack0                      echo $!
+    ${string} =                                 BASH run command                        h6-rack0                      echo $!
+    ${pid1} =                                   Set Variable                            ${string[0]} 
     sleep                                       1
     BASH run command                            h7-rack0                                ping 10.251.1.1 > /tmp/echo1.txt &
     sleep                                       1
-    ${pid2}                                     BASH run command                        h7-rack0                      echo $!
+    ${string} =                                 BASH run command                        h7-rack0                      echo $!
+    ${pid2} =                                   Set Variable                            ${string[0]} 
     sleep                                       1
     ${result} =                                 REST show endpoints mac                 ${mac1}
     ${state} =                                  Set Variable                            ${result[0]['state']}    
