@@ -1,12 +1,15 @@
 #!/usr/bin/env python
 """
+Service startup:
+  $ ./send_mail.py --host 0.0.0.0
+
 Usage:
   $ curl -i -H "Content-Type: application/json" -X POST \
        -d '{"from":"root@jenkins-w6.bigswitch.com",
             "to":"vui.le@bigswitch.com",
             "subject":"This is a test",
             "message_body":"Testing 1 2 3"}' \
-       http://localhost:5000/message
+       http://qarest.bigswitch.com:5000/message
 """
 
 import os
