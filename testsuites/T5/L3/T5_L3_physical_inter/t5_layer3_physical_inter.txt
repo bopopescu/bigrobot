@@ -528,7 +528,7 @@ Verify inter tenant L3 traffic is getting drop with null next hop
     REST show endpoints     
     ${loss} =                                   BASH ping                       h1                      10.252.1.11             count=10
     Should Be True                              ${loss} == 0   
-    REST add static routes                      X                               10.252.0.0/16           {"dest-ip-subnet": "10.252.0.0/16"}
+    REST add static routes                      X                               10.252.0.0/16           nexthop=None
     ${loss} =                                   BASH ping                       h1                      10.252.1.11             count=10
     Should Be True                              ${loss} == 100   
     REST delete static routes                   X                               10.252.0.0/16   

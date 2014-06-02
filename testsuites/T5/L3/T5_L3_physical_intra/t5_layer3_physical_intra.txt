@@ -3209,10 +3209,10 @@ Verify same mac address showing up on two ports in the same segment is blocked
     BASH ping                                   h1                              10.251.1.1              count=5
     ${value} =                                  BASH verify arp                 h1                      10.251.1.1
     Should Be True                              ${value}        
+    ${mac1} =                                   BASH get intf mac               h1                      bond0.1001
     ${result} =                                 REST show endpoints mac         ${mac1}
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
     Should Contain                              ${attachpoint}                  ${leaf0_pc1}
-    ${mac1} =                                   BASH get intf mac               h1                      bond0.1001
     BASH set mac address                        h3                              bond0.1003              ${mac1}
     BASH add ip address                         h3                              10.251.1.11/24          bond0.1003
     BASH add route                              h3                              10.251.0.0/16           10.251.1.1
@@ -3268,10 +3268,10 @@ Verify clear blocked endpoint works
     BASH ping                                   h1                              10.251.1.1              count=5
     ${value} =                                  BASH verify arp                 h1                      10.251.1.1
     Should Be True                              ${value}        
+    ${mac1} =                                   BASH get intf mac               h1                      bond0.1001
     ${result} =                                 REST show endpoints mac         ${mac1}
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
     Should Contain                              ${attachpoint}                  ${leaf0_pc1}
-    ${mac1} =                                   BASH get intf mac               h1                      bond0.1001
     BASH set mac address                        h3                              bond0.1003              ${mac1}
     BASH add ip address                         h3                              10.251.1.11/24          bond0.1003
     BASH add route                              h3                              10.251.0.0/16           10.251.1.1
