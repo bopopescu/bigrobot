@@ -270,7 +270,6 @@ class TestSuite(object):
             test = {'test_id': test_id,
                     'name': name,
                     'tags': tags,
-                    'job_name_id': None,
                     'executed': executed,
                     'status': status,
                     'starttime': starttime,
