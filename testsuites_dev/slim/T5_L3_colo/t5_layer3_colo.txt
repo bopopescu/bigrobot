@@ -891,6 +891,7 @@ Verify inter tenant L3 traffic is getting drop with null next hop
     BASH ping                                   h4-rack0                        10.252.1.11                     count=5
     ${value} =                                  BASH verify arp                 h4-rack0                        10.251.1.1
     Should Be True                              ${value}        
+    BASH ping                                   h7-rack0                        10.252.1.11                     count=5
     ${value} =                                  BASH verify arp                 h7-rack0                        10.252.1.1
     Should Be True                              ${value} 
     ${mac4} =                                   BASH get intf mac               h4-rack0                        bond0
@@ -903,7 +904,7 @@ Verify inter tenant L3 traffic is getting drop with null next hop
     Should Contain                              ${attachpoint}                  ${leaf0_pc7}    
     ${loss} =                                   BASH ping                       h4-rack0                        10.252.1.11             count=10
     Should Be True                              ${loss} == 0    
-    REST add static routes                      X                               10.252.0.0/16                      
+    REST add static routes                      X                               10.252.0.0/16
     ${loss} =                                   BASH ping                       h4-rack0                        10.252.1.11             count=10
     Should Be True                              ${loss} == 100    
     REST add static routes                      X                               10.252.0.0/16                   {"tenant-name": "system"}       

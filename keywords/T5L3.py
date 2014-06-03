@@ -255,14 +255,12 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
         
         t = test.Test()
         c = t.controller('master')
-        
-        nexthop_dict = helpers.from_json(nexthop)
-        
         helpers.test_log("Input arguments: tenant = %s dstroute = %s nexthop = %s " % (tenant, dstroute, nexthop))
         url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/logical-router/routes' % (tenant)
 
-        if not nexthop:
+        if nexthop is not None:
             try:
+                nexthop_dict = helpers.from_json(nexthop)        
                 c.rest.post(url, {"dest-ip-subnet": dstroute, "next-hop": nexthop_dict})
             except:
                 helpers.test_failure(c.rest.error())
