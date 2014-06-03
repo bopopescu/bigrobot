@@ -1,0 +1,389 @@
+== T5 Functional Openstack Integration work flow test ==
+
+* Setting
+Documentation    T5 BCF  Openstack integration feature and solution work flow test suite
+Suite Setup      T5 Functional Suite Setup
+Suite Teardown   T5 Functional Suite Teardown
+Test Setup       base test setup
+Test Teardown    base test teardown
+Force Tags       T5 
+Library          keywords/BsnCommon.py
+Library          keywords/T5.py
+Library          keywords/T5Platform.py
+Library	         keywords/SwitchLight.py
+Library	         keywords/Host.py
+Library		     keywords/Ixia.py
+Library          keywords_dev/prashanth/T5Openstack.py
+Library			 Collections.py
+Resource		 testsuites/T5/t5_physical_variables.txt
+Resource         testsuites_dev/prashanth/t5-openstack/t5_openstack_variables.txt
+
+* Test Case 
+	
+Project (tenant), then delete and readd
+	[Tags]  feature  openstack  IronHorse  manual-untested
+create 2 projects with the same name and different UUID
+	[Tags]  feature  openstack  IronHorse  manual-untested
+verify the username (Does BSN controller expects Orchestrator User ID)
+	[Tags]  feature  openstack  IronHorse  manual-untested
+verify the alias settings from the BSN controller if any 
+	[Tags]  feature  openstack  IronHorse  manual-untested
+Verify the horizon admin role
+	[Tags]  feature  openstack  IronHorse  manual-untested 
+Network and subnet (VNS), then delete and readd
+	[Tags]  feature  openstack  IronHorse  manual-untested
+2 more networks and subnets, then delete and readd
+	[Tags]  feature  openstack  IronHorse  manual-untested
+create a network same as DHCP server interface
+	[Tags]  feature  openstack  IronHorse  manual-untested
+2 more projects and corresponding networks and subnets, then delete and readd
+	[Tags]  feature  openstack  IronHorse  manual-untested
+Automatic LAG creation from the controller with same rack and different rack
+	[Tags]  feature  openstack  IronHorse  manual-untested
+Verify bonding interface creation either from Puppet script or BSN plugin script (Using Mirantis)
+	[Tags]  feature  openstack  IronHorse  manual-untested 
+Create/delete external network (Like any other VNS , no specifical External network or tenant keyword in T5)
+	[Tags]  feature  openstack  IronHorse  manual-untested
+Check that external VNS is created/deleted
+	[Tags]  feature  openstack  IronHorse  manual-untested
+Check that external router is created/deleted
+	[Tags]  feature  openstack  IronHorse  manual-untested
+Create external network subnet
+	[Tags]  feature  openstack  IronHorse  manual-untested
+Verify creation/deletion of gateway pool with one gw-node (gateway specified in the subnet)
+	[Tags]  feature  openstack  IronHorse  manual-untested
+Create/delete tenant and network
+	[Tags]  feature  openstack  IronHorse  manual-untested 
+check that no tenant router is created/deleted
+	[Tags]  feature  openstack  IronHorse  manual-untested
+Create/delete tenant router
+	[Tags]  feature  openstack  IronHorse  manual-untested
+Verify creation/deletion of route rule on tenant router (Only Neutron support)
+	[Tags]  feature  openstack  IronHorse  manual-untested
+Create network uplinks to tenant router (need to verify the membership rule created for the router interface)
+	[Tags]  feature  openstack  IronHorse  manual-untested
+add/remove/change gateway association of the tenant router
+	[Tags]  feature  openstack  IronHorse  manual-untested
+Test security groups use case from openstack permit /deny with specific ports (TCP/UDP) apply multiple VM in same VNS
+	[Tags]  feature  openstack  IronHorse  manual-untested
+Multiple VM creation/deletion and verify VNS membership rule created/deleted
+	[Tags]  feature  openstack  IronHorse  manual-untested
+Test security groups use case from openstack permit /deny with specific ports (TCP/UDP) apply multiple VM in different tenant
+	[Tags]  feature  openstack  IronHorse  manual-untested
+Create/delete VMs with floating IP
+	[Tags]  feature  openstack  IronHorse  manual-untested 
+check associations, dis-association of floating IP for the VM
+	[Tags]  feature  openstack  IronHorse  manual-untested
+delete VM with floating IP
+	[Tags]  feature  openstack  IronHorse  manual-untested
+delete multiple VMs with floating IP
+	[Tags]  feature  openstack  IronHorse  manual-untested
+exhaust floating IPs in a tenant
+	[Tags]  feature  openstack  IronHorse  manual-untested
+verify that floating IPs can be recovered/managed through the access & security tab in the Horizon GUI.
+	[Tags]  feature  openstack  IronHorse  manual-untested
+Security group profiles downloaded onto Vswitch IPtable through our plugin.
+	[Tags]  feature  openstack  IronHorse  manual-untested
+Test Various ICMP/TCP/UDP security profiles.
+	[Tags]  feature  openstack  IronHorse  manual-untested
+		
+On the Openstack Horizon GUI, create VMs under the different projects and networks
+	[Tags]  feature  openstack  IronHorse  manual-untested
+Verify that DHCP is working and that VMs are getting correct addresses
+	[Tags]  feature  openstack  IronHorse  manual-untested
+Verify that traffic correctly flows between networks (VNSs)
+	[Tags]  feature  openstack  IronHorse  manual-untested
+Verify that traffic correctly flows from all networks to the external server/internet
+	[Tags]  feature  openstack  IronHorse  manual-untested
+Verify that traffic is correctly blocked between projects (tenants)
+	[Tags]  feature  openstack  IronHorse  manual-untested
+Verify that asymmetric traffic paths work (Northbound path different from southbound path)
+	[Tags]  feature  openstack  IronHorse  manual-untested
+Verify traffic stats on P+V switches
+	[Tags]  feature  openstack  IronHorse  manual-untested
+Test traffic load balancing over redundant links
+	[Tags]  feature  openstack  IronHorse  manual-untested
+Between Spine switches and Service Rack Leaf switches
+	[Tags]  feature  openstack  IronHorse  manual-untested
+Between Service Rack Leaf switches and Router
+	[Tags]  feature  openstack  IronHorse  manual-untested
+Test with different traffic (IP, TCP, Jumbo Frame)
+	[Tags]  feature  openstack  IronHorse  manual-untested
+Verify behavior of broadcast traffic from VMs (ARP broadcast forward between VM)
+	[Tags]  feature  openstack  IronHorse  manual-untested
+Verify behavior of multicast traffic from VMs
+	[Tags]  feature  openstack  IronHorse  manual-untested
+Test L3 Silent Host scenario (Replace the device with non VRRP Scenario)
+	[Tags]  feature  openstack  IronHorse  manual-untested
+Test multi-tier app support 
+	[Tags]  feature  openstack  IronHorse  manual-untested
+Configure 3 networks (Web, App, DB) and setup rules for the following:
+	[Tags]  feature  openstack  IronHorse  manual-untested
+Web can only communicate with App and external
+	[Tags]  feature  openstack  IronHorse  manual-untested
+App can only communicate with Web and DB
+	[Tags]  feature  openstack  IronHorse  manual-untested
+DB can only communicate with App
+	[Tags]  feature  openstack  IronHorse  manual-untested
+
+
+Verify floating IP connectivity between 2 VNS
+	[Tags]  feature  openstack  IronHorse  manual-untested
+verify floating IP connectivity between VNS and external router
+	[Tags]  feature  openstack  IronHorse  manual-untested
+
+
+Ping external address from VMs
+	[Tags]  feature  openstack  IronHorse  manual-untested
+Ping VMs from external addresses
+	[Tags]  feature  openstack  IronHorse  manual-untested
+Use traceroute to verify traffic paths
+	[Tags]  feature  openstack  IronHorse  manual-untested
+Use “test packet path” and check correctness of output
+	[Tags]  feature  openstack  IronHorse  manual-untested
+Run tests with and without Floating IP
+	[Tags]  feature  openstack  IronHorse  manual-untested
+Run “show tech-support”
+	[Tags]  solution  openstack  IronHorse  manual-untested
+Run bsn-support.py
+	[Tags]  solution  openstack  IronHorse  manual-untested
+Verify trace packet support in the Horizon 
+	[Tags]  feature  openstack  IronHorse  manual-untested
+  
+
+Cinder: Volume create/Delete for block storage management
+	[Tags]  solution  openstack  IronHorse  manual-untested
+Number of volumes to create??
+	[Tags]  solution  openstack  IronHorse  manual-untested
+Cinder: Volume Attach/Detach of block storage to the server
+	[Tags]  solution  openstack  IronHorse  manual-untested
+Cinder: Create/Delete Snapshots
+	[Tags]  solution  openstack  IronHorse  manual-untested
+Number of snapshots to create
+	[Tags]  solution  openstack  IronHorse  manual-untested
+Cinder: Create a new Volume from Snapshot
+	[Tags]  solution  openstack  IronHorse  manual-untested
+Cinder: Get the Volume Stats
+	[Tags]  solution  openstack  IronHorse  manual-untested
+Ceph Storage sets
+	[Tags]  solution  openstack  IronHorse  manual-untested
+Use seperate storage VLAN to provide a storage traffic going through the fabric (Most common used NFS,iSCSi traffic)
+	[Tags]  solution  openstack  IronHorse  manual-untested
+Test to provide any Qos settings for storage traffic
+	[Tags]  solution  openstack  IronHorse  manual-untested
+
+
+Scale upto VM which can support either openstack or 200 server limit (Using Tiny VM size)
+	[Tags]  scaling  openstack  IronHorse  manual-untested
+Measure Openstack Scaling limit (Topology: Single Nova controller)
+	[Tags]  scaling  openstack  IronHorse  manual-untested
+
+Performance(between 2 VM using iperf)
+	[Tags]  performance  openstack  IronHorse  manual-untested
+
+
+Upgrade Iron Horse Image to a Iron Horse Official Release image.
+	[Tags]  solution  openstack  IronHorse  manual-untested	
+
+Configure 2 Nuetron server for openstack HA
+	[Tags]  solution  openstack  IronHorse  manual-untested
+Failover using link down
+	[Tags]  solution  openstack  IronHorse  manual-untested
+Fail back test 
+	[Tags]  solution  openstack  IronHorse  manual-untested 
+reboot Master neutron server
+	[Tags]  solution  openstack  IronHorse  manual-untested
+
+Controller failover
+	[Tags]  solution  openstack  IronHorse  manual-untested
+Trigger HA failover from CLI, then check
+	[Tags]  solution  openstack  IronHorse  manual-untested
+Failover to slave correctly happens
+	[Tags]  solution  openstack  IronHorse  manual-untested
+Existing flows should not be impacted
+	[Tags]  solution  openstack  IronHorse  manual-untested
+New flows should be established after failover
+	[Tags]  solution  openstack  IronHorse  manual-untested
+
+Failback to previous master
+	[Tags]  solution  openstack  IronHorse  manual-untested
+Failover to slave correctly happens
+	[Tags]  solution  openstack  IronHorse  manual-untested
+Existing flows should not be impacted
+	[Tags]  solution  openstack  IronHorse  manual-untested
+New flows should be established after failover
+	[Tags]  solution  openstack  IronHorse  manual-untested
+
+Trigger HA failover via a process restart (floodlight restart) 
+	[Tags]  solution  openstack  IronHorse  manual-untested
+Failover to slave correctly happens
+	[Tags]  solution  openstack  IronHorse  manual-untested
+Existing flows should not be impacted
+	[Tags]  solution  openstack  IronHorse  manual-untested
+New flows should be established after failover
+	[Tags]  solution  openstack  IronHorse  manual-untested
+
+Trigger HA failover via master controller node shutdown/reboot
+	[Tags]  solution  openstack  IronHorse  manual-untested
+Failover to slave correctly happens
+	[Tags]  solution  openstack  IronHorse  manual-untested
+Existing flows should not be impacted
+	[Tags]  solution  openstack  IronHorse  manual-untested
+New flows should be established after failover
+	[Tags]  solution  openstack  IronHorse  manual-untested
+
+ 
+
+Flap the link between Leaf switch and OVS (connection to nova-controller)
+	[Tags]  solution  openstack  IronHorse  manual-untested
+Flap the link between Leaf switch and OVS (connection to nova compute node)
+	[Tags]  solution  openstack  IronHorse  manual-untested 
+Flap the link between Leaf switch and OVS (connection to block storage)
+	[Tags]  solution  openstack  IronHorse  manual-untested
+Flap the link between Service Rack Leaf switch and Spine switch
+	[Tags]  solution  openstack  IronHorse  manual-untested
+Flap the link between Compute Rack Leaf switch and Spine switch
+	[Tags]  solution  openstack  IronHorse  manual-untested
+Flap the link between Service Rack Leaf switch and router
+	[Tags]  solution  openstack  IronHorse  manual-untested
+
+
+Flap all the links on nova-controller
+	[Tags]  solution  openstack  IronHorse  manual-untested
+Flap all the links on compute node
+	[Tags]  solution  openstack  IronHorse  manual-untested
+Flap all the links on storage server
+	[Tags]  solution  openstack  IronHorse  manual-untested
+Flap all the links between Leaf and spine switches
+	[Tags]  solution  openstack  IronHorse  manual-untested 
+Flap all the links on spine switches (Distribution failure)
+	[Tags]  solution  openstack  IronHorse  manual-untested
+Multiple link flaps at different traffic rates
+	[Tags]  solution  openstack  IronHorse  manual-untested
+
+Leaf Connection to server - move/add/remove link
+	[Tags]  solution  openstack  IronHorse  manual-untested
+Connection to Spine - move/add/remove link
+	[Tags]  solution  openstack  IronHorse  manual-untested
+
+service leaf Connection to server - move/add/remove link
+	[Tags]  solution  openstack  IronHorse  manual-untested
+service leaf Connection to Spine - move/add/remove link
+	[Tags]  solution  openstack  IronHorse  manual-untested
+
+Connection to Leaf switch Switch failure/reboot
+	[Tags]  solution  openstack  IronHorse  manual-untested 
+All Spine reboot
+	[Tags]  solution  openstack  IronHorse  manual-untested
+Process failure (OFAD) all leaf
+	[Tags]  solution  openstack  IronHorse  manual-untested
+Reboot
+	[Tags]  solution  openstack  IronHorse  manual-untested
+Process failure (OFAD) all spine
+	[Tags]  solution  openstack  IronHorse  manual-untested
+
+
+OVS - Nova Controller start/stop process
+	[Tags]  solution  openstack  IronHorse  manual-untested
+
+OVS - Compute node start/stop process
+	[Tags]  solution  openstack  IronHorse  manual-untested
+OVS - Storage if any process starts
+	[Tags]  solution  openstack  IronHorse  manual-untested
+
+Multiple failure: All servers fail and recover
+	[Tags]  solution  openstack  IronHorse  manual-untested
+Multiple failure: All Leafs in Service Rack fail
+	[Tags]  solution  openstack  IronHorse  manual-untested
+Multiple failure: All Leafs in Compute Rack fail
+	[Tags]  solution  openstack  IronHorse  manual-untested
+Multiple failure: All Spine switches fail
+	[Tags]  solution  openstack  IronHorse  manual-untested
+Multiple failure: reboot whole P domain
+	[Tags]  solution  openstack  IronHorse  manual-untested
+
+Host reboot
+	[Tags]  solution  openstack  IronHorse  manual-untested
+Nova controller reboot
+	[Tags]  solution  openstack  IronHorse  manual-untested
+Nova compute node reboot
+	[Tags]  solution  openstack  IronHorse  manual-untested
+Storage reboot
+	[Tags]  solution  openstack  IronHorse  manual-untested
+
+Add/Delete new leaf
+	[Tags]  solution  openstack  IronHorse  manual-untested
+Add/delete new spine
+	[Tags]  solution  openstack  IronHorse  manual-untested
+Add/delete new Router
+	[Tags]  solution  openstack  IronHorse  manual-untested
+add/delete compute nodes
+	[Tags]  solution  openstack  IronHorse  manual-untested 
+
+
+Flap mgmt. link on nova controller
+	[Tags]  solution  openstack  IronHorse  manual-untested
+flap mgmt link of compute node
+	[Tags]  solution  openstack  IronHorse  manual-untested
+flap mgmt link on the compute rack
+	[Tags]  solution  openstack  IronHorse  manual-untested
+flap mgmt link on the service rack 
+	[Tags]  solution  openstack  IronHorse  manual-untested
+Reboot one of the mgmt switch 
+	[Tags]  solution  openstack  IronHorse  manual-untested
+Reboot second mgmt switch
+	[Tags]  solution  openstack  IronHorse  manual-untested
+Flap one of the controller mgmt connectivity
+	[Tags]  solution  openstack  IronHorse  manual-untested
+
+Hardware replacement
+	[Tags]  solution  openstack  IronHorse  manual-untested
+Replace a Leaf switch
+	[Tags]  solution  openstack  IronHorse  manual-untested
+Replace a Spine switch
+	[Tags]  solution  openstack  IronHorse  manual-untested
+Scenario of replacing external router (With the same IP and different MAC)
+	[Tags]  solution  openstack  IronHorse  manual-untested
+Replacing server with same host name and IP
+	[Tags]  solution  openstack  IronHorse  manual-untested
+Test work flow of VM migration
+	[Tags]  solution  openstack  IronHorse  manual-untested
+
+
+
+
+Add service between Data and App VNS and verify the traffic load balance
+	[Tags]  solution  openstack  IronHorse  manual-untested
+
+Out of sync script for new controller bringup and exsisting openstack setup
+	[Tags]  solution  openstack  IronHorse  manual-untested
+
+
+verify the controller CLI mapping to global tenant (opp 9 use case)
+	[Tags]  feature  openstack  IronHorse  manual-untested
+add/remove CLI
+	[Tags]  feature  openstack  IronHorse  manual-untested 
+Verify the tenant/VNS mapping to global tenant
+	[Tags]  feature  openstack  IronHorse  manual-untested 
+check the setting before and after reboot
+	[Tags]  feature  openstack  IronHorse  manual-untested
+verify sync script with global mapping setting
+	[Tags]  feature  openstack  IronHorse  manual-untested
+Verify single VNS , multiple VNS forwarding
+	[Tags]  feature  openstack  IronHorse  manual-untested
+	
+
+shared resources VNS created under admin tenant (clemson univsersity)
+	[Tags]  feature  openstack  IronHorse  manual-untested
+create a VM connected to tenant A and shared resource VNS (admin tenant)
+	[Tags]  feature  openstack  IronHorse  manual-untested
+create a multiple VM part of tenant A and have shared network connection , verify the forwarding
+	[Tags]  feature  openstack  IronHorse  manual-untested
+delete/add VM into shared resource network 
+	[Tags]  feature  openstack  IronHorse  manual-untested
+Place VM in different project in same network
+	[Tags]  feature  openstack  IronHorse  manual-untested
+
+
+
+	
