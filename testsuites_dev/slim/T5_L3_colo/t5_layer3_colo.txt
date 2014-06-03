@@ -214,6 +214,10 @@ Inter tenant dhcp relay with two dhcp servers on both vns
 	L3 inter tenant dhcp relay with two dhcp servers on both vns
 	[Tags]									sanity				
 	
+Verify inter tenant L3 traffic is getting drop with null next hop	
+	Verify inter tenant L3 traffic is getting drop with null next hop
+	[Tags]                                 sanity                      run1         
+    
 Verify same mac address showing up on two ports in the same segment is blocked	
 	Verify same mac address showing up on two ports in the same segment is blocked
 	[Tags]                                 sanity                      run1         
@@ -883,6 +887,32 @@ Inter tenant L3 dhcp relay
 	${loss} = 									BASH ping						h4-rack0						${ipAddr}			count=10
 	Should Be True  							${loss} == 0	
 
+Verify inter tenant L3 traffic is getting drop with null next hop
+    BASH ping                                   h4-rack0                        10.252.1.11                     count=5
+    ${value} =                                  BASH verify arp                 h4-rack0                        10.251.1.1
+    Should Be True                              ${value}        
+    ${value} =                                  BASH verify arp                 h7-rack0                        10.252.1.1
+    Should Be True                              ${value} 
+    ${mac4} =                                   BASH get intf mac               h4-rack0                        bond0
+    ${result} =                                 REST show endpoints mac         ${mac4}
+    ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
+    Should Contain                              ${attachpoint}                  ${leaf0_pc4}    
+    ${mac7} =                                   BASH get intf mac               h7-rack0                        bond0.1007
+    ${result} =                                 REST show endpoints mac         ${mac7}
+    ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
+    Should Contain                              ${attachpoint}                  ${leaf0_pc7}    
+    ${loss} =                                   BASH ping                       h4-rack0                        10.252.1.11             count=10
+    Should Be True                              ${loss} == 0    
+    REST add static routes                      X                               10.252.0.0/16                      
+    ${loss} =                                   BASH ping                       h4-rack0                        10.252.1.11             count=10
+    Should Be True                              ${loss} == 100    
+    REST add static routes                      X                               10.252.0.0/16                   {"tenant-name": "system"}       
+    ${loss} =                                   BASH ping                       h4-rack0                        10.252.1.11             count=10
+    Should Be True                              ${loss} < 30    
+    
+
+    
+
 Verify same mac address showing up on two ports in the same segment is blocked
     REST delete portgroup from vns              X                                       X3                      ${leaf0_pc6}            1006
     REST delete portgroup from vns              Y                                       Y1                      ${leaf0_pc7}            1007
@@ -897,11 +927,11 @@ Verify same mac address showing up on two ports in the same segment is blocked
     sleep                                       2
     BASH ping                                   h6-rack0                                10.251.1.1              count=5
     ${value} =                                  BASH verify arp                         h6-rack0                10.251.1.1
-    Should Be True                              ${value}        
+    Should Be True                              ${value}      
+    ${mac1} =                                   BASH get intf mac                       h6-rack0                bond0.1006
     ${result} =                                 REST show endpoints mac                 ${mac1}
     ${attachpoint} =                            Set Variable                            ${result[0]['attachment-point']}    
     Should Contain                              ${attachpoint}                          ${leaf0_pc6}
-    ${mac1} =                                   BASH get intf mac                       h6-rack0                bond0.1006
     BASH set mac address                        h7-rack0                                bond0.1007              ${mac1}
     BASH add ip address                         h7-rack0                                10.251.1.15/24          bond0.1007
     BASH add route                              h7-rack0                                10.251.0.0/16           10.251.1.1
@@ -954,10 +984,10 @@ Verify clear blocked endpoint works
     BASH ping                                   h6-rack0                                10.251.1.1              count=5
     ${value} =                                  BASH verify arp                         h6-rack0                10.251.1.1
     Should Be True                              ${value}        
+    ${mac1} =                                   BASH get intf mac                       h6-rack0                bond0.1006
     ${result} =                                 REST show endpoints mac                 ${mac1}
     ${attachpoint} =                            Set Variable                            ${result[0]['attachment-point']}    
     Should Contain                              ${attachpoint}                          ${leaf0_pc6}
-    ${mac1} =                                   BASH get intf mac                       h6-rack0                bond0.1006
     BASH set mac address                        h7-rack0                                bond0.1007              ${mac1}
     BASH add ip address                         h7-rack0                                10.251.1.15/24          bond0.1007
     BASH add route                              h7-rack0                                10.251.0.0/16           10.251.1.1

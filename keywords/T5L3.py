@@ -238,7 +238,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
             helpers.test_log("Output: %s" % c.rest.result_json())
             return c.rest.content()                    
     
-    def rest_add_static_routes(self, tenant, dstroute, nexthop):
+    def rest_add_static_routes(self, tenant, dstroute, nexthop=None):
         '''Add static routes to tenant router"
         
             Input:
@@ -246,7 +246,11 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
                 `dstroute`        destination subnet
                 `nexthop`         nexthop IP address or nexthop tenant name or nexthop ecmp group name. e.g. of nexthop input is {"ip-address": "10.10.10.1"} or {"tenant-name": "B"} or {"ecmp-group-name": "e3"}
                 more specific example REST add static routes(A, 10.10.11.0/24, {"ecmp-group-name": "e2"})
+                
             Return: true if configuration is successful, false otherwise
+            http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[name="X"]/logical-router/routes[dest-ip-subnet="10.10.0.0/16"] {"next-hop": {"tenant-name": "system"}, "dest-ip-subnet": "10.10.0.0/16"}
+            http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[name="X"]/logical-router/routes[dest-ip-subnet="10.192.0.0/16"] {"dest-ip-subnet": "10.192.0.0/16"}
+
         '''
         
         t = test.Test()
@@ -255,15 +259,25 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
         nexthop_dict = helpers.from_json(nexthop)
         
         helpers.test_log("Input arguments: tenant = %s dstroute = %s nexthop = %s " % (tenant, dstroute, nexthop))
-        
         url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/logical-router/routes' % (tenant)
-        try:
-            c.rest.post(url, {"dest-ip-subnet": dstroute, "next-hop": nexthop_dict})
-        except:
-            helpers.test_failure(c.rest.error())
-        else: 
-            helpers.test_log("Output: %s" % c.rest.result_json())
-            return c.rest.content()    
+
+        if not nexthop:
+            try:
+                c.rest.post(url, {"dest-ip-subnet": dstroute, "next-hop": nexthop_dict})
+            except:
+                helpers.test_failure(c.rest.error())
+            else: 
+                helpers.test_log("Output: %s" % c.rest.result_json())
+                return c.rest.content()    
+        else:
+            try:
+                c.rest.post(url, {"dest-ip-subnet": dstroute})
+            except:
+                helpers.test_failure(c.rest.error())
+            else: 
+                helpers.test_log("Output: %s" % c.rest.result_json())
+                return c.rest.content()    
+            
                    
     def rest_delete_static_routes(self, tenant, dstroute):
         '''Add static routes to tenant router"
