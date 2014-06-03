@@ -146,7 +146,8 @@ class TestSuite(object):
         tc = testcases.find_and_modify(
                 query={ "name": rec['name'],
                         "product_suite" : rec['product_suite'],
-                        "starttime_datestamp" : rec['starttime_datestamp'] },
+                        # "starttime_datestamp" : rec['starttime_datestamp']
+                        },
                 update={ "$set": {"status": rec['status'],
                                   "starttime": rec['starttime'],
                                   "endtime": rec['endtime'],
