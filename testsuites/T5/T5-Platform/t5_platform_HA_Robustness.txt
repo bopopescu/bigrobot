@@ -3,10 +3,10 @@
 * Setting
 Documentation    T5 Controller Platform Robustness Test Suite - Physical Testbed
 Suite Setup      T5 base suite setup
-#Suite Teardown   T5 base suite teardown
+Suite Teardown   T5 base suite teardown
 Test Setup       T5 Platform test setup
 Test Teardown    T5 Platform test teardown
-Force Tags       IronHorse  Platform  HA  Robustness
+Force Tags       T5  IronHorse  Platform  HA  Robustness
 Library          keywords/BsnCommon.py
 Library          keywords/Mininet.py
 Library	    	 keywords/Host.py
@@ -19,7 +19,7 @@ Resource		 testsuites_dev/don/physical_variables.txt
 
 * Variables
 @{spineList}  00:00:04:00:01:00:00:01  00:00:04:00:01:00:00:02
-@{leafList}  00:00:04:00:02:00:00:01  00:00:04:00:02:00:00:02  00:00:04:00:02:00:00:03
+@{leafList}  00:00:04:00:02:00:00:01  00:00:04:00:02:00:00:02  00:00:04:00:02:00:00:03  00:00:04:00:02:00:00:04  00:00:04:00:02:00:00:05  00:00:04:00:02:00:00:06
 
 
 @{vnsIntIPDict}  v1  10.10.10.100  v2  20.20.20.100  v3  30.30.30.100  v4  40.40.40.100  v5 50.50.50.100  v6 60.60.60.100
@@ -33,7 +33,7 @@ Resource		 testsuites_dev/don/physical_variables.txt
 * Test Case 
 
 Configure 6/1 Setup - 6 Tenants with 1 VNS Each
-   [Tags]  setup
+   [Tags]  feature  setup
    Configure 3-Rack/Dual-Leaf/2-Spine/2-Host Setup For Physical Topology
    ${vnsIntIPs}=  Create List  v1  10.10.10.100  v2  20.20.20.100  v3  30.30.30.100  v4  40.40.40.100  v5  50.50.50.100  v6  60.60.60.100
    ${v1MemPGs}=  Create List  v1  PG  p1  10
@@ -46,7 +46,7 @@ Configure 6/1 Setup - 6 Tenants with 1 VNS Each
    
    
 Configure Hosts for 6/1 Setup
-	[Tags]  setup
+	[Tags]  feature  setup
 	bash network restart  h1
 	bash add tag  h1  bond0  10 
 	bash add ip address  h1  10.10.10.51/24  bond0.10
@@ -112,7 +112,7 @@ T1 Fabric Robustness During All Switch Reboot & HA Failover
 
 T2 Fabric Robustness During All Switch Reboot & Active Controller Reboot
 	[Tags]  robustness
-	${returnVal}=	verify HA with disruption	switchReboot	during	activeReboot	switch=spine0 leaf0-a leaf0-b leaf1-a
+	${returnVal}=	verify HA with disruption	switchReboot	during	activeReboot   switch=spine0 spine1 leaf0-a leaf0-b leaf1-a leaf1-b leaf2-a leaf2-b
 	Should be true  ${returnVal}
 	
 T3 Fabric Robustness During All Switch Reboot & Standby Controller Reboot
@@ -183,13 +183,13 @@ Clean Config
     auto delete fabric portgroups
 
 
-Master Reboot Stress Test For 1000 Times
-   [Tags]  stress
+Master Reboot Stress Test For 200 Times
+   [Tags]  stress  don
    Stress Failover/Failback by rebooting the master and verify connectivity
    Verify Connectivity in 3-Rack/Dual-Leaf/2-Spine/2-Host Physical Topology 
    
-Master System Failover Stress Test For 1000 Times
-   [Tags]  stress 
+Master System Failover Stress Test For 250 Times
+   [Tags]  stress  don
    #Stress Failover/Failback by rebooting the master and verify connectivity
    Stress Failover/Failback by failing over the master and verify connectivity
    Verify Connectivity in 3-Rack/Dual-Leaf/2-Spine/2-Host Physical Topology 
@@ -449,12 +449,12 @@ Re-run the election and verify connectivity
 * Keywords      
 
 Stress Failover/Failback by rebooting the master and verify connectivity
-   : FOR    ${Iteration}    IN RANGE    1    1000
+   : FOR    ${Iteration}    IN RANGE    1    200
    \	Log To Console   \n================ Rebooting Master - Iteration ${Iteration} ===============\n
    \	cli verify cluster master reboot
 
 Stress Failover/Failback by failing over the master and verify connectivity
-   : FOR    ${Iteration}    IN RANGE    1    1000
+   : FOR    ${Iteration}    IN RANGE    1    250
    \	Log To Console   \n================ Failing Over Master - Iteration ${Iteration} ===============\n
    \	cli cluster take leader
 
