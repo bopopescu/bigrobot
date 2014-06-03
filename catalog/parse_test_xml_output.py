@@ -108,6 +108,38 @@ class TestSuite(object):
 
         return tc
 
+    def db_find_and_modify_regression_testcase(self, rec):
+        testcases = self.db().test_cases_archive
+
+        tc = testcases.find_and_modify(
+                query={ "name": rec['name'],
+                        "product_suite" : rec['product_suite'],
+                        "starttime_datestamp" : rec['starttime_datestamp'],
+                        "build_number": rec['build_number'] },
+                update={ "$set": {"status": rec['status'],
+                                  "starttime": rec['starttime'],
+                                  "endtime": rec['endtime'],
+                                  "endtime_datestamp": rec['endtime_datestamp'],
+                                  "duration": rec['duration'],
+                                  "executed": rec['executed'],
+                                  "origin_regression_catalog": rec['origin_regression_catalog'],
+                                  "origin_script_catalog": rec['origin_script_catalog'],
+                                  "build_url": rec['build_url'],
+                                  "build_number": rec['build_number'],
+                                  "build_info": rec['build_info'],
+                                  } },
+                new=True,
+                upsert=True
+                )
+        if tc:
+            print("*** Successfully updated record (name:'%s', product_suite:'%s', date:'%s', status:'%s')"
+                  % (rec['name'], rec['product_suite'],
+                     rec['starttime_datestamp'], rec['status']))
+        else:
+            print("Did not find record (name:'%s', product_suite:'%s', date:'%s')"
+                  % (rec['name'], rec['product_suite'],
+                     rec['starttime_datestamp']))
+
     def db_find_and_modify_testcase(self, rec):
         testcases = self.db().test_cases
 
@@ -261,7 +293,8 @@ class TestSuite(object):
                 if 'BUILD_INFO' in os.environ:
                     test['build_info'] = os.environ['BUILD_INFO']
                 self.db_find_and_modify_testcase(test)
-                self.db_insert(test)
+                self.db_find_and_modify_regression_testcase(test)
+                # self.db_insert(test)
 
             self._tests.append(test)
 
