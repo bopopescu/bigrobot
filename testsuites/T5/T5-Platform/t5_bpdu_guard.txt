@@ -4,7 +4,7 @@ Suite Setup      BPDU Guard suite setup
 Suite Teardown   base suite teardown
 Test Setup       BPDU Guard test setup 
 Test Teardown    BPDU Guard test teardown 
-Force Tags       IronHorse
+Force Tags       IronHorse   T5
 Library          keywords/BsnCommon.py
 Library          keywords/Controller.py
 Library			 keywords/Mininet.py
