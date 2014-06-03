@@ -6,7 +6,7 @@ Suite Setup      base suite setup
 Suite Teardown   base suite teardown
 #Test Setup       T5 base test setup
 #Test Teardown    T5 base test teardown
-Force Tags      IronHorse
+Force Tags      IronHorse  T5
 Library          keywords/BsnCommon.py
 Library          keywords/T5.py
 #Library	         keywords_dev/svoora/T5Fabric.py
@@ -14,6 +14,36 @@ Library			 keywords_dev/svoora/T5_Scale.py
 Library		 	 keywords/T5Platform.py
 Library			 keywords/T5L3.py
 Library          keywords/Mininet.py
+
+
+Documentation   T5 Scale - Iron Horse
+...             export BIGROBOT_SUITE=t5_6spine_16rack_test_suite.txt
+...             Section A: Build a Scale configuration file
+...             Section B: Configure master/slave controllers in one cluster
+				Section C: Copy Scale Configuration file to Controller master
+					Topology:
+						6 spines, 16 rack (dual leaf)
+						All leafs have 40G uplinks to spines
+						Ixia and big-tap be used for traffic testing
+					Scale Config: 
+						1022/1023 user Tenants? (+ 1 system tenant vrf-0 + 1 external vrf-1 ? = 1024)
+						4088/4092 user VNS (4 VNS/ tenant, 0x001 and 0xfff  is reserved, 0x000 is not allowed =  4091/4095. Each Ixia ports will have 4k vlan configured)	
+						4088/4092 IP subnets (one per VNS subject to above limits)
+						All VNS will be applied across all leaf nodes including service rack
+						48K L3 host  for intra-tenant routing
+						48K L2 host 
+						16K CIDR routes ? (tables might be used for inter-tenant routing)
+						3K policy rules per leaf switches
+						ARP 2k per sec per switch
+					Performance:
+						Controller PACKET-IN 100k per second
+						No DHCP relay configured. No overlapping subnet.
+						MAC learning rate 2000 per sec for controller, and 200 per switch?
+					Gneralnote:
+						All testcases will be run with L2/L3 and external traffic
+						Will monitor and take snapshot of memory/cpu utilization on both controllers/switches
+						Monitor java exceptions
+						Traffic convergence time periods 
 
 
 * Variables
@@ -29,7 +59,7 @@ ${m_pg}					leaf15-bm46
 * Test Case 
 
 copy config file to controller
-	#[Tags]  scale
+	[Tags]  scale  manual
 	Log To console  Getting config file server
 	copy config from server  ${cfg_file_path}  ${cfg_file_server}  ${file_server_passwd}  ${copied_file} 
 	verify file  ${copied_file}
@@ -38,7 +68,7 @@ copy config file to controller
 	Should Be True  ${returnVal}
 	
 config controller with copied config file
-	[Tags]  scale
+	[Tags]  scale  manual
 	Log To console  Copying file to running-config
 	#start monitoring the exception
 	#${file_exist}=  verify file  ${copied_file}
@@ -50,13 +80,13 @@ config controller with copied config file
 	#parse monitoring file
 	
 verify config sync between controllers
-	[Tags]  scale
+	[Tags]  scale  manual
 	Log To Console  Verifying configuration between controllers
 	${return}=  compare configuration
 	Should Be True  ${return}
 		
 start mininet topology
-	#[Tags]  scale
+	[Tags]  scale  manual
 	Log To Console  Starting mininet topology
 	start monitoring the exception
 	mininet start	
@@ -67,7 +97,7 @@ start mininet topology
 	parse monitoring file
 	
 ping bms to check L2 fwding
-	#[Tags]  scale	
+	[Tags]  scale  manual	
 	Log To console  Configuring mininet bms
 	mininet host ipcfg  bm0  bm0-bond0  10.10.1.2  24
 	mininet host ipcfg  bm5  bm5-bond0  10.10.1.3  24
@@ -87,7 +117,7 @@ ping bms to check L2 fwding
 			
 	
 ping bms to check L3 fwding
-	#[Tags]  scale
+	[Tags]  scale  manual
 	Log To Console  Removing Tenant1 and adding its vns to Tenant0
 	rest delete tenant  Tenant1
 	rest add vns ip  Tenant0  Tenant1-VNS1  10.10.2.1  24
@@ -118,7 +148,7 @@ ping bms to check L3 fwding
 	Should Be True  ${loss} < 100
 	
 Remove spine0 and check L2/L3 
-	#[Tags]  scale
+	[Tags]  scale  manual
 	Log To Console  Removing spine0 from configuation
 	start monitoring the exception
 	rest delete fabric switch  spine0 
@@ -152,7 +182,7 @@ Remove spine0 and check L2/L3
 	Should Be True  ${loss} < 100
 	
 Add spine0 back and check L2/L3
-	#[Tags]  scale
+	[Tags]  scale  manual
 	Log To Console  Adding back spine0
 	start monitoring the exception
 	rest add switch  spine0
@@ -189,7 +219,7 @@ Add spine0 back and check L2/L3
 	Should Be True  ${loss} < 100
 	
 stop and start mininet and verify L2/L3 fwding
-	#[Tags]  scale
+	[Tags]  scale    manual
 	Log To Console  Stopping mininet in topo
 	start monitoring the exception
 	mininet stop	
@@ -236,7 +266,7 @@ stop and start mininet and verify L2/L3 fwding
 	
 	 
 reboot master controller and verify L2/L3 fwding
-	#[Tags]  scale
+	[Tags]  scale  manual
 	Log To Console  Rebooting master controller	 
 	start monitoring the exception
 	cli verify cluster master reboot
@@ -272,7 +302,7 @@ reboot master controller and verify L2/L3 fwding
 	Should Be True  ${loss} < 100
 	
 reboot slave controller and verify L2/L3 fwding
-	#[Tags]  scale
+	[Tags]  scale  manual
 	Log To Console  Rebooting slave controller	 
 	start monitoring the exception
 	cli verify cluster slave reboot
@@ -308,7 +338,7 @@ reboot slave controller and verify L2/L3 fwding
 	Should Be True  ${loss} < 100
 
 cluster failover and verify L2/L3 fwding
-	#[Tags]  scale
+	[Tags]  scale  manual
 	Log To Console  cluster failover	 
 	start monitoring the exception
 	rest verify cluster election take leader
@@ -343,6 +373,498 @@ cluster failover and verify L2/L3 fwding
 	${loss}=  mininet l3 ping  bm4  10.10.1.3
 	Should Be True  ${loss} < 100
 	
+
+
+T1 Verify L2 Traffic Convergence with scale configuration first time
+    Log    Build scale configuration with Scale Config
+    Log    Copy Scale Config to Master Controller
+    Log    Start Traffic on all ixia ports + BigTap ports
+    Log    Copy scale config to running config
+    Log    Measure traffic convergence time for L2 
+    Manual untested
+	[Tags] 	sanity    Manual-untested
+
+T2 Verify L3 Traffic Convergence with scale configuration first time
+    Log    Build scale configuration with Scale Config
+    Log    Copy Scale Config to Master Controller
+    Log    Start Traffic on all ixia ports + BigTap ports
+    Log    Copy scale config to running config
+    Log    Measure traffic convergence time for L3
+    Manual untested
+	[Tags] 	sanity    Manual-untested
+     
+T3 Verify L2/L3 Traffic Convergence with scale configuration first time
+    Log    Build scale configuration with Scale Config
+    Log    Copy Scale Config to Master Controller
+    Log    Start Traffic on all ixia ports + BigTap ports
+    Log    Copy scale config to running config
+    Log    Measure traffic convergence time for L2/L3 mixed
+    Manual untested
+	[Tags] 	sanity    Manual-untested 
+
+T4 Verify L2 traffic drop time after deleting the scale config
+    Log    Repeat T1
+    Log    Delete scale configuration under Master controller
+    Log    Measure complete traffic drop time
+    Manual untested
+	[Tags] 	sanity    Manual-untested
+
+T5 Verify L3 traffic drop time after deleting the scale config
+    Log    Repeat T2
+    Log    Delete scale configuration under Master controller
+    Log    Measure complete traffic drop time
+    Manual untested
+	[Tags] 	sanity    Manual-untested
+    
+T6 Verify L2/L3 traffic drop time after deleting the scale config
+    Log    Repeat T3
+    Log    Delete scale configuration under Master controller
+    Log    Measure complete traffic drop time
+    Manual untested
+	[Tags] 	sanity    Manual-untested
+
+
+T7 Reboot entire fabric to measure time all flows start forwarding without any traffic drop
+    Log    Copy scale configuration to master controller
+    Log    Make sure fabric is in stable state
+    Log    Start L2/L3 traffic profiles
+    Log    Reboot entire fabric
+    Log    Measure the time all traffic flows are forwarding without any packet drops
+    Log    Repeat T7 for 32k/64k/96k/ L2/L3 hosts
+    Manual untested
+	[Tags] 	sanity    Manual-untested
+    
+T8 Generate ARP requests from all L3 hosts
+    Log    Copy scale configuration to master controller
+    Log    Make sure fabric is in stable state
+    Log    Send ARP from all L3 hosts 2k ARPs per switch
+    Log    Verify ARP resolve
+    Log    Repeat T8 for 16k/32k/48k L3 hosts
+    Manual untested
+	[Tags] 	sanity    Manual-untested
+    
+    
+T9 Controller HA fail-over via CLI
+    Log    Repeat T3
+    Log    Perform controller fail-over
+    Log    Verify traffic loss
+    Log    Repeat for 32k/64k/96k L2/L3 hosts
+    Manual untested
+	[Tags] 	sanity    Manual-untested
+	
+	
+T10 Controller HA fail-over/fail-back via CLI
+    Log    Repeat T9
+    Log    Make sure fabric in stable state
+    Log    Perform controller fail-over/fail-back
+    Log    Verify traffic loss
+    Log    Repeat for 32k/64k/96k L2/L3 hosts
+    Manual untested
+	[Tags] 	sanity    Manual-untested
+	
+T11 Controller HA fail-over/fail-back via CLI
+    Log    Repeat T9
+    Log    Fabric is not in stable state
+    Log    Perform controller fail-over/fail-back
+    Log    Verify traffic loss
+    Log    Repeat for 32k/64k/96k L2/L3 hosts
+    Manual untested
+	[Tags] 	sanity    Manual-untested
+	
+T12 Controller master reboot    
+    Log    Repeat T9
+    Log    Fabric is not in stable state
+    Log    Master Controller reboot
+    Log    Verify traffic loss
+    Log    Repeat for 32k/64k/96k L2/L3 hosts
+    Manual untested
+	[Tags] 	sanity    Manual-untested
+	
+	
+T13 Controller slave reboot    
+    Log    Repeat T9
+    Log    Fabric is not in stable state
+    Log    Master Controller reboot
+    Log    Verify traffic loss
+    Log    Repeat for 32k/64k/96k L2/L3 hosts
+    Manual untested
+	[Tags] 	sanity    Manual-untested
+	
+	    
+T14 Verify/Measure Non-Graceful operations    
+    Log    Repeat T9
+    Log    Fabric is not in stable state
+    Log    Master Controller power off
+    Log    Verify traffic loss/Standby take over
+    Log    Repeat for 32k/64k/96k L2/L3 hosts
+    Manual untested
+	[Tags] 	sanity    Manual-untested
+	
+	   
+
+T15 Verify/Measure Non-Graceful operations    
+    Log    Repeat T9
+    Log    Fabric is not in stable state
+    Log    Slave Controller power off
+    Log    Verify traffic loss/Standby take over
+    Log    Repeat for 32k/64k/96k L2/L3 hosts
+    Manual untested
+	[Tags] 	sanity    Manual-untested
+	
+	   
+T16 Kill floodlight deamon in master contorller
+    Log   Repeat T3
+    Log   Make sure fabric is in stable state
+    Log   Verify no traffic loss
+    Log   kill floodlight with kill option 9 under master controller
+    Log   Verify fabric state
+    Log   Measure traffic loss/Convergence time
+    Manual untested
+	[Tags] 	sanity    Manual-untested
+	
+	
+T17 Kill floodlight deamon in slave contorller
+    Log   Repeat T3
+    Log   Make sure fabric is in stable state
+    Log   Verify no traffic loss
+    Log   kill floodlight with kill option 9 under slave controller
+    Log   Verify fabric state
+    Log   Measure traffic loss/Convergence time
+    Manual untested
+	[Tags] 	sanity    Manual-untested
+	
+	
+T18 Kill floodlight deamon in master/slave contorller
+    Log   Repeat T3
+    Log   Make sure fabric is in stable state
+    Log   Verify no traffic loss
+    Log   kill floodlight with kill option 9 under master/slave controller
+    Log   Verify fabric state
+    Log   Measure traffic loss/Convergence time
+    Manual untested
+	[Tags] 	sanity    Manual-untested
+	
+	
+T19 Power off one spine
+    Log   Repeat T3    
+    Log   Make sure fabric is in stable state
+    Log   Verify no traffic loss
+    Log   Power off one spine
+    Log   Verify fabric state
+    Log   Measure traffic loss/Convergence time
+    Manual untested
+	[Tags] 	sanity    Manual-untested
+	
+	
+T20 Power on one spine    
+    Log   Repeat T3    
+    Log   Make sure fabric is in stable state
+    Log   Verify no traffic loss
+    Log   Power on one spine
+    Log   Verify fabric state
+    Log   Measure traffic loss/Convergence time
+    Manual untested
+	[Tags] 	sanity    Manual-untested
+	
+	
+T21 Power off/on spine    
+    Log   Repeat T19/T20 for multiple spines    
+    Log   Make sure fabric is in stable state
+    Log   Verify off/no traffic loss
+    Log   Power on one spine
+    Log   Verify fabric state
+    Log   Measure traffic loss/Convergence time
+    Manual untested
+	[Tags] 	sanity    Manual-untested
+	
+	
+T22 Power off one leaf
+    Log   Repeat T3    
+    Log   Make sure fabric is in stable state
+    Log   Verify no traffic loss
+    Log   Power off one leaf
+    Log   Verify fabric state
+    Log   Measure traffic loss/Convergence time
+    Manual untested
+	[Tags] 	sanity    Manual-untested
+	
+	
+T23 Power on one leaf    
+    Log   Repeat T3    
+    Log   Make sure fabric is in stable state
+    Log   Verify no traffic loss
+    Log   Power on one leaf
+    Log   Verify fabric state
+    Log   Measure traffic loss/Convergence time
+    Manual untested
+	[Tags] 	sanity    Manual-untested
+	
+	
+T24 Power off/on leaf    
+    Log   Repeat T23/T24 for multiple leaf racks    
+    Log   Make sure fabric is in stable state
+    Log   Verify off/no traffic loss
+    Log   Power on one leaf
+    Log   Verify fabric state
+    Log   Measure traffic loss/Convergence time
+    Manual untested
+	[Tags] 	sanity    Manual-untested
+	
+	
+T25 Power down 16th rack
+    Log   Repeat T3
+    Log   Make sure fabric is in stable state
+    Log   Verify traffic loss
+    Log   Power down 16th rack (spines/leafs/servers)
+    Log   Verify fabric stability
+    Log   Measure traffic convergence/loss    
+    Manual untested
+	[Tags] 	sanity    Manual-untested
+	
+	    
+T26 Power up 16th rack
+    Log   Repeat T25
+    Log   Make sure fabric is in stable state
+    Log   Verify traffic loss
+    Log   Power up 16th rack (spines/leafs/servers)
+    Log   Verify fabric stability
+    Log   Measure traffic convergence/loss
+    Manual untested
+	[Tags] 	sanity    Manual-untested
+	
+	
+T27 Disconnect all switches from BSN controller
+    Log   Repeat T3
+    Log   Makre sure fabric is in stable state
+    Log   Verify no traffic loss
+    Log   Disconnect all switch management ports
+    Log   Verify controller stability
+    Log   Measure time till traffic gets dropped
+    Manual untested
+	[Tags] 	sanity    Manual-untested
+	
+	
+T28 Reconnect all switches from BSN controller
+    Log   Repeat T27
+    Log   Reconnect all switch management ports
+    Log   Verify controller stability
+    Log   Measure time till traffic gets dropped
+    Manual untested
+	[Tags] 	sanity    Manual-untested
+	
+	           
+T29 Fail management switch one at a time               
+    Log   Repeat T3
+    Log   Makre sure fabric is in stable state
+    Log   Verify no traffic loss
+    Log   Fail one management switch 
+    Log   Verify controller/fabric stability
+    Log   Measure time till traffic gets dropped
+    Manual untested
+	[Tags] 	sanity    Manual-untested
+	
+	
+T30 Restart ofad in spine
+   Log   Repeat T3
+   Log   Make sure fabric is in stable state
+   Log   Verify no traffic loss
+   Log   Restart ofad in one spine
+   Log   Verify/measure traffic loss/convergence
+   Manual untested
+	[Tags] 	sanity    Manual-untested
+	
+	
+T31 Restart ofad in leaf
+   Log   Repeat T3
+   Log   Make sure fabric is in stable state
+   Log   Verify no traffic loss
+   Log   Restart ofad in one leaf
+   Log   Verify/measure traffic loss/convergence
+   Manual untested
+	[Tags] 	sanity    Manual-untested
+	
+	
+T32 Verify L2 learning rate
+   Log   Repeat T3
+   Log   Make sure fabric is in stable state
+   Log   Verify no traffic loss
+   Log   Restart ofad in one leaf
+   Log   Verify/measure traffic loss/convergence
+   Manual untested
+	[Tags] 	sanity    Manual-untested
+	
+T33 Verify L3 hosts ageout and relearn
+   Log   Repeat T3
+   Log   Make sure fabric is in stable state
+   Log   Verify no traffic loss
+   Log   Restart ofad in one leaf
+   Log   Verify/measure traffic loss/convergence
+   Manual untested
+	[Tags] 	sanity    Manual-untested
+	
+	
+T34 Verify traffic loss/convergence after removing static endpoints
+   Log   Repeat T3
+   Log   Make sure fabric is in stable state
+   Log   Verify no traffic loss
+   Log   Restart ofad in one leaf
+   Log   Verify/measure traffic loss/convergence
+   Manual untested
+	[Tags] 	sanity    Manual-untested
+	
+	
+T35 Verify image upgrade of controller
+   Log   Repeat T3
+   Log   Make sure fabric is in stable state
+   Log   Verify no traffic loss
+   Log   Restart ofad in one leaf
+   Log   Verify/measure traffic loss/convergence
+   Manual untested
+	[Tags] 	sanity    Manual-untested
+	
+	
+T37 Verify parallel upgrades of all spines/leafs
+   Log   Repeat T3
+   Log   Make sure fabric is in stable state
+   Log   Verify no traffic loss
+   Log   Restart ofad in one leaf
+   Log   Verify/measure traffic loss/convergence
+   Manual untested
+	[Tags] 	sanity    Manual-untested
+	
+	
+T38 Verify L2 mac move with multiple macs (repeat with 16k/32k/48k L2 hosts)
+   Log   Repeat T3
+   Log   Make sure fabric is in stable state
+   Log   Verify no traffic loss
+   Log   Restart ofad in one leaf
+   Log   Verify/measure traffic loss/convergence
+   Manual untested
+	[Tags] 	sanity    Manual-untested
+	
+	
+T39 Verify L3 hosts move with inter-tenant traffic (repeat with 16k/32k/48k L3 hosts)
+   Log   Repeat T3
+   Log   Make sure fabric is in stable state
+   Log   Verify no traffic loss
+   Log   Restart ofad in one leaf
+   Log   Verify/measure traffic loss/convergence
+   Manual untested
+	[Tags] 	sanity    Manual-untested
+	
+	
+T40 Verify/measure traffic convergence/cli times for incremental config changes
+   Log   Repeat T3
+   Log   Make sure fabric is in stable state
+   Log   Verify no traffic loss
+   Log   Restart ofad in one leaf
+   Log   Verify/measure traffic loss/convergence
+   Manual untested
+	[Tags] 	sanity    Manual-untested
+	
+	
+T41 Verify fabric stability on spine/leaf interface continuous flap
+   Log   Repeat T3
+   Log   Make sure fabric is in stable state
+   Log   Verify no traffic loss
+   Log   Restart ofad in one leaf
+   Log   Verify/measure traffic loss/convergence
+   Manual untested
+	[Tags] 	sanity    Manual-untested
+	
+	
+T42 Verify traffic loss in headless mode of controller
+   Log   Repeat T3
+   Log   Make sure fabric is in stable state
+   Log   Verify no traffic loss
+   Log   Restart ofad in one leaf
+   Log   Verify/measure traffic loss/convergence
+   Manual untested
+	[Tags] 	sanity    Manual-untested
+	
+	
+T43 Verify traffic loss in controller split brain mode
+   Log   Repeat T3
+   Log   Make sure fabric is in stable state
+   Log   Verify no traffic loss
+   Log   Restart ofad in one leaf
+   Log   Verify/measure traffic loss/convergence
+   Manual untested
+	[Tags] 	sanity    Manual-untested
+	
+	
+T44 Verify traffic loss in half switches connected to master and rest have connection to standby controller
+   Log   Repeat T3
+   Log   Make sure fabric is in stable state
+   Log   Verify no traffic loss
+   Log   Restart ofad in one leaf
+   Log   Verify/measure traffic loss/convergence
+   Manual untested
+	[Tags] 	sanity    Manual-untested
+	
+	
+T45 Repeat T44, all switches connect back to master, verify fabric stability
+   Log   Repeat T3
+   Log   Make sure fabric is in stable state
+   Log   Verify no traffic loss
+   Log   Restart ofad in one leaf
+   Log   Verify/measure traffic loss/convergence
+   Manual untested
+	[Tags] 	sanity    Manual-untested
+	
+	
+T46 Verify snmp polling (get/getnext/getbulk)
+   Log   Repeat T3
+   Log   Make sure fabric is in stable state
+   Log   Verify no traffic loss
+   Log   Restart ofad in one leaf
+   Log   Verify/measure traffic loss/convergence
+   Manual untested
+	[Tags] 	sanity    Manual-untested
+	
+	
+T47 Verify controller stability when switch sends line rate traffic to controller
+   Log   Repeat T3
+   Log   Make sure fabric is in stable state
+   Log   Verify no traffic loss
+   Log   Restart ofad in one leaf
+   Log   Verify/measure traffic loss/convergence
+   Manual untested
+	[Tags] 	sanity    Manual-untested
+	
+	
+T48 Verify switch stability when controller sends line rate traffic switch
+   Log   Repeat T3
+   Log   Make sure fabric is in stable state
+   Log   Verify no traffic loss
+   Log   Restart ofad in one leaf
+   Log   Verify/measure traffic loss/convergence
+   Manual untested
+	[Tags] 	sanity    Manual-untested
+	
+	
+T49 Verify VIP changes
+   Log   Repeat T3
+   Log   Make sure fabric is in stable state
+   Log   Verify no traffic loss
+   Log   Restart ofad in one leaf
+   Log   Verify/measure traffic loss/convergence
+   Manual untested
+	[Tags] 	sanity    Manual-untested
+	
+	
+T50 Verify policy changes
+   Log   Repeat T3
+   Log   Make sure fabric is in stable state
+   Log   Verify no traffic loss
+   Log   Restart ofad in one leaf
+   Log   Verify/measure traffic loss/convergence
+   Manual untested
+	[Tags] 	sanity    Manual-untested
+	
+	
+
+
 	
 	
 * Keywords
