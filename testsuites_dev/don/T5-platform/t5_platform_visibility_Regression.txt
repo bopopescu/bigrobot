@@ -6,7 +6,7 @@ Suite Setup      base suite setup
 Suite Teardown   base suite teardown
 Test Setup       T5 Platform Test Setup
 Test Teardown    T5 Platform Test Teardown
-Force Tags       IronHorse  Platform  Visibility
+Force Tags       T5  IronHorse  Platform  Visibility
 Library          keywords/BsnCommon.py
 Library          keywords/Mininet.py
 Library	    	 keywords/Host.py
@@ -57,7 +57,7 @@ ${s1IxiaVerifyInt}	eth1
 * Test Case 
 
 T0 Setup
-	[Tags]  setup
+	[Tags]  feature  setup
     Configure 3-Rack/Dual-Leaf/2-Spine/2-Host Setup For Physical Topology 
 	Configure Tenants For SPAN & Test Path
 	bash execute command  leaf0-a  ofad-ctl autoneg 25
