@@ -2944,7 +2944,7 @@ Verify L3 intra tenant traffic with ip options
 	${result} =									REST show endpoints mac			${mac2}
 	Should Be True								${result}						
 	REST show endpoints	
-	${loss} = 									BASH ping						h5						10.251.1.1 			record_route				count=5	
+	${loss} = 									BASH ping						h5						10.251.1.1 			record_route=${true}				count=5	
 	Should Be True  							${loss} == 100	
 	BASH delete route							h5								10.251.2.0/24			10.251.1.1
 	BASH delete route							h6								10.251.1.0/24			10.251.2.1

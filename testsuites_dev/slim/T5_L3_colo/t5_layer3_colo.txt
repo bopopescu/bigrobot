@@ -631,7 +631,7 @@ Verify L3 intra tenant traffic with ip options
     Should Contain                              ${attachpoint}                  ${leaf0_pc7}    
     ${loss} =                                   BASH ping                       h4-rack0                        10.252.1.11             count=10
     Should Be True                              ${loss} == 0  
-    ${loss} =                                   BASH ping                       h4-rack0                        10.252.1.11             record_route        count=10
+    ${loss} =                                   BASH ping                       h4-rack0                        10.252.1.11             record_route=${true}        count=10
     Should Be True                              ${loss} == 10  
       
 
