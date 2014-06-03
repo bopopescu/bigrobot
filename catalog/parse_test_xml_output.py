@@ -97,6 +97,49 @@ class TestSuite(object):
         count = testcases.count()
         return count
 
+    def db_insert(self, rec):
+        testcases = self.db().test_cases_archive
+        tc = testcases.insert(rec)
+
+        # Side effect of insert operation is that it will insert the ObjectID
+        # into rec, which may cause subsequent operations to fail (e.g.,
+        # to_json(). So we remove the ObjectID.
+        del rec['_id']
+
+        return tc
+
+    def db_find_and_modify_regression_testcase(self, rec):
+        testcases = self.db().test_cases_archive
+
+        tc = testcases.find_and_modify(
+                query={ "name": rec['name'],
+                        "product_suite" : rec['product_suite'],
+                        "starttime_datestamp" : rec['starttime_datestamp'],
+                        "build_number": rec['build_number'] },
+                update={ "$set": {"status": rec['status'],
+                                  "starttime": rec['starttime'],
+                                  "endtime": rec['endtime'],
+                                  "endtime_datestamp": rec['endtime_datestamp'],
+                                  "duration": rec['duration'],
+                                  "executed": rec['executed'],
+                                  "origin_regression_catalog": rec['origin_regression_catalog'],
+                                  "origin_script_catalog": rec['origin_script_catalog'],
+                                  "build_url": rec['build_url'],
+                                  "build_number": rec['build_number'],
+                                  "build_info": rec['build_info'],
+                                  } },
+                new=True,
+                upsert=True
+                )
+        if tc:
+            print("*** Successfully updated record (name:'%s', product_suite:'%s', date:'%s', status:'%s')"
+                  % (rec['name'], rec['product_suite'],
+                     rec['starttime_datestamp'], rec['status']))
+        else:
+            print("Did not find record (name:'%s', product_suite:'%s', date:'%s')"
+                  % (rec['name'], rec['product_suite'],
+                     rec['starttime_datestamp']))
+
     def db_find_and_modify_testcase(self, rec):
         testcases = self.db().test_cases
 
@@ -187,7 +230,8 @@ class TestSuite(object):
             # In a suite with only a single test case, convert into list
             tests = [tests]
 
-        helpers.debug("DB testcase count (BEFORE): %s" % self.db_count_testcases())
+        if self._is_regression:
+            helpers.debug("DB testcase count (BEFORE): %s" % self.db_count_testcases())
 
         for a_test in tests:
             # print "['@id']: " + '@id'
@@ -240,7 +284,6 @@ class TestSuite(object):
                     'build_url': None,
                     'build_info': None,
                     }
-            self._tests.append(test)
 
             if self._is_regression:
                 if 'BUILD_NUMBER' in os.environ:
@@ -250,11 +293,15 @@ class TestSuite(object):
                 if 'BUILD_INFO' in os.environ:
                     test['build_info'] = os.environ['BUILD_INFO']
                 self.db_find_and_modify_testcase(test)
+                self.db_find_and_modify_regression_testcase(test)
+                # self.db_insert(test)
+
+            self._tests.append(test)
 
             # Add test cases to test suite
             # self._suite['tests'] = self._tests
-
-        helpers.debug("DB testcase count (AFTER): %s" % self.db_count_testcases())
+        if self._is_regression:
+            helpers.debug("DB testcase count (AFTER): %s" % self.db_count_testcases())
         self.total_tests()
 
     def suite_name(self):
@@ -292,6 +339,7 @@ class TestSuite(object):
     def dump_tests(self, to_file=None, to_json=False):
         if to_json:
             if to_file:
+                helpers.log("Writing to file '%s'" % to_file)
                 helpers.file_write_append_once(to_file,
                                                helpers.to_json(self.tests())
                                                + '\n')
@@ -299,6 +347,7 @@ class TestSuite(object):
                 print(helpers.to_json(self.tests()))
         else:
             if to_file:
+                helpers.log("Writing to file '%s'" % to_file)
                 helpers.file_write_append_once(to_file,
                                                helpers.prettify(self.tests())
                                                + '\n')

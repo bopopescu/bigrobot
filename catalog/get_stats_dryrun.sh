@@ -1,6 +1,6 @@
 #!/bin/sh
 
 ts=`date "+%Y-%m-%d_%H%M%S"`
-outfile=doit.sh_output.$ts.log
+outfile=`basename $0`_output.$ts.log
 
 ./_doit.sh > $outfile 2>&1
