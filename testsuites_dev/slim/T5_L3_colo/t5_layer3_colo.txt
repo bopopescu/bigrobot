@@ -201,6 +201,10 @@ Configure overlapping IP with private keyword on the same tenant
 	Configure overlapping IP with private keyword on the same tenant
 	[Tags]									sanity				
 
+Verify L3 intra tenant traffic with ip options
+    Verify L3 intra tenant traffic with ip options  
+    [Tags]                                  feature                 run3
+    
 	
 Inter tenant L3 traffic same rack	
 	L3 inter tenant traffic in the same rack
@@ -611,7 +615,25 @@ Delete and Add L3 dhcp request
 	${loss} = 									BASH ping						h4-rack0						${ipAddr} 			count=10
 	Should Be True  							${loss} == 0	
 
-
+Verify L3 intra tenant traffic with ip options  
+    BASH ping                                   h4-rack0                        10.252.1.11                     count=5
+    ${value} =                                  BASH verify arp                 h4-rack0                        10.251.1.1
+    Should Be True                              ${value}        
+    ${value} =                                  BASH verify arp                 h7-rack0                        10.252.1.1
+    Should Be True                              ${value} 
+    ${mac4} =                                   BASH get intf mac               h4-rack0                        bond0
+    ${result} =                                 REST show endpoints mac         ${mac4}
+    ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
+    Should Contain                              ${attachpoint}                  ${leaf0_pc4}    
+    ${mac7} =                                   BASH get intf mac               h7-rack0                        bond0.1007
+    ${result} =                                 REST show endpoints mac         ${mac7}
+    ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
+    Should Contain                              ${attachpoint}                  ${leaf0_pc7}    
+    ${loss} =                                   BASH ping                       h4-rack0                        10.252.1.11             count=10
+    Should Be True                              ${loss} == 0  
+    ${loss} =                                   BASH ping                       h4-rack0                        10.252.1.11             record_route        count=10
+    Should Be True                              ${loss} == 10  
+      
 
 L3 intra tenant traffic between private and public subnet
 	REST add vns ip  							X								X1								10.251.1.1				24			private=true
@@ -907,6 +929,7 @@ Verify inter tenant L3 traffic is getting drop with null next hop
     REST add static routes                      X                               10.252.0.0/16
     ${loss} =                                   BASH ping                       h4-rack0                        10.252.1.11             count=10
     Should Be True                              ${loss} == 100    
+    REST delete static routes                   X                               10.252.0.0/16
     REST add static routes                      X                               10.252.0.0/16                   {"tenant-name": "system"}       
     ${loss} =                                   BASH ping                       h4-rack0                        10.252.1.11             count=10
     Should Be True                              ${loss} < 30    
@@ -933,6 +956,7 @@ Verify same mac address showing up on two ports in the same segment is blocked
     ${result} =                                 REST show endpoints mac                 ${mac1}
     ${attachpoint} =                            Set Variable                            ${result[0]['attachment-point']}    
     Should Contain                              ${attachpoint}                          ${leaf0_pc6}
+    BASH set mac address                        h7-rack0                                bond0                   ${mac1}
     BASH set mac address                        h7-rack0                                bond0.1007              ${mac1}
     BASH add ip address                         h7-rack0                                10.251.1.15/24          bond0.1007
     BASH add route                              h7-rack0                                10.251.0.0/16           10.251.1.1
@@ -989,6 +1013,7 @@ Verify clear blocked endpoint works
     ${result} =                                 REST show endpoints mac                 ${mac1}
     ${attachpoint} =                            Set Variable                            ${result[0]['attachment-point']}    
     Should Contain                              ${attachpoint}                          ${leaf0_pc6}
+    BASH set mac address                        h7-rack0                                bond0                   ${mac1}
     BASH set mac address                        h7-rack0                                bond0.1007              ${mac1}
     BASH add ip address                         h7-rack0                                10.251.1.15/24          bond0.1007
     BASH add route                              h7-rack0                                10.251.0.0/16           10.251.1.1
