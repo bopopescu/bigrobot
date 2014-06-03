@@ -73,7 +73,7 @@ class Host(object):
         - source_if: Source interface
         - count:     Number of ping packets to send
         - ttl:       IP Time-to-live
-        - record_route:  Include RECORD ROUTE option
+        - record_route:  ${true}  - to include RECORD ROUTE option
 
         Example:
         | ${lossA} = | Bash Ping | h1          | 10.192.104.1 | source_if=eth1 |
