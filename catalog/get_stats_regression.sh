@@ -14,7 +14,9 @@ if [ $# -eq 0 ]; then
             echo "Did not find any output.xml file."
             exit 0
         fi
-        exit
+
+        # ... Found a valid output.xml. Proceed with parsing.
+
     else
         echo "Usage: $0 <infile>"
         exit 0
