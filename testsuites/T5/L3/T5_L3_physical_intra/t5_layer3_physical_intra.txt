@@ -563,6 +563,7 @@ Verify static endpoint state
     ${state1} =                                 Set Variable                    ${result[0]['state']}
     Should Contain                              ${state1}                       Active 
     ${mac2} =                                   BASH get intf mac               h6                      bond0
+    REST add endpoint                           X                               X2                      X2_pc2
     REST add endpoint mac                       X                               X2                      X2_pc2                  ${mac2}
     REST add endpoint portgroup attachment      X                               X2                      X2_pc2                  ${leaf2_pc2}                -1  
     REST add endpoint ip                        X                               X2                      X2_pc2                  10.251.2.11
@@ -626,7 +627,7 @@ Verify host with same IP as vrf is having L2 service only
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
     Should Contain                              ${attachpoint}                  ${leaf2_pc1}
     ${state} =                                  Set Variable                    ${result[0]['state']}   
-    Should Contain                              ${state}                        L2 Only    
+    Should Contain                              ${state}                        Active    
     BASH init intf                              h5                              bond0
 
 L3 intra tenant same rack untagged with static endpoints
@@ -2943,7 +2944,7 @@ Verify L3 intra tenant traffic with ip options
 	${result} =									REST show endpoints mac			${mac2}
 	Should Be True								${result}						
 	REST show endpoints	
-	${loss} = 									BASH ping						h5						10.251.1.1 			-R						count=5	
+	${loss} = 									BASH ping						h5						10.251.1.1 			record_route				count=5	
 	Should Be True  							${loss} == 100	
 	BASH delete route							h5								10.251.2.0/24			10.251.1.1
 	BASH delete route							h6								10.251.1.0/24			10.251.2.1
@@ -3213,6 +3214,7 @@ Verify same mac address showing up on two ports in the same segment is blocked
     ${result} =                                 REST show endpoints mac         ${mac1}
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
     Should Contain                              ${attachpoint}                  ${leaf0_pc1}
+    BASH set mac address                        h3                              bond0                   ${mac1}
     BASH set mac address                        h3                              bond0.1003              ${mac1}
     BASH add ip address                         h3                              10.251.1.11/24          bond0.1003
     BASH add route                              h3                              10.251.0.0/16           10.251.1.1
@@ -3272,6 +3274,7 @@ Verify clear blocked endpoint works
     ${result} =                                 REST show endpoints mac         ${mac1}
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
     Should Contain                              ${attachpoint}                  ${leaf0_pc1}
+    BASH set mac address                        h3                              bond0                   ${mac1}
     BASH set mac address                        h3                              bond0.1003              ${mac1}
     BASH add ip address                         h3                              10.251.1.11/24          bond0.1003
     BASH add route                              h3                              10.251.0.0/16           10.251.1.1
