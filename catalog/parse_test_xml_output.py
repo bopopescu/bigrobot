@@ -98,9 +98,10 @@ class TestSuite(object):
         return count
 
     def db_insert(self, rec):
-        testcases = self.db().test_cases_archive
-        tc = testcases.insert(rec)
-        return tc
+        # testcases = self.db().test_cases_archive
+        # tc = testcases.insert(rec)
+        # return tc
+        self.db().test_cases_archive.insert(rec)
 
     def db_find_and_modify_testcase(self, rec):
         testcases = self.db().test_cases
@@ -246,7 +247,6 @@ class TestSuite(object):
                     'build_url': None,
                     'build_info': None,
                     }
-            self._tests.append(test)
 
             if self._is_regression:
                 if 'BUILD_NUMBER' in os.environ:
@@ -256,7 +256,9 @@ class TestSuite(object):
                 if 'BUILD_INFO' in os.environ:
                     test['build_info'] = os.environ['BUILD_INFO']
                 self.db_find_and_modify_testcase(test)
-                # self.db_insert(test)
+                self.db_insert(test)
+
+            self._tests.append(test)
 
             # Add test cases to test suite
             # self._suite['tests'] = self._tests
