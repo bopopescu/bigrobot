@@ -160,8 +160,8 @@ class TestSuite(object):
                                   "build_number": rec['build_number'],
                                   "build_name": rec['build_name'],
                                   } },
-                new=True,
-                upsert=True
+                # new=True,
+                # upsert=True
                 )
         if tc:
             print("*** Successfully updated record (name:'%s', product_suite:'%s', date:'%s', status:'%s')"
