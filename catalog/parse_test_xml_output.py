@@ -126,7 +126,7 @@ class TestSuite(object):
                                   "origin_script_catalog": rec['origin_script_catalog'],
                                   "build_url": rec['build_url'],
                                   "build_number": rec['build_number'],
-                                  "build_info": rec['build_info'],
+                                  "build_name": rec['build_name'],
                                   } },
                 new=True,
                 upsert=True
@@ -157,7 +157,7 @@ class TestSuite(object):
                                   "origin_script_catalog": rec['origin_script_catalog'],
                                   "build_url": rec['build_url'],
                                   "build_number": rec['build_number'],
-                                  "build_info": rec['build_info'],
+                                  "build_name": rec['build_name'],
                                   } },
                 new=True,
                 upsert=True
@@ -282,7 +282,7 @@ class TestSuite(object):
                     'product_suite': self._suite['product_suite'],
                     'build_number': None,
                     'build_url': None,
-                    'build_info': None,
+                    'build_name': None,
                     }
 
             if self._is_regression:
@@ -290,8 +290,8 @@ class TestSuite(object):
                     test['build_number'] = os.environ['BUILD_NUMBER']
                 if 'BUILD_URL' in os.environ:
                     test['build_url'] = os.environ['BUILD_URL']
-                if 'BUILD_INFO' in os.environ:
-                    test['build_info'] = os.environ['BUILD_INFO']
+                if 'BUILD_NAME' in os.environ:
+                    test['build_name'] = os.environ['BUILD_NAME']
                 self.db_find_and_modify_testcase(test)
                 self.db_find_and_modify_regression_testcase(test)
                 # self.db_insert(test)
