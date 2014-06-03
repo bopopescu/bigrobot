@@ -14,9 +14,9 @@ import robot  # import to force append local robot libraries than python install
 
 
 
-vmdk_name = "/var/lib/jenkins/jobs/bvs\ master/lastSuccessful/archive/controller-bvs-*-SNAPSHOT.qcow2"
+vmdk_name = "/var/lib/jenkins/jobs/bcf_master/lastSuccessful/archive/controller-bvs-*-SNAPSHOT.qcow2"
 mininet_vmdk = "/var/lib/jenkins/jobs/t6-mininet-vm/builds/lastSuccessfulBuild/archive/t6-mininet-vm/ubuntu-kvm/t6-mininet.qcow2"
-vmdk_path = "/var/lib/jenkins/jobs/bvs\ master/lastSuccessful/archive/"
+vmdk_path = "/var/lib/jenkins/jobs/bcf_master/lastSuccessful/archive/"
 kvm_host = "10.192.104.13"
 kvm_user = "root"
 kvm_pwd = "bsn"
