@@ -47,5 +47,8 @@ if [ $failed_count -gt 0 ]; then
     grep FAILED $result_file
 fi
 
+mesg "Collecting test result stats for QA Dashboard database."
+(cd ../catalog; ./get_stats_regression.sh)
+
 exit $failed_count
 
