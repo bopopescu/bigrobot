@@ -4,7 +4,7 @@ Suite Setup     T5 base suite setup
 Suite Teardown  T5 base suite teardown
 Test Setup      test setup topology
 Test Teardown   test teardown topology
-Force Tags      T5 Sanity       IronHorse
+Force Tags      T5     L3      IronHorse
 Library         keywords/BsnCommon.py
 Library         keywords/Host.py
 Library         keywords/T5.py
@@ -22,75 +22,75 @@ Resource		testsuites/T5/t5_dualleaf_three_rack_physical_resource.txt
 * Test Cases
 Inter tenant L3 untagged traffic with dynamic endpoints same rack
 	L3 inter tenant same rack untagged with dynamic endpoints
-	[Tags]										sanity			
+	[Tags]     sanity		feature	
 
 Inter tenant L3 untagged traffic with dynamic endpoints across rack
 	L3 inter tenant across rack untagged with dynamic endpoints
-	[Tags]										sanity	
-
+    [Tags]     sanity       feature 
+    
 Inter tenant L3 tagged traffic with dynamic endpoints same rack
 	L3 inter tenant same rack tagged with dynamic endpoints
-	[Tags]										sanity				
-
+    [Tags]     sanity       feature 
+    
 inter tenant L3 tagged traffic with dynamic endpoints across rack
 	L3 inter tenant across rack tagged with dynamic endpoints
-	[Tags]										sanity				
-
+    [Tags]     sanity       feature 
+    
 Add and delete default route on tenant
 	Add and delete default route on tenant router
-	[Tags]										sanity	
+	[Tags]	    feature	
 
 Add and delete static route on tenant
 	manual passed
-	[Tags]			manual        feature						sanity	
+	[Tags]		manual                        feature							
 
 Add and delete more specific route on tenant over existing static route
 	Add and delete more specific route on tenant over existing static route
-	[Tags]										sanity	
+	[Tags]		feature
 
 Add and delete tenant system interface on tenant router
 	Add and delete tenant system interface on tenant router
-	[Tags]										sanity	
+	[Tags]		feature
 
 Add and delete tenant router interface on system tenant
 	Add and delete tenant router interface on system tenant
-	[Tags]										feature	
+    [Tags]      feature	
 
 L3 ttl one forwarding
 	Verify inter tenant L3 traffic with ttl value of one two and three
-	[Tags]										feature					
+    [Tags]      feature					
 
 L3 inter tenant forwarding with end host moved to another port
 	L3 inter tenant host moved 
-	[Tags]										feature					
+    [Tags]      feature					
 
 L3 inter tenant forwarding split horizon on the same port 
 	manual passed
-	[Tags]										feature			manual		
+    [Tags]      feature     manual		
 
 L3 inter tenant forwarding between endpoints on the same rack but different switch
 	L3 inter tenant forwarding between endpoints on the same rack but different switch
-	[Tags]			feature				
+    [Tags]      feature				
 	
 Inter tenant DHCP relay
 	Inter tenant DHCP relay
-	[Tags]			feature			dhcp-relay			
+    [Tags]      sanity      feature			dhcp-relay			
 
 Dhcp request from other host in other tenants with dhcp enabled but no inter tenant route
 	Dhcp request from other host in other tenants with dhcp enabled but no inter tenant route
-	[Tags]			feature			dhcp-relay			
+	[Tags]		feature			dhcp-relay			
 
 Dhcp request from other host in other tenants without dhcp relay enabled but with inter tenant route
 	Dhcp request from other host in other tenants without dhcp relay enabled but with inter tenant route
-	[Tags]			feature			dhcp-relay			
+	[Tags]		feature			dhcp-relay			
 
 Inter tenant dhcp relay with multiple dhcp servers
 	Inter tenant dhcp relay with multiple dhcp servers
-	[Tags]			feature			dhcp-relay
+	[Tags]		feature			dhcp-relay
 
 Host moved to another vns on another tenant and renew dhcp 
 	Host moved to another vns on another tenant and renew dhcp 
-	[Tags]			feature			dhcp-relay			
+	[Tags]		feature			dhcp-relay			
 
 DHCP request to external dhcp servers
 	manual passed
@@ -110,7 +110,7 @@ Verify private IP is able to communicate with other vns in the same tenant
 
 Controller HA failover via CLI
 	Controller HA failover via CLI
-	[Tags]					feature			HA	
+	[Tags]			feature			HA	
 
 Controller HA failover via reboot of master
 	Controller HA failover via reboot of master
@@ -210,11 +210,11 @@ L3 inter tenant shutdown and bringup both spine switch
 
 L3 inter tenant destroy active controller VM from KVM
 	manual passed
-	[Tags]			manual            feature		BVS-1695	
+	[Tags]			manual            feature		jira-BVS-1695	
 
 L3 inter tenant destroy standby controller VM from KVM
 	manual passed
-	[Tags]			manual			feature			
+	[Tags]			manual			 feature			
 
 Restart ofad on leaf switch
 	Restart ofad on leaf switch
@@ -230,7 +230,7 @@ Controller HA failover with ecmp group
 		
 Controller HA failover with dhcp-relay
 	Controller HA failover with dhcp-relay
-	[Tags]			feature			dhcp-relay			HA
+	[Tags]			feature			dhcp-relay		HA
 
 Active Controller reboot with ecmp group
 	manual passed
@@ -274,23 +274,23 @@ inter tenant ecmp forwarding in headless mode
 
 inter tenant dhcp relay in headless mode
 	manual passed
-	[Tags]			      manual			solution			dhcp-relay	
+    [Tags]          manual			solution			dhcp-relay	
 
 Verify L3 inter tenant forwarding after controller upgrade
 	manual failed
-	[Tags]					manual			feature					
+    [Tags]          manual			feature					
 
 Verify inter tenant ecmp forwarding after controller upgrade
 	manual failed
-	[Tags]					manual			feature					
+	[Tags]			manual			feature					
 
 Verify inter tenant dhcp-relay functionality after controller upgrade
 	manual failed
-	[Tags]					manual			feature		
+	[Tags]			manual			feature		
 
 Dhcp request from overlapping private IP and public IP
     Dhcp request from overlapping private IP and public IP
-    [Tags]                            solution            dhcp-relay  
+    [Tags]          solution            dhcp-relay  
     				
 
 * Keywords
