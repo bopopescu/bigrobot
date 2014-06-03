@@ -98,10 +98,15 @@ class TestSuite(object):
         return count
 
     def db_insert(self, rec):
-        # testcases = self.db().test_cases_archive
-        # tc = testcases.insert(rec)
-        # return tc
-        self.db().test_cases_archive.insert(rec)
+        testcases = self.db().test_cases_archive
+        tc = testcases.insert(rec)
+
+        # Side effect of insert operation is that it will insert the ObjectID
+        # into rec, which may cause subsequent operations to fail (e.g.,
+        # to_json(). So we remove the ObjectID.
+        del rec['_id']
+
+        return tc
 
     def db_find_and_modify_testcase(self, rec):
         testcases = self.db().test_cases
