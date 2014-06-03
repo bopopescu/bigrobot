@@ -3,7 +3,7 @@
 * Setting
 Documentation    T5 Controller Platform Test Suite - SPAN Verification
 Suite Setup      base suite setup
-#Suite Teardown   base suite teardown
+Suite Teardown   base suite teardown
 Test Setup       T5 Platform Test Setup
 Test Teardown    T5 Platform Test Teardown
 Force Tags       T5  IronHorse  Platform  Visibility
