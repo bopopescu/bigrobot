@@ -52,8 +52,8 @@ mesg "Collecting test result stats for QA Dashboard database."
 curl -i -H "Content-Type: application/json" -X POST \
        -d '{"from":"bigrobot@regress.bigswitch.com",
             "to":"vui.le@bigswitch.com",
-            "subject":"Dashboard stats collected for $testsuites",
-            "message_body":"Done!"}' \
+            "subject":"Dashboard stats collected for $BUILD_URL",
+            "message_body":"testsuites: $testsuites"}' \
        http://qarest.bigswitch.com:5000/message
 
 
