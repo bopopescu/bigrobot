@@ -256,7 +256,7 @@ class TestSuite(object):
                 if 'BUILD_INFO' in os.environ:
                     test['build_info'] = os.environ['BUILD_INFO']
                 self.db_find_and_modify_testcase(test)
-                self.db_insert(test)
+                # self.db_insert(test)
 
             # Add test cases to test suite
             # self._suite['tests'] = self._tests
@@ -299,6 +299,7 @@ class TestSuite(object):
     def dump_tests(self, to_file=None, to_json=False):
         if to_json:
             if to_file:
+                helpers.log("Writing to file '%s'" % to_file)
                 helpers.file_write_append_once(to_file,
                                                helpers.to_json(self.tests())
                                                + '\n')
@@ -306,6 +307,7 @@ class TestSuite(object):
                 print(helpers.to_json(self.tests()))
         else:
             if to_file:
+                helpers.log("Writing to file '%s'" % to_file)
                 helpers.file_write_append_once(to_file,
                                                helpers.prettify(self.tests())
                                                + '\n')
