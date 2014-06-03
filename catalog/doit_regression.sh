@@ -1,8 +1,10 @@
 #!/bin/sh
+# 'infile' contains a list of output.xml files (path included).
+#
 
 ts=`date "+%Y-%m-%d_%H%M%S"`
 infile=regression_suites.out
-outfile=doit.sh_output.$ts.log
+outfile=doit_regression.sh_output.$ts.log
 
 rm -f test_suites_regression.json test_cases_regression.json
 
