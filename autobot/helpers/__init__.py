@@ -1253,7 +1253,7 @@ def run_cmd(cmd, cwd=None, ignore_stderr=False, shell=True, quiet=False):
 
 
 def _ping(host, count=5, timeout=5, quiet=False, source_if=None,
-          record_route=None, node_handle=None, mode=None, ttl=None):
+          record_route=False, node_handle=None, mode=None, ttl=None):
     """
     Ping options:
       - count : -c <counter>
