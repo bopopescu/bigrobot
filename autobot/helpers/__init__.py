@@ -646,11 +646,12 @@ def is_bvs(name):
     if helpers.is_bvs(n.platform()):
         ...this is a BVS (aka T5) controller...
     """
-    return name == 'bvs'
+    return name == 'bvs' or name == 'bcf'
 
 
 # Alias
 is_t5 = is_bvs
+is_bcf = is_bvs
 
 
 def is_bigtap(name):
