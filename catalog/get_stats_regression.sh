@@ -1,14 +1,28 @@
-#!/bin/sh
+#!/bin/sh -x
 # 'infile': a file which contains a list of output.xml files (path included).
 #
 
 ts=`date "+%Y-%m-%d_%H%M%S"`
 
 if [ $# -eq 0 ]; then
-    echo "Usage: $0 <infile>"
+    # If ../testlogs exists then look for output.xml there
+    if [ -d ../testlogs ]; then
+        infile=input_list.$ts
+        echo "Looking for output.xml files in ../testlogs/ directory."
+        find ../testlogs -name output.xml > $infile
+        if [ ! -s $infile ]; then
+            echo "Did not find any output.xml file."
+            exit 0
+        fi
+        exit
+    else
+        echo "Usage: $0 <infile>"
+        exit 0
+    fi
+else
+    infile=$1
 fi
 
-infile=$1
 progname=`basename $0`
 outfile=${prog_name}_output.$ts.log
 
