@@ -97,6 +97,11 @@ class TestSuite(object):
         count = testcases.count()
         return count
 
+    def db_insert(self, rec):
+        testcases = self.db().test_cases_archive
+        tc = testcases.insert(rec)
+        return tc
+
     def db_find_and_modify_testcase(self, rec):
         testcases = self.db().test_cases
 
@@ -187,7 +192,8 @@ class TestSuite(object):
             # In a suite with only a single test case, convert into list
             tests = [tests]
 
-        helpers.debug("DB testcase count (BEFORE): %s" % self.db_count_testcases())
+        if self._is_regression:
+            helpers.debug("DB testcase count (BEFORE): %s" % self.db_count_testcases())
 
         for a_test in tests:
             # print "['@id']: " + '@id'
@@ -250,11 +256,12 @@ class TestSuite(object):
                 if 'BUILD_INFO' in os.environ:
                     test['build_info'] = os.environ['BUILD_INFO']
                 self.db_find_and_modify_testcase(test)
+                self.db_insert(test)
 
             # Add test cases to test suite
             # self._suite['tests'] = self._tests
-
-        helpers.debug("DB testcase count (AFTER): %s" % self.db_count_testcases())
+        if self._is_regression:
+            helpers.debug("DB testcase count (AFTER): %s" % self.db_count_testcases())
         self.total_tests()
 
     def suite_name(self):
