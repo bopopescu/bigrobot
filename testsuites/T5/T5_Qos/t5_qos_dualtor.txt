@@ -10,7 +10,7 @@ Test Teardown	 base test teardown
 #Test Teardown   teardown topology
 #Suite Setup		setup topology
 #Suite Teardown	teardown topology
-Force Tags      IronHorse
+Force Tags      IronHorse  T5
 Library         keywords/BsnCommon.py
 Library         keywords/Mininet.py
 Library         keywords/T5.py
@@ -63,7 +63,7 @@ Library         Dialogs
                            
 #
 #GLobal Verifications
-## Any Exceptions in Conttoller, LLDP/LACP timeouts? Packins
+## Any Exceptions in Conttoller, LLDP/LACP/protocol timeouts? Packins rate to/from controller
 ## ofad crfashes, if any
 
 ## Default QoS: all weights are equal share, however .1p mappings are honored as above
@@ -77,56 +77,56 @@ Library         Dialogs
 #FUNCTIONALITY:
 ##ONLY DATA TRAFFIC NO CONTROL TRAFFIC
 T1 With default QoS verify flow mappings to queues
-	[Tags]
+	[Tags]  manual
 	Default QoS
 	Start traffic
 	Verify flow mappings to HW queues
 
 T2 With default QoS verify Weights
-	[Tags]
+	[Tags]  manual
 	Default QoS
 	Start traffic
 	Verify flow weights on egress pipe
 
 T3 with default QoS local leaf traffic
-	[Tags]
+	[Tags]  manual
 	Default QoS
 	Start traffic
 	Verify flow mappings to HW queues
 	Verify flow weights on egress pipe
 	
 T4 with default QoS leaf to leaf traffic in a rack  #Data pkt flooding ratelimiters --->
-	[Tags]
+	[Tags]  manual
 	Default QoS
 	Start traffic
 	Verify flow mappings to HW queues
 	Verify flow weights on egress pipe
 
 T5 With default QoS leaf to Spine traffic
-	[Tags]
+	[Tags]  manual
 	Default QoS
 	Start traffic
 	Verify flow mappings to HW queues
 	Verify flow weights on egress pipe
 
 T6 With default QoS leaf to leaf traffic with 90% low priority and 10% High priority
-	[Tags]
+	[Tags]  manual
 	Default QoS
 	Start traffic
 	Verify flow mappings to HW queues
 	Verify flow weights on egress pipe
 
 T7 With default QoS leaf to spine traffic with 90% low priority and 10% High priority
-	[Tags]
+	[Tags]  manual
 	Default QoS
 	Start traffic
 	Verify flow mappings to HW queues
 	Verify flow weights on egress pipe
 
 T8 Mix T6 and T7
-
+	[Tags]  manual
 T9 With default QoS leaf to leaf start each priority traffic one by one #same interface sending and receiving --->
-	[Tags]
+	[Tags]  manual
 	Default QoS
 	Start low priority traffic 100%
 	Start second low priority traffic 100%
@@ -136,72 +136,78 @@ T9 With default QoS leaf to leaf start each priority traffic one by one #same in
 	Verify flow weights on egress pipe
 
 T10 Repeat T9 with leaf to spine
+	[Tags]  manual
 
 T11 Mix T10 and T9
-
-T12 Repeat T1 to T11 with frame sizes starting from 64 to 9216
-
+	[Tags]  manual
+	
+T12 Repeat T1 to T11 with frame sizes starting from 64 to 9216, (cell boundries 208/209/210 bytes)
+	[Tags]  manual
+	
 T13 Mix and match flows with random frame sizes with multiple flows
-
+	[Tags]  manual
+	
 T14 Repeat above all with two spines and 4 leafs, each source is from different leaf sending to one destination leaf
-
+	[Tags]  manual
 ## WITH CONTROL TRAFFIC 
 T15 Repeat above all with CONTROL TRAFFIC (from T1 to T14)
+	[Tags]  manual-untested
 	Verify the rate limiters on HW and Controller
 
 ## WITH QoS
 ##ONLY DATA TRAFFIC NO CONTROL TRAFFIC
 T16 With QoS verify flow mappings to queues
-	[Tags]
+	[Tags]  manual
 	Default QoS
 	Start traffic
 	Verify flow mappings to HW queues
 
 T17 With QoS verify Weights
-	[Tags]
+	[Tags]  manual
 	Default QoS
 	Start traffic
 	Verify flow weights on egress pipe
 
 T18 with QoS local leaf traffic
-	[Tags]
+	[Tags]  manual
 	Default QoS
 	Start traffic
 	Verify flow mappings to HW queues
 	Verify flow weights on egress pipe
 	
 T19 with QoS leaf to leaf traffic in a rack
-	[Tags]
+	[Tags]  manual
 	Default QoS
 	Start traffic
 	Verify flow mappings to HW queues
 	Verify flow weights on egress pipe
 
 T20 With QoS leaf to Spine traffic
-	[Tags]
+	[Tags]  manual
 	Default QoS
 	Start traffic
 	Verify flow mappings to HW queues
 	Verify flow weights on egress pipe
 
 T21 With QoS leaf to leaf traffic with 90% low priority and 10% High priority
-	[Tags]
+	[Tags]  manual
 	Default QoS
 	Start traffic
 	Verify flow mappings to HW queues
 	Verify flow weights on egress pipe
 
 T22 With QoS leaf to spine traffic with 90% low priority and 10% High priority
-	[Tags]
+	[Tags]  manual
 	Default QoS
 	Start traffic
 	Verify flow mappings to HW queues
 	Verify flow weights on egress pipe
 
 T23 Mix T22 and T21
-
+	[Tags]  manual
+	
 T24 With QoS leaf to leaf start each priority traffic one by one
-	[Tags]
+	[Tags]  manual
 	Default QoS
 	Start low priority traffic 100%
 	Start second low priority traffic 100%
@@ -211,40 +217,56 @@ T24 With QoS leaf to leaf start each priority traffic one by one
 	Verify flow weights on egress pipe
 
 T25 Repeat T9 with leaf to spine
-
+	[Tags]  manual
+	
 T26 Mix T25 and T24
-
+	[Tags]  manual
+	
 T27 Repeat T16 to T26 with frame sizes starting from 64 to 9216
-
+	[Tags]  manual
+	
 T28 Mix and match flows with random frame sizes with multiple flows
-
+	[Tags]  manual
+	
 T29 Repeat above all with two spines and 4 leafs, each source is from different leaf sending to one destination leaf
-
+	[Tags]  manual
+	
 ## WITH CONTROL TRAFFIC 
 T30 Repeat above all with CONTROL TRAFFIC (from T1 to T14)
+	[Tags]  manual-untested
 	Verify control rate limiters on HW and Controller
 	
 T31 shut no shut switch interface
-
+	[Tags]  manual
 T32 Remove Add tenant interface
-
+	[Tags]  manual
 T33 Remove Add vns interface
-
+	[Tags]  manual
 T34 Remove Add switch
+	[Tags]  manual
 #Add a new switch
 #counters. .1p data pkt counters and control pkts
 
 T35 HA failover
+	[Tags]  manual
 T36 Reboot standby
+	[Tags]  manual
 T37 Reboot master
+	[Tags]  manual
 T38 poweroff switch
+	[Tags]  manual
 T39 poweron switch
+	[Tags]  manual
 T40 poweroff master controller
+	[Tags]  manual-untested
 T41 poweroff slave controller
-
+	[Tags]  manual-untested
 T42 Shut Mgmt port in switch and connect back
+	[Tags]  manual-untested
 T43 Verify syslogs for any scale errors
+	[Tags]  manual
 T44 restart ofad
+	[Tags]  manual
 T45 restart floodlight
-
+	[Tags]  manual
 	
