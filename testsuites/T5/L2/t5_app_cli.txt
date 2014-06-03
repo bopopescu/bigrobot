@@ -17,7 +17,7 @@ Resource		 testsuites/T5/t5_physical_variables.txt
 * Test Case 
 
 add Dual Leaf Three Rack setup
-   [Tags]  L2  feature  IronHorse  IronHorse  
+   [Tags]  L2  feature  IronHorse    
    base suite setup
    add fabric switch
    sleep  5
