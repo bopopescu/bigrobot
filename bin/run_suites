@@ -6,7 +6,10 @@
 #echo "Disable BVS smoke test for the interim."
 #exit 0
 
+sender="bigrobot@regress.bigswitch.com"
+receiver="vui.le@bigswitch.com, aruna.mallina@bigswitch.com"
 testsuites=$1
+
 
 mesg() {
     ts=$(date "+%Y-%m-%d %H:%M:%S")
@@ -50,10 +53,10 @@ fi
 mesg "Collecting test result stats for QA Dashboard database."
 (cd ../catalog; ./get_stats_regression.sh)
 curl -i -H "Content-Type: application/json" -X POST \
-    -d "{\"from\":\"bigrobot@regress.bigswitch.com\",
-         \"to\":\"vui.le@bigswitch.com\",
-         \"subject\":\"Dashboard stats collected for $BUILD_URL\",
-         \"message_body\":\"testsuites: $testsuites\"}" \
+    -d "{\"from\":\"${sender}\",
+         \"to\":\"${receiver}\",
+         \"subject\":\"Dashboard stats collected for ${BUILD_URL}\",
+         \"message_body\":\"testsuites:\\n${testsuites}\"}" \
     http://qarest.bigswitch.com:5000/message
 
 

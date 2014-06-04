@@ -146,7 +146,8 @@ class TestSuite(object):
         tc = testcases.find_and_modify(
                 query={ "name": rec['name'],
                         "product_suite" : rec['product_suite'],
-                        "starttime_datestamp" : rec['starttime_datestamp'] },
+                        # "starttime_datestamp" : rec['starttime_datestamp']
+                        },
                 update={ "$set": {"status": rec['status'],
                                   "starttime": rec['starttime'],
                                   "endtime": rec['endtime'],
@@ -159,8 +160,8 @@ class TestSuite(object):
                                   "build_number": rec['build_number'],
                                   "build_name": rec['build_name'],
                                   } },
-                new=True,
-                upsert=True
+                # new=True,
+                # upsert=True
                 )
         if tc:
             print("*** Successfully updated record (name:'%s', product_suite:'%s', date:'%s', status:'%s')"
@@ -269,7 +270,6 @@ class TestSuite(object):
             test = {'test_id': test_id,
                     'name': name,
                     'tags': tags,
-                    'job_name_id': None,
                     'executed': executed,
                     'status': status,
                     'starttime': starttime,
