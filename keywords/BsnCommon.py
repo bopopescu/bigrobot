@@ -121,7 +121,7 @@ class BsnCommon(object):
             os.makedirs(d)
         fh = open(show_cmd_file, 'w')
         cmdlist = [
-                   'debug cli',
+#                   'debug cli',
                    'show running-config details',
                    'show controller',
                    'show controller details',
