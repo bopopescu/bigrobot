@@ -520,7 +520,7 @@ bring up h6 bond0
     bash ifup intf  h6  bond0  
 
 bring up 1 gig interface
-	config  leaf0-a  interface 25 1g-sfp
-	config  leaf0-a  interface 26 1g-sfp
-	config  leaf1-a  interface 25 1g-sfp
-	config  leaf1-a  interface 26 1g-sfp
+	config  leaf0-a  ethernet25 1g-sfp
+	config  leaf0-a  ethernet26 1g-sfp
+	config  leaf1-a  ethernet25 1g-sfp
+	config  leaf1-a  ethernet26 1g-sfp
