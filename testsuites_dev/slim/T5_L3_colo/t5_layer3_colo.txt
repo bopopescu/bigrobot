@@ -987,6 +987,7 @@ Verify same mac address showing up on two ports in the same segment is blocked
     ${state} =                                  Set Variable                            ${result[0]['state']}    
     Should Contain                              ${state}                                Active
     Should Contain                              ${attachpoint}                          ${leaf0_pc6}
+    BASH run command                            h6-rack0                                kill -9 ${pid1}
     BASH delete route                           h6-rack0                                10.251.0.0/16           10.251.1.1
     BASH delete route                           h7-rack0                                10.251.0.0/16           10.251.1.1
     REST add portgroup to vns                   X                                       X3                      ${leaf0_pc6}            1006
@@ -1039,11 +1040,14 @@ Verify clear blocked endpoint works
     sleep                                       1
     BASH network restart                        h7-rack0                                timeout=60    
     sleep                                       5
+    REST clear blocked endpoint                 X                                       X1                  ${mac1}
+    sleep                                       1
     ${result} =                                 REST show endpoints mac                 ${mac1}
     ${attachpoint} =                            Set Variable                            ${result[0]['attachment-point']}    
     ${state} =                                  Set Variable                            ${result[0]['state']}    
     Should Contain                              ${state}                                Active
     Should Contain                              ${attachpoint}                          ${leaf0_pc6}
+    BASH run command                            h6-rack0                                kill -9 ${pid1}
     BASH delete route                           h6-rack0                                10.251.0.0/16           10.251.1.1
     BASH delete route                           h7-rack0                                10.251.0.0/16           10.251.1.1    
     REST add portgroup to vns                   X                                       X3                      ${leaf0_pc6}            1006
@@ -1353,9 +1357,6 @@ teardown topology
 	REST delete vns									Z							Z1
 	REST delete vns									Z							Z2
 	REST delete vns									Z							Z3
-	REST delete tenant								X
-	REST delete tenant								Y
-	REST delete tenant								Z
 	initialize host
 	BASH delete route									h4-rack0								10.251.2.0/24			10.251.1.1
 	BASH delete route									h4-rack0								10.251.3.0/24			10.251.1.1
