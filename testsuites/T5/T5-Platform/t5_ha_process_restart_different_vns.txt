@@ -4,7 +4,7 @@ Suite Setup      t5 suite setup
 Suite Teardown   t5 suite teardown
 Test Setup       base test setup
 Test Teardown    ha test teardown
-Force Tags       T5 
+Force Tags       IronHorse  T5 
 Library          keywords/BsnCommon.py
 Library          keywords/SwitchLight.py
 Library          keywords/AppController.py
@@ -50,7 +50,7 @@ Switch HA: Restart Process snmpd on switch
     verify snmp attribute  s1  sysLocation.0  mountainview
     verify results  transmitted_frame_rate  received_valid_frame_rate
     stop traffic  ${stream}      
-    [Tags]  T5  ha  switch  restart_switch_snmp    
+    [Tags]  feature  ha  traffic  switch  snmp    
 
 Switch HA: Restart Process ntp on switch
     verify ntp  s1  time-c.nist.gov
@@ -70,7 +70,7 @@ Switch HA: Restart Process ntp on switch
     verify results  transmitted_frame_rate  received_valid_frame_rate
     verify ntp  s1  time-c.nist.gov
     stop traffic  ${stream}        
-    [Tags]  T5  ha  switch  restart_switch_ntp    
+    [Tags]  feature  ha  traffic  switch  ntp    
 
 Switch HA: Restart Process fancontrol on switch
     ${stream}=  L3 add  flow=a<->b  frame_rate=10000  frame_size=64
@@ -88,7 +88,7 @@ Switch HA: Restart Process fancontrol on switch
     Sleep  20
     verify results  transmitted_frame_rate  received_valid_frame_rate
     stop traffic  ${stream}      
-    [Tags]  T5  ha  switch  restart_switch_fancontrol
+    [Tags]  feature  ha  traffic  switch  platform
  
 Switch HA: Restart Process RSYSLOG on switch
     ${stream}=  L3 add  flow=a<->b  frame_rate=10000  frame_size=64
@@ -106,7 +106,7 @@ Switch HA: Restart Process RSYSLOG on switch
     Sleep  20
     verify results  transmitted_frame_rate  received_valid_frame_rate
     stop traffic  ${stream}      
-    [Tags]  T5  ha  switch  restart_switch_rsyslogd    
+    [Tags]  feature  ha  traffic  switch  syslog    
 
 Switch HA: Restart Process ssh on switch
     ${stream}=  L3 add  flow=a<->b  frame_rate=10000  frame_size=64
@@ -124,7 +124,7 @@ Switch HA: Restart Process ssh on switch
     Sleep  20
     verify results  transmitted_frame_rate  received_valid_frame_rate
     stop traffic  ${stream}    
-    [Tags]  T5  ha  switch  restart_switch_ssh
+    [Tags]  feature  ha  traffic  switch  platform
 
 Switch HA: Restart Process networking on switch
     ${stream}=  L3 add  flow=a<->b  frame_rate=10000  frame_size=64
@@ -142,7 +142,7 @@ Switch HA: Restart Process networking on switch
     Sleep  20
     verify results  transmitted_frame_rate  received_valid_frame_rate
     stop traffic  ${stream}    
-    [Tags]  T5  ha  switch  restart_switch_networking   
+    [Tags]  feature  ha  traffic  switch   
 
 
 
@@ -162,7 +162,7 @@ Controller HA: Restart Process snmpd on Master Controller:
     Sleep  20
     verify results  transmitted_frame_rate  received_valid_frame_rate
     stop traffic  ${stream}        
-    [Tags]  T5  ha  controller  restart_master_snmpd
+    [Tags]  feature  ha  traffic  controller 
 
 Controller HA: Restart Process snmpd on Slave Controller:
     ${stream}=  L3 add  flow=a<->b  frame_rate=10000  frame_size=64
@@ -180,7 +180,7 @@ Controller HA: Restart Process snmpd on Slave Controller:
     Sleep  20
     verify results  transmitted_frame_rate  received_valid_frame_rate
     stop traffic  ${stream}  
-    [Tags]  T5  ha  controller  restart_slave_snmpd
+    [Tags]  feature  ha  traffic  controller
 
 
 Controller HA: Restart Process rsyslogd on Master Controller:
@@ -199,7 +199,7 @@ Controller HA: Restart Process rsyslogd on Master Controller:
     Sleep  30
     verify results  transmitted_frame_rate  received_valid_frame_rate
     stop traffic  ${stream}        
-    [Tags]  T5  ha  controller  restart_master_rsyslogd
+    [Tags]  feature  ha  traffic  controller 
 
 Controller HA: Restart Process rsyslogd on Slave Controller:
     ${stream}=  L3 add  flow=a<->b  frame_rate=10000  frame_size=64
@@ -217,7 +217,7 @@ Controller HA: Restart Process rsyslogd on Slave Controller:
     Sleep  20
     verify results  transmitted_frame_rate  received_valid_frame_rate
     stop traffic  ${stream}  
-    [Tags]  T5  ha  controller  restart_slave_rsyslogd    
+    [Tags]  feature  ha  traffic  controller     
 
 Controller HA: Restart Process collectd on Master Controller:
     ${stream}=  L3 add  flow=a<->b  frame_rate=10000  frame_size=64
@@ -235,7 +235,7 @@ Controller HA: Restart Process collectd on Master Controller:
     Sleep  20
     verify results  transmitted_frame_rate  received_valid_frame_rate
     stop traffic  ${stream}        
-    [Tags]  T5  ha  controller  restart_master_collectd
+    [Tags]  feature  ha  traffic  controller
 
 Controller HA: Restart Process collectd on Slave Controller:
     ${stream}=  L3 add  flow=a<->b  frame_rate=10000  frame_size=64
@@ -253,7 +253,7 @@ Controller HA: Restart Process collectd on Slave Controller:
     Sleep  30
     verify results  transmitted_frame_rate  received_valid_frame_rate
     stop traffic  ${stream}  
-    [Tags]  T5  ha  controller  restart_slave_collectd       
+    [Tags]  feature  ha  traffic  controller       
 
 
 Controller HA: Restart Process nginx on Master Controller:
@@ -272,7 +272,7 @@ Controller HA: Restart Process nginx on Master Controller:
     Sleep  90
     verify results  transmitted_frame_rate  received_valid_frame_rate
     stop traffic  ${stream}        
-    [Tags]  T5  ha  controller  restart_master_nginx
+    [Tags]  feature  ha  traffic  controller
 
 Controller HA: Restart Process nginx on Slave Controller:
     ${stream}=  L3 add  flow=a<->b  frame_rate=10000  frame_size=64
@@ -290,7 +290,7 @@ Controller HA: Restart Process nginx on Slave Controller:
     Sleep  90
     verify results  transmitted_frame_rate  received_valid_frame_rate
     stop traffic  ${stream}  
-    [Tags]  T5  ha  controller  restart_slave_nginx  
+    [Tags]  feature  ha  traffic  controller  
 
 
 Controller HA: Restart Process Floodlight on Slave Controller:
@@ -309,7 +309,7 @@ Controller HA: Restart Process Floodlight on Slave Controller:
     Sleep  120
     verify results  transmitted_frame_rate  received_valid_frame_rate
     stop traffic  ${stream}  
-    [Tags]  T5  ha  controller  restart_slave_floodlight   
+    [Tags]  feature  ha  traffic  controller   
 
 
 Controller HA: Restart Process Floodlight on Master Controller:
@@ -328,7 +328,7 @@ Controller HA: Restart Process Floodlight on Master Controller:
     Sleep  90
     verify results  transmitted_frame_rate  received_valid_frame_rate
     stop traffic  ${stream}        
-    [Tags]  T5  ha  controller  restart_master_floodlight
+    [Tags]  feature  ha  traffic  controller
 
 Switch HA: Restart Process OFAD on switch
     ${stream}=  L3 add  flow=a<->b  frame_rate=10000  frame_size=128
@@ -346,7 +346,7 @@ Switch HA: Restart Process OFAD on switch
     Sleep  400
     verify results  transmitted_frame_rate  received_valid_frame_rate
     stop traffic  ${stream}   
-    [Tags]  T5  ha  switch  restart_switch_ofad 
+    [Tags]  feature  ha  traffic  switch 
  
 *Keywords
 

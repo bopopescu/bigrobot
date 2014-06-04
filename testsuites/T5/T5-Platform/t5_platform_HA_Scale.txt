@@ -22,45 +22,45 @@ Library	         keywords/T5Utilities.py
 * Test Case 
 
 T1 Boot time for controller (minimum) 
-	[Tags] manual-untested
+	[Tags]  full  manual-untested
     manual untested
     
 T2 Boot time with scale
-	[Tags] manual-untested
+	[Tags]  full  manual-untested
     manual untested
 
 T3 Upgrade time 
-	[Tags] manual-untested
+	[Tags]  full  manual-untested
     manual untested
     
 T4 Bulk VFT sync operations
-	[Tags] manual-untested
+	[Tags]  full  manual-untested
     manual untested
     
 T5 Packet processing rate from single switch and multiple switch
-	[Tags] manual-untested
+	[Tags]  full  manual-untested
     manual untested
     
 T6 Rate at which flow can be programmed into the switch
-	[Tags] manual-untested
+	[Tags]  full  manual-untested
     manual untested
     
 T7 No of connected switch
-	[Tags] manual-untested
+	[Tags]  full  manual-untested
     manual untested
     
 T8 No of links controller can maintain 
-	[Tags] manual-untested
+	[Tags]  full  manual-untested
     manual untested
     
 T9 No of endpoints fabric controller can maintain 
-	[Tags] manual-untested
+	[Tags]  full  manual-untested
     manual untested
     
 T10 OF multiple channels
-	[Tags] manual-untested
+	[Tags]  full  manual-untested
     manual untested
     
 T11 Config load/restore  time
-	[Tags] manual-untested
+	[Tags]  full  manual-untested
     manual untested

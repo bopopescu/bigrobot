@@ -30,6 +30,7 @@ ${h6_ip}  192.168.0.31
 
 
 bring up host bond0 interface
+	[Tags]  feature 
     Configure 3-Rack/Dual-Leaf/2-Spine/2-Host Setup For Physical Regression Topology 
 	Configure 2 Tenants with Different VLAN properties
 	bring up h1 bond0
@@ -95,12 +96,6 @@ Cluster Election Re-run & Verify Connectivity
    Re-run the election and verify connectivity
    
    
-Delete Configuration
-	[Tags]  clean
-    rest delete tenant  autoT1
-    rest delete tenant  autoT2
-    auto delete fabric switch  ${spineList}  ${leafList}  2
-    auto delete fabric portgroups
 
 ########################################################################################################################################
 

@@ -47,7 +47,7 @@ Add Fabric Switch Leaf Group and Verify the status
   verify fabric switch  leaf0-b 
  
 Add leaf group from 2 different rack and verify the status and check the fabric error
-	[Tags]	Fabric  feature  
+	[Tags]	Fabric  feature  IronHorse  
 	add switch  leaf0-a
 	add dpid  leaf0-a  ${leaf0a_dpid}
 	add fabric role  leaf0-a  leaf
@@ -61,7 +61,7 @@ Add leaf group from 2 different rack and verify the status and check the fabric 
 	rest verify fabric error missing link  leaf0-a  leaf1-a  rack0
 	
 add 2 different leaf groups with peer link added
-    [Tags]	Fabric  feature   
+    [Tags]	Fabric  feature  IronHorse   
 	add switch  leaf0-a
 	add dpid  leaf0-a  ${leaf0a_dpid}
 	add fabric role  leaf0-a  leaf

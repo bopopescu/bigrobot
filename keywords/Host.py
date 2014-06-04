@@ -73,7 +73,7 @@ class Host(object):
         - source_if: Source interface
         - count:     Number of ping packets to send
         - ttl:       IP Time-to-live
-        - record_route:  Include RECORD ROUTE option
+        - record_route:  ${true}  - to include RECORD ROUTE option
 
         Example:
         | ${lossA} = | Bash Ping | h1          | 10.192.104.1 | source_if=eth1 |
@@ -158,13 +158,13 @@ class Host(object):
 
         return True
 
-    def bash_network_restart(self, node):
+    def bash_network_restart(self, node, timeout=None):
         """
         Function to restart the networking services for Ubuntu 12.04.
         """
         t = test.Test()
         n = t.node(node)
-        n.sudo("/etc/init.d/networking restart")
+        n.sudo("/etc/init.d/networking restart", timeout=timeout)
         n.bash("route")
         return True
 
@@ -393,3 +393,17 @@ class Host(object):
         content = n.bash("%s " % cmd)['content']
         str_list = helpers.strip_cli_output(content, to_list=True)
         return  str_list
+    
+    def bash_ifconfig_ip_address(self, node, ipaddr, intf, down=True):
+        """
+        Adding IP address to Host interface,For tagged interface user needs
+        to specify interface.tagnumber (e.g eth1.10).
+        """
+        t = test.Test()
+        n = t.node(node)
+        if down is True:
+            n.sudo("ifconfig %s %s down" % (intf, ipaddr))
+        else:
+            n.sudo("ifconfig %s %s up" % (intf, ipaddr))
+        return True
+

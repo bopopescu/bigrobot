@@ -201,6 +201,10 @@ Configure overlapping IP with private keyword on the same tenant
 	Configure overlapping IP with private keyword on the same tenant
 	[Tags]									sanity				
 
+Verify L3 intra tenant traffic with ip options
+    Verify L3 intra tenant traffic with ip options  
+    [Tags]                                  feature                 run3
+    
 	
 Inter tenant L3 traffic same rack	
 	L3 inter tenant traffic in the same rack
@@ -214,6 +218,10 @@ Inter tenant dhcp relay with two dhcp servers on both vns
 	L3 inter tenant dhcp relay with two dhcp servers on both vns
 	[Tags]									sanity				
 	
+Verify inter tenant L3 traffic is getting drop with null next hop	
+	Verify inter tenant L3 traffic is getting drop with null next hop
+	[Tags]                                 sanity                      run1         
+    
 Verify same mac address showing up on two ports in the same segment is blocked	
 	Verify same mac address showing up on two ports in the same segment is blocked
 	[Tags]                                 sanity                      run1         
@@ -607,7 +615,25 @@ Delete and Add L3 dhcp request
 	${loss} = 									BASH ping						h4-rack0						${ipAddr} 			count=10
 	Should Be True  							${loss} == 0	
 
-
+Verify L3 intra tenant traffic with ip options  
+    BASH ping                                   h4-rack0                        10.252.1.11                     count=5
+    ${value} =                                  BASH verify arp                 h4-rack0                        10.251.1.1
+    Should Be True                              ${value}        
+    ${value} =                                  BASH verify arp                 h7-rack0                        10.252.1.1
+    Should Be True                              ${value} 
+    ${mac4} =                                   BASH get intf mac               h4-rack0                        bond0
+    ${result} =                                 REST show endpoints mac         ${mac4}
+    ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
+    Should Contain                              ${attachpoint}                  ${leaf0_pc4}    
+    ${mac7} =                                   BASH get intf mac               h7-rack0                        bond0.1007
+    ${result} =                                 REST show endpoints mac         ${mac7}
+    ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
+    Should Contain                              ${attachpoint}                  ${leaf0_pc7}    
+    ${loss} =                                   BASH ping                       h4-rack0                        10.252.1.11             count=10
+    Should Be True                              ${loss} == 0  
+    ${loss} =                                   BASH ping                       h4-rack0                        10.252.1.11             record_route=${true}        count=10
+    Should Be True                              ${loss} == 100  
+      
 
 L3 intra tenant traffic between private and public subnet
 	REST add vns ip  							X								X1								10.251.1.1				24			private=true
@@ -835,8 +861,8 @@ L3 intra tenant flap link towards spine0
 
 
 L3 inter tenant traffic in the same rack
-	BASH ping									h4-rack0								10.252.1.11				count=5
-	${value} = 									BASH verify arp					h4-rack0						10.251.1.1
+	BASH ping									h4-rack0					    10.252.1.11				         count=5
+	${value} = 									BASH verify arp					h4-rack0						 10.251.1.1
 	Should Be True								${value} 		
 	${value} =									BASH verify arp					h7-rack0						10.252.1.1
 	Should Be True								${value} 
@@ -857,22 +883,22 @@ Inter tenant L3 dhcp relay
 	${value} = 									BASH check service status		h4-rack0						isc-dhcp-server
 	Should Contain								${value}						is started
 	sleep										1
-	REST add dhcp relay							Y								Y2						10.251.1.11
-	REST add dhcprelay circuitid				Y								Y2						private vns Y2
+	REST add dhcp relay							Y								Y2						        10.251.1.11
+	REST add dhcprelay circuitid				Y								Y2						          private vns Y2
 	REST enable dhcp relay						Y								Y2	
-	BASH ping									h4-rack0								10.252.1.11				count=5
-	${value} = 									BASH verify arp					h4-rack0						10.251.1.1
+	BASH ping									h4-rack0						10.252.1.1				             count=5
+	${value} = 									BASH verify arp					h4-rack0						     10.251.1.1
 	Should Be True								${value} 		
-#	${value} =									BASH verify arp					h8-rack0						10.252.1.1
+#	${value} =									BASH verify arp					h8-rack0						     10.252.1.1
 #	Should Be True								${value} 
-	${value} = 									BASH release dhcpv4 address		h8-rack0						bond0.1008
+	${value} = 									BASH release dhcpv4 address		h8-rack0						    bond0.1008
 	Should Be True								${value}
 	sleep										1
-	${ipAddr} = 								BASH renew dhcpv4 address		h8-rack0						bond0.1008
+	${ipAddr} = 								BASH renew dhcpv4 address		h8-rack0						      bond0.1008
 	Should Not Be Empty							${ipAddr}
 	sleep										5
-	BASH ping									h4-rack0								${ipAddr}				count=5
-	${mac4} = 									BASH get intf mac				h4-rack0						bond0
+	BASH ping									h4-rack0						${ipAddr}				              count=5
+	${mac4} = 									BASH get intf mac				h4-rack0						     bond0
 	${result} =									REST show endpoints mac			${mac4}
 	${attachpoint} = 							Set Variable					${result[0]['attachment-point']}	
 	Should Contain								${attachpoint}					${leaf0_pc4}	
@@ -882,6 +908,34 @@ Inter tenant L3 dhcp relay
 	Should Contain								${attachpoint}					${leaf0_pc8}	
 	${loss} = 									BASH ping						h4-rack0						${ipAddr}			count=10
 	Should Be True  							${loss} == 0	
+
+Verify inter tenant L3 traffic is getting drop with null next hop
+    BASH ping                                   h4-rack0                        10.252.1.11                     count=5
+    ${value} =                                  BASH verify arp                 h4-rack0                        10.251.1.1
+    Should Be True                              ${value}        
+    BASH ping                                   h7-rack0                        10.252.1.11                     count=5
+    ${value} =                                  BASH verify arp                 h7-rack0                        10.252.1.1
+    Should Be True                              ${value} 
+    ${mac4} =                                   BASH get intf mac               h4-rack0                        bond0
+    ${result} =                                 REST show endpoints mac         ${mac4}
+    ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
+    Should Contain                              ${attachpoint}                  ${leaf0_pc4}    
+    ${mac7} =                                   BASH get intf mac               h7-rack0                        bond0.1007
+    ${result} =                                 REST show endpoints mac         ${mac7}
+    ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
+    Should Contain                              ${attachpoint}                  ${leaf0_pc7}    
+    ${loss} =                                   BASH ping                       h4-rack0                        10.252.1.11             count=10
+    Should Be True                              ${loss} == 0    
+    REST add static routes                      X                               10.252.0.0/16
+    ${loss} =                                   BASH ping                       h4-rack0                        10.252.1.11             count=10
+    Should Be True                              ${loss} == 100    
+    REST delete static routes                   X                               10.252.0.0/16
+    REST add static routes                      X                               10.252.0.0/16                   {"tenant-name": "system"}       
+    ${loss} =                                   BASH ping                       h4-rack0                        10.252.1.11             count=10
+    Should Be True                              ${loss} < 30    
+    
+
+    
 
 Verify same mac address showing up on two ports in the same segment is blocked
     REST delete portgroup from vns              X                                       X3                      ${leaf0_pc6}            1006
@@ -897,11 +951,12 @@ Verify same mac address showing up on two ports in the same segment is blocked
     sleep                                       2
     BASH ping                                   h6-rack0                                10.251.1.1              count=5
     ${value} =                                  BASH verify arp                         h6-rack0                10.251.1.1
-    Should Be True                              ${value}        
+    Should Be True                              ${value}      
+    ${mac1} =                                   BASH get intf mac                       h6-rack0                bond0.1006
     ${result} =                                 REST show endpoints mac                 ${mac1}
     ${attachpoint} =                            Set Variable                            ${result[0]['attachment-point']}    
     Should Contain                              ${attachpoint}                          ${leaf0_pc6}
-    ${mac1} =                                   BASH get intf mac                       h6-rack0                bond0.1006
+    BASH set mac address                        h7-rack0                                bond0                   ${mac1}
     BASH set mac address                        h7-rack0                                bond0.1007              ${mac1}
     BASH add ip address                         h7-rack0                                10.251.1.15/24          bond0.1007
     BASH add route                              h7-rack0                                10.251.0.0/16           10.251.1.1
@@ -920,14 +975,14 @@ Verify same mac address showing up on two ports in the same segment is blocked
     sleep                                       1
     ${string} =                                 BASH run command                        h7-rack0                      echo $!
     ${pid2} =                                   Set Variable                            ${string[0]} 
-    sleep                                       1
+    sleep                                       10
     ${result} =                                 REST show endpoints mac                 ${mac1}
     ${state} =                                  Set Variable                            ${result[0]['state']}    
     Should Contain                              ${state}                                Blocked
     sleep                                       1
     BASH run command                            h7-rack0                                kill -9 ${pid2}
     sleep                                       1
-    BASH network restart                        h7-rack0
+    BASH network restart                        h7-rack0                                timeout=60
     sleep                                       300
     ${result} =                                 REST show endpoints mac                 ${mac1}
     ${attachpoint} =                            Set Variable                            ${result[0]['attachment-point']}    
@@ -954,14 +1009,14 @@ Verify clear blocked endpoint works
     BASH ping                                   h6-rack0                                10.251.1.1              count=5
     ${value} =                                  BASH verify arp                         h6-rack0                10.251.1.1
     Should Be True                              ${value}        
+    ${mac1} =                                   BASH get intf mac                       h6-rack0                bond0.1006
     ${result} =                                 REST show endpoints mac                 ${mac1}
     ${attachpoint} =                            Set Variable                            ${result[0]['attachment-point']}    
     Should Contain                              ${attachpoint}                          ${leaf0_pc6}
-    ${mac1} =                                   BASH get intf mac                       h6-rack0                bond0.1006
+    BASH set mac address                        h7-rack0                                bond0                   ${mac1}
     BASH set mac address                        h7-rack0                                bond0.1007              ${mac1}
     BASH add ip address                         h7-rack0                                10.251.1.15/24          bond0.1007
     BASH add route                              h7-rack0                                10.251.0.0/16           10.251.1.1
-    BASH ping                                   h7-rack0                                10.251.1.1              count=5
     BASH ping                                   h7-rack0                                10.251.1.1              count=5
     ${value} =                                  BASH verify arp                         h7-rack0                      10.251.1.1
     Should Be True                              ${value}
@@ -977,17 +1032,15 @@ Verify clear blocked endpoint works
     sleep                                       1
     ${string} =                                 BASH run command                        h7-rack0                      echo $!
     ${pid2} =                                   Set Variable                            ${string[0]} 
-    sleep                                       1
+    sleep                                       10
     ${result} =                                 REST show endpoints mac                 ${mac1}
     ${state} =                                  Set Variable                            ${result[0]['state']}    
     Should Contain                              ${state}                                Blocked
     sleep                                       1
     BASH run command                            h7-rack0                                kill -9 ${pid2}
     sleep                                       1
-    BASH network restart                        h7-rack0
+    BASH network restart                        h7-rack0                                timeout=60    
     sleep                                       5
-    BASH network restart                        h3
-    sleep                                       10
     ${result} =                                 REST show endpoints mac                 ${mac1}
     ${attachpoint} =                            Set Variable                            ${result[0]['attachment-point']}    
     ${state} =                                  Set Variable                            ${result[0]['state']}    

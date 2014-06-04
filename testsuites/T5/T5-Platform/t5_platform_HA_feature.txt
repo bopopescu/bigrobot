@@ -6,7 +6,7 @@ Suite Setup      T5 base suite setup
 Suite Teardown   T5 base suite teardown
 Test Setup       base test setup
 Test Teardown    base test teardown
-Force Tags       IronHorse  Platform  HA
+Force Tags       T5  IronHorse  Platform  HA
 Library          keywords/BsnCommon.py
 Library          keywords/Mininet.py
 Library	    	 keywords/Host.py
@@ -22,58 +22,58 @@ Library	         keywords/T5Utilities.py
 * Test Case 
 
 T1 Config changes during controller disconnect is queued and processed during the switch reconnect
-	[Tags]  manual
+	[Tags]  feature  manual
     manual passed
     
 T2 Verify controller can be decommissioned from a cluster. 
-	[Tags]  manual-untested
+	[Tags]  feature  manual-untested
     manual untested
 
 T3 Controller Split Brain
-	[Tags]  manual
-    manual failed
+	[Tags]  feature  manual-untested
+    manual untested
     
 T4 Switch Disconnect - Port Down messages
-	[Tags]  manual
+	[Tags]  feature	 manual
     manual passed
     
 T5 Switch Disconnect & Reconnect
-	[Tags]  manual
+	[Tags]  feature  manual
     manual passed
     
 T6 Verify when a switch dies controller properly route around that switch
-	[Tags]  manual-untested
+	[Tags]  full  manual-untested
     manual untested
     
 T7 Verify the correct traffic failover from the MLAG’d hosts during a switch disconnect/die
-	[Tags]  manual-untested
+	[Tags]  feature  manual-untested
     manual untested
     
 T8 Verify all the config changes happened when one of the controllers is down is correctly getting synced when it comes back online
-	[Tags]  manual-untested
+	[Tags]  feature  manual-untested
     manual untested
     
 T9 Verify all the topology changes happened when one of the controllers is down is correctly getting reflected when it comes back online
-	[Tags]  manual-untested
+	[Tags]  full  manual-untested
     manual untested
     
 T10 Verify the correct controller role changes on both leaf & spine switches during controller failover
-	[Tags]  manual
+	[Tags]  feature  manual
     manual passed
     
 T11 Flap eth0 of the management interface
-	[Tags]  manual-untested
+	[Tags]  feature  manual-untested
     manual untested
     
 T12 Swap eth0 & eth1 in bare metal server 
-	[Tags]  manual-untested
+	[Tags]  full  manual-untested
     manual untested
     
 T13 Pump line rate traffic: look for split brain and other HA sync loss situations.
-	[Tags]  manual  BVS-1689
+	[Tags]  full	manual  BVS-1689
     manual failed
     
 T14 Shut down the standby controller and bring up a new controller and try to join the cluster
-	[Tags]  manual  BVS-1689
+	[Tags]  full	manual  BVS-1689
     manual failed
     

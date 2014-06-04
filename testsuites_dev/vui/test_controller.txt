@@ -148,9 +148,12 @@ Trigger InvalidCommandException
     bash  c1  echo 'command is not found'
 
 Test config mode
-    #[Tags]  skipped
+    [Tags]  skipped
     config   c1   show user
-    config   c1   bvssetting
+    #config   c1   bvssetting
     #config   c1   exit
     cli      c1   show version
 
+Test REST show user
+    rest show user        c1
+    rest version check    c1
