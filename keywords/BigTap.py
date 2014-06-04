@@ -1588,13 +1588,31 @@ class BigTap(object):
         else:
             c = t.controller('master')
             try:
-                url = '/api/v1/data/controller/applications/bigtap/feature'
-                c.rest.patch(url, {str(feature_name): True})
+                c.rest.get('/rest/v1/system/version')
+                content = c.rest.content()
+                version_string = content[0]['controller']
+                helpers.log("version string is %s" % version_string)
+                if "3.0.0" in str(version_string):
+                    if ("l3-l4" in str(feature_name)) or ("full-match" in str(feature_name)):
+                        data = {"match-mode": str(feature_name)}
+                        helpers.log("Data to be patched is %s" % data)
+                    else:
+                        data = {str(feature_name): True}
+                        helpers.log("Data to be patched is %s" % data)
+                else:
+                    data = {str(feature_name): True}
             except:
                 return False
             else:
-                helpers.test_log(c.rest.content_json())
-                return True
+                try:
+                    url = '/api/v1/data/controller/applications/bigtap/feature'
+                    c.rest.patch(url, data)
+                except:
+                    return False
+                else:
+                    helpers.test_log(c.rest.content_json())
+                    return True
+
 
 # Compare coreswitch flows
     def rest_verify_coreswitch_flows(self, flow_1, flow_2, flow_value_1, flow_value_2):
