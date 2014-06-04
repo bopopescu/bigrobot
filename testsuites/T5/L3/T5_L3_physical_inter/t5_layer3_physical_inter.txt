@@ -729,7 +729,7 @@ Add and delete more specific route on tenant over existing static route
     REST delete static routes                   Y                               0.0.0.0/0   
     REST add static routes                      Y                               10.251.0.0/16           {"tenant-name": "system"}
     ${loss} =                                   BASH ping                       h1                      10.252.1.11             count=10
-    Should Be True                              ${loss} < 20
+    Should Be True                              ${loss} < 40
     ${value} =                                  BASH verify arp                 h1                      10.251.1.1
     Should Be True                              ${value}        
     ${value} =                                  BASH verify arp                 h3                      10.252.1.1
@@ -863,6 +863,7 @@ L3 inter tenant host moved
 
 
 L3 inter tenant forwarding between endpoints on the same rack but different switch
+### host onboard nic is 1gig, switchlight will not support 1gig interface
     BASH init intf                              h5                              bond0
     BASH init intf                              h6                              bond0
     BASH ifup intf                              h5                              eth1
@@ -1011,15 +1012,15 @@ Verify private IP is able to communicate with other vns in the same tenant
     sleep                                       5   
     BASH ping                                   h5                              10.251.1.1              count=5
     BASH ping                                   h6                              10.251.2.1              count=5
-    BASH ping                                   h4                              10.251.1.1              count=5
-    BASH ping                                   h3                              10.252.2.1              count=5
+    BASH ping                                   h3                              10.251.1.1              count=5
+    BASH ping                                   h4                              10.252.2.1              count=5
     ${value} =                                  BASH verify arp                 h5                      10.251.1.1
     Should Be True                              ${value}        
     ${value} =                                  BASH verify arp                 h6                      10.251.2.1
     Should Be True                              ${value}        
-    ${value} =                                  BASH verify arp                 h4                      10.251.1.1
+    ${value} =                                  BASH verify arp                 h4                      10.252.2.1
     Should Be True                              ${value}        
-    ${value} =                                  BASH verify arp                 h3                      10.252.2.1
+    ${value} =                                  BASH verify arp                 h3                      10.251.1.1
     Should Be True                              ${value}    
     ${mac1} =                                   BASH get intf mac               h5                      bond0
     ${result} =                                 REST show endpoints mac         ${mac1}
@@ -1757,7 +1758,7 @@ Add and delete endpoints with L3 inter tenant traffic
 	REST add portgroup to vns					X								X1						${leaf2_pc1}			-1
 	sleep										1
 	${loss} = 									BASH ping						h5						10.252.1.11 			count=10
-	Should Be True  							${loss} < 20	
+	Should Be True  							${loss} < 40	
 #	${stream1}=  								L3 add  						name=stream1		  	flow=a<->c 				frame_rate=1000  			frame_size=9216  			frame_cnt=10000
 #	...     									src_ip=10.251.1.101				src_gw=10.251.1.1		dst_ip=10.252.1.101		dst_gw=10.252.1.1			 			
 #   start traffic  								${stream1}
