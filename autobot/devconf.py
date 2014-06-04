@@ -769,9 +769,9 @@ class HostDevConf(DevConf):
     # Alias
     bash = cmd
 
-    def sudo(self, cmd, quiet=False, prompt=False, level=5):
+    def sudo(self, cmd, quiet=False, prompt=False, timeout=None, level=5):
         return self.bash(' '.join(('sudo', cmd)), quiet=quiet, prompt=prompt,
-                         level=level)
+                         timeout=timeout, level=level)
 
     def close(self):
         super(HostDevConf, self).close()
