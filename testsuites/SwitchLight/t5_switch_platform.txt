@@ -2,8 +2,8 @@
 Documentation     T5  Switch Platform Test suite- Iron Horse
 #Suite Setup       base suite setup
 #Suite Teardown    base suite teardown
-#Test Setup        T5 switch platform test setup
-#Test Teardown     T5 switch platform test teardown
+Test Setup        T5 switch platform test setup
+Test Teardown     T5 switch platform test teardown
 Force Tags        T5  IronHorse
 ...             
 ...            
@@ -71,7 +71,7 @@ Verify the openflow aux channel count on Switch
 	verify openflow aux channel  s1  c1  
 	verify openflow aux channel  s2  c1  
 	verify openflow aux channel  s7  c1  
-    [Tags]  T5  switch  ofaux  feature       
+    [Tags]  T5  switch  ofaux  feature        
     
 Verify console connectivity
     Log    Step 1 - Verify access the console through telnet
@@ -386,9 +386,9 @@ Verify the debugging of forwarding programming in the Switch
     [Tags]  Manual-untested  Debug  feature
     Manual untested
 
-verify the ofaux channel on controller 
-    [Tags]  T5  switch  Platform  ofaux  feature 
-    verify ofaux channel on controller  c1  ${switch1_name}    
+verify the ofaux channel on controller  
+    verify ofaux channel on controller  c1  ${switch1_name}
+    [Tags]  T5  switch  Platform  ofaux  feature  test1    
 
 
 * Keywords
@@ -399,16 +399,17 @@ T5 switch platform test setup
    ${swDpid1}=  rest return switch dpid from ip  s1
    rest add dpid  ${switch1_name}   ${swDpid1}
    rest add fabric role  ${switch1_name}  leaf
-      
+   sleep  2   
    rest add switch  ${switch2_name}
    ${swDpid2}=  rest return switch dpid from ip  s2
    rest add dpid  ${switch2_name}   ${swDpid2}
    rest add fabric role  ${switch2_name}  leaf
-   
+   sleep  2
    rest add switch  ${switch7_name}
    ${swDpid7}=  rest return switch dpid from ip  s7
    rest add dpid  ${switch7_name}   ${swDpid7}
    rest add fabric role  ${switch7_name}  spine
+   sleep  10
                 
 T5 switch platform test teardown
    rest delete tenant  ${tenant}  
@@ -425,19 +426,7 @@ verify openflow aux channel  [Arguments]  ${switch}  ${cntrlr}
 verify ofaux channel on controller  [Arguments]  ${controller}  ${switch_alias}
     ${retval1}=  cli return ofaux connection from alias  ${controller}  ${switch_alias}
 	Should be True  ${retval1}  
-	   
-verify the counter test1  [Arguments]  ${switch}  ${int}  ${frame}  ${range}
-    ${retval1}=  rest verify fabric interface rx  ${switch}  ${int}  ${frame}  ${range}   
-    Should be True  ${retval1}
-
-verify the counter test2  [Arguments]  ${switch}  ${int}  ${frame} 
-    ${retval1}=  rest get switch rxcounter  ${switch}  ${int}  ${frame} 
-    Should be True  ${retval1}  
- 
-verify the counter original  [Arguments]   ${switch}  ${int}  ${frame}  ${range}  
-    rest verify fabric interface rx stats   ${switch}  ${int}  ${frame}  ${range}
-    Should return  True
-      
+	         
 verify onie installated on switch  [Arguments]  ${switch}    
 #    ${result1}=  bash execute command  ${switch}  cat /proc/mtd
 	${result1}=  bash  s1  cat /proc/mtd  
