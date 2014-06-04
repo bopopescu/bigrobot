@@ -92,7 +92,7 @@ Cluster Election Re-run & Verify Connectivity
    Re-run the election and verify connectivity
 
 Delete Config
-   [Tags]	clean
+   [Tags]	feature  clean
    rest delete tenant  autoT1
    rest delete tenant  autoT2
    rest delete tenant  system
