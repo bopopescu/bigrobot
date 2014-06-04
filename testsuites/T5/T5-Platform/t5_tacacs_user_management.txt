@@ -14,7 +14,7 @@ Library  keywords/BigTap.py
 Library  Collections.py
 
 * Variable
-${projectname}  Big Virtual Switch Appliance
+${projectname}  Big Cloud Fabric Appliance
 ${version}      SNAPSHOT  
     
 * Test Case
