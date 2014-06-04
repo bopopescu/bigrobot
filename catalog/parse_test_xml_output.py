@@ -228,8 +228,10 @@ class TestSuite(object):
         else:
             helpers.environment_failure(
                 "Fatal error: Source file has invalid format ('%s')" % source)
-        name_actual = os.path.splitext(os.path.basename(source))[0]
         author = self.git_auth(source)
+        name_actual = os.path.splitext(os.path.basename(source))[0]
+        product_suite = os.path.splitext(source)[0]
+        product_suite = re.sub(r'.*bigrobot/testsuites/', '', product_suite)
 
         self._suite = {
                     'source': source,
@@ -239,7 +241,7 @@ class TestSuite(object):
                     'name_actual': name_actual,
                     'name': helpers.utf8(suite['@name']),
                     'product': product,
-                    'product_suite': product + "_" + name_actual,
+                    'product_suite': product_suite,
                     'author': author,
                     'total_tests': None,
                     }
