@@ -42,4 +42,4 @@ Test directory listing
     bash             h1    echo $COLUMNS
 
 Test traceroute
-    bash             h1    traceroute dev1
+    bash             h1    traceroute dev1   timeout=60
