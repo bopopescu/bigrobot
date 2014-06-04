@@ -522,6 +522,8 @@ ${bigtap_policy_name}					offset-policy
 
 offset suite setup
     base suite setup
+    ${return_value}=  rest enable feature  l3-l4-offset-match
+    Should be true   ${return_value}
     rest add switch alias  s1  ${switch1_alias}
     rest add interface role  s1  ${filter_interface_name}  filter    intf_nickname=${filter_interface_alias}
     rest add interface role  s1  ${delivery_interface_name}   delivery  intf_nickname=${delivery_interface_alias}
