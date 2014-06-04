@@ -3243,7 +3243,7 @@ Verify same mac address showing up on two ports in the same segment is blocked
     sleep                                       1
     BASH run command                            h3                              kill -9 ${pid2}
     sleep                                       1
-    BASH network restart                        h3                              timeout=60
+    BASH network restart                        3                               timeout=60
     sleep                                       300
     ${result} =                                 REST show endpoints mac         ${mac1}
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
