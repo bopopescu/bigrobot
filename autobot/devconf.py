@@ -289,7 +289,8 @@ class DevConf(object):
                 self.conn.set_prompt()
 
         if not quiet:
-            helpers.log("Execute command: '%s'" % cmd, level=level)
+            helpers.log("Execute command: '%s' (timeout: %s)"
+                        % (cmd, timeout), level=level)
 
         prefix_str = '%s %s' % (self.name(), mode)
         helpers.bigrobot_devcmd_write("%-9s: %s\n" % (prefix_str, cmd))
@@ -461,8 +462,8 @@ class BsnDevConf(DevConf):
         # helpers.log("Current mode is %s" % self.mode(), level=level)
 
         if not quiet:
-            helpers.log("Execute command on '%s': '%s'" % (self.name(), cmd),
-                        level=level)
+            helpers.log("Execute command on '%s': '%s' (timeout: %s)"
+                        % (self.name(), cmd, timeout), level=level)
 
         super(BsnDevConf, self).cmd(cmd, prompt=prompt, mode=mode,
                                     timeout=timeout, quiet=True)
@@ -619,8 +620,8 @@ class MininetDevConf(DevConf):
         self.mode(mode)
 
         if not quiet:
-            helpers.log("Execute command on '%s': %s"
-                        % (self.name(), cmd), level=level)
+            helpers.log("Execute command on '%s': %s (timeout: %s)"
+                        % (self.name(), cmd, timeout), level=level)
 
         super(MininetDevConf, self).cmd(cmd, prompt=prompt, mode=mode,
                                         timeout=timeout, quiet=True)
@@ -734,11 +735,11 @@ class HostDevConf(DevConf):
 
     def _cmd(self, cmd, quiet=False, prompt=False, timeout=None, level=4):
         if not quiet:
-            helpers.log("Execute command on '%s': '%s'"
-                        % (self.name(), cmd), level=level)
+            helpers.log("Execute command on '%s': '%s' (timeout: %s)"
+                        % (self.name(), cmd, timeout), level=level)
 
         super(HostDevConf, self).cmd(cmd, prompt=prompt, mode='bash',
-                                     timeout=None, quiet=True)
+                                     timeout=timeout, quiet=True)
         if not quiet:
             helpers.log("Content on '%s':\n%s%s"
                         % (self.name(), self.content(),
