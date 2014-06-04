@@ -26,7 +26,7 @@ else
 fi
 
 progname=`basename $0`
-outfile=${prog_name}_output.$ts.log
+outfile=${progname}_output.$ts.log
 
 rm -f test_suites_regression.json test_cases_regression.json
 

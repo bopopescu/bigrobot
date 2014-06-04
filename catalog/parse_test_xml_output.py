@@ -42,6 +42,7 @@ AUTHORS = {
            "Don Jayakody": "don",
            "Cliff DeGuzman": "cliff",
            "kranti": "kranti",
+           "William Tan": "fc7737",
            }
 
 def format_robot_timestamp(ts, is_datestamp=False):
@@ -79,9 +80,9 @@ class TestSuite(object):
         self._db = None
 
         self._is_regression = is_regression
-        if (self._is_regression):
-            client = MongoClient(DB_SERVER, DB_PORT)
-            self._db = client.test_catalog
+
+        client = MongoClient(DB_SERVER, DB_PORT)
+        self._db = client.test_catalog2
 
         # Remove first line: <?xml version="1.0" encoding="UTF-8"?>
         self.xml_str = ''.join(helpers.file_read_once(self._filename,
@@ -97,7 +98,7 @@ class TestSuite(object):
         count = testcases.count()
         return count
 
-    def db_insert(self, rec):
+    def db_insert_testcase_archive(self, rec):
         testcases = self.db().test_cases_archive
         tc = testcases.insert(rec)
 
@@ -105,8 +106,27 @@ class TestSuite(object):
         # into rec, which may cause subsequent operations to fail (e.g.,
         # to_json(). So we remove the ObjectID.
         del rec['_id']
-
         return tc
+
+    def db_insert_testcase(self, rec):
+        testcases = self.db().test_cases
+        tc = testcases.insert(rec)
+
+        # Side effect of insert operation is that it will insert the ObjectID
+        # into rec, which may cause subsequent operations to fail (e.g.,
+        # to_json(). So we remove the ObjectID.
+        del rec['_id']
+        return tc
+
+    def db_insert_suite(self, rec):
+        suites = self.db().test_suites
+        suite = suites.insert(rec)
+
+        # Side effect of insert operation is that it will insert the ObjectID
+        # into rec, which may cause subsequent operations to fail (e.g.,
+        # to_json(). So we remove the ObjectID.
+        del rec['_id']
+        return suite
 
     def db_find_and_modify_regression_testcase(self, rec):
         testcases = self.db().test_cases_archive
@@ -116,27 +136,15 @@ class TestSuite(object):
                         "product_suite" : rec['product_suite'],
                         "starttime_datestamp" : rec['starttime_datestamp'],
                         "build_number": rec['build_number'] },
-                update={ "$set": {"status": rec['status'],
-                                  "starttime": rec['starttime'],
-                                  "endtime": rec['endtime'],
-                                  "endtime_datestamp": rec['endtime_datestamp'],
-                                  "duration": rec['duration'],
-                                  "executed": rec['executed'],
-                                  "origin_regression_catalog": rec['origin_regression_catalog'],
-                                  "origin_script_catalog": rec['origin_script_catalog'],
-                                  "build_url": rec['build_url'],
-                                  "build_number": rec['build_number'],
-                                  "build_name": rec['build_name'],
-                                  } },
-                new=True,
+                update={ "$set": rec },  # update entire record
                 upsert=True
                 )
         if tc:
-            print("*** Successfully updated record (name:'%s', product_suite:'%s', date:'%s', status:'%s')"
+            print("*** Successfully updated Regression test case record (name:'%s', product_suite:'%s', date:'%s', status:'%s')"
                   % (rec['name'], rec['product_suite'],
                      rec['starttime_datestamp'], rec['status']))
         else:
-            print("Did not find record (name:'%s', product_suite:'%s', date:'%s')"
+            print("Did not find Regression test case record (name:'%s', product_suite:'%s', date:'%s')"
                   % (rec['name'], rec['product_suite'],
                      rec['starttime_datestamp']))
 
@@ -146,31 +154,43 @@ class TestSuite(object):
         tc = testcases.find_and_modify(
                 query={ "name": rec['name'],
                         "product_suite" : rec['product_suite'],
-                        # "starttime_datestamp" : rec['starttime_datestamp']
                         },
-                update={ "$set": {"status": rec['status'],
-                                  "starttime": rec['starttime'],
-                                  "endtime": rec['endtime'],
-                                  "endtime_datestamp": rec['endtime_datestamp'],
-                                  "duration": rec['duration'],
-                                  "executed": rec['executed'],
-                                  "origin_regression_catalog": rec['origin_regression_catalog'],
-                                  "origin_script_catalog": rec['origin_script_catalog'],
-                                  "build_url": rec['build_url'],
-                                  "build_number": rec['build_number'],
-                                  "build_name": rec['build_name'],
-                                  } },
-                # new=True,
+                update={ "$set": rec },
                 # upsert=True
                 )
         if tc:
-            print("*** Successfully updated record (name:'%s', product_suite:'%s', date:'%s', status:'%s')"
+            print("*** Successfully updated test case record (name:'%s', product_suite:'%s', date:'%s', status:'%s')"
                   % (rec['name'], rec['product_suite'],
                      rec['starttime_datestamp'], rec['status']))
         else:
-            print("Did not find record (name:'%s', product_suite:'%s', date:'%s')"
+            print("Did not find test case record (name:'%s', product_suite:'%s', date:'%s')"
                   % (rec['name'], rec['product_suite'],
                      rec['starttime_datestamp']))
+
+    def db_add_if_not_found_suite(self, rec):
+        suites = self.db().test_suites
+
+        suite = suites.find_one({ "product_suite" : rec['product_suite'] })
+        if suite:
+            print("*** Found suite record (name:'%s', product_suite:'%s'). Skipping insertion."
+                  % (rec['name'], rec['product_suite']))
+        else:
+            print("*** Did not find suite record (name:'%s', product_suite:'%s'). Inserting new record."
+                  % (rec['name'], rec['product_suite']))
+            self.db_insert_suite(rec)
+
+    def db_add_if_not_found_testcase(self, rec):
+        testcases = self.db().test_cases
+
+        tc = testcases.find_one({ "name": rec['name'],
+                               "product_suite" : rec['product_suite'], })
+        if tc:
+            print("*** Found test case record (name:'%s', product_suite:'%s'). Skipping insertion."
+                  % (rec['name'], rec['product_suite']))
+        else:
+            print("*** Did not find test case record (name:'%s', product_suite:'%s'). Inserting new record."
+                  % (rec['name'], rec['product_suite']))
+            self.db_insert_testcase(rec)
 
     def data(self):
         """
@@ -223,6 +243,11 @@ class TestSuite(object):
                     'author': author,
                     'total_tests': None,
                     }
+        if self._is_regression:
+            pass
+        else:
+            self.db_add_if_not_found_suite(self._suite)
+
 
     def extract_test_attributes(self):
         tests = self.data()['robot']['suite']['test']
@@ -294,7 +319,9 @@ class TestSuite(object):
                     test['build_name'] = os.environ['BUILD_NAME']
                 self.db_find_and_modify_testcase(test)
                 self.db_find_and_modify_regression_testcase(test)
-                # self.db_insert(test)
+                # self.db_insert_testcase_archive(test)
+            else:
+                self.db_add_if_not_found_testcase(test)
 
             self._tests.append(test)
 

@@ -1,6 +1,6 @@
 #!/bin/sh
 
-database=test_catalog
+database=test_catalog2
 collection=test_suites
 mongo_server=qadashboard-mongo.bigswitch.com
 
