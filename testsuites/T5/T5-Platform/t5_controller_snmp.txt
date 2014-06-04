@@ -13,127 +13,127 @@ Library  keywords/BsnCommon.py
 * Test Case
 Configure and Verify Configuration  
     verify config
-    [Tags]  snmp  verify-configuration  
+    [Tags]  feature  
 
 Verify SNMP OID sysContact on Master  
     ${snmp_key}=  snmp get  master  public  sysContact.0
     Should Contain  ${snmp_key}  Big Switch Networks
-    [Tags]  snmp  sysContact  master  
+    [Tags]  feature 
 
 Verify SNMP OID sysContact on Slave  
     ${snmp_key}=  snmp get  slave  public  sysContact.0
     Should Contain  ${snmp_key}  Big Switch Networks
-    [Tags]  snmp  sysContact  slave
+    [Tags]  feature
     
 Verify SNMP OID sysLocation on Master  
     ${snmp_key}=  snmp get  master  public  sysLocation.0
     Should Contain  ${snmp_key}  Mountain View
-    [Tags]  snmp  sysLocation  master  
+    [Tags]  feature  
     
 Verify SNMP OID sysLocation on Slave  
     ${snmp_key}=  snmp get  slave  public  sysLocation.0
     Should Contain  ${snmp_key}  Mountain View
-    [Tags]  snmp  sysLocation  slave  
+    [Tags]  feature  
     
 Verify SNMP OID sysDescr on Master  
     ${snmp_key}=  snmp get  master  public  sysDescr.0
     Should Contain  ${snmp_key}  Big Cloud Fabric Appliance    
-    [Tags]  snmp  sysDescr  master
+    [Tags]  feature
     
 Verify SNMP OID sysDescr on Slave  
     ${snmp_key}=  snmp get  slave  public  sysDescr.0
     Should Contain  ${snmp_key}  Big Cloud Fabric Appliance    
-    [Tags]  snmp  sysDescr  slave  
+    [Tags]  feature 
       
 Verify SNMP OID ifDescr on Master  
     ${snmp_key}=  snmp get  master  public  ifDescr.2
     Should Contain  ${snmp_key}  eth0
-    [Tags]  snmp  ifDescr  master
+    [Tags]  feature
       
 Verify SNMP OID ifDescr on Slave  
     ${snmp_key}=  snmp get  slave  public  ifDescr.2
     Should Contain  ${snmp_key}  eth0
-    [Tags]  snmp  ifDescr  slave    
+    [Tags]  feature   
    
 Verify SNMP OID ifType on Master  
     ${snmp_key}=  snmp get  master  public  ifType.2
     Should Contain  ${snmp_key}  ethernetCsmacd
-    [Tags]  snmp  ifType  master
+    [Tags]  feature
    
 Verify SNMP OID ifType on Slave  
     ${snmp_key}=  snmp get  slave  public  ifType.2
     Should Contain  ${snmp_key}  ethernetCsmacd
-    [Tags]  snmp  ifType  master    
+    [Tags]  feature   
 
 Verify SNMP OID ifOperStatus on Master  
     ${snmp_key}=  snmp get  master  public  ifOperStatus.2
     Should Contain  ${snmp_key}  up
-    [Tags]  snmp  ifOperStatus  master  
+    [Tags]  feature  
 
 Verify SNMP OID ifOperStatus on Slave  
     ${snmp_key}=  snmp get  slave  public  ifOperStatus.2
     Should Contain  ${snmp_key}  up
-    [Tags]  snmp  ifOperStatus  slave  
+    [Tags]  feature 
     
 Verify SNMP OID ifAdminStatus on Master   
     ${snmp_key}=  snmp get  master  public  ifAdminStatus.2
     Should Contain  ${snmp_key}  up     
-    [Tags]  snmp  ifAdminStatus  master 
+    [Tags]  feature 
     
 Verify SNMP OID ifAdminStatus on Slave  
     ${snmp_key}=  snmp get  slave  public  ifAdminStatus.2
     Should Contain  ${snmp_key}  up     
-    [Tags]  snmp  ifAdminStatus  slave     
-
+    [Tags]  feature
+    
 Verify snmpgetnext works as expected on Master
     ${snmp_key}=  snmp getnext  master  public  ifDescr.1
     Should Contain  ${snmp_key}  eth0
-    [Tags]  snmp  snmpgetnext  master
+    [Tags]  feature
      
 Verify snmpgetnext works as expected on Slave
     ${snmp_key}=  snmp getnext  slave  public  ifDescr.1
     Should Contain  ${snmp_key}  eth0
-    [Tags]  snmp  snmpgetnext  slave           
+    [Tags]  feature           
     
 verify snmpbulkget works as expected on Master
     ${snmp_key}=  snmp cmd  master  snmpbulkget  public  ifDescr 
     Should Contain  ${snmp_key}  eth0
-    [Tags]  snmp  snmpbulkget  master
+    [Tags]  feature
 
 verify snmpbulkget works as expected on Slave
     ${snmp_key}=  snmp cmd  slave  snmpbulkget  public  ifDescr 
     Should Contain  ${snmp_key}  eth0
-    [Tags]  snmp  snmpbulkget  slave     
+    [Tags]  feature    
 
 verify snmpbulkwalk works as expected on Master
     ${snmp_key}=  snmp cmd  master  snmpbulkwalk  public  ifDescr 
     Should Contain  ${snmp_key}  eth0
-    [Tags]  snmp  snmpbulkwalk  master   
+    [Tags]  feature   
 
 verify snmpbulkwalk works as expected on Slave
     ${snmp_key}=  snmp cmd  slave  snmpbulkwalk  public  ifDescr 
     Should Contain  ${snmp_key}  eth0
-    [Tags]  snmp  snmpbulkwalk  slave  
+    [Tags]  feature  ha 
 
 Restart process SNMP on Master controller and verify snmpget
     restart process on controller  snmpd  master
     Sleep  10    
     ${snmp_key}=  snmp get  master  public  sysDescr.0
     Should Contain  ${snmp_key}  Big Cloud Fabric Appliance  
-    [Tags]  snmp  process-restart  master  
+    [Tags]  feature  ha  
  
 Restart process SNMP on Slave controller and verify snmpget
     restart process on controller  snmpd  slave
     Sleep  10    
     ${snmp_key}=  snmp get  slave  public  sysDescr.0
     Should Contain  ${snmp_key}  Big Cloud Fabric Appliance  
-    [Tags]  snmp  process-restart  slave 
+    [Tags]  feature  ha 
     
 Change community from public to bigswitch and verify snmp walk
     rest add snmp keyword  community  bigswitch
     ${snmp_key}=  snmp get  master  bigswitch  sysDescr.0
     Should Contain  ${snmp_key}  Big Cloud Fabric Appliance   
-    [Tags]  snmp  
+    [Tags]  feature  
 
        
 * Keywords
