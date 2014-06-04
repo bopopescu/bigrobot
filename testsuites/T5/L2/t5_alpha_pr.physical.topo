@@ -6,106 +6,91 @@
 # mn  : Mininet server
 
 c1:
-  ip: 10.210.144.15
- 
+  ip: 10.192.99.105
 c2:
-  ip: 10.210.144.16
+  ip: 10.192.99.106  
 
 s1:
-  ip: 10.210.144.101
+  ip: 10.195.0.33
   alias: leaf0-a
   user: admin
   password: adminadmin
-
 s2:
-  ip: 10.210.144.102
+  ip: 10.195.0.34
   alias: leaf0-b
   user: admin
   password: adminadmin
-
 s3:
-  ip: 10.210.144.103
+  ip: 10.195.0.35
   alias: leaf1-a
   user: admin
   password: adminadmin
-
 s4:
-  ip: 10.210.144.104
+  ip: 10.195.0.36
   alias: leaf1-b
   user: admin
   password: adminadmin
-
 s5:
-  ip: 10.210.144.105
+  ip: 10.195.0.31
   alias: leaf2-a
   user: admin
   password: adminadmin
-
 s6:
-  ip: 10.210.144.106
+  ip: 10.195.0.32
   alias: leaf2-b
   user: admin
   password: adminadmin
-  
 s7:
-  ip: 10.210.144.110
+  ip: 10.195.0.21
   alias: spine0
   user: admin
   password: adminadmin
-
 s8:
-  ip: 10.210.144.111
+  ip: 10.195.0.22
   alias: spine1
   user: admin
   password: adminadmin
-
 h1:
-  ip: 10.210.144.51
+  ip: 10.195.0.103
   user: root
   password: bsn
-
 h2:
-  ip: 10.210.144.52
+  ip: 10.195.0.104
   user: root
   password: bsn
-  
 h3:
-  ip: 10.210.144.53
+  ip: 10.195.0.101
   user: root
   password: bsn
-  
 h4:
-  ip: 10.210.144.54
+  ip: 10.195.0.102
   user: root
   password: bsn
-  
 h5:
-  ip: 10.210.144.55
+  ip: 10.195.0.105
   user: root
   password: bsn
-  
 h6:
-  ip: 10.210.144.56
+  ip: 10.195.0.106
   user: root
   password: bsn
-
-#tg1:
+tg1:
   platform: 'ixia'
-  chassis_ip: 10.210.192.2
-  tcl_server_ip: 10.194.64.182
+  chassis_ip: 10.192.85.151
+  tcl_server_ip: 10.192.99.10
   #tcl_server_port: 8009
   #ix_version: '7.10'
   #set_init_ping: false
   ports:
     a:
-      name: 1/21
+      name: 4/25
     b:
-      name: 1/22
+      name: 4/26
     c:
-      name: 1/19
+      name: 4/27
     d:
-      name: 1/20
+      name: 4/28
     e:
-      name: 1/23
+      name: 4/29
     f:
-      name: 1/24
+      name: 4/30

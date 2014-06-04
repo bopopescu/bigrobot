@@ -4,7 +4,7 @@ Suite Setup      base suite setup
 Suite Teardown   base suite teardown
 Test Setup       base test setup
 Test Teardown    base test teardown
-Force Tags       IronHorse 
+Force Tags       IronHorse   T5
 Library          keywords/BsnCommon.py
 Library          keywords/Controller.py
 Library			 keywords/Mininet.py
@@ -110,9 +110,9 @@ T4.2 Verification of configs in local node mode
  
 
 T4.3 Controller installation with minimum/maximum supported cpu/memory configuration
-	log  manual verified with #1381
-	log  warning message -Warning: Minimum recommendation is 2 CPU cores   
-	log  warning message -Warning: Minimum recommendation is 2.00 GB of memory 		 
+	log  manual verified with #1961
+	log  warning message -Warning: Minimum recommendation is 4 CPU cores   
+	log  warning message -Warning: Minimum recommendation is 4.00 GB of memory 		 
 	log  only warning message is given	 
     
 	[Tags]	full  feature   firstboot  Manual   

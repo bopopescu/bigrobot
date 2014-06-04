@@ -646,11 +646,12 @@ def is_bvs(name):
     if helpers.is_bvs(n.platform()):
         ...this is a BVS (aka T5) controller...
     """
-    return name == 'bvs'
+    return name == 'bvs' or name == 'bcf'
 
 
 # Alias
 is_t5 = is_bvs
+is_bcf = is_bvs
 
 
 def is_bigtap(name):
@@ -1252,7 +1253,7 @@ def run_cmd(cmd, cwd=None, ignore_stderr=False, shell=True, quiet=False):
 
 
 def _ping(host, count=5, timeout=5, quiet=False, source_if=None,
-          record_route=None, node_handle=None, mode=None, ttl=None):
+          record_route=False, node_handle=None, mode=None, ttl=None):
     """
     Ping options:
       - count : -c <counter>
@@ -1430,20 +1431,23 @@ def snake_case_key(in_dict):
     return out_dict
 
 
-def send_mail(m, debug=None):
+def send_mail(m):
     """
-    Set debug=1 to get debug log.
+    m data structure contains:
+      from: <sender>
+      to: <comma-separated list of receivers>
+      subject: <subject>
+      message_body: <content>
     """
-    _from = m['from']
-    _to = m['to']
-    s = s = smtplib.SMTP(SMTP_SERVER)
+    _to = split_and_strip(m['to'])
+    s = smtplib.SMTP(SMTP_SERVER)
     s.set_debuglevel(debug)
 
     msg = MIMEText(m['message_body'])
     msg['Subject'] = m['subject']
-    msg['From'] = _from
-    msg['To'] = _to
-    s.sendmail(_from, [_to], msg.as_string())
+    msg['From'] = m['from']
+    msg['To'] = m['to']
+    s.sendmail(m['from'], [_to], msg.as_string())
     s.quit()
 
 
@@ -1567,6 +1571,14 @@ def str_to_list(input_str):
     Convert a multi-line string into a list of strings.
     """
     return input_str.splitlines()
+
+
+def split_and_strip(input_str, split_str=','):
+    """
+    Split a string (default split character is ',') and remove surrounding
+    whitespaces.
+    """
+    return [x.strip() for x in input_str.split(split_str)]
 
 
 def strip_cli_output(input_str, to_list=False):

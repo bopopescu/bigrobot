@@ -42,7 +42,7 @@ Verify ICMP Packet of death
     verify results  transmitted_frame_rate  a  received_frame_rate  b
     sleep  5    
     stop traffic   ${stream} 
-    [Tags]  traffic  icmpPoD 
+    [Tags]  feature  traffic 
 
 Verify L2 traffic: frame size 64 bytes
     ${stream}=  L2 add  flow=a<->b  frame_rate=10000  frame_size=64  name=a_b_flow
@@ -58,7 +58,7 @@ Verify L2 traffic: frame size 64 bytes
     verify results  transmitted_frame_rate  b  received_valid_frame_rate  a 
     sleep  5    
     stop traffic   ${stream}    
-    [Tags]  traffic  L264  
+    [Tags]  feature  traffic   
 
 Verify L3 traffic: frame size 68 bytes
     ${stream}=  L3 add  flow=a<->b  frame_rate=10000  frame_size=68
@@ -72,7 +72,7 @@ Verify L3 traffic: frame size 68 bytes
     verify results  transmitted_frame_rate  b  received_valid_frame_rate  a 
     sleep  5    
     stop traffic   ${stream}   
-    [Tags]  traffic  l3basic
+    [Tags]  feature  traffic
 
 Verify L2 traffic: frame size 128 bytes
     ${stream}=  L2 add  flow=a<->b  frame_rate=10000  frame_size=128  name=a_b_flow
@@ -88,7 +88,7 @@ Verify L2 traffic: frame size 128 bytes
     verify results  transmitted_frame_rate  b  received_valid_frame_rate  a 
     sleep  5    
     stop traffic   ${stream}   
-    [Tags]  traffic  
+    [Tags]  feature  traffic  
 
 Verify L3 traffic: frame size 128 bytes
     ${stream}=  L3 add  flow=a<->b  frame_rate=10000  frame_size=128
@@ -102,7 +102,7 @@ Verify L3 traffic: frame size 128 bytes
     verify results  transmitted_frame_rate  b  received_valid_frame_rate  a 
     sleep  5    
     stop traffic   ${stream} 
-    [Tags]  traffic
+    [Tags]  feature  traffic
 
 Verify L2 traffic: frame size 256 bytes
     ${stream}=  L2 add  flow=a<->b  frame_rate=10000  frame_size=256  name=a_b_flow
@@ -118,7 +118,7 @@ Verify L2 traffic: frame size 256 bytes
     verify results  transmitted_frame_rate  b  received_valid_frame_rate  a 
     sleep  5    
     stop traffic   ${stream} 
-    [Tags]  traffic  
+    [Tags]  feature  traffic  
 
 Verify L3 traffic: frame size 256 bytes
     ${stream}=  L3 add  flow=a<->b  frame_rate=10000  frame_size=256
@@ -132,7 +132,7 @@ Verify L3 traffic: frame size 256 bytes
     verify results  transmitted_frame_rate  b  received_valid_frame_rate  a 
     sleep  5    
     stop traffic   ${stream} 
-    [Tags]  traffic
+    [Tags]  feature  traffic
     
 Verify L2 traffic: frame size 512 bytes
     ${stream}=  L2 add  flow=a<->b  frame_rate=10000  frame_size=512  name=a_b_flow
@@ -148,7 +148,7 @@ Verify L2 traffic: frame size 512 bytes
     verify results  transmitted_frame_rate  b  received_valid_frame_rate  a 
     sleep  5    
     stop traffic   ${stream} 
-    [Tags]  traffic  
+    [Tags]  feature  traffic  
 
 Verify L3 traffic: frame size 512 bytes
     ${stream}=  L3 add  flow=a<->b  frame_rate=10000  frame_size=512
@@ -162,7 +162,7 @@ Verify L3 traffic: frame size 512 bytes
     verify results  transmitted_frame_rate  b  received_valid_frame_rate  a 
     sleep  5    
     stop traffic   ${stream} 
-    [Tags]  traffic
+    [Tags]  feature  traffic
     
 Verify L2 traffic: frame size 1024 bytes
     ${stream}=  L2 add  flow=a<->b  frame_rate=10000  frame_size=1024  name=a_b_flow
@@ -178,7 +178,7 @@ Verify L2 traffic: frame size 1024 bytes
     verify results  transmitted_frame_rate  b  received_valid_frame_rate  a 
     sleep  5    
     stop traffic   ${stream} 
-    [Tags]  traffic  
+    [Tags]  feature  traffic  
     
 Verify L3 traffic: frame size 1024 bytes
     ${stream}=  L3 add  flow=a<->b  frame_rate=10000  frame_size=1024
@@ -192,7 +192,7 @@ Verify L3 traffic: frame size 1024 bytes
     verify results  transmitted_frame_rate  b  received_valid_frame_rate  a 
     sleep  5    
     stop traffic   ${stream} 
-    [Tags]  traffic
+    [Tags]  feature  traffic
     
 Verify L2 traffic: frame size 1518 bytes
     ${stream}=  L2 add  flow=a<->b  frame_rate=10000  frame_size=1518  name=a_b_flow
@@ -208,7 +208,7 @@ Verify L2 traffic: frame size 1518 bytes
     verify results  transmitted_frame_rate  b  received_valid_frame_rate  a 
     sleep  5    
     stop traffic   ${stream} 
-    [Tags]  traffic  
+    [Tags]  feature  traffic  
 
 Verify L3 traffic: frame size 1518 bytes
     ${stream}=  L3 add  flow=a<->b  frame_rate=10000  frame_size=1518
@@ -222,7 +222,7 @@ Verify L3 traffic: frame size 1518 bytes
     verify results  transmitted_frame_rate  b  received_valid_frame_rate  a 
     sleep  5    
     stop traffic   ${stream} 
-    [Tags]  traffic
+    [Tags]  feature  traffic
 
     
 Verify L2 traffic: frame size 2048 bytes
@@ -239,7 +239,7 @@ Verify L2 traffic: frame size 2048 bytes
     verify results  transmitted_frame_rate  b  received_frame_rate  a 
     sleep  5    
     stop traffic   ${stream} 
-    [Tags]  traffic  
+    [Tags]  feature  traffic  
 
 Verify L3 traffic: frame size 2048 bytes
     ${stream}=  L3 add  flow=a<->b  frame_rate=10000  frame_size=2048
@@ -253,7 +253,7 @@ Verify L3 traffic: frame size 2048 bytes
     verify results  transmitted_frame_rate  b  received_frame_rate  a 
     sleep  5    
     stop traffic   ${stream} 
-    [Tags]  traffic
+    [Tags]  feature  traffic
     
 Verify L2 traffic: frame size 4096 bytes
     ${stream}=  L2 add  flow=a<->b  frame_rate=10000  frame_size=4096  name=a_b_flow
@@ -269,7 +269,7 @@ Verify L2 traffic: frame size 4096 bytes
     verify results  transmitted_frame_rate  b  received_frame_rate  a 
     sleep  5    
     stop traffic   ${stream} 
-    [Tags]  traffic  
+    [Tags]  feature  traffic  
 
 Verify L3 traffic: frame size 4096 bytes
     ${stream}=  L3 add  flow=a<->b  frame_rate=10000  frame_size=4096
@@ -283,7 +283,7 @@ Verify L3 traffic: frame size 4096 bytes
     verify results  transmitted_frame_rate  b  received_frame_rate  a 
     sleep  5    
     stop traffic   ${stream} 
-    [Tags]  traffic
+    [Tags]  feature  traffic
     
 Verify L2 traffic: frame size 9216 bytes
     ${stream}=  L2 add  flow=a<->b  frame_rate=10000  frame_size=9216  name=a_b_flow
@@ -299,7 +299,7 @@ Verify L2 traffic: frame size 9216 bytes
     verify results  transmitted_frame_rate  b  received_frame_rate  a 
     sleep  5    
     stop traffic   ${stream} 
-    [Tags]  traffic  
+    [Tags]  feature  traffic  
 
 Verify L3 traffic: frame size 9216 bytes
     ${stream}=  L3 add  flow=a<->b  frame_rate=10000  frame_size=9216
@@ -313,7 +313,7 @@ Verify L3 traffic: frame size 9216 bytes
     verify results  transmitted_frame_rate  b  received_frame_rate  a 
     sleep  5    
     stop traffic   ${stream}     
-    [Tags]  traffic
+    [Tags]  feature  traffic
 
 Verify L2 Traffic: VLAN Tagged Traffic
     ${stream}=  L2 add  flow=a<->b  frame_rate=10000  frame_size=128  ethertype=8100  vlan_id=2048  name=a_b_flow
@@ -334,7 +334,7 @@ Verify L2 Traffic: VLAN Tagged Traffic
     stop traffic   ${stream}     
     rest delete tenant  ${tenant_1}
     t5 tenant add  -1  
-    [Tags]  traffic  l2vlan  
+    [Tags]  feature  traffic   
 
 Verify L3 Traffic: VLAN Tagged Traffic
     ${stream}=  L3 add  flow=a<->b  frame_rate=10000  frame_size=128  ethertype=8100  vlan_id=2048  
@@ -357,7 +357,7 @@ Verify L3 Traffic: VLAN Tagged Traffic
     stop traffic   ${stream}     
     rest delete tenant  ${tenant_1}
     t5 tenant add  -1  
-    [Tags]  traffic  l3vlan
+    [Tags]  feature  traffic
 
 Line Rate: L2 Traffic with frame Size 1518
     ${stream}=  L2 add  flow=a<->b  frame_size=1518  line_rate=100  name=a_b_flow
@@ -373,7 +373,7 @@ Line Rate: L2 Traffic with frame Size 1518
     verify results  transmitted_frame_rate  b  received_valid_frame_rate  a 
     sleep  5    
     stop traffic   ${stream}
-    [Tags]  traffic  linerate            
+    [Tags]  feature  traffic            
 
 
 Line Rate: L2 Broadcast traffic with frame Size 1518
@@ -389,7 +389,7 @@ Line Rate: L2 Broadcast traffic with frame Size 1518
     verify results  transmitted_frame_rate  a  received_valid_frame_rate  b
     sleep  5
     stop traffic  ${stream}   
-    [Tags]  traffic  broadcast   
+    [Tags]  feature  traffic   
         
 *Keywords
 

@@ -23,7 +23,7 @@ import autobot.helpers as helpers
 # import autobot.devconf as devconf
 
 helpers.set_env('IS_GOBOT', 'False')
-helpers.set_env('AUTOBOT_LOG', '/tmp/myrobot.log')
+helpers.set_env('AUTOBOT_LOG', './myrobot.log')
 
 DB_SERVER = 'qadashboard-mongo.bigswitch.com'
 DB_PORT = 27017
@@ -92,13 +92,30 @@ class TestSuite(object):
     def db(self):
         return self._db
 
-    def db_find_and_modify_testcase(self, rec):
+    def db_count_testcases(self):
         testcases = self.db().test_cases
+        count = testcases.count()
+        return count
+
+    def db_insert(self, rec):
+        testcases = self.db().test_cases_archive
+        tc = testcases.insert(rec)
+
+        # Side effect of insert operation is that it will insert the ObjectID
+        # into rec, which may cause subsequent operations to fail (e.g.,
+        # to_json(). So we remove the ObjectID.
+        del rec['_id']
+
+        return tc
+
+    def db_find_and_modify_regression_testcase(self, rec):
+        testcases = self.db().test_cases_archive
 
         tc = testcases.find_and_modify(
                 query={ "name": rec['name'],
                         "product_suite" : rec['product_suite'],
-                        "starttime_datestamp" : rec['starttime_datestamp'] },
+                        "starttime_datestamp" : rec['starttime_datestamp'],
+                        "build_number": rec['build_number'] },
                 update={ "$set": {"status": rec['status'],
                                   "starttime": rec['starttime'],
                                   "endtime": rec['endtime'],
@@ -107,9 +124,44 @@ class TestSuite(object):
                                   "executed": rec['executed'],
                                   "origin_regression_catalog": rec['origin_regression_catalog'],
                                   "origin_script_catalog": rec['origin_script_catalog'],
+                                  "build_url": rec['build_url'],
+                                  "build_number": rec['build_number'],
+                                  "build_name": rec['build_name'],
                                   } },
                 new=True,
                 upsert=True
+                )
+        if tc:
+            print("*** Successfully updated record (name:'%s', product_suite:'%s', date:'%s', status:'%s')"
+                  % (rec['name'], rec['product_suite'],
+                     rec['starttime_datestamp'], rec['status']))
+        else:
+            print("Did not find record (name:'%s', product_suite:'%s', date:'%s')"
+                  % (rec['name'], rec['product_suite'],
+                     rec['starttime_datestamp']))
+
+    def db_find_and_modify_testcase(self, rec):
+        testcases = self.db().test_cases
+
+        tc = testcases.find_and_modify(
+                query={ "name": rec['name'],
+                        "product_suite" : rec['product_suite'],
+                        # "starttime_datestamp" : rec['starttime_datestamp']
+                        },
+                update={ "$set": {"status": rec['status'],
+                                  "starttime": rec['starttime'],
+                                  "endtime": rec['endtime'],
+                                  "endtime_datestamp": rec['endtime_datestamp'],
+                                  "duration": rec['duration'],
+                                  "executed": rec['executed'],
+                                  "origin_regression_catalog": rec['origin_regression_catalog'],
+                                  "origin_script_catalog": rec['origin_script_catalog'],
+                                  "build_url": rec['build_url'],
+                                  "build_number": rec['build_number'],
+                                  "build_name": rec['build_name'],
+                                  } },
+                # new=True,
+                # upsert=True
                 )
         if tc:
             print("*** Successfully updated record (name:'%s', product_suite:'%s', date:'%s', status:'%s')"
@@ -133,7 +185,7 @@ class TestSuite(object):
         return self._data
 
     def git_auth(self, filename):
-        filename = re.sub(r'.+bigrobot/', '../', filename)
+        filename = re.sub(r'.*bigrobot/', '../', filename)
         (_, output) = helpers.run_cmd("./git-auth " + filename, shell=False)
         output = output.strip()
         if output in AUTHORS:
@@ -149,6 +201,7 @@ class TestSuite(object):
         source = helpers.utf8(suite['@source'])
         match = re.match(r'.+bigrobot/(\w+/([\w-]+)/.+)$', source)
         if match:
+            source = "bigrobot/" + match.group(1)
             github_link = ('https://github.com/bigswitch/bigrobot/blob/master/'
                            + match.group(1))
             product = match.group(2)
@@ -177,6 +230,9 @@ class TestSuite(object):
         if not helpers.is_list(tests):
             # In a suite with only a single test case, convert into list
             tests = [tests]
+
+        if self._is_regression:
+            helpers.debug("DB testcase count (BEFORE): %s" % self.db_count_testcases())
 
         for a_test in tests:
             # print "['@id']: " + '@id'
@@ -214,7 +270,6 @@ class TestSuite(object):
             test = {'test_id': test_id,
                     'name': name,
                     'tags': tags,
-                    'job_name_id': None,
                     'executed': executed,
                     'status': status,
                     'starttime': starttime,
@@ -225,15 +280,28 @@ class TestSuite(object):
                     'origin_script_catalog': not self._is_regression,
                     'origin_regression_catalog': self._is_regression,
                     'product_suite': self._suite['product_suite'],
+                    'build_number': None,
+                    'build_url': None,
+                    'build_name': None,
                     }
-            self._tests.append(test)
 
             if self._is_regression:
+                if 'BUILD_NUMBER' in os.environ:
+                    test['build_number'] = os.environ['BUILD_NUMBER']
+                if 'BUILD_URL' in os.environ:
+                    test['build_url'] = os.environ['BUILD_URL']
+                if 'BUILD_NAME' in os.environ:
+                    test['build_name'] = os.environ['BUILD_NAME']
                 self.db_find_and_modify_testcase(test)
+                self.db_find_and_modify_regression_testcase(test)
+                # self.db_insert(test)
+
+            self._tests.append(test)
 
             # Add test cases to test suite
             # self._suite['tests'] = self._tests
-
+        if self._is_regression:
+            helpers.debug("DB testcase count (AFTER): %s" % self.db_count_testcases())
         self.total_tests()
 
     def suite_name(self):
@@ -271,6 +339,7 @@ class TestSuite(object):
     def dump_tests(self, to_file=None, to_json=False):
         if to_json:
             if to_file:
+                helpers.log("Writing to file '%s'" % to_file)
                 helpers.file_write_append_once(to_file,
                                                helpers.to_json(self.tests())
                                                + '\n')
@@ -278,6 +347,7 @@ class TestSuite(object):
                 print(helpers.to_json(self.tests()))
         else:
             if to_file:
+                helpers.log("Writing to file '%s'" % to_file)
                 helpers.file_write_append_once(to_file,
                                                helpers.prettify(self.tests())
                                                + '\n')
