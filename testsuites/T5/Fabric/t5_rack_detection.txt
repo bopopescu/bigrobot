@@ -403,7 +403,7 @@ bring up h6 bond0
     bash ifup intf  h6  bond0  
 
 bring up 1 gig interface
-	bash execute command  leaf0-a  ofad-ctl autoneg 25
-	bash execute command  leaf0-a  ofad-ctl autoneg 26
-	bash execute command  leaf1-a  ofad-ctl autoneg 25
-	bash execute command  leaf1-a  ofad-ctl autoneg 26
+	config  leaf0-a  interface 25 1g-sfp
+	config  leaf0-a  interface 26 1g-sfp
+	config  leaf1-a  interface 25 1g-sfp
+	config  leaf1-a  interface 26 1g-sfp
