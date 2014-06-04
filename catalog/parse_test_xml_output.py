@@ -140,11 +140,11 @@ class TestSuite(object):
                 upsert=True
                 )
         if tc:
-            print("*** Successfully updated Regression test case record (name:'%s', product_suite:'%s', date:'%s', status:'%s')"
+            print('Successfully updated Regression test case record (name:"%s", product_suite:"%s", date:"%s", status:"%s")'
                   % (rec['name'], rec['product_suite'],
                      rec['starttime_datestamp'], rec['status']))
         else:
-            print("Did not find Regression test case record (name:'%s', product_suite:'%s', date:'%s')"
+            print('Did not find Regression test case record (name:"%s", product_suite:"%s", date:"%s")'
                   % (rec['name'], rec['product_suite'],
                      rec['starttime_datestamp']))
 
@@ -159,11 +159,11 @@ class TestSuite(object):
                 # upsert=True
                 )
         if tc:
-            print("*** Successfully updated test case record (name:'%s', product_suite:'%s', date:'%s', status:'%s')"
+            print('Successfully updated test case record (name:"%s", product_suite:"%s", date:"%s", status:"%s")'
                   % (rec['name'], rec['product_suite'],
                      rec['starttime_datestamp'], rec['status']))
         else:
-            print("Did not find test case record (name:'%s', product_suite:'%s', date:'%s')"
+            print('CRITICAL ERROR: Did not find test case record (name:"%s", product_suite:"%s", date:"%s")'
                   % (rec['name'], rec['product_suite'],
                      rec['starttime_datestamp']))
 
@@ -172,10 +172,10 @@ class TestSuite(object):
 
         suite = suites.find_one({ "product_suite" : rec['product_suite'] })
         if suite:
-            print("*** Found suite record (name:'%s', product_suite:'%s'). Skipping insertion."
+            print('Found suite record (name:"%s", product_suite:"%s"). Skipping insertion.'
                   % (rec['name'], rec['product_suite']))
         else:
-            print("*** Did not find suite record (name:'%s', product_suite:'%s'). Inserting new record."
+            print('Did not find suite record (name:"%s", product_suite:"%s"). Inserting new record.'
                   % (rec['name'], rec['product_suite']))
             self.db_insert_suite(rec)
 
@@ -183,12 +183,12 @@ class TestSuite(object):
         testcases = self.db().test_cases
 
         tc = testcases.find_one({ "name": rec['name'],
-                               "product_suite" : rec['product_suite'], })
+                                  "product_suite" : rec['product_suite'], })
         if tc:
-            print("*** Found test case record (name:'%s', product_suite:'%s'). Skipping insertion."
+            print('Found test case record (name:"%s", product_suite:"%s"). Skipping insertion.'
                   % (rec['name'], rec['product_suite']))
         else:
-            print("*** Did not find test case record (name:'%s', product_suite:'%s'). Inserting new record."
+            print('Did not find test case record (name:"%s", product_suite:"%s"). Inserting new record.'
                   % (rec['name'], rec['product_suite']))
             self.db_insert_testcase(rec)
 

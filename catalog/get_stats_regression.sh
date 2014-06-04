@@ -2,6 +2,11 @@
 # 'infile': a file which contains a list of output.xml files (path included).
 #
 
+export BUILD_NAME="bvs master #1995"
+#export BUILD_NAME="bvs master #1989"
+#export BUILD_NUMBER
+#export BUILD_URL
+
 ts=`date "+%Y-%m-%d_%H%M%S"`
 
 if [ $# -eq 0 ]; then
