@@ -5,9 +5,8 @@ c2:
 mn:
   ip: 10.192.92.89
 h1:
-  ip: 10.192.95.158  # vui-qa
-  #ip: 10.192.20.9    # jenkins-w9
-  protocol: telnet
-  #user: bsn
-  #password: bsn
+  ip: 10.192.20.6    # jenkins-w6
+  #protocol: telnet
+  user: bsn
+  password: bsn
 

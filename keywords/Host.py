@@ -165,7 +165,6 @@ class Host(object):
         t = test.Test()
         n = t.node(node)
         n.sudo("/etc/init.d/networking restart", timeout=timeout)
-        n.bash("route")
         return True
 
     def bash_get_interface_ipv4(self, node, intf):

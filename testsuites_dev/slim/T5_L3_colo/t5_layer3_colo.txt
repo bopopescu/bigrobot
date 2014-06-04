@@ -933,9 +933,7 @@ Verify inter tenant L3 traffic is getting drop with null next hop
     REST add static routes                      X                               10.252.0.0/16                   {"tenant-name": "system"}       
     ${loss} =                                   BASH ping                       h4-rack0                        10.252.1.11             count=10
     Should Be True                              ${loss} < 30    
-    
-
-    
+      
 
 Verify same mac address showing up on two ports in the same segment is blocked
     REST delete portgroup from vns              X                                       X3                      ${leaf0_pc6}            1006
