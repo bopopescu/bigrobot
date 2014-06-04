@@ -121,30 +121,32 @@ class BsnCommon(object):
             os.makedirs(d)
         fh = open(show_cmd_file, 'w')
         cmdlist = [
+                   'debug cli',
                    'show running-config details',
-                   'show debug counters',
-                   'show bvssetting',
-                   'show cluster details',
+                   'show controller',
+                   'show controller details',
                    'show switch all details',
                    'show switch all interface',
                    'show switch all interface properties',
-                   'show lacp',
                    'show lag',
                    'show link',
                    'show port-group',
-                   'show fabric warn',
+                   'show fabric warning',
                    'show fabric error',
                    'show tenant',
-                   'show vns',
+                   'show segment',
                    'show endpoint',
                    'show attachment-points',
-                   'show router',
-                   'show segment-interface',
-                   'show tenant-interface',
+                   'show logical-router',
+                   'show logical-router interface segment',
+                   'show logical-router interface tenant',
+                   'show port group',
                    'show forwarding',
                    'show forwarding internal',
                    'show vft',
                    'show debug events',
+                   'show debug counters all',
+#                   'show debug events details', Disabling due to BSC-5570
                    ]
         for cmd in cmdlist:
             content = self.config(node, cmd)['content']
