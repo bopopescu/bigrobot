@@ -214,6 +214,8 @@ class T5(object):
         url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/segment[tenant="%s"]' % (tenant)
         c.rest.get(url)
         data = c.rest.content()
+        data.sort(key=lambda x: x['name']) 
+        helpers.log("USR INFO: data after sort is %s" % (data))
         i = 0
         while (i < len(data)):
             j = int(vlan)  + i
@@ -233,6 +235,7 @@ class T5(object):
         url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/segment[tenant="%s"]' % (tenant)
         c.rest.get(url)
         data = c.rest.content()
+         
         for j in range(0, len(data)):
                 i = int(vlan) + j
                 helpers.log("vlan=%d, %d" % (i, j))
@@ -2537,6 +2540,68 @@ class T5(object):
             helpers.test_log("Output: %s" % c.rest.result_json())
             return c.rest.content()            
 
+
+    def rest_add_l2_endpoint_to_all_vns(self, tenant, switch, intf, mac="00:00:00:00:00:01", vlan=1):
+        '''
+        Function to add l2 endpoint to all created vns
+        Input: tennat , switch , interface
+        output : will add end into all vns in a tenant 
+        '''
+        t = test.Test()
+        c = t.controller('master')
+     
+        url = '/api/v1/data/controller/applications/bvs/info/endpoint-manager/segment[tenant="%s"]' % (tenant)
+        c.rest.get(url)
+        data = c.rest.content()
+        data.sort(key=lambda x: x['name'])   
+        helpers.log("USR INFO: data after sort is %s" % (data))                        
+        i = 0
+        while (i < len(data)):
+            j = int(vlan)  + i
+            endpoint = 'E' + str(j)
+            url='/api/v1/data/controller/applications/bvs/tenant[name="%s"]/segment[name="%s"]/endpoint[name="%s"]' %(tenant, data[i]["name"], endpoint)      
+            c.rest.put(url, {"name": endpoint})
+            c.rest.patch(url, {"mac": mac})
+            url1='/api/v1/data/controller/applications/bvs/tenant[name="%s"]/segment[name="%s"]/endpoint[name="%s"]/attachment-point' %(tenant, data[i]["name"], endpoint)                   
+            c.rest.patch(url1, {"interface": intf, "switch": switch, "vlan": j})
+            mac  = helpers.get_next_mac(mac, "00:00:00:00:00:01")
+            i = i + 1                                
+        return True
+
+
+    def rest_add_l3_endpoint_to_all_vns(self, tenant, switch, intf, mac="00:00:00:00:00:01", vlan=1):
+        '''
+        Function to add l3 endpoint to all created vns
+        Input: tennat , switch , interface
+        The ip address is taken from the logical interface, the last byte is modified to 253
+        output : will add end into all vns in a tenant 
+        '''
+        t = test.Test()
+        c = t.controller('master')
+     
+        url = '/api/v1/data/controller/applications/bvs/info/logical-router-manager/interface/segment-interface[logical-router="%s"]'  % (tenant)     
+        c.rest.get(url)
+        data = c.rest.content()
+        data.sort(key=lambda x: x['segment'])   
+        helpers.log("USR INFO: data after sort is %s" % (data))
+              
+        i = 0
+        while (i < len(data)):
+            j = int(vlan)  + i
+            endpoint = 'E' + str(j)
+            url='/api/v1/data/controller/applications/bvs/tenant[name="%s"]/segment[name="%s"]/endpoint[name="%s"]' %(tenant, data[i]["segment"], endpoint)      
+            c.rest.put(url, {"name": endpoint})
+            c.rest.patch(url, {"mac": mac})
+           
+            ip = data[i]["ip-cidr"].split('.') 
+            ip[3] = 253
+            ipaddr = '.'.join(map(str, ip))
+            c.rest.patch(url, {"ip-address": ipaddr})
+            url1='/api/v1/data/controller/applications/bvs/tenant[name="%s"]/segment[name="%s"]/endpoint[name="%s"]/attachment-point' %(tenant, data[i]["segment"], endpoint)                   
+            c.rest.patch(url1, {"interface": intf, "switch": switch, "vlan": j})
+            mac  = helpers.get_next_mac(mac, "00:00:00:00:00:01")
+            i = i + 1                                
+        return True
 
 
 
