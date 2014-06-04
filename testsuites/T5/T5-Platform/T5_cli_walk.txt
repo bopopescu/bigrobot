@@ -67,15 +67,15 @@ T1 Setup Tenant and VNS
      
 T2 login/exec mode cli walk
    cli walk exec  file_name=cli_walk_exec
-   [Tags]  sanity  CLI
+   [Tags]  sanity  CLI  feature
    
 T3 enable mode cli walk
    cli walk enable  file_name=cli_walk_enable
-   [Tags]  sanity  CLI  
+   [Tags]  sanity  CLI  feature
    
 T4 config mode cli walk
    cli walk config  file_name=cli_walk_config
-   [Tags]  sanity  CLI   
+   [Tags]  sanity  CLI  feature
      
  
 	
