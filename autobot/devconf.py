@@ -698,9 +698,17 @@ class MininetDevConf(DevConf):
     def close(self):
         super(MininetDevConf, self).close()
 
-        self.stop_mininet()
-        self.conn.close(force=True)
-        helpers.log("Mininet - force closed the device connection '%s'."
+        try:
+            self.stop_mininet()
+        except:
+            if helpers.bigrobot_ignore_mininet_exception_on_close().lc == 'true':
+                helpers.log("Env BIGROBOT_IGNORE_MININET_EXCEPTION_ON_CLOSE"
+                            " is 'True'. Ignoring Mininet exception.")
+            else:
+                raise
+        else:
+            self.conn.close(force=True)
+            helpers.log("Mininet - force closed the device connection '%s'."
                     % self.name())
 
 
