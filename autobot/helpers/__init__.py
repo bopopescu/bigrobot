@@ -1447,7 +1447,7 @@ def send_mail(m):
     msg['Subject'] = m['subject']
     msg['From'] = m['from']
     msg['To'] = m['to']
-    s.sendmail(m['from'], [_to], msg.as_string())
+    s.sendmail(m['from'], _to, msg.as_string())
     s.quit()
 
 
