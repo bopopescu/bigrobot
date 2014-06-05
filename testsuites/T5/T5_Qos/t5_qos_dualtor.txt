@@ -89,7 +89,7 @@ T2 With default QoS verify Weights
 	Verify flow weights on egress pipe
 
 T3 with default QoS local leaf traffic
-	[Tags]  manual
+	[Tags]  manual  feature
 	Default QoS
 	Start traffic
 	Verify flow mappings to HW queues
@@ -126,7 +126,7 @@ T7 With default QoS leaf to spine traffic with 90% low priority and 10% High pri
 T8 Mix T6 and T7
 	[Tags]  manual  feature
 T9 With default QoS leaf to leaf start each priority traffic one by one #same interface sending and receiving --->
-	[Tags]  manual
+	[Tags]  manual  feature
 	Default QoS
 	Start low priority traffic 100%
 	Start second low priority traffic 100%
