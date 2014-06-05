@@ -42,7 +42,9 @@ AUTHORS = {
            "Don Jayakody": "don",
            "Cliff DeGuzman": "cliff",
            "kranti": "kranti",
-           "William Tan": "fc7737",
+           "William Tan": "wtan",
+           "fc7737": "wtan",
+           "Sakshi Kalra": "sakshikalra",
            }
 
 def format_robot_timestamp(ts, is_datestamp=False):
