@@ -15,8 +15,7 @@ Library 		keywords/T5Utilities.py
 Library         keywords/BsnCommon.py
 Library	        Collections.py
 Library         keywords/Ixia.py
-Resource		testsuites_dev/svoora/T5_policy_physical/t5_policy_physical_inter_variables.txt
-#Resource		testsuites_dev/svoora/T5_policy_physical/t5_policy_physical_inter.physical.topo
+Resource		testsuites/T5/T5_Policy_Physical/t5_policy_physical_inter_variables.txt
 Library         OperatingSystem
 Library         Collections
 Library         Dialogs
@@ -1824,10 +1823,10 @@ test setup topology
 	REST add vns ip  								Y							Y1				10.252.1.1				24	
 	REST add vns ip  								Z							Z1				10.253.1.1				24	
 	REST add interface to vns						X							X1				leaf0-a					${ixia1}	-1
-	REST add interface to vns						X							X2				leaf0-a					${ixia3}	-1
-	REST add interface to vns						X							X3				leaf0-b					${ixia2}	-1
-	REST add interface to vns						Y							Y1				leaf0-b					${ixia4}	-1
-	REST add interface to vns						Z							Z1				leaf1-a					${ixia7}	-1
+	REST add interface to vns						X							X2				leaf0-b					${ixia3}	-1
+	REST add interface to vns						X							X3				leaf1-a					${ixia2}	-1
+	REST add interface to vns						Y							Y1				leaf1-b					${ixia4}	-1
+	REST add interface to vns						Z							Z1				leaf2-a					${ixia7}	-1
 	
 	REST add tenant routers intf to system			X
 	REST add tenant routers intf to system			Y
@@ -1908,33 +1907,33 @@ verify results   [Arguments]  ${transmitted_frames}  ${received_frames}  ${strea
   	
 add fabric switch
   rest add switch  spine0  
-  rest add dpid  spine0  00:00:5c:16:c7:1a:44:37
+  rest add dpid  spine0  ${spine0_dpid}
   rest add fabric role  spine0  spine 
   rest add switch  spine1 
-  rest add dpid  spine1  00:00:88:00:00:00:01:02
+  rest add dpid  spine1  ${spine1_dpid}
   rest add fabric role  spine1  spine
   rest add switch  leaf0-a 
-  rest add dpid  leaf0-a  00:00:5c:16:c7:11:28:ac
+  rest add dpid  leaf0-a  ${leaf0a_dpid}
   rest add fabric role  leaf0-a  leaf
   rest add leaf group  leaf0-a  rack0
   rest add switch  leaf0-b 
-  rest add dpid  leaf0-b  00:00:5c:16:c7:19:42:03
+  rest add dpid  leaf0-b  ${leaf0b_dpid}
   rest add fabric role  leaf0-b  leaf
   rest add leaf group  leaf0-b  rack0
   rest add switch  leaf1-a 
-  rest add dpid  leaf1-a  00:00:5c:16:c7:1a:07:d6
+  rest add dpid  leaf1-a  ${leaf1a_dpid}
   rest add fabric role  leaf1-a  leaf
   rest add leaf group  leaf1-a  rack1
   rest add switch  leaf1-b 
-  rest add dpid  leaf1-b  00:00:5c:16:c7:17:6a:d5
+  rest add dpid  leaf1-b  ${leaf1b_dpid}
   rest add fabric role  leaf1-b  leaf
   rest add leaf group  leaf1-b  rack1
   rest add switch  leaf2-a 
-  rest add dpid  leaf2-a  00:00:5c:16:c7:19:2e:13
+  rest add dpid  leaf2-a  ${leaf2a_dpid}
   rest add fabric role  leaf2-a  leaf
   rest add leaf group  leaf2-a  rack2
   rest add switch  leaf2-b 
-  rest add dpid  leaf2-b  00:00:5c:16:c7:17:50:26
+  rest add dpid  leaf2-b  ${leaf2b_dpid}
   rest add fabric role  leaf2-b  leaf
   rest add leaf group  leaf2-b  rack2
   

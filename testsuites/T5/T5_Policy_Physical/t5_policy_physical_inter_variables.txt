@@ -32,14 +32,14 @@ ${z2_ip}			10.253.2.1
 ${z2_subnet}		24
 ${z3_ip}			10.253.3.1
 ${z3_subnet}		24
-${spine0_dpid}		00:00:5c:16:c7:1a:44:37 
-${spine1_dpid}		00:00:88:00:00:00:01:02
-${leaf0a_dpid}		00:00:5c:16:c7:11:28:ac
-${leaf0b_dpid}		00:00:5c:16:c7:19:42:03
-${leaf1a_dpid}		00:00:5c:16:c7:1a:07:d6
-${leaf1b_dpid}		00:00:5c:16:c7:17:6a:d5
-${leaf2a_dpid}		00:00:5c:16:c7:19:2e:13
-${leaf2b_dpid}		00:00:5c:16:c7:17:50:26
+${spine0_dpid}		00:00:00:00:01:00:00:01 
+${spine1_dpid}		00:00:00:00:01:00:00:02
+${leaf0a_dpid}		00:00:00:00:02:00:00:01
+${leaf0b_dpid}		00:00:00:00:02:00:00:02
+${leaf1a_dpid}		00:00:00:00:02:00:00:03
+${leaf1b_dpid}		00:00:00:00:02:00:00:04
+${leaf2a_dpid}		00:00:00:00:02:00:00:05
+${leaf2b_dpid}		00:00:00:00:02:00:00:06
 
 
 ${leaf0-a}			leaf0-a
@@ -48,12 +48,12 @@ ${leaf1-a}			leaf1-a
 ${leaf1-b}			leaf1-b
 ${leaf2-a}			leaf2-a
 ${leaf2-b}			leaf2-b
-${ixia1}			ethernet1
-${ixia2}			ethernet1
-${ixia3}			ethernet3
-${ixia4}			ethernet3
-${ixia7}			ethernet3
-${ixia6}			ethernet1
+${ixia1}			ethernet24
+${ixia2}			ethernet24
+${ixia3}			ethernet24
+${ixia4}			ethernet24
+${ixia7}			ethernet24
+${ixia6}			ethernet24
 
 ${ixia1_ip}			10.251.1.2/32
 ${ixia2_ip}			10.251.3.2/32

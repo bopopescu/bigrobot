@@ -453,6 +453,7 @@ L3 intra tenant across rack tagged with dynamic endpoints
 	BASH delete route							h3								10.251.1.0/24			10.251.3.1
 
 Intra tenant L3 traffic same rack different leaf switch
+### Host on board nic is 1gig interface, switch does not support autoneg at 1gig so test is failing
     BASH init intf                              h5                              bond0
     BASH init intf                              h6                              bond0
     BASH ifup intf                              h5                              eth1
@@ -843,8 +844,8 @@ L3 intra tenant traceroute
     REST add portgroup to vns                   X                               X2                      ${leaf2_pc2}            -1
     BASH add ip address                         h5                              10.251.1.11/24          bond0   
     BASH add ip address                         h6                              10.251.2.11/24          bond0
-    BASH add route                              h5                              10.251.2.0/24           10.251.1.1
-    BASH add route                              h6                              10.251.1.0/24           10.251.2.1
+    BASH add route                              h5                              10.251.0.0/16           10.251.1.1
+    BASH add route                              h6                              10.251.0.0/16           10.251.2.1
     sleep                                       5   
     ${string} =                                 BASH run command                h5                      traceroute -n -m 5 10.251.1.1
     ${result} =                                 Set Variable                    ${string[1]} 
@@ -869,8 +870,8 @@ L3 intra tenant traceroute
     Should Contain                              ${result}                       \ 1\ \ 10.251.1.1  
     ${result} =                                 Set Variable                    ${string[2]} 
     Should Contain                              ${result}                       \ 2\ \ 10.251.2.11  
-    BASH delete route                           h5                              10.251.2.0/24           10.251.1.1
-    BASH delete route                           h6                              10.251.1.0/24           10.251.2.1
+    BASH delete route                           h5                              10.251.0.0/16           10.251.1.1
+    BASH delete route                           h6                              10.251.0.0/16           10.251.2.1
 
 
 L3 intra tenant dhcp relay on same vns as dhcp server with relay enabled
@@ -2034,7 +2035,8 @@ Static endpoint with dynamic host showing up on another port
 	BASH delete route							h2								10.251.1.0/24			10.251.3.1
 	BASH delete route							h4								10.251.1.0/24			10.251.3.1
 	BASH delete route							h5								10.251.1.0/24			10.251.3.1
-	BASH network restart                        h6
+    BASH run command                            h6                              service networking restart
+	
 	
 Verify subnet mask on vns router ip
 	BASH ifup intf								h1 								bond0
@@ -3234,18 +3236,21 @@ Verify same mac address showing up on two ports in the same segment is blocked
     sleep                                       1
     ${string} =                                 BASH run command                h3                      echo $!
     ${pid2} =                                   Set Variable                    ${string[0]} 
-    sleep                                       1
+    sleep                                       10
     ${result} =                                 REST show endpoints mac         ${mac1}
     ${state} =                                  Set Variable                    ${result[0]['state']}    
     Should Contain                              ${state}                        Blocked
     sleep                                       1
     BASH run command                            h3                              kill -9 ${pid2}
+    sleep                                       1
+    BASH network restart                        3                               timeout=60
     sleep                                       300
     ${result} =                                 REST show endpoints mac         ${mac1}
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
     ${state} =                                  Set Variable                    ${result[0]['state']}    
     Should Contain                              ${state}                        Active
     Should Contain                              ${attachpoint}                  ${leaf0_pc1}
+    BASH run command                            h1                              kill -9 ${pid1}
     BASH delete route                           h1                              10.251.0.0/16           10.251.1.1
     BASH delete route                           h3                              10.251.0.0/16           10.251.1.1
 
@@ -3293,15 +3298,15 @@ Verify clear blocked endpoint works
     sleep                                       1
     ${string} =                                 BASH run command                h3                      echo $!
     ${pid2} =                                   Set Variable                    ${string[0]} 
-    sleep                                       1
+    sleep                                       10
     ${result} =                                 REST show endpoints mac         ${mac1}
     ${state} =                                  Set Variable                    ${result[0]['state']}    
     Should Contain                              ${state}                        Blocked
     sleep                                       1
     BASH run command                            h3                              kill -9 ${pid2}
     sleep                                       1
-    BASH network restart                        h3
-    sleep                                       10
+    BASH network restart                        h3                              timeout=60
+    sleep                                       5
     REST clear blocked endpoints                X                               X1                      ${mac1}
     sleep                                       5
     ${result} =                                 REST show endpoints mac         ${mac1}
@@ -3309,6 +3314,7 @@ Verify clear blocked endpoint works
     ${state} =                                  Set Variable                    ${result[0]['state']}    
     Should Contain                              ${state}                        Active
     Should Contain                              ${attachpoint}                  ${leaf0_pc1}
+    BASH run command                            h1                              kill -9 ${pid1}
     BASH delete route                           h1                              10.251.0.0/16           10.251.1.1
     BASH delete route                           h3                              10.251.0.0/16           10.251.1.1
 	
@@ -3367,6 +3373,7 @@ initialize host
     log                                         host5 ifconfig is ${result}
     ${result} =                                 BASH run command                h6                     ifconfig
     log                                         host6 ifconfig is ${result}
+    BASH stop  service                          h1                              isc-dhcp-server
 	
 
 

@@ -264,10 +264,22 @@ admin_user = glance
 
         helpers.log("*** I am the %s of the Universe!" % controller_role)
 
-    def restclient_show_user_negative(self):
+    def rest_version_check(self, node):
+        t = test.Test()
+        n = t.node(node)
+        n.rest.get('/rest/v1/system/version')
+        content = n.rest.content()
+        version_string = content[0]['controller']
+        helpers.log("version string is %s" % version_string)
+
+    def rest_show_user(self, node):
+        t = test.Test()
+        n = t.node(node)
+        n.rest.get('/api/v1/data/controller/core/aaa/local-user')
+
+    def rest_show_user_negative(self):
         t = test.Test()
         n = t.node('c1')
-
         n.rest.get('/api/v1/data/controller/core/aaa/local-users')
         try:
             n.rest.get('/api/v1/data/controller/core/aaa/local-users')

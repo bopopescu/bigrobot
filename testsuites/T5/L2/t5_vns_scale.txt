@@ -74,6 +74,7 @@ create 4000 vns and verify the table and forwarding
   	rest add tenant  t1
 	rest add vns scale  t1  3998
 	summary log  system create a 4k vns
+	sleep  10
 	rest add interface to all vns  t1  leaf0-a  ${leaf0a_ixia_intf}
 	rest add interface to all vns  t1  leaf1-a  ${leaf1a_ixia_intf}
 	summary log  system add 2 ports to each vns
@@ -97,6 +98,7 @@ Master controller node reboot with 4k vns
   	rest add tenant  t1
 	rest add vns scale  t1  3998
 	summary log  system create a 4k vns
+	sleep  10
 	rest add interface to all vns  t1  leaf0-a  ${leaf0a_ixia_intf}
 	rest add interface to all vns  t1  leaf1-a  ${leaf1a_ixia_intf}
 	summary log  system add 2 ports to each vns
@@ -124,6 +126,7 @@ create 4000 vns and all interface ,verify the table and forwarding
   	rest add tenant  t1
 	rest add vns scale  t1  3998
 	summary log  system create a 4k vns
+	sleep  10
 	rest add interface any to all vns  t1  
 	summary log  system add all interface to all segment
 	sleep  5

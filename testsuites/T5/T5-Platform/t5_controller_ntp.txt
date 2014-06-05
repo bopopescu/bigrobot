@@ -4,7 +4,7 @@ Suite Setup  ntp suite setup
 Suite Teardown   base suite teardown
 Test Setup   base test setup
 Test Teardown   base test teardown
-Force Tags   IronHorse  T5  Platform
+Force Tags   IronHorse  T5  ntp
 
 Library  keywords/T5.py
 Library  keywords/BsnCommon.py
@@ -17,12 +17,12 @@ ${version_string}   2.0.5-SNAPSHOT
 Configure and Verify Configuration on Master 
     ${status}=  verify ntp  c1  time-c.nist.gov
     Should be true  ${status}
-    [Tags]  ntp  verifyconfig
+    [Tags]  feature
 
 Configure and Verify Configuration on Slave 
     ${status}=  verify ntp  c2  time-c.nist.gov
     Should be true  ${status}
-    [Tags]  ntp  verifyconfig    
+    [Tags]  feature    
 
 Delete NTP server and verify 
     ${status}=  delete ntp server  c1  time-c.nist.gov
@@ -30,14 +30,14 @@ Delete NTP server and verify
     Sleep  5
     ${status}=  verify ntp  c1  time-c.nist.gov
     Should not be true  ${status}
-    [Tags]  ntp  deletentp
+    [Tags]  feature
 
 Verify Time Zone
     add ntp timezone  c1  America/Los_Angeles
     Sleep  5
     ${status}=  verify timezone  c1  PDT  
     Should be true  ${status}
-    [Tags]  ntp  add-timezone  timezone
+    [Tags]  feature
 
 Verify Time Zone can be changed
     add ntp timezone  c1  America/Los_Angeles
@@ -49,7 +49,7 @@ Verify Time Zone can be changed
     Sleep  10    
     ${status}=  verify timezone  c1  EDT  
     Should be true  ${status}
-    [Tags]  ntp  change-timezone  timezone
+    [Tags]  feature
 
 Verify deleting NTP TimeZone reverts it to UTC
     add ntp timezone  c1  America/Los_Angeles
@@ -61,7 +61,7 @@ Verify deleting NTP TimeZone reverts it to UTC
     Sleep  10
     ${status}=  verify timezone  c1  UTC  
     Should be true  ${status} 
-    [Tags]  ntp  delete-timezone  timezone
+    [Tags]  feature
 
 
 Add multiple NTP servers and verify on Master and Slave
@@ -86,7 +86,7 @@ Add multiple NTP servers and verify on Master and Slave
     ${status}=  delete ntp server  c1  time-d.nist.gov
     Should be true  ${status}
     ${status}=  delete ntp server  c1  nist-time-server.eoni.com                         
-    [Tags]  ntp  multiple-ntp
+    [Tags]  feature  ha
 
 
 With multiple NTP servers, restart process ntp on Master and verify
@@ -113,7 +113,7 @@ With multiple NTP servers, restart process ntp on Master and verify
     Should be true  ${status}
     ${status}=  delete ntp server  c1  nist-time-server.eoni.com
     Should be true  ${status}                                
-    [Tags]  ntp  restart-ntp
+    [Tags]  feature  ha
 
 
 With multiple NTP servers, restart process ntp on Master and verify Slave is unaffected
@@ -139,7 +139,7 @@ With multiple NTP servers, restart process ntp on Master and verify Slave is una
     Should be true  ${status}
     ${status}=  delete ntp server  c1  nist-time-server.eoni.com
     Should be true  ${status}                                
-    [Tags]  ntp  restart-ntp-check-slave
+    [Tags]  feature  ha  
 
 
 With multiple NTP servers, restart process ntp on Slave and verify Master is unaffected
@@ -165,7 +165,7 @@ With multiple NTP servers, restart process ntp on Slave and verify Master is una
     Should be true  ${status}
     ${status}=  delete ntp server  c1  nist-time-server.eoni.com
     Should be true  ${status}                                
-    [Tags]  ntp  restart-ntp-check-master
+    [Tags]  feature  ha
 
        
                             

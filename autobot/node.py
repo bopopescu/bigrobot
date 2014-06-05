@@ -224,7 +224,10 @@ class ControllerNode(Node):
         if 'http_port' in self.node_params:
             self.http_port = self.node_params['http_port']
         else:
-            self.http_port = 8080
+            if helpers.is_bvs(self.platform()):
+                self.http_port = 8080
+            elif helpers.is_bigtap(self.platform()):
+                self.http_port = 8000
 
         if 'base_url' in self.node_params:
             self.base_url = self.node_params['base_url'] % (ip, self.http_port)
