@@ -21,6 +21,7 @@ if [ $# -eq 0 ]; then
         fi
 
         # ... Found a valid output.xml. Proceed with parsing.
+        cat $infile
 
     else
         echo "Usage: $0 <infile>"
