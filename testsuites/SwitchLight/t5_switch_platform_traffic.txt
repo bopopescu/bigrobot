@@ -4,7 +4,7 @@ Suite Setup       T5 switch platform test setup
 Suite Teardown    T5 switch platform test teardown
 Test Setup        base test setup
 Test Teardown     atest teardown
-Force Tags        T5  switch  Platform  traffic  IronHorse
+Force Tags        T5  IronHorse
 ...             
 ...            
 ...                        
@@ -64,7 +64,7 @@ Uni-Directional L2 Traffic flow=a->b traffic framerate 10000 pktsize 64
     #sleep          10
     #${report}=     fetch port stats
     #verify results traffic  transmitted_frames  received_valid_frames  ${tolerance}        
-    [Tags]  T5  switch  traffic  feature  run   
+    [Tags]  T5  switch  L2  traffic  feature   
 
 Uni-Directional L2 Traffic flow=a->b traffic linerate 10% pktsize 64
     ${stream}=     L2 add  flow=a->b  src_mac=00:11:01:00:00:03  dst_mac=00:11:01:00:00:04  line_rate=10  frame_size=64  ethertype=8000  name=a_b_flow
@@ -81,7 +81,7 @@ Uni-Directional L2 Traffic flow=a->b traffic linerate 10% pktsize 64
     #sleep          10
     #${report}=     fetch port stats
     #verify results traffic  transmitted_frames  received_valid_frames  ${tolerance}    
-    [Tags]  T5  switch  traffic  feature         
+    [Tags]  T5  switch  L2  traffic  feature         
 
 Uni-Directional L2 Traffic flow=a->b traffic framerate 10000 pktsize 256 
     ${stream}=     L2 add  flow=a->b  src_mac=00:11:01:00:00:05  dst_mac=00:11:01:00:00:06  frame_rate=10000  frame_size=256  ethertype=8000  name=a_b_flow
@@ -98,7 +98,7 @@ Uni-Directional L2 Traffic flow=a->b traffic framerate 10000 pktsize 256
     #sleep          10
     #${report}=     fetch port stats
     #verify results traffic  transmitted_frames  received_valid_frames  ${tolerance}        
-    [Tags]  T5  switch  traffic  feature   
+    [Tags]  T5  switch  L2  traffic  feature   
 
 Uni-Directional L2 Traffic flow=a->b traffic linerate 25% pktsize 256
     ${stream}=     L2 add  flow=a->b  src_mac=00:11:01:00:00:07  dst_mac=00:11:01:00:00:08  line_rate=25  frame_size=256  ethertype=8000  name=a_b_flow
@@ -115,7 +115,7 @@ Uni-Directional L2 Traffic flow=a->b traffic linerate 25% pktsize 256
     #sleep          10
     #${report}=     fetch port stats
     #verify results traffic  transmitted_frames  received_valid_frames  ${tolerance}    
-    [Tags]  T5  switch  traffic  feature       
+    [Tags]  T5  switch  L2  traffic  feature       
 
 Uni-Directional L2 Traffic flow=a->b traffic framerate 10000 pktsize 512 
     ${stream}=     L2 add  flow=a->b  src_mac=00:11:01:00:01:01  dst_mac=00:11:01:00:01:02  frame_rate=10000  frame_size=512  ethertype=8000  name=a_b_flow
@@ -132,7 +132,7 @@ Uni-Directional L2 Traffic flow=a->b traffic framerate 10000 pktsize 512
     #sleep          10
     #${report}=     fetch port stats
     #verify results traffic  transmitted_frames  received_valid_frames  ${tolerance}        
-    [Tags]  T5  switch  traffic  feature
+    [Tags]  T5  switch  L2  traffic  feature
 
 Uni-Directional L2 Traffic flow=a->b traffic linerate 50% pktsize 512
     ${stream}=     L2 add  flow=a->b  src_mac=00:11:01:00:00:07  dst_mac=00:11:01:00:00:08  line_rate=50  frame_size=512  ethertype=8000  name=a_b_flow
@@ -149,7 +149,7 @@ Uni-Directional L2 Traffic flow=a->b traffic linerate 50% pktsize 512
     #sleep          10
     #${report}=     fetch port stats
     #verify results traffic  transmitted_frames  received_valid_frames  ${tolerance}    
-    [Tags]  T5  switch  traffic  feature
+    [Tags]  T5  switch  L2  traffic  feature
 
 Bi-Directional L2 Traffic flow=a<->b traffic framerate 10000 pktsize 1024
     ${stream}=     L2 add  flow=a<->b  src_mac=00:11:01:00:02:01  dst_mac=00:11:01:00:02:02  frame_rate=10000  frame_size=1024  ethertype=8000  name=a_b_bidir_flow
@@ -163,7 +163,7 @@ Bi-Directional L2 Traffic flow=a<->b traffic framerate 10000 pktsize 1024
     ${report}=     fetch port stats
     verify results traffic  transmitted_frame_rate  received_frame_rate  ${ratetolerance}  
     stop traffic   ${stream}
-    [Tags]  T5  switch  traffic  feature
+    [Tags]  T5  switch  L2  traffic  feature
 
 Bi-Directional L2 Traffic flow=a<->b traffic framerate 10000 pktsize 1518
     ${stream}=     L2 add  flow=a<->b  src_mac=00:11:01:00:04:01  dst_mac=00:11:01:00:04:02  frame_rate=10000  frame_size=1518  ethertype=8000  name=a_b_bidir_flow
@@ -177,7 +177,7 @@ Bi-Directional L2 Traffic flow=a<->b traffic framerate 10000 pktsize 1518
     ${report}=     fetch port stats
     verify results traffic  transmitted_frame_rate  received_frame_rate  ${ratetolerance}  
     stop traffic   ${stream}
-    [Tags]  T5  switch  traffic  feature  
+    [Tags]  T5  switch  L2  traffic  feature  
 
 Bi-Directional L2 Traffic flow=a<->b traffic linerate 75% pktsize 1518
     ${stream}=     L2 add  flow=a<->b  src_mac=00:11:01:00:03:01  dst_mac=00:11:01:00:03:02  line_rate=75  frame_size=1518  ethertype=8000  name=a_b_bidir_flow
@@ -191,7 +191,7 @@ Bi-Directional L2 Traffic flow=a<->b traffic linerate 75% pktsize 1518
     ${report}=     fetch port stats
     verify results traffic  transmitted_frame_rate  received_frame_rate  ${ratetolerance}  
     stop traffic   ${stream}
-    [Tags]  T5  switch  traffic  feature  
+    [Tags]  T5  switch  L2  traffic  feature  
 
 Bi-Directional L2 Traffic flow=a<->b traffic linerate 100% pktsize 1518
     ${stream}=     L2 add  flow=a<->b  src_mac=00:11:01:00:05:01  dst_mac=00:11:01:00:05:02  line_rate=100  frame_size=1518  ethertype=8000  name=a_b_bidir_flow
@@ -205,7 +205,7 @@ Bi-Directional L2 Traffic flow=a<->b traffic linerate 100% pktsize 1518
     ${report}=     fetch port stats
     verify results traffic  transmitted_frame_rate  received_frame_rate  ${ratetolerance}  
     stop traffic   ${stream}
-    [Tags]  T5  switch  traffic  feature  
+    [Tags]  T5  switch  L2  traffic  feature  
 
 Uni-Directional L2 Traffic jumbo flow=a->b traffic linerate 10% pktsize 9150
     ${stream}=     L2 add  flow=a->b  src_mac=00:11:01:00:01:0e  dst_mac=00:11:01:00:01:0f  line_rate=10  frame_size=9150  ethertype=8000  name=a_b_jumbo_flow
@@ -219,7 +219,7 @@ Uni-Directional L2 Traffic jumbo flow=a->b traffic linerate 10% pktsize 9150
     ${report}=     fetch port stats
     verify results traffic  transmitted_frame_rate  received_frame_rate  ${ratetolerance}  
     stop traffic   ${stream}
-    [Tags]  T5  switch  traffic  feature  jumbo  
+    [Tags]  T5  switch  L2  traffic  jumbo  feature    
 
 Bi-Directional L2 Traffic jumbo flow=a<->b traffic linerate 10% pktsize 9150
     ${stream}=     L2 add  flow=a<->b  src_mac=00:11:01:00:01:0a  dst_mac=00:11:01:00:01:0b  line_rate=10  frame_size=9150  ethertype=8000  name=a_b_bidir_jumbo_flow
@@ -233,111 +233,111 @@ Bi-Directional L2 Traffic jumbo flow=a<->b traffic linerate 10% pktsize 9150
     ${report}=     fetch port stats
     verify results traffic  transmitted_frame_rate  received_frame_rate  ${ratetolerance}  
     stop traffic   ${stream}
-    [Tags]  T5  switch  traffic  jumbo  feature  
+    [Tags]  T5  switch  L2  traffic  jumbo  feature  
 
 Verify all interfaces show up after sw installation 
     Log    Step 1 - Verify all interfaces show up after sw installation
-    [Tags]  Manual-untested
+    [Tags]  Manual-untested  feature    
     Manual untested
 
 Verify that the various transceivers are detected in the uplink module and they are up and running 
     Log    Step 1 - Verify that the various transceivers are detected in the uplink module and they are up and running
-    [Tags]  Manual-untested
+    [Tags]  Manual-untested  feature
     Manual untested
 
 Verify interface op is consistent and as per spec in show interfaces op 
     Log    Step 1 - Verify interface op is consistent and as per spec in show interfaces op
-    [Tags]  Manual-untested
+    [Tags]  Manual-untested  feature
     Manual untested
 
 Verify line-rate traffic 
     Log    Step 1 - Verify line-rate traffic
-    [Tags]  Manual-untested
+    [Tags]  Manual-untested  feature
     Manual untested
 
 Verify end-to-end ping system-test 
     Log    Step 1 - Verify end-to-end ping system-test
-    [Tags]  Manual-untested
+    [Tags]  Manual-untested  feature
     Manual untested
 
 Verify auto-negotiation configurations work as expected 
     Log    Step 1 - Verify auto-negotiation configurations work as expected
-    [Tags]  Manual-untested
+    [Tags]  Manual-untested  feature
     Manual untested
 
 Verify Auto- negotiation enabled on both ends of interface
     Log    Step 1 - Verify Auto- negotiation enabled on both ends of interface
-    [Tags]  Manual-untested
+    [Tags]  Manual-untested  feature
     Manual untested
 
 Verify Speed/Duplex in ports 
     Log    Step 1 - Verify Speed/Duplex in ports
-    [Tags]  Manual-untested
+    [Tags]  Manual-untested  feature
     Manual untested
 
 Verify interface state is reported correctly when cable is unplugged. 
     Log    Step 1 - Verify interface state is reported correctly when cable is unplugged. 
-    [Tags]  Manual-untested
+    [Tags]  Manual-untested  feature
     Manual untested
 
 Verify that the options are maintained on the interface after the system reboot. 
     Log    Step 1 - Verify that the options are maintained on the interface after the system reboot.
-    [Tags]  Manual-untested
+    [Tags]  Manual-untested  feature
     Manual untested
 
 Verify that the appropriate counters are incremented when the interface receivers error oversized undersized packets
     Log    Step 1 - Verify that the appropriate counters are incremented when the interface receivers error oversized undersized packets
-    [Tags]  Manual-untested  interface
+    [Tags]  Manual-untested  interface  counters  feature
     Manual untested
     
 Verify Sending L2 traffic with frame size 64 bytes 
     Log    Step 1 - Verify Sending L2 traffic with frame size 64 bytes
-    [Tags]  Manual-untested  interface  counters  
+    [Tags]  Manual-untested  interface  counters  feature  
     Manual untested
 
 Verify Sending L2 traffic with frame size 128 bytes 
     Log    Step 1 - Verify Sending L2 traffic with frame size 128 bytes
-    [Tags]  Manual-untested  interface  counters
+    [Tags]  Manual-untested  interface  counters  feature
     Manual untested
 
 Verify Sending L2 traffic with frame size 512 bytes 
     Log    Step 1 - Verify Sending L2 traffic with frame size 512 bytes
-    [Tags]  Manual-untested  interface  counters
+    [Tags]  Manual-untested  interface  counters  feature
     Manual untested
 
 Verify Sending L2 traffic with frame size 1024 bytes 
     Log    Step 1 - Verify Sending L2 traffic with frame size 1024 bytes
-    [Tags]  Manual-untested  interface  counters
+    [Tags]  Manual-untested  interface  counters  feature
     Manual untested
 
 Verify Sending L2 traffic with frame size Jumbo 9150 bytes 
     Log    Step 1 - Verify Sending L2 traffic with frame size Jumbo 9150 bytes
-    [Tags]  Manual-untested  interface  counters
+    [Tags]  Manual-untested  interface  counters  feature
     Manual untested
 
 Verify Sending L2 traffic with mix and incremental from 64 to 9150 bytes 
     Log    Step 1 - Verify Sending L2 traffic with frame size mix and incremental from 64 to 9150 bytes
-    [Tags]  Manual-untested  interface  counters
+    [Tags]  Manual-untested  interface  counters  feature
     Manual untested
 
 Verify - Jumbo frame disabled - Sending L2 traffic with Jumbo frame size 9150 bytes 
     Log    Step 1 - Verify - Jumbo frame disabled - Sending L2 traffic with Jumbo frame size 9150 bytes 
-    [Tags]  Manual-untested  interface  counters
+    [Tags]  Manual-untested  interface  counters  feature
     Manual untested
 
 Test the Oversubscription of 40Gig Links between Leaf and Spines
     Log   Step 1 - Test the Oversubscription of 40Gig Links between Leaf and Spines
-    [Tags]  Manual-untested  interface  counters
+    [Tags]  Manual-untested  interface  counters  feature
     Manual untested
     
 Test the hashing algorithm between the leaf and spine with multiple links L2 Traffic 
     Log    Step 1 - Test the hashing algorithm between the leaf and spine with multiple links
-    [Tags]  Manual-untested  interface  counters
+    [Tags]  Manual-untested  interface  counters  feature
     Manual untested
 
 Test the hashing algorithm between the leaf and spine with multiple links L3 Traffic 
     Log    Step 1 - Test the hashing algorithm between the leaf and spine with multiple links
-    [Tags]  Manual-untested  interface  counters
+    [Tags]  Manual-untested  interface  counters  feature
     Manual untested
     
 
