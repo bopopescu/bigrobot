@@ -24,7 +24,7 @@ DB_SERVER = 'qadashboard-mongo.bigswitch.com'
 DB_PORT = 27017
 
 client = MongoClient(DB_SERVER, DB_PORT)
-db = client.test_catalog
+db = client.test_catalog2
 
 testcases = db.test_cases
 testsuites = db.test_suites
@@ -32,7 +32,7 @@ testsuites = db.test_suites
 tc = testcases.find(
         { "$and": [
             {"tags": {"$all": ["ironhorse"]}},
-            {"tags": {"$nin": ["feature", "scaling", "performance", "solution", "longevity", "traffic", "negative"]}}
+            {"tags": {"$nin": ["feature", "scaling", "performance", "solution", "longevity", "negative"]}}
             ] },
         { "product_suite": 1, "name": 1, "tags": 1, "_id": 0 }
         ).sort("product")
@@ -44,12 +44,15 @@ for x in tc:
         tc_dict[product_suite] = []
     tc_dict[product_suite].append(helpers.utf8(x['name']))
 
+count = 0
+
 for key, value in tc_dict.items():
     ts = testsuites.find_one( { "product_suite": key } )
     print "Name: %s, Source file: %s" % (ts["author"], ts["source"])
     for x in ["\t%s" % x for x in value]:
         print x
+        count += 1
     print ""
 
-#print helpers.prettify(tc_dict)
+print "Total test cases affected: %d" % count
 
