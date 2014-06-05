@@ -141,8 +141,7 @@ def print_stat(descr, val):
     print("%-60s %15s" % (descr, val))
 
 
-if __name__ == '__main__':
-
+def collect_stats():
     descr = """\
 Display test execution stats collected for a specific build.
 """
@@ -161,7 +160,7 @@ Display test execution stats collected for a specific build.
     print_stat("Total of all test cases:", ih.total_of_all_testcases())
 
     print ""
-    print "Iron Horse Release Metrics (Build: %s)" % build
+    print "%s Release Metrics (Build: %s)" % (args.release, build)
     print "====================================================="
     print_stat("Total test suites:", ih.total_testsuites())
     print_stat("Total test cases:", ih.total_testcases())
@@ -187,3 +186,7 @@ Display test execution stats collected for a specific build.
     print_stat("Total manual tests (executed, passed, failed):", ih.total_testcases_by_tag_executed("manual", build_name=build))
     print_stat("Total manual-untested tests (executed, passed, failed):", ih.total_testcases_by_tag_executed("manual-untested", build_name=build))
     print_stat("Total executable test cases (executed, passed, failed):", ih.total_executable_testcases_executed(build_name=build))
+
+
+if __name__ == '__main__':
+    collect_stats()
