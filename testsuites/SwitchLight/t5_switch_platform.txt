@@ -253,7 +253,7 @@ Verify switch interface 1g configuration on switch
    
 Verify Show environment
     Log    Step 1 - Verify Show env
-    [Tags]  Manual  CLI  Admin  jira-pan-667  feature  
+    [Tags]  Manual  CLI  Admin  feature  jira-pan-667    
      Manual Failed
 
 Verify Show running-config
@@ -283,7 +283,7 @@ Verify CLI reboot command option - Config persistent after save
 
 Verify that the various transceivers are detected in the uplink module and they are up and running 
     Log    Step 1 - Verify that the various transceivers are detected in the uplink module and they are up and running
-    [Tags]  Manual-untested  interface  optics
+    [Tags]  Manual-untested  interface  optics  feature
     Manual untested
 
 Verify interface op is consistent and as per spec in show interfaces op 
@@ -378,7 +378,7 @@ Verify the debugging of vlan in the Switch
 
 Verify the debugging of vns in the Switch 
     Log    Step 1 - Verify the vns can be shown in switch
-    [Tags]  Manual-untested  Debug
+    [Tags]  Manual-untested  Debug  feature
     Manual untested
     
 Verify the debugging of forwarding programming in the Switch 
@@ -388,7 +388,7 @@ Verify the debugging of forwarding programming in the Switch
 
 verify the ofaux channel on controller  
     verify ofaux channel on controller  c1  ${switch1_name}
-    [Tags]  T5  switch  Platform  ofaux  feature  test1    
+    [Tags]  T5  switch  Platform  ofaux  feature      
 
 
 * Keywords
