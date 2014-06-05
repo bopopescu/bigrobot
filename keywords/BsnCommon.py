@@ -121,7 +121,7 @@ class BsnCommon(object):
             os.makedirs(d)
         fh = open(show_cmd_file, 'w')
         cmdlist = [
-#                   'debug cli',
+                   'debug cli',
                    'show running-config details',
                    'show controller',
                    'show controller details',
@@ -146,6 +146,7 @@ class BsnCommon(object):
                    'show vft',
                    'show debug events',
                    'show debug counters all',
+                   'no debug cli'
 #                   'show debug events details', Disabling due to BSC-5570
                    ]
         for cmd in cmdlist:
