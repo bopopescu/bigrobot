@@ -101,13 +101,6 @@ Head-less Mode & Verify Connectivity
    [Tags]  feature  skipped
    Shutdown both the controllers and verify connectivity
    
-Clean Config
-   [Tags]  clean
-   rest delete tenant  L2autoT1
-   rest delete tenant  L2autoT2
-   rest delete tenant  L2autoT3
-   auto delete fabric switch  ${spineList}  ${leafList}  2
-   auto delete fabric portgroups
    
 ########################################################################################################################################
 
