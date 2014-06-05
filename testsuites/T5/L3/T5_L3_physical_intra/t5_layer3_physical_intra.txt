@@ -3250,6 +3250,7 @@ Verify same mac address showing up on two ports in the same segment is blocked
     ${state} =                                  Set Variable                    ${result[0]['state']}    
     Should Contain                              ${state}                        Active
     Should Contain                              ${attachpoint}                  ${leaf0_pc1}
+    BASH run command                            h1                              kill -9 ${pid1}
     BASH delete route                           h1                              10.251.0.0/16           10.251.1.1
     BASH delete route                           h3                              10.251.0.0/16           10.251.1.1
 
@@ -3313,6 +3314,7 @@ Verify clear blocked endpoint works
     ${state} =                                  Set Variable                    ${result[0]['state']}    
     Should Contain                              ${state}                        Active
     Should Contain                              ${attachpoint}                  ${leaf0_pc1}
+    BASH run command                            h1                              kill -9 ${pid1}
     BASH delete route                           h1                              10.251.0.0/16           10.251.1.1
     BASH delete route                           h3                              10.251.0.0/16           10.251.1.1
 	
@@ -3371,6 +3373,7 @@ initialize host
     log                                         host5 ifconfig is ${result}
     ${result} =                                 BASH run command                h6                     ifconfig
     log                                         host6 ifconfig is ${result}
+    BASH stop  service                          h1                              isc-dhcp-server
 	
 
 

@@ -146,6 +146,7 @@ class BsnCommon(object):
                    'show vft',
                    'show debug events',
                    'show debug counters all',
+                   'no debug cli'
 #                   'show debug events details', Disabling due to BSC-5570
                    ]
         for cmd in cmdlist:

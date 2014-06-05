@@ -2,6 +2,11 @@
 # 'infile': a file which contains a list of output.xml files (path included).
 #
 
+export BUILD_NAME="bvs master #1995"
+#export BUILD_NAME="bvs master #1989"
+#export BUILD_NUMBER
+#export BUILD_URL
+
 ts=`date "+%Y-%m-%d_%H%M%S"`
 
 if [ $# -eq 0 ]; then
@@ -26,7 +31,7 @@ else
 fi
 
 progname=`basename $0`
-outfile=${prog_name}_output.$ts.log
+outfile=${progname}_output.$ts.log
 
 rm -f test_suites_regression.json test_cases_regression.json
 

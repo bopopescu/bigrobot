@@ -2601,6 +2601,9 @@ initialize host
     log                                         host5 ifconfig is ${result}
     ${result} =                                 BASH run command                h6                     ifconfig
     log                                         host6 ifconfig is ${result}
+    BASH stop  service                          h1                              isc-dhcp-server
+    BASH stop  service                          h2                              isc-dhcp-server
+    BASH stop  service                          h3                              isc-dhcp-server
 
 
 test setup topology
