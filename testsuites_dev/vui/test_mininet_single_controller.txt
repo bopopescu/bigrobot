@@ -11,7 +11,7 @@ Library         keywords_dev/vui/MyTest.py
 
 * Test Case
 Test force postmortem
-    base test postmortem
+    #base test postmortem
     log               "Hello"
-    should be true    ${false}
+    #should be true    ${false}
 
