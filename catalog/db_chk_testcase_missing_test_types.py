@@ -32,7 +32,7 @@ testsuites = db.test_suites
 tc = testcases.find(
         { "$and": [
             {"tags": {"$all": ["ironhorse"]}},
-            {"tags": {"$nin": ["feature", "scaling", "performance", "solution", "longevity", "negative"]}}
+            {"tags": {"$nin": ["feature", "scaling", "performance", "solution", "longevity", "negative", "robustness"]}}
             ] },
         { "product_suite": 1, "name": 1, "tags": 1, "_id": 0 }
         ).sort("product")
@@ -42,7 +42,7 @@ for x in tc:
     product_suite = helpers.utf8(x['product_suite'])
     if product_suite not in tc_dict:
         tc_dict[product_suite] = []
-    tc_dict[product_suite].append(helpers.utf8(x['name']))
+    tc_dict[product_suite].append("%s, %s" % (helpers.utf8(x['name']), x['tags']))
 
 count = 0
 
