@@ -1439,7 +1439,7 @@ def send_mail(m):
       subject: <subject>
       message_body: <content>
     """
-    _to = split_and_strip(m['to'])
+    _to = [utf8(x) for x in split_and_strip(m['to'])]
     s = smtplib.SMTP(SMTP_SERVER)
     s.set_debuglevel(debug)
 
@@ -1447,7 +1447,7 @@ def send_mail(m):
     msg['Subject'] = m['subject']
     msg['From'] = m['from']
     msg['To'] = m['to']
-    s.sendmail(m['from'], [_to], msg.as_string())
+    s.sendmail(m['from'], _to, msg.as_string())
     s.quit()
 
 

@@ -42,7 +42,7 @@ T5 Switch Disconnect & Reconnect
     manual passed
     
 T6 Verify when a switch dies controller properly route around that switch
-	[Tags]  full  manual-untested
+	[Tags]  feature  manual-untested
     manual untested
     
 T7 Verify the correct traffic failover from the MLAG’d hosts during a switch disconnect/die
@@ -54,7 +54,7 @@ T8 Verify all the config changes happened when one of the controllers is down is
     manual untested
     
 T9 Verify all the topology changes happened when one of the controllers is down is correctly getting reflected when it comes back online
-	[Tags]  full  manual-untested
+	[Tags]  feature  manual-untested
     manual untested
     
 T10 Verify the correct controller role changes on both leaf & spine switches during controller failover
@@ -66,14 +66,14 @@ T11 Flap eth0 of the management interface
     manual untested
     
 T12 Swap eth0 & eth1 in bare metal server 
-	[Tags]  full  manual-untested
+	[Tags]  feature  manual-untested
     manual untested
     
 T13 Pump line rate traffic: look for split brain and other HA sync loss situations.
-	[Tags]  full	manual  BVS-1689
+	[Tags]  robustness 	manual  BVS-1689
     manual failed
     
 T14 Shut down the standby controller and bring up a new controller and try to join the cluster
-	[Tags]  full	manual  BVS-1689
+	[Tags]  robustness 	manual  BVS-1689
     manual failed
     

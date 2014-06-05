@@ -77,56 +77,56 @@ Library         Dialogs
 #FUNCTIONALITY:
 ##ONLY DATA TRAFFIC NO CONTROL TRAFFIC
 T1 With default QoS verify flow mappings to queues
-	[Tags]  manual
+	[Tags]  manual  feature
 	Default QoS
 	Start traffic
 	Verify flow mappings to HW queues
 
 T2 With default QoS verify Weights
-	[Tags]  manual
+	[Tags]  manual  feature
 	Default QoS
 	Start traffic
 	Verify flow weights on egress pipe
 
 T3 with default QoS local leaf traffic
-	[Tags]  manual
+	[Tags]  manual  feature
 	Default QoS
 	Start traffic
 	Verify flow mappings to HW queues
 	Verify flow weights on egress pipe
 	
 T4 with default QoS leaf to leaf traffic in a rack  #Data pkt flooding ratelimiters --->
-	[Tags]  manual
+	[Tags]  manual  feature
 	Default QoS
 	Start traffic
 	Verify flow mappings to HW queues
 	Verify flow weights on egress pipe
 
 T5 With default QoS leaf to Spine traffic
-	[Tags]  manual
+	[Tags]  manual  feature
 	Default QoS
 	Start traffic
 	Verify flow mappings to HW queues
 	Verify flow weights on egress pipe
 
 T6 With default QoS leaf to leaf traffic with 90% low priority and 10% High priority
-	[Tags]  manual
+	[Tags]  manual  feature
 	Default QoS
 	Start traffic
 	Verify flow mappings to HW queues
 	Verify flow weights on egress pipe
 
 T7 With default QoS leaf to spine traffic with 90% low priority and 10% High priority
-	[Tags]  manual
+	[Tags]  manual  feature
 	Default QoS
 	Start traffic
 	Verify flow mappings to HW queues
 	Verify flow weights on egress pipe
 
 T8 Mix T6 and T7
-	[Tags]  manual
+	[Tags]  manual  feature
 T9 With default QoS leaf to leaf start each priority traffic one by one #same interface sending and receiving --->
-	[Tags]  manual
+	[Tags]  manual  feature
 	Default QoS
 	Start low priority traffic 100%
 	Start second low priority traffic 100%
@@ -136,78 +136,78 @@ T9 With default QoS leaf to leaf start each priority traffic one by one #same in
 	Verify flow weights on egress pipe
 
 T10 Repeat T9 with leaf to spine
-	[Tags]  manual
+	[Tags]  manual  feature
 
 T11 Mix T10 and T9
-	[Tags]  manual
+	[Tags]  manual  feature
 	
 T12 Repeat T1 to T11 with frame sizes starting from 64 to 9216, (cell boundries 208/209/210 bytes)
-	[Tags]  manual
+	[Tags]  manual  feature
 	
 T13 Mix and match flows with random frame sizes with multiple flows
-	[Tags]  manual
+	[Tags]  manual  feature
 	
 T14 Repeat above all with two spines and 4 leafs, each source is from different leaf sending to one destination leaf
-	[Tags]  manual
+	[Tags]  manual  feature
 ## WITH CONTROL TRAFFIC 
 T15 Repeat above all with CONTROL TRAFFIC (from T1 to T14)
-	[Tags]  manual-untested
+	[Tags]  manual-untested  feature
 	Verify the rate limiters on HW and Controller
 
 ## WITH QoS
 ##ONLY DATA TRAFFIC NO CONTROL TRAFFIC
 T16 With QoS verify flow mappings to queues
-	[Tags]  manual
+	[Tags]  manual  feature
 	Default QoS
 	Start traffic
 	Verify flow mappings to HW queues
 
 T17 With QoS verify Weights
-	[Tags]  manual
+	[Tags]  manual  feature
 	Default QoS
 	Start traffic
 	Verify flow weights on egress pipe
 
 T18 with QoS local leaf traffic
-	[Tags]  manual
+	[Tags]  manual  feature
 	Default QoS
 	Start traffic
 	Verify flow mappings to HW queues
 	Verify flow weights on egress pipe
 	
 T19 with QoS leaf to leaf traffic in a rack
-	[Tags]  manual
+	[Tags]  manual  feature
 	Default QoS
 	Start traffic
 	Verify flow mappings to HW queues
 	Verify flow weights on egress pipe
 
 T20 With QoS leaf to Spine traffic
-	[Tags]  manual
+	[Tags]  manual  feature
 	Default QoS
 	Start traffic
 	Verify flow mappings to HW queues
 	Verify flow weights on egress pipe
 
 T21 With QoS leaf to leaf traffic with 90% low priority and 10% High priority
-	[Tags]  manual
+	[Tags]  manual  feature
 	Default QoS
 	Start traffic
 	Verify flow mappings to HW queues
 	Verify flow weights on egress pipe
 
 T22 With QoS leaf to spine traffic with 90% low priority and 10% High priority
-	[Tags]  manual
+	[Tags]  manual  feature
 	Default QoS
 	Start traffic
 	Verify flow mappings to HW queues
 	Verify flow weights on egress pipe
 
 T23 Mix T22 and T21
-	[Tags]  manual
+	[Tags]  manual  feature
 	
 T24 With QoS leaf to leaf start each priority traffic one by one
-	[Tags]  manual
+	[Tags]  manual  feature
 	Default QoS
 	Start low priority traffic 100%
 	Start second low priority traffic 100%
@@ -217,56 +217,56 @@ T24 With QoS leaf to leaf start each priority traffic one by one
 	Verify flow weights on egress pipe
 
 T25 Repeat T9 with leaf to spine
-	[Tags]  manual
+	[Tags]  manual  feature
 	
 T26 Mix T25 and T24
-	[Tags]  manual
+	[Tags]  manual  feature
 	
 T27 Repeat T16 to T26 with frame sizes starting from 64 to 9216
-	[Tags]  manual
+	[Tags]  manual  feature
 	
 T28 Mix and match flows with random frame sizes with multiple flows
-	[Tags]  manual
+	[Tags]  manual  feature
 	
 T29 Repeat above all with two spines and 4 leafs, each source is from different leaf sending to one destination leaf
-	[Tags]  manual
+	[Tags]  manual  feature
 	
 ## WITH CONTROL TRAFFIC 
 T30 Repeat above all with CONTROL TRAFFIC (from T1 to T14)
-	[Tags]  manual-untested
+	[Tags]  manual-untested  feature
 	Verify control rate limiters on HW and Controller
 	
 T31 shut no shut switch interface
-	[Tags]  manual
+	[Tags]  manual  feature
 T32 Remove Add tenant interface
-	[Tags]  manual
+	[Tags]  manual  feature
 T33 Remove Add vns interface
-	[Tags]  manual
+	[Tags]  manual  feature
 T34 Remove Add switch
-	[Tags]  manual
+	[Tags]  manual  feature
 #Add a new switch
 #counters. .1p data pkt counters and control pkts
 
 T35 HA failover
-	[Tags]  manual
+	[Tags]  manual  feature
 T36 Reboot standby
-	[Tags]  manual
+	[Tags]  manual  feature
 T37 Reboot master
-	[Tags]  manual
+	[Tags]  manual  feature
 T38 poweroff switch
-	[Tags]  manual
+	[Tags]  manual  feature
 T39 poweron switch
-	[Tags]  manual
+	[Tags]  manual  feature
 T40 poweroff master controller
-	[Tags]  manual-untested
+	[Tags]  manual-untested  feature
 T41 poweroff slave controller
-	[Tags]  manual-untested
+	[Tags]  manual-untested  feature
 T42 Shut Mgmt port in switch and connect back
-	[Tags]  manual-untested
+	[Tags]  manual-untested  feature
 T43 Verify syslogs for any scale errors
-	[Tags]  manual
+	[Tags]  manual  feature
 T44 restart ofad
-	[Tags]  manual
+	[Tags]  manual  feature
 T45 restart floodlight
-	[Tags]  manual
+	[Tags]  manual  feature
 	

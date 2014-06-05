@@ -42,7 +42,9 @@ AUTHORS = {
            "Don Jayakody": "don",
            "Cliff DeGuzman": "cliff",
            "kranti": "kranti",
-           "William Tan": "fc7737",
+           "William Tan": "wtan",
+           "fc7737": "wtan",
+           "Sakshi Kalra": "sakshikalra",
            }
 
 def format_robot_timestamp(ts, is_datestamp=False):
@@ -214,11 +216,28 @@ class TestSuite(object):
             helpers.environment_failure("AUTHORS dictionary does not contain '%s'"
                                         % output)
 
+    def check_topo_type(self, suite):
+        """
+        Give the 'suite' input which is the path to a suite file (minus the
+        '.txt' extension). Check whether it has <suite>.virtual.topo or
+        <suite>.physical.topo.
+
+        Return value:
+          'virtual'
+          'physical'
+          'unknown'  - neither virtual nor physical
+        """
+        if helpers.file_exists(suite + ".virtual.topo"):
+            return "virtual"
+        if helpers.file_exists(suite + ".physical.topo"):
+            return "physical"
+        return "unknown"
+
     def extract_suite_attributes(self):
         suite = self.data()['robot']['suite']
         timestamp = format_robot_timestamp(self.data()['robot']['@generated'])
         datestamp = format_robot_datestamp(self.data()['robot']['@generated'])
-        source = helpers.utf8(suite['@source'])
+        source = source_file = helpers.utf8(suite['@source'])
         match = re.match(r'.+bigrobot/(\w+/([\w-]+)/.+)$', source)
         if match:
             source = "bigrobot/" + match.group(1)
@@ -232,6 +251,7 @@ class TestSuite(object):
         name_actual = os.path.splitext(os.path.basename(source))[0]
         product_suite = os.path.splitext(source)[0]
         product_suite = re.sub(r'.*bigrobot/testsuites/', '', product_suite)
+        topo_type = self.check_topo_type(os.path.splitext(source_file)[0])
 
         self._suite = {
                     'source': source,
@@ -244,6 +264,8 @@ class TestSuite(object):
                     'product_suite': product_suite,
                     'author': author,
                     'total_tests': None,
+                    'topo_type': topo_type,
+                    'notes': None,
                     }
         if self._is_regression:
             pass
@@ -310,6 +332,7 @@ class TestSuite(object):
                     'build_number': None,
                     'build_url': None,
                     'build_name': None,
+                    'notes': None,
                     }
 
             if self._is_regression:

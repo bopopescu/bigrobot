@@ -3,7 +3,7 @@ Documentation  Corsair Tunnelling Test Suite
 Suite Setup  offset suite setup
 #Suite Teardown   offset suite teardown
 Test Setup   base test setup
-Test Teardown  base test teardown 
+Test Teardown  offset test teardown 
 Force Tags   Corsair  BigTap  Sanity  Feature
 Library  keywords/BsnCommon.py
 Library  keywords/AppController.py
@@ -28,7 +28,7 @@ ${bigtap_policy_name}					offset-policy
 ### GTPv1 Test Cases
 
 
-01_Verify offset match with GTP version  ##PASS
+01_Verify offset match with GTP version   ##PASS
 	rest add policy match  admin-view  ${bigtap_policy_name}  1  {"gtp-version": 1, "ether-type": 2048, "dst-tp-port": 2152, "ip-proto": 17, "sequence": 1}
     sleep  5
     ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
@@ -44,7 +44,7 @@ ${bigtap_policy_name}					offset-policy
     stop traffic  ${stream}
 	[Tags]  offset-match  gtp  version
 
-02_Verify offset match with GTP Protocol Type GTP(value 1) ### FAIL	'False' should be true, fails manually too
+02_Verify offset match with GTP Protocol Type GTP(value 1)   ###FAILasexp
 	rest add policy match  admin-view  ${bigtap_policy_name}  1  {"dst-tp-port": 2152, "ether-type": 2048, "gtp-v1-protocol-type": 1, "ip-proto": 17, "sequence": 1}
     sleep  5
     ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
@@ -60,7 +60,7 @@ ${bigtap_policy_name}					offset-policy
     stop traffic  ${stream}
 	[Tags]  offset-match  gtp  protocol-type
 	
-03_Verify offset match with GTP Protocol Type GTP'(value 0) ##PASS
+03_Verify offset match with GTP Protocol Type GTP'(value 0)  ##PASS
 	rest add policy match  admin-view  ${bigtap_policy_name}  1  {"dst-tp-port": 2152, "ether-type": 2048, "gtp-v1-protocol-type": 0, "ip-proto": 17, "sequence": 1}
     sleep  5
     ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
@@ -76,7 +76,7 @@ ${bigtap_policy_name}					offset-policy
     stop traffic  ${stream}
 	[Tags]  offset-match  gtp'  protocol-type
 
-04_Verify offset match with GTPv1 TEID ###PASS
+04_Verify offset match with GTPv1 TEID  ###PASS
     rest add policy match  admin-view  ${bigtap_policy_name}  1  {"gtp-v1-teid": 100, "ether-type": 2048, "dst-tp-port": 2152, "ip-proto": 17, "sequence": 1}
     sleep  5
     ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
@@ -92,7 +92,7 @@ ${bigtap_policy_name}					offset-policy
     stop traffic  ${stream}
 	[Tags]  offset-match  gtp  teid  
 	
-05_Verify offset match on GTP TEID and send traffic with VLAN header #### FAILs as expected 'False' should be true
+05_Verify offset match on GTP TEID and send traffic with VLAN header  #### FAILsasexp
     rest add policy match  admin-view  ${bigtap_policy_name}  1  {"gtp-v1-teid": 100, "ether-type": 2048, "dst-tp-port": 2152, "ip-proto": 17, "sequence": 1}
     sleep  5
     ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
@@ -109,23 +109,23 @@ ${bigtap_policy_name}					offset-policy
 	[Tags]  offset-match  gtp  teid vlan-header
 
 
-06_Verify offset match with GTP TEID and ip header length > 20 bytes XXXXX skip this test case
-    rest add policy match  admin-view  ${bigtap_policy_name}  1  {"gtp-v1-teid": 100, "ether-type": 2048, "dst-tp-port": 2152, "ip-proto": 17, "sequence": 1}
-    sleep  5
-    ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
-    Should be true  ${verify_policy1}
-    ${stream}=  L3 add  name=gtp_teid  flow=a->b  frame_rate=10000  frame_size=1518
-    ...     src_mac=00:01:02:03:04:01  dst_mac=00:01:02:03:04:02  protocol=UDP  src_port=8001  dst_port=2152
-    ...     src_ip=100.1.1.1  src_gw=100.1.1.2  dst_ip=100.1.1.2  dst_gw=100.1.1.1  
-    ...		no_arp=True  payload=2000000000000064
-    clear stats    
-    start traffic  ${stream}
-    sleep  10
-    verify results  a  b  transmitted_frame_rate  received_frame_rate    
-    stop traffic  ${stream}
-	[Tags]  offset-match  gtp  teid  ip-header
+#06_Verify offset match with GTP TEID and ip header length > 20 bytes XXXXX skip this test case
+ #   rest add policy match  admin-view  ${bigtap_policy_name}  1  {"gtp-v1-teid": 100, "ether-type": 2048, "dst-tp-port": 2152, "ip-proto": 17, "sequence": 1}
+  #  sleep  5
+#    ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
+#    Should be true  ${verify_policy1}
+#    ${stream}=  L3 add  name=gtp_teid  flow=a->b  frame_rate=10000  frame_size=1518
+#    ...     src_mac=00:01:02:03:04:01  dst_mac=00:01:02:03:04:02  protocol=UDP  src_port=8001  dst_port=2152
+#    ...     src_ip=100.1.1.1  src_gw=100.1.1.2  dst_ip=100.1.1.2  dst_gw=100.1.1.1  
+#    ...		no_arp=True  payload=2000000000000064
+#    clear stats    
+#    start traffic  ${stream}
+#    sleep  10
+#    verify results  a  b  transmitted_frame_rate  received_frame_rate    
+#    stop traffic  ${stream}
+#	[Tags]  offset-match  gtp  teid  ip-header
 	
-07_Verify offset match with GTPv1 TEID and Protocol UDP  ###PASS
+07_Verify offset match with GTPv1 TEID and Protocol UDP   ###PASS
 	rest add policy match  admin-view  ${bigtap_policy_name}  1  {"gtp-v1-teid": 100, "sequence": 1, "dst-tp-port": 2152, "ip-proto": 17, "ether-type": 2048}
     sleep  5
     ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
@@ -141,7 +141,7 @@ ${bigtap_policy_name}					offset-policy
     stop traffic  ${stream}
 	[Tags]  offset-match  gtp  teid protocol
 	
-08_Verify offset match with GTP TEID and Destination Port 2152 ###PASS
+08_Verify offset match with GTP TEID and Destination Port 2152  ###PASS
 	rest add policy match  admin-view  ${bigtap_policy_name}  1  {"gtp-v1-teid": 100, "sequence": 1, "dst-tp-port": 2152, "ip-proto": 17, "ether-type": 2048}
     sleep  5
     ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
@@ -157,7 +157,7 @@ ${bigtap_policy_name}					offset-policy
     stop traffic  ${stream}
 	[Tags]  offset-match  gtp  teid dst-port
 	
-09_Verify offset match with GTP TEID and Destination Port 2123 #### FAILs as expected 'False' should be true
+09_Verify offset match with GTP TEID and Destination Port 2123  #### FAILsasexp
 	rest add policy match  admin-view  ${bigtap_policy_name}  1  {"gtp-v1-teid": 100, "sequence": 1, "dst-tp-port": 2123, "ip-proto": 17, "ether-type": 2048}
     sleep  5
     ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
@@ -174,7 +174,7 @@ ${bigtap_policy_name}					offset-policy
 	[Tags]  offset-match  gtp  teid dst-port
 
 	
-10_Verify offset match with GTP TEID and source port ####PASS
+10_Verify offset match with GTP TEID and source port  ####PASS
     rest add policy match  admin-view  ${bigtap_policy_name}  1  {"src-tp-port": 63, "ip-proto": 17, "sequence": 1, "gtp-v1-teid": 100, "ether-type": 2048, "dst-tp-port": 2152}
     sleep  5
     ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
@@ -190,7 +190,7 @@ ${bigtap_policy_name}					offset-policy
     stop traffic  ${stream}
 	[Tags]  offset-match  gtp  teid  src-port
 	
-11_Verify offset match with GTP TEID and source IP address  ####PASS
+11_Verify offset match with GTP TEID and source IP address   ####PASS
 	rest add policy match  admin-view  ${bigtap_policy_name}  1  {"src-ip-mask": "255.255.255.0", "ip-proto": 17, "sequence": 1, "gtp-v1-teid": 100, "ether-type": 2048, "dst-tp-port": 2152, "src-ip": "100.1.1.1"}
     sleep  5
     ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
@@ -206,7 +206,7 @@ ${bigtap_policy_name}					offset-policy
     stop traffic  ${stream}
 	[Tags]  offset-match  gtp  teid src-ip
 	
-12_Verify offset match with GTP TEID and destination IP address ###PASS
+12_Verify offset match with GTP TEID and destination IP address  ###PASS
 	rest add policy match  admin-view  ${bigtap_policy_name}  1  {"dst-ip": "100.1.1.2", "ip-proto": 17, "ether-type": 2048, "gtp-v1-teid": 100, "sequence": 1, "dst-tp-port": 2152, "dst-ip-mask": "255.255.255.0"}
     sleep  5
     ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
@@ -223,7 +223,7 @@ ${bigtap_policy_name}					offset-policy
 	[Tags]  offset-match  gtp  teid dst-ip
       
   
-13_Verify offset match with GTP TEID and VLAN ID ##Manual pass, script fails-false shud be true
+13_Verify offset match with GTP TEID and VLAN ID  ##ManualPassScriptFails
 	rest add policy match  admin-view  ${bigtap_policy_name}  1  {"ether-type": 2048, "ip-proto": 17, "sequence": 1, "gtp-v1-teid": 100, "vlan": 100, "dst-tp-port": 2152}
     sleep  5
     ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
@@ -239,7 +239,7 @@ ${bigtap_policy_name}					offset-policy
     stop traffic  ${stream}
 	[Tags]  offset-match  gtp  teid vlan-id
 		
-14_Verify offset match with GTP TEID and GTP version ##PASS
+14_Verify offset match with GTP TEID and GTP version  ##PASS
 	rest add policy match  admin-view  ${bigtap_policy_name}  1  {"ether-type": 2048, "ip-proto": 17, "sequence": 1, "gtp-v1-teid": 100, "gtp-version": 1, "dst-tp-port": 2152}
     sleep  5
     ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
@@ -255,7 +255,7 @@ ${bigtap_policy_name}					offset-policy
     stop traffic  ${stream}
 	[Tags]  offset-match  gtp  teid gtp-version
 	
-15_Verify offset match with GTPv TEID and GTP Protocol Type ####PASS with P.Type = 0, FAILs with P.Type=1
+15_Verify offset match with GTPv TEID and GTP Protocol Type  ####PASSwithPType=0,FAILswithP.Type=1
 	rest add policy match  admin-view  ${bigtap_policy_name}  1  {"gtp-v1-protocol-type": 0, "ip-proto": 17, "sequence": 1, "gtp-v1-teid": 100, "ether-type": 2048, "dst-tp-port": 2152}
     sleep  5
     ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
@@ -271,7 +271,7 @@ ${bigtap_policy_name}					offset-policy
     stop traffic  ${stream}
 	[Tags]  offset-match  gtp  teid protocol-type	
 	
-16_Verify offset match with GTP TEID, Protocol Type and GTP Version ####PASS with P.Type = 0, FAILs with P.Type=1
+16_Verify offset match with GTP TEID, Protocol Type and GTP Version  ####PASSwithPType=0,FAILswithP.Type=1
 	rest add policy match  admin-view  ${bigtap_policy_name}  1  {"ether-type": 2048, "gtp-v1-protocol-type": 0, "ip-proto": 17, "sequence": 1, "gtp-v1-teid": 100, "gtp-version": 1, "dst-tp-port": 2152}
     sleep  5
     ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
@@ -289,7 +289,7 @@ ${bigtap_policy_name}					offset-policy
 	
 ####### GTPv2 
 
-1_Verify offset match with GTP Version ##generic option gtp-version PASS
+1_Verify offset match with GTP Version  ##PASS
 	rest add policy match  admin-view  ${bigtap_policy_name}  1  {"gtp-version": 2, "ether-type": 2048, "dst-tp-port": 2152, "ip-proto": 17, "sequence": 1}
     sleep  5
     ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
@@ -305,23 +305,8 @@ ${bigtap_policy_name}					offset-policy
     stop traffic  ${stream}
 	[Tags]  offset-match  gtp  version
 	
-02_Verify offset match with GTP Protocol Type ## no option for v2 XXXXXX
-	rest add policy match  admin-view  ${bigtap_policy_name}  1  {"dst-tp-port": 2152, "ether-type": 2048, "gtp-v1-protocol-type": 0, "ip-proto": 17, "sequence": 1}
-    sleep  5
-    ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
-    Should be true  ${verify_policy1}
-    ${stream}=  L3 add  name=gtp_teid  flow=a->b  frame_rate=10000  frame_size=1518
-    ...     src_mac=00:01:02:03:04:01  dst_mac=00:01:02:03:04:02  protocol=UDP  src_port=8001  dst_port=2152
-    ...     src_ip=100.1.1.1  src_gw=100.1.1.2  dst_ip=100.1.1.2  dst_gw=100.1.1.1  
-    ...		no_arp=True  payload=2000000000000064
-    clear stats    
-    start traffic  ${stream}
-    sleep  10
-    verify results  a  b  transmitted_frame_rate  received_frame_rate    
-    stop traffic  ${stream}
-	[Tags]  offset-match  gtp  protocol-type
 	
-03_Verify offset match with GTP TEID without the TEID flag set #### FAILs as expected 'False' should be true
+02_Verify offset match with GTP TEID without the TEID flag set  #### FAILsasexp
 	rest add policy match  admin-view  ${bigtap_policy_name}  1  {"sequence": 1, "gtp-v2-teid": 100, "dst-tp-port": 2123, "ip-proto": 17, "ether-type": 2048}
     sleep  5
     ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
@@ -337,7 +322,7 @@ ${bigtap_policy_name}					offset-policy
     stop traffic  ${stream}
 	[Tags]  offset-match  gtp  protocol-type
 	
-04_Verify offset match on GTP TEID with the TEID flag set and with UDP traffic ##PASS
+03_Verify offset match on GTP TEID with the TEID flag set and with UDP traffic  ##PASS
 	rest add policy match  admin-view  ${bigtap_policy_name}  1  {"sequence": 1, "gtp-v2-teid": 100, "dst-tp-port": 2123, "ip-proto": 17, "ether-type": 2048}
     sleep  5
     ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
@@ -353,7 +338,7 @@ ${bigtap_policy_name}					offset-policy
     stop traffic  ${stream}
 	[Tags]  offset-match  gtp  protocol-type
 
-05_Verify offset match on GTP TEID with the TEID flag set and with TCP traffic #####PASS
+04_Verify offset match on GTP TEID with the TEID flag set and with TCP traffic  #####Failsasexp
 	rest add policy match  admin-view  ${bigtap_policy_name}  1  {"sequence": 1, "gtp-v2-teid": 100, "dst-tp-port": 2123, "ip-proto": 17, "ether-type": 2048}
     sleep  5
     ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
@@ -369,7 +354,7 @@ ${bigtap_policy_name}					offset-policy
     stop traffic  ${stream}
 	[Tags]  offset-match  gtp  protocol-type
 
-06_Verify offset match with GTP TEID and VLAN ID ##Manual pass, script fails-false shud be true
+06_Verify offset match with GTP TEID and VLAN ID  ##ManualPass,scriptFails
 	rest add policy match  admin-view  ${bigtap_policy_name}  1  {"ether-type": 2048, "ip-proto": 17, "sequence": 1, "vlan": 100, "gtp-v2-teid": 100, "dst-tp-port": 2123}
     sleep  5
     ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
@@ -385,7 +370,7 @@ ${bigtap_policy_name}					offset-policy
     stop traffic  ${stream}
 	[Tags]  offset-match  gtp  protocol-type
 	
-07_Verify offset match on GTP TEID and send traffic with VLAN Header  ##Fails
+07_Verify offset match on GTP TEID and send traffic with VLAN Header   ##Fails
 	rest add policy match  admin-view  ${bigtap_policy_name}  1  {"sequence": 1, "gtp-v2-teid": 100, "dst-tp-port": 2123, "ip-proto": 17, "ether-type": 2048}
     sleep  5
     ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
@@ -401,23 +386,23 @@ ${bigtap_policy_name}					offset-policy
     stop traffic  ${stream}
 	[Tags]  offset-match  gtp  protocol-type
 	
-08_Verify offset match with GTP TEID and send traffic with ip header length > 20 bytes #xxxx skip
-    rest add policy match  admin-view  ${bigtap_policy_name}  1  {"gtp-v1-teid": 100, "ether-type": 2048, "dst-tp-port": 2152, "ip-proto": 17, "sequence": 1}
-    sleep  5
-    ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
-    Should be true  ${verify_policy1}
-    ${stream}=  L3 add  name=gtp_teid  flow=a->b  frame_rate=10000  frame_size=1518
-    ...     src_mac=00:01:02:03:04:01  dst_mac=00:01:02:03:04:02  protocol=UDP  src_port=8001  dst_port=2123
-    ...     src_ip=100.1.1.1  src_gw=100.1.1.2  dst_ip=100.1.1.2  dst_gw=100.1.1.1  
-    ...		no_arp=True  payload=4800000000000064
-    clear stats    
-    start traffic  ${stream}
-    sleep  10
-    verify results  a  b  transmitted_frame_rate  received_frame_rate    
-    stop traffic  ${stream}
-	[Tags]  offset-match  gtp  teid  ip-header
+#08_Verify offset match with GTP TEID and send traffic with ip header length > 20 bytes #xxxx skip
+#    rest add policy match  admin-view  ${bigtap_policy_name}  1  {"gtp-v1-teid": 100, "ether-type": 2048, "dst-tp-port": 2152, "ip-proto": 17, "sequence": 1}
+#    sleep  5
+#    ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
+#    Should be true  ${verify_policy1}
+#    ${stream}=  L3 add  name=gtp_teid  flow=a->b  frame_rate=10000  frame_size=1518
+#    ...     src_mac=00:01:02:03:04:01  dst_mac=00:01:02:03:04:02  protocol=UDP  src_port=8001  dst_port=2123
+#    ...     src_ip=100.1.1.1  src_gw=100.1.1.2  dst_ip=100.1.1.2  dst_gw=100.1.1.1  
+#    ...		no_arp=True  payload=4800000000000064
+#    clear stats    
+#    start traffic  ${stream}
+#    sleep  10
+#    verify results  a  b  transmitted_frame_rate  received_frame_rate    
+#    stop traffic  ${stream}
+#	[Tags]  offset-match  gtp  teid  ip-header
 	
-09_Verify offset match with GTP TEID and Protocol UDP ##PASS
+09_Verify offset match with GTP TEID and Protocol UDP  ##PASS
 	rest add policy match  admin-view  ${bigtap_policy_name}  1  {"ether-type": 2048, "gtp-v2-teid": 100, "dst-tp-port": 2123, "ip-proto": 17, "sequence": 1}
     sleep  5
     ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
@@ -433,7 +418,7 @@ ${bigtap_policy_name}					offset-policy
     stop traffic  ${stream}
 	[Tags]  offset-match  gtp  teid protocol
 	
-10_Verify offset match with GTP TEID and Protocol TCP  ####PASS
+10_Verify offset match with GTP TEID and Protocol TCP   ####PASS
 	rest add policy match  admin-view  ${bigtap_policy_name}  1  {"ether-type": 2048, "gtp-v2-teid": 100, "dst-tp-port": 2123, "ip-proto": 6, "sequence": 1}
     sleep  5
     ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
@@ -449,7 +434,7 @@ ${bigtap_policy_name}					offset-policy
     stop traffic  ${stream}
 	[Tags]  offset-match  gtp  teid dst-port
 	
-11_Verify offset match with GTP TEID and Destination Port ####PASS
+11_Verify offset match with GTP TEID and Destination Port  ####PASS
 	rest add policy match  admin-view  ${bigtap_policy_name}  1  {"sequence": 1, "gtp-v2-teid": 100, "dst-tp-port": 2123, "ip-proto": 17, "ether-type": 2048}
     sleep  5
     ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
@@ -466,7 +451,7 @@ ${bigtap_policy_name}					offset-policy
 	[Tags]  offset-match  gtp  teid dst-port
 
 	
-12_Verify offset match with GTP TEID and source port  ###PASS
+12_Verify offset match with GTP TEID and source port   ###PASS
     rest add policy match  admin-view  ${bigtap_policy_name}  1  {"src-tp-port": 8001, "ip-proto": 17, "sequence": 1, "ether-type": 2048, "gtp-v2-teid": 100, "dst-tp-port": 2123}
     sleep  5
     ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
@@ -483,7 +468,7 @@ ${bigtap_policy_name}					offset-policy
 	[Tags]  offset-match  gtp  teid  src-port
 	
 	
-13_Verify offset match with GTP TEID and source IP address  ###PASS
+13_Verify offset match with GTP TEID and source IP address   ###PASS
 	rest add policy match  admin-view  ${bigtap_policy_name}  1  {"src-ip-mask": "255.255.255.0", "ip-proto": 17, "sequence": 1, "ether-type": 2048, "gtp-v2-teid": 100, "dst-tp-port": 2123, "src-ip": "100.1.1.1"}
     sleep  5
     ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
@@ -499,7 +484,7 @@ ${bigtap_policy_name}					offset-policy
     stop traffic  ${stream}
 	[Tags]  offset-match  gtp  teid src-ip
 	
-14_Verify offset match with GTP TEID and destination IP address  ###PASS
+14_Verify offset match with GTP TEID and destination IP address   ###PASS
 	rest add policy match  admin-view  ${bigtap_policy_name}  1  {"sequence": 1, "ip-proto": 17, "dst-ip": "100.1.1.2", "ether-type": 2048, "gtp-v2-teid": 100, "dst-tp-port": 2123, "dst-ip-mask": "255.255.255.0"}
     sleep  5
     ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
@@ -516,7 +501,23 @@ ${bigtap_policy_name}					offset-policy
 	[Tags]  offset-match  gtp  teid dst-ip
       
   
+##Miscellaneous
 
+01_Verify offset match on sctp   ##PASS
+	rest add policy match  admin-view  ${bigtap_policy_name}  1  {"sequence": 1, "ip-proto": 132, "ether-type": 2048}
+    sleep  5
+    ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${stream}=  L3 add  name=gtp_teid  flow=a->b  frame_rate=10000  frame_size=1518
+    ...     src_mac=00:01:02:03:04:01  dst_mac=00:01:02:03:04:02  protocol=SCTP  src_port=8001  dst_port=2152
+    ...     src_ip=100.1.1.1  src_gw=100.1.1.2  dst_ip=100.1.1.2  dst_gw=100.1.1.1  
+    ...		no_arp=True  
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    verify results  a  b  transmitted_frame_rate  received_frame_rate    
+    stop traffic  ${stream}
+	[Tags]  offset-match  sctp
 	
 * Keyword
 
@@ -541,8 +542,13 @@ verify results   [Arguments]  ${send_port}  ${recv_port}  ${transmitted_frames} 
     ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}
     Should be true  ${in_range}
 
+offset test teardown
+	delete traffic
+
 offset suite teardown
 	REST delete policy  admin-view  ${bigtap_policy_name}
+    ${return_value}=  rest enable feature  full-match
+    Should be true   ${return_value}	
 	rest delete interface role  s1  ${filter_interface_name}       	filter 
     rest delete interface role  s1  ${delivery_interface_name}      delivery              
     rest delete interface  s1  ${filter_interface_name}          
@@ -550,5 +556,3 @@ offset suite teardown
     rest delete switch alias  s1
     rest delete switch  s1
     base suite teardown
-
-    corsair suite setup
