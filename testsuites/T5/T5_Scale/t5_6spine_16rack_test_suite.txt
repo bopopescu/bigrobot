@@ -59,7 +59,7 @@ ${m_pg}					leaf15-bm46
 * Test Case 
 
 copy config file to controller
-	[Tags]  scaling  manual
+	[Tags]  scaling
 	Log To console  Getting config file server
 	copy config from server  ${cfg_file_path}  ${cfg_file_server}  ${file_server_passwd}  ${copied_file} 
 	verify file  ${copied_file}
@@ -68,7 +68,7 @@ copy config file to controller
 	Should Be True  ${returnVal}
 	
 config controller with copied config file
-	[Tags]  scaling  manual
+	[Tags]  scaling   
 	Log To console  Copying file to running-config
 	#start monitoring the exception
 	#${file_exist}=  verify file  ${copied_file}
@@ -80,13 +80,13 @@ config controller with copied config file
 	#parse monitoring file
 	
 verify config sync between controllers
-	[Tags]  scaling  manual
+	[Tags]  scaling   
 	Log To Console  Verifying configuration between controllers
 	${return}=  compare configuration
 	Should Be True  ${return}
 		
 start mininet topology
-	[Tags]  scaling  manual
+	[Tags]  scaling   
 	Log To Console  Starting mininet topology
 	start monitoring the exception
 	mininet start	
@@ -97,7 +97,7 @@ start mininet topology
 	parse monitoring file
 	
 ping bms to check L2 fwding
-	[Tags]  scaling  manual	
+	[Tags]  scaling   	
 	Log To console  Configuring mininet bms
 	mininet host ipcfg  bm0  bm0-bond0  10.10.1.2  24
 	mininet host ipcfg  bm5  bm5-bond0  10.10.1.3  24
@@ -117,7 +117,7 @@ ping bms to check L2 fwding
 			
 	
 ping bms to check L3 fwding
-	[Tags]  scaling  manual
+	[Tags]  scaling   
 	Log To Console  Removing Tenant1 and adding its vns to Tenant0
 	rest delete tenant  Tenant1
 	rest add vns ip  Tenant0  Tenant1-VNS1  10.10.2.1  24
@@ -148,7 +148,7 @@ ping bms to check L3 fwding
 	Should Be True  ${loss} < 100
 	
 Remove spine0 and check L2/L3 
-	[Tags]  scaling  manual
+	[Tags]  scaling   
 	Log To Console  Removing spine0 from configuation
 	start monitoring the exception
 	rest delete fabric switch  spine0 
@@ -182,7 +182,7 @@ Remove spine0 and check L2/L3
 	Should Be True  ${loss} < 100
 	
 Add spine0 back and check L2/L3
-	[Tags]  scaling  manual
+	[Tags]  scaling   
 	Log To Console  Adding back spine0
 	start monitoring the exception
 	rest add switch  spine0
@@ -219,7 +219,7 @@ Add spine0 back and check L2/L3
 	Should Be True  ${loss} < 100
 	
 stop and start mininet and verify L2/L3 fwding
-	[Tags]  scaling    manual
+	[Tags]  scaling     
 	Log To Console  Stopping mininet in topo
 	start monitoring the exception
 	mininet stop	
@@ -266,7 +266,7 @@ stop and start mininet and verify L2/L3 fwding
 	
 	 
 reboot master controller and verify L2/L3 fwding
-	[Tags]  scaling  manual
+	[Tags]  scaling   
 	Log To Console  Rebooting master controller	 
 	start monitoring the exception
 	cli verify cluster master reboot
@@ -302,7 +302,7 @@ reboot master controller and verify L2/L3 fwding
 	Should Be True  ${loss} < 100
 	
 reboot slave controller and verify L2/L3 fwding
-	[Tags]  scaling  manual
+	[Tags]  scaling   
 	Log To Console  Rebooting slave controller	 
 	start monitoring the exception
 	cli verify cluster slave reboot
@@ -338,7 +338,7 @@ reboot slave controller and verify L2/L3 fwding
 	Should Be True  ${loss} < 100
 
 cluster failover and verify L2/L3 fwding
-	[Tags]  scaling  manual
+	[Tags]  scaling   
 	Log To Console  cluster failover	 
 	start monitoring the exception
 	rest verify cluster election take leader
@@ -383,6 +383,7 @@ T1 Verify L2 Traffic Convergence with scale configuration first time
     Log    Measure traffic convergence time for L2 
     Manual untested
 	[Tags] 	sanity    Manual-untested  scaling
+	
 
 T2 Verify L3 Traffic Convergence with scale configuration first time
     Log    Build scale configuration with Scale Config
