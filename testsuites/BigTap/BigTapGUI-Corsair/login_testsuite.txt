@@ -1,0 +1,68 @@
+*** Settings ***
+Documentation   A test suite with a single test for valid login. This test has
+...             a workflow that is created using keywords from the resource file.
+Suite Setup     Setup
+Suite Teardown  Teardown
+Force Tags      GUI RBAC
+Library         keywords/BsnCommon.py
+Library         keywords/AppController.py
+Library         keywords_dev/tomasz/BigTap.py
+Library        	SeleniumLibrary
+Resource        bigtap_resource.txt
+
+
+*** Test Cases ***   
+### Valid Login		           	User Name      		Password
+T1.1 Local admin        
+	Valid Login					admin          		adminadmin
+T1.2 Remote admin1  
+	Valid Login                 bt-admin       		adminadmin
+T1.3 Remote admin2
+	Valid Login                 admin          		Password1
+T1.4 Local user1 
+	Valid Login                 test           		adminadmin
+T1.5 Local user2      
+	Valid Login                 test-user-local     ,./[]<:{}`~!@#$^&*()_-1234567890
+T1.6 Remote user1   
+	Valid Login                 tomasz         		password
+T1.7 Remote user2    
+	Valid Login	                test-user-remote    `0-=~!@#$^&*()_+,./;[]<>?:{}|
+
+
+### Login With Invalid Credentials Should Fail             User Name      		Password
+T2.1 Invalid Username                							
+	Login With Invalid Credentials Should Fail			   invalid        		${VALID PASSWD}
+T2.2 Invalid Password 
+	Login With Invalid Credentials Should Fail             ${VALID USER}  		invalid
+T2.3 Invalid Username And Password
+	Login With Invalid Credentials Should Fail			   invalid        		whatever
+T2.4 Empty Username
+	Login With Invalid Credentials Should Fail	           ${EMPTY}       		${VALID PASSWD}
+T2.5 Empty Password
+	Login With Invalid Credentials Should Fail             ${VALID USER}  		${EMPTY}
+T2.6 Empty Username And Password
+	Login With Invalid Credentials Should Fail		       ${EMPTY}       		${EMPTY}
+
+
+*** Keywords ***
+Setup
+    base suite setup
+    Start Selenium Server  -trustAllSSLCertificates
+	${c1_ip}            params  node=c1  key=ip
+    set suite variable  ${SERVER}  ${c1_ip}:8443
+    Set URLs
+    Rest Add Tacacs Server  10.192.4.91  secret
+    Rest Add Tacacs Authentication
+    Rest Add Tacacs Authorization
+    CLI Configure User    tomasz
+    CLI Configure User    test    adminadmin
+    CLI Configure User    test-user-local    ,./[]<:{}`~!@#$^&*()_-1234567890
+    CLI Configure User    test-user-remote
+    #Rest Open GUI Port
+    Open Browser To Login Page
+
+
+Teardown
+    Close Browser
+    Stop Selenium Server
+    base suite teardown

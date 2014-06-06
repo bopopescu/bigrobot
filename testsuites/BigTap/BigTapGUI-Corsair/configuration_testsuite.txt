@@ -1,0 +1,202 @@
+*** Settings ***
+Documentation   	A test suite with a single test for valid login. This test has
+...             	a workflow that is created using keywords from the resource file.
+Force Tags      	GUI RBAC
+Suite Setup      	Setup
+Suite Teardown   	Teardown
+Library         	keywords/BsnCommon.py
+Library         	keywords_dev/tomasz/BigTap.py
+Library        		SeleniumLibrary
+Resource        	bigtap_resource.txt
+
+
+*** Test Cases *** 
+### Configure Big Tap Interface from Controller Menu 		ID	 					Role				Name	 	
+T1.1 Interface with regular name-filter		
+	Configure Big Tap Interface from Controller Menu		s14-eth1				filter				filter-1
+T1.2 Interface with regular name-delivery	
+	Configure Big Tap Interface from Controller Menu		s14-eth2				delivery			delivery-1
+T1.3 Interface with regular name-service-1	
+	Configure Big Tap Interface from Controller Menu		s15-eth1				service 			service-1
+T1.4 Interface with regular name-service-2	
+	Configure Big Tap Interface from Controller Menu		s15-eth2				service				service-2
+T1.5 Edit regular name-filter	
+	Configure Big Tap Interface from Controller Menu		s14-eth1				filter				filter-new-1
+T1.6 Edit regular name-delivery				
+	Configure Big Tap Interface from Controller Menu		s14-eth2				delivery			delivery-new-1
+T1.7 Edit regular name-service-1				
+	Configure Big Tap Interface from Controller Menu		s15-eth1				service 			service-new-1
+T1.8 Edit regular name-service-2				
+	Configure Big Tap Interface from Controller Menu		s15-eth2				service				service-new-2
+T1.9 Edit interface type and name1			
+	Configure Big Tap Interface from Controller Menu		s14-eth1				service				service-new-3
+T1.10 Edit interface type and name2			
+	Configure Big Tap Interface from Controller Menu		s14-eth2				service				service-new-4
+T1.11 Delete regular name-filter				
+	Configure Big Tap Interface from Controller Menu		s14-eth1				${EMPTY}			${EMPTY}
+T1.12 Delete regular name-delivery			
+	Configure Big Tap Interface from Controller Menu		s14-eth2				${EMPTY}			${EMPTY}
+T1.13 Delete regular name-service-1			
+	Configure Big Tap Interface from Controller Menu		s15-eth1				${EMPTY}			${EMPTY}
+T1.14 Delete regular name-service-2			
+	Configure Big Tap Interface from Controller Menu		s15-eth2				${EMPTY}			${EMPTY}
+T1 Teardown
+	Delete All Big Tap Resources
+
+
+###	Configure Big Tap Interface from Big Tap Menu		ID	 					Switch							Role				Name
+T2.1 Interface with regular name-filter			
+	Configure Big Tap Interface from Big Tap Menu		s11-eth1				00:00:00:00:00:00:00:0b			filter				filter-11
+T2.2 Interface with regular name-delivery		
+	Configure Big Tap Interface from Big Tap Menu		s11-eth2				00:00:00:00:00:00:00:0b			delivery			delivery-11
+T2.3 Interface with regular name-service-1		
+	Configure Big Tap Interface from Big Tap Menu		s12-eth1				00:00:00:00:00:00:00:0c			service 			service-11
+T2.4 Interface with regular name-service-2		
+	Configure Big Tap Interface from Big Tap Menu		s12-eth2				00:00:00:00:00:00:00:0c			service				service-21
+T2.5 Edit regular name-filter					
+	Edit Big Tap Interface from Big Tap Menu			s11-eth1				00:00:00:00:00:00:00:0b			filter				filter-new-11
+T2.6 Edit regular name-delivery					
+	Edit Big Tap Interface from Big Tap Menu			s11-eth2				00:00:00:00:00:00:00:0b			delivery			delivery-new-11
+T2.7 Edit regular name-service-1					
+	Edit Big Tap Interface from Big Tap Menu			s12-eth1				00:00:00:00:00:00:00:0c			service 			service-new-11
+T2.8 Edit regular name-service-2							
+	Edit Big Tap Interface from Big Tap Menu			s12-eth2				00:00:00:00:00:00:00:0c			service				service-new-21
+T2.9 Edit regular type and name1	
+	Edit Big Tap Interface from Big Tap Menu			s11-eth1				00:00:00:00:00:00:00:0b			service				service-new-31
+T2.10 Edit regular type and name2					
+	Edit Big Tap Interface from Big Tap Menu			s11-eth2				00:00:00:00:00:00:00:0b			service				service-new-41
+T2.11 Delete regular name-filter					
+	Delete Big Tap Interface from Big Tap Menu			s11-eth1
+T2.12 Delete regular name-delivery				
+	Delete Big Tap Interface from Big Tap Menu			s11-eth2
+T2.13 Delete regular name-service-1					
+	Delete Big Tap Interface from Big Tap Menu			s12-eth1
+T2.14 Delete regular name-service-2				
+	Delete Big Tap Interface from Big Tap Menu			s12-eth2
+T2 Teardown
+	Delete All Big Tap Resources
+
+
+### Configure Big Tap Service			Name	 				Pre-service				Post-service	
+T3.1 Service with regular name				
+	Configure Big Tap Service			__new__					service-new-1			service-new-2
+T3.2 Service with no interfaces			
+	Configure Big Tap Service			__new__					${EMPTY}				${EMPTY}
+T3 Teardown
+	Delete All Big Tap Resources
+
+
+### Configure User	  	Username 			Password 			Confirm Password  			Full Name				Group
+T4.1 User with password 	
+	Configure User		__random__			testtest			testtest					User with password		${EMPTY}
+T4.2 User no password		
+	Configure User		__random__			${EMPTY}			${EMPTY}					User no password		${EMPTY}
+T4.3 User wrong password
+	Configure User		__random__			testtest1			testtest					User wrong password		${EMPTY}
+T4.4 User no full name
+	Configure User		__random__			testtest			testtest					${EMPTY}				${EMPTY}
+T4.5 User group admin
+	Configure User		__random__			adminadmin			adminadmin					User group admin		admin
+T4.6 User new group
+	Configure User		__random__			adminadmin			adminadmin					User new group			__new__
+#T4.7 User unhashable pass
+	#Configure User		__random__			;"$					testtest					User unhashable pass	${EMPTY}
+T4 Teardown
+	Delete All Big Tap Resources
+
+
+### Configure RBAC  				RBAC Name  			Group Name 			Filter			Delivery 		Service			Match	
+T5.1 RBAC Allow All		
+	Configure RBAC			 		__random__			admin				${EMPTY}		${EMPTY}		${EMPTY}	  	${EMPTY}	
+T5.2 RBAC IPv4
+	Configure Big Tap Interface from Controller Menu		s14-eth1				filter				filter1
+	Configure Big Tap Interface from Controller Menu		s14-eth2				delivery			delivery1	
+	Configure Big Tap Service								service1				${EMPTY}			${EMPTY}
+	Configure RBAC				 	__random__			admin				filter1			delivery1		service1	  	IPv4		
+T5.3 RBAC IPv6
+	Configure Big Tap Interface from Controller Menu		s11-eth1				filter				filter2
+	Configure Big Tap Interface from Controller Menu		s11-eth2				delivery			delivery2	
+	Configure Big Tap Service								service2				${EMPTY}			${EMPTY}
+	Configure RBAC				 	__random__			admin				filter2			delivery2		service2	  	IPv6
+T5.4 RBAC ARP
+	Configure RBAC				 	__random__			admin				filter1			delivery2		service1	  	ARP
+T5 Teardown
+	Delete All Big Tap Resources
+
+
+### Configure Group  				Group Name 			User	 			RBAC	
+T6.1 Group with no users		
+	Configure Group			 		__random__			${EMPTY}			${EMPTY}		  			
+T6.2 Group with user admin		
+	Configure Group			 		__random__			admin				${EMPTY}	
+T6.3 Group with new user and new rbac	
+	Configure Group					__random__			__new__				__new__
+T6 Teardown
+	Delete All Big Tap Resources
+
+
+### Upload IP Address List						Name	 				Type				File	 			
+#T7.1 Upload IPv4 list	
+#	Upload IP Address List						__new__					ipv4				/Users/tomaszklimczyk/Desktop/ip_4_medium.txt
+#T7.2 Upload IPv6 list	
+#	Upload IP Address List						__new__					ipv6				/Users/tomaszklimczyk/Desktop/ip_6_medium.txt
+#T7 Teardown
+#	Delete All Big Tap IP Lists
+
+
+### Configure Switch Alias										Switch	 						Alias	 			
+T8.1 Switch with regular alias	 				
+	Configure Switch Alias										00:00:00:00:00:00:00:09			switch1
+T8.2 Edit switch alias			 							
+	Configure Switch Alias										00:00:00:00:00:00:00:09			switchNew
+T8.3 Delete switch regular alias	 	
+	Configure Switch Alias										00:00:00:00:00:00:00:09			${EMPTY}
+T8.4 Switch with alias containing allowed special characters-
+	Configure Switch Alias										00:00:00:00:00:00:00:0a			switch-2
+T8.5 Switch with alias containing allowed special characters_
+	Configure Switch Alias										00:00:00:00:00:00:00:0b			switch_3
+T8.6 Switch with empty alias		 			
+	Configure Switch Alias										00:00:00:00:00:00:00:0c			${EMPTY}
+T8 Teardown
+	Configure Switch Alias										00:00:00:00:00:00:00:09			${EMPTY}
+	Configure Switch Alias										00:00:00:00:00:00:00:0a			${EMPTY}
+	Configure Switch Alias										00:00:00:00:00:00:00:0b			${EMPTY}
+	Configure Switch Alias										00:00:00:00:00:00:00:0c			${EMPTY}
+
+
+### Configure Big Tap Policy							Policy	 			RBAC 			Filter			Delivery 		Service			Match	
+T9.1 Empty Policy
+	Configure Big Tap Policy					 		__random__			admin-view		${EMPTY}		${EMPTY}		${EMPTY}	  	${EMPTY}
+T9.2 Regular Policy
+	Configure Big Tap Interface from Controller Menu		s11-eth1				filter				filter2
+	Configure Big Tap Interface from Controller Menu		s11-eth2				delivery			delivery2	
+	Configure Big Tap Service								service2				${EMPTY}			${EMPTY}
+	Configure Big Tap Policy					 		__random__			__new__			filter2			delivery2		service2	  	IPv6		
+#T9.3 RBAC and Policy
+#	Configure Big Tap Interface from Controller Menu		s14-eth1				filter				filter1
+#	Configure Big Tap Interface from Controller Menu		s14-eth2				delivery			delivery1	
+#	Configure Big Tap Service								service1				${EMPTY}			${EMPTY}
+#	Configure RBAC				 						MyRBAC				admin			filter1			delivery1		service1	  	IPv4	
+#	Configure Big Tap Policy	 						__random__			MyRBAC			filter1			delivery1		service1	  	IPv4		 						
+T9 Teardown
+	Delete All Big Tap Resources
+
+
+*** Keywords ***
+Setup
+	base suite setup
+	${c1_ip}            params  node=c1  key=ip
+    set suite variable  ${SERVER}  ${c1_ip}:8443
+    Set URLs
+    Start Selenium Server  -trustAllSSLCertificates
+    CLI Start Mininet Server  tree,3
+    #Rest Open GUI Port
+    Open Browser To Login Page
+    Valid Login  admin  adminadmin
+    Delete All Big Tap Resources
+
+
+Teardown
+	Close Browser
+    Stop Selenium Server
+    base suite teardown
