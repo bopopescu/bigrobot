@@ -32,27 +32,16 @@ ${z2_ip}			10.253.2.1
 ${z2_subnet}		24
 ${z3_ip}			10.253.3.1
 ${z3_subnet}		24
-${spine0_dpid}		00:99:00:00:00:01:00:01
-${spine1_dpid}		00:99:00:00:00:01:00:02
-${leaf0a_dpid}		00:99:00:00:00:02:00:01
-${leaf0b_dpid}		00:99:00:00:00:02:00:02
-${leaf1a_dpid}		00:99:00:00:00:02:00:03
-${leaf1b_dpid}		00:99:00:00:00:02:00:04
-${leaf2a_dpid}		00:99:00:00:00:02:00:05
-${leaf2b_dpid}		00:99:00:00:00:02:00:06
+${spine0_dpid}		00:00:00:00:01:00:00:01 
+${spine1_dpid}		00:00:00:00:01:00:00:02
+${leaf0a_dpid}		00:00:00:00:02:00:00:01
+${leaf0b_dpid}		00:00:00:00:02:00:00:02
+${leaf1a_dpid}		00:00:00:00:02:00:00:03
+${leaf1b_dpid}		00:00:00:00:02:00:00:04
+${leaf2a_dpid}		00:00:00:00:02:00:00:05
+${leaf2b_dpid}		00:00:00:00:02:00:00:06
 
-${leaf0_pc1}		leaf0-pc1
-${leaf0_pc2}		leaf0-pc2
-${leaf0_pc3}		leaf0-pc3
-${leaf0_pc4}		leaf0-pc4
-${leaf0_pc5}		leaf0-pc5
-${leaf0_pc6}		leaf0-pc6
-${leaf1_pc1}		leaf1-pc1
-${leaf1_pc2}		leaf1-pc2
-${leaf1_pc3}		leaf1-pc3
-${leaf1_pc4}		leaf1-pc4
-${leaf2_pc1}		leaf2-pc1
-${leaf2_pc2}		leaf2-pc2
+
 ${leaf0-a}			leaf0-a
 ${leaf0-b}			leaf0-b
 ${leaf1-a}			leaf1-a
@@ -63,33 +52,24 @@ ${ixia1}			ethernet24
 ${ixia2}			ethernet24
 ${ixia3}			ethernet24
 ${ixia4}			ethernet24
-${ixia5}			ethernet24
+${ixia7}			ethernet24
 ${ixia6}			ethernet24
 
-${leaf0_pc1_intf1}	ethernet48
-${leaf0_pc1_intf2}	ethernet48
-${leaf0_pc2_intf1}	ethernet47
-${leaf0_pc2_intf2}	ethernet47
-${leaf1_pc1_intf1}	ethernet1
-${leaf1_pc1_intf2}	ethernet1
-${leaf1_pc2_intf1}	ethernet2
-${leaf1_pc2_intf2}	ethernet2
-${leaf2_pc1_intf1}	ethernet47
-${leaf2_pc1_intf2}	ethernet47
-${leaf2_pc2_intf1}	ethernet48
-${leaf2_pc2_intf2}	ethernet48
+${ixia1_ip}			10.251.1.2/32
+${ixia2_ip}			10.251.3.2/32
+${ixia3_ip}			10.251.2.2/32
+${ixia4_ip}			10.252.1.2/32
+${ixia7_ip}			10.253.1.2/32
+${ixia6_ip}			
+${tcp_port}			1234
+${udp_port}			5678
 
-${leaf0-a_spine0}	ethernet49
-${leaf0-b_spine0}	ethernet49
-${leaf1-a_spine0}	ethernet49
-${leaf1-b_spine0}	ethernet49
-${leaf2-a_spine0}	ethernet49
-${leaf2-b_spine0}	ethernet49
-${leaf0-a_spine1}	ethernet52
-${leaf0-b_spine1}	ethernet52
-${leaf1-a_spine1}	ethernet52
-${leaf1-b_spine1}	ethernet52
-${leaf2-a_spine1}	ethernet52
-${leaf2-b_spine1}	ethernet52
+${ixia1_mac}		00:11:01:00:00:00
+${ixia2_mac}		00:22:01:00:00:00
+${ixia3_mac}		00:33:01:00:00:00
+${ixia4_mac}		00:44:01:00:00:00
+${ixia7_mac}		00:77:01:00:00:00
+${ixia6_mac}		00:66:01:00:00:00
 
-
+${tenant1_polname}	x1-to-x3
+${tenant2_polname}	x4-to-x1
