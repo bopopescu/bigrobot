@@ -49,6 +49,11 @@ Verify Cluster Master Reboot
 Verify Cluster Slave Reboot
 	[Tags]  sanity  feature
 	Reboot the Slave node & verify fabric integrity
+	
+Verify HA Failover through system failover
+	[Tags]  sanity  feature
+	${returnval}=  cli cluster take leader
+	Should be true  ${returnval}
 
 Configure Cluster VIP & Verify Connectivity After Failover
 	[Tags]   vip   skipped

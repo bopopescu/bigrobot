@@ -56,7 +56,11 @@ Verify Cluster Master Reboot
 Verify Cluster Slave Reboot
 	[Tags]  feature
 	Reboot the Slave node & verify fabric integrity
- 
+
+Verify HA Failover through system failover
+	[Tags]  sanity  feature
+	${returnval}=  cli cluster take leader
+	Should be true  ${returnval}
 
 Two Tenants With Multiple VNS HA Test
 	[Tags]	feature   setup

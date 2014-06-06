@@ -134,7 +134,7 @@ class T5Platform(object):
             c.expect(r"Password:")
             c.config("adminadmin")
             c.send("system failover")
-            c.expect(r"Election may cause role transition: enter \"yes\" \(or \"y\"\) to continue:")
+            c.expect(r"Failover to this controller node \(yes/no\)?")
             c.config("yes")
             sleep(30)
         except:
