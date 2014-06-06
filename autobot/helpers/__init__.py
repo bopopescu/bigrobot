@@ -504,6 +504,18 @@ def bigrobot_test_pause_on_fail(new_val=None, default='False'):
     return _env_get_and_set('BIGROBOT_TEST_PAUSE_ON_FAIL', new_val, default)
 
 
+def bigrobot_ignore_mininet_exception_on_close(new_val=None, default='False'):
+    """
+    Category: Get/set environment variables for BigRobot.
+    Set to 'True' to ignore devconf exception when closing Mininet session.
+    This knob is added primarily for Smoke Test where we've seen Mininet
+    session hanged when session is trying to close (TimeoutException on
+    'exit').
+    """
+    return _env_get_and_set('BIGROBOT_IGNORE_MININET_EXCEPTION_ON_CLOSE',
+                            new_val, default)
+
+
 def bigtest_path(new_val=None, default=None):
     """
     Category: Get/set environment variables for BigTest.
@@ -521,13 +533,6 @@ def bigrobot_testbed(new_val=None, default=None):
         None - (default) assume static attributes are defined in .topo file
     """
     return _env_get_and_set('BIGROBOT_TESTBED', new_val, default)
-
-
-def python_path(new_val=None, default=None):
-    """
-    Category: Get/set environment variables for BigRobot.
-    """
-    return _env_get_and_set('PYTHONPATH', new_val, default)
 
 
 def bigrobot_syslog_file(new_val=None, default=None):
@@ -572,6 +577,13 @@ def bigrobot_devcmd_write(s, no_timestamp=False):
         else:
             file_write_append_once(bigrobot_devcmd_log(),
                                    ts_logger() + ' ' + s)
+
+
+def python_path(new_val=None, default=None):
+    """
+    Category: Get/set environment variables for BigRobot.
+    """
+    return _env_get_and_set('PYTHONPATH', new_val, default)
 
 
 def sleep(s):

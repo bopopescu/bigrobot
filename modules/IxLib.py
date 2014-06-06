@@ -1076,7 +1076,7 @@ class Ixia(object):
             traffic_stream1.append(traffic_item)
         return traffic_stream1[0]
 
-    def ix_start_traffic_ethernet(self, trafficHandle=None, **kwargs):
+    def ix_start_traffic_ethernet(self, trafficHandle=None, exception=False, **kwargs):
         '''
             Returns portStatistics after starting the traffic that is configured in Traffic Stream using Mac devices and Topologies
         '''
@@ -1105,7 +1105,19 @@ class Ixia(object):
                 helpers.log('Fetching port stats after clearing stats')
                 self.ix_fetch_port_stats()
             helpers.log('No Traffic Stream is given so, starting traffic on all configured Streams !!')
-            self._handle.execute('startStatelessTrafficBlocking', self._handle.getRoot() + 'traffic')
+            try:
+                self._handle.execute('startStatelessTrafficBlocking', trafficHandle)
+            except:
+                if exception:
+                    helpers.log("Already tried one time with Applying traffic on Ix Network Exception ,, need to check traffic config for fix this")
+                    return False
+                else:
+                    helpers.log("Got IXIA exception while Applying traffic ...")
+                    helpers.log("will try applying the traffic and try again...")
+                    self._handle.execute('apply', self._handle.getRoot() + 'traffic')
+                    helpers.log('###Applied traffic Config ..')
+                    self.ix_start_traffic_ethernet(trafficHandle, exception=True)
+
         else:
             if learn:
                 helpers.log('Starting traffic for 5 secs and stop it for learning on give traffic stream')
@@ -1118,7 +1130,20 @@ class Ixia(object):
                 helpers.log('Fetching port stats after clearing stats')
                 self.ix_fetch_port_stats()
             helpers.log('Traffic Stream is given, starting traffic on given stream')
-            self._handle.execute('startStatelessTrafficBlocking', trafficHandle)
+            try:
+                self._handle.execute('startStatelessTrafficBlocking', trafficHandle)
+            except:
+                if exception:
+                    helpers.log("Already tried one time with Applying traffic on Ix Network Exception ,, need to check traffic config for fix this")
+                    return False
+                else:
+                    helpers.log("Got IXIA exception while Applying traffic ...")
+                    helpers.log("will try applying the traffic and try again...")
+                    self._handle.execute('apply', self._handle.getRoot() + 'traffic')
+                    helpers.log('###Applied traffic Config ..')
+                    self.ix_start_traffic_ethernet(trafficHandle, exception=True)
+
+
         time.sleep(10)
         helpers.log("### Traffic Started")
         return True

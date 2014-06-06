@@ -44,7 +44,7 @@ ${bigtap_policy_name}					offset-policy
     stop traffic  ${stream}
 	[Tags]  offset-match  gtp  version
 
-02_Verify offset match with GTP Protocol Type GTP(value 1)   ###FAILasexp
+02_Verify offset match with GTP Protocol Type GTP(value 1)   ###PASS
 	rest add policy match  admin-view  ${bigtap_policy_name}  1  {"dst-tp-port": 2152, "ether-type": 2048, "gtp-v1-protocol-type": 1, "ip-proto": 17, "sequence": 1}
     sleep  5
     ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
@@ -52,13 +52,13 @@ ${bigtap_policy_name}					offset-policy
     ${stream}=  L3 add  name=gtp_teid  flow=a->b  frame_rate=10000  frame_size=1518
     ...     src_mac=00:01:02:03:04:01  dst_mac=00:01:02:03:04:02  protocol=UDP  src_port=8001  dst_port=2152
     ...     src_ip=100.1.1.1  src_gw=100.1.1.2  dst_ip=100.1.1.2  dst_gw=100.1.1.1  
-    ...		no_arp=True  payload=2000000000000064
+    ...		no_arp=True  payload=3000000000000064
     clear stats    
     start traffic  ${stream}
     sleep  10
     verify results  a  b  transmitted_frame_rate  received_frame_rate    
     stop traffic  ${stream}
-	[Tags]  offset-match  gtp  protocol-type
+	[Tags]  offset-match  gtp  protocol-type  
 	
 03_Verify offset match with GTP Protocol Type GTP'(value 0)  ##PASS
 	rest add policy match  admin-view  ${bigtap_policy_name}  1  {"dst-tp-port": 2152, "ether-type": 2048, "gtp-v1-protocol-type": 0, "ip-proto": 17, "sequence": 1}
@@ -97,10 +97,9 @@ ${bigtap_policy_name}					offset-policy
     sleep  5
     ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
     Should be true  ${verify_policy1}
-    ${stream}=  L3 add  name=gtp_teid  flow=a->b frame_rate=10000  ethertype=8100  vlan_id=100  frame_size=1518
-    ...     src_mac=00:01:02:03:04:01  dst_mac=00:01:02:03:04:02  protocol=UDP  src_port=8001  dst_port=2152
-    ...     src_ip=100.1.1.1  src_gw=100.1.1.2  dst_ip=100.1.1.2  dst_gw=100.1.1.1  
-    ...		no_arp=True  payload=2000000000000064
+    ${stream}=  L3 add  flow=a->b  line_rate=100  frame_size=1518  ethertype=8100  vlan_id=2048  
+    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  protocol=UDP  src_port=8001  dst_port=2152  no_arp=True
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  name=c_d_flow  payload=2000000000000064
     clear stats    
     start traffic  ${stream}
     sleep  10
@@ -157,13 +156,13 @@ ${bigtap_policy_name}					offset-policy
     stop traffic  ${stream}
 	[Tags]  offset-match  gtp  teid dst-port
 	
-09_Verify offset match with GTP TEID and Destination Port 2123  #### FAILsasexp
+09_Verify offset match with GTP TEID and Destination Port 2123  #### Pass
 	rest add policy match  admin-view  ${bigtap_policy_name}  1  {"gtp-v1-teid": 100, "sequence": 1, "dst-tp-port": 2123, "ip-proto": 17, "ether-type": 2048}
     sleep  5
     ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
     Should be true  ${verify_policy1}
     ${stream}=  L3 add  name=gtp_teid  flow=a->b  frame_rate=10000  frame_size=1518
-    ...     src_mac=00:01:02:03:04:01  dst_mac=00:01:02:03:04:02  protocol=UDP  src_port=8001  dst_port=2152
+    ...     src_mac=00:01:02:03:04:01  dst_mac=00:01:02:03:04:02  protocol=UDP  src_port=8001  dst_port=2123
     ...     src_ip=100.1.1.1  src_gw=100.1.1.2  dst_ip=100.1.1.2  dst_gw=100.1.1.1  
     ...		no_arp=True  payload=2000000000000064
     clear stats    
@@ -230,14 +229,13 @@ ${bigtap_policy_name}					offset-policy
     Should be true  ${verify_policy1}
     ${stream}=  L3 add  name=gtp_teid  flow=a->b  vlan_id=100  ethertype=8100  frame_rate=10000  frame_size=1518
     ...     src_mac=00:01:02:03:04:01  dst_mac=00:01:02:03:04:02  protocol=UDP  src_port=8001  dst_port=2152
-    ...     src_ip=100.1.1.1  src_gw=100.1.1.2  dst_ip=100.1.1.2  dst_gw=100.1.1.1  
-    ...		no_arp=True  payload=2000000000000064
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  no_arp=True  payload=2000000000000064
     clear stats    
     start traffic  ${stream}
     sleep  10
     verify results  a  b  transmitted_frame_rate  received_frame_rate    
     stop traffic  ${stream}
-	[Tags]  offset-match  gtp  teid vlan-id
+	[Tags]  offset-match  gtp  teid vlan-id  run
 		
 14_Verify offset match with GTP TEID and GTP version  ##PASS
 	rest add policy match  admin-view  ${bigtap_policy_name}  1  {"ether-type": 2048, "ip-proto": 17, "sequence": 1, "gtp-v1-teid": 100, "gtp-version": 1, "dst-tp-port": 2152}
