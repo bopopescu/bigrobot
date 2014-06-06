@@ -676,6 +676,7 @@ T5 test setup
 	rest add interface to vns  t1  v1  leaf0-b  ${leaf0b_ixia_intf}  -1
 	rest add interface to vns  t1  v1  leaf1-b  ${leaf1b_ixia_intf}  -1
 	rest add interface to vns  t1  v1  leaf2-b  ${leaf2b_ixia_intf}  -1
+	sleep  5
 	
 T5 suite teardown
    delete fabric switch

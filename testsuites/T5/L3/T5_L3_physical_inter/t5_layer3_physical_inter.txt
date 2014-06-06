@@ -42,7 +42,7 @@ Add and delete default route on tenant
 
 Add and delete static route on tenant
 	manual passed
-	[Tags]		manual                        feature							
+	[Tags]		manual         feature							
 
 Add and delete more specific route on tenant over existing static route
 	Add and delete more specific route on tenant over existing static route
@@ -88,6 +88,10 @@ Inter tenant dhcp relay with multiple dhcp servers
 	Inter tenant dhcp relay with multiple dhcp servers
 	[Tags]		feature			dhcp-relay
 
+Inter tenant dhcp relay with duplicate circuitid
+    manual failed
+    [Tags]      feature         dhcp-relay          jira-PAN-902
+    
 Host moved to another vns on another tenant and renew dhcp 
 	Host moved to another vns on another tenant and renew dhcp 
 	[Tags]		feature			dhcp-relay			
@@ -2601,9 +2605,9 @@ initialize host
     log                                         host5 ifconfig is ${result}
     ${result} =                                 BASH run command                h6                     ifconfig
     log                                         host6 ifconfig is ${result}
-    BASH stop  service                          h1                              isc-dhcp-server
-    BASH stop  service                          h2                              isc-dhcp-server
-    BASH stop  service                          h3                              isc-dhcp-server
+    BASH stop service                           h1                              isc-dhcp-server
+    BASH stop service                           h2                              isc-dhcp-server
+    BASH stop service                           h3                              isc-dhcp-server
 
 
 test setup topology

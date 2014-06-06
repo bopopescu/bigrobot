@@ -701,7 +701,7 @@ class MininetDevConf(DevConf):
         try:
             self.stop_mininet()
         except:
-            if helpers.bigrobot_ignore_mininet_exception_on_close().lc == 'true':
+            if helpers.bigrobot_ignore_mininet_exception_on_close().lower() == 'true':
                 helpers.log("Env BIGROBOT_IGNORE_MININET_EXCEPTION_ON_CLOSE"
                             " is 'True'. Ignoring Mininet exception.")
             else:
