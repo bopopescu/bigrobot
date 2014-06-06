@@ -54,10 +54,10 @@ ${sleepBefore}=   5
 
 *Test Case
 
-Config the switch and controller 
+Config the switch and controller as setup 
     Log    Step 1 - Configure the base set up according to topology
     T5 switch platform test setup
-    [Tags]  T5  switch  setup    
+    [Tags]  T5  switch  setup  feature    
 
 Verify ONIE Installed on Switch
 	Log     Step 1 - verify ONIE installed in switch
