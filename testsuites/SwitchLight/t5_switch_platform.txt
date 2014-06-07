@@ -22,6 +22,7 @@ Library         String
 ${switchlight_version}  SwitchLight
 ${netmask}  18
 ${gateway}  10.192.64.1
+${gateway1}  10.192.60.1
 ${dns_server}  10.192.3.1
 ${dns_domain}  bigswitch.com
 ${j}    1
@@ -130,10 +131,10 @@ Configure DNS server and DNS Domain. Verify ping www.bigswitch.com
     cli ping from switch  s1  bigswitch.com
     [Tags]  t5  platform  InitialConfig  feature      
 
-Verify ntp on spine
-    configure ntp server  s1  time-c.nist.gov
+Verify ntp configuration on spine
+    configure ntp server  s7  time-c.nist.gov
     Sleep  5
-    verify ntp server  s1  time-c.nist.gov
+    verify ntp server  s7  time-c.nist.gov
     delete ntp  s1  time-c.nist.gov
     [Tags]  t5  platform  ntp  feature     
 
@@ -146,7 +147,7 @@ Verify ntp server on spine after process ntp restart
     verify ntp server  s1  time-c.nist.gov    
     [Tags]  t5  platform  ntp  feature
 
-Verify ntp on leaf
+Verify ntp configuration on leaf
     configure ntp server  s2  time-c.nist.gov
     Sleep  5
     verify ntp server  s2  time-c.nist.gov
@@ -161,7 +162,16 @@ Verify ntp server on leaf after process ntp restart
     Sleep  5
     verify ntp server  s2  time-c.nist.gov    
     [Tags]  t5  platform  ntp  feature
-    
+
+Verify the default gateway configuration can be deleted and added
+    delete static ip  s1  ${netmask}  ${gateway}
+    add static ip  s1  ${netmask}  ${gateway1}
+    delete static ip  s1  ${netmask}  ${gateway1}
+    add static ip  s1  ${netmask}  ${gateway}
+    ping from switch  s1  ${gateway}  
+    [Tags]  t5  platform  InitialConfig  feature  test1  
+           
+
 Verify the Switch configuration after ZTN 
     Log    Step 1 - Verify the Switch Configuration after ZTN
     [Tags]  T5  switch  ZTN  feature
@@ -237,8 +247,7 @@ Verify model in Show version for leaf
     Log    Step 1 - Verify right model in Show version for leaf as AS5710
     verify model in show version  s1  ${leafmodel} 
     [Tags]  t5  switch  platform  feature 
-    
-
+   
 Verify model in Show version for spine
     Log    Step 1 - Verify right model in Show version for spine as AS6700
     verify model in show version  s7  ${spinemodel} 
@@ -249,7 +258,12 @@ Verify switch interface 1g configuration on switch
     configure 1g interface on switch  s1  ${interface1g}
     verify 1g interface on switch  s1  ${interface1g}  1G    
     [Tags]  t5  switch  platform  feature       
-   
+
+verify the ofaux channel on controller  
+    verify ofaux channel on controller  c1  ${switch1_name}
+    [Tags]  T5  switch  Platform  ofaux  feature
+
+  
    
 Verify Show environment
     Log    Step 1 - Verify Show env
@@ -261,20 +275,7 @@ Verify Show running-config
     [Tags]  Manual  CLI  Admin  feature  
      Manual Passed
        
-Verify Admin save partial save config allowed config load reload merge override
-    Log    Step 1 - Verify Admin save partial save config allowed config load reload merge  override
-    [Tags]  Manual-untested  t5  switch  Platform  feature
-    Manual untested
-    
-Verify Config commit error flag invalid config missing config part check 
-    Log    Step 1 - Verify Config commit error flag invalid config missing config part check 
-    [Tags]  Manual-untested  t5  switch  Platform  feature
-    Manual untested
-    
-Verify CLI reboot command option - Config persistent after save
-    Log    Step 1 - Verify CLI reboot command option - Config persistent after save
-    [Tags]  Manual-untested  t5  switch  Platform  feature
-    Manual untested
+
     
 ###
 ### Section I : Traffic Test Verification
@@ -386,9 +387,7 @@ Verify the debugging of forwarding programming in the Switch
     [Tags]  Manual-untested  Debug  feature
     Manual untested
 
-verify the ofaux channel on controller  
-    verify ofaux channel on controller  c1  ${switch1_name}
-    [Tags]  T5  switch  Platform  ofaux  feature      
+      
 
 
 * Keywords
