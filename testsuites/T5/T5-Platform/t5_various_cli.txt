@@ -168,7 +168,7 @@ T11 User \n via REST
 	...  My Rest Add User  \n\r
 	[Tags]  BSC-5051  REST  Skipped
 
-T12.1 show this in config-cluster submode
+T12.1 show this in config-controller submode
 	Cli Run  master  controller
 	Cli Run  master  show this
 	[Tags]  BSC-5061  BSC-5491
