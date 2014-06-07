@@ -37,7 +37,7 @@ class T5ZTN(object):
         if not re.match(r'.*switchlight-.*release.ztn.*installer', output[2]):
             return helpers.test_failure("SL installer not found")
         helpers.log("Trying to check if SL SWI image is in %s" % output[1])
-        if not re.match(r'.*switchlight-.*release-t5.*swi', output[1]):
+        if not re.match(r'.*switchlight-.*release-bcf.*swi', output[1]):
             return helpers.test_failure("SL SWI image not found")
         helpers.log("Switch Light installer and SWI image are present")
 
@@ -133,6 +133,70 @@ class T5ZTN(object):
         con = t.dev_console(node)
         con.send("help")
         helpers.log(con.cli('')['content'])
+
+    def telnet_wait_for_switch_to_reload(self, node):
+        """
+        Test telnet access to given node
+
+        Inputs:
+        | node | Alias of the node to use |
+
+        Return Value:
+        - N/A
+        """
+        t = test.Test()
+        con = t.dev_console(node, modeless=True)
+        con.expect("Starting OpenFlow Agent: ofad")
+        con.expect(r'.*login:.*$')
+        return True
+
+    def telnet_verify_ztn_discovery_failed(self, node):
+        """
+        Verify that ZTN Discovery process failed
+
+        Inputs:
+        | node | Alias of the node to use |
+
+        Return Value:
+        - True if ZTN Discovery process failed
+        """
+        t = test.Test()
+        con = t.dev_console(node, modeless=True)
+        con.expect("ZTN Discovery Failed", timeout = 300)
+        return True
+
+    def telnet_verify_ztn_discovery_succeeded(self, node):
+        """
+        Verify that ZTN Discovery process succeeded
+
+        Inputs:
+        | node | Alias of the node to use |
+
+        Return Value:
+        - True if ZTN Discovery process succeeded
+        """
+        t = test.Test()
+        con = t.dev_console(node, modeless=True)
+        con.expect("Discovered Switch Light manifest from url", timeout = 300)
+        con.expect("ZTN Manifest validated")
+        con.expect("Booting")
+        return True
+
+    def telnet_verify_onie_discovery_failed(self, node):
+        """
+        Verify that ONIE Discovery process failed
+
+        Inputs:
+        | node | Alias of the node to use |
+
+        Return Value:
+        - True if ONIE Discovery process succeeded
+        """
+        t = test.Test()
+        con = t.dev_console(node, modeless=True)
+        con.expect("ONIE: Starting ONIE Service Discovery")
+        con.expect("ONIE: Starting ONIE Service Discovery")
+        return True
 
     def modeless_console(self, node):
         """
@@ -353,6 +417,7 @@ class T5ZTN(object):
             config = res.read()
             helpers.log("Response is: %s" % ''.join(config))
         except:
+            helpers.log(sys.exc_info()[0])
             return helpers.test_failure("Error trying to get startup-config"
                    " from Master")
         config = config.replace('\\x', '\\0x')
@@ -377,6 +442,15 @@ class T5ZTN(object):
         c = t.controller('master')
         bsn_common = bsnCommon()
         master_ip = bsn_common.get_node_ip('master')
+        #If this is s0, s1, ... then get hostname of topo file
+        #otherwise just use the provided hostname
+        if re.match(r's\d*$', hostname):
+            switch_name = bsn_common.get_node_alias(hostname)
+            helpers.log("Switch alias is %s" % switch_name)
+        else:
+            switch_name = hostname
+        helpers.log("Expected switch hostname is %s" % switch_name)
+
         single = False
         try:
             slave_ip = bsn_common.get_node_ip('slave')
@@ -394,12 +468,12 @@ class T5ZTN(object):
 
         ztn_config_temp = []
         for ztn_config_line in ztn_config:
-            if re.match(r'snmp-server|ntp|logging', ztn_config_line):
+            if re.match(r'snmp-server|ntp', ztn_config_line):
                 ztn_config_temp.append(ztn_config_line)
                 helpers.log("Keeping line in ztn-config: %s" % ztn_config_line)
         ztn_config = ztn_config_temp
         ztn_config.append("interface ma1 ip-address dhcp")
-        ztn_config.append("hostname %s" % hostname)
+        ztn_config.append("hostname %s" % switch_name)
         ztn_config.append("datapath id 00:00:%s" % mac)
         ztn_config.append("controller %s port 6653" % master_ip)
         ztn_config.append("ssh enable")
@@ -418,17 +492,15 @@ class T5ZTN(object):
                 if "ntp enable" in startup_config_line:
                     helpers.log("Skipping line: %s" % startup_config_line)
                     continue
+                if "timezone UTC" in startup_config_line:
+                    helpers.log("Skipping line: %s" % startup_config_line)
+                    continue
                 startup_config_temp.append(startup_config_line)
                 helpers.log("Keeping line in startup-config: %s"
                             % startup_config_line)
         startup_config = startup_config_temp
 
         for idx, ztn_config_line in enumerate(ztn_config):
-            if "snmp-server community ro" in ztn_config_line:
-                ztn_config[idx] = ztn_config_line.replace(
-                                  "snmp-server community ro",
-                                  "snmp-server community ro public")
-                helpers.log("Rearranging config line: %s" % ztn_config[idx])
             if "snmp-server host" in ztn_config_line:
                 if "udp-port" in ztn_config_line:
                     ztn_config[idx] = ztn_config_line.replace("udp-port",
@@ -499,13 +571,17 @@ class T5ZTN(object):
         s.cli('enable')
         s.cli('config')
         running_config = s.cli("show running-config")['content']
-        running_config = helpers.strip_cli_output(running_config)
         running_config = helpers.str_to_list(running_config)
+        #skipping first line
+        running_config = running_config[1:]
 
         startup_config_temp = []
         for startup_config_line in startup_config:
             if not re.match(r'!|^\s*$', startup_config_line):
                 if "ntp sync" in startup_config_line:
+                    helpers.log("Skipping line: %s" % startup_config_line)
+                    continue
+                if "timezone UTC" in startup_config_line:
                     helpers.log("Skipping line: %s" % startup_config_line)
                     continue
                 if re.match(r'controller .* port 6653', startup_config_line):
@@ -521,6 +597,8 @@ class T5ZTN(object):
 
         running_config_temp = []
         for running_config_line in running_config:
+            helpers.log("Analyzing line %s" % running_config_line)
+            # Excluding comments and empty lines
             if not re.match(r'!|^\s*$', running_config_line):
                 if "timezone Etc/UTC" in running_config_line:
                     helpers.log("Skipping line: %s" % running_config_line)
@@ -586,11 +664,135 @@ class T5ZTN(object):
         content = c.rest.content()
         helpers.log('content is: %s' % content)
         if content:
-            fabric_role = content[0]['fabric-role']
-            return fabric_role
+            return_val = content[0]['fabric-role']
+            return return_val
         else:
             helpers.log("Error when getting switch fabric role")
-            helpers.test_failure(c.rest.error())      
+            helpers.test_failure(c.rest.error())
+            return None
+
+    def rest_get_switch_fabric_connection_state(self, node, switch):
+        """
+        Get fabric connection state of the switch
+
+        Inputs:
+        | node | Alias of the controller node |
+        | switch | Alias of the switch |
+
+        Return Value:
+        - Return fabric-connection-state value (connected, not_connected) or
+          None in case of errors
+        """
+        t = test.Test()
+        c = t.controller(node)
+        url = ('/api/v1/data/controller/applications/bvs/info/fabric/'
+               'switch[name="%s"]' % str(switch))
+        helpers.log("Trying to get switch fabri connection state via url %s"
+                    % url)
+        c.rest.get(url)
+        if not c.rest.status_code_ok():
+            helpers.test_failure(c.rest.error())
+
+        content = c.rest.content()
+        helpers.log('content is: %s' % content)
+        if content:
+            return_val = content[0]['fabric-connection-state']
+            return return_val
+        else:
+            helpers.log("Error when getting switch fabri connetion state")
+            helpers.test_failure(c.rest.error())
+            return None
+
+    def rest_get_switch_suspended_reason(self, node, switch):
+        """
+        Get suspended reason for the switch
+
+        Inputs:
+        | node | Alias of the controller node |
+        | switch | Alias of the switch |
+
+        Return Value:
+        - Return value of suspended-reason or None in case of errors
+        """
+        t = test.Test()
+        c = t.controller(node)
+        url = ('/api/v1/data/controller/applications/bvs/info/fabric/'
+               'switch[name="%s"]' % str(switch))
+        helpers.log("Trying to get switch fabri connection state via url %s"
+                    % url)
+        c.rest.get(url)
+        if not c.rest.status_code_ok():
+            helpers.test_failure(c.rest.error())
+
+        content = c.rest.content()
+        helpers.log('content is: %s' % content)
+        if content:
+            return_val = content[0]['suspended-reason']
+            return return_val
+        else:
+            helpers.log("Error when getting switch fabric connection state")
+            helpers.test_failure(c.rest.error())
+            return None
+
+    def rest_get_switch_connection_state(self, node, switch):
+        """
+        Get connection state of the switch
+
+        Inputs:
+        | node | Alias of the controller node |
+        | switch | Alias of the switch |
+
+        Return Value:
+        - True if switch connected, False if not connected, None in case of
+          errors
+        """
+        t = test.Test()
+        c = t.controller(node)
+        url = ('/api/v1/data/controller/applications/bvs/info/fabric/'
+               'switch[name="%s"]' % str(switch))
+        helpers.log("Trying to get switch connection state  via url %s" % url)
+        c.rest.get(url)
+        if not c.rest.status_code_ok():
+            helpers.test_failure(c.rest.error())
+
+        content = c.rest.content()
+        helpers.log('content is: %s' % content)
+        if content:
+            return_val = content[0]['connected']
+            return return_val
+        else:
+            helpers.log("Error when getting switch connection state")
+            helpers.test_failure(c.rest.error())
+            return None
+
+    def rest_get_switch_handshake_state(self, node, switch):
+        """
+        Get handshake state of the switch
+
+        Inputs:
+        | node | Alias of the controller node |
+        | switch | Alias of the switch |
+
+        Return Value:
+        - Return value of handshake-state or None in case of errors
+        """
+        t = test.Test()
+        c = t.controller(node)
+        url = ('/api/v1/data/controller/applications/bvs/info/fabric/'
+               'switch[name="%s"]' % str(switch))
+        helpers.log("Trying to get switch handshake state  via url %s" % url)
+        c.rest.get(url)
+        if not c.rest.status_code_ok():
+            helpers.test_failure(c.rest.error())
+
+        content = c.rest.content()
+        helpers.log('content is: %s' % content)
+        if content:
+            return_val = content[0]['handshake-state']
+            return return_val
+        else:
+            helpers.log("Error when getting switch handshake state")
+            helpers.test_failure(c.rest.error())
             return None
 
     def rest_get_switch_ip_address(self, node, switch):
@@ -622,15 +824,25 @@ class T5ZTN(object):
             return ip_address
         else:
             helpers.log("Error when getting switch IP address")
-            helpers.test_failure(c.rest.error())      
+            helpers.test_failure(c.rest.error())
             return None
 
-    def reboot_switch(self, switch):
+    def telnet_reboot_switch(self, switch):
+        """
+        Issue reboot command for switch
+
+        Inputs:
+        | switch | Alias of the switch |
+
+        Return Value:
+        - True if reboot triggered successfully, False otherwise
+        """
         t = test.Test()
         s = t.dev_console(switch, modeless=True)
         s.send(helpers.ctrl('c'))
-        options = s.expect([r'[\r\n]*.*login:', r'[Pp]assword:', r'.*@.*:',
-                            r'ONIE:/ #', r'=> ', r'loader#', s.get_prompt()])
+        options = s.expect([r'[\r\n]*.*login:', r'[Pp]assword:', r'root@.*:',
+                            r'ONIE:/ #', r'=> ', r'loader#', s.get_prompt(),
+                            r'Trying manifest'])
         if options[0] == 0: #login prompt
             s.cli('admin')
             s.cli('enable; config')
@@ -648,9 +860,40 @@ class T5ZTN(object):
         if options[0] == 6: #CLI
             s.cli('enable; config')
             s.send('reload now')
-        if options[0] == 4:
-            s.expect(r'\(Re\)start USB')
-            #Loading from usb device
-        else:
-            s.expect(r'Clock Configuration:')
-        #s.expect(r'.*login:.*$')
+        if options[0] == 7: #SL Loader
+            s.send(helpers.ctrl('c'))
+            s.send('reboot')
+        try:
+            if options[0] == 4:
+                s.expect(r'\(Re\)start USB')
+            else:
+                s.expect(r'Clock Configuration:')
+            helpers.log("Switch %s rebooted" % switch)
+        except:
+            helpers.log(c.cli_content())
+            return helpers.test_failure("Error rebooting switch %s" % switch)
+
+        return True
+
+    def enter_loader_shell(self, switch):
+        """
+        Enter Switch Light loader shell while switch is booting up
+
+        Inputs:
+        | switch | Alias of the switch |
+
+        Return Value:
+        - True if successfully entered loader shell, False otherwise
+        """
+        t = test.Test()
+        s = t.dev_console(switch, modeless=True)
+        try:
+            s.expect("Press Control-C now to enter loader shell")
+        except:
+            return helpers.test_failure("Unable to stop at loader shell")
+
+        helpers.log("Entering loader shell")
+        s.send("\x03")
+        s.expect(r'loader#')
+        helpers.log("Loader shell entered")
+        return True

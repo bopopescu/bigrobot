@@ -1,0 +1,42 @@
+# Topology description is in YAML format - see http://en.wikipedia.org/wiki/YAML
+#
+# c<n>: Controllers
+# s<n>: Switches
+# h<n>: Hosts (including bare metal)
+# mn  : Mininet server
+
+c1:
+  ip: 10.192.103.30
+c2:
+  ip: 10.192.103.31
+
+s1:
+  alias:  spine0
+  mac: 70:72:cf:ae:b6:34
+  fabric-role: spine
+  console:
+    ip: cs-rack09
+    protocol: telnet
+    port: 6020
+  set_session_ssh: false
+  set_init_ping: false
+s2:
+  alias: leaf0-a
+  mac: 70:72:cf:b5:f4:5c
+  fabric-role: leaf
+  console:
+    ip: cs-rack09
+    protocol: telnet
+    port: 6021
+  set_session_ssh: false
+  set_init_ping: false
+s3:
+  alias: leaf0-b
+  mac: 70:72:cf:b5:f4:a6
+  fabric-role: leaf
+  console:
+    ip: cs-rack09
+    protocol: telnet
+    port: 6022
+  set_session_ssh: false
+  set_init_ping: false
