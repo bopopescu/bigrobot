@@ -146,7 +146,7 @@ class T5ZTN(object):
         """
         t = test.Test()
         con = t.dev_console(node, modeless=True)
-        con.expect("Starting OpenFlow Agent: ofad")
+        con.expect("Starting OpenFlow Agent: ofad", timeout=1000)
         con.expect(r'.*login:.*$')
         return True
 
@@ -162,7 +162,7 @@ class T5ZTN(object):
         """
         t = test.Test()
         con = t.dev_console(node, modeless=True)
-        con.expect("ZTN Discovery Failed", timeout=300)
+        con.expect("ZTN Discovery Failed", timeout=1000)
         return True
 
     def telnet_verify_ztn_discovery_succeeded(self, node):
@@ -177,7 +177,7 @@ class T5ZTN(object):
         """
         t = test.Test()
         con = t.dev_console(node, modeless=True)
-        con.expect("Discovered Switch Light manifest from url", timeout=300)
+        con.expect("Discovered Switch Light manifest from url", timeout=1000)
         con.expect("ZTN Manifest validated")
         con.expect("Booting")
         return True
@@ -838,7 +838,7 @@ class T5ZTN(object):
         s.send(helpers.ctrl('c'))
         options = s.expect([r'[\r\n]*.*login:', r'[Pp]assword:', r'root@.*:',
                             r'ONIE:/ #', r'=> ', r'loader#', s.get_prompt(),
-                            r'Trying manifest'])
+                            r'Trying manifest'], timeout=1000)
         if options[0] == 0: #login prompt
             s.cli('admin')
             s.cli('enable; config')
@@ -863,10 +863,10 @@ class T5ZTN(object):
             if options[0] == 4:
                 s.expect(r'\(Re\)start USB')
             else:
-                s.expect(r'Clock Configuration:')
+                s.expect(r'Clock Configuration:', timeout=1000)
             helpers.log("Switch %s rebooted" % switch)
         except:
-            helpers.log(s.cli_content())
+            helpers.log(s.cli('')['content'])
             return helpers.test_failure("Error rebooting switch %s" % switch)
 
         return True
