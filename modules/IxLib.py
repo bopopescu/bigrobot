@@ -1131,8 +1131,10 @@ class Ixia(object):
                 self.ix_fetch_port_stats()
             helpers.log('Traffic Stream is given, starting traffic on given stream')
             try:
+                helpers.log("Trying to start traffic ..")
                 self._handle.execute('startStatelessTrafficBlocking', trafficHandle)
             except:
+                helpers.log("Got Exception while trying to apply traffic..")
                 if exception:
                     helpers.log("Already tried one time with Applying traffic on Ix Network Exception ,, need to check traffic config for fix this")
                     return False
