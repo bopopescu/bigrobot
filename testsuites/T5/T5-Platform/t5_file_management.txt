@@ -56,9 +56,11 @@ T0.3 Extensive file remote copy
 	Rest Delete Tenant  TenantTest12345
 	Cli Copy  scp://bsn@regress:file-management-testsuite/extensive-file
 	...  running-config
+	Sleep  10
 	Compare  scp://bsn@regress:file-management-testsuite/extensive-file
 	...  running-config
 	Compare  config://extensive-config  running-config
+	Sleep  5
 	Cli Copy  scp://bsn@regress:file-management-testsuite/extensive-file
 	...  extensive-file
 	Compare  extensive-file  running-config
