@@ -342,17 +342,7 @@ T3.1. Verify that after ZTN configuration change (CLI, GUI, REST), new startup-c
 	Cli Run  master  mac ${mac2}
 	Verify Switch Startup Config  ${mac1}  ${name1}
 	Verify Switch Startup Config  ${mac2}  ${name2}
-	Cli Run  master  enable; config
-	${contact_random}  Generate Random Name  contact  5
-	Cli Run  master  snmp-server contact ${contact_random}
-	${location_random}  Generate Random Name  location  5
-	Cli Run  master  snmp-server location ${location_random}
-	${community_random}  Generate Random Name  community  5
-	Cli Run  master  snmp-server community ro ${community_random}
-	${host_random}  Generate Random IP
-	Cli Run  master  snmp-server host ${host_random}
-	${host_random}  Generate Random IP
-	Cli Run  master  ntp server ${host_random}
+	Randomize ZTN Configuration
 	Verify Switch Startup Config  ${mac1}  ${name1}
 	Verify Switch Startup Config  ${mac2}  ${name2}
 
@@ -362,21 +352,84 @@ T3.2. Verify that after ZTN configuration change (CLI, GUI, REST), admin is noti
 	[Tags]  manual-untested
 #we eventually expect to do this automatically, but this does not happen currently
 T3.3. Change ZTN configuration, do not reload the switch, restore old config (check if reload command on UI is still requested), reload switch - verify that config on switch is correct
-	Manual Untested
-	[Tags]  manual-untested
+	Cli Copy  running-config  config://temp-config
+	Randomize ZTN Configuration
+	Verify Switch Startup Config  ${s2_mac}  ${s2_alias}
+	Cli Copy  config://temp-config  running-config
+	Verify Switch Startup Config  ${s2_mac}  ${s2_alias}
+    Telnet Reboot Switch  s2
+	Sleep  5
+	Verify Switch Connection State  False  ${s2_alias}
+	Verify Switch Fabric Connection State  not_connected  ${s2_alias}
+	Telnet Wait For Switch To Reload  s2
+	Sleep  5
+	Verify Switch Connection State  True  ${s2_alias}
+	Verify Switch Fabric Connection State  connected  ${s2_alias}
+	Verify Switch Startup Config  ${s2_mac}  ${s2_alias}
+	Verify Switch Running Config  ${s2_mac}  ${s2_alias}
+
 T3.4. Change ZTN configuration, do not reload the switch, change config again (check if reload command on UI is still requested), reload switch - verify that config on switch is correct
-	Manual Untested
-	[Tags]  manual-untested
+	Randomize ZTN Configuration
+	Verify Switch Startup Config  ${s2_mac}  ${s2_alias}
+	Randomize ZTN Configuration
+	Verify Switch Startup Config  ${s2_mac}  ${s2_alias}
+    Telnet Reboot Switch  s2
+	Sleep  5
+	Verify Switch Connection State  False  ${s2_alias}
+	Verify Switch Fabric Connection State  not_connected  ${s2_alias}
+	Telnet Wait For Switch To Reload  s2
+	Sleep  5
+	Verify Switch Connection State  True  ${s2_alias}
+	Verify Switch Fabric Connection State  connected  ${s2_alias}
+	Verify Switch Startup Config  ${s2_mac}  ${s2_alias}
+	Verify Switch Running Config  ${s2_mac}  ${s2_alias}
+
 T3.5. Change ZTN configuration, reload half of switches, restore old config - verify that all switches need to be reloaded
-	Manual Untested
-	[Tags]  manual-untested
+	Cli Copy  running-config  config://temp-config
+	Randomize ZTN Configuration
+	Verify Switch Startup Config  ${s1_mac}  ${s1_alias}
+	Verify Switch Startup Config  ${s2_mac}  ${s2_alias}
+	Reboot Provisioned Switch  s2  ${s2_mac}  ${s2_alias}
+	Cli Copy  config://temp-config  running-config
+	Verify Switch Startup Config  ${s1_mac}  ${s1_alias}
+	Verify Switch Startup Config  ${s2_mac}  ${s2_alias}
+	Reboot Provisioned Switch  s1  ${s1_mac}  ${s1_alias}
+	Reboot Provisioned Switch  s2  ${s2_mac}  ${s2_alias}
+	Verify Switch Startup Config  ${s1_mac}  ${s1_alias}
+	Verify Switch Running Config  ${s1_mac}  ${s1_alias}
+	Verify Switch Startup Config  ${s2_mac}  ${s2_alias}
+	Verify Switch Running Config  ${s2_mac}  ${s2_alias}
+
 T3.6. Change ZTN configuration, reload half of switches, change config again - verify that all switches need to be reloaded
-	Manual Untested
-	[Tags]  manual-untested
+	Randomize ZTN Configuration
+	Verify Switch Startup Config  ${s1_mac}  ${s1_alias}
+	Verify Switch Startup Config  ${s2_mac}  ${s2_alias}
+	Reboot Provisioned Switch  s2  ${s2_mac}  ${s2_alias}
+	Randomize ZTN Configuration
+	Verify Switch Startup Config  ${s1_mac}  ${s1_alias}
+	Verify Switch Startup Config  ${s2_mac}  ${s2_alias}
+	Reboot Provisioned Switch  s1  ${s1_mac}  ${s1_alias}
+	Reboot Provisioned Switch  s2  ${s2_mac}  ${s2_alias}
+	Verify Switch Startup Config  ${s1_mac}  ${s1_alias}
+	Verify Switch Running Config  ${s1_mac}  ${s1_alias}
+	Verify Switch Startup Config  ${s2_mac}  ${s2_alias}
+	Verify Switch Running Config  ${s2_mac}  ${s2_alias}
+
 # reload notification in GUI/Cli not (yet) supported
 T3.7. Disconnect all switches from the fabric (ma1 down) then do significant changes in fabric configuration (startup-config template, switch roles) - error should be presented, reconnect the switch - incorrect running config should be noticed by the controller and admin should be notified to take action (reload config on switch)
-	Manual Untested
-	[Tags]  manual-untested
+	Telnet Set MA1 State  s1  down
+	Telnet Set MA1 State  s2  down
+	Sleep  30
+	Randomize ZTN Configuration
+	Verify Switch Startup Config  ${s1_mac}  ${s1_alias}
+	Verify Switch Startup Config  ${s2_mac}  ${s2_alias}
+	Reboot Provisioned Switch  s1  ${s1_mac}  ${s1_alias}
+	Reboot Provisioned Switch  s2  ${s2_mac}  ${s2_alias}
+	Verify Switch Startup Config  ${s1_mac}  ${s1_alias}
+	Verify Switch Running Config  ${s1_mac}  ${s1_alias}
+	Verify Switch Startup Config  ${s2_mac}  ${s2_alias}
+	Verify Switch Running Config  ${s2_mac}  ${s2_alias}
+
 T3.8. Delete all switches from the controller, reboot all switches (they should keep looking for ZTN server). Copy RC from external source (config://, scp://, file) to running config, watch the fabric come up.
 	Manual Untested
 	[Tags]  manual-untested
@@ -1116,11 +1169,7 @@ Suite Setup
 
 	Auto Configure Fabric Switch   ${spineList}   ${leafList}   2
 	Cli Run  master  enable; config
-	#Cli Run  master  snmp-server community ro my-community
-	#Cli Run  master  snmp-server contact tomasz
-	#Cli Run  master  snmp-server enable traps
-	#Cli Run  master  snmp-server host 1.2.3.4
-	#Cli Run  master  snmp-server location here
+	Randomize ZTN Configuration
 	Cli Run  master  ntp time-zone America/Los_Angeles
 
     Telnet Reboot Switch  s1
@@ -1149,10 +1198,10 @@ Suite Teardown
 
 Test Setup
 	Base Test Setup
-	Cli Copy  running-config  config://startup-config
+	Cli Copy  running-config  config://test-config
 
 Test Teardown
-	Cli Copy  config://startup-config  running-config
+	Cli Copy  config://test-config  running-config
 	Base Test Teardown
 
 Verify Switch Handshake State
@@ -1196,3 +1245,36 @@ Generate Random IP
     ${oct4}  Generate Random String  2  [NUMBERS]
     ${ip}  Catenate  SEPARATOR=.  1${oct1}  1${oct2}  1${oct3}  1${oct4}
     [Return]  ${ip}
+
+Generate Random GMT Timezone
+	${digit}  Generate Random String  1  [NUMBERS]
+	${timezone}  Catenate  SEPARATOR=  Etc/GMT+${digit}
+	[Return]  ${timezone}
+
+Randomize ZTN Configuration
+	Cli Run  master  enable; config
+	${contact_random}  Generate Random Name  contact  5
+	Cli Run  master  snmp-server contact ${contact_random}
+	${location_random}  Generate Random Name  location  5
+	Cli Run  master  snmp-server location ${location_random}
+	${community_random}  Generate Random Name  community  5
+	Cli Run  master  snmp-server community ro ${community_random}
+	${host_random}  Generate Random IP
+	Cli Run  master  snmp-server host ${host_random}
+	${host_random}  Generate Random IP
+	Cli Run  master  ntp server ${host_random}
+	${timezone_random}  Generate Random GMT Timezone
+	Cli Run  master  ntp time-zone ${timezone_random}
+
+Reboot Provisioned Switch
+	[Arguments]  ${switch_id}  ${switch_mac}  ${switch_alias}
+	Telnet Reboot Switch  ${switch_id}
+	Sleep  5
+	Verify Switch Connection State  False  ${switch_alias}
+	Verify Switch Fabric Connection State  not_connected  ${switch_alias}
+	Telnet Wait For Switch To Reload  ${switch_id}
+	Sleep  5
+	Verify Switch Connection State  True  ${switch_alias}
+	Verify Switch Fabric Connection State  connected  ${switch_alias}
+	Verify Switch Startup Config  ${switch_mac}  ${switch_alias}
+	Verify Switch Running Config  ${switch_mac}  ${switch_alias}
