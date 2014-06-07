@@ -538,95 +538,63 @@ T24 Configure SPAN session for DST-MAC - Direction Ingress
 	Should not be true  ${returnVal}
 
 
+
 T25 Configure SPAN session for IP-Proto - Direction Ingress
-	[Tags]  span  feature
-	${returnVal} =  rest add monitor session  1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	 ${s1IxiaDstSwitch}	 ${s1IxiaDstInt}  direction=ingress  ip-proto=6
-    Should be true  ${returnVal}
-	${returnVal} =  rest verify monitor session	 1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	${s1IxiaDstSwitch}	${s1IxiaDstInt}  direction=ingress  ip-proto=6
-	Should be true  ${returnVal}
-	rest activate monitor session	1
-	
-	sleep  3
-	
-	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	src port 1000 and tcp  IP
-	Should be true  ${returnVal}
-	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	src port 1100 and tcp  IP
-	Should be true  ${returnVal}
-	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	udp  IP
-	Should not be true  ${returnVal}
+	[Tags]  span  feature manual
+	manual passed
 	
 	
 T26 Configure SPAN session for IP-DSCP - Direction Ingress
-	[Tags]  span  feature   skipped
-	${returnVal} =  rest add monitor session  1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	 ${s1IxiaDstSwitch}	 ${s1IxiaDstInt}  direction=ingress  ip-dscp=6
-    Should be true  ${returnVal}
-	${returnVal} =  rest verify monitor session	 1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	${s1IxiaDstSwitch}	${s1IxiaDstInt}  direction=ingress  ip-dscp=6
-	Should be true  ${returnVal}
-	rest activate monitor session	1
-
-	sleep  3
-	
-	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	src port 8000 and tcp  IP
-	Should be true  ${returnVal}
-	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	src port 7000 and tcp  IP
-	Should not be true  ${returnVal}
-	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	src port 9000 and tcp  IP
-	Should not be true  ${returnVal}
-
+	[Tags]  span  feature  manual
+	manual passed 
 
 T27 Configure SPAN session for IP-ECN - Direction Ingress
-	[Tags]  span  feature   skipped
-	${returnVal} =  rest add monitor session  1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	 ${s1IxiaDstSwitch}	 ${s1IxiaDstInt}  direction=ingress  ip-ecn=6
-    Should be true  ${returnVal}
-	${returnVal} =  rest verify monitor session	 1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	${s1IxiaDstSwitch}	${s1IxiaDstInt}  direction=ingress  ip-ecn=6
-	Should be true  ${returnVal}
-	rest activate monitor session	1
+	[Tags]  span  feature  manual
+	manual passed 
 
-	sleep  3
 	
-	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	src port 8000 and tcp  IP
-	Should be true  ${returnVal}
-	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	src port 7000 and tcp  IP
-	Should not be true  ${returnVal}
-	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	src port 9000 and tcp  IP
-	Should not be true  ${returnVal}
-	
-
 T28 Configure SPAN session for Ethertype - Direction Ingress
-	[Tags]  span  feature
-	${returnVal} =  rest add monitor session  1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	 ${s1IxiaDstSwitch}	 ${s1IxiaDstInt}  direction=ingress  ether-type=2048
-    Should be true  ${returnVal}
-	${returnVal} =  rest verify monitor session	 1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	${s1IxiaDstSwitch}	${s1IxiaDstInt}  direction=ingress  ether-type=2048
-	Should be true  ${returnVal}
-	rest activate monitor session	1
-	
-	sleep  3
-	
-	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	src port 1000 and tcp  IP
-	Should be true  ${returnVal}
-	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	src port 1100 and tcp  IP
-	Should be true  ${returnVal}
-	#${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	udp  IP
-	#Should not be true  ${returnVal}
+	[Tags]  span  feature  manual
+	manual failed 
 	
 
 T29 Configure SPAN session for Tenant/VNS - Direction Ingress
-	[Tags]  span  feature  skipped
-	${returnVal} =  rest add monitor session  1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	 ${s1IxiaDstSwitch}	 ${s1IxiaDstInt}  direction=ingress  ip-proto=6
-    Should be true  ${returnVal}
-	${returnVal} =  rest verify monitor session	 1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	${s1IxiaDstSwitch}	${s1IxiaDstInt}  direction=ingress  ip-proto=6
-	Should be true  ${returnVal}
-	rest activate monitor session	1
+	[Tags]  span  feature  manual
+	manual  failed
 	
-	sleep  3
 	
-	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	src port 1000 and tcp  IP
-	Should be true  ${returnVal}
-	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	src port 1100 and tcp  IP
-	Should be true  ${returnVal}
-	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	udp  IP
-	Should not be true  ${returnVal}
+T30 Configure SPAN session with multiple options - Direction Ingress
+	[Tags]  span  feature  manual
+	manual passed
+
+
+T31 Configure SPAN session with Different VLANs
+	[Tags]  span  feature  manual-untested
+
+
+T32 Configure SPAN session with Spine switches 
+	[Tags]  span  feature  manual
+	manual passed
 	
+	
+T33 Configure SPAN session with multiple source interfaces
+	[Tags]  span  feature  manual
+	manual passed
+	
+	
+T34 Configure SPAN session with multiple destination interfaces
+	[Tags]  span  feature manual
+	manual passed
+
+
+T35 Configure multiple SPAN sessions in multiple switches
+	[Tags]  span  feature  manual-untested
+	
+
+T36 Configure peer links as source interfaces
+	[Tags]  span  feature  manual
+	manual failed
+
 	
 
 
