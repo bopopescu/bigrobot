@@ -1194,5 +1194,5 @@ Generate Random IP
     ${oct2}  Generate Random String  2  [NUMBERS]
     ${oct3}  Generate Random String  2  [NUMBERS]
     ${oct4}  Generate Random String  2  [NUMBERS]
-    ${ip}  Catenate  SEPARATOR=.  ${oct1}  ${oct2}  ${oct3}  ${oct4}
+    ${ip}  Catenate  SEPARATOR=.  1${oct1}  1${oct2}  1${oct3}  1${oct4}
     [Return]  ${ip}
