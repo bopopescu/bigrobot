@@ -4,6 +4,7 @@ from keywords.BsnCommon import BsnCommon as bsnCommon
 import re
 import ast
 import urllib2
+import traceback
 
 class T5ZTN(object):
 
@@ -240,6 +241,37 @@ class T5ZTN(object):
         con.send("reload now")
         helpers.sleep(90)
 
+    def telnet_set_ma1_state(self, node, state):
+        """
+        Run "no interface ma1" command on switch
+
+        Inputs:
+        | node | Alias of the node to use |
+
+        Return Value:
+        - N/A
+        """
+        t = test.Test()
+        s = t.dev_console(node, modeless=True)
+        s.send(helpers.ctrl('c'))
+        options = s.expect([r'[\r\n]*.*login:', r'root@.*:', s.get_prompt()],
+                           timeout=1000)
+        if options[0] == 0: #login prompt
+            s.cli('admin')
+        if options[0] == 1: #bash mode
+            s.cli('exit')
+        s.cli('enable; config')
+        if state == 'up':
+            helpers.log("Setting interface MA1 up")
+            s.cli('interface ma1 ip-address dhcp')
+        elif state == 'down':
+            helpers.log("Setting interface MA1 down")
+            s.cli('no interface ma1 ip-address dhcp')
+        else:
+            helpers.log("%s is not a valid state. Use 'up' or 'down'" % state)
+            return helpers.test_failure("Wrong state of interface")
+        return True
+
     def telnet_switch_reload_and_execute_loader_shell_commands(self,
         node, commands):
         """
@@ -417,7 +449,7 @@ class T5ZTN(object):
             config = res.read()
             helpers.log("Response is: %s" % ''.join(config))
         except:
-            helpers.log(sys.exc_info()[0])
+            helpers.log(traceback.print_exc())
             return helpers.test_failure("Error trying to get startup-config"
                    " from Master")
         config = config.replace('\\x', '\\0x')
