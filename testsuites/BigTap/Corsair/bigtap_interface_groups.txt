@@ -1,0 +1,450 @@
+*Settings
+Documentation  Interface Groups Test Suite
+Suite Setup  interface suite setup
+Suite Teardown   interface suite teardown
+Test Setup   base test setup
+Test Teardown  base test teardown 
+Force Tags   Corsair  AugustaP2  BigTap  
+Library  keywords/BsnCommon.py
+Library  keywords/AppController.py
+Library  keywords/BigTap.py
+Library  keywords/SwitchLight.py
+Library  keywords/Ixia.py
+
+* Variable
+${switch1_alias}                        scale-ac5710-1   #Alias for switch 1
+
+### Ixia Ports
+${switch1_filter_intf_1}                  ethernet1        #filter interface on switch 1
+${switch1_filter_alias_1}                 ixia-4-21        #Alias for filter interface on switch 1
+${switch1_delivery_intf_1}                ethernet2        #Delivery interface on switch 1
+${switch1_delivery_alias_1}               ixia-4-22        #Alias for delivery interface on switch 1
+${switch1_filter_intf_2}                  ethernet11       #filter interface on switch 1
+${switch1_filter_alias_2}                 filter-5710-1    #Alias for filter interface on switch 1
+${switch1_delivery_intf_2}                ethernet12       #Delivery interface on switch 1
+${switch1_delivery_alias_2}               delivery-5710-1  #Alias for delivery interface on switch 1
+${switch1_filter_intf_3}                  ethernet13       #filter interface on switch 1
+${switch1_filter_alias_3}                 filter-5710-2    #Alias for filter interface on switch 1
+${switch1_delivery_intf_3}                ethernet14       #Delivery interface on switch 1
+${switch1_delivery_alias_3}               delivery-5710-2  #Alias for delivery interface on switch 1
+
+
+### BigTap Policy Configuration
+${policy_name}                          policy_filter_group      #Policy Name that will use the tunnel interface
+${filter_interface_group_name_1}          corsair_filter_group_1
+${filter_interface_group_name_2}          corsair_filter_group_2
+${delivery_interface_group_name_1}        corsair_delivery_group_1
+${delivery_interface_group_name_2}        corsair_delivery_group_2
+${vlan_rewrite_1}                         1024
+${vlan_rewrite_2}                         2048
+
+*Test Case
+Verify filter interfaces can be added to a group via rest 
+    ${return_value}=  rest add interface group  ${filter_interface_group_name_1}  filter  
+    Should be true  ${return_value}
+    ${return_value}=  rest add interface to interface group  ${filter_interface_group_name_1}  filter  ${switch1_filter_alias_2}    
+    Should be true  ${return_value}
+    ${filter_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/view/filter-interface-group?config=true
+    Should be equal as strings   ${filter_dictionary[0]['name']}  ${filter_interface_group_name_1}    
+    ${filter_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/view/filter-interface-group?config=true
+    Should be equal as strings   ${filter_dictionary[0]['filter-group'][0]['name']}  ${switch1_filter_alias_2}
+    [Tags]  feature
+    
+Verify a filter interface can be deleted from a filter interface group via rest
+    ${return_value}=  rest delete interface from interface group  ${filter_interface_group_name_1}  filter  ${switch1_filter_alias_2}    
+    Should be true  ${return_value}
+    ${filter_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/view/filter-interface-group?config=true
+    Variable should not exist   ${filter_dictionary[0]['filter-group'][0]['name']}     
+    [Tags]  feature
+    
+Verify a filter interface-group can be deleted via rest
+    ${return_value}=  rest delete interface group  ${filter_interface_group_name_1}  filter   
+    Should be true  ${return_value}
+    ${filter_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/view/filter-interface-group?config=true
+    Variable should not exist   ${filter_dictionary[0]['name']}    
+    [Tags]  feature
+    
+Verify delivery interfaces can be added to a group via rest 
+    ${return_value}=  rest add interface group  ${delivery_interface_group_name_1}  delivery  
+    Should be true  ${return_value}
+    ${return_value}=  rest add interface to interface group  ${delivery_interface_group_name_1}  delivery  ${switch1_delivery_alias_2}    
+    Should be true  ${return_value}
+    ${delivery_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/view/delivery-interface-group?config=true
+    Should be equal as strings   ${delivery_dictionary[0]['delivery-group'][0]['name']}  ${switch1_delivery_alias_2}
+    [Tags]  feature
+    
+Verify a delivery interface can be deleted from a delivery interface group via rest
+    ${return_value}=  rest delete interface from interface group  ${delivery_interface_group_name_1}  delivery  ${switch1_delivery_alias_2}    
+    Should be true  ${return_value}
+    ${delivery_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/view/delivery-interface-group?config=true
+    Variable should not exist   ${delivery_dictionary[0]['delivery-group'][0]['name']}     
+    [Tags]  feature
+    
+Verify a delivery interface-group can be deleted via rest
+    ${return_value}=  rest delete interface group  ${delivery_interface_group_name_1}  delivery   
+    Should be true  ${return_value}
+    ${delivery_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/view/delivery-interface-group?config=true
+    Variable should not exist   ${delivery_dictionary[0]['name']}  
+    [Tags]  feature
+
+Verify multiple interfaces can be added to filter-interface-group
+    ${return_value}=  rest add interface group  ${filter_interface_group_name_1}  filter  
+    Should be true  ${return_value}
+    ${return_value}=  rest add interface to interface group  ${filter_interface_group_name_1}  filter  ${switch1_filter_alias_2}    
+    Should be true  ${return_value}
+    ${return_value}=  rest add interface to interface group  ${filter_interface_group_name_1}  filter  ${switch1_filter_alias_3}    
+    Should be true  ${return_value}
+    ${filter_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/view/filter-interface-group?config=true
+    Should be equal as strings   ${filter_dictionary[0]['filter-group'][0]['name']}  ${switch1_filter_alias_2}
+    ${filter_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/view/filter-interface-group?config=true
+    Should be equal as strings   ${filter_dictionary[0]['filter-group'][1]['name']}  ${switch1_filter_alias_3}    
+    [Tags]  feature
+
+Verify multiple interfaces can be added to delivery-interface-group
+    ${return_value}=  rest add interface group  ${delivery_interface_group_name_1}  delivery  
+    Should be true  ${return_value}
+    ${return_value}=  rest add interface to interface group  ${delivery_interface_group_name_1}  delivery  ${switch1_delivery_alias_2}    
+    Should be true  ${return_value}
+    ${return_value}=  rest add interface to interface group  ${delivery_interface_group_name_1}  delivery  ${switch1_delivery_alias_3}    
+    Should be true  ${return_value}
+    ${delivery_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/view/delivery-interface-group?config=true
+    Should be equal as strings   ${delivery_dictionary[0]['delivery-group'][0]['name']}  ${switch1_delivery_alias_2}
+    ${delivery_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/view/delivery-interface-group?config=true
+    Should be equal as strings   ${delivery_dictionary[0]['delivery-group'][1]['name']}  ${switch1_delivery_alias_3}
+    [Tags]  feature
+
+Verify filter-interface group with multiple member interfaces can be added to policy
+    ${return_value}=  rest delete policy interface  admin-view  ${policy_name}  ${switch1_filter_alias_1}  filter
+    Should be true  ${return_value}
+    Sleep  5      
+    ${return_value}=  rest add interface group to policy  ${policy_name}  ${filter_interface_group_name_1}  filter  
+    Should be true  ${return_value}
+    Sleep  5
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=2  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${return_value}=  rest delete interface group from policy  ${policy_name}  ${filter_interface_group_name_1}  filter  
+    Should be true  ${return_value}
+    Sleep  5 
+    rest add policy interface  admin-view  ${policy_name}  ${switch1_filter_alias_1}  filter
+    Sleep  5        
+    [Tags]  feature      
+
+Verify delivery-interface group with multiple member interfaces can be added to policy
+    ${return_value}=  rest delete policy interface  admin-view  ${policy_name}  ${switch1_delivery_alias_1}  delivery
+    Should be true  ${return_value}
+    Sleep  5      
+    ${return_value}=  rest add interface group to policy  ${policy_name}  ${delivery_interface_group_name_1}  delivery  
+    Should be true  ${return_value}
+    Sleep  5
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=2
+    Should be true  ${verify_policy1}
+    ${return_value}=  rest delete interface group from policy  ${policy_name}  ${delivery_interface_group_name_1}  delivery  
+    Should be true  ${return_value}
+    Sleep  5 
+    rest add policy interface  admin-view  ${policy_name}  ${switch1_delivery_alias_1}  delivery
+    Sleep  5        
+    [Tags]  feature      
+
+
+Verify delivery-interface group and filter-interface group can be added to policy
+    ${return_value}=  rest delete policy interface  admin-view  ${policy_name}  ${switch1_delivery_alias_1}  delivery
+    Should be true  ${return_value}
+    ${return_value}=  rest delete policy interface  admin-view  ${policy_name}  ${switch1_filter_alias_1}  filter
+    Should be true  ${return_value}
+    Sleep  5      
+    ${return_value}=  rest add interface group to policy  ${policy_name}  ${filter_interface_group_name_1}  filter  
+    Should be true  ${return_value}
+    ${return_value}=  rest add interface group to policy  ${policy_name}  ${delivery_interface_group_name_1}  delivery  
+    Should be true  ${return_value}
+    Sleep  5
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=2  num_delivery_intf=2
+    Should be true  ${verify_policy1}      
+    [Tags]  feature 
+
+Delete filter interface from filter-interface group and verify policy gets updated automatically
+    ${return_value}=  rest delete interface from interface group  ${filter_interface_group_name_1}  filter  ${switch1_filter_alias_3}
+    Should be true  ${return_value}
+    Sleep  5 
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=2
+    Should be true  ${verify_policy1}
+    [Tags]  feature
+    
+Add the deleted filter interface back to the filter interface group and verify policy gets updated automatically
+    ${return_value}=  rest add interface to interface group  ${filter_interface_group_name_1}  filter  ${switch1_filter_alias_3}    
+    Should be true  ${return_value}   
+    Sleep  5          
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=2  num_delivery_intf=2
+    Should be true  ${verify_policy1}
+    [Tags]  feature
+
+Delete delivery interface from delivery-interface group and verify policy gets updated automatically
+    ${return_value}=  rest delete interface from interface group  ${delivery_interface_group_name_1}  delivery  ${switch1_delivery_alias_3}
+    Should be true  ${return_value}
+    Sleep  5 
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=2  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    [Tags]  feature  
+    
+Add the deleted delivery interface back to the delivery interface group and verify policy gets updated automatically
+    ${return_value}=  rest add interface to interface group  ${delivery_interface_group_name_1}  delivery  ${switch1_delivery_alias_3}    
+    Should be true  ${return_value}   
+    Sleep  5          
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=2  num_delivery_intf=2
+    Should be true  ${verify_policy1}
+    [Tags]  feature  
+
+Verify same filter interface can be added to a two groups
+    ${return_value}=  rest add interface to interface group  ${filter_interface_group_name_1}  filter  ${switch1_filter_alias_2}    
+    Should be true  ${return_value}
+    ${return_value}=  rest add interface group  ${filter_interface_group_name_2}  filter  
+    Should be true  ${return_value}
+    ${return_value}=  rest add interface to interface group  ${filter_interface_group_name_2}  filter  ${switch1_filter_alias_2}    
+    Should be true  ${return_value}
+    Sleep  5
+    ${filter_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/view/filter-interface-group?config=true
+    Should be equal as strings   ${filter_dictionary[0]['name']}  ${filter_interface_group_name_1}
+    ${filter_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/view/filter-interface-group?config=true
+    Should be equal as strings   ${filter_dictionary[1]['name']}  ${filter_interface_group_name_2}
+    ${filter_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/view/filter-interface-group?config=true
+    Should be equal as strings   ${filter_dictionary[0]['filter-group'][0]['name']}  ${switch1_filter_alias_2}
+    ${filter_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/view/filter-interface-group?config=true
+    Should be equal as strings   ${filter_dictionary[1]['filter-group'][0]['name']}  ${switch1_filter_alias_2}
+    [Tags]  feature
+
+Verify same delivery interface can be added to a two groups
+    ${return_value}=  rest add interface to interface group  ${delivery_interface_group_name_1}  delivery  ${switch1_delivery_alias_2}    
+    Should be true  ${return_value}
+    ${return_value}=  rest add interface group  ${delivery_interface_group_name_2}  delivery  
+    Should be true  ${return_value}
+    ${return_value}=  rest add interface to interface group  ${delivery_interface_group_name_2}  delivery  ${switch1_delivery_alias_2}    
+    Should be true  ${return_value}
+    Sleep  5
+    ${delivery_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/view/delivery-interface-group?config=true
+    Should be equal as strings   ${delivery_dictionary[0]['name']}  ${delivery_interface_group_name_1}
+    ${delivery_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/view/delivery-interface-group?config=true
+    Should be equal as strings   ${delivery_dictionary[1]['name']}  ${delivery_interface_group_name_2}    
+    ${delivery_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/view/delivery-interface-group?config=true
+    Should be equal as strings   ${delivery_dictionary[0]['delivery-group'][0]['name']}  ${switch1_delivery_alias_2}
+    ${delivery_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/view/delivery-interface-group?config=true
+    Should be equal as strings   ${delivery_dictionary[1]['delivery-group'][0]['name']}  ${switch1_delivery_alias_2}    
+    [Tags]  feature
+
+Verify a filter interface and a filter interface group can be both added to a policy
+    rest delete policy  admin-view  ${policy_name}
+    Sleep  10    
+    rest add policy  admin-view  ${policy_name}  forward
+    rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
+    rest add policy interface  admin-view  ${policy_name}  ${switch1_filter_alias_1}  filter
+    rest add policy interface  admin-view  ${policy_name}  ${switch1_delivery_alias_1}  delivery
+    ${return_value}=  rest add interface group to policy  ${policy_name}  ${filter_interface_group_name_1}  filter  
+    Should be true  ${return_value}
+    Sleep  5     
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=3  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${return_value}=  rest delete interface group from policy  ${policy_name}  ${filter_interface_group_name_1}  filter  
+    Should be true  ${return_value}
+    Sleep  5     
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}        
+    [Tags]  feature
+
+Verify a delivery interface and a delivery interface group can be both added to a policy
+    rest delete policy  admin-view  ${policy_name}
+    Sleep  10    
+    rest add policy  admin-view  ${policy_name}  forward
+    rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
+    rest add policy interface  admin-view  ${policy_name}  ${switch1_filter_alias_1}  filter
+    rest add policy interface  admin-view  ${policy_name}  ${switch1_delivery_alias_1}  delivery
+    ${return_value}=  rest add interface group to policy  ${policy_name}  ${delivery_interface_group_name_1}  delivery  
+    Should be true  ${return_value}
+    Sleep  5     
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=3
+    Should be true  ${verify_policy1}
+    ${return_value}=  rest delete interface group from policy  ${policy_name}  ${delivery_interface_group_name_1}  delivery  
+    Should be true  ${return_value}
+    Sleep  5     
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}        
+    [Tags]  feature
+
+Verify a filter interface and a filter interface group with common interface can be added to a policy
+    rest delete policy  admin-view  ${policy_name}
+    Sleep  10    
+    rest add policy  admin-view  ${policy_name}  forward
+    rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
+    rest add policy interface  admin-view  ${policy_name}  ${switch1_filter_alias_2}  filter
+    rest add policy interface  admin-view  ${policy_name}  ${switch1_delivery_alias_1}  delivery
+    ${return_value}=  rest add interface group to policy  ${policy_name}  ${filter_interface_group_name_1}  filter  
+    Should be true  ${return_value}
+    Sleep  5     
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=2  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${return_value}=  rest delete interface group from policy  ${policy_name}  ${filter_interface_group_name_1}  filter  
+    Should be true  ${return_value}
+    Sleep  5     
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}        
+    [Tags]  feature
+
+
+Verify a delivery interface and a delivery interface group with common interface can be added to a policy
+    rest delete policy  admin-view  ${policy_name}
+    Sleep  10    
+    rest add policy  admin-view  ${policy_name}  forward
+    rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
+    rest add policy interface  admin-view  ${policy_name}  ${switch1_filter_alias_1}  filter
+    rest add policy interface  admin-view  ${policy_name}  ${switch1_delivery_alias_2}  delivery
+    ${return_value}=  rest add interface group to policy  ${policy_name}  ${delivery_interface_group_name_1}  delivery  
+    Should be true  ${return_value}
+    Sleep  5     
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=2
+    Should be true  ${verify_policy1}
+    ${return_value}=  rest delete interface group from policy  ${policy_name}  ${delivery_interface_group_name_1}  delivery  
+    Should be true  ${return_value}
+    Sleep  5     
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    rest delete policy  admin-view  ${policy_name}        
+    [Tags]  feature
+
+Verify filter interfaces, that are tagged with vlan-rewrite, can be added to a filter interface group.  
+    rest delete policy  admin-view  ${policy_name}
+    ${return_value}=  rest delete interface group  ${filter_interface_group_name_1}  filter   
+    Should be true  ${return_value}
+    Sleep  10    
+    rest add interface role  s1  ${switch1_filter_intf_2}  filter    intf_nickname=${switch1_filter_alias_2}  rewrite_vlan=${vlan_rewrite_1}
+    ${return_value}=  rest add interface group  ${filter_interface_group_name_1}  filter  
+    Should be true  ${return_value}
+    ${return_value}=  rest add interface to interface group  ${filter_interface_group_name_1}  filter  ${switch1_filter_alias_2}    
+    Should be true  ${return_value}
+    rest add policy  admin-view  ${policy_name}  forward
+    rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
+    rest add policy interface  admin-view  ${policy_name}  ${switch1_delivery_alias_1}  delivery
+    ${return_value}=  rest add interface group to policy  ${policy_name}  ${filter_interface_group_name_1}  filter  
+    Should be true  ${return_value}
+    Sleep  5     
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    [Tags]  feature                 
+
+Verify interfaces tagged with and without vlan-rewrite can exist in a filter interface group
+    rest delete policy  admin-view  ${policy_name}
+    ${return_value}=  rest delete interface group  ${filter_interface_group_name_1}  filter   
+    Should be true  ${return_value}
+    Sleep  10    
+    rest add interface role  s1  ${switch1_filter_intf_2}  filter    intf_nickname=${switch1_filter_alias_2}  rewrite_vlan=${vlan_rewrite_1}
+    ${return_value}=  rest add interface group  ${filter_interface_group_name_1}  filter  
+    Should be true  ${return_value}
+    ${return_value}=  rest add interface to interface group  ${filter_interface_group_name_1}  filter  ${switch1_filter_alias_2}    
+    Should be true  ${return_value}
+    ${return_value}=  rest add interface to interface group  ${filter_interface_group_name_1}  filter  ${switch1_filter_alias_3}    
+    Should be true  ${return_value}    
+    rest add policy  admin-view  ${policy_name}  forward
+    rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
+    rest add policy interface  admin-view  ${policy_name}  ${switch1_delivery_alias_1}  delivery
+    ${return_value}=  rest add interface group to policy  ${policy_name}  ${filter_interface_group_name_1}  filter  
+    Should be true  ${return_value}
+    Sleep  5     
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=2  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${return_value}=  rest delete interface group  ${filter_interface_group_name_1}  filter   
+    Should be true  ${return_value}
+    ${return_value}=  rest delete interface group  ${filter_interface_group_name_2}  filter   
+    Should be true  ${return_value}
+    ${return_value}=  rest delete interface group  ${delivery_interface_group_name_1}  delivery   
+    Should be true  ${return_value}
+    ${return_value}=  rest delete interface group  ${delivery_interface_group_name_2}  delivery   
+    Should be true  ${return_value}    
+    [Tags]  feature 
+
+Verify filter and delivery interface-groups can have all lower-case alphabet names
+    verify group name  filtergroup  deliverygroup
+    [Tags]  feature 
+
+Verify filter and delivery interface-groups can have all upper-case alphabet names
+    verify group name  FILTERGROUP  DELIVERYGROUP
+    [Tags]  feature 
+
+Verify filter and delivery interface-groups can have mix of lower-case and upper-case alphabet names
+    verify group name  FiLtErGrOuP  DeLiVeRyGrOuP
+    [Tags]  feature 
+
+Verify filter and delivery interface-groups can have alphanumeric (alphabet all small) names
+    verify group name  filtergroup1234  deliverygroup1234
+    [Tags]  feature                                             
+
+Verify filter and delivery interface-groups can have alphanumeric (alphabet all caps) names
+    verify group name  FILTERGROUP1234  DELIVERYGROUP1234
+    [Tags]  feature 
+
+Verify filter and delivery interface-groups can have all alphanumeric names with a -
+    verify group name  filter-Group1  delivery-Group1
+    [Tags]  feature
+
+Verify filter and delivery interface-groups can have all alphanumeric names with a _
+    verify group name  filter_Group1  delivery_Group1
+    [Tags]  feature 
+
+Verify filter and delivery interface-groups can have all alphanumeric names with a :
+    verify group name  filter:Group1  delivery:Group1
+    [Tags]  feature 
+
+Verify filter and delivery interface-groups can have all alphanumeric names with a .
+    verify group name  filter.Group1  delivery.Group1
+    [Tags]  feature 
+
+
+* Keyword
+
+interface suite setup
+    base suite setup
+    rest add switch alias  s1  ${switch1_alias}
+    #Configure filter interfaces on all switches
+    rest add interface role  s1  ${switch1_filter_intf_1}  filter    intf_nickname=${switch1_filter_alias_1}
+    rest add interface role  s1  ${switch1_filter_intf_2}  filter    intf_nickname=${switch1_filter_alias_2}
+    rest add interface role  s1  ${switch1_filter_intf_3}  filter    intf_nickname=${switch1_filter_alias_3}    
+    #Configure delivery interfaces on all switches    
+    rest add interface role  s1  ${switch1_delivery_intf_1}  delivery    intf_nickname=${switch1_delivery_alias_1}
+    rest add interface role  s1  ${switch1_delivery_intf_2}  delivery    intf_nickname=${switch1_delivery_alias_2}
+    rest add interface role  s1  ${switch1_delivery_intf_3}  delivery    intf_nickname=${switch1_delivery_alias_3}    
+    #First verify basic policy works
+    Sleep  10    
+    rest add policy  admin-view  ${policy_name}  forward
+    rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
+    rest add policy interface  admin-view  ${policy_name}  ${switch1_filter_alias_1}  filter
+    rest add policy interface  admin-view  ${policy_name}  ${switch1_delivery_alias_1}  delivery
+    Sleep  30
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}    
+
+verify group name  [Arguments]  ${group_name_filter}  ${group_name_delivery}
+    ${return_value}=  rest add interface group  ${group_name_filter}  filter  
+    Should be true  ${return_value}
+    ${return_value}=  rest add interface group  ${group_name_delivery}  delivery  
+    Should be true  ${return_value}
+    Sleep  3
+    ${filter_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/view/filter-interface-group?config=true
+    Should be equal as strings   ${filter_dictionary[0]['name']}  ${group_name_filter}    
+    ${delivery_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/view/delivery-interface-group?config=true
+    Should be equal as strings   ${delivery_dictionary[0]['name']}  ${group_name_delivery}
+    ${return_value}=  rest delete interface group  ${group_name_filter}  filter   
+    Should be true  ${return_value}
+    ${return_value}=  rest delete interface group  ${group_name_delivery}  delivery   
+    Should be true  ${return_value}
+    Sleep  3            
+    
+interface suite teardown
+    rest delete policy  admin-view  ${policy_name}
+    rest delete interface group  ${filter_interface_group_name_1}  filter
+    rest delete interface group  ${filter_interface_group_name_2}  filter
+    rest delete interface group  ${delivery_interface_group_name_1}  delivery
+    rest delete interface group  ${delivery_interface_group_name_2}  delivery          
+    rest delete interface role  s1  ${switch1_filter_intf_1}       filter 
+    rest delete interface role  s1  ${switch1_filter_intf_2}       filter 
+    rest delete interface role  s1  ${switch1_filter_intf_3}       filter 
+    rest delete interface  s1  ${switch1_filter_intf_1}        
+    rest delete interface  s1  ${switch1_filter_intf_2}        
+    rest delete interface  s1  ${switch1_filter_intf_3}        
+    rest delete switch alias  s1
+    rest delete switch  s1
+    base suite teardown

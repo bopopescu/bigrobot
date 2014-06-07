@@ -825,6 +825,248 @@ class BigTap(object):
             else:
                 return True
 
+    def rest_add_interface_group(self, group_name, group_type, rbac_view="admin-view", user="admin", password="adminadmin"):
+        '''
+            Objective
+            - Create a filter-interface-group or delivery-interface-group
+            
+            Input:
+            | group_name | Name of Group |
+            | group_type | Filter or Delivery|
+            
+            
+            Return Value:
+            - True if configuration add is successful
+            - False otherwise              
+        '''
+        try:
+            t = test.Test()
+        except:
+            return False
+        else:
+            c = t.controller('master')
+            try:
+                if ("filter" in str(group_type)) or ("Filter" in str(group_type)):
+                    url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/filter-interface-group[name="%s"]' % (str(rbac_view), str(group_name))
+                elif ("delivery" in str(group_type)) or  ("Delivery" in str(group_type)):
+                    url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/delivery-interface-group[name="%s"]' % (str(rbac_view), str(group_name))
+                else:
+                    return False
+                if "admin" not in user:
+                    c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                    c_user.rest.put(url, {"name": str(group_name)})
+                    t.node_reconnect(node='master')
+                else:
+                    c.rest.put(url, {"name": str(group_name)})
+            except:
+                helpers.test_log(c.rest.error())
+                return False
+            else:
+                return True
+
+    def rest_delete_interface_group(self, group_name, group_type, rbac_view="admin-view", user="admin", password="adminadmin"):
+        '''
+            Objective
+            - Delete an existing filter-interface-group or delivery-interface-group
+            
+            Input:
+            | group_name | Name of Group |
+            | group_type | Filter or Delivery|
+            
+            
+            Return Value:
+            - True if configuration delete is successful
+            - False otherwise              
+        '''
+        try:
+            t = test.Test()
+        except:
+            return False
+        else:
+            c = t.controller('master')
+            try:
+                if ("filter" in str(group_type)) or ("Filter" in str(group_type)):
+                    url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/filter-interface-group[name="%s"]' % (str(rbac_view), str(group_name))
+                elif ("delivery" in str(group_type)) or  ("Delivery" in str(group_type)):
+                    url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/delivery-interface-group[name="%s"]' % (str(rbac_view), str(group_name))
+                else:
+                    return False
+                if "admin" not in user:
+                    c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                    c_user.rest.delete(url, {})
+                    t.node_reconnect(node='master')
+                else:
+                    c.rest.delete(url, {})
+            except:
+                helpers.test_log(c.rest.error())
+                return False
+            else:
+                return True
+
+    def rest_add_interface_to_interface_group(self, group_name, group_type, interface_name, rbac_view="admin-view", user="admin", password="adminadmin"):
+        '''
+            Objective
+            - Create a filter-interface-group or delivery-interface-group
+            
+            Input:
+            | group_name | Name of Group |
+            | group_type | Filter or Delivery|
+            | interface_name | Name of interface being added to interface-group |
+            
+            
+            Return Value:
+            - True if configuration add is successful
+            - False otherwise              
+        '''
+        try:
+            t = test.Test()
+        except:
+            return False
+        else:
+            c = t.controller('master')
+            try:
+                if ("filter" in str(group_type)) or ("Filter" in str(group_type)):
+                    url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/filter-interface-group[name="%s"]/filter-group[name="%s"]' % (str(rbac_view), str(group_name), str(interface_name))
+                elif ("delivery" in str(group_type)) or  ("Delivery" in str(group_type)):
+                    url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/delivery-interface-group[name="%s"]/delivery-group[name="%s"]' % (str(rbac_view), str(group_name), str(interface_name))
+                else:
+                    return False
+                if "admin" not in user:
+                    c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                    c_user.rest.put(url, {"name": str(interface_name)})
+                    t.node_reconnect(node='master')
+                else:
+                    c.rest.put(url, {"name": str(interface_name)})
+            except:
+                helpers.test_log(c.rest.error())
+                return False
+            else:
+                return True
+
+    def rest_delete_interface_from_interface_group(self, group_name, group_type, interface_name, rbac_view="admin-view", user="admin", password="adminadmin"):
+        '''
+            Objective
+            - Delete a interface from an interface group
+            
+            Input:
+            | group_name | Name of Group |
+            | group_type | Filter or Delivery|
+            | interface_name | Name of interface being added to interface-group |
+            
+            
+            Return Value:
+            - True if configuration add is successful
+            - False otherwise              
+        '''
+        try:
+            t = test.Test()
+        except:
+            return False
+        else:
+            c = t.controller('master')
+            try:
+                if ("filter" in str(group_type)) or ("Filter" in str(group_type)):
+                    url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/filter-interface-group[name="%s"]/filter-group[name="%s"]' % (str(rbac_view), str(group_name), str(interface_name))
+                elif ("delivery" in str(group_type)) or  ("Delivery" in str(group_type)):
+                    url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/delivery-interface-group[name="%s"]/delivery-group[name="%s"]' % (str(rbac_view), str(group_name), str(interface_name))
+                else:
+                    return False
+                if "admin" not in user:
+                    c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                    c_user.rest.delete(url, {})
+                    t.node_reconnect(node='master')
+                else:
+                    c.rest.delete(url, {})
+            except:
+                helpers.test_log(c.rest.error())
+                return False
+            else:
+                return True
+
+    def rest_add_interface_group_to_policy(self, policy_name, group_name, group_type, rbac_view="admin-view", user="admin", password="adminadmin"):
+        '''
+            Objective
+            - Add filter-interface-group or delivery-interface-group to policy
+            
+            Input:
+            | policy_name | Name of policy to which group is added|
+            | group_name | Name of Group |
+            | group_type | Filter or Delivery|
+
+            
+            
+            Return Value:
+            - True if configuration add is successful
+            - False otherwise              
+        '''
+        try:
+            t = test.Test()
+        except:
+            return False
+        else:
+            c = t.controller('master')
+            try:
+                url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]' % (str(rbac_view), str(policy_name))
+                if ("filter" in str(group_type)) or ("Filter" in str(group_type)):
+                    data = {"filter-intf-group": str(group_name)}
+                elif ("delivery" in str(group_type)) or  ("Delivery" in str(group_type)):
+                    data = {"delivery-intf-group": str(group_name)}
+                else:
+                    return False
+                if "admin" not in user:
+                    c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                    c_user.rest.patch(url, data)
+                    t.node_reconnect(node='master')
+                else:
+                    c.rest.patch(url, data)
+            except:
+                helpers.test_log(c.rest.error())
+                return False
+            else:
+                return True
+
+    def rest_delete_interface_group_from_policy(self, policy_name, group_name, group_type, rbac_view="admin-view", user="admin", password="adminadmin"):
+        '''
+            Objective
+            - Delete filter-interface-group or delivery-interface-group to policy
+            
+            Input:
+            | policy_name | Name of policy to which group is added|
+            | group_name | Name of Group |
+            | group_type | Filter or Delivery|
+
+            
+            
+            Return Value:
+            - True if configuration add is successful
+            - False otherwise              
+        '''
+        try:
+            t = test.Test()
+        except:
+            return False
+        else:
+            c = t.controller('master')
+            try:
+
+                if ("filter" in str(group_type)) or ("Filter" in str(group_type)):
+                    url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"][filter-intf-group="None"]/filter-intf-group' % (str(rbac_view), str(policy_name))
+                elif ("delivery" in str(group_type)) or  ("Delivery" in str(group_type)):
+                    url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"][delivery-intf-group="None"]/delivery-intf-group' % (str(rbac_view), str(policy_name))
+                else:
+                    return False
+                if "admin" not in user:
+                    c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                    c_user.rest.delete(url, {})
+                    t.node_reconnect(node='master')
+                else:
+                    c.rest.delete(url, {})
+            except:
+                helpers.test_log(c.rest.error())
+                return False
+            else:
+                return True
+
     def rest_add_policy(self, rbac_view_name, policy_name, policy_action="inactive", user="admin", password="adminadmin"):
         '''
             Objective:

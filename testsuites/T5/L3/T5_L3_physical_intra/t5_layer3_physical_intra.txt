@@ -21,55 +21,55 @@ Resource		testsuites/T5/t5_dualleaf_three_rack_physical_resource.txt
 * Test Cases
 Intra tenant L3 untagged traffic with dynamic endpoints same rack
 	L3 intra tenant same rack untagged with dynamic endpoints
-	[Tags]								sanity			
+	[Tags]				feature			sanity			
 
 Intra tenant L3 untagged traffic with dynamic endpoints across rack
 	L3 intra tenant across rack untagged with dynamic endpoints
-	[Tags]			  					sanity	
+	[Tags]			  	feature			sanity	
 
 Intra tenant L3 tagged traffic with dynamic endpoints same rack
 	L3 intra tenant same rack tagged with dynamic endpoints
-	[Tags]								sanity			
+	[Tags]				feature			sanity			
 
 Intra tenant L3 tagged traffic with dynamic endpoints across rack
 	L3 intra tenant across rack tagged with dynamic endpoints
-	[Tags]								sanity	
+	[Tags]				feature			sanity	
 
 Intra tenant L3 traffic same rack different leaf switch
     Intra tenant L3 traffic same rack different leaf switch
-    [Tags]                              sanity                  
+    [Tags]              feature             sanity                  
 
 Verify static endpoint state
     Verify static endpoint state
-    [Tags]                              sanity                              
+    [Tags]                feature             sanity                              
 
 Verify host with same IP as vrf is having L2 service only
     Verify host with same IP as vrf is having L2 service only
-    [Tags]                              feature                  jira-BVS-1725
+    [Tags]                 feature                  jira-BVS-1725
     
 Activate and deactivate router interface
 	Activate and deactivate router interface
-	[Tags]								feature					
+	[Tags]					feature					
 
 Intra tenant L3 untagged traffic with static endpoints same rack
 	L3 intra tenant same rack untagged with static endpoints
-	[Tags]								sanity			
+	[Tags]					feature			sanity			
 
 Intra tenant L3 untagged traffic with static endpoints across rack
 	L3 intra tenant across rack untagged with static endpoints
-	[Tags]								sanity	
+	[Tags]					feature			sanity	
 
 Intra tenant L3 tagged traffic with static endpoints same rack
 	L3 intra tenant same rack tagged with static endpoints
-	[Tags]								sanity			
+	[Tags]					feature			sanity			
 
 Intra tenant L3 tagged traffic with static endpoints across rack
 	L3 intra tenant across rack tagged with static endpoints
-	[Tags]								sanity	
+	[Tags]					feature			sanity	
 
 Dhcp discover on the same vns as server with dhcp relay enabled
 	L3 intra tenant dhcp relay on same vns as dhcp server with relay enabled
-	[Tags]					 			sanity					dhcp-relay
+	[Tags]					 feature			sanity					dhcp-relay
 
 Dhcp discover on the same vns as server without dhcp relay enabled
 	L3 intra tenant dhcp relay on same vns as dhcp server without relay enabled
@@ -77,27 +77,27 @@ Dhcp discover on the same vns as server without dhcp relay enabled
 
 Intra tenant dhcp relay 
 	L3 intra tenant dhcp relay on same rack
-	[Tags]					 			sanity					dhcp-relay	
+	[Tags]					 feature			sanity					dhcp-relay	
 	
 Intra tenant dhcp relay with circuit id
 	L3 intra tenant dhcp relay with circuit id on same rack
-	[Tags]					 			sanity					dhcp-relay	
+	[Tags]					 feature			sanity					dhcp-relay	
 
 Intra tenant dhcp relay across rack
 	L3 intra tenant dhcp relay across rack
-	[Tags]					 			feature					dhcp-relay	
+	[Tags]					 feature			feature					dhcp-relay	
 	
 Intra tenant dhcp relay with circuit id across rack
 	L3 intra tenant dhcp relay with circuit id across rack
-	[Tags]					 			feature					dhcp-relay	
+	[Tags]					 feature			feature					dhcp-relay	
 
 Delete and Add dhcp relay
 	L3 dhcp request without dhcp relay enabled
-	[Tags]					 			feature					dhcp-relay	
+	[Tags]					 feature					dhcp-relay	
 	
 Move host from one vns to another vns in the same tenant and verify dhcp request is working
 	Move host from one vns to another vns in the same tenant and verify dhcp request is working
-	[Tags]				 				feature					dhcp-relay				
+	[Tags]				 	feature					dhcp-relay				
 
 Verify dhcp host is not aged out
 	Verify dhcp host is not being aged out
@@ -129,7 +129,7 @@ Verify L3 ttl 1 is not being forwarded
 
 Verify icmpa is sending destination unreachable for L3 destination miss
 	Verify icmpa is sending destination unreachable for L3 destination miss
-	[Tags]				sanity			
+	[Tags]				feature      sanity			
 
 Change router vns ip
 	Change router ip address

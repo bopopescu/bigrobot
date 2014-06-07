@@ -270,6 +270,7 @@ class TestSuite(object):
         if self._is_regression:
             pass
         else:
+            # Baselining
             self.db_add_if_not_found_suite(self._suite)
 
 
@@ -346,6 +347,7 @@ class TestSuite(object):
                 self.db_find_and_modify_regression_testcase(test)
                 # self.db_insert_testcase_archive(test)
             else:
+                # Baselining
                 self.db_add_if_not_found_testcase(test)
 
             self._tests.append(test)
