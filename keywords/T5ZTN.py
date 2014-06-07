@@ -162,7 +162,7 @@ class T5ZTN(object):
         """
         t = test.Test()
         con = t.dev_console(node, modeless=True)
-        con.expect("ZTN Discovery Failed", timeout = 300)
+        con.expect("ZTN Discovery Failed", timeout=300)
         return True
 
     def telnet_verify_ztn_discovery_succeeded(self, node):
@@ -177,7 +177,7 @@ class T5ZTN(object):
         """
         t = test.Test()
         con = t.dev_console(node, modeless=True)
-        con.expect("Discovered Switch Light manifest from url", timeout = 300)
+        con.expect("Discovered Switch Light manifest from url", timeout=300)
         con.expect("ZTN Manifest validated")
         con.expect("Booting")
         return True
@@ -551,10 +551,6 @@ class T5ZTN(object):
         """
 
         t = test.Test()
-        c = t.controller('master')
-
-        bsn_common = bsnCommon()
-        master_ip = bsn_common.get_node_ip('master')
 
         startup_config = self.curl_get_switch_startup_config(mac)
         missing_startup = []
@@ -819,7 +815,7 @@ class T5ZTN(object):
         helpers.log('content is: %s' % content)
         if content:
             if content[0]['connected'] == False:
-			    return helpers.test_failure("Switch %s not connected" % switch)
+                return helpers.test_failure("Switch %s not connected" % switch)
             ip_address = content[0]['inet-address']['ip']
             return ip_address
         else:
@@ -870,7 +866,7 @@ class T5ZTN(object):
                 s.expect(r'Clock Configuration:')
             helpers.log("Switch %s rebooted" % switch)
         except:
-            helpers.log(c.cli_content())
+            helpers.log(s.cli_content())
             return helpers.test_failure("Error rebooting switch %s" % switch)
 
         return True
