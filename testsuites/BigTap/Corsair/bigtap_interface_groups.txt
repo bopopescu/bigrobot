@@ -357,6 +357,62 @@ Verify interfaces tagged with and without vlan-rewrite can exist in a filter int
     Should be true  ${return_value}    
     [Tags]  feature 
 
+Verify multiple filter interface groups can be added to a policy
+    rest delete policy  admin-view  ${policy_name}
+    ${return_value}=  rest delete interface group  ${filter_interface_group_name_1}  filter   
+    Should be true  ${return_value}
+    ${return_value}=  rest delete interface group  ${filter_interface_group_name_2}  filter   
+    Should be true  ${return_value}    
+    Sleep  10
+    ${return_value}=  rest add interface group  ${filter_interface_group_name_1}  filter  
+    Should be true  ${return_value}
+    ${return_value}=  rest add interface to interface group  ${filter_interface_group_name_1}  filter  ${switch1_filter_alias_2}    
+    Should be true  ${return_value}
+    ${return_value}=  rest add interface group  ${filter_interface_group_name_2}  filter  
+    Should be true  ${return_value}
+    ${return_value}=  rest add interface to interface group  ${filter_interface_group_name_2}  filter  ${switch1_filter_alias_3}    
+    Should be true  ${return_value}
+    Sleep  5
+    rest add policy  admin-view  ${policy_name}  forward
+    rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
+    rest add policy interface  admin-view  ${policy_name}  ${switch1_delivery_alias_1}  delivery
+    ${return_value}=  rest add interface group to policy  ${policy_name}  ${filter_interface_group_name_1}  filter                    
+    Should be true  ${return_value}
+    ${return_value}=  rest add interface group to policy  ${policy_name}  ${filter_interface_group_name_2}  filter                    
+    Should be true  ${return_value}
+    Sleep  20
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=2  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    [Tags]  feature  jira-bt-1367
+
+Verify multiple delivery interface groups can be added to a policy
+    rest delete policy  admin-view  ${policy_name}
+    ${return_value}=  rest delete interface group  ${delivery_interface_group_name_1}  delivery   
+    Should be true  ${return_value}
+    ${return_value}=  rest delete interface group  ${delivery_interface_group_name_2}  delivery   
+    Should be true  ${return_value}    
+    Sleep  10
+    ${return_value}=  rest add interface group  ${delivery_interface_group_name_1}  delivery  
+    Should be true  ${return_value}
+    ${return_value}=  rest add interface to interface group  ${delivery_interface_group_name_1}  delivery  ${switch1_delivery_alias_2}    
+    Should be true  ${return_value}
+    ${return_value}=  rest add interface group  ${delivery_interface_group_name_2}  delivery  
+    Should be true  ${return_value}
+    ${return_value}=  rest add interface to interface group  ${delivery_interface_group_name_2}  delivery  ${switch1_delivery_alias_3}    
+    Should be true  ${return_value}
+    Sleep  10    
+    rest add policy  admin-view  ${policy_name}  forward
+    rest add policy match  admin-view  ${policy_name}  1  {"any-traffic": true, "sequence": 1}
+    rest add policy interface  admin-view  ${policy_name}  ${switch1_filter_alias_1}  filter
+    ${return_value}=  rest add interface group to policy  ${policy_name}  ${delivery_interface_group_name_1}  delivery                    
+    Should be true  ${return_value}
+    ${return_value}=  rest add interface group to policy  ${policy_name}  ${delivery_interface_group_name_2}  delivery                    
+    Should be true  ${return_value}
+    Sleep  20
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=2
+    Should be true  ${verify_policy1}
+    [Tags]  feature  jira-bt-1367
+    
 Verify filter and delivery interface-groups can have all lower-case alphabet names
     verify group name  filtergroup  deliverygroup
     [Tags]  feature 
@@ -442,6 +498,9 @@ interface suite teardown
     rest delete interface role  s1  ${switch1_filter_intf_1}       filter 
     rest delete interface role  s1  ${switch1_filter_intf_2}       filter 
     rest delete interface role  s1  ${switch1_filter_intf_3}       filter 
+    rest delete interface role  s1  ${switch1_delivery_intf_1}       delivery 
+    rest delete interface role  s1  ${switch1_delivery_intf_2}       delivery 
+    rest delete interface role  s1  ${switch1_delivery_intf_3}       delivery     
     rest delete interface  s1  ${switch1_filter_intf_1}        
     rest delete interface  s1  ${switch1_filter_intf_2}        
     rest delete interface  s1  ${switch1_filter_intf_3}        
