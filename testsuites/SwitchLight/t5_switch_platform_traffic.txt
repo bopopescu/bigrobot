@@ -34,6 +34,11 @@ ${intf_7}=        ethernet46
 ${intf_8}=        ethernet47
 ${intf_9}=        ethernet48
 
+${leaf1_spine0_intf1}=  ethernet49
+${spine0_leaf1_intf1}=  ethernet3
+${leaf2_spine0_intf1}=  ethernet49
+${spine0_leaf2_intf1}=  ethernet3
+
 ${count}=         1 
 ${ratetolerance}=     10
 ${tolerance}=         5
@@ -235,49 +240,131 @@ Bi-Directional L2 Traffic jumbo flow=a<->b traffic linerate 10% pktsize 9150
     stop traffic   ${stream}
     [Tags]  T5  switch  L2  traffic  jumbo  feature  
 
+Bi-Directional L2 Traffic jumbo flow=a<->b traffic linerate 25% pktsize 9150
+    ${stream}=     L2 add  flow=a<->b  src_mac=00:11:01:00:01:0a  dst_mac=00:11:01:00:01:0b  line_rate=25  frame_size=9150  ethertype=8000  name=a_b_bidir_jumbo_flow
+    start traffic  ${stream}
+    sleep          5
+    stop traffic   ${stream}
+    sleep          5
+    clear stats
+    start traffic  ${stream}
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_frame_rate  ${ratetolerance}  
+    stop traffic   ${stream}
+    [Tags]  T5  switch  L2  traffic  jumbo  feature  
+
+Bi-Directional L2 Traffic jumbo flow=a<->b traffic linerate 50% pktsize 9150
+    ${stream}=     L2 add  flow=a<->b  src_mac=00:11:01:00:01:0a  dst_mac=00:11:01:00:01:0b  line_rate=50  frame_size=9150  ethertype=8000  name=a_b_bidir_jumbo_flow
+    start traffic  ${stream}
+    sleep          5
+    stop traffic   ${stream}
+    sleep          5
+    clear stats
+    start traffic  ${stream}
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_frame_rate  ${ratetolerance}  
+    stop traffic   ${stream}
+    [Tags]  T5  switch  L2  traffic  jumbo  feature  
+
+Bi-Directional L2 Traffic jumbo flow=a<->b traffic linerate 100% pktsize 9150
+    ${stream}=     L2 add  flow=a<->b  src_mac=00:11:01:00:01:0a  dst_mac=00:11:01:00:01:0b  line_rate=100  frame_size=9150  ethertype=8000  name=a_b_bidir_jumbo_flow
+    start traffic  ${stream}
+    sleep          5
+    stop traffic   ${stream}
+    sleep          5
+    clear stats
+    start traffic  ${stream}
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_frame_rate  ${ratetolerance}  
+    stop traffic   ${stream}
+    [Tags]  T5  switch  L2  traffic  jumbo  feature  
+
+leaf1 spine interface shut no shut Uni-Directional L2 Traffic flow=a->b traffic framerate 10000 pktsize 64 
+    ${stream}=     L2 add  flow=a->b  src_mac=00:11:01:00:00:01  dst_mac=00:11:01:00:00:02  frame_rate=10000  frame_size=64  ethertype=8000  name=a_b_flow
+    clear stats
+    #clear interface counters on controller
+    #clear interface counters on switch  s1
+    #clear interface counters on switch  s2
+    #clear interface counters on switch  s7
+    start traffic  ${stream}
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
+    disable switch interface from controller  ${switch1_name}  ${leaf1_spine0_intf1}
+    sleep  10 
+    enable switch interface from controller  ${switch1_name}  ${leaf1_spine0_intf1}
+    sleep  10 
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
+    stop traffic   ${stream}          
+    [Tags]  T5  switch  L2  traffic  linkflap  feature          
+
+spine leaf1 interface shut no shut Uni-Directional L2 Traffic flow=a->b traffic framerate 10000 pktsize 64 
+    ${stream}=     L2 add  flow=a->b  src_mac=00:11:01:00:00:01  dst_mac=00:11:01:00:00:02  frame_rate=10000  frame_size=64  ethertype=8000  name=a_b_flow
+    clear stats
+    #clear interface counters on controller
+    #clear interface counters on switch  s1
+    #clear interface counters on switch  s2
+    #clear interface counters on switch  s7
+    start traffic  ${stream}
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
+    disable switch interface from controller  ${switch7_name}  ${spine0_leaf1_intf1}
+    sleep  10 
+    enable switch interface from controller  ${switch7_name}  ${spine0_leaf1_intf1}
+    sleep  10 
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
+    stop traffic   ${stream}          
+    [Tags]  T5  switch  L2  traffic  linkflap  feature  test1  
+
+leaf2 spine interface shut no shut bi-Directional L2 Traffic flow=a<->b traffic framerate 10000 pktsize 512 
+    ${stream}=     L2 add  flow=a<->b  src_mac=00:11:01:00:00:01  dst_mac=00:11:01:00:00:02  frame_rate=10000  frame_size=512  ethertype=8000  name=a_b_bidir_flow
+    clear stats
+    #clear interface counters on controller
+    #clear interface counters on switch  s1
+    #clear interface counters on switch  s2
+    #clear interface counters on switch  s7
+    start traffic  ${stream}
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
+    disable switch interface from controller  ${switch2_name}  ${leaf2_spine0_intf1}
+    sleep  10 
+    enable switch interface from controller  ${switch2_name}  ${leaf2_spine0_intf1}
+    sleep  10 
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
+    stop traffic   ${stream}          
+    [Tags]  T5  switch  L2  traffic  linkflap  feature  test1  
+    
+spine leaf2 interface shut no shut bi-Directional L2 Traffic flow=a<->b traffic framerate 10000 pktsize 1518 
+    ${stream}=     L2 add  flow=a->b  src_mac=00:11:01:00:00:01  dst_mac=00:11:01:00:00:02  frame_rate=10000  frame_size=1518  ethertype=8000  name=a_b_bidir_flow
+    clear stats
+    #clear interface counters on controller
+    #clear interface counters on switch  s1
+    #clear interface counters on switch  s2
+    #clear interface counters on switch  s7
+    start traffic  ${stream}
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
+    disable switch interface from controller  ${switch7_name}  ${spine0_leaf2_intf1}
+    sleep  10 
+    enable switch interface from controller  ${switch7_name}  ${spine0_leaf2_intf1}
+    sleep  10 
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
+    stop traffic   ${stream}          
+    [Tags]  T5  switch  L2  traffic  linkflap  feature  test1  
+
 Verify all interfaces show up after sw installation 
     Log    Step 1 - Verify all interfaces show up after sw installation
     [Tags]  Manual-untested  feature    
-    Manual untested
-
-Verify that the various transceivers are detected in the uplink module and they are up and running 
-    Log    Step 1 - Verify that the various transceivers are detected in the uplink module and they are up and running
-    [Tags]  Manual-untested  feature
-    Manual untested
-
-Verify interface op is consistent and as per spec in show interfaces op 
-    Log    Step 1 - Verify interface op is consistent and as per spec in show interfaces op
-    [Tags]  Manual-untested  feature
-    Manual untested
-
-Verify line-rate traffic 
-    Log    Step 1 - Verify line-rate traffic
-    [Tags]  Manual-untested  feature
-    Manual untested
-
-Verify end-to-end ping system-test 
-    Log    Step 1 - Verify end-to-end ping system-test
-    [Tags]  Manual-untested  feature
-    Manual untested
-
-Verify auto-negotiation configurations work as expected 
-    Log    Step 1 - Verify auto-negotiation configurations work as expected
-    [Tags]  Manual-untested  feature
-    Manual untested
-
-Verify Auto- negotiation enabled on both ends of interface
-    Log    Step 1 - Verify Auto- negotiation enabled on both ends of interface
-    [Tags]  Manual-untested  feature
-    Manual untested
-
-Verify Speed/Duplex in ports 
-    Log    Step 1 - Verify Speed/Duplex in ports
-    [Tags]  Manual-untested  feature
-    Manual untested
-
-Verify interface state is reported correctly when cable is unplugged. 
-    Log    Step 1 - Verify interface state is reported correctly when cable is unplugged. 
-    [Tags]  Manual-untested  feature
     Manual untested
 
 Verify that the options are maintained on the interface after the system reboot. 
@@ -290,41 +377,6 @@ Verify that the appropriate counters are incremented when the interface receiver
     [Tags]  Manual-untested  interface  counters  feature
     Manual untested
     
-Verify Sending L2 traffic with frame size 64 bytes 
-    Log    Step 1 - Verify Sending L2 traffic with frame size 64 bytes
-    [Tags]  Manual-untested  interface  counters  feature  
-    Manual untested
-
-Verify Sending L2 traffic with frame size 128 bytes 
-    Log    Step 1 - Verify Sending L2 traffic with frame size 128 bytes
-    [Tags]  Manual-untested  interface  counters  feature
-    Manual untested
-
-Verify Sending L2 traffic with frame size 512 bytes 
-    Log    Step 1 - Verify Sending L2 traffic with frame size 512 bytes
-    [Tags]  Manual-untested  interface  counters  feature
-    Manual untested
-
-Verify Sending L2 traffic with frame size 1024 bytes 
-    Log    Step 1 - Verify Sending L2 traffic with frame size 1024 bytes
-    [Tags]  Manual-untested  interface  counters  feature
-    Manual untested
-
-Verify Sending L2 traffic with frame size Jumbo 9150 bytes 
-    Log    Step 1 - Verify Sending L2 traffic with frame size Jumbo 9150 bytes
-    [Tags]  Manual-untested  interface  counters  feature
-    Manual untested
-
-Verify Sending L2 traffic with mix and incremental from 64 to 9150 bytes 
-    Log    Step 1 - Verify Sending L2 traffic with frame size mix and incremental from 64 to 9150 bytes
-    [Tags]  Manual-untested  interface  counters  feature
-    Manual untested
-
-Verify - Jumbo frame disabled - Sending L2 traffic with Jumbo frame size 9150 bytes 
-    Log    Step 1 - Verify - Jumbo frame disabled - Sending L2 traffic with Jumbo frame size 9150 bytes 
-    [Tags]  Manual-untested  interface  counters  feature
-    Manual untested
-
 Test the Oversubscription of 40Gig Links between Leaf and Spines
     Log   Step 1 - Test the Oversubscription of 40Gig Links between Leaf and Spines
     [Tags]  Manual-untested  interface  counters  feature
@@ -403,7 +455,30 @@ verify results totalframes   [Arguments]  ${transmitted_frames}  ${received_vali
     ${rx_value}=  verify dict key  ${report}  b  ${received_valid_frames}
     ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}
     Should be true  ${in_range} 
+    
+verify rx counter on controller  [Arguments]  ${switch}  ${interface}  ${framecnt}  ${vrange}
+    ${in_range}=  rest verify intf rxcounter from controller  ${switch}  ${interface}  ${framecnt}  ${vrange}    
+    Should be true  ${in_range} 
+    
+verify tx counter on controller  [Arguments]  ${switch}  ${interface}  ${framecnt}  ${vrange}
+    ${in_range}=  rest verify intf txcounter from controller  ${switch}  ${interface}  ${framecnt}  ${vrange}     
+    Should be true  ${in_range}
 
+clear interface counters on controller  
+    ${result}=  rest clear fabric interface stats  
+    Should be true  ${result} 
+
+clear interface counters on switch  [Arguments]  ${switch} 
+    ${result}=  cli clear interface statistics  $switch
+    Should be true  ${result}     
+
+disable switch interface from controller  [Arguments]  ${switch}  ${intf}
+    ${result}=  rest disable fabric interface   ${switch}  ${intf}
+    Should be true  ${result} 
+    
+enable switch interface from controller  [Arguments]  ${switch}  ${intf}
+    ${result}=  rest enable fabric interface   ${switch}  ${intf}
+    Should be true  ${result}    
 add interface to vns snake config   [Arguments]  ${tenant}  ${count}
     ${range}=  Evaluate  ${count} + 1
     : FOR  ${i}  IN RANGE  1  ${range}
