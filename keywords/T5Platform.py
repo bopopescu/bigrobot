@@ -3524,7 +3524,7 @@ class T5Platform(object):
         t = test.Test()
         c = t.controller('master')
         url = '/api/v1/data/controller/applications/bvs/test/path/controller-view'
-              
+
         if(kwargs.get('dst-segment')):
             url = url + '[dst-segment="%s"]' % (kwargs.get('dst-segment'))
         if(kwargs.get('dst-tenant')):
@@ -3539,7 +3539,7 @@ class T5Platform(object):
             url = url + '[dst-ip="%s"]' % (kwargs.get('dst-ip'))
         if(kwargs.get('src-tenant')):
             url = url + '[src-tenant="%s"]' % (kwargs.get('src-tenant'))
-        
+
         result = c.rest.get(url)['content']
         try:
             logicalError = result[0]['summary'][0]['logical-error']
@@ -3608,8 +3608,8 @@ class T5Platform(object):
         except:
             helpers.log("Test Path Sucees In Setting Up Fabric View")
             return True
-        
-        
+
+
     def rest_verify_testpath_fabric_view(self, testName, trafficMode, *args, **kwargs):
 
         '''
@@ -3740,7 +3740,7 @@ class T5Platform(object):
 
     def rest_verify_testpath_timeout(self, pathName):
         ''' Verify whether the testpath is timedout or not
-            Returns : True if timedout 
+            Returns : True if timedout
         '''
         t = test.Test()
         c = t.controller("master")
@@ -3899,7 +3899,7 @@ class T5Platform(object):
 
             # issue the <cr> to test that the command actually works
             if key == '<cr>':
-                
+
                 if re.match(r'boot.*', string) or re.match(r'.*compare.*', string) or re.match(r'.*configure.*', string) or re.match(r'.*copy.*', string) or re.match(r'.*delete.*', string) or re.match(r'.*enable.*', string) or re.match(r'.*end.*', string) or re.match(r'.*exit.*', string) or re.match(r'.*failover.*', string) or re.match(r'.*logout.*', string):
                     helpers.log("Ignoring line - %s" % string)
                     num = num - 1
@@ -3909,9 +3909,14 @@ class T5Platform(object):
                     helpers.log("Ignoring line - %s" % string)
                     num = num - 1
                     continue
-                
+
                 helpers.log(" complete CLI show command: ******%s******" % string)
-                c.cli(string)
+                if string == ' support':
+                    helpers.log("Issuing %s cmd with timeout." % string)
+                    c.cli(string, timeout=200)
+                else:
+                    helpers.log("Issuing cmd:%s with default timeout" % string)
+                    c.cli(string)
 
                 if num == 1:
                     helpers.log("AT END: ******%s******" % string)
@@ -4089,22 +4094,22 @@ class T5Platform(object):
             if key == '<cr>':
 
                 if re.match(r'.*boot.*', string) or re.match(r'.*compare.*', string) or re.match(r'.*configure.*', string) or re.match(r'.*copy.*', string) or re.match(r'.*delete.*', string) or re.match(r'.*enable.*', string) or re.match(r'.*end.*', string) or re.match(r'.*exit.*', string) or re.match(r'.*failover.*', string) or re.match(r'.*logout.*', string):
-                    helpers.log("Ignoring line - %s" % string)                    
+                    helpers.log("Ignoring line - %s" % string)
                     num = num - 1
                     continue
 
                 if re.match(r'.*show controller.*', string) or re.match(r'.*no.*', string) or re.match(r'.*ping.*', string) or re.match(r'.*reauth.*', string) or re.match(r'.*set .*', string) or re.match(r'.*show logging.*', string) or re.match(r'.*system.*', string) or re.match(r'.*test.*', string) or re.match(r'.*upgrade.*', string) or re.match(r'.*watch.*', string):
-                    helpers.log("Ignoring line - %s" % string)                    
+                    helpers.log("Ignoring line - %s" % string)
                     num = num - 1
                     continue
-                
-                if re.match(r'.*clear interface-stats.*', string):                
-                    helpers.log("Ignoring line due to PR BVS-1753 - %s" % string)                    
-                    num = num - 1
-                    continue
-                
+
                 helpers.log(" complete CLI show command: ******%s******" % string)
-                c.enable(string)
+                if string == ' support':
+                    helpers.log("Issuing cmd:%s with timeout option.." % string)
+                    c.enable(string, timeout=200)
+                else:
+                    helpers.log("Issuing cmd:%s with default timeout.." % string)
+                    c.enable(string)
 
                 if num == 1:
                     return string
@@ -4264,8 +4269,8 @@ class T5Platform(object):
                     num = num - 1
                     continue
 
-                if re.match(r'.*member port-group.*vlan.*', string):                
-                    helpers.log("Ignoring line due to PR BVS-1623 - %s" % string)                    
+                if re.match(r'.*member port-group.*vlan.*', string):
+                    helpers.log("Ignoring line due to PR BVS-1623 - %s" % string)
                     num = num - 1
                     continue
 
@@ -4289,17 +4294,10 @@ class T5Platform(object):
                         num = num - 1
                         continue
 
-                    if re.match(r'.*member port-group.*vlan.*', string):                
-                        helpers.log("Ignoring line due to PR BVS-1623 - %s" % string)                    
+                    if re.match(r'.*member port-group.*vlan.*', string):
+                        helpers.log("Ignoring line due to PR BVS-1623 - %s" % string)
                         num = num - 1
                         continue
-                                        
-                    if re.match(r'.*clear interface-stats.*', string):                
-                        helpers.log("Ignoring line due to PR BVS-1753 - %s" % string)                    
-                        num = num - 1
-                        continue
-                    
-                    
 
                     helpers.log(" complete CLI show command: ******%s******" % string)
                     c.config(string)
@@ -4329,7 +4327,7 @@ class T5Platform(object):
                         helpers.log("***** Call the cli walk again with  --- %s" % string)
 
                         # If different, it means that we entered a new config submode.  Call the function again but set config_submode flag to True
-                        #c.config('show this')
+                        # c.config('show this')
                         self.cli_walk_config(newstring, file_name, padding, config_submode=True, exec_mode_done=False)
 
                     if num == 1:
