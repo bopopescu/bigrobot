@@ -782,7 +782,7 @@ class T5Utilities(object):
             c.send(command)
             c.expect([c.get_prompt()], timeout=cmd_timeout)
             if "Error" in c.cli_content():
-                if (re.match(r'.*\?$|.*\t$', command)
+                if (re.match(r'.*[\?\t]$', command)
                     and "Error: Unexpected end of command" in c.cli_content()):
                     helpers.log("Analyzing available completions")
                 else:
