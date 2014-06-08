@@ -1,7 +1,7 @@
 * Settings
 Documentation     T5  Switch Platform Test suite- Iron Horse
-#Suite Setup       base suite setup
-#Suite Teardown    base suite teardown
+Suite Setup       base suite setup
+Suite Teardown    base suite teardown
 Test Setup        T5 switch platform test setup
 Test Teardown     T5 switch platform test teardown
 Force Tags        T5  IronHorse
@@ -49,7 +49,9 @@ ${ratetolerance}=     10
 ${tolerance}=         5
 ${sleepAfter}=    10
 ${sleepBefore}=   5
-
+${software_version_string}=  Software Image Version: SwitchLight
+${default_password}=  adminadmin
+${default_user}=  admin
 
 ### Section A: ONIE, OFAUX Channel  
 
@@ -169,7 +171,7 @@ Verify the default gateway configuration can be deleted and added
     delete static ip  s1  ${netmask}  ${gateway1}
     add static ip  s1  ${netmask}  ${gateway}
     ping from switch  s1  ${gateway}  
-    [Tags]  t5  platform  InitialConfig  feature  test1  
+    [Tags]  t5  platform  InitialConfig  feature  
            
 
 Verify the Switch configuration after ZTN 
@@ -226,8 +228,7 @@ Verify after Master Controller comes back Connection reestablished
     
 ### Section C : Admin/User Authentication     
 ### Section D: System Admin Operation
-### Section F:Switch Platform Environment Variables - Manual 
-### Section H: CLI Configuration and Show commands 
+### 
 ###
 
 Verify all interfaces show up (in show o/p from CLI)
@@ -263,7 +264,31 @@ verify the ofaux channel on controller
     verify ofaux channel on controller  c1  ${switch1_name}
     [Tags]  T5  switch  Platform  ofaux  feature
 
-  
+Verify the user password can have alphanumeric character 
+    [Tags]  T5  switch  Platform usermanagement  feature    
+    verify user password update  s1  ${default_user}  ${default_password}  admin1234
+    reset username password  s1  ${default_user}  ${new_password}
+
+Verify the user password can have special characters !@#
+    [Tags]  T5  switch  Platform usermanagement  feature  
+    verify user password update  s1  ${default_user}  ${default_password}  admin!@#
+    reset username password  s1  ${default_user}  ${new_password}  
+
+Verify the user password can have special characters $%^ 
+    [Tags]  T5  switch  Platform usermanagement  feature  
+    verify user password update  s1  ${default_user}  ${default_password}  admin$%^
+    reset username password  s1  ${default_user}  ${new_password}    
+
+Verify the user password can have special characters &*(
+    [Tags]  T5  switch  Platform usermanagement  feature  
+    verify user password update  s1  ${default_user}  ${default_password}  admin&*(
+    reset username password  s1  ${default_user}  ${new_password}    
+
+Verify the user password can have small and big cap letters alphanuric and special aDmin12@#
+    [Tags]  T5  switch  Platform usermanagement  feature  
+    verify user password update  s1  ${default_user}  ${default_password}  aDmin12@#
+    reset username password  s1  ${default_user}  ${new_password}
+
    
 Verify Show environment
     Log    Step 1 - Verify Show env
@@ -387,7 +412,6 @@ Verify the debugging of forwarding programming in the Switch
     [Tags]  Manual-untested  Debug  feature
     Manual untested
 
-      
 
 
 * Keywords
@@ -561,3 +585,20 @@ deconfigure 1g interface on switch  [Arguments]  ${switch}  ${interface}
     ${ret_value_1}=  cli t5 switch deconfig interface 1g  ${switch}  ${interface}
     Should Be True  ${ret_value_1}
    
+change user password  [Arguments]  ${switch}  ${user}  ${currentpass}  ${updatepass}
+    ${ret_value_1}=  cli change user password  ${switch}  ${user}  ${currentpass}  ${updatepass}
+    Should Be True  ${ret_value_1}
+
+verify user password update  [Arguments]  ${switch}  ${user}  ${currentpass}  ${updatepass}
+    change user password  ${switch}  ${user}  ${currentpass}  ${updatepass}
+    ${ret_vlaue1}=  cli verify password change  ${switch}  ${user}  ${updatepass}  ${software_version_string}              
+    Sleep  10
+    Set Global Variable  ${newpassword}  ${updatepass}
+    Should be True  ${ret_vlaue1}
+
+reset username password  [Arguments]  ${switch}  ${user}  ${newpassword}  
+    change user password  ${switch}  ${user}  ${newpassword}  ${default_password} 
+    ${ret_vlaue1}=  cli verify password change  ${switch}  ${user}  ${default_password}  ${software_version_string}
+    Should Be True  ${ret_vlaue1}  
+                
+    
