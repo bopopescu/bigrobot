@@ -229,19 +229,6 @@ Bi-Directional L3 Traffic flow=a<->b traffic linerate 100% pktsize 1518
     stop traffic   ${stream}     
     [Tags]  T5  switch  L3  traffic feature
 
-
-Bi-Directional L3 Traffic flow=a<->b traffic linerate 25% pktsize 256 
-    ${stream}=   L3 add  name=a_b_flow  flow=a<->b  src_ip=10.200.0.2  src_gw=10.200.0.1
-    ...					dst_ip=10.200.16.2  dst_gw=10.200.16.1  src_mac=${src_mac}  dst_mac=${dst_mac}
-    ...                 line_rate=25  frame_size=256   
-    clear stats
-    start traffic  ${stream}
-    sleep          10
-    ${report}=     fetch port stats
-    verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
-    stop traffic   ${stream}     
-    [Tags]  T5  switch  L3  traffic feature
-
 Uni-Directional L3 Traffic Jumbo flow=a->b traffic framerate 10000 pktsize 9216 
     ${stream}=   L3 add  name=a_b_flow  flow=a->b  src_ip=10.200.0.2  src_gw=10.200.0.1
     ...					dst_ip=10.200.16.2  dst_gw=10.200.16.1  src_mac=${src_mac}  dst_mac=${dst_mac}
@@ -274,7 +261,7 @@ Bi-Directional L3 Traffic Jumbo flow=a<->b traffic linerate 25% pktsize 9216
     start traffic  ${stream}
     sleep          10
     ${report}=     fetch port stats
-    verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
+    verify results traffic  transmitted_frame_rate  received_frame_rate  ${ratetolerance}
     stop traffic   ${stream}     
     [Tags]  T5  switch  L3  traffic feature
 
@@ -286,7 +273,7 @@ Bi-Directional L3 Traffic Jumbo flow=a<->b traffic linerate 50% pktsize 9216
     start traffic  ${stream}
     sleep          10
     ${report}=     fetch port stats
-    verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
+    verify results traffic  transmitted_frame_rate  received_frame_rate  ${ratetolerance}
     stop traffic   ${stream}     
     [Tags]  T5  switch  L3  traffic feature
 
@@ -298,7 +285,7 @@ Bi-Directional L3 Traffic Jumbo flow=a<->b traffic linerate 100% pktsize 9216
     start traffic  ${stream}
     sleep          10
     ${report}=     fetch port stats
-    verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
+    verify results traffic  transmitted_frame_rate  received_frame_rate  ${ratetolerance}
     stop traffic   ${stream}     
     [Tags]  T5  switch  L3  traffic feature
 
