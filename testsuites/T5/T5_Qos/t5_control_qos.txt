@@ -65,7 +65,7 @@ Config all controller plane traffic
  
 
 Verify LLDP packet are going to port 0 queue 1 and get the rate
-	log  packet size 64,  send 100s lacp traffic with 1320pps, did not see drop
+	log  packet size 64,send 100s lacp traffic with 1320pps, did not see drop
 	log  the rate is around 1100pps
 	 Manual passed
 	[Tags] 	full  feature  Manual   fabric_QOS
@@ -78,14 +78,14 @@ Verify LACP packet are going to port 0 queue 1 and get the rate
 	[Tags] 	full  feature   Manual   fabric_QOS
  
 Verify ARP packet are going to port 0 queue 2 and get the rate
-	log  packet size 64,  send 100s arp traffic with 1320pps, did not see drop
+	log  packet size 64, send 100s arp traffic with 1320pps, did not see drop
 	log   the rate is around 1100pps	
 	log   both ARP and IFP are hit
 	Manual passed
 	[Tags] 	full  feature   Manual   fabric_QOS
  
 Verify L2srcmiss mac move(from different port then static endpoint) are going to port 0 queue 3
-	log  packet size 64,  send 100s arp traffic with 1320pps, did not see drop
+	log   packet size 64, send 100s arp traffic with 1320pps, did not see drop
 	log   the rate is around 1100pps	
 	log   send traffic
 	 Manual passed
