@@ -48,9 +48,9 @@ ${spine1}      t5-spine1
 T21 switch node down/up event 	 
     : FOR    ${i}    IN RANGE    0    ${loop}
     \	Log To Console   \n******* switch node down/up event: ${i}********   
-    \	switch node down/up event      ${spine0}
+    \	switch node down/up event      spine0 
     \   sleep  ${inevent}
-    \	switch node down/up event      ${spine1} 
+    \	switch node down/up event       spine1  
     \   sleep  ${inevent}  
        
 	[Tags] 	sanity   traffic    event    
@@ -189,7 +189,8 @@ tenant configuration add/remove    [Arguments]    ${Tnumber}   ${Vnumber}    ${s
  	clear stats in controller switch	     
 	enable  master  copy running-config config://config_tenant_old
 	log  big scale configuration tenant add	
-	rest_add_tenant_vns_scale    tenantcount= ${Tnumber}   tname=FLAP     vnscount=${Vnumber}   vns_ip=yes  base=1.1.1.1    step=0.0.1.0		 
+	log  tenantcount=${Tnumber}, vnscount=${Vnumber}
+	rest_add_tenant_vns_scale    tenantcount=${Tnumber}   tname=FLAP     vnscount=${Vnumber}   vns_ip=yes  base=1.1.1.1    step=0.0.1.0		 
 	${vlan}=    Set Variable   1000
     : FOR    ${j}    IN RANGE    0     ${Tnumber}
     \	rest_add_interface_to_all_vns      FLAP${j}     leaf0-a    ethernet3  vlan=${vlan}	 
@@ -229,12 +230,14 @@ vns configuration add/remove    [Arguments]   ${Vnumber}      ${sleep}=1
  
 
 clear stats in controller switch
+	cli_clear_interface_statistics   s1	
+	cli_clear_interface_statistics   s2
 	cli_clear_interface_statistics   s3	
 	cli_clear_interface_statistics   s4
 	cli_clear_interface_statistics   s5	
 	cli_clear_interface_statistics   s6	
 	cli_clear_interface_statistics   s7
-	cli_clear_interface_statistics   s8		
+#	cli_clear_interface_statistics   s8		
 #	rest_clear_vns_stats
 	rest_clear_fabric_interface_stats
  
@@ -264,7 +267,7 @@ T21 switch node down/up event
     \	switch node down/up event      ${spine1}  
     \   sleep  ${inevent}  
  	    
-T23 controller node event         <<<<<<<<<<<<<<HA /reboot
+T23 controller node event       
      : FOR    ${i}    IN RANGE    0    ${loop}
     \	Log To Console   \n******* controller node event: ${i}*******    
     \	controller node event     ${inevent}
