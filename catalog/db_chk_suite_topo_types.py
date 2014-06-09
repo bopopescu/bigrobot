@@ -23,9 +23,9 @@ helpers.set_env('AUTOBOT_LOG', './myrobot.log')
 DB_SERVER = 'qadashboard-mongo.bigswitch.com'
 DB_PORT = 27017
 
-print_all = True
+print_all = False
 print_unknown = False
-print_mv_commands = False
+print_mv_commands = True
 
 
 client = MongoClient(DB_SERVER, DB_PORT)
@@ -51,4 +51,4 @@ if print_mv_commands:
         if x["topo_type"] == 'unknown':
             suite = os.path.splitext(x["source"])[0]
             #print("mv %s %s" % (suite + ".topo", suite + ".physical.topo"))
-            print("ls -la ../../%s" % (suite + ".topo"))
+            print("mv ../../%s ../../%s" % (suite + ".topo", suite + ".physical.topo"))
