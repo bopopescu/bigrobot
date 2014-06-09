@@ -4,7 +4,7 @@ Suite Setup     test setup topology
 Suite Teardown  test teardown topology
 Test Setup      base test setup
 Test Teardown   test teardown
-Force Tags      IronHorse  T5
+Force Tags      IronHorse  T5  Policy
 Library         keywords/BsnCommon.py
 Library         keywords/Host.py
 Library         keywords/T5.py
