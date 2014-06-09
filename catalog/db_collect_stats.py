@@ -32,6 +32,7 @@ class ReleaseStats(object):
         self._db_port = db_port
         client = MongoClient(self._db_server, self._db_port)
         self._db = client[db]
+        self._authors = {}
 
     def release(self):
         return self._release
@@ -77,15 +78,47 @@ class ReleaseStats(object):
         return len(suites), total_testcases, total_pass, total_fail
 
     def total_testsuites(self, collection="test_cases"):
-        total_suites, _, _, _ = self._total_testsuites_and_testcases(collection)
+        total_suites, _, _, _ = \
+                self._total_testsuites_and_testcases(collection)
         return total_suites
 
     def total_testcases(self, collection="test_cases"):
-        _, total_testcases, _, _ = self._total_testsuites_and_testcases(collection)
+        _, total_testcases, _, _ = \
+                self._total_testsuites_and_testcases(collection)
         return total_testcases
 
-    def total_testcases_by_tag(self, tag, collection="test_cases", query=None):
+    def suite_authors(self, collection="test_suites"):
+        testsuites = self.db()[collection]
+        suites = testsuites.find()
+        for x in suites:
+            product_suite = x['product_suite']
+            author = x['author']
+            self._authors[product_suite] = author
+        return self._authors
+
+    def manual_untested_by_tag(self, tag, collection="test_cases"):
+        authors = self.suite_authors()
+        tags = [self.release_lc(), "manual-untested", tag]
+        query = {"tags": { "$all": tags }}
+        testcases = self.db()[collection]
+        cases = testcases.find(query)
+        tests = []
+        for x in cases:
+            tests.append("%s %s %s %s"
+                         % (authors[x['product_suite']],
+                            x['product_suite'],
+                            x['name'],
+                            x['tags']))
+        return tests
+
+    def total_testcases_by_tag(self, tag, collection="test_cases",
+                               query=None):
+        """
+        tag - can be a single tag or a list of tags.
+        """
         tags = [self.release_lc(), tag]
+        if helpers.is_list(tag):
+            tags = helpers.list_flatten(tags)
         if query == None:
             query = {"tags": { "$all": tags }}
         testcases = self.db()[collection]
@@ -105,7 +138,8 @@ class ReleaseStats(object):
 
     def total_executable_testcases(self, collection="test_cases"):
         total = (self.total_testcases(collection)
-                 - self.total_testcases_by_tag('manual-untested', collection)[0])
+                 - self.total_testcases_by_tag('manual-untested',
+                                               collection)[0])
         return total
 
     # Tests executed. Query based on build_name
@@ -114,31 +148,43 @@ class ReleaseStats(object):
                                   build_name=None):
         query = {"tags": { "$all": [self.release_lc()] },
                  "build_name": build_name}
-        total_suites, _, total_pass, total_fail = self._total_testsuites_and_testcases(collection, query)
+        total_suites, _, total_pass, total_fail = \
+                self._total_testsuites_and_testcases(collection, query)
         return total_suites, total_pass, total_fail
 
     def total_testcases_executed(self, collection="test_cases_archive",
                                  build_name=None):
         query = {"tags": { "$all": [self.release_lc()] },
                  "build_name": build_name}
-        _, total_testcases, total_pass, total_fail = self._total_testsuites_and_testcases(collection, query)
+        _, total_testcases, total_pass, total_fail = \
+                self._total_testsuites_and_testcases(collection, query)
         return total_testcases, total_pass, total_fail
 
-    def total_testcases_by_tag_executed(self, tag, collection="test_cases_archive",
+    def total_testcases_by_tag_executed(self, tag,
+                                        collection="test_cases_archive",
                                         build_name=None):
         tags = [self.release_lc(), tag]
         query = {"tags": { "$all": tags },
                  "build_name": build_name}
         return self.total_testcases_by_tag(tag, collection, query)
 
-    def total_executable_testcases_executed(self, collection="test_cases_archive",
+    def total_executable_testcases_executed(self,
+                                            collection="test_cases_archive",
                                             build_name=None):
-        total = self.total_testcases_executed(collection, build_name=build_name)
+        total = self.total_testcases_executed(collection,
+                                              build_name=build_name)
         return total
 
 
-def print_stat(descr, val):
-    print("%-60s %15s" % (descr, val))
+def print_stat(descr, val, untested=None):
+    if untested != None:
+        print("%-60s %15s  manual-untested(%s)" % (descr, val, untested))
+    else:
+        print("%-60s %15s" % (descr, val))
+
+
+def print_testcases(testcases):
+    print "\n".join(sorted(["\t%s" % x for x in testcases]))
 
 
 def collect_stats():
@@ -150,7 +196,10 @@ Display test execution stats collected for a specific build.
     parser.add_argument('--release', required=True,
                         help=("Product release, e.g., 'IronHorse'"))
     parser.add_argument('--build', required=True,
-                        help=("Jenkins build string, e.g., 'bvs master #2007'"))
+                        help=("Jenkins build string,"
+                              " e.g., 'bvs master #2007'"))
+    parser.add_argument('--show-untested', action='store_true', default=False,
+                        help=("Show the manual-untested test cases"))
     args = parser.parse_args()
     build = args.build
 
@@ -162,30 +211,52 @@ Display test execution stats collected for a specific build.
     print ""
     print "%s Release Metrics (Build: %s)" % (args.release, build)
     print "====================================================="
-    print_stat("Total test suites:", ih.total_testsuites())
-    print_stat("Total test cases:", ih.total_testcases())
-    print_stat("Total feature tests:", ih.total_testcases_by_tag("feature")[0])
-    print_stat("Total scaling tests:", ih.total_testcases_by_tag("scaling")[0])
-    print_stat("Total performance tests:", ih.total_testcases_by_tag("performance")[0])
-    print_stat("Total solution tests:", ih.total_testcases_by_tag("solution")[0])
-    print_stat("Total longevity tests:", ih.total_testcases_by_tag("longevity")[0])
-    print_stat("Total negative tests:", ih.total_testcases_by_tag("negative")[0])
-    print_stat("Total manual tests:", ih.total_testcases_by_tag("manual")[0])
-    print_stat("Total manual-untested tests:", ih.total_testcases_by_tag("manual-untested")[0])
-    print_stat("Total executable test cases:", ih.total_executable_testcases())
+    print_stat("Total test suites:",
+               ih.total_testsuites())
+    print_stat("Total test cases:",
+               ih.total_testcases())
+    print_stat("Total feature tests:",
+               ih.total_testcases_by_tag("feature")[0])
+    print_stat("Total scaling tests:",
+               ih.total_testcases_by_tag("scaling")[0])
+    print_stat("Total performance tests:",
+               ih.total_testcases_by_tag("performance")[0])
+    print_stat("Total solution tests:",
+               ih.total_testcases_by_tag("solution")[0])
+    print_stat("Total longevity tests:",
+               ih.total_testcases_by_tag("longevity")[0])
+    print_stat("Total negative tests:",
+               ih.total_testcases_by_tag("negative")[0])
+    print_stat("Total manual tests:",
+               ih.total_testcases_by_tag("manual")[0])
+    print_stat("Total manual-untested tests:",
+               ih.total_testcases_by_tag("manual-untested")[0])
+    print_stat("Total executable test cases:",
+               ih.total_executable_testcases())
 
     print ""
-    print_stat("Total test suites executed:", ih.total_testsuites_executed(build_name=build)[0])
-    print_stat("Total test cases (executed, passed, failed):", ih.total_testcases_executed(build_name=build))
-    print_stat("Total feature tests (executed, passed, failed):", ih.total_testcases_by_tag_executed("feature", build_name=build))
-    print_stat("Total scaling tests (executed, passed, failed):", ih.total_testcases_by_tag_executed("scaling", build_name=build))
-    print_stat("Total performance tests (executed, passed, failed):", ih.total_testcases_by_tag_executed("performance", build_name=build))
-    print_stat("Total solution tests (executed, passed, failed):", ih.total_testcases_by_tag_executed("solution", build_name=build))
-    print_stat("Total longevity tests (executed, passed, failed):", ih.total_testcases_by_tag_executed("longevity", build_name=build))
-    print_stat("Total negative tests (executed, passed, failed):", ih.total_testcases_by_tag_executed("negative", build_name=build))
-    print_stat("Total manual tests (executed, passed, failed):", ih.total_testcases_by_tag_executed("manual", build_name=build))
-    print_stat("Total manual-untested tests (executed, passed, failed):", ih.total_testcases_by_tag_executed("manual-untested", build_name=build))
-    print_stat("Total executable test cases (executed, passed, failed):", ih.total_executable_testcases_executed(build_name=build))
+    print_stat("Total test suites executed:",
+               ih.total_testsuites_executed(build_name=build)[0])
+    print_stat("Total test cases (executed, passed, failed):",
+               ih.total_testcases_executed(build_name=build))
+
+    for feature in ["feature", "scaling", "performance", "solution",
+                    "longevity", "negative"]:
+        untested = ih.total_testcases_by_tag([feature, "manual-untested"])[0]
+        print_stat("Total %s tests (executed, passed, failed):" % feature,
+               ih.total_testcases_by_tag_executed(feature,
+                                                  build_name=build), untested)
+        if args.show_untested:
+            print_testcases(ih.manual_untested_by_tag(feature))
+
+    print_stat("Total manual tests (executed, passed, failed):",
+               ih.total_testcases_by_tag_executed("manual",
+                                                  build_name=build))
+    print_stat("Total manual-untested tests (executed, passed, failed):",
+               ih.total_testcases_by_tag_executed("manual-untested",
+                                                  build_name=build))
+    print_stat("Total executable test cases (executed, passed, failed):",
+               ih.total_executable_testcases_executed(build_name=build))
 
 
 if __name__ == '__main__':

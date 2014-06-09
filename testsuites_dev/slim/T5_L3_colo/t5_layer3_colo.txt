@@ -639,7 +639,7 @@ L3 intra tenant traffic between private and public subnet
 	REST add vns ip  							X								X1								10.251.1.1				24			private=true
 	REST add vns ip  							Y								Y1								10.251.1.1				24			
 	BASH init intf								h7-rack0						bond0.1007
-	BASH add ip address							h7-rack0						10.251.1.11/24					bond0.1007 	
+	BASH ifconfig ip address							h7-rack0						10.251.1.11/24					bond0.1007 	
 	BASH ping									h4-rack0						10.251.1.1						count=5
 	BASH ping									h7-rack0						10.251.1.1						count=5
 	BASH ping									h6-rack0						10.251.3.1						count=5
@@ -944,7 +944,7 @@ Verify same mac address showing up on two ports in the same segment is blocked
     BASH ifup intf                              h7-rack0                                bond0.1007
     BASH init intf                              h6-rack0                                bond0.1006
     BASH init intf                              h7-rack0                                bond0.1007    
-    BASH add ip address                         h6-rack0                                10.251.1.15/24          bond0.1006
+    BASH ifconfig ip address                         h6-rack0                                10.251.1.15/24          bond0.1006
     BASH add route                              h6-rack0                                10.251.0.0/16           10.251.1.1
     sleep                                       2
     BASH ping                                   h6-rack0                                10.251.1.1              count=5
@@ -956,7 +956,7 @@ Verify same mac address showing up on two ports in the same segment is blocked
     Should Contain                              ${attachpoint}                          ${leaf0_pc6}
     BASH set mac address                        h7-rack0                                bond0                   ${mac1}
     BASH set mac address                        h7-rack0                                bond0.1007              ${mac1}
-    BASH add ip address                         h7-rack0                                10.251.1.15/24          bond0.1007
+    BASH ifconfig ip address                         h7-rack0                                10.251.1.15/24          bond0.1007
     BASH add route                              h7-rack0                                10.251.0.0/16           10.251.1.1
     BASH ping                                   h7-rack0                                10.251.1.1              count=5
     ${value} =                                  BASH verify arp                         h7-rack0                      10.251.1.1
@@ -1002,7 +1002,7 @@ Verify clear blocked endpoint works
     BASH ifup intf                              h7-rack0                                bond0.1007
     BASH init intf                              h6-rack0                                bond0.1006
     BASH init intf                              h7-rack0                                bond0.1007
-    BASH add ip address                         h6-rack0                                10.251.1.15/24          bond0.1006
+    BASH ifconfig ip address                         h6-rack0                                10.251.1.15/24          bond0.1006
     BASH add route                              h6-rack0                                10.251.0.0/16           10.251.1.1
     sleep                                       2
     BASH ping                                   h6-rack0                                10.251.1.1              count=5
@@ -1014,7 +1014,7 @@ Verify clear blocked endpoint works
     Should Contain                              ${attachpoint}                          ${leaf0_pc6}
     BASH set mac address                        h7-rack0                                bond0                   ${mac1}
     BASH set mac address                        h7-rack0                                bond0.1007              ${mac1}
-    BASH add ip address                         h7-rack0                                10.251.1.15/24          bond0.1007
+    BASH ifconfig ip address                         h7-rack0                                10.251.1.15/24          bond0.1007
     BASH add route                              h7-rack0                                10.251.0.0/16           10.251.1.1
     BASH ping                                   h7-rack0                                10.251.1.1              count=5
     ${value} =                                  BASH verify arp                         h7-rack0                      10.251.1.1
@@ -1284,15 +1284,15 @@ setup topology
 	BASH ifup intf									h10-rack0								bond0.1010
 	BASH ifup intf									h3-rack1								bond0.2003
 	BASH ifup intf									h4-rack1								bond0.2004
-	BASH add ip address								h4-rack0								10.251.1.11/24			bond0	
-	BASH add ip address								h5-rack0								10.251.2.11/24			bond0
-	BASH add ip address								h6-rack0								10.251.3.11/24			bond0.1006
-	BASH add ip address								h7-rack0								10.252.1.11/24			bond0.1007
-	BASH add ip address								h8-rack0								10.252.2.11/24			bond0.1008
-	BASH add ip address								h9-rack0								10.252.3.11/24			bond0.1009
-	BASH add ip address								h10-rack0								10.253.1.11/24			bond0.1010
-	BASH add ip address								h1-rack1								10.251.1.21/24			bond0
-	BASH add ip address								h3-rack1								10.251.2.23/24			bond0.2003
+	BASH ifconfig ip address								h4-rack0								10.251.1.11/24			bond0	
+	BASH ifconfig ip address								h5-rack0								10.251.2.11/24			bond0
+	BASH ifconfig ip address								h6-rack0								10.251.3.11/24			bond0.1006
+	BASH ifconfig ip address								h7-rack0								10.252.1.11/24			bond0.1007
+	BASH ifconfig ip address								h8-rack0								10.252.2.11/24			bond0.1008
+	BASH ifconfig ip address								h9-rack0								10.252.3.11/24			bond0.1009
+	BASH ifconfig ip address								h10-rack0								10.253.1.11/24			bond0.1010
+	BASH ifconfig ip address								h1-rack1								10.251.1.21/24			bond0
+	BASH ifconfig ip address								h3-rack1								10.251.2.23/24			bond0.2003
 	BASH add route									h4-rack0								10.251.2.0/24			10.251.1.1
 	BASH add route									h4-rack0								10.251.3.0/24			10.251.1.1
 	BASH add route									h4-rack0								10.252.0.0/16			10.251.1.1
