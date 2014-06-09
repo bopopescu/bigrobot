@@ -93,7 +93,7 @@ class ReleaseStats(object):
         cases = testcases.find(query)
         tests = []
         for x in cases:
-            tests.append("%s  %s" % (x['product_suite'], x['name']))
+            tests.append("%s  %s %s" % (x['product_suite'], x['name'], x['tags']))
         return tests
 
     def total_testcases_by_tag(self, tag, collection="test_cases",

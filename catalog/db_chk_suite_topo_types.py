@@ -51,4 +51,4 @@ if print_mv_commands:
         if x["topo_type"] == 'unknown':
             suite = os.path.splitext(x["source"])[0]
             #print("mv %s %s" % (suite + ".topo", suite + ".physical.topo"))
-            print("ls -la ../../%s" % (suite + ".topo"))
+            print("mv ../../%s ../../%s" % (suite + ".topo", suite + ".physical.topo"))
