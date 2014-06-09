@@ -2,8 +2,7 @@
 Documentation     T5  Switch Platform Test suite- Iron Horse
 Suite Setup       base suite setup
 Suite Teardown    base suite teardown
-Test Setup        T5 switch platform test setup
-Test Teardown     T5 switch platform test teardown
+#Test Teardown     T5 switch platform test teardown
 Force Tags        T5  IronHorse
 ...             
 ...            
@@ -131,7 +130,20 @@ Configure DNS server and DNS Domain. Verify ping www.bigswitch.com
     configure dns domain  s1  ${dns_server}  ${dns_domain}
     Sleep  30
     cli ping from switch  s1  bigswitch.com
-    [Tags]  t5  platform  InitialConfig  feature      
+    [Tags]  t5  platform  InitialConfig  dns  feature      
+
+Verify DNS server and DNS domain can be deleted and added
+    [Tags]  t5  platform  InitialConfig  dns  feature  test1 
+    configure dns domain  s1  ${dns_server}  ${dns_domain}
+    Sleep  30
+    cli ping from switch  s1  bigswitch.com
+    deconfigure dns domain  s1  ${dns_server}  ${dns_domain}
+    Sleep  30 
+    cli execute command  s1  show running-config
+    verify ping fail from switch  s1  bigswitch.com
+    configure dns domain  s1  ${dns_server}  ${dns_domain}
+    Sleep  30
+    cli ping from switch  s1  bigswitch.com
 
 Verify ntp configuration on spine
     configure ntp server  s7  time-c.nist.gov
@@ -228,8 +240,6 @@ Verify after Master Controller comes back Connection reestablished
     
 ### Section C : Admin/User Authentication     
 ### Section D: System Admin Operation
-### 
-###
 
 Verify all interfaces show up (in show o/p from CLI)
     verify interfaces  s1
@@ -505,6 +515,14 @@ ping from switch  [Arguments]  ${switch}  ${remote}
 configure dns domain  [Arguments]  ${switch}  ${dns_server}  ${dns_domain}  
     ${ret_value_1}=  cli add dns server domain  ${switch}  ${dns_server}  ${dns_domain}
     Should Be True  ${ret_value_1}
+
+verify ping fail from switch  [Arguments]  ${switch}  ${remote} 
+    ${ret_value_1}=  cli ping from switch  ${switch}  ${remote}
+    Should Not Be True  ${ret_value_1}     
+
+deconfigure dns domain  [Arguments]  ${switch}  ${dns_server}  ${dns_domain}
+    ${ret_value_1}=  cli delete dns server domain  ${switch}  ${dns_server}  ${dns_domain}
+    Should Be True  ${ret_value_1}  
 
 verify interfaces  [Arguments]  ${switch}
     cli show all interfaces  ${switch}
