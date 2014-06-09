@@ -540,7 +540,7 @@ T24 Configure SPAN session for DST-MAC - Direction Ingress
 
 
 T25 Configure SPAN session for IP-Proto - Direction Ingress
-	[Tags]  span  feature manual
+	[Tags]  span  feature  manual
 	manual passed
 	
 	
@@ -583,7 +583,7 @@ T33 Configure SPAN session with multiple source interfaces
 	
 	
 T34 Configure SPAN session with multiple destination interfaces
-	[Tags]  span  feature manual
+	[Tags]  span  feature  manual
 	manual passed
 
 
