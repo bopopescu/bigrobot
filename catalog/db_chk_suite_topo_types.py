@@ -23,9 +23,9 @@ helpers.set_env('AUTOBOT_LOG', './myrobot.log')
 DB_SERVER = 'qadashboard-mongo.bigswitch.com'
 DB_PORT = 27017
 
-print_all = True
+print_all = False
 print_unknown = False
-print_mv_commands = False
+print_mv_commands = True
 
 
 client = MongoClient(DB_SERVER, DB_PORT)
