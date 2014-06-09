@@ -86,6 +86,16 @@ class ReleaseStats(object):
                 self._total_testsuites_and_testcases(collection)
         return total_testcases
 
+    def manual_untested_by_tag(self, tag, collection="test_cases"):
+        tags = [self.release_lc(), "manual-untested", tag]
+        query = {"tags": { "$all": tags }}
+        testcases = self.db()[collection]
+        cases = testcases.find(query)
+        tests = []
+        for x in cases:
+            tests.append("%s  %s" % (x['product_suite'], x['name']))
+        return tests
+
     def total_testcases_by_tag(self, tag, collection="test_cases",
                                query=None):
         """
@@ -157,6 +167,11 @@ def print_stat(descr, val, untested=None):
     else:
         print("%-60s %15s" % (descr, val))
 
+
+def print_testcases(testcases):
+    print "\n".join(sorted(["\t%s" % x for x in testcases]))
+
+
 def collect_stats():
     descr = """\
 Display test execution stats collected for a specific build.
@@ -168,6 +183,8 @@ Display test execution stats collected for a specific build.
     parser.add_argument('--build', required=True,
                         help=("Jenkins build string,"
                               " e.g., 'bvs master #2007'"))
+    parser.add_argument('--show-untested', action='store_true', default=False,
+                        help=("Show the manual-untested test cases"))
     args = parser.parse_args()
     build = args.build
 
@@ -214,6 +231,8 @@ Display test execution stats collected for a specific build.
         print_stat("Total %s tests (executed, passed, failed):" % feature,
                ih.total_testcases_by_tag_executed(feature,
                                                   build_name=build), untested)
+        if args.show_untested:
+            print_testcases(ih.manual_untested_by_tag(feature))
 
     print_stat("Total manual tests (executed, passed, failed):",
                ih.total_testcases_by_tag_executed("manual",
