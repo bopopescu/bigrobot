@@ -609,7 +609,7 @@ T1 Intra Segment: SRC & DST Are In Same Rack - Same Switch
 	${returnVal}=  rest configure testpath fabric_view  test-name=Test1	 src-tenant=autoT1	src-segment=v1	src-ip=${h1_tag_ip}	 dst-tenant=autoT1	dst-segment=v1	dst-ip=${h2_tag_ip}  ip-protocol=icmp 
 	Should Be True  ${returnVal}
 	${returnVal}=  rest verify testpath fabric view  Test1  HostPing  leaf  host=h1  ip=${h2_tag_ip}
-
+	Should Be True  ${returnVal}
 
 T2 Intra Segment: SRC & DST Are In Same Rack - Different Switch
 	[Tags]  testpath  feature 
