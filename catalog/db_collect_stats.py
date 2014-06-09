@@ -32,6 +32,7 @@ class ReleaseStats(object):
         self._db_port = db_port
         client = MongoClient(self._db_server, self._db_port)
         self._db = client[db]
+        self._authors = {}
 
     def release(self):
         return self._release
@@ -86,14 +87,28 @@ class ReleaseStats(object):
                 self._total_testsuites_and_testcases(collection)
         return total_testcases
 
+    def suite_authors(self, collection="test_suites"):
+        testsuites = self.db()[collection]
+        suites = testsuites.find()
+        for x in suites:
+            product_suite = x['product_suite']
+            author = x['author']
+            self._authors[product_suite] = author
+        return self._authors
+
     def manual_untested_by_tag(self, tag, collection="test_cases"):
+        authors = self.suite_authors()
         tags = [self.release_lc(), "manual-untested", tag]
         query = {"tags": { "$all": tags }}
         testcases = self.db()[collection]
         cases = testcases.find(query)
         tests = []
         for x in cases:
-            tests.append("%s  %s %s" % (x['product_suite'], x['name'], x['tags']))
+            tests.append("%s %s %s %s"
+                         % (authors[x['product_suite']],
+                            x['product_suite'],
+                            x['name'],
+                            x['tags']))
         return tests
 
     def total_testcases_by_tag(self, tag, collection="test_cases",
