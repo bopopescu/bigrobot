@@ -2,6 +2,7 @@
 
 import os
 import sys
+import re
 from pymongo import MongoClient
 import robot
 
@@ -50,5 +51,6 @@ if print_mv_commands:
     for x in sorted(suites, key=lambda k: k['author']):
         if x["topo_type"] == 'unknown':
             suite = os.path.splitext(x["source"])[0]
+            suite = re.sub(r'^bigrobot/', '', suite)
             #print("mv %s %s" % (suite + ".topo", suite + ".physical.topo"))
-            print("mv ../../%s ../../%s" % (suite + ".topo", suite + ".physical.topo"))
+            print("git mv %s %s" % (suite + ".topo", suite + ".physical.topo"))
