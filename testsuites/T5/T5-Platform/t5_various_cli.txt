@@ -21,25 +21,25 @@ T2.1 No Show This in config mode
 	Run Keyword and Expect Error
 	...  *Error: no matching commands*
 	...  Cli Run  master  no show this
-	[TAGS]  show
+	[Tags]  show
 T2.2 No Show This in config-switch submode
 	Cli Run  master  switch test
 	Run Keyword and Expect Error
 	...  *Error: no matching commands*
 	...  Cli Run  master  no show this
-	[TAGS]  BSC-5042  show
+	[Tags]  BSC-5042  show
 T2.3 No Show This in config-tenant submode
 	Cli Run  master  tenant test
 	Run Keyword and Expect Error
 	...  *Error: no matching commands*
 	...  Cli Run  master  no show this
-	[TAGS]  BSC-5042  show
+	[Tags]  BSC-5042  show
 T2.4 No Show This in config-controller submode
 	Cli Run  master  controller
 	Run Keyword and Expect Error
 	...  *Error: no matching commands*
 	...  Cli Run  master  no show this
-	[TAGS]  BSC-5042  show
+	[Tags]  BSC-5042  show
 
 T3 "no snmp-server community ro <foo>" in config-switch submode
 	Cli Run  master  snmp-server community ro test
@@ -49,27 +49,27 @@ T3 "no snmp-server community ro <foo>" in config-switch submode
 	...  show run snmp
 	...  snmp-server community ro test
 	...  flag=False
-	[TAGS]  BSC-5039  show  snmp
+	[Tags]  BSC-5039  show  snmp
 
 T4 Monitor session string as identifier
 	Run Keyword and Expect Error
 	...  *Error: Invalid argument: range: not an integer:*r*
 	...  Cli Run  master  monitor session r
-	[TAGS]  monitor session  BSC-5012
+	[Tags]  MonitorSession  BSC-5012
 
 T5 Monitor session source tcp string
 	Cli Run  master  monitor session 1
 	Run Keyword and Expect Error
 	...  *Error: Invalid argument: range: not an integer:*tcp*
 	...  Cli Run  master  source switch test interface eth1 ip-proto tcp
-	[TAGS]  monitor session  BSC-5017
+	[Tags]  MonitorSession  BSC-5017
 
 T6 Monitor session destination interface numerical only
 	Cli Run  master  monitor session 1
 	Run Keyword and Expect Error
 	...  *Invalid argument: Invalid Alphabetic character, followed by alphanumerics: 3*
 	...  Cli Run  master  destination switch test interface 3
-	[TAGS]  monitor session  BSC-5017
+	[Tags]  MonitorSession  BSC-5017
 
 T7 Autocompletions for user full name
 	Cli Run  master  user test
@@ -80,7 +80,7 @@ T7 Autocompletions for user full name
 	...  full-name ? 'test user'
 	...  r'Default admin'
 	...  flag=False
-	[TAGS]  BSC-5015  user management
+	[Tags]  BSC-5015  UserManagement
 
 T8 Escaping quote and double quote strings - user full-name
 	Cli Run  master  user test
@@ -427,7 +427,7 @@ T25 Polish characters in commands
 	Cli Run and Verify Output  master
 	...  show running-config snmp
 	...  snmp-server location 'Ko\\0xc5\\0x9bciuszki 34, \\0xc5\\0x81\\0xc3\\0xb3d\\0xc5\\0xba'
-	[Tags]  snmp  special characters
+	[Tags]  snmp  SpecialCharacters
 
 T26 Route and Router help texts
 	Cli Run  master  tenant test
