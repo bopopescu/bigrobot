@@ -58,7 +58,7 @@ ${sleepBefore}=   5
 ###
 ### Section I : Traffic Test Verification
 ### Traffic forwarding Sample L3- 
-### Framerate 10K per sec , pkt size 64, 256, 512, 1024, 1518
+### Uni-Directional Framerate 10K per sec , pkt size 64, 256, 512, 1024, 1518
 ### Line rate 10% [ pkt size 64] , 25% [ pkt size 256],  50% [ pkt size 512] , 
 ### Line rate 75% [pkt size 1518 ] , 100% [pkt size 1518 ]
 ### Jumbo Frame size 9216 line rate 50% , line rate 100% 
@@ -166,10 +166,10 @@ Bi-Directional L3 Traffic flow=a<->b traffic framerate 10000 pktsize 256
     stop traffic   ${stream}     
     [Tags]  T5  switch  L3  traffic  feature
 
-Bi-Directional L3 Traffic flow=a<->b traffic framerate 10000 pktsize 256 
+Bi-Directional L3 Traffic flow=a<->b traffic framerate 10000 pktsize 512 
     ${stream}=   L3 add  name=a_b_flow  flow=a<->b  src_ip=10.200.0.2  src_gw=10.200.0.1
     ...					dst_ip=10.200.16.2  dst_gw=10.200.16.1  src_mac=${src_mac}  dst_mac=${dst_mac}
-    ...                 frame_rate=10000  frame_size=256   
+    ...                 frame_rate=10000  frame_size=512   
     clear stats
     start traffic  ${stream}
     sleep          10
@@ -177,6 +177,118 @@ Bi-Directional L3 Traffic flow=a<->b traffic framerate 10000 pktsize 256
     verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
     stop traffic   ${stream}  
     [Tags]  T5  switch  L3  traffic  feature
+
+Bi-Directional L3 Traffic flow=a<->b traffic linerate 25% pktsize 256 
+    ${stream}=   L3 add  name=a_b_flow  flow=a<->b  src_ip=10.200.0.2  src_gw=10.200.0.1
+    ...					dst_ip=10.200.16.2  dst_gw=10.200.16.1  src_mac=${src_mac}  dst_mac=${dst_mac}
+    ...                 line_rate=25  frame_size=256   
+    clear stats
+    start traffic  ${stream}
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
+    stop traffic   ${stream}     
+    [Tags]  T5  switch  L3  traffic feature
+
+
+Bi-Directional L3 Traffic flow=a<->b traffic linerate 50% pktsize 512 
+    ${stream}=   L3 add  name=a_b_flow  flow=a<->b  src_ip=10.200.0.2  src_gw=10.200.0.1
+    ...					dst_ip=10.200.16.2  dst_gw=10.200.16.1  src_mac=${src_mac}  dst_mac=${dst_mac}
+    ...                 line_rate=50  frame_size=512   
+    clear stats
+    start traffic  ${stream}
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
+    stop traffic   ${stream}     
+    [Tags]  T5  switch  L3  traffic feature
+
+
+Bi-Directional L3 Traffic flow=a<->b traffic linerate 75% pktsize 1024 
+    ${stream}=   L3 add  name=a_b_flow  flow=a<->b  src_ip=10.200.0.2  src_gw=10.200.0.1
+    ...					dst_ip=10.200.16.2  dst_gw=10.200.16.1  src_mac=${src_mac}  dst_mac=${dst_mac}
+    ...                 line_rate=75  frame_size=1024   
+    clear stats
+    start traffic  ${stream}
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
+    stop traffic   ${stream}     
+    [Tags]  T5  switch  L3  traffic feature
+
+
+Bi-Directional L3 Traffic flow=a<->b traffic linerate 100% pktsize 1518 
+    ${stream}=   L3 add  name=a_b_flow  flow=a<->b  src_ip=10.200.0.2  src_gw=10.200.0.1
+    ...					dst_ip=10.200.16.2  dst_gw=10.200.16.1  src_mac=${src_mac}  dst_mac=${dst_mac}
+    ...                 line_rate=100  frame_size=1518   
+    clear stats
+    start traffic  ${stream}
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
+    stop traffic   ${stream}     
+    [Tags]  T5  switch  L3  traffic feature
+
+Uni-Directional L3 Traffic Jumbo flow=a->b traffic framerate 10000 pktsize 9216 
+    ${stream}=   L3 add  name=a_b_flow  flow=a->b  src_ip=10.200.0.2  src_gw=10.200.0.1
+    ...					dst_ip=10.200.16.2  dst_gw=10.200.16.1  src_mac=${src_mac}  dst_mac=${dst_mac}
+    ...                 frame_rate=10000  frame_size=9216   
+    clear stats
+    start traffic  ${stream}
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_frame_rate  ${ratetolerance}
+    stop traffic   ${stream}    
+    [Tags]  T5  switch  L3  traffic  feature
+ 
+Uni-Directional L3 Traffic Jumbo flow=a->b traffic linerate 10% pktsize 9216 
+    ${stream}=   L3 add  name=a_b_flow  flow=a->b  src_ip=10.200.0.2  src_gw=10.200.0.1
+    ...					dst_ip=10.200.16.2  dst_gw=10.200.16.1  src_mac=${src_mac}  dst_mac=${dst_mac}
+    ...                 line_rate=10  frame_size=9216   
+    clear stats
+    start traffic  ${stream}
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_frame_rate  ${ratetolerance}
+    stop traffic   ${stream}    
+    [Tags]  T5  switch  L3  traffic  feature
+
+Bi-Directional L3 Traffic Jumbo flow=a<->b traffic linerate 25% pktsize 9216 
+    ${stream}=   L3 add  name=a_b_flow  flow=a<->b  src_ip=10.200.0.2  src_gw=10.200.0.1
+    ...					dst_ip=10.200.16.2  dst_gw=10.200.16.1  src_mac=${src_mac}  dst_mac=${dst_mac}
+    ...                 line_rate=25  frame_size=9216   
+    clear stats
+    start traffic  ${stream}
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_frame_rate  ${ratetolerance}
+    stop traffic   ${stream}     
+    [Tags]  T5  switch  L3  traffic feature
+
+Bi-Directional L3 Traffic Jumbo flow=a<->b traffic linerate 50% pktsize 9216 
+    ${stream}=   L3 add  name=a_b_flow  flow=a<->b  src_ip=10.200.0.2  src_gw=10.200.0.1
+    ...					dst_ip=10.200.16.2  dst_gw=10.200.16.1  src_mac=${src_mac}  dst_mac=${dst_mac}
+    ...                 line_rate=50  frame_size=9216   
+    clear stats
+    start traffic  ${stream}
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_frame_rate  ${ratetolerance}
+    stop traffic   ${stream}     
+    [Tags]  T5  switch  L3  traffic feature
+
+Bi-Directional L3 Traffic Jumbo flow=a<->b traffic linerate 100% pktsize 9216 
+    ${stream}=   L3 add  name=a_b_flow  flow=a<->b  src_ip=10.200.0.2  src_gw=10.200.0.1
+    ...					dst_ip=10.200.16.2  dst_gw=10.200.16.1  src_mac=${src_mac}  dst_mac=${dst_mac}
+    ...                 line_rate=100  frame_size=9216   
+    clear stats
+    start traffic  ${stream}
+    sleep          10
+    ${report}=     fetch port stats
+    verify results traffic  transmitted_frame_rate  received_frame_rate  ${ratetolerance}
+    stop traffic   ${stream}     
+    [Tags]  T5  switch  L3  traffic feature
+
 
 * Keywords
       

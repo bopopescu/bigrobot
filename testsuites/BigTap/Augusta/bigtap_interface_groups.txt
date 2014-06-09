@@ -4,7 +4,7 @@ Suite Setup  interface suite setup
 Suite Teardown   interface suite teardown
 Test Setup   base test setup
 Test Teardown  base test teardown 
-Force Tags   Corsair  AugustaP2  BigTap  
+Force Tags   AugustaP2  BigTap  
 Library  keywords/BsnCommon.py
 Library  keywords/AppController.py
 Library  keywords/BigTap.py
@@ -12,29 +12,29 @@ Library  keywords/SwitchLight.py
 Library  keywords/Ixia.py
 
 * Variable
-${switch1_alias}                        scale-ac5710-1   #Alias for switch 1
+${switch1_alias}                          arista5               #Alias for switch 1
 
 ### Ixia Ports
-${switch1_filter_intf_1}                  ethernet1        #filter interface on switch 1
-${switch1_filter_alias_1}                 ixia-4-21        #Alias for filter interface on switch 1
-${switch1_delivery_intf_1}                ethernet2        #Delivery interface on switch 1
-${switch1_delivery_alias_1}               ixia-4-22        #Alias for delivery interface on switch 1
-${switch1_filter_intf_2}                  ethernet11       #filter interface on switch 1
-${switch1_filter_alias_2}                 filter-5710-1    #Alias for filter interface on switch 1
-${switch1_delivery_intf_2}                ethernet12       #Delivery interface on switch 1
-${switch1_delivery_alias_2}               delivery-5710-1  #Alias for delivery interface on switch 1
-${switch1_filter_intf_3}                  ethernet13       #filter interface on switch 1
-${switch1_filter_alias_3}                 filter-5710-2    #Alias for filter interface on switch 1
-${switch1_delivery_intf_3}                ethernet14       #Delivery interface on switch 1
-${switch1_delivery_alias_3}               delivery-5710-2  #Alias for delivery interface on switch 1
+${switch1_filter_intf_1}                  ethernet1             #filter interface on switch 1
+${switch1_filter_alias_1}                 ixia-4-7              #Alias for filter interface on switch 1
+${switch1_delivery_intf_1}                ethernet2             #Delivery interface on switch 1
+${switch1_delivery_alias_1}               ixia-4-8              #Alias for delivery interface on switch 1
+${switch1_filter_intf_2}                  Ethernet27            #filter interface on switch 1
+${switch1_filter_alias_2}                 filter-arista5-1      #Alias for filter interface on switch 1
+${switch1_delivery_intf_2}                Ethernet28            #Delivery interface on switch 1
+${switch1_delivery_alias_2}               delivery-arista5-1    #Alias for delivery interface on switch 1
+${switch1_filter_intf_3}                  Ethernet29            #filter interface on switch 1
+${switch1_filter_alias_3}                 filter-arista5-2      #Alias for filter interface on switch 1
+${switch1_delivery_intf_3}                Ethernet30            #Delivery interface on switch 1
+${switch1_delivery_alias_3}               delivery-arista5-2    #Alias for delivery interface on switch 1
 
 
 ### BigTap Policy Configuration
-${policy_name}                          policy_filter_group      #Policy Name that will use the tunnel interface
-${filter_interface_group_name_1}          corsair_filter_group_1
-${filter_interface_group_name_2}          corsair_filter_group_2
-${delivery_interface_group_name_1}        corsair_delivery_group_1
-${delivery_interface_group_name_2}        corsair_delivery_group_2
+${policy_name}                            policy_filter_group      #Policy Name that will use the tunnel interface
+${filter_interface_group_name_1}          augusta_filter_group_1
+${filter_interface_group_name_2}          augusta_filter_group_2
+${delivery_interface_group_name_1}        augusta_delivery_group_1
+${delivery_interface_group_name_2}        augusta_delivery_group_2
 ${vlan_rewrite_1}                         1024
 ${vlan_rewrite_2}                         2048
 
@@ -358,7 +358,7 @@ Verify interfaces tagged with and without vlan-rewrite can exist in a filter int
     [Tags]  feature 
 
 Verify multiple filter interface groups can be added to a policy
-    clean configuration    
+    clean configuration 
     ${return_value}=  rest add interface group  ${filter_interface_group_name_1}  filter  
     Should be true  ${return_value}
     ${return_value}=  rest add interface to interface group  ${filter_interface_group_name_1}  filter  ${switch1_filter_alias_2}    
@@ -378,11 +378,11 @@ Verify multiple filter interface groups can be added to a policy
     Sleep  20
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=2  num_delivery_intf=1
     Should be true  ${verify_policy1}
-    clean configuration     
+    clean configuration   
     [Tags]  feature  jira-bt-1367
 
 Verify multiple delivery interface groups can be added to a policy
-    clean configuration     
+    clean configuration 
     ${return_value}=  rest add interface group  ${delivery_interface_group_name_1}  delivery  
     Should be true  ${return_value}
     ${return_value}=  rest add interface to interface group  ${delivery_interface_group_name_1}  delivery  ${switch1_delivery_alias_2}    
@@ -402,7 +402,7 @@ Verify multiple delivery interface groups can be added to a policy
     Sleep  20
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=2
     Should be true  ${verify_policy1}
-    clean configuration     
+    clean configuration          
     [Tags]  feature  jira-bt-1367
     
 Verify filter and delivery interface-groups can have all lower-case alphabet names
@@ -466,18 +466,6 @@ interface suite setup
     ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
     Should be true  ${verify_policy1}    
 
-clean configuration
-    rest delete policy  admin-view  ${policy_name}
-    ${return_value}=  rest delete interface group  ${filter_interface_group_name_1}  filter   
-    Should be true  ${return_value}
-    ${return_value}=  rest delete interface group  ${filter_interface_group_name_2}  filter   
-    Should be true  ${return_value} 
-    ${return_value}=  rest delete interface group  ${delivery_interface_group_name_1}  delivery   
-    Should be true  ${return_value}
-    ${return_value}=  rest delete interface group  ${delivery_interface_group_name_2}  delivery   
-    Should be true  ${return_value}        
-    Sleep  10 
-
 verify group name  [Arguments]  ${group_name_filter}  ${group_name_delivery}
     ${return_value}=  rest add interface group  ${group_name_filter}  filter  
     Should be true  ${return_value}
@@ -493,6 +481,18 @@ verify group name  [Arguments]  ${group_name_filter}  ${group_name_delivery}
     ${return_value}=  rest delete interface group  ${group_name_delivery}  delivery   
     Should be true  ${return_value}
     Sleep  3            
+
+clean configuration
+    rest delete policy  admin-view  ${policy_name}
+    ${return_value}=  rest delete interface group  ${filter_interface_group_name_1}  filter   
+    Should be true  ${return_value}
+    ${return_value}=  rest delete interface group  ${filter_interface_group_name_2}  filter   
+    Should be true  ${return_value} 
+    ${return_value}=  rest delete interface group  ${delivery_interface_group_name_1}  delivery   
+    Should be true  ${return_value}
+    ${return_value}=  rest delete interface group  ${delivery_interface_group_name_2}  delivery   
+    Should be true  ${return_value}        
+    Sleep  10 
     
 interface suite teardown
     rest delete policy  admin-view  ${policy_name}
