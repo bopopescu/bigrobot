@@ -393,7 +393,7 @@ class Host(object):
         str_list = helpers.strip_cli_output(content, to_list=True)
         return  str_list
     
-    def bash_ifconfig_ip_address(self, node, ipaddr, intf, down=True):
+    def bash_ifconfig_ip_address(self, node, ipaddr, intf, down=False):
         """
         Adding IP address to Host interface,For tagged interface user needs
         to specify interface.tagnumber (e.g eth1.10).
