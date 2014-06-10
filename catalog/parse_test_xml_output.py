@@ -62,7 +62,8 @@ def format_robot_timestamp(ts, is_datestamp=False):
     if is_datestamp:
         s = '%s-%s-%s' % (year, month, date)
     else:
-        s = '%s-%s-%sT%s:%s:%s.%sZ' % (year, month, date, hour, minute, sec, msec)
+        s = '%s-%s-%sT%s:%s:%s.%sZ' % (year, month, date,
+                                       hour, minute, sec, msec)
     return s
 
 
@@ -143,11 +144,13 @@ class TestSuite(object):
                 upsert=True
                 )
         if tc:
-            print('Successfully updated Regression "test_cases_archive" record (name:"%s", product_suite:"%s", date:"%s", status:"%s")'
+            print('Successfully updated Regression "test_cases_archive" record'
+                  ' (name:"%s", product_suite:"%s", date:"%s", status:"%s")'
                   % (rec['name'], rec['product_suite'],
                      rec['starttime_datestamp'], rec['status']))
         else:
-            print('Did not find Regression "test_cases_archive" record (name:"%s", product_suite:"%s", date:"%s")'
+            print('Did not find Regression "test_cases_archive" record'
+                  ' (name:"%s", product_suite:"%s", date:"%s")'
                   % (rec['name'], rec['product_suite'],
                      rec['starttime_datestamp']))
 
@@ -162,11 +165,13 @@ class TestSuite(object):
                 # upsert=True
                 )
         if tc:
-            print('Successfully updated "test_cases" record (name:"%s", product_suite:"%s", date:"%s", status:"%s")'
+            print('Successfully updated "test_cases" record'
+                  ' (name:"%s", product_suite:"%s", date:"%s", status:"%s")'
                   % (rec['name'], rec['product_suite'],
                      rec['starttime_datestamp'], rec['status']))
         else:
-            print('CRITICAL ERROR: Did not find "test_cases" record (name:"%s", product_suite:"%s", date:"%s")'
+            print('CRITICAL ERROR: Did not find "test_cases" record'
+                  ' (name:"%s", product_suite:"%s", date:"%s")'
                   % (rec['name'], rec['product_suite'],
                      rec['starttime_datestamp']))
 
@@ -175,10 +180,12 @@ class TestSuite(object):
 
         suite = suites.find_one({ "product_suite" : rec['product_suite'] })
         if suite:
-            print('Found suite record (name:"%s", product_suite:"%s"). Skipping insertion.'
+            print('Found suite record (name:"%s", product_suite:"%s").'
+                  ' Skipping insertion.'
                   % (rec['name'], rec['product_suite']))
         else:
-            print('Did not find suite record (name:"%s", product_suite:"%s"). Inserting new record.'
+            print('Did not find suite record (name:"%s", product_suite:"%s").'
+                  ' Inserting new record.'
                   % (rec['name'], rec['product_suite']))
             self.db_insert_suite(rec)
 
@@ -188,10 +195,12 @@ class TestSuite(object):
         tc = testcases.find_one({ "name": rec['name'],
                                   "product_suite" : rec['product_suite'], })
         if tc:
-            print('Found test case record (name:"%s", product_suite:"%s"). Skipping insertion.'
+            print('Found test case record (name:"%s", product_suite:"%s").'
+                  ' Skipping insertion.'
                   % (rec['name'], rec['product_suite']))
         else:
-            print('Did not find test case record (name:"%s", product_suite:"%s"). Inserting new record.'
+            print('Did not find test case record'
+                  ' (name:"%s", product_suite:"%s"). Inserting new record.'
                   % (rec['name'], rec['product_suite']))
             self.db_insert_testcase(rec)
 
@@ -200,11 +209,14 @@ class TestSuite(object):
         Handle to the XML data from input file (output.xml).
         """
         if 'robot' not in self._data:
-            helpers.environment_failure("Fatal error: expecting data['robot']")
+            helpers.environment_failure(
+                    "Fatal error: expecting data['robot']")
         if 'suite' not in self._data['robot']:
-            helpers.environment_failure("Fatal error: expecting data['robot']['suite']")
+            helpers.environment_failure(
+                    "Fatal error: expecting data['robot']['suite']")
         if 'test' not in self._data['robot']['suite']:
-            helpers.environment_failure("Fatal error: expecting data['robot']['suite']['test']")
+            helpers.environment_failure(
+                    "Fatal error: expecting data['robot']['suite']['test']")
         return self._data
 
     def git_auth(self, filename):
@@ -214,8 +226,8 @@ class TestSuite(object):
         if output in AUTHORS:
             return AUTHORS[output]
         else:
-            helpers.environment_failure("AUTHORS dictionary does not contain '%s'"
-                                        % output)
+            helpers.environment_failure(
+                    "AUTHORS dictionary does not contain '%s'" % output)
 
     def check_topo_type(self, suite):
         """
@@ -283,7 +295,8 @@ class TestSuite(object):
             tests = [tests]
 
         if self._is_regression:
-            helpers.debug("DB testcase count (BEFORE): %s" % self.db_count_testcases())
+            helpers.debug("DB testcase count (BEFORE): %s"
+                          % self.db_count_testcases())
 
         for a_test in tests:
             # print "['@id']: " + '@id'
@@ -304,10 +317,14 @@ class TestSuite(object):
                 # Analyzing regression results which should have PASS/FAIL
                 # status.
                 status = helpers.utf8(a_test['status']['@status'])
-                starttime = format_robot_timestamp(helpers.utf8(a_test['status']['@starttime']))
-                starttime_datestamp = format_robot_datestamp(helpers.utf8(a_test['status']['@starttime']))
-                endtime = format_robot_timestamp(helpers.utf8(a_test['status']['@endtime']))
-                endtime_datestamp = format_robot_datestamp(helpers.utf8(a_test['status']['@endtime']))
+                starttime = format_robot_timestamp(
+                                helpers.utf8(a_test['status']['@starttime']))
+                starttime_datestamp = format_robot_datestamp(
+                                helpers.utf8(a_test['status']['@starttime']))
+                endtime = format_robot_timestamp(
+                                helpers.utf8(a_test['status']['@endtime']))
+                endtime_datestamp = format_robot_datestamp(
+                                helpers.utf8(a_test['status']['@endtime']))
                 executed = True
             else:
                 status = starttime = endtime = endtime_datestamp = None
@@ -356,7 +373,8 @@ class TestSuite(object):
             # Add test cases to test suite
             # self._suite['tests'] = self._tests
         if self._is_regression:
-            helpers.debug("DB testcase count (AFTER): %s" % self.db_count_testcases())
+            helpers.debug("DB testcase count (AFTER): %s"
+                          % self.db_count_testcases())
         self.total_tests()
 
     def suite_name(self):
