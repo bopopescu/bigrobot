@@ -384,13 +384,13 @@ Test the Oversubscription of 40Gig Links between Leaf and Spines
     
 Test the hashing algorithm between the leaf and spine with multiple links L2 Traffic 
     Log    Step 1 - Test the hashing algorithm between the leaf and spine with multiple links
-    [Tags]  Manual-untested  interface  counters  feature
-    Manual untested
+    [Tags]  Manual  interface  counters  feature
+    Manual passed
 
 Test the hashing algorithm between the leaf and spine with multiple links L3 Traffic 
     Log    Step 1 - Test the hashing algorithm between the leaf and spine with multiple links
-    [Tags]  Manual-untested  interface  counters  feature
-    Manual untested
+    [Tags]  Manual  interface  counters  feature
+    Manual passed
     
 
 * Keywords
