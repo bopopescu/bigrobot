@@ -81,18 +81,18 @@ Verify console connectivity
     [Tags]  Manual
     Manual passed
 
-Verify UBoot version DRAM etc
+Verify UBoot version on leaf
     Log    Step 1 - Verify the Uboot version
     Log    Step 2 - Verify the DRAM
     [Tags]  T5  switch  install  feature 
-    [Tags]  Manual-untested
-    Manual untested
+    [Tags]  Manual
+    Manual passed
    
 Verify environmental variables for CPU, RAM, PCI, Ethernet, EEPROM at loader 
     Log    Step 1 - Verify the environmrntal variables 
     [Tags]  T5  switch  install  feature 
-    [Tags]  Manual-untested
-    Manual untested
+    [Tags]  Manual
+    Manual passed
     
 ### SECTION B: Initial Configuration 
 
@@ -421,7 +421,6 @@ Verify the debugging of forwarding programming in the Switch
     Log    Step 1 - Verify the forwarding programming can be shown in switch
     [Tags]  Manual-untested  Debug  feature
     Manual untested
-
 
 
 * Keywords

@@ -84,14 +84,14 @@ Interrupt the switchLight installer and verify that it can be reinstalled
 Interrupt switchLight image upgrade and verify that it can be upgraded 
     Log   Step 1 - Interrupt the switchLight install and verify that it can be re-installed. 
     [Tags]  T5  switch  install  feature  
-    [Tags]  Manual-untested
-    Manual-untested
+    [Tags]  Manual
+    Manual passed
    
 Verify the Installer URL check for leaf and spine
     Log   Step 1 - Verify the Url settings for leaf and spine. 
     [Tags]  T5  switch  install  feature  
-    [Tags]  Manual-untested
-    Manual-untested   
+    [Tags]  Manual 
+    Manual passed   
 
 Verify switchLight Installer can upgrade another switchLite image
     Log     Step 1 - Verify switchLight Installer can upgrade to another swithcLigh image
@@ -109,8 +109,8 @@ Verify console connectivity of the switch
 Verify Uboot version  
     Log    Step 1 - Verify the minimum Uboot version 
     [Tags]  T5  switch  install  feature 
-    [Tags]  Manual-untested
-    Manual untested
+    [Tags]  Manual
+    Manual passed
 
 Verify uboot configuration Static ip address, gateway, netmask, server ip
     Log    Step 1 - Verify the configuration of static Ip address, gateway, netmask and server ip
@@ -123,8 +123,8 @@ Verify uboot configuration Static ip address, gateway, netmask, server ip
 Verify the switch flash card memory 
     Log    Step 1 - Verify the switch flash card memory 4GB or 8GB minimum
     [Tags]  T5  switch  install  feature 
-    [Tags]  Manual-untested
-    Manual untested      
+    [Tags]  Manual
+    Manual passed      
 
 Reboot Switch and verify the loader parameters like IP, gateway, server ip,default gateway etc
     Log    Step 1 - Verify after reboot configuration of static Ip address
@@ -146,15 +146,15 @@ Verify DHCP address configuration, IP address allocation and PING
     Log    Step 2 - Verify the IP address allocation 
     Log    Step 3 - Verify the PING 
     [Tags]  T5  switch  install  feature 
-    [Tags]  Manual-untested
-    Manual untested 
+    [Tags]  Manual
+    Manual passed 
     
 Reboot box and Verify the IP address through DHCP server and Ping 
     Log    Step 1 - Verify after reboot IP address allocation thru DHCP 
     Log    Step 1 - Verify the PING connectivity 
     [Tags]  T5  switch  install  feature 
-    [Tags]  Manual-untested
-    Manual untested 
+    [Tags]  Manual 
+    Manual passed 
    
 Verify environmental variables for CPU, RAM, PCI, Ethernet at loader 
     Log    Step 1 - Verify the environmental variables for CPU, RAM etc. 
@@ -182,8 +182,8 @@ Verify the recovery procedure of Switch when SwLight installer fails
 Verify the procedure of switch upgrade when the switchLight image upgrade fails
     Log    Step 1 - verify that the Switch can be recovered by the defined procedure
     [Tags]  T5  switch  install  feature 
-    [Tags]  Manual-untested
-    Manual untested
+    [Tags]  Manual
+    Manual passed
      
 Verify the procedure to get the recovery password for the switch 
     Log    Step 1 - verify the procedure to get the recovery password 
@@ -357,8 +357,8 @@ Verify password for user admin can be changed
 Verify password for user admin cannot be of zero length   
     Log    Step 1 - Verify password for user admin cannot be of zero length
     [Tags]  T5  switch  UserConfig  feature  
-    [Tags]  Manual-untested
-    Manual untested
+    [Tags]  Manual
+    Manual passed
         
 Verify Passwords are case sensitive   
     Log    Step 1 - Verify Passwords are case-sensitive
@@ -461,32 +461,32 @@ Verify time and date information is NOT lost after reboot
 verify the DNS server and domain name configuration 
     Log    Step 1 - Verify  dns server and dns domain name configuration 
     [Tags]  T5  switch  dns  InitialConfig  feature
-    [Tags]  Manual-untested
-    Manual untested
+    [Tags]  Manual
+    Manual passed
 
 verify the invalid DNS server and domain name configuration can be added and deleted 
     Log    Step 1 - Verify  invalid dns server and dns domain name can be configured and deleted
     [Tags]  T5  switch  dns  InitialConfig  feature
-    [Tags]  Manual-untested
-    Manual untested
+    [Tags]  Manual 
+    Manual passed
 
 verify the hostname configuration on the switch  
     Log    Step 1 - Verify  hostname configuration on the switch 
     [Tags]  T5  switch  hostname  InitialConfig  feature
-    [Tags]  Manual-untested
-    Manual untested
+    [Tags]  Manual
+    Manual passed
 
 verify the hostname configuration can be deleted and added again   
     Log    Step 1 - Verify  verify the hostname configuration can be deleted and added again 
     [Tags]  T5  switch  hostname  InitialConfig  feature
-    [Tags]  Manual-untested
-    Manual untested
+    [Tags]  Manual
+    Manual passed
 
 verify the hostname configuration for the valid and supported character   
     Log    Step 1 - Verify  verify hostname configuration for the valid and supported character  
     [Tags]  T5  switch  hostname  InitialConfig  feature
-    [Tags]  Manual-untested
-    Manual untested
+    [Tags]  Manual
+    Manual passed
 
 ## Mark Skip if admin save/reload not supported
 Config admin save reload operation 
@@ -784,12 +784,12 @@ Verify Speed Duplex in ports
 Verify interface state is reported correctly when cable is unplugged
     Log    Step 1 - Verify interface state is reported correctly when cable is unplugged 
     [Tags]  Manual  interface  feature
-    Manual untested
+    Manual passed
  
 Verify the SNMP server configuration enable and disable from the switch  
     Log    Step 1 - Verify the SNMP server configuration enable and disable from the switch
     [Tags]  Manual-untested  SNMP  feature
-    Manual untested   
+    Manual passed   
     
 ## Add SNMP sections 
 ## SNMP MIB section
@@ -814,18 +814,18 @@ Verify the SNMP server configuration enable and disable from the switch
 
 Verify the SNMPwalk for all the supported Interface MIB 
     Log    Step 1 - Verify the SNMPwalk of the supported Interface MIB
-    [Tags]  Manual-untested  SNMP  feature
-    Manual untested
+    [Tags]  Manual  SNMP  feature
+    Manual passed
 
 Verify the SNMPwalk for all the supported environment MIB 
     Log    Step 1 - Verify the SNMPwalk of the supported environment MIB
-    [Tags]  Manual-untested  SNMP  feature
-    Manual untested
+    [Tags]  Manual  SNMP  feature
+    Manual passed
 
 Verify the SNMPwalk for all the supported system MIB 
     Log    Step 1 - Verify the SNMPwalk of the supported system MIB
-    [Tags]  Manual-untested  SNMP  feature
-    Manual untested
+    [Tags]  Manual  SNMP  feature
+    Manual passed
 
 Verify the SNMPget for all the supported Interface, system, environment MIB 
     Log    Step 1 - Verify the SNMPget of the supported MIB
@@ -839,54 +839,54 @@ Verify the SNMPnext for all the supported Interface, system, environment MIB
     
 Verify the SNMP traps configured and generated for link up down of switch interface 
     Log    Step 1 - Verify the SNMP traps generated for link up down of switch interface 
-    [Tags]  Manual-untested  SNMP  feature
-    Manual untested
+    [Tags]  Manual  SNMP  feature
+    Manual passed
       
 Verify the SNMP traps generated for the PSU sensor failure 
     Log    Step 1 - Verify the SNMP traps generated for the PSU sensor failure
-    [Tags]  Manual-untested  SNMP  feature
-    Manual untested
+    [Tags]  Manual  SNMP  feature
+    Manual Failed
 
 Verify the SNMP traps generated for the chassis Fan failure 
     Log    Step 1 - Verify the SNMP traps generated for the chassis Fan failure
-    [Tags]  Manual-untested  SNMP  feature
-    Manual untested
+    [Tags]  Manual  SNMP  feature
+    Manual Failed
 
 Verify the SNMP traps generated for the temp sensors threshold value crossed 
     Log    Step 1 - Verify the SNMP traps generated for the temp sensors threshold value crossed
-    [Tags]  Manual-untested  SNMP  feature
-    Manual untested
+    [Tags]  Manual  SNMP  feature
+    Manual Failed
 
 Verify the SNMP traps generated for the CPU load threshold value crossed 
     Log    Step 1 - Verify the SNMP traps generated for the CPU load threshold value crossed
-    [Tags]  Manual-untested  SNMP  feature
-    Manual untested
+    [Tags]  Manual  SNMP  feature
+    Manual Failed
 
 Verify the PSU1 and PSU2 SNMPwalk and after removal of the PSU1 
     Log    Step 1 - Verify the SNMPwalk for the PSU1 and PSU2 
     Log    Step 2 - remove PSU1 and verify the snmpwalk again
-    [Tags]  Manual-untested  SNMP  feature
-    Manual untested
+    [Tags]  Manual  SNMP  feature
+    Manual Failed
 
 Verify the AC PSU temp sensors SNMPwalk
     Log    Step 1 - Verify the SNMPwalk for the AC PSU temp sensors 
-    [Tags]  Manual-untested  SNMP  feature
-    Manual untested
+    [Tags]  Manual  SNMP  feature
+    Manual Failed
 
 Verify the DC PSU temp sensors SNMPwalk
     Log    Step 1 - Verify .the SNMPwalk for the DC PSU temp sensors 
-    [Tags]  Manual-untested  SNMP  feature
-    Manual untested
+    [Tags]  Manual  SNMP  feature
+    Manual Failed
 
 Verify the repeatitive snmpwalk of the interface MIB and confirm the consistent value
     Log    Step 1 - Verify repeatitive snmpwalk of the interface MIB and confirm the consistent value 
-    [Tags]  Manual-untested  SNMP  feature
-    Manual untested 
+    [Tags]  Manual  SNMP  feature
+    Manual Failed
 
 Verify after reboot the snmpwalk for the consistent IfIndex value 
     Log    Step 1 - Verify after reboot the consistent value of IfIndex  
-    [Tags]  Manual-untested  SNMP  feature
-    Manual untested
+    [Tags]  Manual  SNMP  feature
+    Manual Failed
 
 
 ## Process stop and restart 
@@ -894,8 +894,8 @@ Verify after reboot the snmpwalk for the consistent IfIndex value
 
 Verify system state after the process ofad restart 
     Log    Step 1 - Verify system state after the ofad process start  
-    [Tags]  Manual-untested  processStart  feature
-    Manual untested
+    [Tags]  Manual  processStart  feature
+    Manual passed
 
 Verify system state after the process snmpd restart 
     Log    Step 1 - Verify system state after the snmpd process start  

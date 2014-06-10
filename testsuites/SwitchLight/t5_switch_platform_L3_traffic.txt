@@ -263,7 +263,7 @@ Bi-Directional L3 Traffic Jumbo flow=a<->b traffic linerate 25% pktsize 9216
     ${report}=     fetch port stats
     verify results traffic  transmitted_frame_rate  received_frame_rate  ${ratetolerance}
     stop traffic   ${stream}     
-    [Tags]  T5  switch  L3  traffic feature
+    [Tags]  T5  switch  L3  traffic feature  
 
 Bi-Directional L3 Traffic Jumbo flow=a<->b traffic linerate 50% pktsize 9216 
     ${stream}=   L3 add  name=a_b_flow  flow=a<->b  src_ip=10.200.0.2  src_gw=10.200.0.1
@@ -275,7 +275,7 @@ Bi-Directional L3 Traffic Jumbo flow=a<->b traffic linerate 50% pktsize 9216
     ${report}=     fetch port stats
     verify results traffic  transmitted_frame_rate  received_frame_rate  ${ratetolerance}
     stop traffic   ${stream}     
-    [Tags]  T5  switch  L3  traffic feature
+    [Tags]  T5  switch  L3  traffic feature  
 
 Bi-Directional L3 Traffic Jumbo flow=a<->b traffic linerate 100% pktsize 9216 
     ${stream}=   L3 add  name=a_b_flow  flow=a<->b  src_ip=10.200.0.2  src_gw=10.200.0.1
@@ -287,7 +287,7 @@ Bi-Directional L3 Traffic Jumbo flow=a<->b traffic linerate 100% pktsize 9216
     ${report}=     fetch port stats
     verify results traffic  transmitted_frame_rate  received_frame_rate  ${ratetolerance}
     stop traffic   ${stream}     
-    [Tags]  T5  switch  L3  traffic feature
+    [Tags]  T5  switch  L3  traffic feature 
 
 
 * Keywords
