@@ -16,41 +16,41 @@ Library			 keywords/T5L3.py
 Library          keywords/Mininet.py
 
 
-Documentation   T5 Scale - Iron Horse
-...             export BIGROBOT_SUITE=t5_6spine_16rack_test_suite.txt
-...             Section A: Build a Scale configuration file
-...             Section B: Configure master/slave controllers in one cluster
-				Section C: Copy Scale Configuration file to Controller master
-					Topology:
-						6 spines, 16 rack (dual leaf)
-						All leafs have 40G uplinks to spines
-						Ixia and big-tap be used for traffic testing
-					Scale Config: 
-						1022/1023 user Tenants? (+ 1 system tenant vrf-0 + 1 external vrf-1 ? = 1024)
-						4088/4092 user VNS (4 VNS/ tenant, 0x001 and 0xfff  is reserved, 0x000 is not allowed =  4091/4095. Each Ixia ports will have 4k vlan configured)	
-						4088/4092 IP subnets (one per VNS subject to above limits)
-						All VNS will be applied across all leaf nodes including service rack
-						48K L3 host  for intra-tenant routing
-						48K L2 host 
-						16K CIDR routes ? (tables might be used for inter-tenant routing)
-						3K policy rules per leaf switches
-						ARP 2k per sec per switch
-					Performance:
-						Controller PACKET-IN 100k per second
-						No DHCP relay configured. No overlapping subnet.
-						MAC learning rate 2000 per sec for controller, and 200 per switch?
-					Gneralnote:
-						All testcases will be run with L2/L3 and external traffic
-						Will monitor and take snapshot of memory/cpu utilization on both controllers/switches
-						Monitor java exceptions
-						Traffic convergence time periods 
+#Documentation   T5 Scale - Iron Horse
+#...             export BIGROBOT_SUITE=t5_6spine_16rack_test_suite.txt
+#...             Section A: Build a Scale configuration file
+#...             Section B: Configure master/slave controllers in one cluster
+#				Section C: Copy Scale Configuration file to Controller master
+#					Topology:
+#						6 spines, 16 rack (dual leaf)
+#						All leafs have 40G uplinks to spines
+#						Ixia and big-tap be used for traffic testing
+#					Scale Config: 
+#						1022/1023 user Tenants? (+ 1 system tenant vrf-0 + 1 external vrf-1 ? = 1024)
+#						4088/4092 user VNS (4 VNS/ tenant, 0x001 and 0xfff  is reserved, 0x000 is not allowed =  4091/4095. Each Ixia ports will have 4k vlan configured)	
+#						4088/4092 IP subnets (one per VNS subject to above limits)
+#						All VNS will be applied across all leaf nodes including service rack
+#						48K L3 host  for intra-tenant routing
+#						48K L2 host 
+#						16K CIDR routes ? (tables might be used for inter-tenant routing)
+#						3K policy rules per leaf switches
+#						ARP 2k per sec per switch
+#					Performance:
+#						Controller PACKET-IN 100k per second
+#						No DHCP relay configured. No overlapping subnet.
+#						MAC learning rate 2000 per sec for controller, and 200 per switch?
+#					Gneralnote:
+#						All testcases will be run with L2/L3 and external traffic
+#						Will monitor and take snapshot of memory/cpu utilization on both controllers/switches
+#						Monitor java exceptions
+#						Traffic convergence time periods 
 
 
 * Variables
 ${cfg_file_path}		/home/svoora/temp.txt
 ${cfg_file_server}		10.192.108.10
 ${file_server_passwd}	bsn
-${copied_file}			cfg.txt
+${copied_file}			scale_policy_cfg_2.txt
 ${monitor_file}			exception_file.log
 ${bm1_ip}				10.0.0.6
 #${m_pg} 				leaf1-bm4
