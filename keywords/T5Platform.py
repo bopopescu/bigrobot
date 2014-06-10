@@ -1653,6 +1653,7 @@ class T5Platform(object):
         try:
             c.config("config")
             c.bash("> .ssh/known_hosts")
+            c.config("config")
             if "Error" in c.cli_content():
                 helpers.log("Error in CLI content")
                 return False
