@@ -248,7 +248,7 @@ Display test execution stats collected for a specific build.
     print_stat("Total test cases (executed, passed, failed):",
                ih.total_testcases_executed(build_name=build))
 
-    for functionality in helpers.list_flatten([TEST_TYPES, "manual", "manual-untested"]):
+    for functionality in TEST_TYPES + ["manual", "manual-untested"]:
         untested = ih.total_testcases_by_tag([functionality,
                                               "manual-untested"])[0]
         print_stat("Total %s tests (executed, passed, failed):"
