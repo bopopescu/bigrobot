@@ -108,7 +108,7 @@ class ReleaseStats(object):
                          % (authors[x['product_suite']],
                             x['product_suite'],
                             x['name'],
-                            x['tags']))
+                            [helpers.utf8(tag) for tag in x['tags']]))
         return tests
 
     def total_testcases_by_tag(self, tag, collection="test_cases",
@@ -184,7 +184,7 @@ def print_stat(descr, val, untested=None):
 
 
 def print_testcases(testcases):
-    print "\n".join(sorted(["\t%s" % x for x in testcases]))
+    print "\n".join(sorted(["\t%s" % helpers.utf8(x) for x in testcases]))
 
 
 def collect_stats():
@@ -241,7 +241,7 @@ Display test execution stats collected for a specific build.
                ih.total_testcases_executed(build_name=build))
 
     for feature in ["feature", "scaling", "performance", "solution",
-                    "longevity", "negative"]:
+                    "longevity", "negative", "robustness"]:
         untested = ih.total_testcases_by_tag([feature, "manual-untested"])[0]
         print_stat("Total %s tests (executed, passed, failed):" % feature,
                ih.total_testcases_by_tag_executed(feature,
