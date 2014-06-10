@@ -369,5 +369,4 @@ if __name__ == '__main__':
     parser.add_argument("--regress",
                         help="This is temporarily used in CI Jenkins")
     main()
-    print "Success!!!"
     sys.exit(0)
