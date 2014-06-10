@@ -35,9 +35,9 @@ ${intf_8}=        ethernet47
 ${intf_9}=        ethernet48
 
 ${leaf1_spine0_intf1}=  ethernet49
-${spine0_leaf1_intf1}=  ethernet3
+${spine0_leaf1_intf1}=  ethernet21
 ${leaf2_spine0_intf1}=  ethernet49
-${spine0_leaf2_intf1}=  ethernet3
+${spine0_leaf2_intf1}=  ethernet22
 
 ${count}=         1 
 ${ratetolerance}=     10
