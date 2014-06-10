@@ -2658,7 +2658,7 @@ class T5Platform(object):
 
         if join_cluster == 'yes':
             n_console.send('2')  # join existing cluster
-            n_console.expect(r'Existing node IP.*> ')
+            n_console.expect(r'Existing \b(node|Controller)\b IP.*> ')
             n_console.send(cluster_ip)
             n_console.expect(r'Administrator password for cluster.*> ')
             n_console.send(cluster_passwd)
