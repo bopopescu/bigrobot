@@ -21,14 +21,16 @@ helpers.set_env('IS_GOBOT', 'False')
 helpers.set_env('AUTOBOT_LOG', './myrobot.log')
 
 
+TEST_TYPES = ["feature", "scaling", "performance", "solution",
+                          "longevity", "negative", "robustness"]
 FEATURES_IRONHORSE = ["ha", "span", "testpath", "pod", "l2", "l3", "snmp",
                     "ntp", "traffic", "logging", "rsyslog", "rsyslogd",
                     "install", "initialconfig", "rebootswitch",
                     "firstboot", "upgrade", "singlenode", "bpdu_guard",
-                    "fabric", "fabric_qos", "ztn", "file management",
+                    "fabric", "fabric_qos", "qos", "ztn", "file management",
                     "filemanagement", "running-config", "initialconfig",
                     "virtualip", "openstack", "dhcp", "dhcp-relay",
-                    "ecmp", "policy-vlanrewrite", "qos"]
+                    "ecmp", "policy-vlanrewrite"]
 
 
 class ReleaseStats(object):
@@ -232,22 +234,11 @@ Display test execution stats collected for a specific build.
                ih.total_testsuites())
     print_stat("Total test cases:",
                ih.total_testcases())
-    print_stat("Total feature tests:",
-               ih.total_testcases_by_tag("feature")[0])
-    print_stat("Total scaling tests:",
-               ih.total_testcases_by_tag("scaling")[0])
-    print_stat("Total performance tests:",
-               ih.total_testcases_by_tag("performance")[0])
-    print_stat("Total solution tests:",
-               ih.total_testcases_by_tag("solution")[0])
-    print_stat("Total longevity tests:",
-               ih.total_testcases_by_tag("longevity")[0])
-    print_stat("Total negative tests:",
-               ih.total_testcases_by_tag("negative")[0])
-    print_stat("Total manual tests:",
-               ih.total_testcases_by_tag("manual")[0])
-    print_stat("Total manual-untested tests:",
-               ih.total_testcases_by_tag("manual-untested")[0])
+
+    for functionality in TEST_TYPES:
+        print_stat("Total %s tests:" % functionality,
+                   ih.total_testcases_by_tag(functionality)[0])
+
     print_stat("Total executable test cases:",
                ih.total_executable_testcases())
 
@@ -257,8 +248,7 @@ Display test execution stats collected for a specific build.
     print_stat("Total test cases (executed, passed, failed):",
                ih.total_testcases_executed(build_name=build))
 
-    for functionality in ["feature", "scaling", "performance", "solution",
-                          "longevity", "negative", "robustness"]:
+    for functionality in TEST_TYPES + ["manual", "manual-untested"]:
         untested = ih.total_testcases_by_tag([functionality,
                                               "manual-untested"])[0]
         print_stat("Total %s tests (executed, passed, failed):"
