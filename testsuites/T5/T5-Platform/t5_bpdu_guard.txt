@@ -30,8 +30,9 @@ ${sw}             leaf1-b
 ${swname}         s6
 ${intf}           ethernet33
 
-${sw1dpid}   00:00:88:00:00:00:01:01
-${sw6dpid}   00:00:5c:16:c7:10:20:9e
+${sw1dpid}   00:00:70:72:77:77:77:29
+${sw6dpid}   00:00:70:72:cf:ab:3c:58
+@{switches}   sw1  sw6 
 
 
 
@@ -99,14 +100,14 @@ T2.2 BPDU guard mstp
 	port recover from bpdu down state		${sw}   ${intf}		
 	[Tags] 	sanity  feature  bpdu_guard     
 	 
-T2.3 BPDU guard rapid-pvst
+T2.3 BPDU guard rapid-pvst with not matched vlan negative
 	arista setup rapid-pvst	
- 	verify switch interface is up    ${sw}   ${intf}
+ 	verify switch interface is up    ${sw}   ${intf} 	
  	config   s100	  spanning-tree vlan 100    	
  	sleep  ${short}
-	verify switch interface is BPDU down	${sw}   ${intf}
-	port recover from bpdu down state		${sw}   ${intf}		
-	[Tags] 	sanity  feature  bpdu_guard       
+	verify switch interface is up	${sw}   ${intf}
+	
+	[Tags] 	sanity  negative  bpdu_guard       
 
 T3.1 BPDU guard with interface configure in vns mismatch vlan
 	rest_add_tenant  BPDU
@@ -138,9 +139,25 @@ T3.2 BPDU guard with interface configure in vns match vlan
  	sleep  ${short}
 	verify switch interface is BPDU down	${sw}   ${intf}
 	port recover from bpdu down state		${sw}   ${intf}	
+	
 	[Tags] 	full  feature   bpdu_guard    
+
+T3.3 BPDU guard rapid-pvst with matched vlan
+	arista setup rapid-pvst	
+ 	verify switch interface is up    ${sw}   ${intf}
+	rest_add_tenant  BPDU
+ 	rest_add_vns     BPDU  V100
+ 	rest_add_interface_to_vns     BPDU     V100     ${sw}   ${intf}   100
+  	
+ 	config   s100	  spanning-tree vlan 100    	
+ 	sleep  ${short}
+	verify switch interface is BPDU down	${sw}   ${intf}
+	port recover from bpdu down state		${sw}   ${intf}		
+	
+	[Tags] 	full  feature   bpdu_guard     
+
 	 
-T3.3 BPDU guard with interface configure in vns port group
+T3.4 BPDU guard with interface configure in vns port group
 	rest_add_tenant  BPDU
  	rest_add_vns     BPDU  V10  
 	rest_add_portgroup 	p-BPDU
