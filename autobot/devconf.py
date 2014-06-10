@@ -119,7 +119,6 @@ class DevConf(object):
         self._mode = 'cli'
         self.conn = conn
 
-
     def timeout(self, seconds=None):
         """
         Set the expect timeout to 'seconds'. If not specified, reset to
@@ -133,6 +132,7 @@ class DevConf(object):
             seconds = self._timeout
 
         self.conn.set_timeout(seconds)
+        return seconds
 
     def name(self):
         return self._name
@@ -277,7 +277,11 @@ class DevConf(object):
 
     def cmd(self, cmd, quiet=False, mode=None, prompt=None,
             timeout=None, level=5):
-        if timeout: self.timeout(timeout)
+        if timeout:
+            self.timeout(timeout)
+        else:
+            timeout = self.timeout()
+
         if prompt:
             prompt = helpers.list_flatten(prompt)
             helpers.log("Expected prompt: %s" % self.prompt_str(prompt))
