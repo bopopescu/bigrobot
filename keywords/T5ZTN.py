@@ -920,11 +920,22 @@ class T5ZTN(object):
         except:
             return helpers.test_failure("Unable to stop at u-boot shell")
 
-        helpers.log("Entering loader shell")
         s.send("\ ")
-        s.expect(r'=>')
-        helpers.log("U-boot shell entered")
-        return True
+        s.send(helpers.ctrl('c'))
+        options = s.expect([r'[\r\n]*.*login:', r'\=\>'], timeout=100)
+        if options[0] == 0:
+            helpers.log("Something went wrong, trying again")
+            s.send("admin")
+            s.send("enable; config; reload now")
+            s.expect("Hit any key to stop autoboot")
+            s.send("\ ")
+            s.send(helpers.ctrl('c'))
+            s.expect(r'\=\>')
+            helpers.log("U-boot shell entered")
+            return True
+        if options[0] == 1:
+            helpers.log("U-boot shell entered")
+            return True
 
     def enter_loader_shell(self, switch):
         """
