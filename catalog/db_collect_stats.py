@@ -21,6 +21,16 @@ helpers.set_env('IS_GOBOT', 'False')
 helpers.set_env('AUTOBOT_LOG', './myrobot.log')
 
 
+FEATURES_IRONHORSE = ["ha", "span", "testpath", "pod", "l2", "l3", "snmp",
+                    "ntp", "traffic", "logging", "rsyslog", "rsyslogd",
+                    "install", "initialconfig", "rebootswitch",
+                    "firstboot", "upgrade", "singlenode", "bpdu_guard",
+                    "fabric", "fabric_qos", "ztn", "file management",
+                    "filemanagement", "running-config", "initialconfig",
+                    "virtualip", "openstack", "dhcp", "dhcp-relay",
+                    "ecmp", "policy-vlanrewrite", "qos"]
+
+
 class ReleaseStats(object):
     def __init__(self,
                  release,
@@ -163,10 +173,17 @@ class ReleaseStats(object):
     def total_testcases_by_tag_executed(self, tag,
                                         collection="test_cases_archive",
                                         build_name=None):
-        tags = [self.release_lc(), tag]
-        query = {"tags": { "$all": tags },
+        """
+        tag - can be a single tag or a list of tags.
+        """
+        tags = tag
+        if helpers.is_list(tag):
+            tags = helpers.list_flatten(tags)
+
+        tags_and_release = helpers.list_flatten([self.release_lc(), tag])
+        query = {"tags": { "$all": tags_and_release },
                  "build_name": build_name}
-        return self.total_testcases_by_tag(tag, collection, query)
+        return self.total_testcases_by_tag(tags, collection, query)
 
     def total_executable_testcases_executed(self,
                                             collection="test_cases_archive",
@@ -178,9 +195,9 @@ class ReleaseStats(object):
 
 def print_stat(descr, val, untested=None):
     if untested != None:
-        print("%-60s %15s  manual-untested(%s)" % (descr, val, untested))
+        print("%-67s %18s  manual-untested(%s)" % (descr, val, untested))
     else:
-        print("%-60s %15s" % (descr, val))
+        print("%-67s %18s" % (descr, val))
 
 
 def print_testcases(testcases):
@@ -240,15 +257,32 @@ Display test execution stats collected for a specific build.
     print_stat("Total test cases (executed, passed, failed):",
                ih.total_testcases_executed(build_name=build))
 
-    for feature in ["feature", "scaling", "performance", "solution",
-                    "longevity", "negative", "robustness"]:
-        untested = ih.total_testcases_by_tag([feature, "manual-untested"])[0]
-        print_stat("Total %s tests (executed, passed, failed):" % feature,
-               ih.total_testcases_by_tag_executed(feature,
-                                                  build_name=build), untested)
+    for functionality in ["feature", "scaling", "performance", "solution",
+                          "longevity", "negative", "robustness"]:
+        untested = ih.total_testcases_by_tag([functionality,
+                                              "manual-untested"])[0]
+        print_stat("Total %s tests (executed, passed, failed):"
+                   % functionality,
+                   ih.total_testcases_by_tag_executed(functionality,
+                                                      build_name=build),
+                   untested)
         if args.show_untested:
-            print_testcases(ih.manual_untested_by_tag(feature))
+            print_testcases(ih.manual_untested_by_tag(functionality))
 
+    print ""
+    functionality = "feature"
+    for feature in FEATURES_IRONHORSE:
+        untested = ih.total_testcases_by_tag([functionality, feature,
+                                              "manual-untested"])[0]
+        print_stat("Total %s+%s tests (executed, passed, failed):"
+                   % (functionality, feature),
+                   ih.total_testcases_by_tag_executed([functionality, feature],
+                                                      build_name=build),
+                   untested)
+        if args.show_untested:
+            print_testcases(ih.manual_untested_by_tag([functionality, feature]))
+
+    print ""
     print_stat("Total manual tests (executed, passed, failed):",
                ih.total_testcases_by_tag_executed("manual",
                                                   build_name=build))
