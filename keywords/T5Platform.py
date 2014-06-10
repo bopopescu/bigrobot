@@ -1480,7 +1480,8 @@ class T5Platform(object):
         helpers.test_log("Running command:\ncopy %s %s" % (src, dst))
         t = test.Test()
         c = t.controller(node)
-        c.config("config")
+        c.send("enable")
+        c.send("config")
         c.send("copy %s %s" % (src, dst))
         options = c.expect([r'[Pp]assword: ', r'\(yes/no\)\?', c.get_prompt()])
         content = c.cli_content()
@@ -1652,6 +1653,7 @@ class T5Platform(object):
         try:
             c.config("config")
             c.bash("> .ssh/known_hosts")
+            c.config("config")
             if "Error" in c.cli_content():
                 helpers.log("Error in CLI content")
                 return False
