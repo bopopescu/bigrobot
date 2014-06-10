@@ -364,13 +364,13 @@ spine leaf2 interface shut no shut bi-Directional L2 Traffic flow=a<->b traffic 
 
 Verify all interfaces show up after sw installation 
     Log    Step 1 - Verify all interfaces show up after sw installation
-    [Tags]  Manual-untested  feature    
-    Manual untested
+    [Tags]  Manual  feature    
+    Manual passed
 
 Verify that the options are maintained on the interface after the system reboot. 
     Log    Step 1 - Verify that the options are maintained on the interface after the system reboot.
-    [Tags]  Manual-untested  feature
-    Manual untested
+    [Tags]  Manual  feature
+    Manual passed
 
 Verify that the appropriate counters are incremented when the interface receivers error oversized undersized packets
     Log    Step 1 - Verify that the appropriate counters are incremented when the interface receivers error oversized undersized packets
