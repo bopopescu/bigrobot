@@ -587,7 +587,7 @@ def python_path(new_val=None, default=None):
 
 
 def bigrobot_configs_path():
-    return ''.join((bigrobot_path(), '/configs'))
+    return ''.join((get_path_autobot(), '/../configs'))
 
 
 def sleep(s):
