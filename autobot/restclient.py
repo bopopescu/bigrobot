@@ -105,8 +105,8 @@ class RestClient(object):
         return helpers.to_json(self.result(result))
 
     def log_result(self, result=None, level=4, log_level="info"):
-        helpers.log("REST result:\n%s%s"
-                    % (self.result_json(result),
+        helpers.log("'%s' REST result:\n%s%s"
+                    % (self._name, self.result_json(result),
                        br_utils.end_of_output_marker()),
                        level=level, log_level=log_level)
 
@@ -117,8 +117,8 @@ class RestClient(object):
         return helpers.to_json(self.content(result))
 
     def log_content(self, result=None, level=4):
-        helpers.log("REST content:\n%s%s"
-                    % (self.content_json(result),
+        helpers.log("'%s' REST content:\n%s%s"
+                    % (self._name, self.content_json(result),
                        br_utils.end_of_output_marker()),
                        level=level)
 
@@ -140,12 +140,14 @@ class RestClient(object):
         elif self.session_cookie:
             headers['Cookie'] = 'session_cookie=%s' % self.session_cookie
 
-        helpers.log("RestClient: %s %s" % (verb, url),
+        helpers.log("'%s' RestClient: %s %s" % (self._name, verb, url),
                     level=5, log_level=log_level)
-        helpers.log("Headers = %s" % helpers.to_json(headers),
+        helpers.log("'%s' Headers = %s"
+                    % (self._name, helpers.to_json(headers)),
                     level=5, log_level=log_level)
         if data:
-            helpers.log("Data = %s" % helpers.to_json(data),
+            helpers.log("'%s' Data = %s"
+                        % (self._name, helpers.to_json(data)),
                         level=5, log_level=log_level)
 
         prefix_str = '%s %s' % (self.name(), verb.lower())
