@@ -219,10 +219,6 @@ Verify Switch Configuration - Allowed or Not Allowed Configuration in ZTN
     [Tags]  Manual-untested
     Manual untested 
     
-Verify Switch DHCP address - Is it Configurable in ZTN
-    [Tags]  T5  switch  ZTN  feature  
-    [Tags]  Manual-untested
-    Manual untested 
 
 ### Managment port 
 ##  Default gateway configuration , if mgmt port
@@ -492,30 +488,19 @@ verify the hostname configuration for the valid and supported character
 Config admin save reload operation 
     Log    Step 1 - Config admin save/reload operation
     [Tags]  T5  switch  SysAdminOperation  feature   
-    [Tags]  Manual-untested
+    [Tags]  Manual  skipped
     Manual untested
     
 Config upload ftp reload operation 
     Log    Step 1 - Config upload/ ftp / reload operation
     [Tags]  T5  switch  SysAdminOperation  feature 
-    [Tags]  Manual-untested
+    [Tags]  Manual  skipped
     Manual untested
     
 Config upload scp reload operation 
     Log    Step 1 - Config upload/ scp / reload operation
     [Tags]  T5  switch  SysAdminOperation  feature 
-    [Tags]  Manual-untested
-    Manual untested
-
-
-## Audit show commands - Remove which is no longer valid on switch
-## Save the running-config to start up config, reboot and verify     
-### Logging section : 
-
-Verify Syslog Server config - logs creation/ rollover / after reboot verification
-    Log    Step 1 - Verify Syslog Server config - logs creation/ rollover / after reboot verification
-    [Tags]  T5  switch  SysAdminOperation  feature
-    [Tags]  Manual-untested
+    [Tags]  Manual  skipped
     Manual untested
 
 
@@ -714,14 +699,14 @@ Verify Show running-config
 ## MArk Skip if N/A    
 Verify Admin save partial save config allowed config load reload merge override
     Log    Step 1 - Verify Admin save partial save config allowed config load reload merge override
-    [Tags]  Manual-untested  feature
-    Manual untested
+    [Tags]  Manual  feature  skipped
+    Manual 
     
 ## Mark Skip if N/A 
   
 Verify Config commit error flag invalid config missing config part check 
     Log    Step 1 - Verify Config commit error flag invalid config missing config part check 
-    [Tags]  Manual-untested  feature
+    [Tags]  Manual  feature  skipped
     Manual untested
     
 ## Mark Skip if N/A  
@@ -768,18 +753,18 @@ Verify 1G interface status after the 1G module and cable insert and the status i
 
 Verify auto-negotiation configurations work as expected 
     Log    Step 1 - Verify auto-negotiation configurations work as expected
-    [Tags]  Manual-untested  interface  feature
-    Manual untested
+    [Tags]  Manual  interface  feature  skipped
+    Manual 
 
 Verify Auto- negotiation enabled on both ends of interface
     Log    Step 1 - Verify Auto- negotiation enabled on both ends of interface
-    [Tags]  Manual-untested  interface  feature
-    Manual untested
+    [Tags]  Manual  interface  feature  skipped
+    Manual
 
 Verify Speed Duplex in ports 
     Log    Step 1 - Verify Speed/Duplex in ports
-    [Tags]  Manual-untested  interface  feature
-    Manual untested
+    [Tags]  Manual  interface  feature  skipped
+    Manual 
 
 Verify interface state is reported correctly when cable is unplugged
     Log    Step 1 - Verify interface state is reported correctly when cable is unplugged 
@@ -788,7 +773,7 @@ Verify interface state is reported correctly when cable is unplugged
  
 Verify the SNMP server configuration enable and disable from the switch  
     Log    Step 1 - Verify the SNMP server configuration enable and disable from the switch
-    [Tags]  Manual-untested  SNMP  feature
+    [Tags]  Manual  SNMP  feature
     Manual passed   
     
 ## Add SNMP sections 
@@ -899,8 +884,8 @@ Verify system state after the process ofad restart
 
 Verify system state after the process snmpd restart 
     Log    Step 1 - Verify system state after the snmpd process start  
-    [Tags]  Manual-untested  processStart  feature
-    Manual untested   
+    [Tags]  Manual  processStart  feature
+    Manual passed   
 
 Verify system state after the process syslogd restart 
     Log    Step 1 - Verify system state after the snmpd process start  
@@ -919,19 +904,19 @@ Verify system state after the process syslogd restart
 
 Verify the logging of openflow events in the Switch 
     Log    Step 1 - Verify the openflow events are being Logged in switch syslog 
-    [Tags]  Manual-untested  Logging  feature
-    Manual untested
+    [Tags]  Manual  Logging  feature
+    Manual passed
 
 Verify the syslog server configuration can be added and deleted 
     Log    Step 1 - Verify the syslog server configuration in the switch 
     Log    Step 2 - Verify the syslog server configuration can de deleted and readded 
-    [Tags]  Manual-untested  Logging  feature
-    Manual untested
+    [Tags]  Manual  Logging  feature
+    Manual passed
 
 Verify the syslog server misconfiguration that can be removed and the correct syslog server can be configured  
     Log    Step 1 - Verify the inaccessible syslog server configuration and then corrected syslog server configuration   
-    [Tags]  Manual-untested  Logging  feature
-    Manual untested
+    [Tags]  Manual  Logging  feature
+    Manual passed
 
 Verify the logging options and level configuration on the switch 
     Log    Step 1 - Verify the logging level and options configuration can be added    
@@ -945,8 +930,8 @@ Verify the max size of the syslog and rollover of the syslog file
 
 Verify the logging of interface events up down disable in the Switch 
     Log    Step 1 - Verify the interface events are being Logged in switch syslog 
-    [Tags]  Manual-untested  Logging  feature
-    Manual untested
+    [Tags]  Manual  Logging  feature
+    Manual passed
 
 Verify the logging of process events restart in the Switch 
     Log    Step 1 - Verify the process events are being Logged in switch syslog 
@@ -969,35 +954,30 @@ Verify the logging of fan failure heat sensors high temp in the Switch
     Manual untested
 
 ## Move to Debugging sections 
-Verify the debugging of environmental failures -PSU/fan/tempsensors in the Switch 
+Verify the debugging of environmental failures PSU/fan/tempsensors in the Switch 
     Log    Step 1 - Verify the environmental fan failure heat sensors high temp are being shown in switch 
-    [Tags]  Manual-untested  Debug  feature
+    [Tags]  Manual-untested  Environment  feature
     Manual untested
 
 Verify the debugging of openFlow connection estabish disconnection in the Switch 
     Log    Step 1 - Verify the openFlow connection estabish disconnection are being Logged and show in switch 
-    [Tags]  Manual-untested  Debug  feature
-    Manual untested
+    [Tags]  Manual  Debug  feature
+    Manual passed
 
 Verify the debugging of interface stats counters status in the Switch 
     Log    Step 1 - Verify the interface stats counters status can be shown in switch
-    [Tags]  Manual-untested  Debug  feature
-    Manual untested
+    [Tags]  Manual  Debug  feature
+    Manual passed
 
 Verify the debugging of port group lag in the Switch 
     Log    Step 1 - Verify the port group lag can be shown in switch
-    [Tags]  Manual-untested  Debug  feature
-    Manual untested
-
-Verify the debugging of vlan in the Switch 
-    Log    Step 1 - Verify the vlan can be shown in switch
-    [Tags]  Manual-untested  Debug  feature
-    Manual untested
-    
+    [Tags]  Manual  Debug  feature
+    Manual passed
+   
 Verify the debugging of forwarding programming in the Switch 
     Log    Step 1 - Verify the forwarding programming can be shown in switch
-    [Tags]  Manual-untested  Debug  feature
-    Manual untested
+    [Tags]  Manual  Debug  feature
+    Manual passed
     
 * Keywords
 
