@@ -14,6 +14,9 @@ import argparse
 import robot  # import to force append local robot libraries than python installed packages
 
 
+if 'BIGROBOT_TESTBED' in os.environ:
+    print "Unsetting env BIGROBOT_TESTBED..."
+    del os.environ['BIGROBOT_TESTBED']
 
 vmdk_name = "/var/lib/jenkins/jobs/bvs\ master/lastSuccessful/archive/target/appliance/images/bvs/controller-bvs-*-SNAPSHOT.qcow2"
 mininet_vmdk = "/var/lib/jenkins/jobs/t6-mininet-vm/builds/lastSuccessfulBuild/archive/t6-mininet-vm/ubuntu-kvm/t6-mininet.qcow2"
