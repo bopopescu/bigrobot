@@ -136,7 +136,7 @@ class TestSuite(object):
         tc = testcases.find_and_modify(
                 query={ "name": rec['name'],
                         "product_suite" : rec['product_suite'],
-                        "starttime_datestamp" : rec['starttime_datestamp'],
+                        # "starttime_datestamp" : rec['starttime_datestamp'],
                         "build_number": rec['build_number'] },
                 update={ "$set": rec },  # update entire record
                 upsert=True
