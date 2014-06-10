@@ -586,8 +586,8 @@ def python_path(new_val=None, default=None):
     return _env_get_and_set('PYTHONPATH', new_val, default)
 
 
-def bigrobot_config_path():
-    return ''.join((bigrobot_path(), '/config'))
+def bigrobot_configs_path():
+    return ''.join((bigrobot_path(), '/configs'))
 
 
 def sleep(s):

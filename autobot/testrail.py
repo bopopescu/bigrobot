@@ -16,7 +16,7 @@ class TestRail(object):
 
     def load_configs(self):
         try:
-            config_file = helpers.bigrobot_config_path + "/testrail.yaml"
+            config_file = helpers.bigrobot_configs_path + "/testrail.yaml"
             config = helpers.load_config(config_file)
         except IOError:
             s = "Unable to open TestRail config file %s" % config_file

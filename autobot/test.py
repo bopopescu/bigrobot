@@ -48,7 +48,7 @@ class Test(object):
             #
             self._node_static_aliases = {}
 
-            self._bsn_config_file = ''.join((helpers.bigrobot_config_path(),
+            self._bsn_config_file = ''.join((helpers.bigrobot_configs_path(),
                                              '/bsn.yaml'))
             helpers.log("Loading config file %s" % self._bsn_config_file)
             self._bsn_config = helpers.load_config(self._bsn_config_file)
