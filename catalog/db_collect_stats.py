@@ -108,7 +108,7 @@ class ReleaseStats(object):
 
     def manual_untested_by_tag(self, tag, collection="test_cases"):
         authors = self.suite_authors()
-        tags = [self.release_lc(), "manual-untested", tag]
+        tags = helpers.list_flatten([self.release_lc(), "manual-untested", tag])
         query = {"tags": { "$all": tags }}
         testcases = self.db()[collection]
         cases = testcases.find(query)
