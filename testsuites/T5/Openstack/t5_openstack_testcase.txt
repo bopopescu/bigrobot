@@ -196,13 +196,13 @@ Ping VMs from external addresses
 Use traceroute to verify traffic paths
 	[Tags]  feature  openstack  IronHorse  manual-untested
 	manual untested
-Use “test packet path” and check correctness of output
+Use test packet path and check correctness of output
 	[Tags]  feature  openstack  IronHorse  manual-untested
 	manual untested
 Run tests with and without Floating IP
 	[Tags]  feature  openstack  IronHorse  manual-untested
 	manual untested
-Run “show tech-support”
+Run show tech-support
 	[Tags]  solution  openstack  IronHorse  manual-untested
 	manual untested
 Run bsn-support.py
