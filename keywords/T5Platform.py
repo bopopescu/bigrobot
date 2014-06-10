@@ -3668,7 +3668,7 @@ class T5Platform(object):
                             return False
                         else:
                             currentHops.append(hop['hop-name'])
-                            currentFlowCount[hop["hop-name"]] = hop["flow-counter"].strip('[]')
+                            currentFlowCount[hop["hop-name"]] = hop["tcam-counter"].strip('[]')
                             currentPktInCount[hop["hop-name"]] = hop["pktin-counter"].strip('[]')
 
                     except Exception as e:
@@ -3691,7 +3691,7 @@ class T5Platform(object):
         result = c.rest.get(url)['content']
         for hop in result[0]['physical-path']:
             try:
-                newFlowCount = int(hop["flow-counter"].strip('[]'))
+                newFlowCount = int(hop["tcam-counter"].strip('[]'))
                 newPktInCount = int(hop["pktin-counter"].strip('[]'))
 
                 if(newFlowCount > int(currentFlowCount[hop["hop-name"]])):
