@@ -29,9 +29,9 @@ ${arista_intf}    ethernet33
 ${sw}             leaf1-b
 ${swname}         s6
 ${intf}           ethernet33
-
-${sw1dpid}   00:00:88:00:00:00:01:01
-${sw6dpid}   00:00:5c:16:c7:10:20:9e
+ 
+${sw1dpid}   00:00:70:72:77:77:77:29
+${sw6dpid}   00:00:70:72:cf:ab:3c:58
 
 
 
