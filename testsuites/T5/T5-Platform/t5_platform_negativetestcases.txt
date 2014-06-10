@@ -1,0 +1,188 @@
+* Settings
+Documentation     T5  Switch Platform Test suite- Iron Horse
+#Suite Setup       T5 switch platform test setup
+#Suite Teardown    T5 switch platform test teardown
+Test Setup        base test setup
+Force Tags        T5  IronHorse 
+...             
+...            
+...                        
+Library         keywords/BsnCommon.py
+Library         keywords/SwitchLight.py
+Library         keywords/AppController.py
+Library         keywords/Ixia.py 
+Library         keywords/T5.py   
+Library         keywords_dev/kranti/ironhorse/T5SwitchPlatform.py  
+Library         String
+
+
+
+*TestCases
+
+# Controller Negative Test Cases 
+Test Cluster formation with 2 different versions
+    Log     Step 1 - Test Cluster formation with 2 different versions   
+    [Tags]  T5  controller  negative  
+    [Tags]  Manual-untested
+    Manual untested
+
+Test Cluster formation with a disconnected/invalid NTP server
+    Log     Step 1 - Test Cluster formation with a disconnected/invalid NTP server   
+    [Tags]  T5  controller  negative  
+    [Tags]  Manual-untested
+    Manual untested
+
+Test Configuration requests originating from standby
+    Log     Step 1 - Test Configuration requests originating from standby   
+    [Tags]  T5  controller  negative  
+    [Tags]  Manual-untested
+    Manual untested
+
+Test Controller behavior during high cpu spikes
+    Log     Step 1 - Test Controller behavior during high cpu spikes   
+    [Tags]  T5  controller  negative  
+    [Tags]  Manual-untested
+    Manual untested
+
+Test Simulate with large configs / issuing failover etc
+    Log     Step 1 - Test Simulate with large configs / issuing failover etc   
+    [Tags]  T5  controller  negative  
+    [Tags]  Manual-untested
+    Manual untested
+
+Test Continuous SNMP Walks
+    Log     Step 1 - Test Continuous SNMP Walks   
+    [Tags]  T5  controller  negative  
+    [Tags]  Manual-untested
+    Manual untested
+
+Test Continuous switch connect/disconnect
+    Log     Step 1 - Test Continuous switch connect/disconnect   
+    [Tags]  T5  controller  negative  
+    [Tags]  Manual-untested
+    Manual untested
+
+Test Continuous switch connect/disconnectTest Without removing the stdby controller add another stdby controller with the same IP
+    Log     Step 1 - Test Without removing the stdby controller add another stdby controller with the same IP   
+    [Tags]  T5  controller  negative  
+    [Tags]  Manual-untested
+    Manual untested
+
+Try to add more than 2 controllers in to a cluster
+    Log     Step 1 - Try to add more than 2 controllers in to a cluster   
+    [Tags]  T5  controller  negative  
+    [Tags]  Manual-untested
+    Manual untested
+
+Test Active & Stdby controller configured in different time zones
+    Log     Step 1 - Test Active & Stdby controller configured in different time zones   
+    [Tags]  T5  controller  negative  
+    [Tags]  Manual-untested
+    Manual untested
+
+Killing active deamons (eg: keepalived, ntpd, collectd)
+    Log     Step 1 - Killing active deamons (eg: keepalived, ntpd, collectd)   
+    [Tags]  T5  controller  negative  
+    [Tags]  Manual-untested
+    Manual untested
+
+Test continuous floodlight restarts
+    Log     Step 1 - Test continuous floodlight restarts   
+    [Tags]  T5  controller  negative  
+    [Tags]  Manual-untested
+    Manual untested
+
+Overlapping / Misconfiguration parameters (Same DPID/MAC with two different switch aliases)
+    Log     Step 1 - Overlapping / Misconfiguration parameters (Same DPID/MAC with two different switch aliases)   
+    [Tags]  T5  controller  negative  
+    [Tags]  Manual-untested
+    Manual untested
+
+Changes in the switch role (leaf to spine / spine to leaf)
+    Log     Step 1 - Changes in the switch role (leaf to spine / spine to leaf)   
+    [Tags]  T5  controller  negative  
+    [Tags]  Manual-untested
+    Manual untested
+
+Misconfiguration in the leaf groups
+    Log     Step 1 - Misconfiguration in the leaf groups   
+    [Tags]  T5  controller  negative  
+    [Tags]  Manual-untested
+    Manual untested
+    
+Misconfiguration in the port-groups. Configuring disconnected/mismatch links
+    Log     Step 1 - Misconfiguration in the port-groups. Configuring disconnected/mismatch links   
+    [Tags]  T5  controller  negative  
+    [Tags]  Manual-untested
+    Manual untested
+
+Connect server ports to leaves in 2 different racks
+    Log     Step 1 - Connect server ports to leaves in 2 different racks   
+    [Tags]  T5  controller  negative  
+    [Tags]  Manual-untested
+    Manual untested
+    
+Connect server port to leaf & a spine
+    Log     Step 1 - Connect server port to leaf & a spine   
+    [Tags]  T5  controller  negative  
+    [Tags]  Manual-untested
+    Manual untested
+    
+
+# Switch Platform Negative Test Cases 
+
+Adding/deleting Controller IP address
+    Log     Step 1 - Adding/deleting Controller IP address   
+    [Tags]  T5  controller  negative  
+    [Tags]  Manual-untested
+    Manual untested
+
+Connecting leaves in between racks
+    Log     Step 1 - Connecting leaves in between racks   
+    [Tags]  T5  controller  negative  
+    [Tags]  Manual-untested
+    Manual untested
+
+Add spine to spine direct links
+    Log     Step 1 - Add spine to spine direct links   
+    [Tags]  T5  controller  negative  
+    [Tags]  Manual-untested
+    Manual untested
+
+Add external stp loop
+    Log     Step 1 - Add external stp loop   
+    [Tags]  T5  controller  negative  
+    [Tags]  Manual-untested
+    Manual untested		
+    
+Different flavor of traffic types (invalid headers, CRC, malformed, Invalid protocols)
+    Log     Step 1 - Different flavor of traffic types (invalid headers, CRC, malformed)   
+    [Tags]  T5  controller  negative  
+    [Tags]  Manual-untested
+    Manual untested
+
+IP header with more than 1500 Bytes
+    Log     Step 1 - IP header with more than 1500 Bytes 
+    [Tags]  T5  controller  negative  
+    [Tags]  Manual-untested
+    Manual untested
+
+Killing OFAD
+    Log     Step 1 - Killing OFAD
+    [Tags]  T5  controller  negative  
+    [Tags]  Manual-untested
+    Manual untested
+
+Loosely attached SFP<->Fiber connections
+    Log     Step 1 - Loosely attached SFP<->Fiber connections
+    [Tags]  T5  controller  negative  
+    [Tags]  Manual-untested
+    Manual untested
+
+Test with malformed MAC/DPID (eg: ff:ff:ff:ff:ff:ff)
+    Log     Step 1 - Test with malformed MAC/DPID (eg: ff:ff:ff:ff:ff:ff)
+    [Tags]  T5  controller  negative  
+    [Tags]  Manual-untested
+    Manual untested
+
+
