@@ -586,6 +586,10 @@ def python_path(new_val=None, default=None):
     return _env_get_and_set('PYTHONPATH', new_val, default)
 
 
+def bigrobot_config_path():
+    return ''.join((bigrobot_path(), '/config'))
+
+
 def sleep(s):
     """
     Sleep for <s> seconds.
@@ -863,10 +867,6 @@ def get_path_autobot():
     """
     import autobot
     return get_path(autobot.__file__)
-
-
-def get_path_autobot_config():
-    return ''.join((get_path_autobot(), '/config'))
 
 
 def create_uuid():
