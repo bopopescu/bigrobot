@@ -142,11 +142,11 @@ class TestSuite(object):
                 upsert=True
                 )
         if tc:
-            print('Successfully updated Regression test case record (name:"%s", product_suite:"%s", date:"%s", status:"%s")'
+            print('Successfully updated Regression "test_cases_archive" record (name:"%s", product_suite:"%s", date:"%s", status:"%s")'
                   % (rec['name'], rec['product_suite'],
                      rec['starttime_datestamp'], rec['status']))
         else:
-            print('Did not find Regression test case record (name:"%s", product_suite:"%s", date:"%s")'
+            print('Did not find Regression "test_cases_archive" record (name:"%s", product_suite:"%s", date:"%s")'
                   % (rec['name'], rec['product_suite'],
                      rec['starttime_datestamp']))
 
@@ -161,11 +161,11 @@ class TestSuite(object):
                 # upsert=True
                 )
         if tc:
-            print('Successfully updated test case record (name:"%s", product_suite:"%s", date:"%s", status:"%s")'
+            print('Successfully updated "test_cases" record (name:"%s", product_suite:"%s", date:"%s", status:"%s")'
                   % (rec['name'], rec['product_suite'],
                      rec['starttime_datestamp'], rec['status']))
         else:
-            print('CRITICAL ERROR: Did not find test case record (name:"%s", product_suite:"%s", date:"%s")'
+            print('CRITICAL ERROR: Did not find "test_cases" record (name:"%s", product_suite:"%s", date:"%s")'
                   % (rec['name'], rec['product_suite'],
                      rec['starttime_datestamp']))
 
