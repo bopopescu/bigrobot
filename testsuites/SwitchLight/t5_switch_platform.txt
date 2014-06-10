@@ -1,8 +1,7 @@
 * Settings
 Documentation     T5  Switch Platform Test suite- Iron Horse
-Suite Setup       base suite setup
-Suite Teardown    base suite teardown
-Test Teardown     T5 switch platform test teardown
+Suite Setup       T5 switch platform test setup
+Suite Teardown    T5 switch platform test teardown
 Force Tags        T5  IronHorse
 ...             
 ...            
@@ -314,7 +313,7 @@ T5 switch platform test teardown
    rest delete fabric switch  ${switch2_name}
    rest delete fabric switch  ${switch7_name}
    base suite teardown
-   sleep  5   
+   sleep  5     
 
 verify openflow aux channel  [Arguments]  ${switch}  ${cntrlr} 
 	${ofAux}=   cli return ofaux channel count  ${switch}  ${cntrlr} 

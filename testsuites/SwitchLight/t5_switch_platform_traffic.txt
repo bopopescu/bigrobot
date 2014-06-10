@@ -381,6 +381,11 @@ Test the Oversubscription of 40Gig Links between Leaf and Spines
     Log   Step 1 - Test the Oversubscription of 40Gig Links between Leaf and Spines
     [Tags]  Manual-untested  interface  counters  feature
     Manual untested
+
+Test the Oversubscription of 10Gig Links between Leaf ports 
+    Log   Step 1 - Test the Oversubscription of 10Gig Links between Leaf ports
+    [Tags]  Manual-untested  interface  counters  feature
+    Manual untested
     
 Test the hashing algorithm between the leaf and spine with multiple links L2 Traffic 
     Log    Step 1 - Test the hashing algorithm between the leaf and spine with multiple links
