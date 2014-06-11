@@ -1,7 +1,7 @@
 == T5 Platform Visibility Test Suite - Regression Test Bed ==
 
 * Setting
-Documentation    T5 Controller Platform Test Suite - SPAN Verification
+Documentation    T5 Controller Platform Test Suite - Visibiility (SPAN/TestPath)
 Suite Setup      base suite setup
 Suite Teardown   base suite teardown
 Test Setup       T5 Platform Test Setup
@@ -103,6 +103,11 @@ T0 Setup
 	...			src_ip=100.1.1.3  src_gw=100.1.1.100  dst_ip=100.1.2.3  dst_gw=100.1.2.100	
 	...			protocol=UDP  src_port=1000  dst_port=2000
 		
+	${stream-ab4}=	L3 add  flow=a<->b  frame_rate=100  frame_size=64  name=ab4_flow
+	...			src_mac=aa:bb:01:00:00:04  dst_mac=aa:bb:02:00:00:04
+	...			src_ip=100.1.1.4  src_gw=100.1.1.100  dst_ip=100.1.2.4  dst_gw=100.1.2.100	
+	...			protocol=UDP  src_port=1100  dst_port=2100
+	
 	${stream-cd1}=  L3 add  flow=c<->d  frame_rate=100  frame_size=64  name=cd1_flow
 	...			src_mac=aa:bb:03:00:00:01  dst_mac=aa:bb:04:00:00:01
 	...			src_ip=100.3.1.1  src_gw=100.3.1.100  dst_ip=100.4.1.1  dst_gw=100.4.1.100	
@@ -336,10 +341,6 @@ T15 Delete SPAN session for Port-Group interface - Direction Egress
 	Should not be true  ${returnVal}
 	
 	
-	
-####################
-
-
 T16 Configure SPAN session - Direction Both
 	[Tags]  span  feature
 	${returnVal} =  rest add monitor session  1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	 ${s1IxiaDstSwitch}	 ${s1IxiaDstInt}  direction=both  
@@ -730,9 +731,45 @@ T11 Inter Tenant: SRC & DST Are In Different Racks
 	Should Be True  ${returnVal}
 
 
+Verify test packet path with L2 traffic to an unknown destination originating from a tenant which spans across multiple racks
+	[Tags]  testpath  full  manual
+    manual passed
 
+Verify the updated paths in test packet path with L2 traffic within a single tenant while introducing path failures
+	[Tags]  testpath  full  manual
+    manual passed
+    
+Verify the updated paths in test packet path with L3 traffic between multiple tenants while introducing path failures
+	[Tags]  testpath  feature  manual
+    manual passed
 
+Verify all the CLI options for the test packet path command
+	[Tags]  testpath  feature  manual
+    manual passed
 
+Private vns test
+   [Tags]  testpath  feature  manual
+    manual failed
+
+Destination as a ECMP Group 
+	[Tags]  testpath  feature  manual
+    manual passed
+    
+Destination as a default router
+	[Tags]  testpath  feature  manual
+    manual passed
+
+Inter Tenant - Blocked by Policy
+	[Tags]  testpath  feature  manual
+    manual failed 
+
+Inter Tenant - Accept by Policy
+	[Tags]  testpath  feature  manual
+    manual passed 
+
+Tracking with multiple test paths
+	[Tags]  testpath  feature  manual
+    manual passed 
 
 ########################################################################################################################################
 
