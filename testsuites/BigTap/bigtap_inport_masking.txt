@@ -4,7 +4,7 @@ Suite Setup  inport suite setup
 Suite Teardown   inport suite teardown
 Test Setup   bigtap-inport test setup
 Test Teardown  base test teardown 
-Force Tags   platform Sanity
+Force Tags  feature  bigtap  inport-mask
 Library  keywords/BsnCommon.py
 Library  keywords/AppController.py
 Library  keywords/BigTap.py
