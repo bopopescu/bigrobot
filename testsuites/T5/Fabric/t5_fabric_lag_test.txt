@@ -51,7 +51,8 @@ Add the Fabric Role spine back and verify the lag from leaf switch
 	verify fabric lag   leaf0-a
 	
 Verify Fabric Lag from spine after adding back spine node 
-	[Tags]	 Fabric  feature  IronHorse     
+	[Tags]	 Fabric  feature  IronHorse
+	sleep  5     
 	verify fabric lag   spine0
 	
 delete the peer leaf0b switch and check the peer-lag from leaf0-a switch
@@ -119,7 +120,7 @@ rack lag detection from rack0 leaf switch using three rack setup (add/delete spi
 
 Verify broadcast traffic forwarding on the lag
 	[Tags]  Fabric  feature  IronHorse
-	sleep  5
+	sleep  15
 	rest verify fabric link common  
 	rest add tenant  t1
 	rest add vns  t1  v1

@@ -2591,9 +2591,13 @@ class T5Platform(object):
 
             # Need to enable developer mode to use DHCP option. Magic string
             # to enable it is 'dhcp'.
-            n_console.expect(r'Do you accept the EULA.* > ')
-            n_console.send('dhcp')
-            n_console.expect(r'Developer.* mode enabled.*')
+            if dhcp == 'yes':
+                helpers.log("Entering into Developer mode for dhcp options..")
+                n_console.expect(r'Do you accept the EULA.* > ')
+                n_console.send('dhcp')
+                n_console.expect(r'Developer.* mode enabled.*')
+            else:
+                helpers.log("In Normal First boot mode NOT DEVELOPER MODE NO DHCP OPTION..")
 
             # The "real" EULA
             n_console.expect(r'Do you accept the EULA.* > ')
@@ -2605,10 +2609,13 @@ class T5Platform(object):
         n_console.send('bsn')
         n_console.expect(r'Retype Password for emergency recovery user > ')
         n_console.send('bsn')
-        n_console.expect(r'Please choose an IP mode:.*[\r\n]')
-        n_console.expect(r'> ')
-        if dhcp == 'no':
-            n_console.send('1')  # Manual
+        if dhcp == 'yes':
+            n_console.expect(r'Please choose an IP mode:.*[\r\n]')
+            n_console.expect(r'> ')
+            # dhcp
+            n_console.send('2')  # DHCP
+        else:
+            # n_console.send('1')  # Manual
             n_console.expect(r'IP address .* > ')
             n_console.send(ip_address)
 
@@ -2625,9 +2632,6 @@ class T5Platform(object):
             n_console.send(dns_search)
             n_console.expect(r'Hostname > ')
             n_console.send(hostname)
-        else:
-            # dhcp
-            n_console.send('2')  # DHCP
         helpers.sleep(3)  # Sleep for a few seconds just in case...
         return True
 
@@ -2660,7 +2664,7 @@ class T5Platform(object):
 
         if join_cluster == 'yes':
             n_console.send('2')  # join existing cluster
-            n_console.expect(r'Existing node IP.*> ')
+            n_console.expect(r'Existing \b(node|Controller)\b IP.*> ')
             n_console.send(cluster_ip)
             n_console.expect(r'Administrator password for cluster.*> ')
             n_console.send(cluster_passwd)

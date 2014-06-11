@@ -25,8 +25,13 @@ ${short}  1
 ${medium}  3
 ${long}   30
 ${verylong}     120 
-${inevent}       300 
-${betweenevent}  600
+${inevent}       30 
+${betweenevent}  60
+
+${Tflapnum}     50
+${Vflapnum}     50
+${bigconfigsleep}   60 
+
 
 ${loop}    2
 ${repeat}      10
@@ -50,10 +55,10 @@ T21 switch node down/up event
     \	Log To Console   \n******* switch node down/up event: ${i}********   
     \	switch node down/up event      spine0 
     \   sleep  ${inevent}
-    \	switch node down/up event       spine1  
+    \	switch node down/up event      spine1  
     \   sleep  ${inevent}  
        
-	[Tags] 	sanity   traffic    event    
+	[Tags] 	longevity   traffic    event    
 	    
 T23 controller node event        
      : FOR    ${i}    IN RANGE    0    ${loop}
@@ -61,7 +66,7 @@ T23 controller node event
     \	controller node event     ${inevent}
     \   sleep   ${inevent}
         
-	[Tags] 	sanity    traffic     event    
+	[Tags] 	longevity    traffic     event    
  
  
 T24 data Link down/up event
@@ -100,26 +105,26 @@ T24 data Link down/up event
 	\  data Link down/up event between nodes  ${spine1}    ${leaf1-b} 
 	\  sleep  ${inevent}  
 	
-
-    
-	[Tags] 	sanity     traffic     event
+   
+	[Tags] 	longevity     traffic     event
 
   
 
 T26 big configuration changes (around 500 tenants or vns change)
      : FOR    ${i}    IN RANGE    0    ${loop}
     \  Log To Console   \n******* big configuration changes ${i}******* 
- 	\  tenant configuration add/remove      500      3      sleep=${inevent} 
- 	\  sleep  ${inevent} 
- 	\  vns configuration add/remove         100             sleep=${inevent} 
- 	\  sleep  ${inevent} 
+ 	\  tenant configuration add/remove      ${Tflapnum}       3       
+ 	\  sleep  ${bigconfigsleep}  
+ 	\  vns configuration add/remove         ${Vflapnum}               
+ 	\  sleep  ${bigconfigsleep}  
  	\  Log To Console   === loading config with more tenant======= 
  	\  enable  master  copy config://config_tenant_new running-config 
- 	\  sleep  ${inevent}
+ 	\  sleep  ${bigconfigsleep} 
  	\  Log To Console   === loading config with less tenant=======  	
  	\  enable  master  copy config://config_tenant_old running-config 
  	
-	[Tags] 	sanity     traffic    event      
+	[Tags] 	longevity     traffic    event     run 
+
 
  
 T51 continues Event
@@ -135,7 +140,7 @@ T51 continues Event
  	\  Run Keyword if    ${random}==4   T26 big configuration changes (around 500 tenants or vns change) 
   	\  sleep  ${betweenevent}
    
-	[Tags] 	sanity    traffic    run 
+	[Tags] 	longevity    traffic    run 
 
 
  
@@ -149,16 +154,16 @@ switch node down/up event   [Arguments]    ${node}
 	Log To Console   ================ Rebooting ${node} ===============
 	cli_restart_switch  ${node}   yes	
 
-controller node event     [Arguments]    ${during}
-    log  ha failover, run below in 2 node controllers: reboot master, reboot slave..
+controller node event     [Arguments]    ${during}=30
+    log  ha failover, run below in 2 node controllers:ha failover, reboot master
+    Log To Console   =============HA failover ===============
     cli_cluster_take_leader
-    sleep  ${during}
-    clear stats in controller switch	 
-#   clear stats       
+    sleep  ${during}    
+    clear stats in controller switch	    
     Log To Console   ================ Rebooting controller ===============
     cluster_node_reboot 
-
-
+    sleep  ${during}
+ 
 
 data Link down/up event between nodes   [Arguments]    ${node1}    ${node2}
     Log To Console   ================ data link down/up for ${node1} ${node2} ===============
@@ -184,12 +189,11 @@ enable links between nodes   [Arguments]   ${node1}   ${list}
 
 
  
-tenant configuration add/remove    [Arguments]    ${Tnumber}   ${Vnumber}    ${sleep}=5
+tenant configuration add/remove    [Arguments]    ${Tnumber}   ${Vnumber}    ${sleep}=1
     Log To Console   ================tenant configuration changes: ${Tnumber}===============
  	clear stats in controller switch	     
 	enable  master  copy running-config config://config_tenant_old
 	log  big scale configuration tenant add	
-	log  tenantcount=${Tnumber}, vnscount=${Vnumber}
 	rest_add_tenant_vns_scale    tenantcount=${Tnumber}   tname=FLAP     vnscount=${Vnumber}   vns_ip=yes  base=1.1.1.1    step=0.0.1.0		 
 	${vlan}=    Set Variable   1000
     : FOR    ${j}    IN RANGE    0     ${Tnumber}
@@ -248,7 +252,7 @@ T5 longevity suite setup
 
 T5 longevity suite teardown
 #   base suite teardown
-	sleep  10
+	sleep  1
  
  
 verify switch interface is up	[Arguments]  ${switch}   ${intf}  
@@ -262,12 +266,12 @@ verify switch interface is up	[Arguments]  ${switch}   ${intf}
 T21 switch node down/up event 	 
     : FOR    ${i}    IN RANGE    0    ${loop}
     \	Log To Console   \n******* switch node down/up event: ${i}********   
-    \	switch node down/up event      ${spine0}  
+    \	switch node down/up event      spine0 
     \   sleep  ${inevent}
-    \	switch node down/up event      ${spine1}  
+    \	switch node down/up event      spine1 
     \   sleep  ${inevent}  
  	    
-T23 controller node event       
+T23 controller node event
      : FOR    ${i}    IN RANGE    0    ${loop}
     \	Log To Console   \n******* controller node event: ${i}*******    
     \	controller node event     ${inevent}
@@ -314,13 +318,13 @@ T24 data Link down/up event
 T26 big configuration changes (around 500 tenants or vns change)
      : FOR    ${i}    IN RANGE    0    ${loop}
     \  Log To Console   \n******* big configuration changes ${i}******* 
- 	\  tenant configuration add/remove      500      3      sleep=180 
- 	\  sleep  180 
- 	\  vns configuration add/remove         100             sleep=180 
- 	\  sleep  180 
+ 	\  tenant configuration add/remove     ${Tflapnum}       3       
+ 	\  sleep  ${bigconfigsleep} 
+ 	\  vns configuration add/remove        ${Vflapnum}                 
+ 	\  sleep  ${bigconfigsleep}  
  	\  Log To Console   === loading config with more tenant======= 
  	\  enable  master  copy config://config_tenant_new running-config 
- 	\  sleep  180
+ 	\  sleep  ${bigconfigsleep} 
  	\  Log To Console   === loading config with less tenant=======  	
  	\  enable  master  copy config://config_tenant_old running-config 
   
