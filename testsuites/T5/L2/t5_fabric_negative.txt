@@ -128,7 +128,7 @@ shut/no shut the switch with traffic forward
     ${loss}=  bash ping  h5  ${h4_ip}  source_if=bond0
     Should Be True  ${loss} < 50
     rest delete shutdown fabric switch  leaf2-a
-    sleep  10
+    sleep  15
     rest verify fabric switch  leaf2-a 
     rest verify fabric link common 
     ${loss}=  bash ping  h5  ${h4_ip}  source_if=bond0
@@ -152,13 +152,13 @@ Test Data center falls below 50% link verify forwarding table for the switch rem
 	[Tags]  L2  IronHorse  
 	rest verify fabric link common
 	rest delete fabric switch  spine1
-	sleep  2
+	sleep  5
 	rest verify forwarding lag  ${leaf2a_dpid}  leaf2-a
 	rest delete fabric switch  spine0
-	sleep  2
+	sleep  5
 	rest verify forwarding lag  ${leaf2a_dpid}  leaf2-a
 	rest delete fabric switch  leaf2-b
-	sleep  2
+	sleep  5
 	${result}=  rest verify forwarding lag  ${leaf2a_dpid}  leaf2-a  
 	Should not be True  ${result}
 	rest add switch  spine0
@@ -200,7 +200,7 @@ Test VFT push to when system has not connected switches
 	cli add controller  leaf2-a  c2
 	cli add controller  leaf2-b  c1
 	cli add controller  leaf2-b  c2
-	sleep  5
+	sleep  10
 	rest verify fabric switch  spine0
 	rest verify fabric switch  spine1
 	rest verify fabric switch  leaf2-a
@@ -373,12 +373,13 @@ T5 test teardown
 	rest delete tenant  internal
 	rest delete tenant  external
 	rest delete tenant  system
+	delete fabric switch
 	base test teardown
 
 T5 test setup
 	base test setup
 	add fabric switch
-	sleep  10
+	sleep  15
 	
 bring up 1 gig interface
 	bash execute command  leaf0-a  ofad-ctl autoneg 25
