@@ -58,9 +58,9 @@ def main(*args):
                                     kvm_user=kvm_user,
                                     kvm_password=kvm_pwd)
         if result['status_code'] == True:
-            print "VM TearDown Success!!"
+            helpers.log("VM TearDown Success!!")
         else:
-            print "VM TearDown Failure!!\n%s" % result['status_descr']
+            helpers.log("VM TearDown Failure!!\n%s" % result['status_descr'])
 
         time.sleep(10)  # sleep for jenkins to run Teardowns
 
