@@ -4,7 +4,7 @@ Suite Setup  snmp suite setup
 Suite Teardown   base suite teardown 
 Test Setup   base test setup
 Test Teardown   base test teardown
-Force Tags   platform Sanity
+Force Tags  SwitchLight  switch-platform 
 Library  keywords/BsnCommon.py
 Library  keywords/AppController.py
 Library  keywords/BigTap.py
@@ -24,268 +24,268 @@ ${fortyGly2_name}  ethernet52
 *Test Case
 Configure and Verify Configuration via CLI   
     verify config
-    [Tags]  sanity  platform  snmp  basic    
+    [Tags]  BigTap  snmp  basic    
 
 Verify SNMP OID sysContact  
     verify snmp attribute  s1  sysContact.0  ${snmp_contact}
     verify snmp attribute  s2  sysContact.0  ${snmp_contact}
-    [Tags]  sanity  platform  snmp  common    
+    [Tags]  BigTap  snmp  common    
 
 Verify SNMP OID sysLocation 
     verify snmp attribute  s1  sysLocation.0  ${snmp_location_1}
     verify snmp attribute  s2  sysLocation.0  ${snmp_location_2}
-    [Tags]  sanity  platform  snmp  common    
+    [Tags]  BigTap  snmp  common    
 
 Verify SNMP OID sysDescr  
     verify snmp attribute  s1  sysDescr.0  ${switchlight_version}
     verify snmp attribute  s2  sysDescr.0  ${switchlight_version}
-    [Tags]  sanity  platform  snmp  common    
+    [Tags]  BigTap  snmp  common    
 
 Verify SNMP OID ifDescr of ma1  
     verify snmp attribute  s1  ifDescr.3  ma1
     verify snmp attribute  s2  ifDescr.3  ma1
-    [Tags]  sanity  platform  snmp  common    
+    [Tags]  BigTap  snmp  common    
  
 Verify SNMP OID ifType of ma1  
     verify snmp attribute  s1  ifType.3  ethernetCsmacd
     verify snmp attribute  s2  ifType.3  ethernetCsmacd
-    [Tags]  sanity  platform  snmp  common    
+    [Tags]  BigTap  snmp  common    
     
 Verify SNMP OID ifAdminStatus of ma1  
     verify snmp attribute  s1  ifAdminStatus.3  up
     verify snmp attribute  s2  ifAdminStatus.3  up
-    [Tags]  sanity  platform  snmp  common    
+    [Tags]  BigTap  snmp  common    
     
 Verify SNMP OID ifOperStatus of ma1  
     verify snmp attribute  s1  ifOperStatus.3  up
     verify snmp attribute  s2  ifOperStatus.3  up
-    [Tags]  sanity  platform  snmp  common    
+    [Tags]  BigTap  snmp  common    
     
 Verify SNMP OID ifSpeed of ma1  
     verify snmp attribute  s1  ifSpeed.3  1000000000
     verify snmp attribute  s2  ifSpeed.3  1000000000
-    [Tags]  sanity  platform  snmp  common    
+    [Tags]  BigTap  snmp  common    
 
 Verify SNMP OID ifMtu of ma1  
     verify snmp attribute  s1  ifMtu.3  1500
     verify snmp attribute  s2  ifMtu.3  1500
-    [Tags]  sanity  platform  snmp  common
+    [Tags]  BigTap  snmp  common
 
 Verify SNMP OID ifDescr of 1Gig Data Port (1G Switch) 
     verify snmp attribute  s1  ifDescr.1048  ${oneGlb9_name}
-    [Tags]  sanity  platform  snmp  1G    
+    [Tags]  BigTap  snmp  1G    
     
 Verify SNMP OID ifType of 1Gig Data Port (1G Switch) 
     verify snmp attribute  s1  ifType.1048  ethernetCsmacd
-    [Tags]  sanity  platform  snmp  1G
+    [Tags]  BigTap  snmp  1G
         
 Verify SNMP OID ifAdminStatus of 1Gig Data Port (1G Switch) 
     verify snmp attribute  s1  ifAdminStatus.1048  up
-    [Tags]  sanity  platform  snmp  1G
+    [Tags]  BigTap  snmp  1G
         
 Verify SNMP OID ifOperStatus of 1Gig Data Port (1G Switch) 
     verify snmp attribute  s1  ifOperStatus.1048  up
-    [Tags]  sanity  platform  snmp  1G
+    [Tags]  BigTap  snmp  1G
         
 Verify SNMP OID ifSpeed of 1Gig Data Port (1G Switch) 
     verify snmp attribute  s1  ifSpeed.1048  1000000000
-    [Tags]  sanity  platform  snmp  1G
+    [Tags]  BigTap  snmp  1G
         
 Verify SNMP OID ifHighSpeed of 1Gig Data Port (1G Switch) 
     verify snmp attribute  s1  ifHighSpeed.1048  1000
-    [Tags]  sanity  platform  snmp  1G
+    [Tags]  BigTap  snmp  1G
         
 Verify SNMP OID ifPhysAddress of 1Gig Data Port (1G Switch)
     ${mac_address1}=  cli show interface macaddress  s1  ${oneGlb9_name} 
     verify snmp attribute  s1  ifPhysAddress.1048  ${mac_address1}
-    [Tags]  sanity  platform  snmp  1G
+    [Tags]  BigTap  snmp  1G
         
 Verify SNMP OID ifDescr of 10Gig Data Port (1G Switch) 
     verify snmp attribute  s1  ifDescr.1051  ${tenGlb9_name}
-    [Tags]  sanity  platform  snmp  1G
+    [Tags]  BigTap  snmp  1G
         
 Verify SNMP OID ifType of 10Gig Data Port (1G Switch) 
     verify snmp attribute  s1  ifType.1051  ethernetCsmacd
-    [Tags]  sanity  platform  snmp  1G    
+    [Tags]  BigTap  snmp  1G    
     
 Verify SNMP OID ifAdminStatus of 10Gig Data Port (1G Switch) 
     verify snmp attribute  s1  ifAdminStatus.1051  up
-    [Tags]  sanity  platform  snmp  1G    
+    [Tags]  BigTap  snmp  1G    
     
 Verify SNMP OID ifOperStatus of 10Gig Data Port (1G Switch) 
     verify snmp attribute  s1  ifOperStatus.1051  up
-    [Tags]  sanity  platform  snmp  1G    
+    [Tags]  BigTap  snmp  1G    
     
 Verify SNMP OID ifSpeed of 10Gig Data Port (1G Switch) 
     verify snmp attribute  s1  ifSpeed.1051  4294967295
-    [Tags]  sanity  platform  snmp  1G    
+    [Tags]  BigTap  snmp  1G    
     
 Verify SNMP OID ifHighSpeed of 10Gig Data Port (1G Switch) 
     verify snmp attribute  s1  ifHighSpeed.1051  10000
-    [Tags]  sanity  platform  snmp  1G    
+    [Tags]  BigTap  snmp  1G    
 
 Verify SNMP OID ifPhysAddress of 10Gig Data Port (1G Switch) 
     ${mac_address1}=  cli show interface macaddress  s1  ${tenGlb9_name} 
     verify snmp attribute  s1  ifPhysAddress.1051  ${mac_address1}
-    [Tags]  sanity  platform  snmp  1G
+    [Tags]  BigTap  snmp  1G
 
 Verify SNMP OID ifDescr of 10Gig Data Port (10G Switch) 
     verify snmp attribute  s2  ifDescr.1031  ${tenGly2_name}
-    [Tags]  sanity  platform  snmp  10G
+    [Tags]  BigTap  snmp  10G
         
 Verify SNMP OID ifType of 10Gig Data Port (10G Switch) 
     verify snmp attribute  s2  ifType.1031  ethernetCsmacd
-    [Tags]  sanity  platform  snmp  10G
+    [Tags]  BigTap  snmp  10G
         
 Verify SNMP OID ifAdminStatus of 10Gig Data Port (10G Switch) 
     verify snmp attribute  s2  ifAdminStatus.1031  up
-    [Tags]  sanity  platform  snmp  10G
+    [Tags]  BigTap  snmp  10G
         
 Verify SNMP OID ifOperStatus of 10Gig Data Port (10G Switch) 
     verify snmp attribute  s2  ifOperStatus.1031  up
-    [Tags]  sanity  platform  snmp  10G
+    [Tags]  BigTap  snmp  10G
         
 Verify SNMP OID ifSpeed of 10Gig Data Port (10G Switch) 
     verify snmp attribute  s2  ifSpeed.1031  4294967295
-    [Tags]  sanity  platform  snmp  10G
+    [Tags]  BigTap  snmp  10G
         
 Verify SNMP OID ifHighSpeed of 10Gig Data Port (10G Switch) 
     verify snmp attribute  s2  ifHighSpeed.1031  10000
-    [Tags]  sanity  platform  snmp  10G
+    [Tags]  BigTap  snmp  10G
     
 Verify SNMP OID ifPhysAddress of 10Gig Data Port (10G Switch) 
     ${mac_address1}=  cli show interface macaddress  s2  ${tenGly2_name} 
     verify snmp attribute  s2  ifPhysAddress.1031  ${mac_address1}
-    [Tags]  sanity  platform  snmp  10G
+    [Tags]  BigTap  snmp  10G
     
 Verify SNMP OID ifDescr of 40Gig Data Port (10G Switch) 
     verify snmp attribute  s2  ifDescr.1052  ${fortyGly2_name}
-    [Tags]  sanity  platform  snmp  10G
+    [Tags]  BigTap  snmp  10G
         
 Verify SNMP OID ifType of 40Gig Data Port (10G Switch) 
     verify snmp attribute  s2  ifType.1052  ethernetCsmacd  
-    [Tags]  sanity  platform  snmp  10G
+    [Tags]  BigTap  snmp  10G
         
 Verify SNMP OID ifAdminStatus of 40Gig Data Port (10G Switch) 
     verify snmp attribute  s2  ifAdminStatus.1052  up
-    [Tags]  sanity  platform  snmp  10G
+    [Tags]  BigTap  snmp  10G
         
 Verify SNMP OID ifOperStatus 40Gig Data Port (10G Switch) 
     verify snmp attribute  s2  ifOperStatus.1052  up
-    [Tags]  sanity  platform  snmp  10G
+    [Tags]  BigTap  snmp  10G
         
 Verify SNMP OID ifSpeed of 40Gig Data Port (10G Switch) 
     verify snmp attribute  s2  ifSpeed.1052  4294967295
-    [Tags]  sanity  platform  snmp  10G
+    [Tags]  BigTap  snmp  10G
         
 Verify SNMP OID ifHighSpeed of 40Gig Data Port (10G Switch) 
     verify snmp attribute  s2  ifHighSpeed.1052  40000
-    [Tags]  sanity  platform  snmp  10G
+    [Tags]  BigTap  snmp  10G
         
 Verify SNMP OID ifPhysAddress of 40Gig Data Port (10G Switch) 
     ${mac_address1}=  cli show interface macaddress  s2  ${fortyGly2_name} 
     verify snmp attribute  s2  ifPhysAddress.1052  ${mac_address1}
-    [Tags]  sanity  platform  snmp  10G
+    [Tags]  BigTap  snmp  10G
 
 
 Verify SNMP OID ifDescr of PortChannel across 1Gig Data Port (1G Switch) 
     verify snmp attribute  s1  ifDescr.1063  port-channel3
-    [Tags]  sanity  platform  snmp  1G  lag
+    [Tags]  BigTap  snmp  1G  lag
     
 Verify SNMP OID ifType of PortChannel across 1Gig Data Port (1G Switch) 
     verify snmp attribute  s1  ifType.1063  ethernetCsmacd
-    [Tags]  sanity  platform  snmp  1G  lag
+    [Tags]  BigTap  snmp  1G  lag
         
 Verify SNMP OID ifAdminStatus of PortChannel across 1Gig Data Port (1G Switch) 
     verify snmp attribute  s1  ifAdminStatus.1063  up
-    [Tags]  sanity  platform  snmp  1G  lag
+    [Tags]  BigTap  snmp  1G  lag
         
 Verify SNMP OID ifOperStatus of PortChannel across 1Gig Data Port (1G Switch) 
     verify snmp attribute  s1  ifOperStatus.1063  up
-    [Tags]  sanity  platform  snmp  1G  lag
+    [Tags]  BigTap  snmp  1G  lag
         
 Verify SNMP OID ifSpeed of PortChannel across 1Gig Data Port (1G Switch) 
     verify snmp attribute  s1  ifSpeed.1063  4294967295
-    [Tags]  sanity  platform  snmp  1G  lag
+    [Tags]  BigTap  snmp  1G  lag
         
 Verify SNMP OID ifHighSpeed of PortChannel across 1Gig Data Port (1G Switch) 
     verify snmp attribute  s1  ifHighSpeed.1063  8000
-    [Tags]  sanity  platform  snmp  1G  lag
+    [Tags]  BigTap  snmp  1G  lag
     
 Verify SNMP OID ifPhysAddress of PortChannel across 1Gig Data Port (1G Switch) 
     ${mac_address1}=  cli show interface macaddress  s1  port-channel3 
     verify snmp attribute  s1  ifPhysAddress.1063  ${mac_address1}
-    [Tags]  sanity  platform  snmp  1G  lag
+    [Tags]  BigTap  snmp  1G  lag
 
 Verify SNMP OID ifDescr of PortChannel across 10Gig Data Port (1G Switch) 
     verify snmp attribute  s1  ifDescr.1061  port-channel1
-    [Tags]  sanity  platform  snmp  1G  lag
+    [Tags]  BigTap  snmp  1G  lag
     
 Verify SNMP OID ifType of PortChannel across 10Gig Data Port (1G Switch) 
     verify snmp attribute  s1  ifType.1061  ethernetCsmacd
-    [Tags]  sanity  platform  snmp  1G  lag
+    [Tags]  BigTap  snmp  1G  lag
         
 Verify SNMP OID ifAdminStatus of PortChannel across 10Gig Data Port (1G Switch) 
     verify snmp attribute  s1  ifAdminStatus.1061  up
-    [Tags]  sanity  platform  snmp  1G  lag
+    [Tags]  BigTap  snmp  1G  lag
         
 Verify SNMP OID ifOperStatus of PortChannel across 10Gig Data Port (1G Switch) 
     verify snmp attribute  s1  ifOperStatus.1061  up
-    [Tags]  sanity  platform  snmp  1G  lag
+    [Tags]  BigTap  snmp  1G  lag
         
 Verify SNMP OID ifSpeed of PortChannel across 10Gig Data Port (1G Switch) 
     verify snmp attribute  s1  ifSpeed.1061  4294967295
-    [Tags]  sanity  platform  snmp  1G  lag
+    [Tags]  BigTap  snmp  1G  lag
         
 Verify SNMP OID ifHighSpeed of PortChannel across 10Gig Data Port (1G Switch) 
     verify snmp attribute  s1  ifHighSpeed.1061  20000
-    [Tags]  sanity  platform  snmp  1G  lag
+    [Tags]  BigTap  snmp  1G  lag
     
 Verify SNMP OID ifPhysAddress of PortChannel across 10Gig Data Port (1G Switch) 
     ${mac_address1}=  cli show interface macaddress  s1  port-channel1 
     verify snmp attribute  s1  ifPhysAddress.1061  ${mac_address1}
-    [Tags]  sanity  platform  snmp  1G  lag
+    [Tags]  BigTap  snmp  1G  lag
         
 Verify SNMP OID ifDescr of PortChannel across 40Gig Data Port (10G Switch) 
     verify snmp attribute  s2  ifDescr.1066  port-channel6
-    [Tags]  sanity  platform  snmp  10G  lag
+    [Tags]  BigTap  snmp  10G  lag
     
 Verify SNMP OID ifType of PortChannel across 40Gig Data Port (10G Switch) 
     verify snmp attribute  s2  ifType.1066  ethernetCsmacd
-    [Tags]  sanity  platform  snmp  10G  lag
+    [Tags]  BigTap  snmp  10G  lag
     
 Verify SNMP OID ifAdminStatus of PortChannel across 40Gig Data Port (10G Switch) 
     verify snmp attribute  s2  ifAdminStatus.1066  up
-    [Tags]  sanity  platform  snmp  10G  lag
+    [Tags]  BigTap  snmp  10G  lag
     
 Verify SNMP OID ifOperStatus of PortChannel across 40Gig Data Port (10G Switch) 
     verify snmp attribute  s2  ifOperStatus.1066  up
-    [Tags]  sanity  platform  snmp  10G  lag
+    [Tags]  BigTap  snmp  10G  lag
     
 Verify SNMP OID ifSpeed of PortChannel across 40Gig Data Port (10G Switch) 
     verify snmp attribute  s2  ifSpeed.1066  4294967295
-    [Tags]  sanity  platform  snmp  10G  lag
+    [Tags]  BigTap  snmp  10G  lag
     
 Verify SNMP OID ifHighSpeed of PortChannel across 40Gig Data Port (10G Switch) 
     verify snmp attribute  s2  ifHighSpeed.1066  80000
-    [Tags]  sanity  platform  snmp  10G  lag
+    [Tags]  BigTap  snmp  10G  lag
     
 Verify SNMP OID ifPhysAddress of PortChannel across 40Gig Data Port (10G Switch) 
     ${mac_address1}=  cli show interface macaddress  s2  port-channel6 
     verify snmp attribute  s2  ifPhysAddress.1066  ${mac_address1}
-    [Tags]  sanity  platform  snmp  10G  lag
+    [Tags]  BigTap  snmp  10G  lag
     
 Verify snmpgetnext works as expected 
     verify snmpgetnext
-    [Tags]  sanity  platform  snmp
+    [Tags]  BigTap  snmp
         
 Verify snmpbulkget works as expected 
     verify snmpbulkget
-    [Tags]  sanity  platform  snmp
+    [Tags]  BigTap  snmp
         
 Verify snmpbulkwalk works as expected 
     verify snmpbulkwalk
-    [Tags]  sanity  platform  snmp
+    [Tags]  BigTap  snmp
         
 Verify snmptrap is generated on dataport linkflap
     clear snmpttlog  10.192.66.230
@@ -301,20 +301,20 @@ Verify snmptrap is generated on dataport linkflap
     sleep  60
     ${output}=  return snmptrap output  10.192.66.230  "Link up on interface 1001"
     Should contain  ${output}  Operational state: 1     
-    [Tags]  sanity  platform  snmp  snmptrap 
+    [Tags]  BigTap  snmp  snmptrap 
          
 
 Modify SNMP Community and Verify SNMP OID sysContact 
     modify community
-    [Tags]  sanity  platform  snmp
+    [Tags]  BigTap  snmp
         
 Verify no snmp-server disables snmp 
     disable snmp
-    [Tags]  sanity  platform  snmp
+    [Tags]  BigTap  snmp
         
 Restart process SNMPD and verify SNMP Stats 
     restart snmpd
-    [Tags]  sanity  platform  snmp
+    [Tags]  BigTap  snmp
     
 * Keywords  
 snmp suite setup
