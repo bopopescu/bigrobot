@@ -129,7 +129,7 @@ def main(*args):
     helpers.log("Created Active VM: \n%s" % active_vm)
 
     if active_vm['status_code'] == False:
-        helpers.summary_log("VM setup failure on active vm!!\n%s"
+        helpers.log("VM setup failure on active vm!!\n%s"
                             % active_vm['status_descr'])
         sys.exit(1)
 
