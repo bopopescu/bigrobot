@@ -1,5 +1,5 @@
 * Settings
-Documentation     T5  Switch Platform Test suite- Iron Horse
+Documentation     switch-platform Platform Test suite- Iron Horse
 Suite Setup       T5 switch platform test setup
 Suite Teardown    T5 switch platform test teardown
 Force Tags        T5  IronHorse
@@ -58,38 +58,38 @@ ${default_user}=  admin
 Config the switch and controller as setup 
     Log    Step 1 - Configure the base set up according to topology
     T5 switch platform test setup
-    [Tags]  T5  switch  setup  feature    
+    [Tags]  switch-platform  setup  feature     
 
 Verify ONIE Installed on Switch
 	Log     Step 1 - verify ONIE installed in switch
 	verify onie installated on switch  s1
 	verify onie installated on switch  s2
 	verify onie installated on switch  s7
-	[Tags]  T5  switch  install  onie  feature 
+	[Tags]  switch-platform  install  onie  feature 
             
 Verify the openflow aux channel count on Switch
 	Log    Step 1 - Get the OF aux channel number
 	verify openflow aux channel  s1  c1  
 	verify openflow aux channel  s2  c1  
 	verify openflow aux channel  s7  c1  
-    [Tags]  T5  switch  ofaux  feature        
+    [Tags]  switch-platform  ofaux  feature        
     
 Verify console connectivity
     Log    Step 1 - Verify access the console through telnet
-    [Tags]  T5  switch  install  feature
+    [Tags]  switch-platform  install  feature
     [Tags]  Manual
     Manual passed
 
 Verify UBoot version on leaf
     Log    Step 1 - Verify the Uboot version
     Log    Step 2 - Verify the DRAM
-    [Tags]  T5  switch  install  feature 
+    [Tags]  switch-platform  install  feature 
     [Tags]  Manual
     Manual passed
    
 Verify environmental variables for CPU, RAM, PCI, Ethernet, EEPROM at loader 
     Log    Step 1 - Verify the environmrntal variables 
-    [Tags]  T5  switch  install  feature 
+    [Tags]  switch-platform  install  feature 
     [Tags]  Manual
     Manual passed
     
@@ -100,7 +100,7 @@ Verify one openflow controller can be configured on Leaf
     delete existing controllers  s1  c2
     add openflow controller  s1  c1
     verify openflow controller  s1  c1
-    [Tags]  t5  platform  InitialConfig  feature  
+    [Tags]  switch-platform  InitialConfig  feature  
 
 Verify controller can be modified on Leaf
     delete existing controllers  s1  c1
@@ -110,7 +110,7 @@ Verify controller can be modified on Leaf
     delete existing controllers  s1  c1
     add openflow controller  s1  c2
     verify openflow controller  s1  c2
-    [Tags]  t5  platform  InitialConfig  feature  
+    [Tags]  switch-platform  InitialConfig  feature  
 
 Verify multiple openflow controllers can be configured on Leaf
     delete existing controllers  s1  c1
@@ -119,20 +119,20 @@ Verify multiple openflow controllers can be configured on Leaf
     verify openflow controller  s1  c1
     add openflow controller  s1  c2
     verify openflow controller  s1  c2    
-    [Tags]  t5  platform  InitialConfig  feature  
+    [Tags]  switch-platform  InitialConfig  feature  
 
 Verify Controller IP address is pingable
     ping remote  c1
-    [Tags]  t5  platform  InitialConfig  feature  
+    [Tags]  switch-platform  InitialConfig  feature  
 
 Configure DNS server and DNS Domain. Verify ping www.bigswitch.com
     configure dns domain  s1  ${dns_server}  ${dns_domain}
     Sleep  30
     cli ping from switch  s1  bigswitch.com
-    [Tags]  t5  platform  InitialConfig  dns  feature      
+    [Tags]  switch-platform  InitialConfig  dns  feature      
 
 Verify DNS server and DNS domain can be deleted and added
-    [Tags]  t5  platform  InitialConfig  dns  feature 
+    [Tags]  switch-platform  InitialConfig  dns  feature 
     configure dns domain  s1  ${dns_server}  ${dns_domain}
     Sleep  30
     cli ping from switch  s1  bigswitch.com
@@ -149,7 +149,7 @@ Verify ntp configuration on spine
     Sleep  5
     verify ntp server  s7  time-c.nist.gov
     delete ntp  s1  time-c.nist.gov
-    [Tags]  t5  platform  ntp  feature     
+    [Tags]  switch-platform  ntp  feature     
 
 Verify ntp server on spine after process ntp restart
     configure ntp server  s1  time-c.nist.gov
@@ -158,14 +158,14 @@ Verify ntp server on spine after process ntp restart
     bash restart process  s1  ntpd
     Sleep  5
     verify ntp server  s1  time-c.nist.gov    
-    [Tags]  t5  platform  ntp  feature
+    [Tags]  switch-platform  ntp  feature
 
 Verify ntp configuration on leaf
     configure ntp server  s2  time-c.nist.gov
     Sleep  5
     verify ntp server  s2  time-c.nist.gov
     delete ntp  s2  time-c.nist.gov
-    [Tags]  t5  platform  ntp  feature     
+    [Tags]  switch-platform  ntp  feature     
 
 Verify ntp server on leaf after process ntp restart
     configure ntp server  s2  time-c.nist.gov
@@ -174,7 +174,7 @@ Verify ntp server on leaf after process ntp restart
     bash restart process  s2  ntpd
     Sleep  5
     verify ntp server  s2  time-c.nist.gov    
-    [Tags]  t5  platform  ntp  feature
+    [Tags]  switch-platform  ntp  feature
 
 Verify the default gateway configuration can be deleted and added
     delete static ip  s1  ${netmask}  ${gateway}
@@ -182,17 +182,17 @@ Verify the default gateway configuration can be deleted and added
     delete static ip  s1  ${netmask}  ${gateway1}
     add static ip  s1  ${netmask}  ${gateway}
     ping from switch  s1  ${gateway}  
-    [Tags]  t5  platform  InitialConfig  feature  
+    [Tags]  switch-platform  InitialConfig  feature  
            
 Verify multiple SSH connections to Management Port 
     Log    Step 1 - Verify multiple SSH connections to Management Port
-    [Tags]  T5  switch  InitialConfig  feature
+    [Tags]  switch-platform  InitialConfig  feature
     [Tags]  Manual
     Manual Passed
     
 Verify multiple telnet connections to Management Port 
     Log    Step 1 - Verify multiple telnet connections to Management Port
-    [Tags]  T5  switch  InitialConfig  feature
+    [Tags]  switch-platform  InitialConfig  feature
     [Tags]  Manual
     Manual Passed
   
@@ -200,14 +200,14 @@ Verify after failure of Master Controller switch connection with backup is re es
     Log    Step 1 - Both Controller connection is present 
     Log    Step 2 - Master Controller fails and connection is removed 
     Log    Step 3 - Connection to Back up controller is established
-    [Tags]  T5  switch  HA    feature 
+    [Tags]  switch-platform  HA    feature 
     [Tags]  Manual
     Manual Passed
     
 Verify after Master Controller comes back Connection reestablished 
     Log    Step 1 - Verify connection re-establishes after Master Controller connection comes back 
     Log    Step 2 - Verify the correct information for Master/Backup Controller
-    [Tags]  T5  switch  HA  feature 
+    [Tags]  switch-platform  HA  feature 
     [Tags]  Manual
     Manual Passed
 
@@ -218,7 +218,7 @@ Verify after Master Controller comes back Connection reestablished
 
 Verify all interfaces show up (in show o/p from CLI)
     verify interfaces  s1
-    [Tags]  t5  platform  Interface  feature    
+    [Tags]  switch-platform  Interface  feature    
     
 Shutdown an interface on switch and verify interface state is down
     shut interface  s1  ethernet1
@@ -227,66 +227,54 @@ Shutdown an interface on switch and verify interface state is down
     unshut interface  s1  ethernet1
     Sleep  15
     verify interface state  s1  ethernet1  up
-    [Tags]  t5  platform  Interface  feature       
+    [Tags]  switch-platform  interface  feature       
 
 Verify model in Show version for leaf 
     Log    Step 1 - Verify right model in Show version for leaf as AS5710
     verify model in show version  s1  ${leafmodel} 
-    [Tags]  t5  switch  platform  feature 
+    [Tags]  switch-platform  platform  feature 
    
 Verify model in Show version for spine
     Log    Step 1 - Verify right model in Show version for spine as AS6700
     verify model in show version  s7  ${spinemodel} 
-    [Tags]  t5  switch  platform  feature  
+    [Tags]  switch-platform  platform  feature  
 
 Verify switch interface 1g configuration on switch 
     Log    Step 1 - Verify the 1G interface configuration on switch 
     configure 1g interface on switch  s1  ${interface1g}
     verify 1g interface on switch  s1  ${interface1g}  1G    
-    [Tags]  t5  switch  platform  feature       
+    [Tags]  switch-platform  interface  feature       
 
 verify the ofaux channel on controller  
     verify ofaux channel on controller  c1  ${switch1_name}
-    [Tags]  T5  switch  Platform  ofaux  feature
+    [Tags]  switch-platform  ofaux  feature
 
 Verify the user password can have alphanumeric character 
-    [Tags]  T5  switch  Platform usermanagement  feature    
+    [Tags]  switch-platform  usermanagement  feature    
     verify user password update  s1  ${default_user}  ${default_password}  admin1234
     reset username password  s1  ${default_user}  ${new_password}
 
 Verify the user password can have special characters !@#
-    [Tags]  T5  switch  Platform usermanagement  feature  
+    [Tags]  switch-platform  usermanagement  feature  
     verify user password update  s1  ${default_user}  ${default_password}  admin!@#
     reset username password  s1  ${default_user}  ${new_password}  
 
 Verify the user password can have special characters $%^ 
-    [Tags]  T5  switch  Platform usermanagement  feature  
+    [Tags]  switch-platform  usermanagement  feature  
     verify user password update  s1  ${default_user}  ${default_password}  admin$%^
     reset username password  s1  ${default_user}  ${new_password}    
 
 Verify the user password can have special characters &*(
-    [Tags]  T5  switch  Platform usermanagement  feature  
+    [Tags]  switch-platform  usermanagement  feature  
     verify user password update  s1  ${default_user}  ${default_password}  admin&*(
     reset username password  s1  ${default_user}  ${new_password}    
 
 Verify the user password can have small and big cap letters alphanuric and special aDmin12@#
-    [Tags]  T5  switch  Platform usermanagement  feature  
+    [Tags]  switch-platform  usermanagement  feature  
     verify user password update  s1  ${default_user}  ${default_password}  aDmin12@#
     reset username password  s1  ${default_user}  ${new_password}
-
-   
-Verify Show environment
-    Log    Step 1 - Verify Show env
-    [Tags]  Manual  CLI  Admin  feature  jira-pan-667    
-     Manual Failed
-
-Verify Show running-config
-    Log    Step 1 - Verify Show running-config
-    [Tags]  Manual  CLI  Admin  feature  
-     Manual Passed
-       
-
-    
+  
+           
 * Keywords
 
 T5 switch platform test setup
