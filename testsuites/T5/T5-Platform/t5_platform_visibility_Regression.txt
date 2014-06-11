@@ -561,7 +561,7 @@ T28 Configure SPAN session for Ethertype - Direction Ingress
 
 T29 Configure SPAN session for Tenant/VNS - Direction Ingress
 	[Tags]  span  feature  manual
-	manual  failed
+	manual failed
 	
 	
 T30 Configure SPAN session with multiple options - Direction Ingress
