@@ -54,7 +54,6 @@ Intra tenant L3 tagged traffic with static endpoints across rack
 L3 intra tenant traceroute
     L3 intra tenant traceroute
     [Tags]                                  smoke               sanity              run
-    
 
 Dhcp discover on the same vns as server with dhcp-relay enabled
 	DHCP discovery on the same vns as server with dhcp-relay enabled
@@ -294,7 +293,7 @@ L3 intra tenant across rack untagged with dynamic endpoints
 
 
 L3 intra tenant same rack tagged with dynamic endpoints
-	BASH ping									h7-rack0								10.252.2.11				count=10
+	BASH ping									h7-rack0						10.252.2.11				        count=10
 	${value} = 									BASH verify arp					h7-rack0						10.252.1.1
 	Should Be True								${value} 		
 	${value} =									BASH verify arp					h8-rack0						10.252.2.1
@@ -639,7 +638,7 @@ L3 intra tenant traffic between private and public subnet
 	REST add vns ip  							X								X1								10.251.1.1				24			private=true
 	REST add vns ip  							Y								Y1								10.251.1.1				24			
 	BASH init intf								h7-rack0						bond0.1007
-	BASH ifconfig ip address							h7-rack0						10.251.1.11/24					bond0.1007 	
+	BASH ifconfig ip address					h7-rack0						10.251.1.11/24					bond0.1007 	
 	BASH ping									h4-rack0						10.251.1.1						count=5
 	BASH ping									h7-rack0						10.251.1.1						count=5
 	BASH ping									h6-rack0						10.251.3.1						count=5
@@ -1284,15 +1283,15 @@ setup topology
 	BASH ifup intf									h10-rack0								bond0.1010
 	BASH ifup intf									h3-rack1								bond0.2003
 	BASH ifup intf									h4-rack1								bond0.2004
-	BASH ifconfig ip address								h4-rack0								10.251.1.11/24			bond0	
-	BASH ifconfig ip address								h5-rack0								10.251.2.11/24			bond0
-	BASH ifconfig ip address								h6-rack0								10.251.3.11/24			bond0.1006
-	BASH ifconfig ip address								h7-rack0								10.252.1.11/24			bond0.1007
-	BASH ifconfig ip address								h8-rack0								10.252.2.11/24			bond0.1008
-	BASH ifconfig ip address								h9-rack0								10.252.3.11/24			bond0.1009
-	BASH ifconfig ip address								h10-rack0								10.253.1.11/24			bond0.1010
-	BASH ifconfig ip address								h1-rack1								10.251.1.21/24			bond0
-	BASH ifconfig ip address								h3-rack1								10.251.2.23/24			bond0.2003
+	BASH ifconfig ip address						h4-rack0								10.251.1.11/24			bond0	
+	BASH ifconfig ip address						h5-rack0								10.251.2.11/24			bond0
+	BASH ifconfig ip address						h6-rack0								10.251.3.11/24			bond0.1006
+	BASH ifconfig ip address						h7-rack0								10.252.1.11/24			bond0.1007
+	BASH ifconfig ip address						h8-rack0								10.252.2.11/24			bond0.1008
+	BASH ifconfig ip address						h9-rack0								10.252.3.11/24			bond0.1009
+	BASH ifconfig ip address						h10-rack0								10.253.1.11/24			bond0.1010
+	BASH ifconfig ip address						h1-rack1								10.251.1.21/24			bond0
+	BASH ifconfig ip address						h3-rack1								10.251.2.23/24			bond0.2003
 	BASH add route									h4-rack0								10.251.2.0/24			10.251.1.1
 	BASH add route									h4-rack0								10.251.3.0/24			10.251.1.1
 	BASH add route									h4-rack0								10.252.0.0/16			10.251.1.1
@@ -1408,7 +1407,20 @@ teardown topology
 	BASH init intf										h10-rack0								bond0	
 	BASH init intf										h1-rack1								bond0	
 	BASH init intf										h3-rack1								bond0	
-	
+	BASH network restart                                h1-rack0                                timeout=30
+	BASH network restart                                h2-rack0                                timeout=30
+    BASH network restart                                h3-rack0                                timeout=30
+    BASH network restart                                h4-rack0                                timeout=30
+    BASH network restart                                h5-rack0                                timeout=30
+    BASH network restart                                h6-rack0                                timeout=30
+    BASH network restart                                h7-rack0                                timeout=30
+    BASH network restart                                h8-rack0                                timeout=30
+    BASH network restart                                h9-rack0                                timeout=30
+    BASH network restart                                h10-rack0                               timeout=30
+    BASH network restart                                h1-rack1                                timeout=30
+    BASH network restart                                h2-rack1                                timeout=30
+    BASH network restart                                h3-rack1                                timeout=30
+    BASH network restart                                h3-rack1                                timeout=30
 	REST delete tenant routers intf to system			X
 	REST delete tenant routers intf to system			Y
 	REST delete tenant routers intf to system			Z									
@@ -1485,6 +1497,7 @@ T5 base suite setup
   	REST add portgroup 								${leaf3b_arista2}
   	REST add portgroup 								${leaf3a_arista1}
   	REST add portgroup 								${leaf3b_arista2}
+
 	
 T5 base suite teardown
   	REST delete portgroup lacp							${leaf0_pc1}

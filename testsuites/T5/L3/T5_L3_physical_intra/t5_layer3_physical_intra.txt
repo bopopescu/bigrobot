@@ -521,10 +521,10 @@ Activate and deactivate router interface
 	REST show endpoints		
 	${loss} = 									BASH ping						h1						10.251.3.11 			count=10
 	Should Be True  							${loss} == 0		
-	REST disable router intf					X								X1
+	REST disable router segment intf			X								X1
 	${loss} = 									BASH ping						h1						10.251.3.11 			count=10
 	Should Be True  							${loss} == 100
-	REST enable router intf						X								X1
+	REST enable router segment intf				X								X1
 	${loss} = 									BASH ping						h1						10.251.3.11 			count=10
 	Should Be True  							${loss} < 20
 	BASH delete route							h1								10.251.3.0/24			10.251.1.1
@@ -884,8 +884,9 @@ L3 intra tenant dhcp relay on same vns as dhcp server with relay enabled
 	BASH init intf								h1								bond0
 	BASH init intf								h2								bond0
 	BASH ifup intf								h1								bond0
-	BASH ifconfig ip address							h1								10.252.1.9/24			bond0					
+	BASH ifconfig ip address					h1								10.252.1.9/24			bond0					
 	BASH start service							h1								isc-dhcp-server
+    BASH ping                                   h1                              10.252.1.1              count=4
 	sleep										1
 	${value} = 									BASH check service status		h1						isc-dhcp-server
 	Should Contain								${value}						is started
@@ -935,8 +936,9 @@ L3 intra tenant dhcp relay on same vns as dhcp server without relay enabled
 	BASH init intf								h1								bond0
 	BASH init intf								h2								bond0
 	BASH ifup intf								h1								bond0
-	BASH ifconfig ip address							h1								10.252.1.9/24			bond0					
+	BASH ifconfig ip address					h1								10.252.1.9/24			bond0					
 	BASH start service							h1								isc-dhcp-server
+    BASH ping                                   h1                              10.252.1.1              count=4
 	sleep										1
 	${value} = 									BASH check service status		h1						isc-dhcp-server
 	Should Contain								${value}						is started
@@ -979,8 +981,9 @@ L3 intra tenant dhcp relay on same rack
 	BASH init intf								h1								bond0
 	BASH init intf								h2								bond0
 	BASH ifup intf								h1								bond0
-	BASH ifconfig ip address							h1								10.252.1.9/24			bond0					
+	BASH ifconfig ip address				    h1								10.252.1.9/24			bond0					
 	BASH start service							h1								isc-dhcp-server
+    BASH ping                                   h1                              10.252.1.1              count=4
 	sleep								        1
 	${value} = 									BASH check service status		h1						isc-dhcp-server
 	Should Contain								${value}						is started
@@ -1028,8 +1031,9 @@ L3 intra tenant dhcp relay with circuit id on same rack
 	BASH init intf								h1								bond0
 	BASH init intf								h2								bond0
 	BASH ifup intf								h1								bond0
-	BASH ifconfig ip address							h1								10.252.1.9/24			bond0					
+	BASH ifconfig ip address					h1								10.252.1.9/24			bond0					
 	BASH start service							h1								isc-dhcp-server
+    BASH ping                                   h1                              10.252.1.1              count=4
 	sleep								        1
 	${value} = 									BASH check service status		h1						isc-dhcp-server
 	Should Contain								${value}						is started
@@ -1074,8 +1078,9 @@ L3 intra tenant dhcp relay across rack
 	BASH init intf								h1								bond0
 	BASH init intf								h2								bond0
 	BASH ifup intf								h1								bond0
-	BASH ifconfig ip address							h1								10.252.1.9/24			bond0					
+	BASH ifconfig ip address					h1								10.252.1.9/24			bond0					
 	BASH start service							h1								isc-dhcp-server
+    BASH ping                                   h1                              10.252.1.1              count=4
 	sleep										1
 	${value} = 									BASH check service status		h1						isc-dhcp-server
 	Should Contain								${value}						is started
@@ -1132,8 +1137,9 @@ L3 intra tenant dhcp relay with circuit id across rack
 	BASH init intf								h1								bond0
 	BASH init intf								h2								bond0
 	BASH ifup intf								h1								bond0
-	BASH ifconfig ip address							h1								10.252.1.9/24			bond0					
+	BASH ifconfig ip address					h1								10.252.1.9/24			bond0					
 	BASH start service							h1								isc-dhcp-server
+    BASH ping                                   h1                              10.252.1.1              count=4
 	sleep										1
 	${value} = 									BASH check service status		h1						isc-dhcp-server
 	Should Contain								${value}						is started
@@ -1185,8 +1191,9 @@ L3 dhcp request without dhcp relay enabled
 	BASH init intf								h1								bond0
 	BASH init intf								h2								bond0
 	BASH ifup intf								h1								bond0
-	BASH ifconfig ip address							h1								10.252.1.9/24			bond0					
+	BASH ifconfig ip address					h1								10.252.1.9/24			bond0					
 	BASH start service							h1								isc-dhcp-server
+    BASH ping                                   h1                              10.252.1.1              count=4
 	sleep										1
 	${value} = 									BASH check service status		h1						isc-dhcp-server
 	Should Contain								${value}						is started
@@ -1259,8 +1266,9 @@ Move host from one vns to another vns in the same tenant and verify dhcp request
 	BASH init intf								h1								bond0
 	BASH init intf								h2								bond0
 	BASH ifup intf								h1								bond0
-	BASH ifconfig ip address							h1								10.252.1.9/24			bond0					
+	BASH ifconfig ip address					h1								10.252.1.9/24			bond0					
 	BASH start service							h1								isc-dhcp-server
+    BASH ping                                   h1                              10.252.1.1              count=4
 	sleep										1
 	${value} = 									BASH check service status		h1						isc-dhcp-server
 	Should Contain								${value}						is started
@@ -1325,8 +1333,9 @@ Verify dhcp host is not being aged out
 	BASH init intf								h1								bond0
 	BASH init intf								h2								bond0
 	BASH ifup intf								h1								bond0
-	BASH ifconfig ip address							h1								10.252.1.9/24			bond0					
+	BASH ifconfig ip address					h1								10.252.1.9/24			bond0					
 	BASH start service							h1								isc-dhcp-server
+    BASH ping                                   h1                              10.252.1.1              count=4
 	sleep										1
 	${value} = 									BASH check service status		h1						isc-dhcp-server
 	Should Contain								${value}						is started
@@ -1384,8 +1393,9 @@ Dhcp relay with static dhcp server endpoint
 	BASH init intf								h1								bond0
 	BASH init intf								h2								bond0
 	BASH ifup intf								h1								bond0
-	BASH ifconfig ip address							h1								10.252.1.9/24			bond0					
+	BASH ifconfig ip address					h1								10.252.1.9/24			bond0					
 	BASH start service							h1								isc-dhcp-server
+    BASH ping                                   h1                              10.252.1.1              count=4
 	sleep										1
 	${value} = 									BASH check service status		h1						isc-dhcp-server
 	Should Contain								${value}						is started
@@ -2358,8 +2368,9 @@ Verify host on private segment is able to get dhcp address from tenant dhcp serv
     BASH init intf                              h1                              bond0
     BASH init intf                              h2                              bond0
     BASH ifup intf                              h1                              bond0
-    BASH ifconfig ip address                         h1                              10.252.1.9/24           bond0                   
+    BASH ifconfig ip address                    h1                              10.252.1.9/24           bond0                   
     BASH start service                          h1                              isc-dhcp-server
+    BASH ping                                   h1                              10.252.1.1              count=4
     sleep                                       1
     ${value} =                                  BASH check service status       h1                      isc-dhcp-server
     Should Contain                              ${value}                        is started
@@ -2962,8 +2973,9 @@ Trigger controller HA failover via CLI and verify dhcp-relay is working
 	BASH init intf								h1								bond0
 	BASH init intf								h2								bond0
 	BASH ifup intf								h1								bond0
-	BASH ifconfig ip address							h1								10.252.1.9/24			bond0					
+	BASH ifconfig ip address					h1								10.252.1.9/24			bond0					
 	BASH start service							h1								isc-dhcp-server
+    BASH ping                                   h1                              10.252.1.1              count=4
 	sleep										1
 	${value} = 									BASH check service status		h1						isc-dhcp-server
 	Should Contain								${value}						is started
@@ -3030,8 +3042,9 @@ Trigger controller HA failover via reboot and verify dhcp-relay is working
 	BASH init intf								h1								bond0
 	BASH init intf								h2								bond0
 	BASH ifup intf								h1								bond0
-	BASH ifconfig ip address							h1								10.252.1.9/24			bond0					
+	BASH ifconfig ip address				    h1								10.252.1.9/24			bond0					
 	BASH start service							h1								isc-dhcp-server
+    BASH ping                                   h1                              10.252.1.1              count=4
 	sleep										1
 	${value} = 									BASH check service status		h1						isc-dhcp-server
 	Should Contain								${value}						is started
