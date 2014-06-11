@@ -24,13 +24,13 @@ helpers.set_env('AUTOBOT_LOG', './myrobot.log')
 TEST_TYPES = ["feature", "scaling", "performance", "solution",
                           "longevity", "negative", "robustness"]
 FEATURES_IRONHORSE = ["ha", "span", "testpath", "pod", "l2", "l3", "snmp",
-                    "ntp", "traffic", "logging", "rsyslog", "rsyslogd",
-                    "install", "initialconfig", "rebootswitch",
-                    "firstboot", "upgrade", "singlenode", "bpdu_guard",
-                    "fabric", "fabric_qos", "qos", "ztn", "file management",
-                    "filemanagement", "running-config", "initialconfig",
-                    "virtualip", "openstack", "dhcp", "dhcp-relay",
-                    "ecmp", "policy-vlanrewrite"]
+                      "ntp", "traffic", "logging", "rsyslog", "rsyslogd",
+                      "install", "initialconfig", "rebootswitch",
+                      "firstboot", "upgrade", "singlenode", "bpdu_guard",
+                      "fabric", "fabric_qos", "qos", "ztn", "file management",
+                      "filemanagement", "running-config", "initialconfig",
+                      "virtualip", "openstack", "dhcp", "dhcp-relay",
+                      "ecmp", "policy", "policy-vlanrewrite"]
 
 
 class ReleaseStats(object):
