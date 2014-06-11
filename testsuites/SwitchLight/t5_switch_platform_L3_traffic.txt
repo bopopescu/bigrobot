@@ -1,5 +1,5 @@
 * Settings
-Documentation     T5  Switch Platform Traffic Test suite- Iron Horse
+Documentation     switch-platform Platform Traffic Test suite- Iron Horse
 Suite Setup       T5 switch platform test setup
 Suite Teardown    T5 switch platform test teardown
 Test Setup        base test setup
@@ -79,7 +79,7 @@ Uni-Directional L3 Traffic flow=a->b traffic framerate 10000 pktsize 64
     verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
     stop traffic   ${stream}
         
-    [Tags]  T5  switch  L3  traffic  feature       
+    [Tags]  switch-platform  L3  traffic  feature       
 
 Uni-Directional L3 Traffic flow=a->b traffic framerate 10000 pktsize 256 
     ${stream}=   L3 add  name=a_b_flow  flow=a->b  src_ip=10.200.0.2  src_gw=10.200.0.1
@@ -92,7 +92,7 @@ Uni-Directional L3 Traffic flow=a->b traffic framerate 10000 pktsize 256
     verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
     stop traffic   ${stream}
         
-    [Tags]  T5  switch  L3  traffic  feature
+    [Tags]  switch-platform  L3  traffic  feature
 
 Uni-Directional L3 Traffic flow=a->b traffic framerate 10000 pktsize 512 
     ${stream}=   L3 add  name=a_b_flow  flow=a->b  src_ip=10.200.0.2  src_gw=10.200.0.1
@@ -104,7 +104,7 @@ Uni-Directional L3 Traffic flow=a->b traffic framerate 10000 pktsize 512
     ${report}=     fetch port stats
     verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
     stop traffic   ${stream}   
-    [Tags]  T5  switch  L3  traffic  feature
+    [Tags]  switch-platform  L3  traffic  feature
 
 Uni-Directional L3 Traffic flow=a->b traffic framerate 10000 pktsize 1024 
     ${stream}=   L3 add  name=a_b_flow  flow=a->b  src_ip=10.200.0.2  src_gw=10.200.0.1
@@ -116,7 +116,7 @@ Uni-Directional L3 Traffic flow=a->b traffic framerate 10000 pktsize 1024
     ${report}=     fetch port stats
     verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
     stop traffic   ${stream}    
-    [Tags]  T5  switch  L3  traffic  feature
+    [Tags]  switch-platform  L3  traffic  feature
 
 Uni-Directional L3 Traffic flow=a->b traffic framerate 10000 pktsize 1518 
     ${stream}=   L3 add  name=a_b_flow  flow=a->b  src_ip=10.200.0.2  src_gw=10.200.0.1
@@ -128,7 +128,7 @@ Uni-Directional L3 Traffic flow=a->b traffic framerate 10000 pktsize 1518
     ${report}=     fetch port stats
     verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
     stop traffic   ${stream}    
-    [Tags]  T5  switch  L3  traffic  feature
+    [Tags]  switch-platform  L3  traffic  feature
 
 Bi-Directional L3 Traffic flow=a<->b traffic linerate 10% pktsize 64 
     ${stream}=   L3 add  name=a_b_flow  flow=a<->b  src_ip=10.200.0.2  src_gw=10.200.0.1
@@ -140,7 +140,7 @@ Bi-Directional L3 Traffic flow=a<->b traffic linerate 10% pktsize 64
     ${report}=     fetch port stats
     verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
     stop traffic   ${stream}     
-    [Tags]  T5  switch  L3  traffic  feature   
+    [Tags]  switch-platform  L3  traffic  feature   
 
 Bi-Directional L3 Traffic flow=a<->b traffic framerate 10000 pktsize 64 
     ${stream}=   L3 add  name=a_b_flow  flow=a<->b  src_ip=10.200.0.2  src_gw=10.200.0.1
@@ -152,7 +152,7 @@ Bi-Directional L3 Traffic flow=a<->b traffic framerate 10000 pktsize 64
     ${report}=     fetch port stats
     verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
     stop traffic   ${stream}
-    [Tags]  T5  switch  L3  traffic  feature
+    [Tags]  switch-platform  L3  traffic  feature
 
 Bi-Directional L3 Traffic flow=a<->b traffic framerate 10000 pktsize 256 
     ${stream}=   L3 add  name=a_b_flow  flow=a<->b  src_ip=10.200.0.2  src_gw=10.200.0.1
@@ -164,7 +164,7 @@ Bi-Directional L3 Traffic flow=a<->b traffic framerate 10000 pktsize 256
     ${report}=     fetch port stats
     verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
     stop traffic   ${stream}     
-    [Tags]  T5  switch  L3  traffic  feature
+    [Tags]  switch-platform  L3  traffic  feature
 
 Bi-Directional L3 Traffic flow=a<->b traffic framerate 10000 pktsize 512 
     ${stream}=   L3 add  name=a_b_flow  flow=a<->b  src_ip=10.200.0.2  src_gw=10.200.0.1
@@ -176,7 +176,7 @@ Bi-Directional L3 Traffic flow=a<->b traffic framerate 10000 pktsize 512
     ${report}=     fetch port stats
     verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
     stop traffic   ${stream}  
-    [Tags]  T5  switch  L3  traffic  feature
+    [Tags]  switch-platform  L3  traffic  feature
 
 Bi-Directional L3 Traffic flow=a<->b traffic linerate 25% pktsize 256 
     ${stream}=   L3 add  name=a_b_flow  flow=a<->b  src_ip=10.200.0.2  src_gw=10.200.0.1
@@ -188,7 +188,7 @@ Bi-Directional L3 Traffic flow=a<->b traffic linerate 25% pktsize 256
     ${report}=     fetch port stats
     verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
     stop traffic   ${stream}     
-    [Tags]  T5  switch  L3  traffic feature
+    [Tags]  switch-platform  L3  traffic feature
 
 
 Bi-Directional L3 Traffic flow=a<->b traffic linerate 50% pktsize 512 
@@ -201,7 +201,7 @@ Bi-Directional L3 Traffic flow=a<->b traffic linerate 50% pktsize 512
     ${report}=     fetch port stats
     verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
     stop traffic   ${stream}     
-    [Tags]  T5  switch  L3  traffic feature
+    [Tags]  switch-platform  L3  traffic feature
 
 
 Bi-Directional L3 Traffic flow=a<->b traffic linerate 75% pktsize 1024 
@@ -214,7 +214,7 @@ Bi-Directional L3 Traffic flow=a<->b traffic linerate 75% pktsize 1024
     ${report}=     fetch port stats
     verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
     stop traffic   ${stream}     
-    [Tags]  T5  switch  L3  traffic feature
+    [Tags]  switch-platform  L3  traffic feature
 
 
 Bi-Directional L3 Traffic flow=a<->b traffic linerate 100% pktsize 1518 
@@ -227,7 +227,7 @@ Bi-Directional L3 Traffic flow=a<->b traffic linerate 100% pktsize 1518
     ${report}=     fetch port stats
     verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
     stop traffic   ${stream}     
-    [Tags]  T5  switch  L3  traffic feature
+    [Tags]  switch-platform  L3  traffic feature
 
 Uni-Directional L3 Traffic Jumbo flow=a->b traffic framerate 10000 pktsize 9216 
     ${stream}=   L3 add  name=a_b_flow  flow=a->b  src_ip=10.200.0.2  src_gw=10.200.0.1
@@ -239,7 +239,7 @@ Uni-Directional L3 Traffic Jumbo flow=a->b traffic framerate 10000 pktsize 9216
     ${report}=     fetch port stats
     verify results traffic  transmitted_frame_rate  received_frame_rate  ${ratetolerance}
     stop traffic   ${stream}    
-    [Tags]  T5  switch  L3  traffic  feature
+    [Tags]  switch-platform  L3  traffic  feature
  
 Uni-Directional L3 Traffic Jumbo flow=a->b traffic linerate 10% pktsize 9216 
     ${stream}=   L3 add  name=a_b_flow  flow=a->b  src_ip=10.200.0.2  src_gw=10.200.0.1
@@ -251,7 +251,7 @@ Uni-Directional L3 Traffic Jumbo flow=a->b traffic linerate 10% pktsize 9216
     ${report}=     fetch port stats
     verify results traffic  transmitted_frame_rate  received_frame_rate  ${ratetolerance}
     stop traffic   ${stream}    
-    [Tags]  T5  switch  L3  traffic  feature
+    [Tags]  switch-platform  L3  traffic  feature
 
 Bi-Directional L3 Traffic Jumbo flow=a<->b traffic linerate 25% pktsize 9216 
     ${stream}=   L3 add  name=a_b_flow  flow=a<->b  src_ip=10.200.0.2  src_gw=10.200.0.1
@@ -263,7 +263,7 @@ Bi-Directional L3 Traffic Jumbo flow=a<->b traffic linerate 25% pktsize 9216
     ${report}=     fetch port stats
     verify results traffic  transmitted_frame_rate  received_frame_rate  ${ratetolerance}
     stop traffic   ${stream}     
-    [Tags]  T5  switch  L3  traffic feature  
+    [Tags]  switch-platform  L3  traffic feature  
 
 Bi-Directional L3 Traffic Jumbo flow=a<->b traffic linerate 50% pktsize 9216 
     ${stream}=   L3 add  name=a_b_flow  flow=a<->b  src_ip=10.200.0.2  src_gw=10.200.0.1
@@ -275,7 +275,7 @@ Bi-Directional L3 Traffic Jumbo flow=a<->b traffic linerate 50% pktsize 9216
     ${report}=     fetch port stats
     verify results traffic  transmitted_frame_rate  received_frame_rate  ${ratetolerance}
     stop traffic   ${stream}     
-    [Tags]  T5  switch  L3  traffic feature  
+    [Tags]  switch-platform  L3  traffic feature  
 
 Bi-Directional L3 Traffic Jumbo flow=a<->b traffic linerate 100% pktsize 9216 
     ${stream}=   L3 add  name=a_b_flow  flow=a<->b  src_ip=10.200.0.2  src_gw=10.200.0.1
@@ -287,7 +287,7 @@ Bi-Directional L3 Traffic Jumbo flow=a<->b traffic linerate 100% pktsize 9216
     ${report}=     fetch port stats
     verify results traffic  transmitted_frame_rate  received_frame_rate  ${ratetolerance}
     stop traffic   ${stream}     
-    [Tags]  T5  switch  L3  traffic feature 
+    [Tags]  switch-platform  L3  traffic feature 
 
 
 * Keywords

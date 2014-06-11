@@ -4,7 +4,7 @@ Suite Setup  bigtap suite setup
 Suite Teardown   bigtap suite teardown
 Test Setup   base test setup
 Test Teardown  traffic teardown 
-Force Tags   platform Sanity
+Force Tags  SwitchLight  BigTap  switch-platform
 Library  keywords/BsnCommon.py
 Library  keywords/AppController.py
 Library  keywords/BigTap.py
@@ -38,7 +38,9 @@ ${core_ly2_15}  ethernet27  #1GBASE-LX     FINISAR CORP.     FTRJ1319P1BTL-MD
 ${core_ly2_16}  ethernet28  #1GBASE-SX     FINISAR CORP.     FTLF8519P2BNL
 ${core_ly2_17}  ethernet29  #1GBASE-SX     FINISAR CORP.     FTRJ8519P1BNL
 ${core_ly2_18}  ethernet30  #10GBASE-SR    OEM               SFP-10G85-3M-QU
-${core_ly2_19}  ethernet50  #40GBASE-CR4   Amphenol          624410003
+${core_ly2_19}  ethernet50  #40GBASE-SR4   AVAGO             AFBR-79E4Z-D
+${core_ly2_20}  ethernet51  #40GBASE-SR4   FINISAR           FTL410QE1C-G1
+
 #DELL S4810                   #Type          Vendor            Model
 ${core_d4810_1}   ethernet13  #1GBASE-LX     AVAGO             AFCT-5715PZ-JU1
 ${core_d4810_2}   ethernet14  #1GBASE-LX     HotLava Systems   HLZX1G2A
@@ -58,8 +60,10 @@ ${core_d4810_15}  ethernet27  #1GBASE-LX     FINISAR CORP.     FTRJ1319P1BTL-MD
 ${core_d4810_16}  ethernet28  #1GBASE-SX     FINISAR CORP.     FTLF8519P2BNL
 ${core_d4810_17}  ethernet29  #1GBASE-SX     FINISAR CORP.     FTRJ8519P1BNL
 ${core_d4810_18}  ethernet30  #10GBASE-SR    OEM               SFP-10G85-3M-QU
-${core_d4810_19}  ethernet52  #40GBASE-CR4   Amphenol          624410003
-${core_d4810_20}  ethernet49  #40GBASE-CR4   Amphenol          624410003  (This is the link to APP-RLY2-5)
+${core_d4810_19}  ethernet52  #40GBASE-SR4   AVAGO             AFBR-79E4Z-D
+${core_d4810_20}  ethernet51  #40GBASE-SR4   FINISAR           FTL410QE1C-G1
+${core_d4810_21}  ethernet49  #40GBASE-CR4   Amphenol          624410003  (This is the link to APP-RLY2-5)
+${core_d4810_22}  ethernet50  #40GBASE-SR4   AVAGO             AFBR-79EQDZ  (This is the link to APP-RLY2-5)
 
 *Test Case
 
@@ -461,7 +465,7 @@ Verify SFP Type:10GBASE-LR Vendor:FibreStore/OEM Model:SFP-10G85-3M-QU
     verify interface state  s1  ${core_d4810_18}  down
     [Tags]  l2  10GBASE-LR  OEM
             
-Verify SFP Type:40GBASE-4CR Vendor:AMPHENOL Model:624410003
+Verify SFP Type:40GBASE-SR4 Vendor:AVAGO Model:AFBR-79E4Z-D
     #Enable specific link
     cli enable interface  s1  ${core_d4810_19}
     Sleep  30
@@ -481,8 +485,30 @@ Verify SFP Type:40GBASE-4CR Vendor:AMPHENOL Model:624410003
     Sleep  30
     #Verify inteface has indeed gone down
     verify interface state  s1  ${core_d4810_19}  down
-    [Tags]  l2  40GBASE-4CR  amphenol
+    [Tags]  l2  40GBASE-SR4   AVAGO  AFBR-79E4Z-D
 
+            
+Verify SFP Type:40GBASE-SR4 Vendor:FINISAR Model:FTL410QE1C-G1
+    #Enable specific link
+    cli enable interface  s1  ${core_d4810_20}
+    Sleep  30
+    #Verify inteface has indeed come up
+    verify interface state  s1  ${core_d4810_20}  up
+    #Verify BigTap Policy is installed
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    #Now start traffic         
+    ${stream}=  L2 add  flow=a->b  line_rate=100  frame_size=64  name=a_b_flow
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    verify results  a  b  transmitted_frame_rate  received_valid_frame_rate    
+    stop traffic  ${stream}
+    cli disable interface  s1  ${core_d4810_20}
+    Sleep  30
+    #Verify inteface has indeed gone down
+    verify interface state  s1  ${core_d4810_20}  down
+    [Tags]  l2  40GBASE-SR4   FINISAR  FTL410QE1C-G1
                                                                      
 * Keywords
 
@@ -524,7 +550,9 @@ bigtap suite setup
     cli disable interface  s1  ${core_d4810_17}
     cli disable interface  s1  ${core_d4810_18}
     cli disable interface  s1  ${core_d4810_19}
-    cli disable interface  s1  ${core_d4810_20}                            
+    cli disable interface  s1  ${core_d4810_20}
+    cli disable interface  s1  ${core_d4810_21}
+    cli disable interface  s1  ${core_d4810_22}                                
     Sleep  30
     #Verify inteface have indeed been disabled
     verify interface state  s1  ${core_d4810_1}  down
@@ -546,7 +574,9 @@ bigtap suite setup
     verify interface state  s1  ${core_d4810_17}  down
     verify interface state  s1  ${core_d4810_18}  down
     verify interface state  s1  ${core_d4810_19}  down
-    verify interface state  s1  ${core_d4810_20}  down                                                                            
+    verify interface state  s1  ${core_d4810_20}  down
+    verify interface state  s1  ${core_d4810_21}  down
+    verify interface state  s1  ${core_d4810_22}  down                                                                                
 
 verify results   [Arguments]  ${send_port}  ${recv_port}  ${transmitted_frames}  ${received_valid_frames}
     Sleep  5
@@ -587,7 +617,9 @@ bigtap suite teardown
     cli enable interface  s1  ${core_d4810_17}
     cli enable interface  s1  ${core_d4810_18}
     cli enable interface  s1  ${core_d4810_19}
-    cli enable interface  s1  ${core_d4810_20}                            
+    cli enable interface  s1  ${core_d4810_20}
+    cli enable interface  s1  ${core_d4810_21}
+    cli enable interface  s1  ${core_d4810_22}                                
     sleep  10
     #Verify inteface have indeed been disabled
     verify interface state  s1  ${core_d4810_1}  up
@@ -610,6 +642,8 @@ bigtap suite teardown
     verify interface state  s1  ${core_d4810_18}  up
     verify interface state  s1  ${core_d4810_19}  up
     verify interface state  s1  ${core_d4810_20}  up
+    verify interface state  s1  ${core_d4810_21}  up
+    verify interface state  s1  ${core_d4810_22}  up    
     sleep  10    
     #Delete existing port-channel on s1
     cli add portchannel  s1  8  13,14,15,16,17,18,25,26,27,28,29  L2
