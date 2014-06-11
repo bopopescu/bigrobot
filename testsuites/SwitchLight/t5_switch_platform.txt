@@ -176,13 +176,13 @@ Verify ntp server on leaf after process ntp restart
     verify ntp server  s2  time-c.nist.gov    
     [Tags]  switch-platform  ntp  feature
 
-Verify the default gateway configuration can be deleted and added
-    delete static ip  s1  ${netmask}  ${gateway}
-    add static ip  s1  ${netmask}  ${gateway1}
-    delete static ip  s1  ${netmask}  ${gateway1}
-    add static ip  s1  ${netmask}  ${gateway}
-    ping from switch  s1  ${gateway}  
-    [Tags]  switch-platform  InitialConfig  feature  
+#Verify the default gateway configuration can be deleted and added
+#    delete static ip  s1  ${netmask}  ${gateway}
+#    add static ip  s1  ${netmask}  ${gateway1}
+#    delete static ip  s1  ${netmask}  ${gateway1}
+#    add static ip  s1  ${netmask}  ${gateway}
+#    ping from switch  s1  ${gateway}  
+#    [Tags]  switch-platform  InitialConfig  feature  
            
 Verify multiple SSH connections to Management Port 
     Log    Step 1 - Verify multiple SSH connections to Management Port
