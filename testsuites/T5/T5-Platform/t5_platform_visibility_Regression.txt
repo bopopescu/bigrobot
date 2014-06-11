@@ -1,7 +1,7 @@
 == T5 Platform Visibility Test Suite - Regression Test Bed ==
 
 * Setting
-Documentation    T5 Controller Platform Test Suite - SPAN Verification
+Documentation    T5 Controller Platform Test Suite - Visibiility (SPAN/TestPath)
 Suite Setup      base suite setup
 Suite Teardown   base suite teardown
 Test Setup       T5 Platform Test Setup
