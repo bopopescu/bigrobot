@@ -115,6 +115,15 @@ Delete and add router vns ip
 	Delete and add router vns ip 
 	[Tags]									feature			
 
+Activate and deactivate router segment interface
+    Activate and deactivate router segment interface
+    [Tags]                                  feature         run1
+
+Activate and deactivate router interface
+    Activate and deactivate router interface
+    [Tags]                                  feature         run1
+
+    
 Change tagged endpoint IP address
 	Change tagged host endpoint IP address
 	[Tags]									feature		
@@ -1053,6 +1062,60 @@ Verify clear blocked endpoint works
     REST add portgroup to vns                   Y                                       Y1                      ${leaf0_pc7}            1007    
     
     
+Activate and deactivate router segment interface
+    ${ipAddr4} =                                BASH get interface ipv4         h4-rack0                        bond0
+    Should Not Be Empty                         ${ipAddr4}
+    ${ipAddr5} =                                BASH get interface ipv4         h5-rack0                        bond0
+    Should Not Be Empty                         ${ipAddr5}
+    BASH ping                                   h4-rack0                        10.251.1.1                      count=10
+    BASH ping                                   h5-rack0                        10.251.2.1                      count=10
+    ${value} =                                  BASH verify arp                 h4-rack0                        10.251.1.1
+    Should Be True                              ${value}        
+    ${value} =                                  BASH verify arp                 h5-rack0                        10.251.2.1
+    Should Be True                              ${value} 
+    ${mac1} =                                   BASH get intf mac               h4-rack0                        bond0
+    ${result} =                                 REST show endpoints mac         ${mac1}
+    ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
+    Should Contain                              ${attachpoint}                  ${leaf0_pc4}    
+    ${mac2} =                                   BASH get intf mac               h5-rack0                        bond0
+    ${result} =                                 REST show endpoints mac         ${mac2}
+    ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
+    Should Contain                              ${attachpoint}                  ${leaf0_pc5}    
+    ${loss} =                                   BASH ping                       h4-rack0                        10.251.2.11             count=10
+    Should Be True                              ${loss} == 0                    
+    REST disable router segment intf            X                               X1
+    ${loss} =                                   BASH ping                       h4-rack0                        10.251.2.11             count=10
+    Should Be True                              ${loss} == 100
+    REST enable router segment intf             X                               X1
+    ${loss} =                                   BASH ping                       h4-rack0                        10.251.2.11             count=10
+    Should Be True                              ${loss} < 20
+    BASH delete route                           h1                              10.251.3.0/24           10.251.1.1
+    BASH delete route                           h3                              10.251.1.0/24           10.251.3.1
+
+Activate and deactivate router interface
+    BASH ping                                   h4-rack0                        10.252.1.11                      count=5
+    ${value} =                                  BASH verify arp                 h4-rack0                         10.251.1.1
+    Should Be True                              ${value}        
+    ${value} =                                  BASH verify arp                 h7-rack0                        10.252.1.1
+    Should Be True                              ${value} 
+    ${mac4} =                                   BASH get intf mac               h4-rack0                        bond0
+    ${result} =                                 REST show endpoints mac         ${mac4}
+    ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
+    Should Contain                              ${attachpoint}                  ${leaf0_pc4}    
+    ${mac7} =                                   BASH get intf mac               h7-rack0                        bond0.1007
+    ${result} =                                 REST show endpoints mac         ${mac7}
+    ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
+    Should Contain                              ${attachpoint}                  ${leaf0_pc7}    
+    ${loss} =                                   BASH ping                       h4-rack0                        10.252.1.11             count=10
+    Should Be True                              ${loss} == 0    
+    REST disable router intf                    X                               system
+    ${loss} =                                   BASH ping                       h4-rack0                        10.252.1.11             count=10
+    Should Be True                              ${loss} == 100    
+    REST enable router intf                     X                               system
+    ${loss} =                                   BASH ping                       h4-rack0                        10.252.1.11             count=10
+    Should Be True                              ${loss} < 20    
+      
+    
 initialize host
 	BASH delete tag										h6-rack0								bond0.1006				soft_error=${true}
 	BASH delete tag										h7-rack0								bond0.1007				soft_error=${true}
@@ -1094,7 +1157,6 @@ initialize host
   	BASH delete route									h1-rack1								10.253.3.0/24			10.253.2.1
 	BASH delete route									h1-rack1 								10.251.0.0/16			10.253.2.1
   	BASH delete route									h1-rack1								10.252.0.0/16			10.253.2.1	
-
 	BASH init intf								h4-rack0								bond0
 	BASH init intf								h5-rack0								bond0
 	BASH init intf								h6-rack0								bond0
@@ -1407,20 +1469,19 @@ teardown topology
 	BASH init intf										h10-rack0								bond0	
 	BASH init intf										h1-rack1								bond0	
 	BASH init intf										h3-rack1								bond0	
-	BASH network restart                                h1-rack0                                timeout=30
-	BASH network restart                                h2-rack0                                timeout=30
-    BASH network restart                                h3-rack0                                timeout=30
-    BASH network restart                                h4-rack0                                timeout=30
-    BASH network restart                                h5-rack0                                timeout=30
-    BASH network restart                                h6-rack0                                timeout=30
-    BASH network restart                                h7-rack0                                timeout=30
-    BASH network restart                                h8-rack0                                timeout=30
-    BASH network restart                                h9-rack0                                timeout=30
-    BASH network restart                                h10-rack0                               timeout=30
-    BASH network restart                                h1-rack1                                timeout=30
-    BASH network restart                                h2-rack1                                timeout=30
-    BASH network restart                                h3-rack1                                timeout=30
-    BASH network restart                                h3-rack1                                timeout=30
+	BASH network restart                                h2-rack0                                timeout=60
+    BASH network restart                                h3-rack0                                timeout=60
+    BASH network restart                                h4-rack0                                timeout=60
+    BASH network restart                                h5-rack0                                timeout=60
+    BASH network restart                                h6-rack0                                timeout=60
+    BASH network restart                                h7-rack0                                timeout=60
+    BASH network restart                                h8-rack0                                timeout=60
+    BASH network restart                                h9-rack0                                timeout=60
+    BASH network restart                                h10-rack0                               timeout=60
+    BASH network restart                                h1-rack1                                timeout=60
+    BASH network restart                                h2-rack1                                timeout=60
+    BASH network restart                                h3-rack1                                timeout=60
+    BASH network restart                                h3-rack1                                timeout=60
 	REST delete tenant routers intf to system			X
 	REST delete tenant routers intf to system			Y
 	REST delete tenant routers intf to system			Z									
