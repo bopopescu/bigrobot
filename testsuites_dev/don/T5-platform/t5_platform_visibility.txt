@@ -1,9 +1,9 @@
 == T5 Platform Visibility Test Suite - Physical Colo Test Bed ==
 
 * Setting
-Documentation    T5 Controller Platform Test Suite - SPAN Verification
+Documentation    T5 Controller Platform Test Suite - Visibiility (SPAN/TestPath)
 Suite Setup      base suite setup
-Suite Teardown   base suite teardown
+#Suite Teardown   base suite teardown
 Test Setup       T5 Platform Test Setup
 Test Teardown    T5 Platform Test Teardown
 Force Tags       T5  IronHorse  Platform  Visibility
@@ -55,7 +55,7 @@ ${s1IxiaVerifyInt}	eth1
 * Test Case 
 
 T0 Setup
-	[Tags]  feature  setup
+	[Tags]  feature  setup  testpath
 	bash network restart  h1
 	bash add tag  h1  bond0  10 
 	bash add ip address  h1  10.10.10.51/24  bond0.10
@@ -136,7 +136,12 @@ T0 Setup
 	...			src_mac=aa:bb:01:00:00:03  dst_mac=aa:bb:02:00:00:03
 	...			src_ip=100.1.1.3  src_gw=100.1.1.100  dst_ip=100.1.2.3  dst_gw=100.1.2.100	
 	...			protocol=UDP  src_port=1000  dst_port=2000
-		
+	
+	${stream-ab4}=	L3 add  flow=a<->b  frame_rate=100  frame_size=64  name=ab4_flow
+	...			src_mac=aa:bb:01:00:00:04  dst_mac=aa:bb:02:00:00:04
+	...			src_ip=100.1.1.4  src_gw=100.1.1.100  dst_ip=100.1.2.4  dst_gw=100.1.2.100	
+	...			protocol=UDP  src_port=1100  dst_port=2100
+	
 	${stream-cd1}=  L3 add  flow=c<->d  frame_rate=100  frame_size=64  name=cd1_flow
 	...			src_mac=aa:bb:03:00:00:01  dst_mac=aa:bb:04:00:00:01
 	...			src_ip=100.3.1.1  src_gw=100.3.1.100  dst_ip=100.4.1.1  dst_gw=100.4.1.100	
@@ -152,6 +157,19 @@ T0 Setup
 	start traffic  ${stream-ab3}
 	start traffic  ${stream-cd1}
 	start traffic  ${stream-ac1}
+	
+
+T00 Ixia Setup
+
+	${bogus_ethertype}=  L3 add  flow=a<->b  frame_rate=100  frame_size=64  
+	...			name=ab1_flow	ethertype=88cc
+	...			src_ip_step=0.0.0.1  dst_ip_step=0.0.0.1 
+	...			src_mac=aa:bb:01:00:00:01  dst_mac=aa:bb:02:00:00:01
+	...			src_ip=100.1.1.2  src_gw=100.1.1.100  dst_ip=100.1.2.2  dst_gw=100.1.2.100	
+	...			protocol=TCP  src_port=1000  dst_port=2000 
+	
+	
+	
 	
 
 T1 Configure SPAN session for Single interface - Direction Both
@@ -367,9 +385,6 @@ T15 Delete SPAN session for Port-Group interface - Direction Egress
 	Should not be true  ${returnVal}
 	
 
-####################
-
-
 T16 Configure SPAN session - Direction Both
 	[Tags]  span  feature  
 	${returnVal} =  rest add monitor session  1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	 ${s1IxiaDstSwitch}	 ${s1IxiaDstInt}  direction=both  
@@ -395,7 +410,7 @@ T16 Configure SPAN session - Direction Both
 	
 
 T17 Configure SPAN Session - Direction Ingress
-	[Tags]  span  feature  
+	[Tags]  span  feature   don
 	${returnVal} =  rest add monitor session  1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	 ${s1IxiaDstSwitch}	 ${s1IxiaDstInt}  direction=ingress
     Should be true  ${returnVal}
 	${returnVal} =  rest verify monitor session	 1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	${s1IxiaDstSwitch}	${s1IxiaDstInt}  direction=ingress
@@ -413,7 +428,7 @@ T17 Configure SPAN Session - Direction Ingress
 	
 	
 T18 Configure SPAN Session - Direction Egress
-	[Tags]  span  feature
+	[Tags]  span  feature  don
 	${returnVal} =  rest add monitor session  1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	 ${s1IxiaDstSwitch}	 ${s1IxiaDstInt}  direction=egress
     Should be true  ${returnVal}
 	${returnVal} =  rest verify monitor session	 1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	${s1IxiaDstSwitch}	${s1IxiaDstInt}  direction=egress
@@ -431,7 +446,7 @@ T18 Configure SPAN Session - Direction Egress
 
 
 T19 Configure SPAN session for SRC-IP-CIDR - Direction Ingress
-	[Tags]  span  feature 
+	[Tags]  span  feature   don
 	${returnVal} =  rest add monitor session  1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	 ${s1IxiaDstSwitch}	 ${s1IxiaDstInt}  direction=ingress  src-ip-cidr=100.1.1.1/32
     Should be true  ${returnVal}
 	${returnVal} =  rest verify monitor session	 1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	${s1IxiaDstSwitch}	${s1IxiaDstInt}  direction=ingress  src-ip-cidr=100.1.1.1/32
@@ -464,7 +479,7 @@ T19 Configure SPAN session for SRC-IP-CIDR - Direction Ingress
 
 
 T20 Configure SPAN session for SRC-PORT - Direction Ingress
-	[Tags]  span  feature
+	[Tags]  span  feature  don
 	${returnVal} =  rest add monitor session  1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	 ${s1IxiaDstSwitch}	 ${s1IxiaDstInt}  direction=ingress  src-tp-port=1000
     Should be true  ${returnVal}
 	${returnVal} =  rest verify monitor session	 1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	${s1IxiaDstSwitch}	${s1IxiaDstInt}  direction=ingress  src-tp-port=1000
@@ -477,12 +492,14 @@ T20 Configure SPAN session for SRC-PORT - Direction Ingress
 	Should be true  ${returnVal}
 	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	src port 1000 and udp  IP
 	Should be true  ${returnVal}
+	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	src port 1100 and tcp  IP
+	Should not be true  ${returnVal}
 	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	src port 1100 and udp  IP
 	Should not be true  ${returnVal}
 	
 
 T21 Configure SPAN session for DST-IP-CIDR - Direction Ingress
-	[Tags]  span  feature
+	[Tags]  span  feature   don
 	${returnVal} =  rest add monitor session  1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	 ${s1IxiaDstSwitch}	 ${s1IxiaDstInt}  direction=ingress  dst-ip-cidr=100.1.2.1/32
     Should be true  ${returnVal}
 	${returnVal} =  rest verify monitor session	 1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	${s1IxiaDstSwitch}	${s1IxiaDstInt}  direction=ingress  dst-ip-cidr=100.1.2.1/32
@@ -515,7 +532,7 @@ T21 Configure SPAN session for DST-IP-CIDR - Direction Ingress
 	
 	
 T22 Configure SPAN session for DST-PORT - Direction Ingress
-	[Tags]  span  feature
+	[Tags]  span  feature  don
 	${returnVal} =  rest add monitor session  1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	 ${s1IxiaDstSwitch}	 ${s1IxiaDstInt}  direction=ingress  dst-tp-port=2000
     Should be true  ${returnVal}
 	${returnVal} =  rest verify monitor session	 1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	${s1IxiaDstSwitch}	${s1IxiaDstInt}  direction=ingress  dst-tp-port=2000
@@ -533,7 +550,7 @@ T22 Configure SPAN session for DST-PORT - Direction Ingress
 	
 	
 T23 Configure SPAN session for SRC-MAC - Direction Ingress
-	[Tags]  span  feature
+	[Tags]  span  feature  don
 	${returnVal} =  rest add monitor session  1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	 ${s1IxiaDstSwitch}	 ${s1IxiaDstInt}  direction=ingress  src-mac=aa:bb:01:00:00:01
     Should be true  ${returnVal}
 	${returnVal} =  rest verify monitor session	 1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	${s1IxiaDstSwitch}	${s1IxiaDstInt}  direction=ingress  src-mac=aa:bb:01:00:00:01
@@ -569,93 +586,27 @@ T24 Configure SPAN session for DST-MAC - Direction Ingress
 
 
 T25 Configure SPAN session for IP-Proto - Direction Ingress
-	[Tags]  span  feature
-	${returnVal} =  rest add monitor session  1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	 ${s1IxiaDstSwitch}	 ${s1IxiaDstInt}  direction=ingress  ip-proto=6
-    Should be true  ${returnVal}
-	${returnVal} =  rest verify monitor session	 1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	${s1IxiaDstSwitch}	${s1IxiaDstInt}  direction=ingress  ip-proto=6
-	Should be true  ${returnVal}
-	rest activate monitor session	1
-	
-	sleep  3
-	
-	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	src port 1000 and tcp  IP
-	Should be true  ${returnVal}
-	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	src port 1100 and tcp  IP
-	Should be true  ${returnVal}
-	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	udp  IP
-	Should not be true  ${returnVal}
+	[Tags]  span  feature manual
+	manual passed
 	
 	
 T26 Configure SPAN session for IP-DSCP - Direction Ingress
-	[Tags]  span  feature
-	${returnVal} =  rest add monitor session  1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	 ${s1IxiaDstSwitch}	 ${s1IxiaDstInt}  direction=ingress  ip-dscp=6
-    Should be true  ${returnVal}
-	${returnVal} =  rest verify monitor session	 1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	${s1IxiaDstSwitch}	${s1IxiaDstInt}  direction=ingress  ip-dscp=6
-	Should be true  ${returnVal}
-	rest activate monitor session	1
-
-	sleep  3
-	
-	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	src port 8000 and tcp  IP
-	Should be true  ${returnVal}
-	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	src port 7000 and tcp  IP
-	Should not be true  ${returnVal}
-	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	src port 9000 and tcp  IP
-	Should not be true  ${returnVal}
-
+	[Tags]  span  feature  manual
+	manual passed 
 
 T27 Configure SPAN session for IP-ECN - Direction Ingress
-	[Tags]  span  feature
-	${returnVal} =  rest add monitor session  1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	 ${s1IxiaDstSwitch}	 ${s1IxiaDstInt}  direction=ingress  ip-ecn=6
-    Should be true  ${returnVal}
-	${returnVal} =  rest verify monitor session	 1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	${s1IxiaDstSwitch}	${s1IxiaDstInt}  direction=ingress  ip-ecn=6
-	Should be true  ${returnVal}
-	rest activate monitor session	1
+	[Tags]  span  feature  manual
+	manual passed 
 
-	sleep  3
 	
-	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	src port 8000 and tcp  IP
-	Should be true  ${returnVal}
-	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	src port 7000 and tcp  IP
-	Should not be true  ${returnVal}
-	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	src port 9000 and tcp  IP
-	Should not be true  ${returnVal}
-	
-
 T28 Configure SPAN session for Ethertype - Direction Ingress
-	[Tags]  span  feature
-	${returnVal} =  rest add monitor session  1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	 ${s1IxiaDstSwitch}	 ${s1IxiaDstInt}  direction=ingress  ip-proto=6
-    Should be true  ${returnVal}
-	${returnVal} =  rest verify monitor session	 1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	${s1IxiaDstSwitch}	${s1IxiaDstInt}  direction=ingress  ip-proto=6
-	Should be true  ${returnVal}
-	rest activate monitor session	1
-	
-	sleep  3
-	
-	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	src port 1000 and tcp  IP
-	Should be true  ${returnVal}
-	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	src port 1100 and tcp  IP
-	Should be true  ${returnVal}
-	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	udp  IP
-	Should not be true  ${returnVal}
+	[Tags]  span  feature  manual
+	manual failed 
 	
 
 T29 Configure SPAN session for Tenant/VNS - Direction Ingress
-	[Tags]  span  feature
-	${returnVal} =  rest add monitor session  1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	 ${s1IxiaDstSwitch}	 ${s1IxiaDstInt}  direction=ingress  ip-proto=6
-    Should be true  ${returnVal}
-	${returnVal} =  rest verify monitor session	 1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	${s1IxiaDstSwitch}	${s1IxiaDstInt}  direction=ingress  ip-proto=6
-	Should be true  ${returnVal}
-	rest activate monitor session	1
-	
-	sleep  3
-	
-	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	src port 1000 and tcp  IP
-	Should be true  ${returnVal}
-	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	src port 1100 and tcp  IP
-	Should be true  ${returnVal}
-	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	udp  IP
-	Should not be true  ${returnVal}
+	[Tags]  span  feature  manual
+	manual  failed
 	
 	
 T30 Configure SPAN session with multiple options - Direction Ingress
@@ -666,11 +617,12 @@ T30 Configure SPAN session with multiple options - Direction Ingress
 
 
 T31 Configure SPAN session with Different VLANs
-	[Tags]  span  feature  manual  untested
+	[Tags]  span  feature  manual-untested
 
 
 T32 Configure SPAN session with Spine switches 
-	[Tags]  span  feature  manual  untested
+	[Tags]  span  feature  manual
+	manual passed
 	
 	
 T33 Configure SPAN session with multiple source interfaces
@@ -684,11 +636,12 @@ T34 Configure SPAN session with multiple destination interfaces
 
 
 T35 Configure multiple SPAN sessions in multiple switches
-	[Tags]  span  feature  manual  untested
-	Configure Span
-	Activate / Deactivate 
+	[Tags]  span  feature  manual-untested
+	
 
-
+T36 Configure peer links as source interfaces
+	[Tags]  span  feature  manual
+	manual failed
 
 
 
@@ -781,7 +734,7 @@ T8 Intra Tenant/ Different Segments: DST Is Other Segment Gateway
 	[Tags]  testpath  feature
 	${returnVal}=  rest configure testpath controller view	 src-tenant=autoT1	src-segment=v1	src-ip=${h1_tag_ip}  dst-tenant=autoT1	dst-segment=v2	dst-ip=${gateway2IP}  ip-protocol=icmp
 	Should Be True  ${returnVal}
-	${returnVal}=  rest configure testpath fabric_view  test-name=Test8	 src-tenant=autoT1	src-segment=v1	src-ip=${h1_tag_ip}	 dst-tenant=autoT1	dst-segment=v2	dst-ip=${gateway2IP}  ip-protocol=icmp 
+	${returnVal}=  rest configure testpath fabric view  test-name=Test8	 src-tenant=autoT1	src-segment=v1	src-ip=${h1_tag_ip}	 dst-tenant=autoT1	dst-segment=v2	dst-ip=${gateway2IP}  ip-protocol=icmp 
 	Should Be True  ${returnVal}
 	${returnVal}=  rest verify testpath fabric view  Test8  HostPing  leaf  host=h1  ip=${gateway2IP}
 	Should Be True  ${returnVal}
@@ -825,41 +778,46 @@ T11 Inter Tenant: SRC & DST Are In Different Racks
 	Should Be True  ${returnVal}
 
 
-T12 Tracking Topology Change: 
-	[Tags]  testpath  full  manual-untested
-    Tracking Topology Change
-    
 
 Verify test packet path with L2 traffic to an unknown destination originating from a tenant which spans across multiple racks
-	[Tags]  testpath  full  manual-untested
-    test packet path with L2 traffic to an unknown destination
+	[Tags]  testpath  full  manual
+    manual passed
 
 Verify the updated paths in test packet path with L2 traffic within a single tenant while introducing path failures
-	[Tags]  testpath  full  manual-untested
-    manual untested
+	[Tags]  testpath  full  manual
+    manual passed
     
 Verify the updated paths in test packet path with L3 traffic between multiple tenants while introducing path failures
-	[Tags]  testpath  feature  manual-untested
-    manual untested
+	[Tags]  testpath  feature  manual
+    manual passed
 
 Verify all the CLI options for the test packet path command
-	[Tags]  testpath  feature  manual-untested
-    manual untested
-    
-Flow Trace on ARP, Ping, UDP & TCP
-	[Tags]  testpath  feature  manual-untested
-    manual untested
-    
-Flow Trace on MAC, VLAN, IP, L4-Port
-	[Tags]  testpath  feature  manual-untested
-    manual untested
-    
-Flow Trace on src-endpoint, dest-endpoint, src-l4-port, dst-l4-port
-	[Tags]  testpath  feature  manual-untested
-    manual untested
-    
-    
+	[Tags]  testpath  feature  manual
+    manual passed
 
+Private vns test
+   [Tags]  testpath  feature  manual
+    manual failed
+
+Destination as a ECMP Group 
+	[Tags]  testpath  feature  manual
+    manual passed
+    
+Destination as a default router
+	[Tags]  testpath  feature  manual
+    manual passed
+    
+Inter Tenant - Blocked by Policy
+	[Tags]  testpath  feature  manual
+    manual failed 
+
+Inter Tenant - Accept by Policy
+	[Tags]  testpath  feature  manual
+    manual passed 
+    
+Tracking with multiple test paths
+	[Tags]  testpath  feature  manual
+    manual passed 
 
 3. intra tenant test
     3.3 3-tier app. We need tcp traffic.
