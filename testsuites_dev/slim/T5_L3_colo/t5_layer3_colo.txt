@@ -1354,38 +1354,31 @@ setup topology
 	BASH ifconfig ip address						h10-rack0								10.253.1.11/24			bond0.1010
 	BASH ifconfig ip address						h1-rack1								10.251.1.21/24			bond0
 	BASH ifconfig ip address						h3-rack1								10.251.2.23/24			bond0.2003
-	BASH add route									h4-rack0								10.251.2.0/24			10.251.1.1
-	BASH add route									h4-rack0								10.251.3.0/24			10.251.1.1
+	BASH add route									h4-rack0								10.251.0.0/16			10.251.1.1
 	BASH add route									h4-rack0								10.252.0.0/16			10.251.1.1
 	BASH add route									h4-rack0								10.253.0.0/16			10.251.1.1
-	BASH add route									h5-rack0								10.251.1.0/24			10.251.2.1
-  	BASH add route									h5-rack0								10.251.3.0/24			10.251.2.1
+	BASH add route									h5-rack0								10.251.0.0/16			10.251.2.1
 	BASH add route									h5-rack0								10.252.0.0/16			10.251.2.1
   	BASH add route									h5-rack0								10.253.0.0/16			10.251.2.1
-  	BASH add route									h6-rack0								10.251.1.0/24			10.251.3.1
-  	BASH add route									h6-rack0								10.251.2.0/24			10.251.3.1
+  	BASH add route									h6-rack0								10.251.0.0/16			10.251.3.1
   	BASH add route									h6-rack0								10.252.0.0/16			10.251.3.1
   	BASH add route									h6-rack0								10.253.0.0/16			10.251.3.1
-  	BASH add route									h7-rack0								10.252.2.0/24			10.252.1.1
-  	BASH add route									h7-rack0								10.252.3/0/24			10.252.1.1
-  	BASH add route									h7-rack0								10.251.0.0/16			10.252.1.1
+  	BASH add route									h7-rack0								10.251.0/0/16			10.252.1.1
+  	BASH add route									h7-rack0								10.252.0.0/16			10.252.1.1
   	BASH add route									h7-rack0								10.253.0.0/16			10.252.1.1
-  	BASH add route									h8-rack0								10.252.1.0/24			10.252.2.1
-  	BASH add route									h8-rack0								10.252.3.0/24			10.252.2.1
-	BASH add route									h8-rack0								10.251.0.0/16			10.252.2.1
+  	BASH add route									h8-rack0								10.251.0.0/16			10.252.2.1
+	BASH add route									h8-rack0								10.252.0.0/16			10.252.2.1
   	BASH add route									h8-rack0								10.253.0.0/16			10.252.2.1
-  	BASH add route									h9-rack0								10.252.1.0/24			10.252.3.1
-  	BASH add route									h9-rack0								10.252.2.0/24			10.252.3.1
   	BASH add route									h9-rack0								10.251.0.0/16			10.252.3.1
+  	BASH add route									h9-rack0								10.252.0.0/16			10.252.3.1
   	BASH add route									h9-rack0								10.253.0.0/16			10.252.3.1
- 	BASH add route									h10-rack0								10.253.2.0/24			10.253.1.1
-  	BASH add route									h10-rack0								10.253.3/0/24			10.253.1.1
-  	BASH add route									h10-rack0								10.251.0.0/16			10.253.1.1
+ 	BASH add route									h10-rack0								10.251.0.0/16			10.253.1.1
   	BASH add route									h10-rack0								10.252.0.0/16			10.253.1.1
-  	BASH add route									h1-rack1								10.253.1.0/24			10.251.1.1
-  	BASH add route									h1-rack1								10.253.2.0/24			10.251.1.1
-	BASH add route									h1-rack1								10.253.3.0/24			10.251.1.1
+  	BASH add route									h10-rack0								10.253.0.0/16			10.253.1.1
+  	BASH add route									h1-rack1								10.251.0.0/16			10.251.1.1
   	BASH add route									h1-rack1								10.252.0.0/16			10.251.1.1
+	BASH add route									h1-rack1								10.253.0.0/16			10.251.1.1
+  	BASH add route									h3-rack1								10.251.0.0/16			10.251.2.1
 	BASH add route									h3-rack1								10.252.0.0/16			10.251.2.1
   	BASH add route									h3-rack1								10.253.0.0/16			10.251.2.1	
 	REST add tenant routers intf to system			X
@@ -1419,40 +1412,33 @@ teardown topology
 	REST delete vns									Z							Z2
 	REST delete vns									Z							Z3
 	initialize host
-	BASH delete route									h4-rack0								10.251.2.0/24			10.251.1.1
-	BASH delete route									h4-rack0								10.251.3.0/24			10.251.1.1
-	BASH delete route									h4-rack0								10.252.0.0/16			10.251.1.1
-	BASH delete route									h4-rack0								10.253.0.0/16			10.251.1.1
-	BASH delete route									h5-rack0								10.251.1.0/24			10.251.2.1
-  	BASH delete route									h5-rack0								10.251.3.0/24			10.251.2.1
-	BASH delete route									h5-rack0								10.252.0.0/16			10.251.2.1
-  	BASH delete route									h5-rack0								10.253.0.0/16			10.251.2.1
-  	BASH delete route									h6-rack0								10.251.1.0/24			10.251.3.1
-  	BASH delete route									h6-rack0								10.251.2.0/24			10.251.3.1
-  	BASH delete route									h6-rack0								10.252.0.0/16			10.251.3.1
-  	BASH delete route									h6-rack0								10.253.0.0/16			10.251.3.1
-  	BASH delete route									h7-rack0								10.252.2.0/24			10.252.1.1
-  	BASH delete route									h7-rack0								10.252.3/0/24			10.252.1.1
-  	BASH delete route									h7-rack0								10.251.0.0/16			10.252.1.1
-  	BASH delete route									h7-rack0								10.253.0.0/16			10.252.1.1
-  	BASH delete route									h8-rack0								10.252.1.0/24			10.252.2.1
-  	BASH delete route									h8-rack0								10.252.3.0/24			10.252.2.1
-	BASH delete route									h8-rack0								10.251.0.0/16			10.252.2.1
-  	BASH delete route									h8-rack0								10.253.0.0/16			10.252.2.1
-  	BASH delete route									h9-rack0								10.252.1.0/24			10.252.3.1
-  	BASH delete route									h9-rack0								10.252.2.0/24			10.252.3.1
-  	BASH delete route									h9-rack0								10.251.0.0/16			10.252.3.1
-  	BASH delete route									h9-rack0								10.253.0.0/16			10.252.3.1
- 	BASH delete route									h10-rack0								10.253.2.0/24			10.253.1.1
-  	BASH delete route									h10-rack0								10.253.3/0/24			10.253.1.1
-  	BASH delete route									h10-rack0								10.251.0.0/16			10.253.1.1
-  	BASH delete route									h10-rack0								10.252.0.0/16			10.253.1.1
-  	BASH delete route									h1-rack1								10.253.1.0/24			10.253.2.1
-  	BASH delete route									h1-rack1								10.253.3.0/24			10.253.2.1
-	BASH delete route									h1-rack1								10.251.0.0/16			10.253.2.1
-  	BASH delete route									h1-rack1								10.252.0.0/16			10.253.2.1
-  	BASH delete route									h3-rack1								10.252.0.0/16			10.251.2.1
-  	BASH delete route									h3-rack1								10.253.0.0/16			10.251.2.1
+    BASH delete route                               h4-rack0                                10.251.0.0/16           10.251.1.1
+    BASH delete route                               h4-rack0                                10.252.0.0/16           10.251.1.1
+    BASH delete route                               h4-rack0                                10.253.0.0/16           10.251.1.1
+    BASH delete route                               h5-rack0                                10.251.0.0/16           10.251.2.1
+    BASH delete route                               h5-rack0                                10.252.0.0/16           10.251.2.1
+    BASH delete route                               h5-rack0                                10.253.0.0/16           10.251.2.1
+    BASH delete route                               h6-rack0                                10.251.0.0/16           10.251.3.1
+    BASH delete route                               h6-rack0                                10.252.0.0/16           10.251.3.1
+    BASH delete route                               h6-rack0                                10.253.0.0/16           10.251.3.1
+    BASH delete route                               h7-rack0                                10.251.0/0/16           10.252.1.1
+    BASH delete route                               h7-rack0                                10.252.0.0/16           10.252.1.1
+    BASH delete route                               h7-rack0                                10.253.0.0/16           10.252.1.1
+    BASH delete route                               h8-rack0                                10.251.0.0/16           10.252.2.1
+    BASH delete route                               h8-rack0                                10.252.0.0/16           10.252.2.1
+    BASH delete route                               h8-rack0                                10.253.0.0/16           10.252.2.1
+    BASH delete route                               h9-rack0                                10.251.0.0/16           10.252.3.1
+    BASH delete route                               h9-rack0                                10.252.0.0/16           10.252.3.1
+    BASH delete route                               h9-rack0                                10.253.0.0/16           10.252.3.1
+    BASH delete route                               h10-rack0                               10.251.0.0/16           10.253.1.1
+    BASH delete route                               h10-rack0                               10.252.0.0/16           10.253.1.1
+    BASH delete route                               h10-rack0                               10.253.0.0/16           10.253.1.1
+    BASH delete route                               h1-rack1                                10.251.0.0/16           10.251.1.1
+    BASH delete route                               h1-rack1                                10.252.0.0/16           10.251.1.1
+    BASH delete route                               h1-rack1                                10.253.0.0/16           10.251.1.1
+    BASH delete route                               h3-rack1                                10.251.0.0/16           10.251.2.1
+    BASH delete route                               h3-rack1                                10.252.0.0/16           10.251.2.1
+    BASH delete route                               h3-rack1                                10.253.0.0/16           10.251.2.1  
 	BASH delete tag										h6-rack0								bond0.1006				soft_error=${true}
 	BASH delete tag										h7-rack0								bond0.1007				soft_error=${true}
 	BASH delete tag										h8-rack0								bond0.1008				soft_error=${true}
