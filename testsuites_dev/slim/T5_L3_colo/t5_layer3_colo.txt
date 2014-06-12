@@ -113,11 +113,11 @@ Delete and add router vns ip
 
 Activate and deactivate router segment interface
     Activate and deactivate router segment interface
-    [Tags]                                  feature         run
+    [Tags]                                  feature         run1
 
 Activate and deactivate router interface
     Activate and deactivate router interface
-    [Tags]                                  feature         run
+    [Tags]                                  feature         run1
 
     
 Change tagged endpoint IP address
@@ -224,15 +224,15 @@ Inter tenant dhcp relay with two dhcp servers on both vns
 	
 Verify inter tenant L3 traffic is getting drop with null next hop	
 	Verify inter tenant L3 traffic is getting drop with null next hop
-	[Tags]                                 sanity                 run    
+	[Tags]                                 sanity                 run1    
     
 Verify same mac address showing up on two ports in the same segment is blocked	
 	Verify same mac address showing up on two ports in the same segment is blocked
-	[Tags]                                 sanity                 run       
+	[Tags]                                 sanity                 run1       
     
 Verify clear blocked endpoint works	
 	Verify clear blocked endpoint works
-	[Tags]                                 sanity                 run         
+	[Tags]                                 sanity                 run1        
     
     
 * Keywords
