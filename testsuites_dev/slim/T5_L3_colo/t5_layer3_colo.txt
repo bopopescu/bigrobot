@@ -57,31 +57,31 @@ L3 intra tenant traceroute
 
 Dhcp discover on the same vns as server with dhcp-relay enabled
 	DHCP discovery on the same vns as server with dhcp-relay enabled
-	[Tags]									smoke				sanity				run		
+	[Tags]									smoke				sanity				run		    dhcp
 
 Dhcp discover on the same vns as server without dhcp-relay enabled
 	DHCP discovery on the same vns as server without dhcp-relay enabled
-	[Tags]									smoke				sanity				run		
+	[Tags]									smoke				sanity				run		    dhcp
 
 Intra tenant dhcp relay 
 	L3 intra tenant dhcp relay on same rack with valid circuitid
-	[Tags]									smoke				sanity				run		
+	[Tags]									smoke				sanity				run		    dhcp
 	
 Intra tenant dhcp relay with invalid circuit id
 	L3 intra tenant dhcp relay on same rack with invalid circuitid
-	[Tags]									smoke				sanity				run		
+	[Tags]									smoke				sanity				run		    dhcp
 
 Intra tenant dhcp relay across rack
 	L3 intra tenant dhcp relay across rack
-	[Tags]									smoke				sanity						
+	[Tags]									sanity			dhcp		
 	
 Intra tenant dhcp relay with circuit id across rack
 	L3 intra tenant dhcp relay with circuit id across rack
-	[Tags]									smoke				sanity					
+	[Tags]									sanity          dhcp					
 
 Delete and Add dhcp relay
 	Delete and Add L3 dhcp request 
-	[Tags]									sanity					run	
+	[Tags]									sanity		    dhcp        
 
 Add and delete untagged endpoints with existing host
 	L3 add and delete untagged endpoints with existing host
@@ -101,7 +101,7 @@ Verify L3 endpoint aging
 	
 Verify L3 ttl 1 is not being forwarded
 	Check L3 ttl 1 is dropped
-	[Tags]									sanity			
+	[Tags]									sanity			icmpa
 
 Change router vns ip
 	Change router ip address
@@ -113,11 +113,11 @@ Delete and add router vns ip
 
 Activate and deactivate router segment interface
     Activate and deactivate router segment interface
-    [Tags]                                  feature         run1
+    [Tags]                                  feature         run
 
 Activate and deactivate router interface
     Activate and deactivate router interface
-    [Tags]                                  feature         run1
+    [Tags]                                  feature         run
 
     
 Change tagged endpoint IP address
@@ -207,7 +207,7 @@ Configure overlapping IP with private keyword on the same tenant
 
 Verify L3 intra tenant traffic with ip options
     Verify L3 intra tenant traffic with ip options  
-    [Tags]                                  feature                 run3
+    [Tags]                                  feature              run
     
 	
 Inter tenant L3 traffic same rack	
@@ -224,15 +224,15 @@ Inter tenant dhcp relay with two dhcp servers on both vns
 	
 Verify inter tenant L3 traffic is getting drop with null next hop	
 	Verify inter tenant L3 traffic is getting drop with null next hop
-	[Tags]                                 sanity                      run1         
+	[Tags]                                 sanity                 run    
     
 Verify same mac address showing up on two ports in the same segment is blocked	
 	Verify same mac address showing up on two ports in the same segment is blocked
-	[Tags]                                 sanity                      run1         
+	[Tags]                                 sanity                 run       
     
 Verify clear blocked endpoint works	
 	Verify clear blocked endpoint works
-	[Tags]                                 sanity                      run1         
+	[Tags]                                 sanity                 run         
     
     
 * Keywords
@@ -402,7 +402,9 @@ DHCP discovery on the same vns as server with dhcp-relay enabled
 DHCP discovery on the same vns as server without dhcp-relay enabled
 	REST delete portgroup from vns				Z								Z2								${leaf0_pc11}			-1
 	BASH init intf								h1-rack1						bond0
-	BASH start service							h4-rack0						isc-dhcp-server
+	BASH stop service							h4-rack0						isc-dhcp-server
+    sleep                                       1
+    BASH start service                          h4-rack0                        isc-dhcp-server
 	sleep										1
 	${value} = 									BASH check service status		h4-rack0						isc-dhcp-server
 	Should Contain								${value}						is started
