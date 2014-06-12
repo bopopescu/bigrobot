@@ -14,6 +14,9 @@ import argparse
 import robot  # import to force append local robot libraries than python installed packages
 
 
+if 'BIGROBOT_TESTBED' in os.environ:
+    print "Unsetting env BIGROBOT_TESTBED..."
+    del os.environ['BIGROBOT_TESTBED']
 
 vmdk_name = "/var/lib/jenkins/jobs/bvs\ master/lastSuccessful/archive/target/appliance/images/bvs/controller-bvs-*-SNAPSHOT.qcow2"
 mininet_vmdk = "/var/lib/jenkins/jobs/t6-mininet-vm/builds/lastSuccessfulBuild/archive/t6-mininet-vm/ubuntu-kvm/t6-mininet.qcow2"
@@ -195,41 +198,57 @@ s1:\n\
   alias: leaf0-a\n\
   user: admin\n\
   password: adminadmin\n\
+  console_ip: cs-rack10\n\
+  console_port: 6003\n\
 s2:\n\
   ip: 10.195.0.34\n\
   alias: leaf0-b\n\
   user: admin\n\
   password: adminadmin\n\
+  console_ip: cs-rack10\n\
+  console_port: 6004\n\
 s3:\n\
   ip: 10.195.0.35\n\
   alias: leaf1-a\n\
   user: admin\n\
   password: adminadmin\n\
+  console_ip: cs-rack10\n\
+  console_port: 6005\n\
 s4:\n\
   ip: 10.195.0.36\n\
   alias: leaf1-b\n\
   user: admin\n\
   password: adminadmin\n\
+  console_ip: cs-rack10\n\
+  console_port: 6006\n\
 s5:\n\
   ip: 10.195.0.31\n\
   alias: leaf2-a\n\
   user: admin\n\
   password: adminadmin\n\
+  console_ip: cs-rack10\n\
+  console_port: 6007\n\
 s6:\n\
   ip: 10.195.0.32\n\
   alias: leaf2-b\n\
   user: admin\n\
   password: adminadmin\n\
+  console_ip: cs-rack10\n\
+  console_port: 6008\n\
 s7:\n\
   ip: 10.195.0.21\n\
   alias: spine0\n\
   user: admin\n\
   password: adminadmin\n\
+  console_ip: cs-rack10\n\
+  console_port: 6001\n\
 s8:\n\
   ip: 10.195.0.22\n\
   alias: spine1\n\
   user: admin\n\
   password: adminadmin\n\
+  console_ip: cs-rack10\n\
+  console_port: 6002\n\
 h1:\n\
   ip: 10.195.0.103\n\
   user: root\n\
@@ -353,5 +372,4 @@ if __name__ == '__main__':
     parser.add_argument("--regress",
                         help="This is temporarily used in CI Jenkins")
     main()
-    print "Success!!!"
     sys.exit(0)

@@ -4,7 +4,7 @@ Suite Setup  lag suite setup
 Suite Teardown   lag suite teardown
 Test Setup   base test setup
 Test Teardown   lag test teardown
-Force Tags   switchlight platform sanity
+Force Tags   SwitchLight  switch-platform  BigTap
 Library  keywords/AppController.py
 Library  keywords/BsnCommon.py
 Library  keywords/BigTap.py

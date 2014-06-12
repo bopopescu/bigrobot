@@ -4,7 +4,7 @@ Suite Setup  bigtap suite setup
 Suite Teardown   base suite teardown
 Test Setup   bigtap test setup
 Test Teardown  bigtap test teardown 
-Force Tags   platform Sanity
+Force Tags  BigTap  SwitchLight
 Library  keywords/BsnCommon.py
 Library  keywords/AppController.py
 Library  keywords/BigTap.py

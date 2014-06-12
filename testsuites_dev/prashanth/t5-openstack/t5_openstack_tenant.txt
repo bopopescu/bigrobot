@@ -16,7 +16,7 @@ Library		     keywords/Ixia.py
 Library          keywords_dev/prashanth/T5Openstack.py
 Library			 Collections.py
 Resource		 testsuites/T5/t5_physical_variables.txt
-Resource         testsuites_dev/prashanth/t5-openstack/t5_openstack_variables.txt
+Resource         testsuites/T5/t5_openstack_variables.txt
 
 * Test Case 
 
@@ -109,7 +109,7 @@ checking multiple network same subnet in a single tenant
 	openstack add net  app-tenant  app-net1
 	openstack add subnet  app-tenant  app-net1  app-net1  30.0.0.0/24
 	sleep  2	
-	${result}=  openstack verify vns  app-tenant  app-net1
+	${result}=  openstack verify vns  app-tenant  app-net2
 	Should not be True  ${result}
 	
 * keywords

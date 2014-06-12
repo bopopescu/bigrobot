@@ -1480,7 +1480,8 @@ class T5Platform(object):
         helpers.test_log("Running command:\ncopy %s %s" % (src, dst))
         t = test.Test()
         c = t.controller(node)
-        c.config("config")
+        c.send("enable")
+        c.send("config")
         c.send("copy %s %s" % (src, dst))
         options = c.expect([r'[Pp]assword: ', r'\(yes/no\)\?', c.get_prompt()])
         content = c.cli_content()
@@ -1652,6 +1653,7 @@ class T5Platform(object):
         try:
             c.config("config")
             c.bash("> .ssh/known_hosts")
+            c.config("config")
             if "Error" in c.cli_content():
                 helpers.log("Error in CLI content")
                 return False
@@ -2589,9 +2591,13 @@ class T5Platform(object):
 
             # Need to enable developer mode to use DHCP option. Magic string
             # to enable it is 'dhcp'.
-            n_console.expect(r'Do you accept the EULA.* > ')
-            n_console.send('dhcp')
-            n_console.expect(r'Developer.* mode enabled.*')
+            if dhcp == 'yes':
+                helpers.log("Entering into Developer mode for dhcp options..")
+                n_console.expect(r'Do you accept the EULA.* > ')
+                n_console.send('dhcp')
+                n_console.expect(r'Developer.* mode enabled.*')
+            else:
+                helpers.log("In Normal First boot mode NOT DEVELOPER MODE NO DHCP OPTION..")
 
             # The "real" EULA
             n_console.expect(r'Do you accept the EULA.* > ')
@@ -2603,10 +2609,13 @@ class T5Platform(object):
         n_console.send('bsn')
         n_console.expect(r'Retype Password for emergency recovery user > ')
         n_console.send('bsn')
-        n_console.expect(r'Please choose an IP mode:.*[\r\n]')
-        n_console.expect(r'> ')
-        if dhcp == 'no':
-            n_console.send('1')  # Manual
+        if dhcp == 'yes':
+            n_console.expect(r'Please choose an IP mode:.*[\r\n]')
+            n_console.expect(r'> ')
+            # dhcp
+            n_console.send('2')  # DHCP
+        else:
+            # n_console.send('1')  # Manual
             n_console.expect(r'IP address .* > ')
             n_console.send(ip_address)
 
@@ -2623,9 +2632,6 @@ class T5Platform(object):
             n_console.send(dns_search)
             n_console.expect(r'Hostname > ')
             n_console.send(hostname)
-        else:
-            # dhcp
-            n_console.send('2')  # DHCP
         helpers.sleep(3)  # Sleep for a few seconds just in case...
         return True
 
@@ -2658,7 +2664,7 @@ class T5Platform(object):
 
         if join_cluster == 'yes':
             n_console.send('2')  # join existing cluster
-            n_console.expect(r'Existing node IP.*> ')
+            n_console.expect(r'Existing \b(node|Controller)\b IP.*> ')
             n_console.send(cluster_ip)
             n_console.expect(r'Administrator password for cluster.*> ')
             n_console.send(cluster_passwd)
@@ -3524,7 +3530,7 @@ class T5Platform(object):
         t = test.Test()
         c = t.controller('master')
         url = '/api/v1/data/controller/applications/bvs/test/path/controller-view'
-              
+
         if(kwargs.get('dst-segment')):
             url = url + '[dst-segment="%s"]' % (kwargs.get('dst-segment'))
         if(kwargs.get('dst-tenant')):
@@ -3539,7 +3545,7 @@ class T5Platform(object):
             url = url + '[dst-ip="%s"]' % (kwargs.get('dst-ip'))
         if(kwargs.get('src-tenant')):
             url = url + '[src-tenant="%s"]' % (kwargs.get('src-tenant'))
-        
+
         result = c.rest.get(url)['content']
         try:
             logicalError = result[0]['summary'][0]['logical-error']
@@ -3608,8 +3614,8 @@ class T5Platform(object):
         except:
             helpers.log("Test Path Sucees In Setting Up Fabric View")
             return True
-        
-        
+
+
     def rest_verify_testpath_fabric_view(self, testName, trafficMode, *args, **kwargs):
 
         '''
@@ -3666,7 +3672,7 @@ class T5Platform(object):
                             return False
                         else:
                             currentHops.append(hop['hop-name'])
-                            currentFlowCount[hop["hop-name"]] = hop["flow-counter"].strip('[]')
+                            currentFlowCount[hop["hop-name"]] = hop["tcam-counter"].strip('[]')
                             currentPktInCount[hop["hop-name"]] = hop["pktin-counter"].strip('[]')
 
                     except Exception as e:
@@ -3689,7 +3695,7 @@ class T5Platform(object):
         result = c.rest.get(url)['content']
         for hop in result[0]['physical-path']:
             try:
-                newFlowCount = int(hop["flow-counter"].strip('[]'))
+                newFlowCount = int(hop["tcam-counter"].strip('[]'))
                 newPktInCount = int(hop["pktin-counter"].strip('[]'))
 
                 if(newFlowCount > int(currentFlowCount[hop["hop-name"]])):
@@ -3740,7 +3746,7 @@ class T5Platform(object):
 
     def rest_verify_testpath_timeout(self, pathName):
         ''' Verify whether the testpath is timedout or not
-            Returns : True if timedout 
+            Returns : True if timedout
         '''
         t = test.Test()
         c = t.controller("master")
@@ -3899,7 +3905,7 @@ class T5Platform(object):
 
             # issue the <cr> to test that the command actually works
             if key == '<cr>':
-                
+
                 if re.match(r'boot.*', string) or re.match(r'.*compare.*', string) or re.match(r'.*configure.*', string) or re.match(r'.*copy.*', string) or re.match(r'.*delete.*', string) or re.match(r'.*enable.*', string) or re.match(r'.*end.*', string) or re.match(r'.*exit.*', string) or re.match(r'.*failover.*', string) or re.match(r'.*logout.*', string):
                     helpers.log("Ignoring line - %s" % string)
                     num = num - 1
@@ -3909,9 +3915,14 @@ class T5Platform(object):
                     helpers.log("Ignoring line - %s" % string)
                     num = num - 1
                     continue
-                
+
                 helpers.log(" complete CLI show command: ******%s******" % string)
-                c.cli(string)
+                if string == ' support':
+                    helpers.log("Issuing %s cmd with timeout." % string)
+                    c.cli(string, timeout=200)
+                else:
+                    helpers.log("Issuing cmd:%s with default timeout" % string)
+                    c.cli(string)
 
                 if num == 1:
                     helpers.log("AT END: ******%s******" % string)
@@ -4089,22 +4100,22 @@ class T5Platform(object):
             if key == '<cr>':
 
                 if re.match(r'.*boot.*', string) or re.match(r'.*compare.*', string) or re.match(r'.*configure.*', string) or re.match(r'.*copy.*', string) or re.match(r'.*delete.*', string) or re.match(r'.*enable.*', string) or re.match(r'.*end.*', string) or re.match(r'.*exit.*', string) or re.match(r'.*failover.*', string) or re.match(r'.*logout.*', string):
-                    helpers.log("Ignoring line - %s" % string)                    
+                    helpers.log("Ignoring line - %s" % string)
                     num = num - 1
                     continue
 
                 if re.match(r'.*show controller.*', string) or re.match(r'.*no.*', string) or re.match(r'.*ping.*', string) or re.match(r'.*reauth.*', string) or re.match(r'.*set .*', string) or re.match(r'.*show logging.*', string) or re.match(r'.*system.*', string) or re.match(r'.*test.*', string) or re.match(r'.*upgrade.*', string) or re.match(r'.*watch.*', string):
-                    helpers.log("Ignoring line - %s" % string)                    
+                    helpers.log("Ignoring line - %s" % string)
                     num = num - 1
                     continue
-                
-                if re.match(r'.*clear interface-stats.*', string):                
-                    helpers.log("Ignoring line due to PR BVS-1753 - %s" % string)                    
-                    num = num - 1
-                    continue
-                
+
                 helpers.log(" complete CLI show command: ******%s******" % string)
-                c.enable(string)
+                if string == ' support':
+                    helpers.log("Issuing cmd:%s with timeout option.." % string)
+                    c.enable(string, timeout=200)
+                else:
+                    helpers.log("Issuing cmd:%s with default timeout.." % string)
+                    c.enable(string)
 
                 if num == 1:
                     return string
@@ -4264,8 +4275,8 @@ class T5Platform(object):
                     num = num - 1
                     continue
 
-                if re.match(r'.*member port-group.*vlan.*', string):                
-                    helpers.log("Ignoring line due to PR BVS-1623 - %s" % string)                    
+                if re.match(r'.*member port-group.*vlan.*', string):
+                    helpers.log("Ignoring line due to PR BVS-1623 - %s" % string)
                     num = num - 1
                     continue
 
@@ -4289,17 +4300,10 @@ class T5Platform(object):
                         num = num - 1
                         continue
 
-                    if re.match(r'.*member port-group.*vlan.*', string):                
-                        helpers.log("Ignoring line due to PR BVS-1623 - %s" % string)                    
+                    if re.match(r'.*member port-group.*vlan.*', string):
+                        helpers.log("Ignoring line due to PR BVS-1623 - %s" % string)
                         num = num - 1
                         continue
-                                        
-                    if re.match(r'.*clear interface-stats.*', string):                
-                        helpers.log("Ignoring line due to PR BVS-1753 - %s" % string)                    
-                        num = num - 1
-                        continue
-                    
-                    
 
                     helpers.log(" complete CLI show command: ******%s******" % string)
                     c.config(string)
@@ -4329,7 +4333,7 @@ class T5Platform(object):
                         helpers.log("***** Call the cli walk again with  --- %s" % string)
 
                         # If different, it means that we entered a new config submode.  Call the function again but set config_submode flag to True
-                        #c.config('show this')
+                        # c.config('show this')
                         self.cli_walk_config(newstring, file_name, padding, config_submode=True, exec_mode_done=False)
 
                     if num == 1:

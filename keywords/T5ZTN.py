@@ -148,7 +148,7 @@ class T5ZTN(object):
         t = test.Test()
         con = t.dev_console(node, modeless=True)
         con.expect("Starting OpenFlow Agent: ofad", timeout=1000)
-        con.expect(r'.*login:.*$')
+        con.expect(r'.*login:.*$', timeout=60)
         return True
 
     def telnet_verify_ztn_discovery_failed(self, node):
@@ -417,7 +417,7 @@ class T5ZTN(object):
             single = True
 
         if not single:
-            url = ("http://%s/ztn/switch/%s/startup_config"
+            url = ("http://%s/ztn/switch/%s/startup_config?proxy=1"
                    % (str(slave_ip), str(mac)))
             helpers.log("Verifying that Slave controller does not provide"
                         " any startup-config for the switch")
@@ -439,7 +439,7 @@ class T5ZTN(object):
             except:
                 return helpers.test_failure("Other error connecting to Slave")
 
-        url = ("http://%s/ztn/switch/%s/startup_config"
+        url = ("http://%s/ztn/switch/%s/startup_config?proxy=1&internal=1"
                % (str(master_ip), str(mac)))
         helpers.log("Trying to get switch startup config at %s" % url)
         try:
@@ -902,6 +902,40 @@ class T5ZTN(object):
             return helpers.test_failure("Error rebooting switch %s" % switch)
 
         return True
+
+    def telnet_stop_autoboot(self, switch):
+        """
+        Enter switch u-boot shell while switch is booting up
+
+        Inputs:
+        | switch | Alias of the switch |
+
+        Return Value:
+        - True if successfully entered u-boot shell, False otherwise
+        """
+        t = test.Test()
+        s = t.dev_console(switch, modeless=True)
+        try:
+            s.expect("Hit any key to stop autoboot")
+        except:
+            return helpers.test_failure("Unable to stop at u-boot shell")
+
+        s.send("\ ")
+        s.send(helpers.ctrl('c'))
+        options = s.expect([r'[\r\n]*.*login:', r'\=\>'], timeout=100)
+        if options[0] == 0:
+            helpers.log("Something went wrong, trying again")
+            s.send("admin")
+            s.send("enable; config; reload now")
+            s.expect("Hit any key to stop autoboot")
+            s.send("\ ")
+            s.send(helpers.ctrl('c'))
+            s.expect(r'\=\>')
+            helpers.log("U-boot shell entered")
+            return True
+        if options[0] == 1:
+            helpers.log("U-boot shell entered")
+            return True
 
     def enter_loader_shell(self, switch):
         """

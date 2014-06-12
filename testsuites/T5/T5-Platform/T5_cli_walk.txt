@@ -63,7 +63,7 @@ T1 Setup Tenant and VNS
     rest add vns  A  A2
     rest add portgroup to vns  A  A2  rack0pg2  -1
     rest add portgroup to vns  A  A2  rack1pg2  -1
-    [Tags] 	sanity   CLI
+    [Tags] 	sanity   CLI  feature
      
 T2 login/exec mode cli walk
    cli walk exec  file_name=cli_walk_exec

@@ -8,16 +8,15 @@ class TestRail(object):
     '''
 
     def __init__(self):
-        autobot_p = helpers.get_path_autobot()
-        self.configs = self.load_configs(autobot_p)
+        self.configs = self.load_configs()
         u = self.configs['user']
         p = self.configs['password']
         self.url = self.configs['url']
         self.rest = restclient.RestClient(u, p)
 
-    def load_configs(self, path):
+    def load_configs(self):
         try:
-            config_file = path + "/config/testrail.yaml"
+            config_file = helpers.bigrobot_configs_path + "/testrail.yaml"
             config = helpers.load_config(config_file)
         except IOError:
             s = "Unable to open TestRail config file %s" % config_file

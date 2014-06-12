@@ -1,5 +1,5 @@
 * Settings
-Documentation     T5  Switch Platform Traffic Test suite- Iron Horse
+Documentation     switch-platform Platform Traffic Test suite- Iron Horse
 Suite Setup       T5 switch platform test setup
 Suite Teardown    T5 switch platform test teardown
 Test Setup        base test setup
@@ -35,9 +35,9 @@ ${intf_8}=        ethernet47
 ${intf_9}=        ethernet48
 
 ${leaf1_spine0_intf1}=  ethernet49
-${spine0_leaf1_intf1}=  ethernet3
+${spine0_leaf1_intf1}=  ethernet21
 ${leaf2_spine0_intf1}=  ethernet49
-${spine0_leaf2_intf1}=  ethernet3
+${spine0_leaf2_intf1}=  ethernet22
 
 ${count}=         1 
 ${ratetolerance}=     10
@@ -69,7 +69,7 @@ Uni-Directional L2 Traffic flow=a->b traffic framerate 10000 pktsize 64
     #sleep          10
     #${report}=     fetch port stats
     #verify results traffic  transmitted_frames  received_valid_frames  ${tolerance}        
-    [Tags]  T5  switch  L2  traffic  feature   
+    [Tags]  switch-platform  L2  traffic  feature   
 
 Uni-Directional L2 Traffic flow=a->b traffic linerate 10% pktsize 64
     ${stream}=     L2 add  flow=a->b  src_mac=00:11:01:00:00:03  dst_mac=00:11:01:00:00:04  line_rate=10  frame_size=64  ethertype=8000  name=a_b_flow
@@ -86,7 +86,7 @@ Uni-Directional L2 Traffic flow=a->b traffic linerate 10% pktsize 64
     #sleep          10
     #${report}=     fetch port stats
     #verify results traffic  transmitted_frames  received_valid_frames  ${tolerance}    
-    [Tags]  T5  switch  L2  traffic  feature         
+    [Tags]  switch-platform  L2  traffic  feature         
 
 Uni-Directional L2 Traffic flow=a->b traffic framerate 10000 pktsize 256 
     ${stream}=     L2 add  flow=a->b  src_mac=00:11:01:00:00:05  dst_mac=00:11:01:00:00:06  frame_rate=10000  frame_size=256  ethertype=8000  name=a_b_flow
@@ -103,7 +103,7 @@ Uni-Directional L2 Traffic flow=a->b traffic framerate 10000 pktsize 256
     #sleep          10
     #${report}=     fetch port stats
     #verify results traffic  transmitted_frames  received_valid_frames  ${tolerance}        
-    [Tags]  T5  switch  L2  traffic  feature   
+    [Tags]  switch-platform  L2  traffic  feature   
 
 Uni-Directional L2 Traffic flow=a->b traffic linerate 25% pktsize 256
     ${stream}=     L2 add  flow=a->b  src_mac=00:11:01:00:00:07  dst_mac=00:11:01:00:00:08  line_rate=25  frame_size=256  ethertype=8000  name=a_b_flow
@@ -120,7 +120,7 @@ Uni-Directional L2 Traffic flow=a->b traffic linerate 25% pktsize 256
     #sleep          10
     #${report}=     fetch port stats
     #verify results traffic  transmitted_frames  received_valid_frames  ${tolerance}    
-    [Tags]  T5  switch  L2  traffic  feature       
+    [Tags]  switch-platform  L2  traffic  feature       
 
 Uni-Directional L2 Traffic flow=a->b traffic framerate 10000 pktsize 512 
     ${stream}=     L2 add  flow=a->b  src_mac=00:11:01:00:01:01  dst_mac=00:11:01:00:01:02  frame_rate=10000  frame_size=512  ethertype=8000  name=a_b_flow
@@ -137,7 +137,7 @@ Uni-Directional L2 Traffic flow=a->b traffic framerate 10000 pktsize 512
     #sleep          10
     #${report}=     fetch port stats
     #verify results traffic  transmitted_frames  received_valid_frames  ${tolerance}        
-    [Tags]  T5  switch  L2  traffic  feature
+    [Tags]  switch-platform  L2  traffic  feature
 
 Uni-Directional L2 Traffic flow=a->b traffic linerate 50% pktsize 512
     ${stream}=     L2 add  flow=a->b  src_mac=00:11:01:00:00:07  dst_mac=00:11:01:00:00:08  line_rate=50  frame_size=512  ethertype=8000  name=a_b_flow
@@ -154,7 +154,7 @@ Uni-Directional L2 Traffic flow=a->b traffic linerate 50% pktsize 512
     #sleep          10
     #${report}=     fetch port stats
     #verify results traffic  transmitted_frames  received_valid_frames  ${tolerance}    
-    [Tags]  T5  switch  L2  traffic  feature
+    [Tags]  switch-platform  L2  traffic  feature
 
 Bi-Directional L2 Traffic flow=a<->b traffic framerate 10000 pktsize 1024
     ${stream}=     L2 add  flow=a<->b  src_mac=00:11:01:00:02:01  dst_mac=00:11:01:00:02:02  frame_rate=10000  frame_size=1024  ethertype=8000  name=a_b_bidir_flow
@@ -168,7 +168,7 @@ Bi-Directional L2 Traffic flow=a<->b traffic framerate 10000 pktsize 1024
     ${report}=     fetch port stats
     verify results traffic  transmitted_frame_rate  received_frame_rate  ${ratetolerance}  
     stop traffic   ${stream}
-    [Tags]  T5  switch  L2  traffic  feature
+    [Tags]  switch-platform  L2  traffic  feature
 
 Bi-Directional L2 Traffic flow=a<->b traffic framerate 10000 pktsize 1518
     ${stream}=     L2 add  flow=a<->b  src_mac=00:11:01:00:04:01  dst_mac=00:11:01:00:04:02  frame_rate=10000  frame_size=1518  ethertype=8000  name=a_b_bidir_flow
@@ -182,7 +182,7 @@ Bi-Directional L2 Traffic flow=a<->b traffic framerate 10000 pktsize 1518
     ${report}=     fetch port stats
     verify results traffic  transmitted_frame_rate  received_frame_rate  ${ratetolerance}  
     stop traffic   ${stream}
-    [Tags]  T5  switch  L2  traffic  feature  
+    [Tags]  switch-platform  L2  traffic  feature  
 
 Bi-Directional L2 Traffic flow=a<->b traffic linerate 75% pktsize 1518
     ${stream}=     L2 add  flow=a<->b  src_mac=00:11:01:00:03:01  dst_mac=00:11:01:00:03:02  line_rate=75  frame_size=1518  ethertype=8000  name=a_b_bidir_flow
@@ -196,7 +196,7 @@ Bi-Directional L2 Traffic flow=a<->b traffic linerate 75% pktsize 1518
     ${report}=     fetch port stats
     verify results traffic  transmitted_frame_rate  received_frame_rate  ${ratetolerance}  
     stop traffic   ${stream}
-    [Tags]  T5  switch  L2  traffic  feature  
+    [Tags]  switch-platform  L2  traffic  feature  
 
 Bi-Directional L2 Traffic flow=a<->b traffic linerate 100% pktsize 1518
     ${stream}=     L2 add  flow=a<->b  src_mac=00:11:01:00:05:01  dst_mac=00:11:01:00:05:02  line_rate=100  frame_size=1518  ethertype=8000  name=a_b_bidir_flow
@@ -210,7 +210,7 @@ Bi-Directional L2 Traffic flow=a<->b traffic linerate 100% pktsize 1518
     ${report}=     fetch port stats
     verify results traffic  transmitted_frame_rate  received_frame_rate  ${ratetolerance}  
     stop traffic   ${stream}
-    [Tags]  T5  switch  L2  traffic  feature  
+    [Tags]  switch-platform  L2  traffic  feature  
 
 Uni-Directional L2 Traffic jumbo flow=a->b traffic linerate 10% pktsize 9150
     ${stream}=     L2 add  flow=a->b  src_mac=00:11:01:00:01:0e  dst_mac=00:11:01:00:01:0f  line_rate=10  frame_size=9150  ethertype=8000  name=a_b_jumbo_flow
@@ -224,7 +224,7 @@ Uni-Directional L2 Traffic jumbo flow=a->b traffic linerate 10% pktsize 9150
     ${report}=     fetch port stats
     verify results traffic  transmitted_frame_rate  received_frame_rate  ${ratetolerance}  
     stop traffic   ${stream}
-    [Tags]  T5  switch  L2  traffic  jumbo  feature    
+    [Tags]  switch-platform  L2  traffic  jumbo  feature    
 
 Bi-Directional L2 Traffic jumbo flow=a<->b traffic linerate 10% pktsize 9150
     ${stream}=     L2 add  flow=a<->b  src_mac=00:11:01:00:01:0a  dst_mac=00:11:01:00:01:0b  line_rate=10  frame_size=9150  ethertype=8000  name=a_b_bidir_jumbo_flow
@@ -238,7 +238,7 @@ Bi-Directional L2 Traffic jumbo flow=a<->b traffic linerate 10% pktsize 9150
     ${report}=     fetch port stats
     verify results traffic  transmitted_frame_rate  received_frame_rate  ${ratetolerance}  
     stop traffic   ${stream}
-    [Tags]  T5  switch  L2  traffic  jumbo  feature  
+    [Tags]  switch-platform  L2  traffic  jumbo  feature  
 
 Bi-Directional L2 Traffic jumbo flow=a<->b traffic linerate 25% pktsize 9150
     ${stream}=     L2 add  flow=a<->b  src_mac=00:11:01:00:01:0a  dst_mac=00:11:01:00:01:0b  line_rate=25  frame_size=9150  ethertype=8000  name=a_b_bidir_jumbo_flow
@@ -252,7 +252,7 @@ Bi-Directional L2 Traffic jumbo flow=a<->b traffic linerate 25% pktsize 9150
     ${report}=     fetch port stats
     verify results traffic  transmitted_frame_rate  received_frame_rate  ${ratetolerance}  
     stop traffic   ${stream}
-    [Tags]  T5  switch  L2  traffic  jumbo  feature  
+    [Tags]  switch-platform  L2  traffic  jumbo  feature  
 
 Bi-Directional L2 Traffic jumbo flow=a<->b traffic linerate 50% pktsize 9150
     ${stream}=     L2 add  flow=a<->b  src_mac=00:11:01:00:01:0a  dst_mac=00:11:01:00:01:0b  line_rate=50  frame_size=9150  ethertype=8000  name=a_b_bidir_jumbo_flow
@@ -266,7 +266,7 @@ Bi-Directional L2 Traffic jumbo flow=a<->b traffic linerate 50% pktsize 9150
     ${report}=     fetch port stats
     verify results traffic  transmitted_frame_rate  received_frame_rate  ${ratetolerance}  
     stop traffic   ${stream}
-    [Tags]  T5  switch  L2  traffic  jumbo  feature  
+    [Tags]  switch-platform  L2  traffic  jumbo  feature  
 
 Bi-Directional L2 Traffic jumbo flow=a<->b traffic linerate 100% pktsize 9150
     ${stream}=     L2 add  flow=a<->b  src_mac=00:11:01:00:01:0a  dst_mac=00:11:01:00:01:0b  line_rate=100  frame_size=9150  ethertype=8000  name=a_b_bidir_jumbo_flow
@@ -280,7 +280,7 @@ Bi-Directional L2 Traffic jumbo flow=a<->b traffic linerate 100% pktsize 9150
     ${report}=     fetch port stats
     verify results traffic  transmitted_frame_rate  received_frame_rate  ${ratetolerance}  
     stop traffic   ${stream}
-    [Tags]  T5  switch  L2  traffic  jumbo  feature  
+    [Tags]  switch-platform  L2  traffic  jumbo  feature  
 
 leaf1 spine interface shut no shut Uni-Directional L2 Traffic flow=a->b traffic framerate 10000 pktsize 64 
     ${stream}=     L2 add  flow=a->b  src_mac=00:11:01:00:00:01  dst_mac=00:11:01:00:00:02  frame_rate=10000  frame_size=64  ethertype=8000  name=a_b_flow
@@ -300,7 +300,7 @@ leaf1 spine interface shut no shut Uni-Directional L2 Traffic flow=a->b traffic 
     ${report}=     fetch port stats
     verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
     stop traffic   ${stream}          
-    [Tags]  T5  switch  L2  traffic  linkflap  feature          
+    [Tags]  switch-platform  L2  traffic  linkflap  feature          
 
 spine leaf1 interface shut no shut Uni-Directional L2 Traffic flow=a->b traffic framerate 10000 pktsize 64 
     ${stream}=     L2 add  flow=a->b  src_mac=00:11:01:00:00:01  dst_mac=00:11:01:00:00:02  frame_rate=10000  frame_size=64  ethertype=8000  name=a_b_flow
@@ -320,7 +320,7 @@ spine leaf1 interface shut no shut Uni-Directional L2 Traffic flow=a->b traffic 
     ${report}=     fetch port stats
     verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
     stop traffic   ${stream}          
-    [Tags]  T5  switch  L2  traffic  linkflap  feature  test1  
+    [Tags]  switch-platform  L2  traffic  linkflap  feature    
 
 leaf2 spine interface shut no shut bi-Directional L2 Traffic flow=a<->b traffic framerate 10000 pktsize 512 
     ${stream}=     L2 add  flow=a<->b  src_mac=00:11:01:00:00:01  dst_mac=00:11:01:00:00:02  frame_rate=10000  frame_size=512  ethertype=8000  name=a_b_bidir_flow
@@ -340,7 +340,7 @@ leaf2 spine interface shut no shut bi-Directional L2 Traffic flow=a<->b traffic 
     ${report}=     fetch port stats
     verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
     stop traffic   ${stream}          
-    [Tags]  T5  switch  L2  traffic  linkflap  feature  test1  
+    [Tags]  switch-platform  L2  traffic  linkflap  feature    
     
 spine leaf2 interface shut no shut bi-Directional L2 Traffic flow=a<->b traffic framerate 10000 pktsize 1518 
     ${stream}=     L2 add  flow=a->b  src_mac=00:11:01:00:00:01  dst_mac=00:11:01:00:00:02  frame_rate=10000  frame_size=1518  ethertype=8000  name=a_b_bidir_flow
@@ -360,37 +360,37 @@ spine leaf2 interface shut no shut bi-Directional L2 Traffic flow=a<->b traffic 
     ${report}=     fetch port stats
     verify results traffic  transmitted_frame_rate  received_valid_frame_rate  ${ratetolerance}
     stop traffic   ${stream}          
-    [Tags]  T5  switch  L2  traffic  linkflap  feature  test1  
+    [Tags]  switch-platform  L2  traffic  linkflap  feature    
 
 Verify all interfaces show up after sw installation 
     Log    Step 1 - Verify all interfaces show up after sw installation
-    [Tags]  Manual-untested  feature    
-    Manual untested
+    [Tags]  switch-platform  Manual  feature    
+    Manual passed
 
 Verify that the options are maintained on the interface after the system reboot. 
     Log    Step 1 - Verify that the options are maintained on the interface after the system reboot.
-    [Tags]  Manual-untested  feature
-    Manual untested
-
-Verify that the appropriate counters are incremented when the interface receivers error oversized undersized packets
-    Log    Step 1 - Verify that the appropriate counters are incremented when the interface receivers error oversized undersized packets
-    [Tags]  Manual-untested  interface  counters  feature
-    Manual untested
-    
+    [Tags]  switch-platform  Manual  feature
+    Manual passed
+     
 Test the Oversubscription of 40Gig Links between Leaf and Spines
     Log   Step 1 - Test the Oversubscription of 40Gig Links between Leaf and Spines
-    [Tags]  Manual-untested  interface  counters  feature
+    [Tags]  switch-platform  Manual-untested  interface  counters  feature
+    Manual untested
+
+Test the Oversubscription of 10Gig Links between Leaf ports 
+    Log   Step 1 - Test the Oversubscription of 10Gig Links between Leaf ports
+    [Tags]  switch-platform  Manual-untested  interface  counters  feature
     Manual untested
     
 Test the hashing algorithm between the leaf and spine with multiple links L2 Traffic 
     Log    Step 1 - Test the hashing algorithm between the leaf and spine with multiple links
-    [Tags]  Manual-untested  interface  counters  feature
-    Manual untested
+    [Tags]  switch-platform  Manual  interface  counters  feature
+    Manual passed
 
 Test the hashing algorithm between the leaf and spine with multiple links L3 Traffic 
     Log    Step 1 - Test the hashing algorithm between the leaf and spine with multiple links
-    [Tags]  Manual-untested  interface  counters  feature
-    Manual untested
+    [Tags]  switch-platform  Manual  interface  counters  feature
+    Manual passed
     
 
 * Keywords

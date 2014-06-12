@@ -4,7 +4,7 @@ Suite Setup  overlap suite setup
 Suite Teardown   overlap suite teardown
 Test Setup   base test setup
 Test Teardown  base test teardown 
-Force Tags   platform Sanity
+Force Tags  bigtap  overlap
 Library  keywords/BsnCommon.py
 Library  keywords/AppController.py
 Library  keywords/BigTap.py

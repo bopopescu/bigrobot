@@ -4,7 +4,7 @@ Suite Setup  		File Suite Setup
 Suite Teardown   	File Suite Teardown
 Test Setup   		Setup
 Test Teardown  		Teardown
-Force Tags   		Full  Feature  File Management  Platform  T5  IronHorse
+Force Tags   		Full  Feature  FileManagement  Platform  T5  IronHorse
 Library  			keywords/BsnCommon.py
 Library  			keywords/T5Platform.py
 Library  			keywords/T5Utilities.py
@@ -60,7 +60,7 @@ T0.3 Extensive file remote copy
 	Compare  scp://bsn@regress:file-management-testsuite/extensive-file
 	...  running-config
 	Compare  config://extensive-config  running-config
-	Sleep  5
+	Sleep  10
 	Cli Copy  scp://bsn@regress:file-management-testsuite/extensive-file
 	...  extensive-file
 	Compare  extensive-file  running-config
@@ -68,16 +68,20 @@ T0.3 Extensive file remote copy
 T0.4 Extensive config remote replace
 	Cli Copy  scp://bsn@regress:file-management-testsuite/extensive-config-start
 	...  running-config
+	Sleep  10
 	Compare  scp://bsn@regress:file-management-testsuite/extensive-config-start
 	...  running-config
+	Sleep  10
 	Cli Copy  scp://bsn@regress:file-management-testsuite/extensive-config-start
 	...  config://extensive-config-start
 	Compare  config://extensive-config-start  running-config
 
 	Cli Copy  scp://bsn@regress:file-management-testsuite/extensive-config
 	...  running-config
+	Sleep  10
 	Compare  scp://bsn@regress:file-management-testsuite/extensive-config
 	...  running-config
+	Sleep  10
 	Cli Copy  scp://bsn@regress:file-management-testsuite/extensive-config
 	...  config://extensive-config
 	Compare  config://extensive-config  running-config
@@ -87,7 +91,7 @@ T0.5 Extensive config local copy
 	Cli Copy  scp://bsn@regress:file-management-testsuite/extensive-config
 	...  config://extensive-config
 	Cli Copy  config://extensive-config  running-config
-	Sleep  5
+	Sleep  10
 	Compare  scp://bsn@regress:file-management-testsuite/extensive-config
 	...  running-config
 	Compare  config://extensive-config  running-config
@@ -98,6 +102,7 @@ T0.6 Extensive file local copy
 	Cli Copy  scp://bsn@regress:file-management-testsuite/extensive-file
 	...  extensive-file
 	Cli Copy  extensive-file  running-config
+	Sleep  10
 	Compare  scp://bsn@regress:file-management-testsuite/extensive-file
 	...  running-config
 	Compare  extensive-file  running-config
@@ -107,16 +112,17 @@ T0.7 Extensive config local replace
 	...  config://extensive-config-start
 	Cli Copy  config://extensive-config-start  running-config
 	Cli Run  master  show running-config
-	Sleep  5
+	Sleep  10
 	Compare  scp://bsn@regress:file-management-testsuite/extensive-config-start
 	...  running-config
 	Compare  config://extensive-config-start  running-config
 
+	Sleep  10
 	Cli Copy  scp://bsn@regress:file-management-testsuite/extensive-config
 	...  config://extensive-config
 	Cli Copy  config://extensive-config  running-config
 	Cli Run  master  show running-config
-	Sleep  5
+	Sleep  10
 	Compare  scp://bsn@regress:file-management-testsuite/extensive-config
 	...  running-config
 	Compare  config://extensive-config  running-config

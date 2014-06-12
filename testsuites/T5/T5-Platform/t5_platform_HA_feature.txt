@@ -2,8 +2,8 @@
 
 * Setting
 Documentation    T5 Controller Platform Test Suite
-Suite Setup      T5 base suite setup
-Suite Teardown   T5 base suite teardown
+Suite Setup      base suite setup
+Suite Teardown   base suite teardown
 Test Setup       base test setup
 Test Teardown    base test teardown
 Force Tags       T5  IronHorse  Platform  HA
@@ -30,40 +30,40 @@ T2 Verify controller can be decommissioned from a cluster.
     manual untested
 
 T3 Controller Split Brain
-	[Tags]  feature  manual-untested
-    manual untested
+	[Tags]  feature  manual
+    manual failed
     
-T4 Switch Disconnect - Port Down messages
-	[Tags]  feature	 manual
+T4 Switch Disconnect - Packet of Death Messages
+	[Tags]  feature	 pod  manual
     manual passed
     
 T5 Switch Disconnect & Reconnect
-	[Tags]  feature  manual
+	[Tags]  feature  pod  manual
     manual passed
     
 T6 Verify when a switch dies controller properly route around that switch
-	[Tags]  feature  manual-untested
-    manual untested
+	[Tags]  feature  pod  manual
+    manual passed
     
 T7 Verify the correct traffic failover from the MLAG’d hosts during a switch disconnect/die
-	[Tags]  feature  manual-untested
-    manual untested
+	[Tags]  feature  pod  manual
+    manual passed
     
 T8 Verify all the config changes happened when one of the controllers is down is correctly getting synced when it comes back online
-	[Tags]  feature  manual-untested
-    manual untested
+	[Tags]  feature  manual
+    manual passed
     
 T9 Verify all the topology changes happened when one of the controllers is down is correctly getting reflected when it comes back online
-	[Tags]  feature  manual-untested
-    manual untested
+	[Tags]  feature  manual
+    manual passed
     
 T10 Verify the correct controller role changes on both leaf & spine switches during controller failover
 	[Tags]  feature  manual
     manual passed
     
 T11 Flap eth0 of the management interface
-	[Tags]  feature  manual-untested
-    manual untested
+	[Tags]  feature  manual
+    manual failed
     
 T12 Swap eth0 & eth1 in bare metal server 
 	[Tags]  feature  manual-untested

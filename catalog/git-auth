@@ -1,5 +1,6 @@
 #!/bin/sh
-
+# Get the author for the source file. Author is defined as the original committer.
+#
 git_auth() {
     file=$1
     git log --reverse $file | grep Author | head -1 | sed -e 's/^Author: //' -e 's/ <.*//'
