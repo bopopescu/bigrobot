@@ -1469,19 +1469,6 @@ teardown topology
 	BASH init intf										h10-rack0								bond0	
 	BASH init intf										h1-rack1								bond0	
 	BASH init intf										h3-rack1								bond0	
-	BASH network restart                                h2-rack0                                timeout=60
-    BASH network restart                                h3-rack0                                timeout=60
-    BASH network restart                                h4-rack0                                timeout=60
-    BASH network restart                                h5-rack0                                timeout=60
-    BASH network restart                                h6-rack0                                timeout=60
-    BASH network restart                                h7-rack0                                timeout=60
-    BASH network restart                                h8-rack0                                timeout=60
-    BASH network restart                                h9-rack0                                timeout=60
-    BASH network restart                                h10-rack0                               timeout=60
-    BASH network restart                                h1-rack1                                timeout=60
-    BASH network restart                                h2-rack1                                timeout=60
-    BASH network restart                                h3-rack1                                timeout=60
-    BASH network restart                                h3-rack1                                timeout=60
 	REST delete tenant routers intf to system			X
 	REST delete tenant routers intf to system			Y
 	REST delete tenant routers intf to system			Z									
@@ -1593,6 +1580,19 @@ T5 base suite teardown
   	REST delete portgroup 								${leaf3b_arista2}
   	REST delete portgroup 								${leaf3a_arista1}
   	REST delete portgroup 								${leaf3b_arista2}	
+    BASH network restart                                h2-rack0                                timeout=60
+    BASH network restart                                h3-rack0                                timeout=60
+    BASH network restart                                h4-rack0                                timeout=60
+    BASH network restart                                h5-rack0                                timeout=60
+    BASH network restart                                h6-rack0                                timeout=60
+    BASH network restart                                h7-rack0                                timeout=60
+    BASH network restart                                h8-rack0                                timeout=60
+    BASH network restart                                h9-rack0                                timeout=60
+    BASH network restart                                h10-rack0                               timeout=60
+    BASH network restart                                h1-rack1                                timeout=60
+    BASH network restart                                h2-rack1                                timeout=60
+    BASH network restart                                h3-rack1                                timeout=60
+    BASH network restart                                h3-rack1                                timeout=60  	
 	delete fabric switch  
 
 
