@@ -440,7 +440,7 @@ verify traffic rate negative   [Arguments]  ${tx_rate}  ${rx_rate}  ${tx_intf}  
     ${report}=  fetch port stats
     ${tx_value}=  verify dict key  ${report}  ${tx_intf}  transmitted_frame_rate
     ${rx_value}=  verify dict key  ${report}  ${rx_intf}  received_valid_frame_rate
-    Should Be True  ${rx_value} == 0
+    Should Be True  ${rx_value} < 3
 
 verify traffic packet  [Arguments]  ${tx_cnt}  ${rx_cnt}  ${tx_intf}  ${rx_intf}
 	Sleep  5

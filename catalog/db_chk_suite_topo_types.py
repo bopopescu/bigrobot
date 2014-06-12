@@ -52,5 +52,11 @@ if print_mv_commands:
         if x["topo_type"] == 'unknown':
             suite = os.path.splitext(x["source"])[0]
             suite = re.sub(r'^bigrobot/', '', suite)
-            #print("mv %s %s" % (suite + ".topo", suite + ".physical.topo"))
-            print("git mv %s %s" % (suite + ".topo", suite + ".physical.topo"))
+
+            topo_file_current = "../" + suite + ".topo"
+            topo_file_new = "../" + suite + ".physical.topo"
+
+            if helpers.file_exists(topo_file_current):
+                #print("mv %s %s" % (topo_file_current, topo_file_new))
+                print("git mv %s %s" % (topo_file_current, topo_file_new))
+                #print("ls -la %s" % topo_file_current)

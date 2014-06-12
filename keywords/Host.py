@@ -397,6 +397,7 @@ class Host(object):
         """
         Adding IP address to Host interface,For tagged interface user needs
         to specify interface.tagnumber (e.g eth1.10).
+        ifconfig bond0.100 10.10.10.1/24 up
         """
         t = test.Test()
         n = t.node(node)

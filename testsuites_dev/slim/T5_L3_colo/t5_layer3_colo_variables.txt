@@ -1,6 +1,4 @@
 * Variable
-${bsn_ctrl1}			10.210.67.143
-${bsn_ctrl2}			10.210.67.137
 ${tenantX}			X
 ${tenantY}			Y
 ${tenantZ}			Z

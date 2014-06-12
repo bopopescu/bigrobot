@@ -137,7 +137,6 @@ Single Leaf Three Rack Suite Setup
    bring up eth1 h3
    bring up eth1 h4
    bring up eth1 h2
-   bring up 1 gig interface
    sleep  5 
    
 Single Leaf Three Rack Suite Teardown 
@@ -210,11 +209,6 @@ bring up eth1 h2
 	bash init intf  h2  eth1
     bash add ip address  h2  ${h2_single_ip}/24  eth1
     bash ifup intf  h2  eth1
-bring up 1 gig interface
-	config  leaf0-a  ethernet25 1g-sfp
-	config  leaf0-a  ethernet26 1g-sfp
-	config  leaf1-a  ethernet25 1g-sfp
-	config  leaf1-a  ethernet26 1g-sfp
 
   
 

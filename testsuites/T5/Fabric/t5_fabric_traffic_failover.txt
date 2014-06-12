@@ -316,7 +316,6 @@ verify traffic packet  [Arguments]  ${tx_cnt}  ${rx_cnt}  ${tx_intf}  ${rx_intf}
     
 T5 test setup
 	base test setup
-	bring up 1 gig interface
 
 T5 test teardown
 	delete traffic

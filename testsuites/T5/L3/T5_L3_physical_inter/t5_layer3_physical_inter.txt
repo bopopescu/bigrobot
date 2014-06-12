@@ -137,11 +137,11 @@ Add and delete one ECMP members with active traffic in ecmp group
 	[Tags]			manual			feature			ecmp			
 
 Add and delete all ECMP members in ecmp group  
-	manual failed
+	manual passed
 	[Tags]			manual			feature			ecmp			
 
 Delete existing one ECMP members and add new ECMP member
-	manual failed
+	manual passed
 	[Tags]			manual			feature			ecmp			
 
 Verify L3 traffic honor more specific routes with ecmp group
@@ -296,6 +296,10 @@ Dhcp request from overlapping private IP and public IP
     Dhcp request from overlapping private IP and public IP
     [Tags]          solution            dhcp-relay  
     				
+Verify routing loop is not causing packets to loop forever
+    manual passed
+    [Tags]          manual          feature     
+    
 
 * Keywords
 L3 inter tenant same rack untagged with dynamic endpoints
@@ -715,10 +719,10 @@ Add and delete more specific route on tenant over existing static route
     BASH ifup intf                              h2                              bond0.1002
     BASH ifup intf                              h3                              bond0.1003
     BASH ifup intf                              h4                              bond0
-    BASH ifconfig ip address                         h1                              10.251.1.11/24          bond0.1001
-    BASH ifconfig ip address                         h2                              10.251.2.11/24          bond0.1002
-    BASH ifconfig ip address                         h3                              10.252.1.11/24          bond0.1003
-    BASH ifconfig ip address                         h4                              10.252.2.11/24          bond0
+    BASH ifconfig ip address                    h1                              10.251.1.11/24          bond0.1001
+    BASH ifconfig ip address                    h2                              10.251.2.11/24          bond0.1002
+    BASH ifconfig ip address                    h3                              10.252.1.11/24          bond0.1003
+    BASH ifconfig ip address                    h4                              10.252.2.11/24          bond0
     BASH add route                              h1                              10.252.0.0/16           10.251.1.1
     BASH add route                              h1                              10.251.0.0/16           10.251.1.1
     BASH add route                              h2                              10.252.0.0/16           10.251.2.1
@@ -747,6 +751,10 @@ Add and delete more specific route on tenant over existing static route
     ${loss} =                                   BASH ping                       h1                      10.252.1.11             count=5
     Should Be True                              ${loss} == 100
     REST delete static routes                   X                               10.252.1.0/24
+    sleep                                       1
+    Log                                         REST show l3 host table
+    Log                                         REST show l3 cidr table
+    Log                                         CLI show running tenant
     ${loss} =                                   BASH ping                       h1                      10.252.1.11             count=10
     Should Be True                              ${loss} < 40
     BASH delete route                           h1                              10.252.0.0/16           10.251.1.1
@@ -1155,15 +1163,16 @@ Inter tenant dhcp relay
 	BASH add tag								h2								bond0					1002
 	BASH ifup intf								h1								bond0
 	BASH ifup intf								h2								bond0.1002
-	BASH ifconfig ip address							h1								10.251.1.11/24			bond0
+	BASH ifconfig ip address	      			h1								10.251.1.11/24			bond0
 	BASH start service							h1								isc-dhcp-server
 	sleep										1
 	${value} = 									BASH check service status		h1						isc-dhcp-server
 	Should Contain								${value}						is started
 	sleep										1
 	BASH add route								h1								10.252.0.0/16			10.251.1.1
+	BASH ping                                   h1                              10.251.1.1              count=4
 	REST add dhcp relay							Y								Y1						10.251.1.11
-	REST enable dhcp relay						Y								Y1	
+	#REST enable dhcp relay						Y								Y1	
 	sleep										5
 	${ipAddr2} = 								BASH renew dhcpv4 address		h2						bond0.1002
 	Should Not Be Empty							${ipAddr2}
@@ -1231,8 +1240,9 @@ Dhcp request from other host in other tenants with dhcp enabled but no inter ten
 	Should Contain								${value}						is started
 	sleep										1
 	BASH add route								h1								10.252.0.0/16			10.251.1.1
+	BASH ping                                   h1                              10.251.1.1              count=4
 	REST add dhcp relay							Y								Y1						10.251.1.11
-	REST enable dhcp relay						Y								Y1	
+	#REST enable dhcp relay						Y								Y1	
 	sleep										5
 	${ipAddr2} = 								BASH renew dhcpv4 address		h2						bond0.1002
 	Should Not Be Empty							${ipAddr2}
@@ -1286,8 +1296,9 @@ Dhcp request from other host in other tenants without dhcp relay enabled but wit
 	BASH add tag								h2								bond0					1002
 	BASH ifup intf								h1								bond0
 	BASH ifup intf								h2								bond0.1002
-	BASH ifconfig ip address							h1								10.251.1.11/24			bond0
+	BASH ifconfig ip address					h1								10.251.1.11/24			bond0
 	BASH start service							h1								isc-dhcp-server
+	BASH ping                                   h1                              10.251.1.1              count=4
 	sleep										1
 	${value} = 									BASH check service status		h1						isc-dhcp-server
 	Should Contain								${value}						is started
@@ -1313,7 +1324,7 @@ Dhcp request from other host in other tenants without dhcp relay enabled but wit
 	Should Contain								${state5}						L2 Only
 	sleep										5
 	REST add dhcp relay							Y								Y1						10.251.1.11
-	REST enable dhcp relay						Y								Y1	
+	#REST enable dhcp relay						Y								Y1	
 	sleep										5
 	${ipAddr2} = 								BASH renew dhcpv4 address		h2						bond0.1002
 	Should Not Be Empty							${ipAddr2}
@@ -1374,15 +1385,16 @@ Host moved to another vns on another tenant and renew dhcp
 	BASH add tag								h2								bond0					1002
 	BASH ifup intf								h1								bond0
 	BASH ifup intf								h2								bond0.1002
-	BASH ifconfig ip address							h1								10.251.1.11/24			bond0
+	BASH ifconfig ip address					h1								10.251.1.11/24			bond0
 	BASH start service							h1								isc-dhcp-server
+    BASH ping                                   h1                              10.251.1.1              count=4	
 	sleep										1
 	${value} = 									BASH check service status		h1						isc-dhcp-server
 	Should Contain								${value}						is started
 	sleep										1
 	BASH add route								h1								10.252.0.0/16			10.251.1.1
 	REST add dhcp relay							Y								Y1						10.251.1.11
-	REST enable dhcp relay						Y								Y1	
+	#REST enable dhcp relay						Y								Y1	
 	sleep										5
 	${ipAddr2} = 								BASH renew dhcpv4 address		h2						bond0.1002
 	Should Not Be Empty							${ipAddr2}
@@ -1463,14 +1475,16 @@ Inter tenant dhcp relay with multiple dhcp servers
     BASH ifup intf                              h2                              bond0
     BASH ifup intf                              h3                              bond0
     BASH ifup intf                              h4                              bond0
-    BASH ifconfig ip address                         h2                              10.251.1.11/24          bond0
+    BASH ifconfig ip address                    h2                              10.251.1.11/24          bond0
     BASH start service                          h2                              isc-dhcp-server
+    BASH ping                                   h2                              10.251.1.1              count=4    
     sleep                                       1
     ${value} =                                  BASH check service status       h2                      isc-dhcp-server
     Should Contain                              ${value}                        is started
     sleep                                       1
-    BASH ifconfig ip address                         h3                              10.252.1.11/24          bond0
+    BASH ifconfig ip address                    h3                              10.252.1.11/24          bond0
     BASH start service                          h3                              isc-dhcp-server
+    BASH ping                                   h3                              10.252.1.1              count=4
     sleep                                       1
     ${value} =                                  BASH check service status       h3                      isc-dhcp-server
     Should Contain                              ${value}                        is started
@@ -1478,9 +1492,9 @@ Inter tenant dhcp relay with multiple dhcp servers
     BASH add route                              h2                              10.252.0.0/16           10.251.1.1
     BASH add route                              h3                              10.251.0.0/16           10.252.1.1
     REST add dhcp relay                         X                               X2                      10.252.1.11
-    REST enable dhcp relay                      X                               X2  
+    #REST enable dhcp relay                      X                               X2  
     REST add dhcp relay                         Y                               Y2                      10.251.1.11
-    REST enable dhcp relay                      Y                               Y2  
+    #REST enable dhcp relay                      Y                               Y2  
     sleep                                       5
     ${mac1} =                                   BASH get intf mac               h1                      bond0
     ${result} =                                 REST show endpoints mac         ${mac1}
@@ -1891,15 +1905,16 @@ Controller HA failover with dhcp-relay
 	BASH add tag								h2								bond0					1002
 	BASH ifup intf								h1								bond0
 	BASH ifup intf								h2								bond0.1002
-	BASH ifconfig ip address							h1								10.251.1.11/24			bond0
+	BASH ifconfig ip address					h1								10.251.1.11/24			bond0
 	BASH start service							h1								isc-dhcp-server
+    BASH ping                                   h1                              10.251.1.1              count=4
 	sleep										1
 	${value} = 									BASH check service status		h1						isc-dhcp-server
 	Should Contain								${value}						is started
 	sleep										1
 	BASH add route								h1								10.252.0.0/16			10.251.1.1
 	REST add dhcp relay							Y								Y1						10.251.1.11
-	REST enable dhcp relay						Y								Y1	
+	#REST enable dhcp relay						Y								Y1	
 	sleep										5
 	${ipAddr2} = 								BASH renew dhcpv4 address		h2						bond0.1002
 	Should Not Be Empty							${ipAddr2}
@@ -1982,15 +1997,16 @@ Active Controller reboot with dhcp-relay
 	BASH add tag								h2								bond0					1002
 	BASH ifup intf								h1								bond0
 	BASH ifup intf								h2								bond0.1002
-	BASH ifconfig ip address							h1								10.251.1.11/24			bond0
+	BASH ifconfig ip address					h1								10.251.1.11/24			bond0
 	BASH start service							h1								isc-dhcp-server
+    BASH ping                                   h1                              10.251.1.1              count=4
 	sleep										1
 	${value} = 									BASH check service status		h1						isc-dhcp-server
 	Should Contain								${value}						is started
 	sleep										1
 	BASH add route								h1								10.252.0.0/16			10.251.1.1
 	REST add dhcp relay							Y								Y1						10.251.1.11
-	REST enable dhcp relay						Y								Y1	
+	#REST enable dhcp relay						Y								Y1	
 	sleep										5
 	${ipAddr2} = 								BASH renew dhcpv4 address		h2						bond0.1002
 	Should Not Be Empty							${ipAddr2}
@@ -2079,8 +2095,9 @@ Dhcp request from overlapping private IP and public IP
     BASH ifup intf                              h1                              bond0
     BASH ifup intf                              h2                              bond0.1002
     BASH init intf                              h2                              bond0.1002
-    BASH ifconfig ip address                         h1                              10.251.1.11/24          bond0
+    BASH ifconfig ip address                    h1                              10.251.1.11/24          bond0
     BASH start service                          h1                              isc-dhcp-server
+    BASH ping                                   h1                              10.251.1.1              count=4
     sleep                                       1
     ${value} =                                  BASH check service status       h1                      isc-dhcp-server
     Should Contain                              ${value}                        is started
@@ -2089,9 +2106,9 @@ Dhcp request from overlapping private IP and public IP
     REST add vns ip                             X                               X3                      10.251.3.1              24          private=true
     REST add vns ip                             Y                               Y3                      10.251.3.1              24  
     REST add dhcp relay                         Y                               Y3                      10.251.1.11
-    REST enable dhcp relay                      Y                               Y3
+    #REST enable dhcp relay                      Y                               Y3
     REST add dhcp relay                         X                               X3                      10.251.1.11
-    REST enable dhcp relay                      X                               X3
+    #REST enable dhcp relay                      X                               X3
     sleep                                       5
     ${ipAddr2} =                                BASH renew dhcpv4 address       h2                      bond0.1002
     Should Not Be Empty                         ${ipAddr2}
@@ -2148,15 +2165,16 @@ Restart ofad on leaf with dhcp-relay
     BASH add tag                                h2                              bond0                   1002
     BASH ifup intf                              h1                              bond0
     BASH ifup intf                              h2                              bond0.1002
-    BASH ifconfig ip address                         h1                              10.251.1.11/24          bond0
+    BASH ifconfig ip address                    h1                              10.251.1.11/24          bond0
     BASH start service                          h1                              isc-dhcp-server
+    BASH ping                                   h1                              10.251.1.1              count=4    
     sleep                                       1
     ${value} =                                  BASH check service status       h1                      isc-dhcp-server
     Should Contain                              ${value}                        is started
     sleep                                       1
     BASH add route                              h1                              10.252.0.0/16           10.251.1.1
     REST add dhcp relay                         Y                               Y1                      10.251.1.11
-    REST enable dhcp relay                      Y                               Y1  
+    #REST enable dhcp relay                      Y                               Y1  
     sleep                                       5
     ${ipAddr2} =                                BASH renew dhcpv4 address       h2                      bond0.1002
     Should Not Be Empty                         ${ipAddr2}
@@ -2246,15 +2264,16 @@ Restart ofad on spine with dhcp-relay
     BASH add tag                                h2                              bond0                   1002
     BASH ifup intf                              h1                              bond0
     BASH ifup intf                              h2                              bond0.1002
-    BASH ifconfig ip address                         h1                              10.251.1.11/24          bond0
+    BASH ifconfig ip address                    h1                              10.251.1.11/24          bond0
     BASH start service                          h1                              isc-dhcp-server
+    BASH ping                                   h1                              10.251.1.1              count=4
     sleep                                       1
     ${value} =                                  BASH check service status       h1                      isc-dhcp-server
     Should Contain                              ${value}                        is started
     sleep                                       1
     BASH add route                              h1                              10.252.0.0/16           10.251.1.1
     REST add dhcp relay                         Y                               Y1                      10.251.1.11
-    REST enable dhcp relay                      Y                               Y1  
+    #REST enable dhcp relay                      Y                               Y1  
     sleep                                       5
     ${ipAddr2} =                                BASH renew dhcpv4 address       h2                      bond0.1002
     Should Not Be Empty                         ${ipAddr2}

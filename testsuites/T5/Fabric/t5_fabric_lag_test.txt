@@ -481,7 +481,6 @@ verify port group switch interface stats  [Arguments]  ${switch}  ${switch1}  ${
 	
 T5 test setup
 	base test setup
-	bring up 1 gig interface
 
 T5 test teardown
 	delete traffic
@@ -520,8 +519,3 @@ bring up h6 bond0
     bash add ip address  h6  ${h6_ip}/24  bond0
     bash ifup intf  h6  bond0  
 
-bring up 1 gig interface
-	config  leaf0-a  ethernet25 1g-sfp
-	config  leaf0-a  ethernet26 1g-sfp
-	config  leaf1-a  ethernet25 1g-sfp
-	config  leaf1-a  ethernet26 1g-sfp
