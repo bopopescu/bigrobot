@@ -3213,13 +3213,21 @@ Verify same mac address showing up on two ports in the same segment is blocked
     BASH ifup intf                              h6                              bond0   
     REST add portgroup to vns                   X                               X1                      ${leaf0_pc1}            1001
     REST add portgroup to vns                   X                               X1                      ${leaf1_pc1}            1003
+    REST add portgroup to vns                   X                               X2                      ${leaf1_pc2}            1004
+    
     BASH add tag                                h1                              bond0                   1001
     BASH add tag                                h3                              bond0                   1003
+    BASH add tag                                h4                              bond0                   1004
+    
     BASH ifup intf                              h1                              bond0.1001
     BASH ifup intf                              h3                              bond0.1003
+    BASH ifup intf                              h4                              bond0.1004
+    
     BASH init intf                              h1                              bond0.1001
     BASH init intf                              h3                              bond0.1003
-    BASH ifconfig ip address                         h1                              10.251.1.11/24          bond0.1001
+    BASH init intf                              h4                              bond0.1004
+    
+    BASH ifconfig ip address                    h1                              10.251.1.11/24          bond0.1001
     BASH add route                              h1                              10.251.0.0/16           10.251.1.1
     sleep                                       2
     BASH ping                                   h1                              10.251.1.1              count=5
@@ -3231,7 +3239,7 @@ Verify same mac address showing up on two ports in the same segment is blocked
     Should Contain                              ${attachpoint}                  ${leaf0_pc1}
     BASH set mac address                        h3                              bond0                   ${mac1}
     BASH set mac address                        h3                              bond0.1003              ${mac1}
-    BASH ifconfig ip address                         h3                              10.251.1.11/24          bond0.1003
+    BASH ifconfig ip address                    h3                              10.251.1.11/24          bond0.1003
     BASH add route                              h3                              10.251.0.0/16           10.251.1.1
     sleep                                       1
     BASH ping                                   h3                              10.251.1.1              count=5
