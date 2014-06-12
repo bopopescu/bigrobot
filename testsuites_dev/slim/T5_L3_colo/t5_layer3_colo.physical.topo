@@ -51,6 +51,7 @@ s10:
   ip: 10.210.66.44
   alias: leaf3-b
   
+  
 h2:
    ip: 10.210.64.30
    alias: h2-rack0
