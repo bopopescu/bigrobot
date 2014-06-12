@@ -1481,7 +1481,7 @@ class T5Platform(object):
         t = test.Test()
         c = t.controller(node)
         c.send("enable")
-        c.send("config")
+        c.config("config")
         c.send("copy %s %s" % (src, dst))
         options = c.expect([r'[Pp]assword: ', r'\(yes/no\)\?', c.get_prompt()])
         content = c.cli_content()
