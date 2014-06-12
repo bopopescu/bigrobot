@@ -210,11 +210,6 @@ bring up eth1 h2
 	bash init intf  h2  eth1
     bash add ip address  h2  ${h2_single_ip}/24  eth1
     bash ifup intf  h2  eth1
-bring up 1 gig interface
-	config  leaf0-a  ethernet25 1g-sfp
-	config  leaf0-a  ethernet26 1g-sfp
-	config  leaf1-a  ethernet25 1g-sfp
-	config  leaf1-a  ethernet26 1g-sfp
 
   
 
