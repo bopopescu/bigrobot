@@ -41,6 +41,7 @@ class T5ZTN(object):
         if not re.match(r'.*switchlight-.*release-bcf.*swi', output[1]):
             return helpers.test_failure("SL SWI image not found")
         helpers.log("Switch Light installer and SWI image are present")
+        c.config("enable")
 
         return True
 
@@ -85,6 +86,7 @@ class T5ZTN(object):
         if swi_operation != 'ztn-runtime':
             helpers.test_failure("Wrong swi operation - %s"
                                   % installer_operation)
+        c.config("enable")
         return True
 
     def bash_get_supported_platforms(self, image):
@@ -118,6 +120,7 @@ class T5ZTN(object):
         manifest = ast.literal_eval(output)
         platform = manifest['platform']
         platform_list = platform.split(',')
+        c.config("enable")
         return platform_list
 
     def test_console(self, node):
@@ -147,7 +150,7 @@ class T5ZTN(object):
         """
         t = test.Test()
         con = t.dev_console(node, modeless=True)
-        con.expect("Starting OpenFlow Agent: ofad", timeout=1000)
+        con.expect("Starting OpenFlow Agent: ofad", timeout=300)
         con.expect(r'.*login:.*$', timeout=60)
         return True
 
@@ -163,7 +166,7 @@ class T5ZTN(object):
         """
         t = test.Test()
         con = t.dev_console(node, modeless=True)
-        con.expect("ZTN Discovery Failed", timeout=1000)
+        con.expect("ZTN Discovery Failed", timeout=300)
         return True
 
     def telnet_verify_ztn_discovery_succeeded(self, node):
@@ -178,7 +181,7 @@ class T5ZTN(object):
         """
         t = test.Test()
         con = t.dev_console(node, modeless=True)
-        con.expect("Discovered Switch Light manifest from url", timeout=1000)
+        con.expect("Discovered Switch Light manifest from url", timeout=300)
         con.expect("ZTN Manifest validated")
         con.expect("Booting")
         return True
@@ -254,8 +257,9 @@ class T5ZTN(object):
         t = test.Test()
         s = t.dev_console(node, modeless=True)
         s.send(helpers.ctrl('c'))
+        s.send("\x03")
         options = s.expect([r'[\r\n]*.*login:', r'root@.*:', s.get_prompt()],
-                           timeout=1000)
+                           timeout=300)
         if options[0] == 0: #login prompt
             s.cli('admin')
         if options[0] == 1: #bash mode
@@ -509,7 +513,6 @@ class T5ZTN(object):
         ztn_config.append("datapath id 00:00:%s" % mac)
         ztn_config.append("controller %s port 6653" % master_ip)
         ztn_config.append("ssh enable")
-        ztn_config.append("telnet enable")
         ztn_config.append("logging host %s" % master_ip)
         if not single:
             ztn_config.append("controller %s port 6653" % slave_ip)
@@ -519,6 +522,12 @@ class T5ZTN(object):
         for startup_config_line in startup_config:
             if not re.match(r'!|^\s*$', startup_config_line):
                 if "ntp sync" in startup_config_line:
+                    helpers.log("Skipping line: %s" % startup_config_line)
+                    continue
+                if "snmp-server enable" in startup_config_line:
+                    helpers.log("Skipping line: %s" % startup_config_line)
+                    continue
+                if re.match(r'snmp-server trap', startup_config_line):
                     helpers.log("Skipping line: %s" % startup_config_line)
                     continue
                 if "ntp enable" in startup_config_line:
@@ -532,22 +541,32 @@ class T5ZTN(object):
                             % startup_config_line)
         startup_config = startup_config_temp
 
-        for idx, ztn_config_line in enumerate(ztn_config):
+        ztn_config_temp = []
+        for ztn_config_line in ztn_config:
             if "snmp-server host" in ztn_config_line:
-                if "udp-port" in ztn_config_line:
-                    ztn_config[idx] = ztn_config_line.replace("udp-port",
-                                "traps public udp-port")
+                if "snmp-server enable traps" in ztn_config:
+                    if "udp-port" in ztn_config_line:
+                        ztn_config_line = ztn_config_line.replace("udp-port",
+                                    "traps public udp-port")
+                    else:
+                        ztn_config_line = (ztn_config_line +
+                                           " traps public udp-port 162")
+                    helpers.log("Rearranging config line: %s" % ztn_config_line)
                 else:
-                    ztn_config[idx] = (ztn_config_line +
-                                       " traps public udp-port 162")
-                helpers.log("Rearranging config line: %s" % ztn_config[idx])
-            if "snmp-server enable traps" in ztn_config_line:
-                ztn_config[idx] = "snmp-server enable"
-                helpers.log("Rearranging config line: %s" % ztn_config[idx])
+                    helpers.log(("Skipping line - %s - because"
+                    " snmp-server traps are not enabled") % ztn_config_line)
+                    continue
+            #if "snmp-server enable traps" in ztn_config_line:
+            #    ztn_config[idx] = "snmp-server enable"
+            #    helpers.log("Rearranging config line: %s" % ztn_config[idx])
             if "ntp time-zone" in ztn_config_line:
-                ztn_config[idx] = ztn_config_line.replace("ntp time-zone",
+                ztn_config_line = ztn_config_line.replace("ntp time-zone",
                                   "timezone")
-                helpers.log("Rearranging config line: %s" % ztn_config[idx])
+                helpers.log("Rearranging config line: %s" % ztn_config_line)
+            helpers.log("Keeping line in ztn-config: %s"
+                        % ztn_config_line)
+            ztn_config_temp.append(ztn_config_line)
+        ztn_config = ztn_config_temp
 
         for ztn_config_line in ztn_config:
             if ztn_config_line not in startup_config:
@@ -590,6 +609,7 @@ class T5ZTN(object):
 
         s = t.dev_console(hostname, modeless=True)
         s.send(helpers.ctrl('c'))
+        s.send("\x03")
         options = s.expect([r'[\r\n]*.*login:', r'[Pp]assword:', r'.*@.*:',
                            s.get_prompt()])
         if options[0] == 0:
@@ -609,8 +629,17 @@ class T5ZTN(object):
                 if "ntp sync" in startup_config_line:
                     helpers.log("Skipping line: %s" % startup_config_line)
                     continue
+                #if "snmp-server enable" in startup_config_line:
+                #    helpers.log("Skipping line: %s" % startup_config_line)
+                #    continue
+                #temp override BSC-5629
+                if re.match(r'snmp-server trap', startup_config_line):
+                    helpers.log("Skipping line %s" % startup_config_line)
+                    continue
                 if "timezone UTC" in startup_config_line:
-                    helpers.log("Skipping line: %s" % startup_config_line)
+                    temp_line = startup_config_line.replace("UTC", "Etc/UTC")
+                    startup_config_temp.append(temp_line)
+                    helpers.log("Rearranging line: %s" % startup_config_line)
                     continue
                 if re.match(r'controller .* port 6653', startup_config_line):
                     helpers.log("Skipping port number in %s" %
@@ -628,7 +657,13 @@ class T5ZTN(object):
             helpers.log("Analyzing line %s" % running_config_line)
             # Excluding comments and empty lines
             if not re.match(r'!|^\s*$', running_config_line):
-                if "timezone Etc/UTC" in running_config_line:
+                #if "timezone Etc/UTC" in running_config_line:
+                #    helpers.log("Skipping line: %s" % running_config_line)
+                #    continue
+                if "show running-config" in running_config_line:
+                    helpers.log("Skipping line: %s" % running_config_line)
+                    continue
+                if "no telnet enable" in running_config_line:
                     helpers.log("Skipping line: %s" % running_config_line)
                     continue
                 if "username recovery" in running_config_line:
@@ -868,9 +903,11 @@ class T5ZTN(object):
         t = test.Test()
         s = t.dev_console(switch, modeless=True)
         s.send(helpers.ctrl('c'))
+        s.send("\x03")
         options = s.expect([r'[\r\n]*.*login:', r'[Pp]assword:', r'root@.*:',
                             r'ONIE:/ #', r'=> ', r'loader#', s.get_prompt(),
-                            r'Trying manifest'], timeout=1000)
+                            r'Press Control-C now to enter loader shell'],
+                           timeout=300)
         if options[0] == 0: #login prompt
             s.cli('admin')
             s.cli('enable; config')
@@ -890,12 +927,13 @@ class T5ZTN(object):
             s.send('reload now')
         if options[0] == 7: #SL Loader
             s.send(helpers.ctrl('c'))
+            s.send("\x03")
             s.send('reboot')
         try:
             if options[0] == 4:
                 s.expect(r'\(Re\)start USB')
             else:
-                s.expect(r'Clock Configuration:', timeout=1000)
+                s.expect(r'Clock Configuration:', timeout=300)
             helpers.log("Switch %s rebooted" % switch)
         except:
             helpers.log(s.cli('')['content'])
@@ -922,6 +960,7 @@ class T5ZTN(object):
 
         s.send("\ ")
         s.send(helpers.ctrl('c'))
+        s.send("\x03")
         options = s.expect([r'[\r\n]*.*login:', r'\=\>'], timeout=100)
         if options[0] == 0:
             helpers.log("Something went wrong, trying again")
@@ -930,6 +969,7 @@ class T5ZTN(object):
             s.expect("Hit any key to stop autoboot")
             s.send("\ ")
             s.send(helpers.ctrl('c'))
+            s.send("\x03")
             s.expect(r'\=\>')
             helpers.log("U-boot shell entered")
             return True
