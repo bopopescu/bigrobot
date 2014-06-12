@@ -481,7 +481,6 @@ verify port group switch interface stats  [Arguments]  ${switch}  ${switch1}  ${
 	
 T5 test setup
 	base test setup
-	bring up 1 gig interface
 
 T5 test teardown
 	delete traffic

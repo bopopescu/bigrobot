@@ -137,7 +137,6 @@ Single Leaf Three Rack Suite Setup
    bring up eth1 h3
    bring up eth1 h4
    bring up eth1 h2
-   bring up 1 gig interface
    sleep  5 
    
 Single Leaf Three Rack Suite Teardown 
