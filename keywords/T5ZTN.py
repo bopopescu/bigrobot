@@ -959,7 +959,11 @@ class T5ZTN(object):
             return helpers.test_failure("Unable to stop at u-boot shell")
 
         s.send("\ ")
+        helpers.sleep(1)
+        s.send("abc")
+        helpers.sleep(1)
         s.send(helpers.ctrl('c'))
+        helpers.sleep(1)
         s.send("\x03")
         options = s.expect([r'[\r\n]*.*login:', r'\=\>'], timeout=100)
         if options[0] == 0:
@@ -998,4 +1002,27 @@ class T5ZTN(object):
         s.send("\x03")
         s.expect(r'loader#')
         helpers.log("Loader shell entered")
+        return True
+
+    def cli_reboot_switch(self, node, switch):
+        """
+        Reboot switch, switches from controller's CLI
+
+        Inputs:
+        | node | reference to controller as defined in .topo file |
+        | switch | Alias, IP, MAC of the switch, or All |
+
+        Return Value:
+        - True if successfully executed reboot command, False otherwise
+        """
+        t = test.Test()
+        c = t.controller(node)
+        helpers.log("Executing 'system reboot switch %s' command"
+                    " on node %s" % (switch, node))
+        try:
+            c.config("system reboot switch %s" % switch)
+        except:
+            return helpers.test_failure("Error rebooting the switch")
+
+        helpers.log("Reboot command executed successfully")
         return True
