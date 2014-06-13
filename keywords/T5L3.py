@@ -813,7 +813,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
         url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/logical-router/segment-interface[segment="%s"]/dhcp-relay/dhcp-server-ip' % (tenant, vnsname)
         try:
             
-            self.rest_disable_dhcp_relay(tenant, vnsname)
+#            self.rest_disable_dhcp_relay(tenant, vnsname)
             c.rest.delete(url, {})
         except:
             helpers.test_failure(c.rest.error())
