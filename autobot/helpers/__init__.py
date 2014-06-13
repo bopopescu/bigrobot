@@ -516,6 +516,17 @@ def bigrobot_ignore_mininet_exception_on_close(new_val=None, default='False'):
                             new_val, default)
 
 
+def bigrobot_preserve_mininet_screen_session(new_val=None, default='False'):
+    """
+    Category: Get/set environment variables for BigRobot.
+    Set to 'True' to preserve the Mininet "screen" session. This feature is
+    useful for debugging. A user can attach to the screen session at a later
+    time.
+    """
+    return _env_get_and_set('BIGROBOT_PRESERVE_MININET_SCREEN_SESSION',
+                            new_val, default)
+
+
 def bigtest_path(new_val=None, default=None):
     """
     Category: Get/set environment variables for BigTest.
