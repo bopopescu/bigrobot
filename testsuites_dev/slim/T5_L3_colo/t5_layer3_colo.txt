@@ -57,35 +57,31 @@ L3 intra tenant traceroute
 
 Dhcp discover on the same vns as server with dhcp-relay enabled
 	DHCP discovery on the same vns as server with dhcp-relay enabled
-	[Tags]									smoke				sanity				run		
+	[Tags]									smoke				sanity				run		    dhcp
 
 Dhcp discover on the same vns as server without dhcp-relay enabled
 	DHCP discovery on the same vns as server without dhcp-relay enabled
-	[Tags]									smoke				sanity				run		
+	[Tags]									smoke				sanity				run		    dhcp
 
 Intra tenant dhcp relay 
 	L3 intra tenant dhcp relay on same rack with valid circuitid
-	[Tags]									smoke				sanity				run		
+	[Tags]									smoke				sanity				run		    dhcp
 	
 Intra tenant dhcp relay with invalid circuit id
 	L3 intra tenant dhcp relay on same rack with invalid circuitid
-	[Tags]									smoke				sanity				run		
-
-Intra tenant dhcp relay enabled and disabled
-	L3 dhcp request with and without dhcp relay enabled
-	[Tags]									smoke				sanity				run		
+	[Tags]									smoke				sanity				run		    dhcp
 
 Intra tenant dhcp relay across rack
 	L3 intra tenant dhcp relay across rack
-	[Tags]									smoke				sanity						
+	[Tags]									sanity			dhcp		
 	
 Intra tenant dhcp relay with circuit id across rack
 	L3 intra tenant dhcp relay with circuit id across rack
-	[Tags]									smoke				sanity					
+	[Tags]									sanity          dhcp					
 
 Delete and Add dhcp relay
 	Delete and Add L3 dhcp request 
-	[Tags]									sanity					run	
+	[Tags]									sanity		    dhcp        
 
 Add and delete untagged endpoints with existing host
 	L3 add and delete untagged endpoints with existing host
@@ -105,7 +101,7 @@ Verify L3 endpoint aging
 	
 Verify L3 ttl 1 is not being forwarded
 	Check L3 ttl 1 is dropped
-	[Tags]									sanity			
+	[Tags]									sanity			icmpa
 
 Change router vns ip
 	Change router ip address
@@ -211,32 +207,32 @@ Configure overlapping IP with private keyword on the same tenant
 
 Verify L3 intra tenant traffic with ip options
     Verify L3 intra tenant traffic with ip options  
-    [Tags]                                  feature                 run3
+    [Tags]                                  feature              run
     
 	
 Inter tenant L3 traffic same rack	
 	L3 inter tenant traffic in the same rack
-	[Tags]									sanity				
+	[Tags]									sanity	         run			
 
 Inter tenant L3 dhcp relay
 	Inter tenant L3 dhcp relay
-	[Tags]									sanity				
+	[Tags]									sanity		    dhcp		
 	
 Inter tenant dhcp relay with two dhcp servers on both vns
-	L3 inter tenant dhcp relay with two dhcp servers on both vns
-	[Tags]									sanity				
+#	L3 inter tenant dhcp relay with two dhcp servers on both vns
+	[Tags]									sanity	         dhcp			
 	
 Verify inter tenant L3 traffic is getting drop with null next hop	
 	Verify inter tenant L3 traffic is getting drop with null next hop
-	[Tags]                                 sanity                      run1         
+	[Tags]                                 sanity                 run1    
     
 Verify same mac address showing up on two ports in the same segment is blocked	
 	Verify same mac address showing up on two ports in the same segment is blocked
-	[Tags]                                 sanity                      run1         
+	[Tags]                                 sanity                 run1       
     
 Verify clear blocked endpoint works	
 	Verify clear blocked endpoint works
-	[Tags]                                 sanity                      run1         
+	[Tags]                                 sanity                 run1        
     
     
 * Keywords
@@ -371,13 +367,15 @@ L3 intra tenant traceroute
 DHCP discovery on the same vns as server with dhcp-relay enabled
 	REST delete portgroup from vns				Z								Z2								${leaf0_pc11}			-1
 	BASH init intf								h1-rack1						bond0
+	BASH stop service                           h4-rack0                        isc-dhcp-server
+    sleep                                       1
 	BASH start service							h4-rack0						isc-dhcp-server
 	sleep										1
 	${value} = 									BASH check service status		h4-rack0						isc-dhcp-server
 	Should Contain								${value}						is started
 	sleep										1
 	REST add dhcp relay							X								X1								10.251.1.11
-	REST enable dhcp relay						X								X1	
+#	#REST enable dhcp relay						X								X1	
 	REST add portgroup to vns					X								X1								${leaf0_pc11}			-1
 	sleep										1
 	${value} = 									BASH release dhcpv4 address		h1-rack1						bond0
@@ -406,7 +404,9 @@ DHCP discovery on the same vns as server with dhcp-relay enabled
 DHCP discovery on the same vns as server without dhcp-relay enabled
 	REST delete portgroup from vns				Z								Z2								${leaf0_pc11}			-1
 	BASH init intf								h1-rack1						bond0
-	BASH start service							h4-rack0						isc-dhcp-server
+	BASH stop service							h4-rack0						isc-dhcp-server
+    sleep                                       1
+    BASH start service                          h4-rack0                        isc-dhcp-server
 	sleep										1
 	${value} = 									BASH check service status		h4-rack0						isc-dhcp-server
 	Should Contain								${value}						is started
@@ -442,14 +442,17 @@ L3 intra tenant dhcp relay on same rack with valid circuitid
   	BASH delete route							h5-rack0								10.251.3.0/24			10.251.2.1
 	BASH delete route							h5-rack0								10.252.0.0/16			10.251.2.1
   	BASH delete route							h5-rack0								10.253.0.0/16			10.251.2.1
-	BASH start service							h4-rack0								isc-dhcp-server
-	sleep										1
+    BASH stop service                           h4-rack0                        isc-dhcp-server
+    sleep                                       1
+    BASH start service                          h4-rack0                        isc-dhcp-server
+    sleep                                       1
 	${value} = 									BASH check service status		h4-rack0						isc-dhcp-server
 	Should Contain								${value}						is started
+    BASH ping                                   h4-rack0                        10.251.1.1                      count=5
 	sleep										1
 	REST add dhcp relay							X								X2								10.251.1.11
 	REST add dhcprelay circuitid				X								X2								private vns X2
-	REST enable dhcp relay						X								X2	
+	#REST enable dhcp relay						X								X2	
 	sleep										10
 	${mac1} = 									BASH get intf mac				h4-rack0						bond0
 	${result} =									REST show endpoints mac			${mac1}
@@ -482,18 +485,21 @@ L3 intra tenant dhcp relay on same rack with invalid circuitid
   	BASH delete route							h5-rack0								10.251.3.0/24			10.251.2.1
 	BASH delete route							h5-rack0								10.252.0.0/16			10.251.2.1
   	BASH delete route							h5-rack0								10.253.0.0/16			10.251.2.1
-	BASH start service							h4-rack0								isc-dhcp-server
-	sleep										1
+    BASH stop service                           h4-rack0                        isc-dhcp-server
+    sleep                                       1
+    BASH start service                          h4-rack0                        isc-dhcp-server
+    sleep                                       1
 	${value} = 									BASH check service status		h4-rack0						isc-dhcp-server
 	Should Contain								${value}						is started
 	sleep										1
 	REST add dhcp relay							X								X2						10.251.1.11
 	REST add dhcprelay circuitid				X								X2						private vns AA2
-	REST enable dhcp relay						X								X2	
-	sleep										10
+	#REST enable dhcp relay						X								X2	
+	sleep										1
+    BASH ping                                   h4-rack0                        10.251.1.1                      count=3	
 	${mac1} = 									BASH get intf mac				h4-rack0						bond0
 	${result} =									REST show endpoints mac			${mac1}
-	${ipAddr} = 								Set Variable					${result[0]['ip-addres']}	
+	${ipAddr} = 								Set Variable					${result[0]['ip-address']}	
 	Should Contain								${ipAddr}						10.251.1.11
 	${value} = 									BASH release dhcpv4 address		h5-rack0						bond0
 	Should Be True								${value}
@@ -510,6 +516,83 @@ L3 intra tenant dhcp relay on same rack with invalid circuitid
 	${attachpoint} = 							Set Variable					${result[0]['attachment-point']}	
 	Should Contain								${attachpoint}					${leaf0_pc5}
 
+L3 intra tenant dhcp relay across rack
+    BASH init intf                              h3-rack1                        bond0.2003
+    REST delete portgroup from vns              X                               X2                              ${leaf1_pc3}       2003
+    BASH stop service                           h4-rack0                        isc-dhcp-server
+    sleep                                       1
+    BASH start service                          h4-rack0                        isc-dhcp-server
+    sleep                                       1
+    ${value} =                                  BASH check service status       h4-rack0                        isc-dhcp-server
+    Should Contain                              ${value}                        is started
+    sleep                                       1
+    REST add dhcp relay                         X                               X3                              10.251.1.11
+    sleep                                       1
+    BASH ping                                   h4-rack0                        10.251.1.1                      count=3
+    ${mac1} =                                   BASH get intf mac               h4-rack0                        bond0
+    ${result} =                                 REST show endpoints mac         ${mac1}
+    Should Be True                              ${result}   
+    ${value} =                                  BASH release dhcpv4 address     h3-rack1                        bond0.2003
+    Should Be True                              ${value}
+    sleep                                       1
+    ${ipAddr} =                                 BASH renew dhcpv4 address       h3-rack1                        bond0.2003
+    Should Not Be Empty                         ${ipAddr}
+    sleep                                       1
+    BASH ping                                   h4-rack0                        ${ipAddr}                       count=10
+    ${value} =                                  BASH verify arp                 h4-rack0                        10.251.1.1
+    Should Be True                              ${value}        
+    ${value} =                                  BASH verify arp                 h3-rack1                        10.251.2.1
+    Should Be True                              ${value}    
+    ${mac1} =                                   BASH get intf mac               h4-rack0                        bond0
+    ${result} =                                 REST show endpoints mac         ${mac1}
+    ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
+    Should Contain                              ${attachpoint}                  ${leaf0_pc4}
+    ${mac2} =                                   BASH get intf mac               h3-rack1                        bond0.2003
+    ${result} =                                 REST show endpoints mac         ${mac2}
+    ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
+    Should Contain                              ${attachpoint}                  ${leaf1_pc3}
+    ${loss} =                                   BASH ping                       h4-rack0                        ${ipAddr}           count=10
+    Should Be True                              ${loss} == 0    
+    REST add portgroup to vns                   X                               X2                              ${leaf1_pc3}            2003    
+
+L3 intra tenant dhcp relay with circuit id across rack
+    BASH init intf                              h3-rack1                        bond0.2003
+    BASH stop service                           h4-rack0                        isc-dhcp-server
+    sleep                                       1
+    BASH start service                          h4-rack0                        isc-dhcp-server
+    sleep                                       1
+    ${value} =                                  BASH check service status       h4-rack0                        isc-dhcp-server
+    Should Contain                              ${value}                        is started
+    sleep                                       1
+    REST add dhcp relay                         X                               X2                              10.251.1.11
+    REST add dhcprelay circuitid                X                               X2                              private vns X2
+    sleep                                       1
+    BASH ping                                   h4-rack0                        10.251.1.1                      count=3
+    ${mac1} =                                   BASH get intf mac               h4-rack0                        bond0
+    ${result} =                                 REST show endpoints mac         ${mac1}
+    Should Be True                              ${result}   
+    ${value} =                                  BASH release dhcpv4 address     h3-rack1                        bond0.2003
+    Should Be True                              ${value}
+    sleep                                       1
+    ${ipAddr} =                                 BASH renew dhcpv4 address       h3-rack1                        bond0.2003
+    Should Not Be Empty                         ${ipAddr}
+    sleep                                       1
+    BASH ping                                   h4-rack0                        ${ipAddr}                       count=10
+    ${value} =                                  BASH verify arp                 h4-rack0                        10.251.1.1
+    Should Be True                              ${value}        
+    ${value} =                                  BASH verify arp                 h3-rack1                        10.251.2.1
+    Should Be True                              ${value}    
+    ${mac1} =                                   BASH get intf mac               h4-rack0                        bond0
+    ${result} =                                 REST show endpoints mac         ${mac1}
+    ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
+    Should Contain                              ${attachpoint}                  ${leaf0_pc4}
+    ${mac2} =                                   BASH get intf mac               h3-rack1                        bond0.2003
+    ${result} =                                 REST show endpoints mac         ${mac2}
+    ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
+    Should Contain                              ${attachpoint}                  ${leaf1_pc3}
+    ${loss} =                                   BASH ping                       h4-rack0                        ${ipAddr}           count=10
+    Should Be True                              ${loss} == 0    
+
 
 L3 dhcp request with and without dhcp relay enabled
 	BASH init intf								h5-rack0								bond0
@@ -517,14 +600,16 @@ L3 dhcp request with and without dhcp relay enabled
   	BASH delete route							h5-rack0								10.251.3.0/24			10.251.2.1
 	BASH delete route							h5-rack0								10.252.0.0/16			10.251.2.1
   	BASH delete route							h5-rack0								10.253.0.0/16			10.251.2.1
-	BASH start service							h4-rack0								isc-dhcp-server
-	sleep										1
+    BASH stop service                           h4-rack0                        isc-dhcp-server
+    sleep                                       1
+    BASH start service                          h4-rack0                        isc-dhcp-server
+    sleep                                       1
 	${value} = 									BASH check service status		h4-rack0						isc-dhcp-server
 	Should Contain								${value}						is started
 	sleep										1
 	REST add dhcp relay							X								X2						10.251.1.11
 	REST add dhcprelay circuitid				X								X2						private vns X2
-	REST enable dhcp relay						X								X2	
+	#REST enable dhcp relay						X								X2	
 	BASH ping									h4-rack0								10.251.1.1 				count=5
 	sleep										1
 	${value} = 									BASH release dhcpv4 address		h5-rack0						bond0
@@ -550,7 +635,8 @@ L3 dhcp request with and without dhcp relay enabled
 	Should Be True  							${loss} == 0	
 	${value} = 									BASH release dhcpv4 address		h5-rack0						bond0
 	Should Be True								${value}
-	REST disable dhcp relay						X								X2	
+	#REST disable dhcp relay						X								X2	
+	REST delete dhcp relay                      X                               X2
 	sleep										1
 	${ipAddr1} = 								BASH renew dhcpv4 address		h5-rack0						bond0
 	Should Be Empty								${ipAddr1}
@@ -560,7 +646,9 @@ L3 dhcp request with and without dhcp relay enabled
 	Should Contain								${attachpoint}					${leaf0_pc5}
 	${loss} = 									BASH ping						h4-rack0						${ipAddr} 			count=10
 	Should Be True  							${loss} == 100		
-	REST enable dhcp relay						X								X2	
+	#REST enable dhcp relay						X								X2	
+    REST add dhcp relay                         X                               X2                      10.251.1.11
+    REST add dhcprelay circuitid                X                               X2                      private vns X2	
 	sleep										1
 	${ipAddr1} = 								BASH renew dhcpv4 address		h5-rack0						bond0
 	Should Not Be Empty							${ipAddr1}
@@ -574,14 +662,16 @@ Delete and Add L3 dhcp request
   	BASH delete route							h5-rack0								10.251.3.0/24			10.251.2.1
 	BASH delete route							h5-rack0								10.252.0.0/16			10.251.2.1
   	BASH delete route							h5-rack0								10.253.0.0/16			10.251.2.1
-	BASH start service							h4-rack0								isc-dhcp-server
-	sleep										1
+    BASH stop service                           h4-rack0                        isc-dhcp-server
+    sleep                                       1
+    BASH start service                          h4-rack0                        isc-dhcp-server
+    sleep                                       1
 	${value} = 									BASH check service status		h4-rack0						isc-dhcp-server
 	Should Contain								${value}						is started
 	sleep										1
 	REST add dhcp relay							X								X2						10.251.1.11
 	REST add dhcprelay circuitid				X								X2						private vns X2
-	REST enable dhcp relay						X								X2	
+	#REST enable dhcp relay						X								X2	
 ### temporary workaround to enable dhcp relay to silent host	
 	BASH ping									h4-rack0								10.251.1.1				count=5
 	sleep										1
@@ -616,7 +706,7 @@ Delete and Add L3 dhcp request
 	sleep										5
 	REST add dhcp relay							X								X2						10.251.1.11
 	REST add dhcprelay circuitid				X								X2						private vns X2
-	REST enable dhcp relay						X								X2	
+	#REST enable dhcp relay						X								X2	
 	sleep										1
 	${ipAddr} = 								BASH renew dhcpv4 address		h5-rack0						bond0
 	Should Not Be Empty							${ipAddr}	
@@ -893,7 +983,7 @@ Inter tenant L3 dhcp relay
 	sleep										1
 	REST add dhcp relay							Y								Y2						        10.251.1.11
 	REST add dhcprelay circuitid				Y								Y2						          private vns Y2
-	REST enable dhcp relay						Y								Y2	
+	#REST enable dhcp relay						Y								Y2	
 	BASH ping									h4-rack0						10.252.1.1				             count=5
 	${value} = 									BASH verify arp					h4-rack0						     10.251.1.1
 	Should Be True								${value} 		
@@ -1354,38 +1444,31 @@ setup topology
 	BASH ifconfig ip address						h10-rack0								10.253.1.11/24			bond0.1010
 	BASH ifconfig ip address						h1-rack1								10.251.1.21/24			bond0
 	BASH ifconfig ip address						h3-rack1								10.251.2.23/24			bond0.2003
-	BASH add route									h4-rack0								10.251.2.0/24			10.251.1.1
-	BASH add route									h4-rack0								10.251.3.0/24			10.251.1.1
+	BASH add route									h4-rack0								10.251.0.0/16			10.251.1.1
 	BASH add route									h4-rack0								10.252.0.0/16			10.251.1.1
 	BASH add route									h4-rack0								10.253.0.0/16			10.251.1.1
-	BASH add route									h5-rack0								10.251.1.0/24			10.251.2.1
-  	BASH add route									h5-rack0								10.251.3.0/24			10.251.2.1
+	BASH add route									h5-rack0								10.251.0.0/16			10.251.2.1
 	BASH add route									h5-rack0								10.252.0.0/16			10.251.2.1
   	BASH add route									h5-rack0								10.253.0.0/16			10.251.2.1
-  	BASH add route									h6-rack0								10.251.1.0/24			10.251.3.1
-  	BASH add route									h6-rack0								10.251.2.0/24			10.251.3.1
+  	BASH add route									h6-rack0								10.251.0.0/16			10.251.3.1
   	BASH add route									h6-rack0								10.252.0.0/16			10.251.3.1
   	BASH add route									h6-rack0								10.253.0.0/16			10.251.3.1
-  	BASH add route									h7-rack0								10.252.2.0/24			10.252.1.1
-  	BASH add route									h7-rack0								10.252.3/0/24			10.252.1.1
-  	BASH add route									h7-rack0								10.251.0.0/16			10.252.1.1
+  	BASH add route									h7-rack0								10.251.0/0/16			10.252.1.1
+  	BASH add route									h7-rack0								10.252.0.0/16			10.252.1.1
   	BASH add route									h7-rack0								10.253.0.0/16			10.252.1.1
-  	BASH add route									h8-rack0								10.252.1.0/24			10.252.2.1
-  	BASH add route									h8-rack0								10.252.3.0/24			10.252.2.1
-	BASH add route									h8-rack0								10.251.0.0/16			10.252.2.1
+  	BASH add route									h8-rack0								10.251.0.0/16			10.252.2.1
+	BASH add route									h8-rack0								10.252.0.0/16			10.252.2.1
   	BASH add route									h8-rack0								10.253.0.0/16			10.252.2.1
-  	BASH add route									h9-rack0								10.252.1.0/24			10.252.3.1
-  	BASH add route									h9-rack0								10.252.2.0/24			10.252.3.1
   	BASH add route									h9-rack0								10.251.0.0/16			10.252.3.1
+  	BASH add route									h9-rack0								10.252.0.0/16			10.252.3.1
   	BASH add route									h9-rack0								10.253.0.0/16			10.252.3.1
- 	BASH add route									h10-rack0								10.253.2.0/24			10.253.1.1
-  	BASH add route									h10-rack0								10.253.3/0/24			10.253.1.1
-  	BASH add route									h10-rack0								10.251.0.0/16			10.253.1.1
+ 	BASH add route									h10-rack0								10.251.0.0/16			10.253.1.1
   	BASH add route									h10-rack0								10.252.0.0/16			10.253.1.1
-  	BASH add route									h1-rack1								10.253.1.0/24			10.251.1.1
-  	BASH add route									h1-rack1								10.253.2.0/24			10.251.1.1
-	BASH add route									h1-rack1								10.253.3.0/24			10.251.1.1
+  	BASH add route									h10-rack0								10.253.0.0/16			10.253.1.1
+  	BASH add route									h1-rack1								10.251.0.0/16			10.251.1.1
   	BASH add route									h1-rack1								10.252.0.0/16			10.251.1.1
+	BASH add route									h1-rack1								10.253.0.0/16			10.251.1.1
+  	BASH add route									h3-rack1								10.251.0.0/16			10.251.2.1
 	BASH add route									h3-rack1								10.252.0.0/16			10.251.2.1
   	BASH add route									h3-rack1								10.253.0.0/16			10.251.2.1	
 	REST add tenant routers intf to system			X
@@ -1419,40 +1502,33 @@ teardown topology
 	REST delete vns									Z							Z2
 	REST delete vns									Z							Z3
 	initialize host
-	BASH delete route									h4-rack0								10.251.2.0/24			10.251.1.1
-	BASH delete route									h4-rack0								10.251.3.0/24			10.251.1.1
-	BASH delete route									h4-rack0								10.252.0.0/16			10.251.1.1
-	BASH delete route									h4-rack0								10.253.0.0/16			10.251.1.1
-	BASH delete route									h5-rack0								10.251.1.0/24			10.251.2.1
-  	BASH delete route									h5-rack0								10.251.3.0/24			10.251.2.1
-	BASH delete route									h5-rack0								10.252.0.0/16			10.251.2.1
-  	BASH delete route									h5-rack0								10.253.0.0/16			10.251.2.1
-  	BASH delete route									h6-rack0								10.251.1.0/24			10.251.3.1
-  	BASH delete route									h6-rack0								10.251.2.0/24			10.251.3.1
-  	BASH delete route									h6-rack0								10.252.0.0/16			10.251.3.1
-  	BASH delete route									h6-rack0								10.253.0.0/16			10.251.3.1
-  	BASH delete route									h7-rack0								10.252.2.0/24			10.252.1.1
-  	BASH delete route									h7-rack0								10.252.3/0/24			10.252.1.1
-  	BASH delete route									h7-rack0								10.251.0.0/16			10.252.1.1
-  	BASH delete route									h7-rack0								10.253.0.0/16			10.252.1.1
-  	BASH delete route									h8-rack0								10.252.1.0/24			10.252.2.1
-  	BASH delete route									h8-rack0								10.252.3.0/24			10.252.2.1
-	BASH delete route									h8-rack0								10.251.0.0/16			10.252.2.1
-  	BASH delete route									h8-rack0								10.253.0.0/16			10.252.2.1
-  	BASH delete route									h9-rack0								10.252.1.0/24			10.252.3.1
-  	BASH delete route									h9-rack0								10.252.2.0/24			10.252.3.1
-  	BASH delete route									h9-rack0								10.251.0.0/16			10.252.3.1
-  	BASH delete route									h9-rack0								10.253.0.0/16			10.252.3.1
- 	BASH delete route									h10-rack0								10.253.2.0/24			10.253.1.1
-  	BASH delete route									h10-rack0								10.253.3/0/24			10.253.1.1
-  	BASH delete route									h10-rack0								10.251.0.0/16			10.253.1.1
-  	BASH delete route									h10-rack0								10.252.0.0/16			10.253.1.1
-  	BASH delete route									h1-rack1								10.253.1.0/24			10.253.2.1
-  	BASH delete route									h1-rack1								10.253.3.0/24			10.253.2.1
-	BASH delete route									h1-rack1								10.251.0.0/16			10.253.2.1
-  	BASH delete route									h1-rack1								10.252.0.0/16			10.253.2.1
-  	BASH delete route									h3-rack1								10.252.0.0/16			10.251.2.1
-  	BASH delete route									h3-rack1								10.253.0.0/16			10.251.2.1
+    BASH delete route                               h4-rack0                                10.251.0.0/16           10.251.1.1
+    BASH delete route                               h4-rack0                                10.252.0.0/16           10.251.1.1
+    BASH delete route                               h4-rack0                                10.253.0.0/16           10.251.1.1
+    BASH delete route                               h5-rack0                                10.251.0.0/16           10.251.2.1
+    BASH delete route                               h5-rack0                                10.252.0.0/16           10.251.2.1
+    BASH delete route                               h5-rack0                                10.253.0.0/16           10.251.2.1
+    BASH delete route                               h6-rack0                                10.251.0.0/16           10.251.3.1
+    BASH delete route                               h6-rack0                                10.252.0.0/16           10.251.3.1
+    BASH delete route                               h6-rack0                                10.253.0.0/16           10.251.3.1
+    BASH delete route                               h7-rack0                                10.251.0/0/16           10.252.1.1
+    BASH delete route                               h7-rack0                                10.252.0.0/16           10.252.1.1
+    BASH delete route                               h7-rack0                                10.253.0.0/16           10.252.1.1
+    BASH delete route                               h8-rack0                                10.251.0.0/16           10.252.2.1
+    BASH delete route                               h8-rack0                                10.252.0.0/16           10.252.2.1
+    BASH delete route                               h8-rack0                                10.253.0.0/16           10.252.2.1
+    BASH delete route                               h9-rack0                                10.251.0.0/16           10.252.3.1
+    BASH delete route                               h9-rack0                                10.252.0.0/16           10.252.3.1
+    BASH delete route                               h9-rack0                                10.253.0.0/16           10.252.3.1
+    BASH delete route                               h10-rack0                               10.251.0.0/16           10.253.1.1
+    BASH delete route                               h10-rack0                               10.252.0.0/16           10.253.1.1
+    BASH delete route                               h10-rack0                               10.253.0.0/16           10.253.1.1
+    BASH delete route                               h1-rack1                                10.251.0.0/16           10.251.1.1
+    BASH delete route                               h1-rack1                                10.252.0.0/16           10.251.1.1
+    BASH delete route                               h1-rack1                                10.253.0.0/16           10.251.1.1
+    BASH delete route                               h3-rack1                                10.251.0.0/16           10.251.2.1
+    BASH delete route                               h3-rack1                                10.252.0.0/16           10.251.2.1
+    BASH delete route                               h3-rack1                                10.253.0.0/16           10.251.2.1  
 	BASH delete tag										h6-rack0								bond0.1006				soft_error=${true}
 	BASH delete tag										h7-rack0								bond0.1007				soft_error=${true}
 	BASH delete tag										h8-rack0								bond0.1008				soft_error=${true}
@@ -1469,19 +1545,6 @@ teardown topology
 	BASH init intf										h10-rack0								bond0	
 	BASH init intf										h1-rack1								bond0	
 	BASH init intf										h3-rack1								bond0	
-	BASH network restart                                h2-rack0                                timeout=60
-    BASH network restart                                h3-rack0                                timeout=60
-    BASH network restart                                h4-rack0                                timeout=60
-    BASH network restart                                h5-rack0                                timeout=60
-    BASH network restart                                h6-rack0                                timeout=60
-    BASH network restart                                h7-rack0                                timeout=60
-    BASH network restart                                h8-rack0                                timeout=60
-    BASH network restart                                h9-rack0                                timeout=60
-    BASH network restart                                h10-rack0                               timeout=60
-    BASH network restart                                h1-rack1                                timeout=60
-    BASH network restart                                h2-rack1                                timeout=60
-    BASH network restart                                h3-rack1                                timeout=60
-    BASH network restart                                h3-rack1                                timeout=60
 	REST delete tenant routers intf to system			X
 	REST delete tenant routers intf to system			Y
 	REST delete tenant routers intf to system			Z									
@@ -1593,6 +1656,19 @@ T5 base suite teardown
   	REST delete portgroup 								${leaf3b_arista2}
   	REST delete portgroup 								${leaf3a_arista1}
   	REST delete portgroup 								${leaf3b_arista2}	
+    BASH network restart                                h2-rack0                                timeout=60
+    BASH network restart                                h3-rack0                                timeout=60
+    BASH network restart                                h4-rack0                                timeout=60
+    BASH network restart                                h5-rack0                                timeout=60
+    BASH network restart                                h6-rack0                                timeout=60
+    BASH network restart                                h7-rack0                                timeout=60
+    BASH network restart                                h8-rack0                                timeout=60
+    BASH network restart                                h9-rack0                                timeout=60
+    BASH network restart                                h10-rack0                               timeout=60
+    BASH network restart                                h1-rack1                                timeout=60
+    BASH network restart                                h2-rack1                                timeout=60
+    BASH network restart                                h3-rack1                                timeout=60
+    BASH network restart                                h3-rack1                                timeout=60  	
 	delete fabric switch  
 
 

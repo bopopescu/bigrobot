@@ -76,56 +76,30 @@ Library         Dialogs
 ##ONLY DATA TRAFFIC NO CONTROL TRAFFIC
 T1 With default QoS verify flow mappings to queues
 	[Tags]  manual  feature
-	Default QoS
-	Start traffic
-	Verify flow mappings to HW queues
 	Manual passed
 
 T2 With default QoS verify Weights
 	[Tags]  manual  feature
-	Default QoS
-	Start traffic
-	Verify flow weights on egress pipe
 	Manual passed
 
 T3 with default QoS local leaf traffic
 	[Tags]  manual  feature
-	Default QoS
-	Start traffic
-	Verify flow mappings to HW queues
-	Verify flow weights on egress pipe
 	Manual passed
 	
 T4 with default QoS leaf to leaf traffic in a rack  #Data pkt flooding ratelimiters --->
 	[Tags]  manual  feature
-	Default QoS
-	Start traffic
-	Verify flow mappings to HW queues
-	Verify flow weights on egress pipe
 	Manual passed
 
 T5 With default QoS leaf to Spine traffic
 	[Tags]  manual  feature
-	Default QoS
-	Start traffic
-	Verify flow mappings to HW queues
-	Verify flow weights on egress pipe
 	Manual passed
 
 T6 With default QoS leaf to leaf traffic with 90% low priority and 10% High priority
 	[Tags]  manual  feature
-	Default QoS
-	Start traffic
-	Verify flow mappings to HW queues
-	Verify flow weights on egress pipe
 	Manual passed
 
 T7 With default QoS leaf to spine traffic with 90% low priority and 10% High priority
 	[Tags]  manual  feature
-	Default QoS
-	Start traffic
-	Verify flow mappings to HW queues
-	Verify flow weights on egress pipe
 	Manual passed
 
 T8 Mix T6 and T7
@@ -134,13 +108,6 @@ T8 Mix T6 and T7
 
 T9 With default QoS leaf to leaf start each priority traffic one by one #same interface sending and receiving --->
 	[Tags]  manual  feature
-	Default QoS
-	Start low priority traffic 100%
-	Start second low priority traffic 100%
-	Start third low priority traffic 100%
-	Start High priority traffic 100%
-	Verify flow mappings to HW queues
-	Verify flow weights on egress pipe
 	Manual passed
 
 T10 Repeat T9 with leaf to spine
@@ -166,62 +133,35 @@ T14 Repeat above all with two spines and 4 leafs, each source is from different 
 ## WITH CONTROL TRAFFIC 
 T15 Repeat above all with CONTROL TRAFFIC (from T1 to T14)
 	[Tags]  manual-untested  feature
-	Verify the rate limiters on HW and Controller
 	Manual untested
 ## WITH QoS
 ##ONLY DATA TRAFFIC NO CONTROL TRAFFIC
 T16 With QoS verify flow mappings to queues
 	[Tags]  manual  feature
-	Default QoS
-	Start traffic
-	Verify flow mappings to HW queues
 	Manual passed
 
 T17 With QoS verify Weights
 	[Tags]  manual  feature
-	Default QoS
-	Start traffic
-	Verify flow weights on egress pipe
 	Manual passed
 
 T18 with QoS local leaf traffic
 	[Tags]  manual  feature
-	Default QoS
-	Start traffic
-	Verify flow mappings to HW queues
-	Verify flow weights on egress pipe
 	Manual passed
 	
 T19 with QoS leaf to leaf traffic in a rack
 	[Tags]  manual  feature
-	Default QoS
-	Start traffic
-	Verify flow mappings to HW queues
-	Verify flow weights on egress pipe
 	Manual passed
 
 T20 With QoS leaf to Spine traffic
 	[Tags]  manual  feature
-	Default QoS
-	Start traffic
-	Verify flow mappings to HW queues
-	Verify flow weights on egress pipe
 	Manual passed
 
 T21 With QoS leaf to leaf traffic with 90% low priority and 10% High priority
 	[Tags]  manual  feature
-	Default QoS
-	Start traffic
-	Verify flow mappings to HW queues
-	Verify flow weights on egress pipe
 	Manual passed
 
 T22 With QoS leaf to spine traffic with 90% low priority and 10% High priority
 	[Tags]  manual  feature
-	Default QoS
-	Start traffic
-	Verify flow mappings to HW queues
-	Verify flow weights on egress pipe
 	Manual passed
 
 T23 Mix T22 and T21
@@ -230,13 +170,6 @@ T23 Mix T22 and T21
 	
 T24 With QoS leaf to leaf start each priority traffic one by one
 	[Tags]  manual  feature
-	Default QoS
-	Start low priority traffic 100%
-	Start second low priority traffic 100%
-	Start third low priority traffic 100%
-	Start High priority traffic 100%
-	Verify flow mappings to HW queues
-	Verify flow weights on egress pipe
 	Manual passed
 
 T25 Repeat T9 with leaf to spine
@@ -262,7 +195,6 @@ T29 Repeat above all with two spines and 4 leafs, each source is from different 
 ## WITH CONTROL TRAFFIC 
 T30 Repeat above all with CONTROL TRAFFIC (from T1 to T14)
 	[Tags]  manual-untested  feature
-	Verify control rate limiters on HW and Controller
 	Manual untested
 	
 T31 shut no shut switch interface

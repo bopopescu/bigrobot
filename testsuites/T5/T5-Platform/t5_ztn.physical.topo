@@ -40,3 +40,13 @@ s3:
     port: 6022
   set_session_ssh: false
   set_init_ping: false
+s4:
+  alias: leaf1-a
+  mac: 70:72:cf:bc:c4:c4
+  fabric-role: leaf
+  console:
+    ip: cs-rack04
+    protocol: telnet
+    port: 7020
+  set_session_ssh: false
+  set_init_ping: false

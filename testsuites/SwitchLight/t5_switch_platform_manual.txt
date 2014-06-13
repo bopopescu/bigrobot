@@ -2,7 +2,7 @@
 Documentation     switch-platform Platform Test suite- Iron Horse
 #Suite Setup       T5 switch platform test setup
 #Suite Teardown    T5 switch platform test teardown
-Test Setup        base suite setup
+#Test Setup        base suite setup
 Force Tags        T5  IronHorse 
 ...             
 ...            
@@ -12,7 +12,7 @@ Library         keywords/SwitchLight.py
 Library         keywords/AppController.py
 Library         keywords/Ixia.py 
 Library         keywords/T5.py   
-Library         keywords_dev/kranti/ironhorse/T5SwitchPlatform.py  
+Library         keywords_dev/kranti/ironhorse/T5SwitchPlatform.py
 #Resource        keywords_dev/kranti/ironhorse/snake_traffic_test_variables.txt
 
 
@@ -210,14 +210,14 @@ Verify the Switch configuration after ZTN
 Verify Switch connectivity after ZTN 
     Log    Step 1 - Verify Switch is pingable
     [Tags]  switch-platform  ZTN  feature  
-    [Tags]  Manual-untested
-    Manual untested 
+    [Tags]  Manual
+    Manual Passed 
     
 Verify Switch Configuration - Allowed or Not Allowed Configuration in ZTN
     Log    Step 1 - Verify the What Switch Configuration are allowed Not Allowed
     [Tags]  switch-platform  ZTN  feature  
-    [Tags]  Manual-untested
-    Manual untested 
+    [Tags]  Manual 
+    Manual Passed 
     
 
 ### Managment port 
@@ -443,8 +443,8 @@ Verify the time zone change and update in syslog
 Verify time and date information is NOT lost after reboot
     Log    Step 1 - Verify time and date information is NOT lost after reboot
     [Tags]  switch-platform  ntp  feature
-    [Tags]  Manual  jira-pan-667
-    Manual Failed
+    [Tags]  Manual
+    Manual passed
 
 ## DNS settings 
 ## Same set of tests 
@@ -455,31 +455,31 @@ Verify time and date information is NOT lost after reboot
 ### Command output for of-aux connections  
 
 verify the DNS server and domain name configuration 
-    Log    Step 1 - Verify  dns server and dns domain name configuration 
+    Log    Step 1 - Verify dns server and dns domain name configuration 
     [Tags]  switch-platform  dns  InitialConfig  feature
     [Tags]  Manual
     Manual passed
 
 verify the invalid DNS server and domain name configuration can be added and deleted 
-    Log    Step 1 - Verify  invalid dns server and dns domain name can be configured and deleted
+    Log    Step 1 - Verify invalid dns server and dns domain name can be configured and deleted
     [Tags]  switch-platform  dns  InitialConfig  feature
     [Tags]  Manual 
     Manual passed
 
 verify the hostname configuration on the switch  
-    Log    Step 1 - Verify  hostname configuration on the switch 
+    Log    Step 1 - Verify hostname configuration on the switch 
     [Tags]  switch-platform  hostname  InitialConfig  feature
     [Tags]  Manual
     Manual passed
 
 verify the hostname configuration can be deleted and added again   
-    Log    Step 1 - Verify  verify the hostname configuration can be deleted and added again 
+    Log    Step 1 - verify the hostname configuration can be deleted and added again 
     [Tags]  switch-platform  hostname  InitialConfig  feature
     [Tags]  Manual
     Manual passed
 
 verify the hostname configuration for the valid and supported character   
-    Log    Step 1 - Verify  verify hostname configuration for the valid and supported character  
+    Log    Step 1 - verify hostname configuration for the valid and supported character  
     [Tags]  switch-platform  hostname  InitialConfig  feature
     [Tags]  Manual
     Manual passed
@@ -511,134 +511,133 @@ Verify the environment information is displayed
     Log    Step 1 - Verify the environment information is displayed
     [Tags]  switch-platform  Environment  feature
     [Tags]  Manual  
-    Manual Failed
+    Manual passed
 
 Verify Power Supply Status
     Log    Step 1 - Verify Power Supply Status
     [Tags]  switch-platform  Environment  feature
-    [Tags]  Manual  jira-pan-667
-    Manual Failed
+    [Tags]  Manual  
+    Manual passed
 
 Verify Temperatures are shown in environmental command
     Log    Step 1 - Verify Temperatures are shown in environmental command
     [Tags]  switch-platform  Environment  feature
-    [Tags]  Manual  jira-pan-667
-    Manual Failed
+    [Tags]  Manual 
+    Manual passed
 
 Verify Fans speeds are reported in environmental command 
     Log    Step 1 - Verify Fans Fans speeds are reported in environmental command
     [Tags]  switch-platform  Environment  feature
-    [Tags]  Manual  jira-pan-667
-    Manual Failed
+    [Tags]  Manual 
+    Manual passed
 
 Verify fans are running at higher speeds when temperature increases
     Log    Step 1 - Verify fans are running at higher speeds when temperature increases
     [Tags]  switch-platform  Environment  feature
-    [Tags]  Manual  jira-pan-667
-    Manual Failed
+    [Tags]  Manual-untested  
+    Manual untested
 
-Verify events are reported in syslog in case of fan failure
-    Log    Step 1 - Verify events are reported in syslog in case of fan failure
+Verify the environment shows if the fan is missing
+    Log    Step 1 - Verify environment shows if the fan is missing
     [Tags]  switch-platform  Environment  feature 
-    [Tags]  Manual  jira-pan-667
-    Manual Failed
+    [Tags]  Manual 
+    Manual passed
 
 Verify Periodic polling of Temp sensor fans
     Log    Step 1 - Verify Periodic polling of Temp sensor fans
     [Tags]  switch-platform  Environment  feature
-    [Tags]  Manual  jira-pan-667
-    Manual Failed
+    [Tags]  Manual-untested
+    Manual untested
 
-Verify if fan speed/status is updated in output of show sensors
+Verify if fan speed/status is updated in output of show environment 
     Log    Step 1 - Verify if fan speed/status is updated in output of show sensors
     [Tags]  switch-platform  Environment  feature
-    [Tags]  Manual  jira-pan-667
-    Manual Failed
+    [Tags]  Manual  
+    Manual passed
 
-Verify if temperature values and sensor status are updated in output of show sensors
+Verify if temperature values and sensor status are updated in output of show environment
     Log    Step 1 - Verify if temperature values and sensor status are updated in output of show sensors
     [Tags]  switch-platform  Environment  feature
-    [Tags]  Manual  jira-pan-667
-    Manual Failed
+    [Tags]  Manual 
+    Manual passed
 
 PSU failure test - Bring up , Failure back up PSU AC ,alarm , messages
     Log    Step 1 - PSU failure test - Bring up , Failure back up PSU ,alarm , messages
     [Tags]  switch-platform  Environment  feature
-    [Tags]  Manual  jira-pan-667
-    Manual Failed
+    [Tags]  Manual
+    Manual passed
     
 Verify power output when DUT use one AC power supply
     Log    Step 1 - Verify power output when DUT use one power supply
     [Tags]  switch-platform  Environment  feature
-    [Tags]  Manual  jira-pan-667
-    Manual Failed    
+    [Tags]  Manual  
+    Manual passed    
 
 Verify power output when DUT use two AC power supplies
     Log    Step 1 - Verify power output when DUT use two power supplies
     [Tags]  switch-platform  Environment  feature
-    [Tags]  Manual  jira-pan-667
-    Manual Failed    
+    [Tags]  Manual  
+    Manual passed    
 
 With both AC power supplies and system up and running, remove one power supply and verify
     Log    Step 1 - With both power supplies and system up and running, remove one power supply and verify
     [Tags]  switch-platform  Environment  feature
-    [Tags]  Manual  jira-pan-667
-    Manual Failed    
-
+    [Tags]  Manual  
+    Manual passed    
 
 Repeat previous testcase with the other AC power supply
     Log    Step 1 - Repeat previous testcase with the other power supply
     [Tags]  switch-platform  Environment  feature
-    [Tags]  Manual  jira-pan-667
-    Manual Failed    
+    [Tags]  Manual  
+    Manual passed    
 
 With one AC power supply and system up and running, add second power supply and verify
     Log    Step 1 - With one power supply and system up and running, add second power supply and verify
     [Tags]  switch-platform  Environment  feature
-    [Tags]  Manual  jira-pan-667
-    Manual Failed    
+    [Tags]  Manual  
+    Manual passed    
 
 VErify with PSU2 with the other AC power supply
     Log    Step 1 - Repeat previous testcase with the other power supply
     [Tags]  switch-platform  Environment  feature
-    [Tags]  Manual  jira-pan-667
-    Manual Failed    
+    [Tags]  Manual  
+    Manual passed    
 
 Verify power output when DUT use one DC power supply
     Log    Step 1 - Verify power output when DUT use one power supply
     [Tags]  switch-platform  Environment  feature
-    [Tags]  Manual  jira-pan-667
-    Manual Failed    
+    [Tags]  Manual-untested
+    Manual untested    
 
 Verify power output when DUT use two DC power supplies
     Log    Step 1 - Verify power output when DUT use two power supplies
     [Tags]  switch-platform  Environment  feature
-    [Tags]  Manual  jira-pan-667
-    Manual Failed    
+    [Tags]  Manual-untested
+    Manual untested    
 
 With both DC power supplies and system up and running, remove one power supply and verify
     Log    Step 1 - With both power supplies and system up and running, remove one power supply and verify
     [Tags]  switch-platform  Environment  feature
-    [Tags]  Manual  jira-pan-667
-    Manual Failed    
+    [Tags]  Manual-untested
+    Manual untested    
 
 Repeat previous testcase with the other DC power supply
     Log    Step 1 - Repeat previous testcase with the other power supply
     [Tags]  switch-platform  Environment  feature
-    [Tags]  Manual  jira-pan-667
-    Manual Failed    
+    [Tags]  Manual-untested
+    Manual untested    
 
 With one DC power supply and system up and running, add second power supply and verify
     Log    Step 1 - With one power supply and system up and running, add second power supply and verify
     [Tags]  switch-platform  Environment  feature
-    [Tags]  Manual  jira-pan-667
-    Manual Failed    
+    [Tags]  Manual-untested
+    Manual untested    
 
 Verify with PSU2 with the other DC power supply
     Log    Step 1 - Repeat previous testcase with the other power supply
     [Tags]  switch-platform  Environment  feature
-    [Tags]  Manual  jira-pan-667
-    Manual Failed
+    [Tags]  Manual-untested
+    Manual untested
 
 #### 
 ### Section: LED Test 
@@ -646,40 +645,55 @@ Verify with PSU2 with the other DC power supply
 Verify LED behavior during and after boot up 
     Log    Step 1 - Verify the LED behavior during and after boot up 
     [Tags]  switch-platform  LED  feature  
-    [Tags]  Manual  jira-pan-675
-    Manual Failed    
+    [Tags]  Manual  
+    Manual passed    
 
-Verify LED behavior when link is up down disable 
+Verify LED behavior when link is up and down of 10G link   
     Log    Step 1 - Verify the LED behavior when link is up 
     Log    Step 1 - Verify the LED behavior when link is down
     Log    Step 1 - Verify the LED behavior when link is admin disable 
     [Tags]  switch-platform  LED  feature  
-    [Tags]  Manual  jira-pan-675
+    [Tags]  Manual  
+    Manual passed
+
+Verify LED behavior when link is up and down of 1G copper link   
+    Log    Step 1 - Verify the LED behavior when link is up 
+    Log    Step 1 - Verify the LED behavior when link is down
+    Log    Step 1 - Verify the LED behavior when link is admin disable 
+    [Tags]  switch-platform  LED  feature  
+    [Tags]   Manual jira-pan-941   
+    Manual failed 
+
+
+Verify LED behavior when link is disable 
+    Log    Step 1 - Verify the LED behavior when link is admin disable 
+    [Tags]  switch-platform  LED  feature  
+    [Tags]  Manual  
     Manual Failed
 
 Verify Activity LED and Status LED for a MGMT Port and data ports when no cable is connected
     Log    Step 1 - Verify Activity LED and Status LED for a MGMT Port and data ports when no cable is connected
     [Tags]  switch-platform  LED  feature
-    [Tags]  Manual  jira-pan-675
-    Manual Failed   
+    [Tags]  Manual  
+    Manual passed   
 
 Verify Activity LED and Status LED for a MGMT Port and data ports when port is connected to TG
     Log    Step 1 - Verify Activity LED and Status LED for a MGMT Port and data ports when port is connected to TG
     [Tags]  switch-platform  LED  feature
-    [Tags]  Manual  jira-pan-675
-    Manual Failed    
+    [Tags]  Manual  
+    Manual passed    
 
 Verify Activity LED and Status LED for a MGMT Port and data ports when cable is disconnected from the other end
     Log    Step 1 - Verify Activity LED and Status LED for a MGMT Port and data ports when cable is disconnected from the other end
     [Tags]  switch-platform  LED  feature
-    [Tags]  Manual  jira-pan-675
-    Manual Failed    
+    [Tags]  Manual  
+    Manual passed    
 
 Verify that all the all network LEDs goes off when systems is halted
     Log    Step 1 - Verify that all the all network LEDs goes off when systems is halted
     [Tags]  switch-platform  LED  feature
-    [Tags]  Manual  jira-pan-675
-    Manual Failed    
+    [Tags]  Manual untested  
+    Manual untested     
 
 ###
 ### Section H: CLI Configuration and Show commands 
@@ -968,8 +982,8 @@ Verify the syslog server misconfiguration that can be removed and the correct sy
 
 Verify the logging options and level configuration on the switch 
     Log    Step 1 - Verify the logging level and options configuration can be added    
-    [Tags]  switch-platform  Manual-untested  Logging  feature
-    Manual untested
+    [Tags]  switch-platform  Manual  Logging  feature
+    Manual passed
 
 Verify the max size of the syslog and rollover of the syslog file 
     Log    Step 1 - Verify the max size of the syslog and rollover of the syslog    
