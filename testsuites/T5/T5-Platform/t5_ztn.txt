@@ -109,23 +109,28 @@ T1.7 Reboot and stop at loader shell
 T1.8 Reboot switches from CLI
 	#Reboot Switches
 	#Cli Reboot Switch  master  ${s1_alias}
-	Cli Reboot Switch  master  ${s2_mac}
-	Cli Reboot Switch  master  ${s3_ip}
-	Cli Reboot Switch  master  ${s4_alias}
-
 	#Telnet Wait For Switch To Reload  s1
+
+	Cli Reboot Switch  master  ${s2_mac}
 	Telnet Wait For Switch To Reload  s2
+
+	Cli Reboot Switch  master  ${s3_ip}
 	Telnet Wait For Switch To Reload  s3
+
+	Cli Reboot Switch  master  ${s4_alias}
+	Telnet Wait For Switch To Reload  s4
 
 	Sleep  20
 
 	#Verify Switch Handshake State  ${s1_alias}
 	Verify Switch Handshake State  ${s2_alias}
 	Verify Switch Handshake State  ${s3_alias}
+	Verify Switch Handshake State  ${s4_alias}
 
 	#Verify Switch Running Config  ${s1_mac}  ${s1_alias}
 	Verify Switch Running Config  ${s2_mac}  ${s2_alias}
 	Verify Switch Running Config  ${s3_mac}  ${s3_alias}
+	Verify Switch Running Config  ${s4_mac}  ${s4_alias}
 
 T0.1 BSC-5430
 	${mac1}=  Set Variable  11:22:33:44:55:66
@@ -164,7 +169,7 @@ T0.3 BSC-5568
 	Cli Run  master  switch ${name}
 	Cli Run  master  mac ${mac1}
 	Run Keyword and Expect error
-	...  *Error: HTTPError: 500: Switch Exception: NOT FOUND*
+	...  *Error: Unable to determine IP address of specified switch name*
 	...  Cli Run and Verify Output  master
 	...  system reboot switch test ?
 	...  Shutdown Controller
@@ -1392,13 +1397,15 @@ Failover
 
 Reboot Switches
 	#Telnet Reboot Switch  s1
-	Telnet Reboot Switch  s2
-	Telnet Reboot Switch  s3
-	Telnet Reboot Switch  s4
-
 	#Telnet Wait For Switch To Reload  s1
+
+	Telnet Reboot Switch  s2
 	Telnet Wait For Switch To Reload  s2
+
+	Telnet Reboot Switch  s3
 	Telnet Wait For Switch To Reload  s3
+
+	Telnet Reboot Switch  s4
 	Telnet Wait For Switch To Reload  s4
 
 	Sleep  100
