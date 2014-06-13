@@ -826,7 +826,7 @@ class T5(object):
                 lag_id.append(data[0]["port-table"][i]["lag-id"])
             else:
                 continue
-        url1 = '/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch-name="%s"]?select=vlan-xlate-table' % (switch)
+        url1 = '/api/v1/data/controller/applications/bvs/info/forwarding/network/switch[switch-name="%s"]/vlan-xlate-table' % (switch)
         c.rest.get(url1)
         data1 = c.rest.content()
         for i in range(0, len(data1[0]["vlan-xlate-table"])):

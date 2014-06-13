@@ -212,7 +212,7 @@ Verify L3 intra tenant traffic with ip options
 	
 Inter tenant L3 traffic same rack	
 	L3 inter tenant traffic in the same rack
-	[Tags]									sanity	         run			
+	[Tags]									sanity	         run99			
 
 Inter tenant L3 dhcp relay
 	Inter tenant L3 dhcp relay
@@ -535,6 +535,10 @@ L3 intra tenant dhcp relay across rack
     ${value} =                                  BASH release dhcpv4 address     h3-rack1                        bond0.2003
     Should Be True                              ${value}
     sleep                                       1
+    ${mac2} =                                   BASH get intf mac               h3-rack1                        bond0.2003
+    ${result} =                                 REST show endpoints mac         ${mac2}
+    ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
+    Should Contain                              ${attachpoint}                  ${leaf1_pc3}
     ${ipAddr} =                                 BASH renew dhcpv4 address       h3-rack1                        bond0.2003
     Should Not Be Empty                         ${ipAddr}
     sleep                                       1
@@ -959,8 +963,9 @@ L3 intra tenant flap link towards spine0
 
 
 L3 inter tenant traffic in the same rack
-	BASH ping									h4-rack0					    10.252.1.11				         count=5
-	${value} = 									BASH verify arp					h4-rack0						 10.251.1.1
+    CLI show running tenant
+	BASH ping									h4-rack0					    10.252.1.11				        count=5
+	${value} = 									BASH verify arp					h4-rack0						10.251.1.1
 	Should Be True								${value} 		
 	${value} =									BASH verify arp					h7-rack0						10.252.1.1
 	Should Be True								${value} 
@@ -977,6 +982,7 @@ L3 inter tenant traffic in the same rack
 
 
 Inter tenant L3 dhcp relay
+    CLI show running tenant
 	BASH init intf								h8-rack0								bond0
 	${value} = 									BASH check service status		h4-rack0						isc-dhcp-server
 	Should Contain								${value}						is started
@@ -1008,6 +1014,7 @@ Inter tenant L3 dhcp relay
 	Should Be True  							${loss} == 0	
 
 Verify inter tenant L3 traffic is getting drop with null next hop
+    CLI show running tenant
     BASH ping                                   h4-rack0                        10.252.1.11                     count=5
     ${value} =                                  BASH verify arp                 h4-rack0                        10.251.1.1
     Should Be True                              ${value}        
@@ -1038,6 +1045,7 @@ Verify same mac address showing up on two ports in the same segment is blocked
     REST delete portgroup from vns              Y                                       Y1                      ${leaf0_pc7}            1007
     REST add portgroup to vns                   X                                       X1                      ${leaf0_pc6}            1006
     REST add portgroup to vns                   X                                       X1                      ${leaf0_pc7}            1007
+    CLI show running tenant
     BASH ifup intf                              h6-rack0                                bond0.1006
     BASH ifup intf                              h7-rack0                                bond0.1007
     BASH init intf                              h6-rack0                                bond0.1006
@@ -1096,6 +1104,7 @@ Verify clear blocked endpoint works
     REST delete portgroup from vns              Y                                       Y1                      ${leaf0_pc7}            1007
     REST add portgroup to vns                   X                                       X1                      ${leaf0_pc6}            1006
     REST add portgroup to vns                   X                                       X1                      ${leaf0_pc7}            1007
+    CLI show running tenant
     BASH ifup intf                              h6-rack0                                bond0.1006
     BASH ifup intf                              h7-rack0                                bond0.1007
     BASH init intf                              h6-rack0                                bond0.1006
@@ -1153,6 +1162,7 @@ Verify clear blocked endpoint works
     
     
 Activate and deactivate router segment interface
+    Log                                         CLI show running tenant
     ${ipAddr4} =                                BASH get interface ipv4         h4-rack0                        bond0
     Should Not Be Empty                         ${ipAddr4}
     ${ipAddr5} =                                BASH get interface ipv4         h5-rack0                        bond0
@@ -1183,6 +1193,7 @@ Activate and deactivate router segment interface
     BASH delete route                           h3                              10.251.1.0/24           10.251.3.1
 
 Activate and deactivate router interface
+    Log                                         CLI show running tenant
     BASH ping                                   h4-rack0                        10.252.1.11                      count=5
     ${value} =                                  BASH verify arp                 h4-rack0                         10.251.1.1
     Should Be True                              ${value}        
@@ -1453,7 +1464,7 @@ setup topology
   	BASH add route									h6-rack0								10.251.0.0/16			10.251.3.1
   	BASH add route									h6-rack0								10.252.0.0/16			10.251.3.1
   	BASH add route									h6-rack0								10.253.0.0/16			10.251.3.1
-  	BASH add route									h7-rack0								10.251.0/0/16			10.252.1.1
+  	BASH add route									h7-rack0								10.251.0.0/16			10.252.1.1
   	BASH add route									h7-rack0								10.252.0.0/16			10.252.1.1
   	BASH add route									h7-rack0								10.253.0.0/16			10.252.1.1
   	BASH add route									h8-rack0								10.251.0.0/16			10.252.2.1
@@ -1656,19 +1667,19 @@ T5 base suite teardown
   	REST delete portgroup 								${leaf3b_arista2}
   	REST delete portgroup 								${leaf3a_arista1}
   	REST delete portgroup 								${leaf3b_arista2}	
-    BASH network restart                                h2-rack0                                timeout=60
-    BASH network restart                                h3-rack0                                timeout=60
-    BASH network restart                                h4-rack0                                timeout=60
-    BASH network restart                                h5-rack0                                timeout=60
-    BASH network restart                                h6-rack0                                timeout=60
-    BASH network restart                                h7-rack0                                timeout=60
-    BASH network restart                                h8-rack0                                timeout=60
-    BASH network restart                                h9-rack0                                timeout=60
-    BASH network restart                                h10-rack0                               timeout=60
-    BASH network restart                                h1-rack1                                timeout=60
-    BASH network restart                                h2-rack1                                timeout=60
-    BASH network restart                                h3-rack1                                timeout=60
-    BASH network restart                                h3-rack1                                timeout=60  	
+#    BASH network restart                                h2-rack0                                timeout=60
+#    BASH network restart                                h3-rack0                                timeout=60
+#    BASH network restart                                h4-rack0                                timeout=60
+#    BASH network restart                                h5-rack0                                timeout=60
+#    BASH network restart                                h6-rack0                                timeout=60
+#    BASH network restart                                h7-rack0                                timeout=60
+#    BASH network restart                                h8-rack0                                timeout=60
+#    BASH network restart                                h9-rack0                                timeout=60
+#    BASH network restart                                h10-rack0                               timeout=60
+#    BASH network restart                                h1-rack1                                timeout=60
+#    BASH network restart                                h2-rack1                                timeout=60
+#    BASH network restart                                h3-rack1                                timeout=60
+#    BASH network restart                                h3-rack1                                timeout=60  	
 	delete fabric switch  
 
 

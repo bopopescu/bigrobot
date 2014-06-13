@@ -1483,7 +1483,8 @@ class T5Platform(object):
         c.send("reauth admin adminadmin")
         c.config("")
         c.send("copy %s %s" % (src, dst))
-        options = c.expect([r'[Pp]assword: ', r'\(yes/no\)\?', c.get_prompt()])
+        options = c.expect([r'[Pp]assword: ', r'\(yes/no\)\?', c.get_prompt()],
+                           timeout=45)
         content = c.cli_content()
         helpers.log("*****Output is :\n%s" % content)
         if  ('Could not resolve' in content) or ('Error' in content) or ('No such file or directory' in content):
