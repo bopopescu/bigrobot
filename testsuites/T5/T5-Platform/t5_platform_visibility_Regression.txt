@@ -751,10 +751,6 @@ Verify all the CLI options for the test packet path command
 	[Tags]  testpath  feature  manual
     manual passed
 
-Private vns test
-   [Tags]  testpath  feature  manual
-    manual failed
-
 Destination as a ECMP Group 
 	[Tags]  testpath  feature  manual
     manual passed
@@ -763,14 +759,30 @@ Destination as a default router
 	[Tags]  testpath  feature  manual
     manual passed
 
-Inter Tenant - Blocked by Policy
+Inter Tenant - Droped by Policy
 	[Tags]  testpath  feature  manual
     manual failed 
 
 Inter Tenant - Accept by Policy
 	[Tags]  testpath  feature  manual
     manual passed 
+    
+Inter Tenant - Missing Route
+	[Tags]  testpath  feature  manual
+    manual passed 
+    
+Inter Tenant - Uninstalled interface
+	[Tags]  testpath  feature  manual
+    manual passed 
 
+Inter Tenant - No Route
+	[Tags]  testpath  feature  manual
+    manual passed 
+  
+Inter Tenant - Dropped due to private segment
+   [Tags]  testpath  feature  manual
+    manual passed
+  
 Tracking with multiple test paths
 	[Tags]  testpath  feature  manual
     manual passed 

@@ -799,10 +799,6 @@ Verify all the CLI options for the test packet path command
 	[Tags]  testpath  feature  manual
     manual passed
 
-Private vns test
-   [Tags]  testpath  feature  manual
-    manual failed
-
 Destination as a ECMP Group 
 	[Tags]  testpath  feature  manual
     manual passed
@@ -830,6 +826,10 @@ Inter Tenant - Uninstalled interface
 Inter Tenant - No Route
 	[Tags]  testpath  feature  manual
     manual passed 
+  
+Inter Tenant - Dropped due to private segment
+   [Tags]  testpath  feature  manual
+    manual passed
   
 Tracking with multiple test paths
 	[Tags]  testpath  feature  manual
