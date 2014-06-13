@@ -70,10 +70,10 @@ T12 Swap eth0 & eth1 in bare metal server
     manual untested
     
 T13 Pump line rate traffic: look for split brain and other HA sync loss situations.
-	[Tags]  robustness 	manual  BVS-1689
-    manual failed
+	[Tags]  robustness 	manual
+    manual passed
     
 T14 Shut down the standby controller and bring up a new controller and try to join the cluster
-	[Tags]  robustness 	manual  BVS-1689
-    manual failed
+	[Tags]  robustness 	manual
+    manual passed
     
