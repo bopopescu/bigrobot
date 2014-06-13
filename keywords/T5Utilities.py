@@ -712,7 +712,7 @@ class T5Utilities(object):
         return pidList
 
 
-    def cli_run(self, node, command, cmd_timeout=5, user='admin', password='adminadmin', soft_error=False):
+    def cli_run(self, node, command, cmd_timeout=45, user='admin', password='adminadmin', soft_error=False):
         """
         Run given CLI command
 
