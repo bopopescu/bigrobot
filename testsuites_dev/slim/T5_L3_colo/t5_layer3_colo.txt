@@ -113,11 +113,11 @@ Delete and add router vns ip
 
 Activate and deactivate router segment interface
     Activate and deactivate router segment interface
-    [Tags]                                  feature         run
+    [Tags]                                  feature         run1
 
 Activate and deactivate router interface
     Activate and deactivate router interface
-    [Tags]                                  feature         run
+    [Tags]                                  feature         run1
 
     
 Change tagged endpoint IP address
@@ -212,27 +212,27 @@ Verify L3 intra tenant traffic with ip options
 	
 Inter tenant L3 traffic same rack	
 	L3 inter tenant traffic in the same rack
-	[Tags]									sanity				
+	[Tags]									sanity	         run			
 
 Inter tenant L3 dhcp relay
 	Inter tenant L3 dhcp relay
-	[Tags]									sanity				
+	[Tags]									sanity		    dhcp		
 	
 Inter tenant dhcp relay with two dhcp servers on both vns
-	L3 inter tenant dhcp relay with two dhcp servers on both vns
-	[Tags]									sanity				
+#	L3 inter tenant dhcp relay with two dhcp servers on both vns
+	[Tags]									sanity	         dhcp			
 	
 Verify inter tenant L3 traffic is getting drop with null next hop	
 	Verify inter tenant L3 traffic is getting drop with null next hop
-	[Tags]                                 sanity                 run    
+	[Tags]                                 sanity                 run1    
     
 Verify same mac address showing up on two ports in the same segment is blocked	
 	Verify same mac address showing up on two ports in the same segment is blocked
-	[Tags]                                 sanity                 run       
+	[Tags]                                 sanity                 run1       
     
 Verify clear blocked endpoint works	
 	Verify clear blocked endpoint works
-	[Tags]                                 sanity                 run         
+	[Tags]                                 sanity                 run1        
     
     
 * Keywords
@@ -368,7 +368,7 @@ DHCP discovery on the same vns as server with dhcp-relay enabled
 	REST delete portgroup from vns				Z								Z2								${leaf0_pc11}			-1
 	BASH init intf								h1-rack1						bond0
 	BASH stop service                           h4-rack0                        isc-dhcp-server
-    sleep    
+    sleep                                       1
 	BASH start service							h4-rack0						isc-dhcp-server
 	sleep										1
 	${value} = 									BASH check service status		h4-rack0						isc-dhcp-server
@@ -495,7 +495,8 @@ L3 intra tenant dhcp relay on same rack with invalid circuitid
 	REST add dhcp relay							X								X2						10.251.1.11
 	REST add dhcprelay circuitid				X								X2						private vns AA2
 	#REST enable dhcp relay						X								X2	
-	sleep										10
+	sleep										1
+    BASH ping                                   h4-rack0                        10.251.1.1                      count=3	
 	${mac1} = 									BASH get intf mac				h4-rack0						bond0
 	${result} =									REST show endpoints mac			${mac1}
 	${ipAddr} = 								Set Variable					${result[0]['ip-address']}	
@@ -591,8 +592,6 @@ L3 intra tenant dhcp relay with circuit id across rack
     Should Contain                              ${attachpoint}                  ${leaf1_pc3}
     ${loss} =                                   BASH ping                       h4-rack0                        ${ipAddr}           count=10
     Should Be True                              ${loss} == 0    
-
-
 
 
 L3 dhcp request with and without dhcp relay enabled
