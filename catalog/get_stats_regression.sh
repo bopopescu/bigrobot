@@ -2,10 +2,18 @@
 # 'infile': a file which contains a list of output.xml files (path included).
 #
 
-#export BUILD_NAME="bvs master #1995"
 #export BUILD_NAME="bvs master #1989"
 #export BUILD_NUMBER
 #export BUILD_URL
+
+usage() {
+    echo "Usage: BUILD_NAME=\"bvs master #<id>\" $0 <infile>"
+    exit 0
+}
+
+if [ "$BUILD_NAME"x = x ]; then
+    usage
+fi
 
 ts=`date "+%Y-%m-%d_%H%M%S"`
 
@@ -24,8 +32,7 @@ if [ $# -eq 0 ]; then
         cat $infile
 
     else
-        echo "Usage: $0 <infile>"
-        exit 0
+        usage
     fi
 else
     infile=$1
