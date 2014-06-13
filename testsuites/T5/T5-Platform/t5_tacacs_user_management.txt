@@ -35,39 +35,51 @@ Add user tacacsadmin to group admin and verify access
     [Tags]  feature
 
 Verify remote authentication with open source tacacs
-    rest delete tacacs server  10.192.4.91
-    rest add tacacs server  10.192.66.100  secret  300
+    ${result}=  rest delete tacacs server  10.192.4.91
+    Should be true  ${result}
+    ${result}=  rest add tacacs server  10.192.66.100  secret  300
+    Should be true  ${result}
     verify version  tacacsadmin  adminadmin  ${true}
-    rest delete tacacs server  10.192.66.100    
+    ${result}=  rest delete tacacs server  10.192.66.100    
+    Should be true  ${result}
     [Tags]  feature
 
 Verify multiple tacacs servers can be configured 
-    rest add tacacs server  10.192.66.100  secret  200
+    ${result}=  rest add tacacs server  10.192.66.100  secret  200
+    Should be true  ${result}
     Verify Tacacs Configuration  0  10.192.4.91  300
     Verify Tacacs Configuration  1  10.192.66.100  200
-    rest delete tacacs server  10.192.66.100        
+    ${result}=  rest delete tacacs server  10.192.66.100        
+    Should be true  ${result}
     [Tags]  feature
 
 Verify second tacacs server is used when the first is unreachable   
-    rest delete tacacs server  10.192.4.91
-    rest add tacacs server  10.192.97.20   secret  300
-    rest add tacacs server  10.192.66.100  secret  200 
+    ${result}=  rest delete tacacs server  10.192.4.91
+    Should be true  ${result}
+    ${result}=  rest add tacacs server  10.192.97.20   secret  300
+    Should be true  ${result}
+    ${result}=  rest add tacacs server  10.192.66.100  secret  200 
+    Should be true  ${result}
     Verify Tacacs Configuration  0  10.192.66.100  200
-    Verify Tacacs Configuration  1  10.192.97.20   300    
+    Verify Tacacs Configuration  1  10.192.97.20   300   
     verify version  tacacsadmin  adminadmin  ${true}
-    rest delete tacacs server  10.192.66.100
-    rest delete tacacs server  10.192.97.20 
+    ${result}=  rest delete tacacs server  10.192.66.100
+    Should be true  ${result}
+    ${result}=  rest delete tacacs server  10.192.97.20 
+    Should be true  ${result}
     [Tags]  feature
             
 Configure mismatched tacacs secret and verify tacacs user cannot login
-    rest delete tacacs server  10.192.4.91
-    rest add tacacs server  10.192.4.91  bsnbsn  300
+    ${result}=  rest delete tacacs server  10.192.4.91
+    Should be true  ${result}
+    ${result}=  rest add tacacs server  10.192.4.91  bsnbsn  300
+    Should be true  ${result}
     ${content}=  rest show version  string=version  user=tacacsadmin  password=adminadmin
     Should not be true  ${content}
     [Tags]  feature
 
 Verify that when AAA is configured for tacacs only, local AAA should not work even though local user-accounts are configured
-    rest add tacacs authentication  tacacs=${true}  tacacs_priority=1  local=${false}  local_priority=2  username=tacacsadmin  password=adminadmin
+    ${result}=  rest add tacacs authentication  tacacs=${true}  tacacs_priority=1  local=${false}  local_priority=2  username=tacacsadmin  password=adminadmin
     verify version  tacacsadmin  adminadmin   ${false}
     ${content}=  rest show version  string=version  user=admin  password=adminadmin   local=${false}
     Should not be true  ${content}            
@@ -75,24 +87,30 @@ Verify that when AAA is configured for tacacs only, local AAA should not work ev
     [Tags]  feature
                 
 Delete tacacs server from configuration and verify tacacs user has no access
-    rest delete tacacs server  10.192.4.91
+    ${result}=  rest delete tacacs server  10.192.4.91
+    Should be true  ${result}
     ${content}=  rest show version  string=version  user=tacacsadmin  password=adminadmin
     Should not be true  ${content}
     [Tags]  feature
 
 Delete user tacacsadmin from group admin and verify access
-    cli delete user from group  tacacsadmin  admin
+    ${result}=  cli delete user from group  tacacsadmin  admin
+    Should be true  ${result}
     ${content}=  rest show version  string=version  user=tacacsadmin  password=adminadmin
     Should not be true  ${content}
-    rest add user to group  tacacsadmin  admin
+    ${result}=  rest add user to group  tacacsadmin  admin
+    Should be true  ${result}
     [Tags]  feature 
         
 * Keywords
 
 tacacs test setup
-    rest add tacacs server  10.192.4.91  secret  300
-    rest add tacacs authentication
-    rest add user to group  tacacsadmin  admin
+    ${result}=  rest add tacacs server  10.192.4.91  secret  300
+    Should be true  ${result}
+    ${result}=  rest add tacacs authentication
+    Should be true  ${result}
+    ${result}=  rest add user to group  tacacsadmin  admin
+    Should be true  ${result}
     
 Verify Tacacs Configuration  [Arguments]  ${index}  ${tacacs-server}  ${timeout}
     ${myDictionary}=  rest return dictionary from get  /api/v1/data/controller/core/aaa/tacacs?config=true
@@ -125,6 +143,9 @@ verify version  [Arguments]  ${username}  ${new_password}  ${local}
     Should Contain  ${content}  ${projectname}
 
 tacacs test teardown
-    cli delete user from group  tacacsadmin  admin
-    rest delete tacacs server  10.192.4.91
-    rest delete tacacs authentication      
+    ${result}=  cli delete user from group  tacacsadmin  admin
+    Should be true  ${result}
+    ${result}=  rest delete tacacs server  10.192.4.91
+    Should be true  ${result}
+    ${result}=  rest delete tacacs authentication      
+    Should be true  ${result}
