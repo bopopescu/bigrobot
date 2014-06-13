@@ -309,7 +309,6 @@ Add service to policy and verify show bigtap policy
     Should be equal as integers   ${command_dictionary[0]['info']['service-count']}  1
     #Verify service-switch-count
     Should be equal as integers   ${command_dictionary[0]['info']['service-switch-count']}  1
-    sleep  220
     [Tags]  feature  cli  service
     
 Verify CLI command show bigtap topology service
