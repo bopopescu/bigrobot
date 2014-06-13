@@ -761,7 +761,7 @@ Destination as a default router
 
 Inter Tenant - Droped by Policy
 	[Tags]  testpath  feature  manual
-    manual failed 
+    manual passed 
 
 Inter Tenant - Accept by Policy
 	[Tags]  testpath  feature  manual
