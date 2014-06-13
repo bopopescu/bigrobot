@@ -1106,7 +1106,7 @@ class Ixia(object):
                 self.ix_fetch_port_stats()
             helpers.log('No Traffic Stream is given so, starting traffic on all configured Streams !!')
             try:
-                helpers.log("Trying to Starting traffic all the ports ...")
+                helpers.log("Trying to Starting traffic all the streams configureds ...")
                 self._handle.execute('startStatelessTrafficBlocking', self._handle.getRoot() + 'traffic')
                 helpers.log("Succes starting traffic on all ports...")
             except:
