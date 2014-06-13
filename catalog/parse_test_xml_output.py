@@ -145,14 +145,14 @@ class TestSuite(object):
                 )
         if tc:
             print('Successfully updated Regression "test_cases_archive" record'
-                  ' (name:"%s", product_suite:"%s", date:"%s", status:"%s")'
-                  % (rec['name'], rec['product_suite'],
+                  ' (name:"%s", product_suite:"%s", build_name:"%s", date:"%s", status:"%s")'
+                  % (rec['name'], rec['product_suite'], rec['build_name'],
                      rec['starttime_datestamp'], rec['status']))
         else:
             print('Did not find Regression "test_cases_archive" record'
-                  ' (name:"%s", product_suite:"%s", date:"%s")'
-                  % (rec['name'], rec['product_suite'],
-                     rec['starttime_datestamp']))
+                  ' (name:"%s", product_suite:"%s", build_name:"%s", date:"%s", status:"%s")'
+                  % (rec['name'], rec['product_suite'], rec['build_name'],
+                     rec['starttime_datestamp'], rec['status']))
 
     def db_find_and_modify_testcase(self, rec):
         testcases = self.db().test_cases
@@ -166,14 +166,14 @@ class TestSuite(object):
                 )
         if tc:
             print('Successfully updated "test_cases" record'
-                  ' (name:"%s", product_suite:"%s", date:"%s", status:"%s")'
-                  % (rec['name'], rec['product_suite'],
+                  ' (name:"%s", product_suite:"%s", build_name:"%s", date:"%s", status:"%s")'
+                  % (rec['name'], rec['product_suite'], rec['build_name'],
                      rec['starttime_datestamp'], rec['status']))
         else:
             print('CRITICAL ERROR: Did not find "test_cases" record'
-                  ' (name:"%s", product_suite:"%s", date:"%s")'
-                  % (rec['name'], rec['product_suite'],
-                     rec['starttime_datestamp']))
+                  ' (name:"%s", product_suite:"%s", build_name:"%s", date:"%s", status:"%s")'
+                  % (rec['name'], rec['product_suite'], rec['build_name'],
+                     rec['starttime_datestamp'], rec['status']))
 
     def db_add_if_not_found_suite(self, rec):
         suites = self.db().test_suites
