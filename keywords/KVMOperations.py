@@ -208,7 +208,7 @@ class KVMOperations(object):
                 helpers.log("SCP should be done:\n%s" % scp_cmd_out)
             helpers.summary_log("Success SCP'ing latest Jenkins build !!")
 
-        kvm_handle.bash('sudo cp %s ../images/%s.qcow2' % (file_name, vm_name))
+        kvm_handle.bash('sudo cp "%s ../images/%s.qcow2"' % (file_name, vm_name))
 
         local_qcow_path = "/var/lib/libvirt/images/%s.qcow2" % vm_name
         # vm_name = "%s_BVS" % current_user
