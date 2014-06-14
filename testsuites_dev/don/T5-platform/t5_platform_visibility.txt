@@ -771,10 +771,10 @@ T10 Inter Tenant: SRC & DST Are In Same Rack - Different Switch
 
 T11 Inter Tenant: SRC & DST Are In Different Racks
 	[Tags]  testpath  feature
-	${returnVal}=  rest configure testpath controller view	 src-tenant=Ixia1	src-segment=v1	src-ip=100.1.1.4
+	${returnVal}=  rest configure testpath controller view	 src-tenant=Ixia1	src-segment=v1	src-ip=100.1.1.5
 	...	dst-tenant=Ixia3  dst-segment=v1	dst-ip=100.3.1.2  ip-protocol=tcp  src-l4-port=1000  dst-l4-port=3000  timeout=60
 	Should Be True  ${returnVal}
-	${returnVal}=  rest configure testpath fabric_view  test-name=Test11  src-tenant=Ixia1	src-segment=v1	src-ip=100.1.1.4
+	${returnVal}=  rest configure testpath fabric_view  test-name=Test11  src-tenant=Ixia1	src-segment=v1	src-ip=100.1.1.5
 	...	dst-tenant=Ixia3  dst-segment=v1	dst-ip=100.3.1.2  ip-protocol=tcp  src-l4-port=1000  dst-l4-port=3000  timeout=60
 	Should Be True  ${returnVal}
 	sleep  3
@@ -799,10 +799,6 @@ Verify all the CLI options for the test packet path command
 	[Tags]  testpath  feature  manual
     manual passed
 
-Private vns test
-   [Tags]  testpath  feature  manual
-    manual failed
-
 Destination as a ECMP Group 
 	[Tags]  testpath  feature  manual
     manual passed
@@ -813,7 +809,7 @@ Destination as a default router
     
 Inter Tenant - Droped by Policy
 	[Tags]  testpath  feature  manual
-    manual failed 
+    manual passed 
 
 Inter Tenant - Accept by Policy
 	[Tags]  testpath  feature  manual
@@ -830,6 +826,10 @@ Inter Tenant - Uninstalled interface
 Inter Tenant - No Route
 	[Tags]  testpath  feature  manual
     manual passed 
+  
+Inter Tenant - Dropped due to private segment
+   [Tags]  testpath  feature  manual
+    manual passed
   
 Tracking with multiple test paths
 	[Tags]  testpath  feature  manual

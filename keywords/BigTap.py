@@ -3445,3 +3445,125 @@ class BigTap(object):
 
                 helpers.log("***** Call the cli walk again with  --- %s" % string)
                 self.cli_walk_exec(string, file_name, padding)
+
+    def cli_walk_command(self, command, cmd_argument_count, cmd_argument=None, soft_error=False):
+        '''
+            Execute CLI walk on controller
+            Arguments:
+            | command | Command to be executed |
+            | cmd_argument_count | Number of lines in command help |
+            | cmd_argument | Specific arguments that you want the function to look for in the command help|
+
+            Description:
+            This function checks for couple of things:
+            | 1 | Number of lines in help output is what user has specified |
+            | 2 | The CLI command does not have '<cr> <cr>' in its help output|
+            | 3 | The CLI command is not missing a help string for some sub command |
+            | 4 | if user has specified one or more arguments, those arguments are present in the help string|
+
+            Example:
+            |cli walk command |  show switch all | 6 | |
+            |cli walk command |  show tenant | 14 | tenant1 tenant2 tenant3|
+            |cli walk command |  show switch | 9 | leaf0-a leaf0-b spine0|
+
+            example output of command:
+            kk-mcntrlr-c1> show switch <====== Here number of lines are 13, but ideally you should see only 9. (this would be an error). THIS WOULD BE CAUGHT
+            Keyword Choices:
+                <cr>                            Show fabric information for selected switch
+                all                             Show fabric information for selected switch
+            Switch Name:Enter a switch name:Name of the switch.
+            The field here primarily is a weak reference to that configured
+            under core/switch-config/name.
+                leaf0-a                         Switch Name selection of
+                leaf0-b                         Switch Name selection of
+                spine0                          Switch Name selection of
+            core/proxy/controller/dpid:MAC Address
+            core/proxy/environment/dpid:MAC Address
+            core/proxy/inventory/dpid:MAC Address
+            switch-name:Switch Name Selection:Switch Name selection
+            kk-mcntrlr-c1>
+
+            alpha-cont1> show switch all
+            <cr> <cr><================================ THIS WOULD BE CAUGHT
+            <cr>            Show fabric information for selected switch
+            agent-counters  Show counters for various agents on the Switch
+            connections     Show fabric information for selected switch
+            details         Show fabric information for selected switch
+            interface       <help missing> SHOW_INTERFACE_STATS_COMMAND_DESCRIPTION <====THIS WOULD BE CAUGHT
+        '''
+        try:
+            t = test.Test()
+            c = t.controller('master')
+        except:
+            return False
+        else:
+            c.cli('')
+            cli_string = command + ' ?'
+            helpers.log("Sending command ====> %s" % cli_string)
+            c.send(str(cli_string), no_cr=True)
+            c.expect(r'[\r\n\x07][\w-]+[#>] ')
+            content = c.cli_content()
+            temp = helpers.strip_cli_output(content)
+            temp = helpers.str_to_list(temp)
+            helpers.log("********content:************\n%s" % content)
+            helpers.log("********new_content:************\n%s" % helpers.prettify(temp))
+            c.send(helpers.ctrl('u'))
+            c.expect()
+            c.cli('')
+            num = len(temp)
+            helpers.log("Number of arguments in show command are %s" % num)
+            if num == int(cmd_argument_count):
+                helpers.log("Correct number of arguments found in CLI help output")
+            else:
+                helpers.test_error("Correct number of arguments not returned", soft_error)
+                return False
+
+            if "<cr> <cr>" in content:
+                helpers.test_error("CLI command has an incorrect help string '<cr> <cr>'", soft_error)
+
+            if "<help missing>" in content:
+                helpers.test_error("CLI command has an mnissing help", soft_error)
+
+            if (cmd_argument is not None) :
+                if (' ' in cmd_argument):
+                    new_string = cmd_argument.split()
+                    helpers.log("New String is %s" % new_string)
+                    helpers.log("Temp is %s" % content)
+                    for index in range(len(new_string)):
+                        if (str(new_string[index]) in content):
+                            helpers.log("Argument %s found in CLI help output" % new_string[index])
+                        else:
+                            helpers.test_error("Argument %s NOT found in CLI help output. Error was %s " % (new_string[index], soft_error))
+                            return False
+                else:
+                    if (str(cmd_argument) in content):
+                        helpers.log("Argument %s found in CLI help output" % cmd_argument)
+                    else:
+                        helpers.test_error("Argument %s NOT found in CLI help output. Error was %s " % (cmd_argument, soft_error))
+                        return False
+            return True
+
+    def cli_verify_command(self, command, cmd_argument_count, cmd_argument=None, soft_error=False):
+        try:
+            t = test.Test()
+            c = t.controller('master')
+        except:
+            return False
+        else:
+            c.cli(command)
+            content = c.cli_content()
+            temp_content = content.split('\n')
+            num = len(temp_content)
+            if (num != cmd_argument_count) :
+                helpers.log("Number of arguments in CLI Command Output is different")
+                return False
+            if ("None" in temp_content[0]) and (num == 1):
+                return True
+            elif ("None" in temp_content[0]) and (num > 2):
+                helpers.log("Number of lines ")
+                return False
+
+            if cmd_argument is not None :
+                for line in temp_content:
+                    if (cmd_argument in line) and (num == cmd_argument_count):
+                        return True

@@ -842,11 +842,13 @@ L3 intra tenant traceroute
     BASH ifup intf                              h6                              bond0           
     REST add portgroup to vns                   X                               X1                      ${leaf2_pc1}            -1
     REST add portgroup to vns                   X                               X2                      ${leaf2_pc2}            -1
-    BASH ifconfig ip address                         h5                              10.251.1.11/24          bond0   
-    BASH ifconfig ip address                         h6                              10.251.2.11/24          bond0
+    BASH ifconfig ip address                    h5                              10.251.1.11/24          bond0   
+    BASH ifconfig ip address                    h6                              10.251.2.11/24          bond0
     BASH add route                              h5                              10.251.0.0/16           10.251.1.1
     BASH add route                              h6                              10.251.0.0/16           10.251.2.1
-    sleep                                       5   
+    sleep                                       1
+    ${loss} =                                   BASH ping                       h5                      10.251.2.11             count=10
+    Should Be True                              ${loss} < 50        
     ${string} =                                 BASH run command                h5                      traceroute -n -m 5 10.251.1.1
     ${result} =                                 Set Variable                    ${string[1]} 
     Should Contain                              ${result}                       \ 1\ \ 10.251.1.1 
@@ -1739,7 +1741,7 @@ Verify icmpa is sending destination unreachable for L3 destination miss
 	Should Be True  							${loss} == 100			
 	${result} =       							BASH content 					h4
     log              							result from bash ping is ${result}
-   	Should Contain X Times						${result}						Destination Host Unreachable		10
+   	Should Contain X Times						${result}						Destination Net Unreachable		10
  	BASH delete route							h3								10.251.2.0/24			10.251.1.1
 	BASH delete route							h4								10.251.1.0/24			10.251.2.1	   	
 	BASH delete route							h4								10.99.99.0/24			10.251.2.1
@@ -2034,6 +2036,7 @@ Static endpoint with dynamic host showing up on another port
     #Should Be True                              ${returnVal}
 	REST delete endpoint						X								X3						X3_host1
 	sleep										1
+	BASH ping                                   h2                              10.251.3.24             count=5
 	${loss} = 									BASH ping						h2						10.251.3.24				count=10
 	Should Be True								${loss} == 0
 	${loss} = 									BASH ping						h2						10.251.3.25				count=10
@@ -2943,9 +2946,9 @@ Verify L3 intra tenant traffic with ip options
 	BASH add route								h6								10.251.1.0/24			10.251.2.1
 	sleep										5	
 	${loss} = 									BASH ping									h5								10.251.1.1				count=10 				
-	Should Be True								${loss} < 20
+	Should Be True								${loss} < 50
 	${loss} = 									BASH ping									h6								10.251.2.1				count=10
-	Should Be True								${loss} < 20
+	Should Be True								${loss} < 50
 	${value} = 									BASH verify arp					h5						10.251.1.1
 	Should Be True								${value} 		
 	${value} =									BASH verify arp					h6						10.251.2.1
@@ -3264,7 +3267,7 @@ Verify same mac address showing up on two ports in the same segment is blocked
     sleep                                       1
     BASH run command                            h3                              kill -9 ${pid2}
     sleep                                       1
-    BASH network restart                        3                               timeout=60
+    BASH network restart                        h3                              timeout=60
     sleep                                       300
     ${result} =                                 REST show endpoints mac         ${mac1}
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
@@ -3464,6 +3467,12 @@ test teardown topology
 T5 base suite setup
 	base suite setup
 	add fabric switch
+    BASH network restart                            h1                                timeout=60
+    BASH network restart                            h2                                timeout=60
+    BASH network restart                            h3                                timeout=60
+    BASH network restart                            h4                                timeout=60
+    BASH network restart                            h5                                timeout=60
+    BASH restart service                            h6                                networking              timeout=60	
 	sleep 											5
 	${result} = 									CLI verify controller		s1							c1		
 	Should Be True									${result}
@@ -3517,6 +3526,12 @@ T5 base suite setup
   
 T5 base suite teardown
 	delete fabric switch  
+    BASH network restart                            h1                                timeout=60
+    BASH network restart                            h2                                timeout=60
+    BASH network restart                            h3                                timeout=60
+    BASH network restart                            h4                                timeout=60
+    BASH network restart                            h5                                timeout=60
+    BASH restart service                            h6                                networking              timeout=60
   	REST delete portgroup lacp							${leaf0_pc1}
   	REST delete portgroup lacp							${leaf0_pc2}
   	REST delete portgroup lacp							${leaf1_pc1}
