@@ -1154,7 +1154,7 @@ class T5(object):
         else:
             helpers.log("Given tenant name and VNS name does not match the config")
 
-    def rest_verify_vns_rx_rates(self, tenant, vns, frame_rate, vrange=5):
+    def rest_verify_vns_rx_rates(self, tenant, vns, frame_rate, vrange=100):
         ''' Function to verify the VNS incoming rates
         Input: vns name
         Output: given vns rates will be displayed and match against the expected rate
@@ -1201,7 +1201,7 @@ class T5(object):
         else:
             helpers.log("Given tenant name and VNS name does not match the config")
 
-    def rest_verify_vns_tx_rates(self, tenant, vns, frame_rate, vrange=5):
+    def rest_verify_vns_tx_rates(self, tenant, vns, frame_rate, vrange=100):
         ''' Function to verify the VNS incoming rates
         Input: vns name
         Output: given vns rates will be displayed and match against the expected rate
@@ -1917,7 +1917,7 @@ class T5(object):
         else:
             helpers.log("Given switch name and interface name are not present in the controller")
 
-    def rest_verify_fabric_interface_rx_rates(self, switch, intf, frame_rate, vrange=5):
+    def rest_verify_fabric_interface_rx_rates(self, switch, intf, frame_rate, vrange=100):
         ''' Function to verify the fabric interface rates
         Input: switch and interface
         Output: reusult will be compared against the frame_rate given in the arguments
@@ -1939,7 +1939,7 @@ class T5(object):
         else:
             helpers.log("Given switch name and interface name are not present in the controller")
 
-    def rest_verify_fabric_interface_tx_rates(self, switch, intf, frame_rate, vrange=5):
+    def rest_verify_fabric_interface_tx_rates(self, switch, intf, frame_rate, vrange=100):
         ''' Function to verify the fabric interface tx rates
         Input: switch and interface
         Output: Results will be compared against frame_rate given
@@ -2005,7 +2005,7 @@ class T5(object):
         else:
             helpers.log("Given tenant name does not match the config")
 
-    def rest_verify_tenant_rx_rates(self, tenant, frame_rate, vrange=5):
+    def rest_verify_tenant_rx_rates(self, tenant, frame_rate, vrange=100):
         ''' Function to verify the Tenant Tx stats
         Input: Tenant name , matching frame count , if required user can provide range as well for the frame count match
         Output: given Tenant counters will be showed and matched aginst the value
@@ -2027,7 +2027,7 @@ class T5(object):
         else:
             helpers.log("Given tenant name does not match the config")
 
-    def rest_verify_tenant_tx_rates(self, tenant, frame_rate, vrange=5):
+    def rest_verify_tenant_tx_rates(self, tenant, frame_rate, vrange=100):
         ''' Function to verify the Tenant Tx stats
         Input: Tenant name , matching frame count , if required user can provide range as well for the frame count match
         Output: given Tenant counters will be showed and matched aginst the value
