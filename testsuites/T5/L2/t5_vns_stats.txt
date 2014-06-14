@@ -118,10 +118,12 @@ Verify single VNS rx/tx stats between rack
     rest clear fabric interface stats 
     rest clear vns stats  v1
     rest verify vns rx stats  t1  v1  0
+    sleep  2
     rest verify vns tx stats  t1  v1  0
     start traffic  ${stream}
     sleep  30
     rest verify vns rx stats  t1  v1  10000
+    sleep  2
     rest verify vns tx stats  t1  v1  10000
     rest delete tenant  t1
    
@@ -154,6 +156,7 @@ Verify single VNS rx/tx stats within same rack
     start traffic  ${stream}
     sleep  30
     rest verify vns rx stats  t1  v1  20000
+    sleep  2
     rest verify vns tx stats  t1  v1  20000
     rest delete fabric switch  leaf0-b
     rest delete tenant  t1
@@ -444,15 +447,20 @@ verify multiple vns counters different rack
     rest clear fabric interface stats 
     rest clear vns stats  v1
     rest clear vns stats  v2
+    sleep  2
     rest verify vns rx stats  t1  v1  0
+    sleep  2
     rest verify vns tx stats  t1  v2  0
     start traffic  ${stream1}
     sleep  10
     start traffic  ${stream3}
     sleep  30
     rest verify vns rx stats  t1  v1  10000
+    sleep  2
     rest verify vns tx stats  t1  v1  10000
+    sleep  2
     rest verify vns rx stats  t1  v2  10000
+    sleep  2
     rest verify vns tx stats  t1  v2  10000
     rest delete tenant  t1
 
@@ -480,17 +488,21 @@ verify multiple vns counters on 2 different tenant
     sleep  30
     rest clear fabric interface stats 
     rest clear vns stats  v1
+    sleep  2
     rest verify vns rx stats  t1  v1  0
-    rest verify vns tx stats  t1  v1  0
+    sleep  2
     rest verify vns rx stats  t2  v1  0
-    rest verify vns tx stats  t2  v1  0
+    sleep  2
     start traffic  ${stream1}
     sleep  20
     start traffic  ${stream3}
     sleep  30
     rest verify vns rx stats  t1  v1  10000
+    sleep  2
     rest verify vns tx stats  t1  v1  10000
+    sleep  2
     rest verify vns rx stats  t2  v1  10000
+    sleep  2
     rest verify vns tx stats  t2  v1  10000
     rest delete tenant  t1
     rest delete tenant  t2
@@ -514,11 +526,14 @@ verify the single tenant stats
     sleep  30
     rest clear fabric interface stats 
     rest clear vns stats  v1
+    sleep  2
     rest verify tenant rx stats  t1  0
+    sleep  2
     rest verify tenant tx stats  t1  0
     start traffic  ${stream}
     sleep  30
     rest verify tenant rx stats  t1  10000
+    sleep  2
     rest verify tenant tx stats  t1  10000
     rest delete tenant  t1
 	
@@ -554,6 +569,7 @@ verify single tenant stats using multiple VNS
     start traffic  ${stream3}
     sleep  30
     rest verify tenant rx stats  t1  20000
+    sleep  2
     rest verify tenant tx stats  t1  20000
     rest delete tenant  t1 
 
@@ -590,8 +606,11 @@ verify multiple tenant stats
     start traffic  ${stream3}
     sleep  30
     rest verify tenant rx stats  t1   10000
+    sleep  2
     rest verify tenant tx stats  t1   10000
+    sleep  2
     rest verify tenant rx stats  t2   10000
+    sleep  2
     rest verify tenant tx stats  t2   10000
     rest delete tenant  t1
     rest delete tenant  t2
@@ -668,6 +687,7 @@ Master node controller reboot with multiple vns/interface stats
     start traffic  ${stream3}
     sleep  30
     rest verify tenant rx stats  t1  20000
+    sleep  2
     rest verify tenant tx stats  t1  20000
     rest verify vns rx stats  t1  v1  10000
     rest verify vns tx stats  t1  v2  10000
