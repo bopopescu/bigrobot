@@ -15,7 +15,7 @@ ${switchlight_version}  SwitchLight
 ${snmp_contact}  nw_admin@super_awesome_switch.com
 ${snmp_location_1}  CS_RACK11_6004
 ${snmp_location_2}  CS_RACK11_6013    
-${oneGlb9_name}  ethernet24
+${oneGlb9_name}  ethernet25
 ${tenGly2_name}  ethernet39
 ${fortyGly2_name}  ethernet52
 
