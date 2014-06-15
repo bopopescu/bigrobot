@@ -83,8 +83,9 @@ class T5Platform(object):
         else:
             slave.rest.post(url, {"rigged": False})
 
-        sleep(30)
-
+        #sleep(30)
+        sleep(90)
+        
         newMasterID = self.getNodeID(False)
         if(newMasterID == -1):
             return False
@@ -111,7 +112,8 @@ class T5Platform(object):
         returnVal = self._cluster_election(True)
         if(not returnVal):
             return False
-        sleep(30)
+        #sleep(30)
+        sleep(90)
         return utilities.fabric_integrity_checker(obj, "after")
 
 
@@ -136,7 +138,8 @@ class T5Platform(object):
             c.send("system failover")
             c.expect(r"Failover to this controller node \(yes/no\)?")
             c.config("yes")
-            sleep(30)
+            #sleep(30)
+            sleep(60)
         except:
             helpers.test_log(c.cli_content())
             return False
@@ -152,7 +155,8 @@ class T5Platform(object):
         returnVal = self._cluster_election(False)
         if(not returnVal):
             return False
-        sleep(30)
+        #sleep(30)
+        sleep(60)
         return utilities.fabric_integrity_checker(obj, "before")
 
 
@@ -189,14 +193,16 @@ class T5Platform(object):
                 master.enable("system reboot", prompt="Confirm \(yes to continue\)")
                 master.enable("yes")
                 helpers.log("Master is rebooting")
-                sleep(90)
+                #sleep(90)
+                sleep(160)
             else:
                 slave = t.controller("slave")
                 ipAddr = slave.ip()
                 slave.enable("system reboot", prompt="Confirm \(yes to continue\)")
                 slave.enable("yes")
                 helpers.log("Slave is rebooting")
-                sleep(90)
+                #sleep(90)
+                sleep(160)
         except:
             helpers.log("Node is rebooting")
             sleep(90)
@@ -1480,7 +1486,7 @@ class T5Platform(object):
         helpers.test_log("Running command:\ncopy %s %s" % (src, dst))
         t = test.Test()
         c = t.controller(node)
-        c.send("reauth admin adminadmin")
+        c.send("reauth admin adminadmin; enable")
         c.config("")
         c.send("copy %s %s" % (src, dst))
         options = c.expect([r'[Pp]assword: ', r'\(yes/no\)\?', c.get_prompt()],

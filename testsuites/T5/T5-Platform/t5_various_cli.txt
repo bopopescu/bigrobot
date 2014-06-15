@@ -505,6 +505,17 @@ T33 Show banner simple test
 	...  This is test banner
 	[Tags]  banner  BSC-5366
 
+T34 Rebooting dummy switch
+	Cli Run  master  switch test
+	Cli Run  master  mac 11:22:33:44:55:66
+	Run Keyword and Expect Error
+	...  *Error: Unable to determine IP address of specified switch name*
+	...  Cli Run  master  system reboot switch test
+	Run Keyword and Expect Error
+	...  *Error: Unable to determine IP address of specified switch DPID*
+	...  Cli Run  master  system reboot switch 11:22:33:44:55:66
+	[Tags]  ZTN  BSC-5569
+
 *** Keywords ***
 Generate Random Name
 	[Arguments]  ${prefix}  ${suffix_len}
