@@ -1,5 +1,6 @@
 import autobot.helpers as helpers
 import autobot.test as test
+import string
 
 class  T5SwitchPlatform(object):
 
@@ -203,4 +204,27 @@ class  T5SwitchPlatform(object):
         except:
             helpers.log("could not execute command, check for log")
             return  False
-        
+   
+   
+    def cli_switch_show_interface_state(self, switch, interface):
+        ''' Function to return interface state when admin down
+           input - switch , interface 
+           output - Interface state 
+        '''
+        try:
+            t = test.Test()
+            s1= t.switch(switch)
+            cli_input1=  "show interface " + str(interface) + " detail"
+            s1.enable(cli_input1)
+            content1 = string.split(s1.cli_content(), '\n')
+            helpers.log("value in content1[1] is %s"  % (content1[1]))
+            (firstval, a, b, lastval) = content1[1].rstrip('\n').strip().split(' ')
+            helpers.log("value of the interface is %s and state is %s"  % (firstval, lastval))
+            intf_state=  lastval
+            helpers.log("value in content1[1] is %s and state is %s"  % (content1[1], lastval))
+            return intf_state
+        except:
+            helpers.test_failure("Could not execute command. Please check log for errors")
+            return False
+              
+              
