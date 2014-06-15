@@ -199,7 +199,7 @@ T0.3. BSC-5568
 	...  Shutdown Controller
 	...  flag=False
 	Run Keyword and Expect Error
-	...  *Error: Unable to determine IP address of specified switch name:
+	...  *Error: Unable to determine IP address of specified switch name*
 	...  Cli Run and Verify Output  master
 	...  system reboot switch test ?
 	...  Reboot indicated switches
@@ -225,6 +225,146 @@ T0.4. Show remote
 	Cli Run  master  show switch ${s4_alias} remote version
 	Cli Run  master  show switch ${s4_alias} remote controller
 	Cli Run  master  show switch ${s4_alias} remote inventory
+
+# Switch in provisioned mode
+T5.3.1. Disconnect, change config, reconnect, reload
+	Reboot Switches
+	Verify Switch In Provisioned Mode  ${s2_alias}
+	Telnet Set MA1 State  s2  down
+	Randomize ZTN Configuration
+	Cli Run  master  show run
+	Verify Switch Startup Config  ${s2_mac}  ${s2_alias}
+	Telnet Set MA1 State  s2  up
+	Reboot Provisioned Switch  s2  ${s2_mac}  ${s2_alias}
+
+T5.3.2. Disconnect, delete, reconnect, reload (reboot?)
+	Reboot Switches
+	Verify Switch In Provisioned Mode  ${s2_alias}
+	Telnet Set MA1 State  s2  down
+	Cli Run  master  enable;config
+	Cli Run  master  no switch ${s2_alias}
+	Randomize ZTN Configuration
+	Telnet Set MA1 State  s2  up
+	Telnet Reboot Switch  s2
+	Telnet Verify ZTN Discovery Failed  s2
+	[Tags]  skipped
+
+T5.3.3. Disconnect, change config, reboot
+	Reboot Switches
+	Verify Switch In Provisioned Mode  ${s2_alias}
+	Telnet Set MA1 State  s2  down
+	Randomize ZTN Configuration
+	Cli Run  master  show run
+	Verify Switch Startup Config  ${s2_mac}  ${s2_alias}
+	Reboot Provisioned Switch  s2  ${s2_mac}  ${s2_alias}
+
+T5.3.4. Disconnect, delete, reboot
+	Reboot Switches
+	Verify Switch In Provisioned Mode  ${s2_alias}
+	Telnet Set MA1 State  s2  down
+	Cli Run  master  enable;config
+	Cli Run  master  no switch ${s2_alias}
+	Randomize ZTN Configuration
+	Telnet Reboot Switch  s2
+	Telnet Verify ZTN Discovery Failed  s2
+	[Tags]  skipped
+
+T5.3.5. Disconnect, change config, failover, reconnect, reload
+	Reboot Switches
+	Verify Switch In Provisioned Mode  ${s2_alias}
+	Telnet Set MA1 State  s2  down
+	Randomize ZTN Configuration
+	Failover
+	Cli Run  master  show run
+	Verify Switch Startup Config  ${s2_mac}  ${s2_alias}
+	Telnet Set MA1 State  s2  up
+	Reboot Provisioned Switch  s2  ${s2_mac}  ${s2_alias}
+
+T5.3.6. Disconnect, delete, failover, reconnect, reload (reboot?)
+	Reboot Switches
+	Verify Switch In Provisioned Mode  ${s2_alias}
+	Telnet Set MA1 State  s2  down
+	Cli Run  master  enable;config
+	Cli Run  master  no switch ${s2_alias}
+	Randomize ZTN Configuration
+	Failover
+	Telnet Set MA1 State  s2  up
+	Telnet Reboot Switch  s2
+	Telnet Verify ZTN Discovery Failed  s2
+	[Tags]  skipped
+
+T5.3.7. Disconnect, change config, failover, reboot
+	Reboot Switches
+	Verify Switch In Provisioned Mode  ${s2_alias}
+	Telnet Set MA1 State  s2  down
+	Randomize ZTN Configuration
+	Failover
+	Cli Run  master  show run
+	Verify Switch Startup Config  ${s2_mac}  ${s2_alias}
+	Reboot Provisioned Switch  s2  ${s2_mac}  ${s2_alias}
+
+T5.3.8. Disconnect, delete, failover, reboot
+	Reboot Switches
+	Verify Switch In Provisioned Mode  ${s2_alias}
+	Telnet Set MA1 State  s2  down
+	Cli Run  master  enable;config
+	Cli Run  master  no switch ${s2_alias}
+	Randomize ZTN Configuration
+	Failover
+	Telnet Reboot Switch  s2
+	Telnet Verify ZTN Discovery Failed  s2
+	[Tags]  skipped
+
+T5.3.9. Disconnect, change config, double failover, reconnect, reload
+	Reboot Switches
+	Verify Switch In Provisioned Mode  ${s2_alias}
+	Telnet Set MA1 State  s2  down
+	Randomize ZTN Configuration
+	Failover
+	Sleep  30
+	Failover
+	Cli Run  master  show run
+	Verify Switch Startup Config  ${s2_mac}  ${s2_alias}
+	Telnet Set MA1 State  s2  up
+	Reboot Provisioned Switch  s2  ${s2_mac}  ${s2_alias}
+
+T5.3.10. Disconnect, delete, double failover, reconnect, reload (reboot?)
+	Reboot Switches
+	Verify Switch In Provisioned Mode  ${s2_alias}
+	Telnet Set MA1 State  s2  down
+	Cli Run  master  enable;config
+	Cli Run  master  no switch ${s2_alias}
+	Randomize ZTN Configuration
+	Failover
+	Failover
+	Telnet Set MA1 State  s2  up
+	Telnet Reboot Switch  s2
+	Telnet Verify ZTN Discovery Failed  s2
+	[Tags]  skipped
+
+T5.3.11. Disconnect, change config, double failover, reboot
+	Reboot Switches
+	Verify Switch In Provisioned Mode  ${s2_alias}
+	Telnet Set MA1 State  s2  down
+	Randomize ZTN Configuration
+	Failover
+	Failover
+	Cli Run  master  show run
+	Verify Switch Startup Config  ${s2_mac}  ${s2_alias}
+	Reboot Provisioned Switch  s2  ${s2_mac}  ${s2_alias}
+
+T5.3.12. Disconnect, delete, double failover, reboot
+	Reboot Switches
+	Verify Switch In Provisioned Mode  ${s2_alias}
+	Telnet Set MA1 State  s2  down
+	Cli Run  master  enable;config
+	Cli Run  master  no switch ${s2_alias}
+	Randomize ZTN Configuration
+	Failover
+	Failover
+	Telnet Reboot Switch  s2
+	Telnet Verify ZTN Discovery Failed  s2
+	[Tags]  skipped
 
 ### Switch bring-up
 # Bring up out-of-the-box switch
@@ -729,145 +869,6 @@ T5.2.4. Power down, delete, failover
 	Telnet Verify ZTN Discovery Failed  s3
 	[Tags]  skipped
 
-# Switch in provisioned mode
-T5.3.1. Disconnect, change config, reconnect, reload
-	Reboot Switches
-	Verify Switch In Provisioned Mode  ${s2_alias}
-	Telnet Set MA1 State  s2  down
-	Randomize ZTN Configuration
-	Cli Run  master  show run
-	Verify Switch Startup Config  ${s2_mac}  ${s2_alias}
-	Telnet Set MA1 State  s2  up
-	Reboot Provisioned Switch  s2  ${s2_mac}  ${s2_alias}
-
-T5.3.2. Disconnect, delete, reconnect, reload (reboot?)
-	Reboot Switches
-	Verify Switch In Provisioned Mode  ${s2_alias}
-	Telnet Set MA1 State  s2  down
-	Cli Run  master  enable;config
-	Cli Run  master  no switch ${s2_alias}
-	Randomize ZTN Configuration
-	Telnet Set MA1 State  s2  up
-	Telnet Reboot Switch  s2
-	Telnet Verify ZTN Discovery Failed  s2
-	[Tags]  skipped
-
-T5.3.3. Disconnect, change config, reboot
-	Reboot Switches
-	Verify Switch In Provisioned Mode  ${s2_alias}
-	Telnet Set MA1 State  s2  down
-	Randomize ZTN Configuration
-	Cli Run  master  show run
-	Verify Switch Startup Config  ${s2_mac}  ${s2_alias}
-	Reboot Provisioned Switch  s2  ${s2_mac}  ${s2_alias}
-
-T5.3.4. Disconnect, delete, reboot
-	Reboot Switches
-	Verify Switch In Provisioned Mode  ${s2_alias}
-	Telnet Set MA1 State  s2  down
-	Cli Run  master  enable;config
-	Cli Run  master  no switch ${s2_alias}
-	Randomize ZTN Configuration
-	Telnet Reboot Switch  s2
-	Telnet Verify ZTN Discovery Failed  s2
-	[Tags]  skipped
-
-T5.3.5. Disconnect, change config, failover, reconnect, reload
-	Reboot Switches
-	Verify Switch In Provisioned Mode  ${s2_alias}
-	Telnet Set MA1 State  s2  down
-	Randomize ZTN Configuration
-	Failover
-	Cli Run  master  show run
-	Verify Switch Startup Config  ${s2_mac}  ${s2_alias}
-	Telnet Set MA1 State  s2  up
-	Reboot Provisioned Switch  s2  ${s2_mac}  ${s2_alias}
-
-T5.3.6. Disconnect, delete, failover, reconnect, reload (reboot?)
-	Reboot Switches
-	Verify Switch In Provisioned Mode  ${s2_alias}
-	Telnet Set MA1 State  s2  down
-	Cli Run  master  enable;config
-	Cli Run  master  no switch ${s2_alias}
-	Randomize ZTN Configuration
-	Failover
-	Telnet Set MA1 State  s2  up
-	Telnet Reboot Switch  s2
-	Telnet Verify ZTN Discovery Failed  s2
-	[Tags]  skipped
-
-T5.3.7. Disconnect, change config, failover, reboot
-	Reboot Switches
-	Verify Switch In Provisioned Mode  ${s2_alias}
-	Telnet Set MA1 State  s2  down
-	Randomize ZTN Configuration
-	Failover
-	Cli Run  master  show run
-	Verify Switch Startup Config  ${s2_mac}  ${s2_alias}
-	Reboot Provisioned Switch  s2  ${s2_mac}  ${s2_alias}
-
-T5.3.8. Disconnect, delete, failover, reboot
-	Reboot Switches
-	Verify Switch In Provisioned Mode  ${s2_alias}
-	Telnet Set MA1 State  s2  down
-	Cli Run  master  enable;config
-	Cli Run  master  no switch ${s2_alias}
-	Randomize ZTN Configuration
-	Failover
-	Telnet Reboot Switch  s2
-	Telnet Verify ZTN Discovery Failed  s2
-	[Tags]  skipped
-
-T5.3.9. Disconnect, change config, double failover, reconnect, reload
-	Reboot Switches
-	Verify Switch In Provisioned Mode  ${s2_alias}
-	Telnet Set MA1 State  s2  down
-	Randomize ZTN Configuration
-	Failover
-	Sleep  30
-	Failover
-	Cli Run  master  show run
-	Verify Switch Startup Config  ${s2_mac}  ${s2_alias}
-	Telnet Set MA1 State  s2  up
-	Reboot Provisioned Switch  s2  ${s2_mac}  ${s2_alias}
-
-T5.3.10. Disconnect, delete, double failover, reconnect, reload (reboot?)
-	Reboot Switches
-	Verify Switch In Provisioned Mode  ${s2_alias}
-	Telnet Set MA1 State  s2  down
-	Cli Run  master  enable;config
-	Cli Run  master  no switch ${s2_alias}
-	Randomize ZTN Configuration
-	Failover
-	Failover
-	Telnet Set MA1 State  s2  up
-	Telnet Reboot Switch  s2
-	Telnet Verify ZTN Discovery Failed  s2
-	[Tags]  skipped
-
-T5.3.11. Disconnect, change config, double failover, reboot
-	Reboot Switches
-	Verify Switch In Provisioned Mode  ${s2_alias}
-	Telnet Set MA1 State  s2  down
-	Randomize ZTN Configuration
-	Failover
-	Failover
-	Cli Run  master  show run
-	Verify Switch Startup Config  ${s2_mac}  ${s2_alias}
-	Reboot Provisioned Switch  s2  ${s2_mac}  ${s2_alias}
-
-T5.3.12. Disconnect, delete, double failover, reboot
-	Reboot Switches
-	Verify Switch In Provisioned Mode  ${s2_alias}
-	Telnet Set MA1 State  s2  down
-	Cli Run  master  enable;config
-	Cli Run  master  no switch ${s2_alias}
-	Randomize ZTN Configuration
-	Failover
-	Failover
-	Telnet Reboot Switch  s2
-	Telnet Verify ZTN Discovery Failed  s2
-	[Tags]  skipped
 
 # Switch in stand-by mode
 T5.4.1. Disconnect, change config, reconnect, reload
