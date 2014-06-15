@@ -326,10 +326,10 @@ class Host(object):
         n.sudo("service %s stop" % processname)
         return True
 
-    def bash_restart_service(self, node, processname):
+    def bash_restart_service(self, node, processname, timeout=None):
         t = test.Test()
         n = t.node(node)
-        n.sudo("service %s restart" % processname)
+        n.sudo("service %s restart" % processname, timeout=timeout)
         return True
 
     def bash_ls(self, node, path):

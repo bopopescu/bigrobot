@@ -3467,12 +3467,12 @@ test teardown topology
 T5 base suite setup
 	base suite setup
 	add fabric switch
-    BASH network restart                            h1                                timeout=60
-    BASH network restart                            h2                                timeout=60
-    BASH network restart                            h3                                timeout=60
-    BASH network restart                            h4                                timeout=60
-    BASH network restart                            h5                                timeout=60
-    BASH restart service                            h6                                networking              timeout=60	
+    #BASH network restart                            h1                                timeout=60
+    #BASH network restart                            h2                                timeout=60
+    #BASH network restart                            h3                                timeout=60
+    #BASH network restart                            h4                                timeout=60
+    #BASH network restart                            h5                                timeout=60
+    #BASH restart service                            h6                                networking              timeout=60	
 	sleep 											5
 	${result} = 									CLI verify controller		s1							c1		
 	Should Be True									${result}
@@ -3526,12 +3526,12 @@ T5 base suite setup
   
 T5 base suite teardown
 	delete fabric switch  
-    BASH network restart                            h1                                timeout=60
-    BASH network restart                            h2                                timeout=60
-    BASH network restart                            h3                                timeout=60
-    BASH network restart                            h4                                timeout=60
-    BASH network restart                            h5                                timeout=60
-    BASH restart service                            h6                                networking              timeout=60
+    #BASH network restart                            h1                                timeout=60
+    #BASH network restart                            h2                                timeout=60
+    #BASH network restart                            h3                                timeout=60
+    #BASH network restart                            h4                                timeout=60
+    #BASH network restart                            h5                                timeout=60
+    #BASH restart service                            h6                                networking              timeout=60
   	REST delete portgroup lacp							${leaf0_pc1}
   	REST delete portgroup lacp							${leaf0_pc2}
   	REST delete portgroup lacp							${leaf1_pc1}
