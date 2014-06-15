@@ -1050,7 +1050,7 @@ class T5ZTN(object):
         helpers.log("Executing 'system reboot switch %s' command"
                     " on node %s" % (switch, node))
         try:
-            c.config("system reboot switch %s" % switch)
+            c.config("system reboot switch %s" % switch, timeout=30)
         except:
             return helpers.test_failure("Error rebooting the switch")
 
