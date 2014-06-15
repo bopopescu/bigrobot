@@ -190,3 +190,55 @@ class T5_longevity(object):
 
         return True
 
+
+
+    def cli_get_qos_weight(self,node,port):
+        t = test.Test()
+        s = t.switch(node)    
+        string = 'debug ofad "qos_weight_info ' + port + '"'
+        content= s.enable(string)['content']        
+        info=[]
+        temp = helpers.strip_cli_output(content,to_list=True)    
+        helpers.log("***temp is: %s  \n"  % temp)                   
+    
+        for line in temp:     
+            helpers.log("***line is: %s  \n"  % line)                   
+            line = line.lstrip()
+            match= re.match(r'queue=(\d+) ->.* weight=(\d+)', line)
+            if match:
+                helpers.log("INFO: queue is: %s,  weight is: %s" % (match.group(1), match.group(2)))                          
+                info.append(match.group(2))
+         
+        helpers.log("***Exiting with info: %s  \n"  % info)
+
+        return info
+
+    def cli_get_qos_port_stat(self,node,port):
+        t = test.Test()
+        s = t.switch(node)    
+        string = 'debug ofad "qos_port_stat ' + port + '"'
+        content= s.enable(string)['content']        
+        info=[]
+        temp = helpers.strip_cli_output(content,to_list=True)    
+        helpers.log("***temp is: %s  \n"  % temp)                   
+    
+        for line in temp:     
+            helpers.log("***line is: %s  \n"  % line)                   
+            line = line.lstrip()
+            match= re.match(r'.*queue=(\d+).* out_pkt.*=(\d+)', line)
+            if match:
+                helpers.log("INFO: queue is: %s,  weight is: %s" % (match.group(1), match.group(2)))                          
+                info.append(match.group(2))
+         
+        helpers.log("***Exiting with info: %s  \n"  % info)
+
+        return info
+
+    def cli_qos_clear_stat(self,node,port):
+        t = test.Test()
+        s = t.switch(node)    
+        string = 'debug ofad "qos_clear_stat ' + port + '"'
+        s.enable(string)     
+ 
+        return True
+

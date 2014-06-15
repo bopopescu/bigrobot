@@ -1384,6 +1384,220 @@ class BigTap(object):
             else:
                 return True
 
+# Add a bigtap filter-set
+    def rest_add_filter_set(self, filter_set_name, rbac_view_name="admin-view", user="admin", password="adminadmin"):
+        '''
+            Objective:
+            - Add a filter set.
+        
+            Input:
+            | `filter_set_name`| Name of filter set | 
+            | `rbac_view_name`| Name of RBAC View. Default is admin-view | 
+            
+            Return Value: 
+            - True if configuration add is successful
+            - False if configuration add is unsuccessful  
+        
+        '''
+        try:
+            t = test.Test()
+        except:
+            return False
+        else:
+            c = t.controller('master')
+            try:
+                url = '/api/v1/data/controller/applications/bigtap/filter-set[name="%s"]' % (str(filter_set_name))
+                if "admin" not in user:
+                    c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                    c_user.rest.put(url, {"name": str(filter_set_name)})
+                    t.node_reconnect(node='master')
+                else:
+                    c.rest.put(url, {"name": str(filter_set_name)})
+            except:
+                helpers.test_log(c.rest.error())
+                return False
+            else:
+                return True
+
+# delete a bigtap filter-set
+    def rest_delete_filter_set(self, filter_set_name, rbac_view_name="admin-view", user="admin", password="adminadmin"):
+        '''
+            Objective:
+            - Add a filter set.
+        
+            Input:
+            | `filter_set_name`| Name of filter set | 
+            | `rbac_view_name`| Name of RBAC View. Default is admin-view | 
+            
+            Return Value: 
+            - True if configuration add is successful
+            - False if configuration add is unsuccessful  
+        
+        '''
+        try:
+            t = test.Test()
+        except:
+            return False
+        else:
+            c = t.controller('master')
+            try:
+                url = '/api/v1/data/controller/applications/bigtap/filter-set[name="%s"]' % (str(filter_set_name))
+                if "admin" not in user:
+                    c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                    c_user.rest.delete(url, {})
+                    t.node_reconnect(node='master')
+                else:
+                    c.rest.delete(url, {})
+            except:
+                helpers.test_log(c.rest.error())
+                return False
+            else:
+                return True
+
+# Add match condition to filter set
+    def rest_add_match_to_filter_set(self, filter_set_name, match_number, data, rbac_view_name="admin-view", user="admin", password="adminadmin"):
+        '''
+            Objective:
+            - Add a bigtap match condition to a filtet set
+        
+            Input:
+            | `filter_set_name` | Name of filter set | 
+            | `match_number` |  Match number like the '1' in  '1 match tcp | 
+            | `data` | Formatted data field like  {"ether-type": 2048, "dst-tp-port": 80, "ip-proto": 6, "sequence": 1} | 
+            | `rbac_view_name`| RBAC View Name for eg. admin-view | 
+            
+            Return Value: 
+            - True if configuration add is successful
+            - False if configuration add is unsuccessful         
+        '''
+        try:
+            t = test.Test()
+        except:
+            return False
+        else:
+            c = t.controller('master')
+            try:
+                helpers.log("Input data is %s" % data)
+                url = '/api/v1/data/controller/applications/bigtap/filter-set[name="%s"]/rule[sequence=%s]' % (str(filter_set_name), str(match_number))
+                data_dict = helpers.from_json(data)
+                if "admin" not in user:
+                    c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                    c_user.rest.put(url, data_dict)
+                    t.node_reconnect(node='master')
+                else:
+                    c.rest.put(url, data_dict)
+            except:
+                return False
+            else:
+                return True
+
+# Delete a match condition to filter set
+    def rest_delete_match_from_filter_set(self, filter_set_name, match_number, rbac_view_name="admin-view", user="admin", password="adminadmin"):
+        '''
+            Objective:
+            - Add a bigtap match condition to a filtet set
+        
+            Input:
+            | `filter_set_name` | Name of filter set | 
+            | `match_number` |  Match number like the '1' in  '1 match tcp | 
+            | `data` | Formatted data field like  {"ether-type": 2048, "dst-tp-port": 80, "ip-proto": 6, "sequence": 1} | 
+            | `rbac_view_name`| RBAC View Name for eg. admin-view | 
+            
+            Return Value: 
+            - True if configuration add is successful
+            - False if configuration add is unsuccessful         
+        '''
+        try:
+            t = test.Test()
+        except:
+            return False
+        else:
+            c = t.controller('master')
+            try:
+                url = '/api/v1/data/controller/applications/bigtap/filter-set[name="%s"]/rule[sequence=%s]' % (str(filter_set_name), str(match_number))
+                if "admin" not in user:
+                    c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                    c_user.rest.delete(url, {})
+                    t.node_reconnect(node='master')
+                else:
+                    c.rest.delete(url, {})
+            except:
+                return False
+            else:
+                return True
+
+# Add filter-set to policy
+    def rest_add_filterset_to_policy(self, policy_name, filter_set_name, match_number, rbac_view_name="admin-view", user="admin", password="adminadmin"):
+        '''
+            Objective:
+            - Add a bigtap match condition to a filtet set
+        
+            Input:
+            | `policy_name` |  Name of policy  |
+            | `filter_set_name` | Name of filter set | 
+            | `match_number` |  Match number like the '1' in  '1 match tcp | 
+            | `rbac_view_name`| RBAC View Name for eg. admin-view | 
+            
+            Return Value: 
+            - True if configuration add is successful
+            - False if configuration add is unsuccessful         
+        '''
+        try:
+            t = test.Test()
+        except:
+            return False
+        else:
+            c = t.controller('master')
+            try:
+                url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]/rule[sequence=%s]' % (str(rbac_view_name), str(policy_name), str(match_number))
+                if "admin" not in user:
+                    c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                    c_user.rest.put(url, {"filter-set-name": str(filter_set_name), "sequence": int(match_number)})
+                    t.node_reconnect(node='master')
+                else:
+                    c.rest.put(url, {"filter-set-name": str(filter_set_name), "sequence": int(match_number)})
+            except:
+                return False
+            else:
+                return True
+
+# Delete filter-set from policy
+    def rest_delete_filterset_from_policy(self, policy_name, filter_set_name, match_number, rbac_view_name="admin-view", user="admin", password="adminadmin"):
+        '''
+            Objective:
+            - Add a bigtap match condition to a filtet set
+        
+            Input:
+            | `policy_name` |  Name of policy  |
+            | `filter_set_name` | Name of filter set | 
+            | `match_number` |  Match number like the '1' in  '1 match tcp | 
+            | `rbac_view_name`| RBAC View Name for eg. admin-view | 
+            
+            Return Value: 
+            - True if configuration add is successful
+            - False if configuration add is unsuccessful         
+        '''
+        try:
+            t = test.Test()
+        except:
+            return False
+        else:
+            c = t.controller('master')
+            try:
+                url = '/api/v1/data/controller/applications/bigtap/view[name="%s"]/policy[name="%s"]/rule[sequence=%s]' % (str(rbac_view_name), str(policy_name), str(match_number))
+                if "admin" not in user:
+                    c_user = t.node_reconnect(node='master', user=str(user), password=password)
+                    c_user.rest.delete(url, {"filter-set-name": str(filter_set_name)})
+                    t.node_reconnect(node='master')
+                else:
+                    c.rest.delete(url, {"filter-set-name": str(filter_set_name)})
+            except:
+                return False
+            else:
+                return True
+
+
+
 # Add strip-vlan
     def rest_add_stripvlan_to_policy(self, policy_name, rbac_view_name="admin-view", user="admin", password="adminadmin"):
         '''
@@ -3080,3 +3294,276 @@ class BigTap(object):
             c.rest.get(url)
             content = c.rest.content()
         return content
+
+    def cli_walk_exec(self, string='', file_name=None, padding=''):
+        ''' cli_exec_walk
+           walk through exec/login mode CLI hierarchy
+           output:   file cli_exec_walk
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        c.cli('')
+        helpers.log("********* Entering cli_exec_walk ----> string: %s, file name: %s" % (string, file_name))
+        if string == '':
+            cli_string = '?'
+        else:
+            cli_string = string + ' ?'
+        c.send(cli_string, no_cr=True)
+        c.expect(r'[\r\n\x07][\w-]+[#>] ')
+        content = c.cli_content()
+        temp = helpers.strip_cli_output(content)
+        temp = helpers.str_to_list(temp)
+        helpers.log("********new_content:************\n%s" % helpers.prettify(temp))
+        c.send(helpers.ctrl('u'))
+        c.expect()
+        c.cli('')
+
+        string_c = string
+
+        if file_name:
+            helpers.log("opening file: %s" % file_name)
+            fo = open(file_name, 'a')
+            lines = []
+            lines.append((padding + string))
+            lines.append((padding + '----------'))
+            for line in temp:
+                lines.append((padding + line))
+            lines.append((padding + '=================='))
+            content = '\n'.join(lines)
+            fo.write(str(content))
+            fo.write("\n")
+
+            fo.close()
+
+        num = len(temp)
+        padding = "   " + padding
+
+        # Loop through commands and sub-commands
+        for line in temp:
+            string = string_c
+            helpers.log(" line is - %s" % line)
+            line = line.lstrip()
+            keys = line.split(' ')
+            temp_key = keys.pop(0)
+            key = temp_key.strip()
+            helpers.log("*** key is - %s" % key)
+            helpers.log("*** string is - %s" % string)
+            helpers.log("*** stringc is - %s" % string_c)
+
+            if key is '':
+                helpers.log("Ignore line %s" % line)
+                num = num - 1
+                continue
+            # Ignoring lines which do not contain actual commands
+            if re.match(r'For', line) or line == "Commands:":
+                helpers.log("Ignoring line - %s" % line)
+                num = num - 1
+                continue
+
+            # ## DELETE THIS (Temporary to Bypass failed command)
+            # if re.match(r'config', line) :
+            #    helpers.log("Ignore line %s" % line)
+            #    num = num - 1
+            #    continue
+
+            # Ignoring commands which are either disruptive or are only one level commands
+            # These commands would have already been displayed with corresponding help in a previous top-level hierarchy
+            if key == "reauth" or key == "echo" or key == "help" or key == "logout" or key == "ping" or key == "watch":
+                helpers.log("Ignore line %s" % line)
+                num = num - 1
+                continue
+
+            # Ignoring sub-commands under 'debug'
+            if key == "bash" or key == "connect" or key == "cassandra-cli" or key == "cli" or key == "cli-backtrace" or key == "cli-batch" or key == "description" or key == "netconfig" or key == "python" or key == "rest":
+                helpers.log("Ignore line %s" % line)
+                num = num - 1
+                continue
+
+            # Ignoring options that require user input or comments in <>
+            if re.match(r'^<.+', line) and not re.match(r'^<cr>', line):
+                helpers.log("Ignoring line - %s" % line)
+                num = num - 1
+                continue
+
+            # Ignoring some sub-commands that may impact test run
+            if ((key == '<cr>' and (re.match(r' set length term', string))) or re.match(r' show debug counters', string) or re.match(r' show debug events details', string)):
+                helpers.log("Ignoring line - %s" % string)
+                num = num - 1
+                continue
+
+            # skip 'show session' (PR BSC-5233)
+            if (re.match(r' show session', string)):
+                helpers.log("Ignoring line - %s" % string)
+                num = num - 1
+                continue
+
+            # for interface related commands, only iterate through "all"
+            if (re.match(r' show(.*)interface(.*)', string)):
+                if key != 'all':
+                    helpers.log("Ignoring line - %s" % string)
+                    num = num - 1
+                    continue
+
+            # for switch related commands, only iterate through "all"
+            if (re.match(r' show(.*)switch(.*)', string)):
+                if key != 'all':
+                    helpers.log("Ignoring line - %s" % string)
+                    num = num - 1
+                    continue
+
+            # skip 'show logging', 'show lacp interface', 'show stats interface-history interface', 'show stats interface-history switch' and 'show running-config' - no need to iterate through options
+            if (re.match(r' show logging', string)):
+                helpers.log("Ignoring line - %s" % string)
+                num = num - 1
+                continue
+
+            # issue the <cr> to test that the command actually works
+            if key == '<cr>':
+
+                if re.match(r'boot.*', string) or re.match(r'.*compare.*', string) or re.match(r'.*configure.*', string) or re.match(r'.*copy.*', string) or re.match(r'.*delete.*', string) or re.match(r'.*enable.*', string) or re.match(r'.*end.*', string) or re.match(r'.*exit.*', string) or re.match(r'.*failover.*', string) or re.match(r'.*logout.*', string):
+                    helpers.log("Ignoring line - %s" % string)
+                    num = num - 1
+                    continue
+
+                if re.match(r'.*show controller.*', string) or re.match(r'.*no.*', string) or re.match(r'.*ping.*', string) or re.match(r'.*reauth.*', string) or re.match(r'.*set .*', string) or re.match(r'.*show logging.*', string) or re.match(r'.*system.*', string) or re.match(r'.*test.*', string) or re.match(r'.*upgrade.*', string) or re.match(r'.*watch.*', string):
+                    helpers.log("Ignoring line - %s" % string)
+                    num = num - 1
+                    continue
+
+                helpers.log(" complete CLI show command: ******%s******" % string)
+                c.cli(string)
+
+                if num == 1:
+                    helpers.log("AT END: ******%s******" % string)
+                    return string
+
+            # If command has sub-commands, call the function again to walk through sub-command options
+            else:
+                string = string + ' ' + key
+                helpers.log("key - %s" % (key))
+                helpers.log("string - %s" % (string))
+
+                helpers.log("***** Call the cli walk again with  --- %s" % string)
+                self.cli_walk_exec(string, file_name, padding)
+
+    def cli_walk_command(self, command, cmd_argument_count, cmd_argument=None, soft_error=False):
+        '''
+            Execute CLI walk on controller
+            Arguments:
+            | command | Command to be executed |
+            | cmd_argument_count | Number of lines in command help |
+            | cmd_argument | Specific arguments that you want the function to look for in the command help|
+
+            Description:
+            This function checks for couple of things:
+            | 1 | Number of lines in help output is what user has specified |
+            | 2 | The CLI command does not have '<cr> <cr>' in its help output|
+            | 3 | The CLI command is not missing a help string for some sub command |
+            | 4 | if user has specified one or more arguments, those arguments are present in the help string|
+
+            Example:
+            |cli walk command |  show switch all | 6 | |
+            |cli walk command |  show tenant | 14 | tenant1 tenant2 tenant3|
+            |cli walk command |  show switch | 9 | leaf0-a leaf0-b spine0|
+
+            example output of command:
+            kk-mcntrlr-c1> show switch <====== Here number of lines are 13, but ideally you should see only 9. (this would be an error). THIS WOULD BE CAUGHT
+            Keyword Choices:
+                <cr>                            Show fabric information for selected switch
+                all                             Show fabric information for selected switch
+            Switch Name:Enter a switch name:Name of the switch.
+            The field here primarily is a weak reference to that configured
+            under core/switch-config/name.
+                leaf0-a                         Switch Name selection of
+                leaf0-b                         Switch Name selection of
+                spine0                          Switch Name selection of
+            core/proxy/controller/dpid:MAC Address
+            core/proxy/environment/dpid:MAC Address
+            core/proxy/inventory/dpid:MAC Address
+            switch-name:Switch Name Selection:Switch Name selection
+            kk-mcntrlr-c1>
+
+            alpha-cont1> show switch all
+            <cr> <cr><================================ THIS WOULD BE CAUGHT
+            <cr>            Show fabric information for selected switch
+            agent-counters  Show counters for various agents on the Switch
+            connections     Show fabric information for selected switch
+            details         Show fabric information for selected switch
+            interface       <help missing> SHOW_INTERFACE_STATS_COMMAND_DESCRIPTION <====THIS WOULD BE CAUGHT
+        '''
+        try:
+            t = test.Test()
+            c = t.controller('master')
+        except:
+            return False
+        else:
+            c.cli('')
+            cli_string = command + ' ?'
+            helpers.log("Sending command ====> %s" % cli_string)
+            c.send(str(cli_string), no_cr=True)
+            c.expect(r'[\r\n\x07][\w-]+[#>] ')
+            content = c.cli_content()
+            temp = helpers.strip_cli_output(content)
+            temp = helpers.str_to_list(temp)
+            helpers.log("********content:************\n%s" % content)
+            helpers.log("********new_content:************\n%s" % helpers.prettify(temp))
+            c.send(helpers.ctrl('u'))
+            c.expect()
+            c.cli('')
+            num = len(temp)
+            helpers.log("Number of arguments in show command are %s" % num)
+            if num == int(cmd_argument_count):
+                helpers.log("Correct number of arguments found in CLI help output")
+            else:
+                helpers.test_error("Correct number of arguments not returned", soft_error)
+                return False
+
+            if "<cr> <cr>" in content:
+                helpers.test_error("CLI command has an incorrect help string '<cr> <cr>'", soft_error)
+
+            if "<help missing>" in content:
+                helpers.test_error("CLI command has an mnissing help", soft_error)
+
+            if (cmd_argument is not None) :
+                if (' ' in cmd_argument):
+                    new_string = cmd_argument.split()
+                    helpers.log("New String is %s" % new_string)
+                    helpers.log("Temp is %s" % content)
+                    for index in range(len(new_string)):
+                        if (str(new_string[index]) in content):
+                            helpers.log("Argument %s found in CLI help output" % new_string[index])
+                        else:
+                            helpers.test_error("Argument %s NOT found in CLI help output. Error was %s " % (new_string[index], soft_error))
+                            return False
+                else:
+                    if (str(cmd_argument) in content):
+                        helpers.log("Argument %s found in CLI help output" % cmd_argument)
+                    else:
+                        helpers.test_error("Argument %s NOT found in CLI help output. Error was %s " % (cmd_argument, soft_error))
+                        return False
+            return True
+
+    def cli_verify_command(self, command, cmd_argument_count, cmd_argument=None, soft_error=False):
+        try:
+            t = test.Test()
+            c = t.controller('master')
+        except:
+            return False
+        else:
+            c.cli(command)
+            content = c.cli_content()
+            temp_content = content.split('\n')
+            num = len(temp_content)
+            if (num != cmd_argument_count) :
+                helpers.log("Number of arguments in CLI Command Output is different")
+                return False
+            if ("None" in temp_content[0]) and (num == 1):
+                return True
+            elif ("None" in temp_content[0]) and (num > 2):
+                helpers.log("Number of lines ")
+                return False
+
+            if cmd_argument is not None :
+                for line in temp_content:
+                    if (cmd_argument in line) and (num == cmd_argument_count):
+                        return True

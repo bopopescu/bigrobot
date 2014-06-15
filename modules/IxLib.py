@@ -1106,7 +1106,9 @@ class Ixia(object):
                 self.ix_fetch_port_stats()
             helpers.log('No Traffic Stream is given so, starting traffic on all configured Streams !!')
             try:
-                self._handle.execute('startStatelessTrafficBlocking', trafficHandle)
+                helpers.log("Trying to Starting traffic all the streams configured ...")
+                self._handle.execute('startStatelessTrafficBlocking', self._handle.getRoot() + 'traffic')
+                helpers.log("Succes starting traffic on all ports...")
             except:
                 if exception:
                     helpers.log("Already tried one time with Applying traffic on Ix Network Exception ,, need to check traffic config for fix this")
@@ -1131,7 +1133,7 @@ class Ixia(object):
                 self.ix_fetch_port_stats()
             helpers.log('Traffic Stream is given, starting traffic on given stream')
             try:
-                helpers.log("Trying to start traffic ..")
+                helpers.log("Trying to start traffic on given traffic stream..")
                 self._handle.execute('startStatelessTrafficBlocking', trafficHandle)
             except:
                 helpers.log("Got Exception while trying to apply traffic..")

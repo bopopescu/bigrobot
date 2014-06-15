@@ -712,7 +712,7 @@ class T5Utilities(object):
         return pidList
 
 
-    def cli_run(self, node, command, cmd_timeout=5, user='admin', password='adminadmin', soft_error=False):
+    def cli_run(self, node, command, cmd_timeout=45, user='admin', password='adminadmin', soft_error=False):
         """
         Run given CLI command
 
@@ -737,7 +737,7 @@ class T5Utilities(object):
             ip_addr = bsn_common.get_node_ip(node)
             c = t.node_spawn(ip=ip_addr, user=user, password=password)
         try:
-            c.cli(command, timeout=cmd_timeout)
+            c.config(command, timeout=cmd_timeout)
             if "Error" in c.cli_content():
                 helpers.test_failure(c.cli_content(), soft_error)
                 return False

@@ -2,7 +2,7 @@
 
 * Setting
 Documentation    T5 Controller Platform Test Suite - Visibiility (SPAN/TestPath)
-Suite Setup      base suite setup
+#Suite Setup      base suite setup
 #Suite Teardown   base suite teardown
 Test Setup       T5 Platform Test Setup
 Test Teardown    T5 Platform Test Teardown
@@ -55,7 +55,7 @@ ${s1IxiaVerifyInt}	eth1
 * Test Case 
 
 T0 Setup
-	[Tags]  feature  setup  testpath
+	[Tags]  feature  setup 
 	bash network restart  h1
 	bash add tag  h1  bond0  10 
 	bash add ip address  h1  10.10.10.51/24  bond0.10
@@ -86,12 +86,12 @@ T0 Setup
 	bash ifup intf  h5  bond0.20
 	bash add route  h5  10.10.10.0/24  20.20.20.100  bond0.20
 	
-	bash execute command  leaf0-a  ofad-ctl autoneg 33
-	bash execute command  leaf0-a  ofad-ctl autoneg 34
-	bash execute command  leaf1-a  ofad-ctl autoneg 33
-	bash execute command  leaf1-a  ofad-ctl autoneg 34
-	bash execute command  leaf2-a  ofad-ctl autoneg 33
-	bash execute command  leaf2-a  ofad-ctl autoneg 34
+	#bash execute command  leaf0-a  ofad-ctl autoneg 33
+	#bash execute command  leaf0-a  ofad-ctl autoneg 34
+	#bash execute command  leaf1-a  ofad-ctl autoneg 33
+	#bash execute command  leaf1-a  ofad-ctl autoneg 34
+	#bash execute command  leaf2-a  ofad-ctl autoneg 33
+	#bash execute command  leaf2-a  ofad-ctl autoneg 34
 	
 	bash init intf  h1  eth1
     bash add ip address  h1  ${h1_single_ip}/24  eth1
@@ -148,13 +148,14 @@ T0 Setup
 	...			protocol=TCP  src_port=3000  dst_port=4000 
 	
 	${stream-ac1}=  L3 add  flow=a<->c  frame_rate=100  frame_size=64  name=ac1_flow
-	...			src_mac=aa:bb:01:00:00:04  dst_mac=aa:bb:03:00:00:02
-	...			src_ip=100.1.1.4  src_gw=100.1.1.100  dst_ip=100.3.1.2  dst_gw=100.3.1.100	
+	...			src_mac=aa:bb:01:00:00:05  dst_mac=aa:bb:03:00:00:02
+	...			src_ip=100.1.1.5  src_gw=100.1.1.100  dst_ip=100.3.1.2  dst_gw=100.3.1.100	
 	...			protocol=TCP  src_port=1000  dst_port=3000 
 	
 	start traffic  ${stream-ab1}
 	start traffic  ${stream-ab2}
 	start traffic  ${stream-ab3}
+	start traffic  ${stream-ab4}
 	start traffic  ${stream-cd1}
 	start traffic  ${stream-ac1}
 	
@@ -665,13 +666,13 @@ T2 Intra Segment: SRC & DST Are In Same Rack - Different Switch
 	rest switch int shut   leaf0-a  ${h2_intf0}
 	sleep  5
 	${returnVal}=  rest configure testpath controller view	 src-tenant=autoT1	src-segment=v1	src-ip=${h1_tag_ip}  dst-tenant=autoT1	dst-segment=v1	dst-ip=${h2_tag_ip}  ip-protocol=icmp
-	Run Keyword If  '${returnVal}' == 'False'  rest switch int noshut   leaf0-b  ${h2_intf1}
+	Run Keyword If  '${returnVal}' == 'False'  rest switch int noshut   leaf0-a  ${h2_intf0}
 	Should Be True  ${returnVal}
 	${returnVal}=  rest configure testpath fabric_view  test-name=Test1	 src-tenant=autoT1	src-segment=v1	src-ip=${h1_tag_ip}	 dst-tenant=autoT1	dst-segment=v1	dst-ip=${h2_tag_ip}  ip-protocol=icmp
 	Should Be True  ${returnVal}
 	sleep  3
 	${returnVal}=  rest verify testpath fabric view  Test1  HostPing  leaf  leaf  host=h1  ip=${h2_tag_ip}
-	rest switch int noshut   leaf0-b  ${h2_intf1}
+	rest switch int noshut   leaf0-a  ${h2_intf0}
 	Should Be True  ${returnVal}
 	
 	
@@ -709,14 +710,17 @@ T6 Intra Tenant/ Different Segments: SRC & DST Are In Same Rack - Different Swit
 	[Tags]  testpath  feature
 	sleep  35
 	rest switch int shut   leaf1-a  ${h4_intf0}
+	rest switch int shut   leaf1-b  ${h3_intf1} 
 	sleep  5
 	${returnVal}=  rest configure testpath controller view	 src-tenant=autoT1	src-segment=v1	src-ip=${h3_tag_ip}  dst-tenant=autoT1	dst-segment=v2	dst-ip=${h4_tag_ip}  ip-protocol=icmp
 	Run Keyword If  '${returnVal}' == 'False'  rest switch int noshut   leaf1-a  ${h4_intf0}
+	Run Keyword If  '${returnVal}' == 'False'  rest switch int noshut   leaf1-b  ${h3_intf1}
 	Should Be True  ${returnVal}
 	${returnVal}=  rest configure testpath fabric_view  test-name=Test5	 src-tenant=autoT1	src-segment=v1	src-ip=${h3_tag_ip}  dst-tenant=autoT1	dst-segment=v2	dst-ip=${h4_tag_ip}  ip-protocol=icmp
 	Should Be True  ${returnVal}
 	${returnVal}=  rest verify testpath fabric view  Test5  HostPing  leaf  leaf  host=h3  ip=${h4_tag_ip}
 	rest switch int noshut   leaf1-a  ${h4_intf0}
+	rest switch int noshut   leaf1-b  ${h3_intf1} 
 	Should Be True  ${returnVal}
 
 
@@ -767,10 +771,10 @@ T10 Inter Tenant: SRC & DST Are In Same Rack - Different Switch
 
 T11 Inter Tenant: SRC & DST Are In Different Racks
 	[Tags]  testpath  feature
-	${returnVal}=  rest configure testpath controller view	 src-tenant=Ixia1	src-segment=v1	src-ip=100.1.1.4
+	${returnVal}=  rest configure testpath controller view	 src-tenant=Ixia1	src-segment=v1	src-ip=100.1.1.5
 	...	dst-tenant=Ixia3  dst-segment=v1	dst-ip=100.3.1.2  ip-protocol=tcp  src-l4-port=1000  dst-l4-port=3000  timeout=60
 	Should Be True  ${returnVal}
-	${returnVal}=  rest configure testpath fabric_view  test-name=Test11  src-tenant=Ixia1	src-segment=v1	src-ip=100.1.1.4
+	${returnVal}=  rest configure testpath fabric_view  test-name=Test11  src-tenant=Ixia1	src-segment=v1	src-ip=100.1.1.5
 	...	dst-tenant=Ixia3  dst-segment=v1	dst-ip=100.3.1.2  ip-protocol=tcp  src-l4-port=1000  dst-l4-port=3000  timeout=60
 	Should Be True  ${returnVal}
 	sleep  3
@@ -779,7 +783,7 @@ T11 Inter Tenant: SRC & DST Are In Different Racks
 
 
 
-Verify test packet path with L2 traffic to an unknown destination originating from a tenant which spans across multiple racks
+Verify test packet path with L2 traffic to an unknown destination - untracked endpoints
 	[Tags]  testpath  full  manual
     manual passed
 
@@ -795,10 +799,6 @@ Verify all the CLI options for the test packet path command
 	[Tags]  testpath  feature  manual
     manual passed
 
-Private vns test
-   [Tags]  testpath  feature  manual
-    manual failed
-
 Destination as a ECMP Group 
 	[Tags]  testpath  feature  manual
     manual passed
@@ -807,14 +807,30 @@ Destination as a default router
 	[Tags]  testpath  feature  manual
     manual passed
     
-Inter Tenant - Blocked by Policy
+Inter Tenant - Droped by Policy
 	[Tags]  testpath  feature  manual
-    manual failed 
+    manual passed 
 
 Inter Tenant - Accept by Policy
 	[Tags]  testpath  feature  manual
     manual passed 
     
+Inter Tenant - Missing Route
+	[Tags]  testpath  feature  manual
+    manual passed 
+    
+Inter Tenant - Uninstalled interface
+	[Tags]  testpath  feature  manual
+    manual passed 
+
+Inter Tenant - No Route
+	[Tags]  testpath  feature  manual
+    manual passed 
+  
+Inter Tenant - Dropped due to private segment
+   [Tags]  testpath  feature  manual
+    manual passed
+  
 Tracking with multiple test paths
 	[Tags]  testpath  feature  manual
     manual passed 
