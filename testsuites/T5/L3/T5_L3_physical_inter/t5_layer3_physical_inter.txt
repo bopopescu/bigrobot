@@ -169,8 +169,8 @@ L3 inter tenant forwarding to external router
 	[Tags]			manual			feature			
 
 L3 inter tenant forwarding to VRRP routers
-	manual failed
-	[Tags]			manual        	feature			BVS-1701
+	manual passed
+	[Tags]			manual        	feature			
 
 L3 inter tenant traceroute with icmp and udp probe
 	L3 inter tenant traceroute with icmp and udp probe
@@ -229,7 +229,7 @@ Restart ofad on spine switch
 	[Tags]			feature			
 
 Controller HA failover with ecmp group
-	manual failed
+	manual passed
 	[Tags]			manual			feature			ecmp	
 		
 Controller HA failover with dhcp-relay
@@ -754,9 +754,9 @@ Add and delete more specific route on tenant over existing static route
     Should Be True                              ${loss} == 100
     REST delete static routes                   X                               10.252.1.0/24
     sleep                                       1
-    Log                                         REST show l3 host table
-    Log                                         REST show l3 cidr table
-    Log                                         CLI show running tenant
+    REST show l3 host table
+    REST show l3 cidr table
+    CLI show running tenant
     ${loss} =                                   BASH ping                       h1                      10.252.1.11             count=10
     Should Be True                              ${loss} < 40
     BASH delete route                           h1                              10.252.0.0/16           10.251.1.1
@@ -777,8 +777,8 @@ Verify inter tenant L3 traffic with ttl value of one two and three
 	BASH add tag								h3								bond0					1003
 	BASH ifup intf								h1								bond0.1001
 	BASH ifup intf								h3								bond0.1003
-	BASH ifconfig ip address							h1								10.251.1.11/24			bond0.1001
-	BASH ifconfig ip address							h3								10.252.1.11/24			bond0.1003
+	BASH ifconfig ip address					h1								10.251.1.11/24			bond0.1001
+	BASH ifconfig ip address					h3								10.252.1.11/24			bond0.1003
 	BASH add route								h1								10.252.0.0/16			10.251.1.1
 	BASH add route								h3								10.251.0.0/16			10.252.1.1
 	sleep										5	
@@ -1237,7 +1237,7 @@ Dhcp request from other host in other tenants with dhcp enabled but no inter ten
 	BASH add tag								h2								bond0					1002
 	BASH ifup intf								h1								bond0
 	BASH ifup intf								h2								bond0.1002
-	BASH ifconfig ip address							h1								10.251.1.11/24			bond0
+	BASH ifconfig ip address				    h1								10.251.1.11/24			bond0
 	BASH start service							h1								isc-dhcp-server
 	sleep										1
 	${value} = 									BASH check service status		h1						isc-dhcp-server
@@ -1271,16 +1271,16 @@ Dhcp request from other host in other tenants with dhcp enabled but no inter ten
 	REST delete static routes					Y								10.251.0.0/16		
 	${value} = 									BASH release dhcpv4 address		h2						bond0.1002
 	Should Be True								${value}
-	${ipAddr2} = 								BASH renew dhcpv4 address		h2						bond0.1002
-	Should Be Empty								${ipAddr2}
+	${ipAddr3} = 								BASH renew dhcpv4 address		h2						bond0.1002
+	Should Be Empty								${ipAddr3}
 	${loss} =									BASH ping						h1						${ipAddr2}
 	Should Be True								${loss} = 100
 	REST add static routes						Y								10.251.0.0/16			 {"tenant-name": "system"}
 	sleep										1
-	${ipAddr2} = 								BASH renew dhcpv4 address		h2						bond0.1002
-	Should Not Be Empty							${ipAddr2}
+	${ipAddr3} = 								BASH renew dhcpv4 address		h2						bond0.1002
+	Should Not Be Empty							${ipAddr3}
 	BASH add route								h2								10.251.0.0/16			10.252.1.1
-	${loss} =									BASH ping						h1						${ipAddr2}
+	${loss} =									BASH ping						h1						${ipAddr3}
 	Should Be True								${loss} < 20
 	BASH delete route							h1								10.252.0.0/16			10.251.1.1
 	BASH delete route							h2								10.251.0.0/16			10.252.1.1	
@@ -2466,8 +2466,8 @@ Link flap between leaf and spine
     REST add portgroup to vns                   Y                               Y1                      ${leaf1_pc2}            -1
     REST add interface to vns                   X                               X1                      ${leaf0_a}              ${ixia1}                -1
     REST add interface to vns                   Y                               Y1                      ${leaf1_a}              ${ixia3}                -1  
-    BASH ifconfig ip address                         h5                              10.251.1.11/24          bond0   
-    BASH ifconfig ip address                         h4                              10.252.1.11/24          bond0
+    BASH ifconfig ip address                    h5                              10.251.1.11/24          bond0   
+    BASH ifconfig ip address                    h4                              10.252.1.11/24          bond0
     BASH add route                              h5                              10.252.0.0/16           10.251.1.1
     BASH add route                              h4                              10.251.0.0/16           10.252.1.1
     sleep                                       5   
@@ -2730,12 +2730,12 @@ test teardown topology
 T5 base suite setup
 	base suite setup
 	add fabric switch
-	BASH network restart                            h1                                timeout=60
-	BASH network restart                            h2                                timeout=60
-    BASH network restart                            h3                                timeout=60
-    BASH network restart                            h4                                timeout=60
-    BASH network restart                            h5                                timeout=60
-    BASH restart service                            h6                                networking              timeout=60
+	#BASH restart service                            h1                                networking               timeout=60
+	#BASH network restart                            h2                                timeout=60
+    #BASH network restart                            h3                                timeout=60
+    #BASH network restart                            h4                                timeout=60
+    #BASH network restart                            h5                                timeout=60
+    #BASH restart service                            h6                                networking              timeout=60
     
 	sleep 											5
 	${result} = 									CLI verify controller		s1							c1		
@@ -2783,12 +2783,12 @@ T5 base suite teardown
 	REST delete portgroup								${leaf1_pc2}
 	REST delete portgroup								${leaf2_pc1}
 	REST delete portgroup								${leaf2_pc2}
-    BASH network restart                            h1                                timeout=60
-    BASH network restart                            h2                                timeout=60
-    BASH network restart                            h3                                timeout=60
-    BASH network restart                            h4                                timeout=60
-    BASH network restart                            h5                                timeout=60
-    BASH restart service                            h6                                networking              timeout=60
+    #BASH restart service                            h1                                networking               timeout=60
+    #BASH network restart                            h2                                timeout=60
+    #BASH network restart                            h3                                timeout=60
+    #BASH network restart                            h4                                timeout=60
+    #BASH network restart                            h5                                timeout=60
+    #BASH restart service                            h6                                networking              timeout=60
 	delete fabric switch  
 
 

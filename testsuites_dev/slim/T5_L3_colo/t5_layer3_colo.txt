@@ -361,7 +361,11 @@ L3 intra tenant traceroute
     ${string} =                                 BASH run command                h4-rack0                      traceroute -n -m 5 -I 10.251.3.1 
     ${result} =                                 Set Variable                    ${string[1]} 
     Should Contain                              ${result}                       \ 1\ \ 10.251.3.1  
-    
+    ${string} =                                 BASH run command                h4-rack0                      traceroute -n -m 5 -I 10.251.3.11 
+    ${result} =                                 Set Variable                    ${string[1]} 
+    Should Contain                              ${result}                       \ 1\ \ 10.251.1.1
+    ${result} =                                 Set Variable                    ${string[2]} 
+    Should Contain                              ${result}                       \ 2\ \ 10.251.3.11
 
 
 DHCP discovery on the same vns as server with dhcp-relay enabled
@@ -536,12 +540,12 @@ L3 intra tenant dhcp relay across rack
     Should Be True                              ${value}
     sleep                                       1
     ${mac2} =                                   BASH get intf mac               h3-rack1                        bond0.2003
-    ${result} =                                 REST show endpoints mac         ${mac2}
-    ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
-    Should Contain                              ${attachpoint}                  ${leaf1_pc3}
     ${ipAddr} =                                 BASH renew dhcpv4 address       h3-rack1                        bond0.2003
     Should Not Be Empty                         ${ipAddr}
     sleep                                       1
+    ${result} =                                 REST show endpoints mac         ${mac2}
+    ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
+    Should Contain                              ${attachpoint}                  ${leaf1_pc3}
     BASH ping                                   h4-rack0                        ${ipAddr}                       count=10
     ${value} =                                  BASH verify arp                 h4-rack0                        10.251.1.1
     Should Be True                              ${value}        
@@ -1184,9 +1188,11 @@ Activate and deactivate router segment interface
     ${loss} =                                   BASH ping                       h4-rack0                        10.251.2.11             count=10
     Should Be True                              ${loss} == 0                    
     REST disable router segment intf            X                               X1
+    sleep                                       1
     ${loss} =                                   BASH ping                       h4-rack0                        10.251.2.11             count=10
     Should Be True                              ${loss} == 100
     REST enable router segment intf             X                               X1
+    sleep                                       1
     ${loss} =                                   BASH ping                       h4-rack0                        10.251.2.11             count=10
     Should Be True                              ${loss} < 20
     BASH delete route                           h1                              10.251.3.0/24           10.251.1.1
