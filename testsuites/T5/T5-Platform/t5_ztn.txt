@@ -83,6 +83,7 @@ T1.3. Check supported platforms of SWI and installer
 	Should Contain  ${swi_platforms}  @{supported_swi_platforms}[3]
 
 T1.4. Check Running config for a switch
+	Cli Run  master  show run
 	#Verify Switch Running Config  ${s1_mac}  ${s1_alias}
 	Verify Switch Running Config  ${s2_mac}  ${s2_alias}
 	Verify Switch Running Config  ${s3_mac}  ${s3_alias}
@@ -131,6 +132,7 @@ T1.8. Reboot switches from CLI
 	Verify Switch Handshake State  ${s3_alias}
 	Verify Switch Handshake State  ${s4_alias}
 
+	Cli Run  master  show run
 	#Verify Switch Running Config  ${s1_mac}  ${s1_alias}
 	Verify Switch Running Config  ${s2_mac}  ${s2_alias}
 	Verify Switch Running Config  ${s3_mac}  ${s3_alias}
@@ -258,6 +260,7 @@ T2.2.1. Verify that switch is successfully provisioned when no fabric role for t
 	Sleep  30
 	Verify Switch Connection State  True  ${s2_alias}
 	Verify Switch Startup Config  ${s2_mac}  ${s2_alias}
+	Cli Run  master  show run
 	Verify Switch Running Config  ${s2_mac}  ${s2_alias}
 	Verify Switch Fabric Connection State  suspended  ${s2_alias}
 	Verify Switch Suspended Reason  No fabric role configured  ${s2_alias}
@@ -278,6 +281,7 @@ T2.2.2. Verify that switch is successfully provisioned when no fabric role for t
 	Sleep  30
 	Verify Switch Connection State  True  ${s2_alias}
 	Verify Switch Startup Config  ${s2_mac}  ${s2_alias}
+	Cli Run  master  show run
 	Verify Switch Running Config  ${s2_mac}  ${s2_alias}
 	Verify Switch Fabric Connection State  suspended  ${s2_alias}
 	Verify Switch Suspended Reason  No fabric role configured  ${s2_alias}
@@ -298,6 +302,7 @@ T2.2.3. Verify that switch is successfully provisioned and flows installed for g
 	Sleep  30
 	Verify Switch Connection State  True  ${s1_alias}
 	Verify Switch Startup Config  ${s1_mac}  ${s1_alias}
+	Cli Run  master  show run
 	Verify Switch Running Config  ${s1_mac}  ${s1_alias}
 	Verify Switch Fabric Connection State  connected  ${s1_alias}
 	[Tags]  skipped
@@ -318,6 +323,7 @@ T2.2.4. Verify that switch is successfully provisioned and no flows for given sp
 	Sleep  30
 	Verify Switch Connection State  True  ${s1_alias}
 	Verify Switch Startup Config  ${s1_mac}  ${s1_alias}
+	Cli Run  master  show run
 	Verify Switch Running Config  ${s1_mac}  ${s1_alias}
 	Verify Switch Fabric Connection State  suspended  ${s1_alias}
 	Verify Switch Suspended Reason  Admin shutdown  ${s1_alias}
@@ -339,6 +345,7 @@ T2.2.5. Verify that switch is successfully provisioned and flows installed for g
 	Sleep  30
 	Verify Switch Connection State  True  ${s2_alias}
 	Verify Switch Startup Config  ${s2_mac}  ${s2_alias}
+	Cli Run  master  show run
 	Verify Switch Running Config  ${s2_mac}  ${s2_alias}
 	Verify Switch Fabric Connection State  connected  ${s2_alias}
 
@@ -359,6 +366,7 @@ T2.2.6. Verify that switch is successfully provisioned and no flows for given le
 	Sleep  30
 	Verify Switch Connection State  True  ${s2_alias}
 	Verify Switch Startup Config  ${s2_mac}  ${s2_alias}
+	Cli Run  master  show run
 	Verify Switch Running Config  ${s2_mac}  ${s2_alias}
 	Verify Switch Fabric Connection State  suspended  ${s2_alias}
 	Verify Switch Suspended Reason  Admin shutdown  ${s2_alias}
@@ -443,6 +451,7 @@ T3.3. Change ZTN configuration, do not reload the switch, restore old config (ch
 	Sleep  30
 	Verify Switch Connection State  True  ${s2_alias}
 	Verify Switch Startup Config  ${s2_mac}  ${s2_alias}
+	Cli Run  master  show run
 	Verify Switch Running Config  ${s2_mac}  ${s2_alias}
 	Verify Switch Fabric Connection State  connected  ${s2_alias}
 
@@ -460,6 +469,7 @@ T3.4. Change ZTN configuration, do not reload the switch, change config again (c
 	Sleep  30
 	Verify Switch Connection State  True  ${s2_alias}
 	Verify Switch Startup Config  ${s2_mac}  ${s2_alias}
+	Cli Run  master  show run
 	Verify Switch Running Config  ${s2_mac}  ${s2_alias}
 	Verify Switch Fabric Connection State  connected  ${s2_alias}
 
@@ -476,8 +486,10 @@ T3.5. Change ZTN configuration, reload half of switches, restore old config - ve
 	Reboot Provisioned Switch  s3  ${s3_mac}  ${s3_alias}
 	Reboot Provisioned Switch  s2  ${s2_mac}  ${s2_alias}
 	Verify Switch Startup Config  ${s3_mac}  ${s3_alias}
+	Cli Run  master  show run
 	Verify Switch Running Config  ${s3_mac}  ${s3_alias}
 	Verify Switch Startup Config  ${s2_mac}  ${s2_alias}
+	Cli Run  master  show run
 	Verify Switch Running Config  ${s2_mac}  ${s2_alias}
 
 T3.6. Change ZTN configuration, reload half of switches, change config again - verify that all switches need to be reloaded
@@ -492,8 +504,10 @@ T3.6. Change ZTN configuration, reload half of switches, change config again - v
 	Reboot Provisioned Switch  s3  ${s3_mac}  ${s3_alias}
 	Reboot Provisioned Switch  s2  ${s2_mac}  ${s2_alias}
 	Verify Switch Startup Config  ${s3_mac}  ${s3_alias}
+	Cli Run  master  show run
 	Verify Switch Running Config  ${s3_mac}  ${s3_alias}
 	Verify Switch Startup Config  ${s2_mac}  ${s2_alias}
+	Cli Run  master  show run
 	Verify Switch Running Config  ${s2_mac}  ${s2_alias}
 
 # reload notification in GUI/Cli not (yet) supported
@@ -508,8 +522,10 @@ T3.7. Disconnect all switches from the fabric (ma1 down) then do significant cha
 	Reboot Provisioned Switch  s3  ${s3_mac}  ${s3_alias}
 	Reboot Provisioned Switch  s2  ${s2_mac}  ${s2_alias}
 	Verify Switch Startup Config  ${s3_mac}  ${s3_alias}
+	Cli Run  master  show run
 	Verify Switch Running Config  ${s3_mac}  ${s3_alias}
 	Verify Switch Startup Config  ${s2_mac}  ${s2_alias}
+	Cli Run  master  show run
 	Verify Switch Running Config  ${s2_mac}  ${s2_alias}
 
 T3.8. Delete all switches from the controller, reboot all switches (they should keep looking for ZTN server). Copy RC from external source (config://, scp://, file) to running config, watch the fabric come up.
@@ -553,6 +569,7 @@ T4.9 Provision two switches, power them both off, swap MACs, power them both on
 # Switch in provisioned mode
 T5.1.1. Power down, change config
 	Reboot Switches
+	Cli Run  master  show run
 	Verify Switch Running Config  ${s3_mac}  ${s3_alias}
 	Telnet Reboot Switch  s3
 	Randomize ZTN Configuration
@@ -564,11 +581,13 @@ T5.1.1. Power down, change config
 	Sleep  30
 	Verify Switch Connection State  True  ${s3_alias}
 	Verify Switch Startup Config  ${s3_mac}  ${s3_alias}
+	Cli Run  master  show run
 	Verify Switch Running Config  ${s3_mac}  ${s3_alias}
 	Verify Switch Fabric Connection State  connected  ${s3_alias}
 
 T5.1.2. Power down, delete
 	Reboot Switches
+	Cli Run  master  show run
 	Verify Switch Running Config  ${s3_mac}  ${s3_alias}
 	Telnet Reboot Switch  s3
 	Sleep  30
@@ -579,6 +598,7 @@ T5.1.2. Power down, delete
 
 T5.1.3. Power down, change config, failover
 	Reboot Switches
+	Cli Run  master  show run
 	Verify Switch Running Config  ${s3_mac}  ${s3_alias}
 	Telnet Reboot Switch  s3
 	Telnet Stop Autoboot  s3
@@ -592,6 +612,7 @@ T5.1.3. Power down, change config, failover
 	Sleep  30
 	Verify Switch Connection State  True  ${s3_alias}
 	Verify Switch Startup Config  ${s3_mac}  ${s3_alias}
+	Cli Run  master  show run
 	Verify Switch Running Config  ${s3_mac}  ${s3_alias}
 	Verify Switch Fabric Connection State  connected  ${s3_alias}
 
@@ -624,6 +645,7 @@ T5.2.1. Power down, change config
 	Sleep  30
 	Verify Switch Connection State  True  ${s2_alias}
 	Verify Switch Startup Config  ${s2_mac}  ${s2_alias}
+	Cli Run  master  show run
 	Verify Switch Running Config  ${s2_mac}  ${s2_alias}
 	Verify Switch Fabric Connection State  suspended  ${s2_alias}
 	Verify Switch Suspended Reason  No fabric role configured  ${s2_alias}
@@ -656,6 +678,7 @@ T5.2.3. Power down, change config, failover
 	Sleep  30
 	Verify Switch Connection State  True  ${s2_alias}
 	Verify Switch Startup Config  ${s2_mac}  ${s2_alias}
+	Cli Run  master  show run
 	Verify Switch Running Config  ${s2_mac}  ${s2_alias}
 	Verify Switch Fabric Connection State  suspended  ${s2_alias}
 	Verify Switch Suspended Reason  No fabric role configured  ${s2_alias}
@@ -1409,6 +1432,7 @@ Reboot Provisioned Switch
 	Sleep  30
 	Verify Switch Connection State  True  ${switch_alias}
 	Verify Switch Startup Config  ${switch_mac}  ${switch_alias}
+	Cli Run  master  show run
 	Verify Switch Running Config  ${switch_mac}  ${switch_alias}
 	Verify Switch Fabric Connection State  connected  ${switch_alias}
 
@@ -1432,6 +1456,7 @@ Reboot Switches
 
 	Sleep  100
 
+	Cli Run  master  show run
 	#Verify Switch Running Config  ${s1_mac}  ${s1_alias}
 	Verify Switch Running Config  ${s2_mac}  ${s2_alias}
 	Verify Switch Running Config  ${s3_mac}  ${s3_alias}
