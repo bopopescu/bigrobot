@@ -82,42 +82,46 @@ T1.3. Check supported platforms of SWI and installer
 	Should Contain  ${swi_platforms}  @{supported_swi_platforms}[2]
 	Should Contain  ${swi_platforms}  @{supported_swi_platforms}[3]
 
-T1.4 Check Running config for a switch
+T1.4. Check Running config for a switch
 	#Verify Switch Running Config  ${s1_mac}  ${s1_alias}
 	Verify Switch Running Config  ${s2_mac}  ${s2_alias}
 	Verify Switch Running Config  ${s3_mac}  ${s3_alias}
 
 
-T1.5 Check Startup config for a switch
+T1.5. Check Startup config for a switch
 	#Verify Switch Startup Config  ${s1_mac}  ${s1_alias}
 	Verify Switch Startup Config  ${s2_mac}  ${s2_alias}
 	Verify Switch Startup Config  ${s3_mac}  ${s3_alias}
 
-T1.6 Test switch reboot
-	Cli Run  master  show run
-	Telnet Reboot Switch  s1
+T1.6. Test switch reboot
+	#Telnet Reboot Switch  s1
 	Telnet Reboot Switch  s2
 	Telnet Reboot Switch  s3
-	[Tags]  skipped
+	Telnet Reboot Switch  s4
 
-T1.7 Reboot and stop at loader shell
+	#Telnet Wait For Switch To Reload s1
+	Telnet Wait For Switch To Reload  s2
+	Telnet Wait For Switch To Reload  s3
+	Telnet Wait For Switch To Reload  s4
+
+T1.7. Reboot and stop at loader shell
 	Telnet Reboot Switch  s1
 	Telnet Stop Autoboot  s1
 	Telnet Reboot Switch  s1
 	[Tags]  skipped
 
-T1.8 Reboot switches from CLI
+T1.8. Reboot switches from CLI
 	#Reboot Switches
 	#Cli Reboot Switch  master  ${s1_alias}
 	#Telnet Wait For Switch To Reload  s1
 
 	Cli Reboot Switch  master  ${s2_mac}
+	Cli Reboot Switch  master  ${s3_ip}
+	Cli Reboot Switch  master  ${s4_alias}
 	Telnet Wait For Switch To Reload  s2
 
-	Cli Reboot Switch  master  ${s3_ip}
 	Telnet Wait For Switch To Reload  s3
 
-	Cli Reboot Switch  master  ${s4_alias}
 	Telnet Wait For Switch To Reload  s4
 
 	Sleep  20
@@ -132,7 +136,18 @@ T1.8 Reboot switches from CLI
 	Verify Switch Running Config  ${s3_mac}  ${s3_alias}
 	Verify Switch Running Config  ${s4_mac}  ${s4_alias}
 
-T0.1 BSC-5430
+T1.9. Verify startup config after failvoer
+	Verify Switch Startup Config  ${s1_mac}  ${s1_alias}
+	Verify Switch Startup Config  ${s2_mac}  ${s2_alias}
+	Verify Switch Startup Config  ${s3_mac}  ${s3_alias}
+	Verify Switch Startup Config  ${s4_mac}  ${s4_alias}
+	Failover
+	Verify Switch Startup Config  ${s1_mac}  ${s1_alias}
+	Verify Switch Startup Config  ${s2_mac}  ${s2_alias}
+	Verify Switch Startup Config  ${s3_mac}  ${s3_alias}
+	Verify Switch Startup Config  ${s4_mac}  ${s4_alias}
+
+T0.1. BSC-5430
 	${mac1}=  Set Variable  11:22:33:44:55:66
 	${mac2}=  Set Variable  66:55:44:33:22:11
 	${name}=  Set Variable  test1
@@ -150,7 +165,7 @@ T0.1 BSC-5430
 	Verify Switch Startup Config  ${mac1}  ${name}
 	[Tags]  BSC-5430
 
-T0.2 BSC-5550
+T0.2. BSC-5550
 	${mac1}=  Set Variable  11:22:33:44:55:66
 	${name}=  Set Variable  test
 	Cli Run  master  enable; config
@@ -162,7 +177,7 @@ T0.2 BSC-5550
 	...  flag=False
 	[Tags]  BSC-5550
 
-T0.3 BSC-5568
+T0.3. BSC-5568
 	${mac1}=  Set Variable  11:22:33:44:55:66
 	${name}=  Set Variable  test
 	Cli Run  master  enable; config
@@ -178,9 +193,12 @@ T0.3 BSC-5568
 	...  system reboot switch ?
 	...  Shutdown Controller
 	...  flag=False
+	Cli Run and Verify Output  master
+	...  system reboot switch test ?
+	...  Reboot indicated switches
 	[Tags]  BSC-5568
 
-T0.4 Show remote
+T0.4. Show remote
 	#Cli Run  master  show switch ${s1_alias} remote environment
 	#Cli Run  master  show switch ${s1_alias} remote version
 	#Cli Run  master  show switch ${s1_alias} remote controller
@@ -233,16 +251,16 @@ T2.2.1. Verify that switch is successfully provisioned when no fabric role for t
 	Cli Run  master  switch ${s2_alias}
 	Cli Run  master  mac ${s2_mac}
 	Telnet Reboot Switch  s2
-	Sleep  5
+	Sleep  30
 	Verify Switch Connection State  False  ${s2_alias}
 	Verify Switch Fabric Connection State  not_connected  ${s2_alias}
 	Telnet Wait For Switch To Reload  s2
-	Sleep  10
+	Sleep  30
 	Verify Switch Connection State  True  ${s2_alias}
-	Verify Switch Fabric Connection State  suspended  ${s2_alias}
-	Verify Switch Suspended Reason  No fabric role configured  ${s2_alias}
 	Verify Switch Startup Config  ${s2_mac}  ${s2_alias}
 	Verify Switch Running Config  ${s2_mac}  ${s2_alias}
+	Verify Switch Fabric Connection State  suspended  ${s2_alias}
+	Verify Switch Suspended Reason  No fabric role configured  ${s2_alias}
 
 
 T2.2.2. Verify that switch is successfully provisioned when no fabric role for the switch is specified (stand-by switch) when switch config says "shutdown"
@@ -253,16 +271,16 @@ T2.2.2. Verify that switch is successfully provisioned when no fabric role for t
 	Cli Run  master  mac ${s2_mac}
 	Cli Run  master  shutdown
 	Telnet Reboot Switch  s2
-	Sleep  5
+	Sleep  30
 	Verify Switch Connection State  False  ${s2_alias}
 	Verify Switch Fabric Connection State  not_connected  ${s2_alias}
 	Telnet Wait For Switch To Reload  s2
-	Sleep  5
+	Sleep  30
 	Verify Switch Connection State  True  ${s2_alias}
-	Verify Switch Fabric Connection State  suspended  ${s2_alias}
-	Verify Switch Suspended Reason  No fabric role configured  ${s2_alias}
 	Verify Switch Startup Config  ${s2_mac}  ${s2_alias}
 	Verify Switch Running Config  ${s2_mac}  ${s2_alias}
+	Verify Switch Fabric Connection State  suspended  ${s2_alias}
+	Verify Switch Suspended Reason  No fabric role configured  ${s2_alias}
 
 
 T2.2.3. Verify that switch is successfully provisioned and flows installed for given spine switch
@@ -273,15 +291,15 @@ T2.2.3. Verify that switch is successfully provisioned and flows installed for g
 	Cli Run  master  mac ${s1_mac}
 	Cli Run  master  fabric-role spine
 	Telnet Reboot Switch  s1
-	Sleep  5
+	Sleep  30
 	Verify Switch Connection State  False  ${s1_alias}
 	Verify Switch Fabric Connection State  not_connected  ${s1_alias}
 	Telnet Wait For Switch To Reload  s1
-	Sleep  5
+	Sleep  30
 	Verify Switch Connection State  True  ${s1_alias}
-	Verify Switch Fabric Connection State  connected  ${s1_alias}
 	Verify Switch Startup Config  ${s1_mac}  ${s1_alias}
 	Verify Switch Running Config  ${s1_mac}  ${s1_alias}
+	Verify Switch Fabric Connection State  connected  ${s1_alias}
 	[Tags]  skipped
 
 T2.2.4. Verify that switch is successfully provisioned and no flows for given spine switch when switch config says "shutdown"
@@ -293,16 +311,16 @@ T2.2.4. Verify that switch is successfully provisioned and no flows for given sp
 	Cli Run  master  fabric-role spine
 	Cli Run  master  shutdown
 	Telnet Reboot Switch  s1
-	Sleep  5
+	Sleep  30
 	Verify Switch Connection State  False  ${s1_alias}
 	Verify Switch Fabric Connection State  not_connected  ${s1_alias}
 	Telnet Wait For Switch To Reload  s1
-	Sleep  5
+	Sleep  30
 	Verify Switch Connection State  True  ${s1_alias}
-	Verify Switch Fabric Connection State  suspended  ${s1_alias}
-	Verify Switch Suspended Reason  Admin shutdown  ${s1_alias}
 	Verify Switch Startup Config  ${s1_mac}  ${s1_alias}
 	Verify Switch Running Config  ${s1_mac}  ${s1_alias}
+	Verify Switch Fabric Connection State  suspended  ${s1_alias}
+	Verify Switch Suspended Reason  Admin shutdown  ${s1_alias}
 	[Tags]  skipped
 
 
@@ -314,15 +332,15 @@ T2.2.5. Verify that switch is successfully provisioned and flows installed for g
 	Cli Run  master  mac ${s2_mac}
 	Cli Run  master  fabric-role leaf
 	Telnet Reboot Switch  s2
-	Sleep  5
+	Sleep  30
 	Verify Switch Connection State  False  ${s2_alias}
 	Verify Switch Fabric Connection State  not_connected  ${s2_alias}
 	Telnet Wait For Switch To Reload  s2
-	Sleep  5
+	Sleep  30
 	Verify Switch Connection State  True  ${s2_alias}
-	Verify Switch Fabric Connection State  connected  ${s2_alias}
 	Verify Switch Startup Config  ${s2_mac}  ${s2_alias}
 	Verify Switch Running Config  ${s2_mac}  ${s2_alias}
+	Verify Switch Fabric Connection State  connected  ${s2_alias}
 
 
 T2.2.6. Verify that switch is successfully provisioned and no flows for given leaf switch when switch config says "shutdown"
@@ -334,16 +352,16 @@ T2.2.6. Verify that switch is successfully provisioned and no flows for given le
 	Cli Run  master  fabric-role leaf
 	Cli Run  master  shutdown
 	Telnet Reboot Switch  s2
-	Sleep  5
+	Sleep  30
 	Verify Switch Connection State  False  ${s2_alias}
 	Verify Switch Fabric Connection State  not_connected  ${s2_alias}
 	Telnet Wait For Switch To Reload  s2
-	Sleep  5
+	Sleep  30
 	Verify Switch Connection State  True  ${s2_alias}
-	Verify Switch Fabric Connection State  suspended  ${s2_alias}
-	Verify Switch Suspended Reason  Admin shutdown  ${s2_alias}
 	Verify Switch Startup Config  ${s2_mac}  ${s2_alias}
 	Verify Switch Running Config  ${s2_mac}  ${s2_alias}
+	Verify Switch Fabric Connection State  suspended  ${s2_alias}
+	Verify Switch Suspended Reason  Admin shutdown  ${s2_alias}
 
 
 T2.2.7. Verify that after deleting and rebooting, unconfigured switch does not receive SWI image
@@ -352,7 +370,7 @@ T2.2.7. Verify that after deleting and rebooting, unconfigured switch does not r
 	Cli Run  master  switch ${s2_alias}
 	Cli Run  master  no mac ${s2_mac}
 	Telnet Reboot Switch  s2
-	Sleep  5
+	Sleep  30
 	Verify Switch Connection State  False  ${s2_alias}
 	Verify Switch Fabric Connection State  not_connected  ${s2_alias}
 	Telnet Verify ZTN Discovery Failed  s2
@@ -373,7 +391,7 @@ T2.2.8. Verify that after deleting and rebooting, unconfigured switch does not r
 	Cli Run  master  no mac ${s2_mac}
 	Request SL Installer Reinstall
 	Telnet Reboot Switch  s2
-	Sleep  5
+	Sleep  30
 	Verify Switch Connection State  False  ${s2_alias}
 	Verify Switch Fabric Connection State  not_connected  ${s2_alias}
 	Telnet Verify ONIE Discovery Failed  s2
@@ -418,15 +436,15 @@ T3.3. Change ZTN configuration, do not reload the switch, restore old config (ch
 	Cli Copy  config://temp-config  running-config
 	Verify Switch Startup Config  ${s2_mac}  ${s2_alias}
 	Telnet Reboot Switch  s2
-	Sleep  5
+	Sleep  30
 	Verify Switch Connection State  False  ${s2_alias}
 	Verify Switch Fabric Connection State  not_connected  ${s2_alias}
 	Telnet Wait For Switch To Reload  s2
-	Sleep  5
+	Sleep  30
 	Verify Switch Connection State  True  ${s2_alias}
-	Verify Switch Fabric Connection State  connected  ${s2_alias}
 	Verify Switch Startup Config  ${s2_mac}  ${s2_alias}
 	Verify Switch Running Config  ${s2_mac}  ${s2_alias}
+	Verify Switch Fabric Connection State  connected  ${s2_alias}
 
 T3.4. Change ZTN configuration, do not reload the switch, change config again (check if reload command on UI is still requested), reload switch - verify that config on switch is correct
 	Reboot Switches
@@ -435,15 +453,15 @@ T3.4. Change ZTN configuration, do not reload the switch, change config again (c
 	Randomize ZTN Configuration
 	Verify Switch Startup Config  ${s2_mac}  ${s2_alias}
 	Telnet Reboot Switch  s2
-	Sleep  5
+	Sleep  30
 	Verify Switch Connection State  False  ${s2_alias}
 	Verify Switch Fabric Connection State  not_connected  ${s2_alias}
 	Telnet Wait For Switch To Reload  s2
-	Sleep  5
+	Sleep  30
 	Verify Switch Connection State  True  ${s2_alias}
-	Verify Switch Fabric Connection State  connected  ${s2_alias}
 	Verify Switch Startup Config  ${s2_mac}  ${s2_alias}
 	Verify Switch Running Config  ${s2_mac}  ${s2_alias}
+	Verify Switch Fabric Connection State  connected  ${s2_alias}
 
 T3.5. Change ZTN configuration, reload half of switches, restore old config - verify that all switches need to be reloaded
 	Reboot Switches
@@ -537,23 +555,23 @@ T5.1.1. Power down, change config
 	Reboot Switches
 	Verify Switch Running Config  ${s3_mac}  ${s3_alias}
 	Telnet Reboot Switch  s3
-	Sleep  5
 	Randomize ZTN Configuration
+	Sleep  30
 	Verify Switch Startup Config  ${s3_mac}  ${s3_alias}
 	Verify Switch Connection State  False  ${s3_alias}
 	Verify Switch Fabric Connection State  not_connected  ${s3_alias}
 	Telnet Wait For Switch To Reload  s3
-	Sleep  5
+	Sleep  30
 	Verify Switch Connection State  True  ${s3_alias}
-	Verify Switch Fabric Connection State  connected  ${s3_alias}
 	Verify Switch Startup Config  ${s3_mac}  ${s3_alias}
 	Verify Switch Running Config  ${s3_mac}  ${s3_alias}
+	Verify Switch Fabric Connection State  connected  ${s3_alias}
 
 T5.1.2. Power down, delete
 	Reboot Switches
 	Verify Switch Running Config  ${s3_mac}  ${s3_alias}
 	Telnet Reboot Switch  s3
-	Sleep  5
+	Sleep  30
 	Cli Run  master  enable;config
 	Cli Run  master  no switch ${s3_alias}
 	Telnet Verify ZTN Discovery Failed  s3
@@ -565,28 +583,26 @@ T5.1.3. Power down, change config, failover
 	Telnet Reboot Switch  s3
 	Telnet Stop Autoboot  s3
 	Randomize ZTN Configuration
-	${status}=  Rest Verify Cluster Election Take Leader
-	Should Be True  ${status}
+	Failover
 	Verify Switch Startup Config  ${s3_mac}  ${s3_alias}
 	Verify Switch Connection State  False  ${s3_alias}
 	Verify Switch Fabric Connection State  not_connected  ${s3_alias}
 	Telnet Reboot Switch  s3
 	Telnet Wait For Switch To Reload  s3
-	Sleep  5
+	Sleep  30
 	Verify Switch Connection State  True  ${s3_alias}
-	Verify Switch Fabric Connection State  connected  ${s3_alias}
 	Verify Switch Startup Config  ${s3_mac}  ${s3_alias}
 	Verify Switch Running Config  ${s3_mac}  ${s3_alias}
+	Verify Switch Fabric Connection State  connected  ${s3_alias}
 
 T5.1.4. Power down, delete, failover
 	Reboot Switches
 	Telnet Reboot Switch  s3
 	Telnet Stop Autoboot  s3
-	Sleep  5
+	Sleep  30
 	Cli Run  master  enable;config
 	Cli Run  master  no switch ${s3_alias}
-	${status}=  Rest Verify Cluster Election Take Leader
-	Should Be True  ${status}
+	Failover
 	Telnet Reboot Switch  s3
 	Telnet Verify ZTN Discovery Failed  s3
 	[Tags]  skipped
@@ -600,17 +616,17 @@ T5.2.1. Power down, change config
 	Cli Run  master  no fabric-role leaf
 	Telnet Set MA1 State  s2  down
 	Telnet Reboot Switch  s2
-	Sleep  5
 	Randomize ZTN Configuration
+	Sleep  30
 	Verify Switch Startup Config  ${s2_mac}  ${s2_alias}
 	Verify Switch Connection State  False  ${s2_alias}
 	Telnet Wait For Switch To Reload  s2
-	Sleep  5
+	Sleep  30
 	Verify Switch Connection State  True  ${s2_alias}
-	Verify Switch Fabric Connection State  suspended  ${s2_alias}
-	Verify Switch Suspended Reason  No fabric role configured  ${s2_alias}
 	Verify Switch Startup Config  ${s2_mac}  ${s2_alias}
 	Verify Switch Running Config  ${s2_mac}  ${s2_alias}
+	Verify Switch Fabric Connection State  suspended  ${s2_alias}
+	Verify Switch Suspended Reason  No fabric role configured  ${s2_alias}
 
 T5.2.2. Power down, delete
 	Reboot Switches
@@ -618,7 +634,7 @@ T5.2.2. Power down, delete
 	Cli Run  master  no switch ${s3_alias}
 	Telnet Set MA1 State  s3  down
 	Telnet Reboot Switch  s3
-	Sleep  5
+	Sleep  30
 	Telnet Verify ZTN Discovery Failed  s3
 	[Tags]  skipped
 
@@ -632,18 +648,17 @@ T5.2.3. Power down, change config, failover
 	Telnet Reboot Switch  s2
 	Telnet Stop Autoboot  s2
 	Randomize ZTN Configuration
-	${status}=  Rest Verify Cluster Election Take Leader
-	Should Be True  ${status}
+	Failover
 	Verify Switch Startup Config  ${s2_mac}  ${s2_alias}
 	Verify Switch Connection State  False  ${s2_alias}
 	Telnet Reboot Switch  s2
 	Telnet Wait For Switch To Reload  s2
-	Sleep  5
+	Sleep  30
 	Verify Switch Connection State  True  ${s2_alias}
-	Verify Switch Fabric Connection State  suspended  ${s2_alias}
-	Verify Switch Suspended Reason  No fabric role configured  ${s2_alias}
 	Verify Switch Startup Config  ${s2_mac}  ${s2_alias}
 	Verify Switch Running Config  ${s2_mac}  ${s2_alias}
+	Verify Switch Fabric Connection State  suspended  ${s2_alias}
+	Verify Switch Suspended Reason  No fabric role configured  ${s2_alias}
 
 T5.2.4. Power down, delete, failover
 	Reboot Switches
@@ -652,10 +667,9 @@ T5.2.4. Power down, delete, failover
 	Telnet Set MA1 State  s3  down
 	Telnet Reboot Switch  s3
 	Telnet Stop Autoboot  s3
-	${status}=  Rest Verify Cluster Election Take Leader
-	Should Be True  ${status}
+	Failover
 	Telnet Reboot Switch  s3
-	Sleep  5
+	Sleep  30
 	Telnet Verify ZTN Discovery Failed  s3
 	[Tags]  skipped
 
@@ -1295,6 +1309,9 @@ Suite Teardown
 
 Test Setup
 	Base Test Setup
+	Cli Run  master  show run
+	Cli Run  master  show switch
+	Cli Run  slave  show switch
 	Cli Copy  running-config  config://test-config
 	Cli Copy  running-config  config://test-config  node=slave
 
@@ -1376,6 +1393,11 @@ Randomize ZTN Configuration
 	Cli Run  master  ntp server ${host_random}
 	#${timezone_random}  Generate Random GMT Timezone
 	#Cli Run  master  ntp time-zone ${timezone_random}
+	${host_random}  Generate Random IP
+	${hostname_random}  Generate Random Name  hostname.tmk.  5
+	Cli Run  master  logging enable remote
+	Cli Run  master  logging remote ${host_random}
+	Cli Run  master  logging remote ${hostname_random}
 
 Reboot Provisioned Switch
 	[Arguments]  ${switch_id}  ${switch_mac}  ${switch_alias}
@@ -1386,9 +1408,9 @@ Reboot Provisioned Switch
 	Telnet Wait For Switch To Reload  ${switch_id}
 	Sleep  30
 	Verify Switch Connection State  True  ${switch_alias}
-	Verify Switch Fabric Connection State  connected  ${switch_alias}
 	Verify Switch Startup Config  ${switch_mac}  ${switch_alias}
 	Verify Switch Running Config  ${switch_mac}  ${switch_alias}
+	Verify Switch Fabric Connection State  connected  ${switch_alias}
 
 Failover
 	${status}=  Rest Verify Cluster Election Take Leader
@@ -1410,12 +1432,12 @@ Reboot Switches
 
 	Sleep  100
 
-	#Verify Switch Handshake State  ${s1_alias}
-	Verify Switch Handshake State  ${s2_alias}
-	Verify Switch Handshake State  ${s3_alias}
-	Verify Switch Handshake State  ${s4_alias}
-
 	#Verify Switch Running Config  ${s1_mac}  ${s1_alias}
 	Verify Switch Running Config  ${s2_mac}  ${s2_alias}
 	Verify Switch Running Config  ${s3_mac}  ${s3_alias}
 	Verify Switch Running Config  ${s4_mac}  ${s4_alias}
+
+	#Verify Switch Handshake State  ${s1_alias}
+	Verify Switch Handshake State  ${s2_alias}
+	Verify Switch Handshake State  ${s3_alias}
+	Verify Switch Handshake State  ${s4_alias}
