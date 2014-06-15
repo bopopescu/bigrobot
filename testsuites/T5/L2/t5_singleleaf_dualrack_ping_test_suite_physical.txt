@@ -26,7 +26,7 @@ ping h3 to h4 single leaf single rack dynamic endpoints
    [Tags]  L2  feature  smoke  sanity  IronHorse      
    rest add interface to vns  A  A  leaf1-a  ${h3_intf0_single}  -1 
    rest add interface to vns  A  A  leaf1-a  ${h4_intf0_single}  -1 
-   sleep  5
+   sleep  10
    ${loss}=  bash ping  h3  ${h4_single_ip}  source_if=eth1
    Should Be True  ${loss} < 60  
  
