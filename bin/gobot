@@ -188,6 +188,7 @@ helpers.bigrobot_test_postmortem()  # (default=True)
 helpers.bigrobot_test_clean_config()  # (default=True)
 helpers.bigrobot_test_pause_on_fail()  # (default=False)
 helpers.bigrobot_ignore_mininet_exception_on_close()  # (default=False)
+helpers.bigrobot_preserve_mininet_screen_session()  # (default=False)
 
 
 def get_command_dict():
