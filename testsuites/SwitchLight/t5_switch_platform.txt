@@ -224,20 +224,20 @@ Verify all interfaces show up (in show o/p from CLI)
 Shutdown and no shut 10G interface on switch and verify interface state is down and up
     shut interface  s1  ${interface10g}
     Sleep  15
-    verify admin interface state  s1  ${interface10g}  down
+    verify admin interface state  s1  ${interface10g}  True  admin down
     unshut interface  s1  ${interface10g}
     Sleep  15
     verify interface state  s1  ${interface10g}  up
-    [Tags]  switch-platform  interface  feature         
+    [Tags]  switch-platform  interface  feature           
 
 Shutdown and no shutdown 1G interface on switch and verify interface state is down and up
     shut interface  s1  ${interface1g}
     Sleep  15
-    verify admin interface state  s1  ${interface1g}  down
+    verify admin interface state  s1  ${interface1g}  True  admin down
     unshut interface  s1  ${interface1g}
     Sleep  15
     verify interface state  s1  ${interface1g}  up
-    [Tags]  switch-platform  interface  feature  
+    [Tags]  switch-platform  interface  feature   
 
 Verify model in Show version for leaf 
     Log    Step 1 - Verify right model in Show version for leaf as AS5710
@@ -396,8 +396,8 @@ verify interface state  [Arguments]  ${switch}  ${interface}  ${state}
     ${ret_value_1}=  cli show interface state  ${switch}  ${interface}
     Should Contain  ${ret_value_1}  ${state}  
 
-verify admin interface state  [Arguments]  ${switch}  ${interface}  ${state}
-    ${ret_value_1}=  cli switch show interface state  ${switch}  ${interface}
+verify admin interface state  [Arguments]  ${switch}  ${interface}  ${admin_down}  ${state}
+    ${ret_value_1}=  cli show interface state  ${switch}  ${interface}  ${admin_down}
     Should Contain  ${ret_value_1}  ${state}
 
 unshut interface  [Arguments]  ${switch}  ${interface}
