@@ -165,7 +165,7 @@ class SwitchLight(object):
                 return False
 
 
-    def cli_show_interface_state(self, node, intf_name):
+    def cli_show_interface_state(self, node, intf_name, admin_down=False):
         '''
             Objective:
             - Return the Interface State of a given interface on a switch
@@ -184,10 +184,12 @@ class SwitchLight(object):
             s1.enable(cli_input)
             content = string.split(s1.cli_content(), '\n')
             helpers.log("Value in content[1] is '%s' " % (content[1]))
-            (firstvalue, colon, lastvalue) = content[1].rstrip('\n').strip().split(' ')
-            helpers.log("Values after split are %s \n %s \n %s \n" % (firstvalue, colon, lastvalue))
-            intf_state = lastvalue.rstrip('\n')
-            helpers.log("Value in content[1] is %s \n and intf_state is %s" % (content[1], intf_state))
+            if admin_down:
+                (firstvalue, secondvalue, thirdvalue, lastvalue) = content[1].rstrip('\n').strip().split(' ')
+                intf_state = thirdvalue + " " + lastvalue.rstrip('\n')
+            else:
+                (firstvalue, colon, lastvalue) = content[1].rstrip('\n').strip().split(' ')
+                intf_state = lastvalue.rstrip('\n')
             return intf_state
         except:
             helpers.test_failure("Could not execute command. Please check log for errors")
@@ -2183,31 +2185,25 @@ class SwitchLight(object):
 
 
 ############# CLI WALK : AUTHOR: CLIFF D
+
     def switch_cli_exec_walk(self, node, string='', file_name=None, padding=''):
         t = test.Test()
         s = t.switch(node)
         s.cli('')
-        # helpers.log("********* Entering cli_exec_walk ----> string: %s, file name: %s" % (string, file_name))
         if string == '':
             cli_string = '?'
         else:
             cli_string = string + ' ?'
         s.send(cli_string, no_cr=True)
-        # s.expect(r'[\r\n\x07]?[\w-]+[#>] [\w-]*')
         s.expect(r'[\r\n\x07][\w-]+[#>] ')
-        # s.expect(r'.*>')
         content = s.cli_content()
         temp = helpers.strip_cli_output(content)
         temp = helpers.str_to_list(temp)
-        # helpers.log("********new_content:************\n%s" % helpers.prettify(temp))
         s.send(helpers.ctrl('u'))
         s.expect()
         s.cli('')
 
         string_c = string
-        # helpers.log("string for this level is: %s" % string_c)
-        # helpers.log("The length of string: %d" % len(temp))
-
         if file_name:
             helpers.log("opening file: %s" % file_name)
             fo = open(file_name, 'a')
@@ -2220,45 +2216,74 @@ class SwitchLight(object):
             content = '\n'.join(lines)
             fo.write(str(content))
             fo.write("\n")
-
             fo.close()
 
-        for index in range(len(temp)):
+        num = len(temp)
+        padding = "   " + padding
+
+        # Loop through commands and sub-commands
+        for line in temp:
             string = string_c
-            helpers.log(" line is - %s" % temp)
-            newline = temp[index].lstrip()
-            if 'All Available commands:' in newline:
-                break
-            keys = newline.split(' ')
+            helpers.log(" line is - %s" % line)
+            line = line.lstrip()
+            keys = line.split(' ')
             key = keys.pop(0)
+            if 'All Available commands:' in key:
+                continue
             helpers.log("*** key is - %s" % key)
-            if re.match(r'For', newline) or "Commands:" in newline:
-                helpers.log("Ignoring line - %s" % newline)
+            helpers.log("*** string is - %s" % string)
+            helpers.log("*** stringc is - %s" % string_c)
+
+            # Ignoring lines which do not contain actual commands
+            if re.match(r'For', line) or line == "Commands:":
+                helpers.log("Ignoring line - %s" % line)
+                num = num - 1
                 continue
-            elif "exit" in key  or "echo" in key or "help" in key or "history" in key or "logout" in key or "ping" in key or "watch" in key:
-                helpers.log("Ignore line %s" % newline)
+
+            # Ignoring commands which are either disruptive or are only one level commands
+            # These commands would have already been displayed with corresponding help in a previous top-level hierarchy
+            if key == "reauth" or key == "echo" or key == "help" or key == "logout" or key == "ping" or key == "watch":
+                helpers.log("Ignore line %s" % line)
+                num = num - 1
                 continue
-            elif re.match(r'^<.+', newline) and not re.match(r'^<cr>', newline):
-                helpers.log("Ignoring line - %s" % newline)
+
+            # Ignoring options that require user input or comments in <>
+            if re.match(r'^<.+', line) and not re.match(r'^<cr>', line):
+                helpers.log("Ignoring line - %s" % line)
+                num = num - 1
                 continue
-            elif '<cr>' in key:
-                # helpers.log(" I AM HERE complete CLI show command: ******%s******" % string)
+
+            if "exit" in key  or "echo" in key or "top" in key or "help" in key or "history" in key or "logout" in key or "ping" in key or "watch" in key:
+                helpers.log("Ignore line %s" % line)
+                num = num - 1
+                continue
+
+            # issue the <cr> to test that the command actually works
+            if key == '<cr>':
+
+                if re.match(r'boot.*', string) or re.match(r'.*compare.*', string) or re.match(r'.*configure.*', string) or re.match(r'.*copy.*', string) or re.match(r'.*delete.*', string) or re.match(r'.*enable.*', string) or re.match(r'.*end.*', string) or re.match(r'.*exit.*', string) or re.match(r'.*failover.*', string) or re.match(r'.*logout.*', string):
+                    helpers.log("Ignoring line - %s" % string)
+                    num = num - 1
+                    continue
+
+                if re.match(r'.*show controller.*', string) or re.match(r'.*no.*', string) or re.match(r'.*ping.*', string) or re.match(r'.*reauth.*', string) or re.match(r'.*set .*', string) or re.match(r'.*show logging.*', string) or re.match(r'.*system.*', string) or re.match(r'.*test.*', string) or re.match(r'.*upgrade.*', string) or re.match(r'.*watch.*', string):
+                    helpers.log("Ignoring line - %s" % string)
+                    num = num - 1
+                    continue
+
+                helpers.log(" complete CLI show command: ******%s******" % string)
                 s.cli(string)
-                if index == len(temp):
+
+                if num == 1:
                     helpers.log("AT END: ******%s******" % string)
                     return string
-                else:
-                    continue
-            # elif "All" in key:
-            #    break
+
+            # If command has sub-commands, call the function again to walk through sub-command options
             else:
-                # index = index + 1
-                key = key.lstrip()
-                if key == '' :
-                    continue
-                else:
-                    helpers.log("CLI show command: ******%s******" % string)
-                    string = string + ' ' + key
-                    helpers.log("key - %s" % (key))
-                    helpers.log("***** Call the cli walk again with  --- %s" % string)
-                    self.switch_cli_exec_walk(node, string, file_name, padding)
+                string = string + ' ' + key
+                helpers.log("key - %s" % (key))
+                helpers.log("string - %s" % (string))
+
+                helpers.log("***** Call the cli walk again with  --- %s" % string)
+                self.switch_cli_exec_walk(node, string, file_name, padding)
+
