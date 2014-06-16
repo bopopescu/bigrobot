@@ -1945,7 +1945,9 @@ class T5Platform(object):
         c.send("yes")
 
         try:
-            c.expect(r'[\r\n].+Rebooting.*')
+            c.expect(r'[\r\n].+[R|r]ebooting.*')
+            content = c.cli_content()
+            helpers.log("*****Output is :\n%s" % content)           
         except:
             helpers.log('ERROR: upgrade launch NOT successfully')
             return False
