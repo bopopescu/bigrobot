@@ -139,7 +139,7 @@ class T5Platform(object):
             c.expect(r"Failover to this controller node \(yes/no\)?")
             c.config("yes")
             #sleep(30)
-            sleep(60)
+            sleep(90)
         except:
             helpers.test_log(c.cli_content())
             return False
@@ -1293,7 +1293,7 @@ class T5Platform(object):
                             helpers.log("Wrong ip-ecn in the monitor session %s : %s: %s" % (sessionID, srcInt, kwargs.get('ip-ecn')))
                             return False
                     if ('ip-proto') in kwargs:
-                        if((session['source'][0]['match-specification'])['ip-proto'] != int(kwargs.get('ip-proto'))):
+                        if((session['source'][0]['match-specification'])['ip-proto'] != (kwargs.get('ip-proto'))):
                             helpers.log("Wrong ip-proto in the monitor session %s : %s: %s" % (sessionID, srcInt, kwargs.get('ip-proto')))
                             return False
                     if ('ether-type') in kwargs:
@@ -1945,7 +1945,9 @@ class T5Platform(object):
         c.send("yes")
 
         try:
-            c.expect(r'[\r\n].+Rebooting.*')
+            c.expect(r'[\r\n].+[R|r]ebooting.*')
+            content = c.cli_content()
+            helpers.log("*****Output is :\n%s" % content)           
         except:
             helpers.log('ERROR: upgrade launch NOT successfully')
             return False

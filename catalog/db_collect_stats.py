@@ -4,7 +4,7 @@ import os
 import sys
 import argparse
 from pymongo import MongoClient
-import robot
+# import robot
 
 # Determine BigRobot path(s) based on this executable (which resides in
 # the bin/ directory.
@@ -47,30 +47,77 @@ class ReleaseStats(object):
         self._authors = {}
 
     def release(self):
-        return self._release
+        return self._release.lower
 
-    def release_lc(self):
+    def release_lowercase(self):
         return self._release.lower()
 
     def db(self):
         return self._db
 
-    def total_of_all_testsuites(self, collection="test_suites"):
-        testsuites = self.db()[collection]
-        total_suites = testsuites.find().count()
-        return total_suites
+    def testcases(self, release=None, build=None, collection_testcases=None):
+        """
+        Returns a Mongo cursor to test case documents.
+        """
+        collection_testcases = (collection_testcases or 'test_cases')
+        testcases = self.db()[collection_testcases]
+        query = {}
+        if release:
+            query["tags"] = { "$all": [release] }
+        if build:
+            query['build_name'] = build
+        return testcases.find(query)
 
-    def total_of_all_testcases(self, collection="test_cases"):
-        testcases = self.db()[collection]
-        total_cases = testcases.find().count()
-        return total_cases
+    def testsuites(self, **kwargs):
+        """
+        Returns a list containing product_suite, total_tests, and author.
+        """
+        testsuites = self.db()['test_suites']
+        collection_suites = testsuites.find({},
+                                            {"product_suite": 1, "author": 1,
+                                             "total_tests": 1, "_id": 0})
+        suites_lookup = {}
+        for s in collection_suites:
+            name = helpers.utf8(s['product_suite'])
+            suites_lookup[name] = s
 
-    def _total_testsuites_and_testcases(self,
-                                        collection="test_cases",
-                                        query=None):
+        testcases = self.testcases(**kwargs)
+        suite_names = {}
+        for tc in testcases:
+            name = helpers.utf8(tc['product_suite'])
+            if name not in suite_names:
+                suite_names[name] = 0
+            else:
+                suite_names[name] += 1
+        suites = []
+        for k, v in suite_names.items():
+            if k in suites_lookup:
+                author = suites_lookup[k]['author']
+            else:
+                author = '???'
+            suites.append({
+                            "product_suite": k,
+                            "total_tests": v,
+                            "author": author,
+                            })
+        return suites
+
+    def total_testcases(self, **kwargs):
+        return self.testcases(**kwargs).count()
+
+    def total_testsuites(self, **kwargs):
+        suites = self.testsuites(**kwargs)
+        return len(suites)
+
+
+    #
+    # The methods below need to be refactored.
+    #
+
+    def _total_testsuites_and_testcases(self, query=None):
         if query == None:
-            query = {"tags": { "$all": [self.release_lc()] }}
-        testcases = self.db()[collection]
+            query = {"tags": { "$all": [self.release_lowercase()] }}
+        testcases = self.db()["test_cases_archive"]
         cases = testcases.find(query)
         suites = {}
         total_testcases = 0
@@ -89,16 +136,6 @@ class ReleaseStats(object):
             total_testcases += 1
         return len(suites), total_testcases, total_pass, total_fail
 
-    def total_testsuites(self, collection="test_cases"):
-        total_suites, _, _, _ = \
-                self._total_testsuites_and_testcases(collection)
-        return total_suites
-
-    def total_testcases(self, collection="test_cases"):
-        _, total_testcases, _, _ = \
-                self._total_testsuites_and_testcases(collection)
-        return total_testcases
-
     def suite_authors(self, collection="test_suites"):
         testsuites = self.db()[collection]
         suites = testsuites.find()
@@ -110,7 +147,7 @@ class ReleaseStats(object):
 
     def manual_untested_by_tag(self, tag, collection="test_cases"):
         authors = self.suite_authors()
-        tags = helpers.list_flatten([self.release_lc(), "manual-untested", tag])
+        tags = helpers.list_flatten([self.release_lowercase(), "manual-untested", tag])
         query = {"tags": { "$all": tags }}
         testcases = self.db()[collection]
         cases = testcases.find(query)
@@ -123,12 +160,11 @@ class ReleaseStats(object):
                             [helpers.utf8(tag) for tag in x['tags']]))
         return tests
 
-    def total_testcases_by_tag(self, tag, collection="test_cases",
-                               query=None):
+    def total_testcases_by_tag(self, tag, collection="test_cases", query=None):
         """
         tag - can be a single tag or a list of tags.
         """
-        tags = [self.release_lc(), tag]
+        tags = [self.release_lowercase(), tag]
         if helpers.is_list(tag):
             tags = helpers.list_flatten(tags)
         if query == None:
@@ -148,33 +184,28 @@ class ReleaseStats(object):
 
         return total_testcases, total_pass, total_fail
 
-    def total_executable_testcases(self, collection="test_cases"):
-        total = (self.total_testcases(collection)
-                 - self.total_testcases_by_tag('manual-untested',
-                                               collection)[0])
+    def total_executable_testcases(self):
+        total = (self.total_testcases(release=self.release_lowercase())
+                 - self.total_testcases_by_tag('manual-untested')[0])
         return total
 
     # Tests executed. Query based on build_name
 
-    def total_testsuites_executed(self, collection="test_cases_archive",
-                                  build_name=None):
-        query = {"tags": { "$all": [self.release_lc()] },
+    def total_testsuites_executed(self, build_name=None):
+        query = {"tags": { "$all": [self.release_lowercase()] },
                  "build_name": build_name}
         total_suites, _, total_pass, total_fail = \
-                self._total_testsuites_and_testcases(collection, query)
+                self._total_testsuites_and_testcases(query)
         return total_suites, total_pass, total_fail
 
-    def total_testcases_executed(self, collection="test_cases_archive",
-                                 build_name=None):
-        query = {"tags": { "$all": [self.release_lc()] },
+    def total_testcases_executed(self, build_name=None):
+        query = {"tags": { "$all": [self.release_lowercase()] },
                  "build_name": build_name}
         _, total_testcases, total_pass, total_fail = \
-                self._total_testsuites_and_testcases(collection, query)
+                self._total_testsuites_and_testcases(query)
         return total_testcases, total_pass, total_fail
 
-    def total_testcases_by_tag_executed(self, tag,
-                                        collection="test_cases_archive",
-                                        build_name=None):
+    def total_testcases_by_tag_executed(self, tag, build_name=None):
         """
         tag - can be a single tag or a list of tags.
         """
@@ -182,16 +213,15 @@ class ReleaseStats(object):
         if helpers.is_list(tag):
             tags = helpers.list_flatten(tags)
 
-        tags_and_release = helpers.list_flatten([self.release_lc(), tag])
+        tags_and_release = helpers.list_flatten([self.release_lowercase(), tag])
         query = {"tags": { "$all": tags_and_release },
                  "build_name": build_name}
-        return self.total_testcases_by_tag(tags, collection, query)
+        return self.total_testcases_by_tag(tags,
+                                           collection="test_cases_archive",
+                                           query=query)
 
-    def total_executable_testcases_executed(self,
-                                            collection="test_cases_archive",
-                                            build_name=None):
-        total = self.total_testcases_executed(collection,
-                                              build_name=build_name)
+    def total_executable_testcases_executed(self, build_name=None):
+        total = self.total_testcases_executed(build_name=build_name)
         return total
 
 
@@ -206,7 +236,30 @@ def print_testcases(testcases):
     print "\n".join(sorted(["\t%s" % helpers.utf8(x) for x in testcases]))
 
 
-def collect_stats():
+def print_suites(suites):
+    i = 0
+    total_tests = 0
+    for n in suites:
+        i += 1
+        print "\t%3d. %-15s (%3s test cases) %s" % (i, n['author'], n['total_tests'], n['product_suite'])
+        total_tests += n['total_tests']
+    print "\t%d total test cases" % total_tests
+
+
+def print_suites_not_executed(suites, suites_executed):
+    suite_executed_lookup = {}
+    for n in suites_executed:
+        name = n['product_suite']
+        suite_executed_lookup[name] = True
+    i = 0
+    for n in suites:
+        name = n['product_suite']
+        if name not in suite_executed_lookup:
+            i += 1
+            print "\t%3d. %-15s %s" % (i, n['author'], name)
+
+
+def prog_args():
     descr = """\
 Display test execution stats collected for a specific build.
 """
@@ -219,21 +272,27 @@ Display test execution stats collected for a specific build.
                               " e.g., 'bvs master #2007'"))
     parser.add_argument('--show-untested', action='store_true', default=False,
                         help=("Show the manual-untested test cases"))
-    args = parser.parse_args()
+    parser.add_argument('--show-suites', action='store_true', default=False,
+                        help=("Show the test suites"))
+    return parser.parse_args()
+
+
+def display_stats(args):
     build = args.build
 
     ih = ReleaseStats(args.release)
 
-    print_stat("Total of all test suites:", ih.total_of_all_testsuites())
-    print_stat("Total of all test cases:", ih.total_of_all_testcases())
+    print_stat("Total of all test suites:", ih.total_testsuites())
+    print_stat("Total of all test cases:", ih.total_testcases())
 
     print ""
     print "%s Release Metrics (Build: %s)" % (args.release, build)
     print "====================================================="
-    print_stat("Total test suites:",
-               ih.total_testsuites())
+    total_testsuites_in_release = ih.total_testsuites(
+               release=ih.release_lowercase())
+    print_stat("Total test suites:", total_testsuites_in_release)
     print_stat("Total test cases:",
-               ih.total_testcases())
+               ih.total_testcases(release=ih.release_lowercase()))
 
     for functionality in TEST_TYPES:
         print_stat("Total %s tests:" % functionality,
@@ -242,9 +301,29 @@ Display test execution stats collected for a specific build.
     print_stat("Total executable test cases:",
                ih.total_executable_testcases())
 
-    print ""
+    total_testsuites_in_release_executed = ih.total_testsuites_executed(
+               build_name=build)[0]
     print_stat("Total test suites executed:",
-               ih.total_testsuites_executed(build_name=build)[0])
+               total_testsuites_in_release_executed)
+    if args.show_suites:
+        suites_executed = ih.testsuites(
+                               release=ih.release_lowercase(),
+                               build=build,
+                               collection_testcases="test_cases_archive")
+        print_suites(suites_executed)
+
+    print_stat("Total test suites not executed:",
+               total_testsuites_in_release - total_testsuites_in_release_executed)
+    if args.show_suites:
+        suites_executed = ih.testsuites(
+                               release=ih.release_lowercase(),
+                               build=build,
+                               collection_testcases="test_cases_archive")
+        suites_in_release = ih.testsuites(release=ih.release_lowercase())
+    print_suites_not_executed(suites_in_release, suites_executed)
+
+
+    print ""
     print_stat("Total test cases (executed, passed, failed):",
                ih.total_testcases_executed(build_name=build))
 
@@ -284,4 +363,4 @@ Display test execution stats collected for a specific build.
 
 
 if __name__ == '__main__':
-    collect_stats()
+    display_stats(prog_args())

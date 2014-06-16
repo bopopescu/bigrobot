@@ -63,7 +63,8 @@ T3.1 Verify first boot of controller in standalone mode via dhcp
 T3.2 Verify first boot of controller in HA mode via dhcp
 	log   need to add copy config and compare config back  
 	${A}=   cli_take_snapshot   master  run_config=yes	
-	Cli Copy  running-config   scp://bsn@qa-kvm-32:/home/mingtao/config_try    scp_passwd=bsn
+	# qa-kvm-32: address is 10.192.88.32
+	Cli Copy  running-config   scp://bsn@10.192.88.32:/home/mingtao/config_try    scp_passwd=bsn
  	cli_boot_factory_default	c1
 	sleep  ${verylong}
   	${ip1}=  first_boot_controller    c1  no  yes    hostname=MY-T5-C1 	
@@ -75,7 +76,7 @@ T3.2 Verify first boot of controller in HA mode via dhcp
  	${result}=  rest_controller_add_ip    ${ip1}   ${ipc1}   18    yes
  	${result}=  rest_controller_add_ip    ${ip2}   ${ipc2}   18    yes 
  	 Should be True     ${result}   	
-	Cli Copy   scp://bsn@qa-kvm-32:/home/mingtao/config_try  running-config  scp_passwd=bsn  
+	Cli Copy   scp://bsn@10.192.88.32:/home/mingtao/config_try  running-config  scp_passwd=bsn  
  	${B}=   cli_take_snapshot   master   run_config=yes			
  	Should Be Equal    ${A}    ${B}	 
   	    
@@ -128,8 +129,8 @@ T4.4 Shutdown the controller
 
 
 T4.5 Verification of tech-support and related commands  
-	log  no command: show tech-support
-    Manual Failed
+	log  show support, support
+    Manual passed
 	[Tags] 	full  feature   Manual  cli  infra
 
  
