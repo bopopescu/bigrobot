@@ -320,7 +320,7 @@ def display_stats(args):
                                build=build,
                                collection_testcases="test_cases_archive")
         suites_in_release = ih.testsuites(release=ih.release_lowercase())
-    print_suites_not_executed(suites_in_release, suites_executed)
+        print_suites_not_executed(suites_in_release, suites_executed)
 
 
     print ""
