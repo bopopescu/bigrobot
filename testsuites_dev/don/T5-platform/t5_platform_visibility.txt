@@ -491,14 +491,24 @@ T20 Configure SPAN session for SRC-PORT - Direction Ingress
 	
 	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	src port 1000 and tcp  IP
 	Should be true  ${returnVal}
-	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	src port 1000 and udp  IP
-	Should be true  ${returnVal}
 	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	src port 1100 and tcp  IP
 	Should not be true  ${returnVal}
-	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	src port 1100 and udp  IP
+	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	udp  IP
 	Should not be true  ${returnVal}
 	
+	${returnVal} =  rest add monitor session  1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	 ${s1IxiaDstSwitch}	 ${s1IxiaDstInt}  direction=ingress  ip-proto=udp  src-tp-port=1000
+    Should be true  ${returnVal}
+	${returnVal} =  rest verify monitor session	 1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	${s1IxiaDstSwitch}	${s1IxiaDstInt}  direction=ingress  ip-proto=udp  src-tp-port=1000
+	Should be true  ${returnVal}
+	rest activate monitor session	1
 
+	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	src port 1000 and udp  IP
+	Should be true  ${returnVal}
+	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	src port 1100 and udp  IP
+	Should not be true  ${returnVal}
+	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	tcp  IP
+	Should not be true  ${returnVal}
+	
 T21 Configure SPAN session for DST-IP-CIDR - Direction Ingress
 	[Tags]  span  feature   don
 	${returnVal} =  rest add monitor session  1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	 ${s1IxiaDstSwitch}	 ${s1IxiaDstInt}  direction=ingress  dst-ip-cidr=100.1.2.1/32
@@ -544,11 +554,24 @@ T22 Configure SPAN session for DST-PORT - Direction Ingress
 	
 	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	dst port 2000 and tcp  IP
 	Should be true  ${returnVal}
-	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	dst port 2000 and udp  IP
-	Should be true  ${returnVal}
 	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	dst port 2100 and tcp  IP
 	Should not be true  ${returnVal}
+	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	dst port 2000 and udp  IP
+	Should not be true  ${returnVal}
 	
+	
+	${returnVal} =  rest add monitor session  1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	 ${s1IxiaDstSwitch}	 ${s1IxiaDstInt}  direction=ingress  ip-proto=udp  dst-tp-port=2000
+    Should be true  ${returnVal}
+	${returnVal} =  rest verify monitor session	 1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	${s1IxiaDstSwitch}	${s1IxiaDstInt}  direction=ingress  ip-proto=udp  dst-tp-port=2000
+	Should be true  ${returnVal}
+	rest activate monitor session	1
+	
+	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	dst port 2000 and udp  IP
+	Should be true  ${returnVal}
+	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	dst port 2100 and udp  IP
+	Should not be true  ${returnVal}
+	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	dst port 2000 and tcp  IP
+	Should not be true  ${returnVal}
 	
 T23 Configure SPAN session for SRC-MAC - Direction Ingress
 	[Tags]  span  feature  don
