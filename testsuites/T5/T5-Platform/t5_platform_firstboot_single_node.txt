@@ -107,7 +107,7 @@ T2.4 Verify with invalid mask
 	first_boot_controller_menu_prefix               c1   ${mask}    
  	first_boot_controller_menu_apply                c1	
     
-	[Tags] 	full  feature  firstboot   singlenode     JIRA-BSC-5032    
+	[Tags] 	full  feature  firstboot   singlenode        
  
   
 T2.5 Verify with invalid IP

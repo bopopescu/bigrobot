@@ -57,7 +57,7 @@ T1.1 first boot of controller in HA mode via static IP after boot factory defaul
 	log   VIP_runningconfig_factorydefault_vip_runningconfig
  	 
 	Verify VIP function 	 ${VIP1}   	
-	Cli Copy  running-config   scp://bsn@qa-kvm-32:/home/mingtao/${file}    scp_passwd=bsn
+	Cli Copy  running-config   scp://bsn@10.192.88.32:/home/mingtao/${file}    scp_passwd=bsn
  	${A}=   cli_take_snapshot   master  run_config=yes	
 	
  	cli_boot_factory_default	c1
@@ -67,7 +67,7 @@ T1.1 first boot of controller in HA mode via static IP after boot factory defaul
     controller first boot static 2nd    c2  yes  no    ${ipc2}   ${mask}   ${gw}   ${dns}   ${domain}   ${namec2}     ${ipc1}
 
 	rest_verify_show_cluster
-	Cli Copy   scp://bsn@qa-kvm-32:/home/mingtao/${file}  running-config  scp_passwd=bsn
+	Cli Copy   scp://bsn@10.192.88.32:/home/mingtao/${file}  running-config  scp_passwd=bsn
 	${B}=   cli_take_snapshot   master   run_config=yes		
   	Should Be Equal    ${A}    ${B}	 	
 	Verify VIP function 	 ${VIP2}
@@ -112,11 +112,12 @@ T1.7 Traceroute
 
 T1.8 Watch debug command output
     Log  watch debug/delete is not useful
-    Manual failed
+    Manual passed
 	[Tags]  full   feature   cli  Manual   HA
 
 
 T1.9 Verify first boot of controller when Master and Slave are in different time zones  
+   #  not supported
  	Verify NTP time zone   c1    America/Los_Angeles   
  	Verify NTP time zone   c2    America/New_York
  	cli_boot_factory_default	c1
@@ -127,18 +128,18 @@ T1.9 Verify first boot of controller when Master and Slave are in different time
  	Verify NTP time zone   c1    America/Los_Angeles   
  	Verify NTP time zone   c2    America/New_York
        	
-   	[Tags]	full   feature   firstboot  ntp  HA
+   	[Tags]	full   feature   firstboot  ntp  HA   skipped
 
 T1.10 first boot of controller join an non existing cluster 
-#	cli_boot_factory_default	c2 	
-#	sleep  ${verylong}	 
-#  	controller first boot static        c1  no  no   ${ipc1}   ${mask}   ${gw}   ${dns}   ${domain}   ${namec1}
+	cli_boot_factory_default	c2 	
+	sleep  ${verylong}	 
+  	controller first boot static        c1  no  no   ${ipc1}   ${mask}   ${gw}   ${dns}   ${domain}   ${namec1}
   	
-#  	first_boot_controller_initial_node_setup        c2  no   ${ipc2}   ${mask}   ${gw}   ${dns}   ${domain}   ${namec2}
-#	first_boot_controller_initial_cluster_setup 	c2  yes   cluster_ip=${ipcno}
-#	first_boot_controller_menu_apply_negative	    c2    cluster_ip=${ipc1}
-	Manual failed	   	
-	[Tags] 	full  feature   firstboot    JIRA-BSC-5087  HA
+  	first_boot_controller_initial_node_setup        c2  no   ${ipc2}   ${mask}   ${gw}   ${dns}   ${domain}   ${namec2}
+	first_boot_controller_initial_cluster_setup 	c2  yes   cluster_ip=${ipcno}
+	first_boot_controller_menu_apply_negative	    c2    cluster_ip=${ipc1}
+	 	   	
+	[Tags] 	full  feature   firstboot     HA
 
 T1.11 Test first boot of controller menu update cluster from join to new (ntp need to be configured)
 	cli_boot_factory_default	c1
