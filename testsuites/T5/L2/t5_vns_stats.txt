@@ -189,8 +189,8 @@ Verify single vns rx/tx rates same rack
     rest verify vns tx stats  t1  v1  0
     start traffic  ${stream}
     sleep  60
-    rest verify vns rx rates  t1  v1  2000  10
-    rest verify vns tx rates  t1  v1  2000  10
+    rest verify vns rx rates  t1  v1  2000 
+    rest verify vns tx rates  t1  v1  2000 
     stop traffic  ${stream}
     rest delete fabric switch  leaf0-b
     rest delete tenant  t1
@@ -218,8 +218,8 @@ verify single vns rx/tx rates different rack
     rest verify vns tx stats  t1  v1  0
     start traffic  ${stream}
     sleep  60
-    rest verify vns rx rates  t1  v1  1000  10
-    rest verify vns tx rates  t1  v1  1000  10
+    rest verify vns rx rates  t1  v1  1000 
+    rest verify vns tx rates  t1  v1  1000 
     stop traffic  ${stream}   
     rest delete tenant  t1
    
@@ -302,12 +302,12 @@ verify interface rx/tx rates different rack
     rest clear fabric interface stats
     start traffic  ${stream}
     sleep  60
-    rest verify fabric interface rx rates  leaf0-a  ${leaf0a_ixia_intf}  1000  10
-    rest verify fabric interface tx rates  leaf0-a  ${leaf0a_spine1_intf0}  1000  10
-    rest verify fabric interface rx rates  spine1  ${spine1_leaf0a_intf0}  1000  10
-    rest verify fabric interface tx rates  spine1  ${spine1_leaf1a_intf0}  1000  10
-    rest verify fabric interface tx rates  leaf1-a  ${leaf1a_ixia_intf}  1000  10
-    rest verify fabric interface rx rates  leaf1-a  ${leaf1a_spine1_intf0}  1000  10
+    rest verify fabric interface rx rates  leaf0-a  ${leaf0a_ixia_intf}  1000  100
+    rest verify fabric interface tx rates  leaf0-a  ${leaf0a_spine1_intf0}  1000  100
+    rest verify fabric interface rx rates  spine1  ${spine1_leaf0a_intf0}  1000  100
+    rest verify fabric interface tx rates  spine1  ${spine1_leaf1a_intf0}  1000  100
+    rest verify fabric interface tx rates  leaf1-a  ${leaf1a_ixia_intf}  1000  100
+    rest verify fabric interface rx rates  leaf1-a  ${leaf1a_spine1_intf0}  1000  100
     stop traffic  ${stream}
     rest delete tenant  t1
    
@@ -336,8 +336,8 @@ verify interface rx/tx rates same rack
     rest clear fabric interface stats
     start traffic  ${stream}
     sleep  60
-    rest verify fabric interface rx rates  leaf0-a  ${leaf0a_ixia_intf}  1000  10
-    rest verify fabric interface tx rates  leaf0-b  ${leaf0b_ixia_intf}  1000  10
+    rest verify fabric interface rx rates  leaf0-a  ${leaf0a_ixia_intf}  1000  100
+    rest verify fabric interface tx rates  leaf0-b  ${leaf0b_ixia_intf}  1000  100
     stop traffic  ${stream}
     rest delete fabric switch  leaf0-b
     rest delete tenant  t1
@@ -645,10 +645,10 @@ verify multiple tenant rates
     sleep  5
     start traffic  ${stream3}
     sleep  30
-    rest verify tenant rx rates  t1   1000  10
-    rest verify tenant tx rates  t1   1000  10
-    rest verify tenant rx rates  t2   1000  10
-    rest verify tenant tx rates  t2   1000  10
+    rest verify tenant rx rates  t1   1000  100
+    rest verify tenant tx rates  t1   1000  100
+    rest verify tenant rx rates  t2   1000  100
+    rest verify tenant tx rates  t2   1000  100
     rest delete tenant  t1
     rest delete tenant  t2
        
