@@ -55,7 +55,7 @@ ${s1IxiaVerifyInt}	eth1
 * Test Case 
 
 T0 Setup
-	[Tags]  feature  setup 
+	[Tags]  feature  setup
 	bash network restart  h1
 	bash add tag  h1  bond0  10 
 	bash add ip address  h1  10.10.10.51/24  bond0.10
@@ -481,9 +481,9 @@ T19 Configure SPAN session for SRC-IP-CIDR - Direction Ingress
 
 T20 Configure SPAN session for SRC-PORT - Direction Ingress
 	[Tags]  span  feature  don
-	${returnVal} =  rest add monitor session  1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	 ${s1IxiaDstSwitch}	 ${s1IxiaDstInt}  direction=ingress  src-tp-port=1000
+	${returnVal} =  rest add monitor session  1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	 ${s1IxiaDstSwitch}	 ${s1IxiaDstInt}  direction=ingress  ip-proto=tcp  src-tp-port=1000
     Should be true  ${returnVal}
-	${returnVal} =  rest verify monitor session	 1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	${s1IxiaDstSwitch}	${s1IxiaDstInt}  direction=ingress  src-tp-port=1000
+	${returnVal} =  rest verify monitor session	 1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	${s1IxiaDstSwitch}	${s1IxiaDstInt}  direction=ingress  ip-proto=tcp  src-tp-port=1000
 	Should be true  ${returnVal}
 	rest activate monitor session	1
 
@@ -534,9 +534,9 @@ T21 Configure SPAN session for DST-IP-CIDR - Direction Ingress
 	
 T22 Configure SPAN session for DST-PORT - Direction Ingress
 	[Tags]  span  feature  don
-	${returnVal} =  rest add monitor session  1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	 ${s1IxiaDstSwitch}	 ${s1IxiaDstInt}  direction=ingress  dst-tp-port=2000
+	${returnVal} =  rest add monitor session  1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	 ${s1IxiaDstSwitch}	 ${s1IxiaDstInt}  direction=ingress  ip-proto=tcp  dst-tp-port=2000
     Should be true  ${returnVal}
-	${returnVal} =  rest verify monitor session	 1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	${s1IxiaDstSwitch}	${s1IxiaDstInt}  direction=ingress  dst-tp-port=2000
+	${returnVal} =  rest verify monitor session	 1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	${s1IxiaDstSwitch}	${s1IxiaDstInt}  direction=ingress  ip-proto=tcp  dst-tp-port=2000
 	Should be true  ${returnVal}
 	rest activate monitor session	1
 
@@ -587,9 +587,34 @@ T24 Configure SPAN session for DST-MAC - Direction Ingress
 
 
 T25 Configure SPAN session for IP-Proto - Direction Ingress
-	[Tags]  span  feature manual
-	manual passed
+	#[Tags]  span  feature manual
+	#manual passed
+	[Tags]  span  feature  don
+	${returnVal} =  rest add monitor session  1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	 ${s1IxiaDstSwitch}	 ${s1IxiaDstInt}  direction=ingress  ip-proto=tcp
+    Should be true  ${returnVal}
+	${returnVal} =  rest verify monitor session	 1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	${s1IxiaDstSwitch}	${s1IxiaDstInt}  direction=ingress  ip-proto=tcp
+	Should be true  ${returnVal}
+	rest activate monitor session	1
+
+	sleep  3
 	
+	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	tcp  IP
+	Should be true  ${returnVal}
+	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	udp  IP
+	Should not be true  ${returnVal}
+	
+	${returnVal} =  rest add monitor session  1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	 ${s1IxiaDstSwitch}	 ${s1IxiaDstInt}  direction=ingress  ip-proto=udp
+    Should be true  ${returnVal}
+	${returnVal} =  rest verify monitor session	 1  ${s1IxiaSrcSwitch}	${s1IxiaSrcInt}	${s1IxiaDstSwitch}	${s1IxiaDstInt}  direction=ingress  ip-proto=udp
+	Should be true  ${returnVal}
+	rest activate monitor session	1
+	
+	sleep  3
+	
+	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	udp  IP
+	Should be true  ${returnVal}
+	${returnVal} =  verify traffic with tcpdump  ${s1IxiaVerifyHost}	${s1IxiaVerifyInt}	tcp  IP
+	Should not be true  ${returnVal}
 	
 T26 Configure SPAN session for IP-DSCP - Direction Ingress
 	[Tags]  span  feature  manual
