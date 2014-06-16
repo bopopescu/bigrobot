@@ -1,0 +1,40 @@
+*Settings
+Documentation  Release:Blackbird
+Suite Setup  overlap suite setup
+Suite Teardown   overlap suite teardown
+Test Setup   base test setup
+Test Teardown  base test teardown 
+Force Tags   platform Sanity
+Library  keywords/BsnCommon.py
+Library  keywords/AppController.py
+Library  keywords/BigTap.py
+Library  keywords/SwitchLight.py
+Library  Collections.py
+
+* Variable
+${switch1_alias}                    app-rlb9-1
+${switch1_filter_intf_1}            ethernet1    
+${switch1_filter_alias_1}           ixia-1-3
+${switch1_filter_intf_2}            ethernet2
+${switch1_filter_alias_2}           ixia-1-4
+${switch1_preservice_intf_1}        ethernet47
+${switch1_preservice_alias_1}       rlb9-1-pre
+${switch1_postservice_intf_1}       ethernet48
+${switch1_postservice_alias_1}      rlb9-1-post
+
+${switch2_alias}                    app-rlb9-2
+${switch2_delivery_intf_1}          ethernet1    
+${switch2_delivery_alias_1}         ixia-1-15
+${switch2_delivery_intf_2}          ethernet2
+${switch2_delivery_alias_2}         ixia-1-16
+${switch2_preservice_intf_1}        ethernet47
+${switch2_preservice_alias_1}       rlb9-2-pre
+${switch2_postservice_intf_1}       ethernet48
+${switch2_postservice_alias_1}      rlb9-2-post
+
+${switch3_alias}                    app-rlb9-3
+${switch3_filter_intf_1}            ethernet1    
+${switch3_filter_alias_1}           ixia-3-3
+${switch3_delivery_intf_2}          ethernet2
+${switch3_delivery_alias_2}         ixia-3-4
+
