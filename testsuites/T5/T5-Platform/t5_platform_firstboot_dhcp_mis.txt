@@ -25,12 +25,12 @@ ${long}   30
 ${verylong}    120 
 ${gw}           10.192.64.1
 ${dns}          10.192.3.1
-${domain}        bigswitch.com 
-${mask}	         18
+${domain}       bigswitch.com 
+${mask}	        18
 ${VIP1}         10.192.105.150
 ${VIP2}         10.192.105.151
-${namec1}       MY-T5-C30
-${namec2}       MY-T5-C10
+${namec1}       MY-T5-C10
+${namec2}       MY-T5-C11
 ${ipcno}        10.192.105.255
 
 * Test Case
@@ -93,12 +93,20 @@ T3.3 Verify controller IP change after the first boot
 
 T4.1 Verify first boot of controller when external DNS/NTP server is unreachable
 	cli_boot_factory_default	c1
+	cli_boot_factory_default	c2
+	
 	sleep  ${verylong}	
   	first_boot_controller_initial_node_setup        c1  no   ${ipc1}   ${mask}   ${gw}   ${dns}   ${domain}   ${namec1}
 	first_boot_controller_initial_cluster_setup 	c1  no   
 	first_boot_controller_menu_gateway   			c1  10.192.64.7  
 	first_boot_controller_menu_dnsserver            c1  8.8.8.8  	      
-	first_boot_controller_menu_apply_negative       c1   gateway=${gw}   dns=${dns}
+	first_boot_controller_menu_apply_negative       c1   gateway=${gw}   dns=${dns}	
+	sleep  ${verylong}		
+	cli_boot_factory_default	c1
+	sleep  ${verylong}	
+  	controller first boot static        c1  no  no   ${ipc1}   ${mask}   ${gw}   ${dns}   ${domain}   ${namec1}			
+    controller first boot static 2nd    c2  yes  no    ${ipc2}   ${mask}   ${gw}   ${dns}   ${domain}   ${namec2}     ${ipc1}
+ 
  	   
 	[Tags] 	full  feature   firstboot   
 

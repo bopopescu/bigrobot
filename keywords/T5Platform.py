@@ -178,7 +178,7 @@ class T5Platform(object):
         if(singleNode):
             masterID = self.getNodeID(False)
         else:
-            masterID, slaveID = self.getNodeID()
+            masterID, slaveID = self.getNodeID() 
 
         if(singleNode):
             if (masterID == -1):
@@ -1697,18 +1697,22 @@ class T5Platform(object):
 
             c.send(string + ' image://')
 #            c.expect(r'[\r\n].+password: ')
-            c.expect(r'[\r\n].+password: |[\r\n].+(yes/no)?')
-            content = c.cli_content()
-            helpers.log("*****Output is :\n%s" % content)
-            if re.match(r'.*password:.*', content):
+
+            options = c.expect([r'[\r\n].+password: ', r'[\r\n].+yes/no'])
+         
+            if options[0] == 0:
                 helpers.log("INFO:  need to provide passwd ")
                 c.send('bsn')
-            elif re.match(r'.+(yes/no)?', content):
+            if options[0] == 1:
                 helpers.log("INFO:  need to send yes, then provide passwd ")
                 c.send('yes')
                 c.expect(r'[\r\n].+password: ')
                 c.send('bsn')
+        
+            content = c.cli_content()
+            helpers.log("*****Output is :\n%s" % content)
 
+ 
             try:
                 c.expect(timeout=300)
             except:
@@ -1744,19 +1748,21 @@ class T5Platform(object):
         c.config('')
         string = 'copy scp://' + src
         c.send(string + ' image://')
-
-        c.expect(r'[\r\n].+password: |[\r\n].+(yes/no)?')
-        content = c.cli_content()
-        helpers.log("*****Output is :\n%s" % content)
-        if re.match(r'.*password:.* ', content):
+        
+        options = c.expect([r'[\r\n].+password: ', r'[\r\n].+yes/no'])
+         
+        if options[0] == 0:
             helpers.log("INFO:  need to provide passwd ")
             c.send(passwd)
-        elif re.match(r'.+(yes/no)?', content):
+        if options[0] == 1:
             helpers.log("INFO:  need to send yes, then provide passwd ")
             c.send('yes')
             c.expect(r'[\r\n].+password: ')
             c.send(passwd)
-
+        
+        content = c.cli_content()
+        helpers.log("*****Output is :\n%s" % content)
+        
         try:
             c.expect(timeout=180)
         except:
@@ -1867,7 +1873,7 @@ class T5Platform(object):
                 c.expect()
                 (_, newimages) = self.cli_check_image(node)
                 if image in newimages:
-                    helpers.log('Error: images: %s is NOT  deleted' % image)
+                    helpers.log('Error: images: %s is NOT deleted' % image)
                     return False
             else:
                 helpers.log("INFO: image: %s not in controller" % image)
@@ -1901,7 +1907,12 @@ class T5Platform(object):
                 c.send('upgrade stage ' + image)
         else:
             c.send('upgrade stage ' + image)
-        c.expect(r'[\r\n].*to continue.*')
+        options = c.expect([r'[\r\n].*to continue.*', r'.* currently staged on alternate partition'])
+         
+        if options[0] == 1:
+            helpers.log('USER INFO:  image is staged already ')
+            return True
+
         c.send("yes")
         try:
             c.expect(timeout=900)
@@ -1939,12 +1950,12 @@ class T5Platform(object):
         helpers.log('INFO: Entering ==> cli_upgrade_launch ')
         c.config('')
         c.send('upgrade launch')
-        c.expect(r'[\r\n].+("yes" or "y" to continue): ')
+        c.expect(r'[\r\n].+ \("yes" or "y" to continue\):', timeout=180)
         content = c.cli_content()
-        helpers.log("*****Output is :\n%s" % content)
+        helpers.log("*****USER INFO:\n%s" % content)
         c.send("yes")
 
-        options = c.expect([r'fabric is redundant', r'.* HITFULL upgrade (y or yes to continue):'])
+        options = c.expect([r'fabric is redundant', r'.* HITFULL upgrade \(y or yes to continue\):'])
         content = c.cli_content()
         helpers.log("USER INFO: the content:  %s" % content)
         if options[0] == 1:
@@ -3428,8 +3439,8 @@ class T5Platform(object):
                         helpers.log("USER ERROR: there is no match")
                         return False
                     n_console.send(option)  # Apply settings
-                    n_console.expect(r'Existing Node IP Address.*')
-                    n_console.expect(r'Existing node IP.* > ')
+                    n_console.expect(r'Existing Controller Node IP Address.*')
+                    n_console.expect(r'Existing Controller IP.* > ')
                     n_console.send(clusterip)
                     n_console.expect(r'\[1\] >')
 
