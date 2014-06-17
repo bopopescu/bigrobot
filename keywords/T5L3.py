@@ -347,9 +347,10 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
         
         helpers.test_log("Input arguments: tenant = %s dstroute = %s " % (tenant, dstroute))
         
-        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/logical-router/routes' % (tenant)
+        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/logical-router/routes[dest-ip-subnet="%s"]' % (tenant, dstroute)
         try:
-            c.rest.delete(url, {"dest-ip-subnet": dstroute})
+            #c.rest.delete(url, {"dest-ip-subnet": dstroute})
+            c.rest.delete(url, {})
         except:
             helpers.test_failure(c.rest.error())
         else: 

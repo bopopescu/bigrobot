@@ -1437,6 +1437,7 @@ Host moved to another vns on another tenant and renew dhcp
 	Should Be True  							${loss} < 20	
 	REST delete portgroup from vns				Y								Y1						${leaf2_pc1}			-1
 	REST add portgroup to vns					Z								Z3						${leaf2_pc1}			-1
+	REST add dhcp relay                         Z                               Z3                      10.251.1.11
 	BASH release dhcpv4 address                 h5                              bond0
     sleep                                       1  
 	${ipAddr5} =								BASH renew dhcpv4 address		h5						bond0
@@ -1526,13 +1527,13 @@ Inter tenant dhcp relay with multiple dhcp servers
     BASH stop service                           h3                              isc-dhcp-server
     sleep                                       1
     ${value} =                                  BASH check service status       h3                      isc-dhcp-server
-    Should Contain                              ${value}                        is not running
+    Should Contain                              ${value}                        is stopped
     ${ipAddr1} =                                BASH renew dhcpv4 address       h1                      bond0
     Should Be Empty                             ${ipAddr1}
     BASH stop service                           h2                              isc-dhcp-server
     sleep                                       1
     ${value} =                                  BASH check service status       h2                      isc-dhcp-server
-    Should Contain                              ${value}                        is not running
+    Should Contain                              ${value}                        is stopped
     ${value} =                                  BASH release dhcpv4 address     h4                      bond0
     Should Be True                              ${value}
     BASH delete route                           h2                              10.252.0.0/16           10.251.1.1
@@ -2245,6 +2246,8 @@ Restart ofad on leaf with dhcp-relay
     Should Not Be Empty                         ${ipAddr5}  
     BASH add route                              h2                              10.251.0.0/16           10.252.1.1
     BASH add route                              h5                              10.251.0.0/16           10.252.1.1
+    BASH ping                                   h2                              10.252.1.1              count=5
+    BASH ping                                   h5                              10.252.1.1              count=5
     ${result} =                                 REST show endpoints mac         ${mac2}
     Should Not Be Empty                         ${result}
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
