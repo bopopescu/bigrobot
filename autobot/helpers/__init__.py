@@ -1275,7 +1275,7 @@ def run_cmd(cmd, cwd=None, ignore_stderr=False, shell=True, quiet=False):
         return (True, out)
 
 
-def _ping(host, count=5, timeout=5, quiet=False, source_if=None,
+def _ping(host, count=10, timeout=5, quiet=False, source_if=None,
           record_route=False, node_handle=None, mode=None, ttl=None):
     """
     Ping options:
@@ -1403,9 +1403,9 @@ def ping(host, count=10, timeout=5, loss=0, quiet=False):
 
     # Need to ping with minimum of 2 counts since 1 packet may get lost due
     # to multiple hops (if destination host is not in the same network).
-    actual_loss = _ping(host, count=2, timeout=1, quiet=quiet)
+    actual_loss = _ping(host, count=count, timeout=1, quiet=quiet)
     if actual_loss > loss:
-        actual_loss = _ping(host, count=2, timeout=1, quiet=quiet)
+        actual_loss = _ping(host, count=count, timeout=1, quiet=quiet)
         if actual_loss > loss:
             count -= 4
             actual_loss = _ping(host, count=count, timeout=timeout, quiet=quiet)
