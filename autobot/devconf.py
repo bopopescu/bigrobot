@@ -498,6 +498,24 @@ class BsnDevConf(DevConf):
             raise
         return result
 
+    def send(self, *args, **kwargs):
+        try:
+            super(BsnDevConf, self).send(*args, **kwargs)
+        except socket.error, e:
+            error_str = str(e)
+            helpers.log("socket.error: e: %s" % error_str)
+            if re.match(r'Socket is closed', error_str):
+                helpers.log("Socket is closed. Reconnecting...")
+                self.connect()
+                super(BsnDevConf, self).send(*args, **kwargs)
+            else:
+                self.expect_exception(None, "Unexpected socket error",
+                                      soft_error=True)
+                raise
+        except:
+            self.expect_exception(None, "Unexpected error", soft_error=True)
+            raise
+
     def cli(self, cmd, quiet=False, prompt=False, timeout=None, level=5):
         return self.cmd(cmd, quiet=quiet, mode='cli', prompt=prompt,
                         timeout=timeout, level=level)
@@ -589,6 +607,19 @@ class MininetDevConf(DevConf):
             helpers.log("Not starting Mininet session (is_start_mininet=%s)"
                         % is_start_mininet)
         else:
+            # Warn user if there's already a screen session.
+            self.send("screen -ls")
+            self.expect(quiet=True)
+            if not helpers.any_match(self.content(), r'No Sockets found'):
+                helpers.warn("There are other Mininet screen sessions running. Please close them.")
+
+            # Must specify a "sensible" term type to avoid the screen error
+            # "Clear screen capability required."
+            self.send("export TERM=vt100")
+            self.expect(quiet=True)
+            self.send("screen")
+            self.expect(r'.*Press Space or Return to end.*')
+            self.send("")
             self.start_mininet()
 
     def is_cli(self):
@@ -680,7 +711,6 @@ class MininetDevConf(DevConf):
                         % (self.name(), new_topology))
 
         _cmd = self.mininet_cmd()
-
         self.cli(_cmd, quiet=False)
         self.state = 'started'
 
@@ -701,7 +731,10 @@ class MininetDevConf(DevConf):
 
     def close(self):
         super(MininetDevConf, self).close()
-
+        if helpers.bigrobot_preserve_mininet_screen_session().lower() == 'true':
+            helpers.log("Env BIGROBOT_PRESERVE_MININET_SCREEN_SESSION"
+                        " is 'True'. Preserving Mininet screen session.")
+            return True
         try:
             self.stop_mininet()
         except:
@@ -711,6 +744,7 @@ class MininetDevConf(DevConf):
             else:
                 raise
         else:
+            self.send('exit', quiet=True)  # terminate screen session
             self.conn.close(force=True)
             helpers.log("Mininet - force closed the device connection '%s'."
                     % self.name())

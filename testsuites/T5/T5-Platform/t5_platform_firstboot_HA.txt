@@ -29,8 +29,8 @@ ${domain}        bigswitch.com
 ${mask}	         18
 ${VIP1}         10.192.105.150
 ${VIP2}         10.192.105.151
-${namec1}       MY-T5-C30
-${namec2}       MY-T5-C10
+${namec1}       MY-T5-C10
+${namec2}       MY-T5-C11
 ${ipcno}        10.192.105.255
 ${colo}         210
 
@@ -57,7 +57,7 @@ T1.1 first boot of controller in HA mode via static IP after boot factory defaul
 	log   VIP_runningconfig_factorydefault_vip_runningconfig
  	 
 	Verify VIP function 	 ${VIP1}   	
-	Cli Copy  running-config   scp://bsn@qa-kvm-32:/home/mingtao/${file}    scp_passwd=bsn
+	Cli Copy  running-config   scp://bsn@10.192.88.32:/home/mingtao/${file}  node=c1  scp_passwd=bsn
  	${A}=   cli_take_snapshot   master  run_config=yes	
 	
  	cli_boot_factory_default	c1
@@ -67,19 +67,18 @@ T1.1 first boot of controller in HA mode via static IP after boot factory defaul
     controller first boot static 2nd    c2  yes  no    ${ipc2}   ${mask}   ${gw}   ${dns}   ${domain}   ${namec2}     ${ipc1}
 
 	rest_verify_show_cluster
-	Cli Copy   scp://bsn@qa-kvm-32:/home/mingtao/${file}  running-config  scp_passwd=bsn
+	Cli Copy   scp://bsn@10.192.88.32:/home/mingtao/${file}  running-config  scp_passwd=bsn
 	${B}=   cli_take_snapshot   master   run_config=yes		
   	Should Be Equal    ${A}    ${B}	 	
 	Verify VIP function 	 ${VIP2}
 	
-   	log   failed for VIP and copy running config
-   
-	[Tags]   sanity   feature   firstboot   VIP  JIRA-BSC-5055   JIRA-BSC-5041  HA
+     
+	[Tags]   sanity   feature   firstboot   VIP     HA
 	
 T1.2 Verify the VIP change after the first boot
      Log   covered in first boot T1.1
      
-	[Tags] 	sanity   feature   firstboot  VIP   JIRA-BSC-5055   HA
+	[Tags] 	sanity   feature   firstboot  VIP     HA
 
 
 T1.3 Factory default options
@@ -89,18 +88,22 @@ T1.3 Factory default options
 
 T1.4 Verify config restore after the first boot
      Log   covered in first boot T1.1
-	[Tags]   sanity   feature   firstboot   JIRA-BSC-5041  HA
+	[Tags]   sanity   feature   firstboot     HA
 
 
 T1.5 Test controller reboot
- 	reboot node and verify it role
- 
+ 	cli_verify_cluster_master_reboot
+ 	sleep   10
+ 	cli_verify_cluster_master_reboot
+ 	sleep   10
+ 	
 	[Tags] 	sanity   feature   infra  HA 
 
 T1.6 Verification of CLI commands (whoami , ping , set length , history , reauth)
 	log   cli with admin and non admin	 
 	Test whoami ping reauth with admin
-	Test whoami ping reauth with non admin  
+	# no admin not supported
+#	Test whoami ping reauth with non admin  
     log  manual pass for: set length,history
 	
 	[Tags]  full  feature   firstboot   cli   HA
@@ -112,11 +115,12 @@ T1.7 Traceroute
 
 T1.8 Watch debug command output
     Log  watch debug/delete is not useful
-    Manual failed
+    Manual passed
 	[Tags]  full   feature   cli  Manual   HA
 
 
 T1.9 Verify first boot of controller when Master and Slave are in different time zones  
+   #  not supported
  	Verify NTP time zone   c1    America/Los_Angeles   
  	Verify NTP time zone   c2    America/New_York
  	cli_boot_factory_default	c1
@@ -127,27 +131,30 @@ T1.9 Verify first boot of controller when Master and Slave are in different time
  	Verify NTP time zone   c1    America/Los_Angeles   
  	Verify NTP time zone   c2    America/New_York
        	
-   	[Tags]	full   feature   firstboot  ntp  HA
+   	[Tags]	full   feature   firstboot  ntp  HA   skipped
 
 T1.10 first boot of controller join an non existing cluster 
-#	cli_boot_factory_default	c2 	
-#	sleep  ${verylong}	 
-#  	controller first boot static        c1  no  no   ${ipc1}   ${mask}   ${gw}   ${dns}   ${domain}   ${namec1}
-  	
-#  	first_boot_controller_initial_node_setup        c2  no   ${ipc2}   ${mask}   ${gw}   ${dns}   ${domain}   ${namec2}
-#	first_boot_controller_initial_cluster_setup 	c2  yes   cluster_ip=${ipcno}
-#	first_boot_controller_menu_apply_negative	    c2    cluster_ip=${ipc1}
-	Manual failed	   	
-	[Tags] 	full  feature   firstboot    JIRA-BSC-5087  HA
+ 
+	cli_boot_factory_default	c2 	
+	sleep  ${verylong}	 
+ 	
+  	first_boot_controller_initial_node_setup        c2  no   ${ipc2}   ${mask}   ${gw}   ${dns}   ${domain}   ${namec2}
+	first_boot_controller_initial_cluster_setup 	c2  yes   cluster_ip=${ipcno}
+	${result}=  first_boot_controller_menu_apply_negative	    c2    cluster_ip=${ipc1}
+	Should be True     ${result}  
+	 	   	
+	[Tags] 	full  feature   firstboot     HA
 
 T1.11 Test first boot of controller menu update cluster from join to new (ntp need to be configured)
-	cli_boot_factory_default	c1
+	cli_boot_factory_default	c1	
 	sleep  ${verylong}	
   	first_boot_controller_initial_node_setup        c1  no   ${ipc1}   ${mask}   ${gw}   ${dns}   ${domain}   ${namec1}
 	first_boot_controller_initial_cluster_setup 	c1  yes   cluster_ip= ${ipc2} 
-	first_boot_controller_menu_cluster_option_apply         c1    cluster_name=MY-T5	 
-
-
+	first_boot_controller_menu_cluster_option_apply         c1    cluster_name=MY-T5	
+	cli_boot_factory_default	c2
+	sleep  ${verylong}	
+	controller first boot static 2nd    c2  yes  no    ${ipc2}   ${mask}   ${gw}   ${dns}   ${domain}   ${namec2}     ${ipc1}
+	 
 	[Tags]  full   feature   firstboot  HA
 	
 

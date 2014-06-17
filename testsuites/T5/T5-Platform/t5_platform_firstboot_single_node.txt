@@ -29,8 +29,8 @@ ${domain}        bigswitch.com
 ${mask}	         18
 ${VIP1}         10.192.105.150
 ${VIP2}         10.192.105.151
-${namec1}       MY-T5-C30
-${namec2}       MY-T5-C10
+${namec1}       MY-T5-C10
+${namec2}       MY-T5-C11
 ${ipcno}        10.192.105.255
 ${colo}         210
 
@@ -107,7 +107,7 @@ T2.4 Verify with invalid mask
 	first_boot_controller_menu_prefix               c1   ${mask}    
  	first_boot_controller_menu_apply                c1	
     
-	[Tags] 	full  feature  firstboot   singlenode     JIRA-BSC-5032    
+	[Tags] 	full  feature  firstboot   singlenode        
  
   
 T2.5 Verify with invalid IP
@@ -196,5 +196,10 @@ T2.11 Verify the behavior if user hits Ctrl+C during various stages of the first
  	log  need to care the ctl_c after the apply
  	    
 	[Tags] 	full  feature  firstboot   singlenode    JIRA-BSC_5064
+
+T2.12 Verification of configs in local node mode 
+	log   covered in T2.1   
+	[Tags] 	full  feature   firstboot  singlenode  cli
+
 
   

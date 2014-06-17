@@ -26,9 +26,9 @@ ping h3 to h4 single leaf single rack dynamic endpoints
    [Tags]  L2  feature  smoke  sanity  IronHorse      
    rest add interface to vns  A  A  leaf1-a  ${h3_intf0_single}  -1 
    rest add interface to vns  A  A  leaf1-a  ${h4_intf0_single}  -1 
-   sleep  5
+   sleep  10
    ${loss}=  bash ping  h3  ${h4_single_ip}  source_if=eth1
-   Should Be True  ${loss} < 50  
+   Should Be True  ${loss} < 60  
  
 ping h3 to h4 single leaf single rack static endpoints
    [Tags]  L2  feature  sanity  IronHorse       
@@ -44,7 +44,7 @@ ping h3 to h4 single leaf single rack static endpoints
    rest add interface to vns  A  A  leaf1-a  ${h3_intf0_single}  -1
    sleep  5 
    ${loss}=  bash ping  h3   ${h4_single_ip}  source_if=eth1
-   Should Be True  ${loss} < 50
+   Should Be True  ${loss} < 60
    
 ping h2 to h3 dual rack single leaf dynamic endpoints
    [Tags]  L2  feature  smoke  sanity  IronHorse     
@@ -52,7 +52,7 @@ ping h2 to h3 dual rack single leaf dynamic endpoints
    rest add interface to vns  A  A  leaf0-a  ${h2_intf0_single}  -1 
    sleep  5 
    ${loss}=  bash ping  h3   ${h2_single_ip}  source_if=eth1
-   Should Be True  ${loss} < 50 					 
+   Should Be True  ${loss} < 60 					 
 		
 ping h2 to h3 dual rack single leaf static endpoints 
    [Tags]  L2  feature  sanity  IronHorse        
@@ -68,7 +68,7 @@ ping h2 to h3 dual rack single leaf static endpoints
    rest add interface to vns  A  A  leaf1-a  ${h3_intf0_single}  -1
    sleep  5 
    ${loss}=  bash ping  h3  ${h2_single_ip}  source_if=eth1
-   Should Be True  ${loss} < 50   
+   Should Be True  ${loss} < 60   
    
 ping h3 to h4 single leaf single rack dynamic endpoints tag
    [Tags]  L2  feature  smoke  sanity  IronHorse      
@@ -87,7 +87,7 @@ ping h3 to h4 single leaf single rack dynamic endpoints tag
    bash ifup intf  h2  eth1.20
    sleep  5
    ${loss}=  bash ping  h3  ${h4_tag_single_ip}  source_if=eth1.20
-   Should Be True  ${loss} < 50  					
+   Should Be True  ${loss} < 60  					
 		
 ping h3 to h4 single leaf single rack static endpoints tag
    [Tags]  L2  feature  sanity  IronHorse    
@@ -111,7 +111,7 @@ ping h2 to h3 dual rack single leaf dynamic endpoints tag
    rest add interface to vns  A  A  leaf0-a  ${h2_intf0_single}  20
    sleep  5
    ${loss}=  bash ping  h3  ${h2_tag_single_ip}  source_if=eth1.20
-   Should Be True  ${loss} < 50    
+   Should Be True  ${loss} < 60    
    
 ping h2 to h3 dual rack single leaf static endpoints tag 
    [Tags]  L2  feature  sanity  IronHorse   
@@ -127,7 +127,7 @@ ping h2 to h3 dual rack single leaf static endpoints tag
    rest add interface to vns  A  A  leaf1-a  ${h3_intf0_single}  20
    sleep  5 
    ${loss}=  bash ping  h3   ${h2_tag_single_ip}  source_if=eth1.20
-   Should Be True  ${loss} < 50  
+   Should Be True  ${loss} < 60  
    
 
 * Keywords
