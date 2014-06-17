@@ -98,7 +98,7 @@ class Node(object):
                                         % self.name())
         helpers.log("Ping %s ('%s')" % (self.ip(), self.name()))
         loss = helpers.ping(self.ip(), count=6, timeout=10, loss=50)
-        if  loss >= 50:
+        if  loss > 50:
             # We can tolerate 50% loss.
             # Consider init to be completed, so as not to be invoked again.
             helpers.environment_failure("Ping failure - Node '%s' with IP"
