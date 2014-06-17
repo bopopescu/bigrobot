@@ -58,7 +58,7 @@ T3 Remove interface tenant deny policy src-ip to dest-ip
 	 
 	
 T11 Interface vns permit policy src-ip to dest-ip 
-	[Tags]  smoke
+	[Tags]
 	${src_dict}=  Create Dictionary  cidr  ${policy_bm1_ip}
 	${dst_dict}=  Create Dictionary  cidr  ${policy_bm0_ip}
 	Policy vns interface  10  permit  ${src_dict}  ${dst_dict}
@@ -67,7 +67,7 @@ T11 Interface vns permit policy src-ip to dest-ip
 	Should Be True  							${loss} == 0
 
 T12 Interface vns deny policy src-ip to dest-ip
-	[Tags]  smoke
+	[Tags]
 	${src_dict}=  Create Dictionary  cidr  ${policy_bm1_ip}
 	${dst_dict}=  Create Dictionary  cidr  ${policy_bm0_ip}
 	Policy vns interface  10  deny  ${src_dict}  ${dst_dict}
@@ -76,7 +76,7 @@ T12 Interface vns deny policy src-ip to dest-ip
 	Should Be True  							${loss} == 100
 
 T13 Remove interface vns deny policy src-ip to dest-ip
-	[Tags]  smoke
+	[Tags]
 	${src_dict}=  Create Dictionary  cidr  ${policy_bm1_ip}
 	${dst_dict}=  Create Dictionary  cidr  ${policy_bm0_ip}
 	Remove policy vns interface  10  deny  ${src_dict}  ${dst_dict}
