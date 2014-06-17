@@ -1939,10 +1939,16 @@ class T5Platform(object):
         helpers.log('INFO: Entering ==> cli_upgrade_launch ')
         c.config('')
         c.send('upgrade launch')
-        c.expect(r'[\r\n].+: ')
+        c.expect(r'[\r\n].+("yes" or "y" to continue): ')
         content = c.cli_content()
         helpers.log("*****Output is :\n%s" % content)
         c.send("yes")
+
+        options = c.expect([r'fabric is redundant', r'.* HITFULL upgrade (y or yes to continue):'])
+        content = c.cli_content()
+        helpers.log("USER INFO: the content:  %s" % content)
+        if options[0] == 1:
+            c.send("yes")             
 
         try:
             c.expect(r'[\r\n].+[R|r]ebooting.*')
@@ -3344,7 +3350,7 @@ class T5Platform(object):
         """
         t = test.Test()
         n = t.node(node)
-        helpers.log("Entering ====>  first_boot_controller_menu_1 for node: '%s'" % node)
+        helpers.log("Entering ====>  first_boot_controller_menu_apply_negative for node: '%s'" % node)
         helpers.log("Getting the console session for '%s'" % node)
         n_console = n.console()
         n_console.expect(r'\[1\] > ')
@@ -3414,7 +3420,7 @@ class T5Platform(object):
                     n_console.expect(r'\[1\] >')
                 if 'cluster_ip' in kwargs:
                     clusterip = kwargs.get('cluster_ip')
-                    match = re.search(r'\[\s*(\d+)\] Update Existing Node IP Address.*[\r\n$]', content)
+                    match = re.search(r'\[\s*(\d+)\] Update Existing Controller Node IP Address.*[\r\n$]', content)
                     if match:
                         option = match.group(1)
                         helpers.log("USER INFO: the option is %s" % option)

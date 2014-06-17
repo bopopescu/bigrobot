@@ -57,7 +57,7 @@ T3.1 Verify first boot of controller in standalone mode via dhcp
   	sleep    ${long}
  	${result}=  rest_controller_add_ip    ${ip}    ${ipc1}   ${mask}    yes 
  	Should be True     ${result}   	  	    
-	[Tags]  full  feature   firstboot  dhcp	 standalone   
+	[Tags]  full  feature   firstboot  dhcp	 standalone    skipped
  	
 
 T3.2 Verify first boot of controller in HA mode via dhcp
@@ -80,11 +80,11 @@ T3.2 Verify first boot of controller in HA mode via dhcp
  	${B}=   cli_take_snapshot   master   run_config=yes			
  	Should Be Equal    ${A}    ${B}	 
   	    
-	[Tags] 	full  feature   firstboot   JIRA-BSC-5041    dhcp   HA   
+	[Tags] 	full  feature   firstboot   JIRA-BSC-5041    dhcp   HA   skipped
 
 T3.3 Verify controller IP change after the first boot
-    log   convered in T2.1 and T2.2
-	[Tags] 	full  feature   firstboot
+    log   not supported
+	[Tags] 	full  feature   firstboot    skipped
 
 
 
@@ -100,15 +100,9 @@ T4.1 Verify first boot of controller when external DNS/NTP server is unreachable
 	first_boot_controller_menu_dnsserver            c1  8.8.8.8  	      
 	first_boot_controller_menu_apply_negative       c1   gateway=${gw}   dns=${dns}
  	   
-	[Tags] 	full  feature   firstboot 
+	[Tags] 	full  feature   firstboot   
 
- 
-
-T4.2 Verification of configs in local node mode 
-	log   covered in T2.1   
-	[Tags] 	full  feature   firstboot   cli
-
- 
+  
 
 T4.3 Controller installation with minimum/maximum supported cpu/memory configuration
 	log  manual verified with #1961

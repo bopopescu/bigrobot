@@ -498,6 +498,24 @@ class BsnDevConf(DevConf):
             raise
         return result
 
+    def send(self, *args, **kwargs):
+        try:
+            super(BsnDevConf, self).send(*args, **kwargs)
+        except socket.error, e:
+            error_str = str(e)
+            helpers.log("socket.error: e: %s" % error_str)
+            if re.match(r'Socket is closed', error_str):
+                helpers.log("Socket is closed. Reconnecting...")
+                self.connect()
+                super(BsnDevConf, self).send(*args, **kwargs)
+            else:
+                self.expect_exception(None, "Unexpected socket error",
+                                      soft_error=True)
+                raise
+        except:
+            self.expect_exception(None, "Unexpected error", soft_error=True)
+            raise
+
     def cli(self, cmd, quiet=False, prompt=False, timeout=None, level=5):
         return self.cmd(cmd, quiet=quiet, mode='cli', prompt=prompt,
                         timeout=timeout, level=level)

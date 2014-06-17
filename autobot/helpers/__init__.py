@@ -1388,7 +1388,7 @@ def _ping(host, count=5, timeout=5, quiet=False, source_if=None,
     test_error("Unknown ping error. Please check the output log.")
 
 
-def ping(host, count=5, timeout=5, loss=0, quiet=False):
+def ping(host, count=10, timeout=5, loss=0, quiet=False):
     """
     Unix ping.
     :param host: (Str) ping hist host
