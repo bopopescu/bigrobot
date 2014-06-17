@@ -3,8 +3,9 @@ c1:
 c2:
   ip: 10.192.94.119  # vui_c2_06021213
 mn:
-  ip: 10.192.95.35   # vui_mn1_06021403
-  #ip: 10.192.92.145  # vui_mn1_06021404
+  ip: 10.192.94.34   # vui_mn1_06130817
+s1:
+  ip: 10.210.64.44   # Song's switch
 h1:
   ip: 10.192.20.6    # jenkins-w6
   #protocol: telnet
