@@ -34,13 +34,14 @@ ${intf_1}=        ethernet1
 ${intf_2}=        ethernet2
 ${intf_3}=        ethernet3
 ${intf_4}=        ethernet4
-${interface1g}=   ethernet12
+${interface1g}=   ethernet10
 ${leafmodel}=     AS5710
 ${spinemodel}=    AS6700
 ${intf_6}=        ethernet45
 ${intf_7}=        ethernet46
 ${intf_8}=        ethernet47
 ${intf_9}=        ethernet48
+${interface10g}=   ethernet25
 
 ${count}=         1 
 ${ratetolerance}=     10
@@ -58,14 +59,14 @@ ${default_user}=  admin
 Config the switch and controller as setup 
     Log    Step 1 - Configure the base set up according to topology
     T5 switch platform test setup
-    [Tags]  switch-platform  setup  feature     
+    [Tags]  switch-platform  setup  feature  skipped     
 
 Verify ONIE Installed on Switch
 	Log     Step 1 - verify ONIE installed in switch
 	verify onie installated on switch  s1
 	verify onie installated on switch  s2
 	verify onie installated on switch  s7
-	[Tags]  switch-platform  install  onie  feature 
+	[Tags]  switch-platform  install  onie  feature
             
 Verify the openflow aux channel count on Switch
 	Log    Step 1 - Get the OF aux channel number
@@ -220,14 +221,23 @@ Verify all interfaces show up (in show o/p from CLI)
     verify interfaces  s1
     [Tags]  switch-platform  Interface  feature    
     
-Shutdown an interface on switch and verify interface state is down
-    shut interface  s1  ethernet1
-    Sleep  5
-    verify interface state  s1  ethernet1  down
-    unshut interface  s1  ethernet1
+Shutdown and no shut 10G interface on switch and verify interface state is down and up
+    shut interface  s1  ${interface10g}
     Sleep  15
-    verify interface state  s1  ethernet1  up
-    [Tags]  switch-platform  interface  feature       
+    verify admin interface state  s1  ${interface10g}  True  admin down
+    unshut interface  s1  ${interface10g}
+    Sleep  15
+    verify interface state  s1  ${interface10g}  up
+    [Tags]  switch-platform  interface  feature           
+
+Shutdown and no shutdown 1G interface on switch and verify interface state is down and up
+    shut interface  s1  ${interface1g}
+    Sleep  15
+    verify admin interface state  s1  ${interface1g}  True  admin down
+    unshut interface  s1  ${interface1g}
+    Sleep  15
+    verify interface state  s1  ${interface1g}  up
+    [Tags]  switch-platform  interface  feature   
 
 Verify model in Show version for leaf 
     Log    Step 1 - Verify right model in Show version for leaf as AS5710
@@ -241,7 +251,7 @@ Verify model in Show version for spine
 
 Verify switch interface 1g configuration on switch 
     Log    Step 1 - Verify the 1G interface configuration on switch 
-    configure 1g interface on switch  s1  ${interface1g}
+    #configure 1g interface on switch  s1  ${interface1g}
     verify 1g interface on switch  s1  ${interface1g}  1G    
     [Tags]  switch-platform  interface  feature       
 
@@ -385,6 +395,10 @@ shut interface  [Arguments]  ${switch}  ${interface}
 verify interface state  [Arguments]  ${switch}  ${interface}  ${state}
     ${ret_value_1}=  cli show interface state  ${switch}  ${interface}
     Should Contain  ${ret_value_1}  ${state}  
+
+verify admin interface state  [Arguments]  ${switch}  ${interface}  ${admin_down}  ${state}
+    ${ret_value_1}=  cli show interface state  ${switch}  ${interface}  ${admin_down}
+    Should Contain  ${ret_value_1}  ${state}
 
 unshut interface  [Arguments]  ${switch}  ${interface}
     ${ret_value_1}=  cli enable interface  ${switch}  ${interface}

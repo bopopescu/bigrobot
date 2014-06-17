@@ -83,8 +83,9 @@ class T5Platform(object):
         else:
             slave.rest.post(url, {"rigged": False})
 
-        sleep(30)
-
+        #sleep(30)
+        sleep(90)
+        
         newMasterID = self.getNodeID(False)
         if(newMasterID == -1):
             return False
@@ -111,7 +112,8 @@ class T5Platform(object):
         returnVal = self._cluster_election(True)
         if(not returnVal):
             return False
-        sleep(30)
+        #sleep(30)
+        sleep(90)
         return utilities.fabric_integrity_checker(obj, "after")
 
 
@@ -136,7 +138,8 @@ class T5Platform(object):
             c.send("system failover")
             c.expect(r"Failover to this controller node \(yes/no\)?")
             c.config("yes")
-            sleep(30)
+            #sleep(30)
+            sleep(90)
         except:
             helpers.test_log(c.cli_content())
             return False
@@ -152,7 +155,8 @@ class T5Platform(object):
         returnVal = self._cluster_election(False)
         if(not returnVal):
             return False
-        sleep(30)
+        #sleep(30)
+        sleep(60)
         return utilities.fabric_integrity_checker(obj, "before")
 
 
@@ -189,14 +193,16 @@ class T5Platform(object):
                 master.enable("system reboot", prompt="Confirm \(yes to continue\)")
                 master.enable("yes")
                 helpers.log("Master is rebooting")
-                sleep(90)
+                #sleep(90)
+                sleep(160)
             else:
                 slave = t.controller("slave")
                 ipAddr = slave.ip()
                 slave.enable("system reboot", prompt="Confirm \(yes to continue\)")
                 slave.enable("yes")
                 helpers.log("Slave is rebooting")
-                sleep(90)
+                #sleep(90)
+                sleep(160)
         except:
             helpers.log("Node is rebooting")
             sleep(90)
@@ -1287,7 +1293,7 @@ class T5Platform(object):
                             helpers.log("Wrong ip-ecn in the monitor session %s : %s: %s" % (sessionID, srcInt, kwargs.get('ip-ecn')))
                             return False
                     if ('ip-proto') in kwargs:
-                        if((session['source'][0]['match-specification'])['ip-proto'] != int(kwargs.get('ip-proto'))):
+                        if((session['source'][0]['match-specification'])['ip-proto'] != (kwargs.get('ip-proto'))):
                             helpers.log("Wrong ip-proto in the monitor session %s : %s: %s" % (sessionID, srcInt, kwargs.get('ip-proto')))
                             return False
                     if ('ether-type') in kwargs:
@@ -1480,10 +1486,11 @@ class T5Platform(object):
         helpers.test_log("Running command:\ncopy %s %s" % (src, dst))
         t = test.Test()
         c = t.controller(node)
-        c.send("enable")
-        c.send("config")
+        c.send("reauth admin adminadmin; enable")
+        c.config("")
         c.send("copy %s %s" % (src, dst))
-        options = c.expect([r'[Pp]assword: ', r'\(yes/no\)\?', c.get_prompt()])
+        options = c.expect([r'[Pp]assword: ', r'\(yes/no\)\?', c.get_prompt()],
+                           timeout=45)
         content = c.cli_content()
         helpers.log("*****Output is :\n%s" % content)
         if  ('Could not resolve' in content) or ('Error' in content) or ('No such file or directory' in content):
@@ -1938,7 +1945,9 @@ class T5Platform(object):
         c.send("yes")
 
         try:
-            c.expect(r'[\r\n].+Rebooting.*')
+            c.expect(r'[\r\n].+[R|r]ebooting.*')
+            content = c.cli_content()
+            helpers.log("*****Output is :\n%s" % content)           
         except:
             helpers.log('ERROR: upgrade launch NOT successfully')
             return False

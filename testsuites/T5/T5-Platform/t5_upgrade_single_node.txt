@@ -14,13 +14,15 @@ Library	         keywords/T5Platform.py
 Resource	     testsuites/T5/T5-Platform/t5_platform_infra_resource.txt 
 
 * Variable
-${imageonserver}    bsn@qa-kvm-32:/home/mingtao/controller-upgrade-bvs-2.0.8-SNAPSHOT.pkg
+${imageonserver}    bsn@qa-kvm-32:/home/mingtao/controller-upgrade-bvs-2.0.0-beta1-SNAPSHOT.pkg
 ${bigtapimage}      bsn@qa-kvm-32:/home/mingtao/bigtap-3.0.0-upgrade-2014.02.27.1852.pkg
+${image}     bsn@regress-master:/home/bsn/bvs/jenkins-bcf_beta1-20/controller-upgrade-bvs-2.0.0-beta1-SNAPSHOT.pkg 
 
 * Test Case
 
 T1.1 Test image copy and delete
-	copy_pkg_from_jenkins  
+    copy_pkg_from_server   ${image}
+#	copy_pkg_from_jenkins  
 	${num}  ${image}=	   cli_check_image
 	${result}=   cli_delete_image	 
  	 Should be True     ${result} 	
@@ -28,7 +30,8 @@ T1.1 Test image copy and delete
 	[Tags] 	sanity  upgrade  feature  singlenode
 
 T1.2 Show command verification for package contents 
-	copy_pkg_from_jenkins  
+    copy_pkg_from_server   ${image}
+#	copy_pkg_from_jenkins  
 	${num}  ${image}=	   cli_check_image		   
      log   there are ${num} images as ${image} in controller
 	[Tags] 		sanity  upgrade  feature  singlenode
@@ -73,7 +76,8 @@ T1.8 Only SCP support or : + wget support too?
 
 T1.9 Verify user can pick & choose images for upgrade staging
 	log   user can pick & choose images for upgrade staging   
-	copy_pkg_from_jenkins  
+    copy_pkg_from_server   ${image}
+#	copy_pkg_from_jenkins  
 	copy_pkg_from_server  ${imageonserver}    
 	${num}  ${image}=	  cli_check_image
  	log   there are ${num} images as ${image} in controller
@@ -94,12 +98,13 @@ T1.10 Test downgrade
 
 
 T1.11 Check only the admin group can execute controller image upgrade
+	# this is not suported anymore
 	create user   user1   adminadmin  group1 
 	cli_reauth   user1   adminadmin   	
 	${result}=  cli_check_image   soft_error=True
  	Should not be True     ${result}  
   		 
-	[Tags] 	full  upgrade  feature  singlenode
+	[Tags] 	full  upgrade  feature  singlenode   skipped
   
  
 	

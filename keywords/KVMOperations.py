@@ -194,7 +194,7 @@ class KVMOperations(object):
         helpers.log("Latest Build Number on KVM Host: %s" % latest_kvm_build_number)
         helpers.log("Latest Build Number on Jenkins: %s" % latest_build_number)
 
-        if int(latest_kvm_build_number) == int(latest_build_number):
+        if str(latest_kvm_build_number) == str(latest_build_number):
             helpers.log("Skipping SCP as the latest build on jenkins server did not change from the latest on KVM Host")
 
         else:

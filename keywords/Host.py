@@ -326,6 +326,11 @@ class Host(object):
         n.sudo("service %s stop" % processname)
         return True
 
+    def bash_restart_service(self, node, processname, timeout=None):
+        t = test.Test()
+        n = t.node(node)
+        n.sudo("service %s restart" % processname, timeout=timeout)
+        return True
 
     def bash_ls(self, node, path):
         """
@@ -397,6 +402,7 @@ class Host(object):
         """
         Adding IP address to Host interface,For tagged interface user needs
         to specify interface.tagnumber (e.g eth1.10).
+        ifconfig bond0.100 10.10.10.1/24 up
         """
         t = test.Test()
         n = t.node(node)

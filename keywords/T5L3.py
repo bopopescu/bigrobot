@@ -81,7 +81,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
             return True
         
         
-    def rest_enable_router_intf(self, tenant, vnsname):
+    def rest_enable_router_intf(self, tenant, tenantIntf):
         '''Create vns router interface via command "logical-router vns interface"
         
             Input:
@@ -89,17 +89,18 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
                 `vnsname`       vns interface name which must be similar to VNS
                 `ipaddr`        interface ip address
                 `netmask`       vns subnet mask
-             PATCH http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant%5Bname%3D%22X%22%5D/logical-router/segment-interface%5Bsegment%3D%22X1%22%5D {"active": true}           
+                DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[name="X"]/logical-router/tenant-interfaces[tenant-name="system"]/shutdown {}
+                DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[name="system"]/logical-router/tenant-interfaces[tenant-name="X"]/shutdown {}
                 Return: true if configuration is successful, false otherwise
         '''    
         t = test.Test()
         c = t.controller('master')
         
-        helpers.test_log("Input arguments: tenant = %s vnsname = %s  " % (tenant, vnsname))
+        helpers.test_log("Input arguments: tenant = %s vnsname = %s  " % (tenant, tenantIntf))
         
-        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/logical-router/segment-interface[segment="%s"]' % (tenant, vnsname)
+        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/logical-router/tenant-interfaces[tenant-name="%s"]/shutdown' % (tenant, tenantIntf)
         try:
-            c.rest.patch(url, {"active": True})
+            c.rest.delete(url, {})
         except:
             return False
             #helpers.test_failure(c.rest.error())
@@ -108,7 +109,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
             #return c.rest.content()
             return True
  
-    def rest_disable_router_intf(self, tenant, vnsname):
+    def rest_disable_router_intf(self, tenant, tenantIntf):
         '''Create vns router interface via command "logical-router vns interface"
         
             Input:
@@ -116,17 +117,18 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
                 `vnsname`       vns interface name which must be similar to VNS
                 `ipaddr`        interface ip address
                 `netmask`       vns subnet mask
-             PATCH http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant%5Bname%3D%22X%22%5D/logical-router/segment-interface%5Bsegment%3D%22X1%22%5D {"active": false}           
+                PATCH http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[name="system"]/logical-router/tenant-interfaces[tenant-name="X"] {"shutdown": true}
+                PATCH http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[name="X"]/logical-router/tenant-interfaces[tenant-name="system"] {"shutdown": true}
                 Return: true if configuration is successful, false otherwise
         '''    
         t = test.Test()
         c = t.controller('master')
         
-        helpers.test_log("Input arguments: tenant = %s vnsname = %s  " % (tenant, vnsname))
+        helpers.test_log("Input arguments: tenant = %s vnsname = %s  " % (tenant, tenantIntf))
         
-        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/logical-router/segment-interface[segment="%s"]' % (tenant, vnsname)
+        url = 'api/v1/data/controller/applications/bvs/tenant[name="%s"]/logical-router/tenant-interfaces[tenant-name="%s"]' % (tenant, tenantIntf)
         try:
-            c.rest.patch(url, {"active": False})
+            c.rest.patch(url, {"shutdown": True})
         except:
             return False
             #helpers.test_failure(c.rest.error())
@@ -134,7 +136,56 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
             #helpers.test_log("Output: %s" % c.rest.result_json())
             #return c.rest.content()
             return True    
+ 
+     
+    def rest_enable_router_segment_intf(self, tenant, vnsname):
+        '''Create vns router interface via command "logical-router vns interface"
         
+            Input:
+                `tenant`        tenant name
+                `vnsname`       vns interface name which must be similar to VNS
+                `ipaddr`        interface ip address
+                `netmask`       vns subnet mask
+                DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[name="X"]/logical-router/segment-interface[segment="X2"]/shutdown {}             
+                Return: true if configuration is successful, false otherwise
+        '''    
+        t = test.Test()
+        c = t.controller('master')
+        
+        helpers.test_log("Input arguments: tenant = %s vnsname = %s  " % (tenant, vnsname))
+        
+        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/logical-router/segment-interface[segment="%s"]/shutdown' % (tenant, vnsname)
+        try:
+            c.rest.delete(url, {})
+        except:
+            return False
+            #helpers.test_failure(c.rest.error())
+        else: 
+            #helpers.test_log("Output: %s" % c.rest.result_json())
+            #return c.rest.content()
+            return True        
+ 
+    def rest_disable_router_segment_intf(self, tenant, vnsname):
+        '''Disable logical router segment interface
+            http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[name="X"]/logical-router/segment-interface[segment="X2"] {"shutdown": true}
+            PATCH http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[name="X"]/logical-router/segment-interface[segment="X1"] {"shutdown": true}
+         '''
+        t = test.Test()
+        c = t.controller('master')
+        
+        helpers.test_log("Input arguments: tenant = %s vnsname = %s  " % (tenant, vnsname))
+        
+        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/logical-router/segment-interface[segment="%s"]' % (tenant, vnsname)
+        try:
+            c.rest.patch(url, {"shutdown": True})
+        except:
+            return False
+            #helpers.test_failure(c.rest.error())
+        else: 
+            #helpers.test_log("Output: %s" % c.rest.result_json())
+            #return c.rest.content()
+            return True    
+              
    
     def rest_add_tenant_routers_intf_to_system(self, tenant):        
         '''Attach tenant router to system tenant"
@@ -156,7 +207,9 @@ REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[
         
         url = '/api/v1/data/controller/applications/bvs/tenant[name="system"]/logical-router/tenant-interfaces[tenant-name="%s"]' % (tenant)
         try:
-            c.rest.post(url, {"tenant-name": tenant, "active": True})
+            #c.rest.post(url, {"tenant-name": tenant, "active": True})
+            c.rest.put(url, {"tenant-name": tenant})
+            
         except:
             helpers.test_failure(c.rest.error())
         else: 
@@ -206,7 +259,8 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
         
         url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/logical-router/tenant-interfaces[tenant-name="system"]' % (tenant)
         try:
-            c.rest.post(url, {"tenant-name": "system", "active": True})
+            #c.rest.post(url, {"tenant-name": "system", "active": True})
+            c.rest.put(url, {"tenant-name": "system"})
         except:
             helpers.test_failure(c.rest.error())
         else: 
@@ -759,7 +813,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
         url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/logical-router/segment-interface[segment="%s"]/dhcp-relay/dhcp-server-ip' % (tenant, vnsname)
         try:
             
-            self.rest_disable_dhcp_relay(tenant, vnsname)
+#            self.rest_disable_dhcp_relay(tenant, vnsname)
             c.rest.delete(url, {})
         except:
             helpers.test_failure(c.rest.error())

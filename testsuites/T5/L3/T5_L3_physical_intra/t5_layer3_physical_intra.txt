@@ -521,10 +521,10 @@ Activate and deactivate router interface
 	REST show endpoints		
 	${loss} = 									BASH ping						h1						10.251.3.11 			count=10
 	Should Be True  							${loss} == 0		
-	REST disable router intf					X								X1
+	REST disable router segment intf			X								X1
 	${loss} = 									BASH ping						h1						10.251.3.11 			count=10
 	Should Be True  							${loss} == 100
-	REST enable router intf						X								X1
+	REST enable router segment intf				X								X1
 	${loss} = 									BASH ping						h1						10.251.3.11 			count=10
 	Should Be True  							${loss} < 20
 	BASH delete route							h1								10.251.3.0/24			10.251.1.1
@@ -842,11 +842,13 @@ L3 intra tenant traceroute
     BASH ifup intf                              h6                              bond0           
     REST add portgroup to vns                   X                               X1                      ${leaf2_pc1}            -1
     REST add portgroup to vns                   X                               X2                      ${leaf2_pc2}            -1
-    BASH ifconfig ip address                         h5                              10.251.1.11/24          bond0   
-    BASH ifconfig ip address                         h6                              10.251.2.11/24          bond0
+    BASH ifconfig ip address                    h5                              10.251.1.11/24          bond0   
+    BASH ifconfig ip address                    h6                              10.251.2.11/24          bond0
     BASH add route                              h5                              10.251.0.0/16           10.251.1.1
     BASH add route                              h6                              10.251.0.0/16           10.251.2.1
-    sleep                                       5   
+    sleep                                       1
+    ${loss} =                                   BASH ping                       h5                      10.251.2.11             count=10
+    Should Be True                              ${loss} < 50        
     ${string} =                                 BASH run command                h5                      traceroute -n -m 5 10.251.1.1
     ${result} =                                 Set Variable                    ${string[1]} 
     Should Contain                              ${result}                       \ 1\ \ 10.251.1.1 
@@ -884,8 +886,9 @@ L3 intra tenant dhcp relay on same vns as dhcp server with relay enabled
 	BASH init intf								h1								bond0
 	BASH init intf								h2								bond0
 	BASH ifup intf								h1								bond0
-	BASH ifconfig ip address							h1								10.252.1.9/24			bond0					
+	BASH ifconfig ip address					h1								10.252.1.9/24			bond0					
 	BASH start service							h1								isc-dhcp-server
+    BASH ping                                   h1                              10.252.1.1              count=4
 	sleep										1
 	${value} = 									BASH check service status		h1						isc-dhcp-server
 	Should Contain								${value}						is started
@@ -893,7 +896,7 @@ L3 intra tenant dhcp relay on same vns as dhcp server with relay enabled
 	REST add portgroup to vns					Y								Y1						${leaf0_pc1}			-1
 	REST add portgroup to vns					Y								Y1						${leaf2_pc1}			-1
 	REST add dhcp relay							Y								Y1						10.252.1.9
-	REST enable dhcp relay						Y								Y1	
+	#REST enable dhcp relay						Y								Y1	
 	sleep										5
 	${h1_ip} = 									BASH get interface ipv4			h1						bond0				
 	Should Contain								${h1_ip}						10.252.1.9	
@@ -935,8 +938,9 @@ L3 intra tenant dhcp relay on same vns as dhcp server without relay enabled
 	BASH init intf								h1								bond0
 	BASH init intf								h2								bond0
 	BASH ifup intf								h1								bond0
-	BASH ifconfig ip address							h1								10.252.1.9/24			bond0					
+	BASH ifconfig ip address					h1								10.252.1.9/24			bond0					
 	BASH start service							h1								isc-dhcp-server
+    BASH ping                                   h1                              10.252.1.1              count=4
 	sleep										1
 	${value} = 									BASH check service status		h1						isc-dhcp-server
 	Should Contain								${value}						is started
@@ -979,8 +983,9 @@ L3 intra tenant dhcp relay on same rack
 	BASH init intf								h1								bond0
 	BASH init intf								h2								bond0
 	BASH ifup intf								h1								bond0
-	BASH ifconfig ip address							h1								10.252.1.9/24			bond0					
+	BASH ifconfig ip address				    h1								10.252.1.9/24			bond0					
 	BASH start service							h1								isc-dhcp-server
+    BASH ping                                   h1                              10.252.1.1              count=4
 	sleep								        1
 	${value} = 									BASH check service status		h1						isc-dhcp-server
 	Should Contain								${value}						is started
@@ -989,7 +994,7 @@ L3 intra tenant dhcp relay on same rack
 	REST add portgroup to vns					Y								Y3						${leaf0_pc2}			-1
 	BASH add route								h1								10.252.3.0/24			10.252.1.1
 	REST add dhcp relay							Y								Y3						10.252.1.9
-	REST enable dhcp relay						Y								Y3	
+	#REST enable dhcp relay						Y								Y3	
 	sleep								        5
 	${h1_ip} = 									BASH get interface ipv4			h1						bond0				
 	Should Contain								${h1_ip}						10.252.1.9	
@@ -1028,8 +1033,9 @@ L3 intra tenant dhcp relay with circuit id on same rack
 	BASH init intf								h1								bond0
 	BASH init intf								h2								bond0
 	BASH ifup intf								h1								bond0
-	BASH ifconfig ip address							h1								10.252.1.9/24			bond0					
+	BASH ifconfig ip address					h1								10.252.1.9/24			bond0					
 	BASH start service							h1								isc-dhcp-server
+    BASH ping                                   h1                              10.252.1.1              count=4
 	sleep								        1
 	${value} = 									BASH check service status		h1						isc-dhcp-server
 	Should Contain								${value}						is started
@@ -1039,7 +1045,7 @@ L3 intra tenant dhcp relay with circuit id on same rack
 	BASH add route								h1								10.252.2.0/24			10.252.1.1
 	REST add dhcp relay							Y								Y2						10.252.1.9
 	REST add dhcprelay circuitid				Y								Y2						&#!ten Y vns Y2
-	REST enable dhcp relay						Y								Y2	
+	#REST enable dhcp relay						Y								Y2	
 	sleep										5
 	${value} = 									BASH release dhcpv4 address		h2						bond0
 	Should Be True								${value}
@@ -1074,8 +1080,9 @@ L3 intra tenant dhcp relay across rack
 	BASH init intf								h1								bond0
 	BASH init intf								h2								bond0
 	BASH ifup intf								h1								bond0
-	BASH ifconfig ip address							h1								10.252.1.9/24			bond0					
+	BASH ifconfig ip address					h1								10.252.1.9/24			bond0					
 	BASH start service							h1								isc-dhcp-server
+    BASH ping                                   h1                              10.252.1.1              count=4
 	sleep										1
 	${value} = 									BASH check service status		h1						isc-dhcp-server
 	Should Contain								${value}						is started
@@ -1084,7 +1091,7 @@ L3 intra tenant dhcp relay across rack
 	REST add portgroup to vns					Y								Y3						${leaf2_pc1}			-1
 	BASH add route								h1								10.252.3.0/24			10.252.1.1
 	REST add dhcp relay							Y								Y3						10.252.1.9
-	REST enable dhcp relay						Y								Y3	
+	#REST enable dhcp relay						Y								Y3	
 	sleep										5
 	${h1_ip} = 									BASH get interface ipv4				h1						bond0				
 	Should Contain								${h1_ip}						10.252.1.9	
@@ -1132,8 +1139,9 @@ L3 intra tenant dhcp relay with circuit id across rack
 	BASH init intf								h1								bond0
 	BASH init intf								h2								bond0
 	BASH ifup intf								h1								bond0
-	BASH ifconfig ip address							h1								10.252.1.9/24			bond0					
+	BASH ifconfig ip address					h1								10.252.1.9/24			bond0					
 	BASH start service							h1								isc-dhcp-server
+    BASH ping                                   h1                              10.252.1.1              count=4
 	sleep										1
 	${value} = 									BASH check service status		h1						isc-dhcp-server
 	Should Contain								${value}						is started
@@ -1143,7 +1151,7 @@ L3 intra tenant dhcp relay with circuit id across rack
 	BASH add route								h1								10.252.2.0/24			10.252.1.1
 	REST add dhcp relay							Y								Y2						10.252.1.9
 	REST add dhcprelay circuitid				Y								Y2						&#!ten Y vns Y2
-	REST enable dhcp relay						Y								Y2	
+	#REST enable dhcp relay						Y								Y2	
 	sleep										5
 	###### hack to force host to resolve gateway, by right, vrf should attempt to resolve dhcp-server mac address and discover its endpoint but that is not happening
 	BASH ping									h1 								10.252.1.1				count=5
@@ -1185,8 +1193,9 @@ L3 dhcp request without dhcp relay enabled
 	BASH init intf								h1								bond0
 	BASH init intf								h2								bond0
 	BASH ifup intf								h1								bond0
-	BASH ifconfig ip address							h1								10.252.1.9/24			bond0					
+	BASH ifconfig ip address					h1								10.252.1.9/24			bond0					
 	BASH start service							h1								isc-dhcp-server
+    BASH ping                                   h1                              10.252.1.1              count=4
 	sleep										1
 	${value} = 									BASH check service status		h1						isc-dhcp-server
 	Should Contain								${value}						is started
@@ -1195,7 +1204,7 @@ L3 dhcp request without dhcp relay enabled
 	REST add portgroup to vns					Y								Y3						${leaf2_pc1}			-1
 	BASH add route								h1								10.252.3.0/24			10.252.1.1
 	REST add dhcp relay							Y								Y3						10.252.1.9
-	REST enable dhcp relay						Y								Y3	
+	#REST enable dhcp relay						Y								Y3	
 	sleep										5
 	${h1_ip} = 									BASH get interface ipv4				h1						bond0				
 	Should Contain								${h1_ip}						10.252.1.9	
@@ -1232,7 +1241,7 @@ L3 dhcp request without dhcp relay enabled
 	REST show endpoints	
 	${loss} = 									BASH ping						h1						${ipAddr} 			count=10
 	Should Be True  							${loss} == 0	
-	REST disable dhcp relay						Y								Y3
+#	REST disable dhcp relay						Y								Y3
 	REST delete dhcp relay						Y								Y3						10.252.1.9
 	BASH release dhcpv4 address					h5								bond0
 	sleep										5
@@ -1240,7 +1249,7 @@ L3 dhcp request without dhcp relay enabled
 	Should Be Empty								${ipAddr}
 	sleep										5
 	REST add dhcp relay							Y								Y3						10.252.1.9
-	REST enable dhcp relay						Y								Y3
+	##REST enable dhcp relay						Y								Y3
 	sleep										5
 	${ipAddr} = 								BASH renew dhcpv4 address		h5						bond0
 	Should Not Be Empty							${ipAddr}
@@ -1259,8 +1268,9 @@ Move host from one vns to another vns in the same tenant and verify dhcp request
 	BASH init intf								h1								bond0
 	BASH init intf								h2								bond0
 	BASH ifup intf								h1								bond0
-	BASH ifconfig ip address							h1								10.252.1.9/24			bond0					
+	BASH ifconfig ip address					h1								10.252.1.9/24			bond0					
 	BASH start service							h1								isc-dhcp-server
+    BASH ping                                   h1                              10.252.1.1              count=4
 	sleep										1
 	${value} = 									BASH check service status		h1						isc-dhcp-server
 	Should Contain								${value}						is started
@@ -1270,7 +1280,7 @@ Move host from one vns to another vns in the same tenant and verify dhcp request
 	BASH add route								h1								10.252.3.0/24			10.252.1.1
 	BASH add route								h1								10.252.2.0/24			10.252.1.1
 	REST add dhcp relay							Y								Y3						10.252.1.9
-	REST enable dhcp relay						Y								Y3	
+	#REST enable dhcp relay						Y								Y3	
 	sleep										5
 	${h1_ip} = 									BASH get interface ipv4				h1						bond0				
 	Should Contain								${h1_ip}						10.252.1.9	
@@ -1296,7 +1306,7 @@ Move host from one vns to another vns in the same tenant and verify dhcp request
 	Should Be True  							${loss} == 0	
 	REST add dhcp relay							Y								Y2						10.252.1.9
 	REST add dhcprelay circuitid				Y								Y2						&#!ten Y vns Y2
-	REST enable dhcp relay						Y								Y2	
+	#REST enable dhcp relay						Y								Y2	
 	REST delete portgroup from vns				Y								Y3						${leaf2_pc1}			-1
 	REST add portgroup to vns					Y								Y2						${leaf2_pc1}			-1
 	sleep										5
@@ -1325,8 +1335,9 @@ Verify dhcp host is not being aged out
 	BASH init intf								h1								bond0
 	BASH init intf								h2								bond0
 	BASH ifup intf								h1								bond0
-	BASH ifconfig ip address							h1								10.252.1.9/24			bond0					
+	BASH ifconfig ip address					h1								10.252.1.9/24			bond0					
 	BASH start service							h1								isc-dhcp-server
+    BASH ping                                   h1                              10.252.1.1              count=4
 	sleep										1
 	${value} = 									BASH check service status		h1						isc-dhcp-server
 	Should Contain								${value}						is started
@@ -1336,7 +1347,7 @@ Verify dhcp host is not being aged out
 	BASH add route								h1								10.252.2.0/24			10.252.1.1
 	REST add dhcp relay							Y								Y2						10.252.1.9
 	REST add dhcprelay circuitid				Y								Y2						&#!ten Y vns Y2
-	REST enable dhcp relay						Y								Y2	
+	#REST enable dhcp relay						Y								Y2	
 	sleep										5
 	###### hack to force host to resolve gateway, by right, vrf should attempt to resolve dhcp-server mac address and discover its endpoint but that is not happening
 	BASH ping									h1 								10.252.1.1				count=5
@@ -1384,8 +1395,9 @@ Dhcp relay with static dhcp server endpoint
 	BASH init intf								h1								bond0
 	BASH init intf								h2								bond0
 	BASH ifup intf								h1								bond0
-	BASH ifconfig ip address							h1								10.252.1.9/24			bond0					
+	BASH ifconfig ip address					h1								10.252.1.9/24			bond0					
 	BASH start service							h1								isc-dhcp-server
+    BASH ping                                   h1                              10.252.1.1              count=4
 	sleep										1
 	${value} = 									BASH check service status		h1						isc-dhcp-server
 	Should Contain								${value}						is started
@@ -1394,7 +1406,7 @@ Dhcp relay with static dhcp server endpoint
 	REST add portgroup to vns					Y								Y3						${leaf0_pc2}			-1
 	BASH add route								h1								10.252.3.0/24			10.252.1.1
 	REST add dhcp relay							Y								Y3						10.252.1.9
-	REST enable dhcp relay						Y								Y3	
+	#REST enable dhcp relay						Y								Y3	
 	sleep										5
 	${h1_ip} = 									BASH get interface ipv4			h1						bond0				
 	Should Contain								${h1_ip}						10.252.1.9	
@@ -1729,7 +1741,7 @@ Verify icmpa is sending destination unreachable for L3 destination miss
 	Should Be True  							${loss} == 100			
 	${result} =       							BASH content 					h4
     log              							result from bash ping is ${result}
-   	Should Contain X Times						${result}						Destination Host Unreachable		10
+   	Should Contain X Times						${result}						Destination Net Unreachable		10
  	BASH delete route							h3								10.251.2.0/24			10.251.1.1
 	BASH delete route							h4								10.251.1.0/24			10.251.2.1	   	
 	BASH delete route							h4								10.99.99.0/24			10.251.2.1
@@ -2024,6 +2036,7 @@ Static endpoint with dynamic host showing up on another port
     #Should Be True                              ${returnVal}
 	REST delete endpoint						X								X3						X3_host1
 	sleep										1
+	BASH ping                                   h2                              10.251.3.24             count=5
 	${loss} = 									BASH ping						h2						10.251.3.24				count=10
 	Should Be True								${loss} == 0
 	${loss} = 									BASH ping						h2						10.251.3.25				count=10
@@ -2358,8 +2371,9 @@ Verify host on private segment is able to get dhcp address from tenant dhcp serv
     BASH init intf                              h1                              bond0
     BASH init intf                              h2                              bond0
     BASH ifup intf                              h1                              bond0
-    BASH ifconfig ip address                         h1                              10.252.1.9/24           bond0                   
+    BASH ifconfig ip address                    h1                              10.252.1.9/24           bond0                   
     BASH start service                          h1                              isc-dhcp-server
+    BASH ping                                   h1                              10.252.1.1              count=4
     sleep                                       1
     ${value} =                                  BASH check service status       h1                      isc-dhcp-server
     Should Contain                              ${value}                        is started
@@ -2369,7 +2383,7 @@ Verify host on private segment is able to get dhcp address from tenant dhcp serv
     BASH add route                              h1                              10.252.3.0/24           10.252.1.1
     REST add vns ip                             Y                               Y3                      10.252.3.1              24      private=true 
     REST add dhcp relay                         Y                               Y3                      10.252.1.9
-    REST enable dhcp relay                      Y                               Y3  
+    #REST enable dhcp relay                      Y                               Y3  
     sleep                                       5
     ${h1_ip} =                                  BASH get interface ipv4         h1                      bond0               
     Should Contain                              ${h1_ip}                        10.252.1.9  
@@ -2932,9 +2946,9 @@ Verify L3 intra tenant traffic with ip options
 	BASH add route								h6								10.251.1.0/24			10.251.2.1
 	sleep										5	
 	${loss} = 									BASH ping									h5								10.251.1.1				count=10 				
-	Should Be True								${loss} < 20
+	Should Be True								${loss} < 50
 	${loss} = 									BASH ping									h6								10.251.2.1				count=10
-	Should Be True								${loss} < 20
+	Should Be True								${loss} < 50
 	${value} = 									BASH verify arp					h5						10.251.1.1
 	Should Be True								${value} 		
 	${value} =									BASH verify arp					h6						10.251.2.1
@@ -2962,8 +2976,9 @@ Trigger controller HA failover via CLI and verify dhcp-relay is working
 	BASH init intf								h1								bond0
 	BASH init intf								h2								bond0
 	BASH ifup intf								h1								bond0
-	BASH ifconfig ip address							h1								10.252.1.9/24			bond0					
+	BASH ifconfig ip address					h1								10.252.1.9/24			bond0					
 	BASH start service							h1								isc-dhcp-server
+    BASH ping                                   h1                              10.252.1.1              count=4
 	sleep										1
 	${value} = 									BASH check service status		h1						isc-dhcp-server
 	Should Contain								${value}						is started
@@ -2972,7 +2987,7 @@ Trigger controller HA failover via CLI and verify dhcp-relay is working
 	REST add portgroup to vns					Y								Y3						${leaf2_pc1}			-1
 	BASH add route								h1								10.252.3.0/24			10.252.1.1
 	REST add dhcp relay							Y								Y3						10.252.1.9
-	REST enable dhcp relay						Y								Y3	
+	#REST enable dhcp relay						Y								Y3	
 	sleep										5
 	${h1_ip} = 									BASH get interface ipv4			h1						bond0				
 	Should Contain								${h1_ip}						10.252.1.9	
@@ -3030,8 +3045,9 @@ Trigger controller HA failover via reboot and verify dhcp-relay is working
 	BASH init intf								h1								bond0
 	BASH init intf								h2								bond0
 	BASH ifup intf								h1								bond0
-	BASH ifconfig ip address							h1								10.252.1.9/24			bond0					
+	BASH ifconfig ip address				    h1								10.252.1.9/24			bond0					
 	BASH start service							h1								isc-dhcp-server
+    BASH ping                                   h1                              10.252.1.1              count=4
 	sleep										1
 	${value} = 									BASH check service status		h1						isc-dhcp-server
 	Should Contain								${value}						is started
@@ -3040,7 +3056,7 @@ Trigger controller HA failover via reboot and verify dhcp-relay is working
 	REST add portgroup to vns					Y								Y3						${leaf2_pc1}			-1
 	BASH add route								h1								10.252.3.0/24			10.252.1.1
 	REST add dhcp relay							Y								Y3						10.252.1.9
-	REST enable dhcp relay						Y								Y3	
+	#REST enable dhcp relay						Y								Y3	
 	sleep										5
 	${h1_ip} = 									BASH get interface ipv4			h1						bond0				
 	Should Contain								${h1_ip}						10.252.1.9	
@@ -3200,13 +3216,21 @@ Verify same mac address showing up on two ports in the same segment is blocked
     BASH ifup intf                              h6                              bond0   
     REST add portgroup to vns                   X                               X1                      ${leaf0_pc1}            1001
     REST add portgroup to vns                   X                               X1                      ${leaf1_pc1}            1003
+    REST add portgroup to vns                   X                               X2                      ${leaf1_pc2}            1004
+    
     BASH add tag                                h1                              bond0                   1001
     BASH add tag                                h3                              bond0                   1003
+    BASH add tag                                h4                              bond0                   1004
+    
     BASH ifup intf                              h1                              bond0.1001
     BASH ifup intf                              h3                              bond0.1003
+    BASH ifup intf                              h4                              bond0.1004
+    
     BASH init intf                              h1                              bond0.1001
     BASH init intf                              h3                              bond0.1003
-    BASH ifconfig ip address                         h1                              10.251.1.11/24          bond0.1001
+    BASH init intf                              h4                              bond0.1004
+    
+    BASH ifconfig ip address                    h1                              10.251.1.11/24          bond0.1001
     BASH add route                              h1                              10.251.0.0/16           10.251.1.1
     sleep                                       2
     BASH ping                                   h1                              10.251.1.1              count=5
@@ -3218,7 +3242,7 @@ Verify same mac address showing up on two ports in the same segment is blocked
     Should Contain                              ${attachpoint}                  ${leaf0_pc1}
     BASH set mac address                        h3                              bond0                   ${mac1}
     BASH set mac address                        h3                              bond0.1003              ${mac1}
-    BASH ifconfig ip address                         h3                              10.251.1.11/24          bond0.1003
+    BASH ifconfig ip address                    h3                              10.251.1.11/24          bond0.1003
     BASH add route                              h3                              10.251.0.0/16           10.251.1.1
     sleep                                       1
     BASH ping                                   h3                              10.251.1.1              count=5
@@ -3243,7 +3267,7 @@ Verify same mac address showing up on two ports in the same segment is blocked
     sleep                                       1
     BASH run command                            h3                              kill -9 ${pid2}
     sleep                                       1
-    BASH network restart                        3                               timeout=60
+    BASH network restart                        h3                              timeout=60
     sleep                                       300
     ${result} =                                 REST show endpoints mac         ${mac1}
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
@@ -3443,6 +3467,12 @@ test teardown topology
 T5 base suite setup
 	base suite setup
 	add fabric switch
+    #BASH network restart                            h1                                timeout=60
+    #BASH network restart                            h2                                timeout=60
+    #BASH network restart                            h3                                timeout=60
+    #BASH network restart                            h4                                timeout=60
+    #BASH network restart                            h5                                timeout=60
+    #BASH restart service                            h6                                networking              timeout=60	
 	sleep 											5
 	${result} = 									CLI verify controller		s1							c1		
 	Should Be True									${result}
@@ -3496,6 +3526,12 @@ T5 base suite setup
   
 T5 base suite teardown
 	delete fabric switch  
+    #BASH network restart                            h1                                timeout=60
+    #BASH network restart                            h2                                timeout=60
+    #BASH network restart                            h3                                timeout=60
+    #BASH network restart                            h4                                timeout=60
+    #BASH network restart                            h5                                timeout=60
+    #BASH restart service                            h6                                networking              timeout=60
   	REST delete portgroup lacp							${leaf0_pc1}
   	REST delete portgroup lacp							${leaf0_pc2}
   	REST delete portgroup lacp							${leaf1_pc1}
