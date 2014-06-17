@@ -858,12 +858,13 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
       
     def rest_show_l3_cidr_table(self):
         '''
+        GET http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/info/forwarding/network/global/l3-cidr-table
         GET http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/info/forwarding/network/l3-cidr-table
         '''
         t = test.Test()
         c = t.controller('master')
         
-        url = '/api/v1/data/controller/applications/bvs/info/forwarding/network/l3-cidr-table' 
+        url = '/api/v1/data/controller/applications/bvs/info/forwarding/network/global/l3-cidr-table' 
         try:
             c.rest.get(url)
         except:
@@ -873,12 +874,14 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
 
     def rest_show_l3_host_table(self):
         '''
+        GET http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/info/forwarding/network/global/l3-host-table
+
         GET http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/info/forwarding/network/l3-host-table
         '''
         t = test.Test()
         c = t.controller('master')
         
-        url = '/api/v1/data/controller/applications/bvs/info/forwarding/network/l3-host-table' 
+        url = '/api/v1/data/controller/applications/bvs/info/forwarding/network/global/l3-host-table' 
         try:
             c.rest.get(url)
         except:
