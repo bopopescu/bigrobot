@@ -1216,9 +1216,11 @@ Activate and deactivate router interface
     ${loss} =                                   BASH ping                       h4-rack0                        10.252.1.11             count=10
     Should Be True                              ${loss} == 0    
     REST disable router intf                    X                               system
+    sleep                                       1
     ${loss} =                                   BASH ping                       h4-rack0                        10.252.1.11             count=10
     Should Be True                              ${loss} == 100    
     REST enable router intf                     X                               system
+    sleep                                       1
     ${loss} =                                   BASH ping                       h4-rack0                        10.252.1.11             count=10
     Should Be True                              ${loss} < 20    
       

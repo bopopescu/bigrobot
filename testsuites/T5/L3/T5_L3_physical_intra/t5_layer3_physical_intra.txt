@@ -3057,23 +3057,13 @@ Trigger controller HA failover via reboot and verify dhcp-relay is working
 	BASH add route								h1								10.252.3.0/24			10.252.1.1
 	REST add dhcp relay							Y								Y3						10.252.1.9
 	#REST enable dhcp relay						Y								Y3	
-	sleep										5
-	${h1_ip} = 									BASH get interface ipv4			h1						bond0				
-	Should Contain								${h1_ip}						10.252.1.9	
-	${h1_mac} =									BASH get intf mac				h1						bond0
-	${result} = 								REST show endpoints mac			${h1_mac}
-	Should Not Be Empty							${result}
-	sleep										1
-	BASH ping                                   h1                              10.252.1.1              count=5                      
-	${value} = 									BASH verify arp					h1						10.252.1.1
-	Should Be True								${value} 		
 	sleep										1
 	${value} = 									BASH release dhcpv4 address		h5						bond0
 	Should Be True								${value}
 	sleep										1
 	${ipAddr} = 								BASH renew dhcpv4 address		h5						bond0
 	Should Not Be Empty							${ipAddr}
-	sleep										10
+	sleep										2
 	BASH ping									h1								${ipAddr}				count=10
 	${value} = 									BASH verify arp					h1						10.252.1.1
 	Should Be True								${value} 		
@@ -3331,7 +3321,7 @@ Verify clear blocked endpoint works
     sleep                                       1
     BASH network restart                        h3                              timeout=60
     sleep                                       5
-    REST clear blocked endpoints                X                               X1                      ${mac1}
+    REST clear blocked endpoint                 X                               X1                      ${mac1}
     sleep                                       5
     ${result} =                                 REST show endpoints mac         ${mac1}
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
