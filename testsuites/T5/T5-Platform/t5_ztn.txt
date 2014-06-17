@@ -113,17 +113,14 @@ T1.7. Reboot and stop at loader shell
 	[Tags]  skipped
 
 T1.8. Reboot switches from CLI
-	#Reboot Switches
 	#Cli Reboot Switch  master  ${s1_alias}
-	#Telnet Wait For Switch To Reload  s1
-
 	Cli Reboot Switch  master  ${s2_mac}
 	Cli Reboot Switch  master  ${s3_ip}
 	Cli Reboot Switch  master  ${s4_alias}
+
+	#Telnet Wait For Switch To Reload  s1
 	Telnet Wait For Switch To Reload  s2
-
 	Telnet Wait For Switch To Reload  s3
-
 	Telnet Wait For Switch To Reload  s4
 
 	Sleep  20
@@ -1456,11 +1453,10 @@ Randomize ZTN Configuration
 	Cli Run  master  ntp server ${host_random}
 	#${timezone_random}  Generate Random GMT Timezone
 	#Cli Run  master  ntp time-zone ${timezone_random}
-	${host_random}  Generate Random IP
-	${hostname_random}  Generate Random Name  hostname.tmk.  5
+	#${host_random}  Generate Random IP
+	#${hostname_random}  Generate Random Name  hostname.tmk.  5
 	Cli Run  master  logging enable remote
-	Cli Run  master  logging remote ${host_random}
-	Cli Run  master  logging remote ${hostname_random}
+	Cli Run  master  logging remote 10.192.66.100
 
 Reboot Provisioned Switch
 	[Arguments]  ${switch_id}  ${switch_mac}  ${switch_alias}
