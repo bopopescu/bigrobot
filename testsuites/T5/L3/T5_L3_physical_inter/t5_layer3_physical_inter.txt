@@ -46,7 +46,7 @@ Add and delete static route on tenant
 
 Add and delete more specific route on tenant over existing static route
 	Add and delete more specific route on tenant over existing static route
-	[Tags]		feature
+	[Tags]		feature                run99
 
 Add and delete tenant system interface on tenant router
 	Add and delete tenant system interface on tenant router
@@ -74,11 +74,11 @@ L3 inter tenant forwarding between endpoints on the same rack but different swit
 	
 Inter tenant DHCP relay
 	Inter tenant DHCP relay
-    [Tags]      sanity      feature			dhcp-relay		run1	
+    [Tags]      sanity      feature			dhcp-relay			
 
 Dhcp request from other host in other tenants with dhcp enabled but no inter tenant route
 	Dhcp request from other host in other tenants with dhcp enabled but no inter tenant route
-	[Tags]		feature			dhcp-relay			
+	[Tags]		feature			dhcp-relay			    run99
 
 Dhcp request from other host in other tenants without dhcp relay enabled but with inter tenant route
 	Dhcp request from other host in other tenants without dhcp relay enabled but with inter tenant route
@@ -86,7 +86,7 @@ Dhcp request from other host in other tenants without dhcp relay enabled but wit
 
 Inter tenant dhcp relay with multiple dhcp servers
 	Inter tenant dhcp relay with multiple dhcp servers
-	[Tags]		feature			dhcp-relay
+	[Tags]		feature			dhcp-relay               run99
 
 Inter tenant dhcp relay with duplicate circuitid
     manual passed
@@ -94,7 +94,7 @@ Inter tenant dhcp relay with duplicate circuitid
     
 Host moved to another vns on another tenant and renew dhcp 
 	Host moved to another vns on another tenant and renew dhcp 
-	[Tags]		feature			dhcp-relay			
+	[Tags]		feature			dhcp-relay	          run99		
 
 DHCP request to external dhcp servers
 	manual passed
@@ -174,7 +174,7 @@ L3 inter tenant forwarding to VRRP routers
 
 L3 inter tenant traceroute with icmp and udp probe
 	L3 inter tenant traceroute with icmp and udp probe
-	[Tags]			feature			
+	[Tags]			feature			    run99
 
 Add and delete endpoints with L3 inter tenant traffic
 	Add and delete endpoints with L3 inter tenant traffic
@@ -190,7 +190,7 @@ L3 inter tenant traffic with jumbo frame
 
 L3 inter tenant with CRC errors
 	L3 inter tenant with CRC errors
-	[Tags]			feature			
+	[Tags]			feature			    run99
 
 Verify route next hop IP must be in the same tenant
 	manual passed
@@ -222,11 +222,11 @@ L3 inter tenant destroy standby controller VM from KVM
 
 Restart ofad on leaf switch
 	Restart ofad on leaf switch
-	[Tags]			feature			
+	[Tags]			feature			        run99
 
 Restart ofad on spine switch
 	Restart ofad on spine switch
-	[Tags]			feature			
+	[Tags]			feature			        run99
 
 Controller HA failover with ecmp group
 	manual passed
@@ -246,7 +246,7 @@ Active Controller reboot with dhcp-relay
 
 Verify inter tenant L3 traffic is getting drop with null next hop
 	Verify inter tenant L3 traffic is getting drop with null next hop
-	[Tags]			feature				
+	[Tags]			feature			run99	
 
 Restart ofad on leaf switch with ecmp group
 	manual passed
@@ -258,11 +258,11 @@ Restart ofad on spine with ecmp group
 
 Restart ofad on leaf with dhcp-relay
 	Restart ofad on leaf with dhcp-relay
-	[Tags]			feature			dhcp-relay	
+	[Tags]			feature			dhcp-relay	     run99
 
 Restart ofad on spine with dhcp-relay
 	Restart ofad on spine with dhcp-relay
-	[Tags]			feature			dhcp-relay	
+	[Tags]			feature			dhcp-relay	     run99
 	
 Flap member link in a port-group in ecmp group
 	manual passed
@@ -294,7 +294,7 @@ Verify inter tenant dhcp-relay functionality after controller upgrade
 
 Dhcp request from overlapping private IP and public IP
     Dhcp request from overlapping private IP and public IP
-    [Tags]          solution            dhcp-relay  
+    [Tags]          solution            dhcp-relay          run99
     				
 Verify routing loop is not causing packets to loop forever
     manual passed
@@ -1520,7 +1520,7 @@ Inter tenant dhcp relay with multiple dhcp servers
     ${ipAddr4} =                                BASH renew dhcpv4 address       h4                      bond0
     Should Not Be Empty                         ${ipAddr4}
     ${loss} =                                   BASH ping                       h1                      ${ipAddr4}          count=10
-    Should Be True                              ${loss} < 20
+    Should Be True                              ${loss} < 40
     ${value} =                                  BASH release dhcpv4 address     h1                      bond0
     Should Be True                              ${value}
     BASH stop service                           h3                              isc-dhcp-server
@@ -2716,7 +2716,7 @@ test setup topology
 	
 
 test teardown topology
-    stop traffic                                    ${stream1}
+    stop traffic                                   
     sleep                                           1
     delete traffic
 	REST delete vns ip  							X							X1				10.251.1.1				24	

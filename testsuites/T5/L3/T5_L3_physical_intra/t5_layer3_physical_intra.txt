@@ -45,7 +45,7 @@ Verify static endpoint state
 
 Verify host with same IP as vrf is having L2 service only
     Verify host with same IP as vrf is having L2 service only
-    [Tags]                 feature                  jira-BVS-1725
+    [Tags]                 feature                  
     
 Activate and deactivate router interface
 	Activate and deactivate router interface
@@ -177,15 +177,15 @@ L3 intra tenant traffic between private and public subnet with overlapping IP
 	
 Verify host with different IP on vns router is not getting L3 service
 	Verify host with different IP on vns router is not getting L3 service
-	[Tags]						feature					   run5
+	[Tags]						feature					   run
 	
 Trigger controller HA failover via CLI
 	Controller HA failover via CLI	
-	[Tags]				feature			                   run5
+	[Tags]				feature			                   run
 	   
 Trigger controller HA failover via reboot
 	Controller HA failover via reboot
-	[Tags]				feature			                   run5
+	[Tags]				feature			                   run
 
 Spine reboot
 	Reboot spine0 via CLI
@@ -209,11 +209,11 @@ Spine to leaf link flap
 
 Leaf to host link flap
 	Flap bond interface towards host
-	[Tags]				feature					run1	
+	[Tags]				feature					run	
 	
 Restart ofad process on spine
 	restart ofad on spine
-	[Tags]				feature					run1
+	[Tags]				feature					run
 	
 Restart ofad process on leaf	
 	restart ofad on leaf
@@ -650,8 +650,8 @@ L3 intra tenant same rack untagged with static endpoints
 	${mac2} = 									BASH get intf mac				h6						bond0
 	REST add endpoint mac						X								X2						X2_pc2					${mac2}
 	REST add endpoint portgroup attachment		X								X2						X2_pc2					${leaf2_pc2}				-1	
-	BASH ifconfig ip address							h5								10.251.1.11/24			bond0	
-	BASH ifconfig ip address							h6								10.251.2.11/24			bond0
+	BASH ifconfig ip address					h5								10.251.1.11/24			bond0	
+	BASH ifconfig ip address					h6								10.251.2.11/24			bond0
 	BASH add route								h5								10.251.2.0/24			10.251.1.1
 	BASH add route								h6								10.251.1.0/24			10.251.2.1
 	sleep										5	
@@ -703,8 +703,8 @@ L3 intra tenant across rack untagged with static endpoints
 	REST add endpoint portgroup attachment		X								X3						X3_pc6					${leaf2_pc1}				-1	
 	REST add portgroup to vns					X								X1						${leaf1_pc2}			-1
 	REST add portgroup to vns					X								X3						${leaf2_pc1}			-1
-	BASH ifconfig ip address							h4								10.251.1.11/24			bond0	
-	BASH ifconfig ip address							h5								10.251.3.11/24			bond0
+	BASH ifconfig ip address					h4								10.251.1.11/24			bond0	
+	BASH ifconfig ip address					h5								10.251.3.11/24			bond0
 	BASH add route								h4								10.251.3.0/24			10.251.1.1
 	BASH add route								h5								10.251.1.0/24			10.251.3.1
 	sleep										5	
@@ -3428,6 +3428,8 @@ test setup topology
 
  
 test teardown topology
+    stop traffic                                   
+    sleep                                           1
 	delete traffic
 	REST delete vns ip  							X							X1				10.251.1.1				24	
 	REST delete vns ip  							X							X2				10.251.2.1				24	
