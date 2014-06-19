@@ -2603,7 +2603,29 @@ class T5(object):
             i = i + 1                                
         return True
 
-
+    def rest_fabric_setting_global(self):
+        '''
+        Function to set the orchestration setting to global
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        
+        url = '/api/v1/data/controller/applications/bvs/global-setting?single=true'
+        c.rest.put(url, {"orchestration-mapping": "default"})
+        c.rest.patch(url, {"orchestration-mapping": "global"})
+        return True
+     
+    def rest_fabric_setting_default(self):
+        '''
+        Function to set the orchestration setting to default
+        '''
+        t = test.Test()
+        c = t.controller('master')
+        
+        url = '/api/v1/data/controller/applications/bvs/global-setting?single=true'
+        c.rest.put(url, {"orchestration-mapping": "global"})
+        c.rest.patch(url, {"orchestration-mapping": "default"})
+        return True                
 
        
             

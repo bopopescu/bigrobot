@@ -1,14 +1,15 @@
 *Settings
-Documentation  Release:Blackbird
+Documentation  Release: BLACKBIRD AND CORSAIR
 Suite Setup  overlap suite setup
 Suite Teardown   overlap suite teardown
-Test Setup   base test setup
-Test Teardown  base test teardown 
-Force Tags   platform Sanity
+Test Setup   overlap test setup
+Test Teardown  overlap test teardown 
+Force Tags   bigtap  overlap
 Library  keywords/BsnCommon.py
 Library  keywords/AppController.py
 Library  keywords/BigTap.py
 Library  keywords/SwitchLight.py
+Library  keywords/Ixia.py
 Library  Collections.py
 
 * Variable
@@ -21,6 +22,8 @@ ${switch1_preservice_intf_1}        ethernet47
 ${switch1_preservice_alias_1}       rlb9-1-pre
 ${switch1_postservice_intf_1}       ethernet48
 ${switch1_postservice_alias_1}      rlb9-1-post
+${switch1_service_name}             rlb9-1-service
+
 
 ${switch2_alias}                    app-rlb9-2
 ${switch2_delivery_intf_1}          ethernet1    
@@ -31,10 +34,740 @@ ${switch2_preservice_intf_1}        ethernet47
 ${switch2_preservice_alias_1}       rlb9-2-pre
 ${switch2_postservice_intf_1}       ethernet48
 ${switch2_postservice_alias_1}      rlb9-2-post
+${switch2_service_name}             rlb9-2-service
 
-${switch3_alias}                    app-rlb9-3
+${switch3_alias}                    app-rly2-6
 ${switch3_filter_intf_1}            ethernet1    
-${switch3_filter_alias_1}           ixia-3-3
-${switch3_delivery_intf_2}          ethernet2
-${switch3_delivery_alias_2}         ixia-3-4
+${switch3_filter_alias_1}           ixia-4-3
+${switch3_delivery_intf_1}          ethernet2
+${switch3_delivery_alias_1}         ixia-4-4
+${switch3_preservice_intf_1}        ethernet31
+${switch3_preservice_alias_1}       rly2-6-pre
+${switch3_postservice_intf_1}       ethernet32
+${switch3_postservice_alias_1}      rly2-6-post
+${switch3_service_name}             rly2-6-service
 
+${policy_name_1}                    P1
+${policy_name_2}                    ZP1
+${policy_name_overlap}              _ZP1_o_P1
+${src_mac}                          00:11:00:00:00:01
+${src_mac_other}                    00:11:00:00:01:02
+${dst_mac}                          00:11:00:00:00:02
+${dst_mac_other}                    00:11:00:00:01:01
+
+* Test Case
+
+Verify initial configuration
+    verify overlapping policies
+    ${stream}=  L2 add  flow=a->c  frame_rate=10000  frame_size=64  frame_cnt=100000  name=a_c_flow  
+    ...         ethertype=0800  src_mac=${src_mac}  dst_mac=${dst_mac}
+    clear stats    
+    start traffic  ${stream}
+    sleep  10        
+    stop traffic  ${stream}    
+    verify results  a  c  transmitted_frames  received_valid_frames
+    verify results  a  d  transmitted_frames  received_valid_frames
+    [Tags]  feature
+
+
+Protocol TCP: All possible matches. Configure two policies with common filter and different delivery interfaces.
+    ${generate_protocol_matches}=  return match  ip_type=2048  protocol=6  src_ip=10.28.6.42  dst_ip=10.28.7.44  dst_port=80  src_port=1234  ip_tos=1  vlan=100  
+    verify protocol matches  ${generate_protocol_matches}                
+    [Tags]  feature  tcp  protocolmatches
+
+Protocol TCP6: All possible matches. Configure two policies with common filter and different delivery interfaces.
+    ${generate_protocol_matches}=  return match  ip_type=34525  protocol=6  src_ip=2001:503:ba3e::2:30  dst_ip=2001:500:2d::d  dst_port=80  src_port=1234  ip_tos=1  vlan=100  
+    verify protocol matches  ${generate_protocol_matches}                
+    [Tags]  feature  tcp  protocolv6matches 
+
+Protocol UDP: All possible matches. Configure two policies with common filter and different delivery interfaces.
+    ${generate_protocol_matches}=  return match  ip_type=2048  protocol=17  src_ip=10.28.6.42  dst_ip=10.28.7.44  dst_port=53  src_port=1234  ip_tos=1  vlan=100
+    verify protocol matches  ${generate_protocol_matches}
+    [Tags]  feature  udp  protocolmatches
+
+Protocol UDP6: All possible matches. Configure two policies with common filter and different delivery interfaces.
+    ${generate_protocol_matches}=  return match  ip_type=34525  protocol=17  src_ip=2001:503:ba3e::2:30  dst_ip=2001:500:2d::d   dst_port=53  src_port=1234  ip_tos=1  vlan=100
+    verify protocol matches  ${generate_protocol_matches}
+    [Tags]  feature  udp  protocolv6matches
+        
+Protocol ICMP: All possible matches. Configure two policies with common filter and different delivery interfaces.
+    ${generate_protocol_matches}=  return match  ip_type=2048  protocol=1  src_ip=10.28.6.42  dst_ip=10.28.7.44  src_port=8  dst_port=0  ip_tos=1  vlan=100
+    verify protocol matches  ${generate_protocol_matches}                
+    [Tags]  feature  icmp  protocolmatches
+
+Protocol SCTP: All possible matches. Configure two policies with common filter and different delivery interfaces.
+    ${generate_protocol_matches}=  return match  ip_type=2048  protocol=132  src_ip=10.28.6.42  dst_ip=10.28.7.44  dst_port=132  src_port=1234  ip_tos=1
+    verify protocol matches  ${generate_protocol_matches}                    
+    [Tags]  feature  sctp  protocolmatches
+
+Protocol SCTP6: All possible matches. Configure two policies with common filter and different delivery interfaces.
+    ${generate_protocol_matches}=  return match  ip_type=34525  protocol=132  src_ip=2001:503:ba3e::2:30  dst_ip=2001:500:2d::d  dst_port=132  src_port=1234  ip_tos=1
+    verify protocol matches  ${generate_protocol_matches}                    
+    [Tags]  feature  sctp  protocolmatches  
+
+L2: All possible matches. Configure two policies with common filter and different delivery interfaces.
+    ${generate_protocol_matches}=  return match  ip_type=2048  dst_mac=00:11:00:00:00:01  src_mac=00:11:00:00:00:02  ip_tos=1  vlan=100
+    verify protocol matches  ${generate_protocol_matches}                    
+    [Tags]  feature  l2  protocolmatches
+
+
+Delete match condition in P1 and verify overlap goes away
+    rest delete policy match  admin-view  ${policy_name_1}   1
+    sleep  3
+    ${verify_overlap}=  rest verify bigtap policy  ${policy_name_overlap}   num_filter_intf=1  num_delivery_intf=2
+    Should not be true  ${verify_overlap}
+    ${stream}=  L2 add  flow=a->d  frame_rate=10000  frame_size=64  frame_cnt=100000  name=a_c_flow  
+    ...         ethertype=0800  src_mac=${src_mac}  dst_mac=${dst_mac}
+    clear stats    
+    start traffic  ${stream}
+    sleep  10        
+    stop traffic  ${stream}    
+    verify results  a  d  transmitted_frames  received_valid_frames
+    return ixia txrx value  c  received_valid_frames  0
+    # Add back    
+    rest add policy match  admin-view  ${policy_name_1}   1  {"src-mac": "00:11:00:00:00:01", "ether-type": 2048, "sequence": 1}
+    Sleep  3
+    ${verify_overlap}=  rest verify bigtap policy  ${policy_name_overlap}   num_filter_intf=1  num_delivery_intf=2
+    Should be true  ${verify_overlap}
+    clear stats    
+    start traffic  ${stream}
+    sleep  10        
+    stop traffic  ${stream}    
+    verify results  a  c  transmitted_frames  received_valid_frames     
+    verify results  a  d  transmitted_frames  received_valid_frames
+    [Tags]  feature
+    
+Change action to inactive in P1 and verify overlap goes away
+    rest update policy action  admin-view  ${policy_name_1}  inactive
+    sleep  3
+    ${verify_overlap}=  rest verify bigtap policy  ${policy_name_overlap}   num_filter_intf=1  num_delivery_intf=2
+    Should not be true  ${verify_overlap}
+    ${stream}=  L2 add  flow=a->d  frame_rate=10000  frame_size=64  frame_cnt=100000  name=a_c_flow  
+    ...         ethertype=0800  src_mac=${src_mac}  dst_mac=${dst_mac}
+    clear stats    
+    start traffic  ${stream}
+    sleep  10        
+    stop traffic  ${stream}    
+    verify results  a  d  transmitted_frames  received_valid_frames
+    return ixia txrx value  c  received_valid_frames  0
+    #Add back    
+    rest update policy action  admin-view  ${policy_name_1}  forward
+    sleep  3
+    ${verify_overlap}=  rest verify bigtap policy  ${policy_name_overlap}   num_filter_intf=1  num_delivery_intf=2
+    Should be true  ${verify_overlap}               
+    clear stats    
+    start traffic  ${stream}
+    sleep  10        
+    stop traffic  ${stream}    
+    verify results  a  c  transmitted_frames  received_valid_frames     
+    verify results  a  d  transmitted_frames  received_valid_frames
+    [Tags]  feature      
+    
+Set policy action to rate-measure and verify overlap goes away
+    ${result}=  rest update policy action  admin-view  ${policy_name_2}  rate-measure
+    Should be true  ${result}
+    sleep  30
+    ${verify_overlap}=  rest verify bigtap policy  ${policy_name_overlap}  num_filter_intf=1  num_delivery_intf=2
+    Should not be true  ${verify_overlap}
+    ${verify_policy}=  rest verify bigtap policy  ${policy_name_2}   num_filter_intf=1  num_delivery_intf=1  action=rate-measure
+    Should be true  ${verify_policy}
+    ${verify_policy}=  rest verify bigtap policy  ${policy_name_1}   num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy}        
+    ${stream}=  L2 add  flow=a->c  frame_rate=10000  frame_size=64  frame_cnt=100000  name=a_c_flow  
+    ...         ethertype=0800  src_mac=${src_mac}  dst_mac=${dst_mac_other}    
+    clear stats    
+    start traffic  ${stream}
+    sleep  10        
+    stop traffic  ${stream}        
+    verify results  a  c  transmitted_frames  received_valid_frames
+    return ixia txrx value  c  received_valid_frames  0
+    #Add back        
+    rest update policy action  admin-view  ${policy_name_2}  forward
+    sleep  30
+    ${verify_overlap}=  rest verify bigtap policy  ${policy_name_overlap}  num_filter_intf=1  num_delivery_intf=2
+    Should be true  ${verify_overlap}
+    ${stream_new}=  L2 add  flow=a->c  frame_rate=10000  frame_size=64  frame_cnt=100000  name=a_c_flow  
+    ...         ethertype=0800  src_mac=${src_mac}  dst_mac=${dst_mac}    
+    clear stats    
+    start traffic  ${stream_new}
+    sleep  10        
+    stop traffic  ${stream_new}    
+    verify results  a  c  transmitted_frames  received_valid_frames     
+    verify results  a  d  transmitted_frames  received_valid_frames    
+    [Tags]  feature
+
+Set different priorities in P1 and P2 and verify overlap goes away
+    rest update policy priority  admin-view  ${policy_name_1}   200
+    sleep  10
+    ${verify_overlap}=  rest verify bigtap policy  ${policy_name_overlap}  num_filter_intf=1  num_delivery_intf=2
+    Should not be true  ${verify_overlap}
+    ${stream}=  L2 add  flow=a->c  frame_rate=10000  frame_size=64  frame_cnt=100000  name=a_c_flow  
+    ...         ethertype=0800  src_mac=${src_mac}  dst_mac=${dst_mac_other}   
+    clear stats    
+    start traffic  ${stream}
+    sleep  10        
+    stop traffic  ${stream}    
+    verify results  a  c  transmitted_frames  received_valid_frames
+    return ixia txrx value  d  received_valid_frames  0    
+    #Add back       
+    rest update policy priority  admin-view  ${policy_name_1}   100
+    sleep  3
+    ${verify_overlap}=  rest verify bigtap policy  ${policy_name_overlap}  num_filter_intf=1  num_delivery_intf=2
+    Should be true  ${verify_overlap}
+    ${stream_new}=  L2 add  flow=a->c  frame_rate=10000  frame_size=64  frame_cnt=100000  name=a_c_flow  
+    ...         ethertype=0800  src_mac=${src_mac}  dst_mac=${dst_mac}    
+    clear stats    
+    start traffic  ${stream_new}
+    sleep  10        
+    stop traffic  ${stream_new}    
+    verify results  a  c  transmitted_frames  received_valid_frames     
+    verify results  a  d  transmitted_frames  received_valid_frames
+    [Tags]  feature  priority
+
+    
+Add vlan re-write to one policy and verify overlap goes away
+    rest add vlan rewrite  admin-view  ${policy_name_1}   200
+    sleep  3
+    ${verify_overlap}=  rest verify bigtap policy  ${policy_name_overlap}  num_filter_intf=1  num_delivery_intf=2
+    Should not be true  ${verify_overlap}
+    ${stream}=  L2 add  flow=a->c  frame_rate=10000  frame_size=64  frame_cnt=100000  name=a_c_flow  
+    ...         ethertype=0800  src_mac=${src_mac}  dst_mac=${dst_mac_other}   
+    clear stats    
+    start traffic  ${stream}
+    sleep  10        
+    stop traffic  ${stream}       
+    verify results  a  c  transmitted_frames  received_crc_errored_frames
+    return ixia txrx value  d  received_valid_frames  0 
+    return ixia txrx value  d  received_crc_errored_frames  0         
+    rest delete vlan rewrite  admin-view  ${policy_name_1}   200
+    sleep  3
+    ${verify_overlap}=  rest verify bigtap policy  ${policy_name_overlap}  num_filter_intf=1  num_delivery_intf=2
+    Should be true  ${verify_overlap}
+    ${stream_new}=  L2 add  flow=a->c  frame_rate=10000  frame_size=64  frame_cnt=100000  name=a_c_flow  
+    ...         ethertype=0800  src_mac=${src_mac}  dst_mac=${dst_mac}    
+    clear stats    
+    start traffic  ${stream_new}
+    sleep  10        
+    stop traffic  ${stream_new}    
+    verify results  a  c  transmitted_frames  received_valid_frames     
+    verify results  a  d  transmitted_frames  received_valid_frames    
+    [Tags]  feature  vlan
+    
+Add vlan re-write to both policies and verify overlap stays
+    rest add vlan rewrite  admin-view  ${policy_name_1}   200
+    rest add vlan rewrite  admin-view  ${policy_name_2}   200    
+    sleep  3
+    ${verify_overlap}=  rest verify bigtap policy  ${policy_name_overlap}  num_filter_intf=1  num_delivery_intf=2
+    Should be true  ${verify_overlap}
+    ${stream}=  L2 add  flow=a->c  frame_rate=10000  frame_size=64  frame_cnt=100000  name=a_c_flow  
+    ...         ethertype=0800  src_mac=${src_mac}  dst_mac=${dst_mac}      
+    clear stats    
+    start traffic  ${stream}
+    sleep  10        
+    stop traffic  ${stream}    
+    verify results  a  c  transmitted_frames  received_crc_errored_frames     
+    verify results  a  d  transmitted_frames  received_crc_errored_frames      
+    rest delete vlan rewrite  admin-view  ${policy_name_1}   200
+    rest delete vlan rewrite  admin-view  ${policy_name_2}   200    
+    sleep  3
+    ${verify_overlap}=  rest verify bigtap policy  ${policy_name_overlap}  num_filter_intf=1  num_delivery_intf=2
+    Should be true  ${verify_overlap}
+    clear stats    
+    start traffic  ${stream}
+    sleep  10        
+    stop traffic  ${stream}    
+    verify results  a  c  transmitted_frames  received_valid_frames     
+    verify results  a  d  transmitted_frames  received_valid_frames              
+    [Tags]  feature  vlan
+
+    
+Add a service to P1 and verify overlap policy stays
+    rest add service to policy  admin-view  ${policy_name_1}  ${switch1_service_name}   1
+    sleep  10
+    ${verify_overlap}=  rest verify bigtap policy   ${policy_name_overlap}  num_filter_intf=1  num_delivery_intf=2
+    Should be true  ${verify_overlap}
+    ${stream}=  L2 add  flow=a->c  frame_rate=10000  frame_size=64  frame_cnt=100000  name=a_c_flow  
+    ...         ethertype=0800  src_mac=${src_mac}  dst_mac=${dst_mac_other}    
+    clear stats    
+    start traffic  ${stream}
+    sleep  10        
+    stop traffic  ${stream}         
+    verify results  a  c  transmitted_frames  received_valid_frames
+    return ixia txrx value  d  received_valid_frames  0               
+    rest delete service from policy  admin-view  ${policy_name_1}  ${switch1_service_name} 
+    sleep  3
+    ${verify_overlap}=  rest verify bigtap policy   ${policy_name_overlap}  num_filter_intf=1  num_delivery_intf=2
+    Should be true  ${verify_overlap}
+    ${stream_new}=  L2 add  flow=a->c  frame_rate=10000  frame_size=64  frame_cnt=100000  name=a_c_flow  
+    ...         ethertype=0800  src_mac=${src_mac}  dst_mac=${dst_mac}    
+    clear stats    
+    start traffic  ${stream_new}
+    sleep  10        
+    stop traffic  ${stream_new}    
+    verify results  a  c  transmitted_frames  received_valid_frames     
+    verify results  a  d  transmitted_frames  received_valid_frames    
+    [Tags]  feature  service  skipped
+
+
+Add same service to both policies and verify overlap policy stays
+    rest add service to policy  admin-view  ${policy_name_1}  ${switch1_service_name}   1
+    rest add service to policy  admin-view  ${policy_name_2}  ${switch1_service_name}   1    
+    sleep  3
+    ${verify_overlap}=  rest verify bigtap policy   ${policy_name_overlap}  num_filter_intf=1  num_delivery_intf=2
+    Should be true  ${verify_overlap}
+    ${stream}=  L2 add  flow=a->d  frame_rate=10000  frame_size=64  frame_cnt=100000  name=a_c_flow  
+    ...         ethertype=0800  src_mac=${src_mac}  dst_mac=${dst_mac}      
+    clear stats    
+    start traffic  ${stream}
+    sleep  10        
+    stop traffic  ${stream}         
+    verify results  a  d  transmitted_frames  received_valid_frames
+    verify results  a  c  transmitted_frames  received_valid_frames              
+    rest delete service from policy  admin-view  ${policy_name_1}  ${switch1_service_name} 
+    sleep  3
+    ${verify_overlap}=  rest verify bigtap policy   ${policy_name_overlap}  num_filter_intf=1  num_delivery_intf=2
+    Should be true  ${verify_overlap}
+    ${stream_one}=  L2 add  flow=a->c  frame_rate=10000  frame_size=64  frame_cnt=100000  name=a_c_flow  
+    ...         ethertype=0800  src_mac=${src_mac}  dst_mac=${dst_mac_other}     
+    clear stats    
+    start traffic  ${stream_one}
+    sleep  10        
+    stop traffic  ${stream_one}         
+    verify results  a  c  transmitted_frames  received_valid_frames
+    return ixia txrx value  d  received_valid_frames  0    
+    rest delete service from policy  admin-view  ${policy_name_2}  ${switch1_service_name} 
+    sleep  3
+    ${verify_overlap}=  rest verify bigtap policy   ${policy_name_overlap}  num_filter_intf=1  num_delivery_intf=2
+    Should be true  ${verify_overlap}
+    ${stream_new}=  L2 add  flow=a->c  frame_rate=10000  frame_size=64  frame_cnt=100000  name=a_c_flow  
+    ...         ethertype=0800  src_mac=${src_mac}  dst_mac=${dst_mac}    
+    clear stats    
+    start traffic  ${stream_new}
+    sleep  10        
+    stop traffic  ${stream_new}    
+    verify results  a  c  transmitted_frames  received_valid_frames     
+    verify results  a  d  transmitted_frames  received_valid_frames         
+    [Tags]  feature  service  skipped
+
+Add a service to both policies and verify overlap policy is created. Bring down pre-service interface, verify overlap goes away
+    rest add service to policy  admin-view  ${policy_name_1}  ${switch1_service_name}   1
+    rest add service to policy  admin-view  ${policy_name_2}  ${switch1_service_name}   1 
+    sleep  3
+    ${verify_overlap}=  rest verify bigtap policy  ${policy_name_overlap}  num_filter_intf=1  num_delivery_intf=2
+    Should be true  ${verify_overlap}    
+    cli disable interface  s1  ${switch1_preservice_intf_1}
+    sleep  3    
+    ${verify_overlap}=  rest verify bigtap policy  ${policy_name_overlap}  num_filter_intf=1  num_delivery_intf=2
+    Should not be true  ${verify_overlap}    
+    cli enable interface  s1  ${switch1_preservice_intf_1}
+    sleep  3
+    ${verify_overlap}=  rest verify bigtap policy  ${policy_name_overlap}  num_filter_intf=1  num_delivery_intf=2
+    Should be true  ${verify_overlap}    
+    rest delete service from policy  admin-view  ${policy_name_1}  ${switch1_service_name} 
+    rest delete service from policy  admin-view  ${policy_name_2}  ${switch1_service_name} 
+    sleep  3
+    ${verify_overlap}=  rest verify bigtap policy  ${policy_name_overlap}  num_filter_intf=1  num_delivery_intf=2
+    Should be true  ${verify_overlap}
+    [Tags]  feature  service  skipped
+
+Add a service to both policies and verify overlap policy is created. Bring down post-service interface, verify overlap goes away
+    rest add service to policy  admin-view  ${policy_name_1}  ${switch1_service_name}   1
+    rest add service to policy  admin-view  ${policy_name_2}  ${switch1_service_name}   1   
+    sleep  3
+    ${verify_overlap}=  rest verify bigtap policy  ${policy_name_overlap}  num_filter_intf=1  num_delivery_intf=2
+    Should be true  ${verify_overlap}
+    cli disable interface  s1  ${switch1_postservice_intf_1}
+    sleep  3    
+    ${verify_overlap}=  rest verify bigtap policy  ${policy_name_overlap}  num_filter_intf=1  num_delivery_intf=2
+    Should not be true  ${verify_overlap}    
+    cli enable interface  s1  ${switch1_postservice_intf_1}
+    sleep  3
+    ${verify_overlap}=  rest verify bigtap policy  ${policy_name_overlap}  num_filter_intf=1  num_delivery_intf=2
+    Should be true  ${verify_overlap}    
+    rest delete service from policy  admin-view  ${policy_name_1}  ${switch1_service_name} 
+    rest delete service from policy  admin-view  ${policy_name_2}  ${switch1_service_name} 
+    sleep  3
+    ${verify_overlap}=  rest verify bigtap policy  ${policy_name_overlap}  num_filter_intf=1  num_delivery_intf=2
+    Should be true  ${verify_overlap}
+    [Tags]  feature  service  skipped
+
+Verify overlap is not created when component policies have different protocols 
+    rest delete policy match  admin-view  ${policy_name_1}  1
+    rest delete policy match  admin-view  ${policy_name_2}   1
+    sleep  3
+    rest add policy match  admin-view  ${policy_name_1}  1  {"src-ip-mask": "255.255.255.255", "sequence": 1, "ether-type": 2048, "src-ip": "192.0.0.2", "dst-ip-mask": "255.255.255.255", "src-tp-port": 1234, "ip-proto": 6, "dst-ip": "192.0.0.1", "dst-tp-port": 80}
+    rest add policy match  admin-view  ${policy_name_2}  1  {"src-ip-mask": "255.255.255.255", "sequence": 1, "ether-type": 2048, "src-ip": "192.0.0.2", "dst-ip-mask": "255.255.255.255", "src-tp-port": 2345, "ip-proto": 17, "dst-ip": "192.0.0.1", "dst-tp-port": 53}                               
+    sleep  15
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy2}    
+    ${verify_overlap}=  rest verify bigtap policy  ${policy_name_overlap}  num_filter_intf=1  num_delivery_intf=2
+    Should not be true  ${verify_overlap}
+    ${stream}=  L3 add  name=a_c_flow  flow=a->c  frame_rate=10000  frame_size=128  frame_cnt=100000
+    ...     src_mac=${src_mac}  dst_mac=${dst_mac}  protocol=TCP  src_port=1234  dst_port=80  no_arp=True
+    ...     src_ip=192.0.0.2  dst_ip=192.0.0.1     
+    sleep  5
+    clear stats    
+    start traffic  ${stream}
+    sleep  10        
+    stop traffic  ${stream}   
+    return ixia txrx value  c  received_valid_frames  100000
+    return ixia txrx value  d  received_valid_frames  0          
+    rest add policy match  admin-view  ${policy_name_1}  1  {"src-mac": "00:11:00:00:00:01", "ether-type": 2048, "sequence": 1}
+    rest add policy match  admin-view  ${policy_name_2}   1  {"dst-mac": "00:11:00:00:00:02", "ether-type": 2048, "sequence": 1}    
+    Sleep  3
+    ${verify_overlap}=  rest verify bigtap policy  ${policy_name_overlap}  num_filter_intf=1  num_delivery_intf=2
+    Should be true  ${verify_overlap}
+    [Tags]  negative
+
+Disable overlap knob and verify overlapping policies are deleted
+    ${ovelap_disabled}=  rest disable feature  overlap
+    Should be true  ${ovelap_disabled} 
+    Sleep  20
+    ${verify_overlap}=  rest verify bigtap policy  ${policy_name_overlap}  num_filter_intf=1  num_delivery_intf=2
+    Should not be true  ${verify_overlap}
+    ${stream}=  L2 add  flow=a->c  frame_rate=10000  frame_size=64  frame_cnt=100000  name=a_c_flow  
+    ...         ethertype=0800  src_mac=${src_mac}  dst_mac=${dst_mac_other}   
+    clear stats    
+    start traffic  ${stream}
+    sleep  10        
+    stop traffic  ${stream}    
+    verify results  a  c  transmitted_frames  received_valid_frames
+    return ixia txrx value  d  received_valid_frames  0    
+    [Tags]  negative     
+
+
+Re-enable overlap knob and verify overlapping policies are deleted
+    ${ovelap_enabled}=  rest enable feature  overlap
+    Should be true  ${ovelap_enabled} 
+    Sleep  10
+    verify overlapping policies
+    ${stream}=  L2 add  flow=a->c  frame_rate=10000  frame_size=64  frame_cnt=100000  name=a_c_flow  
+    ...         ethertype=0800  src_mac=${src_mac}  dst_mac=${dst_mac}   
+    clear stats    
+    start traffic  ${stream}
+    sleep  10        
+    stop traffic  ${stream}    
+    verify results  a  c  transmitted_frames  received_valid_frames
+    verify results  a  d  transmitted_frames  received_valid_frames    
+    [Tags]  negative     
+
+Shutdown filter interface and verify overlapping policy goes away
+    cli disable interface  s1  ${switch1_filter_intf_1}
+    sleep  30  
+    ${verify_overlap}=  rest verify bigtap policy  ${policy_name_overlap}  num_filter_intf=1  num_delivery_intf=2
+    Should not be true  ${verify_overlap}
+    ${stream}=  L2 add  flow=a->c  frame_rate=10000  frame_size=64  frame_cnt=100000  name=a_c_flow  
+    ...         ethertype=0800  src_mac=${src_mac}  dst_mac=${dst_mac_other}   
+    clear stats    
+    start traffic  ${stream}
+    sleep  10        
+    stop traffic  ${stream}    
+    return ixia txrx value  c  received_valid_frames  0
+    return ixia txrx value  d  received_valid_frames  0     
+    [Tags]  negative 
+
+Re-enable previously shut filter interface and verify overlapping policy is re-created
+    cli enable interface  s1  ${switch1_filter_intf_1}
+    sleep  30  
+    verify overlapping policies
+    ${stream}=  L2 add  flow=a->c  frame_rate=10000  frame_size=64  frame_cnt=100000  name=a_c_flow  
+    ...         ethertype=0800  src_mac=${src_mac}  dst_mac=${dst_mac}   
+    clear stats    
+    start traffic  ${stream}
+    sleep  10        
+    stop traffic  ${stream}    
+    verify results  a  c  transmitted_frames  received_valid_frames
+    verify results  a  d  transmitted_frames  received_valid_frames     
+    [Tags]  negative  
+
+Shutdown delivery interface and verify overlapping policy goes away
+    ${stream}=  L2 add  flow=a->d  frame_rate=10000  frame_size=64  frame_cnt=100000  name=a_c_flow  
+    ...         ethertype=0800  src_mac=${src_mac}  dst_mac=${dst_mac} 
+    cli disable interface  s2  ${switch2_delivery_intf_1}
+    sleep  30  
+    ${verify_overlap}=  rest verify bigtap policy  ${policy_name_overlap}  num_filter_intf=1  num_delivery_intf=2
+    Should not be true  ${verify_overlap}
+    clear stats    
+    start traffic  ${stream}
+    sleep  10        
+    stop traffic  ${stream}    
+    return ixia txrx value  c  received_valid_frames  0
+    verify results  a  d  transmitted_frames  received_valid_frames     
+    [Tags]  negative
+
+Re-enable previously shut delivery interface and verify overlapping policy is re-created
+    cli enable interface  s2  ${switch2_delivery_intf_1}
+    sleep  30  
+    verify overlapping policies
+    ${stream}=  L2 add  flow=a->c  frame_rate=10000  frame_size=64  frame_cnt=100000  name=a_c_flow  
+    ...         ethertype=0800  src_mac=${src_mac}  dst_mac=${dst_mac}   
+    clear stats    
+    start traffic  ${stream}
+    sleep  10        
+    stop traffic  ${stream}    
+    verify results  a  c  transmitted_frames  received_valid_frames
+    verify results  a  d  transmitted_frames  received_valid_frames     
+    [Tags]  negative  
+
+
+Reboot filter switch and verify overlapping policies still exist
+    ${stream}=  L2 add  flow=a->c  frame_rate=10000  frame_size=64  frame_cnt=100000  name=a_c_flow  
+    ...         ethertype=0800  src_mac=${src_mac}  dst_mac=${dst_mac} 
+    cli restart switch  s1
+    Sleep  60
+    verify overlapping policies  
+    clear stats    
+    start traffic  ${stream}
+    sleep  10        
+    stop traffic  ${stream}    
+    verify results  a  c  transmitted_frames  received_valid_frames
+    verify results  a  d  transmitted_frames  received_valid_frames         
+    [Tags]  ha 
+
+Reboot delivery switch and verify overlapping policies still exist
+    ${stream}=  L2 add  flow=a->c  frame_rate=10000  frame_size=64  frame_cnt=100000  name=a_c_flow  
+    ...         ethertype=0800  src_mac=${src_mac}  dst_mac=${dst_mac}
+    cli restart switch  s2
+    Sleep  60    
+    verify overlapping policies   
+    clear stats    
+    start traffic  ${stream}
+    sleep  10        
+    stop traffic  ${stream}    
+    verify results  a  c  transmitted_frames  received_valid_frames
+    verify results  a  d  transmitted_frames  received_valid_frames       
+    [Tags]  ha  
+
+Reboot core switch and verify overlapping policies still exist
+    ${stream}=  L2 add  flow=a->c  frame_rate=10000  frame_size=64  frame_cnt=100000  name=a_c_flow  
+    ...         ethertype=0800  src_mac=${src_mac}  dst_mac=${dst_mac} 
+    cli restart switch  s3
+    Sleep  60        
+    verify overlapping policies  
+    clear stats    
+    start traffic  ${stream}
+    sleep  10        
+    stop traffic  ${stream}    
+    verify results  a  c  transmitted_frames  received_valid_frames
+    verify results  a  d  transmitted_frames  received_valid_frames       
+    [Tags]  ha 
+
+Execute HA Failover and verify overlapping policies still exist
+    ${stream}=  L2 add  flow=a->c  frame_rate=10000  frame_size=64  frame_cnt=100000  name=a_c_flow  
+    ...         ethertype=0800  src_mac=${src_mac}  dst_mac=${dst_mac}
+    verify overlapping policies   
+    clear stats    
+    start traffic  ${stream}
+    sleep  10        
+    stop traffic  ${stream}    
+    verify results  a  c  transmitted_frames  received_valid_frames
+    verify results  a  d  transmitted_frames  received_valid_frames      
+    rest execute ha failover
+    sleep  90
+    verify overlapping policies   
+    clear stats    
+    start traffic  ${stream}
+    sleep  10        
+    stop traffic  ${stream}    
+    verify results  a  c  transmitted_frames  received_valid_frames
+    verify results  a  d  transmitted_frames  received_valid_frames     
+    [Tags]  ha  run
+
+Change configuration execute HA Failback and verify overlapping policies still exist
+    rest delete policy match  admin-view  ${policy_name_1}  1
+    sleep  10
+    rest add policy match  admin-view  ${policy_name_1}  1  {"src-mac": ${src_mac_other}, "ether-type": 2048, "sequence": 1}
+    ${stream}=  L2 add  flow=a->c  frame_rate=10000  frame_size=64  frame_cnt=100000  name=a_c_flow  
+    ...         ethertype=0800  src_mac=${src_mac_other}  dst_mac=${dst_mac}
+    verify overlapping policies   
+    clear stats    
+    start traffic  ${stream}
+    sleep  10        
+    stop traffic  ${stream}    
+    verify results  a  c  transmitted_frames  received_valid_frames
+    verify results  a  d  transmitted_frames  received_valid_frames     
+    sleep  10         
+    rest execute ha failover
+    sleep  90
+    verify overlapping policies   
+    clear stats    
+    start traffic  ${stream}
+    sleep  10        
+    stop traffic  ${stream}    
+    verify results  a  c  transmitted_frames  received_valid_frames
+    verify results  a  d  transmitted_frames  received_valid_frames      
+    [Tags]  ha  
+
+        
+* Keywords
+
+overlap suite setup
+    base suite setup
+    ${ovelap_enabled}=  rest enable feature  overlap
+    Should be true  ${ovelap_enabled}  
+    #Configure Switch 1
+    ${result}=  rest add switch alias  s1  ${switch1_alias}
+    Should be true  ${result}      
+    ${result}=  rest add interface role  s1  ${switch1_filter_intf_1}  filter  ${switch1_filter_alias_1}
+    Should be true  ${result}  
+    ${result}=  rest add interface role  s1  ${switch1_filter_intf_2}  filter  ${switch1_filter_alias_2}
+    Should be true  ${result}
+    ${result}=  rest add interface role  s1  ${switch1_preservice_intf_1}  service  ${switch1_preservice_alias_1}
+    Should be true  ${result}  
+    ${result}=  rest add interface role  s1  ${switch1_postservice_intf_1}  service  ${switch1_postservice_alias_1}
+    Should be true  ${result}     
+    
+    #Configure Switch 2    
+    ${result}=  rest add switch alias  s2  ${switch2_alias}
+    Should be true  ${result}      
+    ${result}=  rest add interface role  s2  ${switch2_delivery_intf_1}  delivery  ${switch2_delivery_alias_1}
+    Should be true  ${result}  
+    ${result}=  rest add interface role  s2  ${switch2_delivery_intf_2}  delivery  ${switch2_delivery_alias_2}
+    Should be true  ${result}
+    ${result}=  rest add interface role  s2  ${switch2_preservice_intf_1}  service  ${switch2_preservice_alias_1}
+    Should be true  ${result}  
+    ${result}=  rest add interface role  s2  ${switch2_postservice_intf_1}  service  ${switch2_postservice_alias_1}
+    Should be true  ${result}      
+
+    
+    #Configure Switch 2    
+    ${result}=  rest add switch alias  s3  ${switch3_alias}
+    Should be true  ${result}      
+    ${result}=  rest add interface role  s3  ${switch3_filter_intf_1}  filter  ${switch3_filter_alias_1}
+    Should be true  ${result}  
+    ${result}=  rest add interface role  s3  ${switch3_delivery_intf_1}  delivery  ${switch3_delivery_alias_1}
+    Should be true  ${result}
+    ${result}=  rest add interface role  s3  ${switch3_preservice_intf_1}  service  ${switch3_preservice_alias_1}
+    Should be true  ${result}  
+    ${result}=  rest add interface role  s3  ${switch3_postservice_intf_1}  service  ${switch3_postservice_alias_1}
+    Should be true  ${result}
+    Sleep  5
+    
+    #Configure  All Services
+    ${result}=  rest add service  ${switch1_service_name}  ${switch1_preservice_alias_1}  ${switch1_postservice_alias_1}   
+    Should be true  ${result}
+    ${result}=  rest add service  ${switch2_service_name}  ${switch2_preservice_alias_1}  ${switch2_postservice_alias_1}   
+    Should be true  ${result}
+    ${result}=  rest add service  ${switch3_service_name}  ${switch3_preservice_alias_1}  ${switch3_postservice_alias_1}   
+    Should be true  ${result}            
+    Sleep  5
+
+verify overlapping policies
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${verify_policy2}=  rest verify bigtap policy  ${policy_name_2}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy2}
+    ${verify_policy12}=  rest verify bigtap policy  ${policy_name_overlap}  num_filter_intf=1  num_delivery_intf=2
+    Should be true  ${verify_policy12}
+
+verify results   [Arguments]  ${send_port}  ${recv_port}  ${transmitted_frames}  ${received_valid_frames}
+    Sleep  5
+    ${report}=  fetch port stats
+    ${tx_value}=  verify dict key  ${report}  ${send_port}  ${transmitted_frames}
+    ${rx_value}=  verify dict key  ${report}  ${recv_port}  ${received_valid_frames}
+    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}
+    Should be true  ${in_range}
+
+return ixia txrx value  [Arguments]  ${port}  ${frame_field}  ${verify_value}
+    Sleep  5
+    ${report}=  fetch port stats
+    ${tx_value}=  verify dict key  ${report}  ${port}  ${frame_field}
+    Should be equal as integers  ${tx_value}  ${verify_value}  
+
+verify protocol matches  [Arguments]  ${match_dictionary}
+    ${length}=  Get Length  ${match_dictionary}
+    : FOR    ${INDEX}    IN RANGE    0    ${length}/2
+    \    ${NINDEX}=  Evaluate  ${INDEX} + ${length}/2  
+    \    Log    ${match_dictionary[${INDEX}]}
+    \    Log    ${match_dictionary[${NINDEX}]}
+    \    rest delete policy match  admin-view  ${policy_name_1}   1
+    \    rest delete policy match  admin-view  ${policy_name_2}   1
+    \    Sleep  5
+    \    rest add policy match  admin-view  ${policy_name_1}   1  ${match_dictionary[${INDEX}]}   flag=True
+    \    rest add policy match  admin-view  ${policy_name_2}   1  ${match_dictionary[${NINDEX}]}  flag=True
+    \    Sleep  5
+    \    verify overlapping policies 
+    
+overlap test setup
+    rest add policy  admin-view  ${policy_name_1}   forward
+    rest add policy match  admin-view  ${policy_name_1}   1  {"src-mac": "00:11:00:00:00:01", "ether-type": 2048, "sequence": 1}
+    rest add policy interface  admin-view  ${policy_name_1}   ${switch1_filter_alias_1}  filter
+    rest add policy interface  admin-view  ${policy_name_1}   ${switch2_delivery_alias_1}  delivery 
+    Sleep  5  
+    rest add policy  admin-view  ${policy_name_2}   forward
+    rest add policy match  admin-view  ${policy_name_2}   1  {"dst-mac": "00:11:00:00:00:02", "ether-type": 2048, "sequence": 1}
+    rest add policy interface  admin-view  ${policy_name_2}   ${switch1_filter_alias_1}  filter
+    rest add policy interface  admin-view  ${policy_name_2}   ${switch2_delivery_alias_2}  delivery
+    Sleep  5
+
+overlap test teardown
+    delete traffic
+    rest delete policy  admin-view  ${policy_name_1}
+    rest delete policy  admin-view  ${policy_name_2}
+    sleep  5     
+
+overlap suite teardown
+    rest delete policy  admin-view  ${policy_name_1}
+    rest delete policy  admin-view  ${policy_name_2}
+    rest delete service  ${switch1_service_name}
+    rest delete service  ${switch2_service_name}
+    rest delete service  ${switch3_service_name}        
+    ${result}=  rest delete interface role  s1  ${switch1_filter_intf_1}   filter
+    Should be true  ${result}
+    ${result}=  rest delete interface role  s1  ${switch1_filter_intf_2}   filter
+    Should be true  ${result}
+    ${result}=  rest delete interface role  s1  ${switch1_preservice_intf_1}   service
+    Should be true  ${result}
+    ${result}=  rest delete interface role  s1  ${switch1_postservice_intf_1}   service    
+    Should be true  ${result}
+    ${result}=  rest delete interface role  s2  ${switch2_delivery_intf_1}   delivery
+    Should be true  ${result}
+    ${result}=  rest delete interface role  s2  ${switch2_delivery_intf_2}   delivery
+    Should be true  ${result}
+    ${result}=  rest delete interface role  s2  ${switch2_preservice_intf_1}   service
+    Should be true  ${result}
+    ${result}=  rest delete interface role  s2  ${switch2_postservice_intf_1}   service
+    Should be true  ${result}
+    ${result}=  rest delete interface role  s3  ${switch3_filter_intf_1}   filter
+    Should be true  ${result}
+    ${result}=  rest delete interface role  s3  ${switch3_delivery_intf_1}   delivery
+    Should be true  ${result}
+    ${result}=  rest delete interface role  s3  ${switch3_preservice_intf_1}   service
+    Should be true  ${result}
+    ${result}=  rest delete interface role  s3  ${switch3_postservice_intf_1}   service
+    Should be true  ${result}
+    Sleep  5
+    ${result}=  rest delete interface  s1  ${switch1_filter_intf_1}   
+    Should be true  ${result}
+    ${result}=  rest delete interface  s1  ${switch1_filter_intf_2} 
+    Should be true  ${result}
+    ${result}=  rest delete interface  s1  ${switch1_preservice_intf_1}
+    Should be true  ${result}
+    ${result}=  rest delete interface  s1  ${switch1_postservice_intf_1}
+    Should be true  ${result}            
+    ${result}=  rest delete interface  s2  ${switch2_delivery_intf_1}   
+    Should be true  ${result}
+    ${result}=  rest delete interface  s2  ${switch2_delivery_intf_2} 
+    Should be true  ${result}
+    ${result}=  rest delete interface  s2  ${switch2_preservice_intf_1}
+    Should be true  ${result}
+    ${result}=  rest delete interface  s2  ${switch2_postservice_intf_1}
+    Should be true  ${result}  
+    ${result}=  rest delete interface  s3  ${switch3_filter_intf_1}   
+    Should be true  ${result}
+    ${result}=  rest delete interface  s3  ${switch3_delivery_intf_1} 
+    Should be true  ${result}
+    ${result}=  rest delete interface  s3  ${switch3_preservice_intf_1}
+    Should be true  ${result}
+    ${result}=  rest delete interface  s3  ${switch3_postservice_intf_1}
+    Should be true  ${result}         
+    Sleep  5
+    rest delete switch alias  s1
+    rest delete switch alias  s2
+    rest delete switch alias  s3
+    rest delete switch   s1
+    rest delete switch   s2
+    rest delete switch   s3     
+    base suite teardown                        
