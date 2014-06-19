@@ -15,7 +15,7 @@ ${switchlight_version}  SwitchLight
 ${snmp_contact}  nw_admin@super_awesome_switch.com
 ${snmp_location_1}  CS_RACK11_6004
 ${snmp_location_2}  CS_RACK11_6013    
-${oneGlb9_name}  ethernet24
+${oneGlb9_name}  ethernet25
 ${tenGly2_name}  ethernet39
 ${fortyGly2_name}  ethernet52
 
@@ -62,32 +62,32 @@ Verify SNMP OID ifMtu of ma1
     [Tags]  feature
 
 Verify SNMP OID ifDescr of 1Gig Data Port
-    verify snmp attribute  s1  ifDescr.1024  ${oneGlb9_name}
+    verify snmp attribute  s1  ifDescr.1025  ${oneGlb9_name}
     [Tags]  feature  1G    
     
 Verify SNMP OID ifType of 1Gig Data Port
-    verify snmp attribute  s1  ifType.1024  ethernetCsmacd
+    verify snmp attribute  s1  ifType.1025  ethernetCsmacd
     [Tags]  feature  1G
         
 Verify SNMP OID ifAdminStatus of 1Gig Data Port
-    verify snmp attribute  s1  ifAdminStatus.1024  up
+    verify snmp attribute  s1  ifAdminStatus.1025  up
     [Tags]  feature  1G
         
 Verify SNMP OID ifOperStatus of 1Gig Data Port
-    verify snmp attribute  s1  ifOperStatus.1024  up
+    verify snmp attribute  s1  ifOperStatus.1025  up
     [Tags]  feature  1G
         
 Verify SNMP OID ifSpeed of 1Gig Data Port
-    verify snmp attribute  s1  ifSpeed.1024  1000000000
+    verify snmp attribute  s1  ifSpeed.1025  1000000000
     [Tags]  feature  1G
         
 Verify SNMP OID ifHighSpeed of 1Gig Data Port
-    verify snmp attribute  s1  ifHighSpeed.1024  1000
+    verify snmp attribute  s1  ifHighSpeed.1025  1000
     [Tags]  feature  1G
         
 Verify SNMP OID ifPhysAddress of 1Gig Data Port 
     ${mac_address1}=  cli show interface macaddress  s1  ${oneGlb9_name} 
-    verify snmp attribute  s1  ifPhysAddress.1024  ${mac_address1}
+    verify snmp attribute  s1  ifPhysAddress.1025  ${mac_address1}
     [Tags]  feature  1G
         
 Verify SNMP OID ifDescr of 10Gig Data Port
