@@ -4434,14 +4434,14 @@ class T5Platform(object):
             if num == int(cmd_argument_count):
                 helpers.log("Correct number of arguments found in CLI help output")
             else:
-                helpers.test_error("Correct number of arguments not returned", soft_error)
+                helpers.log("Correct number of arguments not returned", soft_error)
                 return False
 
             if "<cr> <cr>" in content:
                 helpers.test_error("CLI command has an incorrect help string '<cr> <cr>'", soft_error)
 
             if "<help missing>" in content:
-                helpers.test_error("CLI command has an mnissing help", soft_error)
+                helpers.test_error("CLI command has a missing help", soft_error)
 
             if (cmd_argument is not None) :
                 if (' ' in cmd_argument):
@@ -4452,12 +4452,12 @@ class T5Platform(object):
                         if (str(new_string[index]) in content):
                             helpers.log("Argument %s found in CLI help output" % new_string[index])
                         else:
-                            helpers.test_error("Argument %s NOT found in CLI help output. Error was %s " % (new_string[index], soft_error))
+                            helpers.log("Argument %s NOT found in CLI help output. Error was %s " % (new_string[index], soft_error))
                             return False
                 else:
                     if (str(cmd_argument) in content):
                         helpers.log("Argument %s found in CLI help output" % cmd_argument)
                     else:
-                        helpers.test_error("Argument %s NOT found in CLI help output. Error was %s " % (cmd_argument, soft_error))
+                        helpers.log("Argument %s NOT found in CLI help output. Error was %s " % (cmd_argument, soft_error))
                         return False
             return True
