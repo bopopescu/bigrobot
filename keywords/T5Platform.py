@@ -83,9 +83,9 @@ class T5Platform(object):
         else:
             slave.rest.post(url, {"rigged": False})
 
-        #sleep(30)
+        # sleep(30)
         sleep(90)
-        
+
         newMasterID = self.getNodeID(False)
         if(newMasterID == -1):
             return False
@@ -112,7 +112,7 @@ class T5Platform(object):
         returnVal = self._cluster_election(True)
         if(not returnVal):
             return False
-        #sleep(30)
+        # sleep(30)
         sleep(90)
         return utilities.fabric_integrity_checker(obj, "after")
 
@@ -138,7 +138,7 @@ class T5Platform(object):
             c.send("system failover")
             c.expect(r"Failover to this controller node \(yes/no\)?")
             c.config("yes")
-            #sleep(30)
+            # sleep(30)
             sleep(90)
         except:
             helpers.test_log(c.cli_content())
@@ -155,7 +155,7 @@ class T5Platform(object):
         returnVal = self._cluster_election(False)
         if(not returnVal):
             return False
-        #sleep(30)
+        # sleep(30)
         sleep(60)
         return utilities.fabric_integrity_checker(obj, "before")
 
@@ -178,7 +178,7 @@ class T5Platform(object):
         if(singleNode):
             masterID = self.getNodeID(False)
         else:
-            masterID, slaveID = self.getNodeID() 
+            masterID, slaveID = self.getNodeID()
 
         if(singleNode):
             if (masterID == -1):
@@ -193,7 +193,7 @@ class T5Platform(object):
                 master.enable("system reboot", prompt="Confirm \(yes to continue\)")
                 master.enable("yes")
                 helpers.log("Master is rebooting")
-                #sleep(90)
+                # sleep(90)
                 sleep(160)
             else:
                 slave = t.controller("slave")
@@ -201,7 +201,7 @@ class T5Platform(object):
                 slave.enable("system reboot", prompt="Confirm \(yes to continue\)")
                 slave.enable("yes")
                 helpers.log("Slave is rebooting")
-                #sleep(90)
+                # sleep(90)
                 sleep(160)
         except:
             helpers.log("Node is rebooting")
@@ -1699,7 +1699,7 @@ class T5Platform(object):
 #            c.expect(r'[\r\n].+password: ')
 
             options = c.expect([r'[\r\n].+password: ', r'[\r\n].+yes/no'])
-         
+
             if options[0] == 0:
                 helpers.log("INFO:  need to provide passwd ")
                 c.send('bsn')
@@ -1708,11 +1708,11 @@ class T5Platform(object):
                 c.send('yes')
                 c.expect(r'[\r\n].+password: ')
                 c.send('bsn')
-        
+
             content = c.cli_content()
             helpers.log("*****Output is :\n%s" % content)
 
- 
+
             try:
                 c.expect(timeout=300)
             except:
@@ -1748,9 +1748,9 @@ class T5Platform(object):
         c.config('')
         string = 'copy scp://' + src
         c.send(string + ' image://')
-        
+
         options = c.expect([r'[\r\n].+password: ', r'[\r\n].+yes/no'])
-         
+
         if options[0] == 0:
             helpers.log("INFO:  need to provide passwd ")
             c.send(passwd)
@@ -1759,10 +1759,10 @@ class T5Platform(object):
             c.send('yes')
             c.expect(r'[\r\n].+password: ')
             c.send(passwd)
-        
+
         content = c.cli_content()
         helpers.log("*****Output is :\n%s" % content)
-        
+
         try:
             c.expect(timeout=180)
         except:
@@ -1908,7 +1908,7 @@ class T5Platform(object):
         else:
             c.send('upgrade stage ' + image)
         options = c.expect([r'[\r\n].*to continue.*', r'.* currently staged on alternate partition'])
-         
+
         if options[0] == 1:
             helpers.log('USER INFO:  image is staged already ')
             return True
@@ -1959,12 +1959,12 @@ class T5Platform(object):
         content = c.cli_content()
         helpers.log("USER INFO: the content:  %s" % content)
         if options[0] == 1:
-            c.send("yes")             
+            c.send("yes")
 
         try:
             c.expect(r'[\r\n].+[R|r]ebooting.*')
             content = c.cli_content()
-            helpers.log("*****Output is :\n%s" % content)           
+            helpers.log("*****Output is :\n%s" % content)
         except:
             helpers.log('ERROR: upgrade launch NOT successfully')
             return False
@@ -2742,7 +2742,7 @@ class T5Platform(object):
         n_console.expect(r'Initializing system.*[\r\n]')
         n_console.expect(r'Configuring controller.*[\r\n]')
 
-        n_console.expect(r'IP address on eth0 is (.*)[\r\n]')
+        n_console.expect(r'IP address on eth0 is (.*)[\r\n]', timeout=600)
         content = n_console.content()
 
         helpers.log("content is:  %s" % content)
