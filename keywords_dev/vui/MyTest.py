@@ -552,6 +552,10 @@ vui@Vuis-MacBook-Pro$
         con.sudo("cat /etc/shadow")
         con.enable("show running-config")
 
+        # IMPORTANT: Be sure to get back to CLI mode so future console
+        # connections won't get confused.
+        con.cli("")
+
     def test_console2(self, node):
         t = test.Test()
         n = t.node(node)
