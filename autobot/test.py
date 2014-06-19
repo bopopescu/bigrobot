@@ -778,7 +778,8 @@ class Test(object):
         helpers.log("Console user:%s password:%s" % (user, password))
 
         # This regex should match prompts from BSN controllers and switches.
-        prompt_device_cli = r'[\r\n\x07]+(\w+(-?\w+)?\s?@?)?[\-\w+\.:/]+(?:\([^\)]+\))?(:~)?[>#$] ?$'
+        # See vendors/exscript/src/Exscript/protocols/drivers/bsn_{switch,controller}.py
+        prompt_device_cli = r'[\r\n\x07]+\s?(\w+(-?\w+)?\s?@?)?[\-\w+\.:/]+(?:\([^\)]+\))?(:~)?[>#$] ?$'
 
         def login():
             helpers.log("Found the login prompt. Sending user name.")

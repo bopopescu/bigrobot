@@ -1401,8 +1401,6 @@ def ping(host, count=10, timeout=5, loss=0, quiet=False):
     if count < 4:
         count = 4  # minimum count
 
-    # Need to ping with minimum of 2 counts since 1 packet may get lost due
-    # to multiple hops (if destination host is not in the same network).
     actual_loss = _ping(host, count=count, timeout=5, quiet=quiet)
     if actual_loss > loss:
         actual_loss = _ping(host, count=count, timeout=5, quiet=quiet)
