@@ -18,6 +18,8 @@ from BsnCommon import BsnCommon as bsnCommon
 '''
 switchList_b4 = []
 switchList_after = []
+slave_switchList_b4 = []
+slave_switchList_after = []
 fabricLinks_b4 = []
 fabricLinks_after = []
 endpoints_b4 = []
@@ -45,6 +47,7 @@ fwdDhcpTable_b4 = []
 fwdDhcpTable_after = []
 
 warningCount = 0
+fabricErrorEncounteredFlag = False
 
 
 floodlightMonitorFlag = False
@@ -80,6 +83,8 @@ class T5Utilities(object):
         ''' 
         global switchList_b4
         global switchList_after
+        global slave_switchList_b4
+        global slave_switchList_after
         global fabricLinks_b4
         global fabricLinks_after
         global endpoints_b4
@@ -108,11 +113,12 @@ class T5Utilities(object):
         global fwdDhcpTable_after
         
         global warningCount
-        
+        global fabricErrorEncounteredFlag
 
         # Switch connectivity verification
         if (state == "before"):
             switchList_b4 = self._gather_switch_connectivity()
+            slave_switchList_b4 = self._gather_switch_connectivity("slave")
             fabricLinks_b4 = self._gather_fabric_links()
             endpoints_b4 = self._gather_endpoints()
             fabricLags_b4 = self._gather_fabric_lags()
@@ -131,6 +137,8 @@ class T5Utilities(object):
         else:
             switchList_after = self._gather_switch_connectivity()
             warningCount = self._compare_fabric_elements(switchList_b4, switchList_after, "SwitchList")
+            slave_switchList_after = self._gather_switch_connectivity("slave")
+            warningCount = self._compare_fabric_elements(slave_switchList_b4, slave_switchList_after, "SwitchList")
             fabricLinks_after = self._gather_fabric_links()
             warningCount = self._compare_fabric_elements(fabricLinks_b4, fabricLinks_after, "FabricLinks")
             endpoints_after = self._gather_endpoints()
@@ -156,7 +164,10 @@ class T5Utilities(object):
             warningCount = self._compare_fabric_elements(fwdEcmpTable_b4, fwdEcmpTable_after, "fwdEcmpTable")
             fwdDhcpTable_after = self._gather_forwarding('dhcp-table')
             warningCount = self._compare_fabric_elements(fwdDhcpTable_b4, fwdDhcpTable_after, "fwdDhcpTable")
-
+            
+        if(fabricErrorEncounteredFlag):
+            helpers.warn("------- Fabric Error encountered during Fabric Integrity Checks. Returning False -------")
+            return False
         if(warningCount == 0): 
             if(state == "after"):
                 helpers.log("Switch status is intact after the state change operation")
@@ -169,7 +180,7 @@ class T5Utilities(object):
         
         
         
-    def _gather_switch_connectivity(self):
+    def _gather_switch_connectivity(self, node="master"):
         ''' 
         -    This is a helper function. This function is used by "fabric_integrity_checker"
         
@@ -178,7 +189,10 @@ class T5Utilities(object):
 
         '''
         t = test.Test()
-        c = t.controller("master")
+        if(node=="master"):
+            c = t.controller("master")
+        else:
+            c = t.controller("slave")
         url = "/api/v1/data/controller/applications/bvs/info/fabric/switch"
         result =  c.rest.get(url)['content']
         switchList = []
@@ -445,6 +459,7 @@ class T5Utilities(object):
                 6) Show Forwarding Table 
         '''
         global warningCount
+        global fabricErrorEncounteredFlag
         helpers.log("Before State Change Total # of Fabric Elements: %s " % len(list_b4))
         helpers.log("Before State Change : %s " % list_b4)
         helpers.log("After State Change Total # of Fabric Elements: %s " % len(list_after))
@@ -519,14 +534,18 @@ class T5Utilities(object):
                     if item not in list_after:
                         if (fabricElement == "SwitchList"):
                             helpers.warn("Switch list item: %s is not present after the state change" % item)
+                            fabricErrorEncounteredFlag = True
                         if (fabricElement == "FabricLinks"):
                             helpers.warn("Fabric Link: %s is not present after the state change" % item)
+                            fabricErrorEncounteredFlag = True
                         if (fabricElement == "FabricEndpoints"):
                             helpers.warn("Endpoint: %s is not present after the state change" % item)
                         if (fabricElement == "FabricLags"):
                             helpers.warn("Fabric Lag: %s is not present after the state change" % item)
+                            fabricErrorEncounteredFlag = True
                         if (fabricElement == "PortGroups"):
                             helpers.warn("Port Group: %s is not present after the state change" % item)
+                            fabricErrorEncounteredFlag = True
                             
                         if (fabricElement == "fwdARPTable"):
                             helpers.warn("FWD:ARP Table Entry: %s is not present after the state change" % item)
@@ -551,14 +570,18 @@ class T5Utilities(object):
                     if item not in list_b4:
                         if (fabricElement == "SwitchList"):
                             helpers.warn("New Switch list item: %s is present after the state change" % item)
+                            fabricErrorEncounteredFlag = True
                         if (fabricElement == "FabricLinks"):
                             helpers.warn("New fabric link: %s is present after the state change" % item)
+                            fabricErrorEncounteredFlag = True
                         if (fabricElement == "FabricEndpoints"):
                             helpers.warn("New endpoint: %s present after the state change" % item)
                         if (fabricElement == "FabricLags"):
                             helpers.warn("New fabric lag: %s is present after the state change" % item)
+                            fabricErrorEncounteredFlag = True
                         if (fabricElement == "PortGroups"):
                             helpers.warn("New portgroup: %s is present after the state change" % item)
+                            fabricErrorEncounteredFlag = True
                             
                         if (fabricElement == "fwdARPTable"):
                             helpers.warn("New FWD:ARP Table Entry: %s is present after the state change" % item)
