@@ -479,3 +479,15 @@ class KVMOperations(object):
             helpers.log("Current Running VMs on KVM_HOST : \n %s" % kvm_handle.bash('sudo virsh list --all')['content'])
         else:
             helpers.summary_log("FAILURE CREATING VM  :( Need to debug ...")
+
+    def virsh_cmd(self, node=None, virsh_cmd=None):
+        '''
+
+        '''
+        t = test.Test()
+        if node is None:
+            helpers.log("Please provide Host name of the Kvm Host to perform Virsh cmds...")
+            return True
+        kvm_host = t.host(node)
+        kvm_host.bash(virsh_cmd)
+        helpers.log("Success executing virsh cmd..")
