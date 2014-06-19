@@ -462,7 +462,6 @@ verify switch interface stats  [Arguments]  ${switch}  ${intf}
 	
 T5 test setup
 	base test setup
-	bring up 1 gig interface
 	sleep  5
 	rest add tenant  t1
   	rest add tenant  t2
@@ -516,8 +515,3 @@ bring up h6 bond0
 	bash init intf  h6  bond0
     bash add ip address  h6  ${h6_ip}/24  bond0
     bash ifup intf  h6  bond0 
-bring up 1 gig interface
-	bash execute command  leaf0-a  ofad-ctl autoneg 25
-	bash execute command  leaf0-a  ofad-ctl autoneg 26
-	bash execute command  leaf1-a  ofad-ctl autoneg 25
-	bash execute command  leaf1-a  ofad-ctl autoneg 26 
