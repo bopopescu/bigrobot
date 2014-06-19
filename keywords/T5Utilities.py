@@ -16,8 +16,8 @@ from BsnCommon import BsnCommon as bsnCommon
 ''' Global variables to save the state
     Used by: fabric_integrity_checker 
 '''
-switchDict_b4 = {}
-switchDict_after = {}
+switchList_b4 = []
+switchList_after = []
 fabricLinks_b4 = []
 fabricLinks_after = []
 endpoints_b4 = []
@@ -78,8 +78,8 @@ class T5Utilities(object):
         |    Warning Messages along with return True
         
         ''' 
-        global switchDict_b4
-        global switchDict_after
+        global switchList_b4
+        global switchList_after
         global fabricLinks_b4
         global fabricLinks_after
         global endpoints_b4
@@ -112,7 +112,7 @@ class T5Utilities(object):
 
         # Switch connectivity verification
         if (state == "before"):
-            switchDict_b4 = self._gather_switch_connectivity()
+            switchList_b4 = self._gather_switch_connectivity()
             fabricLinks_b4 = self._gather_fabric_links()
             endpoints_b4 = self._gather_endpoints()
             fabricLags_b4 = self._gather_fabric_lags()
@@ -129,8 +129,8 @@ class T5Utilities(object):
             
 
         else:
-            switchDict_after = self._gather_switch_connectivity()
-            warningCount = self._compare_switch_status(switchDict_b4, switchDict_after)
+            switchList_after = self._gather_switch_connectivity()
+            warningCount = self._compare_fabric_elements(switchList_b4, switchList_after, "SwitchList")
             fabricLinks_after = self._gather_fabric_links()
             warningCount = self._compare_fabric_elements(fabricLinks_b4, fabricLinks_after, "FabricLinks")
             endpoints_after = self._gather_endpoints()
@@ -179,48 +179,31 @@ class T5Utilities(object):
         '''
         t = test.Test()
         c = t.controller("master")
-        url = "/api/v1/data/controller/core/switch"
+        url = "/api/v1/data/controller/applications/bvs/info/fabric/switch"
         result =  c.rest.get(url)['content']
-        switchDict = {}
+        switchList = []
         i = 0
+        
         while i<len(result):
-            dpid = result[i]['dpid']
-            switchDict[dpid] = result[i]['connected']
-            i += 1
-
-        return switchDict
-    
-
-    def _compare_switch_status(self, switchDict_b4, switchDict_after):
-        ''' 
-        -    This is a helper function. This function is used by "fabric_integrity_checker"
-        
-        Description:
-        -    Using the "show switch" command verify switches are connected to the fabric
-
-        ''' 
-
-        global warningCount
-        helpers.log("Before is : %s " % switchDict_b4)
-        helpers.log("After is: %s " % switchDict_after)
-        
-        if(len(switchDict_b4) != len(switchDict_after)):
-            helpers.warn("-----------    Connected Switch Discrepancies    -----------")
-            helpers.warn("Warning: Number of switches are different between Before & After")
-            warningCount += 1
-
-        for switch in switchDict_b4:
             try:
-                if switchDict_after[switch] != switchDict_b4[switch]:
-                    helpers.warn("Warning: Switch status for switch %s has changed from: %s to %s " \
-                            %(switch, switchDict_b4[switch], switchDict_after[switch]))
-                    warningCount += 1
+                dpid = result[i]['dpid']
+                connected = result[i]['connected']
+                fabricConState = result[i]['fabric-connection-state']
+                fabricRole = result[i]['fabric-role']
+                shutdown = result[i]['shutdown']
+                try:
+                    handShakeState = result[i]['handshake-state']
+                    key = "%s-%s-%s-%s-%s-%s" % (dpid, connected, fabricConState, fabricRole, shutdown, handShakeState)
+                except(KeyError):
+                    key = "%s-%s-%s-%s-%s" % (dpid, connected, fabricConState, fabricRole, shutdown)
+                    
+                switchList.append(key)
+                i += 1
             except(KeyError):
-                helpers.warn("Warning: Switch: %s is not present after the state change " % (switch))
-                warningCount += 1 
+                helpers.warn("Warning: No switches are detected in the fabric")
 
-        return warningCount
-
+        return switchList
+    
 
     def _gather_fabric_links(self):
         ''' 
@@ -454,11 +437,12 @@ class T5Utilities(object):
         Description:
             Compare fabric element status from one list to the elements in the other list
             fabricElement can be one of the following:
-                1) Fabric Links
-                2) Fabric Endpoints
-                3) Fabric Lags
-                4) Port Groups
-                5) Show Forwarding Table 
+                1) Switch List
+                2) Fabric Links
+                3) Fabric Endpoints
+                4) Fabric Lags
+                5) Port Groups
+                6) Show Forwarding Table 
         '''
         global warningCount
         helpers.log("Before State Change Total # of Fabric Elements: %s " % len(list_b4))
@@ -467,6 +451,8 @@ class T5Utilities(object):
         helpers.log("After State Change: %s " % list_after)
         
         if(helpers.list_compare(list_b4, list_after)):
+            if(fabricElement == "SwitchList"):
+                helpers.log("Switch List is intact between states")
             if (fabricElement == "FabricLinks"):
                 helpers.log("Fabric Links are intact between states")
             if (fabricElement == "FabricEndpoints"):
@@ -499,6 +485,8 @@ class T5Utilities(object):
             #helpers.warn("Got List Different from helpers")
             #helpers.log("B4 is: %s" % list_b4)
             #helpers.log("After is: %s" % list_after)
+            if (fabricElement == "SwitchList"):
+                helpers.warn("-----------    Switch List Discrepancies    -----------")
             if (fabricElement == "FabricLinks"):
                 helpers.warn("-----------    Fabric Link Discrepancies    -----------")
             if (fabricElement == "FabricEndpoints"):
@@ -529,6 +517,8 @@ class T5Utilities(object):
             if (len(list_b4) > len(list_after)):
                 for item in list_b4:
                     if item not in list_after:
+                        if (fabricElement == "SwitchList"):
+                            helpers.warn("Switch list item: %s is not present after the state change" % item)
                         if (fabricElement == "FabricLinks"):
                             helpers.warn("Fabric Link: %s is not present after the state change" % item)
                         if (fabricElement == "FabricEndpoints"):
@@ -559,6 +549,8 @@ class T5Utilities(object):
             else:
                 for item in list_after:
                     if item not in list_b4:
+                        if (fabricElement == "SwitchList"):
+                            helpers.warn("New Switch list item: %s is present after the state change" % item)
                         if (fabricElement == "FabricLinks"):
                             helpers.warn("New fabric link: %s is present after the state change" % item)
                         if (fabricElement == "FabricEndpoints"):
