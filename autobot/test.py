@@ -296,7 +296,7 @@ class Test(object):
             return self._settings.get(name, None)
         return self._settings  # return entire settings dictionary
 
-    def topology_params(self, node=None, key=None, default=None):
+    def topology_params(self, node=None, key=None, default=None, new_val=None):
         """
         Usage:
         - t.params('c1')  # return attributes for c1
@@ -321,24 +321,27 @@ class Test(object):
                 ...
             }
         """
-        if node:
+        if node != None:
             node = self.alias(node)
             if node not in self._topology_params:
                 helpers.environment_failure("Node '%s' is not defined in topology file"
                                             % node)
-            else:
-                if key:
-                    if key not in self._topology_params[node]:
-                        if default:
-                            self._topology_params[node][key] = default
-                            return default
-                        helpers.environment_failure("Node '%s' does not have attribute '%s' defined"
-                                           % (node, key))
-                    else:
-                        return self._topology_params[node][key]
+            if key != None and new_val != None:
+                helpers.log("Updating param[%s][%s] to '%s'" %
+                            (node, key, new_val))
+                self._topology_params[node][key] = new_val
+            if key != None:
+                if key not in self._topology_params[node]:
+                    if default:
+                        self._topology_params[node][key] = default
+                        return default
+                    helpers.environment_failure("Node '%s' does not have attribute '%s' defined"
+                                       % (node, key))
                 else:
-                    return self._topology_params[node]
-        elif key:
+                    return self._topology_params[node][key]
+            else:
+                return self._topology_params[node]
+        elif key != None:
             helpers.environment_failure("Key '%s' is defined but not associated with a node"
                                         % key)
         return self._topology_params
@@ -731,7 +734,8 @@ class Test(object):
             node_name = self.node(node).name()
         helpers.log("Actual node name is '%s'" % node_name)
         c = self.node_connect(node_name, **kwargs)
-        c.rest.request_session_cookie()
+        if helpers.is_controller(node):
+            c.rest.request_session_cookie()
         return self.node(node)
 
     def dev_console(self, node, modeless=False):
@@ -753,6 +757,9 @@ class Test(object):
             con.sudo("cat /etc/shadow")
             con.enable("show running-config")
 
+        Assumption:
+            After authentication, the device puts you directly in the CLI mode.
+
         How it works:
         - It attempts to exit out of whichever mode the console is currently
            in, then try to put the device into CLI mode, or die trying...
@@ -760,8 +767,12 @@ class Test(object):
           atttempt to log in. The user can decide how to control the console
           session (i.e.,  the user is on his own).
 
-        Returns a DevConf object since console is essentially an "Expect"
-        session and not a full blown node object.
+        Returns a generic DevConf object since console is essentially an
+        "Expect" session and not a full blown node object.
+
+        Note: User needs to put the console back to CLI mode to avoid future
+        console connections getting confused. At the end of the keyword, do:
+            con.cli("")
         """
         t = self
         n = t.node(node)
@@ -802,7 +813,7 @@ class Test(object):
             match = n_console.expect(prompt=[prompt_login])
             login()
 
-        # Set the device mode to CLI
+        # Assume that the device mode is CLI by default.
         n_console.mode('cli')
         n_console.cli('show version')
         return n_console
@@ -1017,6 +1028,33 @@ class Test(object):
                         n.config("controller %s" % c.ip())
             n.config("copy running-config startup-config")
 
+    def setup_ztn(self, name):
+        # n = self.topology(name)
+        if not helpers.is_switch(name):
+            return True
+        console = self.params(name, 'console')
+        if not ('ip' in console and 'port' in console):
+            return True
+        helpers.log("ZTN setup - found switch '%s' console info" % name)
+        con = self.dev_console(name)
+        if not helpers.is_switchlight(con.platform()):
+            helpers.log("ZTN setup - switch '%s' is not SwitchLight. No action..." % name)
+            return True
+        helpers.log("ZTN setup - found SwitchLight '%s'. Creating admin account and starting SSH service." % name)
+        con.config("username admin secret adminadmin")
+        con.config("ssh enable")
+        content = con.config("show running-config")["content"]
+        match = helpers.any_match(content,
+                                  r'interface ma1 ip-address (\d+\.\d+\.\d+\.\d+).*')
+        if match and len(match) == 1:
+            mgt_ip = match[0]
+            helpers.log("ZTN setup - SwitchLight '%s' management IP is %s. Updating topology params." % (name, mgt_ip))
+            self.params(name, 'ip', new_val=mgt_ip)
+        else:
+            helpers.warn("ZTN setup - SwitchLight '%s' does not have a management IP" % name)
+        con.cli("")
+        self.node_reconnect(name)
+
     def setup(self):
         # This check ensures we  don't try to setup multiple times.
         if self._setup_completed:  # pylint: disable=E0203
@@ -1033,15 +1071,19 @@ class Test(object):
         helpers.debug("Topology info:\n%s" % helpers.prettify(params))
 
         if helpers.bigrobot_test_setup().lower() != 'false':
+            if helpers.bigrobot_test_ztn():
+                helpers.debug("Env BIGROBOT_TEST_ZTN is True. Setting up ZTN.")
+                for key in params:
+                    self.setup_ztn(key)
+                helpers.debug("Updated topology info:\n%s"
+                              % helpers.prettify(params))
             for key in params:
                 if helpers.is_controller(key):
                     self.setup_controller_pre_clean_config(key)
                 elif helpers.is_switch(key):
                     self.setup_switch_pre_clean_config(key)
-
             for key in params:
                 self.clean_config(key)
-
             for key in params:
                 if helpers.is_controller(key):
                     self.setup_controller_post_clean_config(key)

@@ -488,6 +488,14 @@ def bigrobot_test_clean_config(new_val=None, default='True'):
     return _env_get_and_set('BIGROBOT_TEST_CLEAN_CONFIG', new_val, default)
 
 
+def bigrobot_test_ztn(new_val=None, default='False'):
+    """
+    Category: Get/set environment variables for BigRobot.
+    Set to 'True' if using ZTN setup and tests.
+    """
+    return _env_get_and_set('BIGROBOT_TEST_ZTN', new_val, default)
+
+
 def bigrobot_log_archiver(new_val=None, default='jenkins-w4.bigswitch.com'):
     """
     Category: Get/set environment variables for BigRobot.
