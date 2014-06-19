@@ -1071,7 +1071,7 @@ class Test(object):
         helpers.debug("Topology info:\n%s" % helpers.prettify(params))
 
         if helpers.bigrobot_test_setup().lower() != 'false':
-            if helpers.bigrobot_test_ztn():
+            if helpers.bigrobot_test_ztn().lower() == 'true':
                 helpers.debug("Env BIGROBOT_TEST_ZTN is True. Setting up ZTN.")
                 for key in params:
                     self.setup_ztn(key)
