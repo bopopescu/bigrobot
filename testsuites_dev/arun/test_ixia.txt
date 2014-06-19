@@ -440,20 +440,36 @@ Test IXIA
 	L3 start hosts  port_name=b
 	${result}=  L3 chk gw arp
 	should be true  ${result}
-	[Tags]  run
+	[Tags]  traffic  arp
 
 32_BiDirectional L3 Traffic with TCP and custom Payload is always no ARP
-    ${stream}=  L3 add  name=${stream_name}  flow=a<->b  frame_rate=${frame_size}  frame_size=${frame_size}  frame_cnt=${frame_cnt}
+    ${stream}=  L3 add  name=${stream_name}  flow=a->b  frame_rate=${frame_rate}  frame_size=${frame_size}  frame_cnt=${frame_cnt}
     ...     src_mac=${src_mac}  dst_mac=${dst_mac}  protocol=TCP  src_port=8001  dst_port=8002
     ...     src_ip=100.1.1.1  src_gw=100.1.1.2  dst_ip=100.1.1.2  dst_gw=100.1.1.1  payload=2000000000000064
     clear stats
     start traffic  ${stream}
     sleep  ${sleep_time}
     stop traffic  ${stream}
+    sleep         ${sleep_time}
+    ${report}=  fetch port stats  stream=${stream}
+    verify results  transmitted_frames  received_frames  ${stream}  ${stream_name}
+    [Tags]  traffic  sanity  bigtap
+    
+33_Bi-Directional L3 Traffic with different Hosts in differnt Src and Dst Vlans and networks
+# Basic test case with all default values and ICMP type and value
+    ${stream}=             L3 add  name=${stream_name}  flow=a<->b  src_mac=${src_mac}  dst_mac=${dst_mac}
+    ...						src_cnt=${src_cnt}  dst_cnt=${dst_cnt}  src_ip=20.0.0.1  dst_ip=20.0.0.2
+    ...						src_ip_step=0.0.1.0  dst_ip_step=0.0.1.0  src_gw=20.0.0.2  src_gw_step=0.0.1.0
+    ...						dst_gw=20.0.0.1  dst_gw_step=0.0.1.0  vlan_id=2  vlan_cnt=${src_cnt}
+    clear stats
+    start traffic  ${stream}  learn=True
+    sleep                  ${sleep_time}
+    stop traffic   ${stream}
     sleep                  ${sleep_time}
     ${report}=             fetch port stats  stream=${stream}
     verify results  transmitted_frames  received_frames  ${stream}  ${stream_name}
-    [Tags]  traffic  sanity  bigtap  run
+    [Tags]  traffic  bigtap
+    
 *Keywords
 atest teardown
 	delete traffic

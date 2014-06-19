@@ -182,7 +182,7 @@ Bi-Directional L2 Traffic flow=a<->b traffic framerate 10000 pktsize 1518
     ${report}=     fetch port stats
     verify results traffic  transmitted_frame_rate  received_frame_rate  ${ratetolerance}  
     stop traffic   ${stream}
-    [Tags]  switch-platform  L2  traffic  feature  
+    [Tags]  switch-platform  L2  traffic  feature  run 
 
 Bi-Directional L2 Traffic flow=a<->b traffic linerate 75% pktsize 1518
     ${stream}=     L2 add  flow=a<->b  src_mac=00:11:01:00:03:01  dst_mac=00:11:01:00:03:02  line_rate=75  frame_size=1518  ethertype=8000  name=a_b_bidir_flow
