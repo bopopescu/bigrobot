@@ -32,14 +32,14 @@ ${z2_ip}			10.253.2.1
 ${z2_subnet}		24
 ${z3_ip}			10.253.3.1
 ${z3_subnet}		24
-${spine0_dpid}		00:00:00:00:01:00:00:01 
-${spine1_dpid}		00:00:00:00:01:00:00:02
-${leaf0a_dpid}		00:00:00:00:02:00:00:01
-${leaf0b_dpid}		00:00:00:00:02:00:00:02
-${leaf1a_dpid}		00:00:00:00:02:00:00:03
-${leaf1b_dpid}		00:00:00:00:02:00:00:04
-${leaf2a_dpid}		00:00:00:00:02:00:00:05
-${leaf2b_dpid}		00:00:00:00:02:00:00:06
+${spine0_dpid}		00:00:70:72:cf:a8:07:50 
+${spine1_dpid}		00:00:70:72:cf:a8:09:50
+${leaf0a_dpid}		00:00:70:72:cf:bc:c7:5e
+${leaf0b_dpid}		00:00:70:72:cf:bc:c4:7a
+${leaf1a_dpid}		00:00:70:72:cf:b7:6d:5c
+${leaf1b_dpid}		00:00:70:72:cf:b6:01:f2
+${leaf2a_dpid}		00:00:70:72:cf:b5:ff:0e
+${leaf2b_dpid}		00:00:70:72:cf:b7:6e:3a
 
 
 ${leaf0-a}			leaf0-a
