@@ -82,7 +82,7 @@ Dhcp request from other host in other tenants with dhcp enabled but no inter ten
 
 Dhcp request from other host in other tenants without dhcp relay enabled but with inter tenant route
 	Dhcp request from other host in other tenants without dhcp relay enabled but with inter tenant route
-	[Tags]		feature			dhcp-relay			
+	[Tags]		feature			dhcp-relay			    run99
 
 Inter tenant dhcp relay with multiple dhcp servers
 	Inter tenant dhcp relay with multiple dhcp servers
@@ -206,11 +206,11 @@ L3 inter tenant forwarding with ecmp destination
 
 L3 inter tenant shutdown and bringup both leaf switch in a dual tor setup
 	L3 inter tenant shutdown and bringup both leaf switch in a dual tor setup
-	[Tags]			feature			
+	[Tags]			feature			run99
 
 L3 inter tenant shutdown and bringup both spine switch 
 	L3 inter tenant shutdown and bringup both spine switch
-	[Tags]			feature			
+	[Tags]			feature			run99
 
 L3 inter tenant destroy active controller VM from KVM
 	manual passed
@@ -1316,6 +1316,9 @@ Dhcp request from other host in other tenants without dhcp relay enabled but wit
 	Should Contain								${value}						is started
 	sleep										1
 	BASH add route								h1								10.252.0.0/16			10.251.1.1
+	BASH release dhcpv4 address                 h2                              bond0.1002
+	BASH release dhcpv4 address                 h5                              bond0
+	sleep                                       1
 	${ipAddr2} = 								BASH renew dhcpv4 address		h2						bond0.1002
 	Should Be Empty								${ipAddr2}
 	${ipAddr5} = 								BASH renew dhcpv4 address		h5						bond0
@@ -1448,6 +1451,7 @@ Host moved to another vns on another tenant and renew dhcp
     sleep                                       1  
 	${ipAddr5} =								BASH renew dhcpv4 address		h5						bond0
 	Should Not Be Empty							${ipAddr5}
+    BASH Ping                                   h5                              10.251.1.1              count=3
 	${result} = 								REST show endpoints mac			${mac5}
 	Should Not Be Empty							${result}
 	${attachpoint} = 							Set Variable					${result[0]['attachment-point']}
@@ -2391,11 +2395,11 @@ L3 inter tenant shutdown and bringup both leaf switch in a dual tor setup
     REST add portgroup to vns                   Y                               Y1                      ${leaf1_pc2}            -1
     REST add interface to vns                   X                               X1                      ${leaf0_a}              ${ixia1}                -1
     REST add interface to vns                   Y                               Y1                      ${leaf1_a}              ${ixia3}                -1  
-    BASH ifconfig ip address                         h5                              10.251.1.11/24          bond0   
-    BASH ifconfig ip address                         h4                              10.252.1.11/24          bond0
+    BASH ifconfig ip address                    h5                              10.251.1.11/24          bond0   
+    BASH ifconfig ip address                    h4                              10.252.1.11/24          bond0
     BASH add route                              h5                              10.252.0.0/16           10.251.1.1
     BASH add route                              h4                              10.251.0.0/16           10.252.1.1
-    sleep                                       5   
+    sleep                                       1  
     BASH ping                                   h5                              10.251.1.1              count=10
     BASH ping                                   h4                              10.252.1.1              count=10
     ${value} =                                  BASH verify arp                 h5                      10.251.1.1
