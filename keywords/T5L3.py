@@ -110,7 +110,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
             return True
  
     def rest_disable_router_intf(self, tenant, tenantIntf):
-        '''Create vns router interface via command "logical-router vns interface"
+        '''Disable logical router tenant interface"
         
             Input:
                 `tenant`        tenant name
