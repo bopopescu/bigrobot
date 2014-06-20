@@ -300,6 +300,9 @@ Verify routing loop is not causing packets to loop forever
     manual passed
     [Tags]          manual          feature     
     
+Enable and disable tenant logical router interface
+    Enable and disable tenant logical router interface
+    [Tags]          feature
 
 * Keywords
 L3 inter tenant same rack untagged with dynamic endpoints
@@ -2596,6 +2599,56 @@ Verify private subnet cannot be routed via system router
     BASH delete route                           h4                              10.251.0.0/16           10.252.2.1
     BASH delete route                           h4                              10.252.0.0/16           10.252.2.1
 
+
+Enable and disable tenant logical router interface
+    BASH ifup intf                              h1                              bond0
+    BASH ifup intf                              h2                              bond0
+    BASH ifup intf                              h3                              bond0
+    BASH ifup intf                              h4                              bond0   
+    BASH ifup intf                              h5                              bond0   
+    BASH ifup intf                              h6                              bond0           
+    REST add portgroup to vns                   X                               X1                      ${leaf2_pc1}            -1
+    REST add portgroup to vns                   Y                               Y1                      ${leaf2_pc2}            -1
+    REST add interface to vns                   X                               X1                      ${leaf0_a}              ${ixia1}                -1
+    REST add interface to vns                   Y                               Y1                      ${leaf0_b}              ${ixia2}                -1
+    BASH ifconfig ip address                    h5                              10.251.1.11/24          bond0   
+    BASH ifconfig ip address                    h6                              10.252.1.11/24          bond0
+    BASH add route                              h5                              10.252.1.0/24           10.251.1.1
+    BASH add route                              h6                              10.251.1.0/24           10.252.1.1
+    sleep                                       5   
+    BASH ping                                   h5                              10.251.1.1              count=10
+    BASH ping                                   h6                              10.252.1.1              count=10
+    ${value} =                                  BASH verify arp                 h5                      10.251.1.1
+    Should Be True                              ${value}        
+    ${value} =                                  BASH verify arp                 h6                      10.252.1.1
+    Should Be True                              ${value} 
+    ${mac1} =                                   BASH get intf mac               h5                      bond0
+    ${result} =                                 REST show endpoints mac         ${mac1}
+    Should Be True                              ${result}                       
+    ${mac2} =                                   BASH get intf mac               h6                      bond0
+    ${result} =                                 REST show endpoints mac         ${mac2}
+    Should Be True                              ${result}                       
+    REST show endpoints 
+    ${loss} =                                   BASH ping                       h5                      10.252.1.11             count=10
+    Should Be True                              ${loss} == 0    
+    REST disable router intf                    system                          Y
+    sleep                                       1
+    ${loss} =                                   BASH ping                       h5                      10.252.1.11             count=10
+    Should Be True                              ${loss} == 100    
+    REST enable router intf                     system                          Y
+    ${loss} =                                   BASH ping                       h5                      10.252.1.11             count=10
+    Should Be True                              ${loss} < 50    
+    REST disable router intf                    X                               system
+    ${loss} =                                   BASH ping                       h5                      10.252.1.11             count=10
+    Should Be True                              ${loss} == 100    
+    REST enable router intf                     X                               system 
+    ${loss} =                                   BASH ping                       h5                      10.252.1.11             count=10
+    Should Be True                              ${loss} < 50    
+    BASH delete route                           h5                              10.252.1.0/24           10.251.1.1
+    BASH delete route                           h6                              10.251.1.0/24           10.252.1.1
+
+
+
 initialize host
 	BASH delete tag								h1								bond0.1001				soft_error=${true}
 	BASH delete tag								h2								bond0.1002				soft_error=${true}
@@ -2669,7 +2722,7 @@ test setup topology
 	REST add vns									X							X1
 	REST add vns									X							X2
 	REST add vns									X							X3
-	REST add vns									Y							Y1
+	REST add vns									Y     						Y1
 	REST add vns									Y							Y2
 	REST add vns									Y							Y3
 	REST add vns									Z							Z1
