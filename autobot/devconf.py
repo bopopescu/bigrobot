@@ -37,7 +37,7 @@ class DevConf(object):
         self._mode = 'cli'
         self.is_prompt_changed = False
 
-        self._timeout = timeout if timeout else 30
+        self._timeout = timeout if timeout else 30  # default timeout
 
         self.connect()
 
@@ -118,6 +118,9 @@ class DevConf(object):
         # Reset mode to 'cli' as default
         self._mode = 'cli'
         self.conn = conn
+
+    def default_timeout(self):
+        return self._timeout
 
     def timeout(self, seconds=None):
         """
@@ -467,7 +470,9 @@ class BsnDevConf(DevConf):
 
         if not quiet:
             helpers.log("Execute command on '%s': '%s' (timeout: %s)"
-                        % (self.name(), cmd, timeout), level=level)
+                        % (self.name(), cmd,
+                           timeout or self.default_timeout()),
+                        level=level)
 
         super(BsnDevConf, self).cmd(cmd, prompt=prompt, mode=mode,
                                     timeout=timeout, quiet=True)
@@ -497,6 +502,24 @@ class BsnDevConf(DevConf):
             self.expect_exception(None, "Unexpected error", soft_error=True)
             raise
         return result
+
+    def send(self, *args, **kwargs):
+        try:
+            super(BsnDevConf, self).send(*args, **kwargs)
+        except socket.error, e:
+            error_str = str(e)
+            helpers.log("socket.error: e: %s" % error_str)
+            if re.match(r'Socket is closed', error_str):
+                helpers.log("Socket is closed. Reconnecting...")
+                self.connect()
+                super(BsnDevConf, self).send(*args, **kwargs)
+            else:
+                self.expect_exception(None, "Unexpected socket error",
+                                      soft_error=True)
+                raise
+        except:
+            self.expect_exception(None, "Unexpected error", soft_error=True)
+            raise
 
     def cli(self, cmd, quiet=False, prompt=False, timeout=None, level=5):
         return self.cmd(cmd, quiet=quiet, mode='cli', prompt=prompt,
@@ -638,7 +661,9 @@ class MininetDevConf(DevConf):
 
         if not quiet:
             helpers.log("Execute command on '%s': %s (timeout: %s)"
-                        % (self.name(), cmd, timeout), level=level)
+                        % (self.name(), cmd,
+                           timeout or self.default_timeout()),
+                        level=level)
 
         super(MininetDevConf, self).cmd(cmd, prompt=prompt, mode=mode,
                                         timeout=timeout, quiet=True)
@@ -764,7 +789,9 @@ class HostDevConf(DevConf):
     def _cmd(self, cmd, quiet=False, prompt=False, timeout=None, level=4):
         if not quiet:
             helpers.log("Execute command on '%s': '%s' (timeout: %s)"
-                        % (self.name(), cmd, timeout), level=level)
+                        % (self.name(), cmd,
+                           timeout or self.default_timeout()),
+                        level=level)
 
         super(HostDevConf, self).cmd(cmd, prompt=prompt, mode='bash',
                                      timeout=timeout, quiet=True)

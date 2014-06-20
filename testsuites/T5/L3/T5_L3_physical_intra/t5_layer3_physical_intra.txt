@@ -45,7 +45,7 @@ Verify static endpoint state
 
 Verify host with same IP as vrf is having L2 service only
     Verify host with same IP as vrf is having L2 service only
-    [Tags]                 feature                  jira-BVS-1725
+    [Tags]                 feature                  
     
 Activate and deactivate router interface
 	Activate and deactivate router interface
@@ -105,7 +105,12 @@ Verify dhcp host is not aged out
 
 Dhcp relay with dhcp server configured as static endpoint
 	Dhcp relay with static dhcp server endpoint
-	[Tags]		 		feature					dhcp-relay			
+	[Tags]		 		feature					dhcp-relay	
+	
+Verify add and delete of dhcp server config works
+    Verify add and delete of dhcp server config works
+	[Tags]             feature                 dhcp-relay  
+    	
 	
 Add and delete untagged endpoints with existing host
 	L3 add and delete untagged endpoints with existing host
@@ -177,15 +182,15 @@ L3 intra tenant traffic between private and public subnet with overlapping IP
 	
 Verify host with different IP on vns router is not getting L3 service
 	Verify host with different IP on vns router is not getting L3 service
-	[Tags]						feature					   run5
+	[Tags]						feature					   run
 	
 Trigger controller HA failover via CLI
 	Controller HA failover via CLI	
-	[Tags]				feature			                   run5
+	[Tags]				feature			                   run
 	   
 Trigger controller HA failover via reboot
 	Controller HA failover via reboot
-	[Tags]				feature			                   run5
+	[Tags]				feature			                   run
 
 Spine reboot
 	Reboot spine0 via CLI
@@ -209,11 +214,11 @@ Spine to leaf link flap
 
 Leaf to host link flap
 	Flap bond interface towards host
-	[Tags]				feature					run1	
+	[Tags]				feature					run	
 	
 Restart ofad process on spine
 	restart ofad on spine
-	[Tags]				feature					run1
+	[Tags]				feature					run
 	
 Restart ofad process on leaf	
 	restart ofad on leaf
@@ -650,8 +655,8 @@ L3 intra tenant same rack untagged with static endpoints
 	${mac2} = 									BASH get intf mac				h6						bond0
 	REST add endpoint mac						X								X2						X2_pc2					${mac2}
 	REST add endpoint portgroup attachment		X								X2						X2_pc2					${leaf2_pc2}				-1	
-	BASH ifconfig ip address							h5								10.251.1.11/24			bond0	
-	BASH ifconfig ip address							h6								10.251.2.11/24			bond0
+	BASH ifconfig ip address					h5								10.251.1.11/24			bond0	
+	BASH ifconfig ip address					h6								10.251.2.11/24			bond0
 	BASH add route								h5								10.251.2.0/24			10.251.1.1
 	BASH add route								h6								10.251.1.0/24			10.251.2.1
 	sleep										5	
@@ -703,8 +708,8 @@ L3 intra tenant across rack untagged with static endpoints
 	REST add endpoint portgroup attachment		X								X3						X3_pc6					${leaf2_pc1}				-1	
 	REST add portgroup to vns					X								X1						${leaf1_pc2}			-1
 	REST add portgroup to vns					X								X3						${leaf2_pc1}			-1
-	BASH ifconfig ip address							h4								10.251.1.11/24			bond0	
-	BASH ifconfig ip address							h5								10.251.3.11/24			bond0
+	BASH ifconfig ip address					h4								10.251.1.11/24			bond0	
+	BASH ifconfig ip address					h5								10.251.3.11/24			bond0
 	BASH add route								h4								10.251.3.0/24			10.251.1.1
 	BASH add route								h5								10.251.1.0/24			10.251.3.1
 	sleep										5	
@@ -1438,7 +1443,73 @@ Dhcp relay with static dhcp server endpoint
 	${loss} = 									BASH ping						h1						${ipAddr} 			count=10
 	Should Be True  							${loss} == 0	
 	BASH delete route							h1								10.252.3.0/24			10.252.1.1	
-			
+
+
+Verify add and delete of dhcp server config works    			
+    BASH ifdown intf                            h1                              bond0
+    BASH ifdown intf                            h2                              bond0
+    BASH ifdown intf                            h3                              bond0
+    BASH ifdown intf                            h4                              bond0   
+    BASH ifup intf                              h5                              bond0
+    BASH ifup intf                              h6                              bond0       
+    BASH init intf                              h1                              bond0
+    BASH init intf                              h2                              bond0
+    BASH ifup intf                              h1                              bond0
+    BASH ifconfig ip address                    h1                              10.252.1.9/24           bond0                   
+    BASH start service                          h1                              isc-dhcp-server
+    BASH ping                                   h1                              10.252.1.1              count=4
+    sleep                                       1
+    ${value} =                                  BASH check service status       h1                      isc-dhcp-server
+    Should Contain                              ${value}                        is started
+    sleep                                       1
+    REST add portgroup to vns                   Y                               Y1                      ${leaf0_pc1}            -1
+    REST add portgroup to vns                   Y                               Y3                      ${leaf2_pc1}            -1
+    BASH add route                              h1                              10.252.3.0/24           10.252.1.1
+    REST add dhcp relay                         Y                               Y3                      10.252.1.9
+    sleep                                       5
+    ${result} =                                 REST show forwarding dhcp table
+    ${circuitid} =                              Set Variable                    ${result[0]['circuit-id']}
+    ${dhcpip} =                                 Set Variable                    ${result[0]['dhcp-ip']}
+    ${routerip} =                               Set Variable                    ${result[0]['router-ip']}
+    Should Be Empty                             ${circuitid}
+    Should Be Equal                             ${dhcpip}                       10.252.1.9
+    Should Be Equal                             ${routerip}                     10.252.3.1
+    REST add dhcprelay circuitid                Y                               Y3                      this is a test
+    ${result} =                                 REST show forwarding dhcp table
+    ${circuitid} =                              Set Variable                    ${result[0]['circuit-id']}
+    Should Be Equal                             ${circuitid}                    this is a test
+    REST delete dhcp relay                      Y                               Y3                      10.252.1.9   
+    ${result} =                                 REST show forwarding dhcp table
+    Should Be Empty                             ${result}                    
+    REST add dhcp relay                         Y                               Y3                      10.252.1.11
+    ${result} =                                 REST show forwarding dhcp table
+    ${circuitid} =                              Set Variable                    ${result[0]['circuit-id']}
+    ${dhcpip} =                                 Set Variable                    ${result[0]['dhcp-ip']}
+    ${routerip} =                               Set Variable                    ${result[0]['router-ip']}
+    Should Be Empty                             ${circuitid}
+    Should Be Equal                             ${dhcpip}                       10.252.1.11
+    Should Be Equal                             ${routerip}                     10.252.3.1
+    ${result} =                                 REST delete dhcp relay          Y                               Y3                      10.252.1.9   
+    Should Not Be True                          ${result} 
+    ${result} =                                 REST delete dhcp relay          Y                               Y3                      10.252.1.11   
+    Should Be True                              ${result} 
+    REST add dhcp relay                         Y                               Y3                      10.252.1.9
+    ${result} =                                 REST show forwarding dhcp table
+    ${circuitid} =                              Set Variable                    ${result[0]['circuit-id']}
+    ${dhcpip} =                                 Set Variable                    ${result[0]['dhcp-ip']}
+    ${routerip} =                               Set Variable                    ${result[0]['router-ip']}
+    Should Be Empty                             ${circuitid}
+    Should Be Equal                             ${dhcpip}                       10.252.1.9
+    Should Be Equal                             ${routerip}                     10.252.3.1
+    REST add dhcp relay                         Y                               Y3                      10.252.1.12
+    ${result} =                                 REST show forwarding dhcp table
+    ${circuitid} =                              Set Variable                    ${result[0]['circuit-id']}
+    ${dhcpip} =                                 Set Variable                    ${result[0]['dhcp-ip']}
+    ${routerip} =                               Set Variable                    ${result[0]['router-ip']}
+    Should Be Empty                             ${circuitid}
+    Should Be Equal                             ${dhcpip}                       10.252.1.12
+    Should Be Equal                             ${routerip}                     10.252.3.1
+
 
 L3 add and delete untagged endpoints with existing host
 	BASH init intf								h1 								bond0
@@ -3057,23 +3128,13 @@ Trigger controller HA failover via reboot and verify dhcp-relay is working
 	BASH add route								h1								10.252.3.0/24			10.252.1.1
 	REST add dhcp relay							Y								Y3						10.252.1.9
 	#REST enable dhcp relay						Y								Y3	
-	sleep										5
-	${h1_ip} = 									BASH get interface ipv4			h1						bond0				
-	Should Contain								${h1_ip}						10.252.1.9	
-	${h1_mac} =									BASH get intf mac				h1						bond0
-	${result} = 								REST show endpoints mac			${h1_mac}
-	Should Not Be Empty							${result}
-	sleep										1
-	BASH ping                                   h1                              10.252.1.1              count=5                      
-	${value} = 									BASH verify arp					h1						10.252.1.1
-	Should Be True								${value} 		
 	sleep										1
 	${value} = 									BASH release dhcpv4 address		h5						bond0
 	Should Be True								${value}
 	sleep										1
 	${ipAddr} = 								BASH renew dhcpv4 address		h5						bond0
 	Should Not Be Empty							${ipAddr}
-	sleep										10
+	sleep										2
 	BASH ping									h1								${ipAddr}				count=10
 	${value} = 									BASH verify arp					h1						10.252.1.1
 	Should Be True								${value} 		
@@ -3331,7 +3392,7 @@ Verify clear blocked endpoint works
     sleep                                       1
     BASH network restart                        h3                              timeout=60
     sleep                                       5
-    REST clear blocked endpoints                X                               X1                      ${mac1}
+    REST clear blocked endpoint                 X                               X1                      ${mac1}
     sleep                                       5
     ${result} =                                 REST show endpoints mac         ${mac1}
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
@@ -3438,6 +3499,8 @@ test setup topology
 
  
 test teardown topology
+    stop traffic                                   
+    sleep                                           1
 	delete traffic
 	REST delete vns ip  							X							X1				10.251.1.1				24	
 	REST delete vns ip  							X							X2				10.251.2.1				24	

@@ -74,9 +74,7 @@ test cli whoami    [Arguments]    ${user}     ${group}
 	 Should Be Equal    ${result[0]}    ${user}
 	 Should Be Equal    ${result[1]}    ${group}
 
-reboot node and verify it role
-	cluster_node_reboot    True    
- 
+  
 walk cli command 
 #	cli_exec_walk    file_name=cli_exec_walk
 #	cli_enable_walk    file_name=cli_enable_walk	
@@ -90,7 +88,7 @@ create user    [Arguments]    ${user}     ${passwd}   ${group}
 
 Verify VIP function    [Arguments]   ${vip} 
 	T5Platform.Rest Configure Virtual IP  ${vip}
-	 sleep  5
+	 sleep  10
 	${configured} =  Rest Show Virtual IP
 	Should Be Equal as Strings  ${configured}  ${vip}
 	${mac1} =  Rest Get MAC Using Virtual IP   ${vip}

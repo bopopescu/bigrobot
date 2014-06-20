@@ -10,8 +10,8 @@ Library         keywords/Mininet.py
 Library         keywords_dev/vui/MyTest.py
 
 * Test Case
-Test force postmortem
+Testing 1 2 3
     #base test postmortem
-    log               "Hello"
+    cli         mn1    help
     #should be true    ${false}
 

@@ -35,6 +35,10 @@ Intra tenant L3 tagged traffic with dynamic endpoints across rack
 	L3 intra tenant across rack tagged with dynamic endpoints
 	[Tags]									smoke				sanity				run		
 
+Verify static endpoint state
+    Verify static endpoint state
+    [Tags]                feature             sanity                              
+
 Intra tenant L3 untagged traffic with static endpoints same rack
 	L3 intra tenant same rack untagged with static endpoints
 	[Tags]									smoke				sanity								
@@ -82,7 +86,12 @@ Intra tenant dhcp relay with circuit id across rack
 Delete and Add dhcp relay
 	Delete and Add L3 dhcp request 
 	[Tags]									sanity		    dhcp        
-
+	
+Verify add and delete of dhcp server config works      
+    Verify add and delete of dhcp server config works      	
+    [Tags]                                  sanity          dhcp    run99
+    
+    
 Add and delete untagged endpoints with existing host
 	L3 add and delete untagged endpoints with existing host
 	[Tags]									feature	
@@ -340,6 +349,122 @@ L3 intra tenant across rack tagged with dynamic endpoints
 	Should Contain								${attachpoint}					${leaf1_pc3}	
 	${loss} = 									BASH ping						h6-rack0						${ipAddr5}					count=10
 	Should Be True  							${loss} == 0					
+
+Verify static endpoint state	
+    REST add endpoint                           X                               X1                      X1_pc3
+    ${mac1} =                                   BASH get intf mac               h3-rack0                bond0
+    REST add endpoint mac                       X                               X1                      X1_pc3                  ${mac1}
+    ${result} =                                 REST show endpoints mac         ${mac1}
+    Should Be True                              ${result}       
+    ${apState1} =                               Set Variable                    ${result[0]['attachment-point-state']}    
+    Should Contain                              ${apState1}                     unknown
+    ${state1} =                                 Set Variable                    ${result[0]['state']}
+    Should Contain                              ${state1}                       Attach Point Unknown
+    ${ipState1} =                               Set Variable                    ${result[0]['ip-state']}
+    Should Contain                              ${ipState1}                     unknown 
+    ${result} =                                 REST add endpoint portgroup attachment                  X                        X1                      X1_pc3          ${leaf0_pc11}           -1
+    Should Not Be True                          ${result}
+    ${result} =                                 REST add endpoint portgroup attachment                  X                        X1                      X1_pc3          ${leaf0_pc3}            -1
+    Should Be True                              ${result}  
+    ${result} =                                 REST show endpoints mac         ${mac1}
+    ${state1} =                                 Set Variable                    ${result[0]['state']}
+    Should Contain                              ${state1}                       Member Rule Error
+    REST add endpoint ip                        X                               X1                      X1_pc3                  10.251.1.31
+    ${result} =                                 REST show endpoints mac         ${mac1}
+    ${ipState1} =                               Set Variable                    ${result[0]['ip-state']}
+    Should Contain                              ${ipState1}                     static 
+    ${ipAddr1} =                                Set Variable                    ${result[0]['ip-address']}
+    Should Contain                              ${ipAddr1}                      10.251.1.31
+    REST add portgroup to vns                   X                               X1                      ${leaf0_pc3}            -1
+    ${result} =                                 REST show endpoints mac         ${mac1}
+    ${state1} =                                 Set Variable                    ${result[0]['state']}
+    Should Contain                              ${state1}                       Active 
+    ${mac2} =                                   BASH get intf mac               h1_rack1                bond0
+    REST add endpoint                           X                               X2                      X2_pc2
+    REST add endpoint mac                       X                               X2                      X2_pc2                  ${mac2}
+    REST add endpoint portgroup attachment      X                               X2                      X2_pc2                  ${leaf1_pc3}                2003 
+    REST add endpoint ip                        X                               X2                      X2_pc2                  10.251.2.31
+    BASH ifconfig ip address                    h5                              10.251.1.31/24          bond0   
+    BASH ifconfig ip address                    h6                              10.251.2.31/24          bond0
+    BASH add route                              h5                              10.251.0.0/16           10.251.1.1
+    BASH add route                              h6                              10.251.0.0/16           10.251.2.1
+    sleep                                       1   
+    BASH ping                                   h3_rack0                        10.251.1.1              count=10
+    BASH ping                                   h1_rack1                        10.251.2.1              count=10
+    ${value} =                                  BASH verify arp                 h3_rack0                10.251.1.1
+    Should Be True                              ${value}        
+    ${value} =                                  BASH verify arp                 h1_rack1                10.251.2.1
+    Should Be True                              ${value} 
+    ${mac1} =                                   BASH get intf mac               h3_rack0                bond0
+    ${result} =                                 REST show endpoints mac         ${mac1}
+    Should Be True                              ${result}       
+    ${apState} =                                Set Variable                    ${result[0]['attachment-point-state']}    
+    ${ipState} =                                Set Variable                    ${result[0]['ip-state']}
+    Should Contain                              ${apState}                      static                              
+    Should Contain                              ${ipState}                      static                              
+    ${mac2} =                                   BASH get intf mac               h1_rack1                bond0
+    ${result} =                                 REST show endpoints mac         ${mac2}
+    Should Be True                              ${result}                       
+    ${apState} =                                Set Variable                    ${result[0]['attachment-point-state']}    
+    ${ipState} =                                Set Variable                    ${result[0]['ip-state']}
+    Should Contain                              ${apState}                      static                              
+    Should Contain                              ${ipState}                      static  
+    REST show endpoints 
+    ${loss} =                                   BASH ping                       h3_rack0                      10.251.2.11             count=10
+    Should Be True                              ${loss} == 0    
+    BASH delete route                           h3_rack0                        10.251.2.0/24           10.251.1.1
+    BASH delete route                           h1_rack1                        10.251.1.0/24           10.251.2.1
+
+
+
+Verify add and delete of dhcp server config works               
+    REST add dhcp relay                         Y                               Y3                      10.252.1.9
+    sleep                                       5
+    ${result} =                                 REST show forwarding dhcp table
+    ${circuitid} =                              Set Variable                    ${result[0]['circuit-id']}
+    ${dhcpip} =                                 Set Variable                    ${result[0]['dhcp-ip']}
+    ${routerip} =                               Set Variable                    ${result[0]['router-ip']}
+    Should Be Empty                             ${circuitid}
+    Should Be Equal                             ${dhcpip}                       10.252.1.9
+    Should Be Equal                             ${routerip}                     10.252.3.1
+    REST add dhcprelay circuitid                Y                               Y3                      this is a test
+    ${result} =                                 REST show forwarding dhcp table
+    ${circuitid} =                              Set Variable                    ${result[0]['circuit-id']}
+    Should Be Equal                             ${circuitid}                    this is a test
+    REST delete dhcp relay                      Y                               Y3                      10.252.1.9   
+    ${result} =                                 REST show forwarding dhcp table
+    Should Be Empty                             ${result}                    
+    REST add dhcp relay                         Y                               Y3                      10.252.1.11
+    ${result} =                                 REST show forwarding dhcp table
+    ${circuitid} =                              Set Variable                    ${result[0]['circuit-id']}
+    ${dhcpip} =                                 Set Variable                    ${result[0]['dhcp-ip']}
+    ${routerip} =                               Set Variable                    ${result[0]['router-ip']}
+    Should Be Empty                             ${circuitid}
+    Should Be Equal                             ${dhcpip}                       10.252.1.11
+    Should Be Equal                             ${routerip}                     10.252.3.1
+    ${result} =                                 REST delete dhcp relay          Y                               Y3                      10.252.1.9   
+    Should Not Be True                          ${result} 
+    ${result} =                                 REST delete dhcp relay          Y                               Y3                      10.252.1.11   
+    Should Be True                              ${result} 
+    REST add dhcp relay                         Y                               Y3                      10.252.1.9
+    ${result} =                                 REST show forwarding dhcp table
+    ${circuitid} =                              Set Variable                    ${result[0]['circuit-id']}
+    ${dhcpip} =                                 Set Variable                    ${result[0]['dhcp-ip']}
+    ${routerip} =                               Set Variable                    ${result[0]['router-ip']}
+    Should Be Empty                             ${circuitid}
+    Should Be Equal                             ${dhcpip}                       10.252.1.9
+    Should Be Equal                             ${routerip}                     10.252.3.1
+    REST add dhcp relay                         Y                               Y3                      10.252.1.12
+    ${result} =                                 REST show forwarding dhcp table
+    ${circuitid} =                              Set Variable                    ${result[0]['circuit-id']}
+    ${dhcpip} =                                 Set Variable                    ${result[0]['dhcp-ip']}
+    ${routerip} =                               Set Variable                    ${result[0]['router-ip']}
+    Should Be Empty                             ${circuitid}
+    Should Be Equal                             ${dhcpip}                       10.252.1.12
+    Should Be Equal                             ${routerip}                     10.252.3.1
+		
+L3 intra tenant same rack untagged with static endpoints
+	
 
 
 L3 intra tenant traceroute
@@ -1216,9 +1341,11 @@ Activate and deactivate router interface
     ${loss} =                                   BASH ping                       h4-rack0                        10.252.1.11             count=10
     Should Be True                              ${loss} == 0    
     REST disable router intf                    X                               system
+    sleep                                       1
     ${loss} =                                   BASH ping                       h4-rack0                        10.252.1.11             count=10
     Should Be True                              ${loss} == 100    
     REST enable router intf                     X                               system
+    sleep                                       1
     ${loss} =                                   BASH ping                       h4-rack0                        10.252.1.11             count=10
     Should Be True                              ${loss} < 20    
       

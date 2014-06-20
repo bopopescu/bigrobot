@@ -21,8 +21,8 @@ helpers.set_env('IS_GOBOT', 'False')
 helpers.set_env('AUTOBOT_LOG', './myrobot.log')
 
 
-TEST_TYPES = ["feature", "scaling", "performance", "solution",
-                          "longevity", "negative", "robustness"]
+TEST_TYPES = ["feature", "scaling", "performance", "solution", "longevity",
+              "negative", "robustness"]
 FEATURES_IRONHORSE = ["ha", "span", "testpath", "pod", "l2", "l3", "snmp",
                       "ntp", "traffic", "logging", "rsyslog", "rsyslogd",
                       "install", "initialconfig", "rebootswitch",
@@ -320,12 +320,13 @@ def display_stats(args):
                                build=build,
                                collection_testcases="test_cases_archive")
         suites_in_release = ih.testsuites(release=ih.release_lowercase())
-    print_suites_not_executed(suites_in_release, suites_executed)
+        print_suites_not_executed(suites_in_release, suites_executed)
 
 
     print ""
     print_stat("Total test cases (executed, passed, failed):",
-               ih.total_testcases_executed(build_name=build))
+               ih.total_testcases_executed(build_name=build),
+               untested=ih.total_testcases_by_tag(["manual-untested"])[0])
 
     for functionality in TEST_TYPES + ["manual", "manual-untested"]:
         untested = ih.total_testcases_by_tag([functionality,
@@ -351,15 +352,15 @@ def display_stats(args):
         if args.show_untested:
             print_testcases(ih.manual_untested_by_tag([functionality, feature]))
 
-    print ""
-    print_stat("Total manual tests (executed, passed, failed):",
-               ih.total_testcases_by_tag_executed("manual",
-                                                  build_name=build))
-    print_stat("Total manual-untested tests (executed, passed, failed):",
-               ih.total_testcases_by_tag_executed("manual-untested",
-                                                  build_name=build))
-    print_stat("Total executable test cases (executed, passed, failed):",
-               ih.total_executable_testcases_executed(build_name=build))
+#    print ""
+#    print_stat("Total manual tests (executed, passed, failed):",
+#               ih.total_testcases_by_tag_executed("manual",
+#                                                  build_name=build))
+#    print_stat("Total manual-untested tests (executed, passed, failed):",
+#               ih.total_testcases_by_tag_executed("manual-untested",
+#                                                  build_name=build))
+#    print_stat("Total executable test cases (executed, passed, failed):",
+#               ih.total_executable_testcases_executed(build_name=build))
 
 
 if __name__ == '__main__':

@@ -388,6 +388,8 @@ class BigTap(object):
 
                     if "installed" in content[0]['runtime-status']:
                         helpers.test_log("Policy correctly reports runtime status as : %s" % content[0]['runtime-status'])
+                    elif "installed to drop" in content[0]['runtime-status']:
+                        helpers.test_log("Policy correctly reports runtime status as : %s" % content[0]['runtime-status'])
                     elif "inactive" in content[0]['runtime-status']:
                         helpers.test_log("Policy correctly reports runtime status as : %s" % content[0]['runtime-status'])
                     else:
@@ -409,7 +411,9 @@ class BigTap(object):
 
                     if "installed to forward" in content[0]['detailed-status']:
                         helpers.test_log("Policy correctly reports detailed status as : %s" % content[0]['detailed-status'])
-                    elif "installed to measure rate" in content[0]['detailed-status']:
+                    elif ("installed to measure rate" in content[0]['detailed-status']) or ("installed to drop" in content[0]['detailed-status']):
+                        helpers.test_log("Policy correctly reports detailed status as : %s" % content[0]['detailed-status'])
+                    elif ("installed with service(s) not on all component policies" in content[0]['detailed-status']):
                         helpers.test_log("Policy correctly reports detailed status as : %s" % content[0]['detailed-status'])
                     elif "inactive" in content[0]['detailed-status']:
                         helpers.test_log("Policy correctly reports detailed status as : %s" % content[0]['detailed-status'])

@@ -46,7 +46,7 @@ Add and delete static route on tenant
 
 Add and delete more specific route on tenant over existing static route
 	Add and delete more specific route on tenant over existing static route
-	[Tags]		feature
+	[Tags]		feature                run99
 
 Add and delete tenant system interface on tenant router
 	Add and delete tenant system interface on tenant router
@@ -74,27 +74,27 @@ L3 inter tenant forwarding between endpoints on the same rack but different swit
 	
 Inter tenant DHCP relay
 	Inter tenant DHCP relay
-    [Tags]      sanity      feature			dhcp-relay		run1	
+    [Tags]      sanity      feature			dhcp-relay			
 
 Dhcp request from other host in other tenants with dhcp enabled but no inter tenant route
 	Dhcp request from other host in other tenants with dhcp enabled but no inter tenant route
-	[Tags]		feature			dhcp-relay			
+	[Tags]		feature			dhcp-relay			    run99
 
 Dhcp request from other host in other tenants without dhcp relay enabled but with inter tenant route
 	Dhcp request from other host in other tenants without dhcp relay enabled but with inter tenant route
-	[Tags]		feature			dhcp-relay			
+	[Tags]		feature			dhcp-relay			    run99
 
 Inter tenant dhcp relay with multiple dhcp servers
 	Inter tenant dhcp relay with multiple dhcp servers
-	[Tags]		feature			dhcp-relay
+	[Tags]		feature			dhcp-relay               run99
 
 Inter tenant dhcp relay with duplicate circuitid
-    manual failed
-    [Tags]      feature         dhcp-relay          jira-PAN-902
+    manual passed
+    [Tags]      feature         dhcp-relay          
     
 Host moved to another vns on another tenant and renew dhcp 
 	Host moved to another vns on another tenant and renew dhcp 
-	[Tags]		feature			dhcp-relay			
+	[Tags]		feature			dhcp-relay	          run99		
 
 DHCP request to external dhcp servers
 	manual passed
@@ -108,7 +108,7 @@ One public IP and multiple private IP
 	One public IP and multiple private IP
 	[Tags]			feature			
 
-Verify private IP is able to communicate with other vns in the same tenant
+Verify private IP is able to communicate with other vns in the same tenanttrr
 	Verify private IP is able to communicate with other vns in the same tenant
 	[Tags]			feature			
 
@@ -174,7 +174,7 @@ L3 inter tenant forwarding to VRRP routers
 
 L3 inter tenant traceroute with icmp and udp probe
 	L3 inter tenant traceroute with icmp and udp probe
-	[Tags]			feature			
+	[Tags]			feature			    run99
 
 Add and delete endpoints with L3 inter tenant traffic
 	Add and delete endpoints with L3 inter tenant traffic
@@ -190,7 +190,7 @@ L3 inter tenant traffic with jumbo frame
 
 L3 inter tenant with CRC errors
 	L3 inter tenant with CRC errors
-	[Tags]			feature			
+	[Tags]			feature			    run99
 
 Verify route next hop IP must be in the same tenant
 	manual passed
@@ -206,11 +206,11 @@ L3 inter tenant forwarding with ecmp destination
 
 L3 inter tenant shutdown and bringup both leaf switch in a dual tor setup
 	L3 inter tenant shutdown and bringup both leaf switch in a dual tor setup
-	[Tags]			feature			
+	[Tags]			feature			run99
 
 L3 inter tenant shutdown and bringup both spine switch 
 	L3 inter tenant shutdown and bringup both spine switch
-	[Tags]			feature			
+	[Tags]			feature			run99
 
 L3 inter tenant destroy active controller VM from KVM
 	manual passed
@@ -222,11 +222,11 @@ L3 inter tenant destroy standby controller VM from KVM
 
 Restart ofad on leaf switch
 	Restart ofad on leaf switch
-	[Tags]			feature			
+	[Tags]			feature			        run99
 
 Restart ofad on spine switch
 	Restart ofad on spine switch
-	[Tags]			feature			
+	[Tags]			feature			        run99
 
 Controller HA failover with ecmp group
 	manual passed
@@ -246,7 +246,7 @@ Active Controller reboot with dhcp-relay
 
 Verify inter tenant L3 traffic is getting drop with null next hop
 	Verify inter tenant L3 traffic is getting drop with null next hop
-	[Tags]			feature				
+	[Tags]			feature			run99	
 
 Restart ofad on leaf switch with ecmp group
 	manual passed
@@ -258,11 +258,11 @@ Restart ofad on spine with ecmp group
 
 Restart ofad on leaf with dhcp-relay
 	Restart ofad on leaf with dhcp-relay
-	[Tags]			feature			dhcp-relay	
+	[Tags]			feature			dhcp-relay	     run99
 
 Restart ofad on spine with dhcp-relay
 	Restart ofad on spine with dhcp-relay
-	[Tags]			feature			dhcp-relay	
+	[Tags]			feature			dhcp-relay	     run99
 	
 Flap member link in a port-group in ecmp group
 	manual passed
@@ -294,12 +294,15 @@ Verify inter tenant dhcp-relay functionality after controller upgrade
 
 Dhcp request from overlapping private IP and public IP
     Dhcp request from overlapping private IP and public IP
-    [Tags]          solution            dhcp-relay  
+    [Tags]          solution            dhcp-relay          run99
     				
 Verify routing loop is not causing packets to loop forever
     manual passed
     [Tags]          manual          feature     
     
+Enable and disable tenant logical router interface
+    Enable and disable tenant logical router interface
+    [Tags]          feature
 
 * Keywords
 L3 inter tenant same rack untagged with dynamic endpoints
@@ -542,6 +545,9 @@ Verify inter tenant L3 traffic is getting drop with null next hop
     ${loss} =                                   BASH ping                       h1                      10.252.1.11             count=10
     Should Be True                              ${loss} == 100   
     REST delete static routes                   X                               10.252.0.0/16   
+    sleep                                       1
+    REST add static routes                      X                               10.252.0.0/16           {"tenant-name": "system"}
+    sleep                                       1     
     ${loss} =                                   BASH ping                       h1                      10.252.1.11             count=10
     Should Be True                              ${loss} == 0   
     BASH delete route                           h1                              10.252.0.0/16           10.251.1.1
@@ -1078,11 +1084,11 @@ L3 inter tenant with CRC errors
     REST add portgroup to vns                   Y                               Y1                      ${leaf2_pc2}            -1
     REST add interface to vns                   X                               X1                      ${leaf0_a}              ${ixia1}                -1
     REST add interface to vns                   Y                               Y1                      ${leaf0_b}              ${ixia2}                -1
-    BASH ifconfig ip address                         h5                              10.251.1.11/24          bond0   
-    BASH ifconfig ip address                         h6                              10.252.1.11/24          bond0
+    BASH ifconfig ip address                    h5                              10.251.1.11/24          bond0   
+    BASH ifconfig ip address                    h6                              10.252.1.11/24          bond0
     BASH add route                              h5                              10.252.1.0/24           10.251.1.1
     BASH add route                              h6                              10.251.1.0/24           10.252.1.1
-    sleep                                       5   
+    sleep                                       1   
     BASH ping                                   h5                              10.251.1.1              count=10
     BASH ping                                   h6                              10.252.1.1              count=10
     ${value} =                                  BASH verify arp                 h5                      10.251.1.1
@@ -1105,7 +1111,9 @@ L3 inter tenant with CRC errors
     stop traffic                                ${stream1}
     verify results                              transmitted_frames              received_valid_frames   ${stream1}              stream1
     sleep                                       1
-    ${stream2}=                                 L3 add                          name=stream1            flow=a<->b              frame_rate=1000             frame_size=9216             frame_cnt=10000
+    delete traffic
+    sleep                                       1
+    ${stream2}=                                 L3 add                          name=stream2            flow=a<->b              frame_rate=1000             frame_size=9216             frame_cnt=10000
     ...                                         src_ip=10.251.1.101             src_gw=10.251.1.1       dst_ip=10.252.1.101     dst_gw=10.252.1.1           crc=True                    
     start traffic                               ${stream2}
     sleep  10
@@ -1129,7 +1137,7 @@ L3 inter tenant traceroute with icmp and udp probe
     BASH add route                              h5                              10.252.0.0/16           10.251.1.1
     BASH add route                              h6                              10.251.0.0/16           10.252.1.1
     sleep                                       1
-    ${loss} =                                   BASH ping                       h5                      10.252.1.1              count=10
+    ${loss} =                                   BASH ping                       h5                      10.252.1.11              count=10
     Should Be True                              ${loss} < 50
     ${string} =                                 BASH run command                h5                      traceroute -n -m 10 10.252.1.11
     ${result} =                                 Set Variable                    ${string[1]} 
@@ -1274,8 +1282,8 @@ Dhcp request from other host in other tenants with dhcp enabled but no inter ten
 	${ipAddr3} = 								BASH renew dhcpv4 address		h2						bond0.1002
 	Should Be Empty								${ipAddr3}
 	${loss} =									BASH ping						h1						${ipAddr2}
-	Should Be True								${loss} = 100
-	REST add static routes						Y								10.251.0.0/16			 {"tenant-name": "system"}
+	Should Be True								${loss} == 100
+	REST add static routes						Y								10.251.0.0/16			{"tenant-name": "system"}
 	sleep										1
 	${ipAddr3} = 								BASH renew dhcpv4 address		h2						bond0.1002
 	Should Not Be Empty							${ipAddr3}
@@ -1308,6 +1316,9 @@ Dhcp request from other host in other tenants without dhcp relay enabled but wit
 	Should Contain								${value}						is started
 	sleep										1
 	BASH add route								h1								10.252.0.0/16			10.251.1.1
+	BASH release dhcpv4 address                 h2                              bond0.1002
+	BASH release dhcpv4 address                 h5                              bond0
+	sleep                                       1
 	${ipAddr2} = 								BASH renew dhcpv4 address		h2						bond0.1002
 	Should Be Empty								${ipAddr2}
 	${ipAddr5} = 								BASH renew dhcpv4 address		h5						bond0
@@ -1367,9 +1378,9 @@ Dhcp request from other host in other tenants without dhcp relay enabled but wit
 	${value} = 									BASH release dhcpv4 address		h5						bond0
 	Should Be True								${value}
 	${loss} =									BASH ping 						h1						${ipAddr2}				count=10
-	Should Be True								${loss}	= 100
+	Should Be True								${loss} == 100
 	${loss} =									BASH ping 						h1						${ipAddr5}				count=10
-	Should Be True								${loss}	= 100
+	Should Be True								${loss} == 100
 	BASH delete route							h1								10.252.0.0/16			10.251.1.1
 	BASH delete route							h2								10.251.0.0/16			10.252.1.1	
 	BASH delete route							h5								10.251.0.0/16			10.252.1.1
@@ -1397,9 +1408,10 @@ Host moved to another vns on another tenant and renew dhcp
 	Should Contain								${value}						is started
 	sleep										1
 	BASH add route								h1								10.252.0.0/16			10.251.1.1
+	BASH add route                              h1                              10.253.0.0/16           10.251.1.1
 	REST add dhcp relay							Y								Y1						10.251.1.11
 	#REST enable dhcp relay						Y								Y1	
-	sleep										5
+	sleep										1
 	${ipAddr2} = 								BASH renew dhcpv4 address		h2						bond0.1002
 	Should Not Be Empty							${ipAddr2}
 	${ipAddr5} = 								BASH renew dhcpv4 address		h5						bond0
@@ -1434,8 +1446,12 @@ Host moved to another vns on another tenant and renew dhcp
 	Should Be True  							${loss} < 20	
 	REST delete portgroup from vns				Y								Y1						${leaf2_pc1}			-1
 	REST add portgroup to vns					Z								Z3						${leaf2_pc1}			-1
+	REST add dhcp relay                         Z                               Z3                      10.251.1.11
+	BASH release dhcpv4 address                 h5                              bond0
+    sleep                                       1  
 	${ipAddr5} =								BASH renew dhcpv4 address		h5						bond0
-	Should Be True								${ipAddr5}
+	Should Not Be Empty							${ipAddr5}
+    BASH Ping                                   h5                              10.251.1.1              count=3
 	${result} = 								REST show endpoints mac			${mac5}
 	Should Not Be Empty							${result}
 	${attachpoint} = 							Set Variable					${result[0]['attachment-point']}
@@ -1496,9 +1512,9 @@ Inter tenant dhcp relay with multiple dhcp servers
     BASH add route                              h2                              10.252.0.0/16           10.251.1.1
     BASH add route                              h3                              10.251.0.0/16           10.252.1.1
     REST add dhcp relay                         X                               X2                      10.252.1.11
-    #REST enable dhcp relay                      X                               X2  
+    #REST enable dhcp relay                     X                               X2  
     REST add dhcp relay                         Y                               Y2                      10.251.1.11
-    #REST enable dhcp relay                      Y                               Y2  
+    #REST enable dhcp relay                     Y                               Y2  
     sleep                                       5
     ${mac1} =                                   BASH get intf mac               h1                      bond0
     ${result} =                                 REST show endpoints mac         ${mac1}
@@ -1514,20 +1530,20 @@ Inter tenant dhcp relay with multiple dhcp servers
     Should Not Be Empty                         ${ipAddr1}
     ${ipAddr4} =                                BASH renew dhcpv4 address       h4                      bond0
     Should Not Be Empty                         ${ipAddr4}
-    ${loss} =                                   BASH ping                       h1                      ${ipAddr4}          count=5
-    Should Be True                              ${loss} < 20
+    ${loss} =                                   BASH ping                       h1                      ${ipAddr4}          count=10
+    Should Be True                              ${loss} < 40
     ${value} =                                  BASH release dhcpv4 address     h1                      bond0
     Should Be True                              ${value}
     BASH stop service                           h3                              isc-dhcp-server
     sleep                                       1
     ${value} =                                  BASH check service status       h3                      isc-dhcp-server
-    Should Contain                              ${value}                        is not running
+    Should Contain                              ${value}                        is stopped
     ${ipAddr1} =                                BASH renew dhcpv4 address       h1                      bond0
     Should Be Empty                             ${ipAddr1}
     BASH stop service                           h2                              isc-dhcp-server
     sleep                                       1
     ${value} =                                  BASH check service status       h2                      isc-dhcp-server
-    Should Contain                              ${value}                        is not running
+    Should Contain                              ${value}                        is stopped
     ${value} =                                  BASH release dhcpv4 address     h4                      bond0
     Should Be True                              ${value}
     BASH delete route                           h2                              10.252.0.0/16           10.251.1.1
@@ -1832,8 +1848,10 @@ Restart ofad on leaf switch
    	verify traffic rate  						tx_rate  						rx_rate  				a  						c
 	BASH restart process						s3								ofad					timeout=60
 	sleep										5
-	${value} = 									BASH check service status		s3						ofad
-	Should Contain								${value}						is started
+    ${result} =                                 CLI verify controller           s3                          c1      
+    Should Be True                              ${result}
+    ${result} =                                 CLI verify controller           s3                          c2
+    Should Be True                              ${result}
 	sleep										10
 	verify traffic rate  						tx_rate  						rx_rate  				a  						c
 	sleep										10
@@ -1884,8 +1902,10 @@ Restart ofad on spine switch
    	verify traffic rate  						tx_rate  						rx_rate  				a  						c
 	BASH restart process						s2								ofad					timeout=60
 	sleep										5
-	${value} = 									BASH check service status		s2						ofad
-	Should Contain								${value}						is started
+    ${result} =                                 CLI verify controller           s2                          c1      
+    Should Be True                              ${result}
+    ${result} =                                 CLI verify controller           s2                          c2
+    Should Be True                              ${result}
 	sleep										10
 	verify traffic rate  						tx_rate  						rx_rate  				a  						c
 	sleep										10
@@ -2101,7 +2121,7 @@ Dhcp request from overlapping private IP and public IP
     BASH init intf                              h2                              bond0.1002
     BASH ifconfig ip address                    h1                              10.251.1.11/24          bond0
     BASH start service                          h1                              isc-dhcp-server
-    BASH ping                                   h1                              10.251.1.1              count=4
+    #BASH ping                                  h1                              10.251.1.1              count=4
     sleep                                       1
     ${value} =                                  BASH check service status       h1                      isc-dhcp-server
     Should Contain                              ${value}                        is started
@@ -2110,10 +2130,11 @@ Dhcp request from overlapping private IP and public IP
     REST add vns ip                             X                               X3                      10.251.3.1              24          private=true
     REST add vns ip                             Y                               Y3                      10.251.3.1              24  
     REST add dhcp relay                         Y                               Y3                      10.251.1.11
-    #REST enable dhcp relay                      Y                               Y3
     REST add dhcp relay                         X                               X3                      10.251.1.11
-    #REST enable dhcp relay                      X                               X3
     sleep                                       5
+    BASH release dhcpv4 address                 h2                              bond0.1002
+    BASH release dhcpv4 address                 h6                              bond0
+    BASH release dhcpv4 address                 h1                              bond0
     ${ipAddr2} =                                BASH renew dhcpv4 address       h2                      bond0.1002
     Should Not Be Empty                         ${ipAddr2}
     ${ipAddr6} =                                BASH renew dhcpv4 address       h6                      bond0
@@ -2218,20 +2239,26 @@ Restart ofad on leaf with dhcp-relay
     Should Be True                              ${value}
     BASH restart process                        s3                              ofad                    timeout=60
     sleep                                       5
-    ${value} =                                  BASH check service status       s1                      ofad
-    Should Contain                              ${value}                        is started
-    sleep                                       10
+    ${result} =                                 CLI verify controller           s1                          c1      
+    Should Be True                              ${result}
+    ${result} =                                 CLI verify controller           s1                          c2
+    Should Be True                              ${result}
+    sleep                                       5
     BASH restart process                        s4                              ofad                    timeout=60
     sleep                                       5
-    ${value} =                                  BASH check service status       s1                      ofad
-    Should Contain                              ${value}                        is started
-    sleep                                       10
+    ${result} =                                 CLI verify controller           s4                          c1      
+    Should Be True                              ${result}
+    ${result} =                                 CLI verify controller           s4                          c2
+    Should Be True                              ${result}
+    sleep                                       5
     ${ipAddr2} =                                BASH renew dhcpv4 address       h2                      bond0.1002
     Should Not Be Empty                         ${ipAddr2}
     ${ipAddr5} =                                BASH renew dhcpv4 address       h5                      bond0
     Should Not Be Empty                         ${ipAddr5}  
     BASH add route                              h2                              10.251.0.0/16           10.252.1.1
     BASH add route                              h5                              10.251.0.0/16           10.252.1.1
+    BASH ping                                   h2                              10.252.1.1              count=5
+    BASH ping                                   h5                              10.252.1.1              count=5
     ${result} =                                 REST show endpoints mac         ${mac2}
     Should Not Be Empty                         ${result}
     ${attachpoint} =                            Set Variable                    ${result[0]['attachment-point']}    
@@ -2317,14 +2344,18 @@ Restart ofad on spine with dhcp-relay
     Should Be True                              ${value}
     BASH restart process                        s1                              ofad                    timeout=60
     sleep                                       5
-    ${value} =                                  BASH check service status       s1                      ofad
-    Should Contain                              ${value}                        is started
+    ${result} =                                 CLI verify controller           s1                          c1      
+    Should Be True                              ${result}
+    ${result} =                                 CLI verify controller           s1                          c2
+    Should Be True                              ${result}
     sleep                                       10
     BASH restart process                        s2                              ofad                    timeout=60
     sleep                                       5
-    ${value} =                                  BASH check service status       s1                      ofad
-    Should Contain                              ${value}                        is started
-    sleep                                       10
+    ${result} =                                 CLI verify controller           s2                          c1      
+    Should Be True                              ${result}
+    ${result} =                                 CLI verify controller           s2                          c2
+    Should Be True                              ${result}
+    sleep                                       5
     ${ipAddr2} =                                BASH renew dhcpv4 address       h2                      bond0.1002
     Should Not Be Empty                         ${ipAddr2}
     ${ipAddr5} =                                BASH renew dhcpv4 address       h5                      bond0
@@ -2364,11 +2395,11 @@ L3 inter tenant shutdown and bringup both leaf switch in a dual tor setup
     REST add portgroup to vns                   Y                               Y1                      ${leaf1_pc2}            -1
     REST add interface to vns                   X                               X1                      ${leaf0_a}              ${ixia1}                -1
     REST add interface to vns                   Y                               Y1                      ${leaf1_a}              ${ixia3}                -1  
-    BASH ifconfig ip address                         h5                              10.251.1.11/24          bond0   
-    BASH ifconfig ip address                         h4                              10.252.1.11/24          bond0
+    BASH ifconfig ip address                    h5                              10.251.1.11/24          bond0   
+    BASH ifconfig ip address                    h4                              10.252.1.11/24          bond0
     BASH add route                              h5                              10.252.0.0/16           10.251.1.1
     BASH add route                              h4                              10.251.0.0/16           10.252.1.1
-    sleep                                       5   
+    sleep                                       1  
     BASH ping                                   h5                              10.251.1.1              count=10
     BASH ping                                   h4                              10.252.1.1              count=10
     ${value} =                                  BASH verify arp                 h5                      10.251.1.1
@@ -2572,6 +2603,56 @@ Verify private subnet cannot be routed via system router
     BASH delete route                           h4                              10.251.0.0/16           10.252.2.1
     BASH delete route                           h4                              10.252.0.0/16           10.252.2.1
 
+
+Enable and disable tenant logical router interface
+    BASH ifup intf                              h1                              bond0
+    BASH ifup intf                              h2                              bond0
+    BASH ifup intf                              h3                              bond0
+    BASH ifup intf                              h4                              bond0   
+    BASH ifup intf                              h5                              bond0   
+    BASH ifup intf                              h6                              bond0           
+    REST add portgroup to vns                   X                               X1                      ${leaf2_pc1}            -1
+    REST add portgroup to vns                   Y                               Y1                      ${leaf2_pc2}            -1
+    REST add interface to vns                   X                               X1                      ${leaf0_a}              ${ixia1}                -1
+    REST add interface to vns                   Y                               Y1                      ${leaf0_b}              ${ixia2}                -1
+    BASH ifconfig ip address                    h5                              10.251.1.11/24          bond0   
+    BASH ifconfig ip address                    h6                              10.252.1.11/24          bond0
+    BASH add route                              h5                              10.252.1.0/24           10.251.1.1
+    BASH add route                              h6                              10.251.1.0/24           10.252.1.1
+    sleep                                       5   
+    BASH ping                                   h5                              10.251.1.1              count=10
+    BASH ping                                   h6                              10.252.1.1              count=10
+    ${value} =                                  BASH verify arp                 h5                      10.251.1.1
+    Should Be True                              ${value}        
+    ${value} =                                  BASH verify arp                 h6                      10.252.1.1
+    Should Be True                              ${value} 
+    ${mac1} =                                   BASH get intf mac               h5                      bond0
+    ${result} =                                 REST show endpoints mac         ${mac1}
+    Should Be True                              ${result}                       
+    ${mac2} =                                   BASH get intf mac               h6                      bond0
+    ${result} =                                 REST show endpoints mac         ${mac2}
+    Should Be True                              ${result}                       
+    REST show endpoints 
+    ${loss} =                                   BASH ping                       h5                      10.252.1.11             count=10
+    Should Be True                              ${loss} == 0    
+    REST disable router intf                    system                          Y
+    sleep                                       1
+    ${loss} =                                   BASH ping                       h5                      10.252.1.11             count=10
+    Should Be True                              ${loss} == 100    
+    REST enable router intf                     system                          Y
+    ${loss} =                                   BASH ping                       h5                      10.252.1.11             count=10
+    Should Be True                              ${loss} < 50    
+    REST disable router intf                    X                               system
+    ${loss} =                                   BASH ping                       h5                      10.252.1.11             count=10
+    Should Be True                              ${loss} == 100    
+    REST enable router intf                     X                               system 
+    ${loss} =                                   BASH ping                       h5                      10.252.1.11             count=10
+    Should Be True                              ${loss} < 50    
+    BASH delete route                           h5                              10.252.1.0/24           10.251.1.1
+    BASH delete route                           h6                              10.251.1.0/24           10.252.1.1
+
+
+
 initialize host
 	BASH delete tag								h1								bond0.1001				soft_error=${true}
 	BASH delete tag								h2								bond0.1002				soft_error=${true}
@@ -2635,7 +2716,7 @@ initialize host
 
 test setup topology
 	initialize host
-	
+	delete traffic
 	sleep 											1
 	Start Floodlight Monitor 
 	REST add tenant 								X
@@ -2645,7 +2726,7 @@ test setup topology
 	REST add vns									X							X1
 	REST add vns									X							X2
 	REST add vns									X							X3
-	REST add vns									Y							Y1
+	REST add vns									Y     						Y1
 	REST add vns									Y							Y2
 	REST add vns									Y							Y3
 	REST add vns									Z							Z1
@@ -2694,11 +2775,15 @@ test setup topology
 #	${result} = 									REST add policy item		X					allow_all			20		permit			{"tenant-name": "system"}, "dst": {"tenant-name": "X"}
 #	Should Be True									${result}
 	REST add static routes							X							10.252.0.0/16		 {"tenant-name": "system"}
-	REST add static routes							Y							10.251.0.0/16		 {"tenant-name": "system"}
-		
-	
+	REST add static routes                          X                           10.253.0.0/16        {"tenant-name": "system"}
+    REST add static routes                          Y                           10.251.0.0/16        {"tenant-name": "system"}
+	REST add static routes							Y							10.253.0.0/16		 {"tenant-name": "system"}
+    REST add static routes                          Z                           10.251.0.0/16        {"tenant-name": "system"}
+    REST add static routes                          Z                           10.252.0.0/16        {"tenant-name": "system"}
 
 test teardown topology
+    stop traffic                                   
+    sleep                                           1
     delete traffic
 	REST delete vns ip  							X							X1				10.251.1.1				24	
 	REST delete vns ip  							X							X2				10.251.2.1				24	

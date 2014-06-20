@@ -1,6 +1,7 @@
 * Keywords
 
 add fabric switch
+
   rest add switch  spine0
   rest add dpid  spine0  00:00:00:00:00:01:00:01
   rest add fabric role  spine0  spine

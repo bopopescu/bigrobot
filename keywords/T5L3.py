@@ -110,7 +110,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
             return True
  
     def rest_disable_router_intf(self, tenant, tenantIntf):
-        '''Create vns router interface via command "logical-router vns interface"
+        '''Disable logical router tenant interface"
         
             Input:
                 `tenant`        tenant name
@@ -347,9 +347,10 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
         
         helpers.test_log("Input arguments: tenant = %s dstroute = %s " % (tenant, dstroute))
         
-        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/logical-router/routes' % (tenant)
+        url = '/api/v1/data/controller/applications/bvs/tenant[name="%s"]/logical-router/routes[dest-ip-subnet="%s"]' % (tenant, dstroute)
         try:
-            c.rest.delete(url, {"dest-ip-subnet": dstroute})
+            #c.rest.delete(url, {"dest-ip-subnet": dstroute})
+            c.rest.delete(url, {})
         except:
             helpers.test_failure(c.rest.error())
         else: 
@@ -788,7 +789,7 @@ REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/tenant[
             return c.rest.content()            
 
 
-    def rest_delete_dhcp_relay(self, tenant, vnsname, dhcpserverip):
+    def rest_delete_dhcp_relay(self, tenant, vnsname, dhcpserverip, dhcpcircuitid=None):
         '''Delete dhcp server "
         
             Input:
@@ -858,12 +859,13 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
       
     def rest_show_l3_cidr_table(self):
         '''
+        GET http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/info/forwarding/network/global/l3-cidr-table
         GET http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/info/forwarding/network/l3-cidr-table
         '''
         t = test.Test()
         c = t.controller('master')
         
-        url = '/api/v1/data/controller/applications/bvs/info/forwarding/network/l3-cidr-table' 
+        url = '/api/v1/data/controller/applications/bvs/info/forwarding/network/global/l3-cidr-table' 
         try:
             c.rest.get(url)
         except:
@@ -873,12 +875,14 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
 
     def rest_show_l3_host_table(self):
         '''
+        GET http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/info/forwarding/network/global/l3-host-table
+
         GET http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/info/forwarding/network/l3-host-table
         '''
         t = test.Test()
         c = t.controller('master')
         
-        url = '/api/v1/data/controller/applications/bvs/info/forwarding/network/l3-host-table' 
+        url = '/api/v1/data/controller/applications/bvs/info/forwarding/network/global/l3-host-table' 
         try:
             c.rest.get(url)
         except:
@@ -1392,3 +1396,33 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/
                     #return c.rest.content()
                     return True
 
+    def rest_show_forwarding_dhcp_table(self):
+        '''
+       GET http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/info/forwarding/network/global/dhcp-table
+     '''
+        t = test.Test()
+        c = t.controller('master')
+        
+        url = '/api/v1/data/controller/applications/bvs/info/forwarding/network/global/dhcp-table' 
+        try:
+            c.rest.get(url)
+        except:
+            helpers.test_failure(c.rest.error())
+        else: 
+            return c.rest.content()            
+
+    def rest_show_forwarding_ecmp_table(self):
+        '''
+        GET http://127.0.0.1:8080/api/v1/data/controller/applications/bvs/info/forwarding/network/global/ecmp-table
+
+     '''
+        t = test.Test()
+        c = t.controller('master')
+        
+        url = '/api/v1/data/controller/applications/bvs/info/forwarding/network/global/ecmp-table' 
+        try:
+            c.rest.get(url)
+        except:
+            helpers.test_failure(c.rest.error())
+        else: 
+            return c.rest.content()            
