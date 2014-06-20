@@ -226,24 +226,6 @@ class T5ZTN(object):
         con.send("boot")
         con.expect(r'.*login:.*$')
 
-    def telnet_switch_reload(self, node):
-        """
-        Issue reload command on given node (switch)
-
-        Inputs:
-        | node | Alias of the node to use |
-
-        Return Value:
-        - N/A
-        """
-        t = test.Test()
-        con = t.dev_console(node)
-        con.enable("show running-config")
-        helpers.log(con.cli('')['content'])
-        con.enable("enable")
-        con.send("reload now")
-        helpers.sleep(90)
-
     def telnet_set_ma1_state(self, node, state):
         """
         Run "no interface ma1" command on switch
@@ -920,7 +902,7 @@ class T5ZTN(object):
             helpers.test_failure(c.rest.error())
             return None
 
-    def telnet_reboot_switch(self, switch):
+    def telnet_reboot_switch(self, switch, password='adminadmin'):
         """
         Issue reboot command for switch
 
@@ -935,11 +917,15 @@ class T5ZTN(object):
         s.send(helpers.ctrl('c'))
         s.send("\x03")
         options = s.expect([r'[\r\n]*.*login:', r'[Pp]assword:', r'root@.*:',
-                            r'ONIE:/ #', r'=> ', r'loader#', s.get_prompt(),
-                            r'Press Control-C now to enter loader shell'],
+                            r'onie:/ #', r'=> ', r'loader#', s.get_prompt(),
+                            r'press control-c now to enter loader shell'],
                            timeout=300)
         if options[0] == 0: #login prompt
-            s.cli('admin')
+            s.send('admin')
+            options = s.expect([ r'[Pp]assword:', s.get_prompt()])
+            if options[0] == 0:
+                helpers.log("Logging in as admin with password %s" % password)
+                s.cli(password)
             s.cli('enable; config')
             s.send('reload now')
         if options[0] == 2: #bash mode
