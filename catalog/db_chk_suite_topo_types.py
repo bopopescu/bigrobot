@@ -25,7 +25,7 @@ DB_SERVER = 'qadashboard-mongo.bigswitch.com'
 DB_PORT = 27017
 
 print_all = False
-print_unknown = False
+print_unknown = True
 print_mv_commands = True
 
 

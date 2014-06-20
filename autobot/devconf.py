@@ -37,7 +37,7 @@ class DevConf(object):
         self._mode = 'cli'
         self.is_prompt_changed = False
 
-        self._timeout = timeout if timeout else 30
+        self._timeout = timeout if timeout else 30  # default timeout
 
         self.connect()
 
@@ -118,6 +118,9 @@ class DevConf(object):
         # Reset mode to 'cli' as default
         self._mode = 'cli'
         self.conn = conn
+
+    def default_timeout(self):
+        return self._timeout
 
     def timeout(self, seconds=None):
         """
@@ -467,7 +470,9 @@ class BsnDevConf(DevConf):
 
         if not quiet:
             helpers.log("Execute command on '%s': '%s' (timeout: %s)"
-                        % (self.name(), cmd, timeout), level=level)
+                        % (self.name(), cmd,
+                           timeout or self.default_timeout()),
+                        level=level)
 
         super(BsnDevConf, self).cmd(cmd, prompt=prompt, mode=mode,
                                     timeout=timeout, quiet=True)
@@ -656,7 +661,9 @@ class MininetDevConf(DevConf):
 
         if not quiet:
             helpers.log("Execute command on '%s': %s (timeout: %s)"
-                        % (self.name(), cmd, timeout), level=level)
+                        % (self.name(), cmd,
+                           timeout or self.default_timeout()),
+                        level=level)
 
         super(MininetDevConf, self).cmd(cmd, prompt=prompt, mode=mode,
                                         timeout=timeout, quiet=True)
@@ -782,7 +789,9 @@ class HostDevConf(DevConf):
     def _cmd(self, cmd, quiet=False, prompt=False, timeout=None, level=4):
         if not quiet:
             helpers.log("Execute command on '%s': '%s' (timeout: %s)"
-                        % (self.name(), cmd, timeout), level=level)
+                        % (self.name(), cmd,
+                           timeout or self.default_timeout()),
+                        level=level)
 
         super(HostDevConf, self).cmd(cmd, prompt=prompt, mode='bash',
                                      timeout=timeout, quiet=True)

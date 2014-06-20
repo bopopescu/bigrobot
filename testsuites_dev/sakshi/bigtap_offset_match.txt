@@ -12,19 +12,14 @@ Library  keywords/SwitchLight.py
 Library  keywords/Ixia.py
 
 ### Ixia Ports
-${switch1_filter_intf_1}                  ethernet25        #filter interface on switch 1
-${switch1_filter_alias_1}                 ixia-2-3        #Alias for filter interface on switch 1
-${switch1_delivery_intf_1}                ethernet26        #Delivery interface on switch 1
-${switch1_delivery_alias_1}               ixia-2-4        #Alias for delivery interface on switch 1
-
 
 * Variable
 ${switch1_alias}                        qa-corsair-1  #Alias for switch 1
 ${switch2_alias}                        qa-corsair-2  #Alias for switch 2
-${filter_interface_name}				ethernet26
-${filter_interface_alias}				ixia-2-4
-${delivery_interface_name}				ethernet25
-${delivery_interface_alias}				ixia-2-3
+${switch1_filter_intf_name}				ethernet26
+${switch1_filter_alias} 				ixia-2-4
+${switch1_delivery_intf_name} 			ethernet26
+${switch2_delivery_alias}				ixia-2-3
 
 ${bigtap_policy_name}					offset-policy
 
@@ -35,7 +30,7 @@ ${bigtap_policy_name}					offset-policy
 ### GTPv1 Test Cases
 
 
-01_Verify offset match with GTP version   ##PASS
+01_Verify offset match with GTP version
 	rest add policy match  admin-view  ${bigtap_policy_name}  1  {"gtp-version": 1, "ether-type": 2048, "dst-tp-port": 2152, "ip-proto": 17, "sequence": 1}
     sleep  5
     ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
@@ -49,9 +44,9 @@ ${bigtap_policy_name}					offset-policy
     sleep  10
     verify results  a  b  transmitted_frame_rate  received_frame_rate    
     stop traffic  ${stream}
-	[Tags]  offset-match  gtp  version
+	[Tags]  offset-match  feature
 
-02_Verify offset match with GTP Protocol Type GTP(value 1)   ###PASS
+02_Verify offset match with GTP Protocol Type GTP(value 1)
 	rest add policy match  admin-view  ${bigtap_policy_name}  1  {"dst-tp-port": 2152, "ether-type": 2048, "gtp-v1-protocol-type": 1, "ip-proto": 17, "sequence": 1}
     sleep  5
     ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
@@ -65,9 +60,9 @@ ${bigtap_policy_name}					offset-policy
     sleep  10
     verify results  a  b  transmitted_frame_rate  received_frame_rate    
     stop traffic  ${stream}
-	[Tags]  offset-match  gtp  protocol-type  
+	[Tags]  offset-match  feature  
 	
-03_Verify offset match with GTP Protocol Type GTP'(value 0)  ##PASS
+03_Verify offset match with GTP Protocol Type GTP'(value 0)
 	rest add policy match  admin-view  ${bigtap_policy_name}  1  {"dst-tp-port": 2152, "ether-type": 2048, "gtp-v1-protocol-type": 0, "ip-proto": 17, "sequence": 1}
     sleep  5
     ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
@@ -81,9 +76,9 @@ ${bigtap_policy_name}					offset-policy
     sleep  10
     verify results  a  b  transmitted_frame_rate  received_frame_rate    
     stop traffic  ${stream}
-	[Tags]  offset-match  gtp'  protocol-type
+	[Tags]  feature
 
-04_Verify offset match with GTPv1 TEID  ###PASS
+04_Verify offset match with GTPv1 TEID
     rest add policy match  admin-view  ${bigtap_policy_name}  1  {"gtp-v1-teid": 100, "ether-type": 2048, "dst-tp-port": 2152, "ip-proto": 17, "sequence": 1}
     sleep  5
     ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
@@ -97,41 +92,24 @@ ${bigtap_policy_name}					offset-policy
     sleep  10
     verify results  a  b  transmitted_frame_rate  received_frame_rate    
     stop traffic  ${stream}
-	[Tags]  offset-match  gtp  teid  
+	[Tags]  feature 
 	
-05_Verify offset match on GTP TEID and send traffic with VLAN header  #### FAILsasexp
+05_Verify offset match on GTP TEID and send traffic with VLAN header
     rest add policy match  admin-view  ${bigtap_policy_name}  1  {"gtp-v1-teid": 100, "ether-type": 2048, "dst-tp-port": 2152, "ip-proto": 17, "sequence": 1}
     sleep  5
     ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
     Should be true  ${verify_policy1}
-    ${stream}=  L3 add  flow=a->b  line_rate=100  frame_size=1518  ethertype=8100  vlan_id=2048  
+    ${stream}=  L3 add  name=gtp_teid  flow=a->b  frame_rate=10000  frame_size=1518  ethertype=8100  vlan_id=2048  
     ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  protocol=UDP  src_port=8001  dst_port=2152  no_arp=True
-    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  name=c_d_flow  payload=2000000000000064
+    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  payload=2000000000000064
     clear stats    
     start traffic  ${stream}
-    sleep  1000
-    verify results  a  b  transmitted_frame_rate  received_frame_rate    
+    sleep  10
+    verify false results  a  b  transmitted_frame_rate  received_frame_rate    
     stop traffic  ${stream}
-	[Tags]  offset-match  gtp  teid vlan-header  run
-
-
-#06_Verify offset match with GTP TEID and ip header length > 20 bytes XXXXX skip this test case
- #   rest add policy match  admin-view  ${bigtap_policy_name}  1  {"gtp-v1-teid": 100, "ether-type": 2048, "dst-tp-port": 2152, "ip-proto": 17, "sequence": 1}
-  #  sleep  5
-#    ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
-#    Should be true  ${verify_policy1}
-#    ${stream}=  L3 add  name=gtp_teid  flow=a->b  frame_rate=10000  frame_size=1518
-#    ...     src_mac=00:01:02:03:04:01  dst_mac=00:01:02:03:04:02  protocol=UDP  src_port=8001  dst_port=2152
-#    ...     src_ip=100.1.1.1  src_gw=100.1.1.2  dst_ip=100.1.1.2  dst_gw=100.1.1.1  
-#    ...		no_arp=True  payload=2000000000000064
-#    clear stats    
-#    start traffic  ${stream}
-#    sleep  10
-#    verify results  a  b  transmitted_frame_rate  received_frame_rate    
-#    stop traffic  ${stream}
-#	[Tags]  offset-match  gtp  teid  ip-header
+	[Tags]  feature
 	
-06_Verify offset match with GTPv1 TEID and Protocol UDP   ###PASS
+06_Verify offset match with GTPv1 TEID and Protocol UDP 
 	rest add policy match  admin-view  ${bigtap_policy_name}  1  {"gtp-v1-teid": 100, "sequence": 1, "dst-tp-port": 2152, "ip-proto": 17, "ether-type": 2048}
     sleep  5
     ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
@@ -145,9 +123,9 @@ ${bigtap_policy_name}					offset-policy
     sleep  10
     verify results  a  b  transmitted_frame_rate  received_frame_rate    
     stop traffic  ${stream}
-	[Tags]  offset-match  gtp  teid protocol
+	[Tags]  feature
 	
-07_Verify offset match with GTP TEID and Destination Port 2152  ###PASS
+07_Verify offset match with GTP TEID and Destination Port 2152
 	rest add policy match  admin-view  ${bigtap_policy_name}  1  {"gtp-v1-teid": 100, "sequence": 1, "dst-tp-port": 2152, "ip-proto": 17, "ether-type": 2048}
     sleep  5
     ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
@@ -161,9 +139,9 @@ ${bigtap_policy_name}					offset-policy
     sleep  10
     verify results  a  b  transmitted_frame_rate  received_frame_rate    
     stop traffic  ${stream}
-	[Tags]  offset-match  gtp  teid dst-port
+	[Tags]  feature
 	
-08_Verify offset match with GTP TEID and Destination Port 2123  #### Pass
+08_Verify offset match with GTP TEID and Destination Port 2123
 	rest add policy match  admin-view  ${bigtap_policy_name}  1  {"gtp-v1-teid": 100, "sequence": 1, "dst-tp-port": 2123, "ip-proto": 17, "ether-type": 2048}
     sleep  5
     ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
@@ -177,10 +155,10 @@ ${bigtap_policy_name}					offset-policy
     sleep  10
     verify results  a  b  transmitted_frame_rate  received_frame_rate    
     stop traffic  ${stream}
-	[Tags]  offset-match  gtp  teid dst-port
+	[Tags]  feature
 
 	
-09_Verify offset match with GTP TEID and source port  ####PASS
+09_Verify offset match with GTP TEID and source port
     rest add policy match  admin-view  ${bigtap_policy_name}  1  {"src-tp-port": 63, "ip-proto": 17, "sequence": 1, "gtp-v1-teid": 100, "ether-type": 2048, "dst-tp-port": 2152}
     sleep  5
     ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
@@ -194,9 +172,9 @@ ${bigtap_policy_name}					offset-policy
     sleep  10
     verify results  a  b  transmitted_frame_rate  received_frame_rate    
     stop traffic  ${stream}
-	[Tags]  offset-match  gtp  teid  src-port
+	[Tags]  feature
 	
-10_Verify offset match with GTP TEID and source IP address   ####PASS
+10_Verify offset match with GTP TEID and source IP address
 	rest add policy match  admin-view  ${bigtap_policy_name}  1  {"src-ip-mask": "255.255.255.0", "ip-proto": 17, "sequence": 1, "gtp-v1-teid": 100, "ether-type": 2048, "dst-tp-port": 2152, "src-ip": "100.1.1.1"}
     sleep  5
     ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
@@ -210,9 +188,9 @@ ${bigtap_policy_name}					offset-policy
     sleep  10
     verify results  a  b  transmitted_frame_rate  received_frame_rate    
     stop traffic  ${stream}
-	[Tags]  offset-match  gtp  teid src-ip
+	[Tags]  feature
 	
-11_Verify offset match with GTP TEID and destination IP address  ###PASS
+11_Verify offset match with GTP TEID and destination IP address
 	rest add policy match  admin-view  ${bigtap_policy_name}  1  {"dst-ip": "100.1.1.2", "ip-proto": 17, "ether-type": 2048, "gtp-v1-teid": 100, "sequence": 1, "dst-tp-port": 2152, "dst-ip-mask": "255.255.255.0"}
     sleep  5
     ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
@@ -226,10 +204,10 @@ ${bigtap_policy_name}					offset-policy
     sleep  10
     verify results  a  b  transmitted_frame_rate  received_frame_rate    
     stop traffic  ${stream}
-	[Tags]  offset-match  gtp  teid dst-ip
+	[Tags]  feature
       
   
-12_Verify offset match with GTP TEID and VLAN ID  ##ManualPassScriptFails
+12_Verify offset match with GTP TEID and VLAN ID
 	rest add policy match  admin-view  ${bigtap_policy_name}  1  {"ether-type": 2048, "ip-proto": 17, "sequence": 1, "gtp-v1-teid": 100, "vlan": 100, "dst-tp-port": 2152}
     sleep  5
     ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
@@ -242,9 +220,9 @@ ${bigtap_policy_name}					offset-policy
     sleep  10
     verify results  a  b  transmitted_frame_rate  received_frame_rate    
     stop traffic  ${stream}
-	[Tags]  offset-match  gtp  teid vlan-id
+	[Tags]  feature
 		
-13_Verify offset match with GTP TEID and GTP version  ##PASS
+13_Verify offset match with GTP TEID and GTP version
 	rest add policy match  admin-view  ${bigtap_policy_name}  1  {"ether-type": 2048, "ip-proto": 17, "sequence": 1, "gtp-v1-teid": 100, "gtp-version": 1, "dst-tp-port": 2152}
     sleep  5
     ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
@@ -258,9 +236,9 @@ ${bigtap_policy_name}					offset-policy
     sleep  10
     verify results  a  b  transmitted_frame_rate  received_frame_rate    
     stop traffic  ${stream}
-	[Tags]  offset-match  gtp  teid gtp-version
+	[Tags]  feature
 	
-14_Verify offset match with GTPv TEID and GTP Protocol Type 0  ####PASSwithPType=0,FAILswithP.Type=1
+14_Verify offset match with GTPv TEID and GTP Protocol Type 0
 	rest add policy match  admin-view  ${bigtap_policy_name}  1  {"gtp-v1-protocol-type": 0, "ip-proto": 17, "sequence": 1, "gtp-v1-teid": 100, "ether-type": 2048, "dst-tp-port": 2152}
     sleep  5
     ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
@@ -274,9 +252,9 @@ ${bigtap_policy_name}					offset-policy
     sleep  10
     verify results  a  b  transmitted_frame_rate  received_frame_rate    
     stop traffic  ${stream}
-	[Tags]  offset-match  gtp  teid protocol-type	
+	[Tags]  feature
 
-15_Verify offset match with GTPv TEID and GTP Protocol Type 1  ####PASSwithPType=0,FAILswithP.Type=1
+15_Verify offset match with GTPv TEID and GTP Protocol Type 1
 	rest add policy match  admin-view  ${bigtap_policy_name}  1  {"gtp-v1-protocol-type": 1, "ip-proto": 17, "sequence": 1, "gtp-v1-teid": 100, "ether-type": 2048, "dst-tp-port": 2152}
     sleep  5
     ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
@@ -290,9 +268,9 @@ ${bigtap_policy_name}					offset-policy
     sleep  10
     verify results  a  b  transmitted_frame_rate  received_frame_rate    
     stop traffic  ${stream}
-	[Tags]  offset-match  gtp  teid protocol-type
+	[Tags]  feature
 	
-16_Verify offset match with GTP TEID, Protocol Type 0 and GTP Version  ####PASSwithPType=0,FAILswithP.Type=1
+16_Verify offset match with GTP TEID, Protocol Type 0 and GTP Version
 	rest add policy match  admin-view  ${bigtap_policy_name}  1  {"ether-type": 2048, "gtp-v1-protocol-type": 0, "ip-proto": 17, "sequence": 1, "gtp-v1-teid": 100, "gtp-version": 1, "dst-tp-port": 2152}
     sleep  5
     ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
@@ -306,9 +284,9 @@ ${bigtap_policy_name}					offset-policy
     sleep  10
     verify results  a  b  transmitted_frame_rate  received_frame_rate    
     stop traffic  ${stream}
-	[Tags]  offset-match  gtp  teid protocol-type version
+	[Tags]  feature
 
-17_Verify offset match with GTP TEID, Protocol Type 1 and GTP Version  ####PASSwithPType=0,FAILswithP.Type=1
+17_Verify offset match with GTP TEID, Protocol Type 1 and GTP Version
 	rest add policy match  admin-view  ${bigtap_policy_name}  1  {"ether-type": 2048, "gtp-v1-protocol-type": 1, "ip-proto": 17, "sequence": 1, "gtp-v1-teid": 100, "gtp-version": 1, "dst-tp-port": 2152}
     sleep  5
     ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
@@ -322,11 +300,11 @@ ${bigtap_policy_name}					offset-policy
     sleep  10
     verify results  a  b  transmitted_frame_rate  received_frame_rate    
     stop traffic  ${stream}
-	[Tags]  offset-match  gtp  teid protocol-type version
+	[Tags]  feature
 	
 ####### GTPv2 
 
-1_Verify offset match with GTP Version  ##PASS
+1_Verify offset match with GTP Version
 	rest add policy match  admin-view  ${bigtap_policy_name}  1  {"gtp-version": 2, "ether-type": 2048, "dst-tp-port": 2152, "ip-proto": 17, "sequence": 1}
     sleep  5
     ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
@@ -340,14 +318,14 @@ ${bigtap_policy_name}					offset-policy
     sleep  10
     verify results  a  b  transmitted_frame_rate  received_frame_rate    
     stop traffic  ${stream}
-	[Tags]  offset-match  gtp  version
+	[Tags]  feature
 	
 	
-02_Verify offset match with GTP TEID without the TEID flag set  #### FAILsasexp
+02_Verify offset match with GTP TEID without the TEID flag set
 	rest add policy match  admin-view  ${bigtap_policy_name}  1  {"sequence": 1, "gtp-v2-teid": 100, "dst-tp-port": 2123, "ip-proto": 17, "ether-type": 2048}
     sleep  5
     ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
-    Should not be true  ${verify_policy1}
+    Should be true  ${verify_policy1}
     ${stream}=  L3 add  name=gtp_teid  flow=a->b  frame_rate=10000  frame_size=1518
     ...     src_mac=00:01:02:03:04:01  dst_mac=00:01:02:03:04:02  protocol=UDP  src_port=8001  dst_port=2152
     ...     src_ip=100.1.1.1  src_gw=100.1.1.2  dst_ip=100.1.1.2  dst_gw=100.1.1.1  
@@ -355,11 +333,11 @@ ${bigtap_policy_name}					offset-policy
     clear stats    
     start traffic  ${stream}
     sleep  10
-    verify results  a  b  transmitted_frame_rate  received_frame_rate    
+    verify false results  a  b  transmitted_frame_rate  received_frame_rate    
     stop traffic  ${stream}
-	[Tags]  offset-match  gtp  protocol-type
+	[Tags]  feature
 	
-03_Verify offset match on GTP TEID with the TEID flag set and with UDP traffic  ##PASS
+03_Verify offset match on GTP TEID with the TEID flag set and with UDP traffic
 	rest add policy match  admin-view  ${bigtap_policy_name}  1  {"sequence": 1, "gtp-v2-teid": 100, "dst-tp-port": 2123, "ip-proto": 17, "ether-type": 2048}
     sleep  5
     ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
@@ -373,9 +351,9 @@ ${bigtap_policy_name}					offset-policy
     sleep  10
     verify results  a  b  transmitted_frame_rate  received_frame_rate    
     stop traffic  ${stream}
-	[Tags]  offset-match  gtp  protocol-type
+	[Tags]  feature
 
-04_Verify offset match on GTP TEID with the TEID flag set and with TCP traffic  #####Failsasexp
+04_Verify offset match on GTP TEID with the TEID flag set and with TCP traffic
 	rest add policy match  admin-view  ${bigtap_policy_name}  1  {"ether-type": 2048, "gtp-v2-teid": 100, "dst-tp-port": 2123, "ip-proto": 6, "sequence": 1}
     sleep  5
     ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
@@ -389,9 +367,9 @@ ${bigtap_policy_name}					offset-policy
     sleep  10
     verify results  a  b  transmitted_frame_rate  received_frame_rate    
     stop traffic  ${stream}
-	[Tags]  offset-match  gtp  protocol-type
+	[Tags]  feature
 
-06_Verify offset match with GTP TEID and VLAN ID  ##ManualPass,scriptFails
+06_Verify offset match with GTP TEID and VLAN ID 
 	rest add policy match  admin-view  ${bigtap_policy_name}  1  {"ether-type": 2048, "ip-proto": 17, "sequence": 1, "vlan": 100, "gtp-v2-teid": 100, "dst-tp-port": 2123}
     sleep  5
     ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
@@ -405,9 +383,9 @@ ${bigtap_policy_name}					offset-policy
     sleep  10
     verify results  a  b  transmitted_frame_rate  received_frame_rate    
     stop traffic  ${stream}
-	[Tags]  offset-match  gtp  protocol-type
+	[Tags]  feature
 	
-07_Verify offset match on GTP TEID and send traffic with VLAN Header   ##Fails
+07_Verify offset match on GTP TEID and send traffic with VLAN Header
 	rest add policy match  admin-view  ${bigtap_policy_name}  1  {"sequence": 1, "gtp-v2-teid": 100, "dst-tp-port": 2123, "ip-proto": 17, "ether-type": 2048}
     sleep  5
     ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
@@ -421,25 +399,9 @@ ${bigtap_policy_name}					offset-policy
     sleep  10
     verify results  a  b  transmitted_frame_rate  received_frame_rate    
     stop traffic  ${stream}
-	[Tags]  offset-match  gtp  protocol-type
+	[Tags]  feature
 	
-#08_Verify offset match with GTP TEID and send traffic with ip header length > 20 bytes #xxxx skip
-#    rest add policy match  admin-view  ${bigtap_policy_name}  1  {"gtp-v1-teid": 100, "ether-type": 2048, "dst-tp-port": 2152, "ip-proto": 17, "sequence": 1}
-#    sleep  5
-#    ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
-#    Should be true  ${verify_policy1}
-#    ${stream}=  L3 add  name=gtp_teid  flow=a->b  frame_rate=10000  frame_size=1518
-#    ...     src_mac=00:01:02:03:04:01  dst_mac=00:01:02:03:04:02  protocol=UDP  src_port=8001  dst_port=2123
-#    ...     src_ip=100.1.1.1  src_gw=100.1.1.2  dst_ip=100.1.1.2  dst_gw=100.1.1.1  
-#    ...		no_arp=True  payload=4800000000000064
-#    clear stats    
-#    start traffic  ${stream}
-#    sleep  10
-#    verify results  a  b  transmitted_frame_rate  received_frame_rate    
-#    stop traffic  ${stream}
-#	[Tags]  offset-match  gtp  teid  ip-header
-	
-09_Verify offset match with GTP TEID and Protocol UDP  ##PASS
+08_Verify offset match with GTP TEID and Protocol UDP
 	rest add policy match  admin-view  ${bigtap_policy_name}  1  {"ether-type": 2048, "gtp-v2-teid": 100, "dst-tp-port": 2123, "ip-proto": 17, "sequence": 1}
     sleep  5
     ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
@@ -453,9 +415,9 @@ ${bigtap_policy_name}					offset-policy
     sleep  10
     verify results  a  b  transmitted_frame_rate  received_frame_rate    
     stop traffic  ${stream}
-	[Tags]  offset-match  gtp  teid protocol
+	[Tags]  feature
 	
-10_Verify offset match with GTP TEID and Protocol TCP   ####PASS
+09_Verify offset match with GTP TEID and Protocol TCP
 	rest add policy match  admin-view  ${bigtap_policy_name}  1  {"ether-type": 2048, "gtp-v2-teid": 100, "dst-tp-port": 2123, "ip-proto": 6, "sequence": 1}
     sleep  5
     ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
@@ -469,9 +431,9 @@ ${bigtap_policy_name}					offset-policy
     sleep  10
     verify results  a  b  transmitted_frame_rate  received_frame_rate    
     stop traffic  ${stream}
-	[Tags]  offset-match  gtp  teid dst-port
+	[Tags]  feature
 	
-11_Verify offset match with GTP TEID and Destination Port  ####PASS
+10_Verify offset match with GTP TEID and Destination Port
 	rest add policy match  admin-view  ${bigtap_policy_name}  1  {"sequence": 1, "gtp-v2-teid": 100, "dst-tp-port": 2123, "ip-proto": 17, "ether-type": 2048}
     sleep  5
     ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
@@ -485,10 +447,10 @@ ${bigtap_policy_name}					offset-policy
     sleep  10
     verify results  a  b  transmitted_frame_rate  received_frame_rate    
     stop traffic  ${stream}
-	[Tags]  offset-match  gtp  teid dst-port
+	[Tags]  feature
 
 	
-12_Verify offset match with GTP TEID and source port   ###PASS
+11_Verify offset match with GTP TEID and source port
     rest add policy match  admin-view  ${bigtap_policy_name}  1  {"src-tp-port": 8001, "ip-proto": 17, "sequence": 1, "ether-type": 2048, "gtp-v2-teid": 100, "dst-tp-port": 2123}
     sleep  5
     ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
@@ -502,10 +464,10 @@ ${bigtap_policy_name}					offset-policy
     sleep  10
     verify results  a  b  transmitted_frame_rate  received_frame_rate    
     stop traffic  ${stream}
-	[Tags]  offset-match  gtp  teid  src-port
+	[Tags]  feature
 	
 	
-13_Verify offset match with GTP TEID and source IP address   ###PASS
+12_Verify offset match with GTP TEID and source IP address
 	rest add policy match  admin-view  ${bigtap_policy_name}  1  {"src-ip-mask": "255.255.255.0", "ip-proto": 17, "sequence": 1, "ether-type": 2048, "gtp-v2-teid": 100, "dst-tp-port": 2123, "src-ip": "100.1.1.1"}
     sleep  5
     ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
@@ -519,9 +481,9 @@ ${bigtap_policy_name}					offset-policy
     sleep  10
     verify results  a  b  transmitted_frame_rate  received_frame_rate    
     stop traffic  ${stream}
-	[Tags]  offset-match  gtp  teid src-ip
+	[Tags]  feature
 	
-14_Verify offset match with GTP TEID and destination IP address   ###PASS
+13_Verify offset match with GTP TEID and destination IP address
 	rest add policy match  admin-view  ${bigtap_policy_name}  1  {"sequence": 1, "ip-proto": 17, "dst-ip": "100.1.1.2", "ether-type": 2048, "gtp-v2-teid": 100, "dst-tp-port": 2123, "dst-ip-mask": "255.255.255.0"}
     sleep  5
     ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
@@ -535,12 +497,12 @@ ${bigtap_policy_name}					offset-policy
     sleep  10
     verify results  a  b  transmitted_frame_rate  received_frame_rate    
     stop traffic  ${stream}
-	[Tags]  offset-match  gtp  teid dst-ip
+	[Tags]  feature
       
   
 ##Miscellaneous
 
-01_Verify offset match on sctp   ##PASS
+01_Verify offset match on sctp
 	rest add policy match  admin-view  ${bigtap_policy_name}  1  {"sequence": 1, "ip-proto": 132, "ether-type": 2048}
     sleep  5
     ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
@@ -554,12 +516,59 @@ ${bigtap_policy_name}					offset-policy
     sleep  10
     verify results  a  b  transmitted_frame_rate  received_frame_rate    
     stop traffic  ${stream}
-	[Tags]  offset-match  sctp
+	[Tags]  feature
 	
+	
+02_Match on src-mac with src-mac-mask set
+	
+	rest add policy match  admin-view  ${bigtap_policy_name}  1  {"src-mac-mask": "FF:FF:FF:00:00:00", "src-mac": "00:11:00:00:00:00", "sequence": 1}
+    sleep  5
+    ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+	 ${stream}=             L2 add  name=abc  flow=a->b  src_mac=00:11:00:00:00:00  dst_mac=00:11:00:00:00:22  frame_rate=10000
+	...						frame_size=1518  dst_cnt=100  src_cnt=100
+	...						dst_mac_step=00:00:00:00:00:00  src_mac_step=00:00:00:00:00:01
+    clear stats
+    start traffic  ${stream}
+    sleep    10 
+    verify results  a  b  transmitted_frame_rate  received_frame_rate  
+    stop traffic   ${stream}
+    sleep                  10
+    ${report}=             fetch port stats  stream=${stream}
+    verify results  a  b  transmitted_frame_rate  received_frame_rate
+   
+    [Tags]  feature
+	
+	
+03_Match on dst-mac with dst-mac-mask set
+	
+	rest add policy match  admin-view  ${bigtap_policy_name}  1  {"src-mac-mask": "FF:FF:FF:00:00:00", "src-mac": "00:11:00:00:00:00", "sequence": 1}
+    sleep  5
+    ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+	 ${stream}=             L2 add  name=abc  flow=a->b  src_mac=00:11:00:00:30:22  dst_mac=00:11:00:00:00:00  frame_rate=10000
+	...						frame_size=1518  dst_cnt=100  src_cnt=100
+	...						dst_mac_step=00:00:00:00:00:01  src_mac_step=00:00:00:00:00:00
+    clear stats
+    start traffic  ${stream}
+    sleep    10 
+    verify results  a  b  transmitted_frame_rate  received_frame_rate  
+    stop traffic   ${stream}
+    sleep                  10
+    ${report}=             fetch port stats  stream=${stream}
+    verify results  a  b  transmitted_frame_rate  received_frame_rate
+   
+    [Tags]  feature
 	
 ##### Offset Match Testcases
 
 01_Verify no errors are reported in CLI/Syslog while enabling offset based match via cli command "BigTap offset-match"
+
+	#${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
+    #Should be true  ${verify_policy1}
+    ${return_value}=  rest enable feature  l3-l4-offset-match
+    Should not be true   ${return_value}       
+    [Tags]  feature
 
 02_Verify CLI command "BigTap offset-match ?" does not contain any erroneous strings
 
@@ -567,288 +576,477 @@ ${bigtap_policy_name}					offset-policy
 
 04_With offset matching enabled, verify basic BigTap policy with "match any" condition is active and installed. Verify flow table in switch. 
 
-**05_Verify basic BigTap policy with "1 match gtp gtp-v1-teid 100" condition is active and installed.
-	rest delete policy  admin-view  ${policy_name}
-    Sleep  10    
-    rest add policy  admin-view  ${policy_name}  forward
-    rest add policy match  admin-view  ${policy_name}  1  {"gtp-v1-teid": 100, "ether-type": 2048, "dst-tp-port": 2152, "ip-proto": 17, "sequence": 1}
-    rest add policy interface  admin-view  ${policy_name}  ${switch1_filter_alias_1}  filter
-    rest add policy interface  admin-view  ${policy_name}  ${switch1_delivery_alias_1}  delivery    
-    sleep  5
-    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
-    Should be true  ${verify_policy1}
-    ${flow_count}=  rest show switch flow  s1  switch_alias=${switch1_alias}
+	rest delete policy  admin-view  ${bigtap_policy_name}
+	sleep  10
+    rest add policy  admin-view  ${bigtap_policy_name}  forward
+    rest add policy match  admin-view  ${bigtap_policy_name}  1  {"any-traffic": true, "sequence": 1}
+    rest add policy interface  admin-view  ${bigtap_policy_name}  ${switch1_filter_alias}   filter
+    rest add policy interface  admin-view  ${bigtap_policy_name}  ${switch2_delivery_alias}  delivery    
+    sleep  10
+    #${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
+    #Should be true  ${verify_policy1}
+    ${flow_count}=  rest show switch flow  s1
     Should be equal as integers  ${flow_count}  1
+    ${flow_count}=  rest show switch flow  s2
+    Should be equal as integers  ${flow_count}  1  
+    sleep  5
     ${ethType}=  rest return switch flow  s1  0  eth-type
-    Should be equal as integer  ${ethType}  2048    
-    ${ipproto}=  rest return switch flow  s1  0  ip-proto
-    Should be equal as integer  ${ipproto}  17   
-    ${dstport}=  rest return switch flow  s1  0  udp-dst
-    Should be equal as integer  ${dstport}  2152   
-    ${udf}=  rest return switch flow  s1  0  udf4
-    Should be equal as integer  ${udf}  100                 
-    [Tags]  feature** -- commented
+    Should be equal as integers  ${ethType}  2048    
+    ${ipproto}=  rest return switch flow  s1  1  ip-proto
+    Should be equal as integers  ${ipproto}  17 
+    ${dstport}=  rest return switch flow  s1  2  port
+    Should be equal as integers  ${dstport}  2152   
+    ${udf}=  rest return switch flow  s1  4  udf4
+    Should be equal as integers  ${udf}  100
+    sleep  5
+    ${ethType}=  rest return switch flow  s2  0  eth-type
+    Should be equal as integers  ${ethType}  2048    
+    ${ipproto}=  rest return switch flow  s2  1  ip-proto
+    Should be equal as integers  ${ipproto}  17 
+    ${dstport}=  rest return switch flow  s2  2  port
+    Should be equal as integers  ${dstport}  2152   
+    ${udf}=  rest return switch flow  s2  4  udf4
+    Should be equal as integers  ${udf}  100
+    sleep  5
+    [Tags]  feature
     
     
  05_Verify basic BigTap policy with "1 match gtp gtp-v1-teid 100" condition is active and installed.
 	   
+   	rest delete policy  admin-view  ${bigtap_policy_name}
+    sleep  5
     rest add policy  admin-view  ${bigtap_policy_name}  forward
     rest add policy match  admin-view  ${bigtap_policy_name}  1  {"gtp-v1-teid": 100, "ether-type": 2048, "dst-tp-port": 2152, "ip-proto": 17, "sequence": 1}
-    rest add policy interface  admin-view  ${bigtap_policy_name}  ${filter_interface_alias}  filter
-    rest add policy interface  admin-view  ${bigtap_policy_name}  ${delivery_interface_alias}  delivery    
+    rest add policy interface  admin-view  ${bigtap_policy_name}  ${switch1_filter_alias}  filter
+    rest add policy interface  admin-view  ${bigtap_policy_name}  ${switch2_delivery_alias}  delivery    
     sleep  5
     ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
     Should be true  ${verify_policy1}
-    ${flow_count}=  rest show switch flow  s1  switch_alias=${switch1_alias}
+    ${flow_count}=  rest show switch flow  s1
     Should be equal as integers  ${flow_count}  1
+    ${flow_count}=  rest show switch flow  s2
+    Should be equal as integers  ${flow_count}  1  
+    sleep  5
     ${ethType}=  rest return switch flow  s1  0  eth-type
-    Should be equal as integer  ${ethType}  2048    
-    ${ipproto}=  rest return switch flow  s1  0  ip-proto
-    Should be equal as integer  ${ipproto}  17   
-    ${dstport}=  rest return switch flow  s1  0  udp-dst
-    Should be equal as integer  ${dstport}  2152   
-    ${udf}=  rest return switch flow  s1  0  udf4
-    Should be equal as integer  ${udf}  100                 
+    Should be equal as integers  ${ethType}  2048    
+    ${ipproto}=  rest return switch flow  s1  1  ip-proto
+    Should be equal as integers  ${ipproto}  17 
+    ${dstport}=  rest return switch flow  s1  2  port
+    Should be equal as integers  ${dstport}  2152   
+    ${udf}=  rest return switch flow  s1  4  udf4
+    Should be equal as integers  ${udf}  100
+    ${ethType}=  rest return switch flow  s2  0  eth-type
+    Should be equal as integers  ${ethType}  2048    
+    ${ipproto}=  rest return switch flow  s2  1  ip-proto
+    Should be equal as integers  ${ipproto}  17 
+    ${dstport}=  rest return switch flow  s2  2  port
+    Should be equal as integers  ${dstport}  2152   
+    ${udf}=  rest return switch flow  s2  4  udf4
+    Should be equal as integers  ${udf}  100
     [Tags]  feature
-	
 
 06_With TC5 config, change action from forward to inactive. Verify policy is inactive and flows are deleted from both Switches
-    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+     ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
     Should be true  ${verify_policy1}
-    rest update policy action  admin-view  ${policy_name}  inactive
-    ${flow_count}=  rest show switch flow  s1  switch_alias=${switch1_alias}
-    Should be equal as integers  ${flow_count}  0    
+    sleep  5
+    rest add policy action  admin-view  ${bigtap_policy_name}  inactive
+    sleep  5
+    ${flow_count}=  rest show switch flow  s1
+    Should be equal as integers  ${flow_count}  0 
+    ${flow_count}=  rest show switch flow  s2
+    Should be equal as integers  ${flow_count}  0
+    sleep  10    
     [Tags]  feature
 
 07_With TC6 config, change action from inactive to forward. Verify policy is active and installed. Verify flow table on both switch
 
-	rest add policy  admin-view  ${policy_name}  forward
-    rest add policy match  admin-view  ${policy_name}  1  {"gtp-v1-teid": 100, "ether-type": 2048, "dst-tp-port": 2152, "ip-proto": 17, "sequence": 1}
-    rest add policy interface  admin-view  ${policy_name}  ${switch1_filter_alias_1}  filter
-    rest add policy interface  admin-view  ${policy_name}  ${switch1_delivery_alias_1}  delivery    
-    sleep  5
-    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+	${flow_count}=  rest show switch flow  s1
+    Should be equal as integers  ${flow_count}  0
+    ${flow_count}=  rest show switch flow  s2
+    Should be equal as integers  ${flow_count}  0 
+    sleep  10
+	${result}=  rest add policy action  admin-view  ${bigtap_policy_name}  forward
+	Should be true  ${result}   
+    sleep  15
+    ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
     Should be true  ${verify_policy1}
-    ${flow_count}=  rest show switch flow  s1  switch_alias=${switch1_alias}
+    sleep  10
+    ${flow_count}=  rest show switch flow  s1
+    Should be equal as integers  ${flow_count}  1 
+    ${flow_count}=  rest show switch flow  s2
     Should be equal as integers  ${flow_count}  1    
     [Tags]  feature
 
 08_With TC5 config, change action from forward to rate-measure. Verify policy is installed and flows are deleted only from SW 2
 
-	rest add policy  admin-view  ${policy_name}  rate-measure
-    rest add policy match  admin-view  ${policy_name}  1  {"gtp-v1-teid": 100, "ether-type": 2048, "dst-tp-port": 2152, "ip-proto": 17, "sequence": 1}
-    rest add policy interface  admin-view  ${policy_name}  ${switch1_filter_alias_1}  filter
-    rest add policy interface  admin-view  ${policy_name}  ${switch2_delivery_alias_1}  delivery    
-    sleep  5
-    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
-    Should be true  ${verify_policy1}
-    ${flow_count}=  rest show switch flow  s1  switch_alias=${switch1_alias}
+	rest add policy action  admin-view  ${bigtap_policy_name}  rate-measure
+	sleep  5
+    ${flow_count}=  rest show switch flow  s1
     Should be equal as integers  ${flow_count}  1
-    ${flow_count}=  rest show switch flow  s2  switch_alias=${switch1_alias}
-    Should be equal as integers  ${flow_count}  0    
+    ${flow_count}=  rest show switch flow  s2
+    Should be equal as integers  ${flow_count}  0   
+    sleep  10 
     [Tags]  feature
 
 09_With TC8 config, change action from rate-measure to forward. Verify policy is active and installed. Verify flow table on both switches
-
-	rest add policy  admin-view  ${policy_name}  forward
-    rest add policy match  admin-view  ${policy_name}  1  {"gtp-v1-teid": 100, "ether-type": 2048, "dst-tp-port": 2152, "ip-proto": 17, "sequence": 1}
-    rest add policy interface  admin-view  ${policy_name}  ${switch1_filter_alias_1}  filter
-    rest add policy interface  admin-view  ${policy_name}  ${switch2_delivery_alias_1}  delivery    
-    sleep  5
-    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+	
+	rest add policy action  admin-view  ${bigtap_policy_name}  forward
+	sleep  5
+    ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
     Should be true  ${verify_policy1}
-    ${flow_count}=  rest show switch flow  s1  switch_alias=${switch1_alias}
+    sleep  5
+    ${flow_count}=  rest show switch flow  s1
     Should be equal as integers  ${flow_count}  1
-    ${flow_count}=  rest show switch flow  s2  switch_alias=${switch1_alias}
-    Should be equal as integers  ${flow_count}  1    
+    ${flow_count}=  rest show switch flow  s2
+    Should be equal as integers  ${flow_count}  1
+    sleep  10    
     [Tags]  feature
-
+    
 10_With TC5 config, change match condition (add second match condition, then delete first match condition). Verify updated flows are installed on both switches.
 
-	rest add policy  admin-view  ${policy_name}  forward
-    rest add policy match  admin-view  ${policy_name}  1  {"gtp-v1-teid": 100, "ether-type": 2048, "dst-tp-port": 2152, "ip-proto": 17, "sequence": 1}
-    rest add policy match  admin-view  ${policy_name}  2  {"ether-type": 2048, "gtp-v1-protocol-type": 1, "ip-proto": 17, "sequence": 1, "gtp-v1-teid": 100, "gtp-version": 1, "dst-tp-port": 2152}
-    rest add policy interface  admin-view  ${policy_name}  ${switch1_filter_alias_1}  filter
-    rest add policy interface  admin-view  ${policy_name}  ${switch2_delivery_alias_1}  delivery    
-    sleep  5
-    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+	${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
     Should be true  ${verify_policy1}
-    ${flow_count}=  rest show switch flow  s1  switch_alias=${switch1_alias}
+    sleep  5
+    rest add policy match  admin-view  ${bigtap_policy_name}  2  {"ether-type": 2048, "gtp-v1-protocol-type": 1, "ip-proto": 17, "sequence": 2, "gtp-v1-teid": 100, "gtp-version": 1, "dst-tp-port": 2152}   
+    sleep  5
+    ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    sleep  5
+    ${flow_count}=  rest show switch flow  s1
+    Should be equal as integers  ${flow_count}  2
+    ${flow_count}=  rest show switch flow  s2
+    Should be equal as integers  ${flow_count}  2 
+    rest delete policy match  admin-view  ${bigtap_policy_name}  1  
+    sleep  5    
+    ${flow_count}=  rest show switch flow  s1
     Should be equal as integers  ${flow_count}  1
-    ${flow_count}=  rest show switch flow  s2  switch_alias=${switch1_alias}
+    ${flow_count}=  rest show switch flow  s2
     Should be equal as integers  ${flow_count}  1 
-    rest delete policy match  admin-view  ${policy_name}  1      
-    ${flow_count}=  rest show switch flow  s1  switch_alias=${switch1_alias}
-    Should be equal as integers  ${flow_count}  1
-    ${flow_count}=  rest show switch flow  s2  switch_alias=${switch1_alias}
-    Should be equal as integers  ${flow_count}  1
-    
-      
+    sleep  10
     [Tags]  feature
 
 11_With TC5 config, change match condition (first delete existing match condition, then add second match condition). Verify updated flows are installed on both switches.
-
-	rest add policy  admin-view  ${policy_name}  forward
-    rest add policy match  admin-view  ${policy_name}  1  {"gtp-v1-teid": 100, "ether-type": 2048, "dst-tp-port": 2152, "ip-proto": 17, "sequence": 1}
-    rest add policy interface  admin-view  ${policy_name}  ${switch1_filter_alias_1}  filter
-    rest add policy interface  admin-view  ${policy_name}  ${switch2_delivery_alias_1}  delivery 
-    rest delete policy match  admin-view  ${policy_name}  1      
-    ${flow_count}=  rest show switch flow  s1  switch_alias=${switch1_alias}
-    Should be equal as integers  ${flow_count}  1
-    ${flow_count}=  rest show switch flow  s2  switch_alias=${switch1_alias}
-    Should be equal as integers  ${flow_count}  1  
-    rest add policy match  admin-view  ${policy_name}  2  {"ether-type": 2048, "gtp-v1-protocol-type": 1, "ip-proto": 17, "sequence": 1, "gtp-v1-teid": 100, "gtp-version": 1, "dst-tp-port": 2152}
-    
-    sleep  5
-    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+	
+	${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
     Should be true  ${verify_policy1}
-    ${flow_count}=  rest show switch flow  s1  switch_alias=${switch1_alias}
+    sleep  5
+    rest delete policy match  admin-view  ${bigtap_policy_name}  2  
+    sleep  5   
+    ${flow_count}=  rest show switch flow  s1
+    Should be equal as integers  ${flow_count}  0
+    ${flow_count}=  rest show switch flow  s2
+    Should be equal as integers  ${flow_count}  0  
+    rest add policy match  admin-view  ${bigtap_policy_name}  1  {"gtp-v1-teid": 100, "ether-type": 2048, "dst-tp-port": 2152, "ip-proto": 17, "sequence": 1}
+    sleep  5
+    ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    sleep  5
+    ${flow_count}=  rest show switch flow  s1
     Should be equal as integers  ${flow_count}  1
-    ${flow_count}=  rest show switch flow  s2  switch_alias=${switch1_alias}
+    ${flow_count}=  rest show switch flow  s2
     Should be equal as integers  ${flow_count}  1 
+    sleep  10 
+    [Tags]  feature
     
 
 12_With policy installed (TC5 Configuration), send matching traffic. Verify traffic is forwarded to delivery ports
 
+	rest add policy match  admin-view  ${bigtap_policy_name}  1  {"gtp-v1-teid": 100, "ether-type": 2048, "dst-tp-port": 2152, "ip-proto": 17, "sequence": 1}
+    sleep  5
+    ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    sleep  5
+    ${stream}=  L3 add  name=gtp_teid  flow=a->b  frame_rate=10000  frame_size=1518
+    ...     src_mac=00:01:02:03:04:01  dst_mac=00:01:02:03:04:02  protocol=UDP  src_port=8001  dst_port=2152
+    ...     src_ip=100.1.1.1  src_gw=100.1.1.2  dst_ip=100.1.1.2  dst_gw=100.1.1.1  
+    ...		no_arp=True  payload=2000000000000064
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    verify results  a  b  transmitted_frame_rate  received_frame_rate    
+    stop traffic  ${stream}
+    sleep  10
+	[Tags]  feature
+
 13_With policy installed, send matching traffic. Verify traffic statistics are reported correctly for offset match in "show bigtap policy <policy_name>"
+
+	rest add policy match  admin-view  ${bigtap_policy_name}  1  {"gtp-v1-teid": 100, "ether-type": 2048, "dst-tp-port": 2152, "ip-proto": 17, "sequence": 1}
+    sleep  5
+	${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+	${stream}=  L3 add  name=gtp_teid  flow=a->b  frame_rate=10000  frame_size=1518
+    ...     	src_mac=00:01:02:03:04:01  dst_mac=00:01:02:03:04:02  protocol=UDP  src_port=8001  dst_port=2152
+    ...     	src_ip=100.1.1.1  src_gw=100.1.1.2  dst_ip=100.1.1.2  dst_gw=100.1.1.1  
+    ...			no_arp=True  payload=2000000000000064
+    clear stats
+    start traffic  ${stream} 
+    sleep          10
+    ${filter_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/view/policy[name="offset-policy"]/filter-interface
+ 	${value}=  Convert To Integer  ${filter_dictionary[0]['packet-rate-60']}  
+ 	${report}=  fetch port stats
+ 	${tx_value}=  verify dict key  ${report}  a  transmitted_frame_rate
+ 	${return_value}=  ixia verify traffic rate  ${value}  ${tx_value}  rangev=20
+ 	Should be True  ${return_value}
+    ${delivery_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/view/policy[name="offset-policy"]/delivery-interface
+ 	${value}=  Convert To Integer  ${delivery_dictionary[0]['packet-rate-60']}  
+ 	${report}=  fetch port stats
+ 	${rx_value}=  verify dict key  ${report}  b  received_frame_rate
+ 	${return_value}=  ixia verify traffic rate  ${value}  ${rx_value}  rangev=20
+ 	Should be True  ${return_value} 
+    stop traffic  ${stream}
+ 	[Tags]  new
 
 14_With policy installed, send matching traffic. Verify traffic statistics are reported correctly in "show bigtap policy <policy_name> delivery-interfaces"
 
+	rest add policy match  admin-view  ${bigtap_policy_name}  1  {"gtp-v1-teid": 100, "ether-type": 2048, "dst-tp-port": 2152, "ip-proto": 17, "sequence": 1}
+    sleep  5
+	${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+	${stream}=  L3 add  name=gtp_teid  flow=a->b  frame_rate=10000  frame_size=1518
+    ...     	src_mac=00:01:02:03:04:01  dst_mac=00:01:02:03:04:02  protocol=UDP  src_port=8001  dst_port=2152
+    ...     	src_ip=100.1.1.1  src_gw=100.1.1.2  dst_ip=100.1.1.2  dst_gw=100.1.1.1  
+    ...			no_arp=True  payload=2000000000000064
+    clear stats
+    start traffic  ${stream} 
+    sleep          25
+    ${delivery_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/view/policy[name="offset-policy"]/delivery-interface
+ 	${value}=  Convert To Integer  ${delivery_dictionary[0]['packet-rate-60']}  
+ 	${report}=  fetch port stats
+ 	${rx_value}=  verify dict key  ${report}  b  received_frame_rate
+ 	${return_value}=  ixia verify traffic rate  ${value}  ${rx_value}  rangev=20
+ 	Should be True  ${return_value} 
+    stop traffic  ${stream}
+ 	[Tags]  feature
+
 15_With policy installed, send matching traffic. Verify traffic statistics are reported correctly in "show bigtap policy <policy_name> filter-interfaces"
 
+	rest add policy match  admin-view  ${bigtap_policy_name}  1  {"gtp-v1-teid": 100, "ether-type": 2048, "dst-tp-port": 2152, "ip-proto": 17, "sequence": 1}
+    sleep  5
+	${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+	${stream}=  L3 add  name=gtp_teid  flow=a->b  frame_rate=10000  frame_size=1518
+    ...     	src_mac=00:01:02:03:04:01  dst_mac=00:01:02:03:04:02  protocol=UDP  src_port=8001  dst_port=2152
+    ...     	src_ip=100.1.1.1  src_gw=100.1.1.2  dst_ip=100.1.1.2  dst_gw=100.1.1.1  
+    ...			no_arp=True  payload=2000000000000064
+    clear stats
+    start traffic  ${stream} 
+    sleep          35
+    ${filter_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/view/policy[name="offset-policy"]/filter-interface
+ 	${value}=  Convert To Integer  ${filter_dictionary[0]['packet-rate-60']}  
+ 	${report}=  fetch port stats
+ 	${tx_value}=  verify dict key  ${report}  a  transmitted_frame_rate
+ 	${return_value}=  ixia verify traffic rate  ${value}  ${tx_value}  rangev=20
+ 	Should be True  ${return_value}
+    stop traffic  ${stream}
+ 	[Tags]  feature
+
 16_With policy installed. Verify CLI O/P for "show bigtap policy-flow <policy name> "
+	 ${return_value}=  cli show bigtap policy
+	 Should be true   ${return_value} 
+	 [Tags]  feature
 
 17_With policy installed. Verify CLI O/P for "show bigtap policy <policy name> optimized match"
+
+	#rest add policy match  admin-view  ${bigtap_policy_name}  1  {"gtp-v1-teid": 100, "ether-type": 2048, "dst-tp-port": 2152, "ip-proto": 17, "sequence": 1}
+    #sleep  5
+	${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${count}=  rest_show_policy_optimize  ${bigtap_policy_name}  
+	Should be equal as integers  ${count}  1
+ 	[Tags]  feature
 
 18_Verify CLI "show running-config"
 
 19_Delete and re-add policy and verify flows get deleted and re-installed.
 
-	rest delete policy  admin-view  ${policy_name}
-    Sleep  10    
-    ${flow_count}=  rest show switch flow  s1  switch_alias=${switch1_alias}
-    Should be equal as integers  ${flow_count}  0
-    ${flow_count}=  rest show switch flow  s2  switch_alias=${switch1_alias}
-    Should be equal as integers  ${flow_count}  0   
-    rest add policy  admin-view  ${policy_name}  forward
-    rest add policy match  admin-view  ${policy_name}  1  {"gtp-v1-teid": 100, "ether-type": 2048, "dst-tp-port": 2152, "ip-proto": 17, "sequence": 1}
-    rest add policy interface  admin-view  ${policy_name}  ${switch1_filter_alias_1}  filter
-    rest add policy interface  admin-view  ${policy_name}  ${switch2_delivery_alias_1}  delivery
-  	sleep 10       
-    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+	${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
     Should be true  ${verify_policy1}
-    ${flow_count}=  rest show switch flow  s1  switch_alias=${switch1_alias}
+    sleep  5
+	rest delete policy  admin-view  ${bigtap_policy_name}
+    sleep  10    
+    ${flow_count}=  rest show switch flow  s1
+    Should be equal as integers  ${flow_count}  0
+    ${flow_count}=  rest show switch flow  s2
+    Should be equal as integers  ${flow_count}  0   
+    rest add policy  admin-view  ${bigtap_policy_name}  forward
+    rest add policy match  admin-view  ${bigtap_policy_name}  1  {"gtp-v1-teid": 100, "ether-type": 2048, "dst-tp-port": 2152, "ip-proto": 17, "sequence": 1}
+    rest add policy interface  admin-view  ${bigtap_policy_name}  ${switch1_filter_alias}  filter
+    rest add policy interface  admin-view  ${bigtap_policy_name}  ${switch2_delivery_alias}  delivery
+  	sleep  10       
+    ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    sleep  5
+    ${flow_count}=  rest show switch flow  s1
     Should be equal as integers  ${flow_count}  1
-    ${flow_count}=  rest show switch flow  s2  switch_alias=${switch1_alias}
-    Should be equal as integers  ${flow_count}  1        
+    ${flow_count}=  rest show switch flow  s2
+    Should be equal as integers  ${flow_count}  1    
+    sleep  10    
     [Tags]  feature
 	
 
 20_With policy installed, go from l3-l4-offset mode to l3-l4 mode. Verify CLI disallows
  
-    rest enable feature  l3-l4-offset  
-    rest add policy  admin-view  ${policy_name}  forward
-    rest add policy match  admin-view  ${policy_name}  1  {"gtp-v1-teid": 100, "ether-type": 2048, "dst-tp-port": 2152, "ip-proto": 17, "sequence": 1}
-    rest add policy interface  admin-view  ${policy_name}  ${switch1_filter_alias_1}  filter
-    rest add policy interface  admin-view  ${policy_name}  ${switch2_delivery_alias_1}  delivery
-  	sleep 10       
-    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
     Should be true  ${verify_policy1}
-    rest enable feature  l3-l4       
+    sleep  5
+    ${return_value}=  rest enable feature  l3-l4
+    Should not be true   ${return_value} 
+    sleep  10     
     [Tags]  feature
 	
 
 21_With policy installed, go from l3-l4-offset mode to full-match mode. Verify CLI disallows
-
-	rest enable feature  l3-l4-offset  
-    rest add policy  admin-view  ${policy_name}  forward
-    rest add policy match  admin-view  ${policy_name}  1  {"gtp-v1-teid": 100, "ether-type": 2048, "dst-tp-port": 2152, "ip-proto": 17, "sequence": 1}
-    rest add policy interface  admin-view  ${policy_name}  ${switch1_filter_alias_1}  filter
-    rest add policy interface  admin-view  ${policy_name}  ${switch2_delivery_alias_1}  delivery
-  	sleep 10       
-    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+     
+    ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
     Should be true  ${verify_policy1}
-    rest enable feature  full-match       
+    sleep  5
+    ${return_value}=  rest enable feature  full-match
+    Should not be true   ${return_value}
+    sleep  10         
     [Tags]  feature
 
 22_With policy installed, enable overlap mode. Verify no affect on BigTap policy
- 
-    rest add policy  admin-view  ${policy_name}  forward
-    rest add policy match  admin-view  ${policy_name}  1  {"gtp-v1-teid": 100, "ether-type": 2048, "dst-tp-port": 2152, "ip-proto": 17, "sequence": 1}
-    rest add policy interface  admin-view  ${policy_name}  ${switch1_filter_alias_1}  filter
-    rest add policy interface  admin-view  ${policy_name}  ${switch2_delivery_alias_1}  delivery
-  	sleep 10       
-    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+     
+    ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
     Should be true  ${verify_policy1}
-    rest enable feature  overlap       
+    sleep  5
+    ${return_value}=  rest enable feature  overlap
+    Should be true   ${return_value} 
+    ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    sleep  5
+    ${flow_count}=  rest show switch flow  s1
+    Should be equal as integers  ${flow_count}  1
+    ${flow_count}=  rest show switch flow  s2
+    Should be equal as integers  ${flow_count}  1
+    sleep  10     
     [Tags]  feature
 
 23_With policy installed, disable overlap mode. Verify no affect on BigTap policy
-
-	rest add policy  admin-view  ${policy_name}  forward
-    rest add policy match  admin-view  ${policy_name}  1  {"gtp-v1-teid": 100, "ether-type": 2048, "dst-tp-port": 2152, "ip-proto": 17, "sequence": 1}
-    rest add policy interface  admin-view  ${policy_name}  ${switch1_filter_alias_1}  filter
-    rest add policy interface  admin-view  ${policy_name}  ${switch2_delivery_alias_1}  delivery
-  	sleep 10       
-    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+      
+    ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
     Should be true  ${verify_policy1}
-    rest disable feature  overlap       
+    sleep  5
+    ${return_value}=  rest disable feature  overlap
+    Should be true   ${return_value}
+    sleep  5 
+    ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    sleep  5
+    ${flow_count}=  rest show switch flow  s1
+    Should be equal as integers  ${flow_count}  1
+    ${flow_count}=  rest show switch flow  s2
+    Should be equal as integers  ${flow_count}  1 
+    sleep  5     
     [Tags]  feature
 
 24_With policy installed, enable inport-masking. Verify no affect on BigTap policy
 
-	rest add policy  admin-view  ${policy_name}  forward
-    rest add policy match  admin-view  ${policy_name}  1  {"gtp-v1-teid": 100, "ether-type": 2048, "dst-tp-port": 2152, "ip-proto": 17, "sequence": 1}
-    rest add policy interface  admin-view  ${policy_name}  ${switch1_filter_alias_1}  filter
-    rest add policy interface  admin-view  ${policy_name}  ${switch2_delivery_alias_1}  delivery
-  	sleep 10       
-    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+	     
+   ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
     Should be true  ${verify_policy1}
-    rest enable feature  inport-masking       
+    sleep  5
+    ${return_value}=  rest enable feature  inport-mask 
+    Should be true   ${return_value}
+    sleep  5 
+    ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    sleep  5      
     [Tags]  feature
 
 25_With policy installed, disable inport-masking. Verify no affect on BigTap policy
 
-	rest add policy  admin-view  ${policy_name}  forward
-    rest add policy match  admin-view  ${policy_name}  1  {"gtp-v1-teid": 100, "ether-type": 2048, "dst-tp-port": 2152, "ip-proto": 17, "sequence": 1}
-    rest add policy interface  admin-view  ${policy_name}  ${switch1_filter_alias_1}  filter
-    rest add policy interface  admin-view  ${policy_name}  ${switch2_delivery_alias_1}  delivery
-  	sleep 10       
-    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
     Should be true  ${verify_policy1}
-    rest disable feature  inport-masking  
+    sleep  5
+    ${return_value}=  rest disable feature  inport-mask 
+    Should be true   ${return_value}
+    sleep  5 
+    ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1} 
+    sleep  5
     [Tags]  feature
 
 26_With policy installed, send non-matching traffic. Verify traffic is dropped at ingress ports
 	
-	rest add policy  admin-view  ${policy_name}  forward
-    rest add policy match  admin-view  ${policy_name}  1  {"gtp-v1-teid": 100, "ether-type": 2048, "dst-tp-port": 2152, "ip-proto": 17, "sequence": 1}
-    rest add policy interface  admin-view  ${policy_name}  ${switch1_filter_alias_1}  filter
-    rest add policy interface  admin-view  ${policy_name}  ${switch2_delivery_alias_1}  delivery    
-    sleep  5
-    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
     Should be true  ${verify_policy1}
-       
+    sleep  5
+	rest add policy match  admin-view  ${bigtap_policy_name}  1  {"sequence": 2, "gtp-v2-teid": 100, "dst-tp-port": 2123, "ip-proto": 17, "ether-type": 2048}
+    sleep  5
+    ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    sleep  10
+    ${stream}=  L3 add  name=gtp_teid  flow=a->b  frame_rate=10000  frame_size=1518
+    ...     src_mac=00:01:02:03:04:01  dst_mac=00:01:02:03:04:02  protocol=UDP  src_port=8001  dst_port=2152
+    ...     src_ip=100.1.1.1  src_gw=100.1.1.2  dst_ip=100.1.1.2  dst_gw=100.1.1.1  
+    ...		no_arp=True  payload=4000000000000064
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    verify false results  a  b  transmitted_frame_rate  received_frame_rate    
+    stop traffic  ${stream}
     [Tags]  feature
-	
 
 27_With policy installed and match on GTP TEID, send packet with GTP header and bad CRC
+	
+	rest add policy match  admin-view  ${bigtap_policy_name}  1  {"gtp-v1-teid": 100, "ether-type": 2048, "dst-tp-port": 2152, "ip-proto": 17, "sequence": 1}
+    sleep  5
+	${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+	${stream}=  L3 add  name=gtp_teid  flow=a->b  frame_rate=10000  frame_size=1518  crc=True
+    ...     	src_mac=00:01:02:03:04:01  dst_mac=00:01:02:03:04:02  protocol=UDP  src_port=8001  dst_port=2152
+    ...     	src_ip=100.1.1.1  src_gw=100.1.1.2  dst_ip=100.1.1.2  dst_gw=100.1.1.1  
+    ...			no_arp=True  payload=2000000000000064
+    clear stats
+    start traffic  ${stream} 
+    sleep          10
+    ${filter_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/view/policy[name="offset-policy"]/filter-interface
+ 	${value}=  Convert To Integer  ${filter_dictionary[0]['packet-rate-60']}  
+ 	${report}=  fetch port stats
+ 	${tx_value}=  verify dict key  ${report}  a  transmitted_frame_rate
+ 	${return_value}=  ixia verify traffic rate  ${value}  ${tx_value}  rangev=20
+ 	Should be True  ${return_value}
+    ${delivery_dictionary}=  rest return dictionary from get  /api/v1/data/controller/applications/bigtap/view/policy[name="offset-policy"]/delivery-interface
+ 	${value}=  Convert To Integer  ${delivery_dictionary[0]['packet-rate-60']}  
+ 	${report}=  fetch port stats
+ 	${rx_value}=  verify dict key  ${report}  b  received_frame_rate
+ 	${return_value}=  ixia verify traffic rate  ${value}  ${rx_value}  rangev=20
+ 	Should be True  ${return_value}
+    stop traffic  ${stream}
+ 	[Tags]  new
 
 28_With policy installed and match on GTP TEID, send packet with GTP header and no CRC
-	
+
+	rest add policy match  admin-view  ${bigtap_policy_name}  1  {"gtp-v1-teid": 100, "ether-type": 2048, "dst-tp-port": 2152, "ip-proto": 17, "sequence": 1}
+	sleep  5	
+	${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+	${stream}=  L3 add  name=gtp_teid  flow=a->b  frame_rate=10000  frame_size=1518  crc=False
+    ...     	src_mac=00:01:02:03:04:01  dst_mac=00:01:02:03:04:02  protocol=UDP  src_port=8001  dst_port=2152
+    ...     	src_ip=100.1.1.1  src_gw=100.1.1.2  dst_ip=100.1.1.2  dst_gw=100.1.1.1  
+    ...			no_arp=True  payload=2000000000000064  
+    clear stats
+    start traffic  ${stream}
+    sleep     10
+    ${report}=  fetch port stats  stream=${stream}
+    verify false results  transmitted_frames  received_frames  ${stream}  ${stream_name}
+    stop traffic   ${stream}
+ 	[Tags]  feature
 	
 * Keyword
 
 offset suite setup
     base suite setup
     ${return_value}=  rest enable feature  l3-l4-offset-match
-    Should be true   ${return_value}
+    Should not be true   ${return_value}
     rest add switch alias  s1  ${switch1_alias}
-    rest add interface role  s1  ${filter_interface_name}  filter    intf_nickname=${filter_interface_alias}
-    rest add interface role  s1  ${delivery_interface_name}   delivery  intf_nickname=${delivery_interface_alias}
+    rest add interface role  s1  ${switch1_filter_intf_name}  filter    intf_nickname=${switch1_filter_alias} 
+    rest add interface role  s2  ${switch1_delivery_intf_name}    delivery  intf_nickname=${switch2_delivery_alias}
     rest add policy  admin-view  ${bigtap_policy_name}  forward
-    rest add policy interface  admin-view  ${bigtap_policy_name}  ${filter_interface_alias}  filter
-    rest add policy interface  admin-view  ${bigtap_policy_name}  ${delivery_interface_alias}  delivery
+    rest add policy match  admin-view  ${bigtap_policy_name}  1  {"any-traffic": true, "sequence": 1}
+    rest add policy interface  admin-view  ${bigtap_policy_name}  ${switch1_filter_alias}   filter
+    rest add policy interface  admin-view  ${bigtap_policy_name}  ${switch2_delivery_alias}  delivery
     sleep  30
 
 
@@ -859,6 +1057,14 @@ verify results   [Arguments]  ${send_port}  ${recv_port}  ${transmitted_frames} 
     ${rx_value}=  verify dict key  ${report}  ${recv_port}  ${received_valid_frames}
     ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}
     Should be true  ${in_range}
+    
+verify false results  [Arguments]  ${send_port}  ${recv_port}  ${transmitted_frames}  ${received_valid_frames}
+    Sleep  5
+    ${report}=  fetch port stats
+    ${tx_value}=  verify dict key  ${report}  ${send_port}  ${transmitted_frames}
+    ${rx_value}=  verify dict key  ${report}  ${recv_port}  ${received_valid_frames}
+    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}
+    Should not be true  ${in_range}
 
 offset test teardown
 	delete traffic
@@ -867,10 +1073,12 @@ offset suite teardown
 	REST delete policy  admin-view  ${bigtap_policy_name}
     ${return_value}=  rest enable feature  full-match
     Should be true   ${return_value}	
-	rest delete interface role  s1  ${filter_interface_name}       	filter 
-    rest delete interface role  s1  ${delivery_interface_name}      delivery              
-    rest delete interface  s1  ${filter_interface_name}          
-    rest delete interface  s1  ${delivery_interface_name}
+	rest delete interface role  s1  ${switch1_filter_intf_name}       	filter 
+    rest delete interface role  s2  ${switch1_delivery_intf_name}       delivery              
+    rest delete interface  s1  ${switch1_filter_intf_name}          
+    rest delete interface  s2  ${switch1_delivery_intf_name} 
     rest delete switch alias  s1
     rest delete switch  s1
+    rest delete switch alias  s2
+    rest delete switch  s2
     base suite teardown
