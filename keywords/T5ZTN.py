@@ -487,7 +487,7 @@ class T5ZTN(object):
                 helpers.log("Slave: %s" % slave_config)
                 return helpers.test_failure("Slave and Master generated"
                        " different startup configs")
-        return True
+        return config
 
 
     def verify_switch_startup_config(self, mac, hostname):
