@@ -110,6 +110,124 @@ class T5_longevity(object):
 
 
 
+    def bash_get_key(self, node='master',key='ecdsa'):
+        ''' get the public key for controller
+        ouput: index:  directory  with all the field
+        '''
+        t = test.Test()
+        n = t.node(node)
+        if key=='ecdsa':
+            content = n.bash('ssh-keygen -lf /etc/ssh/ssh_host_ecdsa_key.pub')['content']
+            line = helpers.strip_cli_output(content)
+            line = line.lstrip()
+            fields = line.split()
+            helpers.log("USER INFO: ECDSA key is :\n%s" % fields[1])            
+        elif key=='dsa':
+            content = n.bash('ssh-keygen -lf /etc/ssh/ssh_host_dsa_key.pub')['content']
+            line = helpers.strip_cli_output(content)
+            line = line.lstrip()
+            fields = line.split()
+            helpers.log("USER INFO: DSA key is :\n%s" % fields[1])            
+        elif key=='rsa':
+            content = n.bash('ssh-keygen -lf /etc/ssh/ssh_host_rsa_key.pub')['content']
+            line = helpers.strip_cli_output(content)
+            line = line.lstrip()
+            fields = line.split()
+            helpers.log("USER INFO: RSA key is :\n%s" % fields[1])            
+
+        return fields[1]
+
+
+
+    def rest_get_suspended_switch(self, node='master'):
+        """
+        Get fabric connection state of the switch
+
+        Inputs:
+        | node | Alias of the controller node |
+        | switch | Alias of the switch |
+
+        Return Value:
+        - Return fabric-connection-state value (connected, not_connected) or
+          None in case of errors
+        """
+        t = test.Test()
+        c = t.controller(node)
+        url = '/api/v1/data/controller/applications/bvs/info/fabric/switch'         
+        helpers.log("get switch fabric connection state")         
+                  
+        c.rest.get(url)
+        data = c.rest.content()        
+#        helpers.log("USER INFO: data is  %s" % data)       
+#        helpers.log("USER INFO: length of data is   %d" % len(data))       
+               
+        info = []  
+        if (data):
+            for i in range(0, len(data)):
+                if data[i]['connected'] == True:
+                    if 'fabric-connection-state' in data[i].keys() and data[i]['fabric-connection-state'] == "not_connected":
+                        if 'handshake-state' in data[i].keys() and data[i]['handshake-state'] == "quarantine-state":
+                            info.append( data[i]['name'])  
+        helpers.test_log("USER INFO:  the switches in suspended states:  %s" % info)                        
+        return info
+ 
+
+
+    def cli_boot_partition(self, node='master',option='alternate'):
+        '''
+          boot partition alternate -  to perform rollback
+          Author: Mingtao
+          input:  node  - controller
+                          master, slave, c1 c2
+
+          usage:
+          output: True  - boot successfully
+                  False  -boot Not successfully
+        '''
+
+        t = test.Test()
+        c = t.controller(node)
+        helpers.log('INFO: Entering ==> cli_boot_partition ')
+        c.config('')
+        string = 'boot partition ' + option
+ 
+        c.send(string)        
+        c.expect(r'[\r\n].+ \("yes" or "y" to continue\):', timeout=180)
+        content = c.cli_content()
+        helpers.log("*****USER INFO:\n%s" % content)
+        c.send("yes")
+ 
+        try:
+            c.expect(r'[\r\n].+The system is going down for reboot NOW!')
+            content = c.cli_content()
+            helpers.log("*****Output is :\n%s" % content)           
+        except:
+            helpers.log('ERROR: boot partition NOT successfully')
+            return False
+        else:
+            helpers.log('INFO: boot partition successfully')
+            return True
+        return False
+
+
+    def telnet_switch_config(self, node,config):
+        """
+        Issue reload command on given node (switch)
+
+        Inputs:
+        | node | Alias of the node to use |
+
+        Return Value:
+        - N/A
+        """
+        t = test.Test()
+        con = t.dev_console(node)
+        con.config(config)
+        helpers.log(con.config('')['content'])
+        return True
+
+
+
 
     def cli_show_endpoint_pattern(self,pattern):
         '''
