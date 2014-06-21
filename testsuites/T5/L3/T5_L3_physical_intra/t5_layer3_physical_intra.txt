@@ -105,7 +105,12 @@ Verify dhcp host is not aged out
 
 Dhcp relay with dhcp server configured as static endpoint
 	Dhcp relay with static dhcp server endpoint
-	[Tags]		 		feature					dhcp-relay			
+	[Tags]		 		feature					dhcp-relay	
+	
+Verify add and delete of dhcp server config works
+    Verify add and delete of dhcp server config works
+	[Tags]             feature                 dhcp-relay  
+    	
 	
 Add and delete untagged endpoints with existing host
 	L3 add and delete untagged endpoints with existing host
@@ -1438,7 +1443,73 @@ Dhcp relay with static dhcp server endpoint
 	${loss} = 									BASH ping						h1						${ipAddr} 			count=10
 	Should Be True  							${loss} == 0	
 	BASH delete route							h1								10.252.3.0/24			10.252.1.1	
-			
+
+
+Verify add and delete of dhcp server config works    			
+    BASH ifdown intf                            h1                              bond0
+    BASH ifdown intf                            h2                              bond0
+    BASH ifdown intf                            h3                              bond0
+    BASH ifdown intf                            h4                              bond0   
+    BASH ifup intf                              h5                              bond0
+    BASH ifup intf                              h6                              bond0       
+    BASH init intf                              h1                              bond0
+    BASH init intf                              h2                              bond0
+    BASH ifup intf                              h1                              bond0
+    BASH ifconfig ip address                    h1                              10.252.1.9/24           bond0                   
+    BASH start service                          h1                              isc-dhcp-server
+    BASH ping                                   h1                              10.252.1.1              count=4
+    sleep                                       1
+    ${value} =                                  BASH check service status       h1                      isc-dhcp-server
+    Should Contain                              ${value}                        is started
+    sleep                                       1
+    REST add portgroup to vns                   Y                               Y1                      ${leaf0_pc1}            -1
+    REST add portgroup to vns                   Y                               Y3                      ${leaf2_pc1}            -1
+    BASH add route                              h1                              10.252.3.0/24           10.252.1.1
+    REST add dhcp relay                         Y                               Y3                      10.252.1.9
+    sleep                                       5
+    ${result} =                                 REST show forwarding dhcp table
+    ${circuitid} =                              Set Variable                    ${result[0]['circuit-id']}
+    ${dhcpip} =                                 Set Variable                    ${result[0]['dhcp-ip']}
+    ${routerip} =                               Set Variable                    ${result[0]['router-ip']}
+    Should Be Empty                             ${circuitid}
+    Should Be Equal                             ${dhcpip}                       10.252.1.9
+    Should Be Equal                             ${routerip}                     10.252.3.1
+    REST add dhcprelay circuitid                Y                               Y3                      this is a test
+    ${result} =                                 REST show forwarding dhcp table
+    ${circuitid} =                              Set Variable                    ${result[0]['circuit-id']}
+    Should Be Equal                             ${circuitid}                    this is a test
+    REST delete dhcp relay                      Y                               Y3                      10.252.1.9   
+    ${result} =                                 REST show forwarding dhcp table
+    Should Be Empty                             ${result}                    
+    REST add dhcp relay                         Y                               Y3                      10.252.1.11
+    ${result} =                                 REST show forwarding dhcp table
+    ${circuitid} =                              Set Variable                    ${result[0]['circuit-id']}
+    ${dhcpip} =                                 Set Variable                    ${result[0]['dhcp-ip']}
+    ${routerip} =                               Set Variable                    ${result[0]['router-ip']}
+    Should Be Empty                             ${circuitid}
+    Should Be Equal                             ${dhcpip}                       10.252.1.11
+    Should Be Equal                             ${routerip}                     10.252.3.1
+    ${result} =                                 REST delete dhcp relay          Y                               Y3                      10.252.1.9   
+    Should Not Be True                          ${result} 
+    ${result} =                                 REST delete dhcp relay          Y                               Y3                      10.252.1.11   
+    Should Be True                              ${result} 
+    REST add dhcp relay                         Y                               Y3                      10.252.1.9
+    ${result} =                                 REST show forwarding dhcp table
+    ${circuitid} =                              Set Variable                    ${result[0]['circuit-id']}
+    ${dhcpip} =                                 Set Variable                    ${result[0]['dhcp-ip']}
+    ${routerip} =                               Set Variable                    ${result[0]['router-ip']}
+    Should Be Empty                             ${circuitid}
+    Should Be Equal                             ${dhcpip}                       10.252.1.9
+    Should Be Equal                             ${routerip}                     10.252.3.1
+    REST add dhcp relay                         Y                               Y3                      10.252.1.12
+    ${result} =                                 REST show forwarding dhcp table
+    ${circuitid} =                              Set Variable                    ${result[0]['circuit-id']}
+    ${dhcpip} =                                 Set Variable                    ${result[0]['dhcp-ip']}
+    ${routerip} =                               Set Variable                    ${result[0]['router-ip']}
+    Should Be Empty                             ${circuitid}
+    Should Be Equal                             ${dhcpip}                       10.252.1.12
+    Should Be Equal                             ${routerip}                     10.252.3.1
+
 
 L3 add and delete untagged endpoints with existing host
 	BASH init intf								h1 								bond0
