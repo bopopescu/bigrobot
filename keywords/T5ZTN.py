@@ -214,7 +214,7 @@ class T5ZTN(object):
         """
         t = test.Test()
         con = t.dev_console(node, modeless=True)
-        #con.send("\x03")
+        # con.send("\x03")
         con.send(helpers.ctrl('c'))
         con.expect("=> ")
         con.send("help")
@@ -260,9 +260,9 @@ class T5ZTN(object):
         s.send("\x03")
         options = s.expect([r'[\r\n]*.*login:', r'root@.*:', s.get_prompt()],
                            timeout=300)
-        if options[0] == 0: #login prompt
+        if options[0] == 0:  # login prompt
             s.cli('admin')
-        if options[0] == 1: #bash mode
+        if options[0] == 1:  # bash mode
             s.cli('exit')
         s.cli('enable; config')
         if state == 'up':
@@ -507,8 +507,8 @@ class T5ZTN(object):
         c = t.controller('master')
         bsn_common = bsnCommon()
         master_ip = bsn_common.get_node_ip('master')
-        #If this is s0, s1, ... then get hostname of topo file
-        #otherwise just use the provided hostname
+        # If this is s0, s1, ... then get hostname of topo file
+        # otherwise just use the provided hostname
         if re.match(r's\d*$', hostname):
             switch_name = bsn_common.get_node_alias(hostname)
             helpers.log("Switch alias is %s" % switch_name)
@@ -586,7 +586,7 @@ class T5ZTN(object):
                     helpers.log(("Skipping line - %s - because"
                     " snmp-server traps are not enabled") % ztn_config_line)
                     continue
-            #if "snmp-server enable traps" in ztn_config_line:
+            # if "snmp-server enable traps" in ztn_config_line:
             #    ztn_config[idx] = "snmp-server enable"
             #    helpers.log("Rearranging config line: %s" % ztn_config[idx])
             if "ntp time-zone" in ztn_config_line:
@@ -650,7 +650,7 @@ class T5ZTN(object):
         s.cli('config')
         running_config = s.cli("show running-config")['content']
         running_config = helpers.str_to_list(running_config)
-        #skipping first line
+        # skipping first line
         running_config = running_config[1:]
 
         startup_config_temp = []
@@ -659,10 +659,10 @@ class T5ZTN(object):
                 if "ntp sync" in startup_config_line:
                     helpers.log("Skipping line: %s" % startup_config_line)
                     continue
-                #if "snmp-server enable" in startup_config_line:
+                # if "snmp-server enable" in startup_config_line:
                 #    helpers.log("Skipping line: %s" % startup_config_line)
                 #    continue
-                #temp override BSC-5629
+                # temp override BSC-5629
                 if re.match(r'snmp-server trap', startup_config_line):
                     helpers.log("Skipping line %s" % startup_config_line)
                     continue
@@ -687,7 +687,7 @@ class T5ZTN(object):
             helpers.log("Analyzing line %s" % running_config_line)
             # Excluding comments and empty lines
             if not re.match(r'!|^\s*$', running_config_line):
-                #if "timezone Etc/UTC" in running_config_line:
+                # if "timezone Etc/UTC" in running_config_line:
                 #    helpers.log("Skipping line: %s" % running_config_line)
                 #    continue
                 if "show running-config" in running_config_line:
@@ -747,7 +747,7 @@ class T5ZTN(object):
         """
         t = test.Test()
         c = t.controller(node)
-        url = ('/api/v1/data/controller/applications/bvs/info/fabric/'
+        url = ('/api/v1/data/controller/applications/bcf/info/fabric/'
                'switch[name="%s"]' % str(switch))
         helpers.log("Trying to get switch fabric role via url %s" % url)
         c.rest.get(url)
@@ -778,7 +778,7 @@ class T5ZTN(object):
         """
         t = test.Test()
         c = t.controller(node)
-        url = ('/api/v1/data/controller/applications/bvs/info/fabric/'
+        url = ('/api/v1/data/controller/applications/bcf/info/fabric/'
                'switch[name="%s"]' % str(switch))
         helpers.log("Trying to get switch fabri connection state via url %s"
                     % url)
@@ -809,7 +809,7 @@ class T5ZTN(object):
         """
         t = test.Test()
         c = t.controller(node)
-        url = ('/api/v1/data/controller/applications/bvs/info/fabric/'
+        url = ('/api/v1/data/controller/applications/bcf/info/fabric/'
                'switch[name="%s"]' % str(switch))
         helpers.log("Trying to get switch fabri connection state via url %s"
                     % url)
@@ -841,7 +841,7 @@ class T5ZTN(object):
         """
         t = test.Test()
         c = t.controller(node)
-        url = ('/api/v1/data/controller/applications/bvs/info/fabric/'
+        url = ('/api/v1/data/controller/applications/bcf/info/fabric/'
                'switch[name="%s"]' % str(switch))
         helpers.log("Trying to get switch connection state  via url %s" % url)
         c.rest.get(url)
@@ -871,7 +871,7 @@ class T5ZTN(object):
         """
         t = test.Test()
         c = t.controller(node)
-        url = ('/api/v1/data/controller/applications/bvs/info/fabric/'
+        url = ('/api/v1/data/controller/applications/bcf/info/fabric/'
                'switch[name="%s"]' % str(switch))
         helpers.log("Trying to get switch handshake state  via url %s" % url)
         c.rest.get(url)
@@ -901,7 +901,7 @@ class T5ZTN(object):
         """
         t = test.Test()
         c = t.controller(node)
-        url = ('/api/v1/data/controller/applications/bvs/info/fabric/'
+        url = ('/api/v1/data/controller/applications/bcf/info/fabric/'
                'switch[name="%s"]' % str(switch))
         helpers.log("Trying to get switch IP address via url %s" % url)
         c.rest.get(url)
@@ -938,24 +938,24 @@ class T5ZTN(object):
                             r'ONIE:/ #', r'=> ', r'loader#', s.get_prompt(),
                             r'Press Control-C now to enter loader shell'],
                            timeout=300)
-        if options[0] == 0: #login prompt
+        if options[0] == 0:  # login prompt
             s.cli('admin')
             s.cli('enable; config')
             s.send('reload now')
-        if options[0] == 2: #bash mode
+        if options[0] == 2:  # bash mode
             s.cli('exit')
             s.cli('enable; config')
             s.send('reload now')
-        if options[0] == 3: #ONIE loader
+        if options[0] == 3:  # ONIE loader
             s.send('reboot')
-        if options[0] == 4: #U-boot
+        if options[0] == 4:  # U-boot
             s.send('boot')
-        if options[0] == 5: #SL Loader
+        if options[0] == 5:  # SL Loader
             s.send('reboot')
-        if options[0] == 6: #CLI
+        if options[0] == 6:  # CLI
             s.cli('enable; config')
             s.send('reload now')
-        if options[0] == 7: #SL Loader
+        if options[0] == 7:  # SL Loader
             s.send(helpers.ctrl('c'))
             s.send("\x03")
             s.send('reboot')
