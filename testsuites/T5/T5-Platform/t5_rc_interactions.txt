@@ -164,7 +164,7 @@ T20 Deleting lines
 	${diff}=  Create List
 	...  switch test
 	...  fabric-role spine
-	...  mac 11:22:33:44:55:66
+	...  mac aa:bb:cc:dd:ee:ff
 	...  interface ethernet1
 	...  shutdown
 	Delete single running config line and verify
@@ -183,7 +183,7 @@ T21 Deleting lines
 T22 Deleting lines
 	${command}=  Set Variable  mac 11:22:33:44:55:66
 	${diff}=  Create List
-	...  mac 11:22:33:44:55:66
+	...  mac aa:bb:cc:dd:ee:ff
 	Delete single running config line and verify
 	...  ${command}
 	...  ${diff}
