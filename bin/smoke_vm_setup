@@ -116,6 +116,7 @@ def main(*args):
                                  vm_name=vm_name,
                                  vm_host_name=vm_host_name,
                                  build_number=args.build_number,
+                                 gateway=args.gateway,
                                  network_interface=args.network_interface)
 
     if active_vm['status_code'] == False:
@@ -146,6 +147,7 @@ def main(*args):
                                       cluster_ip=args.active_ip,
                                       vm_host_name=vm_host_name,
                                       build_number=args.build_number,
+                                      gateway=args.gateway,
                                       network_interface=args.network_interface)
         helpers.log("Created Backup VM :\n%s" % standby_vm)
         if standby_vm['status_code'] == False:
@@ -378,6 +380,8 @@ if __name__ == '__main__':
                         help="This build will be picked from jenkins from mininet project")
     parser.add_argument("--regress",
                         help="This is temporarily used in CI Jenkins")
+    parser.add_argument("--gateway",
+                        help="This used for gateway for VMs")
     parser.add_argument("--network_interface",
                         help="This used for virtual network interface on the KVM HOST Server")
     main()
