@@ -71,6 +71,44 @@ class BigTap(object):
                     return content[0]['stats']['table'][1][return_value]
                 else:
                     return content[0]['stats']['table'][1]['active-count']
+                
+    def rest_return_switch_flow(self, node, flow_index, flow_key, switch_alias=None, sw_dpid=None, soft_error=False):
+        '''
+            Objective: Verify flow is pushed via controller
+            
+            Input:
+            | node | Specify switch as defined in topo file|
+            |flow_index| Index in flow you want returned|
+            |_key| Key in the index you want returned|
+            
+            Return Value:
+            Value of the specified key
+        '''
+        t = test.Test()
+        try:
+            c = t.controller('master')
+            AppCommon = AppController.AppController()
+        except:
+            return False
+        else:
+            try:
+                if (switch_alias is None and sw_dpid is not None):
+                    switch_dpid = sw_dpid
+                elif (switch_alias is None and sw_dpid is None):
+                    switch_dpid = AppCommon.rest_return_switch_dpid_from_ip(node)
+                elif (switch_alias is not None and sw_dpid is None):
+                    switch_dpid = AppCommon.rest_return_switch_dpid_from_alias(switch_alias)
+                else:
+                    switch_dpid = sw_dpid
+                url = '/api/v1/data/controller/core/switch[dpid="%s"]?select=stats/flow' % (str(switch_dpid))
+                c.rest.get(url)
+                content = c.rest.content()
+            except:
+                helpers.test_failure("Could not execute command")
+                return False
+            else:
+                return content[0]['stats']['flow'][0]['match-field'][int(flow_index)][str(flow_key)]          
+    
 
 # Mingtao
     def rest_show_address_group(self, group):
