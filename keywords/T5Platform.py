@@ -1933,7 +1933,7 @@ class T5Platform(object):
 
 
 
-    def cli_upgrade_launch(self, node='master'):
+    def cli_upgrade_launch(self, node='master',option=''):
         '''
           upgrade launch  -  2 step of upgrade
           Author: Mingtao
@@ -1949,7 +1949,9 @@ class T5Platform(object):
         c = t.controller(node)
         helpers.log('INFO: Entering ==> cli_upgrade_launch ')
         c.config('')
-        c.send('upgrade launch')
+        string = 'upgrade launch ' + option
+#        c.send('upgrade launch')
+        c.send(string)
         c.expect(r'[\r\n].+ \("yes" or "y" to continue\):', timeout=180)
         content = c.cli_content()
         helpers.log("*****USER INFO:\n%s" % content)
@@ -3530,6 +3532,8 @@ class T5Platform(object):
             dfinfo[fields[5]]['usedpercent'] = fields[4]
         helpers.log("USER INFO: dfinfo is :\n%s" % dfinfo)
         return dfinfo
+    
+
 
     def get_disk_used_percentage(self, node, directory):
         '''

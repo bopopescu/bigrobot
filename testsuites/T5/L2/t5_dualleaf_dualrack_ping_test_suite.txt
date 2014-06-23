@@ -32,7 +32,6 @@ basic cli show commands test case
    cli  c1  show version
    cli  c1  show version detail
    cli  c1  show running-config
-#   cli  c1  show cluster
    cli  c1  show switch
    cli  c1  show controller
    config  c1  show controller
@@ -42,7 +41,6 @@ basic cli show commands test case
 add Fabric setup Dual Rack Dual Leaf 
    [Tags]  L2  smoke  sanity  IronHorse  feature
    sleep  5
-#   add fabric switch
    rest verify fabric switch all
    rest verify fabric link 
 
@@ -50,7 +48,7 @@ ping bm0 to bm1 dual leaf single rack dynamic endpoints
    [Tags]  L2  smoke  sanity  IronHorse  feature
    add portgroup to vns  A  A  p1  -1 
    add portgroup to vns  A  A  p2  -1
-   sleep  10 
+   pause
    ${loss}=  mininet ping  bm0  ${bm1_ip}
    Should Be True  ${loss} == 0						 
 	 
