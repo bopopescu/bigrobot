@@ -1,0 +1,315 @@
+*Settings
+Documentation  Corsair Tunnelling Test Suite
+Suite Setup  offset suite setup
+#Suite Teardown   offset suite teardown
+Test Setup   base test setup
+Test Teardown  base test teardown 
+Force Tags   Corsair  BigTap  Sanity
+Library  keywords/BsnCommon.py
+Library  keywords/AppController.py
+Library  keywords/BigTap.py
+Library  keywords/SwitchLight.py
+Library  keywords/Ixia.py
+
+
+
+
+
+* Variable
+${switch1_alias}                        qa-corsair-1  #Alias for switch 1
+#${switch2_alias}                        qa-corsair-2  #Alias for switch 2
+${filter_interface_name}				ethernet26
+${filter_interface_alias}				ixia-2-4
+${delivery_interface_name}				ethernet26
+${delivery_interface_alias}				ixia-2-3
+
+${bigtap_policy_name}					offset-policy1
+
+*Test Case
+
+### GTPv1 Test Cases
+
+
+01_With TC5 config, change action from forward to inactive. Verify policy is inactive and flows are deleted from both Switches
+	rest delete policy  admin-view  ${bigtap_policy_name}
+    rest add policy  admin-view  ${bigtap_policy_name}  forward
+    rest add policy match  admin-view  ${bigtap_policy_name}  1  {"gtp-v1-teid": 100, "ether-type": 2048, "dst-tp-port": 2152, "ip-proto": 17, "sequence": 1}
+    rest add policy interface  admin-view  ${bigtap_policy_name}  ${filter_interface_alias}  filter
+    rest add policy interface  admin-view  ${bigtap_policy_name}  ${delivery_interface_alias}  delivery    
+    sleep  5
+    ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${flow_count}=  rest show switch flow  s1
+    Should be equal as integers  ${flow_count}  1
+    ${flow_count}=  rest show switch flow  s2
+    Should be equal as integers  ${flow_count}  1
+    ${ethType}=  rest return switch flow  s1  0  eth-type
+    Should be equal as integers  ${ethType}  2048    
+    ${ipproto}=  rest return switch flow  s1  0  ip-proto
+    Should be equal as integer  ${ipproto}  17 
+    ${dstport}=  rest return switch flow  s1  0  udp-dst
+    Should be equal as integers  ${dstport}  2152   
+    ${udf}=  rest return switch flow  s1  0  udf4
+    Should be equal as integers  ${udf}  100                 
+    [Tags]  runs
+    
+05_Verify basic BigTap policy with "1 match gtp gtp-v1-teid 100" condition is active and installed.
+	   
+    rest add policy  admin-view  ${bigtap_policy_name}  forward
+    rest add policy match  admin-view  ${bigtap_policy_name}  1  {"gtp-v1-teid": 100, "ether-type": 2048, "dst-tp-port": 2152, "ip-proto": 17, "sequence": 1}
+    rest add policy interface  admin-view  ${bigtap_policy_name}  ${filter_interface_alias}  filter
+    rest add policy interface  admin-view  ${bigtap_policy_name}  ${delivery_interface_alias}  delivery    
+    sleep  5
+    ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    
+    ${flow_count}=  rest show switch flow  s1  switch_alias=${switch1_alias}
+    Should be equal as integers  ${flow_count}  1
+    ${ethType}=  rest return switch flow  s1  0  eth-type
+    Should be equal as integer  ${ethType}  2048    
+    ${ipproto}=  rest return switch flow  s1  0  ip-proto
+    Should be equal as integer  ${ipproto}  17   
+    ${dstport}=  rest return switch flow  s1  0  udp-dst
+    Should be equal as integer  ${dstport}  2152   
+    ${udf}=  rest return switch flow  s1  0  udf4
+    Should be equal as integer  ${udf}  100                 
+    [Tags]  feature
+	
+
+06_With TC5 config, change action from forward to inactive. Verify policy is inactive and flows are deleted from both Switches
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    rest add policy  admin-view  ${bigtap_policy_name}  inactive
+    ${flow_count}=  rest show switch flow  s1
+    Should be equal as integers  ${flow_count}  0 
+    ${flow_count}=  rest show switch flow  s2
+    Should be equal as integers  ${flow_count}  0    
+    [Tags]  feature
+
+07_With TC6 config, change action from inactive to forward. Verify policy is active and installed. Verify flow table on both switch
+
+	rest add policy  admin-view  ${bigtap_policy_name}  forward
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${flow_count}=  rest show switch flow  s1  switch_alias=${switch1_alias}
+    Should be equal as integers  ${flow_count}  1 
+    ${flow_count}=  rest show switch flow  s2  switch_alias=${switch2_alias}
+    Should be equal as integers  ${flow_count}  1    
+    [Tags]  feature
+
+08_With TC5 config, change action from forward to rate-measure. Verify policy is installed and flows are deleted only from SW 2
+
+	rest add policy  admin-view  ${bigtap_policy_name}  rate-measure
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${flow_count}=  rest show switch flow  s1  switch_alias=${switch1_alias}
+    Should be equal as integers  ${flow_count}  1
+    ${flow_count}=  rest show switch flow  s2  switch_alias=${switch2_alias}
+    Should be equal as integers  ${flow_count}  0    
+    [Tags]  feature
+
+09_With TC8 config, change action from rate-measure to forward. Verify policy is active and installed. Verify flow table on both switches
+
+	rest add policy  admin-view  ${policy_name}  forward
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${flow_count}=  rest show switch flow  s1
+    Should be equal as integers  ${flow_count}  1
+    ${flow_count}=  rest show switch flow  s2
+    Should be equal as integers  ${flow_count}  1    
+    [Tags]  feature
+
+10_With TC5 config, change match condition (add second match condition, then delete first match condition). Verify updated flows are installed on both switches.
+
+	${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    rest add policy match  admin-view  ${policy_name}  2  {"ether-type": 2048, "gtp-v1-protocol-type": 1, "ip-proto": 17, "sequence": 1, "gtp-v1-teid": 100, "gtp-version": 1, "dst-tp-port": 2152}   
+    sleep  5
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${flow_count}=  rest show switch flow  s1
+    Should be equal as integers  ${flow_count}  1
+    ${flow_count}=  rest show switch flow  s2
+    Should be equal as integers  ${flow_count}  1 
+    rest delete policy match  admin-view  ${policy_name}  1      
+    ${flow_count}=  rest show switch flow  s1
+    Should be equal as integers  ${flow_count}  1
+    ${flow_count}=  rest show switch flow  s2
+    Should be equal as integers  ${flow_count}  1 
+    [Tags]  feature
+
+11_With TC5 config, change match condition (first delete existing match condition, then add second match condition). Verify updated flows are installed on both switches.
+	
+	${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    rest delete policy match  admin-view  ${policy_name}  2     
+    ${flow_count}=  rest show switch flow  s1
+    Should be equal as integers  ${flow_count}  1
+    ${flow_count}=  rest show switch flow  s2
+    Should be equal as integers  ${flow_count}  1  
+    rest add policy match  admin-view  ${policy_name}  1  {"gtp-v1-teid": 100, "ether-type": 2048, "dst-tp-port": 2152, "ip-proto": 17, "sequence": 1}
+    sleep  5
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${flow_count}=  rest show switch flow  s1
+    Should be equal as integers  ${flow_count}  1
+    ${flow_count}=  rest show switch flow  s2
+    Should be equal as integers  ${flow_count}  1 
+    
+
+12_With policy installed (TC5 Configuration), send matching traffic. Verify traffic is forwarded to delivery ports
+
+	rest add policy match  admin-view  ${bigtap_policy_name}  1  {"gtp-v1-teid": 100, "ether-type": 2048, "dst-tp-port": 2152, "ip-proto": 17, "sequence": 1}
+    sleep  5
+    ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${stream}=  L3 add  name=gtp_teid  flow=a->b  frame_rate=10000  frame_size=1518
+    ...     src_mac=00:01:02:03:04:01  dst_mac=00:01:02:03:04:02  protocol=UDP  src_port=8001  dst_port=2152
+    ...     src_ip=100.1.1.1  src_gw=100.1.1.2  dst_ip=100.1.1.2  dst_gw=100.1.1.1  
+    ...		no_arp=True  payload=2000000000000064
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    verify results  a  b  transmitted_frame_rate  received_frame_rate    
+    stop traffic  ${stream}
+	[Tags]  offset-match  gtp  teid
+	
+19_Delete and re-add policy and verify flows get deleted and re-installed.
+
+	rest delete policy  admin-view  ${policy_name}
+    Sleep  10    
+    ${flow_count}=  rest show switch flow  s1
+    Should be equal as integers  ${flow_count}  0
+    ${flow_count}=  rest show switch flow  s2
+    Should be equal as integers  ${flow_count}  0   
+    rest add policy  admin-view  ${policy_name}  forward
+    rest add policy match  admin-view  ${policy_name}  1  {"gtp-v1-teid": 100, "ether-type": 2048, "dst-tp-port": 2152, "ip-proto": 17, "sequence": 1}
+    rest add policy interface  admin-view  ${policy_name}  ${filter_interface_alias}  filter
+    rest add policy interface  admin-view  ${policy_name}  ${delivery_interface_alias}  delivery
+  	sleep 10       
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${flow_count}=  rest show switch flow  s1
+    Should be equal as integers  ${flow_count}  1
+    ${flow_count}=  rest show switch flow  s2
+    Should be equal as integers  ${flow_count}  1        
+    [Tags]  feature
+	
+
+20_With policy installed, go from l3-l4-offset mode to l3-l4 mode. Verify CLI disallows
+ 
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    rest enable feature  l3-l4-offset  
+    rest enable feature  l3-l4       
+    [Tags]  feature
+	
+
+21_With policy installed, go from l3-l4-offset mode to full-match mode. Verify CLI disallows
+     
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    rest enable feature  full-match       
+    [Tags]  feature
+
+22_With policy installed, enable overlap mode. Verify no affect on BigTap policy
+     
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    rest enable feature  overlap 
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${flow_count}=  rest show switch flow  s1
+    Should be equal as integers  ${flow_count}  1
+    ${flow_count}=  rest show switch flow  s2
+    Should be equal as integers  ${flow_count}  1     
+    [Tags]  feature
+
+23_With policy installed, disable overlap mode. Verify no affect on BigTap policy
+      
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    rest disable feature  overlap 
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${flow_count}=  rest show switch flow  s1
+    Should be equal as integers  ${flow_count}  1
+    ${flow_count}=  rest show switch flow  s2
+    Should be equal as integers  ${flow_count}  1      
+    [Tags]  feature
+
+24_With policy installed, enable inport-masking. Verify no affect on BigTap policy
+
+	     
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    rest enable feature  inport-masking 
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}      
+    [Tags]  feature
+
+25_With policy installed, disable inport-masking. Verify no affect on BigTap policy
+
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    rest disable feature  inport-masking 
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1} 
+    [Tags]  feature
+
+26_With policy installed, send non-matching traffic. Verify traffic is dropped at ingress ports
+	
+    ${verify_policy1}=  rest verify bigtap policy  ${policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+	rest add policy match  admin-view  ${bigtap_policy_name}  1  {"sequence": 1, "gtp-v2-teid": 100, "dst-tp-port": 2123, "ip-proto": 17, "ether-type": 2048}
+    sleep  5
+    ${verify_policy1}=  rest verify bigtap policy  ${bigtap_policy_name}  num_filter_intf=1  num_delivery_intf=1
+    Should be true  ${verify_policy1}
+    ${stream}=  L3 add  name=gtp_teid  flow=a->b  frame_rate=10000  frame_size=1518
+    ...     src_mac=00:01:02:03:04:01  dst_mac=00:01:02:03:04:02  protocol=UDP  src_port=8001  dst_port=2152
+    ...     src_ip=100.1.1.1  src_gw=100.1.1.2  dst_ip=100.1.1.2  dst_gw=100.1.1.1  
+    ...		no_arp=True  payload=4000000000000064
+    clear stats    
+    start traffic  ${stream}
+    sleep  10
+    verify results  a  b  transmitted_frame_rate  received_frame_rate    
+    stop traffic  ${stream}	``````
+    [Tags]  feature
+
+	
+    
+			
+* Keyword
+
+offset suite setup
+    base suite setup
+    ${return_value}=  rest enable feature  l3-l4-offset-match
+    Should be true   ${return_value}
+    rest add switch alias  s1  ${switch1_alias}
+    rest add interface role  s1  ${filter_interface_name}  filter    intf_nickname=${filter_interface_alias}
+    rest add interface role  s1  ${delivery_interface_name}   delivery  intf_nickname=${delivery_interface_alias}
+    rest add policy  admin-view  ${bigtap_policy_name}  forward
+    rest add policy interface  admin-view  ${bigtap_policy_name}  ${filter_interface_alias}  filter
+    rest add policy interface  admin-view  ${bigtap_policy_name}  ${delivery_interface_alias}  delivery
+    sleep  30
+
+
+verify results   [Arguments]  ${send_port}  ${recv_port}  ${transmitted_frames}  ${received_valid_frames}
+    Sleep  5
+    ${report}=  fetch port stats
+    ${tx_value}=  verify dict key  ${report}  ${send_port}  ${transmitted_frames}
+    ${rx_value}=  verify dict key  ${report}  ${recv_port}  ${received_valid_frames}
+    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}
+    Should be true  ${in_range}
+
+offset suite teardown
+	REST delete policy  admin-view  ${bigtap_policy_name}
+	rest delete interface role  s1  ${filter_interface_name}       	filter 
+    rest delete interface role  s1  ${delivery_interface_name}      delivery              
+    rest delete interface  s1  ${filter_interface_name}          
+    rest delete interface  s1  ${delivery_interface_name}
+    rest delete switch alias  s1
+    rest delete switch  s1
+    base suite teardown
+
+    corsair suite setup
