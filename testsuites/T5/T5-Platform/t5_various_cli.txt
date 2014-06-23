@@ -60,7 +60,7 @@ T4 Monitor session string as identifier
 T5 Monitor session source tcp string
 	Cli Run  master  monitor session 1
 	Run Keyword and Expect Error
-	...  *Error: Invalid argument: range: not an integer:*tcp*
+	...  *Cannot specify a packet match criteria*if direction is not ingress*
 	...  Cli Run  master  source switch test interface eth1 ip-proto tcp
 	[Tags]  MonitorSession  BSC-5017
 
@@ -174,7 +174,7 @@ T12.1 show this in config-controller submode
 	[Tags]  BSC-5061  BSC-5491
 T12.2 show this in config-switch-if submode
 	Cli Run  master  switch test
-	Cli Run  master  mac 11:22:33:44:55:66
+	Cli Run  master  mac 12:22:33:44:55:66
 	Cli Run  master  interface eth1
 	Cli Run  master  show this
 	[Tags]  BSC-5135  BVS-1463
@@ -239,10 +239,10 @@ T16 Switch commands in config-switch-if submode
 	...  show running-config switch test
 	...  fabric-role spine
 	...  flag=False
-	Cli Run  master  mac 11:11:11:11:11:11
+	Cli Run  master  mac 22:11:11:11:11:11
 	Cli Run and Verify Output  master
 	...  show running-config switch test
-	...  mac 11:11:11:11:11:11
+	...  mac 22:11:11:11:11:11
 	Cli Run  master  leaf-group test
 	Cli Run and Verify Output  master
 	...  show running-config switch test
@@ -507,14 +507,22 @@ T33 Show banner simple test
 
 T34 Rebooting dummy switch
 	Cli Run  master  switch test
-	Cli Run  master  mac 11:22:33:44:55:66
+	Cli Run  master  mac 12:22:33:44:55:66
 	Run Keyword and Expect Error
 	...  *Error: Unable to determine IP address of specified switch name*
 	...  Cli Run  master  system reboot switch test
 	Run Keyword and Expect Error
 	...  *Error: Unable to determine IP address of specified switch DPID*
-	...  Cli Run  master  system reboot switch 11:22:33:44:55:66
+	...  Cli Run  master  system reboot switch 12:22:33:44:55:66
 	[Tags]  ZTN  BSC-5569
+
+#T35 Terminal length
+#	Cli Run  master  enable;config;set length 10
+#	Cli Run and Verify Output Length
+#	...  master
+#	...  show run
+#	...  10
+#	Cli Run  master  enable;config;set length 0
 
 *** Keywords ***
 Generate Random Name
