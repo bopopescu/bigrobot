@@ -4465,3 +4465,144 @@ class T5Platform(object):
                         helpers.log("Argument %s NOT found in CLI help output. Error was %s " % (cmd_argument, soft_error))
                         return False
             return True
+    def cli_reboot_switch_name(self, node='master', switch=None):
+        """
+        Reboot switch, switches from controller's CLI
+
+        Inputs:
+        | node | reference to controller as defined in .topo file |
+        | switch | if None,  then reboot all the switches one by one  |
+
+        Return Value:
+        - True if successfully executed reboot command, False otherwise
+        """
+        t = test.Test()
+        c = t.controller(node)
+        
+        if switch is None:
+            url = '/api/v1/data/controller/applications/bvs/info/fabric/switch'         
+            helpers.log("get switch fabric connection state")         
+                  
+            c.rest.get(url)
+            data = c.rest.content()        
+            switch =[]       
+            if (data):
+                for i in range(0, len(data)):
+                    switch.append(data[i]['name'])
+        helpers.log("USER INFO - switches are:  %s" % switch)         
+        
+        for sw in switch:        
+            c.enable('')
+            c.send("system reboot switch %s" % sw )
+            c.expect(r'.*\(y or yes to continue\):')   
+            c.send("yes")  
+            c.expect()      
+            helpers.log("USER INFO: content is: ====== \n  %s" % c.cli_content())                                                              
+                                                
+            if "Error" in c.cli_content():
+                helpers.test_failure("Error rebooting the switch %s " % sw)
+
+            helpers.log("Reboot switch executed successfully %s" % sw )
+        return True
+            
+    def cli_reboot_switch_ip(self, node='master', switch=None):
+        """
+        Reboot switch, switches from controller's CLI
+
+         Inputs:
+        | node | reference to controller as defined in .topo file |
+        | switch | if None,  then reboot all the switches one by one  |
+
+        Return Value:
+        - True if successfully executed reboot command, False otherwise
+        """
+        t = test.Test()
+        c = t.controller(node)
+        
+        if switch is None:
+            url = '/api/v1/data/controller/applications/bvs/info/fabric/switch'         
+            helpers.log("get switch fabric connection state")         
+                  
+            c.rest.get(url)
+            data = c.rest.content()        
+            switch =[]       
+            if (data):
+                for i in range(0, len(data)):
+                    if 'inet-address' in data[i].keys() and 'ip' in data[i]['inet-address'].keys(): 
+                        switch.append(data[i]['inet-address']['ip'])
+                    else:
+                        helpers.log("ERROR:  there is no ip address for: %s" %  data[i]['name'])        
+                                        
+        helpers.log("USER INFO - switches are:  %s" % switch)         
+        for ip in switch:                 
+            c.enable("system reboot switch %s" % ip )
+            helpers.log("USER INFO: content is: ====== \n  %s" % c.cli_content())                                                              
+            if "Error" in c.cli_content():
+                helpers.test_failure("Error rebooting the switch")                         
+            helpers.log("Reboot command executed successfully")
+            return True
+
+    def cli_reboot_switch_mac(self, node='master', switch=None):
+        """
+        Reboot switch, switches from controller's CLI
+
+         Inputs:
+        | node | reference to controller as defined in .topo file |
+        | switch | if None,  then reboot all the switches one by one  |
+
+        Return Value:
+        - True if successfully executed reboot command, False otherwise
+        """
+        t = test.Test()
+        c = t.controller(node)
+        if switch is None:
+            url = '/api/v1/data/controller/applications/bvs/info/fabric/switch'         
+            helpers.log("get switch fabric connection state")         
+                  
+            c.rest.get(url)
+            data = c.rest.content()        
+            switch =[]       
+            if (data):
+                for i in range(0, len(data)):
+                    if 'dpid' in data[i].keys(): 
+                        macs= data[i]['dpid'].split(':',2)
+                        mac = macs[2]
+                        switch.append(mac)
+        helpers.log("USER INFO - switches are:  %s" % switch)         
+        
+        for mac in switch:                 
+            c.enable('')
+            c.send("system reboot switch %s" % mac )                        
+            c.expect(r'.*\(y or yes to continue\):')   
+            c.send("yes")                  
+            c.expect()
+            helpers.log("USER INFO: content is: ====== \n  %s" % c.cli_content()) 
+            if "Error" in c.cli_content():
+                helpers.test_failure("Error rebooting the switch")                         
+            helpers.log("Reboot command executed successfully")
+            return True
+
+    def cli_reboot_switch_all(self, node='master'):
+        """
+        Reboot switch all , switches from controller's CLI
+
+        Inputs:
+        | node | reference to controller as defined in .topo file |
+        | 
+
+        Return Value:
+        - True if successfully executed reboot command, False otherwise
+        """
+        t = test.Test()
+        c = t.controller(node)
+        c.enable("system reboot switch all" )
+       
+        helpers.log("USER INFO: content is: ====== \n  %s" % c.cli_content()) 
+        if "Error" in c.cli_content():
+            helpers.test_failure("Error rebooting the switch")
+        helpers.log("Reboot command executed successfully")
+         
+        return True
+
+
+
