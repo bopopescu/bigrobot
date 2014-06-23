@@ -96,6 +96,10 @@ def main(*args):
 
     if args.netmask is None:
         args.netmask = "18"
+    if args.gateway is None:
+        args.gateway = "10.192.64.1"
+    if args.network_interface is None:
+        args.network_interface = "br0"
 
     # Setting below enviornment Variables for Jenkins CI
     term = helpers.get_env("TERM")
@@ -111,7 +115,9 @@ def main(*args):
                                  netmask=args.netmask,
                                  vm_name=vm_name,
                                  vm_host_name=vm_host_name,
-                                 build_number=args.build_number)
+                                 build_number=args.build_number,
+                                 gateway=args.gateway,
+                                 network_interface=args.network_interface)
 
     if active_vm['status_code'] == False:
         helpers.summary_log("VM setup failure on active vm!!\n%s"
@@ -140,7 +146,9 @@ def main(*args):
                                       vm_name=vm_backup_name,
                                       cluster_ip=args.active_ip,
                                       vm_host_name=vm_host_name,
-                                      build_number=args.build_number)
+                                      build_number=args.build_number,
+                                      gateway=args.gateway,
+                                      network_interface=args.network_interface)
         helpers.log("Created Backup VM :\n%s" % standby_vm)
         if standby_vm['status_code'] == False:
             helpers.summary_log("VM setup failure on standby vm!!\n%s"
@@ -163,7 +171,8 @@ def main(*args):
                                       netmask=args.netmask,
                                       vm_name=vm_mininet_name,
                                       vm_host_name=vm_host_name,
-                                      build_number=args.mininet_build_number)
+                                      build_number=args.mininet_build_number,
+                                      network_interface=args.network_interface)
         helpers.log("Created Mininet VM :\n%s" % mininet_vm)
         if mininet_vm['status_code'] == False:
             helpers.summary_log("VM setup failure on standby vm!!\n%s"
@@ -371,5 +380,9 @@ if __name__ == '__main__':
                         help="This build will be picked from jenkins from mininet project")
     parser.add_argument("--regress",
                         help="This is temporarily used in CI Jenkins")
+    parser.add_argument("--gateway",
+                        help="This used for gateway for VMs")
+    parser.add_argument("--network_interface",
+                        help="This used for virtual network interface on the KVM HOST Server")
     main()
     sys.exit(0)

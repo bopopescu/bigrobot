@@ -94,6 +94,8 @@ def main(*args):
         args.netmask = "18"
     if args.gateway is None:
         args.gateway = "10.192.64.1"
+    if args.network_interface is None:
+        args.network_interface = "br0"
 
     # Setting below enviornment Variables for Jenkins CI
     term = helpers.get_env("TERM")
@@ -115,7 +117,8 @@ def main(*args):
                                  vm_name=vm_name,
                                  vm_host_name=vm_host_name,
                                  build_number=args.build_number,
-                                 cluster_ip=args.cluster_ip)
+                                 cluster_ip=args.cluster_ip,
+                                 network_interface=args.network_interface)
 
     if not active_vm['status_code']:
         helpers.error_exit("Issue seen during VM setup\n%s"
@@ -156,7 +159,8 @@ def main(*args):
                                       vm_name=vm_backup_name,
                                       cluster_ip=args.active_ip,
                                       vm_host_name=vm_host_name,
-                                      build_number=args.build_number)
+                                      build_number=args.build_number,
+                                      network_interface=args.network_interface)
         helpers.log("Created Backup VM :\n%s" % standby_vm)
         # temporarily setting STANDBY_VM env for jenkins vm_setup
         helpers.set_env("STANDBY_VM", standby_vm['vm_name'])
@@ -193,6 +197,8 @@ if __name__ == '__main__':
                         help="This build will be picked from jenkins")
     parser.add_argument("--gateway",
                         help="This used for gateway for VMs")
+    parser.add_argument("--network_interface",
+                        help="This used for virtual network interface on the KVM HOST Server")
     main()
     print "Success!!!"
     sys.exit(0)

@@ -45,6 +45,7 @@ class KVMOperations(object):
         vm_name = kwargs.get("vm_name", None)
         ram = kwargs.get("ram", "1024")
         vcpus = kwargs.get("cpus", "1")
+        network_interface = kwargs.get("network_interface", "br0")
         virt_install_cmd = ("sudo virt-install"
                             " --connect qemu:///system"
                             " -r %s"
@@ -52,9 +53,9 @@ class KVMOperations(object):
                             " --vcpus=%s"
                             " --disk path=%s,device=disk,format=qcow2"
                             " --import --noautoconsole"
-                            " --network=bridge:br0,model=virtio"
+                            " --network=bridge:%s,model=virtio"
                             " --graphics vnc"
-                            % (ram, vm_name, vcpus, disk_path))
+                            % (ram, vm_name, vcpus, disk_path, network_interface))
         helpers.log("Creating VM on KVM host:\n%s" % virt_install_cmd)
         content = kvm_handle.bash(virt_install_cmd)['content']
         if "Domain creation completed." in content:
@@ -284,6 +285,7 @@ class KVMOperations(object):
             cluster_ip = kwargs.get("cluster_ip", None)
             netmask = kwargs.get("netmask", "18")
             gateway = kwargs.get("gateway", "10.192.64.1")
+            network_interface = kwargs.get("network_interface", "br0")
 
             self.log_path = LOG_BASE_PATH + '/' + vm_name
             os.makedirs(self.log_path)
@@ -328,7 +330,8 @@ class KVMOperations(object):
                                        qcow_path=qcow_vm_path,
                                        vm_name=vm_name,
                                        kvm_handle=kvm_handle,
-                                       kvm_host=kvm_host)
+                                       kvm_host=kvm_host,
+                                       network_interface=network_interface)
             result['vm_name'] = vm_name
             result['kvm_host'] = kvm_host
             result['image_path'] = qcow_vm_path
@@ -464,15 +467,16 @@ class KVMOperations(object):
         kvm_vmdk_path = kwargs.get("qcow_path", None)
         kvm_handle = kwargs.get("kvm_handle", None)
         kvm_host = kwargs.get("kvm_host", None)
+        network_interface = kwargs.get("network_interface", None)
 
         vm_creation = False
 
         if vm_type == "mininet":
             vm_creation = self._virt_install_vm(kvm_handle=kvm_handle, disk_path=kvm_vmdk_path,
-                                                vm_name=vm_name)
+                                                vm_name=vm_name, network_interface=network_interface)
         else:
             vm_creation = self._virt_install_vm(kvm_handle=kvm_handle, disk_path=kvm_vmdk_path,
-                                                vm_name=vm_name, ram="4096", cpus="4")
+                                                vm_name=vm_name, ram="4096", cpus="4", network_interface=network_interface)
 
         if vm_creation:
             helpers.summary_log("2. Success Creating VM with Name: %s on KVM_Host: %s" % (vm_name, kvm_host))
