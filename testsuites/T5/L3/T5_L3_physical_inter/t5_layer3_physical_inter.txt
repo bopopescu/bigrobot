@@ -890,8 +890,8 @@ L3 inter tenant forwarding between endpoints on the same rack but different swit
     BASH ifup intf                              h6                              em2
     BASH init intf                              h5                              eth1
     BASH init intf                              h6                              em2
-    BASH ifconfig ip address                         h5                              10.251.1.31/24          eth1
-    BASH ifconfig ip address                         h6                              10.252.1.31/24          em2
+    BASH ifconfig ip address                    h5                              10.251.1.31/24          eth1
+    BASH ifconfig ip address                    h6                              10.252.1.31/24          em2
     BASH add route                              h5                              10.252.1.0/24           10.251.1.1
     BASH add route                              h6                              10.251.1.0/24           10.252.1.1
     REST add interface to vns                   X                               X1                      ${leaf2_a}          ${leaf2a_host5}            -1
