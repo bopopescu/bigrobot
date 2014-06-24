@@ -1,0 +1,76 @@
+*Settings
+Documentation  TCP Flag Test Suite
+Suite Setup  flag suite setup
+Suite Teardown   flag suite teardown
+Test Setup   flag test setup
+Test Teardown  flag test teardown 
+Force Tags   Corsair  AugustaP2  BigTap  
+Library  keywords/BsnCommon.py
+Library  keywords/AppController.py
+Library  keywords/BigTap.py
+Library  keywords/SwitchLight.py
+Library  keywords/Ixia.py
+
+* Variable
+${switch1_alias}                        scale-ac5710-1   #Alias for switch 1
+
+### Ixia Ports
+${switch1_filter_intf_1}                  ethernet1        #filter interface on switch 1
+${switch1_filter_alias_1}                 ixia-4-21        #Alias for filter interface on switch 1
+${switch1_delivery_intf_1}                ethernet2        #Delivery interface on switch 1
+${switch1_delivery_alias_1}               ixia-4-22        #Alias for delivery interface on switch 1
+
+### BigTap Policy Configuration
+${policy_name_1}                          policy_tcp_flags       #Policy Name that will use the tunnel interface
+
+*Test Case
+
+Verify all positive combinations of TCP flags
+    : FOR    ${INDEX}    IN RANGE    0    63
+    \    Log    ${INDEX}
+    \    ${match_result}=  rest add policy match  admin-view  ${policy_name_1}  1  {"tcp-flags": ${INDEX}, "ether-type": 2048, "tcp-flags-mask": ${INDEX}, "ip-proto": 6, "sequence": 1} 
+    \    Should be true  ${match_result}
+    \    sleep  5
+    \    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    \    Should be true  ${verify_policy1}   
+
+Verify all positive combinations of TCP6 flags
+    : FOR    ${INDEX}    IN RANGE    0    63
+    \    Log    ${INDEX}
+    \    ${match_result}=  rest add policy match  admin-view  ${policy_name_1}  1  {"tcp-flags": ${INDEX}, "ether-type": 34525, "tcp-flags-mask": ${INDEX}, "ip-proto": 6, "sequence": 1} 
+    \    Should be true  ${match_result}
+    \    sleep  5
+    \    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
+    \    Should be true  ${verify_policy1}  
+                                            
+* Keyword
+
+flag suite setup
+    base suite setup
+    rest add switch alias  s1  ${switch1_alias}
+    #Configure filter interfaces on all switches
+    rest add interface role  s1  ${switch1_filter_intf_1}  filter    intf_nickname=${switch1_filter_alias_1}
+    #Configure delivery interfaces on all switches    
+    rest add interface role  s1  ${switch1_delivery_intf_1}  delivery    intf_nickname=${switch1_delivery_alias_1}
+    #First verify basic policy works
+    Sleep  10    
+
+
+flag test setup
+    rest add policy  admin-view  ${policy_name_1}  forward
+    rest add policy match  admin-view  ${policy_name_1}  1  {"any-traffic": true, "sequence": 1}
+    rest add policy interface  admin-view  ${policy_name_1}  ${switch1_filter_alias_1}  filter
+    rest add policy interface  admin-view  ${policy_name_1}  ${switch1_delivery_alias_1}  delivery
+    Sleep  30
+
+flag test teardown 
+    rest delete policy  admin-view  ${policy_name_1}
+    
+flag suite teardown
+    rest delete interface role  s1  ${switch1_filter_intf_1}       filter 
+    rest delete interface role  s1  ${switch1_delivery_intf_1}       delivery 
+    rest delete interface  s1  ${switch1_filter_intf_1}        
+    rest delete interface  s1  ${switch1_delivery_intf_1}        
+    rest delete switch alias  s1
+    rest delete switch  s1
+    base suite teardown 
