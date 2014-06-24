@@ -32,8 +32,22 @@ Verify all positive combinations of TCP flags
     \    Should be true  ${match_result}
     \    sleep  5
     \    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
-    \    Should be true  ${verify_policy1}   
-
+    \    Should be true  ${verify_policy1}
+    \    ${flags}=  convert integer to tcpflag  ${INDEX}
+    \    summary log  urgBit=${flags[0]}  ackBit=${flags[1]}  pshBit=${flags[2]}  rstBit=${flags[3]}  synBit=${flags[4]}  finBit=${flags[5]}  
+    \    ${stream}=  L3 add  flow=a->b  frame_rate=50000  frame_size=1518  
+    \    ...     src_mac=00:02:03:04:05:06  dst_mac=00:02:03:04:05:07  no_arp=True
+    \    ...     src_ip=100.1.1.1  dst_ip=100.1.1.2  protocol=TCP  src_port=1234  dst_port=8002  name=a_b_flow       
+    \    ...     urgBit=${flags[0]}  ackBit=${flags[1]}  pshBit=${flags[2]}  rstBit=${flags[3]}  synBit=${flags[4]}  finBit=${flags[5]}
+    \    clear stats    
+    \    start traffic  ${stream}
+    \    sleep  10
+    \    verify results  a  b  transmitted_frame_rate  received_frame_rate    
+    \    stop traffic  ${stream}
+    \    delete traffic
+    \    sleep  2
+    [Tags]  feature  sanity  TCP  positive        
+        
 Verify all positive combinations of TCP6 flags
     : FOR    ${INDEX}    IN RANGE    0    63
     \    Log    ${INDEX}
@@ -42,7 +56,21 @@ Verify all positive combinations of TCP6 flags
     \    sleep  5
     \    ${verify_policy1}=  rest verify bigtap policy  ${policy_name_1}  num_filter_intf=1  num_delivery_intf=1
     \    Should be true  ${verify_policy1}  
-                                            
+    \    ${flags}=  convert integer to tcpflag  ${INDEX}
+    \    summary log  urgBit=${flags[0]}  ackBit=${flags[1]}  pshBit=${flags[2]}  rstBit=${flags[3]}  synBit=${flags[4]}  finBit=${flags[5]}  
+    \    ${stream}=  L3 add  flow=a->b  frame_rate=50000  frame_size=1518  
+    \    ...     src_mac=00:03:03:04:05:06  dst_mac=00:03:03:04:05:07  no_arp=True
+    \    ...     src_ip=2001:2004:0:0:0:0:0:c4  dst_ip=2001:2004:0:0:0:0:0:c3  protocol=TCP  src_port=1234  dst_port=8002  name=a_b_flow       
+    \    ...     urgBit=${flags[0]}  ackBit=${flags[1]}  pshBit=${flags[2]}  rstBit=${flags[3]}  synBit=${flags[4]}  finBit=${flags[5]}
+    \    clear stats    
+    \    start traffic  ${stream}
+    \    sleep  10
+    \    verify results  a  b  transmitted_frame_rate  received_frame_rate    
+    \    stop traffic  ${stream}
+    \    delete traffic
+    \    sleep  2
+    [Tags]  feature  sanity  TCP6  positive          
+                                          
 * Keyword
 
 flag suite setup
@@ -62,6 +90,14 @@ flag test setup
     rest add policy interface  admin-view  ${policy_name_1}  ${switch1_filter_alias_1}  filter
     rest add policy interface  admin-view  ${policy_name_1}  ${switch1_delivery_alias_1}  delivery
     Sleep  30
+
+verify results   [Arguments]  ${send_port}  ${recv_port}  ${transmitted_frames}  ${received_valid_frames}
+    Sleep  5
+    ${report}=  fetch port stats
+    ${tx_value}=  verify dict key  ${report}  ${send_port}  ${transmitted_frames}
+    ${rx_value}=  verify dict key  ${report}  ${recv_port}  ${received_valid_frames}
+    ${in_range}=  ixia verify traffic rate  ${tx_value}  ${rx_value}
+    Should be true  ${in_range}
 
 flag test teardown 
     rest delete policy  admin-view  ${policy_name_1}
