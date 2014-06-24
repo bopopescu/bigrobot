@@ -1284,14 +1284,20 @@ def run_cmd(cmd, cwd=None, ignore_stderr=False, shell=True, quiet=False):
 
 
 def _ping(host, count=10, timeout=5, quiet=False, source_if=None,
-          record_route=False, node_handle=None, mode=None, ttl=None):
+          record_route=False, node_handle=None, mode=None, ttl=None,
+          interval=0.4):
     """
     Ping options:
-      - count : -c <counter>
-      - source_inf : -I <interface>
-      - record_route : -R
-      - ttl : -t <ttl> (on Linux), -T <ttl> (on Mac OS X)
-      - timeout : -W <timeout> (on Linux), -t <timeout> (on Mac OS X)
+      :param host: (Str) ping hist host
+      :param count : (Int) number of packets to send, equivalent to -c <counter>
+      :param source_inf : -I <interface>
+      :param record_route : -R
+      :param ttl : -t <ttl> (on Linux), -T <ttl> (on Mac OS X)
+      :param timeout : (Int) time in seconds to wait for a reply, equivalent
+             to -W <timeout> (on Linux), -t <timeout> (on Mac OS X)
+      :param interval : (Real) time in seconds to wait between sending packets.
+             equivalent to -i <wait>. Interval value less than 0.2 will
+             trigger an error (not supported).
 
     See also Host.bash_ping() to see how to use ping as a BigRobot keyword.
     """
@@ -1301,6 +1307,10 @@ def _ping(host, count=10, timeout=5, quiet=False, source_if=None,
         cmd = "%s -I %s" % (cmd, source_if)
     if record_route:
         cmd = "%s -R" % (cmd)
+    if interval:
+        if float(interval) < 0.2:
+            test_error("Ping interval cannot be less than 0.2 seconds.")
+        cmd = "%s -i %s" % (cmd, interval)
 
     # Ping initiated from the staging machine (likely is your MacBook)
     if not node_handle and platform.system() == 'Darwin':
@@ -1398,10 +1408,9 @@ def _ping(host, count=10, timeout=5, quiet=False, source_if=None,
 
 def ping(host, count=10, timeout=5, loss=0, quiet=False):
     """
-    Unix ping.
-    :param host: (Str) ping hist host
-    :param count: (Int) number of packets to send
-    :param timeout: (Int) time in seconds to wait for a reply
+    Unix ping. See _ping() for a complete list of options.
+    Additional arguments:
+
     :param loss: (Int) allowable loss percentage
 
     Return: (Int) loss percentage
