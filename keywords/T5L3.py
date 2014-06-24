@@ -17,7 +17,7 @@ class T5L3(object):
                 `vns`           vns interface name which must be similar to VNS
                 `ipaddr`        interface ip address
                 `netmask`       vns subnet mask
-                `private`        true or false 
+                `private`        true or false
             POST http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant%5Bname%3D%22X%22%5D/logical-router/segment-interface%5Bsegment%3D%22X1%22%5D/ip-subnet {"ip-cidr": "10.10.0.1/24", "private": false}
         REST-POST: POST http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant%5Bname%3D%22X%22%5D/logical-router/segment-interface%5Bsegment%3D%22X2%22%5D/ip-subnet {"ip-cidr": "10.10.111.1/24", "private": false}
 
@@ -598,7 +598,6 @@ REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant%
 
     def rest_add_endpoint_switch_attachment(self, tenant, vnsname, endpointname, switchname, switchinterface, vlan):
         '''Add nexthop to ecmp groups aks gateway pool in tenant"
-        '''
             Input:
                 `tenant`          tenant name
                 `vnsname`         vns name
@@ -609,6 +608,7 @@ REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant%
             Return: true if configuration is successful, false otherwise
      REST-POST: PATCH http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant%5Bname%3D%22X%22%5D/segment%5Bname%3D%22X1%22%5D/endpoint%5Bname%3D%22H1%22%5D/attachment-point {"interface": "ethernet22", "switch": "leaf0-a", "vlan": 10}
     REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant%5Bname%3D%22X%22%5D/segment%5Bname%3D%22X1%22%5D/endpoint%5Bname%3D%22H1%22%5D/attachment-point done 0:00:00.004528
+        '''
         t = test.Test()
         c = t.controller('master')
 
@@ -624,7 +624,7 @@ REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant%
 
     def rest_delete_endpoint_switch_attachment(self, tenant, vnsname, endpointname, switchname, switchinterface, vlan):
         '''Add nexthop to ecmp groups aks gateway pool in tenant"
-    
+
             Input:
                 `tenant`          tenant name
                 `vnsname`         vns name
@@ -687,7 +687,7 @@ REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[
             Return: true if configuration is successful, false otherwise
 REST-POST: PATCH http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="C"]/logical-router/segment-interface[segment="C1"]/dhcp-relay {"dhcp-relay-enable": true}
 <<<<<<< HEAD
-REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="C"]/logical-router/segment-interface[segment="C1"] reply: ""           
+REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="C"]/logical-router/segment-interface[segment="C1"] reply: ""
 REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="C"]/logical-router/segment-interface[segment="C1"] reply: ""
         '''
         t = test.Test()
@@ -737,7 +737,7 @@ REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[
             Return: true if configuration is successful, false otherwise
 REST-POST: PATCH http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="C"]/logical-router/segment-interface[segment="C1"] {"dhcp-circuit-id": "this is a test"}
 <<<<<<< HEAD
-REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="C"]/logical-router/segment-interface[segment="C1"] reply: ""          
+REST-POST: http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="C"]/logical-router/segment-interface[segment="C1"] reply: ""
         '''
         t = test.Test()
         c = t.controller('master')
@@ -769,7 +769,7 @@ REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/
 
 REST-POST: DELETE http://127.0.0.1:8080/api/v1/data/controller/applications/bcf/tenant[name="B"]/logical-router/segment-interface[segment="B1"]/dhcp-server-ip {}
 <<<<<<< HEAD
-     
+
         '''
         t = test.Test()
         c = t.controller('master')
