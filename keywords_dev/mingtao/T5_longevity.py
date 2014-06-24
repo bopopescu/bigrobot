@@ -210,20 +210,58 @@ class T5_longevity(object):
         return False
 
 
-    def telnet_switch_config(self, node,config):
+    def telnet_switch_config(self, node,config,password='adminadmin'):
         """
-        Issue reload command on given node (switch)
+        config given node (switch)
 
         Inputs:
         | node | Alias of the node to use |
+        | config|  config string
 
         Return Value:
-        - N/A
+        - True
         """
         t = test.Test()
-        con = t.dev_console(node)
-        con.config(config)
-        helpers.log(con.config('')['content'])
+        s = t.dev_console(node, modeless=True)
+        s.send("\r")
+        options = s.expect([r'[\r\n]*.*login:', s.get_prompt()],
+                           timeout=300)
+        if options[0] == 0: #login prompt
+            s.send('admin')
+            options = s.expect([ r'[Pp]assword:', s.get_prompt()])
+            if options[0] == 0:
+                helpers.log("Logging in as admin with password %s" % password)
+                s.cli(password)
+        s.cli('enable; config')
+        s.send(config)
+        helpers.log(s.cli('')['content'])
+        return True
+
+    def telnet_switch_copy_config_start(self, node,password='adminadmin'):
+        """
+        config given node (switch)
+
+        Inputs:
+        | node | Alias of the node to use |
+        | config|  config string
+
+        Return Value:
+        - True
+        """
+        t = test.Test()
+        s = t.dev_console(node, modeless=True)
+        s.send("\r")
+        options = s.expect([r'[\r\n]*.*login:', s.get_prompt()],
+                           timeout=300)
+        if options[0] == 0: #login prompt
+            s.send('admin')
+            options = s.expect([ r'[Pp]assword:', s.get_prompt()])
+            if options[0] == 0:
+                helpers.log("Logging in as admin with password %s" % password)
+                s.cli(password)
+        s.cli('enable')
+        s.send('copy running-config startup-config')
+        helpers.log(s.cli('')['content'])
         return True
 
 

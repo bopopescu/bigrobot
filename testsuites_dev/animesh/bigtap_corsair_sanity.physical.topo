@@ -6,14 +6,22 @@
 # mn  : Mininet server
 
 c1:
-  ip: 10.192.97.21
-
-c2:
-  ip: 10.192.97.20
+  ip: 10.192.97.12
 
 s1:
   ip: 10.192.75.177
 
+s2:
+  ip: 10.192.75.178
+
+s3:
+  ip: 10.192.75.179
+
+s4:
+  ip: 10.192.88.87
+  protocol: telnet
+
+    
 tg1:
   platform: 'ixia'
   chassis_ip: 10.192.85.151
@@ -25,4 +33,9 @@ tg1:
     a:
       name: 4/21 
     b:
-      name: 4/22
+      name: 4/22 
+    c:
+      name: 4/24
+    d:
+      name: 4/18
+         

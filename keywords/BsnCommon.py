@@ -91,6 +91,18 @@ class BsnCommon(object):
     def summary_log(self, msg):
         helpers.summary_log(msg, level=2)
 
+    def trace(self, msg):
+        helpers.trace(msg, level=2)
+
+    def info(self, msg):
+        helpers.info(msg, level=2)
+
+    def warn(self, msg):
+        helpers.warn(msg, level=2)
+
+    def debug(self, msg):
+        helpers.debug(msg, level=2)
+
     def show_test_topology_params(self):
         t = test.Test()
         helpers.log("Test topology params: %s"
@@ -359,7 +371,8 @@ class BsnCommon(object):
 
     def params(self, *args, **kwargs):
         """
-        Return the value for a params (topo) attribute.
+        Return the value for a params attributes. This will include non-node
+        params, such as 'common'.
 
         Inputs:
         | node | reference to switch/controller as defined in .topo file |
@@ -371,6 +384,21 @@ class BsnCommon(object):
         """
         t = test.Test()
         return t.params(*args, **kwargs)
+
+    def params_nodes(self, *args, **kwargs):
+        """
+        Return the value for a params node(s) attributes.
+
+        Inputs:
+        | node | reference to switch/controller as defined in .topo file |
+        | key  | name of attribute (e.g., 'ip') |
+        | default | (option) if attribute is undefined, return the value defined by default |
+
+        Return Value:
+        - Value for attribute
+        """
+        t = test.Test()
+        return t.params_nodes(*args, **kwargs)
 
     def verify_dict_key(self, content, index, key):
         ''' Given a dictionary, return the value for a particular key

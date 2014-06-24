@@ -421,10 +421,11 @@ Verify add and delete of dhcp server config works
     REST add dhcp relay                         Y                               Y3                      10.252.1.9
     sleep                                       5
     ${result} =                                 REST show forwarding dhcp table
-    ${circuitid} =                              Set Variable                    ${result[0]['circuit-id']}
+    Dictionay Should Not Contain Value          ${result}                       circuit-id
+#    ${circuitid} =                              Set Variable                    ${result[0]['circuit-id']}
     ${dhcpip} =                                 Set Variable                    ${result[0]['dhcp-ip']}
     ${routerip} =                               Set Variable                    ${result[0]['router-ip']}
-    Should Be Empty                             ${circuitid}
+#    Should Be Empty                             ${circuitid}
     Should Be Equal                             ${dhcpip}                       10.252.1.9
     Should Be Equal                             ${routerip}                     10.252.3.1
     REST add dhcprelay circuitid                Y                               Y3                      this is a test
@@ -436,10 +437,11 @@ Verify add and delete of dhcp server config works
     Should Be Empty                             ${result}                    
     REST add dhcp relay                         Y                               Y3                      10.252.1.11
     ${result} =                                 REST show forwarding dhcp table
-    ${circuitid} =                              Set Variable                    ${result[0]['circuit-id']}
+    Dictionay Should Not Contain Value          ${result}                       circuit-id
+#    ${circuitid} =                              Set Variable                    ${result[0]['circuit-id']}
     ${dhcpip} =                                 Set Variable                    ${result[0]['dhcp-ip']}
     ${routerip} =                               Set Variable                    ${result[0]['router-ip']}
-    Should Be Empty                             ${circuitid}
+#    Should Be Empty                             ${circuitid}
     Should Be Equal                             ${dhcpip}                       10.252.1.11
     Should Be Equal                             ${routerip}                     10.252.3.1
     ${result} =                                 REST delete dhcp relay          Y                               Y3                      10.252.1.9   
@@ -448,18 +450,20 @@ Verify add and delete of dhcp server config works
     Should Be True                              ${result} 
     REST add dhcp relay                         Y                               Y3                      10.252.1.9
     ${result} =                                 REST show forwarding dhcp table
-    ${circuitid} =                              Set Variable                    ${result[0]['circuit-id']}
+    Dictionay Should Not Contain Value          ${result}                       circuit-id
+#    ${circuitid} =                              Set Variable                    ${result[0]['circuit-id']}
     ${dhcpip} =                                 Set Variable                    ${result[0]['dhcp-ip']}
     ${routerip} =                               Set Variable                    ${result[0]['router-ip']}
-    Should Be Empty                             ${circuitid}
+#    Should Be Empty                             ${circuitid}
     Should Be Equal                             ${dhcpip}                       10.252.1.9
     Should Be Equal                             ${routerip}                     10.252.3.1
     REST add dhcp relay                         Y                               Y3                      10.252.1.12
     ${result} =                                 REST show forwarding dhcp table
-    ${circuitid} =                              Set Variable                    ${result[0]['circuit-id']}
+    Dictionay Should Not Contain Value          ${result}                       circuit-id
+#    ${circuitid} =                              Set Variable                    ${result[0]['circuit-id']}
     ${dhcpip} =                                 Set Variable                    ${result[0]['dhcp-ip']}
     ${routerip} =                               Set Variable                    ${result[0]['router-ip']}
-    Should Be Empty                             ${circuitid}
+#    Should Be Empty                             ${circuitid}
     Should Be Equal                             ${dhcpip}                       10.252.1.12
     Should Be Equal                             ${routerip}                     10.252.3.1
 		

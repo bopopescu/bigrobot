@@ -71,6 +71,44 @@ class BigTap(object):
                     return content[0]['stats']['table'][1][return_value]
                 else:
                     return content[0]['stats']['table'][1]['active-count']
+                
+    def rest_return_switch_flow(self, node, flow_index, flow_key, switch_alias=None, sw_dpid=None, soft_error=False):
+        '''
+            Objective: Verify flow is pushed via controller
+            
+            Input:
+            | node | Specify switch as defined in topo file|
+            |flow_index| Index in flow you want returned|
+            |_key| Key in the index you want returned|
+            
+            Return Value:
+            Value of the specified key
+        '''
+        t = test.Test()
+        try:
+            c = t.controller('master')
+            AppCommon = AppController.AppController()
+        except:
+            return False
+        else:
+            try:
+                if (switch_alias is None and sw_dpid is not None):
+                    switch_dpid = sw_dpid
+                elif (switch_alias is None and sw_dpid is None):
+                    switch_dpid = AppCommon.rest_return_switch_dpid_from_ip(node)
+                elif (switch_alias is not None and sw_dpid is None):
+                    switch_dpid = AppCommon.rest_return_switch_dpid_from_alias(switch_alias)
+                else:
+                    switch_dpid = sw_dpid
+                url = '/api/v1/data/controller/core/switch[dpid="%s"]?select=stats/flow' % (str(switch_dpid))
+                c.rest.get(url)
+                content = c.rest.content()
+            except:
+                helpers.test_failure("Could not execute command")
+                return False
+            else:
+                return content[0]['stats']['flow'][0]['match-field'][int(flow_index)][str(flow_key)]          
+    
 
 # Mingtao
     def rest_show_address_group(self, group):
@@ -2032,7 +2070,7 @@ class BigTap(object):
             - Enable a bigtap feature
         
            Input:
-            | `feature_name` | Bigtap Feature Name. \n Currently allowed feature names are `overlap`,`inport-mask`,`tracked-host`,`l3-l4-mode` | 
+            | `feature_name` | Bigtap Feature Name. \n Currently allowed feature names are `overlap`,`inport-mask`,`tracked-host`,`l3-l4-mode`, `tunneling` | 
             
             Return Value 
             - True if feature is enabled
@@ -2052,7 +2090,7 @@ class BigTap(object):
                 content = c.rest.content()
                 version_string = content[0]['controller']
                 helpers.log("version string is %s" % version_string)
-                if "3.0.0" in str(version_string):
+                if "4.0.0" in str(version_string):
                     if ("l3-l4" in str(feature_name)) or ("full-match" in str(feature_name)):
                         data = {"match-mode": str(feature_name)}
                         helpers.log("Data to be patched is %s" % data)
@@ -2454,7 +2492,7 @@ class BigTap(object):
 ############ CORSAIR: TUNNELLING ### START #
 ############################################
 
-    def rest_add_tunnel_interface(self, node, tunnel_name, switch_alias=None, sw_dpid=None, pinterface=None, tdirection=None, sip=None, mask=None, dip=None, gip=None, user="admin", password="adminadmin", soft_error=False):
+    def rest_add_tunnel_interface(self, node, tunnel_name, switch_alias=None, sw_dpid=None, loopback=None, pinterface=None, tdirection=None, sip=None, mask=None, dip=None, gip=None, user="admin", password="adminadmin", soft_error=False):
         t = test.Test()
         try:
             c = t.controller('master')
@@ -2498,8 +2536,14 @@ class BigTap(object):
                 if tdirection is not None:
                     if (tdirection == 'bidir') or (tdirection == 'bidirectional'):
                         direction = 'bidirectional'
+                        if loopback is None:
+                            helpers.log("Loopback interface needs to be specified when tunnel direction is bidirectional")
+                            return False
                     elif (tdirection == 'tx') or (tdirection == 'transmit-only'):
                         direction = 'transmit-only'
+                        if loopback is None:
+                            helpers.log("Loopback interface needs to be specified when tunnel transmit-only is bidirectional")
+                            return False
                     elif (tdirection == 'rx') or (tdirection == 'receive-only'):
                         direction = 'receive-only'
                     else:
@@ -2509,7 +2553,10 @@ class BigTap(object):
                         helpers.test_error("Non-Admin users cannot create tunnel interfaces", soft_error)
                         return False
                     else:
-                        c.rest.patch(url, {"direction": str(direction)})
+                        if (direction == 'bidirectional') or (direction == 'transmit-only'):
+                            c.rest.patch(url, {"direction": str(direction), "loopback-interface": str(loopback), "type": "tunnel"})
+                        else:
+                            c.rest.patch(url, {"direction": str(direction), "type": "tunnel"})
                         if not c.rest.status_code_ok():
                             helpers.test_log(c.rest.error())
                             return False
@@ -2531,7 +2578,7 @@ class BigTap(object):
                     helpers.test_error("Non-Admin users cannot create tunnel interfaces", soft_error)
                     return False
                 else:
-                    c.rest.patch(url, {"type": "tunnel", "encap-type": "gre"})
+                    c.rest.patch(url, {"encap-type": "gre"})
                 return True
 
     def rest_verify_tunnel_status(self, node, tunnel_name, switch_alias=None, sw_dpid=None, tunnel_number=None, runtime_state=None, parent_interface=None, tunnel_direction=None, sip=None, mask=None, dip=None, gip=None, user="admin", password="adminadmin", soft_error=False):
@@ -3571,3 +3618,4 @@ class BigTap(object):
                 for line in temp_content:
                     if (cmd_argument in line) and (num == cmd_argument_count):
                         return True
+
